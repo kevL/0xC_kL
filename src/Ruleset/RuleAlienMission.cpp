@@ -100,7 +100,7 @@ void RuleAlienMission::load(const YAML::Node& node)
 	_type			= node["type"]			.as<std::string>(_type);
 	_points			= node["points"]		.as<int>(_points);
 	_waves			= node["waves"]			.as<std::vector<MissionWave>>(_waves);
-	_objectiveUfo		= node["objectiveUfo"]	.as<std::string>(_objectiveUfo);
+	_objectiveUfo	= node["objectiveUfo"]	.as<std::string>(_objectiveUfo);
 	_objectiveZone	= node["objectiveZone"]	.as<size_t>(_objectiveZone);
 	_weights		= node["weightsMission"].as<std::map<size_t, int>>(_weights);
 	_retalCoef		= node["retalCoef"]		.as<int>(_retalCoef);
@@ -163,7 +163,7 @@ void RuleAlienMission::load(const YAML::Node& node)
 
 /**
  * Chooses one of the available races for this AlienMission rule.
- * @note The racial distribution may vary based on the current game date.
+ * @note The racial distribution may vary based on the current date.
  * @param monthsPassed - the number of months that have passed
  * @return, the string ID of the race
  */
@@ -178,7 +178,7 @@ std::string RuleAlienMission::generateRace(size_t monthsPassed) const
 
 /**
  * Gets the alien-score of this AlienMission rule.
- * @return, amount of points
+ * @return, score points
  */
 int RuleAlienMission::getPoints() const
 {
@@ -186,8 +186,8 @@ int RuleAlienMission::getPoints() const
 }
 
 /**
- * Gets the chance of this mission being generated based on the game-date.
- * @param monthsPassed - the number of months that have passed
+ * Gets the chance of this mission being generated based on the date.
+ * @param monthsPassed - the months that have passed
  * @return, the weight
  */
 int RuleAlienMission::getWeight(size_t monthsPassed) const

@@ -1197,6 +1197,8 @@ alienDeployments:
     objectiveType: 3
     objectiveComplete: [STR_ALIEN_BASE_CONTROL_DESTROYED, 500]
     objectivePopup: STR_ALIEN_BASE_CONTROL_DESTROYED
+    genMissionType: STR_ALIEN_SUPPLY
+    genMissionPct: 4
   - type: STR_BASE_DEFENSE
     data:
       - alienRank: 6 #terrorist1
@@ -1974,7 +1976,7 @@ alienMissions:
     points: 0
     objectiveType: 4
     objectiveUfo: STR_BATTLESHIP #for the final retaliation run
-    weightsRace: # In the case of a shootdown, race comes from the UFO that triggered the mission.
+    weightsRace: #in the case of a shootdown race comes from the UFO that triggered the mission.
       0:
         STR_SECTOID: 20
         STR_SNAKEMAN: 20

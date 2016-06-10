@@ -102,10 +102,10 @@ private:
 
 	std::vector<RuleCity*> _cities;
 
-	size_t _weight;						// Weight of this Region when selecting regions for AlienMissions.
-	WeightedOptions _weightsMission;	// Weighted list of the different mission-types for this Region.
-	std::vector<MissionZone> _zones;	// All the mission-zones in this Region.
-	std::string _missionRegion;			// Do missions in the Region defined by this string instead.
+	size_t _weight;						// weight of this Region when selecting regions for AlienMissions.
+	WeightedOptions _weightsMission;	// weighted list of the different mission-types for this Region.
+	std::vector<MissionZone> _zones;	// all the mission-zones in this Region.
+	std::string _missionRegion;			// do missions in the Region defined by this string instead.
 
 
 	public:

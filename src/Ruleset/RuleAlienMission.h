@@ -77,7 +77,7 @@ private:
 		_retalCoef;			// Modifier for chance of retaliation.
 	size_t _objectiveZone;	// The mission zone to use for spawning.
 	std::string
-		_terrorType,			// The type of mission-site to generate.
+		_terrorType,		// The type of mission-site to generate.
 		_objectiveUfo,		// The UFO to use for spawning.
 		_type;				// The mission's type-ID.
 

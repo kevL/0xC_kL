@@ -122,6 +122,7 @@ private:
 		_despawnPenalty,
 		_durationMax,
 		_durationMin,
+		_genMissionPct,
 		_height,
 		_length,
 		_markerIcon,
@@ -136,6 +137,7 @@ private:
 	std::string
 		_alert,
 		_alertBg,
+		_genMissionType,
 		_markerType,
 		_nextStage,
 		_objectiveCompleteText,
@@ -248,8 +250,12 @@ private:
 		/// Gets which turn the aLiens start cheating on.
 		int getCheatTurn() const;
 
-		/// Gets if the deployment is for an aLien Base (for quick-battles).
+		/// Gets if the deployment is for an AlienBase (for quick-battles).
 		bool isAlienBase() const;
+		/// Gets the type of AlienMission that an AlienBase can generate.
+		std::string getMissionType() const;
+		/// Gets the chance of an AlienBase generating an AlienMission.
+		int getMissionPercent() const;
 };
 
 }

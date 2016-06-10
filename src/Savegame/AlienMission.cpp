@@ -193,7 +193,7 @@ int AlienMission::getId() const
  * the fallback region as defined in the ruleset. This is a slight difference
  * from the original which just defaulted to zone[0] North America.
  * @param region	- reference to the region to try to set the mission to
- * @param rules		- reference to the ruleset in case the region needs to be swapped out
+ * @param rules		- reference to the ruleset in case an alt-region needs to be swapped in
  */
 void AlienMission::setRegion(
 		const std::string& region,
@@ -249,7 +249,7 @@ void AlienMission::start(int countdown)
 	switch (countdown)
 	{
 		case 0:
-			calcGeneration(0u);
+			calcCountdown(0u);
 			break;
 		default:
 			_spawnTime = countdown;
@@ -281,12 +281,12 @@ void AlienMission::think(
 									wave,
 									trajectory));
 
-			if (ufo != nullptr)								// a UFO hath spawned!
+			if (ufo != nullptr)										// a UFO hath spawned!
 				_gameSave.getUfos()->push_back(ufo);
-			else if ((rules.getUfo(wave.ufoType) == nullptr	// a terror-site to spawn directly
+			else if ((rules.getUfo(wave.ufoType) == nullptr			// a terror-site to spawn directly
 					&& rules.getDeployment(wave.ufoType) != nullptr
 					&& rules.getDeployment(wave.ufoType)->getMarkerType().empty() == false)
-				|| (_missionRule.getObjectiveType() == alm_TERROR	// or spawn a site at random according to the terrain
+				|| (_missionRule.getObjectiveType() == alm_TERROR	// or spawn a site according to the terrain
 					&& wave.isObjective == true))
 			{
 				size_t id;
@@ -331,102 +331,22 @@ void AlienMission::think(
 				case alm_RETAL:
 				case alm_SUPPLY:
 					if (_waveCount != _missionRule.getWaveTotal())
-						calcGeneration(_waveCount);
+						calcCountdown(_waveCount);
 			}
 		}
 	}
 }
-/*	// don't do these onSpawn; do them on ufoLifting() below_
-	if (_waveCount == _missionRule.getWaveTotal())
-	{
-		const MissionObjective object = _missionRule.getObjectiveType();
-
-		if (object == alm_BASE
-			|| object == alm_INFILT)
-		{
-			createAlienBase( // adds alienPts.
-						globe,
-						rules,
-						_missionRule.getObjectiveZone());
-
-			if (object == alm_INFILT)
-			{
-				std::vector<Country*> countryList;
-
-				for (std::vector<Country*>::const_iterator
-						i = _gameSave.getCountries()->begin();
-						i != _gameSave.getCountries()->end();
-						++i)
-				{
-					if ((*i)->getPact() == false
-						&& (*i)->getRecentPact() == false
-						&& rules.getRegion(_region)->insideRegion( // WARNING: The *label* of a Country must be inside its Region for aLiens to infiltrate!
-															(*i)->getRules()->getLabelLongitude(),
-															(*i)->getRules()->getLabelLatitude()) == true)
-					{
-						countryList.push_back(*i);
-					}
-				}
-
-				if (countryList.empty() == false)
-				{
-					//Log(LOG_INFO) << "AlienMission::think(), GAAH! new Pact & aLien base";
-					const size_t pick = RNG::generate(
-												0,
-												countryList.size() - 1);
-					Country* const infiltrated = countryList.at(pick);
-					// kL_note: Ironically, this likely allows multiple alien
-					// bases in Russia solely because of infiltrations ...!!
-					if (infiltrated->getType() != "STR_RUSSIA") // heh.
-						infiltrated->setRecentPact();
-				}
-
-				_waveCount = 0; // Infiltrations loop for ever.
-			}
-		}
-	} // moved to ufoLifting() */
 
 /**
  * Calculates time remaining until the next wave of this AlienMission spawns.
  * @note These come in increments of 30sec (or min?) apiece.
  * @param waveId - the wave to check
  */
-void AlienMission::calcGeneration(size_t waveId) // private.
+void AlienMission::calcCountdown(size_t waveId) // private.
 {
 	_spawnTime = _missionRule.getWave(waveId).spawnTimer / 30;
 	_spawnTime = (RNG::generate(0, _spawnTime) + (_spawnTime >> 1u)) * 30;
 }
-
-
-/**
- ** FUNCTOR ***
- * Finds an XCOM base in this region that is marked for retaliation.
- * @note Helper for createUfo().
- *
-class FindExposedXCOMBase
-	:
-		public std::unary_function<const Base*, bool>
-{
-
-private:
-	const RuleRegion& _region;
-
-	public:
-		///
-		explicit FindExposedXCOMBase(const RuleRegion& region)
-			:
-				_region(region)
-		{}
-
-		///
-		bool operator() (const Base* const base) const
-		{
-			return base->getBaseExposed() == true
-				&& _region.insideRegion(
-									base->getLongitude(),
-									base->getLatitude()) == true;
-		}
-}; */
 
 /**
  * Spawns a UFO according this AlienMission's rules.
@@ -454,13 +374,6 @@ Ufo* AlienMission::createUfo( // private.
 	{
 		case alm_RETAL:
 		{
-//			const RuleRegion& regionRule (*rules.getRegion(_region));
-//			const std::vector<Base*>::const_iterator i (std::find_if(
-//																_gameSave.getBases()->begin(),
-//																_gameSave.getBases()->end(),
-//																FindExposedXCOMBase(regionRule)));
-//			if (i != _gameSave.getBases()->end())
-
 			std::vector<Base*> baseTargets;
 			for (std::vector<Base*>::const_iterator
 					i = _gameSave.getBases()->begin();
@@ -476,9 +389,8 @@ Ufo* AlienMission::createUfo( // private.
 				}
 			}
 
-			if (baseTargets.empty() == false)
+			if (baseTargets.empty() == false) // Spawn a battleship straight for an exposed XCOM Base.
 			{
-				// Spawn a battleship straight for the XCOM Base.
 				const RuleUfo& battleshipRule (*rules.getUfo(_missionRule.getObjectiveUfo()));
 				const UfoTrajectory& trjBattleship (*rules.getUfoTrajectory(UfoTrajectory::RETALIATION_ASSAULT_RUN));
 				const RuleRegion& regionRule (*rules.getRegion(_region));
@@ -513,10 +425,10 @@ Ufo* AlienMission::createUfo( // private.
 				ufo->setDestination(wp);
 				return ufo;
 			}
-			break;
+			break; // if no XCOM Base is exposed create a regular UFO below_
 		}
 
-		case alm_SUPPLY: // check for base to supply.
+		case alm_SUPPLY: // check for an AlienBase to supply.
 			if (ufoRule != nullptr
 				&& (_aBase != nullptr || wave.isObjective == false))
 			{
@@ -569,7 +481,7 @@ Ufo* AlienMission::createUfo( // private.
 			return nullptr; // No base to supply!
 	}
 
-	if (ufoRule != nullptr) // else Spawn UFO according to sequence
+	if (ufoRule != nullptr) // else create a UFO according to sequence
 	{
 		ufo = new Ufo(
 					ufoRule,
@@ -836,14 +748,14 @@ void AlienMission::createAlienBase( // private.
 		MissionArea area (areas.at(RNG::pick(areas.size())));
 
 		const RuleAlienDeployment* ruleDeploy;
-		if (rules.getGlobe()->getTextureRule(area.texture) != nullptr
+		if (rules.getDeployment(_missionRule.getTerrorType()) != nullptr)
+		{
+			ruleDeploy = rules.getDeployment(_missionRule.getTerrorType());
+		}
+		else if (rules.getGlobe()->getTextureRule(area.texture) != nullptr
 			&& rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployments().empty() == false)
 		{
 			ruleDeploy = rules.getDeployment(rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployment());
-		}
-		else if (rules.getDeployment(_missionRule.getTerrorType()) != nullptr)
-		{
-			ruleDeploy = rules.getDeployment(_missionRule.getTerrorType());
 		}
 		else
 		{

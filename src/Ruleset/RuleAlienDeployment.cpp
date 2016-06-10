@@ -163,7 +163,8 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_markerType(Target::stTarget[3u]),
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR"),
-		_isAlienBase(false)
+		_isAlienBase(false),
+		_genMissionPct(0)
 {}
 
 /**
@@ -229,7 +230,9 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 	_turnLimit		= node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult	= static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 
-	_isAlienBase	= node["isAlienBase"].as<bool>(_isAlienBase);
+	_isAlienBase	= node["isAlienBase"]	.as<bool>(_isAlienBase);
+	_genMissionType	= node["genMissionType"].as<std::string>(_genMissionType);
+	_genMissionPct	= node["genMissionPct"]	.as<int>(_genMissionPct);
 }
 
 /**
@@ -262,9 +265,9 @@ void RuleAlienDeployment::getDimensions(
 		int* lenght,
 		int* heigth) const
 {
-	*width = _width;
-	*lenght = _length;
-	*heigth = _height;
+	*width	= _width;
+	*lenght	= _length;
+	*heigth	= _height;
 }
 
 /**
@@ -533,6 +536,25 @@ int RuleAlienDeployment::getCheatTurn() const
 bool RuleAlienDeployment::isAlienBase() const
 {
 	return _isAlienBase;
+}
+
+/**
+ * Gets the type of AlienMission that an AlienBase can generate.
+ * @note This is a supply-mission by default.
+ * @return, type
+ */
+std::string RuleAlienDeployment::getMissionType() const
+{
+	return _genMissionType;
+}
+
+/**
+ * Gets the chance of an AlienBase generating an AlienMission.
+ * @return, percent
+ */
+int RuleAlienDeployment::getMissionPercent() const
+{
+	return _genMissionPct;
 }
 
 }

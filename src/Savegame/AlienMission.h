@@ -74,7 +74,7 @@ private:
 	SavedGame& _gameSave;
 
 	/// Calculates time remaining until the next wave generates.
-	void calcGeneration(size_t waveId);
+	void calcCountdown(size_t waveId);
 
 	/// Spawns a UFO based on the mission rules.
 	Ufo* createUfo(

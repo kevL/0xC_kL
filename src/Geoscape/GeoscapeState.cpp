@@ -2707,10 +2707,10 @@ void GeoscapeState::time1Hour()
 
 /**
  ** FUNCTOR ***
- * Attempts to generate a supply-mission for an AlienBase.
- * @note Each alien base has a 4% chance to generate a supply mission.
+ * Attempts to generate a support-mission for an AlienBase.
+ * @note Each AlienBase has a %chance to generate a mission.
  */
-struct GenerateSupplyMission
+struct GenerateSupportMission
 	:
 		public std::unary_function<const AlienBase*, void>
 {
@@ -2724,7 +2724,7 @@ private:
 		 * @param rules		- reference to the Ruleset
 		 * @param gameSave	- reference to the SavedGame
 		 */
-		GenerateSupplyMission(
+		GenerateSupportMission(
 				const Ruleset& rules,
 				SavedGame& gameSave)
 			:
@@ -2733,33 +2733,43 @@ private:
 		{}
 
 		/**
-		 * Checks and creates a supply-mission.
+		 * Checks and creates a support-mission.
 		 * @param aBase - pointer to an AlienBase
 		 */
-		void operator() (const AlienBase* const base) const;
+		void operator() (const AlienBase* const aBase) const;
 };
 
 /**
  * Checks and creates a supply-mission for a specified AlienBase.
  * @note There is a 4% chance of the mission spawning.
- * @param base - pointer to the AlienBase.
+ * @param aBase - pointer to the AlienBase.
  */
-void GenerateSupplyMission::operator() (const AlienBase* const base) const
+void GenerateSupportMission::operator() (const AlienBase* const aBase) const
 {
-	if (RNG::percent(4) == true)
+	const RuleAlienDeployment* const ruleDeploy (aBase->getAlienBaseDeployment());
+	const RuleAlienMission* const missionRule (_rules.getAlienMission(ruleDeploy->getMissionType()));
+	if (missionRule != nullptr)
 	{
-		const RuleAlienMission& missionRule (*_rules.getAlienMission("STR_ALIEN_SUPPLY"));
-		AlienMission* const mission (new AlienMission(missionRule, _gameSave));
-		mission->setRegion(
-					_gameSave.locateRegion(*base)->getRules()->getType(),
-					_rules);
-		mission->setId(_gameSave.getCanonicalId("STR_ALIEN_MISSION"));
-		mission->setRace(base->getAlienRace());
-		mission->setAlienBase(base);
-		mission->start();
+		if (RNG::percent(ruleDeploy->getMissionPercent()))
+		{
+			AlienMission* const mission (new AlienMission(*missionRule, _gameSave));
+			mission->setRegion(
+						_gameSave.locateRegion(*aBase)->getRules()->getType(),
+						_rules);
+			mission->setId(_gameSave.getCanonicalId("STR_ALIEN_MISSION"));
+			mission->setRace(aBase->getAlienRace());
+			mission->setAlienBase(aBase);
+			mission->start();
 
-		_gameSave.getAlienMissions().push_back(mission);
+			_gameSave.getAlienMissions().push_back(mission);
+		}
 	}
+	else if (ruleDeploy->getMissionType().empty() == false)
+	{
+		std::string st ("AlienBase failed to generate an AlienMission from an ");
+		st += "undefined mission-type [" + ruleDeploy->getMissionType() + "]";
+		throw Exception(st);
+ 	}
 }
 
 
@@ -3139,7 +3149,7 @@ void GeoscapeState::time1Day()
 	std::for_each( // handle supply of aLien-bases
 			_gameSave->getAlienBases()->begin(),
 			_gameSave->getAlienBases()->end(),
-			GenerateSupplyMission(*_rules, *_gameSave));
+			GenerateSupportMission(*_rules, *_gameSave));
 
 
 	const int day (_gameSave->getTime()->getDay()); // Autosave 3 times a month.
