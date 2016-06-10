@@ -34,7 +34,7 @@ namespace OpenXcom
 {
 
 /**
- * Defines a rectangle in polar coordinates used to define areas for a MissionZone.
+ * A rectangle in polar coordinates that defines an area of a MissionZone.
  */
 struct MissionArea
 {
@@ -65,7 +65,7 @@ struct MissionArea
 
 
 /**
- * A zone (set of MissionAreas) on the globe.
+ * A zone (a vector of MissionAreas) on the Globe.
  */
 struct MissionZone
 {
@@ -149,8 +149,11 @@ private:
 
 		/// Gets a random point inside a MissionZone.
 		std::pair<double, double> getZonePoint(size_t zone) const;
-		/// Gets the MissionArea for a corresponding zone and target.
-		MissionArea getMissionPoint(
+		/// Gets a random point inside a MissionArea.
+		std::pair<double, double> getAreaPoint(const MissionArea& area) const;
+
+		/// Gets the MissionArea for a corresponding MissionZone and Target.
+		MissionArea getTerrorPoint(
 				size_t zone,
 				const Target* const target) const;
 		/// Gets a random MissionArea in the RuleRegion.

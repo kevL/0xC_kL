@@ -143,7 +143,7 @@ void TerrorSite::setId(const int id)
 }
 
 /**
- * Gets this TerrorSite's unique identifying name.
+ * Gets this TerrorSite's uniquely identifying label.
  * @param lang - pointer to Language to get strings from
  * @return, full name
  */

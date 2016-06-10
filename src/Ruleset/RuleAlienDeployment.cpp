@@ -162,7 +162,8 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_cheatTurn(CHEAT_TURN_DEFAULT),
 		_markerType(Target::stTarget[3u]),
 		_alert("STR_ALIENS_TERRORISE"),
-		_alertBg("BACK03.SCR")
+		_alertBg("BACK03.SCR"),
+		_isAlienBase(false)
 {}
 
 /**
@@ -227,6 +228,8 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 	_cheatTurn		= node["cheatTurn"].as<int>(_cheatTurn);
 	_turnLimit		= node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult	= static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
+
+	_isAlienBase	= node["isAlienBase"].as<bool>(_isAlienBase);
 }
 
 /**
@@ -521,6 +524,15 @@ ChronoResult RuleAlienDeployment::getChronoResult() const
 int RuleAlienDeployment::getCheatTurn() const
 {
 	return _cheatTurn;
+}
+
+/**
+ * Gets if this deployment is for an aLien Base (for quick-battles).
+ * @return, true if aLien Base
+ */
+bool RuleAlienDeployment::isAlienBase() const
+{
+	return _isAlienBase;
 }
 
 }

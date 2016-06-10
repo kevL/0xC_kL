@@ -701,7 +701,7 @@ void AlienMission::ufoReachedWaypoint(
 			}
 			// NOTE: 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
 
-			if (_missionRule.getWave(wave).isObjective == true // destroy UFO & replace with TerrorSite.
+			if (_missionRule.getWave(wave).isObjective == true					// destroy UFO & replace with TerrorSite.
 				&& trajectory.getZone(wpId) == _missionRule.getSpecialZone())	// NOTE: Supply-missions bypasses this although it has (objective=true)
 			{																	// because it does not have a 'specialZone' set in its rule.
 				addScore( // alm_SITE
@@ -712,7 +712,7 @@ void AlienMission::ufoReachedWaypoint(
 
 				// note: Looks like they're having probls with getting a mission wpId:
 //				MissionArea area (regionRule.getMissionZones().at(trajectory.getZone(wpId)).areas.at(_siteZone));
-				const MissionArea area (regionRule.getMissionPoint(
+				const MissionArea area (regionRule.getTerrorPoint(
 																trajectory.getZone(wpId),
 																dynamic_cast<Target*>(&ufo)));
 
@@ -825,32 +825,58 @@ TerrorSite* AlienMission::createTerror( // private.
  * Spawns an AlienBase.
  * @param globe	- reference to the Globe, required to get access to land checks
  * @param rules	- reference to the Ruleset
- * @param zone	- the mission zone required for determining the base coordinates
  */
 void AlienMission::createAlienBase( // private.
 		const Globe& globe,
-		const Ruleset& rules,
-		const size_t zone)
+		const Ruleset& rules)
 {
-	if (_gameSave.getAlienBases()->size() > 8u + static_cast<size_t>(_gameSave.getDifficulty()) << 1u)
-		return;
+	if (_gameSave.getAlienBases()->size() <= 8u + (static_cast<size_t>(_gameSave.getDifficulty()) << 1u))
+	{
+		const size_t zone (_missionRule.getSpecialZone());
+		std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(zone).areas);
+		MissionArea area (areas.at(RNG::pick(areas.size())));
 
-	// Once the last UFO is spawned the aliens build their base. TODO: <- change that!
-	const RuleRegion& regionRule (*rules.getRegion(_region));
-	const std::pair<double, double> pos (coordsLand(
-												globe,
-												regionRule,
-												zone));
+		const RuleAlienDeployment* ruleDeploy;
+		if (rules.getGlobe()->getTextureRule(area.texture) != nullptr
+			&& rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployments().empty() == false)
+		{
+			ruleDeploy = rules.getDeployment(rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployment());
+		}
+		else if (rules.getDeployment(_missionRule.getSiteType()) != nullptr)
+		{
+			ruleDeploy = rules.getDeployment(_missionRule.getSiteType());
+		}
+		else
+		{
+			ruleDeploy = rules.getDeployment("STR_ALIEN_BASE_ASSAULT");
+		}
 
-	AlienBase* const aBase (new AlienBase());
-	aBase->setAlienRace(_race);
-	aBase->setLongitude(pos.first);
-	aBase->setLatitude(pos.second);
-	_gameSave.getAlienBases()->push_back(aBase);
+		if (ruleDeploy == nullptr)
+		{
+			std::string st ("No RuleAlienDeployment defined for aLien Base.");
+			st += " A deployment-rule must be defined in one of the mission-zone's texture,";
+			st += " the mission's siteType, or by defining a deployment called";
+			st += " \"STR_ALIEN_BASE_ASSAULT\" as a default or fallback.";
+			throw Exception(st);
+		}
 
-	addScore( // alm_BASE, alm_INFILT
-		pos.first,
-		pos.second);
+		const RuleRegion& regionRule (*rules.getRegion(_region));
+		const std::pair<double, double> pos (coordsLand(
+													globe,
+													regionRule,
+													area));
+
+		AlienBase* const aBase (new AlienBase(ruleDeploy));
+		aBase->setAlienRace(_race);
+//		aBase->setId(game.getId(deployment->getMarkerName())); // done in AlienBaseDetectedState.
+		aBase->setLongitude(pos.first);
+		aBase->setLatitude(pos.second);
+		_gameSave.getAlienBases()->push_back(aBase);
+
+		addScore( // alm_BASE, alm_INFILT
+			pos.first,
+			pos.second);
+	}
 }
 
 /**
@@ -906,10 +932,10 @@ void AlienMission::ufoLifting(
 						if (_success == false)
 						{
 							_success = true; // only the first Battleship needs to lift successfully - note this means that only one of the Battleships needs to be successful.
+
 							createAlienBase( // adds alienPts.
 										globe,
-										rules,
-										_missionRule.getSpecialZone());
+										rules);
 
 							std::vector<Country*> suspectCountries;
 							for (std::vector<Country*>::const_iterator
@@ -944,8 +970,7 @@ void AlienMission::ufoLifting(
 					case alm_BASE:
 						createAlienBase( // adds alienPts.
 									globe,
-									rules,
-									_missionRule.getSpecialZone());
+									rules);
 						break;
 
 					case alm_SCORE:
@@ -1011,10 +1036,10 @@ void AlienMission::ufoShotDown(const Ufo& ufo)
 {
 	switch (ufo.getUfoStatus())
 	{
-		case Ufo::FLYING:
-		case Ufo::LANDED:
-			assert(0 && "Ufo seems ok!");
-			break;
+//		case Ufo::FLYING:
+//		case Ufo::LANDED:
+//			assert(0 && "Ufo seems ok!");
+//			break;
 
 		case Ufo::CRASHED:
 		case Ufo::DESTROYED:
@@ -1036,7 +1061,7 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		const UfoTrajectory& trajectory,
 		const size_t wpId,
 		const Globe& globe,
-		const RuleRegion& region)
+		const RuleRegion& region) const
 {
 	if (_siteZone != std::numeric_limits<size_t>::max()
 		&& trajectory.getZone(wpId) == _missionRule.getSpecialZone())
@@ -1055,8 +1080,8 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		if (_missionRule.getWave(wave).isObjective == true)
 		{
 			const MissionArea* const area (&region.getMissionZones()
-														.at(_missionRule.getObjectiveType()).areas
-														.at(_siteZone));
+													.at(_missionRule.getObjectiveType()).areas
+													.at(_siteZone));
 			return std::make_pair(
 								area->lonMin,
 								area->latMin);
@@ -1076,17 +1101,17 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 }
 
 /**
- * Generates destination-coordinates inside a specified Region and zone.
+ * Generates destination-coordinates inside a specified Region and MissionZone.
  * @note The point will be used to land a UFO so it *has to be on land*.
  * @param globe		- reference to the Globe
- * @param region	- reference RuleRegion
- * @param zone		- zone number in the region
+ * @param region	- reference to RuleRegion
+ * @param zone		- a MissionZone in the Region
  * @return, a pair of doubles (lon & lat)
  */
 std::pair<double, double> AlienMission::coordsLand( // private.
 		const Globe& globe,
 		const RuleRegion& region,
-		const size_t zone)
+		const size_t zone) const
 {
 	std::pair<double, double> coord;
 
@@ -1096,7 +1121,7 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 		++t;
 		coord = region.getZonePoint(zone);
 	}
-	while (t < 100
+	while (t < 1000
 		&& (globe.insideLand(
 						coord.first,
 						coord.second) == false
@@ -1104,11 +1129,48 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 						coord.first,
 						coord.second) == false));
 
-	if (t == 100)
+	if (t == 1000)
 		Log(LOG_INFO) << "Region: " << region.getType()
 					  << " lon " << coord.first
 					  << " lat " << coord.second
-					  << " invalid zone: " << zone << " - ufo was forced to land on water.";
+					  << " invalid point in zone: " << zone << " - ufo was forced to land on water.";
+	return coord;
+}
+
+/**
+ * Generates destination-coordinates inside a specified Region and MissionArea.
+ * @note The point will be used to land a UFO so it *has to be on land*.
+ * @param globe		- reference to the Globe
+ * @param region	- reference to RuleRegion
+ * @param area		- a MissionArea in a MissionZone in the Region
+ * @return, a pair of doubles (lon & lat)
+ */
+std::pair<double, double> AlienMission::coordsLand( // private.
+		const Globe& globe,
+		const RuleRegion& region,
+		const MissionArea& area) const
+{
+	std::pair<double, double> coord;
+
+	int t (0);
+	do
+	{
+		++t;
+		coord = region.getAreaPoint(area);
+	}
+	while (t < 1000
+		&& (globe.insideLand(
+						coord.first,
+						coord.second) == false
+			|| region.insideRegion(
+						coord.first,
+						coord.second) == false));
+
+	if (t == 1000)
+		Log(LOG_INFO) << "Region: " << region.getType()
+					  << " lon " << coord.first
+					  << " lat " << coord.second
+					  << " invalid point in area - ufo was forced to land on water.";
 	return coord;
 }
 

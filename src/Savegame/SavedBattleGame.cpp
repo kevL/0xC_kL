@@ -901,7 +901,8 @@ void SavedBattleGame::initUtilities(const ResourcePack* const res)
 }
 
 /**
- * Sets the TacticalType based on the mission-type.
+ * Sets the TacticalType based on a specified mission-type.
+ * @WARNING: This is *not* ready to use arbitrary/customized mission-strings.
  * @param type - reference to a mission-type
  */
 void SavedBattleGame::setTacType(const std::string& type) // private.
@@ -924,8 +925,8 @@ void SavedBattleGame::setTacType(const std::string& type) // private.
 	else if (type.compare("STR_MARS_THE_FINAL_ASSAULT") == 0)
 		_tacType = TCT_MARS2;
 	else
-		_tacType = TCT_DEFAULT; // <- the default should probly be TCT_UFOCRASHED.
-}
+		_tacType = TCT_DEFAULT;	// <- the default should probly be TCT_UFOCRASHED.
+}								// Or even TCT_ARBITRARY/CUSTOM.
 
 /**
  * Gets the TacticalType of this battle.

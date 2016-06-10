@@ -157,7 +157,7 @@ private:
 			bool dontReselect = false,
 			bool checkInventory = false);
 
-	/// Sets the TacticalType from the mission type.
+	/// Sets the TacticalType based on a specified mission-type.
 	void setTacType(const std::string& type);
 
 

@@ -29,8 +29,11 @@
 namespace OpenXcom
 {
 
+class RuleAlienDeployment;
+
+
 /**
- * Represents an AlienBase on the globe.
+ * Represents an AlienBase on the Globe.
  */
 class AlienBase final
 	:
@@ -47,10 +50,12 @@ private:
 		_edit,
 		_race;
 
+	const RuleAlienDeployment* _ruleDeploy;
+
 
 	public:
 		/// Creates an AlienBase.
-		AlienBase();
+		explicit AlienBase(const RuleAlienDeployment* const ruleDeploy);
 		/// Cleans up the AlienBase.
 		~AlienBase();
 
@@ -90,6 +95,9 @@ private:
 		bool isDetected() const;
 		/// Sets the AlienBase's detected status.
 		void setDetected(bool detected = true);
+
+		/// Gets the AlienBase's deployment-rule.
+		const RuleAlienDeployment* getAlienBaseDeployment() const;
 };
 
 }

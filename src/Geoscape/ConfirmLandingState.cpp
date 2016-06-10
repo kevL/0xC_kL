@@ -379,14 +379,16 @@ void ConfirmLandingState::btnYesClick(Action*)
 
 	if (ufo != nullptr)
 	{
+		std::string type;
 		switch (ufo->getUfoStatus())
 		{
 			case Ufo::CRASHED:
-				battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
+				type = "STR_UFO_CRASH_RECOVERY";
 				break;
 			case Ufo::LANDED:
-				battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
+				type = "STR_UFO_GROUND_ASSAULT";
 		}
+		battleSave->setTacticalType(type);
 
 		bGen.setUfo(ufo);
 		bGen.setAlienRace(ufo->getAlienRace());
@@ -397,7 +399,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	}
 	else if (site != nullptr)
 	{
-		battleSave->setTacticalType(site->getSiteDeployment()->getType());
+		battleSave->setTacticalType(site->getSiteDeployment()->getType()); // "STR_TERROR_MISSION" / "STR_PORT_ATTACK"
 
 		bGen.setTerrorSite(site);
 		bGen.setAlienRace(site->getAlienRace());
@@ -407,7 +409,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	}
 	else if (alienBase != nullptr)
 	{
-		battleSave->setTacticalType("STR_ALIEN_BASE_ASSAULT");
+		battleSave->setTacticalType(alienBase->getAlienBaseDeployment()->getType()); // "STR_ALIEN_BASE_ASSAULT"
 
 		bGen.setAlienBase(alienBase);
 		bGen.setAlienRace(alienBase->getAlienRace());

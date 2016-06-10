@@ -501,9 +501,14 @@ void SavedGame::load(
 			i != doc["alienBases"].end();
 			++i)
 	{
-		AlienBase* const aBase (new AlienBase());
-		aBase->load(*i);
-		_alienBases.push_back(aBase);
+		type = (*i)["deployment"].as<std::string>("STR_ALIEN_BASE_ASSAULT"); // default.
+		if (_rules->getDeployment(type) != nullptr)
+		{
+			AlienBase* const aBase (new AlienBase(_rules->getDeployment(type)));
+			aBase->load(*i);
+			_alienBases.push_back(aBase);
+		}
+		else Log(LOG_ERROR) << "Failed to load deployment for alien base: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load missions"; // AlienMissions must be loaded before Ufos.

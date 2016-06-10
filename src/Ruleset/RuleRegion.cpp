@@ -228,8 +228,8 @@ const std::vector<MissionZone>& RuleRegion::getMissionZones() const
 }
 
 /**
- * Gets a random point that is guaranteed to be inside a specified zone.
- * @param zone - the target-zone
+ * Gets a random point that is guaranteed to be inside a specified MissionZone.
+ * @param zone - the zone-ID
  * @return, a pair of longitude and latitude
  */
 std::pair<double, double> RuleRegion::getZonePoint(size_t zone) const
@@ -255,29 +255,47 @@ std::pair<double, double> RuleRegion::getZonePoint(size_t zone) const
 //			lon = RNG::generate(lonMin, lonMax),
 //			lat = RNG::generate(latMin, latMax);
 
-		const size_t pick (RNG::pick(_missionZones[zone].areas.size()));
+		const MissionZone& refZone (_missionZones[zone]);
+		const size_t pick (RNG::pick(refZone.areas.size()));
 		const double
 			lon (RNG::generate(
-							_missionZones[zone].areas[pick].lonMin,
-							_missionZones[zone].areas[pick].lonMax)),
+							refZone.areas[pick].lonMin,
+							refZone.areas[pick].lonMax)),
 			lat (RNG::generate(
-							_missionZones[zone].areas[pick].latMin,
-							_missionZones[zone].areas[pick].latMax));
+							refZone.areas[pick].latMin,
+							refZone.areas[pick].latMax));
 
 		return std::make_pair(lon,lat);
 	}
-
-//	assert(0 && "Invalid zone number");
 	return std::make_pair(0.,0.);
 }
 
 /**
- * Gets the area-data for a mission-point in a specified zone and coordinate.
- * @param zone		- the target-zone
- * @param target	- the target-coordinate
- * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
+ * Gets a random point that is guaranteed to be inside a specified MissionArea.
+ * @param area - reference to a MissionArea
+ * @return, a pair of longitude and latitude
  */
-MissionArea RuleRegion::getMissionPoint(
+std::pair<double, double> RuleRegion::getAreaPoint(const MissionArea& area) const
+{
+	const double
+		lon (RNG::generate(
+						area.lonMin,
+						area.lonMax)),
+		lat (RNG::generate(
+						area.latMin,
+						area.latMax));
+
+	return std::make_pair(lon,lat);
+}
+
+/**
+ * Gets the MissionArea for a terror-point in a specified zone and at Target's
+ * coordinates.
+ * @param zone		- the zone-ID
+ * @param target	- pointer to the Target for coordinates
+ * @return, a MissionArea
+ */
+MissionArea RuleRegion::getTerrorPoint(
 		size_t zone,
 		const Target* const target) const
 {
@@ -296,8 +314,6 @@ MissionArea RuleRegion::getMissionPoint(
 			}
 		}
 	}
-
-//	assert(0 && "Invalid zone number");
 	return MissionArea();
 }
 

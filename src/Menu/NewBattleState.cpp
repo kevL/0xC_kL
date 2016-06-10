@@ -574,8 +574,7 @@ void NewBattleState::btnOkClick(Action*)
 		&& _craft->getQtySoldiers() == 0
 		&& _craft->getQtyVehicles() == 0)
 	{
-		// TODO: Popup that tells player why no-workie.
-		return;
+		return; // TODO: Popup that tells player why no-workie.
 	}
 
 	SavedBattleGame* const battleSave (new SavedBattleGame(
@@ -588,17 +587,18 @@ void NewBattleState::btnOkClick(Action*)
 	bGen.setTerrain(_rules->getTerrain(_terrainTypes[_cbxTerrain->getSelected()]));
 
 	Base* base;
-	if (_missionTypes[_cbxMission->getSelected()] == "STR_BASE_DEFENSE") // base defense
+	if (_missionTypes[_cbxMission->getSelected()] == "STR_BASE_DEFENSE")
 	{
 		base = _craft->getBase();
 		bGen.setBase(base);
 		_craft = nullptr; // kL_note: may need to remove this for .. some reason.
 	}
-	else if (_missionTypes[_cbxMission->getSelected()] == "STR_ALIEN_BASE_ASSAULT") // alien base
+//	else if (_missionTypes[_cbxMission->getSelected()] == "STR_ALIEN_BASE_ASSAULT")
+	else if (_game->getRuleset()->getDeployment(battleSave->getTacticalType())->isAlienBase() == true)
 	{
 		base = nullptr;
 
-		AlienBase* const aBase (new AlienBase());
+		AlienBase* const aBase (new AlienBase(_game->getRuleset()->getDeployment(battleSave->getTacticalType())));
 		aBase->setId(1);
 		aBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
 		_craft->setDestination(aBase);
@@ -607,7 +607,7 @@ void NewBattleState::btnOkClick(Action*)
 		_game->getSavedGame()->getAlienBases()->push_back(aBase);
 	}
 	else if (_craft != nullptr
-		&& _rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr) // ufo assault
+		&& _rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr)
 	{
 		base = nullptr;
 
@@ -619,14 +619,14 @@ void NewBattleState::btnOkClick(Action*)
 		_craft->setDestination(ufo);
 		bGen.setUfo(ufo);
 
-		if (RNG::percent(50) == true) // either ground assault or ufo crash
+		if (RNG::percent(50) == true)
 			battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
 		else
 			battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
 
 		_game->getSavedGame()->getUfos()->push_back(ufo);
 	}
-	else // terror-site
+	else
 	{
 		base = nullptr;
 

@@ -114,6 +114,7 @@ private:
 	bool
 		_finalDestination,
 		_finalMission,
+		_isAlienBase,
 		_noRetreat;
 	int
 		_cheatTurn,
@@ -246,6 +247,9 @@ private:
 
 		/// Gets which turn the aLiens start cheating on.
 		int getCheatTurn() const;
+
+		/// Gets if the deployment is for an aLien Base (for quick-battles).
+		bool isAlienBase() const;
 };
 
 }

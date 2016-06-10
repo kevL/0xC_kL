@@ -89,20 +89,24 @@ private:
 	/// Spawns an AlienBase
 	void createAlienBase(
 			const Globe& globe,
-			const Ruleset& rules,
-			const size_t zone);
+			const Ruleset& rules);
 
 	/// Generates destination-coordinates for a Waypoint.
 	std::pair<double, double> coordsWaypoint(
 			const UfoTrajectory& trajectory,
 			const size_t wpId,
 			const Globe& globe,
-			const RuleRegion& region);
-	/// Generates destination-coordinates inside a specified Region and zone.
+			const RuleRegion& region) const;
+	/// Generates destination-coordinates inside a specified Region and MissionZone.
 	std::pair<double, double> coordsLand(
 			const Globe& globe,
 			const RuleRegion& region,
-			const size_t zone);
+			const size_t zone) const;
+	/// Generates destination-coordinates inside a specified Region and MissionArea.
+	std::pair<double, double> coordsLand(
+			const Globe& globe,
+			const RuleRegion& region,
+			const MissionArea& area) const;
 
 	/// Handles Points for mission success.
 	void addScore(

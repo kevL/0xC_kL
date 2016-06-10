@@ -21,7 +21,9 @@
 
 #include "../Engine/Language.h"
 
-#include "../Geoscape/Globe.h" // Globe::GLM_ALIENBASE
+//#include "../Geoscape/Globe.h" // Globe::GLM_ALIENBASE
+
+#include "../Ruleset/RuleAlienDeployment.h"
 
 
 namespace OpenXcom
@@ -30,12 +32,13 @@ namespace OpenXcom
 /**
  * Initializes an AlienBase.
  */
-AlienBase::AlienBase()
+AlienBase::AlienBase(const RuleAlienDeployment* const ruleDeploy)
 	:
 		Target(),
 		_id(0),
 		_tactical(false),
-		_detected(false)
+		_detected(false),
+		_ruleDeploy(ruleDeploy)
 {}
 
 /**
@@ -71,6 +74,8 @@ YAML::Node AlienBase::save() const
 	node["race"]	= _race;
 	node["edit"]	= _edit;
 
+	node["deployment"] = _ruleDeploy->getType();
+
 	if (_tactical == true) node["tactical"] = _tactical;
 	if (_detected == true) node["detected"] = _detected;
 
@@ -85,7 +90,7 @@ YAML::Node AlienBase::saveId() const
 {
 	YAML::Node node (Target::save());
 
-	node["type"] = Target::stTarget[2u];
+	node["type"] = _ruleDeploy->getMarkerType(); // Target::stTarget[2u];
 	node["id"]   = _id;
 
 	return node;
@@ -126,7 +131,7 @@ std::wstring AlienBase::getName(const Language* const lang) const
 int AlienBase::getMarker() const
 {
 	if (_detected == true)
-		return Globe::GLM_ALIENBASE;
+		return _ruleDeploy->getMarkerIcon(); // Globe::GLM_ALIENBASE;
 
 	return -1;
 }
@@ -201,6 +206,15 @@ bool AlienBase::isDetected() const
 void AlienBase::setDetected(bool detected)
 {
 	_detected = detected;
+}
+
+/**
+ * Gets this AlienBase's deployment-rule.
+ * @return, pointer to RuleAlienDeployment
+ */
+const RuleAlienDeployment* AlienBase::getAlienBaseDeployment() const
+{
+	return _ruleDeploy;
 }
 
 }

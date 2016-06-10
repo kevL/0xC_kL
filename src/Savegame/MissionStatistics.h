@@ -59,20 +59,22 @@ struct MissionStatistics
 
 	GameTime timeStat;
 
+//	std::string getMissionTypeLowerCase()
+//	{
+//		if		(type == "STR_UFO_CRASH_RECOVERY")	return "STR_UFO_CRASH_RECOVERY_LC";
+//		else if (type == "STR_UFO_GROUND_ASSAULT")	return "STR_UFO_GROUND_ASSAULT_LC";
+//		else if (type == "STR_BASE_DEFENSE")		return "STR_BASE_DEFENSE_LC";
+//		else if (type == "STR_ALIEN_BASE_ASSAULT")	return "STR_ALIEN_BASE_ASSAULT_LC";
+//		else if (type == "STR_TERROR_MISSION")		return "STR_TERROR_MISSION_LC";
+//		else if (type == "STR_PORT_ATTACK")			return "STR_PORT_ATTACK_LC";
+//		else										return "type error";
+//	}
 
-/*	///
-	std::string getMissionTypeLowerCase()
-	{
-		if		(type == "STR_UFO_CRASH_RECOVERY")	return "STR_UFO_CRASH_RECOVERY_LC";
-		else if (type == "STR_UFO_GROUND_ASSAULT")	return "STR_UFO_GROUND_ASSAULT_LC";
-		else if (type == "STR_BASE_DEFENSE")		return "STR_BASE_DEFENSE_LC";
-		else if (type == "STR_ALIEN_BASE_ASSAULT")	return "STR_ALIEN_BASE_ASSAULT_LC";
-		else if (type == "STR_TERROR_MISSION")		return "STR_TERROR_MISSION_LC";
-		else if (type == "STR_PORT_ATTACK")			return "STR_PORT_ATTACK_LC";
-		else										return "type error";
-	} */
 
-	/// cTor [1].
+	/**
+	 * Creates a blank MissionStatistics.
+	 * @note MissionStatistics holds data about a tactical battle.
+	 */
 	MissionStatistics()
 		:
 			id(0),
@@ -87,7 +89,11 @@ struct MissionStatistics
 			valiantCrux(false)
 	{}
 
-	/// cTor [2].
+	/**
+	 * Creates MissionStatistics from a YAML node.
+	 * @note MissionStatistics holds data about a tactical battle.
+	 * @param node - reference a YAML node
+	 */
 	explicit MissionStatistics(const YAML::Node& node)
 		:
 			timeStat(0,0,0,0,0,0)
@@ -95,11 +101,16 @@ struct MissionStatistics
 		load(node);
 	}
 
-	/// dTor.
+	/**
+	 * dTor.
+	 */
 	~MissionStatistics()
 	{}
 
-	/// Loads a MissionStatistics node from YAML.
+	/**
+	 * Loads a MissionStatistics node from YAML.
+	 * @param node - reference a YAML node
+	 */
 	void load(const YAML::Node& node)
 	{
 		timeStat.load(node["time"]);
@@ -118,7 +129,10 @@ struct MissionStatistics
 		valiantCrux	= node["valiantCrux"]	.as<bool>(valiantCrux);
 	}
 
-	/// Saves a MissionStatistics node to YAML.
+	/**
+	 * Saves a MissionStatistics node to YAML.
+	 * @return, a YAML node
+	 */
 	YAML::Node save() const
 	{
 		YAML::Node node;
@@ -144,7 +158,10 @@ struct MissionStatistics
 		return node;
 	}
 
-	/// Checks if these MissionStatistics are for an AlienBase tactical.
+	/**
+	 * Checks if these MissionStatistics are for an AlienBase tactical.
+	 * @return, true if data is for an AlienBase tactical
+	 */
 	bool isAlienBase() const
 	{
 		if (type == "STR_ALIEN_BASE_ASSAULT")
@@ -153,7 +170,10 @@ struct MissionStatistics
 		return false;
 	}
 
-	/// Checks if these MissionStatistics are for a BaseDefense tactical.
+	/**
+	 * Checks if these MissionStatistics are for a BaseDefense tactical.
+	 * @return, true if data is for a BaseDefense tactical
+	 */
 	bool isBaseDefense() const
 	{
 		if (type == "STR_BASE_DEFENSE")
@@ -162,7 +182,10 @@ struct MissionStatistics
 		return false;
 	}
 
-	/// Checks if these MissionStatistics are for a UFO tactical.
+	/**
+	 * Checks if these MissionStatistics are for a UFO tactical.
+	 * @return, true if data is for a UFO tactical
+	 */
 	bool isUfoMission() const
 	{
 		if (ufo != "NO_UFO")
