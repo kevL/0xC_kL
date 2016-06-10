@@ -43,7 +43,7 @@ private:
 	bool
 		_cantLoad,
 		_rearming;
-	int _ammo;
+	int _load;
 
 	const RuleCraftWeapon* _cwRule;
 
@@ -52,7 +52,7 @@ private:
 		/// Creates a CraftWeapon of the specified type.
 		CraftWeapon(
 				const RuleCraftWeapon* const cwRule,
-				int ammo = 0);
+				int load = 0);
 		/// Cleans up the CraftWeapon.
 		~CraftWeapon();
 
@@ -65,16 +65,16 @@ private:
 		const RuleCraftWeapon* getRules() const;
 
 		/// Gets the CraftWeapon's ammo.
-		int getAmmo() const;
+		int getCwLoad() const;
 		/// Sets the CraftWeapon's ammo.
-		bool setAmmo(int ammo);
+		bool setCwLoad(int load);
 		/// Gets the CraftWeapon's rearming status.
 		bool getRearming() const;
 		/// Sets the CraftWeapon's rearming status
 		void setRearming(bool rearming = true);
 		/// Rearms the CraftWeapon.
 		int rearm(
-				int baseClips = 0,
+				int baseQty = 0,
 				int clipSize = 0);
 		/// Gets the CraftWeapon's cantLoad status - no stock in Base Stores.
 		bool getCantLoad() const;

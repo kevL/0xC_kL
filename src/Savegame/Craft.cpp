@@ -889,7 +889,7 @@ void Craft::checkup()
 		if (*i != nullptr)
 		{
 			++cw;
-			if ((*i)->getAmmo() < (*i)->getRules()->getLoadCapacity())
+			if ((*i)->getCwLoad() < (*i)->getRules()->getLoadCapacity())
 				(*i)->setRearming();
 			else
 				++armok;
@@ -942,13 +942,13 @@ void Craft::repair()
  * Rearms this Craft's weapons by adding ammo every half-hour while it's docked
  * at a Base.
  * @param rules - pointer to the Ruleset
- * @return, blank string if ArmOk else a string for cantLoad
+ * @return, blank string if ArmOk else an ammo-type-needed string for cantLoad
  */
 std::string Craft::rearm(const Ruleset* const rules)
 {
 	std::string
 		ret,
-		test;
+		warn;
 
 	_warning = CW_NONE;
 
@@ -960,44 +960,44 @@ std::string Craft::rearm(const Ruleset* const rules)
 		if (*i != nullptr
 			&& (*i)->getRearming() == true)
 		{
-			test.clear();
+			warn.clear();
 
-			const std::string clip ((*i)->getRules()->getClipType());
-			const int baseClips (_base->getStorageItems()->getItemQuantity(clip));
+			const std::string clipType ((*i)->getRules()->getClipType());
+			const int baseQty (_base->getStorageItems()->getItemQuantity(clipType));
 
-			if (clip.empty() == true)
+			if (clipType.empty() == true)
 				(*i)->rearm();
-			else if (baseClips > 0)
+			else if (baseQty > 0)
 			{
-				int clipsUsed ((*i)->rearm(
-										baseClips,
-										rules->getItemRule(clip)->getFullClip()));
-				if (clipsUsed != 0)
+				int usedQty ((*i)->rearm(
+										baseQty,
+										rules->getItemRule(clipType)->getFullClip()));
+				if (usedQty != 0)
 				{
-					if (clipsUsed < 0) // trick. See CraftWeapon::rearm() - not enough clips at Base
+					if (usedQty < 0) // trick. See CraftWeapon::rearm() - not enough clips at Base
 					{
-						clipsUsed = -clipsUsed;
-						test = clip;
+						usedQty = -usedQty;
+						warn = clipType;
 
 						_warning = CW_CANTREARM;
 					}
 
-					_base->getStorageItems()->removeItem(clip, clipsUsed);
+					_base->getStorageItems()->removeItem(clipType, usedQty);
 				}
 			}
 			else // no ammo at base
 			{
-				test = clip;
+				warn = clipType;
 				_warning = CW_CANTREARM;
 				(*i)->setCantLoad();
 			}
 
-			if (test.empty() == false) // warning
+			if (warn.empty() == false) // warning
 			{
 				if (ret.empty() == false) // double warning
 					ret = "STR_ORDNANCE_LC";
 				else // check next weapon
-					ret = test;
+					ret = warn;
 			}
 			else // armok
 				break;
@@ -1218,7 +1218,7 @@ int Craft::getDowntime(bool& isDelayed)
 		if (*i != nullptr
 			&& (*i)->getRearming() == true)
 		{
-			const int reqQty ((*i)->getRules()->getLoadCapacity() - (*i)->getAmmo());
+			const int reqQty ((*i)->getRules()->getLoadCapacity() - (*i)->getCwLoad());
 
 			hours += static_cast<int>(std::ceil(
 					 static_cast<double>(reqQty)

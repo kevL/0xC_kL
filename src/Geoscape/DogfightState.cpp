@@ -403,7 +403,7 @@ DogfightState::DogfightState(
 			srf->blit(srfWeapon);
 
 			woststr.str(L"");
-			woststr << cw->getAmmo();
+			woststr << cw->getCwLoad();
 			txtLoad->setText(woststr.str());
 
 			srfRange->lock();
@@ -1037,7 +1037,7 @@ void DogfightState::updateDogfight()
 				{
 					case 0: // Handle weapon firing.
 						if (_dist <= (cw->getRules()->getRange() << 3u) // <- convert ruleset-value to IG Dogfight distance.
-							&& cw->getAmmo() > 0
+							&& cw->getCwLoad() > 0
 							&& _craftStance != _btnStandoff
 							&& _craftStance != _btnDisengage
 							&& _ufo->isCrashed() == false
@@ -1061,7 +1061,7 @@ void DogfightState::updateDogfight()
 						}
 				}
 
-				if (cw->getAmmo() == 0 // Handle craft distance according to option set by player and available ammo.
+				if (cw->getCwLoad() == 0 // Handle craft distance according to option set by player and available ammo.
 					&& prjInFlight == false
 					&& _craft->isDestroyed() == false)
 				{
@@ -1305,13 +1305,13 @@ void DogfightState::updateDogfight()
 void DogfightState::fireWeapon1()
 {
 	CraftWeapon* const cw (_craft->getWeapons()->at(0u));
-	if (cw->setAmmo(cw->getAmmo() - 1))
+	if (cw->setCwLoad(cw->getCwLoad() - 1))
 	{
 		_w1FireCountdown = _w1FireInterval;
 		if (_w1FireCountdown < 1) _w1FireCountdown = 1;
 
 		std::wostringstream woststr;
-		woststr << cw->getAmmo();
+		woststr << cw->getCwLoad();
 		_txtAmmo1->setText(woststr.str());
 
 		CraftWeaponProjectile* const prj (cw->fire());
@@ -1331,13 +1331,13 @@ void DogfightState::fireWeapon1()
 void DogfightState::fireWeapon2()
 {
 	CraftWeapon* const cw (_craft->getWeapons()->at(1u));
-	if (cw->setAmmo(cw->getAmmo() - 1))
+	if (cw->setCwLoad(cw->getCwLoad() - 1))
 	{
 		_w2FireCountdown = _w2FireInterval;
 		if (_w2FireCountdown < 1) _w2FireCountdown = 1;
 
 		std::wostringstream woststr;
-		woststr << cw->getAmmo();
+		woststr << cw->getCwLoad();
 		_txtAmmo2->setText(woststr.str());
 
 		CraftWeaponProjectile* const prj (cw->fire());
@@ -1393,7 +1393,7 @@ void DogfightState::maximumDistance()
 			++i)
 	{
 		if (*i != nullptr
-			&& (*i)->getAmmo() != 0
+			&& (*i)->getCwLoad() != 0
 			&& (*i)->getRules()->getRange() > dist)
 		{
 			dist = (*i)->getRules()->getRange();
@@ -1421,7 +1421,7 @@ void DogfightState::minimumDistance()
 			++i)
 	{
 		if (*i != nullptr
-			&& (*i)->getAmmo() != 0
+			&& (*i)->getCwLoad() != 0
 			&& (*i)->getRules()->getRange() < dist)
 		{
 			dist = (*i)->getRules()->getRange();

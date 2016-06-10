@@ -32,16 +32,16 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the CraftWeapon with a specified rule.
+ * Initializes the CraftWeapon with a specified RuleCraftWeapon.
  * @param cwRule	- pointer to RuleCraftWeapon
- * @param ammo		- initial ammo quantity (default 0)
+ * @param load		- initial ammo quantity (default 0)
  */
 CraftWeapon::CraftWeapon(
 		const RuleCraftWeapon* const cwRule,
-		int ammo)
+		int load)
 	:
 		_cwRule(cwRule),
-		_ammo(ammo),
+		_load(load),
 		_rearming(false),
 		_cantLoad(false)
 {}
@@ -58,7 +58,7 @@ CraftWeapon::~CraftWeapon()
  */
 void CraftWeapon::load(const YAML::Node& node)
 {
-	_ammo		= node["ammo"]		.as<int>(_ammo);
+	_load		= node["ammo"]		.as<int>(_load);
 	_rearming	= node["rearming"]	.as<bool>(_rearming);
 	_cantLoad	= node["cantLoad"]	.as<bool>(_cantLoad);
 }
@@ -72,10 +72,10 @@ YAML::Node CraftWeapon::save() const
 	YAML::Node node;
 
 	node["type"] = _cwRule->getType();
-	node["ammo"] = _ammo;
+	node["ammo"] = _load;
 
-	if (_rearming) node["rearming"] = _rearming;
-	if (_cantLoad) node["cantLoad"] = _cantLoad;
+	if (_rearming != false) node["rearming"] = _rearming;
+	if (_cantLoad != false) node["cantLoad"] = _cantLoad;
 
 	return node;
 }
@@ -93,27 +93,27 @@ const RuleCraftWeapon* CraftWeapon::getRules() const
  * Gets the quantity of ammo contained in this CraftWeapon.
  * @return, quantity of ammo
  */
-int CraftWeapon::getAmmo() const
+int CraftWeapon::getCwLoad() const
 {
-	return _ammo;
+	return _load;
 }
 
 /**
  * Sets the quantity of ammo contained in this CraftWeapon.
  * @note Maintains min/max levels.
- * @param ammo - quantity of ammo
+ * @param load - quantity of ammo
  * @return, true if there was enough ammo to fire a round off
  */
-bool CraftWeapon::setAmmo(int ammo)
+bool CraftWeapon::setCwLoad(int load)
 {
-	if (_ammo = ammo < 0)
+	if ((_load = load) < 0)
 	{
-		_ammo = 0;
+		_load = 0;
 		return false;
 	}
 
-	if (_ammo > _cwRule->getLoadCapacity())
-		_ammo = _cwRule->getLoadCapacity();
+	if (_load > _cwRule->getLoadCapacity())
+		_load = _cwRule->getLoadCapacity();
 
 	return true;
 }
@@ -138,53 +138,51 @@ void CraftWeapon::setRearming(bool rearming)
 
 /**
  * Rearms this CraftWeapon.
- * @param baseClips	- the quantity of clips available at the Base (default 0)
+ * @param baseQty	- the quantity of clips available at the Base (default 0)
  * @param clipSize	- the quantity of rounds in a clip (default 0)
  * @return, the quantity of clips used (negative if not enough clips at Base)
  */
 int CraftWeapon::rearm(
-		int baseClips,
+		int baseQty,
 		int clipSize)
 {
 	const int
 		fullQty (_cwRule->getLoadCapacity()),
 		rateQty (_cwRule->getRearmRate());
-
 	int
 		ret,
 		loadQty,
-		clipsRequested;
+		requestQty;
 
 	if (clipSize > 0)
-		clipsRequested = std::min(rateQty + clipSize - 1, // round up int ->
-								  fullQty - _ammo + clipSize - 1)
-								/ clipSize;
+		requestQty = std::min(rateQty + clipSize - 1, // round up int ->
+							  fullQty - _load + clipSize - 1)
+							/ clipSize;
 	else
-		clipsRequested = 0;
+		requestQty = 0;
 
-	if (baseClips >= clipsRequested)
+	if (baseQty >= requestQty)
 	{
 		_cantLoad = false;
 
 		if (clipSize == 0)
 			loadQty = rateQty;
 		else
-			loadQty = clipsRequested * clipSize;
+			loadQty = requestQty * clipSize;
 	}
-	else // baseClips < clipsRequested
+	else // baseQty < requestQty
 	{
 		_cantLoad = true;
-		loadQty = baseClips * clipSize;
+		loadQty = baseQty * clipSize;
 	}
 
-	setAmmo(_ammo + loadQty);
-	_rearming = (_ammo < fullQty);
+	setCwLoad(_load + loadQty);
+	_rearming = (_load < fullQty);
 
-	if (clipSize == 0)
-		return 0;
+	if (clipSize == 0) return 0;
 
 	ret = (loadQty + clipSize - 1) / clipSize;
-	if (clipsRequested > baseClips)
+	if (requestQty > baseQty)
 		ret = -ret; // trick to tell Craft there isn't enough clips at Base.
 
 	return ret;
@@ -235,9 +233,9 @@ int CraftWeapon::getClipsLoaded(const Ruleset* const rules) const
 	const RuleItem* const clip (rules->getItemRule(_cwRule->getClipType()));
 
 	if (clip == nullptr || clip->getFullClip() < 1)
-		return _ammo / _cwRule->getRearmRate(); // round down.
+		return _load / _cwRule->getRearmRate(); // round down.
 
-	return _ammo / clip->getFullClip(); // round down.
+	return _load / clip->getFullClip(); // round down.
 }
 
 }

@@ -430,13 +430,13 @@ void CraftInfoState::init()
 			_txtW1Name->setText(woststr.str());
 
 			woststr.str(L"");
-			woststr << tr("STR_AMMO_").arg(cw->getAmmo())
+			woststr << tr("STR_AMMO_").arg(cw->getCwLoad())
 					<< L"\n\x01"
 					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
-			if (cw->getAmmo() < cwRule->getLoadCapacity())
+			if (cw->getCwLoad() < cwRule->getLoadCapacity())
 			{
 				hrs = static_cast<int>(std::ceil(
-					  static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
+					  static_cast<double>(cwRule->getLoadCapacity() - cw->getCwLoad()) / static_cast<double>(cwRule->getRearmRate())
 					  / 2.)); // rearm every half-hour.
 				woststr << L"\n" << _game->getSavedGame()->formatCraftDowntime(
 																			hrs,
@@ -477,13 +477,13 @@ void CraftInfoState::init()
 			_txtW2Name->setText(woststr.str());
 
 			woststr.str(L"");
-			woststr << tr("STR_AMMO_").arg(cw->getAmmo())
+			woststr << tr("STR_AMMO_").arg(cw->getCwLoad())
 					<< L"\n\x01"
 					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
-			if (cw->getAmmo() < cwRule->getLoadCapacity())
+			if (cw->getCwLoad() < cwRule->getLoadCapacity())
 			{
 				hrs = static_cast<int>(std::ceil(
-					  static_cast<double>(cwRule->getLoadCapacity() - cw->getAmmo()) / static_cast<double>(cwRule->getRearmRate())
+					  static_cast<double>(cwRule->getLoadCapacity() - cw->getCwLoad()) / static_cast<double>(cwRule->getRearmRate())
 					  / 2.)); // rearm every half-hour.
 				woststr << L"\n" << _game->getSavedGame()->formatCraftDowntime(
 																			hrs,

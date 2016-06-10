@@ -164,6 +164,9 @@ private:
 	/// Creates the prefix for a debugging message.
 	void fabricateDebugPretext();
 
+	/// Processes a TerrorSite.
+	bool processTerrorSite(TerrorSite* const site) const;
+
 	/// Assigns whether an aLien cracked under pressure.
 	void getAlienCracks(
 				const std::string& alienType,
@@ -326,9 +329,6 @@ private:
 		void baseDefenseTactical(
 				Base* const base,
 				Ufo* const ufo);
-
-		/// Processes a TerrorSite.
-		bool processTerrorSite(TerrorSite* const site) const; // OoO
 
 		/// Update the resolution settings - the window was resized.
 		void resize(

@@ -668,6 +668,10 @@ void ManufactureInfoState::incUnitsClick(Action* action) // private.
 	{
 		switch (action->getDetails()->button.button)
 		{
+			case SDL_BUTTON_LEFT:
+				incUnits(stepDelta());
+				break;
+
 			case SDL_BUTTON_RIGHT:
 				if (_production->getRules()->isCraft() == true)
 					incUnits(std::numeric_limits<int>::max());
@@ -676,10 +680,6 @@ void ManufactureInfoState::incUnitsClick(Action* action) // private.
 					_production->setInfinite(true);
 					assignEngineers();
 				}
-				break;
-
-			case SDL_BUTTON_LEFT:
-				incUnits(stepDelta());
 		}
 	}
 }

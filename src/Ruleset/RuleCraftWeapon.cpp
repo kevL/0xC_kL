@@ -38,7 +38,7 @@ RuleCraftWeapon::RuleCraftWeapon(const std::string& type)
 		_reloadCautious(0),
 		_reloadStandard(0),
 		_reloadAggressive(0),
-		_ammoMax(0),
+		_loadCap(0),
 		_rearmRate(1),
 		_prjSpeed(0),
 		_prjType(PT_CANNON_ROUND)
@@ -81,7 +81,7 @@ void RuleCraftWeapon::load(
 	_reloadCautious		= node["reloadCautious"]	.as<int>(_reloadCautious);
 	_reloadStandard		= node["reloadStandard"]	.as<int>(_reloadStandard);
 	_reloadAggressive	= node["reloadAggressive"]	.as<int>(_reloadAggressive);
-	_ammoMax			= node["ammoMax"]			.as<int>(_ammoMax);
+	_loadCap			= node["loadCap"]			.as<int>(_loadCap);
 	_rearmRate			= node["rearmRate"]			.as<int>(_rearmRate);
 	_prjSpeed			= node["prjSpeed"]			.as<int>(_prjSpeed);
 	_launcher			= node["launcher"]			.as<std::string>(_launcher);
@@ -179,7 +179,7 @@ int RuleCraftWeapon::getAggressiveReload() const
  */
 int RuleCraftWeapon::getLoadCapacity() const
 {
-	return _ammoMax;
+	return _loadCap;
 }
 
 /**

@@ -1466,7 +1466,7 @@ void GeoscapeState::timeAdvance()
 }
 
 /**
- * Takes care of any game logic that has to run every 5 game seconds.
+ * Takes care of any game logic that has to run every 5 seconds.
  */
 void GeoscapeState::time5Seconds()
 {
@@ -1888,10 +1888,10 @@ void GeoscapeState::time5Seconds()
 }
 
 /**
- * *** FUNCTOR ***
- * Functor that attempts to detect an XCOM base.
+ ** FUNCTOR ***
+ * Functor that attempts to detect an XCOM Base.
  */
-class DetectXCOMBase
+struct DetectXCOMBase
 	:
 		public std::unary_function<Ufo*, bool>
 {
@@ -1900,7 +1900,11 @@ private:
 	const Base& _base;
 
 	public:
-		/// Create a detector for the given base.
+		/**
+		 * Creates a detector for a specified Base.
+		 * @param base - reference to the Base
+		 * @param diff - difficulty-level
+		 */
 		DetectXCOMBase(
 				const Base& base,
 				int diff)
@@ -1909,8 +1913,11 @@ private:
 				_diff(diff)
 		{}
 
-		/// Attempt detection
-		bool operator() (const Ufo* ufo) const;
+		/**
+		 * Attempts detection of a Base.
+		 * @param ufo - pointer to the UFO trying to detect
+		 */
+		bool operator() (const Ufo* const ufo) const;
 };
 
 /**
@@ -1918,7 +1925,7 @@ private:
  * @param ufo - pointer to the UFO attempting detection
  * @return, true if base detected
  */
-bool DetectXCOMBase::operator() (const Ufo* ufo) const
+bool DetectXCOMBase::operator() (const Ufo* const ufo) const
 {
 	if (ufo->isCrashed() == false
 //		&& ufo->getTrajectoryPoint() > 1u
@@ -1951,8 +1958,8 @@ bool DetectXCOMBase::operator() (const Ufo* ufo) const
 
 
 /**
- * *** FUNCTOR ***
- * Functor that marks an XCOM base for retaliation.
+ ** FUNCTOR ***
+ * Functor that marks an XCOM Base for retaliation.
  * @note This is required because of the iterator type. Only used if Aggressive
  * Retaliation option is false.
  */
@@ -1960,7 +1967,10 @@ struct SetRetaliationStatus
 	:
 		public std::unary_function<std::map<const Region*, Base*>::value_type, void>
 {
-	/// Mark as a valid retaliation target.
+	/**
+	 * Mark a Base as a valid/exposed retaliation target.
+	 * @param i -
+	 */
 	void operator() (const argument_type& i) const
 	{
 		i.second->setBaseExposed();
@@ -1969,7 +1979,7 @@ struct SetRetaliationStatus
 
 
 /**
- * Takes care of any game logic that runs every ten game minutes.
+ * Takes care of any game logic that runs every ten minutes.
  */
 void GeoscapeState::time10Minutes()
 {
@@ -2221,11 +2231,11 @@ void GeoscapeState::time10Minutes()
 
 
 /**
- * *** FUNCTOR ***
+ ** FUNCTOR ***
  * @brief Call AlienMission::think() with proper parameters.
  * @note This function object calls AlienMission::think() with the proper parameters.
  */
-class callThink
+struct CallThink
 	:
 		public std::unary_function<AlienMission*, void>
 {
@@ -2234,12 +2244,12 @@ private:
 	const Globe& _globe;
 
 	public:
-		/// Store the parameters.
 		/**
+		 * Cache the parameters.
 		 * @param game	- reference to the Game engine
 		 * @param globe	- reference to the Globe object
 		 */
-		callThink(
+		CallThink(
 				Game& game,
 				const Globe& globe)
 			:
@@ -2247,78 +2257,28 @@ private:
 				_globe(globe)
 		{}
 
-		/// Call AlienMission::think() with stored parameters.
-		void operator() (AlienMission* mission) const
+		/**
+		 * Call AlienMission::think() with cached parameters.
+		 * @param mission - pointer to an AlienMission
+		 */
+		void operator() (AlienMission* const mission) const
 		{
 			mission->think(_game, _globe);
 		}
 };
 
 /**
- * *** FUNCTOR ***
- * @brief Process a TerrorSite.
- * This function object will count down towards expiring a TerrorSite and
- * handle expired TerrorSites.
- * @param site - pointer to a TerrorSite
- * @return, true if mission is finished (w/out xCom mission success)
- */
-bool GeoscapeState::processTerrorSite(TerrorSite* const site) const
-{
-	bool expired;
-
-	const int
-		diff (static_cast<int>(_gameSave->getDifficulty())),
-		month (_gameSave->getMonthsPassed());
-	int
-		aLienPts,
-		basicPts;
-
-	if (site->getSecondsLeft() > 1799)
-	{
-		expired = false;
-		site->setSecondsLeft(site->getSecondsLeft() - 1800);
-
-		basicPts = site->getSiteDeployment()->getPointsPer30(); // AlienDeployments pts have priority over RuleAlienMission pts
-		if (basicPts == 0)
-			basicPts = site->getRules()->getPoints() / 10;
-
-		aLienPts = basicPts + (diff * 10) + month;
-	}
-	else
-	{
-		expired = true;
-
-		basicPts = site->getSiteDeployment()->getDespawnPenalty(); // AlienDeployments pts have priority over RuleAlienMission pts
-		if (basicPts == 0)
-			basicPts = site->getRules()->getPoints() * 5;
-
-		aLienPts = basicPts + (diff * (235 + month));
-	}
-
-	if (aLienPts != 0)
-		_gameSave->scorePoints(
-							site->getLongitude(),
-							site->getLatitude(),
-							aLienPts,
-							true);
-
-	if (expired == true)
-	{
-		delete site;
-		return true;
-	}
-	return false;
-}
-
-/**
- * *** FUNCTOR ***
- * @brief Advance time for crashed UFOs.
+ ** FUNCTOR ***
+ * Advance time for crashed UFOs.
  * @note This function object will decrease the expiration timer for crashed UFOs.
  */
-struct expireCrashedUfo: public std::unary_function<Ufo*, void>
+struct ExpireCrashedUfo: public std::unary_function<Ufo*, void>
 {
-	/// Decrease UFO expiration timer.
-	void operator() (Ufo* ufo) const
+	/**
+	 * Decreases UFO expiration timer.
+	 * @param ufo - pointer to a crashed UFO
+	 */
+	void operator() (Ufo* const ufo) const
 	{
 		if (ufo->getUfoStatus() == Ufo::CRASHED)
 		{
@@ -2328,21 +2288,21 @@ struct expireCrashedUfo: public std::unary_function<Ufo*, void>
 				ufo->setSecondsLeft(sec - 30 * 60);
 				return;
 			}
-			ufo->setUfoStatus(Ufo::DESTROYED); // mark expired UFOs for removal.
+			ufo->setUfoStatus(Ufo::DESTROYED); // mark expired UFO for removal.
 		}
 	}
 };
 
 
 /**
- * Takes care of any game logic that has to run every game half hour.
+ * Takes care of any game logic that has to run every half-hour.
  */
 void GeoscapeState::time30Minutes()
 {
 	std::for_each( // decrease mission countdowns
 			_gameSave->getAlienMissions().begin(),
 			_gameSave->getAlienMissions().end(),
-			callThink(*_game, *_globe));
+			CallThink(*_game, *_globe));
 
 	for (std::vector<AlienMission*>::const_iterator // remove finished missions
 			i = _gameSave->getAlienMissions().begin();
@@ -2361,7 +2321,7 @@ void GeoscapeState::time30Minutes()
 	std::for_each( // handle crashed UFOs expiration
 			_gameSave->getUfos()->begin(),
 			_gameSave->getUfos()->end(),
-			expireCrashedUfo());
+			ExpireCrashedUfo());
 
 
 	for (std::vector<Base*>::const_iterator // handle Craft maintenance.
@@ -2492,7 +2452,7 @@ void GeoscapeState::time30Minutes()
 			i != _gameSave->getTerrorSites()->end();
 			)
 	{
-		if (processTerrorSite(*i))
+		if (processTerrorSite(*i) == true)
 			i = _gameSave->getTerrorSites()->erase(i);
 		else
 			++i;
@@ -2500,7 +2460,62 @@ void GeoscapeState::time30Minutes()
 }
 
 /**
- * Takes care of any game logic that has to run every game hour.
+ * Processes a TerrorSite.
+ * @note This will count down towards expiring a TerrorSite and handles its
+ * expiration.
+ * @param site - pointer to a TerrorSite
+ * @return, true if terror is finished (w/out xCom mission success)
+ */
+bool GeoscapeState::processTerrorSite(TerrorSite* const site) const // private.
+{
+	bool expired;
+
+	const int
+		diff (static_cast<int>(_gameSave->getDifficulty())),
+		month (_gameSave->getMonthsPassed());
+	int
+		aLienPts,
+		basicPts;
+
+	if (site->getSecondsLeft() > 1799)
+	{
+		expired = false;
+		site->setSecondsLeft(site->getSecondsLeft() - 1800);
+
+		basicPts = site->getSiteDeployment()->getPointsPer30(); // AlienDeployments pts have priority over RuleAlienMission pts
+		if (basicPts == 0)
+			basicPts = site->getRules()->getPoints() / 10;
+
+		aLienPts = basicPts + (diff * 10) + month;
+	}
+	else
+	{
+		expired = true;
+
+		basicPts = site->getSiteDeployment()->getDespawnPenalty(); // AlienDeployments pts have priority over RuleAlienMission pts
+		if (basicPts == 0)
+			basicPts = site->getRules()->getPoints() * 5;
+
+		aLienPts = basicPts + (diff * (235 + month));
+	}
+
+	if (aLienPts != 0)
+		_gameSave->scorePoints(
+							site->getLongitude(),
+							site->getLatitude(),
+							aLienPts,
+							true);
+
+	if (expired == true)
+	{
+		delete site;
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Takes care of any game logic that has to run every hour.
  */
 void GeoscapeState::time1Hour()
 {
@@ -2691,21 +2706,24 @@ void GeoscapeState::time1Hour()
 
 
 /**
- * *** FUNCTOR ***
- * This class will attempt to generate a supply mission for a base.
+ ** FUNCTOR ***
+ * Attempts to generate a supply-mission for an AlienBase.
  * @note Each alien base has a 4% chance to generate a supply mission.
  */
-class GenerateSupplyMission
+struct GenerateSupplyMission
 	:
 		public std::unary_function<const AlienBase*, void>
 {
-
 private:
 	const Ruleset& _rules;
 	SavedGame& _gameSave;
 
 	public:
-		/// Store rules and game data references for later use.
+		/**
+		 * Caches Ruleset and SavedGame for later use.
+		 * @param rules		- reference to the Ruleset
+		 * @param gameSave	- reference to the SavedGame
+		 */
 		GenerateSupplyMission(
 				const Ruleset& rules,
 				SavedGame& gameSave)
@@ -2714,20 +2732,22 @@ private:
 				_gameSave(gameSave)
 		{}
 
-		/// Check and spawn mission.
+		/**
+		 * Checks and creates a supply-mission.
+		 * @param aBase - pointer to an AlienBase
+		 */
 		void operator() (const AlienBase* const base) const;
 };
 
 /**
- * Check and create supply mission for the given base.
+ * Checks and creates a supply-mission for a specified AlienBase.
  * @note There is a 4% chance of the mission spawning.
- * @param base A pointer to the alien base.
+ * @param base - pointer to the AlienBase.
  */
 void GenerateSupplyMission::operator() (const AlienBase* const base) const
 {
 	if (RNG::percent(4) == true)
 	{
-		// Spawn supply mission for this base.
 		const RuleAlienMission& missionRule (*_rules.getAlienMission("STR_ALIEN_SUPPLY"));
 		AlienMission* const mission (new AlienMission(missionRule, _gameSave));
 		mission->setRegion(
@@ -2744,7 +2764,7 @@ void GenerateSupplyMission::operator() (const AlienBase* const base) const
 
 
 /**
- * Takes care of any game logic that has to run every game day.
+ * Takes care of any game logic that has to run every day.
  */
 void GeoscapeState::time1Day()
 {
@@ -3195,7 +3215,7 @@ void GeoscapeState::getAlienCracks( // private.
 }
 
 /**
- * Takes care of any game logic that has to run every game month.
+ * Takes care of any game logic that has to run every month.
  */
 void GeoscapeState::time1Month()
 {
@@ -4578,16 +4598,9 @@ void GeoscapeState::resize(
 
 	switch (Options::geoscapeScale)
 	{
-		case SCALE_SCREEN_DIV_3:
-			divisor = 3;
-			break;
-
-		case SCALE_SCREEN_DIV_2:
-			divisor = 2;
-			break;
-
-		case SCALE_SCREEN:
-			break;
+		case SCALE_SCREEN_DIV_3: divisor = 3; break;
+		case SCALE_SCREEN_DIV_2: divisor = 2; break;
+		case SCALE_SCREEN: break;
 
 		default:
 			dX =

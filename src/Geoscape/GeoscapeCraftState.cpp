@@ -300,7 +300,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		_txtW1Name->setText(tr("STR_WEAPON_ONE").arg(tr(w1->getRules()->getType())));
 
 		woststr.str(L"");
-		woststr << tr("STR_ROUNDS_").arg(w1->getAmmo())
+		woststr << tr("STR_ROUNDS_").arg(w1->getCwLoad())
 				<< L" (" << w1->getRules()->getLoadCapacity() << L")";
 		_txtW1Ammo->setText(woststr.str());
 	}
@@ -317,7 +317,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		_txtW2Name->setText(tr("STR_WEAPON_TWO").arg(tr(w2->getRules()->getType())));
 
 		woststr.str(L"");
-		woststr << tr("STR_ROUNDS_").arg(w2->getAmmo())
+		woststr << tr("STR_ROUNDS_").arg(w2->getCwLoad())
 				<< L" (" << w2->getRules()->getLoadCapacity() << L")";
 		_txtW2Ammo->setText(woststr.str());
 	}

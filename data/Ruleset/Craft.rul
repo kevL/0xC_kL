@@ -136,7 +136,7 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
     reloadCautious: 10
     reloadStandard: 8
     reloadAggressive: 6
-    ammoMax: 100
+    loadCap: 100
     rearmRate: 25
     launcher: STR_CANNON
     clip: STR_CANNON_ROUNDS_50
@@ -151,7 +151,7 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
     reloadCautious: 58
     reloadStandard: 42
     reloadAggressive: 26
-    ammoMax: 6
+    loadCap: 6
     rearmRate: 2
     launcher: STR_STINGRAY_LAUNCHER
     clip: STR_STINGRAY_MISSILES
@@ -166,7 +166,7 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
     reloadCautious: 102
     reloadStandard: 80
     reloadAggressive: 54
-    ammoMax: 3
+    loadCap: 3
     rearmRate: 1
     launcher: STR_AVALANCHE_LAUNCHER
     clip: STR_AVALANCHE_MISSILES
@@ -181,7 +181,7 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
     reloadCautious: 22
     reloadStandard: 16
     reloadAggressive: 10
-    ammoMax: 22
+    loadCap: 22
     rearmRate: 11
     launcher: STR_LASER_CANNON
     clip: STR_ELERIUM_115
@@ -195,7 +195,7 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
     reloadCautious: 40
     reloadStandard: 28
     reloadAggressive: 16
-    ammoMax: 33
+    loadCap: 33
     rearmRate: 11
     launcher: STR_PLASMA_BEAM
     clip: STR_ELERIUM_115
@@ -209,7 +209,7 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
     reloadCautious: 72
     reloadStandard: 54
     reloadAggressive: 36
-    ammoMax: 3
+    loadCap: 3
     rearmRate: 1
     launcher: STR_FUSION_BALL_LAUNCHER
     clip: STR_FUSION_BALL
