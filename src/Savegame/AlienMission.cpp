@@ -72,7 +72,7 @@ AlienMission::AlienMission(
 		_id(0),
 		_aBase(nullptr),
 		_success(false),
-		_siteZone(std::numeric_limits<size_t>::max())
+		_terrorZone(std::numeric_limits<size_t>::max())
 {}
 
 /**
@@ -119,7 +119,7 @@ void AlienMission::load(const YAML::Node& node)
 	_ufoCount	= node["ufoCount"]	.as<int>(_ufoCount);
 	_spawnTime	= node["spawnTime"]	.as<int>(_spawnTime);
 	_liveUfos	= node["liveUfos"]	.as<int>(_liveUfos);
-	_siteZone	= node["siteZone"]	.as<size_t>(_siteZone);
+	_terrorZone	= node["terrorZone"].as<size_t>(_terrorZone);
 	_success	= node["success"]	.as<bool>(_success);
 
 	if (const YAML::Node& baseId = node["alienBase"])
@@ -154,8 +154,8 @@ YAML::Node AlienMission::save() const
 	node["spawnTime"]	= _spawnTime;
 	node["liveUfos"]	= _liveUfos;
 
-	if (_siteZone != std::numeric_limits<size_t>::max())
-		node["siteZone"] = _siteZone;
+	if (_terrorZone != std::numeric_limits<size_t>::max())
+		node["terrorZone"] = _terrorZone;
 
 	if (_success == true)
 		node["success"] = _success;
@@ -290,16 +290,16 @@ void AlienMission::think(
 					&& wave.isObjective == true))
 			{
 				size_t id;
-				if (_missionRule.getSpecialZone() == std::numeric_limits<size_t>::max())
+				if (_missionRule.getObjectiveZone() == std::numeric_limits<size_t>::max())
 					id = trajectory.getZone(0u);
 				else
-					id = _missionRule.getSpecialZone();
+					id = _missionRule.getObjectiveZone();
 				const std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(id).areas);
 
-				if (_siteZone == std::numeric_limits<size_t>::max())
+				if (_terrorZone == std::numeric_limits<size_t>::max())
 					id = RNG::pick(areas.size());
 				else
-					id = _siteZone;
+					id = _terrorZone;
 				const MissionArea area (areas.at(id));
 
 				const RuleTexture* const texture (rules.getGlobe()->getTextureRule(area.texture));
@@ -347,7 +347,7 @@ void AlienMission::think(
 			createAlienBase( // adds alienPts.
 						globe,
 						rules,
-						_missionRule.getSpecialZone());
+						_missionRule.getObjectiveZone());
 
 			if (object == alm_INFILT)
 			{
@@ -479,7 +479,7 @@ Ufo* AlienMission::createUfo( // private.
 			if (baseTargets.empty() == false)
 			{
 				// Spawn a battleship straight for the XCOM Base.
-				const RuleUfo& battleshipRule (*rules.getUfo(_missionRule.getSpecialUfo()));
+				const RuleUfo& battleshipRule (*rules.getUfo(_missionRule.getObjectiveUfo()));
 				const UfoTrajectory& trjBattleship (*rules.getUfoTrajectory(UfoTrajectory::RETALIATION_ASSAULT_RUN));
 				const RuleRegion& regionRule (*rules.getRegion(_region));
 
@@ -701,8 +701,8 @@ void AlienMission::ufoReachedWaypoint(
 			// NOTE: 'wave' has to be reduced by one because think() has already advanced it past current, I suppose.
 
 			if (_missionRule.getWave(wave).isObjective == true					// destroy UFO & replace with TerrorSite.
-				&& trajectory.getZone(wpId) == _missionRule.getSpecialZone())	// NOTE: Supply-missions bypasses this although it has (objective=true)
-			{																	// because it does not have a 'specialZone' set in its rule.
+				&& trajectory.getZone(wpId) == _missionRule.getObjectiveZone())	// NOTE: Supply-missions bypasses this although it has (objective=true)
+			{																	// because it does not have an 'objectiveZone' set in its rule.
 				addScore( // alm_TERROR
 					ufo.getLongitude(),
 					ufo.getLatitude());
@@ -710,12 +710,12 @@ void AlienMission::ufoReachedWaypoint(
 				ufo.setUfoStatus(Ufo::DESTROYED);
 
 				// note: Looks like they're having probls with getting a mission wpId:
-//				MissionArea area (regionRule.getMissionZones().at(trajectory.getZone(wpId)).areas.at(_siteZone));
+//				MissionArea area (regionRule.getMissionZones().at(trajectory.getZone(wpId)).areas.at(_terrorZone));
 				const MissionArea area (regionRule.getTerrorArea(
 															trajectory.getZone(wpId),
 															dynamic_cast<Target*>(&ufo)));
 
-				const RuleAlienDeployment* ruleDeploy (rules.getDeployment(_missionRule.getSiteType()));
+				const RuleAlienDeployment* ruleDeploy (rules.getDeployment(_missionRule.getTerrorType()));
 				if (ruleDeploy == nullptr)
 				{
 					const RuleTexture* const texture (rules.getGlobe()->getTextureRule(area.texture));
@@ -831,8 +831,8 @@ void AlienMission::createAlienBase( // private.
 {
 	if (_gameSave.getAlienBases()->size() <= 8u + (static_cast<size_t>(_gameSave.getDifficulty()) << 1u))
 	{
-		const size_t zone (_missionRule.getSpecialZone());
-		std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(zone).areas);
+		const size_t zoneId (_missionRule.getObjectiveZone());
+		std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(zoneId).areas);
 		MissionArea area (areas.at(RNG::pick(areas.size())));
 
 		const RuleAlienDeployment* ruleDeploy;
@@ -841,9 +841,9 @@ void AlienMission::createAlienBase( // private.
 		{
 			ruleDeploy = rules.getDeployment(rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployment());
 		}
-		else if (rules.getDeployment(_missionRule.getSiteType()) != nullptr)
+		else if (rules.getDeployment(_missionRule.getTerrorType()) != nullptr)
 		{
-			ruleDeploy = rules.getDeployment(_missionRule.getSiteType());
+			ruleDeploy = rules.getDeployment(_missionRule.getTerrorType());
 		}
 		else
 		{
@@ -917,7 +917,7 @@ void AlienMission::ufoLifting(
 	{
 		case Ufo::FLYING:
 			ufo.setUfoTerrainType(); // safety i guess.
-			assert(0 && "Ufo is already on the air!");
+//			assert(0 && "Ufo is already on the air!");
 			break;
 
 		case Ufo::LANDED:
@@ -1020,8 +1020,8 @@ void AlienMission::ufoLifting(
 			ufo.setUfoStatus(Ufo::DESTROYED);
 			break;
 
-		case Ufo::DESTROYED:
-			assert(0 && "UFO can't fly!");
+//		case Ufo::DESTROYED:
+//			assert(0 && "UFO can't fly!");
 	}
 }
 
@@ -1062,8 +1062,8 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		const Globe& globe,
 		const RuleRegion& region) const
 {
-	if (_siteZone != std::numeric_limits<size_t>::max()
-		&& trajectory.getZone(wpId) == _missionRule.getSpecialZone())
+	if (_terrorZone != std::numeric_limits<size_t>::max()
+		&& trajectory.getZone(wpId) == _missionRule.getObjectiveZone())
 	{
 		size_t wave;
 		switch (_waveCount)
@@ -1080,7 +1080,7 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		{
 			const MissionArea* const area (&region.getMissionZones()
 													.at(_missionRule.getObjectiveType()).areas
-													.at(_siteZone));
+													.at(_terrorZone));
 			return std::make_pair(
 								area->lonMin,
 								area->latMin);
@@ -1104,13 +1104,13 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
  * @note The point will be used to land a UFO so it *has to be on land*.
  * @param globe		- reference to the Globe
  * @param region	- reference to RuleRegion
- * @param zone		- a MissionZone in the Region
+ * @param zoneId	- ID of a MissionZone in the Region
  * @return, a pair of doubles (lon & lat)
  */
 std::pair<double, double> AlienMission::coordsLand( // private.
 		const Globe& globe,
 		const RuleRegion& region,
-		const size_t zone) const
+		const size_t zoneId) const
 {
 	std::pair<double, double> coord;
 
@@ -1118,7 +1118,7 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 	do
 	{
 		++t;
-		coord = region.getZonePoint(zone);
+		coord = region.getZonePoint(zoneId);
 	}
 	while (t < 1000
 		&& (globe.insideLand(
@@ -1132,7 +1132,7 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 		Log(LOG_INFO) << "Region: " << region.getType()
 					  << " lon " << coord.first
 					  << " lat " << coord.second
-					  << " invalid point in zone: " << zone << " - ufo was forced to land on water.";
+					  << " invalid point in zoneId: " << zoneId << " - ufo was forced to land on water.";
 	return coord;
 }
 
@@ -1211,11 +1211,11 @@ void AlienMission::addScore( // private.
 
 /**
  * Tells this AlienMission which entry in the MissionZone vector is targeted.
- * @param zone - zone-ID to target, always a City-type zone #3 (probably)
+ * @param zoneId - zone-ID to target, always a City-type zoneId #3 (probably)
  */
-void AlienMission::setTerrorSiteZone(size_t zone)
+void AlienMission::setTerrorZone(size_t zoneId)
 {
-	_siteZone = zone;
+	_terrorZone = zoneId;
 }
 
 }

@@ -37,7 +37,7 @@ RuleRegion::RuleRegion(const std::string& type)
 	:
 		_type(type),
 		_buildCost(0),
-		_regionWeight(0u)
+		_weight(0u)
 {}
 
 /**
@@ -78,26 +78,26 @@ void RuleRegion::load(const YAML::Node& node)
 	}
 
 	// TODO: if ["delete"] delete previous mission zones.
-	// NOTE: the next line replaces previous missionZones:
-	_missionZones = node["missionZones"].as<std::vector<MissionZone>>(_missionZones);
-	// NOTE: while the following lines add to missionZones:
-//	std::vector<MissionZone> misZones = node["missionZones"].as<std::vector<MissionZone>>(misZones);
-//	_missionZones.insert(
-//					_missionZones.end(),
+	// NOTE: the next line replaces previous zones:
+	_zones = node["zones"].as<std::vector<MissionZone>>(_zones);
+	// NOTE: while the following lines add to zones:
+//	std::vector<MissionZone> misZones = node["zones"].as<std::vector<MissionZone>>(misZones);
+//	_zones.insert(
+//					_zones.end(),
 //					misZones.begin(),
 //					misZones.end());
 	// revert that until it gets worked out. FalcoOXC says,
-	/* So if two mods add missionZones how do the trajectory
+	/* So if two mods add zones how do the trajectory
 	references and negative texture entries remain in sync? */
 
 	// kL_begin:
-	MissionArea area (*_missionZones.at(MZ_CITY).areas.begin());
+	MissionArea area (*_zones.at(MZ_CITY).areas.begin());
 
 	// Delete a possible placeholder in the Geography ruleset, by removing
 	// its pointlike MissionArea at MissionZone[3] MZ_CITY; ie [0,0,0,0].
 	// Note that safeties have been removed on all below_ ...
 	if (area.isPoint() == true)
-		_missionZones.at(MZ_CITY).areas.erase(_missionZones.at(MZ_CITY).areas.begin());
+		_zones.at(MZ_CITY).areas.erase(_zones.at(MZ_CITY).areas.begin());
 
 	if (const YAML::Node& cities = node["cities"])
 	{
@@ -118,14 +118,14 @@ void RuleRegion::load(const YAML::Node& node)
 			area.site = city->getName();
 			area.texture = city->getTextureId();
 
-			_missionZones.at(MZ_CITY).areas.push_back(area);
+			_zones.at(MZ_CITY).areas.push_back(area);
 		}
 	} // end_kL.
 
-	if (const YAML::Node& weights = node["missionWeights"])
-		_missionWeights.load(weights);
+	if (const YAML::Node& weights = node["weightsMission"])
+		_weightsMission.load(weights);
 
-	_regionWeight	= node["regionWeight"]	.as<size_t>(_regionWeight);
+	_weight			= node["weight"]		.as<size_t>(_weight);
 	_missionRegion	= node["missionRegion"]	.as<std::string>(_missionRegion);
 }
 
@@ -192,8 +192,8 @@ std::vector<RuleCity*>* RuleRegion::getCities()
 {
 //	if (_cities.empty() == true) // kL_note: unused for now. Just return the cities, thanks anyway.
 //		for (std::vector<MissionZone>::const_iterator
-//				i = _missionZones.begin();
-//				i != _missionZones.end();
+//				i = _zones.begin();
+//				i != _zones.end();
 //				++i)
 //			for (std::vector<MissionArea>::const_iterator
 //					j = i->areas.begin();
@@ -215,7 +215,7 @@ std::vector<RuleCity*>* RuleRegion::getCities()
  */
 size_t RuleRegion::getWeight() const
 {
-	return _regionWeight;
+	return _weight;
 }
 
 /**
@@ -224,7 +224,7 @@ size_t RuleRegion::getWeight() const
  */
 const std::vector<MissionZone>& RuleRegion::getMissionZones() const
 {
-	return _missionZones;
+	return _zones;
 }
 
 /**
@@ -234,9 +234,9 @@ const std::vector<MissionZone>& RuleRegion::getMissionZones() const
  */
 std::pair<double, double> RuleRegion::getZonePoint(size_t zoneId) const
 {
-	if (zoneId < _missionZones.size()) // safety.
+	if (zoneId < _zones.size()) // safety.
 	{
-		const MissionZone& zone (_missionZones[zoneId]);
+		const MissionZone& zone (_zones[zoneId]);
 		const size_t pick (RNG::pick(zone.areas.size()));
 		const double
 			lon (RNG::generate(
@@ -270,21 +270,21 @@ std::pair<double, double> RuleRegion::getAreaPoint(const MissionArea& area) cons
 }
 
 /**
- * Gets the MissionArea for a terror-point in a specified zone and at Target's
+ * Gets the MissionArea for a terror-point in a specified zone-ID and at Target's
  * coordinates.
- * @param zone		- the zone-ID
+ * @param zoneId	- the zone-ID
  * @param target	- pointer to the Target for coordinates
  * @return, a MissionArea
  */
 MissionArea RuleRegion::getTerrorArea(
-		size_t zone,
+		size_t zoneId,
 		const Target* const target) const
 {
-	if (zone < _missionZones.size())
+	if (zoneId < _zones.size())
 	{
 		for (std::vector<MissionArea>::const_iterator
-				i = _missionZones[zone].areas.begin();
-				i != _missionZones[zone].areas.end();
+				i = _zones[zoneId].areas.begin();
+				i != _zones[zoneId].areas.end();
 				++i)
 		{
 			if (i->isPoint() == true
@@ -306,9 +306,9 @@ MissionArea RuleRegion::getTerrorArea(
  *
 MissionArea RuleRegion::getRandomMissionPoint(size_t zone) const
 {
-	if (zone < _missionZones.size())
+	if (zone < _zones.size())
 	{
-		std::vector<MissionArea> randArea = _missionZones[zone].areas;
+		std::vector<MissionArea> randArea = _zones[zone].areas;
 		for (std::vector<MissionArea>::const_iterator
 				i = randArea.begin();
 				i != randArea.end();

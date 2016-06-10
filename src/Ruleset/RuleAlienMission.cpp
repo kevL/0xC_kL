@@ -75,7 +75,7 @@ RuleAlienMission::RuleAlienMission(const std::string& type)
 		_type(type),
 		_points(0),
 		_objectiveType(alm_SCORE),
-		_specialZone(std::numeric_limits<size_t>::max()),
+		_objectiveZone(std::numeric_limits<size_t>::max()),
 		_retalCoef(-1)
 {}
 
@@ -100,16 +100,16 @@ void RuleAlienMission::load(const YAML::Node& node)
 	_type			= node["type"]			.as<std::string>(_type);
 	_points			= node["points"]		.as<int>(_points);
 	_waves			= node["waves"]			.as<std::vector<MissionWave>>(_waves);
-	_specialUfo		= node["specialUfo"]	.as<std::string>(_specialUfo);
-	_specialZone	= node["specialZone"]	.as<size_t>(_specialZone);
-	_weights		= node["missionWeights"].as<std::map<size_t, int>>(_weights);
+	_objectiveUfo		= node["objectiveUfo"]	.as<std::string>(_objectiveUfo);
+	_objectiveZone	= node["objectiveZone"]	.as<size_t>(_objectiveZone);
+	_weights		= node["weightsMission"].as<std::map<size_t, int>>(_weights);
 	_retalCoef		= node["retalCoef"]		.as<int>(_retalCoef);
-	_siteType		= node["siteType"]		.as<std::string>(_siteType);
+	_terrorType		= node["terrorType"]	.as<std::string>(_terrorType);
 
 	_objectiveType = static_cast<MissionObjective>(node["objectiveType"].as<int>(_objectiveType));
 
 
-	if (const YAML::Node& weights = node["raceWeights"]) // allow only full replacement of mission racial distribution.
+	if (const YAML::Node& weights = node["weightsRace"]) // allow only full replacement of mission racial distribution.
 	{
 		typedef std::map<size_t, WeightedOptions*> Associative;
 		typedef std::vector<std::pair<size_t, WeightedOptions*>> Linear;

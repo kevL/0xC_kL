@@ -102,10 +102,10 @@ private:
 
 	std::vector<RuleCity*> _cities;
 
-	WeightedOptions _missionWeights;		// Weighted list of the different mission types for this region.
-	size_t _regionWeight;					// Weight of this region when selecting regions for AlienMissions.
-	std::vector<MissionZone> _missionZones;	// All the mission zones in this region.
-	std::string _missionRegion;				// Do missions in the region defined by this string instead.
+	size_t _weight;						// Weight of this Region when selecting regions for AlienMissions.
+	WeightedOptions _weightsMission;	// Weighted list of the different mission-types for this Region.
+	std::vector<MissionZone> _zones;	// All the mission-zones in this Region.
+	std::string _missionRegion;			// Do missions in the Region defined by this string instead.
 
 
 	public:
@@ -138,7 +138,7 @@ private:
 		size_t getWeight() const;
 		/// Gets the weighted list of missions for the RuleRegion.
 		const WeightedOptions& getAvailableMissions() const
-		{ return _missionWeights; }
+		{ return _weightsMission; }
 
 		/// Gets the substitute region-type for an alien-mission.
 		const std::string& getMissionRegion() const
@@ -154,7 +154,7 @@ private:
 
 		/// Gets the MissionArea for a corresponding MissionZone and Target.
 		MissionArea getTerrorArea(
-				size_t zone,
+				size_t zoneId,
 				const Target* const target) const;
 		/// Gets a random MissionArea in the RuleRegion.
 //		MissionArea getRandomMissionPoint(size_t zone) const;

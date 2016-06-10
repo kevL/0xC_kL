@@ -63,7 +63,7 @@ private:
 		_ufoCount;
 	size_t
 		_waveCount,
-		_siteZone;
+		_terrorZone;
 
 	std::string
 		_race,
@@ -101,7 +101,7 @@ private:
 	std::pair<double, double> coordsLand(
 			const Globe& globe,
 			const RuleRegion& region,
-			const size_t zone) const;
+			const size_t zoneId) const;
 	/// Generates destination-coordinates inside a specified Region and MissionArea.
 	std::pair<double, double> coordsLand(
 			const Globe& globe,
@@ -198,7 +198,7 @@ private:
 		void ufoShotDown(const Ufo& ufo);
 
 		/// Flags tracking of the target-site.
-		void setTerrorSiteZone(size_t zone);
+		void setTerrorZone(size_t zoneId);
 };
 
 }

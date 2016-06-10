@@ -75,10 +75,10 @@ private:
 	int
 		_points,			// The mission's points.
 		_retalCoef;			// Modifier for chance of retaliation.
-	size_t _specialZone;	// The mission zone to use for spawning.
+	size_t _objectiveZone;	// The mission zone to use for spawning.
 	std::string
-		_siteType,			// The type of mission-site to generate.
-		_specialUfo,		// The UFO to use for spawning.
+		_terrorType,			// The type of mission-site to generate.
+		_objectiveUfo,		// The UFO to use for spawning.
 		_type;				// The mission's type-ID.
 
 	std::vector<MissionWave> _waves;									// The mission's waves.
@@ -119,11 +119,11 @@ private:
 		{ return _objectiveType; }
 
 		/// Gets the UFO type for special spawns.
-		const std::string& getSpecialUfo() const
-		{ return _specialUfo; }
+		const std::string& getObjectiveUfo() const
+		{ return _objectiveUfo; }
 		/// Gets the zone for spawning a site or base.
-		size_t getSpecialZone() const
-		{ return _specialZone; }
+		size_t getObjectiveZone() const
+		{ return _objectiveZone; }
 
 		/// Gets the chances of this mission based on the game-time.
 		int getWeight(size_t monthsPassed) const;
@@ -132,8 +132,8 @@ private:
 		int getRetaliation() const;
 
 		/// The type of TerrorSite to spawn if any.
-		const std::string& getSiteType() const
-		{ return _siteType; }
+		const std::string& getTerrorType() const
+		{ return _terrorType; }
 };
 
 }

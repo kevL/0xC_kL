@@ -1101,7 +1101,7 @@ void GeoscapeState::fabricateDebugPretext() // private.
 			break;
 
 		case DTG_ZONE:
-			_stDebug += "missionZones : ";
+			_stDebug += "zones : ";
 	}
 }
 
@@ -4086,9 +4086,9 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		typeRegion,
 		typeMission,
 		typeRace;
-	size_t siteZone (std::numeric_limits<size_t>::max()); // darn vc++ linker warning ...
+	size_t terrorZoneId (std::numeric_limits<size_t>::max()); // darn vc++ linker warning ...
 
-	if (directive->getSiteType() == true)
+	if (directive->terrorType() == true)
 	{
 		typeMission = directive->genDataType(month, GT_MISSION);
 		const std::vector<std::string> missionTypes (directive->getMissionTypes(month));
@@ -4105,7 +4105,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				break;
 		}
 
-		std::vector<std::pair<std::string, size_t>> validSiteZones;
+		std::vector<std::pair<std::string, size_t>> validZoneIds;
 
 		for (size_t
 				i = 0u;
@@ -4113,7 +4113,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				++i)
 		{
 			missionRule = _rules->getAlienMission(typeMission);
-			siteZone = missionRule->getSpecialZone();
+			terrorZoneId = missionRule->getObjectiveZone();
 
 			std::vector<std::string> regions;
 			if (directive->hasRegionWeights() == true)
@@ -4143,10 +4143,10 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				if (go == true)
 				{
 					const RuleRegion* const regionRule (_rules->getRegion(*j));
-					if (regionRule->getMissionZones().size() > siteZone)
+					if (regionRule->getMissionZones().size() > terrorZoneId)
 					{
 						size_t siteZoneTest (0u);
-						const std::vector<MissionArea> areas (regionRule->getMissionZones()[siteZone].areas);
+						const std::vector<MissionArea> areas (regionRule->getMissionZones()[terrorZoneId].areas);
 						for (std::vector<MissionArea>::const_iterator
 								k = areas.begin();
 								k != areas.end();
@@ -4158,7 +4158,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 																regionRule->getType(),
 																siteZoneTest) == true)
 							{
-								validSiteZones.push_back(std::make_pair(
+								validZoneIds.push_back(std::make_pair(
 																	regionRule->getType(),
 																	siteZoneTest));
 							}
@@ -4170,7 +4170,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 					j = regions.erase(j);
 			}
 
-			if (validSiteZones.empty() == true)
+			if (validZoneIds.empty() == true)
 			{
 				if (missionsTotal > 1u && ++missionsTest == missionsTotal)
 					missionsTest = 0u;
@@ -4181,12 +4181,12 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				break;
 		}
 
-		if (validSiteZones.empty() == true)
+		if (validZoneIds.empty() == true)
 			return false;
 
 
-		siteZone = std::numeric_limits<size_t>::max();
-		while (siteZone == std::numeric_limits<size_t>::max())
+		terrorZoneId = std::numeric_limits<size_t>::max();
+		while (terrorZoneId == std::numeric_limits<size_t>::max())
 		{
 			if (directive->hasRegionWeights() == true)
 				typeRegion = directive->genDataType(month, GT_REGION);
@@ -4199,8 +4199,8 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 				testArea ( 0);
 
 			for (std::vector<std::pair<std::string, size_t>>::const_iterator
-					i = validSiteZones.begin();
-					i != validSiteZones.end();
+					i = validZoneIds.begin();
+					i != validZoneIds.end();
 					++i)
 			{
 				if ((*i).first == typeRegion)
@@ -4215,13 +4215,13 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 			}
 
 			if (low != -1)
-				siteZone = validSiteZones[static_cast<size_t>(RNG::generate(low, high))].second;
+				terrorZoneId = validZoneIds[static_cast<size_t>(RNG::generate(low, high))].second;
 		}
 
 		strategy.addMissionLocation(
 								directive->getVarType(),
 								typeRegion,
-								siteZone,
+								terrorZoneId,
 								directive->getRepeatAvoidance());
 	}
 	else if (RNG::percent(directive->getTargetBaseOdds()) == true)
@@ -4358,13 +4358,13 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	mission->setRace(typeRace);
 	mission->setId(_gameSave->getCanonicalId("STR_ALIEN_MISSION"));
 	mission->setRegion(typeRegion, *_rules);
-	mission->setTerrorSiteZone(siteZone);
+	mission->setTerrorZone(terrorZoneId);
 	strategy.addMissionRun(directive->getVarType());
 	mission->start(directive->getDelay());
 
 	_gameSave->getAlienMissions().push_back(mission);
 
-	if (directive->usesTable() == true)
+	if (directive->isTracked() == true)
 		strategy.clearRegion(
 						typeRegion,
 						typeMission);
@@ -4465,12 +4465,12 @@ void GeoscapeState::setupLandMission() // private.
 	{
 		regRule = _rules->getRegion(regionsList[static_cast<size_t>(RNG::generate(0,
 																				  static_cast<int>(regionsList.size()) - 1))]);
-		if (regRule->getMissionZones().size() > missionRule.getSpecialZone()
+		if (regRule->getMissionZones().size() > missionRule.getObjectiveZone()
 			&& _gameSave->findAlienMission(
 										regRule->getType(),
 										alm_TERROR) == nullptr)
 		{
-			const MissionZone& zone = regRule->getMissionZones().at(missionRule.getSpecialZone());
+			const MissionZone& zone = regRule->getMissionZones().at(missionRule.getObjectiveZone());
 			for (std::vector<MissionArea>::const_iterator
 					j = zone.areas.begin();
 					j != zone.areas.end() && picked == false;

@@ -51,8 +51,8 @@ class RuleMissionScript
 
 private:
 	bool
-		_siteType,
-		_useTable;
+		_isTerror,
+		_isTracked;
 	int
 		_avoidRepeats,
 		_delay,
@@ -70,9 +70,9 @@ private:
 	std::vector<int> _conditions;
 
 	std::vector<std::pair<size_t, WeightedOptions*>>
-		_missionWeights,
-		_raceWeights,
-		_regionWeights;
+		_weightsMission,
+		_weightsRace,
+		_weightsRegion;
 
 	std::map<std::string, bool> _researchTriggers;
 
@@ -130,7 +130,7 @@ private:
 		const std::map<std::string, bool>& getResearchTriggers() const;
 
 		/// Checks if the MissionScript uses the "table".
-		bool usesTable() const;
+		bool isTracked() const;
 
 		/// Gets the list of all mission-types contained within the MissionScript.
 		const std::set<std::string> getAllMissionTypes() const;
@@ -144,10 +144,10 @@ private:
 				const size_t monthsPassed,
 				const GenerationType type) const;
 
-		/// Sets the MissionScript to a site-mission type directive or not.
-		void setSiteType(const bool siteType);
-		/// Gets if the MissionScript is a site-mission type or not.
-		bool getSiteType() const;
+		/// Sets the MissionScript to a terror-mission directive or not.
+		void terrorType(bool isTerror);
+		/// Gets if the MissionScript is a terror-mission or not.
+		bool terrorType() const;
 };
 
 }

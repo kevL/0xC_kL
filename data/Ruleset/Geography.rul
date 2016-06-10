@@ -667,11 +667,11 @@ regions:
       - name: STR_VOSTOKSTATION
         lon: 116.782
         lat: 75.2393
-    regionWeight: 4
-    missionWeights:
+    weight: 4
+    weightsMission:
       STR_ALIEN_BASE: 35
       STR_ALIEN_RESEARCH: 25
-    missionZones:
+    zones:
       -
         - [77, 108.125, 62.125, 76.125]
         - [340.75, 48.5, 57.25, 72.75]
@@ -731,11 +731,11 @@ regions:
       - name: STR_TIKSI
         lon: 128.75
         lat: -71.75
-    regionWeight: 4
-    missionWeights:
+    weight: 4
+    weightsMission:
       STR_ALIEN_BASE: 35
       STR_ALIEN_RESEARCH: 25
-    missionZones:
+    zones:
       -
         - [305.25, 333.125, -79.25, -75.25]
         - [273.25, 282.125, -73.375, -71.625]
@@ -852,14 +852,14 @@ regions:
         lon: 175.125
         lat: 41.25
         texture: -2
-    regionWeight: 10
-    missionWeights: #no Terror yet
+    weight: 10
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 4
       STR_ALIEN_BASE: 16
       STR_ALIEN_HARVEST: 11
       STR_ALIEN_INFILTRATION: 8
       STR_ALIEN_RESEARCH: 15
-    missionZones:
+    zones:
       -
         - [129.625, 155.375, -1.875, 9.75]
         - [165.75, 179.5, 33.125, 47.125]
@@ -998,14 +998,14 @@ regions:
       - name: STR_YEREVAN
         lon: 44.35
         lat: -40.1
-    regionWeight: 12
-    missionWeights: #no Terror yet
+    weight: 12
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 6
       STR_ALIEN_BASE: 8
       STR_ALIEN_HARVEST: 5
       STR_ALIEN_INFILTRATION: 10
       STR_ALIEN_RESEARCH: 5
-    missionZones:
+    zones:
       -
         - [39.5, 53.125, -27.625, -16.125]
         - [46.75, 65.25, -36.75, -29.75]
@@ -1293,14 +1293,14 @@ regions:
       - name: STR_ZAGREB
         lon: 16.34
         lat: -45.7
-    regionWeight: 16
-    missionWeights: #no Terror yet
+    weight: 16
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 15
       STR_ALIEN_BASE: 6
       STR_ALIEN_HARVEST: 10
       STR_ALIEN_INFILTRATION: 20
       STR_ALIEN_RESEARCH: 10
-    missionZones:
+    zones:
       -
         - [334, 36.125, -66.125, -58.125]
         - [348, 1.875, -59.375, -49.375]
@@ -1357,11 +1357,11 @@ regions:
         lat: 4.54
         texture: -2
 #    missionRegion: STR_SOUTHERN_AFRICA
-    regionWeight: 5
-    missionWeights:
+    weight: 5
+    weightsMission:
       STR_ALIEN_RESEARCH: 15
 #      STR_ALIEN_TERROR: 15
-    missionZones:
+    zones:
       -
         - [56, 57.25, -16, -14.25]
         - [72, 74.5, 21, 23.375]
@@ -1517,14 +1517,14 @@ regions:
       - name: STR_YAOUNDE
         lon: 11.13
         lat: -4.46
-    regionWeight: 12
-    missionWeights: #no Terror yet
+    weight: 12
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 8
       STR_ALIEN_BASE: 19
       STR_ALIEN_HARVEST: 8
       STR_ALIEN_INFILTRATION: 8
       STR_ALIEN_RESEARCH: 8
-    missionZones:
+    zones:
       -
         - [348.5, 24.5, -34.5, -25]
         - [339.625, 5.75, -18.375, -4.75]
@@ -1747,14 +1747,14 @@ regions:
       - name: STR_YELLOWKNIFE
         lon: 242.19
         lat: -65.52
-    regionWeight: 18
-    missionWeights: #no Terror yet
+    weight: 18
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 20
       STR_ALIEN_BASE: 20
       STR_ALIEN_HARVEST: 17
       STR_ALIEN_INFILTRATION: 20
       STR_ALIEN_RESEARCH: 14
-    missionZones:
+    zones:
       -
         - [200, 220, -65, -60]
         - [230, 260, -65, -55]
@@ -1832,11 +1832,11 @@ regions:
         lat: -47.45
         texture: -2
 #    missionRegion: STR_NORTH_AMERICA
-    regionWeight: 45
-    missionWeights:
+    weight: 45
+    weightsMission:
       STR_ALIEN_RESEARCH: 15
 #      STR_ALIEN_TERROR: 15
-    missionZones:
+    zones:
       -
         - [300, 301, -58, -57]
         - [306, 307, -53, -52]
@@ -1929,14 +1929,14 @@ regions:
         lon: 185
         lat: 21
         texture: -2
-    regionWeight: 5
-    missionWeights:
+    weight: 5
+    weightsMission:
       STR_ALIEN_BASE: 27
       STR_ALIEN_RESEARCH: 15
-#    missionWeights:
+#    weightsMission:
 #      STR_ALIEN_RESEARCH: 15
 #      STR_ALIEN_TERROR: 15
-    missionZones:
+    zones:
       -
         - [189.5, 220.625, -29.25, -15.25]
         - [172.5, 186.875, 10.875, 26.375]
@@ -2004,12 +2004,12 @@ regions:
       - name: STR_YEKATERINBURG
         lon: 63.653
         lat: -60.54
-    regionWeight: 10
-    missionWeights: #no Terror yet
+    weight: 10
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 4
       STR_ALIEN_BASE: 9
       STR_ALIEN_RESEARCH: 6
-    missionZones:
+    zones:
       -
         - [49.875, 80.125, -66.75, -46.5]
         - [67.25, 188.75, -72.5, -57.75]
@@ -2131,14 +2131,14 @@ regions:
       - name: STR_SAOPAULO
         lon: 313.325
         lat: 23.5
-    regionWeight: 10
-    missionWeights: #no Terror yet
+    weight: 10
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 12
       STR_ALIEN_BASE: 22
       STR_ALIEN_HARVEST: 24
       STR_ALIEN_INFILTRATION: 18
       STR_ALIEN_RESEARCH: 10
-    missionZones:
+    zones:
       -
         - [280.375, 297.625, -11.875, -4.125]
         - [279.125, 301.375, -1, 7.75]
@@ -2183,8 +2183,8 @@ regions:
       - [325, 5, 15, 60]
       - [5, 55, 40, 60]
 #    missionRegion: STR_ANTARCTICA
-    regionWeight: 5
-    missionWeights:
+    weight: 5
+    weightsMission:
       STR_ALIEN_RESEARCH: 15
 #      STR_ALIEN_TERROR: 15
     cities:
@@ -2196,7 +2196,7 @@ regions:
         lon: 330.5
         lat: 20.6
         texture: -2
-    missionZones:
+    zones:
       -
         - [303, 305.75, 51, 55]
         - [325, 330, 6, 13.125]
@@ -2369,14 +2369,14 @@ regions:
       - name: STR_XIAN
         lon: 109
         lat: -34.63
-    regionWeight: 15
-    missionWeights: #no Terror yet
+    weight: 15
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 21
       STR_ALIEN_BASE: 8
       STR_ALIEN_HARVEST: 13
       STR_ALIEN_INFILTRATION: 13
       STR_ALIEN_RESEARCH: 8
-    missionZones:
+    zones:
       -
         - [90.125, 108.25, -36.625, -22.625]
         - [93.125, 124.75, -16.375, 6.75]
@@ -2472,14 +2472,14 @@ regions:
         lon: 16.74
         lat: 22.23
         texture: -2
-    regionWeight: 8
-    missionWeights: #no Terror yet
+    weight: 8
+    weightsMission: #no Terror yet
       STR_ALIEN_ABDUCTION: 8
       STR_ALIEN_BASE: 9
       STR_ALIEN_HARVEST: 8
       STR_ALIEN_INFILTRATION: 8
       STR_ALIEN_RESEARCH: 7
-    missionZones:
+    zones:
       -
         - [7.125, 27, -0.375, 7.625]
         - [40.875, 56.625, 12, 30.625]

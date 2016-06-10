@@ -43,8 +43,8 @@ RuleMissionScript::RuleMissionScript(const std::string& type)
 		_maxRuns(-1),
 		_avoidRepeats(0),
 		_delay(0),
-		_useTable(true),
-		_siteType(false)
+		_isTracked(true),
+		_isTerror(false)
 {}
 
 /**
@@ -54,20 +54,20 @@ RuleMissionScript::RuleMissionScript(const std::string& type)
 RuleMissionScript::~RuleMissionScript()
 {
 	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
-			i = _missionWeights.begin();
-			i != _missionWeights.end();
+			i = _weightsMission.begin();
+			i != _weightsMission.end();
 			++i)
 		delete i->second;
 
 	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
-			i = _raceWeights.begin();
-			i != _raceWeights.end();
+			i = _weightsRace.begin();
+			i != _weightsRace.end();
 			++i)
 		delete i->second;
 
 	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
-			i = _regionWeights.begin();
-			i != _regionWeights.end();
+			i = _weightsRegion.begin();
+			i != _weightsRegion.end();
 			++i)
 		delete i->second;
 }
@@ -93,7 +93,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 
 	WeightedOptions* weightOpt;
 
-	if (const YAML::Node& weights = node["missionWeights"])
+	if (const YAML::Node& weights = node["weightsMission"])
 	{
 		for (YAML::const_iterator
 				i = weights.begin();
@@ -102,13 +102,13 @@ void RuleMissionScript::load(const YAML::Node& node)
 		{
 			weightOpt = new WeightedOptions();
 			weightOpt->load(i->second);
-			_missionWeights.push_back(std::make_pair(
+			_weightsMission.push_back(std::make_pair(
 												i->first.as<size_t>(0),
 												weightOpt));
 		}
 	}
 
-	if (const YAML::Node& weights = node["raceWeights"])
+	if (const YAML::Node& weights = node["weightsRace"])
 	{
 		for (YAML::const_iterator
 				i = weights.begin();
@@ -117,13 +117,13 @@ void RuleMissionScript::load(const YAML::Node& node)
 		{
 			weightOpt = new WeightedOptions();
 			weightOpt->load(i->second);
-			_raceWeights.push_back(std::make_pair(
+			_weightsRace.push_back(std::make_pair(
 											i->first.as<size_t>(0),
 											weightOpt));
 		}
 	}
 
-	if (const YAML::Node& weights = node["regionWeights"])
+	if (const YAML::Node& weights = node["weightsRegion"])
 	{
 		for (YAML::const_iterator
 				i = weights.begin();
@@ -132,14 +132,14 @@ void RuleMissionScript::load(const YAML::Node& node)
 		{
 			weightOpt = new WeightedOptions();
 			weightOpt->load(i->second);
-			_regionWeights.push_back(std::make_pair(
+			_weightsRegion.push_back(std::make_pair(
 												i->first.as<size_t>(0),
 												weightOpt));
 		}
 	}
 
 	_researchTriggers	= node["researchTriggers"]	.as<std::map<std::string, bool>>(_researchTriggers);
-	_useTable			= node["useTable"]			.as<bool>(_useTable);
+	_isTracked			= node["isTracked"]			.as<bool>(_isTracked);
 
 	if (_varType.empty() == true
 		&& (_maxRuns > 0 || _avoidRepeats > 0))
@@ -265,7 +265,7 @@ const std::vector<int>& RuleMissionScript::getConditions() const
  */
 bool RuleMissionScript::hasRaceWeights() const
 {
-	return (_raceWeights.empty() == false);
+	return (_weightsRace.empty() == false);
 }
 
 /**
@@ -274,7 +274,7 @@ bool RuleMissionScript::hasRaceWeights() const
  */
 bool RuleMissionScript::hasMissionWeights() const
 {
-	return (_missionWeights.empty() == false);
+	return (_weightsMission.empty() == false);
 }
 
 /**
@@ -283,7 +283,7 @@ bool RuleMissionScript::hasMissionWeights() const
  */
 bool RuleMissionScript::hasRegionWeights() const
 {
-	return (_regionWeights.empty() == false);
+	return (_weightsRegion.empty() == false);
 }
 
 /**
@@ -300,11 +300,11 @@ const std::map<std::string, bool>& RuleMissionScript::getResearchTriggers() cons
  * table.
  * @note Stops it coming up again in random selection but NOT if a missionScript
  * calls it by name.
- * @return, true to use table
+ * @return, true to track
  */
-bool RuleMissionScript::usesTable() const
+bool RuleMissionScript::isTracked() const
 {
-	return _useTable;
+	return _isTracked;
 }
 
 /**
@@ -315,8 +315,8 @@ const std::set<std::string> RuleMissionScript::getAllMissionTypes() const
 {
 	std::set<std::string> ret;
 	for (std::vector<std::pair<size_t, WeightedOptions*>>::const_iterator
-			i = _missionWeights.begin();
-			i != _missionWeights.end();
+			i = _weightsMission.begin();
+			i != _weightsMission.end();
 			++i)
 	{
 		std::vector<std::string> missionTypes ((*i).second->getTypes());
@@ -339,10 +339,10 @@ const std::set<std::string> RuleMissionScript::getAllMissionTypes() const
 const std::vector<std::string> RuleMissionScript::getMissionTypes(const size_t month) const
 {
 	std::vector<std::string> ret;
-	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_missionWeights.rbegin());
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_weightsMission.rbegin());
 	while (month < rit->first)
 	{
-		if (++rit == _missionWeights.rend())
+		if (++rit == _weightsMission.rend())
 		{
 			--rit;
 			break;
@@ -368,10 +368,10 @@ const std::vector<std::string> RuleMissionScript::getMissionTypes(const size_t m
 const std::vector<std::string> RuleMissionScript::getRegions(const size_t month) const
 {
 	std::vector<std::string> ret;
-	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_regionWeights.rbegin());
+	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_weightsRegion.rbegin());
 	while (month < rit->first)
 	{
-		if (++rit == _regionWeights.rend())
+		if (++rit == _weightsRegion.rend())
 		{
 			--rit;
 			break;
@@ -404,16 +404,16 @@ std::string RuleMissionScript::genDataType(
 	switch (type)
 	{
 		case GT_REGION:
-			rit = _regionWeights.rbegin();
+			rit = _weightsRegion.rbegin();
 			break;
 
 		case GT_RACE:
-			rit = _raceWeights.rbegin();
+			rit = _weightsRace.rbegin();
 			break;
 
 		default:
 		case GT_MISSION:
-			rit = _missionWeights.rbegin();
+			rit = _weightsMission.rbegin();
 	}
 
 	while (monthsPassed < rit->first)
@@ -423,21 +423,21 @@ std::string RuleMissionScript::genDataType(
 }
 
 /**
- * Sets this MissionScript to a site-mission type directive or not.
- * @param siteType - true if site-type
+ * Sets this MissionScript to a terror-mission directive or not.
+ * @param isTerror - true if terror
  */
-void RuleMissionScript::setSiteType(const bool siteType)
+void RuleMissionScript::terrorType(bool isTerror)
 {
-	_siteType = siteType;
+	_isTerror = isTerror;
 }
 
 /**
- * Gets if this MissionScript is a site-mission type or not.
- * @return, true if site-type
+ * Gets if this MissionScript is a terror-mission or not.
+ * @return, true if terror
  */
-bool RuleMissionScript::getSiteType() const
+bool RuleMissionScript::terrorType() const
 {
-	return _siteType;
+	return _isTerror;
 }
 
 }

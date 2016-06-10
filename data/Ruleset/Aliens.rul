@@ -1665,7 +1665,7 @@ alienItemLevels:
 alienMissions:
   - type: STR_ALIEN_RESEARCH
     points: 10
-    raceWeights:
+    weightsRace:
       0:
         STR_FLOATER: 20
         STR_SECTOID: 70
@@ -1706,7 +1706,7 @@ alienMissions:
         timer: 9000
   - type: STR_ALIEN_HARVEST
     points: 30
-    raceWeights:
+    weightsRace:
       0:
         STR_FLOATER: 30
         STR_SECTOID: 50
@@ -1762,7 +1762,7 @@ alienMissions:
         timer: 1500
   - type: STR_ALIEN_ABDUCTION
     points: 50
-    raceWeights:
+    weightsRace:
       0:
         STR_FLOATER: 40
         STR_SECTOID: 60
@@ -1802,8 +1802,8 @@ alienMissions:
   - type: STR_ALIEN_INFILTRATION
     points: 100
     objectiveType: 1
-    specialZone: 4 #Mission zone for alien bases
-    raceWeights:
+    objectiveZone: 4 #for alien base
+    weightsRace:
       0:
         STR_FLOATER: 20
         STR_SECTOID: 60
@@ -1868,8 +1868,8 @@ alienMissions:
   - type: STR_ALIEN_BASE
     points: 300
     objectiveType: 2
-    specialZone: 4 #Mission zone for alien bases
-    raceWeights:
+    objectiveZone: 4 #for alien base
+    weightsRace:
       0:
         STR_FLOATER: 50
         STR_SECTOID: 30
@@ -1922,11 +1922,11 @@ alienMissions:
   - type: STR_ALIEN_TERROR
     points: 200
     objectiveType: 3
-    specialZone: 3 #Mission zone for terror missions
-#    specialUfo: STR_TERROR_SHIP
+    objectiveZone: 3 #for terror city
+#    objectiveUfo: STR_TERROR_SHIP
 #    deployment: STR_TERROR_MISSION
 #    markerType: STR_TERROR_SITE
-    raceWeights:
+    weightsRace:
       0:
         STR_SECTOID: 30
         STR_FLOATER: 70
@@ -1973,8 +1973,8 @@ alienMissions:
   - type: STR_ALIEN_RETALIATION
     points: 0
     objectiveType: 4
-    specialUfo: STR_BATTLESHIP #Spawned for the final retaliation run
-    raceWeights: # In the case of a shootdown, race comes from the UFO that triggered the mission.
+    objectiveUfo: STR_BATTLESHIP #for the final retaliation run
+    weightsRace: # In the case of a shootdown, race comes from the UFO that triggered the mission.
       0:
         STR_SECTOID: 20
         STR_SNAKEMAN: 20
@@ -2002,8 +2002,8 @@ alienMissions:
   - type: STR_ALIEN_SUPPLY
     points: 25
     objectiveType: 5
-#    specialUfo: STR_SUPPLY_SHIP
-    raceWeights: {} #Special case, race comes from base.
+#    objectiveUfo: STR_SUPPLY_SHIP
+    weightsRace: {} #use base's race
     waves:
       - ufo: STR_SUPPLY_SHIP
         count: 1
