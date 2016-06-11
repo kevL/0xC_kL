@@ -43,8 +43,8 @@ class TerrorDetectedState
 
 private:
 
-	GeoscapeState* _geo;
-	const TerrorSite* _site;
+	GeoscapeState* _geoState;
+	const TerrorSite* _terrorSite;
 	TextButton
 		* _btnCancel,
 		* _btnCenter,
@@ -59,8 +59,8 @@ private:
 
 		/// Creates a TerrorDetected state.
 		TerrorDetectedState(
-				const TerrorSite* const site,
-				GeoscapeState* const geo);
+				const TerrorSite* const terrorSite,
+				GeoscapeState* const geoState);
 		/// Cleans up the TerrorDetected state.
 		~TerrorDetectedState();
 

@@ -76,7 +76,7 @@ private:
 		/// Gets the TerrorSite's ruleset.
 		const RuleAlienMission* getRules() const;
 		/// Gets the TerrorSite's deployment.
-		const RuleAlienDeployment* getSiteDeployment() const;
+		const RuleAlienDeployment* getTerrorDeployment() const;
 
 		/// Gets the TerrorSite's ID.
 		int getId() const;

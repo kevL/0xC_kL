@@ -21,6 +21,8 @@
 
 //#include <sstream>
 
+#include "GeoscapeCraftState.h"
+
 #include "../Battlescape/BattlescapeGenerator.h"
 #include "../Battlescape/BriefingState.h"
 
@@ -95,7 +97,7 @@ ConfirmLandingState::ConfirmLandingState(
 
 	_txtBegin		= new Text(206, 17, 25, 130);
 
-	_btnNo			= new TextButton(80, 18,  40, 152);
+	_btnPatrol		= new TextButton(80, 18,  40, 152);
 	_btnYes			= new TextButton(80, 18, 136, 152);
 
 	setInterface("confirmLanding");
@@ -107,7 +109,7 @@ ConfirmLandingState::ConfirmLandingState(
 	add(_txtMessage,	"text",		"confirmLanding");
 	add(_txtMessage2,	"text",		"confirmLanding");
 	add(_txtBegin,		"text",		"confirmLanding");
-	add(_btnNo,			"button",	"confirmLanding");
+	add(_btnPatrol,		"button",	"confirmLanding");
 	add(_btnYes,		"button",	"confirmLanding");
 
 	centerAllSurfaces();
@@ -198,13 +200,13 @@ ConfirmLandingState::ConfirmLandingState(
 					if (terrainList.empty() == true)
 					{
 						// get a Terrain from RuleAlienDeployment
-						const RuleAlienDeployment* const ruleDeploy (site->getSiteDeployment());
+						const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployment());
 						terrainList = ruleDeploy->getDeployTerrains();
 					} */
 
 					// get a Terrain from RuleAlienDeployment first
 					Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleAlienDeployment";
-					const RuleAlienDeployment* const ruleDeploy (site->getSiteDeployment());
+					const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployment());
 					terrainList = ruleDeploy->getDeployTerrains();
 
 					// second, check for Terrains in Globe-Texture(INT) ...
@@ -325,19 +327,34 @@ ConfirmLandingState::ConfirmLandingState(
 	}
 	else if (ufo != nullptr)
 	{
-		_btnYes->setText(tr("STR_INTERCEPT"));
-		_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnInterceptClick);
-		_btnYes->onKeyboardPress(
-						(ActionHandler)& ConfirmLandingState::btnInterceptClick,
-						Options::keyOk);
-		_btnYes->onKeyboardPress(
-						(ActionHandler)& ConfirmLandingState::btnInterceptClick,
-						Options::keyOkKeypad);
+		switch (ufo->getUfoStatus())
+		{
+			case Ufo::LANDED:
+				_btnYes->setText(tr("STR_INTERCEPT"));
+				_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnInterceptClick);
+				_btnYes->onKeyboardPress(
+								(ActionHandler)& ConfirmLandingState::btnInterceptClick,
+								Options::keyOk);
+				_btnYes->onKeyboardPress(
+								(ActionHandler)& ConfirmLandingState::btnInterceptClick,
+								Options::keyOkKeypad);
+				break;
+
+			default:
+				_btnYes->setText(tr("STR_RETURN_TO_BASE"));
+				_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnBaseClick);
+				_btnYes->onKeyboardPress(
+								(ActionHandler)& ConfirmLandingState::btnBaseClick,
+								Options::keyOk);
+				_btnYes->onKeyboardPress(
+								(ActionHandler)& ConfirmLandingState::btnBaseClick,
+								Options::keyOkKeypad);
+		}
 	}
 
-	_btnNo->setText(tr("STR_PATROL"));
-	_btnNo->onMouseClick((ActionHandler)& ConfirmLandingState::btnNoClick);
-	_btnNo->onKeyboardPress(
+	_btnPatrol->setText(tr("STR_PATROL"));
+	_btnPatrol->onMouseClick((ActionHandler)& ConfirmLandingState::btnNoClick);
+	_btnPatrol->onKeyboardPress(
 					(ActionHandler)& ConfirmLandingState::btnNoClick,
 					Options::keyCancel);
 }
@@ -366,7 +383,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	_game->popState();
 
 	Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getDestination()));
-	TerrorSite* const site (dynamic_cast<TerrorSite*>(_craft->getDestination()));
+	TerrorSite* const terrorSite (dynamic_cast<TerrorSite*>(_craft->getDestination()));
 	AlienBase* const alienBase (dynamic_cast<AlienBase*>(_craft->getDestination()));
 
 	SavedBattleGame* const battleSave (new SavedBattleGame(
@@ -397,12 +414,12 @@ void ConfirmLandingState::btnYesClick(Action*)
 //		bGen.setTacTexture(_texRule); // was an INT <- !!!
 //		bGen.setIsCity(_city != nullptr); // kL
 	}
-	else if (site != nullptr)
+	else if (terrorSite != nullptr)
 	{
-		battleSave->setTacticalType(site->getSiteDeployment()->getType()); // "STR_TERROR_MISSION" / "STR_PORT_ATTACK"
+		battleSave->setTacticalType(terrorSite->getTerrorDeployment()->getType()); // "STR_TERROR_MISSION" / "STR_PORT_ATTACK"
 
-		bGen.setTerrorSite(site);
-		bGen.setAlienRace(site->getAlienRace());
+		bGen.setTerrorSite(terrorSite);
+		bGen.setAlienRace(terrorSite->getAlienRace());
 		bGen.setTerrain(_terrainRule); // kL
 		bGen.setShade(_shade);
 //		bGen.setTacTexture(_texRule); // was an INT <- !!!
@@ -426,6 +443,16 @@ void ConfirmLandingState::btnYesClick(Action*)
 }
 
 /**
+ * Sets the Craft to patrol and exits to the previous state.
+ * @param action - pointer to an Action
+ */
+void ConfirmLandingState::btnNoClick(Action*)
+{
+	_craft->setDestination();
+	_game->popState();
+}
+
+/**
  * The Craft stays targeted on a UFO if there are no Soldiers onboard.
  * @param action - pointer to an Action
  */
@@ -435,12 +462,12 @@ void ConfirmLandingState::btnInterceptClick(Action*)
 }
 
 /**
- * Sets the Craft to patrol and exits to the previous state.
+ * Returns the Craft back to its Base.
  * @param action - pointer to an Action
  */
-void ConfirmLandingState::btnNoClick(Action*)
+void ConfirmLandingState::btnBaseClick(Action*)
 {
-	_craft->setDestination();
+	_craft->returnToBase();
 	_game->popState();
 }
 

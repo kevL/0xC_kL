@@ -2482,7 +2482,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const site) const // private.
 		expired = false;
 		site->setSecondsLeft(site->getSecondsLeft() - 1800);
 
-		basicPts = site->getSiteDeployment()->getPointsPer30(); // AlienDeployments pts have priority over RuleAlienMission pts
+		basicPts = site->getTerrorDeployment()->getPointsPer30(); // AlienDeployments pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
 			basicPts = site->getRules()->getPoints() / 10;
 
@@ -2492,7 +2492,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const site) const // private.
 	{
 		expired = true;
 
-		basicPts = site->getSiteDeployment()->getDespawnPenalty(); // AlienDeployments pts have priority over RuleAlienMission pts
+		basicPts = site->getTerrorDeployment()->getDespawnPenalty(); // AlienDeployments pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
 			basicPts = site->getRules()->getPoints() * 5;
 

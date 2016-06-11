@@ -90,7 +90,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_craft(nullptr),
 		_ufo(nullptr),
 		_base(nullptr),
-		_site(nullptr),
+		_terrorSite(nullptr),
 		_alienBase(nullptr),
 		_terrainRule(nullptr),
 		_shade(0),
@@ -180,12 +180,12 @@ void BattlescapeGenerator::setBase(Base* const base)
 
 /**
  * Sets the aLien TerrorSite involved in the battle.
- * @param site - pointer to TerrorSite
+ * @param terrorSite - pointer to TerrorSite
  */
-void BattlescapeGenerator::setTerrorSite(TerrorSite* const site)
+void BattlescapeGenerator::setTerrorSite(TerrorSite* const terrorSite)
 {
-	_site = site;
-	_site->setTactical();
+	_terrorSite = terrorSite;
+	_terrorSite->setTactical();
 }
 
 /**
@@ -290,7 +290,7 @@ void BattlescapeGenerator::run()
 		else // UFO crashed/landed or TerrorSite
 		{
 			const Target* target;
-			if (_site != nullptr) target = _site;
+			if (_terrorSite != nullptr) target = _terrorSite;
 			else target = _ufo;
 			_terrainRule = _rules->getTerrain(_texture->getTextureTerrain(target));
 		}
@@ -298,7 +298,7 @@ void BattlescapeGenerator::run()
 /*	if (ruleDeploy->getDeployTerrains().empty() == true) // UFO crashed/landed
 	{
 		Log(LOG_INFO) << "bGen::run() deployment-terrains NOT valid";
-		if (_siteTerrain == nullptr) // kL
+		if (_terrorSiteTerrain == nullptr) // kL
 		{
 			Log(LOG_INFO) << ". siteTexture = " << _texture;
 			double lat;

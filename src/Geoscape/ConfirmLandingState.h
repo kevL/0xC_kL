@@ -59,7 +59,7 @@ private:
 		* _txtShade,
 		* _txtTexture;
 	TextButton
-		* _btnNo,
+		* _btnPatrol,
 		* _btnYes;
 	Window* _window;
 
@@ -81,9 +81,10 @@ private:
 		void btnYesClick(Action* action);
 		/// Handler for clicking the No/Patrol button.
 		void btnNoClick(Action* action);
-
 		/// Handler for clicking the Intercept button.
 		void btnInterceptClick(Action* action);
+		/// Handler for clicking the Return To Base button.
+		void btnBaseClick(Action* action);
 
 		/// Selects a terrain-type for crashed or landed UFOs.
 //		RuleTerrain* selectTerrain(const double lat);

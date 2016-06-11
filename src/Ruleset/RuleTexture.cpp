@@ -79,44 +79,44 @@ const std::map<std::string, int>& RuleTexture::getTextureDeployments() const
  */
 std::string RuleTexture::getTextureDeployment() const
 {
-	if (_deployTypes.empty() == true)
-		return "";
-
-	std::map<std::string, int>::const_iterator i (_deployTypes.begin());
-	if (_deployTypes.size() == 1u)
-		return i->first;
-
-	int totalWeight (0);
-	for (
-			;
-			i != _deployTypes.end();
-			++i)
+	if (_deployTypes.empty() == false)
 	{
-		totalWeight += i->second;
-	}
+		std::map<std::string, int>::const_iterator i (_deployTypes.begin());
+		if (_deployTypes.size() == 1u)
+			return i->first;
 
-	if (totalWeight != 0)
-	{
-		int pick (RNG::generate(1, totalWeight));
+		int totalWeight (0);
 		for (
-				i = _deployTypes.begin();
+				;
 				i != _deployTypes.end();
 				++i)
 		{
-			if (pick <= i->second)
-				return i->first;
-			else
-				pick -= i->second;
+			totalWeight += i->second;
+		}
+
+		if (totalWeight != 0)
+		{
+			int pick (RNG::generate(1, totalWeight));
+			for (
+					i = _deployTypes.begin();
+					i != _deployTypes.end();
+					++i)
+			{
+				if (pick <= i->second)
+					return i->first;
+				else
+					pick -= i->second;
+			}
 		}
 	}
 	return "";
 }
 
 /**
- * Calculates a random terrain for a mission-target based on this texture's
- * available TextureDetail.
- * @param target - pointer to the mission Target (default nullptr to exclude geographical bounds)
- * @return, terrain type
+ * Calculates a random terrain for a Target based on this texture-rule's
+ * available TextureDetails.
+ * @param target - pointer to a target (default nullptr to exclude geographical bounds)
+ * @return, terrain-type
  */
 std::string RuleTexture::getTextureTerrain(const Target* const target) const
 {
@@ -171,7 +171,7 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 				return i->second;
 		}
 	}
-	return ""; // this means nothing. Literally. That is, if the code runs here -> CTD.
+	return "";
 }
 
 }

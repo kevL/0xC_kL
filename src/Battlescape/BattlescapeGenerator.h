@@ -87,7 +87,7 @@ private:
 	Craft* _craft;
 	Game* _game;
 	MapBlock* _testBlock;
-	TerrorSite* _site;
+	TerrorSite* _terrorSite;
 	ResourcePack* _res;
 	Ruleset* _rules;
 	RuleTerrain* _terrainRule;
@@ -224,7 +224,7 @@ private:
 		/// Sets the xCom Base.
 		void setBase(Base* const base);
 		/// Sets the aLien TerrorSite.
-		void setTerrorSite(TerrorSite* const site);
+		void setTerrorSite(TerrorSite* const terrorSite);
 		/// Sets the AlienBase.
 		void setAlienBase(AlienBase* const base);
 		/// Sets the terrain-rule.

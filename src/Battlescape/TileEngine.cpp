@@ -1669,31 +1669,26 @@ bool TileEngine::checkReactionFire(
 {
 	//Log(LOG_INFO) << "TileEngine::checkReactionFire() vs id-" << triggerUnit->getId();
 	//Log(LOG_INFO) << ". tuSpent = " << tuSpent;
-	if (_battleSave->getSide() == FACTION_NEUTRAL						// no reaction on civilian turn.
-		|| triggerUnit->getFaction() != _battleSave->getSide()			// spotted unit must be current side's faction
-		|| triggerUnit->getTile() == nullptr							// and must be on map
-		|| triggerUnit->isOut_t(OUT_HLTH_STUN) == true)					// and must be conscious
-//		|| _battleSave->getBattleGame()->playerPanicHandled() == false)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
-	{
-		return false;
-	}
-
-	// NOTE: If RF is triggered by melee (or walking/kneeling), a target that is
-	// a potential RF-spotter will not be damaged yet and hence the damage +
-	// checkCasualties() happens later; but if RF is triggered by a firearm,
-	// a target that is a potential RF-spotter *will* be damaged when this runs
-	// since damage + checkCasualties() has already been called. fucko*
-
 	bool ret (false);
 
-	if (triggerUnit->getFaction() == FACTION_PLAYER // MC'd aLiens do not RF.
-		|| triggerUnit->isMindControlled() == false)
+	if (_battleSave->getSide() != FACTION_NEUTRAL						// no reaction on civilian turn.
+		&& triggerUnit->getFaction() == _battleSave->getSide()			// spotted unit must be current side's faction
+		&& triggerUnit->getTile() != nullptr							// and must be on map
+		&& triggerUnit->isOut_t(OUT_HLTH_STUN) == false					// and must be conscious
+//		&& _battleSave->getBattleGame()->playerPanicHandled() == true)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
+		&& (triggerUnit->getFaction() == FACTION_PLAYER					// Mc'd aLiens do not RF and Xcom does not RF on Mc'd Xcom-units.
+			|| triggerUnit->isMindControlled() == false))
 	{
+		// NOTE: If RF is triggered by melee (or walking/kneeling), a target that is
+		// a potential RF-spotter will not be damaged yet and hence the damage +
+		// checkCasualties() happens later; but if RF is triggered by a firearm,
+		// a target that is a potential RF-spotter *will* be damaged when this runs
+		// since damage + checkCasualties() has already been called. fucko*
 		//Log(LOG_INFO) << ". Target = VALID";
 		std::vector<BattleUnit*> spotters (getSpottingUnits(triggerUnit));
 		//Log(LOG_INFO) << ". # spotters = " << spotters.size();
 
-		BattleUnit* reactorUnit (getReactor( // get the first man up to bat.
+		BattleUnit* reactorUnit (getReactor( // get the first actor up to bat.
 										spotters,
 										triggerUnit,
 										tuSpent,
@@ -1739,10 +1734,8 @@ bool TileEngine::checkReactionFire(
 								autoSpot);
 			//Log(LOG_INFO) << ". . NEXT AT BAT id-" << reactorUnit->getId();
 		}
-
-		spotters.clear();
+//		spotters.clear();
 	}
-
 	return ret;
 }
 
@@ -1915,34 +1908,34 @@ bool TileEngine::reactionShot(
 	_rfAction->type = BA_NONE;
 	_rfAction->TU = 0;
 
-	if (_rfAction->weapon->getRules()->getBattleType() == BT_MELEE)
+	switch (_rfAction->weapon->getRules()->getBattleType())
 	{
-		_rfAction->type = BA_MELEE;
-		_rfAction->TU = _rfAction->actor->getActionTu(BA_MELEE, _rfAction->weapon);
-		if (_rfAction->TU == 0
-			|| _rfAction->TU > _rfAction->actor->getTimeUnits())
+		case BT_MELEE:
 		{
-			return false;
+			_rfAction->type = BA_MELEE;
+			_rfAction->TU = _rfAction->actor->getActionTu(BA_MELEE, _rfAction->weapon);
+			if (_rfAction->TU == 0
+				|| _rfAction->TU > _rfAction->actor->getTimeUnits())
+			{
+				return false;
+			}
+
+			bool canMelee (false);
+			for (int
+					i = 0;
+					i != 8 && canMelee == false;
+					++i)
+			{
+				canMelee = validMeleeRange(unit, i, targetUnit);
+			}
+			if (canMelee == false) return false;
+			break;
 		}
 
-		bool canMelee (false);
-		for (int
-				i = 0;
-				i != 8 && canMelee == false;
-				++i)
-		{
-			canMelee = validMeleeRange(unit, i, targetUnit);
-		}
-		if (canMelee == false) return false;
-	}
-	else
-	{
-		chooseFireMethod();
-		if (_rfAction->TU == 0
-			|| _rfAction->type == BA_NONE)
-		{
-			return false;
-		}
+		default:
+			chooseFireMethod();
+			if (_rfAction->TU == 0 || _rfAction->type == BA_NONE)
+				return false;
 	}
 
 	_rfAction->targeting = true;

@@ -43,15 +43,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the TerrorDetected window.
- * @param site	- pointer to the respective TerrorSite
- * @param geo	- pointer to GeoscapeState
+ * @param terrorSite	- pointer to the respective TerrorSite
+ * @param geoState		- pointer to GeoscapeState
  */
 TerrorDetectedState::TerrorDetectedState(
-		const TerrorSite* const site,
-		GeoscapeState* const geo)
+		const TerrorSite* const terrorSite,
+		GeoscapeState* const geoState)
 	:
-		_site(site),
-		_geo(geo)
+		_terrorSite(terrorSite),
+		_geoState(geoState)
 {
 	_fullScreen = false;
 
@@ -76,7 +76,7 @@ TerrorDetectedState::TerrorDetectedState(
 	centerAllSurfaces();
 
 
-	_window->setBackground(_game->getResourcePack()->getSurface(_site->getSiteDeployment()->getAlertBackground()));
+	_window->setBackground(_game->getResourcePack()->getSurface(_terrorSite->getTerrorDeployment()->getAlertBackground()));
 
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
 	_btnIntercept->onMouseClick((ActionHandler)& TerrorDetectedState::btnInterceptClick);
@@ -96,16 +96,16 @@ TerrorDetectedState::TerrorDetectedState(
 					(ActionHandler)& TerrorDetectedState::btnCancelClick,
 					Options::keyCancel);
 
-	_txtTitle->setText(tr(_site->getSiteDeployment()->getAlertMessage()));
+	_txtTitle->setText(tr(_terrorSite->getTerrorDeployment()->getAlertMessage()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setWordWrap();
 
-	_txtCity->setText(tr(_site->getCity()));
+	_txtCity->setText(tr(_terrorSite->getCity()));
 	_txtCity->setBig();
 	_txtCity->setAlign(ALIGN_CENTER);
 
-	_geo->resetTimer();
+	_geoState->resetTimer();
 
 	_game->getResourcePack()->fadeMusic(_game, 325);
 	_game->getResourcePack()->playMusic(res_MUSIC_GEO_TERROR_SPLASH);
@@ -127,7 +127,7 @@ TerrorDetectedState::~TerrorDetectedState()
 void TerrorDetectedState::btnInterceptClick(Action*)
 {
 	_game->popState();
-	_game->pushState(new InterceptState(nullptr, _geo));
+	_game->pushState(new InterceptState(nullptr, _geoState));
 }
 
 /**
@@ -136,9 +136,9 @@ void TerrorDetectedState::btnInterceptClick(Action*)
  */
 void TerrorDetectedState::btnCenterClick(Action*)
 {
-	_geo->getGlobe()->center(
-						_site->getLongitude(),
-						_site->getLatitude());
+	_geoState->getGlobe()->center(
+							_terrorSite->getLongitude(),
+							_terrorSite->getLatitude());
 	_game->popState();
 }
 

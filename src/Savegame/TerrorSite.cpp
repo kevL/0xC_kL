@@ -119,7 +119,7 @@ const RuleAlienMission* TerrorSite::getRules() const
  * Gets the rule for this TerrorSite's deployment.
  * @return, pointer to RuleAlienDeployment rule
  */
-const RuleAlienDeployment* TerrorSite::getSiteDeployment() const
+const RuleAlienDeployment* TerrorSite::getTerrorDeployment() const
 {
 	return _ruleDeploy;
 }
