@@ -175,9 +175,11 @@ void ProductionCompleteState::btnOk5SecsClick(Action*)
  */
 void ProductionCompleteState::btnGotoBaseClick(Action*)
 {
-	_geoState->resetTimer();
-	_game->popState();
+	_game->getScreen()->fadeScreen();
 
+	_geoState->resetTimer();
+
+	_game->popState();
 	_game->pushState(new BasescapeState(
 									_base,
 									_geoState->getGlobe()));

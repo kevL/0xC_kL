@@ -286,7 +286,7 @@ protected:
 		const std::vector<std::string>& getAlienRacesList() const;
 		/// Gets the rules for RuleAlienDeployment types.
 		RuleAlienDeployment* getDeployment(const std::string& type) const;
-		/// Gets the available AlienDeployments.
+		/// Gets the available RuleAlienDeployments.
 		const std::vector<std::string>& getDeploymentsList() const;
 
 		/// Gets the rules for Armor types.

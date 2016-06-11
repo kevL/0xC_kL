@@ -158,7 +158,10 @@ void CraftReadyState::btnOk5SecsClick(Action*)
  */
 void CraftReadyState::btnGoToBaseClick(Action*)
 {
+	_game->getScreen()->fadeScreen();
+
 	_geoState->resetTimer();
+
 	_game->popState();
 	_game->pushState(new BasescapeState(
 									_craft->getBase(),
@@ -172,6 +175,7 @@ void CraftReadyState::btnGoToBaseClick(Action*)
 void CraftReadyState::btnCraftInfoClick(Action*)
 {
 	_geoState->resetTimer();
+
 	_game->popState();
 	_game->pushState(new GeoscapeCraftState(_craft, _geoState));
 }

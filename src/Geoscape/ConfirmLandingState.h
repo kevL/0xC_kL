@@ -79,8 +79,8 @@ private:
 
 		/// Handler for clicking the Yes button.
 		void btnYesClick(Action* action);
-		/// Handler for clicking the No/Patrol button.
-		void btnNoClick(Action* action);
+		/// Handler for clicking the Patrol button.
+		void btnPatrolClick(Action* action);
 		/// Handler for clicking the Intercept button.
 		void btnInterceptClick(Action* action);
 		/// Handler for clicking the Return To Base button.

@@ -291,6 +291,8 @@ void InterceptState::btnCancelClick(Action*)
  */
 void InterceptState::btnGotoBaseClick(Action*)
 {
+	_game->getScreen()->fadeScreen();
+
 	_geoState->resetTimer();
 
 	_game->popState();

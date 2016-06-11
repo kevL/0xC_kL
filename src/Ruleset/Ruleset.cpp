@@ -1577,7 +1577,7 @@ RuleAlienDeployment* Ruleset::getDeployment(const std::string& type) const
 
 /**
  * Returns the list of all alien deployments provided by the ruleset.
- * @return, reference to the vector of AlienDeployments
+ * @return, reference to the vector of RuleAlienDeployments
  */
 const std::vector<std::string>& Ruleset::getDeploymentsList() const
 {

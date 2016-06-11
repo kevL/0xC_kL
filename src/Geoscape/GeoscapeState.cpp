@@ -2463,10 +2463,10 @@ void GeoscapeState::time30Minutes()
  * Processes a TerrorSite.
  * @note This will count down towards expiring a TerrorSite and handles its
  * expiration.
- * @param site - pointer to a TerrorSite
+ * @param terrorSite - pointer to a TerrorSite
  * @return, true if terror is finished (w/out xCom mission success)
  */
-bool GeoscapeState::processTerrorSite(TerrorSite* const site) const // private.
+bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // private.
 {
 	bool expired;
 
@@ -2477,14 +2477,14 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const site) const // private.
 		aLienPts,
 		basicPts;
 
-	if (site->getSecondsLeft() > 1799)
+	if (terrorSite->getSecondsLeft() > 1799)
 	{
 		expired = false;
-		site->setSecondsLeft(site->getSecondsLeft() - 1800);
+		terrorSite->setSecondsLeft(terrorSite->getSecondsLeft() - 1800);
 
-		basicPts = site->getTerrorDeployment()->getPointsPer30(); // AlienDeployments pts have priority over RuleAlienMission pts
+		basicPts = terrorSite->getTerrorDeployment()->getPointsPer30(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
-			basicPts = site->getRules()->getPoints() / 10;
+			basicPts = terrorSite->getRules()->getPoints() / 10;
 
 		aLienPts = basicPts + (diff * 10) + month;
 	}
@@ -2492,23 +2492,23 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const site) const // private.
 	{
 		expired = true;
 
-		basicPts = site->getTerrorDeployment()->getDespawnPenalty(); // AlienDeployments pts have priority over RuleAlienMission pts
+		basicPts = terrorSite->getTerrorDeployment()->getDespawnPenalty(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
-			basicPts = site->getRules()->getPoints() * 5;
+			basicPts = terrorSite->getRules()->getPoints() * 5;
 
 		aLienPts = basicPts + (diff * (235 + month));
 	}
 
 	if (aLienPts != 0)
 		_gameSave->scorePoints(
-							site->getLongitude(),
-							site->getLatitude(),
+							terrorSite->getLongitude(),
+							terrorSite->getLatitude(),
 							aLienPts,
 							true);
 
 	if (expired == true)
 	{
-		delete site;
+		delete terrorSite;
 		return true;
 	}
 	return false;
@@ -2523,7 +2523,7 @@ void GeoscapeState::time1Hour()
 	if (_gameSave->getUfos()->empty() == false)
 	{
 		// TODO: pt = pt * _rules->getAlienMission("STR_ALIEN_*")->getPoints() / 100;
-		const int pt (((_gameSave->getMonthsPassed() + 2) / 4)
+		const int pt (((_gameSave->getMonthsPassed() + 2) >> 2u)
 					  + static_cast<int>(_gameSave->getDifficulty()));	// basic Victory Points
 
 		int aLienPts;													// Beginner @ 1st/2nd month ought add 0-pts. here

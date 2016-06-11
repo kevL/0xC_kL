@@ -241,6 +241,7 @@ void ItemsArrivingState::btnOk5SecsClick(Action*)
  *
 void ItemsArrivingState::btnGotoBaseClick(Action*)
 {
+	_game->getScreen()->fadeScreen();
 	_geoState->resetTimer();
 	_game->popState();
 	_game->pushState(new BasescapeState(_base, _geoState->getGlobe()));
@@ -256,8 +257,11 @@ void ItemsArrivingState::lstGoToBasePress(Action* action)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		Base* const base (_bases.at(_lstTransfers->getSelectedRow()));
-		if (base != nullptr)													// Make sure player hasn't deconstructed a Base while
-			_game->pushState(new BasescapeState(base, _geoState->getGlobe()));	// jumping back & forth between Bases and the list.
+		if (base != nullptr)	// Make sure player hasn't deconstructed a Base while
+		{						// jumping back & forth between Bases and the list.
+			_game->getScreen()->fadeScreen();
+			_game->pushState(new BasescapeState(base, _geoState->getGlobe()));
+		}
 	}
 }
 

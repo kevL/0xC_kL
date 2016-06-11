@@ -1198,7 +1198,7 @@ en-US:
   STR_MANAGE_CONTAINMENT: "aLien Containment"
   STR_STORAGE_EXCEEDED: "STORAGE SPACE EXCEEDED!{NEWLINE}{SMALLLINE}Insufficient storage space at {0}.{NEWLINE}{NEWLINE}Excess items must be sold or transfered to another Base."
   STR_DETAILS: "{ALT}{0}"
-  STR_GO_TO_BASE: "da Batcave"
+  STR_GO_TO_BASE: "Batcave"
   STR_DISABLEAUTOEQUIP: "Disable auto-equip"
   STR_DISABLEAUTOEQUIP_DESC: "Disable auto-equipping of new soldiers before battle."
   STR_ALLOWPSISTRENGTHIMPROVEMENT: "Allow Psi-Strength Improvement"

@@ -21,8 +21,6 @@
 
 //#include <sstream>
 
-#include "GeoscapeCraftState.h"
-
 #include "../Battlescape/BattlescapeGenerator.h"
 #include "../Battlescape/BriefingState.h"
 
@@ -353,9 +351,9 @@ ConfirmLandingState::ConfirmLandingState(
 	}
 
 	_btnPatrol->setText(tr("STR_PATROL"));
-	_btnPatrol->onMouseClick((ActionHandler)& ConfirmLandingState::btnNoClick);
+	_btnPatrol->onMouseClick((ActionHandler)& ConfirmLandingState::btnPatrolClick);
 	_btnPatrol->onKeyboardPress(
-					(ActionHandler)& ConfirmLandingState::btnNoClick,
+					(ActionHandler)& ConfirmLandingState::btnPatrolClick,
 					Options::keyCancel);
 }
 
@@ -446,7 +444,7 @@ void ConfirmLandingState::btnYesClick(Action*)
  * Sets the Craft to patrol and exits to the previous state.
  * @param action - pointer to an Action
  */
-void ConfirmLandingState::btnNoClick(Action*)
+void ConfirmLandingState::btnPatrolClick(Action*)
 {
 	_craft->setDestination();
 	_game->popState();

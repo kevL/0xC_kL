@@ -165,7 +165,7 @@ private:
 	void fabricateDebugPretext();
 
 	/// Processes a TerrorSite.
-	bool processTerrorSite(TerrorSite* const site) const;
+	bool processTerrorSite(TerrorSite* const terrorSite) const;
 
 	/// Assigns whether an aLien cracked under pressure.
 	void getAlienCracks(
