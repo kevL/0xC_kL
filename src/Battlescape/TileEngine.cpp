@@ -353,7 +353,7 @@ void TileEngine::addLight( // private.
  * Calculates FoV of a single BattleUnit.
  * @param unit		- pointer to a BattleUnit
  * @param reveal	- true to reveal Tiles (default true)
- * @return, true when previously concealed units are spotted
+ * @return, true if previously concealed units are spotted
  */
 bool TileEngine::calcFov(
 		BattleUnit* const unit,

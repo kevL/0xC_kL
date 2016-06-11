@@ -2240,7 +2240,7 @@ void SavedBattleGame::reviveUnit(
 			_te->calculateUnitLighting();
 			_te->calcFovPos(
 						unit->getPosition(),
-						true);
+						false, true);
 			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();
