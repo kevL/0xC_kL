@@ -948,6 +948,7 @@ void InventoryState::btnClearUnitClick(Action*)
 
 /**
  * Clears the ground-tile inventory and returns the items to base-stores.
+ * @note This works for Craft-equip only, for Base-equip it would be irrelevant.
  * @param action - pointer to an Action
  */
 void InventoryState::btnClearGroundClick(Action*)
@@ -955,7 +956,7 @@ void InventoryState::btnClearGroundClick(Action*)
 	if (_parent == nullptr									// don't accept clicks during tactical or pre-tactical
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse-grab has an item
 	{
-		Craft* craft (nullptr); // find the Craft and later its Base
+		Craft* craft (nullptr);	// find a Craft and later its Base_
 
 		const std::vector<Base*>* const baseList (_battleSave->getSavedGame()->getBases());
 		for (std::vector<Base*>::const_iterator
@@ -963,7 +964,7 @@ void InventoryState::btnClearGroundClick(Action*)
 				i != baseList->end() && craft == nullptr;
 				++i)
 		{
-			if ((*i)->getTactical() == true) return; // if Base is in tactical then any Craft isn't.
+			if ((*i)->getTactical() == true) return; // if a Base is in tactical than any Craft isn't.
 
 			for (std::vector<Craft*>::const_iterator
 					j = (*i)->getCrafts()->begin();
@@ -975,7 +976,7 @@ void InventoryState::btnClearGroundClick(Action*)
 			}
 		}
 
-		if (craft != nullptr) // ie, not base-equip screen.
+		if (craft != nullptr) // safety, not base-equip screen.
 		{
 			Tile* const tile (_battleSave->getSelectedUnit()->getTile());
 			std::vector<BattleItem*>* const grdList (tile->getInventory());
@@ -984,7 +985,7 @@ void InventoryState::btnClearGroundClick(Action*)
 				_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
 
 				Base* const base (craft->getBase());
-				const bool isQuickBattle (_game->getSavedGame()->getMonthsPassed() != -1);
+				const bool isQuickBattle (_game->getSavedGame()->getMonthsPassed() == -1);
 
 				BattleItem* load;
 

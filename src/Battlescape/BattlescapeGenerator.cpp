@@ -2527,7 +2527,7 @@ void BattlescapeGenerator::runInventory(
 	else
 		setBase(base);
 
-	deployXcom(); // generate the battleitems for inventory
+	deployXcom(); // generate BattleItems for the inventory-tile
 
 	if (craft != nullptr
 		&& selUnitId != 0

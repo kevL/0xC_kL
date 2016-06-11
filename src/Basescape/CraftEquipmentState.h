@@ -86,20 +86,22 @@ private:
 
 	std::vector<std::string> _items;
 
-	/// Updates quantities of item.
-	void updateQuantity();
-	/// Sets current cost to send the Craft on a mission.
-	void calculateTacticalCost();
+	/// Updates all values.
+	void update();
+	/// Updates list-values for the selected item.
+	void updateQuantity() const;
+	/// Sets current cost to send the Craft out to battle.
+	void calculateTacticalCost() const;
 	/// Decides whether to show extra buttons - Unload and Inventory.
 	void displayExtraButtons() const;
 
 
 	public:
-		/// Creates the Craft Equipment state.
+		/// Creates a CraftEquipment state.
 		CraftEquipmentState(
-				Base* base,
+				Base* const base,
 				size_t craftId);
-		/// Cleans up the Craft Equipment state.
+		/// Cleans up the CraftEquipment state.
 		~CraftEquipmentState();
 
 		/// Resets state.

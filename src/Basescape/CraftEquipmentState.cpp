@@ -61,12 +61,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Craft Equipment screen.
+ * Initializes all the elements in the CraftEquipment screen.
  * @param base		- pointer to the Base to get info from
  * @param craftId	- ID of the selected craft
  */
 CraftEquipmentState::CraftEquipmentState(
-		Base* base,
+		Base* const base,
 		size_t craftId)
 	:
 		_base(base),
@@ -158,10 +158,6 @@ CraftEquipmentState::CraftEquipmentState(
 						.arg(_craft->getQtyVehicles())
 						.arg(_craft->getSpaceAvailable()));
 
-	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
-						.arg(_craft->getLoadCapacity())
-						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
-
 	_lstEquipment->setColumns(3, 147,85,41);
 	_lstEquipment->setBackground(_window);
 	_lstEquipment->setSelectable();
@@ -176,6 +172,57 @@ CraftEquipmentState::CraftEquipmentState(
 //	_lstEquipment->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
 //	_lstEquipment->onMousePress((ActionHandler)& CraftEquipmentState::lstMousePress);
 
+
+	_timerLeft = new Timer(Timer::SCROLL_SLOW);
+	_timerLeft->onTimer((StateHandler)& CraftEquipmentState::moveLeft);
+
+	_timerRight = new Timer(Timer::SCROLL_SLOW);
+	_timerRight->onTimer((StateHandler)& CraftEquipmentState::moveRight);
+
+	update();
+}
+
+/**
+ * dTor.
+ */
+CraftEquipmentState::~CraftEquipmentState()
+{
+	delete _timerLeft;
+	delete _timerRight;
+}
+
+/**
+ * Resets the stuff when coming back from InventoryState.
+ */
+void CraftEquipmentState::init()
+{
+	State::init();
+
+	// Reset stuff when coming back from pre-battle Inventory.
+	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
+	if (battleSave != nullptr)
+	{
+		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
+		_game->getSavedGame()->setBattleSave();
+		_craft->setTactical(false);
+
+		update();
+	}
+
+	displayExtraButtons();
+	calculateTacticalCost();
+}
+
+/**
+ * Updates all values.
+ */
+void CraftEquipmentState::update()
+{
+	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
+						.arg(_craft->getLoadCapacity())
+						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
+
+	_lstEquipment->clearList();
 
 	size_t row (0u);
 	std::wostringstream woststr;
@@ -245,41 +292,6 @@ CraftEquipmentState::CraftEquipmentState(
 			}
 		}
 	}
-
-	_timerLeft = new Timer(Timer::SCROLL_SLOW);
-	_timerLeft->onTimer((StateHandler)& CraftEquipmentState::moveLeft);
-
-	_timerRight = new Timer(Timer::SCROLL_SLOW);
-	_timerRight->onTimer((StateHandler)& CraftEquipmentState::moveRight);
-}
-
-/**
- * dTor.
- */
-CraftEquipmentState::~CraftEquipmentState()
-{
-	delete _timerLeft;
-	delete _timerRight;
-}
-
-/**
- * Resets the stuff when coming back from soldiers' inventory state.
- */
-void CraftEquipmentState::init()
-{
-	State::init();
-
-	// Reset stuff when coming back from pre-battle Inventory.
-	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
-	if (battleSave != nullptr)
-	{
-		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
-		_game->getSavedGame()->setBattleSave();
-		_craft->setTactical(false);
-	}
-
-	displayExtraButtons();
-	calculateTacticalCost();
 }
 
 /**
@@ -312,18 +324,15 @@ void CraftEquipmentState::lstLeftArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			moveLeftByValue(std::numeric_limits<int>::max());
-			break;
-
 		case SDL_BUTTON_LEFT:
-//			if (_timerLeft->isRunning() == false)
-//			{
 			moveLeftByValue(1);
 
 			_timerLeft->setInterval(Timer::SCROLL_SLOW);
 			_timerLeft->start();
-//			}
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			moveLeftByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -347,20 +356,17 @@ void CraftEquipmentState::lstRightArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			_error.clear();
-			moveRightByValue(std::numeric_limits<int>::max());
-			break;
-
 		case SDL_BUTTON_LEFT:
-//			if (_timerRight->isRunning() == false)
-//			{
 			_error.clear();
 			moveRightByValue(1);
 
 			_timerRight->setInterval(Timer::SCROLL_SLOW);
 			_timerRight->start();
-//			}
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			_error.clear();
+			moveRightByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -377,7 +383,7 @@ void CraftEquipmentState::lstRightArrowRelease(Action* action)
 /**
  * Updates the displayed quantities of the selected item on the list.
  */
-void CraftEquipmentState::updateQuantity()
+void CraftEquipmentState::updateQuantity() const // private.
 {
 	const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
 
@@ -436,7 +442,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 {
 	if (_error.empty() == false)
 		_error.clear();
-	else //if (qtyDelta > 0)
+	else
 	{
 		int baseQty;
 		if (_isQuickBattle == false)
@@ -605,8 +611,6 @@ void CraftEquipmentState::moveLeft()
  */
 void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 {
-//	if (qtyDelta > 0)
-//	{
 	const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
 
 	int craftQty;
@@ -655,7 +659,6 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 
 		updateQuantity();
 	}
-//	}
 }
 
 /**
@@ -674,7 +677,7 @@ void CraftEquipmentState::btnUnloadCraftClick(Action*)
 }
 
 /**
-* Displays the inventory screen for the soldiers inside the craft.
+* Displays the inventory screen for the soldiers in the Craft.
 * @param action - pointer to an Action
 */
 void CraftEquipmentState::btnInventoryClick(Action*)
@@ -690,9 +693,9 @@ void CraftEquipmentState::btnInventoryClick(Action*)
 }
 
 /**
- * Sets current cost to send the Craft on a mission.
+ * Sets current cost to send the Craft out to battle.
  */
-void CraftEquipmentState::calculateTacticalCost() // private.
+void CraftEquipmentState::calculateTacticalCost() const // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
 				  + _craft->getRules()->getSoldierCapacity() * 1000);
@@ -708,7 +711,7 @@ void CraftEquipmentState::displayExtraButtons() const // private.
 	_btnClear->setVisible(hasItem);
 	_btnInventory->setVisible(hasItem
 						  && _craft->getQtySoldiers() != 0
-						  && _isQuickBattle == false);
+						  && _isQuickBattle == false); // TODO: Allow inventory-btn for QuickBattles.
 }
 
 /**
