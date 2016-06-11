@@ -76,8 +76,8 @@ Projectile::Projectile(
 		_bulletSprite(-1)
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "cTor origin = " << posOrigin;
-	//Log(LOG_INFO) << "cTor target = " << targetVoxel << " tSpace " << (targetVoxel / Position(16,16,24));
+	//Log(LOG_INFO) << "cTor origin " << posOrigin;
+	//Log(LOG_INFO) << "cTor target " << targetVoxel << " ts " << (targetVoxel / Position(16,16,24));
 
 	//Log(LOG_INFO) << "Projectile cTor";
 	//Log(LOG_INFO) << ". action.weapon = " << _action.weapon->getRules()->getType();
@@ -218,19 +218,21 @@ VoxelType Projectile::calculateShot(
 //	}
 
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << ". preAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
+	//Log(LOG_INFO) << ". preAcu target = " << _targetVoxel << " ts " << (_targetVoxel / Position(16,16,24));
 	if (_action.type != BA_LAUNCH // Could base BL.. on psiSkill, or sumthin'
 		&& Position::toTileSpace(originVoxel) != Position::toTileSpace(_targetVoxel))
 	{
-		//Log(LOG_INFO) << ". preAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
+		//Log(LOG_INFO) << ". preAcu target = " << _targetVoxel << " ts " << (_targetVoxel / Position(16,16,24));
 		applyAccuracy( // apply some accuracy modifiers. This will result in a new target voxel:
 					originVoxel,
 					&_targetVoxel,
 					accuracy,
 					_battleSave->getTile(_action.posTarget));
-		//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " tSpace " << (_targetVoxel / Position(16,16,24));
+		//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " ts " << (_targetVoxel / Position(16,16,24));
 	}
+	//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " ts " << (_targetVoxel / Position(16,16,24));
 
+	//_battleSave->getTileEngine()->_debug = true; // TEST.
 	const VoxelType impactType (_battleSave->getTileEngine()->plotLine( // finally do a line calculation and store the trajectory.
 																	originVoxel,
 																	_targetVoxel,
@@ -245,7 +247,7 @@ VoxelType Projectile::calculateShot(
 		targetVoxel_cache = _trj.back();
 	}
 
-	//Log(LOG_INFO) << ". RET voxelType = " << impactType;
+	//Log(LOG_INFO) << ". RET voxelType = " << MapData::debugVoxelType(impactType);
 	return impactType;
 }
 

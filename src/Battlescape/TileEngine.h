@@ -81,7 +81,6 @@ private:
 
 		LOFT_LAYERS = 12u;
 
-//	static bool _debug;
 	bool
 		_spotSound,
 		_unitLighting;
@@ -132,6 +131,8 @@ private:
 
 
 	public:
+//		static bool _debug;
+
 		/// Creates a TileEngine.
 		TileEngine(
 				SavedBattleGame* const battleSave,

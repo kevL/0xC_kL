@@ -157,8 +157,8 @@ std::vector<Target*>* Target::getTargeters()
 }
 
 /**
- * Returns the great circle distance to another Target on the globe.
- * @param target - pointer to other Target
+ * Returns the great circle distance to another Target on the Globe.
+ * @param target - pointer to other target
  * @return, distance in radians
  */
 double Target::getDistance(const Target* const target) const

@@ -518,8 +518,15 @@ std::string Craft::getAltitude() const
 	if (ufo != nullptr)
 	{
 		if (ufo->getAltitude() == MovingTarget::stAltitude[0u])
-			return MovingTarget::stAltitude[1u];
+		{
+			if (getDistance(ufo) * earthRadius < 150.)
+				return MovingTarget::stAltitude[1u];
 
+			if (getDistance(ufo) * earthRadius < 750.)
+				return MovingTarget::stAltitude[2u];
+
+			return MovingTarget::stAltitude[3u];
+		}
 		return ufo->getAltitude();
 	}
 	return MovingTarget::stAltitude[3u];

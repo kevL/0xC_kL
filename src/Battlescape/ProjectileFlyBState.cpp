@@ -340,7 +340,7 @@ void ProjectileFlyBState::init()
 				//Log(LOG_INFO) << "projFlyB targetPos[2] = " << _action.target;
 				_targetVoxel.x += 8; // don't shoot yourself but shoot at the floor
 				_targetVoxel.y += 8;
-				_targetVoxel.z += 2;
+//				_targetVoxel.z += 2; // borkity bork.
 				//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
 			}
 			else
@@ -426,7 +426,7 @@ void ProjectileFlyBState::init()
 				_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 				_targetVoxel.x += 8;
 				_targetVoxel.y += 8;
-				_targetVoxel.z += 2;
+//				_targetVoxel.z += 2; // borkity bork.
 			}
 		}
 		else // target nothing, targets the middle of the tile

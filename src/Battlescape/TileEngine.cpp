@@ -5512,6 +5512,7 @@ VoxelType TileEngine::plotLine(
 		}
 	}
 
+	//if (_debug) Log(LOG_INFO) << "ret VOXEL_EMPTY";
 	return VOXEL_EMPTY;
 }
 
@@ -6307,7 +6308,7 @@ VoxelType TileEngine::voxelCheck(
 								// TODO: Trace that because this function gets called 50-bazillion times a second.
 								// And if any voxel-checks *are* being done during pre-battle, stop it back there.
 
-	//Log(LOG_INFO) << "TileEngine::voxelCheck()"; // massive lag-to-file, Do not use.
+	//if (_debug) Log(LOG_INFO) << "TileEngine::voxelCheck() targetVoxel " << targetVoxel;
 	const Tile
 		* const tile (_battleSave->getTile(Position::toTileSpace(targetVoxel))),
 		* tileBelow;
@@ -6327,7 +6328,7 @@ VoxelType TileEngine::voxelCheck(
 		&& ((tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) == nullptr
 			|| tileBelow->getTileUnit() == nullptr))
 	{
-		//Log(LOG_INFO) << ". vC() ret VOXEL_EMPTY";
+		//if (_debug) Log(LOG_INFO) << ". vC() ret VOXEL_EMPTY";
 		return VOXEL_EMPTY;
 	}
 
@@ -6433,7 +6434,7 @@ VoxelType TileEngine::voxelCheck(
 		}
 	}
 
-	//Log(LOG_INFO) << ". vC() ret VOXEL_EMPTY"; // massive lag-to-file, Do not use.
+	//if (_debug) Log(LOG_INFO) << ". vC() EXIT - ret VOXEL_EMPTY";
 	return VOXEL_EMPTY;
 }
 
