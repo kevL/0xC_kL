@@ -209,7 +209,7 @@ bool MapData::blockFire() const
 void MapData::setStopLOS(bool stopLOS)
 {
 	_stopLOS = stopLOS;
-	_block[1u] = stopLOS ? 100 : 0;
+	_block[1u] = (stopLOS == true) ? 100 : 0;
 }
 
 /**
@@ -266,7 +266,7 @@ int MapData::getBlock(DamageType dType) const
 		case DT_NONE:	return _block[1u];	// stop LoS: [0 or 100], was [0 or 255]
 		case DT_HE:
 		case DT_IN:
-		case DT_STUN:	return _block[2u];	// HE block [int]
+		case DT_STUN:	return _block[2u];	// HE block [int] // TODO: Just fix all this crap.
 		case DT_SMOKE:	return _block[3u];	// block smoke: try (bool), was [0 or 256]
 	}
 	return 0;
@@ -289,29 +289,18 @@ void MapData::setBlock(
 		int fireBlock,
 		int gasBlock)
 {
-/*	_block[0] = lightBlock; // not used...
-	_block[1] = visionBlock == 1? 255: 0;
-	_block[2] = heBlock;
-	_block[3] = smokeBlock == 1? 255: 0;
-	_block[4] = fireBlock == 1? 255: 0;
-	_block[5] = gasBlock == 1? 255: 0; */
-
-	_block[0u] = lightBlock; // not used
-//	_block[1u] = visionBlock; // kL
-//	_block[1u] = visionBlock == 1 ? 255 : 0; // <- why? kL_note. haha
-	_block[1u] = visionBlock == 1 ? 100 : 0; // kL
-		// stopLoS==true needs to be a significantly large integer (only about 10+ really)
-		// so that if a directionally opposite Field of View check includes a "-1",
-		// meaning block by bigWall or other content-object, the result is not reduced
-		// to zero (no block at all) when added to regular stopLoS by a standard wall.
-		//
-		// It would be unnecessary to use that jigger-pokery if TileEngine::
-		// horizontalBlockage() & blockage() were coded differently [verticalBlockage() too, perhaps]
+	_block[0u] = lightBlock;					// not used.
+	_block[1u] = visionBlock == 1 ? 100 : 0;	// stopLoS==true needs to be a significantly large integer (only about 10+ really)
+												// so that if a directionally opposite Field of View check includes a "-1",
+												// meaning block by bigWall or other content-object, the result is not reduced
+												// to zero (no block at all) when added to regular stopLoS by a standard wall.
+												//
+												// It would be unnecessary to use that jigger-pokery if TileEngine::horizontalBlockage()
+												// and TileEngine::blockage() were coded differently -- verticalBlockage() too, perhaps.
 	_block[2u] = heBlock;
-//	_block[3u] = smokeBlock == 1? 256: 0; // <- why? kL_note. I basically use visionBlock for smoke ....
-	_block[3u] = smokeBlock;
-	_block[4u] = fireBlock; // this is Flammable, NOT Block_Fire.
-	_block[5u] = gasBlock;
+	_block[3u] = smokeBlock;					// this is the same as the _blockSmoke flag.
+	_block[4u] = fireBlock;						// this is Flammable, NOT Block_Fire.
+	_block[5u] = gasBlock;						// probably not used.
 }
 
 /**

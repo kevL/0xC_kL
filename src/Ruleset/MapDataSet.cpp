@@ -36,7 +36,7 @@
 namespace OpenXcom
 {
 
-MapData
+MapData // static.
 	* MapDataSet::_blankTile (nullptr),
 	* MapDataSet::_scorchedTile (nullptr);
 
@@ -44,8 +44,8 @@ MapData
 /**
  * MapDataSet construction.
  * @note This is a tileset.
- * @param type - reference to the type of the data
- * @param game - pointer to Game
+ * @param type - reference to the type of the MCD
+ * @param game - pointer to the Game
  */
 MapDataSet::MapDataSet(
 		const std::string& type,
@@ -89,7 +89,7 @@ std::string MapDataSet::getType() const
 
 /**
  * Gets the MapDataSet size.
- * @return, the size in number of records
+ * @return, the size in quantity of records
  */
 size_t MapDataSet::getSize() const
 {
@@ -128,8 +128,8 @@ void MapDataSet::loadData()
 #pragma pack(push, 1)	// align the incoming MCD-values with 1-byte boundaries
 	struct MCD			// This struct helps to read the .MCD file format.
 	{
-		unsigned char	Frame[8];
-		unsigned char	LOFT[12];
+		unsigned char	Frame[8u];
+		unsigned char	LOFT[12u];
 		unsigned short	ScanG;
 		unsigned char	u23;
 		unsigned char	u24;
@@ -176,27 +176,27 @@ void MapDataSet::loadData()
 
 	MCD mcd;
 
-	// Load Terrain Data from MCD file.
+	// Load all terrain-data in from an MCD file.
 	std::string file ("TERRAIN/" + _type + ".MCD");
-	std::ifstream mapFile ( // load file
+	std::ifstream ifstr ( // load file
 						CrossPlatform::getDataFile(file).c_str(),
 						std::ios::in | std::ios::binary);
-	if (mapFile.fail() == true)
+	if (ifstr.fail() == true)
 	{
-		throw Exception(file + " not found");
+		throw Exception("MapDataSet::loadData() " + file + " not found");
 	}
 
 
 	MapData* to;
 	int objNumber (0);
-	while (mapFile.read(
+	while (ifstr.read(
 					(char*)&mcd,
 					sizeof(MCD)))
 	{
 		to = new MapData(this);
 		_records.push_back(to);
 
-		// Set all the terrain-part properties:
+		// Set all the terrain/tile-part properties:
 		for (size_t
 				i = 0u;
 				i != 8u; // sprite-frames (Battlescape tactical animations)
@@ -253,7 +253,7 @@ void MapDataSet::loadData()
 						static_cast<size_t>(loft));
 		}
 
-		// store the 2 tiles of blanks in a static - so they are accessible everywhere
+		// Store the 2 tiles of 'blanks' as static so they are accessible to all MapData-instantiations.
 		if ((objNumber == 0 || objNumber == 1)
 			&& _type.compare("BLANKS") == 0)
 		{
@@ -270,12 +270,12 @@ void MapDataSet::loadData()
 	}
 
 
-	if (mapFile.eof() == false)
+	if (ifstr.eof() == false)
 	{
-		throw Exception("Invalid MCD file");
+		throw Exception("MapDataSet::loadData() Invalid MCD file");
 	}
 
-	mapFile.close();
+	ifstr.close();
 
 	// process the MapDataSet to put 'block' values on floortiles (as they don't exist in UFO::Orig)
 	for (std::vector<MapData*>::const_iterator
@@ -308,20 +308,16 @@ void MapDataSet::loadData()
 	}
 
 	// Load terrain sprites/surfaces/PCK files into a SurfaceSet.
-	// Let extraSprites override terrain sprites.
-	std::string test (_type + ".PCK");
-	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet(test));
+	// Let any defined extra-sprites overrule the stock terrain-sprites.
+	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet(_type + ".PCK"));
 	if (srt != nullptr)
 		_surfaceSet = srt;
 	else
 	{
-		std::string
-			test1 ("TERRAIN/" + _type + ".PCK"),
-			test2 ("TERRAIN/" + _type + ".TAB");
 		_surfaceSet = new SurfaceSet(32,40);
 		_surfaceSet->loadPck(
-						CrossPlatform::getDataFile(test1),
-						CrossPlatform::getDataFile(test2));
+						CrossPlatform::getDataFile("TERRAIN/" + _type + ".PCK"),
+						CrossPlatform::getDataFile("TERRAIN/" + _type + ".TAB"));
 	}
 }
 
@@ -332,6 +328,8 @@ void MapDataSet::unloadData()
 {
 	if (_loaded == true)
 	{
+		_loaded = false;
+
 		for (std::vector<MapData*>::const_iterator
 				i = _records.begin();
 				i != _records.end();
@@ -341,13 +339,9 @@ void MapDataSet::unloadData()
 			i = _records.erase(i);
 		}
 
-		// but don't delete the extraSprites for terrain!!!
-		std::string test (_type + ".PCK");
-		const SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet(test));
-		if (srt == nullptr)
+		// But don't delete the extraSprites for terrain!!!
+		if (_game->getResourcePack()->getSurfaceSet(_type + ".PCK") == nullptr)
 			delete _surfaceSet;
-
-		_loaded = false;
 	}
 }
 
@@ -360,15 +354,15 @@ void MapDataSet::loadLoft( // static.
 		const std::string& file,
 		std::vector<Uint16>* const voxelData)
 {
-	std::ifstream mapFile (file.c_str(), std::ios::in | std::ios::binary); // load file
-	if (mapFile.fail() == true)
+	std::ifstream ifstr (file.c_str(), std::ios::in | std::ios::binary);
+	if (ifstr.fail() == true)
 	{
-		throw Exception(file + " not found");
+		throw Exception("MapDataSet::loadData() " + file + " not found");
 	}
 
 	Uint16 value;
 
-	while (mapFile.read(
+	while (ifstr.read(
 					(char*)&value,
 					sizeof(value)))
 	{
@@ -376,12 +370,12 @@ void MapDataSet::loadLoft( // static.
 		voxelData->push_back(value);
 	}
 
-	if (mapFile.eof() == false)
+	if (ifstr.eof() == false)
 	{
-		throw Exception("Invalid LOFTEMPS");
+		throw Exception("MapDataSet::loadData() Invalid LOFTEMPS");
 	}
 
-	mapFile.close();
+	ifstr.close();
 }
 
 /**

@@ -131,7 +131,7 @@ private:
 
 
 	public:
-//		static bool _debug;
+		static bool _debug;
 
 		/// Creates a TileEngine.
 		TileEngine(
