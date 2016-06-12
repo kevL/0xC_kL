@@ -147,8 +147,8 @@ private:
 //		_dragTimeTolerance,		// this is a cache for Options::getInt("battleScrollDragTimeTolerance")
 //		_dragPixelTolerance;	// this is a cache for Options::getInt("battleScrollDragPixelTolerance")
 
-	/// Finishes up Alien or Civilian turns and prepares the Player turn.
-	void prepPlayerTurn();
+	/// Selects one of the Player's units when he/she begins each turn.
+	void selectPlayerUnit();
 
 	/// Selects a BattleUnit.
 	BattleUnit* selectFactionUnit(
@@ -368,7 +368,7 @@ private:
 				const Node* const node,
 				const BattleUnit* const unit) const;
 
-		/// Carries out new turn preparations.
+		/// Carries out full-turn preparations for Tiles.
 		void tileVolatiles();
 
 		/// Revives unconscious units of @a faction.

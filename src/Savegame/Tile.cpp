@@ -646,11 +646,8 @@ void Tile::destroyTilepart(
 	const MapData* const data (_parts[partType]);
 	if (data != nullptr)
 	{
-		if (data->isGravLift() == true
-			|| data->getArmor() == 255) // <- set to 255 in MCD for Truly Indestructability.
-		{
+		if (data->getArmor() == 255 || data->isGravLift() == true)
 			return;
-		}
 
 		if (data->getTileType() == battleSave->getObjectiveTileType())
 			battleSave->addDestroyedObjective();
@@ -692,7 +689,7 @@ void Tile::destroyTilepart(
 		}
 	}
 
-	if (tLevel == -24) // destroy the object-part above if its supports are gone.
+	if (tLevel == -24) // destroy the object-part above if its support is gone.
 	{
 		Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
 		if (tileAbove != nullptr
@@ -706,7 +703,7 @@ void Tile::destroyTilepart(
 }
 
 /**
- * Damages terrain (check against terrain-part armor/hitpoints/constitution).
+ * Damages terrain (check against terrain-part armor).
  * @param partType		- part of tile to check (MapData.h)
  * @param power			- power of the damage
  * @param battleSave	- pointer to the SavedBattleGame

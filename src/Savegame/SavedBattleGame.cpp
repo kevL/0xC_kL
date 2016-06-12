@@ -1294,44 +1294,6 @@ int SavedBattleGame::getTurn() const
 }
 
 /**
- * Finishes up Alien or Civilian turns and prepares the Player turn.
- */
-void SavedBattleGame::prepPlayerTurn() // private.
-{
-	std::fill(
-			_shuffleUnits.begin(),
-			_shuffleUnits.end(),
-			nullptr);
-
-	tileVolatiles(); // do Tile stuff
-	++_turn;
-
-	_side = FACTION_PLAYER;
-
-	if (_lastSelectedUnit != nullptr
-		&& _lastSelectedUnit->isSelectable(FACTION_PLAYER) == true)
-	{
-		//Log(LOG_INFO) << ". . last Selected = " << _lastSelectedUnit->getId();
-		_selectedUnit = _lastSelectedUnit;
-	}
-	else
-	{
-		//Log(LOG_INFO) << ". . select next";
-		selectNextFactionUnit();
-	}
-
-	while (_selectedUnit != nullptr
-		&& _selectedUnit->getFaction() != FACTION_PLAYER)
-	{
-		//Log(LOG_INFO) << ". . select next loop";
-		selectNextFactionUnit(true);
-	}
-
-	//if (_selectedUnit != nullptr) Log(LOG_INFO) << ". -> selected Unit = " << _selectedUnit->getId();
-	//else Log(LOG_INFO) << ". -> NO UNIT TO SELECT FOUND";
-}
-
-/**
  * Ends the current faction-turn and progresses to the next one.
  * @note Called from BattlescapeGame::endTurn()
  * @return, true if the turn rolls-over back to faction Player
@@ -1389,7 +1351,17 @@ bool SavedBattleGame::endFactionTurn()
 	int aLienIntel (0);
 	if (playerTurn == true)
 	{
-		prepPlayerTurn();
+		std::fill(
+				_shuffleUnits.begin(),
+				_shuffleUnits.end(),
+				nullptr);
+
+		tileVolatiles(); // do Tile stuff
+		++_turn;
+
+		_side = FACTION_PLAYER;
+
+		selectPlayerUnit();
 
 		int aLienIntelTest;
 		for (std::vector<BattleUnit*>::const_iterator
@@ -1498,6 +1470,26 @@ bool SavedBattleGame::endFactionTurn()
 		selectNextFactionUnit();
 
 	return playerTurn;
+}
+
+/**
+ * Selects one of the Player's units when he/she begins each turn.
+ */
+void SavedBattleGame::selectPlayerUnit() // private.
+{
+	if (_lastSelectedUnit != nullptr
+		&& _lastSelectedUnit->isSelectable(FACTION_PLAYER) == true)
+	{
+		_selectedUnit = _lastSelectedUnit;
+	}
+	else
+		selectNextFactionUnit();
+
+	while (_selectedUnit != nullptr
+		&& _selectedUnit->getFaction() != FACTION_PLAYER)
+	{
+		selectNextFactionUnit(true);
+	}
 }
 
 /**
@@ -2047,8 +2039,8 @@ bool SavedBattleGame::isNodeType(
 }
 
 /**
- * Carries out new turn preparations such as fire and smoke spreading.
- * @note Also explodes any explosive tiles that get destroyed by fire.
+ * Carries out full-turn preparations such as fire and smoke spreading.
+ * @note Also explodes any explosive Tiles that get destroyed by fire.
  */
 void SavedBattleGame::tileVolatiles()
 {
@@ -2096,21 +2088,21 @@ void SavedBattleGame::tileVolatiles()
 				}
 			}
 		}
-		else
+		else // try to destroy object- and/or floor-parts when Fire goes out.
 		{
 			if ((*i)->getMapData(O_OBJECT) != nullptr)
 			{
 				if ((*i)->getMapData(O_OBJECT)->getFlammable() != 255
-					&& (*i)->getMapData(O_OBJECT)->getArmor() != 255)
+					&& (*i)->getMapData(O_OBJECT)->getArmor() != 255) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_OBJECT, this);
-					(*i)->destroyTilepart(O_FLOOR, this);
-				}
-			}
+					(*i)->destroyTilepart(O_FLOOR, this);	// NOTE: There is no assurance that the current floor-part is actually 'flammable';
+				}											// but it ensures that if there's not a current floor-part then
+			}												// at least a scorched-earth floor-part gets laid down.
 			else if ((*i)->getMapData(O_FLOOR) != nullptr)
 			{
 				if ((*i)->getMapData(O_FLOOR)->getFlammable() != 255
-					&& (*i)->getMapData(O_FLOOR)->getArmor() != 255)
+					&& (*i)->getMapData(O_FLOOR)->getArmor() != 255) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_FLOOR, this);
 				}
