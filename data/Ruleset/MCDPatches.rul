@@ -153,6 +153,44 @@ MCDPatches:
 #        scanG:
 #      - MCDIndex: 80
 #        scanG:
+  - type: FORESTPOLAR
+    data:
+      - MCDIndex: 63
+        scanG: 419 #454
+      - MCDIndex: 64
+        scanG: 420 #455
+      - MCDIndex: 65
+        scanG: 421 #456
+      - MCDIndex: 66
+        scanG: 419 #454
+      - MCDIndex: 67
+        scanG: 420 #455
+#      - MCDIndex: 68
+#        scanG: 433 #468 #water only
+      - MCDIndex: 69
+        scanG: 422 #457
+      - MCDIndex: 70
+        scanG: 423 #458
+      - MCDIndex: 71
+        scanG: 424 #459
+      - MCDIndex: 72
+        scanG: 425 #460
+      - MCDIndex: 73
+        scanG: 428 #463
+      - MCDIndex: 74
+        scanG: 429 #464
+      - MCDIndex: 75
+        scanG: 428 #463
+      - MCDIndex: 76
+        scanG: 426 #461
+      - MCDIndex: 77
+        scanG: 427 #462
+#      - MCDIndex: 78
+#        scanG: 
+#      - MCDIndex: 79
+#        scanG:
+#      - MCDIndex: 80
+#        scanG:
 # --- kL Psycho additions ---------------------------------------------------- #
   - type: U_PODS
     data:
