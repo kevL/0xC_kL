@@ -740,16 +740,16 @@ void DebriefingState::prepareDebriefing() // private.
 			_statList.push_back(new DebriefingStat((*i).second->type, true));
 	}
 	_statList.push_back(new DebriefingStat(_rules->getAlienFuelType(), true));
-/*	_statList.push_back(new DebriefingStat("STR_UFO_POWER_SOURCE", true)); // ->> SpecialTileTypes <<-|
-	_statList.push_back(new DebriefingStat("STR_UFO_NAVIGATION", true));
-	_statList.push_back(new DebriefingStat("STR_UFO_CONSTRUCTION", true));
-	_statList.push_back(new DebriefingStat("STR_ALIEN_FOOD", true));
-	_statList.push_back(new DebriefingStat("STR_ALIEN_REPRODUCTION", true));
-	_statList.push_back(new DebriefingStat("STR_ALIEN_ENTERTAINMENT", true));
-	_statList.push_back(new DebriefingStat("STR_ALIEN_SURGERY", true));
-	_statList.push_back(new DebriefingStat("STR_EXAMINATION_ROOM", true));
-	_statList.push_back(new DebriefingStat("STR_ALIEN_ALLOYS", true));
-	_statList.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true)); */
+//	_statList.push_back(new DebriefingStat("STR_UFO_POWER_SOURCE", true)); // ->> SpecialTileTypes <<-|||
+//	_statList.push_back(new DebriefingStat("STR_UFO_NAVIGATION", true));
+//	_statList.push_back(new DebriefingStat("STR_UFO_CONSTRUCTION", true));
+//	_statList.push_back(new DebriefingStat("STR_ALIEN_FOOD", true));
+//	_statList.push_back(new DebriefingStat("STR_ALIEN_REPRODUCTION", true));
+//	_statList.push_back(new DebriefingStat("STR_ALIEN_ENTERTAINMENT", true));
+//	_statList.push_back(new DebriefingStat("STR_ALIEN_SURGERY", true));
+//	_statList.push_back(new DebriefingStat("STR_EXAMINATION_ROOM", true));
+//	_statList.push_back(new DebriefingStat("STR_ALIEN_ALLOYS", true));
+//	_statList.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true));
 
 	_tactical->timeStat = *_gameSave->getTime();
 	_tactical->type = battleSave->getTacticalType();
@@ -897,10 +897,10 @@ void DebriefingState::prepareDebriefing() // private.
 			(*i)->setTile(battleSave->getTile(pos));
 		}
 
-		if ((*i)->getUnitStatus() != STATUS_DEAD
-			&& (*i)->getOriginalFaction() == FACTION_PLAYER)
+		if ((*i)->getOriginalFaction() == FACTION_PLAYER
+			&& (*i)->getUnitStatus() != STATUS_DEAD)
 		{
-			if (aborted == false
+			if (aborted == false // NOTE: Duplicated this check below_ to determine what to do with player-units.
 				|| ((_tactical->success == true || tacType != TCT_BASEDEFENSE)
 					&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
 			{
@@ -908,7 +908,7 @@ void DebriefingState::prepareDebriefing() // private.
 			}
 		}
 	}
-	const bool playerWipe ((aborted == true && playerExit == 0) // Oops.
+	const bool playerWipe ((aborted == true && playerExit == 0)
 						 || playerLive == 0);
 
 
@@ -971,7 +971,6 @@ void DebriefingState::prepareDebriefing() // private.
 			lon = _base->getLongitude();
 			lat = _base->getLatitude();
 
-//			if (aborted == false && playerLive != 0)
 			if (_tactical->success == true)
 			{
 				_base->setTactical(false);
@@ -1040,7 +1039,6 @@ void DebriefingState::prepareDebriefing() // private.
 			_txtRecovery->setText(tr("STR_UFO_RECOVERY"));
 			_tactical->ufo = (*i)->getRules()->getType();
 
-//			if (aborted == false && playerLive != 0)
 			if (_tactical->success == true)
 			{
 				delete *i;
@@ -1132,30 +1130,6 @@ void DebriefingState::prepareDebriefing() // private.
 			i != battleSave->getUnits()->end();
 			++i)
 	{
-//		if ((*i)->getTile() == nullptr)								// This unit is not on a tile ... give it one.
-//		{
-//			Position pos ((*i)->getPosition());
-//			if (pos == Position(-1,-1,-1))							// in fact, this Unit is in limbo ... ie, is carried.
-//			{
-//				for (std::vector<BattleItem*>::const_iterator		// so look for its body or corpse ...
-//						j = battleSave->getItems()->begin();
-//						j != battleSave->getItems()->end();
-//						++j)
-//				{
-//					if ((*j)->getUnit() != nullptr
-//						&& (*j)->getUnit() == *i)					// found it: corpse is a dead or unconscious BattleUnit!!
-//					{
-//						if ((*j)->getOwner() != nullptr)			// corpse of BattleUnit has an Owner (ie. is being carried by another BattleUnit)
-//							pos = (*j)->getOwner()->getPosition();	// Put the corpse down .. slowly.
-//						else if ((*j)->getTile() != nullptr)		// corpse of BattleUnit is laying around somewhere
-//							pos = (*j)->getTile()->getPosition();	// you're not vaporized yet, Get up.
-//					}
-//				}
-//			}
-//			(*i)->setTile(battleSave->getTile(pos));
-//		}
-
-
 		const UnitFaction orgFaction ((*i)->getOriginalFaction());
 		const int value ((*i)->getValue());
 
@@ -1247,11 +1221,10 @@ void DebriefingState::prepareDebriefing() // private.
 				switch (orgFaction)
 				{
 					case FACTION_PLAYER:
-						if (aborted == false // NOTE: Had to duplicate this same check above^ to determine 'playerExit'.
+						if (aborted == false // NOTE: Duplicated this check above^ to determine 'playerExit'.
 							|| ((_tactical->success == true || tacType != TCT_BASEDEFENSE)
 								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
 						{
-//							++playerExit;
 							recoverItems((*i)->getInventory());
 
 							Soldier* const sol ((*i)->getGeoscapeSoldier());
@@ -1393,7 +1366,7 @@ void DebriefingState::prepareDebriefing() // private.
 						break;
 
 					case FACTION_NEUTRAL:
-						if (_tactical->success == true && isHostileAlive == false
+						if ((_tactical->success == true && isHostileAlive == false)
 							|| (aborted == true && (*i)->isInExitArea() == true))
 						{
 							addStat(
@@ -1404,17 +1377,6 @@ void DebriefingState::prepareDebriefing() // private.
 							addStat(
 								"STR_CIVILIANS_KILLED_BY_ALIENS",
 								-value);
-/*						if ((aborted == true && (*i)->isInExitArea() == false)
-							|| playerLive == 0)
-						{
-							addStat(
-								"STR_CIVILIANS_KILLED_BY_ALIENS",
-								-value);
-						}
-						else
-							addStat(
-								"STR_CIVILIANS_SAVED",
-								value); */ // duplicated below.
 				} // End unit_faction switch.
 		} // End unit_status switch.
 	} //End loop BattleUnits.
@@ -1447,7 +1409,6 @@ void DebriefingState::prepareDebriefing() // private.
 		return; // ||-> EXIT <--|||
 	}
 
-//	if (aborted == true && tacType == TCT_BASEDEFENSE)
 	if (_tactical->success == false && tacType == TCT_BASEDEFENSE)
 	{
 		for (std::vector<Craft*>::const_iterator
@@ -1515,7 +1476,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 			case TCT_BASEASSAULT:
 //			case TCT_MARS1: // Note that these Mars tacticals are really Lose GAME.
-//			case TCT_MARS2: // And there is never a debriefing for this <-
+//			case TCT_MARS2: // And there is still never a debriefing for this <-
 				tacResult = "STR_ALIEN_BASE_STILL_INTACT";
 				break;
 
@@ -1594,8 +1555,6 @@ void DebriefingState::prepareDebriefing() // private.
 							alloyDivisor = 15;
 					}
 
-//					(*i)->qty /= alloyDivisor;
-//					(*i)->score /= alloyDivisor;
 					(*i)->qty = ((*i)->qty + (qtyRuinedAlloys >> 1u)) / alloyDivisor;
 					(*i)->score = ((*i)->score + ((qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value) >> 1u)) / alloyDivisor;
 
@@ -1649,29 +1608,32 @@ void DebriefingState::prepareDebriefing() // private.
 		if ((qtyFullClip = i->first->getFullClip()) != 0) // safety.
 		{
 			clipsTotal = i->second / qtyFullClip;
-			if (clipsTotal == 0)	// all clips-of-type are lost, including those brought on the mission
+			switch (clipsTotal)
 			{
-				if (i->second != 0)	// and if there's a partial clip, that needs to be added to the lost-vector too.
-					++_itemsLostProperty[i->first];
-			}
-			else // clips were found whether xcomProperty or not. Add them to Base-stores!
-			{
-				_itemsLostProperty.erase(i->first);
+				case 0:					// all clips-of-type are lost, including those brought on the mission
+					if (i->second != 0)	// and if there's a partial clip, that needs to be added to the lost-vector too.
+						++_itemsLostProperty[i->first];
+					break;
 
-				int roundsProperty;
-				std::map<const RuleItem*, int>::const_iterator pClipsProperty (_clipsProperty.find(i->first));
-				if (pClipsProperty != _clipsProperty.end())
-					roundsProperty = pClipsProperty->second;
-				else
-					roundsProperty = 0;
+				default:				// clips were found whether xcomProperty or not. Add them to Base-stores!
+				{
+					_itemsLostProperty.erase(i->first);
 
-				int clipsGained ((i->second - roundsProperty) / qtyFullClip);
-				if (clipsGained != 0)
-					_itemsGained[i->first] = clipsGained;		// these clips are over & above those brought as xcomProperty.
+					int roundsProperty;
+					std::map<const RuleItem*, int>::const_iterator pClipsProperty (_clipsProperty.find(i->first));
+					if (pClipsProperty != _clipsProperty.end())
+						roundsProperty = pClipsProperty->second;
+					else
+						roundsProperty = 0;
 
-				_base->getStorageItems()->addItem(
-												i->first->getType(),
-												clipsTotal);	// these clips include both xcomProperty and found clips.
+					int clipsGained ((i->second - roundsProperty) / qtyFullClip);
+					if (clipsGained != 0)
+						_itemsGained[i->first] = clipsGained;		// these clips are over & above those brought as xcomProperty.
+
+					_base->getStorageItems()->addItem(
+													i->first->getType(),
+													clipsTotal);	// these clips include both xcomProperty and found clips.
+				}
 			}
 		}
 	}

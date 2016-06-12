@@ -361,7 +361,6 @@ bool TileEngine::calcFov(
 {
 	//const bool debug (unit->getId() == 167 || unit->getId() == 1000020);
 	//if (debug) Log(LOG_INFO) << "calcFoV id-" << unit->getId();
-//	return false; // TEST.
 	unit->clearHostileUnits();
 //	unit->clearVisibleTiles();
 
@@ -381,9 +380,6 @@ bool TileEngine::calcFov(
 		spotByPlayer  (false),
 		spotByHostile (false);
 
-//	const size_t antecedentOpponents (unit->getHostileUnitsThisTurn().size());
-
-	// start Test.
 	const Position posSelf (unit->getPosition());	// TODO: Check from all four quadrants if unit is large.
 													// See BattleUnit::checkViewSector(). Also visible() and its callers. ETC.
 
@@ -407,9 +403,6 @@ bool TileEngine::calcFov(
 				//if (debug) Log(LOG_INFO) << ". try spot vs id-" << (*i)->getId();
 				switch (unit->getFaction())
 				{
-//					case FACTION_NEUTRAL:
-//						break;
-
 					case FACTION_PLAYER:
 						if ((*i)->getFaction() != FACTION_PLAYER)
 						{
@@ -480,7 +473,6 @@ bool TileEngine::calcFov(
 							//	Log(LOG_INFO) << ". . distSqr= " << distSqr(posSelf, posOther, false);
 							//}
 
-
 							if (distSqr(posSelf, posOther) <= SIGHTDIST_TSp_Sqr)
 							{
 								//if (debug) Log(LOG_INFO) << ". . . in Range";
@@ -516,9 +508,8 @@ bool TileEngine::calcFov(
 				}
 			}
 		}
-	}// end Test.
+	}
 
-	// start Test.
 	if (revealTiles == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
 	{
 		int dir;
@@ -570,15 +561,7 @@ bool TileEngine::calcFov(
 			* object,
 			* objectEdge;
 
-//		int soundId;
-//		if (_spotSound == true)
-//			soundId = unit->getAggroSound();
-//		else
-//			soundId = -1;
-
-//		BattleUnit* spottedUnit;
-
-		if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > Pathfinding::UNIT_HEIGHT)
+		if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > 35) //Pathfinding::UNIT_HEIGHT)
 		{
 			const Tile* const tileAbove (_battleSave->getTile(posUnit + Position(0,0,1)));
 			if (tileAbove != nullptr && tileAbove->hasNoFloor() == true)
@@ -610,82 +593,11 @@ bool TileEngine::calcFov(
 
 					if (x * x + y * y <= SIGHTDIST_TSp_Sqr)
 					{
-//						const int
-//							deltaPos_x = (sign_x[dir] * (swapXY ? y : x)),
-//							deltaPos_y = (sign_y[dir] * (swapXY ? x : y));
-
-						posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x)); //deltaPos_x;
-						posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y)); //deltaPos_y;
+						posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x));
+						posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y));
 
 						if ((tileTest = _battleSave->getTile(posTest)) != nullptr)
 						{
-//							const bool preBattle (_battleSave->getBattleGame() == nullptr);
-
-//							if (preBattle == true ||
-/*							if (_battleSave->getBattleGame()->playerPanicHandled() == true) // spot units ->>
-							{
-								if ((spottedUnit = tileTest->getTileUnit()) != nullptr
-//									&& spottedUnit->isOut_t(OUT_STAT) == false // <- out units have no Tile-ptr
-									&& visible(unit, tileTest) == true)
-								{
-									switch (unit->getFaction())
-									{
-										default:
-										case FACTION_NEUTRAL: // duh. help me ... BOOM!
-											break;
-
-										case FACTION_PLAYER:
-											if (spottedUnit->getUnitVisible() == false)
-											{
-												spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
-												spottedUnit->setUnitVisible();
-											}
-//											spottedUnit->getTile()->setTileVisible(); // Used only by sneakyAI.
-
-											if (spottedUnit->getFaction() == FACTION_HOSTILE)
-											{
-//												const std::vector<BattleUnit*> previouslySpottedUnits (unit->getHostileUnitsThisTurn());
-//												if (std::find(
-//															previouslySpottedUnits.begin(),
-//															previouslySpottedUnits.end(),
-//															spottedUnit) == previouslySpottedUnits.end())
-//												{
-//												}
-
-												unit->addToHostileUnits(spottedUnit); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
-//												unit->addToVisibleTiles(spottedUnit->getTile());
-
-												if (soundId != -1
-//													&& preBattle == false
-													&& spotByPlayer == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
-//													&& unit->getHostileUnitsThisTurn().size() > antecedentOpponents)
-//													&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
-												{													// that back to prevent it or pass in isMC-reveal somehow.
-													const BattlescapeGame* const battle (_battleSave->getBattleGame());
-													battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
-																				->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
-													soundId = -1; // play once only.
-												}
-											}
-											break;
-
-										case FACTION_HOSTILE:
-											if (spottedUnit->getFaction() != FACTION_HOSTILE)
-											{
-												spotByHostile = unit->addToHostileUnits(spottedUnit); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
-//												unit->addToVisibleTiles(spottedUnit->getTile());
-
-												if (_battleSave->getSide() == FACTION_HOSTILE)
-													spottedUnit->setExposed();	// NOTE: xCom agents can be seen by enemies but *not* become Exposed.
-											}									// Only potential reactionFire should set them Exposed during xCom's turn.
-
-										//Log(LOG_INFO) << "calcFov() id " << unit->getId() << " spots " << spottedUnit->getId();
-									}
-								}
-							} */
-
-//							if (revealTiles == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
-//							{
 							// this sets tiles to discovered if they are in FoV -
 							// Tile visibility is not calculated in voxel-space but in tile-space;
 							// large units have "4 pair of eyes"
@@ -710,16 +622,8 @@ bool TileEngine::calcFov(
 														false);
 									trjLength = trj.size();
 
-//									if (blockType > 127)	// last tile is blocked thus must be cropped.
-//									if (blockType > 0)		// -1 - do NOT crop trajectory (ie. hit content-object)
-															//	0 - expose Tile (should never return this, unless out-of-bounds)
-															//	1 - crop the trajectory (hit regular wall)
-
 									switch (blockType)
 									{
-//										case VOXEL_EMPTY:
-//										case VOXEL_FLOOR:
-//											break;
 										case VOXEL_WESTWALL:
 										case VOXEL_NORTHWALL:
 										case VOXEL_OBJECT:
@@ -735,7 +639,7 @@ bool TileEngine::calcFov(
 									{
 										posTrj = trj.at(i);
 
-										// mark every tile of line as visible (this is needed because of bresenham narrow stroke).
+										// mark every tile of line as visible -
 										tile = _battleSave->getTile(posTrj);
 										tile->setRevealed(ST_CONTENT);	// sprite caching for floor+content, ergo + west & north walls.
 //										tile->setTileVisible();			// Used only by sneakyAI.
@@ -834,13 +738,12 @@ bool TileEngine::calcFov(
 									}
 								}
 							}
-//							}
 						}
 					}
 				}
 			}
 		}
-	} // end Test.
+	}
 
 	switch (unit->getFaction())
 	{
@@ -849,15 +752,8 @@ bool TileEngine::calcFov(
 
 		default:
 		case FACTION_HOSTILE:
-		case FACTION_NEUTRAL:
 			return spotByHostile;
-//			if (//unit->getHostileUnits().empty() == false &&					// <- not so sure that this one is needed.
-//				unit->getHostileUnitsThisTurn().size() > antecedentOpponents)	// because it seems unlikely that a hostileUnitThisTurn can be added
-//			{																	// without it being currently in sight. As per this very function.
-//				return true;
-//			}
 	}
-//	return false;
 }
 
 /**
