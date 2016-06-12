@@ -2726,7 +2726,8 @@ void TileEngine::explode(
 
 							while (tileFire != nullptr				// safety.
 								&& tileFire->getPosition().z > 0	// safety.
-//								&& tileFire->getMapData(O_OBJECT) == nullptr
+								&& (tileFire->getMapData(O_OBJECT) == nullptr
+									|| (tileFire->getMapData(O_OBJECT)->getBigwall() & 0xfe) == 1)
 //								&& tileFire->getMapData(O_FLOOR) == nullptr
 								&& tileFire->hasNoFloor(tileBelow) == true)
 							{
