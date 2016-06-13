@@ -2476,8 +2476,6 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					if (camera->isOnScreen(pos) == false)
 					{
 						camera->centerOnPosition(pos);
-						Log(LOG_INFO) << "OffScreen x= " << ((Options::baseXResolution >> 1u) - 16)
-									  << " y= " << ((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);
 						_srfTargeter->setX((Options::baseXResolution >> 1u) - 16);
 						_srfTargeter->setY((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);
 					}
@@ -2490,7 +2488,6 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 												pos,
 												&posScreen);
 						posScreen += camera->getMapOffset();
-						Log(LOG_INFO) << "OnScreen x= " << posScreen.x << " y= " << posScreen.y;
 						_srfTargeter->setX(posScreen.x);
 						_srfTargeter->setY(posScreen.y);
 					}
