@@ -239,7 +239,7 @@ private:
 	void shotgunExplosion();
 
 	/// Popups a context-sensitive-list of battle-actions for the player.
-	void handAction(
+	void itemAction(
 			BattleItem* const item,
 			bool injured = false);
 

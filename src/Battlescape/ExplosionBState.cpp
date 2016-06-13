@@ -100,7 +100,12 @@ ExplosionBState::~ExplosionBState()
  */
 std::string ExplosionBState::getBattleStateLabel() const
 {
-	return "ExplosionBState";
+	std::ostringstream oststr;
+	oststr << "ExplosionBState";
+	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
+	else oststr << " - Actor INVALID";
+
+	return oststr.str();
 }
 
 /**

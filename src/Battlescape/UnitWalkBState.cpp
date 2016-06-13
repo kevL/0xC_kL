@@ -93,7 +93,12 @@ UnitWalkBState::~UnitWalkBState()
  */
 std::string UnitWalkBState::getBattleStateLabel() const
 {
-	return "UnitWalkBState";
+	std::ostringstream oststr;
+	oststr << "UnitWalkBState";
+	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
+	else oststr << " - Actor INVALID";
+
+	return oststr.str();
 }
 
 /**
@@ -363,6 +368,8 @@ bool UnitWalkBState::doStatusStand() // private.
 			if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop.
 			{
 				//Log(LOG_INFO) << ". . . RF triggered";
+				_battleSave->rfTriggerOffset(_walkCam->getMapOffset());
+
 				abortState(false);
 				return false;
 			}
@@ -926,6 +933,8 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
 		{
 			//Log(LOG_INFO) << ". . . RF triggered - cacheUnit/pop state";
+			_battleSave->rfTriggerOffset(_walkCam->getMapOffset());
+
 			abortState();
 			return false;
 		}

@@ -66,7 +66,12 @@ UnitTurnBState::~UnitTurnBState()
  */
 std::string UnitTurnBState::getBattleStateLabel() const
 {
-	return "UnitTurnBState";
+	std::ostringstream oststr;
+	oststr << "UnitTurnBState";
+	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
+	else oststr << " - Actor INVALID";
+
+	return oststr.str();
 }
 
 /**

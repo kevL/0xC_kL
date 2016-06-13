@@ -95,7 +95,12 @@ ProjectileFlyBState::~ProjectileFlyBState()
  */
 std::string ProjectileFlyBState::getBattleStateLabel() const
 {
-	return "ProjectileFlyBState";
+	std::ostringstream oststr;
+	oststr << "ProjectileFlyBState";
+	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
+	else oststr << " - Actor INVALID";
+
+	return oststr.str();
 }
 
 /**
@@ -694,7 +699,9 @@ bool ProjectileFlyBState::createProjectile() // private.
  */
 void ProjectileFlyBState::think()
 {
-	//Log(LOG_INFO) << "ProjectileFlyBState::think() " << _unit->getId();
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "ProjectileFlyBState::think() id-" << _unit->getId();
+	//Log(LOG_INFO) << ". mapOffset " << _parent->getMap()->getCamera()->getMapOffset();
 	if (_unit->getUnitStatus() == STATUS_AIMING
 		&& _unit->getArmor()->getShootFrames() != 0)
 	{
@@ -729,43 +736,44 @@ void ProjectileFlyBState::think()
 		{
 			createProjectile();
 
-/*			if (_action.posCamera.z != -1) // this ought already be in Map draw, as camera follows projectile from barrel of weapon
-			{
-				camera->setMapOffset(_action.posCamera);
+/*			if (_action.posCamera.z != -1)	// this ought already be in Map::drawTerrain()
+			{								// since camera follows projectile from barrel of weapon
+				shotCam->setMapOffset(_action.posCamera);
 //				_parent->getMap()->invalidate();
 //				_parent->getMap()->draw();
 			} */
 		}
 		else // think() FINISH.
 		{
-			//Log(LOG_INFO) << "ProjectileFlyBState::think() -> finish " << _action.actor->getId();
-			if (_action.actor->getFaction() != _battleSave->getSide()	// rf -> note that actionActor may not be the actual shooter,
-				&& Options::battleSmoothCamera == true)					// but he/she will be on the same Side, doing a reaction shot.
+			//Log(LOG_INFO) << "";
+			//Log(LOG_INFO) << "ProjectileFlyBState::think() -> finish actorId-" << _action.actor->getId();
+			if (_action.actor->getFaction() != _battleSave->getSide())	// NOTE: action.actor may not be the actual shooter, but
+//				&& Options::battleSmoothCamera == true)					// the unit will be the same Faction for a reaction shot.
 			{
-				//Log(LOG_INFO) << "reset Camera for " << _action.actor->getId();
-				const std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
-				std::map<int, Position>::const_iterator i (rfShotPos->find(_action.actor->getId()));
+				//Log(LOG_INFO) << "FlyB: Check reset Camera for RF";
+				const std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
+				std::map<int, Position>::const_iterator i (rfShotOffsets->find(_action.actor->getId()));
 
-				//for (std::map<int, Position>::const_iterator j = rfShotPos->begin(); j != rfShotPos->end(); ++j)
-				//{ Log(LOG_INFO) << ". . shotList"; Log(LOG_INFO) << ". . " << j->first << " " << j->second; }
+				//for (std::map<int, Position>::const_iterator j = rfShotOffsets->begin(); j != rfShotOffsets->end(); ++j)
+				//{ Log(LOG_INFO) << "FlyB: . . shotList:"; Log(LOG_INFO) << "FlyB: . . id-" << j->first << " " << j->second; }
 
-				if (i != rfShotPos->end()) // note The shotList vector will be cleared in BattlescapeGame::think() after all BattleStates have popped.
+				if (i != rfShotOffsets->end()) // NOTE: The shotList vector will be cleared in BattlescapeGame::think() after all BattleStates have popped.
 				{
 					_action.posCamera = i->second;
-					//Log(LOG_INFO) << ". to " << _action.posCamera;
+					//Log(LOG_INFO) << "FlyB: . . . set camera to " << _action.posCamera;
 				}
 				else
 				{
 					_action.posCamera.z = -1;
-					//Log(LOG_INFO) << ". no reset";
+					//Log(LOG_INFO) << "FlyB: . . . no reset";
 				}
 			}
 
-			//Log(LOG_INFO) << ". stored posCamera " << _action.posCamera;
-			//Log(LOG_INFO) << ". pauseAfterShot " << (int)camera->getPauseAfterShot();
+			//Log(LOG_INFO) << "FlyB: . stored posCamera " << _action.posCamera;
+			//Log(LOG_INFO) << "FlyB: . pauseAfterShot " << (int)_parent->getMap()->getCamera()->getPauseAfterShot();
 			if (_action.posCamera.z != -1) //&& _action.waypoints.size() < 2)
 			{
-				//Log(LOG_INFO) << "ProjectileFlyBState::think() FINISH: posCamera was Set";
+				//Log(LOG_INFO) << "FlyB: . . posCamera was Set";
 				switch (_action.type) // jump screen back to pre-shot position
 				{
 					case BA_THROW:
@@ -773,26 +781,30 @@ void ProjectileFlyBState::think()
 					case BA_SNAPSHOT:
 					case BA_AIMEDSHOT:
 					{
-						//Log(LOG_INFO) << "ProjectileFlyBState::think() FINISH: resetting Camera to original pos";
+						//Log(LOG_INFO) << "FlyB: . . . resetting Camera to shooter pos";
 						Camera* const shotCam (_parent->getMap()->getCamera());
-						if (shotCam->getPauseAfterShot() == true)	// TODO: move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
-//						if (_action.pauseAfterShot == true)			// note that trying to store the camera position in the BattleAction didn't work either ... double numby.
+						if (shotCam->getPauseAfterShot() == true)	// TODO: Move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
+//						if (_action.pauseAfterShot == true)			// NOTE: That trying to store the camera position in the BattleAction didn't work either ... double numby.
 						{
 							shotCam->setPauseAfterShot(false);
 							if (_prjImpact != VOXEL_OUTOFBOUNDS)
 							{
-								//Log(LOG_INFO) << ". . delay - inBounds";
-								SDL_Delay(331u); // screen-pause when shot hits target before reverting camera to shooter.
+								//Log(LOG_INFO) << "FlyB: . . . . delay";
+								SDL_Delay(Screen::SCREEN_PAUSE); // screen-pause when shot hits target before reverting camera to shooter.
 							}
-							//else Log(LOG_INFO) << ". . final vox OutofBounds - do NOT pause";
+							//else Log(LOG_INFO) << "FlyB: . . . . final vox OutofBounds - do NOT pause";
 						}
 
-						//Log(LOG_INFO) << ". . reset Camera Position " << _action.actor->getId();
-						shotCam->setMapOffset(_action.posCamera);
-//						_action.posCamera = Position(0,0,-1); // reset.
-
-//						_parent->getMap()->draw();
+						shotCam->centerOnPosition(_unit->getPosition());
+//						shotCam->setMapOffset(_action.posCamera);	// NOTE: Might want to centerOnUnit() instead. ^done
+//						_action.posCamera = Position(0,0,-1);		// But keep rfShooterOffsets for posCamera just to flag this code-block.
+																	// TODO: Implement a more efficient flagging mechanism.
 //						_parent->getMap()->invalidate();
+						//Log(LOG_INFO) << "FlyB: . . . DRAW & BLIT & FLIP & PAUSE"; // aka, Screw you, State Machine.
+						Screen* const screen (_parent->getBattlescapeState()->getGame()->getScreen());
+						_parent->getMap()->blit(screen->getSurface());
+						screen->flip();
+						SDL_Delay(Screen::SCREEN_PAUSE);
 					}
 				}
 			}
@@ -810,9 +822,9 @@ void ProjectileFlyBState::think()
 						&& _battleSave->getUnitsFalling() == false)
 					{
 						//Log(LOG_INFO) << "ProjectileFlyBState::think() CALL te::checkReactionFire()"
-						//			  << " id-" << _unit->getId()
-						//			  << " action.type= " << BattleAction::debugBat(_action.type)
-						//			  << " action.TU= " << _action.TU;
+						//			    << " id-" << _unit->getId()
+						//			    << " action.type= " << BattleAction::debugBat(_action.type)
+						//			    << " action.TU= " << _action.TU;
 						_parent->getTileEngine()->checkReactionFire(		// note: I don't believe that smoke obscuration gets accounted
 																_unit,		// for by this call if the current projectile caused cloud.
 																_action.TU,	// But that's kinda ok.

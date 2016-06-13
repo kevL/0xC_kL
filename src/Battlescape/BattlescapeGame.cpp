@@ -345,13 +345,11 @@ void BattlescapeGame::popState()
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates= " << _battleStates.size();
 
-	//for (std::list<BattleState*>::const_iterator
-	//		i = _battleStates.begin();
-	//		i != _battleStates.end();
-	//		++i)
-	//{
-	//	Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
-	//}
+//	for (std::list<BattleState*>::const_iterator
+//			i = _battleStates.begin();
+//			i != _battleStates.end();
+//			++i)
+//		Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
 
 //	if (Options::traceAI)
 //		Log(LOG_INFO) << "BattlescapeGame::popState() "
@@ -625,14 +623,17 @@ void BattlescapeGame::popState()
 
 	if (_battleStates.empty() == true)
 	{
-		getTileEngine()->getRfShooterPositions()->clear();
+		getTileEngine()->rfShooterOffsets()->clear();
 
-		if (_battleSave->getRfTriggerPosition().z != -1) // refocus the Camera back onto RF trigger-unit after a brief delay
+		if (_battleSave->rfTriggerOffset().z != -1) // refocus the Camera back onto RF trigger-unit after a brief delay
 		{
-			SDL_Delay(336u);
-			//Log(LOG_INFO) << "popState - STATES EMPTY - set Camera to triggerPos & clear triggerPos";
-			getMap()->getCamera()->setMapOffset(_battleSave->getRfTriggerPosition());
-			_battleSave->cacheRfTriggerPosition(Position(0,0,-1));
+			//Log(LOG_INFO) << "";
+			//Log(LOG_INFO) << "popState: STATES EMPTY - set Camera to triggerPos " << _battleSave->rfTriggerOffset();
+			//Log(LOG_INFO) << "popState: clear triggerPos";
+
+			SDL_Delay(Screen::SCREEN_PAUSE);
+//			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
+			_battleSave->rfTriggerOffset(Position(0,0,-1));
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
@@ -695,7 +696,7 @@ void BattlescapeGame::resetTraceTiles() // private.
 }
 
 /**
- * Centers the battlefield camera on a BattleUnit.
+ * Centers the battlefield-camera on a specified BattleUnit.
  * @param unit - pointer to a BattleUnit
  * @param draw - true to redraw the battlefield (default false)
  */
@@ -703,19 +704,11 @@ void BattlescapeGame::centerOnUnit( // private.
 		const BattleUnit* const unit,
 		bool draw) const
 {
-	//Log(LOG_INFO) << "BattlescapeGame::centerOnUnit() id-" << unit->getId();
 	if (unit->getUnitVisible() == true)
-	{
-		//Log(LOG_INFO) << ". . curUnit VISIBLE - walkUnit SET curUnit";
 		_battleSave->setWalkUnit(unit);
-	}
 	else
-	{
-		//Log(LOG_INFO) << ". . curUnit NOT Visible - walkUnit Set NULL";
 		_battleSave->setWalkUnit(nullptr);
-	}
 
-	//Log(LOG_INFO) << ". Center on id-" << unit->getId();
 	getMap()->getCamera()->centerOnPosition(unit->getPosition(), draw);
 }
 

@@ -97,7 +97,7 @@ private:
 
 //	BattleActionType _batReserved;
 	ChronoResult _chronoResult;
-	Position _rfTriggerPosition;
+	Position _rfTriggerOffset;
 	TileType _objectiveType;
 	TacticalType _tacType;
 	UnitFaction _side;
@@ -467,10 +467,10 @@ private:
 		/// Gets whether the aLiens have been pacified yet.
 		bool getPacified() const;
 
-		/// Stores the camera-position where the last RF-trigger happened.
-		void cacheRfTriggerPosition(const Position& pos);
-		/// Gets the camera-position where the last RF-trigger happened.
-		const Position& getRfTriggerPosition() const;
+		/// Sets the camera-offset of when the last RF-trigger happened.
+		void rfTriggerOffset(const Position& offset);
+		/// Gets the camera-offset of when the last RF-trigger happened.
+		const Position& rfTriggerOffset() const;
 
 		/// Gets a ref to the scanner-dots vector.
 		std::vector<std::pair<int,int>>& scannerDots();

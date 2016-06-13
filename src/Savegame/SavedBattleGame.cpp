@@ -94,7 +94,7 @@ SavedBattleGame::SavedBattleGame(
 		_controlDestroyed(false),
 		_tiles(nullptr),
 		_pacified(false),
-		_rfTriggerPosition(0,0,-1),
+		_rfTriggerOffset(0,0,-1),
 		_initTu(20),
 		_walkUnit(nullptr),
 		_turnLimit(0),
@@ -2943,21 +2943,21 @@ bool SavedBattleGame::getPacified() const
 }
 
 /**
- * Stores the camera-position where the last RF-trigger happened.
- * @param pos - position
+ * Sets the camera-offset of when the last RF-trigger happened.
+ * @param offset - camera-offset
  */
-void SavedBattleGame::cacheRfTriggerPosition(const Position& pos)
+void SavedBattleGame::rfTriggerOffset(const Position& offset)
 {
-	_rfTriggerPosition = pos;
+	_rfTriggerOffset = offset;
 }
 
 /**
- * Gets the camera-position where the last RF-trigger happened.
- * @return, position
+ * Gets the camera-offset of when the last RF-trigger happened.
+ * @return, camera-offset
  */
-const Position& SavedBattleGame::getRfTriggerPosition() const
+const Position& SavedBattleGame::rfTriggerOffset() const
 {
-	return _rfTriggerPosition;
+	return _rfTriggerOffset;
 }
 
 /**

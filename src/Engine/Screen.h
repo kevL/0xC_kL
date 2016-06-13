@@ -80,6 +80,8 @@ private:
 			ORIGINAL_WIDTH	= 320,
 			ORIGINAL_HEIGHT	= 200;
 
+		static const Uint32 SCREEN_PAUSE = 335u;
+
 		/// Creates a display-screen.
 		Screen();
 		/// Cleans up the display-screen.

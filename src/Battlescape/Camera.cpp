@@ -192,9 +192,9 @@ void Camera::mouseOver(Action* action, State*)
 
 			// if close to top or bottom, also scroll diagonally
 			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY()) // down left
-				_scrollMouseY = scrollSpeed / 2;
+				_scrollMouseY = (scrollSpeed >> 1u);
 			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY()) // up left
-				_scrollMouseY = -scrollSpeed / 2;
+				_scrollMouseY = -(scrollSpeed >> 1u);
 			else
 				_scrollMouseY = 0;
 		}
@@ -204,9 +204,9 @@ void Camera::mouseOver(Action* action, State*)
 
 			// if close to top or bottom, also scroll diagonally
 			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY()) // down right
-				_scrollMouseY = scrollSpeed / 2;
+				_scrollMouseY = (scrollSpeed >> 1u);
 			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY()) // up right
-				_scrollMouseY = -scrollSpeed / 2;
+				_scrollMouseY = -(scrollSpeed >> 1u);
 			else
 				_scrollMouseY = 0;
 		}
@@ -221,12 +221,12 @@ void Camera::mouseOver(Action* action, State*)
 			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX()) // up left
 			{
 				_scrollMouseX = scrollSpeed;
-				_scrollMouseY /= 2;
+				_scrollMouseY >>= 1u;
 			}
 			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX()) // up right
 			{
 				_scrollMouseX = -scrollSpeed;
-				_scrollMouseY /= 2;
+				_scrollMouseY >>= 1u;
 			}
 		}
 		else if (posY > (_screenHeight - SCROLL_BORDER) * action->getScaleY()) // down scroll
@@ -237,12 +237,12 @@ void Camera::mouseOver(Action* action, State*)
 			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX()) // down left
 			{
 				_scrollMouseX = scrollSpeed;
-				_scrollMouseY /= 2;
+				_scrollMouseY >>= 1u;
 			}
 			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX()) // down right
 			{
 				_scrollMouseX = -scrollSpeed;
-				_scrollMouseY /= 2;
+				_scrollMouseY >>= 1u;
 			}
 		}
 		else if (posY != 0
@@ -449,8 +449,8 @@ void Camera::scrollXY(
 	do
 	{
 		convertScreenToMap( // convert center of screen to center of battleField
-					_screenWidth / 2,
-					_playableHeight / 2,
+					_screenWidth    >> 1u,
+					_playableHeight >> 1u,
 					&_centerField.x,
 					&_centerField.y);
 		// Handling map bounds...
@@ -490,8 +490,7 @@ void Camera::scrollXY(
 
 	_map->refreshSelectorPosition();
 
-	if (redraw == true)
-		_map->draw(); // old code.
+	if (redraw == true) _map->draw(); // old code.
 //		_map->invalidate();
 }
 
@@ -509,8 +508,8 @@ void Camera::jumpXY(
 	_offsetField.y += y;
 
 	convertScreenToMap(
-				_screenWidth / 2,
-				_playableHeight / 2,
+				_screenWidth    >> 1u,
+				_playableHeight >> 1u,
 				&_centerField.x,
 				&_centerField.y);
 }
@@ -524,7 +523,7 @@ bool Camera::up()
 	if (_offsetField.z < _mapsize_z - 1)
 	{
 		_map->getBattleSave()->getBattleState()->setLayerValue(++_offsetField.z);
-		_offsetField.y += (_spriteHeight / 2) + 4;
+		_offsetField.y += (_spriteHeight >> 1u) + 4;
 		_map->draw();
 		return true;
 	}
@@ -540,7 +539,7 @@ bool Camera::down()
 	if (_offsetField.z > 0)
 	{
 		_map->getBattleSave()->getBattleState()->setLayerValue(--_offsetField.z);
-		_offsetField.y -= (_spriteHeight / 2) + 4;
+		_offsetField.y -= (_spriteHeight >> 1u) + 4;
 		_map->draw();
 		return true;
 	}
@@ -573,9 +572,9 @@ void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() cau
 }
 
 /**
- * Centers the Map on a certain position.
- * @param posField	- reference the Position to center on
- * @param redraw	- true to redraw map (default true)
+ * Centers the Map on a certain battlefield Position.
+ * @param posField	- reference to the position to center on
+ * @param redraw	- true to redraw the map (default true)
  */
 void Camera::centerOnPosition(
 		const Position& posField,
@@ -597,14 +596,13 @@ void Camera::centerOnPosition(
 					_centerField,
 					&posScreen);
 
-	_offsetField.x = -(posScreen.x - (_screenWidth / 2) + 16);
-	_offsetField.y = -(posScreen.y - (_playableHeight / 2));
+	_offsetField.x = -(posScreen.x - (_screenWidth    >> 1u) + 16);
+	_offsetField.y = -(posScreen.y - (_playableHeight >> 1u));
 	_offsetField.z = _centerField.z;
 
 	_map->getBattleSave()->getBattleState()->setLayerValue(_offsetField.z);
 
-	if (redraw == true)
-		_map->draw();
+	if (redraw == true) _map->draw();
 }
 
 /**
@@ -630,15 +628,15 @@ void Camera::convertScreenToMap(
 		int* mapX,
 		int* mapY) const
 {
-	const int width_4 (_spriteWidth / 4);
+	const int width_4 (_spriteWidth >> 2u);
 
 	// add half a tile-height to the screen-position per layer above floor-level
-	screenY += -_spriteWidth / 2 + _offsetField.z * ((_spriteHeight + width_4) / 2);
+	screenY += -(_spriteWidth >> 1u) + _offsetField.z * ((_spriteHeight + width_4) >> 1u);
 
 	// calculate the actual x/y pixel-position on a diamond shaped map
 	// taking the viewport-offset into account
-	*mapY = -screenX + _offsetField.x + screenY * 2 - _offsetField.y * 2;
-	*mapX =  screenY - _offsetField.y - *mapY / 4 - width_4;
+	*mapY = -screenX + _offsetField.x + (screenY << 1u) - (_offsetField.y << 1u);
+	*mapX =  screenY - _offsetField.y - (*mapY >> 2u) - width_4;
 
 	// to get the row&col itself divide by the size of a tile
 	*mapX /= width_4;
@@ -664,17 +662,17 @@ void Camera::convertMapToScreen(
 		Position* const posScreen) const
 {
 	const int
-		width_2 (_spriteWidth / 2),
-		width_4 (_spriteWidth / 4);
+		width_2 (_spriteWidth >> 1u),
+		width_4 (_spriteWidth >> 2u);
 
 	posScreen->x = posField.x * width_2 - posField.y * width_2;
-	posScreen->y = posField.x * width_4 + posField.y * width_4 - posField.z * ((_spriteHeight + width_4) / 2);
+	posScreen->y = posField.x * width_4 + posField.y * width_4 - posField.z * ((_spriteHeight + width_4) >> 1u);
 	posScreen->z = 0; // not used
 }
 
 /**
  * Converts voxel-coordinates x/y/z to screen-position x/y.
- * @param posVoxel	- reference the x/y/z coordinates of the voxel
+ * @param posVoxel	- reference to the x/y/z coordinates of a voxel
  * @param posScreen	- pointer to the screen-position
  */
 void Camera::convertVoxelToScreen(
@@ -682,20 +680,20 @@ void Camera::convertVoxelToScreen(
 		Position* const posScreen) const
 {
 	const Position mapPosition (Position(
-										posVoxel.x >> 4, // yeh i know: just say no.
-										posVoxel.y >> 4,
+										posVoxel.x >> 4u, // yeh i know: just say no.
+										posVoxel.y >> 4u,
 										posVoxel.z / 24));
 	convertMapToScreen(
 					mapPosition,
 					posScreen);
 
-	const double
-		dx (posVoxel.x - (mapPosition.x << 4)),
-		dy (posVoxel.y - (mapPosition.y << 4)),
-		dz (posVoxel.z - (mapPosition.z * 24));
+	const float
+		dx (static_cast<float>(posVoxel.x - (mapPosition.x << 4u))),
+		dy (static_cast<float>(posVoxel.y - (mapPosition.y << 4u))),
+		dz (static_cast<float>(posVoxel.z - (mapPosition.z  * 24)));
 
-	posScreen->x += static_cast<int>(dx - dy) + (_spriteWidth / 2);
-	posScreen->y += static_cast<int>(((static_cast<double>(_spriteHeight) / 2.)) + (dx / 2.) + (dy / 2.) - dz);
+	posScreen->x += static_cast<int>(dx - dy) + (_spriteWidth >> 1u);
+	posScreen->y += static_cast<int>(((static_cast<float>(_spriteHeight) / 2.f)) + (dx / 2.f) + (dy / 2.f) - dz);
 	posScreen->x += _offsetField.x;
 	posScreen->y += _offsetField.y;
 }

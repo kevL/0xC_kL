@@ -1940,7 +1940,8 @@ void BattlescapeState::btnKneelClick(Action*)
 
 				// Will check reactionFire in BattlescapeGame::kneel()
 				// no, no it won't.
-				_battleGame->getTileEngine()->checkReactionFire(unit);
+				if (_battleGame->getTileEngine()->checkReactionFire(unit) == true)
+					_battleSave->rfTriggerOffset(_map->getCamera()->getMapOffset());
 
 				Pathfinding* const pf (_battleGame->getPathfinding());
 				if (pf->isPathPreviewed() == true)
@@ -2362,7 +2363,7 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 		_map->cacheUnit(unit);
 		_map->draw();
 
-		handAction(
+		itemAction(
 				unit->getItem(ST_LEFTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
 	}
@@ -2404,7 +2405,7 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 		_map->cacheUnit(unit);
 		_map->draw();
 
-		handAction(
+		itemAction(
 				unit->getItem(ST_RIGHTHAND),
 				unit->getFatalWound(BODYPART_LEFTARM) != 0);
 	}
@@ -3707,7 +3708,7 @@ void BattlescapeState::shotgunExplosion() // private.
  * @param item		- pointer to the BattleItem (righthand/lefthand)
  * @param injured	- true if the arm using @a item is injured (default false)
  */
-void BattlescapeState::handAction( // private.
+void BattlescapeState::itemAction( // private.
 		BattleItem* const item,
 		bool injured)
 {
@@ -3737,7 +3738,7 @@ void BattlescapeState::handAction( // private.
 }
 
 /**
- * Handles the top battle game state.
+ * Handles the top BattleState.
  */
 void BattlescapeState::handleState()
 {

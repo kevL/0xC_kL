@@ -139,7 +139,12 @@ UnitDieBState::~UnitDieBState()
  */
 std::string UnitDieBState::getBattleStateLabel() const
 {
-	return "UnitDieBState";
+	std::ostringstream oststr;
+	oststr << "UnitDieBState";
+	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
+	else oststr << " - Actor INVALID";
+
+	return oststr.str();
 }
 
 /**

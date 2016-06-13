@@ -19,6 +19,8 @@
 
 #include "BattleState.h"
 
+#include "../Savegame/BattleUnit.h"
+
 
 namespace OpenXcom
 {
@@ -48,7 +50,12 @@ BattleState::~BattleState() // virtual.
  */
 std::string BattleState::getBattleStateLabel() const // virtual.
 {
-	return "parent BattleState";
+	std::ostringstream oststr;
+	oststr << "parent BattleState";
+	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
+	else oststr << " - Actor INVALID";
+
+	return oststr.str();
 }
 
 /**

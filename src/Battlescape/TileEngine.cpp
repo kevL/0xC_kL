@@ -1852,8 +1852,9 @@ bool TileEngine::reactionShot(
 	if (_rfAction->targeting == true
 		&& _rfAction->actor->spendTimeUnits(_rfAction->TU) == true)
 	{
-		//Log(LOG_INFO) << "rf by Actor " << _rfAction->actor->getId() << " RfTriggerPos " << _battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset();
-		_battleSave->cacheRfTriggerPosition(_battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset());
+		//Log(LOG_INFO) << "TE: rf by Actor id-" << _rfAction->actor->getId();
+		//			  << " rfTriggerPos " << _battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset();
+//		_battleSave->rfTriggerOffset(_battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset());
 		_rfAction->TU = 0;
 		_rfAction->value = -1;
 
@@ -1959,10 +1960,10 @@ BattleAction* TileEngine::getRfAction()
 } */
 
 /**
- * Gets the reaction-fire shot-list.
- * @return, pointer to a map of unit-IDs & Positions
+ * Accesses a cache of reaction-fire shooter-IDs and camera-offsets.
+ * @return, pointer to a map of unit-IDs & camera-offsets
  */
-std::map<int, Position>* TileEngine::getRfShooterPositions()
+std::map<int, Position>* TileEngine::rfShooterOffsets()
 {
 	return &_rfShotPos;
 }
@@ -2072,7 +2073,7 @@ void TileEngine::hit(
 			break;
 		}
 
-		case VOXEL_UNIT: // battleunit voxelType HIT SUCCESS.
+		case VOXEL_UNIT: // BattleUnit voxelType HIT SUCCESS.
 		{
 			if (targetUnit == nullptr
 				&& _battleSave->getTile(posTarget)->hasNoFloor() == true)

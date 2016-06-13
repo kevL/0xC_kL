@@ -394,7 +394,7 @@ void Game::run()
 			if (_init == true) // process rendering
 			{
 #ifdef _DEBUG
-				if (false) { Log(LOG_INFO) << "go fucking figure."; } // The player's ActionMenu won't blit/draw/flip without this.
+				if (false) { Log(LOG_INFO) << "go fucking figure."; } // The player's ActionMenu won't blit/draw/flip without this. g++ debug configuration
 #endif
 
 				_fpsCounter->addFrame();
@@ -404,7 +404,7 @@ void Game::run()
 				if (_blitDelay == true)
 				{
 					_blitDelay = false;
-					SDL_Delay(369u);
+					SDL_Delay(Screen::SCREEN_PAUSE);
 				}
 
 				std::list<State*>::const_iterator i (_states.end());
@@ -673,7 +673,7 @@ void Game::run()
 						if (_blitDelay == true)
 						{
 							_blitDelay = false;
-							SDL_Delay(369u);
+							SDL_Delay(Screen::SCREEN_PAUSE);
 						}
 
 						std::list<State*>::const_iterator i (_states.end());

@@ -381,7 +381,7 @@ void Map::draw()
 
 		static bool delayHide;
 
-		if (_battleSave->getSelectedUnit() == nullptr
+		if (   _battleSave->getSelectedUnit() == nullptr
 			|| _battleSave->getSelectedUnit()->getUnitVisible() == true
 			|| _unitDying == true
 			|| _explosionInFOV == true
@@ -400,7 +400,7 @@ void Map::draw()
 			if (delayHide == true)
 			{
 				delayHide = false;
-				SDL_Delay(369u);
+				SDL_Delay(Screen::SCREEN_PAUSE);
 			}
 
 			_mapIsHidden = true;
@@ -417,6 +417,7 @@ void Map::draw()
  */
 void Map::drawTerrain(Surface* const surface) // private.
 {
+	//Log(LOG_INFO) << "Map::drawTerrain() " << _camera->getMapOffset();
 	Position bullet; // x-y position of bullet on screen.
 	int
 		bulletLowX	(16000),
@@ -499,28 +500,30 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 				}
 
-				const bool offScreen_final (_camera->isOnScreen(posFinal) == false);
-				if (offScreen_final == true)
+				if (action->actor->getFaction() == _battleSave->getSide()) // store camera-offset of possible rf-trigger
+					_battleSave->rfTriggerOffset(_camera->getMapOffset());
+
+				if (_camera->isOnScreen(posFinal) == false)
 				{
 					_smoothingEngaged = true;
 					_camera->setPauseAfterShot();
 
-					if (action->actor->getFaction() != _battleSave->getSide())	// moved here from TileEngine::reactionShot() because this is the
-					{															// accurate position of the bullet-shot-actor's Camera mapOffset.
-						std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
-						rfShotPos->insert(std::pair<int, Position>(
-																action->actor->getId(),
-																_camera->getMapOffset()));
+					if (action->actor->getFaction() != _battleSave->getSide()) // store camera-offsets of rf-shooters
+					{
+						std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
+						rfShotOffsets->insert(std::pair<int, Position>(
+																	action->actor->getId(),
+																	_camera->getMapOffset()));
 					}
 				}
 //				const bool offScreen_final (_camera->isOnScreen(posFinal) == false);
 //				if (offScreen_final == true										// moved here from TileEngine::reactionShot() because this is the
 //					&& action->actor->getFaction() != _battleSave->getSide())	// accurate position of the bullet-shot-actor's Camera mapOffset.
 //				{
-//					std::map<int, Position>* const rfShotPos (_battleSave->getTileEngine()->getRfShooterPositions());
-//					rfShotPos->insert(std::pair<int, Position>(
-//															action->actor->getId(),
-//															_camera->getMapOffset()));
+//					std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
+//					rfShotOffsets->insert(std::pair<int, Position>(
+//																action->actor->getId(),
+//																_camera->getMapOffset()));
 //				}
 //
 //				if (offScreen_final == true)
@@ -609,7 +612,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							&d,
 							&beginY);
 	_camera->convertScreenToMap(
-							surface->getWidth() + _spriteWidth,
+							surface->getWidth()  + _spriteWidth,
 							surface->getHeight() + _spriteHeight,
 							&endX,
 							&d);
@@ -657,7 +660,6 @@ void Map::drawTerrain(Surface* const surface) // private.
 		hasFloor,
 		hasObject,
 		trueLoc;
-
 
 	surface->lock();
 /*	for (int
@@ -2668,13 +2670,8 @@ void Map::cacheUnit(BattleUnit* const unit)
  */
 void Map::setProjectile(Projectile* const projectile)
 {
-	_projectile = projectile;
-
-	if (projectile != nullptr
-		&& Options::battleSmoothCamera == true)
-	{
+	if ((_projectile = projectile) != nullptr) //&& Options::battleSmoothCamera == true)
 		_bulletStart = true;
-	}
 }
 
 /**

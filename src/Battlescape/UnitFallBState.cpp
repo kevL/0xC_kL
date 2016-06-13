@@ -63,7 +63,12 @@ UnitFallBState::~UnitFallBState()
  */
 std::string UnitFallBState::getBattleStateLabel() const
 {
-	return "UnitFallBState";
+	std::ostringstream oststr;
+	oststr << "UnitFallBState";
+	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
+	else oststr << " - Actor INVALID";
+
+	return oststr.str();
 }
 
 /**
@@ -72,10 +77,17 @@ std::string UnitFallBState::getBattleStateLabel() const
 void UnitFallBState::init()
 {
 	Uint32 interval;
-	if (_battleSave->getSide() == FACTION_PLAYER)
-		interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
-	else
-		interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+	switch (_battleSave->getSide())
+	{
+		default:
+		case FACTION_PLAYER:
+			interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
+			break;
+
+		case FACTION_HOSTILE:
+		case FACTION_NEUTRAL:
+			interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+	}
 
 	//Log(LOG_INFO) << "unitFallB: init() set interval = " << interval;
 	_parent->setStateInterval(interval);
@@ -186,14 +198,15 @@ void UnitFallBState::think()
 			}
 		}
 
-		if ((*i)->getUnitStatus() == STATUS_WALKING
-			|| (*i)->getUnitStatus() == STATUS_FLYING)
+		switch ((*i)->getUnitStatus())
 		{
-			//Log(LOG_INFO) << ". . call keepWalking()";
-			(*i)->keepWalking(tileBelow, true);	// advances the phase
+			case STATUS_WALKING:
+			case STATUS_FLYING:
+				//Log(LOG_INFO) << ". . call keepWalking()";
+				(*i)->keepWalking(tileBelow, true);	// advances the phase
 
-			(*i)->flagCache();					// kL
-			_parent->getMap()->cacheUnit(*i);	// make sure the fallUnit sprites are up to date
+				(*i)->flagCache();					// kL
+				_parent->getMap()->cacheUnit(*i);	// make sure the fallUnit sprites are up to date
 		}
 
 		falling = fallCheck
@@ -377,67 +390,73 @@ void UnitFallBState::think()
 			}
 		}
 
-		if ((*i)->getUnitStatus() == STATUS_STANDING) // done falling, just standing around.
+		switch ((*i)->getUnitStatus())
 		{
-			//Log(LOG_INFO) << ". STATUS_STANDING";
-			if (falling == true)
-			{
-				//Log(LOG_INFO) << ". . still falling -> startWalking()";
-				Position destination ((*i)->getPosition() + Position(0,0,-1));
-
-				tileBelow = _battleSave->getTile(destination);
-				(*i)->startWalking(
-								Pathfinding::DIR_DOWN,
-								destination,
-								tileBelow);
-
-				(*i)->flagCache();
-				_parent->getMap()->cacheUnit(*i);
-
-				++i;
-			}
-			else // done falling just standing around ...
-			{
-				//Log(LOG_INFO) << ". . burnFloors, checkProxies, Erase.i";
-				if ((*i)->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
+			case STATUS_STANDING: // done falling, just standing around.
+				//Log(LOG_INFO) << ". STATUS_STANDING";
+				if (falling == true)
 				{
-					// Put burnedBySilacoid() here! etc
-					(*i)->burnTile((*i)->getTile());
+					//Log(LOG_INFO) << ". . still falling -> startWalking()";
+					Position destination ((*i)->getPosition() + Position(0,0,-1));
 
-//					const int power ((*i)->getUnitRules()->getSpecabPower());
-//					(*i)->getTile()->igniteTile(power / 10);
-//					const Position targetVoxel (Position::toVoxelSpaceCentered(
-//																		(*i)->getPosition(),
-//																		-(*i)->getTile()->getTerrainLevel()));
-//					_parent->getTileEngine()->hit(
-//												targetVoxel,
-//												power,
-//												DT_IN,
-//												*i);
+					tileBelow = _battleSave->getTile(destination);
+					(*i)->startWalking(
+									Pathfinding::DIR_DOWN,
+									destination,
+									tileBelow);
+
+					(*i)->flagCache();
+					_parent->getMap()->cacheUnit(*i);
+
+					++i;
 				}
+				else // done falling just standing around ...
+				{
+					//Log(LOG_INFO) << ". . burnFloors, checkProxies, Erase.i";
+					if ((*i)->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
+					{
+						// Put burnedBySilacoid() here! etc
+						(*i)->burnTile((*i)->getTile());
 
-				_terrain->calculateUnitLighting();
+//						const int power ((*i)->getUnitRules()->getSpecabPower());
+//						(*i)->getTile()->igniteTile(power / 10);
+//						const Position targetVoxel (Position::toVoxelSpaceCentered(
+//																			(*i)->getPosition(),
+//																			-(*i)->getTile()->getTerrainLevel()));
+//						_parent->getTileEngine()->hit(
+//													targetVoxel,
+//													power,
+//													DT_IN,
+//													*i);
+					}
 
-				(*i)->flagCache();
-				_parent->getMap()->cacheUnit(*i);
+					_terrain->calculateUnitLighting();
 
-				_terrain->calcFovPos(
-								(*i)->getPosition(),
-								true, true);
+					(*i)->flagCache();
+					_parent->getMap()->cacheUnit(*i);
 
-				_parent->checkProxyGrenades(*i);
-				// kL_add: Put checkForSilacoid() here!
+					_terrain->calcFovPos(
+									(*i)->getPosition(),
+									true, true);
 
-				if (_parent->getTileEngine()->checkReactionFire(*i))
-					_parent->getPathfinding()->abortPath();
+					_parent->checkProxyGrenades(*i);
+					// kL_add: Put checkForSilacoid() here!
 
-				i = _battleSave->getFallingUnits()->erase(i);
-			}
-		}
-		else
-		{
-			//Log(LOG_INFO) << ". not STATUS_STANDING, next unit";
-			++i;
+					if (_parent->getTileEngine()->checkReactionFire(*i) == true)	// TODO: Not so sure I want RF on these guys ....
+					{
+						if ((*i)->getFaction() == _battleSave->getSide())			// Eg. this would need a vector to be accurate.
+							_battleSave->rfTriggerOffset(_parent->getMap()->getCamera()->getMapOffset());
+
+						_parent->getPathfinding()->abortPath();						// In fact this whole state should be bypassed.
+					}
+
+					i = _battleSave->getFallingUnits()->erase(i);
+				}
+				break;
+
+			default:
+				//Log(LOG_INFO) << ". not STATUS_STANDING, next unit";
+				++i;
 		}
 	}
 
