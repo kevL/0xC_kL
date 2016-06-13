@@ -2944,7 +2944,7 @@ bool SavedBattleGame::getPacified() const
 
 /**
  * Sets the camera-offset of when the last RF-trigger happened.
- * @param offset - camera-offset
+ * @param offset - reference to a camera-offset
  */
 void SavedBattleGame::rfTriggerOffset(const Position& offset)
 {
@@ -2953,7 +2953,7 @@ void SavedBattleGame::rfTriggerOffset(const Position& offset)
 
 /**
  * Gets the camera-offset of when the last RF-trigger happened.
- * @return, camera-offset
+ * @return, reference to the camera-offset
  */
 const Position& SavedBattleGame::rfTriggerOffset() const
 {

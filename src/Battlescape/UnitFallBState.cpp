@@ -128,7 +128,7 @@ void UnitFallBState::think()
 
 		bool
 			fallCheck (true),
-			falling   (true);
+			fall	  (true);
 //			onScreen = (*i)->getUnitVisible()
 //					&& _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition());
 //		bool onScreen = ((*i)->getVisible() && _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition(), true, size, false));
@@ -157,13 +157,13 @@ void UnitFallBState::think()
 
 		tileBelow = _battleSave->getTile((*i)->getPosition() + Position(0,0,-1));
 
-		falling = fallCheck
-			   && (*i)->getPosition().z != 0
-			   && (*i)->getTile()->hasNoFloor(tileBelow)
-//			   && (*i)->getMoveTypeUnit() != MT_FLY // done above in fallCheck
-			   && (*i)->getWalkPhase() == 0;
+		fall = fallCheck
+			&& (*i)->getPosition().z != 0
+			&& (*i)->getTile()->hasNoFloor(tileBelow)
+//			&& (*i)->getMoveTypeUnit() != MT_FLY // done above in fallCheck
+			&& (*i)->getWalkPhase() == 0;
 
-		if (falling == true)
+		if (fall == true)
 		{
 			for (int // tile(s) that unit is falling into:
 					x = unitSize;
@@ -209,11 +209,11 @@ void UnitFallBState::think()
 				_parent->getMap()->cacheUnit(*i);	// make sure the fallUnit sprites are up to date
 		}
 
-		falling = fallCheck
-			   && (*i)->getPosition().z != 0
-			   && (*i)->getTile()->hasNoFloor(tileBelow)
-//			   && (*i)->getMovementType() != MT_FLY // done above in fallCheck
-			   && (*i)->getWalkPhase() == 0;
+		fall = fallCheck
+			&& (*i)->getPosition().z != 0
+			&& (*i)->getTile()->hasNoFloor(tileBelow)
+//			&& (*i)->getMovementType() != MT_FLY // done above in fallCheck
+			&& (*i)->getWalkPhase() == 0;
 
 		//Log(LOG_INFO) << ". new fallCheck = " << fallCheck;
 
@@ -394,7 +394,7 @@ void UnitFallBState::think()
 		{
 			case STATUS_STANDING: // done falling, just standing around.
 				//Log(LOG_INFO) << ". STATUS_STANDING";
-				if (falling == true)
+				if (fall == true)
 				{
 					//Log(LOG_INFO) << ". . still falling -> startWalking()";
 					Position destination ((*i)->getPosition() + Position(0,0,-1));

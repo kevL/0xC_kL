@@ -220,7 +220,7 @@ private:
 		void chooseFireMethod();
 		/// Gets the unique reaction-fire BattleAction struct.
 //		BattleAction* getRfAction();
-		/// Gets the reaction-fire shooter-list.
+		/// Accesses the reaction-fire shooter-list.
 		std::map<int, Position>* rfShooterOffsets();
 
 		/// Handles bullet/weapon hits.
