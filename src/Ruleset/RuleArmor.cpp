@@ -100,9 +100,10 @@ void RuleArmor::load(const YAML::Node& node)
 		_corpseBattle	= node["corpseBattle"]	.as<std::vector<std::string>>();
 		_corpseGeo		= _corpseBattle[0u];
 	}
-	_corpseGeo		= node["corpseGeo"]			.as<std::string>(_corpseGeo);
+	_corpseGeo		= node["corpseGeo"]		.as<std::string>(_corpseGeo);
 
-	_mType			= static_cast<MoveType>(node["movementType"].as<int>(0));
+	_mType = static_cast<MoveType>(node["movementType"].as<int>(static_cast<int>(_mType)));
+
 //	_specWeapon		= node["specialWeapon"]	.as<std::string>(_specWeapon);
 	_frontArmor		= node["frontArmor"]	.as<int>(_frontArmor);
 	_sideArmor		= node["sideArmor"]		.as<int>(_sideArmor);

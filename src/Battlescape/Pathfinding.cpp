@@ -120,7 +120,7 @@ void Pathfinding::setPathingUnit(BattleUnit* const unit)
 void Pathfinding::setMoveType() // private.
 {
 	if ((_mType = _unit->getMoveTypeUnit()) == MT_FLY
-		&& _alt == true // this forces soldiers in flightsuits to walk on (or fall to) the ground.
+		&& _alt == true // this forces Soldiers in flightsuits to walk on (or fall to) the ground.
 		&& _unit->getGeoscapeSoldier() != nullptr)
 	{
 		_mType = MT_WALK;
