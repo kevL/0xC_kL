@@ -623,17 +623,24 @@ void BattlescapeGame::popState()
 
 	if (_battleStates.empty() == true)
 	{
-		getTileEngine()->rfShooterOffsets()->clear();
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << "popState: STATES are Empty";
 
-		if (_battleSave->rfTriggerOffset().z != -1) // refocus the Camera back onto RF trigger-unit after a brief delay
+		if (getTileEngine()->rfShooterOffsets()->empty() == false)
 		{
-			//Log(LOG_INFO) << "";
-			//Log(LOG_INFO) << "popState: STATES EMPTY - set Camera to triggerPos " << _battleSave->rfTriggerOffset();
+			//Log(LOG_INFO) << ". rfShooters VALID";
+
+			getTileEngine()->rfShooterOffsets()->clear();
+
+//			if (_battleSave->rfTriggerOffset().z != -1)	// safety. This should always be set for any action capable of inducing RF.
+//			{											// refocus the Camera back onto RF trigger-unit after a brief delay
+			//Log(LOG_INFO) << ". set Camera to triggerPos " << _battleSave->rfTriggerOffset();
 			//Log(LOG_INFO) << "popState: clear triggerPos";
 
 			SDL_Delay(Screen::SCREEN_PAUSE);
-//			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
-			_battleSave->rfTriggerOffset(Position(0,0,-1));
+			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
+//			_battleSave->rfTriggerOffset(Position(0,0,-1));
+//			}
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)

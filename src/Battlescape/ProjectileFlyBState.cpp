@@ -787,23 +787,38 @@ void ProjectileFlyBState::think()
 //						if (_action.pauseAfterShot == true)			// NOTE: That trying to store the camera position in the BattleAction didn't work either ... double numby.
 						{
 							shotCam->setPauseAfterShot(false);
-							if (_prjImpact != VOXEL_OUTOFBOUNDS)
+
+							switch (_prjImpact)
 							{
-								//Log(LOG_INFO) << "FlyB: . . . . delay";
-								SDL_Delay(Screen::SCREEN_PAUSE); // screen-pause when shot hits target before reverting camera to shooter.
+//								case VOXEL_EMPTY: // -1
+								case VOXEL_FLOOR:
+								case VOXEL_WESTWALL:
+								case VOXEL_NORTHWALL:
+								case VOXEL_OBJECT:
+								case VOXEL_UNIT:
+									//Log(LOG_INFO) << "FlyB: . . . . delay";
+									SDL_Delay(Screen::SCREEN_PAUSE); // screen-pause when shot hits target before reverting camera to shooter.
+//									break;
+//
+//								case VOXEL_OUTOFBOUNDS:
+//									Log(LOG_INFO) << "FlyB: . . . . final vox OutofBounds - do NOT pause";
 							}
-							//else Log(LOG_INFO) << "FlyB: . . . . final vox OutofBounds - do NOT pause";
 						}
 
-						shotCam->centerOnPosition(_unit->getPosition());
-//						shotCam->setMapOffset(_action.posCamera);	// NOTE: Might want to centerOnUnit() instead. ^done
-//						_action.posCamera = Position(0,0,-1);		// But keep rfShooterOffsets for posCamera just to flag this code-block.
-																	// TODO: Implement a more efficient flagging mechanism.
+						if (_action.actor->getFaction() == _battleSave->getSide())
+						{
+							shotCam->setMapOffset(_action.posCamera);
+							_parent->getMap()->draw(); // NOTE: Might not be needed. Ie, the camera-offset seems to take hold okay without.
+						}
+						else
+							shotCam->centerOnPosition(_unit->getPosition());	// NOTE: Keep rfShooterOffsets for posCamera just to flag this code-block.
+																				// TODO: Implement a more efficient flagging mechanism.
+//						_action.posCamera = Position(0,0,-1);
 //						_parent->getMap()->invalidate();
-						//Log(LOG_INFO) << "FlyB: . . . DRAW & BLIT & FLIP & PAUSE"; // aka, Screw you, State Machine.
-						Screen* const screen (_parent->getBattlescapeState()->getGame()->getScreen());
-						_parent->getMap()->blit(screen->getSurface());
-						screen->flip();
+
+						//Log(LOG_INFO) << "FlyB: . . . Screw you, State Machine.";
+						_parent->getBattlescapeState()->blit();
+						_parent->getBattlescapeState()->getGame()->getScreen()->flip();
 						SDL_Delay(Screen::SCREEN_PAUSE);
 					}
 				}

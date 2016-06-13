@@ -3764,6 +3764,7 @@ void BattlescapeState::itemAction( // private.
 
 /**
  * Handles the top BattleState.
+ * @note Called by the tactical Timer.
  */
 void BattlescapeState::handleState()
 {
