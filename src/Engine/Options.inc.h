@@ -40,8 +40,8 @@ OPT ScrollType battleEdgeScroll;
 OPT PathPreview battlePreviewPath;
 OPT int battleScrollSpeed, battleDragScrollButton, battleFireSpeed, battleXcomSpeed, battleAlienSpeed, battleExplosionHeight, battlescapeScale, traceAI;
 OPT bool battleInstantGrenade, battleNotifyDeath, battleTooltips, battleHairBleach, battleAutoEnd, //sneakyAI
-	battleStrafe, battleForceFire, battleAllowPsionicCapture, battleDragScrollInvert, battleWeaponSelfDestruction,
-	battleUFOExtenderAccuracy, battleSmoothCamera, battleTFTDDamage, battleRangeBasedAccuracy, battleAlienPanicMessages, battleAlienBleeding;
+	battleStrafe, battleForceFire, battleAllowPsionicCapture, battleDragScrollInvert, battleWeaponSelfDestruction, // battleSmoothCamera
+	battleUFOExtenderAccuracy, battleTFTDDamage, battleRangeBasedAccuracy, battleAlienPanicMessages, battleAlienBleeding;
 OPT SDLKey keyBattleLeft, keyBattleRight, keyBattleUp, keyBattleDown, keyBattleLevelUp, keyBattleLevelDown, keyBattleCenterUnit,
 	keyBattlePrevUnit, keyBattleNextUnit, keyBattleDeselectUnit,
 	keyBattleUseLeftHand, keyBattleUseRightHand,
