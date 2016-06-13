@@ -231,7 +231,7 @@ private:
 	void cycleFuses(BattleUnit* const selUnit);
 	/// Shifts the colors of the visible unit buttons' backgrounds.
 	void hotSqrsCycle(BattleUnit* const selUnit);
-	/// Animates a target cursor over hostile unit when hostileUnit indicator is clicked.
+	/// Animates a targeter over a hostile unit.
 	void hostileTargeter();
 	/// Draws an execution explosion on the Map.
 	void liquidationExplosion();

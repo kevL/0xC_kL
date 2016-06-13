@@ -128,7 +128,7 @@ void UnitFallBState::think()
 
 		bool
 			fallCheck (true),
-			fall	  (true);
+			fall;
 //			onScreen = (*i)->getUnitVisible()
 //					&& _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition());
 //		bool onScreen = ((*i)->getVisible() && _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition(), true, size, false));

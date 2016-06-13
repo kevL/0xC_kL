@@ -2462,16 +2462,43 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
+				{
 					// *** cppCheck false positive ***
 					// kL_note: Invoke cppCheck w/ "--inline-suppr BattlescapeState.cpp"
 					// it says this is going to try accessing _hostileUnit[] at index=HOTSQRS.
 					// cppcheck-suppress arrayIndexOutOfBounds
-					_map->getCamera()->centerOnPosition(_hostileUnit[i]->getPosition());
+//					_map->getCamera()->centerOnPosition(_hostileUnit[i]->getPosition());
 					// (but note that it makes no such burp against _hostileUnit[] below_)
+
+					const Position pos (_hostileUnit[i]->getPosition());
+
+					Camera* const camera (_map->getCamera());
+					if (camera->isOnScreen(pos) == false)
+					{
+						camera->centerOnPosition(pos);
+						Log(LOG_INFO) << "OffScreen x= " << ((Options::baseXResolution >> 1u) - 16)
+									  << " y= " << ((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);
+						_srfTargeter->setX((Options::baseXResolution >> 1u) - 16);
+						_srfTargeter->setY((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);
+					}
+					else
+					{
+						camera->setViewLevel(pos.z);
+
+						Position posScreen;
+						camera->convertMapToScreen(
+												pos,
+												&posScreen);
+						posScreen += camera->getMapOffset();
+						Log(LOG_INFO) << "OnScreen x= " << posScreen.x << " y= " << posScreen.y;
+						_srfTargeter->setX(posScreen.x);
+						_srfTargeter->setY(posScreen.y);
+					}
 
 					_srfTargeter->setVisible();
 					_targeterFrame = 0;
 					break;
+				}
 
 				case SDL_BUTTON_RIGHT:
 				{
@@ -3634,14 +3661,15 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 }
 
 /**
- * Animates a target cursor over hostile unit when hostileUnit indicator is clicked.
+ * Animates a targeter over a hostile unit when the hot-square for a
+ * corresponding hostile unit is mouse-pressed.
  */
 void BattlescapeState::hostileTargeter() // private.
 {
-	static const int cursorFrames[TARGET_FRAMES] {0,1,2,3,4,0}; // NOTE: Does not show the last frame.
+	static const int targeterFrames[TARGET_FRAMES] {0,1,2,3,4,0}; // NOTE: Does not show the last frame.
 
-	Surface* const targetCursor (_game->getResourcePack()->getSurfaceSet("Targeter")->getFrame(cursorFrames[_targeterFrame]));
-	targetCursor->blit(_srfTargeter);
+	Surface* const srfTargeter (_game->getResourcePack()->getSurfaceSet("Targeter")->getFrame(targeterFrames[_targeterFrame]));
+	srfTargeter->blit(_srfTargeter);
 
 	if (++_targeterFrame == TARGET_FRAMES)
 		_srfTargeter->setVisible(false);
