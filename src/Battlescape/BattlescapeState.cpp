@@ -2481,7 +2481,8 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					}
 					else
 					{
-						camera->setViewLevel(pos.z);
+						if (camera->getViewLevel() != pos.z)
+							camera->setViewLevel(pos.z);
 
 						Position posScreen;
 						camera->convertMapToScreen(
@@ -2563,11 +2564,10 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 						}
 
 						Camera* const camera (_map->getCamera());
-						if (camera->isOnScreen(nextSpotter->getPosition()) == false
-							|| camera->getViewLevel() != nextSpotter->getPosition().z)
-						{
+						if (camera->isOnScreen(nextSpotter->getPosition()) == false)
 							camera->centerOnPosition(nextSpotter->getPosition());
-						}
+						else if	(camera->getViewLevel() != nextSpotter->getPosition().z)
+							camera->setViewLevel(nextSpotter->getPosition().z);
 					}
 				}
 			}
