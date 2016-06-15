@@ -641,18 +641,20 @@ void BaseInfoState::btnMonthlyCostsClick(Action*)
 void BaseInfoState::miniClick(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
-	if (baseId < _baseList->size()
-		&& _base != _baseList->at(baseId))
+	if (baseId < _baseList->size())
 	{
-		_txtHoverBase->setText(L"");
-		_txtHoverRegion->setText(L"");
+		Base* const base (_baseList->at(baseId));
+		if (_base != base)
+		{
+			_txtHoverBase->setText(L"");
+			_txtHoverRegion->setText(L"");
 
-		_mini->setSelectedBase(baseId);
-		_base = _baseList->at(baseId);
-		_state->setBase(_base);
+			_mini->setSelectedBase(baseId);
+			_state->setBase(_base = base);
 
-		_state->resetStoresWarning();
-		init();
+			_state->resetStoresWarning();
+			init();
+		}
 	}
 }
 
@@ -667,12 +669,11 @@ void BaseInfoState::miniMouseOver(Action*)
 	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size())
 	{
-		const Base* const hoverBase (_baseList->at(baseId));
-		if (hoverBase != _base)
+		const Base* const base (_baseList->at(baseId));
+		if (base != _base)
 		{
 			clearText = false;
-
-			_txtHoverBase->setText(hoverBase->getName().c_str());
+			_txtHoverBase->setText(base->getName().c_str());
 
 			for (std::vector<Region*>::const_iterator
 					i = _game->getSavedGame()->getRegions()->begin();
@@ -680,8 +681,8 @@ void BaseInfoState::miniMouseOver(Action*)
 					++i)
 			{
 				if ((*i)->getRules()->insideRegion(
-												hoverBase->getLongitude(),
-												hoverBase->getLatitude()) == true)
+												base->getLongitude(),
+												base->getLatitude()) == true)
 				{
 					_txtHoverRegion->setText(tr((*i)->getRules()->getType()));
 					break;

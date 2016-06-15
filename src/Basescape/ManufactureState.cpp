@@ -362,9 +362,8 @@ void ManufactureState::miniClick(Action*)
 			{
 				_txtHoverBase->setText(L"");
 
-				_base = base;
 				_mini->setSelectedBase(baseId);
-				_state->setBase(_base);
+				_state->setBase(_base = base);
 
 				_state->resetStoresWarning();
 				init();
@@ -380,11 +379,13 @@ void ManufactureState::miniClick(Action*)
 void ManufactureState::miniMouseOver(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
+	const Base* const base (_baseList->at(baseId));
+
 	if (baseId < _baseList->size()
-		&& _base != _baseList->at(baseId)
-		&& _baseList->at(baseId)->hasProduction() == true)
+		&& _base != base
+		&& base->hasProduction() == true)
 	{
-		_txtHoverBase->setText(_baseList->at(baseId)->getName().c_str());
+		_txtHoverBase->setText(base->getName().c_str());
 	}
 	else
 		_txtHoverBase->setText(L"");

@@ -208,7 +208,6 @@ AlienContainmentState::~AlienContainmentState()
  */
 void AlienContainmentState::init()
 {
-	Log(LOG_INFO) << "init";
 	State::init();
 
 	_txtBaseLabel->setText(_base->getName());
@@ -312,7 +311,6 @@ void AlienContainmentState::init()
 
 	if (_totalSpace < _usedSpace) // for post-tactical
 		_btnCancel->setVisible(false);
-	Log(LOG_INFO) << "init EXIT";
 }
 
 /**
@@ -561,9 +559,8 @@ void AlienContainmentState::miniClick(Action*)
 			{
 				_txtHoverBase->setText(L"");
 
-				_base = base;
 				_mini->setSelectedBase(baseId);
-				_state->setBase(_base);
+				_state->setBase(_base = base);
 
 				_state->resetStoresWarning();
 				init();
@@ -579,11 +576,13 @@ void AlienContainmentState::miniClick(Action*)
 void AlienContainmentState::miniMouseOver(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
+	const Base* const base (_baseList->at(baseId));
+
 	if (baseId < _baseList->size()
-		&& _base != _baseList->at(baseId)
-		&& _baseList->at(baseId)->hasContainment() == true)
+		&& _base != base
+		&& base->hasContainment() == true)
 	{
-		_txtHoverBase->setText(_baseList->at(baseId)->getName().c_str());
+		_txtHoverBase->setText(base->getName().c_str());
 	}
 	else
 		_txtHoverBase->setText(L"");
