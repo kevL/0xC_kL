@@ -121,7 +121,7 @@ void AlienBase::setId(int id)
  */
 std::wstring AlienBase::getName(const Language* const lang) const
 {
-	return lang->getString("STR_ALIEN_BASE_").arg(_id);
+	return lang->getString(_ruleDeploy->getMarkerType() + "_").arg(_id); //"STR_ALIEN_BASE_"
 }
 
 /**
