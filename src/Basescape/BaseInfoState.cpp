@@ -230,8 +230,8 @@ BaseInfoState::BaseInfoState(
 	}
 	_mini->onMouseClick((ActionHandler)& BaseInfoState::miniClick);
 	_mini->onKeyboardPress((ActionHandler)& BaseInfoState::handleKeyPress);
-	_mini->onMouseOver((ActionHandler)& BaseInfoState::viewMouseOver);
-	_mini->onMouseOut((ActionHandler)& BaseInfoState::viewMouseOut);
+	_mini->onMouseOver((ActionHandler)& BaseInfoState::miniMouseOver);
+	_mini->onMouseOut((ActionHandler)& BaseInfoState::miniMouseOut);
 
 	_edtBase->setBig();
 	_edtBase->onTextChange((ActionHandler)& BaseInfoState::edtLabelChange);
@@ -660,7 +660,7 @@ void BaseInfoState::miniClick(Action*)
  * Displays the name and region of the Base the mouse is over.
  * @param action - pointer to an Action
  */
-void BaseInfoState::viewMouseOver(Action*)
+void BaseInfoState::miniMouseOver(Action*)
 {
 	bool clearText (true);
 
@@ -701,7 +701,7 @@ void BaseInfoState::viewMouseOver(Action*)
  * Clears the hovered Base name and region.
  * @param action - pointer to an Action
  */
-void BaseInfoState::viewMouseOut(Action*)
+void BaseInfoState::miniMouseOut(Action*)
 {
 	_txtHoverBase->setText(L"");
 	_txtHoverRegion->setText(L"");

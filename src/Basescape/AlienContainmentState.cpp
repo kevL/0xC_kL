@@ -23,6 +23,9 @@
 //#include <climits>
 //#include <sstream>
 
+#include "BasescapeState.h"
+#include "MiniBaseView.h"
+
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -54,32 +57,39 @@ namespace OpenXcom
  * Initializes all the elements in the AlienContainment screen.
  * @param base		- pointer to the Base to get info from
  * @param origin	- game section that originated this state
+ * @param state		- pointer to the BasescapeState (default nullptr if
+ *					  Battlescape-invoked or ResearchState-invoked)
  */
 AlienContainmentState::AlienContainmentState(
 		Base* const base,
-		OptionsOrigin origin)
+		OptionsOrigin origin,
+		BasescapeState* const state)
 	:
 		_base(base),
 		_origin(origin),
+		_state(state),
 		_sel(0u),
 		_fishFood(0),
-		_totalSpace(base->getTotalContainment()),
-		_usedSpace(base->getUsedContainment())
+		_totalSpace(0),
+		_usedSpace(0),
+		_baseList(_game->getSavedGame()->getBases())
 {
 	_window			= new Window(this, 320, 200);
+	_mini			= new MiniBaseView(128, 16, 180, 27, MBV_CONTAINMENT);
 
 	_txtTitle		= new Text(300, 17, 10, 10);
 	_txtBaseLabel	= new Text( 80,  9, 16, 10);
+	_txtHoverBase	= new Text( 80,  9, 224, 10);
 
-	_txtSpace		= new Text(144, 9,  16, 30);
-	_txtResearch	= new Text(144, 9, 154, 30);
+	_txtSpace		= new Text(81, 9, 16, 30);
+	_txtResearch	= new Text(80, 9, 97, 30);
 
-	_txtItem		= new Text(138, 9,  16, 40);
-	_txtLiveAliens	= new Text( 50, 9, 154, 40);
-	_txtDeadAliens	= new Text( 50, 9, 204, 40);
-	_txtInResearch	= new Text( 47, 9, 254, 40);
+	_txtItem		= new Text(138, 9,  16, 45);
+	_txtLiveAliens	= new Text( 50, 9, 154, 45);
+	_txtDeadAliens	= new Text( 50, 9, 204, 45);
+	_txtInResearch	= new Text( 47, 9, 254, 45);
 
-	_lstAliens		= new TextList(285, 121, 16, 50);
+	_lstAliens		= new TextList(285, 121, 16, 55);
 
 	_btnCancel		= new TextButton(134, 16,  16, 177);
 	_btnOk			= new TextButton(134, 16, 170, 177);
@@ -87,8 +97,10 @@ AlienContainmentState::AlienContainmentState(
 	setInterface("manageContainment");
 
 	add(_window,		"window",	"manageContainment");
+	add(_mini,			"miniBase",	"basescape"); // <-
 	add(_txtTitle,		"text",		"manageContainment");
 	add(_txtBaseLabel,	"text",		"manageContainment");
+	add(_txtHoverBase,	"numbers",	"baseInfo"); // <-
 	add(_txtSpace,		"text",		"manageContainment");
 	add(_txtResearch,	"text",		"manageContainment");
 	add(_txtItem,		"text",		"manageContainment");
@@ -101,6 +113,27 @@ AlienContainmentState::AlienContainmentState(
 
 	centerAllSurfaces();
 
+
+	_mini->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
+	_mini->setBases(_baseList);
+	for (size_t
+			i = 0u;
+			i != _baseList->size();
+			++i)
+	{
+		if (_baseList->at(i) == _base)
+		{
+			_mini->setSelectedBase(i);
+			break;
+		}
+	}
+	_mini->onMouseClick(
+					(ActionHandler)& AlienContainmentState::miniClick,
+					SDL_BUTTON_LEFT);
+	_mini->onMouseOver((ActionHandler)& AlienContainmentState::miniMouseOver);
+	_mini->onMouseOut((ActionHandler)& AlienContainmentState::miniMouseOut);
+
+	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
 	std::string st;
 	switch (_origin)
@@ -124,28 +157,16 @@ AlienContainmentState::AlienContainmentState(
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& AlienContainmentState::btnOkClick,
 					Options::keyOkKeypad);
-	_btnOk->setVisible(false);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->onMouseClick((ActionHandler)& AlienContainmentState::btnCancelClick);
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& AlienContainmentState::btnCancelClick,
 					Options::keyCancel);
-	if (_totalSpace < _usedSpace)
-		_btnCancel->setVisible(false);
 
 	_txtTitle->setText(tr("STR_MANAGE_CONTAINMENT"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
-
-	_txtBaseLabel->setText(_base->getName());
-
-	_txtSpace->setText(tr("STR_SPACE_USED_SPACE_FREE_")
-						.arg(_usedSpace)
-						.arg(_totalSpace - _usedSpace));
-
-	_txtResearch->setText(tr("STR_INTERROGATION_")
-							.arg(_base->getInterrogatedAliens()));
 
 	_txtItem->setText(tr("STR_ALIEN"));
 	_txtLiveAliens->setText(tr("STR_LIVE_ALIENS"));
@@ -164,6 +185,37 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->onRightArrowClick((ActionHandler)& AlienContainmentState::lstItemsRightArrowClick);
 //	_lstAliens->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
 //	_lstAliens->onMousePress((ActionHandler)& AlienContainmentState::lstItemsMousePress);
+
+
+	_timerInc = new Timer(Timer::SCROLL_SLOW);
+	_timerInc->onTimer((StateHandler)& AlienContainmentState::increase);
+
+	_timerDec = new Timer(Timer::SCROLL_SLOW);
+	_timerDec->onTimer((StateHandler)& AlienContainmentState::decrease);
+}
+
+/**
+ * dTor.
+ */
+AlienContainmentState::~AlienContainmentState()
+{
+	delete _timerInc;
+	delete _timerDec;
+}
+
+/**
+ * Updates the list of Live aLiens after clicking the MiniBase view.
+ */
+void AlienContainmentState::init()
+{
+	Log(LOG_INFO) << "init";
+	State::init();
+
+	_txtBaseLabel->setText(_base->getName());
+
+	_lstAliens->clearList();
+	_qty.clear();
+	_aliens.clear();
 
 	const RuleItem* itRule;
 	std::string type;
@@ -246,21 +298,21 @@ AlienContainmentState::AlienContainmentState(
 							_lstAliens->getSecondaryColor());
 	}
 
+	_fishFood = 0;
+	_totalSpace = _base->getTotalContainment();
+	_usedSpace = _base->getUsedContainment();
+	_txtSpace->setText(tr("STR_SPACE_USED_SPACE_FREE_")
+						.arg(_usedSpace)
+						.arg(_totalSpace - _usedSpace));
 
-	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& AlienContainmentState::increase);
+	_txtResearch->setText(tr("STR_INTERROGATION_")
+							.arg(_base->getInterrogatedAliens()));
 
-	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& AlienContainmentState::decrease);
-}
+	_btnOk->setVisible(false);
 
-/**
- * dTor.
- */
-AlienContainmentState::~AlienContainmentState()
-{
-	delete _timerInc;
-	delete _timerDec;
+	if (_totalSpace < _usedSpace) // for post-tactical
+		_btnCancel->setVisible(false);
+	Log(LOG_INFO) << "init EXIT";
 }
 
 /**
@@ -490,6 +542,60 @@ void AlienContainmentState::update() // private.
 
 	_btnOk->setVisible(_fishFood > 0 && freeSpace > -1);
 	_btnCancel->setVisible(_totalSpace - _usedSpace > -1);
+}
+
+/**
+ * Selects a different Base to display.
+ * TODO: Implement key-presses to switch bases.
+ * @param action - pointer to an Action
+ */
+void AlienContainmentState::miniClick(Action*)
+{
+	if (_state != nullptr) // cannot switch bases if origin is Battlescape/Debriefing OR Research state.
+	{
+		const size_t baseId (_mini->getHoveredBase());
+		if (baseId < _baseList->size())
+		{
+			Base* const base (_baseList->at(baseId));
+			if (base != _base && base->hasContainment() == true)
+			{
+				_txtHoverBase->setText(L"");
+
+				_base = base;
+				_mini->setSelectedBase(baseId);
+				_state->setBase(_base);
+
+				_state->resetStoresWarning();
+				init();
+			}
+		}
+	}
+}
+
+/**
+ * Displays the name of the Base the mouse is over.
+ * @param action - pointer to an Action
+ */
+void AlienContainmentState::miniMouseOver(Action*)
+{
+	const size_t baseId (_mini->getHoveredBase());
+	if (baseId < _baseList->size()
+		&& _base != _baseList->at(baseId)
+		&& _baseList->at(baseId)->hasContainment() == true)
+	{
+		_txtHoverBase->setText(_baseList->at(baseId)->getName().c_str());
+	}
+	else
+		_txtHoverBase->setText(L"");
+}
+
+/**
+ * Clears the hovered Base name.
+ * @param action - pointer to an Action
+ */
+void AlienContainmentState::miniMouseOut(Action*)
+{
+	_txtHoverBase->setText(L"");
 }
 
 }

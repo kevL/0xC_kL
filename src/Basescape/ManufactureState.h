@@ -93,12 +93,12 @@ private:
 		/// Handler for the New Production button.
 		void btnNewProductionClick(Action* action);
 
-		/// Handler for clicking the MiniBaseView.
+		/// Handler for clicking the MiniBase view.
 		void miniClick(Action* action);
-		/// Handler for hovering the MiniBaseView.
-		void viewMouseOver(Action* action);
-		/// Handler for hovering out of the MiniBaseView.
-		void viewMouseOut(Action* action);
+		/// Handler for hovering the MiniBase view.
+		void miniMouseOver(Action* action);
+		/// Handler for hovering out of the MiniBase view.
+		void miniMouseOut(Action* action);
 };
 
 }

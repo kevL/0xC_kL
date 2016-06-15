@@ -23,6 +23,7 @@
 #include "SaveGameState.h"
 
 #include "../Engine/Game.h"
+#include "../Engine/Screen.h"
 
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"

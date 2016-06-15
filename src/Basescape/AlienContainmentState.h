@@ -32,6 +32,9 @@ namespace OpenXcom
 {
 
 class Base;
+class BasescapeState;
+class MiniBaseView;
+
 class Text;
 class TextButton;
 class TextList;
@@ -60,9 +63,12 @@ private:
 	OptionsOrigin _origin;
 
 	Base* _base;
+	BasescapeState* _state;
+	MiniBaseView* _mini;
 	Text
 		* _txtBaseLabel,
 		* _txtDeadAliens,
+		* _txtHoverBase,
 		* _txtResearch,
 		* _txtInResearch,
 		* _txtItem,
@@ -81,6 +87,8 @@ private:
 	std::vector<int> _qty;
 	std::vector<std::string> _aliens;
 
+	std::vector<Base*>* _baseList;
+
 	/// Gets selected quantity.
 	int getQuantity();
 	/// Updates the quantity-strings of the selected alien.
@@ -91,10 +99,13 @@ private:
 		/// Creates an AlienContainment state.
 		AlienContainmentState(
 				Base* const base,
-				OptionsOrigin origin);
+				OptionsOrigin origin,
+				BasescapeState* const state = nullptr);
 		/// Cleans up the AlienContainment state.
 		~AlienContainmentState();
 
+		/// Updates the list of Live aLiens.
+		void init() override;
 		/// Runs the Timers.
 		void think() override;
 
@@ -125,6 +136,13 @@ private:
 		void decrease();
 		/// Decreases the quantity of an aLien by the given value.
 		void decreaseByValue(int change);
+
+		/// Handler for clicking the MiniBase view.
+		void miniClick(Action* action);
+		/// Handler for hovering the MiniBase view.
+		void miniMouseOver(Action* action);
+		/// Handler for hovering out of the MiniBase view.
+		void miniMouseOut(Action* action);
 };
 
 }

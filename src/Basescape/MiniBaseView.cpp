@@ -165,10 +165,16 @@ void MiniBaseView::draw()
 		{
 			base = _baseList->at(i);
 
-			if (   (_mode == MBV_RESEARCH   && base->hasResearch()   == false)
-				|| (_mode == MBV_PRODUCTION && base->hasProduction() == false))
+			switch (_mode)
 			{
-				continue;
+				case MBV_RESEARCH:
+					if (base->hasResearch() == false) continue;
+					break;
+				case MBV_PRODUCTION:
+					if (base->hasProduction() == false) continue;
+					break;
+				case MBV_CONTAINMENT:
+					if (base->hasContainment() == false) continue;
 			}
 
 			lock();

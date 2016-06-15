@@ -130,8 +130,8 @@ ManufactureState::ManufactureState(
 	_mini->onMouseClick(
 					(ActionHandler)& ManufactureState::miniClick,
 					SDL_BUTTON_LEFT);
-	_mini->onMouseOver((ActionHandler)& ManufactureState::viewMouseOver);
-	_mini->onMouseOut((ActionHandler)& ManufactureState::viewMouseOut);
+	_mini->onMouseOver((ActionHandler)& ManufactureState::miniMouseOver);
+	_mini->onMouseOut((ActionHandler)& ManufactureState::miniMouseOut);
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
@@ -377,7 +377,7 @@ void ManufactureState::miniClick(Action*)
  * Displays the name of the Base the mouse is over.
  * @param action - pointer to an Action
  */
-void ManufactureState::viewMouseOver(Action*)
+void ManufactureState::miniMouseOver(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size()
@@ -394,7 +394,7 @@ void ManufactureState::viewMouseOver(Action*)
  * Clears the hovered Base name.
  * @param action - pointer to an Action
  */
-void ManufactureState::viewMouseOut(Action*)
+void ManufactureState::miniMouseOut(Action*)
 {
 	_txtHoverBase->setText(L"");
 }

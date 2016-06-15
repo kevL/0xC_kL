@@ -43,7 +43,7 @@
 namespace OpenXcom
 {
 
-const std::string ManufactureListState::ALL_ITEMS ("STR_ALL_ITEMS");						// private/static.
+const std::string ManufactureListState::ALL_ITEMS ("STR_ALL_ITEMS");					// private/static.
 std::string ManufactureListState::_recallCatString (ManufactureListState::ALL_ITEMS);	// private/static.
 
 

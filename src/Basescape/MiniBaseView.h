@@ -38,7 +38,8 @@ enum MiniBaseViewType
 	MBV_STANDARD,	// 0
 	MBV_RESEARCH,	// 1
 	MBV_PRODUCTION,	// 2
-	MBV_INFO		// 3
+	MBV_INFO,		// 3
+	MBV_CONTAINMENT	// 4
 };
 
 

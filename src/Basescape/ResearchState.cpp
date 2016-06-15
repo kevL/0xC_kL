@@ -124,8 +124,8 @@ ResearchState::ResearchState(
 	_mini->onMouseClick(
 					(ActionHandler)& ResearchState::miniClick,
 					SDL_BUTTON_LEFT);
-	_mini->onMouseOver((ActionHandler)& ResearchState::viewMouseOver);
-	_mini->onMouseOut((ActionHandler)& ResearchState::viewMouseOut);
+	_mini->onMouseOver((ActionHandler)& ResearchState::miniMouseOver);
+	_mini->onMouseOut((ActionHandler)& ResearchState::miniMouseOut);
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
@@ -243,7 +243,7 @@ void ResearchState::btnNewClick(Action*)
 }
 
 /**
- * Goes to the Manage Alien Containment screen.
+ * Goes to the AlienContainment screen.
  * @param action - pointer to an Action
  */
 void ResearchState::btnAliens(Action*)
@@ -311,7 +311,7 @@ void ResearchState::miniClick(Action*)
  * Displays the name of the Base the mouse is over.
  * @param action - pointer to an Action
  */
-void ResearchState::viewMouseOver(Action*)
+void ResearchState::miniMouseOver(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size()
@@ -328,7 +328,7 @@ void ResearchState::viewMouseOver(Action*)
  * Clears the hovered Base name.
  * @param action - pointer to an Action
  */
-void ResearchState::viewMouseOut(Action*)
+void ResearchState::miniMouseOut(Action*)
 {
 	_txtHoverBase->setText(L"");
 }

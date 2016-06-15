@@ -29,6 +29,7 @@ namespace OpenXcom
 class Base;
 class BasescapeState;
 class MiniBaseView;
+
 class Text;
 class TextButton;
 class TextList;
@@ -89,12 +90,12 @@ private:
 		/// Handler for clicking the ResearchProject list.
 		void onSelectProject(Action* action);
 
-		/// Handler for clicking the mini base view.
+		/// Handler for clicking the MiniBase view.
 		void miniClick(Action* action);
 		/// Handler for hovering the MiniBase view.
-		void viewMouseOver(Action* action);
+		void miniMouseOver(Action* action);
 		/// Handler for hovering out of the MiniBase view.
-		void viewMouseOut(Action* action);
+		void miniMouseOut(Action* action);
 };
 
 }

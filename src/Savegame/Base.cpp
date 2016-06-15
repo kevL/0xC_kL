@@ -1013,7 +1013,7 @@ int Base::getFreeContainment() const
 }
 
 /**
- * Returns whether or not this Base has alien containment.
+ * Returns whether or not this Base has alien-containment.
  * @return, true if containment exists
  */
 bool Base::hasContainment() const

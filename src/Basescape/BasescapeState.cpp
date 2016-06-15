@@ -45,6 +45,7 @@
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
+#include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
 
 #include "../Geoscape/BuildNewBaseState.h"
@@ -477,7 +478,7 @@ void BasescapeState::btnCraftsClick(Action*)
 void BasescapeState::btnAliens(Action*)
 {
 	if (_edtBase->isFocused() == false)
-		_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
+		_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE, this));
 }
 
 /**
@@ -648,7 +649,7 @@ void BasescapeState::layoutLeftClick(Action*)
 			}
 			else if (fac->getRules()->getAliens() != 0)
 			{
-				_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
+				_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE, this));
 				bPop = true;
 			}
 			else if (fac->getRules()->isLift() == true) // Lift has radar range (cf. next)
