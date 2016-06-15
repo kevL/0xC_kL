@@ -1432,10 +1432,10 @@ void SavedGame::getAvailableResearchProjects(
 	const RuleResearch* resRule;
 	bool cullProject;
 
-	const std::vector<std::string> researchList (_rules->getResearchList());
+	const std::vector<std::string> allResearch (_rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
-			i = researchList.begin();
-			i != researchList.end();
+			i = allResearch.begin();
+			i != allResearch.end();
 			++i)
 	{
 		resRule = _rules->getResearch(*i);
@@ -1779,7 +1779,7 @@ void SavedGame::getPopupManufacture(
 
 /**
  * Checks if a RuleResearch is discovered.
- * @param resType - reference a research-type
+ * @param resType - reference to a research-type
  * @return, true if type has been researched
  */
 bool SavedGame::isResearched(const std::string& resType) const
@@ -1796,7 +1796,7 @@ bool SavedGame::isResearched(const std::string& resType) const
 
 /**
  * Checks if a list of RuleResearch is discovered.
- * @param resTypes - reference a vector of strings of research-types
+ * @param resTypes - reference to a vector of strings of research-types
  * @return, true if all types have been researched
  */
 bool SavedGame::isResearched(const std::vector<std::string>& resTypes) const

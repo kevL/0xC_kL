@@ -33,6 +33,7 @@
 #include "../Resource/ResourcePack.h"
 
 #include "../Ruleset/RuleResearch.h"
+#include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
 #include "../Savegame/ResearchProject.h"
@@ -152,7 +153,6 @@ void NewResearchListState::fillProjectList() // private.
 	_lstResearch->clearList();
 
 	size_t row (0u);
-	const Uint8 color (_lstResearch->getSecondaryColor());
 
 	const std::vector<ResearchProject*>& currentProjects (_base->getResearch());
 	for (std::vector<ResearchProject*>::const_iterator
@@ -171,20 +171,33 @@ void NewResearchListState::fillProjectList() // private.
 				wst += L" (" + Text::intWide((*i)->getSpent()) + L")";
 
 			_lstResearch->addRow(1, wst.c_str());
-			_lstResearch->setRowColor(row++, color, true);
+			_lstResearch->setRowColor(row++, GRAY);
 
 			_offlineProjects.push_back(*i);
 			++_cutoff;
 		}
 	}
 
+	const Uint8 color (_lstResearch->getSecondaryColor());
+	std::string type;
+
 	_game->getSavedGame()->getAvailableResearchProjects(_resRules, _base); // fills '_resRules'
-	std::vector<const RuleResearch*>::const_iterator i (_resRules.begin());
-	while (i != _resRules.end())
+	for (std::vector<const RuleResearch*>::const_iterator
+			i = _resRules.begin();
+			i != _resRules.end();
+			)
 	{
 		if ((*i)->getCost() != 0)
 		{
-			_lstResearch->addRow(1, tr((*i)->getType()).c_str());
+			type = (*i)->getType();
+			_lstResearch->addRow(1, tr(type).c_str());
+
+			if (_game->getRuleset()->getUnitRule(type) != nullptr // mark researched aliens yellow.
+				&& _game->getSavedGame()->isResearched(type) == true)
+			{
+				_lstResearch->setRowColor(row, color, true);
+			}
+			++row;
 			++i;
 		}
 		else						// no-cost project.

@@ -73,8 +73,8 @@ ResearchInfoState::ResearchInfoState(
 		ResearchProject* const project)
 	:
 		_base(base),
-		_project(project),
-		_resRule(nullptr)
+		_resRule(nullptr),
+		_project(project)
 {
 	//Log(LOG_INFO) << "ResearchInfoState cTor w/ project " << project->getRules()->getType();
 	buildUi();
@@ -96,39 +96,39 @@ void ResearchInfoState::buildUi()
 {
 	_fullScreen = false;
 
-	_window					= new Window(this, 240, 140, 40, 30);
+	_window			= new Window(this, 240, 140, 40, 30);
 
-	_txtTitle				= new Text(198, 16, 61, 40);
+	_txtTitle		= new Text(198, 16, 61, 40);
 
-	_txtAvailableScientist	= new Text(198,  9, 61, 60);
-	_txtAvailableSpace		= new Text(198,  9, 61, 70);
-	_txtAllocatedScientist	= new Text(198, 16, 61, 80);
+	_txtFreeSci		= new Text(198,  9, 61, 60);
+	_txtFreeSpace	= new Text(198,  9, 61, 70);
+	_txtAssigned	= new Text(198, 16, 61, 80);
 
-//	_txtMore				= new Text(134, 16, 93, 100);
-//	_txtLess				= new Text(134, 16, 93, 120);
-//	_btnMore				= new ArrowButton(ARROW_BIG_UP, 13, 14, 205, 100);
-//	_btnLess				= new ArrowButton(ARROW_BIG_DOWN, 13, 14, 205, 120);
-	_btnMore				= new ArrowButton(ARROW_BIG_UP,   120, 16, 100, 100);
-	_btnLess				= new ArrowButton(ARROW_BIG_DOWN, 120, 16, 100, 120);
+//	_txtMore		= new Text(134, 16, 93, 100);
+//	_txtLess		= new Text(134, 16, 93, 120);
+//	_btnMore		= new ArrowButton(ARROW_BIG_UP, 13, 14, 205, 100);
+//	_btnLess		= new ArrowButton(ARROW_BIG_DOWN, 13, 14, 205, 120);
+	_btnMore		= new ArrowButton(ARROW_BIG_UP,   120, 16, 100, 100);
+	_btnLess		= new ArrowButton(ARROW_BIG_DOWN, 120, 16, 100, 120);
 
-	_btnCancel				= new TextButton(95, 16,  61, 144);
-	_btnStartStop			= new TextButton(95, 16, 164, 144);
+	_btnCancel		= new TextButton(95, 16,  61, 144);
+	_btnStartStop	= new TextButton(95, 16, 164, 144);
 
-//	_srfScientists			= new InteractiveSurface(230, 140, 45, 30);
+//	_srfScientists	= new InteractiveSurface(230, 140, 45, 30);
 
 	setInterface("allocateResearch");
 
-	add(_window,				"window",	"allocateResearch");
-	add(_txtTitle,				"text",		"allocateResearch");
-	add(_txtAvailableScientist,	"text",		"allocateResearch");
-	add(_txtAvailableSpace,		"text",		"allocateResearch");
-	add(_txtAllocatedScientist,	"text",		"allocateResearch");
-//	add(_txtMore,				"text",		"allocateResearch");
-//	add(_txtLess,				"text",		"allocateResearch");
-	add(_btnMore,				"button1",	"allocateResearch");
-	add(_btnLess,				"button1",	"allocateResearch");
-	add(_btnCancel,				"button2",	"allocateResearch");
-	add(_btnStartStop,			"button2",	"allocateResearch");
+	add(_window,		"window",	"allocateResearch");
+	add(_txtTitle,		"text",		"allocateResearch");
+	add(_txtFreeSci,	"text",		"allocateResearch");
+	add(_txtFreeSpace,	"text",		"allocateResearch");
+	add(_txtAssigned,	"text",		"allocateResearch");
+//	add(_txtMore,		"text",		"allocateResearch");
+//	add(_txtLess,		"text",		"allocateResearch");
+	add(_btnMore,		"button1",	"allocateResearch");
+	add(_btnLess,		"button1",	"allocateResearch");
+	add(_btnCancel,		"button2",	"allocateResearch");
+	add(_btnStartStop,	"button2",	"allocateResearch");
 
 	centerAllSurfaces();
 
@@ -143,11 +143,10 @@ void ResearchInfoState::buildUi()
 	_txtTitle->setText(wst);
 	_txtTitle->setBig();
 
-	_txtAllocatedScientist->setBig();
+	_txtAssigned->setBig();
 
 //	_txtMore->setText(tr("STR_INCREASE"));
 //	_txtMore->setBig();
-
 //	_txtLess->setText(tr("STR_DECREASE"));
 //	_txtLess->setBig();
 
@@ -167,17 +166,28 @@ void ResearchInfoState::buildUi()
 	_timerLess = new Timer(Timer::SCROLL_SLOW);
 	_timerLess->onTimer((StateHandler)& ResearchInfoState::lessSci);
 
-	_btnCancel->setText(tr("STR_CANCEL_UC"));
+	std::string
+		st1,
+		st2;
+
+	if (_resRule != nullptr || _project->getOffline() == true)
+	{
+		st1 = "STR_CANCEL_UC";
+		st2 = "STR_START_PROJECT";
+	}
+	else
+	{
+		st1 = "STR_OK"; // NOTE: This is activated by a Cancel [Esc] click [key-press]. It means "modifications are done, get rid of popup".
+		st2 = "STR_CANCEL_PROJECT";
+	}
+
+	_btnCancel->setText(tr(st1));
 	_btnCancel->onMouseClick((ActionHandler)& ResearchInfoState::btnCancelClick);
 	_btnCancel->onKeyboardPress(
 					(ActionHandler)& ResearchInfoState::btnCancelClick,
 					Options::keyCancel);
 
-	if (_resRule != nullptr || _project->getOffline() == true)
-		wst = tr("STR_START_PROJECT");
-	else
-		wst = tr("STR_CANCEL_PROJECT");
-	_btnStartStop->setText(wst);
+	_btnStartStop->setText(tr(st2));
 	_btnStartStop->onMouseClick((ActionHandler)& ResearchInfoState::btnStartStopClick);
 	_btnStartStop->onKeyboardPress(
 					(ActionHandler)& ResearchInfoState::btnStartStopClick,
@@ -192,11 +202,11 @@ void ResearchInfoState::buildUi()
  */
 void ResearchInfoState::updateInfo()
 {
-	_txtAvailableScientist->setText(tr("STR_SCIENTISTS_AVAILABLE_UC_")
+	_txtFreeSci->setText(tr("STR_SCIENTISTS_AVAILABLE_UC_")
 									.arg(_base->getScientists()));
-	_txtAvailableSpace->setText(tr("STR_LABORATORY_SPACE_AVAILABLE_UC_")
+	_txtFreeSpace->setText(tr("STR_LABORATORY_SPACE_AVAILABLE_UC_")
 									.arg(_base->getFreeLaboratories()));
-	_txtAllocatedScientist->setText(tr("STR_SCIENTISTS_ALLOCATED_")
+	_txtAssigned->setText(tr("STR_SCIENTISTS_ALLOCATED_")
 									.arg(_project->getAssignedScientists()));
 }
 

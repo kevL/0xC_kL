@@ -46,6 +46,8 @@ class NewResearchListState
 {
 
 private:
+	static const Uint8 GRAY = 5u;
+
 	int _cutoff;
 	size_t _scroll;
 
@@ -58,14 +60,14 @@ private:
 	std::vector<ResearchProject*> _offlineProjects;
 	std::vector<const RuleResearch*> _resRules;
 
-	///
+	/// Opens a window to assign scientists.
 	void onSelectProject(Action* action);
 	/// Fills the ResearchProject list with possible ResearchProjects.
 	void fillProjectList();
 
 
 	public:
-		/// Creates the NewResearchListState.
+		/// Creates the NewResearchList state.
 		explicit NewResearchListState(Base* const base);
 		/// dTor.
 		~NewResearchListState();

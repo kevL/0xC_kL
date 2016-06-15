@@ -38,7 +38,7 @@ class Window;
 
 
 /**
- * Window which allows changing of the number of assigned scientists to a project.
+ * Window that allows changing of the quantity of assigned scientists to a project.
  */
 class ResearchInfoState
 	:
@@ -54,9 +54,9 @@ private:
 	ResearchProject* _project;
 	const RuleResearch* _resRule;
 	Text
-		* _txtAllocatedScientist,
-		* _txtAvailableScientist,
-		* _txtAvailableSpace,
+		* _txtAssigned,
+		* _txtFreeSci,
+		* _txtFreeSpace,
 //		* _txtLess,
 //		* _txtMore,
 		* _txtTitle;
@@ -106,7 +106,7 @@ private:
 	/// Gets quantity to change by.
 	int getQty() const;
 
-	/// Runs state functionality every cycle(used to update the timer).
+	/// Runs state functionality every cycle (used to update the timer).
 	void think() override;
 
 
