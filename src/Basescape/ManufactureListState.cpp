@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NewManufactureListState.h"
+#include "ManufactureListState.h"
 
 #include "ManufactureCostsState.h"
 #include "ManufactureStartState.h"
@@ -43,8 +43,8 @@
 namespace OpenXcom
 {
 
-const std::string NewManufactureListState::ALL_ITEMS ("STR_ALL_ITEMS");						// private/static.
-std::string NewManufactureListState::_recallCatString (NewManufactureListState::ALL_ITEMS);	// private/static.
+const std::string ManufactureListState::ALL_ITEMS ("STR_ALL_ITEMS");						// private/static.
+std::string ManufactureListState::_recallCatString (ManufactureListState::ALL_ITEMS);	// private/static.
 
 
 /**
@@ -52,7 +52,7 @@ std::string NewManufactureListState::_recallCatString (NewManufactureListState::
  * @note Initializes all the elements in the productions list screen.
  * @param base - pointer to the Base to get info from
  */
-NewManufactureListState::NewManufactureListState(
+ManufactureListState::ManufactureListState(
 		Base* const base)
 	:
 		_base(base),
@@ -100,21 +100,21 @@ NewManufactureListState::NewManufactureListState(
 	_lstManufacture->setColumns(2, 132,145);
 	_lstManufacture->setBackground(_window);
 	_lstManufacture->setSelectable();
-	_lstManufacture->onMouseClick((ActionHandler)& NewManufactureListState::lstProdClick);
+	_lstManufacture->onMouseClick((ActionHandler)& ManufactureListState::lstProdClick);
 
 	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
-	_btnCostTable->onMouseClick((ActionHandler)& NewManufactureListState::btnCostsClick);
+	_btnCostTable->onMouseClick((ActionHandler)& ManufactureListState::btnCostsClick);
 
 	_btnCancel->setText(tr("STR_OK"));
-	_btnCancel->onMouseClick((ActionHandler)& NewManufactureListState::btnCancelClick);
+	_btnCancel->onMouseClick((ActionHandler)& ManufactureListState::btnCancelClick);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewManufactureListState::btnCancelClick,
+					(ActionHandler)& ManufactureListState::btnCancelClick,
 					Options::keyOk);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewManufactureListState::btnCancelClick,
+					(ActionHandler)& ManufactureListState::btnCancelClick,
 					Options::keyOkKeypad);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewManufactureListState::btnCancelClick,
+					(ActionHandler)& ManufactureListState::btnCancelClick,
 					Options::keyCancel);
 
 
@@ -137,7 +137,7 @@ NewManufactureListState::NewManufactureListState(
 	}
 	_cbxCategory->setOptions(_catStrings);
 	_cbxCategory->setBackgroundFill(58); // green <- TODO: put this in Interfaces.rul
-	_cbxCategory->onComboChange((ActionHandler)& NewManufactureListState::cbxCategoryChange);
+	_cbxCategory->onComboChange((ActionHandler)& ManufactureListState::cbxCategoryChange);
 
 	std::vector<std::string>::iterator i (std::find( // <- std::distance(below_) does not accept a const_iterator.
 												_catStrings.begin(),
@@ -158,13 +158,13 @@ NewManufactureListState::NewManufactureListState(
 /**
  * dTor.
  */
-NewManufactureListState::~NewManufactureListState()
+ManufactureListState::~ManufactureListState()
 {}
 
 /**
  * Initializes state - fills list with possible productions.
  */
-void NewManufactureListState::init()
+void ManufactureListState::init()
 {
 	State::init();
 
@@ -176,7 +176,7 @@ void NewManufactureListState::init()
  * Go to the Costs table.
  * @param action - pointer to an Action
  */
-void NewManufactureListState::btnCostsClick(Action*)
+void ManufactureListState::btnCostsClick(Action*)
 {
 	_game->pushState(new ManufactureCostsState());
 }
@@ -185,7 +185,7 @@ void NewManufactureListState::btnCostsClick(Action*)
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */
-void NewManufactureListState::btnCancelClick(Action*)
+void ManufactureListState::btnCancelClick(Action*)
 {
 	_game->popState();
 }
@@ -194,7 +194,7 @@ void NewManufactureListState::btnCancelClick(Action*)
  * Opens the Production settings screen.
  * @param action - pointer to an Action
 */
-void NewManufactureListState::lstProdClick(Action*)
+void ManufactureListState::lstProdClick(Action*)
 {
 	_scroll = _lstManufacture->getScroll();
 
@@ -218,7 +218,7 @@ void NewManufactureListState::lstProdClick(Action*)
 /**
  * Updates the production-list to match the category-filter.
  */
-void NewManufactureListState::cbxCategoryChange(Action*)
+void ManufactureListState::cbxCategoryChange(Action*)
 {
 
 	fillProductionList();
@@ -227,7 +227,7 @@ void NewManufactureListState::cbxCategoryChange(Action*)
 /**
  * Fills the list of possible productions.
  */
-void NewManufactureListState::fillProductionList() // private.
+void ManufactureListState::fillProductionList() // private.
 {
 	_recallCatString = _catStrings[_cbxCategory->getSelected()];
 

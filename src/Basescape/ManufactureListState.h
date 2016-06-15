@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_NEWMANUFACTURELISTSTATE_H
-#define OPENXCOM_NEWMANUFACTURELISTSTATE_H
+#ifndef OPENXCOM_MANUFACTURELISTSTATE_H
+#define OPENXCOM_MANUFACTURELISTSTATE_H
 
 //#include <vector>
 
@@ -41,7 +41,7 @@ class Window;
 /**
  * Screen that lists possible productions.
  */
-class NewManufactureListState
+class ManufactureListState
 	:
 		public State
 {
@@ -75,9 +75,9 @@ private:
 
 	public:
 		/// Creates a NewManufactureList state.
-		explicit NewManufactureListState(Base* const base);
+		explicit ManufactureListState(Base* const base);
 		/// dTor.
-		~NewManufactureListState();
+		~ManufactureListState();
 
 		/// Initializes state.
 		void init() override;

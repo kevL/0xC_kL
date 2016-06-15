@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NewResearchListState.h"
+#include "ResearchListState.h"
 
 #include "ResearchInfoState.h"
 
@@ -48,7 +48,7 @@ namespace OpenXcom
  * @note Initializes all the elements in the research list screen.
  * @param base - pointer to the Base to get info from
  */
-NewResearchListState::NewResearchListState(
+ResearchListState::ResearchListState(
 		Base* const base)
 	:
 		_base(base),
@@ -81,31 +81,31 @@ NewResearchListState::NewResearchListState(
 	_lstResearch->setBackground(_window);
 	_lstResearch->setSelectable();
 	_lstResearch->setAlign(ALIGN_CENTER);
-	_lstResearch->onMouseClick((ActionHandler)& NewResearchListState::onSelectProject);
+	_lstResearch->onMouseClick((ActionHandler)& ResearchListState::onSelectProject);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& NewResearchListState::btnCancelClick);
+	_btnCancel->onMouseClick((ActionHandler)& ResearchListState::btnCancelClick);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewResearchListState::btnCancelClick,
+					(ActionHandler)& ResearchListState::btnCancelClick,
 					Options::keyCancel);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewResearchListState::btnCancelClick,
+					(ActionHandler)& ResearchListState::btnCancelClick,
 					Options::keyOk);
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewResearchListState::btnCancelClick,
+					(ActionHandler)& ResearchListState::btnCancelClick,
 					Options::keyOkKeypad);
 }
 
 /**
  * dTor.
  */
-NewResearchListState::~NewResearchListState()
+ResearchListState::~ResearchListState()
 {}
 
 /**
  * Initializes the screen and fills the list with ResearchProjects.
  */
-void NewResearchListState::init()
+void ResearchListState::init()
 {
 	State::init();
 
@@ -117,7 +117,7 @@ void NewResearchListState::init()
  * Returns to the previous screen.
  * @param action - pointer to an Action
  */
-void NewResearchListState::btnCancelClick(Action*)
+void ResearchListState::btnCancelClick(Action*)
 {
 	_game->popState();
 }
@@ -127,7 +127,7 @@ void NewResearchListState::btnCancelClick(Action*)
  * @note If an offline ResearchProject is selected the spent & cost values are preserved.
  * @param action - pointer to an Action
  */
-void NewResearchListState::onSelectProject(Action*) // private.
+void ResearchListState::onSelectProject(Action*) // private.
 {
 	_scroll = _lstResearch->getScroll();
 
@@ -145,7 +145,7 @@ void NewResearchListState::onSelectProject(Action*) // private.
 /**
  * Fills the list with ResearchProjects.
  */
-void NewResearchListState::fillProjectList() // private.
+void ResearchListState::fillProjectList() // private.
 {
 	_cutoff = -1;
 	_offlineProjects.clear();

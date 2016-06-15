@@ -23,8 +23,8 @@
 
 #include "BasescapeState.h"
 #include "ManufactureInfoState.h"
+#include "ManufactureListState.h"
 #include "MiniBaseView.h"
-#include "NewManufactureListState.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -223,7 +223,7 @@ void ManufactureState::btnOkClick(Action*)
  */
 void ManufactureState::btnNewProductionClick(Action*)
 {
-	_game->pushState(new NewManufactureListState(_base));
+	_game->pushState(new ManufactureListState(_base));
 }
 
 /**

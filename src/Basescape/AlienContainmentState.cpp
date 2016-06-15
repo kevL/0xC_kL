@@ -23,8 +23,6 @@
 //#include <climits>
 //#include <sstream>
 
-#include "SellState.h"
-
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -158,14 +156,14 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->setArrow(158, ARROW_HORIZONTAL);
 	_lstAliens->setBackground(_window);
 	_lstAliens->setSelectable();
-//	_lstAliens->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstAliens->onMousePress((ActionHandler)& AlienContainmentState::lstItemsMousePress);
 	_lstAliens->onLeftArrowPress((ActionHandler)& AlienContainmentState::lstItemsLeftArrowPress);
 	_lstAliens->onLeftArrowRelease((ActionHandler)& AlienContainmentState::lstItemsLeftArrowRelease);
 	_lstAliens->onLeftArrowClick((ActionHandler)& AlienContainmentState::lstItemsLeftArrowClick);
 	_lstAliens->onRightArrowPress((ActionHandler)& AlienContainmentState::lstItemsRightArrowPress);
 	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstItemsRightArrowRelease);
 	_lstAliens->onRightArrowClick((ActionHandler)& AlienContainmentState::lstItemsRightArrowClick);
+//	_lstAliens->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
+//	_lstAliens->onMousePress((ActionHandler)& AlienContainmentState::lstItemsMousePress);
 
 	const RuleItem* itRule;
 	std::string type;
@@ -248,6 +246,7 @@ AlienContainmentState::AlienContainmentState(
 							_lstAliens->getSecondaryColor());
 	}
 
+
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
 	_timerInc->onTimer((StateHandler)& AlienContainmentState::increase);
 
@@ -320,6 +319,7 @@ void AlienContainmentState::btnCancelClick(Action*)
 void AlienContainmentState::lstItemsRightArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
+
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
 		&& _timerInc->isRunning() == false)
 	{
@@ -364,6 +364,7 @@ void AlienContainmentState::lstItemsRightArrowClick(Action* action)
 void AlienContainmentState::lstItemsLeftArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
+
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
 		&& _timerDec->isRunning() == false)
 	{
@@ -406,7 +407,7 @@ void AlienContainmentState::lstItemsLeftArrowClick(Action* action)
  * Gets the quantity of the currently selected alien on the base.
  * @return, quantity of alien
  */
-int AlienContainmentState::getQuantity()
+int AlienContainmentState::getQuantity() // private.
 {
 	return _base->getStorageItems()->getItemQuantity(_aliens[_sel]);
 }
@@ -427,17 +428,14 @@ void AlienContainmentState::increase()
  */
 void AlienContainmentState::increaseByValue(int change)
 {
-	if (change > 0)
+	const int qtyType (getQuantity() - _qty[_sel]);
+	if (qtyType > 0)
 	{
-		const int qtyType (getQuantity() - _qty[_sel]);
-		if (qtyType > 0)
-		{
-			change = std::min(change, qtyType);
-			_qty[_sel] += change;
-			_fishFood += change;
+		change = std::min(change, qtyType);
+		_qty[_sel] += change;
+		_fishFood += change;
 
-			update();
-		}
+		update();
 	}
 }
 
@@ -457,7 +455,7 @@ void AlienContainmentState::decrease()
  */
 void AlienContainmentState::decreaseByValue(int change)
 {
-	if (change > 0 && _qty[_sel] > 0)
+	if (_qty[_sel] > 0)
 	{
 		change = std::min(change, _qty[_sel]);
 		_qty[_sel] -= change;
@@ -503,12 +501,10 @@ void AlienContainmentState::update() // private.
 void AlienContainmentState::lstItemsMousePress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
-
 	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
 	{
 		_timerInc->stop();
 		_timerDec->stop();
-
 		if (action->getAbsoluteMouseX() >= _lstAliens->getArrowsLeftEdge()
 			&& action->getAbsoluteMouseX() <= _lstAliens->getArrowsRightEdge())
 		{
@@ -519,7 +515,6 @@ void AlienContainmentState::lstItemsMousePress(Action* action)
 	{
 		_timerInc->stop();
 		_timerDec->stop();
-
 		if (action->getAbsoluteMouseX() >= _lstAliens->getArrowsLeftEdge()
 			&& action->getAbsoluteMouseX() <= _lstAliens->getArrowsRightEdge())
 		{

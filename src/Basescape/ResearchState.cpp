@@ -24,8 +24,8 @@
 #include "AlienContainmentState.h"
 #include "BasescapeState.h"
 #include "MiniBaseView.h"
-#include "NewResearchListState.h"
 #include "ResearchInfoState.h"
+#include "ResearchListState.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -234,12 +234,12 @@ void ResearchState::btnOkClick(Action*)
 }
 
 /**
- * Pops up the NewResearchListState screen.
+ * Pops up the ResearchListState screen.
  * @param action - pointer to an Action
  */
 void ResearchState::btnNewClick(Action*)
 {
-	_game->pushState(new NewResearchListState(_base));
+	_game->pushState(new ResearchListState(_base));
 }
 
 /**

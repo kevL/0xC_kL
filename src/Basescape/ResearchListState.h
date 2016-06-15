@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_NEWRESEARCHLISTSTATE_H
-#define OPENXCOM_NEWRESEARCHLISTSTATE_H
+#ifndef OPENXCOM_RESEARCHLISTSTATE_H
+#define OPENXCOM_RESEARCHLISTSTATE_H
 
 //#include <vector>
 
@@ -40,7 +40,7 @@ class Window;
 /**
  * Window which displays possible research projects.
  */
-class NewResearchListState
+class ResearchListState
 	:
 		public State
 {
@@ -68,9 +68,9 @@ private:
 
 	public:
 		/// Creates the NewResearchList state.
-		explicit NewResearchListState(Base* const base);
+		explicit ResearchListState(Base* const base);
 		/// dTor.
-		~NewResearchListState();
+		~ResearchListState();
 
 		/// Initializes the state.
 		void init() override;
