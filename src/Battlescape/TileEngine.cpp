@@ -428,15 +428,15 @@ bool TileEngine::calcFov(
 											++y)
 									{
 										const Position pos (posOther + Position(x,y,0));
-										if (unit->checkViewSector(pos) == true
+										if (unit->checkViewSector(pos, true) == true
 											&& visible(unit, _battleSave->getTile(pos)) == true)
 										{
 											//if (debug) Log(LOG_INFO) << ". . . . visible TRUE";
 											if ((*i)->getUnitVisible() == false)
 											{
 												//if (debug) Log(LOG_INFO) << ". . . . . set Visible";
-												spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
 												(*i)->setUnitVisible();
+												spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
 											}
 
 											if ((*i)->getFaction() == FACTION_HOSTILE)
@@ -488,7 +488,7 @@ bool TileEngine::calcFov(
 											++y)
 									{
 										const Position pos (posOther + Position(x,y,0));
-										if (unit->checkViewSector(pos) == true
+										if (unit->checkViewSector(pos, true) == true
 											&& visible(unit, _battleSave->getTile(pos)) == true)
 										{
 											//if (debug) Log(LOG_INFO) << ". . . . visible TRUE - add to HostileUnits vector";

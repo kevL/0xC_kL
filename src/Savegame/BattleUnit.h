@@ -787,7 +787,9 @@ private:
 		void deriveRank();
 
 		/// This function checks if a Position is visible using maths.
-		bool checkViewSector(const Position& pos) const;
+		bool checkViewSector(
+				const Position& pos,
+				bool forceOneQuad = false) const;
 
 		/// Adjusts the BattleUnit's stats according to difficulty.
 		void adjustStats(

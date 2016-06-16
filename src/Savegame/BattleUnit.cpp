@@ -4281,10 +4281,13 @@ void BattleUnit::deriveRank()
 /**
  * Checks if a specified Position is in this BattleUnit's facing-quadrant.
  * @note Using maths!
- * @param pos - reference to the position to check against
+ * @param pos			- reference to the position to check against
+ * @param forceOneQuad	- true to force check from only 1 quadrant/position (default false)
  * @return, whatever the maths decide
  */
-bool BattleUnit::checkViewSector(const Position& pos) const
+bool BattleUnit::checkViewSector(
+		const Position& pos,
+		bool forceOneQuad) const
 {
 	int dir;
 	switch (_turretType)
@@ -4298,8 +4301,13 @@ bool BattleUnit::checkViewSector(const Position& pos) const
 
 	int
 		dx,dy;
-	const int unitSize (_armor->getSize()); // Check view-cone from each of the unit's tiles.
-	for (int
+	int unitSize;
+	if (forceOneQuad == true)
+		unitSize = 1;
+	else
+		unitSize = _armor->getSize();
+
+	for (int // Check view-cone from each of the unit's tiles if applicable.
 			x = 0;
 			x != unitSize;
 			++x)
