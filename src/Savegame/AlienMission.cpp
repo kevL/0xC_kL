@@ -577,6 +577,7 @@ void AlienMission::ufoReachedWaypoint(
 		const Ruleset& rules,
 		const Globe& globe)
 {
+	//Log(LOG_INFO) << "AlienMission::ufoReachedWaypoint()";
 	const UfoTrajectory& trajectory (ufo.getTrajectory());
 	const size_t
 		wpId (ufo.getTrajectoryPoint()),
@@ -671,10 +672,12 @@ void AlienMission::ufoReachedWaypoint(
 			}
 			else // Set timer for UFO on the ground.
 			{
+				//Log(LOG_INFO) << ". . Landed ufo= " << ufo.getRules()->getType();
 				if (globe.insideLand(
 								ufo.getLongitude(),
 								ufo.getLatitude()) == true)
 				{
+					//Log(LOG_INFO) << ". . . seconds left= " << trajectory.groundTimer() * 5;
 					ufo.setSecondsLeft(trajectory.groundTimer() * 5);
 
 					if (ufo.getDetected() == true && ufo.getLandId() == 0)

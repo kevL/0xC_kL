@@ -73,7 +73,7 @@ Craft::Craft(
 		_id(id),
 		_fuel(0),
 		_damage(0),
-		_takeOff(0),
+		_takeOffDelay(0),
 		_status(CS_READY),
 		_lowFuel(false),
 		_tacticalDone(false),
@@ -276,8 +276,8 @@ void Craft::loadCraft(
 		}
 	}
 
-	_takeOff	= node["takeOff"]	.as<int>(_takeOff);
-	_tactical	= node["tactical"]	.as<bool>(_tactical);
+	_takeOffDelay	= node["takeOff"]	.as<int>(_takeOffDelay);
+	_tactical		= node["tactical"]	.as<bool>(_tactical);
 	if (_tactical == true)
 		setSpeed(0);
 }
@@ -324,7 +324,7 @@ YAML::Node Craft::save() const
 	if (_tacticalDone == true)	node["tacticalDone"]	= _tacticalDone;
 	if (_tactical == true)		node["tactical"]		= _tactical;
 	if (_kills != 0)			node["kills"]			= _kills;
-	if (_takeOff != 0)			node["takeOff"]			= _takeOff;
+	if (_takeOffDelay != 0)		node["takeOff"]			= _takeOffDelay;
 	if (_name.empty() == false)	node["name"]			= Language::wstrToUtf8(_name);
 	if (_warning != CW_NONE)	node["warning"]			= static_cast<int>(_warning);
 
@@ -511,6 +511,10 @@ std::string Craft::getCraftStatusString() const
  */
 std::string Craft::getAltitude() const
 {
+	if		(_takeOffDelay > 50) return MovingTarget::stAltitude[0u];
+	else if	(_takeOffDelay > 25) return MovingTarget::stAltitude[1u];
+	else if (_takeOffDelay != 0) return MovingTarget::stAltitude[2u];
+
 	if (_dest == nullptr)
 		return MovingTarget::stAltitude[2u];
 
@@ -540,7 +544,7 @@ void Craft::setDestination(Target* const dest)
 {
 	if (_status != CS_OUT)
 	{
-		_takeOff = 75;
+		_takeOffDelay = 75;
 		setSpeed(_crRule->getMaxSpeed() / 10);
 	}
 	else if (dest == nullptr)
@@ -849,28 +853,29 @@ void Craft::setTacticalReturn()
  */
 void Craft::think()
 {
-	if (_takeOff != 0)
+	switch (_takeOffDelay)
 	{
-		if (--_takeOff == 0)
-			setSpeed(_crRule->getMaxSpeed());
-	}
-	else
-	{
-		stepTarget();
+		case 0:
+			stepTarget();
 
-		if (reachedDestination() == true
-			&& _dest == dynamic_cast<Target*>(_base))
-		{
-			setDestination();
-			setSpeed(0);
+			if (reachedDestination() == true
+				&& _dest == dynamic_cast<Target*>(_base))
+			{
+				setDestination();
+				setSpeed(0);
 
-			_lowFuel =
-			_tacticalDone = false;
-			_warning = CW_NONE;
-			_takeOff = 0;
+				_lowFuel =
+				_tacticalDone = false;
+				_warning = CW_NONE;
+				_takeOffDelay = 0;
 
-			checkup();
-		}
+				checkup();
+			}
+			break;
+
+		default:
+			if (--_takeOffDelay == 0)
+				setSpeed(_crRule->getMaxSpeed());
 	}
 }
 
@@ -1326,9 +1331,9 @@ int Craft::getKills() const
  * Gets if this Craft has left the ground.
  * @return, true if airborne
  */
-bool Craft::getTakeoff() const
+bool Craft::hasLeftGround() const
 {
-	return (_takeOff == 0);
+	return (_takeOffDelay == 0);
 }
 
 /**

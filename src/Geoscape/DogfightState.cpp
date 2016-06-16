@@ -1110,7 +1110,7 @@ void DogfightState::updateDogfight()
 				{
 					case 0u: // this->craft.
 						_ufo->setShootingAt(_slot);
-						ufoFireWeapon();
+						fireWeaponUfo();
 						break;
 
 					default:
@@ -1123,7 +1123,7 @@ void DogfightState::updateDogfight()
 						if (RNG::percent(noSwitch) == true)
 						{
 							_ufo->setShootingAt(_slot);
-							ufoFireWeapon();
+							fireWeaponUfo();
 						}
 						else // This is where the magic happens, Lulzor!!
 							_ufo->setShootingAt(altIntercepts.at(RNG::pick(altIntercepts.size())));
@@ -1354,7 +1354,7 @@ void DogfightState::fireWeapon2()
 /**
  * Each time a UFO fires its weapon a new reload interval is calculated.
  */
-void DogfightState::ufoFireWeapon()
+void DogfightState::fireWeaponUfo()
 {
 	resetStatus("STR_UFO_RETURN_FIRE");
 
@@ -1866,7 +1866,7 @@ void DogfightState::drawUfo()
  */
 void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 {
-	int pos_x ((_battleScope->getWidth() >> 1u) + (prj->getHorizontalPosition() << 2u));
+	int pos_x ((_battleScope->getWidth() >> 1u) + (prj->getHorizontalPosition() << 1u));
 	Uint8
 		color,
 		colorOffset;

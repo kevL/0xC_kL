@@ -101,7 +101,7 @@ UfoDetectedState::UfoDetectedState(
 
 	_txtUfo			= new Text(102, 16, 20, 56);
 	_txtDetected	= new Text( 80,  9, 32, 73);
-	_txtTimeLeft	= new Text( 60,  9, 20, 73);
+//	_txtTimeLeft	= new Text( 60,  9, 20, 83);
 
 	_lstInfo		= new TextList(192, 33, 32, 85);
 
@@ -121,7 +121,7 @@ UfoDetectedState::UfoDetectedState(
 	{
 		_txtUfo->setY(19);
 		_txtDetected->setY(36);
-		_txtTimeLeft->setY(36);
+//		_txtTimeLeft->setY(46);
 		_lstInfo->setY(60);
 		_btnCenter->setY(135);
 		_btnIntercept->setY(155);
@@ -145,7 +145,7 @@ UfoDetectedState::UfoDetectedState(
 	add(_window,		"window",	"UFOInfo");
 	add(_txtUfo,		"text",		"UFOInfo");
 	add(_txtDetected,	"text",		"UFOInfo");
-	add(_txtTimeLeft,	"text",		"UFOInfo");
+//	add(_txtTimeLeft,	"text",		"UFOInfo");
 	add(_lstInfo,		"text",		"UFOInfo");
 	add(_btnCenter,		"button",	"UFOInfo");
 	add(_btnIntercept,	"button",	"UFOInfo");
@@ -183,8 +183,8 @@ UfoDetectedState::UfoDetectedState(
 	_txtRegion->setAlign(ALIGN_RIGHT);
 	std::wostringstream woststr;
 	const double
-		lon = _ufo->getLongitude(),
-		lat = _ufo->getLatitude();
+		lon (_ufo->getLongitude()),
+		lat (_ufo->getLatitude());
 
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
@@ -265,56 +265,60 @@ UfoDetectedState::UfoDetectedState(
 					(ActionHandler)& UfoDetectedState::btnCancelClick,
 					Options::keyCancel);
 
-	if (ufo->getUfoStatus() == Ufo::CRASHED
-		|| ufo->getUfoStatus() == Ufo::LANDED)
+	switch (ufo->getUfoStatus())
 	{
-		// IMPORTANT: This does not return the actual battleField terrain; that is done
-		// in ConfirmLandingState. This is merely an indicator .... cf. DogfightState
-		int
-			texture,
-			shade;
-		_geo->getGlobe()->getPolygonTextureAndShade(
-											_ufo->getLongitude(),
-											_ufo->getLatitude(),
-											&texture,
-											&shade);
-		std::string terrain;
-		switch (texture)
+		case Ufo::LANDED:
+		case Ufo::CRASHED:
 		{
-			case  0: terrain = "FOREST";	break;
-			case  1: terrain = "CULTA";		break;
-			case  2: terrain = "CULTA";		break;
-			case  3: terrain = "FOREST";	break;
-			case  4: terrain = "POLAR";		break;
-			case  5: terrain = "MOUNT";		break;
-			case  6: terrain = "FOREST";	break; // substitute f/ JUNGLE
-			case  7: terrain = "DESERT";	break;
-			case  8: terrain = "DESERT";	break;
-			case  9: terrain = "POLAR";		break;
-			case 10: terrain = "URBAN";		break;
-			case 11: terrain = "POLAR";		break;
-			case 12: terrain = "POLAR";		break;
-			default:
-				terrain = "WATER"; // tex = -1
+			// IMPORTANT: This does not return the actual battleField terrain; that is done
+			// in ConfirmLandingState. This is merely an indicator .... cf. DogfightState
+			int
+				texture,
+				shade;
+			_geo->getGlobe()->getPolygonTextureAndShade(
+												_ufo->getLongitude(),
+												_ufo->getLatitude(),
+												&texture,
+												&shade);
+			std::string terrain;
+			switch (texture)
+			{
+				case  0: terrain = "FOREST";	break;
+				case  1: terrain = "CULTA";		break;
+				case  2: terrain = "CULTA";		break;
+				case  3: terrain = "FOREST";	break;
+				case  4: terrain = "POLAR";		break;
+				case  5: terrain = "MOUNT";		break;
+				case  6: terrain = "FOREST";	break; // substitute f/ JUNGLE
+				case  7: terrain = "DESERT";	break;
+				case  8: terrain = "DESERT";	break;
+				case  9: terrain = "POLAR";		break;
+				case 10: terrain = "URBAN";		break;
+				case 11: terrain = "POLAR";		break;
+				case 12: terrain = "POLAR";		break;
+				default:
+					terrain = "WATER"; // tex = -1
+			}
+
+			woststr.str(L"");
+			woststr << tr(terrain);
+			woststr << L"> shade " << shade;
+
+			_txtTexture->setAlign(ALIGN_RIGHT);
+			_txtTexture->setText(woststr.str());
+
+//			woststr.str(L"");
+//			woststr << L"t> ";
+//			std::wstring wst (Text::formatInt(_ufo->getSecondsLeft()));
+//			woststr << wst;
+//			_txtTimeLeft->setText(woststr.str()); // debug-thing.
+			break;
 		}
 
-		woststr.str(L"");
-		woststr << tr(terrain);
-		woststr << L"> shade " << shade;
-
-		_txtTexture->setAlign(ALIGN_RIGHT);
-		_txtTexture->setText(woststr.str());
-
-		woststr.str(L"");
-		woststr << L"t> ";
-		std::wstring wst (Text::formatInt(_ufo->getSecondsLeft()));
-		woststr << wst;
-		_txtTimeLeft->setText(woststr.str()); // debug-thing.
-	}
-	else
-	{
-		_txtTexture->setVisible(false);
-		_txtTimeLeft->setVisible(false);
+		case Ufo::FLYING:
+//		case Ufo::DESTROYED:
+			_txtTexture->setVisible(false);
+//			_txtTimeLeft->setVisible(false);
 	}
 
 	if (_hyperDetected == true)

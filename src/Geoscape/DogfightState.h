@@ -181,7 +181,7 @@ private:
 		/// Fires the second Craft weapon.
 		void fireWeapon2();
 		/// Fires UFO weapon.
-		void ufoFireWeapon();
+		void fireWeaponUfo();
 		/// Sets the Craft to maximum distance.
 		void maximumDistance();
 		/// Sets the Craft to minimum distance.

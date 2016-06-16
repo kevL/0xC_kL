@@ -1997,7 +1997,7 @@ void GeoscapeState::time10Minutes()
 				++j)
 		{
 			if ((*j)->getCraftStatus() == CS_OUT
-				&& (*j)->getTakeoff() == true)
+				&& (*j)->hasLeftGround() == true)
 			{
 				(*j)->consumeFuel();
 
@@ -2129,7 +2129,7 @@ void GeoscapeState::time10Minutes()
 							++k)
 					{
 						if ((*k)->getCraftStatus() == CS_OUT
-							&& (*k)->getTakeoff() == true
+							&& (*k)->hasLeftGround() == true
 							&& (*k)->detect(*i) == true)
 						{
 							contact = true;
@@ -2187,7 +2187,7 @@ void GeoscapeState::time10Minutes()
 							++k)
 					{
 						if ((*k)->getCraftStatus() == CS_OUT
-							&& (*k)->getTakeoff() == true
+							&& (*k)->hasLeftGround() == true
 							&& (*k)->detect(*i) == true)
 						{
 							contact = true;
@@ -2299,6 +2299,7 @@ struct ExpireCrashedUfo: public std::unary_function<Ufo*, void>
  */
 void GeoscapeState::time30Minutes()
 {
+	//Log(LOG_INFO) << "GeoscapeState::time30Minutes()";
 	std::for_each( // decrease mission countdowns
 			_gameSave->getAlienMissions().begin(),
 			_gameSave->getAlienMissions().end(),
@@ -2309,8 +2310,10 @@ void GeoscapeState::time30Minutes()
 			i != _gameSave->getAlienMissions().end();
 			)
 	{
+		//Log(LOG_INFO) << ". aL mission type= " << (*i)->getRules().getType();
 		if ((*i)->isOver() == true)
 		{
+			//Log(LOG_INFO) << ". . Over";
 			delete *i;
 			i = _gameSave->getAlienMissions().erase(i);
 		}

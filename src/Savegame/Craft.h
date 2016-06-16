@@ -73,7 +73,7 @@ private:
 		_damage,
 		_fuel,
 		_id,
-		_takeOff,
+		_takeOffDelay,
 
 		_kills;
 
@@ -261,7 +261,7 @@ private:
 		int getKills() const;
 
 		/// Gets if the Craft has left the ground.
-		bool getTakeoff() const;
+		bool hasLeftGround() const;
 
 		/// Transfers soldiers, tanks, items, and weapons to its Base.
 		void unloadCraft(

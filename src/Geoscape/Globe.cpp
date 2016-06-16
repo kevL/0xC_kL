@@ -1628,7 +1628,7 @@ void Globe::drawRadars()
 						++j)
 				{
 					if ((*j)->getCraftStatus() == CS_OUT
-						&& (*j)->getTakeoff() == true)
+						&& (*j)->hasLeftGround() == true)
 					{
 						range = static_cast<double>((*j)->getRules()->getRadarRange());
 						if (range > 0.)

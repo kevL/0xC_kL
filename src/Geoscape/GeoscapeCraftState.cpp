@@ -331,7 +331,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	// NOTE: These could be set above^ where status was set.
 	const bool occupied (lowFuel == true
 					  || missionComplete == true
-					  || _craft->getTakeoff() == false);
+					  || _craft->hasLeftGround() == false);
 
 	if (stat != CS_OUT || occupied == true)
 	{
