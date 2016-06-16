@@ -4286,10 +4286,6 @@ void BattleUnit::deriveRank()
  */
 bool BattleUnit::checkViewSector(const Position& pos) const
 {
-	const int
-		dx ( pos.x - _pos.x),
-		dy (_pos.y -  pos.y);
-
 	int dir;
 	switch (_turretType)
 	{
@@ -4300,16 +4296,34 @@ bool BattleUnit::checkViewSector(const Position& pos) const
 //			else dir = _dir;
 	}
 
-	switch (dir)
+	int
+		dx,dy;
+	const int unitSize (_armor->getSize()); // Check view-cone from each of the unit's tiles.
+	for (int
+			x = 0;
+			x != unitSize;
+			++x)
 	{
-		case 0: if (dx + dy > -1 && dy - dx > -1)	return true; break;
-		case 1: if (dx > -1 && dy > -1)				return true; break;
-		case 2: if (dx + dy > -1 && dy - dx < 1)	return true; break;
-		case 3: if (dy < 1 && dx > -1)				return true; break;
-		case 4: if (dx + dy < 1 && dy - dx < 1)		return true; break;
-		case 5: if (dx < 1 && dy < 1)				return true; break;
-		case 6: if (dx + dy < 1 && dy - dx > -1)	return true; break;
-		case 7: if (dy > -1 && dx < 1)				return true;
+		for (int
+				y = 0;
+				y != unitSize;
+				++y)
+		{
+			dx =  pos.x +     x - _pos.x;
+			dy = _pos.y - pos.y -      y;
+
+			switch (dir)
+			{
+				case 0: if (dx + dy > -1 && dy - dx > -1) return true; break;
+				case 1: if (dx      > -1 && dy      > -1) return true; break;
+				case 2: if (dx + dy > -1 && dy - dx <  1) return true; break;
+				case 3: if (     dy <  1 &&      dx > -1) return true; break;
+				case 4: if (dx + dy <  1 && dy - dx <  1) return true; break;
+				case 5: if (dx      <  1 && dy      <  1) return true; break;
+				case 6: if (dx + dy <  1 && dy - dx > -1) return true; break;
+				case 7: if (     dy > -1 &&      dx <  1) return true;
+			}
+		}
 	}
 	return false;
 }

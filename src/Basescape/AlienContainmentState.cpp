@@ -579,7 +579,7 @@ void AlienContainmentState::miniMouseOver(Action*)
 	const Base* const base (_baseList->at(baseId));
 
 	if (baseId < _baseList->size()
-		&& _base != base
+		&& base != _base
 		&& base->hasContainment() == true)
 	{
 		_txtHoverBase->setText(base->getName().c_str());

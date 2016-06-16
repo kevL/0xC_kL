@@ -644,7 +644,7 @@ void BaseInfoState::miniClick(Action*)
 	if (baseId < _baseList->size())
 	{
 		Base* const base (_baseList->at(baseId));
-		if (_base != base)
+		if (base != _base)
 		{
 			_txtHoverBase->setText(L"");
 			_txtHoverRegion->setText(L"");
