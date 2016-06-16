@@ -545,10 +545,10 @@ void InventoryState::init()
 //			&& CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false)
 		{
 			look = sol->getArmor()->getSpriteInventory() + ".SPK";
-		}
 
-		if (_game->getResourcePack()->getSurface(look) == nullptr)
-			look = sol->getArmor()->getSpriteInventory();
+			if (_game->getResourcePack()->getSurface(look) == nullptr)
+				look = sol->getArmor()->getSpriteInventory();
+		}
 
 		if (_game->getResourcePack()->getSurface(look) != nullptr)
 			_game->getResourcePack()->getSurface(look)->blit(_srfRagdoll);

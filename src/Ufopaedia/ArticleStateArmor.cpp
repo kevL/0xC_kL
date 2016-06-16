@@ -75,10 +75,10 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 //		&& CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false)
 	{
 		look = armorRule->getSpriteInventory() + ".SPK";
-	}
 
-	if (_game->getResourcePack()->getSurface(look) == nullptr)
-		look = armorRule->getSpriteInventory();
+		if (_game->getResourcePack()->getSurface(look) == nullptr)
+			look = armorRule->getSpriteInventory();
+	}
 
 	if (_game->getResourcePack()->getSurface(look) != nullptr)
 		_game->getResourcePack()->getSurface(look)->blit(_image);
