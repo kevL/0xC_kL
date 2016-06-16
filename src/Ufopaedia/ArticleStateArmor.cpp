@@ -49,7 +49,7 @@ namespace OpenXcom
 ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	:
 		ArticleState(defs->id),
-		_row(0)
+		_row(0u)
 {
 	setPalette(PAL_BATTLEPEDIA);
 	ArticleState::initLayout();
@@ -69,12 +69,17 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 
 	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(defs->id));
 
-	std::string look (armorRule->getSpriteInventory());
-	look += "M0.SPK";
-	if (CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false
-		&& _game->getResourcePack()->getSurface(look) == nullptr)
+	std::string look (armorRule->getSpriteInventory() + "M0.SPK");
+
+	if (_game->getResourcePack()->getSurface(look) == nullptr
+		&& CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false)
 	{
 		look = armorRule->getSpriteInventory() + ".SPK";
+	}
+
+	if (_game->getResourcePack()->getSurface(look) == nullptr)
+	{
+		look = armorRule->getSpriteInventory();
 	}
 	_game->getResourcePack()->getSurface(look)->blit(_image);
 
