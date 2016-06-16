@@ -185,40 +185,33 @@ void TileEngine::calculateTerrainLighting() const
 		_battleSave->getTiles()[i]->resetLight(LIGHT_LAYER_STATIC);
 	}
 
+	int light;
 	Tile* tile;
-	Position pos;
 
 	for (size_t
 			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
 	{
+		light = 0;
 		tile = _battleSave->getTiles()[i];
-		pos = tile->getPosition();
 
 		if (tile->getMapData(O_FLOOR) != nullptr					// add lighting of Floor-part
 			&& tile->getMapData(O_FLOOR)->getLightSource() != 0)
 		{
-			addLight(
-					pos,
-					tile->getMapData(O_FLOOR)->getLightSource(),
-					LIGHT_LAYER_STATIC);
+			light = tile->getMapData(O_FLOOR)->getLightSource();
 		}
 
 		if (tile->getMapData(O_OBJECT) != nullptr					// add lighting of Object-part
 			&& tile->getMapData(O_OBJECT)->getLightSource() != 0)
 		{
-			addLight(
-					pos,
-					tile->getMapData(O_OBJECT)->getLightSource(),
-					LIGHT_LAYER_STATIC);
+			light = std::max(light,
+							 tile->getMapData(O_OBJECT)->getLightSource());
 		}
 
 		if (tile->getFire() != 0)									// add lighting from Tile-fire
-			addLight(
-					pos,
-					LIGHT_FIRE,
-					LIGHT_LAYER_STATIC);
+			light = std::max(light,
+							 LIGHT_FIRE);
 
 		for (std::vector<BattleItem*>::const_iterator
 				j = tile->getInventory()->begin();
@@ -228,12 +221,15 @@ void TileEngine::calculateTerrainLighting() const
 			if ((*j)->getRules()->getBattleType() == BT_FLARE		// add lighting of battle-flares
 				&& (*j)->getFuse() != -1)
 			{
-				addLight(
-						pos,
-						(*j)->getRules()->getPower(),
-						LIGHT_LAYER_STATIC);
+				light = std::max(light,
+								 (*j)->getRules()->getPower());
 			}
 		}
+
+		addLight(
+				tile->getPosition(),
+				light,
+				LIGHT_LAYER_STATIC);
 	}
 }
 
@@ -250,26 +246,28 @@ void TileEngine::calculateUnitLighting() const
 		_battleSave->getTiles()[i]->resetLight(LIGHT_LAYER_DYNAMIC);
 	}
 
+	int light;
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if (_unitLighting == true // add lighting of soldiers
+		light = 0;
+		if (_unitLighting == true		// add lighting of soldiers
 			&& (*i)->getFaction() == FACTION_PLAYER
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
-			addLight(
-					(*i)->getPosition(),
-					LIGHT_UNIT,
-					LIGHT_LAYER_DYNAMIC);
+			light = LIGHT_UNIT;
 		}
 
-		if ((*i)->getFireUnit() != 0) // add lighting of units on fire
-			addLight(
-					(*i)->getPosition(),
-					LIGHT_FIRE,
-					LIGHT_LAYER_DYNAMIC);
+		if ((*i)->getFireUnit() != 0)	// add lighting of units on fire
+			light = std::max(light,
+							 LIGHT_FIRE);
+
+		addLight(
+				(*i)->getPosition(),
+				light,
+				LIGHT_LAYER_DYNAMIC);
 	}
 }
 
@@ -295,18 +293,17 @@ void TileEngine::addLight( // private.
 		size_t layer) const
 {
 	Tile* tile;
-	int dist;
+	int light;
+	double dZ;
 
 	for (int // loop through the positive quadrant only - reflect that onto the other quadrants.
 			x = 0;
-			x < power;
-//			x <= power;
+			x <= power;
 			++x)
 	{
 		for (int
 				y = 0;
-				y < power;
-//				y <= power;
+				y <= power;
 				++y)
 		{
 			for (int
@@ -314,36 +311,29 @@ void TileEngine::addLight( // private.
 					z != _battleSave->getMapSizeZ();
 					++z)
 			{
-				dist = power
-					 - static_cast<int>(Round(std::sqrt(static_cast<double>(x * x + y * y))));
+				dZ = static_cast<double>(std::abs(pos.z - z)) * 1.5;
+				light = power
+					  - static_cast<int>(Round(std::sqrt(static_cast<double>(x * x + y * y) + dZ * dZ)));
 
-				tile = _battleSave->getTile(Position(
-												pos.x + x,
-												pos.y + y,
-												z));
-				if (tile != nullptr)
-					tile->addLight(dist, layer);
+				if ((tile = _battleSave->getTile(Position(
+														pos.x + x,
+														pos.y + y,
+														z))) != nullptr) tile->addLight(light, layer);
 
-				tile = _battleSave->getTile(Position(
-												pos.x - x,
-												pos.y - y,
-												z));
-				if (tile != nullptr)
-					tile->addLight(dist, layer);
+				if ((tile = _battleSave->getTile(Position(
+														pos.x - x,
+														pos.y - y,
+														z))) != nullptr) tile->addLight(light, layer);
 
-				tile = _battleSave->getTile(Position(
-												pos.x + x,
-												pos.y - y,
-												z));
-				if (tile != nullptr)
-					tile->addLight(dist, layer);
+				if ((tile = _battleSave->getTile(Position(
+														pos.x + x,
+														pos.y - y,
+														z))) != nullptr) tile->addLight(light, layer);
 
-				tile = _battleSave->getTile(Position(
-												pos.x - x,
-												pos.y + y,
-												z));
-				if (tile != nullptr)
-					tile->addLight(dist, layer);
+				if ((tile = _battleSave->getTile(Position(
+														pos.x - x,
+														pos.y + y,
+														z))) != nullptr) tile->addLight(light, layer);
 			}
 		}
 	}
