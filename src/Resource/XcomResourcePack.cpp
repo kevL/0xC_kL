@@ -1112,11 +1112,11 @@ void XcomResourcePack::loadBattlescapeResources()
 
 	const std::string ufograph (CrossPlatform::getDataFolder("UFOGRAPH/"));
 
-	// Load Battlescape paperdolls
-	std::vector<std::string> paperdolls (CrossPlatform::getFolderContents(ufograph, "SPK"));
+	// Load Battlescape ragdolls
+	std::vector<std::string> ragdolls (CrossPlatform::getFolderContents(ufograph, "SPK"));
 	for (std::vector<std::string>::iterator
-			i = paperdolls.begin();
-			i != paperdolls.end();
+			i = ragdolls.begin();
+			i != ragdolls.end();
 			++i)
 	{
 		std::string path (ufograph + *i);

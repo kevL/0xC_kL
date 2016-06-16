@@ -69,19 +69,19 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 
 	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(defs->id));
 
-	std::string look (armorRule->getSpriteInventory() + "M0.SPK");
+	std::string look (armorRule->getSpriteInventory() + "M0.SPK"); // See also: InventoryState::init().
 
-	if (_game->getResourcePack()->getSurface(look) == nullptr
-		&& CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false)
+	if (_game->getResourcePack()->getSurface(look) == nullptr)
+//		&& CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false)
 	{
 		look = armorRule->getSpriteInventory() + ".SPK";
 	}
 
 	if (_game->getResourcePack()->getSurface(look) == nullptr)
-	{
 		look = armorRule->getSpriteInventory();
-	}
-	_game->getResourcePack()->getSurface(look)->blit(_image);
+
+	if (_game->getResourcePack()->getSurface(look) != nullptr)
+		_game->getResourcePack()->getSurface(look)->blit(_image);
 
 
 	_lstInfo = new TextList(155, 129, 145, 12);

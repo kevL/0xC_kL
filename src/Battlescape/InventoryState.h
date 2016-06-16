@@ -79,10 +79,10 @@ private:
 		* _numFire;
 	SavedBattleGame* _battleSave;
 	Surface
-		* _bg,
-		* _gender,
-		* _srfAmmo,
-		* _paper;
+		* _srfBg,
+		* _srfGender,
+		* _srfLoad,
+		* _srfRagdoll;
 	Text
 		* _txtName,
 		* _txtItem,

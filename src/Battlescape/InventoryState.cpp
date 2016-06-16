@@ -98,11 +98,11 @@ InventoryState::InventoryState(
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	_bg			= new Surface(320, 200);
-	_paper		= new Surface(320, 200);
+	_srfBg		= new Surface(320, 200);
+	_srfRagdoll	= new Surface(320, 200);
 
 	_txtName	= new Text(200, 17, 36, 6);
-	_gender		= new Surface(7, 7, 28, 1);
+	_srfGender	= new Surface(7, 7, 28, 1);
 
 	_txtWeight	= new Text(70, 9, 237, 24);
 	_txtTUs		= new Text(40, 9, 237, 32);
@@ -144,7 +144,7 @@ InventoryState::InventoryState(
 //	_btnClearInventory	= new BattlescapeButton(32,22, _templateBtnX, _clearInventoryBtnY);
 
 	_txtAmmo = new Text(40, 24, 288, 64);
-	_srfAmmo = new Surface(
+	_srfLoad = new Surface(
 						RuleInventory::HAND_W * RuleInventory::SLOT_W,
 						RuleInventory::HAND_H * RuleInventory::SLOT_H,
 						288,88);
@@ -157,42 +157,42 @@ InventoryState::InventoryState(
 
 	setPalette(PAL_BATTLESCAPE);
 
-	add(_bg);
-	_game->getResourcePack()->getSurface("Inventory")->blit(_bg);
+	add(_srfBg);
+	_game->getResourcePack()->getSurface("Inventory")->blit(_srfBg);
 
-	add(_gender);
-	add(_paper);
-	add(_txtName,		"textName",			"inventory", _bg);
+	add(_srfGender);
+	add(_srfRagdoll);
+	add(_txtName,		"textName",			"inventory", _srfBg);
 
-	add(_txtWeight,		"textWeight",		"inventory", _bg);
-	add(_txtTUs,		"textTUs",			"inventory", _bg);
-	add(_txtFAcc,		"textFiring",		"inventory", _bg);
-	add(_txtReact,		"textReaction",		"inventory", _bg);
-	add(_txtThrow,		"textThrowing",		"inventory", _bg);
-	add(_txtMelee,		"textMelee",		"inventory", _bg);
-	add(_txtPStr,		"textPsiStrength",	"inventory", _bg);
-	add(_txtPSkill,		"textPsiSkill",		"inventory", _bg);
+	add(_txtWeight,		"textWeight",		"inventory", _srfBg);
+	add(_txtTUs,		"textTUs",			"inventory", _srfBg);
+	add(_txtFAcc,		"textFiring",		"inventory", _srfBg);
+	add(_txtReact,		"textReaction",		"inventory", _srfBg);
+	add(_txtThrow,		"textThrowing",		"inventory", _srfBg);
+	add(_txtMelee,		"textMelee",		"inventory", _srfBg);
+	add(_txtPStr,		"textPsiStrength",	"inventory", _srfBg);
+	add(_txtPSkill,		"textPsiSkill",		"inventory", _srfBg);
 
 	add(_numOrder);
 	add(_numTuCost);
 
-	add(_txtItem,		"textItem",			"inventory", _bg);
-	add(_txtAmmo,		"textAmmo",			"inventory", _bg);
-	add(_btnOk,			"buttonOK",			"inventory", _bg);
-	add(_btnPrev,		"buttonPrev",		"inventory", _bg);
-	add(_btnNext,		"buttonNext",		"inventory", _bg);
-	add(_btnUnload,		"buttonUnload",		"inventory", _bg);
-	add(_btnGroundL,	"buttonGround",		"inventory", _bg);
-	add(_btnGroundR,	"buttonGround",		"inventory", _bg);
-	add(_btnRank,		"rank",				"inventory", _bg);
+	add(_txtItem,		"textItem",			"inventory", _srfBg);
+	add(_txtAmmo,		"textAmmo",			"inventory", _srfBg);
+	add(_btnOk,			"buttonOK",			"inventory", _srfBg);
+	add(_btnPrev,		"buttonPrev",		"inventory", _srfBg);
+	add(_btnNext,		"buttonNext",		"inventory", _srfBg);
+	add(_btnUnload,		"buttonUnload",		"inventory", _srfBg);
+	add(_btnGroundL,	"buttonGround",		"inventory", _srfBg);
+	add(_btnGroundR,	"buttonGround",		"inventory", _srfBg);
+	add(_btnRank,		"rank",				"inventory", _srfBg);
 
-//	add(_btnCreateTemplate,	"buttonCreate",	"inventory", _bg);
-//	add(_btnApplyTemplate,	"buttonApply",	"inventory", _bg);
+//	add(_btnCreateTemplate,	"buttonCreate",	"inventory", _srfBg);
+//	add(_btnApplyTemplate,	"buttonApply",	"inventory", _srfBg);
 //	add(_btnClearInventory);
 
-	add(_txtUseTU,		"textTUs",			"inventory", _bg);
-	add(_txtThrowTU,	"textTUs",			"inventory", _bg);
-	add(_txtPsiTU,		"textTUs",			"inventory", _bg);
+	add(_txtUseTU,		"textTUs",			"inventory", _srfBg);
+	add(_txtThrowTU,	"textTUs",			"inventory", _srfBg);
+	add(_txtPsiTU,		"textTUs",			"inventory", _srfBg);
 
 	add(_numHead);
 	add(_numTorso);
@@ -202,7 +202,7 @@ InventoryState::InventoryState(
 	add(_numLeftLeg);
 	add(_numFire);
 
-	add(_srfAmmo);
+	add(_srfLoad);
 	add(_inventoryPanel);
 
 	centerAllSurfaces();
@@ -501,9 +501,9 @@ void InventoryState::init()
 
 	unit->flagCache();
 
-	_paper->clear();
+	_srfRagdoll->clear();
 	_btnRank->clear();
-	_gender->clear();
+	_srfGender->clear();
 
 	_txtName->setText(unit->getName(_game->getLanguage()));
 
@@ -515,7 +515,7 @@ void InventoryState::init()
 		SurfaceSet* const srtRank (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
 		srtRank->getFrame(20 + sol->getRank())->blit(_btnRank);
 
-		std::string look (sol->getArmor()->getSpriteInventory());
+		std::string look (sol->getArmor()->getSpriteInventory()); // See also: ArticleStateArmor cTor.
 		Surface* srfGender;
 		switch (sol->getGender())
 		{
@@ -529,7 +529,7 @@ void InventoryState::init()
 				srfGender = _game->getResourcePack()->getSurface("GENDER_F");
 				look += "F";
 		}
-		srfGender->blit(_gender);
+		srfGender->blit(_srfGender);
 
 		switch (sol->getLook())
 		{
@@ -541,22 +541,26 @@ void InventoryState::init()
 		}
 		look += ".SPK";
 
-		if (CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false
-			&& _game->getResourcePack()->getSurface(look) == nullptr)
+		if (_game->getResourcePack()->getSurface(look) == nullptr)
+//			&& CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false)
 		{
 			look = sol->getArmor()->getSpriteInventory() + ".SPK";
 		}
 
-		_game->getResourcePack()->getSurface(look)->blit(_paper);
+		if (_game->getResourcePack()->getSurface(look) == nullptr)
+			look = sol->getArmor()->getSpriteInventory();
+
+		if (_game->getResourcePack()->getSurface(look) != nullptr)
+			_game->getResourcePack()->getSurface(look)->blit(_srfRagdoll);
 	}
 	else
 	{
 		Surface* const dolphins (_game->getResourcePack()->getSurface("Dolphins"));
 		dolphins->blit(_btnRank);
 
-		Surface* const srfPaper (_game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory()));
-		if (srfPaper != nullptr)
-			srfPaper->blit(_paper);
+		Surface* const ragdoll (_game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory()));
+		if (ragdoll != nullptr)
+			ragdoll->blit(_srfRagdoll);
 	}
 
 	updateStats();
@@ -784,7 +788,7 @@ void InventoryState::btnLoadIconClick(Action*)
 		_txtAmmo->setText(L"");
 		_txtUseTU->setText(L"");
 
-		_srfAmmo->clear();
+		_srfLoad->clear();
 
 		updateStats();
 		_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_UNLOAD_HQ)->play();
@@ -1085,7 +1089,7 @@ void InventoryState::inClick(Action*)
 						rect.y = 0;
 						rect.w = static_cast<Sint16>(RuleInventory::HAND_W * RuleInventory::SLOT_W);
 						rect.h = static_cast<Sint16>(RuleInventory::HAND_H * RuleInventory::SLOT_H);
-						_srfAmmo->drawRect(
+						_srfLoad->drawRect(
 										&rect,
 										static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")
 											->getElement("grid")->color));
@@ -1094,11 +1098,11 @@ void InventoryState::inClick(Action*)
 						++rect.y;
 						rect.w -= 2u;
 						rect.h -= 2u;
-						_srfAmmo->drawRect(&rect, 15u);
+						_srfLoad->drawRect(&rect, 15u);
 
 						aItem->getRules()->drawHandSprite(
 													_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
-													_srfAmmo);
+													_srfLoad);
 					}
 				}
 		}
@@ -1134,7 +1138,7 @@ void InventoryState::inMouseOver(Action*)
 	}
 	else // no item on cursor.
 	{
-		_srfAmmo->clear();
+		_srfLoad->clear();
 
 		const BattleItem* const overItem (_inventoryPanel->getMouseOverItem());
 		if (overItem != nullptr)
@@ -1170,7 +1174,7 @@ void InventoryState::inMouseOver(Action*)
 							rect.y = 0;
 							rect.w = RuleInventory::HAND_W * RuleInventory::SLOT_W;
 							rect.h = RuleInventory::HAND_H * RuleInventory::SLOT_H;
-							_srfAmmo->drawRect(
+							_srfLoad->drawRect(
 											&rect,
 											static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")
 												->getElement("grid")->color));
@@ -1179,11 +1183,11 @@ void InventoryState::inMouseOver(Action*)
 							++rect.y;
 							rect.w -= 2u;
 							rect.h -= 2u;
-							_srfAmmo->drawRect(&rect, 15u);
+							_srfLoad->drawRect(&rect, 15u);
 
 							aItem->getRules()->drawHandSprite(
 														_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
-														_srfAmmo);
+														_srfLoad);
 //							_updateTemplateButtons(false);
 						}
 //						else _updateTemplateButtons(!_tuMode);
@@ -1214,7 +1218,7 @@ void InventoryState::inMouseOut(Action*)
 	_txtAmmo->setText(L"");
 	_txtUseTU->setText(L"");
 
-	_srfAmmo->clear();
+	_srfLoad->clear();
 //	_updateTemplateButtons(!_tuMode);
 }
 

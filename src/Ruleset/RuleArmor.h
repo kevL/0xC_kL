@@ -55,7 +55,7 @@ private:
 		_corpseGeo,
 //		_specWeapon,
 		_spriteSheet,
-		_spriteInv,
+		_spriteImage,
 		_storeItem,
 		_type;
 	bool

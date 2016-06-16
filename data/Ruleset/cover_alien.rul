@@ -90,7 +90,7 @@ items:
 armors:
   - type: WASPITE_ARMOR0
     spriteSheet: WASPITE.PCK
-    spriteInv: inventory_WASPITE
+    spriteImage: inventory_WASPITE
     corpseBattle:
       - STR_WASPITE_CORPSE
     frontArmor: 18
@@ -113,7 +113,7 @@ armors:
     loftSet: [3]
   - type: WASPITE_ARMOR1
     spriteSheet: WASPITE.PCK
-    spriteInv: inventory_WASPITE
+    spriteImage: inventory_WASPITE
     corpseBattle:
       - STR_WASPITE_CORPSE
     frontArmor: 26
@@ -136,7 +136,7 @@ armors:
     loftSet: [3]
   - type: WASPITE_ARMOR2
     spriteSheet: WASPITE.PCK
-    spriteInv: inventory_WASPITE
+    spriteImage: inventory_WASPITE
     corpseBattle:
       - STR_WASPITE_CORPSE
     frontArmor: 34

@@ -92,7 +92,7 @@ void RuleArmor::load(const YAML::Node& node)
 {
 	_type			= node["type"]			.as<std::string>(_type);
 	_spriteSheet	= node["spriteSheet"]	.as<std::string>(_spriteSheet);
-	_spriteInv		= node["spriteInv"]		.as<std::string>(_spriteInv);
+	_spriteImage	= node["spriteImage"]	.as<std::string>(_spriteImage);
 	_hasInventory	= node["allowInv"]		.as<bool>(_hasInventory);
 
 	if (node["corpseBattle"])
@@ -177,7 +177,7 @@ std::string RuleArmor::getSpriteSheet() const
  */
 std::string RuleArmor::getSpriteInventory() const
 {
-	return _spriteInv;
+	return _spriteImage;
 }
 
 /**
