@@ -96,8 +96,8 @@ SoldierInfoState::SoldierInfoState(
 	_txtMissions	= new Text(80, 9, 112, 49);
 	_txtKills		= new Text(80, 9, 112, 57);
 
-	_txtRecovery	= new Text(45, 9, 192, 57);
-	_txtDay			= new Text(30, 9, 237, 57);
+	_txtRecovery	= new Text(39, 9, 192, 57);
+	_txtDay			= new Text(43, 9, 231, 57);
 
 
 	static const int STEP_y (11);
@@ -334,14 +334,18 @@ void SoldierInfoState::init()
 
 	_gender->clear();
 	Surface* gender;
-	if (_soldier->getGender() == GENDER_MALE)
-		gender = _game->getResourcePack()->getSurface("GENDER_M");
-	else
-		gender = _game->getResourcePack()->getSurface("GENDER_F");
-	if (gender != nullptr)
-		gender->blit(_gender);
+	switch (_soldier->getGender())
+	{
+		default:
+		case GENDER_MALE:
+			gender = _game->getResourcePack()->getSurface("GENDER_M");
+			break;
+		case GENDER_FEMALE:
+			gender = _game->getResourcePack()->getSurface("GENDER_F");
+	}
+	if (gender != nullptr) gender->blit(_gender);
 
-	_battleOrder->setValue(_soldierId + 1);
+	_battleOrder->setValue(_soldierId + 1u);
 
 
 	const UnitStats
@@ -543,45 +547,45 @@ void SoldierInfoState::init()
 
 
 	const int recovery (_soldier->getSickbay());
-	if (recovery != 0)
+	switch (recovery)
 	{
-		Uint8 color;
-		const int pct (_soldier->getRecoveryPct());
-		if (pct > 50)
-			color = ORANGE;
-		else if (pct > 10)
-			color = YELLOW;
-		else
-			color = GREEN;
+		case 0:
+			_txtRecovery->setText(L"");
+			_txtRecovery->setVisible(false);
 
-		_txtRecovery->setSecondaryColor(color);
-		_txtRecovery->setText(tr("STR_WOUND_RECOVERY_").arg(tr("STR_DAY", recovery)));
-		_txtRecovery->setVisible();
+			_txtDay->setText(L"");
+			_txtDay->setVisible(false);
+			break;
 
-		_txtDay->setColor(color);
-		_txtDay->setText(tr("STR_DAY", recovery));
-		_txtDay->setVisible();
-	}
-	else
-	{
-		_txtRecovery->setText(L"");
-		_txtRecovery->setVisible(false);
+		default:
+		{
+			Uint8 color;
+			const int pct (_soldier->getRecoveryPct());
+			if		(pct > 50)	color = ORANGE;
+			else if	(pct > 10)	color = YELLOW;
+			else				color = GREEN;
 
-		_txtDay->setText(L"");
-		_txtDay->setVisible(false);
+			_txtRecovery->setText(tr("STR_WOUND_RECOVERY_").arg(tr("")));
+			_txtRecovery->setVisible();
+
+			_txtDay->setColor(color);
+			_txtDay->setText(tr("STR_DAY", recovery));
+			_txtDay->setVisible();
+		}
 	}
 
 	_txtRank->setText(tr("STR_RANK_").arg(tr(_soldier->getRankString())));
 
-	if (_game->getSavedGame()->getMonthsPassed() != -1)
+	switch (_game->getSavedGame()->getMonthsPassed())
 	{
-		_txtMissions->setText(tr("STR_MISSIONS_").arg(_soldier->getMissions()));
-		_txtKills->setText(tr("STR_KILLS_").arg(_soldier->getKills()));
-	}
-	else // skirmish Mode.
-	{
-		_txtMissions->setText(tr("STR_MISSIONS_").arg(L"-"));
-		_txtKills->setText(tr("STR_KILLS_").arg(L"-"));
+		case -1: // quick battle.
+			_txtMissions->setText(tr("STR_MISSIONS_").arg(L"-"));
+			_txtKills->setText(tr("STR_KILLS_").arg(L"-"));
+			break;
+
+		default:
+			_txtMissions->setText(tr("STR_MISSIONS_").arg(_soldier->getMissions()));
+			_txtKills->setText(tr("STR_KILLS_").arg(_soldier->getKills()));
 	}
 
 	_txtPsionic->setVisible(_soldier->inPsiTraining());
@@ -589,59 +593,60 @@ void SoldierInfoState::init()
 //	const int minPsi = _soldier->getRules()->getMinStats().psiSkill;
 //		|| (Options::psiStrengthEval == true // for determination to show psiStrength
 //			&& _game->getSavedGame()->isResearched(_game->getRuleset()->getPsiRequirements()) == true))
-	if (current->psiSkill != 0)
+	switch (current->psiSkill)
 	{
-		woststr.str(L"");
-		woststr << armored.psiStrength;
-		_numPsiStrength->setText(woststr.str());
-		_barPsiStrength->setValue(armored.psiStrength);
-		if (initial->psiStrength > current->psiStrength)
-			_barPsiStrength->setMaxValue(initial->psiStrength);
-		else
-			_barPsiStrength->setMaxValue(current->psiStrength);
+		case 0:
+			_numPsiStrength->setVisible(false);
+			_barPsiStrength->setVisible(false);
 
-		if (armored.psiStrength > initial->psiStrength)
-			_barPsiStrength->setValue2(initial->psiStrength);
-		else
-		{
-			if (armored.psiStrength > current->psiStrength)
-				_barPsiStrength->setValue2(current->psiStrength);
+			_numPsiSkill->setVisible(false);
+			_barPsiSkill->setVisible(false);
+			break;
+
+		default:
+			woststr.str(L"");
+			woststr << armored.psiStrength;
+			_numPsiStrength->setText(woststr.str());
+			_barPsiStrength->setValue(armored.psiStrength);
+			if (initial->psiStrength > current->psiStrength)
+				_barPsiStrength->setMaxValue(initial->psiStrength);
 			else
-				_barPsiStrength->setValue2(armored.psiStrength);
-		}
+				_barPsiStrength->setMaxValue(current->psiStrength);
 
-		_numPsiStrength->setVisible();
-		_barPsiStrength->setVisible();
-
-		woststr.str(L"");
-		woststr << armored.psiSkill;
-		_numPsiSkill->setText(woststr.str());
-		_barPsiSkill->setValue(armored.psiSkill);
-		if (initial->psiSkill > current->psiSkill)
-			_barPsiSkill->setMaxValue(initial->psiSkill);
-		else
-			_barPsiSkill->setMaxValue(current->psiSkill);
-
-		if (armored.psiSkill > initial->psiSkill)
-			_barPsiSkill->setValue2(initial->psiSkill);
-		else
-		{
-			if (armored.psiSkill > current->psiSkill)
-				_barPsiSkill->setValue2(current->psiSkill);
+			if (armored.psiStrength > initial->psiStrength)
+				_barPsiStrength->setValue2(initial->psiStrength);
 			else
-				_barPsiSkill->setValue2(armored.psiSkill);
-		}
+			{
+				if (armored.psiStrength > current->psiStrength)
+					_barPsiStrength->setValue2(current->psiStrength);
+				else
+					_barPsiStrength->setValue2(armored.psiStrength);
+			}
 
-		_numPsiSkill->setVisible();
-		_barPsiSkill->setVisible();
-	}
-	else
-	{
-		_numPsiStrength->setVisible(false);
-		_barPsiStrength->setVisible(false);
+			_numPsiStrength->setVisible();
+			_barPsiStrength->setVisible();
 
-		_numPsiSkill->setVisible(false);
-		_barPsiSkill->setVisible(false);
+			woststr.str(L"");
+			woststr << armored.psiSkill;
+			_numPsiSkill->setText(woststr.str());
+			_barPsiSkill->setValue(armored.psiSkill);
+			if (initial->psiSkill > current->psiSkill)
+				_barPsiSkill->setMaxValue(initial->psiSkill);
+			else
+				_barPsiSkill->setMaxValue(current->psiSkill);
+
+			if (armored.psiSkill > initial->psiSkill)
+				_barPsiSkill->setValue2(initial->psiSkill);
+			else
+			{
+				if (armored.psiSkill > current->psiSkill)
+					_barPsiSkill->setValue2(current->psiSkill);
+				else
+					_barPsiSkill->setValue2(armored.psiSkill);
+			}
+
+			_numPsiSkill->setVisible();
+			_barPsiSkill->setVisible();
 	}
 
 	_btnSack->setVisible(!
@@ -674,7 +679,7 @@ void SoldierInfoState::btnAutoStatAll(Action*)
 
 	Soldier* sol;
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _list->size();
 			++i)
 	{
