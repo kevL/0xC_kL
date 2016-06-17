@@ -527,12 +527,11 @@ void Ufo::calculateSpeed() // private.
 {
 	MovingTarget::calculateSpeed();
 
-	const double // TODO: Move to MovingTarget.
+	const double
 		x ( _speedLon),
 		y (-_speedLat);
 
-	// This section guards vs. divide-by-zero.
-	if (AreSame(x, 0.) || AreSame(y, 0.))
+	if (AreSame(x, 0.) || AreSame(y, 0.)) // This section guards vs. divide-by-zero.
 	{
 		if (AreSame(x, 0.) && AreSame(y, 0.))
 		{
@@ -546,20 +545,20 @@ void Ufo::calculateSpeed() // private.
 				_heading = "STR_NORTH";
 				_headingInt = 8u;
 			}
-			else //if (y < 0.)
+			else
 			{
 				_heading = "STR_SOUTH";
 				_headingInt = 4u;
 			}
 		}
-		else if (AreSame(y, 0.))
+		else
 		{
 			if (x > 0.)
 			{
 				_heading = "STR_EAST";
 				_headingInt = 2u;
 			}
-			else //if (x < 0.)
+			else
 			{
 				_heading = "STR_WEST";
 				_headingInt = 6u;
@@ -571,7 +570,7 @@ void Ufo::calculateSpeed() // private.
 	double theta (std::atan2(y,x)); // theta is radians.
 	// Convert radians to degrees so i don't go bonkers;
 	// ie. KILL IT WITH FIRE!!1@!
-	// note that this is between +/- 180 deg.
+	// NOTE: This is between +/- 180 deg.
 	theta *= 180. / M_PI;
 
 	if (theta > 157.5 || theta < -157.5)

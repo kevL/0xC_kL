@@ -77,8 +77,6 @@ private:
 
 		_kills;
 
-//	unsigned _headingInt;
-
 	std::wstring _name;
 
 	CraftStatus _status;

@@ -83,7 +83,6 @@ Craft::Craft(
 		_warned(false), // do not save-to-file; ie, re-warn player if reloading
 		_kills(0),
 		_showReady(false)
-//		_headingInt(0u)
 {
 	_items = new ItemContainer();
 
@@ -577,106 +576,42 @@ unsigned Craft::getAltitudeInt() const
  */
 unsigned Craft::getHeadingInt() const
 {
-	const double // TODO: Move to MovingTarget.
+	const double
 		x ( _speedLon),
 		y (-_speedLat);
 
-	// This section guards vs. divide-by-zero.
-	if (AreSame(x, 0.) || AreSame(y, 0.))
+	if (AreSame(x, 0.) || AreSame(y, 0.)) // This section guards vs. divide-by-zero.
 	{
 		if (AreSame(x, 0.) && AreSame(y, 0.))
-		{
-//			_heading = "STR_NONE_UC";
-//			_headingInt = 8u;
 			return 0u;
-		}
-		else if (AreSame(x, 0.))
+
+		if (AreSame(x, 0.))
 		{
-			if (y > 0.)
-			{
-//				_heading = "STR_NORTH";
-//				_headingInt = 0u;
-				return 8u;
-			}
-			else //if (y < 0.)
-			{
-//				_heading = "STR_SOUTH";
-//				_headingInt = 4u;
-				return 4u;
-			}
+			if (y > 0.) return 8u;
+			return 4u;
 		}
-		else if (AreSame(y, 0.))
-		{
-			if (x > 0.)
-			{
-//				_heading = "STR_EAST";
-//				_headingInt = 2u;
-				return 2u;
-			}
-			else //if (x < 0.)
-			{
-//				_heading = "STR_WEST";
-//				_headingInt = 6u;
-				return 6u;
-			}
-		}
-//		return;
+
+		if (x > 0.) return 2u;
+		return 6u;
 	}
 
 	double theta (std::atan2(y,x)); // theta is radians.
 	// Convert radians to degrees so i don't go bonkers;
 	// ie. KILL IT WITH FIRE!!1@!
-	// note that this is between +/- 180 deg.
+	// NOTE: This is between +/- 180 deg.
 	theta *= 180. / M_PI;
 
 	if (theta > 157.5 || theta < -157.5)
-	{
-//		_heading = "STR_WEST";
-//		_headingInt = 6u;
 		return 6u;
-	}
-	else if (theta > 112.5)
-	{
-//		_heading = "STR_NORTH_WEST";
-//		_headingInt = 7u;
-		return 7u;
-	}
-	else if (theta > 67.5)
-	{
-//		_heading = "STR_NORTH";
-//		_headingInt = 0u;
-		return 8u;
-	}
-	else if (theta > 22.5)
-	{
-//		_heading = "STR_NORTH_EAST";
-//		_headingInt = 1u;
-		return 1u;
-	}
-	else if (theta < -112.5)
-	{
-//		_heading = "STR_SOUTH_WEST";
-//		_headingInt = 5u;
-		return 5u;
-	}
-	else if (theta < -67.5)
-	{
-//		_heading = "STR_SOUTH";
-//		_headingInt = 4u;
-		return 7u;
-	}
-	else if (theta < -22.5)
-	{
-//		_heading = "STR_SOUTH_EAST";
-//		_headingInt = 3u;
-		return 3u;
-	}
-	else
-	{
-//		_heading = "STR_EAST";
-//		_headingInt = 2u;
-		return 2u;
-	}
+
+	if (theta >  112.5)	return 7u;
+	if (theta >   67.5)	return 8u;
+	if (theta >   22.5)	return 1u;
+	if (theta < -112.5)	return 5u;
+	if (theta <  -67.5)	return 4u;
+	if (theta <  -22.5)	return 3u;
+
+	return 2u;
 }
 
 /**
