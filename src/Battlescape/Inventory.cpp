@@ -1335,38 +1335,39 @@ bool Inventory::unload()
 		return false;
 	}
 
-	for (std::vector<BattleItem*>::const_iterator
-			i = _selUnit->getInventory()->begin();
-			i != _selUnit->getInventory()->end();
-			++i)
+	const RuleInventory* inRule;
+	if (_tuMode == true)
 	{
-		if (*i != _selItem
-			&& (*i)->getInventorySection() != nullptr
-			&& (*i)->getInventorySection()->getCategory() == IC_HAND)
+		for (std::vector<BattleItem*>::const_iterator
+				i = _selUnit->getInventory()->begin();
+				i != _selUnit->getInventory()->end();
+				++i)
 		{
-			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[10u]));
+			if (*i != _selItem
+				&& (*i)->getInventorySection() != nullptr
+				&& (*i)->getInventorySection()->getCategory() == IC_HAND)
+			{
+				_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[10u]));
+				return false;
+			}
+		}
+
+		if (_selUnit->spendTimeUnits(_selItem->getRules()->getUnloadTu()) == false)
+		{
+			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 			return false;
 		}
-	}
 
-	if (_tuMode == true
-		&& _selUnit->spendTimeUnits(_selItem->getRules()->getUnloadTu()) == false)
-	{
-		_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
-		return false;
+		inRule = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
 	}
+	else
+		inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 
 
 	moveItem(
 			_selItem,
 			_game->getRuleset()->getInventoryRule(ST_RIGHTHAND));
 	_selItem->setAmmoItem();
-
-	const RuleInventory* inRule;
-	if (_tuMode == true)
-		inRule = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
-	else
-		inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 
 	moveItem(load, inRule);
 	setSelectedItem();
