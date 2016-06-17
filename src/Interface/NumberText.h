@@ -37,10 +37,10 @@ class NumberText final
 
 private:
 	static bool init;
-	static const size_t DIGITS = 10;
+	static const size_t DIGITS = 10u;
 	static const Uint8
-		FG =  1, // foreground color / digit
-		BG = 14; // background color / border
+		FG =  1u, // foreground color / digit
+		BG = 14u; // background color / border
 	static const int
 		WIDTH    = 3,
 		HEIGHT   = 5,

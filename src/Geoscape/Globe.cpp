@@ -37,6 +37,7 @@
 #include "../Engine/Timer.h"
 
 #include "../Interface/Cursor.h"
+#include "../Interface/NumberText.h"
 #include "../Interface/Text.h"
 
 #include "../Resource/ResourcePack.h"
@@ -366,7 +367,7 @@ Globe::Globe(
 
 	_terminatorFluxions.resize(static_data.random_surf_size * static_data.random_surf_size);
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _terminatorFluxions.size();
 			++i)
 	{
@@ -374,6 +375,8 @@ Globe::Globe(
 	}
 
 	cachePolygons();
+
+	_flightData = new NumberText(27,5);
 }
 
 /**
@@ -396,6 +399,8 @@ Globe::~Globe()
 			i != _cacheLand.end();
 			++i)
 		delete *i;
+
+	delete _flightData;
 }
 
 /**
@@ -1159,6 +1164,8 @@ void Globe::setPalette(
 	_crosshair->setPalette(colors, firstcolor, ncolors);
 	_markers->setPalette(colors, firstcolor, ncolors);
 	_radars->setPalette(colors, firstcolor, ncolors);
+
+	_flightData->setPalette(getPalette());
 }
 
 /**
@@ -2346,12 +2353,12 @@ void Globe::drawInterceptMarker( // private.
 
 /**
  * Draws the marker for a specified Target on this Globe.
- * @param target	- pointer to globe Target
- * @param surface	- pointer to globe Surface
+ * @param target	- pointer to the target
+ * @param srfGlobe	- pointer to the globe's Surface
  */
 void Globe::drawTarget( // private.
 		const Target* const target,
-		Surface* const surface)
+		Surface* const srfGlobe)
 {
 	const int markerId (target->getMarker());
 	if (markerId != -1)
@@ -2371,7 +2378,40 @@ void Globe::drawTarget( // private.
 			Surface* const marker (_markerSet->getFrame(markerId));
 			marker->setX(x - 1);
 			marker->setY(y - 1);
-			marker->blit(surface);
+			marker->blit(srfGlobe);
+
+			switch (markerId)
+			{
+				case Globe::GLM_CRAFT:
+				case Globe::GLM_UFO_FLYING:
+					_flightData->setX(x);
+					_flightData->setY(y - 7);
+
+					unsigned data = 0u; // headingInt[1-digit] - altitudeInt[1-digit] - 0 - speed[4-digits]
+
+					const Craft* const craft (dynamic_cast<const Craft*>(target));
+					const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
+					if (craft != nullptr)
+					{
+						_flightData->setColor(8u);
+
+						data  = craft->getHeadingInt()  * 1000000u;
+						data += craft->getAltitudeInt() * 100000u;
+						data += static_cast<unsigned>(craft->getSpeed());
+					}
+					else if (ufo != nullptr)
+					{
+						_flightData->setColor(14u);
+
+						data  = ufo->getHeadingInt()  * 1000000u;
+						data += ufo->getAltitudeInt() * 100000u;
+						data += static_cast<unsigned>(ufo->getSpeed());
+					}
+					_flightData->setValue(data);
+
+					_flightData->draw();
+					_flightData->blit(srfGlobe);
+			}
 		}
 	}
 }

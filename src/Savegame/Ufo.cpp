@@ -60,7 +60,8 @@ Ufo::Ufo(
 		_idCrashed(0),
 		_idLanded(0),
 		_damage(0),
-		_direction("STR_NORTH"),
+		_heading("STR_NORTH"),
+		_headingInt(0u),
 		_altitude(MovingTarget::stAltitude[3u]),
 		_status(FLYING),
 		_secondsLeft(0),
@@ -147,7 +148,7 @@ void Ufo::loadUfo(
 	_idLanded		= node["idLanded"]		.as<int>(_idLanded);
 	_damage			= node["damage"]		.as<int>(_damage);
 	_altitude		= node["altitude"]		.as<std::string>(_altitude);
-	_direction		= node["direction"]		.as<std::string>(_direction);
+	_heading		= node["direction"]		.as<std::string>(_heading);
 	_detected		= node["detected"]		.as<bool>(_detected);
 	_hyperDetected	= node["hyperDetected"]	.as<bool>(_hyperDetected);
 	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
@@ -226,7 +227,7 @@ YAML::Node Ufo::save() const
 	if (_terrain.empty() == false) node["terrain"] = _terrain;
 
 	node["altitude"]	= _altitude;
-	node["direction"]	= _direction;
+	node["direction"]	= _heading;
 	node["status"]		= static_cast<int>(_status);
 
 	if (_damage != 0)				node["damage"]			= _damage;
@@ -466,12 +467,35 @@ std::string Ufo::getAltitude() const
 }
 
 /**
- * Gets the current direction this UFO is headed.
- * @return, direction
+ * Gets the current altitude of this UFO as an integer.
+ * @return, alititude as an integer
  */
-std::string Ufo::getDirection() const
+unsigned Ufo::getAltitudeInt() const
 {
-	return _direction;
+	if (_altitude == MovingTarget::stAltitude[0u]) return 0u;
+	if (_altitude == MovingTarget::stAltitude[1u]) return 1u;
+	if (_altitude == MovingTarget::stAltitude[2u]) return 2u;
+	if (_altitude == MovingTarget::stAltitude[3u]) return 3u;
+
+	return 4u;
+}
+
+/**
+ * Gets the current heading of this UFO.
+ * @return, heading
+ */
+std::string Ufo::getHeading() const
+{
+	return _heading;
+}
+
+/**
+ * Gets the current heading of this UFO as an integer-value.
+ * @return, heading as an integer
+ */
+unsigned Ufo::getHeadingInt() const
+{
+	return _headingInt;
 }
 
 /**
@@ -495,12 +519,13 @@ bool Ufo::isDestroyed() const
 /**
  * Calculates the direction for this Ufo based on the current raw speed and
  * destination.
+ * @sa Craft::getHeadingInt().
  */
 void Ufo::calculateSpeed() // private.
 {
 	MovingTarget::calculateSpeed();
 
-	const double
+	const double // TODO: Move to MovingTarget.
 		x ( _speedLon),
 		y (-_speedLat);
 
@@ -508,20 +533,35 @@ void Ufo::calculateSpeed() // private.
 	if (AreSame(x, 0.) || AreSame(y, 0.))
 	{
 		if (AreSame(x, 0.) && AreSame(y, 0.))
-			_direction = "STR_NONE_UC";
+		{
+			_heading = "STR_NONE_UC";
+			_headingInt = 0u;
+		}
 		else if (AreSame(x, 0.))
 		{
 			if (y > 0.)
-				_direction = "STR_NORTH";
+			{
+				_heading = "STR_NORTH";
+				_headingInt = 8u;
+			}
 			else //if (y < 0.)
-				_direction = "STR_SOUTH";
+			{
+				_heading = "STR_SOUTH";
+				_headingInt = 4u;
+			}
 		}
 		else if (AreSame(y, 0.))
 		{
 			if (x > 0.)
-				_direction = "STR_EAST";
+			{
+				_heading = "STR_EAST";
+				_headingInt = 2u;
+			}
 			else //if (x < 0.)
-				_direction = "STR_WEST";
+			{
+				_heading = "STR_WEST";
+				_headingInt = 6u;
+			}
 		}
 		return;
 	}
@@ -533,21 +573,45 @@ void Ufo::calculateSpeed() // private.
 	theta *= 180. / M_PI;
 
 	if (theta > 157.5 || theta < -157.5)
-		_direction = "STR_WEST";
+	{
+		_heading = "STR_WEST";
+		_headingInt = 6u;
+	}
 	else if (theta > 112.5)
-		_direction = "STR_NORTH_WEST";
+	{
+		_heading = "STR_NORTH_WEST";
+		_headingInt = 7u;
+	}
 	else if (theta > 67.5)
-		_direction = "STR_NORTH";
+	{
+		_heading = "STR_NORTH";
+		_headingInt = 8u;
+	}
 	else if (theta > 22.5)
-		_direction = "STR_NORTH_EAST";
+	{
+		_heading = "STR_NORTH_EAST";
+		_headingInt = 1u;
+	}
 	else if (theta < -112.5)
-		_direction = "STR_SOUTH_WEST";
+	{
+		_heading = "STR_SOUTH_WEST";
+		_headingInt = 5u;
+	}
 	else if (theta < -67.5)
-		_direction = "STR_SOUTH";
+	{
+		_heading = "STR_SOUTH";
+		_headingInt = 4u;
+	}
 	else if (theta < -22.5)
-		_direction = "STR_SOUTH_EAST";
+	{
+		_heading = "STR_SOUTH_EAST";
+		_headingInt = 3u;
+	}
 	else
-		_direction = "STR_EAST";
+	{
+		_heading = "STR_EAST";
+		_headingInt = 2u;
+	}
 }
 
 /**

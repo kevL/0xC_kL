@@ -77,6 +77,8 @@ private:
 
 		_kills;
 
+//	unsigned _headingInt;
+
 	std::wstring _name;
 
 	CraftStatus _status;
@@ -148,6 +150,10 @@ private:
 
 		/// Gets the Craft's altitude.
 		std::string getAltitude() const;
+		/// Gets the Craft's altitude as an integer.
+		unsigned getAltitudeInt() const;
+		/// Gets the Craft's heading as an integer.
+		unsigned getHeadingInt() const;
 
 		/// Sets the Craft's destination.
 		void setDestination(Target* const dest = nullptr) override;

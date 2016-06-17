@@ -215,27 +215,39 @@ UfoDetectedState::UfoDetectedState(
 
 	_lstInfo->setColumns(2, 80,112);
 	_lstInfo->setDot();
+
 	woststr.str(L"");
 	woststr << L'\x01' << tr(_ufo->getRules()->getSize());
 	_lstInfo->addRow(
 				2,
 				tr("STR_SIZE_UC").c_str(),
 				woststr.str().c_str());
+
 	woststr.str(L"");
 	woststr << L'\x01' << tr(_ufo->getAltitude());
 	_lstInfo->addRow(
 				2,
 				tr("STR_ALTITUDE").c_str(),
 				woststr.str().c_str());
+
 	woststr.str(L"");
-	std::string heading (_ufo->getDirection());
-	if (_ufo->getUfoStatus() != Ufo::FLYING)
-		heading = "STR_NONE";
+	std::string heading (_ufo->getHeading());
+	switch (_ufo->getUfoStatus())
+	{
+		case Ufo::FLYING:
+			heading = _ufo->getHeading();
+			break;
+
+		case Ufo::LANDED:
+		case Ufo::CRASHED:
+			heading = "STR_NONE";	// NOTE: Probably done okay in Ufo::calculateSpeed().
+	}								// Although it uses "STR_NONE_UC" ....
 	woststr << L'\x01' << tr(heading);
 	_lstInfo->addRow(
 				2,
 				tr("STR_HEADING").c_str(),
 				woststr.str().c_str());
+
 	woststr.str(L"");
 	woststr << L'\x01' << _ufo->getSpeed();
 	_lstInfo->addRow(

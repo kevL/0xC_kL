@@ -73,6 +73,7 @@ private:
 		_secondsLeft,
 		_shootingAt;
 	size_t _trajectoryWp;
+	unsigned _headingInt;
 
 	AlienMission* _mission;
 	const RuleUfo* _ufoRule;
@@ -80,7 +81,7 @@ private:
 
 	std::string
 		_altitude,
-		_direction,
+		_heading,
 		_terrain;
 
 	CraftId _shotDownByCraftId;
@@ -151,8 +152,12 @@ private:
 		void setAltitude(const std::string& altitude);
 		/// Gets the Ufo's altitude.
 		std::string getAltitude() const;
-		/// Gets the Ufo's direction.
-		std::string getDirection() const;
+		/// Gets the Ufo's altitude as an integer.
+		unsigned getAltitudeInt() const;
+		/// Gets the Ufo's heading.
+		std::string getHeading() const;
+		/// Gets the Ufo's heading as an integer.
+		unsigned getHeadingInt() const;
 
 		/// Gets the Ufo status.
 		UfoStatus getUfoStatus() const

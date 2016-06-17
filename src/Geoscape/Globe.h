@@ -43,6 +43,7 @@ enum DebugTypeGlobe
 
 
 class Game;
+class NumberText;
 class Polygon;
 class RuleGlobe;
 class SurfaceSet;
@@ -103,6 +104,7 @@ private:
 
 	FastLineClip* _clipper;
 	Game* _game;
+	NumberText* _flightData;
 	RuleGlobe* _rules;
 	Surface
 		* _countries,

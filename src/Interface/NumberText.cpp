@@ -25,11 +25,11 @@
 namespace OpenXcom
 {
 
-bool NumberText::init = true;
+bool NumberText::init = true; // static.
 
 Surface
-	* NumberText::_chars[DIGITS + 1u] = {},
-	* NumberText::_charsBorder[DIGITS] = {};
+	* NumberText::_chars[DIGITS + 1u] = {},		// static.
+	* NumberText::_charsBorder[DIGITS] = {};	// static.
 
 
 /**
@@ -385,7 +385,7 @@ void NumberText::draw()
 	oststr << _value;
 	const std::string st (oststr.str());
 
-	int x = 0;
+	int x (0);
 	if (_bordered == false)
 	{
 		for (std::string::const_iterator
@@ -423,8 +423,8 @@ void NumberText::draw()
 		{
 			const int pixels (_surface->w * _surface->h);
 			int
-				x = 0,
-				y = 0;
+				x (0),
+				y (0);
 			Uint8 color;
 			for (int
 					i = 0;
@@ -452,8 +452,8 @@ void NumberText::draw()
 	{
 		const int pixels (_surface->w * _surface->h);
 		int
-			x = 0,
-			y = 0;
+			x (0),
+			y (0);
 		Uint8 color;
 		for (int
 				i = 0;
