@@ -2387,10 +2387,9 @@ void Globe::drawTarget( // private.
 					_flightData->setX(x);
 					_flightData->setY(y - 7);
 
-					unsigned data = 0u; // headingInt[1-digit] - altitudeInt[1-digit] - 0 - speed[4-digits]
+					unsigned data; // headingInt[1-digit] - altitudeInt[1-digit] - 0 - speed[4-digits]
 
 					const Craft* const craft (dynamic_cast<const Craft*>(target));
-					const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
 					if (craft != nullptr)
 					{
 						_flightData->setColor(8u);
@@ -2399,10 +2398,11 @@ void Globe::drawTarget( // private.
 						data += craft->getAltitudeInt() * 100000u;
 						data += static_cast<unsigned>(craft->getSpeed());
 					}
-					else if (ufo != nullptr)
+					else //if (ufo != nullptr)
 					{
 						_flightData->setColor(14u);
 
+						const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
 						data  = ufo->getHeadingInt()  * 1000000u;
 						data += ufo->getAltitudeInt() * 100000u;
 						data += static_cast<unsigned>(ufo->getSpeed());

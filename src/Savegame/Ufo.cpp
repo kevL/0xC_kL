@@ -61,7 +61,7 @@ Ufo::Ufo(
 		_idLanded(0),
 		_damage(0),
 		_heading("STR_NORTH"),
-		_headingInt(0u),
+		_headingInt(8u),
 		_altitude(MovingTarget::stAltitude[3u]),
 		_status(FLYING),
 		_secondsLeft(0),
@@ -149,6 +149,7 @@ void Ufo::loadUfo(
 	_damage			= node["damage"]		.as<int>(_damage);
 	_altitude		= node["altitude"]		.as<std::string>(_altitude);
 	_heading		= node["direction"]		.as<std::string>(_heading);
+	_headingInt		= node["dirInt"]		.as<unsigned>(_headingInt);
 	_detected		= node["detected"]		.as<bool>(_detected);
 	_hyperDetected	= node["hyperDetected"]	.as<bool>(_hyperDetected);
 	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
@@ -228,6 +229,7 @@ YAML::Node Ufo::save() const
 
 	node["altitude"]	= _altitude;
 	node["direction"]	= _heading;
+	node["dirInt"]		= _headingInt;
 	node["status"]		= static_cast<int>(_status);
 
 	if (_damage != 0)				node["damage"]			= _damage;

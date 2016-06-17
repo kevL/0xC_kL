@@ -231,7 +231,7 @@ UfoDetectedState::UfoDetectedState(
 				woststr.str().c_str());
 
 	woststr.str(L"");
-	std::string heading (_ufo->getHeading());
+	std::string heading;
 	switch (_ufo->getUfoStatus())
 	{
 		case Ufo::FLYING:
