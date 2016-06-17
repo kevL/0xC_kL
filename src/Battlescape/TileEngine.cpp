@@ -349,8 +349,8 @@ bool TileEngine::calcFov(
 		BattleUnit* const unit,
 		bool revealTiles) const
 {
-	//const bool debug (unit->getId() == 167 || unit->getId() == 1000020);
-	//if (debug) Log(LOG_INFO) << "calcFoV id-" << unit->getId();
+	//_debug = unit->getId() == 496;
+	//if (_debug) Log(LOG_INFO) << "calcFoV id-" << unit->getId();
 	unit->clearHostileUnits();
 //	unit->clearVisibleTiles();
 
@@ -586,6 +586,9 @@ bool TileEngine::calcFov(
 						posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x));
 						posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y));
 
+						//if (posTest != Position(14,19,0))	_debug = false;
+						//else if (unit->getId() == 496)	_debug = true;
+
 						if ((tileTest = _battleSave->getTile(posTest)) != nullptr)
 						{
 							// this sets tiles to discovered if they are in FoV -
@@ -612,6 +615,9 @@ bool TileEngine::calcFov(
 														false);
 									trjLength = trj.size();
 
+									//if (_debug) Log(LOG_INFO) << ". blockType= " << MapData::debugVoxelType(blockType);
+									//if (_debug) Log(LOG_INFO) << ". trjLength= " << trjLength;
+
 									if (blockType == VOXEL_FLOOR) // NOTE: Not really a floor here, just a #
 										--trjLength;
 
@@ -624,6 +630,7 @@ bool TileEngine::calcFov(
 
 										// mark every tile of line as visible -
 										tile = _battleSave->getTile(posTrj);
+										//if (_debug) Log(LOG_INFO) << ". . tilePos " << tile->getPosition();
 										tile->setRevealed(ST_CONTENT);	// sprite caching for floor+content, ergo + west & north walls.
 //										tile->setTileVisible();			// Used only by sneakyAI.
 
@@ -3500,14 +3507,18 @@ int TileEngine::horizontalBlockage(
 					tileStop,
 					O_OBJECT,
 					dType,
-					(dir + 4) % 8)	// opposite direction
-				!= 0)				// should always be, < 1; ie. this conditions checks [if -1]
-		{
-			if (dType == DT_NONE)
-				return -1;
+					(dir + 4) % 8) != 0)	// opposite direction
+		{									// should always be, < 1; ie. this condition checks [if -1]
+			switch (dType)
+			{
+				case DT_NONE:
+					//if (_debug) Log(LOG_INFO) << ". ret -1";
+					return -1;
 
-			//Log(LOG_INFO) << "explode End: hardblock";
-			return HARD_BLOCK;
+				default:
+					//if (_debug) Log(LOG_INFO) << ". ret HARD_BLOCK";
+					return HARD_BLOCK;
+			}
 		}
 	}
 
@@ -3808,7 +3819,6 @@ int TileEngine::blockage( // private.
 
 				default: // (dir > -1) -> VALID object-part (incl. BigWalls) *always* gets passed in here and *with* a direction.
 				{
-					//if (_debug) Log(LOG_INFO) << ". dir= " << dir;
 					const MapData* const object (tile->getMapData(O_OBJECT));
 					const BigwallType bigType (object->getBigwall()); // 0..9 or per MCD.
 					//if (_debug) Log(LOG_INFO) << ". dir = " << dir << " bigWall = " << bigType;
@@ -5001,6 +5011,7 @@ VoxelType TileEngine::plotLine(
 				* const tileStart (_battleSave->getTile(posLast)),
 				* const tileDest (_battleSave->getTile(Position(cx,cy,cz)));
 
+			//if (_debug) Log(LOG_INFO) << "pL() tileStart" << posLast << " tileDest" << Position(cx,cy,cz);
 			horiBlock = horizontalBlockage(
 									tileStart,
 									tileDest,
@@ -5010,7 +5021,6 @@ VoxelType TileEngine::plotLine(
 									tileDest,
 									DT_NONE);
 			//if (_debug) {
-			//	Log(LOG_INFO) << "pL() tileStart" << posLast << " tileDest" << Position(cx,cy,cz);
 			//	Log(LOG_INFO) << ". horiBlock= " << horiBlock;
 			//	Log(LOG_INFO) << ". vertBlock= " << vertBlock; }
 
