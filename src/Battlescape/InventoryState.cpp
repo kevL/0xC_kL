@@ -39,8 +39,8 @@
 #include "../Engine/SurfaceSet.h"
 
 #include "../Interface/BattlescapeButton.h"
-#include "../Interface/Text.h"
 #include "../Interface/NumberText.h"
+#include "../Interface/Text.h"
 
 #include "../Resource/ResourcePack.h"
 

@@ -31,7 +31,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a blank warning message with the specified size and position.
+ * Sets up a WarningMessage with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
@@ -48,7 +48,7 @@ WarningMessage::WarningMessage(
 			height,
 			x,y),
 		_color(0u),
-		_fade(0u)
+		_fadeStep(0u)
 {
 	_text = new Text(
 					width,
@@ -62,7 +62,7 @@ WarningMessage::WarningMessage(
 	_timer = new Timer(80u);
 	_timer->onTimer((SurfaceHandler)& WarningMessage::fade);
 
-	setVisible(false);
+	_visible = false;
 }
 
 /**
@@ -124,16 +124,16 @@ void WarningMessage::setPalette(
 }
 
 /**
- * Displays the warning message.
- * @param msg - reference a message string
+ * Displays this WarningMessage.
+ * @param wst - reference a message string
  */
-void WarningMessage::showMessage(const std::wstring& msg)
+void WarningMessage::showMessage(const std::wstring& wst)
 {
-	_text->setText(msg);
-	_fade = 0u;
+	_text->setText(wst);
+	_fadeStep = 0u;
+	_visible =
 	_redraw = true;
 
-	setVisible();
 	_timer->start();
 }
 
@@ -150,26 +150,24 @@ void WarningMessage::think()
  */
 void WarningMessage::fade()
 {
-	_redraw = true;
-
-	++_fade;
-	if (_fade == 15u)
+	if (++_fadeStep == 15u)
 	{
-		setVisible(false);
+		_visible = false;
 		_timer->stop();
 	}
+	else
+		_redraw = true;
 }
 
 /**
- * Draws the warning message.
+ * Draws this WarningMessage.
  */
 void WarningMessage::draw()
 {
 	Surface::draw();
 
-	Uint8 color = static_cast<Uint8>(_color + 1u + _fade);
-	if (_fade == 15u)
-		color = static_cast<Uint8>(color - 1u);
+	Uint8 color (_color + _fadeStep);
+	if (_fadeStep != 15u) color += 1u;
 
 	drawRect(
 			0,0,
@@ -178,17 +176,17 @@ void WarningMessage::draw()
 			6u);
 	drawRect(
 			1,1,
-			static_cast<Sint16>(getWidth() - 2),
+			static_cast<Sint16>(getWidth()  - 2),
 			static_cast<Sint16>(getHeight() - 2),
 			10u);
 	drawRect(
 			2,2,
-			static_cast<Sint16>(getWidth() - 3),
+			static_cast<Sint16>(getWidth()  - 3),
 			static_cast<Sint16>(getHeight() - 3),
 			15u);
 	drawRect(
 			2,2,
-			static_cast<Sint16>(getWidth() - 4),
+			static_cast<Sint16>(getWidth()  - 4),
 			static_cast<Sint16>(getHeight() - 4),
 			color);
 

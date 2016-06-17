@@ -56,7 +56,7 @@ private:
 		_grdOffset,
 		_prime,
 		_tuCost;
-	size_t _fuseFrame;
+	size_t _fusePulse;
 
 	BattleItem
 		* _overItem,

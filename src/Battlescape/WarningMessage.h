@@ -43,7 +43,7 @@ class WarningMessage final
 private:
 	Uint8
 		_color,
-		_fade;
+		_fadeStep;
 
 	Text* _text;
 	Timer* _timer;
@@ -76,7 +76,7 @@ private:
 				int ncolors = 256) override;
 
 		/// Shows the WarningMessage.
-		void showMessage(const std::wstring& msg);
+		void showMessage(const std::wstring& wst);
 
 		/// Handles the timers.
 		void think() override;

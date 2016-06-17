@@ -88,7 +88,7 @@ Inventory::Inventory(
 		_tuMode(true),
 		_atBase(atBase),
 		_grdOffset(0),
-		_fuseFrame(0u),
+		_fusePulse(0u),
 		_prime(-1),
 		_tuCost(-1)
 {
@@ -104,9 +104,9 @@ Inventory::Inventory(
 							RuleInventory::HAND_W * RuleInventory::SLOT_W,
 							RuleInventory::HAND_H * RuleInventory::SLOT_H);
 	_warning	= new WarningMessage(
-							224,24,
+							225,24,
 							((Options::baseXResolution - 320) >> 1u) + 48,
-							((Options::baseYResolution - 200) >> 1u) + 176);
+							((Options::baseYResolution - 200) >> 1u) + 177);
 	_numStack	= new NumberText(15,15);
 	_animTimer	= new Timer(80u);
 
@@ -401,10 +401,13 @@ void Inventory::think()
 {
 	if (_prime != -1)
 	{
-		std::wstring activated;
-		if (_prime > 0) activated = Text::intWide(_prime) + L" ";
-		activated += _game->getLanguage()->getString("STR_GRENADE_ACTIVATED");
-		if (_prime > 0) activated += L" " + Text::intWide(_prime);
+		std::wstring activated (_game->getLanguage()->getString("STR_GRENADE_ACTIVATED"));
+		if (_prime > 0)
+		{
+			const std::wstring prime (Text::intWide(_prime));
+			activated.insert(0u, prime + L" ");
+			activated += L" " + prime;
+		}
 		_warning->showMessage(activated);
 		_prime = -1;
 	}
@@ -417,10 +420,12 @@ void Inventory::think()
  */
 void Inventory::drawPrimers() // private.
 {
-	static const int pulse[22u] { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
-								13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
+	static const int
+		CB_RED = 3,
+		pulse[22u] { 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,
+					13,12,11,10, 9, 8, 7, 6, 5, 4, 3};
 
-	if (_fuseFrame == 22u) _fuseFrame = 0u;
+	if (_fusePulse == 22u) _fusePulse = 0u;
 
 	static Surface* const srf (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9));
 	for (std::vector<std::pair<int,int>>::const_iterator
@@ -432,10 +437,10 @@ void Inventory::drawPrimers() // private.
 					_srfItems,
 					(*i).first,
 					(*i).second,
-					pulse[_fuseFrame],
-					false, 3); // red
+					pulse[_fusePulse],
+					false, CB_RED);
 	}
-	++_fuseFrame;
+	++_fusePulse;
 }
 
 /**
