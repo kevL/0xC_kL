@@ -1710,6 +1710,8 @@ void GeoscapeState::time5Seconds()
 						switch (ufo->getUfoStatus())
 						{
 							case Ufo::FLYING:
+								(*j)->interceptLanded(false);
+
 								if (_dogfights.size() + _dogfightsToStart.size() < 4u) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
 								{
 									if ((*j)->inDogfight() == false
@@ -1743,7 +1745,8 @@ void GeoscapeState::time5Seconds()
 
 							case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
 							case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
-								if ((*j)->inDogfight() == false) // NOTE: Allows non-transport Craft to case the joint.
+								if ((*j)->inDogfight() == false // NOTE: Allows non-transport Craft to case the joint.
+									&& (*j)->interceptLanded() == false)
 								{
 									resetTimer();
 

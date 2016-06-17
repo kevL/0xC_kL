@@ -64,6 +64,7 @@ private:
 	bool
 		_tactical,
 		_inDogfight,
+		_interceptLanded,
 		_lowFuel,
 		_showReady,
 		_tacticalDone,
@@ -271,6 +272,11 @@ private:
 		void unloadCraft(
 				const Ruleset* const rules,
 				bool updateCraft = true);
+
+		/// Sets the Craft as intercepting a land-site.
+		void interceptLanded(bool intercept);
+		/// Gets if the Craft is intercepting a land-site.
+		bool interceptLanded();
 };
 
 }

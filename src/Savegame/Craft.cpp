@@ -82,7 +82,8 @@ Craft::Craft(
 		_warning(CW_NONE),
 		_warned(false), // do not save-to-file; ie, re-warn player if reloading
 		_kills(0),
-		_showReady(false)
+		_showReady(false),
+		_interceptLanded(false)
 {
 	_items = new ItemContainer();
 
@@ -620,6 +621,8 @@ unsigned Craft::getHeadingInt() const
  */
 void Craft::setDestination(Target* const dest)
 {
+	_interceptLanded = false;
+
 	if (_status != CS_OUT)
 	{
 		_takeOffDelay = 75;
@@ -1505,6 +1508,24 @@ void Craft::unloadCraft(
 			break;
 		}
 	}
+}
+
+/**
+ * Sets this Craft as intercepting a land-site.
+ * @param intercept - true to intercept
+ */
+void Craft::interceptLanded(bool intercept)
+{
+	_interceptLanded = intercept;
+}
+
+/**
+ * Gets if this Craft is intercepting a land-site.
+ * @return, true if intercept
+ */
+bool Craft::interceptLanded()
+{
+	return _interceptLanded;
 }
 
 }

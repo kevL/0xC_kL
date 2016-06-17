@@ -147,8 +147,8 @@ ConfirmLandingState::ConfirmLandingState(
 //							&& _city == nullptr;
 						++j)
 				{
-					if (AreSame((*j)->getLongitude(), lon)
-						&& AreSame((*j)->getLatitude(), lat))
+					if (   AreSame((*j)->getLongitude(), lon)
+						&& AreSame((*j)->getLatitude(),  lat))
 					{
 //						_city = *j;
 						city = true;
@@ -349,6 +349,8 @@ ConfirmLandingState::ConfirmLandingState(
 								Options::keyOkKeypad);
 		}
 	}
+	else
+		_btnYes->setVisible(false);
 
 	_btnPatrol->setText(tr("STR_PATROL"));
 	_btnPatrol->onMouseClick((ActionHandler)& ConfirmLandingState::btnPatrolClick);
@@ -456,6 +458,7 @@ void ConfirmLandingState::btnPatrolClick(Action*)
  */
 void ConfirmLandingState::btnInterceptClick(Action*)
 {
+	_craft->interceptLanded(true);
 	_game->popState();
 }
 
