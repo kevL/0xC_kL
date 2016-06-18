@@ -104,17 +104,11 @@ void ResearchInfoState::buildUi()
 	_txtFreeSpace	= new Text(198,  9, 61, 70);
 	_txtAssigned	= new Text(198, 16, 61, 80);
 
-//	_txtMore		= new Text(134, 16, 93, 100);
-//	_txtLess		= new Text(134, 16, 93, 120);
-//	_btnMore		= new ArrowButton(ARROW_BIG_UP, 13, 14, 205, 100);
-//	_btnLess		= new ArrowButton(ARROW_BIG_DOWN, 13, 14, 205, 120);
 	_btnMore		= new ArrowButton(ARROW_BIG_UP,   120, 16, 100, 100);
 	_btnLess		= new ArrowButton(ARROW_BIG_DOWN, 120, 16, 100, 120);
 
 	_btnCancel		= new TextButton(95, 16,  61, 144);
 	_btnStartStop	= new TextButton(95, 16, 164, 144);
-
-//	_srfScientists	= new InteractiveSurface(230, 140, 45, 30);
 
 	setInterface("allocateResearch");
 
@@ -123,8 +117,6 @@ void ResearchInfoState::buildUi()
 	add(_txtFreeSci,	"text",		"allocateResearch");
 	add(_txtFreeSpace,	"text",		"allocateResearch");
 	add(_txtAssigned,	"text",		"allocateResearch");
-//	add(_txtMore,		"text",		"allocateResearch");
-//	add(_txtLess,		"text",		"allocateResearch");
 	add(_btnMore,		"button1",	"allocateResearch");
 	add(_btnLess,		"button1",	"allocateResearch");
 	add(_btnCancel,		"button2",	"allocateResearch");
@@ -145,20 +137,15 @@ void ResearchInfoState::buildUi()
 
 	_txtAssigned->setBig();
 
-//	_txtMore->setText(tr("STR_INCREASE"));
-//	_txtMore->setBig();
-//	_txtLess->setText(tr("STR_DECREASE"));
-//	_txtLess->setBig();
-
 	updateInfo();
 
-	_btnMore->onMousePress((ActionHandler)& ResearchInfoState::morePress);
-	_btnMore->onMouseRelease((ActionHandler)& ResearchInfoState::moreRelease);
-	_btnMore->onMouseClick((ActionHandler)& ResearchInfoState::moreClick, 0u);
+	_btnMore->onMousePress(		(ActionHandler)& ResearchInfoState::morePress);
+	_btnMore->onMouseRelease(	(ActionHandler)& ResearchInfoState::moreRelease);
+	_btnMore->onMouseClick(		(ActionHandler)& ResearchInfoState::moreClick, 0u);
 
-	_btnLess->onMousePress((ActionHandler)& ResearchInfoState::lessPress);
-	_btnLess->onMouseRelease((ActionHandler)& ResearchInfoState::lessRelease);
-	_btnLess->onMouseClick((ActionHandler)& ResearchInfoState::lessClick, 0u);
+	_btnLess->onMousePress(		(ActionHandler)& ResearchInfoState::lessPress);
+	_btnLess->onMouseRelease(	(ActionHandler)& ResearchInfoState::lessRelease);
+	_btnLess->onMouseClick(		(ActionHandler)& ResearchInfoState::lessClick, 0u);
 
 	_timerMore = new Timer(Timer::SCROLL_SLOW);
 	_timerMore->onTimer((StateHandler)& ResearchInfoState::moreSci);
@@ -255,19 +242,7 @@ void ResearchInfoState::btnCancelClick(Action*)
 }
 
 /**
- * Increases or decreases the scientists according the mouse-wheel used.
- * @param action - pointer to an Action
- */
-/* void ResearchInfoState::handleWheel(Action* action)
-{
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-		moreByValue(Options::changeValueByMouseWheel);
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-		lessByValue(Options::changeValueByMouseWheel);
-} */
-
-/**
- * Starts the timeMore timer.
+ * Starts the more Timer.
  * @param action - pointer to an Action
  */
 void ResearchInfoState::morePress(Action* action)
@@ -277,7 +252,7 @@ void ResearchInfoState::morePress(Action* action)
 }
 
 /**
- * Stops the timeMore timer.
+ * Stops the more Timer.
  * @param action - pointer to an Action
  */
 void ResearchInfoState::moreRelease(Action* action)
@@ -302,12 +277,12 @@ void ResearchInfoState::moreClick(Action* action)
 			moreByValue(std::numeric_limits<int>::max());
 			break;
 		case SDL_BUTTON_LEFT:
-			moreByValue(getQty());
+			moreByValue(stepDelta());
 	}
 }
 
 /**
- * Starts the timeLess timer.
+ * Starts the less Timer.
  * @param action - pointer to an Action
  */
 void ResearchInfoState::lessPress(Action* action)
@@ -317,7 +292,7 @@ void ResearchInfoState::lessPress(Action* action)
 }
 
 /**
- * Stops the timeLess timer.
+ * Stops the less Timer.
  * @param action - pointer to an Action
  */
 void ResearchInfoState::lessRelease(Action* action)
@@ -342,7 +317,7 @@ void ResearchInfoState::lessClick(Action* action)
 			lessByValue(std::numeric_limits<int>::max());
 			break;
 		case SDL_BUTTON_LEFT:
-			lessByValue(getQty());
+			lessByValue(stepDelta());
 	}
 }
 
@@ -352,7 +327,7 @@ void ResearchInfoState::lessClick(Action* action)
 void ResearchInfoState::moreSci()
 {
 	_timerMore->setInterval(Timer::SCROLL_FAST);
-	moreByValue(getQty());
+	moreByValue(stepDelta());
 }
 
 /**
@@ -361,22 +336,19 @@ void ResearchInfoState::moreSci()
  */
 void ResearchInfoState::moreByValue(int change)
 {
-	if (change > 0)
+	const int
+		freeScientists (_base->getScientists()),
+		freeSpaceLab (_base->getFreeLaboratories());
+
+	if (freeScientists != 0 && freeSpaceLab != 0)
 	{
-		const int
-			freeScientists (_base->getScientists()),
-			freeSpaceLab (_base->getFreeLaboratories());
+		change = std::min(change,
+						  std::min(freeScientists,
+								   freeSpaceLab));
+		_project->setAssignedScientists(_project->getAssignedScientists() + change);
+		_base->setScientists(_base->getScientists() - change);
 
-		if (freeScientists != 0 && freeSpaceLab != 0)
-		{
-			change = std::min(change,
-							  std::min(freeScientists,
-									   freeSpaceLab));
-			_project->setAssignedScientists(_project->getAssignedScientists() + change);
-			_base->setScientists(_base->getScientists() - change);
-
-			updateInfo();
-		}
+		updateInfo();
 	}
 }
 
@@ -386,7 +358,7 @@ void ResearchInfoState::moreByValue(int change)
 void ResearchInfoState::lessSci()
 {
 	_timerLess->setInterval(Timer::SCROLL_FAST);
-	lessByValue(getQty());
+	lessByValue(stepDelta());
 }
 
 /**
@@ -395,18 +367,15 @@ void ResearchInfoState::lessSci()
  */
 void ResearchInfoState::lessByValue(int change)
 {
-	if (change > 0)
+	const int assigned (_project->getAssignedScientists());
+	if (assigned != 0)
 	{
-		const int assigned (_project->getAssignedScientists());
-		if (assigned != 0)
-		{
-			change = std::min(change,
-							  assigned);
-			_project->setAssignedScientists(assigned - change);
-			_base->setScientists(_base->getScientists() + change);
+		change = std::min(change,
+						  assigned);
+		_project->setAssignedScientists(assigned - change);
+		_base->setScientists(_base->getScientists() + change);
 
-			updateInfo();
-		}
+		updateInfo();
 	}
 }
 
@@ -415,7 +384,7 @@ void ResearchInfoState::lessByValue(int change)
  * @note what were these guys smokin'
  * @return, 10 if CTRL is pressed else 1
  */
-int ResearchInfoState::getQty() const
+int ResearchInfoState::stepDelta() const
 {
 	if ((SDL_GetModState() & KMOD_CTRL) == 0)
 		return 1;

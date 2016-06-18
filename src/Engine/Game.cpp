@@ -817,7 +817,7 @@ State* Game::getState() const
  * Gets the quantity of currently running states.
  * @return, qty of states
  */
-int Game::getQtyStates() const
+size_t Game::getQtyStates() const
 {
 	return _states.size();
 }

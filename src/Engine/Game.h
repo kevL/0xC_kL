@@ -107,7 +107,7 @@ private:
 		/// kL. Gets the current (top) state.
 //		State* getState() const;
 		/// Gets the quantity of currently running states.
-		int getQtyStates() const;
+		size_t getQtyStates() const;
 		/// Returns whether a state is the current state.
 		bool isState(const State* const state) const;
 

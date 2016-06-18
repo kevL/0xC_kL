@@ -28,7 +28,6 @@ namespace OpenXcom
 
 class ArrowButton;
 class Base;
-class InteractiveSurface;
 class ResearchProject;
 class RuleResearch;
 class Text;
@@ -50,15 +49,12 @@ private:
 		* _btnMore,
 		* _btnLess;
 	Base* _base;
-//	InteractiveSurface* _srfScientists;
 	ResearchProject* _project;
 	const RuleResearch* _resRule;
 	Text
 		* _txtAssigned,
 		* _txtFreeSci,
 		* _txtFreeSpace,
-//		* _txtLess,
-//		* _txtMore,
 		* _txtTitle;
 	TextButton
 		* _btnCancel,
@@ -77,9 +73,6 @@ private:
 	void btnStartStopClick(Action* action);
 	/// Handler for clicking the Cancel button.
 	void btnCancelClick(Action* action);
-
-	/// Handler for using the mouse wheel.
-//	void handleWheel(Action* action);
 
 	/// Handler for pressing the More button.
 	void morePress(Action* action);
@@ -104,7 +97,7 @@ private:
 	void lessByValue(int change);
 
 	/// Gets quantity to change by.
-	int getQty() const;
+	int stepDelta() const;
 
 	/// Runs state functionality every cycle (used to update the timer).
 	void think() override;

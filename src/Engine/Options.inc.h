@@ -11,7 +11,7 @@ OPT int displayWidth, displayHeight,
 	baseXResolution, baseYResolution, baseXGeoscape, baseYGeoscape, baseXBattlescape, baseYBattlescape,
 	windowedModePositionX, windowedModePositionY,
 	soundVolume, musicVolume, uiVolume, audioSampleRate, audioBitDepth, audioBuffer,
-	autosaveFrequency, changeValueByMouseWheel, mousewheelSpeed, FPS, FPSUnfocused,
+	autosaveFrequency, mousewheelSpeed, FPS, FPSUnfocused,
 	dragScrollTimeTolerance, dragScrollPixelTolerance, pauseMode;
 OPT bool fullscreen, borderless, allowResize, asyncBlit, useScaleFilter, useHQXFilter, useXBRZFilter,
 	useOpenGL, checkOpenGLErrors, useOpenGLSmoothing, vSyncForOpenGL,

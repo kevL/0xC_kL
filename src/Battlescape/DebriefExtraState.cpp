@@ -611,7 +611,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			break;
 
 		case DES_SOL_STATS:
-			if (_game->getQtyStates() == 2 // ie: (1) this, (2) Geoscape
+			if (_game->getQtyStates() == 2u // ie: (1) this, (2) Geoscape
 				&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 			{
 				_game->getResourcePack()->fadeMusic(_game, 863);

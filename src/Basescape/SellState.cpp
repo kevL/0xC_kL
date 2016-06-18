@@ -474,8 +474,6 @@ void SellState::lstLeftArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerInc->isRunning() == false)
-//			{
 			if ((SDL_GetModState() & KMOD_CTRL) != 0)
 				changeByValue(10,1);
 			else
@@ -483,7 +481,6 @@ void SellState::lstLeftArrowPress(Action* action)
 
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerInc->start();
-//			}
 	}
 }
 
@@ -512,8 +509,6 @@ void SellState::lstRightArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerDec->isRunning() == false)
-//			{
 			if ((SDL_GetModState() & KMOD_CTRL) != 0)
 				changeByValue(10,-1);
 			else
@@ -521,7 +516,6 @@ void SellState::lstRightArrowPress(Action* action)
 
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->start();
-//			}
 	}
 }
 
@@ -825,40 +819,5 @@ size_t SellState::getCraftIndex(size_t sel) const // private.
 {
 	return sel - _soldiers.size();
 }
-
-/**
- * Handles the mouse-wheels on the arrow-buttons.
- * @param action - pointer to an Action
- *
-void SellState::lstMousePress(Action* action)
-{
-	if (Options::changeValueByMouseWheel < 1)
-		return;
-
-	_sel = _lstItems->getSelectedRow();
-
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-
-		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
-		{
-			changeByValue(Options::changeValueByMouseWheel, 1);
-		}
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-
-		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
-		{
-			changeByValue(Options::changeValueByMouseWheel, -1);
-		}
-	}
-} */
 
 }

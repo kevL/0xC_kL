@@ -1303,32 +1303,20 @@ void TextList::think()
 }
 
 /**
- * Ignores any mouse-clicks that aren't on a row.
+ * Ignores any mouse-clicks that aren't on a decent row.
  * @param action	- pointer to an Action
  * @param state		- state that the ActionHandlers belong to
  */
 void TextList::mousePress(Action* action, State* state)
 {
-	bool allowScroll;
-	if (Options::changeValueByMouseWheel == true)
+	switch (action->getDetails()->button.button)
 	{
-		allowScroll = (action->getAbsoluteMouseX() < _arrowsLeftEdge
-					|| action->getAbsoluteMouseX() > _arrowsRightEdge);
-	}
-	else
-		allowScroll = true;
+		case SDL_BUTTON_WHEELUP:
+			scrollUp(false, true);
+			break;
 
-	if (allowScroll == true)
-	{
-		switch (action->getDetails()->button.button)
-		{
-			case SDL_BUTTON_WHEELUP:
-				scrollUp(false, true);
-				break;
-
-			case SDL_BUTTON_WHEELDOWN:
-				scrollDown(false, true);
-		}
+		case SDL_BUTTON_WHEELDOWN:
+			scrollDown(false, true);
 	}
 
 	if (_selectable == true)

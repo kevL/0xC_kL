@@ -177,14 +177,14 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->setArrow(158, ARROW_HORIZONTAL);
 	_lstAliens->setBackground(_window);
 	_lstAliens->setSelectable();
-	_lstAliens->onLeftArrowPress((ActionHandler)& AlienContainmentState::lstItemsLeftArrowPress);
-	_lstAliens->onLeftArrowRelease((ActionHandler)& AlienContainmentState::lstItemsLeftArrowRelease);
-	_lstAliens->onLeftArrowClick((ActionHandler)& AlienContainmentState::lstItemsLeftArrowClick);
-	_lstAliens->onRightArrowPress((ActionHandler)& AlienContainmentState::lstItemsRightArrowPress);
+
+	_lstAliens->onLeftArrowPress(	(ActionHandler)& AlienContainmentState::lstItemsLeftArrowPress);
+	_lstAliens->onLeftArrowRelease(	(ActionHandler)& AlienContainmentState::lstItemsLeftArrowRelease);
+	_lstAliens->onLeftArrowClick(	(ActionHandler)& AlienContainmentState::lstItemsLeftArrowClick);
+
+	_lstAliens->onRightArrowPress(	(ActionHandler)& AlienContainmentState::lstItemsRightArrowPress);
 	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstItemsRightArrowRelease);
-	_lstAliens->onRightArrowClick((ActionHandler)& AlienContainmentState::lstItemsRightArrowClick);
-//	_lstAliens->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstAliens->onMousePress((ActionHandler)& AlienContainmentState::lstItemsMousePress);
+	_lstAliens->onRightArrowClick(	(ActionHandler)& AlienContainmentState::lstItemsRightArrowClick);
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
@@ -344,7 +344,7 @@ void AlienContainmentState::btnOkClick(Action*)
 		}
 	}
 
-	if (_game->getQtyStates() == 2 // ie: (1) this, (2) Geoscape
+	if (_game->getQtyStates() == 2u // ie: (1) this, (2) Geoscape
 		&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 	{
 		_game->getResourcePack()->fadeMusic(_game, 863);
@@ -370,11 +370,8 @@ void AlienContainmentState::lstItemsRightArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _timerInc->isRunning() == false)
-	{
+	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerInc->start();
-	}
 }
 
 /**
@@ -399,7 +396,6 @@ void AlienContainmentState::lstItemsRightArrowClick(Action* action)
 		case SDL_BUTTON_LEFT:
 			increaseByValue(1);
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			break;
 
 		case SDL_BUTTON_RIGHT:
@@ -415,11 +411,8 @@ void AlienContainmentState::lstItemsLeftArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _timerDec->isRunning() == false)
-	{
+	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->start();
-	}
 }
 
 /**
@@ -443,8 +436,6 @@ void AlienContainmentState::lstItemsLeftArrowClick(Action* action)
 	{
 		case SDL_BUTTON_LEFT:
 			decreaseByValue(1);
-
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			break;
 
@@ -467,7 +458,6 @@ int AlienContainmentState::getQuantity() // private.
  */
 void AlienContainmentState::increase()
 {
-	_timerDec->setInterval(Timer::SCROLL_FAST);
 	_timerInc->setInterval(Timer::SCROLL_FAST);
 	increaseByValue(1);
 }
@@ -494,7 +484,6 @@ void AlienContainmentState::increaseByValue(int change)
  */
 void AlienContainmentState::decrease()
 {
-	_timerInc->setInterval(Timer::SCROLL_FAST);
 	_timerDec->setInterval(Timer::SCROLL_FAST);
 	decreaseByValue(1);
 }
@@ -598,32 +587,3 @@ void AlienContainmentState::miniMouseOut(Action*)
 }
 
 }
-
-/**
- * Handles the mouse-wheels on the arrow-buttons.
- * @param action - pointer to an Action
- *
-void AlienContainmentState::lstItemsMousePress(Action* action)
-{
-	_sel = _lstAliens->getSelectedRow();
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-		if (action->getAbsoluteMouseX() >= _lstAliens->getArrowsLeftEdge()
-			&& action->getAbsoluteMouseX() <= _lstAliens->getArrowsRightEdge())
-		{
-			increaseByValue(Options::changeValueByMouseWheel);
-		}
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-		if (action->getAbsoluteMouseX() >= _lstAliens->getArrowsLeftEdge()
-			&& action->getAbsoluteMouseX() <= _lstAliens->getArrowsRightEdge())
-		{
-			decreaseByValue(Options::changeValueByMouseWheel);
-		}
-	}
-} */

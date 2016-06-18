@@ -122,14 +122,6 @@ void ManufactureInfoState::buildUi() // private.
 	_txtTotalDesc		= new Text(84, 17, 176, 88);
 	_txtTotal			= new Text(50, 17, 260, 88);
 
-//	_txtEngineerUp		= new Text(100, 17, 32, 111);
-//	_btnEngineerUp		= new ArrowButton(ARROW_BIG_UP, 14, 14, 145, 111);
-//	_txtEngineerDown	= new Text(100, 17, 32, 135);
-//	_btnEngineerDown	= new ArrowButton(ARROW_BIG_DOWN, 14, 14, 145, 135);
-//	_txtUnitUp			= new Text(100, 17, 205, 111);
-//	_btnUnitUp			= new ArrowButton(ARROW_BIG_UP, 14, 14, 280, 111);
-//	_txtUnitDown		= new Text(100, 17, 205, 135);
-//	_btnUnitDown		= new ArrowButton(ARROW_BIG_DOWN, 14, 14, 280, 135);
 	_btnEngineerUp		= new ArrowButton(ARROW_BIG_UP,   100, 16,  30, 119);
 	_btnEngineerDown	= new ArrowButton(ARROW_BIG_DOWN, 100, 16,  30, 143);
 	_btnUnitUp			= new ArrowButton(ARROW_BIG_UP,   100, 16, 190, 119);
@@ -137,12 +129,6 @@ void ManufactureInfoState::buildUi() // private.
 
 	_btnStop			= new TextButton(130, 16,  20, 170);
 	_btnOk				= new TextButton(130, 16, 170, 170);
-
-//	_surfaceEngineers = new InteractiveSurface(160, 150, 0, 25);
-//	_surfaceEngineers->onMouseClick((ActionHandler)& ManufactureInfoState::handleWheelEngineer, 0);
-
-//	_surfaceUnits = new InteractiveSurface(160, 150, 160, 25);
-//	_surfaceUnits->onMouseClick((ActionHandler)& ManufactureInfoState::handleWheelUnit, 0);
 
 	setInterface("manufactureInfo");
 
@@ -158,19 +144,12 @@ void ManufactureInfoState::buildUi() // private.
 	add(_txtEngineers,		"text",		"manufactureInfo");
 	add(_txtTotalDesc,		"text",		"manufactureInfo");
 	add(_txtTotal,			"text",		"manufactureInfo");
-//	add(_txtEngineerUp,		"text",		"manufactureInfo");
 	add(_btnEngineerUp,		"button1",	"manufactureInfo");
-//	add(_txtEngineerDown,	"text",		"manufactureInfo");
 	add(_btnEngineerDown,	"button1",	"manufactureInfo");
-//	add(_txtUnitUp,			"text",		"manufactureInfo");
 	add(_btnUnitUp,			"button1",	"manufactureInfo");
-//	add(_txtUnitDown,		"text",		"manufactureInfo");
 	add(_btnUnitDown,		"button1",	"manufactureInfo");
 	add(_btnStop,			"button2",	"manufactureInfo");
 	add(_btnOk,				"button2",	"manufactureInfo");
-
-//	add(_surfaceEngineers);
-//	add(_surfaceUnits);
 
 	centerAllSurfaces();
 
@@ -195,27 +174,21 @@ void ManufactureInfoState::buildUi() // private.
 	_txtTotalDesc->setText(tr("STR_UNITS_TO_PRODUCE"));
 	_txtTotalDesc->setBig();
 
-//	_txtEngineerUp->setText(tr("STR_INCREASE_UC"));
-//	_txtEngineerDown->setText(tr("STR_DECREASE_UC"));
+	_btnEngineerUp->onMousePress(		(ActionHandler)& ManufactureInfoState::incEngineersPress);
+	_btnEngineerUp->onMouseRelease(		(ActionHandler)& ManufactureInfoState::incEngineersRelease);
+	_btnEngineerUp->onMouseClick(		(ActionHandler)& ManufactureInfoState::incEngineersClick, 0u);
 
-	_btnEngineerUp->onMousePress((ActionHandler)& ManufactureInfoState::incEngineersPress);
-	_btnEngineerUp->onMouseRelease((ActionHandler)& ManufactureInfoState::incEngineersRelease);
-	_btnEngineerUp->onMouseClick((ActionHandler)& ManufactureInfoState::incEngineersClick, 0u);
+	_btnEngineerDown->onMousePress(		(ActionHandler)& ManufactureInfoState::decEngineersPress);
+	_btnEngineerDown->onMouseRelease(	(ActionHandler)& ManufactureInfoState::decEngineersRelease);
+	_btnEngineerDown->onMouseClick(		(ActionHandler)& ManufactureInfoState::decEngineersClick, 0u);
 
-	_btnEngineerDown->onMousePress((ActionHandler)& ManufactureInfoState::decEngineersPress);
-	_btnEngineerDown->onMouseRelease((ActionHandler)& ManufactureInfoState::decEngineersRelease);
-	_btnEngineerDown->onMouseClick((ActionHandler)& ManufactureInfoState::decEngineersClick, 0u);
+	_btnUnitUp->onMousePress(		(ActionHandler)& ManufactureInfoState::incUnitsPress);
+	_btnUnitUp->onMouseRelease(		(ActionHandler)& ManufactureInfoState::incUnitsRelease);
+	_btnUnitUp->onMouseClick(		(ActionHandler)& ManufactureInfoState::incUnitsClick, 0u);
 
-//	_txtUnitUp->setText(tr("STR_INCREASE_UC"));
-//	_txtUnitDown->setText(tr("STR_DECREASE_UC"));
-
-	_btnUnitUp->onMousePress((ActionHandler)& ManufactureInfoState::incUnitsPress);
-	_btnUnitUp->onMouseRelease((ActionHandler)& ManufactureInfoState::incUnitsRelease);
-	_btnUnitUp->onMouseClick((ActionHandler)& ManufactureInfoState::incUnitsClick, 0u);
-
-	_btnUnitDown->onMousePress((ActionHandler)& ManufactureInfoState::decUnitsPress);
-	_btnUnitDown->onMouseRelease((ActionHandler)& ManufactureInfoState::decUnitsRelease);
-	_btnUnitDown->onMouseClick((ActionHandler)& ManufactureInfoState::decUnitsClick, 0u);
+	_btnUnitDown->onMousePress(		(ActionHandler)& ManufactureInfoState::decUnitsPress);
+	_btnUnitDown->onMouseRelease(	(ActionHandler)& ManufactureInfoState::decUnitsRelease);
+	_btnUnitDown->onMouseClick(		(ActionHandler)& ManufactureInfoState::decUnitsClick, 0u);
 
 	_btnStop->setText(tr("STR_STOP_PRODUCTION"));
 	_btnStop->onMouseClick((ActionHandler)& ManufactureInfoState::btnStopClick);
@@ -406,28 +379,6 @@ int ManufactureInfoState::calcProfit() // private.
 
 	return qty * (sellValue - _production->getRules()->getManufactureCost());
 }
-/*	// does not take into account leap years
-	static const int AVG_HOURS_PER_MONTH = (365 * 24) / 12;
-
-	const RuleManufacture* const manfRule = _production->getRules();
-	int
-		sellValue = _btnSell->getPressed() ? _producedValue : 0,
-		numEngineers = _production->getAssignedEngineers(),
-		manHoursPerMonth = AVG_HOURS_PER_MONTH * numEngineers;
-
-	if (_production->getInfinite() == false)
-	{
-		// scale down to actual number of man hours required if the job takes less than one month
-		const int manHoursRemaining = manfRule->getManufactureTime()
-									* (_production->getTotalQuantity() - _production->getProducedQuantity());
-		manHoursPerMonth = std::min(
-								manHoursPerMonth,
-								manHoursRemaining);
-	}
-
-	const int itemsPerMonth = static_cast<int>(static_cast<float>(manHoursPerMonth)
-							/ static_cast<float>(manfRule->getManufactureTime()));
-	return itemsPerMonth * (sellValue - manfRule->getManufactureCost()); */
 
 /**
  * Formats the profit-value.
@@ -451,36 +402,6 @@ bool ManufactureInfoState::formatProfit( // private.
 	woststr << Text::formatCurrency(static_cast<int64_t>(profit));
 	return ret;
 }
-/*	float profit_f (static_cast<float>(profit));
-
-	bool ret;
-	if (profit_f < 0.f)
-	{
-		profit_f = -profit_f;
-		ret = false;
-	}
-	else
-		ret = true;
-
-	std::wstring suffix;
-	if (profit_f >= 1e9f)
-	{
-		profit_f /= 1e9f;
-		suffix = L" b";
-	}
-	else if (profit_f >= 1e6f)
-	{
-		profit_f /= 1e6f;
-		suffix = L" m";
-	}
-	else if (profit_f >= 1e3f)
-	{
-		profit_f /= 1e3f;
-		suffix = L" k";
-	}
-
-	woststr << L"$" << std::fixed << std::setprecision(1) << profit_f << suffix;
-	return ret; */
 
 /**
  * Adds given number of engineers to the project if possible.
@@ -807,26 +728,3 @@ void ManufactureInfoState::think() // private.
 }
 
 }
-
-/**
- * Increases or decreases the Engineers according the mouse-wheel used.
- * @param action - pointer to an Action
- *
-void ManufactureInfoState::handleWheelEngineer(Action* action)
-{
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-		incEngineers(Options::changeValueByMouseWheel);
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-		decEngineers(Options::changeValueByMouseWheel);
-} */
-/**
- * Increases or decreases the Units to produce according the mouse-wheel used.
- * @param action - pointer to an Action
- */
-/* void ManufactureInfoState::handleWheelUnit(Action* action)
-{
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-		incUnits(Options::changeValueByMouseWheel);
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-		decUnits(Options::changeValueByMouseWheel);
-} */

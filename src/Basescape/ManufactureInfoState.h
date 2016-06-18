@@ -28,7 +28,6 @@ namespace OpenXcom
 
 class ArrowButton;
 class Base;
-//class InteractiveSurface;
 class Production;
 class RuleManufacture;
 class Text;
@@ -55,9 +54,6 @@ private:
 		* _btnUnitDown,
 		* _btnUnitUp;
 	Base* _base;
-//	InteractiveSurface
-//		* _surfaceEngineers,
-//		* _surfaceUnits;
 	Production* _production;
 	const RuleManufacture* _manfRule;
 	Text
@@ -65,16 +61,12 @@ private:
 		* _txtFreeSpace,
 		* _txtEngineers,
 		* _txtEngineersDesc,
-//		* _txtEngineerDown,
-//		* _txtEngineerUp,
 		* _txtProfit,
 		* _txtTimeDesc,
 		* _txtTimeLeft,
 		* _txtTitle,
 		* _txtTotal,
 		* _txtTotalDesc;
-//		* _txtUnitDown,
-//		* _txtUnitUp;
 	TextButton
 		* _btnOk,
 		* _btnStop;
@@ -161,11 +153,6 @@ private:
 
 	/// Runs state functionality every cycle.
 	void think() override;
-
-	/// Handler for using the mouse wheel on the Engineer-part of the screen.
-//	void handleWheelEngineer(Action* action);
-	/// Handler for using the mouse wheel on the Unit-part of the screen.
-//	void handleWheelUnit(Action* action);
 
 
 	public:

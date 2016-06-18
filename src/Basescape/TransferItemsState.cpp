@@ -177,9 +177,6 @@ TransferItemsState::TransferItemsState(
 	_lstItems->onRightArrowPress(	(ActionHandler)& TransferItemsState::lstRightArrowPress);
 	_lstItems->onRightArrowRelease(	(ActionHandler)& TransferItemsState::lstRightArrowRelease);
 
-//	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstItems->onMousePress((ActionHandler)& TransferItemsState::lstMousePress);
-
 	_distance = getDistance();
 
 
@@ -631,8 +628,6 @@ void TransferItemsState::lstLeftArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerInc->isRunning() == false)
-//			{
 			_error.clear();
 
 			if ((SDL_GetModState() & KMOD_CTRL) != 0)
@@ -642,7 +637,6 @@ void TransferItemsState::lstLeftArrowPress(Action* action)
 
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerInc->start();
-//			}
 	}
 }
 
@@ -671,8 +665,6 @@ void TransferItemsState::lstRightArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerDec->isRunning() == false)
-//			{
 			if ((SDL_GetModState() & KMOD_CTRL) != 0)
 				decreaseByValue(10);
 			else
@@ -680,7 +672,6 @@ void TransferItemsState::lstRightArrowPress(Action* action)
 
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->start();
-//			}
 	}
 }
 
@@ -763,7 +754,7 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 {
 	if (_error.empty() == false)
 		_error.clear();
-	else if (_transferQty[_sel] < getSourceQuantity()) //qtyDelta > 0 &&
+	else if (_transferQty[_sel] < getSourceQuantity())
 	{
 		const RuleItem* itRule;
 
@@ -883,7 +874,7 @@ void TransferItemsState::decrease()
  */
 void TransferItemsState::decreaseByValue(int qtyDelta)
 {
-	if (_transferQty[_sel] > 0) //qtyDelta > 0 &&
+	if (_transferQty[_sel] > 0)
 	{
 		qtyDelta = std::min(qtyDelta,
 							_transferQty[_sel]);
@@ -1100,38 +1091,3 @@ size_t TransferItemsState::getCraftIndex(size_t sel) const // private.
 }
 
 }
-
-/**
- * Handles the mouse-wheels on the arrow-buttons.
- * @param action - pointer to an Action
- *
-void TransferItemsState::lstMousePress(Action* action)
-{
-	if (Options::changeValueByMouseWheel < 1)
-		return;
-
-	_sel = _lstItems->getSelectedRow();
-
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-
-		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
-		{
-			increaseByValue(Options::changeValueByMouseWheel);
-		}
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-
-		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
-		{
-			decreaseByValue(Options::changeValueByMouseWheel);
-		}
-	}
-} */

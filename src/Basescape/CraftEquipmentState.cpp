@@ -169,9 +169,6 @@ CraftEquipmentState::CraftEquipmentState(
 	_lstEquipment->onRightArrowPress(	(ActionHandler)& CraftEquipmentState::lstRightArrowPress);
 	_lstEquipment->onRightArrowRelease(	(ActionHandler)& CraftEquipmentState::lstRightArrowRelease);
 
-//	_lstEquipment->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstEquipment->onMousePress((ActionHandler)& CraftEquipmentState::lstMousePress);
-
 
 	_timerLeft = new Timer(Timer::SCROLL_SLOW);
 	_timerLeft->onTimer((StateHandler)& CraftEquipmentState::moveLeft);
@@ -713,37 +710,5 @@ void CraftEquipmentState::displayExtraButtons() const // private.
 						  && _craft->getQtySoldiers() != 0
 						  && _isQuickBattle == false); // TODO: Allow inventory-btn for QuickBattles.
 }
-
-/**
- * Handles the mouse-wheels on the arrow-buttons.
- * @param action, Pointer to an action.
- *
-void CraftEquipmentState::lstMousePress(Action* action)
-{
-	_sel = _lstEquipment->getSelectedRow();
-
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-	{
-		_timerRight->stop();
-		_timerLeft->stop();
-
-		if (action->getAbsoluteMouseX() >= _lstEquipment->getArrowsLeftEdge()
-			&& action->getAbsoluteMouseX() <= _lstEquipment->getArrowsRightEdge())
-		{
-			moveRightByValue(Options::changeValueByMouseWheel);
-		}
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-	{
-		_timerRight->stop();
-		_timerLeft->stop();
-
-		if (action->getAbsoluteMouseX() >= _lstEquipment->getArrowsLeftEdge()
-			&& action->getAbsoluteMouseX() <= _lstEquipment->getArrowsRightEdge())
-		{
-			moveLeftByValue(Options::changeValueByMouseWheel);
-		}
-	}
-} */
 
 }

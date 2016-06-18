@@ -167,9 +167,6 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->onRightArrowPress(	(ActionHandler)& PurchaseState::lstRightArrowPress);
 	_lstItems->onRightArrowRelease(	(ActionHandler)& PurchaseState::lstRightArrowRelease);
 
-//	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstItems->onMousePress((ActionHandler)& PurchaseState::lstMousePress); // mousewheel
-
 
 	// Add soldier-types to purchase-list.
 	const RuleSoldier* solRule;
@@ -595,8 +592,6 @@ void PurchaseState::lstLeftArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerInc->isRunning() == false)
-//			{
 			_error.clear();
 
 			if ((SDL_GetModState() & KMOD_CTRL) != 0)
@@ -606,7 +601,6 @@ void PurchaseState::lstLeftArrowPress(Action* action)
 
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerInc->start();
-//			}
 	}
 }
 
@@ -635,8 +629,6 @@ void PurchaseState::lstRightArrowPress(Action* action)
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerDec->isRunning() == false)
-//			{
 			if ((SDL_GetModState() & KMOD_CTRL) != 0)
 				decreaseByValue(10);
 			else
@@ -644,7 +636,6 @@ void PurchaseState::lstRightArrowPress(Action* action)
 
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->start();
-//			}
 	}
 }
 
@@ -705,7 +696,7 @@ void PurchaseState::increaseByValue(int qtyDelta)
 {
 	if (_error.empty() == false)
 		_error.clear();
-	else //if (qtyDelta > 0)
+	else
 	{
 		if (_costTotal + getPrice() > _game->getSavedGame()->getFunds())
 			_error = tr("STR_NOT_ENOUGH_MONEY");
@@ -810,7 +801,7 @@ void PurchaseState::decrease()
  */
 void PurchaseState::decreaseByValue(int qtyDelta)
 {
-	if (_orderQty[_sel] > 0) //qtyDelta > 0 &&
+	if (_orderQty[_sel] > 0)
 	{
 		qtyDelta = std::min(qtyDelta, _orderQty[_sel]);
 
@@ -922,38 +913,3 @@ size_t PurchaseState::getCraftIndex(size_t sel) const // private.
 }
 
 }
-
-/**
- * Handles the mouse-wheels on the arrow-buttons.
- * @param action - pointer to an Action
- *
-void PurchaseState::lstMousePress(Action* action)
-{
-	if (Options::changeValueByMouseWheel < 1)
-		return;
-
-	_sel = _lstItems->getSelectedRow();
-
-	if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-
-		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
-		{
-			increaseByValue(Options::changeValueByMouseWheel);
-		}
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-	{
-		_timerInc->stop();
-		_timerDec->stop();
-
-		if (static_cast<int>(action->getAbsoluteMouseX()) >= _lstItems->getArrowsLeftEdge()
-			&& static_cast<int>(action->getAbsoluteMouseX()) <= _lstItems->getArrowsRightEdge())
-		{
-			decreaseByValue(Options::changeValueByMouseWheel);
-		}
-	}
-} */

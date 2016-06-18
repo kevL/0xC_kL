@@ -120,9 +120,6 @@ private:
 		/// Handler for releasing a Move Right arrow in the list.
 		void lstRightArrowRelease(Action* action);
 
-		/// Handler for pressing-down a mouse-button in the list.
-//		void lstMousePress(Action* action);
-
 		/// Moves an item to the Craft.
 		void moveRight();
 		/// Moves the given number of items to the Craft.

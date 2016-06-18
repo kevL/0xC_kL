@@ -132,9 +132,6 @@ private:
 		/// Handler for releasing a decrease-arrow in the list.
 		void lstRightArrowRelease(Action* action);
 
-		/// Handler for pressing a mouse-button in the list.
-//		void lstMousePress(Action* action);
-
 		/// Increases the quantity of an item by one.
 		void increase();
 		/// Decreases the quantity of an item by one.
