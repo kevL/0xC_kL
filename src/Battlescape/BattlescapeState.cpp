@@ -3228,29 +3228,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 					_numAmmoR->setColor(color);
 					_numAmmoR->setVisible();
 				}
-//				{
-//					const BattleItem* const aItem (rtItem->getAmmoItem());
-//					if ((aItem != nullptr && rtItem->selfPowered() == false)
-//						|| rtItem->selfExpended() == true)
-//					{
-//						const int load (aItem->getAmmoQuantity());
-//						_numAmmoR->setValue(static_cast<unsigned>(load));
-//						_numAmmoR->setVisible();
-//
-//						Uint8 color;
-//						int clip;
-//						if (itRule->isFixed() == true)
-//							clip = itRule->getFullClip();
-//						else
-//							clip = aItem->getRules()->getFullClip();
-//
-//						if		(load == clip)		color = GREEN_D;
-//						else if	(load >= clip / 2)	color = YELLOW_D;
-//						else						color = ORANGE_D;
-//
-//						_numAmmoR->setColor(color);
-//					}
-//				}
 				break;
 
 			case BT_AMMO:
@@ -3319,29 +3296,6 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 					_numAmmoL->setColor(color);
 					_numAmmoL->setVisible();
 				}
-//				{
-//					const BattleItem* const aItem (ltItem->getAmmoItem());
-//					if ((aItem != nullptr && ltItem->selfPowered() == false)
-//						 || ltItem->selfExpended() == true)
-//					{
-//						const int load (aItem->getAmmoQuantity());
-//						_numAmmoL->setValue(static_cast<unsigned>(load));
-//						_numAmmoL->setVisible();
-//
-//						Uint8 color;
-//						int clip;
-//						if (itRule->isFixed() == true)
-//							clip = itRule->getFullClip();
-//						else
-//							clip = aItem->getRules()->getFullClip();
-//
-//						if		(load == clip)		color = GREEN_D;
-//						else if	(load >= clip / 2)	color = YELLOW_D;
-//						else						color = ORANGE_D;
-//
-//						_numAmmoL->setColor(color);
-//					}
-//				}
 				break;
 
 			case BT_AMMO:
