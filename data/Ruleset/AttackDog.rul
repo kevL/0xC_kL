@@ -110,7 +110,7 @@ extraStrings:
   - type: en-US
     strings:
       STR_DOG: "Attack Dog"
-      STR_DOG_CORPSE: "Dead Dog"
+      STR_DOG_CORPSE: "Dead dog"
       STR_DOG_BITE: "Bite"
       STR_DOG_BARK: "Bark"
       STR_DOG_UFOPEDIA: "These highly trained dogs are fully able in battlefield conditions. They can spot aliens but won't attack unless ordered to do so. To avoid compromising their positions xCom agents communicate with these dogs via supersonic whistles."

@@ -49,11 +49,11 @@ ScrollBar::ScrollBar(
 		InteractiveSurface(
 			width, height,
 			x,y),
-		_list(0),
+		_list(nullptr),
 		_color(0u),
 		_contrast(false),
 		_offset(-1),
-		_bg(0),
+		_bg(nullptr),
 		_scrollDir(MSCROLL_NONE),
 		_useScalePad(false)
 {
@@ -65,11 +65,11 @@ ScrollBar::ScrollBar(
 	_rect.w =
 	_rect.h = 0u;
 
-	_timerScrollKey = new Timer(122u);
-	_timerScrollKey->onTimer((SurfaceHandler)& ScrollBar::keyScroll);
-
 	_timerScrollMouse = new Timer(122u);
 	_timerScrollMouse->onTimer((SurfaceHandler)& ScrollBar::mouseScroll);
+
+	_timerScrollKey = new Timer(122u);
+	_timerScrollKey->onTimer((SurfaceHandler)& ScrollBar::keyScroll);
 }
 
 /**
@@ -79,6 +79,7 @@ ScrollBar::~ScrollBar()
 {
 	delete _track;
 	delete _btn;
+	delete _timerScrollMouse;
 	delete _timerScrollKey;
 }
 

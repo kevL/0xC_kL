@@ -201,7 +201,7 @@ int TextList::getArrowsRightEdge()
  * Unpresses all the arrow-buttons.
  * @param state - pointer to running state
  */
-void TextList::unpress(State* state)
+void TextList::unpress(State* const state)
 {
 	InteractiveSurface::unpress(state);
 
@@ -603,13 +603,12 @@ void TextList::initText(
 		Font* const small,
 		const Language* const lang)
 {
+	_font =
+	_small = small;
 	_big = big;
-	_small =
-	_font = small;
 	_lang = lang;
 
 	delete _selector;
-
 	_selector = new Surface(
 						getWidth(),
 						_font->getHeight() + _font->getSpacing(),
@@ -617,7 +616,6 @@ void TextList::initText(
 						getY());
 	_selector->setPalette(getPalette());
 	_selector->setVisible(false);
-
 	updateVisible();
 }
 

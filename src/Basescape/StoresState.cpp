@@ -269,10 +269,12 @@ StoresState::~StoresState()
 }
 
 /**
- * Runs the blink Timer.
+ * Runs the blink Timer and scrolling.
  */
 void StoresState::think()
 {
+	State::think();
+
 	if (_txtTotal->getColor() == RED)
 		_blinkTimer->think(this, nullptr);
 }

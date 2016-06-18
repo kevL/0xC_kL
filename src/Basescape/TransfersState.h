@@ -34,7 +34,7 @@ class Window;
 
 
 /**
- * Transfers window that displays all the items currently in-transit to a base.
+ * Transfers window that displays all the items currently in-transit to a Base.
  */
 class TransfersState
 	:

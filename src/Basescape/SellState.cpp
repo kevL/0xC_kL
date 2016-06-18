@@ -611,8 +611,6 @@ void SellState::changeByValue(
 		int qtyDelta,
 		int dir)
 {
-//	if (qtyDelta > 0)
-//	{
 	switch (dir)
 	{
 		case 1:
@@ -674,7 +672,6 @@ void SellState::changeByValue(
 	}
 
 	update();
-//	}
 }
 
 /**

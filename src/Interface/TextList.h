@@ -134,7 +134,7 @@ private:
 		int getArrowsRightEdge();
 
 		/// Unpresses the Surface.
-		void unpress(State* state) override;
+		void unpress(State* const state) override;
 
 		/// Sets the text-color of a certain cell.
 		void setCellColor(
