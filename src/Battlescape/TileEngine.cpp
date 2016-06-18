@@ -2973,8 +2973,8 @@ int TileEngine::horizontalBlockage(
 		const DamageType dType) const
 {
 	//Log(LOG_INFO) << "TileEngine::horizontalBlockage()";
-	if (tileStart == nullptr // safety checks
-		|| tileStop == nullptr
+	if (   tileStart == nullptr // safety checks
+		|| tileStop  == nullptr
 		|| tileStart->getPosition().z != tileStop->getPosition().z)
 	{
 		return 0;
@@ -3065,68 +3065,68 @@ int TileEngine::horizontalBlockage(
 			}
 			else // dt_NE
 			{
-				block = blockage(
+				block = (blockage(
 								tileStart,
 								O_NORTHWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								tileStop,
 								O_WESTWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_NORTHWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_WESTWALL,
-								dType) / 2
+								dType) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								0,
-								true) / 2
-						+ blockage(
+								true) >> 1u)
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								2,
-								true) / 2
+								true) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
-								2) / 2 // checks Content/bigWalls
-						+ blockage(
+								2) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
-								4) / 2 // checks Content/bigWalls
+								4) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
-								0) / 2 // checks Content/bigWalls
-						+ blockage(
+								0) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
-								6) / 2 // checks Content/bigWalls
+								6) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								4) / 2 // checks Content/bigWalls
-						+ blockage(
+								4) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								6) / 2; // checks Content/bigWalls
+								6) >> 1u); // checks Content/bigWalls
 			}
 			break;
 
@@ -3185,68 +3185,68 @@ int TileEngine::horizontalBlockage(
 			}
 			else // dt_SE
 			{
-				block = blockage(
+				block = (blockage(
 								tileStop,
 								O_WESTWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								tileStop,
 								O_NORTHWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_WESTWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_NORTHWALL,
-								dType) / 2
+								dType) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								2,
-								true) / 2 // checks Content/bigWalls
-						+ blockage(
+								true) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								4,
-								true) / 2 // checks Content/bigWalls
+								true) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
-								0) / 2 // checks Content/bigWalls
-						+ blockage(
+								0) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
-								2) / 2 // checks Content/bigWalls
+								2) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
-								4) / 2 // checks Content/bigWalls
-						+ blockage(
+								4) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posEast),
 								O_OBJECT,
 								dType,
-								6) / 2 // checks Content/bigWalls
+								6) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								0) / 2 // checks Content/bigWalls
-						+ blockage(
+								0) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								6) / 2; // checks Content/bigWalls
+								6) >> 1u); // checks Content/bigWalls
 			}
 			break;
 
@@ -3305,68 +3305,68 @@ int TileEngine::horizontalBlockage(
 			}
 			else // dt_SW
 			{
-				block = blockage(
+				block = (blockage(
 								tileStop,
 								O_NORTHWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								tileStart,
 								O_WESTWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_WESTWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_NORTHWALL,
-								dType) / 2
+								dType) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								4,
-								true) / 2 // checks Content/bigWalls
-						+ blockage(
+								true) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								6,
-								true) / 2 // checks Content/bigWalls
+								true) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
-								0) / 2 // checks Content/bigWalls
-						+ blockage(
+								0) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posSouth),
 								O_OBJECT,
 								dType,
-								6) / 2 // checks Content/bigWalls
+								6) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
-								2) / 2 // checks Content/bigWalls
-						+ blockage(
+								2) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
-								4) / 2 // checks Content/bigWalls
+								4) >> 1u) // checks Content/bigWalls
 
-						+ blockage(
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								0) / 2 // checks Content/bigWalls
-						+ blockage(
+								0) >> 1u) // checks Content/bigWalls
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								2) / 2; // checks Content/bigWalls
+								2) >> 1u); // checks Content/bigWalls
 			}
 			break;
 
@@ -3427,68 +3427,68 @@ int TileEngine::horizontalBlockage(
 			}
 			else // dt_NW
 			{
-				block = blockage(
+				block = (blockage(
 								tileStart,
 								O_WESTWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								tileStart,
 								O_NORTHWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_WESTWALL,
-								dType) / 2
-						+ blockage(
+								dType) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_NORTHWALL,
-								dType) / 2
+								dType) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								0,
-								true) / 2
-						+ blockage(
+								true) >> 1u)
+						+ (blockage(
 								tileStart,
 								O_OBJECT,
 								dType,
 								6,
-								true) / 2
+								true) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
-								4) / 2
-						+ blockage(
+								4) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posNorth),
 								O_OBJECT,
 								dType,
-								6) / 2
+								6) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
-								0) / 2
-						+ blockage(
+								0) >> 1u)
+						+ (blockage(
 								_battleSave->getTile(tileStart->getPosition() + posWest),
 								O_OBJECT,
 								dType,
-								2) / 2
+								2) >> 1u)
 
-						+ blockage(
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								2) / 2
-						+ blockage(
+								2) >> 1u)
+						+ (blockage(
 								tileStop,
 								O_OBJECT,
 								dType,
-								4) / 2;
+								4) >> 1u);
 			}
 	}
 

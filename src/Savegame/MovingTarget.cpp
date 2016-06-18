@@ -23,6 +23,7 @@
 
 #include "SavedGame.h"
 #include "SerializationHelper.h"
+#include "Ufo.h"
 #include "Waypoint.h"
 
 #include "../Geoscape/GeoscapeState.h"
@@ -75,7 +76,12 @@ YAML::Node MovingTarget::save() const // virtual.
 {
 	YAML::Node node (Target::save());
 
-	if (_dest != nullptr) node["dest"] = _dest->saveId();
+	if (_dest != nullptr)
+	{
+		const Ufo* const ufo (dynamic_cast<const Ufo*>(this));
+		if (ufo == nullptr || ufo->getUfoStatus() != Ufo::CRASHED) // Ie, is Craft or UFO-flying or -landed.
+			node["dest"] = _dest->saveId();
+	}
 
 	if (_speed != 0)
 	{

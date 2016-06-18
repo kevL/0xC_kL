@@ -533,7 +533,7 @@ void Projectile::applyAccuracy( // private.
 				perfect = 150.; // higher value makes non-Soldiers less accurate at throwing.
 		}
 
-		accuracy = accuracy * 50. + 73.1; // arbitrary adjustment.
+		accuracy = accuracy * 50. + 72.6; // arbitrary adjustment.
 
 		double deviation (perfect - accuracy);
 		deviation = std::max(ACU_MIN,
