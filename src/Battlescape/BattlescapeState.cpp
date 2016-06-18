@@ -3123,40 +3123,40 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		switch (ah)
 		{
 			case AH_RIGHT:
-				itRule = rtItem->getRules();
-				if (itRule->getBattleType() == BT_FIREARM
-					|| itRule->getBattleType() == BT_MELEE)
+				switch (rtItem->getRules()->getBattleType())
 				{
-					tuLaunch = selUnit->getActionTu(BA_LAUNCH, rtItem);
-					tuAim = selUnit->getActionTu(BA_AIMEDSHOT, rtItem);
-					tuAuto = selUnit->getActionTu(BA_AUTOSHOT, rtItem);
-					tuSnap = selUnit->getActionTu(BA_SNAPSHOT, rtItem);
-					if (tuLaunch == 0
-						&& tuAim == 0
-						&& tuAuto == 0
-						&& tuSnap == 0)
-					{
-						tuSnap = selUnit->getActionTu(BA_MELEE, rtItem);
-					}
+					case BT_FIREARM:
+					case BT_MELEE:
+						tuLaunch = selUnit->getActionTu(BA_LAUNCH, rtItem);
+						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, rtItem);
+						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, rtItem);
+						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, rtItem);
+						if (tuLaunch  == 0
+							&& tuAim  == 0
+							&& tuAuto == 0
+							&& tuSnap == 0)
+						{
+							tuSnap = selUnit->getActionTu(BA_MELEE, rtItem);
+						}
 				}
 				break;
 
 			case AH_LEFT:
-				itRule = ltItem->getRules();
-				if (itRule->getBattleType() == BT_FIREARM
-					|| itRule->getBattleType() == BT_MELEE)
+				switch (ltItem->getRules()->getBattleType())
 				{
-					tuLaunch = selUnit->getActionTu(BA_LAUNCH, ltItem);
-					tuAim = selUnit->getActionTu(BA_AIMEDSHOT, ltItem);
-					tuAuto = selUnit->getActionTu(BA_AUTOSHOT, ltItem);
-					tuSnap = selUnit->getActionTu(BA_SNAPSHOT, ltItem);
-					if (tuLaunch == 0
-						&& tuAim == 0
-						&& tuAuto == 0
-						&& tuSnap == 0)
-					{
-						tuSnap = selUnit->getActionTu(BA_MELEE, ltItem);
-					}
+					case BT_FIREARM:
+					case BT_MELEE:
+						tuLaunch = selUnit->getActionTu(BA_LAUNCH, ltItem);
+						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, ltItem);
+						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, ltItem);
+						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, ltItem);
+						if (tuLaunch  == 0
+							&& tuAim  == 0
+							&& tuAuto == 0
+							&& tuSnap == 0)
+						{
+							tuSnap = selUnit->getActionTu(BA_MELEE, ltItem);
+						}
 				}
 		}
 
@@ -3193,39 +3193,64 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 							_btnRightHandItem);
 		_btnRightHandItem->setVisible();
 
-		if (itRule->isFixed() == false
-			&& itRule->isTwoHanded() == true)
-		{
+		if (itRule->isFixed() == false && itRule->isTwoHanded() == true)
 			_numTwohandR->setVisible();
-		}
 
 		switch (itRule->getBattleType())
 		{
 			case BT_FIREARM:
 //			case BT_MELEE:
+				if (rtItem->selfPowered() == false || rtItem->selfExpended() == true)
 				{
+					Uint8 color;
+
 					const BattleItem* const aItem (rtItem->getAmmoItem());
-					if ((aItem != nullptr && rtItem->selfPowered() == false)
-						|| rtItem->selfExpended() == true)
+					if (aItem != nullptr)
 					{
 						const int load (aItem->getAmmoQuantity());
 						_numAmmoR->setValue(static_cast<unsigned>(load));
-						_numAmmoR->setVisible();
 
-						Uint8 color;
-						int clip;
+						int fullclip;
 						if (itRule->isFixed() == true)
-							clip = itRule->getFullClip();
+							fullclip = itRule->getFullClip();
 						else
-							clip = aItem->getRules()->getFullClip();
+							fullclip = aItem->getRules()->getFullClip();
 
-						if		(load == clip)		color = GREEN_D;
-						else if	(load >= clip / 2)	color = YELLOW_D;
-						else						color = ORANGE_D;
-
-						_numAmmoR->setColor(color);
+						if		(load ==  fullclip)			color = GREEN_D;
+						else if	(load >= (fullclip >> 1u))	color = YELLOW_D;
+						else								color = ORANGE_D;
 					}
+					else
+					{
+						_numAmmoR->setValue(0u);
+						color = RED_M;
+					}
+					_numAmmoR->setColor(color);
+					_numAmmoR->setVisible();
 				}
+//				{
+//					const BattleItem* const aItem (rtItem->getAmmoItem());
+//					if ((aItem != nullptr && rtItem->selfPowered() == false)
+//						|| rtItem->selfExpended() == true)
+//					{
+//						const int load (aItem->getAmmoQuantity());
+//						_numAmmoR->setValue(static_cast<unsigned>(load));
+//						_numAmmoR->setVisible();
+//
+//						Uint8 color;
+//						int clip;
+//						if (itRule->isFixed() == true)
+//							clip = itRule->getFullClip();
+//						else
+//							clip = aItem->getRules()->getFullClip();
+//
+//						if		(load == clip)		color = GREEN_D;
+//						else if	(load >= clip / 2)	color = YELLOW_D;
+//						else						color = ORANGE_D;
+//
+//						_numAmmoR->setColor(color);
+//					}
+//				}
 				break;
 
 			case BT_AMMO:
@@ -3259,39 +3284,64 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 							_btnLeftHandItem);
 		_btnLeftHandItem->setVisible();
 
-		if (itRule->isFixed() == false
-			&& itRule->isTwoHanded() == true)
-		{
+		if (itRule->isFixed() == false && itRule->isTwoHanded() == true)
 			_numTwohandL->setVisible();
-		}
 
 		switch (itRule->getBattleType())
 		{
 			case BT_FIREARM:
 //			case BT_MELEE:
+				if (ltItem->selfPowered() == false || ltItem->selfExpended() == true)
 				{
+					Uint8 color;
+
 					const BattleItem* const aItem (ltItem->getAmmoItem());
-					if ((aItem != nullptr && ltItem->selfPowered() == false)
-						 || ltItem->selfExpended() == true)
+					if (aItem != nullptr)
 					{
 						const int load (aItem->getAmmoQuantity());
 						_numAmmoL->setValue(static_cast<unsigned>(load));
-						_numAmmoL->setVisible();
 
-						Uint8 color;
-						int clip;
+						int fullclip;
 						if (itRule->isFixed() == true)
-							clip = itRule->getFullClip();
+							fullclip = itRule->getFullClip();
 						else
-							clip = aItem->getRules()->getFullClip();
+							fullclip = aItem->getRules()->getFullClip();
 
-						if		(load == clip)		color = GREEN_D;
-						else if	(load >= clip / 2)	color = YELLOW_D;
-						else						color = ORANGE_D;
-
-						_numAmmoL->setColor(color);
+						if		(load ==  fullclip)			color = GREEN_D;
+						else if	(load >= (fullclip >> 1u))	color = YELLOW_D;
+						else								color = ORANGE_D;
 					}
+					else
+					{
+						_numAmmoL->setValue(0u);
+						color = RED_M;
+					}
+					_numAmmoL->setColor(color);
+					_numAmmoL->setVisible();
 				}
+//				{
+//					const BattleItem* const aItem (ltItem->getAmmoItem());
+//					if ((aItem != nullptr && ltItem->selfPowered() == false)
+//						 || ltItem->selfExpended() == true)
+//					{
+//						const int load (aItem->getAmmoQuantity());
+//						_numAmmoL->setValue(static_cast<unsigned>(load));
+//						_numAmmoL->setVisible();
+//
+//						Uint8 color;
+//						int clip;
+//						if (itRule->isFixed() == true)
+//							clip = itRule->getFullClip();
+//						else
+//							clip = aItem->getRules()->getFullClip();
+//
+//						if		(load == clip)		color = GREEN_D;
+//						else if	(load >= clip / 2)	color = YELLOW_D;
+//						else						color = ORANGE_D;
+//
+//						_numAmmoL->setColor(color);
+//					}
+//				}
 				break;
 
 			case BT_AMMO:
@@ -4455,15 +4505,16 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 			if (i == 0u) // Floor
 			{
 				std::wstring hasFloor;
-				if (info[i] == 0)
+				switch (info[i])
 				{
-					hasFloor = L"F";
-					color = GREEN; // Floor
-				}
-				else
-				{
-					hasFloor = L"-";
-					color = ORANGE; // NO Floor
+					case 0:					// Floor
+						hasFloor = L"F";
+						color = GREEN;
+						break;
+					case 1:					// NO Floor
+					default:
+						hasFloor = L"-";
+						color = ORANGE;
 				}
 
 				_lstTileInfo->addRow(
@@ -4473,16 +4524,19 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 			}
 			else if (i < 3u) // smoke & fire
 			{
-				if (i == 1u)
-					color = BROWN_L; // smoke
-				else
-					color = RED; // fire
+				switch (i)
+				{
+					case 1u: color = BROWN_L; break;	// smoke
+					case 2u:							// fire
+					default: color = RED;
+				}
 
 				std::wstring value;
-				if (info[i] != 0)
-					value = Text::intWide(info[i]);
-				else
-					value = L"";
+				switch (info[i])
+				{
+					case 0:  value = L""; break;
+					default: value = Text::intWide(info[i]);
+				}
 
 				_lstTileInfo->addRow(
 								2,
@@ -4494,10 +4548,8 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 				color = BLUE;
 
 				std::wstring cost;
-				if (info[i] < 255)
-					cost = Text::intWide(info[i]);
-				else
-					cost = L"-";
+				if (info[i] < 255)	cost = Text::intWide(info[i]);
+				else				cost = L"-";
 
 				_lstTileInfo->addRow(
 								2,
