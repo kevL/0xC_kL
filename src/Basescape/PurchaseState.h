@@ -85,10 +85,13 @@ private:
 		_items,
 		_soldiers;
 
-	/// Gets the price of a selected item.
-	int getPrice();
 	/// Updates the quantity-strings of the selected item.
-	void update();
+	void updateListrow();
+	/// Returns the quantity by which to increase/decrease.
+	int stepDelta() const;
+
+	/// Gets the price of a selected item.
+	int getPrice() const;
 	/// Gets the purchase type.
 	PurchaseSellTransferType getPurchaseType(size_t sel) const;
 	/// Gets the index of selected item.
@@ -102,9 +105,6 @@ private:
 		explicit PurchaseState(Base* const base);
 		/// Cleans up the Purchase state.
 		~PurchaseState();
-
-		/// Runs the timers.
-		void think() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
@@ -120,14 +120,17 @@ private:
 		/// Handler for releasing a decrease-arrow in the list.
 		void lstRightArrowRelease(Action* action);
 
+		/// Runs the timers.
+		void think() override;
+
 		/// Increases the quantity of an item by one.
-		void increase();
+		void onIncrease();
 		/// Increases the quantity of an item by the given value.
-		void increaseByValue(int qtyDelta);
+		void increaseByValue(int delta);
 		/// Decreases the quantity of an item by one.
-		void decrease();
+		void onDecrease();
 		/// Decreases the quantity of an item by the given value.
-		void decreaseByValue(int qtyDelta);
+		void decreaseByValue(int delta);
 };
 
 }

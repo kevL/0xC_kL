@@ -106,8 +106,6 @@ private:
 
 		/// Updates the list of Live aLiens.
 		void init() override;
-		/// Runs the Timers.
-		void think() override;
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
@@ -122,6 +120,9 @@ private:
 		void lstRightArrowPress(Action* action);
 		/// Handler for releasing an increase-arrow in the list.
 		void lstRightArrowRelease(Action* action);
+
+		/// Runs the Timers.
+		void think() override;
 
 		/// Decreases the quantity of an aLien by one.
 		void onLeft();

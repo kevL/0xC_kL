@@ -115,8 +115,6 @@ private:
 
 		/// Resets state.
 		void init() override;
-		/// Runs the timers.
-		void think() override;
 
 		/// Handler for pressing a Move Left arrow in the list.
 		void lstLeftArrowPress(Action* action);
@@ -126,6 +124,9 @@ private:
 		void lstRightArrowPress(Action* action);
 		/// Handler for releasing a Move Right arrow in the list.
 		void lstRightArrowRelease(Action* action);
+
+		/// Runs the timers.
+		void think() override;
 
 		/// Moves an item to the Base.
 		void onLeft();

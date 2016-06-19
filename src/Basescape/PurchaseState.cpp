@@ -449,10 +449,10 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->scrollTo(_base->getRecallRow(REC_PURCHASE));
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& PurchaseState::increase);
+	_timerInc->onTimer((StateHandler)& PurchaseState::onIncrease);
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& PurchaseState::decrease);
+	_timerDec->onTimer((StateHandler)& PurchaseState::onDecrease);
 }
 
 /**
@@ -462,17 +462,6 @@ PurchaseState::~PurchaseState()
 {
 	delete _timerInc;
 	delete _timerDec;
-}
-
-/**
- * Runs the arrow timers.
- */
-void PurchaseState::think()
-{
-	State::think();
-
-	_timerInc->think(this, nullptr);
-	_timerDec->think(this, nullptr);
 }
 
 /**
@@ -586,21 +575,18 @@ void PurchaseState::lstLeftArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			_error.clear();
-			increaseByValue(std::numeric_limits<int>::max());
-			break;
-
 		case SDL_BUTTON_LEFT:
 			_error.clear();
 
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				increaseByValue(10);
-			else
-				increaseByValue(1);
-
+			increaseByValue(stepDelta());
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerInc->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			_error.clear();
+
+			increaseByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -624,18 +610,14 @@ void PurchaseState::lstRightArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			decreaseByValue(std::numeric_limits<int>::max());
-			break;
-
 		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				decreaseByValue(10);
-			else
-				decreaseByValue(1);
-
+			decreaseByValue(stepDelta());
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			decreaseByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -650,49 +632,30 @@ void PurchaseState::lstRightArrowRelease(Action* action)
 }
 
 /**
- * Gets the price of the currently selected item.
- * @return, the price of the currently selected item
+ * Runs the arrow timers.
  */
-int PurchaseState::getPrice() // private.
+void PurchaseState::think()
 {
-	switch (getPurchaseType(_sel))
-	{
-		case PST_SOLDIER:
-			return _game->getRuleset()->getSoldier(_soldiers[_sel])->getBuyCost();
+	State::think();
 
-		case PST_SCIENTIST:
-			return _game->getRuleset()->getScientistCost() << 1u;
-
-		case PST_ENGINEER:
-			return _game->getRuleset()->getEngineerCost() << 1u;
-
-		case PST_CRAFT:
-			return _game->getRuleset()->getCraft(_crafts[getCraftIndex(_sel)])->getBuyCost();
-
-		case PST_ITEM:
-			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getBuyCost();
-	}
-	return 0;
+	_timerInc->think(this, nullptr);
+	_timerDec->think(this, nullptr);
 }
 
 /**
  * Increases the quantity of the selected item to buy by one.
  */
-void PurchaseState::increase()
+void PurchaseState::onIncrease()
 {
 	_timerInc->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		increaseByValue(10);
-	else
-		increaseByValue(1);
+	increaseByValue(stepDelta());
 }
 
 /**
  * Increases the quantity of the selected item to buy.
- * @param qtyDelta - how many to add
+ * @param delta - quantity to add
  */
-void PurchaseState::increaseByValue(int qtyDelta)
+void PurchaseState::increaseByValue(int delta)
 {
 	if (_error.empty() == false)
 		_error.clear();
@@ -739,23 +702,23 @@ void PurchaseState::increaseByValue(int qtyDelta)
 		}
 		else
 		{
-			qtyDelta = std::min(qtyDelta,
-							   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // NOTE: (int)cast renders int64_t useless.
+			delta = std::min(delta,
+							(static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / getPrice()); // NOTE: (int)cast renders int64_t useless.
 
 			switch (getPurchaseType(_sel))
 			{
 				case PST_SOLDIER:
 				case PST_SCIENTIST:
 				case PST_ENGINEER:
-					qtyDelta = std::min(qtyDelta,
-										_base->getFreeQuarters() - _qtyPersonnel);
-					_qtyPersonnel += qtyDelta;
+					delta = std::min(delta,
+									_base->getFreeQuarters() - _qtyPersonnel);
+					_qtyPersonnel += delta;
 					break;
 
 				case PST_CRAFT:
-					qtyDelta = std::min(qtyDelta,
-										_base->getFreeHangars() - _qtyCraft);
-					_qtyCraft += qtyDelta;
+					delta = std::min(delta,
+									_base->getFreeHangars() - _qtyCraft);
+					_qtyCraft += delta;
 					break;
 
 				case PST_ITEM:
@@ -768,16 +731,16 @@ void PurchaseState::increaseByValue(int qtyDelta)
 					else
 						allowed = std::numeric_limits<double>::max();
 
-					qtyDelta = std::min(qtyDelta,
-										static_cast<int>(allowed));
-					_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
+					delta = std::min(delta,
+									 static_cast<int>(allowed));
+					_storeSize += static_cast<double>(delta) * storeSizePer;
 				}
 			}
 
-			_orderQty[_sel] += qtyDelta;
-			_costTotal += getPrice() * qtyDelta;
+			_orderQty[_sel] += delta;
+			_costTotal += getPrice() * delta;
 
-			update();
+			updateListrow();
 		}
 	}
 }
@@ -785,53 +748,49 @@ void PurchaseState::increaseByValue(int qtyDelta)
 /**
  * Decreases the quantity of the selected item to buy by one.
  */
-void PurchaseState::decrease()
+void PurchaseState::onDecrease()
 {
 	_timerDec->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		decreaseByValue(10);
-	else
-		decreaseByValue(1);
+	decreaseByValue(stepDelta());
 }
 
 /**
  * Decreases the quantity of the selected item to buy.
- * @param qtyDelta - how many to subtract
+ * @param delta - quantity to subtract
  */
-void PurchaseState::decreaseByValue(int qtyDelta)
+void PurchaseState::decreaseByValue(int delta)
 {
 	if (_orderQty[_sel] > 0)
 	{
-		qtyDelta = std::min(qtyDelta, _orderQty[_sel]);
+		delta = std::min(delta, _orderQty[_sel]);
 
 		switch (getPurchaseType(_sel))
 		{
 			case PST_SOLDIER:
 			case PST_SCIENTIST:
 			case PST_ENGINEER:
-				_qtyPersonnel -= qtyDelta;
+				_qtyPersonnel -= delta;
 				break;
 
 			case PST_CRAFT:
-				_qtyCraft -= qtyDelta;
+				_qtyCraft -= delta;
 				break;
 
 			case PST_ITEM:
-				_storeSize -= _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize() * static_cast<double>(qtyDelta);
+				_storeSize -= _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getStoreSize() * static_cast<double>(delta);
 		}
 
-		_orderQty[_sel] -= qtyDelta;
-		_costTotal -= getPrice() * qtyDelta;
+		_orderQty[_sel] -= delta;
+		_costTotal -= getPrice() * delta;
 
-		update();
+		updateListrow();
 	}
 }
 
 /**
  * Updates the quantity-strings of the selected item.
  */
-void PurchaseState::update() // private.
+void PurchaseState::updateListrow() // private.
 {
 	_txtPurchases->setText(tr("STR_COST_OF_PURCHASES_")
 							.arg(Text::formatCurrency(_costTotal)));
@@ -870,6 +829,44 @@ void PurchaseState::update() // private.
 }
 
 /**
+ * Returns the quantity by which to increase/decrease.
+ * @return, 10 if CTRL is pressed else 1
+ */
+int PurchaseState::stepDelta() const // private.
+{
+	if ((SDL_GetModState() & KMOD_CTRL) == 0)
+		return 1;
+
+	return 10;
+}
+
+/**
+ * Gets the price of the currently selected item.
+ * @return, the price of the currently selected item
+ */
+int PurchaseState::getPrice() const // private.
+{
+	switch (getPurchaseType(_sel))
+	{
+		case PST_SOLDIER:
+			return _game->getRuleset()->getSoldier(_soldiers[_sel])->getBuyCost();
+
+		case PST_SCIENTIST:
+			return _game->getRuleset()->getScientistCost() << 1u;
+
+		case PST_ENGINEER:
+			return _game->getRuleset()->getEngineerCost() << 1u;
+
+		case PST_CRAFT:
+			return _game->getRuleset()->getCraft(_crafts[getCraftIndex(_sel)])->getBuyCost();
+
+		case PST_ITEM:
+			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getBuyCost();
+	}
+	return 0;
+}
+
+/**
  * Gets the purchase type.
  * @return, PurchaseSellTransferType (Base.h)
  */
@@ -877,17 +874,10 @@ PurchaseSellTransferType PurchaseState::getPurchaseType(size_t sel) const // pri
 {
 	size_t rowCutoff (_soldiers.size());
 
-	if (sel < rowCutoff)
-		return PST_SOLDIER;
-
-	if (sel < (rowCutoff += 1))
-		return PST_SCIENTIST;
-
-	if (sel < (rowCutoff += 1))
-		return PST_ENGINEER;
-
-	if (sel < (rowCutoff + _crafts.size()))
-		return PST_CRAFT;
+	if (sel <  rowCutoff)					return PST_SOLDIER;
+	if (sel < (rowCutoff += 1))				return PST_SCIENTIST;
+	if (sel < (rowCutoff += 1))				return PST_ENGINEER;
+	if (sel < (rowCutoff + _crafts.size()))	return PST_CRAFT;
 
 	return PST_ITEM;
 }

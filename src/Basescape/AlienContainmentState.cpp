@@ -312,17 +312,6 @@ void AlienContainmentState::init()
 }
 
 /**
- * Runs the arrow timers.
- */
-void AlienContainmentState::think()
-{
-	State::think();
-
-	_timerRight->think(this, nullptr);
-	_timerLeft->think(this, nullptr);
-}
-
-/**
  * Deals with the selected aliens.
  * @param action - pointer to an Action
  */
@@ -420,6 +409,17 @@ void AlienContainmentState::lstRightArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerRight->stop();
+}
+
+/**
+ * Runs the arrow timers.
+ */
+void AlienContainmentState::think()
+{
+	State::think();
+
+	_timerRight->think(this, nullptr);
+	_timerLeft->think(this, nullptr);
 }
 
 /**

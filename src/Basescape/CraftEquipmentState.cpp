@@ -313,17 +313,6 @@ void CraftEquipmentState::showExtraButtons() const // private.
 }
 
 /**
- * Runs the arrow timers.
- */
-void CraftEquipmentState::think()
-{
-	State::think();
-
-	_timerLeft->think(this, nullptr);
-	_timerRight->think(this, nullptr);
-}
-
-/**
  * Starts moving the selected row-items to the Craft.
  * @param action - pointer to an Action
  */
@@ -387,6 +376,17 @@ void CraftEquipmentState::lstLeftArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerLeft->stop();
+}
+
+/**
+ * Runs the arrow timers.
+ */
+void CraftEquipmentState::think()
+{
+	State::think();
+
+	_timerLeft->think(this, nullptr);
+	_timerRight->think(this, nullptr);
 }
 
 /**
