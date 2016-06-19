@@ -141,11 +141,9 @@ void ResearchInfoState::buildUi()
 
 	_btnMore->onMousePress(		(ActionHandler)& ResearchInfoState::morePress);
 	_btnMore->onMouseRelease(	(ActionHandler)& ResearchInfoState::moreRelease);
-	_btnMore->onMouseClick(		(ActionHandler)& ResearchInfoState::moreClick, 0u);
 
 	_btnLess->onMousePress(		(ActionHandler)& ResearchInfoState::lessPress);
 	_btnLess->onMouseRelease(	(ActionHandler)& ResearchInfoState::lessRelease);
-	_btnLess->onMouseClick(		(ActionHandler)& ResearchInfoState::lessClick, 0u);
 
 	_timerMore = new Timer(Timer::SCROLL_SLOW);
 	_timerMore->onTimer((StateHandler)& ResearchInfoState::onMore);
@@ -247,8 +245,17 @@ void ResearchInfoState::btnCancelClick(Action*)
  */
 void ResearchInfoState::morePress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		_timerMore->start();
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			moreByValue(stepDelta());
+			_timerMore->setInterval(Timer::SCROLL_SLOW);
+			_timerMore->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			moreByValue(std::numeric_limits<int>::max());
+	}
 }
 
 /**
@@ -258,27 +265,7 @@ void ResearchInfoState::morePress(Action* action)
 void ResearchInfoState::moreRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-	{
-		_timerMore->setInterval(Timer::SCROLL_SLOW);
 		_timerMore->stop();
-	}
-}
-
-/**
- * Allocates scientists to the current project;
- * one scientist on left-click, all scientists on right-click.
- * @param action - pointer to an Action
- */
-void ResearchInfoState::moreClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_RIGHT:
-			moreByValue(std::numeric_limits<int>::max());
-			break;
-		case SDL_BUTTON_LEFT:
-			moreByValue(stepDelta());
-	}
 }
 
 /**
@@ -287,8 +274,17 @@ void ResearchInfoState::moreClick(Action* action)
  */
 void ResearchInfoState::lessPress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		_timerLess->start();
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			lessByValue(stepDelta());
+			_timerLess->setInterval(Timer::SCROLL_SLOW);
+			_timerLess->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			lessByValue(std::numeric_limits<int>::max());
+	}
 }
 
 /**
@@ -298,27 +294,7 @@ void ResearchInfoState::lessPress(Action* action)
 void ResearchInfoState::lessRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-	{
-		_timerLess->setInterval(Timer::SCROLL_SLOW);
 		_timerLess->stop();
-	}
-}
-
-/**
- * Removes scientists from the current project;
- * one scientist on left-click, all scientists on right-click.
- * @param action - pointer to an Action
- */
-void ResearchInfoState::lessClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_RIGHT:
-			lessByValue(std::numeric_limits<int>::max());
-			break;
-		case SDL_BUTTON_LEFT:
-			lessByValue(stepDelta());
-	}
 }
 
 /**
@@ -343,9 +319,9 @@ void ResearchInfoState::onMore()
 
 /**
  * Adds the given number of scientists to the project if possible.
- * @param change Number of scientists to add.
+ * @param delta - quantity of scientists to add
  */
-void ResearchInfoState::moreByValue(int change)
+void ResearchInfoState::moreByValue(int delta)
 {
 	const int
 		freeScientists (_base->getScientists()),
@@ -353,11 +329,11 @@ void ResearchInfoState::moreByValue(int change)
 
 	if (freeScientists != 0 && freeSpaceLab != 0)
 	{
-		change = std::min(change,
-						  std::min(freeScientists,
-								   freeSpaceLab));
-		_project->setAssignedScientists(_project->getAssignedScientists() + change);
-		_base->setScientists(_base->getScientists() - change);
+		delta = std::min(delta,
+						 std::min(freeScientists,
+								  freeSpaceLab));
+		_project->setAssignedScientists(_project->getAssignedScientists() + delta);
+		_base->setScientists(_base->getScientists() - delta);
 
 		updateInfo();
 	}
@@ -374,17 +350,16 @@ void ResearchInfoState::onLess()
 
 /**
  * Removes the given number of scientists from the project if possible.
- * @param change Number of scientists to subtract.
+ * @param delta - quantity of scientists to subtract
  */
-void ResearchInfoState::lessByValue(int change)
+void ResearchInfoState::lessByValue(int delta)
 {
 	const int assigned (_project->getAssignedScientists());
 	if (assigned != 0)
 	{
-		change = std::min(change,
-						  assigned);
-		_project->setAssignedScientists(assigned - change);
-		_base->setScientists(_base->getScientists() + change);
+		delta = std::min(delta, assigned);
+		_project->setAssignedScientists(assigned - delta);
+		_base->setScientists(_base->getScientists() + delta);
 
 		updateInfo();
 	}

@@ -78,26 +78,22 @@ private:
 	void morePress(Action* action);
 	/// Handler for releasing the More button.
 	void moreRelease(Action* action);
-	/// Handler for clicking the More button.
-	void moreClick(Action* action);
 	/// Handler for pressing the Less button.
 	void lessPress(Action* action);
 	/// Handler for releasing the Less button.
 	void lessRelease(Action* action);
-	/// Handler for clicking the Less button.
-	void lessClick(Action* action);
 
 	/// Runs state functionality every Timer tick.
 	void think() override;
 
 	/// Function called every time the _timerMore timer is triggered.
 	void onMore();
-	/// Add given number of scientists to the project if possible
-	void moreByValue(int change);
+	/// Adds a given number of scientists to the project if possible
+	void moreByValue(int delta);
 	/// Function called every time the _timerLess timer is triggered.
 	void onLess();
-	/// Remove the given number of scientists from the project if possible
-	void lessByValue(int change);
+	/// Removes a the given number of scientists from the project if possible
+	void lessByValue(int delta);
 
 	/// Gets quantity to change by.
 	int stepDelta() const;
