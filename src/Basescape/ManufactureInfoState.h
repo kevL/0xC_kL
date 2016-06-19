@@ -49,10 +49,10 @@ private:
 	int _producedValue;
 
 	ArrowButton
-		* _btnEngineerDown,
-		* _btnEngineerUp,
-		* _btnUnitDown,
-		* _btnUnitUp;
+		* _btnEngineerLess,
+		* _btnEngineerMore,
+		* _btnUnitLess,
+		* _btnUnitMore;
 	Base* _base;
 	Production* _production;
 	const RuleManufacture* _manfRule;
@@ -71,10 +71,10 @@ private:
 		* _btnOk,
 		* _btnStop;
 	Timer
-		* _timerDecEngineers,
-		* _timerDecUnits,
-		* _timerIncEngineers,
-		* _timerIncUnits;
+		* _timerEngineersLess,
+		* _timerEngineersMore,
+		* _timerUnitsLess,
+		* _timerUnitsMore;
 	ToggleTextButton* _btnSell;
 	Window* _window;
 
@@ -93,7 +93,7 @@ private:
 	/// Handler for releasing the Sell button.
 	void btnSellRelease(Action* action);
 
-	/// Updates display of assigned/available engineers and workshop space.
+	/// Updates display of assigned/available engineers and workshop-space.
 	void assignEngineers();
 	/// Calculates the monthly change in funds due to profit/expenses.
 	int calcProfit();
@@ -102,57 +102,53 @@ private:
 			int profit,
 			std::wostringstream& woststr);
 
-	/// Adds given number of engineers to the project if possible.
-	void incEngineers(int change);
 	/// Handler for pressing the more engineer button.
-	void incEngineersPress(Action* action);
+	void engineersMorePress(Action* action);
 	/// Handler for releasing the more engineer button.
-	void incEngineersRelease(Action* action);
-	/// Handler for clicking the more engineer button.
-	void incEngineersClick(Action* action);
+	void engineersMoreRelease(Action* action);
 
-	/// Removes the given number of engineers from the project if possible.
-	void decEngineers(int change);
 	/// Handler for pressing the less engineer button.
-	void decEngineersPress(Action* action);
+	void engineersLessPress(Action* action);
 	/// Handler for releasing the less engineer button.
-	void decEngineersRelease(Action* action);
-	/// Handler for clicking the less engineer button.
-	void decEngineersClick(Action* action);
+	void engineersLessRelease(Action* action);
 
-	/// Adds given number of units to produce to the project if possible.
-	void incUnits(int change);
 	/// Handler for pressing the more unit button.
-	void incUnitsPress(Action* action);
+	void unitsMorePress(Action* action);
 	/// Handler for releasing the more unit button.
-	void incUnitsRelease(Action* action);
+	void unitsMoreRelease(Action* action);
 	/// Handler for clicking the more unit button.
-	void incUnitsClick(Action* action);
+	void unitsMoreClick(Action* action);
 
-	/// Removes the given number of units to produce from the project if possible.
-	void decUnits(int change);
 	/// Handler for pressing the less unit button.
-	void decUnitsPress(Action* action);
+	void unitsLessPress(Action* action);
 	/// Handler for releasing the less unit button.
-	void decUnitsRelease(Action* action);
+	void unitsLessRelease(Action* action);
 	/// Handler for clicking the less unit button.
-	void decUnitsClick(Action* action);
-
-	/// Adds engineers to the production (if possible).
-	void onIncEngineers();
-	/// Removes engineers from the production (if possible).
-	void onDecEngineers();
-
-	/// Increases quantity of units to make.
-	void onIncUnits();
-	/// Decreases quantity of units to make (if possible).
-	void onDecUnits();
-
-	/// Gets the quantity by which to increase/decrease.
-	int stepDelta() const;
+	void unitsLessClick(Action* action);
 
 	/// Runs state functionality every cycle.
 	void think() override;
+
+	/// Adds engineers to the production.
+	void onEngineersMore();
+	/// Adds a given quantity of engineers to the production if possible.
+	void engineersMoreByValue(int delta);
+	/// Subtracts engineers from the production.
+	void onEngineersLess();
+	/// Subtracts a given quantity of engineers from the production if possible.
+	void engineersLessByValue(int delta);
+
+	/// Increases quantity of units to produce.
+	void onUnitsMore();
+	/// Adds a given quantity of units to produce if possible.
+	void unitsMoreByValue(int delta);
+	/// Decreases quantity of units to produce.
+	void onUnitsLess();
+	/// Subtracts a given quantity of units to produce if possible.
+	void unitsLessByValue(int delta);
+
+	/// Gets the quantity by which to increase/decrease.
+	int stepDelta() const;
 
 
 	public:

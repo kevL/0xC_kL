@@ -1005,12 +1005,10 @@ int TransferItemsState::getCost() const // private.
 		default:
 		case PST_SOLDIER:
 		case PST_SCIENTIST:
-		case PST_ENGINEER:
-			cost = 100.;
+		case PST_ENGINEER: cost = 100.;
 			break;
 
-		case PST_CRAFT:
-			cost = 1000.;
+		case PST_CRAFT: cost = 1000.;
 			break;
 
 		case PST_ITEM:
