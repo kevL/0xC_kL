@@ -551,7 +551,6 @@ void PurchaseState::btnOkClick(Action*)
 			}
 		}
 	}
-
 	_game->popState();
 }
 
@@ -848,20 +847,11 @@ int PurchaseState::getPrice() const // private.
 {
 	switch (getPurchaseType(_sel))
 	{
-		case PST_SOLDIER:
-			return _game->getRuleset()->getSoldier(_soldiers[_sel])->getBuyCost();
-
-		case PST_SCIENTIST:
-			return _game->getRuleset()->getScientistCost() << 1u;
-
-		case PST_ENGINEER:
-			return _game->getRuleset()->getEngineerCost() << 1u;
-
-		case PST_CRAFT:
-			return _game->getRuleset()->getCraft(_crafts[getCraftIndex(_sel)])->getBuyCost();
-
-		case PST_ITEM:
-			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getBuyCost();
+		case PST_SOLDIER:	return _game->getRuleset()->getSoldier(_soldiers[_sel])->getBuyCost();
+		case PST_SCIENTIST:	return _game->getRuleset()->getScientistCost() << 1u;
+		case PST_ENGINEER:	return _game->getRuleset()->getEngineerCost() << 1u;
+		case PST_CRAFT:		return _game->getRuleset()->getCraft(_crafts[getCraftIndex(_sel)])->getBuyCost();
+		case PST_ITEM:		return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getBuyCost();
 	}
 	return 0;
 }

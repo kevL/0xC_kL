@@ -549,6 +549,20 @@ void TransferItemsState::completeTransfer()
 					}
 					break;
 
+				case PST_SCIENTIST:
+					_baseSource->setScientists(_baseSource->getScientists() - _transferQty[sel]);
+					transfer = new Transfer(eta);
+					transfer->setScientists(_transferQty[sel]);
+					_baseTarget->getTransfers()->push_back(transfer);
+					break;
+
+				case PST_ENGINEER:
+					_baseSource->setEngineers(_baseSource->getEngineers() - _transferQty[sel]);
+					transfer = new Transfer(eta);
+					transfer->setEngineers(_transferQty[sel]);
+					_baseTarget->getTransfers()->push_back(transfer);
+					break;
+
 				case PST_CRAFT:
 				{
 					Craft* const craft (_crafts[getCraftIndex(sel)]);
@@ -572,20 +586,6 @@ void TransferItemsState::completeTransfer()
 					}
 					break;
 				}
-
-				case PST_SCIENTIST:
-					_baseSource->setScientists(_baseSource->getScientists() - _transferQty[sel]);
-					transfer = new Transfer(eta);
-					transfer->setScientists(_transferQty[sel]);
-					_baseTarget->getTransfers()->push_back(transfer);
-					break;
-
-				case PST_ENGINEER:
-					_baseSource->setEngineers(_baseSource->getEngineers() - _transferQty[sel]);
-					transfer = new Transfer(eta);
-					transfer->setEngineers(_transferQty[sel]);
-					_baseTarget->getTransfers()->push_back(transfer);
-					break;
 
 				case PST_ITEM:
 					_baseSource->getStorageItems()->removeItem(
@@ -697,13 +697,41 @@ void TransferItemsState::increaseByValue(int delta)
 		_error.clear();
 	else if (_transferQty[_sel] < getSourceQuantity())
 	{
-		const RuleItem* itRule;
-
 		switch (getTransferType(_sel))
 		{
-			case PST_ITEM:
-				itRule = _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]);
+			case PST_SOLDIER:
+			case PST_SCIENTIST:
+			case PST_ENGINEER:
+				if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
+					_error = tr("STR_NO_FREE_ACCOMMODATION");
+				else
+				{
+					delta = std::min(delta,
+									 std::min(_baseTarget->getFreeQuarters() - _qtyPersonnel,
+											  getSourceQuantity() - _transferQty[_sel]));
+					_qtyPersonnel += delta;
+					_baseQty[_sel] -= delta;
+					_destQty[_sel] += delta;
+					_transferQty[_sel] += delta;
+					_costTotal += getCost() * delta;
+				}
+				break;
 
+			case PST_CRAFT:
+				if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
+					_error = tr("STR_NO_FREE_HANGARS_FOR_TRANSFER");
+				else
+				{
+					++_qtyCraft;
+					--_baseQty[_sel];
+					++_destQty[_sel];
+					++_transferQty[_sel];
+					_costTotal += getCost();
+				}
+				break;
+
+			case PST_ITEM:
+				const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
 				if (itRule->isLiveAlien() == false)
 				{
 					if (_baseTarget->storesOverfull(itRule->getStoreSize() + _storeSize - 0.05))
@@ -748,35 +776,6 @@ void TransferItemsState::increaseByValue(int delta)
 						_costTotal += getCost() * delta;
 					}
 				}
-				break;
-
-			case PST_CRAFT:
-				if (_qtyCraft + 1 > _baseTarget->getFreeHangars())
-					_error = tr("STR_NO_FREE_HANGARS_FOR_TRANSFER");
-				else
-				{
-					++_qtyCraft;
-					--_baseQty[_sel];
-					++_destQty[_sel];
-					++_transferQty[_sel];
-					_costTotal += getCost();
-				}
-				break;
-
-			default: // soldier, scientist, engineer
-				if (_qtyPersonnel + 1 > _baseTarget->getFreeQuarters())
-					_error = tr("STR_NO_FREE_ACCOMMODATION");
-				else
-				{
-					delta = std::min(delta,
-									 std::min(_baseTarget->getFreeQuarters() - _qtyPersonnel,
-											  getSourceQuantity() - _transferQty[_sel]));
-					_qtyPersonnel += delta;
-					_baseQty[_sel] -= delta;
-					_destQty[_sel] += delta;
-					_transferQty[_sel] += delta;
-					_costTotal += getCost() * delta;
-				}
 		}
 
 		if (_error.empty() == false)
@@ -818,6 +817,16 @@ void TransferItemsState::decreaseByValue(int delta)
 
 		switch (getTransferType(_sel))
 		{
+			case PST_SOLDIER:
+			case PST_SCIENTIST:
+			case PST_ENGINEER:
+				_qtyPersonnel -= delta;
+				break;
+
+			case PST_CRAFT:
+				--_qtyCraft;
+				break;
+
 			case PST_ITEM:
 			{
 				const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
@@ -825,15 +834,7 @@ void TransferItemsState::decreaseByValue(int delta)
 					_storeSize -= itRule->getStoreSize() * static_cast<double>(delta);
 				else
 					_qtyAlien -= delta;
-				break;
 			}
-
-			case PST_CRAFT:
-				--_qtyCraft;
-				break;
-
-			default: // soldier, scientist, engineer
-				_qtyPersonnel -= delta;
 		}
 
 		_baseQty[_sel] += delta;
@@ -858,6 +859,18 @@ void TransferItemsState::updateListrow() // private.
 
 	switch (getTransferType(_sel))
 	{
+		default:
+		case PST_SOLDIER:
+		case PST_SCIENTIST:
+		case PST_ENGINEER:
+		case PST_CRAFT:
+			switch (_transferQty[_sel])
+			{
+				case 0:  color = _lstItems->getColor(); break;
+				default: color = _lstItems->getSecondaryColor();
+			}
+			break;
+
 		case PST_ITEM:
 		{
 			const Ruleset* const rules (_game->getRuleset());
@@ -900,19 +913,7 @@ void TransferItemsState::updateListrow() // private.
 			}
 			else
 				color = _lstItems->getColor();
-			break;
 		}
-
-		default:
-			switch (_transferQty[_sel])
-			{
-				case 0:
-					color = _lstItems->getColor();
-					break;
-
-				default:
-					color = _lstItems->getSecondaryColor();
-			}
 	}
 
 	_lstItems->setRowColor(_sel, color);
@@ -1001,6 +1002,17 @@ int TransferItemsState::getCost() const // private.
 	double cost;
 	switch (getTransferType(_sel))
 	{
+		default:
+		case PST_SOLDIER:
+		case PST_SCIENTIST:
+		case PST_ENGINEER:
+			cost = 100.;
+			break;
+
+		case PST_CRAFT:
+			cost = 1000.;
+			break;
+
 		case PST_ITEM:
 			{
 				if (_items[getItemIndex(_sel)] == "STR_ALIEN_ALLOYS")
@@ -1012,14 +1024,6 @@ int TransferItemsState::getCost() const // private.
 				else
 					cost = 10.;
 			}
-			break;
-
-		case PST_CRAFT:
-			cost = 1000.;
-			break;
-
-		default:
-			cost = 100.;
 	}
 	return static_cast<int>(std::ceil(cost * _distance));
 }
@@ -1032,12 +1036,14 @@ int TransferItemsState::getSourceQuantity() const // private.
 {
 	switch (getTransferType(_sel))
 	{
+		default:
+		case PST_SOLDIER:
+		case PST_CRAFT:		return 1;
 		case PST_SCIENTIST:	return _baseSource->getScientists();
 		case PST_ENGINEER:	return _baseSource->getEngineers();
 		case PST_ITEM:
 			return _baseSource->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
 	}
-	return 1; // soldier, craft
 }
 
 /**
@@ -1052,7 +1058,7 @@ PurchaseSellTransferType TransferItemsState::getTransferType(size_t sel) const /
 	if (sel <  rowCutoff)						return PST_SOLDIER;
 	if (sel < (rowCutoff += _crafts.size()))	return PST_CRAFT;
 	if (sel < (rowCutoff += _hasSci))			return PST_SCIENTIST;
-	if (sel < (rowCutoff + _hasEng))			return PST_ENGINEER;
+	if (sel < (rowCutoff +  _hasEng))			return PST_ENGINEER;
 
 	return PST_ITEM;
 }

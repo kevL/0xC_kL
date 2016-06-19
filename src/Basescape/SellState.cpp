@@ -397,6 +397,14 @@ void SellState::btnOkClick(Action*)
 					delete _soldiers[sel];
 					break;
 
+				case PST_SCIENTIST:
+					_base->setScientists(_base->getScientists() - _sellQty[sel]);
+					break;
+
+				case PST_ENGINEER:
+					_base->setEngineers(_base->getEngineers() - _sellQty[sel]);
+					break;
+
 				case PST_CRAFT:
 				{
 					Craft* const craft (_crafts[getCraftIndex(sel)]);
@@ -416,14 +424,6 @@ void SellState::btnOkClick(Action*)
 					}
 					break;
 				}
-
-				case PST_SCIENTIST:
-					_base->setScientists(_base->getScientists() - _sellQty[sel]);
-					break;
-
-				case PST_ENGINEER:
-					_base->setEngineers(_base->getEngineers() - _sellQty[sel]);
-					break;
 
 				case PST_ITEM:
 					_base->getStorageItems()->removeItem(
@@ -688,10 +688,10 @@ void SellState::updateListrow() // private.
 				{
 					switch (getSellType(sel))
 					{
-						case PST_CRAFT:
 						case PST_SOLDIER:
 						case PST_SCIENTIST:
-						case PST_ENGINEER: showOk = true;
+						case PST_ENGINEER:
+						case PST_CRAFT: showOk = true;
 					}
 				}
 			}
@@ -731,13 +731,15 @@ int SellState::getPrice() const // private.
 {
 	switch (getSellType(_sel))
 	{
-		case PST_ITEM:
-			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getSellCost();
-
+		default:
+		case PST_SOLDIER:
+		case PST_SCIENTIST:
+		case PST_ENGINEER: return 0;
 		case PST_CRAFT:
 			return _crafts[getCraftIndex(_sel)]->getRules()->getSellCost();
+		case PST_ITEM:
+			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getSellCost();
 	}
-	return 0; // soldier, scientist, engineer
 }
 
 /**

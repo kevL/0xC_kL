@@ -44,8 +44,8 @@ enum PurchaseSellTransferType
 	PST_SOLDIER,	// 0
 	PST_SCIENTIST,	// 1
 	PST_ENGINEER,	// 2
-	PST_ITEM,		// 3
-	PST_CRAFT		// 4
+	PST_CRAFT,		// 3
+	PST_ITEM		// 4
 };
 
 
