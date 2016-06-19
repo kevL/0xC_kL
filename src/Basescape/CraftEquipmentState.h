@@ -55,6 +55,7 @@ private:
 
 	bool _isQuickBattle;
 	size_t
+		_recall,
 		_sel,
 		_selUnitId;
 	Uint8 _ammoColor;

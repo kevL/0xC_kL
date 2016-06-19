@@ -2746,7 +2746,7 @@ void Base::zeroCashSpent()
 
 /**
  * Sets various recalls for this Base.
- * @param recallType	- recall type
+ * @param recallType	- recall type (Base.h)
  * @param row			- row
  */
 void Base::setRecallRow(
@@ -2755,15 +2755,16 @@ void Base::setRecallRow(
 {
 	switch (recallType)
 	{
-		case REC_SOLDIER:	_recallSoldier = row;	break;
-		case REC_TRANSFER:	_recallTransfer = row;	break;
-		case REC_PURCHASE:	_recallPurchase = row;	break;
-		case REC_SELL:		_recallSell = row;
+		case REC_SOLDIER:	_recallSoldier	= row; break;
+		case REC_TRANSFER:	_recallTransfer	= row; break;
+		case REC_PURCHASE:	_recallPurchase	= row; break;
+		case REC_SELL:		_recallSell		= row;
 	}
 }
 
 /**
  * Gets various recalls for this Base.
+ * @param recallType - recall type (Base.h)
  * @return, row
  */
 size_t Base::getRecallRow(RecallType recallType) const

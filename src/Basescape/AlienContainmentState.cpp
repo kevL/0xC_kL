@@ -433,7 +433,7 @@ void AlienContainmentState::onLeft()
 
 /**
  * Decreases the quantity of the selected alien to exterminate.
- * @param delta - how much to remove
+ * @param delta - quantity to remove
  */
 void AlienContainmentState::leftByValue(int delta)
 {
@@ -457,7 +457,7 @@ void AlienContainmentState::onRight()
 
 /**
  * Increases the quantity of the selected alien to exterminate.
- * @param delta - how much to add
+ * @param delta - quantity to add
  */
 void AlienContainmentState::rightByValue(int delta)
 {
@@ -473,7 +473,7 @@ void AlienContainmentState::rightByValue(int delta)
 
 /**
  * Gets the quantity of the currently selected alien at the Base.
- * @return, quantity of alien
+ * @return, quantity of alien-type
  */
 int AlienContainmentState::getBaseQuantity() // private.
 {

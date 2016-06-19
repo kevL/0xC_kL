@@ -74,6 +74,7 @@ CraftEquipmentState::CraftEquipmentState(
 		_rules(_game->getRuleset()),
 		_sel(0u),
 		_selUnitId(0u),
+		_recall(0u),
 		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1)
 {
 	_window			= new Window(this, 320, 200);
@@ -286,6 +287,7 @@ void CraftEquipmentState::updateList() // private.
 			}
 		}
 	}
+	_lstEquipment->scrollTo(_recall);
 }
 
 /**
@@ -683,6 +685,8 @@ void CraftEquipmentState::btnUnloadCraftClick(Action*) // private.
  */
 void CraftEquipmentState::btnInventoryClick(Action*) // private.
 {
+	_recall = _lstEquipment->getScroll();
+
 	SavedBattleGame* const battleSave (new SavedBattleGame());
 	_game->getSavedGame()->setBattleSave(battleSave);
 
