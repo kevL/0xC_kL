@@ -87,14 +87,14 @@ private:
 	std::vector<std::string> _items;
 
 	/// Updates all values.
-	void update();
-	/// Decides whether to show extra buttons - Unload and Inventory.
-	void displayExtraButtons() const;
+	void updateList();
 	/// Sets current cost to send the Craft out to battle.
-	void calculateTacticalCost() const;
+	void calcTacticalCost() const;
+	/// Decides whether to show extra buttons - unload-craft and Inventory.
+	void showExtraButtons() const;
 
 	/// Updates list-values for the selected item.
-	void updateQuantity() const;
+	void updateListrow() const;
 
 	/// Handler for clicking the unload-craft button.
 	void btnUnloadCraftClick(Action* action);
@@ -117,23 +117,23 @@ private:
 		/// Runs the timers.
 		void think() override;
 
-		/// Handler for pressing a Move Right arrow in the list.
-		void lstRightArrowPress(Action* action);
-		/// Handler for releasing a Move Right arrow in the list.
-		void lstRightArrowRelease(Action* action);
 		/// Handler for pressing a Move Left arrow in the list.
 		void lstLeftArrowPress(Action* action);
 		/// Handler for releasing a Move Left arrow in the list.
 		void lstLeftArrowRelease(Action* action);
+		/// Handler for pressing a Move Right arrow in the list.
+		void lstRightArrowPress(Action* action);
+		/// Handler for releasing a Move Right arrow in the list.
+		void lstRightArrowRelease(Action* action);
 
-		/// Moves an item to the Craft.
-		void moveRight();
-		/// Moves the given number of items to the Craft.
-		void moveRightByValue(int qtyDelta);
 		/// Moves an item to the Base.
-		void moveLeft();
-		/// Moves the given number of items to the Base.
-		void moveLeftByValue(int qtyDelta);
+		void onLeft();
+		/// Moves a given number of items to the Base.
+		void leftByValue(int delta);
+		/// Moves an item to the Craft.
+		void onRight();
+		/// Moves a given number of items to the Craft.
+		void rightByValue(int delta);
 };
 
 }

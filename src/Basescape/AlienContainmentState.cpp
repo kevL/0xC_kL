@@ -433,15 +433,15 @@ void AlienContainmentState::onLeft()
 
 /**
  * Decreases the quantity of the selected alien to exterminate.
- * @param change - how much to remove
+ * @param delta - how much to remove
  */
-void AlienContainmentState::leftByValue(int change)
+void AlienContainmentState::leftByValue(int delta)
 {
 	if (_qtysCorpsify[_sel] > 0)
 	{
-		change = std::min(change, _qtysCorpsify[_sel]);
-		_qtysCorpsify[_sel] -= change;
-		_fishFood -= change;
+		delta = std::min(delta, _qtysCorpsify[_sel]);
+		_qtysCorpsify[_sel] -= delta;
+		_fishFood -= delta;
 		updateListrow();
 	}
 }
@@ -457,16 +457,16 @@ void AlienContainmentState::onRight()
 
 /**
  * Increases the quantity of the selected alien to exterminate.
- * @param change - how much to add
+ * @param delta - how much to add
  */
-void AlienContainmentState::rightByValue(int change)
+void AlienContainmentState::rightByValue(int delta)
 {
 	const int qtyType (getBaseQuantity() - _qtysCorpsify[_sel]);
 	if (qtyType > 0)
 	{
-		change = std::min(change, qtyType);
-		_qtysCorpsify[_sel] += change;
-		_fishFood += change;
+		delta = std::min(delta, qtyType);
+		_qtysCorpsify[_sel] += delta;
+		_fishFood += delta;
 		updateListrow();
 	}
 }

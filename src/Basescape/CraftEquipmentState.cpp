@@ -171,12 +171,10 @@ CraftEquipmentState::CraftEquipmentState(
 
 
 	_timerLeft = new Timer(Timer::SCROLL_SLOW);
-	_timerLeft->onTimer((StateHandler)& CraftEquipmentState::moveLeft);
+	_timerLeft->onTimer((StateHandler)& CraftEquipmentState::onLeft);
 
 	_timerRight = new Timer(Timer::SCROLL_SLOW);
-	_timerRight->onTimer((StateHandler)& CraftEquipmentState::moveRight);
-
-	update();
+	_timerRight->onTimer((StateHandler)& CraftEquipmentState::onRight);
 }
 
 /**
@@ -202,18 +200,17 @@ void CraftEquipmentState::init()
 		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
 		_game->getSavedGame()->setBattleSave();
 		_craft->setTactical(false);
-
-		update();
 	}
 
-	displayExtraButtons();
-	calculateTacticalCost();
+	updateList();
+	calcTacticalCost();
+	showExtraButtons();
 }
 
 /**
  * Updates all values.
  */
-void CraftEquipmentState::update() // private.
+void CraftEquipmentState::updateList() // private.
 {
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
 						.arg(_craft->getLoadCapacity())
@@ -292,25 +289,25 @@ void CraftEquipmentState::update() // private.
 }
 
 /**
- * Decides whether to show extra buttons - Unload and Inventory.
- */
-void CraftEquipmentState::displayExtraButtons() const // private.
-{
-	const bool hasItem (_craft->getCraftItems()->getTotalQuantity() != 0);
-	_btnClear->setVisible(hasItem);
-	_btnInventory->setVisible(hasItem
-						  && _craft->getQtySoldiers() != 0
-						  && _isQuickBattle == false); // TODO: Allow inventory-btn for QuickBattles.
-}
-
-/**
  * Sets current cost to send the Craft out to battle.
  */
-void CraftEquipmentState::calculateTacticalCost() const // private.
+void CraftEquipmentState::calcTacticalCost() const // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
 				  + _craft->getRules()->getSoldierCapacity() * 1000);
 	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
+}
+
+/**
+ * Decides whether to show extra buttons - unload-craft and Inventory.
+ */
+void CraftEquipmentState::showExtraButtons() const // private.
+{
+	const bool vis (_craft->getCraftItems()->getTotalQuantity() != 0);
+	_btnClear->setVisible(vis);
+	_btnInventory->setVisible(vis
+						  && _craft->getQtySoldiers() != 0
+						  && _isQuickBattle == false); // TODO: Allow inventory-btn for QuickBattles.
 }
 
 /**
@@ -336,15 +333,16 @@ void CraftEquipmentState::lstRightArrowPress(Action* action)
 	{
 		case SDL_BUTTON_LEFT:
 			_error.clear();
-			moveRightByValue(1);
 
+			rightByValue(1);
 			_timerRight->setInterval(Timer::SCROLL_SLOW);
 			_timerRight->start();
 			break;
 
 		case SDL_BUTTON_RIGHT:
 			_error.clear();
-			moveRightByValue(std::numeric_limits<int>::max());
+
+			rightByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -369,14 +367,13 @@ void CraftEquipmentState::lstLeftArrowPress(Action* action)
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
-			moveLeftByValue(1);
-
+			leftByValue(1);
 			_timerLeft->setInterval(Timer::SCROLL_SLOW);
 			_timerLeft->start();
 			break;
 
 		case SDL_BUTTON_RIGHT:
-			moveLeftByValue(std::numeric_limits<int>::max());
+			leftByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -393,17 +390,17 @@ void CraftEquipmentState::lstLeftArrowRelease(Action* action)
 /**
  * Moves the selected row-items to the Craft on Timer ticks.
  */
-void CraftEquipmentState::moveRight()
+void CraftEquipmentState::onRight()
 {
 	_timerRight->setInterval(Timer::SCROLL_FAST);
-	moveRightByValue(1);
+	rightByValue(1);
 }
 
 /**
  * Moves a specified quantity of the selected row-items to the Craft.
- * @param qtyDelta - quantity to move right
+ * @param delta - quantity to move right
  */
-void CraftEquipmentState::moveRightByValue(int qtyDelta)
+void CraftEquipmentState::rightByValue(int delta)
 {
 	if (_error.empty() == false)
 		_error.clear();
@@ -414,16 +411,16 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			baseQty = _base->getStorageItems()->getItemQuantity(_items[_sel]);
 		else
 		{
-			if (qtyDelta == std::numeric_limits<int>::max())
-				qtyDelta = 10;
+			if (delta == std::numeric_limits<int>::max())
+				delta = 10;
 
-			baseQty = qtyDelta;
+			baseQty = delta;
 		}
 
 		if (baseQty != 0)
 		{
 			bool overLoad (false);
-			qtyDelta = std::min(qtyDelta, baseQty);
+			delta = std::min(delta, baseQty);
 
 			const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
@@ -434,23 +431,22 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 					int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_sel])->getArmorType())->getSize());
 					quadrants *= quadrants;
 
-					const int spaceAvailable (std::min(
-													vhclCap - _craft->getQtyVehicles(true),
-													_craft->getSpaceAvailable())
-												/ quadrants);
+					const int spaceAvailable (std::min(_craft->getSpaceAvailable(),
+														vhclCap - _craft->getQtyVehicles(true))
+													/ quadrants);
 
 					if (spaceAvailable > 0
 						&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() >= quadrants * 10) // note: 10 is the 'load' that a single 'space' uses.
 					{
-						qtyDelta = std::min(qtyDelta, spaceAvailable);
-						qtyDelta = std::min(qtyDelta,
-										   (_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (quadrants * 10));
+						delta = std::min(delta, spaceAvailable);
+						delta = std::min(delta,
+										(_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (quadrants * 10));
 
 						if (itRule->getFullClip() < 1) // no Ammo required.
 						{
 							for (int
 									i = 0;
-									i != qtyDelta;
+									i != delta;
 									++i)
 							{
 								_craft->getVehicles()->push_back(new Vehicle(
@@ -460,7 +456,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 							}
 
 							if (_isQuickBattle == false)
-								_base->getStorageItems()->removeItem(_items[_sel], qtyDelta);
+								_base->getStorageItems()->removeItem(_items[_sel], delta);
 						}
 						else // tank needs Ammo.
 						{
@@ -470,14 +466,14 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 								baseClips (_base->getStorageItems()->getItemQuantity(type));
 
 							if (_isQuickBattle == false)
-								qtyDelta = std::min(qtyDelta,
-													baseClips / clipsRequired);
+								delta = std::min(delta,
+												 baseClips / clipsRequired);
 
-							if (qtyDelta > 0)
+							if (delta > 0)
 							{
 								for (int
 										i = 0;
-										i != qtyDelta;
+										i != delta;
 										++i)
 								{
 									_craft->getVehicles()->push_back(new Vehicle(
@@ -488,8 +484,8 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 
 								if (_isQuickBattle == false)
 								{
-									_base->getStorageItems()->removeItem(_items[_sel], qtyDelta);
-									_base->getStorageItems()->removeItem(type, clipsRequired * qtyDelta);
+									_base->getStorageItems()->removeItem(_items[_sel], delta);
+									_base->getStorageItems()->removeItem(type, clipsRequired * delta);
 								}
 							}
 							else // not enough Ammo
@@ -526,18 +522,18 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 			else if (_craft->getRules()->getItemCapacity() != 0) // load items
 			{
 				const int loadCur (_craft->calcLoadCurrent());
-				if (loadCur + qtyDelta > _craft->getLoadCapacity())
+				if (loadCur + delta > _craft->getLoadCapacity())
 				{
 					overLoad = true;
-					qtyDelta = _craft->getLoadCapacity() - loadCur;
+					delta = _craft->getLoadCapacity() - loadCur;
 				}
 
-				if (qtyDelta > 0)
+				if (delta > 0)
 				{
-					_craft->getCraftItems()->addItem(_items[_sel], qtyDelta);
+					_craft->getCraftItems()->addItem(_items[_sel], delta);
 
 					if (_isQuickBattle == false)
-						_base->getStorageItems()->removeItem(_items[_sel], qtyDelta);
+						_base->getStorageItems()->removeItem(_items[_sel], delta);
 				}
 			}
 
@@ -554,7 +550,7 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 													COLOR_ERROR_BG));
 			}
 
-			updateQuantity();
+			updateListrow();
 		}
 	}
 }
@@ -562,17 +558,17 @@ void CraftEquipmentState::moveRightByValue(int qtyDelta)
 /**
  * Moves the selected row-items to the Base on Timer ticks.
  */
-void CraftEquipmentState::moveLeft()
+void CraftEquipmentState::onLeft()
 {
 	_timerLeft->setInterval(Timer::SCROLL_FAST);
-	moveLeftByValue(1);
+	leftByValue(1);
 }
 
 /**
  * Moves a specified quantity of selected row-items to the Base.
- * @param qtyDelta - quantity to move left
+ * @param delta - quantity to move left
  */
-void CraftEquipmentState::moveLeftByValue(int qtyDelta)
+void CraftEquipmentState::leftByValue(int delta)
 {
 	const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
 
@@ -584,27 +580,27 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 
 	if (craftQty != 0)
 	{
-		qtyDelta = std::min(qtyDelta, craftQty);
+		delta = std::min(delta, craftQty);
 
 		if (itRule->isFixed() == true) // convert Vehicles to storage-items
 		{
 			if (_isQuickBattle == false)
 			{
-				_base->getStorageItems()->addItem(_items[_sel], qtyDelta);
+				_base->getStorageItems()->addItem(_items[_sel], delta);
 				if (itRule->getFullClip() > 0)
 					_base->getStorageItems()->addItem(
 													itRule->getCompatibleAmmo()->front(),
-													itRule->getFullClip() * qtyDelta); // Vehicles onboard Craft always have full clips.
+													itRule->getFullClip() * delta); // Vehicles onboard Craft always have full clips.
 			}
 
 			for (std::vector<Vehicle*>::const_iterator
 					i = _craft->getVehicles()->begin();
-					i != _craft->getVehicles()->end() && qtyDelta != 0;
+					i != _craft->getVehicles()->end() && delta != 0;
 					)
 			{
 				if ((*i)->getRules() == itRule)
 				{
-					--qtyDelta;
+					--delta;
 					delete *i;
 					i = _craft->getVehicles()->erase(i);
 				}
@@ -614,20 +610,20 @@ void CraftEquipmentState::moveLeftByValue(int qtyDelta)
 		}
 		else
 		{
-			_craft->getCraftItems()->removeItem(_items[_sel], qtyDelta);
+			_craft->getCraftItems()->removeItem(_items[_sel], delta);
 
 			if (_isQuickBattle == false)
-				_base->getStorageItems()->addItem(_items[_sel], qtyDelta);
+				_base->getStorageItems()->addItem(_items[_sel], delta);
 		}
 
-		updateQuantity();
+		updateListrow();
 	}
 }
 
 /**
  * Updates the displayed quantities of the selected row-item in the list.
  */
-void CraftEquipmentState::updateQuantity() const // private.
+void CraftEquipmentState::updateListrow() const // private.
 {
 	const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
 
@@ -662,9 +658,8 @@ void CraftEquipmentState::updateQuantity() const // private.
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
 						.arg(_craft->getLoadCapacity())
 						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
-
-	displayExtraButtons();
-	calculateTacticalCost();
+	calcTacticalCost();
+	showExtraButtons();
 }
 
 /**
@@ -678,7 +673,7 @@ void CraftEquipmentState::btnUnloadCraftClick(Action*) // private.
 			_sel != _items.size();
 			++_sel)
 	{
-		moveLeftByValue(std::numeric_limits<int>::max());
+		leftByValue(std::numeric_limits<int>::max());
 	}
 }
 

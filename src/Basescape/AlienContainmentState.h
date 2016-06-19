@@ -126,11 +126,11 @@ private:
 		/// Decreases the quantity of an aLien by one.
 		void onLeft();
 		/// Decreases the quantity of an aLien by a given value.
-		void leftByValue(int change);
+		void leftByValue(int delta);
 		/// Increases the quantity of an aLien by one.
 		void onRight();
 		/// Increases the quantity of an aLien by a given value.
-		void rightByValue(int change);
+		void rightByValue(int delta);
 
 		/// Handler for clicking the MiniBase view.
 		void miniClick(Action* action);
