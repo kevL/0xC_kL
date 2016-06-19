@@ -101,12 +101,14 @@ private:
 	std::vector<Craft*> _crafts;
 	std::vector<Soldier*> _soldiers;
 
+	/// Gets distance between bases.
+	double getDistance() const;
+
 	/// Gets cost of selected.
 	int getCost() const;
 	/// Gets quantity of selected at source Base.
 	int getSourceQuantity() const;
-	/// Gets distance between bases.
-	double getDistance() const;
+
 	/// Gets type of selected.
 	PurchaseSellTransferType getTransferType(size_t sel) const;
 	/// Gets index of selected item-type.
@@ -115,7 +117,10 @@ private:
 	size_t getCraftIndex(size_t sel) const;
 
 	/// Updates the quantity-strings of selected row.
-	void update();
+	void updateListrow();
+
+	/// Gets quantity to change by.
+	int stepDelta() const;
 
 
 	public:
@@ -128,8 +133,6 @@ private:
 
 		/// Initializes the Transfer menu, when cancelling TransferConfirmState.
 		void init() override;
-		/// Runs the timers.
-		void think() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
@@ -148,14 +151,17 @@ private:
 		/// Handler for releasing a Decrease arrow in the list.
 		void lstRightArrowRelease(Action* action);
 
+		/// Runs the timers.
+		void think() override;
+
 		/// Increases the quantity of an item by one.
-		void increase();
+		void onIncrease();
 		/// Increases the quantity of an item by the given value.
-		void increaseByValue(int qtyDelta);
+		void increaseByValue(int delta);
 		/// Decreases the quantity of an item by one.
-		void decrease();
+		void onDecrease();
 		/// Decreases the quantity of an item by the given value.
-		void decreaseByValue(int qtyDelta);
+		void decreaseByValue(int delta);
 
 		/// Gets the total cost of the transfer.
 		int getTotalCost() const;

@@ -181,10 +181,10 @@ TransferItemsState::TransferItemsState(
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& TransferItemsState::increase);
+	_timerInc->onTimer((StateHandler)& TransferItemsState::onIncrease);
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& TransferItemsState::decrease);
+	_timerDec->onTimer((StateHandler)& TransferItemsState::onDecrease);
 }
 
 /**
@@ -485,17 +485,6 @@ void TransferItemsState::init()
 }
 
 /**
- * Runs the arrow timers.
- */
-void TransferItemsState::think()
-{
-	State::think();
-
-	_timerInc->think(this, nullptr);
-	_timerDec->think(this, nullptr);
-}
-
-/**
  * Transfers the selected items.
  * @param action - pointer to an Action
  */
@@ -622,21 +611,18 @@ void TransferItemsState::lstLeftArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			_error.clear();
-			increaseByValue(std::numeric_limits<int>::max());
-			break;
-
 		case SDL_BUTTON_LEFT:
 			_error.clear();
 
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				increaseByValue(10);
-			else
-				increaseByValue(1);
-
+			increaseByValue(stepDelta());
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerInc->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			_error.clear();
+
+			increaseByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -660,18 +646,14 @@ void TransferItemsState::lstRightArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			decreaseByValue(std::numeric_limits<int>::max());
-			break;
-
 		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				decreaseByValue(10);
-			else
-				decreaseByValue(1);
-
+			decreaseByValue(stepDelta());
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			decreaseByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -686,71 +668,30 @@ void TransferItemsState::lstRightArrowRelease(Action* action)
 }
 
 /**
- * Gets the transfer cost of the currently selected item.
- * @note All prices increased tenfold.
- * @return, transfer cost
+ * Runs the arrow timers.
  */
-int TransferItemsState::getCost() const // private.
+void TransferItemsState::think()
 {
-	double cost;
-	switch (getTransferType(_sel))
-	{
-		case PST_ITEM:
-			{
-				if (_items[getItemIndex(_sel)] == "STR_ALIEN_ALLOYS")
-					cost = 0.1;
-				else if (_items[getItemIndex(_sel)] == _game->getRuleset()->getAlienFuelType())
-					cost = 1.;
-				else if (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->isLiveAlien() == true)
-					cost = 200.;
-				else
-					cost = 10.;
-			}
-			break;
+	State::think();
 
-		case PST_CRAFT:
-			cost = 1000.;
-			break;
-
-		default:
-			cost = 100.;
-	}
-	return static_cast<int>(std::ceil(cost * _distance));
-}
-
-/**
- * Gets the quantity of the currently selected type on the base.
- * @return, type quantity
- */
-int TransferItemsState::getSourceQuantity() const // private.
-{
-	switch (getTransferType(_sel))
-	{
-		case PST_ITEM:		return _baseSource->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
-		case PST_SCIENTIST:	return _baseSource->getScientists();
-		case PST_ENGINEER:	return _baseSource->getEngineers();
-	}
-	return 1; // soldier, craft
+	_timerInc->think(this, nullptr);
+	_timerDec->think(this, nullptr);
 }
 
 /**
  * Increases the quantity of the selected item to transfer by one.
  */
-void TransferItemsState::increase()
+void TransferItemsState::onIncrease()
 {
 	_timerInc->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		increaseByValue(10);
-	else
-		increaseByValue(1);
+	increaseByValue(stepDelta());
 }
 
 /**
  * Increases the quantity of the selected item to transfer.
- * @param qtyDelta - how many to add
+ * @param delta - quantity to add
  */
-void TransferItemsState::increaseByValue(int qtyDelta)
+void TransferItemsState::increaseByValue(int delta)
 {
 	if (_error.empty() == false)
 		_error.clear();
@@ -778,14 +719,14 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 						else
 							allowed = std::numeric_limits<double>::max();
 
-						qtyDelta = std::min(qtyDelta,
-											std::min(static_cast<int>(allowed),
-													 getSourceQuantity() - _transferQty[_sel]));
-						_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
-						_baseQty[_sel] -= qtyDelta;
-						_destQty[_sel] += qtyDelta;
-						_transferQty[_sel] += qtyDelta;
-						_costTotal += getCost() * qtyDelta;
+						delta = std::min(delta,
+										 std::min(static_cast<int>(allowed),
+												  getSourceQuantity() - _transferQty[_sel]));
+						_storeSize += static_cast<double>(delta) * storeSizePer;
+						_baseQty[_sel] -= delta;
+						_destQty[_sel] += delta;
+						_transferQty[_sel] += delta;
+						_costTotal += getCost() * delta;
 					}
 				}
 				else // aLien.
@@ -797,14 +738,14 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 					}
 					else
 					{
-						qtyDelta = std::min(qtyDelta,
-											std::min(_baseTarget->getFreeContainment() - _qtyAlien,
-													 getSourceQuantity() - _transferQty[_sel]));
-						_qtyAlien += qtyDelta;
-						_baseQty[_sel] -= qtyDelta;
-						_destQty[_sel] += qtyDelta;
-						_transferQty[_sel] += qtyDelta;
-						_costTotal += getCost() * qtyDelta;
+						delta = std::min(delta,
+										 std::min(_baseTarget->getFreeContainment() - _qtyAlien,
+												  getSourceQuantity() - _transferQty[_sel]));
+						_qtyAlien += delta;
+						_baseQty[_sel] -= delta;
+						_destQty[_sel] += delta;
+						_transferQty[_sel] += delta;
+						_costTotal += getCost() * delta;
 					}
 				}
 				break;
@@ -827,14 +768,14 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 					_error = tr("STR_NO_FREE_ACCOMMODATION");
 				else
 				{
-					qtyDelta = std::min(qtyDelta,
-										std::min(_baseTarget->getFreeQuarters() - _qtyPersonnel,
-												 getSourceQuantity() - _transferQty[_sel]));
-					_qtyPersonnel += qtyDelta;
-					_baseQty[_sel] -= qtyDelta;
-					_destQty[_sel] += qtyDelta;
-					_transferQty[_sel] += qtyDelta;
-					_costTotal += getCost() * qtyDelta;
+					delta = std::min(delta,
+									 std::min(_baseTarget->getFreeQuarters() - _qtyPersonnel,
+											  getSourceQuantity() - _transferQty[_sel]));
+					_qtyPersonnel += delta;
+					_baseQty[_sel] -= delta;
+					_destQty[_sel] += delta;
+					_transferQty[_sel] += delta;
+					_costTotal += getCost() * delta;
 				}
 		}
 
@@ -851,33 +792,29 @@ void TransferItemsState::increaseByValue(int qtyDelta)
 												uiRule->getElement("errorPalette")->color));
 		}
 		else
-			update();
+			updateListrow();
 	}
 }
 
 /**
  * Decreases the quantity of the selected item to transfer by one.
  */
-void TransferItemsState::decrease()
+void TransferItemsState::onDecrease()
 {
 	_timerDec->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		decreaseByValue(10);
-	else
-		decreaseByValue(1);
+	decreaseByValue(stepDelta());
 }
 
 /**
  * Decreases the quantity of the selected row to transfer.
- * @param qtyDelta - how many to remove
+ * @param delta - quantity to subtract
  */
-void TransferItemsState::decreaseByValue(int qtyDelta)
+void TransferItemsState::decreaseByValue(int delta)
 {
 	if (_transferQty[_sel] > 0)
 	{
-		qtyDelta = std::min(qtyDelta,
-							_transferQty[_sel]);
+		delta = std::min(delta,
+						_transferQty[_sel]);
 
 		switch (getTransferType(_sel))
 		{
@@ -885,9 +822,9 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 			{
 				const RuleItem* const itRule (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)]));
 				if (itRule->isLiveAlien() == false)
-					_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
+					_storeSize -= itRule->getStoreSize() * static_cast<double>(delta);
 				else
-					_qtyAlien -= qtyDelta;
+					_qtyAlien -= delta;
 				break;
 			}
 
@@ -896,22 +833,22 @@ void TransferItemsState::decreaseByValue(int qtyDelta)
 				break;
 
 			default: // soldier, scientist, engineer
-				_qtyPersonnel -= qtyDelta;
+				_qtyPersonnel -= delta;
 		}
 
-		_baseQty[_sel] += qtyDelta;
-		_destQty[_sel] -= qtyDelta;
-		_transferQty[_sel] -= qtyDelta;
-		_costTotal -= getCost() * qtyDelta;
+		_baseQty[_sel] += delta;
+		_destQty[_sel] -= delta;
+		_transferQty[_sel] -= delta;
+		_costTotal -= getCost() * delta;
 
-		update();
+		updateListrow();
 	}
 }
 
 /**
  * Updates the quantity-strings of the selected row.
  */
-void TransferItemsState::update() // private.
+void TransferItemsState::updateListrow() // private.
 {
 	_lstItems->setCellText(_sel, 1u, Text::intWide(_baseQty[_sel]));
 	_lstItems->setCellText(_sel, 2u, Text::intWide(_transferQty[_sel]));
@@ -1004,6 +941,18 @@ void TransferItemsState::update() // private.
 }
 
 /**
+ * Gets quantity to change by.
+ * @return, 10 if CTRL is pressed else 1
+ */
+int TransferItemsState::stepDelta() const // private.
+{
+	if ((SDL_GetModState() & KMOD_CTRL) == 0)
+		return 1;
+
+	return 10;
+}
+
+/**
  * Gets the total cost of the current Transfer.
  * @return, total cost
  */
@@ -1043,6 +992,55 @@ double TransferItemsState::getDistance() const // private.
 }
 
 /**
+ * Gets the transfer cost of the currently selected item.
+ * @note All prices increased tenfold.
+ * @return, transfer cost
+ */
+int TransferItemsState::getCost() const // private.
+{
+	double cost;
+	switch (getTransferType(_sel))
+	{
+		case PST_ITEM:
+			{
+				if (_items[getItemIndex(_sel)] == "STR_ALIEN_ALLOYS")
+					cost = 0.1;
+				else if (_items[getItemIndex(_sel)] == _game->getRuleset()->getAlienFuelType())
+					cost = 1.;
+				else if (_game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->isLiveAlien() == true)
+					cost = 200.;
+				else
+					cost = 10.;
+			}
+			break;
+
+		case PST_CRAFT:
+			cost = 1000.;
+			break;
+
+		default:
+			cost = 100.;
+	}
+	return static_cast<int>(std::ceil(cost * _distance));
+}
+
+/**
+ * Gets the quantity of the currently selected type on the base.
+ * @return, type quantity
+ */
+int TransferItemsState::getSourceQuantity() const // private.
+{
+	switch (getTransferType(_sel))
+	{
+		case PST_SCIENTIST:	return _baseSource->getScientists();
+		case PST_ENGINEER:	return _baseSource->getEngineers();
+		case PST_ITEM:
+			return _baseSource->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
+	}
+	return 1; // soldier, craft
+}
+
+/**
  * Gets the type of selected Item.
  * @param sel - the selected item
  * @return, PurchaseSellTransferType (Base.h)
@@ -1051,17 +1049,10 @@ PurchaseSellTransferType TransferItemsState::getTransferType(size_t sel) const /
 {
 	size_t rowCutoff (_soldiers.size());
 
-	if (sel < rowCutoff)
-		return PST_SOLDIER;
-
-	if (sel < (rowCutoff += _crafts.size()))
-		return PST_CRAFT;
-
-	if (sel < (rowCutoff += _hasSci))
-		return PST_SCIENTIST;
-
-	if (sel < (rowCutoff + _hasEng))
-		return PST_ENGINEER;
+	if (sel <  rowCutoff)						return PST_SOLDIER;
+	if (sel < (rowCutoff += _crafts.size()))	return PST_CRAFT;
+	if (sel < (rowCutoff += _hasSci))			return PST_SCIENTIST;
+	if (sel < (rowCutoff + _hasEng))			return PST_ENGINEER;
 
 	return PST_ITEM;
 }
