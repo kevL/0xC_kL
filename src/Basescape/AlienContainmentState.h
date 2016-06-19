@@ -80,19 +80,19 @@ private:
 		* _btnOk;
 	TextList* _lstAliens;
 	Timer
-		* _timerDec,
-		* _timerInc;
+		* _timerLeft,
+		* _timerRight;
 	Window* _window;
 
-	std::vector<int> _qty;
+	std::vector<int> _qtysCorpsify;
 	std::vector<std::string> _aliens;
 
 	std::vector<Base*>* _baseList;
 
-	/// Gets selected quantity.
-	int getQuantity();
-	/// Updates the quantity-strings of the selected alien.
-	void update();
+	/// Gets quantity of the selected alien at the Base.
+	int getBaseQuantity();
+	/// Updates the list-row for the selected alien.
+	void updateListrow();
 
 
 	public:
@@ -114,23 +114,23 @@ private:
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
 
-		/// Handler for pressing a Decrease arrow in the list.
-		void lstRightArrowPress(Action* action);
-		/// Handler for releasing a Decrease arrow in the list.
-		void lstRightArrowRelease(Action* action);
-		/// Handler for clicking a Decrease arrow in the list.
+		/// Handler for clicking a decrease-arrow in the list.
 		void lstLeftArrowPress(Action* action);
-		/// Handler for releasing an Increase arrow in the list.
+		/// Handler for releasing a decrease-arrow in the list.
 		void lstLeftArrowRelease(Action* action);
+		/// Handler for pressing an increase-arrow in the list.
+		void lstRightArrowPress(Action* action);
+		/// Handler for releasing an increase-arrow in the list.
+		void lstRightArrowRelease(Action* action);
 
-		/// Increases the quantity of an aLien by one.
-		void increase();
-		/// Increases the quantity of an aLien by the given value.
-		void increaseByValue(int change);
 		/// Decreases the quantity of an aLien by one.
-		void decrease();
-		/// Decreases the quantity of an aLien by the given value.
-		void decreaseByValue(int change);
+		void onLeft();
+		/// Decreases the quantity of an aLien by a given value.
+		void leftByValue(int change);
+		/// Increases the quantity of an aLien by one.
+		void onRight();
+		/// Increases the quantity of an aLien by a given value.
+		void rightByValue(int change);
 
 		/// Handler for clicking the MiniBase view.
 		void miniClick(Action* action);

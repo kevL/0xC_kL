@@ -178,18 +178,18 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->setBackground(_window);
 	_lstAliens->setSelectable();
 
-	_lstAliens->onRightArrowPress(	(ActionHandler)& AlienContainmentState::lstRightArrowPress);
-	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstRightArrowRelease);
-
 	_lstAliens->onLeftArrowPress(	(ActionHandler)& AlienContainmentState::lstLeftArrowPress);
 	_lstAliens->onLeftArrowRelease(	(ActionHandler)& AlienContainmentState::lstLeftArrowRelease);
 
+	_lstAliens->onRightArrowPress(	(ActionHandler)& AlienContainmentState::lstRightArrowPress);
+	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstRightArrowRelease);
 
-	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& AlienContainmentState::increase);
 
-	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& AlienContainmentState::decrease);
+	_timerLeft = new Timer(Timer::SCROLL_SLOW);
+	_timerLeft->onTimer((StateHandler)& AlienContainmentState::onLeft);
+
+	_timerRight = new Timer(Timer::SCROLL_SLOW);
+	_timerRight->onTimer((StateHandler)& AlienContainmentState::onRight);
 }
 
 /**
@@ -197,8 +197,8 @@ AlienContainmentState::AlienContainmentState(
  */
 AlienContainmentState::~AlienContainmentState()
 {
-	delete _timerInc;
-	delete _timerDec;
+	delete _timerRight;
+	delete _timerLeft;
 }
 
 /**
@@ -211,7 +211,7 @@ void AlienContainmentState::init()
 	_txtBaseLabel->setText(_base->getName());
 
 	_lstAliens->clearList();
-	_qty.clear();
+	_qtysCorpsify.clear();
 	_aliens.clear();
 
 	const RuleItem* itRule;
@@ -248,8 +248,8 @@ void AlienContainmentState::init()
 		{
 			if ((qtyAliens = _base->getStorageItems()->getItemQuantity(*i)) != 0) // get Qty of each aLien-type in this Base's stores.
 			{
-				_qty.push_back(0);		// put it in the _qty <vector> as (int)
-				_aliens.push_back(*i);	// put its name in the _aliens <vector> as (string)
+				_qtysCorpsify.push_back(0);
+				_aliens.push_back(*i);
 
 				std::wstring rpQty;
 				const std::vector<std::string>::const_iterator j (std::find(
@@ -282,7 +282,7 @@ void AlienContainmentState::init()
 			i != interrogations.end();
 			++i)
 	{
-		_qty.push_back(0);
+		_qtysCorpsify.push_back(0);
 		_aliens.push_back(*i);
 
 		_lstAliens->addRow(
@@ -291,7 +291,7 @@ void AlienContainmentState::init()
 						L"0",L"0",
 						tr("STR_YES").c_str());
 		_lstAliens->setRowColor(
-							_qty.size() - 1u,
+							_qtysCorpsify.size() - 1u,
 							_lstAliens->getSecondaryColor());
 	}
 
@@ -318,8 +318,8 @@ void AlienContainmentState::think()
 {
 	State::think();
 
-	_timerInc->think(this, nullptr);
-	_timerDec->think(this, nullptr);
+	_timerRight->think(this, nullptr);
+	_timerLeft->think(this, nullptr);
 }
 
 /**
@@ -330,15 +330,15 @@ void AlienContainmentState::btnOkClick(Action*)
 {
 	for (size_t
 			i = 0u;
-			i != _qty.size();
+			i != _qtysCorpsify.size();
 			++i)
 	{
-		if (_qty[i] != 0)
+		if (_qtysCorpsify[i] != 0)
 		{
-			_base->getStorageItems()->removeItem(_aliens[i], _qty[i]);
+			_base->getStorageItems()->removeItem(_aliens[i], _qtysCorpsify[i]);
 			_base->getStorageItems()->addItem(
 										_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(_aliens[i])->getArmorType())->getCorpseGeoscape(),
-										_qty[i]);
+										_qtysCorpsify[i]);
 		}
 	}
 
@@ -361,37 +361,6 @@ void AlienContainmentState::btnCancelClick(Action*)
 }
 
 /**
- * Starts increasing the alien count.
- * @param action - pointer to an Action
- */
-void AlienContainmentState::lstRightArrowPress(Action* action)
-{
-	_sel = _lstAliens->getSelectedRow();
-
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_LEFT:
-			increaseByValue(1);
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			_timerInc->start();
-			break;
-
-		case SDL_BUTTON_RIGHT:
-			increaseByValue(std::numeric_limits<int>::max());
-	}
-}
-
-/**
- * Stops increasing the alien count.
- * @param action - pointer to an Action
- */
-void AlienContainmentState::lstRightArrowRelease(Action* action)
-{
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		_timerInc->stop();
-}
-
-/**
  * Starts decreasing the alien count.
  * @param action - pointer to an Action
  */
@@ -402,13 +371,13 @@ void AlienContainmentState::lstLeftArrowPress(Action* action)
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
-			decreaseByValue(1);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
-			_timerDec->start();
+			leftByValue(1);
+			_timerLeft->setInterval(Timer::SCROLL_SLOW);
+			_timerLeft->start();
 			break;
 
 		case SDL_BUTTON_RIGHT:
-			decreaseByValue(std::numeric_limits<int>::max());
+			leftByValue(std::numeric_limits<int>::max());
 	}
 }
 
@@ -419,83 +388,114 @@ void AlienContainmentState::lstLeftArrowPress(Action* action)
 void AlienContainmentState::lstLeftArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		_timerDec->stop();
+		_timerLeft->stop();
 }
 
 /**
- * Increases the quantity of the selected alien to exterminate by Timer tick.
+ * Starts increasing the alien count.
+ * @param action - pointer to an Action
  */
-void AlienContainmentState::increase()
+void AlienContainmentState::lstRightArrowPress(Action* action)
 {
-	_timerInc->setInterval(Timer::SCROLL_FAST);
-	increaseByValue(1);
-}
+	_sel = _lstAliens->getSelectedRow();
 
-/**
- * Increases the quantity of the selected alien to exterminate.
- * @param change - how much to add
- */
-void AlienContainmentState::increaseByValue(int change)
-{
-	const int qtyType (getQuantity() - _qty[_sel]);
-	if (qtyType > 0)
+	switch (action->getDetails()->button.button)
 	{
-		change = std::min(change, qtyType);
-		_qty[_sel] += change;
-		_fishFood += change;
-		update();
+		case SDL_BUTTON_LEFT:
+			rightByValue(1);
+			_timerRight->setInterval(Timer::SCROLL_SLOW);
+			_timerRight->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			rightByValue(std::numeric_limits<int>::max());
 	}
+}
+
+/**
+ * Stops increasing the alien count.
+ * @param action - pointer to an Action
+ */
+void AlienContainmentState::lstRightArrowRelease(Action* action)
+{
+	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		_timerRight->stop();
 }
 
 /**
  * Decreases the quantity of the selected alien to exterminate by Timer tick.
  */
-void AlienContainmentState::decrease()
+void AlienContainmentState::onLeft()
 {
-	_timerDec->setInterval(Timer::SCROLL_FAST);
-	decreaseByValue(1);
+	_timerLeft->setInterval(Timer::SCROLL_FAST);
+	leftByValue(1);
 }
 
 /**
  * Decreases the quantity of the selected alien to exterminate.
  * @param change - how much to remove
  */
-void AlienContainmentState::decreaseByValue(int change)
+void AlienContainmentState::leftByValue(int change)
 {
-	if (_qty[_sel] > 0)
+	if (_qtysCorpsify[_sel] > 0)
 	{
-		change = std::min(change, _qty[_sel]);
-		_qty[_sel] -= change;
+		change = std::min(change, _qtysCorpsify[_sel]);
+		_qtysCorpsify[_sel] -= change;
 		_fishFood -= change;
-		update();
+		updateListrow();
 	}
 }
 
 /**
- * Gets the quantity of the currently selected alien on the base.
+ * Increases the quantity of the selected alien to exterminate by Timer tick.
+ */
+void AlienContainmentState::onRight()
+{
+	_timerRight->setInterval(Timer::SCROLL_FAST);
+	rightByValue(1);
+}
+
+/**
+ * Increases the quantity of the selected alien to exterminate.
+ * @param change - how much to add
+ */
+void AlienContainmentState::rightByValue(int change)
+{
+	const int qtyType (getBaseQuantity() - _qtysCorpsify[_sel]);
+	if (qtyType > 0)
+	{
+		change = std::min(change, qtyType);
+		_qtysCorpsify[_sel] += change;
+		_fishFood += change;
+		updateListrow();
+	}
+}
+
+/**
+ * Gets the quantity of the currently selected alien at the Base.
  * @return, quantity of alien
  */
-int AlienContainmentState::getQuantity() // private.
+int AlienContainmentState::getBaseQuantity() // private.
 {
 	return _base->getStorageItems()->getItemQuantity(_aliens[_sel]);
 }
 
 /**
- * Updates the row (quantity & color) of the selected aLien species.
+ * Updates the currently selected-row's quantity & color.
  * @note Also determines if the OK button should be in/visible.
  */
-void AlienContainmentState::update() // private.
+void AlienContainmentState::updateListrow() // private.
 {
 	Uint8 color;
-	if (_qty[_sel] != 0)
+	if (_qtysCorpsify[_sel] != 0)
 		color = _lstAliens->getSecondaryColor();
 	else if (_game->getSavedGame()->isResearched(_game->getRuleset()->getItemRule(_aliens[_sel])->getType()) == false)
 		color = YELLOW;
 	else
 		color = _lstAliens->getColor();
 
-	_lstAliens->setCellText(_sel, 1u, Text::intWide(getQuantity() - _qty[_sel]));	// qty still in Containment
-	_lstAliens->setCellText(_sel, 2u, Text::intWide(_qty[_sel]));					// qty to exterminate
+	_lstAliens->setCellText(_sel, 1u, Text::intWide(getBaseQuantity() - _qtysCorpsify[_sel]));	// qty still in Containment
+	_lstAliens->setCellText(_sel, 2u, Text::intWide(_qtysCorpsify[_sel]));						// qty to exterminate
 	_lstAliens->setRowColor(_sel, color);
 
 
