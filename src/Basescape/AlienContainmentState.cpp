@@ -178,13 +178,11 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->setBackground(_window);
 	_lstAliens->setSelectable();
 
-	_lstAliens->onLeftArrowPress(	(ActionHandler)& AlienContainmentState::lstLeftArrowPress);
-	_lstAliens->onLeftArrowRelease(	(ActionHandler)& AlienContainmentState::lstLeftArrowRelease);
-	_lstAliens->onLeftArrowClick(	(ActionHandler)& AlienContainmentState::lstLeftArrowClick);
-
 	_lstAliens->onRightArrowPress(	(ActionHandler)& AlienContainmentState::lstRightArrowPress);
 	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstRightArrowRelease);
-	_lstAliens->onRightArrowClick(	(ActionHandler)& AlienContainmentState::lstRightArrowClick);
+
+	_lstAliens->onLeftArrowPress(	(ActionHandler)& AlienContainmentState::lstLeftArrowPress);
+	_lstAliens->onLeftArrowRelease(	(ActionHandler)& AlienContainmentState::lstLeftArrowRelease);
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
@@ -370,8 +368,17 @@ void AlienContainmentState::lstRightArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		_timerInc->start();
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			increaseByValue(1);
+			_timerInc->setInterval(Timer::SCROLL_SLOW);
+			_timerInc->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			increaseByValue(std::numeric_limits<int>::max());
+	}
 }
 
 /**
@@ -385,24 +392,6 @@ void AlienContainmentState::lstRightArrowRelease(Action* action)
 }
 
 /**
- * Increases the selected alien count.
- * @param action - pointer to an Action
- */
-void AlienContainmentState::lstRightArrowClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_LEFT:
-			increaseByValue(1);
-			_timerInc->setInterval(Timer::SCROLL_SLOW);
-			break;
-
-		case SDL_BUTTON_RIGHT:
-			increaseByValue(std::numeric_limits<int>::max());
-	}
-}
-
-/**
  * Starts decreasing the alien count.
  * @param action - pointer to an Action
  */
@@ -410,8 +399,17 @@ void AlienContainmentState::lstLeftArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		_timerDec->start();
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			decreaseByValue(1);
+			_timerDec->setInterval(Timer::SCROLL_SLOW);
+			_timerDec->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			decreaseByValue(std::numeric_limits<int>::max());
+	}
 }
 
 /**
@@ -422,24 +420,6 @@ void AlienContainmentState::lstLeftArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->stop();
-}
-
-/**
- * Decreases the selected alien count.
- * @param action - pointer to an Action
- */
-void AlienContainmentState::lstLeftArrowClick(Action* action)
-{
-	switch (action->getDetails()->button.button)
-	{
-		case SDL_BUTTON_LEFT:
-			decreaseByValue(1);
-			_timerDec->setInterval(Timer::SCROLL_SLOW);
-			break;
-
-		case SDL_BUTTON_RIGHT:
-			decreaseByValue(std::numeric_limits<int>::max());
-	}
 }
 
 /**

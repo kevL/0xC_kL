@@ -119,13 +119,9 @@ private:
 		/// Handler for releasing a Decrease arrow in the list.
 		void lstRightArrowRelease(Action* action);
 		/// Handler for clicking a Decrease arrow in the list.
-		void lstRightArrowClick(Action* action);
-		/// Handler for pressing an Increase arrow in the list.
 		void lstLeftArrowPress(Action* action);
 		/// Handler for releasing an Increase arrow in the list.
 		void lstLeftArrowRelease(Action* action);
-		/// Handler for clicking an Increase arrow in the list.
-		void lstLeftArrowClick(Action* action);
 
 		/// Increases the quantity of an aLien by one.
 		void increase();

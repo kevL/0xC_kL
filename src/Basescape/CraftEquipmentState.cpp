@@ -163,11 +163,11 @@ CraftEquipmentState::CraftEquipmentState(
 	_lstEquipment->setSelectable();
 	_lstEquipment->setArrow(189, ARROW_HORIZONTAL);
 
-	_lstEquipment->onLeftArrowPress(	(ActionHandler)& CraftEquipmentState::lstLeftArrowPress);
-	_lstEquipment->onLeftArrowRelease(	(ActionHandler)& CraftEquipmentState::lstLeftArrowRelease);
-
 	_lstEquipment->onRightArrowPress(	(ActionHandler)& CraftEquipmentState::lstRightArrowPress);
 	_lstEquipment->onRightArrowRelease(	(ActionHandler)& CraftEquipmentState::lstRightArrowRelease);
+
+	_lstEquipment->onLeftArrowPress(	(ActionHandler)& CraftEquipmentState::lstLeftArrowPress);
+	_lstEquipment->onLeftArrowRelease(	(ActionHandler)& CraftEquipmentState::lstLeftArrowRelease);
 
 
 	_timerLeft = new Timer(Timer::SCROLL_SLOW);
