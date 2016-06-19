@@ -168,9 +168,6 @@ SellState::SellState(Base* const base)
 	_lstItems->onRightArrowPress(	(ActionHandler)& SellState::lstRightArrowPress);
 	_lstItems->onRightArrowRelease(	(ActionHandler)& SellState::lstRightArrowRelease);
 
-//	_lstItems->setAllowScrollOnArrowButtons(!_allowChangeListValuesByMouseWheel);
-//	_lstItems->onMousePress((ActionHandler)& SellState::lstMousePress);
-
 
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
@@ -341,11 +338,12 @@ SellState::SellState(Base* const base)
 
 	_lstItems->scrollTo(_base->getRecallRow(REC_SELL));
 
+
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& SellState::increase);
+	_timerInc->onTimer((StateHandler)& SellState::onIncrease);
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& SellState::decrease);
+	_timerDec->onTimer((StateHandler)& SellState::onDecrease);
 }
 
 /**
@@ -355,17 +353,6 @@ SellState::~SellState()
 {
 	delete _timerInc;
 	delete _timerDec;
-}
-
-/**
- * Runs the arrow timers.
- */
-void SellState::think()
-{
-	State::think();
-
-	_timerInc->think(this, nullptr);
-	_timerDec->think(this, nullptr);
 }
 
 /**
@@ -445,7 +432,6 @@ void SellState::btnOkClick(Action*)
 			}
 		}
 	}
-
 	_game->popState();
 }
 
@@ -469,18 +455,14 @@ void SellState::lstLeftArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			changeByValue(std::numeric_limits<int>::max(), 1);
-			break;
-
 		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				changeByValue(10,1);
-			else
-				changeByValue(1,1);
-
+			changeByValue(stepDelta(), +1);
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerInc->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			changeByValue(std::numeric_limits<int>::max(), +1);
 	}
 }
 
@@ -504,18 +486,14 @@ void SellState::lstRightArrowPress(Action* action)
 
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_RIGHT:
-			changeByValue(std::numeric_limits<int>::max(), -1);
-			break;
-
 		case SDL_BUTTON_LEFT:
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				changeByValue(10,-1);
-			else
-				changeByValue(1,-1);
-
+			changeByValue(stepDelta(), -1);
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->start();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			changeByValue(std::numeric_limits<int>::max(), -1);
 	}
 }
 
@@ -530,70 +508,32 @@ void SellState::lstRightArrowRelease(Action* action)
 }
 
 /**
- * Gets the price of the currently selected item.
- * @return, price of the selected item
+ * Runs the arrow timers.
  */
-int SellState::getPrice() const // private.
+void SellState::think()
 {
-	switch (getSellType(_sel))
-	{
-		case PST_ITEM:
-			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getSellCost();
+	State::think();
 
-		case PST_CRAFT:
-			return _crafts[getCraftIndex(_sel)]->getRules()->getSellCost();
-	}
-	return 0; // soldier, scientist, engineer
-}
-
-/**
- * Gets the quantity of the currently selected item at the Base.
- * @return, quantity of selected item
- */
-int SellState::getBaseQuantity() const // private.
-{
-	switch (getSellType(_sel))
-	{
-		case PST_SOLDIER:
-		case PST_CRAFT:
-			return 1;
-
-		case PST_SCIENTIST:
-			return _base->getScientists();
-
-		case PST_ENGINEER:
-			return _base->getEngineers();
-
-		case PST_ITEM:
-			return _base->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
-	}
-	return 0;
+	_timerInc->think(this, nullptr);
+	_timerDec->think(this, nullptr);
 }
 
 /**
  * Increases the quantity of the selected item to sell by one.
  */
-void SellState::increase()
+void SellState::onIncrease()
 {
 	_timerInc->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		changeByValue(10,1);
-	else
-		changeByValue(1,1);
+	changeByValue(stepDelta(), +1);
 }
 
 /**
  * Decreases the quantity of the selected item to sell by one.
  */
-void SellState::decrease()
+void SellState::onDecrease()
 {
 	_timerDec->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		changeByValue(10,-1);
-	else
-		changeByValue(1,-1);
+	changeByValue(stepDelta(), -1);
 }
 
 /**
@@ -607,7 +547,7 @@ void SellState::changeByValue(
 {
 	switch (dir)
 	{
-		case 1:
+		case +1:
 			if (_sellQty[_sel] >= getBaseQuantity())
 				return;
 
@@ -665,13 +605,13 @@ void SellState::changeByValue(
 			_storeSize -= static_cast<double>(dir * qtyDelta) * itRule->getStoreSize();
 	}
 
-	update();
+	updateListrow();
 }
 
 /**
  * Updates the quantity-strings of the selected item.
  */
-void SellState::update() // private.
+void SellState::updateListrow() // private.
 {
 	_lstItems->setCellText(_sel, 1u, Text::intWide(getBaseQuantity() - _sellQty[_sel]));
 	_lstItems->setCellText(_sel, 2u, Text::intWide(_sellQty[_sel]));
@@ -751,8 +691,7 @@ void SellState::update() // private.
 						case PST_CRAFT:
 						case PST_SOLDIER:
 						case PST_SCIENTIST:
-						case PST_ENGINEER:
-							showOk = true;
+						case PST_ENGINEER: showOk = true;
 					}
 				}
 			}
@@ -773,6 +712,53 @@ void SellState::update() // private.
 }
 
 /**
+ * Gets quantity to change by.
+ * @return, 10 if CTRL is pressed else 1
+ */
+int SellState::stepDelta() const // private.
+{
+	if ((SDL_GetModState() & KMOD_CTRL) == 0)
+		return 1;
+
+	return 10;
+}
+
+/**
+ * Gets the price of the currently selected item.
+ * @return, price of the selected item
+ */
+int SellState::getPrice() const // private.
+{
+	switch (getSellType(_sel))
+	{
+		case PST_ITEM:
+			return _game->getRuleset()->getItemRule(_items[getItemIndex(_sel)])->getSellCost();
+
+		case PST_CRAFT:
+			return _crafts[getCraftIndex(_sel)]->getRules()->getSellCost();
+	}
+	return 0; // soldier, scientist, engineer
+}
+
+/**
+ * Gets the quantity of the currently selected item at the Base.
+ * @return, quantity of selected item
+ */
+int SellState::getBaseQuantity() const // private.
+{
+	switch (getSellType(_sel))
+	{
+		case PST_SOLDIER:
+		case PST_CRAFT:		return 1;
+		case PST_SCIENTIST:	return _base->getScientists();
+		case PST_ENGINEER:	return _base->getEngineers();
+		case PST_ITEM:
+			return _base->getStorageItems()->getItemQuantity(_items[getItemIndex(_sel)]);
+	}
+	return 0;
+}
+
+/**
  * Gets the SellType of the selected item.
  * @param sel - index of currently selected item
  * @return, PurchaseSellTransferType (Base.h)
@@ -781,17 +767,10 @@ PurchaseSellTransferType SellState::getSellType(size_t sel) const // private.
 {
 	size_t rowCutoff (_soldiers.size());
 
-	if (sel < rowCutoff)
-		return PST_SOLDIER;
-
-	if (sel < (rowCutoff += _crafts.size()))
-		return PST_CRAFT;
-
-	if (sel < (rowCutoff += _hasSci))
-		return PST_SCIENTIST;
-
-	if (sel < (rowCutoff + _hasEng))
-		return PST_ENGINEER;
+	if (sel < rowCutoff)						return PST_SOLDIER;
+	if (sel < (rowCutoff += _crafts.size()))	return PST_CRAFT;
+	if (sel < (rowCutoff += _hasSci))			return PST_SCIENTIST;
+	if (sel < (rowCutoff + _hasEng))			return PST_ENGINEER;
 
 	return PST_ITEM;
 }

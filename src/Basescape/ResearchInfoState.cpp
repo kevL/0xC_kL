@@ -92,7 +92,7 @@ ResearchInfoState::~ResearchInfoState()
 /**
  * Builds dialog.
  */
-void ResearchInfoState::buildUi()
+void ResearchInfoState::buildUi() // private.
 {
 	_fullScreen = false;
 
@@ -185,7 +185,7 @@ void ResearchInfoState::buildUi()
 /**
  * Updates counts of assigned/free scientists and available lab-space.
  */
-void ResearchInfoState::updateInfo()
+void ResearchInfoState::updateInfo() // private.
 {
 	_txtFreeSci->setText(tr("STR_SCIENTISTS_AVAILABLE_UC_")
 								.arg(_base->getScientists()));
@@ -199,7 +199,7 @@ void ResearchInfoState::updateInfo()
  * Exits to the previous screen and either starts or stops a project.
  * @param action - pointer to an Action
  */
-void ResearchInfoState::btnStartStopClick(Action*)
+void ResearchInfoState::btnStartStopClick(Action*) // private.
 {
 	if (_resRule != nullptr)					// start a new project
 	{
@@ -232,7 +232,7 @@ void ResearchInfoState::btnStartStopClick(Action*)
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void ResearchInfoState::btnCancelClick(Action*)
+void ResearchInfoState::btnCancelClick(Action*) // private.
 {
 	if (_resRule != nullptr) delete _project;
 
@@ -243,7 +243,7 @@ void ResearchInfoState::btnCancelClick(Action*)
  * Starts the more Timer.
  * @param action - pointer to an Action
  */
-void ResearchInfoState::morePress(Action* action)
+void ResearchInfoState::morePress(Action* action) // private.
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -262,7 +262,7 @@ void ResearchInfoState::morePress(Action* action)
  * Stops the more Timer.
  * @param action - pointer to an Action
  */
-void ResearchInfoState::moreRelease(Action* action)
+void ResearchInfoState::moreRelease(Action* action) // private.
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerMore->stop();
@@ -272,7 +272,7 @@ void ResearchInfoState::moreRelease(Action* action)
  * Starts the less Timer.
  * @param action - pointer to an Action
  */
-void ResearchInfoState::lessPress(Action* action)
+void ResearchInfoState::lessPress(Action* action) // private.
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -291,7 +291,7 @@ void ResearchInfoState::lessPress(Action* action)
  * Stops the less Timer.
  * @param action - pointer to an Action
  */
-void ResearchInfoState::lessRelease(Action* action)
+void ResearchInfoState::lessRelease(Action* action) // private.
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerLess->stop();
@@ -300,7 +300,7 @@ void ResearchInfoState::lessRelease(Action* action)
 /**
  * Runs state functionality every cycle (used to update the timer).
  */
-void ResearchInfoState::think()
+void ResearchInfoState::think() // private.
 {
 	State::think();
 
@@ -311,7 +311,7 @@ void ResearchInfoState::think()
 /**
  * Adds one scientist to the project if possible.
  */
-void ResearchInfoState::onMore()
+void ResearchInfoState::onMore() // private.
 {
 	_timerMore->setInterval(Timer::SCROLL_FAST);
 	moreByValue(stepDelta());
@@ -321,7 +321,7 @@ void ResearchInfoState::onMore()
  * Adds the given number of scientists to the project if possible.
  * @param delta - quantity of scientists to add
  */
-void ResearchInfoState::moreByValue(int delta)
+void ResearchInfoState::moreByValue(int delta) // private.
 {
 	const int
 		freeScientists (_base->getScientists()),
@@ -342,7 +342,7 @@ void ResearchInfoState::moreByValue(int delta)
 /**
  * Removes one scientist from the project if possible.
  */
-void ResearchInfoState::onLess()
+void ResearchInfoState::onLess() // private.
 {
 	_timerLess->setInterval(Timer::SCROLL_FAST);
 	lessByValue(stepDelta());
@@ -352,7 +352,7 @@ void ResearchInfoState::onLess()
  * Removes the given number of scientists from the project if possible.
  * @param delta - quantity of scientists to subtract
  */
-void ResearchInfoState::lessByValue(int delta)
+void ResearchInfoState::lessByValue(int delta) // private.
 {
 	const int assigned (_project->getAssignedScientists());
 	if (assigned != 0)
@@ -370,7 +370,7 @@ void ResearchInfoState::lessByValue(int delta)
  * @note what were these guys smokin'
  * @return, 10 if CTRL is pressed else 1
  */
-int ResearchInfoState::stepDelta() const
+int ResearchInfoState::stepDelta() const // private.
 {
 	if ((SDL_GetModState() & KMOD_CTRL) == 0)
 		return 1;

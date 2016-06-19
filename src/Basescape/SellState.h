@@ -91,6 +91,12 @@ private:
 	std::vector<Craft*> _crafts;
 	std::vector<Soldier*> _soldiers;
 
+	/// Updates the quantity-strings of the selected item.
+	void updateListrow();
+
+	/// Gets quantity to change by.
+	int stepDelta() const;
+
 	/// Gets selected price.
 	int getPrice() const;
 	/// Gets selected quantity.
@@ -98,25 +104,18 @@ private:
 
 	/// Gets the type of the selected item.
 	PurchaseSellTransferType getSellType(size_t sel) const;
-
 	/// Gets the index of selected item.
 	size_t getItemIndex(size_t sel) const;
 	/// Gets the index of the selected craft.
 	size_t getCraftIndex(size_t sel) const;
 
-	/// Updates the quantity-strings of the selected item.
-	void update();
-
 
 	public:
-		/// Creates the Sell state.
+		/// Creates a Sell state.
 		explicit SellState(Base* const base);
 //				OptionsOrigin origin = OPT_GEOSCAPE);
 		/// Cleans up the Sell state.
 		~SellState();
-
-		/// Runs the timers.
-		void think() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
@@ -132,11 +131,14 @@ private:
 		/// Handler for releasing a decrease-arrow in the list.
 		void lstRightArrowRelease(Action* action);
 
-		/// Increases the quantity of an item by one.
-		void increase();
-		/// Decreases the quantity of an item by one.
-		void decrease();
-		/// Changes the quantity of an item by the given value.
+		/// Runs the timers.
+		void think() override;
+
+		/// Increases the quantity of an item on Timer tick.
+		void onIncrease();
+		/// Decreases the quantity of an item on Timer tick.
+		void onDecrease();
+		/// Changes the quantity of an item by a given value.
 		void changeByValue(
 				int qtyDelta,
 				int dir);
