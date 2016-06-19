@@ -260,7 +260,7 @@ std::wstring CraftsState::getAltStatus(Craft* const craft) // private.
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void CraftsState::btnOkClick(Action*)

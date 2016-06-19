@@ -324,7 +324,7 @@ void SoldierDiaryOverviewState::setSoldierId(size_t soldierId)
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void SoldierDiaryOverviewState::btnOkClick(Action*)

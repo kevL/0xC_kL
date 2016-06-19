@@ -705,7 +705,7 @@ void InventoryState::updateWounds() // private.
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void InventoryState::btnOkClick(Action*)

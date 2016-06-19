@@ -125,7 +125,7 @@ void BaseNameState::edtLabelChange(Action* action)
 }
 
 /**
- * Returns to the previous screen
+ * Exits to the previous screen
  * @param action - pointer to an Action
  */
 void BaseNameState::btnOkClick(Action*)

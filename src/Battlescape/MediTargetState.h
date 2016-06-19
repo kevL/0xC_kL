@@ -75,7 +75,7 @@ private:
 
 		/// Chooses a unit to apply Medikit to.
 		void lstTargetPress(Action* action);
-		/// Returns to the previous screen.
+		/// Exits to the previous screen.
 		void btnCancelClick(Action* action);
 };
 

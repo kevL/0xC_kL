@@ -514,7 +514,7 @@ void UfoDetectedState::btnCenterClick(Action*)
 }
 
 /**
- * Returns to the previous screen and sets Geoscape timer to 5 seconds.
+ * Exits to the previous screen and sets Geoscape timer to 5 seconds.
  * @param action - pointer to an Action
  */
 void UfoDetectedState::btn5SecClick(Action*)
@@ -525,7 +525,7 @@ void UfoDetectedState::btn5SecClick(Action*)
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void UfoDetectedState::btnCancelClick(Action*)

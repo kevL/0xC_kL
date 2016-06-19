@@ -178,13 +178,13 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->setBackground(_window);
 	_lstAliens->setSelectable();
 
-	_lstAliens->onLeftArrowPress(	(ActionHandler)& AlienContainmentState::lstItemsLeftArrowPress);
-	_lstAliens->onLeftArrowRelease(	(ActionHandler)& AlienContainmentState::lstItemsLeftArrowRelease);
-	_lstAliens->onLeftArrowClick(	(ActionHandler)& AlienContainmentState::lstItemsLeftArrowClick);
+	_lstAliens->onLeftArrowPress(	(ActionHandler)& AlienContainmentState::lstLeftArrowPress);
+	_lstAliens->onLeftArrowRelease(	(ActionHandler)& AlienContainmentState::lstLeftArrowRelease);
+	_lstAliens->onLeftArrowClick(	(ActionHandler)& AlienContainmentState::lstLeftArrowClick);
 
-	_lstAliens->onRightArrowPress(	(ActionHandler)& AlienContainmentState::lstItemsRightArrowPress);
-	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstItemsRightArrowRelease);
-	_lstAliens->onRightArrowClick(	(ActionHandler)& AlienContainmentState::lstItemsRightArrowClick);
+	_lstAliens->onRightArrowPress(	(ActionHandler)& AlienContainmentState::lstRightArrowPress);
+	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstRightArrowRelease);
+	_lstAliens->onRightArrowClick(	(ActionHandler)& AlienContainmentState::lstRightArrowClick);
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
@@ -354,7 +354,7 @@ void AlienContainmentState::btnOkClick(Action*)
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::btnCancelClick(Action*)
@@ -366,7 +366,7 @@ void AlienContainmentState::btnCancelClick(Action*)
  * Starts increasing the alien count.
  * @param action - pointer to an Action
  */
-void AlienContainmentState::lstItemsRightArrowPress(Action* action)
+void AlienContainmentState::lstRightArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
 
@@ -378,18 +378,17 @@ void AlienContainmentState::lstItemsRightArrowPress(Action* action)
  * Stops increasing the alien count.
  * @param action - pointer to an Action
  */
-void AlienContainmentState::lstItemsRightArrowRelease(Action* action)
+void AlienContainmentState::lstRightArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerInc->stop();
 }
 
 /**
- * Increases the selected alien count;
- * by one on left-click, to max on right-click.
+ * Increases the selected alien count.
  * @param action - pointer to an Action
  */
-void AlienContainmentState::lstItemsRightArrowClick(Action* action)
+void AlienContainmentState::lstRightArrowClick(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -407,7 +406,7 @@ void AlienContainmentState::lstItemsRightArrowClick(Action* action)
  * Starts decreasing the alien count.
  * @param action - pointer to an Action
  */
-void AlienContainmentState::lstItemsLeftArrowPress(Action* action)
+void AlienContainmentState::lstLeftArrowPress(Action* action)
 {
 	_sel = _lstAliens->getSelectedRow();
 
@@ -419,18 +418,17 @@ void AlienContainmentState::lstItemsLeftArrowPress(Action* action)
  * Stops decreasing the alien count.
  * @param action - pointer to an Action
  */
-void AlienContainmentState::lstItemsLeftArrowRelease(Action* action)
+void AlienContainmentState::lstLeftArrowRelease(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		_timerDec->stop();
 }
 
 /**
- * Decreases the selected alien count;
- * by one on left-click, to 0 on right-click.
+ * Decreases the selected alien count.
  * @param action - pointer to an Action
  */
-void AlienContainmentState::lstItemsLeftArrowClick(Action* action)
+void AlienContainmentState::lstLeftArrowClick(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -445,16 +443,7 @@ void AlienContainmentState::lstItemsLeftArrowClick(Action* action)
 }
 
 /**
- * Gets the quantity of the currently selected alien on the base.
- * @return, quantity of alien
- */
-int AlienContainmentState::getQuantity() // private.
-{
-	return _base->getStorageItems()->getItemQuantity(_aliens[_sel]);
-}
-
-/**
- * Increases the quantity of the selected alien to exterminate by one.
+ * Increases the quantity of the selected alien to exterminate by Timer tick.
  */
 void AlienContainmentState::increase()
 {
@@ -474,13 +463,12 @@ void AlienContainmentState::increaseByValue(int change)
 		change = std::min(change, qtyType);
 		_qty[_sel] += change;
 		_fishFood += change;
-
 		update();
 	}
 }
 
 /**
- * Decreases the quantity of the selected alien to exterminate by one.
+ * Decreases the quantity of the selected alien to exterminate by Timer tick.
  */
 void AlienContainmentState::decrease()
 {
@@ -504,6 +492,15 @@ void AlienContainmentState::decreaseByValue(int change)
 }
 
 /**
+ * Gets the quantity of the currently selected alien on the base.
+ * @return, quantity of alien
+ */
+int AlienContainmentState::getQuantity() // private.
+{
+	return _base->getStorageItems()->getItemQuantity(_aliens[_sel]);
+}
+
+/**
  * Updates the row (quantity & color) of the selected aLien species.
  * @note Also determines if the OK button should be in/visible.
  */
@@ -518,7 +515,7 @@ void AlienContainmentState::update() // private.
 		color = _lstAliens->getColor();
 
 	_lstAliens->setCellText(_sel, 1u, Text::intWide(getQuantity() - _qty[_sel]));	// qty still in Containment
-	_lstAliens->setCellText(_sel, 2u, Text::intWide(_qty[_sel]));					// qty to torture
+	_lstAliens->setCellText(_sel, 2u, Text::intWide(_qty[_sel]));					// qty to exterminate
 	_lstAliens->setRowColor(_sel, color);
 
 

@@ -250,7 +250,7 @@ void ManufactureInfoState::initProfit() // private.
 }
 
 /**
- * Stops this Production. Returns to the previous screen.
+ * Stops this Production. Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::btnStopClick(Action*) // private.
@@ -260,7 +260,7 @@ void ManufactureInfoState::btnStopClick(Action*) // private.
 }
 
 /**
- * Starts this Production (if new). Returns to the previous screen.
+ * Starts this Production (if new). Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::btnOkClick(Action*) // private.
@@ -274,7 +274,7 @@ void ManufactureInfoState::btnOkClick(Action*) // private.
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  */
 void ManufactureInfoState::exitState() // private.
 {

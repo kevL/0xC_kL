@@ -198,7 +198,7 @@ void ResearchInfoState::updateInfo()
 }
 
 /**
- * Returns to the previous screen and either starts or stops a project.
+ * Exits to the previous screen and either starts or stops a project.
  * @param action - pointer to an Action
  */
 void ResearchInfoState::btnStartStopClick(Action*)
@@ -231,7 +231,7 @@ void ResearchInfoState::btnStartStopClick(Action*)
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ResearchInfoState::btnCancelClick(Action*)

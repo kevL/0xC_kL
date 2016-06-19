@@ -113,18 +113,19 @@ private:
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
-		/// Handler for pressing an Increase arrow in the list.
-		void lstItemsLeftArrowPress(Action* action);
-		/// Handler for releasing an Increase arrow in the list.
-		void lstItemsLeftArrowRelease(Action* action);
-		/// Handler for clicking an Increase arrow in the list.
-		void lstItemsLeftArrowClick(Action* action);
+
 		/// Handler for pressing a Decrease arrow in the list.
-		void lstItemsRightArrowPress(Action* action);
+		void lstRightArrowPress(Action* action);
 		/// Handler for releasing a Decrease arrow in the list.
-		void lstItemsRightArrowRelease(Action* action);
+		void lstRightArrowRelease(Action* action);
 		/// Handler for clicking a Decrease arrow in the list.
-		void lstItemsRightArrowClick(Action* action);
+		void lstRightArrowClick(Action* action);
+		/// Handler for pressing an Increase arrow in the list.
+		void lstLeftArrowPress(Action* action);
+		/// Handler for releasing an Increase arrow in the list.
+		void lstLeftArrowRelease(Action* action);
+		/// Handler for clicking an Increase arrow in the list.
+		void lstLeftArrowClick(Action* action);
 
 		/// Increases the quantity of an aLien by one.
 		void increase();

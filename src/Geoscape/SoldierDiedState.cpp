@@ -97,7 +97,7 @@ SoldierDiedState::~SoldierDiedState()
 {}
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void SoldierDiedState::btnOkClick(Action*)

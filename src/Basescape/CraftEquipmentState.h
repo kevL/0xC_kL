@@ -88,12 +88,20 @@ private:
 
 	/// Updates all values.
 	void update();
-	/// Updates list-values for the selected item.
-	void updateQuantity() const;
-	/// Sets current cost to send the Craft out to battle.
-	void calculateTacticalCost() const;
 	/// Decides whether to show extra buttons - Unload and Inventory.
 	void displayExtraButtons() const;
+	/// Sets current cost to send the Craft out to battle.
+	void calculateTacticalCost() const;
+
+	/// Updates list-values for the selected item.
+	void updateQuantity() const;
+
+	/// Handler for clicking the unload-craft button.
+	void btnUnloadCraftClick(Action* action);
+	/// Handler for clicking the Inventory button.
+	void btnInventoryClick(Action* action);
+	/// Handler for clicking the OK button.
+	void btnOkClick(Action* action);
 
 
 	public:
@@ -109,16 +117,14 @@ private:
 		/// Runs the timers.
 		void think() override;
 
-		/// Handler for clicking the OK button.
-		void btnOkClick(Action* action);
-		/// Handler for pressing a Move Left arrow in the list.
-		void lstLeftArrowPress(Action* action);
-		/// Handler for releasing a Move Left arrow in the list.
-		void lstLeftArrowRelease(Action* action);
 		/// Handler for pressing a Move Right arrow in the list.
 		void lstRightArrowPress(Action* action);
 		/// Handler for releasing a Move Right arrow in the list.
 		void lstRightArrowRelease(Action* action);
+		/// Handler for pressing a Move Left arrow in the list.
+		void lstLeftArrowPress(Action* action);
+		/// Handler for releasing a Move Left arrow in the list.
+		void lstLeftArrowRelease(Action* action);
 
 		/// Moves an item to the Craft.
 		void moveRight();
@@ -128,11 +134,6 @@ private:
 		void moveLeft();
 		/// Moves the given number of items to the Base.
 		void moveLeftByValue(int qtyDelta);
-
-		/// Handler for clicking the unload-craft button.
-		void btnUnloadCraftClick(Action* action);
-		/// Handler for clicking the Inventory button.
-		void btnInventoryClick(Action* action);
 };
 
 }

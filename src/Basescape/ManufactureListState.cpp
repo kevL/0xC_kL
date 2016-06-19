@@ -182,7 +182,7 @@ void ManufactureListState::btnCostsClick(Action*)
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ManufactureListState::btnCancelClick(Action*)

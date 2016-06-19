@@ -120,7 +120,7 @@ NewPossibleResearchState::~NewPossibleResearchState()
 {}
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void NewPossibleResearchState::btnOkClick(Action*)

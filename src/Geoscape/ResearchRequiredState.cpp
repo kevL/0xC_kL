@@ -82,7 +82,7 @@ ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ResearchRequiredState::btnOkClick(Action*)

@@ -159,7 +159,7 @@ void ArticleState::initLayout(bool contrast) // protected.
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ArticleState::btnOkClick(Action*) // protected.

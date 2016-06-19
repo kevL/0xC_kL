@@ -173,7 +173,7 @@ void MultipleTargetsState::popupTarget(Target* const target)
 }
 
 /**
- * Returns to the previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void MultipleTargetsState::btnCancelClick(Action*)
