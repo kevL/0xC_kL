@@ -6689,7 +6689,7 @@ double TileEngine::distancePrecise( // static.
 } */
 
 /**
- * Returns the direction from origin to target.
+ * Gets the direction from origin to target.
  * @param posOrigin - reference to the origin-point of the action
  * @param posTarget - reference to the target-point of the action
  * @return, direction

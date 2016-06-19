@@ -131,7 +131,7 @@ void ScrollBar::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to render this ScrollBar.
+ * Gets the color used to render this ScrollBar.
  * @return, color-value
  */
 Uint8 ScrollBar::getColor() const

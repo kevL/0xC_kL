@@ -1274,7 +1274,7 @@ SavedGame* Ruleset::createSave(Game* const game) const
 }
 
 /**
- * Returns the list of soldier name pools.
+ * Gets the list of soldier name pools.
  * @return, reference to a vector of SoldierNamePool pointers
  *
 const std::vector<SoldierNamePool*>& Ruleset::getPools() const
@@ -1283,7 +1283,7 @@ const std::vector<SoldierNamePool*>& Ruleset::getPools() const
 } */
 
 /**
- * Returns the list of operation title pools.
+ * Gets the list of operation title pools.
  * @return, reference to a vector of OperationPool pointers
  */
 const std::vector<OperationPool*>& Ruleset::getOperations() const
@@ -1292,7 +1292,7 @@ const std::vector<OperationPool*>& Ruleset::getOperations() const
 }
 
 /**
- * Returns the rules for the specified country.
+ * Gets the rules for the specified country.
  * @param id - reference a Country type
  * @return, pointer to Rule for the country
  */
@@ -1306,7 +1306,7 @@ RuleCountry* Ruleset::getCountry(const std::string& id) const
 }
 
 /**
- * Returns the list of all countries provided by the ruleset.
+ * Gets the list of all countries provided by the ruleset.
  * @return, reference to a vector of Country types
  */
 const std::vector<std::string>& Ruleset::getCountriesList() const
@@ -1315,7 +1315,7 @@ const std::vector<std::string>& Ruleset::getCountriesList() const
 }
 
 /**
- * Returns the rules for the specified region.
+ * Gets the rules for the specified region.
  * @param id - reference a Region type
  * @return, pointer to Rule for the region
  */
@@ -1329,7 +1329,7 @@ RuleRegion* Ruleset::getRegion(const std::string& id) const
 }
 
 /**
- * Returns the list of all regions provided by the ruleset.
+ * Gets the list of all regions provided by the ruleset.
  * @return, reference to a vector of Region types
  */
 const std::vector<std::string>& Ruleset::getRegionsList() const
@@ -1338,7 +1338,7 @@ const std::vector<std::string>& Ruleset::getRegionsList() const
 }
 
 /**
- * Returns the rules for the specified base facility.
+ * Gets the rules for the specified base facility.
  * @param id - reference a BaseFacility type
  * @return, pointer to Rule for the facility
  */
@@ -1352,7 +1352,7 @@ RuleBaseFacility* Ruleset::getBaseFacility(const std::string& id) const
 }
 
 /**
- * Returns the list of all base facilities provided by the ruleset.
+ * Gets the list of all base facilities provided by the ruleset.
  * @return, reference to a vector of BaseFacility types
  */
 const std::vector<std::string>& Ruleset::getBaseFacilitiesList() const
@@ -1361,7 +1361,7 @@ const std::vector<std::string>& Ruleset::getBaseFacilitiesList() const
 }
 
 /**
- * Returns the rules for the specified craft.
+ * Gets the rules for the specified craft.
  * @param id - reference a Craft type
  * @return, pointer to Rule for the craft
  */
@@ -1375,7 +1375,7 @@ RuleCraft* Ruleset::getCraft(const std::string& id) const
 }
 
 /**
- * Returns the list of all crafts provided by the ruleset.
+ * Gets the list of all crafts provided by the ruleset.
  * @return, reference to a vector of Craft types
  */
 const std::vector<std::string>& Ruleset::getCraftsList() const
@@ -1384,7 +1384,7 @@ const std::vector<std::string>& Ruleset::getCraftsList() const
 }
 
 /**
- * Returns the rules for the specified craft weapon.
+ * Gets the rules for the specified craft weapon.
  * @param id - reference a CraftWeapon type
  * @return, pointer to Rule for the CraftWeapon
  */
@@ -1398,7 +1398,7 @@ RuleCraftWeapon* Ruleset::getCraftWeapon(const std::string& id) const
 }
 
 /**
- * Returns the list of all craft weapons provided by the ruleset.
+ * Gets the list of all craft weapons provided by the ruleset.
  * @return, reference to a vector of CraftWeapon types
  */
 const std::vector<std::string>& Ruleset::getCraftWeaponsList() const
@@ -1407,7 +1407,7 @@ const std::vector<std::string>& Ruleset::getCraftWeaponsList() const
 }
 
 /**
- * Returns the rules for the specified item.
+ * Gets the rules for the specified item.
  * @param id - reference to an Item type
  * @return, pointer to RuleItem or nullptr if not found
  */
@@ -1421,7 +1421,7 @@ RuleItem* Ruleset::getItemRule(const std::string& id) const
 }
 
 /**
- * Returns the list of all items provided by the ruleset.
+ * Gets the list of all items provided by the ruleset.
  * @return, reference to a vector of Item types
  */
 const std::vector<std::string>& Ruleset::getItemsList() const
@@ -1430,7 +1430,7 @@ const std::vector<std::string>& Ruleset::getItemsList() const
 }
 
 /**
- * Returns the rules for the specified UFO.
+ * Gets the rules for the specified UFO.
  * @param id - reference a Ufo type
  * @return, pointer to Rule for the Ufo
  */
@@ -1444,7 +1444,7 @@ RuleUfo* Ruleset::getUfo(const std::string& id) const
 }
 
 /**
- * Returns the list of all ufos provided by the ruleset.
+ * Gets the list of all ufos provided by the ruleset.
  * @return, reference to a vector of Ufo types
  */
 const std::vector<std::string>& Ruleset::getUfosList() const
@@ -1453,7 +1453,7 @@ const std::vector<std::string>& Ruleset::getUfosList() const
 }
 
 /**
- * Returns the rules for the specified terrain.
+ * Gets the rules for the specified terrain.
  * @param type - reference a Terrain type
  * @return, pointer to Rule for the Terrain
  */
@@ -1468,7 +1468,7 @@ RuleTerrain* Ruleset::getTerrain(const std::string& type) const
 }
 
 /**
- * Returns the list of all terrains provided by the ruleset.
+ * Gets the list of all terrains provided by the ruleset.
  * @return, reference to a vector of Terrain types
  */
 const std::vector<std::string>& Ruleset::getTerrainList() const
@@ -1477,7 +1477,7 @@ const std::vector<std::string>& Ruleset::getTerrainList() const
 }
 
 /**
- * Returns the info about a specific map data file.
+ * Gets the info about a specific map data file.
  * @param type - reference a MapDataSet type
  * @return, pointer to rule for the MapDataSet
  */
@@ -1517,7 +1517,7 @@ RuleSoldier* Ruleset::getSoldier(const std::string& type) const
 }
 
 /**
- * Returns the list of all soldiers provided by this Ruleset.
+ * Gets the list of all soldiers provided by this Ruleset.
  * @return, reference to a vector of strings - the list of soldier types
  */
 const std::vector<std::string>& Ruleset::getSoldiersList() const
@@ -1540,7 +1540,7 @@ RuleUnit* Ruleset::getUnitRule(const std::string& type) const
 }
 
 /**
- * Returns the info about a specific alien race.
+ * Gets the info about a specific alien race.
  * @param type - reference a Race type
  * @return, pointer to the Rule for AlienRaces
  */
@@ -1554,7 +1554,7 @@ RuleAlienRace* Ruleset::getAlienRace(const std::string& type) const
 }
 
 /**
- * Returns the list of all alien races provided by the ruleset.
+ * Gets the list of all alien races provided by the ruleset.
  * @return, reference to the vector of RuleAlienRace types
  */
 const std::vector<std::string>& Ruleset::getAlienRacesList() const
@@ -1563,7 +1563,7 @@ const std::vector<std::string>& Ruleset::getAlienRacesList() const
 }
 
 /**
- * Returns the info about a specific deployment.
+ * Gets the info about a specific deployment.
  * @param type - reference the RuleAlienDeployment type
  * @return, pointer to Rule for the RuleAlienDeployment
  */
@@ -1577,7 +1577,7 @@ RuleAlienDeployment* Ruleset::getDeployment(const std::string& type) const
 }
 
 /**
- * Returns the list of all alien deployments provided by the ruleset.
+ * Gets the list of all alien deployments provided by the ruleset.
  * @return, reference to the vector of RuleAlienDeployments
  */
 const std::vector<std::string>& Ruleset::getDeploymentsList() const
@@ -1586,7 +1586,7 @@ const std::vector<std::string>& Ruleset::getDeploymentsList() const
 }
 
 /**
- * Returns the info about a specific armor.
+ * Gets the info about a specific armor.
  * @param name - reference the Armor type
  * @return, pointer to RuleArmor
  */
@@ -1600,7 +1600,7 @@ RuleArmor* Ruleset::getArmor(const std::string& name) const
 }
 
 /**
- * Returns the list of all armors provided by the ruleset.
+ * Gets the list of all armors provided by the ruleset.
  * @return, reference to the vector of Armors
  */
 const std::vector<std::string>& Ruleset::getArmorsList() const
@@ -1609,7 +1609,7 @@ const std::vector<std::string>& Ruleset::getArmorsList() const
 }
 
 /**
- * Returns the cost of an individual engineer for purchase/maintenance.
+ * Gets the cost of an individual engineer for purchase/maintenance.
  * @return, cost
  */
 int Ruleset::getEngineerCost() const
@@ -1618,7 +1618,7 @@ int Ruleset::getEngineerCost() const
 }
 
 /**
- * Returns the cost of an individual scientist for purchase/maintenance.
+ * Gets the cost of an individual scientist for purchase/maintenance.
  * @return, cost
  */
 int Ruleset::getScientistCost() const
@@ -1627,7 +1627,7 @@ int Ruleset::getScientistCost() const
 }
 
 /**
- * Returns the time it takes to transfer personnel between bases.
+ * Gets the time it takes to transfer personnel between bases.
  * @return, time in hours
  */
 int Ruleset::getPersonnelTime() const
@@ -1636,7 +1636,7 @@ int Ruleset::getPersonnelTime() const
 }
 
 /**
- * Returns the ArticleDefinition for a given name.
+ * Gets the ArticleDefinition for a given name.
  * @param name - article name
  * @return, pointer to ArticleDefinition
  */
@@ -1650,7 +1650,7 @@ ArticleDefinition* Ruleset::getUfopaediaArticle(const std::string& article_id) c
 }
 
 /**
- * Returns the list of all articles provided by the ruleset.
+ * Gets the list of all articles provided by the ruleset.
  * @return, reference to a vector of strings as the list of articles
  */
 const std::vector<std::string>& Ruleset::getUfopaediaList() const
@@ -1668,7 +1668,7 @@ std::map<std::string, RuleInventory*>* Ruleset::getInventories()
 }
 
 /**
- * Returns the RuleInventory for a specific inventory-type (a 'section').
+ * Gets the RuleInventory for a specific inventory-type (a 'section').
  * @param type - reference the inventory type
  * @return, pointer to RuleInventory
  */
@@ -1682,7 +1682,7 @@ const RuleInventory* Ruleset::getInventory(const std::string& type) const
 }
 
 /**
- * Returns the RuleInventory for a specific inventory-section.
+ * Gets the RuleInventory for a specific inventory-section.
  * @param sectionId - InventorySection (RuleInventory.h)
  * @return, pointer to RuleInventory
  */
@@ -1729,7 +1729,7 @@ void Ruleset::convertInventories()
 }
 
 /**
- * Returns the list of inventories.
+ * Gets the list of inventories.
  * @return, reference to a vector of strings as the list of inventories
  *
 const std::vector<std::string>& Ruleset::getInventoryList() const
@@ -1779,7 +1779,7 @@ int Ruleset::detHighTuInventoryCost() const
 	} */
 
 /**
- * Returns the rules for a specified research-project.
+ * Gets the rules for a specified research-project.
  * @param id - reference a research-project-type
  * @return, pointer to RuleResearch
  */
@@ -1793,7 +1793,7 @@ const RuleResearch* Ruleset::getResearch(const std::string& id) const
 }
 
 /**
- * Returns the list of research-projects.
+ * Gets the list of research-projects.
  * @return, reference to a vector of strings as the list of research-projects
  */
 const std::vector<std::string>& Ruleset::getResearchList() const
@@ -1802,7 +1802,7 @@ const std::vector<std::string>& Ruleset::getResearchList() const
 }
 
 /**
- * Returns the rules for the specified manufacture-project.
+ * Gets the rules for the specified manufacture-project.
  * @param id - reference to the manufacture-project-type
  * @return, pointer to RuleManufacture
  */
@@ -1816,7 +1816,7 @@ RuleManufacture* Ruleset::getManufacture(const std::string& id) const
 }
 
 /**
- * Returns the list of manufacture-projects.
+ * Gets the list of manufacture-projects.
  * @return, reference to a vector of strings as the list of manufacture-projects
  */
 const std::vector<std::string>& Ruleset::getManufactureList() const
@@ -1850,7 +1850,7 @@ std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 }
 
 /**
- * Returns the data for a specified ufo-trajectory.
+ * Gets the data for a specified ufo-trajectory.
  * @param id - reference the UfoTrajectory ID
  * @return, a pointer to data in UfoTrajectory
  */
@@ -1865,7 +1865,7 @@ const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
 }
 
 /**
- * Returns the rules for a specified AlienMission.
+ * Gets the rules for a specified AlienMission.
  * @param id - AlienMission type
  * @return, pointer to RuleAlienMission
  */
@@ -1879,7 +1879,7 @@ const RuleAlienMission* Ruleset::getAlienMission(const std::string& id) const
 }
 
 /**
- * Returns the rules for a random AlienMission based on a specified objective.
+ * Gets the rules for a random AlienMission based on a specified objective.
  * @param objective		- AlienMission objective (RuleAlienMission.h)
  * @param monthsPassed	- the number of months since game start
  * @return, pointer to RuleAlienMission
@@ -1918,7 +1918,7 @@ const RuleAlienMission* Ruleset::getMissionRand(
 }
 
 /**
- * Returns the list of alien mission types.
+ * Gets the list of alien mission types.
  * @return, reference to a vector of strings as the list of AlienMissions
  */
 const std::vector<std::string>& Ruleset::getAlienMissionList() const

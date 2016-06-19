@@ -607,7 +607,7 @@ void Tile::addLight(
 
 /**
  * Gets this Tile's shade: 0-15.
- * @note Returns the brightest of all light-layers.
+ * @note Gets the brightest of all light-layers.
  * @note Shade is the inverse of light-level so a maximum amount of light '15'
  * returns shade-level '0'.
  * @return, the current shade

@@ -112,7 +112,7 @@ void ResearchProject::setAssignedScientists(const int qty)
 }
 
 /**
- * Returns the number of scientists assigned to this ResearchProject.
+ * Gets the number of scientists assigned to this ResearchProject.
  * @return, quantity of scientists assigned
  */
 int ResearchProject::getAssignedScientists() const
@@ -130,7 +130,7 @@ void ResearchProject::setSpent(const int spent)
 }
 
 /**
- * Returns the time already spent on this ResearchProject.
+ * Gets the time already spent on this ResearchProject.
  * @return, the time already spent in man-days
  */
 int ResearchProject::getSpent() const
@@ -148,7 +148,7 @@ void ResearchProject::setCost(const int cost)
 }
 
 /**
- * Returns the cost of this ResearchProject.
+ * Gets the cost of this ResearchProject.
  * @return, the cost in man-days
  */
 int ResearchProject::getCost() const

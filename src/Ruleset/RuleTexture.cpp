@@ -55,7 +55,7 @@ void RuleTexture::load(const YAML::Node& node)
 }
 
 /**
- * Returns the list of TextureDetail's associated with this RuleTexture.
+ * Gets the list of TextureDetail's associated with this RuleTexture.
  * @return, pointer to a vector of TextureDetail's
  */
 const std::vector<TextureDetail>* RuleTexture::getTextureDetail() const

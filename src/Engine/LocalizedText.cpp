@@ -27,14 +27,14 @@ namespace OpenXcom
 
 /**
  * Replaces the next argument placeholder with @a val.
- * @param val - reference the value to place in the next placeholder's position
+ * @param val - reference to the value to place in the next placeholder's position
  * @return, a translated string with all occurrences of the marker replaced by @a val
  */
 LocalizedText LocalizedText::arg(const std::wstring& val) const
 {
 	std::wostringstream woststr;
 	woststr << '{' << _nextArg << '}';
-	std::wstring marker (woststr.str()); // init.
+	std::wstring marker (woststr.str());
 	size_t pos = _text.find(marker);
 	if (std::wstring::npos == pos)
 		return *this;
@@ -58,14 +58,14 @@ LocalizedText LocalizedText::arg(const std::wstring& val) const
 
 /**
  * Replaces the next argument placeholder with @a val.
- * @param val - reference the value to place in the next placeholder's position
+ * @param val - reference to the value to place in the next placeholder's position
  * @return, a reference to the translated string with all occurrences of the marker replaced by @a val
  */
 LocalizedText& LocalizedText::arg(const std::wstring& val)
 {
 	std::wostringstream woststr;
 	woststr << '{' << _nextArg << '}';
-	std::wstring marker (woststr.str()); // init.
+	std::wstring marker (woststr.str());
 	size_t pos = _text.find(marker);
 	if (std::wstring::npos != pos)
 	{

@@ -98,9 +98,9 @@ private:
 			/// Moves toward the destination.
 			void stepTarget();
 
-			/// Returns the longitude of a meet-point.
+			/// Gets the longitude of a meet-point.
 			double getMeetLongitude() const;
-			/// Returns the latitude of a meet-point.
+			/// Gets the latitude of a meet-point.
 			double getMeetLatitude() const;
 };
 

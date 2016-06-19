@@ -85,7 +85,7 @@ const std::string& RuleCity::getName() const
 }
 
 /**
- * Returns the globe-marker for this RuleCity.
+ * Gets the globe-marker for this RuleCity.
  * @return, marker-sprite #8
  */
 int RuleCity::getMarker() const
@@ -94,7 +94,7 @@ int RuleCity::getMarker() const
 }
 
 /**
- * Returns the minimal zoom-level that is required to show name of this RuleCity.
+ * Gets the minimal zoom-level that is required to show name of this RuleCity.
  * @return, minimum zoom-level
  */
 size_t RuleCity::getZoomLevel() const

@@ -829,7 +829,7 @@ void PurchaseState::updateListrow() // private.
 }
 
 /**
- * Returns the quantity by which to increase/decrease.
+ * Gets the quantity by which to increase/decrease.
  * @return, 10 if CTRL is pressed else 1
  */
 int PurchaseState::stepDelta() const // private.

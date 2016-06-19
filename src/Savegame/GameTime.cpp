@@ -181,7 +181,7 @@ TimeTrigger GameTime::advance()
 }
 
 /**
- * Returns the current IG second.
+ * Gets the current IG second.
  * @return, second (0-59)
  */
 int GameTime::getSecond() const
@@ -190,7 +190,7 @@ int GameTime::getSecond() const
 }
 
 /**
- * Returns the current IG minute.
+ * Gets the current IG minute.
  * @return, minute (0-59)
  */
 int GameTime::getMinute() const
@@ -199,7 +199,7 @@ int GameTime::getMinute() const
 }
 
 /**
- * Returns the current IG hour.
+ * Gets the current IG hour.
  * @return, hour (0-23)
  */
 int GameTime::getHour() const
@@ -208,7 +208,7 @@ int GameTime::getHour() const
 }
 
 /**
- * Returns the current IG weekday.
+ * Gets the current IG weekday.
  * @return, weekday (1-7) starts on Sunday
  *
 int GameTime::getWeekday() const
@@ -235,7 +235,7 @@ std::string GameTime::getWeekdayString() const
 } */
 
 /**
- * Returns the current IG day.
+ * Gets the current IG day.
  * @return, day (1-31)
  */
 int GameTime::getDay() const
@@ -244,7 +244,7 @@ int GameTime::getDay() const
 }
 
 /**
- * Returns the localized representation of the current IG day with its cardinal
+ * Gets the localized representation of the current IG day with its cardinal
  * suffix attached.
  * @param lang - pointer to current language
  * @return, localized day string
@@ -275,7 +275,7 @@ std::wstring GameTime::getDayString(const Language* const lang) const
 }
 
 /**
- * Returns the current IG month.
+ * Gets the current IG month.
  * @return, month (1-12)
  */
 int GameTime::getMonth() const
@@ -293,7 +293,7 @@ std::string GameTime::getMonthString() const
 }
 
 /**
- * Returns the current IG year.
+ * Gets the current IG year.
  * @return, year
  */
 int GameTime::getYear() const
@@ -302,7 +302,7 @@ int GameTime::getYear() const
 }
 
 /**
- * Returns the current position of the daylight emitted on the globe according
+ * Gets the current position of the daylight emitted on the globe according
  * to the current IG time - so the value is 0 when the light starts at 0º
  * longitude (6h) and 1 when the light ends at 0º longitude (18h).
  * @return, daylight position (0-1)

@@ -60,7 +60,7 @@ YAML::Node SoldierDeath::save() const
 }
 
 /**
- * Returns the time of death of a soldier.
+ * Gets the time of death of a soldier.
  * @return, address of GameTime
  */
 const GameTime* SoldierDeath::getTime() const

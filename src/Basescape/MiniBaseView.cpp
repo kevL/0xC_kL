@@ -100,7 +100,7 @@ void MiniBaseView::setTexture(SurfaceSet* texture)
 }
 
 /**
- * Returns the Base the mouse cursor is currently over.
+ * Gets the Base the mouse cursor is currently over.
  * @return, ID of the base
  */
 size_t MiniBaseView::getHoveredBase() const

@@ -89,7 +89,7 @@ uint64_t next_y()
 }
 
 /**
- * Returns the current state-value of the internal generator.
+ * Gets the current state-value of the internal generator.
  * @return, the SAVE seed
  */
 uint64_t getSeed()

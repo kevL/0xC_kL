@@ -63,7 +63,7 @@ void ImageButton::setColor(Uint8 color)
 }
 
 /**
- * Returns the color for this ImageButton.
+ * Gets the color for this ImageButton.
  * @return, color value
  */
 Uint8 ImageButton::getColor() const

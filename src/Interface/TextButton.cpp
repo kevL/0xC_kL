@@ -102,7 +102,7 @@ void TextButton::setColor(Uint8 color)
 }
 
 /**
- * Returns the color for this TextButton and Text.
+ * Gets the color for this TextButton and Text.
  * @return, color value
  */
 Uint8 TextButton::getColor() const
@@ -149,7 +149,7 @@ void TextButton::setSmall()
 }
 
 /**
- * Returns the Font currently used by the Text.
+ * Gets the Font currently used by the Text.
  * @return, pointer to Font
  */
 Font* TextButton::getFont() const
@@ -198,7 +198,7 @@ void TextButton::setText(const std::wstring& text)
 }
 
 /**
- * Returns the Text of the button-label.
+ * Gets the Text of the button-label.
  * @return, text-string
  *
 std::wstring TextButton::getText() const

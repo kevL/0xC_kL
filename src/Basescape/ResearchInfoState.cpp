@@ -148,10 +148,10 @@ void ResearchInfoState::buildUi()
 	_btnLess->onMouseClick(		(ActionHandler)& ResearchInfoState::lessClick, 0u);
 
 	_timerMore = new Timer(Timer::SCROLL_SLOW);
-	_timerMore->onTimer((StateHandler)& ResearchInfoState::moreSci);
+	_timerMore->onTimer((StateHandler)& ResearchInfoState::onMore);
 
 	_timerLess = new Timer(Timer::SCROLL_SLOW);
-	_timerLess->onTimer((StateHandler)& ResearchInfoState::lessSci);
+	_timerLess->onTimer((StateHandler)& ResearchInfoState::onLess);
 
 	std::string
 		st1,
@@ -190,11 +190,11 @@ void ResearchInfoState::buildUi()
 void ResearchInfoState::updateInfo()
 {
 	_txtFreeSci->setText(tr("STR_SCIENTISTS_AVAILABLE_UC_")
-									.arg(_base->getScientists()));
+								.arg(_base->getScientists()));
 	_txtFreeSpace->setText(tr("STR_LABORATORY_SPACE_AVAILABLE_UC_")
-									.arg(_base->getFreeLaboratories()));
+								.arg(_base->getFreeLaboratories()));
 	_txtAssigned->setText(tr("STR_SCIENTISTS_ALLOCATED_")
-									.arg(_project->getAssignedScientists()));
+								.arg(_project->getAssignedScientists()));
 }
 
 /**
@@ -322,9 +322,20 @@ void ResearchInfoState::lessClick(Action* action)
 }
 
 /**
+ * Runs state functionality every cycle (used to update the timer).
+ */
+void ResearchInfoState::think()
+{
+	State::think();
+
+	_timerLess->think(this, nullptr);
+	_timerMore->think(this, nullptr);
+}
+
+/**
  * Adds one scientist to the project if possible.
  */
-void ResearchInfoState::moreSci()
+void ResearchInfoState::onMore()
 {
 	_timerMore->setInterval(Timer::SCROLL_FAST);
 	moreByValue(stepDelta());
@@ -355,7 +366,7 @@ void ResearchInfoState::moreByValue(int change)
 /**
  * Removes one scientist from the project if possible.
  */
-void ResearchInfoState::lessSci()
+void ResearchInfoState::onLess()
 {
 	_timerLess->setInterval(Timer::SCROLL_FAST);
 	lessByValue(stepDelta());
@@ -390,17 +401,6 @@ int ResearchInfoState::stepDelta() const
 		return 1;
 
 	return 10;
-}
-
-/**
- * Runs state functionality every cycle (used to update the timer).
- */
-void ResearchInfoState::think()
-{
-	State::think();
-
-	_timerLess->think(this, nullptr);
-	_timerMore->think(this, nullptr);
 }
 
 }

@@ -51,10 +51,10 @@ void RuleAlienRace::load(const YAML::Node& node)
 }
 
 /**
- * Returns the language string that names this RuleAlienRace.
+ * Gets the language string that names this RuleAlienRace.
  * @return, race type
- */
-/* std::string RuleAlienRace::getAlienType() const
+ *
+std::string RuleAlienRace::getAlienType() const
 {
 	return _type;
 } */

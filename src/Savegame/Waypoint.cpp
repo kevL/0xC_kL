@@ -109,7 +109,7 @@ std::wstring Waypoint::getName(const Language* const lang) const
 }
 
 /**
- * Returns the globe marker for this Waypoint.
+ * Gets the globe marker for this Waypoint.
  * @return, marker sprite #6
  */
 int Waypoint::getMarker() const

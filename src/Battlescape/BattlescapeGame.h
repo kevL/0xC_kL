@@ -430,7 +430,7 @@ private:
 
 		/// Sets the TU reserved type.
 //		void setReservedAction(BattleActionType bat);
-		/// Returns the type of action that is reserved.
+		/// Gets the type of action that is reserved.
 //		BattleActionType getReservedAction() const;
 		/// Sets the kneel reservation setting.
 //		void setKneelReserved(bool reserved) const;

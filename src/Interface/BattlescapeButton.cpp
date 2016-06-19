@@ -67,7 +67,7 @@ void BattlescapeButton::setColor(Uint8 color)
 }
 
 /**
- * Returns the color of this BattlescapeButton.
+ * Gets the color of this BattlescapeButton.
  * @return, color
  */
 Uint8 BattlescapeButton::getColor() const

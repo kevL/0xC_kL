@@ -104,7 +104,7 @@ void Cursor::setColor(Uint8 color)
 }
 
 /**
- * Returns the cursor's base color.
+ * Gets the cursor's base color.
  * @return, color value
  */
 Uint8 Cursor::getColor() const

@@ -415,7 +415,7 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 }
 
 /**
- * Returns the Craft back to its Base.
+ * Sends the Craft back to its Base.
  * @param action - pointer to an Action
  */
 void GeoscapeCraftState::btnBaseClick(Action*)

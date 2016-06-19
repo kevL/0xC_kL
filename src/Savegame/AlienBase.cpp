@@ -125,7 +125,7 @@ std::wstring AlienBase::getName(const Language* const lang) const
 }
 
 /**
- * Returns the globe marker for this AlienBase.
+ * Gets the globe marker for this AlienBase.
  * @return, marker sprite #7 (-1 if none)
  */
 int AlienBase::getMarker() const
@@ -137,7 +137,7 @@ int AlienBase::getMarker() const
 }
 
 /**
- * Returns the alien race currently residing in this AlienBase.
+ * Gets the alien race currently residing in this AlienBase.
  * @return, alien race string
  */
 std::string AlienBase::getAlienRace() const

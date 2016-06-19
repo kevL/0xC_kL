@@ -232,29 +232,22 @@ void Transfer::setTransferItems(
 }
 
 /**
- * Returns the name of the contents of this Transfer.
+ * Gets the name of the contents of this Transfer.
  * @param lang - pointer to a Language to get text from
  * @return, wide-string
  */
 std::wstring Transfer::getName(const Language* const lang) const
 {
-	if (_soldier != nullptr)
-		return _soldier->getName();
-
-	if (_craft != nullptr)
-		return _craft->getName(lang);
-
-	if (_scientists != 0)
-		return lang->getString("STR_SCIENTISTS");
-
-	if (_engineers != 0)
-		return lang->getString("STR_ENGINEERS");
+	if (_soldier != nullptr)	return _soldier->getName();
+	if (_craft != nullptr)		return _craft->getName(lang);
+	if (_scientists != 0)		return lang->getString("STR_SCIENTISTS");
+	if (_engineers != 0)		return lang->getString("STR_ENGINEERS");
 
 	return lang->getString(_itemId);
 }
 
 /**
- * Returns the time remaining until this Transfer arrives at its destination.
+ * Gets the time remaining until this Transfer arrives at its destination.
  * @return, amount of hours
  */
 int Transfer::getHours() const
@@ -263,40 +256,28 @@ int Transfer::getHours() const
 }
 
 /**
- * Returns the quantity of items in this Transfer.
+ * Gets the quantity of items in this Transfer.
  * @return, amount of items
  */
 int Transfer::getQuantity() const
 {
-	if (_itemQty != 0)
-		return _itemQty;
-
-	if (_scientists != 0)
-		return _scientists;
-
-	if (_engineers != 0)
-		return _engineers;
+	if (_itemQty != 0)		return _itemQty;
+	if (_scientists != 0)	return _scientists;
+	if (_engineers != 0)	return _engineers;
 
 	return 1;
 }
 
 /**
- * Returns the type of the contents of this Transfer.
+ * Gets the type of the contents of this Transfer.
  * @return, PurchaseSellTransferType (Base.h)
  */
 PurchaseSellTransferType Transfer::getTransferType() const
 {
-	if (_soldier != nullptr)
-		return PST_SOLDIER;
-
-	if (_craft != nullptr)
-		return PST_CRAFT;
-
-	if (_scientists != 0)
-		return PST_SCIENTIST;
-
-	if (_engineers != 0)
-		return PST_ENGINEER;
+	if (_soldier != nullptr)	return PST_SOLDIER;
+	if (_craft != nullptr)		return PST_CRAFT;
+	if (_scientists != 0)		return PST_SCIENTIST;
+	if (_engineers != 0)		return PST_ENGINEER;
 
 	return PST_ITEM;
 }

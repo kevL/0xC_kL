@@ -383,7 +383,7 @@ YAML::Node Base::saveId() const
 }
 
 /**
- * Returns the player-specified name for this Base.
+ * Gets the player-specified name for this Base.
  * @note The Language-ptr is neither used nor needed for Base-Targets.
  * @param lang - pointer to Language to get strings from (default nullptr)
  * @return, the base-name as a wide-string
@@ -403,7 +403,7 @@ void Base::setName(const std::wstring& wst)
 }
 
 /**
- * Returns the globe-marker for this Base.
+ * Gets the globe-marker for this Base.
  * @return, marker sprite #0 (-1 if none)
  */
 int Base::getMarker() const
@@ -415,7 +415,7 @@ int Base::getMarker() const
 }
 
 /**
- * Returns the list of BaseFacilities in this Base.
+ * Gets the list of BaseFacilities in this Base.
  * @return, pointer to a vector of pointers to facilities at this base
  */
 std::vector<BaseFacility*>* Base::getFacilities()
@@ -424,7 +424,7 @@ std::vector<BaseFacility*>* Base::getFacilities()
 }
 
 /**
- * Returns the list of Soldiers in this Base.
+ * Gets the list of Soldiers in this Base.
  * @return, pointer to a vector of pointers to soldiers at this base
  */
 std::vector<Soldier*>* Base::getSoldiers()
@@ -433,7 +433,7 @@ std::vector<Soldier*>* Base::getSoldiers()
 }
 
 /**
- * Returns the list of Crafts in this Base.
+ * Gets the list of Crafts in this Base.
  * @return, pointer to a vector of pointers to crafts at this base
  */
 std::vector<Craft*>* Base::getCrafts()
@@ -442,7 +442,7 @@ std::vector<Craft*>* Base::getCrafts()
 }
 
 /**
- * Returns the list of Transfers destined to this Base.
+ * Gets the list of Transfers destined to this Base.
  * @return, pointer to a vector of pointers to transfers to this base
  */
 std::vector<Transfer*>* Base::getTransfers()
@@ -451,7 +451,7 @@ std::vector<Transfer*>* Base::getTransfers()
 }
 
 /**
- * Returns the list of items in this Base.
+ * Gets the list of items in this Base.
  * @return, pointer to the ItemContainer for this base
  */
 ItemContainer* Base::getStorageItems()
@@ -460,7 +460,7 @@ ItemContainer* Base::getStorageItems()
 }
 
 /**
- * Returns the amount of scientists currently in this Base.
+ * Gets the amount of scientists currently in this Base.
  * @return, scientists not at work
  */
 int Base::getScientists() const
@@ -478,7 +478,7 @@ void Base::setScientists(int scientists)
 }
 
 /**
- * Returns the amount of engineers currently in this Base.
+ * Gets the amount of engineers currently in this Base.
  * @return, engineers not at work
  */
 int Base::getEngineers() const
@@ -496,7 +496,7 @@ void Base::setEngineers(int engineers)
 }
 
 /**
- * Returns the amount of soldiers with neither a Craft assignment nor wounds at
+ * Gets the amount of soldiers with neither a Craft assignment nor wounds at
  * this Base.
  * @param combatReady - does what it says on the tin. [ bull..] (default false)
  * @return, free soldiers
@@ -527,7 +527,7 @@ int Base::getAvailableSoldiers(const bool combatReady) const
 }
 
 /**
- * Returns the total amount of soldiers contained in this Base.
+ * Gets the total amount of soldiers contained in this Base.
  * @return, total soldiers incl. transfers
  */
 int Base::getTotalSoldiers() const
@@ -545,7 +545,7 @@ int Base::getTotalSoldiers() const
 }
 
 /**
- * Returns the total amount of scientists contained in this Base.
+ * Gets the total amount of scientists contained in this Base.
  * @return, total scientists incl. transfers & at work
  */
 int Base::getTotalScientists() const
@@ -573,7 +573,7 @@ int Base::getTotalScientists() const
 }
 
 /**
- * Returns the amount of scientists currently in use.
+ * Gets the amount of scientists currently in use.
  * @return, amount of scientists
  */
 int Base::getAllocatedScientists() const
@@ -591,7 +591,7 @@ int Base::getAllocatedScientists() const
 }
 
 /**
- * Returns the total amount of engineers contained in this Base.
+ * Gets the total amount of engineers contained in this Base.
  * @return, total engineers incl. transfers & at work
  */
 int Base::getTotalEngineers() const
@@ -618,7 +618,7 @@ int Base::getTotalEngineers() const
 }
 
 /**
- * Returns the amount of engineers currently in use.
+ * Gets the amount of engineers currently in use.
  * @return, amount of engineers
  */
 int Base::getAllocatedEngineers() const
@@ -635,7 +635,7 @@ int Base::getAllocatedEngineers() const
 }
 
 /**
- * Returns the amount of living quarters used up by personnel in this Base.
+ * Gets the amount of living quarters used up by personnel in this Base.
  * @return, occupied personel space
  */
 int Base::getUsedQuarters() const
@@ -644,7 +644,7 @@ int Base::getUsedQuarters() const
 }
 
 /**
- * Returns the total amount of living quarters in this Base.
+ * Gets the total amount of living quarters in this Base.
  * @return, total personel space
  */
 int Base::getTotalQuarters() const
@@ -671,7 +671,7 @@ int Base::getFreeQuarters() const
 }
 
 /**
- * Returns the amount of storage space used by equipment in this Base.
+ * Gets the amount of storage space used by equipment in this Base.
  * @note This includes equipment on Craft and about to arrive in Transfers as
  * well as any armor that this Base's Soldiers are currently wearing.
  * @return, used storage space
@@ -729,7 +729,7 @@ double Base::getUsedStores() const
 }
 
 /**
- * Returns the total amount of stores in this Base.
+ * Gets the total amount of stores in this Base.
  * @return, total storage space
  */
 int Base::getTotalStores() const
@@ -761,7 +761,7 @@ bool Base::storesOverfull(double offset) const
 }
 
 /**
- * Returns the amount of laboratories used up by research projects in this Base.
+ * Gets the amount of laboratories used up by research projects in this Base.
  * @return, used laboratory space
  */
 int Base::getUsedLaboratories() const
@@ -779,7 +779,7 @@ int Base::getUsedLaboratories() const
 }
 
 /**
- * Returns the total amount of laboratories in this Base.
+ * Gets the total amount of laboratories in this Base.
  * @return, total laboratory space
  */
 int Base::getTotalLaboratories() const
@@ -826,7 +826,7 @@ bool Base::hasResearch() const
 }
 
 /**
- * Returns the amount of workshops used up by manufacturing projects in this Base.
+ * Gets the amount of workshops used up by manufacturing projects in this Base.
  * @return, used workshop space
  */
 int Base::getUsedWorkshops() const
@@ -843,7 +843,7 @@ int Base::getUsedWorkshops() const
 }
 
 /**
- * Returns the total amount of workshops in this Base.
+ * Gets the total amount of workshops in this Base.
  * @return, total workshop space
  */
 int Base::getTotalWorkshops() const
@@ -890,7 +890,7 @@ bool Base::hasProduction() const
 }
 
 /**
- * Returns the total amount of used psilab-space in this Base.
+ * Gets the total amount of used psilab-space in this Base.
  * @return, used psilab space
  */
 int Base::getUsedPsiLabs() const
@@ -908,7 +908,7 @@ int Base::getUsedPsiLabs() const
 }
 
 /**
- * Returns the total amount of psilab-space in this Base.
+ * Gets the total amount of psilab-space in this Base.
  * @return, total psilab space
  */
 int Base::getTotalPsiLabs() const
@@ -955,7 +955,7 @@ bool Base::hasPsiLabs() const
 }
 
 /**
- * Returns the total amount of used containment-space in this Base.
+ * Gets the total amount of used containment-space in this Base.
  * @return, used containment space incl. transfers & interrogations
  */
 int Base::getUsedContainment() const
@@ -986,7 +986,7 @@ int Base::getUsedContainment() const
 }
 
 /**
- * Returns the total amount of containment-space in this Base.
+ * Gets the total amount of containment-space in this Base.
  * @return, total containment space
  */
 int Base::getTotalContainment() const
@@ -1056,7 +1056,7 @@ int Base::getInterrogatedAliens() const
 }
 
 /**
- * Returns the amount of hangars used by Craft at this Base.
+ * Gets the amount of hangars used by Craft at this Base.
  * @return, used hangars incl. transfers & production
  */
 int Base::getUsedHangars() const
@@ -1086,7 +1086,7 @@ int Base::getUsedHangars() const
 }
 
 /**
- * Returns the total amount of hangars in this Base.
+ * Gets the total amount of hangars in this Base.
  * @return, total hangars
  */
 int Base::getTotalHangars() const
@@ -1113,7 +1113,7 @@ int Base::getFreeHangars() const
 }
 
 /**
- * Returns the total amount of Soldiers of a certain type occupying this Base.
+ * Gets the total amount of Soldiers of a certain type occupying this Base.
  * @param soldier - soldier-type
  * @return, quantity of soldiers
  */
@@ -1145,7 +1145,7 @@ int Base::getSoldierCount(const std::string& soldier) const
 }
 
 /**
- * Returns the total amount of Craft of a certain type stored at or being
+ * Gets the total amount of Craft of a certain type stored at or being
  * transfered to this Base.
  * @note Used by MonthlyCostsState.
  * @param craft - reference the craft-type
@@ -1218,7 +1218,7 @@ const std::vector<Production*>& Base::getProductions() const
 }
 
 /**
- * Returns the list of all this Base's ResearchProjects.
+ * Gets the list of all this Base's ResearchProjects.
  * @return, list of base's ResearchProjects
  */
 const std::vector<ResearchProject*>& Base::getResearch() const
@@ -1702,7 +1702,7 @@ bool Base::getHyperDetection() const
 }
 
 /**
- * Returns the total amount of short range detection facilities in this Base.
+ * Gets the total amount of short range detection facilities in this Base.
  * @return, quantity of shortrange detection facilities
  *
 int Base::getShortRangeDetection() const
@@ -1736,7 +1736,7 @@ int Base::getShortRangeDetection() const
 } */
 
 /**
- * Returns the total value of short range detection facilities at this base.
+ * Gets the total value of short range detection facilities at this base.
  * @note Used for BaseInfoState bar.
  * @return, shortrange detection value as percent
  */
@@ -1766,7 +1766,7 @@ int Base::getShortRangeTotal() const
 }
 
 /**
- * Returns the total amount of long range detection facilities in this Base.
+ * Gets the total amount of long range detection facilities in this Base.
  * @return, quantity of longrange detection facilities
  *
 int Base::getLongRangeDetection() const
@@ -1790,7 +1790,7 @@ int Base::getLongRangeDetection() const
 } */
 
 /**
- * Returns the total value of long range detection facilities at this base.
+ * Gets the total value of long range detection facilities at this base.
  * @note Used for BaseInfoState bar.
  * @return, longrange detection value as percent
  */
@@ -2040,7 +2040,7 @@ size_t Base::getGravShields() const
 }
 
 /**
- * Returns the total defense-value of all the facilities at this Base.
+ * Gets the total defense-value of all the facilities at this Base.
  * @note Used for BaseInfoState bar.
  * @return, defense value
  */
@@ -2600,7 +2600,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 }
 
 /**
- * Returns the total amount of monthly costs for maintaining the Craft in this
+ * Gets the total amount of monthly costs for maintaining the Craft in this
  * Base.
  * @note Used for monthly maintenance expenditure.
  * @return, maintenance costs
@@ -2628,7 +2628,7 @@ int Base::getCraftMaintenance() const
 }
 
 /**
- * Returns the total amount of monthly costs for maintaining the personnel in
+ * Gets the total amount of monthly costs for maintaining the personnel in
  * this Base.
  * @note Used for monthly maintenance expenditure.
  * @return, maintenance costs
@@ -2661,7 +2661,7 @@ int Base::getPersonnelMaintenance() const
 }
 
 /**
- * Returns the total amount of monthly costs for maintaining the facilities in
+ * Gets the total amount of monthly costs for maintaining the facilities in
  * this Base.
  * @note Used for monthly maintenance expenditure.
  * @return, maintenance costs
@@ -2681,7 +2681,7 @@ int Base::getFacilityMaintenance() const
 }
 
 /**
- * Returns the total amount of all the maintenance monthly costs in this Base.
+ * Gets the total amount of all the maintenance monthly costs in this Base.
  * @note Used for monthly maintenance expenditure.
  * @return, maintenance costs
  */

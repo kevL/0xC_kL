@@ -81,7 +81,7 @@ YAML::Node BaseFacility::save() const
 }
 
 /**
- * Returns the ruleset for this BaseFacility's type.
+ * Gets the ruleset for this BaseFacility's type.
  * @return, pointer to RuleBaseFacility
  */
 const RuleBaseFacility* BaseFacility::getRules() const

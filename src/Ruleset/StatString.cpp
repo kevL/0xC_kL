@@ -99,7 +99,7 @@ StatStringCondition* StatString::getCondition(
 }
 
 /**
- * Returns the conditions associated with this StatString.
+ * Gets the conditions associated with this StatString.
  * @return List of StatStringConditions.
  */
 const std::vector<StatStringCondition*> StatString::getConditions() const
@@ -108,7 +108,7 @@ const std::vector<StatStringCondition*> StatString::getConditions() const
 }
 
 /**
- * Returns the string to add to a name for this StatString.
+ * Gets the string to add to a name for this StatString.
  * @return StatString... string.
  */
 std::string StatString::getString() const

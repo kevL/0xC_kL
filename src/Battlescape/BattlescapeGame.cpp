@@ -3756,7 +3756,7 @@ void BattlescapeGame::setReservedAction(BattleActionType bat)
 	_battleSave->setBatReserved(bat);
 } */
 /**
- * Returns the action type that is reserved.
+ * Gets the action type that is reserved.
  * @return, the BattleActionType that is reserved
  *
 BattleActionType BattlescapeGame::getReservedAction() const

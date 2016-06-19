@@ -151,7 +151,7 @@ int RuleCraft::getSprite() const
 }
 
 /**
- * Returns the globe marker for the Craft type.
+ * Gets the globe marker for the Craft type.
  * @return, marker sprite (-1 if not in rule)
  */
 int RuleCraft::getMarker() const

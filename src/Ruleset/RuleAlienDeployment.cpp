@@ -236,7 +236,7 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 }
 
 /**
- * Returns the language string that names this deployment.
+ * Gets the language string that names this deployment.
  * @note Each deployment type has a unique name.
  * @return, deployment name
  */
@@ -379,7 +379,7 @@ BriefingData RuleAlienDeployment::getBriefingData() const
 }
 
 /**
- * Returns the globe-marker-type for this RuleAlienDeployment.
+ * Gets the globe-marker-type for this RuleAlienDeployment.
  * @return, marker-type
  */
 const std::string& RuleAlienDeployment::getMarkerType() const
@@ -388,7 +388,7 @@ const std::string& RuleAlienDeployment::getMarkerType() const
 }
 
 /**
- * Returns the globe-marker-icon for this RuleAlienDeployment.
+ * Gets the globe-marker-icon for this RuleAlienDeployment.
  * @return, marker-sprite (-1 if not set)
  */
 int RuleAlienDeployment::getMarkerIcon() const
@@ -397,7 +397,7 @@ int RuleAlienDeployment::getMarkerIcon() const
 }
 
 /**
- * Returns the minimum duration for this RuleAlienDeployment to exist on the Globe.
+ * Gets the minimum duration for this RuleAlienDeployment to exist on the Globe.
  * @return, minimum duration in hours
  */
 int RuleAlienDeployment::getDurationMin() const
@@ -406,7 +406,7 @@ int RuleAlienDeployment::getDurationMin() const
 }
 
 /**
- * Returns the maximum duration for this RuleAlienDeployment to exist on the Globe.
+ * Gets the maximum duration for this RuleAlienDeployment to exist on the Globe.
  * @return, maximum duration in hours
  */
 int RuleAlienDeployment::getDurationMax() const

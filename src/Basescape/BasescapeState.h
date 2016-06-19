@@ -137,7 +137,7 @@ private:
 		void basesRightClick(Action* action);
 		/// Handler for pressing a Base selection hotkey.
 		void handleKeyPress(Action* action);
-		/// Returns the baseId for a keypress.
+		/// Gets the baseId for a keypress.
 		size_t getKeyedBaseId(SDLKey keyId) const;
 
 		/// Handler for changing the text in the base-name editor.

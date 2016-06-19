@@ -194,7 +194,7 @@ void RuleGlobe::load(const YAML::Node& node)
 }
 
 /**
- * Returns the list of polygons in the globe.
+ * Gets the list of polygons in the globe.
  * @return, pointer to a list of pointers to Polygons
  */
 std::list<Polygon*>* RuleGlobe::getPolygons()
@@ -203,7 +203,7 @@ std::list<Polygon*>* RuleGlobe::getPolygons()
 }
 
 /**
- * Returns the list of polylines in the globe.
+ * Gets the list of polylines in the globe.
  * @return, pointer to a list of pointers to Polylines
  */
 std::list<Polyline*>* RuleGlobe::getPolylines()

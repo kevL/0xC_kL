@@ -99,7 +99,7 @@ protected:
 		/// Converts damage-type to string.
 		static std::string getDamageTypeText(DamageType dType);
 
-		/// Returns the article-ID.
+		/// Gets the article-ID.
 		std::string getId() const
 		{ return _id; }
 };

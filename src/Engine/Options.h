@@ -152,7 +152,7 @@ namespace Options
 	const std::vector<std::string>& getDataList();
 	/// Gets the game's user-folder.
 	std::string getUserFolder();
-	/// Returns the game's picture-folder where screenshots are stored.
+	/// Gets the game's picture-folder where screenshots are stored.
 	std::string getPictureFolder();
 	/// Gets the game's config-folder.
 	std::string getConfigFolder();

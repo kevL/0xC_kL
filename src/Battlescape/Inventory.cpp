@@ -1288,7 +1288,7 @@ void Inventory::setSelectedItem(BattleItem* const item)
 }
 
 /**
- * Returns the item currently grabbed by the player.
+ * Gets the item currently grabbed by the player.
  * @return, pointer to selected BattleItem or nullptr if none
  */
 BattleItem* Inventory::getSelectedItem() const
@@ -1309,7 +1309,7 @@ void Inventory::setMouseOverItem(BattleItem* const item)
 }
 
 /**
- * Returns the item currently under mouse-cursor.
+ * Gets the item currently under mouse-cursor.
  * @return, pointer to a BattleItem or nullptr if none
  */
 BattleItem* Inventory::getMouseOverItem() const

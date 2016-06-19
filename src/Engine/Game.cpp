@@ -1015,7 +1015,7 @@ void Game::loadLanguage(const std::string& file)
 }
 
 /**
- * Returns the Language currently in use by this Game.
+ * Gets the Language currently in use by this Game.
  * @return, pointer to the Language
  */
 Language* Game::getLanguage() const
@@ -1138,7 +1138,7 @@ SavedGame* Game::getSavedGame() const
 }
 
 /**
- * Returns the display-screen used by this Game.
+ * Gets the display-screen used by this Game.
  * @return, pointer to the Screen
  */
 Screen* Game::getScreen() const
@@ -1147,7 +1147,7 @@ Screen* Game::getScreen() const
 }
 
 /**
- * Returns the mouse-cursor used by this Game.
+ * Gets the mouse-cursor used by this Game.
  * @return, pointer to the Cursor
  */
 Cursor* Game::getCursor() const
@@ -1156,7 +1156,7 @@ Cursor* Game::getCursor() const
 }
 
 /**
- * Returns the FpsCounter used by this Game.
+ * Gets the FpsCounter used by this Game.
  * @return, pointer to the FpsCounter
  */
 FpsCounter* Game::getFpsCounter() const

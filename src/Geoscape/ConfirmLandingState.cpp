@@ -463,7 +463,7 @@ void ConfirmLandingState::btnInterceptClick(Action*)
 }
 
 /**
- * Returns the Craft back to its Base.
+ * Sends the Craft back to its Base.
  * @param action - pointer to an Action
  */
 void ConfirmLandingState::btnBaseClick(Action*)

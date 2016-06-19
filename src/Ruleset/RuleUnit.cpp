@@ -122,7 +122,7 @@ void RuleUnit::load(
 }
 
 /**
- * Returns the string-ID that identifies this type of unit.
+ * Gets the string-ID that identifies this type of unit.
  * @note Each unit is identified by race and if alien rank.
  * @return, the unit's name
  */
@@ -132,7 +132,7 @@ std::string RuleUnit::getType() const
 }
 
 /**
- * Returns the unit's stats-data-struct.
+ * Gets the unit's stats-data-struct.
  * @return, pointer to the unit's stats
  */
 UnitStats* RuleUnit::getStats()
@@ -141,7 +141,7 @@ UnitStats* RuleUnit::getStats()
 }
 
 /**
- * Returns the unit's height when standing.
+ * Gets the unit's height when standing.
  * @return, the unit's height
  */
 int RuleUnit::getStandHeight() const
@@ -150,7 +150,7 @@ int RuleUnit::getStandHeight() const
 }
 
 /**
- * Returns the unit's height when kneeling.
+ * Gets the unit's height when kneeling.
  * @return, the unit's kneeling height
  */
 int RuleUnit::getKneelHeight() const
@@ -159,7 +159,7 @@ int RuleUnit::getKneelHeight() const
 }
 
 /**
- * Returns the unit's floating elevation.
+ * Gets the unit's floating elevation.
  * @return, the unit's floating height
  */
 int RuleUnit::getFloatHeight() const

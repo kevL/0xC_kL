@@ -701,7 +701,7 @@ void ManufactureInfoState::onDecUnits() // private.
 }
 
 /**
- * Returns the quantity by which to increase/decrease.
+ * Gets the quantity by which to increase/decrease.
  * @note what were these guys smokin'
  * @return, 10 if CTRL is pressed else 1
  */

@@ -95,7 +95,7 @@ YAML::Node Target::save() const // virtual.
 }
 
 /**
- * Returns the longitude coordinate of this Target.
+ * Gets the longitude coordinate of this Target.
  * @return, longitude in radians
  */
 double Target::getLongitude() const
@@ -119,7 +119,7 @@ void Target::setLongitude(double lon)
 }
 
 /**
- * Returns the latitude coordinate of this Target.
+ * Gets the latitude coordinate of this Target.
  * @return, latitude in radians
  */
 double Target::getLatitude() const
@@ -148,7 +148,7 @@ void Target::setLatitude(double lat)
 }
 
 /**
- * Returns the list of Craft currently targeting this Target.
+ * Gets the list of Craft currently targeting this Target.
  * @return, pointer to a vector of pointers to Crafts
  */
 std::vector<Target*>* Target::getTargeters()
@@ -157,7 +157,7 @@ std::vector<Target*>* Target::getTargeters()
 }
 
 /**
- * Returns the great circle distance to another Target on the Globe.
+ * Gets the great circle distance to another Target on the Globe.
  * @param target - pointer to other target
  * @return, distance in radians
  */

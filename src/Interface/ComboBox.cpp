@@ -199,7 +199,7 @@ void ComboBox::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to draw this ComboBox.
+ * Gets the color used to draw this ComboBox.
  * @return, color value
  */
 Uint8 ComboBox::getColor() const
@@ -278,7 +278,7 @@ void ComboBox::setArrowColor(Uint8 color)
 }
 
 /**
- * Returns the currently selected option.
+ * Gets the currently selected option.
  * @return, selected row
  */
 size_t ComboBox::getSelected() const

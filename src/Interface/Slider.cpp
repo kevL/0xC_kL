@@ -186,7 +186,7 @@ void Slider::setColor(Uint8 color)
 }
 
 /**
- * Returns the color used to render this Slider.
+ * Gets the color used to render this Slider.
  * @return, color value
  */
 Uint8 Slider::getColor() const
@@ -289,7 +289,7 @@ void Slider::setValue(int value)
 }
 
 /**
-* Returns the current value of this Slider.
+* Gets the current value of this Slider.
 * @return, value
 */
 int Slider::getValue() const

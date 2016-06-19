@@ -193,7 +193,7 @@ void BaseView::setDog(Surface* const dog)
 }
 
 /**
- * Returns the facility the mouse is currently over.
+ * Gets the facility the mouse is currently over.
  * @return, pointer to base facility (0 if none)
  */
 BaseFacility* BaseView::getSelectedFacility() const
@@ -214,7 +214,7 @@ void BaseView::resetSelectedFacility()
 }
 
 /**
- * Returns the x-position of the grid square the mouse is currently over.
+ * Gets the x-position of the grid square the mouse is currently over.
  * @return, x-position on the grid
  */
 int BaseView::getGridX() const
@@ -223,7 +223,7 @@ int BaseView::getGridX() const
 }
 
 /**
- * Returns the y-position of the grid square the mouse is currently over.
+ * Gets the y-position of the grid square the mouse is currently over.
  * @return, y-position on the grid
  */
 int BaseView::getGridY() const

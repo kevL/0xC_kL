@@ -148,7 +148,7 @@ private:
 	/// Decreases quantity of units to make (if possible).
 	void onDecUnits();
 
-	/// Returns the quantity by which to increase/decrease.
+	/// Gets the quantity by which to increase/decrease.
 	int stepDelta() const;
 
 	/// Runs state functionality every cycle.

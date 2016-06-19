@@ -584,7 +584,7 @@ std::wstring Language::loadString(const std::string& stIn) const // private.
 }
 
 /**
- * Returns the Language's locale.
+ * Gets the Language's locale.
  * @return, IANA language tag
  */
 std::string Language::getId() const
@@ -602,7 +602,7 @@ std::wstring Language::getName() const
 }
 
 /**
- * Returns the LocalizedText of the specified ID.
+ * Gets the LocalizedText of the specified ID.
  * @note If not found return the ID itself.
  * @param id - reference to the string-ID
  * @return, reference to LocalizedText (wide-string) of the requested ID
@@ -627,7 +627,7 @@ const LocalizedText& Language::getString(const std::string& id) const
 }
 
 /**
- * Returns the LocalizedText with the specified ID in the proper form for @a qty.
+ * Gets the LocalizedText with the specified ID in the proper form for @a qty.
  * @note The substitution of @a qty has already happened in the returned
  * LocalizedText. If not found return the ID itself.
  * @param id	- reference to the string-ID
@@ -689,7 +689,7 @@ LocalizedText Language::getString(
 }
 
 /**
- * Returns the LocalizedText with the specified ID in the proper form for the
+ * Gets the LocalizedText with the specified ID in the proper form for the
  * gender.
  * @note If not found return the ID itself.
  * @param id		- reference to the string-ID
@@ -748,7 +748,7 @@ void Language::toHtml(const std::string& file) const
 } */
 
 /**
- * Returns the direction to use for rendering text in this Language.
+ * Gets the direction to use for rendering text in this Language.
  * @return, text-direction
  */
 TextDirection Language::getTextDirection() const
@@ -757,7 +757,7 @@ TextDirection Language::getTextDirection() const
 }
 
 /**
- * Returns the wrapping rules to use for rendering text in this Language.
+ * Gets the wrapping rules to use for rendering text in this Language.
  * @return, text-wrapping
  */
 TextWrapping Language::getTextWrapping() const

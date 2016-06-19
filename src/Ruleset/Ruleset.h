@@ -314,7 +314,7 @@ protected:
 		const RuleInventory* getInventoryRule(const InventorySection sectionId) const;
 		/// Converts all inventory-mappings from string-keys to enumerated-keys.
 		void convertInventories();
-		/// Returns the sorted list of inventories.
+		/// Gets the sorted list of inventories.
 //		const std::vector<std::string>& getInventoryList() const;
 		/// Determines the highest TU-value used in Inventory rules.
 		int detHighTuInventoryCost() const;

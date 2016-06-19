@@ -154,7 +154,7 @@ void RuleArmor::load(const YAML::Node& node)
 }
 
 /**
- * Returns the string of the Armor type.
+ * Gets the string of the Armor type.
  * @return, armor type
  */
 std::string RuleArmor::getType() const

@@ -87,7 +87,7 @@ private:
 
 	/// Updates the quantity-strings of the selected item.
 	void updateListrow();
-	/// Returns the quantity by which to increase/decrease.
+	/// Gets the quantity by which to increase/decrease.
 	int stepDelta() const;
 
 	/// Gets the price of a selected item.

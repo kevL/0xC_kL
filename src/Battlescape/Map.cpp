@@ -2804,7 +2804,7 @@ int Map::getIconWidth() const
 }
 
 /**
- * Returns the angle (left/right balance) of a sound-effect based on a map-position.
+ * Gets the angle (left/right balance) of a sound-effect based on a map-position.
  * @param pos - reference to the map-position to calculate a sound-angle from
  * @return, the angle of the sound (360 = 0 degrees center)
  */

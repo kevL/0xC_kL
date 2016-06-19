@@ -241,7 +241,7 @@ Surface* Font::getChar(wchar_t fontChar)
 }
 
 /**
- * Returns the maximum width for any character in this Font.
+ * Gets the maximum width for any character in this Font.
  * @return, width in pixels
  */
 int Font::getWidth() const
@@ -250,7 +250,7 @@ int Font::getWidth() const
 }
 
 /**
- * Returns the maximum height for any character in this Font.
+ * Gets the maximum height for any character in this Font.
  * @return, height in pixels
  */
 int Font::getHeight() const
@@ -259,7 +259,7 @@ int Font::getHeight() const
 }
 
 /**
- * Returns the spacing for any character in this Font.
+ * Gets the spacing for any character in this Font.
  * @return, spacing in pixels
  * @note This does not refer to character spacing within the surface
  * but to the spacing used between multiple characters in a line.
@@ -270,7 +270,7 @@ int Font::getSpacing() const
 }
 
 /**
- * Returns the dimensions of a particular character in this Font.
+ * Gets the dimensions of a particular character in this Font.
  * @param fontChar - font character
  * @return, width and height dimensions (x/y are set as safeties)
  */
@@ -304,7 +304,7 @@ SDL_Rect Font::getCharSize(wchar_t fontChar)
 }
 
 /**
- * Returns the Surface stored within this Font.
+ * Gets the Surface stored within this Font.
  * @note Used for loading the actual graphic into this Font.
  * @return, pointer to the internal Surface
  */

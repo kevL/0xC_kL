@@ -77,7 +77,7 @@ YAML::Node Region::save() const
 }
 
 /**
- * Returns the ruleset for the region's type.
+ * Gets the ruleset for the region's type.
  * @return, pointer to RuleRegion
  */
 RuleRegion* Region::getRules() const

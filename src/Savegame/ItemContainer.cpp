@@ -140,7 +140,7 @@ void ItemContainer::removeItem(
 } */
 
 /**
- * Returns the quantity of an item in the container.
+ * Gets the quantity of an item in the container.
  * @param type - reference an item type
  * @return, item quantity
  */
@@ -156,7 +156,7 @@ int ItemContainer::getItemQuantity(const std::string& type) const
 }
 
 /**
- * Returns the total quantity of the items in the container.
+ * Gets the total quantity of the items in the container.
  * @return, total item quantity
  */
 int ItemContainer::getTotalQuantity() const
@@ -173,7 +173,7 @@ int ItemContainer::getTotalQuantity() const
 }
 
 /**
- * Returns the total size (in storage-units) of the items in the container.
+ * Gets the total size (in storage-units) of the items in the container.
  * @param rules - pointer to Ruleset
  * @return, total item size
  */

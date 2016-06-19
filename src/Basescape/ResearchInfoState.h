@@ -87,20 +87,20 @@ private:
 	/// Handler for clicking the Less button.
 	void lessClick(Action* action);
 
+	/// Runs state functionality every Timer tick.
+	void think() override;
+
 	/// Function called every time the _timerMore timer is triggered.
-	void moreSci();
+	void onMore();
 	/// Add given number of scientists to the project if possible
 	void moreByValue(int change);
 	/// Function called every time the _timerLess timer is triggered.
-	void lessSci();
+	void onLess();
 	/// Remove the given number of scientists from the project if possible
 	void lessByValue(int change);
 
 	/// Gets quantity to change by.
 	int stepDelta() const;
-
-	/// Runs state functionality every cycle (used to update the timer).
-	void think() override;
 
 
 	public:

@@ -77,7 +77,7 @@ void Frame::setBorderColor(Uint8 color)
 }
 
 /**
- * Returns the color used to draw the shaded border.
+ * Gets the color used to draw the shaded border.
  * @return, color value
  */
 Uint8 Frame::getColor() const
@@ -96,7 +96,7 @@ void Frame::setSecondaryColor(Uint8 bg)
 }
 
 /**
-* Returns the color used to draw the background.
+* Gets the color used to draw the background.
 * @return, color value
 */
 Uint8 Frame::getSecondaryColor() const

@@ -198,7 +198,7 @@ private:
 		/// Gets the Craft's minimum fuel limit.
 		int getFuelLimit() const;
 
-		/// Returns the Craft to its base.
+		/// Sends the Craft to its Base.
 		void returnToBase();
 		/// Gets whether the Craft has just finished a mission.
 		bool getTacticalReturn() const;

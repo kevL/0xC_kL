@@ -189,7 +189,7 @@ void CraftPatrolState::btnInfoClick(Action*)
 }
 
 /**
- * Returns the Craft back to its Base.
+ * Sends the Craft back to its Base.
  * @param action - pointer to an Action
  */
 void CraftPatrolState::btnBaseClick(Action*)

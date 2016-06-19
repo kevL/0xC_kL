@@ -98,7 +98,7 @@ YAML::Node SoldierLayout::save() const
 }
 
 /**
- * Returns the item's type which has to be in an Inventory section.
+ * Gets the item's type which has to be in an Inventory section.
  * @return, item-type
  */
 std::string SoldierLayout::getItemType() const
@@ -107,7 +107,7 @@ std::string SoldierLayout::getItemType() const
 }
 
 /**
- * Returns the Inventory section to be occupied.
+ * Gets the Inventory section to be occupied.
  * @return, section-type
  */
 std::string SoldierLayout::getLayoutSection() const
@@ -116,7 +116,7 @@ std::string SoldierLayout::getLayoutSection() const
 }
 
 /**
- * Returns the position-X in the Inventory section to be occupied.
+ * Gets the position-X in the Inventory section to be occupied.
  * @return, slot-X
  */
 int SoldierLayout::getSlotX() const
@@ -125,7 +125,7 @@ int SoldierLayout::getSlotX() const
 }
 
 /**
- * Returns the position-Y in the Inventory section to be occupied.
+ * Gets the position-Y in the Inventory section to be occupied.
  * @return, slot-Y
  */
 int SoldierLayout::getSlotY() const
@@ -134,7 +134,7 @@ int SoldierLayout::getSlotY() const
 }
 
 /**
- * Returns the ammo-type that has to be loaded into the item.
+ * Gets the ammo-type that has to be loaded into the item.
  * @return, the ammo-type
  */
 std::string SoldierLayout::getAmmoType() const
@@ -143,7 +143,7 @@ std::string SoldierLayout::getAmmoType() const
 }
 
 /**
- * Returns the turn until explosion of the item (if it's an activated grenade-type).
+ * Gets the turn until explosion of the item (if it's an activated grenade-type).
  * @return, turn count
  */
 int SoldierLayout::getFuse() const

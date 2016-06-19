@@ -291,7 +291,7 @@ void NumberText::setValue(unsigned value)
 }
 
 /**
- * Returns the value used to render the digits.
+ * Gets the value used to render the digits.
  * @return, digits value
  */
 unsigned NumberText::getValue() const

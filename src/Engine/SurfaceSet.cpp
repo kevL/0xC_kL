@@ -269,7 +269,7 @@ Surface* SurfaceSet::addFrame(int i)
 }
 
 /**
- * Returns the full width of a frame in this SurfaceSet.
+ * Gets the full width of a frame in this SurfaceSet.
  * @return, width in pixels
  */
 int SurfaceSet::getWidth() const
@@ -278,7 +278,7 @@ int SurfaceSet::getWidth() const
 }
 
 /**
- * Returns the full height of a frame in this SurfaceSet.
+ * Gets the full height of a frame in this SurfaceSet.
  * @return, height in pixels
  */
 int SurfaceSet::getHeight() const
@@ -287,7 +287,7 @@ int SurfaceSet::getHeight() const
 }
 
 /**
- * Returns the total amount of frames currently stored in this SurfaceSet.
+ * Gets the total amount of frames currently stored in this SurfaceSet.
  * @return, number of frames
  */
 size_t SurfaceSet::getTotalFrames() const

@@ -96,7 +96,7 @@ YAML::Node Country::save() const
 }
 
 /**
- * Returns the ruleset for this Country's type.
+ * Gets the ruleset for this Country's type.
  * @return, pointer to RuleCountry
  */
 const RuleCountry* Country::getRules() const
