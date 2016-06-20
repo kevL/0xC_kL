@@ -1045,6 +1045,7 @@ void UnitSprite::drawRoutine3() // private.
 	if (_quad != 0)
 	{
 		quad = _unitSet->getFrame(((_quad - 1) << 3u) + _aniFrame + walk);
+		quad->setX(OFFSET);
 		drawRecolored(quad);
 	}
 

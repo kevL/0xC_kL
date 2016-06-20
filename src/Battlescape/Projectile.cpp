@@ -92,7 +92,7 @@ Projectile::Projectile(
 		{
 			case BA_THROW:
 				_throwSprite = res->getSurfaceSet("FLOOROB.PCK")->getFrame(_action.weapon->getRules()->getFloorSprite());
-				_speed /= 5;
+				_speed >>= 2u;
 				break;
 
 //			default: // ba_SHOOT!! or hit, or spit

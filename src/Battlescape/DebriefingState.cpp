@@ -1221,7 +1221,7 @@ void DebriefingState::prepareDebriefing() // private.
 				switch (orgFaction)
 				{
 					case FACTION_PLAYER:
-						if (aborted == false // NOTE: Duplicated this check above^ to determine 'playerExit'.
+						if (aborted == false // NOTE: Duplicated this check above^ to determine 'playerExit' val.
 							|| ((_tactical->success == true || tacType != TCT_BASEDEFENSE)
 								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
 						{
