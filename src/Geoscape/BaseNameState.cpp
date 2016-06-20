@@ -122,7 +122,7 @@ void BaseNameState::edtLabelChange(Action* action)
 }
 
 /**
- * Go to the PlaceLift screen.
+ * Goes to the PlaceLift screen.
  * @param action - pointer to an Action
  */
 void BaseNameState::btnOkClick(Action*)

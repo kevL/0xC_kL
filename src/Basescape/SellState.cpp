@@ -188,29 +188,6 @@ SellState::SellState(Base* const base)
 
 	int val;
 
-	for (std::vector<Craft*>::const_iterator
-			i = _base->getCrafts()->begin();
-			i != _base->getCrafts()->end();
-			++i)
-	{
-		if ((*i)->getCraftStatus() != CS_OUT)
-		{
-			_sellQty.push_back(0);
-			_crafts.push_back(*i);
-			std::wstring wst;
-			val = (*i)->getRules()->getSellCost();
-			if (val != 0)
-				wst = Text::formatCurrency(val);
-			else
-				wst = L"-";
-			_lstItems->addRow(
-							4,
-							(*i)->getName(_game->getLanguage()).c_str(),
-							L"1",L"0",
-							wst.c_str());
-		}
-	}
-
 	if ((val = _base->getScientists()) != 0)
 	{
 		_hasSci = 1u;
@@ -233,6 +210,28 @@ SellState::SellState(Base* const base)
 						Text::intWide(val).c_str(),
 						L"0",L"-");
 //						Text::formatCurrency(0).c_str());
+	}
+
+	for (std::vector<Craft*>::const_iterator
+			i = _base->getCrafts()->begin();
+			i != _base->getCrafts()->end();
+			++i)
+	{
+		if ((*i)->getCraftStatus() != CS_OUT)
+		{
+			_sellQty.push_back(0);
+			_crafts.push_back(*i);
+			std::wstring wst;
+			if ((val = (*i)->getRules()->getSellCost()) != 0)
+				wst = Text::formatCurrency(val);
+			else
+				wst = L"-";
+			_lstItems->addRow(
+							4,
+							(*i)->getName(_game->getLanguage()).c_str(),
+							L"1",L"0",
+							wst.c_str());
+		}
 	}
 
 
@@ -770,9 +769,9 @@ PurchaseSellTransferType SellState::getSellType(size_t sel) const // private.
 	size_t rowCutoff (_soldiers.size());
 
 	if (sel < rowCutoff)						return PST_SOLDIER;
-	if (sel < (rowCutoff += _crafts.size()))	return PST_CRAFT;
 	if (sel < (rowCutoff += _hasSci))			return PST_SCIENTIST;
-	if (sel < (rowCutoff + _hasEng))			return PST_ENGINEER;
+	if (sel < (rowCutoff += _hasEng))			return PST_ENGINEER;
+	if (sel < (rowCutoff +  _crafts.size()))	return PST_CRAFT;
 
 	return PST_ITEM;
 }
@@ -786,9 +785,9 @@ size_t SellState::getItemIndex(size_t sel) const // private.
 {
 	return sel
 		 - _soldiers.size()
-		 - _crafts.size()
 		 - _hasSci
-		 - _hasEng;
+		 - _hasEng
+		 - _crafts.size();
 }
 
 /**
@@ -798,7 +797,10 @@ size_t SellState::getItemIndex(size_t sel) const // private.
  */
 size_t SellState::getCraftIndex(size_t sel) const // private.
 {
-	return sel - _soldiers.size();
+	return sel
+		- _soldiers.size()
+		- _hasSci
+		- _hasEng;
 }
 
 }

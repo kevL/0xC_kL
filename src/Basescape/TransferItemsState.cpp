@@ -276,6 +276,38 @@ void TransferItemsState::init()
 		}
 	}
 
+	int val;
+
+	if ((val = _baseSource->getScientists()) != 0)
+	{
+		_hasSci = 1u;
+		_transferQty.push_back(0);
+		_baseQty.push_back(val);
+		_destQty.push_back(_baseTarget->getTotalScientists());
+
+		_lstItems->addRow(
+						4,
+						tr("STR_SCIENTIST").c_str(),
+						Text::intWide(_baseQty.back()).c_str(),
+						L"0",
+						Text::intWide(_destQty.back()).c_str());
+	}
+
+	if ((val = _baseSource->getEngineers()) != 0)
+	{
+		_hasEng = 1u;
+		_transferQty.push_back(0);
+		_baseQty.push_back(val);
+		_destQty.push_back(_baseTarget->getTotalEngineers());
+
+		_lstItems->addRow(
+						4,
+						tr("STR_ENGINEER").c_str(),
+						Text::intWide(_baseQty.back()).c_str(),
+						L"0",
+						Text::intWide(_destQty.back()).c_str());
+	}
+
 	for (std::vector<Craft*>::const_iterator
 			i = _baseSource->getCrafts()->begin();
 			i != _baseSource->getCrafts()->end();
@@ -293,36 +325,6 @@ void TransferItemsState::init()
 							(*i)->getName(_game->getLanguage()).c_str(),
 							L"1",L"0",L"0");
 		}
-	}
-
-	if (_baseSource->getScientists() != 0)
-	{
-		_hasSci = 1u;
-		_transferQty.push_back(0);
-		_baseQty.push_back(_baseSource->getScientists());
-		_destQty.push_back(_baseTarget->getTotalScientists());
-
-		_lstItems->addRow(
-						4,
-						tr("STR_SCIENTIST").c_str(),
-						Text::intWide(_baseQty.back()).c_str(),
-						L"0",
-						Text::intWide(_destQty.back()).c_str());
-	}
-
-	if (_baseSource->getEngineers() != 0)
-	{
-		_hasEng = 1u;
-		_transferQty.push_back(0);
-		_baseQty.push_back(_baseSource->getEngineers());
-		_destQty.push_back(_baseTarget->getTotalEngineers());
-
-		_lstItems->addRow(
-						4,
-						tr("STR_ENGINEER").c_str(),
-						Text::intWide(_baseQty.back()).c_str(),
-						L"0",
-						Text::intWide(_destQty.back()).c_str());
 	}
 
 
@@ -1054,9 +1056,9 @@ PurchaseSellTransferType TransferItemsState::getTransferType(size_t sel) const /
 	size_t rowCutoff (_soldiers.size());
 
 	if (sel <  rowCutoff)						return PST_SOLDIER;
-	if (sel < (rowCutoff += _crafts.size()))	return PST_CRAFT;
 	if (sel < (rowCutoff += _hasSci))			return PST_SCIENTIST;
-	if (sel < (rowCutoff +  _hasEng))			return PST_ENGINEER;
+	if (sel < (rowCutoff += _hasEng))			return PST_ENGINEER;
+	if (sel < (rowCutoff +  _crafts.size()))	return PST_CRAFT;
 
 	return PST_ITEM;
 }
@@ -1070,9 +1072,9 @@ size_t TransferItemsState::getItemIndex(size_t sel) const // private.
 {
 	return sel
 		 - _soldiers.size()
-		 - _crafts.size()
 		 - _hasSci
-		 - _hasEng;
+		 - _hasEng
+		 - _crafts.size();
 }
 
 /**
@@ -1082,7 +1084,10 @@ size_t TransferItemsState::getItemIndex(size_t sel) const // private.
  */
 size_t TransferItemsState::getCraftIndex(size_t sel) const // private.
 {
-	return sel - _soldiers.size();
+	return sel
+		- _soldiers.size()
+		- _hasSci
+		- _hasEng;
 }
 
 }
