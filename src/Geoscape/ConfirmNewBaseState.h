@@ -34,7 +34,7 @@ class Window;
 
 
 /**
- * Screen that allows the player to confirm a new base on the globe.
+ * Screen that allows the player to confirm placing a Sase on the Globe.
  * @note This is different from the starting base screen, BaseNameState
  */
 class ConfirmNewBaseState
@@ -57,11 +57,11 @@ private:
 
 
 	public:
-		/// Creates the Confirm New Base state.
+		/// Creates a ConfirmNewBase state.
 		ConfirmNewBaseState(
 				Base* const base,
 				Globe* const globe);
-		/// Cleans up the Confirm New Base state.
+		/// Cleans up the ConfirmNewBase state.
 		~ConfirmNewBaseState();
 
 		/// Handler for clicking the OK button.

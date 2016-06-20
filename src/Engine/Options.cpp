@@ -176,7 +176,6 @@ void create()
 	// true drags away from the cursor, false drags towards (like a grab)
 	_info.push_back(OptionInfo("geoDragScrollInvert", &geoDragScrollInvert, false, "STR_DRAGSCROLLINVERT", "STR_GEOSCAPE"));
 	_info.push_back(OptionInfo("aggressiveRetaliation", &aggressiveRetaliation, false, "STR_AGGRESSIVERETALIATION", "STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("customInitialBase", &customInitialBase, false, "STR_CUSTOMINITIALBASE", "STR_GEOSCAPE"));
 	_info.push_back(OptionInfo("allowBuildingQueue", &allowBuildingQueue, false, "STR_ALLOWBUILDINGQUEUE", "STR_GEOSCAPE"));
 	_info.push_back(OptionInfo("craftLaunchAlways", &craftLaunchAlways, false, "STR_CRAFTLAUNCHALWAYS", "STR_GEOSCAPE"));
 	_info.push_back(OptionInfo("canSellLiveAliens", &canSellLiveAliens, false, "STR_CANSELLLIVEALIENS", "STR_GEOSCAPE"));
@@ -197,7 +196,6 @@ void create()
 //	_info.push_back(OptionInfo("battleSmoothCamera", &battleSmoothCamera, false, "STR_BATTLESMOOTHCAMERA", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleWeaponSelfDestruction", &battleWeaponSelfDestruction, false, "STR_WEAPONSELFDESTRUCTION", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleAllowPsionicCapture", &battleAllowPsionicCapture, false, "STR_ALLOWPSIONICCAPTURE", "STR_BATTLESCAPE"));
-//	_info.push_back(OptionInfo("allowPsiStrengthImprovement", &allowPsiStrengthImprovement, false, "STR_ALLOWPSISTRENGTHIMPROVEMENT", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleStrafe", &battleStrafe, false, "STR_STRAFE", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleForceFire", &battleForceFire, true, "STR_FORCE_FIRE", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleTFTDDamage", &battleTFTDDamage, false, "STR_TFTDDAMAGE", "STR_BATTLESCAPE"));

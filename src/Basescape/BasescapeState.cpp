@@ -408,7 +408,7 @@ void BasescapeState::setBase(Base* const base)
 }
 
 /**
- * Goes to the Build New Base screen.
+ * Goes to the BuildNewBase screen.
  * @param action - pointer to an Action
  *
 void BasescapeState::btnNewBaseClick(Action*)

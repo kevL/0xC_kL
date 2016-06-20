@@ -29,8 +29,8 @@ OPT SDLKey keyOk, keyOkKeypad, keyCancel, keyScreenshot, keyFps, keyQuickLoad, k
 // Geoscape options
 OPT int geoClockSpeed, dogfightSpeed, geoScrollSpeed, geoDragScrollButton, geoscapeScale;
 OPT bool includePrimeStateInSavedLayout, retainCorpses, craftLaunchAlways, globeSeasons, globeDetail, globeRadarLines, globeFlightPaths,
-	globeAllRadarsOnBaseBuild, canSellLiveAliens, customInitialBase, aggressiveRetaliation, geoDragScrollInvert,
-	allowBuildingQueue, showFundsOnGeoscape, fieldPromotions, psiStrengthEval; //allowPsiStrengthImprovement
+	globeAllRadarsOnBaseBuild, canSellLiveAliens, aggressiveRetaliation, geoDragScrollInvert,
+	allowBuildingQueue, showFundsOnGeoscape, fieldPromotions, psiStrengthEval;
 OPT SDLKey keyGeoLeft, keyGeoRight, keyGeoUp, keyGeoDown, keyGeoZoomIn, keyGeoZoomOut, keyGeoSpeed1, keyGeoSpeed2, keyGeoSpeed3, keyGeoSpeed4, keyGeoSpeed5,
 	keyGeoSpeed6, keyGeoIntercept, keyGeoBases, keyGeoGraphs, keyGeoUfopedia, keyGeoOptions, keyGeoFunding, keyGeoToggleDetail, keyGeoToggleRadar,
 	keyBaseSelect1, keyBaseSelect2, keyBaseSelect3, keyBaseSelect4, keyBaseSelect5, keyBaseSelect6, keyBaseSelect7, keyBaseSelect8;

@@ -154,7 +154,6 @@ void Base::load(
 
 	//Log(LOG_INFO) << ". load facilities";
 	if (isFirstBase == false || isQuickBattle == true)
-//		|| Options::customInitialBase == false)
 	{
 		_placed = true;
 		for (YAML::const_iterator

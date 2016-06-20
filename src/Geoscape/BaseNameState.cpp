@@ -42,14 +42,14 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in a Base Name window.
+ * Initializes all the elements in the BaseName window.
  * @param base		- pointer to the Base to name
  * @param globe		- pointer to the Geoscape globe
  * @param firstBase	- true if this is the first base in the game (default false)
  */
 BaseNameState::BaseNameState(
-		Base* base,
-		Globe* globe,
+		Base* const base,
+		Globe* const globe,
 		bool firstBase)
 	:
 		_base(base),
@@ -78,7 +78,6 @@ BaseNameState::BaseNameState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->setVisible(false); // something must be in the name before it's acceptable
 	_btnOk->onMouseClick((ActionHandler)& BaseNameState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& BaseNameState::btnOkClick,
@@ -86,6 +85,7 @@ BaseNameState::BaseNameState(
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& BaseNameState::btnOkClick,
 					Options::keyOkKeypad);
+	_btnOk->setVisible(false);
 
 	_txtTitle->setText(tr("STR_BASE_NAME"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -112,37 +112,31 @@ void BaseNameState::edtLabelChange(Action* action)
 
 	if (_edtName->getText().empty() == true)
 		_btnOk->setVisible(false);
-	else
+	else if (action->getDetails()->key.keysym.sym == Options::keyCancel)
 	{
-		if (action->getDetails()->key.keysym.sym == Options::keyCancel)
-		{
-			_btnOk->setVisible(false);
-			_edtName->setText(L"");
-		}
-		else
-			_btnOk->setVisible();
+		_btnOk->setVisible(false);
+		_edtName->setText(L"");
 	}
+	else
+		_btnOk->setVisible();
 }
 
 /**
- * Exits to the previous screen
+ * Go to the PlaceLift screen.
  * @param action - pointer to an Action
  */
 void BaseNameState::btnOkClick(Action*)
 {
-	if (_edtName->getText().empty() == false)
+	_game->popState();
+	_game->popState();
+
+	if (_firstBase == false)
 	{
 		_game->popState();
-		_game->popState();
-
-		if (_firstBase == false
-			|| Options::customInitialBase == true)
-		{
-			if (_firstBase == false)
-				_game->popState();
-
-			_game->pushState(new PlaceLiftState(_base, _globe, _firstBase));
-		}
+		_game->pushState(new PlaceLiftState(
+										_base,
+										_globe,
+										_firstBase));
 	}
 }
 

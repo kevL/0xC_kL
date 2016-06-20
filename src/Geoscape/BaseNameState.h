@@ -56,12 +56,12 @@ private:
 
 
 	public:
-		/// Creates the Base Name state.
+		/// Creates a BaseName state.
 		BaseNameState(
-				Base* base,
-				Globe* globe,
+				Base* const base,
+				Globe* const globe,
 				bool firstBase = false);
-		/// Cleans up the Base Name state.
+		/// Cleans up the BaseName state.
 		~BaseNameState();
 
 		/// Handler for clicking the OK button.

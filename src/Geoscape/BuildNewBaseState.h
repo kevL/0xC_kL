@@ -64,12 +64,12 @@ private:
 
 
 	public:
-		/// Creates a BuildNewBaseState.
+		/// Creates a BuildNewBase state.
 		BuildNewBaseState(
 				Base* const base,
 				Globe* const globe,
 				bool firstBase = false);
-		/// Cleans up the BuildNewBaseState.
+		/// Cleans up the BuildNewBase state.
 		~BuildNewBaseState();
 
 		/// Resets Globe.

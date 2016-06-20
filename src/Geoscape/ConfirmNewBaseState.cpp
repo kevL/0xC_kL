@@ -47,7 +47,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Confirm New Base window.
+ * Initializes all the elements in the ConfirmNewBase window.
  * @param base	- pointer to the Base to place
  * @param globe	- pointer to the Geoscape globe
  */
@@ -119,7 +119,7 @@ ConfirmNewBaseState::~ConfirmNewBaseState()
 {}
 
 /**
- * Go to the Place Access Lift screen.
+ * Go to the BaseNameState screen.
  * @param action - pointer to an Action
  */
 void ConfirmNewBaseState::btnOkClick(Action*)
