@@ -62,11 +62,11 @@ private:
 		* _txtEngineers,
 		* _txtEngineersDesc,
 		* _txtProfit,
-		* _txtTimeDesc,
-		* _txtTimeLeft,
+		* _txtDurationDesc,
+		* _txtDuration,
 		* _txtTitle,
-		* _txtTotal,
-		* _txtTotalDesc;
+		* _txtUnits,
+		* _txtUnitsDesc;
 	TextButton
 		* _btnOk,
 		* _btnStop;

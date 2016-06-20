@@ -80,7 +80,7 @@ ManufactureState::ManufactureState(
 	_txtEngineers	= new Text( 45,  9, 145, 53);
 	_txtProduced	= new Text( 40,  9, 174, 45);
 	_txtCost		= new Text( 50, 17, 215, 45);
-	_txtTimeLeft	= new Text( 25, 17, 271, 45);
+	_txtDuration	= new Text( 25, 17, 271, 45);
 
 	_lstManufacture	= new TextList(285, 81, 16,  71);
 	_lstResources	= new TextList(285, 17, 16, 156);
@@ -103,7 +103,7 @@ ManufactureState::ManufactureState(
 	add(_txtEngineers,		"text2",	"manufactureMenu");
 	add(_txtProduced,		"text2",	"manufactureMenu");
 	add(_txtCost,			"text2",	"manufactureMenu");
-	add(_txtTimeLeft,		"text2",	"manufactureMenu");
+	add(_txtDuration,		"text2",	"manufactureMenu");
 	add(_lstManufacture,	"list",		"manufactureMenu");
 	add(_lstResources,		"list",		"manufactureMenu");
 	add(_btnNew,			"button",	"manufactureMenu");
@@ -161,7 +161,7 @@ ManufactureState::ManufactureState(
 	_txtEngineers->setText(tr("STR_ENGINEERS_ALLOCATED"));
 	_txtProduced->setText(tr("STR_UNITS_PRODUCED"));
 	_txtCost->setText(tr("STR_COST_PER_UNIT"));
-	_txtTimeLeft->setText(tr("STR_DAYS_HOURS_LEFT"));
+	_txtDuration->setText(tr("STR_DAYS_HOURS_LEFT"));
 
 	_lstManufacture->setColumns(5, 121,29,41,56,30);
 	_lstManufacture->setSelectable();

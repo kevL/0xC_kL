@@ -287,9 +287,7 @@ void Base::load(
 		type = (*i)["item"].as<std::string>();
 		if (_rules->getManufacture(type) != nullptr)
 		{
-			Production* const production (new Production(
-													_rules->getManufacture(type),
-													0));
+			Production* const production (new Production(_rules->getManufacture(type)));
 			production->load(*i);
 			_productions.push_back(production);
 		}
@@ -1077,9 +1075,8 @@ int Base::getUsedHangars() const
 			i != _productions.end();
 			++i)
 	{
-		if ((*i)->getRules()->isCraft() == true)
-			total += ((*i)->getProductionTotal() - (*i)->getProducedQuantity());
-			// TODO: This should account for the case when (*i)->getInfinite() == TRUE
+		if ((*i)->getRules()->isCraft() == true) // TODO: This should account for the case when (*i)->getInfinite() == TRUE
+			total += ((*i)->getProductionTotal() - (*i)->getProducedQuantity()); // Or disallow infinite Craft in ManufactureInfoState.
 	}
 
 	return total;
@@ -1179,7 +1176,7 @@ int Base::getCraftCount(const std::string& craft) const
 }
 
 /**
- * Adds a new Production to this Base.
+ * Adds a specified Production to this Base.
  * @param prod - pointer to a Production
  */
 void Base::addProduction(Production* const prod)
@@ -1188,7 +1185,7 @@ void Base::addProduction(Production* const prod)
 }
 
 /**
- * Removes a Production from this Base.
+ * Removes a specified Production from this Base.
  * @param prod - pointer to a Production
  */
 void Base::removeProduction(const Production* const prod)
@@ -1202,6 +1199,7 @@ void Base::removeProduction(const Production* const prod)
 	{
 		if (*i == prod)
 		{
+			delete *i;
 			_productions.erase(i);
 			return;
 		}

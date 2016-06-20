@@ -32,14 +32,14 @@ class Ruleset;
 class SavedGame;
 
 
+// Used by Manufacture and construction both by ProductionCompleteState in geoscape.
 enum ProductionProgress
 {
 	PROGRESS_NOT_COMPLETE,			// 0
 	PROGRESS_COMPLETE,				// 1
 	PROGRESS_NOT_ENOUGH_MONEY,		// 2
 	PROGRESS_NOT_ENOUGH_MATERIALS,	// 3
-	PROGRESS_MAX,					// 4
-	PROGRESS_CONSTRUCTION			// 5
+	PROGRESS_CONSTRUCTION			// 4
 };
 
 
@@ -53,7 +53,7 @@ private:
 		_infinite,
 		_sell;
 	int
-		_total,
+		_units,
 		_engineers,
 		_timeSpent;
 
@@ -67,9 +67,7 @@ private:
 
 	public:
 		/// Tracks a Base manufacturing project.
-		Production(
-				const RuleManufacture* const manfRule,
-				int total);
+		explicit Production(const RuleManufacture* const manfRule);
 		/// Cleans the Base manufacturing project.
 		~Production();
 

@@ -249,7 +249,14 @@ private:
 		/// Gets the Base's crafts of a certain type.
 		int getCraftCount(const std::string& craft) const;
 
-		/// Gets the list of the Base's ResearchProject.
+		/// Adds a Production to the Base.
+		void addProduction(Production* const prod);
+		/// Removes a Production from the Base.
+		void removeProduction(const Production* const prod);
+		/// Gets a list of the Base's Productions.
+		const std::vector<Production*>& getProductions() const;
+
+		/// Gets the list of the Base's ResearchProjects.
 		const std::vector<ResearchProject*>& getResearch() const;
 		/// Adds a fresh ResearchProject to the Base.
 		void addResearch(ResearchProject* const project);
@@ -260,13 +267,6 @@ private:
 				bool goOffline = false);
 		/// Research Help ala XcomUtil.
 		void researchHelp(const std::string& aLien);
-
-		/// Adds a Production to the Base.
-		void addProduction(Production* const prod);
-		/// Removes a Production from the Base.
-		void removeProduction(const Production* const prod);
-		/// Gets a list of the Base's Production.
-		const std::vector<Production*>& getProductions() const;
 
 		/// Sets the Base's battlescape status.
 		void setTactical(bool tactical = true);

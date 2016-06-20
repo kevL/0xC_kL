@@ -64,7 +64,7 @@ private:
 				const std::wstring& item,
 				GeoscapeState* const geoState,
 				bool gotoBaseBtn,
-				ProductionProgress endType = PROGRESS_COMPLETE);
+				ProductionProgress endType);
 		/// Cleans up the Production Complete state.
 		~ProductionCompleteState();
 

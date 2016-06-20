@@ -49,7 +49,7 @@ namespace OpenXcom
  * @param item			- reference the item that finished producing
  * @param geoState		- pointer to GeoscapeState
  * @param gotoBaseBtn	- true to show the goToBase button
- * @param endType		- what ended the production (default PROGRESS_COMPLETE) (see Production.h)
+ * @param endType		- what ended the production (Production.h)
  */
 ProductionCompleteState::ProductionCompleteState(
 		Base* const base,

@@ -42,18 +42,15 @@ namespace OpenXcom
 /**
  * Tracks a Base manufacturing project.
  * @param manfRule	- pointer to RuleManufacture
- * @param total		- quantity to produce
  */
-Production::Production(
-		const RuleManufacture* const manfRule,
-		int total)
+Production::Production(const RuleManufacture* const manfRule)
 	:
 		_manfRule(manfRule),
-		_total(total),
-		_timeSpent(0),
+		_units(1),
 		_engineers(0),
-		_infinite(false),
-		_sell(false)
+		_timeSpent(0),
+		_sell(false),
+		_infinite(false)
 {}
 
 /**
@@ -70,9 +67,9 @@ void Production::load(const YAML::Node& node)
 {
 	_engineers	= node["engineers"]	.as<int>(_engineers);
 	_timeSpent	= node["timeSpent"]	.as<int>(_timeSpent);
-	_total		= node["total"]		.as<int>(_total);
-	_infinite	= node["infinite"]	.as<bool>(_infinite);
 	_sell		= node["sell"]		.as<bool>(_sell);
+	_infinite	= node["infinite"]	.as<bool>(_infinite);
+	_units		= node["units"]		.as<int>(_units);
 }
 
 /**
@@ -85,11 +82,11 @@ YAML::Node Production::save() const
 
 	node["item"] = _manfRule->getType();
 
-	if (_timeSpent != 0)	node["timeSpent"]	= _timeSpent;
-	if (_total != 0)		node["total"]		= _total;
 	if (_engineers != 0)	node["engineers"]	= _engineers;
-	if (_infinite != false)	node["infinite"]	= _infinite;
+	if (_timeSpent != 0)	node["timeSpent"]	= _timeSpent;
 	if (_sell != false)		node["sell"]		= _sell;
+	if (_infinite != false)	node["infinite"]	= _infinite;
+	else					node["units"]		= _units;
 
 	return node;
 }
@@ -109,7 +106,7 @@ const RuleManufacture* Production::getRules() const
  */
 int Production::getProductionTotal() const
 {
-	return _total;
+	return _units;
 }
 
 /**
@@ -118,7 +115,7 @@ int Production::getProductionTotal() const
  */
 void Production::setProductionTotal(int quantity)
 {
-	_total = quantity;
+	_units = quantity;
 }
 
 /**
@@ -235,9 +232,9 @@ ProductionProgress Production::step(
 	if (qtyDone_pre < qtyDone_total)
 	{
 		int producedQty;
-		if (_infinite == false) // don't overproduce '_total'
+		if (_infinite == false) // don't overproduce units
 			producedQty = std::min(qtyDone_total,
-								  _total) - qtyDone_pre;
+								  _units) - qtyDone_pre;
 		else
 			producedQty = qtyDone_total - qtyDone_pre;
 
@@ -321,7 +318,7 @@ ProductionProgress Production::step(
 		while (producedQty != 0);
 	}
 
-	if (_infinite == false && qtyDone_total >= _total)
+	if (_infinite == false && qtyDone_total >= _units)
 		return PROGRESS_COMPLETE;
 
 	if (qtyDone_pre < qtyDone_total)
@@ -352,7 +349,7 @@ void Production::startProduction(
 	gameSave->setFunds(gameSave->getFunds() - cost);
 	base->addCashSpent(cost);
 
-	for (std::map<std::string,int>::const_iterator
+	for (std::map<std::string, int>::const_iterator
 			i = _manfRule->getRequiredItems().begin();
 			i != _manfRule->getRequiredItems().end();
 			++i)

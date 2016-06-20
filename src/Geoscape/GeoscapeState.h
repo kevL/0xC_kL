@@ -237,7 +237,7 @@ private:
 		bool is5Sec() const;
 
 		/// Displays a popup window.
-		void popup(State* state);
+		void popup(State* const state);
 
 		/// Gets the Geoscape globe.
 		Globe* getGlobe() const;

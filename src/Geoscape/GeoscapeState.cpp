@@ -2616,7 +2616,7 @@ void GeoscapeState::time1Hour()
 	}
 
 
-	std::vector<ProductionCompleteInfo> events;
+	std::vector<ProductionCompleteInfo> prodEvents;
 	// Note that if transfers arrive at the same time Production(s) complete
 	// the gotoBase button handling below is obviated by RMB on transfers ....
 	// But that's been amended by showing Transfers after ProdCompleted screens;
@@ -2648,18 +2648,16 @@ void GeoscapeState::time1Hour()
 				case PROGRESS_COMPLETE:
 				case PROGRESS_NOT_ENOUGH_MONEY:
 				case PROGRESS_NOT_ENOUGH_MATERIALS:
-				case PROGRESS_MAX:
-				case PROGRESS_CONSTRUCTION:
 					(*i)->removeProduction(j->first);
 
-					if (events.empty() == false) // set the previous event to NOT show btn.
-						events.back().gotoBaseBtn = false;
+					if (prodEvents.empty() == false) // set the previous event to NOT show btn.
+						prodEvents.back().gotoBaseBtn = false;
 
-					events.push_back(ProductionCompleteInfo(
-														*i,
-														tr(j->first->getRules()->getType()),
-														(arrivals == false),
-														j->second));
+					prodEvents.push_back(ProductionCompleteInfo(
+															*i,
+															tr(j->first->getRules()->getType()),
+															(arrivals == false),
+															j->second));
 			}
 		}
 
@@ -2677,17 +2675,16 @@ void GeoscapeState::time1Hour()
 	}
 
 	for (std::vector<ProductionCompleteInfo>::const_iterator
-			j = events.begin();
-			j != events.end();
-			)
+			j = prodEvents.begin();
+			j != prodEvents.end();
+			++j)
 	{
 		popup(new ProductionCompleteState(
 										j->base,
 										j->item,
 										this,
 										j->gotoBaseBtn,
-										j->endType));
-		j = events.erase(j);
+										j->endType)); // ie. Manufacture endType.
 	}
 
 	if (arrivals == true)
@@ -3082,54 +3079,50 @@ void GeoscapeState::time1Day()
 //	if (resEvents.empty() == false && newResEvents.empty() == true)
 //		newResEvents.push_back(NewPossibleResearchInfo(std::vector<const RuleResearch*>(), true));
 
-	// show events
+	// show Popup Events:
 	for (std::vector<ProductionCompleteInfo>::const_iterator
 			i = prodEvents.begin();
 			i != prodEvents.end();
-			)
+			++i)
 	{
 		popup(new ProductionCompleteState(
 									i->base,
 									i->item,
 									this,
 									i->gotoBaseBtn,
-									i->endType));
-		i = prodEvents.erase(i);
+									i->endType)); // ie. PROGRESS_CONSTRUCTION
 	}
 
 	for (std::vector<State*>::const_iterator
 			i = resEvents.begin();
 			i != resEvents.end();
-			)
+			++i)
 	{
 		popup(*i);
-		i = resEvents.erase(i);
 	}
 
 	for (std::vector<NewPossibleResearchInfo>::const_iterator
 			i = newResEvents.begin();
 			i != newResEvents.end();
-			)
+			++i)
 	{
 		popup(new NewPossibleResearchState(
 									i->base,
 									i->newPossibleResearch,
 									i->showResearchButton));
-		i = newResEvents.erase(i);
 	}
 
 	for (std::vector<NewPossibleManufactureInfo>::const_iterator
 			i = newProdEvents.begin();
 			i != newProdEvents.end();
-			)
+			++i)
 	{
 		popup(new NewPossibleManufactureState(
 										i->base,
 										i->newPossibleManufacture,
 										i->showManufactureButton));
-		i = newProdEvents.erase(i);
 	}
-
+	// done Popup Events.
 
 
 	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
@@ -3380,11 +3373,11 @@ bool GeoscapeState::is5Sec() const
 }
 
 /**
- * Adds a new popup window to the queue and pauses the game timer respectively.
+ * Adds a new popup-window to the queue and pauses the game-timer respectively.
  * @note Doing it this way this prevents popups from overlapping.
  * @param state - pointer to popup state
  */
-void GeoscapeState::popup(State* state)
+void GeoscapeState::popup(State* const state)
 {
 	_pause = true;
 	_popups.push_back(state);

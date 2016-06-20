@@ -58,7 +58,7 @@ private:
 		* _txtItem,
 		* _txtProduced,
 		* _txtSpace,
-		* _txtTimeLeft,
+		* _txtDuration,
 		* _txtTitle;
 	TextButton
 		* _btnNew,

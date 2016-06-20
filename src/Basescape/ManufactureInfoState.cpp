@@ -53,7 +53,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all elements in the Production settings screen (new Production).
+ * Initializes all elements in the Production settings screen (start Production).
  * @param base		- pointer to the Base to get info from
  * @param manfRule	- pointer to the RuleManufacture to produce
  */
@@ -70,7 +70,7 @@ ManufactureInfoState::ManufactureInfoState(
 }
 
 /**
- * Initializes all elements in the Production settings screen (modifying Production).
+ * Initializes all elements in the Production settings screen (modify Production).
  * @param base			- pointer to the Base to get info from
  * @param production	- pointer to the Production to modify
  */
@@ -108,8 +108,8 @@ void ManufactureInfoState::buildUi() // private.
 
 	_txtTitle			= new Text(280, 17, 20, 33);
 
-	_txtTimeDesc		= new Text(30, 17, 244, 44);
-	_txtTimeLeft		= new Text(30, 17, 274, 44);
+	_txtDurationDesc	= new Text(30, 17, 244, 44);
+	_txtDuration		= new Text(30, 17, 274, 44);
 	_btnSell			= new ToggleTextButton(60, 16, 244, 64);
 
 	_txtFreeEngineer	= new Text(100, 9, 16, 55);
@@ -119,8 +119,8 @@ void ManufactureInfoState::buildUi() // private.
 	_txtEngineersDesc	= new Text(84, 17,  16, 88);
 	_txtEngineers		= new Text(50, 17, 100, 88);
 
-	_txtTotalDesc		= new Text(84, 17, 176, 88);
-	_txtTotal			= new Text(50, 17, 260, 88);
+	_txtUnitsDesc		= new Text(84, 17, 176, 88);
+	_txtUnits			= new Text(50, 17, 260, 88);
 
 	_btnEngineerMore	= new ArrowButton(ARROW_BIG_UP,   100, 16,  30, 119);
 	_btnEngineerLess	= new ArrowButton(ARROW_BIG_DOWN, 100, 16,  30, 143);
@@ -134,16 +134,16 @@ void ManufactureInfoState::buildUi() // private.
 
 	add(_window,			"window",	"manufactureInfo");
 	add(_txtTitle,			"text",		"manufactureInfo");
-	add(_txtTimeDesc,		"text",		"manufactureInfo");
-	add(_txtTimeLeft,		"text",		"manufactureInfo");
+	add(_txtDurationDesc,	"text",		"manufactureInfo");
+	add(_txtDuration,		"text",		"manufactureInfo");
 	add(_btnSell,			"button1",	"manufactureInfo");
 	add(_txtFreeEngineer,	"text",		"manufactureInfo");
 	add(_txtFreeSpace,		"text",		"manufactureInfo");
 	add(_txtProfit,			"text",		"manufactureInfo");
 	add(_txtEngineersDesc,	"text",		"manufactureInfo");
 	add(_txtEngineers,		"text",		"manufactureInfo");
-	add(_txtTotalDesc,		"text",		"manufactureInfo");
-	add(_txtTotal,			"text",		"manufactureInfo");
+	add(_txtUnitsDesc,		"text",		"manufactureInfo");
+	add(_txtUnits,			"text",		"manufactureInfo");
 	add(_btnEngineerMore,	"button1",	"manufactureInfo");
 	add(_btnEngineerLess,	"button1",	"manufactureInfo");
 	add(_btnUnitMore,		"button1",	"manufactureInfo");
@@ -160,7 +160,7 @@ void ManufactureInfoState::buildUi() // private.
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	_txtTimeDesc->setText(tr("STR_DAYS_HOURS_LEFT"));
+	_txtDurationDesc->setText(tr("STR_DAYS_HOURS_LEFT"));
 
 	_btnSell->setText(tr("STR_SELL_PRODUCTION"));
 	_btnSell->onMouseRelease((ActionHandler)& ManufactureInfoState::btnSellRelease);
@@ -168,11 +168,11 @@ void ManufactureInfoState::buildUi() // private.
 	_txtEngineersDesc->setText(tr("STR_ENGINEERS_ALLOCATED"));
 	_txtEngineersDesc->setBig();
 
-	_txtEngineers->setBig();
-	_txtTotal->setBig();
+	_txtUnitsDesc->setText(tr("STR_UNITS_TO_PRODUCE"));
+	_txtUnitsDesc->setBig();
 
-	_txtTotalDesc->setText(tr("STR_UNITS_TO_PRODUCE"));
-	_txtTotalDesc->setBig();
+	_txtEngineers->setBig();
+	_txtUnits->setBig();
 
 	_btnEngineerMore->onMousePress(		(ActionHandler)& ManufactureInfoState::engineersMorePress);
 	_btnEngineerMore->onMouseRelease(	(ActionHandler)& ManufactureInfoState::engineersMoreRelease);
@@ -205,8 +205,7 @@ void ManufactureInfoState::buildUi() // private.
 
 	if (_production == nullptr)
 	{
-		_btnOk->setVisible(false);
-		_production = new Production(_manfRule, 0);
+		_production = new Production(_manfRule);
 		_base->addProduction(_production);
 	}
 
@@ -214,6 +213,7 @@ void ManufactureInfoState::buildUi() // private.
 
 	initProfit();
 	assignEngineers();
+
 
 	_timerEngineersMore = new Timer(Timer::SCROLL_SLOW);
 	_timerEngineersLess = new Timer(Timer::SCROLL_SLOW);
@@ -319,7 +319,7 @@ void ManufactureInfoState::assignEngineers() // private.
 		woststr << L"oo";
 	else
 		woststr << _production->getProductionTotal();
-	_txtTotal->setText(woststr.str());
+	_txtUnits->setText(woststr.str());
 
 	woststr.str(L"");
 	std::string st;
@@ -347,11 +347,7 @@ void ManufactureInfoState::assignEngineers() // private.
 	}
 	else
 		woststr << L"oo";
-	_txtTimeLeft->setText(woststr.str());
-
-
-	_btnOk->setVisible(_production->getProductionTotal() > 0
-					|| _production->getInfinite() == true);
+	_txtDuration->setText(woststr.str());
 }
 
 /**
@@ -467,8 +463,8 @@ void ManufactureInfoState::engineersLessRelease(Action* action) // private.
  */
 void ManufactureInfoState::unitsMorePress(Action* action) // private.
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT
-		&& _production->getProductionTotal() < std::numeric_limits<int>::max())
+	if (_production->getInfinite() == false // We can't increase over infinite :) [cf. Cantor]
+		&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		_timerUnitsMore->setInterval(Timer::SCROLL_SLOW);
 		_timerUnitsMore->start();
@@ -590,7 +586,7 @@ void ManufactureInfoState::engineersMoreByValue(int delta) // private.
 		availableEngineers (_base->getEngineers()),
 		availableWorkSpace (_base->getFreeWorkshops());
 
-	if (availableEngineers > 0 && availableWorkSpace > 0)
+	if (availableEngineers != 0 && availableWorkSpace != 0)
 	{
 		delta = std::min(delta,
 						 std::min(availableEngineers,
@@ -617,7 +613,7 @@ void ManufactureInfoState::onEngineersLess() // private.
 void ManufactureInfoState::engineersLessByValue(int delta) // private.
 {
 	const int assigned (_production->getAssignedEngineers());
-	if (assigned > 0)
+	if (assigned != 0)
 	{
 		delta = std::min(delta, assigned);
 		_production->setAssignedEngineers(assigned - delta);
@@ -642,7 +638,7 @@ void ManufactureInfoState::onUnitsMore() // private.
 void ManufactureInfoState::unitsMoreByValue(int delta) // private.
 {
 	if (_production->getRules()->isCraft() == true
-		&& _base->getFreeHangars() < 1)
+		&& _base->getFreeHangars() == 0)
 	{
 		_timerUnitsMore->stop();
 
