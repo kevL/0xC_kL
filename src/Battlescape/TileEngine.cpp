@@ -211,7 +211,7 @@ void TileEngine::calculateTerrainLighting() const
 
 		if (tile->getFire() != 0)									// add lighting from Tile-fire
 			light = std::max(light,
-							 LIGHT_FIRE);
+							 static_cast<int>(LIGHT_FIRE)); // kludgy STL::nerf
 
 		for (std::vector<BattleItem*>::const_iterator
 				j = tile->getInventory()->begin();
@@ -262,7 +262,7 @@ void TileEngine::calculateUnitLighting() const
 
 		if ((*i)->getFireUnit() != 0)	// add lighting of units on fire
 			light = std::max(light,
-							 LIGHT_FIRE);
+							 static_cast<int>(LIGHT_FIRE)); // kludgy STL::nerf
 
 		addLight(
 				(*i)->getPosition(),

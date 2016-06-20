@@ -749,40 +749,39 @@ void ProjectileFlyBState::think()
 		{
 			//Log(LOG_INFO) << "";
 			//Log(LOG_INFO) << "ProjectileFlyBState::think() -> finish actorId-" << _action.actor->getId();
-			if (_action.actor->getFaction() != _battleSave->getSide())	// NOTE: action.actor may not be the actual shooter, but
-//				&& Options::battleSmoothCamera == true)					// the unit will be the same Faction for a reaction shot.
+			switch (_action.type) // jump screen back to pre-shot position
 			{
-				//Log(LOG_INFO) << "FlyB: Check reset Camera for RF";
-				const std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
-				std::map<int, Position>::const_iterator i (rfShotOffsets->find(_action.actor->getId()));
-
-				//for (std::map<int, Position>::const_iterator j = rfShotOffsets->begin(); j != rfShotOffsets->end(); ++j)
-				//{ Log(LOG_INFO) << "FlyB: . . shotList:"; Log(LOG_INFO) << "FlyB: . . id-" << j->first << " " << j->second; }
-
-				if (i != rfShotOffsets->end()) // NOTE: The shotList vector will be cleared in BattlescapeGame::think() after all BattleStates have popped.
-				{
-					_action.posCamera = i->second;
-					//Log(LOG_INFO) << "FlyB: . . . set camera to " << _action.posCamera;
-				}
-				else
-				{
-					_action.posCamera.z = -1;
-					//Log(LOG_INFO) << "FlyB: . . . no reset";
-				}
-			}
-
-			//Log(LOG_INFO) << "FlyB: . stored posCamera " << _action.posCamera;
-			//Log(LOG_INFO) << "FlyB: . pauseAfterShot " << (int)_parent->getMap()->getCamera()->getPauseAfterShot();
-			if (_action.posCamera.z != -1) //&& _action.waypoints.size() < 2)
-			{
-				//Log(LOG_INFO) << "FlyB: . . posCamera was Set";
-				switch (_action.type) // jump screen back to pre-shot position
-				{
-					case BA_THROW:
-					case BA_AUTOSHOT:
-					case BA_SNAPSHOT:
-					case BA_AIMEDSHOT:
+				case BA_THROW:
+				case BA_AUTOSHOT:
+				case BA_SNAPSHOT:
+				case BA_AIMEDSHOT:
+					if (_action.actor->getFaction() != _battleSave->getSide())	// NOTE: action.actor may not be the actual shooter, but
+//						&& Options::battleSmoothCamera == true)					// the unit will be the same Faction for a reaction shot.
 					{
+						//Log(LOG_INFO) << "FlyB: Check reset Camera for RF";
+						const std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
+						std::map<int, Position>::const_iterator i (rfShotOffsets->find(_action.actor->getId()));
+
+						//for (std::map<int, Position>::const_iterator j = rfShotOffsets->begin(); j != rfShotOffsets->end(); ++j)
+						//{ Log(LOG_INFO) << "FlyB: . . shotList:"; Log(LOG_INFO) << "FlyB: . . id-" << j->first << " " << j->second; }
+
+						if (i != rfShotOffsets->end()) // NOTE: The shotList vector will be cleared in BattlescapeGame::think() after all BattleStates have popped.
+						{
+							_action.posCamera = i->second;
+							//Log(LOG_INFO) << "FlyB: . . . set camera to " << _action.posCamera;
+						}
+						else
+						{
+							_action.posCamera.z = -1;
+							//Log(LOG_INFO) << "FlyB: . . . set camera to NONE";
+						}
+					}
+
+					//Log(LOG_INFO) << "FlyB: . stored posCamera " << _action.posCamera;
+					//Log(LOG_INFO) << "FlyB: . pauseAfterShot " << (int)_parent->getMap()->getCamera()->getPauseAfterShot();
+					if (_action.posCamera.z != -1) //&& _action.waypoints.size() < 2)
+					{
+						//Log(LOG_INFO) << "FlyB: . . posCamera was Set";
 						//Log(LOG_INFO) << "FlyB: . . . resetting Camera to shooter pos";
 						Camera* const shotCam (_parent->getMap()->getCamera());
 						if (shotCam->getPauseAfterShot() == true)	// TODO: Move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
@@ -823,7 +822,6 @@ void ProjectileFlyBState::think()
 						_parent->getBattlescapeState()->getGame()->getScreen()->flip();
 						SDL_Delay(Screen::SCREEN_PAUSE);
 					}
-				}
 			}
 
 			switch (_action.type)

@@ -120,6 +120,8 @@ Map::Map(
 		_noDraw(false),
 		_showProjectile(true),
 		_battleSave(game->getSavedGame()->getBattleSave()),
+		_te(game->getSavedGame()->getBattleSave()->getTileEngine()),
+		_battleGame(nullptr), // is Set in BattlescapeGame cTor.
 		_res(game->getResourcePack()),
 		_fuseColor(31u),
 		_tile(nullptr),
@@ -387,9 +389,11 @@ void Map::draw()
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
 			|| _reveal == true // stop flashing the Hidden Movement screen between waypoints and/or autoshots.
+			|| _te->rfShooterOffsets()->empty() == false
 			|| _battleSave->getDebugTac() == true)
 		{
 			// REVEAL //
+			//Log(LOG_INFO) << "map: REVEAL";
 			delayHide = true;
 			_mapIsHidden = false;
 			drawTerrain(this);
@@ -399,6 +403,7 @@ void Map::draw()
 			// HIDE //
 			if (delayHide == true)
 			{
+				//Log(LOG_INFO) << "map: HIDE !!!";
 				delayHide = false;
 				SDL_Delay(Screen::SCREEN_PAUSE);
 			}
@@ -508,9 +513,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 					_smoothingEngaged = true;
 					_camera->setPauseAfterShot();
 
-					if (action->actor->getFaction() != _battleSave->getSide()) // store camera-offsets of rf-shooters
+					if (action->actor->getFaction() != _battleSave->getSide() // store camera-offsets of rf-shooters
+						&& action->actor->getUnitVisible() == true)
 					{
-						std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
+						//Log(LOG_INFO) << "";
+						//Log(LOG_INFO) << "map: insert reactor id-" << action->actor->getId() << " offset " << _camera->getMapOffset();
+						std::map<int, Position>* const rfShotOffsets (_te->rfShooterOffsets());
 						rfShotOffsets->insert(std::pair<int, Position>(
 																	action->actor->getId(),
 																	_camera->getMapOffset()));
@@ -520,7 +528,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 //				if (offScreen_final == true										// moved here from TileEngine::reactionShot() because this is the
 //					&& action->actor->getFaction() != _battleSave->getSide())	// accurate position of the bullet-shot-actor's Camera mapOffset.
 //				{
-//					std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
+//					std::map<int, Position>* const rfShotOffsets (_te->rfShooterOffsets());
 //					rfShotOffsets->insert(std::pair<int, Position>(
 //																action->actor->getId(),
 //																_camera->getMapOffset()));
@@ -864,9 +872,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 								case CT_TOSS:
 									if (hasUnit == true
 										&& (_selectorType != CT_PSI
-											|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
+											|| ((_battleGame->getTacticalAction()->type == BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_HOSTILE)
-												|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
+												|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{
 										spriteId = (_aniFrame & 1);	// yellow flashing box
@@ -1031,7 +1039,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							//if (sprite != nullptr)
 							{
 								voxel = _projectile->getPosition(); // draw shadow on the floor
-								voxel.z = _battleSave->getTileEngine()->castShadow(voxel);
+								voxel.z = _te->castShadow(voxel);
 								if (   (voxel.x >> 4) >= itX
 									&& (voxel.y >> 4) >= itY
 									&& (voxel.x >> 4) <  itX + 2
@@ -1077,7 +1085,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									//if (sprite != nullptr) // fusion-torch has no bullet.
 									{
 										voxel = _projectile->getPosition(1 - id); // draw shadow on the floor
-										voxel.z = _battleSave->getTileEngine()->castShadow(voxel);
+										voxel.z = _te->castShadow(voxel);
 										if (   (voxel.x >> 4) == itX
 											&& (voxel.y >> 4) == itY
 											&&  voxel.z / 24  == itZ)
@@ -1263,7 +1271,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											&& (_unit->getArmor()->getSize() == 1 || quadrant == 1)
 //											&& _projectileInFOV == false && _explosionInFOV == false)
 //											&& _battleSave->getBattleState()->allowButtons() == true
-											&& _battleSave->getBattleGame()->getTacticalAction()->type == BA_NONE)
+											&& _battleGame->getTacticalAction()->type == BA_NONE)
 											// well that's quirky. The exposed value of actor gets drawn on the
 											// defender (at least when within one tile) for a brief flash, even
 											// before projectile and explosion is taken into account. If projectile
@@ -1472,9 +1480,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 								case CT_TOSS:
 									if (hasUnit == true
 										&& (_selectorType != CT_PSI
-											|| ((_battleSave->getBattleGame()->getTacticalAction()->type == BA_PSICOURAGE
+											|| ((_battleGame->getTacticalAction()->type == BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_HOSTILE)
-												|| (_battleSave->getBattleGame()->getTacticalAction()->type != BA_PSICOURAGE
+												|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{
 										spriteId = 3 + (_aniFrame & 1);	// yellow flashing box
@@ -1518,18 +1526,16 @@ void Map::drawTerrain(Surface* const surface) // private.
 									// to turn accuracy to 'red 0' if target is out of LoS/LoF.
 									//
 									// TODO: use Projectile::rangeAccuracy() as a static function.
-									const BattleAction* const action (_battleSave->getBattleGame()->getTacticalAction());
+									const BattleAction* const action (_battleGame->getTacticalAction());
 									int accuracy;
 									Uint8 color;
 
 									bool zero;
 									if (hasUnit == true)
 									{
-										TileEngine* te (_battleSave->getTileEngine());
-
-										const Position originVoxel (te->getSightOriginVoxel(action->actor));
+										const Position originVoxel (_te->getSightOriginVoxel(action->actor));
 										Position scanVoxel;
-										zero = te->canTargetUnit(
+										zero = _te->canTargetUnit(
 															&originVoxel,
 															_tile,
 															&scanVoxel,
@@ -1606,21 +1612,21 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 								case CT_TOSS:
 								{
-									BattleAction* const action (_battleSave->getBattleGame()->getTacticalAction());
+									BattleAction* const action (_battleGame->getTacticalAction());
 									action->posTarget = Position(itX,itY,itZ);
 
 									unsigned accuracy;
 									Uint8 color;
 									const Position
-										originVoxel (_battleSave->getTileEngine()->getOriginVoxel(*action)),
+										originVoxel (_te->getOriginVoxel(*action)),
 										targetVoxel (Position::toVoxelSpaceCentered( // TODO: conform this to ProjectileFlyBState (modifier keys) & Projectile::_targetVoxel
 																				Position(itX,itY,itZ), // LoFT of floor is typically 2 voxels thick.
 																				2 - _battleSave->getTile(action->posTarget)->getTerrainLevel()));
 									if (hasFloor == true
-										&& _battleSave->getTileEngine()->validateThrow(
-																					*action,
-																					originVoxel,
-																					targetVoxel) == true)
+										&& _te->validateThrow(
+															*action,
+															originVoxel,
+															targetVoxel) == true)
 									{
 										accuracy = static_cast<unsigned int>(Round(_battleSave->getSelectedUnit()->getAccuracy(*action) * 100.));
 										color = ACU_GREEN;
@@ -2878,6 +2884,15 @@ bool Map::getMapHidden() const
 SavedBattleGame* Map::getBattleSave() const
 {
 	return _battleSave;
+}
+
+/**
+ * Sets the BattlescapeGame.
+ * @param battleGame - pointer to BattlescapeGame
+ */
+void Map::setBattleGame(BattlescapeGame* const battleGame)
+{
+	_battleGame = battleGame;
 }
 
 /**

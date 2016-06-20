@@ -191,7 +191,7 @@ void LoadGameState::think()
 			_game->setSavedGame(gameSave);
 			gameSave->load(_file, _game->getRuleset());
 
-			switch (_game->getSavedGame()->getEnding())
+			switch (gameSave->getEnding())
 			{
 				case END_WIN:
 				case END_LOSE:
@@ -209,10 +209,11 @@ void LoadGameState::think()
 
 					_game->setState(new GeoscapeState());
 
-					if (gameSave->getBattleSave() != nullptr)
+					SavedBattleGame* const battleSave (gameSave->getBattleSave());
+					if (battleSave != nullptr)
 					{
 						Log(LOG_INFO) << "LoadGameState: loading battlescape map";
-						_game->getSavedGame()->getBattleSave()->loadMapResources(_game);
+						battleSave->loadMapResources(_game);
 
 						Options::baseXResolution = Options::baseXBattlescape;
 						Options::baseYResolution = Options::baseYBattlescape;
@@ -220,7 +221,7 @@ void LoadGameState::think()
 
 						BattlescapeState* const battleState (new BattlescapeState());
 						_game->pushState(battleState);
-						gameSave->getBattleSave()->setBattleState(battleState);
+						battleSave->setBattleState(battleState);
 					}
 			}
 		}

@@ -31,6 +31,7 @@
 namespace OpenXcom
 {
 
+class BattlescapeGame;
 class BattlescapeMessage;
 class BattleUnit;
 class Camera;
@@ -41,6 +42,7 @@ class ResourcePack;
 class SavedBattleGame;
 class SurfaceSet;
 class Tile;
+class TileEngine;
 class Timer;
 
 
@@ -122,6 +124,7 @@ private:
 
 	PathPreview _previewSetting;
 
+	BattlescapeGame* _battleGame;
 	BattlescapeMessage* _hiddenScreen;
 	BattleUnit* _unit;
 	Camera* _camera;
@@ -140,6 +143,7 @@ private:
 		* _srfCross;
 	SurfaceSet* _projectileSet;
 	Tile* _tile;
+	TileEngine* _te;
 	Timer
 		* _scrollMouseTimer,
 		* _scrollKeyTimer;
@@ -304,6 +308,9 @@ private:
 
 		/// Gets the SavedBattleGame.
 		SavedBattleGame* getBattleSave() const;
+
+		/// Sets the BattlescapeGame.
+		void setBattleGame(BattlescapeGame* const battleGame);
 
 		/// Tells the Map to remain revealed because there's a duration-type action going down.
 		void setReveal(bool reveal = true);

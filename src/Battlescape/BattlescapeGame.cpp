@@ -148,6 +148,8 @@ BattlescapeGame::BattlescapeGame(
 		(*i)->setBattleForUnit(this);
 	}
 
+	_parentState->getMap()->setBattleGame(this);
+
 	// sequence of instantiations:
 	// - SavedBattleGame		- dTor: DebriefingState::btnOkClick()
 	// - BattlescapeGenerator
@@ -177,16 +179,15 @@ BattlescapeGame::~BattlescapeGame()
  */
 void BattlescapeGame::init()
 {
-	//Log(LOG_INFO) << "bg: init()";
 	if (_init == true)
 	{
 		_init = false;
-																	// done in one of
-//		getTileEngine()->calculateSunShading();		// (a) BattlescapeGenerator::run()
+														// done in one of
+//		getTileEngine()->calculateSunShading();			// (a) BattlescapeGenerator::run()
 //		getTileEngine()->calculateTerrainLighting();	// (b) BattlescapeGenerator::nextStage()
 //		getTileEngine()->calculateUnitLighting();		// (c) SavedBattleGame::loadMapResources()
 
-		getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
+		getTileEngine()->calcFovAll(false, true);		// NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
 	}
 }
 
@@ -628,8 +629,8 @@ void BattlescapeGame::popState()
 
 		if (getTileEngine()->rfShooterOffsets()->empty() == false)
 		{
-			//Log(LOG_INFO) << ". rfShooters VALID";
-
+			//Log(LOG_INFO) << "";
+			//Log(LOG_INFO) << "PopState: rfShooters VALID - clear!";
 			getTileEngine()->rfShooterOffsets()->clear();
 
 //			if (_battleSave->rfTriggerOffset().z != -1)	// safety. This should always be set for any action capable of inducing RF.
