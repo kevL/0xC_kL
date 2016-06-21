@@ -69,7 +69,6 @@
 #include "../Savegame/ItemContainer.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/SavedBattleGame.h"
-//#include "../Savegame/SavedGame.h"
 #include "../Savegame/SoldierDiary.h"
 #include "../Savegame/TerrorSite.h"
 #include "../Savegame/Tile.h"
@@ -87,6 +86,8 @@ DebriefingState::DebriefingState()
 	:
 		_rules(_game->getRuleset()),
 		_gameSave(_game->getSavedGame()),
+		_battleSave(_game->getSavedGame()->getBattleSave()),
+		_unitList(_game->getSavedGame()->getBattleSave()->getUnits()),
 		_diff(static_cast<int>(_game->getSavedGame()->getDifficulty())),
 		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1),
 		_region(nullptr),
@@ -112,7 +113,7 @@ DebriefingState::DebriefingState()
 	// ~BattlescapeGame but that causes CTD under reLoad situation. Now done
 	// here and in NextTurnState; not ideal: should find a safe place when
 	// BattlescapeGame is really dTor'd and not reLoaded ...... uh, i guess.
-	_gameSave->getBattleSave()->getBattleGame()->cleanBattleStates();
+	_battleSave->getBattleGame()->cleanBattleStates();
 
 	_tactical		= new MissionStatistics();
 
@@ -157,7 +158,7 @@ DebriefingState::DebriefingState()
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
-	std::wstring wst (_gameSave->getBattleSave()->getOperation());
+	std::wstring wst (_battleSave->getOperation());
 	if (wst.empty() == true) wst = tr("STR_OK");
 	_btnOk->setText(wst);
 	_btnOk->onMouseClick((ActionHandler)& DebriefingState::btnOkClick);
@@ -345,19 +346,17 @@ DebriefingState::DebriefingState()
 	// Soldier Diary ->
 	if (_isQuickBattle == false) // TODO: Show some stats for quick-battles.
 	{
-		SavedBattleGame* const battleSave (_gameSave->getBattleSave());
-
 		_tactical->rating = rating;
 		_tactical->id = _gameSave->getMissionStatistics()->size();
-		_tactical->shade = battleSave->getTacticalShade();
+		_tactical->shade = _battleSave->getTacticalShade();
 
 		//Log(LOG_INFO) << "DebriefingState::cTor";
 		Soldier* sol;
 		std::vector<MissionStatistics*>* const tacticals (_game->getSavedGame()->getMissionStatistics());
 
 		for (std::vector<BattleUnit*>::const_iterator
-				i = battleSave->getUnits()->begin();
-				i != battleSave->getUnits()->end();
+				i = _unitList->begin();
+				i != _unitList->end();
 				++i)
 		{
 			//Log(LOG_INFO) << ". iter BattleUnits";
@@ -514,12 +513,10 @@ void DebriefingState::btnOkClick(Action*)
 				_game->pushState(new CeremonyState(_soldiersFeted));
 			}
 
-			SavedBattleGame* const battleSave (_gameSave->getBattleSave());
-
 			std::vector<Soldier*> participants;
 			for (std::vector<BattleUnit*>::const_iterator
-					i = battleSave->getUnits()->begin();
-					i != battleSave->getUnits()->end();
+					i = _unitList->begin();
+					i != _unitList->end();
 					++i)
 			{
 				if ((*i)->getGeoscapeSoldier() != nullptr)
@@ -547,7 +544,7 @@ void DebriefingState::btnOkClick(Action*)
 
 			_game->pushState(new DebriefExtraState(
 												_base,
-												battleSave->getOperation(),
+												_battleSave->getOperation(),
 												_itemsGained,
 												_itemsLostProperty,
 												_soldierStatInc));
@@ -697,8 +694,7 @@ void DebriefingState::prepareDebriefing() // private.
 		objectiveScore		 (0), // dang vc++ compiler warnings.
 		objectiveFailedScore (0); // dang vc++ compiler warnings.
 
-	SavedBattleGame* const battleSave (_gameSave->getBattleSave());
-	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
+	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
 	if (ruleDeploy != nullptr)
 	{
 		if (ruleDeploy->getObjectiveCompleteInfo(
@@ -751,12 +747,12 @@ void DebriefingState::prepareDebriefing() // private.
 //	_statList.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true));
 
 	_tactical->timeStat = *_gameSave->getTime();
-	_tactical->type = battleSave->getTacticalType();
+	_tactical->type = _battleSave->getTacticalType();
 
 	if (_isQuickBattle == false) // Do all aLienRace types here for SoldierDiary stat.
 	{
-		if (battleSave->getAlienRace().empty() == false) // safety.
-			_tactical->alienRace = battleSave->getAlienRace();
+		if (_battleSave->getAlienRace().empty() == false) // safety.
+			_tactical->alienRace = _battleSave->getAlienRace();
 		else
 			_tactical->alienRace = "STR_UNKNOWN";
 	}
@@ -769,8 +765,8 @@ void DebriefingState::prepareDebriefing() // private.
 
 	bool isHostileAlive	(false);
 	for (std::vector<BattleUnit*>::const_iterator
-			i = battleSave->getUnits()->begin();
-			i != battleSave->getUnits()->end();
+			i = _unitList->begin();
+			i != _unitList->end();
 			++i)
 	{
 		switch ((*i)->getOriginalFaction())
@@ -803,8 +799,8 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		playerLive = 0;
 		for (std::vector<BattleUnit*>::const_iterator
-				i = battleSave->getUnits()->begin();
-				i != battleSave->getUnits()->end();
+				i = _unitList->begin();
+				i != _unitList->end();
 				++i)
 		{
 			if ((*i)->getOriginalFaction() == FACTION_PLAYER
@@ -817,13 +813,13 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 	}
 
-	const bool aborted (battleSave->isAborted());
+	const bool aborted (_battleSave->isAborted());
 
 	if (playerLive == 1)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
-				i = battleSave->getUnits()->begin();
-				i != battleSave->getUnits()->end();
+				i = _unitList->begin();
+				i != _unitList->end();
 				++i)
 		{
 			if ((*i)->getGeoscapeSoldier() != nullptr
@@ -848,18 +844,18 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 
-	const TacticalType tacType (battleSave->getTacType());
+	const TacticalType tacType (_battleSave->getTacType());
 
 
 //	_tactical->success = (aborted == false && (playerLive != 0 || isHostileAlive == false))
-//					  || battleSave->allObjectivesDestroyed() == true;
+//					  || _battleSave->allObjectivesDestroyed() == true;
 	_tactical->success = isHostileAlive == false
-					  || battleSave->allObjectivesDestroyed() == true;
+					  || _battleSave->allObjectivesDestroyed() == true;
 
 	Position pos;
 	for (std::vector<BattleUnit*>::const_iterator
-			i = battleSave->getUnits()->begin();
-			i != battleSave->getUnits()->end();
+			i = _unitList->begin();
+			i != _unitList->end();
 			++i)
 	{
 		if ((*i)->getTile() == nullptr)								// This unit is not on a tile ... give it one.
@@ -867,8 +863,8 @@ void DebriefingState::prepareDebriefing() // private.
 			if ((pos = (*i)->getPosition()) == Position(-1,-1,-1))	// in fact, this Unit is in limbo ... ie, is carried.
 			{
 				for (std::vector<BattleItem*>::const_iterator		// so look for its body or corpse ...
-						j = battleSave->getItems()->begin();
-						j != battleSave->getItems()->end();
+						j = _battleSave->getItems()->begin();
+						j != _battleSave->getItems()->end();
 						++j)
 				{
 					if ((*j)->getUnit() != nullptr
@@ -881,7 +877,7 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 				}
 			}
-			(*i)->setTile(battleSave->getTile(pos));
+			(*i)->setTile(_battleSave->getTile(pos));
 		}
 
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
@@ -968,7 +964,7 @@ void DebriefingState::prepareDebriefing() // private.
 						j != _base->getFacilities()->end();
 						)
 				{
-					if (battleSave->baseDestruct()[(*j)->getX()]
+					if (_battleSave->baseDestruct()[(*j)->getX()]
 												  [(*j)->getY()].second == 0) // this facility was demolished
 					{
 						facDestroyed = true;
@@ -1113,8 +1109,8 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = battleSave->getUnits()->begin();
-			i != battleSave->getUnits()->end();
+			i = _unitList->begin();
+			i != _unitList->end();
 			++i)
 	{
 		const UnitFaction orgFaction ((*i)->getOriginalFaction());
@@ -1482,11 +1478,11 @@ void DebriefingState::prepareDebriefing() // private.
 
 	if (playerLive != 0)
 	{
-		recoverItems(battleSave->guaranteedItems());
+		recoverItems(_battleSave->guaranteedItems());
 
 		if (aborted == false)
 		{
-			recoverItems(battleSave->conditionalItems());
+			recoverItems(_battleSave->conditionalItems());
 
 			const int parts (static_cast<int>(Tile::PARTS_TILE));
 			MapDataType partType;
@@ -1494,10 +1490,10 @@ void DebriefingState::prepareDebriefing() // private.
 
 			for (size_t
 					i = 0u;
-					i != battleSave->getMapSizeXYZ();
+					i != _battleSave->getMapSizeXYZ();
 					++i)
 			{
-				recoverItems(battleSave->getTiles()[i]->getInventory());
+				recoverItems(_battleSave->getTiles()[i]->getInventory());
 
 				for (int
 						j = 0;
@@ -1505,9 +1501,9 @@ void DebriefingState::prepareDebriefing() // private.
 						++j)
 				{
 					partType = static_cast<MapDataType>(j);
-					if (battleSave->getTiles()[i]->getMapData(partType) != nullptr)
+					if (_battleSave->getTiles()[i]->getMapData(partType) != nullptr)
 					{
-						const TileType tileType (battleSave->getTiles()[i]->getMapData(partType)->getTileType());
+						const TileType tileType (_battleSave->getTiles()[i]->getMapData(partType)->getTileType());
 
 						switch (tileType)
 						{
@@ -1557,13 +1553,13 @@ void DebriefingState::prepareDebriefing() // private.
 		{
 			for (size_t
 					i = 0u;
-					i != battleSave->getMapSizeXYZ();
+					i != _battleSave->getMapSizeXYZ();
 					++i)
 			{
-				if (battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-					&& battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
+				if (_battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
+					&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
 				{
-					recoverItems(battleSave->getTiles()[i]->getInventory());
+					recoverItems(_battleSave->getTiles()[i]->getInventory());
 				}
 			}
 		}
@@ -1571,8 +1567,8 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = battleSave->getDeletedItems().begin();
-			i != battleSave->getDeletedItems().end();
+			i = _battleSave->getDeletedItems().begin();
+			i != _battleSave->getDeletedItems().end();
 			++i)
 	{
 		if ((*i)->getProperty() == true)

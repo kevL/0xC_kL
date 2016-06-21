@@ -93,6 +93,7 @@ class Region;
 class RuleItem;
 class Ruleset;
 class SavedGame;
+class SavedBattleGame;
 class Soldier;
 class Text;
 class TextButton;
@@ -129,6 +130,7 @@ private:
 	Region* _region;
 	Ruleset* _rules;
 	SavedGame* _gameSave;
+	SavedBattleGame* _battleSave;
 	Text
 		* _txtBaseLabel,
 		* _txtCost,
@@ -159,6 +161,7 @@ private:
 
 	std::vector<ReequipStat> _missingItems;
 
+	std::vector<BattleUnit*>* _unitList;
 	std::vector<DebriefingStat*> _statList;
 	std::vector<Soldier*> _soldiersFeted;
 	std::vector<SoldierDead*> _soldiersLost;
