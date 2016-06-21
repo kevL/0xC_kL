@@ -29,8 +29,6 @@ namespace OpenXcom
 {
 
 class AlienBase;
-class RuleAlienDeployment;
-class RuleAlienRace;
 class Base;
 class BattleItem;
 class BattleUnit;
@@ -38,6 +36,8 @@ class Craft;
 class Game;
 class TerrorSite;
 class ResourcePack;
+class RuleAlienDeployment;
+class RuleAlienRace;
 class RuleItem;
 class Ruleset;
 class RuleUnit;
@@ -81,6 +81,8 @@ private:
 		_drillMap,
 		_seg;
 	std::vector<std::vector<MapBlock*>> _blocks;
+
+	std::vector<BattleUnit*>* _unitList;
 
 	AlienBase* _alienBase;
 	Base* _base;

@@ -3641,7 +3641,8 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 	switch (placed)
 	{
 		case 1:
-			item->changeOwner(unit); // no break;
+			item->changeOwner(unit);
+			// no break;
 		case 2:
 			//Log(LOG_INFO) << ". ret TRUE";
 			return true;

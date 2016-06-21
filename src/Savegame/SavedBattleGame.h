@@ -47,6 +47,7 @@ enum TacticalType
 
 
 class BattleItem;
+class BattleUnit;
 class BattlescapeState;
 class Game;
 class MapDataSet;

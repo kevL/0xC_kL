@@ -29,10 +29,10 @@ namespace OpenXcom
 {
 
 class AlienBase;
-class RuleAlienDeployment;
 class Game;
 class Globe;
 class TerrorSite;
+class RuleAlienDeployment;
 class RuleAlienMission;
 class RuleRegion;
 class Ruleset;

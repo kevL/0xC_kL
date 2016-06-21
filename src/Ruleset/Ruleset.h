@@ -38,8 +38,6 @@
 namespace OpenXcom
 {
 
-class RuleAlienDeployment;
-class RuleAlienRace;
 class ArticleDefinition;
 class Base;
 class ExtraSounds;
@@ -51,7 +49,9 @@ class MapScript;
 class MCDPatch;
 class OperationPool;
 class ResourcePack;
+class RuleAlienDeployment;
 class RuleAlienMission;
+class RuleAlienRace;
 class RuleArmor;
 class RuleAward;
 class RuleBaseFacility;

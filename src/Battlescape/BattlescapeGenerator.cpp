@@ -85,6 +85,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_game(game),
 		_gameSave(game->getSavedGame()),
 		_battleSave(game->getSavedGame()->getBattleSave()),
+		_unitList(game->getSavedGame()->getBattleSave()->getUnits()),
 		_rules(game->getRuleset()),
 		_res(game->getResourcePack()),
 		_craft(nullptr),
@@ -249,7 +250,7 @@ void BattlescapeGenerator::setAlienItemlevel(int alienItemLevel)
  */
 void BattlescapeGenerator::run()
 {
-	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape soldier IDs should stay below this number
+	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape Soldier IDs should stay below this number
 
 	const RuleAlienDeployment* ruleDeploy;
 	if (_ufo != nullptr)
@@ -367,11 +368,11 @@ void BattlescapeGenerator::run()
 
 	deployXcom();									// <--|| XCOM DEPLOYMENT. <--|||
 
-	const size_t qtyUnits_pre (_battleSave->getUnits()->size());
+	const size_t qtyUnits_pre (_unitList->size());
 
 	deployAliens(ruleDeploy);						// <--|| ALIEN DEPLOYMENT. <--|||
 
-	if (qtyUnits_pre == _battleSave->getUnits()->size())
+	if (qtyUnits_pre == _unitList->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
@@ -437,12 +438,12 @@ void BattlescapeGenerator::run()
 //	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed.
 
 	_battleSave->getShuffleUnits()->assign(
-										_battleSave->getUnits()->size(),
+										_unitList->size(),
 										nullptr);
 }
 
 /**
- * Switches an existing SavedBattleGame to a new stage.
+ * Re-initializes an existing SavedBattleGame for a next-stage tactical battle.
  */
 void BattlescapeGenerator::nextStage()
 {
@@ -451,15 +452,14 @@ void BattlescapeGenerator::nextStage()
 	bool isHostileAlive (false);
 
 	const Position posBogus (Position(-1,-1,-1));
-	for (std::vector<BattleUnit*>::const_iterator // kill all enemy units or those not in endpoint area if aborted
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
+	for (std::vector<BattleUnit*>::const_iterator // kill all enemy units, or those not in endpoint-area if aborted
+			i = _unitList->begin();
+			i != _unitList->end();
 			++i)
 	{
 		if ((*i)->getUnitStatus() != STATUS_DEAD
 			&& ((*i)->getOriginalFaction() != FACTION_PLAYER
-				|| (_battleSave->isAborted() == true
-					&& (*i)->isInExitArea(END_POINT) == false)))
+				|| (_battleSave->isAborted() == true && (*i)->isInExitArea(END_POINT) == false)))
 		{
 			if ((*i)->getOriginalFaction() == FACTION_HOSTILE
 				&& (*i)->isOut_t(OUT_STAT) == false)
@@ -506,8 +506,10 @@ void BattlescapeGenerator::nextStage()
 
 	// Remove all items not belonging to player-units from the map.
 	// Sort items into two categories:
-	// - the ones that are guaranteed to be able to take home barring complete failure - ie: stuff on the transport craft
-	// - and those that are scattered about on the ground that will be recovered ONLY on success.
+	// - the ones that are guaranteed to be able to take home barring complete
+	//	 failure - ie: stuff on the transport craft
+	// - and those that are scattered about on the ground that will be recovered
+	//	 ONLY on success.
 	// This does not include items in player-units' hands.
 	std::vector<BattleItem*>
 		* const itemsGuaranteed (_battleSave->guaranteedItems()),
@@ -668,8 +670,8 @@ void BattlescapeGenerator::nextStage()
 
 	bool selectDone (false);
 	for (std::vector<BattleUnit*>::const_iterator		// <--|| XCOM DEPLOYMENT. <--|||
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
+			i = _unitList->begin();
+			i != _unitList->end();
 			++i)
 	{
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
@@ -771,13 +773,13 @@ void BattlescapeGenerator::nextStage()
 	}
 
 
-	_unitSequence = _battleSave->getUnits()->back()->getId() + 1;
+	_unitSequence = _unitList->back()->getId() + 1;
 
-	const size_t qtyUnits_pre (_battleSave->getUnits()->size());
+	const size_t qtyUnits_pre (_unitList->size());
 
 	deployAliens(ruleDeploy);							// <--|| ALIEN DEPLOYMENT. <--|||
 
-	if (qtyUnits_pre == _battleSave->getUnits()->size())
+	if (qtyUnits_pre == _unitList->size())
 	{
 		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
 	}
@@ -807,7 +809,7 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getBattleGame()->reinit();
 
 	_battleSave->getShuffleUnits()->assign(
-										_battleSave->getUnits()->size(),
+										_unitList->size(),
 										nullptr);
 }
 
@@ -880,7 +882,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		}
 	}
 
-	if (_battleSave->getUnits()->empty() == true)
+	if (_unitList->empty() == true)
 	{
 		throw Exception("Map generator encountered an error: no xcom units could be placed on the map.");
 	}
@@ -888,8 +890,8 @@ void BattlescapeGenerator::deployXcom() // private.
 	//Log(LOG_INFO) << ". addPlayerUnit(s) DONE";
 
 	for (std::vector<BattleUnit*>::const_iterator // pre-battle Equip; give all xCom Soldiers access to the inventory tile.
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
+			i = _unitList->begin();
+			i != _unitList->end();
 			++i)
 	{
 		if ((*i)->getFaction() == FACTION_PLAYER) // not really necessary because only xCom is on the field atm. Could exclude tanks ....
@@ -1285,7 +1287,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 		if (node != nullptr)
 		{
 			//Log(LOG_INFO) << ". . spawnNode valid";
-			_battleSave->getUnits()->push_back(unit); // add unit to vector of Units.
+			_unitList->push_back(unit); // add unit to vector of Units.
 
 			_battleSave->setUnitPosition(unit, node->getPosition());
 			unit->setUnitDirection(RNG::generate(0,7));
@@ -1301,7 +1303,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 			if (placeUnitNearFaction(unit) == true)
 			{
 				//Log(LOG_INFO) << ". . . placeUnitNearFaction() TRUE";
-				_battleSave->getUnits()->push_back(unit); // add unit to vector of Units.
+				_unitList->push_back(unit); // add unit to vector of Units.
 
 				unit->setUnitDirection(RNG::generate(0,7));
 
@@ -1350,7 +1352,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 				if (_battleSave->setUnitPosition(unit, pos) == true)
 				{
 					//Log(LOG_INFO) << ". setUnitPosition()";
-					_battleSave->getUnits()->push_back(unit); // add unit to vector of Units.
+					_unitList->push_back(unit); // add unit to vector of Units.
 					unit->setUnitDirection((*i)[3u]);
 					return unit;
 				}
@@ -1379,7 +1381,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 													unit,
 													tile->getPosition()) == true)
 					{
-						_battleSave->getUnits()->push_back(unit);
+						_unitList->push_back(unit);
 						return unit;
 					}
 				}
@@ -1387,7 +1389,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 													unit,
 													tile->getPosition()) == true)
 				{
-					_battleSave->getUnits()->push_back(unit);
+					_unitList->push_back(unit);
 					return unit;
 				}
 			}
@@ -1455,8 +1457,8 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 
 	bool loaded;
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
+			i = _unitList->begin();
+			i != _unitList->end();
 			++i)
 	{
 		if ((*i)->getGeoscapeSoldier() != nullptr)
@@ -1935,7 +1937,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 										node));
 		unit->setRankInt(aLienRank);
 
-		const Position posCraft (_battleSave->getUnits()->at(0u)->getPosition()); // aLiens face Craft
+		const Position posCraft (_unitList->at(0u)->getPosition()); // aLiens face Craft
 		int dir;
 		if (RNG::percent((diff + 1) * 20) == true
 			&& TileEngine::distance(
@@ -1953,7 +1955,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 
 		unit->preBattleMotion();
 
-		_battleSave->getUnits()->push_back(unit);
+		_unitList->push_back(unit);
 	}
 	else
 	{
@@ -1974,13 +1976,13 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
  */
 bool BattlescapeGenerator::placeUnitNearFaction(BattleUnit* const unit) // private.
 {
-	if (unit != nullptr && _battleSave->getUnits()->empty() == false)
+	if (unit != nullptr && _unitList->empty() == false)
 	{
 		const BattleUnit* unitFriend;
 		int t (100);
 		while (t-- != 0)
 		{
-			unitFriend = _battleSave->getUnits()->at(RNG::pick(_battleSave->getUnits()->size()));
+			unitFriend = _unitList->at(RNG::pick(_unitList->size()));
 			if (unitFriend->getFaction() == unit->getFaction()
 				&& unitFriend->getPosition() != Position(-1,-1,-1)
 				&& unitFriend->getArmor()->getSize() >= unit->getArmor()->getSize())
@@ -2040,7 +2042,7 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
 		unit->setAIState(new CivilianBAIState(_battleSave, unit, node));
 		unit->setUnitDirection(RNG::generate(0,7));
 
-		_battleSave->getUnits()->push_back(unit);
+		_unitList->push_back(unit);
 	}
 	else
 	{
@@ -2535,8 +2537,8 @@ void BattlescapeGenerator::runInventory(
 	{
 		size_t j (0u);
 		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
+				i = _unitList->begin();
+				i != _unitList->end();
 				++i)
 		{
 			if (++j == selUnitId)
