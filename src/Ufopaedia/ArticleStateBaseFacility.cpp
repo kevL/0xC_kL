@@ -48,7 +48,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 	:
 		ArticleState(defs->id)
 {
-	RuleBaseFacility* facRule = _game->getRuleset()->getBaseFacility(defs->id);
+	const RuleBaseFacility* const facRule (_game->getRuleset()->getBaseFacility(defs->id));
 
 	_txtTitle = new Text(200, 17, 10, 24);
 
@@ -69,14 +69,14 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 	_txtTitle->setBig();
 
 
-	const int tile_size = 32;
+	const int tile_size (32);
 	_image = new Surface( // build preview image
-						tile_size * 2,
-						tile_size * 2,
+						tile_size << 1u,
+						tile_size << 1u,
 						232,16);
 	add(_image);
 
-	SurfaceSet* const baseBits = _game->getResourcePack()->getSurfaceSet("BASEBITS.PCK");
+	SurfaceSet* const baseBits (_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	Surface* srfFac;
 	int
 		x_offset,
@@ -84,26 +84,30 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 		x_pos,
 		y_pos,
 		i = 0;
-	const size_t facSize = facRule->getSize();
+	const size_t facSize (facRule->getSize());
 
-	if (facSize == 1)
-		x_offset =
-		y_offset = tile_size / 2;
-	else
-		x_offset =
-		y_offset = 0;
+	switch (facSize)
+	{
+		case 1:
+			x_offset =
+			y_offset = tile_size >> 1u;
+			break;
+		default:
+			x_offset =
+			y_offset = 0;
+	}
 
 	y_pos = y_offset;
 	for (size_t
-			y = 0;
+			y = 0u;
 			y != facSize;
-			++y)
+			++y, y_pos += tile_size)
 	{
 		x_pos = x_offset;
 		for (size_t
-				x = 0;
+				x = 0u;
 				x != facSize;
-				++x)
+				++x, ++i, x_pos += tile_size)
 		{
 			srfFac = baseBits->getFrame(facRule->getSpriteShape() + i);
 			srfFac->setX(x_pos);
@@ -117,13 +121,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 				srfFac->setY(y_pos);
 				srfFac->blit(_image);
 			}
-
-			x_pos += tile_size;
-
-			++i;
 		}
-
-		y_pos += tile_size;
 	}
 
 	_txtInfo = new Text(300, 90, 10, 104);
@@ -144,7 +142,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 				2,
 				tr("STR_CONSTRUCTION_TIME").c_str(),
 				tr("STR_DAY", facRule->getBuildTime()).c_str());
-	_lstInfo->setCellColor(0,1, BASESCAPE_WHITE);
+	_lstInfo->setCellColor(0u,1u, BASESCAPE_WHITE);
 
 	std::wostringstream woststr;
 	woststr << Text::formatCurrency(facRule->getBuildCost());
@@ -152,7 +150,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 				2,
 				tr("STR_CONSTRUCTION_COST").c_str(),
 				woststr.str().c_str());
-	_lstInfo->setCellColor(1,1, BASESCAPE_WHITE);
+	_lstInfo->setCellColor(1u,1u, BASESCAPE_WHITE);
 
 	woststr.str(L"");
 	woststr.clear();
@@ -161,7 +159,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 				2,
 				tr("STR_MAINTENANCE_COST").c_str(),
 				woststr.str().c_str());
-	_lstInfo->setCellColor(2,1, BASESCAPE_WHITE);
+	_lstInfo->setCellColor(2u,1u, BASESCAPE_WHITE);
 
 	if (facRule->getDefenseValue() != 0)
 	{
@@ -172,7 +170,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 					2,
 					tr("STR_DEFENSE_VALUE").c_str(),
 					woststr.str().c_str());
-		_lstInfo->setCellColor(3,1, BASESCAPE_WHITE);
+		_lstInfo->setCellColor(3u,1u, BASESCAPE_WHITE);
 
 		woststr.str(L"");
 		woststr.clear();
@@ -181,7 +179,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 					2,
 					tr("STR_HIT_RATIO").c_str(),
 					woststr.str().c_str());
-		_lstInfo->setCellColor(4,1, BASESCAPE_WHITE);
+		_lstInfo->setCellColor(4u,1u, BASESCAPE_WHITE);
 	}
 
 	centerAllSurfaces();

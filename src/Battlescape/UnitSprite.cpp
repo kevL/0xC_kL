@@ -421,7 +421,7 @@ void UnitSprite::drawRoutine0() // private.
 			&& (_itRT->getRules()->isTwoHanded() == true
 				|| _itRT->getRules()->getBattleType() == BT_MELEE))
 		{
-			itRT = _itSetRT->getFrame((unitDir + 2) % 8u + _itRT->getRules()->getHandSprite());
+			itRT = _itSetRT->getFrame((unitDir + 2) % 8 + _itRT->getRules()->getHandSprite());
 			itRT->setX(offX[unitDir]);
 			itRT->setY(offY[unitDir]);
 		}
@@ -525,7 +525,7 @@ void UnitSprite::drawRoutine0() // private.
 			&& (_itLT->getRules()->isTwoHanded() == true
 				|| _itLT->getRules()->getBattleType() == BT_MELEE))
 		{
-			itLT = _itSetLT->getFrame((unitDir + 2) % 8u + _itLT->getRules()->getHandSprite());
+			itLT = _itSetLT->getFrame((unitDir + 2) % 8 + _itLT->getRules()->getHandSprite());
 
 			switch (_drawRoutine)
 			{
@@ -783,7 +783,7 @@ void UnitSprite::drawRoutine1() // private.
 		if (_unit->getUnitStatus() == STATUS_AIMING
 			&& _itRT->getRules()->isTwoHanded() == true)
 		{
-			itRT = _itSetRT->getFrame((unitDir + 2) % 8u + _itRT->getRules()->getHandSprite());
+			itRT = _itSetRT->getFrame((unitDir + 2) % 8 + _itRT->getRules()->getHandSprite());
 			itRT->setX(offX[unitDir]);
 			itRT->setY(offY[unitDir]);
 		}
@@ -832,7 +832,7 @@ void UnitSprite::drawRoutine1() // private.
 		if (_unit->getUnitStatus() == STATUS_AIMING
 			&& _itLT->getRules()->isTwoHanded() == true)
 		{
-			itLT = _itSetLT->getFrame((unitDir + 2) % 8u + _itLT->getRules()->getHandSprite());
+			itLT = _itSetLT->getFrame((unitDir + 2) % 8 + _itLT->getRules()->getHandSprite());
 			itLT->setX(offX3[unitDir]);
 			itLT->setY(offY3[unitDir]);
 			rightArm = _unitSet->getFrame(unitDir + rarmShoot);
@@ -1108,7 +1108,7 @@ void UnitSprite::drawRoutine4() // private.
 		if (_unit->getUnitStatus() == STATUS_AIMING
 			&& _itRT->getRules()->isTwoHanded() == true)
 		{
-			itRT = _itSetRT->getFrame((unitDir + 2) % 8u + _itRT->getRules()->getHandSprite());
+			itRT = _itSetRT->getFrame((unitDir + 2) % 8 + _itRT->getRules()->getHandSprite());
 			itRT->setX(offX[unitDir]);
 			itRT->setY(offY[unitDir]);
 		}
@@ -1135,7 +1135,7 @@ void UnitSprite::drawRoutine4() // private.
 		if (_unit->getUnitStatus() == STATUS_AIMING
 			&& _itLT->getRules()->isTwoHanded() == true)
 		{
-			itLT = _itSetLT->getFrame((unitDir + 2) % 8u + _itLT->getRules()->getHandSprite());
+			itLT = _itSetLT->getFrame((unitDir + 2) % 8 + _itLT->getRules()->getHandSprite());
 			itLT->setX(offX3[unitDir]);
 			itLT->setY(offY3[unitDir]);
 		}
@@ -1224,7 +1224,7 @@ void UnitSprite::drawRoutine5() // private.
 		case STATUS_WALKING:
 			quad = _unitSet->getFrame((_unit->getUnitDirection() << 4u)
 									+ (_quad << 2u)
-									+ (_unit->getWalkPhase() >> 1u) % 4u
+									+ (_unit->getWalkPhase() >> 1u) % 4
 									+ walk);
 			break;
 
@@ -1327,7 +1327,7 @@ void UnitSprite::drawRoutine6() // private.
 		if (_unit->getUnitStatus() == STATUS_AIMING
 			&& _itRT->getRules()->isTwoHanded() == true)
 		{
-			itRT = _itSetRT->getFrame((unitDir + 2) % 8u + _itRT->getRules()->getHandSprite());
+			itRT = _itSetRT->getFrame((unitDir + 2) % 8 + _itRT->getRules()->getHandSprite());
 			itRT->setX(offX[unitDir]);
 			itRT->setY(offY[unitDir]);
 		}
@@ -1393,7 +1393,7 @@ void UnitSprite::drawRoutine6() // private.
 		if (_unit->getUnitStatus() == STATUS_AIMING
 			&& _itLT->getRules()->isTwoHanded() == true)
 		{
-			itLT = _itSetLT->getFrame((unitDir + 2) % 8u + _itLT->getRules()->getHandSprite());
+			itLT = _itSetLT->getFrame((unitDir + 2) % 8 + _itLT->getRules()->getHandSprite());
 			itLT->setX(offX3[unitDir]);
 			itLT->setY(offY3[unitDir]);
 

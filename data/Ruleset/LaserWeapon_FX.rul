@@ -108,7 +108,7 @@ extraSprites:
     subX: 32
     subY: 40
     files:
-      664: Resources/LaserWeapon_FX/LaserSniperRifle_HANDOB.PNG
+      666: Resources/LaserWeapon_FX/LaserSniperRifle_HANDOB.PNG
 # Heavy Laser
   - type: BIGOBS.PCK
     files:
@@ -126,8 +126,8 @@ extraSprites:
     subX: 32
     subY: 40
     files:
-      672: Resources/LaserWeapon_FX/alt/HandOb_Heavy_Laser_MiB.png #alt
-#      672: Resources/LaserWeapon_FX/HeavyLaser_HANDOB.PNG
+      674: Resources/LaserWeapon_FX/alt/HandOb_Heavy_Laser_MiB.png #alt
+#      674: Resources/LaserWeapon_FX/HeavyLaser_HANDOB.PNG
 # Laser Scatter
   - type: BIGOBS.PCK
     files:
@@ -143,7 +143,7 @@ extraSprites:
     subX: 32
     subY: 40
     files:
-      680: Resources/LaserWeapon_FX/LaserScatter_HANDOB.PNG
+      682: Resources/LaserWeapon_FX/LaserScatter_HANDOB.PNG
 # INITIAL ROCKET LAUNCHER and AUTO-CANNON - overwrites original indices #
 #  - type: BIGOBS.PCK
 #    files:
