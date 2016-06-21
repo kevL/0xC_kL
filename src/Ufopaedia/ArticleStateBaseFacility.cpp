@@ -145,6 +145,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 	_lstInfo->setCellColor(0u,1u, BASESCAPE_WHITE);
 
 	std::wostringstream woststr;
+
 	woststr << Text::formatCurrency(facRule->getBuildCost());
 	_lstInfo->addRow(
 				2,
@@ -153,7 +154,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 	_lstInfo->setCellColor(1u,1u, BASESCAPE_WHITE);
 
 	woststr.str(L"");
-	woststr.clear();
+//	woststr.clear();
 	woststr << Text::formatCurrency(facRule->getMonthlyCost());
 	_lstInfo->addRow(
 				2,
@@ -161,25 +162,135 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 				woststr.str().c_str());
 	_lstInfo->setCellColor(2u,1u, BASESCAPE_WHITE);
 
+
+	size_t row (3u);
+
 	if (facRule->getDefenseValue() != 0)
 	{
 		woststr.str(L"");
-		woststr.clear();
+//		woststr.clear();
 		woststr << facRule->getDefenseValue();
 		_lstInfo->addRow(
 					2,
 					tr("STR_DEFENSE_VALUE").c_str(),
 					woststr.str().c_str());
-		_lstInfo->setCellColor(3u,1u, BASESCAPE_WHITE);
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
 
 		woststr.str(L"");
-		woststr.clear();
+//		woststr.clear();
 		woststr << Text::formatPercent(facRule->getHitRatio());
 		_lstInfo->addRow(
 					2,
 					tr("STR_HIT_RATIO").c_str(),
 					woststr.str().c_str());
-		_lstInfo->setCellColor(4u,1u, BASESCAPE_WHITE);
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getRadarRange() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getRadarRange();
+		_lstInfo->addRow(
+					2,
+					tr("STR_RADAR_RANGE").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << Text::formatPercent(facRule->getRadarChance());
+		if (facRule->isHyperwave() == true)
+			woststr << L" " << tr("STR_HYPERWAVE_MARK");
+		_lstInfo->addRow(
+					2,
+					tr("STR_RADAR_CHANCE").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getStorage() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getStorage();
+		_lstInfo->addRow(
+					2,
+					tr("STR_STORAGE_CAP").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getPersonnel() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getPersonnel();
+		_lstInfo->addRow(
+					2,
+					tr("STR_PERSONNEL_CAP").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getAliens() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getAliens();
+		_lstInfo->addRow(
+					2,
+					tr("STR_ALIENS_CAP").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getCrafts() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getCrafts();
+		_lstInfo->addRow(
+					2,
+					tr("STR_CRAFT_CAP").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getLaboratories() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getLaboratories();
+		_lstInfo->addRow(
+					2,
+					tr("STR_LABORATORY_CAP").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getWorkshops() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getWorkshops();
+		_lstInfo->addRow(
+					2,
+					tr("STR_WORKSHOP_CAP").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row++, 1u, BASESCAPE_WHITE);
+	}
+
+	if (facRule->getPsiLaboratories() != 0)
+	{
+		woststr.str(L"");
+//		woststr.clear();
+		woststr << facRule->getPsiLaboratories();
+		_lstInfo->addRow(
+					2,
+					tr("STR_PSILAB_CAP").c_str(),
+					woststr.str().c_str());
+		_lstInfo->setCellColor(row, 1u, BASESCAPE_WHITE);
 	}
 
 	centerAllSurfaces();

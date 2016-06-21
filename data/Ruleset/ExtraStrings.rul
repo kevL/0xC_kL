@@ -188,7 +188,7 @@ extraStrings:
       STR_TOTAL_GROSS_UC: "TOTAL gross"
       STR_TOTAL_NET_UC: "TOTAL net"
       STR_LOADOUT: "Loadout"
-      STR_RADAR_RANGE: "radar> {0}"
+      STR_RADAR_RANGE_: "radar> {0}"
       STR_DATE_DEATH: "Date o' Death"
       STR_DATE_MISSION: "Date o' Mission"
       STR_DATE_RECRUIT: "Recruited"

@@ -306,7 +306,7 @@ void CraftInfoState::init()
 	}
 	_txtFuel->setText(woststr1.str());
 
-	_txtRadar->setText(tr("STR_RADAR_RANGE")
+	_txtRadar->setText(tr("STR_RADAR_RANGE_")
 						.arg(crRule->getRadarRange()));
 
 	woststr2 << tr("STR_HULL_").arg(Text::formatPercent(100 - _craft->getCraftDamagePct()));
