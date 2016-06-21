@@ -448,7 +448,7 @@ void BattlescapeGenerator::nextStage()
 {
 	_battleSave->resetTurnCounter();
 
-	int aliensAlive (0);
+	bool isHostileAlive (false);
 
 	const Position posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator // kill all enemy units or those not in endpoint area if aborted
@@ -464,7 +464,7 @@ void BattlescapeGenerator::nextStage()
 			if ((*i)->getOriginalFaction() == FACTION_HOSTILE
 				&& (*i)->isOut_t(OUT_STAT) == false)
 			{
-				++aliensAlive;
+				isHostileAlive = true;
 			}
 			(*i)->setUnitStatus(STATUS_LATENT);
 
@@ -530,7 +530,7 @@ void BattlescapeGenerator::nextStage()
 			{
 				(*i)->setFuse(-1);
 
-				if (aliensAlive == 0)
+				if (isHostileAlive == false)	// full-win on 1st stage
 				{
 					if ((*i)->getUnit() != nullptr
 						|| _gameSave->isResearched((*i)->getRules()->getRequirements()) == false)
@@ -540,7 +540,7 @@ void BattlescapeGenerator::nextStage()
 					else
 						toContainer = &passToNextStage;
 				}
-				else
+				else							// patial-win on 1st stage
 				{
 					const Tile* const tile ((*i)->getTile());
 					if (tile != nullptr)

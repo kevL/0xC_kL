@@ -2424,8 +2424,9 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 	int
 		del,
 		personel,
-		destroyed ((*pFac)->getRules()->getPsiLaboratories());
-	if (destroyed != 0)
+		destroyed;
+
+	if ((destroyed = (*pFac)->getRules()->getPsiLaboratories()) != 0)
 	{
 		del = destroyed - getFreePsiLabs();
 		for (std::vector<Soldier*>::const_iterator
@@ -2441,8 +2442,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		}
 	}
 
-	destroyed = (*pFac)->getRules()->getLaboratories();
-	if (destroyed != 0)
+	if ((destroyed = (*pFac)->getRules()->getLaboratories()) != 0)
 	{
 		if (getTotalLaboratories() - destroyed == 0)
 		{
@@ -2482,8 +2482,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		}
 	}
 
-	destroyed = (*pFac)->getRules()->getWorkshops();
-	if (destroyed != 0)
+	if ((destroyed = (*pFac)->getRules()->getWorkshops()) != 0)
 	{
 		if (getTotalWorkshops() - destroyed == 0)
 		{
@@ -2553,8 +2552,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		}
 	} */
 
-	destroyed = (*pFac)->getRules()->getPersonnel();
-	if (destroyed != 0)
+	if ((destroyed = (*pFac)->getRules()->getPersonnel()) != 0)
 	{
 		// Could get cramped in here; current personel are not removed.
 		// TODO: Issue a stream of warnings ala storesOverfull.

@@ -663,7 +663,6 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		itRule = _rules->getItemRule(*i);
 		const TileType tileType (itRule->getTileType());
-//		if (tileType > 1)
 		switch (tileType)
 		{
 //			case TILE
@@ -864,11 +863,11 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 //	_tactical->success = (aborted == false && (playerLive != 0 || isHostileAlive == false))
-//								|| battleSave->allObjectivesDestroyed() == true;
+//					  || battleSave->allObjectivesDestroyed() == true;
 	_tactical->success = isHostileAlive == false
 					  || battleSave->allObjectivesDestroyed() == true;
 
-
+	Position pos;
 	for (std::vector<BattleUnit*>::const_iterator
 			i = battleSave->getUnits()->begin();
 			i != battleSave->getUnits()->end();
@@ -876,8 +875,7 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		if ((*i)->getTile() == nullptr)								// This unit is not on a tile ... give it one.
 		{
-			Position pos ((*i)->getPosition());
-			if (pos == Position(-1,-1,-1))							// in fact, this Unit is in limbo ... ie, is carried.
+			if ((pos = (*i)->getPosition()) == Position(-1,-1,-1))	// in fact, this Unit is in limbo ... ie, is carried.
 			{
 				for (std::vector<BattleItem*>::const_iterator		// so look for its body or corpse ...
 						j = battleSave->getItems()->begin();
@@ -1917,8 +1915,8 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 									}
 								}
 								else if (unit->getUnitStatus() == STATUS_UNCONSCIOUS
-									|| (unit->getUnitStatus() == STATUS_LATENT
-										&& unit->isOut_t(OUT_STUNNED) == true)) // kL_tentative.
+									|| (unit->getUnitStatus() == STATUS_LATENT // kL_tentative.
+										&& unit->isOut_t(OUT_STUNNED) == true))
 								{
 									switch (unit->getOriginalFaction()) // TODO: Add captured alien-types to a DebriefExtra screen.
 									{

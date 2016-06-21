@@ -36,7 +36,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Aliens Crash screen.
+ * Initializes all the elements in the AliensCrash screen.
  */
 AliensCrashState::AliensCrashState()
 {
