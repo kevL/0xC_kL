@@ -3693,8 +3693,8 @@ bool BattlescapeGame::tallyUnits(
 		}
 	}
 
-	if (livePlayer == 0 && liveHostile == 0)
-		livePlayer = -1; // adjudicate: Player Victory.
+	if (livePlayer == 0 && liveHostile == 0) // adjudicate: Player Victory.
+		livePlayer = -1;
 
 	//Log(LOG_INFO) << "bg:tallyUnits() ret= " << ret << " soldiers= " << livePlayer << " aLiens= " << liveHostile;
 	return ret;

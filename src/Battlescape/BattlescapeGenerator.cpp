@@ -467,12 +467,10 @@ void BattlescapeGenerator::nextStage()
 				isHostileAlive = true;
 			}
 			(*i)->setUnitStatus(STATUS_LATENT);
-
-			if ((*i)->getAIState() != nullptr)
-				(*i)->setAIState();
+			(*i)->setAIState();
 		}
 
-		if ((*i)->getTile() != nullptr) // break Tiles' link to unit.
+		if ((*i)->getTile() != nullptr) // break Tiles' links to unit.
 		{
 			const int unitSize ((*i)->getArmor()->getSize());
 			switch (unitSize)

@@ -1908,18 +1908,9 @@ bool BattleUnit::isOut_t(OutCheck test) const
 	{
 		default:
 		case OUT_ALL:
-			switch (_status)
-			{
-				case STATUS_DEAD:
-				case STATUS_UNCONSCIOUS:
-				case STATUS_LATENT:
-					return true;
-			}
-
 			if (_health == 0 || _health <= _stunLevel)
 				return true;
-			break;
-
+			// no break;
 		case OUT_STAT:
 			switch (_status)
 			{
@@ -2672,7 +2663,6 @@ void BattleUnit::setAIState(BattleAIState* const aiState)
 //		_unitAIState->exit();
 		delete _unitAIState;
 	}
-
 	_unitAIState = aiState;
 //	_unitAIState->enter();
 }
