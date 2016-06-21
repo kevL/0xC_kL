@@ -768,8 +768,6 @@ void DebriefingState::prepareDebriefing() // private.
 		playerOut  (0);
 
 	bool isHostileAlive	(false);
-//		isCivilianAlive (false);
-
 	for (std::vector<BattleUnit*>::const_iterator
 			i = battleSave->getUnits()->begin();
 			i != battleSave->getUnits()->end();
@@ -796,17 +794,8 @@ void DebriefingState::prepareDebriefing() // private.
 				break;
 
 			case FACTION_HOSTILE:
-				if ((*i)->isOut_t(OUT_STAT) == false
-					&& (Options::battleAllowPsionicCapture == false
-						|| (*i)->isMindControlled() == false))
-				{
+				if ((*i)->isOut_t(OUT_STAT) == false)
 					isHostileAlive = true;
-				}
-//				break;
-//
-//			case FACTION_NEUTRAL:
-//				if ((*i)->isOut_t(OUT_STAT) == false)
-//					isCivilianAlive = true;
 		}
 	}
 

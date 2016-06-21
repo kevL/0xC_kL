@@ -3655,8 +3655,10 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 /**
  * Tallies the conscious units Player and Hostile.
  * @param liveHostile	- reference in which to store the live aLien tally
+ *						  including MC'd aLiens and MC'd xCom units
  * @param livePlayer	- reference in which to store the live xCom tally
- * @return, true if all aliens are dead or pacified independent of 'battleAllowPsionicCapture' option
+ *						  excluding MC'd xCom units and MC'd aLiens
+ * @return, true if all the aLiens are dead or MC'd (aka. pacified)
  */
 bool BattlescapeGame::tallyUnits(
 		int& liveHostile,
@@ -3676,22 +3678,17 @@ bool BattlescapeGame::tallyUnits(
 		{
 			switch ((*j)->getOriginalFaction())
 			{
-				case FACTION_HOSTILE:
-					if (Options::battleAllowPsionicCapture == false
-						|| (*j)->isMindControlled() == false)
-					{
-						++liveHostile;
-					}
-
-					if ((*j)->isMindControlled() == false)
-						ret = false;
-					break;
-
 				case FACTION_PLAYER:
 					if ((*j)->isMindControlled() == false)
 						++livePlayer;
 					else
 						++liveHostile;
+					break;
+
+				case FACTION_HOSTILE:
+					++liveHostile;
+					if ((*j)->isMindControlled() == false)
+						ret = false;
 			}
 		}
 	}
@@ -3699,12 +3696,12 @@ bool BattlescapeGame::tallyUnits(
 	if (livePlayer == 0 && liveHostile == 0)
 		livePlayer = -1; // adjudicate: Player Victory.
 
-	//Log(LOG_INFO) << "bg:tallyUnits() ret = " << ret << "; Sol = " << livePlayer << "; aLi = " << liveHostile;
+	//Log(LOG_INFO) << "bg:tallyUnits() ret= " << ret << " soldiers= " << livePlayer << " aLiens= " << liveHostile;
 	return ret;
 }
 
 /**
- * Tallies the conscious player-units at an Exit-area.
+ * Tallies the conscious player-units at an Exit-area even if MC'd.
  * @return, quantity of units at exit
  */
 int BattlescapeGame::tallyPlayerExit() const
@@ -3727,7 +3724,7 @@ int BattlescapeGame::tallyPlayerExit() const
 }
 
 /**
- * Tallies conscious hostile-units.
+ * Tallies conscious hostile-units including MC'd aLiens.
  * @return, quantity of hostiles
  */
 int BattlescapeGame::tallyHostiles() const
@@ -3739,9 +3736,7 @@ int BattlescapeGame::tallyHostiles() const
 			++j)
 	{
 		if ((*j)->getOriginalFaction() == FACTION_HOSTILE
-			&& (*j)->isOut_t(OUT_STAT) == false
-			&& (Options::battleAllowPsionicCapture == false
-				|| (*j)->isMindControlled() == false))
+			&& (*j)->isOut_t(OUT_STAT) == false)
 		{
 			++ret;
 		}
