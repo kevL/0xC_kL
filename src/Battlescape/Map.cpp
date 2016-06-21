@@ -389,7 +389,7 @@ void Map::draw()
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
 			|| _reveal == true // stop flashing the Hidden Movement screen between waypoints and/or autoshots.
-			|| _te->rfShooterOffsets()->empty() == false
+			|| _te->isReaction() == true
 			|| _battleSave->getDebugTac() == true)
 		{
 			// REVEAL //
@@ -505,45 +505,16 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 				}
 
-				if (action->actor->getFaction() == _battleSave->getSide()) // store camera-offset of possible rf-trigger
-					_battleSave->rfTriggerOffset(_camera->getMapOffset());
-
 				if (_camera->isOnScreen(posFinal) == false)
 				{
 					_smoothingEngaged = true;
 					_camera->setPauseAfterShot();
-
-					if (action->actor->getFaction() != _battleSave->getSide() // store camera-offsets of rf-shooters
-						&& action->actor->getUnitVisible() == true)
-					{
-						//Log(LOG_INFO) << "";
-						//Log(LOG_INFO) << "map: insert reactor id-" << action->actor->getId() << " offset " << _camera->getMapOffset();
-						std::map<int, Position>* const rfShotOffsets (_te->rfShooterOffsets());
-						rfShotOffsets->insert(std::pair<int, Position>(
-																	action->actor->getId(),
-																	_camera->getMapOffset()));
-					}
 				}
-//				const bool offScreen_final (_camera->isOnScreen(posFinal) == false);
-//				if (offScreen_final == true										// moved here from TileEngine::reactionShot() because this is the
-//					&& action->actor->getFaction() != _battleSave->getSide())	// accurate position of the bullet-shot-actor's Camera mapOffset.
-//				{
-//					std::map<int, Position>* const rfShotOffsets (_te->rfShooterOffsets());
-//					rfShotOffsets->insert(std::pair<int, Position>(
-//																action->actor->getId(),
-//																_camera->getMapOffset()));
-//				}
-//
-//				if (offScreen_final == true)
-//					|| ((_projectile->getThrowItem() != nullptr
-//							|| action->weapon->getRules()->isArcingShot() == true)
-//						&& TileEngine::distSqr(
-//											action->actor->getPosition(),
-//											posFinal) > DIST_ARC_SMOOTH_Sqr)) // no smoothing unless throw > ~8 tiles
-//				{
-//					_smoothingEngaged = true;
-//					_camera->setPauseAfterShot();
-//				}
+
+				if (action->actor->getFaction() == _battleSave->getSide())	// store camera-offset of possible rf-trigger
+					_battleSave->rfTriggerOffset(_camera->getMapOffset());
+				else if (action->actor->getUnitVisible() == true)			// or set the reaction-fire boolean
+					_te->isReaction() = true;
 			}
 			else if (_smoothingEngaged == true)
 				_camera->jumpXY(

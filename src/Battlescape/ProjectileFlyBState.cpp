@@ -737,52 +737,22 @@ void ProjectileFlyBState::think()
 				|| _unit->getMoveTypeUnit() == MT_FLY))
 		{
 			createProjectile();
-
-/*			if (_action.posCamera.z != -1)	// this ought already be in Map::drawTerrain()
-			{								// since camera follows projectile from barrel of weapon
-				shotCam->setMapOffset(_action.posCamera);
-//				_parent->getMap()->invalidate();
-//				_parent->getMap()->draw();
-			} */
 		}
 		else // think() FINISH.
 		{
 			//Log(LOG_INFO) << "";
 			//Log(LOG_INFO) << "ProjectileFlyBState::think() -> finish actorId-" << _action.actor->getId();
-			switch (_action.type) // jump screen back to pre-shot position
+			switch (_action.type) // possible Camera re/positioning to pre-shot or post-RF position
 			{
 				case BA_THROW:
 				case BA_AUTOSHOT:
 				case BA_SNAPSHOT:
 				case BA_AIMEDSHOT:
-					if (_action.actor->getFaction() != _battleSave->getSide())	// NOTE: action.actor may not be the actual shooter, but
-//						&& Options::battleSmoothCamera == true)					// the unit will be the same Faction for a reaction shot.
-					{
-						//Log(LOG_INFO) << "FlyB: Check reset Camera for RF";
-						const std::map<int, Position>* const rfShotOffsets (_battleSave->getTileEngine()->rfShooterOffsets());
-						std::map<int, Position>::const_iterator i (rfShotOffsets->find(_action.actor->getId()));
-
-						//for (std::map<int, Position>::const_iterator j = rfShotOffsets->begin(); j != rfShotOffsets->end(); ++j)
-						//{ Log(LOG_INFO) << "FlyB: . . shotList:"; Log(LOG_INFO) << "FlyB: . . id-" << j->first << " " << j->second; }
-
-						if (i != rfShotOffsets->end()) // NOTE: The shotList vector will be cleared in BattlescapeGame::think() after all BattleStates have popped.
-						{
-							_action.posCamera = i->second;
-							//Log(LOG_INFO) << "FlyB: . . . set camera to " << _action.posCamera;
-						}
-						else
-						{
-							_action.posCamera.z = -1;
-							//Log(LOG_INFO) << "FlyB: . . . set camera to NONE";
-						}
-					}
-
 					//Log(LOG_INFO) << "FlyB: . stored posCamera " << _action.posCamera;
-					//Log(LOG_INFO) << "FlyB: . pauseAfterShot " << (int)_parent->getMap()->getCamera()->getPauseAfterShot();
-					if (_action.posCamera.z != -1) //&& _action.waypoints.size() < 2)
+					if (_action.posCamera.z != -1
+						|| _parent->getTileEngine()->isReaction() == true)
 					{
-						//Log(LOG_INFO) << "FlyB: . . posCamera was Set";
-						//Log(LOG_INFO) << "FlyB: . . . resetting Camera to shooter pos";
+						//Log(LOG_INFO) << "FlyB: . . resetting Camera to shooter pos";
 						Camera* const shotCam (_parent->getMap()->getCamera());
 						if (shotCam->getPauseAfterShot() == true)	// TODO: Move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
 //						if (_action.pauseAfterShot == true)			// NOTE: That trying to store the camera position in the BattleAction didn't work either ... double numby.
@@ -806,14 +776,13 @@ void ProjectileFlyBState::think()
 							}
 						}
 
-						if (_action.actor->getFaction() == _battleSave->getSide())
+						if (_parent->getTileEngine()->isReaction() == true)
+							shotCam->centerOnPosition(_unit->getPosition());
+						else
 						{
 							shotCam->setMapOffset(_action.posCamera);
 							_parent->getMap()->draw(); // NOTE: Might not be needed. Ie, the camera-offset seems to take hold okay without.
 						}
-						else
-							shotCam->centerOnPosition(_unit->getPosition());	// NOTE: Keep rfShooterOffsets for posCamera just to flag this code-block.
-																				// TODO: Implement a more efficient flagging mechanism.
 //						_action.posCamera = Position(0,0,-1);
 //						_parent->getMap()->invalidate();
 

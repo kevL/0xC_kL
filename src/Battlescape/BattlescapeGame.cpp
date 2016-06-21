@@ -346,11 +346,11 @@ void BattlescapeGame::popState()
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates= " << _battleStates.size();
 
-//	for (std::list<BattleState*>::const_iterator
-//			i = _battleStates.begin();
-//			i != _battleStates.end();
-//			++i)
-//		Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
+	//for (std::list<BattleState*>::const_iterator
+	//		i = _battleStates.begin();
+	//		i != _battleStates.end();
+	//		++i)
+	//	Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
 
 //	if (Options::traceAI)
 //		Log(LOG_INFO) << "BattlescapeGame::popState() "
@@ -626,27 +626,18 @@ void BattlescapeGame::popState()
 	{
 		//Log(LOG_INFO) << "";
 		//Log(LOG_INFO) << "popState: STATES are Empty";
-
-		if (getTileEngine()->rfShooterOffsets()->empty() == false)
+		if (getTileEngine()->isReaction() == true)
 		{
-			//Log(LOG_INFO) << "";
-			//Log(LOG_INFO) << "PopState: rfShooters VALID - clear!";
-			getTileEngine()->rfShooterOffsets()->clear();
+			//Log(LOG_INFO) << "PopState: rfShooter VALID - clear!";
+			getTileEngine()->isReaction() = false;
 
-//			if (_battleSave->rfTriggerOffset().z != -1)	// safety. This should always be set for any action capable of inducing RF.
-//			{											// refocus the Camera back onto RF trigger-unit after a brief delay
 			//Log(LOG_INFO) << ". set Camera to triggerPos " << _battleSave->rfTriggerOffset();
-			//Log(LOG_INFO) << "popState: clear triggerPos";
-
 			SDL_Delay(Screen::SCREEN_PAUSE);
 			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
-//			_battleSave->rfTriggerOffset(Position(0,0,-1));
-//			}
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
-			//Log(LOG_INFO) << ". states Empty, re-enable cursor";
 			_parentState->getGame()->getCursor()->setHidden(false);
 			_parentState->refreshMousePosition(); // update tile-data on the HUD
 			setupSelector();

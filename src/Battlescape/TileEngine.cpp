@@ -86,7 +86,8 @@ TileEngine::TileEngine(
 		_powerT(-1),
 		_spotSound(true),
 		_trueTile(nullptr),
-		_dirRay(-1)
+		_dirRay(-1),
+		_isReaction(false)
 //		_missileDirection(-1)
 {
 	_rfAction = new BattleAction();
@@ -1553,6 +1554,7 @@ bool TileEngine::checkReactionFire(
 		int tuSpent,
 		bool autoSpot)
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "TileEngine::checkReactionFire() vs id-" << triggerUnit->getId();
 	//Log(LOG_INFO) << ". tuSpent = " << tuSpent;
 	bool ret (false);
@@ -1850,8 +1852,6 @@ bool TileEngine::reactionShot(
 		&& _rfAction->actor->spendTimeUnits(_rfAction->TU) == true)
 	{
 		//Log(LOG_INFO) << "TE: rf by Actor id-" << _rfAction->actor->getId();
-		//			  << " rfTriggerPos " << _battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset();
-//		_battleSave->rfTriggerOffset(_battleSave->getBattleGame()->getMap()->getCamera()->getMapOffset());
 		_rfAction->TU = 0;
 		_rfAction->value = -1;
 
@@ -1948,21 +1948,12 @@ void TileEngine::chooseFireMethod()
 }
 
 /**
- * Gets the unique reaction fire BattleAction struct.
- * @return, rf action struct
- *
-BattleAction* TileEngine::getRfAction()
-{
-	return _rfAction;
-} */
-
-/**
- * Accesses a cache of reaction-fire shooter-IDs and camera-offsets.
- * @return, pointer to a map of unit-IDs & camera-offsets
+ * Accesses a boolean that flags reaction-fire for Camera repositioning.
+ * @return, reference to the isReaction flag
  */
-std::map<int, Position>* TileEngine::rfShooterOffsets()
+bool& TileEngine::isReaction()
 {
-	return &_rfShotPos;
+	return _isReaction;
 }
 
 /**

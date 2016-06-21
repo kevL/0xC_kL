@@ -82,6 +82,7 @@ private:
 		LOFT_LAYERS = 12u;
 
 	bool
+		_isReaction,
 		_spotSound,
 		_unitLighting;
 	int
@@ -94,7 +95,6 @@ private:
 	Tile* _trueTile;
 
 	BattleAction* _rfAction;
-	std::map<int, Position> _rfShotPos;
 
 	const std::vector<Uint16>* _voxelData;
 
@@ -218,10 +218,8 @@ private:
 				const BattleUnit* const targetUnit);
 		/// Selects a reaction-fire-method based on TU & range.
 		void chooseFireMethod();
-		/// Gets the unique reaction-fire BattleAction struct.
-//		BattleAction* getRfAction();
-		/// Accesses the reaction-fire shooter-list.
-		std::map<int, Position>* rfShooterOffsets();
+		/// Accesses a boolean that flags reaction-fire for Camera repositioning.
+		bool& isReaction();
 
 		/// Handles bullet/weapon hits.
 		void hit(
