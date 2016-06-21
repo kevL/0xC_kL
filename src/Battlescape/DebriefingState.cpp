@@ -188,7 +188,7 @@ DebriefingState::DebriefingState()
 	_lstTotal->setDot();
 	_lstTotal->setMargin(0);
 
-	_txtBaseLabel->setAlign(ALIGN_RIGHT);	// note: Text is set in prepareDebriefing() before
+	_txtBaseLabel->setAlign(ALIGN_RIGHT);	// NOTE: Text is set in prepareDebriefing() before
 											// a possibly failed BaseDefense dangles '_base' ptr.
 
 
@@ -610,14 +610,13 @@ void DebriefingState::addStat( // private.
 
 
 /**
- * *** FUNCTOR ***
+ ** FUNCTOR ***
  * Clears any supply missions from an aLien-base.
  */
 class ClearAlienBase
 	:
 		public std::unary_function<AlienMission*, void>
 {
-
 private:
 	const AlienBase* _aBase;
 
@@ -1108,34 +1107,20 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 
+	Soldier* sol;
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
-		const UnitFaction orgFaction ((*i)->getOriginalFaction());
-		const int value ((*i)->getValue());
-
-		switch ((*i)->getUnitStatus())
+		switch ((*i)->getOriginalFaction())
 		{
-			case STATUS_DEAD:
-				//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
-				switch (orgFaction)
+			case FACTION_PLAYER:
+				switch ((*i)->getUnitStatus())
 				{
-					case FACTION_HOSTILE:
-						if ((*i)->killerFaction() == FACTION_PLAYER)
-						{
-							//Log(LOG_INFO) << ". . killed by xCom";
-							addStat(
-								"STR_ALIENS_KILLED",
-								value);
-						}
-						break;
-
-					case FACTION_PLAYER:
-					{
-						Soldier* const sol ((*i)->getGeoscapeSoldier());
-						if (sol != nullptr)
+					case STATUS_DEAD:
+						//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
+						if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 						{
 							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 
@@ -1144,7 +1129,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 							addStat(
 								"STR_XCOM_OPERATIVES_KILLED",
-								-value);
+								-(*i)->getValue());
 
 							for (std::vector<Soldier*>::const_iterator
 									j = _base->getSoldiers()->begin();
@@ -1160,7 +1145,7 @@ void DebriefingState::prepareDebriefing() // private.
 								}
 							}
 						}
-						else // support unit
+						else // support unit.
 						{
 							if (_isQuickBattle == false)
 								_missionCost += _base->supportExpense(
@@ -1168,7 +1153,7 @@ void DebriefingState::prepareDebriefing() // private.
 																true);
 							addStat(
 								"STR_TANKS_DESTROYED",
-								-value);
+								-(*i)->getValue());
 
 							++_itemsLostProperty[_rules->getItemRule((*i)->getType())];
 
@@ -1185,33 +1170,16 @@ void DebriefingState::prepareDebriefing() // private.
 							}
 						}
 						break;
-					}
 
-					case FACTION_NEUTRAL:
-						if ((*i)->killerFaction() == FACTION_PLAYER)
-							addStat(
-								"STR_CIVILIANS_KILLED_BY_XCOM_OPERATIVES",
-								-(value * 2));
-						else
-							addStat(
-								"STR_CIVILIANS_KILLED_BY_ALIENS",
-								-value);
-				}
-				break;
-
-			default: // alive units possible unconscious. // Standing, Unconscious, or Latent i guess.
-				//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
-				switch (orgFaction)
-				{
-					case FACTION_PLAYER:
+					default:
+						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
 						if (aborted == false // NOTE: Duplicated this check above^ to determine 'playerExit' val.
 							|| ((_tactical->success == true || tacType != TCT_BASEDEFENSE)
 								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
 						{
 							recoverItems((*i)->getInventory());
 
-							Soldier* const sol ((*i)->getGeoscapeSoldier());
-							if (sol != nullptr)
+							if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 							{
 								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures();
 
@@ -1223,7 +1191,7 @@ void DebriefingState::prepareDebriefing() // private.
 //												Options::psiStrengthEval
 //													&& _gameSave->isResearched(_rules->getPsiRequirements()));
 							}
-							else
+							else // support unit.
 							{
 								if (_isQuickBattle == false)
 								{
@@ -1276,15 +1244,14 @@ void DebriefingState::prepareDebriefing() // private.
 						{
 							(*i)->setUnitStatus(STATUS_DEAD);
 
-							Soldier* const sol ((*i)->getGeoscapeSoldier());
-							if (sol != nullptr)
+							if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 							{
 								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 								(*i)->getStatistics()->MIA = true;
 
 								addStat(
 									"STR_XCOM_OPERATIVES_MISSING_IN_ACTION",
-									-value);
+									-(*i)->getValue());
 
 								for (std::vector<Soldier*>::const_iterator
 										j = _base->getSoldiers()->begin();
@@ -1300,11 +1267,11 @@ void DebriefingState::prepareDebriefing() // private.
 									}
 								}
 							}
-							else // support unit
+							else // support unit.
 							{
 								addStat(
 									"STR_TANKS_DESTROYED",
-									-value);
+									-(*i)->getValue());
 
 								++_itemsLostProperty[_rules->getItemRule((*i)->getType())];
 
@@ -1321,9 +1288,25 @@ void DebriefingState::prepareDebriefing() // private.
 								}
 							}
 						}
+				}
+				break;
+
+			case FACTION_HOSTILE:
+				switch ((*i)->getUnitStatus())
+				{
+					case STATUS_DEAD:
+						//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
+						if ((*i)->killerFaction() == FACTION_PLAYER)
+						{
+							//Log(LOG_INFO) << ". . killed by xCom";
+							addStat(
+								"STR_ALIENS_KILLED",
+								(*i)->getValue());
+						}
 						break;
 
-					case FACTION_HOSTILE:
+					default:
+						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
 						if ((*i)->isMindControlled() == true
 							&& (*i)->isOut_t(OUT_STAT) == false
 							&& (aborted == false || (*i)->isInExitArea() == true))
@@ -1346,23 +1329,47 @@ void DebriefingState::prepareDebriefing() // private.
 							}
 							recoverLiveAlien(*i);
 						}
+				}
+				break;
+
+			case FACTION_NEUTRAL:
+				switch ((*i)->getUnitStatus())
+				{
+					case STATUS_DEAD:
+						//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
+						switch ((*i)->killerFaction())
+						{
+							case FACTION_PLAYER:
+								//Log(LOG_INFO) << ". . killed by xCom";
+								addStat(
+									"STR_CIVILIANS_KILLED_BY_XCOM_OPERATIVES",
+									-((*i)->getValue() << 1u));
+								break;
+
+							default:
+								addStat(
+									"STR_CIVILIANS_KILLED_BY_ALIENS",
+									-(*i)->getValue());
+						}
 						break;
 
-					case FACTION_NEUTRAL:
+					default:
+						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
 						if ((_tactical->success == true && isHostileAlive == false)
 							|| (aborted == true && (*i)->isInExitArea() == true))
 						{
 							addStat(
 								"STR_CIVILIANS_SAVED",
-								value); // duplicated below.
+								(*i)->getValue()); // duplicated below.
 						}
 						else
 							addStat(
 								"STR_CIVILIANS_KILLED_BY_ALIENS",
-								-value);
-				} // End unit_faction switch.
-		} // End unit_status switch.
+								-(*i)->getValue());
+				}
+		}
 	} //End loop BattleUnits.
+
 
 	if (_craft != nullptr && playerWipe == true)
 	{
@@ -1370,13 +1377,14 @@ void DebriefingState::prepareDebriefing() // private.
 			"STR_XCOM_CRAFT_LOST",
 			-(_craft->getRules()->getScore()));
 
-		for (std::vector<Soldier*>::const_iterator
+		for (std::vector<Soldier*>::const_iterator // kill off any Soldiers that haven't already been dealt with above^
 				i = _base->getSoldiers()->begin();
 				i != _base->getSoldiers()->end();
 				)
 		{
 			if ((*i)->getCraft() == _craft)
 			{
+				(*i)->die(_gameSave);
 				delete *i;
 				i = _base->getSoldiers()->erase(i);
 			}
@@ -1987,7 +1995,7 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 		if (_rules->getResearch(type) != nullptr
 			&& _gameSave->isResearched(type) == false)
 		{
-			value = unit->getValue() * 2;
+			value = unit->getValue() << 1u;
 		}
 		else
 			value = unit->getValue();

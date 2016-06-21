@@ -104,7 +104,7 @@ private:
 
 
 	public:
-		/// Creates a brand new Soldier from scratch.
+		/// Creates a Soldier from scratch.
 		Soldier(
 				const RuleSoldier* const solRule,
 				const RuleArmor* const armorRule,
