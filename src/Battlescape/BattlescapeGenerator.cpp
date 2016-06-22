@@ -614,6 +614,7 @@ void BattlescapeGenerator::nextStage()
 										&& (*i)->getUnit()->isHealable() == true)
 									{
 										dst = &forwardGround;
+										break;
 									}
 									// no break;
 
@@ -630,9 +631,18 @@ void BattlescapeGenerator::nextStage()
 						{
 							switch (tile->getMapData(O_FLOOR)->getTileType())
 							{
-								case END_POINT:	  dst = &forwardGround;	break;
-								case START_POINT: dst = guaranteed;		break;
-								default:		  dst = conditional;
+								case START_POINT: dst = guaranteed;
+									break;
+
+								case END_POINT:
+									if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
+									{
+										dst = &forwardGround;
+										break;
+									}
+									// no break;
+
+								default: dst = conditional;
 							}
 						}
 						else
