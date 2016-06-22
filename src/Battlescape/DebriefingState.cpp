@@ -1478,7 +1478,7 @@ void DebriefingState::prepareDebriefing() // private.
 				objectiveFailedScore);
 	}
 
-	if (playerLive != 0)
+	if (playerWipe == false)
 	{
 		recoverItems(_battleSave->guaranteedRecover());
 
@@ -1573,13 +1573,13 @@ void DebriefingState::prepareDebriefing() // private.
 			i != _battleSave->getDeletedItems().end();
 			++i)
 	{
-		if ((*i)->getProperty() == true)
-		{
-			if (_itemsGained.find(itRule = (*i)->getRules()) == _itemsGained.end())
-				++_itemsLostProperty[itRule];
-			else if (--_itemsGained[itRule] == 0)	// NOTE: '_itemsGained' shall never contain clips - vid. recoverItems()
-				_itemsGained.erase(itRule);			// ... clips handled immediately below_
-		}											// TODO: Extensive testing on item-gains/losses ....
+//		if ((*i)->getProperty() == true) // taken care of in toDeleteItem().
+//		{
+		if (_itemsGained.find(itRule = (*i)->getRules()) == _itemsGained.end())
+			++_itemsLostProperty[itRule];
+		else if (--_itemsGained[itRule] == 0)	// NOTE: '_itemsGained' shall never contain clips - vid. recoverItems()
+			_itemsGained.erase(itRule);			// ... clips handled immediately below_
+//		}										// TODO: Extensive testing on item-gains/losses ....
 	}
 
 	int
