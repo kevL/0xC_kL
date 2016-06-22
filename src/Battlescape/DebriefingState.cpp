@@ -781,7 +781,7 @@ void DebriefingState::prepareDebriefing() // private.
 				{
 					++playerLive;
 					if ((*i)->getUnitStatus() == STATUS_UNCONSCIOUS
-						|| (*i)->getFaction() == FACTION_HOSTILE)
+						|| (*i)->isMindControlled() == true)
 					{
 						++playerOut;
 					}
@@ -794,7 +794,7 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 	}
 
-	if (playerOut == playerLive)
+	if (playerLive == playerOut)
 	{
 		playerLive = 0;
 		for (std::vector<BattleUnit*>::const_iterator
@@ -846,8 +846,6 @@ void DebriefingState::prepareDebriefing() // private.
 	const TacticalType tacType (_battleSave->getTacType());
 
 
-//	_tactical->success = (aborted == false && (playerLive != 0 || isHostileAlive == false))
-//					  || _battleSave->allObjectivesDestroyed() == true;
 	_tactical->success = isHostileAlive == false
 					  || _battleSave->allObjectivesDestroyed() == true;
 
@@ -880,14 +878,12 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
-			&& (*i)->getUnitStatus() != STATUS_DEAD)
+			&& (*i)->getUnitStatus() != STATUS_DEAD
+			&& (aborted == false // NOTE: Duplicated this check below_ to determine what to do with player-units.
+				|| ((tacType != TCT_BASEDEFENSE || _tactical->success == true)
+					&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT))))
 		{
-			if (aborted == false // NOTE: Duplicated this check below_ to determine what to do with player-units.
-				|| ((_tactical->success == true || tacType != TCT_BASEDEFENSE)
-					&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
-			{
-				++playerExit;
-			}
+			++playerExit;
 		}
 	}
 	const bool playerWipe ((aborted == true && playerExit == 0)
@@ -905,6 +901,43 @@ void DebriefingState::prepareDebriefing() // private.
 			i != _gameSave->getBases()->end();
 			++i)
 	{
+		if ((*i)->getTactical() == true) // in case this DON'T have a Craft, ie. BaseDefense
+		{
+			_base = *i;
+			_txtBaseLabel->setText(_base->getName());
+
+			lon = _base->getLongitude();
+			lat = _base->getLatitude();
+
+			if (_tactical->success == true)
+			{
+				_base->setTactical(false);
+
+				bool facDestroyed (false);
+				for (std::vector<BaseFacility*>::const_iterator
+						j = _base->getFacilities()->begin();
+						j != _base->getFacilities()->end();
+						)
+				{
+					if (_battleSave->baseDestruct()[(*j)->getX()]
+												  [(*j)->getY()].second == 0) // this facility was demolished
+					{
+						facDestroyed = true;
+						j = _base->destroyFacility(j);
+					}
+					else
+						++j;
+				}
+
+				if (facDestroyed == true)
+					_base->destroyDisconnectedFacilities(); // this may cause the base to become disjointed; destroy the disconnected parts.
+			}
+			else
+				_destroyPlayerBase = true;
+
+			break;
+		}
+
 		for (std::vector<Craft*>::const_iterator
 				j = (*i)->getCrafts()->begin();
 				j != (*i)->getCrafts()->end();
@@ -943,41 +976,6 @@ void DebriefingState::prepareDebriefing() // private.
 				if (site != nullptr && site->getTactical() == true)
 					(*j)->returnToBase();
 			}
-		}
-
-		if ((*i)->getTactical() == true) // in case this DON'T have a Craft, ie. BaseDefense
-		{
-			_base = *i;
-			_txtBaseLabel->setText(_base->getName());
-
-			lon = _base->getLongitude();
-			lat = _base->getLatitude();
-
-			if (_tactical->success == true)
-			{
-				_base->setTactical(false);
-
-				bool facDestroyed (false);
-				for (std::vector<BaseFacility*>::const_iterator
-						j = _base->getFacilities()->begin();
-						j != _base->getFacilities()->end();
-						)
-				{
-					if (_battleSave->baseDestruct()[(*j)->getX()]
-												  [(*j)->getY()].second == 0) // this facility was demolished
-					{
-						facDestroyed = true;
-						j = _base->destroyFacility(j);
-					}
-					else
-						++j;
-				}
-
-				if (facDestroyed == true)
-					_base->destroyDisconnectedFacilities(); // this may cause the base to become disjointed; destroy the disconnected parts.
-			}
-			else
-				_destroyPlayerBase = true;
 		}
 	}
 
@@ -1174,7 +1172,7 @@ void DebriefingState::prepareDebriefing() // private.
 					default:
 						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
 						if (aborted == false // NOTE: Duplicated this check above^ to determine 'playerExit' val.
-							|| ((_tactical->success == true || tacType != TCT_BASEDEFENSE)
+							|| ((tacType != TCT_BASEDEFENSE || _tactical->success == true)
 								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
 						{
 							recoverItems((*i)->getInventory());
@@ -1400,20 +1398,6 @@ void DebriefingState::prepareDebriefing() // private.
 		return; // ||-> EXIT <--|||
 	}
 
-	if (_tactical->success == false && tacType == TCT_BASEDEFENSE)
-	{
-		for (std::vector<Craft*>::const_iterator
-				i = _base->getCrafts()->begin();
-				i != _base->getCrafts()->end();
-				++i)
-		{
-			addStat(
-				"STR_XCOM_CRAFT_LOST",
-				-(*i)->getRules()->getScore());
-		}
-	}
-
-
 	std::string tacResult;
 	if (_tactical->success == true)
 	{
@@ -1459,6 +1443,16 @@ void DebriefingState::prepareDebriefing() // private.
 
 			case TCT_BASEDEFENSE:
 				tacResult = "STR_BASE_IS_LOST";
+
+				for (std::vector<Craft*>::const_iterator
+						i = _base->getCrafts()->begin();
+						i != _base->getCrafts()->end();
+						++i)
+				{
+					addStat(
+						"STR_XCOM_CRAFT_LOST",
+						-(*i)->getRules()->getScore());
+				}
 				break;
 
 			case TCT_TERRORSITE:

@@ -1615,7 +1615,7 @@ void BattlescapeGame::endTurn() // private.
 		}
 
 		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != MUST_DESTROY)
-								 || livePlayer  == 0);
+								 || livePlayer < 1);
 
 		if (battleComplete == false)
 		{

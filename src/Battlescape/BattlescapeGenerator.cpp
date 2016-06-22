@@ -510,11 +510,11 @@ void BattlescapeGenerator::nextStage()
 	//	 ONLY on success.
 	// This does not include items in player-units' hands.
 	std::vector<BattleItem*>
-		* const itemsGuaranteed (_battleSave->guaranteedItems()),
-		* const itemsConditional (_battleSave->conditionalItems()),
-		passToNextStage,
-		carryToNextStage,
-		removeFromGame;
+		* const guaranteed (_battleSave->guaranteedItems()),
+		* const conditional (_battleSave->conditionalItems()),
+		forwardGround,
+		forwardCarried,
+		deletable;
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = _battleSave->getItems()->begin();
@@ -523,7 +523,7 @@ void BattlescapeGenerator::nextStage()
 	{
 		if ((*i)->isLoad() == false)
 		{
-			std::vector<BattleItem*>* toContainer;
+			std::vector<BattleItem*>* dst;
 
 			if ((*i)->getOwner() == nullptr // assign the item a destination container ->
 				&& (*i)->getRules()->isRecoverable() == true)
@@ -535,10 +535,10 @@ void BattlescapeGenerator::nextStage()
 					if ((*i)->getUnit() != nullptr
 						|| _gameSave->isResearched((*i)->getRules()->getRequirements()) == false)
 					{
-						toContainer = itemsGuaranteed;
+						dst = guaranteed;
 					}
 					else
-						toContainer = &passToNextStage;
+						dst = &forwardGround;
 				}
 				else							// patial-win on 1st stage
 				{
@@ -548,67 +548,53 @@ void BattlescapeGenerator::nextStage()
 						if (tile->getMapData(O_FLOOR) != nullptr
 							&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT)
 						{
-							toContainer = itemsGuaranteed;
+							dst = guaranteed;
 						}
 						else if (tile->getMapData(O_FLOOR) != nullptr
 							&& tile->getMapData(O_FLOOR)->getTileType() == END_POINT)
 						{
-							toContainer = &passToNextStage;
+							dst = &forwardGround;
 						}
 						else
-							toContainer = itemsConditional;
+							dst = conditional;
 					}
 					else
-						toContainer = &removeFromGame;
+						dst = &deletable;
 				}
 			}
 			else if ((*i)->getOwner() != nullptr
 				&& (*i)->getOwner()->getFaction() == FACTION_PLAYER)
 			{
-				toContainer = &carryToNextStage;
+				dst = &forwardCarried;
 			}
 			else
-				toContainer = &removeFromGame;
+				dst = &deletable;
 
-			BattleItem* const load ((*i)->getAmmoItem()); // move the item to its destination container ->
-			if (load != nullptr && *i != load)
+			if ((*i)->selfPowered() == false)
 			{
-				load->setTile();
-				toContainer->push_back(load);
+				BattleItem* const load ((*i)->getAmmoItem());
+				if (load != nullptr)
+					dst->push_back(load);
 			}
 
 			(*i)->setTile();
-			toContainer->push_back(*i);
+			dst->push_back(*i); // move the item to its destination container ->
 		}
 	}
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = removeFromGame.begin();
-			i != removeFromGame.end();
+			i = deletable.begin();
+			i != deletable.end();
 			++i)
 	{
-		if ((*i)->getOwner() != nullptr)
-		{
-			for (std::vector<BattleItem*>::const_iterator
-					j = (*i)->getOwner()->getInventory()->begin();
-					j != (*i)->getOwner()->getInventory()->end();
-					++j)
-			{
-				if (*j == *i)
-				{
-					(*i)->getOwner()->getInventory()->erase(j);
-					break;
-				}
-			}
-		}
-		delete *i;	// TODO: Send these ex-items to the _toDelete container so
-	}				// that they will be accounted for in xCom losses if applicable.
+		_battleSave->toDeleteItem(*i);
+	}
 
 	_battleSave->getItems()->clear();
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = carryToNextStage.begin();
-			i != carryToNextStage.end();
+			i = forwardCarried.begin();
+			i != forwardCarried.end();
 			++i)
 	{
 		_battleSave->getItems()->push_back(*i);
@@ -724,13 +710,14 @@ void BattlescapeGenerator::nextStage()
 
 	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 	for (std::vector<BattleItem*>::const_iterator
-		i = passToNextStage.begin();
-		i != passToNextStage.end();
+		i = forwardGround.begin();
+		i != forwardGround.end();
 		++i)
 	{
+		_battleSave->getItems()->push_back(*i);
+
 		(*i)->setInventorySection(grdRule);
 		_tileEquipt->addItem(*i);
-		_battleSave->getItems()->push_back(*i);
 	}
 
 

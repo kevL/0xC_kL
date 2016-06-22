@@ -782,8 +782,8 @@ YAML::Node SavedBattleGame::save() const
 			i != _toDelete.end();
 			++i)
 	{
-		if ((*i)->getProperty() == true)
-			node["toDelete"].push_back((*i)->save());
+//		if ((*i)->getProperty() == true) // taken care of in toDeleteItem().
+		node["toDelete"].push_back((*i)->save());
 	}
 
 //	node["batReserved"]		= static_cast<int>(_batReserved);
@@ -1664,8 +1664,6 @@ void SavedBattleGame::distributeEquipment(Tile* const tile)
  */
 std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleItem* const item)
 {
-	_toDelete.push_back(item);
-
 	Tile* const tile (item->getTile());
 	if (tile != nullptr)
 	{
@@ -1703,7 +1701,15 @@ std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleIte
 			i != _items.end();
 			++i)
 	{
-		if (*i == item) return _items.erase(i);
+		if (*i == item)
+		{
+			if ((*i)->getProperty() == true)
+				_toDelete.push_back(item);
+			else
+				delete *i;
+
+			return _items.erase(i);
+		}
 	}
 	return _items.end();
 }
@@ -2250,13 +2256,15 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();
 			i != _items.end();
-			++i)
+			)
 	{
 		if ((*i)->getUnit() == unit)
 		{
 			i = toDeleteItem(*i);
 			if (--quadrants == 0) return;
 		}
+		else
+			++i;
 	}
 }
 
