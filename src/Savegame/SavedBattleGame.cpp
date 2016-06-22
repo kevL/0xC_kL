@@ -1725,16 +1725,16 @@ const std::vector<BattleItem*>& SavedBattleGame::getDeletedItems() const
 
 /**
  * Sets whether the mission was aborted or successful.
- * @param abort - true if tactical was aborted or false if successful (default true)
+ * @param abort - true if tactical was aborted or false if successful
  */
-void SavedBattleGame::setAborted(bool abort)
+void SavedBattleGame::isAborted(bool abort)
 {
 	_aborted = abort;
 }
 
 /**
- * Checks whether the mission was aborted or not.
- * @return, true if the mission was aborted, or false if the mission was successful
+ * Gets whether the mission was aborted or successful.
+ * @return, true if the mission was aborted or false if successful
  */
 bool SavedBattleGame::isAborted() const
 {
@@ -2762,7 +2762,7 @@ void SavedBattleGame::calcBaseDestruct()
  * @note These items are in the transport.
  * @return, pointer to a vector of pointers to BattleItems
  */
-std::vector<BattleItem*>* SavedBattleGame::guaranteedItems()
+std::vector<BattleItem*>* SavedBattleGame::guaranteedRecover()
 {
 	return &_recoverGuaranteed;
 }
@@ -2772,7 +2772,7 @@ std::vector<BattleItem*>* SavedBattleGame::guaranteedItems()
  * @note These items are NOT in the transport.
  * @return, pointer to a vector of pointers to BattleItems
  */
-std::vector<BattleItem*>* SavedBattleGame::conditionalItems()
+std::vector<BattleItem*>* SavedBattleGame::conditionalRecover()
 {
 	return &_recoverConditional;
 }

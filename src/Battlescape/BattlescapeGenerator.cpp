@@ -86,6 +86,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_gameSave(game->getSavedGame()),
 		_battleSave(game->getSavedGame()->getBattleSave()),
 		_unitList(game->getSavedGame()->getBattleSave()->getUnits()),
+		_itemList(game->getSavedGame()->getBattleSave()->getItems()),
 		_rules(game->getRuleset()),
 		_res(game->getResourcePack()),
 		_craft(nullptr),
@@ -449,7 +450,12 @@ void BattlescapeGenerator::nextStage()
 {
 	_battleSave->resetTurnCounter();
 
-	bool isHostileAlive (false);
+	const Tile* tile;
+	Position pos;
+
+	int unitSize;
+
+	bool fullSuccess (true);
 
 	const Position posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator // kill all enemy units, or those not in endpoint-area if aborted
@@ -457,23 +463,47 @@ void BattlescapeGenerator::nextStage()
 			i != _unitList->end();
 			++i)
 	{
-		if ((*i)->getUnitStatus() != STATUS_DEAD
-			&& ((*i)->getOriginalFaction() != FACTION_PLAYER
-				|| (_battleSave->isAborted() == true && (*i)->isInExitArea(END_POINT) == false)))
+		if ((*i)->getUnitStatus() != STATUS_DEAD)
 		{
-			if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-				&& (*i)->isOut_t(OUT_STAT) == false)
-			{
-				isHostileAlive = true;
-			}
-			(*i)->setUnitStatus(STATUS_LATENT);
 			(*i)->setAIState();
+
+			switch ((*i)->getOriginalFaction())
+			{
+				case FACTION_PLAYER:
+					if (_battleSave->isAborted() == true)
+					{
+						switch ((*i)->getUnitStatus())
+						{
+							case STATUS_UNCONSCIOUS:
+								if ((pos = (*i)->getPosition()) != Position(-1,-1,-1) // is Not carried: else stay Status_Unconscious
+									&& ((tile = _battleSave->getTile(pos)) == nullptr
+										|| tile->getMapData(O_FLOOR) == nullptr
+										|| tile->getMapData(O_FLOOR)->getTileType() != END_POINT))
+								{
+									(*i)->setUnitStatus(STATUS_LATENT); // Unconscious xCom units on an exit-tile should remain Status_Unconscious.
+								}
+								break;
+
+							default: // standing.
+								if ((*i)->isInExitArea(END_POINT) == false)
+									(*i)->setUnitStatus(STATUS_LATENT);
+						}
+					}
+					break;
+
+				case FACTION_HOSTILE:
+					if ((*i)->isOut_t(OUT_STAT) == false)
+						fullSuccess = false;
+					// no break;
+
+				case FACTION_NEUTRAL:
+					(*i)->setUnitStatus(STATUS_LATENT);
+			}
 		}
 
 		if ((*i)->getTile() != nullptr) // break Tiles' links to unit.
 		{
-			const int unitSize ((*i)->getArmor()->getSize());
-			switch (unitSize)
+			switch (unitSize = (*i)->getArmor()->getSize())
 			{
 				case 1:
 					(*i)->getTile()->setUnit();
@@ -481,7 +511,7 @@ void BattlescapeGenerator::nextStage()
 
 				case 2:
 				{
-					const Position pos ((*i)->getPosition());
+					pos = (*i)->getPosition();
 					for (int
 							x = 0;
 							x != unitSize;
@@ -509,51 +539,101 @@ void BattlescapeGenerator::nextStage()
 	// - and those that are scattered about on the ground that will be recovered
 	//	 ONLY on success.
 	// This does not include items in player-units' hands.
+	// whatever.
+	// NOTE: The one rule through all of this is that unit-corpses should never
+	// get deleted; they need to be used for Scoring and possible resurrection
+	// after the second stage - when the Debriefing runs finally.
 	std::vector<BattleItem*>
-		* const guaranteed (_battleSave->guaranteedItems()),
-		* const conditional (_battleSave->conditionalItems()),
+		* const guaranteed (_battleSave->guaranteedRecover()),
+		* const conditional (_battleSave->conditionalRecover()),
 		forwardGround,
 		forwardCarried,
 		deletable;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _battleSave->getItems()->begin();
-			i != _battleSave->getItems()->end();
+			i = _itemList->begin();
+			i != _itemList->end();
 			++i)
 	{
 		if ((*i)->isLoad() == false)
 		{
-			std::vector<BattleItem*>* dst;
+			std::vector<BattleItem*>* dst; // assign the item a destination container ->
 
-			if ((*i)->getOwner() == nullptr // assign the item a destination container ->
-				&& (*i)->getRules()->isRecoverable() == true)
+			if ((*i)->getOwner() == nullptr) // is on ground
 			{
 				(*i)->setFuse(-1);
 
-				if (isHostileAlive == false)	// full-win on 1st stage
+				if (fullSuccess == true) // all aLiens were put down on previous stage
 				{
-					if ((*i)->getUnit() != nullptr
-						|| _gameSave->isResearched((*i)->getRules()->getRequirements()) == false)
+					if ((*i)->getUnit() != nullptr)
 					{
-						dst = guaranteed;
+						switch ((*i)->getUnit()->getOriginalFaction())
+						{
+							case FACTION_PLAYER:
+								if ((*i)->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS
+									&& (*i)->getUnit()->isHealable() == true
+									&& (_battleSave->isAborted() == false
+										|| ((tile = (*i)->getTile()) != nullptr
+											&& tile->getMapData(O_FLOOR) != nullptr
+											&& tile->getMapData(O_FLOOR)->getTileType() == END_POINT)))
+								{
+									dst = &forwardGround;
+									break;
+								}
+								// no break;
+
+							case FACTION_HOSTILE:
+							case FACTION_NEUTRAL: dst = guaranteed;
+						}
+					}
+					else if ((*i)->getRules()->isRecoverable() == true)
+					{
+						if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
+							dst = &forwardGround;
+						else
+							dst = guaranteed;
 					}
 					else
-						dst = &forwardGround;
+						dst = &deletable;
 				}
-				else							// patial-win on 1st stage
+				else // all aLiens were NOT put down; implies that previous stage was Aborted.
 				{
-					const Tile* const tile ((*i)->getTile());
-					if (tile != nullptr)
+					if ((*i)->getUnit() != nullptr)
 					{
-						if (tile->getMapData(O_FLOOR) != nullptr
-							&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT)
+						if ((tile = (*i)->getTile()) != nullptr
+							&& tile->getMapData(O_FLOOR) != nullptr)
 						{
-							dst = guaranteed;
+							switch (tile->getMapData(O_FLOOR)->getTileType())
+							{
+								case START_POINT: dst = guaranteed;
+									break;
+
+								case END_POINT:
+									if ((*i)->getUnit()->getOriginalFaction() == FACTION_PLAYER
+										&& (*i)->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS
+										&& (*i)->getUnit()->isHealable() == true)
+									{
+										dst = &forwardGround;
+									}
+									// no break;
+
+								default: dst = conditional;
+							}
 						}
-						else if (tile->getMapData(O_FLOOR) != nullptr
-							&& tile->getMapData(O_FLOOR)->getTileType() == END_POINT)
+						else
+							dst = conditional;
+					}
+					else if ((*i)->getRules()->isRecoverable() == true)
+					{
+						if ((tile = (*i)->getTile()) != nullptr
+							&& tile->getMapData(O_FLOOR) != nullptr)
 						{
-							dst = &forwardGround;
+							switch (tile->getMapData(O_FLOOR)->getTileType())
+							{
+								case END_POINT:	  dst = &forwardGround;	break;
+								case START_POINT: dst = guaranteed;		break;
+								default:		  dst = conditional;
+							}
 						}
 						else
 							dst = conditional;
@@ -562,13 +642,10 @@ void BattlescapeGenerator::nextStage()
 						dst = &deletable;
 				}
 			}
-			else if ((*i)->getOwner() != nullptr
-				&& (*i)->getOwner()->getFaction() == FACTION_PLAYER)
-			{
+			else if ((*i)->getOwner()->getFaction() == FACTION_PLAYER)
 				dst = &forwardCarried;
-			}
 			else
-				dst = &deletable;
+				dst = &deletable; // TODO: What if second stage is a success ....
 
 			if ((*i)->selfPowered() == false)
 			{
@@ -578,7 +655,7 @@ void BattlescapeGenerator::nextStage()
 			}
 
 			(*i)->setTile();
-			dst->push_back(*i); // move the item to its destination container ->
+			dst->push_back(*i); // -> put the item in its destination container
 		}
 	}
 
@@ -589,16 +666,16 @@ void BattlescapeGenerator::nextStage()
 	{
 		_battleSave->toDeleteItem(*i);
 	}
-
-	_battleSave->getItems()->clear();
+	_itemList->clear();
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = forwardCarried.begin();
 			i != forwardCarried.end();
 			++i)
 	{
-		_battleSave->getItems()->push_back(*i);
+		_itemList->push_back(*i);
 	}
+	// NOTE: forwardGround vector is placed below after _tileEquipt is assigned.
 
 
 	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
@@ -650,7 +727,7 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->setTacticalShade(_shade);
 	_battleSave->setBattleTerrain(_terrainRule->getType());
 //	setTacticalSprites();
-	_battleSave->setAborted(false);
+	_battleSave->isAborted(false);
 
 	bool selectDone (false);
 	for (std::vector<BattleUnit*>::const_iterator		// <--|| XCOM DEPLOYMENT. <--|||
@@ -665,11 +742,15 @@ void BattlescapeGenerator::nextStage()
 			(*i)->setExposed(-1);
 //			(*i)->getVisibleTiles()->clear();
 
-			if (selectDone == false
-				&& (*i)->getGeoscapeSoldier() != nullptr)
+			if ((*i)->getGeoscapeSoldier() != nullptr)
 			{
-				selectDone = true;
-				_battleSave->setSelectedUnit(*i);
+				(*i)->kneelUnit(false);
+
+				if (selectDone == false)
+				{
+					selectDone = true;
+					_battleSave->setSelectedUnit(*i);
+				}
 			}
 
 			const Node* const node (_battleSave->getSpawnNode(NR_XCOM, *i));
@@ -714,7 +795,7 @@ void BattlescapeGenerator::nextStage()
 		i != forwardGround.end();
 		++i)
 	{
-		_battleSave->getItems()->push_back(*i);
+		_itemList->push_back(*i);
 
 		(*i)->setInventorySection(grdRule);
 		_tileEquipt->addItem(*i);
@@ -1069,7 +1150,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			)
 	{
 		(*i)->setProperty();
-		_battleSave->getItems()->push_back(*i);
+		_itemList->push_back(*i);
 		if ((*i)->getInventorySection() != grdRule)
 		{
 			//Log(LOG_INFO) << ". . erase tileItem : " << (*i)->getRules()->getType();
@@ -1687,7 +1768,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
 		case 1:
 			item->changeOwner(unit); // no break.
 		case 2:
-			_battleSave->getItems()->push_back(item);
+			_itemList->push_back(item);
 			return true;
 	}
 	return false; // If not placed the item will be deleted.
@@ -2232,7 +2313,7 @@ int BattlescapeGenerator::loadMAP( // private.
 												offset_x,
 												offset_y,
 												0))->addItem(item);
-			_battleSave->getItems()->push_back(item);
+			_itemList->push_back(item);
 		}
 	}
 	return size_z;
@@ -2394,7 +2475,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 									_battleSave->getCanonicalBattleId());
 			alienFuel->setInventorySection(_rules->getInventoryRule(ST_GROUND));
 			_battleSave->getTiles()[i]->addItem(alienFuel);
-			_battleSave->getItems()->push_back(alienFuel);
+			_itemList->push_back(alienFuel);
 		}
 	}
 }
@@ -2446,7 +2527,6 @@ void BattlescapeGenerator::explodePowerSources() // private.
 											tile->getExplosive(),
 											DT_HE,
 											tile->getExplosive() / 10);
-
 		tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
 	}
 }

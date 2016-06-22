@@ -173,7 +173,7 @@ void AbortMissionState::btnOkClick(Action*)
 {
 	_game->popState();
 
-	_battleSave->setAborted();
+	_battleSave->isAborted(true);
 	_state->finishBattle(true, _insideExit);
 }
 

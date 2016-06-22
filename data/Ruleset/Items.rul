@@ -1268,50 +1268,50 @@ items:
     floorSprite: 64
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: HOVERTANK_CORPSE_2
     floorSprite: 65
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: HOVERTANK_CORPSE_3
     floorSprite: 66
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: HOVERTANK_CORPSE_4
     floorSprite: 67
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: TANK_CORPSE_1
     floorSprite: 68
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: TANK_CORPSE_2
     floorSprite: 69
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: TANK_CORPSE_3
     floorSprite: 70
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: TANK_CORPSE_4
     floorSprite: 71
     invWidth: 0
     invHeight: 0
+    battleType: 11
     recover: false
-    battleType: 11 #kL
   - type: CIVM_CORPSE
     name: STR_CORPSE
     weight: 32
@@ -1320,8 +1320,8 @@ items:
     invWidth: 2
     invHeight: 3
     armor: 12
+    battleType: 11
     recover: false
-    battleType: 11 #kL
     twoHanded: true
   - type: CIVF_CORPSE
     name: STR_CORPSE
@@ -1331,8 +1331,8 @@ items:
     invWidth: 2
     invHeight: 3
     armor: 12
+    battleType: 11
     recover: false
-    battleType: 11 #kL
     twoHanded: true
   - type: CYBERDISC_WEAPON
     weight: 3
@@ -1477,147 +1477,118 @@ items:
     flatRate: true
   - type: STR_SECTOID_COMMANDER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 50000
   - type: STR_SECTOID_LEADER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 50000
   - type: STR_SECTOID_ENGINEER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 50000
   - type: STR_SECTOID_MEDIC
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 50000
   - type: STR_SECTOID_NAVIGATOR
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 50000
   - type: STR_SECTOID_SOLDIER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 50000
   - type: STR_FLOATER_COMMANDER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
   - type: STR_FLOATER_LEADER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
   - type: STR_FLOATER_ENGINEER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
   - type: STR_FLOATER_MEDIC
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
   - type: STR_FLOATER_NAVIGATOR
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
   - type: STR_FLOATER_SOLDIER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
   - type: STR_SNAKEMAN_COMMANDER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 70000
   - type: STR_SNAKEMAN_LEADER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 70000
   - type: STR_SNAKEMAN_ENGINEER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 70000
   - type: STR_SNAKEMAN_NAVIGATOR
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 70000
   - type: STR_SNAKEMAN_SOLDIER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 70000
   - type: STR_MUTON_ENGINEER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 80000
   - type: STR_MUTON_NAVIGATOR
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 80000
   - type: STR_MUTON_SOLDIER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 80000
   - type: STR_ETHEREAL_COMMANDER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 90000
   - type: STR_ETHEREAL_LEADER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 90000
   - type: STR_ETHEREAL_SOLDIER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 90000
   - type: STR_CYBERDISC_TERRORIST
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 180000
   - type: STR_REAPER_TERRORIST
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 150000
   - type: STR_CHRYSSALID_TERRORIST
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 200000
   - type: STR_SILACOID_TERRORIST
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 100000
   - type: STR_CELATID_TERRORIST
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 100000
   - type: STR_SECTOPOD_TERRORIST
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 250000
 # Special Psi Weapon for Aliens. Usage of this is hard-coded.

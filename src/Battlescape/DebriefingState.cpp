@@ -1480,11 +1480,11 @@ void DebriefingState::prepareDebriefing() // private.
 
 	if (playerLive != 0)
 	{
-		recoverItems(_battleSave->guaranteedItems());
+		recoverItems(_battleSave->guaranteedRecover());
 
 		if (aborted == false)
 		{
-			recoverItems(_battleSave->conditionalItems());
+			recoverItems(_battleSave->conditionalRecover());
 
 			const int parts (static_cast<int>(Tile::PARTS_TILE));
 			MapDataType partType;

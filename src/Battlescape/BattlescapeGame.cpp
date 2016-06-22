@@ -1603,12 +1603,12 @@ void BattlescapeGame::endTurn() // private.
 					break;
 
 				case FORCE_LOSE:
-					_battleSave->setAborted();
+					_battleSave->isAborted(true);
 					_parentState->finishBattle(true, 0);
 					break;
 
 				case FORCE_ABORT:
-					_battleSave->setAborted();
+					_battleSave->isAborted(true);
 					_parentState->finishBattle(true, tallyPlayerExit());
 			}
 			return;

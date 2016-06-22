@@ -121,7 +121,6 @@ void BattleItem::load(const YAML::Node& node)
 void BattleItem::loadDeleted(const YAML::Node& node)
 {
 	_xcomProperty = true;
-//	_xcomProperty = node["xcomProperty"].as<bool>(_xcomProperty);
 }
 
 /**
@@ -146,19 +145,13 @@ YAML::Node BattleItem::save() const
 	if (_xcomProperty == true)	node["xcomProperty"]	= _xcomProperty;
 
 	if (_owner != nullptr)		node["owner"]		= _owner->getId();
-//	else						node["owner"] = -1; // cf. SavedBattleGame::load()
 	if (_ownerPre != nullptr
 		&& _ownerPre != _owner)	node["ownerPre"]	= _ownerPre->getId();
 
-
 	if (_unit != nullptr)		node["unit"]		= _unit->getId();
-//	else						node["unit"] = -1; // cf. SavedBattleGame::load()
-	if (_section != nullptr)	node["section"]		= _section->getInventoryType(); // note: 'section' should always be valid. Unless it's a loaded Ammo-item.
-//	else						node["section"] = "NONE"; // cf. SavedBattleGame::load()
+	if (_section != nullptr)	node["section"]		= _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
 	if (_tile != nullptr)		node["position"]	= _tile->getPosition();
-//	else						node["position"] = Position(-1,-1,-1); // cf. SavedBattleGame::load()
 	if (_ammoItem != nullptr)	node["ammoItem"]	= _ammoItem->getId();
-//	else						node["ammoItem"] = -1; // cf. SavedBattleGame::load()
 
 	return node;
 }
@@ -173,8 +166,6 @@ YAML::Node BattleItem::saveDeleted() const
 
 	node["id"]   = _id;
 	node["type"] = _itRule->getType();
-
-//	if (_xcomProperty == true) node["xcomProperty"] = _xcomProperty;
 
 	return node;
 }

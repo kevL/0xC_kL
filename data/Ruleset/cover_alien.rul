@@ -47,43 +47,36 @@ items:
 #    listOrder: 11510
   - type: STR_WASPITE_SOLDIER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 40000
     listOrder: 14401
   - type: STR_WASPITE_MEDIC
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
     listOrder: 14402
   - type: STR_WASPITE_NAVIGATOR
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
     listOrder: 14403
   - type: STR_WASPITE_ENGINEER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
     listOrder: 14404
   - type: STR_WASPITE_LEADER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
     listOrder: 14405
   - type: STR_WASPITE_COMMANDER
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
     listOrder: 14406
   - type: STR_CYBERMITE_TERRORIST
     size: 0.0
-    recover: true
     liveAlien: true
     costSell: 60000
     listOrder: 14407

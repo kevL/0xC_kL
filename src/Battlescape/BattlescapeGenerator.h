@@ -82,6 +82,7 @@ private:
 		_seg;
 	std::vector<std::vector<MapBlock*>> _blocks;
 
+	std::vector<BattleItem*>* _itemList;
 	std::vector<BattleUnit*>* _unitList;
 
 	AlienBase* _alienBase;

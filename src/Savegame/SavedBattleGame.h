@@ -332,9 +332,9 @@ private:
 		/// Gives read-only access to the deleted-items vector.
 		const std::vector<BattleItem*>& getDeletedItems() const;
 
-		/// Sets if the mission was aborted or not.
-		void setAborted(bool abort = true);
-		/// Checks if the mission was aborted.
+		/// Sets if the mission was aborted.
+		void isAborted(bool abort);
+		/// Gets if the mission was aborted.
 		bool isAborted() const;
 
 		/// Sets the objective-tiletype for this mission.
@@ -427,9 +427,9 @@ private:
 		void calcBaseDestruct();
 
 		/// Gets the list of items guaranteed to be recovered.
-		std::vector<BattleItem*>* guaranteedItems();
+		std::vector<BattleItem*>* guaranteedRecover();
 		/// Gets the list of items that MIGHT get recovered.
-		std::vector<BattleItem*>* conditionalItems();
+		std::vector<BattleItem*>* conditionalRecover();
 
 		/// Sets the player's inventory-tile when BattlescapeGenerator runs.
 		void setBattleInventory(Tile* const equiptTile);
