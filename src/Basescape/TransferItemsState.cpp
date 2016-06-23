@@ -944,18 +944,6 @@ void TransferItemsState::updateListrow() // private.
 }
 
 /**
- * Gets quantity to change by.
- * @return, 10 if CTRL is pressed else 1
- */
-int TransferItemsState::stepDelta() const // private.
-{
-	if ((SDL_GetModState() & KMOD_CTRL) == 0)
-		return 1;
-
-	return 10;
-}
-
-/**
  * Gets the total cost of the current Transfer.
  * @return, total cost
  */

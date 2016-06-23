@@ -628,4 +628,16 @@ void State::setGamePtr(Game* game)
 	_game = game;
 }
 
+/**
+ * Adjusts the quantity by which to increase/decrease a TextList value.
+ * @return, delta
+ */
+int State::stepDelta() const // protected.
+{
+	if ((SDL_GetModState() & KMOD_CTRL) == 0)
+		return 1;
+
+	return 10;
+}
+
 }

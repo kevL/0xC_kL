@@ -119,9 +119,6 @@ private:
 	/// Updates the quantity-strings of selected row.
 	void updateListrow();
 
-	/// Gets quantity to change by.
-	int stepDelta() const;
-
 
 	public:
 		/// Creates the Transfer Items state.

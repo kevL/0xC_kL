@@ -66,6 +66,9 @@ protected:
 
 	std::vector<Surface*> _surfaces;
 
+	/// Adjusts the quantity by which to increase/decrease a TextList value.
+	int stepDelta() const;
+
 
 	public:
 		/// Creates State linked to a game.

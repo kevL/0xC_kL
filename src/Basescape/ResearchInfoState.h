@@ -95,9 +95,6 @@ private:
 	/// Removes a the given number of scientists from the project if possible
 	void lessByValue(int delta);
 
-	/// Gets quantity to change by.
-	int stepDelta() const;
-
 
 	public:
 		/// Creates a ResearchProject state.

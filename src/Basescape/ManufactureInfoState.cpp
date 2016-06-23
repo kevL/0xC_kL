@@ -686,17 +686,4 @@ void ManufactureInfoState::unitsLessByValue(int delta) // private.
 	assignEngineers();
 }
 
-/**
- * Gets the quantity by which to increase/decrease.
- * @note what were these guys smokin'
- * @return, 10 if CTRL is pressed else 1
- */
-int ManufactureInfoState::stepDelta() const // private.
-{
-	if ((SDL_GetModState() & KMOD_CTRL) == 0)
-		return 1;
-
-	return 10;
-}
-
 }

@@ -828,18 +828,6 @@ void PurchaseState::updateListrow() // private.
 }
 
 /**
- * Gets the quantity by which to increase/decrease.
- * @return, 10 if CTRL is pressed else 1
- */
-int PurchaseState::stepDelta() const // private.
-{
-	if ((SDL_GetModState() & KMOD_CTRL) == 0)
-		return 1;
-
-	return 10;
-}
-
-/**
  * Gets the price of the currently selected item.
  * @return, the price of the currently selected item
  */

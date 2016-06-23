@@ -365,17 +365,4 @@ void ResearchInfoState::lessByValue(int delta) // private.
 	}
 }
 
-/**
- * Gets quantity to change by.
- * @note what were these guys smokin'
- * @return, 10 if CTRL is pressed else 1
- */
-int ResearchInfoState::stepDelta() const // private.
-{
-	if ((SDL_GetModState() & KMOD_CTRL) == 0)
-		return 1;
-
-	return 10;
-}
-
 }

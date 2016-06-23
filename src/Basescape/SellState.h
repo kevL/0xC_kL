@@ -94,9 +94,6 @@ private:
 	/// Updates the quantity-strings of the selected item.
 	void updateListrow();
 
-	/// Gets quantity to change by.
-	int stepDelta() const;
-
 	/// Gets selected price.
 	int getPrice() const;
 	/// Gets selected quantity.

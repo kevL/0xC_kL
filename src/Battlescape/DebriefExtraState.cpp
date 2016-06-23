@@ -82,11 +82,13 @@ DebriefExtraState::DebriefExtraState(
 
 	_txtQtyItems	= new Text(55, 9, 186, 26);
 	_txtBuyOrSell	= new Text(30, 9, 241, 26);
-	_txtQtyAtBase	= new Text(20, 9, 271, 26);
+	_txtQtyAtBase	= new Text(25, 9, 271, 26);
 
 	_lstGained		= new TextList(285, 137, 16, 36);
 	_lstLost		= new TextList(285, 137, 16, 36);
 	_lstSolStats	= new TextList(285, 145, 16, 30);
+
+	_txtCash		= new Text(73, 9, 239, 179);
 
 	_btnOk			= new TextButton(136, 16, 92, 177);
 
@@ -102,6 +104,7 @@ DebriefExtraState::DebriefExtraState(
 	add(_lstGained,		"list",		"debriefing");
 	add(_lstLost,		"list",		"debriefing");
 	add(_lstSolStats,	"list",		"debriefing");
+	add(_txtCash,		"text",		"debriefing");
 	add(_btnOk,			"button",	"debriefing");
 
 	centerAllSurfaces();
@@ -203,13 +206,15 @@ DebriefExtraState::DebriefExtraState(
 	_lstLost	->setVisible(_curScreen == DES_LOOT_LOST);
 	_lstSolStats->setVisible(_curScreen == DES_SOL_STATS);
 
+	_txtCash->setVisible(false);
+
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& DebriefExtraState::increase);
+	_timerInc->onTimer((StateHandler)& DebriefExtraState::onIncrease);
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& DebriefExtraState::decrease);
+	_timerDec->onTimer((StateHandler)& DebriefExtraState::onDecrease);
 }
 
 /**
@@ -244,18 +249,11 @@ void DebriefExtraState::lstLeftArrowPress(Action* action) // private.
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerInc->isRunning() == false)
-//			{
 			_error.clear();
 
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				increaseByValue(10);
-			else
-				increaseByValue(1);
-
+			increaseByValue(stepDelta());
 			_timerInc->setInterval(Timer::SCROLL_SLOW);
 			_timerInc->start();
-//			}
 	}
 }
 
@@ -291,16 +289,9 @@ void DebriefExtraState::lstRightArrowPress(Action* action) // private.
 			break;
 
 		case SDL_BUTTON_LEFT:
-//			if (_timerDec->isRunning() == false)
-//			{
-			if ((SDL_GetModState() & KMOD_CTRL) != 0)
-				decreaseByValue(10);
-			else
-				decreaseByValue(1);
-
+			decreaseByValue(stepDelta());
 			_timerDec->setInterval(Timer::SCROLL_SLOW);
 			_timerDec->start();
-//			}
 	}
 }
 
@@ -317,24 +308,18 @@ void DebriefExtraState::lstRightArrowRelease(Action* action) // private.
 /**
  * Increases the quantity of the selected item to buy/sell.
  */
-void DebriefExtraState::increase() // private.
+void DebriefExtraState::onIncrease() // private.
 {
 	_timerInc->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		increaseByValue(10);
-	else
-		increaseByValue(1);
+	increaseByValue(stepDelta());
 }
 
 /**
  * Increases the quantity of the selected item to buy/sell by a specified value.
- * @param qtyDelta - quantity to add
+ * @param delta - quantity to add
  */
-void DebriefExtraState::increaseByValue(int qtyDelta) // private.
+void DebriefExtraState::increaseByValue(int delta) // private.
 {
-//	if (qtyDelta > 0)
-//	{
 	switch (_curScreen)
 	{
 		case DES_LOOT_GAINED:
@@ -343,13 +328,13 @@ void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 			if (itRule != nullptr && itRule->getSellCost() != 0 && itRule->isLiveAlien() == false
 				&& _qtysSell[_sel] < _itemsGained[itRule])
 			{
-				qtyDelta = std::min(qtyDelta,
-									_itemsGained[itRule] - _qtysSell[_sel]);
+				delta = std::min(delta,
+								_itemsGained[itRule] - _qtysSell[_sel]);
 
-				_qtysSell[_sel] += qtyDelta;
-				_costTotal += itRule->getSellCost() * qtyDelta;
+				_qtysSell[_sel] += delta;
+				_costTotal += itRule->getSellCost() * delta;
 
-				update();
+				updateListrow();
 			}
 			break;
 		}
@@ -385,8 +370,8 @@ void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 					}
 					else
 					{
-						qtyDelta = std::min(qtyDelta,
-										   (static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / itRule->getBuyCost()); // NOTE: (int)cast renders int64_t useless.
+						delta = std::min(delta,
+										(static_cast<int>(_game->getSavedGame()->getFunds()) - _costTotal) / itRule->getBuyCost()); // NOTE: (int)cast renders int64_t useless.
 
 						const double storeSizePer (itRule->getStoreSize());
 						double allowed;
@@ -396,43 +381,36 @@ void DebriefExtraState::increaseByValue(int qtyDelta) // private.
 						else
 							allowed = std::numeric_limits<double>::max();
 
-						qtyDelta = std::min(qtyDelta,
-											static_cast<int>(allowed));
-						_storeSize += static_cast<double>(qtyDelta) * storeSizePer;
+						delta = std::min(delta,
+										 static_cast<int>(allowed));
+						_storeSize += static_cast<double>(delta) * storeSizePer;
 
-						_qtysBuy[_sel] += qtyDelta;
-						_costTotal += itRule->getBuyCost() * qtyDelta;
+						_qtysBuy[_sel] += delta;
+						_costTotal += itRule->getBuyCost() * delta;
 
-						update();
+						updateListrow();
 					}
 				}
 			}
 		}
 	}
-//	}
 }
 
 /**
  * Decreases the quantity of the selected item to buy/sell.
  */
-void DebriefExtraState::decrease() // private.
+void DebriefExtraState::onDecrease() // private.
 {
 	_timerDec->setInterval(Timer::SCROLL_FAST);
-
-	if ((SDL_GetModState() & KMOD_CTRL) != 0)
-		decreaseByValue(10);
-	else
-		decreaseByValue(1);
+	decreaseByValue(stepDelta());
 }
 
 /**
  * Decreases the quantity of the selected item to buy/sell by a specified value.
- * @param qtyDelta - quantity to subtract
+ * @param delta - quantity to subtract
  */
-void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
+void DebriefExtraState::decreaseByValue(int delta) // private.
 {
-//	if (qtyDelta > 0)
-//	{
 	switch (_curScreen)
 	{
 		case DES_LOOT_GAINED:
@@ -442,12 +420,12 @@ void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
 				const RuleItem* const itRule (getRule(_itemsGained));
 				if (itRule != nullptr) // safety.
 				{
-					qtyDelta = std::min(qtyDelta, _qtysSell[_sel]);
+					delta = std::min(delta, _qtysSell[_sel]);
 
-					_qtysSell[_sel] -= qtyDelta;
-					_costTotal -= itRule->getSellCost() * qtyDelta;
+					_qtysSell[_sel] -= delta;
+					_costTotal -= itRule->getSellCost() * delta;
 
-					update();
+					updateListrow();
 				}
 			}
 			break;
@@ -460,25 +438,24 @@ void DebriefExtraState::decreaseByValue(int qtyDelta) // private.
 				const RuleItem* const itRule (getRule(_itemsLost));
 				if (itRule != nullptr) // safety.
 				{
-					qtyDelta = std::min(qtyDelta, _qtysBuy[_sel]);
+					delta = std::min(delta, _qtysBuy[_sel]);
 
-					_storeSize -= itRule->getStoreSize() * static_cast<double>(qtyDelta);
+					_storeSize -= itRule->getStoreSize() * static_cast<double>(delta);
 
-					_qtysBuy[_sel] -= qtyDelta;
-					_costTotal -= itRule->getBuyCost() * qtyDelta;
+					_qtysBuy[_sel] -= delta;
+					_costTotal -= itRule->getBuyCost() * delta;
 
-					update();
+					updateListrow();
 				}
 			}
 		}
 	}
-//	}
 }
 
 /**
  * Updates the buy/sell quantities on-screen.
  */
-void DebriefExtraState::update() // private.
+void DebriefExtraState::updateListrow() // private.
 {
 	switch (_curScreen)
 	{
@@ -489,6 +466,20 @@ void DebriefExtraState::update() // private.
 		case DES_LOOT_LOST:
 			_lstLost->setCellText(_sel, 2u, Text::intWide(_qtysBuy[_sel]));
 	}
+
+	if (_costTotal != 0)
+	{
+		std::wstring wst;
+		switch (_curScreen)
+		{
+			case DES_LOOT_GAINED: wst = L"+"; break;
+			case DES_LOOT_LOST:   wst = L"-";
+		}
+		_txtCash->setText(wst + Text::formatCurrency(static_cast<int64_t>(_costTotal)));
+		_txtCash->setVisible();
+	}
+	else
+		_txtCash->setVisible(false);
 }
 
 /**
@@ -548,6 +539,7 @@ void DebriefExtraState::btnOkClick(Action*)
 	{
 		case DES_LOOT_GAINED:
 			_lstGained->setVisible(false);
+			_txtCash->setVisible(false);
 
 			if (_costTotal != 0)
 			{
@@ -579,6 +571,10 @@ void DebriefExtraState::btnOkClick(Action*)
 
 		case DES_LOOT_LOST:
 			_lstLost->setVisible(false);
+			_txtCash->setVisible(false);
+			_txtQtyItems->setVisible(false);
+			_txtBuyOrSell->setVisible(false);
+			_txtQtyAtBase->setVisible(false);
 
 			if (_costTotal != 0)
 			{
@@ -600,10 +596,6 @@ void DebriefExtraState::btnOkClick(Action*)
 					}
 				}
 			}
-
-			_txtQtyItems->setVisible(false);
-			_txtBuyOrSell->setVisible(false);
-			_txtQtyAtBase->setVisible(false);
 
 			_curScreen = DES_SOL_STATS;
 			_txtScreen->setText(L"Stats");
@@ -628,18 +620,9 @@ void DebriefExtraState::buildSoldierStats() // private.
 {
 	_lstSolStats->addRow( // vid. BattleUnit::postMissionProcedures().
 					12,
-					L"",
-					L"BR",
-					L"FR",
-					L"RA",
-					L"ML",
-					L"PA",
-					L"PD",
-					L"TR",
-					L"TU",
-					L"HL",
-					L"ST",
-					L"EN");
+					L"",	L"BR",	L"FR",	L"RA",
+					L"ML",	L"PA",	L"PD",	L"TR",
+					L"TU",	L"HL",	L"ST",	L"EN");
 
 	size_t row (1u);
 	for (std::map<std::wstring, std::vector<int>>::const_iterator

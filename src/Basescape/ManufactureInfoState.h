@@ -147,9 +147,6 @@ private:
 	/// Subtracts a given quantity of units to produce if possible.
 	void unitsLessByValue(int delta);
 
-	/// Gets the quantity by which to increase/decrease.
-	int stepDelta() const;
-
 
 	public:
 		/// Creates a ManufactureInfo state (new production).

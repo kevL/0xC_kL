@@ -711,18 +711,6 @@ void SellState::updateListrow() // private.
 }
 
 /**
- * Gets quantity to change by.
- * @return, 10 if CTRL is pressed else 1
- */
-int SellState::stepDelta() const // private.
-{
-	if ((SDL_GetModState() & KMOD_CTRL) == 0)
-		return 1;
-
-	return 10;
-}
-
-/**
  * Gets the price of the currently selected item.
  * @return, price of the selected item
  */

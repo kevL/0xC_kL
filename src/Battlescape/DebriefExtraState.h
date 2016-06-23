@@ -83,11 +83,12 @@ private:
 
 	Text
 		* _txtBaseLabel,
-		* _txtScreen,
-		* _txtTitle,
-		* _txtQtyItems,
 		* _txtBuyOrSell,
-		* _txtQtyAtBase;
+		* _txtCash,
+		* _txtQtyAtBase,
+		* _txtQtyItems,
+		* _txtScreen,
+		* _txtTitle;
 	TextButton* _btnOk;
 	TextList
 		* _lstLost,
@@ -110,16 +111,16 @@ private:
 	void lstRightArrowRelease(Action* action);
 
 	/// Increases the quantity of the selected item.
-	void increase();
+	void onIncrease();
 	/// Increases the quantity of the selected item by a specified value.
-	void increaseByValue(int qtyDelta);
+	void increaseByValue(int delta);
 	/// Decreases the quantity of the selected item.
-	void decrease();
+	void onDecrease();
 	/// Decreases the quantity of the selected item by a specified value.
-	void decreaseByValue(int qtyDelta);
+	void decreaseByValue(int delta);
 
 	/// Updates the display.
-	void update();
+	void updateListrow();
 
 	/// Gets the rule for the currently selected item.
 	const RuleItem* getRule(const std::map<const RuleItem*, int>& list) const;

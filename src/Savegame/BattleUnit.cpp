@@ -1600,7 +1600,7 @@ int BattleUnit::takeDamage(
 				else
 				{
 					if (selfAware == true)
-						_stunLevel += RNG::generate(0, power / 3);
+						_stunLevel += RNG::generate((power + 9) / 10, (power + 2) / 3); // round up.
 
 					wounds = RNG::generate(1,3);
 
@@ -1619,8 +1619,8 @@ int BattleUnit::takeDamage(
 		{
 			moraleChange(-wounds * 3);
 
-			int moraleLoss ((110 - _stats.bravery) / 10);
-			if (moraleLoss > 0)
+			int morale ((110 - _stats.bravery) / 10);
+			if (morale > 0)
 			{
 				int leadership (100);		// <- for civilians & pre-battle PS explosion.
 				if (_battleGame != nullptr)	// ie. don't CTD on preBattle power-source explosion.
@@ -1636,8 +1636,8 @@ int BattleUnit::takeDamage(
 					}
 				}
 
-				moraleLoss = moraleLoss * power * 10 / leadership;
-				moraleChange(-moraleLoss);
+				morale = morale * power * 10 / leadership;
+				moraleChange(-morale);
 			}
 		}
 

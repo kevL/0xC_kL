@@ -676,8 +676,8 @@ void BattlescapeGenerator::nextStage()
 	{
 		_battleSave->toDeleteItem(*i);
 	}
-	_itemList->clear();
 
+	_itemList->clear();
 	for (std::vector<BattleItem*>::const_iterator
 			i = forwardCarried.begin();
 			i != forwardCarried.end();
