@@ -52,7 +52,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the LoadGame screen.
  * @param origin	- section that originated this state
- * @param file		- reference the name of the save-file without extension
+ * @param file		- reference to the name of the save-file without extension
  * @param palette	- pointer to parent-state palette
  * @param parent	- pointer to parent ListLoadState to hide its elements
  */

@@ -106,7 +106,7 @@ void BattlescapeMessage::setBackground(Surface* const bg)
 
 /**
  * Changes this BattlescapeMessage's text.
- * @param message - reference the Message string
+ * @param message - reference to the Message string
  */
 void BattlescapeMessage::setText(const std::wstring& message)
 {

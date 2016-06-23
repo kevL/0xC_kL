@@ -1223,7 +1223,7 @@ bool XcomResourcePack::isImageFile(std::string ext)
 /**
  * Loads the specified music file format.
  * @param fmt		- format of the music
- * @param file		- reference the filename of the music
+ * @param file		- reference to the filename of the music
  * @param track		- track number of the music, if stored in a CAT
  * @param volume	- volume modifier of the music, if stored in a CAT
  * @param adlibcat	- pointer to ADLIB.CAT if available

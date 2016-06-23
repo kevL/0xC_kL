@@ -124,7 +124,7 @@ RuleItem::~RuleItem()
 
 /**
  * Loads this RuleItem from a YAML file.
- * @param node		- reference the YAML node
+ * @param node		- reference to the YAML node
  * @param modIndex	- offsets the sounds and sprite values to avoid conflicts
  * @param listOrder	- the list weight of the item
  */

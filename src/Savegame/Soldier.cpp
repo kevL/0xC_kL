@@ -347,7 +347,7 @@ std::wstring Soldier::getName() const
 
 /**
  * Changes this Soldier's full name.
- * @param name - reference the soldier name
+ * @param name - reference to the soldier name
  */
 void Soldier::setName(const std::wstring& name)
 {

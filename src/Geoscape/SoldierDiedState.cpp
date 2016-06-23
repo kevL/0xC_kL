@@ -35,8 +35,8 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Soldier Died window.
- * @param name - reference the name of the Soldier
- * @param base - reference the title of the Soldier's base
+ * @param name - reference to the name of the Soldier
+ * @param base - reference to the title of the Soldier's base
  */
 SoldierDiedState::SoldierDiedState(
 		const std::wstring& name,

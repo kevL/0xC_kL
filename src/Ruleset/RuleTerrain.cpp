@@ -31,7 +31,7 @@ namespace OpenXcom
 
 /**
  * RuleTerrain construction.
- * @param type - reference the type of terrain
+ * @param type - reference to the type of terrain
  */
 RuleTerrain::RuleTerrain(const std::string& type)
 	:

@@ -25,7 +25,7 @@ namespace OpenXcom
 
 /**
  * cTor.
- * @param type - reference the type
+ * @param type - reference to the type
  */
 SoundDefinition::SoundDefinition(const std::string& type)
 	:

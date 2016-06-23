@@ -83,7 +83,7 @@ RuleSoldier::~RuleSoldier()
 
 /**
  * Loads the Soldier ruleset from a YAML file.
- * @param node - reference the YAML node
+ * @param node - reference to the YAML node
  */
 void RuleSoldier::load(const YAML::Node& node)
 {

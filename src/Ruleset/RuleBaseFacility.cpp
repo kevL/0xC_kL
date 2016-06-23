@@ -25,7 +25,7 @@ namespace OpenXcom
 
 /**
  * Creates a blank ruleset for a certain type of base facility.
- * @param type - reference the type
+ * @param type - reference to the type
  */
 RuleBaseFacility::RuleBaseFacility(const std::string& type)
 	:

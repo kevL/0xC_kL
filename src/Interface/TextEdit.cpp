@@ -179,7 +179,7 @@ void TextEdit::initText(
 
 /**
  * Sets the string displayed on screen.
- * @param text - reference the text-string
+ * @param text - reference to the text-string
  */
 void TextEdit::setText(const std::wstring& text)
 {
@@ -200,7 +200,7 @@ std::wstring TextEdit::getText() const
 /**
  * Stores the previous string-value (before editing) so that it can be retrieved
  * if the editing operation is cancelled.
- * @param text - reference the text-string
+ * @param text - reference to the text-string
  */
 void TextEdit::storeText(const std::wstring& text)
 {

@@ -29,7 +29,7 @@ namespace OpenXcom
  * Adds the weighted options from a YAML::Node to this WeightedOptions.
  * @note The WeightedOptions list is not replaced; only values in @a node will
  * be added/changed.
- * @param node - reference the YAML node of a map with the new values
+ * @param node - reference to the YAML node of a map with the new values
  */
 void WeightedOptions::load(const YAML::Node& node)
 {
@@ -126,7 +126,7 @@ std::string WeightedOptions::topChoice() const
  * @note If @a weight is set to 0 the option is removed from the list of choices.
  * @note If @a type already exists the new weight replaces the old one; otherwise
  * @a type is added to the list of choices with @a weight as the weight.
- * @param type		- reference the option name
+ * @param type		- reference to the option name
  * @param weight	- the option's new weight
  */
 void WeightedOptions::setWeight(

@@ -223,7 +223,7 @@ void BattlescapeGenerator::setShade(int shade)
 /**
  * Sets the alien-race for tactical.
  * @note This is used to determine the various alien-types to spawn.
- * @param alienRace - reference the alien-race family
+ * @param alienRace - reference to the alien-race family
  */
 void BattlescapeGenerator::setAlienRace(const std::string& alienRace)
 {
@@ -3425,8 +3425,8 @@ void BattlescapeGenerator::attachNodeLinks() // private.
 /**
  * Selects a position for a MapBlock.
  * @param rects		- pointer to a vector of pointers representing the positions to select from - none means the whole map
- * @param ret_x		- reference the x position for the block - gets stored in this variable
- * @param ret_y		- reference the y position for the block - gets stored in this variable
+ * @param ret_x		- reference to the x position for the block - gets stored in this variable
+ * @param ret_y		- reference to the y position for the block - gets stored in this variable
  * @param size_x	- the x size of the block to add
  * @param size_y	- the y size of the block to add
  * @return, true if a position was selected
@@ -3545,7 +3545,7 @@ bool BattlescapeGenerator::selectPosition( // private.
  * underneath it.
  * @param block		- pointer to the MapBlock for the craft in question
  * @param script	- pointer to the script command to pull info from
- * @param rect		- reference the position of the craft and store it here
+ * @param rect		- reference to the position of the craft and store it here
  * @return, true if the craft was placed
  */
 bool BattlescapeGenerator::addCraft( // private.

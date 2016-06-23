@@ -67,7 +67,7 @@ protected:
 	std::vector<Surface*> _surfaces;
 
 	/// Adjusts the quantity by which to increase/decrease a TextList value.
-	int stepDelta() const;
+	static int stepDelta();
 
 
 	public:

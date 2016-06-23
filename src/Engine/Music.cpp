@@ -52,7 +52,7 @@ Music::~Music()
 
 /**
  * Loads this Music track from a specified file.
- * @param file - reference the file to load
+ * @param file - reference to the file to load
  */
 void Music::load(const std::string& file)
 {

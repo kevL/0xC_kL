@@ -25,7 +25,7 @@ namespace OpenXcom
 
 /**
  * Creates a blank StatStringCondition.
- * @param conditionName	- reference the name of the condition
+ * @param conditionName	- reference to the name of the condition
  * @param minVal		- minimum value
  * @param maxVal		- maximum value
  */

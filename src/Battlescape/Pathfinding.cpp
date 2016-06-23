@@ -840,7 +840,7 @@ std::vector<size_t> Pathfinding::findReachable(
 
 /**
  * Gets the Node on a given position on the map.
- * @param pos - reference the Position
+ * @param pos - reference to the Position
  * @return, pointer to PathfindingNode
  */
 PathfindingNode* Pathfinding::getNode(const Position& pos) // private.

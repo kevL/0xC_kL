@@ -654,7 +654,7 @@ void Camera::convertScreenToMap(
 
 /**
  * Converts map-coordinates x/y/z to screen-positions x/y.
- * @param posField	- reference the x/y/z coordinates on the Map (tile-space)
+ * @param posField	- reference to the x/y/z coordinates on the Map (tile-space)
  * @param posScreen	- pointer to the screen-position pixel (upper left corner of sprite-rectangle)
  */
 void Camera::convertMapToScreen(
@@ -755,7 +755,7 @@ bool Camera::getShowLayers() const
 /**
  * Checks if map-coordinates x/y/z are on-screen.
  * @note This does not care about the Map's z-level, only whether @a posField is on screen.
- * @param posField - reference the coordinates to check
+ * @param posField - reference to the coordinates to check
  * @return, true if the map-coordinates are on-screen
  */
 bool Camera::isOnScreen(const Position& posField) const

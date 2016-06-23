@@ -104,9 +104,9 @@ ActionMenuItem::~ActionMenuItem()
 /**
  * Links with an action and fills in the text fields.
  * @param batType	- the battlescape action
- * @param desc		- reference the action's description
- * @param acu		- reference the action's accuracy including the 'acu' prefix
- * @param tu		- reference the timeunits string including the 'tu' prefix
+ * @param desc		- reference to the action's description
+ * @param acu		- reference to the action's accuracy including the 'acu' prefix
+ * @param tu		- reference to the timeunits string including the 'tu' prefix
  * @param tuCost	- the timeunits value that will get expended
  */
 void ActionMenuItem::setAction(

@@ -1077,7 +1077,7 @@ int BattleUnit::getWalkPhase() const
 /**
  * Initializes variables to start walking.
  * @param dir		- the direction to walk
- * @param dest		- reference the Position the unit should end up at
+ * @param dest		- reference to the Position the unit should end up at
  * @param tileBelow	- pointer to the Tile below destination position
  */
 void BattleUnit::startWalking(
@@ -2213,7 +2213,7 @@ void BattleUnit::clearVisibleTiles()
 
 /**
  * Calculates firing and/or throwing accuracy.
- * @param action	- reference the current BattleAction (BattlescapeGame.h)
+ * @param action	- reference to the current BattleAction (BattlescapeGame.h)
  * @param bat		- BattleActionType (default BA_NONE) (BattlescapeGame.h)
  * @return, accuracy
  */
@@ -3988,7 +3988,7 @@ std::string BattleUnit::getSpawnType() const
 
 /**
  * Sets a unit-type that is spawned when this one dies.
- * @param spawnType - reference the special unit type
+ * @param spawnType - reference to the special unit type
  */
 void BattleUnit::setSpawnUnit(const std::string& spawnType)
 {

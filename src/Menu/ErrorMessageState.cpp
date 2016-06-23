@@ -98,8 +98,8 @@ ErrorMessageState::~ErrorMessageState()
 
 /**
  * Creates the elements in this ErrorMessage window.
- * @param st		- reference the language-ID for the message to display
- * @param wst		- reference the text-string for the message to display
+ * @param st		- reference to the language-ID for the message to display
+ * @param wst		- reference to the text-string for the message to display
  * @param palette	- pointer to the parent-state palette
  * @param color		- color of the UI-controls
  * @param bg		- background image

@@ -39,7 +39,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the ConfirmLoad screen.
  * @param origin	- game section that originated this state
- * @param fileName	- reference the name of the save file without extension
+ * @param fileName	- reference to the name of the save file without extension
  * @param parent	- pointer to parent ListLoadState
  */
 ConfirmLoadState::ConfirmLoadState(

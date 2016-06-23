@@ -1144,7 +1144,7 @@ int Base::getSoldierCount(const std::string& soldier) const
  * Gets the total amount of Craft of a certain type stored at or being
  * transfered to this Base.
  * @note Used by MonthlyCostsState.
- * @param craft - reference the craft-type
+ * @param craft - reference to the craft-type
  * @return, quantity of craft-type
  */
 int Base::getCraftCount(const std::string& craft) const
@@ -1271,7 +1271,7 @@ void Base::removeResearch(
 
 /**
  * Research Help ala XcomUtil.
- * @param aLien - reference the name of an aLien that got prodded
+ * @param aLien - reference to the name of an aLien that got prodded
  */
 void Base::researchHelp(const std::string& aLien)
 {

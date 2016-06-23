@@ -56,7 +56,7 @@ const double Projectile::PCT = 0.01;
  * Creates a Projectile on the battlefield and calculates its trajectory.
  * @param res			- pointer to ResourcePack
  * @param battleSave	- pointer to SavedBattleGame
- * @param action		- reference the BattleAction (BattlescapeGame.h)
+ * @param action		- reference to the BattleAction (BattlescapeGame.h)
  * @param posOrigin		- reference position that this projectile originates at in tile-space
  * @param targetVoxel	- reference position that this projectile is targeted at in voxel-space
  */
@@ -345,7 +345,7 @@ VoxelType Projectile::calculateThrow(double accuracy)
 
 /**
  * Calculates a final target in voxel-space based on a given accuracy modifier.
- * @param originVoxel	- reference the start position of the trajectory in voxelspace
+ * @param originVoxel	- reference to the start position of the trajectory in voxelspace
  * @param targetVoxel	- pointer to a position to store the end of the trajectory in voxelspace
  * @param accuracy		- accuracy modifier
  * @param tileTarget	- pointer to tile of the target

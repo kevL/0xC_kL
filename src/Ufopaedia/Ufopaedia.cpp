@@ -50,7 +50,7 @@ int Ufopaedia::_current_index = 0; // static.
  * Gets the index of the selected article_id in the visible list.
  * @param gameSave		- pointer to SavedGame
  * @param rules			- pointer to Ruleset
- * @param article_id	- reference the article ID to find
+ * @param article_id	- reference to the article ID to find
  * @return, index of the given article ID in the internal list (-1 if not found)
  */
 int Ufopaedia::getArticleIndex( // protected/static.
@@ -263,8 +263,8 @@ void Ufopaedia::prev(Game* const game) // static.
  * specified Ufopaedia section.
  * @param gameSave	- pointer to SavedGame
  * @param rules		- pointer to Ruleset
- * @param section	- reference the article section to find, e.g. "XCOM Crafts & Armaments", "Alien Lifeforms", etc.
- * @param data		- reference the article definition list object to fill data in
+ * @param section	- reference to the article section to find, e.g. "XCOM Crafts & Armaments", "Alien Lifeforms", etc.
+ * @param data		- reference to the article definition list object to fill data in
  */
 void Ufopaedia::list( // static.
 		const SavedGame* const gameSave,

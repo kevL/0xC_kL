@@ -83,7 +83,7 @@ class MedikitTitle
 /**
  * Initializes a MedikitTitle.
  * @param y		- the title's y origin
- * @param title	- reference the title
+ * @param title	- reference to the title
  */
 MedikitTitle::MedikitTitle(
 		int y,

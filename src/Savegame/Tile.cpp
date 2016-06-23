@@ -150,7 +150,7 @@ void Tile::load(const YAML::Node& node)
 /**
  * Loads this Tile from binary.
  * @param buffer - pointer to buffer
- * @param serKey - reference the serialization key
+ * @param serKey - reference to the serialization key
  */
 void Tile::loadBinary(
 		Uint8* buffer,

@@ -585,7 +585,7 @@ void DebriefingState::btnOkClick(Action*)
 
 /**
  * Adds to the debriefing-stats.
- * @param type	- reference the untranslated type-ID of the stat
+ * @param type	- reference to the untranslated type-ID of the stat
  * @param score	- the score to add
  * @param qty	- the quantity to add (default 1)
  */

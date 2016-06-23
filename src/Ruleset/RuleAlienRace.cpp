@@ -25,7 +25,7 @@ namespace OpenXcom
 
 /**
  * Creates the rules for an RuleAlienRace.
- * @param type - reference the defining type
+ * @param type - reference to the defining type
  */
 RuleAlienRace::RuleAlienRace(const std::string& type)
 	:

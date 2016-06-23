@@ -40,7 +40,7 @@ namespace OpenXcom
 
 /**
  * cTor.
- * @param section - reference the section desired
+ * @param section - reference to the section desired
  */
 UfopaediaSelectState::UfopaediaSelectState(
 		const std::string& section,

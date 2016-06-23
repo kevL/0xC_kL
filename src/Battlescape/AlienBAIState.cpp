@@ -2009,7 +2009,7 @@ bool AlienBAIState::grenadeAction() // private.
 /**
  * Decides if it's worthwhile to create an explosion.
  * @note Also called from TileEngine::reactionShot().
- * @param pos		- reference the target's position
+ * @param pos		- reference to the target's position
  * @param attacker	- pointer to the attacking unit
  * @param radius	- radius of explosion in tile space
  * @param diff		- game difficulty

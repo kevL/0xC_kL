@@ -494,7 +494,7 @@ void Ruleset::validateMissions() const
 
 /**
  * Loads a ruleset's contents from the given source file.
- * @param src - reference the source file
+ * @param src - reference to the source file
  */
 void Ruleset::load(const std::string& src)
 {
@@ -510,7 +510,7 @@ void Ruleset::load(const std::string& src)
 
 /**
  * Loads the contents of all the rule files in the given directory.
- * @param dir - reference the name of an existing directory containing YAML ruleset files
+ * @param dir - reference to the name of an existing directory containing YAML ruleset files
  */
 void Ruleset::loadFiles(const std::string& dir) // protected.
 {
@@ -1060,7 +1060,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
  * @param node	- reference a YAML node
  * @param types	- pointer to a map associated to the rule type
  * @param index	- pointer to a vector of indices for the rule type (default nullptr)
- * @param keyId	- reference the rule's key-ID (default "type")
+ * @param keyId	- reference to the rule's key-ID (default "type")
  * @return, pointer to new rule if one was created or nullptr if one was removed
  */
 template<typename T>
@@ -1564,7 +1564,7 @@ const std::vector<std::string>& Ruleset::getAlienRacesList() const
 
 /**
  * Gets the info about a specific deployment.
- * @param type - reference the RuleAlienDeployment type
+ * @param type - reference to the RuleAlienDeployment type
  * @return, pointer to Rule for the RuleAlienDeployment
  */
 RuleAlienDeployment* Ruleset::getDeployment(const std::string& type) const
@@ -1587,7 +1587,7 @@ const std::vector<std::string>& Ruleset::getDeploymentsList() const
 
 /**
  * Gets the info about a specific armor.
- * @param name - reference the Armor type
+ * @param name - reference to the Armor type
  * @return, pointer to RuleArmor
  */
 RuleArmor* Ruleset::getArmor(const std::string& name) const
@@ -1669,7 +1669,7 @@ std::map<std::string, RuleInventory*>* Ruleset::getInventories()
 
 /**
  * Gets the RuleInventory for a specific inventory-type (a 'section').
- * @param type - reference the inventory type
+ * @param type - reference to the inventory type
  * @return, pointer to RuleInventory
  */
 const RuleInventory* Ruleset::getInventory(const std::string& type) const
@@ -1851,7 +1851,7 @@ std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 
 /**
  * Gets the data for a specified ufo-trajectory.
- * @param id - reference the UfoTrajectory ID
+ * @param id - reference to the UfoTrajectory ID
  * @return, a pointer to data in UfoTrajectory
  */
 const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
@@ -2431,7 +2431,7 @@ int Ruleset::getRetaliation() const
 
 /**
  * Gets information on an interface.
- * @param id - reference the interface for info
+ * @param id - reference to the interface for info
  * @return, pointer to RuleInterface
  */
 RuleInterface* Ruleset::getInterface(const std::string& id) const

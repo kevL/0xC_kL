@@ -49,7 +49,7 @@ Palette::~Palette()
  * Loads an X-Com palette from a file.
  * @note X-Com palettes are just a set of RGB colors in a row, on a 0-63 scale,
  * which have to be adjusted for modern computers (0-255 scale).
- * @param file		- reference the filename of the palette
+ * @param file		- reference to the filename of the palette
  * @param qColors	- number of colors in the palette
  * @param offset	- position of the palette in the file in bytes (default 0)
  * @sa http://www.ufopaedia.org/index.php?title=PALETTES.DAT
@@ -175,7 +175,7 @@ void Palette::setColors(
 
 /**
  * Writes a palette file from TestState.
- * @param file - reference the file
+ * @param file - reference to the file
  *
 void Palette::savePal(const std::string& file) const
 {

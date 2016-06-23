@@ -220,7 +220,7 @@ std::string Transfer::getTransferItems() const
 
 /**
  * Sets the item-type being transfered.
- * @param id	- reference the item-ID
+ * @param id	- reference to the item-ID
  * @param qty	- item quantity (default 1)
  */
 void Transfer::setTransferItems(

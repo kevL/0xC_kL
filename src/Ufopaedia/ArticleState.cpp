@@ -35,7 +35,7 @@ namespace OpenXcom
 
 /**
  * Constructs an ArticleState.
- * @param article_id - reference the article id of this instance
+ * @param article_id - reference to the article id of this instance
  */
 ArticleState::ArticleState(const std::string& article_id) // protected.
 	:

@@ -265,7 +265,7 @@ ActionMenuState::~ActionMenuState()
 /**
  * Adds a menu-item for a battle-action type.
  * @param bat	- action type (BattlescapeGame.h)
- * @param desc	- reference the action-description
+ * @param desc	- reference to the action-description
  * @param id	- pointer to the item-action-ID
  */
 void ActionMenuState::addItem( // private.

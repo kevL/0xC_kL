@@ -1938,7 +1938,7 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 /**
  * Processes a soldier and adds their rank to the promotions data struct.
  * @param soldier	- pointer to the Soldier to process
- * @param promoData	- reference the PromotionInfo data struct to put the info into
+ * @param promoData	- reference to the PromotionInfo data struct to put the info into
  */
 void SavedGame::processSoldier(
 		const Soldier* const soldier,

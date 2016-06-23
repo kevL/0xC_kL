@@ -42,7 +42,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the EndManufacture screen.
  * @param base					- pointer to the Base to get info from
- * @param possibilities			- reference the vector of pointers to RuleManufacture for projects
+ * @param possibilities			- reference to the vector of pointers to RuleManufacture for projects
  * @param showManufactureButton	- true to show the goto manufacture button
  */
 NewPossibleManufactureState::NewPossibleManufactureState(

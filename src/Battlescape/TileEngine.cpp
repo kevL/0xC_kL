@@ -1959,7 +1959,7 @@ bool& TileEngine::isReaction()
 /**
  * Handles bullet/weapon hits. A bullet/weapon hits a voxel.
  * @note Called from ExplosionBState::explode().
- * @param targetVoxel	- reference the center of hit in voxel-space
+ * @param targetVoxel	- reference to the center of hit in voxel-space
  * @param power			- power of the hit/explosion
  * @param dType			- damage type of the hit (RuleItem.h)
  * @param attacker		- pointer to BattleUnit that caused the hit
@@ -4780,7 +4780,7 @@ bool TileEngine::testAdjacentDoor(
 /**
  * Opens any doors connected to this wall at this position,
  * @note Keeps processing till it hits a non-ufo-door.
- * @param pos		- reference the starting position
+ * @param pos		- reference to the starting position
  * @param partType	- the wall to open (defines which direction to check)
  */
 void TileEngine::openAdjacentDoors( // private.
@@ -4872,8 +4872,8 @@ bool TileEngine::closeSlideDoors() const
 /**
  * Calculates a line trajectory using bresenham algorithm in 3D.
  * @note Accuracy is NOT considered; this is a true path/trajectory.
- * @param origin		- reference the origin (voxel-space for 'doVoxelCheck'; tile-space otherwise)
- * @param target		- reference the target (voxel-space for 'doVoxelCheck'; tile-space otherwise)
+ * @param origin		- reference to the origin (voxel-space for 'doVoxelCheck'; tile-space otherwise)
+ * @param target		- reference to the target (voxel-space for 'doVoxelCheck'; tile-space otherwise)
  * @param storeTrj		- true will store the whole trajectory; otherwise only the last position gets stored
  * @param trj			- pointer to a vector of Positions in which the trajectory will be stored
  * @param excludeUnit	- pointer to a BattleUnit to be excluded from collision detection
@@ -5101,14 +5101,14 @@ VoxelType TileEngine::plotLine(
 /**
  * Calculates a parabolic trajectory for thrown items.
  * @note Accuracy is NOT considered; this is a true path/trajectory.
- * @param originVoxel	- reference the origin in voxelspace
- * @param targetVoxel	- reference the target in voxelspace
+ * @param originVoxel	- reference to the origin in voxelspace
+ * @param targetVoxel	- reference to the target in voxelspace
  * @param storeTrj		- true will store the whole trajectory - otherwise it stores the last position only
  * @param trj			- pointer to a vector of Positions in which the trajectory will be stored
  * @param excludeUnit	- pointer to a unit to exclude - makes sure the trajectory does not hit the shooter itself
  * @param arc			- how high the parabola goes: 1.0 is almost straight throw, 3.0 is a very high throw, to throw over a fence for example
  * @param allowCeil		- true to allow arching shots to hit a ceiling ... (default false)
- * @param deltaVoxel	- reference the deviation of the angles that should be taken into account (0,0,0) is perfection (default Position(0,0,0))
+ * @param deltaVoxel	- reference to the deviation of the angles that should be taken into account (0,0,0) is perfection (default Position(0,0,0))
  * @return, VoxelType (MapData.h)
  *			 -1 hit nothing
  *			0-3 tile-part (floor / westwall / northwall / object)
@@ -5248,9 +5248,9 @@ VoxelType TileEngine::plotParabola(
  * Checks if a throw action is permissible.
  * @note Accuracy is NOT considered; this checks for a true path/trajectory.
  * @sa Projectile::calculateThrow()
- * @param action		- reference the action to validate
- * @param originVoxel	- reference the origin point of the action
- * @param targetVoxel	- reference the target point of the action
+ * @param action		- reference to the action to validate
+ * @param originVoxel	- reference to the origin point of the action
+ * @param targetVoxel	- reference to the target point of the action
  * @param arc			- pointer to a curvature of the throw (default nullptr)
  * @param impactType	- pointer to a type of voxel at which the trajectory terminates (default nullptr)
  * @return, true if throw is valid
@@ -5440,7 +5440,7 @@ bool TileEngine::validateThrow(
 /**
  * Validates the throwing range.
  * @param action		- pointer to BattleAction (BattlescapeGame.h)
- * @param originVoxel	- reference the origin in voxel-space
+ * @param originVoxel	- reference to the origin in voxel-space
  * @param tile			- pointer to the targeted tile
  * @return, true if the range is valid
  */
@@ -5540,7 +5540,7 @@ bool TileEngine::validMeleeRange(
 
 /**
  * Validates the melee-range between a Position and a BattleUnit.
- * @param pos			- reference the position of action
+ * @param pos			- reference to the position of action
  * @param dir			- direction to check
  * @param actor			- pointer to acting unit
  * @param targetUnit	- pointer to targetUnit (default nullptr)
@@ -6614,8 +6614,8 @@ int TileEngine::distance( // static.
  * Calculates the distance squared between 2 points.
  * @note No square-root and no floating-point math and sometimes it's all that's
  * really needed.
- * @param pos1		- to reference the first Position
- * @param pos2		- to reference the second Position
+ * @param pos1		- to reference to the first Position
+ * @param pos2		- to reference to the second Position
 // * @param considerZ	- true to consider the z coordinate (default true)
  * @return, distance
  */
@@ -6650,8 +6650,8 @@ int TileEngine::distSqr( // static.
 
 /**
  * Calculates the distance between 2 points as a floating-point value.
- * @param pos1 - reference the first Position
- * @param pos2 - reference the second Position
+ * @param pos1 - reference to the first Position
+ * @param pos2 - reference to the second Position
  * @return, distance
  *
 double TileEngine::distancePrecise( // static.

@@ -2272,7 +2272,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
  * Places units on the map.
  * @note Also handles large units that are placed on multiple tiles.
  * @param unit	- pointer to a unit to be placed
- * @param pos	- reference the position to place the unit
+ * @param pos	- reference to the position to place the unit
  * @param test	- true only checks if unit can be placed at the position (default false)
  * @return, true if unit was placed successfully
  */
@@ -2885,8 +2885,8 @@ void SavedBattleGame::setMusic(std::string& track)
  * Sets variables for what music to play in a specified terrain or lack thereof.
  * @note The music-string and terrain-string are both const but I don't want to
  * deal with it.
- * @param music		- reference the music category to play
- * @param terrain	- reference the terrain to choose music for
+ * @param music		- reference to the music category to play
+ * @param terrain	- reference to the terrain to choose music for
  */
 void SavedBattleGame::calibrateMusic(
 		std::string& music,

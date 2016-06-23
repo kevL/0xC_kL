@@ -95,7 +95,7 @@ std::string State::getStateLabel() const // virtual.
 /**
  * Sets the User Interface data from a ruleset.
  * @note Also sets the Palette for the State.
- * @param category		- reference the category of the interface from an Interfaces ruleset
+ * @param category		- reference to the category of the interface from an Interfaces ruleset
  * @param altBackpal	- true to swap out the backpal-colors (default false)
  * @param tactical		- true to use Battlescape Palette (applies only to options screens) (default false)
  */
@@ -166,8 +166,8 @@ void State::add(Surface* const srf)
  * @note that this function REQUIRES the ruleset to have been loaded prior to
  * use. If no parent is defined the element will not be moved.
  * @param srf		- pointer to child Surface
- * @param id		- reference the ID of the element defined in the ruleset if any
- * @param category	- reference the category of elements the Interface is associated with
+ * @param id		- reference to the ID of the element defined in the ruleset if any
+ * @param category	- reference to the category of elements the Interface is associated with
  * @param parent	- pointer to the Surface to base the coordinates of this element off (default nullptr)
  */
 void State::add(
@@ -388,7 +388,7 @@ void State::resetAll()
 /**
  * Gets the LocalizedText for dictionary key @a id.
  * @note This function forwards the call to Language::getString(const std::string&).
- * @param id - reference the dictionary key to search for
+ * @param id - reference to the dictionary key to search for
  * @return, reference to the LocalizedText
  */
 const LocalizedText& State::tr(const std::string& id) const
@@ -399,7 +399,7 @@ const LocalizedText& State::tr(const std::string& id) const
 /**
  * Gets a modifiable copy of the LocalizedText for dictionary key @a id.
  * @note This function forwards the call to Language::getString(const std::string&, unsigned).
- * @param id	- reference the dictionary key to search for
+ * @param id	- reference to the dictionary key to search for
  * @param qty	- the number to use to find the correct plurality
  * @return, copy of the LocalizedLext
  */
@@ -533,7 +533,7 @@ void State::setPalette(
 
 /**
  * Loads palettes from the ResourcePack into the state.
- * @param pal		- reference the string-ID of the palette to load
+ * @param pal		- reference to the string-ID of the palette to load
  * @param backpal	- BACKPALS.DAT offset to use (Palette.h) (default BACKPAL_NONE)
  */
 void State::setPalette(
@@ -632,7 +632,7 @@ void State::setGamePtr(Game* game)
  * Adjusts the quantity by which to increase/decrease a TextList value.
  * @return, delta
  */
-int State::stepDelta() const // protected.
+int State::stepDelta() // protected/static.
 {
 	if ((SDL_GetModState() & KMOD_CTRL) == 0)
 		return 1;

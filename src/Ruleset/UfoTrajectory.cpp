@@ -67,7 +67,7 @@ const std::string UfoTrajectory::RETALIATION_ASSAULT_RUN = "__RETALIATION_ASSAUL
 
 /**
  * Creates rules for a UfoTrajectory.
- * @param id - reference the ID string (eg. 'P0')
+ * @param id - reference to the ID string (eg. 'P0')
  */
 UfoTrajectory::UfoTrajectory(const std::string& id)
 	:

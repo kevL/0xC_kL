@@ -29,7 +29,7 @@ namespace OpenXcom
  * RuleMissionScript cTor - the rules for Alien Mission propagation.
  * @note The geoscape will probe the scripts each month to determine what's
  * going to happen.
- * @param type - reference the type ID
+ * @param type - reference to the type ID
  */
 RuleMissionScript::RuleMissionScript(const std::string& type)
 	:

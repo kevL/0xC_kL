@@ -104,11 +104,11 @@ AdlibMusic::~AdlibMusic()
 
 /**
  * Loads a music file from a specified filename.
- * @param file - reference the name of the music file
+ * @param file - reference to the name of the music file
  */
 void AdlibMusic::load(const std::string& file)
 {
-	std::ifstream ifstr (file.c_str(), std::ios::binary); // init.
+	std::ifstream ifstr (file.c_str(), std::ios::binary);
 	if (ifstr.fail() == true)
 	{
 		throw Exception(file + " not found");

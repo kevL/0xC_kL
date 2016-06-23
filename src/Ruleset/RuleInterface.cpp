@@ -28,7 +28,7 @@ namespace OpenXcom
 /**
  * Creates a blank ruleset for a certain type of interface containing an index
  * of elements that make it up.
- * @param type - reference the string defining the type
+ * @param type - reference to the string defining the type
  */
 RuleInterface::RuleInterface(const std::string& type)
 	:

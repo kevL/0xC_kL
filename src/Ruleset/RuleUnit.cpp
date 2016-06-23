@@ -27,7 +27,7 @@ namespace OpenXcom
 
 /**
  * Creates rules for a certain type of unit.
- * @param type - reference the Unit's type
+ * @param type - reference to the Unit's type
  */
 RuleUnit::RuleUnit(const std::string& type)
 	:
