@@ -37,7 +37,9 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleManufacture.h"
+#include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
 #include "../Savegame/ItemContainer.h"
@@ -170,24 +172,28 @@ ManufactureState::ManufactureState(
 
 	_lstResources->setColumns(4, 151,50,40,40);
 	_lstResources->setMargin(4);
+	_lstResources->setDot();
+
+	const Uint8 color (static_cast<Uint8>(_game->getRuleset()->getInterface("manufactureMenu")->getElement("text1")->color2));
 	std::string st;
 	for (size_t
 			i = 0u;
 			i != 2u;
 			++i)
 	{
-		if (i == 0u)
-			st = "STR_ALIEN_ALLOYS";
-		else
-			st = "STR_ELERIUM_115";
+		switch (i)
+		{
+			case 0u: st = "STR_ALIEN_ALLOYS"; break;
+			default: st = "STR_ELERIUM_115";
+		}
 
 		_lstResources->addRow(4,
 							tr(st).c_str(),
 							L"",
 							tr("STR_TOTAL").c_str(),
 							L"");
-		_lstResources->setCellColor(i, 1u, 208u); // white: text1->color2
-		_lstResources->setCellColor(i, 3u, 208u);
+		_lstResources->setCellColor(i, 1u, color);
+		_lstResources->setCellColor(i, 3u, color);
 	}
 }
 
@@ -285,10 +291,10 @@ void ManufactureState::fillProductionList()
 							.arg(_base->getFreeWorkshops()));
 
 	int
-		qtyA = 0,
-		qtyE = 0,
-		totalA = 0,
-		totalE = 0,
+		qtyA (0),
+		qtyE (0),
+		totalA (0),
+		totalE (0),
 		ally,
 		eler;
 	for (std::vector<Base*>::const_iterator
