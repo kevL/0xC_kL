@@ -131,7 +131,7 @@ extraSprites:
   - type: INTICON.PCK
     files:
       0: Resources/Sprites/geograph/inticon/
-  - type: TEXTURE.DAT
+  - type: GlobeTextures #TEXTURE.DAT
     width: 416
     height: 96
     subX: 32

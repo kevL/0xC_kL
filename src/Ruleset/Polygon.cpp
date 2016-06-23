@@ -111,11 +111,11 @@ void Polygon::load(const YAML::Node& node)
 	_texture = static_cast<size_t>(coords[0u]);
 
 	for (size_t
-			i = 1u;
+			i = 1u, j;
 			i < coords.size();
 			i += 2u)
 	{
-		size_t j ((i - 1u) >> 1u);
+		j = (i - 1u) >> 1u;
 
 		_lon[j] = coords[i] * M_PI / 180.;
 		_lat[j] = coords[i + 1u] * M_PI / 180.;

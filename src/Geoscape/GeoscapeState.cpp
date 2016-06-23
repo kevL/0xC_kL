@@ -279,7 +279,7 @@ struct ProductionCompleteInfo
 
 	/// cTor.
 	ProductionCompleteInfo(
-			Base* a_base,
+			Base* const a_base,
 			const std::wstring& a_item,
 			bool a_gotoBaseBtn,
 			ProductionProgress a_endType)
@@ -300,7 +300,7 @@ struct NewPossibleResearchInfo
 
 	/// cTor.
 	NewPossibleResearchInfo(
-			Base* a_base,
+			Base* const a_base,
 			const std::vector<const RuleResearch*>& a_newPossibleResearch,
 			bool a_showResearchButton)
 		:
@@ -319,7 +319,7 @@ struct NewPossibleManufactureInfo
 
 	/// cTor.
 	NewPossibleManufactureInfo(
-			Base* a_base,
+			Base* const a_base,
 			const std::vector<const RuleManufacture*>& a_newPossibleManufacture,
 			bool a_showManufactureButton)
 		:
@@ -2648,8 +2648,6 @@ void GeoscapeState::time1Hour()
 				case PROGRESS_COMPLETE:
 				case PROGRESS_NOT_ENOUGH_MONEY:
 				case PROGRESS_NOT_ENOUGH_MATERIALS:
-					(*i)->removeProduction(j->first);
-
 					if (prodEvents.empty() == false) // set the previous event to NOT show btn.
 						prodEvents.back().gotoBaseBtn = false;
 
@@ -2658,6 +2656,7 @@ void GeoscapeState::time1Hour()
 															tr(j->first->getRules()->getType()),
 															(arrivals == false),
 															j->second));
+					(*i)->removeProduction(j->first);
 			}
 		}
 

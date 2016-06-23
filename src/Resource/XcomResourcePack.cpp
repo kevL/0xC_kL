@@ -266,7 +266,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	{
 		"BASEBITS.PCK",
 		"INTICON.PCK",
-		"TEXTURE.DAT"
+//		"TEXTURE.DAT" // -> "GlobeTextures"
 	};
 
 	std::ostringstream

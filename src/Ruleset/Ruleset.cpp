@@ -853,7 +853,8 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		type = (*i)["type"].as<std::string>();
 		std::auto_ptr<ExtraSprites> extraSprites (new ExtraSprites());
 
-		if (type != "TEXTURE.DAT") // doesn't support modIndex
+//		if (type != "TEXTURE.DAT") // doesn't support modIndex
+		if (type != "GlobeTextures")
 			extraSprites->load(*i, _modIndex);
 		else
 			extraSprites->load(*i, 0);

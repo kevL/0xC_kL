@@ -91,7 +91,7 @@ Uint8 // these are only fallbacks for Geography.rul->globe
 namespace
 {
 
-/// A helper class/struct for drawing shadows & noise on the Globe.
+/// A helper struct for drawing shadows & noise on the Globe.
 struct GlobeStaticData
 {
 	/// array of shading gradient
@@ -176,11 +176,10 @@ struct GlobeStaticData
 			shade_gradient[static_cast<size_t>(i)] = static_cast<Sint16>(j) + 16;
 		}
 	}
-};
-
-GlobeStaticData static_data;
+} static_data;
 
 
+///
 struct Ocean
 {
 	///
@@ -196,6 +195,7 @@ struct Ocean
 };
 
 
+///
 struct CreateShadow
 {
 	///
@@ -239,29 +239,26 @@ struct CreateShadow
 			{
 				return Globe::C_OCEAN + val; // this pixel is ocean
 			}
-			else
-			{
-				if (dest == 0u)
-					return val; // this pixel is land
 
-				const Uint8 e (dest + (val / 3u));
-				if (e > (d + helper::ColorShade))
-					return d + helper::ColorShade;
+			if (dest == 0u)
+				return val; // this pixel is land
 
-				return static_cast<Uint8>(e);
-			}
+			const Uint8 e (dest + (val / 3u));
+
+			if (e > (d + helper::ColorShade))
+				return d + helper::ColorShade;
+
+			return static_cast<Uint8>(e);
 		}
-		else
+
+		const Uint8 d (dest & helper::ColorGroup);
+		if (   d == Globe::C_OCEAN
+			|| d == Globe::C_OCEAN + 16u)
 		{
-			const Uint8 d (dest & helper::ColorGroup);
-			if (   d == Globe::C_OCEAN
-				|| d == Globe::C_OCEAN + 16u)
-			{
-				return Globe::C_OCEAN; // this pixel is ocean
-			}
-
-			return dest; // this pixel is land
+			return Globe::C_OCEAN; // this pixel is ocean
 		}
+
+		return dest; // this pixel is land
 	}
 
 	///
@@ -339,7 +336,7 @@ Globe::Globe(
 		_crosshairLat(0.),
 		_crosshairLon(0.)
 {
-	_texture	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("TEXTURE.DAT"));
+	_texture	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeTextures")); //"TEXTURE.DAT"
 	_markerSet	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
 
 	_countries	= new Surface(width, height, x,y);
@@ -519,17 +516,16 @@ Polygon* Globe::getPolygonAtCoord( // private.
     double
 		cosLat (cos(lat)),
 		sinLat (sin(lat));
+	double
+		x,y,
+		x2,y2,
+		cLat,cLon;
 
 	for (std::list<Polygon*>::const_iterator
 			i = _rules->getPolygons()->begin();
 			i != _rules->getPolygons()->end();
 			++i)
 	{
-		double
-			x,y,
-			x2,y2,
-			cLat,cLon;
-
 		bool pass (false);
 		for (size_t
 				j = 0u;
@@ -702,7 +698,7 @@ void Globe::rotateStopLat()
 }
 
 /**
- * Sets up the radius of earth at various zoom-levels.
+ * Sets up the perceived radii of the Earth for the several zoom-levels.
  * @param width		- the new width of the Globe
  * @param height	- the new height of the Globe
  */
@@ -714,6 +710,7 @@ void Globe::setupRadii( // private.
 	const double height_d (static_cast<double>(height));
 
 	// These are the globe-zoom magnifications stored as a <vector> of 6 (doubles).
+	_zoomRadii.push_back(0.39 * height_d); // [-1]					// kL_extra z-out
 	_zoomRadii.push_back(0.47 * height_d); // 0 - Zoomed all out	// no detail
 	_zoomRadii.push_back(0.60 * height_d); // 1						// country borders
 	_zoomRadii.push_back(0.85 * height_d); // 2						// country labels
@@ -722,21 +719,21 @@ void Globe::setupRadii( // private.
 	_zoomRadii.push_back(3.42 * height_d); // 5 - Zoomed all in
 
 	_radius = _zoomRadii[_zoom];
-	_radiusStep = (_zoomRadii[_zoomRadii.size() - 1] - _zoomRadii[0]) / 12.2;
+	_radiusStep = (_zoomRadii[_zoomRadii.size() - 1u] - _zoomRadii[0u]) / 12.2;
 
 	_earthData.resize(_zoomRadii.size());	// data for drawing sun-shadow.
 	for (size_t								// filling normal field for each radius
-			radiusId = 0;
+			radiusId = 0u;
 			radiusId != _zoomRadii.size();
 			++radiusId)
 	{
 		_earthData[radiusId].resize(width * height);
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != static_cast<size_t>(height);
 				++j)
 			for (size_t
-					i = 0;
+					i = 0u;
 					i != static_cast<size_t>(width);
 					++i)
 				_earthData[radiusId]
@@ -750,17 +747,30 @@ void Globe::setupRadii( // private.
 }
 
 /**
- * Changes the current globe-zoom factor.
- * @param zoom - the new zoom level
+ * Changes this Globe's current zoom-level.
+ * @note Zoomed-out is "0".
+ * @param level - zoom-level
  */
-void Globe::setZoom(size_t zoom) // private.
+void Globe::setZoom(size_t level) // private.
 {
-	_zoom = std::min(_zoomRadii.size() - 1,
-					 std::max(0u, //static_cast<size_t>(0), // go f*cking figure.
-							  zoom));
+	_zoom = std::min(level,
+					_zoomRadii.size() - 1u);
 
-	_zoomTexture = (2 - static_cast<size_t>(std::floor(static_cast<double>(_zoom) / 2.)))
-				 * (_texture->getTotalFrames() / 3);
+//	_texOffset = (2u - (_zoom >> 1u)) * (_texture->getTotalFrames() / 3u);
+	switch (_zoom)
+	{
+		default:
+		case 0:							// far out
+		case 1:
+		case 2: _texOffset = 26u; break;
+		case 3:							// mid
+		case 4: _texOffset = 13u; break;
+		case 5:							// close up
+		case 6: _texOffset =  0u;
+	}
+	// NOTE: The above^ relies on "GlobeTextures"/"WORLD.DAT" being divided up
+	// as 13 textures with 3 zoom-levels apiece. Globe-drawing is basically
+	// hard-coded to see things that way.
 
 	_radius = _zoomRadii[_zoom];
 	_game->getSavedGame()->setGlobeZoom(_zoom);
@@ -799,8 +809,8 @@ size_t Globe::getZoomLevels() const
  */
 void Globe::zoomIn()
 {
-	if (_zoom < _zoomRadii.size() - 1)
-		setZoom(_zoom + 1);
+	if (_zoom < _zoomRadii.size() - 1u)
+		setZoom(_zoom + 1u);
 }
 
 /**
@@ -809,7 +819,7 @@ void Globe::zoomIn()
 void Globe::zoomOut()
 {
 	if (_zoom > 0)
-		setZoom(_zoom - 1);
+		setZoom(_zoom - 1u);
 }
 
 /**
@@ -834,7 +844,7 @@ void Globe::zoomMax()
  */
 bool Globe::zoomDogfightIn()
 {
-	const size_t dfZoom (_zoomRadii.size() - 1);
+	const size_t dfZoom (_zoomRadii.size() - 1u);
 
 	if (_zoom < dfZoom)
 	{
@@ -844,7 +854,7 @@ bool Globe::zoomDogfightIn()
 			setZoom(dfZoom);
 		else
 		{
-			if (radius + _radiusStep >= _zoomRadii[_zoom + 1])
+			if (radius + _radiusStep >= _zoomRadii[_zoom + 1u])
 				++_zoom;
 
 			setZoom(_zoom);
@@ -871,7 +881,7 @@ bool Globe::zoomDogfightOut()
 			setZoom(preDfZoom);
 		else
 		{
-			if (radius - _radiusStep <= _zoomRadii[_zoom - 1])
+			if (radius - _radiusStep <= _zoomRadii[_zoom - 1u])
 				--_zoom;
 
 			setZoom(_zoom);
@@ -1068,37 +1078,26 @@ std::vector<Target*> Globe::getTargets(
 }
 
 /**
- * Takes care of pre-calculating all the Polygons currently visible on this
+ * Caches a set of Polygons.
+ * @note Takes care of pre-calculating all the Polygons currently visible on this
  * Globe and caching them so they only need to be recalculated when this Globe
  * is actually moved.
  */
-void Globe::cachePolygons()
-{
-	cache(_rules->getPolygons(), &_cacheLand);
-}
-
-/**
- * Caches a set of Polygons.
- * @param polygons	- pointer to list of polygons
- * @param cache		- pointer to cache list
- */
-void Globe::cache( // private.
-		std::list<Polygon*>* const polygons,
-		std::list<Polygon*>* const cache)
+void Globe::cachePolygons() // private.
 {
 	for (std::list<Polygon*>::const_iterator
-			i = cache->begin();
-			i != cache->end();
+			i = _cacheLand.begin();
+			i != _cacheLand.end();
 			++i)
 	{
 		delete *i;
 	}
+	_cacheLand.clear();
 
-	cache->clear();
-
+	std::list<Polygon*>* const allPolygons (_rules->getPolygons());
 	for (std::list<Polygon*>::const_iterator
-			i = polygons->begin();
-			i != polygons->end();
+			i = allPolygons->begin();
+			i != allPolygons->end();
 			++i)
 	{
 		double
@@ -1107,7 +1106,7 @@ void Globe::cache( // private.
 			z;
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != (*i)->getPoints();
 				++j)
 		{
@@ -1126,7 +1125,7 @@ void Globe::cache( // private.
 		Polygon* const poly (new Polygon(**i));
 
 		for (size_t
-				j = 0;
+				j = 0u;
 				j != poly->getPoints();
 				++j)
 		{
@@ -1140,7 +1139,7 @@ void Globe::cache( // private.
 			poly->setY(j,y);
 		}
 
-		cache->push_back(poly);
+		_cacheLand.push_back(poly);
 	}
 }
 
@@ -1292,7 +1291,7 @@ void Globe::drawLand()
 		drawTexturedPolygon( // Apply textures according to zoom and shade
 						x,y,
 						(*i)->getPoints(),
-						_texture->getFrame(static_cast<int>((*i)->getPolyTexture() + _zoomTexture)),
+						_texture->getFrame(static_cast<int>((*i)->getPolyTexture() + _texOffset)),
 						0,0);
 	}
 }

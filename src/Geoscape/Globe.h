@@ -88,8 +88,8 @@ private:
 		_crosshairLon,
 		_hoverLat,
 		_hoverLon,
-		_lonPreMouseScroll,
 		_latPreMouseScroll,
+		_lonPreMouseScroll,
 		_rotLat,
 		_rotLon,
 		_radius,
@@ -100,7 +100,7 @@ private:
 	Uint32 _mouseScrollStartTime;
 	size_t
 		_zoom,
-		_zoomTexture;
+		_texOffset;
 
 	FastLineClip* _clipper;
 	Game* _game;
@@ -135,7 +135,7 @@ private:
 			int width,
 			int height);
 	/// Sets the Globe's zoom-factor.
-	void setZoom(size_t zoom);
+	void setZoom(size_t level);
 
 	/// Checks if a point is behind the Globe.
 	bool pointBack(
@@ -157,14 +157,15 @@ private:
 			const Target* const target,
 			int x,
 			int y) const;
-	/// Caches a set of Polygons.
-	void cache(
-			std::list<Polygon*>* const polygons,
-			std::list<Polygon*>* const cache);
+
+	/// Caches visible Polygons.
+	void cachePolygons();
+
 	/// Gets position of sun relative to given position in polar-coords and date.
 	Cord getSunDirection(
 			double lon,
 			double lat) const;
+
 	/// Draws a Globe range-circle.
 	void drawGlobeCircle(
 			double lat,
@@ -318,8 +319,6 @@ private:
 				int y,
 				bool flightTargets = true) const;
 
-		/// Caches visible Polygons.
-		void cachePolygons();
 		/// Sets the Palette of the Globe.
 		void setPalette(
 				SDL_Color* const colors,
