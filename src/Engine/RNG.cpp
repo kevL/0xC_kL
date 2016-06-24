@@ -207,17 +207,16 @@ Implements the Polar form of the Box-Muller Transformation
 */
 /**
  * Gaussian generator.
- * @param mean		- offset of the center value (default 0.0)
- * @param deviation	- standard deviation (default 1.0)
+ * @param deviation	- standard deviation
  * @return, normally distributed value
  */
-double boxMuller(
-		double mean,
-		double deviation)
+double boxMuller(double deviation)
 {
 	// kL_note: Do not store the static vars because when reloading they throw
 	// off the predictability of the RNG. Regenerate a fresh return value from
 	// scratch every time instead.
+	//
+	// And there's no use for a mean-value; always use 0.
 	double
 		x1,x2,
 		w;
@@ -231,7 +230,7 @@ double boxMuller(
 
 	w = std::sqrt(-2. * std::log(w) / w);
 
-	return (mean + (x1 * w * deviation));
+	return (x1 * w * deviation);
 }
 /*	static bool use_last;
 	static double y2;

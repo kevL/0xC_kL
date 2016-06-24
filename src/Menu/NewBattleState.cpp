@@ -97,7 +97,7 @@ NewBattleState::NewBattleState()
 	_slrDarkness		= new Slider(120, 16, 22, 93);
 
 	_txtTerrain			= new Text(120, 9, 22, 113);
-	_cbxTerrain			= new ComboBox(this, 120, 16, 22, 123);
+	_cbxTerrain			= new ComboBox(this, 140, 16, 12, 123, 5);
 
 	_txtDifficulty		= new Text(120, 9, 178, 83);
 	_cbxDifficulty		= new ComboBox(this, 120, 16, 178, 93);
@@ -195,16 +195,16 @@ NewBattleState::NewBattleState()
 	_cbxDifficulty->setBackgroundFill(BROWN_D);
 
 	_alienRaces = _rules->getAlienRacesList();
-	for (std::vector<std::string>::const_iterator
-			i = _alienRaces.begin();
-			i != _alienRaces.end();
-			)
-	{
-		if ((*i).find("_UNDERWATER") != std::string::npos)
-			i = _alienRaces.erase(i);
-		else
-			++i;
-	}
+//	for (std::vector<std::string>::const_iterator
+//			i = _alienRaces.begin();
+//			i != _alienRaces.end();
+//			)
+//	{
+//		if ((*i).find("_UNDERWATER") != std::string::npos)
+//			i = _alienRaces.erase(i);
+//		else
+//			++i;
+//	}
 	_cbxAlienRace->setOptions(_alienRaces);
 	_cbxAlienRace->setBackgroundFill(BROWN_D);
 
@@ -220,7 +220,7 @@ NewBattleState::NewBattleState()
 	_btnRandom->setText(tr("STR_RANDOMIZE"));
 	_btnRandom->onMouseClick((ActionHandler)& NewBattleState::btnRandClick);
 
-	_btnOk->setText(tr("STR_OK"));
+	_btnOk->setText(tr("STR_COMBAT_UC"));
 	_btnOk->onMouseClick((ActionHandler)& NewBattleState::btnOkClick);
 	_btnOk->onKeyboardPress(
 					(ActionHandler)& NewBattleState::btnOkClick,
@@ -235,7 +235,7 @@ NewBattleState::NewBattleState()
 					(ActionHandler)& NewBattleState::btnCancelClick,
 					Options::keyCancel);
 
-	load();
+	configLoad();
 }
 
 /**
@@ -252,19 +252,19 @@ void NewBattleState::init()
 	State::init();
 
 	if (_craft == nullptr)
-		load();
+		configLoad();
 }
 
 /**
- * Loads new battle data from a YAML file.
+ * Loads configuration from a YAML file.
  * @param file - reference a YAML filename (default "battle")
  */
-void NewBattleState::load(const std::string& file)
+void NewBattleState::configLoad(const std::string& file)
 {
 	const std::string config (Options::getConfigFolder() + file + ".cfg");
 
 	if (CrossPlatform::fileExists(config) == false)
-		initPlay();
+		configCreate();
 	else
 	{
 		try
@@ -289,6 +289,11 @@ void NewBattleState::load(const std::string& file)
 			_cbxDifficulty->setSelected(doc["difficulty"].as<size_t>(0));
 			_slrAlienTech->setValue(doc["alienTech"].as<size_t>(0));
 
+			if (doc["rng"] && Options::reSeedOnLoad == false)
+				RNG::setSeed(doc["rng"].as<uint64_t>());
+			else
+				RNG::setSeed(0u);
+
 			if (doc["base"])
 			{
 				SavedGame* const gameSave (new SavedGame(_rules));
@@ -297,39 +302,9 @@ void NewBattleState::load(const std::string& file)
 				Base* const base (new Base(_rules));
 				base->load(
 						doc["base"],
-						gameSave); // note: considered as neither a 'firstBase' nor a 'skirmish' ...
+						gameSave); // NOTE: considered as neither a 'firstBase' nor a 'quick-battle' ...
 				gameSave->getBases()->push_back(base);
 
-				// Add research - setup research generals.
-				const std::vector<std::string>& allResearch (_rules->getResearchList());
-				for (std::vector<std::string>::const_iterator
-						i = allResearch.begin();
-						i != allResearch.end();
-						++i)
-				{
-					gameSave->getResearchGenerals().push_back(new ResearchGeneral(
-																			_rules->getResearch(*i),
-																			true));
-				}
-
-				// Generate items
-				base->getStorageItems()->getContents()->clear();
-				const RuleItem* itRule;
-				const std::vector<std::string>& allItems (_rules->getItemsList());
-				for (std::vector<std::string>::const_iterator
-						i = allItems.begin();
-						i != allItems.end();
-						++i)
-				{
-					itRule = _rules->getItemRule(*i);
-					if (itRule->getBattleType() != BT_CORPSE
-						&& itRule->isRecoverable() == true)
-					{
-						base->getStorageItems()->addItem(*i);
-					}
-				}
-
-				// Fix invalid contents
 				if (base->getCrafts()->empty() == true)
 				{
 					const std::string craftType (_crafts[_cbxCraft->getSelected()]);
@@ -340,7 +315,7 @@ void NewBattleState::load(const std::string& file)
 									gameSave->getCanonicalId(craftType));
 					base->getCrafts()->push_back(_craft);
 				}
-				else
+				else // fix potentially invalid contents
 				{
 					_craft = base->getCrafts()->front();
 					for (std::map<std::string, int>::iterator
@@ -352,28 +327,31 @@ void NewBattleState::load(const std::string& file)
 							i->second = 0;
 					}
 				}
+
+				resetStorage(base);			// Clear and generate Base storage.
+				resetResearch(gameSave);	// Add research - setup ResearchGenerals.
 			}
 			else
-				initPlay();
+				configCreate();
 		}
 		catch (YAML::Exception& e)
 		{
 			Log(LOG_WARNING) << e.what();
-			initPlay();
+			configCreate();
 		}
 	}
 }
 
 /**
- * Saves new battle data to a YAML file.
+ * Saves configuration to a YAML file.
  * @param file - reference a YAML filename (default "battle")
  */
-void NewBattleState::save(const std::string& file)
+void NewBattleState::configSave(const std::string& file)
 {
 	const std::string config (Options::getConfigFolder() + file + ".cfg");
 
-	std::ofstream save (config.c_str());
-	if (save.fail() == true)
+	std::ofstream ofstr (config.c_str());
+	if (ofstr.fail() == true)
 	{
 		Log(LOG_WARNING) << "Failed to save " << file << ".cfg";
 		return;
@@ -390,16 +368,17 @@ void NewBattleState::save(const std::string& file)
 	node["difficulty"]	= _cbxDifficulty->getSelected();
 	node["alienTech"]	= _slrAlienTech->getValue();
 	node["base"]		= _game->getSavedGame()->getBases()->front()->save();
+	node["rng"]			= RNG::getSeed();
 	emit << node;
 
-	save << emit.c_str();
-	save.close();
+	ofstr << emit.c_str();
+	ofstr.close();
 }
 
 /**
- * Initializes a SavedGame with everything available.
+ * Creates a SavedGame with everything necessary.
  */
-void NewBattleState::initPlay()
+void NewBattleState::configCreate()
 {
 	RNG::setSeed(0u);
 
@@ -417,16 +396,7 @@ void NewBattleState::initPlay()
 	gameSave->getBases()->push_back(base);
 	base->setName(L"tactical");
 
-	// Delete Soldiers & Craft at the Base.
-	for (std::vector<Soldier*>::const_iterator
-			i = base->getSoldiers()->begin();
-			i != base->getSoldiers()->end();
-			++i)
-	{
-		delete *i;
-	}
-	base->getSoldiers()->clear();
-
+	// Clear and generate Craft.
 	for (std::vector<Craft*>::const_iterator
 			i = base->getCrafts()->begin();
 			i != base->getCrafts()->end();
@@ -436,9 +406,6 @@ void NewBattleState::initPlay()
 	}
 	base->getCrafts()->clear();
 
-	// Clear the stores too.
-	base->getStorageItems()->getContents()->clear();
-
 	_craft = new Craft(
 					_rules->getCraft(_crafts[_cbxCraft->getSelected()]),
 					base,
@@ -446,18 +413,26 @@ void NewBattleState::initPlay()
 					1);
 	base->getCrafts()->push_back(_craft);
 
-	// Generate Soldiers.
-	// TODO: re-generate Soldiers btn.
+
+	// Clear and generate Soldiers.
+	for (std::vector<Soldier*>::const_iterator
+			i = base->getSoldiers()->begin();
+			i != base->getSoldiers()->end();
+			++i)
+	{
+		delete *i;
+	}
+	base->getSoldiers()->clear();
+
 	const UnitStats statCaps (_rules->getSoldier("STR_SOLDIER")->getStatCaps());
 	UnitStats* stats;
-
 	bool
 		hasCdr (false),
 		hasRookieStats;
 
 	for (int
 			i = 0;
-			i != 50; // qty Soldiers available
+			i != 50; // qty Soldiers on call
 			++i)
 	{
 		Soldier* const sol (_rules->genSoldier(
@@ -525,7 +500,21 @@ void NewBattleState::initPlay()
 	}
 	base->sortSoldiers();
 
-	// Generate items.
+
+	resetStorage(base);			// Clear and generate Base storage.
+	resetResearch(gameSave);	// Add research - setup ResearchGenerals.
+
+	cbxMissionChange(nullptr);
+}
+
+/**
+ * Clears and generates Base storage-items.
+ * @param base - pointer to the base
+ */
+void NewBattleState::resetStorage(Base* const base) const // private.
+{
+	base->getStorageItems()->getContents()->clear();
+
 	const RuleItem* itRule;
 	const std::vector<std::string>& allItems (_rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
@@ -534,32 +523,32 @@ void NewBattleState::initPlay()
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
-		if (itRule->getBattleType() != BT_CORPSE
+		if (   itRule->getBattleType() != BT_CORPSE
+			&& itRule->isLiveAlien() == false
 			&& itRule->isRecoverable() == true)
 		{
 			base->getStorageItems()->addItem(*i);
-//			if (itRule->getBattleType() != BT_NONE
-//				&& itRule->isFixed() == false
-//				&& itRule->getBigSprite() > -1)
-//			{
-//				_craft->getItems()->addItem(*i);
-//			}
 		}
 	}
+}
 
-	// Add research - setup ResearchGenerals.
-	const std::vector<std::string>& resList (_rules->getResearchList());
+/**
+ * Generates all research.
+ * @note The Game and SavedGame objects take care of deletion.
+ * @param gameSave - pointer to the SavedGame
+ */
+void NewBattleState::resetResearch(SavedGame* const gameSave) const // private.
+{
+	const std::vector<std::string>& allResearch (_rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
-			i = resList.begin();
-			i != resList.end();
+			i = allResearch.begin();
+			i != allResearch.end();
 			++i)
 	{
 		gameSave->getResearchGenerals().push_back(new ResearchGeneral(
 																_rules->getResearch(*i),
 																true));
 	}
-
-	cbxMissionChange(nullptr);
 }
 
 /**
@@ -568,11 +557,11 @@ void NewBattleState::initPlay()
  */
 void NewBattleState::btnOkClick(Action*)
 {
-	save();
+	configSave();
 
 	if (_missionTypes[_cbxMission->getSelected()] != "STR_BASE_DEFENSE"
-		&& _craft->getQtySoldiers() == 0
-		&& _craft->getQtyVehicles() == 0)
+		&& _craft->getQtySoldiers() == 0)
+//		&& _craft->getQtyVehicles() == 0)
 	{
 		return; // TODO: Popup that tells player why no-workie.
 	}
@@ -672,7 +661,7 @@ void NewBattleState::btnOkClick(Action*)
  */
 void NewBattleState::btnCancelClick(Action*)
 {
-	save();
+	configSave();
 
 	_game->setSavedGame();
 	_game->popState();
@@ -684,7 +673,9 @@ void NewBattleState::btnCancelClick(Action*)
  */
 void NewBattleState::btnRandClick(Action*)
 {
-	initPlay();
+//	configCreate();		// <- Do NOT reset Soldiers/Craft/etc (the Base) here.
+	RNG::setSeed(0u);	// TODO: Add buttons to run configCreate() and/or to reset RNG-seed.
+						// else do it the old-fashioned way and delete 'battle.cfg' ...
 
 	_cbxMission->setSelected(RNG::pick(_missionTypes.size()));
 	cbxMissionChange(nullptr);
@@ -810,7 +801,7 @@ void NewBattleState::cbxMissionChange(Action*)
 }
 
 /**
- * Updates craft accordingly.
+ * Updates Craft accordingly.
  * @param action - pointer to an Action
  */
 void NewBattleState::cbxCraftChange(Action*)
@@ -822,13 +813,16 @@ void NewBattleState::cbxCraftChange(Action*)
 	if (curSoldiers > maxSoldiers)
 	{
 		for (std::vector<Soldier*>::const_reverse_iterator
-				i = _craft->getBase()->getSoldiers()->rbegin();
-				i != _craft->getBase()->getSoldiers()->rend() && curSoldiers > maxSoldiers;
-				++i)
+				rit = _craft->getBase()->getSoldiers()->rbegin();
+				rit != _craft->getBase()->getSoldiers()->rend() && curSoldiers > maxSoldiers;
+				++rit)
 		{
-			if ((*i)->getCraft() == _craft)
+			if ((*rit)->getCraft() == _craft) // TODO: Remove excess luggage/support units also.
 			{
-				(*i)->setCraft();
+				(*rit)->setCraft(
+							nullptr,
+							_craft->getBase(),
+							true);
 				--curSoldiers;
 			}
 		}

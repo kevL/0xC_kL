@@ -36,19 +36,21 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a combobox with the specified size and position.
+ * Sets up the ComboBox with the specified size and position.
  * @param state 	- pointer to state the combobox belongs to
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
  * @param y			- y-position in pixels (default 0)
+ * @param extend	- extra pixels to extend window in x-direction (default 0)
  */
 ComboBox::ComboBox(
 		State* const state,
 		int width,
 		int height,
 		int x,
-		int y)
+		int y,
+		int extend)
 	:
 		InteractiveSurface(
 			width,
@@ -69,12 +71,12 @@ ComboBox::ComboBox(
 						y + 4);
 	_window	= new Window(
 						state,
-						width,
-						(ROWS_DEFAULT * 8 + MARGIN_VERTICAL * 2) + 1,
+						width + extend,
+						((ROWS_DEFAULT * TEXT_HEIGHT) + (MARGIN_VERTICAL << 1u)) + 1,
 						x,
 						y + height);
 	_list	= new TextList(
-						width - MARGIN_HORIZONTAL * 2 - BUTTON_WIDTH + 1,
+						width - (MARGIN_HORIZONTAL << 1u) - BUTTON_WIDTH + 3 + extend,
 						(ROWS_DEFAULT * TEXT_HEIGHT) + 1,
 						x + MARGIN_HORIZONTAL,
 						y + height + MARGIN_VERTICAL);
@@ -87,7 +89,7 @@ ComboBox::ComboBox(
 	_list->setColumns(1, _list->getWidth());
 	_list->setBackground(_window);
 	_list->setSelectable();
-	_list->setScrollable();
+	_list->setMargin(0);
 
 	toggle(true);
 }
@@ -104,9 +106,9 @@ ComboBox::~ComboBox()
 }
 
 /**
-* Changes the position of the surface in the x-axis.
-* @param x - x-position in pixels
-*/
+ * Changes the position of the surface in the x-axis.
+ * @param x - x-position in pixels
+ */
 void ComboBox::setX(int x)
 {
 	Surface::setX(x);
@@ -118,9 +120,9 @@ void ComboBox::setX(int x)
 }
 
 /**
-* Changes the position of the surface in the y-axis.
-* @param y - y-position in pixels
-*/
+ * Changes the position of the surface in the y-axis.
+ * @param y - y-position in pixels
+ */
 void ComboBox::setY(int y)
 {
 	Surface::setY(y);
@@ -215,10 +217,11 @@ void ComboBox::drawArrow() // private.
 	_arrow->clear();
 
 	Uint8 color;
-	if (_color == 255u) // TODO: Not sure that is necessary.
-		color = 1u;
-	else
-		color = _color + 1u;
+	switch (_color)
+	{
+		case 255u: color = 1u; break; // TODO: Not sure that is necessary.
+		default:   color = 1u + _color;
+	}
 
 	SDL_Rect rect;
 
@@ -292,9 +295,7 @@ size_t ComboBox::getSelected() const
  */
 void ComboBox::setSelected(size_t sel)
 {
-	_sel = sel;
-
-	if (_sel < _list->getTextsQuantity())
+	if ((_sel = sel) < _list->getTextsQuantity())
 		_button->setText(_list->getCellText(_sel, 0u));
 }
 
@@ -308,12 +309,12 @@ void ComboBox::setDropdown(int rows) // private.
 //	rows = std::min(rows, ROWS_DEFAULT);
 	const int
 		h (_button->getFont()->getHeight() + _button->getFont()->getSpacing()),
-		dY ((Options::baseYResolution - 200) / 2);
+		dY ((Options::baseYResolution - 200) >> 1u);
 
-	while (_window->getY() + rows * h + MARGIN_VERTICAL * 2 > 200 + dY)
+	while (_window->getY() + rows * h + (MARGIN_VERTICAL << 1u) > 200 + dY)
 		--rows;
 
-	_window->setHeight((rows * h + MARGIN_VERTICAL * 2) + 1);
+	_window->setHeight((rows * h + (MARGIN_VERTICAL << 1u)) + 1);
 	_list->setHeight((rows * h) + 1);
 }
 
@@ -404,7 +405,7 @@ void ComboBox::handle(Action* action, State* state)
 	if (_window->getVisible() == true
 		&& action->getDetails()->type == SDL_MOUSEBUTTONDOWN
 		&& (   action->getAbsoluteMouseX() <  getX()
-			|| action->getAbsoluteMouseX() >= getX() + getWidth()
+			|| action->getAbsoluteMouseX() >= getX() /*+ getWidth()*/ + _window->getWidth() // TODO: Carve out the top-right bit.
 			|| action->getAbsoluteMouseY() <  getY()
 			|| action->getAbsoluteMouseY() >= getY() + getHeight() + _window->getHeight()))
 	{
@@ -442,10 +443,10 @@ void ComboBox::toggle(bool init)
 
 	if (_list->getVisible() == true)
 	{
-		if (_sel < _list->getVisibleRows() / 2)
+		if (_sel < (_list->getVisibleRows() >> 1u))
 			_list->scrollTo();
 		else
-			_list->scrollTo(_sel - _list->getVisibleRows() / 2);
+			_list->scrollTo(_sel - (_list->getVisibleRows() >> 1u));
 	}
 }
 

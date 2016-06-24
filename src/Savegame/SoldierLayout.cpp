@@ -29,8 +29,8 @@ namespace OpenXcom
  * @param slot		- reference to the occupied section type
  * @param slotX		- position-X in the occupied slot
  * @param slotY		- position-Y in the occupied slot
- * @param ammoItem	- reference to the ammo that has to be loaded into the item (its type)
- * @param fuse		- the turn until explosion of the item (if it's an activated grenade-type)
+ * @param ammoItem	- reference to the ammo that should be loaded into the item
+ * @param fuse		- the turn until explosion of the item if it's an activated grenade-type
  */
 SoldierLayout::SoldierLayout(
 		const std::string& itemType,
@@ -73,7 +73,7 @@ void SoldierLayout::load(const YAML::Node& node)
 	_section	= node["section"]	.as<std::string>(_section);
 	_slotX		= node["slotX"]		.as<int>(0);
 	_slotY		= node["slotY"]		.as<int>(0);
-	_ammoItem	= node["ammoItem"]	.as<std::string>(_ammoItem);
+	_ammoItem	= node["ammoItem"]	.as<std::string>("");
 	_fuse		= node["fuse"]		.as<int>(-1);
 }
 
@@ -134,7 +134,7 @@ int SoldierLayout::getSlotY() const
 }
 
 /**
- * Gets the ammo-type that has to be loaded into the item.
+ * Gets the ammo-type that should be loaded into the item.
  * @return, the ammo-type
  */
 std::string SoldierLayout::getAmmoType() const

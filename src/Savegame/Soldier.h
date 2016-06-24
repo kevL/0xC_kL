@@ -55,6 +55,7 @@ enum SoldierLook
 };
 
 
+class Base;
 class Craft;
 class Language;
 class RuleArmor;
@@ -142,7 +143,10 @@ private:
 		/// Gets the Soldier's Craft.
 		Craft* getCraft() const;
 		/// Sets the Soldier's Craft.
-		void setCraft(Craft* const craft = nullptr);
+		void setCraft(
+				Craft* const craft = nullptr,
+				Base* const base = nullptr,
+				bool isQuickBattle = false);
 		/// Gets the Soldier's craft-string.
 		std::wstring getCraftString(const Language* const lang) const;
 

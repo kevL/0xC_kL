@@ -29,8 +29,8 @@ namespace OpenXcom
 {
 
 /**
- * Represents a Soldier's SoldierLayout which is used to equip a Soldier
- * for tactical battles.
+ * Represents a single item as a Soldier's SoldierLayout, which is used to equip
+ * a Soldier for tactical battles.
  */
 class SoldierLayout
 {

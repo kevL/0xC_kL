@@ -606,6 +606,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 	}
 	else // shoot weapon
 	{
+		//Log(LOG_INFO) << "FlyB: . shoot weapon";
 		if (_originVoxel.z != -1) // origin is a BL waypoint
 		{
 			_prjImpact = prj->calculateShot( // this should probly be TE:plotLine() - cf. else(error) below_
@@ -616,6 +617,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 		}
 		else // non-BL weapon
 		{
+			//Log(LOG_INFO) << "FlyB: . . not BL";
 			if (_forced == true) prj->setForced();
 			_prjImpact = prj->calculateShot(_unit->getAccuracy(_action)); // this should probly be TE:plotLine() - cf. else(error) below_
 			//Log(LOG_INFO) << ". shoot weapon[1], voxelType = " << (int)_prjImpact;
@@ -663,6 +665,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				_parent->getMap()->cacheUnit(_unit);
 			}
 
+			//Log(LOG_INFO) << "FlyB: . okay to shoot";
 			// lift-off
 			soundId = _load->getRules()->getFireSound();
 			if (soundId == -1)
@@ -679,6 +682,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			_unit->setUnitStatus(STATUS_STANDING);
 
 			_parent->popState();
+			//Log(LOG_INFO) << "FlyB: . no LoS ret FALSE";
 			return false;
 		}
 	}

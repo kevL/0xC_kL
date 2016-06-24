@@ -19,7 +19,9 @@
 
 #include "Soldier.h"
 
+#include "Base.h"
 #include "Craft.h"
+#include "ItemContainer.h"
 #include "SavedGame.h"
 #include "SoldierDead.h"
 #include "SoldierDeath.h"
@@ -265,15 +267,12 @@ YAML::Node Soldier::save() const
 
 	if (_craft != nullptr) node["craft"] = _craft->saveId();
 
-	if (_layout.empty() == false)
+	for (std::vector<SoldierLayout*>::const_iterator
+			i = _layout.begin();
+			i != _layout.end();
+			++i)
 	{
-		for (std::vector<SoldierLayout*>::const_iterator
-				i = _layout.begin();
-				i != _layout.end();
-				++i)
-		{
-			node["layout"].push_back((*i)->save());
-		}
+		node["layout"].push_back((*i)->save());
 	}
 
 	if (_diary->getMissionIdList().empty() == false
@@ -355,8 +354,8 @@ void Soldier::setName(const std::wstring& name)
 }
 
 /**
- * Gets the craft this Soldier is assigned to.
- * @return, pointer to Craft
+ * Gets the Craft this Soldier is assigned to.
+ * @return, pointer to the craft
  */
 Craft* Soldier::getCraft() const
 {
@@ -364,11 +363,85 @@ Craft* Soldier::getCraft() const
 }
 
 /**
- * Assigns this Soldier to a craft.
- * @param craft - pointer to Craft (default nullptr)
+ * Assigns this Soldier to a specified Craft.
+ * @note Also tries to load/unload the soldier's layout-items.
+ * @param craft			- pointer to a craft (default nullptr)
+ * @param base			- pointer to the craft's Base (default nullptr)
+ * @param isQuickBattle	- true if quick-battle (default false)
  */
-void Soldier::setCraft(Craft* const craft)
+void Soldier::setCraft(
+		Craft* const craft,
+		Base* const base,
+		bool isQuickBattle)
 {
+	if (base != nullptr) // load/unload layout-items w/ Soldier
+	{
+		std::string type;
+		if (craft != nullptr) // load items
+		{
+			for (std::vector<SoldierLayout*>::const_iterator
+					i = _layout.begin();
+					i != _layout.end();
+					++i)
+			{
+				if (craft->calcLoadCurrent() < craft->getLoadCapacity())
+				{
+					type = (*i)->getItemType();
+					if (base->getStorageItems()->getItemQuantity(type) != 0
+						|| isQuickBattle == true)
+					{
+						craft->getCraftItems()->addItem(type);
+						if (isQuickBattle == false)
+							base->getStorageItems()->removeItem(type);
+
+						type = (*i)->getAmmoType();
+						if (type.empty() == false)
+						{
+							if (craft->calcLoadCurrent() < craft->getLoadCapacity())
+							{
+								if (base->getStorageItems()->getItemQuantity(type) != 0
+									|| isQuickBattle == true)
+								{
+									craft->getCraftItems()->addItem(type);
+									if (isQuickBattle == false)
+										base->getStorageItems()->removeItem(type);
+								}
+							}
+							else
+								break;
+						}
+					}
+				}
+				else
+					break;
+			}
+		}
+		else // unload items
+		{
+			for (std::vector<SoldierLayout*>::const_iterator
+					i = _layout.begin();
+					i != _layout.end();
+					++i)
+			{
+				type = (*i)->getItemType();
+				if (_craft->getCraftItems()->getItemQuantity(type) != 0)
+				{
+					_craft->getCraftItems()->removeItem(type);
+					if (isQuickBattle == false)
+						base->getStorageItems()->addItem(type);
+
+					type = (*i)->getAmmoType();
+					if (type.empty() == false
+						&& _craft->getCraftItems()->getItemQuantity(type) != 0)
+					{
+						_craft->getCraftItems()->removeItem(type);
+						if (isQuickBattle == false)
+							base->getStorageItems()->addItem(type);
+					}
+				}
+			}
+		}
+	}
 	_craft = craft;
 }
 
@@ -410,7 +483,7 @@ std::string Soldier::getRankString() const
 /**
  * Gets a graphic representation of this Soldier's military rank.
  * @note THE MEANING OF LIFE
- * @return, sprite ID for rank
+ * @return, sprite-ID for rank
  */
 int Soldier::getRankSprite() const
 {

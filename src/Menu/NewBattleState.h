@@ -29,10 +29,12 @@
 namespace OpenXcom
 {
 
+class Base;
 class ComboBox;
 class Craft;
 class Frame;
 class Ruleset;
+class SavedGame;
 class Slider;
 class Text;
 class TextButton;
@@ -88,6 +90,11 @@ private:
 		_alienRaces,
 		_crafts;
 
+	/// Clears and generates Base storage-items.
+	void resetStorage(Base* const base) const;
+	/// Generates all research.
+	void resetResearch(SavedGame* const gameSave) const;
+
 
 	public:
 		/// Creates a NewBattle state.
@@ -98,11 +105,11 @@ private:
 		/// Resets state.
 		void init() override;
 		/// Loads NewBattle settings.
-		void load(const std::string& file = "battle");
+		void configLoad(const std::string& file = "battle");
 		/// Saves NewBattle settings.
-		void save(const std::string& file = "battle");
-		/// Initializes a blank savegame.
-		void initPlay();
+		void configSave(const std::string& file = "battle");
+		/// Creates a SavedGame.
+		void configCreate();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

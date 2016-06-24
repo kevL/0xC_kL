@@ -122,8 +122,8 @@ CraftArmorState::CraftArmorState(
 	_lstSoldiers->setColumns(3, 90,120,73);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
-	_lstSoldiers->onMousePress((ActionHandler)& CraftArmorState::lstSoldiersPress);
-	_lstSoldiers->onLeftArrowClick((ActionHandler)& CraftArmorState::lstLeftArrowClick);
+	_lstSoldiers->onMousePress(		(ActionHandler)& CraftArmorState::lstSoldiersPress);
+	_lstSoldiers->onLeftArrowClick(	(ActionHandler)& CraftArmorState::lstLeftArrowClick);
 	_lstSoldiers->onRightArrowClick((ActionHandler)& CraftArmorState::lstRightArrowClick);
 }
 
@@ -134,7 +134,7 @@ CraftArmorState::~CraftArmorState()
 {}
 
 /**
- * The soldier-armors can change after going into other screens.
+ * The armors can change after going into other screens.
  */
 void CraftArmorState::init()
 {

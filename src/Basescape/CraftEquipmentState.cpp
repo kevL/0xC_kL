@@ -306,10 +306,8 @@ void CraftEquipmentState::calcTacticalCost() const // private.
 void CraftEquipmentState::showExtraButtons() const // private.
 {
 	const bool vis (_craft->getCraftItems()->getTotalQuantity() != 0);
-	_btnClear->setVisible(vis);
-	_btnInventory->setVisible(vis
-						  && _craft->getQtySoldiers() != 0
-						  && _isQuickBattle == false); // TODO: Allow inventory-btn for QuickBattles.
+	_btnClear->setVisible(vis || _craft->getVehicles()->empty() == false);
+	_btnInventory->setVisible(vis && _craft->getQtySoldiers() != 0);
 }
 
 /**

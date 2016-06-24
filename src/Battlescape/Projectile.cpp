@@ -228,7 +228,6 @@ VoxelType Projectile::calculateShot(
 					&_targetVoxel,
 					accuracy,
 					_battleSave->getTile(_action.posTarget));
-		//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " ts " << (_targetVoxel / Position(16,16,24));
 	}
 	//Log(LOG_INFO) << ". postAcu target = " << _targetVoxel << " ts " << (_targetVoxel / Position(16,16,24));
 
@@ -369,7 +368,7 @@ void Projectile::applyAccuracy( // private.
 	// Do not use Z-axis. It messes up pure vertical shots.
 	const double targetDist (std::sqrt(
 							 static_cast<double>((delta_x * delta_x) + (delta_y * delta_y))));
-	//Log(LOG_INFO) << ". targetDist = " << targetDist;
+	//Log(LOG_INFO) << ". targetDist= " << targetDist;
 
 	const RuleItem* const itRule (_action.weapon->getRules()); // <- after reading up, 'const' is basically worthless & wordy waste of effort.
 	if (_action.type != BA_THROW
@@ -431,8 +430,10 @@ void Projectile::applyAccuracy( // private.
 			//Log(LOG_INFO) << ". deviation= " << deviation;
 
 			// The angle deviations are spread using a normal distribution:
-			deltaHori = RNG::boxMuller(0., deviation / div_HORI); // horizontal miss in radians
-			deltaVert = RNG::boxMuller(0., deviation / div_VERT); // vertical miss in radians
+			deltaHori = RNG::boxMuller(deviation / div_HORI); // horizontal miss in radians
+			deltaVert = RNG::boxMuller(deviation / div_VERT); // vertical miss in radians
+			//Log(LOG_INFO) << "deltaHori= " << deltaHori;
+			//Log(LOG_INFO) << "deltaVert= " << deltaVert;
 //			}
 //			else
 //			{
@@ -447,8 +448,8 @@ void Projectile::applyAccuracy( // private.
 			double kick ((static_cast<double>(itRule->getAutoKick()) * PCT)
 					   - (static_cast<double>(_action.actor->getStrength()) / 1000.));
 			kick = std::max(kick, ACU_MIN);
-			deltaHori = RNG::boxMuller(0., kick / div_HORI); // horizontal miss in radians
-			deltaVert = RNG::boxMuller(0., kick / div_VERT); // vertical miss in radians
+			deltaHori = RNG::boxMuller(kick / div_HORI); // horizontal miss in radians
+			deltaVert = RNG::boxMuller(kick / div_VERT); // vertical miss in radians
 		}
 		//Log(LOG_INFO) << "deltaHori= " << deltaHori;
 		//Log(LOG_INFO) << "deltaVert= " << deltaVert;
@@ -540,9 +541,9 @@ void Projectile::applyAccuracy( // private.
 							 deviation * targetDist * PCT);
 
 		const double
-			dx (RNG::boxMuller(0., deviation) / 4.),
-			dy (RNG::boxMuller(0., deviation) / 4.),
-			dz (RNG::boxMuller(0., deviation) / 6.);
+			dx (RNG::boxMuller(deviation) / 4.),
+			dy (RNG::boxMuller(deviation) / 4.),
+			dz (RNG::boxMuller(deviation) / 6.);
 
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[1] " << *targetVoxel;
 		targetVoxel->x += static_cast<int>(Round(dx));
@@ -589,8 +590,8 @@ void Projectile::applyAccuracy( // private.
 //			}
 //			else
 //			{
-//				dRot = RNG::boxMuller(0., baseDeviation);
-//				dTilt = RNG::boxMuller(0., baseDeviation / 2.); // tilt deviation is halved
+//				dRot = RNG::boxMuller(baseDeviation);
+//				dTilt = RNG::boxMuller(baseDeviation / 2.); // tilt deviation is halved
 //			}
 //			rotation += dRot; // add deviations
 //			tilt += dTilt;

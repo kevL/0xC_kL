@@ -60,11 +60,11 @@ private:
 
 
 	public:
-		/// Creates the Soldier Armor state.
+		/// Creates a SoldierArmor state.
 		SoldierArmorState(
 				Base* const base,
 				size_t soldierId);
-		/// Cleans up the Soldier Armor state.
+		/// Cleans up the SoldierArmor state.
 		~SoldierArmorState();
 
 		/// Handler for clicking the Cancel button.

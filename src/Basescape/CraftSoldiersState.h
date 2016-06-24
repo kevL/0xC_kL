@@ -35,7 +35,8 @@ class Window;
 
 
 /**
- * Select Squad screen that lets the player pick the soldiers to assign to a Craft.
+ * A select-squad screen that lets the player pick the Soldiers that are
+ * assigned to a Craft.
  */
 class CraftSoldiersState final
 	:
@@ -68,7 +69,7 @@ private:
 
 	/// Sets current cost to send the Craft on a mission.
 	void calculateTacticalCost();
-	/// Decides whether to show extra buttons - Unload and Inventory.
+	/// Decides whether to show extra buttons - unload-soldiers and Inventory.
 	void displayExtraButtons() const;
 
 
@@ -80,7 +81,7 @@ private:
 		/// Cleans up the CraftSoldiers state.
 		~CraftSoldiersState();
 
-		/// Updates the soldiers list.
+		/// Updates the Soldiers list.
 		void init() override;
 
 		/// Handler for clicking the OK button.

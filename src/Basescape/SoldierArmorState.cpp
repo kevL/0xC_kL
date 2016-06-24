@@ -109,10 +109,10 @@ SoldierArmorState::SoldierArmorState(
 	_lstArmor->setSelectable();
 
 	RuleArmor* armorRule;
-	const std::vector<std::string>& armorList (_game->getRuleset()->getArmorsList());
+	const std::vector<std::string>& allArmors (_game->getRuleset()->getArmorsList());
 	for (std::vector<std::string>::const_reverse_iterator
-			rit = armorList.rbegin();
-			rit != armorList.rend();
+			rit = allArmors.rbegin();
+			rit != allArmors.rend();
 			++rit)
 	{
 		armorRule = _game->getRuleset()->getArmor(*rit);

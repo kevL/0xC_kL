@@ -57,7 +57,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Craft Soldiers screen.
+ * Initializes all the elements in the CraftSoldiers screen.
  * @param base		- pointer to the Base to get info from
  * @param craftId	- ID of the selected craft
  */
@@ -160,7 +160,7 @@ CraftSoldiersState::~CraftSoldiersState()
 {}
 
 /**
- * Shows the soldiers in a list.
+ * Shows the Soldiers in a list.
  */
 void CraftSoldiersState::init()
 {
@@ -194,13 +194,10 @@ void CraftSoldiersState::init()
 
 		if ((*i)->getCraft() == nullptr)
 			color = _lstSoldiers->getColor();
+		else if ((*i)->getCraft() == _craft)
+			color = _lstSoldiers->getSecondaryColor();
 		else
-		{
-			if ((*i)->getCraft() == _craft)
-				color = _lstSoldiers->getSecondaryColor();
-			else
-				color = static_cast<Uint8>(_game->getRuleset()->getInterface("craftSoldiers")->getElement("otherCraft")->color);
-		}
+			color = static_cast<Uint8>(_game->getRuleset()->getInterface("craftSoldiers")->getElement("otherCraft")->color);
 
 		_lstSoldiers->setRowColor(row, color);
 
@@ -243,7 +240,7 @@ void CraftSoldiersState::btnOkClick(Action*)
 }
 
 /**
- * Unloads all soldiers from current transport craft.
+ * Unloads all Soldiers from current transport craft.
  * @param action - pointer to an Action
  */
 void CraftSoldiersState::btnUnloadClick(Action*)
@@ -254,7 +251,10 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 			++i)
 	{
 		if ((*i)->getCraft() == _craft)
-			(*i)->setCraft();
+			(*i)->setCraft(
+						nullptr,
+						_base,
+						_game->getSavedGame()->getMonthsPassed() == -1);
 	}
 
 	_base->setRecallRow(
@@ -264,7 +264,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 }
 
 /**
- * LMB assigns and de-assigns soldiers from a Craft. RMB shows soldier info.
+ * LMB assigns and de-assigns Soldiers from a Craft. RMB shows SoldierInfo.
  * @param action - pointer to an Action
  */
 void CraftSoldiersState::lstSoldiersPress(Action* action)
@@ -295,7 +295,10 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 				{
 					color = _lstSoldiers->getSecondaryColor();
 
-					sol->setCraft(_craft);
+					sol->setCraft(
+								_craft,
+								_base,
+								_game->getSavedGame()->getMonthsPassed() == -1);
 					_lstSoldiers->setCellText(
 											row, 2u,
 											_craft->getName(_game->getLanguage()));
@@ -307,7 +310,10 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 					if (sol->getCraft() != nullptr
 						&& sol->getCraft()->getCraftStatus() != CS_OUT)
 					{
-						sol->setCraft();
+						sol->setCraft(
+									nullptr,
+									_base,
+									_game->getSavedGame()->getMonthsPassed() == -1);
 						_lstSoldiers->setCellText(
 												row, 2u,
 												tr("STR_NONE_UC"));
@@ -341,7 +347,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 }
 
 /**
- * Reorders a soldier up.
+ * Reorders a Soldier up the list.
  * @param action - pointer to an Action
  */
 void CraftSoldiersState::lstLeftArrowClick(Action* action)
@@ -398,7 +404,7 @@ void CraftSoldiersState::lstLeftArrowClick(Action* action)
 }
 
 /**
- * Reorders a soldier down.
+ * Reorders a Soldier down the list.
  * @param action - pointer to an Action
  */
 void CraftSoldiersState::lstRightArrowClick(Action* action)
@@ -455,9 +461,9 @@ void CraftSoldiersState::lstRightArrowClick(Action* action)
 }
 
 /**
-* Displays the inventory screen for the soldiers inside the craft.
-* @param action - pointer to an Action
-*/
+ * Displays the Inventory for the Soldiers inside the Craft.
+ * @param action - pointer to an Action
+ */
 void CraftSoldiersState::btnInventoryClick(Action*)
 {
 	_base->setRecallRow(
@@ -475,7 +481,7 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 }
 
 /**
- * Sets current cost to send the Craft on a mission.
+ * Sets the current cost to send the Craft on a mission.
  */
 void CraftSoldiersState::calculateTacticalCost() // private.
 {
@@ -485,15 +491,13 @@ void CraftSoldiersState::calculateTacticalCost() // private.
 }
 
 /**
- * Decides whether to show extra buttons - Unload and Inventory.
+ * Decides whether to show extra buttons - unload-soldiers and Inventory.
  */
 void CraftSoldiersState::displayExtraButtons() const // private.
 {
-	const bool hasSoldier (_craft->getQtySoldiers() != 0);
-	_btnUnload->setVisible(hasSoldier);
-	_btnInventory->setVisible(hasSoldier
-						   && _craft->getCraftItems()->getTotalQuantity() != 0
-						   && _game->getSavedGame()->getMonthsPassed() != -1);
+	const bool vis (_craft->getQtySoldiers() != 0);
+	_btnUnload->setVisible(vis);
+	_btnInventory->setVisible(vis && _craft->getCraftItems()->getTotalQuantity() != 0);
 }
 
 }

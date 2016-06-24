@@ -63,9 +63,7 @@ int seedless(
 		int valMax);
 
 /// Gets a normally distributed value.
-double boxMuller(
-		double mean = 0.,
-		double deviation = 1.);
+double boxMuller(double deviation);
 
 /// Decides if a percentage chance succeeds.
 bool percent(int valPct);

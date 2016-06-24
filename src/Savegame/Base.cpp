@@ -335,9 +335,7 @@ YAML::Node Base::save() const
 			++i)
 		node["crafts"].push_back((*i)->save());
 
-	node["items"]		= _items->save();
-	node["cashIncome"]	= _cashIncome;
-	node["cashSpent"]	= _cashSpent;
+	node["items"] = _items->save();
 
 	for (std::vector<Transfer*>::const_iterator
 			i = _transfers.begin();
@@ -361,6 +359,9 @@ YAML::Node Base::save() const
 	if (_exposed == true)	node["exposed"]		= _exposed;
 	if (_scientists != 0)	node["scientists"]	= _scientists;
 	if (_engineers != 0)	node["engineers"]	= _engineers;
+
+	if (_cashIncome != 0)	node["cashIncome"]	= _cashIncome;
+	if (_cashSpent != 0)	node["cashSpent"]	= _cashSpent;
 
 	return node;
 }

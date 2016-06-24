@@ -46,8 +46,8 @@ class ComboBox final
 
 private:
 	static const int
-		MARGIN_HORIZONTAL	=  3,
-		MARGIN_VERTICAL		=  3,
+		MARGIN_HORIZONTAL	=  5,
+		MARGIN_VERTICAL		=  4,
 		ROWS_DEFAULT		= 10,
 		BUTTON_WIDTH		= 14,
 		TEXT_HEIGHT			=  8;
@@ -79,7 +79,8 @@ private:
 				int width,
 				int height,
 				int x = 0,
-				int y = 0);
+				int y = 0,
+				int extend = 0);
 		/// Cleans up the ComboBox.
 		~ComboBox();
 
