@@ -387,8 +387,7 @@ void Soldier::setCraft(
 				if (craft->calcLoadCurrent() < craft->getLoadCapacity())
 				{
 					type = (*i)->getItemType();
-					if (base->getStorageItems()->getItemQuantity(type) != 0
-						|| isQuickBattle == true)
+					if (base->getStorageItems()->getItemQuantity(type) != 0) //|| isQuickBattle == true)
 					{
 						craft->getCraftItems()->addItem(type);
 						if (isQuickBattle == false)
@@ -399,8 +398,7 @@ void Soldier::setCraft(
 						{
 							if (craft->calcLoadCurrent() < craft->getLoadCapacity())
 							{
-								if (base->getStorageItems()->getItemQuantity(type) != 0
-									|| isQuickBattle == true)
+								if (base->getStorageItems()->getItemQuantity(type) != 0) //|| isQuickBattle == true)
 								{
 									craft->getCraftItems()->addItem(type);
 									if (isQuickBattle == false)

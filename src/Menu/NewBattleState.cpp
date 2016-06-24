@@ -195,16 +195,6 @@ NewBattleState::NewBattleState()
 	_cbxDifficulty->setBackgroundFill(BROWN_D);
 
 	_alienRaces = _rules->getAlienRacesList();
-//	for (std::vector<std::string>::const_iterator
-//			i = _alienRaces.begin();
-//			i != _alienRaces.end();
-//			)
-//	{
-//		if ((*i).find("_UNDERWATER") != std::string::npos)
-//			i = _alienRaces.erase(i);
-//		else
-//			++i;
-//	}
 	_cbxAlienRace->setOptions(_alienRaces);
 	_cbxAlienRace->setBackgroundFill(BROWN_D);
 
