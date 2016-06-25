@@ -122,7 +122,7 @@ SoldierArmorState::SoldierArmorState(
 					armorRule->getUnits().end(),
 					_soldier->getRules()->getType()) != armorRule->getUnits().end())
 		{
-			if (_base->getStorageItems()->getItemQuantity(armorRule->getStoreItem()) != 0)
+			if (_base->getStorageItems()->getItemQuantity(armorRule->getStoreItem()) != 0) //|| isQuickBattle == true)
 			{
 				_armors.push_back(armorRule);
 

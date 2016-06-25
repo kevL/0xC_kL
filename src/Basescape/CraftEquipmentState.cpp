@@ -247,7 +247,7 @@ void CraftEquipmentState::updateList() // private.
 			else
 				craftQty = _craft->getCraftItems()->getItemQuantity(*i);
 
-			if (_base->getStorageItems()->getItemQuantity(*i) != 0 || craftQty != 0)
+			if (_base->getStorageItems()->getItemQuantity(*i) != 0 || craftQty != 0) //|| isQuickBattle == true)
 			{
 				_items.push_back(*i);
 

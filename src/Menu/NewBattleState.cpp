@@ -702,45 +702,45 @@ void NewBattleState::btnEquipClick(Action*)
  */
 void NewBattleState::cbxMissionChange(Action*)
 {
-	Log(LOG_INFO) << "NewBattleState::cbxMissionChange()";
+	//Log(LOG_INFO) << "NewBattleState::cbxMissionChange()";
 	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_missionTypes[_cbxMission->getSelected()]));
-	Log(LOG_INFO) << ". ruleDeploy = " << ruleDeploy->getType();
+	//Log(LOG_INFO) << ". ruleDeploy = " << ruleDeploy->getType();
 
 	std::vector<std::string> // Get terrains associated with this mission
 		deployTerrains (ruleDeploy->getDeployTerrains()),
 		globeTerrains;
 
 	// debug:
-	for (std::vector<std::string>::const_iterator
-			i = deployTerrains.begin();
-			i != deployTerrains.end();
-			++i)
-		Log(LOG_INFO) << ". . deployTerrain = " << *i;
+	//for (std::vector<std::string>::const_iterator
+	//		i = deployTerrains.begin();
+	//		i != deployTerrains.end();
+	//		++i)
+	//	Log(LOG_INFO) << ". . deployTerrain = " << *i;
 
 
 	if (deployTerrains.empty() == true)
 	{
-		Log(LOG_INFO) << ". . deployTerrains invalid; get globeTerrains w/out Deployment rule";
+		//Log(LOG_INFO) << ". . deployTerrains invalid; get globeTerrains w/out Deployment rule";
 		globeTerrains = _rules->getGlobe()->getGlobeTerrains("");
 
 		// debug:
-		for (std::vector<std::string>::const_iterator
-				i = globeTerrains.begin();
-				i != globeTerrains.end();
-				++i)
-			Log(LOG_INFO) << ". . . globeTerrain = " << *i;
+		//for (std::vector<std::string>::const_iterator
+		//		i = globeTerrains.begin();
+		//		i != globeTerrains.end();
+		//		++i)
+		//	Log(LOG_INFO) << ". . . globeTerrain = " << *i;
 	}
 	else
 	{
-		Log(LOG_INFO) << ". . deployTerrains valid; get globeTerrains w/ Deployment rule";
+		//Log(LOG_INFO) << ". . deployTerrains valid; get globeTerrains w/ Deployment rule";
 		globeTerrains = _rules->getGlobe()->getGlobeTerrains(ruleDeploy->getType());
 
 		// debug:
-		for (std::vector<std::string>::const_iterator
-				i = globeTerrains.begin();
-				i != globeTerrains.end();
-				++i)
-			Log(LOG_INFO) << ". . . globeTerrain = " << *i;
+		//for (std::vector<std::string>::const_iterator
+		//		i = globeTerrains.begin();
+		//		i != globeTerrains.end();
+		//		++i)
+		//	Log(LOG_INFO) << ". . . globeTerrain = " << *i;
 	}
 
 	std::set<std::string> terrains;
@@ -750,7 +750,7 @@ void NewBattleState::cbxMissionChange(Action*)
 			i != deployTerrains.end();
 			++i)
 	{
-		Log(LOG_INFO) << ". . insert deployTerrain = " << *i;
+		//Log(LOG_INFO) << ". . insert deployTerrain = " << *i;
 		terrains.insert(*i);
 	}
 
@@ -759,7 +759,7 @@ void NewBattleState::cbxMissionChange(Action*)
 		i != globeTerrains.end();
 		++i)
 	{
-		Log(LOG_INFO) << ". . insert globeTerrain = " << *i;
+		//Log(LOG_INFO) << ". . insert globeTerrain = " << *i;
 		terrains.insert(*i);
 	}
 
@@ -771,7 +771,7 @@ void NewBattleState::cbxMissionChange(Action*)
 			i != terrains.end();
 			++i)
 	{
-		Log(LOG_INFO) << ". . insert to _terrainTypes Option = " << *i;
+		//Log(LOG_INFO) << ". . insert to _terrainTypes Option = " << *i;
 		_terrainTypes.push_back(*i);
 		terrainOptions.push_back("MAP_" + *i);
 	}
@@ -787,7 +787,7 @@ void NewBattleState::cbxMissionChange(Action*)
 	_cbxTerrain->setOptions(terrainOptions);
 	_cbxTerrain->setSelected(0u);
 
-	Log(LOG_INFO) << "NewBattleState::cbxMissionChange() EXIT";
+	//Log(LOG_INFO) << "NewBattleState::cbxMissionChange() EXIT";
 }
 
 /**
@@ -802,9 +802,10 @@ void NewBattleState::cbxCraftChange(Action*)
 	int curSoldiers (_craft->getQtySoldiers());
 	if (curSoldiers > maxSoldiers)
 	{
+		std::vector<Soldier*>* const soldiers (_craft->getBase()->getSoldiers()); // NOTE: Perhaps should not reverse-iterate since AutoStat ran.
 		for (std::vector<Soldier*>::const_reverse_iterator
-				rit = _craft->getBase()->getSoldiers()->rbegin();
-				rit != _craft->getBase()->getSoldiers()->rend() && curSoldiers > maxSoldiers;
+				rit = soldiers->rbegin();
+				rit != soldiers->rend() && curSoldiers > maxSoldiers;
 				++rit)
 		{
 			if ((*rit)->getCraft() == _craft) // TODO: Remove excess luggage/support units also.
