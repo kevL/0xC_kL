@@ -27,7 +27,7 @@ items:
   - type: STR_LASER_SNIPER_RIFLE
     bigSprite: 654
     floorSprite: 654
-    handSprite: 664
+    handSprite: 666
     fireSound: 655
   - type: STR_LASER_SNIPER_RIFLE_CLIP
     bigSprite: 655
@@ -38,7 +38,7 @@ items:
   - type: STR_HEAVY_LASER
     bigSprite: 656
     floorSprite: 656
-    handSprite: 672
+    handSprite: 674
     fireSound: 656
   - type: STR_HEAVY_LASER_CLIP
     bigSprite: 657
@@ -49,7 +49,7 @@ items:
   - type: STR_SCATTER_LASER
     bigSprite: 658
     floorSprite: 658
-    handSprite: 680
+    handSprite: 682
     bulletSprite: 6
     fireSound: 655
   - type: STR_SCATTER_LASER_CLIP
