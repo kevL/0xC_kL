@@ -523,8 +523,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 			if (_smoothingEngaged == true
 				|| posFinal.z != action->actor->getPosition().z
-				|| _projectile->getThrowItem() != nullptr
-				|| action->weapon->getRules()->isArcingShot() == true)
+				|| ((_projectile->getThrowItem() != nullptr
+						|| action->weapon->getRules()->isArcingShot() == true)
+					&& std::abs(posFinal.x - action->actor->getPosition().x) > 1
+					&& std::abs(posFinal.y - action->actor->getPosition().y) > 1))
 			{
 				const int posBullet_z (_projectile->getPosition().z / 24);
 				if (posBullet_z != viewLevel)
