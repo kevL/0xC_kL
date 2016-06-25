@@ -65,6 +65,10 @@ class Globe final
 private:
 	static const int NEAR_RADIUS = 25;
 
+	static const Uint8
+		C_GREEN	=  8u,
+		C_RED	= 14u;
+
 	static const double
 		ROTATE_LONGITUDE,
 		ROTATE_LATITUDE;

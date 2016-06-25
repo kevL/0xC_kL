@@ -2384,14 +2384,14 @@ void Globe::drawTarget( // private.
 				case Globe::GLM_CRAFT:
 				case Globe::GLM_UFO_FLYING:
 					_flightData->setX(x);
-					_flightData->setY(y - 7);
 
 					unsigned data; // headingInt[1-digit] - altitudeInt[1-digit] - 0 - speed[4-digits]
 
 					const Craft* const craft (dynamic_cast<const Craft*>(target));
 					if (craft != nullptr)
 					{
-						_flightData->setColor(8u);
+						_flightData->setY(y - 7);
+						_flightData->setColor(C_GREEN);
 
 						data  = craft->getHeadingInt()  * 1000000u;
 						data += craft->getAltitudeInt() * 100000u;
@@ -2399,7 +2399,8 @@ void Globe::drawTarget( // private.
 					}
 					else //if (ufo != nullptr)
 					{
-						_flightData->setColor(14u);
+						_flightData->setY(y + 4);
+						_flightData->setColor(C_RED);
 
 						const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
 						data  = ufo->getHeadingInt()  * 1000000u;
