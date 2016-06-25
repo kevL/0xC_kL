@@ -313,9 +313,9 @@ private:
 				double lat) const;
 
 		/// Turns on/off the Globe detail.
-		void toggleDetail();
-		/// Turns on/off the radar lines.
-		void toggleRadarLines();
+		bool toggleDetail();
+		/// Switches the radar-details shown on this Globe.
+		int toggleRadarLines();
 
 		/// Gets all the Targets near a point on the Globe.
 		std::vector<Target*> getTargets(

@@ -921,19 +921,26 @@ bool Globe::insideLand(
 }
 
 /**
- * Switches the amount of detail shown on this Globe.
+ * Turns on/off the detail shown on this Globe.
  * @note Country and city details are shown only when zoomed in.
+ * @return, true if turned on
  */
-void Globe::toggleDetail()
+bool Globe::toggleDetail()
 {
 	Options::globeDetail = !Options::globeDetail;
 	drawDetail();
+
+	if (Options::globeDetail == true)
+		return true;
+
+	return false;
 }
 
 /**
- * Turns radar-lines on or off.
+ * Switches the radar-details shown on this Globe.
+ * @return, value of the radar-detail var
  */
-void Globe::toggleRadarLines()
+int Globe::toggleRadarLines()
 {
 	switch (_radarDetail)
 	{
@@ -955,6 +962,8 @@ void Globe::toggleRadarLines()
 			Options::globeRadarLines = false;
 	}
 	drawRadars();
+
+	return _radarDetail;
 }
 
 /**

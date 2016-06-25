@@ -144,6 +144,9 @@ private:
 		* _txtMonth,
 		* _txtYear,
 
+		* _txtRadars,
+		* _txtLabels,
+
 		* _ufoDetected;
 	TextButton
 		* _sideTop,

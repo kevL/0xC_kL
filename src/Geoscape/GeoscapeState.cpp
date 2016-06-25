@@ -355,16 +355,16 @@ GeoscapeState::GeoscapeState()
 		_score(0)
 {
 	const int
-		screenWidth		= Options::baseXGeoscape,
-		screenHeight	= Options::baseYGeoscape,
-		halfHeight		= screenHeight / 2;
+		screenWidth		(Options::baseXGeoscape),
+		screenHeight	(Options::baseYGeoscape),
+		halfHeight		(screenHeight >> 1u);
 
 	_srfSpace	= new Surface(
 						screenWidth,
 						screenHeight);
 	_globe		= new Globe(
 						_game,
-						(screenWidth - 64) / 2,
+						(screenWidth - 64) >> 1u,
 						halfHeight,
 						screenWidth - 64,
 						screenHeight);
@@ -376,17 +376,17 @@ GeoscapeState::GeoscapeState()
 
 	// revert to ImageButtons. Stock build uses TextButton's
 	_btnIntercept	= new ImageButton(63, 11, screenWidth - 63, halfHeight - 100);
-	_btnBases		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 88);
-	_btnGraphs		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 76);
-	_btnUfopaedia	= new ImageButton(63, 11, screenWidth - 63, halfHeight - 64);
-	_btnOptions		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 52);
-	_btnFunding		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 40);
+	_btnBases		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  88);
+	_btnGraphs		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  76);
+	_btnUfopaedia	= new ImageButton(63, 11, screenWidth - 63, halfHeight -  64);
+	_btnOptions		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  52);
+	_btnFunding		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  40);
 //	_btnOptions		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 100); // change the GeoGraphic first .... ->
-//	_btnUfopaedia	= new ImageButton(63, 11, screenWidth - 63, halfHeight - 88);
-//	_btnFunding		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 76);
-//	_btnGraphs		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 64);
-//	_btnIntercept	= new ImageButton(63, 11, screenWidth - 63, halfHeight - 52);
-//	_btnBases		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 40);
+//	_btnUfopaedia	= new ImageButton(63, 11, screenWidth - 63, halfHeight -  88);
+//	_btnFunding		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  76);
+//	_btnGraphs		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  64);
+//	_btnIntercept	= new ImageButton(63, 11, screenWidth - 63, halfHeight -  52);
+//	_btnBases		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  40);
 
 	_btn5Secs		= new ImageButton(31, 13, screenWidth - 63, halfHeight + 12);
 	_btn1Min		= new ImageButton(31, 13, screenWidth - 31, halfHeight + 12);
@@ -410,17 +410,17 @@ GeoscapeState::GeoscapeState()
 	_btnZoomIn		= new InteractiveSurface(23, 23, screenWidth-25, screenHeight/2+56);
 	_btnZoomOut		= new InteractiveSurface(13, 17, screenWidth-20, screenHeight/2+82); */
 
-	const int height = (screenHeight - Screen::ORIGINAL_HEIGHT) / 2 - 12;
+	const int height (((screenHeight - Screen::ORIGINAL_HEIGHT) >> 1u) - 12);
 	_sideTop	= new TextButton(
 							64,
 							height,
 							screenWidth - 64,
-							(halfHeight) - (Screen::ORIGINAL_HEIGHT / 2) - (height + 12));
+							halfHeight - (Screen::ORIGINAL_HEIGHT >> 1u) - (height + 12));
 	_sideBottom	= new TextButton(
 							64,
 							height,
 							screenWidth - 64,
-							(halfHeight) + (Screen::ORIGINAL_HEIGHT / 2) + 12);
+							halfHeight + (Screen::ORIGINAL_HEIGHT >> 1u) + 12);
 
 	_ufoDetected = new Text(17, 17, _sideBottom->getX() + 6, _sideBottom->getY() + 4);
 
@@ -471,6 +471,9 @@ GeoscapeState::GeoscapeState()
 	_dfTimer		= new Timer(static_cast<Uint32>(Options::dogfightSpeed));
 
 	_txtDebug = new Text(320, 27);
+
+	_txtLabels	= new Text(65, 9, 3, screenHeight - 12); // lower-left corner
+	_txtRadars	= new Text(65, 9, 3, screenHeight - 22);
 
 
 	setInterface("geoscape");
@@ -536,6 +539,8 @@ GeoscapeState::GeoscapeState()
 	add(_txtDay);
 	add(_txtMonth);
 	add(_txtYear);
+	add(_txtRadars,	"text",	"geoscape");
+	add(_txtLabels,	"text",	"geoscape");
 
 	_game->getResourcePack()->getSurface("Cygnus_BG")->blit(_srfSpace);
 
@@ -648,9 +653,9 @@ GeoscapeState::GeoscapeState()
 	_btn1Day->setGeoscapeButton(true); */
 
 	// revert to ImageButtons.
-	Surface* const geobord = _game->getResourcePack()->getSurface("GEOBORD.SCR");
+	Surface* const geobord (_game->getResourcePack()->getSurface("GEOBORD.SCR"));
 	geobord->setX(screenWidth - geobord->getWidth());
-	geobord->setY((screenHeight - geobord->getHeight()) / 2);
+	geobord->setY((screenHeight - geobord->getHeight()) >> 1u);
 
 	_btnIntercept->copy(geobord);
 	_btnIntercept->onMouseClick((ActionHandler)& GeoscapeState::btnInterceptClick);
@@ -910,6 +915,10 @@ GeoscapeState::GeoscapeState()
 	_txtMonth->setAlign(ALIGN_CENTER);
 
 	_txtYear->setColor(GREEN_SEA);
+
+	_txtRadars->setText(tr("STR_RADARS_").arg(tr("STR_RADARS_BASE_UC")));
+	_txtLabels->setText(tr("STR_LABELS_").arg(tr("STR_ON_UC")));
+
 
 	_geoTimer->onTimer((StateHandler)& GeoscapeState::timeAdvance);
 	_geoTimer->start();
@@ -3541,10 +3550,27 @@ void GeoscapeState::btnFundingClick(Action*)
  */
 void GeoscapeState::btnDetailPress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		_globe->toggleDetail();
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-		_globe->toggleRadarLines();
+	std::string st;
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			if (_globe->toggleDetail() == true)
+				st = "STR_ON_UC";
+			else
+				st = "STR_OFF_UC";
+			_txtLabels->setText(tr("STR_LABELS_").arg(tr(st)));
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			switch (_globe->toggleRadarLines())
+			{
+				case 0: st = "STR_RADARS_NONE_UC";	break;
+				case 1: st = "STR_RADARS_CRAFT_UC";	break;
+				case 2: st = "STR_RADARS_BASE_UC";	break;
+				case 3: st = "STR_RADARS_ALL_UC";
+			}
+			_txtRadars->setText(tr("STR_RADARS_").arg(tr(st)));
+	}
 }
 
 /**
@@ -3668,7 +3694,7 @@ void GeoscapeState::btnZoomOutLeftClick(Action*)
 	_globe->zoomOut();
 }
 
-/*
+/**
  * Zooms the globe maximum.
  * @param action - pointer to an Action
  *
@@ -3676,8 +3702,7 @@ void GeoscapeState::btnZoomInRightClick(Action*)
 {
 	_globe->zoomMax();
 } */
-
-/*
+/**
  * Zooms the globe minimum.
  * @param action - pointer to an Action
  *
