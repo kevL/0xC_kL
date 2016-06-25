@@ -935,7 +935,7 @@ void Inventory::mouseClick(Action* action, State* state)
 }
 
 /**
- * Gets the inventory section located in the specified mouse position.
+ * Gets the inventory section located in the specified mouse-position.
  * @param x - pointer to mouse x-position; returns the slot's x-position
  * @param y - pointer to mouse y-position; returns the slot's y-position
  * @return, pointer to section rules or nullptr if none
@@ -1335,12 +1335,15 @@ bool Inventory::unload()
 	if (load == nullptr)
 	{
 		if (_selItem->getRules()->getCompatibleAmmo()->empty() == false)
-			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[2u]));
+			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[2u])); // weapon is not loaded
 
 		return false;
 	}
 
-	const RuleInventory* inRule;
+	InventorySection
+		sectionLoad,
+		sectionWeap;
+
 	if (_tuMode == true)
 	{
 		for (std::vector<BattleItem*>::const_iterator
@@ -1352,29 +1355,41 @@ bool Inventory::unload()
 				&& (*i)->getInventorySection() != nullptr
 				&& (*i)->getInventorySection()->getCategory() == IC_HAND)
 			{
-				_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[10u]));
+				_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[10u])); // hands
 				return false;
 			}
 		}
 
 		if (_selUnit->spendTimeUnits(_selItem->getRules()->getUnloadTu()) == false)
 		{
-			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
+			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u])); // not enough TU
 			return false;
 		}
 
-		inRule = _game->getRuleset()->getInventoryRule(ST_LEFTHAND);
+		sectionLoad = ST_LEFTHAND;
+		sectionWeap = ST_RIGHTHAND;
 	}
 	else
-		inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
+	{
+		sectionLoad = ST_GROUND;
+
+		const BattleItem* const rtItem (_selUnit->getItem(ST_RIGHTHAND));
+		if (rtItem == nullptr || rtItem == _selItem)
+			sectionWeap = ST_RIGHTHAND;
+		else
+			sectionWeap = ST_GROUND;
+	}
 
 
 	moveItem(
 			_selItem,
-			_game->getRuleset()->getInventoryRule(ST_RIGHTHAND));
+			_game->getRuleset()->getInventoryRule(sectionWeap));
 	_selItem->setAmmoItem();
 
-	moveItem(load, inRule);
+	moveItem(
+			load,
+			_game->getRuleset()->getInventoryRule(sectionLoad));
+
 	setSelectedItem();
 	if (_tuMode == false) arrangeGround();
 	drawItems();

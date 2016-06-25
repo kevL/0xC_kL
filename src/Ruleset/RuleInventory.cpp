@@ -250,7 +250,7 @@ bool RuleInventory::detSlotAtCursor(
 					}
 				}
 			}
-		break;
+			break;
 
 		case IC_GROUND:
 			if (   mX >= _x
@@ -265,7 +265,7 @@ bool RuleInventory::detSlotAtCursor(
 
 				return true;
 			}
-		break;
+			break;
 
 		default:
 			for (std::vector<RuleSlot>::const_iterator
