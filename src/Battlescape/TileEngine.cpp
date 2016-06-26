@@ -57,9 +57,9 @@
 namespace OpenXcom
 {
 
-bool TileEngine::_debug = false;
+//bool TileEngine::_debug = false;
 
-const int TileEngine::scanOffsetZ[11u] // static.
+const int TileEngine::scanOffsetZ[11u] // static/private.
 {
 		  0,
 	 -2,  2,
@@ -833,6 +833,7 @@ bool TileEngine::visible(
 		const BattleUnit* const unit,
 		const Tile* const tile) const
 {
+	//return false;
 	//bool debug (false);
 	if (tile != nullptr)
 	{
@@ -840,7 +841,7 @@ bool TileEngine::visible(
 		//if (debug) Log(LOG_INFO) << "TileEngine::visible() id-" << unit->getId();
 
 		const BattleUnit* const targetUnit (getTargetUnit(tile));
-		if (targetUnit != nullptr && targetUnit->isOut_t() == false)
+		if (targetUnit != nullptr && targetUnit->getTile() != nullptr) //targetUnit->isOut_t() == false)
 		{
 			//Log(LOG_INFO) << ". try to sight id-" << targetUnit->getId();
 
@@ -1014,7 +1015,7 @@ Position TileEngine::getOriginVoxel(
  *						  current unit)
  * @param force			- pointer to bool that stores whether shot should be
  *						  automatically verified in Projectile instantiation (default nullptr not used)
- * @return, true if a unit can be targeted
+ * @return, true if a unit can be targeted in @a tileTarget
  */
 bool TileEngine::canTargetUnit(
 		const Position* const originVoxel,
@@ -1047,7 +1048,8 @@ bool TileEngine::canTargetUnit(
 	bool hypothetical;
 	if (targetUnit == nullptr)
 	{
-		if ((targetUnit = tileTarget->getTileUnit()) == nullptr)
+//		if ((targetUnit = tileTarget->getTileUnit()) == nullptr)
+		if ((targetUnit = getTargetUnit(tileTarget)) == nullptr)
 		{
 			//if (debug) Log(LOG_INFO) << ". no Unit, ret FALSE";
 			return false; // no unit in the tileTarget even if it's elevated and appearing in it. TODO: Could use getTargetUnit().
@@ -1230,15 +1232,15 @@ bool TileEngine::canTargetUnit(
 		int
 			minVal (*std::min_element(targetable_x.begin(), targetable_x.end())),
 			maxVal (*std::max_element(targetable_x.begin(), targetable_x.end()));
-		const int target_x ((minVal + maxVal) / 2);
+		const int target_x ((minVal + maxVal) >> 1u);
 
 		minVal = *std::min_element(targetable_y.begin(), targetable_y.end()),
 		maxVal = *std::max_element(targetable_y.begin(), targetable_y.end());
-		const int target_y ((minVal + maxVal) / 2);
+		const int target_y ((minVal + maxVal) >> 1u);
 
 		minVal = *std::min_element(targetable_z.begin(), targetable_z.end()),
 		maxVal = *std::max_element(targetable_z.begin(), targetable_z.end());
-		const int target_z ((minVal + maxVal) / 2);
+		const int target_z ((minVal + maxVal) >> 1u);
 
 		*scanVoxel = Position(target_x, target_y, target_z);
 		if (force != nullptr) *force = true;
