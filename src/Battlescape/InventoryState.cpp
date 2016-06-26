@@ -409,7 +409,7 @@ InventoryState::~InventoryState()
 		te->applyGravity(tile);
 
 		te->calculateTerrainLighting();
-		te->calcFovAll(true);
+		te->calcFovUnits_all(true);
 
 		_battleSave->getBattleGame()->getMap()->setNoDraw(false);
 	}

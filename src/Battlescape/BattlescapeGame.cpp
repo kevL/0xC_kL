@@ -187,7 +187,8 @@ void BattlescapeGame::init()
 //		getTileEngine()->calculateTerrainLighting();	// (b) BattlescapeGenerator::nextStage()
 //		getTileEngine()->calculateUnitLighting();		// (c) SavedBattleGame::loadMapResources()
 
-		getTileEngine()->calcFovAll(false, true);		// NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
+		getTileEngine()->calcFovTiles_all();				// NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
+		getTileEngine()->calcFovUnits_all(false);
 	}
 }
 
@@ -218,7 +219,8 @@ void BattlescapeGame::think()
 					if ((_playerPanicHandled = handlePanickingPlayer()) == true)
 					{
 						//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
-						getTileEngine()->calcFovAll(false, true);
+						getTileEngine()->calcFovTiles_all();
+						getTileEngine()->calcFovUnits_all();
 						_battleSave->getBattleState()->updateSoldierInfo(false);
 					}
 				}
@@ -744,7 +746,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 	unit->setUnitVisible(false);
 
-	getTileEngine()->calcFovPos(unit->getPosition());
+	getTileEngine()->calcFovUnits_pos(unit->getPosition());
 
 	if (unit->getAIState() == nullptr)
 	{
@@ -3063,7 +3065,7 @@ void BattlescapeGame::dropItem(
 			&& item->getFuse() != -1)
 		{
 			getTileEngine()->calculateTerrainLighting();
-			getTileEngine()->calcFovAll(true);
+			getTileEngine()->calcFovUnits_all(true);
 		}
 	}
 }
@@ -3107,7 +3109,7 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 		if (calcFoV == true)
 		{
 			getTileEngine()->calculateTerrainLighting();
-			getTileEngine()->calcFovAll(true);
+			getTileEngine()->calcFovUnits_all(true);
 		}
 	}
 }
@@ -3190,7 +3192,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 
 	getTileEngine()->applyGravity(potato->getTile());
 	getTileEngine()->calculateUnitLighting();
-	getTileEngine()->calcFovPos(potato->getPosition(), true);
+	getTileEngine()->calcFovUnits_pos(potato->getPosition(), true);
 
 	return potato;
 }

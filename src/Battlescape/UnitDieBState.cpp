@@ -404,8 +404,8 @@ void UnitDieBState::convertToBody() // private.
 	if (calcLights == true)
 		_parent->getTileEngine()->calculateTerrainLighting();
 
-	_parent->getTileEngine()->calcFovPos(pos, true);	// expose any units that were hiding behind dead unit
-}														// and account for possible obscuring effects too.
+	_parent->getTileEngine()->calcFovUnits_pos(pos, true);	// expose any units that were hiding behind dead unit
+}															// and account for possible obscuring effects too.
 
 /**
  * Centers the Camera on the collapsing unit.

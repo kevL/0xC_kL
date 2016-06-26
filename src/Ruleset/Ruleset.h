@@ -330,7 +330,7 @@ protected:
 		const std::vector<std::string>& getManufactureList() const;
 
 		/// Gets Facilities for custom-bases.
-		std::vector<OpenXcom::RuleBaseFacility*> getCustomBaseFacilities() const;
+		std::vector<RuleBaseFacility*> getCustomBaseFacilities() const;
 
 		/// Gets a specific UfoTrajectory.
 		const UfoTrajectory* getUfoTrajectory(const std::string& id) const;

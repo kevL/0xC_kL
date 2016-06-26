@@ -152,19 +152,20 @@ private:
 		/// Toggles xCom units' personal lighting on/off.
 		void togglePersonalLighting();
 
-		/// Calculates Field of View of a single BattleUnit.
-		bool calcFov(
-				BattleUnit* const unit,
-				bool revealTiles = true) const;
-		/// Calculates Field of View of all conscious units within range of a specified Position.
-		void calcFovPos(
+		/// Calculates Field of View vs units for a single BattleUnit.
+		bool calcFovUnits(BattleUnit* const unit) const;
+		/// Calculates Field of View vs Tiles for a single BattleUnit.
+		void calcFovTiles(BattleUnit* const unit) const;
+		/// Calculates Field of View vs units for conscious units within range.
+		void calcFovUnits_pos(
 				const Position& pos,
-				bool spotSound = false,
-				bool revealTiles = false);
-		/// Calculates Field of View of all conscious units on the battlefield.
-		void calcFovAll(
-				bool spotSound = false,
-				bool revealTiles = false);
+				bool spotSound = false);
+		/// Calculates Field of View vs Tiles for conscious units within range.
+		void calcFovTiles_pos(const Position& pos);
+		/// Calculates Field of View vs units for all conscious units.
+		void calcFovUnits_all(bool spotSound = false);
+		/// Calculates Field of View vs Tiles for all conscious units.
+		void calcFovTiles_all();
 
 		/// Checks visibility of a BattleUnit to a Tile.
 		bool visible(

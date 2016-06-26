@@ -136,8 +136,8 @@ void CivilianBAIState::think(BattleAction* const action)
 		case AI_ESCAPE:
 			action->type = _escapeAction->type;
 			action->posTarget = _escapeAction->posTarget;
-			action->AIcount = 3;
 //			action->finalAction = true; // <- AlienBAI uses this instead of AICount= 3 <--
+			action->AIcount = 3;
 			action->desperate = true;
 
 			_unit->dontReselect();

@@ -1464,7 +1464,7 @@ bool SavedBattleGame::endFactionTurn()
 	_te->calculateTerrainLighting();
 	_te->calculateUnitLighting(); // turn off MC'd aLien-lighting.
 
-	_te->calcFovAll(); // do calcFov() *after* aLiens & civies have been set non-visible above^
+	_te->calcFovUnits_all(); // do calcFov() *after* aLiens & civies have been set non-visible above^
 
 	if (_side != FACTION_PLAYER)
 		selectNextFactionUnit();
@@ -2236,9 +2236,8 @@ void SavedBattleGame::reviveUnit(
 			unit->setRevived();
 
 			_te->calculateUnitLighting();
-			_te->calcFovPos(
-						unit->getPosition(),
-						false, true);
+			_te->calcFovTiles_pos(unit->getPosition());
+			_te->calcFovUnits_pos(unit->getPosition());
 			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();

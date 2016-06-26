@@ -193,8 +193,20 @@ void UnitTurnBState::think()
 		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 
-//		const size_t antecedentOpponents (_unit->getHostileUnitsThisTurn().size());
-		const bool spot (_parent->getTileEngine()->calcFov(_unit));
+		bool spot;
+		switch (_unit->getFaction())
+		{
+			case FACTION_PLAYER:
+				_parent->getTileEngine()->calcFovTiles(_unit);
+				// no break;
+			case FACTION_HOSTILE:
+				spot = _parent->getTileEngine()->calcFovUnits(_unit);
+				break;
+
+			case FACTION_NEUTRAL:
+			default:
+				spot = false;
+		}
 
 		if (_chargeTu == true)
 		{
@@ -211,12 +223,8 @@ void UnitTurnBState::think()
 					break;
 
 				case FACTION_HOSTILE:
-				case FACTION_NEUTRAL:
 					if (_action.type == BA_NONE && spot == true)
-//						&& _unit->getHostileUnitsThisTurn().size() > antecedentOpponents) // NOTE: This should be the same as 'spot'.
-					{
 						_unit->setUnitStatus(STATUS_STANDING);
-					}
 			}
 		}
 

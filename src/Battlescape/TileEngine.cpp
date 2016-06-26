@@ -341,42 +341,25 @@ void TileEngine::addLight( // private.
 }
 
 /**
- * Calculates FoV of a single BattleUnit.
- * @param unit			- pointer to a BattleUnit
- * @param revealTiles	- true to reveal Tiles (default true)
+ * Calculates FoV vs units for a single BattleUnit.
+ * @param unit - pointer to a BattleUnit
  * @return, true if previously concealed units are spotted
  */
-bool TileEngine::calcFov(
-		BattleUnit* const unit,
-		bool revealTiles) const
+bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 {
-	//_debug = unit->getId() == 496;
-	//if (_debug) Log(LOG_INFO) << "calcFoV id-" << unit->getId();
 	unit->clearHostileUnits();
-//	unit->clearVisibleTiles();
-
-	if (unit->getFaction() == FACTION_NEUTRAL // duh. help me ... BOOM!
-		|| unit->isOut_t(OUT_STAT) == true)
-	{
-		return false;
-	}
-
-//	if (unit->getFaction() == FACTION_PLAYER)
-//	{
-//		unit->getTile()->setTileVisible();
-//		unit->getTile()->setDiscovered(true, 2);
-//	}
 
 	bool
 		spotByPlayer  (false),
 		spotByHostile (false);
 
-	const Position posSelf (unit->getPosition());	// TODO: Check from all four quadrants if unit is large.
+//	const Position posSelf (unit->getPosition());	// TODO: Check from all four quadrants if unit is large.
 													// See BattleUnit::checkViewSector(). Also visible() and its callers. ETC.
 
-	// NOTE: Lift by terrain-level hasn't bee done yet; see before tile-reveals below_
+	// NOTE: Lift by terrain-level hasn't been done yet; see before tile-reveals below_
 
-	if (_battleSave->getBattleGame()->playerPanicHandled() == true)
+	if (_battleSave->getBattleGame() == nullptr // pre-battle power-source explosion.
+		|| _battleSave->getBattleGame()->playerPanicHandled() == true)
 	{
 		int soundId;
 		if (_spotSound == true)
@@ -384,355 +367,112 @@ bool TileEngine::calcFov(
 		else
 			soundId = -1;
 
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
-				++i)
-		{
-			if ((*i)->isOut_t() == false)
-			{
-				//if (debug) Log(LOG_INFO) << ". try spot vs id-" << (*i)->getId();
-				switch (unit->getFaction())
-				{
-					case FACTION_PLAYER:
-						if ((*i)->getFaction() != FACTION_PLAYER)
-						{
-							const Position posOther ((*i)->getPosition());
-							//if (debug)
-							//{
-							//	Log(LOG_INFO) << ". . spot vs pos " << posOther;
-							//	Log(LOG_INFO) << ". . distSqr= " << distSqr(posSelf, posOther, false);
-							//}
-
-							if (distSqr(posSelf, posOther) <= SIGHTDIST_TSp_Sqr)
-							{
-								//if (debug) Log(LOG_INFO) << ". . . in Range";
-								const int unitSize ((*i)->getArmor()->getSize());
-								for (int
-										x = 0;
-										x != unitSize;
-										++x)
-								{
-									for (int
-											y = 0;
-											y != unitSize;
-											++y)
-									{
-										const Position pos (posOther + Position(x,y,0));
-										if (unit->checkViewSector(pos, true) == true
-											&& visible(unit, _battleSave->getTile(pos)) == true)
-										{
-											//if (debug) Log(LOG_INFO) << ". . . . visible TRUE";
-											if ((*i)->getUnitVisible() == false)
-											{
-												//if (debug) Log(LOG_INFO) << ". . . . . set Visible";
-												(*i)->setUnitVisible();
-												spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
-											}
-
-											if ((*i)->getFaction() == FACTION_HOSTILE)
-											{
-												unit->addToHostileUnits((*i)); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
-
-												if (soundId != -1
-													&& spotByPlayer == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
-//													&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
-												{													// that back to prevent it or pass in isMC-reveal somehow.
-													const BattlescapeGame* const battle (_battleSave->getBattleGame());
-													battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
-																				->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
-													soundId = -1; // play once only.
-												}
-											}
-
-											x =
-											y = unitSize - 1; // stop.
-										}
-									}
-								}
-							}
-						}
-						break;
-
-					case FACTION_HOSTILE:
-						if ((*i)->getFaction() != FACTION_HOSTILE)
-						{
-							const Position posOther ((*i)->getPosition());
-							//if (debug)
-							//{
-							//	Log(LOG_INFO) << ". . spot vs pos " << posOther;
-							//	Log(LOG_INFO) << ". . distSqr= " << distSqr(posSelf, posOther, false);
-							//}
-
-							if (distSqr(posSelf, posOther) <= SIGHTDIST_TSp_Sqr)
-							{
-								//if (debug) Log(LOG_INFO) << ". . . in Range";
-								const int unitSize ((*i)->getArmor()->getSize());
-								for (int
-										x = 0;
-										x != unitSize;
-										++x)
-								{
-									for (int
-											y = 0;
-											y != unitSize;
-											++y)
-									{
-										const Position pos (posOther + Position(x,y,0));
-										if (unit->checkViewSector(pos, true) == true
-											&& visible(unit, _battleSave->getTile(pos)) == true)
-										{
-											//if (debug) Log(LOG_INFO) << ". . . . visible TRUE - add to HostileUnits vector";
-											spotByHostile = unit->addToHostileUnits(*i); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
-
-											if (_battleSave->getSide() == FACTION_HOSTILE)
-												(*i)->setExposed();	// NOTE: xCom agents can be seen by enemies but *not* become Exposed.
-																	// Only potential reactionFire should set them Exposed during xCom's turn.
-
-											x =
-											y = unitSize - 1; // stop.
-										}
-									}
-								}
-							}
-						}
-				}
-			}
-		}
-	}
-
-	if (revealTiles == true && unit->getFaction() == FACTION_PLAYER) // reveal extra tiles ->>
-	{
-		int dir;
-		switch (unit->getTurretType())
-		{
-			case TRT_NONE: dir = unit->getUnitDirection(); break;
-			default:
-//				if (Options::battleStrafe == false)
-//					dir = unit->getUnitDirection();
-//				else
-				dir = unit->getTurretDirection();
-		}
-
-		const bool swapXY (dir == 0 || dir == 4);
-
-		static const int
-			sign_x[8u] { 1, 1, 1, 1,-1,-1,-1,-1},
-			sign_y[8u] {-1,-1, 1, 1, 1, 1,-1,-1};
-
-		int
-			y1 (0),
-			y2 (0),
-			unitSize;
-		size_t trjLength;
-
-		bool diag;
-		if ((dir & 1) == 1)
-		{
-			diag = true;
-			y2 = SIGHTDIST_TSp;
-		}
-		else
-			diag = false;
-
-		VoxelType blockType;
-
-		std::vector<Position> trj;
-
 		Position
-			posUnit (unit->getPosition()),
-			posTest,
-			posTrj;
+			posOther,
+			pos;
 
-		const Tile* tileTest;
-		Tile
-			* tile,
-			* tileEdge;
-		const MapData
-			* object,
-			* objectEdge;
+		int otherSize;
 
-		if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > 31) // arbitrary 24+8, could use Pathfinding::UNIT_HEIGHT
+		switch (unit->getFaction())
 		{
-			const Tile* const tileAbove (_battleSave->getTile(posUnit + Position(0,0,1)));
-			if (tileAbove != nullptr && tileAbove->hasNoFloor() == true)
-				++posUnit.z;
-		}
-
-		for (int
-				x = 0; // does the unit itself really need checking ... Yes, marks own Tile as _visible.
-				x <= SIGHTDIST_TSp;
-				++x)
-		{
-			if (diag == false)
-			{
-				y1 = -x;
-				y2 =  x;
-			}
-
-			for (int
-					y = y1;
-					y <= y2;
-					++y)
-			{
-				for (int
-						z = 0;
-						z != _battleSave->getMapSizeZ();
-						++z)
+			case FACTION_PLAYER:
+				for (std::vector<BattleUnit*>::const_iterator
+						i = _battleSave->getUnits()->begin(), j = _battleSave->getUnits()->end();
+						i != j;
+						++i)
 				{
-					posTest.z = z;
-
-					if (x * x + y * y <= SIGHTDIST_TSp_Sqr)
+					if ((*i)->getFaction() != FACTION_PLAYER
+						&& (*i)->getTile() != nullptr) // otherUnit is standing.
 					{
-						posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x));
-						posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y));
+						posOther = (*i)->getPosition();
 
-						//if (posTest != Position(14,19,0))	_debug = false;
-						//else if (unit->getId() == 496)	_debug = true;
-
-						if ((tileTest = _battleSave->getTile(posTest)) != nullptr)
+						otherSize = (*i)->getArmor()->getSize();
+						for (int
+								x = 0;
+								x != otherSize;
+								++x)
 						{
-							// this sets tiles to discovered if they are in FoV -
-							// Tile visibility is not calculated in voxel-space but in tile-space;
-							// large units have "4 pair of eyes"
-							unitSize = unit->getArmor()->getSize();
 							for (int
-									dX = 0;
-									dX != unitSize;
-									++dX)
+									y = 0;
+									y != otherSize;
+									++y)
 							{
-								for (int
-										dY = 0;
-										dY != unitSize;
-										++dY)
+								pos = posOther + Position(x,y,0);
+
+								if (unit->checkViewSector(pos, true) == true // TODO: Deal with "true".
+									&& visible(unit, _battleSave->getTile(pos)) == true)
 								{
-									trj.clear();
-									blockType = plotLine(
-														posUnit + Position(dX,dY, 0),
-														posTest,
-														true,
-														&trj,
-														unit,
-														false);
-									trjLength = trj.size();
-
-									//if (_debug) Log(LOG_INFO) << ". blockType= " << MapData::debugVoxelType(blockType);
-									//if (_debug) Log(LOG_INFO) << ". trjLength= " << trjLength;
-
-									if (blockType == VOXEL_FLOOR) // NOTE: Not really a floor here, just a #
-										--trjLength;
-
-									for (size_t
-											i = 0u;
-											i != trjLength;
-											++i)
+									if ((*i)->getUnitVisible() == false)
 									{
-										posTrj = trj.at(i);
+										(*i)->setUnitVisible();
+										spotByPlayer = true; // NOTE: This will halt a player's moving-unit when spotting a new Civie even.
+									}
 
-										// mark every tile of line as visible -
-										tile = _battleSave->getTile(posTrj);
-										//if (_debug) Log(LOG_INFO) << ". . tilePos " << tile->getPosition();
-										tile->setRevealed(ST_CONTENT);	// sprite caching for floor+content, ergo + west & north walls.
-//										tile->setTileVisible();			// Used only by sneakyAI.
+									if ((*i)->getFaction() == FACTION_HOSTILE)
+									{
+										unit->addToHostileUnits((*i)); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
 
-										// walls to the east or south of a visible tile, reveal that too
-										// NOTE: yeh, If there's walls or an appropriate BigWall object!
-										// tile-parts:
-										//		#0 - floor
-										//		#1 - westwall
-										//		#2 - northwall
-										//		#3 - object
-										// revealable sections:
-										//		#0 - westwall
-										//		#1 - northwall
-										//		#2 - floor + content (reveals both walls also)
-
-										if ((object = tile->getMapData(O_OBJECT)) == nullptr
-											|| (object->getBigwall() & 0xa1) == 0)				// [0xa1 = Block/East/ES]
-										{
-											tileEdge = _battleSave->getTile(Position(			// show Tile EAST
-																				posTrj.x + 1,
-																				posTrj.y,
-																				posTrj.z));
-											if (tileEdge != nullptr)
-											{
-												if ((objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr
-													&& (objectEdge->getBigwall() & 0x9) != 0)	// [0x9 = Block/West]
-												{
-													tileEdge->setRevealed(ST_CONTENT);			// reveal entire TileEast
-												}
-												else if (tileEdge->getMapData(O_WESTWALL) != nullptr)
-													tileEdge->setRevealed(ST_WEST);				// reveal only westwall
-											}
-										}
-
-										if (object == nullptr
-											|| (object->getBigwall() & 0xc1) == 0)				// [0xc1 = Block/South/ES]
-										{
-											tileEdge = _battleSave->getTile(Position(			// show Tile SOUTH
-																				posTrj.x,
-																				posTrj.y + 1,
-																				posTrj.z));
-											if (tileEdge != nullptr)
-											{
-												if ((objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr
-													&& (objectEdge->getBigwall() & 0x11) != 0)	// [0x11 = Block/North]
-												{
-													tileEdge->setRevealed(ST_CONTENT);			// reveal entire TileSouth
-												}
-												else if (tileEdge->getMapData(O_NORTHWALL) != nullptr)
-													tileEdge->setRevealed(ST_NORTH);			// reveal only northwall
-											}
-										}
-
-										if (tile->getMapData(O_WESTWALL) == nullptr
-											&& (object == nullptr
-												|| (object->getBigwall() & 0x9) == 0))			// [0x9 = Block/West]
-										{
-											tileEdge = _battleSave->getTile(Position(			// show Tile WEST
-																				posTrj.x - 1,
-																				posTrj.y,
-																				posTrj.z));
-											if (tileEdge != nullptr
-												&& (objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr)
-											{
-												switch (objectEdge->getBigwall())
-												{
-													case BIGWALL_BLOCK:
-													case BIGWALL_EAST:
-													case BIGWALL_E_S:
-														tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileWest
-												}
-											}
-										}
-
-										if (tile->getMapData(O_NORTHWALL) == nullptr
-											&& (object == nullptr
-												|| (object->getBigwall() & 0x11) == 0))			// [0x11 = Block/North]
-										{
-											tileEdge = _battleSave->getTile(Position(			// show Tile NORTH
-																				posTrj.x,
-																				posTrj.y - 1,
-																				posTrj.z));
-											if (tileEdge != nullptr
-												&& (objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr)
-											{
-												switch (objectEdge->getBigwall())
-												{
-													case BIGWALL_BLOCK:
-													case BIGWALL_SOUTH:
-													case BIGWALL_E_S:
-														tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileNorth
-												}
-											}
+										if (soundId != -1
+											&& spotByPlayer == true) // play aggro-sound if non-MC'd [huh] xCom unit spots a not-previously-visible hostile.
+//											&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
+										{													// that back to prevent it or pass in isMC-reveal somehow.
+											const BattlescapeGame* const battle (_battleSave->getBattleGame());
+											battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
+																		->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
+											soundId = -1; // play once only.
 										}
 									}
+
+									x =
+									y = otherSize - 1; // stop.
 								}
 							}
 						}
 					}
 				}
-			}
+				break;
+
+			case FACTION_HOSTILE:
+				for (std::vector<BattleUnit*>::const_iterator
+						i = _battleSave->getUnits()->begin(), j = _battleSave->getUnits()->end();
+						i != j;
+						++i)
+				{
+					if ((*i)->getFaction() != FACTION_HOSTILE
+						&& (*i)->getTile() != nullptr) // otherUnit is standing.
+					{
+						posOther = (*i)->getPosition();
+
+						otherSize = (*i)->getArmor()->getSize();
+						for (int
+								x = 0;
+								x != otherSize;
+								++x)
+						{
+							for (int
+									y = 0;
+									y != otherSize;
+									++y)
+							{
+								pos = posOther + Position(x,y,0);
+
+								if (unit->checkViewSector(pos, true) == true // TODO: Deal with "true".
+									&& visible(unit, _battleSave->getTile(pos)) == true)
+								{
+									spotByHostile = unit->addToHostileUnits(*i); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
+
+									if (_battleSave->getSide() == FACTION_HOSTILE)
+										(*i)->setExposed();	// NOTE: xCom agents can be seen by enemies but *not* become Exposed.
+															// Only potential reactionFire should set them Exposed during xCom's turn.
+
+									x =
+									y = otherSize - 1; // stop.
+								}
+							}
+						}
+					}
+				}
+				break;
 		}
 	}
 
@@ -748,7 +488,243 @@ bool TileEngine::calcFov(
 }
 
 /**
- * Calculates FoV of all conscious units within range of a specified Position.
+ * Calculates FoV vs Tiles for a single BattleUnit.
+ * @note Only Player faction ever needs to use this.
+ * @param unit - pointer to a BattleUnit
+ */
+void TileEngine::calcFovTiles(BattleUnit* const unit) const
+{
+//	unit->clearVisibleTiles();
+//	unit->getTile()->setTileVisible();
+//	unit->getTile()->setDiscovered(true, 2);
+
+	int dir;
+	switch (unit->getTurretType())
+	{
+		case TRT_NONE: dir = unit->getUnitDirection(); break;
+		default:
+//			if (Options::battleStrafe == false)
+//				dir = unit->getUnitDirection();
+//			else
+			dir = unit->getTurretDirection();
+	}
+
+	const bool swapXY (dir == 0 || dir == 4);
+
+	static const int
+		sign_x[8u] { 1, 1, 1, 1,-1,-1,-1,-1},
+		sign_y[8u] {-1,-1, 1, 1, 1, 1,-1,-1};
+
+	int
+		y1 (0),
+		y2 (0),
+		unitSize;
+	size_t trjLength;
+
+	bool diag;
+	if ((dir & 1) == 1)
+	{
+		diag = true;
+		y2 = SIGHTDIST_TSp;
+	}
+	else
+		diag = false;
+
+	VoxelType blockType;
+
+	std::vector<Position> trj;
+
+	Position
+		posUnit (unit->getPosition()),
+		posTest,
+		posTrj;
+
+	const Tile* tileTest;
+	Tile
+		* tile,
+		* tileEdge;
+	const MapData
+		* object,
+		* objectEdge;
+
+	if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > 31) // arbitrary 24+8, could use Pathfinding::UNIT_HEIGHT
+	{
+		const Tile* const tileAbove (_battleSave->getTile(posUnit + Position(0,0,1)));
+		if (tileAbove != nullptr && tileAbove->hasNoFloor() == true)
+			++posUnit.z;
+	}
+
+	for (int
+			x = 0; // does the unit itself really need checking ... Yes, marks own Tile as discovered.
+			x <= SIGHTDIST_TSp;
+			++x)
+	{
+		if (diag == false)
+		{
+			y1 = -x;
+			y2 =  x;
+		}
+
+		for (int
+				y = y1;
+				y <= y2;
+				++y)
+		{
+			for (int
+					z = 0;
+					z != _battleSave->getMapSizeZ();
+					++z)
+			{
+				posTest.z = z;
+
+				if (x * x + y * y <= SIGHTDIST_TSp_Sqr)
+				{
+					posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x));
+					posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y));
+
+					if ((tileTest = _battleSave->getTile(posTest)) != nullptr)
+					{
+						// this sets tiles to discovered if they are in FoV ->
+						// NOTE: Tile visibility is calculated not in voxel-space but in tile-space.
+						unitSize = unit->getArmor()->getSize();
+						for (int
+								dX = 0;
+								dX != unitSize;
+								++dX)
+						{
+							for (int
+									dY = 0;
+									dY != unitSize;
+									++dY)
+							{
+								trj.clear();
+								blockType = plotLine(
+													posUnit + Position(dX,dY, 0),
+													posTest,
+													true,
+													&trj,
+													unit,
+													false);
+								trjLength = trj.size();
+
+								if (blockType == VOXEL_FLOOR) // NOTE: Not really a floor here, just a return-value.
+									--trjLength;
+
+								for (size_t
+										i = 0u;
+										i != trjLength;
+										++i)
+								{
+									posTrj = trj.at(i);
+
+									// mark every tile of line as visible ->
+									tile = _battleSave->getTile(posTrj);
+									tile->setRevealed(ST_CONTENT);	// sprite caching for floor+content, ergo + west & north walls.
+//									tile->setTileVisible();			// Used only by sneakyAI.
+
+									// walls to the east or south of a visible tile, reveal that too
+									// NOTE: yeh, If there's walls or an appropriate BigWall object!
+									// tile-parts:
+									//		#0 - floor
+									//		#1 - westwall
+									//		#2 - northwall
+									//		#3 - object
+									// revealable sections:
+									//		#0 - westwall
+									//		#1 - northwall
+									//		#2 - floor + content (reveals both walls also)
+
+									if ((object = tile->getMapData(O_OBJECT)) == nullptr
+										|| (object->getBigwall() & 0xa1) == 0)				// [0xa1 = Block/East/ES]
+									{
+										tileEdge = _battleSave->getTile(Position(			// show Tile EAST
+																			posTrj.x + 1,
+																			posTrj.y,
+																			posTrj.z));
+										if (tileEdge != nullptr)
+										{
+											if ((objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr
+												&& (objectEdge->getBigwall() & 0x9) != 0)	// [0x9 = Block/West]
+											{
+												tileEdge->setRevealed(ST_CONTENT);			// reveal entire TileEast
+											}
+											else if (tileEdge->getMapData(O_WESTWALL) != nullptr)
+												tileEdge->setRevealed(ST_WEST);				// reveal only westwall
+										}
+									}
+
+									if (object == nullptr
+										|| (object->getBigwall() & 0xc1) == 0)				// [0xc1 = Block/South/ES]
+									{
+										tileEdge = _battleSave->getTile(Position(			// show Tile SOUTH
+																			posTrj.x,
+																			posTrj.y + 1,
+																			posTrj.z));
+										if (tileEdge != nullptr)
+										{
+											if ((objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr
+												&& (objectEdge->getBigwall() & 0x11) != 0)	// [0x11 = Block/North]
+											{
+												tileEdge->setRevealed(ST_CONTENT);			// reveal entire TileSouth
+											}
+											else if (tileEdge->getMapData(O_NORTHWALL) != nullptr)
+												tileEdge->setRevealed(ST_NORTH);			// reveal only northwall
+										}
+									}
+
+									if (tile->getMapData(O_WESTWALL) == nullptr
+										&& (object == nullptr
+											|| (object->getBigwall() & 0x9) == 0))			// [0x9 = Block/West]
+									{
+										tileEdge = _battleSave->getTile(Position(			// show Tile WEST
+																			posTrj.x - 1,
+																			posTrj.y,
+																			posTrj.z));
+										if (tileEdge != nullptr
+											&& (objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr)
+										{
+											switch (objectEdge->getBigwall())
+											{
+												case BIGWALL_BLOCK:
+												case BIGWALL_EAST:
+												case BIGWALL_E_S:
+													tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileWest
+											}
+										}
+									}
+
+									if (tile->getMapData(O_NORTHWALL) == nullptr
+										&& (object == nullptr
+											|| (object->getBigwall() & 0x11) == 0))			// [0x11 = Block/North]
+									{
+										tileEdge = _battleSave->getTile(Position(			// show Tile NORTH
+																			posTrj.x,
+																			posTrj.y - 1,
+																			posTrj.z));
+										if (tileEdge != nullptr
+											&& (objectEdge = tileEdge->getMapData(O_OBJECT)) != nullptr)
+										{
+											switch (objectEdge->getBigwall())
+											{
+												case BIGWALL_BLOCK:
+												case BIGWALL_SOUTH:
+												case BIGWALL_E_S:
+													tileEdge->setRevealed(ST_CONTENT);		// reveal entire TileNorth
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Calculates FoV vs units for conscious units within range of a specified Position.
  * @note Used when a unit is walking or terrain has changed which can reveal
  * unseen units and/or parts of terrain. Spotsound triggers:
  * - convert unit
@@ -761,52 +737,90 @@ bool TileEngine::calcFov(
  * - walkBstate end
  * - walkBstate post-path
  * - unit revives
- * @param pos			- reference to the position of the changed unit/terrain
- * @param spotSound		- true to play aggro-sound (default false)
- * @param revealTiles	- true to reveal Tiles (default false)
+ * @param pos		- reference to the position of the changed unit/terrain
+ * @param spotSound	- true to play aggro-sound (default false)
  */
-void TileEngine::calcFovPos(
+void TileEngine::calcFovUnits_pos(
 		const Position& pos,
-		bool spotSound,
-		bool revealTiles)
+		bool spotSound)
 {
 	_spotSound = spotSound;
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
+			i = _battleSave->getUnits()->begin(), j = _battleSave->getUnits()->end();
+			i != j;
 			++i)
 	{
-		if ((*i)->getTile() != nullptr // the BattleUnit must be conscious.
-			&& distSqr(pos, (*i)->getPosition()) <= SIGHTDIST_TSp_Sqr)
+		if ((*i)->getTile() != nullptr
+			&& distSqr((*i)->getPosition(), pos) <= SIGHTDIST_TSp_Sqr
+			&& (*i)->getFaction() != FACTION_NEUTRAL)
 		{
-			calcFov(*i, revealTiles);
+			calcFovUnits(*i);
 		}
 	}
 	_spotSound = true;
 }
 
 /**
- * Calculates FoV of all conscious units on the battlefield.
+ * Calculates FoV vs Tiles for conscious units within range of a specified Position.
+ * @note Used when a unit is walking or terrain has changed which can reveal
+ * unseen units and/or parts of terrain.
+ */
+void TileEngine::calcFovTiles_pos(const Position& pos)
+{
+	for (std::vector<BattleUnit*>::const_iterator
+			i = _battleSave->getUnits()->begin(), j = _battleSave->getUnits()->end();
+			i != j;
+			++i)
+	{
+		if ((*i)->getFaction() == FACTION_PLAYER
+			&& (*i)->getTile() != nullptr
+			&& distSqr((*i)->getPosition(), pos) <= SIGHTDIST_TSp_Sqr)
+		{
+			calcFovTiles(*i);
+		}
+	}
+}
+
+/**
+ * Calculates FoV vs units for all conscious BattleUnits on the battlefield.
  * @note Spotsound triggers:
  * - drop an item
  * - explosion changes unit/terrain
- * @param spotSound		- true to play aggro sound (default false)
- * @param revealTiles	- true to reveal Tiles (default false)
+ * @param spotSound - true to play aggro-sound (default false)
  */
-void TileEngine::calcFovAll(
-		bool spotSound,
-		bool revealTiles)
+void TileEngine::calcFovUnits_all(bool spotSound)
 {
 	_spotSound = spotSound;
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
+			i = _battleSave->getUnits()->begin(), j = _battleSave->getUnits()->end();
+			i != j;
 			++i)
 	{
-		if ((*i)->getTile() != nullptr) // the BattleUnit must be conscious.
-			calcFov(*i, revealTiles);
+		if ((*i)->getTile() != nullptr
+			&& (*i)->getFaction() != FACTION_NEUTRAL)
+		{
+			calcFovUnits(*i);
+		}
 	}
 	_spotSound = true;
+}
+
+/**
+ * Calculates FoV vs Tiles for all conscious BattleUnits on the battlefield.
+ */
+void TileEngine::calcFovTiles_all()
+{
+	for (std::vector<BattleUnit*>::const_iterator
+			i = _battleSave->getUnits()->begin(), j = _battleSave->getUnits()->end();
+			i != j;
+			++i)
+	{
+		if ((*i)->getFaction() == FACTION_PLAYER
+			&& (*i)->getTile() != nullptr)
+		{
+			calcFovTiles(*i);
+		}
+	}
 }
 
 /**
@@ -825,7 +839,7 @@ bool TileEngine::visible(
 		//debug = unit->getId() == 1000020 || unit->getId() == 167;
 		//if (debug) Log(LOG_INFO) << "TileEngine::visible() id-" << unit->getId();
 
-		const BattleUnit* const targetUnit (tile->getTileUnit());
+		const BattleUnit* const targetUnit (getTargetUnit(tile));
 		if (targetUnit != nullptr && targetUnit->isOut_t() == false)
 		{
 			//Log(LOG_INFO) << ". try to sight id-" << targetUnit->getId();
@@ -894,7 +908,7 @@ bool TileEngine::visible(
 								}
 							}
 
-							if (tileScan->getTileUnit() == getTargetUnit(tile))
+							if (getTargetUnit(tileScan) == targetUnit)
 							{
 								//if (debug) Log(LOG_INFO) << ". . Tile has targetUnit - ret TRUE";
 								return true;
@@ -1033,12 +1047,12 @@ bool TileEngine::canTargetUnit(
 	bool hypothetical;
 	if (targetUnit == nullptr)
 	{
-		hypothetical = false;
 		if ((targetUnit = tileTarget->getTileUnit()) == nullptr)
 		{
 			//if (debug) Log(LOG_INFO) << ". no Unit, ret FALSE";
-			return false; // no unit in the tileTarget even if it's elevated and appearing in it.
+			return false; // no unit in the tileTarget even if it's elevated and appearing in it. TODO: Could use getTargetUnit().
 		}
+		hypothetical = false;
 		offsetX =
 		offsetY = 0;
 	}
@@ -1112,8 +1126,8 @@ bool TileEngine::canTargetUnit(
 		height = 12; // whats this even for.
 
 	targetHigh += (height - 1);
-	targetMid = (targetHigh + targetLow) / 2;
-	height = std::min(11, height / 2); // don't exceed array-size of scanOffsetZ[]
+	targetMid = (targetHigh + targetLow) >> 1u;
+	height = std::min(11, height >> 1u); // don't exceed array-size of scanOffsetZ[]
 
 /*	if (debug)
 	{
@@ -2200,7 +2214,8 @@ void TileEngine::hit(
 	calculateSunShading();		// roofs could have been destroyed
 	calculateTerrainLighting();	// fires could have been started
 //	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
-	calcFovPos(posTarget, true, true);
+	calcFovTiles_pos(posTarget);
+	calcFovUnits_pos(posTarget, true);
 }
 
 /**
@@ -2943,8 +2958,8 @@ void TileEngine::explode(
 	calculateTerrainLighting();	// fires could have been started
 //	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
 
-	if (_battleSave->getBattleGame() != nullptr)	// don't let pre-battle Power Source explosions CTD
-		calcFovAll(true);							// on the call to BattlescapeGame::playerPanicHandled().
+	calcFovTiles_all();
+	calcFovUnits_all();
 	//Log(LOG_INFO) << "TileEngine::explode() EXIT";
 }
 
@@ -4608,9 +4623,8 @@ DoorResult TileEngine::unitOpensDoor(
 					//Log(LOG_INFO) << "RMB -> calcFoV";
 					_battleSave->getBattleGame()->checkProxyGrenades(unit);
 
-					calcFovPos(
-							unit->getPosition(),
-							true, true); // calculate FoV for everyone within sight-range, incl. unit.
+					calcFovTiles_pos(unit->getPosition()); // calculate FoV for everyone within sight-range, incl. unit.
+					calcFovUnits_pos(unit->getPosition(), true);
 
 					// look from the other side, may need to check reaction fire
 					// This seems redundant but hey maybe it removes now-unseen units from a unit's visible-units vector ....
@@ -6234,9 +6248,8 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							victim->setUnitStatus(STATUS_STANDING);
 
 							calculateUnitLighting();
-							calcFovPos(
-									victim->getPosition(),
-									true, true);
+							calcFovTiles_pos(victim->getPosition());
+							calcFovUnits_pos(victim->getPosition(), true);
 
 							//Log(LOG_INFO) << ". . . tallyUnits DONE";
 							break;

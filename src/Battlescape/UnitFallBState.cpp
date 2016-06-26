@@ -435,9 +435,8 @@ void UnitFallBState::think()
 					(*i)->flagCache();
 					_parent->getMap()->cacheUnit(*i);
 
-					_terrain->calcFovPos(
-									(*i)->getPosition(),
-									true, true);
+					_terrain->calcFovTiles_pos((*i)->getPosition());
+					_terrain->calcFovUnits_pos((*i)->getPosition(), true);
 
 					_parent->checkProxyGrenades(*i);
 					// kL_add: Put checkForSilacoid() here!

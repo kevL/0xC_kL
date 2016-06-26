@@ -1925,9 +1925,8 @@ void BattlescapeState::btnKneelClick(Action*)
 			//Log(LOG_INFO) << "BattlescapeState::btnKneelClick()";
 			if (_battleGame->kneelToggle(unit) == true)
 			{
-				_battleGame->getTileEngine()->calcFovPos(
-													unit->getPosition(),
-													true, true);
+				_battleGame->getTileEngine()->calcFovTiles_pos(unit->getPosition());
+				_battleGame->getTileEngine()->calcFovUnits_pos(unit->getPosition(), true);
 				// need that here, so that my newVis algorithm works without
 				// false positives, or true negatives as it were, when a soldier
 				// stands up and walks in one go via UnitWalkBState. Because if
@@ -3046,7 +3045,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 	BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 	if (calcFoV == true)
-		_battleSave->getTileEngine()->calcFov(selUnit, false); // try no tile-reveal.
+		_battleSave->getTileEngine()->calcFovUnits(selUnit); // try no tile-reveal.
 
 	if (_battleSave->getSide() == FACTION_PLAYER)
 		hotSqrsUpdate();

@@ -67,14 +67,14 @@ UnitWalkBState::UnitWalkBState(
 		_battleSave(parent->getBattleSave()),
 		_fall(false),
 		_preStepTurn(false),
-//		_antecedentOpponents(0),
 		_preStepCost(0),
 		_tileSwitchDone(false),
 		_isVisible(false),
 		_walkCam(parent->getMap()->getCamera()),
 		_dirStart(-1),
 		_kneelCheck(true),
-		_playFly(false)
+		_playFly(false),
+		_door(false)
 {
 	//Log(LOG_INFO) << "walkB: cTor id-" << _unit->getId();
 }
@@ -120,9 +120,6 @@ void UnitWalkBState::init()
 		_battleSave->setWalkUnit(_unit);
 		_walkCam->centerOnPosition(_unit->getPosition());
 	}
-
-	// This is used only for aLiens:
-//	_antecedentOpponents = _unit->getHostileUnitsThisTurn().size();
 
 	_pf->setPathingUnit(_unit);
 	_dirStart = _pf->getStartDirection();
@@ -389,13 +386,13 @@ bool UnitWalkBState::doStatusStand() // private.
 		//if (_unit->getFaction() == FACTION_PLAYER) Log(LOG_INFO) << ". . _newVis = TRUE, postPathProcedures";
 		//else Log(LOG_INFO) << ". . _newUnitSpotted = TRUE, postPathProcedures";
 
-		if (_unit->getFaction() != FACTION_PLAYER)
-			_unit->setHiding(false);
+//		if (_unit->getFaction() != FACTION_PLAYER)
+		_unit->setHiding(false);
 
 		_unit->flagCache();
 		_parent->getMap()->cacheUnit(_unit);
 
-		postPathProcedures();
+		postPathProcedures(); // NOTE: This is the only call for which _door==TRUE might be needed.
 		return false;
 	}
 
@@ -407,8 +404,7 @@ bool UnitWalkBState::doStatusStand() // private.
 		dir = Pathfinding::DIR_DOWN;
 		//Log(LOG_INFO) << ". . _fall, dir = " << dir;
 	}
-
-	if (dir == -1)
+	else if (dir == -1)
 	{
 		//Log(LOG_INFO) << ". dir = " << _unit->getUnitDirection();
 		//Log(LOG_INFO) << ". . CALL postPathProcedures()";
@@ -564,10 +560,12 @@ bool UnitWalkBState::doStatusStand() // private.
 		{
 			case DR_WOOD_OPEN:
 				soundId = ResourcePack::DOOR_OPEN;
+				_door = true;
 				break;
 
 			case DR_UFO_OPEN:
 				soundId = ResourcePack::SLIDING_DOOR_OPEN;
+				_door = true;
 				wait = true;
 				break;
 
@@ -892,6 +890,9 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	else
 		_walkCam->setViewLevel(pos.z);
 
+	if (_unit->getFaction() == FACTION_PLAYER)
+		_te->calcFovTiles(_unit);
+
 	// This needs to be done *before* calcFovPos() below_ or else any units
 	// spotted would be flagged-visible before a call to visForUnits() has had
 	// a chance to catch a newly spotted unit (that was not-visible).
@@ -911,11 +912,19 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		}
 	} // debug_end. */
 
-	_te->calcFovPos(pos, true); // NOTE: This should be done only for non-unit-faction units probably - ie RF.
+//	UnitFaction faction;
+//	switch (_unit->getFaction())
+//	{
+//		default:
+//		case FACTION_PLAYER:
+//		case FACTION_NEUTRAL: faction = FACTION_HOSTILE; break;
+//		case FACTION_HOSTILE: faction = FACTION_PLAYER;  break;
+//	}
+	_te->calcFovUnits_pos(pos, true); // TODO: Calc for non-player faction only.
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{
-		_parent->popState();
+		abortState();
 		return false;
 	}
 
@@ -940,6 +949,8 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		}
 		//else Log(LOG_INFO) << ". . WalkBState: checkReactionFire() FALSE - no caching";
 	}
+
+	_door = false;
 	return true;
 }
 
@@ -957,6 +968,9 @@ void UnitWalkBState::doStatusTurn() // private.
 
 	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
+
+	if (_unit->getFaction() == FACTION_PLAYER)
+		_te->calcFovTiles(_unit);
 
 	// calcFov() is unreliable for setting the _newUnitSpotted bool as it
 	// can be called from various other places in the code, ie: doors opening
@@ -1118,8 +1132,8 @@ void UnitWalkBState::postPathProcedures() // private.
 				while (_unit->getUnitStatus() == STATUS_TURNING)
 				{
 					_unit->turn();
-					_te->calcFov(_unit);
-					// might need newVis/newUnitSpotted -> abort
+					if (_unit->getFaction() == FACTION_HOSTILE)
+						_te->calcFovUnits(_unit); // NOTE: Might need newVis/newUnitSpotted -> abort.
 				}
 			}
 			break;
@@ -1131,9 +1145,12 @@ void UnitWalkBState::postPathProcedures() // private.
 	}
 
 
-	_te->calculateUnitLighting();
-	_te->calcFovPos(_unit->getPosition(), true);	// in case unit opened a door and stopped without doing Status_WALKING
-													// TODO: Put a clamp on that: call only if a door actually opened above^
+	if (_door == true) // in case a door opened AND state was aborted.
+	{
+		_te->calculateUnitLighting();
+		_te->calcFovUnits_pos(_unit->getPosition(), true);
+	}
+
 	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
 
@@ -1225,23 +1242,28 @@ int UnitWalkBState::getFinalDirection() const // private.
  */
 bool UnitWalkBState::visForUnits() const // private.
 {
-	if (_fall == true
-		|| _parent->playerPanicHandled() == false)	// NOTE: _playerPanicHandled can be false only on Player's
-	{												// turn so if expression== TRUE then it's a player's turn.
-		return false;
-	}
+	if (_fall == true) return false;
 
-	bool ret (_te->calcFov(_unit));
-
-	if (_unit->getFaction() != FACTION_PLAYER)
+	bool spot;
+	switch (_unit->getFaction())
 	{
-//		ret = ret
-//		   && _unit->getHostileUnitsThisTurn().size() > _antecedentOpponents
-//		   && _action.desperate == false
-//		   && _unit->getChargeTarget() == nullptr;
-		ret &= (_action.desperate == false && _unit->getChargeTarget() == nullptr);
+		case FACTION_PLAYER:
+			spot = _parent->playerPanicHandled() == true // short-circuit calcFovUnits() intentional.
+				&& _te->calcFovUnits(_unit);
+			break;
+
+		case FACTION_HOSTILE:
+			spot = _te->calcFovUnits(_unit)
+				&& _action.desperate == false
+				&& _unit->getChargeTarget() == nullptr;
+			break;
+
+		case FACTION_NEUTRAL:
+		default:
+			spot = false;
+			break;
 	}
-	return ret;
+	return spot;
 }
 
 /**
@@ -1336,9 +1358,9 @@ void UnitWalkBState::playMoveSound() // private.
 					}
 				}
 				else if (walkPhase == 7
-					&& groundCheck() == true
 					&& (_fall == true
-						|| (_unit->isFloating() == true && _pf->getMoveTypePf() == MT_WALK)))
+						|| (_unit->isFloating() == true && _pf->getMoveTypePf() != MT_FLY))
+					&& groundCheck() == true)
 				{
 					soundId = ResourcePack::ITEM_DROP; // *thunk*
 				}
@@ -1383,7 +1405,7 @@ void UnitWalkBState::doFallCheck() // private.
 /**
  * Checks if there is ground below when unit is falling.
  * @note Pathfinding already has a function canFallDown() that could be used.
- @return, true if unit hits a Floor
+ * @return, true if unit hits a Floor
  */
 bool UnitWalkBState::groundCheck() const // private.
 {
