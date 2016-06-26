@@ -421,7 +421,7 @@ void UnitDieBState::centerOnDeath() // private.
 
 /**
  * Dying cannot be cancelled.
- */
-//void UnitDieBState::cancel(){}
+ *
+void UnitDieBState::cancel(){} */
 
 }

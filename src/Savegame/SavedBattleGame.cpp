@@ -2236,8 +2236,9 @@ void SavedBattleGame::reviveUnit(
 			unit->setRevived();
 
 			_te->calculateUnitLighting();
-			_te->calcFovTiles_pos(unit->getPosition());
-			_te->calcFovUnits_pos(unit->getPosition());
+			pos = unit->getPosition();
+			_te->calcFovTiles_pos(pos);
+			_te->calcFovUnits_pos(pos);
 			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();
@@ -2383,15 +2384,15 @@ bool SavedBattleGame::setUnitPosition(
 
 /**
  * Places a unit on or near a specified Position.
- * @param unit			- pointer to a BattleUnit to place
- * @param pos			- reference to the position around which to attempt to place @a unit
- * @param isLargeUnit	- true if @a unit is large
+ * @param unit		- pointer to a BattleUnit to place
+ * @param pos		- reference to the position around which to attempt to place @a unit
+ * @param isLarge	- true if @a unit is large
  * @return, true if placed
  */
 bool SavedBattleGame::placeUnitNearPosition(
 		BattleUnit* const unit,
 		const Position& pos,
-		bool isLargeUnit) const
+		bool isLarge) const
 {
 	if (unit == nullptr)
 		return false;
@@ -2401,7 +2402,7 @@ bool SavedBattleGame::placeUnitNearPosition(
 
 	int
 		size1 (0 - unit->getArmor()->getSize()),
-		size2 ((isLargeUnit == true) ? 2 : 1),
+		size2 ((isLarge == true) ? 2 : 1),
 		xArray[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
 		yArray[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
 
@@ -2413,8 +2414,8 @@ bool SavedBattleGame::placeUnitNearPosition(
 			++i)
 	{
 		Position posOffset (Position(
-									xArray[i % 8u],
-									yArray[i % 8u],
+									xArray[i % 8],
+									yArray[i % 8],
 									0));
 //		getPathfinding()->directionToVector(i % 8, &posOffset);
 

@@ -187,8 +187,8 @@ void BattlescapeGame::init()
 //		getTileEngine()->calculateTerrainLighting();	// (b) BattlescapeGenerator::nextStage()
 //		getTileEngine()->calculateUnitLighting();		// (c) SavedBattleGame::loadMapResources()
 
-		getTileEngine()->calcFovTiles_all();				// NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
-		getTileEngine()->calcFovUnits_all(false);
+		getTileEngine()->calcFovTiles_all();			// NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
+		getTileEngine()->calcFovUnits_all();
 	}
 }
 

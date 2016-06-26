@@ -103,7 +103,10 @@ void UnitFallBState::think()
 	BattleUnit* unitBelow;
 	const Tile* tile;
 	Tile* tileBelow;
-	Position posStart;
+	Position
+		posStop,
+		pos;
+	const Position posBelow (Position(0,0,-1));
 
 	for (std::list<BattleUnit*>::const_iterator
 			i = _battleSave->getFallingUnits()->begin();
@@ -130,8 +133,8 @@ void UnitFallBState::think()
 			fallCheck (true),
 			fall;
 //			onScreen = (*i)->getUnitVisible()
-//					&& _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition());
-//		bool onScreen = ((*i)->getVisible() && _parent->getMap()->getCamera()->isOnScreen((*i)->getPosition(), true, size, false));
+//					&& _parent->getMap()->getCamera()->isOnScreen(posStart);
+//		bool onScreen = ((*i)->getVisible() && _parent->getMap()->getCamera()->isOnScreen(posStart, true, size, false));
 
 		const int unitSize ((*i)->getArmor()->getSize() - 1);
 		for (int
@@ -155,7 +158,7 @@ void UnitFallBState::think()
 			}
 		}
 
-		tileBelow = _battleSave->getTile((*i)->getPosition() + Position(0,0,-1));
+		tileBelow = _battleSave->getTile((*i)->getPosition() + posBelow);
 
 		fall = fallCheck
 			&& (*i)->getPosition().z != 0
@@ -271,7 +274,7 @@ void UnitFallBState::think()
 					bool escape (false);
 
 					const int belowSize (unitBelow->getArmor()->getSize() - 1); // need to move all sections of unitBelow out of the way.
-					std::vector<Position> bodyPositions;
+					std::vector<Position> posQuadrants;
 					for (int
 							x = belowSize;
 							x != -1;
@@ -283,11 +286,11 @@ void UnitFallBState::think()
 								--y)
 						{
 							//Log(LOG_INFO) << ". body size + 1";
-							bodyPositions.push_back(unitBelow->getPosition() + Position(x,y,0));
+							posQuadrants.push_back(unitBelow->getPosition() + Position(x,y,0));
 						}
 					}
 
-					for (int // Check in each compass direction.
+					for (int // Check in each direction.
 							dir = 0;
 							dir != Pathfinding::DIR_UP && escape == false;
 							++dir)
@@ -297,14 +300,14 @@ void UnitFallBState::think()
 						Pathfinding::directionToVector(dir, &posVect);
 
 						for (std::vector<Position>::const_iterator
-								k = bodyPositions.begin();
-								k != bodyPositions.end();
+								k = posQuadrants.begin();
+								k != posQuadrants.end();
 								)
 						{
 							//Log(LOG_INFO) << ". . . checking bodysections";
-							posStart = *k;
-							tile = _battleSave->getTile(posStart + posVect);
-							tileBelow = _battleSave->getTile(posStart + posVect + Position(0,0,-1));
+							pos = *k;
+							tile = _battleSave->getTile(pos + posVect);
+							tileBelow = _battleSave->getTile(pos + posVect + posBelow);
 
 							bool
 								aboutToBeOccupiedFromAbove (tile != nullptr
@@ -323,7 +326,7 @@ void UnitFallBState::think()
 								hasFloor (tile != nullptr
 									   && tile->hasNoFloor(tileBelow) == false),
 								blocked (_battleSave->getPathfinding()->isBlockedPath(
-																					_battleSave->getTile(posStart),
+																					_battleSave->getTile(pos),
 																					dir,
 																					unitBelow)),
 								unitCanFly (unitBelow->getMoveTypeUnit() == MT_FLY),
@@ -342,7 +345,7 @@ void UnitFallBState::think()
 
 
 							// If all sections of the unit-fallen-onto can be moved then move it.
-							if (k == bodyPositions.end())
+							if (k == posQuadrants.end())
 							{
 								//Log(LOG_INFO) << ". . . . move unit";
 								if (_battleSave->addFallingUnit(unitBelow) == true)
@@ -369,7 +372,7 @@ void UnitFallBState::think()
 									unitBelow->startWalking(
 														dir,
 														unitBelow->getPosition() + posVect,
-														_battleSave->getTile(posStart + Position(0,0,-1)));
+														_battleSave->getTile(pos + posBelow));
 
 									j = _unitsToMove.erase(j);
 								}
@@ -397,12 +400,12 @@ void UnitFallBState::think()
 				if (fall == true)
 				{
 					//Log(LOG_INFO) << ". . still falling -> startWalking()";
-					Position destination ((*i)->getPosition() + Position(0,0,-1));
+					posStop = (*i)->getPosition() + posBelow;
 
-					tileBelow = _battleSave->getTile(destination);
+					tileBelow = _battleSave->getTile(posStop);
 					(*i)->startWalking(
 									Pathfinding::DIR_DOWN,
-									destination,
+									posStop,
 									tileBelow);
 
 					(*i)->flagCache();
@@ -435,8 +438,9 @@ void UnitFallBState::think()
 					(*i)->flagCache();
 					_parent->getMap()->cacheUnit(*i);
 
-					_terrain->calcFovTiles_pos((*i)->getPosition());
-					_terrain->calcFovUnits_pos((*i)->getPosition(), true);
+					pos = (*i)->getPosition();
+					_terrain->calcFovTiles_pos(pos);
+					_terrain->calcFovUnits_pos(pos, true);
 
 					_parent->checkProxyGrenades(*i);
 					// kL_add: Put checkForSilacoid() here!

@@ -4623,8 +4623,9 @@ DoorResult TileEngine::unitOpensDoor(
 					//Log(LOG_INFO) << "RMB -> calcFoV";
 					_battleSave->getBattleGame()->checkProxyGrenades(unit);
 
-					calcFovTiles_pos(unit->getPosition()); // calculate FoV for everyone within sight-range, incl. unit.
-					calcFovUnits_pos(unit->getPosition(), true);
+					const Position pos (unit->getPosition());
+					calcFovTiles_pos(pos); // calculate FoV for everyone within sight-range, incl. unit.
+					calcFovUnits_pos(pos, true);
 
 					// look from the other side, may need to check reaction fire
 					// This seems redundant but hey maybe it removes now-unseen units from a unit's visible-units vector ....
@@ -6248,8 +6249,9 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							victim->setUnitStatus(STATUS_STANDING);
 
 							calculateUnitLighting();
-							calcFovTiles_pos(victim->getPosition());
-							calcFovUnits_pos(victim->getPosition(), true);
+							const Position pos (victim->getPosition());
+							calcFovTiles_pos(pos);
+							calcFovUnits_pos(pos, true);
 
 							//Log(LOG_INFO) << ". . . tallyUnits DONE";
 							break;
