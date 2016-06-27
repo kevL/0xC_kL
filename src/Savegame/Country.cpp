@@ -87,10 +87,8 @@ YAML::Node Country::save() const
 	node["recentActA"]	= _recentActA;
 	node["recentActX"]	= _recentActX;
 
-	if (_pact == true)
-		node["pact"]	= _pact;
-	else if (_newPact == true)
-		node["newPact"]	= _newPact;
+	if		(_pact == true)		node["pact"]	= _pact;
+	else if	(_newPact == true)	node["newPact"]	= _newPact;
 
 	return node;
 }
@@ -131,10 +129,9 @@ std::vector<int>& Country::getFunding()
  */
 SatisfactionType Country::getSatisfaction() const
 {
-	if (_pact == false)
-		return _satisfaction;
-
-	return SAT_NEUTRAL;
+//	if (_pact == true || _newPact == true)
+//		return SAT_NEUTRAL;
+	return _satisfaction;
 }
 
 /**
@@ -272,10 +269,10 @@ void Country::newMonth(
 
 	_funding.push_back(funds);
 
-	if (_pact == false && _newPact == true) // now in cahoots
+	if (_newPact == true) // now in cahoots
 	{
-		_pact = true;
 		_newPact = false;
+		_pact = true;
 	}
 
 	_actA.push_back(0);
@@ -298,7 +295,7 @@ void Country::setRecentPact()
 }
 
 /**
- * Gets if this country has signed a recent pact with aLiens.
+ * Gets if this Country has signed a recent pact with aLiens.
  * @return, true if so
  */
 bool Country::getRecentPact() const
@@ -307,7 +304,7 @@ bool Country::getRecentPact() const
 }
 
 /**
- * Gets if this country already has a pact with aLiens.
+ * Gets if this Country already has a pact with aLiens.
  * @note There is no setter for this one since it gets set automatically at the
  * end of the month if @a _newPact is true.
  * @return, true if country has a pact with aLiens
@@ -318,7 +315,16 @@ bool Country::getPact() const
 }
 
 /**
- * Handles recent aLien activity in this country for GraphsState blink.
+ * Checks if this Country either has a pact or is about to pact w/ aLiens.
+ * @return, true if pacted
+ */
+bool Country::isPacted() const
+{
+	return _pact || _newPact;
+}
+
+/**
+ * Handles recent aLien activity in this Country for GraphsState blink.
  * @param activity	- true to reset the startcounter (default true)
  * @param graphs	- not sure lol (default false)
  * @return, true if there is activity
@@ -348,7 +354,7 @@ bool Country::recentActivityAlien(
 }
 
 /**
- * Handles recent XCOM activity in this country for GraphsState blink.
+ * Handles recent XCOM activity in this Country for GraphsState blink.
  * @param activity	- true to reset the startcounter (default true)
  * @param graphs	- not sure lol (default false)
  * @return, true if there is activity

@@ -1142,14 +1142,14 @@ SavedGame* Ruleset::createSave(Game* const game) const
 	//Log(LOG_INFO) << ". countries DONE";
 
 	// Adjust funding to total $6-million.
-//	int missing ((_initialFunding - gameSave->getCountryFunding()) / (int)gameSave->getCountries()->size());
+//	int adjust ((_initialFunding - gameSave->getCountryFunding()) / (int)gameSave->getCountries()->size());
 //	for (std::vector<Country*>::const_iterator
 //			i = gameSave->getCountries()->begin();
 //			i != gameSave->getCountries()->end();
 //			++i)
 //	{
 //		int fund (std::max(0,
-//						  (*i)->getFunding().back() + missing));
+//						  (*i)->getFunding().back() + adjust));
 //		(*i)->getFunding().back() = fund;
 //	}
 

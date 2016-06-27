@@ -66,8 +66,8 @@ private:
 		_terrorZone;
 
 	std::string
-		_race,
-		_region;
+		_raceType,
+		_regionType;
 
 	const AlienBase* _aBase;
 	const RuleAlienMission& _missionRule;
@@ -138,7 +138,7 @@ private:
 
 		/// Gets the AlienMission's Region.
 		const std::string& getRegion() const
-		{ return _region; }
+		{ return _regionType; }
 		/// Sets the AlienMission's Region.
 		void setRegion(
 				const std::string& region,
@@ -146,10 +146,10 @@ private:
 
 		/// Gets the AlienMission's RuleAlienRace type.
 		const std::string& getRace() const
-		{ return _race; }
+		{ return _raceType; }
 		/// Sets the AlienMission's RuleAlienRace type.
 		void setRace(const std::string& race)
-		{ _race = race; }
+		{ _raceType = race; }
 
 		/// Gets the minutes until next wave spawns.
 //		size_t getWaveCountdown() const

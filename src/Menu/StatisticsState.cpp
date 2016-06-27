@@ -360,7 +360,7 @@ void StatisticsState::listStats()
 			totalCrafts += ids[*i] - 1; // TODO: Show quantity of Craft lost ... or sold.
 	}
 
-	const int currentBases (gameSave->getBases()->size());
+	const int currentBases (static_cast<int>(gameSave->getBases()->size()));
 
 	int
 		currentScientists (0),
@@ -380,7 +380,7 @@ void StatisticsState::listStats()
 			i != gameSave->getCountries()->end();
 			++i)
 	{
-		if ((*i)->getPact() == true) // TODO: Countries total. Also do percent lost.
+		if ((*i)->isPacted() == true) // TODO: Countries total. Also do percent lost.
 			++countriesLost;
 	}
 

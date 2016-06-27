@@ -323,7 +323,7 @@ void MonthlyReportState::calculateChanges() // private.
 				++i)
 		{
 			if ((pactScore = (*i)->getRules()->getPactScore() * diff) != 0
-				&& (*i)->getRecentPact() == true || (*i)->getPact() == true)
+				&& (*i)->isPacted() == true)
 			{
 				Region* region (nullptr);
 				for (std::vector<Region*>::const_iterator
@@ -338,8 +338,9 @@ void MonthlyReportState::calculateChanges() // private.
 					}
 				}
 
-				if ((*i)->getPact() == true) // rand if already pacted, full pts for about-to-pact Countries.
-					pactScore = RNG::generate(0, pactScore);
+				if ((*i)->getPact() == true) // rand 50..100% if already pacted, full pts for about-to-pact Countries.
+					pactScore = RNG::generate(pactScore >> 1u,
+											  pactScore);
 
 				if (pactScore != 0)
 					_gameSave->scorePoints(
@@ -396,7 +397,6 @@ void MonthlyReportState::calculateChanges() // private.
 				break;
 			case SAT_HAPPY:
 				_happyList.push_back((*i)->getRules()->getType());
-				break;
 		}
 	}
 

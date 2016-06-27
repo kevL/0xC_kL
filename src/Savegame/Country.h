@@ -108,6 +108,8 @@ private:
 		bool getRecentPact() const;
 		/// Gets if they already signed a pact w/ aLiens.
 		bool getPact() const;
+		/// Checks if the Country either has a pact or is about to pact w/ aLiens.
+		bool isPacted() const;
 
 		/// Handles recent aLien-activity in the Country for GraphsState blink.
 		bool recentActivityAlien(

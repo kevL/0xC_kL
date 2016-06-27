@@ -113,8 +113,8 @@ private:
 void AlienMission::load(const YAML::Node& node)
 {
 	_id			= node["id"]		.as<int>(_id);
-	_region		= node["region"]	.as<std::string>(_region);
-	_race		= node["race"]		.as<std::string>(_race);
+	_regionType	= node["region"]	.as<std::string>(_regionType);
+	_raceType	= node["race"]		.as<std::string>(_raceType);
 	_waveCount	= node["waveCount"]	.as<size_t>(_waveCount);
 	_ufoCount	= node["ufoCount"]	.as<int>(_ufoCount);
 	_spawnTime	= node["spawnTime"]	.as<int>(_spawnTime);
@@ -147,8 +147,8 @@ YAML::Node AlienMission::save() const
 
 	node["type"]		= _missionRule.getType();
 	node["id"]			= _id;
-	node["region"]		= _region;
-	node["race"]		= _race;
+	node["region"]		= _regionType;
+	node["race"]		= _raceType;
 	node["waveCount"]	= _waveCount;
 	node["ufoCount"]	= _ufoCount;
 	node["spawnTime"]	= _spawnTime;
@@ -200,9 +200,9 @@ void AlienMission::setRegion(
 		const Ruleset& rules)
 {
 	if (rules.getRegion(region)->getMissionRegion().empty() == false)
-		_region = rules.getRegion(region)->getMissionRegion();
+		_regionType = rules.getRegion(region)->getMissionRegion();
 	else
-		_region = region;
+		_regionType = region;
 }
 
 /**
@@ -294,7 +294,7 @@ void AlienMission::think(
 					id = trajectory.getZone(0u);
 				else
 					id = _missionRule.getObjectiveZone();
-				const std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(id).areas);
+				const std::vector<MissionArea> areas (rules.getRegion(_regionType)->getMissionZones().at(id).areas);
 
 				if (_terrorZone == std::numeric_limits<size_t>::max())
 					id = RNG::pick(areas.size());
@@ -381,9 +381,9 @@ Ufo* AlienMission::createUfo( // private.
 					++i)
 			{
 				if ((*i)->getBaseExposed() == true
-					&& rules.getRegion(_region)->insideRegion(
-														(*i)->getLongitude(),
-														(*i)->getLatitude()) == true)
+					&& rules.getRegion(_regionType)->insideRegion(
+															(*i)->getLongitude(),
+															(*i)->getLatitude()) == true)
 				{
 					baseTargets.push_back(*i);
 				}
@@ -393,7 +393,7 @@ Ufo* AlienMission::createUfo( // private.
 			{
 				const RuleUfo& battleshipRule (*rules.getUfo(_missionRule.getObjectiveUfo()));
 				const UfoTrajectory& trjBattleship (*rules.getUfoTrajectory(UfoTrajectory::RETALIATION_ASSAULT_RUN));
-				const RuleRegion& regionRule (*rules.getRegion(_region));
+				const RuleRegion& regionRule (*rules.getRegion(_regionType));
 
 				ufo = new Ufo(
 							&battleshipRule,
@@ -438,7 +438,7 @@ Ufo* AlienMission::createUfo( // private.
 				ufo->setUfoMissionInfo( // destination is always an alien base.
 									this,
 									&trajectory);
-				const RuleRegion& regionRule (*rules.getRegion(_region));
+				const RuleRegion& regionRule (*rules.getRegion(_regionType));
 
 				if (trajectory.getAltitude(0u) == MovingTarget::stAltitude[0u])
 					coord = coordsLand(
@@ -489,12 +489,12 @@ Ufo* AlienMission::createUfo( // private.
 		ufo->setUfoMissionInfo(
 							this,
 							&trajectory);
-		const RuleRegion& regionRule (*rules.getRegion(_region));
+		const RuleRegion& regionRule (*rules.getRegion(_regionType));
 		coord = coordsWaypoint(
-						trajectory,
-						0u,
-						globe,
-						regionRule);
+							trajectory,
+							0u,
+							globe,
+							regionRule);
 		ufo->setLongitude(coord.first);
 		ufo->setLatitude(coord.second);
 
@@ -588,7 +588,7 @@ void AlienMission::ufoReachedWaypoint(
 		ufo.setAltitude(trajectory.getAltitude(wpId_next));
 		ufo.setTrajectoryPoint(wpId_next);
 
-		const RuleRegion& regionRule (*rules.getRegion(_region));
+		const RuleRegion& regionRule (*rules.getRegion(_regionType));
 
 		Waypoint* const wp (new Waypoint());
 		const std::pair<double, double> coord (coordsWaypoint(
@@ -726,7 +726,7 @@ TerrorSite* AlienMission::createTerror( // private.
 		site->setSecondsLeft(RNG::generate(
 										ruleDeploy->getDurationMin(),
 										ruleDeploy->getDurationMax()) * 3600);
-		site->setAlienRace(_race);
+		site->setAlienRace(_raceType);
 		site->setSiteTextureId(area.texture);
 		site->setCity(area.site);
 
@@ -747,7 +747,7 @@ void AlienMission::createAlienBase( // private.
 	if (_gameSave.getAlienBases()->size() <= 8u + (static_cast<size_t>(_gameSave.getDifficulty()) << 1u))
 	{
 		const size_t zoneId (_missionRule.getObjectiveZone());
-		std::vector<MissionArea> areas (rules.getRegion(_region)->getMissionZones().at(zoneId).areas);
+		std::vector<MissionArea> areas (rules.getRegion(_regionType)->getMissionZones().at(zoneId).areas);
 		MissionArea area (areas.at(RNG::pick(areas.size())));
 
 		const RuleAlienDeployment* ruleDeploy;
@@ -774,14 +774,14 @@ void AlienMission::createAlienBase( // private.
 			throw Exception(st);
 		}
 
-		const RuleRegion& regionRule (*rules.getRegion(_region));
+		const RuleRegion& regionRule (*rules.getRegion(_regionType));
 		const std::pair<double, double> pos (coordsLand(
 													globe,
 													regionRule,
 													area));
 
 		AlienBase* const aBase (new AlienBase(ruleDeploy));
-		aBase->setAlienRace(_race);
+		aBase->setAlienRace(_raceType);
 //		aBase->setId(game.getId(deployment->getMarkerName())); // done in AlienBaseDetectedState.
 		aBase->setLongitude(pos.first);
 		aBase->setLatitude(pos.second);
@@ -857,10 +857,9 @@ void AlienMission::ufoLifting(
 									i != _gameSave.getCountries()->end();
 									++i)
 							{
-								if ((*i)->getPact() == false
-									&& (*i)->getRecentPact() == false
-									&& (*i)->getRules()->getCountryRegion() == _region)
-//									&& rules.getRegion(_region)->insideRegion(
+								if ((*i)->isPacted() == false
+									&& (*i)->getRules()->getCountryRegion() == _regionType)
+//									&& rules.getRegion(_regionType)->insideRegion(
 //																		(*i)->getRules()->getLabelLongitude(),			// WARNING: The *label* of a Country must be inside the
 //																		(*i)->getRules()->getLabelLatitude()) == true)	// AlienMission's Region for aLiens to infiltrate!
 								{
