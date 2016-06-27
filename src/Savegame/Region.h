@@ -50,7 +50,7 @@ private:
 
 
 	public:
-		/// Creates a Region with the specified RuleRegion.
+		/// Creates a Region with the specified rule.
 		explicit Region(RuleRegion* const regionRule);
 		/// Cleans up the Region.
 		~Region();

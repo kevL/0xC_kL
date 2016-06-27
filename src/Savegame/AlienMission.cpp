@@ -851,7 +851,7 @@ void AlienMission::ufoLifting(
 										globe,
 										rules);
 
-							std::vector<Country*> suspectCountries;
+							std::vector<Country*> suspects;
 							for (std::vector<Country*>::const_iterator
 									i = _gameSave.getCountries()->begin();
 									i != _gameSave.getCountries()->end();
@@ -859,17 +859,18 @@ void AlienMission::ufoLifting(
 							{
 								if ((*i)->getPact() == false
 									&& (*i)->getRecentPact() == false
-									&& rules.getRegion(_region)->insideRegion(
-																		(*i)->getRules()->getLabelLongitude(),			// WARNING: The *label* of a Country must be inside the
-																		(*i)->getRules()->getLabelLatitude()) == true)	// AlienMission's Region for aLiens to infiltrate!
+									&& (*i)->getRules()->getCountryRegion() == _region)
+//									&& rules.getRegion(_region)->insideRegion(
+//																		(*i)->getRules()->getLabelLongitude(),			// WARNING: The *label* of a Country must be inside the
+//																		(*i)->getRules()->getLabelLatitude()) == true)	// AlienMission's Region for aLiens to infiltrate!
 								{
-									suspectCountries.push_back(*i);
+									suspects.push_back(*i);
 								}
 							}
 
-							if (suspectCountries.empty() == false)
+							if (suspects.empty() == false)
 							{
-								Country* const infiltrated (suspectCountries.at(RNG::pick(suspectCountries.size())));
+								Country* const infiltrated (suspects.at(RNG::pick(suspects.size())));
 								//Log(LOG_INFO) << "AlienMission::ufoLifting(), GAAH! new Pact & aLien base: " << infiltrated->getType();
 								if (infiltrated->getType() != "STR_RUSSIA")	// heh. ironically, this likely allows multiple alien
 									infiltrated->setRecentPact();			// bases in Russia due solely to infiltrations ...!!
@@ -1097,7 +1098,7 @@ void AlienMission::addScore( // private.
 		const double lon,
 		const double lat) const
 {
-	int aLienPts (_missionRule.getPoints());
+	int aLienPts (_missionRule.getMissionPoints());
 	if (aLienPts != 0)
 	{
 		switch (_missionRule.getObjectiveType())

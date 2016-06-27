@@ -41,6 +41,7 @@
 
 #include "../Ruleset/RuleCountry.h"
 #include "../Ruleset/RuleInterface.h"
+#include "../Ruleset/RuleRegion.h"
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
@@ -141,7 +142,7 @@ MonthlyReportState::MonthlyReportState()
 
 	const int
 		diff (static_cast<int>(_gameSave->getDifficulty())),
-		difficulty_threshold (250 * (diff - 4));
+		ratingThreshold (250 * (diff - 4));
 		// 0 -> -1000
 		// 1 -> -750
 		// 2 -> -500
@@ -150,27 +151,25 @@ MonthlyReportState::MonthlyReportState()
 
 	std::string music (OpenXcom::res_MUSIC_GEO_MONTHLYREPORT);
 
-	std::wstring wst;
 	if (_ratingTotal > 10000)
-		wst = tr("STR_RATING_STUPENDOUS");
+		st = "STR_RATING_STUPENDOUS";
 	else if (_ratingTotal > 5000)
-		wst = tr("STR_RATING_EXCELLENT");
+		st = "STR_RATING_EXCELLENT";
 	else if (_ratingTotal > 2500)
-		wst = tr("STR_RATING_GOOD");
+		st = "STR_RATING_GOOD";
 	else if (_ratingTotal > 1000)
-		wst = tr("STR_RATING_OK");
-	else if (_ratingTotal > difficulty_threshold)
-		wst = tr("STR_RATING_POOR");
+		st = "STR_RATING_OK";
+	else if (_ratingTotal > ratingThreshold)
+		st = "STR_RATING_POOR";
 	else
 	{
-		wst = tr("STR_RATING_TERRIBLE");
+		st = "STR_RATING_TERRIBLE";
 		music = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 	}
-
-	_txtRating->setText(tr("STR_MONTHLY_RATING").arg(_ratingTotal).arg(wst));
+	_txtRating->setText(tr("STR_MONTHLY_RATING__").arg(_ratingTotal).arg(tr(st)));
 
 /*	std::wostringstream ss; // ADD:
-	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_gameSave->getCountryFunding());
+	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_gameSave->getCountryFunding() * 1000);
 	ss << L" (";
 	if (_deltaFunds > 0)
 		ss << '+';
@@ -188,73 +187,54 @@ MonthlyReportState::MonthlyReportState()
 
 	std::wostringstream woststr;
 	if (_deltaFunds > 0) woststr << '+';
-	woststr << Text::formatCurrency(_deltaFunds);
-	_txtChange->setText(tr("STR_FUNDING_CHANGE").arg(woststr.str()));
+	woststr << Text::formatCurrency(_deltaFunds * 1000);
+	_txtChange->setText(tr("STR_FUNDING_CHANGE_").arg(woststr.str()));
 
 
-	if (_ratingPrior <= difficulty_threshold // calculate satisfaction
-		&& _ratingTotal <= difficulty_threshold)
+	if (   _ratingPrior <= ratingThreshold // calculate satisfaction
+		&& _ratingTotal <= ratingThreshold)
 	{
-		wst = tr("STR_YOU_HAVE_NOT_SUCCEEDED");
-
-		_pactList.erase(
-					_pactList.begin(),
-					_pactList.end());
-		_happyList.erase(
-					_happyList.begin(),
-					_happyList.end());
-		_sadList.erase(
-					_sadList.begin(),
-					_sadList.end());
-
 		_gameOver = true; // you lose.
+		st = "STR_YOU_HAVE_NOT_SUCCEEDED";
+
+		_happyList.clear();
+		_sadList.clear();
+		_pactList.clear();
 	}
 	else if (_ratingTotal > 1000 + (diff * 2000)) // was 1500 flat.
-		wst = tr("STR_COUNCIL_IS_VERY_PLEASED");
-	else if (_ratingTotal > difficulty_threshold)
-		wst = tr("STR_COUNCIL_IS_GENERALLY_SATISFIED");
+		st = "STR_COUNCIL_IS_VERY_PLEASED";
+	else if (_ratingTotal > ratingThreshold)
+		st = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
 	else
-		wst = tr("STR_COUNCIL_IS_DISSATISFIED");
+		st = "STR_COUNCIL_IS_DISSATISFIED";
 
 	woststr.str(L"");
-	woststr << wst;
+	woststr << tr(st);
 
-	bool resetWarning (true);
 	if (_gameOver == false)
 	{
 		if (_gameSave->getFunds() < -999999)
 		{
 			if (_gameSave->getWarned() == true)
 			{
+				_gameOver = true; // you lose.
 				woststr.str(L"");
 				woststr << tr("STR_YOU_HAVE_NOT_SUCCEEDED");
 
-				_pactList.erase(
-							_pactList.begin(),
-							_pactList.end());
-				_happyList.erase(
-							_happyList.begin(),
-							_happyList.end());
-				_sadList.erase(
-							_sadList.begin(),
-							_sadList.end());
-
-				_gameOver = true; // you lose.
+				_happyList.clear();
+				_sadList.clear();
+				_pactList.clear();
 			}
 			else
 			{
-				woststr << "\n\n" << tr("STR_COUNCIL_REDUCE_DEBTS");
-
 				_gameSave->setWarned();
-				resetWarning = false;
-
+				woststr << "\n\n" << tr("STR_COUNCIL_REDUCE_DEBTS");
 				music = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 			}
 		}
+		else
+			_gameSave->setWarned(false);
 	}
-
-	if (resetWarning == true && _gameSave->getWarned() == true)
-		_gameSave->setWarned(false);
 
 	woststr << countryList(
 					_happyList,
@@ -325,6 +305,7 @@ void MonthlyReportState::init()
 {
 	State::init();
 }
+
 /**
  * Updates all activity counters, gathers all scores, gets countries to sign
  * pacts, adjusts their fundings, assesses their satisfaction, and finally
@@ -332,59 +313,100 @@ void MonthlyReportState::init()
  */
 void MonthlyReportState::calculateChanges() // private.
 {
+	const int diff (static_cast<int>(_gameSave->getDifficulty()));
+	if (diff != 0)
+	{
+		int pactScore;
+		for (std::vector<Country*>::const_iterator // add scores for pacted or about-to-pact Countries.
+				i = _gameSave->getCountries()->begin();
+				i != _gameSave->getCountries()->end();
+				++i)
+		{
+			if ((pactScore = (*i)->getRules()->getPactScore() * diff) != 0
+				&& (*i)->getRecentPact() == true || (*i)->getPact() == true)
+			{
+				Region* region (nullptr);
+				for (std::vector<Region*>::const_iterator
+						j = _gameSave->getRegions()->begin();
+						j != _gameSave->getRegions()->end();
+						++j)
+				{
+					if ((*j)->getRules()->getType() == (*i)->getRules()->getCountryRegion())
+					{
+						region = *j;
+						break;
+					}
+				}
+
+				if ((*i)->getPact() == true) // rand if already pacted, full pts for about-to-pact Countries.
+					pactScore = RNG::generate(0, pactScore);
+
+				if (pactScore != 0)
+					_gameSave->scorePoints(
+										region,
+										*i,
+										pactScore,
+										true);
+			}
+		}
+	}
+
 	_ratingPrior = 0;
 	int
-		player (0),
-		alien (0);
+		scorePlayer (0),
+		scoreAlien  (0);
 
-	const size_t assessMonth (_gameSave->getFundsList().size() - 2u); // <- the index of the month assessed
+	const size_t assizeId (_gameSave->getFundsList().size() - 1u); // <- index of the month assessed
 
-	for (std::vector<Region*>::const_iterator
-			i = _gameSave->getRegions()->begin();
+	for (std::vector<Region*>::const_iterator		// NOTE: Only Region scores are evaluated;
+			i = _gameSave->getRegions()->begin();	// Country scores are NOT added.
 			i != _gameSave->getRegions()->end();
 			++i)
 	{
 		(*i)->newMonth();
 
-		if (assessMonth > 0)
-			_ratingPrior += (*i)->getActivityXCom().at(assessMonth - 1u)
-						 - (*i)->getActivityAlien().at(assessMonth - 1u);
+		if (assizeId != 0u)
+			_ratingPrior += (*i)->getActivityXCom() .at(assizeId - 1u)
+						  - (*i)->getActivityAlien().at(assizeId - 1u);
 
-		player += (*i)->getActivityXCom().at(assessMonth);
-		alien += (*i)->getActivityAlien().at(assessMonth);
+		scorePlayer += (*i)->getActivityXCom() .at(assizeId);
+		scoreAlien  += (*i)->getActivityAlien().at(assizeId);
 	}
 
-	std::string st;
-	const int diff (static_cast<int>(_gameSave->getDifficulty()));
+
 	for (std::vector<Country*>::const_iterator
 			i = _gameSave->getCountries()->begin();
 			i != _gameSave->getCountries()->end();
 			++i)
 	{
-		st = (*i)->getRules()->getType();
-
 		if ((*i)->getRecentPact() == true)
-			_pactList.push_back(st);
+			_pactList.push_back((*i)->getRules()->getType());
 
-		(*i)->newMonth(player, alien, diff); // calculates satisfaction & funding.
+		(*i)->newMonth( // calculates satisfaction & funding & updates pact-vars.
+					scorePlayer,
+					scoreAlien,
+					diff);
 		_deltaFunds += (*i)->getFunding().back()
-					 - (*i)->getFunding().at(assessMonth);
+					 - (*i)->getFunding().at(assizeId);
 
 		switch ((*i)->getSatisfaction())
 		{
 			case SAT_SAD:
-				_sadList.push_back(st);
+				_sadList.push_back((*i)->getRules()->getType());
 				break;
 			case SAT_HAPPY:
-				_happyList.push_back(st);
+				_happyList.push_back((*i)->getRules()->getType());
+				break;
 		}
 	}
 
-	if (assessMonth > 0)
-		_ratingPrior += _gameSave->getResearchScores().at(assessMonth - 1u);
+	if (assizeId != 0u)
+		_ratingPrior += _gameSave->getResearchScores().at(assizeId - 1u); // add research-scores.
 
-	player += _gameSave->getResearchScores().at(assessMonth);
-	_ratingTotal = player - alien;
+	scorePlayer += _gameSave->getResearchScores().at(assizeId); // add research-scores.
+	_ratingTotal = scorePlayer - scoreAlien;
+
+	_gameSave->balanceBudget(); // handle cash-accounts.
 }
 
 /**
@@ -487,7 +509,7 @@ std::wstring MonthlyReportState::countryList( // private.
  */
 void MonthlyReportState::awards() // private.
 {
-	for (std::vector<Base*>::const_iterator // Award medals for service time
+	for (std::vector<Base*>::const_iterator // Award medals for service time.
 			i = _gameSave->getBases()->begin();
 			i != _gameSave->getBases()->end();
 			++i)

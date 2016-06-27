@@ -112,7 +112,7 @@ private:
 		{ return _waves[index]; }
 
 		/// Gets the score of the AlienMission rule.
-		int getPoints() const;
+		int getMissionPoints() const;
 
 		/// Gets the objective-type of the AlienMission rule.
 		MissionObjective getObjectiveType() const

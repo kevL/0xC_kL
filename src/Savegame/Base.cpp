@@ -2706,7 +2706,7 @@ int Base::getCashIncome() const
 
 /**
  * Zeros the Base's income-value.
- * @note Used by SavedGame::monthlyFunding() for each new month.
+ * @note Used by SavedGame::balanceBudget() for each new month.
  */
 void Base::zeroCashIncome()
 {
@@ -2733,7 +2733,7 @@ int Base::getCashSpent() const
 
 /**
  * Zeros the Base's expenditure-value.
- * @note Used by SavedGame::monthlyFunding() for each new month.
+ * @note Used by SavedGame::balanceBudget() for each new month.
  */
 void Base::zeroCashSpent()
 {

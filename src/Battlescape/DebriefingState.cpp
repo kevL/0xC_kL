@@ -338,7 +338,7 @@ DebriefingState::DebriefingState()
 	else
 		_txtCost->setVisible(false);
 
-//	_txtRating->setText(tr("STR_RATING").arg(tr(rating)));
+//	_txtRating->setText(tr("STR_RATING_").arg(tr(rating)));
 	_txtRating->setText(tr(rating));
 	_txtRating->setAlign(ALIGN_CENTER);
 

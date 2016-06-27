@@ -34,7 +34,7 @@ class Window;
 
 
 /**
- * Monthly Costs screen that displays all the maintenance costs of a particular base.
+ * A screen that displays all the maintenance costs of a particular Base.
  */
 class MonthlyCostsState
 	:
@@ -61,9 +61,9 @@ private:
 
 
 	public:
-		/// Creates the Monthly Costs state.
+		/// Creates a MonthlyCosts state.
 		explicit MonthlyCostsState(Base* base);
-		/// Cleans up the Monthly Costs state.
+		/// Cleans up the MonthlyCosts state.
 		~MonthlyCostsState();
 
 		/// Handler for clicking the OK button.

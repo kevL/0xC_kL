@@ -33,8 +33,8 @@ class Window;
 
 
 /**
- * Funding screen accessible from the Geoscape that shows all the countries'
- * funding.
+ * Funding screen accessible from the Geoscape that shows all the Countries'
+ * funding of the XCOM project.
  */
 class FundingState
 	:
@@ -58,7 +58,7 @@ private:
 
 
 	public:
-		/// Creates the Funding state.
+		/// Creates a Funding state.
 		FundingState();
 		/// Cleans up the Funding state.
 		~FundingState();

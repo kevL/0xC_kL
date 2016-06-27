@@ -39,7 +39,8 @@ class RuleCountry
 private:
 	int
 		_fundingBase,
-		_fundingCap;
+		_fundingCap,
+		_pactScore;
 	double
 		_labelLon,
 		_labelLat;
@@ -95,6 +96,9 @@ private:
 		std::vector<double>& getLonMax() {return _lonMax;}
 		std::vector<double>& getLatMin() {return _latMin;}
 		std::vector<double>& getLatMax() {return _latMax;}
+
+		/// Gets the aLien-points for signing a pact.
+		int getPactScore() const;
 };
 
 }

@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a region of the specified type.
+ * Initializes a Region with the specified rule.
  * @param regionRule - pointer to RuleRegion
  */
 Region::Region(RuleRegion* const regionRule)
@@ -139,10 +139,10 @@ void Region::newMonth()
 	_actX.push_back(0);
 
 	if (_actA.size() > 12)
+	{
 		_actA.erase(_actA.begin());
-
-	if (_actX.size() > 12)
 		_actX.erase(_actX.begin());
+	}
 }
 
 /**

@@ -254,6 +254,9 @@ private:
 		/// Sets the SavedGame's name.
 		void setName(const std::wstring& name);
 
+		/// Gets this SavedGame's Ruleset.
+//		const Ruleset* getRules() const;
+
 		/// Gets the SavedGame's difficulty.
 		DifficultyLevel getDifficulty() const;
 		/// Sets the SavedGame's difficulty.
@@ -296,7 +299,9 @@ private:
 		void setDfZoom(size_t zoom);
 
 		/// Handles player's monthly funding.
-		void monthlyFunding();
+		void balanceBudget();
+		/// Gets the total country-funding.
+		int getCountryFunding() const;
 
 		/// Sets new funds.
 		void setFunds(int64_t funds);
@@ -326,8 +331,6 @@ private:
 
 		/// Gets the list of Countries.
 		std::vector<Country*>* getCountries();
-		/// Gets the total country-funding.
-		int getCountryFunding() const;
 		/// Gets the list of Regions.
 		std::vector<Region*>* getRegions();
 		/// Gets the list of Bases.
@@ -502,10 +505,16 @@ private:
 		/// Gets the list of MissionStatistics.
 		std::vector<MissionStatistics*>* getMissionStatistics();
 
-		/// Scores points for xCom or aLiens.
+		/// Scores points for xCom or aLiens at coordinates.
 		void scorePoints(
 				double lon,
 				double lat,
+				int pts,
+				bool aLien) const;
+		/// Scores points for xCom or aLiens in Region/Country.
+		void scorePoints(
+				Region* const region,
+				Country* const country,
 				int pts,
 				bool aLien) const;
 

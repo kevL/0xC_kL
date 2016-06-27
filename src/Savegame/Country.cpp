@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the Country from a specified type.
+ * Initializes the Country from a specified rule.
  * @param countryRule	- pointer to RuleCountry
  * @param genFunds		- true to generate new funding (default false)
  */
@@ -123,15 +123,6 @@ std::vector<int>& Country::getFunding()
 }
 
 /**
- * Changes this Country's current monthly funding.
- * @param funding - monthly funds
- */
-void Country::setFunding(int funding)
-{
-	_funding.back() = funding;
-}
-
-/**
  * Keith Richards would be so proud.
  * @return, satisfaction level (Country.h)
  *			0 = unhappy
@@ -183,8 +174,8 @@ std::vector<int>& Country::getActivityXCom()
 }
 
 /**
- * Resets all the counters, calculates monthly funding, and sets the delta value
- * for the month.
+ * Resets the funding- and activity-counters, calculates monthly funding, and
+ * sets the cash-delta-value for the month.
  * @param totalX	- the council's xCom score
  * @param totalA	- the council's aLien score
  * @param diff		- game difficulty
@@ -195,65 +186,97 @@ void Country::newMonth(
 		const int diff)
 {
 	//Log(LOG_INFO) << "Country::newMonth()";
-	_satisfaction = SAT_NEUTRAL;
-
-	const int
-		xComPts ((totalX / 10) + _actX.back()),
-		aLienPts ((totalA / 20) + _actA.back()),
-		funding (getFunding().back()),
-		oldFunding (_funding.back() / 1000);
-	int newFunding ((oldFunding * RNG::generate(5,20) / 100) * 1000);
-
-	if (xComPts > aLienPts + ((diff + 1) * 20)) // country auto. increases funding
+	int funds;
+	if (_pact == false && _newPact == false)
 	{
-		//Log(LOG_INFO) << ". auto funding increase";
-		const int cap (getRules()->getFundingCap() * 1000);
-		if (funding + newFunding > cap)
-			newFunding = cap - funding;
+		const int
+			scorePlayer (totalX / 10 + _actX.back()),
+			scoreAlien  (totalA / 20 + _actA.back()),
 
-		if (newFunding != 0)
-			_satisfaction = SAT_HAPPY;
-	}
-	else if (xComPts - (diff * 20) > aLienPts) // 50-50 increase/decrease funding
-	{
-		//Log(LOG_INFO) << ". possible funding increase/decrease";
-		if (RNG::generate(0, xComPts) > aLienPts)
+			fundsPre (_funding.back());
+
+		funds = static_cast<int>(static_cast<float>(fundsPre) * RNG::generate(0.05f,0.2f)); // increase OR decrease 5..20%
+
+		if (scorePlayer > scoreAlien + ((diff + 1) * 20))
 		{
-			//Log(LOG_INFO) << ". . funding increase";
-			const int cap (getRules()->getFundingCap() * 1000);
-			if (funding + newFunding > cap)
-				newFunding = cap - funding;
-
-			if (newFunding != 0)
-				_satisfaction = SAT_HAPPY;
+			funds = std::min(funds,
+							_countryRule->getFundingCap() - fundsPre);
+			switch (funds)
+			{
+				case 0: // Country's funding is already capped.
+					_satisfaction = SAT_NEUTRAL;
+					break;
+				default:
+					_satisfaction = SAT_HAPPY;
+			}
 		}
-		else if (RNG::generate(0, aLienPts) > xComPts
-			&& newFunding != 0)
+		else if (scorePlayer - (diff * 20) > scoreAlien)
 		{
-			//Log(LOG_INFO) << ". . funding decrease";
-			newFunding = -newFunding;
-			_satisfaction = SAT_SAD;
+			if (RNG::generate(0, scorePlayer) > scoreAlien)
+			{
+				funds = std::min(funds,
+								_countryRule->getFundingCap() - fundsPre);
+				switch (funds)
+				{
+					case 0: // Country's funding is already capped.
+						_satisfaction = SAT_NEUTRAL;
+						break;
+					default:
+						_satisfaction = SAT_HAPPY;
+				}
+			}
+			else if (RNG::generate(0, scoreAlien) > scorePlayer)
+			{
+				switch (funds)
+				{
+					case 0: // Country's funding is already zero'd.
+						_satisfaction = SAT_NEUTRAL;
+						break;
+					default:
+						_satisfaction = SAT_SAD;
+				}
+			}
+			else
+			{
+				funds = 0;
+				_satisfaction = SAT_NEUTRAL;
+			}
+		}
+		else
+		{
+			switch (funds)
+			{
+				case 0: // Country's funding is already zero'd.
+					_satisfaction = SAT_NEUTRAL;
+					break;
+				default:
+					_satisfaction = SAT_SAD;
+			}
+		}
+
+		switch (_satisfaction)
+		{
+			case SAT_HAPPY:
+				funds += fundsPre;
+				break;
+
+			case SAT_SAD:
+				funds = fundsPre - funds;
 		}
 	}
-	else if (newFunding != 0) // auto. funding decrease
+	else // pacted or about to pact.
 	{
-		//Log(LOG_INFO) << ". auto funding decrease";
-		newFunding = -newFunding;
-		_satisfaction = SAT_SAD;
+		funds = 0;
+		_satisfaction = SAT_NEUTRAL; // safety.
 	}
 
-	if (_newPact == true && _pact == false) // about to be in cahoots
+	_funding.push_back(funds);
+
+	if (_pact == false && _newPact == true) // now in cahoots
 	{
-		_newPact = false;
 		_pact = true;
+		_newPact = false;
 	}
-
-	if (_pact == true) // set the new funding and reset the activity meters
-		_funding.push_back(0);
-	else if (_satisfaction != SAT_NEUTRAL)
-		_funding.push_back(funding + newFunding);
-	else
-		_funding.push_back(funding);
 
 	_actA.push_back(0);
 	_actX.push_back(0);
@@ -293,14 +316,6 @@ bool Country::getPact() const
 {
 	return _pact;
 }
-
-/**
- * Signs a new pact.
- *
-void Country::setPact()
-{
-	 _pact = true;
-} */
 
 /**
  * Handles recent aLien activity in this country for GraphsState blink.

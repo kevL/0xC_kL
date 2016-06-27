@@ -37,7 +37,8 @@ RuleCountry::RuleCountry(const std::string& type)
 		_fundingBase(0),
 		_fundingCap(0),
 		_labelLon(0.),
-		_labelLat(0.)
+		_labelLat(0.),
+		_pactScore(0)
 {}
 
 /**
@@ -58,6 +59,7 @@ void RuleCountry::load(const YAML::Node& node)
 	_labelLon		= node["labelLon"]		.as<double>(_labelLon) * M_PI / 180.; // converts degrees to radians
 	_labelLat		= node["labelLat"]		.as<double>(_labelLat) * M_PI / 180.; // converts degrees to radians
 	_region			= node["region"]		.as<std::string>();
+	_pactScore		= node["pactScore"]		.as<int>(_pactScore);
 
 	std::vector<std::vector<double>> areas;
 	areas = node["areas"].as<std::vector<std::vector<double>>>(areas);
@@ -92,13 +94,13 @@ const std::string& RuleCountry::getType() const
 
 /**
  * Generates the random starting funding for the represented Country.
- * @return, the monthly funding
+ * @return, the monthly funding in $thousands
  */
 int RuleCountry::generateFunding() const
 {
 	return RNG::generate(
-					_fundingBase / 2,
-					_fundingBase * 2) * 1000;
+					_fundingBase >> 1u,
+					_fundingBase << 1u);
 }
 
 /**
@@ -149,7 +151,7 @@ bool RuleCountry::insideCountry(
 		double lat) const
 {
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != _lonMin.size();
 			++i)
 	{
@@ -170,6 +172,15 @@ bool RuleCountry::insideCountry(
 	}
 
 	return false;
+}
+
+/**
+ * Gets the aLien-points for signing a pact.
+ * @return, score
+ */
+int RuleCountry::getPactScore() const
+{
+	return _pactScore;
 }
 
 }

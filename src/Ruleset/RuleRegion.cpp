@@ -30,8 +30,8 @@ namespace OpenXcom
 {
 
 /**
- * Creates a rule for a specified type of RuleRegion.
- * @param type - reference to a string defining the type
+ * Creates a RuleRegion of a specified type.
+ * @param type - reference to the type
  */
 RuleRegion::RuleRegion(const std::string& type)
 	:

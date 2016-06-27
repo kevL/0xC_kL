@@ -180,7 +180,7 @@ std::string RuleAlienMission::generateRace(size_t monthsPassed) const
  * Gets the alien-score of this AlienMission rule.
  * @return, score points
  */
-int RuleAlienMission::getPoints() const
+int RuleAlienMission::getMissionPoints() const
 {
 	return _points;
 }

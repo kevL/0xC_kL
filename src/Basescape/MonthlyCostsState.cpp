@@ -44,7 +44,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Monthly Costs screen.
+ * Initializes all the elements in the MonthlyCosts screen.
  * @param base - pointer to the Base to get info from
  */
 MonthlyCostsState::MonthlyCostsState(Base* base)
@@ -102,18 +102,20 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_txtRental->setText(tr("STR_CRAFT_RENTAL"));
 
 	int
-		cost, qty;
+		cost,
+		qty;
 
 	_lstCrafts->setColumns(4, 124,62,43,56);
 	_lstCrafts->setMargin();
 	_lstCrafts->setDot();
+	const RuleCraft* crRule;
 	const std::vector<std::string>& allCraft (_game->getRuleset()->getCraftsList());
 	for (std::vector<std::string>::const_iterator
 			i = allCraft.begin();
 			i != allCraft.end();
 			++i)
 	{
-		const RuleCraft* const crRule (_game->getRuleset()->getCraft(*i));
+		crRule = _game->getRuleset()->getCraft(*i);
 		if (_game->getSavedGame()->isResearched(crRule->getRequirements()) == true)
 		{
 			cost = crRule->getRentCost();
@@ -133,15 +135,16 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstSalaries->setColumns(4, 124,62,43,56);
 	_lstSalaries->setMargin();
 	_lstSalaries->setDot();
+	const RuleSoldier* solRule;
 	const std::vector<std::string>& soldierList (_game->getRuleset()->getSoldiersList());
 	for (std::vector<std::string>::const_iterator
 			i = soldierList.begin();
 			i != soldierList.end();
 			++i)
 	{
-		const RuleSoldier* const sol (_game->getRuleset()->getSoldier(*i));
-		if (sol->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(sol->getRequirements()))
+		solRule = _game->getRuleset()->getSoldier(*i);
+		if (solRule->getBuyCost() != 0
+			&& _game->getSavedGame()->isResearched(solRule->getRequirements()))
 		{
 			std::string type;
 			if (i == soldierList.begin())
@@ -149,7 +152,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 			else
 				type = *i;
 
-			cost = _game->getRuleset()->getSoldier(*i)->getSalaryCost();
+			cost = solRule->getSalaryCost();
 			qty = base->getSoldierCount(*i);
 			_lstSalaries->addRow(
 							4,
@@ -198,7 +201,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 					Text::formatCurrency(base->getMonthlyMaintenace()).c_str());
 
 	woststr.str(L"");
-	woststr << tr("STR_INCOME") << L" " << Text::formatCurrency(_game->getSavedGame()->getCountryFunding());
+	woststr << tr("STR_INCOME") << L" " << Text::formatCurrency(_game->getSavedGame()->getCountryFunding() * 1000);
 	_txtIncome->setText(woststr.str());
 
 	_lstTotal->setColumns(2, 47,56);

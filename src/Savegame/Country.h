@@ -64,7 +64,7 @@ private:
 
 
 	public:
-		/// Creates a Country of the specified type.
+		/// Creates a Country with the specified rule.
 		Country(
 				const RuleCountry* const countryRule,
 				bool genFunds = false);
@@ -83,8 +83,6 @@ private:
 
 		/// Gets the Country's funding.
 		std::vector<int>& getFunding();
-		/// Sets the Country's funding.
-		void setFunding(int funding);
 
 		/// Gets the Country's satisfaction-level.
 		SatisfactionType getSatisfaction() const;
@@ -110,14 +108,12 @@ private:
 		bool getRecentPact() const;
 		/// Gets if they already signed a pact w/ aLiens.
 		bool getPact() const;
-		/// Signs a pact w/ aLiens immediately!1
-//		void setPact();
 
-		/// Handles recent alien activity in the Country for GraphsState blink.
+		/// Handles recent aLien-activity in the Country for GraphsState blink.
 		bool recentActivityAlien(
 				bool activity = true,
 				bool graphs = false);
-		/// Handles recent XCOM activity in the Country for GraphsState blink.
+		/// Handles recent XCOM-activity in the Country for GraphsState blink.
 		bool recentActivityXCom(
 				bool activity = true,
 				bool graphs = false);

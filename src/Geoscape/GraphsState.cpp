@@ -1828,7 +1828,7 @@ void GraphsState::drawCountryLines() // private.
 			if (_alien == true)
 				act = _game->getSavedGame()->getCountries()->at(j)->getActivityAlien().at(i);
 			else if (_income == true)
-				act = _game->getSavedGame()->getCountries()->at(j)->getFunding().at(i) / 1000;
+				act = _game->getSavedGame()->getCountries()->at(j)->getFunding().at(i);
 			else
 				act = _game->getSavedGame()->getCountries()->at(j)->getActivityXCom().at(i);
 
@@ -1924,8 +1924,8 @@ void GraphsState::drawCountryLines() // private.
 				if (j < country->getFunding().size())
 				{
 					reduction = country->getFunding().at(country->getFunding().size() - (j + 1));
-					y -= static_cast<Sint16>(Round(static_cast<float>(reduction) / 1000.f / pixelUnits));
-					totals[j] += static_cast<int>(Round(static_cast<float>(reduction) / 1000.f));
+					y -= static_cast<Sint16>(Round(static_cast<float>(reduction) / pixelUnits));
+					totals[j] += reduction;
 				}
 			}
 			else

@@ -1136,28 +1136,24 @@ SavedGame* Ruleset::createSave(Game* const game) const
 			++i)
 	{
 		RuleCountry* const country (getCountry(*i));
-		if (country->getLonMin().empty() == false) // safety.
-			gameSave->getCountries()->push_back(new Country(country, true));
+//		if (country->getLonMin().empty() == false) // safety.
+		gameSave->getCountries()->push_back(new Country(country, true));
 	}
 	//Log(LOG_INFO) << ". countries DONE";
 
-//	int missing = ((_initialFunding - gameSave->getCountryFunding() / 1000) / (int)gameSave->getCountries()->size()) * 1000;
-	for (std::vector<Country*>::const_iterator // Adjust funding to total $6-million.
-			i = gameSave->getCountries()->begin();
-			i != gameSave->getCountries()->end();
-			++i)
-	{
-//		int funding = (*i)->getFunding().back() + missing;
-//		if (funding < 0)
-//			funding = (*i)->getFunding().back();
+	// Adjust funding to total $6-million.
+//	int missing ((_initialFunding - gameSave->getCountryFunding()) / (int)gameSave->getCountries()->size());
+//	for (std::vector<Country*>::const_iterator
+//			i = gameSave->getCountries()->begin();
+//			i != gameSave->getCountries()->end();
+//			++i)
+//	{
+//		int fund (std::max(0,
+//						  (*i)->getFunding().back() + missing));
+//		(*i)->getFunding().back() = fund;
+//	}
 
-		int funding ((*i)->getFunding().back());
-		if (funding < 0) funding = 0; // safety, i guess.
-
-		(*i)->setFunding(funding);
-	}
-
-	gameSave->setFunds(gameSave->getCountryFunding());
+	gameSave->setFunds(gameSave->getCountryFunding() * 1000);
 	//Log(LOG_INFO) << ". funding DONE";
 
 	for (std::vector<std::string>::const_iterator // add Regions.

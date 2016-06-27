@@ -2499,7 +2499,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // pri
 
 		basicPts = terrorSite->getTerrorDeployment()->getPointsPer30(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
-			basicPts = terrorSite->getRules()->getPoints() / 10;
+			basicPts = terrorSite->getRules()->getMissionPoints() / 10;
 
 		aLienPts = basicPts + (diff * 10) + month;
 	}
@@ -2509,7 +2509,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // pri
 
 		basicPts = terrorSite->getTerrorDeployment()->getDespawnPenalty(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
-			basicPts = terrorSite->getRules()->getPoints() * 5;
+			basicPts = terrorSite->getRules()->getMissionPoints() * 5;
 
 		aLienPts = basicPts + (diff * (235 + month));
 	}
@@ -3136,7 +3136,7 @@ void GeoscapeState::time1Day()
 	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
 																alm_BASE,
 																_gameSave->getMonthsPassed()));
-	const int aLienPts ((missionRule->getPoints() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
+	const int aLienPts ((missionRule->getMissionPoints() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
 	if (aLienPts != 0)
 	{
 		for (std::vector<AlienBase*>::const_iterator
@@ -3238,103 +3238,12 @@ void GeoscapeState::time1Month()
 {
 	//Log(LOG_INFO) << "GeoscapeState::time1Month()";
 	resetTimer();
-	_gameSave->addMonth();
-
-	deterAlienMissions(); // determine alien mission for this month.
-
-/*	const int monthsPassed = _gameSave->getMonthsPassed();
-//	if (monthsPassed > 5)
-	if (RNG::percent(monthsPassed * 2) == true)
-		deterAlienMissions(); // kL_note: determine another one, I guess.
-
-	setupLandMission(); // always add a Mission, eg. TerrorMission, to the regular mission(s) <-
-
-	const int diff = static_cast<int>(_gameSave->getDifficulty());
-
-	bool newRetaliation = false;
-//	if (monthsPassed > 13 - static_cast<int>(_gameSave->getDifficulty())
-	if (RNG::percent((monthsPassed * diff) + 3) == true
-		|| _gameSave->isResearched("STR_THE_MARTIAN_SOLUTION") == true)
-	{
-		newRetaliation = true;
-	} */
-
-/*	for (std::vector<Base*>::const_iterator // initiate a new retaliation mission if applicable
-			i = _gameSave->getBases()->begin();
-			i != _gameSave->getBases()->end();
-			++i)
-	{
-		if (newRetaliation == true)
-		{
-			for (std::vector<Region*>::const_iterator
-					j = _gameSave->getRegions()->begin();
-					j != _gameSave->getRegions()->end();
-					++j)
-			{
-				if ((*j)->getRules()->insideRegion(
-												(*i)->getLongitude(),
-												(*i)->getLatitude()) == true)
-				{
-					if (_gameSave->findAlienMission(
-												(*j)->getRules()->getType(),
-												alm_RETAL) == false)
-					{
-						const RuleAlienMission& missionRule = *_rules->getMissionRand(
-																				alm_RETAL,
-																				_gameSave->getMonthsPassed());
-						AlienMission* const mission = new AlienMission(
-																	missionRule,
-																	*_gameSave);
-						mission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
-						mission->setRegion(
-										(*j)->getRules()->getType(),
-										*_rules);
-
-//						int race = RNG::generate(
-//											0,
-//											static_cast<int>(
-//													_rules->getAlienRacesList().size())
-//												- 2); // -2 to avoid "MIXED" race
-//						mission->setRace(_rules->getAlienRacesList().at(race));
-						// get races for retaliation missions
-						std::vector<std::string> raceList = _rules->getAlienRacesList();
-						for (std::vector<std::string>::const_iterator
-								k = raceList.begin();
-								k != raceList.end();
-								)
-						{
-							if (_rules->getAlienRace(*k)->canRetaliate() == true)
-								++k;
-							else
-								k = raceList.erase(k);
-						}
-
-						const size_t race = static_cast<size_t>(RNG::generate(
-																		0,
-																		static_cast<int>(raceList.size()) - 1));
-						mission->setRace(raceList[race]);
-						mission->start(150);
-						_gameSave->getAlienMissions().push_back(mission);
-
-						newRetaliation = false;
-					}
-
-					break;
-				}
-			}
-		}
-	} */
-
-	_gameSave->monthlyFunding(); // handle Funding
-	_game->getResourcePack()->fadeMusic(_game, 1232);
 
 	popup(new MonthlyReportState());
 
-
-	// handle xCom Secret Agents discovering bases
-	if (_gameSave->getAlienBases()->empty() == false)
+	if (_gameSave->getAlienBases()->empty() == false) // handle xCom Secret Agents discovering bases
 	{
-		const int pct (20 - static_cast<int>(_gameSave->getDifficulty()) * 5);
+		const int pct (20 - (static_cast<int>(_gameSave->getDifficulty()) * 5));
 		if (RNG::percent(50 + pct) == true)
 		{
 			for (std::vector<AlienBase*>::const_iterator
@@ -3343,13 +3252,15 @@ void GeoscapeState::time1Month()
 					++i)
 			{
 				if ((*i)->isDetected() == false && RNG::percent(5 + pct) == true)
-				{
-					resetTimer();
 					popup(new AlienBaseDetectedState(*i, false));
-				}
 			}
 		}
 	}
+
+	_gameSave->addMonth();
+	deterAlienMissions(); // determine aLien-mission-possibilities for the new month.
+
+	_game->getResourcePack()->fadeMusic(_game, 1232);
 }
 
 /**
@@ -4010,8 +3921,9 @@ void GeoscapeState::baseDefenseTactical(
  */
 void GeoscapeState::deterAlienMissions() // private.
 {
+	const int elapsed (_gameSave->getMonthsPassed());
+
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
-	const int month (_gameSave->getMonthsPassed());
 	std::vector<RuleMissionScript*> availableMissions;
 	std::map<int, bool> conditions;
 
@@ -4023,8 +3935,8 @@ void GeoscapeState::deterAlienMissions() // private.
 	{
 		directive = _rules->getMissionScript(*i);
 
-		if (directive->getFirstMonth() <= month
-			&& (directive->getLastMonth() >= month
+		if (directive->getFirstMonth() <= elapsed
+			&& (directive->getLastMonth() >= elapsed
 				|| directive->getLastMonth() == -1)
 			&& (directive->getMaxRuns() == -1
 				|| directive->getMaxRuns() > strategy.getMissionsRun(directive->getVarType()))
@@ -4112,8 +4024,9 @@ void GeoscapeState::deterAlienMissions() // private.
  */
 bool GeoscapeState::processDirective(RuleMissionScript* const directive) // private.
 {
+	const int elapsed (_gameSave->getMonthsPassed());
+
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
-	const int month (_gameSave->getMonthsPassed());
 	const RuleAlienMission* missionRule;
 	std::string
 		typeRegion,
@@ -4123,8 +4036,8 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 
 	if (directive->terrorType() == true)
 	{
-		typeMission = directive->genDataType(month, GT_MISSION);
-		const std::vector<std::string> missionTypes (directive->getMissionTypes(month));
+		typeMission = directive->genDataType(elapsed, GT_MISSION);
+		const std::vector<std::string> missionTypes (directive->getMissionTypes(elapsed));
 		size_t
 			missionsTotal (missionTypes.size()),
 			missionsTest (0u);
@@ -4150,7 +4063,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 
 			std::vector<std::string> regions;
 			if (directive->hasRegionWeights() == true)
-				regions = directive->getRegions(month);
+				regions = directive->getRegions(elapsed);
 			else
 				regions = _rules->getRegionsList();
 
@@ -4222,7 +4135,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		while (terrorZoneId == std::numeric_limits<size_t>::max())
 		{
 			if (directive->hasRegionWeights() == true)
-				typeRegion = directive->genDataType(month, GT_REGION);
+				typeRegion = directive->genDataType(elapsed, GT_REGION);
 			else
 				typeRegion = _rules->getRegionsList().at(RNG::pick(_rules->getRegionsList().size()));
 
@@ -4268,7 +4181,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 			regionsPlayerBases.push_back(_gameSave->locateRegion(**i)->getRules()->getType());
 		}
 
-		std::vector<std::string> missionTypes (directive->getMissionTypes(month));
+		std::vector<std::string> missionTypes (directive->getMissionTypes(elapsed));
 		if (missionTypes.empty() == false)
 		{
 			std::vector<std::string> regionTypes;
@@ -4333,7 +4246,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		}
 	}
 	else if (directive->hasRegionWeights() == true)
-		typeRegion = directive->genDataType(month, GT_REGION);
+		typeRegion = directive->genDataType(elapsed, GT_REGION);
 	else
 		typeRegion = strategy.chooseRegion(_rules);
 
@@ -4354,7 +4267,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 		if (directive->hasMissionWeights() == false)
 			typeMission = strategy.chooseMission(typeRegion);
 		else
-			typeMission = directive->genDataType(month, GT_MISSION);
+			typeMission = directive->genDataType(elapsed, GT_MISSION);
 	}
 
 	if (typeMission.empty() == true)
@@ -4372,9 +4285,9 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	}
 
 	if (directive->hasRaceWeights() == false)
-		typeRace = missionRule->generateRace(month);
+		typeRace = missionRule->generateRace(elapsed);
 	else
-		typeRace = directive->genDataType(month, GT_RACE);
+		typeRace = directive->genDataType(elapsed, GT_RACE);
 
 	if (_rules->getAlienRace(typeRace) == nullptr)
 	{

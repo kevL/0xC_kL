@@ -137,7 +137,6 @@ FundingState::FundingState()
 	} */ // End debug-data.
 
 	_lstCountries->setColumns(6, 102,60,6,54,6,54);
-//	_lstCountries->setMargin();
 	_lstCountries->setDot();
 	_lstCountries->setBackground(_window);
 	_lstCountries->setSelectable();
@@ -192,11 +191,11 @@ FundingState::FundingState()
 					actX ((*i)->getActivityXCom()),
 					actA ((*i)->getActivityAlien());
 
-				woststr1 << L'\x01' << Text::formatCurrency(funds.at(funds.size() - 1));
+				woststr1 << L'\x01' << Text::formatCurrency(funds.at(funds.size() - 1u) * 1000);
 
-				if (funds.size() > 1)
+				if (funds.size() > 1u)
 				{
-					int change (funds.back() - funds.at(funds.size() - 2));
+					int change (funds.back() - funds.at(funds.size() - 2u));
 					if (change > 0)
 						woststr2 << L'\x01' << L'+';
 					else if (change < 0)
@@ -207,7 +206,7 @@ FundingState::FundingState()
 					else
 						woststr2 << L' ' << L' ';
 
-					woststr3 << L'\x01' << Text::formatCurrency(change);
+					woststr3 << L'\x01' << Text::formatCurrency(change * 1000);
 				}
 				else
 				{
@@ -215,7 +214,7 @@ FundingState::FundingState()
 					woststr3 << Text::formatCurrency(0);
 				}
 
-				int score (actX.at(actX.size() - 1) - actA.at(actA.size() - 1));
+				int score (actX.at(actX.size() - 1u) - actA.at(actA.size() - 1u));
 				if (score > -1)
 					woststr4 << L' ' << L' ';
 				else
@@ -238,70 +237,7 @@ FundingState::FundingState()
 		}
 	}
 
-
-/*	for (std::vector<Country*>::const_iterator
-			i = _game->getSavedGame()->getCountries()->begin();
-			i != _game->getSavedGame()->getCountries()->end();
-			++i)
-	{
-		std::wostringstream
-			woststr1,
-			woststr2,
-			woststr3,
-			woststr4,
-			woststr5;
-
-		const std::vector<int>
-			funds ((*i)->getFunding()),
-			actX ((*i)->getActivityXCom()),
-			actA ((*i)->getActivityAlien());
-
-		woststr1 << L'\x01' << Text::formatCurrency(funds.at(funds.size() - 1));
-
-		if (funds.size() > 1)
-		{
-			int change (funds.back() - funds.at(funds.size() - 2));
-			if (change > 0)
-				woststr2 << L'\x01' << L'+';
-			else if (change < 0)
-			{
-				woststr2 << L'\x01' << L'-';
-				change = -change;
-			}
-			else
-				woststr2 << L' ' << L' ';
-
-			woststr3 << L'\x01' << Text::formatCurrency(change);
-		}
-		else
-		{
-			woststr2 << L' ' << L' ';
-			woststr3 << Text::formatCurrency(0);
-		}
-
-		int score (actX.at(actX.size() - 1) - actA.at(actA.size() - 1));
-		if (score > -1)
-			woststr4 << L' ' << L' ';
-		else
-		{
-			woststr4 << L'\x01' << L'-';
-			score = -score;
-		}
-
-		woststr5 << L'\x01' << score;
-
-		_lstCountries->addRow(
-							6,
-							tr((*i)->getRules()->getType()).c_str(),
-							woststr1.str().c_str(),
-							woststr2.str().c_str(),
-							woststr3.str().c_str(),
-							woststr4.str().c_str(),
-							woststr5.str().c_str());
-	} */
-
-
-	const int gross (_game->getSavedGame()->getCountryFunding());
+	const int gross (_game->getSavedGame()->getCountryFunding() * 1000);
 	int net (gross);
 
 	for (std::vector<Base*>::const_iterator

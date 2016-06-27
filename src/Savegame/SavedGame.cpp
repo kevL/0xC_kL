@@ -812,6 +812,15 @@ void SavedGame::setName(const std::wstring& name)
 }
 
 /**
+ * Gets this SavedGame's Ruleset.
+ * @return, pointer to the Ruleset
+ *
+const Ruleset* SavedGame::getRules() const
+{
+	return _rules;
+} */
+
+/**
  * Gets this SavedGame's difficulty setting.
  * @return, difficulty-level
  */
@@ -976,34 +985,34 @@ void SavedGame::setDfZoom(size_t zoom)
 }
 
 /**
- * Gives the player his/her monthly funds.
+ * Resets all monthly accounts and gives the player his/her monthly funds.
  * @note Takes into account all maintenance and profit/expenditure costs. Also
  * stores monthly totals for the GraphsState.
  */
-void SavedGame::monthlyFunding()
+void SavedGame::balanceBudget()
 {
 	int
-		income (0),
-		expenditure (0);
+		cashIn (0),
+		cashOut (0);
 
 	for (std::vector<Base*>::const_iterator
 			i = _bases.begin();
 			i != _bases.end();
 			++i)
 	{
-		income += (*i)->getCashIncome();
-		expenditure += (*i)->getCashSpent();
+		cashIn  += (*i)->getCashIncome();
+		cashOut += (*i)->getCashSpent();
 
 		(*i)->zeroCashIncome();
 		(*i)->zeroCashSpent();
 	}
 
-	_income.back() = income;							// INCOME
+	_income.back() = cashIn; // INCOME
 	_income.push_back(0);
 	if (_income.size() > 12u)
 		_income.erase(_income.begin());
 
-	_expenditure.back() = expenditure;					// EXPENDITURE
+	_expenditure.back() = cashOut; // EXPENDITURE
 	_expenditure.push_back(0);
 	if (_expenditure.size() > 12u)
 		_expenditure.erase(_expenditure.begin());
@@ -1011,20 +1020,37 @@ void SavedGame::monthlyFunding()
 
 	const int maintenance (getBaseMaintenances());
 
-	_maintenance.back() = maintenance;					// MAINTENANCE
+	_maintenance.back() = maintenance; // MAINTENANCE
 	_maintenance.push_back(0);
 	if (_maintenance.size() > 12u)
 		_maintenance.erase(_maintenance.begin());
 
-	_funds.back() += getCountryFunding() - maintenance;	// BALANCE
+	_funds.back() += getCountryFunding() * 1000 - maintenance; // BALANCE
 	_funds.push_back(_funds.back());
 	if (_funds.size() > 12)
 		_funds.erase(_funds.begin());
 
-	_researchScores.push_back(0);						// SCORE (doesn't include xCom - aLien activity)
+
+	_researchScores.push_back(0); // SCORE (doesn't include xCom - aLien activity)
 	if (_researchScores.size() > 12u)
 		_researchScores.erase(_researchScores.begin());
+}
 
+/**
+ * Adds up the monthly funding of all the Countries.
+ * @return, total funding
+ */
+int SavedGame::getCountryFunding() const
+{
+	int total (0);
+	for (std::vector<Country*>::const_iterator
+			i = _countries.begin();
+			i != _countries.end();
+			++i)
+	{
+		total += (*i)->getFunding().back();
+	}
+	return total;
 }
 
 /**
@@ -1140,23 +1166,6 @@ void SavedGame::setCanonicalIds(const std::map<std::string, int>& ids)
 std::vector<Country*>* SavedGame::getCountries()
 {
 	return &_countries;
-}
-
-/**
- * Adds up the monthly funding of all the Countries.
- * @return, total funding
- */
-int SavedGame::getCountryFunding() const
-{
-	int total (0);
-	for (std::vector<Country*>::const_iterator
-			i = _countries.begin();
-			i != _countries.end();
-			++i)
-	{
-		total += (*i)->getFunding().back();
-	}
-	return total;
 }
 
 /**
@@ -2026,7 +2035,7 @@ int SavedGame::getSoldierScore(Soldier* const soldier)
 //	if (stats->psiSkill > 0)
 //		score += stats->psiStrength + stats->psiSkill * 2;
 
-	return (score + (soldier->getMissions() + soldier->getKills()) * 8);
+	return ((score + (soldier->getMissions() + soldier->getKills())) << 3u);
 }
 
 /**
@@ -2388,11 +2397,11 @@ std::vector<MissionStatistics*>* SavedGame::getMissionStatistics()
 }
 
 /**
- * Scores points for XCom or aLiens.
+ * Scores points for XCOM or aLiens at specified coordinates.
  * @param lon	- longitude
  * @param lat	- latitude
  * @param pts	- points to award
- * @param aLien	- true if aLienPts; false if XCom points
+ * @param aLien	- true if aLienPts; false if XCOM points
  */
 void SavedGame::scorePoints(
 		double lon,
@@ -2439,6 +2448,48 @@ void SavedGame::scorePoints(
 				(*i)->recentActivityXCom();
 			}
 			break;
+		}
+	}
+}
+
+/**
+ * Scores points for XCOM or aLiens in specified Region/Country.
+ * @param region	- pointer to Region
+ * @param country	- pointer to Country
+ * @param pts		- points to award
+ * @param aLien		- true if aLienPts; false if XCOM points
+ */
+void SavedGame::scorePoints(
+		Region* const region,
+		Country* const country,
+		int pts,
+		bool aLien) const
+{
+	if (region != nullptr)
+	{
+		if (aLien == true)
+		{
+			region->addActivityAlien(pts);
+			region->recentActivityAlien();
+		}
+		else // XCom
+		{
+			region->addActivityXCom(pts);
+			region->recentActivityXCom();
+		}
+	}
+
+	if (country != nullptr)
+	{
+		if (aLien == true)
+		{
+			country->addActivityAlien(pts);
+			country->recentActivityAlien();
+		}
+		else // XCom
+		{
+			country->addActivityXCom(pts);
+			country->recentActivityXCom();
 		}
 	}
 }
