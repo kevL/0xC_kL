@@ -2748,7 +2748,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 					case MSC_ADDCRAFT:
 						if (_craft != nullptr)
 						{
-							craftBlock = _craft->getRules()->getBattlescapeTerrainData()->getMapBlockRand(999,999, 0, false);
+							craftBlock = _craft->getRules()->getTacticalTerrainData()->getMapBlockRand(999,999, 0, false);
 							if (addCraft(craftBlock, *i, _craftPos) == true)
 							{
 								// By default addCraft adds blocks from group 1.
@@ -2793,9 +2793,9 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 						//
 						// - Warboy opus (c.2015)
 						if (_rules->getUfo((*i)->getUfoType()) != nullptr)
-							ufoTerrain = _rules->getUfo((*i)->getUfoType())->getBattlescapeTerrainData();
+							ufoTerrain = _rules->getUfo((*i)->getUfoType())->getTacticalTerrainData();
 						else if (_ufo != nullptr)
-							ufoTerrain = _ufo->getRules()->getBattlescapeTerrainData();
+							ufoTerrain = _ufo->getRules()->getTacticalTerrainData();
 
 						if (ufoTerrain != nullptr)
 						{
@@ -2994,8 +2994,8 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 	if (craftBlock != nullptr)
 	{
 		for (std::vector<MapDataSet*>::const_iterator
-				i = _craft->getRules()->getBattlescapeTerrainData()->getMapDataSets()->begin();
-				i != _craft->getRules()->getBattlescapeTerrainData()->getMapDataSets()->end();
+				i = _craft->getRules()->getTacticalTerrainData()->getMapDataSets()->begin();
+				i != _craft->getRules()->getTacticalTerrainData()->getMapDataSets()->end();
 				++i)
 		{
 			(*i)->loadData();
@@ -3010,7 +3010,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 				craftBlock,
 				static_cast<int>(_craftPos.x * 10),
 				static_cast<int>(_craftPos.y * 10),
-				_craft->getRules()->getBattlescapeTerrainData(),
+				_craft->getRules()->getTacticalTerrainData(),
 				blockDataSetIdOffset + craftDataSetIdOffset,
 				false, // was true
 				true);

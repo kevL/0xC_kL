@@ -325,7 +325,7 @@ int RuleCraft::getScore() const
  * Gets the terrain data needed to draw the Craft in the battlescape.
  * @return, pointer to RuleTerrain data
  */
-RuleTerrain* RuleCraft::getBattlescapeTerrainData()
+RuleTerrain* RuleCraft::getTacticalTerrainData()
 {
 	return _tacticalTerrainData;
 }

@@ -154,7 +154,7 @@ private:
 		int getScore() const;
 
 		/// Gets a Craft's terrain data.
-		RuleTerrain* getBattlescapeTerrainData();
+		RuleTerrain* getTacticalTerrainData();
 
 		/// Checks if a Craft is capable of travelling to Mars.
 		bool getSpacecraft() const;

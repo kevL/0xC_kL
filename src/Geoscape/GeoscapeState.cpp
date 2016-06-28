@@ -2410,57 +2410,7 @@ void GeoscapeState::time30Minutes()
 
 
 	if (_gameSave->getUfos()->empty() == false)
-	{
-		// TODO: pt = pt * _rules->getAlienMission("STR_ALIEN_*")->getPoints() / 100;
-		const int pt (((_gameSave->getMonthsPassed() + 2) / 4)
-					  + static_cast<int>(_gameSave->getDifficulty()));	// basic Victory Points
-
-		int aLienPts;													// Beginner @ 1st/2nd month ought add 0-pts. here
-		for (std::vector<Ufo*>::const_iterator // calc aLien points
-				i = _gameSave->getUfos()->begin();
-				i != _gameSave->getUfos()->end();
-				++i)
-		{
-			if ((*i)->getUfoStatus() == Ufo::FLYING
-				|| (*i)->getUfoStatus() == Ufo::LANDED)
-			{
-				aLienPts = (*i)->getVictoryPoints() + pt; // re-calc for each UFO; not CRASHED ufo's here
-				if (aLienPts > 0)
-				{
-					const double
-						lon ((*i)->getLongitude()),
-						lat ((*i)->getLatitude());
-
-					for (std::vector<Region*>::const_iterator // points per UFO in-Region per half hour
-							j = _gameSave->getRegions()->begin();
-							j != _gameSave->getRegions()->end();
-							++j)
-					{
-						if ((*j)->getRules()->insideRegion(lon,lat) == true)
-						{
-							(*j)->addActivityAlien(aLienPts);
-							(*j)->recentActivityAlien();
-							break;
-						}
-					}
-
-					for (std::vector<Country*>::const_iterator // points per UFO in-Country per half hour
-							j = _gameSave->getCountries()->begin();
-							j != _gameSave->getCountries()->end();
-							++j)
-					{
-						if ((*j)->getRules()->insideCountry(lon,lat) == true)
-						{
-							(*j)->addActivityAlien(aLienPts);
-							(*j)->recentActivityAlien();
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
+		scoreUfos(false);
 
 	for (std::vector<TerrorSite*>::const_iterator
 			i = _gameSave->getTerrorSites()->begin();
@@ -2471,6 +2421,51 @@ void GeoscapeState::time30Minutes()
 			i = _gameSave->getTerrorSites()->erase(i);
 		else
 			++i;
+	}
+}
+
+/**
+ * Scores points for UFOs that are Flying/Landed or Crashed.
+ * @param hour - true if on the hour, false for the half-hour
+ */
+void GeoscapeState::scoreUfos(bool hour) const // private.
+{
+	const int basic (((_gameSave->getMonthsPassed() + 2) >> 2u)
+					 + static_cast<int>(_gameSave->getDifficulty())); // basic score
+	int score;
+	for (std::vector<Ufo*>::const_iterator
+			i = _gameSave->getUfos()->begin();
+			i != _gameSave->getUfos()->end();
+			++i)
+	{
+		switch ((*i)->getUfoStatus())
+		{
+			case Ufo::FLYING:
+			case Ufo::LANDED:
+				if (hour == false)
+				{
+					score = (*i)->getActivityPoints() + basic;
+					score += (*i)->getAlienMission()->getRules().getMissionScore() / 10;
+					if (score != 0)
+						_gameSave->scorePoints(
+											(*i)->getLongitude(),
+											(*i)->getLatitude(),
+											score,
+											true);
+				}
+				break;
+
+			case Ufo::CRASHED:
+				if (hour == true
+					&& (score = (*i)->getActivityPoints() + basic) != 0)
+				{
+						_gameSave->scorePoints(
+											(*i)->getLongitude(),
+											(*i)->getLatitude(),
+											score,
+											true);
+				}
+		}
 	}
 }
 
@@ -2487,38 +2482,30 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // pri
 
 	const int
 		diff (static_cast<int>(_gameSave->getDifficulty())),
-		month (_gameSave->getMonthsPassed());
-	int
-		aLienPts,
-		basicPts;
+		elapsed (_gameSave->getMonthsPassed());
+	int score;
 
 	if (terrorSite->getSecondsLeft() > 1799)
 	{
 		expired = false;
 		terrorSite->setSecondsLeft(terrorSite->getSecondsLeft() - 1800);
 
-		basicPts = terrorSite->getTerrorDeployment()->getPointsPer30(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
-		if (basicPts == 0)
-			basicPts = terrorSite->getRules()->getMissionScore() / 10;
-
-		aLienPts = basicPts + (diff * 10) + month;
+		score = terrorSite->getRules()->getMissionScore() / 10;
+		score += diff * 10 + elapsed;
 	}
 	else
 	{
 		expired = true;
 
-		basicPts = terrorSite->getTerrorDeployment()->getDespawnPenalty(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
-		if (basicPts == 0)
-			basicPts = terrorSite->getRules()->getMissionScore() * 5;
-
-		aLienPts = basicPts + (diff * (235 + month));
+		score = terrorSite->getRules()->getMissionScore() * 5;
+		score += diff * (235 + elapsed);
 	}
 
-	if (aLienPts != 0)
+	if (score != 0)
 		_gameSave->scorePoints(
 							terrorSite->getLongitude(),
 							terrorSite->getLatitude(),
-							aLienPts,
+							score,
 							true);
 
 	if (expired == true)
@@ -2536,56 +2523,7 @@ void GeoscapeState::time1Hour()
 {
 	//Log(LOG_INFO) << "GeoscapeState::time1Hour()";
 	if (_gameSave->getUfos()->empty() == false)
-	{
-		// TODO: pt = pt * _rules->getAlienMission("STR_ALIEN_*")->getPoints() / 100;
-		const int pt (((_gameSave->getMonthsPassed() + 2) >> 2u)
-					  + static_cast<int>(_gameSave->getDifficulty()));	// basic Victory Points
-
-		int aLienPts;													// Beginner @ 1st/2nd month ought add 0-pts. here
-		for (std::vector<Ufo*>::const_iterator // calc aLien points
-				i = _gameSave->getUfos()->begin();
-				i != _gameSave->getUfos()->end();
-				++i)
-		{
-			if ((*i)->getUfoStatus() == Ufo::CRASHED)
-			{
-				aLienPts = (*i)->getVictoryPoints() + pt; // re-calc for each UFO; not CRASHED ufo's here
-				if (aLienPts > 0)
-				{
-					const double
-						lon ((*i)->getLongitude()),
-						lat ((*i)->getLatitude());
-
-					for (std::vector<Region*>::const_iterator // points per UFO in-Region per half hour
-							j = _gameSave->getRegions()->begin();
-							j != _gameSave->getRegions()->end();
-							++j)
-					{
-						if ((*j)->getRules()->insideRegion(lon,lat) == true)
-						{
-							(*j)->addActivityAlien(aLienPts);
-							(*j)->recentActivityAlien();
-							break;
-						}
-					}
-
-					for (std::vector<Country*>::const_iterator // points per UFO in-Country per half hour
-							j = _gameSave->getCountries()->begin();
-							j != _gameSave->getCountries()->end();
-							++j)
-					{
-						if ((*j)->getRules()->insideCountry(lon,lat) == true)
-						{
-							(*j)->addActivityAlien(aLienPts);
-							(*j)->recentActivityAlien();
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
+		scoreUfos(true);
 
 	for (std::vector<Region*>::const_iterator // check if Graphs blink needs Region reset.
 			i = _gameSave->getRegions()->begin();

@@ -52,6 +52,7 @@ RuleUfo::RuleUfo(const std::string& type)
 		_power(0),
 		_range(0),
 		_score(0),
+		_scoreAct(0),
 		_reload(0),
 		_escape(0),
 		_reconRange(600),
@@ -75,20 +76,21 @@ void RuleUfo::load(
 		const YAML::Node& node,
 		Ruleset* const rules)
 {
-	_type			= node["type"]		.as<std::string>(_type);
-	_size			= node["size"]		.as<std::string>(_size);
-	_sprite			= node["sprite"]	.as<int>(_sprite);
-	_marker			= node["marker"]	.as<int>(_marker);
-	_damageMax		= node["damageMax"]	.as<int>(_damageMax);
-	_speedMax		= node["speedMax"]	.as<int>(_speedMax);
-	_accel			= node["accel"]		.as<int>(_accel);
-	_power			= node["power"]		.as<int>(_power);
-	_range			= node["range"]		.as<int>(_range);
-	_score			= node["score"]		.as<int>(_score);
-	_reload			= node["reload"]	.as<int>(_reload);
-	_escape			= node["escape"]	.as<int>(_escape);
-	_reconRange		= node["reconRange"].as<int>(_reconRange);
-	_modSprite		= node["modSprite"]	.as<std::string>(_modSprite);
+	_type		= node["type"]		.as<std::string>(_type);
+	_size		= node["size"]		.as<std::string>(_size);
+	_sprite		= node["sprite"]	.as<int>(_sprite);
+	_marker		= node["marker"]	.as<int>(_marker);
+	_damageMax	= node["damageMax"]	.as<int>(_damageMax);
+	_speedMax	= node["speedMax"]	.as<int>(_speedMax);
+	_accel		= node["accel"]		.as<int>(_accel);
+	_power		= node["power"]		.as<int>(_power);
+	_range		= node["range"]		.as<int>(_range);
+	_score		= node["score"]		.as<int>(_score);
+	_scoreAct	= node["scoreAct"]	.as<int>(_scoreAct);
+	_reload		= node["reload"]	.as<int>(_reload);
+	_escape		= node["escape"]	.as<int>(_escape);
+	_reconRange	= node["reconRange"].as<int>(_reconRange);
+	_modSprite	= node["modSprite"]	.as<std::string>(_modSprite);
 
 	if		(_size == stSize[0u]) _sizeType = UFO_VERYSMALL;
 	else if	(_size == stSize[1u]) _sizeType = UFO_SMALL;
@@ -224,10 +226,19 @@ int RuleUfo::getScore() const
 }
 
 /**
- * Gets the terrain data needed to draw the UFO in the battlescape.
- * @return, pointer to the RuleTerrain
+ * Gets this type of Ufo's activity score.
+ * @return, activity score
  */
-RuleTerrain* RuleUfo::getBattlescapeTerrainData() const
+int RuleUfo::getActivityScore() const
+{
+	return _scoreAct;
+}
+
+/**
+ * Gets the terrain-data needed to draw this type of UFO in the battlescape.
+ * @return, pointer to RuleTerrain
+ */
+RuleTerrain* RuleUfo::getTacticalTerrainData() const
 {
 	return _tacticalTerrainData;
 }

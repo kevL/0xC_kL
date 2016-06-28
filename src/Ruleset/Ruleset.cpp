@@ -2522,7 +2522,7 @@ const std::string& Ruleset::getFinalResearch() const
 }
 
 /**
- * Gets low-funding threshold for defeat condition.
+ * Gets low-funds threshold for defeat condition.
  * @return, low-funding threshold
  */
 int Ruleset::getDefeatFunds() const
@@ -2532,9 +2532,6 @@ int Ruleset::getDefeatFunds() const
 
 /**
  * Gets low-score threshold for defeat condition.
- * @note Acts as a coefficient in MonthlyReportState and is multiplied by
- * inverse-negative-difficulty to denote the minimum needed monthly score to
- * remain in good standing with the Council.
  * @return, low-score threshold
  */
 int Ruleset::getDefeatScore() const

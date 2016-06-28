@@ -1048,6 +1048,8 @@ alienFuel: [STR_ELERIUM_115,50]
 radarCutoffRange: 1500
 firstGrenade: 0
 retalCoef: 3
+defeatScore: -1000
+defeatFunds: -1000000
 font: Font.dat
 cutscenes:
   - type: intro

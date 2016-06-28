@@ -129,7 +129,6 @@ private:
 		_objectiveCompleteScore,
 		_objectiveFailedScore,
 		_objectivesReqd,
-		_pointsPer30,
 		_shade,
 		_turnLimit,
 		_width;
@@ -239,8 +238,6 @@ private:
 
 		/// Gets the score-penalty xCom receives for ignoring a site.
 		int getDespawnPenalty() const;
-		/// Gets the half-hourly score-penalty xCom receives for a site existing.
-		int getPointsPer30() const;
 
 		/// Gets the turn-limit for the RuleAlienDeployment.
 		int getTurnLimit() const;

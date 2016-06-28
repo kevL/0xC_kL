@@ -425,7 +425,7 @@ private:
 		/// Gets the final-research-type.
 		const std::string& getFinalResearch() const;
 
-		/// Gets low-funding threshold for defeat condition.
+		/// Gets low-funds threshold for defeat condition.
 		int getDefeatFunds() const;
 		/// Gets low-score threshold for defeat condition.
 		int getDefeatScore() const;

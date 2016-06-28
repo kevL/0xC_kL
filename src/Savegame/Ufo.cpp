@@ -694,19 +694,19 @@ CraftId Ufo::getShotDownByCraftId() const
 }
 
 /**
- * Gets the scare-factor of UFOs for activity on the Graphs.
+ * Gets the scare-factor of this Ufo for activity on the Graphs.
  * @return, activity points
  */
-int Ufo::getVictoryPoints() const
+int Ufo::getActivityPoints() const
 {
-	int ret (0);
+	int ret (_ufoRule->getActivityScore());
 	switch (_status)
 	{
 		default:
-		case Ufo::FLYING:		ret = 2; break; // per half-hr.
-		case Ufo::LANDED:		ret = 5; break; // per hr.
-		case Ufo::CRASHED:		ret = 3; break; // per hr.
-		case Ufo::DESTROYED:	ret = 0;
+		case Ufo::FLYING:		ret += 2; break; // per half-hr.
+		case Ufo::LANDED:		ret += 5; break; // per half-hr.
+		case Ufo::CRASHED:		ret += 3; break; // per hr.
+		case Ufo::DESTROYED:	return 0;
 	}
 
 	switch (_ufoRule->getSizeType())
@@ -790,7 +790,7 @@ void Ufo::setUfoMissionInfo(
 		AlienMission* const mission,
 		const UfoTrajectory* const trajectory)
 {
-	assert(!_mission && mission && trajectory);
+//	assert(!_mission && mission && trajectory);
 
 	_mission = mission;
 	_mission->increaseLiveUfos();

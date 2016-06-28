@@ -155,7 +155,6 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_objectiveCompleteScore(0),
 		_objectiveFailedScore(0),
 		_despawnPenalty(0),
-		_pointsPer30(0),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_TURN_DEFAULT),
@@ -212,7 +211,6 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 	_objectivePopup	= node["objectivePopup"].as<std::string>(_objectivePopup);
 
 	_despawnPenalty	= node["despawnPenalty"].as<int>(_despawnPenalty);
-	_pointsPer30	= node["pointsPer30"]	.as<int>(_pointsPer30);
 
 	if (node["objectiveComplete"])
 	{
@@ -491,15 +489,6 @@ bool RuleAlienDeployment::getObjectiveFailedInfo(
 int RuleAlienDeployment::getDespawnPenalty() const
 {
 	return _despawnPenalty;
-}
-
-/**
- * Gets the half-hourly score penalty against XCom for this site existing.
- * @return, points for aLiens per 30 mins
- */
-int RuleAlienDeployment::getPointsPer30() const
-{
-	return _pointsPer30;
 }
 
 /**

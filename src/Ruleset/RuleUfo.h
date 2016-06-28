@@ -60,6 +60,7 @@ private:
 		_reconRange,
 		_reload,
 		_score,
+		_scoreAct,
 		_speedMax,
 		_sprite;
 	std::string
@@ -113,9 +114,11 @@ private:
 
 		/// Gets the UFO's score.
 		int getScore() const;
+		/// Gets the UFO's activity score.
+		int getActivityScore() const;
 
-		/// Sets the battlescape terrain data ruleset for this UFO
-		RuleTerrain* getBattlescapeTerrainData() const;
+		/// Gets the tactical-terrain-data-rule for the type of UFO.
+		RuleTerrain* getTacticalTerrainData() const;
 
 		/// Gets the reload time of the UFO's weapon.
 		int getWeaponReload() const;

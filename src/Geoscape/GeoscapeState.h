@@ -167,6 +167,8 @@ private:
 	/// Creates the prefix for a debugging message.
 	void fabricateDebugPretext();
 
+	/// Scores points for UFOs that are Flying/Landed or Crashed.
+	void scoreUfos(bool hour) const;
 	/// Processes a TerrorSite.
 	bool processTerrorSite(TerrorSite* const terrorSite) const;
 

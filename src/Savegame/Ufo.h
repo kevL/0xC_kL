@@ -188,7 +188,7 @@ private:
 		CraftId getShotDownByCraftId() const;
 
 		/// Gets the scare-factor of UFOs for activity on the Graphs.
-		int getVictoryPoints() const;
+		int getActivityPoints() const;
 
 		/// Gets the Ufo's visibility.
 		int getVisibility() const;
