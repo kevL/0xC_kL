@@ -73,7 +73,7 @@ class RuleAlienMission
 
 private:
 	int
-		_points,			// The mission's points.
+		_score,				// The mission's points.
 		_retalCoef;			// Modifier for chance of retaliation.
 	size_t _objectiveZone;	// The mission zone to use for spawning.
 	std::string
@@ -112,7 +112,7 @@ private:
 		{ return _waves[index]; }
 
 		/// Gets the score of the AlienMission rule.
-		int getMissionPoints() const;
+		int getMissionScore() const;
 
 		/// Gets the objective-type of the AlienMission rule.
 		MissionObjective getObjectiveType() const

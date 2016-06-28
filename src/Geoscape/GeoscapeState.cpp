@@ -2499,7 +2499,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // pri
 
 		basicPts = terrorSite->getTerrorDeployment()->getPointsPer30(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
-			basicPts = terrorSite->getRules()->getMissionPoints() / 10;
+			basicPts = terrorSite->getRules()->getMissionScore() / 10;
 
 		aLienPts = basicPts + (diff * 10) + month;
 	}
@@ -2509,7 +2509,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // pri
 
 		basicPts = terrorSite->getTerrorDeployment()->getDespawnPenalty(); // RuleAlienDeployment pts have priority over RuleAlienMission pts
 		if (basicPts == 0)
-			basicPts = terrorSite->getRules()->getMissionPoints() * 5;
+			basicPts = terrorSite->getRules()->getMissionScore() * 5;
 
 		aLienPts = basicPts + (diff * (235 + month));
 	}
@@ -3136,7 +3136,7 @@ void GeoscapeState::time1Day()
 	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
 																alm_BASE,
 																_gameSave->getMonthsPassed()));
-	const int aLienPts ((missionRule->getMissionPoints() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
+	const int aLienPts ((missionRule->getMissionScore() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
 	if (aLienPts != 0)
 	{
 		for (std::vector<AlienBase*>::const_iterator

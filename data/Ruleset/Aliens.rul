@@ -1666,7 +1666,7 @@ alienItemLevels:
   - [0, 1, 2, 2, 2, 2, 2, 2, 2, 2] #may
 alienMissions:
   - type: STR_ALIEN_RESEARCH
-    points: 10
+    score: 10
     weightsRace:
       0:
         STR_FLOATER: 20
@@ -1707,7 +1707,7 @@ alienMissions:
         trajectory: P4
         timer: 9000
   - type: STR_ALIEN_HARVEST
-    points: 30
+    score: 30
     weightsRace:
       0:
         STR_FLOATER: 30
@@ -1763,7 +1763,7 @@ alienMissions:
         trajectory: P2
         timer: 1500
   - type: STR_ALIEN_ABDUCTION
-    points: 50
+    score: 50
     weightsRace:
       0:
         STR_FLOATER: 40
@@ -1802,7 +1802,7 @@ alienMissions:
         trajectory: P4
         timer: 60
   - type: STR_ALIEN_INFILTRATION
-    points: 100
+    score: 100
     objectiveType: 1
     objectiveZone: 4 #for alien base
     weightsRace:
@@ -1868,7 +1868,7 @@ alienMissions:
         trajectory: P7
         timer: 60
   - type: STR_ALIEN_BASE
-    points: 300
+    score: 300
     objectiveType: 2
     objectiveZone: 4 #for alien base
     weightsRace:
@@ -1922,7 +1922,7 @@ alienMissions:
         trajectory: P6
         timer: 60
   - type: STR_ALIEN_TERROR
-    points: 200
+    score: 200
     objectiveType: 3
     objectiveZone: 3 #for terror city
 #    objectiveUfo: STR_TERROR_SHIP
@@ -1973,7 +1973,7 @@ alienMissions:
         timer: 9000
         isObjective: true
   - type: STR_ALIEN_RETALIATION
-    points: 0
+    score: 0
     objectiveType: 4
     objectiveUfo: STR_BATTLESHIP #for the final retaliation run
     weightsRace: #in the case of a shootdown race comes from the UFO that triggered the mission.
@@ -2002,7 +2002,7 @@ alienMissions:
         trajectory: P8
         timer: 3000
   - type: STR_ALIEN_SUPPLY
-    points: 25
+    score: 25
     objectiveType: 5
 #    objectiveUfo: STR_SUPPLY_SHIP
     weightsRace: {} #use base's race

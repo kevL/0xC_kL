@@ -1097,7 +1097,7 @@ void AlienMission::addScore( // private.
 		const double lon,
 		const double lat) const
 {
-	int aLienPts (_missionRule.getMissionPoints());
+	int aLienPts (_missionRule.getMissionScore());
 	if (aLienPts != 0)
 	{
 		switch (_missionRule.getObjectiveType())

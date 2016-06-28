@@ -73,7 +73,7 @@ namespace OpenXcom
 RuleAlienMission::RuleAlienMission(const std::string& type)
 	:
 		_type(type),
-		_points(0),
+		_score(0),
 		_objectiveType(alm_SCORE),
 		_objectiveZone(std::numeric_limits<size_t>::max()),
 		_retalCoef(-1)
@@ -98,7 +98,7 @@ RuleAlienMission::~RuleAlienMission()
 void RuleAlienMission::load(const YAML::Node& node)
 {
 	_type			= node["type"]			.as<std::string>(_type);
-	_points			= node["points"]		.as<int>(_points);
+	_score			= node["score"]			.as<int>(_score);
 	_waves			= node["waves"]			.as<std::vector<MissionWave>>(_waves);
 	_objectiveUfo	= node["objectiveUfo"]	.as<std::string>(_objectiveUfo);
 	_objectiveZone	= node["objectiveZone"]	.as<size_t>(_objectiveZone);
@@ -129,16 +129,16 @@ void RuleAlienMission::load(const YAML::Node& node)
 				i != weights.end();
 				++i)
 		{
-			const size_t monthsPassed (i->first.as<size_t>());
+			const size_t elapsed (i->first.as<size_t>());
 
-			Associative::const_iterator existing (assoc.find(monthsPassed));
+			Associative::const_iterator existing (assoc.find(elapsed));
 			if (assoc.end() == existing) // new entry, load and add it.
 			{
 				std::auto_ptr<WeightedOptions> weight (new WeightedOptions);
 				weight->load(i->second);
 
 				assoc.insert(std::make_pair(
-										monthsPassed,
+										elapsed,
 										weight.release()));
 			}
 			else
@@ -164,13 +164,13 @@ void RuleAlienMission::load(const YAML::Node& node)
 /**
  * Chooses one of the available races for this AlienMission rule.
  * @note The racial distribution may vary based on the current date.
- * @param monthsPassed - the number of months that have passed
+ * @param elapsed - the number of months that have passed
  * @return, the string ID of the race
  */
-std::string RuleAlienMission::generateRace(size_t monthsPassed) const
+std::string RuleAlienMission::generateRace(size_t elapsed) const
 {
 	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_raceDistribution.rbegin());
-	while (monthsPassed < rit->first)
+	while (elapsed < rit->first)
 		++rit;
 
 	return rit->second->getOptionResult();
@@ -180,17 +180,17 @@ std::string RuleAlienMission::generateRace(size_t monthsPassed) const
  * Gets the alien-score of this AlienMission rule.
  * @return, score points
  */
-int RuleAlienMission::getMissionPoints() const
+int RuleAlienMission::getMissionScore() const
 {
-	return _points;
+	return _score;
 }
 
 /**
  * Gets the chance of this mission being generated based on the date.
- * @param monthsPassed - the months that have passed
+ * @param elapsed - the months that have passed
  * @return, the weight
  */
-int RuleAlienMission::getWeight(size_t monthsPassed) const
+int RuleAlienMission::getWeight(size_t elapsed) const
 {
 	if (_weights.empty() == false)
 	{
@@ -200,7 +200,7 @@ int RuleAlienMission::getWeight(size_t monthsPassed) const
 				i != _weights.end();
 				++i)
 		{
-			if (i->first > monthsPassed)
+			if (i->first > elapsed)
 				break;
 
 			weight = i->second;
