@@ -159,7 +159,8 @@ private:
 		/// Calculates Field of View vs units for conscious units within range.
 		void calcFovUnits_pos(
 				const Position& pos,
-				bool spotSound = false);
+				bool spotSound = false,
+				UnitFaction faction = FACTION_NONE);
 		/// Calculates Field of View vs Tiles for conscious units within range.
 		void calcFovTiles_pos(const Position& pos);
 		/// Calculates Field of View vs units for all conscious units.

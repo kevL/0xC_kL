@@ -399,7 +399,7 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 							{
 								pos = posOther + Position(x,y,0);
 
-								if (unit->checkViewSector(pos, true) == true // TODO: Deal with "true".
+								if (unit->checkViewSector(pos) == true
 									&& visible(unit, _battleSave->getTile(pos)) == true)
 								{
 									if ((*i)->getUnitVisible() == false)
@@ -456,7 +456,7 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 							{
 								pos = posOther + Position(x,y,0);
 
-								if (unit->checkViewSector(pos, true) == true // TODO: Deal with "true".
+								if (unit->checkViewSector(pos) == true
 									&& visible(unit, _battleSave->getTile(pos)) == true)
 								{
 									spotByHostile = unit->addToHostileUnits(*i); // adds spottedUnit to '_hostileUnits' and to '_hostileUnitsThisTurn'
@@ -739,10 +739,12 @@ void TileEngine::calcFovTiles(BattleUnit* const unit) const
  * - unit revives
  * @param pos		- reference to the position of the changed unit/terrain
  * @param spotSound	- true to play aggro-sound (default false)
+ * @param faction	- faction to calculate for (BattleUnit.h) (default FACTION_NONE)
  */
 void TileEngine::calcFovUnits_pos(
 		const Position& pos,
-		bool spotSound)
+		bool spotSound,
+		UnitFaction faction)
 {
 	_spotSound = spotSound;
 	for (std::vector<BattleUnit*>::const_iterator
@@ -750,9 +752,10 @@ void TileEngine::calcFovUnits_pos(
 			i != j;
 			++i)
 	{
-		if ((*i)->getTile() != nullptr
-			&& distSqr((*i)->getPosition(), pos) <= SIGHTDIST_TSp_Sqr
-			&& (*i)->getFaction() != FACTION_NEUTRAL)
+		if (((faction == FACTION_NONE && (*i)->getFaction() != FACTION_NEUTRAL)
+				|| (*i)->getFaction() == faction)
+			&& (*i)->getTile() != nullptr
+			&& distSqr((*i)->getPosition(), pos) <= SIGHTDIST_TSp_Sqr)
 		{
 			calcFovUnits(*i);
 		}
@@ -856,8 +859,8 @@ bool TileEngine::visible(
 									targetUnit->getPosition()));
 			//if (debug) Log(LOG_INFO) << ". distSqr= " << sqrDist;
 
-			if (sqrDist <= SIGHTDIST_TSp_Sqr)
-			{
+			if (sqrDist <= SIGHTDIST_TSp_Sqr + unit->getArmor()->getSize())	// include armor-size to account for vagaries
+			{																// between tile-space and voxel-space
 				//if (debug) Log(LOG_INFO) << ". passed SIGHTDIST_TSp_Sqr";
 				switch (unit->getFaction())
 				{
@@ -892,7 +895,7 @@ bool TileEngine::visible(
 									unit);
 
 							float distLimit (static_cast<float>(trj.size()));
-							const Tile* tileScan (_battleSave->getTile(unit->getPosition()));
+							const Tile* tileScan (nullptr);
 
 							for (size_t
 									i = 0u;
@@ -909,7 +912,8 @@ bool TileEngine::visible(
 								}
 							}
 
-							if (getTargetUnit(tileScan) == targetUnit)
+							if (tileScan != nullptr // safety.
+								&& getTargetUnit(tileScan) == targetUnit)
 							{
 								//if (debug) Log(LOG_INFO) << ". . Tile has targetUnit - ret TRUE";
 								return true;
@@ -957,10 +961,10 @@ Position TileEngine::getSightOriginVoxel(
 	if (pos == nullptr)
 		pos = &unit->getPosition();
 
-	Position originVoxel (Position::toVoxelSpaceCentered(
-													*pos,
+	Position originVoxel (Position::toVoxelSpaceCentered(	// TODO: Large units get an origin in the very northwest corner of quadrant #4.
+													*pos,	// It will not be accurate.
 													unit->getHeight(true) + EYE_OFFSET
-														- _battleSave->getTile(*pos)->getTerrainLevel(), // TODO: this is quadrant #1, will not be accurate in all cases.
+														- _battleSave->getTile(*pos)->getTerrainLevel(),
 													unit->getArmor()->getSize()));
 	const int ceilingZ ((*pos).z * 24 + 23);
 	if (ceilingZ < originVoxel.z)

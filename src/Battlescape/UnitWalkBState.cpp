@@ -912,15 +912,15 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		}
 	} // debug_end. */
 
-//	UnitFaction faction;
-//	switch (_unit->getFaction())
-//	{
-//		default:
-//		case FACTION_PLAYER:
-//		case FACTION_NEUTRAL: faction = FACTION_HOSTILE; break;
-//		case FACTION_HOSTILE: faction = FACTION_PLAYER;  break;
-//	}
-	_te->calcFovUnits_pos(pos, true); // TODO: Calc for non-player faction only.
+	UnitFaction faction;
+	switch (_unit->getFaction())
+	{
+		default:
+		case FACTION_PLAYER:
+		case FACTION_NEUTRAL: faction = FACTION_HOSTILE; break;
+		case FACTION_HOSTILE: faction = FACTION_PLAYER;
+	}
+	_te->calcFovUnits_pos(pos, true, faction);
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{
