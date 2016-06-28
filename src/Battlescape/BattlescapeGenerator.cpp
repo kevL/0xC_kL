@@ -809,6 +809,9 @@ void BattlescapeGenerator::nextStage()
 
 		(*i)->setInventorySection(grdRule);
 		_tileEquipt->addItem(*i);
+
+		if ((*i)->getUnit() != nullptr)
+			(*i)->getUnit()->setPosition(_tileEquipt->getPosition());
 	}
 
 
