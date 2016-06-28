@@ -2936,7 +2936,7 @@ void GeoscapeState::time1Day()
 			{
 				if (resRule->needsItem() == true
 					&& resRule->destroyItem() == true
-					&& Options::retainCorpses == true)
+					&& Options::grantCorpses == true)
 				{
 					(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
 				}

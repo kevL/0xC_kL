@@ -181,7 +181,7 @@ void create()
 	_info.push_back(OptionInfo("canSellLiveAliens", &canSellLiveAliens, false, "STR_CANSELLLIVEALIENS", "STR_GEOSCAPE"));
 	_info.push_back(OptionInfo("globeSeasons", &globeSeasons, false, "STR_GLOBESEASONS", "STR_GEOSCAPE"));
 	_info.push_back(OptionInfo("psiStrengthEval", &psiStrengthEval, false, "STR_PSISTRENGTHEVAL", "STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("retainCorpses", &retainCorpses, true, "STR_RETAINCORPSES", "STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("grantCorpses", &grantCorpses, true, "STR_RETAINCORPSES", "STR_GEOSCAPE"));
 	_info.push_back(OptionInfo("fieldPromotions", &fieldPromotions, false, "STR_FIELDPROMOTIONS", "STR_GEOSCAPE"));
 
 	// true drags away from the cursor, false drags towards (like a grab)
