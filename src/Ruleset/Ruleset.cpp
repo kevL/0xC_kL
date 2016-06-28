@@ -108,7 +108,9 @@ Ruleset::Ruleset(const Game* const game)
 		_invListOrder(0),
 		_radarCutoff(1500),
 		_firstGrenade(-1),
-		_retalCoef(0)
+		_retalCoef(0),
+		_defeatFunds(0),
+		_defeatScore(0)
 {
 	//Log(LOG_INFO) << "Create Ruleset";
 	_globe = new RuleGlobe();
@@ -807,6 +809,8 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	_radarCutoff	= doc["radarCutoff"]	.as<int>(_radarCutoff);
 	_firstGrenade	= doc["firstGrenade"]	.as<int>(_firstGrenade);
 	_retalCoef		= doc["retalCoef"]		.as<int>(_retalCoef);
+	_defeatFunds	= doc["defeatFunds"]	.as<int>(_defeatFunds);
+	_defeatScore	= doc["defeatScore"]	.as<int>(_defeatScore);
 
 	for (YAML::const_iterator
 			i = doc["ufoTrajectories"].begin();
@@ -2515,6 +2519,27 @@ const std::vector<MapScript*>* Ruleset::getMapScripts(const std::string& type) c
 const std::string& Ruleset::getFinalResearch() const
 {
 	return _finalResearch;
+}
+
+/**
+ * Gets low-funding threshold for defeat condition.
+ * @return, low-funding threshold
+ */
+int Ruleset::getDefeatFunds() const
+{
+	return _defeatFunds;
+}
+
+/**
+ * Gets low-score threshold for defeat condition.
+ * @note Acts as a coefficient in MonthlyReportState and is multiplied by
+ * inverse-negative-difficulty to denote the minimum needed monthly score to
+ * remain in good standing with the Council.
+ * @return, low-score threshold
+ */
+int Ruleset::getDefeatScore() const
+{
+	return _defeatScore;
 }
 
 /**

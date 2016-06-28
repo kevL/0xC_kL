@@ -142,29 +142,28 @@ MonthlyReportState::MonthlyReportState()
 
 	const int
 		diff (static_cast<int>(_gameSave->getDifficulty())),
-		ratingThreshold (250 * (diff - 4));
-		// 0 -> -1000
-		// 1 -> -750
-		// 2 -> -500
-		// 3 -> -250
-		// 4 -> 0
+		ratingThreshold (_game->getRuleset()->getDefeatScore() + diff * 250);
 
-	std::string music (OpenXcom::res_MUSIC_GEO_MONTHLYREPORT);
-
-	if (_ratingTotal > 10000)
-		st = "STR_RATING_STUPENDOUS";
-	else if (_ratingTotal > 5000)
-		st = "STR_RATING_EXCELLENT";
-	else if (_ratingTotal > 2500)
-		st = "STR_RATING_GOOD";
-	else if (_ratingTotal > 1000)
-		st = "STR_RATING_OK";
-	else if (_ratingTotal > ratingThreshold)
-		st = "STR_RATING_POOR";
-	else
+	std::string track;
+	if (_ratingTotal < ratingThreshold)
 	{
 		st = "STR_RATING_TERRIBLE";
-		music = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
+		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
+	}
+	else
+	{
+		if (_ratingTotal > ratingThreshold + 10000)
+			st = "STR_RATING_STUPENDOUS";
+		else if (_ratingTotal > ratingThreshold + 5000)
+			st = "STR_RATING_EXCELLENT";
+		else if (_ratingTotal > ratingThreshold + 2500)
+			st = "STR_RATING_GOOD";
+		else if (_ratingTotal > ratingThreshold + 1000)
+			st = "STR_RATING_OK";
+		else
+			st = "STR_RATING_POOR";
+
+		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT;
 	}
 	_txtRating->setText(tr("STR_MONTHLY_RATING__").arg(_ratingTotal).arg(tr(st)));
 
@@ -191,8 +190,8 @@ MonthlyReportState::MonthlyReportState()
 	_txtChange->setText(tr("STR_FUNDING_CHANGE_").arg(woststr.str()));
 
 
-	if (   _ratingPrior <= ratingThreshold // calculate satisfaction
-		&& _ratingTotal <= ratingThreshold)
+	if (   _ratingPrior < ratingThreshold // calculate satisfaction
+		&& _ratingTotal < ratingThreshold)
 	{
 		_gameOver = true; // you lose.
 		st = "STR_YOU_HAVE_NOT_SUCCEEDED";
@@ -201,9 +200,9 @@ MonthlyReportState::MonthlyReportState()
 		_sadList.clear();
 		_pactList.clear();
 	}
-	else if (_ratingTotal > 1000 + (diff * 2000)) // was 1500 flat.
+	else if (_ratingTotal > 1000 + 2000 * diff)
 		st = "STR_COUNCIL_IS_VERY_PLEASED";
-	else if (_ratingTotal > ratingThreshold)
+	else if (_ratingTotal > -1)
 		st = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
 	else
 		st = "STR_COUNCIL_IS_DISSATISFIED";
@@ -213,7 +212,7 @@ MonthlyReportState::MonthlyReportState()
 
 	if (_gameOver == false)
 	{
-		if (_gameSave->getFunds() < -999999)
+		if (_gameSave->getFunds() < _game->getRuleset()->getDefeatFunds())
 		{
 			if (_gameSave->getWarned() == true)
 			{
@@ -229,7 +228,7 @@ MonthlyReportState::MonthlyReportState()
 			{
 				_gameSave->setWarned();
 				woststr << "\n\n" << tr("STR_COUNCIL_REDUCE_DEBTS");
-				music = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
+				track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 			}
 		}
 		else
@@ -287,7 +286,7 @@ MonthlyReportState::MonthlyReportState()
 	_btnOkLoser->setVisible(false);
 
 
-	_game->getResourcePack()->playMusic(music, "", 1);
+	_game->getResourcePack()->playMusic(track, "", 1);
 
 	awards();
 }

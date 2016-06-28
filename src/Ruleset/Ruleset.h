@@ -91,9 +91,11 @@ class UfoTrajectory;
 class Ruleset
 {
 
-protected:
+private:
 	int
 //		_initialFunding,
+		_defeatFunds,
+		_defeatScore,
 		_firstGrenade,
 		_retalCoef,
 
@@ -422,6 +424,11 @@ protected:
 
 		/// Gets the final-research-type.
 		const std::string& getFinalResearch() const;
+
+		/// Gets low-funding threshold for defeat condition.
+		int getDefeatFunds() const;
+		/// Gets low-score threshold for defeat condition.
+		int getDefeatScore() const;
 
 		/// Gets the current Game-ptr.
 		const Game* getGame() const;
