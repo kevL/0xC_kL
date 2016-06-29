@@ -1609,141 +1609,157 @@ inline void BattlescapeState::handle(Action* action)
 	{
 		State::handle(action);
 
-		if (action->getDetails()->type == SDL_KEYDOWN)
+		switch (action->getDetails()->type)
 		{
-			bool beep (false);
-
-			if (Options::debug == true)
+			case SDL_KEYDOWN:
 			{
-				if ((SDL_GetModState() & KMOD_CTRL) != 0)
+				bool beep (false);
+
+				if (Options::debug == true)
 				{
-					if (_battleSave->getDebugTac() == false)
+					if ((SDL_GetModState() & KMOD_CTRL) != 0)
 					{
-						if (action->getDetails()->key.keysym.sym == SDLK_d		// "ctrl-d" - enable debug mode.
-							&& allowButtons() == true)							// - disallow turning debug-mode on during a non-
-						{														//   player turn else the HUD won't show back up.
-							beep = true;
-							_battleSave->debugTac();
-							printDebug(L"debug set active");
+						if (_battleSave->getDebugTac() == false)
+						{
+							if (action->getDetails()->key.keysym.sym == SDLK_d		// "ctrl-d" - enable debug mode.
+								&& allowButtons() == true)							// - disallow turning debug-mode on during a non-
+							{														//   player turn else the HUD won't show back up.
+								beep = true;
+								_battleSave->debugTac();
+								printDebug(L"debug set active");
+							}
+							else
+								printDebug(L"player turn only");
 						}
 						else
-							printDebug(L"player turn only");
-					}
-					else
-					{
-						bool casualties (false);
-						switch (action->getDetails()->key.keysym.sym)
 						{
-							case SDLK_d:										// "ctrl-d" - debug already enabled.
-								printDebug(L"debug already active");
-								break;
+							bool casualties (false);
+							switch (action->getDetails()->key.keysym.sym)
+							{
+								case SDLK_d:										// "ctrl-d" - debug already enabled.
+									printDebug(L"debug already active");
+									break;
 
-							case SDLK_v:										// "ctrl-v" - reset tile visibility.
-								beep = true;
-								printDebug(L"blacking all tiles");
-								_battleSave->blackTiles();
-								break;
+								case SDLK_v:										// "ctrl-v" - reset tile visibility.
+									beep = true;
+									printDebug(L"blacking all tiles");
+									_battleSave->blackTiles();
+									break;
 
-							case SDLK_k:										// "ctrl-k" - kill all aliens.
-								beep = true; //MB_ICONERROR
-								printDebug(L"dispersing influenza");
-								for (std::vector<BattleUnit*>::const_iterator
+								case SDLK_k:										// "ctrl-k" - kill all aliens.
+									beep = true; //MB_ICONERROR
+									printDebug(L"dispersing influenza");
+									for (std::vector<BattleUnit*>::const_iterator
+											i = _battleSave->getUnits()->begin();
+											i !=_battleSave->getUnits()->end();
+											++i)
+									{
+										if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+											&& (*i)->isOut_t(OUT_HEALTH) == false)
+										{
+											casualties = true;
+											(*i)->setHealth(0);
+//											(*i)->takeDamage(Position(0,0,0), 1000, DT_AP, true);
+										}
+									}
+									break;
+
+								case SDLK_j:										// "ctrl-j" - stun all aliens.
+									beep = true; //MB_ICONWARNING
+									printDebug(L"deploying Celine Dione");
+									for (std::vector<BattleUnit*>::const_iterator
 										i = _battleSave->getUnits()->begin();
 										i !=_battleSave->getUnits()->end();
 										++i)
-								{
-									if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-										&& (*i)->isOut_t(OUT_HEALTH) == false)
 									{
-										casualties = true;
-										(*i)->setHealth(0);
-//										(*i)->takeDamage(Position(0,0,0), 1000, DT_AP, true);
+										if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+											&& (*i)->isOut_t(OUT_HEALTH) == false)
+										{
+											casualties = true;
+											(*i)->setStun((*i)->getHealth() + 1000);
+//											(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
+										}
 									}
-								}
-								break;
+							}
 
-							case SDLK_j:										// "ctrl-j" - stun all aliens.
-								beep = true; //MB_ICONWARNING
-								printDebug(L"deploying Celine Dione");
-								for (std::vector<BattleUnit*>::const_iterator
-									i = _battleSave->getUnits()->begin();
-									i !=_battleSave->getUnits()->end();
-									++i)
-								{
-									if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-										&& (*i)->isOut_t(OUT_HEALTH) == false)
-									{
-										casualties = true;
-										(*i)->setStun((*i)->getHealth() + 1000);
-//										(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
-									}
-								}
-						}
-
-						if (casualties == true)
-						{
-							_battleGame->checkCasualties(nullptr, nullptr, true);
-							_battleGame->handleState();
+							if (casualties == true)
+							{
+								_battleGame->checkCasualties(nullptr, nullptr, true);
+								_battleGame->handleState();
+							}
 						}
 					}
-				}
-				else
-				{
-					switch (action->getDetails()->key.keysym.sym)
+					else
 					{
-//						case SDLK_F10:													// f10 - voxel-map dump. - moved below_
-//							beep = true;
-//							saveVoxelMap();
-//							break;
+						switch (action->getDetails()->key.keysym.sym)
+						{
+//							case SDLK_F10:													// f10 - voxel-map dump. - moved below_
+//								beep = true;
+//								saveVoxelMap();
+//								break;
 
-						case SDLK_F9:													// f9 - ai dump. TODO: Put in Options.
-							beep = true;
-							saveAIMap();
+							case SDLK_F9:													// f9 - ai dump. TODO: Put in Options.
+								beep = true;
+								saveAIMap();
+						}
 					}
 				}
-			}
 
-			if (action->getDetails()->key.keysym.sym == Options::keyBattleVoxelView)	// f11 - voxel-view pic.
-			{
-				beep = true;
-				saveVoxelView();
-			}
-			else if (action->getDetails()->key.keysym.sym == SDLK_F10)					// f10 - voxel-map dump. - from above^ TODO: Put in Options.
-			{
-				beep = true;
-				saveVoxelMap();
-			}
-			else if (_gameSave->isIronman() == false)
-			{
-				if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave.
+
+				if (action->getDetails()->key.keysym.sym == Options::keyBattleVoxelView)	// f11 - voxel-view pic.
 				{
 					beep = true;
-					_game->pushState(new SaveGameState(
-													OPT_BATTLESCAPE,
-													SAVE_QUICK,
-													_palette));
+					saveVoxelView();
 				}
-				else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad.
+				else if (action->getDetails()->key.keysym.sym == SDLK_F10)					// f10 - voxel-map dump. - from above^ TODO: Put in Options.
 				{
 					beep = true;
-					_game->pushState(new LoadGameState(
-													OPT_BATTLESCAPE,
-													SAVE_QUICK,
-													_palette));
+					saveVoxelMap();
 				}
-			}
+				else if (_gameSave->isIronman() == false)
+				{
+					if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave.
+					{
+						beep = true;
+						_game->pushState(new SaveGameState(
+														OPT_BATTLESCAPE,
+														SAVE_QUICK,
+														_palette));
+					}
+					else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad.
+					{
+						beep = true;
+						_game->pushState(new LoadGameState(
+														OPT_BATTLESCAPE,
+														SAVE_QUICK,
+														_palette));
+					}
+				}
 
+				if (beep == true)
+				{
 #ifdef _WIN32
-			if (beep == true) MessageBeep(MB_OK);
+					MessageBeep(MB_OK);
 #endif
+					break; // <- is not comprehensive; some conditions above^ will pass through. no biggie.
+				}
+				// no break;
+			}
+
+			case SDL_KEYUP:
+				if (action->getDetails()->key.keysym.sym == SDLK_LALT						// Alt - updateTileInfo.
+					|| action->getDetails()->key.keysym.sym == SDLK_RALT)
+				{
+					mapOver(nullptr);
+				}
+//				break;
+//
+//			case SDL_MOUSEBUTTONDOWN:
+//				if (action->getDetails()->button.button == SDL_BUTTON_X1)
+//					btnNextUnitPress(action);
+//				else if (action->getDetails()->button.button == SDL_BUTTON_X2)
+//					btnPrevUnitPress(action);
 		}
-//		else if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
-//		{
-//			if (action->getDetails()->button.button == SDL_BUTTON_X1)
-//				btnNextUnitPress(action);
-//			else if (action->getDetails()->button.button == SDL_BUTTON_X2)
-//				btnPrevUnitPress(action);
-//		}
 	}
 }
 
@@ -4403,36 +4419,53 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 	if (tile != nullptr && tile->isRevealed() == true)
 	{
 		size_t rows (3u);
-		int tuCost (0);
 
+		int tuCost;
 		const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 		if (selUnit != nullptr
 			&& selUnit->getFaction() == FACTION_PLAYER)
 		{
 			++rows;
-			const MoveType mType (selUnit->getMoveTypeUnit());
 
-			tuCost = tile->getTuCostTile(O_FLOOR, mType)
-				   + tile->getTuCostTile(O_OBJECT, mType);
-
-			if (tile->getMapData(O_FLOOR) == nullptr
-				&& tile->getMapData(O_OBJECT) != nullptr)
+			MoveType mType (selUnit->getMoveTypeUnit());
+			if (mType == MT_FLY
+				&& selUnit->getGeoscapeSoldier() != nullptr
+				&& (SDL_GetModState() & KMOD_ALT) != 0) // forced walk.
 			{
-				tuCost += 4;
+				mType = MT_WALK;
 			}
-			else if (tuCost == 0)
-			{
-				switch (mType)
-				{
-					case MT_FLOAT: // wft.
-					case MT_FLY: tuCost = 4;
-						break;
 
-					case MT_WALK:
-					case MT_SLIDE: tuCost = 255;
+			if (tile->getMapData(O_OBJECT) != nullptr)
+				tuCost = 4 + tile->getTuCostTile(O_OBJECT, mType);
+			else if (tile->getMapData(O_FLOOR) != nullptr)
+				tuCost = tile->getTuCostTile(O_FLOOR, mType);
+			else
+			{
+				if (tile->hasNoFloor() == false)
+				{
+					const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
+					if (tileBelow->getMapData(O_OBJECT) != nullptr)
+						tuCost = 4 + tileBelow->getTuCostTile(O_OBJECT, mType);
+					else
+						tuCost = 4;	// safety. If tile has no floor-object but hasNoFloor=FALSE
+				}					// there'd better be an object w/ tLevel -24 in tileBelow.
+				else
+				{
+					switch (mType)
+					{
+						case MT_FLOAT: // wft.
+						case MT_FLY: tuCost = 4;
+							break;
+
+						default: // avoid g++ warning.
+						case MT_WALK:
+						case MT_SLIDE: tuCost = 255;
+					}
 				}
 			}
 		}
+		else
+			tuCost = 0;
 
 
 		const int info[]

@@ -654,8 +654,8 @@ int Pathfinding::getTuCostPf(
 	//if (_debug) Log(LOG_INFO) << ". posStop= " << (*posStop);
 
 	bool
-		fall   (false),
-		stairs (false); // NOTE: Not necessarily stairs.
+		fall		(false),
+		zLevel_UP	(false);
 
 	int
 		partsGoingUp	(0),
@@ -676,10 +676,14 @@ int Pathfinding::getTuCostPf(
 		* tileStopAbove;
 
 	Position posOffset;
+	const Position
+		posAbove (Position(0,0, 1)),
+		posBelow (Position(0,0,-1));
 
 	const int
-		unitSize (_unit->getArmor()->getSize()),
+		unitSize  (_unit->getArmor()->getSize()),
 		quadrants (unitSize * unitSize);
+
 	for (int
 			x = 0;
 			x != unitSize;
@@ -716,7 +720,7 @@ int Pathfinding::getTuCostPf(
 				}
 				else
 				{
-					tileStartBelow = _battleSave->getTile(posStart + posOffset + Position(0,0,-1));
+					tileStartBelow = _battleSave->getTile(posStart + posOffset + posBelow);
 					if (tileStart->hasNoFloor(tileStartBelow) == true
 						&& ++partsOnAir == quadrants)
 					{
@@ -750,24 +754,24 @@ int Pathfinding::getTuCostPf(
 
 			Position posOffsetVertical (0,0,0); // this will later be used to re-init the start Tile
 
-			tileStopBelow = _battleSave->getTile(*posStop + posOffset + Position(0,0,-1)),
-			tileStopAbove = _battleSave->getTile(*posStop + posOffset + Position(0,0, 1));
+			tileStopBelow = _battleSave->getTile(*posStop + posOffset + posBelow),
+			tileStopAbove = _battleSave->getTile(*posStop + posOffset + posAbove);
 
-			if (dir < DIR_UP
-				&& stairs == false
+			if (zLevel_UP == false
+				&& dir < DIR_UP
 				&& tileStart->getTerrainLevel() < -15
 				&& tileStopAbove->hasNoFloor(tileStop) == false)
 			{
-				if (++partsGoingUp >= unitSize)
+				if (++partsGoingUp == quadrants)
 				{
-					stairs = true;
-					++posOffsetVertical.z;
+					zLevel_UP = true;
 					++posStop->z;
+					++posOffsetVertical.z;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
 				}
 			}
-			else if (dir < DIR_UP
-				&& fall == false
+			else if (fall == false
+				&& dir < DIR_UP
 				&& _mType != MT_FLY
 				&& canFallDown(tileStop) == true
 				&& tileStopBelow != nullptr
@@ -775,22 +779,20 @@ int Pathfinding::getTuCostPf(
 			{
 				if (++partsGoingDown == quadrants)
 				{
-					if (tileStopBelow->getMapData(O_FLOOR) != nullptr)			// copied from below_
+					fall = true;
+					--posStop->z;
+					tileStop = _battleSave->getTile(*posStop + posOffset);
+
+					if (tileStopBelow->getMapData(O_OBJECT) != nullptr)			// copied from below_
+						cost = 4 + tileStopBelow->getTuCostTile(O_OBJECT, _mType);
+					else if (tileStopBelow->getMapData(O_FLOOR) != nullptr)
 						cost = tileStopBelow->getTuCostTile(O_FLOOR, _mType);
 					else
 						cost = 4;
 
-					if (tileStopBelow->getMapData(O_OBJECT) != nullptr)
-						cost += tileStopBelow->getTuCostTile(O_OBJECT, _mType);
-
 					if ((dir & 1) == 1)
 						cost += (cost + 1) >> 1u;								// end_Copy.
 
-					//tileStop->getTuCostTile(O_FLOOR, _mType)
-					//tileStop->getTuCostTile(O_OBJECT, _mType)
-					fall = true;
-					--posStop->z;
-					tileStop = _battleSave->getTile(*posStop + posOffset);
 					//if (_debug) Log(LOG_INFO) << ". . ++partsGoingDown=quadrants -- fall= " << fall;
 				}
 			}
@@ -862,7 +864,7 @@ int Pathfinding::getTuCostPf(
 			{
 				dir = DIR_DOWN;
 				fall = true;
-				*posStop = posStart + Position(0,0,-1);
+				*posStop = posStart + posBelow;
 				tileStop = _battleSave->getTile(*posStop + posOffset);
 				//if (_debug) Log(LOG_INFO) << ". . ++partsFalling=quadrants -- fall= " << fall;
 			}
@@ -899,13 +901,20 @@ int Pathfinding::getTuCostPf(
 // Calculate TU costage ->
 			if (dir < DIR_UP && fall == false)
 			{
-				if (tileStop->getMapData(O_FLOOR) != nullptr)					// copied above^
+//				if (tileStop->getMapData(O_FLOOR) != nullptr)					// copied above^
+//					cost = tileStop->getTuCostTile(O_FLOOR, _mType);
+//				else
+//					cost = 4;
+//
+//				if (tileStop->getMapData(O_OBJECT) != nullptr) //&& zLevel_UP == false
+//					cost += tileStop->getTuCostTile(O_OBJECT, _mType);
+
+				if (tileStop->getMapData(O_OBJECT) != nullptr) //&& zLevel_UP == false
+					cost = 4 + tileStop->getTuCostTile(O_OBJECT, _mType);
+				else if (tileStop->getMapData(O_FLOOR) != nullptr)
 					cost = tileStop->getTuCostTile(O_FLOOR, _mType);
 				else
 					cost = 4;
-
-				if (stairs == false && tileStop->getMapData(O_OBJECT) != nullptr)
-					cost += tileStop->getTuCostTile(O_OBJECT, _mType);
 
 				if ((dir & 1) == 1)
 					cost += (cost + 1) >> 1u;									// end_Copy.
