@@ -287,7 +287,7 @@ private:
 		static const char* const PLAYER_ERROR[15u];
 
 
-		/// Creates the BattlescapeGame.
+		/// Creates a BattlescapeGame.
 		BattlescapeGame(
 				SavedBattleGame* const battleSave,
 				BattlescapeState* const parentState);

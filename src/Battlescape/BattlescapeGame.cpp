@@ -99,7 +99,7 @@ const char* const BattlescapeGame::PLAYER_ERROR[15u] // static.
 
 
 /**
- * Initializes all the elements in the Battlescape screen.
+ * Initializes the core elements of tactical combat.
  * @param battleSave	- pointer to the SavedBattleGame
  * @param parentState	- pointer to the parent BattlescapeState
  */

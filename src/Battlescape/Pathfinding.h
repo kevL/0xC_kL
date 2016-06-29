@@ -78,12 +78,6 @@ private:
 	/// Sets the movement-type.
 	void setMoveType();
 
-	/// Tries to find a straight-line path between two Positions.
-	bool bresenhamPath(
-			const Position& origin,
-			const Position& target,
-			const BattleUnit* const launchTarget);
-//			bool sneak);
 	/// Tries to find a path between two Positions.
 	bool aStarPath(
 			const Position& posOrigin,
@@ -166,8 +160,7 @@ private:
 				const Position& posStart,
 				int dir,
 				Position* const posStop,
-				const BattleUnit* const launchTarget = nullptr,
-				bool bresenh = true);
+				const BattleUnit* const launchTarget = nullptr);
 		/// Gets _tuCostTotal; finds out whether we can hike somewhere in this turn or not.
 		int getTuCostTotalPf() const
 		{ return _tuCostTotal; }

@@ -62,7 +62,7 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 		_tuCostTotal(0),
 		_ctrl(false),
 		_alt(false),
-		_zPath(false),
+		_zPath(false), // currently not implemented; open for ideas!
 		_mType(MT_WALK),
 		_doorCost(0)
 {
@@ -163,6 +163,8 @@ void Pathfinding::setInputModifiers()
  */
 void Pathfinding::abortPath()
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "pf:abortPath() id-" << _unit->getId();
 	_path.clear();
 	_tuCostTotal = 0;
 
@@ -186,7 +188,8 @@ void Pathfinding::calculatePath(
 		const BattleUnit* const launchTarget,
 		bool strafeRejected)
 {
-	//Log(LOG_INFO) << "Pathfinding::calculatePath()";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "pf:calculatePath() id-" << unit->getId();
 	// i'm DONE with these out of bounds errors.
 	// kL_note: I really don't care what you're "DONE" with ..... if you're going
 	// to cry like a babby, at least make it humorous -- like
@@ -357,272 +360,48 @@ void Pathfinding::calculatePath(
 //		const bool sneak (Options::sneakyAI == true
 //					   && unit->getFaction() == FACTION_HOSTILE);
 
-		if (posStart.z == posStop.z
-			&& bresenhamPath(
-						posStart,
-						posStop,
-						launchTarget) == true)
-//						sneak) == true)
+		if (aStarPath(
+					posStart,
+					posStop,
+					launchTarget,
+					maxTuCost) == true)
+//					sneak) == true)
 		{
-			std::reverse(
-					_path.begin(),
-					_path.end());
-		}
-		else
-		{
-			abortPath();
-			if (aStarPath(
-						posStart,
-						posStop,
-						launchTarget,
-						maxTuCost) == false)
-//						sneak) == false)
+			if (_path.empty() == false)
 			{
-				abortPath();
-			}
-		}
-
-		if (_path.empty() == false)
-		{
-			if (_path.size() > 2u && _strafe == true)
-			{
-				calculatePath( // iterate this function ONCE ->
-							unit,
-							posStop_cache,
-							maxTuCost,
-							nullptr,
-							true); // <- sets '_strafe' FALSE so loop never gets back in here.
-			}
-			else if (Options::battleStrafe == true
-				&& _ctrl == true
-				&& unit->getGeoscapeSoldier() != nullptr
-				&& (_strafe == false
-					|| (_path.size() == 1u
-						&& unit->getUnitDirection() == _path.front())))
-			{
-				_strafe =
-				_pathAction->strafe = false;
-				_pathAction->dash = true;
-				if (_pathAction->actor != nullptr)
-					_pathAction->actor->setDashing();
-			}
-			else
-			{
-				_pathAction->dash = false;
-				if (_pathAction->actor != nullptr)
-					_pathAction->actor->setDashing(false);
-			}
-		}
-	}
-
-	// TEST:
-//	for (std::vector<int>::const_reverse_iterator
-//			rit = _path.rbegin();
-//			rit != _path.rend();
-//			++rit)
-//	{
-//		Log(LOG_INFO) << ". dir= " << *rit;
-//	}
-}
-
-/**
- * Calculates the shortest path using Brensenham path algorithm.
- * @note This only works in the x/y-plane.
- * @param origin		- reference to the Position to start from
- * @param target		- reference to the Position to end at
- * @param launchTarget	- pointer to targeted BattleUnit
-// * @param sneak		- true if unit is sneaking
- * @return, true if a path is found
- */
-bool Pathfinding::bresenhamPath( // private.
-		const Position& origin,
-		const Position& target,
-		const BattleUnit* const launchTarget)
-//		bool sneak)
-{
-	return false; // TEST.
-
-
-	//Log(LOG_INFO) << "Pathfinding::bresenhamPath()";
-	static const size_t DIR_TOTAL (8u);
-	static const int
-		stock_xd[DIR_TOTAL]	{ 0, 1, 1, 1, 0,-1,-1,-1}, // stock values
-		stock_yd[DIR_TOTAL]	{-1,-1, 0, 1, 1, 1, 0,-1},
-		alt_xd[DIR_TOTAL]	{ 0,-1,-1,-1, 0, 1, 1, 1}, // alt values
-		alt_yd[DIR_TOTAL]	{ 1, 1, 0,-1,-1,-1, 0, 1};
-
-	int
-		xd[DIR_TOTAL],
-		yd[DIR_TOTAL];
-	if (_zPath == false)
-	{
-		//std::copy(std::begin(src), std::end(src), std::begin(dest));
-		std::copy(stock_xd, stock_xd + 8, xd);
-		std::copy(stock_yd, stock_yd + 8, yd);
-	}
-	else
-	{
-		std::copy(alt_xd, alt_xd + 8, xd);
-		std::copy(alt_yd, alt_yd + 8, yd);
-	}
-
-	int
-		x,x0,x1, delta_x, step_x,
-		y,y0,y1, delta_y, step_y,
-		z,z0,z1, delta_z, step_z,
-
-		swap_xy, swap_xz,
-		drift_xy, drift_xz,
-
-		cx,cy,cz,
-
-		tuCostLast (-1);
-
-	size_t dir;
-
-	Position
-		posStart (origin),
-		posStop,
-		posStopTest;
-
-//	_tuCostTotal = 0;
-
-	// start and end points
-	x0 = origin.x; x1 = target.x;
-	y0 = origin.y; y1 = target.y;
-	z0 = origin.z; z1 = target.z;
-
-	// 'steep' x/y Line, make longest delta x-plane
-	swap_xy = std::abs(y1 - y0) > std::abs(x1 - x0);
-	if (swap_xy)
-	{
-		std::swap(x0,y0);
-		std::swap(x1,y1);
-	}
-
-	// do same for x/z
-	swap_xz = std::abs(z1 - z0) > std::abs(x1 - x0);
-	if (swap_xz)
-	{
-		std::swap(x0,z0);
-		std::swap(x1,z1);
-	}
-
-	// delta is Length in each plane
-	delta_x = std::abs(x1 - x0);
-	delta_y = std::abs(y1 - y0);
-	delta_z = std::abs(z1 - z0);
-
-	// drift controls when to step in 'shallow' planes
-	// starting value keeps Line centred
-	drift_xy = delta_x >> 1u;
-	drift_xz = delta_x >> 1u;
-
-	// direction of line
-	step_x =
-	step_y =
-	step_z = 1;
-	if (x0 > x1) step_x = -1;
-	if (y0 > y1) step_y = -1;
-	if (z0 > z1) step_z = -1;
-
-	// starting point
-	y = y0;
-	z = z0;
-
-	// step through longest delta that was swapped to x
-	for (
-			x = x0;
-			x != (x1 + step_x);
-			x += step_x)
-	{
-		// copy position
-		cx = x; cy = y; cz = z;
-
-		// unswap (in reverse)
-		if (swap_xz) std::swap(cx,cz);
-		if (swap_xy) std::swap(cx,cy);
-
-		if (x != x0 || y != y0 || z != z0)
-		{
-			posStopTest =
-			posStop = Position(cx,cy,cz);
-
-			// get direction
-			for (
-					dir = 0;
-					dir != DIR_TOTAL;
-					++dir)
-			{
-				if (   xd[dir] == cx - posStart.x
-					&& yd[dir] == cy - posStart.y)
+				if (_strafe == true && _path.size() > 2u)
 				{
-					break;
+					calculatePath( // iterate this function ONCE ->
+								unit,
+								posStop_cache,
+								maxTuCost,
+								nullptr,
+								true); // <- sets '_strafe' FALSE so loop never gets back in here.
+				}
+				else if (Options::battleStrafe == true
+					&& _ctrl == true
+					&& unit->getGeoscapeSoldier() != nullptr
+					&& (_strafe == false
+						|| (_path.size() == 1u
+							&& unit->getUnitDirection() == _path.front())))
+				{
+					_strafe =
+					_pathAction->strafe = false;
+					_pathAction->dash = true;
+					if (_pathAction->actor != nullptr)
+						_pathAction->actor->setDashing();
+				}
+				else
+				{
+					_pathAction->dash = false;
+					if (_pathAction->actor != nullptr)
+						_pathAction->actor->setDashing(false);
 				}
 			}
-
-			const int tuCost (getTuCostPf(
-										posStart,
-										static_cast<int>(dir),
-										&posStop,
-										launchTarget));
-			//Log(LOG_INFO) << ". TU Cost = " << tuCost;
-
-//			if (sneak == true && _battleSave->getTile(posStop)->getTileVisible())
-//				return false;
-
-			// delete the following <- wtf does that stand for. Apart from the fact that this is an extremely kludgy approximation of wall-costs:
-			const bool isDiagonal ((dir & 1u) == 1u);
-			const int
-				tuCostDiagonalLast (tuCostLast + (tuCostLast >> 1u)),
-				tuCostDiagonal (tuCost + (tuCost >> 1u));
-
-			if (posStopTest == posStop
-				&& tuCost < FAIL
-				&& (tuCost == tuCostLast
-					|| (isDiagonal == true  && tuCost == tuCostDiagonalLast)
-					|| (isDiagonal == false && tuCostLast == tuCostDiagonal)
-					|| tuCostLast == -1)
-				&& isBlockedPath(
-							_battleSave->getTile(posStart),
-							static_cast<int>(dir),
-							launchTarget) == false)
-			{
-				_path.push_back(static_cast<int>(dir));
-				//Log(LOG_INFO) << ". " << dir;
-			}
-			else
-				return false;
-
-			if (tuCost != FAIL && launchTarget == nullptr)
-			{
-				tuCostLast = tuCost;
-				_tuCostTotal += tuCost;
-			}
-
-			posStart = Position(cx,cy,cz);
 		}
-
-		// update progress in other planes
-		drift_xy = drift_xy - delta_y;
-		drift_xz = drift_xz - delta_z;
-
-		// step in y-plane
-		if (drift_xy < 0)
-		{
-			y = y + step_y;
-			drift_xy = drift_xy + delta_x;
-		}
-
-		// step in z-plane
-		if (drift_xz < 0)
-		{
-			z = z + step_z;
-			drift_xz = drift_xz + delta_x;
-		}
+		else
+			abortPath();
 	}
-
-	return true;
 }
 
 /**
@@ -644,7 +423,7 @@ bool Pathfinding::aStarPath( // private.
 //		bool sneak)
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "Pathfinding::aStarPath()";
+	//Log(LOG_INFO) << "pf:aStarPath() id-" << _unit->getId();
 	for (std::vector<PathfindingNode>::iterator
 			i = _nodes.begin();
 			i != _nodes.end();
@@ -709,8 +488,7 @@ bool Pathfinding::aStarPath( // private.
 							posStart,
 							dir,
 							&posStop,
-							launchTarget,
-							false);
+							launchTarget);
 			//Log(LOG_INFO) << ". dir= " << dir << " tuCost=" << tuCost;
 			if (tuCost < FAIL)
 			{
@@ -856,20 +634,22 @@ PathfindingNode* Pathfinding::getNode(const Position& pos) // private.
  * @param dir			- direction of movement
  * @param posStop		- pointer to destination-position
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
- * @param bresenh		- true if calc'd by Breshenham pathing (default true)
  * @return, TU cost or 255 if movement is impossible
  */
 int Pathfinding::getTuCostPf(
 		const Position& posStart,
 		int dir,
 		Position* const posStop,
-		const BattleUnit* const launchTarget,
-		bool bresenh)
+		const BattleUnit* const launchTarget)
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "Pathfinding::getTuCostPf()";// << _unit->getId();
+//	Log(LOG_INFO) << "";
+//	Log(LOG_INFO) << "pf:getTuCostPf() id-" << _unit->getId();
+
 	directionToVector(dir, posStop);
 	*posStop += posStart;
+//	Log(LOG_INFO) << ". dir= " << dir;
+//	Log(LOG_INFO) << ". posStart= " << posStart;
+//	Log(LOG_INFO) << ". posStop= " << (*posStop);
 
 	bool
 		fall   (false),
@@ -1128,34 +908,19 @@ int Pathfinding::getTuCostPf(
 
 			// Propose: if flying then no extra TU cost
 			//Log(LOG_INFO) << ". pathSize = " << (int)_path.size();
-			if (_strafe == true)
+			if (_strafe == true && _unit->getUnitDirection() != dir) // if not dashing straight ahead 1 tile.
 			{
 				// Extra TU for strafe-moves ->	1 0 1
 				//								2 ^ 2
 				//								3 2 3
-				int delta (std::abs((dir + 4) % 8 - _unit->getUnitDirection())); // no u.
+				int delta (std::min(
+								std::abs(8 + dir - _unit->getUnitDirection()),
+								std::min(
+									std::abs(_unit->getUnitDirection() - dir),
+									std::abs(8 + _unit->getUnitDirection() - dir))));
+				if (delta == 4) delta = 2;
 
-				if (delta > 1 && delta < 7
-					&& _unit->getUnitRules() != nullptr
-					&& _unit->getUnitRules()->isMechanical() == true)
-				{
-					if (bresenh == true) // NOTE: A* happily denies an illegal tank-strafe completely.
-					{
-						_strafe = false; // illegal direction for tank-strafe.
-						_pathAction->strafe = false;
-					}
-				}
-				else if (_unit->getUnitDirection() != dir) // if not dashing straight ahead 1 tile.
-				{
-					delta = std::min(
-									std::abs(8 + dir - _unit->getUnitDirection()),
-									std::min(
-										std::abs(_unit->getUnitDirection() - dir),
-										std::abs(8 + _unit->getUnitDirection() - dir)));
-					if (delta == 4) delta = 2;
-
-					cost += delta;
-				}
+				cost += delta;
 			}
 			costTotal += cost;
 		}
@@ -1926,7 +1691,8 @@ bool Pathfinding::isBlocked( // private.
  */
 bool Pathfinding::previewPath(bool discard)
 {
-	//Log(LOG_INFO) << "Pathfinding::previewPath()";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "pf:previewPath() id-" << _unit->getId();
 	if (_path.empty() == true							// <- no current path at all
 		|| (_previewed == true && discard == false))	// <- already previewed; won't change the preview (preview must be discarded before calling funct.)
 	{
