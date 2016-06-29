@@ -1264,7 +1264,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 	bool showInfo;
 
 	if (tile != nullptr
-		&& tile->isRevealed(ST_CONTENT) == true
+		&& tile->isRevealed() == true
 		&& tile->getInventory()->empty() == false)
 	{
 		showInfo = false;
@@ -4400,7 +4400,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 {
 	_lstTileInfo->clearList();
 
-	if (tile != nullptr && tile->isRevealed(ST_CONTENT) == true)
+	if (tile != nullptr && tile->isRevealed() == true)
 	{
 		size_t rows (3u);
 		int tuCost (0);
@@ -4573,7 +4573,7 @@ void BattlescapeState::saveAIMap()
 			posTile.x = x;
 			tile = _battleSave->getTile(posTile);
 
-			if (tile == nullptr || tile->isRevealed(ST_CONTENT) == false)
+			if (tile == nullptr || tile->isRevealed() == false)
 				continue;
 
 			rect.x = static_cast<Sint16>(x) * static_cast<Sint16>(rect.w);
@@ -4825,7 +4825,7 @@ void BattlescapeState::saveVoxelView()
 //					if (debugTac == true
 //						|| (tile->isRevealed(ST_WEST) && voxelTest == 2)
 //						|| (tile->isRevealed(ST_NORTH) && voxelTest == 3)
-//						|| (tile->isRevealed(ST_CONTENT) && (voxelTest == 1 || voxelTest == 4))
+//						|| (tile->isRevealed() && (voxelTest == 1 || voxelTest == 4))
 //						|| voxelTest == 5)
 					if (debugTac == true)
 						black = false;
@@ -4835,7 +4835,7 @@ void BattlescapeState::saveVoxelView()
 						{
 							case 1:
 							case 4:
-								if (tile->isRevealed(ST_CONTENT) == true)
+								if (tile->isRevealed() == true)
 									black = false;
 								break;
 

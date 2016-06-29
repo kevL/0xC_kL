@@ -540,7 +540,7 @@ bool Tile::closeSlideDoor()
 /**
  * Sets this Tile's sections' revealed flags.
  * @note Also re-caches the sprites for any unit on this Tile if the value changes.
- * @param section - the SectionType (Tile.h)
+ * @param section - the SectionType (Tile.h) (default ST_CONTENT)
  *					0 westwall
  *					1 northwall
  *					2 object+floor
@@ -570,7 +570,7 @@ void Tile::setRevealed(
 
 /**
  * Gets the black fog-of-war/revealed status of this Tile.
- * @param section - the SectionType (Tile.h)
+ * @param section - the SectionType (Tile.h) (default ST_CONTENT)
  *					0 westwall
  *					1 northwall
  *					2 object+floor

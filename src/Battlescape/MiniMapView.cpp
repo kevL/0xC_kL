@@ -159,7 +159,7 @@ void MiniMapView::draw()
 							colorGroup  = 1; // greyscale
 							colorOffset = 5;
 						}
-						else if (tile->isRevealed(ST_CONTENT) == true)
+						else if (tile->isRevealed() == true)
 						{
 							colorGroup  = 0;
 							colorOffset = tile->getShade();
@@ -206,7 +206,7 @@ void MiniMapView::draw()
 								}
 							}
 
-							if (tile->getFire() != 0 && tile->isRevealed(ST_CONTENT) == true) // draw fire
+							if (tile->getFire() != 0 && tile->isRevealed() == true) // draw fire
 							{
 								int fire;
 								switch (_cycle)
@@ -265,7 +265,7 @@ void MiniMapView::draw()
 										colorGroup);
 						}
 
-						if (tile->isRevealed(ST_CONTENT) == true
+						if (tile->isRevealed() == true
 							&& tile->getInventory()->empty() == false)		// at least one item on this tile
 						{
 							int color;

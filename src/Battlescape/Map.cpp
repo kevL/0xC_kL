@@ -690,7 +690,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					else
 						tileBelow = nullptr;
 
-					if (_tile->isRevealed(ST_CONTENT) == true)
+					if (_tile->isRevealed() == true)
 						tileShade = _tile->getShade();
 					else
 						tileShade = SHADE_BLACK;
@@ -948,7 +948,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.y + _tile->getTerrainLevel(),
 										tileShade);
 
-							if (var == true && _tile->isRevealed(ST_CONTENT) == true)
+							if (var == true && _tile->isRevealed() == true)
 							{
 								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 								//if (sprite != nullptr)
@@ -970,7 +970,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										posScreen.y + _tile->getTerrainLevel(),
 										tileShade);
 
-								if (var == true && _tile->isRevealed(ST_CONTENT) == true)
+								if (var == true && _tile->isRevealed() == true)
 									for (int
 											x = 0;
 											x != 3;
@@ -1314,7 +1314,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								sprite = unitBelow->getCache(quadrant);
 								//if (sprite != nullptr)
 								{
-									if (tileBelow->isRevealed(ST_CONTENT) == true)
+									if (tileBelow->isRevealed() == true)
 										shade = tileBelow->getShade();
 									else
 										shade = SHADE_BLACK;
@@ -1341,7 +1341,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					}
 
 // Draw SMOKE & FIRE
-					if (_tile->isRevealed(ST_CONTENT) == true)
+					if (_tile->isRevealed() == true)
 					{
 						std::string st;
 						if (_tile->getFire() != 0) // check & draw fire first.
@@ -1478,7 +1478,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								case CT_TARGET:
 								{
 									// draw targetUnit overtop cursor's front if Tile is blacked-out.
-									if (hasUnit == true && _tile->isRevealed(ST_CONTENT) == false)
+									if (hasUnit == true && _tile->isRevealed() == false)
 									{
 										trueLoc = isTrueLoc(_unit, _tile);
 										quadrant = getQuadrant(_unit, _tile, trueLoc);
@@ -1808,7 +1808,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						&& posScreen.y <  _spriteHeight + surface->getHeight())
 					{
 						if ((_tile = _battleSave->getTile(posField)) != nullptr
-							&& _tile->isRevealed(ST_CONTENT) == true
+							&& _tile->isRevealed() == true
 							&& _tile->getPreviewDir() != -1)
 						{
 							int offset_y (-_tile->getTerrainLevel());

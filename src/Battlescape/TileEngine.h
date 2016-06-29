@@ -155,7 +155,7 @@ private:
 		/// Calculates Field of View vs units for a single BattleUnit.
 		bool calcFovUnits(BattleUnit* const unit) const;
 		/// Calculates Field of View vs Tiles for a single BattleUnit.
-		void calcFovTiles(BattleUnit* const unit) const;
+		void calcFovTiles(const BattleUnit* const unit) const;
 		/// Calculates Field of View vs units for conscious units within range.
 		void calcFovUnits_pos(
 				const Position& pos,

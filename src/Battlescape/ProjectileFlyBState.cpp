@@ -368,7 +368,7 @@ void ProjectileFlyBState::init()
 				|| Options::battleForceFire == false))
 		{
 			//Log(LOG_INFO) << ". tileTarget has content-object";
-			if (tileTarget->isRevealed(ST_CONTENT) == false
+			if (tileTarget->isRevealed() == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,
@@ -422,7 +422,7 @@ void ProjectileFlyBState::init()
 		else if (tileTarget->getMapData(O_FLOOR) != nullptr) // forced-shot at Floor is handled above^ [CTRL+ALT]
 		{
 			//Log(LOG_INFO) << ". tileTarget has floor";
-			if (tileTarget->isRevealed(ST_CONTENT) == false
+			if (tileTarget->isRevealed() == false
 				|| _parent->getTileEngine()->canTargetTilepart(
 														&originVoxel,
 														tileTarget,

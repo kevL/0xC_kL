@@ -216,10 +216,10 @@ private:
 
 		/// Sets the black fog-of-war status of a tile-section.
 		void setRevealed(
-				SectionType section,
+				SectionType section = ST_CONTENT,
 				bool revealed = true);
 		/// Gets the black fog-of-war status of a tile-section.
-		bool isRevealed(SectionType section) const;
+		bool isRevealed(SectionType section = ST_CONTENT) const;
 
 		/// Resets light to zero for the Tile.
 		void resetLight(size_t layer);

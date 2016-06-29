@@ -2268,7 +2268,7 @@ int BattlescapeGenerator::loadMAP( // private.
 				&& z != _craftZ)
 			{
 				revealDone = true;
-				_battleSave->getTile(Position(x,y,z))->setRevealed(ST_CONTENT);
+				_battleSave->getTile(Position(x,y,z))->setRevealed();
 			}
 		}
 
