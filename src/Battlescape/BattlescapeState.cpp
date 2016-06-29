@@ -1579,33 +1579,24 @@ inline void BattlescapeState::handle(Action* action)
 		return;
 
 	bool doit;
-	switch (action->getDetails()->button.button)
+	if (_game->getCursor()->getVisible() == true)
+		doit = true;
+	else
 	{
-		case SDL_BUTTON_RIGHT: // ... not sure what all this is on about; but here's a refactor of that.
-			switch (action->getDetails()->type)
-			{
-				case SDL_MOUSEBUTTONDOWN:
-				case SDL_MOUSEBUTTONUP:
-					doit = true;
-					break;
-
-				default:
-					doit = false;
-			}
-			break;
-
-		default:
-			if (_game->getCursor()->getVisible() == true)
-				doit = true;
-			else
-				doit = false;
+		doit = false;
+		switch (action->getDetails()->button.button)
+		{
+			case SDL_BUTTON_RIGHT: // -> not sure what this is on about; but here's a refactor of that.
+				switch (action->getDetails()->type)
+				{
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+						doit = true;
+				}
+		}
 	}
 
 	if (doit == true)
-//	if (_game->getCursor()->getVisible() == true
-//		|| (action->getDetails()->button.button == SDL_BUTTON_RIGHT
-//			&& (action->getDetails()->type == SDL_MOUSEBUTTONDOWN
-//				|| action->getDetails()->type == SDL_MOUSEBUTTONUP)))
 	{
 		State::handle(action);
 
@@ -1747,10 +1738,11 @@ inline void BattlescapeState::handle(Action* action)
 			}
 
 			case SDL_KEYUP:
-				if (action->getDetails()->key.keysym.sym == SDLK_LALT						// Alt - updateTileInfo.
-					|| action->getDetails()->key.keysym.sym == SDLK_RALT)
+				switch (action->getDetails()->key.keysym.sym)								// Alt - updateTileInfo.
 				{
-					mapOver(nullptr);
+					case SDLK_LALT:
+					case SDLK_RALT:
+						mapOver(nullptr);
 				}
 //				break;
 //
