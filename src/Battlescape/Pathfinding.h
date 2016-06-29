@@ -52,6 +52,8 @@ class Pathfinding
 {
 
 private:
+	static bool _debug;
+
 	static const int FAIL = 255;
 
 	bool

@@ -57,7 +57,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the BattleUnit from a Soldier.
+ * Initializes the BattleUnit from a specified Soldier.
  * @param sol	- pointer to a geoscape Soldier
  * @param diff	- for negative VictoryPts value at death
  */

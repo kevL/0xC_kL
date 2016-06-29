@@ -39,6 +39,8 @@
 namespace OpenXcom
 {
 
+bool Pathfinding::_debug = false; // static.
+
 Uint8 // static not const.
 	Pathfinding::red	=  3u, // defaults ->
 	Pathfinding::green	=  4u, // overridden by Interfaces.rul when BattlescapeState loads
@@ -642,26 +644,26 @@ int Pathfinding::getTuCostPf(
 		Position* const posStop,
 		const BattleUnit* const launchTarget)
 {
-//	Log(LOG_INFO) << "";
-//	Log(LOG_INFO) << "pf:getTuCostPf() id-" << _unit->getId();
+	//if (_debug) Log(LOG_INFO) << "";
+	//if (_debug) Log(LOG_INFO) << "pf:getTuCostPf() id-" << _unit->getId();
 
 	directionToVector(dir, posStop);
 	*posStop += posStart;
-//	Log(LOG_INFO) << ". dir= " << dir;
-//	Log(LOG_INFO) << ". posStart= " << posStart;
-//	Log(LOG_INFO) << ". posStop= " << (*posStop);
+	//if (_debug) Log(LOG_INFO) << ". dir= " << dir;
+	//if (_debug) Log(LOG_INFO) << ". posStart= " << posStart;
+	//if (_debug) Log(LOG_INFO) << ". posStop= " << (*posStop);
 
 	bool
 		fall   (false),
-		stairs (false);
+		stairs (false); // NOTE: Not necessarily stairs.
 
 	int
 		partsGoingUp	(0),
-		partsGoingDown	(0),
+		partsGoingDown	(0),	// TODO: 3 vars all denoting essentially the same thing ->
 		partsFalling	(0),
-		partsOnAir		(0),
-
-		cost,
+		partsOnAir		(0),	// The problem is they were trying to account for a unit
+								// standing on nothing and a unit stepping onto nothing
+		cost,					// simultaneously (during the same 'step' [ call/loop ]).
 		costTotal (0);
 
 	_doorCost = 0;
@@ -689,6 +691,8 @@ int Pathfinding::getTuCostPf(
 				++y)
 		{
 // first, CHECK FOR BLOCKAGE ->> then calc TU cost after.
+			cost = 0;
+
 			posOffset = Position(x,y,0);
 
 			if (   (tileStart = _battleSave->getTile(posStart + posOffset)) == nullptr
@@ -708,6 +712,7 @@ int Pathfinding::getTuCostPf(
 
 					fall = true;
 					++partsOnAir;
+					//if (_debug) Log(LOG_INFO) << ". . not Fly, canFallDown, ++partsOnAir -- fall= " << fall;
 				}
 				else
 				{
@@ -718,6 +723,7 @@ int Pathfinding::getTuCostPf(
 						if (dir != DIR_DOWN) return FAIL;
 
 						fall = true;
+						//if (_debug) Log(LOG_INFO) << ". . not Fly, hasNoFloor, ++partsOnAir=quadrants -- fall= " << fall;
 					}
 				}
 			}
@@ -769,9 +775,23 @@ int Pathfinding::getTuCostPf(
 			{
 				if (++partsGoingDown == quadrants)
 				{
+					if (tileStopBelow->getMapData(O_FLOOR) != nullptr)			// copied from below_
+						cost = tileStopBelow->getTuCostTile(O_FLOOR, _mType);
+					else
+						cost = 4;
+
+					if (tileStopBelow->getMapData(O_OBJECT) != nullptr)
+						cost += tileStopBelow->getTuCostTile(O_OBJECT, _mType);
+
+					if ((dir & 1) == 1)
+						cost += (cost + 1) >> 1u;								// end_Copy.
+
+					//tileStop->getTuCostTile(O_FLOOR, _mType)
+					//tileStop->getTuCostTile(O_OBJECT, _mType)
 					fall = true;
 					--posStop->z;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
+					//if (_debug) Log(LOG_INFO) << ". . ++partsGoingDown=quadrants -- fall= " << fall;
 				}
 			}
 			else if (_mType == MT_FLY
@@ -786,8 +806,6 @@ int Pathfinding::getTuCostPf(
 
 			if (tileStop == nullptr)
 				return FAIL;
-
-			cost = 0;
 
 			switch (dir)
 			{
@@ -846,6 +864,7 @@ int Pathfinding::getTuCostPf(
 				fall = true;
 				*posStop = posStart + Position(0,0,-1);
 				tileStop = _battleSave->getTile(*posStop + posOffset);
+				//if (_debug) Log(LOG_INFO) << ". . ++partsFalling=quadrants -- fall= " << fall;
 			}
 
 			tileStart = _battleSave->getTile(tileStart->getPosition() + posOffsetVertical);
@@ -873,10 +892,14 @@ int Pathfinding::getTuCostPf(
 			}
 // CHECK FOR BLOCKAGE_end.
 
+			//if (_debug) Log(LOG_INFO) << ". . dir= " << dir;
+			//if (_debug) Log(LOG_INFO) << ". . posStop= " << (*posStop);
+			//if (_debug) Log(LOG_INFO) << ". . fall= " << fall;
+
 // Calculate TU costage ->
 			if (dir < DIR_UP && fall == false)
 			{
-				if (tileStop->getMapData(O_FLOOR) != nullptr)
+				if (tileStop->getMapData(O_FLOOR) != nullptr)					// copied above^
 					cost = tileStop->getTuCostTile(O_FLOOR, _mType);
 				else
 					cost = 4;
@@ -885,7 +908,7 @@ int Pathfinding::getTuCostPf(
 					cost += tileStop->getTuCostTile(O_OBJECT, _mType);
 
 				if ((dir & 1) == 1)
-					cost += (cost + 1) >> 1u;
+					cost += (cost + 1) >> 1u;									// end_Copy.
 
 				// TODO: Early-exit if cost>FAIL.
 //				if (cost >= FAIL) return FAIL; // quick outs ->
@@ -972,7 +995,7 @@ int Pathfinding::getTuCostPf(
 		costTotal = (costTotal + quadrants - 1) / quadrants; // round up.
 	} // largeUnits_end.
 
-	//Log(LOG_INFO) << ". costTotal= " << costTotal;
+	//if (_debug) Log(LOG_INFO) << ". COST TU= " << costTotal;
 	return costTotal;
 }
 
@@ -1691,6 +1714,7 @@ bool Pathfinding::isBlocked( // private.
  */
 bool Pathfinding::previewPath(bool discard)
 {
+	//_debug = true;
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "pf:previewPath() id-" << _unit->getId();
 	if (_path.empty() == true							// <- no current path at all
@@ -1847,6 +1871,7 @@ bool Pathfinding::previewPath(bool discard)
 //		if (switchBack == true)
 //			_battleSave->getBattleGame()->setReservedAction(BA_NONE);
 	}
+	//_debug = false;
 	return true;
 }
 
