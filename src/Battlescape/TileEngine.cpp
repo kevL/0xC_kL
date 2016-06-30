@@ -4953,24 +4953,15 @@ VoxelType TileEngine::plotLine(
 {
 	//if (_debug) Log(LOG_INFO) << "TileEngine::plotLine()";
 	VoxelType voxelTest;
-	bool
-		swap_xy,
-		swap_xz;
 	int
-		x,x0,x1, delta_x, step_x,
-		y,y0,y1, delta_y, step_y,
-		z,z0,z1, delta_z, step_z,
-
-		drift_xy,
-		drift_xz,
-
-		cx,cy,cz,
+		x,x0,x1,
+		y,y0,y1,
+		z,z0,z1,
 
 		horiBlock,
 		vertBlock;
 
 	Position posLast (origin);
-
 
 	x0 = origin.x; // start & end points
 	x1 = target.x;
@@ -4981,44 +4972,50 @@ VoxelType TileEngine::plotLine(
 	z0 = origin.z;
 	z1 = target.z;
 
-	swap_xy = std::abs(y1 - y0) > std::abs(x1 - x0); // 'steep' xy Line, make longest delta x plane
+	const bool swap_xy (std::abs(y1 - y0) > std::abs(x1 - x0)); // 'steep' xy Line, make longest delta the x-plane
 	if (swap_xy == true)
 	{
 		std::swap(x0,y0);
 		std::swap(x1,y1);
 	}
 
-	swap_xz = std::abs(z1 - z0) > std::abs(x1 - x0); // do same for xz
+	const bool swap_xz (std::abs(z1 - z0) > std::abs(x1 - x0)); // do same for xz
 	if (swap_xz == true)
 	{
 		std::swap(x0,z0);
 		std::swap(x1,z1);
 	}
 
-	delta_x = std::abs(x1 - x0); // delta is Length in each plane
-	delta_y = std::abs(y1 - y0);
-	delta_z = std::abs(z1 - z0);
+	const bool swap_yz (abs(z1 - z0) > abs(y1 - y0)); // finally make sure delta-y is bigger than delta-z
+	if (swap_yz == true)
+	{
+		std::swap(y0, z0);
+		std::swap(y1, z1);
+	}
 
-	drift_xy =				// drift controls when to step in 'shallow' planes;
-	drift_xz = delta_x / 2;	// starting value keeps Line centered
+	const int& cx (swap_xy ? (swap_yz ? z : y) : (swap_xz ? z : x)); // set references to the true values of the coordinates
+	const int& cy (swap_xy ? (swap_xz ? z : x) : (swap_yz ? z : y)); // as opposed to the swapped values
+	const int& cz (swap_xz ?                x  : (swap_yz ? y : z));
 
-	step_x =				// direction of Line
-	step_y = step_z = 1;
-	if (x0 > x1) step_x = -1;
-	if (y0 > y1) step_y = -1;
-	if (z0 > z1) step_z = -1;
+	const int
+		delta_x (std::abs(x1 - x0)), // delta is Length in each plane
+		delta_y (std::abs(y1 - y0)),
+		delta_z (std::abs(z1 - z0)),
 
-	y = y0; // starting point
-	z = z0;
+		step_x ((x0 > x1) ? -1 : 1), // direction of Line
+		step_y ((y0 > y1) ? -1 : 1),
+		step_z ((z0 > z1) ? -1 : 1);
+
+	int
+		drift_xy (delta_x >> 1u),	// drift controls when to step in 'shallow' planes;
+		drift_xz (drift_xy);		// starting value keeps Line centered
+
+	x = x0; y = y0; z = z0; // starting point
 	for (
-			x = x0; // step through longest delta (which has been swapped to x)
+			; // step through longest delta that has been swapped to X
 			x != x1 + step_x;
 			x += step_x)
 	{
-		cx = x; cy = y; cz = z; // copy position
-		if (swap_xz == true) std::swap(cx,cz); // unswap (in reverse)
-		if (swap_xy == true) std::swap(cx,cy);
-
 		if (storeTrj == true) // && trj != nullptr)
 			trj->push_back(Position(cx,cy,cz));
 
@@ -5034,7 +5031,7 @@ VoxelType TileEngine::plotLine(
 			if (voxelTest != VOXEL_EMPTY) // hit.
 			{
 				//if (_debug) Log(LOG_INFO) << "pL() ret[1] " << MapData::debugVoxelType(voxelTest) << " vs"
-				//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+				//						    << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
 //				if (trj != nullptr)					// store the position of impact
 				trj->push_back(Position(cx,cy,cz));	// NOTE: This stores the final position twice if storeTrj=TRUE.
@@ -5046,7 +5043,7 @@ VoxelType TileEngine::plotLine(
 		{
 			Tile
 				* const tileStart (_battleSave->getTile(posLast)),
-				* const tileDest (_battleSave->getTile(Position(cx,cy,cz)));
+				* const tileDest  (_battleSave->getTile(Position(cx,cy,cz)));
 
 			//if (_debug) Log(LOG_INFO) << "pL() tileStart" << posLast << " tileDest" << Position(cx,cy,cz);
 			horiBlock = horizontalBlockage(
@@ -5074,20 +5071,11 @@ VoxelType TileEngine::plotLine(
 			posLast = Position(cx,cy,cz);
 		}
 
-		drift_xy = drift_xy - delta_y; // update progress in other planes
-		drift_xz = drift_xz - delta_z;
-
-		if (drift_xy < 0) // step in y plane
+		if ((drift_xy -= delta_y) < 0) // step in y-plane NOTE: "y" is not a "plane"
 		{
-			y = y + step_y;
-			drift_xy = drift_xy + delta_x;
-
+			y += step_y;
 			if (doVoxelCheck == true) // check for xy diagonal intermediate voxel step, for Unit visibility
 			{
-				cx = x; cy = y; cz = z;
-				if (swap_xz == true) std::swap(cx,cz);
-				if (swap_xy == true) std::swap(cx,cy);
-
 				voxelTest = voxelCheck(
 									Position(cx,cy,cz),
 									excludeUnit,
@@ -5098,7 +5086,7 @@ VoxelType TileEngine::plotLine(
 				if (voxelTest != VOXEL_EMPTY)
 				{
 					//if (_debug) Log(LOG_INFO) << "pL() ret[2] " << MapData::debugVoxelType(voxelTest) << " vs"
-					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+					//						    << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
 //					if (trj != nullptr)
 					trj->push_back(Position(cx,cy,cz)); // store the position of impact
@@ -5106,19 +5094,14 @@ VoxelType TileEngine::plotLine(
 					return voxelTest;
 				}
 			}
+			drift_xy += delta_x;
 		}
 
-		if (drift_xz < 0) // same in z
+		if ((drift_xz -= delta_z) < 0) // step in z-plane NOTE: "z" is not a "plane"
 		{
-			z = z + step_z;
-			drift_xz = drift_xz + delta_x;
-
+			z += step_z;
 			if (doVoxelCheck == true) // check for xz diagonal intermediate voxel step
 			{
-				cx = x; cy = y; cz = z;
-				if (swap_xz == true) std::swap(cx,cz);
-				if (swap_xy == true) std::swap(cx,cy);
-
 				voxelTest = voxelCheck(
 									Position(cx,cy,cz),
 									excludeUnit,
@@ -5129,7 +5112,7 @@ VoxelType TileEngine::plotLine(
 				if (voxelTest != VOXEL_EMPTY)
 				{
 					//if (_debug) Log(LOG_INFO) << "pL() ret[3] " << MapData::debugVoxelType(voxelTest) << " vs"
-					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+					//						    << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
 //					if (trj != nullptr)
 					trj->push_back(Position(cx,cy,cz));	// store the position of impact
@@ -5137,6 +5120,7 @@ VoxelType TileEngine::plotLine(
 					return voxelTest;
 				}
 			}
+			drift_xz += delta_x;
 		}
 	}
 

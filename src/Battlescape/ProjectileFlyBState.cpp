@@ -677,8 +677,8 @@ bool ProjectileFlyBState::createProjectile() // private.
 		_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
 			->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
 
-	if (_unit->getArmor()->getShootFrames() != 0)
-		_parent->getMap()->showProjectile(false); // postpone showing the Celatid spit-blob till later
+	if (_unit->getArmor()->getShootFrames() != 0) // postpone showing the Celatid spit-blob till later
+		_parent->getMap()->showProjectile(false);
 
 	//Log(LOG_INFO) << ". createProjectile() ret TRUE";
 	_parent->getMap()->setProjectile(_prj); // add projectile to Map.

@@ -19,7 +19,7 @@
 
 #include "CraftWeapon.h"
 
-//#include <algorithm>
+//#include <algorithm> // std::min()
 
 #include "CraftWeaponProjectile.h"
 
