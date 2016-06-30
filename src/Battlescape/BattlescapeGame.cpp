@@ -2848,13 +2848,6 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 		const bool ctrl ((SDL_GetModState() & KMOD_CTRL) != 0);
 
-		bool zPath;
-		const Uint8* const keystate (SDL_GetKeyState(nullptr));
-		if (keystate[SDLK_z] != 0)
-			zPath = true;
-		else
-			zPath = false;
-
 		if (ctrl == true
 			&& targetUnit != nullptr
 			&& targetUnit == _tacAction.actor
@@ -2885,11 +2878,18 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		{
 			const bool alt ((SDL_GetModState() & KMOD_ALT)  != 0);
 
+//			bool zPath;
+//			const Uint8* const keystate (SDL_GetKeyState(nullptr));
+//			if (keystate[SDLK_z] != 0)
+//				zPath = true;
+//			else
+//				zPath = false;
+
 			if (allowPreview == true
 				&& (_tacAction.posTarget != pos
 					|| pf->isModCtrl() != ctrl
-					|| pf->isModAlt() != alt
-					|| pf->isZPath() != zPath))
+					|| pf->isModAlt() != alt))
+//					|| pf->isZPath() != zPath))
 			{
 				pf->clearPreview();
 			}
