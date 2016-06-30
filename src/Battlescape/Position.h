@@ -26,6 +26,9 @@
 namespace OpenXcom
 {
 
+static const int FLOOR_TLEVEL = 2;
+
+
 /**
  * Easy handling of X-Y-Z coordinates.
  */

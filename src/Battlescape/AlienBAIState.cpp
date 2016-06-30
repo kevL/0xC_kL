@@ -1986,8 +1986,8 @@ bool AlienBAIState::grenadeAction() // private.
 				const Position
 					originVoxel (_battleSave->getTileEngine()->getSightOriginVoxel(_unit)),
 					targetVoxel (Position::toVoxelSpaceCentered(
-															action.posTarget, // LoFT of floor is typically 2 voxels thick.
-															2 - _battleSave->getTile(action.posTarget)->getTerrainLevel()));
+															action.posTarget,
+															FLOOR_TLEVEL - _battleSave->getTile(action.posTarget)->getTerrainLevel()));
 
 				if (_battleSave->getTileEngine()->validateThrow(action, originVoxel, targetVoxel) == true)
 				{

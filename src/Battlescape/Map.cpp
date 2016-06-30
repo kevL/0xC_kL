@@ -1593,8 +1593,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 									const Position
 										originVoxel (_te->getOriginVoxel(*action)),
 										targetVoxel (Position::toVoxelSpaceCentered( // TODO: conform this to ProjectileFlyBState (modifier keys) & Projectile::_targetVoxel
-																				Position(itX,itY,itZ), // LoFT of floor is typically 2 voxels thick.
-																				2 - _battleSave->getTile(action->posTarget)->getTerrainLevel()));
+																				Position(itX,itY,itZ),
+																				FLOOR_TLEVEL - _battleSave->getTile(action->posTarget)->getTerrainLevel()));
 									if (hasFloor == true
 										&& _te->validateThrow(
 															*action,

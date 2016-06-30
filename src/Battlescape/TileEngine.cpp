@@ -2650,7 +2650,7 @@ void TileEngine::explode(
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
-											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
@@ -2664,7 +2664,7 @@ void TileEngine::explode(
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
 											(*i)->setFuse(-2);
-											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
@@ -2843,7 +2843,7 @@ void TileEngine::explode(
 									{
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
-											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
@@ -2855,7 +2855,7 @@ void TileEngine::explode(
 /*										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
 											(*i)->setFuse(-2);
-											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
@@ -5129,7 +5129,7 @@ VoxelType TileEngine::plotLine(
 }
 
 /**
- * Calculates a parabolic trajectory for thrown items.
+ * Calculates a parabolic trajectory for thrown items and arcing shots.
  * @note Accuracy is NOT considered; this is a true path/trajectory.
  * @param originVoxel	- reference to the origin in voxelspace
  * @param targetVoxel	- reference to the target in voxelspace
@@ -5197,7 +5197,7 @@ VoxelType TileEngine::plotParabola(
 		stopPlotLine;
 
 	const Position posTarget (Position::toTileSpace(targetVoxel));
-	const int posVoxelZ (posTarget.z * 24 + 2);
+	const int posVoxelZ (posTarget.z * 24 + FLOOR_TLEVEL);
 
 	VoxelType voxelTest;
 
@@ -5222,14 +5222,10 @@ VoxelType TileEngine::plotParabola(
 							startVoxel,
 							stopVoxel,
 							false,
-							&trjPlotLine, //nullptr,
+							&trjPlotLine, // NOTE: This already handles karadoc's core fix.
 							excludeUnit);
 		//if (_debug) Log(LOG_INFO) << "pP() plotLine DONE";
 
-//		if (voxelTest != VOXEL_EMPTY
-//			|| (   stopVoxel.z < startVoxel.z
-//				&& stopVoxel.z < posVoxelZ
-//				&& Position::toTileSpace(stopVoxel) == posTarget))
 		if (trjPlotLine.empty() == false)
 			stopPlotLine = trjPlotLine.at(0u);
 		else
@@ -5260,7 +5256,7 @@ VoxelType TileEngine::plotParabola(
 			if (storeTrj == false) trj->push_back(stopPlotLine); // final voxel only.
 
 			//if (_debug) Log(LOG_INFO) << "pP() ret " << MapData::debugVoxelType(voxelTest) << " vs"
-			//						  << stopPlotLine << " ts" << Position::toTileSpace(stopPlotLine);
+			//						    << stopPlotLine << " ts" << Position::toTileSpace(stopPlotLine);
 			return voxelTest;
 		}
 

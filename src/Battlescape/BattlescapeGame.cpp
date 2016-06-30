@@ -1238,7 +1238,7 @@ void BattlescapeGame::liquidateUnit() // private.
 	{
 		Explosion* const explosion (new Explosion(
 												explType,
-												Position::toVoxelSpaceCentered(_tacAction.posTarget, 2),
+												Position::toVoxelSpaceCentered(_tacAction.posTarget, FLOOR_TLEVEL),
 												aniStart));
 		getMap()->getExplosions()->push_back(explosion);
 		_executeProgress = true;
@@ -1448,7 +1448,7 @@ void BattlescapeGame::endTurn() // private.
 			{
 				pos = Position::toVoxelSpaceCentered(
 												tile->getPosition(),
-												2 - tile->getTerrainLevel());
+												FLOOR_TLEVEL - tile->getTerrainLevel());
 				statePushNext(new ExplosionBState(
 												this,
 												pos,
@@ -2565,8 +2565,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 										const Position
 											originVoxel (getTileEngine()->getOriginVoxel(action)),
 											targetVoxel (Position::toVoxelSpaceCentered(
-																					action.posTarget, // LoFT of floor is typically 2 voxels thick.
-																					2 - _battleSave->getTile(action.posTarget)->getTerrainLevel()));
+																					action.posTarget,
+																					FLOOR_TLEVEL - _battleSave->getTile(action.posTarget)->getTerrainLevel()));
 
 										if (getTileEngine()->validateThrow(
 																		action,
@@ -3829,7 +3829,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 								{															// there *might* be a problem if the Proxy is on a non-walkable tile ....
 									pos = Position::toVoxelSpaceCentered(
 																	tile->getPosition(),
-																	2 - (tile->getTerrainLevel()));
+																	FLOOR_TLEVEL - (tile->getTerrainLevel()));
 									statePushNext(new ExplosionBState(
 																	this,
 																	pos,
