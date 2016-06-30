@@ -1671,7 +1671,7 @@ void BattlescapeGame::endTurn() // private.
  * Checks for casualties and adjusts morale accordingly.
  * @note Etc.
 // * @note Also checks if Alien Base Control was destroyed in a BaseAssault tactical.
- * @param itRule	- pointer to the weapon's RuleItem (default nullptr)
+ * @param itRule	- pointer to the weapon's rule (default nullptr)
  * @param attacker	- pointer to credit the kill (default nullptr)
  * @param hidden	- true for UFO Power Source explosions at the start of
  *					  battlescape (default false)

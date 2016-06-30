@@ -1083,7 +1083,9 @@ void ProjectileFlyBState::think()
 				}
 
 
-				std::vector<BattleUnit*> doneUnits; // This section is only for SoldierDiary.
+				std::vector<BattleUnit*> contactsHandled; // This section is only for SoldierDiary.
+				contactsHandled.resize(posContacts.size());
+
 				for (std::vector<Position>::const_iterator
 						i = posContacts.begin();
 						i != posContacts.end();
@@ -1092,11 +1094,11 @@ void ProjectileFlyBState::think()
 					BattleUnit* const victim (_battleSave->getTile(*i)->getTileUnit());
 					if (victim != nullptr	// position of impact has a victim; actually every entry in posContacts ought have a victim per above^.
 						&& std::find(		// this needs to ID the unit itself because large units occupy more than one position.
-								doneUnits.begin(),
-								doneUnits.end(),
-								victim) == doneUnits.end())
+								contactsHandled.begin(),
+								contactsHandled.end(),
+								victim) == contactsHandled.end())
 					{
-						doneUnits.push_back(victim); // each victim counts only once.
+						contactsHandled.push_back(victim); // each victim counts only once.
 
 						if (_unit->getGeoscapeSoldier() != nullptr
 							&& _unit->isMindControlled() == false)
@@ -1131,8 +1133,7 @@ void ProjectileFlyBState::think()
 			}
 
 			delete _prj;
-			_prj = nullptr;
-			_parent->getMap()->setProjectile();
+			_parent->getMap()->setProjectile(_prj = nullptr);
 		}
 	}
 	//Log(LOG_INFO) << "ProjectileFlyBState::think() EXIT";
