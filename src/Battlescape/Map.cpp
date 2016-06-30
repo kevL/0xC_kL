@@ -1504,7 +1504,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 									Uint8 color;
 
 									bool zero;
-									if (hasUnit == true)
+									if (hasUnit == true
+										&& _tile->getTileUnit() != _battleSave->getSelectedUnit())
 									{
 										const Position originVoxel (_te->getSightOriginVoxel(action->actor));
 										Position scanVoxel;
