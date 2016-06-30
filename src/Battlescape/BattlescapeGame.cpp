@@ -76,7 +76,7 @@ namespace OpenXcom
 
 bool BattlescapeGame::_debugPlay; // static.
 
-const char* const BattlescapeGame::PLAYER_ERROR[15u] // static.
+const char* const BattlescapeGame::PLAYER_ERROR[16u] // static.
 {
 	"STR_NOT_ENOUGH_TIME_UNITS",			//  0
 	"STR_NOT_ENOUGH_ENERGY",				//  1
@@ -92,7 +92,8 @@ const char* const BattlescapeGame::PLAYER_ERROR[15u] // static.
 	"STR_ACTION_NOT_ALLOWED_PSIONIC",		// 11
 	"STR_ACTION_NOT_ALLOWED_NOFLY",			// 12
 	"STR_ACTION_NOT_ALLOWED_ROOF",			// 13
-	"STR_ACTION_NOT_ALLOWED_FLOOR"			// 14
+	"STR_ACTION_NOT_ALLOWED_FLOOR",			// 14
+	"STR_UNABLE_TO_THROW_HERE"				// 15
 //	"STR_TUS_RESERVED"
 //	"STR_NO_ROUNDS_LEFT"
 };
@@ -1256,7 +1257,7 @@ void BattlescapeGame::liquidateUnit() // private.
 	_tacAction.targetUnit = nullptr;
 
 	checkCasualties(
-				_tacAction.weapon,
+				_tacAction.weapon->getRules(),
 				_tacAction.actor);
 //				false, false, true);
 }
@@ -1449,7 +1450,9 @@ void BattlescapeGame::endTurn() // private.
 												tile->getPosition(),
 												2 - tile->getTerrainLevel());
 				statePushNext(new ExplosionBState(
-												this, pos, *j,
+												this,
+												pos,
+												(*j)->getRules(),
 												(*j)->getPriorOwner()));
 				_battleSave->toDeleteItem(*j);
 
@@ -1668,14 +1671,14 @@ void BattlescapeGame::endTurn() // private.
  * Checks for casualties and adjusts morale accordingly.
  * @note Etc.
 // * @note Also checks if Alien Base Control was destroyed in a BaseAssault tactical.
- * @param weapon	- pointer to the weapon responsible (default nullptr)
+ * @param itRule	- pointer to the weapon's RuleItem (default nullptr)
  * @param attacker	- pointer to credit the kill (default nullptr)
  * @param hidden	- true for UFO Power Source explosions at the start of
  *					  battlescape (default false)
  * @param terrain	- true for terrain explosions (default false)
  */
 void BattlescapeGame::checkCasualties(
-		const BattleItem* const weapon,
+		const RuleItem* const itRule,
 		BattleUnit* attacker,
 		bool hidden,
 		bool terrain)
@@ -1710,7 +1713,7 @@ void BattlescapeGame::checkCasualties(
 		checkExposedByMelee(attacker);
 
 		if (attacker->getGeoscapeSoldier() != nullptr)
-			diaryAttacker(attacker, weapon);
+			diaryAttacker(attacker, itRule);
 	}
 
 	bool
@@ -1787,8 +1790,8 @@ void BattlescapeGame::checkCasualties(
 					else
 					{
 						DamageType dType;
-						if (weapon != nullptr)
-							dType = weapon->getRules()->getDamageType();
+						if (itRule != nullptr)
+							dType = itRule->getDamageType();
 						else if (hidden == true || terrain == true)
 							dType = DT_HE;
 						else
@@ -1917,19 +1920,19 @@ void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
  * Collects data about attacker for SoldierDiary.
  * @note Helper for checkCasualties().
  * @param attacker	- pointer to the attacker
- * @param weapon	- pointer to the weapon used
+ * @param itRule	- pointer to the weapon's rule
  */
 void BattlescapeGame::diaryAttacker( // private.
 		const BattleUnit* const attacker,
-		const BattleItem* const weapon)
+		const RuleItem* itRule)
 {
 	_killStatMission = _battleSave->getSavedGame()->getMissionStatistics()->size();
 	_killStatTurn = _battleSave->getTurn() * 3 + static_cast<int>(_battleSave->getSide());
 
-	if (weapon != nullptr)
+	if (itRule != nullptr)
 	{
 		_killStatWeapon =
-		_killStatWeaponAmmo = weapon->getRules()->getType();
+		_killStatWeaponAmmo = itRule->getType();
 	}
 	else
 	{
@@ -1937,7 +1940,6 @@ void BattlescapeGame::diaryAttacker( // private.
 		_killStatWeaponAmmo = "STR_WEAPON_UNKNOWN";
 	}
 
-	const RuleItem* itRule;
 	const BattleItem* item (attacker->getItem(ST_RIGHTHAND));
 	if (item != nullptr)
 	{
@@ -3829,9 +3831,11 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 																	tile->getPosition(),
 																	2 - (tile->getTerrainLevel()));
 									statePushNext(new ExplosionBState(
-																	this, pos, *i,
+																	this,
+																	pos,
+																	(*i)->getRules(),
 																	(*i)->getPriorOwner()));
-									_battleSave->toDeleteItem(*i); // does/should this even be done (also done at end of ExplosionBState) -> causes a double-explosion if remarked here.
+									_battleSave->toDeleteItem(*i);
 
 									unit->flagCache();
 									getMap()->cacheUnit(unit);

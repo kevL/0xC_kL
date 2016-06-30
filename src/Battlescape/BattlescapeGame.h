@@ -40,6 +40,7 @@ class InfoboxDialogState;
 class Map;
 class Pathfinding;
 class ResourcePack;
+class RuleItem;
 class Ruleset;
 class SavedBattleGame;
 class TileEngine;
@@ -263,7 +264,7 @@ private:
 	/// Collects data about attacker for SoldierDiary.
 	void diaryAttacker(
 			const BattleUnit* const attacker,
-			const BattleItem* const weapon);
+			const RuleItem* itRule);
 	/// Collects data about defender for SoldierDiary.
 	void diaryDefender(const BattleUnit* const defender);
 	/// Adjusts a BattleUnit's morale for making a kill.
@@ -284,7 +285,7 @@ private:
 	public:
 		static bool _debugPlay;
 
-		static const char* const PLAYER_ERROR[15u];
+		static const char* const PLAYER_ERROR[16u];
 
 
 		/// Creates a BattlescapeGame.
@@ -333,7 +334,7 @@ private:
 
 		/// Checks for casualties.
 		void checkCasualties(
-				const BattleItem* const weapon = nullptr,
+				const RuleItem* const itRule = nullptr,
 				BattleUnit* attacker = nullptr,
 				bool hidden = false,
 				bool terrain = false);

@@ -2650,12 +2650,25 @@ void TileEngine::explode(
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
+											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+																										_battleSave->getBattleGame(),
+																										explVoxel,
+																										(*i)->getRules(),
+																										attacker));
+										}
+										//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
+										_battleSave->toDeleteItem(*i);
+										break;
+/*										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
+										{
+											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
 											(*i)->setFuse(-2);
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
-																										*i,
+																										(*i)->getRules(),
 																										attacker));
 										}
 										else if ((*i)->getFuse() != -2)
@@ -2663,10 +2676,9 @@ void TileEngine::explode(
 											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
 											_battleSave->toDeleteItem(*i);
 											break;
-										}
+										} */
 									}
 									//else Log(LOG_INFO) << ". . . INVENTORY: bypass item = " << (*i)->getRules()->getType();
-
 									done = (++i == tileStop->getInventory()->end());
 								}
 							}
@@ -2831,19 +2843,30 @@ void TileEngine::explode(
 									{
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
+											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
+											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+																										_battleSave->getBattleGame(),
+																										explVoxel,
+																										(*i)->getRules(),
+																										attacker));
+										}
+										_battleSave->toDeleteItem(*i);
+										break;
+/*										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
+										{
 											(*i)->setFuse(-2);
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), 2));
 											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
-																										*i,
+																										(*i)->getRules(),
 																										attacker));
 										}
 										else if ((*i)->getFuse() != -2)
 										{
 											_battleSave->toDeleteItem(*i);
 											break;
-										}
+										} */
 									}
 									done = (++i == tileStop->getInventory()->end());
 								}

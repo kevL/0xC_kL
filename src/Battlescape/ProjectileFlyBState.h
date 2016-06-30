@@ -29,9 +29,10 @@
 namespace OpenXcom
 {
 
+class BattleItem;
 class BattlescapeGame;
 class BattleUnit;
-class BattleItem;
+class Projectile;
 class SavedBattleGame;
 class Tile;
 
@@ -55,6 +56,7 @@ private:
 		* _load,
 		* _prjItem;
 	BattleUnit* _unit;
+	Projectile* _prj;
 	SavedBattleGame* _battleSave;
 
 	Position
@@ -64,7 +66,7 @@ private:
 		_prjVector;
 	VoxelType _prjImpact;
 
-	/// Tries to create a projectile sprite.
+	/// Tries to create a projectile.
 	bool createProjectile();
 
 	/// Peforms a melee attack.

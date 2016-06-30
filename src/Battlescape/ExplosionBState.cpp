@@ -35,7 +35,6 @@
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
 
-#include "../Savegame/BattleItem.h"
 #include "../Savegame/BattleUnit.h"
 #include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/Tile.h"
@@ -48,7 +47,7 @@ namespace OpenXcom
  * Sets up an ExplosionBState.
  * @param parent		- pointer to the BattlescapeGame
  * @param centerVoxel	- center position in voxel-space
- * @param item			- pointer to item involved in the explosion (eg grenade)
+ * @param itRule		- pointer to the weapon's rule
  * @param unit			- pointer to unit involved in the explosion (eg unit throwing the grenade, cyberdisc, etc)
  * @param tile			- pointer to tile the explosion is on (default nullptr)
  * @param lowerWeapon	- true to tell the unit causing this explosion to lower their weapon (default false)
@@ -59,7 +58,7 @@ namespace OpenXcom
 ExplosionBState::ExplosionBState(
 		BattlescapeGame* const parent,
 		const Position centerVoxel,
-		BattleItem* const item,
+		const RuleItem* const itRule,
 		BattleUnit* const unit,
 		Tile* const tile,
 		bool lowerWeapon,
@@ -69,7 +68,7 @@ ExplosionBState::ExplosionBState(
 	:
 		BattleState(parent),
 		_centerVoxel(centerVoxel),
-		_item(item),
+		_itRule(itRule),
 		_unit(unit),
 		_tile(tile),
 		_lowerWeapon(lowerWeapon),
@@ -116,10 +115,9 @@ std::string ExplosionBState::getBattleStateLabel() const
 void ExplosionBState::init()
 {
 	//Log(LOG_INFO) << ". init()";
-	if (_item != nullptr)
+	if (_itRule != nullptr)
 	{
-		const RuleItem* const itRule (_item->getRules());
-		switch (itRule->getBattleType())
+		switch (_itRule->getBattleType())
 		{
 			case BT_PSIAMP: // pass by. Let cTor initialization handle it. Except '_areaOfEffect' value
 				_areaOfEffect = false;
@@ -129,18 +127,18 @@ void ExplosionBState::init()
 				// getTacticalAction() only works for player actions: aliens cannot melee attack with rifle butts.
 				_buttHurt = _unit != nullptr
 						 && _unit->getFaction() == FACTION_PLAYER
-						 && itRule->getBattleType() != BT_MELEE
+						 && _itRule->getBattleType() != BT_MELEE
 						 && _parent->getTacticalAction()->type == BA_MELEE;
 
 				if (_buttHurt == true)
-					_power = itRule->getMeleePower();
+					_power = _itRule->getMeleePower();
 				else
-					_power = itRule->getPower();
+					_power = _itRule->getPower();
 
 				// since melee aliens don't use a conventional weapon type use their strength instead.
 				if (_unit != nullptr
-					&& itRule->isStrengthApplied() == true
-					&& (itRule->getBattleType() == BT_MELEE || _buttHurt == true))
+					&& _itRule->isStrengthApplied() == true
+					&& (_itRule->getBattleType() == BT_MELEE || _buttHurt == true))
 				{
 					int extraPower (_unit->getStrength() >> 1u);
 
@@ -158,8 +156,8 @@ void ExplosionBState::init()
 				// HE, incendiary, smoke or stun bombs create AOE explosions;
 				// all the rest hits one point: AP, melee (stun or AP), laser, plasma, acid
 				_areaOfEffect = _buttHurt == false
-							 && itRule->getBattleType() != BT_MELEE
-							 && itRule->getExplosionRadius() != -1;
+							 && _itRule->getBattleType() != BT_MELEE
+							 && _itRule->getExplosionRadius() != -1;
 		}
 	}
 	else if (_tile != nullptr)
@@ -197,20 +195,19 @@ void ExplosionBState::init()
 				offset;
 
 			Uint32 interval;
-			if (_item != nullptr)
+			if (_itRule != nullptr)
 			{
-				const RuleItem* const itRule (_item->getRules());
-				if (itRule->defusePulse() == true)
+				if (_itRule->defusePulse() == true)
 					_parent->getMap()->setBlastFlash(true);
 
 				interval = static_cast<Uint32>(
 						   std::max(1,
-									static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - itRule->getExplosionSpeed()));
+									static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - _itRule->getExplosionSpeed()));
 
-				aniStart = itRule->getFireHitAnimation();
-				radius = std::max(0, itRule->getExplosionRadius());
+				aniStart = _itRule->getFireHitAnimation();
+				radius = std::max(0, _itRule->getExplosionRadius());
 
-				switch (itRule->getDamageType())
+				switch (_itRule->getDamageType())
 				{
 					case DT_SMOKE:
 					case DT_STUN:
@@ -249,20 +246,19 @@ void ExplosionBState::init()
 
 				if (aniStart != -1)
 				{
-					Explosion* const explosion (new Explosion(
-															ET_AOE,
-															explVoxel - Position(16,16,0), // jog downward on the screen.
-															aniStart,
-															aniDelay));
-					_parent->getMap()->getExplosions()->push_back(explosion);
+					_parent->getMap()->getExplosions()->push_back(new Explosion(
+																			ET_AOE,
+																			explVoxel - Position(16,16,0), // jog downward on the screen.
+																			aniStart,
+																			aniDelay));
 					_parent->setStateInterval(interval);
 				}
 			}
 
 
 			int soundId;
-			if (_item != nullptr)
-				soundId = _item->getRules()->getFireHitSound();
+			if (_itRule != nullptr)
+				soundId = _itRule->getFireHitSound();
 			else if (_power < 73)
 				soundId = ResourcePack::SMALL_EXPLOSION;
 			else
@@ -286,7 +282,6 @@ void ExplosionBState::init()
 	}
 	else // create a bullet hit, or melee hit, or psi-hit, or acid spit hit
 	{
-		const RuleItem* const itRule (_item->getRules());
 		ExplosionType
 			explType_att,
 			explType_hit;
@@ -296,12 +291,12 @@ void ExplosionBState::init()
 			aniStart_hit;
 
 		_melee = _buttHurt
-			  || itRule->getBattleType() == BT_MELEE
-			  || itRule->getBattleType() == BT_PSIAMP;
+			  || _itRule->getBattleType() == BT_MELEE
+			  || _itRule->getBattleType() == BT_PSIAMP;
 
 		if (_melee == true)
 		{
-			switch (itRule->getBattleType())
+			switch (_itRule->getBattleType())
 			{
 				default:
 					explType_att = ET_MELEE_ATT;
@@ -312,18 +307,18 @@ void ExplosionBState::init()
 						aniStart_att = -1;
 						if (_meleeSuccess == true)
 						{
-							soundId = itRule->getMeleeHitSound();
-							aniStart_hit = itRule->getMeleeHitAnimation();
+							soundId = _itRule->getMeleeHitSound();
+							aniStart_hit = _itRule->getMeleeHitAnimation();
 						}
 						else
 							soundId = aniStart_hit = -1;
 					}
 					else
 					{
-						soundId = itRule->getMeleeHitSound();
-						aniStart_att = itRule->getMeleeAnimation();
+						soundId = _itRule->getMeleeHitSound();
+						aniStart_att = _itRule->getMeleeAnimation();
 						if (_meleeSuccess == true)
-							aniStart_hit = itRule->getMeleeHitAnimation();
+							aniStart_hit = _itRule->getMeleeHitAnimation();
 						else
 							aniStart_hit = -1;
 					}
@@ -331,18 +326,18 @@ void ExplosionBState::init()
 
 				case BT_PSIAMP:
 					explType_hit = explType_att = ET_PSI;
-					soundId = itRule->getMeleeHitSound();
-					aniStart_hit = itRule->getMeleeHitAnimation();
+					soundId = _itRule->getMeleeHitSound();
+					aniStart_hit = _itRule->getMeleeHitAnimation();
 					aniStart_att = -1;
 			}
 		}
 		else
 		{
-			soundId = itRule->getFireHitSound();
-			aniStart_hit = itRule->getFireHitAnimation();
+			soundId = _itRule->getFireHitSound();
+			aniStart_hit = _itRule->getFireHitAnimation();
 			aniStart_att = -1;
 
-			if (itRule->getType() == "STR_FUSION_TORCH_POWER_CELL")
+			if (_itRule->getType() == "STR_FUSION_TORCH_POWER_CELL")
 				explType_hit = explType_att = ET_TORCH;
 			else
 				explType_hit = explType_att = ET_BULLET;
@@ -354,28 +349,21 @@ void ExplosionBState::init()
 
 		if (aniStart_att != -1 || aniStart_hit != -1)
 		{
-			Explosion* explosion;
 			if (aniStart_att != -1) // TODO: Move create Explosion for start-swing to ProjectileFlyBState::performMeleeAttack().
-			{
-				explosion = new Explosion(
-										explType_att,
-										_centerVoxel,
-										aniStart_att);
-				_parent->getMap()->getExplosions()->push_back(explosion);
-			}
+				_parent->getMap()->getExplosions()->push_back(new Explosion(
+																		explType_att,
+																		_centerVoxel,
+																		aniStart_att));
 
 			if (aniStart_hit != -1)
-			{
-				explosion = new Explosion(
-										explType_hit,
-										_centerVoxel,
-										aniStart_hit);
-				_parent->getMap()->getExplosions()->push_back(explosion);
-			}
+				_parent->getMap()->getExplosions()->push_back(new Explosion(
+																		explType_hit,
+																		_centerVoxel,
+																		aniStart_hit));
 
 			Uint32 interval (static_cast<Uint32>(
 							 std::max(1,
-									  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - itRule->getExplosionSpeed())));
+									  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - _itRule->getExplosionSpeed())));
 			_parent->setStateInterval(interval);
 		}
 
@@ -383,9 +371,9 @@ void ExplosionBState::init()
 		if (_forceCamera == true
 			|| (exploCam->isOnScreen(posTarget) == false
 				&& (_battleSave->getSide() != FACTION_PLAYER
-					|| itRule->getBattleType() != BT_PSIAMP))
+					|| _itRule->getBattleType() != BT_PSIAMP))
 			|| (_battleSave->getSide() != FACTION_PLAYER
-				&& itRule->getBattleType() == BT_PSIAMP))
+				&& _itRule->getBattleType() == BT_PSIAMP))
 		{
 			exploCam->centerOnPosition(posTarget, false);
 		}
@@ -468,74 +456,19 @@ void ExplosionBState::think()
 void ExplosionBState::explode() // private.
 {
 	//Log(LOG_INFO) << ". explode()";
-	const RuleItem* itRule;
-	if (_item != nullptr)
+	if (_itRule != nullptr && _itRule->getBattleType() == BT_PSIAMP)
 	{
-		itRule = _item->getRules();
-		if (itRule->getBattleType() == BT_PSIAMP)
-		{
-			_parent->popState();
-			return;
-		}
+		_parent->popState();
+		return;
 	}
-	else
-		itRule = nullptr;
+
 
 	TileEngine* const te (_battleSave->getTileEngine());
 	bool isTerrain;
 
-	if (itRule != nullptr)
+	if (_itRule != nullptr)
 	{
 		isTerrain = false;
-
-		// NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
-		if (_melee == true)
-		{
-			_parent->getTacticalAction()->type = BA_NONE;
-
-			if (_unit != nullptr)
-			{
-				if (_unit->isOut_t() == false)
-				{
-					_unit->aim(false);
-//					_unit->flagCache();
-				}
-
-				if (_unit->getGeoscapeSoldier() != nullptr
-					&& _unit->isMindControlled() == false)
-				{
-					const BattleUnit* const targetUnit (_battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit());
-					if (targetUnit != nullptr) // safety.
-					{
-						switch (targetUnit->getFaction())
-						{
-							case FACTION_HOSTILE:
-								if (_meleeSuccess == true)
-									_unit->addMeleeExp(2);
-								else
-									_unit->addMeleeExp(1);
-								break;
-
-							case FACTION_PLAYER:
-							case FACTION_NEUTRAL:
-								if (_meleeSuccess == true)
-									_unit->addMeleeExp(1);
-						}
-					}
-				}
-			}
-
-			if (_meleeSuccess == false) // MISS.
-			{
-				_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
-				_parent->getMap()->cacheUnits();
-				_parent->popState();
-				return;
-			}
-		}
-
-		if (_unit == nullptr && _item->getPriorOwner() != nullptr)
-			_unit = _item->getPriorOwner();
 
 		if (_areaOfEffect == true)
 		{
@@ -544,21 +477,67 @@ void ExplosionBState::explode() // private.
 			te->explode(
 					_centerVoxel,
 					_power,
-					itRule->getDamageType(),
-					itRule->getExplosionRadius(),
+					_itRule->getDamageType(),
+					_itRule->getExplosionRadius(),
 					_unit,
-					itRule->isGrenade() == true,
-					itRule->defusePulse() == true,
+					_itRule->isGrenade() == true,
+					_itRule->defusePulse() == true,
 					_isLaunched);
 		}
 		else
 		{
 			//Log(LOG_INFO) << "ExplosionBState::explode() point te::hit";
+			// NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
+			if (_melee == true)
+			{
+				_parent->getTacticalAction()->type = BA_NONE;
+
+				if (_unit != nullptr)
+				{
+					if (_unit->isOut_t() == false)
+					{
+						_unit->aim(false);
+//						_unit->flagCache();
+					}
+
+					if (_unit->getGeoscapeSoldier() != nullptr
+						&& _unit->isMindControlled() == false)
+					{
+						const BattleUnit* const targetUnit (_battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit());
+						if (targetUnit != nullptr) // safety.
+						{
+							switch (targetUnit->getFaction())
+							{
+								case FACTION_HOSTILE:
+									if (_meleeSuccess == true)
+										_unit->addMeleeExp(2);
+									else
+										_unit->addMeleeExp(1);
+									break;
+
+								case FACTION_PLAYER:
+								case FACTION_NEUTRAL:
+									if (_meleeSuccess == true)
+										_unit->addMeleeExp(1);
+							}
+						}
+					}
+				}
+
+				if (_meleeSuccess == false) // MISS.
+				{
+					_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
+					_parent->getMap()->cacheUnits();
+					_parent->popState();
+					return;
+				}
+			}
+
 			DamageType dType;
 			if (_buttHurt == true)
 				dType = DT_STUN;
 			else
-				dType = itRule->getDamageType();
+				dType = _itRule->getDamageType();
 
 			te->hit(
 					_centerVoxel,
@@ -566,8 +545,8 @@ void ExplosionBState::explode() // private.
 					dType,
 					_unit,
 					_melee,
-					itRule->getShotgunPellets() != 0,
-					itRule->getZombieUnit());
+					_itRule->getShotgunPellets() != 0,
+					_itRule->getZombieUnit());
 		}
 	}
 	else if (_tile != nullptr)
@@ -600,9 +579,13 @@ void ExplosionBState::explode() // private.
 	}
 
 	//Log(LOG_INFO) << "ExplosionBState::explode() CALL bg::checkCasualties()";
-	_parent->checkCasualties(_item, _unit, false, isTerrain);
+	_parent->checkCasualties(
+						_itRule,
+						_unit,
+						false,
+						isTerrain);
 
-	if (itRule != nullptr && itRule->getShotgunPellets() != 0)
+	if (_itRule != nullptr && _itRule->getShotgunPellets() != 0)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _battleSave->getUnits()->begin();
@@ -625,21 +608,6 @@ void ExplosionBState::explode() // private.
 	_parent->getMap()->cacheUnits();
 	_parent->popState();
 	//Log(LOG_INFO) << ". . pop";
-
-	if (itRule != nullptr && itRule->isGrenade() == true)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i = _battleSave->getItems()->begin();
-				i != _battleSave->getItems()->end();
-				++i)
-		{
-			if ((*i)->getId() == _item->getId())
-			{
-				_battleSave->toDeleteItem(_item);
-				break;
-			}
-		}
-	}
 
 
 	Tile* const tile (te->checkForTerrainExplosions()); // check for more exploding tiles

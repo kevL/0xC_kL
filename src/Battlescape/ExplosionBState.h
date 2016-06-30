@@ -27,9 +27,9 @@
 namespace OpenXcom
 {
 
-class BattleItem;
 class BattlescapeGame;
 class BattleUnit;
+class RuleItem;
 class SavedBattleGame;
 class Tile;
 
@@ -55,8 +55,8 @@ private:
 	int _power;
 //		_extend,
 
-	BattleItem* _item;
 	BattleUnit* _unit;
+	const RuleItem* _itRule;
 	SavedBattleGame* _battleSave;
 	Tile* _tile;
 
@@ -72,7 +72,7 @@ private:
 		ExplosionBState(
 				BattlescapeGame* const parent,
 				const Position centerVoxel,
-				BattleItem* const item,
+				const RuleItem* const itRule,
 				BattleUnit* const unit,
 				Tile* const tile = nullptr,
 				bool lowerWeapon = false,

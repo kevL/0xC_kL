@@ -30,6 +30,7 @@
 //#include "../Engine/Language.h" // TEST, for soldier name.
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
+#include "../Engine/RNG.h"
 
 #include "../Menu/SaveGameState.h"
 
