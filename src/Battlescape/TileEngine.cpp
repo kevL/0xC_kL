@@ -353,9 +353,6 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 		spotByPlayer  (false),
 		spotByHostile (false);
 
-//	const Position posSelf (unit->getPosition());	// TODO: Check from all four quadrants if unit is large.
-													// See BattleUnit::checkViewSector(). Also visible() and its callers. ETC.
-
 	// NOTE: Lift by terrain-level hasn't been done yet; see before tile-reveals below_
 
 	if (_battleSave->getBattleGame() == nullptr // pre-battle power-source explosion.

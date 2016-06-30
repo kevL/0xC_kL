@@ -127,6 +127,8 @@ class BattleUnit
 {
 
 	public:
+//		static bool _debug;
+
 		static const size_t PARTS_BODY = 6u;
 
 private:

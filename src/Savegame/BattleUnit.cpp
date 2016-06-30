@@ -56,6 +56,9 @@
 namespace OpenXcom
 {
 
+//bool BattleUnit::_debug = false; // static.
+
+
 /**
  * Initializes the BattleUnit from a specified Soldier.
  * @param sol	- pointer to a geoscape Soldier
@@ -4271,7 +4274,7 @@ void BattleUnit::deriveRank()
 /**
  * Checks if a specified Position is inside this BattleUnit's facing-quadrant.
  * @note Using maths!
- * @param pos			- reference to the position to check against
+ * @param pos - reference to the position to check against
  * @return, whatever the maths decide
  */
 bool BattleUnit::checkViewSector(const Position& pos) const
@@ -4286,32 +4289,36 @@ bool BattleUnit::checkViewSector(const Position& pos) const
 //			else dir = _dir;
 	}
 
+	const int
+		offset_x (pos.x - _pos.x),
+		offset_y (pos.y - _pos.y);
 	int
 		dx,dy;
 	const int unitSize (_armor->getSize());
-	for (int // Check view-cone from each of the unit's tiles if applicable.
+	for (int // Check view-cone from each of the unit's quadrants.
 			x = 0;
 			x != unitSize;
 			++x)
 	{
+		dx = offset_x - x;
 		for (int
 				y = 0;
 				y != unitSize;
 				++y)
 		{
-			dx =  pos.x +     x - _pos.x;
-			dy = _pos.y - pos.y -      y;
+			dy = offset_y - y;
 
 			switch (dir)
 			{
-				case 0: if (dx + dy > -1 && dy - dx > -1) return true; break;
-				case 1: if (dx      > -1 && dy      > -1) return true; break;
+				case 1: if (dx > -1 && dy <  1) return true; break;
+				case 3: if (dx > -1 && dy > -1) return true; break;
+				case 5: if (dx <  1 && dy > -1) return true; break;
+				case 7: if (dx <  1 && dy <  1) return true; break;
+
+				case 0: if (dx + dy <  1 && dy - dx <  1) return true; break;
 				case 2: if (dx + dy > -1 && dy - dx <  1) return true; break;
-				case 3: if (     dy <  1 &&      dx > -1) return true; break;
-				case 4: if (dx + dy <  1 && dy - dx <  1) return true; break;
-				case 5: if (dx      <  1 && dy      <  1) return true; break;
-				case 6: if (dx + dy <  1 && dy - dx > -1) return true; break;
-				case 7: if (     dy > -1 &&      dx <  1) return true;
+				case 4: if (dx + dy > -1 && dy - dx > -1) return true; break;
+				case 6: if (dx + dy <  1 && dy - dx > -1) return true;
 			}
 		}
 	}
