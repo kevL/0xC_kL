@@ -1159,7 +1159,8 @@ void ProjectileFlyBState::cancel()
  */
 void ProjectileFlyBState::performMeleeAttack() // private.
 {
-	//Log(LOG_INFO) << "flyB:performMeleeAttack() " << _unit->getId();
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "fB:performMeleeAttack() id-" << _unit->getId();
 	_unit->aim();
 //	_unit->flagCache();
 	_parent->getMap()->cacheUnit(_unit);
@@ -1173,6 +1174,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 		success = true;
 	else
 		success = false;
+	//Log(LOG_INFO) << ". success= " << success;
 
 	if (success == false || _action.weapon->getRules()->getMeleeHitSound() == -1)
 	{

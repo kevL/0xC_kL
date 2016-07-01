@@ -126,7 +126,7 @@ private:
 //	std::set<Tile*> _detonationTiles;
 
 	std::vector<BattleItem*>
-		_toDelete,
+		_deletedProperty,
 		_items,
 		_recoverConditional,
 		_recoverGuaranteed;
@@ -329,8 +329,8 @@ private:
 
 		/// Removes a BattleItem from the battlefield.
 		std::vector<BattleItem*>::const_iterator toDeleteItem(BattleItem* const item);
-		/// Gives read-only access to the deleted-items vector.
-		const std::vector<BattleItem*>& getDeletedItems() const;
+		/// Gives read-only access to the deleted-property vector.
+		const std::vector<BattleItem*>& deletedProperty() const;
 
 		/// Sets if the mission was aborted.
 		void isAborted(bool abort);

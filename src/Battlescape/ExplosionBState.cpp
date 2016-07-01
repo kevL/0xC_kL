@@ -82,7 +82,9 @@ ExplosionBState::ExplosionBState(
 		_melee(false)
 //		_extend(3) // extra think-cycles before this state is allowed to Pop.
 {
-	//Log(LOG_INFO) << "cTor ExplBState";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "cTor ExplBState id-" << (_unit ? _unit->getId() : 0);
+	//Log(LOG_INFO) << ". item type " << (itRule ? itRule->getType() : "NONe");
 }
 
 /**
@@ -134,6 +136,7 @@ void ExplosionBState::init()
 					_power = _itRule->getMeleePower();
 				else
 					_power = _itRule->getPower();
+				//Log(LOG_INFO) << ". . power[1]= " << _power;
 
 				// since melee aliens don't use a conventional weapon type use their strength instead.
 				if (_unit != nullptr
@@ -141,6 +144,7 @@ void ExplosionBState::init()
 					&& (_itRule->getBattleType() == BT_MELEE || _buttHurt == true))
 				{
 					int extraPower (_unit->getStrength() >> 1u);
+					//Log(LOG_INFO) << ". . . extraPower[1]= " << extraPower;
 
 					if (_buttHurt == true)
 						extraPower >>= 1u;		// pistolwhipping adds only 1/2 extraPower.
@@ -148,9 +152,11 @@ void ExplosionBState::init()
 					if (_unit->isKneeled() == true)
 						extraPower >>= 1u;		// kneeled units further half extraPower.
 
+					//Log(LOG_INFO) << ". . . extraPower[2]= " << extraPower;
 					_power += RNG::generate(	// add 10% to 100% of extPower
 										(extraPower + 9) / 10,
 										 extraPower);
+					//Log(LOG_INFO) << ". . power[2]= " << _power;
 				}
 
 				// HE, incendiary, smoke or stun bombs create AOE explosions;

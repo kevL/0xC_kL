@@ -1365,6 +1365,7 @@ items:
     meleeAniHit: 0
     fullClip: -1
     strengthApplied: true
+    power: 50
     damageType: 7
     accuracyMelee: 76
     tuMelee: 17
@@ -1384,6 +1385,7 @@ items:
     meleeAniHit: 0
     fullClip: -1
     strengthApplied: true
+    power: 20
     damageType: 7
     accuracyMelee: 80
     tuMelee: 19
@@ -1425,6 +1427,7 @@ items:
     meleeAni: 8 #claws_red
     meleeAniHit: 0
     strengthApplied: true
+    power: 30
     damageType: 7
     accuracyMelee: 71
     tuMelee: 14
@@ -1465,6 +1468,7 @@ items:
     meleeAni: 16 #claws_white
     meleeAniHit: 0
     strengthApplied: true
+    power: 40
     damageType: 7
     accuracyMelee: 50
     tuMelee: 17

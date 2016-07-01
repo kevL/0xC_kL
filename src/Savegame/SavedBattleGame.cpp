@@ -192,8 +192,8 @@ SavedBattleGame::~SavedBattleGame()
 		delete *i;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _toDelete.begin();
-			i != _toDelete.end();
+			i = _deletedProperty.begin();
+			i != _deletedProperty.end();
 			++i)
 		delete *i;
 
@@ -556,7 +556,7 @@ void SavedBattleGame::load(
 								nullptr,
 								id);
 			item->load(*i);
-			_toDelete.push_back(item);
+			_deletedProperty.push_back(item);
 		}
 	}
 
@@ -778,8 +778,8 @@ YAML::Node SavedBattleGame::save() const
 	}
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _toDelete.begin();
-			i != _toDelete.end();
+			i = _deletedProperty.begin();
+			i != _deletedProperty.end();
 			++i)
 	{
 //		if ((*i)->getProperty() == true) // taken care of in toDeleteItem().
@@ -1657,7 +1657,7 @@ void SavedBattleGame::distributeEquipment(Tile* const tile)
  *		- tile inventory
  *		- battleunit inventory
  *		- battlescape-items container
- * Upon removal the pointer to the item is kept in the '_toDelete' vector which
+ * Upon removal the pointer to the item is kept in the '_deletedProperty' vector which
  * is flushed and destroyed in the SavedBattleGame dTor.
  * @param item - pointer to an item to remove
  * @return, const_iterator to the next item in the BattleItems list
@@ -1704,7 +1704,7 @@ std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleIte
 		if (*i == item)
 		{
 			if ((*i)->getProperty() == true)
-				_toDelete.push_back(item);
+				_deletedProperty.push_back(item);
 			else
 				delete *i;
 
@@ -1715,12 +1715,12 @@ std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleIte
 }
 
 /**
- * Gives read-only access to the deleted-items vector.
+ * Gives read-only access to the deleted-property vector.
  * @return, const-ref to a vector of pointers to deleted BattleItems
  */
-const std::vector<BattleItem*>& SavedBattleGame::getDeletedItems() const
+const std::vector<BattleItem*>& SavedBattleGame::deletedProperty() const
 {
-	return _toDelete;
+	return _deletedProperty;
 }
 
 /**

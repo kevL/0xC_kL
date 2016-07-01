@@ -1462,10 +1462,10 @@ int BattleUnit::takeDamage(
 		DamageType dType,
 		const bool ignoreArmor)
 {
-	//Log(LOG_INFO) << "BattleUnit::takeDamage() " << getId() << " power[0] = " << power;
+	//Log(LOG_INFO) << "bu:takeDamage() id-" << _id << " power[0]= " << power;
 	power = static_cast<int>(Round(
 			static_cast<float>(power) * _armor->getDamageModifier(dType)));
-	//Log(LOG_INFO) << ". dType = " << (int)dType << " power[1] = " << power;
+	//Log(LOG_INFO) << ". dType = " << (int)dType << " power[1]= " << power;
 
 //	if (power < 1) // kL_note: this early-out messes with got-hit sFx below_
 //		return 0;
@@ -1481,12 +1481,14 @@ int BattleUnit::takeDamage(
 
 	if (power > 0 && ignoreArmor == false)
 	{
-		UnitSide side = SIDE_FRONT;
+		UnitSide side;
 
 		if (relVoxel == Position(0,0,0))
 			side = SIDE_UNDER;
 		else
 		{
+			side = SIDE_FRONT;
+
 			int dirRel;
 			const int
 				abs_x (std::abs(relVoxel.x)),
@@ -1514,7 +1516,6 @@ int BattleUnit::takeDamage(
 				}
 			}
 
-			//Log(LOG_INFO) << "BattleUnit::takeDamage() Target was hit from DIR = " << ((dirRel - _dir) % 8);
 			switch ((dirRel - _dir) % 8)
 			{
 				case 0:	side = SIDE_FRONT;						break;
@@ -1530,7 +1531,7 @@ int BattleUnit::takeDamage(
 				case 7:	side = RNG::percent(50)	? SIDE_FRONT
 												: SIDE_LEFT;
 			}
-			//Log(LOG_INFO) << ". side = " << (int)side;
+			//Log(LOG_INFO) << ". . side= " << (int)side;
 
 			if (woundable == true)
 			{
@@ -1558,17 +1559,17 @@ int BattleUnit::takeDamage(
 					}
 				}
 			}
-			//Log(LOG_INFO) << ". bodyPart = " << (int)bodyPart;
+			//Log(LOG_INFO) << ". . bodyPart = " << (int)bodyPart;
 		}
 
 		const int armor (getArmor(side)); // armor damage
 		setArmor(
 				std::max(0,
-						armor - (power + 9) / 10), // round up.
+						 armor - (power + 9) / 10), // round up.
 				side);
 
 		power -= armor; // subtract armor-before-damage from power.
-		//Log(LOG_INFO) << ". power[2] = " << power;
+		//Log(LOG_INFO) << ". power[2]= " << power;
 	}
 
 	if (power > 0)
@@ -1661,7 +1662,7 @@ int BattleUnit::takeDamage(
 	}
 
 	if (power < 0) power = 0;
-	//Log(LOG_INFO) << "BattleUnit::takeDamage() ret Penetrating Power " << power;
+	//Log(LOG_INFO) << ". ret power[3]= " << power;
 
 	return power;
 }
