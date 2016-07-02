@@ -376,6 +376,7 @@ void SavedBattleGame::load(
 					{
 						case STATUS_DEAD:
 						case STATUS_LATENT:
+						case STATUS_LATENT_START:
 							break;
 
 						default:
@@ -1414,10 +1415,22 @@ bool SavedBattleGame::endFactionTurn()
 			i != _units.end();
 			++i)
 	{
-		if ((*i)->getUnitStatus() != STATUS_LATENT)
+		switch ((*i)->getUnitStatus())
 		{
-			if ((*i)->getUnitStatus() != STATUS_DEAD) //getHealth() != 0) //isOut_t(OUT_HEALTH) == false)
-			{
+			case STATUS_LATENT:
+			case STATUS_LATENT_START:
+				break;
+
+			case STATUS_DEAD: // burning corpses eventually sputter out.
+				if ((*i)->getFaction() == _side && (*i)->getFireUnit() != 0)
+					(*i)->setFireUnit((*i)->getFireUnit() - 1);
+				break;
+
+			default:
+				(*i)->setUnitStatus(STATUS_STANDING); // safety.
+				// no break;
+			case STATUS_STANDING:
+			case STATUS_UNCONSCIOUS:
 				(*i)->setDashing(false);	// Safety. no longer dashing; dash is effective
 											// vs. Reaction Fire only and is/ought be
 											// reset/removed every time BattlescapeGame::primaryAction()
@@ -1454,9 +1467,6 @@ bool SavedBattleGame::endFactionTurn()
 				}
 
 				(*i)->setUnitVisible((*i)->getFaction() == FACTION_PLAYER);
-			}
-			else if ((*i)->getFaction() == _side && (*i)->getFireUnit() != 0)
-				(*i)->setFireUnit((*i)->getFireUnit() - 1); // dead burning bodies eventually go out.
 		}
 	}
 

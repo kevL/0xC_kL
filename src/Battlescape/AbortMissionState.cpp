@@ -104,8 +104,8 @@ AbortMissionState::AbortMissionState(
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
-			if (   (nextStage.empty() == true  && (*i)->isInExitArea() == true) // TODO: Ability to retreat from multi-stage !noRetreat battles.
-				|| (nextStage.empty() == false && (*i)->isInExitArea(END_POINT)))
+			if (   (nextStage.empty() == true  && (*i)->isOnTiletype(START_POINT) == true)
+				|| (nextStage.empty() == false && (*i)->isOnTiletype(END_POINT) == true))
 			{
 				++_insideExit;
 			}

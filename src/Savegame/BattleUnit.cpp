@@ -1921,6 +1921,7 @@ bool BattleUnit::isOut_t(OutCheck test) const
 				case STATUS_DEAD:
 				case STATUS_UNCONSCIOUS:
 				case STATUS_LATENT:
+				case STATUS_LATENT_START:
 					return true;
 			}
 			break;
@@ -3229,11 +3230,11 @@ bool BattleUnit::checkReload()
 }
 
 /**
- * Checks if this BattleUnit is in an exit-area.
- * @param tileType - type of exit-tile to check for (RuleItem.h) (default START_POINT)
- * @return, true if unit is in a designated exit-area
+ * Checks if this BattleUnit is standing on a specified tile-type.
+ * @param tileType - type of tile to check for (RuleItem.h)
+ * @return, true if unit is currently conscious on @a tileType
  */
-bool BattleUnit::isInExitArea(TileType tileType) const
+bool BattleUnit::isOnTiletype(TileType tileType) const
 {
 	return _tile != nullptr
 		&& _tile->getMapData(O_FLOOR) != nullptr
@@ -3898,6 +3899,7 @@ int BattleUnit::getMoveSound() const
 bool BattleUnit::isWoundable() const
 {
 	return _status != STATUS_LATENT
+		&& _status != STATUS_LATENT_START
 		&& _status != STATUS_DEAD
 		&& (_geoscapeSoldier != nullptr
 			|| (Options::battleAlienBleeding == true
@@ -3912,6 +3914,7 @@ bool BattleUnit::isWoundable() const
 bool BattleUnit::isMoralable() const
 {
 	return _status != STATUS_LATENT
+		&& _status != STATUS_LATENT_START
 		&& _status != STATUS_DEAD
 		&& _status != STATUS_UNCONSCIOUS
 		&& (_geoscapeSoldier != nullptr
@@ -3926,6 +3929,7 @@ bool BattleUnit::isMoralable() const
 bool BattleUnit::isHealable() const
 {
 	return _status != STATUS_LATENT
+		&& _status != STATUS_LATENT_START
 		&& _status != STATUS_DEAD
 		&& (_geoscapeSoldier != nullptr
 			|| (_unitRule->isMechanical() == false

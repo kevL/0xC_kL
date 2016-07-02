@@ -455,12 +455,17 @@ void BattlescapeGenerator::nextStage()
 
 	int unitSize;
 
-	bool fullSuccess (true);
+	bool fullSuccess (true); // all aLiens were put down on previous stage regardless of 'aborted'.
 
+	// NOTE: The next section decides if each unit should be set Latent.
+	// Player units are never set latent unless the 1st-stage is aborted; all
+	// non-player units will have a Latency set, either Latent_Start or just
+	// Latent depending on what tile they're on at the end of the 1st-stage. If
+	// aborted, player-units will be set latent unless they're on an End_Point.
 	const Position posBogus (Position(-1,-1,-1));
-	for (std::vector<BattleUnit*>::const_iterator // kill all enemy units, or those not in endpoint-area if aborted
-			i = _unitList->begin();
-			i != _unitList->end();
+	for (std::vector<BattleUnit*>::const_iterator	// set all living hostile/neutral units Latent
+			i = _unitList->begin();					// and deal with player-units not in endpoint-area if aborted
+			i != _unitList->end();					// plus break all unit-tile links and unit-positions.
 			++i)
 	{
 		if ((*i)->getUnitStatus() != STATUS_DEAD)
@@ -471,33 +476,15 @@ void BattlescapeGenerator::nextStage()
 			{
 				case FACTION_PLAYER:
 					if (_battleSave->isAborted() == true)
-					{
-						switch ((*i)->getUnitStatus())
-						{
-							case STATUS_UNCONSCIOUS:
-								if ((pos = (*i)->getPosition()) != Position(-1,-1,-1) // is Not carried: else stay Status_Unconscious
-									&& ((tile = _battleSave->getTile(pos)) == nullptr
-										|| tile->getMapData(O_FLOOR) == nullptr
-										|| tile->getMapData(O_FLOOR)->getTileType() != END_POINT))
-								{
-									(*i)->setUnitStatus(STATUS_LATENT); // Unconscious xCom units on an exit-tile should remain Status_Unconscious.
-								}
-								break;
-
-							default: // standing.
-								if ((*i)->isInExitArea(END_POINT) == false)
-									(*i)->setUnitStatus(STATUS_LATENT);
-						}
-					}
+						setUnitLatency(*i);
 					break;
 
 				case FACTION_HOSTILE:
 					if ((*i)->isOut_t(OUT_STAT) == false)
 						fullSuccess = false;
 					// no break;
-
 				case FACTION_NEUTRAL:
-					(*i)->setUnitStatus(STATUS_LATENT);
+					setUnitLatency(*i);
 			}
 		}
 
@@ -529,7 +516,7 @@ void BattlescapeGenerator::nextStage()
 			}
 		}
 		(*i)->setTile();					// break unit's link to Tile.
-		(*i)->setPosition(posBogus, false);	// and give unit a bogus Position
+		(*i)->setPosition(posBogus, false);	// and give unit a bogus Position(-1,-1,-1)
 	}
 
 	// Remove all items not belonging to player-units from the map.
@@ -555,21 +542,21 @@ void BattlescapeGenerator::nextStage()
 			i != _itemList->end();
 			++i)
 	{
-		if ((*i)->isLoad() == false)
+		std::vector<BattleItem*>* dst; // assign the item a destination container ->
+
+		if ((*i)->getRules()->isRecoverable() == true)
 		{
-			std::vector<BattleItem*>* dst; // assign the item a destination container ->
-
-			if ((*i)->getOwner() == nullptr) // is on ground
+			if ((*i)->getUnit() != nullptr							// IMPORTANT: Do not load weapons with battle-corpses.
+				&& (*i)->getUnit()->getUnitStatus() != STATUS_DEAD)	// if unit is Dead just treat its corpse as any other object.
 			{
-				(*i)->setFuse(-1);
-
-				if (fullSuccess == true) // all aLiens were put down on previous stage
+				if ((*i)->getOwner() == nullptr
+					|| (*i)->getUnit()->isHealable() == false)
 				{
-					if ((*i)->getUnit() != nullptr)
+					switch ((*i)->getUnit()->getOriginalFaction())
 					{
-						switch ((*i)->getUnit()->getOriginalFaction())
-						{
-							case FACTION_PLAYER:
+						case FACTION_PLAYER:
+							if (fullSuccess == true) // aborted or not.
+							{
 								if ((*i)->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS
 									&& (*i)->getUnit()->isHealable() == true
 									&& (_battleSave->isAborted() == false
@@ -578,96 +565,137 @@ void BattlescapeGenerator::nextStage()
 											&& tile->getMapData(O_FLOOR)->getTileType() == END_POINT)))
 								{
 									dst = &forwardGround;
-									break;
 								}
-								// no break;
+								else
+									dst = guaranteed;
+							}
+							else // all aLiens were NOT put down; implies that previous stage was Aborted.
+							{
+								switch ((*i)->getUnit()->getUnitStatus())
+								{
+									case STATUS_UNCONSCIOUS:
+										if ((*i)->getUnit()->isHealable() == true)
+										{
+											dst = &forwardGround;	// tricky bit of logic here.
+											break;					// Relies on the result of setUnitLatency().
+										}
+										// no break;
 
-							case FACTION_HOSTILE:
-							case FACTION_NEUTRAL: dst = guaranteed;
-						}
+									case STATUS_LATENT: dst = conditional;
+										break;
+
+									case STATUS_LATENT_START: dst = guaranteed;
+								}
+							}
+							break;
+
+						case FACTION_HOSTILE:
+						case FACTION_NEUTRAL:
+							if (fullSuccess == true
+								|| (*i)->getUnit()->getUnitStatus() == STATUS_LATENT_START)
+							{
+								dst = guaranteed;
+							}
+							else
+								dst = conditional;
 					}
-					else if ((*i)->getRules()->isRecoverable() == true)
+				}
+				else // body is carried and healable
+					dst = &forwardCarried;
+			}
+			else if ((*i)->isLoad() == false)
+			{
+				if ((*i)->getOwner() == nullptr)
+				{
+					if (fullSuccess == true) // all aLiens were put down on previous stage
 					{
 						if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
 							dst = &forwardGround;
 						else
 							dst = guaranteed;
 					}
-					else
-						dst = &deletable;
+					else if ((tile = (*i)->getTile()) != nullptr // definitely aborted.
+						&& tile->getMapData(O_FLOOR) != nullptr)
+					{
+						switch (tile->getMapData(O_FLOOR)->getTileType())
+						{
+							case START_POINT: dst = guaranteed;
+								break;
+
+							case END_POINT:
+								if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
+								{
+									dst = &forwardGround;
+									break;
+								}
+								// no break;
+
+							default: dst = conditional;
+						}
+					}
+					else // safety catch-all.
+						dst = conditional;
 				}
-				else // all aLiens were NOT put down; implies that previous stage was Aborted.
+				else // carried:
 				{
-					if ((*i)->getUnit() != nullptr)
+					if (fullSuccess == true) // no hostiles left standing so they shouldn't be carrying anything; neutrals might still be packing an apple or two ...
 					{
-						if ((tile = (*i)->getTile()) != nullptr
-							&& tile->getMapData(O_FLOOR) != nullptr)
-						{
-							switch (tile->getMapData(O_FLOOR)->getTileType())
-							{
-								case START_POINT: dst = guaranteed;
-									break;
-
-								case END_POINT:
-									if ((*i)->getUnit()->getOriginalFaction() == FACTION_PLAYER
-										&& (*i)->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS
-										&& (*i)->getUnit()->isHealable() == true)
-									{
-										dst = &forwardGround;
-										break;
-									}
-									// no break;
-
-								default: dst = conditional;
-							}
-						}
+						if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
+							dst = &forwardCarried;
 						else
-							dst = conditional;
+							dst = guaranteed;
 					}
-					else if ((*i)->getRules()->isRecoverable() == true)
+					else // carried & aborted:
 					{
-						if ((tile = (*i)->getTile()) != nullptr
-							&& tile->getMapData(O_FLOOR) != nullptr)
+						switch ((*i)->getOwner()->getFaction())
 						{
-							switch (tile->getMapData(O_FLOOR)->getTileType())
-							{
-								case START_POINT: dst = guaranteed;
-									break;
-
-								case END_POINT:
-									if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
-									{
-										dst = &forwardGround;
+							case FACTION_PLAYER:
+								switch ((*i)->getOwner()->getUnitStatus())
+								{
+									case STATUS_LATENT_START: dst = guaranteed;
 										break;
-									}
-									// no break;
 
-								default: dst = conditional;
-							}
+									default:
+										if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
+										{
+											dst = &forwardCarried;	// Not so sure that I really want unresearched stuff getting shuttled around automagically !
+											break;
+										}
+										// no break;				// In fact I don't; aborting player-units should have to hold onto their stuff and drag it out manually.
+
+									case STATUS_LATENT: dst = conditional;
+								}
+								break;
+
+							case FACTION_HOSTILE:
+							case FACTION_NEUTRAL:
+//								dst = &deletable;	// aLiens and Civies run away with their stuff ... but, uh, their bodies are counted in Debriefing.
+								dst = conditional;	// So make it conditional -- fun: Two-stage routines that I'm not even going to use ......
 						}
-						else
-							dst = conditional;
 					}
-					else
-						dst = &deletable;
+				}
+
+
+				if ((*i)->selfPowered() == false)
+				{
+					BattleItem* const load ((*i)->getAmmoItem());
+					if (load != nullptr)
+					{
+						if (load->getRules()->isRecoverable() == true)
+							dst->push_back(load);
+						else
+							dst = &deletable;
+					}
 				}
 			}
-			else if ((*i)->getOwner()->getFaction() == FACTION_PLAYER)
-				dst = &forwardCarried;
-			else
-				dst = &deletable; // TODO: What if second stage is a success ....
-
-			if ((*i)->selfPowered() == false)
-			{
-				BattleItem* const load ((*i)->getAmmoItem());
-				if (load != nullptr)
-					dst->push_back(load);
-			}
-
-			(*i)->setTile();
-			dst->push_back(*i); // -> put the item in its destination container
 		}
+		else
+			dst = &deletable;
+
+		(*i)->setTile();
+		dst->push_back(*i); // -> put the item in its destination container
 	}
+
 
 	for (std::vector<BattleItem*>::const_iterator
 			i = deletable.begin();
@@ -890,6 +918,103 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getShuffleUnits()->assign(
 										_unitList->size(),
 										nullptr);
+}
+
+/**
+ * Determines and sets the latency-status of a specified BattleUnit at the start
+ * of next-stage tactical battles.
+ * @param unit - pointer to a BattleUnit
+ */
+void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
+{
+	const Position pos (unit->getPosition());
+	switch (unit->getUnitStatus())
+	{
+		case STATUS_UNCONSCIOUS:			// has no Tile, need to get one
+			if (pos == Position(-1,-1,-1))	// is carried
+			{
+				bool found (false);
+				for (std::vector<BattleUnit*>::const_iterator		// find carrier
+						i = _unitList->begin();
+						i != _unitList->end() && found == false;
+						++i)
+				{
+					for (std::vector<BattleItem*>::const_iterator	// find body in carrier's inventory
+							j = (*i)->getInventory()->begin();
+							j != (*i)->getInventory()->end() && found == false;
+							++j)
+					{
+						if (/*(*j)->getUnit() != nullptr &&*/ (*j)->getUnit() == *i)
+						{
+							found = true;
+
+							if ((*i)->isOnTiletype(START_POINT) == true)
+								unit->setUnitStatus(STATUS_LATENT_START);
+							else
+							{
+								switch (unit->getOriginalFaction())
+								{
+									case FACTION_PLAYER:
+										if ((*i)->isOnTiletype(END_POINT) == true	// the unit's carrier is on an End_Tile and is carrying said
+											&& unit->isHealable() == true)			// unit to the next stage. So remain Unconscious @ pos(-1,-1,-1)
+										{
+											break;
+										}
+										// no break;
+									case FACTION_HOSTILE:
+									case FACTION_NEUTRAL:
+										unit->setUnitStatus(STATUS_LATENT);
+								}
+							}
+						}
+					}
+				}
+			}
+			else // is NOT carried
+			{
+				const Tile* const tile (_battleSave->getTile(pos));
+				if (tile != nullptr && tile->getMapData(O_FLOOR) != nullptr)
+				{
+					switch (tile->getMapData(O_FLOOR)->getTileType())
+					{
+						case START_POINT:
+							unit->setUnitStatus(STATUS_LATENT_START);
+							break;
+
+						case END_POINT:
+							if (unit->getOriginalFaction() == FACTION_PLAYER	// if Faction_Player the unit is lying Unconscious on an End_Tile and will
+								&& unit->isHealable() == true)					// appear on the next stage's equipt-tile. So just stay Unconscious
+							{
+								break;
+							}
+							// no break;
+						default:
+							unit->setUnitStatus(STATUS_LATENT);
+							break;
+					}
+				}
+				else // safety catch-all.
+					unit->setUnitStatus(STATUS_LATENT);
+			}
+			break;
+
+		case STATUS_STANDING: // TODO: Check that MC'd units are reset to original faction ....
+			if (unit->isOnTiletype(START_POINT) == true)
+				unit->setUnitStatus(STATUS_LATENT_START);
+			else
+			{
+				switch (unit->getOriginalFaction())
+				{
+					case FACTION_PLAYER:
+						if (unit->isOnTiletype(END_POINT) == true)
+							break;
+						// no break;
+					case FACTION_HOSTILE:
+					case FACTION_NEUTRAL:
+						unit->setUnitStatus(STATUS_LATENT);
+				}
+			}
+	}
 }
 
 /**

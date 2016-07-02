@@ -796,11 +796,11 @@ void AlienMission::createAlienBase( // private.
 /**
  * Sets the AlienBase associated with this AlienMission.
  * @note Only aLien supply-missions care about this.
- * @param base - pointer to an AlienBase
+ * @param base - pointer to an AlienBase (default nullptr)
  */
-void AlienMission::setAlienBase(const AlienBase* const base)
+void AlienMission::setAlienBase(const AlienBase* const aBase)
 {
-	_aBase = base;
+	_aBase = aBase;
 }
 
 /**

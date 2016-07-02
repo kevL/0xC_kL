@@ -187,7 +187,7 @@ private:
 		/// Gets the AlienBase for the AlienMission.
 		const AlienBase* getAlienBase() const;
 		/// Sets the AlienBase for the AlienMission.
-		void setAlienBase(const AlienBase* const base);
+		void setAlienBase(const AlienBase* const aBase = nullptr);
 
 		/// Handles a UFO lifting from the ground.
 		void ufoLifting(

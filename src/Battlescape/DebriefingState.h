@@ -159,7 +159,7 @@ private:
 
 	std::map<std::wstring, std::vector<int>> _soldierStatInc;
 
-	std::vector<ReequipStat> _missingItems;
+	std::vector<ReequipStat> _cannotReequip;
 
 	std::vector<BattleUnit*>* _unitList;
 	std::vector<DebriefingStat*> _statList;
@@ -171,7 +171,7 @@ private:
 			const std::string& type,
 			int score,
 			int qty = 1);
-	/// Prepares the debriefing.
+	/// One of the longest and most complicated functions in the entire codebase.
 	void prepareDebriefing();
 	/// Recovers items from tactical.
 	void recoverItems(std::vector<BattleItem*>* const battleItems);

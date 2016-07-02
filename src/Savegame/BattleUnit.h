@@ -71,7 +71,8 @@ enum UnitStatus
 	STATUS_UNCONSCIOUS,	//  7
 	STATUS_PANICKING,	//  8
 	STATUS_BERSERK,		//  9
-	STATUS_LATENT,		// 10 won't participate in a 'next stage' battle.
+	STATUS_LATENT,		// 10 - can't participate in 2nd-stage's battle.
+	STATUS_LATENT_START	// 11 - LATENT but Standing or Unconscious on 1st-stage's start-tile(s).
 };
 
 enum UnitFaction
@@ -620,8 +621,8 @@ private:
 		/// Reloads weapon if needed.
 		bool checkReload();
 
-		/// Checks if the BattleUnit is in an exit-area.
-		bool isInExitArea(TileType tileType = START_POINT) const;
+		/// Checks if the BattleUnit is standing on a specified tile-type.
+		bool isOnTiletype(TileType tileType) const;
 
 		/// Gets the BattleUnit's height taking into account kneeling/standing.
 		int getHeight(bool floating = false) const;

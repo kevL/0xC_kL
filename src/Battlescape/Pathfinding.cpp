@@ -760,6 +760,7 @@ int Pathfinding::getTuCostPf(
 			if (zLevel_UP == false
 				&& dir < DIR_UP
 				&& tileStart->getTerrainLevel() < -15
+				&& tileStopAbove != nullptr
 				&& tileStopAbove->hasNoFloor(tileStop) == false)
 			{
 				if (++partsGoingUp == quadrants)

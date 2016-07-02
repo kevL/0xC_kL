@@ -337,7 +337,7 @@ void ProjectileFlyBState::init()
 																		_battleSave->getTile(_posOrigin)));
 		if (tileTarget->getTileUnit() != nullptr
 			&& (_unit->getFaction() != FACTION_PLAYER
-				|| (((SDL_GetModState() & KMOD_SHIFT) == 0
+				|| ((      (SDL_GetModState() & KMOD_SHIFT) == 0
 						&& (SDL_GetModState() & KMOD_CTRL) == 0)
 					|| Options::battleForceFire == false)))
 		{
@@ -351,15 +351,19 @@ void ProjectileFlyBState::init()
 //				_targetVoxel.z += 2; // borkity bork.
 				//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
 			}
-			else
-			{
-				_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
+			else if (_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
 													&originVoxel,
 													tileTarget,
 													&_targetVoxel,
 													_unit,
 													nullptr,
-													&_forced);
+													&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
+			{
+				_action.result = BattlescapeGame::PLAYER_ERROR[6u]; // no LoF
+//				_action.TU = 0;
+//				_unit->setUnitStatus(STATUS_STANDING);
+				_parent->popState();
+				return;
 				//Log(LOG_INFO) << ". canTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
 			}
 		}

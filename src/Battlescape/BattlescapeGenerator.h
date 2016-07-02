@@ -105,6 +105,9 @@ private:
 	/// Sets the map-size and associated vars.
 	void init();
 
+	/// Sets the latency-status of a specified BattleUnit.
+	void setUnitLatency(BattleUnit* const unit);
+
 	/// Deploys XCOM units for the mission.
 	void deployXcom();
 	/// Constructs a vector of Vehicles that can participate in a Base Defense tactical.

@@ -352,6 +352,7 @@ DebriefingState::DebriefingState()
 
 		//Log(LOG_INFO) << "DebriefingState::cTor";
 		Soldier* sol;
+		SoldierDead* solDead;
 		std::vector<MissionStatistics*>* const tacticals (_game->getSavedGame()->getMissionStatistics());
 
 		for (std::vector<BattleUnit*>::const_iterator
@@ -361,7 +362,7 @@ DebriefingState::DebriefingState()
 		{
 			//Log(LOG_INFO) << ". iter BattleUnits";
 			// NOTE: In the case of a dead soldier this pointer is Valid but points to garbage.
-			// Use that.
+			// Use that. Pointer is NULL'd below_
 			if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 			{
 				//Log(LOG_INFO) << ". . id = " << (*i)->getId();
@@ -392,54 +393,60 @@ DebriefingState::DebriefingState()
 				}
 
 
-				if ((*i)->getUnitStatus() == STATUS_DEAD)
+				switch ((*i)->getUnitStatus())
 				{
-					//Log(LOG_INFO) << ". . . dead";
-					sol = nullptr;	// Zero out the BattleUnit from the geoscape Soldiers list
-									// in this State; it's already gone from his/her former Base.
-									// This makes them ineligible for promotion.
-									// PS, there is no 'geoscape Soldiers list' really; it's
-									// just a variable stored in each xCom-agent/BattleUnit ....
-					SoldierDead* deadSoldier (nullptr); // avoid vc++ linker warning.
-					for (std::vector<SoldierDead*>::const_iterator
-							j = _gameSave->getDeadSoldiers()->begin();
-							j != _gameSave->getDeadSoldiers()->end();
-							++j)
-					{
-						if ((*j)->getId() == (*i)->getId())
+					case STATUS_DEAD:
+						//Log(LOG_INFO) << ". . . dead";
+						sol = nullptr;	// Zero out the BattleUnit from the geoscape Soldiers list
+										// in this State; it's already gone from his/her former Base.
+										// This makes them ineligible for promotion.
+										// PS, there is no "geoscape Soldiers list" really; it's
+										// just a variable stored on each xCom-agent/BattleUnit ....
+
+						solDead = nullptr; // avoid vc++ linker warning.
+						for (std::vector<SoldierDead*>::const_iterator
+								j = _gameSave->getDeadSoldiers()->begin();
+								j != _gameSave->getDeadSoldiers()->end();
+								++j)
 						{
-							deadSoldier = *j;
-							break;
+							if ((*j)->getId() == (*i)->getId())
+							{
+								solDead = *j;
+								break;
+							}
 						}
-					}
 
-					diaryStats->daysWounded = 0;
+						diaryStats->daysWounded = 0;
 
-					// NOTE: Safety on *deadSoldier shall not be needed. see above^
-					if (diaryStats->KIA == true)
-						_tactical->injuryList[deadSoldier->getId()] = -1;
-					else // MIA
-						_tactical->injuryList[deadSoldier->getId()] = -2;
+						// NOTE: Safety on *solDead shall not be needed. see above^
+						if (diaryStats->KIA == true)
+							_tactical->injuryList[solDead->getId()] = -1; // kia
+						else
+							_tactical->injuryList[solDead->getId()] = -2; // mia
 
-					deadSoldier->getDiary()->updateDiary(
-													diaryStats,
-													_tactical,
-													_rules);
-					deadSoldier->getDiary()->manageAwards(_rules, tacticals);
-					_soldiersLost.push_back(deadSoldier);
-				}
-				else
-				{
-					//Log(LOG_INFO) << ". . . alive";
-					if ((diaryStats->daysWounded = sol->getSickbay()) != 0)
-						_tactical->injuryList[sol->getId()] = diaryStats->daysWounded;
+						solDead->getDiary()->updateDiary(
+														diaryStats,
+														_tactical,
+														_rules);
+						solDead->getDiary()->manageAwards(_rules, tacticals);
+						_soldiersLost.push_back(solDead);
+						break;
 
-					sol->getDiary()->updateDiary(
-											diaryStats,
-											_tactical,
-											_rules);
-					if (sol->getDiary()->manageAwards(_rules, tacticals) == true)
-						_soldiersFeted.push_back(sol);
+//					default: // <- should be Unconscious, Latent, or Standing.
+					case STATUS_UNCONSCIOUS:
+					case STATUS_LATENT:			// TODO: Latent should have been resolved to one of Dead, Unconscious, or Standing by this point.
+					case STATUS_LATENT_START:	// Because a Latent unit could be dead if things went badly on a 2nd stage tactical.
+					case STATUS_STANDING:
+						//Log(LOG_INFO) << ". . . alive";
+						if ((diaryStats->daysWounded = sol->getSickbay()) != 0)
+							_tactical->injuryList[sol->getId()] = diaryStats->daysWounded;
+
+						sol->getDiary()->updateDiary(
+												diaryStats,
+												_tactical,
+												_rules);
+						if (sol->getDiary()->manageAwards(_rules, tacticals) == true)
+							_soldiersFeted.push_back(sol);
 				}
 			}
 		}
@@ -498,8 +505,8 @@ void DebriefingState::btnOkClick(Action*)
 			bool playAwardMusic (false);
 
 			// NOTE: These push to player in reverse order.
-			if (_missingItems.empty() == false)
-				_game->pushState(new CannotReequipState(_missingItems));
+			if (_cannotReequip.empty() == false)
+				_game->pushState(new CannotReequipState(_cannotReequip));
 
 			if (_soldiersLost.empty() == false)
 			{
@@ -632,22 +639,21 @@ private:
 };
 
 /**
- * Removes the association between the alien mission and the aLien-base if one
- * existed.
+ * Removes the link between the AlienMission and an AlienBase if one existed.
  * @param mission - pointer to the AlienMission
  */
 void ClearAlienBase::operator() (AlienMission* const mission) const
 {
 	if (mission->getAlienBase() == _aBase)
-		mission->setAlienBase(nullptr);
+		mission->setAlienBase();
 }
 
 
 /**
  * Prepares debriefing: gathers Aliens, Corpses, Artefacts, UFO Components.
- * Adds the items to the craft.
- * @note Also calculates the Soldiers' experience and possible promotions. If
- * aborted only the things on the exit-area are recovered.
+ * @note Adds the items to the craft. Also calculates the Soldiers' experience
+ * and possible promotions. If aborted only the things on the exit-area are
+ * recovered.
  */
 void DebriefingState::prepareDebriefing() // private.
 {
@@ -759,10 +765,12 @@ void DebriefingState::prepareDebriefing() // private.
 	int
 		playerExit (0),
 		playerLive (0),
-		playerDead (0), // Soldier Diary.
-		playerOut  (0);
+		playerDead (0); // Soldier Diary.
 
-	bool isHostileAlive	(false);
+	bool
+		isHostileStanding (false),
+		isPlayerWipe (true);
+
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _unitList->begin();
 			i != _unitList->end();
@@ -771,33 +779,38 @@ void DebriefingState::prepareDebriefing() // private.
 		switch ((*i)->getOriginalFaction())
 		{
 			case FACTION_PLAYER:
-				if ((*i)->getUnitStatus() == STATUS_DEAD)
+				switch ((*i)->getUnitStatus())
 				{
-					++playerDead;
-					if ((*i)->getGeoscapeSoldier() != nullptr)
-						(*i)->getStatistics()->KIA = true;
-				}
-				else
-				{
-					++playerLive;
-					if ((*i)->getUnitStatus() == STATUS_UNCONSCIOUS
-						|| (*i)->isMindControlled() == true)
-					{
-						++playerOut;
-					}
+					case STATUS_DEAD:
+						++playerDead;
+
+						if ((*i)->getGeoscapeSoldier() != nullptr)
+							(*i)->getStatistics()->KIA = true;
+						break;
+
+					case STATUS_STANDING:
+						if ((*i)->isMindControlled() == false)
+							isPlayerWipe = false;
+						// no break;
+					case STATUS_UNCONSCIOUS:
+					case STATUS_LATENT:
+					case STATUS_LATENT_START:
+						++playerLive;
 				}
 				break;
 
 			case FACTION_HOSTILE:
-				if ((*i)->isOut_t(OUT_STAT) == false)
-					isHostileAlive = true;
+				if ((*i)->getUnitStatus() == STATUS_STANDING)
+					isHostileStanding = true;
 		}
 	}
 
-	if (playerLive == playerOut)
+	const bool aborted (_battleSave->isAborted());
+
+	if (isPlayerWipe == true)
 	{
-		playerLive = 0;
-		for (std::vector<BattleUnit*>::const_iterator
+		playerLive = 0;									// NOTE: This is not necessarily a playerWipe; tactical could
+		for (std::vector<BattleUnit*>::const_iterator	// have been aborted with player-units still standing.
 				i = _unitList->begin();
 				i != _unitList->end();
 				++i)
@@ -805,16 +818,14 @@ void DebriefingState::prepareDebriefing() // private.
 			if ((*i)->getOriginalFaction() == FACTION_PLAYER
 				&& (*i)->getUnitStatus() != STATUS_DEAD)
 			{
-				(*i)->setUnitStatus(STATUS_DEAD);
+				(*i)->setUnitStatus(STATUS_DEAD);	// ah This should set any/all Unconscious and Latent
+													// units Dead if things went badly for player. But does it ....
 				if ((*i)->getGeoscapeSoldier() != nullptr)
 					(*i)->getStatistics()->MIA = true;
 			}
 		}
 	}
-
-	const bool aborted (_battleSave->isAborted());
-
-	if (playerLive == 1)
+	else if (playerLive == 1)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _unitList->begin();
@@ -846,7 +857,7 @@ void DebriefingState::prepareDebriefing() // private.
 	const TacticalType tacType (_battleSave->getTacType());
 
 
-	_tactical->success = isHostileAlive == false
+	_tactical->success = isHostileStanding == false
 					  || _battleSave->allObjectivesDestroyed() == true;
 
 	Position pos;
@@ -857,38 +868,53 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		if ((*i)->getTile() == nullptr)								// This unit is not on a tile ... give it one.
 		{
-			if ((pos = (*i)->getPosition()) == Position(-1,-1,-1))	// in fact, this Unit is in limbo ... ie, is carried.
+			if ((pos = (*i)->getPosition()) == Position(-1,-1,-1))	// in fact, this Unit is in limbo ... ie, is carried or Latent.
 			{
-				for (std::vector<BattleItem*>::const_iterator		// so look for its body or corpse ...
-						j = _battleSave->getItems()->begin();
-						j != _battleSave->getItems()->end();
-						++j)
+				switch ((*i)->getUnitStatus())
 				{
-					if ((*j)->getUnit() != nullptr
-						&& (*j)->getUnit() == *i)					// found it: corpse is a dead or unconscious BattleUnit!!
+					case STATUS_LATENT:				// give Latent units a position & Tile in the top-left corner of the battlefield.
+					case STATUS_LATENT_START:
+						pos = Position(0,0,0);
+						break;
+
+					default:
 					{
-						if ((*j)->getOwner() != nullptr)			// corpse of BattleUnit has an Owner (ie. is being carried by another BattleUnit)
-							pos = (*j)->getOwner()->getPosition();	// Put the corpse down .. slowly.
-						else if ((*j)->getTile() != nullptr)		// corpse of BattleUnit is laying around somewhere
-							pos = (*j)->getTile()->getPosition();	// you're not vaporized yet, Get up.
+						for (std::vector<BattleItem*>::const_iterator		// so look for its body or corpse ...
+								j = _battleSave->getItems()->begin();
+								j != _battleSave->getItems()->end();
+								++j)
+						{
+							if ((*j)->getUnit() != nullptr
+								&& (*j)->getUnit() == *i)					// found it: corpse is a dead or unconscious BattleUnit!!
+							{
+								if ((*j)->getOwner() != nullptr)			// corpse of BattleUnit has an Owner (ie. is being carried by another BattleUnit)
+									pos = (*j)->getOwner()->getPosition();	// Put the corpse down .. slowly.
+								else if ((*j)->getTile() != nullptr)		// corpse of BattleUnit is laying around somewhere
+									pos = (*j)->getTile()->getPosition();	// you're not vaporized yet, Get up.
+
+								break;
+							}
+						}
 					}
 				}
 			}
-			(*i)->setTile(_battleSave->getTile(pos));
-		}
-
+			(*i)->setTile(_battleSave->getTile(pos));	// why, exactly, do all units need a position and Tile:
+		}												// because it drops still-standing-aLiens' inventories to the ground in preparation for the item-recovery phase.
+														// And Unconscious/latent civies need to check if they're on an Exit-tile ...
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
 			&& (*i)->getUnitStatus() != STATUS_DEAD
 			&& (aborted == false // NOTE: Duplicated this check below_ to determine what to do with player-units.
 				|| ((tacType != TCT_BASEDEFENSE || _tactical->success == true)
-					&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT))))
+					&& ((*i)->isOnTiletype(START_POINT) == true
+						|| (*i)->getUnitStatus() == STATUS_LATENT
+						|| (*i)->getUnitStatus() == STATUS_LATENT_START))))
 		{
 			++playerExit;
 		}
 	}
-	const bool playerWipe ((aborted == true && playerExit == 0)
-						 || playerLive == 0);
 
+
+	isPlayerWipe |= (aborted == true && playerExit == 0);
 
 	double
 		lon (0.), // avoid vc++ linker warnings.
@@ -954,7 +980,7 @@ void DebriefingState::prepareDebriefing() // private.
 				_base = *i;
 				_craft = *j;
 
-				if (playerWipe == false)
+				if (isPlayerWipe == false)
 				{
 					_craft->returnToBase();
 					_craft->setTacticalReturn();
@@ -1106,7 +1132,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	Soldier* sol;
-	for (std::vector<BattleUnit*>::const_iterator
+	for (std::vector<BattleUnit*>::const_iterator // handle all BattleUnits ->
 			i = _unitList->begin();
 			i != _unitList->end();
 			++i)
@@ -1173,7 +1199,9 @@ void DebriefingState::prepareDebriefing() // private.
 						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
 						if (aborted == false // NOTE: Duplicated this check above^ to determine 'playerExit' val.
 							|| ((tacType != TCT_BASEDEFENSE || _tactical->success == true)
-								&& ((*i)->isInExitArea() == true || (*i)->getUnitStatus() == STATUS_LATENT)))
+								&& ((*i)->isOnTiletype(START_POINT) == true
+									|| (*i)->getUnitStatus() == STATUS_LATENT
+									|| (*i)->getUnitStatus() == STATUS_LATENT_START)))
 						{
 							recoverItems((*i)->getInventory());
 
@@ -1303,11 +1331,12 @@ void DebriefingState::prepareDebriefing() // private.
 						}
 						break;
 
-					default:
+//					default:
+					case STATUS_STANDING:
 						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
 						if ((*i)->isMindControlled() == true
-							&& (*i)->isOut_t(OUT_STAT) == false
-							&& (aborted == false || (*i)->isInExitArea() == true))
+//							&& (*i)->isOut_t(OUT_STAT) == false
+							&& (aborted == false || (*i)->isOnTiletype(START_POINT) == true))
 							// This never actually runs unless the early psi-exit option,
 							// where all aliens are dead or mind-controlled, is turned on --
 							// except for the two-stage Cydonia mission in which case all
@@ -1351,10 +1380,13 @@ void DebriefingState::prepareDebriefing() // private.
 						}
 						break;
 
-					default:
+					case STATUS_STANDING:
+					case STATUS_UNCONSCIOUS:
+					case STATUS_LATENT:
+					case STATUS_LATENT_START:
 						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
-						if ((_tactical->success == true && isHostileAlive == false)
-							|| (aborted == true && (*i)->isInExitArea() == true))
+						if ((_tactical->success == true && isHostileStanding == false)
+							|| (aborted == true && (*i)->isOnTiletype(START_POINT) == true)) // NOTE: Even if isPlayerWipe.
 						{
 							addStat(
 								"STR_CIVILIANS_SAVED",
@@ -1369,7 +1401,7 @@ void DebriefingState::prepareDebriefing() // private.
 	} //End loop BattleUnits.
 
 
-	if (_craft != nullptr && playerWipe == true)
+	if (_craft != nullptr && isPlayerWipe == true)
 	{
 		addStat(
 			"STR_XCOM_CRAFT_LOST",
@@ -1478,7 +1510,7 @@ void DebriefingState::prepareDebriefing() // private.
 				objectiveFailedScore);
 	}
 
-	if (playerWipe == false)
+	if (isPlayerWipe == false)
 	{
 		recoverItems(_battleSave->guaranteedRecover());
 
@@ -1533,11 +1565,8 @@ void DebriefingState::prepareDebriefing() // private.
 					int alloyDivisor; // TODO: Subtract diff*10 for gameDifficulty.
 					switch (tacType)
 					{
-						case TCT_BASEASSAULT:
-							alloyDivisor = 150;
-							break;
-						default:
-							alloyDivisor = 15;
+						case TCT_BASEASSAULT:	alloyDivisor = 150; break;
+						default:				alloyDivisor = 15;
 					}
 
 					(*i)->qty = ((*i)->qty + (qtyRuinedAlloys >> 1u)) / alloyDivisor;
@@ -1573,14 +1602,11 @@ void DebriefingState::prepareDebriefing() // private.
 			i != _battleSave->deletedProperty().end();
 			++i)
 	{
-//		if ((*i)->getProperty() == true) // taken care of in toDeleteItem().
-//		{
 		if (_itemsGained.find(itRule = (*i)->getRules()) == _itemsGained.end())
 			++_itemsLostProperty[itRule];
 		else if (--_itemsGained[itRule] == 0)	// NOTE: '_itemsGained' shall never contain clips - vid. recoverItems()
 			_itemsGained.erase(itRule);			// ... clips handled immediately below_
-//		}										// TODO: Extensive testing on item-gains/losses ....
-	}
+	}											// TODO: Extensive testing on item-gains/losses ....
 
 	int
 		qtyFullClip,
@@ -1655,9 +1681,9 @@ void DebriefingState::prepareDebriefing() // private.
 
 			if (_region != nullptr)
 			{
-				const AlienMission* const retalMission (_game->getSavedGame()->findAlienMission(
-																						_region->getRules()->getType(),
-																						alm_RETAL));
+				const AlienMission* const retalMission (_gameSave->findAlienMission(
+																				_region->getRules()->getType(),
+																				alm_RETAL));
 				for (std::vector<Ufo*>::const_iterator
 						i = _gameSave->getUfos()->begin();
 						i != _gameSave->getUfos()->end();
@@ -1687,7 +1713,7 @@ void DebriefingState::prepareDebriefing() // private.
 			}
 			break;
 
-		default: // not a BaseDefense.
+		default: // not BaseDefense.
 			reequipCraft(_craft);
 	}
 }
@@ -1719,13 +1745,13 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			qtyLost = i->second - baseQty;
 			craftContainer->removeItem(i->first, qtyLost);
 
-			const ReequipStat stat =
+			const ReequipStat stat
 			{
 				i->first,
 				qtyLost,
 				craft->getName(_game->getLanguage())
 			};
-			_missingItems.push_back(stat);
+			_cannotReequip.push_back(stat);
 		}
 		else
 			_base->getStorageItems()->removeItem(i->first, i->second);
@@ -1748,7 +1774,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 		craft->getVehicles()->clear();
 
 		int
-			tanks,
+			qtySupport,
 			quadrants;
 		for (std::map<std::string, int>::const_iterator
 				i = craftVehicles.getContents()->begin();
@@ -1757,19 +1783,19 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 		{
 			if ((baseQty = _base->getStorageItems()->getItemQuantity(i->first)) < i->second)
 			{
-				const ReequipStat stat =
+				const ReequipStat stat
 				{
 					i->first,
 					i->second - baseQty,
 					craft->getName(_game->getLanguage())
 				};
-				_missingItems.push_back(stat);
+				_cannotReequip.push_back(stat);
 			}
 
 			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmorType())->getSize();
 			quadrants *= quadrants;
 
-			tanks = std::min(baseQty, i->second);
+			qtySupport = std::min(baseQty, i->second);
 
 			const RuleItem* const itRule (_rules->getItemRule(i->first));
 
@@ -1777,7 +1803,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			{
 				for (int
 						j = 0;
-						j != tanks;
+						j != qtySupport;
 						++j)
 				{
 					craft->getVehicles()->push_back(new Vehicle(
@@ -1785,7 +1811,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 															itRule->getFullClip(),
 															quadrants));
 				}
-				_base->getStorageItems()->removeItem(i->first, tanks);
+				_base->getStorageItems()->removeItem(i->first, qtySupport);
 			}
 			else
 			{
@@ -1796,22 +1822,22 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 
 				if ((qtyLost = (clipsRequired * i->second) - baseClips) > 0)
 				{
-					const ReequipStat stat =
+					const ReequipStat stat
 					{
 						type,
 						qtyLost,
 						craft->getName(_game->getLanguage())
 					};
-					_missingItems.push_back(stat);
+					_cannotReequip.push_back(stat);
 				}
 
-				tanks = std::min(tanks,
-								 baseClips / clipsRequired);
-				if (tanks != 0)
+				qtySupport = std::min(qtySupport,
+									  baseClips / clipsRequired);
+				if (qtySupport != 0)
 				{
 					for (int
 							j = 0;
-							j != tanks;
+							j != qtySupport;
 							++j)
 					{
 						craft->getVehicles()->push_back(new Vehicle(
@@ -1819,8 +1845,8 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 																clipsRequired,
 																quadrants));
 					}
-					_base->getStorageItems()->removeItem(i->first, tanks);
-					_base->getStorageItems()->removeItem(type, clipsRequired * tanks);
+					_base->getStorageItems()->removeItem(i->first, qtySupport);
+					_base->getStorageItems()->removeItem(type, clipsRequired * qtySupport);
 				}
 			}
 		}
@@ -1884,42 +1910,47 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 							BattleUnit* const unit ((*i)->getUnit());
 							if (unit != nullptr)
 							{
-								if (itRule->isRecoverable() == true
-									&& (unit->getUnitStatus() == STATUS_DEAD
-										|| (unit->getUnitStatus() == STATUS_LATENT // kL_tentative.
-											&& unit->isOut_t(OUT_HEALTH) == true)))
+								switch (unit->getUnitStatus())
 								{
-									//Log(LOG_INFO) << ". . corpse = " << type << " id-" << unit->getId();
-									addStat(
-										"STR_ALIEN_CORPSES_RECOVERED",
-										unit->getValue() / 3); // TODO: This should rather be the 'recoveryPoints' of the corpse-item!
-
-									std::string corpse (unit->getArmor()->getCorpseGeoscape());
-									if (corpse.empty() == false) // safety.
-									{
-										_base->getStorageItems()->addItem(corpse);
-										++_itemsGained[_rules->getItemRule(corpse)];
-									}
-								}
-								else if (unit->getUnitStatus() == STATUS_UNCONSCIOUS
-									|| (unit->getUnitStatus() == STATUS_LATENT // kL_tentative.
-										&& unit->isOut_t(OUT_STUNNED) == true))
-								{
-									switch (unit->getOriginalFaction()) // TODO: Add captured alien-types to a DebriefExtra screen.
-									{
-										case FACTION_HOSTILE:
-											if (itRule->isRecoverable() == true)
-											{
-												++_aliensStunned; // for Nike Cross determination.
-												recoverLiveAlien(unit);
-											}
-											break;
-
-										case FACTION_NEUTRAL:
-											//Log(LOG_INFO) << ". . unconsciousCivie = " << type;
+									case STATUS_DEAD: // NOTE: Dead units are never set Latent. But units that were Unconscious can be set Latent.
+										if (itRule->isRecoverable() == true)
+										{
+											//Log(LOG_INFO) << ". . corpse = " << type << " id-" << unit->getId();
 											addStat(
-												"STR_CIVILIANS_SAVED",
-												unit->getValue()); // duplicated above.
+												"STR_ALIEN_CORPSES_RECOVERED",
+												unit->getValue() / 3); // TODO: This should rather be the 'recoveryPoints' of the corpse-item!
+
+											std::string corpse (unit->getArmor()->getCorpseGeoscape());
+											if (corpse.empty() == false) // safety.
+											{
+												_base->getStorageItems()->addItem(corpse);
+												++_itemsGained[_rules->getItemRule(corpse)];
+											}
+										}
+										break;
+
+									case STATUS_UNCONSCIOUS:
+									case STATUS_LATENT:
+									case STATUS_LATENT_START:
+									{
+										switch (unit->getOriginalFaction())
+										{
+											case FACTION_HOSTILE:
+												if (itRule->isRecoverable() == true) // TODO: Add captured alien-types to a DebriefExtra screen. Ps see elsewhere also.
+												{
+													++_aliensStunned;						// for Nike Cross determination.
+
+													if (unit->isOut_t(OUT_STUNNED) == true)	// Latent (still conscious) hostiles on 1st stage
+														recoverLiveAlien(unit);				// of two-part battles make their getaway heheh.
+												}
+												break;
+
+											case FACTION_NEUTRAL:
+												//Log(LOG_INFO) << ". . unconsciousCivie = " << type;
+												addStat(
+													"STR_CIVILIANS_SAVED",
+													unit->getValue()); // duplicated above.
+										}
 									}
 								}
 							}

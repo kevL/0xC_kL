@@ -334,7 +334,7 @@ void UnitDieBState::convertToBody() // private.
 		calcLights (false);
 
 	int unitSize (_unit->getArmor()->getSize());
-	size_t quadrants (static_cast<size_t>(unitSize * unitSize));
+	size_t quadrant (static_cast<size_t>(unitSize * unitSize));
 	--unitSize;
 
 	const Position pos (_unit->getPosition());
@@ -391,9 +391,9 @@ void UnitDieBState::convertToBody() // private.
 																	// null-ing all tile-links to it. cf. SavedBattleGame::deleteBody().
 
 			BattleItem* const body (new BattleItem(
-											_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrants]),
+											_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrant]),
 											_battleSave->getCanonicalBattleId()));
-			body->setUnit(_unit);
+			if (quadrant == 0) body->setUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
 			_parent->dropItem(
 							body,
 							pos + Position(x,y,0),

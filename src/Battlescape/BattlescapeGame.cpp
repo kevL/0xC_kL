@@ -1733,6 +1733,7 @@ void BattlescapeGame::checkCasualties(
 		{
 			case STATUS_DEAD:
 			case STATUS_LATENT:
+			case STATUS_LATENT_START:
 				break;
 
 			case STATUS_UNCONSCIOUS:
@@ -3709,7 +3710,7 @@ int BattlescapeGame::tallyPlayerExit() const
 	{
 		if ((*j)->getOriginalFaction() == FACTION_PLAYER
 			&& (*j)->isOut_t(OUT_STAT) == false
-			&& (*j)->isInExitArea(END_POINT) == true)
+			&& (*j)->isOnTiletype(END_POINT) == true)
 //			&& (*j)->isMindControlled() == false) // allow.
 		{
 			++ret;
