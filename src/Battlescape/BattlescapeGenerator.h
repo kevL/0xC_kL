@@ -58,7 +58,7 @@ class BattlescapeGenerator
 
 private:
 	bool
-		_baseEquiptMode,
+		_isFakeInventory,
 		_craftDeployed,
 		_generateFuel;
 //		_error;
@@ -108,13 +108,13 @@ private:
 	/// Sets the latency-status of a specified BattleUnit.
 	void setUnitLatency(BattleUnit* const unit);
 
-	/// Deploys XCOM units for the mission.
+	/// Deploys XCOM units and equipment for tactical.
 	void deployXcom();
-	/// Constructs a vector of Vehicles that can participate in a Base Defense tactical.
-	void prepareBaseVehicles(std::vector<Vehicle*>& vehicles);
-	/// Prepares a player-support-unit to be added to the Battlescape.
+	/// Constructs a vector of Vehicles that can participate in BaseDefense tacticals.
+	void prepBaseVehicles(std::vector<Vehicle*>& vehicles);
+	/// Prepares a support-unit to be added to the Battlescape.
 	BattleUnit* convertVehicle(Vehicle* const vehicle);
-	/// Adds a player-unit to the Battlescape.
+	/// Adds a unit to the Battlescape.
 	BattleUnit* addPlayerUnit(BattleUnit* const unit);
 	/// Runs necessary checks before setting a unit's position.
 	bool canPlacePlayerUnit(Tile* const tile);
@@ -132,12 +132,12 @@ private:
 
 	/// Deploys the aLiens according to an RuleAlienDeployment rule.
 	void deployAliens(const RuleAlienDeployment* const ruleDeploy);
-	/// Adds an aLien to the battlescape.
+	/// Adds an aLien to the Battlescape.
 	BattleUnit* addAlien(
 			RuleUnit* const unitRule,
 			int aLienRank,
 			bool outside);
-	/// Finds a spot near a friend to spawn at.
+	/// Finds a tile near an ally to spawn at.
 	bool placeUnitNearFaction(BattleUnit* const unit);
 
 	/// Spawns civilians for a terror-mission.
@@ -145,7 +145,7 @@ private:
 	/// Adds a civilian to the Battlescape.
 	void addCivilian(RuleUnit* const unitRule);
 
-	/// Loads an XCom MAP file.
+	/// Loads a MAP file.
 	int loadMAP(
 			MapBlock* const block,
 			int offset_x,
@@ -154,24 +154,24 @@ private:
 			int dataSetIdOffset = 0,
 			bool revealed = false,
 			bool craft = false);
-	/// Loads an XCom RMP file.
+	/// Loads an RMP file.
 	void loadRMP(
 			MapBlock* const block,
 			int offset_x,
 			int offset_y,
 			int segment);
 
-	/// Fills power sources with an alien fuel object.
+	/// Fills power-sources with a alien-fuel objects.
 	void fuelPowerSources();
-	/// Possibly explodes ufo powersources.
+	/// Possibly explodes UFO power-sources.
 	void explodePowerSources();
 
 	/// Generates the tactical Map of a battlefield.
 	void generateMap(const std::vector<MapScript*>* const directives);
-	/// Generates the tactical Map of a battlefield based on player's Base.
+	/// Generates the tactical Map of a battlefield based on the player's Base.
 	void generateBaseMap();
 
-	/// Finds aLienBase start modules for xCom equipment-spawning.
+	/// Uses aLienBase start-modules for spawning xCom equipment.
 	void placeXcomProperty();
 
 	/// Clears a module from the Map.
@@ -180,40 +180,40 @@ private:
 			int y,
 			int sizeX,
 			int sizeY);
-	/// Load the nodes from the associated map-blocks.
+	/// Loads the Nodes from associated MapBlocks.
 	void loadNodes();
-	/// Connects all the nodes together.
+	/// Connects all the Nodes together.
 	void attachNodeLinks();
-	/// Selects an unused position on the map of a given size.
+	/// Selects an unused rectangle of a specified size on the Map.
 	bool selectPosition(
 			const std::vector<SDL_Rect*>* const rects,
 			int& ret_x,
 			int& ret_y,
 			int size_x,
 			int size_y);
-	/// Adds a craft (either a ufo or an xcom craft) somewhere on the map.
+	/// Adds a Craft (either a UFO or an XCOM Craft) somewhere on the Map.
 	bool addCraft(
 			const MapBlock* const block,
 			MapScript* const script,
 			SDL_Rect& rect);
-	/// Adds a line (generally a road) to the map.
+	/// Adds a line (generally a road) to the Map.
 	bool addLine(
 			MapDirection dir,
 			const std::vector<SDL_Rect*>* const rects);
-	/// Adds a single block at a given position.
+	/// Adds a single MapBlock at a specified position.
 	bool addBlock(
 			int x,
 			int y,
 			MapBlock* const block);
-	/// Drills some tunnels between map blocks.
+	/// Drills tunnels between MapBlocks.
 	void drillModules(
 			TunnelData* const info,
 			const std::vector<SDL_Rect*>* const rects,
 			MapDirection dir);
-	/// Clears all modules in a rect from a command.
+	/// Clears all modules in a rect from a directive.
 	bool removeBlocks(const MapScript* const directive);
 
-	/// Sets up the Player's objectives for the battle.
+	/// Sets up the player's objectives for the upcoming battle.
 	void setupObjectives(const RuleAlienDeployment* const ruleDeploy);
 
 

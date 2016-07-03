@@ -1466,7 +1466,7 @@ void BattlescapeGame::endTurn() // private.
 		getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SLIDING_DOOR_CLOSE)->play();
 //	}
 
-	if ((tile = getTileEngine()->checkForTerrainExplosions()) != nullptr)
+	if ((tile = getTileEngine()->checkForTerrainExplosives()) != nullptr)
 	{
 		pos = Position::toVoxelSpaceCentered(tile->getPosition(), 10);
 		// kL_note: This seems to be screwing up.
@@ -1480,7 +1480,7 @@ void BattlescapeGame::endTurn() // private.
 										nullptr,
 										tile));
 
-//		tile = getTileEngine()->checkForTerrainExplosions();
+//		tile = getTileEngine()->checkForTerrainExplosives();
 
 		statePushBack();	// this will repeatedly call another endTurn() so there's
 		return;				// no need to continue this one till all explosions are done.
@@ -1552,13 +1552,13 @@ void BattlescapeGame::endTurn() // private.
 			(*i)->setTakenFire(false);
 		}
 	}
-	// best just to do another call to checkForTerrainExplosions()/ ExplosionBState in there ....
+	// best just to do another call to checkForTerrainExplosives()/ ExplosionBState in there ....
 	// -> SavedBattleGame::tileVolatiles()
 	// Or here
 	// ... done it in NextTurnState.
 
 		// check AGAIN for terrain explosions
-/*		tile = getTileEngine()->checkForTerrainExplosions();
+/*		tile = getTileEngine()->checkForTerrainExplosives();
 		if (tile != nullptr)
 		{
 			pos = Position(

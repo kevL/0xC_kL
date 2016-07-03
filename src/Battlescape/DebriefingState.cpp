@@ -650,10 +650,9 @@ void ClearAlienBase::operator() (AlienMission* const mission) const
 
 
 /**
- * Prepares debriefing: gathers Aliens, Corpses, Artefacts, UFO Components.
- * @note Adds the items to the craft. Also calculates the Soldiers' experience
- * and possible promotions. If aborted only the things on the exit-area are
- * recovered.
+ * Prepares debriefing: Determines success or failure; gathers Aliens, Corpses,
+ * Artefacts, UFO Components; handles units and re-equipping any crafts. If
+ * aborted only the things on the exit-area are recovered.
  */
 void DebriefingState::prepareDebriefing() // private.
 {
@@ -877,7 +876,8 @@ void DebriefingState::prepareDebriefing() // private.
 						pos = Position(0,0,0);
 						break;
 
-					default:
+					case STATUS_UNCONSCIOUS:
+					case STATUS_DEAD:
 					{
 						for (std::vector<BattleItem*>::const_iterator		// so look for its body or corpse ...
 								j = _battleSave->getItems()->begin();
@@ -1407,20 +1407,20 @@ void DebriefingState::prepareDebriefing() // private.
 			"STR_XCOM_CRAFT_LOST",
 			-(_craft->getRules()->getScore()));
 
-		for (std::vector<Soldier*>::const_iterator // kill off any Soldiers that haven't already been dealt with above^
-				i = _base->getSoldiers()->begin();
-				i != _base->getSoldiers()->end();
-				)
-		{
-			if ((*i)->getCraft() == _craft)
-			{
-				(*i)->die(_gameSave);
-				delete *i;
-				i = _base->getSoldiers()->erase(i);
-			}
-			else
-				++i;
-		}
+//		for (std::vector<Soldier*>::const_iterator // kill off any Soldiers that haven't already been dealt with above^
+//				i = _base->getSoldiers()->begin();
+//				i != _base->getSoldiers()->end();
+//				)
+//		{
+//			if ((*i)->getCraft() == _craft)
+//			{
+//				(*i)->die(_gameSave);
+//				delete *i;
+//				i = _base->getSoldiers()->erase(i);
+//			}
+//			else
+//				++i;
+//		} // -> Should be all done by here.
 
 		delete _craft;
 		_craft = nullptr;
@@ -1737,8 +1737,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			i != craftContents.end();
 			++i)
 	{
-		baseQty = _base->getStorageItems()->getItemQuantity(i->first);
-		if (baseQty < i->second)
+		if ((baseQty = _base->getStorageItems()->getItemQuantity(i->first)) < i->second)
 		{
 			_base->getStorageItems()->removeItem(i->first, baseQty);
 
@@ -1912,8 +1911,8 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 							{
 								switch (unit->getUnitStatus())
 								{
-									case STATUS_DEAD: // NOTE: Dead units are never set Latent. But units that were Unconscious can be set Latent.
-										if (itRule->isRecoverable() == true)
+									case STATUS_DEAD:							// NOTE: Dead units are never set Latent. Only units that
+										if (itRule->isRecoverable() == true)	// were Unconscious or Standing would have been set Latent.
 										{
 											//Log(LOG_INFO) << ". . corpse = " << type << " id-" << unit->getId();
 											addStat(

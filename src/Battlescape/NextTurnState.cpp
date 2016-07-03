@@ -246,7 +246,7 @@ void NextTurnState::nextTurn() // private.
 					switchMusic = true;
 
 
-				Tile* const tile (_battleSave->getTileEngine()->checkForTerrainExplosions());
+				Tile* const tile (_battleSave->getTileEngine()->checkForTerrainExplosives());
 				if (tile != nullptr)
 				{
 					const Position pos (Position::toVoxelSpaceCentered(tile->getPosition(), 10));

@@ -46,6 +46,15 @@ class SavedBattleGame;
 class TileEngine;
 
 
+enum DropType
+{
+	DROP_STANDARD,		// 0
+	DROP_CLEAROWNER,	// 1
+	DROP_FROMINVENTORY,	// 2
+	DROP_CREATE			// 3
+};
+
+
 enum BattleActionType
 {
 	BA_NONE,		//  0
@@ -68,15 +77,6 @@ enum BattleActionType
 	BA_PSICOURAGE,	// 17 - increases morale of an ally
 	BA_LIQUIDATE	// 18 - executes an unconscious unit
 };
-
-enum DropType
-{
-	DROP_STANDARD,		// 0
-	DROP_CLEAROWNER,	// 1
-	DROP_FROMINVENTORY,	// 2
-	DROP_CREATE			// 3
-};
-
 
 /**
  * Object that holds relevant battle action data in one container.

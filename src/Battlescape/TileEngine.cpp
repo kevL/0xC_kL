@@ -4457,9 +4457,9 @@ void TileEngine::detonateTile(Tile* const tile) const
  * Checks for chained explosions.
  * @note Chained explosions are explosions which occur after an explosive object
  * is destroyed. May be due a direct hit, other explosion or fire.
- * @return, tile on which an explosion occurred
+ * @return, tile on which an explosion is about to occur
  */
-Tile* TileEngine::checkForTerrainExplosions() const
+Tile* TileEngine::checkForTerrainExplosives() const
 {
 	Tile* tile;
 	for (size_t

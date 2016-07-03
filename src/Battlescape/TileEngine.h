@@ -257,7 +257,7 @@ private:
 		/// Blows a Tile up.
 		void detonateTile(Tile* const tile) const;
 		/// Checks if a destroyed Tile starts an explosion.
-		Tile* checkForTerrainExplosions() const;
+		Tile* checkForTerrainExplosives() const;
 
 		/// Tries to open a door.
 		DoorResult unitOpensDoor(

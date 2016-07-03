@@ -616,7 +616,7 @@ void ExplosionBState::explode() // private.
 	//Log(LOG_INFO) << ". . pop";
 
 
-	Tile* const tile (te->checkForTerrainExplosions()); // check for more exploding tiles
+	Tile* const tile (te->checkForTerrainExplosives()); // check for more exploding tiles
 	if (tile != nullptr)
 	{
 		const Position explVoxel (Position::toVoxelSpaceCentered(tile->getPosition(), 10));

@@ -105,7 +105,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_generateFuel(true),
 		_craftDeployed(false),
 		_craftZ(0),
-		_baseEquiptMode(false),
+		_isFakeInventory(false),
 		_battleOrder(0),
 		_blocksLeft(0),
 		_testBlock(nullptr)
@@ -275,7 +275,7 @@ void BattlescapeGenerator::run()
 		{
 			// trouble: no texture and no deployment terrain, most likely scenario is a UFO landing on water: use the first available terrain.
 			_terrainRule = _game->getRuleset()->getTerrain(_game->getRuleset()->getTerrainList().front());
-			Log(LOG_WARNING) << "bGen::run() - Could not find a terrain rule ... using first terrainType: "
+			Log(LOG_WARNING) << "bGen::run() Could not find a terrain rule. Use first terrainType: "
 							 << _terrainRule->getType();
 		}
 	}
@@ -335,7 +335,7 @@ void BattlescapeGenerator::run()
 	if (script.empty() == false)
 	{
 		directives = _rules->getMapScripts(script);
-		if (directives == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Deployment script defined ["
+		if (directives == nullptr) Log(LOG_WARNING) << "bGen::run() - There is a Deployment script defined ["
 													<< script << "] but could not find its rule.";
 	}
 
@@ -346,14 +346,14 @@ void BattlescapeGenerator::run()
 		if (script.empty() == false)
 		{
 			directives = _rules->getMapScripts(script);
-			if (directives == nullptr) Log(LOG_WARNING) << "bGen::nextStage() - There is a Terrain script defined ["
+			if (directives == nullptr) Log(LOG_WARNING) << "bGen::run() - There is a Terrain script defined ["
 														<< script << "] but could not find its rule.";
 		}
 	}
 
 	if (directives == nullptr)
 	{
-		throw Exception("Map generator encountered an error: no script found. See log for detail.");
+		throw Exception("bGen:run() No map-script found. See logfile for details.");
 	}
 
 	generateMap(directives);						// <--|| BATTLEFIELD GENERATION. <--|||
@@ -375,7 +375,7 @@ void BattlescapeGenerator::run()
 
 	if (qtyUnits_pre == _unitList->size())
 	{
-		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
+		throw Exception("bGen:run() No alien units could be placed on the map.");
 	}
 
 	deployCivilians(ruleDeploy->getCivilians());	// <--|| CIVILIAN DEPLOYMENT. <--|||
@@ -607,6 +607,8 @@ void BattlescapeGenerator::nextStage()
 			{
 				if ((*i)->getOwner() == nullptr)
 				{
+					(*i)->setFuse(-1);
+
 					if (fullSuccess == true) // all aLiens were put down on previous stage
 					{
 						if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
@@ -755,7 +757,7 @@ void BattlescapeGenerator::nextStage()
 
 	if (directives == nullptr)
 	{
-		throw Exception("Map generator encountered an error: no script found. See log for detail.");
+		throw Exception("bGen:nextStage() No script found. See logfile for details.");
 	}
 
 	generateMap(directives);							// <--|| BATTLEFIELD GENERATION. <--|||
@@ -773,55 +775,50 @@ void BattlescapeGenerator::nextStage()
 			i != _unitList->end();
 			++i)
 	{
-		if ((*i)->getOriginalFaction() == FACTION_PLAYER
-			&& (*i)->isOut_t(OUT_STAT) == false)
+		if ((*i)->getOriginalFaction() == FACTION_PLAYER)
 		{
 			(*i)->setFaction(FACTION_PLAYER);
 			(*i)->setExposed(-1);
+			(*i)->kneelUnit(false);
 //			(*i)->getVisibleTiles()->clear();
 
-			if ((*i)->getGeoscapeSoldier() != nullptr)
+			if ((*i)->getUnitStatus() == STATUS_STANDING)
 			{
-				(*i)->kneelUnit(false);
-
-				if (selectDone == false)
+				if ((*i)->getGeoscapeSoldier() != nullptr
+					&& selectDone == false)
 				{
 					selectDone = true;
 					_battleSave->setSelectedUnit(*i);
 				}
-			}
 
-			const Node* const node (_battleSave->getSpawnNode(NR_XCOM, *i));
-			if (node != nullptr
-				|| placeUnitNearFaction(*i) == true)
-			{
-				if (node != nullptr)
-					_battleSave->setUnitPosition(*i, node->getPosition());
-
-				if (_tileEquipt == nullptr)
+				const Node* const node (_battleSave->getSpawnNode(NR_XCOM, *i));
+				if (node != nullptr || placeUnitNearFaction(*i) == true)
 				{
-					_tileEquipt = (*i)->getTile();
-					_battleSave->setBattleInventory(_tileEquipt);
-				}
+					if (node != nullptr)
+						_battleSave->setUnitPosition(*i, node->getPosition());
 
-/* why. Tile holds exactly ONE BattleUnit */
-/* unit does lose its link to its previous Tile */
-				_tileEquipt->setUnit(*i); // bogus Tile until resetUnitsOnTiles() runs when exiting pre-battle InventoryState.
-				(*i)->setUnitVisible(false);
-				(*i)->prepUnit(false);
-			}
-			else
-			{
-				(*i)->setUnitStatus(STATUS_LATENT);
-				Log(LOG_WARNING) << "BattlescapeGenerator::nextStage() - Could not place xCom unit ["
-								 << (*i)->getId() << "] Send to Limbo.";
+					if (_tileEquipt == nullptr)
+					{
+						_tileEquipt = (*i)->getTile();
+						_battleSave->setBattleInventory(_tileEquipt);
+					}
+
+					_tileEquipt->setUnit(*i);		// Use tileEquipt for pre-battle inventory until resetUnitsOnTiles()
+					(*i)->setUnitVisible(false);	// runs when exiting pre-battle w/ InventoryState::btnOkClick().
+					(*i)->prepUnit(false);
+				}
+				else
+				{
+					(*i)->setUnitStatus(STATUS_LATENT);
+					Log(LOG_WARNING) << "bGen:nextStage() Could not place xCom unit id-" << (*i)->getId() << " Set to STATUS_LATENT.";
+				}
 			}
 		}
 	}
 
 	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 	if (selUnit == nullptr
-		|| selUnit->isOut_t(OUT_STAT) == true
+		|| selUnit->getUnitStatus() != STATUS_STANDING
 		|| selUnit->getFaction() != FACTION_PLAYER)
 	{
 		_battleSave->selectNextFactionUnit(); // NOTE: This runs only if the only player-unit still conscious is a support-unit.
@@ -833,13 +830,19 @@ void BattlescapeGenerator::nextStage()
 		i != forwardGround.end();
 		++i)
 	{
+		Log(LOG_INFO) << "bGen:nextStage() forwardGround " << (*i)->getRules()->getType();
+		Log(LOG_INFO) << ". ItemID-" << (*i)->getId();
 		_itemList->push_back(*i);
 
 		(*i)->setInventorySection(grdRule);
 		_tileEquipt->addItem(*i);
 
 		if ((*i)->getUnit() != nullptr)
+		{
+			Log(LOG_INFO) << ". UnitID-" << (*i)->getUnit()->getId()
+						  << " status=" << (int)(*i)->getUnit()->getUnitStatus();
 			(*i)->getUnit()->setPosition(_tileEquipt->getPosition());
+		}
 	}
 
 
@@ -876,7 +879,7 @@ void BattlescapeGenerator::nextStage()
 
 	if (_alienRace.empty() == true)
 	{
-		throw Exception("Map generator encountered an error: no alien race could be determined.");
+		throw Exception("bGen:nextStage() No alien race specified.");
 	}
 
 
@@ -888,7 +891,7 @@ void BattlescapeGenerator::nextStage()
 
 	if (qtyUnits_pre == _unitList->size())
 	{
-		throw Exception("Map generator encountered an error: no alien units could be placed on the map.");
+		throw Exception("bGen:nextStage() No alien units deployed.");
 	}
 
 	deployCivilians(ruleDeploy->getCivilians());		// <--|| CIVILIAN DEPLOYMENT. <--|||
@@ -1018,48 +1021,50 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 }
 
 /**
- * Deploys all the X-COM units and equipment based on the geoscape Base or Craft.
+ * Deploys the player's units and equipment based on the Craft and/or Base.
  */
 void BattlescapeGenerator::deployXcom() // private.
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeGenerator::deployXcom()";
+	// A vehicle is actually an item that you will never see since it is
+	// converted to a unit -- the item itself however becomes its weapon.
+	std::vector<Vehicle*>* pSupports;
+
 	if (_craft != nullptr)
 	{
+		//Log(LOG_INFO) << ". craft VALID";
 		_base = _craft->getBase();
 
-		if (_baseEquiptMode == false)
-		{
-			//Log(LOG_INFO) << ". craft VALID";
-			// A vehicle is actually an item that you will never see since it is
-			// converted to a unit, the item itself however becomes its weapon.
-			for (std::vector<Vehicle*>::const_iterator // Add all Vehicles that are in the Craft.
-					i = _craft->getVehicles()->begin();
-					i != _craft->getVehicles()->end();
-					++i)
-			{
-				//Log(LOG_INFO) << ". . Craft: convertVehicle " << (int)*i;
-				BattleUnit* const unit (convertVehicle(*i));
-				if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
-					_battleSave->setSelectedUnit(unit);
-			}
-		}
+		if (_isFakeInventory == false)
+			pSupports = _craft->getVehicles();
+		else
+			pSupports = nullptr;
 	}
-	else if (_base != nullptr && _baseEquiptMode == false)
+	else if (_base != nullptr && _isFakeInventory == false)
 	{
-		std::vector<Vehicle*> vehicles;
-		prepareBaseVehicles(vehicles);
+		//Log(LOG_INFO) << ". base VALID";
+		std::vector<Vehicle*> supports;
+		prepBaseVehicles(supports);
+		pSupports = &supports;
+	}
+	else
+		pSupports = nullptr;
+
+	if (pSupports != nullptr)
+	{
 		for (std::vector<Vehicle*>::const_iterator
-				i = vehicles.begin();
-				i != vehicles.end();
+				i = pSupports->begin();
+				i != pSupports->end();
 				++i)
 		{
-			//Log(LOG_INFO) << ". . isBase: convertVehicle " << (int)*i;
+			//Log(LOG_INFO) << ". . convertVehicle " << (int)*i;
 			BattleUnit* const unit (convertVehicle(*i));
 			if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 				_battleSave->setSelectedUnit(unit);
 		}
 	}
+
 
 	for (std::vector<Soldier*>::const_iterator // Add Soldiers that are in the Craft or Base.
 			i = _base->getSoldiers()->begin();
@@ -1074,7 +1079,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
 			//Log(LOG_INFO) << ". . addPlayerUnit " << (*i)->getId();
-			BattleUnit* const unit (addPlayerUnit(new BattleUnit(*i, _gameSave->getDifficulty()))); // for VictoryPts value per death.
+			BattleUnit* const unit (addPlayerUnit(new BattleUnit(*i, _gameSave->getDifficulty())));
 			if (unit != nullptr)
 			{
 				//Log(LOG_INFO) << "bGen::deployXcom() ID " << unit->getId() << " battleOrder = " << _battleOrder + 1;
@@ -1088,25 +1093,21 @@ void BattlescapeGenerator::deployXcom() // private.
 
 	if (_unitList->empty() == true)
 	{
-		throw Exception("Map generator encountered an error: no xcom units could be placed on the map.");
+		throw Exception("bGen:deployXcom() No player units deployed.");
 	}
 
 	//Log(LOG_INFO) << ". addPlayerUnit(s) DONE";
 
-	for (std::vector<BattleUnit*>::const_iterator // pre-battle Equip; give all xCom Soldiers access to the inventory tile.
+	for (std::vector<BattleUnit*>::const_iterator // pre-battle Equip; give all xCom units access to the inventory tile.
 			i = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
-		if ((*i)->getFaction() == FACTION_PLAYER) // not really necessary because only xCom is on the field atm. Could exclude tanks ....
-		{
-/* why. Tile holds exactly ONE BattleUnit */
-/* unit does lose its link to its previous Tile */
-			_tileEquipt->setUnit(*i); // bogus Tile until resetUnitsOnTiles() runs when exiting pre-battle InventoryState.
-			(*i)->setUnitVisible(false);
-		}
+		_tileEquipt->setUnit(*i);		// Use tileEquipt for pre-battle inventory until resetUnitsOnTiles()
+		(*i)->setUnitVisible(false);	// runs when exiting pre-battle w/ InventoryState::btnOkClick().
 	}
 	//Log(LOG_INFO) << ". setUnit(s) DONE";
+
 
 	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 
@@ -1142,54 +1143,66 @@ void BattlescapeGenerator::deployXcom() // private.
 
 		// Add only items in Craft that are at the Base for skirmish mode; ie.
 		// Do NOT add items from the Base itself in skirmish mode.
-		if (_gameSave->getMonthsPassed() != -1) // add items that are in the Base.
+		if (_gameSave->getMonthsPassed() != -1)									// Add items that are at the Base.
 		{
 			//Log(LOG_INFO) << "";
 			//Log(LOG_INFO) << ". . addBaseItems";
-			for (std::map<std::string, int>::const_iterator // Add items from storage at the Base.
+			const RuleItem* itRule;
+			for (std::map<std::string, int>::const_iterator						// Add items that are in the Base's storage.
 					i = _base->getStorageItems()->getContents()->begin();
 					i != _base->getStorageItems()->getContents()->end();
 					)
 			{
 				//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
-				const RuleItem* const itRule (_rules->getItemRule(i->first));
-				if (itRule->getBigSprite() > -1 // see also CraftEquipmentState cTor.
-					&& itRule->getBattleType() != BT_NONE
-					&& itRule->getBattleType() != BT_CORPSE
-					&& itRule->getBattleType() != BT_FUEL
-					&& itRule->isFixed() == false
-					&& _gameSave->isResearched(itRule->getRequirements()) == true)
+				itRule = _rules->getItemRule(i->first);
+				switch (itRule->getBattleType())
 				{
-					//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
-					for (int
-							j = 0;
-							j != i->second;
-							++j)
-					{
-						//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
-						item = new BattleItem(
-											itRule,
-											_battleSave->getCanonicalBattleId());
-						item->setInventorySection(grdRule);
-						_tileEquipt->addItem(item);
-					}
+					case BT_FIREARM:
+					case BT_AMMO:
+					case BT_MELEE:
+					case BT_GRENADE:
+					case BT_PROXYGRENADE:
+					case BT_MEDIKIT:
+					case BT_SCANNER:
+					case BT_MINDPROBE:
+					case BT_PSIAMP:
+					case BT_FLARE:
+						if (itRule->getBigSprite() > -1 // see also CraftEquipmentState cTor.
+							&& _gameSave->isResearched(itRule->getRequirements()) == true)
+						{
+							//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
+							for (int
+									j = 0;
+									j != i->second;
+									++j)
+							{
+								//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
+								item = new BattleItem(
+													itRule,
+													_battleSave->getCanonicalBattleId());
+								item->setInventorySection(grdRule);
+								_tileEquipt->addItem(item);
+							}
 
-					if (_baseEquiptMode == false)
-					{
-						//Log(LOG_INFO) << ". . . . remove item from Stores";
-						i = _base->getStorageItems()->getContents()->erase(i);
-					}
-					else
+							if (_isFakeInventory == false)
+							{
+								//Log(LOG_INFO) << ". . . . remove item from Stores";
+								i = _base->getStorageItems()->getContents()->erase(i);
+								break;
+							}
+						}
+						// no break;
+					case BT_NONE:
+					case BT_CORPSE:
+					case BT_FUEL:
 						++i;
 				}
-				else
-					++i;
 			}
 		}
 		//Log(LOG_INFO) << "";
 		//Log(LOG_INFO) << ". . addBaseBaseItems DONE, add BaseCraftItems";
 
-		for (std::vector<Craft*>::const_iterator // Add items from Crafts at the Base.
+		for (std::vector<Craft*>::const_iterator								// Add items that are in the Crafts at the Base.
 				i = _base->getCrafts()->begin();
 				i != _base->getCrafts()->end();
 				++i)
@@ -1229,7 +1242,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	// the inventory-tile is cleaned up at the end of this function....
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". placeLayout Pt I";
-	for (std::vector<BattleItem*>::const_iterator // Equip soldiers based on equipment-layout Part I.
+	for (std::vector<BattleItem*>::const_iterator								// Equip soldiers based on equipment-layout Part I.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
@@ -1245,7 +1258,7 @@ void BattlescapeGenerator::deployXcom() // private.
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". placeLayout Pt II";
-	for (std::vector<BattleItem*>::const_iterator // Equip soldiers based on equipment-layout Part II.
+	for (std::vector<BattleItem*>::const_iterator								// Equip soldiers based on equipment-layout Part II.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
@@ -1262,18 +1275,18 @@ void BattlescapeGenerator::deployXcom() // private.
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". Load Ground Weapons...";
-	for (std::vector<BattleItem*>::const_iterator // Load ground weapons.
+	for (std::vector<BattleItem*>::const_iterator								// Load ground weapons.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
-//		(*i)->getRules()->isFixed() == false
-//		(*i)->getAmmoItem() == nullptr
-//		(*i)->selfPowered() == false
-//		(*i)->getRules()->getBattleType() == BT_FIREARM
-//		(*i)->getRules()->getBattleType() == BT_MELEE
 		if ((*i)->getInventorySection() == grdRule
 			&& (*i)->getRules()->getCompatibleAmmo()->empty() == false)
+//			&& (*i)->getRules()->isFixed() == false
+//			&& (*i)->getAmmoItem() == nullptr
+//			&& (*i)->selfPowered() == false
+//			&& (*i)->getRules()->getBattleType() == BT_FIREARM
+//			&& (*i)->getRules()->getBattleType() == BT_MELEE
 		{
 			//Log(LOG_INFO) << ". . load " << (*i)->getRules()->getType();
 			loadGroundWeapon(*i);
@@ -1282,7 +1295,7 @@ void BattlescapeGenerator::deployXcom() // private.
 
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". Clean up";
-	for (std::vector<BattleItem*>::const_iterator // Clean up placed items.
+	for (std::vector<BattleItem*>::const_iterator								// Clean up placed items.
 			i = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			)
@@ -1304,10 +1317,10 @@ void BattlescapeGenerator::deployXcom() // private.
 }
 
 /**
- * Constructs a vector of Vehicles that can participate in a BaseDefense tactical.
+ * Constructs a vector of Vehicles that can participate in BaseDefense tacticals.
  * @param vehicles - reference to a vector of pointers to Vehicles
  */
-void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) // private.
+void BattlescapeGenerator::prepBaseVehicles(std::vector<Vehicle*>& vehicles) // private.
 {
 	for (std::vector<Craft*>::const_iterator // add Vehicles that are in Crafts at the Base.
 			i = _base->getCrafts()->begin();
@@ -1387,7 +1400,6 @@ void BattlescapeGenerator::prepareBaseVehicles(std::vector<Vehicle*>& vehicles) 
 				}
 			}
 		}
-
 		++i;
 	}
 }
@@ -1419,7 +1431,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 											_battleSave->getCanonicalBattleId()));
 		if (placeGeneric(weapon, supportUnit) == false)
 		{
-			Log(LOG_WARNING) << "BattlescapeGenerator could not add: " << type;
+			Log(LOG_WARNING) << "bGen:convertVehicle() Could not add " << type;
 
 			--_unitSequence;
 			delete weapon;
@@ -1436,7 +1448,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 												_battleSave->getCanonicalBattleId()));
 			if (placeGeneric(load, supportUnit) == false)
 			{
-				Log(LOG_WARNING) << "BattlescapeGenerator could not add " << type << " to " << vehicle->getRules()->getType();
+				Log(LOG_WARNING) << "bGen:convertVehicle() Could not add " << type << " to " << vehicle->getRules()->getType();
 
 				--_unitSequence;
 				delete load;
@@ -1462,7 +1474,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 					weapon = new BattleItem(itRule, _battleSave->getCanonicalBattleId());
 					if (placeGeneric(weapon, supportUnit) == false)
 					{
-						Log(LOG_WARNING) << "BattlescapeGenerator could not add [" << itRule->getType() << "] to " << vhclType;
+						Log(LOG_WARNING) << "bGen:convertVehicle() Could not add " << itRule->getType() << " to " << vhclType;
 						delete weapon;
 					}
 				}
@@ -1484,7 +1496,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 {
 	//Log(LOG_INFO) << "bsg:addPlayerUnit()";
 	if ((_craft == nullptr || _craftDeployed == false) // (_missionType == "STR_ALIEN_BASE_ASSAULT" || _missionType == "STR_MARS_THE_FINAL_ASSAULT") <- taken care of in MapScripting.
-		&& _baseEquiptMode == false)
+		&& _isFakeInventory == false)
 	{
 		//Log(LOG_INFO) << ". no Craft";
 		const Node* const node (_battleSave->getSpawnNode(NR_XCOM, unit));
@@ -1520,7 +1532,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 	}
 	else if (_craft != nullptr // Transport Craft deployments (Lightning & Avenger)
 		&& _craft->getRules()->getCraftDeployment().empty() == false
-		&& _baseEquiptMode == false)
+		&& _isFakeInventory == false)
 	{
 		//Log(LOG_INFO) << ". Craft valid - use Deployment";
 		int unitSize;
@@ -1567,20 +1579,19 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 	{
 		//Log(LOG_INFO) << ". baseEquip OR Craft w/out Deployment rule";
 		Tile* tile;
-		int tankOrder (0);
+		int supportOrder (0);
 		for (size_t
 				i = 0u;
 				i != _battleSave->getMapSizeXYZ();
 				++i)
 		{
-			tile = _battleSave->getTiles()[i];
-			if (canPlacePlayerUnit(tile) == true)
+			if (canPlacePlayerUnit(tile = _battleSave->getTiles()[i]) == true)
 			{
 				if (unit->getGeoscapeSoldier() == nullptr)
 				{
 					if ((unit->getArmor()->getSize() == 1
 							|| tile->getPosition().x == _tileEquipt->getPosition().x)
-						&& ++tankOrder == 3
+						&& ++supportOrder == 3
 						&& _battleSave->setUnitPosition(
 													unit,
 													tile->getPosition()) == true)
@@ -1612,14 +1623,14 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
  */
 bool BattlescapeGenerator::canPlacePlayerUnit(Tile* const tile) // private.
 {
-	if (tile != nullptr													// is a tile
-		&& tile->getMapData(O_FLOOR) != nullptr							// has a floor
+	if (tile != nullptr												// is a tile
+		&& tile->getMapData(O_FLOOR) != nullptr						// has a floor
 		&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT	// is a 'start point', ie. cargo tile
-		&& tile->getMapData(O_OBJECT) == nullptr						// no object content
-		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) < 255		// is walkable.
-		&& tile->getTileUnit() == nullptr)								// and no unit on Tile.
+		&& tile->getMapData(O_OBJECT) == nullptr					// no object content
+		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) < 255	// is walkable.
+		&& tile->getTileUnit() == nullptr)							// and no unit on Tile.
 	{
-		if (_tileEquipt == nullptr)										// xCom Inventory-tile goes where the first xCom unit spawns
+		if (_tileEquipt == nullptr)									// xCom Inventory-tile goes where the first xCom unit spawns
 			_battleSave->setBattleInventory(_tileEquipt = tile);
 
 		return true;
@@ -1918,31 +1929,30 @@ bool BattlescapeGenerator::placeGeneric( // private.
  */
 void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDeploy) // private.
 {
-	int month (_gameSave->getMonthsPassed());
-	if (month != -1)
+	int elapsed (_gameSave->getMonthsPassed());
+	if (elapsed != -1)
 	{
-		const int itemLevel_top (static_cast<int>(_rules->getAlienItemLevels().size()) - 1);
-		if (month > itemLevel_top)
-			month = itemLevel_top;
+		const int levelHigh (static_cast<int>(_rules->getAlienItemLevels().size()) - 1);
+		if (elapsed > levelHigh)
+			elapsed = levelHigh;
 
 		if (ruleDeploy->getRace().empty() == false) // race re-defined by Deployment if there is one.
 			_alienRace = ruleDeploy->getRace();
 	}
 	else
-		month = _alienItemLevel;
+		elapsed = _alienItemLevel;
 
 	const RuleAlienRace* const raceRule (_game->getRuleset()->getAlienRace(_alienRace));
 	if (raceRule == nullptr)
 	{
-		throw Exception("Map generator encountered an error: Unknown race: ["
-				+ _alienRace + "] defined in deployAliens()");
+		throw Exception("bGen:deployAliens() No rule for " + _alienRace);
 	}
 
 
 	std::string aLien;
 	bool outside;
 	int qty;
-	size_t itemLevel;
+	size_t level;
 
 	const RuleItem* itRule;
 	BattleItem* item;
@@ -1950,46 +1960,53 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 	BattleUnit* unit;
 
 	for (std::vector<DeploymentData>::const_iterator
-			data = ruleDeploy->getDeploymentData()->begin();
-			data != ruleDeploy->getDeploymentData()->end();
-			++data)
+			i = ruleDeploy->getDeploymentData()->begin();
+			i != ruleDeploy->getDeploymentData()->end();
+			++i)
 	{
-		aLien = raceRule->getMember((*data).alienRank);
+		aLien = raceRule->getMember((*i).alienRank);
 
-		if (_gameSave->getDifficulty() < DIFF_VETERAN)
-			qty = (*data).lowQty
-				+ RNG::generate(0, (*data).dQty); // beginner/experienced
-		else if (_gameSave->getDifficulty() < DIFF_SUPERHUMAN)
-			qty = (*data).lowQty
-				+ (((*data).highQty - (*data).lowQty) / 2)
-				+ RNG::generate(0, (*data).dQty); // veteran/genius
-		else
-			qty = (*data).highQty
-				+ RNG::generate(0, (*data).dQty); // super (and beyond)
-
-		qty += RNG::generate(0, (*data).extraQty);
-
-		if (_base != nullptr
-			&& _base->getDefenseResult() != 0)
+		switch (_gameSave->getDifficulty())
 		{
-			qty = std::max(qty >> 1u,
-						   qty - (qty * _base->getDefenseResult() / 100));
+			case DIFF_BEGINNER:
+			case DIFF_EXPERIENCED:
+				qty = (*i).lowQty
+					+ RNG::generate(0, (*i).dQty);
+				break;
+
+			case DIFF_VETERAN:
+			case DIFF_GENIUS:
+				qty = (*i).lowQty
+					+ (((*i).highQty - (*i).lowQty) >> 1u)
+					+ RNG::generate(0, (*i).dQty);
+				break;
+
+			default: // void g++ warning.
+			case DIFF_SUPERHUMAN:
+				qty = (*i).highQty
+					+ RNG::generate(0, (*i).dQty);
 		}
 
+		qty += RNG::generate(0, (*i).extraQty);
+
+		if (_base != nullptr && _base->getDefenseResult() != 0)
+			qty = std::max(qty >> 1u,
+						   qty - (qty * _base->getDefenseResult() / 100));
+
 		for (int
-				i = 0;
-				i != qty;
-				++i)
+				j = 0;
+				j != qty;
+				++j)
 		{
 			if (_ufo != nullptr)
-				outside = RNG::percent((*data).pctOutsideUfo);
+				outside = RNG::percent((*i).pctOutsideUfo);
 			else
 				outside = false;
 
 			unitRule = _rules->getUnitRule(aLien);
 			unit = addAlien(
 						unitRule,
-						(*data).alienRank,
+						(*i).alienRank,
 						outside);
 
 			if (unit != nullptr)
@@ -2007,8 +2024,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 //							item = new BattleItem(itRule, _battleSave->getCanonicalBattleId());
 //							if (placeGeneric(item, unit) == false)
 //							{
-//								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
-//												 << itRule->getType() << "] to " << unit->getType();
+//								Log(LOG_WARNING) << "bGen:deployAliens() Could not add " << itRule->getType() << " to " << unit->getType();
 //								delete item;
 //							}
 //						}
@@ -2025,8 +2041,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 											_battleSave->getCanonicalBattleId());
 						if (placeGeneric(item, unit) == false)
 						{
-							Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
-											 << itRule->getType() << "] to " << unit->getType();
+							Log(LOG_WARNING) << "bGen:deployAliens() [1] Could not add " << itRule->getType() << " to " << unit->getType();
 							delete item;
 						}
 //						else // -> there are no aLien turret-types at present. I don't do MiB. i do aLiens.
@@ -2035,38 +2050,37 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 				}
 				else
 				{
-					if ((*data).itemSets.size() == 0)
+					if ((*i).itemSets.size() == 0)
 					{
-						throw Exception("Unit generator encountered an error: item set not defined");
+						throw Exception("bGen:deployAliens() No itemSets defined.");
 					}
 
-					itemLevel = static_cast<size_t>(_rules->getAlienItemLevels().at(static_cast<size_t>(month)).at(RNG::generate(0,9)));
-					if (itemLevel > (*data).itemSets.size() - 1u)
-						itemLevel = (*data).itemSets.size() - 1u;
+					level = static_cast<size_t>(_rules->getAlienItemLevels().at(static_cast<size_t>(elapsed)).at(RNG::generate(0,9)));
+					if (level > (*i).itemSets.size() - 1u)
+						level = (*i).itemSets.size() - 1u;
 					// Relax item level requirements
 					// <- Yankes; https://github.com/Yankes/OpenXcom/commit/4c252470aa2e261b0f449a56aaea5d5b0cb2229c
-//					if (itemLevel > (*data).itemSets.size() - 1u)
+//					if (level > (*i).itemSets.size() - 1u)
 //					{
 //						std::ostringstream ststr;
 //						ststr	<< "Unit generator encountered an error: not enough item sets defined, expected: "
-//								<< (itemLevel+1) << " found: " << (*data).itemSets.size();
+//								<< (level + 1) << " found: " << (*i).itemSets.size();
 //						throw Exception(ststr.str());
 //					}
 
 					for (std::vector<std::string>::const_iterator
-							setItem = (*data).itemSets.at(itemLevel).items.begin();
-							setItem != (*data).itemSets.at(itemLevel).items.end();
-							++setItem)
+							type = (*i).itemSets.at(level).items.begin();
+							type != (*i).itemSets.at(level).items.end();
+							++type)
 					{
-						if ((itRule = _rules->getItemRule(*setItem)) != nullptr)
+						if ((itRule = _rules->getItemRule(*type)) != nullptr)
 						{
 							item = new BattleItem( // aLiens add items
 												itRule,
 												_battleSave->getCanonicalBattleId());
 							if (placeGeneric(item, unit) == false)
 							{
-								Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
-												 << itRule->getType() << "] to " << unit->getType();
+								Log(LOG_WARNING) << "bGen:deployAliens() [2] Could not add " << itRule->getType() << " to " << unit->getType();
 								delete item;
 							}
 						}
@@ -2163,8 +2177,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 	}
 	else
 	{
-		Log(LOG_WARNING) << "BattlescapeGenerator could not add ["
-						 << unit->getType() << "]";
+		Log(LOG_WARNING) << "bGen:addAlien() Could not add " << unit->getType();
 		--_unitSequence;
 		delete unit;
 		return nullptr;
@@ -2182,19 +2195,19 @@ bool BattlescapeGenerator::placeUnitNearFaction(BattleUnit* const unit) // priva
 {
 	if (unit != nullptr && _unitList->empty() == false)
 	{
-		const BattleUnit* unitFriend;
+		const BattleUnit* ally;
 		int t (100);
-		while (t-- != 0)
+		while (t--)
 		{
-			unitFriend = _unitList->at(RNG::pick(_unitList->size()));
-			if (unitFriend->getFaction() == unit->getFaction()
-				&& unitFriend->getPosition() != Position(-1,-1,-1)
-				&& unitFriend->getArmor()->getSize() >= unit->getArmor()->getSize())
+			ally = _unitList->at(RNG::pick(_unitList->size()));
+			if (ally->getFaction() == unit->getFaction()
+				&& ally->getPosition() != Position(-1,-1,-1)
+				&& ally->getArmor()->getSize() >= unit->getArmor()->getSize())
 			{
 				if (_battleSave->placeUnitNearPosition(
 													unit,
-													unitFriend->getPosition(),
-													unitFriend->getArmor()->getSize() == 2) == true)
+													ally->getPosition(),
+													ally->getArmor()->getSize() == 2) == true)
 				{
 					return true;
 				}
@@ -2213,15 +2226,15 @@ void BattlescapeGenerator::deployCivilians(int civilians) // private.
 	if (civilians != 0)
 	{
 		const int qty (std::max(1,
-								RNG::generate(
-											civilians >> 1u,
-											civilians)));
+								RNG::generate(civilians >> 1u,
+											  civilians)));
 		for (int
 				i = 0;
 				i != qty;
 				++i)
 		{
-			addCivilian(_rules->getUnitRule(_terrainRule->getCivilianTypes().at(RNG::pick(_terrainRule->getCivilianTypes().size()))));
+			addCivilian(_rules->getUnitRule(_terrainRule->getCivilianTypes()
+						.at(RNG::pick(_terrainRule->getCivilianTypes().size()))));
 		}
 	}
 }
@@ -2245,12 +2258,13 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
 	{
 		unit->setAIState(new CivilianBAIState(_battleSave, unit, node));
 		unit->setUnitDirection(RNG::generate(0,7));
+		unit->preBattleMotion();
 
 		_unitList->push_back(unit);
 	}
 	else
 	{
-		Log(LOG_WARNING) << "BattlescapeGenerator could not add: " << unit->getType();
+		Log(LOG_WARNING) << "bGen:addCivilian() Could not add " << unit->getType();
 		--_unitSequence;
 		delete unit;
 	}
@@ -2285,7 +2299,7 @@ int BattlescapeGenerator::loadMAP( // private.
 						std::ios::in | std::ios::binary);
 	if (ifstr.fail() == true)
 	{
-		throw Exception(file.str() + " not found");
+		throw Exception("bGen:loadMAP() " + file.str() + " not found.");
 	}
 
 	char array_Map[3u];
@@ -2302,13 +2316,13 @@ int BattlescapeGenerator::loadMAP( // private.
 	std::ostringstream oststr;
 	if (size_z > _battleSave->getMapSizeZ())
 	{
-		oststr << "Height of " + file.str() + " is too big for the mission. Block is "
+		oststr << "bGen:loadMAP() Height of " + file.str() + " is too big for the mission. Block is "
 			   << size_z << " expected: " << _battleSave->getMapSizeZ();
 		throw Exception(oststr.str());
 	}
 	else if (size_x != block->getSizeX() || size_y != block->getSizeY())
 	{
-		oststr << "Map block is not of the size specified. " + file.str() + " is "
+		oststr << "bGen:loadMAP() Map block is not of the size specified. " + file.str() + " is "
 			   << size_x << "x" << size_y << " expected: " << block->getSizeX() << "x" << block->getSizeY();
 		throw Exception(oststr.str());
 	}
@@ -2337,7 +2351,7 @@ int BattlescapeGenerator::loadMAP( // private.
 
 	if (z > _battleSave->getMapSizeZ() - 1)
 	{
-		throw Exception("Something is wrong in the map definitions, craft/ufo map is too tall.");
+		throw Exception("bGen:loadMAP() Craft/UFO map is too tall.");
 	}
 
 	unsigned char array_Parts[Tile::PARTS_TILE];
@@ -2422,7 +2436,7 @@ int BattlescapeGenerator::loadMAP( // private.
 
 	if (ifstr.eof() == false)
 	{
-		throw Exception("Invalid MAP file: " + file.str());
+		throw Exception("bGen:loadMAP() Invalid MAP file: " + file.str());
 	}
 
 	ifstr.close();
@@ -2481,7 +2495,7 @@ void BattlescapeGenerator::loadRMP( // private.
 						std::ios::in | std::ios::binary);
 	if (ifstr.fail() == true)
 	{
-		throw Exception(file.str() + " not found");
+		throw Exception("bGen:loadRMP() " + file.str() + " not found");
 	}
 
 	int
@@ -2578,7 +2592,7 @@ void BattlescapeGenerator::loadRMP( // private.
 		else
 		{
 //			_error = true;
-			Log(LOG_WARNING) << "Error in RMP file: " << file.str()
+			Log(LOG_WARNING) << "bGen:loadRMP() Error in RMP file: " << file.str()
 							 << " node #" << nodeVal << " is outside map boundaries at"
 							 << " (" << pos_x << "," << pos_y << "," << pos_z << ")";
 		}
@@ -2587,7 +2601,7 @@ void BattlescapeGenerator::loadRMP( // private.
 
 	if (ifstr.eof() == false)
 	{
-		throw Exception("Invalid RMP file: " + file.str());
+		throw Exception("bGen:loadRMP() Invalid RMP file: " + file.str());
 	}
 	ifstr.close();
 }
@@ -2624,8 +2638,6 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 void BattlescapeGenerator::explodePowerSources() // private.
 {
 	const Tile* tile;
-	Position voxel;
-
 	for (size_t
 			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
@@ -2636,12 +2648,8 @@ void BattlescapeGenerator::explodePowerSources() // private.
 			&& tile->getMapData(O_OBJECT)->getTileType() == UFO_POWER_SOURCE
 			&& RNG::percent(80) == true)
 		{
-			voxel = Position::toVoxelSpaceCentered(
-												tile->getPosition(),
-												10);
-
 			double power (static_cast<double>(_ufo->getUfoDamagePct()));	// range: ~50+ to ~100-
-			if (RNG::percent(static_cast<int>(power) / 2) == true)			// chance for full range Explosion (even if crash took low damage)
+			if (RNG::percent(static_cast<int>(power) >> 1u) == true)		// chance for full range Explosion (even if crash took low damage)
 				power = RNG::generate(1.,100.);
 
 			power *= RNG::generate(0.1,2.);
@@ -2649,28 +2657,23 @@ void BattlescapeGenerator::explodePowerSources() // private.
 
 			if (power > 0.5)
 				_battleSave->getTileEngine()->explode(
-													voxel,
+													Position::toVoxelSpaceCentered(tile->getPosition(), 10),
 													static_cast<int>(std::ceil(power)),
 													DT_HE,
 													21);
 		}
 	}
 
-	tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
-	while (tile != nullptr)
-	{
-		voxel = Position::toVoxelSpaceCentered(tile->getPosition(), 10);
+	while ((tile = _battleSave->getTileEngine()->checkForTerrainExplosives()) != nullptr)
 		_battleSave->getTileEngine()->explode(
-											voxel,
+											Position::toVoxelSpaceCentered(tile->getPosition(), 10),
 											tile->getExplosive(),
 											DT_HE,
 											tile->getExplosive() / 10);
-		tile = _battleSave->getTileEngine()->checkForTerrainExplosions();
-	}
 }
 
 /**
- * Creates a mini-battlesave for managing inventory from the Geoscape's
+ * Creates a mini-battleSave for managing inventory from the Geoscape's
  * CraftEquip or BaseEquip and some other screens.
  * @note kids, don't try this at home! yer tellin' me.
  * @param craft		- pointer to Craft to handle
@@ -2682,75 +2685,57 @@ void BattlescapeGenerator::runInventory(
 		Base* const base,
 		size_t selUnitId)
 {
-	_baseEquiptMode = true;
+	_isFakeInventory = true;
 
-	int qtySoldiers;
 	if (craft != nullptr)
-		qtySoldiers = craft->getQtySoldiers();
-	else
-		qtySoldiers = base->getAvailableSoldiers(true);
-
-	_mapsize_x = qtySoldiers; // fake a map for soldier placement
-	_mapsize_y =
-	_mapsize_z = 1;
-
-	_battleSave->initMap(
-					_mapsize_x,
-					_mapsize_y,
-					_mapsize_z);
-
-	MapDataSet* const dataSet (new MapDataSet("blank", _game));
-	MapData* const data (new MapData(dataSet));
-	Tile* tile;
-
-	for (size_t
-			i = 0u;
-			i != _battleSave->getMapSizeXYZ();
-			++i)
 	{
-		tile = _battleSave->getTiles()[i];
-		tile->setMapData(
-					data,
-					0,0,
-					O_FLOOR);
-		tile->getMapData(O_FLOOR)->setTileType(START_POINT);
-		tile->getMapData(O_FLOOR)->setTUWalk(0);
-		tile->getMapData(O_FLOOR)->setFlags(
-										false,
-										false,
-										false,
-										0,
-										false,
-										false,
-										false,
-										false,
-										false);
-	}
-
-	if (craft != nullptr)
 		setCraft(craft);
-	else
-		setBase(base);
 
-	deployXcom(); // generate BattleItems for the inventory-tile
-
-	if (craft != nullptr
-		&& selUnitId != 0
-		&& static_cast<int>(selUnitId) <= qtySoldiers)
-	{
-		size_t j (0u);
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _unitList->begin();
-				i != _unitList->end();
-				++i)
+		if (selUnitId != 0 && static_cast<int>(selUnitId) <= craft->getQtySoldiers())
 		{
-			if (++j == selUnitId)
+			size_t j (0u);
+			for (std::vector<BattleUnit*>::const_iterator
+					i = _unitList->begin();
+					i != _unitList->end();
+					++i)
 			{
-				_battleSave->setSelectedUnit(*i);
-				break;
+				if (++j == selUnitId)
+				{
+					_battleSave->setSelectedUnit(*i);
+					break;
+				}
 			}
 		}
 	}
+	else
+		setBase(base);
+
+	_battleSave->initMap(			// -> fake a Map for soldier placement ->
+					_mapsize_x = 1,	// All units go on the same tile
+					_mapsize_y = 1,	// and that tile is the equipt-Tile.
+					_mapsize_z = 1);
+
+	MapDataSet* const dataSet (new MapDataSet("blank", _game));
+	MapData* const data (new MapData(dataSet));
+	Tile* const tile (_battleSave->getTiles()[0u]);
+	tile->setMapData(
+				data,
+				0,0,
+				O_FLOOR);
+	tile->getMapData(O_FLOOR)->setTileType(START_POINT);
+	tile->getMapData(O_FLOOR)->setTUWalk(0);
+	tile->getMapData(O_FLOOR)->setFlags(
+									false,
+									false,
+									false,
+									0,
+									false,
+									false,
+									false,
+									false,
+									false);
+	deployXcom(); // generate BattleItems for the equipt-Tile and place all units on that tile.
+
 	delete data;
 	delete dataSet;
 }
@@ -2806,7 +2791,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 		if ((*i)->getLabel() != 0
 			&& conditions.find((*i)->getLabel()) != conditions.end())
 		{
-			throw Exception("Map generator encountered an error: multiple commands are sharing the same label.");
+			throw Exception("bGen:generateMap() Multiple directives share the same label.");
 		}
 
 		success = conditions[static_cast<size_t>((*i)->getLabel())] = false;
@@ -2830,7 +2815,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 				}
 				else
 				{
-					throw Exception("Map generator encountered an error: conditional command expected a label that did not exist before this command.");
+					throw Exception("bGen:generateMap() Conditional directive expected a label that did not exist before the directive.");
 				}
 			}
 		}
@@ -3033,12 +3018,12 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 					case MSC_RESIZE:
 						if (_battleSave->getTacType() == TCT_BASEDEFENSE)
 						{
-							throw Exception("Map Generator encountered an error: Base defense map cannot be resized.");
+							throw Exception("bGen:generateMap() Base defense map cannot be resized.");
 						}
 
 						if (_blocksLeft < (_mapsize_x / 10) * (_mapsize_y / 10))
 						{
-							throw Exception("Map Generator encountered an error: The map cannot be resized after adding blocks.");
+							throw Exception("bGen:generateMap() Map cannot be resized after adding blocks.");
 						}
 
 						if ((*i)->getSizeX() > 0 && (*i)->getSizeX() != _mapsize_x / 10)
@@ -3059,7 +3044,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 	if (_blocksLeft != 0)
 	{
-		throw Exception("Map failed to fully generate.");
+		throw Exception("bGen:generateMap() Map failed to fully generate.");
 	}
 
 	loadNodes();
@@ -3208,7 +3193,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 //	if (_error == true)
 //	{
-//		throw Exception("Map failed to fully generate, check Log.");
+//		throw Exception("bGen:generateMap() Map failed to fully generate. See logfile for details.");
 //	}
 }
 
