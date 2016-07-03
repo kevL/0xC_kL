@@ -161,9 +161,9 @@ private:
 			int offset_y,
 			int segment);
 
-	/// Fills power-sources with a alien-fuel objects.
+	/// Fills power-sources with aLien-fuel objects.
 	void fuelPowerSources();
-	/// Possibly explodes UFO power-sources.
+	/// Checks and explodes UFO power-sources.
 	void explodePowerSources();
 
 	/// Generates the tactical Map of a battlefield.
@@ -210,8 +210,8 @@ private:
 			TunnelData* const info,
 			const std::vector<SDL_Rect*>* const rects,
 			MapDirection dir);
-	/// Clears all modules in a rect from a directive.
-	bool removeBlocks(const MapScript* const directive);
+	/// Clears all modules in a rect according to a specified directive.
+	bool clearBlocks(const MapScript* const directive);
 
 	/// Sets up the player's objectives for the upcoming battle.
 	void setupObjectives(const RuleAlienDeployment* const ruleDeploy);
