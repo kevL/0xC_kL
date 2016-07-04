@@ -115,6 +115,7 @@ private:
 		_alienDies,
 		_destroyPlayerBase,
 		_manageContainment,
+		_isHostileStanding,
 		_isQuickBattle;
 	int
 		_aliensStunned,

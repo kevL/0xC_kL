@@ -934,7 +934,7 @@ bool TileEngine::visible(
  */
 const BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const	// now I love const; it does absolutely nothing other than
 {																			// cause problems and make a pretty blue color in the IDE.
-	if (tile != nullptr)
+	if (tile != nullptr) // safety for canTargetUnit().
 	{
 		if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
 			return tile->getTileUnit();
@@ -1582,7 +1582,7 @@ bool TileEngine::checkReactionFire(
 
 	if (_battleSave->getSide() != FACTION_NEUTRAL						// no reaction on civilian turn.
 		&& triggerUnit->getFaction() == _battleSave->getSide()			// spotted unit must be current side's faction
-		&& triggerUnit->getUnitTile() != nullptr							// and must be on map
+		&& triggerUnit->getUnitTile() != nullptr						// and must be on map
 		&& triggerUnit->isOut_t(OUT_HLTH_STUN) == false					// and must be conscious
 //		&& _battleSave->getBattleGame()->playerPanicHandled() == true)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
 		&& (triggerUnit->getFaction() == FACTION_PLAYER					// Mc'd aLiens do not RF and Xcom does not RF on Mc'd Xcom-units.
@@ -1636,7 +1636,7 @@ bool TileEngine::checkReactionFire(
 				}
 			}
 
-			reactorUnit = getReactor( // nice shot.
+			reactorUnit = getReactor( // nice shot, Buckwheat.
 								spotters,
 								triggerUnit,
 								tuSpent,

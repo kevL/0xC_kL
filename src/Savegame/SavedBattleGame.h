@@ -323,7 +323,7 @@ private:
 		void resetUnitsOnTiles();
 
 		/// Gives access to the storage-tiles vector.
-		std::vector<Position>& storageSpace();
+		std::vector<Position>& storagePositions();
 		/// Moves all the leftover items to random locations in the storage-tiles vector.
 		void distributeEquipt(Tile* const tile);
 

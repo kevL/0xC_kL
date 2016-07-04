@@ -101,7 +101,8 @@ DebriefingState::DebriefingState()
 		_missionCost(0),
 		_aliensStunned(0),
 		_playerDead(0),
-		_playerLive(0)
+		_playerLive(0),
+		_isHostileStanding(0)
 {
 	Options::baseXResolution = Options::baseXGeoscape;
 	Options::baseYResolution = Options::baseYGeoscape;
@@ -351,15 +352,16 @@ DebriefingState::DebriefingState()
 						i != _unitList->end();
 						++i)
 				{
-					if ((*i)->getGeoscapeSoldier() != nullptr
-						&& (*i)->getUnitStatus() != STATUS_DEAD)
+					if ((*i)->getGeoscapeSoldier() != nullptr)
 					{
-						if (checkIron)
+						if (checkIron
+							&& (*i)->getUnitStatus() == STATUS_STANDING)
 						{
 							(*i)->getStatistics()->ironMan = true;
 							break;
 						}
 						else if (_playerDead != 0									// if only one Soldier survived give him a medal!
+							&& (*i)->getUnitStatus() != STATUS_DEAD
 							&& (*i)->getStatistics()->hasFriendlyFired() == false)	// unless he killed all the others ...
 						{
 							(*i)->getStatistics()->loneSurvivor = true;
@@ -374,6 +376,7 @@ DebriefingState::DebriefingState()
 		Soldier* sol;
 		SoldierDead* solDead;
 		std::vector<MissionStatistics*>* const tacticals (_game->getSavedGame()->getMissionStatistics());
+		BattleUnitStatistics* diaryStats;
 
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _unitList->begin();
@@ -386,9 +389,9 @@ DebriefingState::DebriefingState()
 			if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 			{
 				//Log(LOG_INFO) << ". . id = " << (*i)->getId();
-				BattleUnitStatistics* const diaryStats ((*i)->getStatistics());
+				diaryStats = (*i)->getStatistics();
 
-				if (_tactical->success == true)
+				if (_isHostileStanding == false)
 				{
 					int take (0);
 					for (std::vector<BattleUnitKill*>::const_iterator
@@ -400,12 +403,9 @@ DebriefingState::DebriefingState()
 							++take;
 					}
 
-					// NOTE: re. Nike Cross:
-					// This can be exploited by MC'ing a bunch of aLiens while having
-					// Option "psi-control ends battle" TRUE. ... Patched.
-					//
-					// NOTE: This can still be exploited by MC'ing and
-					// executing a bunch of aLiens with a single Soldier.
+					// TODO: re. Nike Cross:
+					// This can be exploited by MC'ing all aLiens and then
+					// executing all aLiens with a single Soldier.
 					if (take == aliensKilled + _aliensStunned
 						&& take > 3 + _diff)
 					{
@@ -609,7 +609,7 @@ void DebriefingState::btnOkClick(Action*)
 	}
 	_gameSave->setBattleSave();	// delete SavedBattleGame.
 }								// NOTE: BattlescapeState and BattlescapeGame are still VALID here. Okay ......
-
+								// State will be deleted by the engine and the battle will be deleted by the state.
 /**
  * Adds to the debriefing-stats.
  * @param type	- reference to the untranslated type-ID of the stat
@@ -770,10 +770,43 @@ void DebriefingState::prepareDebriefing() // private.
 //	_statList.push_back(new DebriefingStat("STR_ALIEN_ALLOYS", true));
 //	_statList.push_back(new DebriefingStat("STR_ALIEN_HABITAT", true));
 
+
+	// Resolve tiles for Latent and Latent_Start units. Aka post-2nd-stage
+	Tile
+		* const tileEquipt (_battleSave->getBattleInventory()),
+		* const tileOrigin (_battleSave->getTile(Position(0,0,0)));
+	for (std::vector<BattleUnit*>::const_iterator
+			i = _unitList->begin();
+			i != _unitList->end();
+			++i)
+	{
+		switch ((*i)->getUnitStatus())
+		{
+			case STATUS_LATENT:
+				(*i)->setUnitTile(tileOrigin);
+
+				if ((*i)->getHealth() > (*i)->getStun())
+					(*i)->setUnitStatus(STATUS_STANDING);
+				else
+					(*i)->setUnitStatus(STATUS_UNCONSCIOUS);
+				break;
+
+			case STATUS_LATENT_START:
+				(*i)->setUnitTile(tileEquipt);
+
+				if ((*i)->getHealth() > (*i)->getStun())
+					(*i)->setUnitStatus(STATUS_STANDING);
+				else
+					(*i)->setUnitStatus(STATUS_UNCONSCIOUS);
+		}
+	}
+
+
 	const TacticalType tacType (_battleSave->getTacType());
 
 	int playerExit (0);
 
+	// Resolve tiles for other units that do not have a Tile.
 	Position pos;
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _unitList->begin();
@@ -786,13 +819,8 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				switch ((*i)->getUnitStatus())
 				{
-					case STATUS_LATENT: // give Latent units a position & Tile in the top-left corner of the battlefield.
-					case STATUS_LATENT_START:
-						pos = Position(0,0,0);
-						break;
-
-					case STATUS_UNCONSCIOUS:
 					case STATUS_DEAD:
+					case STATUS_UNCONSCIOUS:
 					{
 						for (std::vector<BattleItem*>::const_iterator			// so look for its body or corpse ...
 								j = _battleSave->getItems()->begin();
@@ -818,9 +846,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}														// And Unconscious/latent civies need to check if they're on an Exit-tile ...
 															// And isOnTiletype() requires that unit have a tile set.
 
-	bool
-		isHostileStanding (false),
-		isPlayerWipe (true);
+	bool isPlayerWipe (true);
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _unitList->begin();
@@ -852,10 +878,10 @@ void DebriefingState::prepareDebriefing() // private.
 
 			case FACTION_HOSTILE:
 				if ((*i)->getUnitStatus() == STATUS_STANDING)
-					isHostileStanding = true;
+					_isHostileStanding = true;
 		}
 	}
-	_tactical->success = isHostileStanding == false // NOTE: Can still be a playerWipe and lose Craft/recovery (but not a Base).
+	_tactical->success = _isHostileStanding == false // NOTE: Can still be a playerWipe and lose Craft/recovery (but not a Base).
 					  || _battleSave->allObjectivesDestroyed() == true;
 
 
@@ -1353,7 +1379,7 @@ void DebriefingState::prepareDebriefing() // private.
 					case STATUS_LATENT:
 					case STATUS_LATENT_START:
 						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
-						if ((_tactical->success == true && isHostileStanding == false)
+						if ((_tactical->success == true && _isHostileStanding == false)
 							|| (_aborted == true && (*i)->isOnTiletype(START_POINT) == true)) // NOTE: Even if isPlayerWipe.
 						{
 							addStat(

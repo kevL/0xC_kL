@@ -3082,7 +3082,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 	loadNodes();
 
 	if (_battleSave->getTacType() == TCT_BASEASSAULT)
-		assignStorage();
+		assignStoragePositions();
 
 
 	if (ufoTerrain != nullptr && ufoBlocks.empty() == false)
@@ -3326,7 +3326,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 										&& tileSouth != nullptr
 										&& tileSouth->getMapData(O_NORTHWALL) == nullptr)
 									{
-										_battleSave->storageSpace().push_back(Position(k,l, grdLevel));
+										_battleSave->storagePositions().push_back(Position(k,l, grdLevel));
 									}
 								}
 							}
@@ -3369,7 +3369,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
  * Finds AlienBase start-modules and assigns possible positions for player's
  * starting equipment.
  */
-void BattlescapeGenerator::assignStorage() // private.
+void BattlescapeGenerator::assignStoragePositions() // private.
 {
 	const size_t
 		xSize (static_cast<size_t>(_mapsize_x / 10)),
@@ -3386,7 +3386,7 @@ void BattlescapeGenerator::assignStorage() // private.
 				++x)
 		{
 			if (_blocks[x][y]->isInGroup(MBT_START) == true)
-				_battleSave->storageSpace().push_back(Position(
+				_battleSave->storagePositions().push_back(Position(
 															static_cast<int>(x) * 10 + 5,
 															static_cast<int>(y) * 10 + 5,
 															1));

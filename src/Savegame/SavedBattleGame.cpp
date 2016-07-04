@@ -1634,11 +1634,11 @@ void SavedBattleGame::resetUnitsOnTiles()
 }
 
 /**
- * Gives access to the storageSpace vector for distribution of items in base
+ * Gives access to the storagePositions vector for distribution of items in base
  * defense missions.
  * @return, reference a vector of storage positions
  */
-std::vector<Position>& SavedBattleGame::storageSpace()
+std::vector<Position>& SavedBattleGame::storagePositions()
 {
 	return _storageSpace;
 }
@@ -2796,7 +2796,9 @@ std::vector<BattleItem*>* SavedBattleGame::conditionalRecover()
 
 /**
  * Sets the player's inventory-tile when BattlescapeGenerator runs.
- * @note For use in base-missions to randomize item locations.
+ * @note For use in BaseAssault/Defense tacticals to randomize item locations.
+ * Also used to resolve positions for Status_Latent_Start units after a
+ * 2nd-stage tactical.
  * @param equiptTile - pointer to the Tile where tactical equip't goes
  */
 void SavedBattleGame::setBattleInventory(Tile* const equiptTile)
