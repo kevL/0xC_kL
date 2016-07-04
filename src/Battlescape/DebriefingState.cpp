@@ -306,9 +306,9 @@ DebriefingState::DebriefingState()
 	else
 	{
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING;
-		if		(_tactical->score < 101)	_tactical->rating = "STR_RATING_POOR";
-		else if	(_tactical->score < 351)	_tactical->rating = "STR_RATING_OK";
-		else if	(_tactical->score < 751)	_tactical->rating = "STR_RATING_GOOD";
+		if		(_tactical->score <  101)	_tactical->rating = "STR_RATING_POOR";
+		else if	(_tactical->score <  351)	_tactical->rating = "STR_RATING_OK";
+		else if	(_tactical->score <  751)	_tactical->rating = "STR_RATING_GOOD";
 		else if	(_tactical->score < 1251)	_tactical->rating = "STR_RATING_EXCELLENT";
 		else								_tactical->rating = "STR_RATING_STUPENDOUS";
 	}
@@ -339,38 +339,9 @@ DebriefingState::DebriefingState()
 		if (civiliansSaved != 0 && civiliansDead == 0)
 			_tactical->valiantCrux = true;
 
-		if (_playerLive == 1)
-		{
-			const bool
-				checkIron (_playerDead == 0
-						&& _aborted == false
-						&& aliensKilled + _aliensStunned > 1 + _diff);
-			if (checkIron == true || _playerDead != 0)
-			{
-				for (std::vector<BattleUnit*>::const_iterator
-						i = _unitList->begin();
-						i != _unitList->end();
-						++i)
-				{
-					if ((*i)->getGeoscapeSoldier() != nullptr)
-					{
-						if (checkIron
-							&& (*i)->getUnitStatus() == STATUS_STANDING)
-						{
-							(*i)->getStatistics()->ironMan = true;
-							break;
-						}
-						else if (_playerDead != 0									// if only one Soldier survived give him a medal!
-							&& (*i)->getUnitStatus() != STATUS_DEAD
-							&& (*i)->getStatistics()->hasFriendlyFired() == false)	// unless he killed all the others ...
-						{
-							(*i)->getStatistics()->loneSurvivor = true;
-							break;
-						}
-					}
-				}
-			}
-		}
+		const bool checkIron (_playerDead == 0
+						   && _aborted == false
+						   && _aliensStunned + aliensKilled > 1 + _diff);
 
 		//Log(LOG_INFO) << "DebriefingState::cTor";
 		Soldier* sol;
@@ -391,6 +362,26 @@ DebriefingState::DebriefingState()
 				//Log(LOG_INFO) << ". . id = " << (*i)->getId();
 				diaryStats = (*i)->getStatistics();
 
+				if (_playerLive == 1)
+				{
+					switch ((*i)->getUnitStatus())
+					{
+						case STATUS_STANDING:
+							if (checkIron == true)
+							{
+								diaryStats->ironMan = true;
+								break;
+							}
+							// no break;
+						case STATUS_UNCONSCIOUS:
+							if (_playerDead != 0
+								&& diaryStats->hasFriendlyFired() == false)
+							{
+								diaryStats->loneSurvivor = true;
+							}
+					}
+				}
+
 				if (_isHostileStanding == false)
 				{
 					int take (0);
@@ -406,7 +397,7 @@ DebriefingState::DebriefingState()
 					// TODO: re. Nike Cross:
 					// This can be exploited by MC'ing all aLiens and then
 					// executing all aLiens with a single Soldier.
-					if (take == aliensKilled + _aliensStunned
+					if (take == _aliensStunned + aliensKilled
 						&& take > 3 + _diff)
 					{
 						diaryStats->nikeCross = true;
@@ -416,6 +407,20 @@ DebriefingState::DebriefingState()
 
 				switch ((*i)->getUnitStatus())
 				{
+					case STATUS_STANDING:
+					case STATUS_UNCONSCIOUS:
+						//Log(LOG_INFO) << ". . . alive";
+						if ((diaryStats->daysWounded = sol->getSickbay()) != 0)
+							_tactical->injuryList[sol->getId()] = diaryStats->daysWounded;
+
+						sol->getDiary()->updateDiary(
+												diaryStats,
+												_tactical,
+												_rules);
+						if (sol->getDiary()->manageAwards(_rules, tacticals) == true)
+							_soldiersFeted.push_back(sol);
+						break;
+
 					case STATUS_DEAD:
 						//Log(LOG_INFO) << ". . . dead";
 						sol = nullptr;	// Zero out the BattleUnit from the geoscape Soldiers list
@@ -451,23 +456,6 @@ DebriefingState::DebriefingState()
 														_rules);
 						solDead->getDiary()->manageAwards(_rules, tacticals);
 						_soldiersLost.push_back(solDead);
-						break;
-
-//					default: // <- should be Unconscious, Latent, or Standing.
-					case STATUS_UNCONSCIOUS:
-					case STATUS_LATENT:			// TODO: Latent should have been resolved to one of Dead, Unconscious, or Standing by this point.
-					case STATUS_LATENT_START:	// Because a Latent unit could be dead if things went badly on a 2nd stage tactical.
-					case STATUS_STANDING:
-						//Log(LOG_INFO) << ". . . alive";
-						if ((diaryStats->daysWounded = sol->getSickbay()) != 0)
-							_tactical->injuryList[sol->getId()] = diaryStats->daysWounded;
-
-						sol->getDiary()->updateDiary(
-												diaryStats,
-												_tactical,
-												_rules);
-						if (sol->getDiary()->manageAwards(_rules, tacticals) == true)
-							_soldiersFeted.push_back(sol);
 				}
 			}
 		}
@@ -802,12 +790,9 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 
-	const TacticalType tacType (_battleSave->getTacType());
-
-	int playerExit (0);
-
 	// Resolve tiles for other units that do not have a Tile.
 	Position pos;
+	const Position& posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _unitList->begin();
 			i != _unitList->end();
@@ -815,7 +800,7 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		if ((*i)->getUnitTile() == nullptr)										// This unit is not on a tile ... give it one.
 		{
-			if ((pos = (*i)->getPosition()) == Position(-1,-1,-1))				// in fact, this Unit is in limbo ... ie, is carried or Latent.
+			if ((pos = (*i)->getPosition()) == posBogus)						// in fact, this Unit is in limbo ... ie, is carried.
 			{
 				switch ((*i)->getUnitStatus())
 				{
@@ -841,12 +826,10 @@ void DebriefingState::prepareDebriefing() // private.
 					}
 				}
 			}
-			(*i)->setUnitTile(_battleSave->getTile(pos));	// why, exactly, do all units need a position and Tile:
+			(*i)->setUnitTile(_battleSave->getTile(pos));	// why, exactly, do all units need a Tile:
 		}													// because it drops still-standing-aLiens' inventories to the ground in preparation for the item-recovery phase.
 	}														// And Unconscious/latent civies need to check if they're on an Exit-tile ...
 															// And isOnTiletype() requires that unit have a tile set.
-
-	bool isPlayerWipe (true);
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _unitList->begin();
@@ -859,20 +842,12 @@ void DebriefingState::prepareDebriefing() // private.
 				switch ((*i)->getUnitStatus())
 				{
 					case STATUS_DEAD:
-						++_playerDead;								// <- only to check for IronMan and LoneSurvivor awards.
-
-						if ((*i)->getGeoscapeSoldier() != nullptr)
-							(*i)->getStatistics()->KIA = true;		// <- kia
+						++_playerDead;			// <- only to check for IronMan and LoneSurvivor awards.
 						break;
 
 					case STATUS_STANDING:
-						if ((*i)->isMindControlled() == false)
-							isPlayerWipe = false;
-						// no break;
 					case STATUS_UNCONSCIOUS:
-					case STATUS_LATENT:
-					case STATUS_LATENT_START:
-						++_playerLive;								// <- only to check for IronMan and LoneSurvivor awards.
+						++_playerLive;			// <- only to check for IronMan and LoneSurvivor awards.
 				}
 				break;
 
@@ -885,41 +860,21 @@ void DebriefingState::prepareDebriefing() // private.
 					  || _battleSave->allObjectivesDestroyed() == true;
 
 
+	const TacticalType tacType (_battleSave->getTacType());
+
+	bool isPlayerWipe (true);
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
-			&& (*i)->isMindControlled() == false
 			&& (*i)->getUnitStatus() == STATUS_STANDING
-
-			&& (_aborted == false // NOTE: Duplicated this check below_ to determine what to do with player-units.
-				|| ((tacType != TCT_BASEDEFENSE || _tactical->success == true)
-					&& ((*i)->isOnTiletype(START_POINT) == true
-						|| (*i)->getUnitStatus() == STATUS_LATENT
-						|| (*i)->getUnitStatus() == STATUS_LATENT_START))))
-		{
-			++playerExit;
-		}
-	}
-	isPlayerWipe |= (_aborted == true && playerExit == 0);
-
-	if (isPlayerWipe == true)
-	{
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _unitList->begin();
-				i != _unitList->end();
-				++i)
-		{
-			if ((*i)->getOriginalFaction() == FACTION_PLAYER
-				&& (*i)->getUnitStatus() != STATUS_DEAD)
-			{
-				(*i)->setUnitStatus(STATUS_DEAD);	// ah This should set any/all Unconscious and Latent
-													// units Dead if things went badly for player. But does it ....
-				if ((*i)->getGeoscapeSoldier() != nullptr)
-					(*i)->getStatistics()->MIA = true;				// <- mia
-			}
+			&& (*i)->isMindControlled() == false
+			&& (_aborted == false || (*i)->isOnTiletype(START_POINT) == true))	// NOTE: On a BaseDefense module with Start_Points defn'd this
+		{																		// would also need to do a check for (_tactical->success==true).
+			isPlayerWipe = false;
+			break;
 		}
 	}
 
@@ -943,7 +898,7 @@ void DebriefingState::prepareDebriefing() // private.
 			lon = _base->getLongitude();
 			lat = _base->getLatitude();
 
-			if (_tactical->success == true)
+			if (_isHostileStanding == false)
 			{
 				_base->setTactical(false);
 
@@ -1140,7 +1095,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	Soldier* sol;
-	for (std::vector<BattleUnit*>::const_iterator // handle all BattleUnits ->
+	for (std::vector<BattleUnit*>::const_iterator // resolve all BattleUnits ->
 			i = _unitList->begin();
 			i != _unitList->end();
 			++i)
@@ -1151,9 +1106,10 @@ void DebriefingState::prepareDebriefing() // private.
 				switch ((*i)->getUnitStatus())
 				{
 					case STATUS_DEAD:
-						//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " type= " << (*i)->getType();
 						if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 						{
+							(*i)->getStatistics()->KIA = true;
 							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 
 							if (_isQuickBattle == false)
@@ -1168,7 +1124,7 @@ void DebriefingState::prepareDebriefing() // private.
 									j != _base->getSoldiers()->end();
 									++j)
 							{
-								if (*j == sol) // note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
+								if (*j == sol) // NOTE: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 								{
 									(*j)->die(_gameSave);
 									delete *j;
@@ -1205,14 +1161,8 @@ void DebriefingState::prepareDebriefing() // private.
 
 					case STATUS_STANDING:
 					case STATUS_UNCONSCIOUS:
-					case STATUS_LATENT:
-					case STATUS_LATENT_START:
-						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
-						if (_aborted == false // NOTE: Duplicated this check above^ to determine 'playerExit' val.
-							|| ((tacType != TCT_BASEDEFENSE || _tactical->success == true)
-								&& ((*i)->isOnTiletype(START_POINT) == true
-									|| (*i)->getUnitStatus() == STATUS_LATENT
-									|| (*i)->getUnitStatus() == STATUS_LATENT_START)))
+						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " type= " << (*i)->getType();
+						if (isPlayerWipe == false)
 						{
 							recoverItems((*i)->getInventory());
 
@@ -1232,8 +1182,8 @@ void DebriefingState::prepareDebriefing() // private.
 							{
 								if (_isQuickBattle == false)
 								{
-									const int quadrants ((*i)->getArmor()->getSize());
-									_missionCost += _base->supportExpense(quadrants * quadrants);
+									const int unitSize ((*i)->getArmor()->getSize());
+									_missionCost += _base->supportExpense(unitSize * unitSize);
 								}
 
 								_base->getStorageItems()->addItem((*i)->getType());	// return the support-unit to base-stores.
@@ -1258,14 +1208,15 @@ void DebriefingState::prepareDebriefing() // private.
 								}
 							}
 						}
-						else
+						else // playerWipe.
 						{
+							//Log(LOG_INFO) << ". . playerWipe set MIA / Status_Dead";
 							(*i)->setUnitStatus(STATUS_DEAD);
 
 							if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 							{
-								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 								(*i)->getStatistics()->MIA = true;
+								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
 
 								addStat(
 									"STR_XCOM_AGENTS_MISSING",
@@ -1276,7 +1227,7 @@ void DebriefingState::prepareDebriefing() // private.
 										j != _base->getSoldiers()->end();
 										++j)
 								{
-									if (*j == sol) // note: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
+									if (*j == sol) // NOTE: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 									{
 										(*j)->die(_gameSave);
 										delete *j;
@@ -1313,7 +1264,7 @@ void DebriefingState::prepareDebriefing() // private.
 				switch ((*i)->getUnitStatus())
 				{
 					case STATUS_DEAD:
-						//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " type= " << (*i)->getType();
 						if ((*i)->killerFaction() == FACTION_PLAYER)
 						{
 							//Log(LOG_INFO) << ". . killed by xCom";
@@ -1323,33 +1274,9 @@ void DebriefingState::prepareDebriefing() // private.
 						}
 						break;
 
-					case STATUS_STANDING: // TODO: This needs a lot of thought.
 					case STATUS_UNCONSCIOUS:
-					case STATUS_LATENT:
-					case STATUS_LATENT_START:
+						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " type= " << (*i)->getType();
 						++_aliensStunned; // for Nike Cross determination.
-
-//						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
-//						if ((*i)->isMindControlled() == true
-//							&& (_aborted == false || (*i)->isOnTiletype(START_POINT) == true))
-//							// This never actually runs unless the early psi-exit option,
-//							// where all aliens are dead or mind-controlled, is turned on --
-//							// except for the two-stage Cydonia mission in which case all
-//							// this does not matter.
-//						{
-//							for (std::vector<BattleItem*>::const_iterator
-//									j = (*i)->getInventory()->begin();
-//									j != (*i)->getInventory()->end();
-//									++j)
-//							{
-//								if ((*j)->getRules()->isFixed() == false)
-//								{
-//									(*j)->setInventorySection(_rules->getInventoryRule(ST_GROUND));
-//									(*i)->getTile()->addItem(*j);
-//								}
-//							}
-//							recoverLiveAlien(*i);
-//						}
 				}
 				break;
 
@@ -1357,7 +1284,7 @@ void DebriefingState::prepareDebriefing() // private.
 				switch ((*i)->getUnitStatus())
 				{
 					case STATUS_DEAD:
-						//Log(LOG_INFO) << ". unitDead " << (*i)->getId() << " type = " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " type= " << (*i)->getType();
 						switch ((*i)->killerFaction())
 						{
 							case FACTION_PLAYER:
@@ -1367,7 +1294,8 @@ void DebriefingState::prepareDebriefing() // private.
 									-((*i)->getValue() << 1u));
 								break;
 
-							default:
+							case FACTION_HOSTILE:
+							case FACTION_NEUTRAL:
 								addStat(
 									"STR_CIVILIANS_KILLED_BY_ALIENS",
 									-(*i)->getValue());
@@ -1375,11 +1303,21 @@ void DebriefingState::prepareDebriefing() // private.
 						break;
 
 					case STATUS_STANDING:
+						for (std::vector<BattleItem*>::const_iterator // in case Civie was MC'd and given stuff.
+								j = (*i)->getInventory()->begin();
+								j != (*i)->getInventory()->end();
+								++j)
+						{
+							if ((*j)->getRules()->isFixed() == false)
+							{
+								(*j)->setInventorySection(_rules->getInventoryRule(ST_GROUND));
+								(*i)->getUnitTile()->addItem(*j);
+							}
+						}
+						// no break;
 					case STATUS_UNCONSCIOUS:
-					case STATUS_LATENT:
-					case STATUS_LATENT_START:
-						//Log(LOG_INFO) << ". unitLive " << (*i)->getId() << " type = " << (*i)->getType();
-						if ((_tactical->success == true && _isHostileStanding == false)
+						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " type= " << (*i)->getType();
+						if (_isHostileStanding == false
 							|| (_aborted == true && (*i)->isOnTiletype(START_POINT) == true)) // NOTE: Even if isPlayerWipe.
 						{
 							addStat(
@@ -1395,33 +1333,15 @@ void DebriefingState::prepareDebriefing() // private.
 	} //End loop BattleUnits.
 
 
-	if (_craft != nullptr && isPlayerWipe == true)
+	if (_craft != nullptr && isPlayerWipe == true && _aborted == false)
 	{
 		addStat(
 			"STR_XCOM_CRAFT_LOST",
 			-(_craft->getRules()->getScore()));
 
-//		for (std::vector<Soldier*>::const_iterator // kill off any Soldiers that haven't already been dealt with above^
-//				i = _base->getSoldiers()->begin();
-//				i != _base->getSoldiers()->end();
-//				)
-//		{
-//			if ((*i)->getCraft() == _craft)
-//			{
-//				(*i)->die(_gameSave);
-//				delete *i;
-//				i = _base->getSoldiers()->erase(i);
-//			}
-//			else
-//				++i;
-//		} // -> Should be all done by here.
-
 		delete _craft;
 		_craft = nullptr;
 		_base->getCrafts()->erase(pCraft);
-		_txtTitle->setText(tr("STR_CRAFT_IS_LOST"));
-
-		return; // ||-> EXIT <--|||
 	}
 
 	std::string tacResult;
@@ -1450,16 +1370,16 @@ void DebriefingState::prepareDebriefing() // private.
 			default:
 			case TCT_UFOCRASHED:
 			case TCT_UFOLANDED:
-				tacResult = "STR_UFO_IS_RECOVERED";
-		}
-		_txtTitle->setText(tr(tacResult));
+				tacResult = "STR_UFO_IS_RECOVERED";	// ... But not if player completed objectives
+		}											// and aborted while leaving a hostile standing.
+		_txtTitle->setText(tr(tacResult));			// Fortunately crashed and landed UFOs do not have objectives.
 
 		if (objectiveText.empty() == false)
 			addStat(
 				objectiveText,
 				objectiveScore);
 	}
-	else
+	else // hostiles Standing AND objective NOT completed
 	{
 		switch (tacType)
 		{
@@ -1494,7 +1414,10 @@ void DebriefingState::prepareDebriefing() // private.
 			default:
 			case TCT_UFOCRASHED:
 			case TCT_UFOLANDED:
-				tacResult = "STR_UFO_IS_NOT_RECOVERED";
+				if (_aborted == true)
+					tacResult = "STR_UFO_IS_NOT_RECOVERED";
+				else
+					tacResult = "STR_CRAFT_IS_LOST";
 		}
 		_txtTitle->setText(tr(tacResult));
 
@@ -1504,89 +1427,92 @@ void DebriefingState::prepareDebriefing() // private.
 				objectiveFailedScore);
 	}
 
-	if (isPlayerWipe == false)
+	if (_isHostileStanding == false || _aborted == true)
 	{
 		recoverItems(_battleSave->guaranteedRecover());
 
-		if (_aborted == false)
+		if (_destroyPlayerBase == false)
 		{
-			recoverItems(_battleSave->conditionalRecover());
-
-			const int parts (static_cast<int>(Tile::PARTS_TILE));
-			MapDataType partType;
-			int qtyRuinedAlloys (0);
-
+			Tile* tile;
 			for (size_t
 					i = 0u;
 					i != _battleSave->getMapSizeXYZ();
 					++i)
 			{
-				recoverItems(_battleSave->getTiles()[i]->getInventory());
-
-				for (int
-						j = 0;
-						j != parts;
-						++j)
-				{
-					partType = static_cast<MapDataType>(j);
-					if (_battleSave->getTiles()[i]->getMapData(partType) != nullptr)
-					{
-						const TileType tileType (_battleSave->getTiles()[i]->getMapData(partType)->getTileType());
-
-						switch (tileType)
-						{
-							case DEAD_TILE:
-								++qtyRuinedAlloys;
-								break;
-
-							default: // TODO: Expand these using legit values above^
-								if (_specialTypes.find(tileType) != _specialTypes.end())
-									addStat(
-										_specialTypes[tileType]->type,
-										_specialTypes[tileType]->value);
-						}
-					}
-				}
-			}
-
-			for (std::vector<DebriefingStat*>::const_iterator
-					i = _statList.begin();
-					i != _statList.end();
-					++i)
-			{
-				if ((*i)->type == _specialTypes[ALIEN_ALLOYS]->type)
-				{
-					int alloyDivisor; // TODO: Subtract diff*10 for gameDifficulty.
-					switch (tacType)
-					{
-						case TCT_BASEASSAULT:	alloyDivisor = 150; break;
-						default:				alloyDivisor = 15;
-					}
-
-					(*i)->qty = ((*i)->qty + (qtyRuinedAlloys >> 1u)) / alloyDivisor;
-					(*i)->score = ((*i)->score + ((qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value) >> 1u)) / alloyDivisor;
-
-					if ((*i)->qty != 0 && (*i)->recover == true)
-						_itemsGained[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
-				}
-
-				if ((*i)->qty != 0 && (*i)->recover == true)
-					_base->getStorageItems()->addItem((*i)->type, (*i)->qty);
-			}
-		}
-		else if (_destroyPlayerBase == false)
-		{
-			for (size_t
-					i = 0u;
-					i != _battleSave->getMapSizeXYZ();
-					++i)
-			{
-				if (_battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-					&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
+				tile = _battleSave->getTiles()[i];
+				if (tile->getMapData(O_FLOOR) != nullptr
+					&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT)
 				{
 					recoverItems(_battleSave->getTiles()[i]->getInventory());
 				}
 			}
+		}
+	}
+
+	if (_isHostileStanding == false)
+	{
+		recoverItems(_battleSave->conditionalRecover());
+
+		const int parts (static_cast<int>(Tile::PARTS_TILE));
+		MapDataType partType;
+		int qtyRuinedAlloys (0);
+
+		for (size_t
+				i = 0u;
+				i != _battleSave->getMapSizeXYZ();
+				++i)
+		{
+			recoverItems(_battleSave->getTiles()[i]->getInventory());
+
+			for (int
+					j = 0;
+					j != parts;
+					++j)
+			{
+				partType = static_cast<MapDataType>(j);
+				if (_battleSave->getTiles()[i]->getMapData(partType) != nullptr)
+				{
+					const TileType tileType (_battleSave->getTiles()[i]->getMapData(partType)->getTileType());
+
+					switch (tileType)
+					{
+						case DEAD_TILE:
+							++qtyRuinedAlloys;
+							break;
+
+						default: // TODO: Expand these using legit values above^
+							if (_specialTypes.find(tileType) != _specialTypes.end())
+								addStat(
+									_specialTypes[tileType]->type,
+									_specialTypes[tileType]->value);
+					}
+				}
+			}
+		}
+
+		for (std::vector<DebriefingStat*>::const_iterator
+				i = _statList.begin();
+				i != _statList.end();
+				++i)
+		{
+			if ((*i)->type == _specialTypes[ALIEN_ALLOYS]->type)
+			{
+				int alloyDivisor; // TODO: Subtract diff*10 for gameDifficulty.
+				switch (tacType)
+				{
+					case TCT_BASEASSAULT:	alloyDivisor = 150; break;
+					default:				alloyDivisor = 15;
+				}
+
+				(*i)->qty = ((*i)->qty + (qtyRuinedAlloys >> 1u)) / alloyDivisor;
+				(*i)->score = ((*i)->score + ((qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value) >> 1u)) / alloyDivisor;
+
+				if ((*i)->qty != 0 && (*i)->recover == true)
+					_itemsGained[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
+			}
+
+			if ((*i)->qty != 0 && (*i)->recover == true)
+				_base->getStorageItems()->addItem((*i)->type, (*i)->qty);
 		}
 	}
 
@@ -1646,7 +1572,7 @@ void DebriefingState::prepareDebriefing() // private.
 	switch (tacType)
 	{
 		case TCT_BASEDEFENSE:
-			if (_destroyPlayerBase == false)
+			if (_destroyPlayerBase == false || _isQuickBattle == true)
 			{
 				for (std::vector<Craft*>::const_iterator
 						i = _base->getCrafts()->begin();
@@ -1657,7 +1583,7 @@ void DebriefingState::prepareDebriefing() // private.
 						reequipCraft(*i);
 				}
 			}
-			else if (_isQuickBattle == false)
+			else
 			{
 				for (std::vector<Base*>::const_iterator
 						i = _gameSave->getBases()->begin();
@@ -1673,7 +1599,7 @@ void DebriefingState::prepareDebriefing() // private.
 				}
 			}
 
-			if (_region != nullptr)
+			if (_region != nullptr && _isQuickBattle == false)
 			{
 				const AlienMission* const retalMission (_gameSave->findAlienMission(
 																				_region->getRules()->getType(),
@@ -1707,13 +1633,20 @@ void DebriefingState::prepareDebriefing() // private.
 			}
 			break;
 
-		default: // not BaseDefense.
-			reequipCraft(_craft);
+//		case TCT_DEFAULT:			// -1
+		case TCT_UFOCRASHED:
+		case TCT_UFOLANDED:
+		case TCT_BASEASSAULT:
+		case TCT_TERRORSITE:
+		case TCT_MARS1:				// for QuickBattle i guess (if not, Debriefing will not run)
+		case TCT_MARS2:				// for QuickBattle i guess (if not, Debriefing will not run)
+			reequipCraft(_craft);	// not a BaseDefense.
 	}
 }
 
 /**
  * Reequips a Craft after tactical.
+ * TODO: Figure out what's going on w/ QuickBattles and base-storage.
  * @param craft - pointer to a Craft
  */
 void DebriefingState::reequipCraft(Craft* const craft) // private.
@@ -1848,6 +1781,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 
 /**
  * Recovers items from tactical.
+ * TODO: Figure out what's going on w/ QuickBattles and base-storage.
  * @note Transfers the contents of a battlefield-inventory to the Base's stores.
  * This does not handle fixed-weapons/items.
  * @param battleItems - pointer to a vector of pointers to BattleItems on the battlefield
@@ -1923,8 +1857,6 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 										break;
 
 									case STATUS_UNCONSCIOUS:
-									case STATUS_LATENT:
-									case STATUS_LATENT_START:
 									{
 										switch (unit->getOriginalFaction())
 										{
@@ -1985,6 +1917,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 /**
  * Recovers a live aLien from the battlefield.
+ * TODO: Figure out what's going on w/ QuickBattles and base-storage.
  * @param unit - pointer to a BattleUnit to recover
  */
 void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
