@@ -379,7 +379,7 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 						++i)
 				{
 					if ((*i)->getFaction() != FACTION_PLAYER
-						&& (*i)->getTile() != nullptr) // otherUnit is standing.
+						&& (*i)->getUnitTile() != nullptr) // otherUnit is standing.
 					{
 						posOther = (*i)->getPosition();
 
@@ -436,7 +436,7 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 						++i)
 				{
 					if ((*i)->getFaction() != FACTION_HOSTILE
-						&& (*i)->getTile() != nullptr) // otherUnit is standing.
+						&& (*i)->getUnitTile() != nullptr) // otherUnit is standing.
 					{
 						posOther = (*i)->getPosition();
 
@@ -753,7 +753,7 @@ void TileEngine::calcFovUnits_pos(
 	{
 		if (((faction == FACTION_NONE && (*i)->getFaction() != FACTION_NEUTRAL)
 				|| (*i)->getFaction() == faction)
-			&& (*i)->getTile() != nullptr
+			&& (*i)->getUnitTile() != nullptr
 			&& distSqr((*i)->getPosition(), pos) <= SIGHTDIST_TSp_Sqr)
 		{
 			calcFovUnits(*i);
@@ -775,7 +775,7 @@ void TileEngine::calcFovTiles_pos(const Position& pos)
 			++i)
 	{
 		if ((*i)->getFaction() == FACTION_PLAYER
-			&& (*i)->getTile() != nullptr
+			&& (*i)->getUnitTile() != nullptr
 			&& distSqr((*i)->getPosition(), pos) <= SIGHTDIST_TSp_Sqr)
 		{
 			calcFovTiles(*i);
@@ -798,7 +798,7 @@ void TileEngine::calcFovUnits_all(bool spotSound)
 			i != j;
 			++i)
 	{
-		if ((*i)->getTile() != nullptr
+		if ((*i)->getUnitTile() != nullptr
 			&& (*i)->getFaction() != FACTION_NEUTRAL)
 		{
 			calcFovUnits(*i);
@@ -818,7 +818,7 @@ void TileEngine::calcFovTiles_all()
 			++i)
 	{
 		if ((*i)->getFaction() == FACTION_PLAYER
-			&& (*i)->getTile() != nullptr)
+			&& (*i)->getUnitTile() != nullptr)
 		{
 			calcFovTiles(*i);
 		}
@@ -843,7 +843,7 @@ bool TileEngine::visible(
 		//if (debug) Log(LOG_INFO) << "TileEngine::visible() id-" << unit->getId();
 
 		const BattleUnit* const targetUnit (getTargetUnit(tile));
-		if (targetUnit != nullptr && targetUnit->getTile() != nullptr) //targetUnit->isOut_t() == false)
+		if (targetUnit != nullptr && targetUnit->getUnitTile() != nullptr) //targetUnit->isOut_t() == false)
 		{
 			//Log(LOG_INFO) << ". try to sight id-" << targetUnit->getId();
 
@@ -934,16 +934,18 @@ bool TileEngine::visible(
  */
 const BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const	// now I love const; it does absolutely nothing other than
 {																			// cause problems and make a pretty blue color in the IDE.
-	if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
-		return tile->getTileUnit();
-
-	if (tile->getPosition().z > 0 && tile->hasNoFloor() == true)
+	if (tile != nullptr)
 	{
-		const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
-		if (tileBelow->getTileUnit() != nullptr)
-			return tileBelow->getTileUnit();
-	}
+		if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
+			return tile->getTileUnit();
 
+		if (tile->getPosition().z > 0 && tile->hasNoFloor() == true)
+		{
+			const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
+			if (tileBelow->getTileUnit() != nullptr)
+				return tileBelow->getTileUnit();
+		}
+	}
 	return nullptr;
 }
 
@@ -992,7 +994,7 @@ Position TileEngine::getOriginVoxel(
 		if (tile != nullptr)
 			pos = tile->getPosition();
 		else
-			pos = action.actor->getTile()->getPosition();
+			pos = action.actor->getUnitTile()->getPosition();
 
 		if (action.actor->getPosition() != pos)				// NOTE: Don't consider unit height or terrain-level if the Prj
 			return Position::toVoxelSpaceCentered(pos, 16);	// is not being launched - ie, if it originates from a waypoint.
@@ -1580,7 +1582,7 @@ bool TileEngine::checkReactionFire(
 
 	if (_battleSave->getSide() != FACTION_NEUTRAL						// no reaction on civilian turn.
 		&& triggerUnit->getFaction() == _battleSave->getSide()			// spotted unit must be current side's faction
-		&& triggerUnit->getTile() != nullptr							// and must be on map
+		&& triggerUnit->getUnitTile() != nullptr							// and must be on map
 		&& triggerUnit->isOut_t(OUT_HLTH_STUN) == false					// and must be conscious
 //		&& _battleSave->getBattleGame()->playerPanicHandled() == true)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
 		&& (triggerUnit->getFaction() == FACTION_PLAYER					// Mc'd aLiens do not RF and Xcom does not RF on Mc'd Xcom-units.
@@ -1654,7 +1656,7 @@ bool TileEngine::checkReactionFire(
 std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const unit)
 {
 	//Log(LOG_INFO) << "TileEngine::getSpottingUnits() vs. id-" << unit->getId() << " " << unit->getPosition();
-	const Tile* const tile (unit->getTile());
+	const Tile* const tile (unit->getUnitTile());
 	std::vector<BattleUnit*> spotters;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -2515,7 +2517,7 @@ void TileEngine::explode(
 									i != tileStop->getInventory()->end();
 									++i)
 							{
-								if ((bu = (*i)->getUnit()) != nullptr
+								if ((bu = (*i)->getItemUnit()) != nullptr
 									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 									&& bu->getTakenExpl() == false)
 								{
@@ -2599,7 +2601,7 @@ void TileEngine::explode(
 								{
 									//Log(LOG_INFO) << "pos " << tileStop->getPosition();
 									//Log(LOG_INFO) << ". . INVENTORY: Item = " << (*i)->getRules()->getType();
-									if ((bu = (*i)->getUnit()) != nullptr
+									if ((bu = (*i)->getItemUnit()) != nullptr
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 										&& bu->getTakenExpl() == false)
 									{
@@ -2706,7 +2708,7 @@ void TileEngine::explode(
 									i != tileStop->getInventory()->end();
 									++i)
 							{
-								if ((bu = (*i)->getUnit()) != nullptr
+								if ((bu = (*i)->getItemUnit()) != nullptr
 									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 									&& bu->getTakenExpl() == false)
 								{
@@ -2804,7 +2806,7 @@ void TileEngine::explode(
 										i != tileFire->getInventory()->end();
 										)
 								{
-									if ((bu = (*i)->getUnit()) != nullptr
+									if ((bu = (*i)->getItemUnit()) != nullptr
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 										&& bu->getTakenExpl() == false)
 									{
@@ -4518,7 +4520,7 @@ DoorResult TileEngine::unitOpensDoor(
 		z;
 	DoorResult ret (DR_NONE);
 
-	if (unit->getTile()->getTerrainLevel() < -12)
+	if (unit->getUnitTile()->getTerrainLevel() < -12)
 		z = 1; // if standing on stairs check the tile above instead
 	else
 		z = 0;
@@ -6395,7 +6397,7 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 							x != -1;
 							--x)
 					{
-						_battleSave->getTile(pos + Position(x,y,0))->setUnit();
+						_battleSave->getTile(pos + Position(x,y,0))->setTileUnit();
 					}
 				}
 				unit->setPosition(posBelow);
@@ -6455,10 +6457,10 @@ Tile* TileEngine::applyGravity(Tile* const tile) const
 					i != tile->getInventory()->end();
 					++i)
 			{
-				if ((*i)->getUnit() != nullptr
-					&& tile->getPosition() == (*i)->getUnit()->getPosition())
+				if ((*i)->getItemUnit() != nullptr
+					&& tile->getPosition() == (*i)->getItemUnit()->getPosition())
 				{
-					(*i)->getUnit()->setPosition(deltaTile->getPosition());
+					(*i)->getItemUnit()->setPosition(deltaTile->getPosition());
 				}
 				deltaTile->addItem(*i);
 			}

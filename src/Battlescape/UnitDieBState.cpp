@@ -261,20 +261,6 @@ void UnitDieBState::think()
 															.arg(_unit->getName(lang))));
 			}
 		}
-
-		// if all units from either faction are killed - auto-end the mission.
-//		if (Options::battleAutoEnd == true && _battleSave->getSide() == FACTION_PLAYER)
-//		{
-//			int liveHostile, livePlayer;
-//			_parent->tallyUnits(liveHostile, livePlayer);
-//
-//			if (liveHostile == 0 || livePlayer == 0)
-//			{
-//				_battleSave->setSelectedUnit();
-//				_parent->cancelTacticalAction(true);
-//				_parent->requestEndTurn();
-//			}
-//		}
 	}
 //	#4
 	else if (_unit->isOut_t(OUT_STAT) == true) // and this ought be Status_Dead OR _Unconscious.
@@ -299,10 +285,7 @@ void UnitDieBState::think()
 	}
 
 	if (_hidden == false)
-	{
-//		_unit->flagCache(); // <- set in startCollapsing() and keepCollapsing()
 		_parent->getMap()->cacheUnit(_unit);
-	}
 }
 
 /**
@@ -312,7 +295,7 @@ void UnitDieBState::think()
  */
 void UnitDieBState::convertToBody() // private.
 {
-	_unit->setTile();
+	_unit->setUnitTile(); // This should have never been done. Only the Tile's link to unit should be broken.
 
 	if (_hidden == false)
 		_battleSave->getBattleState()->showPsiButton(false);	// ... why is this here ...
@@ -387,13 +370,12 @@ void UnitDieBState::convertToBody() // private.
 			}
 
 			if (tile != nullptr && tile->getTileUnit() == _unit)	// safety. had a CTD when ethereal dies on water.
-				tile->setUnit();									// TODO: iterate over all mapTiles searching for the unit-item and
-																	// null-ing all tile-links to it. cf. SavedBattleGame::deleteBody().
+				tile->setTileUnit();								// cf. SavedBattleGame::deleteBody().
 
 			BattleItem* const body (new BattleItem(
 											_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrant]),
 											_battleSave->getCanonicalBattleId()));
-			if (quadrant == 0) body->setUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
+			if (quadrant == 0) body->setItemUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
 			_parent->dropItem(
 							body,
 							pos + Position(x,y,0),

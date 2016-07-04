@@ -1095,7 +1095,7 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 					i != _inventory.end();
 					++i)
 			{
-				if ((unit = (*i)->getUnit()) != nullptr
+				if ((unit = (*i)->getItemUnit()) != nullptr
 					&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
 					&& unit->getTakenExpl() == false)
 				{
@@ -1121,7 +1121,7 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 						i != _inventory.end();
 						)
 				{
-					if ((unit = (*i)->getUnit()) != nullptr
+					if ((unit = (*i)->getItemUnit()) != nullptr
 						&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
 						&& unit->getTakenFire() == false)
 					{
@@ -1241,12 +1241,12 @@ Surface* Tile::getSprite(MapDataType partType) const
  * @param unit		- pointer to a BattleUnit (default nullptr)
  * @param tileBelow	- pointer to the Tile below this Tile (default nullptr)
  */
-void Tile::setUnit(
+void Tile::setTileUnit(
 		BattleUnit* const unit,
 		const Tile* const tileBelow)
 {
 	if (unit != nullptr)
-		unit->setTile(this, tileBelow);
+		unit->setUnitTile(this, tileBelow);
 
 	_unit = unit;
 }
@@ -1266,7 +1266,7 @@ void Tile::setTransitUnit(BattleUnit* const unit)
  */
 void Tile::addItem(BattleItem* const item)
 {
-	item->setTile(this);
+	item->setItemTile(this);
 	_inventory.push_back(item);
 }
 
@@ -1287,7 +1287,7 @@ void Tile::removeItem(BattleItem* const item)
 			break;
 		}
 	}
-	item->setTile();
+	item->setItemTile();
 }
 
 /**
@@ -1310,8 +1310,8 @@ int Tile::getCorpseSprite(bool* fired) const
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getUnit() != nullptr
-				&& (*i)->getUnit()->getGeoscapeSoldier() != nullptr)
+			if ((*i)->getItemUnit() != nullptr
+				&& (*i)->getItemUnit()->getGeoscapeSoldier() != nullptr)
 			{
 				weightTest = (*i)->getRules()->getWeight();
 				if (weightTest > weight)
@@ -1319,7 +1319,7 @@ int Tile::getCorpseSprite(bool* fired) const
 					weight = weightTest;
 					sprite = (*i)->getRules()->getFloorSprite();
 
-					if ((*i)->getUnit()->getFireUnit() != 0)
+					if ((*i)->getItemUnit()->getFireUnit() != 0)
 						*fired = true;
 				}
 			}
@@ -1333,7 +1333,7 @@ int Tile::getCorpseSprite(bool* fired) const
 					i != _inventory.end();
 					++i)
 			{
-				if ((*i)->getUnit() != nullptr)
+				if ((*i)->getItemUnit() != nullptr)
 				{
 					weightTest = (*i)->getRules()->getWeight();
 					if (weightTest > weight)
@@ -1341,7 +1341,7 @@ int Tile::getCorpseSprite(bool* fired) const
 						weight = weightTest;
 						sprite = (*i)->getRules()->getFloorSprite();
 
-						if ((*i)->getUnit()->getFireUnit() != 0)
+						if ((*i)->getItemUnit()->getFireUnit() != 0)
 							*fired = true;
 					}
 				}
@@ -1446,7 +1446,7 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 			i != _inventory.end();
 			++i)
 	{
-		const BattleUnit* const unit ((*i)->getUnit());
+		const BattleUnit* const unit ((*i)->getItemUnit());
 
 		if (unit != nullptr
 			&& unit->getUnitStatus() == STATUS_UNCONSCIOUS

@@ -319,7 +319,7 @@ private:
 		/// Gets the sorted list of inventories.
 //		const std::vector<std::string>& getInventoryList() const;
 		/// Determines the highest TU-value used in Inventory rules.
-		int detHighTuInventoryCost() const;
+		int getHighestDropCost() const;
 
 		/// Gets the rules for a specific research-project.
 		const RuleResearch* getResearch(const std::string& id) const;

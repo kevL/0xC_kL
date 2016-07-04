@@ -335,7 +335,7 @@ void Inventory::drawItems()
 		RED (37u);
 
 	inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
-	list = _selUnit->getTile()->getInventory();
+	list = _selUnit->getUnitTile()->getInventory();
 	for (std::vector<BattleItem*>::const_iterator // draw Ground section.
 			i = list->begin();
 			i != list->end();
@@ -365,8 +365,8 @@ void Inventory::drawItems()
 			const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
 									  [(*i)->getSlotY()]);
 			int fatals;
-			if ((*i)->getUnit() != nullptr)
-				fatals = (*i)->getUnit()->getFatalWounds();
+			if ((*i)->getItemUnit() != nullptr)
+				fatals = (*i)->getItemUnit()->getFatalWounds();
 			else
 				fatals = 0;
 
@@ -754,7 +754,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
 									{
 										doGround = true;
-										_selUnit->getTile()->removeItem(_selItem);
+										_selUnit->getUnitTile()->removeItem(_selItem);
 
 										// TODO: set stackLevel
 									}
@@ -977,10 +977,10 @@ void Inventory::moveItem( // private.
 		if (inRule->getCategory() == IC_GROUND) // set down onto Ground, or unload a weapon-clip to Ground in pre-battle
 		{
 			item->changeOwner(); // NOTE: Already done in case of unload() during pre-battle equip.
-			_selUnit->getTile()->addItem(item);
+			_selUnit->getUnitTile()->addItem(item);
 
-			if (item->getUnit() != nullptr) //&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				item->getUnit()->setPosition(_selUnit->getPosition());
+			if (item->getItemUnit() != nullptr) //&& item->getItemUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+				item->getItemUnit()->setPosition(_selUnit->getPosition());
 		}
 		else if (item->getInventorySection() == nullptr) // unload a weapon-clip to left hand
 			item->changeOwner(_selUnit);
@@ -988,10 +988,10 @@ void Inventory::moveItem( // private.
 		{
 			item->changeOwner(_selUnit);
 
-			_selUnit->getTile()->removeItem(item);
+			_selUnit->getUnitTile()->removeItem(item);
 
-			if (item->getUnit() != nullptr) //&& item->getUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				item->getUnit()->setPosition(Position(-1,-1,-1));
+			if (item->getItemUnit() != nullptr) //&& item->getItemUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+				item->getItemUnit()->setPosition(Position(-1,-1,-1));
 
 			if (_tuMode == true)					// To prevent units from picking up large objects and running around with
 				_selUnit->setTimeUnits(std::max(0,	// nearly full TU on the same turn its weight becomes an extra tu-burden.
@@ -1080,7 +1080,7 @@ bool Inventory::canStack( // private.
 				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()						// and the same ammo type
 				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
 		&& itemA->getFuse() == itemB->getFuse()															// and both have the same fuse-setting
-		&& itemA->getUnit() == nullptr && itemB->getUnit() == nullptr									// and neither is a corpse or unconscious unit
+		&& itemA->getItemUnit() == nullptr && itemB->getItemUnit() == nullptr									// and neither is a corpse or unconscious unit
 		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
 		&& itemA->getHealQuantity() == itemB->getHealQuantity()
 		&& itemA->getStimulantQuantity() == itemB->getStimulantQuantity());
@@ -1100,8 +1100,8 @@ void Inventory::arrangeGround(int dir)
 
 	// first move all items out of the way -> a big number in X direction to right
 	for (std::vector<BattleItem*>::const_iterator
-			i = _selUnit->getTile()->getInventory()->begin();
-			i != _selUnit->getTile()->getInventory()->end();
+			i = _selUnit->getUnitTile()->getInventory()->begin();
+			i != _selUnit->getUnitTile()->getInventory()->end();
 			++i)
 	{
 		(*i)->setInventorySection(grdRule);
@@ -1117,8 +1117,8 @@ void Inventory::arrangeGround(int dir)
 
 	// for each item find the most top-left position that is not occupied and will fit
 	for (std::vector<BattleItem*>::const_iterator
-			i = _selUnit->getTile()->getInventory()->begin();
-			i != _selUnit->getTile()->getInventory()->end();
+			i = _selUnit->getUnitTile()->getInventory()->begin();
+			i != _selUnit->getUnitTile()->getInventory()->end();
 			++i)
 	{
 		x =
@@ -1222,11 +1222,11 @@ bool Inventory::isOverlap( // static.
 			}
 		}
 	}
-	else if (unit->getTile() != nullptr)
+	else if (unit->getUnitTile() != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getTile()->getInventory()->begin();
-				i != unit->getTile()->getInventory()->end();
+				i = unit->getUnitTile()->getInventory()->begin();
+				i != unit->getUnitTile()->getInventory()->end();
 				++i)
 		{
 			if ((*i)->occupiesSlot(x,y, item) == true)

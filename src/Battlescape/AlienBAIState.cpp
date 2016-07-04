@@ -1318,7 +1318,7 @@ int AlienBAIState::selectNearestTarget() // private.
 			++i)
 	{
 		if (validTarget(*i, true, true) == true
-			&& _te->visible(_unit, (*i)->getTile()) == true)
+			&& _te->visible(_unit, (*i)->getUnitTile()) == true)
 		{
 			++ret;
 			distTest = TileEngine::distance(
@@ -1334,7 +1334,7 @@ int AlienBAIState::selectNearestTarget() // private.
 					origin = _te->getSightOriginVoxel(_unit);
 					canTarget = _te->canTargetUnit(
 											&origin,
-											(*i)->getTile(),
+											(*i)->getUnitTile(),
 											&target,
 											_unit);
 				}
@@ -1498,7 +1498,7 @@ bool AlienBAIState::findFirePosition() // private.
 				originVoxel = _te->getSightOriginVoxel(_unit, &pos);
 				if (_battleSave->getTileEngine()->canTargetUnit(
 															&originVoxel,
-															_unitAggro->getTile(),
+															_unitAggro->getUnitTile(),
 															&targetVoxel,
 															_unit) == true)
 				{
@@ -2090,8 +2090,8 @@ bool AlienBAIState::explosiveEfficacy(
 			{
 				//Log(LOG_INFO) << ". . dangerousFALSE = " << ((*i)->getTile() != nullptr && (*i)->getTile()->getDangerous() == false);
 				//Log(LOG_INFO) << ". . exposed = " << ((*i)->getFaction() == FACTION_HOSTILE || (*i)->getExposed() < _unit->getIntelligence() + 1);
-				if ((*i)->getTile() != nullptr
-					&& (*i)->getTile()->getDangerous() == false
+				if ((*i)->getUnitTile() != nullptr
+					&& (*i)->getUnitTile()->getDangerous() == false
 					&& ((*i)->getFaction() == FACTION_HOSTILE
 						|| ((*i)->getExposed() != -1
 							&& (*i)->getExposed() <= _unit->getIntelligence())))
@@ -2195,7 +2195,7 @@ bool AlienBAIState::psiAction() // private.
 					originVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
 					losTest = static_cast<int>(_battleSave->getTileEngine()->canTargetUnit(
 																						&originVoxel,
-																						(*i)->getTile(),
+																						(*i)->getUnitTile(),
 																						&targetVoxel,
 																						_unit)) * PSI_LOS_WEIGHT;
 					//Log(LOG_INFO) << ". . . ";
@@ -2295,7 +2295,7 @@ bool AlienBAIState::validTarget( // private.
 		&& unit->isOut_t(OUT_STAT) == false					// ignore targets that are dead/unconscious
 		&& unit->getExposed() != -1
 		&& unit->getExposed() <= _unit->getIntelligence()	// target must be a unit that this aLien 'knows about'
-		&& (unit->getTile()->getDangerous() == false
+		&& (unit->getUnitTile()->getDangerous() == false
 			|| dangerTile == false))						// target has not been grenaded
 	{
 		return true;

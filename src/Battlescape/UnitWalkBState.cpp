@@ -726,7 +726,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 			{
 				//Log(LOG_INFO) << ". . remove unit from previous tile";
 				tile = _battleSave->getTile(_unit->getStartPosition() + Position(x,y,0));
-				tile->setUnit();
+				tile->setTileUnit();
 				tile->setTransitUnit(_unit); // IMPORTANT: lastTile transiently holds onto this unit (all quads) for Map drawing.
 			}
 		}
@@ -750,7 +750,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 					doFallCheck = false;
 				}
 				//Log(LOG_INFO) << ". . set unit on new tile";
-				tile->setUnit(_unit, tileBelow);
+				tile->setTileUnit(_unit, tileBelow);
 				//Log(LOG_INFO) << ". . . NEW unitPos " << _unit->getPosition();
 			}
 		}
@@ -832,7 +832,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	}
 
 	if (_unit->getFireUnit() != 0) // TODO: Also add to falling and/or all quadrants of large units.
-		_unit->getTile()->addSmoke(1); //(_unit->getFireUnit() + 1) >> 1u);
+		_unit->getUnitTile()->addSmoke(1); //(_unit->getFireUnit() + 1) >> 1u);
 
 
 	const Position pos (_unit->getPosition());
@@ -841,7 +841,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		&& _unit->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
 	{
 		// Put burnedBySilacoid() here! etc
-		_unit->burnTile(_unit->getTile());
+		_unit->burnTile(_unit->getUnitTile());
 
 //		const int power (_unit->getUnitRules()->getSpecabPower());
 //		_unit->getTile()->igniteTile(power / 10);
@@ -1319,7 +1319,7 @@ void UnitWalkBState::playMoveSound() // private.
 					case 7:
 					{
 						const Tile
-							* const tile (_unit->getTile()),
+							* const tile (_unit->getUnitTile()),
 							* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
 						const int stepSound (tile->getFootstepSound(tileBelow));
 						if (stepSound != 0)

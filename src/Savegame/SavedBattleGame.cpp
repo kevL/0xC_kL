@@ -95,7 +95,7 @@ SavedBattleGame::SavedBattleGame(
 		_tiles(nullptr),
 		_pacified(false),
 		_rfTriggerOffset(0,0,-1),
-		_initTu(20),
+		_dropTu(0),
 		_walkUnit(nullptr),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
@@ -107,7 +107,7 @@ SavedBattleGame::SavedBattleGame(
 {
 	//Log(LOG_INFO) << "\nCreate SavedBattleGame";
 	if (rules != nullptr) // ie. not craft- or base-equip screen.
-		_initTu = rules->detHighTuInventoryCost();
+		_dropTu = rules->getHighestDropCost();
 
 	_tileSearch.resize(SEARCH_SIZE);
 	for (size_t
@@ -491,7 +491,7 @@ void SavedBattleGame::load(
 						item->setPriorOwner(*k);
 
 					if (testId == unitId)
-						item->setUnit(*k);
+						item->setItemUnit(*k);
 				}
 
 				if (item->getInventorySection() != nullptr						// match up items and tiles
@@ -1573,18 +1573,29 @@ void SavedBattleGame::setBattleState(BattlescapeState* const battleState)
  */
 void SavedBattleGame::resetUnitsOnTiles()
 {
+	Tile* tile;
+	Position
+		pos,
+		posOffset;
+	const Position& posBelow (Position(0,0,-1));
+
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _units.begin();
 			i != _units.end();
 			++i)
 	{
-		if ((*i)->isOut_t(OUT_STAT) == false)
+
+		if ((*i)->getUnitStatus() == STATUS_STANDING)
 		{
+			if ((*i)->getFaction() == FACTION_PLAYER)
+				(*i)->setUnitVisible();
+
 			const int unitSize ((*i)->getArmor()->getSize() - 1);
 
-			if ((*i)->getTile() != nullptr // clear Tile's link to its current unit
-				&& (*i)->getTile()->getTileUnit() == *i)
+			if ((tile = (*i)->getUnitTile()) != nullptr // clear Tile's link to its current unit
+				&& tile->getTileUnit() == *i)
 			{
+				pos = tile->getPosition();
 				for (int
 						x = unitSize;
 						x != -1;
@@ -1595,12 +1606,12 @@ void SavedBattleGame::resetUnitsOnTiles()
 							y != -1;
 							--y)
 					{
-						getTile((*i)->getTile()->getPosition() + Position(x,y,0))->setUnit();
+						getTile(pos + Position(x,y,0))->setTileUnit();
 					}
 				}
 			}
 
-			Tile* tile;
+			pos = (*i)->getPosition();
 			for (int // set Tile's link to its current unit
 					x = unitSize;
 					x != -1;
@@ -1611,19 +1622,15 @@ void SavedBattleGame::resetUnitsOnTiles()
 						y != -1;
 						--y)
 				{
-					tile = getTile((*i)->getPosition() + Position(x,y,0));
-					tile->setUnit(
-								*i,
-								getTile(tile->getPosition() + Position(0,0,-1)));
+					posOffset = pos + Position(x,y,0);
+					tile = getTile(posOffset);
+					tile->setTileUnit(
+									*i,
+									getTile(posOffset + posBelow));
 				}
 			}
 		}
-
-		if ((*i)->getFaction() == FACTION_PLAYER)
-			(*i)->setUnitVisible();
 	}
-//	_battleState->getBattleGame()->reinit(); // -> BattlescapeGame is not valid yet for SavedBattleGame::load()
-//	_preBattle = false; // gtg.
 }
 
 /**
@@ -1631,7 +1638,7 @@ void SavedBattleGame::resetUnitsOnTiles()
  * defense missions.
  * @return, reference a vector of storage positions
  */
-std::vector<Position>& SavedBattleGame::getStorageSpace()
+std::vector<Position>& SavedBattleGame::storageSpace()
 {
 	return _storageSpace;
 }
@@ -1641,7 +1648,7 @@ std::vector<Position>& SavedBattleGame::getStorageSpace()
  * the storage facilities.
  * @param tile - pointer to a tile where all the goodies are placed
  */
-void SavedBattleGame::distributeEquipment(Tile* const tile)
+void SavedBattleGame::distributeEquipt(Tile* const tile)
 {
 	if (_storageSpace.empty() == false)
 	{
@@ -1674,7 +1681,7 @@ void SavedBattleGame::distributeEquipment(Tile* const tile)
  */
 std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleItem* const item)
 {
-	Tile* const tile (item->getTile());
+	Tile* const tile (item->getItemTile());
 	if (tile != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
@@ -2205,8 +2212,8 @@ void SavedBattleGame::reviveUnit(
 					i != _items.end();
 					++i)
 			{
-				if ((*i)->getUnit() != nullptr
-					&& (*i)->getUnit() == unit
+				if ((*i)->getItemUnit() != nullptr
+					&& (*i)->getItemUnit() == unit
 					&& (*i)->getOwner() != nullptr)
 				{
 					pos = (*i)->getOwner()->getPosition();
@@ -2268,7 +2275,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 			i != _items.end();
 			)
 	{
-		if ((*i)->getUnit() == unit)
+		if ((*i)->getItemUnit() == unit)
 		{
 			i = toDeleteItem(*i);
 			if (--quadrants == 0) return;
@@ -2381,7 +2388,7 @@ bool SavedBattleGame::setUnitPosition(
 						y != -1;
 						--y)
 				{
-					getTile(posTest + Position(x,y,0))->setUnit(
+					getTile(posTest + Position(x,y,0))->setTileUnit(
 															unit,
 															getTile(posTest + Position(x,y,-1)));
 				}
@@ -3000,9 +3007,9 @@ const std::vector<std::pair<int,int>>& SavedBattleGame::scannerDots() const
  * Gets the minimum TU that a unit has at start of its turn.
  * @return, min TU value
  */
-int SavedBattleGame::getInitTu() const
+int SavedBattleGame::getDropTu() const
 {
-	return _initTu;
+	return _dropTu;
 }
 
 /**

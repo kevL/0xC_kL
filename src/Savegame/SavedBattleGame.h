@@ -84,7 +84,7 @@ private:
 	int
 		_cheatTurn,
 		_groundLevel,
-		_initTu,
+		_dropTu,
 		_itemId,
 		_mapsize_x,
 		_mapsize_y,
@@ -323,9 +323,9 @@ private:
 		void resetUnitsOnTiles();
 
 		/// Gives access to the storage-tiles vector.
-		std::vector<Position>& getStorageSpace();
+		std::vector<Position>& storageSpace();
 		/// Moves all the leftover items to random locations in the storage-tiles vector.
-		void distributeEquipment(Tile* const tile);
+		void distributeEquipt(Tile* const tile);
 
 		/// Removes a BattleItem from the battlefield.
 		std::vector<BattleItem*>::const_iterator toDeleteItem(BattleItem* const item);
@@ -479,7 +479,7 @@ private:
 		const std::vector<std::pair<int,int>>& scannerDots() const;
 
 		/// Gets the minimum TU that a unit has at start of its turn.
-		int getInitTu() const;
+		int getDropTu() const;
 
 		/// Sets the previous walking unit.
 		void setWalkUnit(const BattleUnit* const unit);

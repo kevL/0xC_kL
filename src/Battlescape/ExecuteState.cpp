@@ -139,7 +139,7 @@ void ExecuteState::init()
 					i != tile->getInventory()->end();
 					++i)
 			{
-				if ((targetUnit = (*i)->getUnit()) != nullptr
+				if ((targetUnit = (*i)->getItemUnit()) != nullptr
 					&& targetUnit->getUnitStatus() == STATUS_UNCONSCIOUS)
 				{
 					_targetUnits.push_back(targetUnit);
@@ -158,7 +158,7 @@ void ExecuteState::init()
 				i != tile->getInventory()->end();
 				++i)
 		{
-			if ((targetUnit = (*i)->getUnit()) != nullptr
+			if ((targetUnit = (*i)->getItemUnit()) != nullptr
 				&& targetUnit->getUnitStatus() == STATUS_UNCONSCIOUS)
 			{
 				_targetUnits.push_back(targetUnit);

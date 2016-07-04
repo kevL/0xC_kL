@@ -1519,7 +1519,7 @@ void BattlescapeGame::endTurn() // private.
 		if ((*i)->getOriginalFaction() == _battleSave->getSide()
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
-			if ((tile = (*i)->getTile()) != nullptr
+			if ((tile = (*i)->getUnitTile()) != nullptr
 				&& (tile->getSmoke() != 0 || tile->getFire() != 0))
 			{
 				tile->hitTileContent(); // hit the tile's unit w/ Smoke & Fire at end of unit's faction's Turn-phase.
@@ -3047,8 +3047,8 @@ void BattlescapeGame::dropItem(
 		item->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
 		_battleSave->getTile(pos)->addItem(item);
 
-		if (item->getUnit() != nullptr)
-			item->getUnit()->setPosition(pos);
+		if (item->getItemUnit() != nullptr)
+			item->getItemUnit()->setPosition(pos);
 
 		switch (dropType)
 		{
@@ -3074,7 +3074,7 @@ void BattlescapeGame::dropItem(
 }
 
 /**
- * Drops all items in a specific BattleUnit's inventory to the ground.
+ * Drops all items in a specified BattleUnit's inventory to the ground.
  * @param unit - pointer to a BattleUnit
  */
 void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
@@ -3094,8 +3094,8 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 				(*i)->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
 				_battleSave->getTile(pos)->addItem(*i);
 
-				if ((*i)->getUnit() != nullptr)
-					(*i)->getUnit()->setPosition(pos);
+				if ((*i)->getItemUnit() != nullptr)
+					(*i)->getItemUnit()->setPosition(pos);
 
 				if ((*i)->getRules()->getBattleType() == BT_FLARE
 					&& (*i)->getFuse() != -1)
@@ -3125,7 +3125,7 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::convertUnit() " << conType;
-	const bool wasVisible (potato->getUnitVisible());
+	const bool vis (potato->getUnitVisible());
 
 	_battleSave->getBattleState()->showPsiButton(false);
 
@@ -3146,8 +3146,8 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 
 	dropUnitInventory(potato);
 
-	potato->setTile();
-	_battleSave->getTile(potato->getPosition())->setUnit(); // NOTE: This could, theoretically, be a large potato.
+	potato->setUnitTile();										// TODO: Run potato through putDown().
+	_battleSave->getTile(potato->getPosition())->setTileUnit();	// NOTE: This could, theoretically, be a large potato.
 
 
 	RuleUnit* const unitRule (getRuleset()->getUnitRule(potato->getSpawnType()));
@@ -3161,9 +3161,9 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 						_parentState->getGame()->getSavedGame()->getMonthsPassed(),
 						this);
 
-	_battleSave->getTile(pos)->setUnit(
-									potato,
-									_battleSave->getTile(pos + Position(0,0,-1)));
+	_battleSave->getTile(pos)->setTileUnit(
+										potato,
+										_battleSave->getTile(pos + Position(0,0,-1)));
 	potato->setPosition(pos);
 
 	int dir;
@@ -3191,9 +3191,9 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 	}
 
 	getMap()->cacheUnit(potato);
-	potato->setUnitVisible(wasVisible);
+	potato->setUnitVisible(vis);
 
-	getTileEngine()->applyGravity(potato->getTile());
+	getTileEngine()->applyGravity(potato->getUnitTile());
 	getTileEngine()->calculateUnitLighting();
 	getTileEngine()->calcFovUnits_pos(potato->getPosition(), true);
 
@@ -3222,8 +3222,8 @@ void BattlescapeGame::speedyConvert(BattleUnit* const unit)
 	}
 	unit->getInventory()->clear();
 
-	unit->setTile(nullptr);
-	_battleSave->getTile(unit->getPosition())->setUnit(nullptr);
+	unit->setUnitTile();
+	_battleSave->getTile(unit->getPosition())->setTileUnit(nullptr);
 
 
 	std::string st (unit->getSpawnType());
@@ -3240,7 +3240,7 @@ void BattlescapeGame::speedyConvert(BattleUnit* const unit)
 											this));
 
 	const Position posUnit (unit->getPosition());
-	_battleSave->getTile(posUnit)->setUnit(
+	_battleSave->getTile(posUnit)->setTileUnit(
 										conUnit,
 										_battleSave->getTile(posUnit + Position(0,0,-1)));
 	conUnit->setPosition(posUnit);
@@ -3316,7 +3316,7 @@ bool BattlescapeGame::pickupItem(BattleAction* const action) const
 	{
 		//Log(LOG_INFO) << ". found " << targetItem->getRules()->getType();
 //		if (targetItem->getTile()->getPosition() == action->actor->getPosition())
-		if (targetItem->getTile() == action->actor->getTile())
+		if (targetItem->getItemTile() == action->actor->getUnitTile())
 		{
 			//Log(LOG_INFO) << ". . pickup on spot";
 			if (takeItemFromGround(targetItem, action->actor) == true
@@ -3332,7 +3332,7 @@ bool BattlescapeGame::pickupItem(BattleAction* const action) const
 		{
 			//Log(LOG_INFO) << ". . move to spot";
 			action->type = BA_MOVE;
-			action->posTarget = targetItem->getTile()->getPosition();
+			action->posTarget = targetItem->getItemTile()->getPosition();
 		}
 	}
 	return false;
@@ -3360,7 +3360,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 		{
 			//Log(LOG_INFO) << ". " << (*i)->getRules()->getType();
 			//Log(LOG_INFO) << ". . grd attr = " << (*i)->getRules()->getAttraction();
-			if ((tile = (*i)->getTile()) != nullptr
+			if ((tile = (*i)->getItemTile()) != nullptr
 				&& (tile->getTileUnit() == nullptr || tile->getTileUnit() == unit)
 				&& tile->getTuCostTile(O_FLOOR, MT_WALK) != 255 // TODO:: pathfind.
 				&& tile->getTuCostTile(O_OBJECT, MT_WALK) != 255
@@ -3389,7 +3389,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 			testWorth = (*i)->getRules()->getAttraction()
 					  / (TileEngine::distance(
 											posUnit,
-											(*i)->getTile()->getPosition()) + 1);
+											(*i)->getItemTile()->getPosition()) + 1);
 			if (testWorth >= worth)
 			{
 				if (testWorth > worth)
@@ -3539,7 +3539,7 @@ bool BattlescapeGame::takeItemFromGround(
 		&& takeItem(item, unit) == true)
 	{
 		unit->spendTimeUnits(cost);
-		item->getTile()->removeItem(item);
+		item->getItemTile()->removeItem(item);
 		//Log(LOG_INFO) << ". ret TRUE";
 		return true;
 	}
@@ -3666,16 +3666,16 @@ bool BattlescapeGame::tallyUnits(
 	livePlayer = 0;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			j = _battleSave->getUnits()->begin();
-			j != _battleSave->getUnits()->end();
-			++j)
+			i = _battleSave->getUnits()->begin();
+			i != _battleSave->getUnits()->end();
+			++i)
 	{
-		if ((*j)->isOut_t(OUT_STAT) == false)
+		if ((*i)->getUnitStatus() == STATUS_STANDING)
 		{
-			switch ((*j)->getOriginalFaction())
+			switch ((*i)->getOriginalFaction())
 			{
 				case FACTION_PLAYER:
-					if ((*j)->isMindControlled() == false)
+					if ((*i)->isMindControlled() == false)
 						++livePlayer;
 					else
 						++liveHostile;
@@ -3683,7 +3683,7 @@ bool BattlescapeGame::tallyUnits(
 
 				case FACTION_HOSTILE:
 					++liveHostile;
-					if ((*j)->isMindControlled() == false)
+					if ((*i)->isMindControlled() == false)
 						ret = false;
 			}
 		}
@@ -3697,21 +3697,20 @@ bool BattlescapeGame::tallyUnits(
 }
 
 /**
- * Tallies the conscious player-units at an Exit-area even if MC'd.
+ * Tallies the conscious player-units at an Exit-area unless MC'd.
  * @return, quantity of units at exit
  */
 int BattlescapeGame::tallyPlayerExit() const
 {
 	int ret (0);
 	for (std::vector<BattleUnit*>::const_iterator
-			j = _battleSave->getUnits()->begin();
-			j != _battleSave->getUnits()->end();
-			++j)
+			i = _battleSave->getUnits()->begin();
+			i != _battleSave->getUnits()->end();
+			++i)
 	{
-		if ((*j)->getOriginalFaction() == FACTION_PLAYER
-			&& (*j)->isOut_t(OUT_STAT) == false
-			&& (*j)->isOnTiletype(END_POINT) == true)
-//			&& (*j)->isMindControlled() == false) // allow.
+		if ((*i)->getOriginalFaction() == FACTION_PLAYER
+			&& (*i)->isMindControlled() == false
+			&& (*i)->isOnTiletype(END_POINT) == true) // NOTE: Unit will be Status_Standing to be on tile.
 		{
 			++ret;
 		}
@@ -3727,12 +3726,12 @@ int BattlescapeGame::tallyHostiles() const
 {
 	int ret (0);
 	for (std::vector<BattleUnit*>::const_iterator
-			j = _battleSave->getUnits()->begin();
-			j != _battleSave->getUnits()->end();
-			++j)
+			i = _battleSave->getUnits()->begin();
+			i != _battleSave->getUnits()->end();
+			++i)
 	{
-		if ((*j)->getOriginalFaction() == FACTION_HOSTILE
-			&& (*j)->isOut_t(OUT_STAT) == false)
+		if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+			&& (*i)->getUnitStatus() == STATUS_STANDING)
 		{
 			++ret;
 		}

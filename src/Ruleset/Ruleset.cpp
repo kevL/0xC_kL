@@ -1745,7 +1745,7 @@ const std::vector<std::string>& Ruleset::getInventoryList() const
  * unless it has just panicked or revived etc.
  * @return, high TU value
  */
-int Ruleset::detHighTuInventoryCost() const
+int Ruleset::getHighestDropCost() const
 {
 	int
 		costTest,
@@ -1757,8 +1757,7 @@ int Ruleset::detHighTuInventoryCost() const
 			i != _inventories.end();
 			++i)
 	{
-		costTest = (*i).second->getCost(grdRule);
-		if (costTest > cost)
+		if ((costTest = (*i).second->getCost(grdRule)) > cost)
 			cost = costTest;
 	}
 	return cost;

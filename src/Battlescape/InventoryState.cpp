@@ -403,9 +403,9 @@ InventoryState::~InventoryState()
 //	delete _timer;
 	if (_parent != nullptr)
 	{
-		Tile* const tile (_battleSave->getSelectedUnit()->getTile());
-
 		TileEngine* const te (_battleSave->getTileEngine());
+
+		Tile* const tile (_battleSave->getSelectedUnit()->getUnitTile());
 		te->applyGravity(tile);
 
 		te->calculateTerrainLighting();
@@ -714,21 +714,12 @@ void InventoryState::btnOkClick(Action*)
 	{
 		_game->popState();
 
-		if (_tuMode == false && _parent != nullptr) // pre-battle but going into tactical!
+		if (_parent != nullptr && _tuMode == false) // pre-battle but going into tactical!
 		{
 			_battleSave->resetUnitsOnTiles();
 
 			Tile* const inTile (_battleSave->getBattleInventory());
-			_battleSave->distributeEquipment(inTile);	// This doesn't seem to happen on second stage of Multi-State MISSIONS.
-														// In fact, none of this !_tuMode InventoryState appears to run for 2nd staged missions.
-														// and BattlescapeGenerator::nextStage() has its own bu->prepUnit() call ....
-														// but Leaving this out could be troublesome for Multi-Stage MISSIONS.
-//			if (_battleSave->getTurn() == 1)
-//			{
-//				_battleSave->distributeEquipment(inTile);
-//				if (inTile->getTileUnit())
-//					_battleSave->setSelectedUnit(inTile->getTileUnit()); // make sure the unit closest to the ramp is selected.
-//			}
+			_battleSave->distributeEquipt(inTile);
 
 			for (std::vector<BattleUnit*>::const_iterator
 					i = _battleSave->getUnits()->begin();
@@ -736,7 +727,7 @@ void InventoryState::btnOkClick(Action*)
 					++i)
 			{
 				if ((*i)->getFaction() == FACTION_PLAYER)
-					(*i)->prepTu(true);
+					(*i)->prepUnit(true);
 			}
 		}
 	}
@@ -928,7 +919,7 @@ void InventoryState::btnClearUnitClick(Action*)
 			_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
 
 			const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
-			Tile* const tile (unit->getTile());
+			Tile* const tile (unit->getUnitTile());
 			for (std::vector<BattleItem*>::const_iterator
 					i = equiptList->begin();
 					i != equiptList->end();
@@ -982,7 +973,7 @@ void InventoryState::btnClearGroundClick(Action*)
 
 		if (craft != nullptr) // safety, not base-equip screen.
 		{
-			Tile* const tile (_battleSave->getSelectedUnit()->getTile());
+			Tile* const tile (_battleSave->getSelectedUnit()->getUnitTile());
 			std::vector<BattleItem*>* const grdList (tile->getInventory());
 			if (grdList->empty() == false)
 			{
@@ -1256,7 +1247,7 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 	{
 		isArt = false;
 
-		const BattleUnit* const corpseUnit (selOver->getUnit());
+		const BattleUnit* const corpseUnit (selOver->getItemUnit());
 		if (corpseUnit != nullptr)
 		{
 			if (corpseUnit->getType().compare(0u,11u, "STR_FLOATER") == 0 // special handling for Floaters.

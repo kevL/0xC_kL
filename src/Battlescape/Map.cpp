@@ -2324,7 +2324,7 @@ bool Map::isTrueLoc(
 		const BattleUnit* const unit,
 		const Tile* const tile) const // private.
 {
-	if (unit->getTile() == tile
+	if (unit->getUnitTile() == tile
 		|| (unit->getArmor()->getSize() == 2
 			&& (   tile->getPosition() + Position(-1, 0,0) == unit->getPosition()
 				|| tile->getPosition() + Position( 0,-1,0) == unit->getPosition()

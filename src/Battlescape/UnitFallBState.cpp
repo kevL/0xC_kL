@@ -162,7 +162,7 @@ void UnitFallBState::think()
 
 		fall = fallCheck
 			&& (*i)->getPosition().z != 0
-			&& (*i)->getTile()->hasNoFloor(tileBelow)
+			&& (*i)->getUnitTile()->hasNoFloor(tileBelow)
 //			&& (*i)->getMoveTypeUnit() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
 
@@ -214,7 +214,7 @@ void UnitFallBState::think()
 
 		fall = fallCheck
 			&& (*i)->getPosition().z != 0
-			&& (*i)->getTile()->hasNoFloor(tileBelow)
+			&& (*i)->getUnitTile()->hasNoFloor(tileBelow)
 //			&& (*i)->getMovementType() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
 
@@ -236,7 +236,7 @@ void UnitFallBState::think()
 					if (*i == _battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->getTileUnit())	// another falling unit might have already taken up
 					{																							// this position so check that that unit is still there.
 						//Log(LOG_INFO) << ". Tile is not occupied";
-						_battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->setUnit();
+						_battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->setTileUnit();
 					}
 				}
 			}
@@ -251,9 +251,9 @@ void UnitFallBState::think()
 						y != -1;
 						--y)
 				{
-					//Log(LOG_INFO) << ". setUnit to belowTile";
+					//Log(LOG_INFO) << ". setTileUnit to belowTile";
 					_battleSave->getTile((*i)->getPosition() + Position(x,y,0))
-									->setUnit(
+									->setTileUnit(
 											*i,
 											_battleSave->getTile((*i)->getPosition() + Position(x,y,-1)));
 				}
@@ -419,7 +419,7 @@ void UnitFallBState::think()
 					if ((*i)->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
 					{
 						// Put burnedBySilacoid() here! etc
-						(*i)->burnTile((*i)->getTile());
+						(*i)->burnTile((*i)->getUnitTile());
 
 //						const int power ((*i)->getUnitRules()->getSpecabPower());
 //						(*i)->getTile()->igniteTile(power / 10);

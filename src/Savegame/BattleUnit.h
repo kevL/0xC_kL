@@ -544,11 +544,11 @@ private:
 		int getInitiative(const int tuSpent = 0) const;
 
 		/// Prepares the BattleUnit for a new turn.
-		void prepUnit(bool full = true);
+		void prepUnit(bool preBattle = false);
 		/// Calculates and resets the BattleUnit's time units and energy.
 		void prepTu(
 				bool preBattle = false,
-				bool hasPanicked = false,
+				bool isPanicked = false,
 				bool reverted = false);
 
 		/// Changes the BattleUnit's morale.
@@ -579,11 +579,11 @@ private:
 		void setAIState(BattleAIState* const aiState = nullptr);
 
 		/// Sets the Tile that the BattleUnit occupies.
-		void setTile(
+		void setUnitTile(
 				Tile* const tile = nullptr,
 				const Tile* const tileBelow = nullptr);
 		/// Gets the BattleUnit's Tile.
-		Tile* getTile() const;
+		Tile* getUnitTile() const;
 
 		/// Gets the item in the specified slot of the BattleUnit's inventory.
 		BattleItem* getItem(

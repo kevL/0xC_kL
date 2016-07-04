@@ -172,7 +172,7 @@ private:
 	void generateBaseMap();
 
 	/// Uses aLienBase start-modules for spawning xCom equipment.
-	void placeXcomProperty();
+	void assignStorage();
 
 	/// Clears a module from the Map.
 	void clearModule(

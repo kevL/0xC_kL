@@ -422,7 +422,7 @@ int CivilianBAIState::selectHostile() // private.
 	{
 		if ((*i)->getFaction() == FACTION_HOSTILE
 			&& (*i)->isOut_t(OUT_STAT) == false
-			&& _te->visible(_unit, (*i)->getTile()) == true)
+			&& _te->visible(_unit, (*i)->getUnitTile()) == true)
 		{
 			++tally;
 			distTest = TileEngine::distSqr(
@@ -431,7 +431,7 @@ int CivilianBAIState::selectHostile() // private.
 			if (distTest < dist
 				&& _te->canTargetUnit(
 								&originVoxel,
-								(*i)->getTile(),
+								(*i)->getUnitTile(),
 								&targetVoxel,
 								_unit) == true)
 			{

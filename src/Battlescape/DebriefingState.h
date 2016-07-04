@@ -111,16 +111,17 @@ class DebriefingState
 
 private:
 	bool
+		_aborted,
 		_alienDies,
 		_destroyPlayerBase,
 		_manageContainment,
 		_isQuickBattle;
 	int
-		_aliensControlled,
-		_aliensKilled,
 		_aliensStunned,
 		_diff,
-		_missionCost;
+		_missionCost,
+		_playerDead,
+		_playerLive;
 
 	std::string _music;
 

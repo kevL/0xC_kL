@@ -2398,9 +2398,9 @@ int BattleUnit::getInitiative(const int tuSpent) const
  * Prepares this BattleUnit for its turn unless it was Mind-controlled.
  * @note Mind-controlled units call this at the beginning of the opposing
  * faction's next turn.
- * @param full - true to do the full process (default true)
+ * @param preBattle - true to skip the full process (default false)
  */
-void BattleUnit::prepUnit(bool full)
+void BattleUnit::prepUnit(bool preBattle)
 {
 	//Log(LOG_INFO) << "BattleUnit::prepUnit() id-" << _id;
 //	bool debug = _id == 257;
@@ -2423,8 +2423,8 @@ void BattleUnit::prepUnit(bool full)
 		reverted = false;
 	//Log(LOG_INFO) << ". reverted= " << (int)reverted;
 
-	bool hasPanicked (false);
-	if (full == true) // don't do damage or panic when transitioning between stages
+	bool isPanicked (false);
+	if (preBattle == false) // Don't do damage or panic at start of tactical.
 	{
 		if (_fire != 0) --_fire;
 
@@ -2447,7 +2447,7 @@ void BattleUnit::prepUnit(bool full)
 			const int panicPct (100 - (getMorale() << 1u));
 			if (RNG::percent(panicPct) == true)
 			{
-				hasPanicked = true;
+				isPanicked = true;
 				if (reverted == false) // stay STATUS_STANDING if just coming out of Mc. But init tu/stamina as if panicked.
 				{
 					if (RNG::percent(30) == true)
@@ -2462,18 +2462,18 @@ void BattleUnit::prepUnit(bool full)
 	}
 
 	if (_status != STATUS_UNCONSCIOUS)
-		prepTu(false, hasPanicked, reverted);
+		prepTu(preBattle, isPanicked, reverted);
 }
 
 /**
  * Calculates and resets this BattleUnit's time units and energy.
  * @param preBattle		- true for pre-battle initialization (default false)
- * @param hasPanicked	- true if unit has just panicked (default false)
+ * @param isPanicked	- true if unit has just panicked (default false)
  * @param reverted		- true if unit has just reverted from MC (default false)
  */
 void BattleUnit::prepTu(
 		bool preBattle,
-		bool hasPanicked,
+		bool isPanicked,
 		bool reverted)
 {
 	if (_revived == true)
@@ -2493,7 +2493,7 @@ void BattleUnit::prepTu(
 		if (_geoscapeSoldier != nullptr) // Each fatal wound to the left or right leg reduces a Soldier's TUs by 10%.
 			_tu -= _tu * (getFatalWound(BODYPART_LEFTLEG) + getFatalWound(BODYPART_RIGHTLEG)) / 10;
 
-		if (hasPanicked == true)
+		if (isPanicked == true)
 		{
 			if (reverted == false)
 				_tu = _tu * RNG::generate(0,100) / 100; // this is how many TU the unit gets to run around/shoot with.
@@ -2501,9 +2501,9 @@ void BattleUnit::prepTu(
 				_tu = 0;	// if unit fails its panic-roll when reverting from MC (at
 		}					// the beginning of opponent's turn) it simply loses its TU.
 
-		if (hasPanicked == false || reverted == false)
+		if (isPanicked == false || reverted == false)
 			_tu = std::max(_tu,
-						   _battleGame->getBattleSave()->getInitTu());
+						   _battleGame->getBattleSave()->getDropTu());
 
 
 		if (preBattle == false)				// no energy recovery needed at battle start
@@ -2512,7 +2512,7 @@ void BattleUnit::prepTu(
 			if (_geoscapeSoldier != nullptr)
 			{
 				if (_kneeled == true)
-					energy /= 2;
+					energy >>= 1u;
 				else
 					energy /= 3;
 			}
@@ -2686,7 +2686,7 @@ BattleAIState* BattleUnit::getAIState() const
  * @param tile		- pointer to a tile (default nullptr)
  * @param tileBelow	- pointer to any tile-below (default nullptr)
  */
-void BattleUnit::setTile(
+void BattleUnit::setUnitTile(
 		Tile* const tile,
 		const Tile* const tileBelow)
 {
@@ -2723,9 +2723,10 @@ void BattleUnit::setTile(
 
 /**
  * Gets this BattleUnit's current Tile.
+ * @note A unit that is Dead or Unconscious (or Latent) returns 'nullptr'.
  * @return, pointer to the tile or nullptr
  */
-Tile* BattleUnit::getTile() const
+Tile* BattleUnit::getUnitTile() const
 {
 	return _tile;
 }
