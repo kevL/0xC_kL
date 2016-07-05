@@ -743,8 +743,8 @@ void TextList::setWordWrap(bool wrap)
  * Sets the horizontal alignment of the text in this TextList.
  * @note This doesn't change the alignment of existing text just the alignment
  * of text added from then on.
- * @param align	- horizontal alignment
- * @param col	- the column to set the alignment for (defaults to -1 meaning "all")
+ * @param align	- horizontal alignment (Text.h)
+ * @param col	- the column to set the alignment for (default -1 all)
  */
 void TextList::setAlign(
 		TextHAlign align,

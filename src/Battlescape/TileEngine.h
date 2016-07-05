@@ -299,7 +299,7 @@ private:
 				const Position& originVoxel,
 				const Position& targetVoxel,
 				double* const arc = nullptr,
-				VoxelType* const impactType = nullptr) const;
+				VoxelType* const pType = nullptr) const;
 		/// Validates the throwing range.
 		static bool validThrowRange(
 				const BattleAction* const action,

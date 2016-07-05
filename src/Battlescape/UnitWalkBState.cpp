@@ -920,7 +920,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		case FACTION_NEUTRAL: faction = FACTION_HOSTILE; break;
 		case FACTION_HOSTILE: faction = FACTION_PLAYER;
 	}
-	_te->calcFovUnits_pos(pos, true, faction);
+	_te->calcFovUnits_pos(pos, false, faction);
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{

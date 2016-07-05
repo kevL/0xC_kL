@@ -66,14 +66,15 @@ namespace OpenXcom
  * @param craftId	- ID of the selected craft
  */
 CraftInfoState::CraftInfoState(
-		Base* base,
+		Base* const base,
 		size_t craftId)
 	:
 		_base(base),
 		_craftId(craftId),
-		_craft(base->getCrafts()->at(craftId))
+		_craft(base->getCrafts()->at(craftId)),
+		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1)
 {
-	if (_game->getSavedGame()->getMonthsPassed() != -1)
+	if (_isQuickBattle == false)
 		_window		= new Window(this, 320, 200, 0, 0, POPUP_BOTH);
 	else
 		_window		= new Window(this, 320, 200);
@@ -236,16 +237,19 @@ void CraftInfoState::init()
 		_craft->setTactical(false);
 	}
 
-	const bool isQuickBattle (_game->getSavedGame()->getMonthsPassed() == -1);
-
 	_btnInventory->setVisible(_craft->getQtySoldiers() != 0
 						   && _craft->getCraftItems()->getTotalQuantity() != 0
-						   && isQuickBattle == false);
+						   && _isQuickBattle == false);
 
 	_edtCraft->setText(_craft->getName(_game->getLanguage()));
 
-	if (isQuickBattle == true)
+	const RuleCraft* const crRule (_craft->getRules());
+
+	if (_isQuickBattle == true)
+	{
 		_txtStatus->setText(L"");
+		_craft->setFuel(crRule->getMaxFuel()); // top up Craft for insta-Battle mode.
+	}
 	else
 	{
 		Uint8 color;
@@ -253,10 +257,7 @@ void CraftInfoState::init()
 		const CraftStatus status (_craft->getCraftStatus());
 		switch (status)
 		{
-			case CS_READY:
-				color = GREEN;
-				break;
-
+			case CS_READY: color = GREEN; break;
 			default:
 			{
 				if (_blinkTimer->isRunning() == false)
@@ -264,34 +265,23 @@ void CraftInfoState::init()
 
 				switch (status)
 				{
-					case CS_REFUELLING:
-						color = YELLOW;
-						break;
-					case CS_REARMING:
-						color = ORANGE;
-						break;
+					case CS_REFUELLING:	color = YELLOW; break;
+					case CS_REARMING:	color = ORANGE; break;
 					default: // shuttup, g++
-					case CS_REPAIRS:
-						color = RED;
+					case CS_REPAIRS:	color = RED;
 				}
 			}
 		}
-
 		_txtStatus->setText(tr(_craft->getCraftStatusString()));
 		_txtStatus->setColor(color);
 		_txtStatus->setHighContrast();
 	}
 
 
-	const RuleCraft* const crRule (_craft->getRules());
-
 	int hrs;
 	std::wostringstream
 		woststr1, // fuel
 		woststr2; // hull
-
-	if (isQuickBattle == true)
-		_craft->setFuel(crRule->getMaxFuel()); // top up Craft for insta-Battle mode.
 
 	woststr1 << tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct()));
 	if (crRule->getMaxFuel() - _craft->getFuel() > 0)
@@ -393,7 +383,7 @@ void CraftInfoState::init()
 			bit->blit(_equip);
 		}
 
-		if (isQuickBattle == false)
+		if (_isQuickBattle == false)
 			calculateTacticalCost();
 		else
 			_txtCost->setVisible(false);
@@ -412,16 +402,13 @@ void CraftInfoState::init()
 	const RuleCraftWeapon* cwRule;
 	const CraftWeapon* cw;
 
-	if (crRule->getWeaponCapacity() > 0)
+	if (crRule->getWeaponCapacity() > 0 && _isQuickBattle == false)
 	{
-		cw = _craft->getWeapons()->at(0u);
-		if (cw != nullptr)
+		if ((cw = _craft->getWeapons()->at(0u)) != nullptr)
 		{
 			cwRule = cw->getRules();
 
 			bit = baseBits->getFrame(cwRule->getSprite() + 48);
-//			bit->setX(0);
-//			bit->setY(0);
 			bit->blit(_weapon1);
 
 			std::wostringstream woststr;
@@ -459,16 +446,13 @@ void CraftInfoState::init()
 		_txtW1Ammo->setVisible(false);
 	}
 
-	if (crRule->getWeaponCapacity() > 1)
+	if (crRule->getWeaponCapacity() > 1 && _isQuickBattle == false)
 	{
-		cw = _craft->getWeapons()->at(1u);
-		if (cw != nullptr)
+		if ((cw = _craft->getWeapons()->at(1u)) != nullptr)
 		{
 			cwRule = cw->getRules();
 
 			bit = baseBits->getFrame(cwRule->getSprite() + 48);
-//			bit->setX(0);
-//			bit->setY(0);
 			bit->blit(_weapon2);
 
 			std::wostringstream woststr;

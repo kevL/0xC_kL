@@ -277,7 +277,7 @@ void ProjectileFlyBState::init()
 	}
 
 
-	// ** find TARGET voxel ** ->
+	// ** Assign TARGET voxel ** ->
 	const Tile* const tileTarget ( _battleSave->getTile(_action.posTarget));
 	_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 	//Log(LOG_INFO) << "FlyB init targetVoxel " << _targetVoxel;
@@ -352,19 +352,45 @@ void ProjectileFlyBState::init()
 				//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
 			}
 			else if (_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
-													&originVoxel,
-													tileTarget,
-													&_targetVoxel,
-													_unit,
-													nullptr,
-													&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
+														&originVoxel,
+														tileTarget,
+														&_targetVoxel,
+														_unit,
+														nullptr,
+														&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
 			{
-				_action.result = BattlescapeGame::PLAYER_ERROR[6u]; // no LoF
-//				_action.TU = 0;
-//				_unit->setUnitStatus(STATUS_STANDING);
-				_parent->popState();
-				return;
-				//Log(LOG_INFO) << ". canTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
+				// karadoc: if this action requires direct line-of-sight, should abort.
+				// iff it's a line-shot (not arcing).
+				// kL_note: You're playing around with the AI here, dude -- and I don't think you've considered that AT ALL.
+				// Apart from that, I'm not so sure this is needed with the changes I've made to
+				// - canTargetUnit()
+				// - plotLine()
+				// - plotParabola()
+				// - etc etc etc.
+				// - validateThrow()
+				// - validateTarget()
+				// - verifyTarget()
+				// - canTargetTilepart()
+				// - &tc.
+				// On the bright side, the AI may well have already done a canTargetUnit() call, and so this would
+				// always be true for the AI if and whenever it gets to here.
+				//
+				// ... but disable it anyway.
+/*				switch (_action.type)
+				{
+					case BA_SNAPSHOT:
+					case BA_AUTOSHOT:
+					case BA_AIMEDSHOT:
+						if (_action.weapon->getRules()->isArcingShot() == false)
+						{
+							_action.result = BattlescapeGame::PLAYER_ERROR[6u]; // no LoF
+//							_action.TU = 0;
+//							_unit->setUnitStatus(STATUS_STANDING);
+							_parent->popState();
+							return;
+							//Log(LOG_INFO) << ". canTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
+						}
+				} */
 			}
 		}
 		else if (tileTarget->getMapData(O_OBJECT) != nullptr	// force vs. Object by using CTRL above^

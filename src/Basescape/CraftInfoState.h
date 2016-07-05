@@ -54,6 +54,8 @@ private:
 	size_t _craftId;
 	std::wstring _defaultName;
 
+	bool _isQuickBattle;
+
 	Base* _base;
 	Craft* _craft;
 	Surface
@@ -93,7 +95,7 @@ private:
 	public:
 		/// Creates a CraftInfo state.
 		CraftInfoState(
-				Base* base,
+				Base* const base,
 				size_t craftId);
 		/// Cleans up the CraftInfo state.
 		~CraftInfoState();
