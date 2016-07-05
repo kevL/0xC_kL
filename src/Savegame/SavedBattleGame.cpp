@@ -2779,7 +2779,7 @@ void SavedBattleGame::calcBaseDestruct()
  * @note These items are in the transport.
  * @return, pointer to a vector of pointers to BattleItems
  */
-std::vector<BattleItem*>* SavedBattleGame::guaranteedRecover()
+std::vector<BattleItem*>* SavedBattleGame::recoverGuaranteed()
 {
 	return &_recoverGuaranteed;
 }
@@ -2789,7 +2789,7 @@ std::vector<BattleItem*>* SavedBattleGame::guaranteedRecover()
  * @note These items are NOT in the transport.
  * @return, pointer to a vector of pointers to BattleItems
  */
-std::vector<BattleItem*>* SavedBattleGame::conditionalRecover()
+std::vector<BattleItem*>* SavedBattleGame::recoverConditional()
 {
 	return &_recoverConditional;
 }

@@ -427,9 +427,9 @@ private:
 		void calcBaseDestruct();
 
 		/// Gets the list of items guaranteed to be recovered.
-		std::vector<BattleItem*>* guaranteedRecover();
+		std::vector<BattleItem*>* recoverGuaranteed();
 		/// Gets the list of items that MIGHT get recovered.
-		std::vector<BattleItem*>* conditionalRecover();
+		std::vector<BattleItem*>* recoverConditional();
 
 		/// Sets the player's inventory-tile when BattlescapeGenerator runs.
 		void setBattleInventory(Tile* const equiptTile);

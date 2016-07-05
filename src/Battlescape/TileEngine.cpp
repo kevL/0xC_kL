@@ -1254,6 +1254,12 @@ bool TileEngine::canTargetUnit(
 		return true;
 	}
 
+	// Couldn't establish LoF so just set *scanVoxel to the centre of the target
+	// in case caller wants to use it anyway -- See ProjectileFlyBState::init().
+//	*scanVoxel = Position::toVoxelSpaceCentered(tileTarget->getPosition(), targetMid);
+	// kL_note: Except I'm not so sure that I haven't fixed the glitch. If I
+	// have that would throw my fix off again.
+
 	//if (debug) Log(LOG_INFO) << "TileEngine::canTargetUnit() exit FALSE";
 	return false;
 }
@@ -4971,47 +4977,47 @@ VoxelType TileEngine::plotLine(
 	z0 = origin.z;
 	z1 = target.z;
 
-	const bool swap_xy (std::abs(y1 - y0) > std::abs(x1 - x0)); // 'steep' xy Line, make longest delta the x-plane
+	const bool swap_xy (std::abs(y1 - y0) > std::abs(x1 - x0)); // step x/y plane, make longest delta along the x-axis
 	if (swap_xy == true)
 	{
 		std::swap(x0,y0);
 		std::swap(x1,y1);
 	}
 
-	const bool swap_xz (std::abs(z1 - z0) > std::abs(x1 - x0)); // do same for xz
+	const bool swap_xz (std::abs(z1 - z0) > std::abs(x1 - x0)); // step x/z plane, make longest delta along the x-axis
 	if (swap_xz == true)
 	{
 		std::swap(x0,z0);
 		std::swap(x1,z1);
 	}
 
-	const bool swap_yz (abs(z1 - z0) > abs(y1 - y0)); // finally make sure delta-y is bigger than delta-z
+	const bool swap_yz (std::abs(z1 - z0) > std::abs(y1 - y0)); // step y/z plane, make sure delta-y is bigger than delta-z
 	if (swap_yz == true)
 	{
 		std::swap(y0, z0);
 		std::swap(y1, z1);
 	}
 
-	const int& cx (swap_xy ? (swap_yz ? z : y) : (swap_xz ? z : x)); // set references to the true values of the coordinates
+	const int& cx (swap_xy ? (swap_yz ? z : y) : (swap_xz ? z : x)); // set references to the true values
 	const int& cy (swap_xy ? (swap_xz ? z : x) : (swap_yz ? z : y)); // as opposed to the swapped values
 	const int& cz (swap_xz ?                x  : (swap_yz ? y : z));
 
 	const int
-		delta_x (std::abs(x1 - x0)), // delta is Length in each plane
+		delta_x (std::abs(x1 - x0)), // delta is length in each plane
 		delta_y (std::abs(y1 - y0)),
 		delta_z (std::abs(z1 - z0)),
 
-		step_x ((x0 > x1) ? -1 : 1), // direction of Line
+		step_x ((x0 > x1) ? -1 : 1), // direction of line
 		step_y ((y0 > y1) ? -1 : 1),
 		step_z ((z0 > z1) ? -1 : 1);
 
 	int
-		drift_xy (delta_x >> 1u),	// drift controls when to step in 'shallow' planes;
-		drift_xz (drift_xy);		// starting value keeps Line centered
+		drift_xy (delta_x >> 1u),	// drift controls when to step in shallow planes
+		drift_xz (drift_xy);		// starting value keeps line centered
 
-	x = x0; y = y0; z = z0; // starting point
+	x = x0; y = y0; z = z0;			// starting point
 	for (
-			; // step through longest delta that has been swapped to X
+			;						// step through longest delta that has been swapped to x-axis
 			x != x1 + step_x;
 			x += step_x)
 	{
@@ -5032,10 +5038,10 @@ VoxelType TileEngine::plotLine(
 				//if (_debug) Log(LOG_INFO) << "pL() ret[1] " << MapData::debugVoxelType(voxelType) << " vs"
 				//						    << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
-//				if (trj != nullptr)					// store the position of impact
-				trj->push_back(Position(cx,cy,cz));	// NOTE: This stores the final position twice if storeTrj=TRUE.
-													// Cf. plotParabola() where that is explicitly not done.
-				return voxelType;
+//				if (trj != nullptr)
+				trj->push_back(Position(cx,cy,cz));	// store the position of impact
+													// NOTE: This stores the final position twice if storeTrj=TRUE.
+				return voxelType;					// Cf. plotParabola() where that is explicitly not done.
 			}
 		}
 		else // for Terrain visibility, ie. FoV / Fog of War.
@@ -5070,10 +5076,10 @@ VoxelType TileEngine::plotLine(
 			posLast = Position(cx,cy,cz);
 		}
 
-		if ((drift_xy -= delta_y) < 0) // step in y-plane NOTE: "y" is not a "plane"
+		if ((drift_xy -= delta_y) < 0) // step along y-axis
 		{
 			y += step_y;
-			if (doVoxelCheck == true) // check for xy diagonal intermediate voxel step, for Unit visibility
+			if (doVoxelCheck == true) // check for x/y diagonal intermediate voxel step for Unit visibility
 			{
 				voxelType = voxelCheck(
 									Position(cx,cy,cz),
@@ -5096,10 +5102,10 @@ VoxelType TileEngine::plotLine(
 			drift_xy += delta_x;
 		}
 
-		if ((drift_xz -= delta_z) < 0) // step in z-plane NOTE: "z" is not a "plane"
+		if ((drift_xz -= delta_z) < 0) // step along z-axis
 		{
 			z += step_z;
-			if (doVoxelCheck == true) // check for xz diagonal intermediate voxel step
+			if (doVoxelCheck == true) // check for x/z diagonal intermediate voxel step
 			{
 				voxelType = voxelCheck(
 									Position(cx,cy,cz),
@@ -5276,7 +5282,7 @@ VoxelType TileEngine::plotParabola(
  * @param action		- reference to the action to validate
  * @param originVoxel	- reference to the origin point of the action
  * @param targetVoxel	- reference to the target point of the action
- * @param arc			- pointer to a curvature of the throw (default nullptr)
+ * @param pArc			- pointer to a curvature of the throw (default nullptr)
  * @param pType			- pointer to a type of voxel at which the trajectory terminates (default nullptr)
  * @return, true if throw is valid
  */
@@ -5284,7 +5290,7 @@ bool TileEngine::validateThrow(
 		const BattleAction& action,
 		const Position& originVoxel,
 		const Position& targetVoxel,
-		double* const arc,
+		double* const pArc,
 		VoxelType* const pType) const
 {
 //	if (_debug == true) _debug = false;
@@ -5365,7 +5371,7 @@ bool TileEngine::validateThrow(
 	std::vector<Position> trj;
 
 	bool arcGood (false);
-	while (arcGood == false && parabolicCoefficient_low < 10.) // find an 'arc' to destination
+	while (arcGood == false && parabolicCoefficient_low < 10.) // find an arc to destination
 	{
 //		if (_debug)
 //		{
@@ -5410,7 +5416,7 @@ bool TileEngine::validateThrow(
 		return false;
 	}
 
-	if (arc != nullptr)
+	if (pArc != nullptr)
 	{
 		// arc continues rising to find upper limit
 		double parabolicCoefficient_high (parabolicCoefficient_low + ARC_DELTA);
@@ -5453,10 +5459,10 @@ bool TileEngine::validateThrow(
 
 		// use the average of upper & lower limits:
 		// Lessens chance of bouncing a thrown item back off a wall by barely skimming overtop once accuracy is applied.
-		*arc = (parabolicCoefficient_low + parabolicCoefficient_high - ARC_DELTA) / 2.; // back off from the upper limit
+		*pArc = (parabolicCoefficient_low + parabolicCoefficient_high - ARC_DELTA) / 2.; // back off from the upper limit
 	}
 
-	//if (arc != nullptr) Log(LOG_INFO) << ". vT() ret TRUE arc = " << *arc;
+	//if (pArc != nullptr) Log(LOG_INFO) << ". vT() ret TRUE arc = " << *pArc;
 	//else Log(LOG_INFO) << ". vT() ret TRUE no arc requested";
 	//if (_debug) Log(LOG_INFO) << "vT() EXIT - ret TRUE";
 	return true;

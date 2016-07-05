@@ -1322,7 +1322,7 @@ void DebriefingState::prepareDebriefing() // private.
 						{
 							addStat(
 								"STR_CIVILIANS_SAVED",
-								(*i)->getValue()); // duplicated below.
+								(*i)->getValue());
 						}
 						else
 							addStat(
@@ -1429,7 +1429,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 	if (_isHostileStanding == false || _aborted == true)
 	{
-		recoverItems(_battleSave->guaranteedRecover());
+		recoverItems(_battleSave->recoverGuaranteed());
 
 		if (_destroyPlayerBase == false)
 		{
@@ -1451,7 +1451,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 	if (_isHostileStanding == false)
 	{
-		recoverItems(_battleSave->conditionalRecover());
+		recoverItems(_battleSave->recoverConditional());
 
 		const int parts (static_cast<int>(Tile::PARTS_TILE));
 		MapDataType partType;
@@ -1783,7 +1783,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
  * Recovers items from tactical.
  * TODO: Figure out what's going on w/ QuickBattles and base-storage.
  * @note Transfers the contents of a battlefield-inventory to the Base's stores.
- * This does not handle fixed-weapons/items.
+ * This bypasses fixed-weapons and non-recoverable items.
  * @param battleItems - pointer to a vector of pointers to BattleItems on the battlefield
  */
 void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) // private.
@@ -1800,36 +1800,27 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 	{
 		itRule = (*i)->getRules();
 
-		if (itRule->isFixed() == false)
+		if (itRule->isFixed() == false && itRule->isRecoverable() == true)
 		{
 			bType = itRule->getBattleType();
 
 			switch (bType)
 			{
 				case BT_FUEL:
-					if (itRule->isRecoverable() == true)
-					{
-						_itemsGained[itRule] += _rules->getAlienFuelQuantity();
-						addStat(
-							_rules->getAlienFuelType(),
-							itRule->getRecoveryPoints(),
-							_rules->getAlienFuelQuantity());
-					}
+					_itemsGained[itRule] += _rules->getAlienFuelQuantity();
+					addStat(
+						_rules->getAlienFuelType(),
+						itRule->getRecoveryPoints(),
+						_rules->getAlienFuelQuantity());
 					break;
 
 				default:
 					type = itRule->getType();
 
-					if (itRule->isRecoverable() == true // add pts. for unresearched items only
-						&& itRule->getRecoveryPoints() != 0
-						&& bType != BT_CORPSE
-						&& _gameSave->isResearched(type) == false)
-					{
-						//Log(LOG_INFO) << ". . artefact = " << type;
+					if (bType != BT_CORPSE && _gameSave->isResearched(type) == false)
 						addStat(
 							"STR_ALIEN_ARTIFACTS_RECOVERED",
 							itRule->getRecoveryPoints());
-					}
 
 					switch (bType) // shuttle all times instantly to the Base
 					{
@@ -1839,59 +1830,37 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 							{
 								switch (unit->getUnitStatus())
 								{
-									case STATUS_DEAD:							// NOTE: Dead units are never set Latent. Only units that
-										if (itRule->isRecoverable() == true)	// were Unconscious or Standing would have been set Latent.
-										{
-											//Log(LOG_INFO) << ". . corpse = " << type << " id-" << unit->getId();
-											addStat(
-												"STR_ALIEN_CORPSES_RECOVERED",
-												unit->getValue() / 3); // TODO: This should rather be the 'recoveryPoints' of the corpse-item!
+									case STATUS_DEAD:
+									{
+										addStat(
+											"STR_ALIEN_CORPSES_RECOVERED",
+											unit->getValue() / 3); // TODO: This should rather be the 'recoveryPoints' of the corpse-item!
 
-											std::string corpse (unit->getArmor()->getCorpseGeoscape());
-											if (corpse.empty() == false) // safety.
-											{
-												_base->getStorageItems()->addItem(corpse);
-												++_itemsGained[_rules->getItemRule(corpse)];
-											}
+										std::string corpse (unit->getArmor()->getCorpseGeoscape());
+										if (corpse.empty() == false) // safety.
+										{
+											_base->getStorageItems()->addItem(corpse);
+											++_itemsGained[_rules->getItemRule(corpse)];
 										}
 										break;
+									}
 
 									case STATUS_UNCONSCIOUS:
-									{
-										switch (unit->getOriginalFaction())
-										{
-											case FACTION_HOSTILE:
-												if (itRule->isRecoverable() == true) // TODO: Add captured alien-types to a DebriefExtra screen. Ps see elsewhere also.
-												{
-													if (unit->isOut_t(OUT_STUNNED) == true)	// Latent (still conscious) hostiles on 1st stage
-														recoverLiveAlien(unit);				// of two-part battles make their getaway heheh.
-												}
-												break;
-
-											case FACTION_NEUTRAL:
-												//Log(LOG_INFO) << ". . unconsciousCivie = " << type;
-												addStat(
-													"STR_CIVILIANS_SAVED",
-													unit->getValue()); // duplicated above.
-										}
-									}
+										if (unit->getOriginalFaction() == FACTION_HOSTILE)
+											recoverLiveAlien(unit); // TODO: Add captured alien-types to DebriefExtra screen. Ps see elsewhere also.
 								}
 							}
 							break;
 						}
 
 						case BT_AMMO:
-							if (itRule->isRecoverable() == true)
-							{
-								_clips[itRule] += (*i)->getAmmoQuantity();
-								if ((*i)->getProperty() == true)
-									_clipsProperty[itRule] += (*i)->getAmmoQuantity();
-							}
+							_clips[itRule] += (*i)->getAmmoQuantity();
+							if ((*i)->getProperty() == true)
+								_clipsProperty[itRule] += (*i)->getAmmoQuantity();
 							break;
 
 						case BT_FIREARM:
-							if (itRule->isRecoverable() == true
-								&& (*i)->selfPowered() == false)
+							if ((*i)->selfPowered() == false)
 							{
 								const BattleItem* const clip ((*i)->getAmmoItem());
 								if (clip != nullptr) //&& clip->getRules()->getFullClip() != 0) // <- nobody be stupid and make a clip with 0 ammo-capacity.
@@ -1900,15 +1869,13 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 									if ((*i)->getProperty() == true)
 										_clipsProperty[clip->getRules()] += clip->getAmmoQuantity();
 								}
-							} // no break;
+							}
+							// no break;
 
 						default:
-							if (itRule->isRecoverable() == true)
-							{
-								_base->getStorageItems()->addItem(type);
-								if ((*i)->getProperty() == false)
-									++_itemsGained[itRule];
-							}
+							_base->getStorageItems()->addItem(type);
+							if ((*i)->getProperty() == false)
+								++_itemsGained[itRule];
 					}
 			}
 		}
