@@ -48,7 +48,7 @@ class ProjectileFlyBState
 private:
 	bool
 		_forced,
-		_initialized,
+		_init,
 		_targetFloor;
 	int _initUnitAni;
 

@@ -1691,19 +1691,22 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 			}
 		}
 	}
-
 	return spotters;
 }
 
 /**
- * Gets the unit with the highest reaction score from the spotters-vector.
- * @note The tuSpent parameter is needed because popState() doesn't
- * subtract TU until after the Initiative has been calculated or called from
- * ProjectileFlyBState.
+ * Gets the unit with the highest reaction-score from the spotters-vector.
  * @param spotters	- vector of the pointers to spotting BattleUnits
- * @param defender	- pointer to the defending BattleUnit to check reaction scores against
- * @param tuSpent	- defending BattleUnit's expenditure of TU that had caused reaction checks
- * @param autoSpot	- true if RF was not triggered by a Melee atk (default true)
+ * @param defender	- pointer to the defending BattleUnit to check reaction
+ *					  scores against
+ * @param tuSpent	- defending BattleUnit's expenditure of TU that had caused
+ *					  reaction checks. This is needed because popState() doesn't
+ *					  subtract TU until after the initiative has been calculated
+ *					  and shots have been done by ProjectileFlyBState.
+ * @param autoSpot	- true if RF was triggered by a projectile-shot, ie. NOT a
+ *					  melee-atk. This is so that if an aLien in the spotters-
+ *					  vector gets put down by the trigger-shot it won't tell its
+ *					  buds. (default true)
  * @return, pointer to the BattleUnit with initiative (next up!)
  */
 BattleUnit* TileEngine::getReactor(
@@ -1758,7 +1761,7 @@ BattleUnit* TileEngine::getReactor(
 		{
 			//Log(LOG_INFO) << ". after a melee-attack, wait for checkCasualties";
 			defender->getRfSpotters()->push_back(nextReactor);	// let BG::checkCasualties() figure it out
-		}														// this is so that if an aLien in the spotters-vector gets put down by the trigger-shot it won't tell its buds.
+		}
 	}
 
 	//Log(LOG_INFO) << ". init = " << init;

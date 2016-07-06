@@ -77,7 +77,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_prjItem(nullptr),
 		_prjImpact(VOXEL_FLOOR),
 		_prjVector(0,0,-1),
-		_initialized(false),
+		_init(true),
 		_targetFloor(false),
 		_initUnitAni(0),
 		_prj(nullptr)
@@ -115,372 +115,372 @@ void ProjectileFlyBState::init()
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "ProjectileFlyBState::init()";
-	if (_initialized == true) return;
-
-	//Log(LOG_INFO) << "projFlyB init() targetPosTile = " << _action.target;
-	_initialized = true;
-	_parent->getTacticalAction()->takenXp = false;
-
-	_unit = _action.actor;
-
-	bool popThis (false);
-
-	if (_unit->isOut_t() == true
-		|| _action.weapon == nullptr
-		|| _battleSave->getTile(_action.posTarget) == nullptr)
+	if (_init == true)
 	{
-		popThis = true;
-	}
-	else if (_unit->getTimeUnits() >= _action.TU // go ->
-		|| _action.type == BA_MELEE
-		|| _parent->playerPanicHandled() == false
-		|| _unit->getFaction() != FACTION_PLAYER)
-	{
-		_load = _action.weapon->getAmmoItem();
+		//Log(LOG_INFO) << "projFlyB init() targetPosTile = " << _action.target;
+		_init = false;
 
-		bool fireValid;
-		if (_unit->getFaction() != _battleSave->getSide()) // reaction fire
-		{
-			const BattleUnit* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit());
-			fireValid = targetUnit != nullptr
-					 && targetUnit->isOut_t() == false
-					 && targetUnit == _battleSave->getSelectedUnit()
-					 && _load != nullptr;
-		}
-		else
-			fireValid = true;
+		_unit = _action.actor;
+		_parent->getTacticalAction()->takenXp = false;
 
-		if (fireValid == false || _unit->getStopShot() == true)
+		bool popThis (false);
+		if (_unit->isOut_t() == true
+			|| _action.weapon == nullptr
+			|| _battleSave->getTile(_action.posTarget) == nullptr)
 		{
-			_unit->setTimeUnits(_unit->getTimeUnits() + _action.TU);
 			popThis = true;
 		}
-	}
-	else
-	{
-		_action.result = BattlescapeGame::PLAYER_ERROR[0u]; // no TU
-		popThis = true;
-	}
+		else if (_unit->getTimeUnits() >= _action.TU // go ->
+			|| _action.type == BA_MELEE
+			|| _parent->playerPanicHandled() == false
+			|| _unit->getFaction() != FACTION_PLAYER)
+		{
+			_load = _action.weapon->getAmmoItem();
 
-	if (popThis == true)
-	{
-		_unit->setStopShot(false);
-		_parent->popState();
-		return;
-	}
+			bool fireValid;
+			if (_unit->getFaction() != _battleSave->getSide()) // reaction fire
+			{
+				const BattleUnit* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit());
+				fireValid = targetUnit != nullptr
+						 && targetUnit->isOut_t() == false
+						 && targetUnit == _battleSave->getSelectedUnit()
+						 && _load != nullptr;
+			}
+			else
+				fireValid = true;
+
+			if (fireValid == false || _unit->getStopShot() == true)
+			{
+				_unit->setTimeUnits(_unit->getTimeUnits() + _action.TU);
+				popThis = true;
+			}
+		}
+		else
+		{
+			_action.result = BattlescapeGame::PLAYER_ERROR[0u]; // no TU
+			popThis = true;
+		}
+
+		if (popThis == true)
+		{
+			_unit->setStopShot(false);
+			_parent->popState();
+			return;
+		}
 
 
-	// autoshot will default back to snapshot if it's not possible
-	// This shouldn't happen w/ chooseFireMethod() properly in place.
-	if (_action.type == BA_AUTOSHOT
-		&& _action.weapon->getRules()->getAccuracyAuto() == 0)
-	{
-		_action.type = BA_SNAPSHOT;
-	}
-	// Except that Berserk tries to use SnapShot .... needs looking at.
+		// autoshot will default back to snapshot if it's not possible
+		// This shouldn't happen w/ chooseFireMethod() properly in place.
+		if (_action.type == BA_AUTOSHOT
+			&& _action.weapon->getRules()->getAccuracyAuto() == 0)
+		{
+			_action.type = BA_SNAPSHOT;
+		}
+		// Except that Berserk tries to use SnapShot .... needs looking at.
 
 
-	// snapshot defaults to "hit" if it's a melee weapon (in case of reaction
-	// with a melee weapon) for Silacoid attack etc.
-	if (_action.weapon->getRules()->getBattleType() == BT_MELEE)
-	{
-		//Log(LOG_INFO) << ". convert shotType to BA_MELEE";
+		// snapshot defaults to "hit" if it's a melee weapon (in case of reaction
+		// with a melee weapon) for Silacoid attack etc.
+		if (_action.weapon->getRules()->getBattleType() == BT_MELEE)
+		{
+			//Log(LOG_INFO) << ". convert shotType to BA_MELEE";
+			switch (_action.type)
+			{
+				case BA_SNAPSHOT:
+				case BA_AUTOSHOT:
+				case BA_AIMEDSHOT:
+					_action.type = BA_MELEE;
+			}
+		}
+
 		switch (_action.type)
 		{
 			case BA_SNAPSHOT:
 			case BA_AUTOSHOT:
 			case BA_AIMEDSHOT:
-				_action.type = BA_MELEE;
-		}
-	}
-
-	switch (_action.type)
-	{
-		case BA_SNAPSHOT:
-		case BA_AUTOSHOT:
-		case BA_AIMEDSHOT:
-		case BA_LAUNCH:
-			//Log(LOG_INFO) << ". . BA_SNAPSHOT, AIMEDSHOT, AUTOSHOT, or LAUNCH";
-			if (_load == nullptr)
-			{
-				//Log(LOG_INFO) << ". . . no ammo, EXIT";
-				_action.result = BattlescapeGame::PLAYER_ERROR[2u]; // no ammo loaded
-				popThis = true;
-			}
-//			else if (_load->getAmmoQuantity() == 0) // TODO: Move this down to inform player of an autoshot that runs out of bullets.
-//			{
-//				//Log(LOG_INFO) << ". . . no ammo Quantity, EXIT";
-//				_action.result = "STR_NO_ROUNDS_LEFT";
-//				popThis = true;
-//			}
-			else if (TileEngine::distance(
-									_unit->getPosition(),
-									_action.posTarget) > _action.weapon->getRules()->getMaxRange())
-			{
-				//Log(LOG_INFO) << ". . . out of range, EXIT";
-				_action.result = BattlescapeGame::PLAYER_ERROR[5u]; // out of range
-				popThis = true;
-			}
-			break;
-
-		case BA_THROW:
-		{
-			//Log(LOG_INFO) << ". . BA_THROW " << _action.posTarget << " panic= " << (int)(_parent->playerPanicHandled() == false);
-			const Tile* const tileTarget (_battleSave->getTile(_action.posTarget)); // always Valid.
-			if (TileEngine::validThrowRange(
-										&_action,
-										_parent->getTileEngine()->getOriginVoxel(_action),
-										tileTarget) == true)
-			{
-				_prjItem = _action.weapon;
-				if (tileTarget->getTerrainLevel() == -24
-					&& tileTarget->getPosition().z < _battleSave->getMapSizeZ() - 1)
-				{
-					++_action.posTarget.z;
-				}
-			}
-			else
-			{
-				//Log(LOG_INFO) << ". . . not valid throw range, EXIT";
-				_action.result = BattlescapeGame::PLAYER_ERROR[5u]; // out of range
-				popThis = true;
-			}
-			break;
-		}
-
-		case BA_MELEE:
-			performMeleeAttack();
-			//Log(LOG_INFO) << ". . BA_MELEE performMeleeAttack() DONE - EXIT flyBState::init()";
-			return;
-
-		case BA_PSIPANIC:
-		case BA_PSICONTROL:
-		case BA_PSICONFUSE:
-		case BA_PSICOURAGE:
-			//Log(LOG_INFO) << ". . BA_PSIPANIC/CONTROL/CONFUSE/COURAGE, new ExplosionBState - EXIT flyBState::init()";
-			_parent->statePushFront(new ExplosionBState(
-													_parent,
-													Position::toVoxelSpaceCentered(_action.posTarget, 10),
-													_action.weapon->getRules(),
-													_unit));
-			return;
-
-		default:
-			//Log(LOG_INFO) << ". . default, EXIT";
-			popThis = true;
-	}
-
-	if (popThis == true)
-	{
-		_parent->popState();
-		return;
-	}
-
-
-	// ** Assign TARGET voxel ** ->
-	const Tile* const tileTarget ( _battleSave->getTile(_action.posTarget));
-	_targetVoxel = Position::toVoxelSpace(_action.posTarget);
-	//Log(LOG_INFO) << "FlyB init targetVoxel " << _targetVoxel;
-
-	if (_action.type == BA_THROW || _action.type == BA_LAUNCH)
-	{
-		//Log(LOG_INFO) << "projFlyB init() B-Launch OR Throw";
-		_targetVoxel.x += 8;
-		_targetVoxel.y += 8;
-
-		switch (_action.type)
-		{
-			case BA_THROW:
-				_targetVoxel.z += 2 - tileTarget->getTerrainLevel(); // LoFT of floor is typically 2 voxels thick.
-				break;
 			case BA_LAUNCH:
-				if (_targetFloor == false) _targetVoxel.z += 16;
-		}
-	}
-	else if ((_unit->getFaction() == FACTION_PLAYER		// force fire at center of Tile by pressing [CTRL] but *not* SHIFT
-			&& (SDL_GetModState() & KMOD_CTRL)  != 0	// force fire at Floor w/ [CTRL+ALT]
-			&& (SDL_GetModState() & KMOD_SHIFT) == 0)
-		|| _parent->playerPanicHandled() == false) // note that nonPlayer berserk bypasses this and targets according to targetUnit OR tileParts below_
-	{
-		//Log(LOG_INFO) << "projFlyB init() Player panic OR Ctrl [!Shift]";
-		_targetVoxel.x += 8; // force fire at floor w/ Alt
-		_targetVoxel.y += 8;
-
-		if ((SDL_GetModState() & KMOD_ALT) == 0
-			|| _parent->playerPanicHandled() == false)
-		{
-			_targetVoxel.z += 10;
-		}
-	}
-	else
-	{
-		// determine the target voxel.
-		// aim at (in this priority)
-		//		- the center of the targetUnit, or the floor if target=origin
-		//		- the object
-		//		- the northwall
-		//		- the westwall
-		//		- the floor
-		// if there is no LoF to the center canTarget*() tries moving the target-voxel outward.
-		// Store that voxel.
-		//
-		// Force Fire keyboard modifiers:
-		// NOTE: non-Player units cannot target tileParts ... but they might someday.
-		// none			- See above^
-		// CTRL			- center
-		// CTRL+ALT		- floor
-		// SHIFT		- northwall
-		// SHIFT+CTRL	- westwall
-		const Position originVoxel (_parent->getTileEngine()->getOriginVoxel(
-																		_action,
-																		_battleSave->getTile(_posOrigin)));
-		if (tileTarget->getTileUnit() != nullptr
-			&& (_unit->getFaction() != FACTION_PLAYER
-				|| (   (SDL_GetModState() & KMOD_SHIFT) == 0
-					&& (SDL_GetModState() & KMOD_CTRL)  == 0)))
-		{
-			//Log(LOG_INFO) << ". tileTarget has unit";
-			if (_action.posTarget == _posOrigin
-				|| tileTarget->getTileUnit() == _unit)
-			{
-				//Log(LOG_INFO) << "projFlyB targetPos[2] = " << _action.target;
-				_targetVoxel.x += 8; // don't shoot yourself but shoot at the floor
-				_targetVoxel.y += 8;
-//				_targetVoxel.z += 2; // borkity bork.
-				//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
-			}
-			else if (_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
-														&originVoxel,
-														tileTarget,
-														&_targetVoxel,
-														_unit,
-														nullptr,
-														&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
-			{
-				// karadoc: if this action requires direct line-of-sight, should abort.
-				// iff it's a line-shot (not arcing).
-				// kL_note: You're playing around with the AI here, dude -- and I don't think you've considered that AT ALL.
-				// Apart from that, I'm not so sure this is needed with the changes I've made to
-				// - canTargetUnit()
-				// - plotLine()
-				// - plotParabola()
-				// - etc etc etc.
-				// - validateThrow()
-				// - validateTarget()
-				// - verifyTarget()
-				// - canTargetTilepart()
-				// - &tc.
-				// On the bright side, the AI may well have already done a canTargetUnit() call, and so this would
-				// always be true for the AI if and whenever it gets to here.
-				//
-				// ... but disable it anyway.
-/*				switch (_action.type)
+				//Log(LOG_INFO) << ". . BA_SNAPSHOT, AIMEDSHOT, AUTOSHOT, or LAUNCH";
+				if (_load == nullptr)
 				{
-					case BA_SNAPSHOT:
-					case BA_AUTOSHOT:
-					case BA_AIMEDSHOT:
-						if (_action.weapon->getRules()->isArcingShot() == false)
-						{
-							_action.result = BattlescapeGame::PLAYER_ERROR[6u]; // no LoF
-//							_action.TU = 0;
-//							_unit->setUnitStatus(STATUS_STANDING);
-							_parent->popState();
-							return;
-							//Log(LOG_INFO) << ". canTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
-						}
-				} */
-			}
-		}
-		else if (tileTarget->getMapData(O_OBJECT) != nullptr	// force vs. Object by using CTRL above^
-			&& (_unit->getFaction() != FACTION_PLAYER			// bypass Object by pressing SHIFT
-				|| (SDL_GetModState() & KMOD_SHIFT) == 0))
-		{
-			//Log(LOG_INFO) << ". tileTarget has content-object";
-			if (tileTarget->isRevealed() == false
-				|| _parent->getTileEngine()->canTargetTilepart(
-														&originVoxel,
-														tileTarget,
-														O_OBJECT,
-														&_targetVoxel,
-														_unit) == false)
+					//Log(LOG_INFO) << ". . . no ammo, EXIT";
+					_action.result = BattlescapeGame::PLAYER_ERROR[2u]; // no ammo loaded
+					popThis = true;
+				}
+//				else if (_load->getAmmoQuantity() == 0) // TODO: Move this down to inform player of an autoshot that runs out of bullets.
+//				{
+//					//Log(LOG_INFO) << ". . . no ammo Quantity, EXIT";
+//					_action.result = "STR_NO_ROUNDS_LEFT";
+//					popThis = true;
+//				}
+				else if (TileEngine::distance(
+										_unit->getPosition(),
+										_action.posTarget) > _action.weapon->getRules()->getMaxRange())
+				{
+					//Log(LOG_INFO) << ". . . out of range, EXIT";
+					_action.result = BattlescapeGame::PLAYER_ERROR[5u]; // out of range
+					popThis = true;
+				}
+				break;
+
+			case BA_THROW:
 			{
-				_targetVoxel = Position::toVoxelSpace(_action.posTarget);
-				_targetVoxel.x += 8;
-				_targetVoxel.y += 8;
-				_targetVoxel.z += 10;
+				//Log(LOG_INFO) << ". . BA_THROW " << _action.posTarget << " panic= " << (int)(_parent->playerPanicHandled() == false);
+				const Tile* const tileTarget (_battleSave->getTile(_action.posTarget)); // always Valid.
+				if (TileEngine::validThrowRange(
+											&_action,
+											_parent->getTileEngine()->getOriginVoxel(_action),
+											tileTarget) == true)
+				{
+					_prjItem = _action.weapon;
+					if (tileTarget->getTerrainLevel() == -24
+						&& tileTarget->getPosition().z < _battleSave->getMapSizeZ() - 1)
+					{
+						++_action.posTarget.z;
+					}
+				}
+				else
+				{
+					//Log(LOG_INFO) << ". . . not valid throw range, EXIT";
+					_action.result = BattlescapeGame::PLAYER_ERROR[5u]; // out of range
+					popThis = true;
+				}
+				break;
 			}
+
+			case BA_MELEE:
+				performMeleeAttack();
+				//Log(LOG_INFO) << ". . BA_MELEE performMeleeAttack() DONE - EXIT flyBState::init()";
+				return;
+
+			case BA_PSIPANIC:
+			case BA_PSICONTROL:
+			case BA_PSICONFUSE:
+			case BA_PSICOURAGE:
+				//Log(LOG_INFO) << ". . BA_PSIPANIC/CONTROL/CONFUSE/COURAGE, new ExplosionBState - EXIT flyBState::init()";
+				_parent->statePushFront(new ExplosionBState(
+														_parent,
+														Position::toVoxelSpaceCentered(_action.posTarget, 10),
+														_action.weapon->getRules(),
+														_unit));
+				return;
+
+			default:
+				//Log(LOG_INFO) << ". . default, EXIT";
+				popThis = true;
 		}
-		else if (tileTarget->getMapData(O_NORTHWALL) != nullptr // force Northwall by pressing [SHIFT] but not CTRL
-			&& (_unit->getFaction() != FACTION_PLAYER
-				|| (SDL_GetModState() & KMOD_CTRL) == 0))
+
+		if (popThis == true)
 		{
-			//Log(LOG_INFO) << ". tileTarget has northwall";
-			if (tileTarget->isRevealed(ST_NORTH) == false
-				|| _parent->getTileEngine()->canTargetTilepart(
-														&originVoxel,
-														tileTarget,
-														O_NORTHWALL,
-														&_targetVoxel,
-														_unit) == false)
-			{
-				_targetVoxel = Position::toVoxelSpace(_action.posTarget);
-				_targetVoxel.x += 8;
-				_targetVoxel.y += 2;
-				_targetVoxel.z += 10;
-			}
+			_parent->popState();
+			return;
 		}
-		else if (tileTarget->getMapData(O_WESTWALL) != nullptr) // force Westwall by pressing [CTRL+SHIFT]
+
+
+		// ** Assign TARGET voxel ** ->
+		const Tile* const tileTarget ( _battleSave->getTile(_action.posTarget));
+		_targetVoxel = Position::toVoxelSpace(_action.posTarget);
+		//Log(LOG_INFO) << "FlyB init targetVoxel " << _targetVoxel;
+
+		if (_action.type == BA_THROW || _action.type == BA_LAUNCH)
 		{
-			//Log(LOG_INFO) << ". tileTarget has westwall";
-			if (tileTarget->isRevealed(ST_WEST) == false
-				|| _parent->getTileEngine()->canTargetTilepart(
-														&originVoxel,
-														tileTarget,
-														O_WESTWALL,
-														&_targetVoxel,
-														_unit) == false)
-			{
-				_targetVoxel = Position::toVoxelSpace(_action.posTarget);
-				_targetVoxel.x += 2;
-				_targetVoxel.y += 8;
-				_targetVoxel.z += 10;
-			}
-		}
-		else if (tileTarget->getMapData(O_FLOOR) != nullptr) // forced-shot at Floor is handled above^ [CTRL+ALT]
-		{
-			//Log(LOG_INFO) << ". tileTarget has floor";
-			if (tileTarget->isRevealed() == false
-				|| _parent->getTileEngine()->canTargetTilepart(
-														&originVoxel,
-														tileTarget,
-														O_FLOOR,
-														&_targetVoxel,
-														_unit) == false)
-			{
-				_targetVoxel = Position::toVoxelSpace(_action.posTarget);
-				_targetVoxel.x += 8;
-				_targetVoxel.y += 8;
-//				_targetVoxel.z += 2; // borkity bork.
-			}
-		}
-		else // target nothing, targets the middle of the tile
-		{
-			//Log(LOG_INFO) << ". tileTarget is void";
+			//Log(LOG_INFO) << "projFlyB init() B-Launch OR Throw";
 			_targetVoxel.x += 8;
 			_targetVoxel.y += 8;
-			_targetVoxel.z += 10;
+
+			switch (_action.type)
+			{
+				case BA_THROW:
+					_targetVoxel.z += 2 - tileTarget->getTerrainLevel(); // LoFT of floor is typically 2 voxels thick.
+					break;
+				case BA_LAUNCH:
+					if (_targetFloor == false) _targetVoxel.z += 16;
+			}
 		}
-	}
+		else if ((_unit->getFaction() == FACTION_PLAYER		// force fire at center of Tile by pressing [CTRL] but *not* SHIFT
+				&& (SDL_GetModState() & KMOD_CTRL)  != 0	// force fire at Floor w/ [CTRL+ALT]
+				&& (SDL_GetModState() & KMOD_SHIFT) == 0)
+			|| _parent->playerPanicHandled() == false) // note that nonPlayer berserk bypasses this and targets according to targetUnit OR tileParts below_
+		{
+			//Log(LOG_INFO) << "projFlyB init() Player panic OR Ctrl [!Shift]";
+			_targetVoxel.x += 8; // force fire at floor w/ Alt
+			_targetVoxel.y += 8;
 
-	//Log(LOG_INFO) << "FlyB final targetVoxel " << _targetVoxel;
-	//Log(LOG_INFO) << "projFlyB init() targetPosVoxel.x = " << static_cast<float>(_targetVoxel.x) / 16.f;
-	//Log(LOG_INFO) << "projFlyB init() targetPosVoxel.y = " << static_cast<float>(_targetVoxel.y) / 16.f;
-	//Log(LOG_INFO) << "projFlyB init() targetPosVoxel.z = " << static_cast<float>(_targetVoxel.z) / 24.f;
+			if ((SDL_GetModState() & KMOD_ALT) == 0
+				|| _parent->playerPanicHandled() == false)
+			{
+				_targetVoxel.z += 10;
+			}
+		}
+		else
+		{
+			// determine the target voxel.
+			// aim at (in this priority)
+			//		- the center of the targetUnit, or the floor if target=origin
+			//		- the object
+			//		- the northwall
+			//		- the westwall
+			//		- the floor
+			// if there is no LoF to the center canTarget*() tries moving the target-voxel outward.
+			// Store that voxel.
+			//
+			// Force Fire keyboard modifiers:
+			// NOTE: non-Player units cannot target tileParts ... but they might someday.
+			// none			- See above^
+			// CTRL			- center
+			// CTRL+ALT		- floor
+			// SHIFT		- northwall
+			// SHIFT+CTRL	- westwall
+			const Position originVoxel (_parent->getTileEngine()->getOriginVoxel(
+																			_action,
+																			_battleSave->getTile(_posOrigin)));
+			if (tileTarget->getTileUnit() != nullptr
+				&& (_unit->getFaction() != FACTION_PLAYER
+					|| (   (SDL_GetModState() & KMOD_SHIFT) == 0
+						&& (SDL_GetModState() & KMOD_CTRL)  == 0)))
+			{
+				//Log(LOG_INFO) << ". tileTarget has unit";
+				if (_action.posTarget == _posOrigin
+					|| tileTarget->getTileUnit() == _unit)
+				{
+					//Log(LOG_INFO) << "projFlyB targetPos[2] = " << _action.target;
+					_targetVoxel.x += 8; // don't shoot yourself but shoot at the floor
+					_targetVoxel.y += 8;
+//					_targetVoxel.z += 2; // borkity bork.
+					//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
+				}
+				else if (_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
+															&originVoxel,
+															tileTarget,
+															&_targetVoxel,
+															_unit,
+															nullptr,
+															&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
+				{
+					// karadoc: if this action requires direct line-of-sight, should abort.
+					// iff it's a line-shot (not arcing).
+					// kL_note: You're playing around with the AI here, dude -- and I don't think you've considered that AT ALL.
+					// Apart from that, I'm not so sure this is needed with the changes I've made to
+					// - canTargetUnit()
+					// - plotLine()
+					// - plotParabola()
+					// - etc etc etc.
+					// - validateThrow()
+					// - validateTarget()
+					// - verifyTarget()
+					// - canTargetTilepart()
+					// - &tc.
+					// On the bright side, the AI may well have already done a canTargetUnit() call, and so this would
+					// always be true for the AI if and whenever it gets to here.
+					//
+					// ... but disable it anyway.
+/*					switch (_action.type)
+					{
+						case BA_SNAPSHOT:
+						case BA_AUTOSHOT:
+						case BA_AIMEDSHOT:
+							if (_action.weapon->getRules()->isArcingShot() == false)
+							{
+								_action.result = BattlescapeGame::PLAYER_ERROR[6u]; // no LoF
+//								_action.TU = 0;
+//								_unit->setUnitStatus(STATUS_STANDING);
+								_parent->popState();
+								return;
+								//Log(LOG_INFO) << ". canTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
+							}
+					} */
+				}
+			}
+			else if (tileTarget->getMapData(O_OBJECT) != nullptr	// force vs. Object by using CTRL above^
+				&& (_unit->getFaction() != FACTION_PLAYER			// bypass Object by pressing SHIFT
+					|| (SDL_GetModState() & KMOD_SHIFT) == 0))
+			{
+				//Log(LOG_INFO) << ". tileTarget has content-object";
+				if (tileTarget->isRevealed() == false
+					|| _parent->getTileEngine()->canTargetTilepart(
+															&originVoxel,
+															tileTarget,
+															O_OBJECT,
+															&_targetVoxel,
+															_unit) == false)
+				{
+					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
+					_targetVoxel.x += 8;
+					_targetVoxel.y += 8;
+					_targetVoxel.z += 10;
+				}
+			}
+			else if (tileTarget->getMapData(O_NORTHWALL) != nullptr // force Northwall by pressing [SHIFT] but not CTRL
+				&& (_unit->getFaction() != FACTION_PLAYER
+					|| (SDL_GetModState() & KMOD_CTRL) == 0))
+			{
+				//Log(LOG_INFO) << ". tileTarget has northwall";
+				if (tileTarget->isRevealed(ST_NORTH) == false
+					|| _parent->getTileEngine()->canTargetTilepart(
+															&originVoxel,
+															tileTarget,
+															O_NORTHWALL,
+															&_targetVoxel,
+															_unit) == false)
+				{
+					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
+					_targetVoxel.x += 8;
+					_targetVoxel.y += 2;
+					_targetVoxel.z += 10;
+				}
+			}
+			else if (tileTarget->getMapData(O_WESTWALL) != nullptr) // force Westwall by pressing [CTRL+SHIFT]
+			{
+				//Log(LOG_INFO) << ". tileTarget has westwall";
+				if (tileTarget->isRevealed(ST_WEST) == false
+					|| _parent->getTileEngine()->canTargetTilepart(
+															&originVoxel,
+															tileTarget,
+															O_WESTWALL,
+															&_targetVoxel,
+															_unit) == false)
+				{
+					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
+					_targetVoxel.x += 2;
+					_targetVoxel.y += 8;
+					_targetVoxel.z += 10;
+				}
+			}
+			else if (tileTarget->getMapData(O_FLOOR) != nullptr) // forced-shot at Floor is handled above^ [CTRL+ALT]
+			{
+				//Log(LOG_INFO) << ". tileTarget has floor";
+				if (tileTarget->isRevealed() == false
+					|| _parent->getTileEngine()->canTargetTilepart(
+															&originVoxel,
+															tileTarget,
+															O_FLOOR,
+															&_targetVoxel,
+															_unit) == false)
+				{
+					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
+					_targetVoxel.x += 8;
+					_targetVoxel.y += 8;
+//					_targetVoxel.z += 2; // borkity bork.
+				}
+			}
+			else // target nothing, targets middle of the tile
+			{
+				//Log(LOG_INFO) << ". tileTarget is void";
+				_targetVoxel.x += 8;
+				_targetVoxel.y += 8;
+				_targetVoxel.z += 10;
+			}
+		}
 
-	if (createProjectile() == true)
-	{
-		_parent->getMap()->setSelectorType(CT_NONE);			// might be already done in primaryAction(). Nope --
-		_parent->getMap()->getCamera()->stopMouseScrolling();	// the cursor is hidden there, the selector is hidden here.
+		//Log(LOG_INFO) << "FlyB final targetVoxel " << _targetVoxel;
+		//Log(LOG_INFO) << "projFlyB init() targetPosVoxel.x = " << static_cast<float>(_targetVoxel.x) / 16.f;
+		//Log(LOG_INFO) << "projFlyB init() targetPosVoxel.y = " << static_cast<float>(_targetVoxel.y) / 16.f;
+		//Log(LOG_INFO) << "projFlyB init() targetPosVoxel.z = " << static_cast<float>(_targetVoxel.z) / 24.f;
+
+		if (createProjectile() == true)
+		{
+			_parent->getMap()->setSelectorType(CT_NONE);			// might be already done in primaryAction(). Nope --
+			_parent->getMap()->getCamera()->stopMouseScrolling();	// the cursor is hidden there, the selector is hidden here.
+		}
 	}
 	//Log(LOG_INFO) << "ProjectileFlyBState::init() EXIT";
 }
