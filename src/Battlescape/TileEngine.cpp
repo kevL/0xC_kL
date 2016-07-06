@@ -1258,7 +1258,7 @@ bool TileEngine::canTargetUnit(
 	// in case caller wants to use it anyway -- See ProjectileFlyBState::init().
 //	*scanVoxel = Position::toVoxelSpaceCentered(tileTarget->getPosition(), targetMid);
 	// kL_note: Except I'm not so sure that I haven't fixed the glitch. If I
-	// have that would throw my fix off again.
+	// have that could throw my fix off again.
 
 	//if (debug) Log(LOG_INFO) << "TileEngine::canTargetUnit() exit FALSE";
 	return false;
@@ -2647,7 +2647,7 @@ void TileEngine::explode(
 											}
 										}
 									}
-									else if (_powerE > (*i)->getRules()->getArmor()
+									else if (_powerE > (*i)->getRules()->getArmorPoints()
 										&& (bu == nullptr
 											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExpl() == false)))
 									{
@@ -2842,7 +2842,7 @@ void TileEngine::explode(
 											}
 										}
 									}
-									else if (_powerE > (*i)->getRules()->getArmor()
+									else if (_powerE > (*i)->getRules()->getArmorPoints()
 										&& (bu == nullptr
 											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExpl() == false)))
 									{

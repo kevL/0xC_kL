@@ -88,7 +88,7 @@ RuleItem::RuleItem(const std::string& type)
 		_healthRecovery(0),
 		_stunRecovery(0),
 		_energyRecovery(0),
-		_recoveryPoints(0),
+		_score(0),
 		_armor(20),
 		_turretType(TRT_NONE),
 		_recover(true),
@@ -251,7 +251,7 @@ void RuleItem::load(
 	_healthRecovery		= node["healthRecovery"]	.as<int>(_healthRecovery);
 	_stunRecovery		= node["stunRecovery"]		.as<int>(_stunRecovery);
 	_energyRecovery		= node["energyRecovery"]	.as<int>(_energyRecovery);
-	_recoveryPoints		= node["recoveryPoints"]	.as<int>(_recoveryPoints);
+	_score				= node["score"]				.as<int>(_score);
 	_armor				= node["armor"]				.as<int>(_armor);
 	_recover			= node["recover"]			.as<bool>(_recover);
 	_liveAlien			= node["liveAlien"]			.as<bool>(_liveAlien);
@@ -725,7 +725,7 @@ int RuleItem::getEnergyRecovery() const
 }
 
 /**
- * Gets the amount of stun removed from a soldier's stun level.
+ * Gets the amount of stun removed from a soldier's stun-level.
  * @return, the amount of stun removed
  */
 int RuleItem::getStunRecovery() const
@@ -742,38 +742,35 @@ int RuleItem::getStunRecovery() const
  */
 int RuleItem::getExplosionRadius() const
 {
-	if (_blastRadius == -1
-		&& (_dType == DT_HE
-			|| _dType == DT_STUN
-			|| _dType == DT_SMOKE
-			|| _dType == DT_IN))
+	switch (_dType)
 	{
-		return _firePower / 20;
+		case DT_HE:
+		case DT_STUN:
+		case DT_SMOKE:
+		case DT_IN:
+			if (_blastRadius == -1)
+				return _firePower / 20;
 	}
-
-//	if (_dType == DT_IN)
-//		return _firePower / 30;
-
 	return _blastRadius;
 }
 
 /**
- * Gets the Item's recovery points.
- * @note This is used during the battlescape debriefing score calculation.
- * @return, the recovery points
+ * Gets the Item's battlefield recovery-score.
+ * @note This is used during the battlescape debriefing-score calculation.
+ * @return, the recovery-points
  */
-int RuleItem::getRecoveryPoints() const
+int RuleItem::getRecoveryScore() const
 {
-	return _recoveryPoints;
+	return _score;
 }
 
 /**
  * Gets the Item's armor-value.
- * @note The item is destroyed when an explosive power higher than its armor
- * hits it.
+ * @note The item is destroyed when an explosive power higher than its armor-
+ * points hits it.
  * @return, the armor-value
  */
-int RuleItem::getArmor() const
+int RuleItem::getArmorPoints() const
 {
 	return _armor;
 }

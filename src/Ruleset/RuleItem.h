@@ -127,7 +127,7 @@ private:
 		_invWidth,
 		_invHeight,
 		_listOrder,
-		_recoveryPoints,
+		_score,
 		_transferTime,
 		_weight,
 
@@ -332,11 +332,11 @@ private:
 		/// Gets the max explosion radius.
 		int getExplosionRadius() const;
 
-		/// Gets the recovery points score
-		int getRecoveryPoints() const;
+		/// Gets the recovery-points score.
+		int getRecoveryScore() const;
 
 		/// Gets the item's armor.
-		int getArmor() const;
+		int getArmorPoints() const;
 
 		/// Gets the item's recoverability.
 		bool isRecoverable() const;

@@ -692,7 +692,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				SpecialType* const specialType (new SpecialType());
 				specialType->type = *i;
-				specialType->value = itRule->getRecoveryPoints();
+				specialType->value = itRule->getRecoveryScore();
 
 				_specialTypes[tileType] = specialType;
 			}
@@ -1106,7 +1106,7 @@ void DebriefingState::prepareDebriefing() // private.
 				switch ((*i)->getUnitStatus())
 				{
 					case STATUS_DEAD:
-						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " type= " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " " << (*i)->getType();
 						if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 						{
 							(*i)->getStatistics()->KIA = true;
@@ -1161,7 +1161,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 					case STATUS_STANDING:
 					case STATUS_UNCONSCIOUS:
-						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " type= " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " " << (*i)->getType();
 						if (isPlayerWipe == false)
 						{
 							recoverItems((*i)->getInventory());
@@ -1264,7 +1264,7 @@ void DebriefingState::prepareDebriefing() // private.
 				switch ((*i)->getUnitStatus())
 				{
 					case STATUS_DEAD:
-						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " type= " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " " << (*i)->getType();
 						if ((*i)->killerFaction() == FACTION_PLAYER)
 						{
 							//Log(LOG_INFO) << ". . killed by xCom";
@@ -1275,7 +1275,7 @@ void DebriefingState::prepareDebriefing() // private.
 						break;
 
 					case STATUS_UNCONSCIOUS:
-						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " type= " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " " << (*i)->getType();
 						++_aliensStunned; // for Nike Cross determination.
 				}
 				break;
@@ -1284,7 +1284,7 @@ void DebriefingState::prepareDebriefing() // private.
 				switch ((*i)->getUnitStatus())
 				{
 					case STATUS_DEAD:
-						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " type= " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitDead id-" << (*i)->getId() << " " << (*i)->getType();
 						switch ((*i)->killerFaction())
 						{
 							case FACTION_PLAYER:
@@ -1316,7 +1316,7 @@ void DebriefingState::prepareDebriefing() // private.
 						}
 						// no break;
 					case STATUS_UNCONSCIOUS:
-						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " type= " << (*i)->getType();
+						//Log(LOG_INFO) << ". unitLive id-" << (*i)->getId() << " " << (*i)->getType();
 						if (_isHostileStanding == false
 							|| (_aborted == true && (*i)->isOnTiletype(START_POINT) == true)) // NOTE: Even if isPlayerWipe.
 						{
@@ -1810,7 +1810,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 					_itemsGained[itRule] += _rules->getAlienFuelQuantity();
 					addStat(
 						_rules->getAlienFuelType(),
-						itRule->getRecoveryPoints(),
+						itRule->getRecoveryScore(),
 						_rules->getAlienFuelQuantity());
 					break;
 
@@ -1820,7 +1820,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 					if (bType != BT_CORPSE && _gameSave->isResearched(type) == false)
 						addStat(
 							"STR_ALIEN_ARTIFACTS_RECOVERED",
-							itRule->getRecoveryPoints());
+							itRule->getRecoveryScore());
 
 					switch (bType) // shuttle all times instantly to the Base
 					{
@@ -1834,8 +1834,8 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 									{
 										addStat(
 											"STR_ALIEN_CORPSES_RECOVERED",
-											unit->getValue() / 3); // TODO: This should rather be the 'recoveryPoints' of the corpse-item!
-
+											unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;
+																	// but at present all the corpse-rules spec. default values of 3 or 5 pts.
 										std::string corpse (unit->getArmor()->getCorpseGeoscape());
 										if (corpse.empty() == false) // safety.
 										{
@@ -1847,7 +1847,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 									case STATUS_UNCONSCIOUS:
 										if (unit->getOriginalFaction() == FACTION_HOSTILE)
-											recoverLiveAlien(unit); // TODO: Add captured alien-types to DebriefExtra screen. Ps see elsewhere also.
+											recoverLiveAlien(unit);
 								}
 							}
 							break;
@@ -1889,22 +1889,9 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
  */
 void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 {
-//	std::string type;
-//	if ((*i)->getSpawnType().empty() == false)	// btw. This should never happen.
-//		type = (*i)->getSpawnType();			// Zombies can't be MC'd basically. Can't be stunned either.
-//	else										// And Soldiers should spawn into zombies ~immediately.
-//		type = (*i)->getType();					// Plus aLiens can't be zombified and zombies blow up if burned to death anyway.
-
-//	if (unit->getSpawnType().empty() == false) // DON'T USE THIS IT CAN BREAK THE ITERATOR.
-//	{
-//		BattleUnit* const conUnit (_gameSave->getBattleSave()->getBattleGame()->speedyConvert(unit));
-//		conUnit->setFaction(FACTION_PLAYER);
-//		return;
-//	}
-
 	if (_base->hasContainment() == true || _isQuickBattle == true)
 	{
-		//Log(LOG_INFO) << ". . . alienLive = " << unit->getType() << " id-" << unit->getId();
+		//Log(LOG_INFO) << ". . . alienLive id-" << unit->getId() << " " << unit->getType();
 		const std::string type (unit->getType());
 
 		int value;
@@ -1927,24 +1914,14 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 	}
 	else
 	{
-		//Log(LOG_INFO) << ". . . alienDead = " << unit->getType();
+		//Log(LOG_INFO) << ". . . alienDead id-" << unit->getId() << " " << unit->getType();
 		_alienDies = true;
 		addStat(
 			"STR_ALIEN_CORPSES_RECOVERED",
 			unit->getValue() / 3);
 
-//		std::string corpseItem;
-//		if (unit->getSpawnType().empty() == false)
-//			corpseItem = _rules->getArmor(_rules->getItemUnit(unit->getSpawnType())->getArmor())->getCorpseGeoscape();
-//		else
-//			corpseItem = unit->getArmor()->getCorpseGeoscape();
-//		const std::string corpseItem (unit->getArmor()->getCorpseGeoscape());
-//
-//		if (corpseItem.empty() == false) // safety.
-//			_base->getStorageItems()->addItem(corpseItem);
-
 		std::string corpse (unit->getArmor()->getCorpseGeoscape());
-		if (corpse.empty() == false) // safety. [Or error-out if there isn't one.]
+		if (corpse.empty() == false) // safety. (Or error-out if there isn't one.)
 		{
 			_base->getStorageItems()->addItem(corpse);
 			++_itemsGained[_rules->getItemRule(corpse)];

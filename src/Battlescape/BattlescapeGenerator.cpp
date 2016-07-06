@@ -530,6 +530,9 @@ void BattlescapeGenerator::nextStage()
 	// NOTE: The one rule through all of this is that unit-corpses should never
 	// get deleted; they need to be used for Scoring and possible resurrection
 	// after the second stage - when the Debriefing runs finally.
+	// OOps: bodies/corpses (non-recoverable) are deletable since BattleItems
+	// are not used for kill/stun/rescue scoring -- BattleUnits are. Any non-
+	// recoverable BattleItem can be deleted here if you want.
 	std::vector<BattleItem*>
 		* const guaranteed  (_battleSave->recoverGuaranteed()),
 		* const conditional (_battleSave->recoverConditional()),
