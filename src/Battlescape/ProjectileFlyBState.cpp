@@ -297,10 +297,9 @@ void ProjectileFlyBState::init()
 				if (_targetFloor == false) _targetVoxel.z += 16;
 		}
 	}
-	else if ((_unit->getFaction() == FACTION_PLAYER	// force fire at center of Tile by pressing [CTRL] but *not* SHIFT
-			&& (SDL_GetModState() & KMOD_CTRL) != 0	// force fire at Floor w/ [CTRL+ALT]
-			&& (SDL_GetModState() & KMOD_SHIFT) == 0
-			&& Options::battleForceFire == true)
+	else if ((_unit->getFaction() == FACTION_PLAYER		// force fire at center of Tile by pressing [CTRL] but *not* SHIFT
+			&& (SDL_GetModState() & KMOD_CTRL)  != 0	// force fire at Floor w/ [CTRL+ALT]
+			&& (SDL_GetModState() & KMOD_SHIFT) == 0)
 		|| _parent->playerPanicHandled() == false) // note that nonPlayer berserk bypasses this and targets according to targetUnit OR tileParts below_
 	{
 		//Log(LOG_INFO) << "projFlyB init() Player panic OR Ctrl [!Shift]";
@@ -326,7 +325,7 @@ void ProjectileFlyBState::init()
 		// Store that voxel.
 		//
 		// Force Fire keyboard modifiers:
-		// note non-Player units cannot target tileParts ... but they might someday.
+		// NOTE: non-Player units cannot target tileParts ... but they might someday.
 		// none			- See above^
 		// CTRL			- center
 		// CTRL+ALT		- floor
@@ -337,9 +336,8 @@ void ProjectileFlyBState::init()
 																		_battleSave->getTile(_posOrigin)));
 		if (tileTarget->getTileUnit() != nullptr
 			&& (_unit->getFaction() != FACTION_PLAYER
-				|| ((      (SDL_GetModState() & KMOD_SHIFT) == 0
-						&& (SDL_GetModState() & KMOD_CTRL) == 0)
-					|| Options::battleForceFire == false)))
+				|| (   (SDL_GetModState() & KMOD_SHIFT) == 0
+					&& (SDL_GetModState() & KMOD_CTRL)  == 0)))
 		{
 			//Log(LOG_INFO) << ". tileTarget has unit";
 			if (_action.posTarget == _posOrigin
@@ -395,8 +393,7 @@ void ProjectileFlyBState::init()
 		}
 		else if (tileTarget->getMapData(O_OBJECT) != nullptr	// force vs. Object by using CTRL above^
 			&& (_unit->getFaction() != FACTION_PLAYER			// bypass Object by pressing SHIFT
-				|| (SDL_GetModState() & KMOD_SHIFT) == 0
-				|| Options::battleForceFire == false))
+				|| (SDL_GetModState() & KMOD_SHIFT) == 0))
 		{
 			//Log(LOG_INFO) << ". tileTarget has content-object";
 			if (tileTarget->isRevealed() == false
@@ -415,8 +412,7 @@ void ProjectileFlyBState::init()
 		}
 		else if (tileTarget->getMapData(O_NORTHWALL) != nullptr // force Northwall by pressing [SHIFT] but not CTRL
 			&& (_unit->getFaction() != FACTION_PLAYER
-				|| (SDL_GetModState() & KMOD_CTRL) == 0
-				|| Options::battleForceFire == false))
+				|| (SDL_GetModState() & KMOD_CTRL) == 0))
 		{
 			//Log(LOG_INFO) << ". tileTarget has northwall";
 			if (tileTarget->isRevealed(ST_NORTH) == false
@@ -483,8 +479,8 @@ void ProjectileFlyBState::init()
 
 	if (createProjectile() == true)
 	{
-		_parent->getMap()->setSelectorType(CT_NONE); // might be already done in primaryAction()
-		_parent->getMap()->getCamera()->stopMouseScrolling();
+		_parent->getMap()->setSelectorType(CT_NONE);			// might be already done in primaryAction(). Nope --
+		_parent->getMap()->getCamera()->stopMouseScrolling();	// the cursor is hidden there, the selector is hidden here.
 	}
 	//Log(LOG_INFO) << "ProjectileFlyBState::init() EXIT";
 }

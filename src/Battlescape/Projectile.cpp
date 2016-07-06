@@ -193,10 +193,9 @@ VoxelType Projectile::calculateShot(
 		&& _action.autoShotCount == 1
 		&& _action.type != BA_LAUNCH
 		&& _battleSave->getBattleGame()->playerPanicHandled() == true
-		&& ((	   (SDL_GetModState() & KMOD_CTRL)	== 0
-				&& (SDL_GetModState() & KMOD_ALT)	== 0
-				&& (SDL_GetModState() & KMOD_SHIFT)	== 0)
-			|| Options::battleForceFire == false))
+		&& (SDL_GetModState() & KMOD_CTRL)	== 0
+		&& (SDL_GetModState() & KMOD_ALT)	== 0
+		&& (SDL_GetModState() & KMOD_SHIFT)	== 0)
 	{
 		//Log(LOG_INFO) << "originVoxel " << originVoxel << " useExclude = " << useExclude;
 		if (verifyTarget(originVoxel, useExclude) == false)

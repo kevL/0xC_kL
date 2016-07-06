@@ -1354,8 +1354,6 @@ en-US:
   STR_PREFERRED_FORMAT_AUTO: "Auto"
   STR_CURRENT_FORMAT: "Current: {0}"
   STR_MELEE_ACCURACY: "melee accuracy"
-  STR_FORCE_FIRE: "Override Line of Fire"
-  STR_FORCE_FIRE_DESC: "Enables forcing your soldiers to take a shot when holding CTRL, regardless of line of fire rules."
   STR_NO_AUDIO_HARDWARE_DETECTED: "No audio hardware detected"
   STR_SELL_PRODUCTION: "$$"
   STR_BOTH_HANDS_MUST_BE_EMPTY: "< hands >"

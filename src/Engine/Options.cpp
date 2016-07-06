@@ -195,7 +195,6 @@ void create()
 //	_info.push_back(OptionInfo("battleSmoothCamera", &battleSmoothCamera, false, "STR_BATTLESMOOTHCAMERA", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleWeaponSelfDestruction", &battleWeaponSelfDestruction, false, "STR_WEAPONSELFDESTRUCTION", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleStrafe", &battleStrafe, false, "STR_STRAFE", "STR_BATTLESCAPE"));
-	_info.push_back(OptionInfo("battleForceFire", &battleForceFire, true, "STR_FORCE_FIRE", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleTFTDDamage", &battleTFTDDamage, false, "STR_TFTDDAMAGE", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleRangeBasedAccuracy", &battleRangeBasedAccuracy, false, "STR_BATTLERANGEBASEDACCURACY", "STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("battleAlienPanicMessages", &battleAlienPanicMessages, true, "STR_ALIENPANICMESSAGES", "STR_BATTLESCAPE"));
