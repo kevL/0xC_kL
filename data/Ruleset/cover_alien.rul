@@ -8,7 +8,7 @@ items:
     floorSprite: 105
     invWidth: 2
     invHeight: 3
-    recoveryPoints: 5
+    score: 5
     battleType: 11
     twoHanded: true
     armor: 26
@@ -22,7 +22,7 @@ items:
     power: 80
     invWidth: 2
     invHeight: 2
-    recoveryPoints: 5
+    score: 5
     battleType: 11
     twoHanded: true
     armor: 26
