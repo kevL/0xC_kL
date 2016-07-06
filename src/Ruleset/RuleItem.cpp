@@ -765,10 +765,10 @@ int RuleItem::getRecoveryScore() const
 }
 
 /**
- * Gets the Item's armor-value.
+ * Gets the Item's armor-points.
  * @note The item is destroyed when an explosive power higher than its armor-
  * points hits it.
- * @return, the armor-value
+ * @return, the armor-points
  */
 int RuleItem::getArmorPoints() const
 {
@@ -884,7 +884,7 @@ int RuleItem::getMinRange() const
 }
 
 /**
- * Gets the accuracy dropoff value of the Item.
+ * Gets the accuracy dropoff of the Item.
  * @return, the per-tile dropoff
  */
 int RuleItem::getDropoff() const

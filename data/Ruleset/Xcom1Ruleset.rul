@@ -63,7 +63,7 @@ units:
     armor: TANK_ARMOR
     standHeight: 16
     kneelHeight: 16
-    value: 35
+    score: 35
     deathSound: 23
     moveSound: 14
     energyRecovery: 75
@@ -87,7 +87,7 @@ units:
     armor: TANK_ARMOR
     standHeight: 16
     kneelHeight: 16
-    value: 40
+    score: 40
     deathSound: 23
     moveSound: 14
     energyRecovery: 75
@@ -111,7 +111,7 @@ units:
     armor: TANK_ARMOR
     standHeight: 16
     kneelHeight: 16
-    value: 45
+    score: 45
     deathSound: 23
     moveSound: 14
     energyRecovery: 75
@@ -136,7 +136,7 @@ units:
     standHeight: 12
     kneelHeight: 12
     floatHeight: 6
-    value: 50
+    score: 50
     deathSound: 23
     moveSound: 40
     energyRecovery: 85
@@ -161,7 +161,7 @@ units:
     standHeight: 12
     kneelHeight: 12
     floatHeight: 6
-    value: 55
+    score: 55
     deathSound: 23
     moveSound: 40
     energyRecovery: 85
@@ -185,7 +185,7 @@ units:
     armor: CIVM_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
   - type: FEMALE_CIVILIAN
@@ -205,7 +205,7 @@ units:
     armor: CIVF_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
     female: true
@@ -227,7 +227,7 @@ units:
     armor: SECTOID_ARMOR0
     standHeight: 16
     kneelHeight: 12
-    value: 8
+    score: 8
     deathSound: 10
     intelligence: 3
     aggression: 1
@@ -250,7 +250,7 @@ units:
     armor: SECTOID_ARMOR0
     standHeight: 16
     kneelHeight: 12
-    value: 10
+    score: 10
     deathSound: 10
     intelligence: 4
     aggression: 1
@@ -273,7 +273,7 @@ units:
     armor: SECTOID_ARMOR0
     standHeight: 16
     kneelHeight: 12
-    value: 12
+    score: 12
     deathSound: 10
     intelligence: 5
     aggression: 0
@@ -296,7 +296,7 @@ units:
     armor: SECTOID_ARMOR0
     standHeight: 16
     kneelHeight: 12
-    value: 14
+    score: 14
     deathSound: 10
     intelligence: 6
     aggression: 2
@@ -319,7 +319,7 @@ units:
     armor: SECTOID_ARMOR1
     standHeight: 16
     kneelHeight: 12
-    value: 16
+    score: 16
     deathSound: 10
     intelligence: 7
     aggression: 1
@@ -342,7 +342,7 @@ units:
     armor: SECTOID_ARMOR2
     standHeight: 16
     kneelHeight: 12
-    value: 22
+    score: 22
     deathSound: 10
     intelligence: 8
     aggression: 0
@@ -366,7 +366,7 @@ units:
     standHeight: 15
     kneelHeight: 15
     floatHeight: 2
-    value: 20
+    score: 20
     deathSound: 23
     moveSound: 40
     intelligence: 4
@@ -396,7 +396,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 10
+    score: 10
     deathSound: 255
     moveSound: 15
     intelligence: 4
@@ -421,7 +421,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 12
+    score: 12
     deathSound: 255
     moveSound: 15
     intelligence: 5
@@ -446,7 +446,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 14
+    score: 14
     deathSound: 255
     moveSound: 15
     intelligence: 6
@@ -471,7 +471,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 16
+    score: 16
     deathSound: 255
     moveSound: 15
     intelligence: 7
@@ -496,7 +496,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 22
+    score: 22
     deathSound: 255
     moveSound: 15
     intelligence: 8
@@ -521,7 +521,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 30
+    score: 30
     deathSound: 255
     moveSound: 15
     intelligence: 8
@@ -545,7 +545,7 @@ units:
     armor: REAPER_ARMOR
     standHeight: 23
     kneelHeight: 16
-    value: 20
+    score: 20
     deathSound: 48
     aggroSound: 48
     intelligence: 2
@@ -572,7 +572,7 @@ units:
     armor: SNAKEMAN_ARMOR0
     standHeight: 18
     kneelHeight: 18
-    value: 13
+    score: 13
     deathSound: 8
     moveSound: 0
     intelligence: 2
@@ -597,7 +597,7 @@ units:
     armor: SNAKEMAN_ARMOR1
     standHeight: 18
     kneelHeight: 18
-    value: 15
+    score: 15
     deathSound: 8
     moveSound: 0
     intelligence: 3
@@ -622,7 +622,7 @@ units:
     armor: SNAKEMAN_ARMOR2
     standHeight: 18
     kneelHeight: 18
-    value: 18
+    score: 18
     deathSound: 8
     moveSound: 0
     intelligence: 4
@@ -647,7 +647,7 @@ units:
     armor: SNAKEMAN_ARMOR3
     standHeight: 18
     kneelHeight: 18
-    value: 24
+    score: 24
     deathSound: 8
     moveSound: 0
     intelligence: 5
@@ -672,7 +672,7 @@ units:
     armor: SNAKEMAN_ARMOR4
     standHeight: 18
     kneelHeight: 18
-    value: 32
+    score: 32
     deathSound: 8
     moveSound: 0
     intelligence: 6
@@ -697,7 +697,7 @@ units:
     armor: CHRYSSALID_ARMOR
     standHeight: 21
     kneelHeight: 16
-    value: 22
+    score: 22
     deathSound: 49
     aggroSound: 49
     intelligence: 2
@@ -724,7 +724,7 @@ units:
     armor: MUTON_ARMOR0
     standHeight: 21
     kneelHeight: 16
-    value: 13
+    score: 13
     deathSound: 6
     intelligence: 2
     aggression: 2
@@ -748,7 +748,7 @@ units:
     armor: MUTON_ARMOR1
     standHeight: 21
     kneelHeight: 16
-    value: 15
+    score: 15
     deathSound: 6
     intelligence: 3
     aggression: 2
@@ -772,7 +772,7 @@ units:
     armor: MUTON_ARMOR2
     standHeight: 21
     kneelHeight: 16
-    value: 17
+    score: 17
     deathSound: 6
     intelligence: 4
     aggression: 2
@@ -796,7 +796,7 @@ units:
     armor: SILACOID_ARMOR
     standHeight: 10
     kneelHeight: 10
-    value: 18
+    score: 18
     deathSound: 7
     moveSound: 47
     intelligence: 1
@@ -826,7 +826,7 @@ units:
     standHeight: 10
     kneelHeight: 10
     floatHeight: 6
-    value: 16
+    score: 16
     deathSound: 7
     moveSound: 16
     intelligence: 3
@@ -853,7 +853,7 @@ units:
     armor: ETHEREAL_ARMOR0
     standHeight: 20
     kneelHeight: 15
-    value: 18
+    score: 18
     deathSound: 9
     moveSound: 15
     intelligence: 4
@@ -877,7 +877,7 @@ units:
     armor: ETHEREAL_ARMOR1
     standHeight: 20
     kneelHeight: 15
-    value: 27
+    score: 27
     deathSound: 9
     moveSound: 15
     intelligence: 6
@@ -901,7 +901,7 @@ units:
     armor: ETHEREAL_ARMOR2
     standHeight: 20
     kneelHeight: 15
-    value: 35
+    score: 35
     deathSound: 9
     moveSound: 15
     intelligence: 8
@@ -925,7 +925,7 @@ units:
     armor: SECTOPOD_ARMOR
     standHeight: 23
     kneelHeight: 16
-    value: 27
+    score: 27
     deathSound: 23
     intelligence: 5
     aggression: 2
@@ -951,7 +951,7 @@ units:
     armor: ZOMBIE_ARMOR
     standHeight: 18
     kneelHeight: 18
-    value: 15
+    score: 15
     deathSound: 71
     intelligence: 0
     aggression: 2

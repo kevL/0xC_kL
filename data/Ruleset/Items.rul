@@ -34,25 +34,25 @@ items:
     fullClip: 1
   - type: STR_LASER_CANNON
     required:
-      - STR_LASER_CANNON # kL. This is only for populating CraftWeaponsState
+      - STR_LASER_CANNON #This is only for populating CraftWeaponsState
     size: 1.8
-    costSell: 250740 # 835800
+    costSell: 250740 #835800
     transferTime: 48
   - type: STR_PLASMA_BEAM
     required:
-      - STR_PLASMA_CANNON # kL. This is only for populating CraftWeaponsState
+      - STR_PLASMA_CANNON #This is only for populating CraftWeaponsState
     size: 1.2
-    costSell: 442680 # 1475600
+    costSell: 442680 #1475600
     transferTime: 48
   - type: STR_FUSION_BALL_LAUNCHER
     required:
-      - STR_FUSION_MISSILE # kL. This is only for populating CraftWeaponsState
+      - STR_FUSION_MISSILE #This is only for populating CraftWeaponsState
     size: 1.5
-    costSell: 148290 # 494300 x 0.1 (triple this for equip NOT on Battlescape)
+    costSell: 148290 #494300 x 0.1 (triple this for equip NOT on Battlescape)
     transferTime: 48
   - type: STR_FUSION_BALL
     size: 0.6
-    costSell: 260490 # 868300
+    costSell: 260490 #868300
     transferTime: 48
     fullClip: 1
   - type: STR_TANK_CANNON
@@ -60,10 +60,7 @@ items:
     costBuy: 235000
     costSell: 47000
     transferTime: 96
-#    weight: 1
     bigSprite: 43
-#    floorSprite: 0
-#    handSprite: 0
     bulletSprite: 4
     fireSound: 2
     compatibleAmmo:
@@ -74,7 +71,7 @@ items:
     tuAimed: 83
     battleType: 1
     fixedWeapon: true
-    fullClip: 18 #kL
+    fullClip: 18
     invWidth: 2
     invHeight: 3
     turretType: 0
@@ -88,17 +85,14 @@ items:
     fireHitAni: 0
     power: 92
     damageType: 1
-    fullClip: 1 #kL
+    fullClip: 1
     battleType: 2
   - type: STR_TANK_ROCKET_LAUNCHER
     size: 5
     costBuy: 340000
     costSell: 66500
     transferTime: 96
-#    weight: 1
     bigSprite: 42
-#    floorSprite: 0
-#    handSprite: 0
     bulletSprite: 0
     fireSound: 52
     compatibleAmmo:
@@ -109,7 +103,7 @@ items:
     tuAimed: 64
     battleType: 1
     fixedWeapon: true
-    fullClip: 6 #kL
+    fullClip: 6
     invWidth: 2
     invHeight: 3
     turretType: 1
@@ -128,12 +122,9 @@ items:
 #    explosionSpeed:
   - type: STR_TANK_LASER_CANNON
     size: 5
-    costSell: 406290 # 1354300
+    costSell: 406290 #1354300
     transferTime: 96
-#    weight: 1
     bigSprite: 54
-#    floorSprite: 0
-#    handSprite: 0
     bulletSprite: 5
     fireSound: 11
     fireSoundHit: 19
@@ -152,12 +143,9 @@ items:
     turretType: 2
   - type: STR_HOVERTANK_PLASMA
     size: 6
-    costSell: 849330 # 2831100
+    costSell: 849330 #2831100
     transferTime: 96
-#    weight: 1
     bigSprite: 40
-#    floorSprite: 0
-#    handSprite: 0
     bulletSprite: 8
     fireSound: 18
     fireSoundHit: 19
@@ -176,30 +164,27 @@ items:
     turretType: 3
   - type: STR_HOVERTANK_LAUNCHER
     size: 6
-    costSell: 705540 # 2351800
+    costSell: 705540 #2351800
     transferTime: 96
-#    weight: 1
     bigSprite: 40
-#    floorSprite: 0
-#    handSprite: 0
     bulletSprite: 10
     fireSound: 53
     compatibleAmmo:
       - STR_HWP_FUSION_BOMB
     accuracyAimed: 120
     tuAimed: 52
-    tuLaunch: 78 #kL
+    tuLaunch: 78
     battleType: 1
     fixedWeapon: true
-    fullClip: 5 #kL
-    noReaction: true # kL
+    fullClip: 5
+    noReaction: true
     waypoint: 12
     invWidth: 2
     invHeight: 3
     turretType: 4
   - type: STR_HWP_FUSION_BOMB
     size: 0.6
-    costSell: 216240 # 720800
+    costSell: 216240 #720800
     transferTime: 48
     weight: 0
     fireSoundHit: 5
@@ -504,7 +489,7 @@ items:
     invHeight: 3
   - type: STR_LASER_PISTOL
     size: 0.2
-    costSell: 31950 # 106500
+    costSell: 31950 #106500
     weight: 4
     bigSprite: 5
     floorSprite: 5
@@ -528,7 +513,7 @@ items:
     invHeight: 2
   - type: STR_LASER_RIFLE
     size: 0.3
-    costSell: 43350 # 144500
+    costSell: 43350 #144500
     weight: 7
     bigSprite: 0
     floorSprite: 0
@@ -553,7 +538,7 @@ items:
     invHeight: 3
   - type: STR_HEAVY_LASER
     size: 0.8
-    costSell: 76230 # 254100
+    costSell: 76230 #254100
     weight: 19
     bigSprite: 6
     floorSprite: 6
@@ -637,7 +622,7 @@ items:
     tuPrime: 65
   - type: STR_MOTION_SCANNER
     size: 0.1
-    costSell: 36300 # 121000
+    costSell: 36300 #121000
     weight: 6
     bigSprite: 23
     floorSprite: 23
@@ -645,7 +630,7 @@ items:
     tuUse: 25
   - type: STR_MEDI_KIT
     size: 0.2
-    costSell: 26880 # 89600
+    costSell: 26880 #89600
     weight: 8
     bigSprite: 24
     floorSprite: 24
@@ -665,7 +650,7 @@ items:
     required:
       - STR_PSI_AMP
     size: 0.3
-    costSell: 86310 # 287700
+    costSell: 86310 #287700
     weight: 9
     bigSprite: 33
     floorSprite: 32
@@ -748,7 +733,7 @@ items:
     required:
       - STR_HEAVY_PLASMA
     size: 0.5
-    costSell: 50800 # 508000
+    costSell: 50800 #508000
     weight: 16
     bigSprite: 30
     floorSprite: 29
@@ -774,7 +759,7 @@ items:
     required:
       - STR_HEAVY_PLASMA_CLIP
     size: 0.2
-    costSell: 11350 # 113500
+    costSell: 11350 #113500
     weight: 4
     bigSprite: 25
     floorSprite: 33
@@ -790,7 +775,7 @@ items:
     required:
       - STR_PLASMA_RIFLE
     size: 0.4
-    costSell: 38300 # 383000
+    costSell: 38300 #383000
     weight: 11
     bigSprite: 31
     floorSprite: 30
@@ -817,7 +802,7 @@ items:
     required:
       - STR_PLASMA_RIFLE_CLIP
     size: 0.2
-    costSell: 9450 # 94500
+    costSell: 9450 #94500
     weight: 3
     bigSprite: 41
     floorSprite: 33
@@ -833,7 +818,7 @@ items:
     required:
       - STR_PLASMA_PISTOL
     size: 0.2
-    costSell: 26300 # 263000
+    costSell: 26300 #263000
     weight: 5
     bigSprite: 32
     floorSprite: 31
@@ -859,7 +844,7 @@ items:
     required:
       - STR_PLASMA_PISTOL_CLIP
     size: 0.1
-    costSell: 7650 # 76500
+    costSell: 7650 #76500
     weight: 2
     bigSprite: 34
     floorSprite: 33
@@ -875,7 +860,7 @@ items:
     required:
       - STR_BLASTER_LAUNCHER
     size: 0.3
-    costSell: 23900 # 239000
+    costSell: 23900 #239000
     weight: 15
     bigSprite: 35
     floorSprite: 34
@@ -885,10 +870,10 @@ items:
     compatibleAmmo:
       - STR_BLASTER_BOMB
     accuracyAimed: 120
-    tuAimed: 57 #66
-    tuLaunch: 82 #kL
+    tuAimed: 57
+    tuLaunch: 82
     battleType: 1
-    noReaction: true #kL
+    noReaction: true
     twoHanded: true
     waypoint: 9
     invWidth: 2
@@ -900,7 +885,7 @@ items:
     required:
       - STR_BLASTER_BOMB
     size: 0.3
-    costSell: 35750 # 357500
+    costSell: 35750 #357500
     weight: 5
     bigSprite: 36
     floorSprite: 35
@@ -921,7 +906,7 @@ items:
     required:
       - STR_SMALL_LAUNCHER
     size: 0.3
-    costSell: 19900 # 199000
+    costSell: 19900 #199000
     weight: 9
     bigSprite: 37
     floorSprite: 36
@@ -944,10 +929,10 @@ items:
     required:
       - STR_STUN_BOMB
     size: 0.1
-    costSell: 20830 # 208300
+    costSell: 20830 #208300
     weight: 4
     bigSprite: 38
-    floorSprite: 90 # was 37
+    floorSprite: 90 #was 37
     fireSoundHit: 12
     fireHitAni: 16
     power: 85
@@ -962,7 +947,7 @@ items:
     required:
       - STR_ALIEN_GRENADE
     size: 0.1
-    costSell: 19200 # 192000
+    costSell: 19200 #192000
     weight: 3
     bigSprite: 39
     floorSprite: 38
@@ -981,7 +966,7 @@ items:
     required:
       - STR_MIND_PROBE
     size: 0.1
-    costSell: 200500 # 401000 (x 0.5)
+    costSell: 200500 #401000 (x 0.5)
     weight: 4
     bigSprite: 29
     floorSprite: 28
@@ -1025,10 +1010,10 @@ items:
   - type: STR_ALIEN_ALLOYS
     listOrder: 1
     size: 0.1
-    costSell: 1000 # 21500 (x ?)
+    costSell: 1000 #21500 (x ?)
     specialType: 10
     score: 1
-  - type: STR_RUINED_ALLOYS # fake entry for DebriefingState
+  - type: STR_RUINED_ALLOYS #fake entry for DebriefingState
     specialType: 12
     score: 1
   - type: STR_ELERIUM_115
@@ -1046,12 +1031,12 @@ items:
     attraction: 5
   - type: STR_UFO_POWER_SOURCE
     size: 0.8
-    costSell: 335300 # 3353000
+    costSell: 335300 #3353000
     specialType: 2
     score: 20
   - type: STR_UFO_NAVIGATION
     size: 0.5
-    costSell: 88600 # 886000
+    costSell: 88600 #886000
     specialType: 3
     score: 5
   - type: STR_UFO_CONSTRUCTION
@@ -1061,13 +1046,13 @@ items:
     score: 2
   - type: STR_PERSONAL_ARMOR
     size: 0.8
-    costSell: 152400 # 508000
+    costSell: 152400 #508000
   - type: STR_POWER_SUIT
     size: 0.8
-    costSell: 256950 # 856500
+    costSell: 256950 #856500
   - type: STR_FLYING_SUIT
     size: 0.8
-    costSell: 400650 # 1335500
+    costSell: 400650 #1335500
   - type: STR_SECTOID_CORPSE
     size: 0.5
     costSell: 5000
@@ -1171,8 +1156,8 @@ items:
     bigSprite: -1 #uh, that might be a terrorist weapon; but it's about to get blown up anyway.
     battleType: 11
     twoHanded: true
-    armor: 0 #blow this up easy.
-    power: 54 #for Zombie explosions
+    armor: 0       #blow this up easy.
+    power: 54      #for Zombie explosions
     blastRadius: 0 #for Zombie explosions
     recover: false
   - type: STR_REAPER_CORPSE
@@ -1237,7 +1222,7 @@ items:
     size: 1
     costSell: 18000
     battleType: 11
-    power: 100 #kL: was 120
+    power: 100
     blastRadius: 5
   - type: CYBERDISC_CORPSE_1
     name: STR_CYBERDISC_CORPSE
@@ -1601,16 +1586,16 @@ items:
     meleeSoundHit: 75 #was 36
     meleeAniHit: 0
     battleType: 9
-    tuUse: 35 # kL: was 25
-    flatRate: false #kL: was true
+    tuUse: 35
+    flatRate: false
     recover: false
 # Universal Fist Weapon for Aliens. Usage of this is hard-coded.
 # DO NOT DELETE!
   - type: STR_FIST
     bigSprite: 56 #temp: Elerium
-    meleeSound: 39 # swish
-    meleeSoundHit: 38 # thock
-    meleeAni: 0 #sword
+    meleeSound: 39    #swish
+    meleeSoundHit: 38 #thock
+    meleeAni: 0       #sword
     meleeAniHit: 0
     power: 17
     strengthApplied: true

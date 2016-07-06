@@ -238,7 +238,7 @@ private:
 		_intelligence,
 		_moveSound,
 		_specabPower,
-		_value;
+		_score;
 
 	std::string
 		_armor,

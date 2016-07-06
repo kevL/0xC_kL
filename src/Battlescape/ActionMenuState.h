@@ -42,6 +42,8 @@ class ActionMenuState
 private:
 	static const size_t MENU_ITEMS = 8u;
 
+	int _actions;
+
 	ActionMenuItem* _menuSelect[MENU_ITEMS];
 	BattleAction* _action;
 
@@ -65,7 +67,7 @@ private:
 		/// Cleans up the ActionMenu state.
 		~ActionMenuState();
 
-		/// Handler for right-clicking anything.
+		/// Handler for hardware interrupts.
 		void handle(Action* action) override;
 
 		/// Handler for clicking an ActionMenuItem.

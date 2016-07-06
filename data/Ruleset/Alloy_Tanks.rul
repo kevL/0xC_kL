@@ -114,7 +114,7 @@ units:
     armor: TANK_ARMOR_ALLOY
     standHeight: 16
     kneelHeight: 16
-    value: 20
+    score: 20
     energyRecovery: 80
     deathSound: 23
     moveSound: 14
@@ -137,7 +137,7 @@ units:
     armor: TANK_ARMOR_ALLOY
     standHeight: 16
     kneelHeight: 16
-    value: 20
+    score: 20
     energyRecovery: 80
     deathSound: 23
     moveSound: 14
@@ -160,7 +160,7 @@ units:
     armor: TANK_ARMOR_ALLOY
     standHeight: 16
     kneelHeight: 16
-    value: 20
+    score: 20
     energyRecovery: 80
     deathSound: 23
     moveSound: 14

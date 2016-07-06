@@ -306,7 +306,7 @@ units:
     armor: MALE_CIVILIAN2_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
   - type: MALE_CIVILIAN3
@@ -326,7 +326,7 @@ units:
     armor: MALE_CIVILIAN3_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
   - type: MALE_CIVILIAN4
@@ -346,7 +346,7 @@ units:
     armor: MALE_CIVILIAN4_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
   - type: MALE_CIVILIAN5
@@ -366,7 +366,7 @@ units:
     armor: MALE_CIVILIAN5_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
   - type: MALE_CIVILIAN6
@@ -386,7 +386,7 @@ units:
     armor: MALE_CIVILIAN6_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
   - type: MALE_CIVILIAN7
@@ -406,7 +406,7 @@ units:
     armor: MALE_CIVILIAN7_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
   - type: FEMALE_CIVILIAN2
@@ -426,7 +426,7 @@ units:
     armor: FEMALE_CIVILIAN2_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
     female: true
@@ -447,7 +447,7 @@ units:
     armor: FEMALE_CIVILIAN3_ARMOR
     standHeight: 21
     kneelHeight: 14
-    value: 33
+    score: 33
     intelligence: 4
     energyRecovery: 50
     female: true

@@ -35,7 +35,7 @@ RuleUnit::RuleUnit(const std::string& type)
 		_standHeight(0),
 		_kneelHeight(0),
 		_floatHeight(0),
-		_value(0),
+		_score(0),
 		_deathSound(-1),
 		_aggroSound(-1),
 		_moveSound(-1),
@@ -83,7 +83,7 @@ void RuleUnit::load(
 		throw Exception("Error with Unit " + _type + ": Unit height shall not exceed 24");
 	}
 
-	_value			= node["value"]			.as<int>(_value);
+	_score			= node["score"]			.as<int>(_score);
 	_intelligence	= node["intelligence"]	.as<int>(_intelligence);
 	_aggression		= node["aggression"]	.as<int>(_aggression);
 	_energyRecovery	= node["energyRecovery"].as<int>(_energyRecovery);
@@ -200,7 +200,7 @@ std::string RuleUnit::getRank() const
  */
 int RuleUnit::getValue() const
 {
-	return _value;
+	return _score;
 }
 
 /**

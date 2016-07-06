@@ -192,7 +192,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 14
+    score: 14
     deathSound: 72
     moveSound: 15
     intelligence: 5
@@ -216,7 +216,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 14
+    score: 14
     deathSound: 72
     moveSound: 15
     intelligence: 5
@@ -240,7 +240,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 14
+    score: 14
     deathSound: 72
     moveSound: 15
     intelligence: 6
@@ -264,7 +264,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 18
+    score: 18
     deathSound: 72
     moveSound: 15
     intelligence: 7
@@ -288,7 +288,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 18
+    score: 18
     deathSound: 72
     moveSound: 15
     intelligence: 6
@@ -312,7 +312,7 @@ units:
     standHeight: 21
     kneelHeight: 16
     floatHeight: 2
-    value: 18
+    score: 18
     deathSound: 72
     moveSound: 15
     intelligence: 8
@@ -335,7 +335,7 @@ units:
     armor: CYBERMITE_ARMOR
     standHeight: 6
     kneelHeight: 6
-    value: 25
+    score: 25
     deathSound: 73
     intelligence: 2
     aggression: 2

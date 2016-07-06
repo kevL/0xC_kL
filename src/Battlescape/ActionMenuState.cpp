@@ -19,6 +19,8 @@
 
 #include "ActionMenuState.h"
 
+#include "../fmath.h"
+
 #include "ActionMenuItem.h"
 #include "ExecuteState.h"
 #include "Map.h"
@@ -27,8 +29,6 @@
 #include "PrimeGrenadeState.h"
 #include "ScannerState.h"
 #include "TileEngine.h"
-
-#include "../fmath.h"
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
@@ -64,7 +64,8 @@ ActionMenuState::ActionMenuState(
 		int y,
 		bool injured)
 	:
-		_action(action)
+		_action(action),
+		_actions(-1)
 {
 	_fullScreen = false;
 
@@ -263,7 +264,7 @@ ActionMenuState::~ActionMenuState()
 {}
 
 /**
- * Adds a menu-item for a battle-action type.
+ * Adds a menu-item for a specified BattleActionType.
  * @param bat	- action type (BattlescapeGame.h)
  * @param desc	- reference to the action-description
  * @param id	- pointer to the item-action-ID
@@ -303,23 +304,53 @@ void ActionMenuState::addItem( // private.
 	_menuSelect[*id]->setVisible();
 
 	++(*id);
+	++_actions;
 }
 
 /**
- * Closes the window on click or cancel.
+ * Closes this ActionMenu on key-press or mouse-click to cancel.
  * @param action - pointer to an Action
  */
 void ActionMenuState::handle(Action* action)
 {
 	State::handle(action);
 
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT
-		|| (action->getDetails()->type == SDL_KEYDOWN
-			&& (   action->getDetails()->key.keysym.sym == Options::keyCancel
-				|| action->getDetails()->key.keysym.sym == Options::keyBattleUseLeftHand
-				|| action->getDetails()->key.keysym.sym == Options::keyBattleUseRightHand)))
+	if (action->getDetails()->type == SDL_KEYDOWN
+		&& (   action->getDetails()->key.keysym.sym == Options::keyCancel
+			|| action->getDetails()->key.keysym.sym == Options::keyBattleUseLeftHand
+			|| action->getDetails()->key.keysym.sym == Options::keyBattleUseRightHand))
 	{
 		_game->popState();
+	}
+	else
+	{
+		switch (action->getDetails()->button.button)
+		{
+			case SDL_BUTTON_RIGHT:
+				if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+					_game->popState();
+				break;
+
+			case SDL_BUTTON_LEFT: // exit state if outside the menu.
+				if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+				{
+					const double mX (action->getAbsoluteMouseX());
+					if (   mX <  static_cast<double>(_menuSelect[0u]->getX())
+						|| mX >= static_cast<double>(_menuSelect[0u]->getX() +  _menuSelect[0u]->getWidth()))
+					{
+						_game->popState();
+					}
+					else
+					{
+						const double mY (action->getAbsoluteMouseY());
+						if (   mY <  static_cast<double>(_menuSelect[0u]->getY() - (_menuSelect[0u]->getHeight() * _actions))
+							|| mY >= static_cast<double>(_menuSelect[0u]->getY() +  _menuSelect[0u]->getHeight()))
+						{
+							_game->popState();
+						}
+					}
+				}
+		}
 	}
 }
 
