@@ -315,25 +315,25 @@ void ActionMenuState::handle(Action* action)
 {
 	State::handle(action);
 
-	if (action->getDetails()->type == SDL_KEYDOWN
-		&& (   action->getDetails()->key.keysym.sym == Options::keyCancel
-			|| action->getDetails()->key.keysym.sym == Options::keyBattleUseLeftHand
-			|| action->getDetails()->key.keysym.sym == Options::keyBattleUseRightHand))
+	switch (action->getDetails()->type)
 	{
-		_game->popState();
-	}
-	else
-	{
-		switch (action->getDetails()->button.button)
-		{
-			case SDL_BUTTON_RIGHT:
-				if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
-					_game->popState();
-				break;
+		case SDL_KEYDOWN:
+			if (   action->getDetails()->key.keysym.sym == Options::keyCancel
+				|| action->getDetails()->key.keysym.sym == Options::keyBattleUseLeftHand
+				|| action->getDetails()->key.keysym.sym == Options::keyBattleUseRightHand)
+			{
+				_game->popState();
+			}
+			break;
 
-			case SDL_BUTTON_LEFT: // exit state if outside the menu.
-				if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
-				{
+		case SDL_MOUSEBUTTONDOWN:
+			switch (action->getDetails()->button.button)
+			{
+				case SDL_BUTTON_RIGHT:
+					_game->popState();
+					break;
+
+				case SDL_BUTTON_LEFT: // exit state if outside the menu.
 					const double mX (action->getAbsoluteMouseX());
 					if (   mX <  static_cast<double>(_menuSelect[0u]->getX())
 						|| mX >= static_cast<double>(_menuSelect[0u]->getX() +  _menuSelect[0u]->getWidth()))
@@ -349,8 +349,7 @@ void ActionMenuState::handle(Action* action)
 							_game->popState();
 						}
 					}
-				}
-		}
+			}
 	}
 }
 
