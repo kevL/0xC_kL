@@ -1015,7 +1015,7 @@ void UnitWalkBState::abortState(bool recache) // private.
 		_parent->getMap()->cacheUnit(_unit);
 	}
 	_pf->abortPath();
-	_parent->popState();
+	_parent->popBattleState();
 }
 
 /**
@@ -1155,7 +1155,7 @@ void UnitWalkBState::postPathProcedures() // private.
 	_parent->getMap()->cacheUnit(_unit);
 
 	if (_fall == false)
-		_parent->popState();
+		_parent->popBattleState();
 }
 
 /**

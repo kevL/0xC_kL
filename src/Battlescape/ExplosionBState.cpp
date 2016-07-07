@@ -284,7 +284,7 @@ void ExplosionBState::init()
 				exploCam->setViewLevel(posTarget.z);
 		}
 		else
-			_parent->popState();
+			_parent->popBattleState();
 	}
 	else // create a bullet hit, or melee hit, or psi-hit, or acid spit hit
 	{
@@ -464,7 +464,7 @@ void ExplosionBState::explode() // private.
 	//Log(LOG_INFO) << ". explode()";
 	if (_itRule != nullptr && _itRule->getBattleType() == BT_PSIAMP)
 	{
-		_parent->popState();
+		_parent->popBattleState();
 		return;
 	}
 
@@ -534,7 +534,7 @@ void ExplosionBState::explode() // private.
 				{
 					_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
 					_parent->getMap()->cacheUnits();
-					_parent->popState();
+					_parent->popBattleState();
 					return;
 				}
 			}
@@ -612,7 +612,7 @@ void ExplosionBState::explode() // private.
 	}
 
 	_parent->getMap()->cacheUnits();
-	_parent->popState();
+	_parent->popBattleState();
 	//Log(LOG_INFO) << ". . pop";
 
 

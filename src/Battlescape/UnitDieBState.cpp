@@ -229,7 +229,7 @@ void UnitDieBState::think()
 			_parent->getMap()->setUnitDying(false);
 
 		_parent->getTileEngine()->calculateUnitLighting();
-		_parent->popState(); // NOTE: If unit was selected it will be de-selected in popState().
+		_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popState().
 
 		// need to freshen visUnit-indicators in case other units were hiding behind the one who just fell
 		_battleSave->getBattleState()->updateSoldierInfo(false);
@@ -281,7 +281,7 @@ void UnitDieBState::think()
 			convertToBody();
 
 		if (_hidden == true)
-			_parent->popState(); // NOTE: If unit was selected it will be de-selected in popState().
+			_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popState().
 	}
 
 	if (_hidden == false)

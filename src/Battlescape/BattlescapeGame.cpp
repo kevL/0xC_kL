@@ -167,9 +167,7 @@ BattlescapeGame::~BattlescapeGame()
 			i = _battleStates.begin();
 			i != _battleStates.end();
 			++i)
-	{
 		delete *i;
-	}
 
 	delete _universalFist;
 	delete _alienPsi;
@@ -323,16 +321,13 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
 {
 	if (_battleStates.empty() == false)
 		_battleStates.push_back(battleState);
-	else
+	else if (battleState != nullptr)
 	{
-		if (battleState == nullptr)
-			endTurn();
-		else
-		{
-			_battleStates.push_front(battleState);
-			battleState->init();
-		}
+		_battleStates.push_front(battleState);
+		battleState->init();
 	}
+	else
+		endTurn();
 }
 
 /**
@@ -342,7 +337,7 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
  * finished its BattleAction. Check the result of that BattleAction here and do
  * all the aftermath. The state is then popped off the '_battleStates' list.
  */
-void BattlescapeGame::popState()
+void BattlescapeGame::popBattleState()
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates= " << _battleStates.size();
@@ -376,15 +371,15 @@ void BattlescapeGame::popState()
 //	tilesToDetonate.clear();
 //	Log(LOG_INFO) << ". explode Tiles DONE";
 
-	if (getMap()->getExplosions()->empty() == true) // Explosions need to run fast after popping ProjectileFlyBState etc etc.
-	{
-		//Log(LOG_INFO) << "bg: popState() set interval = " << BattlescapeState::STATE_INTERVAL_STANDARD;
-		setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
-	}
-
 	if (_battleStates.empty() == false)
 	{
 		//Log(LOG_INFO) << ". states NOT Empty";
+		if (getMap()->getExplosions()->empty() == true)						// Explosions need to continue to run fast after
+		{																	// popping ProjectileFlyBState etc etc.
+			setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);	// So don't set core-speed to Standard until they're done.
+			//Log(LOG_INFO) << "bg: popState() set interval= " << BattlescapeState::STATE_INTERVAL_STANDARD;
+		}
+
 		const BattleAction action (_battleStates.front()->getAction());
 
 		bool actionFail;
@@ -559,41 +554,22 @@ void BattlescapeGame::popState()
 		}
 
 
-		//Log(LOG_INFO) << ". uh yeah";
 		if (_battleStates.empty() == false)
 		{
-			//Log(LOG_INFO) << ". states NOT Empty [1]";
 			if (_battleStates.front() == nullptr) // end turn request
 			{
-				//Log(LOG_INFO) << ". states.front() == nullptr";
-				while (_battleStates.empty() == false)
-				{
-					//Log(LOG_INFO) << ". cycle through nullptr-states Front";
-					if (_battleStates.front() == nullptr)
-					{
-						//Log(LOG_INFO) << ". pop Front";
-						_battleStates.pop_front();
-					}
-					else
-						break;
-				}
+				while (_battleStates.front() == nullptr && _battleStates.empty() == false)
+					_battleStates.pop_front();
 
-				if (_battleStates.empty() == true)
-				{
-					//Log(LOG_INFO) << ". states Empty -> endTurn()";
-					endTurn();
-					//Log(LOG_INFO) << ". endTurn() DONE return";
-					return;
-				}
+				if (_battleStates.empty() == false)
+					_battleStates.push_back(nullptr);
 				else
 				{
-					//Log(LOG_INFO) << ". states NOT Empty -> prep back state w/ nullptr";
-					_battleStates.push_back(nullptr);
+					endTurn();
+					return;
 				}
 			}
-
-			//Log(LOG_INFO) << ". states.front()->init()";
-			_battleStates.front()->init(); // init the next state in queue
+			_battleStates.front()->init(); // (re)init the next state
 		}
 
 
@@ -618,12 +594,11 @@ void BattlescapeGame::popState()
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". updateSoldierInfo()";
-//			_parentState->updateSoldierInfo();		// although calcFoV ought have been done by now ...
-			_parentState->updateSoldierInfo(false);	// try popState w/out calcFoV.
+			_parentState->updateSoldierInfo(false);	// try no calcFoV()
 		}
 	}
 
-	if (_battleStates.empty() == true)
+	if (_battleStates.empty() == true) // NOTE: This could probly go upstairs but for now it's working okay.
 	{
 		//Log(LOG_INFO) << "";
 		//Log(LOG_INFO) << "popState: STATES are Empty";

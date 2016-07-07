@@ -471,7 +471,7 @@ void UnitFallBState::think()
 //		_tilesToFallInto.clear();
 //		_unitsToMove.clear();
 
-		_parent->popState();
+		_parent->popBattleState();
 //		return;
 	}
 	//Log(LOG_INFO) << "UnitFallBState::think() EXIT";

@@ -164,7 +164,7 @@ void ProjectileFlyBState::init()
 		if (popThis == true)
 		{
 			_unit->setStopShot(false);
-			_parent->popState();
+			_parent->popBattleState();
 			return;
 		}
 
@@ -271,7 +271,7 @@ void ProjectileFlyBState::init()
 
 		if (popThis == true)
 		{
-			_parent->popState();
+			_parent->popBattleState();
 			return;
 		}
 
@@ -572,7 +572,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				_action.TU = 0;
 				_unit->setUnitStatus(STATUS_STANDING);
 
-				_parent->popState();
+				_parent->popBattleState();
 				return false;
 		}
 	}
@@ -620,7 +620,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			_action.TU = 0;
 			_unit->setUnitStatus(STATUS_STANDING);
 
-			_parent->popState();
+			_parent->popBattleState();
 			return false;
 		}
 	}
@@ -693,7 +693,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			_action.TU = 0;
 			_unit->setUnitStatus(STATUS_STANDING);
 
-			_parent->popState();
+			_parent->popBattleState();
 			//Log(LOG_INFO) << "FlyB: . no LoS ret FALSE";
 			return false;
 		}
@@ -847,7 +847,7 @@ void ProjectileFlyBState::think()
 			if (_unit->isOut_t() == false && _action.type != BA_MELEE)
 				_unit->setUnitStatus(STATUS_STANDING);
 
-			_parent->popState();
+			_parent->popBattleState();
 		}
 	}
 	else // projectile VALID in motion -> ! impact !

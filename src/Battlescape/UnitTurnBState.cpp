@@ -161,13 +161,13 @@ void UnitTurnBState::init()
 
 			default: // safety.
 				_unit->clearTurnDirection();
-				_parent->popState();
+				_parent->popBattleState();
 		}
 	}
 	else
 	{
 		_unit->clearTurnDirection();
-		_parent->popState();
+		_parent->popBattleState();
 	}
 }
 
@@ -253,7 +253,7 @@ void UnitTurnBState::think()
 	if (pop == true)
 	{
 		_unit->clearTurnDirection();
-		_parent->popState();
+		_parent->popBattleState();
 	}
 }
 

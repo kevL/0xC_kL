@@ -311,7 +311,7 @@ private:
 		/// Pushes a BattleState to the back of the list.
 		void statePushBack(BattleState* const battleState = nullptr);
 		/// Pops the current BattleState and handles any after-effects.
-		void popState();
+		void popBattleState();
 		/// Checks that there are no BattleStates pending for a specified actor.
 		bool noActionsPending(const BattleUnit* const unit) const;
 		/// Sets the BattleState->think() interval.

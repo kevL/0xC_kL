@@ -87,7 +87,7 @@ void UnitPanicBState::think()
 	{
 		_parent->setupSelector();
 	}
-	_parent->popState();
+	_parent->popBattleState();
 }
 
 /**
