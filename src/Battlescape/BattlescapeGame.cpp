@@ -558,7 +558,7 @@ void BattlescapeGame::popBattleState()
 		{
 			if (_battleStates.front() == nullptr) // end turn request
 			{
-				while (_battleStates.front() == nullptr && _battleStates.empty() == false)
+				while (_battleStates.empty() == false && _battleStates.front() == nullptr)
 					_battleStates.pop_front();
 
 				if (_battleStates.empty() == false)
