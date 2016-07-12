@@ -111,32 +111,28 @@ CraftPatrolState::CraftPatrolState(
 //	_txtPatrolling->setText(tr("STR_NOW_PATROLLING"));
 
 	_btnOk->setText(tr("STR_PATROL"));
-	_btnOk->onMouseClick((ActionHandler)& CraftPatrolState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftPatrolState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CraftPatrolState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftPatrolState::btnOkClick),
+							Options::keyCancel);
 
 	_btn5s->setText(tr("STR_5_SECONDS"));
-	_btn5s->onMouseClick((ActionHandler)& CraftPatrolState::btn5sClick);
+	_btn5s->onMouseClick(static_cast<ActionHandler>(&CraftPatrolState::btn5sClick));
 
 	_btnInfo->setText(tr("STR_EQUIP_CRAFT"));
-	_btnInfo->onMouseClick((ActionHandler)& CraftPatrolState::btnInfoClick);
+	_btnInfo->onMouseClick(static_cast<ActionHandler>(&CraftPatrolState::btnInfoClick));
 
 	_btnBase->setText(tr("STR_RETURN_TO_BASE"));
-	_btnBase->onMouseClick((ActionHandler)& CraftPatrolState::btnBaseClick);
+	_btnBase->onMouseClick(static_cast<ActionHandler>(&CraftPatrolState::btnBaseClick));
 
 	_btnCenter->setText(tr("STR_CENTER"));
-	_btnCenter->onMouseClick((ActionHandler)& CraftPatrolState::btnCenterClick);
+	_btnCenter->onMouseClick(static_cast<ActionHandler>(&CraftPatrolState::btnCenterClick));
 
 	_btnRedirect->setText(tr("STR_REDIRECT_CRAFT"));
-	_btnRedirect->onMouseClick((ActionHandler)& CraftPatrolState::btnRedirectClick);
-	_btnRedirect->onKeyboardPress(
-					(ActionHandler)& CraftPatrolState::btnRedirectClick,
-					Options::keyOk);
-	_btnRedirect->onKeyboardPress(
-					(ActionHandler)& CraftPatrolState::btnRedirectClick,
-					Options::keyOkKeypad);
-
+	_btnRedirect->onMouseClick(		static_cast<ActionHandler>(&CraftPatrolState::btnRedirectClick));
+	_btnRedirect->onKeyboardPress(	static_cast<ActionHandler>(&CraftPatrolState::btnRedirectClick),
+									Options::keyOk);
+	_btnRedirect->onKeyboardPress(	static_cast<ActionHandler>(&CraftPatrolState::btnRedirectClick),
+									Options::keyOkKeypad);
 
 	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("INTICON.PCK"));
 	const int craftSprite (_craft->getRules()->getSprite());

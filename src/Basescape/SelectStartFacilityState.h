@@ -54,7 +54,8 @@ private:
 		void populateBuildList() override;
 
 		/// Handler for clicking the Reset button.
-		void btnOkClick(Action* action) override;
+//		void btnOkClick(Action* action) override;
+		void btnResetClick(Action* action);
 		/// Handler for clicking the Facilities list.
 		void lstFacilitiesClick(Action* action) override;
 

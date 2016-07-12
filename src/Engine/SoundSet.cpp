@@ -41,7 +41,7 @@ SoundSet::SoundSet()
  */
 SoundSet::~SoundSet()
 {
-	for (std::map<int, Sound*>::const_iterator
+	for (std::map<unsigned, Sound*>::const_iterator
 			i = _sounds.begin();
 			i != _sounds.end();
 			++i)
@@ -71,14 +71,14 @@ void SoundSet::loadCat(
 	}
 
 	// Load each sound file
-	for (int
-			i = 0;
-			i < sndFile.getAmount();
+	for (unsigned
+			i = 0u;
+			i < sndFile.getQuantityObjects();
 			++i)
 	{
 		// Read WAV chunk
 		unsigned char* sound (reinterpret_cast<unsigned char*>(sndFile.load(i)));
-		unsigned int bytes (sndFile.getObjectSize(i));
+		unsigned bytes (sndFile.getObjectSize(i));
 
 		// If there's no WAV header (44 bytes), add it
 		// Assuming sounds are 8-bit 8000Hz (DOS version)
@@ -107,7 +107,8 @@ void SoundSet::loadCat(
 						j != bytes;
 						++j)
 				{
-					sound[j] *= 4; // scale to 8 bits
+//					sound[j] *= 4; // scale to 8 bits
+					sound[j] = static_cast<unsigned char>(sound[j] << 2u); // scale to 8 bits
 				}
 
 				if (bytes > 5u) // skip 5 garbage name bytes at beginning
@@ -116,13 +117,13 @@ void SoundSet::loadCat(
 				if (bytes > 0u) // omit trailing null byte
 					--bytes;
 
-				int headersize (bytes + 36u);
+				unsigned headersize (bytes + 36u);
 				std::memcpy(
 						header + 4,
 						&headersize,
 						sizeof(headersize));
 
-				int soundsize (bytes);
+				unsigned soundsize (bytes);
 				std::memcpy(
 						header + 40,
 						&soundsize,
@@ -140,10 +141,9 @@ void SoundSet::loadCat(
 							sound + 5u,
 							bytes);
 
-				const Uint32 step16 ((8000 << 16) / 11025);
+				const Uint32 step16 ((8000u << 16u) / 11025u);
 				Uint8* wet (newsound + 44u);
-				int newsize (0);
-
+				unsigned newsize (0u);
 				for (Uint32
 						offset16 = 0u;
 						(offset16 >> 16u) < bytes;
@@ -151,7 +151,7 @@ void SoundSet::loadCat(
 				{
 					*wet = sound[5u + (offset16 >> 16u)];
 				}
-				bytes = newsize + 44;
+				bytes = newsize + 44u;
 			}
 		}
 		else if (0x40 == sound[0x18]
@@ -174,10 +174,9 @@ void SoundSet::loadCat(
 					sound,
 					bytes);
 
-			const Uint32 step16 ((8000 << 16) / 11025);
+			const Uint32 step16 ((8000u << 16) / 11025u);
 			Uint8* wet (sound2 + 44u);
-			int newsize (0);
-
+			unsigned newsize (0u);
 			for (Uint32
 					offset16 = 0u;
 					(offset16 >> 16u) < bytes - 44u;
@@ -186,7 +185,7 @@ void SoundSet::loadCat(
 				*wet = sound[44u + (offset16 >> 16u)];
 			}
 
-			bytes = static_cast<unsigned>(newsize) + 44u;
+			bytes = newsize + 44u;
 
 			// Rewrite the number of samples in the WAV file
 			std::memcpy(
@@ -197,7 +196,7 @@ void SoundSet::loadCat(
 			// Ok, now replace the original with the converted:
 			delete[] sound;
 
-			sound = sound2;
+			sound = sound2; // okay!
 		}
 
 		Sound* const pSound (new Sound());
@@ -230,7 +229,7 @@ void SoundSet::loadCat(
  * @param id - ID in the set
  * @return, pointer to the Sound
  */
-Sound* SoundSet::getSound(size_t id)
+Sound* SoundSet::getSound(unsigned id)
 {
 	if (_sounds.find(id) != _sounds.end())
 		return _sounds[id];
@@ -238,13 +237,12 @@ Sound* SoundSet::getSound(size_t id)
 	return nullptr;
 }
 
-
 /**
  * Creates and returns a particular wave in the SoundSet.
  * @param id - ID in the set
  * @return, pointer to the Sound
  */
-Sound* SoundSet::addSound(size_t id)
+Sound* SoundSet::addSound(unsigned id)
 {
 	_sounds[id] = new Sound();
 

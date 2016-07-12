@@ -84,27 +84,23 @@ ProductionCompleteState::ProductionCompleteState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_btnOk->setText(tr(gotoBaseBtn == true ? "STR_OK" : "STR_MORE"));
-	_btnOk->onMouseClick((ActionHandler)& ProductionCompleteState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ProductionCompleteState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->setText(tr((gotoBaseBtn == true) ? "STR_OK" : "STR_MORE"));
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ProductionCompleteState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ProductionCompleteState::btnOkClick),
+							Options::keyCancel);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-	_btnOk5Secs->onMouseClick((ActionHandler)& ProductionCompleteState::btnOk5SecsClick);
-	_btnOk5Secs->onKeyboardPress(
-					(ActionHandler)& ProductionCompleteState::btnOk5SecsClick,
-					Options::keyGeoSpeed1);
+	_btnOk5Secs->onMouseClick(		static_cast<ActionHandler>(&ProductionCompleteState::btnOk5SecsClick));
+	_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&ProductionCompleteState::btnOk5SecsClick),
+									Options::keyGeoSpeed1);
 
 	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
 	_btnGotoBase->setVisible(gotoBaseBtn == true);
-	_btnGotoBase->onMouseClick((ActionHandler)& ProductionCompleteState::btnGotoBaseClick);
-	_btnGotoBase->onKeyboardPress(
-					(ActionHandler)& ProductionCompleteState::btnGotoBaseClick,
-					Options::keyOk);
-	_btnGotoBase->onKeyboardPress(
-					(ActionHandler)& ProductionCompleteState::btnGotoBaseClick,
-					Options::keyOkKeypad);
+	_btnGotoBase->onMouseClick(		static_cast<ActionHandler>(&ProductionCompleteState::btnGotoBaseClick));
+	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ProductionCompleteState::btnGotoBaseClick),
+									Options::keyOk);
+	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ProductionCompleteState::btnGotoBaseClick),
+									Options::keyOkKeypad);
 
 	std::wstring wst;
 	switch (endType)
@@ -124,10 +120,8 @@ ProductionCompleteState::ProductionCompleteState(
 		case PROGRESS_NOT_ENOUGH_MATERIALS:
 			wst = tr("STR_NOT_ENOUGH_SPECIAL_MATERIALS_TO_PRODUCE_ITEM_AT_BASE")
 					.arg(item).arg(base->getName());
-			break;
-
-		default:
-			assert(false);
+//			break;
+//		default: assert(false);
 	}
 	_txtMessage->setText(wst);
 	_txtMessage->setAlign(ALIGN_CENTER);

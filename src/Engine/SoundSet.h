@@ -37,7 +37,7 @@ class SoundSet
 {
 
 private:
-	std::map<int, Sound*> _sounds;
+	std::map<unsigned, Sound*> _sounds;
 
 	/// Gets the total sounds in the set.
 //	size_t getTotalSounds() const;
@@ -55,9 +55,9 @@ private:
 				bool wav = true);
 
 		/// Gets a specified entry in the SoundSet.
-		Sound* getSound(size_t id);
+		Sound* getSound(unsigned id);
 		/// Creates a new sound and returns a pointer to it.
-		Sound* addSound(size_t id);
+		Sound* addSound(unsigned id);
 
 		/// Loads a specific entry from a CAT file into the soundset.
 //		void loadCatByIndex(const std::string& file, int index);

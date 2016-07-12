@@ -123,7 +123,7 @@ private:
 		void initText(
 				Font* const big,
 				Font* const small,
-				const Language* const lang) override;
+				const Language* const lang) override final;
 
 		/// Sets the Text's string.
 		void setText(const std::wstring& text);
@@ -139,7 +139,7 @@ private:
 		void setInvert(bool invert = true);
 
 		/// Sets the Text's high-contrast setting.
-		void setHighContrast(bool contrast = true) override;
+		void setHighContrast(bool contrast = true) override final;
 		/// Gets if the Text is using high-contrast color.
 		bool getHighContrast() const;
 
@@ -153,11 +153,11 @@ private:
 		TextVAlign getVerticalAlign() const;
 
 		/// Sets the Text's color.
-		void setColor(Uint8 color) override;
+		void setColor(Uint8 color) override final;
 		/// Gets the Text's color.
 		Uint8 getColor() const;
 		/// Sets the Text's secondary color.
-		void setSecondaryColor(Uint8 color) override;
+		void setSecondaryColor(Uint8 color) override final;
 		/// Gets the Text's secondary color.
 		Uint8 getSecondaryColor() const;
 
@@ -175,7 +175,7 @@ private:
 		int getLineX(int line) const;
 
 		/// Draws the Text.
-		void draw() override;
+		void draw() override final;
 };
 
 }

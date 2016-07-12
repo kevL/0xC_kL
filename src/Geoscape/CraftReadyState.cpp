@@ -80,38 +80,33 @@ CraftReadyState::CraftReadyState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CraftReadyState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftReadyState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CraftReadyState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftReadyState::btnOkClick),
+							Options::keyCancel);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-	_btnOk5Secs->onMouseClick((ActionHandler)& CraftReadyState::btnOk5SecsClick);
+	_btnOk5Secs->onMouseClick(static_cast<ActionHandler>(&CraftReadyState::btnOk5SecsClick));
 
 	if (_geoState->is5Sec() == true)
 	{
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& CraftReadyState::btnOkClick,
-						Options::keyOk);
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& CraftReadyState::btnOkClick,
-						Options::keyOkKeypad);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftReadyState::btnOkClick),
+								Options::keyOk);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftReadyState::btnOkClick),
+								Options::keyOkKeypad);
 	}
 	else
 	{
-		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& CraftReadyState::btnOk5SecsClick,
-						Options::keyOk);
-		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& CraftReadyState::btnOk5SecsClick,
-						Options::keyOkKeypad);
+		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&CraftReadyState::btnOk5SecsClick),
+										Options::keyOk);
+		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&CraftReadyState::btnOk5SecsClick),
+										Options::keyOkKeypad);
 	}
 
 	_btnGoToBase->setText(tr("STR_GO_TO_BASE"));
-	_btnGoToBase->onMouseClick((ActionHandler)& CraftReadyState::btnGoToBaseClick);
+	_btnGoToBase->onMouseClick(static_cast<ActionHandler>(&CraftReadyState::btnGoToBaseClick));
 
 	_btnCraftInfo->setText(tr("STR_CRAFT_INFO"));
-	_btnCraftInfo->onMouseClick((ActionHandler)& CraftReadyState::btnCraftInfoClick);
+	_btnCraftInfo->onMouseClick(static_cast<ActionHandler>(&CraftReadyState::btnCraftInfoClick));
 
 	_txtMessage->setText(wst);
 	_txtMessage->setAlign(ALIGN_CENTER);

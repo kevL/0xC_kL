@@ -64,7 +64,7 @@ FpsCounter::FpsCounter(
 	_visible = Options::fpsCounter;
 
 	_timer = new Timer(1000u);
-	_timer->onTimer((SurfaceHandler)& FpsCounter::update);
+	_timer->onTimer(static_cast<SurfaceHandler>(&FpsCounter::update));
 	_timer->start();
 
 	_text = new NumberText(width, height, x,y);
@@ -133,7 +133,7 @@ void FpsCounter::think()
  */
 void FpsCounter::update()
 {
-	const Uint32 fps (static_cast<int>(std::floor(static_cast<double>(_frames * 1000 / _timer->getTimerElapsed()))));
+	const Uint32 fps (_frames * 1000u / _timer->getTimerElapsed());
 	_text->setValue(static_cast<unsigned>(fps));
 
 	_frames = 0u;

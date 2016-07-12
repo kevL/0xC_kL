@@ -72,19 +72,16 @@ ConfirmCydoniaState::ConfirmCydoniaState(Craft* const craft)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick((ActionHandler)& ConfirmCydoniaState::btnYesClick);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& ConfirmCydoniaState::btnYesClick,
-					Options::keyOk);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& ConfirmCydoniaState::btnYesClick,
-					Options::keyOkKeypad);
+	_btnYes->onMouseClick(		static_cast<ActionHandler>(&ConfirmCydoniaState::btnYesClick));
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmCydoniaState::btnYesClick),
+								Options::keyOk);
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmCydoniaState::btnYesClick),
+								Options::keyOkKeypad);
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick((ActionHandler)& ConfirmCydoniaState::btnNoClick);
-	_btnNo->onKeyboardPress(
-					(ActionHandler)& ConfirmCydoniaState::btnNoClick,
-					Options::keyCancel);
+	_btnNo->onMouseClick(	static_cast<ActionHandler>(&ConfirmCydoniaState::btnNoClick));
+	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&ConfirmCydoniaState::btnNoClick),
+							Options::keyCancel);
 
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setBig();

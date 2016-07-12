@@ -814,7 +814,7 @@ const std::string& Ufo::getUfoMissionType() const
  * Sets the intercept-port this Ufo is shooting at during a Dogfight.
  * @param target - interception-port-ID
  */
-void Ufo::setShootingAt(const size_t target)
+void Ufo::setShootingAt(size_t target)
 {
 	_shootingAt = target;
 }

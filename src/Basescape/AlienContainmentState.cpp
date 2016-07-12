@@ -127,11 +127,10 @@ AlienContainmentState::AlienContainmentState(
 			break;
 		}
 	}
-	_mini->onMouseClick(
-					(ActionHandler)& AlienContainmentState::miniClick,
-					SDL_BUTTON_LEFT);
-	_mini->onMouseOver((ActionHandler)& AlienContainmentState::miniMouseOver);
-	_mini->onMouseOut((ActionHandler)& AlienContainmentState::miniMouseOut);
+	_mini->onMouseClick(static_cast<ActionHandler>(&AlienContainmentState::miniClick),
+						SDL_BUTTON_LEFT);
+	_mini->onMouseOver(	static_cast<ActionHandler>(&AlienContainmentState::miniMouseOver));
+	_mini->onMouseOut(	static_cast<ActionHandler>(&AlienContainmentState::miniMouseOut));
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
@@ -150,19 +149,16 @@ AlienContainmentState::AlienContainmentState(
 			st = "STR_REMOVE_SELECTED";
 	}
 	_btnOk->setText(tr(st));
-	_btnOk->onMouseClick((ActionHandler)& AlienContainmentState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienContainmentState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienContainmentState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&AlienContainmentState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienContainmentState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienContainmentState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& AlienContainmentState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& AlienContainmentState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&AlienContainmentState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&AlienContainmentState::btnCancelClick),
+								Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_MANAGE_CONTAINMENT"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -178,18 +174,18 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->setBackground(_window);
 	_lstAliens->setSelectable();
 
-	_lstAliens->onLeftArrowPress(	(ActionHandler)& AlienContainmentState::lstLeftArrowPress);
-	_lstAliens->onLeftArrowRelease(	(ActionHandler)& AlienContainmentState::lstLeftArrowRelease);
+	_lstAliens->onLeftArrowPress(	static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowPress));
+	_lstAliens->onLeftArrowRelease(	static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowRelease));
 
-	_lstAliens->onRightArrowPress(	(ActionHandler)& AlienContainmentState::lstRightArrowPress);
-	_lstAliens->onRightArrowRelease((ActionHandler)& AlienContainmentState::lstRightArrowRelease);
+	_lstAliens->onRightArrowPress(	static_cast<ActionHandler>(&AlienContainmentState::lstRightArrowPress));
+	_lstAliens->onRightArrowRelease(static_cast<ActionHandler>(&AlienContainmentState::lstRightArrowRelease));
 
 
 	_timerLeft = new Timer(Timer::SCROLL_SLOW);
-	_timerLeft->onTimer((StateHandler)& AlienContainmentState::onLeft);
+	_timerLeft->onTimer(static_cast<StateHandler>(&AlienContainmentState::onLeft));
 
 	_timerRight = new Timer(Timer::SCROLL_SLOW);
-	_timerRight->onTimer((StateHandler)& AlienContainmentState::onRight);
+	_timerRight->onTimer(static_cast<StateHandler>(&AlienContainmentState::onRight));
 }
 
 /**
@@ -235,7 +231,7 @@ void AlienContainmentState::init()
 		_txtInResearch->setVisible(false);
 
 	int qtyAliens;
-	size_t row (0u);
+	size_t r (0u);
 
 	const std::vector<std::string>& allItems (_game->getRuleset()->getItemsList());
 	for (std::vector<std::string>::const_iterator
@@ -270,9 +266,9 @@ void AlienContainmentState::init()
 								rpQty.c_str());
 
 				if (_game->getSavedGame()->isResearched(itRule->getType()) == false)
-					_lstAliens->setRowColor(row, YELLOW);
+					_lstAliens->setRowColor(r, YELLOW);
 
-				++row;
+				++r;
 			}
 		}
 	}

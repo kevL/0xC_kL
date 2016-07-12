@@ -132,20 +132,17 @@ TransferItemsState::TransferItemsState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_TRANSFER"));
-	_btnOk->onMouseClick((ActionHandler)& TransferItemsState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& TransferItemsState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& TransferItemsState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&TransferItemsState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TransferItemsState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TransferItemsState::btnOkClick),
+							Options::keyOkKeypad);
 	_btnOk->setVisible(false);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& TransferItemsState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& TransferItemsState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&TransferItemsState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&TransferItemsState::btnCancelClick),
+								Options::keyCancel);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -170,21 +167,19 @@ TransferItemsState::TransferItemsState(
 	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
 	_lstItems->setArrow(172, ARROW_VERTICAL);
-
-	_lstItems->onLeftArrowPress(	(ActionHandler)& TransferItemsState::lstLeftArrowPress);
-	_lstItems->onLeftArrowRelease(	(ActionHandler)& TransferItemsState::lstLeftArrowRelease);
-
-	_lstItems->onRightArrowPress(	(ActionHandler)& TransferItemsState::lstRightArrowPress);
-	_lstItems->onRightArrowRelease(	(ActionHandler)& TransferItemsState::lstRightArrowRelease);
+	_lstItems->onLeftArrowPress(	static_cast<ActionHandler>(&TransferItemsState::lstLeftArrowPress));
+	_lstItems->onLeftArrowRelease(	static_cast<ActionHandler>(&TransferItemsState::lstLeftArrowRelease));
+	_lstItems->onRightArrowPress(	static_cast<ActionHandler>(&TransferItemsState::lstRightArrowPress));
+	_lstItems->onRightArrowRelease(	static_cast<ActionHandler>(&TransferItemsState::lstRightArrowRelease));
 
 	_distance = getDistance();
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& TransferItemsState::onIncrease);
+	_timerInc->onTimer(static_cast<StateHandler>(&TransferItemsState::onIncrease));
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& TransferItemsState::onDecrease);
+	_timerDec->onTimer(static_cast<StateHandler>(&TransferItemsState::onDecrease));
 }
 
 /**
@@ -431,7 +426,7 @@ void TransferItemsState::init()
 			}
 
 			Uint8 color;
-			if (itRule->getBattleType() == BT_AMMO
+			if (    itRule->getBattleType() == BT_AMMO
 				|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
 				color = _colorAmmo;
@@ -908,8 +903,7 @@ void TransferItemsState::updateListrow() // private.
 				color = YELLOW;
 			}
 			else if (itRule->getBattleType() == BT_AMMO
-				|| (itRule->getBattleType() == BT_NONE
-					&& itRule->getFullClip() != 0))
+				||  (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
 				color = _colorAmmo;
 			}

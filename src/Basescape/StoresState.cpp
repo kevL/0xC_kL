@@ -90,19 +90,16 @@ StoresState::StoresState(Base* const base)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& StoresState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& StoresState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&StoresState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StoresState::btnOkClick),
+							Options::keyCancel);
 
 	_btnTransfers->setText(tr("STR_TRANSIT_LC"));
-	_btnTransfers->onMouseClick((ActionHandler)& StoresState::btnIncTransClick);
-	_btnTransfers->onKeyboardPress(
-					(ActionHandler)& StoresState::btnIncTransClick,
-					Options::keyOk);
-	_btnTransfers->onKeyboardPress(
-					(ActionHandler)& StoresState::btnIncTransClick,
-					Options::keyOkKeypad);
+	_btnTransfers->onMouseClick(	static_cast<ActionHandler>(&StoresState::btnIncTransClick));
+	_btnTransfers->onKeyboardPress(	static_cast<ActionHandler>(&StoresState::btnIncTransClick),
+									Options::keyOk);
+	_btnTransfers->onKeyboardPress(	static_cast<ActionHandler>(&StoresState::btnIncTransClick),
+									Options::keyOkKeypad);
 	_btnTransfers->setVisible(_base->getTransfers()->empty() == false);
 
 	_txtTitle->setText(tr("STR_STORES"));
@@ -132,8 +129,8 @@ StoresState::StoresState(Base* const base)
 
 	std::wstring item;
 
+	size_t r (0u);
 	int
-		row (0),
 		baseQty,
 		clip;
 	Uint8 color;
@@ -147,8 +144,7 @@ StoresState::StoresState(Base* const base)
 		//Log(LOG_INFO) << *i << " stores listOrder = " << rules->getItemRule(*i)->getListOrder(); // Prints listOrder to LOG.
 		if (rules->getItemRule(*i)->isLiveAlien() == false)
 		{
-			baseQty = _base->getStorageItems()->getItemQuantity(*i);
-			if (baseQty != 0)
+			if ((baseQty = _base->getStorageItems()->getItemQuantity(*i)) != 0)
 			{
 				color = BLUE;
 				itRule = rules->getItemRule(*i);
@@ -183,7 +179,7 @@ StoresState::StoresState(Base* const base)
 					item += (L" (" + Text::intWide(clip) + L")");
 				}
 
-				if (itRule->getBattleType() == BT_AMMO
+				if (    itRule->getBattleType() == BT_AMMO
 					|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 				{
 					color = PURPLE;
@@ -214,7 +210,7 @@ StoresState::StoresState(Base* const base)
 								item.c_str(),
 								Text::intWide(baseQty).c_str(),
 								woststr.str().c_str());
-				_lstStores->setRowColor(row++, color);
+				_lstStores->setRowColor(r++, color);
 
 //				std::wostringstream woststr1;
 //				woststr1 << baseQty;
@@ -252,7 +248,7 @@ StoresState::StoresState(Base* const base)
 		_txtTotal->setVisible(false); // wait for blink.
 
 		_blinkTimer = new Timer(325u);
-		_blinkTimer->onTimer((StateHandler)& StoresState::blink);
+		_blinkTimer->onTimer(static_cast<StateHandler>(&StoresState::blink));
 		_blinkTimer->start();
 	}
 	else

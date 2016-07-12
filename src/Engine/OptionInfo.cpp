@@ -132,16 +132,16 @@ void OptionInfo::load(const YAML::Node& node) const
 	switch (_type)
 	{
 		case OPTION_BOOL:
-			*(_ref.b) = node[_id].as<bool>(_def.b);
+			*_ref.b = node[_id].as<bool>(_def.b);
 			break;
 		case OPTION_INT:
-			*(_ref.i) = node[_id].as<int>(_def.i);
+			*_ref.i = node[_id].as<int>(_def.i);
 			break;
 		case OPTION_KEY:
-			*(_ref.k) = (SDLKey)node[_id].as<int>(_def.k);
+			*_ref.k = static_cast<SDLKey>(node[_id].as<int>(_def.k));
 			break;
 		case OPTION_STRING:
-			*(_ref.s) = node[_id].as<std::string>(_def.s);
+			*_ref.s = node[_id].as<std::string>(_def.s);
 	}
 }
 
@@ -169,20 +169,20 @@ void OptionInfo::load(const std::map<std::string, std::string>& optionsMap) cons
 			case OPTION_BOOL:
 				ststr << std::boolalpha << value;
 				ststr >> std::boolalpha >> b;
-				*(_ref.b) = b;
+				*_ref.b = b;
 				break;
 			case OPTION_INT:
 				ststr << std::dec << value;
 				ststr >> std::dec >> i;
-				*(_ref.i) = i;
+				*_ref.i = i;
 				break;
 			case OPTION_KEY:
 				ststr << std::dec << value;
 				ststr >> std::dec >> i;
-				*(_ref.k) = static_cast<SDLKey>(i);
+				*_ref.k = static_cast<SDLKey>(i);
 				break;
 			case OPTION_STRING:
-				*(_ref.s) = value;
+				*_ref.s = value;
 		}
 	}
 }
@@ -196,16 +196,16 @@ void OptionInfo::save(YAML::Node& node) const
 	switch (_type)
 	{
 		case OPTION_BOOL:
-			node[_id] = *(_ref.b);
+			node[_id] = *_ref.b;
 			break;
 		case OPTION_INT:
-			node[_id] = *(_ref.i);
+			node[_id] = *_ref.i;
 			break;
 		case OPTION_KEY:
-			node[_id] = (int)*(_ref.k);
+			node[_id] = static_cast<int>(*_ref.k);
 			break;
 		case OPTION_STRING:
-			node[_id] = *(_ref.s);
+			node[_id] = *_ref.s;
 	}
 }
 
@@ -217,16 +217,16 @@ void OptionInfo::reset() const
 	switch (_type)
 	{
 		case OPTION_BOOL:
-			*(_ref.b) = _def.b;
+			*_ref.b = _def.b;
 			break;
 		case OPTION_INT:
-			*(_ref.i) = _def.i;
+			*_ref.i = _def.i;
 			break;
 		case OPTION_KEY:
-			*(_ref.k) = _def.k;
+			*_ref.k = _def.k;
 			break;
 		case OPTION_STRING:
-			*(_ref.s) = _def.s;
+			*_ref.s = _def.s;
 	}
 }
 
@@ -267,9 +267,7 @@ std::string OptionInfo::category() const
 bool* OptionInfo::asBool() const
 {
 	if (_type != OPTION_BOOL)
-	{
 		throw Exception(_id + " is not a boolean!");
-	}
 
 	return _ref.b;
 }
@@ -282,9 +280,7 @@ bool* OptionInfo::asBool() const
 int* OptionInfo::asInt() const
 {
 	if (_type != OPTION_INT)
-	{
 		throw Exception(_id + " is not an integer!");
-	}
 
 	return _ref.i;
 }
@@ -297,9 +293,7 @@ int* OptionInfo::asInt() const
 SDLKey* OptionInfo::asKey() const
 {
 	if (_type != OPTION_KEY)
-	{
 		throw Exception(_id + " is not a key!");
-	}
 
 	return _ref.k;
 }
@@ -312,9 +306,7 @@ SDLKey* OptionInfo::asKey() const
 std::string* OptionInfo::asString() const
 {
 	if (_type != OPTION_STRING)
-	{
 		throw Exception(_id + " is not a string!");
-	}
 
 	return _ref.s;
 }

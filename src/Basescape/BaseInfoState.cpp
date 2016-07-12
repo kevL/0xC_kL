@@ -228,44 +228,38 @@ BaseInfoState::BaseInfoState(
 			break;
 		}
 	}
-	_mini->onMouseClick((ActionHandler)& BaseInfoState::miniClick);
-	_mini->onKeyboardPress((ActionHandler)& BaseInfoState::handleKeyPress);
-	_mini->onMouseOver((ActionHandler)& BaseInfoState::miniMouseOver);
-	_mini->onMouseOut((ActionHandler)& BaseInfoState::miniMouseOut);
+	_mini->onMouseClick(	static_cast<ActionHandler>(&BaseInfoState::miniMouseClick));
+	_mini->onMouseOver(		static_cast<ActionHandler>(&BaseInfoState::miniMouseOver));
+	_mini->onMouseOut(		static_cast<ActionHandler>(&BaseInfoState::miniMouseOut));
+	_mini->onKeyboardPress(	static_cast<ActionHandler>(&BaseInfoState::miniKeyPress));
 
 	_edtBase->setBig();
-	_edtBase->onTextChange((ActionHandler)& BaseInfoState::edtLabelChange);
+	_edtBase->onTextChange(static_cast<ActionHandler>(&BaseInfoState::edtLabelChange));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& BaseInfoState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseInfoState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseInfoState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseInfoState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BaseInfoState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseInfoState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseInfoState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseInfoState::btnOkClick),
+							Options::keyOkKeypad);
 
 //	_btnTransfers->setText(tr("STR_TRANSFERS"));
 	_btnTransfers->setText(tr("STR_STATISTICS"));
-	_btnTransfers->onMouseClick((ActionHandler)& BaseInfoState::btnTransfersClick);
-	_btnTransfers->onKeyboardPress(
-					(ActionHandler)& BaseInfoState::btnOkClick,
-					SDLK_t);
+	_btnTransfers->onMouseClick(	static_cast<ActionHandler>(&BaseInfoState::btnTransfersClick));
+	_btnTransfers->onKeyboardPress(	static_cast<ActionHandler>(&BaseInfoState::btnTransfersClick),
+									SDLK_t);
 
 	_btnStores->setText(tr("STR_STORES_UC"));
-	_btnStores->onMouseClick((ActionHandler)& BaseInfoState::btnStoresClick);
-	_btnStores->onKeyboardPress(
-					(ActionHandler)& BaseInfoState::btnStoresClick,
-					SDLK_s);
+	_btnStores->onMouseClick(	static_cast<ActionHandler>(&BaseInfoState::btnStoresClick));
+	_btnStores->onKeyboardPress(static_cast<ActionHandler>(&BaseInfoState::btnStoresClick),
+								SDLK_s);
 
 	_btnMonthlyCosts->setText(tr("STR_MONTHLY_COSTS"));
-	_btnMonthlyCosts->onMouseClick((ActionHandler)& BaseInfoState::btnMonthlyCostsClick);
-	_btnMonthlyCosts->onKeyboardPress(
-					(ActionHandler)& BaseInfoState::btnMonthlyCostsClick,
-					SDLK_c);
+	_btnMonthlyCosts->onMouseClick(		static_cast<ActionHandler>(&BaseInfoState::btnMonthlyCostsClick));
+	_btnMonthlyCosts->onKeyboardPress(	static_cast<ActionHandler>(&BaseInfoState::btnMonthlyCostsClick),
+										SDLK_c);
 
 //	_txtPersonnel->setText(tr("STR_PERSONNEL_AVAILABLE_PERSONNEL_TOTAL"));
 
@@ -349,8 +343,7 @@ void BaseInfoState::init()
 		var2;
 	bool vis;
 
-	var = _base->getTotalSoldiers();
-	if (var != 0)
+	if ((var = _base->getTotalSoldiers()) != 0)
 	{
 		var2 = _base->getAvailableSoldiers(true);
 		woststr.str(L"");
@@ -365,8 +358,7 @@ void BaseInfoState::init()
 	_numSoldiers->setVisible(vis);
 	_barSoldiers->setVisible(vis);
 
-	var = _base->getTotalScientists();
-	if (var != 0)
+	if ((var = _base->getTotalScientists()) != 0)
 	{
 		var2 = _base->getScientists();
 		woststr.str(L"");
@@ -381,8 +373,7 @@ void BaseInfoState::init()
 	_numScientists->setVisible(vis);
 	_barScientists->setVisible(vis);
 
-	var = _base->getTotalEngineers();
-	if (var != 0)
+	if ((var = _base->getTotalEngineers()) != 0)
 	{
 		var2 = _base->getEngineers();
 		woststr.str(L"");
@@ -398,8 +389,7 @@ void BaseInfoState::init()
 	_barEngineers->setVisible(vis);
 
 
-	var = _base->getTotalStores();
-	if (var != 0)
+	if ((var = _base->getTotalStores()) != 0)
 	{
 		var2 = static_cast<int>(std::floor(_base->getUsedStores() + 0.05));
 		woststr.str(L"");
@@ -414,8 +404,7 @@ void BaseInfoState::init()
 	_numStores->setVisible(vis);
 	_barStores->setVisible(vis);
 
-	var = _base->getTotalQuarters();
-	if (var != 0)
+	if ((var = _base->getTotalQuarters()) != 0)
 	{
 		var2 = _base->getUsedQuarters();
 		woststr.str(L"");
@@ -430,8 +419,7 @@ void BaseInfoState::init()
 	_numQuarters->setVisible(vis);
 	_barQuarters->setVisible(vis);
 
-	var = _base->getTotalLaboratories();
-	if (var != 0)
+	if ((var = _base->getTotalLaboratories()) != 0)
 	{
 		var2 = _base->getUsedLaboratories();
 		woststr.str(L"");
@@ -446,8 +434,7 @@ void BaseInfoState::init()
 	_numLaboratories->setVisible(vis);
 	_barLaboratories->setVisible(vis);
 
-	var = _base->getTotalWorkshops();
-	if (var != 0)
+	if ((var = _base->getTotalWorkshops()) != 0)
 	{
 		var2 = _base->getUsedWorkshops();
 		woststr.str(L"");
@@ -462,8 +449,7 @@ void BaseInfoState::init()
 	_numWorkshops->setVisible(vis);
 	_barWorkshops->setVisible(vis);
 
-	var = _base->getTotalHangars();
-	if (var != 0)
+	if ((var = _base->getTotalHangars()) != 0)
 	{
 		var2 = _base->getUsedHangars();
 		woststr.str(L"");
@@ -478,8 +464,7 @@ void BaseInfoState::init()
 	_numHangars->setVisible(vis);
 	_barHangars->setVisible(vis);
 
-	var = _base->getTotalContainment();
-	if (var != 0)
+	if ((var = _base->getTotalContainment()) != 0)
 	{
 		var2 = _base->getUsedContainment();
 		woststr.str(L"");
@@ -494,8 +479,7 @@ void BaseInfoState::init()
 	_numContainment->setVisible(vis);
 	_barContainment->setVisible(vis);
 
-	var = _base->getDefenseTotal();
-	if (var != 0)
+	if ((var = _base->getDefenseTotal()) != 0)
 	{
 		woststr.str(L"");
 		woststr << var;
@@ -509,8 +493,7 @@ void BaseInfoState::init()
 	_numDefense->setVisible(vis);
 	_barDefense->setVisible(vis);
 
-	var = _base->getShortRangeTotal();
-	if (var != 0)
+	if ((var = _base->getShortRangeTotal()) != 0)
 	{
 		woststr.str(L"");
 		woststr << var;
@@ -524,8 +507,7 @@ void BaseInfoState::init()
 	_numShortRange->setVisible(vis);
 	_barShortRange->setVisible(vis);
 
-	var = _base->getLongRangeTotal();
-	if (var != 0)
+	if ((var = _base->getLongRangeTotal()) != 0)
 	{
 		woststr.str(L"");
 		woststr << var;
@@ -546,8 +528,7 @@ void BaseInfoState::init()
 
 	if (_psiResearched == true)
 	{
-		var = _base->getTotalPsiLabs();
-		if (var != 0)
+		if ((var = _base->getTotalPsiLabs()) != 0)
 		{
 			var2 = _base->getUsedPsiLabs();
 			woststr.str(L"");
@@ -571,30 +552,6 @@ void BaseInfoState::init()
 void BaseInfoState::edtLabelChange(Action*)
 {
 	_base->setName(_edtBase->getText());
-}
-
-/**
- * Selects a different Base to display.
- * @param action - pointer to an Action
- */
-void BaseInfoState::handleKeyPress(Action* action)
-{
-	if (action->getDetails()->type == SDL_KEYDOWN)
-	{
-		const size_t baseId (_state->getKeyedBaseId(action->getDetails()->key.keysym.sym));
-		if (baseId != Base::MAX_BASES)
-		{
-			_txtHoverBase->setText(L"");
-			_txtHoverRegion->setText(L"");
-
-			_mini->setSelectedBase(baseId);
-			_base = _baseList->at(baseId);
-			_state->setBase(_base);
-
-			_state->resetStoresWarning();
-			init();
-		}
-	}
 }
 
 /**
@@ -638,7 +595,31 @@ void BaseInfoState::btnMonthlyCostsClick(Action*)
  * Selects a different Base to display.
  * @param action - pointer to an Action
  */
-void BaseInfoState::miniClick(Action*)
+void BaseInfoState::miniKeyPress(Action* action)
+{
+	if (action->getDetails()->type == SDL_KEYDOWN)
+	{
+		const size_t baseId (_state->getKeyedBaseId(action->getDetails()->key.keysym.sym));
+		if (baseId != Base::MAX_BASES)
+		{
+			_txtHoverBase->setText(L"");
+			_txtHoverRegion->setText(L"");
+
+			_mini->setSelectedBase(baseId);
+			_base = _baseList->at(baseId);
+			_state->setBase(_base);
+
+			_state->resetStoresWarning();
+			init();
+		}
+	}
+}
+
+/**
+ * Selects a different Base to display.
+ * @param action - pointer to an Action
+ */
+void BaseInfoState::miniMouseClick(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size())

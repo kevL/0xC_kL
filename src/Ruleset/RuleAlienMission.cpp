@@ -177,15 +177,6 @@ std::string RuleAlienMission::generateRace(size_t elapsed) const
 }
 
 /**
- * Gets the alien-score of this AlienMission rule.
- * @return, score points
- */
-int RuleAlienMission::getMissionScore() const
-{
-	return _score;
-}
-
-/**
  * Gets the chance of this mission being generated based on the date.
  * @param elapsed - the months that have passed
  * @return, the weight
@@ -208,16 +199,6 @@ int RuleAlienMission::getWeight(size_t elapsed) const
 		return weight;
 	}
 	return 1;
-}
-
-/**
- * Gets the modified-chance that shooting down a UFO on this type of mission
- * causes a retaliation-mission to generate.
- * @return, retaliation coefficient
- */
-int RuleAlienMission::getRetaliation() const
-{
-	return _retalCoef;
 }
 
 }

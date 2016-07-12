@@ -94,7 +94,7 @@ void RuleBaseFacility::load(
 	_hyper				= node["hyper"]			.as<bool>(_hyper);
 	_mind				= node["mind"]			.as<bool>(_mind);
 	_grav				= node["grav"]			.as<bool>(_grav);
-	_size				= node["size"]			.as<int>(_size);
+	_size				= node["size"]			.as<size_t>(_size);
 	_buildCost			= node["buildCost"]		.as<int>(_buildCost);
 	_buildTime			= node["buildTime"]		.as<int>(_buildTime);
 	_monthlyCost		= node["monthlyCost"]	.as<int>(_monthlyCost);

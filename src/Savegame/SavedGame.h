@@ -257,10 +257,12 @@ private:
 		/// Gets this SavedGame's Ruleset.
 //		const Ruleset* getRules() const;
 
+		/// Sets the SavedGame's difficulty.
+		void setDifficulty(DifficultyLevel diff);
 		/// Gets the SavedGame's difficulty.
 		DifficultyLevel getDifficulty() const;
-		/// Sets the SavedGame's difficulty.
-		void setDifficulty(DifficultyLevel difficulty);
+		/// Gets the SavedGame's difficulty as an integer.
+		int getDifficultyInt() const;
 
 		/// Gets the SavedGame's ending-type.
 		EndType getEnding() const;

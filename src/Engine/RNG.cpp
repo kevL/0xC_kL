@@ -130,7 +130,7 @@ int generate(
 	if (valMin > valMax)
 		std::swap(valMin, valMax);
 
-	return static_cast<int>(next_x() % (valMax - valMin + 1)) + valMin;
+	return static_cast<int>(next_x() % static_cast<uint64_t>(valMax - valMin + 1)) + valMin;
 }
 
 /**
@@ -194,7 +194,7 @@ int seedless(
 	if (valMin > valMax)
 		std::swap(valMin, valMax);
 
-	return (static_cast<int>(next_y() % (valMax - valMin + 1)) + valMin);
+	return (static_cast<int>(next_y() % static_cast<uint64_t>(valMax - valMin + 1)) + valMin);
 }
 
 /*

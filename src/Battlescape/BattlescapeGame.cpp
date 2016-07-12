@@ -795,7 +795,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 
 		const int soundId (unit->getAggroSound());
 		if (soundId != -1)
-			getResourcePack()->getSound("BATTLE.CAT", soundId)
+			getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 								->play(-1, getMap()->getSoundAngle(unit->getPosition()));
 	}
 
@@ -886,7 +886,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
 					{
 						const BattleUnit* const psiVictim (_battleSave->getTile(action.posTarget)->getTileUnit());
 						Language* const lang (_parentState->getGame()->getLanguage());
-						std::wstring wst;
 						switch (action.type)
 						{
 							default:
@@ -1200,7 +1199,7 @@ void BattlescapeGame::liquidateUnit() // private.
 	}
 
 	if (soundId != -1)
-		getResourcePack()->getSound("BATTLE.CAT", soundId)
+		getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 							->play(-1, getMap()->getSoundAngle(_tacAction.actor->getPosition()));
 
 	ammo->spendBullet(
@@ -1900,7 +1899,7 @@ void BattlescapeGame::diaryAttacker( // private.
 		const BattleUnit* const attacker,
 		const RuleItem* itRule)
 {
-	_killStatMission = _battleSave->getSavedGame()->getMissionStatistics()->size();
+	_killStatMission = static_cast<int>(_battleSave->getSavedGame()->getMissionStatistics()->size());
 	_killStatTurn = _battleSave->getTurn() * 3 + static_cast<int>(_battleSave->getSide());
 
 	if (itRule != nullptr)
@@ -2684,7 +2683,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 								{
 										const int soundId (_tacAction.weapon->getRules()->getFireHitSound());
 										if (soundId != -1)
-											getResourcePack()->getSound("BATTLE.CAT", soundId)
+											getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 																->play(-1, getMap()->getSoundAngle(pos));
 
 										_parentState->getGame()->pushState(new UnitInfoState(

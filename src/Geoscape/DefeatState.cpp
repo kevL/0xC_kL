@@ -82,8 +82,8 @@ DefeatState::DefeatState()
 
 		screen->blit(_bg[i]);
 		_bg[i]->setVisible(false);
-		_bg[i]->onMousePress((ActionHandler)& DefeatState::screenPress);
-		_bg[i]->onKeyboardPress((ActionHandler)& DefeatState::screenPress);
+		_bg[i]->onMousePress(	static_cast<ActionHandler>(&DefeatState::screenPress));
+		_bg[i]->onKeyboardPress(static_cast<ActionHandler>(&DefeatState::screenPress));
 
 		std::ostringstream oststr;
 		oststr << "STR_GAME_OVER_" << static_cast<int>(i + 1u);
@@ -97,7 +97,7 @@ DefeatState::DefeatState()
 	centerAllSurfaces();
 
 
-//	_timer->onTimer((StateHandler)& DefeatState::screenTimer);
+//	_timer->onTimer(static_cast<StateHandler>(&DefeatState::screenTimer));
 //	_timer->start();
 
 	screenPress(nullptr);

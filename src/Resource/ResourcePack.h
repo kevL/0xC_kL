@@ -81,7 +81,7 @@ private:
 
 
 		public:
-			static constexpr size_t // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE, etc.
+			static constexpr unsigned // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE, etc.
 				BUTTON_PRESS		=   0u,
 				WINDOW_POPUP[3u]	=  {1u,2u,3u},
 
@@ -159,10 +159,10 @@ private:
 			/// Gets a particular sound.
 			Sound* getSound(
 					const std::string& soundSet,
-					size_t soundId) const;
+					unsigned soundId) const;
 			/// Plays a sound effect in stereo.
 			void playSoundFx(
-					const int sound,
+					const unsigned soundId,
 					const bool randAngle = false) const;
 
 			/// Gets a particular palette by PaletteType.

@@ -750,20 +750,23 @@ void AlienMission::createAlienBase( // private.
 		std::vector<MissionArea> areas (rules.getRegion(_regionType)->getMissionZones().at(zoneId).areas);
 		MissionArea area (areas.at(RNG::pick(areas.size())));
 
+
+		// Question: What does Ruleset getDeployment() return when passed an empty string.
+		// What do any of the Ruleset getters return when passed an empty string.
+		// Because the excessive "modability" is verging on fucko'd.
+		//
+		// TODO: REVERT. Or smooth in the practical usefulness of getTerrorType().
+		// (atm I'm dealing with 15000 warnings that the pop-code generates.)
 		const RuleAlienDeployment* ruleDeploy;
 		if (rules.getDeployment(_missionRule.getTerrorType()) != nullptr)
-		{
 			ruleDeploy = rules.getDeployment(_missionRule.getTerrorType());
-		}
 		else if (rules.getGlobe()->getTextureRule(area.texture) != nullptr
-			&& rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployments().empty() == false)
+			&&   rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployments().empty() == false)
 		{
 			ruleDeploy = rules.getDeployment(rules.getGlobe()->getTextureRule(area.texture)->getTextureDeployment());
 		}
 		else
-		{
 			ruleDeploy = rules.getDeployment("STR_ALIEN_BASE_ASSAULT");
-		}
 
 		if (ruleDeploy == nullptr)
 		{

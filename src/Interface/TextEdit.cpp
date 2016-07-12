@@ -60,7 +60,7 @@ TextEdit::TextEdit(
 	_text = new Text(width, height);
 
 	_timer = new Timer(166u);
-	_timer->onTimer((SurfaceHandler)& TextEdit::blink);
+	_timer->onTimer(static_cast<SurfaceHandler>(&TextEdit::blink));
 
 	_caret = new Text(5,16);
 	_caret->setText(L"|");
@@ -96,7 +96,7 @@ void TextEdit::handle(Action* action, State* state)
 			|| action->getAbsoluteMouseY() <  getY()
 			|| action->getAbsoluteMouseY() >= getY() + getHeight()))
 	{
-		setFocus(false, true);
+		setFocusEdit(false, true);
 	}
 }
 
@@ -105,7 +105,7 @@ void TextEdit::handle(Action* action, State* state)
  * @param focus		- true if focused
  * @param pokeModal	- true to lock input to this control
  */
-void TextEdit::setFocus(
+void TextEdit::setFocusEdit(
 		bool focus,
 		bool pokeModal)
 {
@@ -453,13 +453,13 @@ void TextEdit::mousePress(Action* action, State* state)
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		if (_isFocused == false)
-			setFocus(true, true);
+			setFocusEdit(true, true);
 		else
 		{
 			const double
 				mX (action->getRelativeMouseX()),
 				scale (action->getScaleX());
-			double pX (static_cast<double>(_text->getLineX(0) * scale));
+			double pX (_text->getLineX(0) * scale);
 			if (mX > pX)
 			{
 				size_t caret (0u);
@@ -547,7 +547,7 @@ void TextEdit::keyboardPress(Action* action, State* state)
 			case SDLK_RETURN:
 			case SDLK_KP_ENTER:
 				if (_edit.empty() == false)
-					setFocus(false, true);
+					setFocusEdit(false, true);
 				break;
 
 			default:

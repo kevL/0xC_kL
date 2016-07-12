@@ -90,19 +90,15 @@ FundingState::FundingState()
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"), dX);
 
 	_btnOk->setText(tr("STR_CANCEL"));
-	_btnOk->onMouseClick((ActionHandler)& FundingState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& FundingState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& FundingState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& FundingState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& FundingState::btnOkClick,
-					Options::keyGeoFunding);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&FundingState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&FundingState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&FundingState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&FundingState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&FundingState::btnOkClick),
+							Options::keyGeoFunding);
 
 	_txtTitle->setText(tr("STR_INTERNATIONAL_RELATIONS"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -143,12 +139,12 @@ FundingState::FundingState()
 
 	static const int REGIONS (15);
 
-	int row (0);
+	size_t r (0u);
 	std::string regionType;
 	for (int
 			i = 0;
 			i != REGIONS;
-			++i, ++row)
+			++i, ++r)
 	{
 		switch (i)
 		{
@@ -169,16 +165,16 @@ FundingState::FundingState()
 			case 14: regionType = "STR_INDIAN_OCEAN";
 		}
 		_lstCountries->addRow(1, tr(regionType + "_UC").c_str());
-		_lstCountries->setRowColor(row, BROWN, true);
+		_lstCountries->setRowColor(r, BROWN, true);
 
 		for (std::vector<Country*>::const_iterator
-				i = _game->getSavedGame()->getCountries()->begin();
-				i != _game->getSavedGame()->getCountries()->end();
-				++i)
+				j = _game->getSavedGame()->getCountries()->begin();
+				j != _game->getSavedGame()->getCountries()->end();
+				++j)
 		{
-			if ((*i)->getRules()->getCountryRegion() == regionType)
+			if ((*j)->getRules()->getCountryRegion() == regionType)
 			{
-				++row;
+				++r;
 				std::wostringstream
 					woststr1,
 					woststr2,
@@ -187,9 +183,9 @@ FundingState::FundingState()
 					woststr5;
 
 				const std::vector<int>
-					funds ((*i)->getFunding()),
-					actX ((*i)->getActivityXCom()),
-					actA ((*i)->getActivityAlien());
+					funds ((*j)->getFunding()),
+					actX  ((*j)->getActivityXCom()),
+					actA  ((*j)->getActivityAlien());
 
 				woststr1 << L'\x01' << Text::formatCurrency(funds.at(funds.size() - 1u) * 1000);
 
@@ -227,7 +223,7 @@ FundingState::FundingState()
 
 				_lstCountries->addRow(
 									6,
-									tr((*i)->getRules()->getType()).c_str(),
+									tr((*j)->getRules()->getType()).c_str(),
 									woststr1.str().c_str(),
 									woststr2.str().c_str(),
 									woststr3.str().c_str(),

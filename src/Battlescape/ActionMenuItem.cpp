@@ -181,12 +181,11 @@ void ActionMenuItem::draw()
  */
 void ActionMenuItem::mouseIn(Action* action, State* state)
 {
-	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor()) - _highlightModifier);
+	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor() - _highlightModifier)); // okay. c/G++ is neurotic.
 
 	draw();
 	InteractiveSurface::mouseIn(action, state);
 }
-
 
 /**
  * De-highlights the box when the cursor moves out of its area.
@@ -195,7 +194,7 @@ void ActionMenuItem::mouseIn(Action* action, State* state)
  */
 void ActionMenuItem::mouseOut(Action* action, State* state)
 {
-	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor()) + _highlightModifier);
+	_frame->setSecondaryColor(static_cast<Uint8>(_frame->getSecondaryColor() + _highlightModifier));
 
 	draw();
 	InteractiveSurface::mouseOut(action, state);

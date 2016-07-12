@@ -79,22 +79,19 @@ TerrorDetectedState::TerrorDetectedState(
 	_window->setBackground(_game->getResourcePack()->getSurface(_terrorSite->getTerrorDeployment()->getAlertBackground()));
 
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
-	_btnIntercept->onMouseClick((ActionHandler)& TerrorDetectedState::btnInterceptClick);
+	_btnIntercept->onMouseClick(static_cast<ActionHandler>(&TerrorDetectedState::btnInterceptClick));
 
 	_btnCenter->setText(tr("STR_CENTER_ON_SITE_TIME_5_SECONDS"));
-	_btnCenter->onMouseClick((ActionHandler)& TerrorDetectedState::btnCenterClick);
-	_btnCenter->onKeyboardPress(
-					(ActionHandler)& TerrorDetectedState::btnCenterClick,
-					Options::keyOk);
-	_btnCenter->onKeyboardPress(
-					(ActionHandler)& TerrorDetectedState::btnCenterClick,
-					Options::keyOkKeypad);
+	_btnCenter->onMouseClick(	static_cast<ActionHandler>(&TerrorDetectedState::btnCenterClick));
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&TerrorDetectedState::btnCenterClick),
+								Options::keyOk);
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&TerrorDetectedState::btnCenterClick),
+								Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& TerrorDetectedState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& TerrorDetectedState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&TerrorDetectedState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&TerrorDetectedState::btnCancelClick),
+								Options::keyCancel);
 
 	_txtTitle->setText(tr(_terrorSite->getTerrorDeployment()->getAlertMessage()));
 	_txtTitle->setBig();

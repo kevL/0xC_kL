@@ -431,7 +431,7 @@ void operator()()
 				const soundInFile* const sf ((*sounds) + soundTrigger);
 				Log(LOG_DEBUG) << "playing: " << sf->catFile << ":" << sf->sound << " for index " << soundTrigger;
 
-				if ((pSound = rp->getSound(sf->catFile, sf->sound)) != nullptr)
+				if ((pSound = rp->getSound(sf->catFile, static_cast<unsigned>(sf->sound))) != nullptr)
 				{
 					pSound->play(-1); // kL
 //					int channel = trackPosition %4; // use at most four channels to play sound effects
@@ -469,19 +469,19 @@ void IntroState::init()
 
 	Options::keepAspectRatio = _wasLetterBoxed;
 
-	const int videoFilesQty (_introFiles.size());
-	if (videoFilesQty != 0)
+	const size_t videoFilesQty (_introFiles.size());
+	if (videoFilesQty != 0u)
 	{
 		const int
-			dx ((Options::baseXResolution - Screen::ORIGINAL_WIDTH)  / 2),
-			dy ((Options::baseYResolution - Screen::ORIGINAL_HEIGHT) / 2);
+			dx ((Options::baseXResolution - Screen::ORIGINAL_WIDTH)  >> 1u),
+			dy ((Options::baseYResolution - Screen::ORIGINAL_HEIGHT) >> 1u);
 
-		if (videoFilesQty == 1 // Original introduction video.
+		if (videoFilesQty == 1u // Original introduction video.
 			&& (CrossPlatform::fileExists(_introSoundFileDOS) == true
 				|| CrossPlatform::fileExists(_introSoundFileWin) == true))
 		{
 			//Log(LOG_INFO) << "ORIGINAL INTRO";
-			const std::string& videoFile (_introFiles[0]);
+			const std::string& videoFile (_introFiles[0u]);
 			if (CrossPlatform::fileExists(videoFile) == true)
 			{
 				_flcPlayer = new FlcPlayer();
@@ -550,8 +550,8 @@ void IntroState::init()
 	// I can't get a real refresh/update to work here or on forward to MainMenu,
 	// unfortunately. So this ensures merely that the cursor appears centered.
 	SDL_WarpMouse(
-			static_cast<Uint16>(_game->getScreen()->getWidth()  / 2),
-			static_cast<Uint16>(_game->getScreen()->getHeight() / 2));
+			static_cast<Uint16>(_game->getScreen()->getWidth()  >> 1u),
+			static_cast<Uint16>(_game->getScreen()->getHeight() >> 1u));
 
 	_game->setState(new MainMenuState());
 }
@@ -573,8 +573,8 @@ void IntroState::endVideo()
 	if (_game->getScreen()->getSurface()->getSurface()->format->BitsPerPixel == 8u)
 	{
 		//Log(LOG_INFO) << ". 8bpp TRUE";
-		const Uint8 FADE_STEPS (10u);
-		const Uint32 FADE_DELAY (45u);
+		static const Uint8  FADE_STEPS (10u);
+		static const Uint32 FADE_DELAY (45u);
 /*
 		const int fadeDur (static_cast<int>(FADE_DELAY) * static_cast<int>(FADE_STEPS));
 
@@ -629,9 +629,9 @@ void IntroState::endVideo()
 					j != 256u;
 					++j)
 			{
-				pal2[j].r = pal[j].r * i / FADE_STEPS;
-				pal2[j].g = pal[j].g * i / FADE_STEPS;
-				pal2[j].b = pal[j].b * i / FADE_STEPS;
+				pal2[j].r = static_cast<Uint8>(pal[j].r * i / FADE_STEPS);
+				pal2[j].g = static_cast<Uint8>(pal[j].g * i / FADE_STEPS);
+				pal2[j].b = static_cast<Uint8>(pal[j].b * i / FADE_STEPS);
 				pal2[j].unused = pal[j].unused;
 			}
 

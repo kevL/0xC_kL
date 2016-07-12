@@ -1175,7 +1175,7 @@ void BattleUnit::cacheWalkPhases()
 	switch (_dirVertical)
 	{
 		case Pathfinding::DIR_VERT_NONE:
-			_walkPhaseFull = 8 + (8 * (_dir & 1u)); // diagonal walking takes double the steps
+			_walkPhaseFull = 8 + (8 * (_dir & 1)); // diagonal walking takes double the steps
 			switch (_armor->getSize())
 			{
 				case 1:
@@ -1712,7 +1712,7 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 			soundId = _deathSound;
 
 		if (soundId != -1)
-			_battleGame->getResourcePack()->getSound("BATTLE.CAT", soundId)
+			_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 											->play(-1, _battleGame->getMap()->getSoundAngle(_pos));
 	}
 }
@@ -2610,7 +2610,7 @@ void BattleUnit::takeFire()
 					DT_SMOKE, // -> DT_STUN
 					true);
 
-		if (vulnr = _armor->getDamageModifier(DT_IN) > 0.f)
+		if ((vulnr = _armor->getDamageModifier(DT_IN)) > 0.f)
 			takeDamage(
 					Position(0,0,0),
 					static_cast<int>(RNG::generate(2.f,6.f) * vulnr),
@@ -4463,18 +4463,16 @@ void BattleUnit::contDeathSpin()
 				break;
 
 			case 1:
-			{
 				switch (_dir)
 				{
 					case 3:  _spinPhase = 4; break;	// only 1 CCW rotation to go ...
 					default: _spinPhase = 2;		// 1st CCW rotation of 2
 				}
-			}
 		}
 	}
 
 	int dir (_dir);
-	switch (_spinPhase & 1u)
+	switch (_spinPhase & 1)
 	{
 		case 0:
 			if (--dir == -1) dir = 7;

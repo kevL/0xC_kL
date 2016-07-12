@@ -66,7 +66,7 @@ MiniBaseView::MiniBaseView(
 	if (_mode == MBV_STANDARD)
 	{
 		_timer = new Timer(250u);
-		_timer->onTimer((SurfaceHandler)& MiniBaseView::blink);
+		_timer->onTimer(static_cast<SurfaceHandler>(&MiniBaseView::blink));
 		_timer->start();
 	}
 }
@@ -190,34 +190,34 @@ void MiniBaseView::draw()
 				else
 					color = RED_D;
 
-				rect.x = static_cast<Sint16>(static_cast<int>(i) * (MINI_SIZE + 2) + 2 + (*j)->getX() * 2);
-				rect.y = static_cast<Sint16>(2 + (*j)->getY() * 2);
+				rect.x = static_cast<Sint16>(static_cast<int>(i) * (MINI_SIZE + 2) + 2 + ((*j)->getX() << 1u));
+				rect.y = static_cast<Sint16>(2 + ((*j)->getY() << 1u));
 				rect.w =
-				rect.h = static_cast<Uint16>((*j)->getRules()->getSize() * 2);
-				drawRect(&rect, color + 3u);
+				rect.h = static_cast<Uint16>((*j)->getRules()->getSize() << 1u);
+				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 3)); // g++ Go figur.
 
 				++rect.x;
 				++rect.y;
 				--rect.w;
 				--rect.h;
-				drawRect(&rect, color + 5u);
+				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 5));
 
 				--rect.x;
 				--rect.y;
-				drawRect(&rect, color + 2u);
+				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 2));
 
 				++rect.x;
 				++rect.y;
 				--rect.w;
 				--rect.h;
-				drawRect(&rect, color + 3u);
+				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 3));
 
 				--rect.x;
 				--rect.y;
 				setPixelColor(
 							rect.x,
 							rect.y,
-							color + 1u);
+							static_cast<Uint8>(static_cast<int>(color) + 1));
 			}
 			unlock();
 
@@ -362,7 +362,7 @@ void MiniBaseView::blink()
 	{
 		base = _baseList->at(i);
 
-		x = i * (MINI_SIZE + 2);
+		x = static_cast<int>(i) * (MINI_SIZE + 2);
 
 		if (base->getScientists() != 0 // unused Scientists &/or Engineers &/or PsiLab space
 			|| base->getEngineers() != 0
@@ -382,7 +382,7 @@ void MiniBaseView::blink()
 
 		if (base->getCrafts()->empty() == false)
 		{
-			const RuleCraft* craftRule;
+			const RuleCraft* crRule;
 			y = 17;
 
 			for (std::vector<Craft*>::const_iterator
@@ -413,9 +413,9 @@ void MiniBaseView::blink()
 								color);
 				}
 
-				craftRule = (*j)->getRules();
-				if (craftRule->getWeaponCapacity() != 0 // craft needs Weapons mounted.
-					&& craftRule->getWeaponCapacity() != (*j)->getQtyWeapons())
+				crRule = (*j)->getRules();
+				if (crRule->getWeaponCapacity() != 0 // craft needs Weapons mounted.
+					&& crRule->getWeaponCapacity() != (*j)->getQtyWeapons())
 				{
 					if (_blink == true)
 						color = BLUE;

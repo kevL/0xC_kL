@@ -340,10 +340,11 @@ BattlescapeState::BattlescapeState()
 
 	add(_map);
 	_map->init();
-	_map->onMouseOver((ActionHandler)& BattlescapeState::mapOver);
-	_map->onMousePress((ActionHandler)& BattlescapeState::mapPress);
-	_map->onMouseClick((ActionHandler)& BattlescapeState::mapClick, 0u);
-	_map->onMouseIn((ActionHandler)& BattlescapeState::mapIn);
+	_map->onMouseOver(	static_cast<ActionHandler>(&BattlescapeState::mapOver));
+	_map->onMousePress(	static_cast<ActionHandler>(&BattlescapeState::mapPress));
+	_map->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::mapClick),
+						0u);
+	_map->onMouseIn(	static_cast<ActionHandler>(&BattlescapeState::mapIn));
 
 
 	add(_icons);
@@ -441,11 +442,11 @@ BattlescapeState::BattlescapeState()
 	add(_btnPsi);
 
 	_game->getResourcePack()->getSurfaceSet("SPICONS.DAT")->getFrame(0)->blit(_btnLaunch);
-	_btnLaunch->onMousePress((ActionHandler)& BattlescapeState::btnLaunchPress);
+	_btnLaunch->onMousePress(static_cast<ActionHandler>(&BattlescapeState::btnLaunchPress));
 	_btnLaunch->setVisible(false);
 
 	_game->getResourcePack()->getSurfaceSet("SPICONS.DAT")->getFrame(1)->blit(_btnPsi);
-	_btnPsi->onMouseClick((ActionHandler)& BattlescapeState::btnPsiClick);
+	_btnPsi->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnPsiClick));
 	_btnPsi->setVisible(false);
 
 	add(_srfBtnBorder);
@@ -470,7 +471,7 @@ BattlescapeState::BattlescapeState()
 	_txtDebug->setAlign(ALIGN_RIGHT);
 
 	_warning->setTextColor(static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color));
-	_warning->setColor(static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color2));
+	_warning->setColor(    static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color2));
 
 	if (_battleSave->getOperation().empty() == false)
 	{
@@ -480,16 +481,12 @@ BattlescapeState::BattlescapeState()
 		_txtOperationTitle->setBig();
 
 		const Sint16
-			text_width	(static_cast<Sint16>(_txtOperationTitle->getTextWidth()) + 14),
-			x_left		((static_cast<Sint16>(screenWidth) - text_width) >> 1u),
-			x_right		(x_left + text_width),
-			y_high		(static_cast<Sint16>(_srfTitle->getY()) + 1),
-			y_low		(static_cast<Sint16>(_srfTitle->getHeight()) - 2);
+			text_width	(static_cast<Sint16>(_txtOperationTitle->getTextWidth() + 14)),
+			x_left		(static_cast<Sint16>((screenWidth - text_width) >> 1u)),
+			x_right		(static_cast<Sint16>(x_left + text_width)),
+			y_high		(static_cast<Sint16>(_srfTitle->getY() + 1)),
+			y_low		(static_cast<Sint16>(_srfTitle->getHeight() - 2));
 
-//		_srfTitle->drawLine( // low line
-//						x_left,  y_low,
-//						x_right, y_low,
-//						2);
 		_srfTitle->drawLine( // left line
 						x_left, y_high,
 						x_left, y_low,
@@ -500,13 +497,13 @@ BattlescapeState::BattlescapeState()
 						WHITE); // TODO: Get color (Uint8) of OperationTitle [#0].
 
 		_srfTitle->drawLine( // left line shadow
-						x_left + 1, y_high + 1,
-						x_left + 1, y_low + 1,
-						14u);//ORANGE_D);
+						static_cast<Sint16>(x_left + 1), static_cast<Sint16>(y_high + 1),
+						static_cast<Sint16>(x_left + 1), static_cast<Sint16>(y_low  + 1),
+						BLACK);
 		_srfTitle->drawLine( // right line shadow
-						x_right + 1, y_high + 1,
-						x_right + 1, y_low + 1,
-						14u);//ORANGE_D);
+						static_cast<Sint16>(x_right + 1), static_cast<Sint16>(y_high + 1),
+						static_cast<Sint16>(x_right + 1), static_cast<Sint16>(y_low  + 1),
+						BLACK);
 	}
 	else
 		_txtOperationTitle->setVisible(false);
@@ -690,305 +687,237 @@ BattlescapeState::BattlescapeState()
 	_srfOverweight->drawRect(0,0,2,2, RED_D);
 	_srfOverweight->setVisible(false);
 
-	_icons->onMouseIn((ActionHandler)& BattlescapeState::mouseInIcons);
-	_icons->onMouseOut((ActionHandler)& BattlescapeState::mouseOutIcons);
+	_icons->onMouseIn(	static_cast<ActionHandler>(&BattlescapeState::mouseInIcons));
+	_icons->onMouseOut(	static_cast<ActionHandler>(&BattlescapeState::mouseOutIcons));
 
-	_btnUnitUp->onMousePress(
-					(ActionHandler)& BattlescapeState::btnUnitUpPress,
-					SDL_BUTTON_LEFT);
-	_btnUnitUp->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnUnitUpRelease,
-					SDL_BUTTON_LEFT);
+	_btnUnitUp->onMousePress(	static_cast<ActionHandler>(&BattlescapeState::btnUnitUpPress),
+								SDL_BUTTON_LEFT);
+	_btnUnitUp->onMouseRelease(	static_cast<ActionHandler>(&BattlescapeState::btnUnitUpRelease),
+								SDL_BUTTON_LEFT);
+//	_btnUnitUp->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnUnitUp->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnUnitUp->setTooltip("STR_UNIT_LEVEL_ABOVE");
-//	_btnUnitUp->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnUnitUp->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnUnitDown->onMousePress(
-					(ActionHandler)& BattlescapeState::btnUnitDownPress,
-					SDL_BUTTON_LEFT);
-	_btnUnitDown->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnUnitDownRelease,
-					SDL_BUTTON_LEFT);
+	_btnUnitDown->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnUnitDownPress),
+									SDL_BUTTON_LEFT);
+	_btnUnitDown->onMouseRelease(	static_cast<ActionHandler>(&BattlescapeState::btnUnitDownRelease),
+									SDL_BUTTON_LEFT);
+//	_btnUnitDown->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnUnitDown->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnUnitDown->setTooltip("STR_UNIT_LEVEL_BELOW");
-//	_btnUnitDown->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnUnitDown->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnMapUp->onMousePress(
-					(ActionHandler)& BattlescapeState::btnMapUpPress,
-					SDL_BUTTON_LEFT);
-	_btnMapUp->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnMapUpPress,
-					Options::keyBattleLevelUp);
-
-	_btnMapUp->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnMapUpRelease,
-					SDL_BUTTON_LEFT);
-	_btnMapUp->onKeyboardRelease(
-					(ActionHandler)& BattlescapeState::btnMapUpRelease,
-					Options::keyBattleLevelUp);
+	_btnMapUp->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnMapUpPress),
+									SDL_BUTTON_LEFT);
+	_btnMapUp->onKeyboardPress(		static_cast<ActionHandler>(&BattlescapeState::btnMapUpPress),
+									Options::keyBattleLevelUp);
+	_btnMapUp->onMouseRelease(		static_cast<ActionHandler>(&BattlescapeState::btnMapUpRelease),
+									SDL_BUTTON_LEFT);
+	_btnMapUp->onKeyboardRelease(	static_cast<ActionHandler>(&BattlescapeState::btnMapUpRelease),
+									Options::keyBattleLevelUp);
+//	_btnMapUp->onMouseIn(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnMapUp->onMouseOut(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnMapUp->setTooltip("STR_VIEW_LEVEL_ABOVE");
-//	_btnMapUp->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnMapUp->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnMapDown->onMousePress(
-					(ActionHandler)& BattlescapeState::btnMapDownPress,
-					SDL_BUTTON_LEFT);
-	_btnMapDown->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnMapDownPress,
-					Options::keyBattleLevelDown);
-
-	_btnMapDown->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnMapDownRelease,
-					SDL_BUTTON_LEFT);
-	_btnMapDown->onKeyboardRelease(
-					(ActionHandler)& BattlescapeState::btnMapDownRelease,
-					Options::keyBattleLevelDown);
+	_btnMapDown->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnMapDownPress),
+									SDL_BUTTON_LEFT);
+	_btnMapDown->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnMapDownPress),
+									Options::keyBattleLevelDown);
+	_btnMapDown->onMouseRelease(	static_cast<ActionHandler>(&BattlescapeState::btnMapDownRelease),
+									SDL_BUTTON_LEFT);
+	_btnMapDown->onKeyboardRelease(	static_cast<ActionHandler>(&BattlescapeState::btnMapDownRelease),
+									Options::keyBattleLevelDown);
+//	_btnMapDown->onMouseIn(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnMapDown->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnMapDown->setTooltip("STR_VIEW_LEVEL_BELOW");
-//	_btnMapDown->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnMapDown->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnMiniMap->onMouseClick((ActionHandler)& BattlescapeState::btnMinimapClick);
-	_btnMiniMap->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnMinimapClick,
-					Options::keyBattleMap);
+	_btnMiniMap->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnMinimapClick));
+	_btnMiniMap->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnMinimapClick),
+									Options::keyBattleMap);
+//	_btnMiniMap->onMouseIn(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnMiniMap->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnMiniMap->setTooltip("STR_MINIMAP");
-//	_btnMiniMap->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnMiniMap->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnKneel->onMouseClick((ActionHandler)& BattlescapeState::btnKneelClick);
-	_btnKneel->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnKneelClick,
-					Options::keyBattleKneel);
+	_btnKneel->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnKneelClick));
+	_btnKneel->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnKneelClick),
+								Options::keyBattleKneel);
+//	_btnKneel->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnKneel->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnKneel->setTooltip("STR_KNEEL");
-//	_btnKneel->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnKneel->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnInventory->onMouseClick((ActionHandler)& BattlescapeState::btnInventoryClick);
-	_btnInventory->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnInventoryClick,
-					Options::keyBattleInventory);
+	_btnInventory->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnInventoryClick));
+	_btnInventory->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnInventoryClick),
+									Options::keyBattleInventory);
+//	_btnInventory->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnInventory->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnInventory->setTooltip("STR_INVENTORY");
-//	_btnInventory->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnInventory->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnCenter->onMousePress(
-					(ActionHandler)& BattlescapeState::btnCenterPress,
-					SDL_BUTTON_LEFT);
-	_btnCenter->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnCenterPress,
-					Options::keyBattleCenterUnit);
-	_btnCenter->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnCenterPress,
-					SDLK_KP5);
-
-	_btnCenter->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnCenterRelease,
-					SDL_BUTTON_LEFT);
-	_btnCenter->onKeyboardRelease(
-					(ActionHandler)& BattlescapeState::btnCenterRelease,
-					Options::keyBattleCenterUnit);
-	_btnCenter->onKeyboardRelease(
-					(ActionHandler)& BattlescapeState::btnCenterRelease,
-					SDLK_KP5);
+	_btnCenter->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnCenterPress),
+									SDL_BUTTON_LEFT);
+	_btnCenter->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnCenterPress),
+									Options::keyBattleCenterUnit);
+	_btnCenter->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnCenterPress),
+									SDLK_KP5);
+	_btnCenter->onMouseRelease(		static_cast<ActionHandler>(&BattlescapeState::btnCenterRelease),
+									SDL_BUTTON_LEFT);
+	_btnCenter->onKeyboardRelease(	static_cast<ActionHandler>(&BattlescapeState::btnCenterRelease),
+									Options::keyBattleCenterUnit);
+	_btnCenter->onKeyboardRelease(	static_cast<ActionHandler>(&BattlescapeState::btnCenterRelease),
+									SDLK_KP5);
+//	_btnCenter->onMouseIn(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnCenter->onMouseOut(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnCenter->setTooltip("STR_CENTER_SELECTED_UNIT");
-//	_btnCenter->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnCenter->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnNextUnit->onMousePress(
-					(ActionHandler)& BattlescapeState::btnNextUnitPress,
-					SDL_BUTTON_LEFT);
-	_btnNextUnit->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnNextUnitPress,
-					Options::keyBattleNextUnit);
-
-	_btnNextUnit->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnNextUnitRelease,
-					SDL_BUTTON_LEFT);
-	_btnNextUnit->onKeyboardRelease(
-					(ActionHandler)& BattlescapeState::btnNextUnitRelease,
-					Options::keyBattleNextUnit);
-
-	_btnNextUnit->onMousePress(
-					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
-					SDL_BUTTON_RIGHT);
-	_btnNextUnit->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnPrevUnitPress,
-					Options::keyBattlePrevUnit);
-
-	_btnNextUnit->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnPrevUnitRelease,
-					SDL_BUTTON_RIGHT);
-	_btnNextUnit->onKeyboardRelease(
-					(ActionHandler)& BattlescapeState::btnPrevUnitRelease,
-					Options::keyBattlePrevUnit);
+	_btnNextUnit->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnNextUnitPress),
+									SDL_BUTTON_LEFT);
+	_btnNextUnit->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnNextUnitPress),
+									Options::keyBattleNextUnit);
+	_btnNextUnit->onMouseRelease(	static_cast<ActionHandler>(&BattlescapeState::btnNextUnitRelease),
+									SDL_BUTTON_LEFT);
+	_btnNextUnit->onKeyboardRelease(static_cast<ActionHandler>(&BattlescapeState::btnNextUnitRelease),
+									Options::keyBattleNextUnit);
+	_btnNextUnit->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnPrevUnitPress),
+									SDL_BUTTON_RIGHT);
+	_btnNextUnit->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnPrevUnitPress),
+									Options::keyBattlePrevUnit);
+	_btnNextUnit->onMouseRelease(	static_cast<ActionHandler>(&BattlescapeState::btnPrevUnitRelease),
+									SDL_BUTTON_RIGHT);
+	_btnNextUnit->onKeyboardRelease(static_cast<ActionHandler>(&BattlescapeState::btnPrevUnitRelease),
+									Options::keyBattlePrevUnit);
+//	_btnNextUnit->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnNextUnit->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnNextUnit->setTooltip("STR_NEXT_UNIT");
-//	_btnNextUnit->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnNextUnit->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnNextStop->onMousePress(
-					(ActionHandler)& BattlescapeState::btnNextStopPress,
-					SDL_BUTTON_LEFT);
-	_btnNextStop->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnNextStopPress,
-					Options::keyBattleDeselectUnit);
-
-	_btnNextStop->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnNextStopRelease,
-					SDL_BUTTON_LEFT);
-	_btnNextStop->onKeyboardRelease(
-					(ActionHandler)& BattlescapeState::btnNextStopRelease,
-					Options::keyBattleDeselectUnit);
-
-	_btnNextStop->onMousePress( // NOTE: There's no option for 'keyBattleDeselectPrevUnit'.
-					(ActionHandler)& BattlescapeState::btnPrevStopPress,
-					SDL_BUTTON_RIGHT);
-	_btnNextStop->onMouseRelease(
-					(ActionHandler)& BattlescapeState::btnPrevStopRelease,
-					SDL_BUTTON_RIGHT);
+	_btnNextStop->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnNextStopPress),
+									SDL_BUTTON_LEFT);
+	_btnNextStop->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnNextStopPress),
+									Options::keyBattleDeselectUnit);
+	_btnNextStop->onMouseRelease(	static_cast<ActionHandler>(&BattlescapeState::btnNextStopRelease),
+									SDL_BUTTON_LEFT);
+	_btnNextStop->onKeyboardRelease(static_cast<ActionHandler>(&BattlescapeState::btnNextStopRelease),
+									Options::keyBattleDeselectUnit);
+	_btnNextStop->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnPrevStopPress), // NOTE: There's no Option for 'keyBattleDeselectPrevUnit'.
+									SDL_BUTTON_RIGHT);
+	_btnNextStop->onMouseRelease(	static_cast<ActionHandler>(&BattlescapeState::btnPrevStopRelease),
+									SDL_BUTTON_RIGHT);
+//	_btnNextStop->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnNextStop->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnNextStop->setTooltip("STR_DESELECT_UNIT");
-//	_btnNextStop->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnNextStop->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnShowLayers->onMouseClick((ActionHandler)& BattlescapeState::btnShowLayersClick);
+	_btnShowLayers->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnShowLayersClick));
+//	_btnShowLayers->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnShowLayers->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnShowLayers->setTooltip("STR_MULTI_LEVEL_VIEW");
-//	_btnShowLayers->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnShowLayers->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnOptions->onMouseClick((ActionHandler)& BattlescapeState::btnBattleOptionsClick);
-	_btnOptions->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnBattleOptionsClick,
-					Options::keyBattleOptions); // = keyCancel. [Escape]
+	_btnOptions->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnBattleOptionsClick));
+	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnBattleOptionsClick),
+									Options::keyBattleOptions); // = keyCancel. [Escape]
+//	_btnOptions->onMouseIn(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnOptions->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnOptions->setTooltip("STR_OPTIONS");
-//	_btnOptions->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnOptions->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnEndTurn->onMouseClick((ActionHandler)& BattlescapeState::btnEndTurnClick);
-	_btnEndTurn->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnEndTurnClick,
-					Options::keyBattleEndTurn);
+	_btnEndTurn->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnEndTurnClick));
+	_btnEndTurn->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnEndTurnClick),
+									Options::keyBattleEndTurn);
+//	_btnEndTurn->onMouseIn(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnEndTurn->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnEndTurn->setTooltip("STR_END_TURN");
-//	_btnEndTurn->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnEndTurn->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnAbort->onMouseClick((ActionHandler)& BattlescapeState::btnAbortClick);
-	_btnAbort->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnAbortClick,
-					Options::keyBattleAbort);
+	_btnAbort->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnAbortClick));
+	_btnAbort->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnAbortClick),
+								Options::keyBattleAbort);
+//	_btnAbort->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnAbort->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnAbort->setTooltip("STR_ABORT_MISSION");
-//	_btnAbort->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnAbort->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnStats->onMouseClick((ActionHandler)& BattlescapeState::btnStatsClick);
-	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnStatsClick,
-					Options::keyBattleStats);
+	_btnStats->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnStatsClick));
+	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnStatsClick),
+								Options::keyBattleStats);
+//	_btnStats->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnStats->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnStats->setTooltip("STR_UNIT_STATS");
-//	_btnStats->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnStats->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-//	_btnLeftHandItem->onMouseClick((ActionHandler)& BattlescapeState::btnLeftHandItemClick);
-	_btnLeftHandItem->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnLeftHandLeftClick,
-					SDL_BUTTON_LEFT);
-	_btnLeftHandItem->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnLeftHandRightClick,
-					SDL_BUTTON_RIGHT);
-	_btnLeftHandItem->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnLeftHandLeftClick,
-					Options::keyBattleUseLeftHand);
+	_btnLeftHandItem->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnLeftHandLeftClick),
+										SDL_BUTTON_LEFT);
+	_btnLeftHandItem->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnLeftHandRightClick),
+										SDL_BUTTON_RIGHT);
+	_btnLeftHandItem->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnLeftHandLeftClick),
+										Options::keyBattleUseLeftHand);
+//	_btnLeftHandItem->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnLeftHandItem->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnLeftHandItem->setTooltip("STR_USE_LEFT_HAND");
-//	_btnLeftHandItem->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnLeftHandItem->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-//	_btnRightHandItem->onMouseClick((ActionHandler)& BattlescapeState::btnRightHandItemClick);
-	_btnRightHandItem->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnRightHandLeftClick,
-					SDL_BUTTON_LEFT);
-	_btnRightHandItem->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnRightHandRightClick,
-					SDL_BUTTON_RIGHT);
-	_btnRightHandItem->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnRightHandLeftClick,
-					Options::keyBattleUseRightHand);
+	_btnRightHandItem->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandLeftClick),
+										SDL_BUTTON_LEFT);
+	_btnRightHandItem->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandRightClick),
+										SDL_BUTTON_RIGHT);
+	_btnRightHandItem->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandLeftClick),
+										Options::keyBattleUseRightHand);
+//	_btnRightHandItem->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnRightHandItem->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnRightHandItem->setTooltip("STR_USE_RIGHT_HAND");
-//	_btnRightHandItem->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnRightHandItem->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-/*	_btnReserveNone->onMouseClick((ActionHandler)& BattlescapeState::btnReserveClick);
+/*	_btnReserveNone->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnReserveClick));
 	_btnReserveNone->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnReserveClick,
+					static_cast<ActionHandler>(&BattlescapeState::btnReserveClick),
 					Options::keyBattleReserveNone);
+	_btnReserveNone->onMouseIn(static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+	_btnReserveNone->onMouseOut(static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 	_btnReserveNone->setTooltip("STR_DONT_RESERVE_TIME_UNITS");
-	_btnReserveNone->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-	_btnReserveNone->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnReserveSnap->onMouseClick((ActionHandler)& BattlescapeState::btnReserveClick);
+	_btnReserveSnap->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnReserveClick));
 	_btnReserveSnap->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnReserveClick,
+					static_cast<ActionHandler>(&BattlescapeState::btnReserveClick),
 					Options::keyBattleReserveSnap);
+	_btnReserveSnap->onMouseIn(static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+	_btnReserveSnap->onMouseOut(static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 	_btnReserveSnap->setTooltip("STR_RESERVE_TIME_UNITS_FOR_SNAP_SHOT");
-	_btnReserveSnap->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-	_btnReserveSnap->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnReserveAimed->onMouseClick((ActionHandler)& BattlescapeState::btnReserveClick);
+	_btnReserveAimed->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnReserveClick));
 	_btnReserveAimed->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnReserveClick,
+					static_cast<ActionHandler>(&BattlescapeState::btnReserveClick),
 					Options::keyBattleReserveAimed);
+	_btnReserveAimed->onMouseIn(static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+	_btnReserveAimed->onMouseOut(static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 	_btnReserveAimed->setTooltip("STR_RESERVE_TIME_UNITS_FOR_AIMED_SHOT");
-	_btnReserveAimed->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-	_btnReserveAimed->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnReserveAuto->onMouseClick((ActionHandler)& BattlescapeState::btnReserveClick);
+	_btnReserveAuto->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnReserveClick));
 	_btnReserveAuto->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnReserveClick,
+					static_cast<ActionHandler>(&BattlescapeState::btnReserveClick),
 					Options::keyBattleReserveAuto);
+	_btnReserveAuto->onMouseIn(static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+	_btnReserveAuto->onMouseOut(static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 	_btnReserveAuto->setTooltip("STR_RESERVE_TIME_UNITS_FOR_AUTO_SHOT");
-	_btnReserveAuto->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-	_btnReserveAuto->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
-	_btnReserveKneel->onMouseClick((ActionHandler)& BattlescapeState::btnReserveKneelClick);
+	_btnReserveKneel->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnReserveKneelClick));
 	_btnReserveKneel->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnReserveKneelClick,
+					static_cast<ActionHandler>(&BattlescapeState::btnReserveKneelClick),
 					Options::keyBattleReserveKneel);
-	_btnReserveKneel->setTooltip("STR_RESERVE_TIME_UNITS_FOR_KNEEL");
-	_btnReserveKneel->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-	_btnReserveKneel->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
-	_btnReserveKneel->allowToggleInversion(); */
+	_btnReserveKneel->onMouseIn(static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+	_btnReserveKneel->onMouseOut(static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
+	_btnReserveKneel->allowToggleInversion();
+	_btnReserveKneel->setTooltip("STR_RESERVE_TIME_UNITS_FOR_KNEEL"); */
 
-	_btnLogo->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnZeroTuClick,
-					SDL_BUTTON_LEFT);
-	// NOTE: Can't use a specific SDLKey on this because it requires CTRL.
-	// InteractiveSurface handlers do not like that ....
-	_btnLogo->onKeyboardPress((ActionHandler)& BattlescapeState::keyZeroTuPress);
+	_btnLogo->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnZeroTuClick));
+	_btnLogo->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyZeroTuPress));		// NOTE: Can't use a specific SDLKey on this because it requires CTRL.
+	_btnLogo->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnUfoPaediaClick),	// ... InteractiveSurface handlers do not like that.
+								SDL_BUTTON_RIGHT);
+	_btnLogo->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnUfoPaediaClick),
+								Options::keyGeoUfopedia);
 
-	_btnLogo->onMouseClick(
-					(ActionHandler)& BattlescapeState::btnUfoPaediaClick,
-					SDL_BUTTON_RIGHT);
-	_btnLogo->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::btnUfoPaediaClick,
-					Options::keyGeoUfopedia);
-//	_btnZeroTUs->setTooltip("STR_EXPEND_ALL_TIME_UNITS");
-//	_btnZeroTUs->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//	_btnZeroTUs->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
+//	_btnZeroTUs->onMouseIn(	static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_btnZeroTUs->onMouseOut(static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnZeroTUs->allowClickInversion();
+//	_btnZeroTUs->setTooltip("STR_EXPEND_ALL_TIME_UNITS");
 
 	// NOTE: The following shortcuts do not have a specific surface-button graphic.
-//	_btnStats->onKeyboardPress( // NOTE: Reloading uses advanced requirements in the Inventory.
-//					(ActionHandler)& BattlescapeState::btnReloadClick,
-//					Options::keyBattleReload);
-	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::keyUnitLight,
-					Options::keyBattlePersonalLighting);
-	_btnStats->onKeyboardPress(
-					(ActionHandler)& BattlescapeState::keyConsoleToggle,
-					Options::keyBattleConsole);
-
-	// NOTE: Can't use a specific SDLKey on this because it can require CTRL.
-	// InteractiveSurface handlers do not like that ....
-	_btnStats->onKeyboardPress((ActionHandler)& BattlescapeState::keyTurnUnit);
-
-
+//	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnReloadClick), // NOTE: Reloading uses advanced conditions in the Inventory.
+//								Options::keyBattleReload);
+	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyUnitLight),
+								Options::keyBattlePersonalLighting);
+	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyConsoleToggle),
+								Options::keyBattleConsole);
+	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyTurnUnit));	// NOTE: Can't use a specific SDLKey on this because it can require CTRL.
+																								// ... InteractiveSurface handlers do not like that.
 
 //	const SDLKey buttons[]
 //	{
@@ -1010,19 +939,17 @@ BattlescapeState::BattlescapeState()
 			i != HOTSQRS;
 			++i)
 	{
-		_btnHostileUnit[i]->onMousePress((ActionHandler)& BattlescapeState::btnHostileUnitPress);
-//		_btnHostileUnit[i]->onKeyboardPress(
-//						(ActionHandler)& BattlescapeState::btnHostileUnitPress,
-//						buttons[i]);
-
+		_btnHostileUnit[i]->onMousePress(	static_cast<ActionHandler>(&BattlescapeState::btnHostileUnitPress));
+//		_btnHostileUnit[i]->onKeyboardPress(static_cast<ActionHandler>(&BattlescapeState::btnHostileUnitPress),
+//											buttons[i]);
+//		_btnHostileUnit[i]->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//		_btnHostileUnit[i]->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //		std::ostringstream tooltip;
 //		tooltip << "STR_CENTER_ON_ENEMY_" << (i + 1);
 //		_btnHostileUnit[i]->setTooltip(tooltip.str());
-//		_btnHostileUnit[i]->onMouseIn((ActionHandler)& BattlescapeState::txtTooltipIn);
-//		_btnHostileUnit[i]->onMouseOut((ActionHandler)& BattlescapeState::txtTooltipOut);
 
 		_numHostileUnit[i]->setColor(color);
-		_numHostileUnit[i]->setValue(static_cast<unsigned>(i) + 1u);
+		_numHostileUnit[i]->setValue(i + 1u);
 	}
 
 	for (size_t
@@ -1030,7 +957,7 @@ BattlescapeState::BattlescapeState()
 			i != WOUNDED;
 			++i)
 	{
-		_btnWounded[i]->onMousePress((ActionHandler)& BattlescapeState::btnWoundedPress);
+		_btnWounded[i]->onMousePress(static_cast<ActionHandler>(&BattlescapeState::btnWoundedPress));
 	}
 
 	_txtName->setHighContrast();
@@ -1038,18 +965,18 @@ BattlescapeState::BattlescapeState()
 	_numTwohandR->setValue(2u);
 	_numTwohandL->setValue(2u);
 
-/*	_btnReserveNone->setGroup(&_reserve);
-	_btnReserveSnap->setGroup(&_reserve);
-	_btnReserveAimed->setGroup(&_reserve);
-	_btnReserveAuto->setGroup(&_reserve); */
+//	_btnReserveNone->setGroup(&_reserve);
+//	_btnReserveSnap->setGroup(&_reserve);
+//	_btnReserveAimed->setGroup(&_reserve);
+//	_btnReserveAuto->setGroup(&_reserve);
 
 	_game->getFpsCounter()->setY(screenHeight - 6);
 
-	_aniTimer = new Timer(STATE_INTERVAL_TILE); // setStateInterval() does NOT change this <-
-	_aniTimer->onTimer((StateHandler)& BattlescapeState::animate);
+	_aniTimer = new Timer(STATE_INTERVAL_TILE);				// setStateInterval() does NOT change this <-
+	_aniTimer->onTimer(static_cast<StateHandler>(&BattlescapeState::animate));
 
-	_tacticalTimer = new Timer(STATE_INTERVAL_STANDARD); // setStateInterval() will change this <-
-	_tacticalTimer->onTimer((StateHandler)& BattlescapeState::handleState);
+	_tacticalTimer = new Timer(STATE_INTERVAL_STANDARD);	// setStateInterval() will change this <-
+	_tacticalTimer->onTimer(static_cast<StateHandler>(&BattlescapeState::handleState));
 	//_tacticalTimer->debug("BattlescapeState");
 
 	_battleGame = new BattlescapeGame(_battleSave, this);
@@ -2522,7 +2449,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					}
 
 					for (std::vector<BattleUnit*>::const_iterator
-						j = _battleSave->getUnits()->begin() + curIter;
+						j = _battleSave->getUnits()->begin() + static_cast<std::ptrdiff_t>(curIter);
 						j != _battleSave->getUnits()->end();
 						++j)
 					{
@@ -2542,7 +2469,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					{
 						for (std::vector<BattleUnit*>::const_iterator
 							j = _battleSave->getUnits()->begin();
-							j != _battleSave->getUnits()->end() - _battleSave->getUnits()->size() + curIter;
+							j != _battleSave->getUnits()->end() - static_cast<std::ptrdiff_t>(_battleSave->getUnits()->size() - curIter);
 							++j)
 						{
 							if ((*j)->getFaction() == FACTION_PLAYER
@@ -2755,7 +2682,7 @@ void BattlescapeState::btnReloadClick(Action*)
  * @note Requires CTRL-key down and BattleStates inactive.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnZeroTuClick(Action* action)
+void BattlescapeState::btnZeroTuClick(Action* /*action*/)
 {
 	if ((SDL_GetModState() & KMOD_CTRL) != 0
 		&& playableUnitSelected() == true)
@@ -3079,12 +3006,12 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	if (selUnit->getCarriedWeight() > selUnit->getStrength())
 		_isOverweight = true;
 
-	_numDir->setValue(selUnit->getUnitDirection());
+	_numDir->setValue(static_cast<unsigned>(selUnit->getUnitDirection()));
 	_numDir->setVisible();
 
 	if (selUnit->getTurretType() != TRT_NONE)
 	{
-		_numDirTur->setValue(selUnit->getTurretDirection());
+		_numDirTur->setValue(static_cast<unsigned>(selUnit->getTurretDirection()));
 		_numDirTur->setVisible();
 	}
 
@@ -3170,25 +3097,25 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 		if (tuLaunch != 0)
 		{
-			_numTULaunch->setValue(tuLaunch);
+			_numTULaunch->setValue(static_cast<unsigned>(tuLaunch));
 			_numTULaunch->setVisible();
 		}
 
 		if (tuAim != 0)
 		{
-			_numTUAim->setValue(tuAim);
+			_numTUAim->setValue(static_cast<unsigned>(tuAim));
 			_numTUAim->setVisible();
 		}
 
 		if (tuAuto != 0)
 		{
-			_numTUAuto->setValue(tuAuto);
+			_numTUAuto->setValue(static_cast<unsigned>(tuAuto));
 			_numTUAuto->setVisible();
 		}
 
 		if (tuSnap != 0)
 		{
-			_numTUSnap->setValue(tuSnap);
+			_numTUSnap->setValue(static_cast<unsigned>(tuSnap));
 			_numTUSnap->setVisible();
 		}
 	}
@@ -3411,7 +3338,7 @@ void BattlescapeState::hotWoundsRefresh()
 			srfBadge->blit(_btnWounded[k]);
 			_btnWounded[k]->setVisible(vis);
 
-			_numWounded[k]->setValue(static_cast<int>(unit->getFatalWounds()));
+			_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalWounds()));
 			_numWounded[k]->setVisible(vis);
 
 			_tileWounded[k++] = tile;
@@ -3432,7 +3359,7 @@ void BattlescapeState::hotWoundsRefresh()
 				srfBadge->blit(_btnWounded[k]);
 				_btnWounded[k]->setVisible(vis);
 
-				_numWounded[k]->setValue(static_cast<int>(unit->getFatalWounds()));
+				_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalWounds()));
 				_numWounded[k]->setVisible(vis);
 
 				_tileWounded[k++] = tile;
@@ -4601,8 +4528,8 @@ void BattlescapeState::saveAIMap()
 			if (tile == nullptr || tile->isRevealed() == false)
 				continue;
 
-			rect.x = static_cast<Sint16>(x) * static_cast<Sint16>(rect.w);
-			rect.y = static_cast<Sint16>(y) * static_cast<Sint16>(rect.h);
+			rect.x = static_cast<Sint16>(x * static_cast<int>(rect.w));
+			rect.y = static_cast<Sint16>(y * static_cast<int>(rect.h));
 
 			if (tile->getTuCostTile(O_FLOOR, MT_FLY) != 255
 				&& tile->getTuCostTile(O_OBJECT, MT_FLY) != 255)
@@ -4691,13 +4618,13 @@ void BattlescapeState::saveAIMap()
 					break; // no seeing through floors
 			}
 
-			if (tile->getMapData(O_NORTHWALL) != nullptr
+			if (   tile->getMapData(O_NORTHWALL) != nullptr
 				&& tile->getMapData(O_NORTHWALL)->getTuCostPart(MT_FLY) == 255)
 			{
 				lineRGBA(
 						img,
 						rect.x, rect.y,
-						rect.x + static_cast<Sint16>(rect.w),
+						static_cast<Sint16>(rect.x + rect.w),
 						rect.y,
 						0x50u,
 						0x50u,
@@ -4705,14 +4632,14 @@ void BattlescapeState::saveAIMap()
 						255u);
 			}
 
-			if (tile->getMapData(O_WESTWALL) != nullptr
+			if (   tile->getMapData(O_WESTWALL) != nullptr
 				&& tile->getMapData(O_WESTWALL)->getTuCostPart(MT_FLY) == 255)
 			{
 				lineRGBA(
 						img,
 						rect.x, rect.y,
 						rect.x,
-						rect.y + static_cast<Sint16>(rect.h),
+						static_cast<Sint16>(rect.y + rect.h),
 						0x50u,
 						0x50u,
 						0x50u,
@@ -5110,8 +5037,8 @@ void BattlescapeState::saveVoxelMap()
 		unsigned error (lodepng::encode(
 									oststr.str(),
 									image,
-									_battleSave->getMapSizeX() << 4u,
-									_battleSave->getMapSizeY() << 4u,
+									static_cast<unsigned>(_battleSave->getMapSizeX() << 4u),
+									static_cast<unsigned>(_battleSave->getMapSizeY() << 4u),
 									LCT_RGB));
 		if (error != 0u)
 			Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);

@@ -86,19 +86,16 @@ ConfirmDestinationState::ConfirmDestinationState(
 		_txtTarget->setText(tr("STR_TARGET").arg(_target->getName(_game->getLanguage())));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ConfirmDestinationState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ConfirmDestinationState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ConfirmDestinationState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ConfirmDestinationState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmDestinationState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmDestinationState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& ConfirmDestinationState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ConfirmDestinationState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ConfirmDestinationState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ConfirmDestinationState::btnCancelClick),
+								Options::keyCancel);
 }
 
 /**

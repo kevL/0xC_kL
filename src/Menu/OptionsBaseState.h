@@ -42,7 +42,7 @@ class Window;
 
 
 /**
- * Options base state for common stuff across Options windows.
+ * OptionsBaseState for common stuff across Options windows.
  */
 class OptionsBaseState
 	:
@@ -72,9 +72,9 @@ protected:
 
 
 	public:
-		/// Creates the Options state.
+		/// Creates the OptionsBase state.
 		explicit OptionsBaseState(OptionsOrigin origin);
-		/// Cleans up the Options state.
+		/// Cleans up the OptionsBase state.
 		~OptionsBaseState();
 
 		/// Restarts the game states.

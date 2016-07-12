@@ -327,10 +327,10 @@ int MapScript::getGroupNumber() // private.
 				{
 					if (--_maxUsesTemp.at(i) == 0)
 					{
-						_groupsTemp.erase(_groupsTemp.begin() + i);
+						_groupsTemp.erase(_groupsTemp.begin() + static_cast<std::ptrdiff_t>(i));
 						_cumulativeFrequency -= _frequenciesTemp.at(i);
-						_frequenciesTemp.erase(_frequenciesTemp.begin() + i);
-						_maxUsesTemp.erase(_maxUsesTemp.begin() + i);
+						_frequenciesTemp.erase(_frequenciesTemp.begin() + static_cast<std::ptrdiff_t>(i));
+						_maxUsesTemp.erase(_maxUsesTemp.begin() + static_cast<std::ptrdiff_t>(i));
 					}
 				}
 				return ret;
@@ -366,10 +366,10 @@ int MapScript::getBlockNumber() // private.
 				{
 					if (--_maxUsesTemp.at(i) == 0)
 					{
-						_blocksTemp.erase(_blocksTemp.begin() + i);
+						_blocksTemp.erase(_blocksTemp.begin() + static_cast<std::ptrdiff_t>(i));
 						_cumulativeFrequency -= _frequenciesTemp.at(i);
-						_frequenciesTemp.erase(_frequenciesTemp.begin() + i);
-						_maxUsesTemp.erase(_maxUsesTemp.begin() + i);
+						_frequenciesTemp.erase(_frequenciesTemp.begin() + static_cast<std::ptrdiff_t>(i));
+						_maxUsesTemp.erase(_maxUsesTemp.begin() + static_cast<std::ptrdiff_t>(i));
 					}
 				}
 				return ret;

@@ -33,6 +33,7 @@
 
 #include "../Ruleset/RuleCountry.h"
 #include "../Ruleset/RuleRegion.h"
+#include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/AlienMission.h"
 #include "../Savegame/Base.h"
@@ -59,7 +60,7 @@ BaseDestroyedState::BaseDestroyedState(
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 246, 160, 35, 20); // note, these are offset a few px left.
+	_window		= new Window(this, 246, 160, 35, 20); // NOTE: These are offset a few px left.
 	_txtMessage	= new Text(224, 106, 46, 26);
 	_btnCenter	= new TextButton(140, 16, 88, 133);
 	_btnOk		= new TextButton(140, 16, 88, 153);
@@ -82,24 +83,20 @@ BaseDestroyedState::BaseDestroyedState(
 	_txtMessage->setVerticalAlign(ALIGN_MIDDLE);
 	_txtMessage->setBig();
 	_txtMessage->setWordWrap();
-	_txtMessage->setText(tr("STR_THE_ALIENS_HAVE_DESTROYED_THE_UNDEFENDED_BASE")
+	_txtMessage->setText(tr("STR_BASE_DESTROYED_BY_ALIENS")
 							.arg(_base->getName()));
 
 	_btnCenter->setText(tr("STR_CENTER"));
-	_btnCenter->onMouseClick((ActionHandler)& BaseDestroyedState::btnCenterClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDestroyedState::btnCenterClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDestroyedState::btnCenterClick,
-					Options::keyOkKeypad);
+	_btnCenter->onMouseClick(static_cast<ActionHandler>(&BaseDestroyedState::btnCenterClick));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& BaseDestroyedState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDestroyedState::btnOkClick,
-					Options::keyCancel);
-
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BaseDestroyedState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDestroyedState::btnCenterClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDestroyedState::btnCenterClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDestroyedState::btnOkClick),
+							Options::keyCancel);
 
 	const double
 		lon (base->getLongitude()),
@@ -128,7 +125,8 @@ BaseDestroyedState::BaseDestroyedState(
 			delete *i;
 			i = _game->getSavedGame()->getUfos()->erase(i);
 		}
-		else ++i;
+		else
+			++i;
 	}
 
 	for (std::vector<AlienMission*>::const_iterator
@@ -136,7 +134,7 @@ BaseDestroyedState::BaseDestroyedState(
 			i != _game->getSavedGame()->getAlienMissions().end();
 			++i)
 	{
-		if (dynamic_cast<AlienMission*>(*i) == mission) // is that really necessary (i doubt it!)
+		if (*i == mission)
 		{
 			delete *i;
 			_game->getSavedGame()->getAlienMissions().erase(i);
@@ -152,17 +150,21 @@ BaseDestroyedState::~BaseDestroyedState()
 {}
 
 /**
- * Scores aLien points and destroys the Base.
+ * Scores aLien-points and destroys the Base.
  */
 void BaseDestroyedState::finish()
 {
 	_game->popState();
 
-	_game->getSavedGame()->scorePoints( // TODO: Put points in ruleset.
-								_base->getLongitude(),
-								_base->getLatitude(),
-								(static_cast<int>(_game->getSavedGame()->getDifficulty()) + 1) * 200,
-								true);
+//	const int score ((static_cast<int>(_game->getSavedGame()->getDifficulty()) + 1) * 200); // was 235 in DebriefingState.
+	const int score (_game->getRuleset()->getBaseLostScore()
+				  *  _base->getQuantityFacilities()
+				  * (static_cast<int>(_game->getSavedGame()->getDifficulty()) + 1));
+
+	_game->getSavedGame()->scorePoints(
+									_base->getLongitude(),
+									_base->getLatitude(),
+									score, true);
 
 	std::vector<Base*>* const baseList (_game->getSavedGame()->getBases());
 	for (std::vector<Base*>::const_iterator

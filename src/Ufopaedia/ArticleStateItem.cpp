@@ -105,7 +105,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 
 				_isfMode = new InteractiveSurface(204, 9, 8, 66);
 				add(_isfMode);
-				_isfMode->onMouseClick((ActionHandler)& ArticleStateItem::toggleTable);
+				_isfMode->onMouseClick(static_cast<ActionHandler>(&ArticleStateItem::toggleTable));
 
 				_lstInfoMelee = new TextList(204, 64, 8, 78);
 				add(_lstInfoMelee);

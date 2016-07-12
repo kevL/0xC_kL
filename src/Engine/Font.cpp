@@ -282,8 +282,8 @@ SDL_Rect Font::getCharSize(wchar_t fontChar)
 		&& isLinebreak(fontChar) == false
 		&& isSpace(fontChar) == false)
 	{
-		charSize.w = _chars[fontChar].w + static_cast<Uint16>(_spacing);
-		charSize.h = _chars[fontChar].h + static_cast<Uint16>(_spacing);
+		charSize.w = static_cast<Uint16>(_chars[fontChar].w + static_cast<Uint16>(_spacing));
+		charSize.h = static_cast<Uint16>(_chars[fontChar].h + static_cast<Uint16>(_spacing));
 	}
 	else
 	{

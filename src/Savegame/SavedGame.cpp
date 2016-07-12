@@ -601,8 +601,8 @@ void SavedGame::load(
 			i != doc["bases"].end();
 			++i)
 	{
-		Base* const base (new Base(_rules));
-		base->load(*i, this);
+		Base* const base (new Base(_rules, this));
+		base->loadBase(*i);
 		_bases.push_back(base);
 	}
 
@@ -821,8 +821,17 @@ const Ruleset* SavedGame::getRules() const
 } */
 
 /**
+ * Sets this SavedGame's difficulty-level.
+ * @param difficulty - difficulty setting (SavedGame.h)
+ */
+void SavedGame::setDifficulty(DifficultyLevel diff)
+{
+	_difficulty = diff;
+}
+
+/**
  * Gets this SavedGame's difficulty setting.
- * @return, difficulty-level
+ * @return, diff-level (SavedGame.h)
  */
 DifficultyLevel SavedGame::getDifficulty() const
 {
@@ -830,12 +839,20 @@ DifficultyLevel SavedGame::getDifficulty() const
 }
 
 /**
- * Sets this SavedGame's difficulty-level.
- * @param difficulty - difficulty setting
+ * Gets the SavedGame's difficulty as an integer.
+ * @return, diff-level as integer
  */
-void SavedGame::setDifficulty(DifficultyLevel difficulty)
+int SavedGame::getDifficultyInt() const
 {
-	_difficulty = difficulty;
+	switch (_difficulty)
+	{
+		case DIFF_BEGINNER:		return 0;
+		case DIFF_EXPERIENCED:	return 1;
+		case DIFF_VETERAN:		return 2;
+		case DIFF_GENIUS:		return 3;
+		default:
+		case DIFF_SUPERHUMAN:	return 4;
+	}
 }
 
 /**
@@ -2514,13 +2531,13 @@ std::wstring SavedGame::formatCraftDowntime(
 
 	if (dys != 0)
 	{
-		woststr << lang->getString("STR_DAY", dys);
+		woststr << lang->getString("STR_DAY", static_cast<unsigned>(dys));
 		if (hrs != 0)
 			woststr << L" ";
 	}
 
 	if (hrs != 0)
-		woststr << lang->getString("STR_HOUR", hrs);
+		woststr << lang->getString("STR_HOUR", static_cast<unsigned>(hrs));
 
 	if (isDelayed == true)
 		woststr << L" +";

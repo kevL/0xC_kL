@@ -40,7 +40,7 @@ class SackSoldierState
 {
 
 private:
-	size_t _soldierId;
+	size_t _solId;
 
 	Base* _base;
 
@@ -54,11 +54,11 @@ private:
 
 
 	public:
-		/// Creates the Sack Soldier state.
+		/// Creates a SackSoldier state.
 		SackSoldierState(
 				Base* const base,
-				size_t _soldierId);
-		/// Cleans up the Sack Soldier state.
+				size_t solId);
+		/// Cleans up the SackSoldier state.
 		~SackSoldierState();
 
 		/// Handler for clicking the OK button.

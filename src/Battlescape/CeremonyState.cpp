@@ -76,8 +76,8 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 	_lstSoldiers->setColumns(2, 200,77);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
-	_lstSoldiers->onMouseOver((ActionHandler)& CeremonyState::lstInfoMouseOver);
-	_lstSoldiers->onMouseOut((ActionHandler)& CeremonyState::lstInfoMouseOut);
+	_lstSoldiers->onMouseOver(	static_cast<ActionHandler>(&CeremonyState::lstInfoMouseOver));
+	_lstSoldiers->onMouseOut(	static_cast<ActionHandler>(&CeremonyState::lstInfoMouseOut));
 
 	_txtMedalInfo->setColor(SLATE);
 	_txtMedalInfo->setHighContrast();
@@ -85,16 +85,13 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 
 	_btnOk->setColor(GREEN);
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CeremonyState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CeremonyState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CeremonyState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CeremonyState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CeremonyState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CeremonyState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CeremonyState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CeremonyState::btnOkClick),
+							Options::keyCancel);
 
 
 	std::string qualifier;
@@ -102,7 +99,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 		titleChosen (true),
 		qualifiedAward;
 	size_t
-		row (0u),
+		r (0u),
 		titleRow;
 
 	std::map<std::string, RuleAward*> awardsList (_game->getRuleset()->getAwardsList());
@@ -116,12 +113,12 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 
 		if (titleChosen == true)
 		{
+			titleChosen = false;
 			_lstSoldiers->addRow(2, L"", L""); // Blank row, will be filled in later -> unless it's the last row ......
-			_titleRows.insert(std::pair<size_t, std::string>(row++, ""));
+			_titleRows.insert(std::pair<size_t, std::string>(r++, ""));
 		}
 
-		titleChosen = false;
-		titleRow = row - 1u;
+		titleRow = r - 1u; // NOTE: Does not underflow since r always increments^ on the 1st iteration.
 
 		for (std::vector<Soldier*>::const_iterator
 				j = soldiersMedalled.begin();
@@ -138,7 +135,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 					&& qualifier == "noQual")
 				{
 					(*k)->clearRecent();
-					++row;
+					++r;
 
 					if ((*k)->getQualifier() != "noQual")
 					{
@@ -151,11 +148,12 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 					woststr << (*j)->getName();
 
 					int
-						skip (0),
 						lastInt (-2),
 						thisInt;
+					size_t
+						nextLevel (0u),
+						skip      (0u);
 
-					size_t nextLevel (0u);
 					for (std::vector<int>::const_iterator
 							l = (*i).second->getCriteria()->begin()->second.begin();
 							l != (*i).second->getCriteria()->begin()->second.end();
@@ -183,7 +181,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 			}
 		}
 
-		if (titleRow != row - 1u)
+		if (titleRow != r - 1u)
 		{
 			if (qualifiedAward == true)
 				_lstSoldiers->setCellText(
@@ -196,7 +194,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 
 			_lstSoldiers->setRowColor(titleRow, GREEN);
 
-			std::string info ((*i).second->getDescriptionGeneral()); // look for Generic Desc first.
+			const std::string info ((*i).second->getDescriptionGeneral()); // look for Generic Desc first.
 			if (info.empty() == false)
 				_titleRows[titleRow] = info;
 			else
@@ -236,9 +234,9 @@ void CeremonyState::btnOkClick(Action*)
  */
 void CeremonyState::lstInfoMouseOver(Action*)
 {
-	const size_t row (_lstSoldiers->getSelectedRow());
-	if (_titleRows.find(row) != _titleRows.end())
-		_txtMedalInfo->setText(tr(_titleRows[row]));
+	const size_t r (_lstSoldiers->getSelectedRow());
+	if (_titleRows.find(r) != _titleRows.end())
+		_txtMedalInfo->setText(tr(_titleRows[r]));
 	else
 		_txtMedalInfo->setText(L"");
 }

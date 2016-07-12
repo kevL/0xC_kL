@@ -42,9 +42,9 @@ private:
 
 
 	public:
-		/// Creates the Audio Options state.
+		/// Creates an OptionsNoAudio state.
 		explicit OptionsNoAudioState(OptionsOrigin origin);
-		/// Cleans up the Audio Options state.
+		/// Cleans up the OptionsNoAudio state.
 		~OptionsNoAudioState();
 };
 

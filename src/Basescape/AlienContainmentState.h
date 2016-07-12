@@ -46,7 +46,7 @@ class Window;
  * AlienContainment screen that lets the player manage aLiens at a particular
  * Base.
  */
-class AlienContainmentState
+class AlienContainmentState final
 	:
 		public State
 {

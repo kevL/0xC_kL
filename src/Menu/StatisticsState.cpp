@@ -85,16 +85,13 @@ StatisticsState::StatisticsState()
 	_lstStats->setMargin(16);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& StatisticsState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& StatisticsState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& StatisticsState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& StatisticsState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&StatisticsState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StatisticsState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StatisticsState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StatisticsState::btnOkClick),
+							Options::keyCancel);
 
 	listStats();
 }
@@ -113,15 +110,15 @@ StatisticsState::~StatisticsState()
 template <typename _Tx>
 _Tx StatisticsState::total(const std::vector<_Tx>& vect) const
 {
-	_Tx total (static_cast<_Tx>(0));
+	_Tx ret (static_cast<_Tx>(0));
 	for (typename std::vector<_Tx>::const_iterator
 			i = vect.begin();
 			i != vect.end();
 			++i)
 	{
-		total += *i;
+		ret += *i;
 	}
-	return total;
+	return ret;
 }
 
 /**
@@ -154,7 +151,8 @@ void StatisticsState::listStats()
 			<< gt->getYear();
 	_txtTitle->setText(woststr.str());
 
-	const int monthlyScore (total(gameSave->getResearchScores()) / gameSave->getResearchScores().size()); // huh. Is this total. no.
+	const int monthlyScore (total(gameSave->getResearchScores()) // huh. Is this total. no.
+						  / static_cast<int>(gameSave->getResearchScores().size()));
 	const int64_t
 		totalIncome (total(gameSave->getIncomeList())),			// Check these also.
 		totalExpenses (total(gameSave->getExpenditureList()));	// They are inaccurate after 12+ months (because only the latest 12 months are maintained).

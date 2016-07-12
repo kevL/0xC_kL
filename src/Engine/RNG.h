@@ -82,24 +82,19 @@ size_t pick(
  * @param first	- RAI to first element (random access iterator)
  * @param last	- RAI to last element (random access iterator)
  */
-template<class itRand>
+template<class iter>
 void shuffle(
-		itRand first,
-		itRand last)
+		iter first,
+		iter last)
 {
-    typename std::iterator_traits<itRand>::difference_type
-		delta,
-		i;
-
-    delta = last - first;
-    for (
-			i = delta - 1;
+    for (std::ptrdiff_t
+			i = last - first - 1;
 			i > 0;
 			--i)
 	{
 		std::swap(
 				first[i],
-				first[next_x() % (i + 1)]);
+				first[static_cast<std::ptrdiff_t>(next_x()) % (i + 1)]);
 	}
 }
 

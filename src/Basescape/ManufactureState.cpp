@@ -129,28 +129,24 @@ ManufactureState::ManufactureState(
 			break;
 		}
 	}
-	_mini->onMouseClick(
-					(ActionHandler)& ManufactureState::miniClick,
-					SDL_BUTTON_LEFT);
-	_mini->onMouseOver((ActionHandler)& ManufactureState::miniMouseOver);
-	_mini->onMouseOut((ActionHandler)& ManufactureState::miniMouseOut);
+	_mini->onMouseClick(static_cast<ActionHandler>(&ManufactureState::miniClick));
+	_mini->onMouseOver(	static_cast<ActionHandler>(&ManufactureState::miniMouseOver));
+	_mini->onMouseOut(	static_cast<ActionHandler>(&ManufactureState::miniMouseOut));
+	// TODO: onKeyboardPress(). See BaseInfoState.
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
 	_btnNew->setText(tr("STR_NEW_PRODUCTION"));
-	_btnNew->onMouseClick((ActionHandler)& ManufactureState::btnNewProductionClick);
+	_btnNew->onMouseClick(static_cast<ActionHandler>(&ManufactureState::btnNewProductionClick));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ManufactureState::btnOkClick);
-	_btnOk->onKeyboardPress(
-						(ActionHandler)& ManufactureState::btnOkClick,
-						Options::keyOk);
-	_btnOk->onKeyboardPress(
-						(ActionHandler)& ManufactureState::btnOkClick,
-						Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-						(ActionHandler)& ManufactureState::btnOkClick,
-						Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ManufactureState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -168,7 +164,7 @@ ManufactureState::ManufactureState(
 	_lstManufacture->setColumns(5, 121,29,41,56,30);
 	_lstManufacture->setSelectable();
 	_lstManufacture->setBackground(_window);
-	_lstManufacture->onMouseClick((ActionHandler)& ManufactureState::lstManufactureClick);
+	_lstManufacture->onMouseClick(static_cast<ActionHandler>(&ManufactureState::lstManufactureClick));
 
 	_lstResources->setColumns(4, 151,50,40,40);
 	_lstResources->setMargin(4);

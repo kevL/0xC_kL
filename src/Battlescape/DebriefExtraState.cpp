@@ -113,16 +113,13 @@ DebriefExtraState::DebriefExtraState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& DebriefExtraState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DebriefExtraState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DebriefExtraState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DebriefExtraState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&DebriefExtraState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefExtraState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefExtraState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefExtraState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setText(operation);
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -148,11 +145,10 @@ DebriefExtraState::DebriefExtraState(
 
 		_lstGained->setArrow(192, ARROW_VERTICAL);
 
-		_lstGained->onLeftArrowPress(	(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
-		_lstGained->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
-
-		_lstGained->onRightArrowPress(	(ActionHandler)& DebriefExtraState::lstRightArrowPress);
-		_lstGained->onRightArrowRelease((ActionHandler)& DebriefExtraState::lstRightArrowRelease);
+		_lstGained->onLeftArrowPress(	static_cast<ActionHandler>(&DebriefExtraState::lstLeftArrowPress));
+		_lstGained->onLeftArrowRelease(	static_cast<ActionHandler>(&DebriefExtraState::lstLeftArrowRelease));
+		_lstGained->onRightArrowPress(	static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowPress));
+		_lstGained->onRightArrowRelease(static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowRelease));
 
 		styleList(_itemsGained, _lstGained);
 	}
@@ -174,11 +170,10 @@ DebriefExtraState::DebriefExtraState(
 
 		_lstLost->setArrow(192, ARROW_VERTICAL);
 
-		_lstLost->onLeftArrowPress(		(ActionHandler)& DebriefExtraState::lstLeftArrowPress);
-		_lstLost->onLeftArrowRelease(	(ActionHandler)& DebriefExtraState::lstLeftArrowRelease);
-
-		_lstLost->onRightArrowPress(	(ActionHandler)& DebriefExtraState::lstRightArrowPress);
-		_lstLost->onRightArrowRelease(	(ActionHandler)& DebriefExtraState::lstRightArrowRelease);
+		_lstLost->onLeftArrowPress(		static_cast<ActionHandler>(&DebriefExtraState::lstLeftArrowPress));
+		_lstLost->onLeftArrowRelease(	static_cast<ActionHandler>(&DebriefExtraState::lstLeftArrowRelease));
+		_lstLost->onRightArrowPress(	static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowPress));
+		_lstLost->onRightArrowRelease(	static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowRelease));
 
 		styleList(_itemsLost, _lstLost);
 	}
@@ -209,12 +204,11 @@ DebriefExtraState::DebriefExtraState(
 	_txtCash->setVisible(false);
 
 
-
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& DebriefExtraState::onIncrease);
+	_timerInc->onTimer(static_cast<StateHandler>(&DebriefExtraState::onIncrease));
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& DebriefExtraState::onDecrease);
+	_timerDec->onTimer(static_cast<StateHandler>(DebriefExtraState::onDecrease));
 }
 
 /**
@@ -624,11 +618,11 @@ void DebriefExtraState::buildSoldierStats() // private.
 					L"ML",	L"PA",	L"PD",	L"TR",
 					L"TU",	L"HL",	L"ST",	L"EN");
 
-	size_t row (1u);
+	size_t r (1u);
 	for (std::map<std::wstring, std::vector<int>>::const_iterator
 			i = _solStatDeltas.begin();
 			i != _solStatDeltas.end();
-			++i, ++row)
+			++i, ++r)
 	{
 		_lstSolStats->addRow(
 						12,
@@ -644,7 +638,7 @@ void DebriefExtraState::buildSoldierStats() // private.
 						i->second[ 8u] ? Text::intWide(i->second[ 8u]).c_str() : L"",
 						i->second[ 9u] ? Text::intWide(i->second[ 9u]).c_str() : L"",
 						i->second[10u] ? Text::intWide(i->second[10u]).c_str() : L"");
-		_lstSolStats->setRowColor(row, YELLOW);
+		_lstSolStats->setRowColor(r, YELLOW);
 	}
 }
 
@@ -663,12 +657,12 @@ void DebriefExtraState::styleList( // private.
 		wst2; // quantity to buy/sell
 	Uint8 color;
 	bool contrast;
-	size_t row (0u);
+	size_t r (0u);
 
 	for (std::map<const RuleItem*, int>::const_iterator
 			i = input.begin();
 			i != input.end();
-			++i, ++row)
+			++i, ++r)
 	{
 		type = i->first->getType();
 
@@ -777,7 +771,7 @@ void DebriefExtraState::styleList( // private.
 				Text::intWide(i->second).c_str(),
 				wst2.c_str(),
 				Text::intWide(baseQty).c_str());
-		list->setRowColor(row, color, contrast);
+		list->setRowColor(r, color, contrast);
 	}
 }
 

@@ -81,7 +81,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 	_varType		= node["varType"]		.as<std::string>(_varType);
 	_firstMonth		= node["firstMonth"]	.as<int>(_firstMonth);
 	_lastMonth		= node["lastMonth"]		.as<int>(_lastMonth);
-	_label			= node["label"]			.as<unsigned int>(_label);
+	_label			= node["label"]			.as<int>(_label);
 	_executionOdds	= node["executionOdds"]	.as<int>(_executionOdds);
 	_targetBaseOdds	= node["targetBaseOdds"].as<int>(_targetBaseOdds);
 	_maxRuns		= node["maxRuns"]		.as<int>(_maxRuns);
@@ -103,7 +103,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 			weightOpt = new WeightedOptions();
 			weightOpt->load(i->second);
 			_weightsMission.push_back(std::make_pair(
-												i->first.as<size_t>(0),
+												i->first.as<size_t>(0u),
 												weightOpt));
 		}
 	}
@@ -118,7 +118,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 			weightOpt = new WeightedOptions();
 			weightOpt->load(i->second);
 			_weightsRace.push_back(std::make_pair(
-											i->first.as<size_t>(0),
+											i->first.as<size_t>(0u),
 											weightOpt));
 		}
 	}
@@ -133,7 +133,7 @@ void RuleMissionScript::load(const YAML::Node& node)
 			weightOpt = new WeightedOptions();
 			weightOpt->load(i->second);
 			_weightsRegion.push_back(std::make_pair(
-												i->first.as<size_t>(0),
+												i->first.as<size_t>(0u),
 												weightOpt));
 		}
 	}
@@ -333,14 +333,14 @@ const std::set<std::string> RuleMissionScript::getAllMissionTypes() const
 
 /**
  * Gets a list of the possible missions for the given month.
- * @param month - the month for info
+ * @param elapsed - the month for info
  * @return, vector of strings
  */
-const std::vector<std::string> RuleMissionScript::getMissionTypes(const size_t month) const
+const std::vector<std::string> RuleMissionScript::getMissionTypes(const size_t elapsed) const
 {
 	std::vector<std::string> ret;
 	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_weightsMission.rbegin());
-	while (month < rit->first)
+	while (elapsed < rit->first)
 	{
 		if (++rit == _weightsMission.rend())
 		{
@@ -362,14 +362,14 @@ const std::vector<std::string> RuleMissionScript::getMissionTypes(const size_t m
 
 /**
  * Gets the list of regions to pick from this month.
- * @param month - the month for info
+ * @param elapsed - the month for info
  * @return, vector of strings
  */
-const std::vector<std::string> RuleMissionScript::getRegions(const size_t month) const
+const std::vector<std::string> RuleMissionScript::getRegions(const size_t elapsed) const
 {
 	std::vector<std::string> ret;
 	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit (_weightsRegion.rbegin());
-	while (month < rit->first)
+	while (elapsed < rit->first)
 	{
 		if (++rit == _weightsRegion.rend())
 		{
@@ -391,12 +391,12 @@ const std::vector<std::string> RuleMissionScript::getRegions(const size_t month)
 
 /**
  * Chooses one of the available races, regions, or missions for this command.
- * @param monthsPassed	- number of months that have passed in the game world
- * @param type			- type of thing to generate; region, mission, or race
+ * @param elapsed	- number of months that have passed in the game world
+ * @param type		- type of thing to generate; region, mission, or race
  * @return, string-id of the type generated
  */
 std::string RuleMissionScript::genDataType(
-		const size_t monthsPassed,
+		const size_t elapsed,
 		const GenerationType type) const
 {
 	std::vector<std::pair<size_t, WeightedOptions*>>::const_reverse_iterator rit;
@@ -416,7 +416,7 @@ std::string RuleMissionScript::genDataType(
 			rit = _weightsMission.rbegin();
 	}
 
-	while (monthsPassed < rit->first)
+	while (elapsed < rit->first)
 		++rit;
 
 	return rit->second->getOptionResult();

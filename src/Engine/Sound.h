@@ -50,7 +50,7 @@ private:
 		/// Loads a sound-effect from a chunk of memory.
 		void load(
 				const void* data,
-				unsigned int bytes);
+				unsigned bytes);
 
 		/// Plays the sound-effect.
 		void play(

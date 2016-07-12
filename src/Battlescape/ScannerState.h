@@ -47,8 +47,6 @@ private:
 	Surface* _scan;
 	Timer* _timer;
 
-	/// Updates the Scanner interface.
-//	void update();
 	/// Handles the radar-blob animations.
 	void animate();
 

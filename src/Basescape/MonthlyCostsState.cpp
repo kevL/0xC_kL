@@ -213,16 +213,13 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 					Text::formatCurrency(_game->getSavedGame()->getBaseMaintenances()).c_str());
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& MonthlyCostsState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& MonthlyCostsState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& MonthlyCostsState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& MonthlyCostsState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick),
+							Options::keyCancel);
 }
 
 /**

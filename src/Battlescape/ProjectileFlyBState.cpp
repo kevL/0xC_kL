@@ -550,7 +550,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				_unit->flagCache();
 				_parent->getMap()->cacheUnit(_unit);
 
-				soundId = ResourcePack::ITEM_THROW;
+				soundId = static_cast<int>(ResourcePack::ITEM_THROW);
 
 				if (_unit->getGeoscapeSoldier() != nullptr
 					&& _unit->isMindControlled() == false
@@ -700,7 +700,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 	}
 
 	if (soundId != -1)
-		_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+		_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 			->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
 
 	if (_unit->getArmor()->getShootFrames() != 0) // postpone showing the Celatid spit-blob till later
@@ -1206,7 +1206,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	{
 		const int soundId (_action.weapon->getRules()->getMeleeSound());
 		if (soundId != -1)
-			_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 										->play(-1, _parent->getMap()->getSoundAngle(_action.posTarget));
 	}
 

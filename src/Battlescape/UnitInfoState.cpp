@@ -287,20 +287,16 @@ UnitInfoState::UnitInfoState(
 
 	_game->getResourcePack()->getSurface("UNIBORD.PCK")->blit(_bg);
 
-	_exit->onMouseClick((ActionHandler)& UnitInfoState::exitPress,
-					SDL_BUTTON_RIGHT);
-	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitPress,
-					Options::keyCancel);
-	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitPress,
-					Options::keyOk);
-	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitPress,
-					Options::keyOkKeypad);
-	_exit->onKeyboardPress(
-					(ActionHandler)& UnitInfoState::exitPress,
-					Options::keyBattleStats);
+	_exit->onMouseClick(	static_cast<ActionHandler>(&UnitInfoState::exitClick),
+							SDL_BUTTON_RIGHT);
+	_exit->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::exitClick),
+							Options::keyCancel);
+	_exit->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::exitClick),
+							Options::keyOk);
+	_exit->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::exitClick),
+							Options::keyOkKeypad);
+	_exit->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::exitClick),
+							Options::keyBattleStats);
 
 	const Element* const el (_game->getRuleset()->getInterface("stats")->getElement("text"));
 	Uint8
@@ -483,28 +479,22 @@ UnitInfoState::UnitInfoState(
 	if (_mindProbe == false)
 	{
 		_btnPrev->setText(L"<");
-		_btnPrev->onMouseClick((ActionHandler)& UnitInfoState::btnPrevClick);
-		_btnPrev->onKeyboardPress(
-						(ActionHandler)& UnitInfoState::btnPrevClick,
-						Options::keyBattlePrevUnit);
-		_btnPrev->onKeyboardPress(
-						(ActionHandler)& UnitInfoState::btnPrevClick,
-						SDLK_LEFT);
-		_btnPrev->onKeyboardPress(
-						(ActionHandler)& UnitInfoState::btnPrevClick,
-						SDLK_KP4);
+		_btnPrev->onMouseClick(		static_cast<ActionHandler>(&UnitInfoState::btnPrevClick));
+		_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::btnPrevClick),
+									Options::keyBattlePrevUnit);
+		_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::btnPrevClick),
+									SDLK_LEFT);
+		_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::btnPrevClick),
+									SDLK_KP4);
 
 		_btnNext->setText(L">");
-		_btnNext->onMouseClick((ActionHandler)& UnitInfoState::btnNextClick);
-		_btnNext->onKeyboardPress(
-						(ActionHandler)& UnitInfoState::btnNextClick,
-						Options::keyBattleNextUnit);
-		_btnNext->onKeyboardPress(
-						(ActionHandler)& UnitInfoState::btnNextClick,
-						SDLK_RIGHT);
-		_btnNext->onKeyboardPress(
-						(ActionHandler)& UnitInfoState::btnNextClick,
-						SDLK_KP6);
+		_btnNext->onMouseClick(		static_cast<ActionHandler>(&UnitInfoState::btnNextClick));
+		_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::btnNextClick),
+									Options::keyBattleNextUnit);
+		_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::btnNextClick),
+									SDLK_RIGHT);
+		_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&UnitInfoState::btnNextClick),
+									SDLK_KP6);
 
 //		_timer = new Timer(300u);
 //		_timer->onTimer((StateHandler)& UnitInfoState::keyRepeat);
@@ -797,6 +787,12 @@ void UnitInfoState::init()
 void UnitInfoState::handle(Action* action)
 {
 	State::handle(action);
+
+	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN // Might not be needed, cf. ScannerState::handle().
+		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+	{
+		exitClick();
+	}
 //	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
 //	{
 //		if (_mindProbe == false)
@@ -825,7 +821,7 @@ void UnitInfoState::btnPrevClick(Action*)
 	if (_unit != nullptr)
 		init();
 	else
-		exitPress(nullptr);
+		exitClick(nullptr);
 }
 
 /**
@@ -844,14 +840,14 @@ void UnitInfoState::btnNextClick(Action*)
 	if (_unit != nullptr)
 		init();
 	else
-		exitPress(nullptr);
+		exitClick(nullptr);
 }
 
 /**
- * Exits the screen.
- * @param action - pointer to an Action
+ * Exits the state.
+ * @param action - pointer to an Action (default nullptr)
  */
-void UnitInfoState::exitPress(Action*) const // private.
+void UnitInfoState::exitClick(Action*) // private.
 {
 	_game->getScreen()->fadeScreen();
 

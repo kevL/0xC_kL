@@ -41,15 +41,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in a Sack Soldier window.
- * @param base 		- pointer to the Base to get info from
- * @param soldierId	- pointer to the soldier to sack
+ * @param base	- pointer to the Base to get info from
+ * @param solId	- the soldier-ID to sack
  */
 SackSoldierState::SackSoldierState(
 		Base* const base,
-		size_t soldierId)
+		size_t solId)
 	:
 		_base(base),
-		_soldierId(soldierId)
+		_solId(solId)
 {
 	_fullScreen = false;
 
@@ -73,24 +73,21 @@ SackSoldierState::SackSoldierState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SackSoldierState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SackSoldierState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SackSoldierState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SackSoldierState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SackSoldierState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SackSoldierState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& SackSoldierState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& SackSoldierState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&SackSoldierState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SackSoldierState::btnCancelClick),
+								Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_SACK"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	_txtSoldier->setText(_base->getSoldiers()->at(_soldierId)->getName());
+	_txtSoldier->setText(_base->getSoldiers()->at(_solId)->getName());
 	_txtSoldier->setAlign(ALIGN_CENTER);
 }
 
@@ -106,12 +103,12 @@ SackSoldierState::~SackSoldierState()
  */
 void SackSoldierState::btnOkClick(Action*)
 {
-	const Soldier* const sol (_base->getSoldiers()->at(_soldierId));
+	const Soldier* const sol (_base->getSoldiers()->at(_solId));
 	if (sol->getArmor()->isBasic() == false)
 		_base->getStorageItems()->addItem(sol->getArmor()->getStoreItem());
 
 	delete sol;
-	_base->getSoldiers()->erase(_base->getSoldiers()->begin() + _soldierId);
+	_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(_solId));
 
 	_game->popState();
 }

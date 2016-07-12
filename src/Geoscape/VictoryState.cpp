@@ -64,11 +64,11 @@ VictoryState::VictoryState()
 
 //	_timer = new Timer(30000u);
 
-	_text[0] = new Text(195,  56,  5,   0);
-	_text[1] = new Text(232,  64, 88, 136);
-	_text[2] = new Text(254,  48, 66, 152);
-	_text[3] = new Text(300, 200,  5,   0);
-	_text[4] = new Text(310,  42,  5, 158);
+	_text[0u] = new Text(195,  56,  5,   0);
+	_text[1u] = new Text(232,  64, 88, 136);
+	_text[2u] = new Text(254,  48, 66, 152);
+	_text[3u] = new Text(300, 200,  5,   0);
+	_text[4u] = new Text(310,  42,  5, 158);
 
 	for (size_t
 			i = 0u;
@@ -86,8 +86,8 @@ VictoryState::VictoryState()
 
 		screen->blit(_bg[i]);
 		_bg[i]->setVisible(false);
-		_bg[i]->onMousePress((ActionHandler)& VictoryState::screenPress);
-		_bg[i]->onKeyboardPress((ActionHandler)& VictoryState::screenPress);
+		_bg[i]->onMousePress(	static_cast<ActionHandler>(&VictoryState::screenPress));
+		_bg[i]->onKeyboardPress(static_cast<ActionHandler>(&VictoryState::screenPress));
 
 		std::ostringstream oststr;
 		oststr << "STR_VICTORY_" << static_cast<int>(i + 1u);

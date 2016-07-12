@@ -65,7 +65,7 @@ private:
 
 
 protected:
-	bool isButtonHandled(Uint8 btn = 0u) override;
+	bool isButtonHandled(Uint8 btn = 0u) override final;
 
 
 	public:
@@ -85,7 +85,7 @@ protected:
 		/// Gets the TextButton's color.
 		Uint8 getColor() const;
 		/// Sets the secondary color of this TextButton.
-		void setSecondaryColor(Uint8 color) override;
+		void setSecondaryColor(Uint8 color) override final;
 		/// Sets the TextButton's Text color.
 		void setTextColor(Uint8 color);
 
@@ -99,10 +99,10 @@ protected:
 		void initText(
 				Font* const big,
 				Font* const small,
-				const Language* const lang) override;
+				const Language* const lang) override final;
 
 		/// Sets the TextButton's high-contrast color setting.
-		void setHighContrast(bool contrast = true) override;
+		void setHighContrast(bool contrast = true) override final;
 
 		/// Sets the TextButton's Text.
 		void setText(const std::wstring& text);
@@ -118,7 +118,7 @@ protected:
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
-				int ncolors = 256) override;
+				int ncolors = 256) override final;
 
 		/// Draws the TextButton.
 		void draw() override;
@@ -126,15 +126,15 @@ protected:
 		/// Special handling for mouse presses.
 		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse releases.
-		void mouseRelease(Action* action, State* state) override;
+		void mouseRelease(Action* action, State* state) override final;
 
 		/// Attaches this button to a combobox.
 		void setComboBox(ComboBox* comboBox);
 
 		/// Sets the width of this TextButton.
-		void setWidth(int width) override;
+		void setWidth(int width) override final;
 		/// Sets the height of this TextButton.
-		void setHeight(int height) override;
+		void setHeight(int height) override final;
 
 		/// Sets this TextButton as silent.
 	   void setSilent();

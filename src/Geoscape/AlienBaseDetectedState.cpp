@@ -74,16 +74,13 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& AlienBaseDetectedState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienBaseDetectedState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienBaseDetectedState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AlienBaseDetectedState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
@@ -99,7 +96,7 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 		lon (_aBase->getLongitude()),
 		lat (_aBase->getLatitude());
 
-	std::wstring loc; // NOTE: Regions cover all areas of the Globe. Don't eff it up Lol.
+	std::wstring loc; // NOTE: Regions implicitly cover all areas of the Globe. Don't eff it up Lol.
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
 			i != _game->getSavedGame()->getRegions()->end();

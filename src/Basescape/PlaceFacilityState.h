@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Window shown when the player tries to build a Facility.
+ * Window shown when the player wants to build a Facility.
  */
 class PlaceFacilityState
 	:
@@ -43,6 +43,8 @@ class PlaceFacilityState
 {
 
 protected:
+	int64_t _cost;
+
 	Base* _base;
 	BaseView* _baseLayout;
 	const RuleBaseFacility* _facRule;

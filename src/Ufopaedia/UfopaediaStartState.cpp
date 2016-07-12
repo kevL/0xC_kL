@@ -105,7 +105,7 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 									offset_y);
 		add(_btnSection[i], "button1", "ufopaedia");
 		_btnSection[i]->setText(tr(ped_TITLES[i]));
-		_btnSection[i]->onMouseClick((ActionHandler)& UfopaediaStartState::btnSectionClick);
+		_btnSection[i]->onMouseClick(static_cast<ActionHandler>(&UfopaediaStartState::btnSectionClick));
 
 		offset_y += 13;
 	}
@@ -126,19 +126,15 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 	_txtTitle->setText(tr("STR_UFOPAEDIA"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& UfopaediaStartState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaStartState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaStartState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaStartState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaStartState::btnOkClick,
-					Options::keyGeoUfopedia);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&UfopaediaStartState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaStartState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaStartState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaStartState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaStartState::btnOkClick),
+							Options::keyGeoUfopedia);
 }
 
 /**

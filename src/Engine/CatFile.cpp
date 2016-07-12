@@ -26,48 +26,48 @@ namespace OpenXcom
 {
 
 /**
- * Creates a CAT file stream.
- * @note A CAT file starts with an index of the offset and size of every file
+ * Creates a CAT-file stream.
+ * @note A CAT-file starts with an index of the offset and size of every file
  * contained within. Each file consists of a filename followed by its contents.
- * @param path - pointer to full path to CAT file
+ * @param path - pointer to the full path of the CAT-file
  */
 CatFile::CatFile(const char* path)
 	:
 		std::ifstream(
 					path,
 					std::ios::in | std::ios::binary),
-		_amount(0u),
+		_qtyObjects(0u),
 		_offset(nullptr),
 		_size(nullptr)
 {
 	// Get amount of files
 	std::ifstream::read(
-					reinterpret_cast<char*>(&_amount),
-					sizeof(_amount));
+					reinterpret_cast<char*>(&_qtyObjects),
+					sizeof(_qtyObjects));
 
-	_amount = static_cast<unsigned>(SDL_SwapLE32(_amount));
-	_amount /= 2 * sizeof(_amount);
+	_qtyObjects = SDL_SwapLE32(_qtyObjects);
+	_qtyObjects /= 2 * sizeof(_qtyObjects);
 
 	// Get object offsets
 	std::ifstream::seekg(0, std::ios::beg);
 
-	_offset = new unsigned[_amount];
-	_size = new unsigned[_amount];
+	_offset = new unsigned[_qtyObjects];
+	_size = new unsigned[_qtyObjects];
 
 	for (unsigned
-			i = 0;
-			i != _amount;
+			i = 0u;
+			i != _qtyObjects;
 			++i)
 	{
 		std::ifstream::read(
 						reinterpret_cast<char*>(&_offset[i]),
 						sizeof(*_offset));
-		_offset[i] = static_cast<unsigned>(SDL_SwapLE32(_offset[i]));
+		_offset[i] = SDL_SwapLE32(_offset[i]);
 
 		std::ifstream::read(
 						reinterpret_cast<char*>(&_size[i]),
 						sizeof(*_size));
-		_size[i] = static_cast<unsigned>(SDL_SwapLE32(_size[i]));
+		_size[i] = SDL_SwapLE32(_size[i]);
 	}
 }
 
@@ -84,34 +84,36 @@ CatFile::~CatFile()
 
 /**
  * Loads an object into memory.
- * @param i		- object number to load
- * @param name	- true to preserve internal file name
+ * @param id		- object-ID to load
+ * @param keepLabel	- true to preserve internal filename (default false)
  * @return, pointer to the loaded object
  */
 char* CatFile::load(
-		unsigned i,
-		bool name)
+		unsigned id,
+		bool keepLabel)
 {
-	if (i >= _amount) return nullptr;
-
-	std::ifstream::seekg(_offset[i], std::ios::beg);
-
-	unsigned char namesize (static_cast<unsigned char>(peek()));
-	if (namesize <= 56)
+	if (id < _qtyObjects)
 	{
-		if (name == false)
-		{
-			std::ifstream::seekg(
-						namesize + 1,
-						std::ios::cur);
-		}
-		else
-			_size[i] += namesize + 1;
-	}
+		std::ifstream::seekg(_offset[id], std::ios::beg);
 
-	char* const object (new char[_size[i]]);
-	std::ifstream::read(object, _size[i]);
-	return object;
+		unsigned char labelSize (static_cast<unsigned char>(peek()));
+		if (labelSize < 57u)
+		{
+			if (keepLabel == false)
+			{
+				std::ifstream::seekg(
+								labelSize + 1u,
+								std::ios::cur);
+			}
+			else
+				_size[id] += labelSize + 1u;
+		}
+
+		char* const object (new char[_size[id]]);
+		std::ifstream::read(object, static_cast<int>(_size[id]));
+		return object;
+	}
+	return nullptr;
 }
 
 }

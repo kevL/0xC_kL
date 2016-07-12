@@ -62,16 +62,16 @@ namespace OpenXcom
 /**
  * Sets up an inventory with the specified size and position.
  * @param game		- pointer to core Game
- * @param width		- width in pixels
- * @param height	- height in pixels
+// * @param width	- width in pixels
+// * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
  * @param y			- y-position in pixels (default 0)
  * @param atBase	- true if inventory is accessed from Basescape (default false)
  */
 Inventory::Inventory(
-		Game* game,
-		int width,
-		int height,
+		Game* const game,
+//		int width,
+//		int height,
 		int x,
 		int y,
 		bool atBase)
@@ -122,7 +122,7 @@ Inventory::Inventory(
 
 	_numStack->setBordered();
 
-	_animTimer->onTimer((SurfaceHandler)& Inventory::drawPrimers);
+	_animTimer->onTimer(static_cast<SurfaceHandler>(&Inventory::drawPrimers));
 	_animTimer->start();
 }
 
@@ -213,8 +213,8 @@ void Inventory::drawGrids()
 
 					++rect.x;
 					++rect.y;
-					rect.w -= 2u;
-					rect.h -= 2u;
+					rect.w = static_cast<Uint16>(rect.w - 2u);
+					rect.h = static_cast<Uint16>(rect.h - 2u);
 					_srfGrid->drawRect(&rect, 0u);
 				}
 				break;
@@ -229,8 +229,8 @@ void Inventory::drawGrids()
 
 				++rect.x;
 				++rect.y;
-				rect.w -= 2u;
-				rect.h -= 2u;
+				rect.w = static_cast<Uint16>(rect.w - 2u);
+				rect.h = static_cast<Uint16>(rect.h - 2u);
 				_srfGrid->drawRect(&rect, 0u);
 				break;
 
@@ -260,8 +260,8 @@ void Inventory::drawGrids()
 
 							++rect.x;
 							++rect.y;
-							rect.w -= 2u;
-							rect.h -= 2u;
+							rect.w = static_cast<Uint16>(rect.w - 2u);
+							rect.h = static_cast<Uint16>(rect.h - 2u);
 							_srfGrid->drawRect(&rect, 0u);
 						}
 					}
@@ -516,7 +516,7 @@ void Inventory::mouseClick(Action* action, State* state)
 {
 	if (_selUnit == nullptr) return;
 
-	int soundId (-1);
+	unsigned soundId (std::numeric_limits<unsigned>::max());
 
 	switch (action->getDetails()->button.button)
 	{
@@ -927,7 +927,7 @@ void Inventory::mouseClick(Action* action, State* state)
 			}
 	}
 
-	if (soundId != -1)
+	if (soundId != std::numeric_limits<unsigned>::max())
 		_game->getResourcePack()->getSound("BATTLE.CAT", soundId)->play();
 
 	_game->getSavedGame()->getBattleSave()->getBattleState()->refreshMousePosition();

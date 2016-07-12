@@ -85,19 +85,16 @@ TransferBaseState::TransferBaseState(Base* base)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& TransferBaseState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& TransferBaseState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& TransferBaseState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& TransferBaseState::btnCancelClick,
-					Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&TransferBaseState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&TransferBaseState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&TransferBaseState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&TransferBaseState::btnCancelClick),
+								Options::keyOkKeypad);
 
 	_btnMatrix->setText(tr("STR_MATRIX"));
-	_btnMatrix->onMouseClick((ActionHandler)& TransferBaseState::btnMatrixClick);
+	_btnMatrix->onMouseClick(static_cast<ActionHandler>(&TransferBaseState::btnMatrixClick));
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_RIGHT);
@@ -117,7 +114,7 @@ TransferBaseState::TransferBaseState(Base* base)
 	_lstBases->setBackground(_window);
 	_lstBases->setColumns(2, 128,80);
 	_lstBases->setSelectable();
-	_lstBases->onMouseClick((ActionHandler)& TransferBaseState::lstBasesClick);
+	_lstBases->onMouseClick(static_cast<ActionHandler>(&TransferBaseState::lstBasesClick));
 
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
@@ -126,8 +123,7 @@ TransferBaseState::TransferBaseState(Base* base)
 	{
 		if (*i != _base)
 		{
-			std::wstring area;
-
+			std::wstring region;
 			for (std::vector<Region*>::const_iterator
 					j = _game->getSavedGame()->getRegions()->begin();
 					j != _game->getSavedGame()->getRegions()->end();
@@ -137,13 +133,13 @@ TransferBaseState::TransferBaseState(Base* base)
 												(*i)->getLongitude(),
 												(*i)->getLatitude()))
 				{
-					area = tr((*j)->getRules()->getType());
+					region = tr((*j)->getRules()->getType());
 					break;
 				}
 			}
 
 			std::wostringstream woststr;
-			woststr << L'\x01' << area;
+			woststr << L'\x01' << region;
 			_lstBases->addRow(
 							2,
 							(*i)->getName().c_str(),

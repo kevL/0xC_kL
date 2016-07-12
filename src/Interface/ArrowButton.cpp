@@ -51,7 +51,7 @@ ArrowButton::ArrowButton(
 		_list(nullptr)
 {
 	_timer = new Timer(77u);
-	_timer->onTimer((SurfaceHandler)& ArrowButton::scroll);
+	_timer->onTimer(static_cast<SurfaceHandler>(&ArrowButton::scroll));
 }
 
 /**
@@ -123,7 +123,7 @@ void ArrowButton::draw()
 	lock();
 
 	SDL_Rect rect; // draw button
-	Uint8 color (_color + 2u);
+	Uint8 color (static_cast<Uint8>(static_cast<unsigned>(_color) + 2u));
 
 	rect.x =
 	rect.y = 0;
@@ -134,36 +134,36 @@ void ArrowButton::draw()
 
 	++rect.x;
 	++rect.y;
-	color = _color + 5u;
+	color = static_cast<Uint8>(static_cast<unsigned>(_color) + 5u);
 
 	drawRect(&rect, color);
 
 	--rect.w;
 	--rect.h;
-	color = _color + 4u;
+	color = static_cast<Uint8>(static_cast<unsigned>(_color) + 4u);
 
 	drawRect(&rect, color);
 
 	setPixelColor(
 			0,0,
-			_color + 1u);
+			static_cast<Uint8>(static_cast<unsigned>(_color) + 1u));
 	setPixelColor(
 			0,
 			getHeight() - 1,
-			_color + 4u);
+			static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 	setPixelColor(
 			getWidth() - 1,
 			0,
-			_color + 4u);
+			static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 
-	color = _color + 1u;
+	color = static_cast<Uint8>(static_cast<unsigned>(_color) + 1u);
 
 	switch (_shape)
 	{
 		case OpenXcom::ARROW_BIG_UP:
 			rect.x = 5; // draw arrow square
 			rect.y = 8;
-			rect.w = 3u;
+			rect.w =
 			rect.h = 3u;
 
 			drawRect(&rect, color);
@@ -176,7 +176,7 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.w > 1u;
-					rect.w -= 2u)
+					rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 			{
 				drawRect(&rect, color);
 				++rect.x;
@@ -188,7 +188,7 @@ void ArrowButton::draw()
 		case OpenXcom::ARROW_BIG_DOWN:
 			rect.x = 5; // draw arrow square
 			rect.y = 3;
-			rect.w = 3u;
+			rect.w =
 			rect.h = 3u;
 
 			drawRect(&rect, color);
@@ -201,7 +201,7 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.w > 1u;
-					rect.w -= 2u)
+					rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 			{
 				drawRect(&rect, color);
 				++rect.x;
@@ -219,13 +219,13 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.w > 1u;
-					rect.w -= 2u)
+					rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 			{
-				drawRect(&rect, color + 2u);
+				drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 				++rect.x;
 				--rect.y;
 			}
-			drawRect(&rect, color + 2u);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 
 			rect.x = 2; // draw arrow triangle 2
 			rect.y = 5;
@@ -235,7 +235,7 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.w > 1u;
-					rect.w -= 2u)
+					rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 			{
 				drawRect(&rect, color);
 				++rect.x;
@@ -253,15 +253,15 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.w > 1u;
-					rect.w -= 2u)
+					rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 			{
-				drawRect(&rect, color + 2u);
+				drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 				++rect.x;
 				++rect.y;
 			}
-			drawRect(&rect, color + 2);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 
-			rect.x = 2; // draw arrow triangle 2
+			rect.x = // draw arrow triangle 2
 			rect.y = 2;
 			rect.w = 7u;
 			rect.h = 1u;
@@ -269,7 +269,7 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.w > 1u;
-					rect.w -= 2u)
+					rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 			{
 				drawRect(&rect, color);
 				++rect.x;
@@ -287,14 +287,14 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.h < 5u;
-					rect.h += 2u)
+					rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) + 2u))
 			{
-				drawRect(&rect, color + 2u);
-				rect.x += 2;
+				drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
+				rect.x = static_cast<Sint16>(static_cast<int>(rect.x) + 2);
 				--rect.y;
 			}
 			rect.w = 1u;
-			drawRect(&rect, color + 2u);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 
 			rect.x = 3; // draw arrow triangle 2
 			rect.y = 4;
@@ -304,10 +304,10 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.h < 5u;
-					rect.h += 2u)
+					rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) + 2u))
 			{
 				drawRect(&rect, color);
-				rect.x += 2;
+				rect.x = static_cast<Sint16>(static_cast<int>(rect.x) + 2);
 				--rect.y;
 			}
 			rect.w = 1u;
@@ -323,15 +323,15 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.h < 5u;
-					rect.h += 2u)
+					rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) + 2u))
 			{
-				drawRect(&rect, color + 2u);
-				rect.x -= 2;
+				drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
+				rect.x = static_cast<Sint16>(static_cast<int>(rect.x) - 2);
 				--rect.y;
 			}
 			++rect.x;
 			rect.w = 1u;
-			drawRect(&rect, color + 2u);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 
 			rect.x = 6; // draw arrow triangle 2
 			rect.y = 4;
@@ -341,10 +341,10 @@ void ArrowButton::draw()
 			for (
 					;
 					rect.h < 5u;
-					rect.h += 2u)
+					rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) + 2u))
 			{
 				drawRect(&rect, color);
-				rect.x -= 2;
+				rect.x = static_cast<Sint16>(static_cast<int>(rect.x) - 2);
 				--rect.y;
 			}
 			++rect.x;

@@ -78,13 +78,11 @@ BaseNameState::BaseNameState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& BaseNameState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseNameState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseNameState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BaseNameState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseNameState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseNameState::btnOkClick),
+							Options::keyOkKeypad);
 	_btnOk->setVisible(false);
 
 	_txtTitle->setText(tr("STR_BASE_NAME"));
@@ -92,8 +90,8 @@ BaseNameState::BaseNameState(
 	_txtTitle->setBig();
 
 	_edtName->setBig();
-	_edtName->setFocus(true, false);
-	_edtName->onTextChange((ActionHandler)& BaseNameState::edtLabelChange);
+	_edtName->setFocusEdit(true, false);
+	_edtName->onTextChange(static_cast<ActionHandler>(&BaseNameState::edtLabelChange));
 }
 
 /**

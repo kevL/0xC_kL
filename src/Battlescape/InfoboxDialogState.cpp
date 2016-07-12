@@ -71,16 +71,13 @@ InfoboxDialogState::InfoboxDialogState(const std::wstring& msg)
 	_txtTitle->setBig();
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& InfoboxDialogState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& InfoboxDialogState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& InfoboxDialogState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& InfoboxDialogState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick),
+							Options::keyCancel);
 	_btnOk->setHighContrast();
 
 	_game->getCursor()->setVisible();

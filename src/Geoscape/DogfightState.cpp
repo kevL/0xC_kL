@@ -276,40 +276,36 @@ DogfightState::DogfightState(
 		srf->blit(_previewUfo);
 	}
 	_previewUfo->setVisible(false);
-	_previewUfo->onMouseClick(
-					(ActionHandler)& DogfightState::previewClick,
-					SDL_BUTTON_LEFT);
-	_previewUfo->onMouseClick(
-					(ActionHandler)& DogfightState::previewClick,
-					SDL_BUTTON_RIGHT);
+	_previewUfo->onMouseClick(	static_cast<ActionHandler>(&DogfightState::previewClick),
+								0u);
 
-	_btnMinimize->onMouseClick((ActionHandler)& DogfightState::btnMinimizeDfClick);
+	_btnMinimize->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnMinimizeDfClick));
 
 	_btnUfo->copy(_window);
-	_btnUfo->onMouseClick((ActionHandler)& DogfightState::btnUfoClick);
+	_btnUfo->onMouseClick(	static_cast<ActionHandler>(&DogfightState::btnUfoClick),
+							0u);
 
 	_btnDisengage->copy(_window);
 	_btnDisengage->setGroup(&_craftStance);
-	_btnDisengage->onMouseClick((ActionHandler)& DogfightState::btnDisengageClick);
+	_btnDisengage->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnDisengageClick)); // TODO: Key-presses.
 
 	_btnCautious->copy(_window);
 	_btnCautious->setGroup(&_craftStance);
-	_btnCautious->onMouseClick((ActionHandler)& DogfightState::btnCautiousClick);
+	_btnCautious->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnCautiousClick));
 
 	_btnStandard->copy(_window);
 	_btnStandard->setGroup(&_craftStance);
-	_btnStandard->onMouseClick((ActionHandler)& DogfightState::btnStandardClick);
+	_btnStandard->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnStandardClick));
 
 	_btnAggressive->copy(_window);
 	_btnAggressive->setGroup(&_craftStance);
-	_btnAggressive->onMouseClick((ActionHandler)& DogfightState::btnAggressiveClick);
+	_btnAggressive->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnAggressiveClick));
 
 	_btnStandoff->copy(_window);
 	_btnStandoff->setGroup(&_craftStance);
-	_btnStandoff->onMouseClick((ActionHandler)& DogfightState::btnStandoffClick);
-	_btnStandoff->onKeyboardPress(
-					(ActionHandler)& DogfightState::keyEscape,
-					Options::keyCancel);
+	_btnStandoff->onMouseClick(		static_cast<ActionHandler>(&DogfightState::btnStandoffClick));
+	_btnStandoff->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::keyEscape),
+									Options::keyCancel);
 
 	if ((srf = _game->getResourcePack()->getSurface(getTextureIcon())) != nullptr)
 		srf->blit(_texture);
@@ -327,13 +323,11 @@ DogfightState::DogfightState(
 //	srf->setX(0);
 //	srf->setY(0);
 	srf->blit(_btnMinimizedIcon);
-	_btnMinimizedIcon->onMousePress((ActionHandler)& DogfightState::btnMaximizeDfPress);
-	_btnMinimizedIcon->onKeyboardPress(
-					(ActionHandler)& DogfightState::btnMaximizeDfPress,
-					Options::keyOk); // used to Maximize all minimized interceptor icons.
-	_btnMinimizedIcon->onKeyboardPress(
-					(ActionHandler)& DogfightState::btnMaximizeDfPress,
-					Options::keyOkKeypad); // used to Maximize all minimized interceptor icons.
+	_btnMinimizedIcon->onMousePress(	static_cast<ActionHandler>(&DogfightState::btnMaximizeDfPress));
+	_btnMinimizedIcon->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::btnMaximizeDfPress),
+										Options::keyOk);		// used to Maximize all minimized interceptor icons.
+	_btnMinimizedIcon->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::btnMaximizeDfPress),
+										Options::keyOkKeypad);	// used to Maximize all minimized interceptor icons.
 	_btnMinimizedIcon->setVisible(false);
 
 	std::wostringstream woststr;
@@ -460,7 +454,7 @@ DogfightState::DogfightState(
 	srf = srtInticon->getFrame(_craft->getRules()->getSprite() + 11);
 	srf->blit(_damage);
 
-	_craftDamageAnimTimer->onTimer((StateHandler)& DogfightState::animateCraftDamage);
+	_craftDamageAnimTimer->onTimer(static_cast<StateHandler>(&DogfightState::animateCraftDamage));
 
 	if (_ufo->getEscapeCountdown() == 0) // UFO is *not* engaged already in a different dogfight/Intercept slot.
 	{
@@ -477,7 +471,7 @@ DogfightState::DogfightState(
 		&& _craft->getWeapons()->at(0u) != nullptr)
 	{
 		_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getStandardReload();
-		_weapon1->onMouseClick((ActionHandler)& DogfightState::weapon1Click);
+		_weapon1->onMouseClick(static_cast<ActionHandler>(&DogfightState::weapon1Click));
 	}
 	else
 	{
@@ -490,7 +484,7 @@ DogfightState::DogfightState(
 		&& _craft->getWeapons()->at(1u) != nullptr)
 	{
 		_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getStandardReload();
-		_weapon2->onMouseClick((ActionHandler)& DogfightState::weapon2Click);
+		_weapon2->onMouseClick(static_cast<ActionHandler>(&DogfightState::weapon2Click));
 	}
 	else
 	{
@@ -1206,11 +1200,11 @@ void DogfightState::updateDogfight()
 						targetRegion = _gameSave->locateRegion(lon,lat)->getRules()->getType();				// Retaliation vs UFO's shootdown region.
 
 					// Difference from original: No retaliation until final UFO lands (Original: Is spawned).
-					if (_game->getSavedGame()->findAlienMission(targetRegion, alm_RETAL) == false)
+					if (_game->getSavedGame()->findAlienMission(targetRegion, alm_RETAL) == nullptr)
 					{
 						const RuleAlienMission& missionRule (*_game->getRuleset()->getMissionRand(
 																							alm_RETAL,
-																							_game->getSavedGame()->getMonthsPassed()));
+																							static_cast<size_t>(_game->getSavedGame()->getMonthsPassed())));
 						AlienMission* const mission (new AlienMission(missionRule, *_gameSave));
 						mission->setId(_gameSave->getCanonicalId("STR_ALIEN_MISSION"));
 						mission->setRegion(
@@ -1320,7 +1314,7 @@ void DogfightState::fireWeapon1()
 		_projectiles.push_back(prj);
 
 		_game->getResourcePack()->playSoundFx(
-										cw->getRules()->getSound(),
+										static_cast<unsigned>(cw->getRules()->getMissileSound()),
 										true);
 	}
 }
@@ -1346,7 +1340,7 @@ void DogfightState::fireWeapon2()
 		_projectiles.push_back(prj);
 
 		_game->getResourcePack()->playSoundFx(
-										cw->getRules()->getSound(),
+										static_cast<unsigned>(cw->getRules()->getMissileSound()),
 										true);
 	}
 }
@@ -1624,42 +1618,52 @@ void DogfightState::btnDisengageClick(Action*)
  * Shows a front view of the UFO.
  * @param action - pointer to an Action
  */
-void DogfightState::btnUfoClick(Action*)
+void DogfightState::btnUfoClick(Action* action)
 {
-	_previewUfo->setVisible();
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			_previewUfo->setVisible();
 
-	// Disable all other buttons to prevent misclicks
-	_btnStandoff->setVisible(false);
-	_btnCautious->setVisible(false);
-	_btnStandard->setVisible(false);
-	_btnAggressive->setVisible(false);
-	_btnDisengage->setVisible(false);
-	_btnUfo->setVisible(false);
-	_texture->setVisible(false);
-	_btnMinimize->setVisible(false);
-	_weapon1->setVisible(false);
-	_weapon2->setVisible(false);
+			// Disable all other buttons to prevent misclicks
+			_btnStandoff->setVisible(false);
+			_btnCautious->setVisible(false);
+			_btnStandard->setVisible(false);
+			_btnAggressive->setVisible(false);
+			_btnDisengage->setVisible(false);
+			_btnUfo->setVisible(false);
+			_texture->setVisible(false);
+			_btnMinimize->setVisible(false);
+			_weapon1->setVisible(false);
+			_weapon2->setVisible(false);
+	}
 }
 
 /**
  * Hides the front view of the UFO.
  * @param action - pointer to an Action
  */
-void DogfightState::previewClick(Action*)
+void DogfightState::previewClick(Action* action)
 {
-	_previewUfo->setVisible(false);
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			_previewUfo->setVisible(false);
 
-	// Reenable all other buttons to prevent misclicks Lol
-	_btnStandoff->setVisible();
-	_btnCautious->setVisible();
-	_btnStandard->setVisible();
-	_btnAggressive->setVisible();
-	_btnDisengage->setVisible();
-	_btnUfo->setVisible();
-	_texture->setVisible();
-	_btnMinimize->setVisible();
-	_weapon1->setVisible();
-	_weapon2->setVisible();
+			// Reenable all other buttons to prevent misclicks Lol
+			_btnStandoff->setVisible();
+			_btnCautious->setVisible();
+			_btnStandard->setVisible();
+			_btnAggressive->setVisible();
+			_btnDisengage->setVisible();
+			_btnUfo->setVisible();
+			_texture->setVisible();
+			_btnMinimize->setVisible();
+			_weapon1->setVisible();
+			_weapon2->setVisible();
+	}
 }
 
 /**
@@ -1838,11 +1842,11 @@ void DogfightState::drawUfo()
 				if (color != 0u)
 				{
 					if (_ufo->isCrashed() == true || _ufo->getHitFrame() != 0)
-						color <<= 1u;
+						color = static_cast<Uint8>(color << 1u);
 
-					color = _window->getPixelColor(
-												ufo_x + x + 3,
-												ufo_y + y + 3) - color;
+					color = static_cast<Uint8>(_window->getPixelColor(
+																ufo_x + x + 3,
+																ufo_y + y + 3) - color);
 					if (color < _colors[BLOB_MIN])
 						color = _colors[BLOB_MIN];
 
@@ -1895,7 +1899,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 						color = _window->getPixelColor(
 													pos_x + x + 3, // +3 'cause of the window frame
 													pos_y + y + 3);
-						color -= colorOffset;
+						color = static_cast<Uint8>(color - colorOffset);
 						if (color < _colors[BLOB_MIN])
 							color = _colors[BLOB_MIN];
 
@@ -1927,7 +1931,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 						color = _window->getPixelColor(
 													pos_x + 3,
 													y + 3);
-						color -= colorOffset;
+						color = static_cast<Uint8>(color - colorOffset);
 						if (color < _colors[BLOB_MIN])
 							color = _colors[BLOB_MIN];
 						break;
@@ -2049,7 +2053,7 @@ void DogfightState::resetInterceptPort(
 		_slot = _geoState->getOpenDfSlot(); // not sure what this is doing anymore ...
 
 	_minimizedIconX = 5;
-	_minimizedIconY = (_slot * 5) + ((_slot - 1) << 4u);
+	_minimizedIconY = static_cast<int>((_slot * 5u) + ((_slot - 1u) << 4u));
 
 	if (_minimized == false)
 	{

@@ -117,20 +117,17 @@ PurchaseState::PurchaseState(Base* const base)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& PurchaseState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& PurchaseState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& PurchaseState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&PurchaseState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&PurchaseState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&PurchaseState::btnOkClick),
+							Options::keyOkKeypad);
 	_btnOk->setVisible(false);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& PurchaseState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PurchaseState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&PurchaseState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PurchaseState::btnCancelClick),
+								Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_PURCHASE_HIRE_PERSONNEL"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -161,11 +158,11 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->setBackground(_window);
 	_lstItems->setArrow(227, ARROW_VERTICAL);
 
-	_lstItems->onLeftArrowPress(	(ActionHandler)& PurchaseState::lstLeftArrowPress);
-	_lstItems->onLeftArrowRelease(	(ActionHandler)& PurchaseState::lstLeftArrowRelease);
+	_lstItems->onLeftArrowPress(	static_cast<ActionHandler>(&PurchaseState::lstLeftArrowPress));
+	_lstItems->onLeftArrowRelease(	static_cast<ActionHandler>(&PurchaseState::lstLeftArrowRelease));
 
-	_lstItems->onRightArrowPress(	(ActionHandler)& PurchaseState::lstRightArrowPress);
-	_lstItems->onRightArrowRelease(	(ActionHandler)& PurchaseState::lstRightArrowRelease);
+	_lstItems->onRightArrowPress(	static_cast<ActionHandler>(&PurchaseState::lstRightArrowPress));
+	_lstItems->onRightArrowRelease(	static_cast<ActionHandler>(&PurchaseState::lstRightArrowRelease));
 
 
 	// Add soldier-types to purchase-list.
@@ -209,23 +206,23 @@ PurchaseState::PurchaseState(Base* const base)
 
 
 	// Add craft-types to purchase-list.
-	const RuleCraft* crfRule;
+	const RuleCraft* crRule;
 	const std::vector<std::string>& craftList (rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
 			i = craftList.begin();
 			i != craftList.end();
 			++i)
 	{
-		crfRule = rules->getCraft(*i);
-		if (crfRule->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(crfRule->getRequirements()) == true)
+		crRule = rules->getCraft(*i);
+		if (crRule->getBuyCost() != 0
+			&& _game->getSavedGame()->isResearched(crRule->getRequirements()) == true)
 		{
 			_orderQty.push_back(0);
 			_crafts.push_back(*i);
 			_lstItems->addRow(
 						4,
 						tr(*i).c_str(),
-						Text::formatCurrency(crfRule->getBuyCost()).c_str(),
+						Text::formatCurrency(crRule->getBuyCost()).c_str(),
 						Text::intWide(_base->getCraftCount(*i)).c_str(),
 						L"0");
 		}
@@ -449,10 +446,10 @@ PurchaseState::PurchaseState(Base* const base)
 	_lstItems->scrollTo(_base->getRecallRow(REC_PURCHASE));
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& PurchaseState::onIncrease);
+	_timerInc->onTimer(static_cast<StateHandler>(&PurchaseState::onIncrease));
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& PurchaseState::onDecrease);
+	_timerDec->onTimer(static_cast<StateHandler>(&PurchaseState::onDecrease));
 }
 
 /**

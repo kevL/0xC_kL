@@ -55,7 +55,7 @@ AbortMissionState::AbortMissionState(
 	:
 		_battleSave(battleSave),
 		_state(state),
-		_insideExit(0)
+		_insideExit(0u)
 {
 	_fullScreen = false;
 
@@ -95,7 +95,7 @@ AbortMissionState::AbortMissionState(
 			nextStage = _game->getRuleset()->getDeployment(_battleSave->getTacticalType())->getNextStage();
 	}
 
-	int outsideExit (0);
+	unsigned outsideExit (0u);
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
@@ -105,7 +105,7 @@ AbortMissionState::AbortMissionState(
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
 			if (   (nextStage.empty() == true  && (*i)->isOnTiletype(START_POINT) == true)
-				|| (nextStage.empty() == false && (*i)->isOnTiletype(END_POINT) == true))
+				|| (nextStage.empty() == false && (*i)->isOnTiletype(END_POINT)   == true))
 			{
 				++_insideExit;
 			}
@@ -140,23 +140,19 @@ AbortMissionState::AbortMissionState(
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->setHighContrast();
-	_btnOk->onMouseClick((ActionHandler)& AbortMissionState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AbortMissionState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AbortMissionState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& AbortMissionState::btnOkClick,
-					Options::keyBattleAbort);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&AbortMissionState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AbortMissionState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AbortMissionState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AbortMissionState::btnOkClick),
+							Options::keyBattleAbort);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
 	_btnCancel->setHighContrast();
-	_btnCancel->onMouseClick((ActionHandler)& AbortMissionState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& AbortMissionState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&AbortMissionState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&AbortMissionState::btnCancelClick),
+								Options::keyCancel);
 }
 
 /**
@@ -174,7 +170,7 @@ void AbortMissionState::btnOkClick(Action*)
 	_game->popState();
 
 	_battleSave->isAborted(true);
-	_state->finishBattle(true, _insideExit);
+	_state->finishBattle(true, static_cast<int>(_insideExit));
 }
 
 /**

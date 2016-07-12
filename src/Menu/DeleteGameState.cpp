@@ -77,24 +77,21 @@ DeleteGameState::DeleteGameState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick((ActionHandler)& DeleteGameState::btnYesClick);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& DeleteGameState::btnYesClick,
-					Options::keyOk);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& DeleteGameState::btnYesClick,
-					Options::keyOkKeypad);
+	_btnYes->onMouseClick(		static_cast<ActionHandler>(&DeleteGameState::btnYesClick));
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteGameState::btnYesClick),
+								Options::keyOk);
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteGameState::btnYesClick),
+								Options::keyOkKeypad);
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick((ActionHandler)& DeleteGameState::btnNoClick);
-	_btnNo->onKeyboardPress(
-					(ActionHandler)& DeleteGameState::btnNoClick,
-					Options::keyCancel);
+	_btnNo->onMouseClick(	static_cast<ActionHandler>(&DeleteGameState::btnNoClick));
+	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&DeleteGameState::btnNoClick),
+							Options::keyCancel);
 
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setBig();
 	_txtMessage->setWordWrap();
-	_txtMessage->setText(tr("STR_CONFIRM_DELETE_THE_SAVED_GAME"));
+	_txtMessage->setText(tr("STR_CONFIRM_DELETE_SAVED_GAME"));
 
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();

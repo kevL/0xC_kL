@@ -83,7 +83,7 @@ ActionMenuState::ActionMenuState(
 		add(_menuSelect[i]);
 
 		_menuSelect[i]->setVisible(false);
-		_menuSelect[i]->onMouseClick((ActionHandler)& ActionMenuState::btnActionMenuClick);
+		_menuSelect[i]->onMouseClick(static_cast<ActionHandler>(&ActionMenuState::btnActionMenuClick));
 	}
 
 	const RuleItem* const itRule (_action->weapon->getRules());
@@ -389,7 +389,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 
 				const int soundId (itRule->getMeleeSound());
 				if (soundId != -1)
-					_game->getResourcePack()->getSound("BATTLE.CAT", soundId)
+					_game->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 												->play(-1, _game->getSavedGame()->getBattleSave()->getBattleGame()->getMap()
 													->getSoundAngle(_action->actor->getPosition()));
 				break;

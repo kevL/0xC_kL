@@ -42,9 +42,9 @@ class ManufactureCostsState
 
 private:
 	static const Uint8
-		GREEN	=  48,
-		BROWN	=  80,
-		YELLOW	= 213;
+		GREEN	=  48u,
+		BROWN	=  80u,
+		YELLOW	= 213u;
 
 	Text
 		* _txtTitle,
@@ -59,12 +59,12 @@ private:
 
 
 	public:
-		/// Creates the State.
+		/// Creates a ManufactureCosts state.
 		ManufactureCostsState();
 		/// dTor.
 		~ManufactureCostsState();
 
-		/// Populates the table with manufacture information.
+		/// Populates the table with manufacture-information.
 		void init() override;
 
 		/// Handler for the Cancel button.

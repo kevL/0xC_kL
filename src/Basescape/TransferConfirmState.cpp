@@ -78,19 +78,16 @@ TransferConfirmState::TransferConfirmState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& TransferConfirmState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& TransferConfirmState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&TransferConfirmState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&TransferConfirmState::btnCancelClick),
+								Options::keyCancel);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& TransferConfirmState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& TransferConfirmState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& TransferConfirmState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&TransferConfirmState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TransferConfirmState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TransferConfirmState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);

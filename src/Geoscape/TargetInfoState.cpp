@@ -84,19 +84,16 @@ TargetInfoState::TargetInfoState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
-	_btnIntercept->onMouseClick((ActionHandler)& TargetInfoState::btnInterceptClick);
+	_btnIntercept->onMouseClick(static_cast<ActionHandler>(&TargetInfoState::btnInterceptClick));
 
 	_btnOk->setText(tr("STR_CANCEL"));
-	_btnOk->onMouseClick((ActionHandler)& TargetInfoState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& TargetInfoState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& TargetInfoState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& TargetInfoState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&TargetInfoState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TargetInfoState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TargetInfoState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TargetInfoState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -114,7 +111,7 @@ TargetInfoState::TargetInfoState(
 			_aBase = *i;
 			const std::wstring edit (Language::utf8ToWstr((*i)->getUserLabel()));
 			_edtTarget->setText(edit);
-			_edtTarget->onTextChange((ActionHandler)& TargetInfoState::edtTargetChange);
+			_edtTarget->onTextChange(static_cast<ActionHandler>(&TargetInfoState::edtTargetChange));
 			break;
 		}
 	}

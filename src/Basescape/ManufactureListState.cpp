@@ -100,22 +100,19 @@ ManufactureListState::ManufactureListState(
 	_lstManufacture->setColumns(2, 132,145);
 	_lstManufacture->setBackground(_window);
 	_lstManufacture->setSelectable();
-	_lstManufacture->onMouseClick((ActionHandler)& ManufactureListState::lstProdClick);
+	_lstManufacture->onMouseClick(static_cast<ActionHandler>(&ManufactureListState::lstProdClick));
 
 	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
-	_btnCostTable->onMouseClick((ActionHandler)& ManufactureListState::btnCostsClick);
+	_btnCostTable->onMouseClick(static_cast<ActionHandler>(&ManufactureListState::btnCostsClick));
 
 	_btnCancel->setText(tr("STR_OK"));
-	_btnCancel->onMouseClick((ActionHandler)& ManufactureListState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ManufactureListState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ManufactureListState::btnCancelClick,
-					Options::keyOkKeypad);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ManufactureListState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ManufactureListState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ManufactureListState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ManufactureListState::btnCancelClick),
+								Options::keyOkKeypad);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ManufactureListState::btnCancelClick),
+								Options::keyCancel);
 
 
 	_catStrings.push_back(ALL_ITEMS); // #0
@@ -136,22 +133,22 @@ ManufactureListState::ManufactureListState(
 		}
 	}
 	_cbxCategory->setOptions(_catStrings);
-	_cbxCategory->setBackgroundFill(58); // green <- TODO: put this in Interfaces.rul
-	_cbxCategory->onComboChange((ActionHandler)& ManufactureListState::cbxCategoryChange);
+	_cbxCategory->setBackgroundFill(58u); // green <- TODO: put this in Interfaces.rul
+	_cbxCategory->onComboChange(static_cast<ActionHandler>(&ManufactureListState::cbxCategoryChange));
 
-	std::vector<std::string>::iterator i (std::find( // <- std::distance(below_) does not accept a const_iterator.
+	std::vector<std::string>::iterator i (std::find( // <- std::distance() below_ does not accept a const_iterator.
 												_catStrings.begin(),
 												_catStrings.end(),
 												_recallCatString));
 	if (i != _catStrings.end())
 	{
-		const size_t j (std::distance(_catStrings.begin(), i));
+		const size_t j (static_cast<size_t>(std::distance(_catStrings.begin(), i)));
 		_cbxCategory->setSelected(j);
 	}
 	else // safety.
 	{
 		_recallCatString = ALL_ITEMS;
-		_cbxCategory->setSelected(0);
+		_cbxCategory->setSelected(0u);
 	}
 }
 
@@ -220,7 +217,6 @@ void ManufactureListState::lstProdClick(Action*)
  */
 void ManufactureListState::cbxCategoryChange(Action*)
 {
-
 	fillProductionList();
 }
 

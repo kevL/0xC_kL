@@ -112,54 +112,53 @@ SelectDestinationState::SelectDestinationState(
 	_txtError->setVisible(false);
 
 	// NOTE: Replacing onMouseClick() w/ onMousePress() causes a bizarre CTD situation.
-	_globe->onMouseClick((ActionHandler)& SelectDestinationState::globeClick);
+	_globe->onMouseClick(static_cast<ActionHandler>(&SelectDestinationState::globeClick));
 
-/*	_btnRotateLeft->onMousePress((ActionHandler)& SelectDestinationState::btnRotateLeftPress);
-	_btnRotateLeft->onMouseRelease((ActionHandler)& SelectDestinationState::btnRotateLeftRelease);
-	_btnRotateLeft->onKeyboardPress((ActionHandler)&SelectDestinationState::btnRotateLeftPress, Options::keyGeoLeft);
-	_btnRotateLeft->onKeyboardRelease((ActionHandler)&SelectDestinationState::btnRotateLeftRelease, Options::keyGeoLeft);
+/*	_btnRotateLeft->onMousePress(		static_cast<ActionHandler>(&SelectDestinationState::btnRotateLeftPress));
+	_btnRotateLeft->onMouseRelease(		static_cast<ActionHandler>(&SelectDestinationState::btnRotateLeftRelease));
+	_btnRotateLeft->onKeyboardPress(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateLeftPress),   Options::keyGeoLeft);
+	_btnRotateLeft->onKeyboardRelease(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateLeftRelease), Options::keyGeoLeft);
 
-	_btnRotateRight->onMousePress((ActionHandler)& SelectDestinationState::btnRotateRightPress);
-	_btnRotateRight->onMouseRelease((ActionHandler)& SelectDestinationState::btnRotateRightRelease);
-	_btnRotateRight->onKeyboardPress((ActionHandler)&SelectDestinationState::btnRotateRightPress, Options::keyGeoRight);
-	_btnRotateRight->onKeyboardRelease((ActionHandler)&SelectDestinationState::btnRotateRightRelease, Options::keyGeoRight);
+	_btnRotateRight->onMousePress(		static_cast<ActionHandler>(&SelectDestinationState::btnRotateRightPress));
+	_btnRotateRight->onMouseRelease(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateRightRelease));
+	_btnRotateRight->onKeyboardPress(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateRightPress),   Options::keyGeoRight);
+	_btnRotateRight->onKeyboardRelease(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateRightRelease), Options::keyGeoRight);
 
-	_btnRotateUp->onMousePress((ActionHandler)& SelectDestinationState::btnRotateUpPress);
-	_btnRotateUp->onMouseRelease((ActionHandler)& SelectDestinationState::btnRotateUpRelease);
-	_btnRotateUp->onKeyboardPress((ActionHandler)&SelectDestinationState::btnRotateUpPress, Options::keyGeoUp);
-	_btnRotateUp->onKeyboardRelease((ActionHandler)&SelectDestinationState::btnRotateUpRelease, Options::keyGeoUp);
+	_btnRotateUp->onMousePress(		static_cast<ActionHandler>(&SelectDestinationState::btnRotateUpPress));
+	_btnRotateUp->onMouseRelease(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateUpRelease));
+	_btnRotateUp->onKeyboardPress(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateUpPress),   Options::keyGeoUp);
+	_btnRotateUp->onKeyboardRelease(static_cast<ActionHandler>(&SelectDestinationState::btnRotateUpRelease), Options::keyGeoUp);
 
-	_btnRotateDown->onMousePress((ActionHandler)& SelectDestinationState::btnRotateDownPress);
-	_btnRotateDown->onMouseRelease((ActionHandler)& SelectDestinationState::btnRotateDownRelease);
-	_btnRotateDown->onKeyboardPress((ActionHandler)&SelectDestinationState::btnRotateDownPress, Options::keyGeoDown);
-	_btnRotateDown->onKeyboardRelease((ActionHandler)&SelectDestinationState::btnRotateDownRelease, Options::keyGeoDown);
+	_btnRotateDown->onMousePress(		static_cast<ActionHandler>(&SelectDestinationState::btnRotateDownPress));
+	_btnRotateDown->onMouseRelease(		static_cast<ActionHandler>(&SelectDestinationState::btnRotateDownRelease));
+	_btnRotateDown->onKeyboardPress(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateDownPress),   Options::keyGeoDown);
+	_btnRotateDown->onKeyboardRelease(	static_cast<ActionHandler>(&SelectDestinationState::btnRotateDownRelease), Options::keyGeoDown);
 
-	_btnZoomIn->onMouseClick((ActionHandler)& SelectDestinationState::btnZoomInLeftClick, SDL_BUTTON_LEFT);
-	_btnZoomIn->onMouseClick((ActionHandler)& SelectDestinationState::btnZoomInRightClick, SDL_BUTTON_RIGHT);
-	_btnZoomIn->onKeyboardPress((ActionHandler)&SelectDestinationState::btnZoomInLeftClick, Options::keyGeoZoomIn);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&SelectDestinationState::btnZoomInLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&SelectDestinationState::btnZoomInRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomIn->onKeyboardPress(static_cast<ActionHandler>(&SelectDestinationState::btnZoomInLeftClick),  Options::keyGeoZoomIn);
 
-	_btnZoomOut->onMouseClick((ActionHandler)& SelectDestinationState::btnZoomOutLeftClick, SDL_BUTTON_LEFT);
-	_btnZoomOut->onMouseClick((ActionHandler)& SelectDestinationState::btnZoomOutRightClick, SDL_BUTTON_RIGHT);
-	_btnZoomOut->onKeyboardPress((ActionHandler)&SelectDestinationState::btnZoomOutLeftClick, Options::keyGeoZoomOut);
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&SelectDestinationState::btnZoomOutLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&SelectDestinationState::btnZoomOutRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomOut->onKeyboardPress(	static_cast<ActionHandler>(&SelectDestinationState::btnZoomOutLeftClick),  Options::keyGeoZoomOut);
 
 	// dirty hacks to get the rotate buttons to work in "classic" style
-	_btnRotateLeft->setListButton();
-	_btnRotateRight->setListButton();
-	_btnRotateUp->setListButton();
-	_btnRotateDown->setListButton(); */
+	_btnRotateLeft	->setListButton();
+	_btnRotateRight	->setListButton();
+	_btnRotateUp	->setListButton();
+	_btnRotateDown	->setListButton(); */
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& SelectDestinationState::btnCancelClick);
+	_btnCancel->onMouseClick(static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick));
 	_btnCancel->onKeyboardPress(
-					(ActionHandler)& SelectDestinationState::btnCancelClick,
+					static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick),
 					Options::keyCancel);
 
 //	_txtTitle->setText(tr("STR_SELECT_DESTINATION"));
 //	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
 //	_txtTitle->setWordWrap();
-
 
 	if (_craft->getRules()->getSpacecraft() == true
 		&& _game->getSavedGame()->isResearched(_game->getRuleset()->getFinalResearch()) == true
@@ -184,22 +183,18 @@ SelectDestinationState::SelectDestinationState(
 	if (_btnCydonia->getVisible() == true)
 	{
 		_btnCydonia->setText(tr("STR_CYDONIA"));
-		_btnCydonia->onMouseClick((ActionHandler)& SelectDestinationState::btnCydoniaClick);
-		_btnCydonia->onKeyboardPress(
-						(ActionHandler)& SelectDestinationState::btnCydoniaClick,
-						Options::keyOk);
-		_btnCydonia->onKeyboardPress(
-						(ActionHandler)& SelectDestinationState::btnCydoniaClick,
-						Options::keyOkKeypad);
+		_btnCydonia->onMouseClick(		static_cast<ActionHandler>(&SelectDestinationState::btnCydoniaClick));
+		_btnCydonia->onKeyboardPress(	static_cast<ActionHandler>(&SelectDestinationState::btnCydoniaClick),
+										Options::keyOk);
+		_btnCydonia->onKeyboardPress(	static_cast<ActionHandler>(&SelectDestinationState::btnCydoniaClick),
+										Options::keyOkKeypad);
 	}
 	else
 	{
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& SelectDestinationState::btnCancelClick,
-						Options::keyOk);
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& SelectDestinationState::btnCancelClick,
-						Options::keyOkKeypad);
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick),
+									Options::keyOk);
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick),
+									Options::keyOkKeypad);
 	}
 }
 
@@ -253,24 +248,14 @@ void SelectDestinationState::globeClick(Action* action)
 	const int mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
 	if (mY > _window->getY() + _window->getHeight()) // ignore window clicks
 	{
-//		const Uint8 btnId (action->getDetails()->button.button);
-
 		if (_ufoLost == true)
 		{
-//			switch (btnId)
-//			{
-//				case SDL_BUTTON_LEFT:
-//				case SDL_BUTTON_RIGHT:
-			//Log(LOG_INFO) << ". ufoLost TRUE";
 			_ufoLost = false;
 			_globe->clearCrosshair();
 			_craft->setDestination();
 			_globe->draw();
-//			}
 		}
 
-//		if (btnId == SDL_BUTTON_LEFT) // set a Waypoint. This is called only on LMB.
-//		{
 		const int mX (static_cast<int>(std::floor(action->getAbsoluteMouseX())));
 		double
 			lon,lat;
@@ -284,9 +269,9 @@ void SelectDestinationState::globeClick(Action* action)
 		wp->setLatitude(lat);
 
 		int range (_craft->getFuel());
-		const RuleCraft* const craftRule (_craft->getRules());
-		if (craftRule->getRefuelItem().empty() == false)
-			range *= craftRule->getMaxSpeed();
+		const RuleCraft* const crRule (_craft->getRules());
+		if (crRule->getRefuelItem().empty() == false)
+			range *= crRule->getMaxSpeed();
 
 		range /= 6; // six doses per hour on Geoscape.
 
@@ -304,7 +289,7 @@ void SelectDestinationState::globeClick(Action* action)
 			std::vector<Target*>::const_iterator i (std::find( // do not show Craft's current Target
 															targets.begin(),
 															targets.end(),
-															dynamic_cast<Target*>(_craft->getDestination())));
+															_craft->getDestination()));
 			if (i != targets.end())
 				targets.erase(i);
 
@@ -318,7 +303,6 @@ void SelectDestinationState::globeClick(Action* action)
 													_craft,
 													nullptr));
 		}
-//		}
 	}
 }
 

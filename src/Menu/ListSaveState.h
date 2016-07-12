@@ -39,7 +39,7 @@ class ListSaveState
 {
 
 private:
-	int
+	int // TODO: These should be size_t's; indepth consideration required ....
 		_selectedPre,
 		_selected;
 

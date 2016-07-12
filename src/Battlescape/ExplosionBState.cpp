@@ -266,12 +266,12 @@ void ExplosionBState::init()
 			if (_itRule != nullptr)
 				soundId = _itRule->getFireHitSound();
 			else if (_power < 73)
-				soundId = ResourcePack::SMALL_EXPLOSION;
+				soundId = static_cast<int>(ResourcePack::SMALL_EXPLOSION);
 			else
-				soundId = ResourcePack::LARGE_EXPLOSION;
+				soundId = static_cast<int>(ResourcePack::LARGE_EXPLOSION);
 
 			if (soundId != -1)
-				_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+				_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 											->play(-1, _parent->getMap()->getSoundAngle(posTarget));
 
 			Camera* const exploCam (_parent->getMap()->getCamera());
@@ -350,7 +350,7 @@ void ExplosionBState::init()
 		}
 
 		if (soundId != -1)
-			_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 										->play(-1, _parent->getMap()->getSoundAngle(posTarget));
 
 		if (aniStart_att != -1 || aniStart_hit != -1)

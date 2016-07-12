@@ -107,10 +107,10 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 
 	_cbxEdgeScroll->setOptions(edgeScrolls);
 	_cbxEdgeScroll->setSelected(Options::battleEdgeScroll);
-	_cbxEdgeScroll->onComboChange((ActionHandler)& OptionsBattlescapeState::cbxEdgeScrollChange);
+	_cbxEdgeScroll->onComboChange(	static_cast<ActionHandler>(&OptionsBattlescapeState::cbxEdgeScrollChange));
+//	_cbxEdgeScroll->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_cbxEdgeScroll->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_cbxEdgeScroll->setTooltip("STR_EDGE_SCROLL_DESC");
-//	_cbxEdgeScroll->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_cbxEdgeScroll->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_txtDragScroll->setText(tr("STR_DRAG_SCROLL"));
 
@@ -121,79 +121,79 @@ OptionsBattlescapeState::OptionsBattlescapeState(OptionsOrigin origin)
 	dragScrolls.push_back("STR_RIGHT_MOUSE_BUTTON");
 
 	_cbxDragScroll->setOptions(dragScrolls);
-	_cbxDragScroll->setSelected(Options::battleDragScrollButton);
-	_cbxDragScroll->onComboChange((ActionHandler)& OptionsBattlescapeState::cbxDragScrollChange);
+	_cbxDragScroll->setSelected(static_cast<size_t>(Options::battleDragScrollButton));
+	_cbxDragScroll->onComboChange(	static_cast<ActionHandler>(&OptionsBattlescapeState::cbxDragScrollChange));
+//	_cbxDragScroll->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_cbxDragScroll->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_cbxDragScroll->setTooltip("STR_DRAG_SCROLL_DESC");
-//	_cbxDragScroll->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_cbxDragScroll->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_txtScrollSpeed->setText(tr("STR_SCROLL_SPEED"));
 
 	_slrScrollSpeed->setRange(2, 20);
 	_slrScrollSpeed->setValue(Options::battleScrollSpeed);
-	_slrScrollSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrScrollSpeedChange);
+	_slrScrollSpeed->onSliderChange(static_cast<ActionHandler>(&OptionsBattlescapeState::slrScrollSpeedChange));
+//	_slrScrollSpeed->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_slrScrollSpeed->onMouseOut(	static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_slrScrollSpeed->setTooltip("STR_SCROLL_SPEED_BATTLE_DESC");
-//	_slrScrollSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_slrScrollSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_txtFireSpeed->setText(tr("STR_FIRE_SPEED"));
 
 	_slrFireSpeed->setRange(1, 20);
 	_slrFireSpeed->setValue(Options::battleFireSpeed);
-	_slrFireSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrFireSpeedChange);
+	_slrFireSpeed->onSliderChange(	static_cast<ActionHandler>(&OptionsBattlescapeState::slrFireSpeedChange));
+//	_slrFireSpeed->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_slrFireSpeed->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_slrFireSpeed->setTooltip("STR_FIRE_SPEED_DESC");
-//	_slrFireSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_slrFireSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_txtXcomSpeed->setText(tr("STR_PLAYER_MOVEMENT_SPEED"));
 
 	_slrXcomSpeed->setRange(80, 1); // was 40
 	_slrXcomSpeed->setValue(Options::battleXcomSpeed);
-	_slrXcomSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrXcomSpeedChange);
+	_slrXcomSpeed->onSliderChange(	static_cast<ActionHandler>(&OptionsBattlescapeState::slrXcomSpeedChange));
+//	_slrXcomSpeed->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_slrXcomSpeed->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_slrXcomSpeed->setTooltip("STR_PLAYER_MOVEMENT_SPEED_DESC");
-//	_slrXcomSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_slrXcomSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_txtAlienSpeed->setText(tr("STR_COMPUTER_MOVEMENT_SPEED"));
 
 	_slrAlienSpeed->setRange(40, 1);
 	_slrAlienSpeed->setValue(Options::battleAlienSpeed);
-	_slrAlienSpeed->onSliderChange((ActionHandler)& OptionsBattlescapeState::slrAlienSpeedChange);
+	_slrAlienSpeed->onSliderChange(	static_cast<ActionHandler>(&OptionsBattlescapeState::slrAlienSpeedChange));
+//	_slrAlienSpeed->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_slrAlienSpeed->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_slrAlienSpeed->setTooltip("STR_COMPUTER_MOVEMENT_SPEED_DESC");
-//	_slrAlienSpeed->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_slrAlienSpeed->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_txtPathPreview->setText(tr("STR_PATH_PREVIEW"));
 
 	_btnArrows->setText(tr("STR_PATH_ARROWS"));
 	_btnArrows->setPressed((Options::battlePreviewPath & PATH_ARROWS) != 0);
-	_btnArrows->onMouseClick((ActionHandler)& OptionsBattlescapeState::btnPathPreviewClick);
+	_btnArrows->onMouseClick(	static_cast<ActionHandler>(&OptionsBattlescapeState::btnPathPreviewClick));
+//	_btnArrows->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_btnArrows->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_btnArrows->setTooltip("STR_PATH_ARROWS_DESC");
-//	_btnArrows->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_btnArrows->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_btnTuCost->setText(tr("STR_PATH_TIME_UNIT_COST"));
 	_btnTuCost->setPressed((Options::battlePreviewPath & PATH_TU_COST) != 0);
-	_btnTuCost->onMouseClick((ActionHandler)& OptionsBattlescapeState::btnPathPreviewClick);
+	_btnTuCost->onMouseClick(	static_cast<ActionHandler>(&OptionsBattlescapeState::btnPathPreviewClick));
+//	_btnTuCost->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_btnTuCost->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_btnTuCost->setTooltip("STR_PATH_TIME_UNIT_COST_DESC");
-//	_btnTuCost->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_btnTuCost->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_txtOptions->setText(tr("STR_USER_INTERFACE_OPTIONS"));
 
 	_btnTooltips->setText(tr("STR_TOOLTIPS"));
 	_btnTooltips->setPressed(Options::battleTooltips);
-	_btnTooltips->onMouseClick((ActionHandler)& OptionsBattlescapeState::btnTooltipsClick);
+	_btnTooltips->onMouseClick(	static_cast<ActionHandler>(&OptionsBattlescapeState::btnTooltipsClick));
+//	_btnTooltips->onMouseIn(	static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_btnTooltips->onMouseOut(	static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_btnTooltips->setTooltip("STR_TOOLTIPS_DESC");
-//	_btnTooltips->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_btnTooltips->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 
 	_btnDeaths->setText(tr("STR_DEATH_NOTIFICATIONS"));
 	_btnDeaths->setPressed(Options::battleNotifyDeath);
-	_btnDeaths->onMouseClick((ActionHandler)& OptionsBattlescapeState::btnDeathsClick);
+	_btnDeaths->onMouseClick(	static_cast<ActionHandler>(&OptionsBattlescapeState::btnDeathsClick));
+//	_btnDeaths->onMouseIn(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipIn));
+//	_btnDeaths->onMouseOut(		static_cast<ActionHandler>(&OptionsBattlescapeState::txtTooltipOut));
 //	_btnDeaths->setTooltip("STR_DEATH_NOTIFICATIONS_DESC");
-//	_btnDeaths->onMouseIn((ActionHandler)& OptionsBattlescapeState::txtTooltipIn);
-//	_btnDeaths->onMouseOut((ActionHandler)& OptionsBattlescapeState::txtTooltipOut);
 }
 
 /**
@@ -217,7 +217,7 @@ void OptionsBattlescapeState::cbxEdgeScrollChange(Action*)
  */
 void OptionsBattlescapeState::cbxDragScrollChange(Action*)
 {
-	Options::battleDragScrollButton = _cbxDragScroll->getSelected();
+	Options::battleDragScrollButton = static_cast<int>(_cbxDragScroll->getSelected());
 }
 
 /**

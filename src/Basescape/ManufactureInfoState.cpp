@@ -163,7 +163,7 @@ void ManufactureInfoState::buildUi() // private.
 	_txtDurationDesc->setText(tr("STR_DAYS_HOURS_LEFT"));
 
 	_btnSell->setText(tr("STR_SELL_PRODUCTION"));
-	_btnSell->onMouseRelease((ActionHandler)& ManufactureInfoState::btnSellRelease);
+	_btnSell->onMouseRelease(static_cast<ActionHandler>(&ManufactureInfoState::btnSellRelease));
 
 	_txtEngineersDesc->setText(tr("STR_ENGINEERS_ALLOCATED"));
 	_txtEngineersDesc->setBig();
@@ -174,34 +174,33 @@ void ManufactureInfoState::buildUi() // private.
 	_txtEngineers->setBig();
 	_txtUnits->setBig();
 
-	_btnEngineerMore->onMousePress(		(ActionHandler)& ManufactureInfoState::engineersMorePress);
-	_btnEngineerMore->onMouseRelease(	(ActionHandler)& ManufactureInfoState::engineersMoreRelease);
+	_btnEngineerMore->onMousePress(		static_cast<ActionHandler>(&ManufactureInfoState::engineersMorePress));
+	_btnEngineerMore->onMouseRelease(	static_cast<ActionHandler>(&ManufactureInfoState::engineersMoreRelease));
 
-	_btnEngineerLess->onMousePress(		(ActionHandler)& ManufactureInfoState::engineersLessPress);
-	_btnEngineerLess->onMouseRelease(	(ActionHandler)& ManufactureInfoState::engineersLessRelease);
+	_btnEngineerLess->onMousePress(		static_cast<ActionHandler>(&ManufactureInfoState::engineersLessPress));
+	_btnEngineerLess->onMouseRelease(	static_cast<ActionHandler>(&ManufactureInfoState::engineersLessRelease));
 
-	_btnUnitMore->onMousePress(		(ActionHandler)& ManufactureInfoState::unitsMorePress);
-	_btnUnitMore->onMouseRelease(	(ActionHandler)& ManufactureInfoState::unitsMoreRelease);
-	_btnUnitMore->onMouseClick(		(ActionHandler)& ManufactureInfoState::unitsMoreClick, 0u);
+	_btnUnitMore->onMousePress(		static_cast<ActionHandler>(&ManufactureInfoState::unitsMorePress));
+	_btnUnitMore->onMouseRelease(	static_cast<ActionHandler>(&ManufactureInfoState::unitsMoreRelease));
+	_btnUnitMore->onMouseClick(		static_cast<ActionHandler>(&ManufactureInfoState::unitsMoreClick),
+									0u);
 
-	_btnUnitLess->onMousePress(		(ActionHandler)& ManufactureInfoState::unitsLessPress);
-	_btnUnitLess->onMouseRelease(	(ActionHandler)& ManufactureInfoState::unitsLessRelease);
-	_btnUnitLess->onMouseClick(		(ActionHandler)& ManufactureInfoState::unitsLessClick, 0u);
+	_btnUnitLess->onMousePress(		static_cast<ActionHandler>(&ManufactureInfoState::unitsLessPress));
+	_btnUnitLess->onMouseRelease(	static_cast<ActionHandler>(&ManufactureInfoState::unitsLessRelease));
+	_btnUnitLess->onMouseClick(		static_cast<ActionHandler>(&ManufactureInfoState::unitsLessClick),
+									0u);
 
 	_btnStop->setText(tr("STR_STOP_PRODUCTION"));
-	_btnStop->onMouseClick((ActionHandler)& ManufactureInfoState::btnStopClick);
-	_btnStop->onKeyboardPress(
-					(ActionHandler)& ManufactureInfoState::btnStopClick,
-					Options::keyCancel);
+	_btnStop->onMouseClick(		static_cast<ActionHandler>(&ManufactureInfoState::btnStopClick));
+	_btnStop->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureInfoState::btnStopClick),
+								Options::keyCancel);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ManufactureInfoState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ManufactureInfoState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ManufactureInfoState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ManufactureInfoState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureInfoState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureInfoState::btnOkClick),
+							Options::keyOkKeypad);
 
 	if (_production == nullptr)
 	{
@@ -217,13 +216,13 @@ void ManufactureInfoState::buildUi() // private.
 
 	_timerEngineersMore = new Timer(Timer::SCROLL_SLOW);
 	_timerEngineersLess = new Timer(Timer::SCROLL_SLOW);
-	_timerEngineersMore->onTimer((StateHandler)& ManufactureInfoState::onEngineersMore);
-	_timerEngineersLess->onTimer((StateHandler)& ManufactureInfoState::onEngineersLess);
+	_timerEngineersMore->onTimer(static_cast<StateHandler>(&ManufactureInfoState::onEngineersMore));
+	_timerEngineersLess->onTimer(static_cast<StateHandler>(&ManufactureInfoState::onEngineersLess));
 
 	_timerUnitsMore = new Timer(Timer::SCROLL_SLOW);
 	_timerUnitsLess = new Timer(Timer::SCROLL_SLOW);
-	_timerUnitsMore->onTimer((StateHandler)& ManufactureInfoState::onUnitsMore);
-	_timerUnitsLess->onTimer((StateHandler)& ManufactureInfoState::onUnitsLess);
+	_timerUnitsMore->onTimer(static_cast<StateHandler>(&ManufactureInfoState::onUnitsMore));
+	_timerUnitsLess->onTimer(static_cast<StateHandler>(&ManufactureInfoState::onUnitsLess));
 }
 
 /**

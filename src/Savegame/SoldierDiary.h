@@ -70,7 +70,7 @@ private:
 		/// Gets the SoldierAward's noun/qualifier.
 		const std::string getQualifier() const;
 		/// Gets the SoldierAward decoration-level type.
-		const std::string getClassType(int skip) const;
+		const std::string getClassType(size_t skip) const;
 		/// Gets the SoldierAward's decoration-level-ID.
 		size_t getClassLevel() const;
 		/// Gets the SoldierAward's decoration-description.
@@ -145,8 +145,7 @@ private:
 		/// Updates the SoldierDiary's statistics.
 		void updateDiary(
 				const BattleUnitStatistics* const diaryStats,
-				const MissionStatistics* const tactical,
-				const Ruleset* const rules);
+				const MissionStatistics* const tactical);
 
 		/// Gets the SoldierAwards currently in the SoldierDiary.
 		std::vector<SoldierAward*>* getSoldierAwards();

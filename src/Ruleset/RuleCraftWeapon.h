@@ -77,7 +77,7 @@ private:
 		/// Gets a CraftWeapon's sprite.
 		int getSprite() const;
 		/// Gets a CraftWeapon's sound.
-		int getSound() const;
+		int getMissileSound() const;
 		/// Gets a CraftWeapon's damage.
 		int getPower() const;
 		/// Gets a CraftWeapon's range.

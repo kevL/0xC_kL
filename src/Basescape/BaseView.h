@@ -53,8 +53,8 @@ private:
 	bool _blink;
 	int
 		_gridX,
-		_gridY;
-	size_t _selSize;
+		_gridY,
+		_selSize;
 	Uint8
 		_cellColor,
 		_selectorColor;
@@ -115,7 +115,7 @@ private:
 		int getGridY() const;
 
 		/// Sets whether the BaseView is selectable.
-		void setSelectable(size_t facSize);
+		void highlightFacility(size_t facSize);
 
 		/// Checks if a facility can be placed.
 		bool isPlaceable(const RuleBaseFacility* const facRule) const;

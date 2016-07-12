@@ -70,9 +70,7 @@ private:
 		~SaveGameState();
 
 		/// Creates the interface.
-		void buildUi(
-				SDL_Color* const palette,
-				bool dropText = false);
+		void buildUi(SDL_Color* const palette);
 
 		/// Saves the game.
 		void think() override;

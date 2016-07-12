@@ -119,20 +119,17 @@ SellState::SellState(Base* const base)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_SELL_SACK"));
-	_btnOk->onMouseClick((ActionHandler)& SellState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SellState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SellState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SellState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SellState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SellState::btnOkClick),
+							Options::keyOkKeypad);
 	_btnOk->setVisible(false);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& SellState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& SellState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&SellState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SellState::btnCancelClick),
+								Options::keyCancel);
 //	if (overfull == true)
 //		_btnCancel->setVisible(false);
 
@@ -162,11 +159,11 @@ SellState::SellState(Base* const base)
 	_lstItems->setSelectable();
 	_lstItems->setArrow(182, ARROW_VERTICAL);
 
-	_lstItems->onLeftArrowPress(	(ActionHandler)& SellState::lstLeftArrowPress);
-	_lstItems->onLeftArrowRelease(	(ActionHandler)& SellState::lstLeftArrowRelease);
+	_lstItems->onLeftArrowPress(	static_cast<ActionHandler>(&SellState::lstLeftArrowPress));
+	_lstItems->onLeftArrowRelease(	static_cast<ActionHandler>(&SellState::lstLeftArrowRelease));
 
-	_lstItems->onRightArrowPress(	(ActionHandler)& SellState::lstRightArrowPress);
-	_lstItems->onRightArrowRelease(	(ActionHandler)& SellState::lstRightArrowRelease);
+	_lstItems->onRightArrowPress(	static_cast<ActionHandler>(&SellState::lstRightArrowPress));
+	_lstItems->onRightArrowRelease(	static_cast<ActionHandler>(&SellState::lstRightArrowRelease));
 
 
 	for (std::vector<Soldier*>::const_iterator
@@ -331,7 +328,7 @@ SellState::SellState(Base* const base)
 							Text::intWide(baseQty).c_str(),
 							L"0",
 							Text::formatCurrency(itRule->getSellCost()).c_str());
-			_lstItems->setRowColor(_sellQty.size() - 1, color);
+			_lstItems->setRowColor(_sellQty.size() - 1u, color);
 		}
 	}
 
@@ -339,10 +336,10 @@ SellState::SellState(Base* const base)
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
-	_timerInc->onTimer((StateHandler)& SellState::onIncrease);
+	_timerInc->onTimer(static_cast<StateHandler>(&SellState::onIncrease));
 
 	_timerDec = new Timer(Timer::SCROLL_SLOW);
-	_timerDec->onTimer((StateHandler)& SellState::onDecrease);
+	_timerDec->onTimer(static_cast<StateHandler>(&SellState::onDecrease));
 }
 
 /**

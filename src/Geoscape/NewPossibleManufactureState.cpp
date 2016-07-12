@@ -76,19 +76,16 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
 	_btnOk->setText(tr(showManufactureButton ? "STR_OK" : "STR_MORE"));
-	_btnOk->onMouseClick((ActionHandler)& NewPossibleManufactureState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NewPossibleManufactureState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewPossibleManufactureState::btnOkClick),
+							Options::keyCancel);
 
 	_btnManufacture->setText(tr("STR_ALLOCATE_MANUFACTURE"));
-	_btnManufacture->onMouseClick((ActionHandler)& NewPossibleManufactureState::btnManufactureClick);
-	_btnManufacture->onKeyboardPress(
-					(ActionHandler)& NewPossibleManufactureState::btnManufactureClick,
-					Options::keyOk);
-	_btnManufacture->onKeyboardPress(
-					(ActionHandler)& NewPossibleManufactureState::btnManufactureClick,
-					Options::keyOkKeypad);
+	_btnManufacture->onMouseClick(		static_cast<ActionHandler>(&NewPossibleManufactureState::btnManufactureClick));
+	_btnManufacture->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnManufactureClick),
+										Options::keyOk);
+	_btnManufacture->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnManufactureClick),
+										Options::keyOkKeypad);
 	_btnManufacture->setVisible(showManufactureButton && (base->hasProduction() == true));
 
 	_txtTitle->setText(tr("STR_WE_CAN_NOW_PRODUCE"));

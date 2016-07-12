@@ -135,7 +135,7 @@ void CraftWeaponProjectile::stepProjectile()
 		}
 
 		case PGT_BEAM:
-			if ((_beamPhase >>= 1u) == 1)
+			if ((_beamPhase = static_cast<Uint8>(_beamPhase >> 1u)) == 1u)
 				_done = true;
 	}
 }

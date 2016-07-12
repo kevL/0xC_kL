@@ -271,20 +271,17 @@ MedikitState::MedikitState(BattleAction* const action)
 	_txtUnit->setHighContrast();
 	_txtUnit->setAlign(ALIGN_RIGHT);
 
-	_btnClose->onMouseClick((ActionHandler)& MedikitState::closeClick);
-	_btnClose->onKeyboardPress(
-					(ActionHandler)& MedikitState::closeClick,
-					Options::keyCancel);
-	_btnClose->onKeyboardPress(
-					(ActionHandler)& MedikitState::closeClick,
-					Options::keyOk);
-	_btnClose->onKeyboardPress(
-					(ActionHandler)& MedikitState::closeClick,
-					Options::keyOkKeypad);
+	_btnClose->onMouseClick(	static_cast<ActionHandler>(&MedikitState::closeClick));
+	_btnClose->onKeyboardPress(	static_cast<ActionHandler>(&MedikitState::closeClick),
+								Options::keyCancel);
+	_btnClose->onKeyboardPress(	static_cast<ActionHandler>(&MedikitState::closeClick),
+								Options::keyOk);
+	_btnClose->onKeyboardPress(	static_cast<ActionHandler>(&MedikitState::closeClick),
+								Options::keyOkKeypad);
 
-	_btnHeal->onMouseClick((ActionHandler)& MedikitState::healClick);
-	_btnStim->onMouseClick((ActionHandler)& MedikitState::stimClick);
-	_btnPain->onMouseClick((ActionHandler)& MedikitState::painClick);
+	_btnHeal->onMouseClick(static_cast<ActionHandler>(&MedikitState::healClick));
+	_btnStim->onMouseClick(static_cast<ActionHandler>(&MedikitState::stimClick));
+	_btnPain->onMouseClick(static_cast<ActionHandler>(&MedikitState::painClick));
 
 	update();
 }

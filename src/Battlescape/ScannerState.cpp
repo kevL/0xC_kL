@@ -72,24 +72,18 @@ ScannerState::ScannerState(const BattleUnit* const selUnit)
 	_game->getResourcePack()->getSurface("DETBORD.PCK")->blit(_bg);
 	_game->getResourcePack()->getSurface("DETBORD2.PCK")->blit(_scan);
 
-	_bg->onMouseClick(
-					(ActionHandler)& ScannerState::exitClick,
-					SDL_BUTTON_RIGHT);
-	_bg->onKeyboardPress(
-					(ActionHandler)& ScannerState::exitClick,
-					Options::keyCancel);
-	_bg->onKeyboardPress(
-					(ActionHandler)& ScannerState::exitClick,
-					Options::keyOk);
-	_bg->onKeyboardPress(
-					(ActionHandler)& ScannerState::exitClick,
-					Options::keyOkKeypad);
+	_bg->onMouseClick(		static_cast<ActionHandler>(&ScannerState::exitClick),
+							SDL_BUTTON_RIGHT);
+	_bg->onKeyboardPress(	static_cast<ActionHandler>(&ScannerState::exitClick),
+							Options::keyCancel);
+	_bg->onKeyboardPress(	static_cast<ActionHandler>(&ScannerState::exitClick),
+							Options::keyOk);
+	_bg->onKeyboardPress(	static_cast<ActionHandler>(&ScannerState::exitClick),
+							Options::keyOkKeypad);
 
 	_timer = new Timer(125u);
-	_timer->onTimer((StateHandler)& ScannerState::animate);
+	_timer->onTimer(static_cast<StateHandler>(&ScannerState::animate));
 	_timer->start();
-
-//	update();
 }
 
 /**
@@ -108,20 +102,12 @@ void ScannerState::handle(Action* action)
 {
 	State::handle(action);
 
-	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN
+	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN // Might not be needed, cf. UnitInfoState::handle().
 		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
 		exitClick();
 	}
 }
-
-/**
- * Updates the Scanner state.
- *
-void ScannerState::update() // private.
-{
-	_scanView->draw();
-} */
 
 /**
  * Cycles the radar-blob animations.

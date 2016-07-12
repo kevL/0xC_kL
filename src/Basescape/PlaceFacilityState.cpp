@@ -96,37 +96,38 @@ PlaceFacilityState::PlaceFacilityState(
 	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_baseLayout->setDog(_game->getResourcePack()->getSurface("BASEDOG"));
 	_baseLayout->setBase(_base);
-	_baseLayout->setSelectable(_facRule->getSize());
-	_baseLayout->onMouseClick((ActionHandler)& PlaceFacilityState::baseLayoutClick);
+	_baseLayout->highlightFacility(_facRule->getSize());
+	_baseLayout->onMouseClick(static_cast<ActionHandler>(&PlaceFacilityState::baseLayoutClick));
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& PlaceFacilityState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PlaceFacilityState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PlaceFacilityState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PlaceFacilityState::btnCancelClick,
-					Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&PlaceFacilityState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PlaceFacilityState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PlaceFacilityState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PlaceFacilityState::btnCancelClick),
+								Options::keyOkKeypad);
 
 	_txtFacility->setText(tr(_facRule->getType()));
 
 	_txtCost->setText(tr("STR_COST_UC"));
 
+	const float factor (static_cast<float>(_game->getSavedGame()->getDifficultyInt()) * 0.1f); // +10% per diff.
+	float cost (static_cast<float>(_facRule->getBuildCost()));
+	_cost = static_cast<int64_t>(cost + cost * factor);
+	_txtCostAmount->setText(Text::formatCurrency(_cost));
 	_txtCostAmount->setBig();
-	_txtCostAmount->setText(Text::formatCurrency(_facRule->getBuildCost()));
 
 	_txtTime->setText(tr("STR_CONSTRUCTION_TIME_UC"));
 
+	_txtTimeAmount->setText(tr("STR_DAY", static_cast<unsigned>(_facRule->getBuildTime())));
 	_txtTimeAmount->setBig();
-	_txtTimeAmount->setText(tr("STR_DAY", _facRule->getBuildTime()));
 
 	_txtMaintenance->setText(tr("STR_MAINTENANCE_UC"));
 
+	cost = static_cast<float>(_facRule->getMonthlyCost());
+	_txtMaintAmount->setText(Text::formatCurrency(static_cast<int64_t>(cost + cost * factor)));
 	_txtMaintAmount->setBig();
-	_txtMaintAmount->setText(Text::formatCurrency(_facRule->getMonthlyCost()));
 }
 
 /**
@@ -162,7 +163,7 @@ void PlaceFacilityState::baseLayoutClick(Action*) // virtual.
 											"BACK01.SCR",
 											uiRule->getElement("errorPalette")->color));
 	}
-	else if (_game->getSavedGame()->getFunds() < _facRule->getBuildCost())
+	else if (_game->getSavedGame()->getFunds() < _cost)
 	{
 		_game->popState();
 
@@ -191,9 +192,8 @@ void PlaceFacilityState::baseLayoutClick(Action*) // virtual.
 			_baseLayout->reCalcQueuedBuildings();
 		}
 
-		const int cost (_facRule->getBuildCost());
-		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - static_cast<int64_t>(cost));
-		_base->addCashSpent(cost);
+		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _cost);
+		_base->addCashSpent(static_cast<int>(_cost));
 
 		_game->popState();
 	}

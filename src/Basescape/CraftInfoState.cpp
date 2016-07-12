@@ -147,7 +147,7 @@ CraftInfoState::CraftInfoState(
 
 	_edtCraft->setBig();
 	_edtCraft->setAlign(ALIGN_CENTER);
-	_edtCraft->onTextChange((ActionHandler)& CraftInfoState::edtCraftChange);
+	_edtCraft->onTextChange(static_cast<ActionHandler>(&CraftInfoState::edtCraftChange));
 
 	_txtBaseLabel->setText(_base->getName());
 	_txtStatus->setAlign(ALIGN_RIGHT);
@@ -163,56 +163,56 @@ CraftInfoState::CraftInfoState(
 	_txtDamage->setAlign(ALIGN_RIGHT);
 
 	_btnW1->setText(L"1");
-	_btnW1->onMouseClick((ActionHandler)& CraftInfoState::btnW1Click);
+	_btnW1->onMouseClick(static_cast<ActionHandler>(&CraftInfoState::btnW1Click));
 	_btnW1->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnW1Click,
+					static_cast<ActionHandler>(&CraftInfoState::btnW1Click),
 					SDLK_1);
 
 	_btnW2->setText(L"2");
-	_btnW2->onMouseClick((ActionHandler)& CraftInfoState::btnW2Click);
+	_btnW2->onMouseClick(static_cast<ActionHandler>(&CraftInfoState::btnW2Click));
 	_btnW2->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnW2Click,
+					static_cast<ActionHandler>(&CraftInfoState::btnW2Click),
 					SDLK_2);
 
 	_btnCrew->setText(tr("STR_CREW"));
-	_btnCrew->onMouseClick((ActionHandler)& CraftInfoState::btnCrewClick);
+	_btnCrew->onMouseClick(static_cast<ActionHandler>(&CraftInfoState::btnCrewClick));
 	_btnCrew->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnCrewClick,
+					static_cast<ActionHandler>(&CraftInfoState::btnCrewClick),
 					SDLK_s);
 
 	_btnEquip->setText(tr("STR_EQUIPMENT_UC"));
-	_btnEquip->onMouseClick((ActionHandler)& CraftInfoState::btnEquipClick);
+	_btnEquip->onMouseClick(static_cast<ActionHandler>(&CraftInfoState::btnEquipClick));
 	_btnEquip->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnEquipClick,
+					static_cast<ActionHandler>(&CraftInfoState::btnEquipClick),
 					SDLK_e);
 
 	_btnArmor->setText(tr("STR_ARMOR"));
-	_btnArmor->onMouseClick((ActionHandler)& CraftInfoState::btnArmorClick);
+	_btnArmor->onMouseClick(static_cast<ActionHandler>(&CraftInfoState::btnArmorClick));
 	_btnArmor->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnArmorClick,
+					static_cast<ActionHandler>(&CraftInfoState::btnArmorClick),
 					SDLK_a);
 
 	_btnInventory->setText(tr("STR_LOADOUT"));
-	_btnInventory->onMouseClick((ActionHandler)& CraftInfoState::btnInventoryClick);
+	_btnInventory->onMouseClick(static_cast<ActionHandler>(&CraftInfoState::btnInventoryClick));
 	_btnInventory->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnInventoryClick,
+					static_cast<ActionHandler>(&CraftInfoState::btnInventoryClick),
 					SDLK_i);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CraftInfoState::btnOkClick);
+	_btnOk->onMouseClick(static_cast<ActionHandler>(&CraftInfoState::btnOkClick));
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnOkClick,
+					static_cast<ActionHandler>(&CraftInfoState::btnOkClick),
 					Options::keyOk);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnOkClick,
+					static_cast<ActionHandler>(&CraftInfoState::btnOkClick),
 					Options::keyOkKeypad);
 	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftInfoState::btnOkClick,
+					static_cast<ActionHandler>(&CraftInfoState::btnOkClick),
 					Options::keyCancel);
 
 
 	_blinkTimer = new Timer(325u);
-	_blinkTimer->onTimer((StateHandler)& CraftInfoState::blinkStatus);
+	_blinkTimer->onTimer(static_cast<StateHandler>(&CraftInfoState::blinkStatus));
 }
 
 /**
@@ -595,7 +595,7 @@ void CraftInfoState::btnInventoryClick(Action*)
 }
 
 /**
- * Changes the Craft name.
+ * Changes the Craft's name.
  * @param action - pointer to an Action
  */
 void CraftInfoState::edtCraftChange(Action*)

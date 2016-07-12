@@ -78,8 +78,7 @@ private:
 		void handle(Action* action, State* state) override;
 
 		/// Sets focus on the TextEdit.
-		using InteractiveSurface::setFocus;
-		void setFocus(
+		void setFocusEdit(
 				bool focus,
 				bool pokeModal);
 

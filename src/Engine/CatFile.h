@@ -27,7 +27,7 @@ namespace OpenXcom
 {
 
 /**
- * Subclass of std::ifstream to handle CAT files
+ * Subclass of std::ifstream to handle CAT-files
  */
 class CatFile
 	:
@@ -36,32 +36,32 @@ class CatFile
 
 private:
 	unsigned
-		_amount,
+		_qtyObjects,
 		* _offset,
 		* _size;
 
 	public:
-		/// Creates a CAT file stream.
+		/// Creates a CAT-file.
 		explicit CatFile(const char* path);
-		/// Cleans up the stream.
+		/// Cleans up the CAT-file.
 		~CatFile();
 
-		/// Inherit operator.
+		/// Inherits operator ....
 		bool operator! () const
 		{ return std::ifstream::operator! (); } // *cough
 
-		/// Get amount of objects.
-		int getAmount() const
-		{ return _amount; }
+		/// Gets the quantity of objects in the CAT-file.
+		unsigned getQuantityObjects() const
+		{ return _qtyObjects; }
 
-		/// Get object size.
+		/// Gets an internal object's size.
 		unsigned getObjectSize(unsigned i) const
-		{ return (i < _amount) ? _size[i] : 0u; }
+		{ return (i < _qtyObjects) ? _size[i] : 0u; }
 
-		/// Load an object into memory.
+		/// Loads an object into memory.
 		char* load(
-				unsigned i,
-				bool name = false);
+				unsigned id,
+				bool keepLabel = false);
 };
 
 }

@@ -121,31 +121,27 @@ ResearchState::ResearchState(
 			break;
 		}
 	}
-	_mini->onMouseClick(
-					(ActionHandler)& ResearchState::miniClick,
-					SDL_BUTTON_LEFT);
-	_mini->onMouseOver((ActionHandler)& ResearchState::miniMouseOver);
-	_mini->onMouseOut((ActionHandler)& ResearchState::miniMouseOut);
+	_mini->onMouseClick(static_cast<ActionHandler>(&ResearchState::miniClick));
+	_mini->onMouseOver(	static_cast<ActionHandler>(&ResearchState::miniMouseOver));
+	_mini->onMouseOut(	static_cast<ActionHandler>(&ResearchState::miniMouseOut));
+	// TODO: onKeyboardPress(). See BaseInfoState.
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
 	_btnAliens->setText(tr("STR_ALIENS"));
-	_btnAliens->onMouseClick((ActionHandler)& ResearchState::btnAliens);
+	_btnAliens->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnAliens));
 
 	_btnNew->setText(tr("STR_NEW_PROJECT"));
-	_btnNew->onMouseClick((ActionHandler)& ResearchState::btnNewClick);
+	_btnNew->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnNewClick));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ResearchState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ResearchState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -160,7 +156,7 @@ ResearchState::ResearchState(
 	_lstResearch->setBackground(_window);
 	_lstResearch->setColumns(4, 137,58,48,34);
 	_lstResearch->setSelectable();
-	_lstResearch->onMouseClick((ActionHandler)& ResearchState::onSelectProject);
+	_lstResearch->onMouseClick(static_cast<ActionHandler>(&ResearchState::onSelectProject));
 }
 
 /**

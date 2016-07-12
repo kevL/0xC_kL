@@ -414,7 +414,7 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 //											&& unit->getOriginalFaction() == FACTION_PLAYER	// NOTE: Mind-control zhing clashes with aggroSound; put
 										{													// that back to prevent it or pass in isMC-reveal somehow.
 											const BattlescapeGame* const battle (_battleSave->getBattleGame());
-											battle->getResourcePack()->getSound("BATTLE.CAT", soundId)
+											battle->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 																		->play(-1, battle->getMap()->getSoundAngle(unit->getPosition()));
 											soundId = -1; // play once only.
 										}
@@ -2083,8 +2083,8 @@ void TileEngine::hit(
 					&& tile->getMapData(O_OBJECT)->isBaseObject() == true
 					&& tile->getMapData(O_OBJECT)->getArmor() <= power)
 				{
-					_battleSave->baseDestruct()[(targetVoxel.x >> 4) / 10]
-											   [(targetVoxel.y >> 4) / 10].second--;
+					_battleSave->baseDestruct()[static_cast<size_t>((targetVoxel.x >> 4) / 10)]
+											   [static_cast<size_t>((targetVoxel.y >> 4) / 10)].second--;
 				}
 				tile->hitTile(partType, power, _battleSave);
 			}
@@ -4430,8 +4430,8 @@ void TileEngine::detonateTile(Tile* const tile) const
 			if (_battleSave->getTacType() == TCT_BASEDEFENSE
 				&& part->isBaseObject() == true)
 			{
-				_battleSave->baseDestruct()[tile->getPosition().x / 10]
-										   [tile->getPosition().y / 10].second--;
+				_battleSave->baseDestruct()[static_cast<size_t>(tile->getPosition().x / 10)]
+										   [static_cast<size_t>(tile->getPosition().y / 10)].second--;
 			}
 
 			// This tracks dead object-parts (object-part can become a floor-part ... unless your MCDs are correct!)
@@ -4662,7 +4662,7 @@ DoorResult TileEngine::unitOpensDoor(
 					//Log(LOG_INFO) << "RMB -> calcFoV";
 					_battleSave->getBattleGame()->checkProxyGrenades(unit);
 
-					const Position pos (unit->getPosition());
+					pos = unit->getPosition();
 					calcFovTiles_pos(pos); // calculate FoV for everyone within sight-range, incl. unit.
 					calcFovUnits_pos(pos, true);
 
@@ -6034,7 +6034,7 @@ VoxelType TileEngine::voxelCheck(
 
 //				if (layer > -1)
 //				{
-				x = targetVoxel.x % 16;
+				x = static_cast<size_t>(targetVoxel.x % 16);
 				// That should be (8,8,10) as per BattlescapeGame::handleNonTargetAction() if (_tacAction.type == BA_MELEE)
 
 				//Log(LOG_INFO) << "loftId = " << loftId << " vD-size = " << (int)_voxelData->size();

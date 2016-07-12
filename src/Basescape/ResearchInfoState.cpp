@@ -139,17 +139,17 @@ void ResearchInfoState::buildUi() // private.
 
 	updateInfo();
 
-	_btnMore->onMousePress(		(ActionHandler)& ResearchInfoState::morePress);
-	_btnMore->onMouseRelease(	(ActionHandler)& ResearchInfoState::moreRelease);
+	_btnMore->onMousePress(		static_cast<ActionHandler>(&ResearchInfoState::morePress));
+	_btnMore->onMouseRelease(	static_cast<ActionHandler>(&ResearchInfoState::moreRelease));
 
-	_btnLess->onMousePress(		(ActionHandler)& ResearchInfoState::lessPress);
-	_btnLess->onMouseRelease(	(ActionHandler)& ResearchInfoState::lessRelease);
+	_btnLess->onMousePress(		static_cast<ActionHandler>(&ResearchInfoState::lessPress));
+	_btnLess->onMouseRelease(	static_cast<ActionHandler>(&ResearchInfoState::lessRelease));
 
 	_timerMore = new Timer(Timer::SCROLL_SLOW);
-	_timerMore->onTimer((StateHandler)& ResearchInfoState::onMore);
+	_timerMore->onTimer(static_cast<StateHandler>(&ResearchInfoState::onMore));
 
 	_timerLess = new Timer(Timer::SCROLL_SLOW);
-	_timerLess->onTimer((StateHandler)& ResearchInfoState::onLess);
+	_timerLess->onTimer(static_cast<StateHandler>(&ResearchInfoState::onLess));
 
 	std::string
 		st1,
@@ -167,19 +167,16 @@ void ResearchInfoState::buildUi() // private.
 	}
 
 	_btnCancel->setText(tr(st1));
-	_btnCancel->onMouseClick((ActionHandler)& ResearchInfoState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ResearchInfoState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ResearchInfoState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ResearchInfoState::btnCancelClick),
+								Options::keyCancel);
 
 	_btnStartStop->setText(tr(st2));
-	_btnStartStop->onMouseClick((ActionHandler)& ResearchInfoState::btnStartStopClick);
-	_btnStartStop->onKeyboardPress(
-					(ActionHandler)& ResearchInfoState::btnStartStopClick,
-					Options::keyOk);
-	_btnStartStop->onKeyboardPress(
-					(ActionHandler)& ResearchInfoState::btnStartStopClick,
-					Options::keyOkKeypad);
+	_btnStartStop->onMouseClick(	static_cast<ActionHandler>(&ResearchInfoState::btnStartStopClick));
+	_btnStartStop->onKeyboardPress(	static_cast<ActionHandler>(&ResearchInfoState::btnStartStopClick),
+									Options::keyOk);
+	_btnStartStop->onKeyboardPress(	static_cast<ActionHandler>(&ResearchInfoState::btnStartStopClick),
+									Options::keyOkKeypad);
 }
 
 /**
@@ -188,11 +185,11 @@ void ResearchInfoState::buildUi() // private.
 void ResearchInfoState::updateInfo() // private.
 {
 	_txtFreeSci->setText(tr("STR_SCIENTISTS_AVAILABLE_UC_")
-								.arg(_base->getScientists()));
+							.arg(_base->getScientists()));
 	_txtFreeSpace->setText(tr("STR_LABORATORY_SPACE_AVAILABLE_UC_")
-								.arg(_base->getFreeLaboratories()));
+							.arg(_base->getFreeLaboratories()));
 	_txtAssigned->setText(tr("STR_SCIENTISTS_ALLOCATED_")
-								.arg(_project->getAssignedScientists()));
+							.arg(_project->getAssignedScientists()));
 }
 
 /**

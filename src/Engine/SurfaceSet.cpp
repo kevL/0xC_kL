@@ -83,7 +83,7 @@ void SurfaceSet::loadPck(
 		const std::string& tab)
 {
 	//Log(LOG_INFO) << "SurfaceSet::loadPck() " << pck;
-	size_t q;
+	int q;
 
 	if (tab.empty() == false) // Load TAB and get image-offsets
 	{
@@ -104,7 +104,7 @@ void SurfaceSet::loadPck(
 		ifstr.seekg(0, std::ios::end);
 
 		stop = ifstr.tellg();
-		const size_t tabSize (static_cast<size_t>(stop - start));
+		const int tabSize (static_cast<int>(stop - start));
 
 		if (offset != 0)
 			q = tabSize >> 1u; // 16-bit offsets
@@ -113,8 +113,8 @@ void SurfaceSet::loadPck(
 
 		ifstr.close();
 
-		for (size_t
-				i = 0u;
+		for (int
+				i = 0;
 				i != q;
 				++i)
 		{
@@ -123,8 +123,8 @@ void SurfaceSet::loadPck(
 	}
 	else
 	{
-		q = 1u;
-		_frames[0u] = new Surface(_width, _height);
+		q = 1;
+		_frames[0] = new Surface(_width, _height);
 	}
 
 	std::ifstream ifstr (pck.c_str(), std::ios::in | std::ios::binary); // Load PCK and put pixels in surfaces
@@ -137,8 +137,8 @@ void SurfaceSet::loadPck(
 	int
 		x,y;
 
-	for (size_t
-			i = 0u;
+	for (int
+			i = 0;
 			i != q;
 			++i)
 	{
@@ -205,11 +205,11 @@ void SurfaceSet::loadDat(const std::string& file)
 	std::streamoff datSize (ifstr.tellg());
 	ifstr.seekg(0, std::ios::beg);
 
-	size_t q (static_cast<size_t>(static_cast<int>(datSize) / (_width * _height)));
+	int q (static_cast<int>(datSize) / (_width * _height));
 	//Log(LOG_INFO) << "loadDat total = " << q;
 
-	for (size_t
-			i = 0u;
+	for (int
+			i = 0;
 			i != q;
 			++i)
 	{
@@ -219,8 +219,8 @@ void SurfaceSet::loadDat(const std::string& file)
 	Uint8 val;
 	int
 		x (0),
-		y (0);
-	size_t i (0u);
+		y (0),
+		i (0);
 
 	_frames[i]->lock();
 	while (ifstr.read(reinterpret_cast<char*>(&val), 1))

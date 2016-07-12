@@ -147,25 +147,25 @@ void OpenGL::init(
 
 	// bind shader functions
 #ifndef __APPLE__
-	glCreateProgram			= (PFNGLCREATEPROGRAMPROC)					glGetProcAddress("glCreateProgram");
-	glUseProgram			= (PFNGLUSEPROGRAMPROC)						glGetProcAddress("glUseProgram");
-	glCreateShader			= (PFNGLCREATESHADERPROC)					glGetProcAddress("glCreateShader");
-	glDeleteShader			= (PFNGLDELETESHADERPROC)					glGetProcAddress("glDeleteShader");
-	glShaderSource			= (PFNGLSHADERSOURCEPROC)					glGetProcAddress("glShaderSource");
-	glCompileShader			= (PFNGLCOMPILESHADERPROC)					glGetProcAddress("glCompileShader");
-	glAttachShader			= (PFNGLATTACHSHADERPROC)					glGetProcAddress("glAttachShader");
-	glDetachShader			= (PFNGLDETACHSHADERPROC)					glGetProcAddress("glDetachShader");
-	glLinkProgram			= (PFNGLLINKPROGRAMPROC)					glGetProcAddress("glLinkProgram");
-	glGetUniformLocation	= (PFNGLGETUNIFORMLOCATIONPROC)				glGetProcAddress("glGetUniformLocation");
-	glUniform1i				= (PFNGLUNIFORM1IPROC)						glGetProcAddress("glUniform1i");
-	glUniform2fv			= (PFNGLUNIFORM2FVPROC)						glGetProcAddress("glUniform2fv");
-	glUniform4fv			= (PFNGLUNIFORM4FVPROC)						glGetProcAddress("glUniform4fv");
+	glCreateProgram			= reinterpret_cast<PFNGLCREATEPROGRAMPROC>					(glGetProcAddress("glCreateProgram"));
+	glUseProgram			= reinterpret_cast<PFNGLUSEPROGRAMPROC>						(glGetProcAddress("glUseProgram"));
+	glCreateShader			= reinterpret_cast<PFNGLCREATESHADERPROC>					(glGetProcAddress("glCreateShader"));
+	glDeleteShader			= reinterpret_cast<PFNGLDELETESHADERPROC>					(glGetProcAddress("glDeleteShader"));
+	glShaderSource			= reinterpret_cast<PFNGLSHADERSOURCEPROC>					(glGetProcAddress("glShaderSource"));
+	glCompileShader			= reinterpret_cast<PFNGLCOMPILESHADERPROC>					(glGetProcAddress("glCompileShader"));
+	glAttachShader			= reinterpret_cast<PFNGLATTACHSHADERPROC>					(glGetProcAddress("glAttachShader"));
+	glDetachShader			= reinterpret_cast<PFNGLDETACHSHADERPROC>					(glGetProcAddress("glDetachShader"));
+	glLinkProgram			= reinterpret_cast<PFNGLLINKPROGRAMPROC>					(glGetProcAddress("glLinkProgram"));
+	glGetUniformLocation	= reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>				(glGetProcAddress("glGetUniformLocation"));
+	glUniform1i				= reinterpret_cast<PFNGLUNIFORM1IPROC>						(glGetProcAddress("glUniform1i"));
+	glUniform2fv			= reinterpret_cast<PFNGLUNIFORM2FVPROC>						(glGetProcAddress("glUniform2fv"));
+	glUniform4fv			= reinterpret_cast<PFNGLUNIFORM4FVPROC>						(glGetProcAddress("glUniform4fv"));
 #endif
-	glXGetCurrentDisplay	= (void* (APIENTRYP)())						glGetProcAddress("glXGetCurrentDisplay");
-	glXGetCurrentDrawable	= (Uint32 (APIENTRYP)())					glGetProcAddress("glXGetCurrentDrawable");
-	glXSwapIntervalEXT		= (void (APIENTRYP)(void*, Uint32, int))	glGetProcAddress("glXSwapIntervalEXT");
+	glXGetCurrentDisplay	= reinterpret_cast<void* (APIENTRYP)()>						(glGetProcAddress("glXGetCurrentDisplay"));
+	glXGetCurrentDrawable	= reinterpret_cast<Uint32 (APIENTRYP)()>					(glGetProcAddress("glXGetCurrentDrawable"));
+	glXSwapIntervalEXT		= reinterpret_cast<void (APIENTRYP)(void*, Uint32, int)>	(glGetProcAddress("glXSwapIntervalEXT"));
 
-	wglSwapIntervalEXT		= (Uint32 (APIENTRYP)(int))					glGetProcAddress("wglSwapIntervalEXT");
+	wglSwapIntervalEXT		= reinterpret_cast<Uint32 (APIENTRYP)(int)>					(glGetProcAddress("wglSwapIntervalEXT"));
 	// kL_note: f*ck I hate re-direction.
 
 
@@ -248,7 +248,7 @@ void OpenGL::refresh(
 		glUseProgram(glprogram);
 		GLint location;
 
-		float inputSize[2]
+		float inputSize[2u]
 		{
 			static_cast<float>(inwidth),
 			static_cast<float>(inheight)
@@ -260,7 +260,7 @@ void OpenGL::refresh(
 					1,
 					inputSize);
 
-		float outputSize[2]
+		float outputSize[2u]
 		{
 			static_cast<float>(outwidth),
 			static_cast<float>(outheight)
@@ -272,7 +272,7 @@ void OpenGL::refresh(
 					1,
 					outputSize);
 
-		float textureSize[2]
+		float textureSize[2u]
 		{
 			static_cast<float>(iwidth),
 			static_cast<float>(iheight)
@@ -314,8 +314,8 @@ void OpenGL::refresh(
 			-1., 1.);
 	glViewport(
 			0,0,
-			outwidth,
-			outheight);
+			static_cast<int>(outwidth),
+			static_cast<int>(outheight));
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -334,7 +334,8 @@ void OpenGL::refresh(
 				/* mip-map level = */ 0,
 				/* x = */ 0,
 				/* y = */ 0,
-				iwidth, iheight,
+				static_cast<int>(iwidth),
+				static_cast<int>(iheight),
 				GL_BGRA,
 				iformat,
 				buffer);
@@ -348,8 +349,8 @@ void OpenGL::refresh(
 		h (static_cast<float>(inheight) / static_cast<float>(iheight));
 	const int
 		u1 (leftBlackBand),
-		u2 (outwidth - rightBlackBand),
-		v1 (outheight - topBlackBand),
+		u2 (static_cast<int>(outwidth) - rightBlackBand),
+		v1 (static_cast<int>(outheight) - topBlackBand),
 		v2 (bottomBlackBand);
 
 	glBegin(GL_TRIANGLE_STRIP);
@@ -397,10 +398,10 @@ void OpenGL::resize( // private.
 		delete buffer_surface;
 
 	buffer_surface = new Surface( // use OpenXcom's Surface class to get an aligned-buffer with bonus SDL_Surface
-								iwidth,
-								iheight,
+								static_cast<int>(iwidth),
+								static_cast<int>(iheight),
 								0,0,
-								ibpp);
+								static_cast<int>(ibpp));
 
 	buffer = static_cast<uint32_t*>(buffer_surface->getSurface()->pixels);
 
@@ -410,14 +411,14 @@ void OpenGL::resize( // private.
 	glErrorCheck();
 	glPixelStorei(
 				GL_UNPACK_ROW_LENGTH,
-				iwidth);
+				static_cast<int>(iwidth));
 	glErrorCheck();
 	glTexImage2D(
 				GL_TEXTURE_2D,
 				/* mip-map level = */ 0,
 				/* internal format = */ GL_RGB16_EXT,
-				width,
-				height,
+				static_cast<int>(width),
+				static_cast<int>(height),
 				/* border = */ 0,
 				/* format = */ GL_BGRA,
 				iformat,
@@ -492,7 +493,7 @@ void OpenGL::set_fragment_shader(const char* source) // private.
 				fragmentshader,
 				1,
 				&source,
-				0);
+				nullptr);
 	glCompileShader(fragmentshader);
 	glAttachShader(
 				glprogram,
@@ -509,7 +510,7 @@ void OpenGL::set_vertex_shader(const char* source) // private.
 				vertexshader,
 				1,
 				&source,
-				0);
+				nullptr);
 	glCompileShader(vertexshader);
 	glAttachShader(
 				glprogram,
@@ -581,7 +582,7 @@ void OpenGL::setVSync(bool sync)
 							drawable,
 							interval);
 	}
-	else if (wglSwapIntervalEXT != 0u)
+	else if (wglSwapIntervalEXT != nullptr)
 		wglSwapIntervalEXT(interval);	// Other:
 										// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 										// SDL_GL_SetSwapInterval(0)

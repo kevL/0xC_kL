@@ -48,9 +48,9 @@ struct convert<OpenXcom::TrajectoryWaypoint>
 		if (node.IsSequence() == false || node.size() != 3u)
 			return false;
 
-		rhs.zone		= node[0u].as<int>();
-		rhs.altitude	= node[1u].as<int>();
-		rhs.speed		= node[2u].as<int>();
+		rhs.zone		= node[0u].as<size_t>();
+		rhs.altitude	= node[1u].as<size_t>();
+		rhs.speed		= node[2u].as<size_t>();
 
 		return true;
 	}
@@ -72,7 +72,7 @@ const std::string UfoTrajectory::RETALIATION_ASSAULT_RUN = "__RETALIATION_ASSAUL
 UfoTrajectory::UfoTrajectory(const std::string& id)
 	:
 		_id(id),
-		_groundTimer(5u)
+		_groundTimer(5)
 {}
 
 /**
@@ -83,7 +83,7 @@ UfoTrajectory::UfoTrajectory(const std::string& id)
 void UfoTrajectory::load(const YAML::Node& node)
 {
 	_id				= node["id"]			.as<std::string>(_id);
-	_groundTimer	= node["groundTimer"]	.as<size_t>(_groundTimer);
+	_groundTimer	= node["groundTimer"]	.as<int>(_groundTimer);
 	_waypoints		= node["waypoints"]		.as<std::vector<TrajectoryWaypoint>>(_waypoints);
 }
 

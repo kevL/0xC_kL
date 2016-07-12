@@ -108,19 +108,16 @@ NewGameState::NewGameState()
 	_txtIronman->setVerticalAlign(ALIGN_MIDDLE);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& NewGameState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NewGameState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NewGameState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewGameState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewGameState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewGameState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& NewGameState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewGameState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&NewGameState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&NewGameState::btnCancelClick),
+								Options::keyCancel);
 }
 
 /**
@@ -137,16 +134,11 @@ void NewGameState::btnOkClick(Action*)
 {
 	DifficultyLevel diff;
 
-	if (_difficulty == _btnSuperhuman)
-		diff = DIFF_SUPERHUMAN;
-	else if (_difficulty == _btnGenius)
-		diff = DIFF_GENIUS;
-	else if (_difficulty == _btnVeteran)
-		diff = DIFF_VETERAN;
-	else if (_difficulty == _btnExperienced)
-		diff = DIFF_EXPERIENCED;
-	else // _btnBeginner
-		diff = DIFF_BEGINNER;
+	if		(_difficulty == _btnSuperhuman)		diff = DIFF_SUPERHUMAN;
+	else if	(_difficulty == _btnGenius)			diff = DIFF_GENIUS;
+	else if	(_difficulty == _btnVeteran)		diff = DIFF_VETERAN;
+	else if	(_difficulty == _btnExperienced)	diff = DIFF_EXPERIENCED;
+	else										diff = DIFF_BEGINNER;
 
 	SavedGame* const gameSave (_game->getRuleset()->createSave(_game));
 	gameSave->setDifficulty(diff);

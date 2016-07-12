@@ -54,7 +54,7 @@ PlaceStartFacilityState::PlaceStartFacilityState(
 		PlaceFacilityState(base, facRule),
 		_select(select)
 {
-	_baseLayout->onMouseClick((ActionHandler)& PlaceStartFacilityState::baseLayoutClick);
+	_baseLayout->onMouseClick(static_cast<ActionHandler>(&PlaceStartFacilityState::baseLayoutClick));
 
 	_txtCostAmount->setText(tr("STR_NONE"));
 	_txtTimeAmount->setText(tr("STR_NONE"));

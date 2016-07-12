@@ -86,28 +86,22 @@ DismantleFacilityState::DismantleFacilityState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& DismantleFacilityState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DismantleFacilityState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DismantleFacilityState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DismantleFacilityState::btnOkClick,
-					SDLK_y);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&DismantleFacilityState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DismantleFacilityState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DismantleFacilityState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DismantleFacilityState::btnOkClick),
+							SDLK_y);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& DismantleFacilityState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& DismantleFacilityState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& DismantleFacilityState::btnCancelClick,
-					SDLK_c);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& DismantleFacilityState::btnCancelClick,
-					SDLK_n);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&DismantleFacilityState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&DismantleFacilityState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&DismantleFacilityState::btnCancelClick),
+								SDLK_c);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&DismantleFacilityState::btnCancelClick),
+								SDLK_n);
 
 	_txtTitle->setText(tr("STR_DISMANTLE"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -116,7 +110,6 @@ DismantleFacilityState::DismantleFacilityState(
 	_txtFacility->setAlign(ALIGN_CENTER);
 
 	calcRefund();
-
 	_txtRefund->setText(tr("STR_REFUND_")
 						.arg(Text::formatCurrency(_refund)));
 	_txtRefund->setAlign(ALIGN_CENTER);
@@ -138,8 +131,8 @@ void DismantleFacilityState::btnOkClick(Action*)
 
 	if (_fac->getRules()->isLift() == false)
 	{
-		gameSave->setFunds(gameSave->getFunds() + static_cast<int64_t>(_refund));
-		_base->addCashIncome(_refund);
+		gameSave->setFunds(gameSave->getFunds() + _refund);
+		_base->addCashIncome(static_cast<int>(_refund));
 
 		for (std::vector<BaseFacility*>::const_iterator
 				i = _base->getFacilities()->begin();
@@ -200,23 +193,26 @@ void DismantleFacilityState::calcRefund() // private.
 	{
 		if ((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
 			&& AreSame((*i)->getDestination()->getLongitude(), _base->getLongitude())
-			&& AreSame((*i)->getDestination()->getLatitude(), _base->getLatitude()))
+			&& AreSame((*i)->getDestination()->getLatitude(),  _base->getLatitude()))
 		{
 			_refund = 0;
 			return;
 		}
 	}
 
-	const int buildCost (_fac->getRules()->getBuildCost());
+	const float cost (static_cast<float>(_fac->getRules()->getBuildCost()));
+	float factor (static_cast<float>(_game->getSavedGame()->getDifficultyInt()) * 0.1f); // +10% per diff.
+	const int64_t buildCost (static_cast<int64_t>(cost + cost * factor));
+
 	if (_fac->buildFinished() == false)
 	{
-		if (_fac->getBuildTime() > _fac->getRules()->getBuildTime()) // queued facilities
+		if (_fac->getBuildTime() >= _fac->getRules()->getBuildTime()) // queued facilities
 			_refund = buildCost;
 		else
 		{
-			const float factor (static_cast<float>(_fac->getBuildTime())
-							  / static_cast<float>(_fac->getRules()->getBuildTime()));
-			_refund = static_cast<int>(ceil(
+			factor = static_cast<float>(_fac->getBuildTime())
+				   / static_cast<float>(_fac->getRules()->getBuildTime());
+			_refund = static_cast<int64_t>(ceil(
 					  static_cast<float>(buildCost) * factor));
 			if (_refund < buildCost / 10)
 				_refund = buildCost / 10;

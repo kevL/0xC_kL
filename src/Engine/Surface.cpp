@@ -71,7 +71,7 @@ inline int GetPitch(
 /**
  * Helper function creating aligned buffer.
  * @param bpp		- bits per pixel
- * @param width		- number of pixel in row
+ * @param width		- number of pixels in row
  * @param height	- number of rows
  * @return, pointer to memory
  */
@@ -99,7 +99,7 @@ inline void* NewAligned(
 	}
 #	endif
 #else
-	if ((buffer = _aligned_malloc(total, 16)) == nullptr) // of course Windows has to be difficult about this!
+	if ((buffer = _aligned_malloc(static_cast<size_t>(total), 16u)) == nullptr) // of course Windows has to be difficult about this!
 	{
 		throw Exception("Failed to allocate surface");
 	}
@@ -335,16 +335,19 @@ void Surface::loadImage(const std::string& file)
 		{
 			const LodePNGColorMode* const color (&state.info_png.color);
 
-			unsigned bpp (lodepng_get_bpp(color));
-			if (bpp == 8u)
+			const int bpp (static_cast<int>(lodepng_get_bpp(color)));
+			if (bpp == 8)
 			{
-				_alignedBuffer = NewAligned(bpp, width, height);
+				_alignedBuffer = NewAligned(
+										bpp,
+										static_cast<int>(width),
+										static_cast<int>(height));
 				_surface = SDL_CreateRGBSurfaceFrom(
 												_alignedBuffer,
-												width,
-												height,
+												static_cast<int>(width),
+												static_cast<int>(height),
 												bpp,
-												GetPitch(bpp, width),
+												GetPitch(bpp, static_cast<int>(width)),
 												0u,0u,0u,0u);
 				if (_surface != nullptr)
 				{
@@ -361,9 +364,9 @@ void Surface::loadImage(const std::string& file)
 					}
 
 					setPalette(
-							(SDL_Color*)color->palette,
+							reinterpret_cast<SDL_Color*>(color->palette),
 							0,
-							color->palettesize);
+							static_cast<int>(color->palettesize));
 
 					int transparent (0);
 					for (int
@@ -397,8 +400,8 @@ void Surface::loadImage(const std::string& file)
 
 	if (_surface == nullptr)
 	{
-		const std::string error (file + ": " + IMG_GetError());
-		throw Exception(error);
+//		const std::string error (file + ": " + IMG_GetError());
+		throw Exception(file + ": " + IMG_GetError());
 	}
 }
 
@@ -856,12 +859,12 @@ void Surface::drawString(
  * Sets the position of this Surface in the x-axis.
  * @param x - x-position in pixels
  */
-void Surface::setX(int x) // virtual.
-{
-	_x = x;
-}
-
-/**
+void Surface::setX(int x) // virtual.	// Inheritance gone wild.
+{										// Since '_x' is protected it can be used directly by
+	_x = x;								// any derived classes; setX() need not even be virtual.
+}										// Care should be taken that setX() in the derived
+										// classes do not "hide" setX() in this base class.
+/**										// who's that chick who sings ... oh yeh, Julie Andrews.
  * Sets the position of this Surface in the y-axis.
  * @param y - y-position in pixels
  */
@@ -1029,7 +1032,7 @@ static inline void func(
 		if (newShade > 15) // so dark it would flip over to another color - make it black instead
 			dest = 15u;
 		else
-			dest = static_cast<Uint8>((static_cast<int>(src) & (15u << 4u)) | newShade);
+			dest = static_cast<Uint8>((static_cast<int>(src) & (15 << 4u)) | newShade);
 	}
 }
 };

@@ -60,7 +60,7 @@ WarningMessage::WarningMessage(
 	_text->setWordWrap();
 
 	_timer = new Timer(80u);
-	_timer->onTimer((SurfaceHandler)& WarningMessage::fade);
+	_timer->onTimer(static_cast<SurfaceHandler>(&WarningMessage::fade));
 
 	_visible = false;
 }
@@ -166,8 +166,8 @@ void WarningMessage::draw()
 {
 	Surface::draw();
 
-	Uint8 color (_color + _fadeStep);
-	if (_fadeStep != 15u) color += 1u;
+	Uint8 color (static_cast<Uint8>(_color + _fadeStep));
+	if (_fadeStep != 15u) color = static_cast<Uint8>(color + 1u);
 
 	drawRect(
 			0,0,

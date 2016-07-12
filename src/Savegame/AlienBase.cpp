@@ -68,7 +68,7 @@ void AlienBase::load(const YAML::Node& node)
  */
 YAML::Node AlienBase::save() const
 {
-	YAML::Node node = Target::save();
+	YAML::Node node (Target::save());
 
 	node["id"]		= _id;
 	node["race"]	= _race;

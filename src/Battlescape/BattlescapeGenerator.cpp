@@ -129,17 +129,24 @@ void BattlescapeGenerator::init() // private.
 	_drillMap.clear();
 
 	_blocks.resize(
-			_mapsize_x / 10,
-			std::vector<MapBlock*>(_mapsize_y / 10));
+			static_cast<size_t>(_mapsize_x / 10),
+			std::vector<MapBlock*>(
+							static_cast<size_t>(_mapsize_y / 10)));
 	_landingzone.resize(
-			_mapsize_x / 10,
-			std::vector<bool>(_mapsize_y / 10, false));
+			static_cast<size_t>(_mapsize_x / 10),
+			std::vector<bool>(
+							static_cast<size_t>(_mapsize_y / 10),
+							false));
 	_seg.resize(
-			_mapsize_x / 10,
-			std::vector<int>(_mapsize_y / 10, 0));
+			static_cast<size_t>(_mapsize_x / 10),
+			std::vector<int>(
+							static_cast<size_t>(_mapsize_y / 10),
+							0));
 	_drillMap.resize(
-			_mapsize_x / 10,
-			std::vector<int>(_mapsize_y / 10, MD_NONE));
+			static_cast<size_t>(_mapsize_x / 10),
+			std::vector<int>(
+							static_cast<size_t>(_mapsize_y / 10),
+							static_cast<int>(MD_NONE)));
 
 	_blocksLeft = (_mapsize_x / 10) * (_mapsize_y / 10);
 
@@ -709,7 +716,7 @@ void BattlescapeGenerator::nextStage()
 		Log(LOG_INFO) << "bGen:nextStage() guaranteed " << (*i)->getRules()->getType();
 		Log(LOG_INFO) << ". ItemID-" << (*i)->getId();
 		if ((*i)->getItemUnit() != nullptr) Log(LOG_INFO) << ". UnitID-" << (*i)->getItemUnit()->getId()
-													  << " status= " << (int)(*i)->getItemUnit()->getUnitStatus();
+								  << " status= " << static_cast<int>((*i)->getItemUnit()->getUnitStatus());
 	}
 
 	for (std::vector<BattleItem*>::const_iterator
@@ -720,7 +727,7 @@ void BattlescapeGenerator::nextStage()
 		Log(LOG_INFO) << "bGen:nextStage() conditional " << (*i)->getRules()->getType();
 		Log(LOG_INFO) << ". ItemID-" << (*i)->getId();
 		if ((*i)->getItemUnit() != nullptr) Log(LOG_INFO) << ". UnitID-" << (*i)->getItemUnit()->getId()
-													  << " status= " << (int)(*i)->getItemUnit()->getUnitStatus();
+								  << " status= " << static_cast<int>((*i)->getItemUnit()->getUnitStatus());
 	}
 
 	for (std::vector<BattleItem*>::const_iterator
@@ -731,7 +738,7 @@ void BattlescapeGenerator::nextStage()
 		Log(LOG_INFO) << "bGen:nextStage() deletable " << (*i)->getRules()->getType();
 		Log(LOG_INFO) << ". ItemID-" << (*i)->getId();
 		if ((*i)->getItemUnit() != nullptr) Log(LOG_INFO) << ". UnitID-" << (*i)->getItemUnit()->getId()
-													  << " status= " << (int)(*i)->getItemUnit()->getUnitStatus();
+								  << " status= " << static_cast<int>((*i)->getItemUnit()->getUnitStatus());
 		_battleSave->toDeleteItem(*i);
 	}
 
@@ -744,7 +751,7 @@ void BattlescapeGenerator::nextStage()
 		Log(LOG_INFO) << "bGen:nextStage() forwardCarried " << (*i)->getRules()->getType();
 		Log(LOG_INFO) << ". ItemID-" << (*i)->getId();
 		if ((*i)->getItemUnit() != nullptr) Log(LOG_INFO) << ". UnitID-" << (*i)->getItemUnit()->getId()
-													  << " status= " << (int)(*i)->getItemUnit()->getUnitStatus();
+								  << " status= " << static_cast<int>((*i)->getItemUnit()->getUnitStatus());
 		_itemList->push_back(*i);
 	}
 	// NOTE: forwardGround vector is placed below after _tileEquipt is assigned.
@@ -872,7 +879,7 @@ void BattlescapeGenerator::nextStage()
 		if ((*i)->getItemUnit() != nullptr)
 		{
 			Log(LOG_INFO) << ". UnitID-" << (*i)->getItemUnit()->getId()
-						  << " status= " << (int)(*i)->getItemUnit()->getUnitStatus();
+						  << " status= " << static_cast<int>((*i)->getItemUnit()->getUnitStatus());
 			(*i)->getItemUnit()->setPosition(_tileEquipt->getPosition());
 		}
 	}
@@ -2089,7 +2096,9 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 						throw Exception("bGen:deployAliens() No itemSets defined.");
 					}
 
-					level = static_cast<size_t>(_rules->getAlienItemLevels().at(static_cast<size_t>(elapsed)).at(RNG::generate(0,9)));
+					level = static_cast<size_t>(_rules->getAlienItemLevels()
+														.at(static_cast<size_t>(elapsed))
+														.at(static_cast<size_t>(RNG::generate(0,9))));
 					if (level > (*i).itemSets.size() - 1u)
 						level = (*i).itemSets.size() - 1u;
 					// Relax item level requirements
@@ -2828,9 +2837,9 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 			throw Exception("bGen:generateMap() Multiple directives share the same label.");
 		}
 
-		success = conditions[static_cast<size_t>((*i)->getLabel())] = false;
+		success = conditions[(*i)->getLabel()] = false;
 
-		bool metConditions (true);
+		bool doit (true);
 		if ((*i)->getConditions()->empty() == false) // if this command runs conditionally on the failures or successes of previous commands
 		{
 			for (std::vector<int>::const_iterator // compare the corresponding entries in the success/failure vector
@@ -2840,10 +2849,10 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 			{
 				if (conditions.find(std::abs(*j)) != conditions.end())	// positive numbers indicate conditional on success, negative means conditional on failure
 				{														// ie: [1,-2] means this command only runs if command 1 succeeded and command 2 failed.
-					if ((*j > 0 && conditions[*j] == false)
+					if (   (*j > 0 && conditions[*j] == false)
 						|| (*j < 0 && conditions[std::abs(*j)] == true))
 					{
-						metConditions = false;
+						doit = false;
 						break;
 					}
 				}
@@ -2854,7 +2863,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 			}
 		}
 
-		if (metConditions == true
+		if (doit == true
 			&& RNG::percent((*i)->chanceOfExecution()) == true) // if there's a chance a command won't execute by design take that into account here
 		{
 			//Log(LOG_INFO) << " execution TRUE";
@@ -2865,7 +2874,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 					j != (*i)->getExecutions();
 					++j)
 			{
-				MapBlock* block (nullptr);
+				MapBlock* block;
 				int
 					x,y;
 
@@ -2885,7 +2894,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 					case MSC_ADDLINE:
 						success = addLine(
-										static_cast<MapDirection>((*i)->getDirection()),
+										(*i)->getDirection(),
 										(*i)->getRects()) == true;
 						break;
 
@@ -2910,14 +2919,19 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 											y != static_cast<int>(_craftPos.y) + static_cast<int>(_craftPos.h);
 											++y)
 									{
-										if (_blocks[x][y] != nullptr)
+										if (_blocks[static_cast<size_t>(x)]
+												   [static_cast<size_t>(y)] != nullptr)
+										{
 											loadMAP(
-												_blocks[x][y],
+												_blocks[static_cast<size_t>(x)]
+													   [static_cast<size_t>(y)],
 												x * 10, y * 10,
 												_terrainRule);
+										}
 									}
 								}
-								success = _craftDeployed = true;
+								_craftDeployed =
+								success = true;
 							}
 						}
 						break;
@@ -2943,14 +2957,14 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 						if (ufoTerrain != nullptr)
 						{
-							MapBlock* const ufoBlock (ufoTerrain->getMapBlockRand(999,999, 0, false));
-							Log(LOG_INFO) << "bGen:generateMap() ufo-type " << ufoBlock->getType();
+							block = ufoTerrain->getMapBlockRand(999,999, 0, false);
+							Log(LOG_INFO) << "bGen:generateMap() ufo-type " << block->getType();
 
 							SDL_Rect ufoPosTest;
-							if (addCraft(ufoBlock, *i, ufoPosTest) == true)
+							if (addCraft(block, *i, ufoPosTest) == true)
 							{
 								_ufoPos.push_back(ufoPosTest);
-								ufoBlocks.push_back(ufoBlock);
+								ufoBlocks.push_back(block);
 
 								for (
 										x = static_cast<int>(ufoPosTest.x);
@@ -2962,11 +2976,16 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 											y != static_cast<int>(ufoPosTest.y) + static_cast<int>(ufoPosTest.h);
 											++y)
 									{
-										if (_blocks[x][y])
+										block = _blocks[static_cast<size_t>(x)]
+													   [static_cast<size_t>(y)];
+
+										if (block != nullptr)
+										{
 											loadMAP(
-												_blocks[x][y],
-												x * 10, y * 10,
-												_terrainRule);
+													block,
+													x * 10, y * 10,
+													_terrainRule);
+										}
 									}
 								}
 								success = true;
@@ -2976,10 +2995,10 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 					case MSC_DIGTUNNEL:
 						drillModules(
-									(*i)->getTunnelData(),
-									(*i)->getRects(),
-									(*i)->getDirection());
-							success = true; // this command is fail-proof
+								(*i)->getTunnelData(),
+								(*i)->getRects(),
+								(*i)->getDirection());
+						success = true; // this command is fail-proof
 						break;
 
 					case MSC_FILLAREA:
@@ -3024,7 +3043,8 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 												z != (*i)->getGroups()->end() && success == false;
 												++z)
 										{
-											success = (_blocks[x][y]->isInGroup(*z) == true);
+											success = (_blocks[static_cast<size_t>(x)]
+															  [static_cast<size_t>(y)]->isInGroup(*z) == true);
 										}
 									}
 									else if ((*i)->getBlocks()->empty() == false)
@@ -3035,11 +3055,14 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 												++z)
 										{
 											if (*z < static_cast<int>(_terrainRule->getMapBlocks()->size()))
-												success = (_blocks[x][y] == _terrainRule->getMapBlocks()->at(*z));
+												success = (_blocks[static_cast<size_t>(x)]
+																  [static_cast<size_t>(y)] == _terrainRule->getMapBlocks()
+																												->at(static_cast<size_t>(*z)));
 										}
 									}
 									else // wildcard - don't care what block it is, just wanna know if there's a block here
-										success = (_blocks[x][y] != nullptr);
+										success = (_blocks[static_cast<size_t>(x)]
+														  [static_cast<size_t>(y)] != nullptr);
 								}
 							}
 						}
@@ -3152,16 +3175,16 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 		loadMAP(
 				craftBlock,
-				static_cast<int>(_craftPos.x * 10),
-				static_cast<int>(_craftPos.y * 10),
+				static_cast<int>(_craftPos.x) * 10,
+				static_cast<int>(_craftPos.y) * 10,
 				_craft->getRules()->getTacticalTerrainData(),
 				blockDataSetIdOffset + craftDataSetIdOffset,
 				false, // was true
 				true);
 		loadRMP(
 				craftBlock,
-				static_cast<int>(_craftPos.x * 10),
-				static_cast<int>(_craftPos.y * 10),
+				static_cast<int>(_craftPos.x) * 10,
+				static_cast<int>(_craftPos.y) * 10,
 				Node::SEG_CRAFT);
 
 		for (int
@@ -3232,12 +3255,12 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 }
 
 /**
- * Generates a battlefield based on the Base's layout.
+ * Generates a battlefield based on a Base's layout.
  * @note This doesn't drill or fill with dirt - the script must do that.
  */
 void BattlescapeGenerator::generateBaseMap() // private.
 {
-	// add modules based on the base's layout
+	// Add modules based on the Base's constructed floorplan.
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _base->getFacilities()->begin();
 			i != _base->getFacilities()->end();
@@ -3246,18 +3269,18 @@ void BattlescapeGenerator::generateBaseMap() // private.
 		if ((*i)->buildFinished() == true)
 		{
 			const int
-				xLimit ((*i)->getX() + static_cast<int>((*i)->getRules()->getSize()) - 1),
-				yLimit ((*i)->getY() + static_cast<int>((*i)->getRules()->getSize()) - 1);
+				xEnd ((*i)->getX() + static_cast<int>((*i)->getRules()->getSize()) - 1),
+				yEnd ((*i)->getY() + static_cast<int>((*i)->getRules()->getSize()) - 1);
 			int num (0);
 
 			for (int
 					y = (*i)->getY();
-					y <= yLimit;
+					y <= yEnd;
 					++y)
 			{
 				for (int
 						x = (*i)->getX();
-						x <= xLimit;
+						x <= xEnd;
 						++x)
 				{
 					// lots of crazy stuff here, which is for the hangars or other large base facilities
@@ -3281,7 +3304,8 @@ void BattlescapeGenerator::generateBaseMap() // private.
 						x,y,
 						_terrainRule->getMapBlock(newname.str()));
 
-					_drillMap[x][y] = MD_NONE;
+					_drillMap[static_cast<size_t>(x)]
+							 [static_cast<size_t>(y)] = static_cast<int>(MD_NONE);
 					++num;
 
 					// general stores - there is where the items are put
@@ -3346,21 +3370,22 @@ void BattlescapeGenerator::generateBaseMap() // private.
 
 			for (int
 					x = (*i)->getX();
-					x <= xLimit;
+					x <= xEnd;
 					++x)
 			{
-				_drillMap[x][yLimit] = MD_VERTICAL;
+				_drillMap[static_cast<size_t>(x)]
+						 [static_cast<size_t>(yEnd)] = static_cast<int>(MD_VERTICAL);
 			}
-
 			for (int
 					y = (*i)->getY();
-					y <= yLimit;
+					y <= yEnd;
 					++y)
 			{
-				_drillMap[xLimit][y] = MD_HORIZONTAL;
+				_drillMap[static_cast<size_t>(xEnd)]
+						 [static_cast<size_t>(y)] = static_cast<int>(MD_HORIZONTAL);
 			}
-
-			_drillMap[xLimit][yLimit] = MD_BOTH;
+			_drillMap[static_cast<size_t>(xEnd)]
+					 [static_cast<size_t>(yEnd)] = static_cast<int>(MD_BOTH);
 		}
 	}
 
@@ -3753,41 +3778,47 @@ bool BattlescapeGenerator::addLine( // private.
 		MapDirection dir,
 		const std::vector<SDL_Rect*>* const rects)
 {
-	if (dir == MD_BOTH)
+	switch (dir)
 	{
-		if (addLine(MD_VERTICAL, rects) == true)
-		{
-			addLine(MD_HORIZONTAL, rects);
-			return true;
-		}
-		return false;
+		case MD_NONE: // safety.
+			// TODO: Send insult to ruleset-developer.
+			return false;
+			break;
+
+		case MD_BOTH:
+			if (addLine(MD_VERTICAL, rects) == true)
+				if (addLine(MD_HORIZONTAL, rects) == true)
+					return true;
+			return false;
 	}
 
 	int
-		roadX (0), // avoid vc++ linker warnings
-		roadY (0),
-		limit,
-		* pRoad;
+		x (0), // avoid vc++ linker warnings
+		y (0),
+		end,
+		* progress;
 	MapBlockType
-		testType,
-		blockType;
+		typeTest,
+		type;
 
 	switch (dir)
 	{
-		case MD_VERTICAL:
-			limit = _mapsize_y / 10;
-			pRoad = &roadY;
-			testType = MBT_EWROAD;
-			blockType = MBT_NSROAD;
+		default:
+		case MD_HORIZONTAL:
+			end = _mapsize_x / 10;
+			progress = &x;
+			type = MBT_EWROAD;
+			typeTest = MBT_NSROAD;
 			break;
 
-		default:
-			limit = _mapsize_x / 10;
-			pRoad = &roadX;
-			testType = MBT_NSROAD;
-			blockType = MBT_EWROAD;
+		case MD_VERTICAL:
+			end = _mapsize_y / 10;
+			progress = &y;
+			type = MBT_NSROAD;
+			typeTest = MBT_EWROAD;
 	}
 
+	MapBlock* block;
 	int t (0);
 	bool placed (false);
 	while (placed == false)
@@ -3795,15 +3826,17 @@ bool BattlescapeGenerator::addLine( // private.
 		placed = true;
 		selectPosition(
 					rects,
-					roadX, roadY,
+					x,y,
 					10,10);
 		for (
-				*pRoad = 0;
-				*pRoad != limit;
-				++(*pRoad))
+				*progress = 0;
+				*progress != end;
+				++(*progress))
 		{
-			if (   _blocks[roadX][roadY] != nullptr
-				&& _blocks[roadX][roadY]->isInGroup(testType) == false)
+			block = _blocks[static_cast<size_t>(x)]
+						   [static_cast<size_t>(y)];
+
+			if (block != nullptr && block->isInGroup(typeTest) == false)
 			{
 				placed = false;
 				break;
@@ -3812,27 +3845,30 @@ bool BattlescapeGenerator::addLine( // private.
 		if (++t > 20) return false; // forget it ...
 	}
 
-	*pRoad = 0;
-	while (*pRoad != limit)
+	*progress = 0;
+	while (*progress != end)
 	{
-		if (_blocks[roadX][roadY] == nullptr)
+		block = _blocks[static_cast<size_t>(x)]
+					   [static_cast<size_t>(y)];
+
+		if (block == nullptr)
 			addBlock(
-					roadX, roadY,
-					_terrainRule->getMapBlockRand(10,10, blockType));
-		else if (_blocks[roadX][roadY]->isInGroup(testType) == true)
+					x,y,
+					_terrainRule->getMapBlockRand(10,10, type));
+		else if (block->isInGroup(typeTest) == true)
 		{
-			_blocks[roadX][roadY] = _terrainRule->getMapBlockRand(10,10, MBT_CROSSROAD);
+			block = _terrainRule->getMapBlockRand(10,10, MBT_CROSSROAD);
 			clearModule(
-					roadX * 10,
-					roadY * 10,
+					x * 10,
+					y * 10,
 					10,10);
 			loadMAP(
-				_blocks[roadX][roadY],
-				roadX * 10,
-				roadY * 10,
-				_terrainRule);
+					block,
+					x * 10,
+					y * 10,
+					_terrainRule);
 		}
-		++(*pRoad);
+		++(*progress);
 	}
 	return true;
 }
@@ -3850,18 +3886,18 @@ bool BattlescapeGenerator::addBlock( // private.
 		MapBlock* const block)
 {
 	const size_t
-		xSize ((block->getSizeX() - 1) / 10),
-		ySize ((block->getSizeY() - 1) / 10),
+		xSize (static_cast<size_t>((block->getSizeX() - 1) / 10)),
+		ySize (static_cast<size_t>((block->getSizeY() - 1) / 10)),
 		xt (static_cast<size_t>(x)),
 		yt (static_cast<size_t>(y));
 
 	for (size_t
-			xd = 0;
+			xd = 0u;
 			xd <= xSize;
 			++xd)
 	{
 		for (size_t
-				yd = 0;
+				yd = 0u;
 				yd != ySize;
 				++yd)
 		{
@@ -3874,12 +3910,12 @@ bool BattlescapeGenerator::addBlock( // private.
 	}
 
 	for (size_t
-			xd = 0;
+			xd = 0u;
 			xd <= xSize;
 			++xd)
 	{
 		for (size_t
-				yd = 0;
+				yd = 0u;
 				yd <= ySize;
 				++yd)
 		{
@@ -3890,7 +3926,7 @@ bool BattlescapeGenerator::addBlock( // private.
 	}
 
 	for (size_t // mark the south edge of the block for drilling
-			xd = 0;
+			xd = 0u;
 			xd <= xSize;
 			++xd)
 	{
@@ -3899,7 +3935,7 @@ bool BattlescapeGenerator::addBlock( // private.
 	}
 
 	for (size_t // then the east edge
-			yd = 0;
+			yd = 0u;
 			yd <= ySize;
 			++yd)
 	{
@@ -3952,8 +3988,8 @@ void BattlescapeGenerator::drillModules( // private.
 		rect = *rects->front();
 
 	Tile* tile;
-	MapData* data;
-	const MapData* objPart;
+	MapData* part;
+	const MapData* object;
 
 	for (int
 			i = 0;
@@ -3965,20 +4001,25 @@ void BattlescapeGenerator::drillModules( // private.
 				j != (_mapsize_y / 10);
 				++j)
 		{
-			if (_blocks[i][j] != 0)
+			if (_blocks[static_cast<size_t>(i)]
+					   [static_cast<size_t>(j)] != nullptr)
 			{
 				tile = nullptr;
-				data = nullptr;
+				part = nullptr;
 
 				if (dir != MD_VERTICAL) // drill east
 				{
 					if (i < _mapsize_x / 10 - 1
-						&& (_drillMap[i][j] == MD_HORIZONTAL || _drillMap[i][j] == MD_BOTH)
-						&& _blocks[i + 1][j] != nullptr)
+						&& (   _drillMap[static_cast<size_t>(i)]
+										[static_cast<size_t>(j)] == static_cast<int>(MD_HORIZONTAL)
+							|| _drillMap[static_cast<size_t>(i)]
+										[static_cast<size_t>(j)] == static_cast<int>(MD_BOTH))
+						&& _blocks[static_cast<size_t>(i) + 1u]
+								  [static_cast<size_t>(j)] != nullptr)
 					{
 						for (int
-								k = rect.y;
-								k != rect.y + rect.h;
+								k = static_cast<int>(rect.y);
+								k != static_cast<int>(rect.y) + static_cast<int>(rect.h);
 								++k)
 						{
 							tile = _battleSave->getTile(Position(
@@ -3987,14 +4028,16 @@ void BattlescapeGenerator::drillModules( // private.
 															info->level));
 							if (tile != nullptr)
 							{
-								tile->setMapData(0,-1,-1, O_WESTWALL);
-								tile->setMapData(0,-1,-1, O_OBJECT);
+								tile->setMapData(nullptr,-1,-1, O_WESTWALL);
+								tile->setMapData(nullptr,-1,-1, O_OBJECT);
 
 								if (floorMcd != nullptr)
 								{
-									data = _terrainRule->getMapDataSets()->at(floorMcd->dataSet)->getRecords()->at(floorMcd->entry);
+									part = _terrainRule->getMapDataSets()
+															->at(static_cast<size_t>(floorMcd->dataSet))->getRecords()
+															->at(static_cast<size_t>(floorMcd->entry));
 									tile->setMapData(
-												data,
+												part,
 												floorMcd->entry,
 												floorMcd->dataSet,
 												O_FLOOR);
@@ -4006,8 +4049,8 @@ void BattlescapeGenerator::drillModules( // private.
 																info->level));
 								tile->setMapData(nullptr,-1,-1, O_WESTWALL);
 
-								if ((objPart = tile->getMapData(O_OBJECT)) != nullptr
-									&& objPart->getTuCostPart(MT_WALK) == 0)
+								if ((object = tile->getMapData(O_OBJECT)) != nullptr
+									&& object->getTuCostPart(MT_WALK) == 0)
 								{
 									tile->setMapData(nullptr,-1,-1, O_OBJECT);
 								}
@@ -4016,22 +4059,24 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (northMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(northMcd->dataSet)->getRecords()->at(northMcd->entry);
+							part = _terrainRule->getMapDataSets()
+													->at(static_cast<size_t>(northMcd->dataSet))->getRecords()
+													->at(static_cast<size_t>(northMcd->entry));
 							tile = _battleSave->getTile(Position(
 															(i * 10) + 9,
-															(j * 10) + rect.y,
+															(j * 10) + static_cast<int>(rect.y),
 															info->level));
 							tile->setMapData(
-										data,
+										part,
 										northMcd->entry,
 										northMcd->dataSet,
 										O_NORTHWALL);
 							tile = _battleSave->getTile(Position(
 															(i * 10) + 9,
-															(j * 10) + rect.y + rect.h,
+															(j * 10) + static_cast<int>(rect.y) + static_cast<int>(rect.h),
 															info->level));
 							tile->setMapData(
-										data,
+										part,
 										northMcd->entry,
 										northMcd->dataSet,
 										O_NORTHWALL);
@@ -4039,15 +4084,17 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (cornerMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(cornerMcd->dataSet)->getRecords()->at(cornerMcd->entry);
+							part = _terrainRule->getMapDataSets()
+													->at(static_cast<size_t>(cornerMcd->dataSet))->getRecords()
+													->at(static_cast<size_t>(cornerMcd->entry));
 							tile = _battleSave->getTile(Position(
 															(i + 1) * 10,
-															(j * 10) + rect.y,
+															(j * 10) + static_cast<int>(rect.y),
 															info->level));
 
 							if (tile->getMapData(O_NORTHWALL) == nullptr)
 								tile->setMapData(
-											data,
+											part,
 											cornerMcd->entry,
 											cornerMcd->dataSet,
 											O_NORTHWALL);
@@ -4058,12 +4105,16 @@ void BattlescapeGenerator::drillModules( // private.
 				if (dir != MD_HORIZONTAL) // drill south
 				{
 					if (j < _mapsize_y / 10 - 1
-						&& (_drillMap[i][j] == MD_VERTICAL || _drillMap[i][j] == MD_BOTH)
-						&& _blocks[i][j + 1] != nullptr)
+						&& (   _drillMap[static_cast<size_t>(i)]
+										[static_cast<size_t>(j)] == static_cast<int>(MD_VERTICAL)
+							|| _drillMap[static_cast<size_t>(i)]
+										[static_cast<size_t>(j)] == static_cast<int>(MD_BOTH))
+						&& _blocks[static_cast<size_t>(i)]
+								  [static_cast<size_t>(j) + 1u] != nullptr)
 					{
 						for (int
-								k = rect.x;
-								k != rect.x + rect.w;
+								k = static_cast<int>(rect.x);
+								k != static_cast<int>(rect.x) + static_cast<int>(rect.w);
 								++k)
 						{
 							tile = _battleSave->getTile(Position(
@@ -4077,9 +4128,11 @@ void BattlescapeGenerator::drillModules( // private.
 
 								if (floorMcd != nullptr)
 								{
-									data = _terrainRule->getMapDataSets()->at(floorMcd->dataSet)->getRecords()->at(floorMcd->entry);
+									part = _terrainRule->getMapDataSets()
+															->at(static_cast<size_t>(floorMcd->dataSet))->getRecords()
+															->at(static_cast<size_t>(floorMcd->entry));
 									tile->setMapData(
-												data,
+												part,
 												floorMcd->entry,
 												floorMcd->dataSet,
 												O_FLOOR);
@@ -4091,8 +4144,8 @@ void BattlescapeGenerator::drillModules( // private.
 																info->level));
 								tile->setMapData(nullptr,-1,-1, O_NORTHWALL);
 
-								if ((objPart = tile->getMapData(O_OBJECT)) != nullptr
-									&& objPart->getTuCostPart(MT_WALK) == 0)
+								if ((object = tile->getMapData(O_OBJECT)) != nullptr
+									&& object->getTuCostPart(MT_WALK) == 0)
 								{
 									tile->setMapData(nullptr,-1,-1, O_OBJECT);
 								}
@@ -4101,22 +4154,24 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (westMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(westMcd->dataSet)->getRecords()->at(westMcd->entry);
+							part = _terrainRule->getMapDataSets()
+													->at(static_cast<size_t>(westMcd->dataSet))->getRecords()
+													->at(static_cast<size_t>(westMcd->entry));
 							tile = _battleSave->getTile(Position(
-															(i * 10) + rect.x,
+															(i * 10) + static_cast<int>(rect.x),
 															(j * 10) + 9,
 															info->level));
 							tile->setMapData(
-										data,
+										part,
 										westMcd->entry,
 										westMcd->dataSet,
 										O_WESTWALL);
 							tile = _battleSave->getTile(Position(
-															(i * 10) + rect.x + rect.w,
+															(i * 10) + static_cast<int>(rect.x) + static_cast<int>(rect.w),
 															(j * 10) + 9,
 															info->level));
 							tile->setMapData(
-										data,
+										part,
 										westMcd->entry,
 										westMcd->dataSet,
 										O_WESTWALL);
@@ -4124,15 +4179,17 @@ void BattlescapeGenerator::drillModules( // private.
 
 						if (cornerMcd != nullptr)
 						{
-							data = _terrainRule->getMapDataSets()->at(cornerMcd->dataSet)->getRecords()->at(cornerMcd->entry);
+							part = _terrainRule->getMapDataSets()
+													->at(static_cast<size_t>(cornerMcd->dataSet))->getRecords()
+													->at(static_cast<size_t>(cornerMcd->entry));
 							tile = _battleSave->getTile(Position(
-															(i * 10) + rect.x,
+															(i * 10) + static_cast<int>(rect.x),
 															(j + 1) * 10,
 															info->level));
 
 							if (tile->getMapData(O_WESTWALL) == nullptr)
 								tile->setMapData(
-											data,
+											part,
 											cornerMcd->entry,
 											cornerMcd->dataSet,
 											O_WESTWALL);
@@ -4154,6 +4211,7 @@ void BattlescapeGenerator::drillModules( // private.
  */
 bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // private.
 {
+	MapBlock* block;
 	std::vector<std::pair<int,int>> deleted;
 
 	for (std::vector<SDL_Rect*>::const_iterator
@@ -4177,7 +4235,10 @@ bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // priv
 					y != yPos + height && y != _mapsize_y / 10;
 					++y)
 			{
-				if (_blocks[x][y] != nullptr && _blocks[x][y] != _testBlock)
+				block = _blocks[static_cast<size_t>(x)]
+							   [static_cast<size_t>(y)];
+
+				if (block != nullptr && block != _testBlock)
 				{
 					std::pair<int,int> pos (x,y);
 
@@ -4187,8 +4248,8 @@ bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // priv
 								j = directive->getGroups()->begin();
 								j != directive->getGroups()->end();
 								++j)
-							if (_blocks[x][y]->isInGroup(*j) == true)
-								if (std::find( // the deleted vector should only contain unique entries
+							if (block->isInGroup(*j) == true)
+								if (std::find(					// the deleted vector should only contain unique entries
 											deleted.begin(),
 											deleted.end(),
 											pos) == deleted.end())
@@ -4201,13 +4262,13 @@ bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // priv
 								j != directive->getBlocks()->end();
 								++j)
 							if (*j < static_cast<int>(_terrainRule->getMapBlocks()->size()))
-								if (std::find( // the deleted vector should only contain unique entries
+								if (std::find(					// the deleted vector should only contain unique entries
 											deleted.begin(),
 											deleted.end(),
 											pos) == deleted.end())
 									deleted.push_back(pos);
 					}
-					else if (std::find( // the deleted vector should only contain unique entries
+					else if (std::find(							// the deleted vector should only contain unique entries
 									deleted.begin(),
 									deleted.end(),
 									pos) == deleted.end())
@@ -4223,28 +4284,28 @@ bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // priv
 			i != deleted.end();
 			++i)
 	{
-		const int
-			x ((*i).first),
-			y ((*i).second);
+		const size_t
+			x (static_cast<size_t>((*i).first)),
+			y (static_cast<size_t>((*i).second));
 
 		clearModule(
-				x * 10,
-				y * 10,
+				static_cast<int>(x) * 10,
+				static_cast<int>(y) * 10,
 				_blocks[x][y]->getSizeX(),
 				_blocks[x][y]->getSizeY());
 
-		const int
-			delx (_blocks[x][y]->getSizeX() / 10),
-			dely (_blocks[x][y]->getSizeY() / 10);
+		const size_t
+			x1 (x + static_cast<size_t>(_blocks[x][y]->getSizeX() / 10)),
+			y1 (y + static_cast<size_t>(_blocks[x][y]->getSizeY() / 10));
 
-		for (int
+		for (size_t
 				dx = x;
-				dx != x + delx;
+				dx != x1;
 				++dx)
 		{
-			for (int
+			for (size_t
 					dy = y;
-					dy != y + dely;
+					dy != y1;
 					++dy)
 			{
 				_blocks[dx][dy] = nullptr;

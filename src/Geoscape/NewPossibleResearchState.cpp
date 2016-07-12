@@ -79,19 +79,16 @@ NewPossibleResearchState::NewPossibleResearchState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 
 	_btnOk->setText(tr(showBtn ? "STR_OK" : "STR_MORE"));
-	_btnOk->onMouseClick((ActionHandler)& NewPossibleResearchState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NewPossibleResearchState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewPossibleResearchState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewPossibleResearchState::btnOkClick),
+							Options::keyCancel);
 
 	_btnResearch->setText(tr("STR_ALLOCATE_RESEARCH"));
-	_btnResearch->onMouseClick((ActionHandler)& NewPossibleResearchState::btnResearchClick);
-	_btnResearch->onKeyboardPress(
-					(ActionHandler)& NewPossibleResearchState::btnResearchClick,
-					Options::keyOk);
-	_btnResearch->onKeyboardPress(
-					(ActionHandler)& NewPossibleResearchState::btnResearchClick,
-					Options::keyOkKeypad);
+	_btnResearch->onMouseClick(		static_cast<ActionHandler>(&NewPossibleResearchState::btnResearchClick));
+	_btnResearch->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleResearchState::btnResearchClick),
+									Options::keyOk);
+	_btnResearch->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleResearchState::btnResearchClick),
+									Options::keyOkKeypad);
 	_btnResearch->setVisible(showBtn);
 
 	_txtTitle->setAlign(ALIGN_CENTER);

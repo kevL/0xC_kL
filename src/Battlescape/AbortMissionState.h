@@ -42,7 +42,7 @@ class AbortMissionState
 {
 
 private:
-	int _insideExit;
+	unsigned _insideExit;
 
 	BattlescapeState* _state;
 	Text

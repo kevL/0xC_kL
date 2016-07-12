@@ -163,16 +163,13 @@ DebriefingState::DebriefingState()
 	std::wstring wst (_battleSave->getOperation());
 	if (wst.empty() == true) wst = tr("STR_OK");
 	_btnOk->setText(wst);
-	_btnOk->onMouseClick((ActionHandler)& DebriefingState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DebriefingState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DebriefingState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& DebriefingState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&DebriefingState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefingState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefingState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefingState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setBig();
 
@@ -274,7 +271,12 @@ DebriefingState::DebriefingState()
 	{
 		if (_destroyPlayerBase == true)
 		{
-			_region->addActivityAlien((_diff + 1) * 235);
+//			const int score ((_diff + 1) * 235); // was 200 in BaseDestroyedState.
+			const int score (_rules->getBaseLostScore()
+						  *  _base->getQuantityFacilities()
+						  * (_diff + 1));
+
+			_region->addActivityAlien(score);
 			_region->recentActivityAlien();
 		}
 		else
@@ -288,7 +290,12 @@ DebriefingState::DebriefingState()
 	{
 		if (_destroyPlayerBase == true)
 		{
-			_country->addActivityAlien((_diff + 1) * 235);
+//			const int score ((_diff + 1) * 235); // was 200 in BaseDestroyedState.
+			const int score (_rules->getBaseLostScore()
+						  *  _base->getQuantityFacilities()
+						  * (_diff + 1));
+
+			_country->addActivityAlien(score);
 			_country->recentActivityAlien();
 		}
 		else
@@ -330,7 +337,7 @@ DebriefingState::DebriefingState()
 	// Soldier Diary ->
 	if (_isQuickBattle == false) // TODO: Show some stats for quick-battles.
 	{
-		_tactical->id			= _gameSave->getMissionStatistics()->size();
+		_tactical->id			= static_cast<int>(_gameSave->getMissionStatistics()->size());
 		_tactical->timeStat		= *_gameSave->getTime();
 		_tactical->type			= _battleSave->getTacticalType();
 		_tactical->shade		= _battleSave->getTacticalShade();
@@ -413,10 +420,7 @@ DebriefingState::DebriefingState()
 						if ((diaryStats->daysWounded = sol->getSickbay()) != 0)
 							_tactical->injuryList[sol->getId()] = diaryStats->daysWounded;
 
-						sol->getDiary()->updateDiary(
-												diaryStats,
-												_tactical,
-												_rules);
+						sol->getDiary()->updateDiary(diaryStats, _tactical);
 						if (sol->getDiary()->manageAwards(_rules, tacticals) == true)
 							_soldiersFeted.push_back(sol);
 						break;
@@ -450,10 +454,7 @@ DebriefingState::DebriefingState()
 						else
 							_tactical->injuryList[solDead->getId()] = -2; // mia
 
-						solDead->getDiary()->updateDiary(
-														diaryStats,
-														_tactical,
-														_rules);
+						solDead->getDiary()->updateDiary(diaryStats, _tactical);
 						solDead->getDiary()->manageAwards(_rules, tacticals);
 						_soldiersLost.push_back(solDead);
 				}
@@ -908,8 +909,8 @@ void DebriefingState::prepareDebriefing() // private.
 						j != _base->getFacilities()->end();
 						)
 				{
-					if (_battleSave->baseDestruct()[(*j)->getX()]
-												  [(*j)->getY()].second == 0) // this facility was demolished
+					if (_battleSave->baseDestruct()[static_cast<size_t>((*j)->getX())]
+												   [static_cast<size_t>((*j)->getY())].second == 0) // this facility was demolished
 					{
 						facDestroyed = true;
 						j = _base->destroyFacility(j);

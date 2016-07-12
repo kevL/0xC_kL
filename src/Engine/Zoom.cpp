@@ -691,8 +691,8 @@ void Zoom::flipWithZoom( // static.
 						glOut->linear,
 						glOut->iwidth,
 						glOut->iheight,
-						dst->w,
-						dst->h,
+						static_cast<unsigned>(dst->w),
+						static_cast<unsigned>(dst->h),
 						topBlackBand,
 						bottomBlackBand,
 						leftBlackBand,
@@ -940,13 +940,13 @@ int Zoom::_zoomSurfaceY( // static.
 	}
 
 	// Allocate memory for row increments.
-	if ((sax = static_cast<Uint32*>(realloc(sax, (dst->w + 1) * sizeof(Uint32)))) == nullptr)
+	if ((sax = static_cast<Uint32*>(realloc(sax, static_cast<size_t>((dst->w + 1)) * sizeof(Uint32)))) == nullptr)
 	{
 		sax = nullptr;
 		return -1;
 	}
 
-	if ((say = static_cast<Uint32*>(realloc(say, (dst->h + 1) * sizeof(Uint32)))) == nullptr)
+	if ((say = static_cast<Uint32*>(realloc(say, static_cast<size_t>((dst->h + 1)) * sizeof(Uint32)))) == nullptr)
 	{
 		say = nullptr;
 		//free(sax);
@@ -960,9 +960,7 @@ int Zoom::_zoomSurfaceY( // static.
 	dgap = static_cast<int>(dst->pitch) - dst->w;
 
 	if (flipx != 0) csp += (src->w - 1);
-	if (flipy != 0) csp  = ((Uint8*)csp + src->pitch * (src->h - 1)); // okay ... so what's the proper C++ cast for that.
-//	if (flipy != 0) csp  = (static_cast<Uint8*>(csp + static_cast<int>(src->pitch) * (src->h - 1)));
-//	if (flipy != 0) csp  = (static_cast<Uint8*>(csp) + static_cast<int>(src->pitch) * (src->h - 1));
+	if (flipy != 0) csp  = (csp + src->pitch * (src->h - 1));
 
 	// Precalculate row increments.
 	csx = 0;
@@ -976,7 +974,8 @@ int Zoom::_zoomSurfaceY( // static.
 			csx -= dst->w;
 			++(*csax);
 		}
-		(*csax) *= ((flipx != 0) ? -1 : 1);
+//		(*csax) *= ((flipx != 0) ? -1 : 1);
+		(*csax) = (*csax) * ((flipx != 0) ? -1 : 1); // G++ warning: negative integer implicitly converted to unsigned type [-Wsign-conversion]
 		++csax;
 	}
 	csy = 0;
@@ -990,7 +989,8 @@ int Zoom::_zoomSurfaceY( // static.
 			csy -= dst->h;
 			++(*csay);
 		}
-		(*csay) *= src->pitch * ((flipy != 0) ? -1 : 1);
+//		(*csay) *= src->pitch * ((flipy != 0) ? -1 : 1);
+		(*csay) = (*csay) * src->pitch * ((flipy != 0) ? -1 : 1); // G++ warning: negative integer implicitly converted to unsigned type [-Wsign-conversion]
 		++csay;
 	}
 	// Draw.

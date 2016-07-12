@@ -39,7 +39,7 @@ class TextEdit;
 
 
 /**
- * Soldier Info screen that shows all the info of a specific soldier.
+ * Soldier Info screen that shows all the info of a specific Soldier.
  */
 class SoldierInfoState final
 	:
@@ -56,9 +56,9 @@ private:
 		PURPLE			= 246;
 
 	bool _allowExit;
-	size_t _soldierId;
+	size_t _solId;
 
-	std::vector<Soldier*>* _list;
+	std::vector<Soldier*>* _listBase;
 
 	Bar
 		* _barTimeUnits,
@@ -75,7 +75,7 @@ private:
 	Base* _base;
 	InteractiveSurface* _bg;
 	NumberText* _battleOrder;
-	Soldier* _soldier;
+	Soldier* _sol;
 	Surface
 		* _gender,
 		* _rank;
@@ -132,18 +132,18 @@ private:
 
 
 	public:
-		/// Creates the Soldier Info state.
+		/// Creates a SoldierInfo state.
 		SoldierInfoState(
 				Base* base,
-				size_t soldierId);
-		/// Cleans up the Soldier Info state.
+				size_t solId);
+		/// Cleans up the SoldierInfo state.
 		~SoldierInfoState();
 
-		/// Updates the soldier info.
+		/// Updates the Soldier's info.
 		void init() override;
 
-		/// Sets the soldier ID.
-		void setSoldierId(size_t soldierId);
+		/// Sets the soldier-ID.
+		void setSoldierId(size_t solId);
 		/// Handler for changing text on the Name edit.
 		void edtSoldierChange(Action* action);
 

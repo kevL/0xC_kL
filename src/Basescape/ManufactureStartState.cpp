@@ -113,7 +113,7 @@ ManufactureStartState::ManufactureStartState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 
 	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
-	_btnCostTable->onMouseClick((ActionHandler)& ManufactureStartState::btnCostsClick);
+	_btnCostTable->onMouseClick(static_cast<ActionHandler>(&ManufactureStartState::btnCostsClick));
 
 	_txtManHour->setText(tr("STR_ENGINEER_HOURS_TO_PRODUCE_ONE_UNIT_")
 							.arg(_manfRule->getManufactureTime()));
@@ -179,19 +179,16 @@ ManufactureStartState::ManufactureStartState(
 
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& ManufactureStartState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-							(ActionHandler)& ManufactureStartState::btnCancelClick,
-							Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ManufactureStartState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ManufactureStartState::btnCancelClick),
+								Options::keyCancel);
 
 	_btnStart->setText(tr("STR_START_PRODUCTION"));
-	_btnStart->onMouseClick((ActionHandler)& ManufactureStartState::btnStartClick);
-	_btnStart->onKeyboardPress(
-					(ActionHandler)& ManufactureStartState::btnStartClick,
+	_btnStart->onMouseClick(	static_cast<ActionHandler>(&ManufactureStartState::btnStartClick));
+	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureStartState::btnStartClick),
 					Options::keyOk);
-	_btnStart->onKeyboardPress(
-					(ActionHandler)& ManufactureStartState::btnStartClick,
-					Options::keyOkKeypad);
+	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureStartState::btnStartClick),
+								Options::keyOkKeypad);
 	_btnStart->setVisible(showStart);
 }
 
@@ -260,7 +257,7 @@ void ManufactureStartState::btnCostsClick(Action*)
 }
 
 /**
- * Returns to previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ManufactureStartState::btnCancelClick(Action*)

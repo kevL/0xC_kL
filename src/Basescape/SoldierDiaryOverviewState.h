@@ -51,14 +51,14 @@ private:
 	size_t
 		_recall,
 		_rows,
-		_soldierId;
+		_solId;
 
-	const std::vector<Soldier*>* _list;
+	const std::vector<Soldier*>* _listBase;
 	const std::vector<SoldierDead*>* _listDead;
 
 	Base* _base;
-	SoldierInfoState* _soldierInfo;
-	SoldierInfoDeadState* _soldierInfoDead;
+	SoldierInfoState* _solInfo;
+	SoldierInfoDeadState* _solInfoDead;
 
 	Text
 		* _txtTitle,
@@ -82,17 +82,17 @@ private:
 		/// Creates a SoldierDiaryOverview state.
 		SoldierDiaryOverviewState(
 				Base* const base,
-				size_t soldierId,
-				SoldierInfoState* const soldierInfo,
-				SoldierInfoDeadState* const soldierInfoDead);
+				size_t solId,
+				SoldierInfoState* const solInfo,
+				SoldierInfoDeadState* const solInfoDead);
 		/// Cleans up the SoldierDiaryOverview state.
 		~SoldierDiaryOverviewState();
 
 		/// Updates the list info.
 		void init() override;
 
-		/// Sets the current Soldier's ID.
-		void setSoldierId(size_t soldierId);
+		/// Sets the current Soldier by his/her ID.
+		void setSoldierId(size_t solId);
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

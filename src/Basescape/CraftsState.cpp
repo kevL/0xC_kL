@@ -89,16 +89,13 @@ CraftsState::CraftsState(Base* base)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CraftsState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftsState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftsState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftsState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CraftsState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftsState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftsState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftsState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -120,9 +117,9 @@ CraftsState::CraftsState(Base* base)
 	_lstCrafts->setArrow(274, ARROW_VERTICAL);
 	_lstCrafts->setBackground(_window);
 	_lstCrafts->setSelectable();
-	_lstCrafts->onMousePress((ActionHandler)& CraftsState::lstCraftsPress);
-	_lstCrafts->onLeftArrowClick((ActionHandler)& CraftsState::lstLeftArrowClick);
-	_lstCrafts->onRightArrowClick((ActionHandler)& CraftsState::lstRightArrowClick);
+	_lstCrafts->onMousePress(		static_cast<ActionHandler>(&CraftsState::lstCraftsPress));
+	_lstCrafts->onLeftArrowClick(	static_cast<ActionHandler>(&CraftsState::lstLeftArrowClick));
+	_lstCrafts->onRightArrowClick(	static_cast<ActionHandler>(&CraftsState::lstRightArrowClick));
 }
 
 /**
@@ -142,11 +139,11 @@ void CraftsState::init()
 
 	const RuleCraft* craftRule;
 
-	size_t row (0u);
+	size_t r (0u);
 	for (std::vector<Craft*>::const_iterator
 			i = _base->getCrafts()->begin();
 			i != _base->getCrafts()->end();
-			++i, ++row)
+			++i, ++r)
 	{
 		std::wostringstream
 			woststr1,
@@ -179,7 +176,7 @@ void CraftsState::init()
 						woststr2.str().c_str(),
 						woststr3.str().c_str());
 		_lstCrafts->setCellColor(
-								row,
+								r,
 								1u,
 								_cellColor,
 								true);
@@ -276,8 +273,8 @@ void CraftsState::btnOkClick(Action*)
 void CraftsState::lstCraftsPress(Action* action)
 {
 	const double mX (action->getAbsoluteMouseX());
-	if (   mX >= static_cast<double>(_lstCrafts->getArrowsLeftEdge())
-		&& mX <  static_cast<double>(_lstCrafts->getArrowsRightEdge()))
+	if (   mX <  static_cast<double>(_lstCrafts->getArrowsRightEdge())
+		&& mX >= static_cast<double>(_lstCrafts->getArrowsLeftEdge()))
 	{
 		return;
 	}
@@ -313,23 +310,23 @@ void CraftsState::lstCraftsPress(Action* action)
  */
 void CraftsState::lstLeftArrowClick(Action* action)
 {
-	const size_t row (_lstCrafts->getSelectedRow());
-	if (row > 0u)
+	const size_t r (_lstCrafts->getSelectedRow());
+	if (r > 0u)
 	{
 		switch (action->getDetails()->button.button)
 		{
 			case SDL_BUTTON_LEFT:
 			{
-				Craft* const craft (_base->getCrafts()->at(row));
+				Craft* const craft (_base->getCrafts()->at(r));
 
-				_base->getCrafts()->at(row) = _base->getCrafts()->at(row - 1u);
-				_base->getCrafts()->at(row - 1u) = craft;
+				_base->getCrafts()->at(r) = _base->getCrafts()->at(r - 1u);
+				_base->getCrafts()->at(r - 1u) = craft;
 
-				if (row != _lstCrafts->getScroll())
+				if (r != _lstCrafts->getScroll())
 					SDL_WarpMouse(
 							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
 							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-													- static_cast<int>(8. * action->getScaleY())));
+								- static_cast<int>(8. * action->getScaleY())));
 				else
 					_lstCrafts->scrollUp();
 
@@ -339,9 +336,9 @@ void CraftsState::lstLeftArrowClick(Action* action)
 
 			case SDL_BUTTON_RIGHT:
 			{
-				Craft* const craft (_base->getCrafts()->at(row));
+				Craft* const craft (_base->getCrafts()->at(r));
 
-				_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
+				_base->getCrafts()->erase(_base->getCrafts()->begin() + static_cast<std::ptrdiff_t>(r));
 				_base->getCrafts()->insert(
 										_base->getCrafts()->begin(),
 										craft);
@@ -360,23 +357,23 @@ void CraftsState::lstRightArrowClick(Action* action)
 	const size_t qtyCrafts (_base->getCrafts()->size());
 	if (qtyCrafts != 0u)
 	{
-		const size_t row (_lstCrafts->getSelectedRow());
-		if (row < qtyCrafts - 1u)
+		const size_t r (_lstCrafts->getSelectedRow());
+		if (r < qtyCrafts - 1u)
 		{
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
 				{
-					Craft* const craft (_base->getCrafts()->at(row));
+					Craft* const craft (_base->getCrafts()->at(r));
 
-					_base->getCrafts()->at(row) = _base->getCrafts()->at(row + 1u);
-					_base->getCrafts()->at(row + 1u) = craft;
+					_base->getCrafts()->at(r) = _base->getCrafts()->at(r + 1u);
+					_base->getCrafts()->at(r + 1u) = craft;
 
-					if (row != _lstCrafts->getVisibleRows() - 1u + _lstCrafts->getScroll())
+					if (r != _lstCrafts->getVisibleRows() + _lstCrafts->getScroll() - 1u)
 						SDL_WarpMouse(
 								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
 								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-														+ static_cast<int>(8. * action->getScaleY())));
+									+ static_cast<int>(8. * action->getScaleY())));
 					else
 						_lstCrafts->scrollDown();
 
@@ -386,9 +383,9 @@ void CraftsState::lstRightArrowClick(Action* action)
 
 				case SDL_BUTTON_RIGHT:
 				{
-					Craft* const craft (_base->getCrafts()->at(row));
+					Craft* const craft (_base->getCrafts()->at(r));
 
-					_base->getCrafts()->erase(_base->getCrafts()->begin() + row);
+					_base->getCrafts()->erase(_base->getCrafts()->begin() + static_cast<std::ptrdiff_t>(r));
 					_base->getCrafts()->insert(
 											_base->getCrafts()->end(),
 											craft);

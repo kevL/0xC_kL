@@ -476,10 +476,10 @@ DoorResult Tile::openDoor(
 			}
 
 			setMapData(
-					_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD()),
+					_parts[partType]->getDataset()->getRecords()->at(static_cast<size_t>(_parts[partType]->getAltMCD())),
 					_parts[partType]->getAltMCD(),
 					_partSetId[partType],
-					_parts[partType]->getDataset()->getRecords()->at(_parts[partType]->getAltMCD())->getPartType());
+					_parts[partType]->getDataset()->getRecords()->at(static_cast<size_t>(_parts[partType]->getAltMCD()))->getPartType());
 			setMapData(nullptr,-1,-1, partType);
 
 			return DR_WOOD_OPEN;
@@ -658,7 +658,7 @@ void Tile::destroyTilepart(
 		const int deadId (data->getDieMCD());
 		if (deadId != 0 && obliterate == false)
 		{
-			MapData* const partDead (data->getDataset()->getRecords()->at(deadId));
+			MapData* const partDead (data->getDataset()->getRecords()->at(static_cast<size_t>(deadId)));
 			setMapData(
 					partDead,
 					deadId,

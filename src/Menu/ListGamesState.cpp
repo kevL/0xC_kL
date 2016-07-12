@@ -158,10 +158,9 @@ ListGamesState::ListGamesState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& ListGamesState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ListGamesState::btnCancelKeypress,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ListGamesState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ListGamesState::btnCancelKeypress),
+								Options::keyCancel);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -176,18 +175,18 @@ ListGamesState::ListGamesState(
 	_lstSaves->setBackground(_window);
 	_lstSaves->setColumns(3, 188,60,29);
 	_lstSaves->setSelectable();
-	_lstSaves->onMouseOver((ActionHandler)& ListGamesState::lstSavesMouseOver);
-	_lstSaves->onMouseOut((ActionHandler)& ListGamesState::lstSavesMouseOut);
-	_lstSaves->onMousePress((ActionHandler)& ListGamesState::lstSavesPress);
+	_lstSaves->onMouseOver(	static_cast<ActionHandler>(&ListGamesState::lstSavesMouseOver));
+	_lstSaves->onMouseOut(	static_cast<ActionHandler>(&ListGamesState::lstSavesMouseOut));
+	_lstSaves->onMousePress(static_cast<ActionHandler>(&ListGamesState::lstSavesPress));
 
 	_txtDetails->setWordWrap();
 	_txtDetails->setText(tr("STR_DETAILS").arg(L""));
 
 	_sortName->setX(_sortName->getX() + _txtName->getTextWidth() + 5);
-	_sortName->onMouseClick((ActionHandler)& ListGamesState::sortNameClick);
+	_sortName->onMouseClick(static_cast<ActionHandler>(&ListGamesState::sortNameClick));
 
 	_sortDate->setX(_sortDate->getX() + _txtDate->getTextWidth() + 5);
-	_sortDate->onMouseClick((ActionHandler)& ListGamesState::sortDateClick);
+	_sortDate->onMouseClick(static_cast<ActionHandler>(&ListGamesState::sortDateClick));
 
 	updateArrows();
 }
@@ -319,13 +318,13 @@ void ListGamesState::sortList(SaveSort order)
  */
 void ListGamesState::updateList() // virtual.
 {
-	size_t row (0u);
+	size_t r (0u);
 	Uint8 color (_lstSaves->getSecondaryColor());
 
 	for (std::vector<SaveInfo>::const_iterator
 			i = _saves.begin();
 			i != _saves.end();
-			++i, ++row)
+			++i, ++r)
 	{
 		_lstSaves->addRow(
 						3,
@@ -335,7 +334,7 @@ void ListGamesState::updateList() // virtual.
 		if (i->reserved == true
 			&& _origin != OPT_BATTLESCAPE)
 		{
-			_lstSaves->setRowColor(row, color);
+			_lstSaves->setRowColor(r, color);
 		}
 	}
 }

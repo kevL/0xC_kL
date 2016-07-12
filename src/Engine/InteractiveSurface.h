@@ -92,7 +92,7 @@ private:
 			virtual ~InteractiveSurface();
 
 			/// Sets the Surface's visibility.
-			void setVisible(bool visible = true) override;
+			void setVisible(bool visible = true) override final;
 
 			/// Processes any pending events.
 			virtual void handle(
@@ -100,12 +100,12 @@ private:
 					State* state);
 
 			/// Sets the focus of the Surface.
-			virtual void setFocus(bool focus = true);
+			void setFocus(bool focus = true);
 			/// Gets the focus of the Surface.
 			bool isFocused() const;
 
 			/// Unpresses the Surface.
-			virtual void unpress(State* state);
+			virtual void unpress(State* const state);
 
 			/// Processes a mouse-button-press event.
 			virtual void mousePress(Action* action, State* state);

@@ -69,7 +69,7 @@ BaseView::BaseView(
 		_lang(nullptr),
 		_gridX(0),
 		_gridY(0),
-		_selSize(0u),
+		_selSize(0),
 		_selector(nullptr),
 		_blink(true)
 {
@@ -88,7 +88,7 @@ BaseView::BaseView(
 	}
 
 	_timer = new Timer(125u);
-	_timer->onTimer((SurfaceHandler)& BaseView::blink);
+	_timer->onTimer(static_cast<SurfaceHandler>(&BaseView::blink));
 	_timer->start();
 }
 
@@ -146,7 +146,6 @@ void BaseView::setBase(Base* const base)
 		facX,
 		facY,
 		facSize;
-
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _base->getFacilities()->begin();
 			i != _base->getFacilities()->end();
@@ -170,12 +169,11 @@ void BaseView::setBase(Base* const base)
 			}
 		}
 	}
-
 	_redraw = true;
 }
 
 /**
- * Changes the texture to use for drawing the various base elements.
+ * Sets the texture to use for drawing the Base's bits.
  * @param texture - pointer to SurfaceSet to use
  */
 void BaseView::setTexture(SurfaceSet* const texture)
@@ -184,7 +182,7 @@ void BaseView::setTexture(SurfaceSet* const texture)
 }
 
 /**
- * Changes the dog to use for drawing the at the base.
+ * Sets the dog to draw at the Base.
  * @param texture - pointer to Surface to use
  */
 void BaseView::setDog(Surface* const dog)
@@ -223,7 +221,7 @@ int BaseView::getGridX() const
 }
 
 /**
- * Gets the y-position of the grid square the mouse is currently over.
+ * Gets the y-position of the grid-square the mouse is currently over.
  * @return, y-position on the grid
  */
 int BaseView::getGridY() const
@@ -235,14 +233,13 @@ int BaseView::getGridY() const
  * If enabled this BaseView will highlight the selected facility.
  * @param facSize - X/Y dimension in pixels (0 to disable)
  */
-void BaseView::setSelectable(size_t facSize)
+void BaseView::highlightFacility(size_t facSize)
 {
-	_selSize = facSize;
-	if (_selSize != 0u)
+	if ((_selSize = static_cast<int>(facSize)) != 0)
 	{
 		_selector = new Surface(
-							facSize * GRID_SIZE,
-							facSize * GRID_SIZE,
+							_selSize * GRID_SIZE,
+							_selSize * GRID_SIZE,
 							_x,_y);
 		_selector->setPalette(getPalette());
 
@@ -255,9 +252,10 @@ void BaseView::setSelectable(size_t facSize)
 
 		++rect.x;
 		++rect.y;
-//		rect.w = static_cast<Uint16>(static_cast<int>(rect.w) - 2); // Holy F*cking shoot-me-in-the-head-to-avoid-a-Wconversion-warning, batman!
-		rect.w -= 2u;
-		rect.h -= 2u;
+		rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u); // Holy F*cking shoot-me-in-the-head-to-avoid-a-Wconversion-warning, batman!
+		rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
+//		rect.w -= 2u; // aka
+//		rect.h -= 2u;
 
 		_selector->drawRect(&rect, 0u);
 		_selector->setVisible(false);
@@ -523,13 +521,11 @@ void BaseView::think()
  */
 void BaseView::blink()
 {
-	_blink = !_blink;
-
-	if (_selSize != 0u)
+	if (_selSize != 0)
 	{
 		SDL_Rect rect;
 
-		if (_blink == true)
+		if ((_blink = !_blink) == true)
 		{
 			rect.x =
 			rect.y = 0;
@@ -539,8 +535,8 @@ void BaseView::blink()
 
 			++rect.x;
 			++rect.y;
-			rect.w -= 2u;
-			rect.h -= 2u;
+			rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u);
+			rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
 			_selector->drawRect(&rect, 0);
 		}
 		else
@@ -646,7 +642,7 @@ void BaseView::draw()
 						&& _facilities[x][y1]->buildFinished() == true)
 					{
 						srf = _texture->getFrame(7);
-						srf->setX(static_cast<int>(x)  * GRID_SIZE - GRID_SIZE / 2);
+						srf->setX(static_cast<int>(x)  * GRID_SIZE - (GRID_SIZE >> 1u));
 						srf->setY(static_cast<int>(y1) * GRID_SIZE);
 						srf->blit(this);
 					}
@@ -665,7 +661,7 @@ void BaseView::draw()
 					{
 						srf = _texture->getFrame(8);
 						srf->setX(static_cast<int>(x1) * GRID_SIZE);
-						srf->setY(static_cast<int>(y)  * GRID_SIZE - GRID_SIZE / 2);
+						srf->setY(static_cast<int>(y)  * GRID_SIZE - (GRID_SIZE >> 1u));
 						srf->blit(this);
 					}
 				}
@@ -682,20 +678,20 @@ void BaseView::draw()
 
 		facSize = static_cast<int>((*i)->getRules()->getSize());
 		for (int
-				y = (*i)->getY(), j = 0;
-				y != (*i)->getY() + facSize;
-				++y)
+				yOffset = (*i)->getY(), j = 0;
+				yOffset != (*i)->getY() + facSize;
+				++yOffset)
 		{
 			for (int
-					x = (*i)->getX();
-					x != (*i)->getX() + facSize;
-					++x, ++j)
+					xOffset = (*i)->getX();
+					xOffset != (*i)->getX() + facSize;
+					++xOffset, ++j)
 			{
 				if (facSize == 1)
 				{
 					srf = _texture->getFrame((*i)->getRules()->getSpriteFacility() + j);
-					srf->setX(x * GRID_SIZE);
-					srf->setY(y * GRID_SIZE);
+					srf->setX(xOffset * GRID_SIZE);
+					srf->setY(yOffset * GRID_SIZE);
 					srf->blit(this);
 				}
 			}
@@ -714,7 +710,7 @@ void BaseView::draw()
 						_small,
 						_lang);
 			text->setX(((*i)->getX() * GRID_SIZE) - 1);
-			text->setY(((*i)->getY() * GRID_SIZE) + (GRID_SIZE * facSize - 16) / 2);
+			text->setY(((*i)->getY() * GRID_SIZE) + ((GRID_SIZE * facSize - 16) >> 1u));
 			text->setBig();
 
 			std::wostringstream woststr;
@@ -737,18 +733,17 @@ void BaseView::draw()
 		posDog_x,
 		posDog_y;
 
-	for (size_t
+	for (
 			y = 0u;
 			y != Base::BASE_SIZE;
 			++y)
 	{
-		for (size_t
+		for (
 				x = 0u;
 				x != Base::BASE_SIZE;
 				++x)
 		{
-			fac = _facilities[x][y];
-			if (fac != nullptr)
+			if ((fac = _facilities[x][y]) != nullptr)
 			{
 				facSize = static_cast<int>(fac->getRules()->getSize());
 
@@ -760,8 +755,8 @@ void BaseView::draw()
 					if ((*pCraft)->getCraftStatus() != CS_OUT)
 					{
 						srf = _texture->getFrame((*pCraft)->getRules()->getSprite() + 33);
-						srf->setX(fac->getX() * GRID_SIZE + (facSize - 1) * GRID_SIZE / 2 + 2);
-						srf->setY(fac->getY() * GRID_SIZE + (facSize - 1) * GRID_SIZE / 2 - 4);
+						srf->setX(fac->getX() * GRID_SIZE + (((facSize - 1) * GRID_SIZE) >> 1u) + 2);
+						srf->setY(fac->getY() * GRID_SIZE + (((facSize - 1) * GRID_SIZE) >> 1u) - 4);
 						srf->blit(this);
 					}
 
@@ -820,11 +815,12 @@ void BaseView::mouseOver(Action* action, State* state)
 		&& _gridY > -1
 		&& _gridY < static_cast<int>(Base::BASE_SIZE))
 	{
-		_selFacility = _facilities[static_cast<size_t>(_gridX)][static_cast<size_t>(_gridY)];
-		if (_selSize != 0u)
+		_selFacility = _facilities[static_cast<size_t>(_gridX)]
+								  [static_cast<size_t>(_gridY)];
+		if (_selSize != 0)
 		{
-			if (   static_cast<size_t>(_gridX) + _selSize <= Base::BASE_SIZE
-				&& static_cast<size_t>(_gridY) + _selSize <= Base::BASE_SIZE)
+			if (   _gridX + _selSize <= static_cast<int>(Base::BASE_SIZE)
+				&& _gridY + _selSize <= static_cast<int>(Base::BASE_SIZE))
 			{
 				_selector->setX(_x + _gridX * GRID_SIZE);
 				_selector->setY(_y + _gridY * GRID_SIZE);
@@ -837,8 +833,7 @@ void BaseView::mouseOver(Action* action, State* state)
 	else
 	{
 		_selFacility = nullptr;
-		if (_selSize != 0u)
-			_selector->setVisible(false);
+		if (_selSize != 0) _selector->setVisible(false);
 	}
 
 	InteractiveSurface::mouseOver(action, state);
@@ -852,8 +847,7 @@ void BaseView::mouseOver(Action* action, State* state)
 void BaseView::mouseOut(Action* action, State* state)
 {
 	_selFacility = nullptr;
-	if (_selSize != 0u)
-		_selector->setVisible(false);
+	if (_selSize != 0) _selector->setVisible(false);
 
 	InteractiveSurface::mouseOut(action, state);
 }

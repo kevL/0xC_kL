@@ -26,6 +26,7 @@
 //#include <ios>		// std::dec()
 //#include <sstream>	// std::ostringstream
 
+#include "../fmath.h"
 #include "../lodepng.h"
 
 #include "Action.h"
@@ -376,7 +377,7 @@ void Screen::resetDisplay(bool resetVideo)
 				throw Exception(SDL_GetError());
 			}
 		}
-		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << (int)_screen->format->BitsPerPixel << ".";
+		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << _screen->format->BitsPerPixel << ".";
 	}
 	else
 		clear();
@@ -408,7 +409,7 @@ void Screen::resetDisplay(bool resetVideo)
 	else
 		cursorInBlackBands = Options::cursorInBlackBandsInBorderlessWindow;
 
-	if (Options::keepAspectRatio == true && _scaleX != _scaleY)
+	if (Options::keepAspectRatio == true && AreSame(_scaleX, _scaleY) == false)
 	{
 		if (_scaleX > _scaleY)
 		{
@@ -680,9 +681,9 @@ void Screen::screenshot(const std::string& file) const
 
 	unsigned error (lodepng::encode(
 								file,
-								(const unsigned char*)(screenshot->pixels),
-								_screen->w - _screen->w % 4,
-								_screen->h,
+								static_cast<const unsigned char*>(screenshot->pixels),
+								static_cast<unsigned>(_screen->w - _screen->w % 4),
+								static_cast<unsigned>(_screen->h),
 								LCT_RGB));
 	if (error != 0u)
 		Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
@@ -772,7 +773,7 @@ void Screen::updateScale( // static.
 
 		case SCALE_SCREEN:
 			width	= Options::displayWidth;
-			height	= static_cast<int>(static_cast<double>(Options::displayHeight / pixelRatioY));
+			height	= static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY);
 			break;
 
 		default:
@@ -842,9 +843,9 @@ void Screen::fadeScreen(
 					j != 256u;
 					++j)
 			{
-				dst[j].r = src[j].r * i / steps;
-				dst[j].g = src[j].g * i / steps;
-				dst[j].b = src[j].b * i / steps;
+				dst[j].r = static_cast<Uint8>(src[j].r * i / steps);
+				dst[j].g = static_cast<Uint8>(src[j].g * i / steps);
+				dst[j].b = static_cast<Uint8>(src[j].b * i / steps);
 
 				dst[j].unused = src[j].unused;
 			}

@@ -98,16 +98,13 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->setColor(PURPLE);
-	_btnOk->onMouseClick((ActionHandler)& BaseDetectionState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDetectionState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDetectionState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDetectionState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BaseDetectionState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDetectionState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDetectionState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDetectionState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_txtFacilities->setText(tr("STR_FACILITIES"));
 	_txtFacilities->setColor(PURPLE);
@@ -121,7 +118,7 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 	if (_base->getBaseExposed() == true)
 	{
 		_blinkTimer = new Timer(325u);
-		_blinkTimer->onTimer((StateHandler)& BaseDetectionState::blink);
+		_blinkTimer->onTimer(static_cast<StateHandler>(&BaseDetectionState::blink));
 		_blinkTimer->start();
 
 		_txtSpotted->setText(tr("STR_SPOTTED"));
@@ -154,10 +151,11 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 	if (_game->getSavedGame()->isResearched("STR_MIND_SHIELD") == true)
 	{
 		std::wostringstream woststr;
-		if (shields == 0)
-			woststr << L"-";
-		else
-			woststr << shields;
+		switch (shields)
+		{
+			case 0:  woststr << L"-"; break;
+			default: woststr << shields;
+		}
 		_txtShieldsVal->setText(woststr.str());
 		_txtShieldsVal->setColor(PURPLE);
 	}

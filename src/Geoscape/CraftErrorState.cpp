@@ -66,31 +66,26 @@ CraftErrorState::CraftErrorState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CraftErrorState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftErrorState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CraftErrorState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
+							Options::keyCancel);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-	_btnOk5Secs->onMouseClick((ActionHandler)& CraftErrorState::btnOk5SecsClick);
+	_btnOk5Secs->onMouseClick(static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick));
 
 	if (_state->is5Sec() == true)
 	{
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOkClick,
-						Options::keyOk);
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOkClick,
-						Options::keyOkKeypad);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
+								Options::keyOk);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
+								Options::keyOkKeypad);
 	}
 	else
 	{
-		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOk5SecsClick,
-						Options::keyOk);
-		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& CraftErrorState::btnOk5SecsClick,
-						Options::keyOkKeypad);
+		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick),
+										Options::keyOk);
+		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick),
+										Options::keyOkKeypad);
 	}
 
 	_txtMessage->setAlign(ALIGN_CENTER);

@@ -48,15 +48,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Soldier Armor window.
- * @param base		- pointer to the Base to get info from
- * @param soldierId	- ID of the selected Soldier
+ * @param base	- pointer to the Base to get info from
+ * @param solId	- soldier-ID to suit
  */
 SoldierArmorState::SoldierArmorState(
 		Base* const base,
-		size_t soldierId)
+		size_t solId)
 	:
 		_base(base),
-		_soldier(base->getSoldiers()->at(soldierId))
+		_sol(base->getSoldiers()->at(solId))
 {
 	_fullScreen = false;
 
@@ -86,18 +86,15 @@ SoldierArmorState::SoldierArmorState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& SoldierArmorState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& SoldierArmorState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& SoldierArmorState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& SoldierArmorState::btnCancelClick,
-					Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&SoldierArmorState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SoldierArmorState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SoldierArmorState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SoldierArmorState::btnCancelClick),
+								Options::keyOkKeypad);
 
-	_txtSoldier->setText(_soldier->getName());
+	_txtSoldier->setText(_sol->getName());
 	_txtSoldier->setAlign(ALIGN_CENTER);
 
 	_txtType->setText(tr("STR_TYPE"));
@@ -120,7 +117,7 @@ SoldierArmorState::SoldierArmorState(
 			|| std::find(
 					armorRule->getUnits().begin(),
 					armorRule->getUnits().end(),
-					_soldier->getRules()->getType()) != armorRule->getUnits().end())
+					_sol->getRules()->getType()) != armorRule->getUnits().end())
 		{
 			if (_base->getStorageItems()->getItemQuantity(armorRule->getStoreItem()) != 0) //|| isQuickBattle == true)
 			{
@@ -144,7 +141,7 @@ SoldierArmorState::SoldierArmorState(
 			}
 		}
 	}
-	_lstArmor->onMouseClick((ActionHandler)& SoldierArmorState::lstArmorClick);
+	_lstArmor->onMouseClick(static_cast<ActionHandler>(&SoldierArmorState::lstArmorClick));
 }
 
 /**
@@ -170,14 +167,14 @@ void SoldierArmorState::lstArmorClick(Action*)
 {
 	if (_game->getSavedGame()->getMonthsPassed() != -1)
 	{
-		if (_soldier->getArmor()->isBasic() == false)
-			_base->getStorageItems()->addItem(_soldier->getArmor()->getStoreItem());
+		if (_sol->getArmor()->isBasic() == false)
+			_base->getStorageItems()->addItem(_sol->getArmor()->getStoreItem());
 
 		if (_armors[_lstArmor->getSelectedRow()]->isBasic() == false)
 			_base->getStorageItems()->removeItem(_armors[_lstArmor->getSelectedRow()]->getStoreItem());
 	}
 
-	_soldier->setArmor(_armors[_lstArmor->getSelectedRow()]);
+	_sol->setArmor(_armors[_lstArmor->getSelectedRow()]);
 	_game->popState();
 }
 

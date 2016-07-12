@@ -190,7 +190,7 @@ void MapDataSet::loadData()
 	MapData* to;
 	int objNumber (0);
 	while (ifstr.read(
-					(char*)&mcd,
+					reinterpret_cast<char*>(&mcd),
 					sizeof(MCD)))
 	{
 		to = new MapData(this);
@@ -202,43 +202,43 @@ void MapDataSet::loadData()
 				i != 8u; // sprite-frames (Battlescape tactical animations)
 				++i)
 		{
-			to->setSprite(i, (int)mcd.Frame[i]);
+			to->setSprite(i, static_cast<int>(mcd.Frame[i]));
 		}
 
 		to->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
 		to->setTileType(static_cast<TileType>(mcd.Target_Type));
-		to->setOffsetY((int)mcd.P_Level);
+		to->setOffsetY(static_cast<int>(mcd.P_Level));
 		to->setTUCosts(
-				(int)mcd.TU_Walk,
-				(int)mcd.TU_Fly,
-				(int)mcd.TU_Slide);
+				static_cast<int>(mcd.TU_Walk),
+				static_cast<int>(mcd.TU_Fly),
+				static_cast<int>(mcd.TU_Slide));
 		to->setFlags(
 				mcd.UFO_Door != 0,
 				mcd.Stop_LOS != 0,
 				mcd.No_Floor != 0,
-				(int)mcd.Big_Wall,
+				static_cast<int>(mcd.Big_Wall),
 				mcd.Gravlift != 0,
 				mcd.Door != 0,
 				mcd.Block_Fire != 0,
 				mcd.Block_Smoke != 0,
 				mcd.Xcom_Base != 0);
-		to->setTerrainLevel((int)mcd.T_Level);
-		to->setFootstepSound((int)mcd.Footstep);
-		to->setAltMCD((int)(mcd.Alt_MCD));
-		to->setDieMCD((int)(mcd.Die_MCD));
+		to->setTerrainLevel(static_cast<int>(mcd.T_Level));
+		to->setFootstepSound(static_cast<int>(mcd.Footstep));
+		to->setAltMCD(static_cast<int>(mcd.Alt_MCD));
+		to->setDieMCD(static_cast<int>(mcd.Die_MCD));
 		to->setBlock(
-				(int)mcd.Light_Block,
-				(int)mcd.Stop_LOS,
-				(int)mcd.HE_Block,
-				(int)mcd.Block_Smoke,
-				(int)mcd.Flammable,
-				(int)mcd.HE_Block);
-		to->setLightSource((int)mcd.Light_Source);
-		to->setArmor((int)mcd.Armor);
-		to->setFlammable((int)mcd.Flammable);
-		to->setFuel((int)mcd.Fuel);
-		to->setExplosiveType((int)mcd.HE_Type);
-		to->setExplosive((int)mcd.HE_Strength);
+				static_cast<int>(mcd.Light_Block),
+				static_cast<int>(mcd.Stop_LOS),
+				static_cast<int>(mcd.HE_Block),
+				static_cast<int>(mcd.Block_Smoke),
+				static_cast<int>(mcd.Flammable),
+				static_cast<int>(mcd.HE_Block));
+		to->setLightSource(static_cast<int>(mcd.Light_Source));
+		to->setArmor(static_cast<int>(mcd.Armor));
+		to->setFlammable(static_cast<int>(mcd.Flammable));
+		to->setFuel(static_cast<int>(mcd.Fuel));
+		to->setExplosiveType(static_cast<int>(mcd.HE_Type));
+		to->setExplosive(static_cast<int>(mcd.HE_Strength));
 
 		mcd.ScanG = SDL_SwapLE16(mcd.ScanG);
 		to->setMiniMapIndex(mcd.ScanG);
@@ -250,7 +250,7 @@ void MapDataSet::loadData()
 		{
 			to->setLoftId(
 						static_cast<size_t>(mcd.LOFT[loft]),
-						static_cast<size_t>(loft));
+						loft);
 		}
 
 		// Store the 2 tiles of 'blanks' as static so they are accessible to all MapData-instantiations.
@@ -363,7 +363,7 @@ void MapDataSet::loadLoft( // static.
 	Uint16 value;
 
 	while (ifstr.read(
-					(char*)&value,
+					reinterpret_cast<char*>(&value),
 					sizeof(value)))
 	{
 		value = SDL_SwapLE16(value);

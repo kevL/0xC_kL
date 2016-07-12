@@ -272,7 +272,8 @@ protected:
 		 */
 		inline ShaderBase(Surface* s)
 			:
-				_orgin((Uint8*)s->getSurface()->pixels),
+//				_orgin((Uint8*)s->getSurface()->pixels),
+				_orgin(static_cast<Uint8*>(s->getSurface()->pixels)),
 				_range_base(
 						s->getWidth(),
 						s->getHeight()),
@@ -385,7 +386,8 @@ protected:
 		 */
 		inline ShaderBase(const Surface* s)
 			:
-				_orgin((Uint8*) s->getSurface()->pixels),
+//				_orgin((Uint8*) s->getSurface()->pixels),
+				_orgin(static_cast<Uint8*>(s->getSurface()->pixels)),
 				_range_base(
 						s->getWidth(),
 						s->getHeight()),
@@ -586,8 +588,8 @@ struct controler_base
 			const std::pair<int, int>& s)
 		:
 			data(base + d.beg_x * s.first + d.beg_y * s.second),
-			ptr_pos_y(0),
-			ptr_pos_x(0),
+			ptr_pos_y(nullptr),
+			ptr_pos_x(nullptr),
 			range(r),
 			start_x(),
 			start_y(),

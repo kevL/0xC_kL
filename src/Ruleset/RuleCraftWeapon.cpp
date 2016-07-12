@@ -114,7 +114,7 @@ int RuleCraftWeapon::getSprite() const
  * Gets the ID of the sound used when firing the CraftWeapon in the Dogfight screen.
  * @return, the sound ID
  */
-int RuleCraftWeapon::getSound() const
+int RuleCraftWeapon::getMissileSound() const
 {
 	return _sound;
 }

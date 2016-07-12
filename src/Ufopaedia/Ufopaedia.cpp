@@ -74,17 +74,17 @@ int Ufopaedia::getArticleIndex( // protected/static.
 			if (*j == article_id)
 			{
 				article_id = articles[i]->id;
-				return i;
+				return static_cast<int>(i);
 			}
 		}
 
 		if (articles[i]->id == article_id)
-			return i;
+			return static_cast<int>(i);
 
 		if (articles[i]->id == Id_UC)
 		{
 			article_id = Id_UC;
-			return i;
+			return static_cast<int>(i);
 		}
 	}
 	return -1;
@@ -237,7 +237,7 @@ void Ufopaedia::next(Game* const game) // static.
 		++_current_index;
 
 	game->popState();
-	game->pushState(createArticleState(articles[_current_index]));
+	game->pushState(createArticleState(articles[static_cast<size_t>(_current_index)]));
 }
 
 /**
@@ -255,7 +255,7 @@ void Ufopaedia::prev(Game* const game) // static.
 		--_current_index;
 
 	game->popState();
-	game->pushState(createArticleState(articles[_current_index]));
+	game->pushState(createArticleState(articles[static_cast<size_t>(_current_index)]));
 }
 
 /**

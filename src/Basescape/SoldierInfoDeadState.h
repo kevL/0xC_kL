@@ -36,7 +36,7 @@ class TextButton;
 
 
 /**
- * Soldier Dead Info screen that shows all the info of a specific dead soldier.
+ * SoldierInfoDead screen that shows all the info of a specific dead Soldier.
  */
 class SoldierInfoDeadState final
 	:
@@ -44,11 +44,11 @@ class SoldierInfoDeadState final
 {
 
 private:
-	size_t _soldierId;
+	size_t _solId;
 
-	std::vector<SoldierDead*>* _list;
+	std::vector<SoldierDead*>* _listDead;
 
-	SoldierDead* _soldier;
+	SoldierDead* _sol;
 
 	Bar
 		* _barTimeUnits,
@@ -105,16 +105,16 @@ private:
 
 
 	public:
-		/// Creates the Soldier Dead Info state.
-		explicit SoldierInfoDeadState(size_t soldierId);
-		/// Cleans up the Soldier Dead Info state.
+		/// Creates a SoldierInfoDead state.
+		explicit SoldierInfoDeadState(size_t solId);
+		/// Cleans up the SoldierInfoDead state.
 		~SoldierInfoDeadState();
 
-		/// Updates the dead soldier info.
+		/// Updates the dead Soldier info.
 		void init() override;
 
-		/// Sets the soldier ID.
-		void setSoldierId(size_t soldierId);
+		/// Sets the soldier-ID.
+		void setSoldierId(size_t solId);
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

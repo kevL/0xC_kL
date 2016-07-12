@@ -96,16 +96,13 @@ CraftArmorState::CraftArmorState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CraftArmorState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftArmorState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftArmorState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftArmorState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CraftArmorState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftArmorState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftArmorState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftArmorState::btnOkClick),
+							Options::keyCancel);
 
 
 	_txtTitle->setBig();
@@ -122,9 +119,9 @@ CraftArmorState::CraftArmorState(
 	_lstSoldiers->setColumns(3, 90,120,73);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
-	_lstSoldiers->onMousePress(		(ActionHandler)& CraftArmorState::lstSoldiersPress);
-	_lstSoldiers->onLeftArrowClick(	(ActionHandler)& CraftArmorState::lstLeftArrowClick);
-	_lstSoldiers->onRightArrowClick((ActionHandler)& CraftArmorState::lstRightArrowClick);
+	_lstSoldiers->onMousePress(		static_cast<ActionHandler>(&CraftArmorState::lstSoldiersPress));
+	_lstSoldiers->onLeftArrowClick(	static_cast<ActionHandler>(&CraftArmorState::lstLeftArrowClick));
+	_lstSoldiers->onRightArrowClick(static_cast<ActionHandler>(&CraftArmorState::lstRightArrowClick));
 }
 
 /**
@@ -149,11 +146,11 @@ void CraftArmorState::init()
 	else
 		craft = nullptr;
 
-	size_t row (0u);
+	size_t r (0u);
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
-			++i, ++row)
+			++i, ++r)
 	{
 		_lstSoldiers->addRow(
 						3,
@@ -169,7 +166,7 @@ void CraftArmorState::init()
 		else
 			color = static_cast<Uint8>(_game->getRuleset()->getInterface("craftArmor")->getElement("otherCraft")->color);
 
-		_lstSoldiers->setRowColor(row, color);
+		_lstSoldiers->setRowColor(r, color);
 
 		if ((*i)->getSickbay() != 0)
 		{
@@ -178,7 +175,7 @@ void CraftArmorState::init()
 			else if	(pct > 10)	color = YELLOW;
 			else				color = GREEN;
 
-			_lstSoldiers->setCellColor(row, 2u, color, true);
+			_lstSoldiers->setCellColor(r, 2u, color, true);
 		}
 	}
 
@@ -206,8 +203,8 @@ void CraftArmorState::btnOkClick(Action*)
 void CraftArmorState::lstSoldiersPress(Action* action)
 {
 	const double mX (action->getAbsoluteMouseX());
-	if (   mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
-		&& mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
+	if (   mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge())
+		&& mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge()))
 	{
 		return;
 	}
@@ -220,12 +217,12 @@ void CraftArmorState::lstSoldiersPress(Action* action)
 	{
 		case SDL_BUTTON_LEFT:
 		{
-			size_t row (_lstSoldiers->getSelectedRow());
-			const Soldier* const sol (_base->getSoldiers()->at(row));
+			size_t r (_lstSoldiers->getSelectedRow());
+			const Soldier* const sol (_base->getSoldiers()->at(r));
 			if (sol->getCraft() == nullptr
 				|| sol->getCraft()->getCraftStatus() != CS_OUT)
 			{
-				_game->pushState(new SoldierArmorState(_base, row));
+				_game->pushState(new SoldierArmorState(_base, r));
 			}
 			else
 				_game->pushState(new ErrorMessageState(
@@ -255,23 +252,23 @@ void CraftArmorState::lstLeftArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t row (_lstSoldiers->getSelectedRow());
-	if (row != 0u)
+	const size_t r (_lstSoldiers->getSelectedRow());
+	if (r != 0u)
 	{
 		switch (action->getDetails()->button.button)
 		{
 			case SDL_BUTTON_LEFT:
 			{
-				Soldier* const sol (_base->getSoldiers()->at(row));
+				Soldier* const sol (_base->getSoldiers()->at(r));
 
-				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1u);
-				_base->getSoldiers()->at(row - 1u) = sol;
+				_base->getSoldiers()->at(r) = _base->getSoldiers()->at(r - 1u);
+				_base->getSoldiers()->at(r - 1u) = sol;
 
-				if (row != _lstSoldiers->getScroll())
+				if (r != _lstSoldiers->getScroll())
 					SDL_WarpMouse(
 							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-													- static_cast<int>(8. * action->getScaleY())));
+							static_cast<Uint16>(action->getTopBlackBand()  + action->getMouseY()
+								- static_cast<int>(8. * action->getScaleY())));
 				else
 				{
 					_base->setRecallRow(
@@ -290,9 +287,9 @@ void CraftArmorState::lstLeftArrowClick(Action* action)
 								REC_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
-				Soldier* const sol (_base->getSoldiers()->at(row));
+				Soldier* const sol (_base->getSoldiers()->at(r));
 
-				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(r));
 				_base->getSoldiers()->insert(
 										_base->getSoldiers()->begin(),
 										sol);
@@ -315,23 +312,23 @@ void CraftArmorState::lstRightArrowClick(Action* action)
 	const size_t qtySoldiers (_base->getSoldiers()->size());
 	if (qtySoldiers != 0u)
 	{
-		const size_t row (_lstSoldiers->getSelectedRow());
-		if (row < qtySoldiers - 1u)
+		const size_t r (_lstSoldiers->getSelectedRow());
+		if (r < qtySoldiers - 1u)
 		{
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
 				{
-					Soldier* const sol (_base->getSoldiers()->at(row));
+					Soldier* const sol (_base->getSoldiers()->at(r));
 
-					_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1u);
-					_base->getSoldiers()->at(row + 1u) = sol;
+					_base->getSoldiers()->at(r) = _base->getSoldiers()->at(r + 1u);
+					_base->getSoldiers()->at(r + 1u) = sol;
 
-					if (row != _lstSoldiers->getVisibleRows() - 1u + _lstSoldiers->getScroll())
+					if (r != _lstSoldiers->getVisibleRows() + _lstSoldiers->getScroll() - 1u)
 						SDL_WarpMouse(
 								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-														+ static_cast<int>(8. * action->getScaleY())));
+								static_cast<Uint16>(action->getTopBlackBand()  + action->getMouseY()
+									+ static_cast<int>(8. * action->getScaleY())));
 					else
 					{
 						_base->setRecallRow(
@@ -346,9 +343,9 @@ void CraftArmorState::lstRightArrowClick(Action* action)
 
 				case SDL_BUTTON_RIGHT:
 				{
-					Soldier* const sol (_base->getSoldiers()->at(row));
+					Soldier* const sol (_base->getSoldiers()->at(r));
 
-					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(r));
 					_base->getSoldiers()->insert(
 											_base->getSoldiers()->end(),
 											sol);

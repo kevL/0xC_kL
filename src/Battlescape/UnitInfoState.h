@@ -134,7 +134,7 @@ private:
 //	void keyRepeat(); // <- too twitchy.
 
 	/// Handler for exiting the state.
-	void exitPress(Action* action) const;
+	void exitClick(Action* action = nullptr);
 
 
 	public:

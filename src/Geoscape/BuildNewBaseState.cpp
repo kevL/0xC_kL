@@ -90,7 +90,7 @@ BuildNewBaseState::BuildNewBaseState(
 	_btnCancel	= new TextButton(54, 14, 194 + dx, 8);
 
 	_hoverTimer	= new Timer(60u);
-	_hoverTimer->onTimer((StateHandler)& BuildNewBaseState::hoverRedraw);
+	_hoverTimer->onTimer(static_cast<StateHandler>(&BuildNewBaseState::hoverRedraw));
 	_hoverTimer->start();
 
 	setInterface("geoscape");
@@ -106,41 +106,41 @@ BuildNewBaseState::BuildNewBaseState(
 	add(_txtTitle,	"genericText",		"geoscape");
 	add(_btnCancel,	"genericButton2",	"geoscape");
 
-	_globe->onMouseClick((ActionHandler)& BuildNewBaseState::globeClick);
+	_globe->onMouseClick(static_cast<ActionHandler>(&BuildNewBaseState::globeClick));
 
-/*	_btnRotateLeft->onMousePress((ActionHandler)&BuildNewBaseState::btnRotateLeftPress);
-	_btnRotateLeft->onMouseRelease((ActionHandler)&BuildNewBaseState::btnRotateLeftRelease);
-	_btnRotateLeft->onKeyboardPress((ActionHandler)&BuildNewBaseState::btnRotateLeftPress, Options::keyGeoLeft);
-	_btnRotateLeft->onKeyboardRelease((ActionHandler)&BuildNewBaseState::btnRotateLeftRelease, Options::keyGeoLeft);
+/*	_btnRotateLeft->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftPress));
+	_btnRotateLeft->onMouseRelease(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftRelease));
+	_btnRotateLeft->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftPress),   Options::keyGeoLeft);
+	_btnRotateLeft->onKeyboardRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftRelease), Options::keyGeoLeft);
 
-	_btnRotateRight->onMousePress((ActionHandler)&BuildNewBaseState::btnRotateRightPress);
-	_btnRotateRight->onMouseRelease((ActionHandler)&BuildNewBaseState::btnRotateRightRelease);
-	_btnRotateRight->onKeyboardPress((ActionHandler)&BuildNewBaseState::btnRotateRightPress, Options::keyGeoRight);
-	_btnRotateRight->onKeyboardRelease((ActionHandler)&BuildNewBaseState::btnRotateRightRelease, Options::keyGeoRight);
+	_btnRotateRight->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightPress));
+	_btnRotateRight->onMouseRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightRelease));
+	_btnRotateRight->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightPress),   Options::keyGeoRight);
+	_btnRotateRight->onKeyboardRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightRelease), Options::keyGeoRight);
 
-	_btnRotateUp->onMousePress((ActionHandler)&BuildNewBaseState::btnRotateUpPress);
-	_btnRotateUp->onMouseRelease((ActionHandler)&BuildNewBaseState::btnRotateUpRelease);
-	_btnRotateUp->onKeyboardPress((ActionHandler)&BuildNewBaseState::btnRotateUpPress, Options::keyGeoUp);
-	_btnRotateUp->onKeyboardRelease((ActionHandler)&BuildNewBaseState::btnRotateUpRelease, Options::keyGeoUp);
+	_btnRotateUp->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpPress));
+	_btnRotateUp->onMouseRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpRelease));
+	_btnRotateUp->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpPress),   Options::keyGeoUp);
+	_btnRotateUp->onKeyboardRelease(static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpRelease), Options::keyGeoUp);
 
-	_btnRotateDown->onMousePress((ActionHandler)&BuildNewBaseState::btnRotateDownPress);
-	_btnRotateDown->onMouseRelease((ActionHandler)&BuildNewBaseState::btnRotateDownRelease);
-	_btnRotateDown->onKeyboardPress((ActionHandler)&BuildNewBaseState::btnRotateDownPress, Options::keyGeoDown);
-	_btnRotateDown->onKeyboardRelease((ActionHandler)&BuildNewBaseState::btnRotateDownRelease, Options::keyGeoDown);
+	_btnRotateDown->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownPress));
+	_btnRotateDown->onMouseRelease(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownRelease));
+	_btnRotateDown->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownPress),   Options::keyGeoDown);
+	_btnRotateDown->onKeyboardRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownRelease), Options::keyGeoDown);
 
-	_btnZoomIn->onMouseClick((ActionHandler)&BuildNewBaseState::btnZoomInLeftClick, SDL_BUTTON_LEFT);
-	_btnZoomIn->onMouseClick((ActionHandler)&BuildNewBaseState::btnZoomInRightClick, SDL_BUTTON_RIGHT);
-	_btnZoomIn->onKeyboardPress((ActionHandler)&BuildNewBaseState::btnZoomInLeftClick, Options::keyGeoZoomIn);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&BuildNewBaseState::btnZoomInLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&BuildNewBaseState::btnZoomInRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomIn->onKeyboardPress(static_cast<ActionHandler>(&BuildNewBaseState::btnZoomInLeftClick),  Options::keyGeoZoomIn);
 
-	_btnZoomOut->onMouseClick((ActionHandler)&BuildNewBaseState::btnZoomOutLeftClick, SDL_BUTTON_LEFT);
-	_btnZoomOut->onMouseClick((ActionHandler)&BuildNewBaseState::btnZoomOutRightClick, SDL_BUTTON_RIGHT);
-	_btnZoomOut->onKeyboardPress((ActionHandler)&BuildNewBaseState::btnZoomOutLeftClick, Options::keyGeoZoomOut);
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&BuildNewBaseState::btnZoomOutLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&BuildNewBaseState::btnZoomOutRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomOut->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnZoomOutLeftClick),  Options::keyGeoZoomOut);
 
 	// dirty hacks to get the rotate buttons to work in "classic" style
-	_btnRotateLeft->setListButton();
-	_btnRotateRight->setListButton();
-	_btnRotateUp->setListButton();
-	_btnRotateDown->setListButton(); */
+	_btnRotateLeft->	setListButton();
+	_btnRotateRight->	setListButton();
+	_btnRotateUp->		setListButton();
+	_btnRotateDown->	setListButton(); */
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
@@ -152,10 +152,9 @@ BuildNewBaseState::BuildNewBaseState(
 	else
 	{
 		_btnCancel->setText(tr("STR_CANCEL_UC"));
-		_btnCancel->onMouseClick((ActionHandler)& BuildNewBaseState::btnCancelClick);
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& BuildNewBaseState::btnCancelClick,
-						Options::keyCancel);
+		_btnCancel->onMouseClick(	static_cast<ActionHandler>(&BuildNewBaseState::btnCancelClick));
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&BuildNewBaseState::btnCancelClick),
+									Options::keyCancel);
 	}
 
 	_showRadar = Options::globeRadarLines;
@@ -179,7 +178,7 @@ BuildNewBaseState::~BuildNewBaseState()
 void BuildNewBaseState::init()
 {
 	State::init();
-	_globe->onMouseOver((ActionHandler)& BuildNewBaseState::globeHover);
+	_globe->onMouseOver(static_cast<ActionHandler>(&BuildNewBaseState::globeHover));
 	_globe->setNewBaseHover();
 }
 
@@ -249,19 +248,17 @@ void BuildNewBaseState::hoverRedraw()
  */
 void BuildNewBaseState::globeClick(Action* action)
 {
-	const int mouseY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
-	if (mouseY > _window->getY() + _window->getHeight())
+	const int mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
+	if (mY > _window->getY() + _window->getHeight())
 	{
-		const int mouseX (static_cast<int>(std::floor(action->getAbsoluteMouseX())));
+		const int mX (static_cast<int>(std::floor(action->getAbsoluteMouseX())));
 		double
 			lon,lat;
 		_globe->cartToPolar(
-						static_cast<Sint16>(mouseX),
-						static_cast<Sint16>(mouseY),
+						static_cast<Sint16>(mX),
+						static_cast<Sint16>(mY),
 						&lon, &lat);
 
-//		if (action->getDetails()->button.button == SDL_BUTTON_LEFT) // This is called only on LMB.
-//		{
 		if (_globe->insideLand(lon, lat) == true)
 		{
 			_base->setLongitude(lon);
@@ -285,13 +282,12 @@ void BuildNewBaseState::globeClick(Action* action)
 		{
 			const RuleInterface* const uiRule (_game->getRuleset()->getInterface("geoscape"));
 			_game->pushState(new ErrorMessageState(
-											tr("STR_XCOM_BASE_CANNOT_BE_BUILT"),
+											tr("STR_BASE_CANNOT_BE_BUILT"),
 											_palette,
 											uiRule->getElement("genericWindow")->color,
 											_game->getResourcePack()->getBackgroundRand(),
 											uiRule->getElement("backpal")->color));
 		}
-//		}
 	}
 }
 

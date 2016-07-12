@@ -70,6 +70,7 @@ private:
 	static const Uint8
 		TRANSP		=   0u,
 		WHITE		=   2u,
+		BLACK		=  14u,
 		ORANGE		=  16u,
 		ORANGE_D	=  20u,
 		RED			=  32u,

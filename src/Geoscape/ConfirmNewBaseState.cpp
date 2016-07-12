@@ -97,19 +97,16 @@ ConfirmNewBaseState::ConfirmNewBaseState(
 	}
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& ConfirmNewBaseState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ConfirmNewBaseState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ConfirmNewBaseState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ConfirmNewBaseState::btnCancelClick),
+								Options::keyCancel);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ConfirmNewBaseState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ConfirmNewBaseState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ConfirmNewBaseState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ConfirmNewBaseState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmNewBaseState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmNewBaseState::btnOkClick),
+							Options::keyOkKeypad);
 }
 
 /**

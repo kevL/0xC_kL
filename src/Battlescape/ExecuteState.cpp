@@ -87,20 +87,17 @@ ExecuteState::ExecuteState(BattleAction* const action)
 	_lstTarget->setSelectable();
 	_lstTarget->setMargin(12);
 	_lstTarget->setHighContrast();
-	_lstTarget->onMousePress((ActionHandler)& ExecuteState::lstTargetPress);
+	_lstTarget->onMousePress(static_cast<ActionHandler>(&ExecuteState::lstTargetPress));
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->setHighContrast();
-	_btnCancel->onMouseClick((ActionHandler)& ExecuteState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ExecuteState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ExecuteState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ExecuteState::btnCancelClick,
-					Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ExecuteState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ExecuteState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ExecuteState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ExecuteState::btnCancelClick),
+								Options::keyOkKeypad);
 }
 
 /**
@@ -207,7 +204,7 @@ void ExecuteState::lstTargetPress(Action* action)
 			if (soundId != -1)
 			{
 				const Map* const battleMap (_game->getSavedGame()->getBattleSave()->getBattleGame()->getMap());
-				_game->getResourcePack()->getSound("BATTLE.CAT", soundId)
+				_game->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 											->play(-1, battleMap->getSoundAngle(_action->actor->getPosition()));
 			}
 		}

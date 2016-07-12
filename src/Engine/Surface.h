@@ -334,7 +334,7 @@ protected:
 		{};
 
 		/// Sets the high-contrast color of the Surface.
-		virtual void setHighContrast(bool contrast = true)
+		virtual void setHighContrast(bool /*contrast = true*/)
 		{};
 };
 

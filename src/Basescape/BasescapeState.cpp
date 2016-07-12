@@ -149,89 +149,82 @@ BasescapeState::BasescapeState(
 
 	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_baseLayout->setDog(_game->getResourcePack()->getSurface("BASEDOG"));
-	_baseLayout->onMouseClick(
-					(ActionHandler)& BasescapeState::layoutLeftClick,
-					SDL_BUTTON_LEFT);
-	_baseLayout->onMouseClick(
-					(ActionHandler)& BasescapeState::layoutRightClick,
-					SDL_BUTTON_RIGHT);
-	_baseLayout->onMouseOver((ActionHandler)& BasescapeState::layoutMouseOver);
-	_baseLayout->onMouseOut((ActionHandler)& BasescapeState::layoutMouseOut);
+	_baseLayout->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::layoutLeftClick),
+								SDL_BUTTON_LEFT);
+	_baseLayout->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::layoutRightClick),
+								SDL_BUTTON_RIGHT);
+	_baseLayout->onMouseOver(	static_cast<ActionHandler>(&BasescapeState::layoutMouseOver));
+	_baseLayout->onMouseOut(	static_cast<ActionHandler>(&BasescapeState::layoutMouseOut));
 
 	_miniBases->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_miniBases->setBases(_baseList);
-	_miniBases->onMouseClick(
-					(ActionHandler)& BasescapeState::basesLeftClick,
-					SDL_BUTTON_LEFT);
-	_miniBases->onMouseClick(
-					(ActionHandler)& BasescapeState::basesRightClick,
-					SDL_BUTTON_RIGHT);
-	_miniBases->onKeyboardPress((ActionHandler)& BasescapeState::handleKeyPress);
-	_miniBases->onMouseOver((ActionHandler)& BasescapeState::layoutMouseOver);
-	_miniBases->onMouseOut((ActionHandler)& BasescapeState::layoutMouseOut);
+	_miniBases->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::basesLeftClick),
+								SDL_BUTTON_LEFT);
+	_miniBases->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::basesRightClick),
+								SDL_BUTTON_RIGHT);
+	_miniBases->onKeyboardPress(static_cast<ActionHandler>(&BasescapeState::handleKeyPress));
+	_miniBases->onMouseOver(	static_cast<ActionHandler>(&BasescapeState::layoutMouseOver));
+	_miniBases->onMouseOut(		static_cast<ActionHandler>(&BasescapeState::layoutMouseOut));
 
 	_edtBase->setBig();
-	_edtBase->onTextChange((ActionHandler)& BasescapeState::edtLabelChange);
+	_edtBase->onTextChange(static_cast<ActionHandler>(&BasescapeState::edtLabelChange));
 
 	_txtRegion->setAlign(ALIGN_RIGHT);
 
 	_btnBaseInfo->setText(tr("STR_BASE_INFORMATION"));
-	_btnBaseInfo->onMouseClick((ActionHandler)& BasescapeState::btnBaseInfoClick);
+	_btnBaseInfo->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnBaseInfoClick));
 
 	_btnStores->setText(tr("STR_STORES"));
-	_btnStores->onMouseClick((ActionHandler)& BasescapeState::btnStoresClick);
+	_btnStores->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnStoresClick));
 
 	_btnSoldiers->setText(tr("STR_SOLDIERS_UC"));
-	_btnSoldiers->onMouseClick((ActionHandler)& BasescapeState::btnSoldiersClick);
+	_btnSoldiers->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnSoldiersClick));
 
 	_btnMemorial->setText(tr("STR_MEMORIAL"));
-	_btnMemorial->onMouseClick((ActionHandler)& BasescapeState::btnMemorialClick);
+	_btnMemorial->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnMemorialClick));
 	_btnMemorial->setVisible(_game->getSavedGame()->getDeadSoldiers()->empty() == false);
 
 	_btnCrafts->setText(tr("STR_EQUIP_CRAFT"));
-	_btnCrafts->onMouseClick((ActionHandler)& BasescapeState::btnCraftsClick);
+	_btnCrafts->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnCraftsClick));
 
 	_btnAliens->setText(tr("STR_ALIENS"));
-	_btnAliens->onMouseClick((ActionHandler)& BasescapeState::btnAliens);
+	_btnAliens->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnAliens));
 
 	_btnResearch->setText(tr("STR_RESEARCH"));
-	_btnResearch->onMouseClick((ActionHandler)& BasescapeState::btnResearchClick);
+	_btnResearch->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnResearchClick));
 
 	_btnManufacture->setText(tr("STR_MANUFACTURE"));
-	_btnManufacture->onMouseClick((ActionHandler)& BasescapeState::btnManufactureClick);
+	_btnManufacture->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnManufactureClick));
 
 	_btnPurchase->setText(tr("STR_PURCHASE_RECRUIT"));
-	_btnPurchase->onMouseClick((ActionHandler)& BasescapeState::btnPurchaseClick);
+	_btnPurchase->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnPurchaseClick));
 
 	_btnSell->setText(tr("STR_SELL_SACK_UC"));
-	_btnSell->onMouseClick((ActionHandler)& BasescapeState::btnSellClick);
+	_btnSell->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnSellClick));
 
 	_btnDaMatrix->setText(tr("STR_MATRIX"));
-	_btnDaMatrix->onMouseClick((ActionHandler)& BasescapeState::btnMatrixClick);
+	_btnDaMatrix->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnMatrixClick));
 
 	_btnTransfer->setText(tr("STR_TRANSFER_UC"));
-	_btnTransfer->onMouseClick((ActionHandler)& BasescapeState::btnTransferClick);
+	_btnTransfer->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnTransferClick));
 
 	_btnIncTrans->setText(tr("STR_TRANSIT_LC"));
-	_btnIncTrans->onMouseClick((ActionHandler)& BasescapeState::btnIncTransClick);
+	_btnIncTrans->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnIncTransClick));
 
 	_btnFacilities->setText(tr("STR_BUILD_FACILITIES"));
-	_btnFacilities->onMouseClick((ActionHandler)& BasescapeState::btnFacilitiesClick);
+	_btnFacilities->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnFacilitiesClick));
 
 	_btnGeoscape->setText(tr("STR_GEOSCAPE_UC"));
-	_btnGeoscape->onMouseClick((ActionHandler)& BasescapeState::btnGeoscapeClick);
-	_btnGeoscape->onKeyboardPress(
-					(ActionHandler)& BasescapeState::btnGeoscapeClick,
-					Options::keyOk);
-	_btnGeoscape->onKeyboardPress(
-					(ActionHandler)& BasescapeState::btnGeoscapeClick,
-					Options::keyOkKeypad);
-	_btnGeoscape->onKeyboardPress(
-					(ActionHandler)& BasescapeState::btnGeoscapeClick,
-					Options::keyCancel);
+	_btnGeoscape->onMouseClick(		static_cast<ActionHandler>(&BasescapeState::btnGeoscapeClick));
+	_btnGeoscape->onKeyboardPress(	static_cast<ActionHandler>(&BasescapeState::btnGeoscapeClick),
+									Options::keyOk);
+	_btnGeoscape->onKeyboardPress(	static_cast<ActionHandler>(&BasescapeState::btnGeoscapeClick),
+									Options::keyOkKeypad);
+	_btnGeoscape->onKeyboardPress(	static_cast<ActionHandler>(&BasescapeState::btnGeoscapeClick),
+									Options::keyCancel);
 
 //	_btnNewBase->setText(tr("STR_BUILD_NEW_BASE_UC"));
-//	_btnNewBase->onMouseClick((ActionHandler)& BasescapeState::btnNewBaseClick);
+//	_btnNewBase->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnNewBaseClick));
 }
 
 /**
@@ -764,7 +757,7 @@ void BasescapeState::layoutMouseOut(Action*)
 }
 
 /**
- * Selects a different Base to display. Also builds a new Base on the globe.
+ * Selects a different Base to display. Also builds a Base on the Globe.
  * @param action - pointer to an Action
  */
 void BasescapeState::basesLeftClick(Action*)
@@ -787,7 +780,9 @@ void BasescapeState::basesLeftClick(Action*)
 			kL_geoMusicPlaying = false;
 			kL_geoMusicReturnState = true;
 
-			Base* const base (new Base(_game->getRuleset()));
+			Base* const base (new Base(
+									_game->getRuleset(),
+									_game->getSavedGame()));
 
 			_game->popState();
 			_game->pushState(new BuildNewBaseState(base, _globe));

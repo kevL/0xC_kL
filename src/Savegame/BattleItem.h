@@ -76,7 +76,7 @@ private:
 		/// Loads the BattleItem from YAML.
 		void load(const YAML::Node& node);
 		/// Loads a deleted BattleItem from YAML.
-		void loadDeleted(const YAML::Node& node);
+		void loadDeleted();
 		/// Saves the BattleItem to YAML.
 		YAML::Node save() const;
 		/// Saves a deleted BattleItem to YAML.

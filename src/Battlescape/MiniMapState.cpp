@@ -108,63 +108,35 @@ MiniMapState::MiniMapState(
 	add(_txtLevel,		"textLevel",	"minimap", _bg);
 
 
-	_btnLvlUp->onMouseClick((ActionHandler)& MiniMapState::btnLevelUpClick);
-//	_btnLvlUp->onKeyboardPress(
-//					(ActionHandler)& MiniMapState::btnLevelUpClick,
-//					Options::keyBattleLevelUp);
-	_btnLvlDown->onMouseClick((ActionHandler)& MiniMapState::btnLevelDownClick);
-//	_btnLvlDown->onKeyboardPress(
-//					(ActionHandler)& MiniMapState::btnLevelDownClick,
-//					Options::keyBattleLevelDown);
-//
-	_btnOk->onMouseClick((ActionHandler)& MiniMapState::btnOkClick);
-//	_btnOk->onKeyboardPress(
-//					(ActionHandler)& MiniMapState::btnOkClick,
-//					Options::keyOk);
-//	_btnOk->onKeyboardPress(
-//					(ActionHandler)& MiniMapState::btnOkClick,
-//					Options::keyOkKeypad);
-//	_btnOk->onKeyboardPress(
-//					(ActionHandler)& MiniMapState::btnOkClick,
-//					Options::keyCancel);
-//	_btnOk->onKeyboardPress(
-//					(ActionHandler)& MiniMapState::btnOkClick,
-//					Options::keyBattleMap);
-//
+	_btnLvlUp->onMouseClick(	static_cast<ActionHandler>(&MiniMapState::btnLevelUpClick));
+	_btnLvlDown->onMouseClick(	static_cast<ActionHandler>(&MiniMapState::btnLevelDownClick));
+
+	_btnOk->onMouseClick(static_cast<ActionHandler>(&MiniMapState::btnOkClick));
+
 	_txtLevel->setHighContrast();
 	_txtLevel->setBig();
 	_txtLevel->setAlign(ALIGN_CENTER);
 	_txtLevel->setText(Text::intWide((camera->getViewLevel() + 1) /*% 10*/));
 
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::btnOkClick,
-					Options::keyBattleMap);
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::btnOkClick,
-					Options::keyCancel);
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::btnOkClick,
-					Options::keyOk);
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::btnOkClick,
-					Options::keyOkKeypad);
-
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::btnLevelUpClick,
-					Options::keyBattleLevelUp);
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::btnLevelDownClick,
-					Options::keyBattleLevelDown);
-
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::keyCenterUnitPress,
-					Options::keyBattleCenterUnit);
-	_miniView->onKeyboardPress(
-					(ActionHandler)& MiniMapState::keyCenterUnitPress,
-					SDLK_KP5);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::btnOkClick),
+								Options::keyBattleMap);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::btnOkClick),
+								Options::keyCancel);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::btnOkClick),
+								Options::keyOk);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::btnOkClick),
+								Options::keyOkKeypad);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::btnLevelUpClick),
+								Options::keyBattleLevelUp);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::btnLevelDownClick),
+								Options::keyBattleLevelDown);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::keyCenterUnitPress),
+								Options::keyBattleCenterUnit);
+	_miniView->onKeyboardPress(	static_cast<ActionHandler>(&MiniMapState::keyCenterUnitPress),
+								SDLK_KP5);
 
 	_timerAnimate = new Timer(125u);
-	_timerAnimate->onTimer((StateHandler)& MiniMapState::animate);
+	_timerAnimate->onTimer(static_cast<StateHandler>(&MiniMapState::animate));
 	_timerAnimate->start();
 
 	_game->getSavedGame()->getBattleSave()->getBattleState()->getMap()->setNoDraw();

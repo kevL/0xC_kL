@@ -66,10 +66,13 @@ namespace OpenXcom
  * Initializes a Base.
  * @param rule - pointer to Ruleset
  */
-Base::Base(const Ruleset* const rules)
+Base::Base(
+		const Ruleset* const rules,
+		SavedGame* const gameSave)
 	:
 		Target(),
 		_rules(rules),
+		_gameSave(gameSave),
 		_scientists(0),
 		_engineers(0),
 		_tactical(false),
@@ -133,13 +136,11 @@ Base::~Base()
 /**
  * Loads this Base from a YAML file.
  * @param node			- reference a YAML node
- * @param gameSave		- pointer to SavedGame
  * @param isFirstBase	- true if this is the first Base of a new game (default false)
  * @param isQuickBattle	- true if this is the Base of a quick-battle (default false)
  */
-void Base::load(
+void Base::loadBase(
 		const YAML::Node& node,
-		SavedGame* const gameSave,
 		bool isFirstBase,
 		bool isQuickBattle)
 {
@@ -186,7 +187,7 @@ void Base::load(
 			Craft* const craft (new Craft(
 									_rules->getCraft(type),
 									this,
-									gameSave));
+									_gameSave));
 			craft->loadCraft(*i, _rules);
 			_crafts.push_back(craft);
 		}
@@ -1982,7 +1983,7 @@ int Base::getDetectionChance(
 	}
 
 	int
-		facQty0 (0),
+		facQty0  (0),
 		shields0 (0);
 
 	for (std::vector<BaseFacility*>::const_iterator
@@ -2017,12 +2018,31 @@ int Base::calcDetChance( // private.
 }
 
 /**
+ * Gets the quantity of Facilities that have completed construction.
+ * @note For determining player-penalty score when a Base is lost.
+ * @return, quantity of built facilities
+ */
+int Base::getQuantityFacilities() const
+{
+	int ret (0);
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+			++ret;
+	}
+	return ret;
+}
+
+/**
  * Gets the number of grav-shields at this base.
  * @return, total grav-shields
  */
 size_t Base::getGravShields() const
 {
-	size_t total (0);
+	size_t total (0u);
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _facilities.begin();
 			i != _facilities.end();
@@ -2673,7 +2693,9 @@ int Base::getFacilityMaintenance() const
 		if ((*i)->buildFinished() == true)
 			total += (*i)->getRules()->getMonthlyCost();
 	}
-	return total;
+
+	const float factor (static_cast<float>(_gameSave->getDifficultyInt()) * 0.1f); // +10% per diff.
+	return static_cast<int>(static_cast<float>(total) * factor);
 }
 
 /**

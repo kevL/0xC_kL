@@ -90,16 +90,13 @@ PsiTrainingState::PsiTrainingState(Base* const base)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& PsiTrainingState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& PsiTrainingState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& PsiTrainingState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& PsiTrainingState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&PsiTrainingState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&PsiTrainingState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&PsiTrainingState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&PsiTrainingState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_PSIONIC_TRAINING"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -121,9 +118,9 @@ PsiTrainingState::PsiTrainingState(Base* const base)
 	_lstSoldiers->setArrow(193, ARROW_VERTICAL);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
-	_lstSoldiers->onMousePress((ActionHandler)& PsiTrainingState::lstSoldiersPress);
-	_lstSoldiers->onLeftArrowClick((ActionHandler)& PsiTrainingState::lstLeftArrowClick);
-	_lstSoldiers->onRightArrowClick((ActionHandler)& PsiTrainingState::lstRightArrowClick);
+	_lstSoldiers->onMousePress(		static_cast<ActionHandler>(&PsiTrainingState::lstSoldiersPress));
+	_lstSoldiers->onLeftArrowClick(	static_cast<ActionHandler>(&PsiTrainingState::lstLeftArrowClick));
+	_lstSoldiers->onRightArrowClick(static_cast<ActionHandler>(&PsiTrainingState::lstRightArrowClick));
 }
 
 /**
@@ -141,11 +138,11 @@ void PsiTrainingState::init()
 
 	_lstSoldiers->clearList();
 
-	size_t row (0u);
+	size_t r (0u);
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
-			++i, ++row)
+			++i, ++r)
 	{
 		std::wostringstream
 			woststr1, // strength
@@ -181,7 +178,7 @@ void PsiTrainingState::init()
 						woststr1.str().c_str(),
 						woststr2.str().c_str(),
 						wst.c_str());
-		_lstSoldiers->setRowColor(row, color);
+		_lstSoldiers->setRowColor(r, color);
 	}
 
 	_lstSoldiers->scrollTo(_base->getRecallRow(REC_SOLDIER));
@@ -208,8 +205,8 @@ void PsiTrainingState::btnOkClick(Action*)
 void PsiTrainingState::lstSoldiersPress(Action* action)
 {
 	const double mX (action->getAbsoluteMouseX());
-	if (   mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
-		&& mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
+	if (   mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge())
+		&& mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge()))
 	{
 		return;
 	}
@@ -218,32 +215,28 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 	{
 		case SDL_BUTTON_LEFT:
 		{
-			const size_t row (_lstSoldiers->getSelectedRow());
+			const size_t r (_lstSoldiers->getSelectedRow());
 
-			if (_base->getSoldiers()->at(row)->inPsiTraining() == false)
+			if (_base->getSoldiers()->at(r)->inPsiTraining() == false)
 			{
 				if (_base->getUsedPsiLabs() < _base->getTotalPsiLabs())
 				{
-					_base->getSoldiers()->at(row)->togglePsiTraining();
+					_base->getSoldiers()->at(r)->togglePsiTraining();
 					_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(--_labSpace));
 					_lstSoldiers->setCellText(
-											row, 3u,
+											r, 3u,
 											tr("STR_YES"));
-					_lstSoldiers->setRowColor(
-											row,
-											_lstSoldiers->getSecondaryColor());
+					_lstSoldiers->setRowColor(r, _lstSoldiers->getSecondaryColor());
 				}
 			}
 			else
 			{
-				_base->getSoldiers()->at(row)->togglePsiTraining();
+				_base->getSoldiers()->at(r)->togglePsiTraining();
 				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(++_labSpace));
 				_lstSoldiers->setCellText(
-										row, 3u,
+										r, 3u,
 										tr("STR_NO"));
-				_lstSoldiers->setRowColor(
-										row,
-										_lstSoldiers->getColor());
+				_lstSoldiers->setRowColor(r, _lstSoldiers->getColor());
 			}
 			break;
 		}
@@ -270,23 +263,23 @@ void PsiTrainingState::lstLeftArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t row (_lstSoldiers->getSelectedRow());
-	if (row > 0u)
+	const size_t r (_lstSoldiers->getSelectedRow());
+	if (r > 0u)
 	{
 		switch (action->getDetails()->button.button)
 		{
 			case SDL_BUTTON_LEFT:
 			{
-				Soldier* const sol (_base->getSoldiers()->at(row));
+				Soldier* const sol (_base->getSoldiers()->at(r));
 
-				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1u);
-				_base->getSoldiers()->at(row - 1u) = sol;
+				_base->getSoldiers()->at(r) = _base->getSoldiers()->at(r - 1u);
+				_base->getSoldiers()->at(r - 1u) = sol;
 
-				if (row != _lstSoldiers->getScroll())
+				if (r != _lstSoldiers->getScroll())
 					SDL_WarpMouse(
 							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
 							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-													- static_cast<int>(8. * action->getScaleY())));
+								- static_cast<int>(8. * action->getScaleY())));
 				else
 				{
 					_base->setRecallRow(
@@ -305,9 +298,9 @@ void PsiTrainingState::lstLeftArrowClick(Action* action)
 								REC_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
-				Soldier* const sol (_base->getSoldiers()->at(row));
+				Soldier* const sol (_base->getSoldiers()->at(r));
 
-				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(r));
 				_base->getSoldiers()->insert(
 										_base->getSoldiers()->begin(),
 										sol);
@@ -330,23 +323,23 @@ void PsiTrainingState::lstRightArrowClick(Action* action)
 	const size_t qtySoldiers (_base->getSoldiers()->size());
 	if (qtySoldiers > 0u)
 	{
-		const size_t row (_lstSoldiers->getSelectedRow());
-		if (row < qtySoldiers - 1u)
+		const size_t r (_lstSoldiers->getSelectedRow());
+		if (r < qtySoldiers - 1u)
 		{
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
 				{
-					Soldier* const sol (_base->getSoldiers()->at(row));
+					Soldier* const sol (_base->getSoldiers()->at(r));
 
-					_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1u);
-					_base->getSoldiers()->at(row + 1u) = sol;
+					_base->getSoldiers()->at(r) = _base->getSoldiers()->at(r + 1u);
+					_base->getSoldiers()->at(r + 1u) = sol;
 
-					if (row != _lstSoldiers->getVisibleRows() - 1u + _lstSoldiers->getScroll())
+					if (r != _lstSoldiers->getVisibleRows() + _lstSoldiers->getScroll() - 1u)
 						SDL_WarpMouse(
 								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
 								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-														+ static_cast<int>(8. * action->getScaleY())));
+									+ static_cast<int>(8. * action->getScaleY())));
 					else
 					{
 						_base->setRecallRow(
@@ -361,9 +354,9 @@ void PsiTrainingState::lstRightArrowClick(Action* action)
 
 				case SDL_BUTTON_RIGHT:
 				{
-					Soldier* const sol (_base->getSoldiers()->at(row));
+					Soldier* const sol (_base->getSoldiers()->at(r));
 
-					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(r));
 					_base->getSoldiers()->insert(
 											_base->getSoldiers()->end(),
 											sol);

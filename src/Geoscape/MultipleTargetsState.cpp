@@ -65,8 +65,8 @@ MultipleTargetsState::MultipleTargetsState(
 	if (_targets.size() > 1)
 	{
 		int
-			height ((BUTTON_HEIGHT * (_targets.size() + 1)) + (SPACING * (_targets.size())) + (MARGIN * 2)),
-			window_y ((200 - height) / 2),
+			height ((BUTTON_HEIGHT * static_cast<int>(_targets.size()) + 1) + (SPACING * static_cast<int>(_targets.size())) + (MARGIN * 2)),
+			window_y ((200 - height) >> 1u),
 			btn_y (window_y + MARGIN);
 
 		_window = new Window(
@@ -80,11 +80,10 @@ MultipleTargetsState::MultipleTargetsState(
 		setInterface("UFOInfo");
 
 		add(_window, "window", "UFOInfo");
-
 		_window->setBackground(_game->getResourcePack()->getSurface("BACK15.SCR"));
 
 		for (size_t
-				i = 0;
+				i = 0u;
 				i != _targets.size();
 				++i)
 		{
@@ -93,9 +92,9 @@ MultipleTargetsState::MultipleTargetsState(
 										BUTTON_HEIGHT,
 										70,
 										btn_y));
-			btn->setText(_targets[i]->getName(_game->getLanguage()));
-			btn->onMouseClick((ActionHandler)& MultipleTargetsState::btnTargetClick);
 			add(btn, "button", "UFOInfo");
+			btn->setText(_targets[i]->getName(_game->getLanguage()));
+			btn->onMouseClick(static_cast<ActionHandler>(&MultipleTargetsState::btnTargetClick));
 
 			_btnTargets.push_back(btn);
 
@@ -107,18 +106,15 @@ MultipleTargetsState::MultipleTargetsState(
 								BUTTON_HEIGHT,
 								70,
 								btn_y);
-		_btnCancel->setText(tr("STR_CANCEL"));
-		_btnCancel->onMouseClick((ActionHandler)& MultipleTargetsState::btnCancelClick);
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& MultipleTargetsState::btnCancelClick,
-						Options::keyCancel);
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& MultipleTargetsState::btnCancelClick,
-						Options::keyOk);
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& MultipleTargetsState::btnCancelClick,
-						Options::keyOkKeypad);
 		add(_btnCancel, "button", "UFOInfo");
+		_btnCancel->setText(tr("STR_CANCEL"));
+		_btnCancel->onMouseClick(	static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick));
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick),
+									Options::keyCancel);
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick),
+									Options::keyOk);
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick),
+									Options::keyOkKeypad);
 
 		centerAllSurfaces();
 	}

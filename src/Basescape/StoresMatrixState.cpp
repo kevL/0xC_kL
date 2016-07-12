@@ -104,16 +104,13 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->setColor(BLUE);
-	_btnOk->onMouseClick((ActionHandler)& StoresMatrixState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& StoresMatrixState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& StoresMatrixState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& StoresMatrixState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&StoresMatrixState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StoresMatrixState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StoresMatrixState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StoresMatrixState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_MATRIX"));
 	_txtTitle->setColor(BLUE);
@@ -139,18 +136,17 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	const SavedGame* const gameSave (_game->getSavedGame());
 	std::wstring wst;
 	int
-		qty[MTX_BASES]			= {0,0,0,0,0,0,0,0},
-		qtyScientist[MTX_BASES]	= {0,0,0,0,0,0,0,0},
-		qtyEngineer[MTX_BASES]	= {0,0,0,0,0,0,0,0},
+		qty[MTX_BASES]			{0,0,0,0,0,0,0,0},
+		qtyScientist[MTX_BASES]	{0,0,0,0,0,0,0,0},
+		qtyEngineer[MTX_BASES]	{0,0,0,0,0,0,0,0},
 		freeSpace;
 
 	for (size_t
-		i = 0;
+		i = 0u;
 		i != gameSave->getBases()->size();
 		++i)
 	{
-		base = gameSave->getBases()->at(i);
-		if (base != nullptr) // safety.
+		if ((base = gameSave->getBases()->at(i)) != nullptr) // safety.
 		{
 			qty[i]			= base->getTotalSoldiers();
 			qtyScientist[i]	= base->getTotalScientists();
@@ -200,17 +196,25 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 		woststr6,
 		woststr7;
 
-	size_t row = 0;
-	if (qty[0] + qty[1] + qty[2] + qty[3] + qty[4] + qty[5] + qty[6] + qty[7] != 0)
+	size_t r (0u);
+
+	if (  qty[0u]
+		+ qty[1u]
+		+ qty[2u]
+		+ qty[3u]
+		+ qty[4u]
+		+ qty[5u]
+		+ qty[6u]
+		+ qty[7u] != 0)
 	{
-		if (qty[0] != 0) woststr0 << qty[0];
-		if (qty[1] != 0) woststr1 << qty[1];
-		if (qty[2] != 0) woststr2 << qty[2];
-		if (qty[3] != 0) woststr3 << qty[3];
-		if (qty[4] != 0) woststr4 << qty[4];
-		if (qty[5] != 0) woststr5 << qty[5];
-		if (qty[6] != 0) woststr6 << qty[6];
-		if (qty[7] != 0) woststr7 << qty[7];
+		if (qty[0u] != 0) woststr0 << qty[0u];
+		if (qty[1u] != 0) woststr1 << qty[1u];
+		if (qty[2u] != 0) woststr2 << qty[2u];
+		if (qty[3u] != 0) woststr3 << qty[3u];
+		if (qty[4u] != 0) woststr4 << qty[4u];
+		if (qty[5u] != 0) woststr5 << qty[5u];
+		if (qty[6u] != 0) woststr6 << qty[6u];
+		if (qty[7u] != 0) woststr7 << qty[7u];
 
 		_lstMatrix->addRow(
 						9,
@@ -223,10 +227,17 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 						woststr5.str().c_str(),
 						woststr6.str().c_str(),
 						woststr7.str().c_str());
-		_lstMatrix->setRowColor(row++, YELLOW);
+		_lstMatrix->setRowColor(r++, YELLOW);
 	}
 
-	if (qtyScientist[0] + qtyScientist[1] + qtyScientist[2] + qtyScientist[3] + qtyScientist[4] + qtyScientist[5] + qtyScientist[6] + qtyScientist[7] != 0)
+	if (  qtyScientist[0u]
+		+ qtyScientist[1u]
+		+ qtyScientist[2u]
+		+ qtyScientist[3u]
+		+ qtyScientist[4u]
+		+ qtyScientist[5u]
+		+ qtyScientist[6u]
+		+ qtyScientist[7u] != 0)
 	{
 		woststr0.str(L"");
 		woststr1.str(L"");
@@ -237,14 +248,14 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 		woststr6.str(L"");
 		woststr7.str(L"");
 
-		if (qtyScientist[0] != 0) woststr0 << qtyScientist[0];
-		if (qtyScientist[1] != 0) woststr1 << qtyScientist[1];
-		if (qtyScientist[2] != 0) woststr2 << qtyScientist[2];
-		if (qtyScientist[3] != 0) woststr3 << qtyScientist[3];
-		if (qtyScientist[4] != 0) woststr4 << qtyScientist[4];
-		if (qtyScientist[5] != 0) woststr5 << qtyScientist[5];
-		if (qtyScientist[6] != 0) woststr6 << qtyScientist[6];
-		if (qtyScientist[7] != 0) woststr7 << qtyScientist[7];
+		if (qtyScientist[0u] != 0) woststr0 << qtyScientist[0u];
+		if (qtyScientist[1u] != 0) woststr1 << qtyScientist[1u];
+		if (qtyScientist[2u] != 0) woststr2 << qtyScientist[2u];
+		if (qtyScientist[3u] != 0) woststr3 << qtyScientist[3u];
+		if (qtyScientist[4u] != 0) woststr4 << qtyScientist[4u];
+		if (qtyScientist[5u] != 0) woststr5 << qtyScientist[5u];
+		if (qtyScientist[6u] != 0) woststr6 << qtyScientist[6u];
+		if (qtyScientist[7u] != 0) woststr7 << qtyScientist[7u];
 
 		_lstMatrix->addRow(
 						9,
@@ -257,10 +268,17 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 						woststr5.str().c_str(),
 						woststr6.str().c_str(),
 						woststr7.str().c_str());
-		_lstMatrix->setRowColor(row++, YELLOW);
+		_lstMatrix->setRowColor(r++, YELLOW);
 	}
 
-	if (qtyEngineer[0] + qtyEngineer[1] + qtyEngineer[2] + qtyEngineer[3] + qtyEngineer[4] + qtyEngineer[5] + qtyEngineer[6] + qtyEngineer[7] != 0)
+	if (  qtyEngineer[0u]
+		+ qtyEngineer[1u]
+		+ qtyEngineer[2u]
+		+ qtyEngineer[3u]
+		+ qtyEngineer[4u]
+		+ qtyEngineer[5u]
+		+ qtyEngineer[6u]
+		+ qtyEngineer[7u] != 0)
 	{
 		woststr0.str(L"");
 		woststr1.str(L"");
@@ -271,14 +289,14 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 		woststr6.str(L"");
 		woststr7.str(L"");
 
-		if (qtyEngineer[0] != 0) woststr0 << qtyEngineer[0];
-		if (qtyEngineer[1] != 0) woststr1 << qtyEngineer[1];
-		if (qtyEngineer[2] != 0) woststr2 << qtyEngineer[2];
-		if (qtyEngineer[3] != 0) woststr3 << qtyEngineer[3];
-		if (qtyEngineer[4] != 0) woststr4 << qtyEngineer[4];
-		if (qtyEngineer[5] != 0) woststr5 << qtyEngineer[5];
-		if (qtyEngineer[6] != 0) woststr6 << qtyEngineer[6];
-		if (qtyEngineer[7] != 0) woststr7 << qtyEngineer[7];
+		if (qtyEngineer[0u] != 0) woststr0 << qtyEngineer[0u];
+		if (qtyEngineer[1u] != 0) woststr1 << qtyEngineer[1u];
+		if (qtyEngineer[2u] != 0) woststr2 << qtyEngineer[2u];
+		if (qtyEngineer[3u] != 0) woststr3 << qtyEngineer[3u];
+		if (qtyEngineer[4u] != 0) woststr4 << qtyEngineer[4u];
+		if (qtyEngineer[5u] != 0) woststr5 << qtyEngineer[5u];
+		if (qtyEngineer[6u] != 0) woststr6 << qtyEngineer[6u];
+		if (qtyEngineer[7u] != 0) woststr7 << qtyEngineer[7u];
 
 		_lstMatrix->addRow(
 						9,
@@ -291,18 +309,18 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 						woststr5.str().c_str(),
 						woststr6.str().c_str(),
 						woststr7.str().c_str());
-		_lstMatrix->setRowColor(row++, YELLOW);
+		_lstMatrix->setRowColor(r++, YELLOW);
 	}
 
 	const Ruleset* const rules (_game->getRuleset());
 	const RuleItem* itRule;
 	const RuleCraftWeapon* cwRule;
-	size_t baseId (0);
+	size_t baseId;
 	std::string type;
 	std::wstring item;
 	Uint8 color;
 
-	const std::vector<std::string>& allItems = rules->getItemsList();
+	const std::vector<std::string>& allItems (rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
 			i = allItems.begin();
 			i != allItems.end();
@@ -320,7 +338,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 		woststr6.str(L"");
 		woststr7.str(L"");
 
-		baseId = 0;
+		baseId = 0u;
 		for (std::vector<Base*>::const_iterator
 				j = gameSave->getBases()->begin();
 				j != gameSave->getBases()->end();
@@ -373,16 +391,23 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			}
 		}
 
-		if (qty[0] + qty[1] + qty[2] + qty[3] + qty[4] + qty[5] + qty[6] + qty[7] != 0)
+		if (  qty[0u]
+			+ qty[1u]
+			+ qty[2u]
+			+ qty[3u]
+			+ qty[4u]
+			+ qty[5u]
+			+ qty[6u]
+			+ qty[7u] != 0)
 		{
-			if (qty[0] != 0) woststr0 << qty[0];
-			if (qty[1] != 0) woststr1 << qty[1];
-			if (qty[2] != 0) woststr2 << qty[2];
-			if (qty[3] != 0) woststr3 << qty[3];
-			if (qty[4] != 0) woststr4 << qty[4];
-			if (qty[5] != 0) woststr5 << qty[5];
-			if (qty[6] != 0) woststr6 << qty[6];
-			if (qty[7] != 0) woststr7 << qty[7];
+			if (qty[0u] != 0) woststr0 << qty[0u];
+			if (qty[1u] != 0) woststr1 << qty[1u];
+			if (qty[2u] != 0) woststr2 << qty[2u];
+			if (qty[3u] != 0) woststr3 << qty[3u];
+			if (qty[4u] != 0) woststr4 << qty[4u];
+			if (qty[5u] != 0) woststr5 << qty[5u];
+			if (qty[6u] != 0) woststr6 << qty[6u];
+			if (qty[7u] != 0) woststr7 << qty[7u];
 
 
 			bool craftOrdnance (false);
@@ -393,7 +418,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
-				if (itRule == rules->getItemRule(cwRule->getLauncherType())
+				if (   itRule == rules->getItemRule(cwRule->getLauncherType())
 					|| itRule == rules->getItemRule(cwRule->getClipType()))
 				{
 					craftOrdnance = true;
@@ -403,7 +428,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			item = tr(*i);
 			color = BLUE;
 
-			if (itRule->getBattleType() == BT_AMMO
+			if (    itRule->getBattleType() == BT_AMMO
 				|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
 				color = PURPLE;
@@ -432,7 +457,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 							woststr5.str().c_str(),
 							woststr6.str().c_str(),
 							woststr7.str().c_str());
-			_lstMatrix->setRowColor(row++, color);
+			_lstMatrix->setRowColor(r++, color);
 		}
 	}
 

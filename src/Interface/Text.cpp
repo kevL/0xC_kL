@@ -375,20 +375,25 @@ int Text::getNumLines() const
  */
 int Text::getTextWidth(int line) const
 {
-	if (line == -1)
+	switch (line)
 	{
-		int width (0);
-		for (std::vector<int>::const_iterator
-				i = _lineWidth.begin();
-				i != _lineWidth.end();
-				++i)
+		case -1:
 		{
-			if (*i > width)
-				width = *i;
+			int width (0);
+			for (std::vector<int>::const_iterator
+					i = _lineWidth.begin();
+					i != _lineWidth.end();
+					++i)
+			{
+				if (*i > width)
+					width = *i;
+			}
+			return width;
 		}
-		return width;
+
+		default:
+			return _lineWidth[static_cast<size_t>(line)];
 	}
-	return _lineWidth[line];
 }
 
 /**
@@ -399,19 +404,24 @@ int Text::getTextWidth(int line) const
  */
 int Text::getTextHeight(int line) const
 {
-	if (line == -1)
+	switch (line)
 	{
-		int height (0);
-		for (std::vector<int>::const_iterator
-				i = _lineHeight.begin();
-				i != _lineHeight.end();
-				++i)
+		case -1:
 		{
-			height += *i;
+			int height (0);
+			for (std::vector<int>::const_iterator
+					i = _lineHeight.begin();
+					i != _lineHeight.end();
+					++i)
+			{
+				height += *i;
+			}
+			return height;
 		}
-		return height;
+
+		default:
+			return _lineHeight[static_cast<size_t>(line)];
 	}
-	return _lineHeight[line];
 }
 
 /**
@@ -565,7 +575,6 @@ void Text::processText() // private.
 int Text::getLineX(int line) const
 {
 	int x (0);
-
 	switch (_lang->getTextDirection())
 	{
 		case DIRECTION_LTR:
@@ -573,10 +582,10 @@ int Text::getLineX(int line) const
 			{
 				case ALIGN_CENTER:
 					x = static_cast<int>(std::ceil(
-						static_cast<double>(getWidth() + _font->getSpacing() - _lineWidth[line]) / 2.));
+						static_cast<double>(getWidth() + _font->getSpacing() - _lineWidth[static_cast<size_t>(line)]) / 2.));
 					break;
 				case ALIGN_RIGHT:
-					x = getWidth() - 1 - _lineWidth[line];
+					x = getWidth() - 1 - _lineWidth[static_cast<size_t>(line)];
 			}
 			break;
 
@@ -588,13 +597,12 @@ int Text::getLineX(int line) const
 					break;
 				case ALIGN_CENTER:
 					x = getWidth() - static_cast<int>(std::ceil(
-									 static_cast<double>(getWidth() + _font->getSpacing() - _lineWidth[line]) / 2.));
+									 static_cast<double>(getWidth() + _font->getSpacing() - _lineWidth[static_cast<size_t>(line)]) / 2.));
 					break;
 				case ALIGN_RIGHT:
-					x = _lineWidth[line];
+					x = _lineWidth[static_cast<size_t>(line)];
 			}
 	}
-
 	return x;
 }
 
@@ -650,8 +658,8 @@ void Text::draw()
 
 		++rect.x;
 		++rect.y;
-		rect.w -= 2;
-		rect.h -= 2;
+		rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u);
+		rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
 		this->drawRect(&rect, 0u);
 	}
 

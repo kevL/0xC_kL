@@ -91,16 +91,13 @@ CraftWeaponsState::CraftWeaponsState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& CraftWeaponsState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& CraftWeaponsState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& CraftWeaponsState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& CraftWeaponsState::btnCancelClick,
-					Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&CraftWeaponsState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&CraftWeaponsState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&CraftWeaponsState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&CraftWeaponsState::btnCancelClick),
+								Options::keyOkKeypad);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -156,7 +153,7 @@ CraftWeaponsState::CraftWeaponsState(
 							woststr2.str().c_str());
 		}
 	}
-	_lstWeapons->onMouseClick((ActionHandler)& CraftWeaponsState::lstWeaponsClick);
+	_lstWeapons->onMouseClick(static_cast<ActionHandler>(&CraftWeaponsState::lstWeaponsClick));
 }
 
 /**
@@ -175,7 +172,7 @@ void CraftWeaponsState::btnCancelClick(Action*)
 }
 
 /**
- * Equips the weapon on the craft and returns to the previous screen.
+ * Equips the weapon on the craft and exits to the previous screen.
  * @param action - pointer to an Action
  */
 void CraftWeaponsState::lstWeaponsClick(Action*)

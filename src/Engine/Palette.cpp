@@ -59,7 +59,7 @@ void Palette::loadDat(
 		int qColors,
 		int offset)
 {
-	if (_colors != 0)
+	if (_colors != nullptr)
 	{
 		throw Exception("loadDat can be run only once");
 	}
@@ -87,9 +87,9 @@ void Palette::loadDat(
 			i != _count && ifstr.read(reinterpret_cast<char*>(val), 3);
 			++i)
 	{
-		_colors[i].r = val[0u] << 2u;
-		_colors[i].g = val[1u] << 2u;
-		_colors[i].b = val[2u] << 2u;
+		_colors[i].r = static_cast<Uint8>(val[0u] << 2u);
+		_colors[i].g = static_cast<Uint8>(val[1u] << 2u);
+		_colors[i].b = static_cast<Uint8>(val[2u] << 2u);
 		_colors[i].unused = 255u;
 	}
 	_colors[0u].unused = 0u;
@@ -122,7 +122,7 @@ Uint32 Palette::getRGBA(
 	return (static_cast<Uint32>(pal[color].r) << 24u)
 		 | (static_cast<Uint32>(pal[color].g) << 16u)
 		 | (static_cast<Uint32>(pal[color].b) <<  8u)
-		 | (static_cast<Uint32>(0xffu));
+		 | 0xffu;
 }
 
 }

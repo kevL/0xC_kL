@@ -45,7 +45,6 @@ class ActionMenuItem final
 
 private:
 	Uint8 _highlightModifier;
-
 	int _tu;
 
 	BattleActionType _bat;

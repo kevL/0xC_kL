@@ -98,12 +98,12 @@ Soldier::Soldier(
 
 	_look = static_cast<SoldierLook>(RNG::generate(0,3));
 
-//	_gender = (SoldierGender)RNG::generate(0, 1);
+//	_gender = (SoldierGender)RNG::generate(0,1);
 	// gender Ratios
 	const RuleGender* const gRatio (_solRule->getGenderRatio());
 	const double
-		male (static_cast<double>(gRatio->male)),
-		total (static_cast<double>(male + gRatio->female));
+		male  (static_cast<double>(gRatio->male)),
+		total (static_cast<double>(gRatio->female) + male);
 
 	if (AreSame(total, 0.)
 		|| RNG::percent(static_cast<int>(Round(male / total * 100.))))

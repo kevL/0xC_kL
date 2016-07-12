@@ -65,7 +65,7 @@ private:
 	size_t
 		_lastScroll,
 		_rows,
-		_soldierId;
+		_solId;
 	Uint8
 		_colorBtnDown,
 		_colorBtnUp,
@@ -73,9 +73,9 @@ private:
 
 	SoldierDiaryDisplay _display;
 
-	std::vector<std::wstring> _awardsListEntry;
+	std::vector<std::wstring> _awardsList;
 
-	const std::vector<Soldier*>* _list;
+	const std::vector<Soldier*>* _listBase;
 	const std::vector<SoldierDead*>* _listDead;
 	std::vector<Surface*>
 		_srfSprite,
@@ -137,7 +137,7 @@ private:
 		/// Creates a SoldierDiaryPerformance state.
 		SoldierDiaryPerformanceState(
 				Base* const base,
-				const size_t soldierId,
+				const size_t solId,
 				SoldierDiaryOverviewState* const overview,
 				const SoldierDiaryDisplay display);
 		/// Cleans up the SoldierDiaryPerformance state.

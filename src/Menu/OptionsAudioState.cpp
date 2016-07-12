@@ -121,35 +121,35 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 
 	_slrMusicVolume->setRange(0, SDL_MIX_MAXVOLUME);
 	_slrMusicVolume->setValue(Options::musicVolume);
-	_slrMusicVolume->onSliderChange((ActionHandler)& OptionsAudioState::slrMusicVolumeChange);
+	_slrMusicVolume->onSliderChange(static_cast<ActionHandler>(&OptionsAudioState::slrMusicVolumeChange));
+//	_slrMusicVolume->onMouseIn(		static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
+//	_slrMusicVolume->onMouseOut(	static_cast<ActionHandler>(&OptionsAudioState::txtTooltipOut));
 //	_slrMusicVolume->setTooltip("STR_MUSIC_VOLUME_DESC");
-//	_slrMusicVolume->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
-//	_slrMusicVolume->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
 
 	_txtSoundVolume->setText(tr("STR_SFX_VOLUME"));
 
 	_slrSoundVolume->setRange(0, SDL_MIX_MAXVOLUME);
 	_slrSoundVolume->setValue(Options::soundVolume);
-	_slrSoundVolume->onSliderChange((ActionHandler)& OptionsAudioState::slrSoundVolumeChange);
-	_slrSoundVolume->onMouseRelease((ActionHandler)& OptionsAudioState::slrSoundVolumeRelease);
+	_slrSoundVolume->onSliderChange(static_cast<ActionHandler>(&OptionsAudioState::slrSoundVolumeChange));
+	_slrSoundVolume->onMouseRelease(static_cast<ActionHandler>(&OptionsAudioState::slrSoundVolumeRelease));
+//	_slrSoundVolume->onMouseIn(		static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
+//	_slrSoundVolume->onMouseOut(	static_cast<ActionHandler>(&OptionsAudioState::txtTooltipOut));
 //	_slrSoundVolume->setTooltip("STR_SFX_VOLUME_DESC");
-//	_slrSoundVolume->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
-//	_slrSoundVolume->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
 
 	_txtUiVolume->setText(tr("STR_UI_VOLUME"));
 
 	_slrUiVolume->setRange(0, SDL_MIX_MAXVOLUME);
 	_slrUiVolume->setValue(Options::uiVolume);
-	_slrUiVolume->onSliderChange((ActionHandler)& OptionsAudioState::slrUiVolumeChange);
-	_slrUiVolume->onMouseRelease((ActionHandler)& OptionsAudioState::slrUiVolumeRelease);
+	_slrUiVolume->onSliderChange(	static_cast<ActionHandler>(&OptionsAudioState::slrUiVolumeChange));
+	_slrUiVolume->onMouseRelease(	static_cast<ActionHandler>(&OptionsAudioState::slrUiVolumeRelease));
+//	_slrUiVolume->onMouseIn(		static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
+//	_slrUiVolume->onMouseOut(		static_cast<ActionHandler>(&OptionsAudioState::txtTooltipOut));
 //	_slrUiVolume->setTooltip("STR_UI_VOLUME_DESC");
-//	_slrUiVolume->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
-//	_slrUiVolume->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
 
 	std::wostringstream ss;
 	std::vector<std::wstring> samplesText;
 
-	int samples[] =
+	int samples[]
 	{
 		8000,
 		11025,
@@ -161,8 +161,8 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 	};
 
 	for (size_t
-			i = 0;
-			i < (sizeof(samples) / sizeof(samples[0]));
+			i = 0u;
+			i < (sizeof(samples) / sizeof(samples[0u]));
 			++i)
 	{
 		_sampleRates.push_back(samples[i]);
@@ -177,10 +177,10 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 	_txtSampleRate->setText(tr("STR_AUDIO_SAMPLE_RATE"));
 
 	_cbxSampleRate->setOptions(samplesText);
-	_cbxSampleRate->onComboChange((ActionHandler)& OptionsAudioState::cbxSampleRateChange);
+	_cbxSampleRate->onComboChange(static_cast<ActionHandler>(&OptionsAudioState::cbxSampleRateChange));
 //	_cbxSampleRate->setTooltip("STR_AUDIO_SAMPLE_RATE_DESC");
-//	_cbxSampleRate->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
-//	_cbxSampleRate->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
+//	_cbxSampleRate->onMouseIn(static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
+//	_cbxSampleRate->onMouseOut(static_cast<ActionHandler>(&OptionsAudioState::txtTooltipOut));
 
 	std::vector<std::wstring>
 		musicText,
@@ -204,28 +204,28 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 
 	_cbxMusicFormat->setOptions(musicText);
 	_cbxMusicFormat->setSelected(Options::preferredMusic);
-	_cbxMusicFormat->onComboChange((ActionHandler)& OptionsAudioState::cbxMusicFormatChange);
+	_cbxMusicFormat->onComboChange(static_cast<ActionHandler>(&OptionsAudioState::cbxMusicFormatChange));
+//	_cbxMusicFormat->onMouseIn(static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
+//	_cbxMusicFormat->onMouseOut(static_cast<ActionHandler>(&OptionsAudioState::txtTooltipOut));
 //	_cbxMusicFormat->setTooltip("STR_PREFERRED_MUSIC_FORMAT_DESC");
-//	_cbxMusicFormat->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
-//	_cbxMusicFormat->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
 
-	std::wstring curMusic = musFormats[Mix_GetMusicType(0)];
+	std::wstring curMusic (musFormats[Mix_GetMusicType(nullptr)]);
 	_txtCurrentMusic->setText(tr("STR_CURRENT_FORMAT").arg(curMusic));
 
 	_txtSoundFormat->setText(tr("STR_PREFERRED_SFX_FORMAT"));
 
 	_cbxSoundFormat->setOptions(soundText);
 	_cbxSoundFormat->setSelected(Options::preferredSound);
-	_cbxSoundFormat->onComboChange((ActionHandler)& OptionsAudioState::cbxSoundFormatChange);
+	_cbxSoundFormat->onComboChange(static_cast<ActionHandler>(&OptionsAudioState::cbxSoundFormatChange));
+//	_cbxSoundFormat->onMouseIn(static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
+//	_cbxSoundFormat->onMouseOut(static_cast<ActionHandler>(&OptionsAudioState::txtTooltipOut));
 //	_cbxSoundFormat->setTooltip("STR_PREFERRED_SFX_FORMAT_DESC");
-//	_cbxSoundFormat->onMouseIn((ActionHandler)& OptionsAudioState::txtTooltipIn);
-//	_cbxSoundFormat->onMouseOut((ActionHandler)& OptionsAudioState::txtTooltipOut);
 
-	std::wstring curSound = sndFormats[Options::currentSound];
+	std::wstring curSound (sndFormats[Options::currentSound]);
 	_txtCurrentSound->setText(tr("STR_CURRENT_FORMAT").arg(curSound));
 
 	// These options require a restart, so don't enable them in-game
-	bool vis = (_origin == OPT_MENU);
+	bool vis (_origin == OPT_MENU);
 	_txtSampleRate->setVisible(vis);
 	_cbxSampleRate->setVisible(vis);
 	_txtMusicFormat->setVisible(vis);
@@ -296,7 +296,7 @@ void OptionsAudioState::slrUiVolumeChange(Action*)
  */
 void OptionsAudioState::slrUiVolumeRelease(Action*)
 {
-//	_game->getResourcePack()->getSound("GEO.CAT", 0)->play(Mix_GroupAvailable(0));
+//	_game->getResourcePack()->getSound("GEO.CAT", 0u)->play(Mix_GroupAvailable(0));
 	TextButton::soundPress->play(Mix_GroupAvailable(0));
 }
 
@@ -316,7 +316,7 @@ void OptionsAudioState::cbxSampleRateChange(Action*)
  */
 void OptionsAudioState::cbxMusicFormatChange(Action*)
 {
-	Options::preferredMusic = (MusicFormat)_cbxMusicFormat->getSelected();
+	Options::preferredMusic = static_cast<MusicFormat>(_cbxMusicFormat->getSelected());
 	Options::reload = true;
 }
 
@@ -326,7 +326,7 @@ void OptionsAudioState::cbxMusicFormatChange(Action*)
  */
 void OptionsAudioState::cbxSoundFormatChange(Action*)
 {
-	Options::preferredSound = (SoundFormat)_cbxSoundFormat->getSelected();
+	Options::preferredSound = static_cast<SoundFormat>(_cbxSoundFormat->getSelected());
 	Options::reload = true;
 }
 

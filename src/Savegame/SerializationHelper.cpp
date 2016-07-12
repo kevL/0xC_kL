@@ -37,17 +37,17 @@ int unserializeInt(
 	int ret (0);
 	switch (sizeKey)
 	{
-		case 1:
+		case 1u:
 			ret = static_cast<int>(**buffer);
 			break;
-		case 2:
-			ret = *(Sint16*)*buffer;
+		case 2u:
+			ret = *(reinterpret_cast<Sint16*>(*buffer));
 			break;
-		case 3:
+		case 3u:
 			assert(false); // no.
 			break;
-		case 4:
-			ret = *(Uint32*)*buffer;
+		case 4u:
+			ret = static_cast<int>(*(reinterpret_cast<Uint32*>(*buffer)));
 			break;
 
 		default:
@@ -69,20 +69,20 @@ void serializeInt(
 {
 	switch (sizeKey)
 	{
-		case 1:
+		case 1u:
 			assert(value < 256);
 			**buffer = static_cast<Uint8>(value);
 			break;
-		case 2:
+		case 2u:
 			assert(value < 65536);
-			*(Sint16*)*buffer = static_cast<Sint16>(value);
+			*(reinterpret_cast<Sint16*>(*buffer)) = static_cast<Sint16>(value);
 			break;
-		case 3:
+		case 3u:
 			assert(false); // no.
 			break;
-		case 4:
-//			assert(value < 4294967296);
-			*(Uint32*)*buffer = static_cast<Uint32>(value);
+		case 4u:
+			assert(value < 4294967296);
+			*(reinterpret_cast<Uint32*>(*buffer)) = static_cast<Uint32>(value);
 			break;
 
 		default:

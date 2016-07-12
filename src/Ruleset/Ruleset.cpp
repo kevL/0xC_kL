@@ -110,7 +110,8 @@ Ruleset::Ruleset(const Game* const game)
 		_firstGrenade(-1),
 		_retalCoef(0),
 		_defeatFunds(0),
-		_defeatScore(0)
+		_defeatScore(0),
+		_scoreBaseLost(0)
 {
 	//Log(LOG_INFO) << "Create Ruleset";
 	_globe = new RuleGlobe();
@@ -495,8 +496,8 @@ void Ruleset::validateMissions() const
 }
 
 /**
- * Loads a ruleset's contents from the given source file.
- * @param src - reference to the source file
+ * Loads a ruleset's contents from a specified source.
+ * @param src - reference to the source file or directory
  */
 void Ruleset::load(const std::string& src)
 {
@@ -511,8 +512,8 @@ void Ruleset::load(const std::string& src)
 }						// See also, load() rules ....
 
 /**
- * Loads the contents of all the rule files in the given directory.
- * @param dir - reference to the name of an existing directory containing YAML ruleset files
+ * Loads the contents of all the rule-files in a specified directory.
+ * @param dir - reference to the name of an existing directory containing YAML ruleset-files
  */
 void Ruleset::loadFiles(const std::string& dir) // protected.
 {
@@ -527,7 +528,7 @@ void Ruleset::loadFiles(const std::string& dir) // protected.
 }
 
 /**
- * Loads a ruleset's contents from a YAML file.
+ * Loads a ruleset from a YAML file.
  * @note Rules that match pre-existing rules overwrite them.
  * @param file - reference a YAML file
  */
@@ -761,7 +762,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 					_ufopaediaArticles[type] = articleRule;
 					_ufopaediaIndex.push_back(type);
 				}
-				else Log(LOG_INFO) << "ERROR: undefined ArticleDefinition typeId [" << typeId << "] for " << type;
+				else Log(LOG_INFO) << "ERROR: undefined ArticleDefinition typeId [" << static_cast<int>(typeId) << "] for " << type;
 			}
 
 			_ufopaediaListOrder += 100;
@@ -770,7 +771,8 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		}
 		else if ((*i)["delete"])
 		{
-			const std::string type ((*i)["delete"].as<std::string>());
+			type = (*i)["delete"].as<std::string>();
+
 			const std::map<std::string, ArticleDefinition*>::const_iterator pArticle (_ufopaediaArticles.find(type));
 			if (pArticle != _ufopaediaArticles.end())
 				_ufopaediaArticles.erase(pArticle);
@@ -811,6 +813,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	_retalCoef		= doc["retalCoef"]		.as<int>(_retalCoef);
 	_defeatFunds	= doc["defeatFunds"]	.as<int>(_defeatFunds);
 	_defeatScore	= doc["defeatScore"]	.as<int>(_defeatScore);
+	_scoreBaseLost	= doc["scoreBaseLost"]	.as<int>(_scoreBaseLost);
 
 	for (YAML::const_iterator
 			i = doc["ufoTrajectories"].begin();
@@ -1173,9 +1176,9 @@ SavedGame* Ruleset::createSave(Game* const game) const
 
 
 	//Log(LOG_INFO) << ". create Base";
-	Base* const base (new Base(this)); // setup start Base.
+	Base* const base (new Base(this, gameSave)); // setup start Base.
 	//Log(LOG_INFO) << ". load Base";
-	base->load(_startBase, gameSave, true);
+	base->loadBase(_startBase, true);
 	//Log(LOG_INFO) << ". add Base";
 	gameSave->getBases()->push_back(base);
 	//Log(LOG_INFO) << ". base DONE";
@@ -1588,12 +1591,12 @@ const std::vector<std::string>& Ruleset::getDeploymentsList() const
 
 /**
  * Gets the info about a specific armor.
- * @param name - reference to the Armor type
+ * @param type - reference to the Armor type
  * @return, pointer to RuleArmor
  */
-RuleArmor* Ruleset::getArmor(const std::string& name) const
+RuleArmor* Ruleset::getArmor(const std::string& type) const
 {
-	std::map<std::string, RuleArmor*>::const_iterator i (_armors.find(name));
+	std::map<std::string, RuleArmor*>::const_iterator i (_armors.find(type));
 	if (i != _armors.end())
 		return i->second;
 
@@ -2024,7 +2027,7 @@ std::vector<StatString*> Ruleset::getStatStrings() const
  * Compares rules based on their list orders.
  */
 template<typename T>
-struct compareRule
+struct CompareRule
 	:
 		public std::binary_function<const std::string&, const std::string&, bool>
 {
@@ -2032,7 +2035,7 @@ struct compareRule
 	typedef T*(Ruleset::*RuleLookup)(const std::string& id);
 	RuleLookup _lookup;
 
-	compareRule(
+	CompareRule(
 			Ruleset* const ruleset,
 			const RuleLookup lookup)
 		:
@@ -2056,13 +2059,13 @@ struct compareRule
  * Craft weapons use the list order of their launcher item.
  */
 template<>
-struct compareRule<RuleCraftWeapon>
+struct CompareRule<RuleCraftWeapon>
 	:
 		public std::binary_function<const std::string&, const std::string&, bool>
 {
 	Ruleset* _ruleset;
 
-	compareRule(Ruleset* ruleset)
+	CompareRule(Ruleset* ruleset)
 		:
 			_ruleset(ruleset)
 	{}
@@ -2084,13 +2087,13 @@ struct compareRule<RuleCraftWeapon>
  * @note Itemless armor comes before all else.
  */
 template<>
-struct compareRule<RuleArmor>
+struct CompareRule<RuleArmor>
 	:
 		public std::binary_function<const std::string&, const std::string&, bool>
 {
 	Ruleset* _ruleset;
 
-	compareRule(Ruleset* const ruleset)
+	CompareRule(Ruleset* const ruleset)
 		:
 			_ruleset(ruleset)
 	{}
@@ -2130,7 +2133,7 @@ struct compareRule<RuleArmor>
  * Ufopaedia articles use section and list order.
  */
 template<>
-struct compareRule<ArticleDefinition>
+struct CompareRule<ArticleDefinition>
 	:
 		public std::binary_function<const std::string&, const std::string&, bool>
 {
@@ -2138,7 +2141,7 @@ struct compareRule<ArticleDefinition>
 	static std::map<std::string, int> _sections;
 	bool _listOrder;
 
-	compareRule(
+	CompareRule(
 			Ruleset* const ruleset,
 			bool listOrder)
 		:
@@ -2174,7 +2177,7 @@ struct compareRule<ArticleDefinition>
 	}
 };
 
-std::map<std::string, int> compareRule<ArticleDefinition>::_sections;
+std::map<std::string, int> CompareRule<ArticleDefinition>::_sections;
 
 /**
  * Sorts all lists according to their weight.
@@ -2184,58 +2187,58 @@ void Ruleset::sortLists()
 	std::sort(
 			_itemsIndex.begin(),
 			_itemsIndex.end(),
-			compareRule<RuleItem>(
+			CompareRule<RuleItem>(
 							this,
-							(compareRule<RuleItem>::RuleLookup)& Ruleset::getItemRule));
+							reinterpret_cast<CompareRule<RuleItem>::RuleLookup>(&Ruleset::getItemRule)));
 	std::sort(
 			_craftsIndex.begin(),
 			_craftsIndex.end(),
-			compareRule<RuleCraft>(
+			CompareRule<RuleCraft>(
 							this,
-							(compareRule<RuleCraft>::RuleLookup)& Ruleset::getCraft));
+							reinterpret_cast<CompareRule<RuleCraft>::RuleLookup>(&Ruleset::getCraft)));
 	std::sort(
 			_facilitiesIndex.begin(),
 			_facilitiesIndex.end(),
-			compareRule<RuleBaseFacility>(
+			CompareRule<RuleBaseFacility>(
 							this,
-							(compareRule<RuleBaseFacility>::RuleLookup)& Ruleset::getBaseFacility));
+							reinterpret_cast<CompareRule<RuleBaseFacility>::RuleLookup>(&Ruleset::getBaseFacility)));
 	std::sort(
 			_researchIndex.begin(),
 			_researchIndex.end(),
-			compareRule<RuleResearch>(
+			CompareRule<RuleResearch>(
 							this,
-							(compareRule<RuleResearch>::RuleLookup)& Ruleset::getResearch));
+							reinterpret_cast<CompareRule<RuleResearch>::RuleLookup>(&Ruleset::getResearch)));
 	std::sort(
 			_manufactureIndex.begin(),
 			_manufactureIndex.end(),
-			compareRule<RuleManufacture>(
+			CompareRule<RuleManufacture>(
 							this,
-							(compareRule<RuleManufacture>::RuleLookup)& Ruleset::getManufacture));
+							reinterpret_cast<CompareRule<RuleManufacture>::RuleLookup>(&Ruleset::getManufacture)));
 	std::sort(
 			_invsIndex.begin(),
 			_invsIndex.end(),
-			compareRule<RuleInventory>(
+			CompareRule<RuleInventory>(
 							this,
-							(compareRule<RuleInventory>::RuleLookup)& Ruleset::getInventory));
+							reinterpret_cast<CompareRule<RuleInventory>::RuleLookup>(&Ruleset::getInventory)));
 
 	// special cases
 	std::sort(
 			_craftWeaponsIndex.begin(),
 			_craftWeaponsIndex.end(),
-			compareRule<RuleCraftWeapon>(this));
+			CompareRule<RuleCraftWeapon>(this));
 	std::sort(
 			_armorsIndex.begin(),
 			_armorsIndex.end(),
-			compareRule<RuleArmor>(this));
+			CompareRule<RuleArmor>(this));
 
 	std::sort( // sort by listOrder first
 			_ufopaediaIndex.begin(),
 			_ufopaediaIndex.end(),
-			compareRule<ArticleDefinition>(this, true));
+			CompareRule<ArticleDefinition>(this, true));
 //	std::sort( // sort by sectionOrder second
 //			_ufopaediaIndex.begin(),
 //			_ufopaediaIndex.end(),
-//			compareRule<ArticleDefinition>(this, false));
+//			CompareRule<ArticleDefinition>(this, false));
 }
 
 /**
@@ -2536,6 +2539,15 @@ int Ruleset::getDefeatFunds() const
 int Ruleset::getDefeatScore() const
 {
 	return _defeatScore;
+}
+
+/**
+ * Gets the player-penalty for losing a Base.
+ * @return, penalty for losing a base
+ */
+int Ruleset::getBaseLostScore() const
+{
+	return _scoreBaseLost;
 }
 
 /**

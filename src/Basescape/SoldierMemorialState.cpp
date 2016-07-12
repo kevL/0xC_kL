@@ -87,22 +87,18 @@ SoldierMemorialState::SoldierMemorialState()
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SoldierMemorialState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierMemorialState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierMemorialState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierMemorialState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldierMemorialState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierMemorialState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierMemorialState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierMemorialState::btnOkClick),
+							Options::keyCancel);
 
 	_btnStatistics->setText(tr("STR_STATISTICS"));
-	_btnStatistics->onMouseClick((ActionHandler)& SoldierMemorialState::btnStatsClick);
-	_btnStatistics->onKeyboardPress(
-					(ActionHandler)& SoldierMemorialState::btnStatsClick,
-					SDLK_s);
+	_btnStatistics->onMouseClick(	static_cast<ActionHandler>(&SoldierMemorialState::btnStatsClick));
+	_btnStatistics->onKeyboardPress(static_cast<ActionHandler>(&SoldierMemorialState::btnStatsClick),
+									SDLK_s);
 
 	_txtTitle->setText(tr("STR_MEMORIAL"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -112,23 +108,22 @@ SoldierMemorialState::SoldierMemorialState()
 	_txtRank->setText(tr("STR_RANK"));
 	_txtDate->setText(tr("STR_DATE_DEATH"));
 
-	const size_t lost (_game->getSavedGame()->getDeadSoldiers()->size());
-	_txtLost->setText(tr("STR_SOLDIERS_LOST_").arg(lost));
+	int agents (static_cast<int>(_game->getSavedGame()->getDeadSoldiers()->size()));
+	_txtLost->setText(tr("STR_SOLDIERS_LOST_").arg(agents));
 
-	size_t recruited (lost);
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
 			i != _game->getSavedGame()->getBases()->end();
 			++i)
 	{
-		recruited += (*i)->getTotalSoldiers();
+		agents += (*i)->getTotalSoldiers();
 	}
-	_txtRecruited->setText(tr("STR_SOLDIERS_RECRUITED_").arg(recruited));
+	_txtRecruited->setText(tr("STR_SOLDIERS_RECRUITED_").arg(agents));
 
 	_lstSoldiers->setColumns(5, 124,70,26,23,33);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
-	_lstSoldiers->onMousePress((ActionHandler)& SoldierMemorialState::lstSoldiersPress);
+	_lstSoldiers->onMousePress(static_cast<ActionHandler>(&SoldierMemorialState::lstSoldiersPress));
 
 	const SoldierDeath* death;
 	for (std::vector<SoldierDead*>::const_reverse_iterator

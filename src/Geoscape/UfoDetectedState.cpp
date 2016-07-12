@@ -256,26 +256,23 @@ UfoDetectedState::UfoDetectedState(
 				woststr.str().c_str());
 
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
-	_btnIntercept->onMouseClick((ActionHandler)& UfoDetectedState::btnInterceptClick);
+	_btnIntercept->onMouseClick(static_cast<ActionHandler>(&UfoDetectedState::btnInterceptClick));
 	_btnIntercept->setVisible(contact);
 
 	_btnCenter->setText(tr("STR_CENTER_ON_UFO_TIME_5_SECONDS"));
-	_btnCenter->onMouseClick((ActionHandler)& UfoDetectedState::btnCenterClick);
-	_btnCenter->onKeyboardPress(
-					(ActionHandler)& UfoDetectedState::btnCenterClick,
-					Options::keyOk);
-	_btnCenter->onKeyboardPress(
-					(ActionHandler)& UfoDetectedState::btnCenterClick,
-					Options::keyOkKeypad);
+	_btnCenter->onMouseClick(	static_cast<ActionHandler>(&UfoDetectedState::btnCenterClick));
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&UfoDetectedState::btnCenterClick),
+								Options::keyOk);
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&UfoDetectedState::btnCenterClick),
+								Options::keyOkKeypad);
 
 	_btn5Sec->setText(tr("STR_OK_5_SECONDS"));
-	_btn5Sec->onMouseClick((ActionHandler)& UfoDetectedState::btn5SecClick);
+	_btn5Sec->onMouseClick(static_cast<ActionHandler>(&UfoDetectedState::btn5SecClick));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& UfoDetectedState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& UfoDetectedState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&UfoDetectedState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&UfoDetectedState::btnCancelClick),
+								Options::keyCancel);
 
 	switch (ufo->getUfoStatus())
 	{

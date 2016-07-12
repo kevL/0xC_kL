@@ -66,9 +66,9 @@ void Sound::load(const std::string& file)
  */
 void Sound::load(
 		const void* data,
-		unsigned int bytes)
+		unsigned bytes)
 {
-	SDL_RWops* const rw (SDL_RWFromConstMem(data, bytes));
+	SDL_RWops* const rw (SDL_RWFromConstMem(data, static_cast<int>(bytes)));
 	if ((_sound = Mix_LoadWAV_RW(rw, 1)) == nullptr)
 	{
 		throw Exception(Mix_GetError());

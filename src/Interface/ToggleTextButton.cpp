@@ -113,8 +113,7 @@ void ToggleTextButton::setPressed(bool pressed)
  */
 void ToggleTextButton::setColor(Uint8 color)
 {
-	_originalColor = color;
-	TextButton::setColor(color);
+	TextButton::setColor(_originalColor = color);
 }
 
 /**

@@ -144,60 +144,51 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_btnCenter->setText(tr("STR_CENTER"));
-	_btnCenter->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCenterClick);
-	_btnCenter->onKeyboardPress(
-					(ActionHandler)& GeoscapeCraftState::btnCenterClick,
-					SDLK_c);
+	_btnCenter->onMouseClick(	static_cast<ActionHandler>(&GeoscapeCraftState::btnCenterClick));
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCenterClick),
+								SDLK_c);
 
 	_btnRebase->setText(tr("STR_RETURN_TO_BASE"));
-	_btnRebase->onMouseClick((ActionHandler)& GeoscapeCraftState::btnBaseClick);
-	_btnRebase->onKeyboardPress(
-					(ActionHandler)& GeoscapeCraftState::btnBaseClick,
-					SDLK_b);
+	_btnRebase->onMouseClick(	static_cast<ActionHandler>(&GeoscapeCraftState::btnBaseClick));
+	_btnRebase->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnBaseClick),
+								SDLK_b);
 
 	_btnTarget->setText(tr("STR_SELECT_NEW_TARGET"));
-	_btnTarget->onMouseClick((ActionHandler)& GeoscapeCraftState::btnTargetClick);
-	_btnTarget->onKeyboardPress(
-					(ActionHandler)& GeoscapeCraftState::btnTargetClick,
-					SDLK_t);
+	_btnTarget->onMouseClick(	static_cast<ActionHandler>(&GeoscapeCraftState::btnTargetClick));
+	_btnTarget->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnTargetClick),
+								SDLK_t);
 
 	_btnPatrol->setText(tr("STR_PATROL"));
-	_btnPatrol->onMouseClick((ActionHandler)& GeoscapeCraftState::btnPatrolClick);
-	_btnPatrol->onKeyboardPress(
-					(ActionHandler)& GeoscapeCraftState::btnPatrolClick,
-					SDLK_p);
+	_btnPatrol->onMouseClick(	static_cast<ActionHandler>(&GeoscapeCraftState::btnPatrolClick));
+	_btnPatrol->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnPatrolClick),
+								SDLK_p);
 
-	_btnCancel->onMouseClick((ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick);
+	_btnCancel->onMouseClick(static_cast<ActionHandler>(&GeoscapeCraftState::btnCancelOrRedirectClick));
 	if (_waypoint != nullptr) // can Redirect
 	{
 		_txtRedirect->setText(tr("STR_REDIRECT_CRAFT"));
 		_txtRedirect->setAlign(ALIGN_CENTER);
 		_txtRedirect->setBig();
 
-		_btnPatrol->onKeyboardPress(
-						(ActionHandler)& GeoscapeCraftState::btnPatrolClick,
-						Options::keyCancel);
+		_btnPatrol->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnPatrolClick),
+									Options::keyCancel);
 
 		_btnCancel->setText(tr("STR_GO_TO_LAST_KNOWN_UFO_POSITION"));
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
-						SDLK_r);
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCancelOrRedirectClick),
+									SDLK_r);
 	}
 	else
 	{
 		_txtRedirect->setVisible(false);
 
 		_btnCancel->setText(tr("STR_CANCEL_UC"));
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
-						Options::keyCancel);
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCancelOrRedirectClick),
+									Options::keyCancel);
 	}
-	_btnCancel->onKeyboardPress( // if (can Redirect) redirect; else Cancel.
-					(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& GeoscapeCraftState::btnCancelOrRedirectClick,
-					Options::keyOkKeypad);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCancelOrRedirectClick), // if (can Redirect) redirect; else Cancel.
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCancelOrRedirectClick),
+								Options::keyOkKeypad);
 
 	_txtTitle->setText(_craft->getName(_game->getLanguage()));
 	_txtTitle->setBig();
@@ -490,20 +481,20 @@ void GeoscapeCraftState::btnCancelOrRedirectClick(Action*)
  */
 void GeoscapeCraftState::transposeWindow() // private.
 {
-	_window->setVisible(false);
+	_window->		setVisible(false);
 
-	_txtRedirect->setVisible(false);
-	_txtSpeed->setVisible(false);
-	_txtMaxSpeed->setVisible(false);
-	_txtSoldier->setVisible(false);
-	_txtAltitude->setVisible(false);
-	_txtHWP->setVisible(false);
-	_txtFuel->setVisible(false);
-	_txtDamage->setVisible(false);
-	_txtW1Name->setVisible(false);
-	_txtW1Ammo->setVisible(false);
-	_txtW2Name->setVisible(false);
-	_txtW2Ammo->setVisible(false);
+	_txtRedirect->	setVisible(false);
+	_txtSpeed->		setVisible(false);
+	_txtMaxSpeed->	setVisible(false);
+	_txtSoldier->	setVisible(false);
+	_txtAltitude->	setVisible(false);
+	_txtHWP->		setVisible(false);
+	_txtFuel->		setVisible(false);
+	_txtDamage->	setVisible(false);
+	_txtW1Name->	setVisible(false);
+	_txtW1Ammo->	setVisible(false);
+	_txtW2Name->	setVisible(false);
+	_txtW2Ammo->	setVisible(false);
 
 	int dy (26);
 	_btnTarget->setY(_btnTarget->getY() + dy);

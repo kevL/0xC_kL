@@ -59,26 +59,20 @@ ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ResearchRequiredState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchRequiredState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchRequiredState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchRequiredState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ResearchRequiredState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchRequiredState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchRequiredState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchRequiredState::btnOkClick),
+							Options::keyOkKeypad);
 
+	_txtTitle->setText(tr("STR_YOU_NEED_TO_RESEARCH_ITEM_TO_PRODUCE_ITEM")
+					   .arg(tr(itRule->getCompatibleAmmo()->front()))
+					   .arg(tr(itRule->getType())));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
-	const std::string
-		weapon = itRule->getType(),
-		clip = itRule->getCompatibleAmmo()->front();
-	_txtTitle->setText(tr("STR_YOU_NEED_TO_RESEARCH_ITEM_TO_PRODUCE_ITEM")
-					   .arg(tr(clip))
-					   .arg(tr(weapon)));
 }
 
 /**

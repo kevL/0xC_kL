@@ -105,23 +105,19 @@ InterceptState::InterceptState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"), dX);
 
 	_btnGoto->setText(tr("STR_GO_TO_BASE"));
-	_btnGoto->onMouseClick((ActionHandler)& InterceptState::btnGotoBaseClick);
+	_btnGoto->onMouseClick(static_cast<ActionHandler>(&InterceptState::btnGotoBaseClick));
 	_btnGoto->setVisible(_base != nullptr);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& InterceptState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-						(ActionHandler)& InterceptState::btnCancelClick,
-						Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-						(ActionHandler)& InterceptState::btnCancelClick,
-						Options::keyOk);
-	_btnCancel->onKeyboardPress(
-						(ActionHandler)& InterceptState::btnCancelClick,
-						Options::keyOkKeypad);
-	_btnCancel->onKeyboardPress(
-						(ActionHandler)& InterceptState::btnCancelClick,
-						Options::keyGeoIntercept);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&InterceptState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&InterceptState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&InterceptState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&InterceptState::btnCancelClick),
+								Options::keyOkKeypad);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&InterceptState::btnCancelClick),
+								Options::keyGeoIntercept);
 
 	_txtCraft->setText(tr("STR_CRAFT"));
 
@@ -135,17 +131,16 @@ InterceptState::InterceptState(
 	_lstCrafts->setColumns(5, 91,126,25,15,15);
 	_lstCrafts->setBackground(_window);
 	_lstCrafts->setSelectable();
-	_lstCrafts->onMouseClick((ActionHandler)& InterceptState::lstCraftsLeftClick);
-	_lstCrafts->onMouseClick(
-					(ActionHandler)& InterceptState::lstCraftsRightClick,
-					SDL_BUTTON_RIGHT);
-	_lstCrafts->onMouseOver((ActionHandler)& InterceptState::lstCraftsMouseOver);
-	_lstCrafts->onMouseOut((ActionHandler)& InterceptState::lstCraftsMouseOut);
+	_lstCrafts->onMouseClick(	static_cast<ActionHandler>(&InterceptState::lstCraftsLeftClick));
+	_lstCrafts->onMouseClick(	static_cast<ActionHandler>(&InterceptState::lstCraftsRightClick),
+								SDL_BUTTON_RIGHT);
+	_lstCrafts->onMouseOver(	static_cast<ActionHandler>(&InterceptState::lstCraftsMouseOver));
+	_lstCrafts->onMouseOut(		static_cast<ActionHandler>(&InterceptState::lstCraftsMouseOut));
 
 
 	const RuleCraft* crRule;
 
-	size_t row (0);
+	size_t r (0u);
 	for (std::vector<Base*>::const_iterator
 			i = _game->getSavedGame()->getBases()->begin();
 			i != _game->getSavedGame()->getBases()->end();
@@ -190,7 +185,7 @@ InterceptState::InterceptState(
 								woststr1.str().c_str(),
 								woststr2.str().c_str(),
 								woststr3.str().c_str());
-				_lstCrafts->setCellColor(row++, 1, _cellColor, true);
+				_lstCrafts->setCellColor(r++, 1u, _cellColor, true);
 			}
 		}
 	}

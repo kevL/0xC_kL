@@ -135,13 +135,13 @@ private:
 		/// Gets the list of all mission-types contained within the MissionScript.
 		const std::set<std::string> getAllMissionTypes() const;
 		/// Gets a list of mission-types in this MissionScript's mission-weights for a given month.
-		const std::vector<std::string> getMissionTypes(const size_t month) const;
+		const std::vector<std::string> getMissionTypes(const size_t elapsed) const;
 		/// Gets a list of the Regions in this MissionScript's region-weights for a given month.
-		const std::vector<std::string> getRegions(const size_t month) const;
+		const std::vector<std::string> getRegions(const size_t elapsed) const;
 
 		/// Generates a region, a mission, or a race based on the current month.
 		std::string genDataType(
-				const size_t monthsPassed,
+				const size_t elapsed,
 				const GenerationType type) const;
 
 		/// Sets the MissionScript to a terror-mission directive or not.

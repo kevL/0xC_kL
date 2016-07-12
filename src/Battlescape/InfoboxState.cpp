@@ -61,7 +61,7 @@ InfoboxState::InfoboxState(const std::wstring& msg)
 	_text->setBig();
 
 	_timer = new Timer(INFOBOX_DELAY);
-	_timer->onTimer((StateHandler)& InfoboxState::exit);
+	_timer->onTimer(static_cast<StateHandler>(&InfoboxState::exit));
 	_timer->start();
 }
 

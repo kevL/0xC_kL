@@ -117,35 +117,30 @@ SoldiersState::SoldiersState(Base* base)
 	_txtSoldiers->setAlign(ALIGN_RIGHT);
 
 	_btnSort->setText(tr("STR_SORT"));
-	_btnSort->onMouseClick(
-					(ActionHandler)& SoldiersState::btnSortClick,
-					SDL_BUTTON_LEFT);
-	_btnSort->onMouseClick(
-					(ActionHandler)& SoldiersState::btnAutoStatClick,
-					SDL_BUTTON_RIGHT);
+	_btnSort->onMouseClick(	static_cast<ActionHandler>(&SoldiersState::btnSortClick),
+							SDL_BUTTON_LEFT);
+	_btnSort->onMouseClick(	static_cast<ActionHandler>(&SoldiersState::btnAutoStatClick),
+							SDL_BUTTON_RIGHT);
 
 	_btnPsi->setText(tr("STR_PSIONIC_TRAINING"));
-	_btnPsi->onMouseClick((ActionHandler)& SoldiersState::btnPsiTrainingClick);
+	_btnPsi->onMouseClick(static_cast<ActionHandler>(&SoldiersState::btnPsiTrainingClick));
 	_btnPsi->setVisible(_base->hasPsiLabs() == true);
 
 	_btnArmor->setText(tr("STR_ARMOR"));
-	_btnArmor->onMouseClick((ActionHandler)& SoldiersState::btnArmorClick);
+	_btnArmor->onMouseClick(static_cast<ActionHandler>(&SoldiersState::btnArmorClick));
 
 	_btnEquip->setText(tr("STR_INVENTORY"));
-	_btnEquip->onMouseClick((ActionHandler)& SoldiersState::btnEquipClick);
+	_btnEquip->onMouseClick(static_cast<ActionHandler>(&SoldiersState::btnEquipClick));
 	_btnEquip->setVisible(_base->getAvailableSoldiers(true) != 0);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SoldiersState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldiersState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldiersState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldiersState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldiersState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldiersState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldiersState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldiersState::btnOkClick),
+							Options::keyCancel);
 
 	_txtName->setText(tr("STR_NAME_UC"));
 	_txtRank->setText(tr("STR_RANK"));
@@ -155,9 +150,9 @@ SoldiersState::SoldiersState(Base* base)
 	_lstSoldiers->setArrow(193, ARROW_VERTICAL);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
-	_lstSoldiers->onMousePress((ActionHandler)& SoldiersState::lstSoldiersPress);
-	_lstSoldiers->onLeftArrowClick((ActionHandler)& SoldiersState::lstLeftArrowClick);
-	_lstSoldiers->onRightArrowClick((ActionHandler)& SoldiersState::lstRightArrowClick);
+	_lstSoldiers->onMousePress(		static_cast<ActionHandler>(&SoldiersState::lstSoldiersPress));
+	_lstSoldiers->onLeftArrowClick(	static_cast<ActionHandler>(&SoldiersState::lstLeftArrowClick));
+	_lstSoldiers->onRightArrowClick(static_cast<ActionHandler>(&SoldiersState::lstRightArrowClick));
 
 
 	// DEBUG for Soldier Diary:
@@ -217,19 +212,16 @@ void SoldiersState::init()
 		_base->setTactical(false);
 	}
 
-
-	std::wostringstream woststr; // in case soldier was told to GTFO.
+	std::wostringstream woststr; // update in case soldier was told to GTFO.
 	woststr << _base->getTotalSoldiers();
 	_txtSoldiers->setText(woststr.str());
 
-
 	_lstSoldiers->clearList();
-
-	size_t row (0u);
+	size_t r (0u);
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
-			++i, ++row)
+			++i, ++r)
 	{
 		_lstSoldiers->addRow(
 						3,
@@ -239,10 +231,7 @@ void SoldiersState::init()
 
 		if ((*i)->getCraft() == nullptr)
 		{
-			_lstSoldiers->setRowColor(
-									row,
-									_lstSoldiers->getSecondaryColor());
-
+			_lstSoldiers->setRowColor(r, _lstSoldiers->getSecondaryColor());
 			if ((*i)->getSickbay() != 0)
 			{
 				Uint8 color;
@@ -251,11 +240,10 @@ void SoldiersState::init()
 				else if	(pct > 10)	color = YELLOW;
 				else				color = GREEN;
 
-				_lstSoldiers->setCellColor(row, 2u, color, true);
+				_lstSoldiers->setCellColor(r, 2u, color, true);
 			}
 		}
 	}
-
 	_lstSoldiers->scrollTo(_base->getRecallRow(REC_SOLDIER));
 	_lstSoldiers->draw();
 }
@@ -370,8 +358,8 @@ void SoldiersState::btnAutoStatClick(Action*)
 void SoldiersState::lstSoldiersPress(Action* action)
 {
 	const double mX (action->getAbsoluteMouseX());
-	if (   mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
-		&& mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
+	if (   mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge())
+		&& mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge()))
 	{
 		return;
 	}
@@ -400,23 +388,23 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 					REC_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	const size_t row (_lstSoldiers->getSelectedRow());
-	if (row > 0u)
+	const size_t r (_lstSoldiers->getSelectedRow());
+	if (r > 0u)
 	{
 		switch (action->getDetails()->button.button)
 		{
 			case SDL_BUTTON_LEFT:
 			{
-				Soldier* const sol (_base->getSoldiers()->at(row));
+				Soldier* const sol (_base->getSoldiers()->at(r));
 
-				_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row - 1u);
-				_base->getSoldiers()->at(row - 1u) = sol;
+				_base->getSoldiers()->at(r) = _base->getSoldiers()->at(r - 1u);
+				_base->getSoldiers()->at(r - 1u) = sol;
 
-				if (row != _lstSoldiers->getScroll())
+				if (r != _lstSoldiers->getScroll())
 					SDL_WarpMouse(
 							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-													- static_cast<int>(8. * action->getScaleY())));
+							static_cast<Uint16>(action->getTopBlackBand()  + action->getMouseY()
+								- static_cast<int>(8. * action->getScaleY())));
 				else
 				{
 					_base->setRecallRow(
@@ -435,9 +423,9 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 								REC_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
-				Soldier* const sol (_base->getSoldiers()->at(row));
+				Soldier* const sol (_base->getSoldiers()->at(r));
 
-				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+				_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(r));
 				_base->getSoldiers()->insert(
 										_base->getSoldiers()->begin(),
 										sol);
@@ -460,23 +448,23 @@ void SoldiersState::lstRightArrowClick(Action* action)
 	const size_t qtySoldiers (_base->getSoldiers()->size());
 	if (qtySoldiers > 0u)
 	{
-		const size_t row (_lstSoldiers->getSelectedRow());
-		if (row < qtySoldiers - 1u)
+		const size_t r (_lstSoldiers->getSelectedRow());
+		if (r < qtySoldiers - 1u)
 		{
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
 				{
-					Soldier* const sol (_base->getSoldiers()->at(row));
+					Soldier* const sol (_base->getSoldiers()->at(r));
 
-					_base->getSoldiers()->at(row) = _base->getSoldiers()->at(row + 1u);
-					_base->getSoldiers()->at(row + 1u) = sol;
+					_base->getSoldiers()->at(r) = _base->getSoldiers()->at(r + 1u);
+					_base->getSoldiers()->at(r + 1u) = sol;
 
-					if (row != _lstSoldiers->getVisibleRows() - 1u + _lstSoldiers->getScroll())
+					if (r != _lstSoldiers->getVisibleRows() + _lstSoldiers->getScroll() - 1u)
 						SDL_WarpMouse(
 								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
-														+ static_cast<int>(8. * action->getScaleY())));
+								static_cast<Uint16>(action->getTopBlackBand()  + action->getMouseY()
+									+ static_cast<int>(8. * action->getScaleY())));
 					else
 					{
 						_base->setRecallRow(
@@ -491,9 +479,9 @@ void SoldiersState::lstRightArrowClick(Action* action)
 
 				case SDL_BUTTON_RIGHT:
 				{
-					Soldier* const sol (_base->getSoldiers()->at(row));
+					Soldier* const sol (_base->getSoldiers()->at(r));
 
-					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + row);
+					_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(r));
 					_base->getSoldiers()->insert(
 											_base->getSoldiers()->end(),
 											sol);

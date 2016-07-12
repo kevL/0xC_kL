@@ -132,8 +132,6 @@ private:
 		/// Handler for changing the text on the name-edit.
 		void edtLabelChange(Action* action);
 
-		/// Handler for selecting Bases.
-		void handleKeyPress(Action* action);
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Transfers button.
@@ -143,8 +141,10 @@ private:
 		/// Handler for clicking the Monthly Costs button.
 		void btnMonthlyCostsClick(Action* action);
 
+		/// Handler for selecting Bases.
+		void miniKeyPress(Action* action);
 		/// Handler for clicking the MiniBase view.
-		void miniClick(Action* action);
+		void miniMouseClick(Action* action);
 		/// Handler for hovering the MiniBase view.
 		void miniMouseOver(Action* action);
 		/// Handler for hovering out of the MiniBase view.

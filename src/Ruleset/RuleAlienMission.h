@@ -112,7 +112,8 @@ private:
 		{ return _waves[index]; }
 
 		/// Gets the score of the AlienMission rule.
-		int getMissionScore() const;
+		int getMissionScore() const
+		{ return _score; }
 
 		/// Gets the objective-type of the AlienMission rule.
 		MissionObjective getObjectiveType() const
@@ -121,15 +122,16 @@ private:
 		/// Gets the UFO type for special spawns.
 		const std::string& getObjectiveUfo() const
 		{ return _objectiveUfo; }
-		/// Gets the zone for spawning a site or base.
+		/// Gets the zone for creating a TerrorSite or AlienBase.
 		size_t getObjectiveZone() const
 		{ return _objectiveZone; }
 
-		/// Gets the chances of this mission based on the game-time.
-		int getWeight(size_t monthsPassed) const;
+		/// Gets the chance of the AlienMission based on GT.
+		int getWeight(size_t elapsed) const;
 
-		/// Gets the basic odds of this mission spawning a retaliation mission.
-		int getRetaliation() const;
+		/// Gets the basic odds of XCOM resistance creating a retaliation-mission.
+		int getRetaliation() const
+		{ return _retalCoef; }
 
 		/// The type of TerrorSite to spawn if any.
 		const std::string& getTerrorType() const

@@ -72,10 +72,10 @@ OptionsConfirmState::OptionsConfirmState(OptionsOrigin origin)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick((ActionHandler)& OptionsConfirmState::btnYesClick);
+	_btnYes->onMouseClick(static_cast<ActionHandler>(&OptionsConfirmState::btnYesClick));
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick((ActionHandler)& OptionsConfirmState::btnNoClick);
+	_btnNo->onMouseClick(static_cast<ActionHandler>(&OptionsConfirmState::btnNoClick));
 	// no keyboard shortcuts to make sure users can see the message
 
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -89,7 +89,7 @@ OptionsConfirmState::OptionsConfirmState(OptionsOrigin origin)
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();
 
-	_timer->onTimer((StateHandler)& OptionsConfirmState::countdown);
+	_timer->onTimer(static_cast<StateHandler>(&OptionsConfirmState::countdown));
 	_timer->start();
 }
 

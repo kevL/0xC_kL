@@ -72,16 +72,13 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 
 	_btnExit->setText(tr("STR_OK"));
 	_btnExit->setColor(uPed_GREEN_SLATE);
-	_btnExit->onMouseClick((ActionHandler)& ExtraAlienInfoState::btnExit);
-	_btnExit->onKeyboardPress(
-					(ActionHandler)& ExtraAlienInfoState::btnExit,
-					Options::keyOk);
-	_btnExit->onKeyboardPress(
-					(ActionHandler)& ExtraAlienInfoState::btnExit,
-					Options::keyOkKeypad);
-	_btnExit->onKeyboardPress(
-					(ActionHandler)& ExtraAlienInfoState::btnExit,
-					Options::keyCancel);
+	_btnExit->onMouseClick(		static_cast<ActionHandler>(&ExtraAlienInfoState::btnExit));
+	_btnExit->onKeyboardPress(	static_cast<ActionHandler>(&ExtraAlienInfoState::btnExit),
+								Options::keyOk);
+	_btnExit->onKeyboardPress(	static_cast<ActionHandler>(&ExtraAlienInfoState::btnExit),
+								Options::keyOkKeypad);
+	_btnExit->onKeyboardPress(	static_cast<ActionHandler>(&ExtraAlienInfoState::btnExit),
+								Options::keyCancel);
 
 	_lstInfo->setColumns(2, 125,25);
 	_lstInfo->setColor(uPed_BLUE_SLATE);
@@ -96,7 +93,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 
 	std::string type;
 	if (defs->id.find("_AUTOPSY") != std::string::npos)
-		type = defs->id.substr(0, defs->id.length() - 8);
+		type = defs->id.substr(0u, defs->id.length() - 8u);
 	else
 		type = defs->id;
 
@@ -113,8 +110,8 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 
 	if (unitRule != nullptr)
 	{
-		const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unitRule->getArmorType()));
-		size_t row (0);
+		const RuleArmor* const arRule (_game->getRuleset()->getArmor(unitRule->getArmorType()));
+		size_t r (0u);
 		DamageType dType;
 		int vulnr;
 
@@ -127,18 +124,18 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 			type = ArticleState::getDamageTypeText(dType);
 			if (type != "STR_UNKNOWN")
 			{
-				vulnr = static_cast<int>(Round(armorRule->getDamageModifier(dType) * 100.f));
+				vulnr = static_cast<int>(Round(arRule->getDamageModifier(dType) * 100.f));
 				_lstInfo->addRow(
 							2,
 							tr(type).c_str(),
 							Text::formatPercent(vulnr).c_str());
-				_lstInfo->setCellColor(row++, 1, uPed_GREEN_SLATE);
+				_lstInfo->setCellColor(r++, 1u, uPed_GREEN_SLATE);
 			}
 		}
 
 		if (unitRule->isLivingWeapon() == true)
 		{
-			type = unitRule->getRace().substr(4) + "_WEAPON";
+			type = unitRule->getRace().substr(4u) + "_WEAPON";
 			const RuleItem* const itRule (_game->getRuleset()->getItemRule(type));
 			if (itRule != nullptr)
 			{
@@ -157,8 +154,8 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 									tr("STR_WEAPON").c_str(),
 									wstPower.c_str(),
 									tr(type).c_str());
-					_lstWeapon->setCellColor(0,1, uPed_GREEN_SLATE);
-					_lstWeapon->setCellColor(0,2, uPed_GREEN_SLATE);
+					_lstWeapon->setCellColor(0u,1u, uPed_GREEN_SLATE);
+					_lstWeapon->setCellColor(0u,2u, uPed_GREEN_SLATE);
 				}
 			}
 		}

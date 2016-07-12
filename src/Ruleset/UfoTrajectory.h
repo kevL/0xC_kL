@@ -59,7 +59,7 @@ class UfoTrajectory
 {
 
 private:
-	size_t _groundTimer;
+	int _groundTimer;
 	std::string _id;
 
 	std::vector<TrajectoryWaypoint> _waypoints;
@@ -111,7 +111,7 @@ private:
 		 * Gets the number of seconds that a UFO should spend on the ground.
 		 * @return, seconds
 		 */
-		size_t groundTimer() const
+		int groundTimer() const
 		{ return _groundTimer; }
 };
 

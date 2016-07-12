@@ -116,9 +116,8 @@ void BattleItem::load(const YAML::Node& node)
 
 /**
  * Loads a deleted item from a YAML file.
- * @param node - YAML node
  */
-void BattleItem::loadDeleted(const YAML::Node& node)
+void BattleItem::loadDeleted()
 {
 	_xcomProperty = true;
 }

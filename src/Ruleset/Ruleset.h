@@ -98,6 +98,7 @@ private:
 		_defeatScore,
 		_firstGrenade,
 		_retalCoef,
+		_scoreBaseLost,
 
 		_costEngineer,
 		_costScientist,
@@ -196,7 +197,7 @@ private:
 
 	/// Loads all ruleset-files from a directory.
 	void loadFiles(const std::string& dir);
-	/// Loads a ruleset-file that's in YAML.
+	/// Loads a ruleset-file in YAML.
 	void loadFile(const std::string& file);
 
 	/// Loads a ruleset-element.
@@ -292,7 +293,7 @@ private:
 		const std::vector<std::string>& getDeploymentsList() const;
 
 		/// Gets the rules for Armor types.
-		RuleArmor* getArmor(const std::string& name) const;
+		RuleArmor* getArmor(const std::string& type) const;
 		/// Gets the available Armors.
 		const std::vector<std::string>& getArmorsList() const;
 
@@ -429,6 +430,8 @@ private:
 		int getDefeatFunds() const;
 		/// Gets low-score threshold for defeat condition.
 		int getDefeatScore() const;
+		/// Gets the player-penalty for losing a Base.
+		int getBaseLostScore() const;
 
 		/// Gets the current Game-ptr.
 		const Game* getGame() const;

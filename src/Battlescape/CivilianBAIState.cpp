@@ -258,7 +258,7 @@ void CivilianBAIState::setupEscape() // private.
 			else if (_escapeAction->posTarget.z >= _battleSave->getMapSizeZ())
 				_escapeAction->posTarget.z = _battleSave->getMapSizeZ();
 		}
-		i += RNG::generate(1,10);
+		i += static_cast<size_t>(RNG::generate(1,10));
 
 
 		if (_unitAggro != nullptr)

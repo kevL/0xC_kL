@@ -1050,6 +1050,7 @@ firstGrenade: 0
 retalCoef: 3
 defeatScore: -1000
 defeatFunds: -1000000
+scoreBaseLost: 10 #per facility per diff
 font: Font.dat
 cutscenes:
   - type: intro

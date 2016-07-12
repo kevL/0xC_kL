@@ -138,10 +138,10 @@ void UnitTurnBState::init()
 					switch (_parent->getTileEngine()->unitOpensDoor(_unit))
 					{
 						case DR_WOOD_OPEN:
-							soundId = ResourcePack::DOOR_OPEN;
+							soundId = static_cast<int>(ResourcePack::DOOR_OPEN);
 							break;
 						case DR_UFO_OPEN:
-							soundId = ResourcePack::SLIDING_DOOR_OPEN;
+							soundId = static_cast<int>(ResourcePack::SLIDING_DOOR_OPEN);
 							break;
 						case DR_ERR_TU:
 							_action.result = BattlescapeGame::PLAYER_ERROR[0u];
@@ -155,7 +155,7 @@ void UnitTurnBState::init()
 					}
 
 					if (soundId != -1)
-						_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+						_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 													->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
 				} // no break;
 

@@ -139,16 +139,13 @@ void ErrorMessageState::create(
 
 	_btnOk->setColor(color);
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ErrorMessageState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ErrorMessageState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ErrorMessageState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ErrorMessageState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ErrorMessageState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ErrorMessageState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ErrorMessageState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ErrorMessageState::btnOkClick),
+							Options::keyCancel);
 
 	if (st.empty() == false)
 		_txtMessage->setText(tr(st));

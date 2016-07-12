@@ -66,10 +66,10 @@ ScrollBar::ScrollBar(
 	_rect.h = 0u;
 
 	_timerScrollMouse = new Timer(122u);
-	_timerScrollMouse->onTimer((SurfaceHandler)& ScrollBar::mouseScroll);
+	_timerScrollMouse->onTimer(static_cast<SurfaceHandler>(&ScrollBar::mouseScroll));
 
 	_timerScrollKey = new Timer(122u);
-	_timerScrollKey->onTimer((SurfaceHandler)& ScrollBar::keyScroll);
+	_timerScrollKey->onTimer(static_cast<SurfaceHandler>(&ScrollBar::keyScroll));
 }
 
 /**
@@ -453,7 +453,7 @@ void ScrollBar::drawButton() // private.
 		_useScalePad = true;
 		_rect.h = BTN_HEIGHT_MIN;
 		const double padFactor (static_cast<double>(BTN_HEIGHT_MIN) / static_cast<double>(_surface->h));
-		_rect.y -= static_cast<Sint16>(static_cast<double>(_rect.y) * padFactor);
+		_rect.y = static_cast<Sint16>(static_cast<double>(_rect.y) - static_cast<double>(_rect.y) * padFactor);
 	}
 
 
@@ -464,41 +464,41 @@ void ScrollBar::drawButton() // private.
 
 	--rect.w;
 	--rect.h;
-	_btn->drawRect(&rect, _color + 2u);
+	_btn->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 2u));
 
 	++rect.x;
 	++rect.y;
-	_btn->drawRect(&rect, _color + 5u);
+	_btn->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 5u));
 
 	--rect.w;
 	--rect.h;
-	_btn->drawRect(&rect, _color + 4u);
+	_btn->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 
 
 	_btn->setPixelColor(
 					static_cast<int>(_rect.x),
 					static_cast<int>(_rect.y),
-					_color + 1u);
+					static_cast<Uint8>(static_cast<unsigned>(_color) + 1u));
 	_btn->setPixelColor(
 					static_cast<int>(_rect.x),
 					static_cast<int>(_rect.y) + static_cast<int>(_rect.h) - 1,
-					_color + 4u);
+					static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 	_btn->setPixelColor(
 					static_cast<int>(_rect.x) + static_cast<int>(_rect.w) - 1,
 					static_cast<int>(_rect.y),
-					_color + 4u);
+					static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 
 	if (_rect.h > BTN_HEIGHT_MIN) // hollow it out
 	{
 		++rect.x;
 		++rect.y;
-		rect.w -= 3u;
-		rect.h -= 3u;
-		_btn->drawRect(&rect, _color + 5u);
+		rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 3u);
+		rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 3u);
+		_btn->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 5u));
 
 		++rect.x;
 		++rect.y;
-		_btn->drawRect(&rect, _color + 2u);
+		_btn->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 2u));
 
 		--rect.w;
 		--rect.h;
@@ -508,15 +508,15 @@ void ScrollBar::drawButton() // private.
 		_btn->setPixelColor(
 						static_cast<int>(_rect.x) + static_cast<int>(_rect.w) - 3,
 						static_cast<int>(_rect.y) + static_cast<int>(_rect.h) - 3,
-						_color + 1u);
+						static_cast<Uint8>(static_cast<unsigned>(_color) + 1u));
 		_btn->setPixelColor(
 						static_cast<int>(_rect.x) + 2,
 						static_cast<int>(_rect.y) + static_cast<int>(_rect.h) - 3,
-						_color + 4u);
+						static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 		_btn->setPixelColor(
 						static_cast<int>(_rect.x) + static_cast<int>(_rect.w) - 3,
 						static_cast<int>(_rect.y) + 2,
-						_color + 4u);
+						static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 	}
 	_btn->unlock();
 }

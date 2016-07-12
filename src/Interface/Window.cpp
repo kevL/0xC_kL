@@ -37,7 +37,7 @@ namespace OpenXcom
 // like 0.076f.
 const float Window::POPUP_SPEED = 0.135f; // larger is faster step.
 
-Sound* Window::soundPopup[3u] = {0,0,0}; // static.
+Sound* Window::soundPopup[3u] = {nullptr, nullptr, nullptr}; // static.
 
 
 /**
@@ -80,7 +80,7 @@ Window::Window(
 		_popProgress(POP_START)
 {
 	_timer = new Timer(16u);
-	_timer->onTimer((SurfaceHandler)& Window::popup);
+	_timer->onTimer(static_cast<SurfaceHandler>(&Window::popup));
 
 	switch (_popType)
 	{
@@ -221,11 +221,11 @@ void Window::draw()
 	if (_contrast == true)	gradient = 2u;
 	else					gradient = 1u;
 
-	color = _color + (gradient * 3u);
+	color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 3u));
 
 	if (_thinBorder == true)
 	{
-		color = _color + gradient;
+		color = static_cast<Uint8>(_color + gradient);
 		for (int
 				i = 0;
 				i != 5;
@@ -245,18 +245,18 @@ void Window::draw()
 			switch (i)
 			{
 				case 0:
-					color = _color + (gradient * 5u);
+					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 5u));
 					setPixelColor(static_cast<int>(rect.w), 0, color);
 					break;
 				case 1:
-					color = _color + (gradient * 2u);
+					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 2u));
 					break;
 				case 2:
-					color = _color + (gradient * 4u);
+					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 4u));
 					setPixelColor(static_cast<int>(rect.w) + 1, 1, color);
 					break;
 				case 3:
-					color = _color + (gradient * 3u);
+					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 3u));
 			}
 		}
 	}
@@ -270,16 +270,16 @@ void Window::draw()
 			if (rect.w > 0u && rect.h > 0u)
 				drawRect(&rect, color);
 
-			if (i < 2)	color -= gradient;
-			else		color += gradient;
+			if (i < 2)	color = static_cast<Uint8>(color - gradient);
+			else		color = static_cast<Uint8>(color + gradient);
 
 			++rect.x;
 			++rect.y;
 
-			if (rect.w > 1u) rect.w -= 2u;
+			if (rect.w > 1u) rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u);
 			else			 rect.w = 0u;
 
-			if (rect.h > 1u) rect.h -= 2u;
+			if (rect.h > 1u) rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
 			else			 rect.h = 0u;
 		}
 	}

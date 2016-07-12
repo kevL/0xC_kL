@@ -105,55 +105,46 @@ OptionsBaseState::OptionsBaseState(OptionsOrigin origin)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnVideo->setText(tr("STR_VIDEO"));
-	_btnVideo->onMousePress(
-					(ActionHandler)& OptionsBaseState::btnGroupPress,
-					SDL_BUTTON_LEFT);
+	_btnVideo->onMousePress(static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
+							SDL_BUTTON_LEFT);
 
 	_btnAudio->setText(tr("STR_AUDIO"));
-	_btnAudio->onMousePress(
-					(ActionHandler)& OptionsBaseState::btnGroupPress,
-					SDL_BUTTON_LEFT);
+	_btnAudio->onMousePress(static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
+							SDL_BUTTON_LEFT);
 
 	_btnControls->setText(tr("STR_CONTROLS"));
-	_btnControls->onMousePress(
-					(ActionHandler)& OptionsBaseState::btnGroupPress,
-					SDL_BUTTON_LEFT);
+	_btnControls->onMousePress(	static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
+								SDL_BUTTON_LEFT);
 
 	_btnGeoscape->setText(tr("STR_GEOSCAPE_UC"));
-	_btnGeoscape->onMousePress(
-					(ActionHandler)& OptionsBaseState::btnGroupPress,
-					SDL_BUTTON_LEFT);
+	_btnGeoscape->onMousePress(	static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
+								SDL_BUTTON_LEFT);
 
 	_btnBattlescape->setText(tr("STR_BATTLESCAPE_UC"));
-	_btnBattlescape->onMousePress(
-					(ActionHandler)& OptionsBaseState::btnGroupPress,
-					SDL_BUTTON_LEFT);
+	_btnBattlescape->onMousePress(	static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
+									SDL_BUTTON_LEFT);
 
 	_btnAdvanced->setText(tr("STR_ADVANCED"));
-	_btnAdvanced->onMousePress(
-					(ActionHandler)& OptionsBaseState::btnGroupPress,
-					SDL_BUTTON_LEFT);
+	_btnAdvanced->onMousePress(	static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
+								SDL_BUTTON_LEFT);
 
 	_btnMods->setText(tr("STR_MODS"));
-	_btnMods->onMousePress(
-					(ActionHandler)& OptionsBaseState::btnGroupPress,
-					SDL_BUTTON_LEFT);
+	_btnMods->onMousePress(	static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
+							SDL_BUTTON_LEFT);
 	_btnMods->setVisible(_origin == OPT_MENU); // Mods require a restart, don't enable them in-game
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& OptionsBaseState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& OptionsBaseState::btnOkClick,
-					Options::keyOk);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&OptionsBaseState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&OptionsBaseState::btnOkClick),
+							Options::keyOk);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& OptionsBaseState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& OptionsBaseState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&OptionsBaseState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&OptionsBaseState::btnCancelClick),
+								Options::keyCancel);
 
 	_btnDefault->setText(tr("STR_RESTORE_DEFAULTS"));
-	_btnDefault->onMouseClick((ActionHandler)& OptionsBaseState::btnDefaultClick);
+	_btnDefault->onMouseClick(static_cast<ActionHandler>(&OptionsBaseState::btnDefaultClick));
 
 	_txtTooltip->setWordWrap();
 }

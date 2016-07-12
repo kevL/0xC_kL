@@ -95,47 +95,39 @@ MainMenuState::MainMenuState()
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnStart->setText(tr("STR_NEW_GAME"));
-	_btnStart->onMouseClick((ActionHandler)& MainMenuState::btnNewGameClick);
-	_btnStart->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnNewGameClick,
-					SDLK_n);
+	_btnStart->onMouseClick(	static_cast<ActionHandler>(&MainMenuState::btnNewGameClick));
+	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnNewGameClick),
+								SDLK_n);
 
 	_btnTactical->setText(tr("STR_NEW_BATTLE"));
-	_btnTactical->onMouseClick((ActionHandler)& MainMenuState::btnNewBattleClick);
-	_btnTactical->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnNewBattleClick,
-					SDLK_t);
+	_btnTactical->onMouseClick(		static_cast<ActionHandler>(&MainMenuState::btnNewBattleClick));
+	_btnTactical->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnNewBattleClick),
+									SDLK_t);
 
 	_btnLoad->setText(tr("STR_LOAD_SAVED_GAME"));
-	_btnLoad->onMouseClick((ActionHandler)& MainMenuState::btnLoadClick);
-	_btnLoad->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnLoadClick,
-					Options::keyOk);
-	_btnLoad->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnLoadClick,
-					Options::keyOkKeypad);
-	_btnLoad->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnLoadClick,
-					SDLK_l);
+	_btnLoad->onMouseClick(		static_cast<ActionHandler>(&MainMenuState::btnLoadClick));
+	_btnLoad->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnLoadClick),
+								Options::keyOk);
+	_btnLoad->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnLoadClick),
+								Options::keyOkKeypad);
+	_btnLoad->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnLoadClick),
+								SDLK_l);
 
 //	_btnOptions->setText(tr("STR_OPTIONS"));
-//	_btnOptions->onMouseClick((ActionHandler)& MainMenuState::btnOptionsClick);
+//	_btnOptions->onMouseClick(static_cast<ActionHandler>(&MainMenuState::btnOptionsClick));
 //	_btnOptions->setVisible(false);
 
 	_btnIntro->setText(tr("STR_PLAYINTRO"));
-	_btnIntro->onMouseClick((ActionHandler)& MainMenuState::btnPlayIntroClick);
-	_btnIntro->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnPlayIntroClick,
-					SDLK_i);
+	_btnIntro->onMouseClick(	static_cast<ActionHandler>(&MainMenuState::btnPlayIntroClick));
+	_btnIntro->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnPlayIntroClick),
+								SDLK_i);
 
 	_btnQuit->setText(tr("STR_QUIT"));
-	_btnQuit->onMouseClick((ActionHandler)& MainMenuState::btnQuitClick);
-	_btnQuit->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnQuitClick,
-					Options::keyCancel);
-	_btnQuit->onKeyboardPress(
-					(ActionHandler)& MainMenuState::btnQuitClick,
-					SDLK_q);
+	_btnQuit->onMouseClick(		static_cast<ActionHandler>(&MainMenuState::btnQuitClick));
+	_btnQuit->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnQuitClick),
+								Options::keyCancel);
+	_btnQuit->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnQuitClick),
+								SDLK_q);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();

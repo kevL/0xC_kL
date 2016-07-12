@@ -28,8 +28,8 @@ namespace OpenXcom
 bool NumberText::init = true; // static.
 
 Surface
-	* NumberText::_chars[DIGITS + 1u] = {},		// static.
-	* NumberText::_charsBorder[DIGITS] = {};	// static.
+	* NumberText::_chars[DIGITS + 1u]  {},	// static.
+	* NumberText::_charsBorder[DIGITS] {};	// static.
 
 
 /**
@@ -385,7 +385,7 @@ void NumberText::draw()
 	oststr << _value;
 	const std::string st (oststr.str());
 
-	int x (0);
+	int dx (0);
 	if (_bordered == false)
 	{
 		for (std::string::const_iterator
@@ -393,15 +393,15 @@ void NumberText::draw()
 				i != st.end();
 				++i)
 		{
-			_chars[*i - '0']->setX(x);
+			_chars[*i - '0']->setX(dx);
 			_chars[*i - '0']->setY(0);
 			_chars[*i - '0']->blit(this);
-			x += _chars[*i - '0']->getWidth() + 1;
+			dx += _chars[*i - '0']->getWidth() + 1;
 		}
 
 		if (_append == true)
 		{
-			_chars[10u]->setX(x);
+			_chars[10u]->setX(dx);
 			_chars[10u]->setY(0);
 			_chars[10u]->blit(this);
 		}
@@ -413,10 +413,10 @@ void NumberText::draw()
 				i != st.end();
 				++i)
 		{
-			_charsBorder[*i - '0']->setX(x);
+			_charsBorder[*i - '0']->setX(dx);
 			_charsBorder[*i - '0']->setY(0);
 			_charsBorder[*i - '0']->blit(this);
-			x += _chars[*i - '0']->getWidth() + 1;
+			dx += _chars[*i - '0']->getWidth() + 1;
 		}
 
 		if (_colorBorder != 0u)

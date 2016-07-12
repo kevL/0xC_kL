@@ -141,12 +141,12 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 	_lstInfo->addRow(
 				2,
 				tr("STR_CONSTRUCTION_TIME").c_str(),
-				tr("STR_DAY", facRule->getBuildTime()).c_str());
+				tr("STR_DAY", static_cast<unsigned>(facRule->getBuildTime())).c_str());
 	_lstInfo->setCellColor(0u,1u, BASESCAPE_WHITE);
 
 	std::wostringstream woststr;
 
-	woststr << Text::formatCurrency(facRule->getBuildCost());
+	woststr << Text::formatCurrency(facRule->getBuildCost()); // NOTE: Does not consider diff-inflation.
 	_lstInfo->addRow(
 				2,
 				tr("STR_CONSTRUCTION_COST").c_str(),
@@ -155,7 +155,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 
 	woststr.str(L"");
 //	woststr.clear();
-	woststr << Text::formatCurrency(facRule->getMonthlyCost());
+	woststr << Text::formatCurrency(facRule->getMonthlyCost()); // NOTE: Does not consider diff-inflation.
 	_lstInfo->addRow(
 				2,
 				tr("STR_MAINTENANCE_COST").c_str(),

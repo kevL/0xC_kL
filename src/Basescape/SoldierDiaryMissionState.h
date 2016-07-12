@@ -38,7 +38,7 @@ class Window;
 /**
  * A small window that shows mission-details for a Soldier.
  */
-class SoldierDiaryMissionState
+class SoldierDiaryMissionState final
 	:
 		public State
 {
@@ -47,8 +47,8 @@ private:
 	static const Uint8 BLACK = 14u;
 
 	size_t
-		_soldierId,
-		_rowEntry;
+		_solId,
+		_rowOverview;
 	Uint8 _color;
 
 	Base* _base;
@@ -79,8 +79,8 @@ private:
 		/// Creates a SoldierDiaryMission state.
 		SoldierDiaryMissionState(
 				Base* const base,
-				size_t soldierId,
-				size_t rowEntry);
+				size_t solId,
+				size_t rowOverview);
 		/// Cleans up the SoldierDiaryMission state.
 		~SoldierDiaryMissionState();
 

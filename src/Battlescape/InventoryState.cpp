@@ -151,7 +151,7 @@ InventoryState::InventoryState(
 
 	_inventoryPanel	= new Inventory(
 								_game,
-								320,200,
+//								320,200,
 								0,0,
 								_parent == nullptr);
 
@@ -249,107 +249,90 @@ InventoryState::InventoryState(
 	_txtAmmo->setAlign(ALIGN_LEFT);
 	_txtAmmo->setHighContrast();
 
-	_btnOk->onMouseClick((ActionHandler)& InventoryState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnOkClick,
-					Options::keyBattleInventory);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnOkClick),
+							Options::keyBattleInventory);
+//	_btnOk->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnOk->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnOk->setTooltip("STR_OK");
-//	_btnOk->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnOk->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnPrev->onMouseClick((ActionHandler)& InventoryState::btnPrevClick);
-	_btnPrev->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnPrevClick,
-					Options::keyBattlePrevUnit);
-	_btnPrev->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnPrevClick,
-					SDLK_LEFT);
-	_btnPrev->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnPrevClick,
-					SDLK_KP4);
+	_btnPrev->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnPrevClick));
+	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnPrevClick),
+								Options::keyBattlePrevUnit);
+	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnPrevClick),
+								SDLK_LEFT);
+	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnPrevClick),
+								SDLK_KP4);
+//	_btnPrev->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnPrev->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnPrev->setTooltip("STR_PREVIOUS_UNIT");
-//	_btnPrev->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnPrev->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnNext->onMouseClick((ActionHandler)& InventoryState::btnNextClick);
-	_btnNext->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnNextClick,
-					Options::keyBattleNextUnit);
-	_btnNext->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnNextClick,
-					SDLK_RIGHT);
-	_btnNext->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnNextClick,
-					SDLK_KP6);
+	_btnNext->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnNextClick));
+	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnNextClick),
+								Options::keyBattleNextUnit);
+	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnNextClick),
+								SDLK_RIGHT);
+	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnNextClick),
+								SDLK_KP6);
+//	_btnNext->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnNext->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnNext->setTooltip("STR_NEXT_UNIT");
-//	_btnNext->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnNext->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnUnload->onMouseClick((ActionHandler)& InventoryState::btnLoadIconClick);
-	_btnUnload->onMouseClick(
-					(ActionHandler)& InventoryState::btnSaveLayouts,
-					SDL_BUTTON_RIGHT);
-//	_btnUnload->onMouseClick((ActionHandler)& InventoryState::btnLoadIconClick);
+	_btnUnload->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnLoadIconClick));
+	_btnUnload->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnSaveLayouts),
+								SDL_BUTTON_RIGHT);
+//	_btnUnload->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnLoadIconClick));
+//	_btnUnload->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnUnload->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnUnload->setTooltip("STR_UNLOAD_WEAPON");
-//	_btnUnload->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnUnload->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_inventoryPanel->onMousePress((ActionHandler)& InventoryState::btnGroundPress);
+	_inventoryPanel->onMousePress(static_cast<ActionHandler>(&InventoryState::btnGroundPress));
 
-	_btnGroundL->onMouseClick((ActionHandler)& InventoryState::btnGroundClick);
-	_btnGroundL->onMouseClick(
-					(ActionHandler)& InventoryState::btnClearGroundClick,
-					SDL_BUTTON_RIGHT);
+	_btnGroundL->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnGroundClick));
+	_btnGroundL->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnClearGroundClick),
+								SDL_BUTTON_RIGHT);
 
-	_btnGroundR->onMouseClick((ActionHandler)& InventoryState::btnGroundClick);
-	_btnGroundR->onMouseClick(
-					(ActionHandler)& InventoryState::btnClearUnitClick,
-					SDL_BUTTON_RIGHT);
-	_btnGroundR->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnClearUnitClick,
-					Options::keyInvClear);
+	_btnGroundR->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnGroundClick));
+	_btnGroundR->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
+									SDL_BUTTON_RIGHT);
+	_btnGroundR->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
+									Options::keyInvClear);
+//	_btnGroundR->onMouseIn(			static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnGroundR->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnGroundR->setTooltip("STR_SCROLL_RIGHT");
-//	_btnGroundR->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnGroundR->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-	_btnRank->onMouseClick((ActionHandler)& InventoryState::btnRankClick);
+	_btnRank->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnRankClick));
+//	_btnRank->onMouseIn(	static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnRank->onMouseOut(	static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnRank->setTooltip("STR_UNIT_STATS");
-//	_btnRank->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnRank->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
 
-/*	_btnCreateTemplate->onMouseClick((ActionHandler)& InventoryState::btnCreateTemplateClick);
-	_btnCreateTemplate->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnCreateTemplateClick,
-					Options::keyInvCreateTemplate); */
+/*	_btnCreateTemplate->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnCreateTemplateClick));
+	_btnCreateTemplate->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnCreateTemplateClick),
+										Options::keyInvCreateTemplate); */
+//	_btnCreateTemplate->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnCreateTemplate->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnCreateTemplate->setTooltip("STR_CREATE_INVENTORY_TEMPLATE");
-//	_btnCreateTemplate->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnCreateTemplate->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-/*	_btnApplyTemplate->onMouseClick((ActionHandler)& InventoryState::btnApplyTemplateClick);
-	_btnApplyTemplate->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnApplyTemplateClick,
-					Options::keyInvApplyTemplate); */
+/*	_btnApplyTemplate->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnApplyTemplateClick));
+	_btnApplyTemplate->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnApplyTemplateClick),
+										Options::keyInvApplyTemplate); */
+//	_btnApplyTemplate->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnApplyTemplate->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnApplyTemplate->setTooltip("STR_APPLY_INVENTORY_TEMPLATE");
-//	_btnApplyTemplate->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnApplyTemplate->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
-/*	_btnClearInventory->onMouseClick((ActionHandler)& InventoryState::btnClearUnitClick);
-	_btnClearInventory->onKeyboardPress(
-					(ActionHandler)& InventoryState::btnClearUnitClick,
-					Options::keyInvClear); */
+/*	_btnClearInventory->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnClearUnitClick));
+	_btnClearInventory->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
+										Options::keyInvClear); */
+//	_btnClearInventory->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnClearInventory->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnClearInventory->setTooltip("STR_CLEAR_INVENTORY");
-//	_btnClearInventory->onMouseIn((ActionHandler)& InventoryState::txtTooltipIn);
-//	_btnClearInventory->onMouseOut((ActionHandler)& InventoryState::txtTooltipOut);
 
 
 	// only use copy/paste layout-template buttons in setup (i.e. non-tu) mode
@@ -365,9 +348,10 @@ InventoryState::InventoryState(
 //	_inventoryPanel->setSelectedUnitInventory(_battleSave->getSelectedUnit());
 	_inventoryPanel->drawGrids();
 	_inventoryPanel->setTuMode(_tuMode);
-	_inventoryPanel->onMouseClick((ActionHandler)& InventoryState::inClick, 0u);
-	_inventoryPanel->onMouseOver((ActionHandler)& InventoryState::inMouseOver);
-	_inventoryPanel->onMouseOut((ActionHandler)& InventoryState::inMouseOut);
+	_inventoryPanel->onMouseClick(	static_cast<ActionHandler>(&InventoryState::inClick),
+									0u);
+	_inventoryPanel->onMouseOver(	static_cast<ActionHandler>(&InventoryState::inMouseOver));
+	_inventoryPanel->onMouseOut(	static_cast<ActionHandler>(&InventoryState::inMouseOut));
 
 	_txtTUs->setVisible(_tuMode);
 	_txtUseTU->setVisible(_tuMode);
@@ -1087,8 +1071,8 @@ void InventoryState::inClick(Action*)
 
 						++rect.x;
 						++rect.y;
-						rect.w -= 2u;
-						rect.h -= 2u;
+						rect.w = static_cast<Uint16>(rect.w - 2u);
+						rect.h = static_cast<Uint16>(rect.h - 2u);
 						_srfLoad->drawRect(&rect, 15u);
 
 						aItem->getRules()->drawHandSprite(
@@ -1172,8 +1156,8 @@ void InventoryState::inMouseOver(Action*)
 
 							++rect.x;
 							++rect.y;
-							rect.w -= 2u;
-							rect.h -= 2u;
+							rect.w = static_cast<Uint16>(rect.w - 2u);
+							rect.h = static_cast<Uint16>(rect.h - 2u);
 							_srfLoad->drawRect(&rect, 15u);
 
 							aItem->getRules()->drawHandSprite(

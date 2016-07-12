@@ -81,19 +81,16 @@ ResearchListState::ResearchListState(
 	_lstResearch->setBackground(_window);
 	_lstResearch->setSelectable();
 	_lstResearch->setAlign(ALIGN_CENTER);
-	_lstResearch->onMouseClick((ActionHandler)& ResearchListState::onSelectProject);
+	_lstResearch->onMouseClick(static_cast<ActionHandler>(&ResearchListState::onSelectProject));
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& ResearchListState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ResearchListState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ResearchListState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& ResearchListState::btnCancelClick,
-					Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ResearchListState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ResearchListState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ResearchListState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ResearchListState::btnCancelClick),
+								Options::keyOkKeypad);
 }
 
 /**
@@ -152,7 +149,7 @@ void ResearchListState::fillProjectList() // private.
 	_resRules.clear();
 	_lstResearch->clearList();
 
-	size_t row (0u);
+	size_t r (0u);
 
 	const std::vector<ResearchProject*>& currentProjects (_base->getResearch());
 	for (std::vector<ResearchProject*>::const_iterator
@@ -171,7 +168,7 @@ void ResearchListState::fillProjectList() // private.
 				wst += L" (" + Text::intWide((*i)->getSpent()) + L")";
 
 			_lstResearch->addRow(1, wst.c_str());
-			_lstResearch->setRowColor(row++, GRAY);
+			_lstResearch->setRowColor(r++, GRAY);
 
 			_offlineProjects.push_back(*i);
 			++_cutoff;
@@ -195,9 +192,9 @@ void ResearchListState::fillProjectList() // private.
 			if (_game->getRuleset()->getUnitRule(type) != nullptr // mark researched aliens yellow.
 				&& _game->getSavedGame()->isResearched(type) == true)
 			{
-				_lstResearch->setRowColor(row, color, true);
+				_lstResearch->setRowColor(r, color, true);
 			}
-			++row;
+			++r;
 			++i;
 		}
 		else						// no-cost project.

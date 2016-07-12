@@ -57,10 +57,12 @@ SelectStartFacilityState::SelectStartFacilityState(
 	_facilities = _game->getRuleset()->getCustomBaseFacilities();
 
 	_btnOk->setText(tr("STR_RESET"));
-	_btnOk->onMouseClick((ActionHandler)& SelectStartFacilityState::btnOkClick);
-	_btnOk->onKeyboardPress(nullptr, Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SelectStartFacilityState::btnResetClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SelectStartFacilityState::btnResetClick),
+							Options::keyCancel);
+//	_btnOk->onKeyboardPress(nullptr, Options::keyCancel);
 
-	_lstFacilities->onMouseClick((ActionHandler)& SelectStartFacilityState::lstFacilitiesClick);
+	_lstFacilities->onMouseClick(static_cast<ActionHandler>(&SelectStartFacilityState::lstFacilitiesClick));
 
 	populateBuildList();
 }
@@ -90,7 +92,8 @@ void SelectStartFacilityState::populateBuildList() // virtual. Cf, BuildFaciliti
  * Resets the base-building procedure.
  * @param action - pointer to an Action
  */
-void SelectStartFacilityState::btnOkClick(Action*)
+//void SelectStartFacilityState::btnOkClick(Action*)
+void SelectStartFacilityState::btnResetClick(Action*)
 {
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _base->getFacilities()->begin();
@@ -125,7 +128,7 @@ void SelectStartFacilityState::lstFacilitiesClick(Action*)
  */
 void SelectStartFacilityState::facilityBuilt()
 {
-	_facilities.erase(_facilities.begin() + _lstFacilities->getSelectedRow());
+	_facilities.erase(_facilities.begin() + static_cast<std::ptrdiff_t>(_lstFacilities->getSelectedRow()));
 
 	if (_facilities.empty() == false)
 		populateBuildList();

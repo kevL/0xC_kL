@@ -64,16 +64,13 @@ SoldierDiedState::SoldierDiedState(
 
 	_btnOk->setColor(CYAN);
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SoldierDiedState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiedState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiedState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiedState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldierDiedState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiedState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiedState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiedState::btnOkClick),
+							Options::keyCancel);
 
 	std::wstring msg (name);
 	msg += L'\n';

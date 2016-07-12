@@ -65,11 +65,11 @@ ListSaveState::ListSaveState(OptionsOrigin origin)
 	_edtSave->setColor(Palette::blockOffset(10u)); // geo:SLATE
 	_edtSave->setHighContrast();
 	_edtSave->setVisible(false);
-	_edtSave->onKeyboardPress((ActionHandler)& ListSaveState::keySavePress);
+	_edtSave->onKeyboardPress(static_cast<ActionHandler>(&ListSaveState::keySavePress));
 	// note: BasescapeState, eg, uses onChange handler.
 
 	_btnSaveGame->setText(tr("STR_OK"));
-	_btnSaveGame->onMouseClick((ActionHandler)& ListSaveState::btnSaveClick);
+	_btnSaveGame->onMouseClick(static_cast<ActionHandler>(&ListSaveState::btnSaveClick));
 	_btnSaveGame->setVisible(false);
 
 	centerAllSurfaces();
@@ -145,9 +145,9 @@ void ListSaveState::lstSavesPress(Action* action)
 				_edtSave->setText(_label);
 
 				_edtSave->setX(_lstSaves->getColumnX(0));
-				_edtSave->setY(_lstSaves->getRowY(_selected));
+				_edtSave->setY(_lstSaves->getRowY(static_cast<size_t>(_selected)));
 				_edtSave->setVisible();
-				_edtSave->setFocus(true, false); // note: modal=false allows keypress Enter to save.
+				_edtSave->setFocusEdit(true, false); // NOTE: modal=false allows keypress Enter to save.
 
 				ListGamesState::disableSort();
 				break;
@@ -178,7 +178,7 @@ void ListSaveState::keySavePress(Action* action)
 			_lstSaves->setScrollable();
 
 			_edtSave->setVisible(false);
-			_edtSave->setFocus(false);
+			_edtSave->setFocus(false); // NOTE: Not using setFocusEdit().
 
 			_lstSaves->setCellText(
 								_lstSaves->getSelectedRow(),

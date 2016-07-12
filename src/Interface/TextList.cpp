@@ -395,7 +395,7 @@ void TextList::addRow(
 			++i)
 	{
 		Text* const txt (new Text(
-								_columns[i],
+								static_cast<int>(_columns[i]),
 								_font->getHeight(),
 								rowOffset_x + _margin,
 								rowOffset_y));
@@ -405,8 +405,8 @@ void TextList::addRow(
 		txt->setColor(_color);
 		txt->setSecondaryColor(_color2);
 
-		if (_align[i] != ALIGN_LEFT)
-			txt->setAlign(_align[i]);
+		if (_align[static_cast<int>(i)] != ALIGN_LEFT)
+			txt->setAlign(_align[static_cast<int>(i)]);
 
 		txt->setHighContrast(_contrast);
 
@@ -441,7 +441,7 @@ void TextList::addRow(
 		{
 			std::wstring buf (txt->getText());
 
-			size_t width (txt->getTextWidth());
+			size_t width (static_cast<size_t>(txt->getTextWidth()));
 			while (width < _columns[i])
 			{
 				width += static_cast<size_t>(static_cast<int>(_font->getChar('.')->getCrop()->w) + _font->getSpacing());
@@ -542,7 +542,7 @@ void TextList::setColumns(
 			i = 0;
 			i != cols;
 			++i)
-		_columns.push_back(va_arg(args, int));
+		_columns.push_back(static_cast<size_t>(va_arg(args, int)));
 
 	va_end(args);
 }
@@ -750,16 +750,19 @@ void TextList::setAlign(
 		TextHAlign align,
 		int col)
 {
-	if (col == -1)
+	switch (col)
 	{
-		for (size_t
-				i = 0u;
-				i != _columns.size();
-				++i)
-			_align[i] = align;
+		case -1:
+			for (int
+					i = 0;
+					i != static_cast<int>(_columns.size());
+					++i)
+				_align[i] = align;
+			break;
+
+		default:
+			_align[col] = align;
 	}
-	else
-		_align[static_cast<size_t>(col)] = align;
 }
 
 /**
@@ -832,10 +835,10 @@ void TextList::setCondensed(bool condensed)
  */
 size_t TextList::getSelectedRow() const
 {
-	if (_rows.empty() == true || _selRow > _rows.size() - 1u)
-		return std::numeric_limits<size_t>::max();
+	if (_rows.empty() == false && _selRow < _rows.size())
+		return _rows[_selRow];
 
-	return _rows[_selRow];
+	return std::numeric_limits<size_t>::max();
 }
 
 /**
@@ -844,8 +847,7 @@ size_t TextList::getSelectedRow() const
  */
 void TextList::setBackground(Surface* bg)
 {
-	_bg = bg;
-	_scrollbar->setBackground(_bg);
+	_scrollbar->setBackground(_bg = bg);
 }
 
 /**
@@ -1379,12 +1381,11 @@ void TextList::mouseOver(Action* action, State* state)
 	if (_selectable == true)
 	{
 		int h (_font->getHeight() + _font->getSpacing());
-		_selRow = std::max(0,
-						   static_cast<int>(_scroll)
-						 + static_cast<int>(std::floor(action->getRelativeMouseY()
-						/ (static_cast<double>(h) * action->getScaleY()))));
+		_selRow = std::max(0u,
+						   _scroll + static_cast<size_t>(std::floor(action->getRelativeMouseY()
+										/ (static_cast<double>(h) * action->getScaleY()))));
 
-		if (_selRow < _texts.size()
+		if (   _selRow < _texts.size()
 			&& _selRow < _scroll + _visibleRows
 			&& _texts[_selRow][0u]->getText().empty() == false)	// kL_add. Don't highlight rows w/out text in first column.
 		{														// This is currently only a special case in Battlescape/CeremonyState(cTor)

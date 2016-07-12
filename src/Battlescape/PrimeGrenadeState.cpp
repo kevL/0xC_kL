@@ -123,7 +123,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 
 	if (Options::battleInstantGrenade == true)
 	{
-		_isfBtn0->onMouseClick((ActionHandler)& PrimeGrenadeState::btnClick);
+		_isfBtn0->onMouseClick(static_cast<ActionHandler>(&PrimeGrenadeState::btnClick));
 
 		_txtTurn0 = new Text(190, 18, 66, 67);
 		add(_txtTurn0);
@@ -142,7 +142,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 			++i)
 	{
 		add(_isfBtn[i]);
-		_isfBtn[i]->onMouseClick((ActionHandler)& PrimeGrenadeState::btnClick);
+		_isfBtn[i]->onMouseClick(static_cast<ActionHandler>(&PrimeGrenadeState::btnClick));
 
 		SDL_Rect rect;
 
@@ -156,8 +156,8 @@ PrimeGrenadeState::PrimeGrenadeState(
 
 		++rect.x; // inside fill
 		++rect.y;
-		rect.w -= 2u;
-		rect.h -= 2u;
+		rect.w = static_cast<Uint16>(rect.w - 2u);
+		rect.h = static_cast<Uint16>(rect.h - 2u);
 		_isfBtn[i]->drawRect(
 						&rect,
 						static_cast<Uint8>(el->color2));

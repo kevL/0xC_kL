@@ -97,7 +97,7 @@ LoadGameState::LoadGameState(
 		case SAVE_AUTO_BATTLESCAPE:
 			_file = SavedGame::AUTOSAVE_BATTLESCAPE;
 	}
-	buildUi(palette, true);
+	buildUi(palette);
 }
 
 /**
@@ -112,37 +112,29 @@ LoadGameState::~LoadGameState()
 
 /**
  * Builds the interface.
- * @param palette	- pointer to parent-state palette
- * @param dropText	- true if loading without a window (eg. quickload)
+ * @param palette - pointer to parent-state palette
  */
-void LoadGameState::buildUi(
-		SDL_Color* const palette,
-		bool dropText)
+void LoadGameState::buildUi(SDL_Color* const palette)
 {
 //#ifdef _WIN32
 //	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
 //#endif
 	_fullScreen = false;
 
-	int y;
-//	if (dropText == true)	y = 92;
-//	else					y = -18;
-	y = 92; // bypass above^ cf. SaveGameState.
-
-	_txtStatus = new Text(320, 17, 0, y);
+	_txtStatus = new Text(320, 17, 0, 92);
 
 	setPalette(palette);
 
 	switch (_origin)
 	{
-		case OPT_BATTLESCAPE:
-			add(_txtStatus, "textLoad", "battlescape");
-			_txtStatus->setHighContrast();
-			break;
-
 		case OPT_GEOSCAPE:
 		case OPT_MENU:
 			add(_txtStatus, "textLoad", "geoscape");
+			break;
+
+		case OPT_BATTLESCAPE:
+			add(_txtStatus, "textLoad", "battlescape");
+			_txtStatus->setHighContrast();
 	}
 
 	centerAllSurfaces();

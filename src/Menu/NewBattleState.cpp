@@ -168,7 +168,7 @@ NewBattleState::NewBattleState()
 	_missionTypes = _rules->getDeploymentsList();
 	_cbxMission->setOptions(_missionTypes);
 	_cbxMission->setBackgroundFill(BROWN_D);
-	_cbxMission->onComboChange((ActionHandler)& NewBattleState::cbxMissionChange);
+	_cbxMission->onComboChange(static_cast<ActionHandler>(&NewBattleState::cbxMissionChange));
 
 	const std::vector<std::string>& allCraft (_rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
@@ -181,7 +181,7 @@ NewBattleState::NewBattleState()
 	}
 	_cbxCraft->setOptions(_crafts);
 	_cbxCraft->setBackgroundFill(BROWN_D);
-	_cbxCraft->onComboChange((ActionHandler)& NewBattleState::cbxCraftChange);
+	_cbxCraft->onComboChange(static_cast<ActionHandler>(&NewBattleState::cbxCraftChange));
 
 	_slrDarkness->setRange(0,15);
 
@@ -198,32 +198,28 @@ NewBattleState::NewBattleState()
 	_cbxAlienRace->setOptions(_alienRaces);
 	_cbxAlienRace->setBackgroundFill(BROWN_D);
 
-	_slrAlienTech->setRange(
-						0,
-						static_cast<int>(_rules->getAlienItemLevels().size()) - 1u);
+	_slrAlienTech->setRange(0,
+							static_cast<int>(_rules->getAlienItemLevels().size()) - 1);
 
 	_cbxTerrain->setBackgroundFill(BROWN_D);
 
 	_btnEquip->setText(tr("STR_EQUIP_CRAFT"));
-	_btnEquip->onMouseClick((ActionHandler)& NewBattleState::btnEquipClick);
+	_btnEquip->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnEquipClick));
 
 	_btnRandom->setText(tr("STR_RANDOMIZE"));
-	_btnRandom->onMouseClick((ActionHandler)& NewBattleState::btnRandClick);
+	_btnRandom->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnRandClick));
 
 	_btnOk->setText(tr("STR_COMBAT_UC"));
-	_btnOk->onMouseClick((ActionHandler)& NewBattleState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NewBattleState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NewBattleState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewBattleState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewBattleState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewBattleState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick((ActionHandler)& NewBattleState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& NewBattleState::btnCancelClick,
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&NewBattleState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&NewBattleState::btnCancelClick),
+								Options::keyCancel);
 
 	configLoad();
 }
@@ -262,22 +258,22 @@ void NewBattleState::configLoad(const std::string& file)
 			YAML::Node doc (YAML::LoadFile(config));
 
 			_cbxMission->setSelected(std::min(
-										doc["mission"].as<size_t>(0),
+										doc["mission"].as<size_t>(0u),
 										_missionTypes.size() - 1u));
 			cbxMissionChange(nullptr);
 
 			_cbxCraft->setSelected(std::min(
-										doc["craft"].as<size_t>(0),
+										doc["craft"].as<size_t>(0u),
 										_crafts.size() - 1u));
-			_slrDarkness->setValue(doc["darkness"].as<size_t>(0));
+			_slrDarkness->setValue(doc["darkness"].as<int>(0));
 			_cbxTerrain->setSelected(std::min(
-										doc["terrain"].as<size_t>(0),
+										doc["terrain"].as<size_t>(0u),
 										_terrainTypes.size() - 1u));
 			_cbxAlienRace->setSelected(std::min(
-											doc["alienRace"].as<size_t>(0),
+											doc["alienRace"].as<size_t>(0u),
 											_alienRaces.size() - 1u));
-			_cbxDifficulty->setSelected(doc["difficulty"].as<size_t>(0));
-			_slrAlienTech->setValue(doc["alienTech"].as<size_t>(0));
+			_cbxDifficulty->setSelected(doc["difficulty"].as<size_t>(0u));
+			_slrAlienTech->setValue(doc["alienTech"].as<int>(0));
 
 			if (doc["rng"] && Options::reSeedOnLoad == false)
 				RNG::setSeed(doc["rng"].as<uint64_t>());
@@ -289,10 +285,8 @@ void NewBattleState::configLoad(const std::string& file)
 				SavedGame* const gameSave (new SavedGame(_rules));
 				_game->setSavedGame(gameSave);
 
-				Base* const base (new Base(_rules));
-				base->load(
-						doc["base"],
-						gameSave); // NOTE: considered as neither a 'firstBase' nor a 'quick-battle' ...
+				Base* const base (new Base(_rules, gameSave));
+				base->loadBase(doc["base"]); // NOTE: considered as neither a 'firstBase' nor a 'quick-battle' ...
 				gameSave->getBases()->push_back(base);
 
 				if (base->getCrafts()->empty() == true)
@@ -375,14 +369,10 @@ void NewBattleState::configCreate()
 	SavedGame* const gameSave (new SavedGame(_rules));
 	_game->setSavedGame(gameSave);
 
-	Base* const base (new Base(_rules));
+	Base* const base (new Base(_rules, gameSave));
 
 	const YAML::Node& node (_rules->getStartingBase());
-	base->load(
-			node,
-			gameSave,
-			true,
-			true);
+	base->loadBase(node, true, true);
 	gameSave->getBases()->push_back(base);
 	base->setName(L"tactical");
 
@@ -682,7 +672,7 @@ void NewBattleState::btnRandClick(Action*)
 	_cbxDifficulty->setSelected(static_cast<size_t>(RNG::generate(0,4)));
 
 	_slrAlienTech->setValue(RNG::generate(0,
-							static_cast<int>(_rules->getAlienItemLevels().size()) - 1u));
+							static_cast<int>(_rules->getAlienItemLevels().size()) - 1));
 }
 
 /**

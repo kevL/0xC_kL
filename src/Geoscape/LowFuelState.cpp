@@ -62,7 +62,7 @@ LowFuelState::LowFuelState(
 	_btnOk		= new TextButton(90, 18, 136, 134);
 
 	_blinkTimer = new Timer(325u);
-	_blinkTimer->onTimer((StateHandler)& LowFuelState::blink);
+	_blinkTimer->onTimer(static_cast<StateHandler>(&LowFuelState::blink));
 	_blinkTimer->start();
 
 	setInterface("lowFuel");
@@ -89,32 +89,27 @@ LowFuelState::LowFuelState(
 	_txtMessage->setVisible(false); // wait for blink.
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& LowFuelState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& LowFuelState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&LowFuelState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&LowFuelState::btnOkClick),
+							Options::keyCancel);
 
 	if (_state->is5Sec() == false)
 	{
 		_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-		_btnOk5Secs->onMouseClick((ActionHandler)& LowFuelState::btnOk5SecsClick);
-		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& LowFuelState::btnOk5SecsClick,
-						Options::keyOk);
-		_btnOk5Secs->onKeyboardPress(
-						(ActionHandler)& LowFuelState::btnOk5SecsClick,
-						Options::keyOkKeypad);
+		_btnOk5Secs->onMouseClick(		static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick));
+		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick),
+										Options::keyOk);
+		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick),
+										Options::keyOkKeypad);
 	}
 	else
 	{
 		_btnOk5Secs->setVisible(false);
 
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& LowFuelState::btnOkClick,
-						Options::keyOk);
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& LowFuelState::btnOkClick,
-						Options::keyOkKeypad);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&LowFuelState::btnOkClick),
+								Options::keyOk);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&LowFuelState::btnOkClick),
+								Options::keyOkKeypad);
 	}
 }
 

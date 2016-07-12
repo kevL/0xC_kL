@@ -108,16 +108,13 @@ ManufactureCostsState::ManufactureCostsState()
 	_lstProduction->setSelectable();
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& ManufactureCostsState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-							(ActionHandler)& ManufactureCostsState::btnCancelClick,
-							Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-							(ActionHandler)& ManufactureCostsState::btnCancelClick,
-							Options::keyOk);
-	_btnCancel->onKeyboardPress(
-							(ActionHandler)& ManufactureCostsState::btnCancelClick,
-							Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ManufactureCostsState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ManufactureCostsState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ManufactureCostsState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ManufactureCostsState::btnCancelClick),
+								Options::keyOkKeypad);
 }
 
 /**
@@ -134,10 +131,10 @@ void ManufactureCostsState::init()
 	std::vector<const RuleManufacture*> prodRules;
 	const RuleManufacture* prodRule;
 
-	const std::vector<std::string>& prodList (_game->getRuleset()->getManufactureList());
+	const std::vector<std::string>& allProduction (_game->getRuleset()->getManufactureList());
 	for (std::vector<std::string>::const_iterator
-			i = prodList.begin();
-			i != prodList.end();
+			i = allProduction.begin();
+			i != allProduction.end();
 			++i)
 	{
 		prodRule = _game->getRuleset()->getManufacture(*i);
@@ -146,7 +143,7 @@ void ManufactureCostsState::init()
 			prodRules.push_back(prodRule);
 	}
 
-	size_t row = 0;
+	size_t r (0u);
 	std::wostringstream woststr;
 	int
 		profit,
@@ -157,7 +154,7 @@ void ManufactureCostsState::init()
 	for (std::vector<const RuleManufacture*>::const_iterator
 			i = prodRules.begin();
 			i != prodRules.end();
-			++i, row += 3)
+			++i, r += 3u)
 	{
 		woststr.str(L"");
 		woststr << L"> " << tr((*i)->getType());
@@ -185,16 +182,16 @@ void ManufactureCostsState::init()
 			woststr << L"(" << (*j).second << L") " << tr((*j).first);
 
 			if (j == required.begin())
-				_lstProduction->setCellText(row, 4, woststr.str());
+				_lstProduction->setCellText(r, 4u, woststr.str());
 			else
 			{
 				_lstProduction->addRow(
 									5,
 									L">",L"",L"",L"",
 									woststr.str().c_str());
-				++row;
+				++r;
 			}
-			_lstProduction->setRowColor(row, YELLOW);
+			_lstProduction->setRowColor(r, YELLOW);
 		}
 		// note: Productions that require items show as yellow; those that don't show as blue.
 
@@ -226,7 +223,7 @@ void ManufactureCostsState::init()
 								Text::formatCurrency(salesCost).c_str(),
 								qty.str().c_str(),
 								L"",L"");
-			_lstProduction->setRowColor(++row, GREEN, true);
+			_lstProduction->setRowColor(++r, GREEN, true);
 		}
 
 		profit -= (*i)->getManufactureCost();
@@ -242,14 +239,14 @@ void ManufactureCostsState::init()
 							woststr.str().c_str(),
 							L"",L"",
 							Text::formatCurrency(profit).c_str());
-		_lstProduction->setRowColor(row + 1, BROWN, true);
+		_lstProduction->setRowColor(r + 1u, BROWN, true);
 
 		_lstProduction->addRow(5, L"",L"",L"",L"",L""); // hori-spacer.
 	}
 }
 
 /**
- * Returns to previous screen.
+ * Exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ManufactureCostsState::btnCancelClick(Action*)

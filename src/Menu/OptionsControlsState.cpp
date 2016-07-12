@@ -42,7 +42,7 @@ OptionsControlsState::OptionsControlsState(OptionsOrigin origin)
 	:
 		OptionsBaseState(origin),
 		_selected(-1),
-		_selKey(0)
+		_selKey(nullptr)
 {
 	setCategory(_btnControls);
 
@@ -60,12 +60,13 @@ OptionsControlsState::OptionsControlsState(OptionsOrigin origin)
 	_lstControls->setWordWrap();
 	_lstControls->setSelectable();
 	_lstControls->setBackground(_window);
-	_lstControls->onMouseClick((ActionHandler)& OptionsControlsState::lstControlsClick, 0u);
-	_lstControls->onKeyboardPress((ActionHandler)& OptionsControlsState::lstControlsKeyPress);
+	_lstControls->onMouseClick(		static_cast<ActionHandler>(&OptionsControlsState::lstControlsClick),
+									0u);
+	_lstControls->onKeyboardPress(	static_cast<ActionHandler>(&OptionsControlsState::lstControlsKeyPress));
 	_lstControls->setFocus(true);
+//	_lstControls->onMouseIn(static_cast<ActionHandler>(&OptionsControlsState::txtTooltipIn));
+//	_lstControls->onMouseOut(static_cast<ActionHandler>(&OptionsControlsState::txtTooltipOut));
 //	_lstControls->setTooltip("STR_CONTROLS_DESC");
-//	_lstControls->onMouseIn((ActionHandler)& OptionsControlsState::txtTooltipIn);
-//	_lstControls->onMouseOut((ActionHandler)& OptionsControlsState::txtTooltipOut);
 
 	_colorGroup = _lstControls->getSecondaryColor();
 	_colorSel = _lstControls->getScrollbarColor();
@@ -77,15 +78,11 @@ OptionsControlsState::OptionsControlsState(OptionsOrigin origin)
 			i != options.end();
 			++i)
 	{
-		if (i->type() == OPTION_KEY
-			&& !i->description().empty())
+		if (i->type() == OPTION_KEY && i->description().empty() == false)
 		{
-			if (i->category() == "STR_GENERAL")
-				_controlsGeneral.push_back(*i);
-			else if (i->category() == "STR_GEOSCAPE")
-				_controlsGeo.push_back(*i);
-			else if (i->category() == "STR_BATTLESCAPE")
-				_controlsBattle.push_back(*i);
+			if		(i->category() == "STR_GENERAL")		_controlsGeneral.push_back(*i);
+			else if	(i->category() == "STR_GEOSCAPE")		_controlsGeo.push_back(*i);
+			else if	(i->category() == "STR_BATTLESCAPE")	_controlsBattle.push_back(*i);
 		}
 	}
 }
@@ -106,7 +103,7 @@ void OptionsControlsState::init()
 
 	_lstControls->addRow(2, tr("STR_GENERAL").c_str(), L"");
 	_lstControls->setCellColor(
-							0,0,
+							0u,0u,
 							_colorGroup);
 
 	addControls(_controlsGeneral);
@@ -114,8 +111,8 @@ void OptionsControlsState::init()
 	_lstControls->addRow(2, L"", L"");
 	_lstControls->addRow(2, tr("STR_GEOSCAPE").c_str(), L"");
 	_lstControls->setCellColor(
-							_controlsGeneral.size() + 2,
-							0,
+							_controlsGeneral.size() + 2u,
+							0u,
 							_colorGroup);
 
 	addControls(_controlsGeo);
@@ -123,8 +120,8 @@ void OptionsControlsState::init()
 	_lstControls->addRow(2, L"", L"");
 	_lstControls->addRow(2, tr("STR_BATTLESCAPE").c_str(), L"");
 	_lstControls->setCellColor(
-							_controlsGeneral.size() + 2 + _controlsGeo.size() + 2,
-							0,
+							_controlsGeneral.size() + 2u + _controlsGeo.size() + 2u,
+							0u,
 							_colorGroup);
 
 	addControls(_controlsBattle);
@@ -138,19 +135,18 @@ void OptionsControlsState::init()
 std::string OptionsControlsState::ucWords(std::string st)
 {
 	if (st.empty() == false)
-		st[0] = static_cast<char>(std::toupper(st[0]));
+		st[0u] = static_cast<char>(std::toupper(st[0u]));
 
 	for (size_t
 			i = st.find_first_of(' ');
 			i != std::string::npos;
-			i = st.find_first_of(' ', i + 1))
+			i = st.find_first_of(' ', i + 1u))
 	{
-		if (st.length() > i + 1)
-			st[i + 1] = static_cast<char>(std::toupper(st[i + 1]));
+		if (st.length() > i + 1u)
+			st[i + 1u] = static_cast<char>(std::toupper(st[i + 1u]));
 		else
 			break;
 	}
-
 	return st;
 }
 
@@ -160,23 +156,22 @@ std::string OptionsControlsState::ucWords(std::string st)
  */
 void OptionsControlsState::addControls(const std::vector<OptionInfo>& keys)
 {
+	SDLKey* key;
+	std::wstring keyLabel;
+
 	for (std::vector<OptionInfo>::const_iterator
 			i = keys.begin();
 			i != keys.end();
 			++i)
 	{
-		std::wstring name = tr(i->description());
+		key = i->asKey();
+		keyLabel = Language::utf8ToWstr(ucWords(SDL_GetKeyName(*key)));
 
-		SDLKey* key = i->asKey();
-		std::wstring keyName = Language::utf8ToWstr(ucWords(SDL_GetKeyName(*key)));
-
-		if (*key == SDLK_UNKNOWN)
-			keyName = L"";
-
+		if (*key == SDLK_UNKNOWN) keyLabel = L"";
 		_lstControls->addRow(
 							2,
-							name.c_str(),
-							keyName.c_str());
+							tr(i->description()).c_str(),
+							keyLabel.c_str());
 	}
 }
 
@@ -187,23 +182,25 @@ void OptionsControlsState::addControls(const std::vector<OptionInfo>& keys)
  */
 OptionInfo* OptionsControlsState::getControl(size_t sel)
 {
-	if (sel > 0
+	if (sel > 0u
 		&& sel <= _controlsGeneral.size())
 	{
-		return &_controlsGeneral[sel - 1];
+		return &_controlsGeneral[sel - 1u];
 	}
-	else if (sel > _controlsGeneral.size() + 2
-		&& sel <= _controlsGeneral.size() + 2 + _controlsGeo.size())
+
+	if (sel > _controlsGeneral.size() + 2u
+		&& sel <= _controlsGeneral.size() + 2u + _controlsGeo.size())
 	{
-		return &_controlsGeo[sel - 1 - _controlsGeneral.size() - 2];
+		return &_controlsGeo[sel - 1u - _controlsGeneral.size() - 2u];
 	}
-	else if (sel > _controlsGeneral.size() + 2 + _controlsGeo.size() + 2
-		&& sel <= _controlsGeneral.size() + 2 + _controlsGeo.size() + 2 + _controlsBattle.size())
+
+	if (sel > _controlsGeneral.size() + 2u + _controlsGeo.size() + 2u
+		&& sel <= _controlsGeneral.size() + 2u + _controlsGeo.size() + 2u + _controlsBattle.size())
 	{
-		return &_controlsBattle[sel - 1 - _controlsGeneral.size() - 2 - _controlsGeo.size() - 2];
+		return &_controlsBattle[sel - 1u - _controlsGeneral.size() - 2u - _controlsGeo.size() - 2u];
 	}
-	else
-		return 0;
+
+	return nullptr;
 }
 
 /**
@@ -212,46 +209,60 @@ OptionInfo* OptionsControlsState::getControl(size_t sel)
  */
 void OptionsControlsState::lstControlsClick(Action* action)
 {
-	if (action->getDetails()->button.button != SDL_BUTTON_LEFT
-		&& action->getDetails()->button.button != SDL_BUTTON_RIGHT)
+	const Uint8 btn (action->getDetails()->button.button);
+	switch (btn)
 	{
-		return;
-	}
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			if (_selected != -1)
+			{
+				size_t selected (static_cast<size_t>(_selected));
 
-	if (_selected != -1)
-	{
-		size_t selected = static_cast<size_t>(_selected);
+				_lstControls->setCellColor(
+										static_cast<size_t>(_selected),
+										0u,
+										_colorNormal);
+				_lstControls->setCellColor(
+										static_cast<size_t>(_selected),
+										1u,
+										_colorNormal);
+				_selected = -1;
+				_selKey = nullptr;
 
-		_lstControls->setCellColor(_selected, 0, _colorNormal);
-		_lstControls->setCellColor(_selected, 1, _colorNormal);
-		_selected = -1;
-		_selKey = 0;
+				if (selected == _lstControls->getSelectedRow())
+					return;
+			}
 
-		if (selected == _lstControls->getSelectedRow())
-			return;
-	}
+			_selected = static_cast<int>(_lstControls->getSelectedRow());
+			_selKey = getControl(static_cast<size_t>(_selected));
 
-	_selected = _lstControls->getSelectedRow();
-	_selKey = getControl(_selected);
-	if (!_selKey)
-	{
-		_selected = -1;
+			if (_selKey == nullptr)
+			{
+				_selected = -1;
+				return;
+			}
 
-		return;
-	}
+			switch (btn)
+			{
+				case SDL_BUTTON_LEFT:
+					_lstControls->setCellColor(
+											static_cast<size_t>(_selected),
+											0u,
+											_colorSel);
+					_lstControls->setCellColor(
+											static_cast<size_t>(_selected),
+											1u,
+											_colorSel);
+					break;
 
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-	{
-		_lstControls->setCellColor(_selected, 0, _colorSel);
-		_lstControls->setCellColor(_selected, 1, _colorSel);
-	}
-	else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
-	{
-		_lstControls->setCellText(_selected, 1, L"");
-
-		*_selKey->asKey() = SDLK_UNKNOWN;
-		_selected = -1;
-		_selKey = 0;
+				case SDL_BUTTON_RIGHT:
+					_lstControls->setCellText(
+											static_cast<size_t>(_selected),
+											1u, L"");
+					*_selKey->asKey() = SDLK_UNKNOWN;
+					_selected = -1;
+					_selKey = nullptr;
+			}
 	}
 }
 
@@ -263,18 +274,26 @@ void OptionsControlsState::lstControlsKeyPress(Action* action)
 {
 	if (_selected != -1)
 	{
-		SDLKey key = action->getDetails()->key.keysym.sym;
-		if (key != 0)
+		SDLKey key (action->getDetails()->key.keysym.sym);
+		if (key != SDLK_UNKNOWN)
 		{
 			*_selKey->asKey() = key;
-			std::wstring name = Language::utf8ToWstr(ucWords(SDL_GetKeyName(*_selKey->asKey())));
-			_lstControls->setCellText(_selected, 1, name);
+			_lstControls->setCellText(
+									static_cast<size_t>(_selected),
+									1u,
+									Language::utf8ToWstr(ucWords(SDL_GetKeyName(*_selKey->asKey()))));
 		}
 
-		_lstControls->setCellColor(_selected, 0, _colorNormal);
-		_lstControls->setCellColor(_selected, 1, _colorNormal);
+		_lstControls->setCellColor(
+								static_cast<size_t>(_selected),
+								0u,
+								_colorNormal);
+		_lstControls->setCellColor(
+								static_cast<size_t>(_selected),
+								1u,
+								_colorNormal);
 		_selected = -1;
-		_selKey = 0;
+		_selKey = nullptr;
 	}
 }
 

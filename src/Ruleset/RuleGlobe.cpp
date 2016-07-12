@@ -226,8 +226,9 @@ void RuleGlobe::loadDat(const std::string& file)
 	}
 
 	short value[10u];
-
-	while (ifstr.read(reinterpret_cast<char*>(&value), sizeof(value)))
+	while (ifstr.read(
+					reinterpret_cast<char*>(&value),
+					sizeof(value)))
 	{
 		Polygon* poly;
 		size_t points;
@@ -254,14 +255,14 @@ void RuleGlobe::loadDat(const std::string& file)
 				++i)
 		{
 			double // correct X-Com degrees and convert to radians ( 7.25 arc-min = 1 xcomDegree ~or so~ /shrug )
-				lonRad = value[j++] * 0.125 * M_PI / 180., // should j double-increment like this
-				latRad = value[j++] * 0.125 * M_PI / 180.; // should j double-increment like this
+				lonRad = value[j++] * 0.125 * M_PI / 180.,
+				latRad = value[j++] * 0.125 * M_PI / 180.;
 
 			poly->setLongitude(i, lonRad);
-			poly->setLatitude(i, latRad);
+			poly->setLatitude (i, latRad);
 		}
 
-		poly->setPolyTexture(value[8u]);
+		poly->setPolyTexture(static_cast<size_t>(value[8u]));
 		_polygons.push_back(poly);
 	}
 

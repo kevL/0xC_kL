@@ -330,12 +330,12 @@ void ResourcePack::makeMusicAssignment(
 /**
  * Gets a specific Sound from this ResourcePack.
  * @param set		- reference to the type of a SoundSet
- * @param soundId	- ID of the Sound
+ * @param soundId	- ID of the sound
  * @return, pointer to the Sound
  */
 Sound* ResourcePack::getSound(
 		const std::string& soundSet,
-		size_t soundId) const
+		unsigned soundId) const
 {
 	if (Options::mute == true)
 		return _muteSound;
@@ -345,17 +345,16 @@ Sound* ResourcePack::getSound(
 		if (i != _sounds.end())
 			return i->second->getSound(soundId);
 	}
-
 	return nullptr;
 }
 
 /**
  * Plays a sound-effect in stereo.
- * @param soundId	- sound-ID to play
- * @param randAngle	- true to randomize the sound-angle (default false to center it)
+ * @param soundId	- ID of the sound to play
+ * @param randAngle	- true to randomize the sound-angle (default false centered)
  */
 void ResourcePack::playSoundFx(
-		const int soundId,
+		const unsigned soundId,
 		const bool randAngle) const
 {
 	int dir (360); // stereo center

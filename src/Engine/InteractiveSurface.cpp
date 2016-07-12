@@ -57,7 +57,7 @@ InteractiveSurface::InteractiveSurface(
 /**
  * dTor.
  */
-InteractiveSurface::~InteractiveSurface() // virtual
+InteractiveSurface::~InteractiveSurface() // virtual.
 {}
 
 /**
@@ -76,7 +76,7 @@ bool InteractiveSurface::isButtonPressed(Uint8 btn) const
  * Checks if a button has been handled.
  * @param btn - an SDL-button identifier (default 0)
  */
-bool InteractiveSurface::isButtonHandled(Uint8 btn) // virtual
+bool InteractiveSurface::isButtonHandled(Uint8 btn) // virtual.
 {
 	bool handled = (_click.find(0u) != _click.end()
 				|| _press.find(0u) != _press.end()
@@ -100,9 +100,9 @@ void InteractiveSurface::setButtonPressed(
 		bool pressed)
 {
 	if (pressed == true)
-		_buttonsPressed = _buttonsPressed | SDL_BUTTON(btn);
+		_buttonsPressed = static_cast<Uint8>(_buttonsPressed | SDL_BUTTON(btn));
 	else
-		_buttonsPressed = _buttonsPressed & (!SDL_BUTTON(btn));
+		_buttonsPressed = static_cast<Uint8>(_buttonsPressed & (!SDL_BUTTON(btn)));
 }
 
 /**
@@ -112,9 +112,10 @@ void InteractiveSurface::setButtonPressed(
  */
 void InteractiveSurface::setVisible(bool visible)
 {
-	Surface::setVisible(visible);
-
-	if (_visible == false) // unpress button if it was not visible
+//	Surface::setVisible(visible);
+//	if (_visible == false) // unpress button if it was not visible
+//		unpress(nullptr);
+	if ((_visible = visible) == false)
 		unpress(nullptr);
 }
 
@@ -125,7 +126,7 @@ void InteractiveSurface::setVisible(bool visible)
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::handle( // virtual
+void InteractiveSurface::handle( // virtual.
 		Action* action,
 		State* state)
 {
@@ -248,17 +249,17 @@ void InteractiveSurface::handle( // virtual
 
 /**
  * Changes this Surface's focus.
- * @note Surfaces will only receive keyboard events if focused.
+ * @note Surfaces will only receive keyboard-events if focused.
  * @param focus - true if focused (default true)
  */
-void InteractiveSurface::setFocus(bool focus) // virtual
+void InteractiveSurface::setFocus(bool focus)
 {
 	_isFocused = focus;
 }
 
 /**
  * Returns this Surface's focus.
- * @note Surfaces will only receive keyboard events if focused.
+ * @note Surfaces will only receive keyboard-events if focused.
  * @return, true if focused
  */
 bool InteractiveSurface::isFocused() const
@@ -271,7 +272,7 @@ bool InteractiveSurface::isFocused() const
  * @note Used in circumstances where this Surface is unpressed without user input.
  * @param state - pointer to running State
  */
-void InteractiveSurface::unpress(State* state) // virtual
+void InteractiveSurface::unpress(State* const state) // virtual.
 {
 	if (isButtonPressed() == true)
 	{
@@ -292,7 +293,7 @@ void InteractiveSurface::unpress(State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::mousePress(Action* action, State* state) // virtual
+void InteractiveSurface::mousePress(Action* action, State* state) // virtual.
 {
 	std::map<Uint8, ActionHandler>::const_iterator allHandler (_press.find(0u));
 	if (allHandler != _press.end())
@@ -316,7 +317,7 @@ void InteractiveSurface::mousePress(Action* action, State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::mouseRelease(Action* action, State* state) // virtual
+void InteractiveSurface::mouseRelease(Action* action, State* state) // virtual.
 {
 	std::map<Uint8, ActionHandler>::const_iterator allHandler (_release.find(0u));
 	if (allHandler != _release.end())
@@ -340,7 +341,7 @@ void InteractiveSurface::mouseRelease(Action* action, State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::mouseClick(Action* action, State* state) // virtual
+void InteractiveSurface::mouseClick(Action* action, State* state) // virtual.
 {
 	std::map<Uint8, ActionHandler>::const_iterator allHandler (_click.find(0u));
 	if (allHandler != _click.end())
@@ -364,7 +365,7 @@ void InteractiveSurface::mouseClick(Action* action, State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::mouseIn(Action* action, State* state) // virtual
+void InteractiveSurface::mouseIn(Action* action, State* state) // virtual.
 {
 	if (_in != nullptr)
 		(state->*_in)(action);
@@ -377,7 +378,7 @@ void InteractiveSurface::mouseIn(Action* action, State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::mouseOver(Action* action, State* state) // virtual
+void InteractiveSurface::mouseOver(Action* action, State* state) // virtual.
 {
 	if (_over != nullptr)
 		(state->*_over)(action);
@@ -390,7 +391,7 @@ void InteractiveSurface::mouseOver(Action* action, State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::mouseOut(Action* action, State* state) // virtual
+void InteractiveSurface::mouseOut(Action* action, State* state) // virtual.
 {
 	if (_out != nullptr)
 		(state->*_out)(action);
@@ -403,7 +404,7 @@ void InteractiveSurface::mouseOut(Action* action, State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual
+void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual.
 {
 	std::map<SDLKey, ActionHandler>::const_iterator allHandler (_keyPress.find(SDLK_ANY));
 	if (allHandler != _keyPress.end())
@@ -431,7 +432,7 @@ void InteractiveSurface::keyboardPress(Action* action, State* state) // virtual
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
-void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtual
+void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtual.
 {
 	std::map<SDLKey, ActionHandler>::const_iterator allHandler (_keyRelease.find(SDLK_ANY));
 	if (allHandler != _keyRelease.end())
@@ -530,7 +531,7 @@ void InteractiveSurface::onMouseOut(ActionHandler handler)
  * @a keyRelease is left at default SDLK_ANY. Any repercussions of that need to
  * be handled in the final functions.
  * @param handler	- ActionHandler
- * @param keyPress	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY)
+ * @param keyPress	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY) // kL_note: Fix the SDLK_ANY hocus-pocus.
  */
 void InteractiveSurface::onKeyboardPress(
 		ActionHandler handler,
@@ -548,7 +549,7 @@ void InteractiveSurface::onKeyboardPress(
  * @a keyRelease is left at default SDLK_ANY. Any repercussions of that need to
  * be handled in the final functions.
  * @param handler		- ActionHandler
- * @param keyRelease	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY)
+ * @param keyRelease	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY) // kL_note: I disabled the SDLK_ANY hocus-pocus.
  */
 void InteractiveSurface::onKeyboardRelease(
 		ActionHandler handler,

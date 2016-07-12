@@ -438,8 +438,8 @@ GeoscapeState::GeoscapeState()
 			i != UFO_HOTBLOBS;
 			++i)
 	{
-		offset_x = ((i % 4) * 13); // 4 UFOs per row on top sidebar
-		offset_y = ((i / 4) * 13); // 4 rows going up
+		offset_x = ((static_cast<int>(i) % 4) * 13); // 4 UFOs per row on top sidebar
+		offset_y = ((static_cast<int>(i) / 4) * 13); // 4 rows going up
 		x = _sideTop->getX() + offset_x + 3;
 		y = _sideTop->getY() + height - offset_y - 16;
 
@@ -516,16 +516,13 @@ GeoscapeState::GeoscapeState()
 	{
 		add(_isfUfoBlobs[i]);
 		_isfUfoBlobs[i]->setVisible(false);
-//		_isfUfoBlobs[i]->onMousePress(
-//						(ActionHandler)& GeoscapeState::btnUfoBlobPress,
-//						SDL_BUTTON_LEFT);
-		_isfUfoBlobs[i]->onMousePress((ActionHandler)& GeoscapeState::btnUfoBlobPress);
+		_isfUfoBlobs[i]->onMousePress(		static_cast<ActionHandler>(&GeoscapeState::btnUfoBlobPress));
+//		_isfUfoBlobs[i]->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnUfoBlobPress),
+//											buttons[i]);
 
 		add(_numUfoBlobs[i]);
 		_numUfoBlobs[i]->setVisible(false);
 		_numUfoBlobs[i]->setColor(11); // dk.yellow
-
-//		_isfUfoBlobs[i]->onKeyboardPress((ActionHandler)& GeoscapeState::btnUfoBlobPress, buttons[i]);
 	}
 
 	add(_isfTime);
@@ -551,105 +548,81 @@ GeoscapeState::GeoscapeState()
 					15u); // black
 
 /*	_btnIntercept->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-//	_btnIntercept->setColor(Palette::blockOffset(15)+6);
-//	_btnIntercept->setTextColor(Palette::blockOffset(15)+5);
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
-	_btnIntercept->onMouseClick((ActionHandler)& GeoscapeState::btnInterceptClick);
-	_btnIntercept->onKeyboardPress((ActionHandler)& GeoscapeState::btnInterceptClick, Options::keyGeoIntercept);
+	_btnIntercept->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick));
+	_btnIntercept->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick), Options::keyGeoIntercept);
 	_btnIntercept->setGeoscapeButton(true);
 
 	_btnBases->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-//	_btnBases->setColor(Palette::blockOffset(15)+6);
-//	_btnBases->setTextColor(Palette::blockOffset(15)+5);
 	_btnBases->setText(tr("STR_BASES"));
-	_btnBases->onMouseClick((ActionHandler)& GeoscapeState::btnBasesClick);
-	_btnBases->onKeyboardPress((ActionHandler)& GeoscapeState::btnBasesClick, Options::keyGeoBases);
+	_btnBases->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnBasesClick));
+	_btnBases->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnBasesClick), Options::keyGeoBases);
 	_btnBases->setGeoscapeButton(true);
 
 	_btnGraphs->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-//	_btnGraphs->setColor(Palette::blockOffset(15)+6);
-//	_btnGraphs->setTextColor(Palette::blockOffset(15)+5);
 	_btnGraphs->setText(tr("STR_GRAPHS"));
-	_btnGraphs->onMouseClick((ActionHandler)& GeoscapeState::btnGraphsClick);
-	_btnGraphs->onKeyboardPress((ActionHandler)& GeoscapeState::btnGraphsClick, Options::keyGeoGraphs);
+	_btnGraphs->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnGraphsClick);
+	_btnGraphs->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnGraphsClick), Options::keyGeoGraphs);
 	_btnGraphs->setGeoscapeButton(true);
 
 	_btnUfopaedia->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-//	_btnUfopaedia->setColor(Palette::blockOffset(15)+6);
-//	_btnUfopaedia->setTextColor(Palette::blockOffset(15)+5);
 	_btnUfopaedia->setText(tr("STR_UFOPAEDIA_UC"));
-	_btnUfopaedia->onMouseClick((ActionHandler)& GeoscapeState::btnUfopaediaClick);
-	_btnUfopaedia->onKeyboardPress((ActionHandler)& GeoscapeState::btnUfopaediaClick, Options::keyGeoUfopedia);
+	_btnUfopaedia->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick));
+	_btnUfopaedia->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick), Options::keyGeoUfopedia);
 	_btnUfopaedia->setGeoscapeButton(true);
 
 	_btnOptions->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-//	_btnOptions->setColor(Palette::blockOffset(15)+6);
-//	_btnOptions->setTextColor(Palette::blockOffset(15)+5);
 	_btnOptions->setText(tr("STR_OPTIONS_UC"));
-	_btnOptions->onMouseClick((ActionHandler)& GeoscapeState::btnOptionsClick);
-	_btnOptions->onKeyboardPress((ActionHandler)& GeoscapeState::btnOptionsClick, Options::keyGeoOptions);
+	_btnOptions->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick));
+	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick), Options::keyGeoOptions);
 	_btnOptions->setGeoscapeButton(true);
 
 	_btnFunding->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-//	_btnFunding->setColor(Palette::blockOffset(15)+6);
-//	_btnFunding->setTextColor(Palette::blockOffset(15)+5);
 	_btnFunding->setText(tr("STR_FUNDING_UC"));
-	_btnFunding->onMouseClick((ActionHandler)& GeoscapeState::btnFundingClick);
-	_btnFunding->onKeyboardPress((ActionHandler)& GeoscapeState::btnFundingClick, Options::keyGeoFunding);
+	_btnFunding->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnFundingClick));
+	_btnFunding->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnFundingClick), Options::keyGeoFunding);
 	_btnFunding->setGeoscapeButton(true);
 
 	_btn5Secs->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-	_btn5Secs->setBig();
-//	_btn5Secs->setColor(Palette::blockOffset(15)+6);
-//	_btn5Secs->setTextColor(Palette::blockOffset(15)+5);
 	_btn5Secs->setText(tr("STR_5_SECONDS"));
+	_btn5Secs->setBig();
 	_btn5Secs->setGroup(&_timeComp);
-	_btn5Secs->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed1);
+	_btn5Secs->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression), Options::keyGeoSpeed1);
 	_btn5Secs->setGeoscapeButton(true);
 
 	_btn1Min->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-	_btn1Min->setBig();
-//	_btn1Min->setColor(Palette::blockOffset(15)+6);
-//	_btn1Min->setTextColor(Palette::blockOffset(15)+5);
 	_btn1Min->setText(tr("STR_1_MINUTE"));
+	_btn1Min->setBig();
 	_btn1Min->setGroup(&_timeComp);
-	_btn1Min->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed2);
+	_btn1Min->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression), Options::keyGeoSpeed2);
 	_btn1Min->setGeoscapeButton(true);
 
 	_btn5Mins->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-	_btn5Mins->setBig();
-//	_btn5Mins->setColor(Palette::blockOffset(15)+6);
-//	_btn5Mins->setTextColor(Palette::blockOffset(15)+5);
 	_btn5Mins->setText(tr("STR_5_MINUTES"));
+	_btn5Mins->setBig();
 	_btn5Mins->setGroup(&_timeComp);
-	_btn5Mins->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed3);
+	_btn5Mins->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression), Options::keyGeoSpeed3);
 	_btn5Mins->setGeoscapeButton(true);
 
 	_btn30Mins->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-	_btn30Mins->setBig();
-//	_btn30Mins->setColor(Palette::blockOffset(15)+6);
-//	_btn30Mins->setTextColor(Palette::blockOffset(15)+5);
 	_btn30Mins->setText(tr("STR_30_MINUTES"));
+	_btn30Mins->setBig();
 	_btn30Mins->setGroup(&_timeComp);
-	_btn30Mins->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed4);
+	_btn30Mins->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression), Options::keyGeoSpeed4);
 	_btn30Mins->setGeoscapeButton(true);
 
 	_btn1Hour->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-	_btn1Hour->setBig();
-//	_btn1Hour->setColor(Palette::blockOffset(15)+6);
-//	_btn1Hour->setTextColor(Palette::blockOffset(15)+5);
 	_btn1Hour->setText(tr("STR_1_HOUR"));
+	_btn1Hour->setBig();
 	_btn1Hour->setGroup(&_timeComp);
-	_btn1Hour->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed5);
+	_btn1Hour->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression), Options::keyGeoSpeed5);
 	_btn1Hour->setGeoscapeButton(true);
 
 	_btn1Day->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
-	_btn1Day->setBig();
-//	_btn1Day->setColor(Palette::blockOffset(15)+6);
-//	_btn1Day->setTextColor(Palette::blockOffset(15)+5);
 	_btn1Day->setText(tr("STR_1_DAY"));
+	_btn1Day->setBig();
 	_btn1Day->setGroup(&_timeComp);
-	_btn1Day->onKeyboardPress((ActionHandler)& GeoscapeState::keyTimeCompression, Options::keyGeoSpeed6);
+	_btn1Day->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression), Options::keyGeoSpeed6);
 	_btn1Day->setGeoscapeButton(true); */
 
 	// revert to ImageButtons.
@@ -658,230 +631,184 @@ GeoscapeState::GeoscapeState()
 	geobord->setY((screenHeight - geobord->getHeight()) >> 1u);
 
 	_btnIntercept->copy(geobord);
-	_btnIntercept->onMouseClick((ActionHandler)& GeoscapeState::btnInterceptClick);
-	_btnIntercept->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnInterceptClick,
-					Options::keyGeoIntercept);
+	_btnIntercept->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick));
+	_btnIntercept->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick),
+									Options::keyGeoIntercept);
 
 	_btnBases->copy(geobord);
-	_btnBases->onMouseClick((ActionHandler)& GeoscapeState::btnBasesClick);
-	_btnBases->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnBasesClick,
-					Options::keyGeoBases);
+	_btnBases->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnBasesClick));
+	_btnBases->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnBasesClick),
+								Options::keyGeoBases);
 
 	_btnGraphs->copy(geobord);
-	_btnGraphs->onMouseClick((ActionHandler)& GeoscapeState::btnGraphsClick);
-	_btnGraphs->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnGraphsClick,
-					Options::keyGeoGraphs);
+	_btnGraphs->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnGraphsClick));
+	_btnGraphs->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnGraphsClick),
+								Options::keyGeoGraphs);
 
 	_btnUfopaedia->copy(geobord);
-	_btnUfopaedia->onMouseClick((ActionHandler)& GeoscapeState::btnUfopaediaClick);
-	_btnUfopaedia->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnUfopaediaClick,
-					Options::keyGeoUfopedia);
+	_btnUfopaedia->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick));
+	_btnUfopaedia->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick),
+									Options::keyGeoUfopedia);
 
 	_btnOptions->copy(geobord);
-	_btnOptions->onMouseClick((ActionHandler)& GeoscapeState::btnOptionsClick);	// why the f are these buttons calling resetTimeCacheClick() AND EVEN GETTING
-	_btnOptions->onKeyboardPress(												// THE SENDER RIGHT when a true click on a time-compression btn does not.
-					(ActionHandler)& GeoscapeState::btnOptionsClick,			// Note that happens only if the 'resetTimeCache' is on a Press, not a Click! holy diana
-					Options::keyGeoOptions); // Escape key.
-//	_btnOptions->onKeyboardPress( // note: These interfere w/ opening minimized Dogfights.
-//					(ActionHandler)& GeoscapeState::btnOptionsClick,
-//					Options::keyOk);
-//	_btnOptions->onKeyboardPress(
-//					(ActionHandler)& GeoscapeState::btnOptionsClick,
-//					Options::keyOkKeypad);
+	_btnOptions->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick));	// why the f are these buttons calling resetTimeCacheClick() AND EVEN GETTING
+	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick),	// THE SENDER RIGHT when a true click on a time-compression btn does not.
+									Options::keyGeoOptions); // Escape key.							// Note that happens only if the 'resetTimeCache' is on a Press, not a Click!
+																									// holy diana
+//	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick, // note: These would interfere w/ opening minimized Dogfights.
+//									Options::keyOk);
+//	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick,
+//									Options::keyOkKeypad);
 
 	_btnFunding->copy(geobord);
-	_btnFunding->onMouseClick((ActionHandler)& GeoscapeState::btnFundingClick);
-	_btnFunding->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnFundingClick,
-					Options::keyGeoFunding);
+	_btnFunding->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnFundingClick));
+	_btnFunding->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnFundingClick),
+									Options::keyGeoFunding);
 
 
 	_isfTime->copy(geobord);
-	_isfTime->onMouseClick(
-					(ActionHandler)& GeoscapeState::btnPauseClick,
-					SDL_BUTTON_LEFT);
-	_isfTime->onMouseClick(
-					(ActionHandler)& GeoscapeState::btnPauseClick,
-					SDL_BUTTON_RIGHT);
-	_isfTime->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnPauseClick,
-					SDLK_SPACE);
+	_isfTime->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnPauseClick),
+								0u);
+	_isfTime->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnPauseClick),
+								SDLK_SPACE);
 
 	_btn5Secs->copy(geobord);
 	_btn5Secs->setGroup(&_timeComp);
-	_btn5Secs->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompression,
-					Options::keyGeoSpeed1);
-	_btn5Secs->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
+	_btn5Secs->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+								Options::keyGeoSpeed1);
+	_btn5Secs->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
 
 	_btn1Min->copy(geobord);
 	_btn1Min->setGroup(&_timeComp);
-	_btn1Min->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompression,
-					Options::keyGeoSpeed2);
-	_btn1Min->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
+	_btn1Min->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+								Options::keyGeoSpeed2);
+	_btn1Min->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
 
 	_btn5Mins->copy(geobord);
 	_btn5Mins->setGroup(&_timeComp);
-	_btn5Mins->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompression,
-					Options::keyGeoSpeed3);
-	_btn5Mins->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
+	_btn5Mins->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+								Options::keyGeoSpeed3);
+	_btn5Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
 
 	_btn30Mins->copy(geobord);
 	_btn30Mins->setGroup(&_timeComp);
-	_btn30Mins->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompression,
-					Options::keyGeoSpeed4);
-	_btn30Mins->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
+	_btn30Mins->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+								Options::keyGeoSpeed4);
+	_btn30Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
 
 	_btn1Hour->copy(geobord);
 	_btn1Hour->setGroup(&_timeComp);
-	_btn1Hour->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompression,
-					Options::keyGeoSpeed5);
-	_btn1Hour->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
+	_btn1Hour->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+								Options::keyGeoSpeed5);
+	_btn1Hour->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
 
 	_btn1Day->copy(geobord);
 	_btn1Day->setGroup(&_timeComp);
-	_btn1Day->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::keyTimeCompression,
-					Options::keyGeoSpeed6);
-	_btn1Day->onMouseClick((ActionHandler)& GeoscapeState::resetTimeCacheClick);
+	_btn1Day->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+								Options::keyGeoSpeed6);
+	_btn1Day->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
 
 
 	_btnDetail->copy(geobord);
 	_btnDetail->setColor(PURPLE_D);
-	_btnDetail->onMousePress((ActionHandler)& GeoscapeState::btnDetailPress);
+	_btnDetail->onMousePress(static_cast<ActionHandler>(&GeoscapeState::btnDetailPress));
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateLeftPress,
-					Options::keyGeoLeft);
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateLeftPress,
-					SDLK_KP4);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLonStop,
-					Options::keyGeoLeft);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLonStop,
-					SDLK_KP4);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress),
+									Options::keyGeoLeft);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress),
+									SDLK_KP4);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+									Options::keyGeoLeft);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+									SDLK_KP4);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateRightPress,
-					Options::keyGeoRight);
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateRightPress,
-					SDLK_KP6);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLonStop,
-					Options::keyGeoRight);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLonStop,
-					SDLK_KP6);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress),
+									Options::keyGeoRight);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress),
+									SDLK_KP6);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+									Options::keyGeoRight);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+									SDLK_KP6);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateUpPress,
-					Options::keyGeoUp);
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateUpPress,
-					SDLK_KP8);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLatStop,
-					Options::keyGeoUp);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLatStop,
-					SDLK_KP8);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress),
+									Options::keyGeoUp);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress),
+									SDLK_KP8);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+									Options::keyGeoUp);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+									SDLK_KP8);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateDownPress,
-					Options::keyGeoDown);
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateDownPress,
-					SDLK_KP2);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLatStop,
-					Options::keyGeoDown);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateLatStop,
-					SDLK_KP2);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress),
+									Options::keyGeoDown);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress),
+									SDLK_KP2);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+									Options::keyGeoDown);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+									SDLK_KP2);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateLeftUpPress,
-					SDLK_KP7);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateStop,
-					SDLK_KP7);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftUpPress),
+									SDLK_KP7);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+									SDLK_KP7);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateLeftDownPress,
-					SDLK_KP1);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateStop,
-					SDLK_KP1);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftDownPress),
+									SDLK_KP1);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+									SDLK_KP1);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateRightUpPress,
-					SDLK_KP9);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateStop,
-					SDLK_KP9);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightUpPress),
+									SDLK_KP9);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+									SDLK_KP9);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnRotateRightDownPress,
-					SDLK_KP3);
-	_btnDetail->onKeyboardRelease(
-					(ActionHandler)& GeoscapeState::btnRotateStop,
-					SDLK_KP3);
+	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightDownPress),
+									SDLK_KP3);
+	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+									SDLK_KP3);
 
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnZoomInLeftClick,
-					Options::keyGeoZoomIn);
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnZoomInLeftClick,
-					SDLK_KP_PLUS);
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnZoomOutLeftClick,
-					Options::keyGeoZoomOut);
-	_btnDetail->onKeyboardPress(
-					(ActionHandler)& GeoscapeState::btnZoomOutLeftClick,
-					SDLK_KP_MINUS);
+	_btnDetail->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnZoomInLeftClick),
+								Options::keyGeoZoomIn);
+	_btnDetail->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnZoomInLeftClick),
+								SDLK_KP_PLUS);
+	_btnDetail->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnZoomOutLeftClick),
+								Options::keyGeoZoomOut);
+	_btnDetail->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnZoomOutLeftClick),
+								SDLK_KP_MINUS);
 
 	_ufoDetected->setColor(SLATE);
 	_ufoDetected->setBig();
 	_ufoDetected->setVisible(false);
 
-/*	_btnRotateLeft->onMousePress((ActionHandler)& GeoscapeState::btnRotateLeftPress);
-	_btnRotateLeft->onMouseRelease((ActionHandler)& GeoscapeState::btnRotateLeftRelease);
-	_btnRotateLeft->onKeyboardPress((ActionHandler)&GeoscapeState::btnRotateLeftPress, Options::keyGeoLeft);
-	_btnRotateLeft->onKeyboardRelease((ActionHandler)&GeoscapeState::btnRotateLeftRelease, Options::keyGeoLeft);
+/*	_btnRotateLeft->onMousePress(		static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress));
+	_btnRotateLeft->onMouseRelease(		static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftRelease));
+	_btnRotateLeft->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress),   Options::keyGeoLeft);
+	_btnRotateLeft->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftRelease), Options::keyGeoLeft);
 
-	_btnRotateRight->onMousePress((ActionHandler)& GeoscapeState::btnRotateRightPress);
-	_btnRotateRight->onMouseRelease((ActionHandler)& GeoscapeState::btnRotateRightRelease);
-	_btnRotateRight->onKeyboardPress((ActionHandler)&GeoscapeState::btnRotateRightPress, Options::keyGeoRight);
-	_btnRotateRight->onKeyboardRelease((ActionHandler)&GeoscapeState::btnRotateRightRelease, Options::keyGeoRight);
+	_btnRotateRight->onMousePress(		static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress));
+	_btnRotateRight->onMouseRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightRelease));
+	_btnRotateRight->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress),   Options::keyGeoRight);
+	_btnRotateRight->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightRelease), Options::keyGeoRight);
 
-	_btnRotateUp->onMousePress((ActionHandler)& GeoscapeState::btnRotateUpPress);
-	_btnRotateUp->onMouseRelease((ActionHandler)& GeoscapeState::btnRotateUpRelease);
-	_btnRotateUp->onKeyboardPress((ActionHandler)&GeoscapeState::btnRotateUpPress, Options::keyGeoUp);
-	_btnRotateUp->onKeyboardRelease((ActionHandler)&GeoscapeState::btnRotateUpRelease, Options::keyGeoUp);
+	_btnRotateUp->onMousePress(		static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress));
+	_btnRotateUp->onMouseRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateUpRelease));
+	_btnRotateUp->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress),   Options::keyGeoUp);
+	_btnRotateUp->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateUpRelease), Options::keyGeoUp);
 
-	_btnRotateDown->onMousePress((ActionHandler)& GeoscapeState::btnRotateDownPress);
-	_btnRotateDown->onMouseRelease((ActionHandler)& GeoscapeState::btnRotateDownRelease);
-	_btnRotateDown->onKeyboardPress((ActionHandler)&GeoscapeState::btnRotateDownPress, Options::keyGeoDown);
-	_btnRotateDown->onKeyboardRelease((ActionHandler)&GeoscapeState::btnRotateDownRelease, Options::keyGeoDown);
+	_btnRotateDown->onMousePress(		static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress));
+	_btnRotateDown->onMouseRelease(		static_cast<ActionHandler>(&GeoscapeState::btnRotateDownRelease));
+	_btnRotateDown->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress),   Options::keyGeoDown);
+	_btnRotateDown->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateDownRelease), Options::keyGeoDown);
 
-	_btnZoomIn->onMouseClick((ActionHandler)& GeoscapeState::btnZoomInLeftClick, SDL_BUTTON_LEFT);
-	_btnZoomIn->onMouseClick((ActionHandler)& GeoscapeState::btnZoomInRightClick, SDL_BUTTON_RIGHT);
-	_btnZoomIn->onKeyboardPress((ActionHandler)&GeoscapeState::btnZoomInLeftClick, Options::keyGeoZoomIn);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnZoomInLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnZoomInRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomIn->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnZoomInLeftClick),  Options::keyGeoZoomIn);
 
-	_btnZoomOut->onMouseClick((ActionHandler)& GeoscapeState::btnZoomOutLeftClick, SDL_BUTTON_LEFT);
-	_btnZoomOut->onMouseClick((ActionHandler)& GeoscapeState::btnZoomOutRightClick, SDL_BUTTON_RIGHT);
-	_btnZoomOut->onKeyboardPress((ActionHandler)&GeoscapeState::btnZoomOutLeftClick, Options::keyGeoZoomOut); */
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnZoomOutLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnZoomOutRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomOut->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnZoomOutLeftClick),  Options::keyGeoZoomOut); */
 
 	if (Options::showFundsOnGeoscape == true)
 	{
@@ -920,13 +847,13 @@ GeoscapeState::GeoscapeState()
 	_txtLabels->setText(tr("STR_LABELS_").arg(tr("STR_ON_UC")));
 
 
-	_geoTimer->onTimer((StateHandler)& GeoscapeState::timeAdvance);
+	_geoTimer->onTimer(static_cast<StateHandler>(&GeoscapeState::timeAdvance));
 	_geoTimer->start();
 
-	_dfZoomInTimer->onTimer((StateHandler)& GeoscapeState::dfZoomIn);
-	_dfZoomOutTimer->onTimer((StateHandler)& GeoscapeState::dfZoomOut);
-	_dfStartTimer->onTimer((StateHandler)& GeoscapeState::startDogfight);
-	_dfTimer->onTimer((StateHandler)& GeoscapeState::thinkDogfights);
+	_dfZoomInTimer	->onTimer(static_cast<StateHandler>(&GeoscapeState::dfZoomIn));
+	_dfZoomOutTimer	->onTimer(static_cast<StateHandler>(&GeoscapeState::dfZoomOut));
+	_dfStartTimer	->onTimer(static_cast<StateHandler>(&GeoscapeState::startDogfight));
+	_dfTimer		->onTimer(static_cast<StateHandler>(&GeoscapeState::thinkDogfights));
 
 //	updateTimeDisplay();
 
@@ -1126,7 +1053,7 @@ void GeoscapeState::init()
 	_timeCache = 0;
 	updateTimeDisplay();
 
-	_globe->onMouseClick((ActionHandler)& GeoscapeState::globeClick);
+	_globe->onMouseClick(static_cast<ActionHandler>(&GeoscapeState::globeClick));
 	_globe->onMouseOver(nullptr);
 //	_globe->rotateStop();
 	_globe->setFocus(true);
@@ -1289,7 +1216,7 @@ void GeoscapeState::drawUfoBlobs()
 						_isfUfoBlobs[j]->setPixelColor(
 													static_cast<int>(x),
 													static_cast<int>(y),
-													colorBasic - color);
+													static_cast<Uint8>(colorBasic - color));
 					else
 						_isfUfoBlobs[j]->setPixelColor(
 													static_cast<int>(x),
@@ -1351,7 +1278,7 @@ void GeoscapeState::updateTimeDisplay()
 	else
 	{
 		const int sec (_gameSave->getTime()->getSecond());
-		_txtSec->setVisible(sec % 15u > 9);
+		_txtSec->setVisible(sec % 15 > 9);
 //		_txtSec->setVisible(_gameSave->getTime()->getSecond() % 15 == 0);
 	}
 
@@ -3073,7 +3000,7 @@ void GeoscapeState::time1Day()
 
 	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
 																alm_BASE,
-																_gameSave->getMonthsPassed()));
+																static_cast<size_t>(_gameSave->getMonthsPassed())));
 	const int aLienPts ((missionRule->getMissionScore() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
 	if (aLienPts != 0)
 	{
@@ -3962,7 +3889,7 @@ void GeoscapeState::deterAlienMissions() // private.
  */
 bool GeoscapeState::processDirective(RuleMissionScript* const directive) // private.
 {
-	const int elapsed (_gameSave->getMonthsPassed());
+	const size_t elapsed (static_cast<size_t>(_gameSave->getMonthsPassed()));
 
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
 	const RuleAlienMission* missionRule;
@@ -4106,7 +4033,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 								directive->getVarType(),
 								typeRegion,
 								terrorZoneId,
-								directive->getRepeatAvoidance());
+								static_cast<size_t>(directive->getRepeatAvoidance()));
 	}
 	else if (RNG::percent(directive->getTargetBaseOdds()) == true)
 	{
@@ -4418,10 +4345,15 @@ void GeoscapeState::resetTimeCacheClick(Action*) // private.
  * Pauses and unpauses the Geoscape.
  * @param action - pointer to an Action
  */
-void GeoscapeState::btnPauseClick(Action*) // private.
+void GeoscapeState::btnPauseClick(Action* action) // private.
 {
-	_pauseHard = !_pauseHard;
-	_globe->toggleBlink();
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+			_pauseHard = !_pauseHard;
+			_globe->toggleBlink();
+	}
 }
 
 /**

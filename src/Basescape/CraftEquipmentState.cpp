@@ -121,28 +121,23 @@ CraftEquipmentState::CraftEquipmentState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));
 
 	_btnClear->setText(tr("STR_UNLOAD_CRAFT"));
-	_btnClear->onMouseClick((ActionHandler)& CraftEquipmentState::btnUnloadCraftClick);
-	_btnClear->onKeyboardPress(
-					(ActionHandler)& CraftEquipmentState::btnUnloadCraftClick,
-					SDLK_u);
+	_btnClear->onMouseClick(	static_cast<ActionHandler>(&CraftEquipmentState::btnUnloadCraftClick));
+	_btnClear->onKeyboardPress(	static_cast<ActionHandler>(&CraftEquipmentState::btnUnloadCraftClick),
+								SDLK_u);
 
 	_btnInventory->setText(tr("STR_LOADOUT"));
-	_btnInventory->onMouseClick((ActionHandler)& CraftEquipmentState::btnInventoryClick);
-	_btnInventory->onKeyboardPress(
-					(ActionHandler)& CraftEquipmentState::btnInventoryClick,
-					SDLK_i);
+	_btnInventory->onMouseClick(	static_cast<ActionHandler>(&CraftEquipmentState::btnInventoryClick));
+	_btnInventory->onKeyboardPress(	static_cast<ActionHandler>(&CraftEquipmentState::btnInventoryClick),
+									SDLK_i);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CraftEquipmentState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftEquipmentState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftEquipmentState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CraftEquipmentState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CraftEquipmentState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftEquipmentState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftEquipmentState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftEquipmentState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_txtTitle->setText(tr("STR_EQUIPMENT_FOR_CRAFT").arg(_craft->getName(_game->getLanguage())));
 	_txtTitle->setBig();
@@ -164,18 +159,18 @@ CraftEquipmentState::CraftEquipmentState(
 	_lstEquipment->setSelectable();
 	_lstEquipment->setArrow(189, ARROW_HORIZONTAL);
 
-	_lstEquipment->onRightArrowPress(	(ActionHandler)& CraftEquipmentState::lstRightArrowPress);
-	_lstEquipment->onRightArrowRelease(	(ActionHandler)& CraftEquipmentState::lstRightArrowRelease);
+	_lstEquipment->onRightArrowPress(	static_cast<ActionHandler>(&CraftEquipmentState::lstRightArrowPress));
+	_lstEquipment->onRightArrowRelease(	static_cast<ActionHandler>(&CraftEquipmentState::lstRightArrowRelease));
 
-	_lstEquipment->onLeftArrowPress(	(ActionHandler)& CraftEquipmentState::lstLeftArrowPress);
-	_lstEquipment->onLeftArrowRelease(	(ActionHandler)& CraftEquipmentState::lstLeftArrowRelease);
+	_lstEquipment->onLeftArrowPress(	static_cast<ActionHandler>(&CraftEquipmentState::lstLeftArrowPress));
+	_lstEquipment->onLeftArrowRelease(	static_cast<ActionHandler>(&CraftEquipmentState::lstLeftArrowRelease));
 
 
 	_timerLeft = new Timer(Timer::SCROLL_SLOW);
-	_timerLeft->onTimer((StateHandler)& CraftEquipmentState::onLeft);
+	_timerLeft->onTimer(static_cast<StateHandler>(&CraftEquipmentState::onLeft));
 
 	_timerRight = new Timer(Timer::SCROLL_SLOW);
-	_timerRight->onTimer((StateHandler)& CraftEquipmentState::onRight);
+	_timerRight->onTimer(static_cast<StateHandler>(&CraftEquipmentState::onRight));
 }
 
 /**
@@ -219,7 +214,7 @@ void CraftEquipmentState::updateList() // private.
 
 	_lstEquipment->clearList();
 
-	size_t row (0u);
+	size_t r (0u);
 	std::wostringstream woststr;
 	std::wstring wst;
 	int
@@ -283,7 +278,7 @@ void CraftEquipmentState::updateList() // private.
 				else
 					color = _lstEquipment->getColor();
 
-				_lstEquipment->setRowColor(row++, color);
+				_lstEquipment->setRowColor(r++, color);
 			}
 		}
 	}
@@ -541,7 +536,7 @@ void CraftEquipmentState::rightByValue(int delta)
 			{
 				_timerRight->stop();
 
-				_error = tr("STR_NO_MORE_EQUIPMENT_ALLOWED", _craft->getLoadCapacity());
+				_error = tr("STR_NO_MORE_EQUIPMENT_ALLOWED", static_cast<unsigned>(_craft->getLoadCapacity()));
 				_game->pushState(new ErrorMessageState(
 													_error,
 													_palette,

@@ -219,7 +219,7 @@ ConfirmLandingState::ConfirmLandingState(
 					if (terrainList.empty() == false) // SAFETY.
 					{
 						const size_t pick (RNG::pick(terrainList.size()));
-						Log(LOG_INFO) << ". . . . size = " << (int)terrainList.size() << " pick = " << (int)pick;
+						Log(LOG_INFO) << ". . . . size = " << terrainList.size() << " pick = " << pick;
 						Log(LOG_INFO) << ". . . . terrain = " << terrainList.at(pick) << " - Not Weighted";
 						_terrainRule = _game->getRuleset()->getTerrain(terrainList.at(pick));
 					}
@@ -315,13 +315,11 @@ ConfirmLandingState::ConfirmLandingState(
 	if (allowTactical == true)
 	{
 		_btnYes->setText(tr("STR_YES"));
-		_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnYesClick);
-		_btnYes->onKeyboardPress(
-						(ActionHandler)& ConfirmLandingState::btnYesClick,
-						Options::keyOk);
-		_btnYes->onKeyboardPress(
-						(ActionHandler)& ConfirmLandingState::btnYesClick,
-						Options::keyOkKeypad);
+		_btnYes->onMouseClick(		static_cast<ActionHandler>(&ConfirmLandingState::btnYesClick));
+		_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLandingState::btnYesClick),
+									Options::keyOk);
+		_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLandingState::btnYesClick),
+									Options::keyOkKeypad);
 	}
 	else if (ufo != nullptr)
 	{
@@ -329,34 +327,29 @@ ConfirmLandingState::ConfirmLandingState(
 		{
 			case Ufo::LANDED:
 				_btnYes->setText(tr("STR_INTERCEPT"));
-				_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnInterceptClick);
-				_btnYes->onKeyboardPress(
-								(ActionHandler)& ConfirmLandingState::btnInterceptClick,
-								Options::keyOk);
-				_btnYes->onKeyboardPress(
-								(ActionHandler)& ConfirmLandingState::btnInterceptClick,
-								Options::keyOkKeypad);
+				_btnYes->onMouseClick(		static_cast<ActionHandler>(&ConfirmLandingState::btnInterceptClick));
+				_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLandingState::btnInterceptClick),
+											Options::keyOk);
+				_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLandingState::btnInterceptClick),
+											Options::keyOkKeypad);
 				break;
 
 			default:
 				_btnYes->setText(tr("STR_RETURN_TO_BASE"));
-				_btnYes->onMouseClick((ActionHandler)& ConfirmLandingState::btnBaseClick);
-				_btnYes->onKeyboardPress(
-								(ActionHandler)& ConfirmLandingState::btnBaseClick,
-								Options::keyOk);
-				_btnYes->onKeyboardPress(
-								(ActionHandler)& ConfirmLandingState::btnBaseClick,
-								Options::keyOkKeypad);
+				_btnYes->onMouseClick(		static_cast<ActionHandler>(&ConfirmLandingState::btnBaseClick));
+				_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLandingState::btnBaseClick),
+											Options::keyOk);
+				_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLandingState::btnBaseClick),
+											Options::keyOkKeypad);
 		}
 	}
 	else
 		_btnYes->setVisible(false);
 
 	_btnPatrol->setText(tr("STR_PATROL"));
-	_btnPatrol->onMouseClick((ActionHandler)& ConfirmLandingState::btnPatrolClick);
-	_btnPatrol->onKeyboardPress(
-					(ActionHandler)& ConfirmLandingState::btnPatrolClick,
-					Options::keyCancel);
+	_btnPatrol->onMouseClick(	static_cast<ActionHandler>(&ConfirmLandingState::btnPatrolClick));
+	_btnPatrol->onKeyboardPress(static_cast<ActionHandler>(&ConfirmLandingState::btnPatrolClick),
+								Options::keyCancel);
 }
 
 /**
@@ -509,9 +502,8 @@ RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
 
 	if (terrains.empty() == false)
 	{
-		const size_t pick = static_cast<size_t>(RNG::generate(
-														0,
-														static_cast<int>(terrains.size()) - 1));
+		const size_t pick = static_cast<size_t>(RNG::generate(0,
+															  static_cast<int>(terrains.size()) - 1));
 		Log(LOG_INFO) << ". . selected terrain = " << terrains.at(pick)->getName();
 		return terrains.at(pick);
 	}

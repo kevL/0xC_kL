@@ -53,66 +53,69 @@ OptionsModsState::OptionsModsState(OptionsOrigin origin)
 	centerAllSurfaces();
 
 	// how much room do you need for YES/NO
-	Text text = Text(100, 9);
+	Text text (Text(100, 9));
 	text.initText(
 				_game->getResourcePack()->getFont("FONT_BIG"),
 				_game->getResourcePack()->getFont("FONT_SMALL"),
 				_game->getLanguage());
 	text.setText(tr("STR_YES"));
-	int yes = text.getTextWidth();
 	text.setText(tr("STR_NO"));
-	int no = text.getTextWidth();
 
-	int
-		rightcol = std::max(yes, no) + 2,
-		leftcol = _lstMods->getWidth() - rightcol;
+	const int
+		yes (text.getTextWidth()),
+		no  (text.getTextWidth()),
+		rightcol (std::max(yes, no) + 2),
+		leftcol  (_lstMods->getWidth() - rightcol);
 
 	_lstMods->setAlign(ALIGN_RIGHT, 1);
 	_lstMods->setColumns(2, leftcol, rightcol);
 	_lstMods->setWordWrap();
 	_lstMods->setSelectable();
 	_lstMods->setBackground(_window);
-	_lstMods->onMouseClick((ActionHandler)& OptionsModsState::lstModsClick);
+	_lstMods->onMouseClick(	static_cast<ActionHandler>(&OptionsModsState::lstModsClick));
+//	_lstMods->onMouseIn(	static_cast<ActionHandler>(&OptionsModsState::txtTooltipIn));
+//	_lstMods->onMouseOut(	static_cast<ActionHandler>(&OptionsModsState::txtTooltipOut));
 //	_lstMods->setTooltip("STR_MODS_DESC");
-//	_lstMods->onMouseIn((ActionHandler)& OptionsModsState::txtTooltipIn);
-//	_lstMods->onMouseOut((ActionHandler)& OptionsModsState::txtTooltipOut);
 
-	std::vector<std::string> rulesets = CrossPlatform::getDataContents("Ruleset/");
-	for (std::vector<std::string>::iterator
+	std::string
+		file,
+		ruleset;
+	std::wstring rulesetLabel;
+	std::vector<std::string> rulesets (CrossPlatform::getDataContents("Ruleset/"));
+	for (std::vector<std::string>::const_iterator
 			i = rulesets.begin();
 			i != rulesets.end();
 			++i)
 	{
-		std::string file = *i;
+		file = *i;
 		std::transform(
 					file.begin(),
 					file.end(),
 					file.begin(),
 					tolower);
 
-		if ((file.length() > 4
-				&& file.substr(file.length() - 4, 4) == ".rul")
+		if ((file.length() > 4u && file.substr(file.length() - 4u, 4u) == ".rul")
 			|| CrossPlatform::getDataContents("Ruleset/" + *i, "rul").empty() == false)
 		{
-			std::string mod = CrossPlatform::noExt(*i);
-			std::wstring modName = Language::fsToWstr(mod);
+			ruleset = CrossPlatform::noExt(*i);
+			rulesetLabel = Language::fsToWstr(ruleset);
 			Language::replace(
-							modName,
+							rulesetLabel,
 							L"_",
 							L" ");
 
-			if (mod != "Xcom1Ruleset") // ignore default ruleset
+			if (ruleset != "Xcom1Ruleset") // ignore default ruleset
 			{
-				bool modEnabled = (std::find(
-										Options::rulesets.begin(),
-										Options::rulesets.end(),
-										mod) != Options::rulesets.end());
+				const bool ruleEnabled ((std::find(
+												Options::rulesets.begin(),
+												Options::rulesets.end(),
+												ruleset) != Options::rulesets.end()));
 				_lstMods->addRow(
 							2,
-							modName.c_str(),
-							modEnabled ? tr("STR_YES").c_str() : tr("STR_NO").c_str());
+							rulesetLabel.c_str(),
+							(ruleEnabled == true) ? tr("STR_YES").c_str() : tr("STR_NO").c_str());
 
-				_mods.push_back(mod);
+				_mods.push_back(ruleset);
 			}
 		}
 	}
@@ -126,22 +129,27 @@ OptionsModsState::~OptionsModsState()
 
 void OptionsModsState::lstModsClick(Action*)
 {
-	std::string selectedMod = _mods[_lstMods->getSelectedRow()];
-	std::vector<std::string>::iterator i = std::find(
-													Options::rulesets.begin(),
-													Options::rulesets.end(),
-													selectedMod);
+	std::string selectedRuleset (_mods[_lstMods->getSelectedRow()]);
+	std::vector<std::string>::const_iterator i (std::find(
+														Options::rulesets.begin(),
+														Options::rulesets.end(),
+														selectedRuleset));
 	if (i != Options::rulesets.end())
 	{
-		_lstMods->setCellText(_lstMods->getSelectedRow(), 1, tr("STR_NO"));
+		_lstMods->setCellText(
+							_lstMods->getSelectedRow(),
+							1u,
+							tr("STR_NO"));
 		Options::rulesets.erase(i);
 	}
 	else
 	{
-		_lstMods->setCellText(_lstMods->getSelectedRow(), 1, tr("STR_YES"));
-		Options::rulesets.push_back(selectedMod);
+		_lstMods->setCellText(
+							_lstMods->getSelectedRow(),
+							1u,
+							tr("STR_YES"));
+		Options::rulesets.push_back(selectedRuleset);
 	}
-
 	Options::reload = true;
 }
 

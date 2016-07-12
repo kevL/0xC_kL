@@ -85,7 +85,7 @@ MiniMapView::MiniMapView(
 		_set(game->getResourcePack()->getSurfaceSet("SCANG.DAT"))
 {
 	_timerScroll = new Timer(SCROLL_INTERVAL);
-	_timerScroll->onTimer((SurfaceHandler)& MiniMapView::keyScroll);
+	_timerScroll->onTimer(static_cast<SurfaceHandler>(&MiniMapView::keyScroll));
 }
 
 /**
@@ -308,30 +308,30 @@ void MiniMapView::draw()
 		xOffset (static_cast<Sint16>(CELL_WIDTH  >> 1u)),
 		yOffset (static_cast<Sint16>(CELL_HEIGHT >> 1u));
 
-//	const Uint8 color = static_cast<Uint8>(WHITE + _cycle * 3); // <- if you really want the crosshair to blink.
+//	const Uint8 color (static_cast<Uint8>(WHITE + _cycle * 3)); // <- if you really want the crosshair to blink.
 	drawLine(
-			centerX - static_cast<Sint16>(CELL_WIDTH),	// top left
-			centerY - static_cast<Sint16>(CELL_HEIGHT),
-			centerX - xOffset,
-			centerY - yOffset,
+			static_cast<Sint16>(centerX - static_cast<Sint16>(CELL_WIDTH)),	// top left
+			static_cast<Sint16>(centerY - static_cast<Sint16>(CELL_HEIGHT)),
+			static_cast<Sint16>(centerX - xOffset),
+			static_cast<Sint16>(centerY - yOffset),
 			WHITE);
 	drawLine(
-			centerX + xOffset,							// top right
-			centerY - yOffset,
-			centerX + static_cast<Sint16>(CELL_WIDTH),
-			centerY - static_cast<Sint16>(CELL_HEIGHT),
+			static_cast<Sint16>(centerX + xOffset),							// top right
+			static_cast<Sint16>(centerY - yOffset),
+			static_cast<Sint16>(centerX + static_cast<Sint16>(CELL_WIDTH)),
+			static_cast<Sint16>(centerY - static_cast<Sint16>(CELL_HEIGHT)),
 			WHITE);
 	drawLine(
-			centerX - static_cast<Sint16>(CELL_WIDTH),	// bottom left
-			centerY + static_cast<Sint16>(CELL_HEIGHT),
-			centerX - xOffset,
-			centerY + yOffset,
+			static_cast<Sint16>(centerX - static_cast<Sint16>(CELL_WIDTH)),	// bottom left
+			static_cast<Sint16>(centerY + static_cast<Sint16>(CELL_HEIGHT)),
+			static_cast<Sint16>(centerX - xOffset),
+			static_cast<Sint16>(centerY + yOffset),
 			WHITE);
 	drawLine(
-			centerX + static_cast<Sint16>(CELL_WIDTH),	 // bottom right
-			centerY + static_cast<Sint16>(CELL_HEIGHT),
-			centerX + xOffset,
-			centerY + yOffset,
+			static_cast<Sint16>(centerX + static_cast<Sint16>(CELL_WIDTH)),	 // bottom right
+			static_cast<Sint16>(centerY + static_cast<Sint16>(CELL_HEIGHT)),
+			static_cast<Sint16>(centerX + xOffset),
+			static_cast<Sint16>(centerY + yOffset),
 			WHITE);
 }
 

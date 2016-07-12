@@ -46,14 +46,14 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the SoldierInfoDeadState screen.
- * @param soldierId - ID of the selected soldier
+ * @param solId - ID of the current Soldier
  */
-SoldierInfoDeadState::SoldierInfoDeadState(size_t soldierId)
+SoldierInfoDeadState::SoldierInfoDeadState(size_t solId)
 	:
-		_soldierId(soldierId),
-		_soldier(nullptr)
+		_solId(solId),
+		_sol(nullptr)
 {
-	_list = _game->getSavedGame()->getDeadSoldiers();
+	_listDead = _game->getSavedGame()->getDeadSoldiers();
 
 	_bg				= new Surface(320, 200);
 
@@ -199,44 +199,41 @@ SoldierInfoDeadState::SoldierInfoDeadState(size_t soldierId)
 	_game->getResourcePack()->getSurface("BACK06.SCR")->blit(_bg);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SoldierInfoDeadState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierInfoDeadState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldierInfoDeadState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierInfoDeadState::btnOkClick),
+							Options::keyCancel);
 
 	_btnPrev->setText(L"<");
-	_btnPrev->onMouseClick((ActionHandler)& SoldierInfoDeadState::btnPrevClick);
-	_btnPrev->onKeyboardPress(
-					(ActionHandler)& SoldierInfoDeadState::btnPrevClick,
-					Options::keyBattlePrevUnit);
+	_btnPrev->onMouseClick(		static_cast<ActionHandler>(&SoldierInfoDeadState::btnPrevClick));
+	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&SoldierInfoDeadState::btnPrevClick),
+								Options::keyBattlePrevUnit);
 
 	_btnNext->setText(L">");
-	_btnNext->onMouseClick((ActionHandler)& SoldierInfoDeadState::btnNextClick);
-	_btnNext->onKeyboardPress(
-					(ActionHandler)& SoldierInfoDeadState::btnNextClick,
-					Options::keyBattleNextUnit);
+	_btnNext->onMouseClick(		static_cast<ActionHandler>(&SoldierInfoDeadState::btnNextClick));
+	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&SoldierInfoDeadState::btnNextClick),
+								Options::keyBattleNextUnit);
 
 
 	_txtSoldier->setBig();
 
 	_txtDeath->setText(tr("STR_DATE_DEATH"));
-	_txtDate->setColor(208); // <- text1->color2
+	_txtDate->setColor(208u); // <- text1->color2
 
 	_btnDiary->setText(tr("STR_DIARY"));
-	_btnDiary->onMouseClick((ActionHandler)& SoldierInfoDeadState::btnDiaryClick);
+	_btnDiary->onMouseClick(static_cast<ActionHandler>(&SoldierInfoDeadState::btnDiaryClick));
 
 
-	_txtTimeUnits->setText(tr("STR_TIME_UNITS"));
-	_txtStamina->setText(tr("STR_STAMINA"));
-	_txtHealth->setText(tr("STR_HEALTH"));
-	_txtBravery->setText(tr("STR_BRAVERY"));
-	_txtReactions->setText(tr("STR_REACTIONS"));
-	_txtFiring->setText(tr("STR_FIRING_ACCURACY"));
-	_txtThrowing->setText(tr("STR_THROWING_ACCURACY"));
-	_txtMelee->setText(tr("STR_MELEE_ACCURACY"));
-	_txtStrength->setText(tr("STR_STRENGTH"));
-	_txtPsiStrength->setText(tr("STR_PSIONIC_STRENGTH"));
-	_txtPsiSkill->setText(tr("STR_PSIONIC_SKILL"));
+	_txtTimeUnits->		setText(tr("STR_TIME_UNITS"));
+	_txtStamina->		setText(tr("STR_STAMINA"));
+	_txtHealth->		setText(tr("STR_HEALTH"));
+	_txtBravery->		setText(tr("STR_BRAVERY"));
+	_txtReactions->		setText(tr("STR_REACTIONS"));
+	_txtFiring->		setText(tr("STR_FIRING_ACCURACY"));
+	_txtThrowing->		setText(tr("STR_THROWING_ACCURACY"));
+	_txtMelee->			setText(tr("STR_MELEE_ACCURACY"));
+	_txtStrength->		setText(tr("STR_STRENGTH"));
+	_txtPsiStrength->	setText(tr("STR_PSIONIC_STRENGTH"));
+	_txtPsiSkill->		setText(tr("STR_PSIONIC_SKILL"));
 }
 
 /**
@@ -246,40 +243,43 @@ SoldierInfoDeadState::~SoldierInfoDeadState()
 {}
 
 /**
- * Updates soldier stats when the dead soldier changes.
+ * Updates the displayed stats when the current dead Soldier changes.
  */
 void SoldierInfoDeadState::init()
 {
 	State::init();
 
-	if (_list->empty() == true)
+	if (_listDead->empty() == true)
 	{
 		_game->popState();
 		return;
 	}
 
-	if (_soldierId >= _list->size())
-		_soldierId = 0;
+	if (_solId >= _listDead->size())
+		_solId = 0;
 
-	_soldier = _list->at(_soldierId);
-	_txtSoldier->setText(_soldier->getName());
+	_sol = _listDead->at(_solId);
+	_txtSoldier->setText(_sol->getName());
 
 	SurfaceSet* const baseBits (_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
-	baseBits->getFrame(_soldier->getRankSprite())->setX(0);
-	baseBits->getFrame(_soldier->getRankSprite())->setY(0);
-	baseBits->getFrame(_soldier->getRankSprite())->blit(_rank);
+	baseBits->getFrame(_sol->getRankSprite())->setX(0);
+	baseBits->getFrame(_sol->getRankSprite())->setY(0);
+	baseBits->getFrame(_sol->getRankSprite())->blit(_rank);
 
 	_gender->clear();
 	Surface* gender;
-	if (_soldier->getGender() == GENDER_MALE)
-		gender = _game->getResourcePack()->getSurface("GENDER_M");
-	else
-		gender = _game->getResourcePack()->getSurface("GENDER_F");
+	switch (_sol->getGender())
+	{
+		default:
+		case GENDER_MALE:
+			gender = _game->getResourcePack()->getSurface("GENDER_M");
+			break;
+		case GENDER_FEMALE:
+			gender = _game->getResourcePack()->getSurface("GENDER_F");
+	}
+	if (gender != nullptr) gender->blit(_gender);
 
-	if (gender != nullptr)
-		gender->blit(_gender);
-
-	const SoldierDeath* const death (_soldier->getDeath());
+	const SoldierDeath* const death (_sol->getDeath());
 	std::wostringstream date;
 	date << death->getTime()->getDayString(_game->getLanguage());
 	date << L" ";
@@ -290,8 +290,8 @@ void SoldierInfoDeadState::init()
 
 
 	const UnitStats
-		* const initial (_soldier->getInitStats()),
-		* const current (_soldier->getCurrentStats());
+		* const initial (_sol->getInitStats()),
+		* const current (_sol->getCurrentStats());
 
 	std::wostringstream woststr;
 
@@ -390,9 +390,9 @@ void SoldierInfoDeadState::init()
 	_barStrength->setValue(current->strength);
 
 
-	_txtRank->setText(tr("STR_RANK_").arg(tr(_soldier->getRankString())));
-	_txtMissions->setText(tr("STR_MISSIONS_").arg(_soldier->getMissions()));
-	_txtKills->setText(tr("STR_KILLS_").arg(_soldier->getKills()));
+	_txtRank->setText(tr("STR_RANK_").arg(tr(_sol->getRankString())));
+	_txtMissions->setText(tr("STR_MISSIONS_").arg(_sol->getMissions()));
+	_txtKills->setText(tr("STR_KILLS_").arg(_sol->getKills()));
 
 	if (current->psiSkill != 0)
 	{
@@ -436,49 +436,53 @@ void SoldierInfoDeadState::btnOkClick(Action*)
 }
 
 /**
- * Goes to the previous soldier.
- * kL: reversed these because SoldierMemorialState uses a reversed vector.
+ * Goes to the previous Soldier.
+ * @note Reversed these because SoldierMemorialState uses a reversed vector.
  * @param action - pointer to an Action
  */
 void SoldierInfoDeadState::btnNextClick(Action*)
 {
-	if (_soldierId == 0)
-		_soldierId = _list->size() - 1;
+	if (_solId == 0)
+		_solId = _listDead->size() - 1;
 	else
-		--_soldierId;
+		--_solId;
 
 	init();
 }
 
 /**
- * Goes to the next soldier.
- * kL: reversed these because SoldierMemorialState uses a reversed vector.
+ * Goes to the next Soldier.
+ * @note Reversed these because SoldierMemorialState uses a reversed vector.
  * @param action - pointer to an Action
  */
 void SoldierInfoDeadState::btnPrevClick(Action*)
 {
-	if (++_soldierId >= _list->size())
-		_soldierId = 0;
+	if (++_solId >= _listDead->size())
+		_solId = 0;
 
 	init();
 }
 
 /**
- * Sets the soldier ID.
- * @param soldierId - the ID for the current soldier
+ * Sets the soldier-ID.
+ * @param solId - the ID for the current dead Soldier
  */
-void SoldierInfoDeadState::setSoldierId(size_t soldierId)
+void SoldierInfoDeadState::setSoldierId(size_t solId)
 {
-	_soldierId = soldierId;
+	_solId = solId;
 }
 
 /**
- * Shows the Diary Soldier window.
+ * Shows the SoldierDiaryOverview screen.
  * @param action - pointer to an Action
  */
 void SoldierInfoDeadState::btnDiaryClick(Action*)
 {
-	_game->pushState(new SoldierDiaryOverviewState(nullptr, _soldierId, nullptr, this));
+	_game->pushState(new SoldierDiaryOverviewState(
+												nullptr,
+												_solId,
+												nullptr,
+												this));
 }
 
 }

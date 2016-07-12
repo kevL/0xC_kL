@@ -53,17 +53,17 @@ namespace OpenXcom
  * The diary-screen that displays/hides the several screens that document a
  * Soldier's performance.
  * @param base		- pointer to the Base to get info from
- * @param soldierId	- ID of the selected soldier
+ * @param solId		- soldier-ID to show info for
  * @param overview	- pointer to SoldierDiaryOverviewState
  * @param display	- SoldierDiaryDisplay (SoldierDiaryPerformanceState.h)
  */
 SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		Base* const base,
-		const size_t soldierId,
+		const size_t solId,
 		SoldierDiaryOverviewState* const overview,
 		const SoldierDiaryDisplay display)
 	:
-		_soldierId(soldierId),
+		_solId(solId),
 		_overview(overview),
 		_display(display),
 		_lastScroll(0u),
@@ -71,14 +71,14 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 {
 	if (base != nullptr)
 	{
-		_list = base->getSoldiers();
+		_listBase = base->getSoldiers();
 		_listDead = nullptr;
-		_rows = _list->size();
+		_rows = _listBase->size();
 	}
 	else
 	{
 		_listDead = _game->getSavedGame()->getDeadSoldiers();
-		_list = nullptr;
+		_listBase = nullptr;
 		_rows = _listDead->size();
 	}
 
@@ -193,7 +193,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	if (_list != nullptr)
+	if (_listBase != nullptr)
 	{
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
 		_txtBaseLabel->setText(base->getName());
@@ -201,16 +201,14 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
-			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick);
-			_btnPrev->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick,
-							Options::keyBattlePrevUnit);
+			_btnPrev->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnPrevClick));
+			_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnPrevClick),
+										Options::keyBattlePrevUnit);
 
 			_btnNext->setText(L">");
-			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
-			_btnNext->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryPerformanceState::btnNextClick,
-							Options::keyBattleNextUnit);
+			_btnNext->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnNextClick));
+			_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnNextClick),
+										Options::keyBattleNextUnit);
 		}
 		else
 		{
@@ -225,16 +223,14 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
-			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnNextClick);
-			_btnPrev->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryPerformanceState::btnNextClick,
-							Options::keyBattlePrevUnit);
+			_btnPrev->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnNextClick));
+			_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnNextClick),
+										Options::keyBattlePrevUnit);
 
 			_btnNext->setText(L">");
-			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick);
-			_btnNext->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryPerformanceState::btnPrevClick,
-							Options::keyBattleNextUnit);
+			_btnNext->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnPrevClick));
+			_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnPrevClick),
+										Options::keyBattleNextUnit);
 		}
 		else
 		{
@@ -245,34 +241,28 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 
 	_btnMissions->setText(tr("STR_MISSIONS_UC"));
-	_btnMissions->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnMissionsToggle);
-	_btnMissions->onMouseClick(
-					(ActionHandler)& SoldierDiaryPerformanceState::btnMissionsToggle,
-					SDLK_m);
+	_btnMissions->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnMissionsToggle));
+	_btnMissions->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnMissionsToggle),
+									SDLK_m);
 
 	_btnKills->setText(tr("STR_KILLS_UC"));
-	_btnKills->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnKillsToggle);
-	_btnKills->onMouseClick(
-					(ActionHandler)& SoldierDiaryPerformanceState::btnKillsToggle,
-					SDLK_k);
+	_btnKills->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnKillsToggle));
+	_btnKills->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnKillsToggle),
+								SDLK_k);
 
 	_btnAwards->setText(tr("STR_AWARDS_UC"));
-	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnMedalsToggle);
-	_btnAwards->onMouseClick(
-					(ActionHandler)& SoldierDiaryPerformanceState::btnMedalsToggle,
-					SDLK_a);
+	_btnAwards->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnMedalsToggle));
+	_btnAwards->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnMedalsToggle),
+								SDLK_a);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryPerformanceState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryPerformanceState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryPerformanceState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryPerformanceState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryPerformanceState::btnOkClick),
+							Options::keyCancel);
 
 
 	// Mission stats ->
@@ -280,10 +270,10 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_txtType->setText(tr("STR_MISSIONS_BY_TYPE"));
 	_txtUFO->setText(tr("STR_MISSIONS_BY_UFO"));
 
-	Uint8 color		 (_game->getRuleset()->getInterface("awards")->getElement("list")->color2);
-	_colorBtnUp		= _game->getRuleset()->getInterface("awards")->getElement("button2")->color;
-	_colorBtnDown	= _game->getRuleset()->getInterface("awards")->getElement("button2")->color2;
-	_color1stCol	= _game->getRuleset()->getInterface("awards")->getElement("list2")->color;
+	Uint8 color		 (static_cast<Uint8>(_game->getRuleset()->getInterface("awards")->getElement("list")->color2));
+	_colorBtnUp		= static_cast<Uint8>(_game->getRuleset()->getInterface("awards")->getElement("button2")->color);
+	_colorBtnDown	= static_cast<Uint8>(_game->getRuleset()->getInterface("awards")->getElement("button2")->color2);
+	_color1stCol	= static_cast<Uint8>(_game->getRuleset()->getInterface("awards")->getElement("list2")->color);
 
 	_lstLocation->setArrowColor(color);
 	_lstLocation->setColumns(2, 80,12);
@@ -332,9 +322,9 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_lstAwards->setBackground(_window);
 	_lstAwards->setSelectable();
 	_lstAwards->setMargin();
-	_lstAwards->onMouseOver((ActionHandler)& SoldierDiaryPerformanceState::lstMouseOver);
-	_lstAwards->onMouseOut((ActionHandler)& SoldierDiaryPerformanceState::lstMouseOut);
-	_lstAwards->onMousePress((ActionHandler)& SoldierDiaryPerformanceState::handle);
+	_lstAwards->onMouseOver(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::lstMouseOver));
+	_lstAwards->onMouseOut(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::lstMouseOut));
+	_lstAwards->onMousePress(							   &SoldierDiaryPerformanceState::handle); // call to base-state.
 
 	_txtMedalInfo->setHighContrast();
 	_txtMedalInfo->setWordWrap();
@@ -342,14 +332,9 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 	switch (_display)
 	{
-		case DIARY_KILLS:
-			_displayGroup = _btnKills;
-			break;
-		case DIARY_MISSIONS:
-			_displayGroup = _btnMissions;
-			break;
-		case DIARY_MEDALS:
-			_displayGroup = _btnAwards;
+		case DIARY_KILLS:		_displayGroup = _btnKills;		break;
+		case DIARY_MISSIONS:	_displayGroup = _btnMissions;	break;
+		case DIARY_MEDALS:		_displayGroup = _btnAwards;
 	}
 
 	_btnKills->setGroup(&_displayGroup);
@@ -451,9 +436,9 @@ void SoldierDiaryPerformanceState::init()
 	_txtMedalInfo	->setVisible(vis);
 
 
-	_awardsListEntry	 .clear();
 	_lstKillTotals		->clearList();
 	_lstMissionTotals	->clearList();
+	_awardsList			.clear();
 
 	_lstRace		->clearList();
 	_lstRank		->clearList();
@@ -464,25 +449,18 @@ void SoldierDiaryPerformanceState::init()
 	_lstAwards		->clearList();
 
 
-//	if (_soldierId >= _rows) // safety.
-//		_soldierId = 0u;
-
-	if (_list != nullptr)
+	if (_listBase != nullptr)
 	{
-		const Soldier* const soldier (_list->at(_soldierId));
+		const Soldier* const soldier (_listBase->at(_solId));
 		_diary = soldier->getDiary();
 		_txtTitle->setText(soldier->getName());
 	}
 	else
 	{
-		const SoldierDead* const deadSoldier (_listDead->at(_soldierId));
+		const SoldierDead* const deadSoldier (_listDead->at(_solId));
 		_diary = deadSoldier->getDiary();
 		_txtTitle->setText(deadSoldier->getName());
 	}
-
-
-	if (_diary == nullptr) // safety.
-		return;
 
 	std::vector<MissionStatistics*>* tacticals (_game->getSavedGame()->getMissionStatistics());
 
@@ -563,7 +541,7 @@ void SoldierDiaryPerformanceState::init()
 			i != lstCols;
 			++i)
 	{
-		size_t row (0u);
+		size_t r (0u);
 		for (std::map<std::string, int>::const_iterator
 				j = mapArray[i].begin();
 				j != mapArray[i].end();
@@ -578,7 +556,7 @@ void SoldierDiaryPerformanceState::init()
 								2,
 								tr((*j).first).c_str(),
 								woststr.str().c_str());
-				lstArray[i]->setCellColor(row++, 0u, _color1stCol);
+				lstArray[i]->setCellColor(r++, 0u, _color1stCol);
 			}
 		}
 	}
@@ -614,7 +592,7 @@ void SoldierDiaryPerformanceState::init()
 						tr((*i)->getClassDescription()).c_str(),
 						tr((*i)->getClassDegree()).c_str());
 
-		_awardsListEntry.push_back(woststr2.str());
+		_awardsList.push_back(woststr2.str());
 		drawMedals();
 	}
 }
@@ -652,8 +630,7 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 				sprite = awardRule->getSprite();
 				_srtSprite->getFrame(sprite)->blit(_srfSprite[j - scroll]);
 
-				sprite = static_cast<int>((*i)->getClassLevel()); // handle award's decoration-sprites
-				if (sprite != 0)
+				if ((sprite = static_cast<int>((*i)->getClassLevel())) != 0) // handle award's decoration-sprites
 					_srtDecor->getFrame(sprite)->blit(_srfLevel[j - scroll]);
 			}
 		}
@@ -676,15 +653,17 @@ void SoldierDiaryPerformanceState::btnOkClick(Action*)
  */
 void SoldierDiaryPerformanceState::btnKillsToggle(Action*)
 {
-	if (_display != DIARY_KILLS)
+	switch (_display)
 	{
-		_display = DIARY_KILLS;
-		init();
-	}
-	else
-	{
-		_overview->setSoldierId(_soldierId);
-		_game->popState();
+		case DIARY_KILLS:
+			_overview->setSoldierId(_solId);
+			_game->popState();
+			break;
+
+		case DIARY_MISSIONS:
+		case DIARY_MEDALS:
+			_display = DIARY_KILLS;
+			init();
 	}
 }
 
@@ -694,15 +673,17 @@ void SoldierDiaryPerformanceState::btnKillsToggle(Action*)
  */
 void SoldierDiaryPerformanceState::btnMissionsToggle(Action*)
 {
-	if (_display != DIARY_MISSIONS)
+	switch (_display)
 	{
-		_display = DIARY_MISSIONS;
-		init();
-	}
-	else
-	{
-		_overview->setSoldierId(_soldierId);
-		_game->popState();
+		case DIARY_MISSIONS:
+			_overview->setSoldierId(_solId);
+			_game->popState();
+			break;
+
+		case DIARY_KILLS:
+		case DIARY_MEDALS:
+			_display = DIARY_MISSIONS;
+			init();
 	}
 }
 
@@ -712,15 +693,17 @@ void SoldierDiaryPerformanceState::btnMissionsToggle(Action*)
  */
 void SoldierDiaryPerformanceState::btnMedalsToggle(Action*)
 {
-	if (_display != DIARY_MEDALS)
+	switch (_display)
 	{
-		_display = DIARY_MEDALS;
-		init();
-	}
-	else
-	{
-		_overview->setSoldierId(_soldierId);
-		_game->popState();
+		case DIARY_MEDALS:
+			_overview->setSoldierId(_solId);
+			_game->popState();
+			break;
+
+		case DIARY_KILLS:
+		case DIARY_MISSIONS:
+			_display = DIARY_MEDALS;
+			init();
 	}
 }
 
@@ -730,15 +713,12 @@ void SoldierDiaryPerformanceState::btnMedalsToggle(Action*)
  */
 void SoldierDiaryPerformanceState::lstMouseOver(Action*)
 {
-	const size_t row (_lstAwards->getSelectedRow());
+	const size_t r (_lstAwards->getSelectedRow());
 
-	if (_awardsListEntry.empty() == true
-		|| row > _awardsListEntry.size() - 1u)
-	{
-		_txtMedalInfo->setText(L"");
-	}
+	if (r != std::numeric_limits<size_t>::max())
+		_txtMedalInfo->setText(_awardsList[r]);
 	else
-		_txtMedalInfo->setText(_awardsListEntry[row]);
+		_txtMedalInfo->setText(L"");
 }
 
 /**
@@ -756,10 +736,10 @@ void SoldierDiaryPerformanceState::lstMouseOut(Action*)
  */
 void SoldierDiaryPerformanceState::btnPrevClick(Action*)
 {
-	if (_soldierId == 0u)
-		_soldierId = _rows - 1u;
+	if (_solId == 0u)
+		_solId = _rows - 1u;
 	else
-		--_soldierId;
+		--_solId;
 
 	init();
 }
@@ -770,8 +750,8 @@ void SoldierDiaryPerformanceState::btnPrevClick(Action*)
  */
 void SoldierDiaryPerformanceState::btnNextClick(Action*)
 {
-	if (++_soldierId == _rows)
-		_soldierId = 0u;
+	if (++_solId == _rows)
+		_solId = 0u;
 
 	init();
 }

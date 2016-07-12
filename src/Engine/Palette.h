@@ -101,9 +101,9 @@ private:
 		static inline int palOffset(int palette)
 		{ return palette * (768 + 6); }
 
-		/// Gets the position of a certain color block in the Palette.
+		/// Gets the position of a certain color-block in the Palette.
 		/**
-		 * Returns the position of a certain color block in the Palette.
+		 * Returns the position of a certain color-block in the Palette.
 		 * @note They're usually split into sections of 16 colors as gradients.
 		 * This function makes setting color(s) a lot easier than counting to
 		 * a color's exact position.
@@ -111,7 +111,7 @@ private:
 		 * @return, start-position of a color-section
 		 */
 		static inline Uint8 blockOffset(Uint8 block)
-		{ return (static_cast<Uint8>(block << 4)); }
+		{ return (static_cast<Uint8>(block << 4u)); }
 
 		///
 //		void setColors(SDL_Color* pal, int qColors);

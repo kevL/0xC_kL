@@ -56,10 +56,14 @@ PauseState::PauseState(OptionsOrigin origin)
 	_fullScreen = false;
 
 	int x;
-	if (_origin == OPT_GEOSCAPE)
-		x = 20;
-	else
-		x = 52;
+	switch (_origin)
+	{
+		case OPT_GEOSCAPE: x = 20; break;
+
+		default:
+		case OPT_MENU:
+		case OPT_BATTLESCAPE: x = 52;
+	}
 
 	_window		= new Window(this, 216, 158, x, 20, POPUP_BOTH);
 
@@ -96,57 +100,50 @@ PauseState::PauseState(OptionsOrigin origin)
 	_txtTitle->setText(tr("STR_OPTIONS_UC"));
 
 	_btnLoad->setText(tr("STR_LOAD_GAME"));
-	_btnLoad->onMouseClick((ActionHandler)& PauseState::btnLoadClick);
-	_btnLoad->onKeyboardPress(
-					(ActionHandler)& PauseState::btnLoadClick,
-					SDLK_l); // load
+	_btnLoad->onMouseClick(		static_cast<ActionHandler>(&PauseState::btnLoadClick));
+	_btnLoad->onKeyboardPress(	static_cast<ActionHandler>(&PauseState::btnLoadClick),
+								SDLK_l); // load
 
 	_btnSave->setText(tr("STR_SAVE_GAME"));
-	_btnSave->onMouseClick((ActionHandler)& PauseState::btnSaveClick);
-	_btnSave->onKeyboardPress(
-					(ActionHandler)& PauseState::btnSaveClick,
-					SDLK_s); // save
+	_btnSave->onMouseClick(		static_cast<ActionHandler>(&PauseState::btnSaveClick));
+	_btnSave->onKeyboardPress(	static_cast<ActionHandler>(&PauseState::btnSaveClick),
+								SDLK_s); // save
 
 	_btnAbandon->setText(tr("STR_ABANDON_GAME"));
-	_btnAbandon->onMouseClick((ActionHandler)& PauseState::btnAbandonClick);
-	_btnAbandon->onKeyboardPress(
-					(ActionHandler)& PauseState::btnAbandonClick,
-					SDLK_a); // abandon
-	_btnAbandon->onMouseClick((ActionHandler)& PauseState::btnAbandonClick);
-	_btnAbandon->onKeyboardPress(
-					(ActionHandler)& PauseState::btnAbandonClick,
-					SDLK_q); // quit
+	_btnAbandon->onMouseClick(		static_cast<ActionHandler>(&PauseState::btnAbandonClick));
+	_btnAbandon->onKeyboardPress(	static_cast<ActionHandler>(&PauseState::btnAbandonClick),
+									SDLK_a); // abandon
+	_btnAbandon->onMouseClick(		static_cast<ActionHandler>(&PauseState::btnAbandonClick));
+	_btnAbandon->onKeyboardPress(	static_cast<ActionHandler>(&PauseState::btnAbandonClick),
+									SDLK_q); // quit
 
 //	_btnOptions->setText(tr("STR_GAME_OPTIONS"));
-//	_btnOptions->onMouseClick((ActionHandler)& PauseState::btnOptionsClick);
+//	_btnOptions->onMouseClick(static_cast<ActionHandler>(&PauseState::btnOptionsClick));
 //	_btnOptions->setVisible(false);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick((ActionHandler)& PauseState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PauseState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PauseState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PauseState::btnCancelClick,
-					Options::keyOkKeypad);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& PauseState::btnCancelClick,
-					SDLK_c);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&PauseState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
+								Options::keyOkKeypad);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
+								SDLK_c);
 
-	if (origin == OPT_GEOSCAPE)
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& PauseState::btnCancelClick,
-						Options::keyGeoOptions);
-	else if (origin == OPT_BATTLESCAPE)
-		_btnCancel->onKeyboardPress(
-						(ActionHandler)& PauseState::btnCancelClick,
-						Options::keyBattleOptions);
+	switch (_origin)
+	{
+		case OPT_GEOSCAPE:
+			_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
+										Options::keyGeoOptions);
+			break;
 
-	if (_origin == OPT_BATTLESCAPE)
-		applyBattlescapeTheme();
+		case OPT_BATTLESCAPE:
+			_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
+										Options::keyBattleOptions);
+			applyBattlescapeTheme();
+	}
 
 	if (_game->getSavedGame()->isIronman() == true)
 	{
@@ -186,22 +183,29 @@ void PauseState::btnSaveClick(Action*)
 
 /**
 * Opens the Game Options screen.
-* @param action Pointer to an action.
+* @param action - pointer to an Action
 *
 void PauseState::btnOptionsClick(Action*)
 {
 	Options::backupDisplay();
 
-	if (_origin == OPT_GEOSCAPE)
-		_game->pushState(new OptionsGeoscapeState(_origin));
-	else if (_origin == OPT_BATTLESCAPE)
-		_game->pushState(new OptionsBattlescapeState(_origin));
-	else
-		_game->pushState(new OptionsVideoState(_origin));
+	switch (_origin)
+	{
+		case OPT_GEOSCAPE:
+			_game->pushState(new OptionsGeoscapeState(_origin));
+			break;
+
+		case OPT_BATTLESCAPE:
+			_game->pushState(new OptionsBattlescapeState(_origin));
+			break;
+
+		default:
+			_game->pushState(new OptionsVideoState(_origin));
+	}
 } */
 
 /**
- * Opens the Abandon Game window.
+ * Opens the AbandonGame window.
  * @param action - pointer to an Action
  */
 void PauseState::btnAbandonClick(Action*)

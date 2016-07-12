@@ -161,10 +161,10 @@ Map::Map(
 	_hiddenScreen->setTextColor(static_cast<Uint8>(uiRule->getElement("messageWindows")->color));
 
 	_scrollMouseTimer = new Timer(SCROLL_INTERVAL);
-	_scrollMouseTimer->onTimer((SurfaceHandler)& Map::scrollMouse);
+	_scrollMouseTimer->onTimer(static_cast<SurfaceHandler>(&Map::scrollMouse));
 
 	_scrollKeyTimer = new Timer(SCROLL_INTERVAL);
-	_scrollKeyTimer->onTimer((SurfaceHandler)& Map::scrollKey);
+	_scrollKeyTimer->onTimer(static_cast<SurfaceHandler>(&Map::scrollKey));
 
 	_camera->setScrollTimers(
 						_scrollMouseTimer,

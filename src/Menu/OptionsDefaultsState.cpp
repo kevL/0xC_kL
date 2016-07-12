@@ -68,21 +68,19 @@ OptionsDefaultsState::OptionsDefaultsState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick((ActionHandler)& OptionsDefaultsState::btnYesClick);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& OptionsDefaultsState::btnYesClick,
-					Options::keyOk);
+	_btnYes->onMouseClick(		static_cast<ActionHandler>(&OptionsDefaultsState::btnYesClick));
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&OptionsDefaultsState::btnYesClick),
+								Options::keyOk);
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick((ActionHandler)& OptionsDefaultsState::btnNoClick);
-	_btnNo->onKeyboardPress(
-					(ActionHandler)& OptionsDefaultsState::btnNoClick,
-					Options::keyCancel);
+	_btnNo->onMouseClick(	static_cast<ActionHandler>(&OptionsDefaultsState::btnNoClick));
+	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&OptionsDefaultsState::btnNoClick),
+							Options::keyCancel);
 
+	_txtTitle->setText(tr("STR_RESTORE_DEFAULTS_PROMPT"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 	_txtTitle->setWordWrap();
-	_txtTitle->setText(tr("STR_RESTORE_DEFAULTS_QUESTION"));
 
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();
@@ -100,11 +98,8 @@ OptionsDefaultsState::~OptionsDefaultsState()
  */
 void OptionsDefaultsState::btnYesClick(Action* action)
 {
-	if (_origin == OPT_MENU
-		&& Options::rulesets.size() > 1)
-	{
+	if (_origin == OPT_MENU && Options::rulesets.size() > 1u)
 		Options::reload = true;
-	}
 
 	Options::resetDefault();
 

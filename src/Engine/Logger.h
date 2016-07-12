@@ -62,32 +62,66 @@ class Logger
 
 private:
 	/// Logger copy-constructor.
-	Logger(const Logger&);
+//	Logger(const Logger&);
 	/// Logger assignment-operator.
-	Logger& operator= (const Logger&);
+//	Logger& operator= (const Logger&);
 
 
-	protected:
-		std::ostringstream _oststr;
+	/*protected:*/
+	std::ostringstream _oststr;
 
 
 		public:
 			/// cTor.
 			Logger();
 			/// dTor.
-			virtual ~Logger();
+			/*virtual*/ ~Logger();
 
 			///
 			std::ostringstream& get(SeverityLevel level = LOG_INFO);
 
 			///
-			static SeverityLevel& reportingLevel();
+			static SeverityLevel& reportLevel();
 			///
 			static std::string& logFile();
 			///
 			static std::string toString(SeverityLevel level);
 };
 
+
+/* In modern C++, inline tells the linker that, if multiple definitions (not
+	declarations) are found in different translation units, they are all the
+	same, and the linker can freely keep one and discard all the other ones. */
+// http://stackoverflow.com/questions/145838/benefits-of-inline-functions-in-c/7418299#7418299
+/* inline allows you to place a function definition in a header file and
+	#include that header file in multiple source files without violating the
+	one definition rule. */
+// http://stackoverflow.com/questions/145838/benefits-of-inline-functions-in-c/7414495#7414495
+/* inline is more like static or extern than a directive telling the compiler to
+	inline your functions. extern, static, inline are linkage directives, used
+	almost exclusively by the linker, not the compiler.
+
+   It is said that inline hints to the compiler that you think the function
+	should be inlined. That may have been true in 1998, but a decade later the
+	compiler needs no such hints. Not to mention humans are usually wrong when
+	it comes to optimizing code, so most compilers flat out ignore the 'hint'.
+
+   static - the variable/function name cannot be used in other compilation units.
+	Linker needs to make sure it doesn't accidentally use a statically defined
+	variable/function from another compilation unit.
+
+   extern - use this variable/function name in this compilation unit but don't
+	complain if it isn't defined. The linker will sort it out and make sure all
+	the code that tried to use some extern symbol has its address.
+
+   inline - this function will be defined in multiple compilation units, don't
+	worry about it. The linker needs to make sure all compilation units use a
+	single instance of the variable/function.
+
+   Note: Generally declaring templates inline is pointless, as they have the
+	linkage semantics of inline already. However, explicit specialization and
+	instantiation of templates require inline to be used. */
+// http://stackoverflow.com/questions/1759300/when-should-i-write-the-keyword-inline-for-a-function-method/1759575#1759575
 
 /**
  *
@@ -126,7 +160,7 @@ inline Logger::~Logger() // virtual. NOTE: This need not be virtual.
 		std::fclose(file);
 	}
 
-	switch (reportingLevel())
+	switch (reportLevel())
 	{
 		default:
 			if (file != nullptr) break;
@@ -146,10 +180,10 @@ inline Logger::~Logger() // virtual. NOTE: This need not be virtual.
  * Gets/Sets the maximum SeverityLevel.
  * @return, reference to the current maximum SeverityLevel
  */
-inline SeverityLevel& Logger::reportingLevel() // static.
+inline SeverityLevel& Logger::reportLevel() // static.
 {
-	static SeverityLevel reportingLevel (LOG_DEBUG);
-	return reportingLevel;
+	static SeverityLevel reportLevel (LOG_DEBUG);
+	return reportLevel;
 }
 
 /**
@@ -182,7 +216,7 @@ inline std::string Logger::toString(SeverityLevel level) // static.
 }
 
 // macro: Log
-#define Log(level) if (level > Logger::reportingLevel()) ; else Logger().get(level)
+#define Log(level) if (level > Logger::reportLevel()) ; else Logger().get(level)
 
 }
 

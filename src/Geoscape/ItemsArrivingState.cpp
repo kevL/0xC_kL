@@ -99,28 +99,23 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 //	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
-//	_btnGotoBase->onMouseClick((ActionHandler)& ItemsArrivingState::btnGotoBaseClick);
-//	_btnGotoBase->onKeyboardPress(
-//					(ActionHandler)& ItemsArrivingState::btnGotoBaseClick,
-//					Options::keyOk);
+//	_btnGotoBase->onMouseClick(		static_cast<ActionHandler>(&ItemsArrivingState::btnGotoBaseClick));
+//	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ItemsArrivingState::btnGotoBaseClick),
+//									Options::keyOk);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-	_btnOk5Secs->onMouseClick((ActionHandler)& ItemsArrivingState::btnOk5SecsClick);
-	_btnOk5Secs->onKeyboardPress(
-					(ActionHandler)& ItemsArrivingState::btnOk5SecsClick,
-					Options::keyGeoSpeed1);
-	_btnOk5Secs->onKeyboardPress(
-					(ActionHandler)& ItemsArrivingState::btnOk5SecsClick,
-					Options::keyOk);
-	_btnOk5Secs->onKeyboardPress(
-					(ActionHandler)& ItemsArrivingState::btnOk5SecsClick,
-					Options::keyOkKeypad);
+	_btnOk5Secs->onMouseClick(		static_cast<ActionHandler>(&ItemsArrivingState::btnOk5SecsClick));
+	_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&ItemsArrivingState::btnOk5SecsClick),
+									Options::keyGeoSpeed1);
+	_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&ItemsArrivingState::btnOk5SecsClick),
+									Options::keyOk);
+	_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&ItemsArrivingState::btnOk5SecsClick),
+									Options::keyOkKeypad);
 
 	_btnOk->setText(tr("STR_CANCEL"));
-	_btnOk->onMouseClick((ActionHandler)& ItemsArrivingState::btnCancelClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ItemsArrivingState::btnCancelClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ItemsArrivingState::btnCancelClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ItemsArrivingState::btnCancelClick),
+							Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_ITEMS_ARRIVING"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -135,7 +130,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 	_lstTransfers->setColumns(3, 144,53,80);
 	_lstTransfers->setBackground(_window);
 	_lstTransfers->setSelectable();
-	_lstTransfers->onMousePress((ActionHandler)& ItemsArrivingState::lstGoToBasePress);
+	_lstTransfers->onMousePress(static_cast<ActionHandler>(&ItemsArrivingState::lstGoToBasePress));
 
 	const RuleItem* itRule;
 	for (std::vector<Base*>::const_iterator
@@ -255,13 +250,17 @@ void ItemsArrivingState::btnGotoBaseClick(Action*)
  */
 void ItemsArrivingState::lstGoToBasePress(Action* action)
 {
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	switch (action->getDetails()->button.button)
 	{
-		Base* const base (_bases.at(_lstTransfers->getSelectedRow()));
-		if (base != nullptr)	// Make sure player hasn't deconstructed a Base while
-		{						// jumping back & forth between Bases and the list.
-			_game->getScreen()->fadeScreen();
-			_game->pushState(new BasescapeState(base, _geoState->getGlobe()));
+		case SDL_BUTTON_LEFT:
+		case SDL_BUTTON_RIGHT:
+		{
+			Base* const base (_bases.at(_lstTransfers->getSelectedRow()));
+			if (base != nullptr)	// Make sure player hasn't deconstructed a Base while
+			{						// jumping back & forth between Bases and the list.
+				_game->getScreen()->fadeScreen();
+				_game->pushState(new BasescapeState(base, _geoState->getGlobe()));
+			}
 		}
 	}
 }

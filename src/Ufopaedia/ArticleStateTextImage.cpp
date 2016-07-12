@@ -84,7 +84,7 @@ ArticleStateTextImage::ArticleStateTextImage(const ArticleDefinitionTextImage* c
 	_btnExtraInfo->setColor(uPed_GREEN_SLATE);
 	_btnExtraInfo->setVisible(defs->section == UFOPAEDIA_ALIEN_LIFE_FORMS
 							&& showInfoBtn() == true);
-	_btnExtraInfo->onMouseClick((ActionHandler)& ArticleStateTextImage::btnInfo);
+	_btnExtraInfo->onMouseClick(static_cast<ActionHandler>(&ArticleStateTextImage::btnInfo));
 
 	centerAllSurfaces();
 }

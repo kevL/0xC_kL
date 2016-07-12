@@ -82,7 +82,7 @@ void create()
 	_info.push_back(OptionInfo("displayHeight", &displayHeight, Screen::ORIGINAL_HEIGHT * 2));
 	_info.push_back(OptionInfo("fullscreen", &fullscreen, false));
 	_info.push_back(OptionInfo("asyncBlit", &asyncBlit, true));
-	_info.push_back(OptionInfo("keyboardMode", (int*)&keyboardMode, KEYBOARD_ON));
+	_info.push_back(OptionInfo("keyboardMode", reinterpret_cast<int*>(&keyboardMode), KEYBOARD_ON));
 #endif
 
 	_info.push_back(OptionInfo("engineLooper", &engineLooper, "wilecoyote"));
@@ -113,14 +113,14 @@ void create()
 	_info.push_back(OptionInfo("uiVolume", &uiVolume, MIX_MAX_VOLUME / 3));
 	_info.push_back(OptionInfo("language", &language, ""));
 	_info.push_back(OptionInfo("battleScrollSpeed", &battleScrollSpeed, 8));
-	_info.push_back(OptionInfo("battleEdgeScroll", (int*)&battleEdgeScroll, MAP_SCROLL_AUTO));
+	_info.push_back(OptionInfo("battleEdgeScroll", reinterpret_cast<int*>(&battleEdgeScroll), MAP_SCROLL_AUTO));
 	_info.push_back(OptionInfo("battleDragScrollButton", &battleDragScrollButton, SDL_BUTTON_MIDDLE));
 	_info.push_back(OptionInfo("dragScrollTimeTolerance", &dragScrollTimeTolerance, 300)); // milliSecond
 	_info.push_back(OptionInfo("dragScrollPixelTolerance", &dragScrollPixelTolerance, 10)); // count of pixels
 	_info.push_back(OptionInfo("battleFireSpeed", &battleFireSpeed, 6));
 	_info.push_back(OptionInfo("battleXcomSpeed", &battleXcomSpeed, 30));
 	_info.push_back(OptionInfo("battleAlienSpeed", &battleAlienSpeed, 30));
-	_info.push_back(OptionInfo("battlePreviewPath", (int*)&battlePreviewPath, PATH_NONE)); // requires double-click to confirm moves
+	_info.push_back(OptionInfo("battlePreviewPath", reinterpret_cast<int*>(&battlePreviewPath), PATH_NONE)); // requires double-click to confirm moves
 	_info.push_back(OptionInfo("fpsCounter", &fpsCounter, false));
 	_info.push_back(OptionInfo("globeDetail", &globeDetail, true));
 	_info.push_back(OptionInfo("globeRadarLines", &globeRadarLines, true));
@@ -135,20 +135,20 @@ void create()
 	_info.push_back(OptionInfo("windowedModePositionX", &windowedModePositionX, -1));
 	_info.push_back(OptionInfo("windowedModePositionY", &windowedModePositionY, -1));
 	_info.push_back(OptionInfo("borderless", &borderless, false));
-	_info.push_back(OptionInfo("captureMouse", (bool*)&captureMouse, false));
+	_info.push_back(OptionInfo("captureMouse", reinterpret_cast<bool*>(&captureMouse), false));
 	_info.push_back(OptionInfo("battleTooltips", &battleTooltips, true));
 	_info.push_back(OptionInfo("keepAspectRatio", &keepAspectRatio, true));
 	_info.push_back(OptionInfo("nonSquarePixelRatio", &nonSquarePixelRatio, false));
 	_info.push_back(OptionInfo("cursorInBlackBandsInFullscreen", &cursorInBlackBandsInFullscreen, false));
 	_info.push_back(OptionInfo("cursorInBlackBandsInWindow", &cursorInBlackBandsInWindow, true));
 	_info.push_back(OptionInfo("cursorInBlackBandsInBorderlessWindow", &cursorInBlackBandsInBorderlessWindow, false));
-	_info.push_back(OptionInfo("saveOrder", (int*)&saveOrder, SORT_DATE_DESC));
+	_info.push_back(OptionInfo("saveOrder", reinterpret_cast<int*>(&saveOrder), SORT_DATE_DESC));
 	_info.push_back(OptionInfo("geoClockSpeed", &geoClockSpeed, 80));
 	_info.push_back(OptionInfo("dogfightSpeed", &dogfightSpeed, 30));
 	_info.push_back(OptionInfo("geoScrollSpeed", &geoScrollSpeed, 20));
 	_info.push_back(OptionInfo("geoDragScrollButton", &geoDragScrollButton, SDL_BUTTON_MIDDLE));
-	_info.push_back(OptionInfo("preferredMusic", (int*)&preferredMusic, MUSIC_AUTO));
-	_info.push_back(OptionInfo("preferredSound", (int*)&preferredSound, SOUND_AUTO));
+	_info.push_back(OptionInfo("preferredMusic", reinterpret_cast<int*>(&preferredMusic), MUSIC_AUTO));
+	_info.push_back(OptionInfo("preferredSound", reinterpret_cast<int*>(&preferredSound), SOUND_AUTO));
 	_info.push_back(OptionInfo("musicAlwaysLoop", &musicAlwaysLoop, false));
 
 	// advanced options

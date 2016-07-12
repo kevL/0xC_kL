@@ -72,7 +72,8 @@ protected:
 		void init() override;
 
 		/// Handler for clicking the OK button.
-		virtual void btnOkClick(Action* action);
+//		virtual void btnOkClick(Action* action);
+		void btnOkClick(Action* action);
 		/// Handler for clicking the Facilities list.
 		virtual void lstFacilitiesClick(Action* action);
 };

@@ -47,7 +47,7 @@ class SoldierArmorState
 
 private:
 	Base* _base;
-	Soldier* _soldier;
+	Soldier* _sol;
 	Text
 		* _txtQuantity,
 		* _txtSoldier,
@@ -63,7 +63,7 @@ private:
 		/// Creates a SoldierArmor state.
 		SoldierArmorState(
 				Base* const base,
-				size_t soldierId);
+				size_t solId);
 		/// Cleans up the SoldierArmor state.
 		~SoldierArmorState();
 

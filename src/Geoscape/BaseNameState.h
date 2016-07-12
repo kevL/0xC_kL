@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Window used to input a name for a new Base.
+ * Window used to input a name for a Base.
  * @note Player's first Base uses this screen; additional bases use
  * ConfirmNewBaseState.
  */

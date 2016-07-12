@@ -63,14 +63,14 @@ BaseDefenseState::BaseDefenseState(
 		_ufo(ufo),
 		_state(state),
 		_action(BD_NONE),
-		_row(0),
-		_passes(0),
-		_attacks(0),
 		_thinkCycles(0),
-		_explosionCount(0),
-		_stLen_destroyed(0),
-		_stLen_initiate(0),
-		_stLen_repulsed(0)
+		_row(0u),
+		_passes(0u),
+		_attacks(0u),
+		_explosionCount(0u),
+		_stLen_destroyed(0u),
+		_stLen_initiate(0u),
+		_stLen_repulsed(0u)
 {
 	_window			= new Window(this, 320, 200);
 
@@ -95,16 +95,13 @@ BaseDefenseState::BaseDefenseState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& BaseDefenseState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDefenseState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDefenseState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BaseDefenseState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BaseDefenseState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDefenseState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDefenseState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDefenseState::btnOkClick),
+							Options::keyCancel);
 	_btnOk->setVisible(false);
 
 	_txtTitle->setText(tr("STR_BASE_UNDER_ATTACK").arg(_base->getName()));
@@ -117,13 +114,13 @@ BaseDefenseState::BaseDefenseState(
 	_txtDestroyed->setAlign(ALIGN_CENTER);
 
 	_timer = new Timer(TI_FAST);
-	_timer->onTimer((StateHandler)& BaseDefenseState::next);
+	_timer->onTimer(static_cast<StateHandler>(&BaseDefenseState::next));
 	_timer->start();
 
 
-	_destroyed = tr("STR_UFO_DESTROYED");
-	_initiate = tr("STR_BASE_DEFENSES_INITIATED");
-	_repulsed = tr("STR_GRAV_SHIELD_REPELS_UFO");
+	_destroyed	= tr("STR_UFO_DESTROYED");
+	_initiate	= tr("STR_BASE_DEFENSES_INITIATED");
+	_repulsed	= tr("STR_GRAV_SHIELD_REPELS_UFO");
 
 	_gravShields = _base->getGravShields();
 	_defenses = _base->getDefenses()->size();
@@ -157,31 +154,30 @@ void BaseDefenseState::next() // private.
 	{
 		if (_stLen_initiate <= _initiate.size())
 		{
-			_txtInit->setText(_initiate.substr(0, _stLen_initiate++));
+			_txtInit->setText(_initiate.substr(0u, _stLen_initiate++));
 			return;
 		}
 
-		++_thinkCycles;
-		if (_thinkCycles > 3)
+		if (++_thinkCycles > 3)
 		{
 			switch (_action)
 			{
 				case BD_DESTROY:
-					if (_explosionCount == 0)
+					if (_explosionCount == 0u)
 					{
-						if (_stLen_destroyed == 0)
+						if (_stLen_destroyed == 0u)
 						{
 							_lstDefenses->addRow(3, L" ",L" ",L" ");
 							++_row;
 							_timer->setInterval(TI_FAST);
 						}
 
-						if (_row > 14)
+						if (_row > DISPLAYED)
 							_lstDefenses->scrollDown(true);
 
 						if (_stLen_destroyed <= _destroyed.size())
 						{
-							_txtDestroyed->setText(_destroyed.substr(0, _stLen_destroyed++));
+							_txtDestroyed->setText(_destroyed.substr(0u, _stLen_destroyed++));
 							return;
 						}
 
@@ -190,7 +186,7 @@ void BaseDefenseState::next() // private.
 
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE, true);
 
-					if (++_explosionCount == 3)
+					if (++_explosionCount == 3u)
 						_action = BD_END;
 
 					return;
@@ -210,15 +206,15 @@ void BaseDefenseState::next() // private.
 					_action = BD_END;
 					return;
 				}
-				else if (_passes < _gravShields)
+
+				if (_passes < _gravShields)
 				{
-					if (_stLen_repulsed == 0)
+					if (_stLen_repulsed == 0u)
 					{
 						_lstDefenses->addRow(3, L" ",L" ",L" ");
 						_lstDefenses->addRow(3, L" ",L" ",L" "); // <- gravShield repels UFO
 
-						_row += 2;
-						if (_row > 14)
+						if ((_row += 2u) > DISPLAYED)
 							_lstDefenses->scrollDown(true);
 
 						_timer->setInterval(TI_FAST);
@@ -227,8 +223,8 @@ void BaseDefenseState::next() // private.
 					if (_stLen_repulsed <= _repulsed.size())
 					{
 						_lstDefenses->setCellText(
-											_row - 1, 0,
-											_repulsed.substr(0, _stLen_repulsed++));
+											_row - 1u, 0u,
+											_repulsed.substr(0u, _stLen_repulsed++));
 
 						if (_stLen_repulsed > _repulsed.size())
 						{
@@ -239,7 +235,7 @@ void BaseDefenseState::next() // private.
 					}
 
 					++_passes;
-					_attacks = 0;
+					_attacks = 0u;
 					_timer->setInterval(TI_MEDIUM);
 					return;
 				}
@@ -256,19 +252,18 @@ void BaseDefenseState::next() // private.
 									3,
 									tr(fac->getRules()->getType()),
 									L" ",L" ");
-					++_row;
-					if (_row > 14) _lstDefenses->scrollDown(true);
+					if (++_row > DISPLAYED) _lstDefenses->scrollDown(true);
 
 					return;
 
 				case BD_FIRE:
 					_lstDefenses->setCellText(
-											_row - 1, 1,
+											_row - 1u, 1u,
 											tr("STR_FIRING"));
 //					_lstDefenses->setCellColor(_row - 1, 1, 160, /* slate */ true);
 
 					_game->getResourcePack()->playSoundFx(
-													fac->getRules()->getFireSound(),
+													static_cast<unsigned>(fac->getRules()->getFireSound()),
 													true);
 					_action = BD_RESOLVE;
 					_timer->setInterval(TI_SLOW);
@@ -278,31 +273,40 @@ void BaseDefenseState::next() // private.
 				case BD_RESOLVE:
 					if (RNG::percent(fac->getRules()->getHitRatio()) == true)
 					{
-						_game->getResourcePack()->playSoundFx(fac->getRules()->getHitSound());
+						_game->getResourcePack()->playSoundFx(static_cast<unsigned>(fac->getRules()->getHitSound()));
 
 						int power (fac->getRules()->getDefenseValue());
 						power = RNG::generate( // vary power between 75% and 133% ( stock is 50..150% )
-											power * 3 / 4,
-											power * 4 / 3);
+											(power * 3) >> 2u,
+											(power << 2u) / 3);
 						_ufo->setUfoDamage(_ufo->getUfoDamage() + power);
 
 						_lstDefenses->setCellText(
-											_row - 1, 2,
+											_row - 1u, 2u,
 											tr("STR_HIT"));
-//						_lstDefenses->setCellColor(_row - 1, 2, 32, /* green */ true);
+//						_lstDefenses->setCellColor(_row - 1u, 2u, 32u, /*green*/ true);
 					}
 					else
 					{
 						_lstDefenses->setCellText(
-											_row - 1, 2,
+											_row - 1u, 2u,
 											tr("STR_MISSED"));
-//						_lstDefenses->setCellColor(_row - 1, 2, 144, /* brown */ true);
+//						_lstDefenses->setCellColor(_row - 1u, 2u, 144u, /*brown*/ true);
 					}
 
-					if (_ufo->getUfoStatus() == Ufo::DESTROYED)
-						_action = BD_DESTROY;
-					else
-						_action = BD_NONE;
+					switch (_ufo->getUfoStatus())
+					{
+						case Ufo::DESTROYED:
+							_action = BD_DESTROY;
+							break;
+
+						default:
+						case Ufo::FLYING:
+						case Ufo::LANDED:
+						case Ufo::CRASHED:
+							_action = BD_NONE;
+							break;
+					}
 
 					++_attacks;
 					_timer->setInterval(TI_MEDIUM);

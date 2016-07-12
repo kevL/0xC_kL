@@ -147,16 +147,13 @@ BriefingState::BriefingState(
 
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& BriefingState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BriefingState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BriefingState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BriefingState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BriefingState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BriefingState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BriefingState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BriefingState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setBig();
 	_txtTitle->setText(tr(type));

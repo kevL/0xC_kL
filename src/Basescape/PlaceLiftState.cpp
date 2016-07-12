@@ -85,8 +85,8 @@ PlaceLiftState::PlaceLiftState(
 			break;
 		}
 	}
-	_baseLayout->setSelectable(_lift->getSize());
-	_baseLayout->onMouseClick((ActionHandler)& PlaceLiftState::baseLayoutClick);
+	_baseLayout->highlightFacility(_lift->getSize());
+	_baseLayout->onMouseClick(static_cast<ActionHandler>(&PlaceLiftState::baseLayoutClick));
 
 	_txtTitle->setText(tr("STR_SELECT_POSITION_FOR_ACCESS_LIFT"));
 }
@@ -113,7 +113,6 @@ void PlaceLiftState::baseLayoutClick(Action*)
 	_game->popState();
 
 	BasescapeState* const baseState (new BasescapeState(_base, _globe));
-//	_game->getSavedGame()->setRecallBase(_game->getSavedGame()->getBases()->size() - 1);
 
 	_game->pushState(baseState);
 

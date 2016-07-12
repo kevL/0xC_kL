@@ -60,6 +60,8 @@ private:
 		TI_MEDIUM	= 269u,
 		TI_FAST		=  76u;
 
+	static const size_t DISPLAYED = 14u; // max rows that can be displayed before scrolling down.
+
 	int
 		_thinkCycles;
 	size_t

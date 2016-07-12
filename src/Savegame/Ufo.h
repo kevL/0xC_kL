@@ -70,9 +70,10 @@ private:
 		_id,
 		_idCrashed,
 		_idLanded,
-		_secondsLeft,
-		_shootingAt;
-	size_t _trajectoryWp;
+		_secondsLeft;
+	size_t
+		_shootingAt,
+		_trajectoryWp;
 	unsigned _headingInt;
 
 	AlienMission* _mission;
@@ -216,7 +217,7 @@ private:
 		{ return *_trajectory; }
 
 		/// Sets the interceptor engaging the Ufo.
-		void setShootingAt(const size_t target);
+		void setShootingAt(size_t target);
 		/// Gets the interceptor engaging the Ufo.
 		size_t getShootingAt() const;
 

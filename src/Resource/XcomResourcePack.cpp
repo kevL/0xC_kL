@@ -87,7 +87,7 @@ struct HairXCOM1
 		if (src > cutoff
 			&& src <= Face + ShadeMax)
 		{
-			src = Hair + (src & ShadeMax) - 6u; // make hair color like male in xcom_0.pck
+			src = static_cast<Uint8>(static_cast<unsigned>(Hair + (src & ShadeMax)) - 6u); // make hair color like male in xcom_0.pck
 		}
 	}
 };
@@ -132,7 +132,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 		_palettes[pal[i]]->loadDat(
 								CrossPlatform::getDataFile("GEODATA/PALETTES.DAT"),
 								256,
-								Palette::palOffset(i));
+								Palette::palOffset(static_cast<int>(i)));
 	}
 
 	st = "PAL_BATTLESCAPE"; // correct the Tactical palette
@@ -904,10 +904,10 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					{
 						oststr2.str("");
 						oststr2 << oststr.str() << CrossPlatform::getDataFile(*k);
-						if (_sounds[st]->getSound(static_cast<size_t>(offset)) != nullptr)
-							_sounds[st]->getSound(static_cast<size_t>(offset))->load(oststr2.str());
+						if (_sounds[st]->getSound(static_cast<unsigned>(offset)) != nullptr)
+							_sounds[st]->getSound(static_cast<unsigned>(offset))->load(oststr2.str());
 						else
-							_sounds[st]->addSound(static_cast<size_t>(offset + soundPack->getModIndex()))->load(oststr2.str());
+							_sounds[st]->addSound(static_cast<unsigned>(offset + soundPack->getModIndex()))->load(oststr2.str());
 
 						++offset;
 					}
@@ -921,15 +921,15 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			{
 				oststr2.str("");
 				oststr2 << CrossPlatform::getDataFile(st2);
-				if (_sounds[st]->getSound(static_cast<size_t>(start)) != nullptr)
+				if (_sounds[st]->getSound(static_cast<unsigned>(start)) != nullptr)
 				{
 					//Log(LOG_VERBOSE) << "Replacing index: " << start;
-					_sounds[st]->getSound(static_cast<size_t>(start))->load(oststr2.str());
+					_sounds[st]->getSound(static_cast<unsigned>(start))->load(oststr2.str());
 				}
 				else
 				{
 					//Log(LOG_VERBOSE) << "Adding index: " << start;
-					_sounds[st]->addSound(static_cast<size_t>(start + soundPack->getModIndex()))->load(oststr2.str());
+					_sounds[st]->addSound(static_cast<unsigned>(start + soundPack->getModIndex()))->load(oststr2.str());
 				}
 			}
 		}

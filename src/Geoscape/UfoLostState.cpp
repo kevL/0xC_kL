@@ -60,23 +60,20 @@ UfoLostState::UfoLostState(const std::wstring& id)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK15.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& UfoLostState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfoLostState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfoLostState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfoLostState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&UfoLostState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfoLostState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfoLostState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfoLostState::btnOkClick),
+							Options::keyCancel);
 
-	_txtTitle->setBig();
-	_txtTitle->setAlign(ALIGN_CENTER);
 	std::wstring wst (_id);
 	wst += L'\n';
 	wst += tr("STR_TRACKING_LOST");
 	_txtTitle->setText(wst);
+	_txtTitle->setBig();
+	_txtTitle->setAlign(ALIGN_CENTER);
 }
 
 /**

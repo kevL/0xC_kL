@@ -22,24 +22,34 @@
 
 namespace
 {
+
+//
 template <uint32_t N> inline
 unsigned char getByte(uint32_t val) { return static_cast<unsigned char>((val >> (8 * N)) & 0xff); }
 
+//
 inline unsigned char getRed  (uint32_t val) { return getByte<2>(val); }
 inline unsigned char getGreen(uint32_t val) { return getByte<1>(val); }
 inline unsigned char getBlue (uint32_t val) { return getByte<0>(val); }
 
-/*template <class T> inline
+/**
+ *
+ *
+template <class T> inline
 T abs(T value)
 {
     static_assert(std::is_signed<T>::value, "");
     return value < 0 ? -value : value;
-}*/
+} */
 
+//
 const uint32_t redMask   = 0xff0000;
 const uint32_t greenMask = 0x00ff00;
 const uint32_t blueMask  = 0x0000ff;
 
+/**
+ *
+ */
 template <unsigned int N, unsigned int M> inline
 void alphaBlend(uint32_t& dst, uint32_t col) //blend color over destination with opacity N / M
 {
@@ -51,19 +61,22 @@ void alphaBlend(uint32_t& dst, uint32_t col) //blend color over destination with
           (blueMask  & ((col & blueMask ) * N + (dst & blueMask ) * (M - N)) / M);
 }
 
+/**
+ *
+ *
+inline
+double fastSqrt(double n)
+{
+    __asm //speeds up xBRZ by about 9% compared to std::sqrt
+    {
+        fld n
+        fsqrt
+    }
+} */
 
-//inline
-//double fastSqrt(double n)
-//{
-//    __asm //speeds up xBRZ by about 9% compared to std::sqrt
-//    {
-//        fld n
-//        fsqrt
-//    }
-//}
-//
-
-
+/**
+ *
+ */
 inline
 uint32_t alphaBlend2(uint32_t pix1, uint32_t pix2, double alpha)
 {
@@ -72,12 +85,15 @@ uint32_t alphaBlend2(uint32_t pix1, uint32_t pix2, double alpha)
            (blueMask  & static_cast<uint32_t>((pix1 & blueMask ) * alpha + (pix2 & blueMask ) * (1 - alpha)));
 }
 
-
+/**
+ *
+ */
 uint32_t*       byteAdvance(      uint32_t* ptr, int bytes) { return reinterpret_cast<      uint32_t*>(reinterpret_cast<      char*>(ptr) + bytes); }
 const uint32_t* byteAdvance(const uint32_t* ptr, int bytes) { return reinterpret_cast<const uint32_t*>(reinterpret_cast<const char*>(ptr) + bytes); }
 
-
-//fill block  with the given color
+/**
+ * Fills block with the given color.
+ */
 inline
 void fillBlock(uint32_t* trg, int pitch, uint32_t col, int blockWidth, int blockHeight)
 {
@@ -89,31 +105,38 @@ void fillBlock(uint32_t* trg, int pitch, uint32_t col, int blockWidth, int block
             trg[x] = col;
 }
 
+/**
+ *
+ */
 inline
 void fillBlock(uint32_t* trg, int pitch, uint32_t col, int n) { fillBlock(trg, pitch, col, n, n); }
 
 
 #ifdef _MSC_VER
-#define FORCE_INLINE __forceinline
+#	define FORCE_INLINE __forceinline
 #elif defined __GNUC__
-#define FORCE_INLINE __attribute__((always_inline)) inline
+#	define FORCE_INLINE __attribute__((always_inline)) inline
 #else
-#define FORCE_INLINE inline
+#	define FORCE_INLINE inline
 #endif
 
 
+//
 enum RotationDegree //clock-wise
 {
-    ROT_0,
-    ROT_90,
-    ROT_180,
-    ROT_270
+    ROT_0,		// 0
+    ROT_90,		// 1
+    ROT_180,	// 2
+    ROT_270		// 3
 };
 
 //calculate input matrix coordinates after rotation at compile time
 template <RotationDegree rotDeg, size_t I, size_t J, size_t N>
 struct MatrixRotation;
 
+/**
+ *
+ */
 template <size_t I, size_t J, size_t N>
 struct MatrixRotation<ROT_0, I, J, N>
 {
@@ -121,6 +144,9 @@ struct MatrixRotation<ROT_0, I, J, N>
     static const size_t J_old = J;
 };
 
+/**
+ *
+ */
 template <RotationDegree rotDeg, size_t I, size_t J, size_t N> //(i, j) = (row, col) indices, N = size of (square) matrix
 struct MatrixRotation
 {
@@ -128,7 +154,9 @@ struct MatrixRotation
     static const size_t J_old =         MatrixRotation<static_cast<RotationDegree>(rotDeg - 1), I, J, N>::I_old; //
 };
 
-
+/**
+ *
+ */
 template <size_t N, RotationDegree rotDeg>
 class OutputMatrix
 {
@@ -150,12 +178,13 @@ private:
     const int outWidth_;
 };
 
-
+//
 template <class T> inline
 T square(T value) { return value * value; }
 
-
-/*
+/**
+ *
+ *
 inline
 void rgbtoLuv(uint32_t c, double& L, double& u, double& v)
 {
@@ -202,9 +231,11 @@ void rgbtoLuv(uint32_t c, double& L, double& u, double& v)
     L = ( 116 * var_Y ) - 16;
     u = 13 * L * ( var_U - ref_U );
     v = 13 * L * ( var_V - ref_V );
-}
-*/
+} */
 
+/**
+ *
+ */
 inline
 void rgbtoLab(uint32_t c, unsigned char& L, signed char& A, signed char& B)
 {
@@ -243,7 +274,9 @@ void rgbtoLab(uint32_t c, unsigned char& L, signed char& A, signed char& B)
     B = static_cast<  signed char>(200 * (var_Y - var_Z));
 };
 
-
+/**
+ *
+ */
 inline
 double distLAB(uint32_t pix1, uint32_t pix2)
 {
@@ -266,8 +299,9 @@ double distLAB(uint32_t pix1, uint32_t pix2)
                      square(1.0 * b1 - b2));
 }
 
-
-/*
+/**
+ *
+ *
 inline
 void rgbtoHsl(uint32_t c, double& h, double& s, double& l)
 {
@@ -309,8 +343,11 @@ void rgbtoHsl(uint32_t c, double& h, double& s, double& l)
         if (h > 1)
             h -= 1;
     }
-}
+} */
 
+/**
+ *
+ *
 inline
 double distHSL(uint32_t pix1, uint32_t pix2, double lightningWeight)
 {
@@ -345,10 +382,11 @@ double distHSL(uint32_t pix1, uint32_t pix2, double lightningWeight)
     double z2 = l2;
 
     return 255 * std::sqrt(square(x1 - x2) + square(y1 - y2) +  square(lightningWeight * (z1 - z2)));
-}
-*/
+} */
 
-
+/**
+ *
+ */
 inline
 double distRGB(uint32_t pix1, uint32_t pix2)
 {
@@ -360,7 +398,9 @@ double distRGB(uint32_t pix1, uint32_t pix2)
     return std::sqrt(square(r_diff) + square(g_diff) + square(b_diff));
 }
 
-
+/**
+ *
+ */
 inline
 double distNonLinearRGB(uint32_t pix1, uint32_t pix2)
 {
@@ -373,7 +413,9 @@ double distNonLinearRGB(uint32_t pix1, uint32_t pix2)
     return std::sqrt((2 + r_avg / 255) * square(r_diff) + 4 * square(g_diff) + (2 + (255 - r_avg) / 255) * square(b_diff));
 }
 
-
+/**
+ *
+ */
 inline
 double distYCbCr(uint32_t pix1, uint32_t pix2, double lumaWeight)
 {
@@ -398,7 +440,9 @@ double distYCbCr(uint32_t pix1, uint32_t pix2, double lumaWeight)
     return std::sqrt(square(lumaWeight * y) + square(c_b) +  square(c_r));
 }
 
-
+/**
+ *
+ */
 inline
 double distYUV(uint32_t pix1, uint32_t pix2, double luminanceWeight)
 {
@@ -433,7 +477,9 @@ double distYUV(uint32_t pix1, uint32_t pix2, double luminanceWeight)
     return std::sqrt(square(luminanceWeight * y) + square(u) +  square(v));
 }
 
-
+/**
+ *
+ */
 inline
 double colorDist(uint32_t pix1, uint32_t pix2, double luminanceWeight)
 {
@@ -449,7 +495,7 @@ double colorDist(uint32_t pix1, uint32_t pix2, double luminanceWeight)
     return distYCbCr(pix1, pix2, luminanceWeight);
 }
 
-
+//
 enum BlendType
 {
     BLEND_NONE = 0,
@@ -458,6 +504,7 @@ enum BlendType
     //attention: BlendType must fit into the value range of 2 bit!!!
 };
 
+//
 struct BlendResult
 {
     BlendType
@@ -465,7 +512,7 @@ struct BlendResult
     /**/blend_j, blend_k;
 };
 
-
+//
 struct Kernel_4x4 //kernel for preprocessing step
 {
     uint32_t
@@ -475,9 +522,11 @@ struct Kernel_4x4 //kernel for preprocessing step
     /**/m, n, o, p;
 };
 
+//
 inline
 double dist(uint32_t col1, uint32_t col2, const xbrz::ScalerCfg& cfg) { return colorDist(col1, col2, cfg.luminanceWeight_); };
 
+//
 inline
 bool eq(uint32_t col1, uint32_t col2, const xbrz::ScalerCfg& cfg) { return colorDist(col1, col2, cfg.luminanceWeight_) < cfg.equalColorTolerance_; };
 
@@ -493,6 +542,9 @@ input kernel area naming convention:
 | M | N | O | P |
 -----------------
 */
+/**
+ *
+ */
 FORCE_INLINE //detect blend direction
 BlendResult preProcessCorners(const Kernel_4x4& ker, const xbrz::ScalerCfg& cfg) //result: F, G, J, K corners of "GradientType"
 {
@@ -529,6 +581,7 @@ BlendResult preProcessCorners(const Kernel_4x4& ker, const xbrz::ScalerCfg& cfg)
     return result;
 }
 
+//
 struct Kernel_3x3
 {
     uint32_t
@@ -600,6 +653,9 @@ input kernel area naming convention:
 | G | H | I |
 -------------
 */
+/**
+ *
+ */
 template <class Scaler, RotationDegree rotDeg>
 FORCE_INLINE //perf: quite worth it!
 void scalePixel(const Kernel_3x3& ker,
@@ -678,6 +734,9 @@ void scalePixel(const Kernel_3x3& ker,
 }
 
 
+/**
+ *
+ */
 template <class Scaler> //scaler policy: see "Scaler2x" reference implementation
 void scaleImage(const uint32_t* src, uint32_t* trg, int srcWidth, int srcHeight, const xbrz::ScalerCfg& cfg, int yFirst, int yLast)
 {
@@ -846,7 +905,9 @@ void scaleImage(const uint32_t* src, uint32_t* trg, int srcWidth, int srcHeight,
     }
 }
 
-
+/**
+ *
+ */
 struct Scaler2x
 {
     static const int scale = 2;
@@ -887,7 +948,9 @@ struct Scaler2x
     }
 };
 
-
+/**
+ *
+ */
 struct Scaler3x
 {
     static const int scale = 3;
@@ -940,7 +1003,9 @@ struct Scaler3x
     }
 };
 
-
+/**
+ *
+ */
 struct Scaler4x
 {
     static const int scale = 4;
@@ -1000,7 +1065,9 @@ struct Scaler4x
     }
 };
 
-
+/**
+ *
+ */
 struct Scaler5x
 {
     static const int scale = 5;
@@ -1083,9 +1150,13 @@ struct Scaler5x
         //alphaBlend<8, 1000>(out.template ref<2, 4>(), col); //0.008384061834
     }
 };
-}
+
+} // namespace
 
 
+/**
+ *
+ */
 void xbrz::scale(size_t factor, const uint32_t* src, uint32_t* trg, int srcWidth, int srcHeight, const xbrz::ScalerCfg& cfg, int yFirst, int yLast)
 {
     switch (factor)
@@ -1102,13 +1173,17 @@ void xbrz::scale(size_t factor, const uint32_t* src, uint32_t* trg, int srcWidth
     assert(false);
 }
 
-
+/**
+ *
+ */
 bool xbrz::equalColor(uint32_t col1, uint32_t col2, double luminanceWeight, double equalColorTolerance)
 {
     return colorDist(col1, col2, luminanceWeight) < equalColorTolerance;
 }
 
-
+/**
+ *
+ */
 void xbrz::nearestNeighborScale(const uint32_t* src, int srcWidth, int srcHeight, int srcPitch,
                                 uint32_t* trg, int trgWidth, int trgHeight, int trgPitch,
                                 SliceType st, int yFirst, int yLast)

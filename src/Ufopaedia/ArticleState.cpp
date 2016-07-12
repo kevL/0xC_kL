@@ -47,7 +47,7 @@ ArticleState::ArticleState(const std::string& article_id) // protected.
 	_btnNext	= new TextButton(30, 14, 75, 5);
 
 	_timer = new Timer(132u);
-	_timer->onTimer((StateHandler)& ArticleState::keyRepeat);
+	_timer->onTimer(static_cast<StateHandler>(&ArticleState::keyRepeat));
 	_timer->start();
 }
 
@@ -113,46 +113,37 @@ void ArticleState::initLayout(bool contrast) // protected.
 	add(_btnPrev);
 	add(_btnNext);
 
-	_bg->onMouseClick(
-					(ActionHandler)& ArticleState::btnOkClick,
-					SDL_BUTTON_RIGHT);
+	_bg->onMouseClick(	static_cast<ActionHandler>(&ArticleState::btnOkClick),
+						SDL_BUTTON_RIGHT);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ArticleState::btnOkClick);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnOkClick,
-			Options::keyOk);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnOkClick,
-			Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnOkClick,
-			Options::keyCancel);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnOkClick,
-			Options::keyGeoUfopedia);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ArticleState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ArticleState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ArticleState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ArticleState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ArticleState::btnOkClick),
+							Options::keyGeoUfopedia);
 
 	_btnPrev->setText(L"<");
-	_btnPrev->onMouseClick((ActionHandler)& ArticleState::btnPrevClick);
-	_btnPrev->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnPrevClick,
-			Options::keyGeoLeft);
-	_btnPrev->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnPrevClick,
-			SDLK_KP4);
+	_btnPrev->onMouseClick(		static_cast<ActionHandler>(&ArticleState::btnPrevClick));
+	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&ArticleState::btnPrevClick),
+								Options::keyGeoLeft);
+	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&ArticleState::btnPrevClick),
+								SDLK_KP4);
 
 	_btnNext->setText(L">");
-	_btnNext->onMouseClick((ActionHandler)& ArticleState::btnNextClick);
-	_btnNext->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnNextClick,
-			Options::keyGeoRight);
-	_btnNext->onKeyboardPress(
-			(ActionHandler)& ArticleState::btnNextClick,
-			SDLK_KP6);
+	_btnNext->onMouseClick(		static_cast<ActionHandler>(&ArticleState::btnNextClick));
+	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&ArticleState::btnNextClick),
+								Options::keyGeoRight);
+	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&ArticleState::btnNextClick),
+								SDLK_KP6);
 
 	if (contrast == true)
 	{
-		_btnOk->setHighContrast();
+		_btnOk	->setHighContrast();
 		_btnPrev->setHighContrast();
 		_btnNext->setHighContrast();
 	}

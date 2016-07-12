@@ -89,6 +89,7 @@ private:
 
 	ItemContainer* _items;
 	const Ruleset* const _rules;
+	SavedGame* _gameSave;
 
 	std::wstring _name;
 
@@ -127,15 +128,15 @@ private:
 			BASE_SIZE = 6u;
 
 		/// Creates a Base.
-		explicit Base(const Ruleset* const rules);
+		Base(
+				const Ruleset* const rules,
+				SavedGame* const gameSave);
 		/// Cleans up the Base.
 		~Base();
 
 		/// Loads the Base from YAML.
-		using Target::load;
-		void load(
+		void loadBase(
 				const YAML::Node& node,
-				SavedGame* const gameSave,
 				bool isFirstBase = false,
 				bool isQuickBattle = false);
 		/// Saves the Base to YAML.
@@ -304,6 +305,9 @@ private:
 				int diff,
 				int* facQty = nullptr,
 				int* shields = nullptr) const;
+
+		/// Gets the quantity of Facilities that have completed construction.
+		int getQuantityFacilities() const;
 
 		/// Gets how many grav-shields the Base has.
 		size_t getGravShields() const;

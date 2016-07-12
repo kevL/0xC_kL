@@ -80,32 +80,27 @@ ResearchCompleteState::ResearchCompleteState(
 	_txtTitle->setBig();
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& ResearchCompleteState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& ResearchCompleteState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ResearchCompleteState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchCompleteState::btnOkClick),
+							Options::keyCancel);
 
 	if (_resRulePedia != nullptr || _gofRule != nullptr)
 	{
 		_btnReport->setText(tr("STR_VIEW_REPORTS"));
-		_btnReport->onMouseClick((ActionHandler)& ResearchCompleteState::btnReportClick);
-		_btnReport->onKeyboardPress(
-							(ActionHandler)& ResearchCompleteState::btnReportClick,
-							Options::keyOk);
-		_btnReport->onKeyboardPress(
-							(ActionHandler)& ResearchCompleteState::btnReportClick,
-							Options::keyOkKeypad);
+		_btnReport->onMouseClick(	static_cast<ActionHandler>(&ResearchCompleteState::btnReportClick));
+		_btnReport->onKeyboardPress(static_cast<ActionHandler>(&ResearchCompleteState::btnReportClick),
+									Options::keyOk);
+		_btnReport->onKeyboardPress(static_cast<ActionHandler>(&ResearchCompleteState::btnReportClick),
+									Options::keyOkKeypad);
 	}
 	else
 	{
 		_btnReport->setVisible(false);
 
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& ResearchCompleteState::btnOkClick,
-						Options::keyOk);
-		_btnOk->onKeyboardPress(
-						(ActionHandler)& ResearchCompleteState::btnOkClick,
-						Options::keyOkKeypad);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchCompleteState::btnOkClick),
+								Options::keyOk);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchCompleteState::btnOkClick),
+								Options::keyOkKeypad);
 	}
 
 	if (resRule != nullptr)

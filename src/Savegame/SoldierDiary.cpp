@@ -387,12 +387,10 @@ YAML::Node SoldierDiary::save() const
  * @param diaryStats	- pointer to BattleUnitStatistics for info on a Soldier's
  *						  current tactical performance ala DebriefingState.
  * @param tacticals		- pointer to latest MissionStatistics
- * @param rules			- pointer to the Ruleset
  */
 void SoldierDiary::updateDiary(
 		const BattleUnitStatistics* const diaryStats,
-		const MissionStatistics* const tactical,
-		const Ruleset* const rules)
+		const MissionStatistics* const tactical)
 {
 	//Log(LOG_INFO) << "SoldierDiary::updateDiary()";
 	const std::vector<BattleUnitKill*> unitKills (diaryStats->kills);
@@ -1581,7 +1579,7 @@ const std::string SoldierAward::getQualifier() const
  * @param skip -
  * @return, decoration-level as string
  */
-const std::string SoldierAward::getClassType(int skip) const
+const std::string SoldierAward::getClassType(size_t skip) const
 {
 	std::ostringstream oststr;
 	oststr << "STR_AWARD_" << _level - skip;

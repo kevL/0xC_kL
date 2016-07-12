@@ -147,7 +147,7 @@ std::string Language::wstrToUtf8(const std::wstring& src) // static.
 								0,
 								nullptr,
 								nullptr));
-	std::string st (bytes, 0);
+	std::string st (static_cast<size_t>(bytes), 0);
 	WideCharToMultiByte(
 					CP_UTF8,
 					0,
@@ -225,7 +225,7 @@ std::string Language::wstrToCp(const std::wstring& src) // static.
 								0,
 								nullptr,
 								nullptr));
-	std::string st (bytes, 0);
+	std::string st (static_cast<size_t>(bytes), 0);
 	WideCharToMultiByte(
 					CP_ACP,
 					0,
@@ -283,7 +283,7 @@ std::wstring Language::utf8ToWstr(const std::string& src) // static.
 								static_cast<int>(src.size()),
 								nullptr,
 								0));
-	std::wstring wst (bytes, 0);
+	std::wstring wst (static_cast<size_t>(bytes), 0);
 	MultiByteToWideChar(
 					CP_UTF8,
 					0,
@@ -367,7 +367,7 @@ std::wstring Language::cpToWstr(const std::string& src) // static.
 								static_cast<int>(src.size()),
 								nullptr,
 								0));
-	std::wstring wst (bytes, 0);
+	std::wstring wst (static_cast<size_t>(bytes), 0);
 	MultiByteToWideChar(
 					CP_ACP,
 					0,

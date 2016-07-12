@@ -220,7 +220,7 @@ void Bar::draw()
 	SDL_Rect rect;
 	rect.x =
 	rect.y = 0;
-	rect.w = static_cast<Uint16>(Round(_scale * _maxVal)) + 1u;
+	rect.w = static_cast<Uint16>(static_cast<unsigned>(Round(_scale * _maxVal)) + 1u);
 	rect.h = static_cast<Uint16>(getHeight());
 
 	if (_invert == true)
@@ -228,11 +228,11 @@ void Bar::draw()
 	else if (_borderColor != 0u)
 		drawRect(&rect, _borderColor);
 	else
-		drawRect(&rect, _color + 6u); // was +4 but red is wonky.
+		drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 6u)); // was +4 but red is wonky.
 
 	++rect.y;
 	--rect.w;
-	rect.h -= 2u;
+	rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
 	drawRect(&rect, 0u);
 
 	double
@@ -249,19 +249,19 @@ void Bar::draw()
 		if (_secondOnTop == true)
 		{
 			rect.w = static_cast<Uint16>(Round(width));
-			drawRect(&rect, _color + 4u);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 
 			rect.w = static_cast<Uint16>(Round(width2));
-			rect.y += static_cast<Sint16>(_offSecond_y);
-			drawRect(&rect, _color2 + 4u);
+			rect.y = static_cast<Sint16>(static_cast<int>(rect.y) + _offSecond_y);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color2) + 4u));
 		}
 		else
 		{
 			rect.w = static_cast<Uint16>(Round(width2));
-			drawRect(&rect, _color2 + 4u);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color2) + 4u));
 
 			rect.w = static_cast<Uint16>(Round(width));
-			drawRect(&rect, _color + 4u);
+			drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(_color) + 4u));
 		}
 	}
 	else
@@ -272,7 +272,7 @@ void Bar::draw()
 			drawRect(&rect, _color);
 
 			rect.w = static_cast<Uint16>(Round(width2));
-			rect.y += static_cast<Sint16>(_offSecond_y);
+			rect.y = static_cast<Sint16>(static_cast<int>(rect.y) + _offSecond_y);
 			drawRect(&rect, _color2);
 		}
 		else

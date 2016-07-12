@@ -43,7 +43,7 @@ Frame::Frame(
 			height,
 			x,y),
 		_color(0u),
-		_bg(0u),
+		_colorBg(0u),
 		_thickness(5),
 		_contrast(1)
 {}
@@ -66,14 +66,15 @@ void Frame::setColor(Uint8 color)
 
 /**
  * Changes the color used to draw the shaded border.
- * Only really to be used in conjunction with the State add()
+ * @note Only really to be used in conjunction with the State::add()
  * function as a convenient wrapper to avoid ugly quacks at that end;
  * better to have them here!
  * @param color - color value
  */
 void Frame::setBorderColor(Uint8 color)
 {
-	setColor(color);
+	_color = color; // NOTE: This simply overrides setColor().
+	_redraw = true; // I'd guess it aliases "border" in Interfaces.rul to "color".
 }
 
 /**
@@ -86,22 +87,22 @@ Uint8 Frame::getColor() const
 }
 
 /**
-* Changes the color used to draw the background.
-* @param bg - color value
-*/
-void Frame::setSecondaryColor(Uint8 bg)
+ * Changes the color used to draw the background.
+ * @param color - color value
+ */
+void Frame::setSecondaryColor(Uint8 color)
 {
-	_bg = bg;
+	_colorBg = color;
 	_redraw = true;
 }
 
 /**
-* Gets the color used to draw the background.
-* @return, color value
-*/
+ * Gets the color used to draw the background.
+ * @return, color value
+ */
 Uint8 Frame::getSecondaryColor() const
 {
-	return _bg;
+	return _colorBg;
 }
 
 /**
@@ -110,7 +111,7 @@ Uint8 Frame::getSecondaryColor() const
  */
 void Frame::setHighContrast(bool contrast)
 {
-	_contrast = contrast ? 2 : 1;
+	_contrast = (contrast == true) ? 2 : 1;
 	_redraw = true;
 }
 
@@ -140,8 +141,9 @@ void Frame::draw()
 	rect.h = static_cast<Uint16>(getHeight());
 
 	Uint8
-		darkest = Palette::blockOffset(_color >> 4u) + 15u,
-		color = _color;
+		darkest	(static_cast<Uint8>(Palette::blockOffset(static_cast<Uint8>(static_cast<int>(_color) >> 4u)) + 15u)), // fuck you, c/G++ Thanks.
+		// interpretation: darkest = Palette::blockOffset(_color / 16) + 15;
+		color	(_color);
 
 	for (int
 			i = 0;
@@ -154,7 +156,8 @@ void Frame::draw()
 			color = darkest;
 		}
 		else
-			color = _color + static_cast<Uint8>(std::abs(i - (_thickness >> 1u)) * _contrast);
+			color = static_cast<Uint8>(_color + static_cast<Uint8>(std::abs(i - (_thickness >> 1u)) * _contrast)); // ditto.
+			// interpretation: color = _color + (abs(i - _thickness / 2) * _contrast);
 
 		drawRect(&rect, color);
 
@@ -162,16 +165,16 @@ void Frame::draw()
 		++rect.y;
 
 		if (rect.w > 1u)
-			rect.w -= 2u;
+			rect.w = static_cast<Uint16>(rect.w - 2u);
 		else
 			rect.w = 1u;
 
 		if (rect.h > 1u)
-			rect.h -= 2u;
+			rect.h = static_cast<Uint16>(rect.h - 2u);
 		else
 			rect.h = 1u;
 	}
-	drawRect(&rect, _bg);
+	drawRect(&rect, _colorBg);
 }
 
 }

@@ -43,7 +43,7 @@ class OptionsControlsState
 {
 
 private:
-	int _selected;
+	int _selected; // TODO: This should be size_t; indepth consideration required ....
 	Uint8
 		_colorGroup,
 		_colorSel,

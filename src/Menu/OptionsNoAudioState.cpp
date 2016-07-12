@@ -28,8 +28,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Audio Options screen.
- * @param origin Game section that originated this state.
+ * Initializes all the elements in the OptionsNoAudio screen.
+ * @param origin - section that originated this state
  */
 OptionsNoAudioState::OptionsNoAudioState(OptionsOrigin origin)
 	:
@@ -44,11 +44,11 @@ OptionsNoAudioState::OptionsNoAudioState(OptionsOrigin origin)
 	centerAllSurfaces();
 
 
+	_txtError->setText(tr("STR_NO_AUDIO_HARDWARE_DETECTED"));
 	_txtError->setAlign(ALIGN_CENTER);
 	_txtError->setVerticalAlign(ALIGN_MIDDLE);
 	_txtError->setBig();
 	_txtError->setWordWrap();
-	_txtError->setText(tr("STR_NO_AUDIO_HARDWARE_DETECTED"));
 }
 
 /**

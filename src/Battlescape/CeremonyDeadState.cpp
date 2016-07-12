@@ -90,8 +90,8 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //	_lstAwards->setColumns(2, 200,77);
 //	_lstAwards->setBackground(_window);
 //	_lstAwards->setSelectable();
-//	_lstAwards->onMouseOver((ActionHandler)& CeremonyDeadState::lstInfoMouseOver);
-//	_lstAwards->onMouseOut((ActionHandler)& CeremonyDeadState::lstInfoMouseOut);
+//	_lstAwards->onMouseOver(static_cast<ActionHandler>(&CeremonyDeadState::lstInfoMouseOver));
+//	_lstAwards->onMouseOut(	static_cast<ActionHandler>(&CeremonyDeadState::lstInfoMouseOut));
 
 //	_txtMedalInfo->setColor(SLATE);
 //	_txtMedalInfo->setHighContrast();
@@ -99,16 +99,13 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->setColor(GREEN);
-	_btnOk->onMouseClick((ActionHandler)& CeremonyDeadState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CeremonyDeadState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CeremonyDeadState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CeremonyDeadState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CeremonyDeadState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CeremonyDeadState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CeremonyDeadState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CeremonyDeadState::btnOkClick),
+							Options::keyCancel);
 
 
 //	const int rowsLost (std::min(8, // the soldiersLost list has maximum 8 rows so that there's room below it for the Awards List
@@ -119,17 +116,17 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //	_lstAwards->setHeight(_lstAwards->getHeight() - (rowsLost - 1) * 8);
 
 
-	size_t row (0u);
+	size_t r (0u);
 	for (std::vector<SoldierDead*>::const_iterator
 			i = soldiersLost.begin();
 			i != soldiersLost.end();
-			++i, ++row)
+			++i, ++r)
 	{
 		_lstSoldiersLost->addRow(
 							2,
 							(*i)->getName().c_str(),
 							tr((*i)->getDiary()->getKiaOrMia()).c_str());
-		_lstSoldiersLost->setCellColor(row, 1u, SLATE, true);
+		_lstSoldiersLost->setCellColor(r, 1u, SLATE, true);
 	}
 
 

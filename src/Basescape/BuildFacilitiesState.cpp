@@ -77,16 +77,13 @@ BuildFacilitiesState::BuildFacilitiesState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& BuildFacilitiesState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BuildFacilitiesState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BuildFacilitiesState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& BuildFacilitiesState::btnOkClick,
-					Options::keyOkKeypad);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BuildFacilitiesState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BuildFacilitiesState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BuildFacilitiesState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BuildFacilitiesState::btnOkClick),
+							Options::keyOkKeypad);
 
 	_txtTitle->setText(tr("STR_INSTALLATION"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -97,7 +94,7 @@ BuildFacilitiesState::BuildFacilitiesState(
 	_lstFacilities->setBackground(_window);
 	_lstFacilities->setSelectable();
 	_lstFacilities->setMargin(2);
-	_lstFacilities->onMouseClick((ActionHandler)& BuildFacilitiesState::lstFacilitiesClick);
+	_lstFacilities->onMouseClick(static_cast<ActionHandler>(&BuildFacilitiesState::lstFacilitiesClick));
 
 	populateBuildList();
 }
@@ -150,7 +147,7 @@ void BuildFacilitiesState::init()
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void BuildFacilitiesState::btnOkClick(Action*) // virtual.
+void BuildFacilitiesState::btnOkClick(Action*)
 {
 	_game->popState();
 }

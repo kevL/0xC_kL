@@ -84,28 +84,22 @@ AbandonGameState::AbandonGameState(OptionsOrigin origin)
 	_txtTitle->setText(tr("STR_ABANDON_GAME_QUESTION"));
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick((ActionHandler)& AbandonGameState::btnNoClick);
-	_btnNo->onKeyboardPress(
-					(ActionHandler)& AbandonGameState::btnNoClick,
-					Options::keyCancel);
-	_btnNo->onKeyboardPress(
-					(ActionHandler)& AbandonGameState::btnNoClick,
-					SDLK_n);
+	_btnNo->onMouseClick(	static_cast<ActionHandler>(&AbandonGameState::btnNoClick));
+	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&AbandonGameState::btnNoClick),
+							Options::keyCancel);
+	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&AbandonGameState::btnNoClick),
+							SDLK_n);
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick((ActionHandler)& AbandonGameState::btnYesClick);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& AbandonGameState::btnYesClick,
-					Options::keyOk);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& AbandonGameState::btnYesClick,
-					Options::keyOkKeypad);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& AbandonGameState::btnYesClick,
-					SDLK_y);
-	_btnYes->onKeyboardPress(
-					(ActionHandler)& AbandonGameState::btnYesClick,
-					SDLK_q);
+	_btnYes->onMouseClick(		static_cast<ActionHandler>(&AbandonGameState::btnYesClick));
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&AbandonGameState::btnYesClick),
+								Options::keyOk);
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&AbandonGameState::btnYesClick),
+								Options::keyOkKeypad);
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&AbandonGameState::btnYesClick),
+								SDLK_y);
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&AbandonGameState::btnYesClick),
+								SDLK_q);
 
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();

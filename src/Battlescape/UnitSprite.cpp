@@ -157,7 +157,7 @@ struct ColorReplace
 	{
 		if ((src & ColorGroup) == face_color.first)
 		{
-			dest = face_color.second + (src & ColorShade);
+			dest = static_cast<Uint8>(face_color.second + (src & ColorShade));
 			return true;
 		}
 

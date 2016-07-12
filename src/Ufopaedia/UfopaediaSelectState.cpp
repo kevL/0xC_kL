@@ -78,25 +78,21 @@ UfopaediaSelectState::UfopaediaSelectState(
 	_txtTitle->setText(tr("STR_SELECT_ITEM"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& UfopaediaSelectState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaSelectState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaSelectState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaSelectState::btnOkClick,
-					Options::keyCancel);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& UfopaediaSelectState::btnOkClick,
-					Options::keyGeoUfopedia);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&UfopaediaSelectState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaSelectState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaSelectState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaSelectState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&UfopaediaSelectState::btnOkClick),
+							Options::keyGeoUfopedia);
 
 	_lstSelection->setColumns(1, 190);
 	_lstSelection->setBackground(_window);
 	_lstSelection->setSelectable();
 	_lstSelection->setAlign(ALIGN_CENTER);
-	_lstSelection->onMouseClick((ActionHandler)& UfopaediaSelectState::lstSelectionClick);
+	_lstSelection->onMouseClick(static_cast<ActionHandler>(&UfopaediaSelectState::lstSelectionClick));
 
 	loadSelectionList();
 }

@@ -53,34 +53,34 @@ namespace OpenXcom
 {
 
 /**
- * The primary diary-screen that shows all the missions that a Soldier has.
- * @param base				- pointer to the Base to get info from
- * @param soldierId			- ID of the selected soldier
- * @param soldierInfo		- pointer to the SoldierInfo screen
- * @param soldierInfoDead	- pointer to the SoldierInfoDead screen
+ * The primary diary-screen that shows all the missions that a Soldier has had.
+ * @param base			- pointer to the Base to get info from
+ * @param solId			- soldier-ID to show info for
+ * @param solInfo		- pointer to the SoldierInfo screen
+ * @param solInfoDead	- pointer to the SoldierInfoDead screen
  */
 SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		Base* const base,
-		size_t soldierId,
-		SoldierInfoState* const soldierInfo,
-		SoldierInfoDeadState* const soldierInfoDead)
+		size_t solId,
+		SoldierInfoState* const solInfo,
+		SoldierInfoDeadState* const solInfoDead)
 	:
 		_base(base),
-		_soldierId(soldierId),
-		_soldierInfo(soldierInfo),
-		_soldierInfoDead(soldierInfoDead),
+		_solId(solId),
+		_solInfo(solInfo),
+		_solInfoDead(solInfoDead),
 		_recall(0u)
 {
 	if (_base != nullptr)
 	{
-		_list = _base->getSoldiers();
+		_listBase = _base->getSoldiers();
 		_listDead = nullptr;
-		_rows = _list->size();
+		_rows = _listBase->size();
 	}
 	else
 	{
 		_listDead = _game->getSavedGame()->getDeadSoldiers();
-		_list = nullptr;
+		_listBase = nullptr;
 		_rows = _listDead->size();
 	}
 
@@ -133,7 +133,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	if (_list != nullptr)
+	if (_listBase != nullptr)
 	{
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
 		_txtBaseLabel->setText(_base->getName());
@@ -141,16 +141,14 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
-			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnPrevClick);
-			_btnPrev->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryOverviewState::btnPrevClick,
-							Options::keyBattlePrevUnit);
+			_btnPrev->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnPrevClick));
+			_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnPrevClick),
+										Options::keyBattlePrevUnit);
 
 			_btnNext->setText(L">");
-			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnNextClick);
-			_btnNext->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryOverviewState::btnNextClick,
-							Options::keyBattleNextUnit);
+			_btnNext->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnNextClick));
+			_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnNextClick),
+										Options::keyBattleNextUnit);
 		}
 		else
 		{
@@ -165,16 +163,14 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		if (_rows > 1u)
 		{
 			_btnPrev->setText(L"<");
-			_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnNextClick);
-			_btnPrev->onKeyboardPress(
-								(ActionHandler)& SoldierDiaryOverviewState::btnNextClick,
-								Options::keyBattlePrevUnit);
+			_btnPrev->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnNextClick));
+			_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnNextClick),
+										Options::keyBattlePrevUnit);
 
 			_btnNext->setText(L">");
-			_btnNext->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnPrevClick);
-			_btnNext->onKeyboardPress(
-							(ActionHandler)& SoldierDiaryOverviewState::btnPrevClick,
-							Options::keyBattleNextUnit);
+			_btnNext->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnPrevClick));
+			_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnPrevClick),
+										Options::keyBattleNextUnit);
 		}
 		else
 		{
@@ -188,46 +184,40 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	_txtStatus->setText(tr("STR_STATUS"));
 	_txtDate->setText(tr("STR_DATE_MISSION"));
 
-	Uint8 color (_game->getRuleset()->getInterface("awards")->getElement("list")->color2);
+	Uint8 color (static_cast<Uint8>(_game->getRuleset()->getInterface("awards")->getElement("list")->color2));
 
 	_lstDiary->setColumns(6, 30,74,98,25,22,30);
 	_lstDiary->setArrowColor(color);
 	_lstDiary->setBackground(_window);
 	_lstDiary->setSelectable();
 	_lstDiary->setMargin();
-	_lstDiary->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::lstMissionInfoClick);
+	_lstDiary->onMouseClick(static_cast<ActionHandler>(&SoldierDiaryOverviewState::lstMissionInfoClick));
 
 
 	_btnMissions->setText(tr("STR_MISSIONS_UC"));
-	_btnMissions->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMissionsClick);
-	_btnMissions->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryOverviewState::btnMissionsClick,
-					SDLK_m);
+	_btnMissions->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnMissionsClick));
+	_btnMissions->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnMissionsClick),
+									SDLK_m);
 
 	_btnKills->setText(tr("STR_KILLS_UC"));
-	_btnKills->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnKillsClick);
-	_btnKills->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryOverviewState::btnKillsClick,
-					SDLK_k);
+	_btnKills->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnKillsClick));
+	_btnKills->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnKillsClick),
+								SDLK_k);
 
 	_btnAwards->setText(tr("STR_AWARDS_UC"));
-	_btnAwards->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick);
-	_btnAwards->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryOverviewState::btnMedalsClick,
-					SDLK_a);
+	_btnAwards->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnMedalsClick));
+	_btnAwards->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnMedalsClick),
+								SDLK_a);
 //	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryOverviewState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryOverviewState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryOverviewState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& SoldierDiaryOverviewState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryOverviewState::btnOkClick),
+							Options::keyCancel);
 }
 
 /**
@@ -245,18 +235,18 @@ void SoldierDiaryOverviewState::init()
 
 	SoldierDiary* diary (nullptr);
 
-//	if (_soldierId >= _rows) // safety.
-//		_soldierId = 0;
+//	if (_solId >= _rows) // safety.
+//		_solId = 0;
 
-	if (_list != nullptr)
+	if (_listBase != nullptr)
 	{
-		const Soldier* const sol (_list->at(_soldierId));
+		const Soldier* const sol (_listBase->at(_solId));
 		diary = sol->getDiary();
 		_txtTitle->setText(sol->getName());
 	}
 	else
 	{
-		const SoldierDead* const solDead (_listDead->at(_soldierId));
+		const SoldierDead* const solDead (_listDead->at(_solId));
 		diary = solDead->getDiary();
 		_txtTitle->setText(solDead->getName());
 	}
@@ -316,11 +306,11 @@ void SoldierDiaryOverviewState::init()
 }
 
 /**
- * Sets the current Soldier's ID.
+ * Sets the current Soldier by his/her ID.
  */
-void SoldierDiaryOverviewState::setSoldierId(size_t soldierId)
+void SoldierDiaryOverviewState::setSoldierId(size_t solId)
 {
-	_soldierId = soldierId;
+	_solId = solId;
 }
 
 /**
@@ -329,10 +319,10 @@ void SoldierDiaryOverviewState::setSoldierId(size_t soldierId)
  */
 void SoldierDiaryOverviewState::btnOkClick(Action*)
 {
-	if (_list != nullptr)
-		_soldierInfo->setSoldierId(_soldierId);
+	if (_listBase != nullptr)
+		_solInfo->setSoldierId(_solId);
 	else
-		_soldierInfoDead->setSoldierId(_soldierId);
+		_solInfoDead->setSoldierId(_solId);
 
 	_game->popState();
 }
@@ -346,7 +336,7 @@ void SoldierDiaryOverviewState::btnKillsClick(Action*)
 	_recall = _lstDiary->getScroll();
 	_game->pushState(new SoldierDiaryPerformanceState(
 												_base,
-												_soldierId,
+												_solId,
 												this,
 												DIARY_KILLS));
 }
@@ -360,7 +350,7 @@ void SoldierDiaryOverviewState::btnMissionsClick(Action*)
 	_recall = _lstDiary->getScroll();
 	_game->pushState(new SoldierDiaryPerformanceState(
 												_base,
-												_soldierId,
+												_solId,
 												this,
 												DIARY_MISSIONS));
 }
@@ -374,7 +364,7 @@ void SoldierDiaryOverviewState::btnMedalsClick(Action*)
 	_recall = _lstDiary->getScroll();
 	_game->pushState(new SoldierDiaryPerformanceState(
 												_base,
-												_soldierId,
+												_solId,
 												this,
 												DIARY_MEDALS));
 }
@@ -387,10 +377,10 @@ void SoldierDiaryOverviewState::btnPrevClick(Action*)
 {
 	_recall = 0u;
 
-	if (_soldierId == 0u)
-		_soldierId = _rows - 1u;
+	if (_solId == 0u)
+		_solId = _rows - 1u;
 	else
-		--_soldierId;
+		--_solId;
 
 	init();
 }
@@ -403,8 +393,8 @@ void SoldierDiaryOverviewState::btnNextClick(Action*)
 {
 	_recall = 0u;
 
-	if (++_soldierId == _rows)
-		_soldierId = 0u;
+	if (++_solId == _rows)
+		_solId = 0u;
 
 	init();
 }
@@ -417,11 +407,11 @@ void SoldierDiaryOverviewState::lstMissionInfoClick(Action*)
 {
 	_recall = _lstDiary->getScroll();
 
-	const size_t row (_lstDiary->getRows() - _lstDiary->getSelectedRow() - 1u);
+	const size_t r (_lstDiary->getRows() - _lstDiary->getSelectedRow() - 1u);
 	_game->pushState(new SoldierDiaryMissionState(
 												_base,
-												_soldierId,
-												row));
+												_solId,
+												r));
 }
 
 }

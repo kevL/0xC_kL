@@ -104,20 +104,17 @@ MediTargetState::MediTargetState(BattleAction* const action)
 	_lstTarget->setSelectable();
 	_lstTarget->setMargin(6);
 	_lstTarget->setHighContrast();
-	_lstTarget->onMousePress((ActionHandler)& MediTargetState::lstTargetPress);
+	_lstTarget->onMousePress(static_cast<ActionHandler>(&MediTargetState::lstTargetPress));
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->setHighContrast();
-	_btnCancel->onMouseClick((ActionHandler)& MediTargetState::btnCancelClick);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& MediTargetState::btnCancelClick,
-					Options::keyCancel);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& MediTargetState::btnCancelClick,
-					Options::keyOk);
-	_btnCancel->onKeyboardPress(
-					(ActionHandler)& MediTargetState::btnCancelClick,
-					Options::keyOkKeypad);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&MediTargetState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MediTargetState::btnCancelClick),
+								Options::keyCancel);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MediTargetState::btnCancelClick),
+								Options::keyOk);
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MediTargetState::btnCancelClick),
+								Options::keyOkKeypad);
 }
 
 /**

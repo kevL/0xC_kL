@@ -173,7 +173,7 @@ struct GlobeStaticData
 			else if (j >  10) j =  10;
 			else if (j >   8) j =   9;
 
-			shade_gradient[static_cast<size_t>(i)] = static_cast<Sint16>(j) + 16;
+			shade_gradient[static_cast<size_t>(i)] = static_cast<Sint16>(j + 16);
 		}
 	}
 } static_data;
@@ -237,16 +237,17 @@ struct CreateShadow
 			if (   d == Globe::C_OCEAN
 				|| d == Globe::C_OCEAN + 16u)
 			{
-				return Globe::C_OCEAN + val; // this pixel is ocean
+				return static_cast<Uint8>(Globe::C_OCEAN + val); // this pixel is ocean
 			}
 
 			if (dest == 0u)
 				return val; // this pixel is land
 
-			const Uint8 e (dest + (val / 3u));
+//			const Uint8 e (static_cast<Uint8>(dest + (val / 3u)));
+			const Uint8 e (static_cast<Uint8>(static_cast<unsigned>(dest) + (static_cast<unsigned>(val) / 3u))); // to be precise & explicit.
 
 			if (e > (d + helper::ColorShade))
-				return d + helper::ColorShade;
+				return static_cast<Uint8>(d + helper::ColorShade);
 
 			return static_cast<Uint8>(e);
 		}
@@ -349,11 +350,11 @@ Globe::Globe(
 								y, y + height);
 
 	_blinkTimer = new Timer(200u);
-	_blinkTimer->onTimer((SurfaceHandler)& Globe::blink);
+	_blinkTimer->onTimer(static_cast<SurfaceHandler>(&Globe::blink));
 	_blinkTimer->start();
 
-	_rotTimer = new Timer(Options::geoScrollSpeed);
-	_rotTimer->onTimer((SurfaceHandler)& Globe::rotate);
+	_rotTimer = new Timer(static_cast<Uint32>(Options::geoScrollSpeed));
+	_rotTimer->onTimer(static_cast<SurfaceHandler>(&Globe::rotate));
 
 	_cenLon = _game->getSavedGame()->getGlobeLongitude();
 	_cenLat = _game->getSavedGame()->getGlobeLatitude();
@@ -362,7 +363,7 @@ Globe::Globe(
 	setupRadii(width, height);
 	setZoom(_zoom);
 
-	_terminatorFluxions.resize(static_data.random_surf_size * static_data.random_surf_size);
+	_terminatorFluxions.resize(static_cast<size_t>(static_data.random_surf_size * static_data.random_surf_size));
 	for (size_t
 			i = 0u;
 			i != _terminatorFluxions.size();
@@ -414,9 +415,10 @@ void Globe::polarToCart( // Orthographic projection
 		Sint16* x,
 		Sint16* y) const
 {
-	*x = _cenX + static_cast<Sint16>(std::floor(_radius * std::cos(lat) * std::sin(lon - _cenLon)));
-	*y = _cenY + static_cast<Sint16>(std::floor(_radius * (std::cos(_cenLat) * std::sin(lat)
-											- std::sin(_cenLat) * std::cos(lat) * std::cos(lon - _cenLon))));
+	*x = static_cast<Sint16>(static_cast<double>(_cenX) + std::floor(_radius * std::cos(lat) * std::sin(lon - _cenLon)));
+	*y = static_cast<Sint16>(static_cast<double>(_cenY) + static_cast<Sint16>(std::floor(_radius * (std::cos(_cenLat) * std::sin(lat)
+																	- std::sin(_cenLat) * std::cos(lat) * std::cos(lon - _cenLon)))));
+	// casting 'irregularities' irritate
 }
 
 /**
@@ -447,8 +449,8 @@ void Globe::cartToPolar( // Orthographic Projection
 		double* lon,
 		double* lat) const
 {
-	x -= _cenX;
-	y -= _cenY;
+	x = static_cast<Sint16>(x - _cenX);
+	y = static_cast<Sint16>(y - _cenY);
 
 	const double
 		rho (std::sqrt(static_cast<double>(x * x + y * y))),
@@ -723,11 +725,11 @@ void Globe::setupRadii( // private.
 
 	_earthData.resize(_zoomRadii.size());	// data for drawing sun-shadow.
 	for (size_t								// filling normal field for each radius
-			radiusId = 0u;
-			radiusId != _zoomRadii.size();
-			++radiusId)
+			radId = 0u;
+			radId != _zoomRadii.size();
+			++radId)
 	{
-		_earthData[radiusId].resize(width * height);
+		_earthData[radId].resize(static_cast<size_t>(width * height));
 		for (size_t
 				j = 0u;
 				j != static_cast<size_t>(height);
@@ -736,11 +738,11 @@ void Globe::setupRadii( // private.
 					i = 0u;
 					i != static_cast<size_t>(width);
 					++i)
-				_earthData[radiusId]
+				_earthData[radId]
 						  [static_cast<size_t>(width) * j + i] = static_data.circle_norm(
 																					static_cast<double>(width) / 2.,
 																					height_d / 2.,
-																					_zoomRadii[radiusId],
+																					_zoomRadii[radId],
 																					static_cast<double>(i) + 0.5,
 																					static_cast<double>(j) + 0.5);
 	}
@@ -1267,9 +1269,9 @@ void Globe::drawOcean()
 {
 	lock();
 	drawCircle(
-			_cenX + 1,
+			static_cast<Sint16>(_cenX + 1),
 			_cenY,
-			static_cast<Sint16>(_radius) + 20,
+			static_cast<Sint16>(_radius + 20),
 			C_OCEAN);
 	unlock();
 }
@@ -1368,10 +1370,10 @@ Cord Globe::getSunDirection( // private.
 						/ 86400.);
 
 		double today;
-		if (year % 4u == 0 // spring equinox (start of astronomic year)
+		if (year % 4 == 0 // spring equinox (start of astronomic year)
 			&& !
-				(year % 100u == 0
-					&& year % 400u != 0))
+				(year % 100 == 0
+					&& year % 400 != 0))
 		{
 			today = (static_cast<double>(monthDays2[month] + day) + tm) / 366. - 0.219;
 		}
@@ -1511,25 +1513,25 @@ void Globe::XuLine( // private.
 		tcol = src->getPixelColor(
 							static_cast<int>(x0),
 							static_cast<int>(y0));
-		if (tcol != 0)
+		if (tcol != 0u)
 		{
-			if (color != 0)
+			if (color != 0u)
 				tcol = color; // flight path or craft radar
 			else
 			{
 				const Uint8 colorBlock (tcol & helper::ColorGroup);
 
-				if (colorBlock == C_OCEAN
-					|| colorBlock == C_OCEAN + 16)
+				if (   colorBlock == C_OCEAN
+					|| colorBlock == C_OCEAN + 16u)
 				{
-					tcol = C_OCEAN + static_cast<Uint8>(shade) + 8; // this pixel is ocean
+					tcol = static_cast<Uint8>(static_cast<int>(C_OCEAN) + shade + 8); // this pixel is Ocean
 				}
 				else // this pixel is land
 				{
-					const Uint8 colorShaded (tcol + static_cast<Uint8>(shade));
+					const Uint8 colorShaded (static_cast<Uint8>(shade + static_cast<int>(tcol)));
 
 					if (colorShaded > colorBlock + helper::ColorShade)
-						tcol = colorBlock + helper::ColorShade;
+						tcol = static_cast<Uint8>(colorBlock + helper::ColorShade);
 					else
 						tcol = colorShaded;
 				}
@@ -1555,7 +1557,7 @@ void Globe::drawRadars()
 	_radars->clear();
 
 	_radars->lock();
-	if (_hover == true // placing new Base.
+	if (_hover == true // placing Base.
 		&& Options::globeAllRadarsOnBaseBuild == true)
 	{
 		double range;
@@ -2780,7 +2782,7 @@ void Globe::getPolygonTextureAndShade(
 
 	const Polygon* const poly (getPolygonAtCoord(lon,lat));
 	if (poly != nullptr)
-		*texture = poly->getPolyTexture();
+		*texture = static_cast<int>(poly->getPolyTexture());
 	else
 		*texture = -1;
 }
@@ -2798,7 +2800,7 @@ void Globe::getPolygonTexture(
 {
 	const Polygon* const poly (getPolygonAtCoord(lon,lat));
 	if (poly != nullptr)
-		*texture = poly->getPolyTexture();
+		*texture = static_cast<int>(poly->getPolyTexture());
 	else
 		*texture = -1;
 }

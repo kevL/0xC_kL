@@ -63,16 +63,16 @@ int main(
 #ifndef _DEBUG
 	try
 	{
-		Logger::reportingLevel() = LOG_INFO;
+		Logger::reportLevel() = LOG_INFO;
 #else
-		Logger::reportingLevel() = LOG_DEBUG;
+		Logger::reportLevel() = LOG_DEBUG;
 #endif
 
 		if (Options::init(argc, argv) == false)
 			return EXIT_SUCCESS;
 
 		if (Options::verboseLogging == true)
-			Logger::reportingLevel() = LOG_VERBOSE;
+			Logger::reportLevel() = LOG_VERBOSE;
 
 //		Options::baseXResolution = Options::displayWidth;
 //		Options::baseYResolution = Options::displayHeight;

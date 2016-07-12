@@ -36,7 +36,7 @@ class Window;
 
 
 /**
- * Screen that allows the player to place a new Base on the Globe.
+ * Screen that allows the player to place a Base on the Globe.
  */
 class BuildNewBaseState
 	:

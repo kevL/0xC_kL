@@ -133,7 +133,7 @@ NextTurnState::NextTurnState(
 		{
 			woststr << L" / " << _battleSave->getTurnLimit();
 			if (_battleSave->getTurnLimit() - _battleSave->getTurn() < 4)
-				_txtTurn->setColor(_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2); // borrow 'overweight' color ...
+				_txtTurn->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2)); // borrow 'overweight' color ...
 		}
 		_txtTurn->setText(woststr.str());
 

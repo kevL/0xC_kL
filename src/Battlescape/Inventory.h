@@ -103,9 +103,9 @@ private:
 	public:
 		/// Creates an inventory-view with the specified position and size.
 		Inventory(
-				Game* game,
-				int width,
-				int height,
+				Game* const game,
+//				int width,
+//				int height,
 				int x = 0,
 				int y = 0,
 				bool atBase = false);

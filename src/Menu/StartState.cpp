@@ -123,7 +123,7 @@ StartState::StartState()
 	_cursor->setColor(0u);
 	_cursor->setText(L"_");
 
-	_timer->onTimer((StateHandler)& StartState::animate);
+	_timer->onTimer(static_cast<StateHandler>(&StartState::animate));
 	_timer->start();
 
 	_game->getCursor()->setVisible(false);
@@ -173,11 +173,11 @@ void StartState::init()
 	ss << L"Loading OpenXcom " << Language::utf8ToWstr(OPENXCOM_VERSION_SHORT) << Language::utf8ToWstr(OPENXCOM_VERSION_GIT) << "...";
 	addLine(ss.str()); */
 
-	_thread = SDL_CreateThread( // load the game data in a separate thread
+	_thread = SDL_CreateThread(	// load the game data in a separate thread
 							load,
-							(void*)_game);
-	if (_thread == nullptr) // if thread can't create just load as usual
-		load((void*)_game);
+							static_cast<void*>(_game));
+	if (_thread == nullptr)		// if thread can't create just load as usual
+		load(static_cast<void*>(_game));
 }
 
 /**

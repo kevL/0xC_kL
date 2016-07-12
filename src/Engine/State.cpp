@@ -268,7 +268,7 @@ void State::init() // virtual.
 	_game->getCursor()->draw();
 
 	_game->getFpsCounter()->setPalette(_palette);
-	_game->getFpsCounter()->setColor(_cursorColor + 2u);
+	_game->getFpsCounter()->setColor(static_cast<Uint8>(_cursorColor + 2u));
 	_game->getFpsCounter()->draw();
 
 	if (_game->getResourcePack() != nullptr)
@@ -435,7 +435,7 @@ void State::lowerAllSurfaces()
 			i != _surfaces.end();
 			++i)
 	{
-		(*i)->setY((*i)->getY() + _game->getScreen()->getDY() / 2);
+		(*i)->setY((*i)->getY() + (_game->getScreen()->getDY() >> 1u));
 	}
 }
 
@@ -456,7 +456,7 @@ void State::applyBattlescapeTheme()
 			++i)
 	{
 		(*i)->setColor(static_cast<Uint8>(el->color));
-		(*i)->setHighContrast();
+		(*i)->setHighContrast(true);
 
 		if ((window = dynamic_cast<Window*>(*i)) != nullptr)
 			window->setBackground(_game->getResourcePack()->getSurface("Diehard"));

@@ -119,12 +119,12 @@ void Cursor::draw()
 {
 	Surface::draw();
 
-	Uint8 color = _color;
+	Uint8 color (_color);
 	Sint16
-		x1 = 0,
-		y1 = 0,
-		x2 = static_cast<Sint16>(getWidth() - 1),
-		y2 = static_cast<Sint16>(getHeight() - 1);
+		x1 (0),
+		y1 (0),
+		x2 (static_cast<Sint16>(getWidth()  - 1)),
+		y2 (static_cast<Sint16>(getHeight() - 1));
 
 	lock();
 	for (int
@@ -143,7 +143,7 @@ void Cursor::draw()
 				color);
 
 		++x1;
-		y1 += 2;
+		y1 = static_cast<Sint16>(static_cast<int>(y1) + 2);
 
 		--y2;
 		--x2;

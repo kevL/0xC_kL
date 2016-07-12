@@ -254,16 +254,13 @@ MonthlyReportState::MonthlyReportState()
 
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& MonthlyReportState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& MonthlyReportState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& MonthlyReportState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& MonthlyReportState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+							Options::keyCancel);
 
 
 	_txtFailure->setText(tr("STR_YOU_HAVE_FAILED"));
@@ -274,16 +271,13 @@ MonthlyReportState::MonthlyReportState()
 	_txtFailure->setVisible(false);
 
 	_btnOkLoser->setText(tr("STR_OK"));
-	_btnOkLoser->onMouseClick((ActionHandler)& MonthlyReportState::btnOkClick);
-	_btnOkLoser->onKeyboardPress(
-					(ActionHandler)& MonthlyReportState::btnOkClick,
-					Options::keyOk);
-	_btnOkLoser->onKeyboardPress(
-					(ActionHandler)& MonthlyReportState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOkLoser->onKeyboardPress(
-					(ActionHandler)& MonthlyReportState::btnOkClick,
-					Options::keyCancel);
+	_btnOkLoser->onMouseClick(		static_cast<ActionHandler>(&MonthlyReportState::btnOkClick));
+	_btnOkLoser->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+									Options::keyOk);
+	_btnOkLoser->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+									Options::keyOkKeypad);
+	_btnOkLoser->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+									Options::keyCancel);
 	_btnOkLoser->setVisible(false);
 
 
@@ -484,21 +478,26 @@ std::wstring MonthlyReportState::countryList( // private.
 	if (countries.empty() == false)
 	{
 		woststr << "\n\n";
-		if (countries.size() == 1)
-			woststr << tr(singular).arg(tr(countries.front()));
-		else
+		switch (countries.size())
 		{
-			LocalizedText countryList (tr(countries.front()));
-			std::vector<std::string>::const_iterator i;
-			for (
-					i = countries.begin() + 1;
-					i != countries.end() - 1;
-					++i)
+			case 1u:
+				woststr << tr(singular).arg(tr(countries.front()));
+				break;
+
+			default:
 			{
-				countryList = tr("STR_COUNTRIES_COMMA").arg(countryList).arg(tr(*i));
+				LocalizedText countryList (tr(countries.front()));
+				std::vector<std::string>::const_iterator i;
+				for (
+						i = countries.begin() + 1;
+						i != countries.end() - 1;
+						++i)
+				{
+					countryList = tr("STR_COUNTRIES_COMMA").arg(countryList).arg(tr(*i));
+				}
+				countryList = tr("STR_COUNTRIES_AND").arg(countryList).arg(tr(*i));
+				woststr << tr(plural).arg(countryList);
 			}
-			countryList = tr("STR_COUNTRIES_AND").arg(countryList).arg(tr(*i));
-			woststr << tr(plural).arg(countryList);
 		}
 	}
 	return woststr.str();

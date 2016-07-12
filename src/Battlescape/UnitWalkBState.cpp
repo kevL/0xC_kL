@@ -430,14 +430,14 @@ bool UnitWalkBState::doStatusStand() // private.
 		}
 		else
 		{
-			const int dirStrafe ((_dirStart + 4) % 8u);
+			const int dirStrafe ((_dirStart + 4) % 8);
 			_unit->setFaceDirection(dirStrafe);
 			//Log(LOG_INFO) << ". STANDING strafeTank, setFaceDirection() -> " << dirStrafe;
 
 			if (_unit->getTurretType() != TRT_NONE)
 			{
 				const int dirTurret (_unit->getTurretDirection() - _unit->getUnitDirection());
-				_unit->setTurretDirection((dirTurret + dirStrafe) % 8u);
+				_unit->setTurretDirection((dirTurret + dirStrafe) % 8);
 				//Log(LOG_INFO) << ". STANDING strafeTank, setTurretDirection() -> " << (turretOffset + dirStrafe);
 			}
 		}
@@ -559,12 +559,12 @@ bool UnitWalkBState::doStatusStand() // private.
 		switch (_te->unitOpensDoor(_unit, false, dir))
 		{
 			case DR_WOOD_OPEN:
-				soundId = ResourcePack::DOOR_OPEN;
+				soundId = static_cast<int>(ResourcePack::DOOR_OPEN);
 				_door = true;
 				break;
 
 			case DR_UFO_OPEN:
-				soundId = ResourcePack::SLIDING_DOOR_OPEN;
+				soundId = static_cast<int>(ResourcePack::SLIDING_DOOR_OPEN);
 				_door = true;
 				wait = true;
 				break;
@@ -576,7 +576,7 @@ bool UnitWalkBState::doStatusStand() // private.
 				soundId = -1;
 		}
 		if (soundId != -1)
-			_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 										->play(-1, _parent->getMap()->getSoundAngle(pos));
 
 		if (wait == true) return false; // wait for the ufo door to open
@@ -1327,10 +1327,10 @@ void UnitWalkBState::playMoveSound() // private.
 							switch (walkPhase)
 							{
 								case 3:
-									soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET + 1;
+									soundId = (stepSound << 1u) + static_cast<int>(ResourcePack::WALK_OFFSET) + 1;
 									break;
 								case 7:
-									soundId = (stepSound << 1u) + ResourcePack::WALK_OFFSET;
+									soundId = (stepSound << 1u) + static_cast<int>(ResourcePack::WALK_OFFSET);
 							}
 						}
 					}
@@ -1344,16 +1344,16 @@ void UnitWalkBState::playMoveSound() // private.
 					if (_fall == false)
 					{
 						if (_unit->isFloating() == false) // GravLift note: isFloating() might be redundant w/ (_fall=false). See above^
-							soundId = ResourcePack::GRAVLIFT_SOUND;
+							soundId = static_cast<int>(ResourcePack::GRAVLIFT_SOUND);
 						else
 						{
 							if (_unit->getUnitRules() != nullptr
 								&& _unit->getUnitRules()->isMechanical() == true)
 							{
-								soundId = ResourcePack::FLYING_SOUND;		// hoverSound flutter
+								soundId = static_cast<int>(ResourcePack::FLYING_SOUND);		// hoverSound flutter
 							}
 							else
-								soundId = ResourcePack::FLYING_SOUND_HQ;	// HQ hoverSound
+								soundId = static_cast<int>(ResourcePack::FLYING_SOUND_HQ);	// HQ hoverSound
 						}
 					}
 				}
@@ -1362,7 +1362,7 @@ void UnitWalkBState::playMoveSound() // private.
 						|| (_unit->isFloating() == true && _pf->getMoveTypePf() != MT_FLY))
 					&& groundCheck() == true)
 				{
-					soundId = ResourcePack::ITEM_DROP; // *thunk*
+					soundId = static_cast<int>(ResourcePack::ITEM_DROP); // *thunk*
 				}
 		}
 	}
@@ -1373,7 +1373,7 @@ void UnitWalkBState::playMoveSound() // private.
 			&& _unit->isFloating() == false
 			&& _fall == false)
 		{
-			soundId = ResourcePack::GRAVLIFT_SOUND; // GravLift note: isFloating() might be redundant w/ (_fall=false). See above^
+			soundId = static_cast<int>(ResourcePack::GRAVLIFT_SOUND); // GravLift note: isFloating() might be redundant w/ (_fall=false). See above^
 		}
 		else
 			soundId = _unit->getMoveSound();
@@ -1381,7 +1381,7 @@ void UnitWalkBState::playMoveSound() // private.
 
 	//Log(LOG_INFO) << ". phase= " << walkPhase << " id= " << soundId;
 	if (soundId != -1)
-		_parent->getResourcePack()->getSound("BATTLE.CAT", soundId)
+		_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 									->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
 }
 

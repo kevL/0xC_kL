@@ -70,32 +70,25 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& CannotReequipState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CannotReequipState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CannotReequipState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& CannotReequipState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CannotReequipState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CannotReequipState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CannotReequipState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CannotReequipState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_NOT_ENOUGH_EQUIPMENT_TO_FULLY_RE_EQUIP_SQUAD"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
 	_txtItem->setText(tr("STR_ITEM"));
-
 	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
-
 	_txtCraft->setText(tr("STR_CRAFT"));
-
 
 	_lstItems->setColumns(3, 154,46,72);
 	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
-
 	for (std::vector<ReequipStat>::const_iterator
 			i = missingItems.begin();
 			i != missingItems.end();

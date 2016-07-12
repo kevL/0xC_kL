@@ -56,16 +56,13 @@ NoContainmentState::NoContainmentState()
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& NoContainmentState::btnOkClick);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NoContainmentState::btnOkClick,
-					Options::keyOk);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NoContainmentState::btnOkClick,
-					Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-					(ActionHandler)& NoContainmentState::btnOkClick,
-					Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NoContainmentState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NoContainmentState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NoContainmentState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NoContainmentState::btnOkClick),
+							Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_ALIEN_DIES_NO_ALIEN_CONTAINMENT_FACILITY"));
 	_txtTitle->setAlign(ALIGN_CENTER);

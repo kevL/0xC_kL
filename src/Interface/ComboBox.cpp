@@ -220,7 +220,7 @@ void ComboBox::drawArrow() // private.
 	switch (_color)
 	{
 		case 255u: color = 1u; break; // TODO: Not sure that is necessary.
-		default:   color = 1u + _color;
+		default:   color = static_cast<Uint8>(static_cast<unsigned>(_color) + 1u);
 	}
 
 	SDL_Rect rect;
@@ -233,13 +233,13 @@ void ComboBox::drawArrow() // private.
 	for (
 			;
 			rect.w > 1u;
-			rect.w -= 2u)
+			rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 	{
-		_arrow->drawRect(&rect, color + 2u);
+		_arrow->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 		++rect.x;
 		++rect.y;
 	}
-	_arrow->drawRect(&rect, color + 2u);
+	_arrow->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
 
 	rect.x = // draw arrow triangle 2
 	rect.y = 2;
@@ -249,7 +249,7 @@ void ComboBox::drawArrow() // private.
 	for (
 			;
 			rect.w > 1u;
-			rect.w -= 2u)
+			rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
 	{
 		_arrow->drawRect(&rect, color);
 		++rect.x;
@@ -324,7 +324,7 @@ void ComboBox::setDropdown(int rows) // private.
  */
 void ComboBox::setOptions(const std::vector<std::string>& options)
 {
-	setDropdown(options.size());
+	setDropdown(static_cast<int>(options.size()));
 	_list->clearList();
 
 	for (std::vector<std::string>::const_iterator
@@ -345,7 +345,7 @@ void ComboBox::setOptions(const std::vector<std::string>& options)
  */
 void ComboBox::setOptions(const std::vector<std::wstring>& options)
 {
-	setDropdown(options.size());
+	setDropdown(static_cast<int>(options.size()));
 	_list->clearList();
 
 	for (std::vector<std::wstring>::const_iterator

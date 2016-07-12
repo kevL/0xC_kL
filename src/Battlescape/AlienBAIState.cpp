@@ -305,7 +305,7 @@ void AlienBAIState::think(BattleAction* const action)
 				&& (_unitAggro->getExposed() == -1
 					|| _unitAggro->getExposed() > _unit->getIntelligence()))
 			|| (_battleSave->isCheating() == true
-				&& _AIMode != AI_COMBAT)));
+				&& _AIMode != AI_COMBAT)))
 	{
 		if (_traceAI) Log(LOG_INFO) << ". . AIMode pre-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
 		evaluateAiMode();
@@ -465,8 +465,8 @@ void AlienBAIState::setupPatrol() // private.
 			&& (   _attackAction->weapon->getRules()->getAccuracySnap() != 0 // TODO: this ought be expanded to include melee.
 				|| _attackAction->weapon->getRules()->getAccuracyAuto() != 0
 				|| _attackAction->weapon->getRules()->getAccuracyAimed() != 0)
-			&& _battleSave->baseDestruct()[_startNode->getPosition().x / 10]
-										  [_startNode->getPosition().y / 10].second > 0)
+			&& _battleSave->baseDestruct()[static_cast<size_t>(_startNode->getPosition().x / 10)]
+										  [static_cast<size_t>(_startNode->getPosition().y / 10)].second > 0)
 		{
 			const MapData* data;
 			const int
@@ -1191,7 +1191,7 @@ void AlienBAIState::evaluateAiMode() // private.
 
 	if (_AIMode == AI_COMBAT)
 	{
-		if (_traceAI) Log(LOG_INFO) << ". AI_COMBAT _hasBlaster = " << (int)_hasBlaster;
+		if (_traceAI) Log(LOG_INFO) << ". AI_COMBAT _hasBlaster = " << _hasBlaster;
 //		if (_unitAggro)
 		if (_attackAction->type == BA_LAUNCH
 //		if (_hasBlaster == true // note: Blaster-wielding units should go for an AimedShot ... costs less TU.

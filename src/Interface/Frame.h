@@ -39,12 +39,12 @@ private:
 		_contrast,
 		_thickness;
 	Uint8
-		_bg,
+		_colorBg,
 		_color;
 
 
 	public:
-		/// Creates a new Frame with the specified size and position.
+		/// Creates a Frame with the specified size and position.
 		Frame(
 				int width,
 				int height,
@@ -58,11 +58,11 @@ private:
 		/// Gets the border-color.
 		Uint8 getColor() const;
 
-		///
+		/// Sets the border-color w/ hack.
 		void setBorderColor(Uint8 color) override;
 
 		/// Sets the background color.
-		void setSecondaryColor(Uint8 bg) override;
+		void setSecondaryColor(Uint8 color) override;
 		/// Gets the background color.
 		Uint8 getSecondaryColor() const;
 

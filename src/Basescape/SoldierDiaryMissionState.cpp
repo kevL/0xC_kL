@@ -50,18 +50,18 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Soldier Diary missions-description window.
- * @param base		- pointer to the Base to get info from
- * @param soldierId	- ID of the selected soldier
- * @param rowEntry	- list-row to get mission info from
+ * @param base			- pointer to the Base to get info from
+ * @param solId			- soldier-ID to show info for
+ * @param rowOverview	- list-row to get mission info from
  */
 SoldierDiaryMissionState::SoldierDiaryMissionState(
 		Base* const base,
-		size_t soldierId,
-		size_t rowEntry)
+		size_t solId,
+		size_t rowOverview)
 	:
 		_base(base),
-		_soldierId(soldierId),
-		_rowEntry(rowEntry),
+		_solId(solId),
+		_rowOverview(rowOverview),
 		_diary(nullptr)
 {
 	_fullScreen = false;
@@ -118,20 +118,18 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	_txtTitle->setBig();
 
 	_btnPrev->setText(L"<");
-	_btnPrev->onMouseClick((ActionHandler)& SoldierDiaryMissionState::btnNextClick); // list is reversed.
-	_btnPrev->onKeyboardPress(
-			(ActionHandler)& SoldierDiaryMissionState::btnNextClick,
-			Options::keyBattlePrevUnit);
+	_btnPrev->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryMissionState::btnNextClick)); // list is reversed.
+	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryMissionState::btnNextClick),
+								Options::keyBattlePrevUnit);
 
 	_btnNext->setText(L">");
-	_btnNext->onMouseClick((ActionHandler)& SoldierDiaryMissionState::btnPrevClick); // list is reversed.
-	_btnNext->onKeyboardPress(
-			(ActionHandler)& SoldierDiaryMissionState::btnPrevClick,
-			Options::keyBattleNextUnit);
+	_btnNext->onMouseClick(		static_cast<ActionHandler>(&SoldierDiaryMissionState::btnPrevClick)); // list is reversed.
+	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&SoldierDiaryMissionState::btnPrevClick),
+								Options::keyBattleNextUnit);
 
-	_color = _game->getRuleset()->getInterface("awardsMissionInfo")->getElement("list")->color2;
+	_color = static_cast<Uint8>(_game->getRuleset()->getInterface("awardsMissionInfo")->getElement("list")->color2);
 
-	_srfLine	 ->drawLine(0,0, 120,0, _color + 2u);
+	_srfLine	 ->drawLine(0,0, 120,0, static_cast<Uint8>(_color + 2u));
 	_srfLineShade->drawLine(0,0, 120,0, BLACK);
 
 	_lstKills->setArrowColor(_color);
@@ -139,16 +137,13 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	_lstKills->setMargin();
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick((ActionHandler)& SoldierDiaryMissionState::btnOkClick);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
-			Options::keyOk);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
-			Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(
-			(ActionHandler)& SoldierDiaryMissionState::btnOkClick,
-			Options::keyCancel);
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryMissionState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryMissionState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryMissionState::btnOkClick),
+							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiaryMissionState::btnOkClick),
+							Options::keyCancel);
 }
 
 /**
@@ -164,29 +159,19 @@ void SoldierDiaryMissionState::init()
 {
 	State::init();
 
-	const MissionStatistics* stats;
+	const MissionStatistics* tactical;
 	size_t missionId;
 	int daysWounded;
 
 	const std::vector<MissionStatistics*>* const statList (_game->getSavedGame()->getMissionStatistics());
 	if (_base != nullptr)
 	{
-		const std::vector<Soldier*>* const listLive (_base->getSoldiers());
-
-//		if (_soldierId >= listLive->size()) // safety.
-//			_soldierId = 0;
-
-		const Soldier* const sol (listLive->at(_soldierId));
+		const Soldier* const sol (_base->getSoldiers()->at(_solId));
 		_diary = sol->getDiary();
+		missionId = static_cast<size_t>(_diary->getMissionIdList().at(_rowOverview));
+		tactical = statList->at(missionId);
 
-		missionId = _diary->getMissionIdList().at(_rowEntry);
-//		if (missionId > statList->size()) // safety.
-//			missionId = 0u;
-
-		stats = statList->at(missionId);
-
-//		daysWounded = stats->injuryList[sol->getId()];
-		const std::map<int,int>* injured (&stats->injuryList);
+		const std::map<int,int>* injured (&tactical->injuryList);
 		if (injured->find(sol->getId()) != injured->end())
 			daysWounded = injured->at(sol->getId());
 		else
@@ -194,22 +179,12 @@ void SoldierDiaryMissionState::init()
 	}
 	else
 	{
-		const std::vector<SoldierDead*>* const listDead (_game->getSavedGame()->getDeadSoldiers());
-
-//		if (_soldierId >= listDead->size()) // safety.
-//			_soldierId = 0;
-
-		const SoldierDead* const solDead (listDead->at(_soldierId));
+		const SoldierDead* const solDead (_game->getSavedGame()->getDeadSoldiers()->at(_solId));
 		_diary = solDead->getDiary();
+		missionId = static_cast<size_t>(_diary->getMissionIdList().at(_rowOverview));
+		tactical = statList->at(missionId);
 
-		missionId = _diary->getMissionIdList().at(_rowEntry);
-//		if (missionId > statList->size()) // safety.
-//			missionId = 0u;
-
-		stats = statList->at(missionId);
-
-//		daysWounded = stats->injuryList[solDead->getId()];
-		const std::map<int,int>* injured (&stats->injuryList);
+		const std::map<int,int>* injured (&tactical->injuryList);
 		if (injured->find(solDead->getId()) != injured->end())
 			daysWounded = injured->at(solDead->getId());
 		else
@@ -222,29 +197,29 @@ void SoldierDiaryMissionState::init()
 
 	_txtTitle->setText(tr("STR_MISSION_UC_").arg(missionId));
 
-	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(stats->score));
-	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(stats->type))); // 'type' was, getMissionTypeLowerCase()
+	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(tactical->score));
+	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(tactical->type))); // 'type' was, getMissionTypeLowerCase()
 
-	if (stats->isUfoMission() == true)
+	if (tactical->isUfoMission() == true)
 	{
 		_txtUFO->setVisible();
-		_txtUFO->setText(tr("STR_UFO_TYPE_").arg(tr(stats->ufo)));
+		_txtUFO->setText(tr("STR_UFO_TYPE_").arg(tr(tactical->ufo)));
 	}
 	else
 		_txtUFO->setVisible(false);
 
-	if (stats->alienRace != "STR_UNKNOWN")
+	if (tactical->alienRace != "STR_UNKNOWN")
 	{
 		_txtRace->setVisible();
-		_txtRace->setText(tr("STR_RACE_TYPE_").arg(tr(stats->alienRace)));
+		_txtRace->setText(tr("STR_RACE_TYPE_").arg(tr(tactical->alienRace)));
 	}
 	else
 		_txtRace->setVisible(false);
 
-	if (stats->isBaseDefense() == false && stats->isAlienBase() == false)
+	if (tactical->isBaseDefense() == false && tactical->isAlienBase() == false)
 	{
 		_txtDaylight->setVisible();
-		if (stats->shade < MissionStatistics::NIGHT_SHADE)
+		if (tactical->shade < MissionStatistics::NIGHT_SHADE)
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_DAY")));
 		else
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_NIGHT")));
@@ -271,7 +246,7 @@ void SoldierDiaryMissionState::init()
 	int
 		kills  (0),
 		points (0);
-	size_t row (0);
+	size_t r (0);
 
 	for (std::vector<BattleUnitKill*>::const_iterator
 			i = _diary->getKills().begin();
@@ -287,10 +262,11 @@ void SoldierDiaryMissionState::init()
 				wst1,
 				wst2;
 
-			if ((*i)->_status == STATUS_DEAD)
-				wst1 = tr("STR_KILLED");
-			else
-				wst1 = tr("STR_STUNNED");
+			switch ((*i)->_status)
+			{
+				case STATUS_DEAD:			wst1 = tr("STR_KILLED"); break;
+				case STATUS_UNCONSCIOUS:	wst1 = tr("STR_STUNNED");
+			}
 
 			wst2 = tr((*i)->_race);
 			wst2 += L" ";
@@ -301,7 +277,7 @@ void SoldierDiaryMissionState::init()
 							wst1.c_str(),
 							wst2.c_str(),
 							tr((*i)->_weapon).c_str());
-			_lstKills->setCellColor(row++, 0, _color);
+			_lstKills->setCellColor(r++, 0u, _color);
 		}
 	}
 
@@ -328,10 +304,10 @@ void SoldierDiaryMissionState::init()
  */
 void SoldierDiaryMissionState::btnPrevClick(Action*)
 {
-	if (_rowEntry == 0)
-		_rowEntry = _diary->getMissionTotal() - 1;
+	if (_rowOverview == 0)
+		_rowOverview = _diary->getMissionTotal() - 1;
 	else
-		--_rowEntry;
+		--_rowOverview;
 
 	init();
 }
@@ -342,8 +318,8 @@ void SoldierDiaryMissionState::btnPrevClick(Action*)
  */
 void SoldierDiaryMissionState::btnNextClick(Action*)
 {
-	if (++_rowEntry == _diary->getMissionTotal())
-		_rowEntry = 0;
+	if (++_rowOverview == _diary->getMissionTotal())
+		_rowOverview = 0;
 
 	init();
 }

@@ -556,7 +556,7 @@ void SavedBattleGame::load(
 								rules->getItemRule(st),
 								nullptr,
 								id);
-			item->load(*i);
+			item->loadDeleted();
 			_deletedProperty.push_back(item);
 		}
 	}
@@ -702,9 +702,9 @@ YAML::Node SavedBattleGame::save() const
 	node["tileSetIDSize"]		= Tile::serializationKey._partSetId;
 	node["tileBoolFieldsSize"]	= Tile::serializationKey.boolFields;
 
-	size_t tilesDataSize (static_cast<size_t>(Tile::serializationKey.totalBytes) * _qtyTilesTotal);
+	size_t tilesDataSize (Tile::serializationKey.totalBytes * _qtyTilesTotal);
 	Uint8
-		* const tilesData (static_cast<Uint8*>(calloc(tilesDataSize, 1))),
+		* const tilesData (static_cast<Uint8*>(calloc(tilesDataSize, 1u))),
 		* writeBuffer (tilesData);
 
 	for (size_t
@@ -729,7 +729,7 @@ YAML::Node SavedBattleGame::save() const
 			tilesDataSize -= Tile::serializationKey.totalBytes; */
 	}
 
-	node["totalTiles"]	= tilesDataSize / static_cast<size_t>(Tile::serializationKey.totalBytes); // not strictly necessary, just convenient
+	node["totalTiles"]	= tilesDataSize / Tile::serializationKey.totalBytes; // not strictly necessary, just convenient
 	node["binTiles"]	= YAML::Binary(tilesData, tilesDataSize);
 
 	std::free(tilesData);
@@ -783,8 +783,7 @@ YAML::Node SavedBattleGame::save() const
 			i != _deletedProperty.end();
 			++i)
 	{
-//		if ((*i)->getProperty() == true) // taken care of in toDeleteItem().
-		node["toDelete"].push_back((*i)->save());
+		node["toDelete"].push_back((*i)->saveDeleted());
 	}
 
 //	node["batReserved"]		= static_cast<int>(_batReserved);
@@ -2438,7 +2437,7 @@ bool SavedBattleGame::placeUnitNearPosition(
 
 //		tile = getTile(pos + posOffset);
 		if ((tile = getTile(pos + (posOffset / 2))) != nullptr
-			&& getPathfinding()->isBlockedPath(tile, dir) == false
+			&& getPathfinding()->isBlockedPath(tile, static_cast<int>(dir)) == false
 //			&& getPathfinding()->isBlockedPath(getTile(pos), i) == false
 			&& setUnitPosition(unit, pos + posOffset) == true)
 		{
@@ -2739,8 +2738,10 @@ std::vector<std::vector<std::pair<int,int>>>& SavedBattleGame::baseDestruct()
 void SavedBattleGame::calcBaseDestruct()
 {
 	_baseModules.resize(
-					static_cast<size_t>(_mapsize_x / 10),
-					std::vector<std::pair<int,int>>(_mapsize_y / 10, std::make_pair(-1,-1)));
+					static_cast<size_t>(_mapsize_x / 10), // resize 1st dimension in array.
+							std::vector<std::pair<int,int>>(
+					static_cast<size_t>(_mapsize_y / 10), // resize 2nd dimension in array.
+							std::make_pair(-1,-1)));
 
 	const Tile* tile;
 	for (int // need a bunch of size_t ->
@@ -2762,12 +2763,12 @@ void SavedBattleGame::calcBaseDestruct()
 					&& tile->getMapData(O_OBJECT) != nullptr
 					&& tile->getMapData(O_OBJECT)->isBaseObject() == true)
 				{
-					_baseModules[x / 10]
-								[y / 10].first += _baseModules[x / 10]
-															  [y / 10].first > 0 ? 1 : 2;
-					_baseModules[x / 10]
-								[y / 10].second = _baseModules[x / 10]
-															  [y / 10].first;
+					_baseModules[static_cast<size_t>(x / 10)]
+								[static_cast<size_t>(y / 10)].first += _baseModules[static_cast<size_t>(x / 10)]
+																				   [static_cast<size_t>(y / 10)].first > 0 ? 1 : 2;
+					_baseModules[static_cast<size_t>(x / 10)]
+								[static_cast<size_t>(y / 10)].second = _baseModules[static_cast<size_t>(x / 10)]
+																				   [static_cast<size_t>(y / 10)].first;
 				}
 			}
 		}

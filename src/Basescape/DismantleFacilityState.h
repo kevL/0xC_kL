@@ -43,7 +43,7 @@ class DismantleFacilityState
 {
 
 private:
-	int _refund;
+	int64_t _refund;
 
 	Base* _base;
 	const BaseFacility* _fac;
