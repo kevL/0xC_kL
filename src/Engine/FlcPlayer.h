@@ -86,8 +86,8 @@ private:
 	typedef struct AudioBuffer
 	{
 		Sint16* samples;
-		int sampleCount;
-		int sampleBufSize;
+		Uint32 sampleCount;
+		Uint32 sampleBufSize;
 		int currSamplePos;
 	} AudioBuffer;
 
@@ -133,7 +133,10 @@ private:
 
 	bool isEndOfFile(Uint8 *pos) const;
 
-	static void audioCallback(void* userData, Uint8* stream, int len);
+	static void audioCallback(
+			void* userData,
+			Uint8* stream,
+			int len);
 
 
 	public:

@@ -65,7 +65,6 @@ void SoundSet::loadCat(
 {
 	// Load CAT file
 	CatFile sndFile (file.c_str());
-//	if (!sndFile)
 	if (!sndFile)
 	{
 		throw Exception(file + " not found");

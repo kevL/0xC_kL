@@ -124,17 +124,17 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_lstInfo->addRow(0);
 	++_row;
 
-	addStat("STR_TIME_UNITS",			arRule->getStats()->tu,			true);
+	addStat("STR_TIME_UNITS",			arRule->getStats()->tu,				true);
 	addStat("STR_STAMINA",				arRule->getStats()->stamina,		true);
-	addStat("STR_HEALTH",				arRule->getStats()->health,		true);
+	addStat("STR_HEALTH",				arRule->getStats()->health,			true);
 	addStat("STR_BRAVERY",				arRule->getStats()->bravery,		true);
-	addStat("STR_REACTIONS",			arRule->getStats()->reactions,	true);
-	addStat("STR_FIRING_ACCURACY",		arRule->getStats()->firing,		true);
-	addStat("STR_THROWING_ACCURACY",	arRule->getStats()->throwing,	true);
-	addStat("STR_MELEE_ACCURACY",		arRule->getStats()->melee,		true);
-	addStat("STR_STRENGTH",				arRule->getStats()->strength,	true);
+	addStat("STR_REACTIONS",			arRule->getStats()->reactions,		true);
+	addStat("STR_FIRING_ACCURACY",		arRule->getStats()->firing,			true);
+	addStat("STR_THROWING_ACCURACY",	arRule->getStats()->throwing,		true);
+	addStat("STR_MELEE_ACCURACY",		arRule->getStats()->melee,			true);
+	addStat("STR_STRENGTH",				arRule->getStats()->strength,		true);
 	addStat("STR_PSIONIC_STRENGTH",		arRule->getStats()->psiStrength,	true);
-	addStat("STR_PSIONIC_SKILL",		arRule->getStats()->psiSkill,	true);
+	addStat("STR_PSIONIC_SKILL",		arRule->getStats()->psiSkill,		true);
 
 	centerAllSurfaces();
 }

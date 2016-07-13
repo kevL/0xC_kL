@@ -60,7 +60,7 @@ Soldier::Soldier(
 //		const std::vector<SoldierNamePool*>* const names,
 	:
 		_solRule(solRule),
-		_armorRule(arRule),
+		_arRule(arRule),
 		_id(id),
 		_rank(RANK_ROOKIE),
 		_craft(nullptr),
@@ -144,7 +144,7 @@ Soldier::Soldier(
 Soldier::Soldier(const RuleSoldier* const solRule)
 	:
 		_solRule(solRule),
-		_armorRule(nullptr),
+		_arRule(nullptr),
 		_id(0),
 		_rank(RANK_ROOKIE),
 		_gender(GENDER_MALE),
@@ -200,12 +200,12 @@ void Soldier::load(
 	_initialStats = node["initialStats"].as<UnitStats>(_initialStats);
 	_currentStats = node["currentStats"].as<UnitStats>(_currentStats);
 
-	_armorRule = rules->getArmor(node["armor"].as<std::string>(""));
-	//if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [1] = " << _armorRule->getType();
-	if (_armorRule == nullptr)
+	_arRule = rules->getArmor(node["armor"].as<std::string>(""));
+	//if (_arRule != nullptr) Log(LOG_INFO) << ". armor [1] = " << _arRule->getType();
+	if (_arRule == nullptr)
 	{
-		_armorRule = rules->getArmor(_solRule->getArmor());
-		//if (_armorRule != nullptr) Log(LOG_INFO) << ". armor [2] = " << _armorRule->getType();
+		_arRule = rules->getArmor(_solRule->getArmor());
+		//if (_arRule != nullptr) Log(LOG_INFO) << ". armor [2] = " << _arRule->getType();
 	}
 
 	//Log(LOG_INFO) << ". load layout";
@@ -263,7 +263,7 @@ YAML::Node Soldier::save() const
 	node["initialStats"] = _initialStats;
 	node["currentStats"] = _currentStats;
 
-	node["armor"] = _armorRule->getType();
+	node["armor"] = _arRule->getType();
 
 	if (_craft != nullptr) node["craft"] = _craft->saveId();
 
@@ -572,16 +572,16 @@ bool Soldier::isPromoted()
  */
 const RuleArmor* Soldier::getArmor() const
 {
-	return _armorRule;
+	return _arRule;
 }
 
 /**
  * Sets this Soldier's current armor.
  * @param arRule - pointer to Armor rule
  */
-void Soldier::setArmor(RuleArmor* const arRule)
+void Soldier::setArmor(const RuleArmor* const arRule)
 {
-	_armorRule = arRule;
+	_arRule = arRule;
 }
 
 /**

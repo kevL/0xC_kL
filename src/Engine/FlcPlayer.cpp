@@ -159,7 +159,9 @@ bool FlcPlayer::init(
 
 	_fileBuf = new Uint8[static_cast<size_t>(streamSize)]; // TODO: substitute with a cross-platform memory mapped file.
 	_fileSize = static_cast<Uint32>(streamSize);
-	ifstr.read(reinterpret_cast<char*>(_fileBuf), streamSize);
+	ifstr.read(
+			reinterpret_cast<char*>(_fileBuf),
+			static_cast<std::streamsize>(streamSize));
 	ifstr.close();
 
 	_audioFrameData = _fileBuf + 128;
@@ -280,18 +282,18 @@ void FlcPlayer::SDLPolling()
 						screenHeight (Screen::ORIGINAL_HEIGHT);
 
 					Options::newDisplayWidth =
-					Options::displayWidth  = std::max(screenWidth,
-													  event.resize.w);
+					Options::displayWidth    = std::max(screenWidth,
+														event.resize.w);
 					Options::newDisplayHeight =
-					Options::displayHeight = std::max(screenHeight,
-													  event.resize.h);
+					Options::displayHeight    = std::max(screenHeight,
+														 event.resize.h);
 //#else
 //					Options::newDisplayWidth =
-//					Options::displayWidth = std::max(Screen::ORIGINAL_WIDTH,
-//													 event.resize.w);
+//					Options::displayWidth    = std::max(Screen::ORIGINAL_WIDTH,
+//														event.resize.w);
 //					Options::newDisplayHeight =
-//					Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-//													  event.resize.h);
+//					Options::displayHeight    = std::max(Screen::ORIGINAL_HEIGHT,
+//														 event.resize.h);
 //#endif
 
 					if (_mainScreen != _realScreen->getSurface()->getSurface())
@@ -421,8 +423,8 @@ void FlcPlayer::decodeVideo(bool skipLastFrame)
 
 				Uint32 delay;
 				if (_headerType == FLI_TYPE)
-					delay = _delayOverride > 0 ? static_cast<Uint32>(_delayOverride)
-											   : static_cast<Uint32>(static_cast<double>(_headerSpeed) * (1000. / 70.));
+					delay = _delayOverride > 0u ? static_cast<Uint32>(_delayOverride)
+												: static_cast<Uint32>(static_cast<double>(_headerSpeed) * (1000. / 70.));
 				else
 					delay = static_cast<Uint32>(_videoDelay);
 
@@ -442,7 +444,7 @@ void FlcPlayer::decodeVideo(bool skipLastFrame)
 				break;
 
 			case AUDIO_CHUNK:
-				_videoFrameData += _videoFrameSize + 16;
+				_videoFrameData += _videoFrameSize + 16u;
 				break;
 
 			case PREFIX_CHUNK:
@@ -477,7 +479,7 @@ void FlcPlayer::playVideoFrame()
 			case BLACK:		black();	break;
 			case FLI_BRUN:	fliBRun();	break;
 			case FLI_COPY:	fliCopy();	break;
-			case 18:					break;
+			case 18u:					break;
 
 			default:
 				Log(LOG_WARNING) << "Teek! a non implemented chunk type: " << _chunkType;
@@ -511,7 +513,7 @@ void FlcPlayer::playAudioFrame(Uint16 sampleRate)
 	{
 		_audioData.sampleRate = sampleRate;
 		_hasAudio = true;
-		initAudio(AUDIO_S16SYS, 1);
+		initAudio(AUDIO_S16SYS, 1u);
 	}
 	else
 	{
@@ -523,26 +525,26 @@ void FlcPlayer::playAudioFrame(Uint16 sampleRate)
 	AudioBuffer* const loadingBuff = _audioData.loadingBuffer;
 	assert(loadingBuff->currSamplePos == 0);
 
-	const int newSize (_audioFrameSize + loadingBuff->sampleCount + 2);
+	const Uint32 newSize (_audioFrameSize + loadingBuff->sampleCount + 2u);
 	if (newSize > loadingBuff->sampleBufSize)
 	{
 		// If the sample count has changed, reallocation is needed (Handles initial
 		// state of '0' sample count too since realloc(nullptr, size) == malloc(size)
-		loadingBuff->samples = (Sint16*)realloc(loadingBuff->samples, newSize);
+		loadingBuff->samples = static_cast<Sint16*>(realloc(loadingBuff->samples, newSize));
 		loadingBuff->sampleBufSize = newSize;
 	}
 
 	const float vol (static_cast<float>(Game::volExp(Options::musicVolume)));
 	for (Uint32
-		i = 0;
+		i = 0u;
 		i != _audioFrameSize;
 		++i)
 	{
-		loadingBuff->samples[static_cast<Uint32>(loadingBuff->sampleCount) + i] = static_cast<Sint16>(static_cast<float>(_chunkData[i] - 128) * vol * 240.f);
+		loadingBuff->samples[loadingBuff->sampleCount + i] = static_cast<Sint16>(static_cast<float>(_chunkData[i] - 128u) * vol * 240.f);
 	}
 
-	loadingBuff->sampleCount += _audioFrameSize; // i wish someone would learn to make sensible casts instead of merely riding this hobby-horse.
-	SDL_SemPost(_audioData.sharedLock);
+	loadingBuff->sampleCount += _audioFrameSize;	// i wish someone would learn to make sensible casts instead of merely riding this hobby-horse.
+	SDL_SemPost(_audioData.sharedLock);				// okay I learned.
 }
 
 /**
@@ -555,15 +557,15 @@ void FlcPlayer::color256()
 		* pSrc;
 	Uint16
 		qtyColorPackets,
-		qtyColors (0);
+		qtyColors (0u);
 
 	pSrc = _chunkData + 6;
 	readU16(qtyColorPackets, pSrc);
 	pSrc += 2;
 
-	while (qtyColorPackets--)
+	while (qtyColorPackets-- != 0u)
 	{
-		qtyColorsSkip = *(pSrc++) + static_cast<Uint8>(qtyColors);
+		qtyColorsSkip = static_cast<Uint8>(*(pSrc++) + qtyColors);
 		if ((qtyColors = *(pSrc++)) == 0u) qtyColors = 256u;
 		for (Uint16
 				i = 0u;
@@ -588,7 +590,7 @@ void FlcPlayer::color256()
 							qtyColors,
 							true);
 
-		if (qtyColorPackets > 0)
+		if (qtyColorPackets > 0u)
 			++qtyColors;
 	}
 }
@@ -605,26 +607,26 @@ void FlcPlayer::fliSS2()
 		columSkip,
 		fill1,
 		fill2,
-		lastByte (0),
+		lastByte (0u),
 		* pSrc,
 		* pDst,
 		* pTmpDst;
 	Uint16 lines;
 
 	pSrc = _chunkData + 6;
-	pDst = (Uint8*)_mainScreen->pixels + _offset;
+	pDst = static_cast<Uint8*>(_mainScreen->pixels) + _offset;
 	readU16(lines, pSrc);
 
 	pSrc += 2;
 
-	while (lines--)
+	while (lines-- != 0)
 	{
-		readS16(counter, (Sint8*)pSrc);
+		readS16(counter, reinterpret_cast<Sint8*>(pSrc));
 		pSrc += 2;
 
 		if ((counter & MASK) == SKIP_LINES)
 		{
-			pDst += (-counter)*_mainScreen->pitch;
+			pDst += (-counter) * _mainScreen->pitch;
 			++lines;
 			continue;
 		}
@@ -632,20 +634,20 @@ void FlcPlayer::fliSS2()
 		if ((counter & MASK) == LAST_PIXEL)
 		{
 			setLastByte = true;
-			lastByte = (counter & 0x00FF);
-			readS16(counter, (Sint8*)pSrc);
+			lastByte = static_cast<Uint8>(counter & 0x00FF);
+			readS16(counter, reinterpret_cast<Sint8*>(pSrc));
 			pSrc += 2;
 		}
 
 		if ((counter & MASK) == PACKETS_COUNT)
 		{
 			pTmpDst = pDst;
-			while (counter--)
+			while (counter-- != 0)
 			{
 				columSkip = *(pSrc++);
 				pTmpDst += columSkip;
 
-				if ((countData = *(pSrc++)) > 0)
+				if ((countData = static_cast<Sint8>(*(pSrc++))) > 0)
 				{
 					std::copy(
 							pSrc,
@@ -656,11 +658,11 @@ void FlcPlayer::fliSS2()
 				}
 				else if (countData < 0)
 				{
-					countData = -countData;
+					countData = static_cast<Sint8>(-countData);
 
 					fill1 = *(pSrc++);
 					fill2 = *(pSrc++);
-					while (countData--)
+					while (countData-- != 0)
 					{
 						*(pTmpDst++) = fill1;
 						*(pTmpDst++) = fill2;
@@ -693,9 +695,9 @@ void FlcPlayer::fliBRun()
 
 	heightCount = _headerHeight;
 	pSrc = _chunkData + 6; // skip chunk header
-	pDst = (Uint8*)_mainScreen->pixels + _offset;
+	pDst = static_cast<Uint8*>(_mainScreen->pixels) + _offset;
 
-	while (heightCount--)
+	while (heightCount-- != 0)
 	{
 		pTmpDst = pDst;
 		++pSrc; // read and skip the packet count value
@@ -703,7 +705,7 @@ void FlcPlayer::fliBRun()
 		int pixels (0);
 		while (pixels != _headerWidth)
 		{
-			if ((countData = *(pSrc++)) > 0)
+			if ((countData = static_cast<Sint8>(*(pSrc++))) > 0)
 			{
 				filler = *(pSrc++);
 
@@ -716,7 +718,7 @@ void FlcPlayer::fliBRun()
 			}
 			else if (countData < 0)
 			{
-				countData = -countData;
+				countData = static_cast<Sint8>(-countData);
 
 				std::copy(
 						pSrc,
@@ -749,7 +751,7 @@ void FlcPlayer::fliLC()
 		temp;
 
 	pSrc = _chunkData + 6;
-	pDst = (Uint8*)_mainScreen->pixels + _offset;
+	pDst = static_cast<Uint8*>(_mainScreen->pixels) + _offset;
 
 	readU16(temp, pSrc);
 	pSrc += 2;
@@ -757,29 +759,28 @@ void FlcPlayer::fliLC()
 	readU16(lines, pSrc);
 	pSrc += 2;
 
-	while (lines--)
+	while (lines-- != 0)
 	{
 		pTmpDst = pDst;
 		packetsCount = *(pSrc++);
 
-		while (packetsCount--)
+		while (packetsCount-- != 0)
 		{
 			countSkip = *(pSrc++);
 			pTmpDst += countSkip;
-			countData = *(pSrc++);
+			countData = static_cast<Sint8>(*(pSrc++));
 			if (countData > 0)
 			{
-				while (countData--) *(pTmpDst++) = *(pSrc++);
+				while (countData-- != 0)
+					*(pTmpDst++) = *(pSrc++);
 			}
-			else
+			else if (countData < 0)
 			{
-				if (countData < 0)
-				{
-					countData = -countData;
+				countData = static_cast<Sint8>(-countData);
 
-					filler = *(pSrc++);
-					while (countData--) *(pTmpDst++) = filler;
-				}
+				filler = *(pSrc++);
+				while (countData-- != 0)
+					*(pTmpDst++) = filler;
 			}
 		}
 		pDst += _mainScreen->pitch;
@@ -811,9 +812,9 @@ void FlcPlayer::color64()
 				i != qtyColors;
 				++i)
 		{
-			_colors[i].r = *(pSrc++) << 2u;
-			_colors[i].g = *(pSrc++) << 2u;
-			_colors[i].b = *(pSrc++) << 2u;
+			_colors[i].r = static_cast<Uint8>(*(pSrc++) << 2u);
+			_colors[i].g = static_cast<Uint8>(*(pSrc++) << 2u);
+			_colors[i].b = static_cast<Uint8>(*(pSrc++) << 2u);
 		}
 
 		if (_mainScreen != _realScreen->getSurface()->getSurface())
@@ -841,14 +842,14 @@ void FlcPlayer::fliCopy()
 		* pDst;
 	int lines (_screenHeight);
 	pSrc = _chunkData + 6;
-	pDst = (Uint8*)_mainScreen->pixels + _offset;
+	pDst = static_cast<Uint8*>(_mainScreen->pixels) + _offset;
 
-	while (lines--)
+	while (lines-- != 0)
 	{
 		std::memcpy(
 				pDst,
 				pSrc,
-				_screenWidth);
+				static_cast<size_t>(_screenWidth));
 		pSrc += _screenWidth;
 		pDst += _mainScreen->pitch;
 	}
@@ -861,14 +862,14 @@ void FlcPlayer::black()
 {
 	Uint8* pDst;
 	int lines (_screenHeight);
-	pDst = (Uint8*)_mainScreen->pixels + _offset;
+	pDst = static_cast<Uint8*>(_mainScreen->pixels) + _offset;
 
 	while (lines-- != 0)
 	{
 		std::memset(
 				pDst,
 				0,
-				_screenHeight);
+				static_cast<size_t>(_screenHeight));
 		pDst += _mainScreen->pitch;
 	}
 }
@@ -881,25 +882,25 @@ void FlcPlayer::audioCallback(
 		Uint8* stream,
 		int len)
 {
-	AudioData* audio ((AudioData*)userData);
+	AudioData* audio (static_cast<AudioData*>(userData));
 	AudioBuffer* playBuff (audio->playingBuffer);
 
 	while (len > 0)
 	{
-		if (playBuff->sampleCount > 0)
+		if (playBuff->sampleCount > 0u)
 		{
 			const int bytesToCopy (std::min(len,
-											playBuff->sampleCount * 2));
+											static_cast<int>(playBuff->sampleCount) * 2));
 			std::memcpy(
 					stream,
 					playBuff->samples + playBuff->currSamplePos,
-					bytesToCopy);
+					static_cast<size_t>(bytesToCopy));
 
 			playBuff->currSamplePos += bytesToCopy / 2;
-			playBuff->sampleCount -= bytesToCopy / 2;
+			playBuff->sampleCount = playBuff->sampleCount - static_cast<Uint32>(bytesToCopy / 2);
 			len -= bytesToCopy;
 
-			assert(playBuff->sampleCount >= 0);
+			assert(playBuff->sampleCount >= 0u);
 		}
 
 		if (len > 0) // need to swap buffers
@@ -911,7 +912,7 @@ void FlcPlayer::audioCallback(
 			audio->loadingBuffer = tempBuff;
 			SDL_SemPost(audio->sharedLock);
 
-			if (playBuff->sampleCount == 0)
+			if (playBuff->sampleCount == 0u)
 				break;
 		}
 	}
@@ -928,8 +929,8 @@ void FlcPlayer::initAudio(
 							_audioData.sampleRate,
 							audioFormat,
 							channels,
-							_audioFrameSize * 2));
-	_videoDelay = 1000 / (_audioData.sampleRate / _audioFrameSize);
+							static_cast<int>(_audioFrameSize * 2u)));
+	_videoDelay = 1000 / (_audioData.sampleRate / static_cast<int>(_audioFrameSize));
 
 	if (err != 0)
 	{
@@ -938,19 +939,19 @@ void FlcPlayer::initAudio(
 	}
 
 	// Start runnable
-	_audioData.sharedLock = SDL_CreateSemaphore(1);
+	_audioData.sharedLock = SDL_CreateSemaphore(1u);
 
 	_audioData.loadingBuffer = new AudioBuffer();
 	_audioData.loadingBuffer->currSamplePos = 0;
-	_audioData.loadingBuffer->sampleCount = 0;
-	_audioData.loadingBuffer->samples = (Sint16*)malloc(_audioFrameSize * 2);
-	_audioData.loadingBuffer->sampleBufSize = _audioFrameSize * 2;
+	_audioData.loadingBuffer->sampleCount = 0u;
+	_audioData.loadingBuffer->samples = static_cast<Sint16*>(malloc(_audioFrameSize * 2u));
+	_audioData.loadingBuffer->sampleBufSize = _audioFrameSize * 2u;
 
 	_audioData.playingBuffer = new AudioBuffer();
 	_audioData.playingBuffer->currSamplePos = 0;
-	_audioData.playingBuffer->sampleCount = 0;
-	_audioData.playingBuffer->samples = (Sint16*)malloc(_audioFrameSize * 2);
-	_audioData.playingBuffer->sampleBufSize = _audioFrameSize * 2;
+	_audioData.playingBuffer->sampleCount = 0u;
+	_audioData.playingBuffer->samples = static_cast<Sint16*>(malloc(_audioFrameSize * 2u));
+	_audioData.playingBuffer->sampleBufSize = _audioFrameSize * 2u;
 
 	Mix_HookMusic(
 				FlcPlayer::audioCallback,
@@ -1050,7 +1051,7 @@ void FlcPlayer::waitForNextFrame(Uint32 delay)
 		while (currentTick < newTick)
 		{
 			while (
-					(newTick - currentTick) > 10
+					(newTick - currentTick) > 10u
 					&& isEndOfFile(_audioFrameData) == false)
 			{
 				decodeAudio(1);
@@ -1077,36 +1078,36 @@ void FlcPlayer::waitForNextFrame(Uint32 delay)
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 inline void FlcPlayer::readU16(Uint16& dst, const Uint8* const src)
 {
-	dst = (src[0] << 8) | src[1];
+	dst = (src[0u] << 8u) | src[1u];
 }
 inline void FlcPlayer::readU32(Uint32& dst, const Uint8* const src)
 {
-	dst = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
+	dst = (src[0u] << 24u) | (src[1u] << 16u) | (src[2u] << 8u) | src[3u];
 }
 inline void FlcPlayer::readS16(Sint16& dst, const Sint8* const src)
 {
-	dst = (src[0] << 8) | src[1];
+	dst = (src[0u] << 8u) | src[1u];
 }
 inline void FlcPlayer::readS32(Sint32& dst, const Sint8* const src)
 {
-	dst = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
+	dst = (src[0u] << 24u) | (src[1u] << 16u) | (src[2u] << 8u) | src[3u];
 }
 #else
 inline void FlcPlayer::readU16(Uint16& dst, const Uint8* const src)
 {
-	dst = (src[1] << 8) | src[0];
+	dst = static_cast<Uint16>((src[1u] << 8u) | src[0u]);
 }
 inline void FlcPlayer::readU32(Uint32& dst, const Uint8* const src)
 {
-	dst = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
+	dst = static_cast<Uint32>((src[3u] << 24u) | (src[2u] << 16u) | (src[1u] << 8u) | src[0u]);
 }
 inline void FlcPlayer::readS16(Sint16& dst, const Sint8* const src)
 {
-	dst = (src[1] << 8) | src[0];
+	dst = static_cast<Sint16>((src[1u] << 8u) | src[0u]);
 }
 inline void FlcPlayer::readS32(Sint32& dst, const Sint8* const src)
 {
-	dst = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
+	dst = (src[3u] << 24u) | (src[2u] << 16u) | (src[1u] << 8u) | src[0u];
 }
 #endif
 

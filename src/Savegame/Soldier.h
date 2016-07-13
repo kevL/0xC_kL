@@ -89,7 +89,7 @@ private:
 //		_statString;
 
 	Craft* _craft;
-	const RuleArmor* _armorRule;
+	const RuleArmor* _arRule;
 	const RuleSoldier* _solRule;
 	SoldierDiary* _diary;
 
@@ -177,7 +177,7 @@ private:
 		/// Gets the Soldier armor.
 		const RuleArmor* getArmor() const;
 		/// Sets the Soldier armor.
-		void setArmor(RuleArmor* const armor);
+		void setArmor(const RuleArmor* const armor);
 
 		/// Gets the Soldier's wound recovery time.
 		int getSickbay() const;
