@@ -2018,25 +2018,6 @@ int Base::calcDetChance( // private.
 }
 
 /**
- * Gets the quantity of Facilities that have completed construction.
- * @note For determining player-penalty score when a Base is lost.
- * @return, quantity of built facilities
- */
-int Base::getQuantityFacilities() const
-{
-	int ret (0);
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
-			++ret;
-	}
-	return ret;
-}
-
-/**
  * Gets the number of grav-shields at this base.
  * @return, total grav-shields
  */
@@ -2943,6 +2924,26 @@ void Base::sortSoldiers()
 	{
 		_soldiers.at(j) = (*i).second;
 	}
+}
+
+/**
+ * Calculates the penalty-score for losing this Base.
+ * @return, penalty for losing the base
+ */
+int Base::calcLostScore() const
+{
+	int ret (0);
+	for (std::vector<BaseFacility*>::const_iterator
+			i = _facilities.begin();
+			i != _facilities.end();
+			++i)
+	{
+		if ((*i)->buildFinished() == true)
+			++ret;
+	}
+	return ret
+		* _rules->getBaseLostScore()
+		* (static_cast<int>(_gameSave->getDifficulty()) + 1);
 }
 
 }

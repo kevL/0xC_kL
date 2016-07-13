@@ -298,7 +298,7 @@ void MiniMapView::draw()
 		}
 		this->unlock();
 	}
-	else Log(LOG_INFO) << "ERROR: MiniMapView SCANG.DAT not available";
+	else Log(LOG_WARNING) << "MiniMapView::draw() SCANG.DAT not available";
 
 
 	// looks like the crosshairs for the MiniMap
@@ -310,33 +310,33 @@ void MiniMapView::draw()
 
 //	const Uint8 color (static_cast<Uint8>(WHITE + _cycle * 3)); // <- if you really want the crosshair to blink.
 	drawLine(
-			static_cast<Sint16>(centerX - static_cast<Sint16>(CELL_WIDTH)),	// top left
-			static_cast<Sint16>(centerY - static_cast<Sint16>(CELL_HEIGHT)),
+			static_cast<Sint16>(centerX - CELL_WIDTH),	// top left
+			static_cast<Sint16>(centerY - CELL_HEIGHT),
 			static_cast<Sint16>(centerX - xOffset),
 			static_cast<Sint16>(centerY - yOffset),
 			WHITE);
 	drawLine(
-			static_cast<Sint16>(centerX + xOffset),							// top right
+			static_cast<Sint16>(centerX + xOffset),		// top right
 			static_cast<Sint16>(centerY - yOffset),
-			static_cast<Sint16>(centerX + static_cast<Sint16>(CELL_WIDTH)),
-			static_cast<Sint16>(centerY - static_cast<Sint16>(CELL_HEIGHT)),
+			static_cast<Sint16>(centerX + CELL_WIDTH),
+			static_cast<Sint16>(centerY - CELL_HEIGHT),
 			WHITE);
 	drawLine(
-			static_cast<Sint16>(centerX - static_cast<Sint16>(CELL_WIDTH)),	// bottom left
-			static_cast<Sint16>(centerY + static_cast<Sint16>(CELL_HEIGHT)),
+			static_cast<Sint16>(centerX - CELL_WIDTH),	// bottom left
+			static_cast<Sint16>(centerY + CELL_HEIGHT),
 			static_cast<Sint16>(centerX - xOffset),
 			static_cast<Sint16>(centerY + yOffset),
 			WHITE);
 	drawLine(
-			static_cast<Sint16>(centerX + static_cast<Sint16>(CELL_WIDTH)),	 // bottom right
-			static_cast<Sint16>(centerY + static_cast<Sint16>(CELL_HEIGHT)),
+			static_cast<Sint16>(centerX + CELL_WIDTH),	 // bottom right
+			static_cast<Sint16>(centerY + CELL_HEIGHT),
 			static_cast<Sint16>(centerX + xOffset),
 			static_cast<Sint16>(centerY + yOffset),
 			WHITE);
 }
 
 /**
- * Scrolls the MiniMap w/ keyboard handlers.
+ * Scrolls the MiniMap w/ keyboard-handlers.
  */
 void MiniMapView::think()
 {

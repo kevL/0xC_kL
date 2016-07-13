@@ -252,10 +252,8 @@ void BaseView::highlightFacility(size_t facSize)
 
 		++rect.x;
 		++rect.y;
-		rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u); // Holy F*cking shoot-me-in-the-head-to-avoid-a-Wconversion-warning, batman!
-		rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
-//		rect.w -= 2u; // aka
-//		rect.h -= 2u;
+		rect.w = static_cast<Uint16>(rect.w - 2u);
+		rect.h = static_cast<Uint16>(rect.h - 2u);
 
 		_selector->drawRect(&rect, 0u);
 		_selector->setVisible(false);
@@ -535,8 +533,8 @@ void BaseView::blink()
 
 			++rect.x;
 			++rect.y;
-			rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u);
-			rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
+			rect.w = static_cast<Uint16>(rect.w - 2u);
+			rect.h = static_cast<Uint16>(rect.h - 2u);
 			_selector->drawRect(&rect, 0);
 		}
 		else

@@ -67,17 +67,17 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_image = new Surface(320, 200);
 	add(_image);
 
-	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(defs->id));
+	const RuleArmor* const arRule (_game->getRuleset()->getArmor(defs->id));
 
-	std::string look (armorRule->getSpriteInventory() + "M0.SPK"); // See also: InventoryState::init().
+	std::string look (arRule->getSpriteInventory() + "M0.SPK"); // See also: InventoryState::init().
 
 	if (_game->getResourcePack()->getSurface(look) == nullptr)
 //		&& CrossPlatform::fileExists(CrossPlatform::getDataFile("UFOGRAPH/" + look)) == false)
 	{
-		look = armorRule->getSpriteInventory() + ".SPK";
+		look = arRule->getSpriteInventory() + ".SPK";
 
 		if (_game->getResourcePack()->getSurface(look) == nullptr)
-			look = armorRule->getSpriteInventory();
+			look = arRule->getSpriteInventory();
 	}
 
 	if (_game->getResourcePack()->getSurface(look) != nullptr)
@@ -97,11 +97,11 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_txtInfo->setWordWrap();
 
 
-	addStat("STR_FRONT_ARMOR",	armorRule->getFrontArmor());
-	addStat("STR_LEFT_ARMOR",	armorRule->getSideArmor());
-	addStat("STR_RIGHT_ARMOR",	armorRule->getSideArmor());
-	addStat("STR_REAR_ARMOR",	armorRule->getRearArmor());
-	addStat("STR_UNDER_ARMOR",	armorRule->getUnderArmor());
+	addStat("STR_FRONT_ARMOR",	arRule->getFrontArmor());
+	addStat("STR_LEFT_ARMOR",	arRule->getSideArmor());
+	addStat("STR_RIGHT_ARMOR",	arRule->getSideArmor());
+	addStat("STR_REAR_ARMOR",	arRule->getRearArmor());
+	addStat("STR_UNDER_ARMOR",	arRule->getUnderArmor());
 
 	_lstInfo->addRow(0);
 	++_row;
@@ -116,7 +116,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 		const std::string st (getDamageTypeText(dType));
 		if (st != "STR_UNKNOWN")
 		{
-			const int vulnr (static_cast<int>(Round(static_cast<double>(armorRule->getDamageModifier(dType)) * 100.)));
+			const int vulnr (static_cast<int>(Round(static_cast<double>(arRule->getDamageModifier(dType)) * 100.)));
 			addStat(st, Text::formatPercent(vulnr));
 		}
 	}
@@ -124,17 +124,17 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_lstInfo->addRow(0);
 	++_row;
 
-	addStat("STR_TIME_UNITS",			armorRule->getStats()->tu,			true);
-	addStat("STR_STAMINA",				armorRule->getStats()->stamina,		true);
-	addStat("STR_HEALTH",				armorRule->getStats()->health,		true);
-	addStat("STR_BRAVERY",				armorRule->getStats()->bravery,		true);
-	addStat("STR_REACTIONS",			armorRule->getStats()->reactions,	true);
-	addStat("STR_FIRING_ACCURACY",		armorRule->getStats()->firing,		true);
-	addStat("STR_THROWING_ACCURACY",	armorRule->getStats()->throwing,	true);
-	addStat("STR_MELEE_ACCURACY",		armorRule->getStats()->melee,		true);
-	addStat("STR_STRENGTH",				armorRule->getStats()->strength,	true);
-	addStat("STR_PSIONIC_STRENGTH",		armorRule->getStats()->psiStrength,	true);
-	addStat("STR_PSIONIC_SKILL",		armorRule->getStats()->psiSkill,	true);
+	addStat("STR_TIME_UNITS",			arRule->getStats()->tu,			true);
+	addStat("STR_STAMINA",				arRule->getStats()->stamina,		true);
+	addStat("STR_HEALTH",				arRule->getStats()->health,		true);
+	addStat("STR_BRAVERY",				arRule->getStats()->bravery,		true);
+	addStat("STR_REACTIONS",			arRule->getStats()->reactions,	true);
+	addStat("STR_FIRING_ACCURACY",		arRule->getStats()->firing,		true);
+	addStat("STR_THROWING_ACCURACY",	arRule->getStats()->throwing,	true);
+	addStat("STR_MELEE_ACCURACY",		arRule->getStats()->melee,		true);
+	addStat("STR_STRENGTH",				arRule->getStats()->strength,	true);
+	addStat("STR_PSIONIC_STRENGTH",		arRule->getStats()->psiStrength,	true);
+	addStat("STR_PSIONIC_SKILL",		arRule->getStats()->psiSkill,	true);
 
 	centerAllSurfaces();
 }

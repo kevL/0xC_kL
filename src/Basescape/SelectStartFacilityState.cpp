@@ -43,8 +43,8 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the SelectStartFacility state.
  * @param base	- pointer to the Base to get info from
- * @param state	- pointer to the base State to refresh
- * @param globe	- pointer to the Globe to refresh
+ * @param state	- pointer to the base State to update
+ * @param globe	- pointer to the Globe to update
  */
 SelectStartFacilityState::SelectStartFacilityState(
 		Base* const base,

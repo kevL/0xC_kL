@@ -306,9 +306,6 @@ private:
 				int* facQty = nullptr,
 				int* shields = nullptr) const;
 
-		/// Gets the quantity of Facilities that have completed construction.
-		int getQuantityFacilities() const;
-
 		/// Gets how many grav-shields the Base has.
 		size_t getGravShields() const;
 
@@ -378,6 +375,9 @@ private:
 
 		/// Sorts the Base's Soldiers according to a pre-determined algorithm.
 		void sortSoldiers();
+
+		/// Calculates the penalty-score for losing this Base.
+		int calcLostScore() const;
 };
 
 }

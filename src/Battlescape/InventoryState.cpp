@@ -1554,7 +1554,7 @@ void InventoryState::btnApplyTemplateClick(Action*)
 		_inventoryPanel->showWarning(tr("STR_NOT_ENOUGH_ITEMS_FOR_TEMPLATE"));
 
 
-	_inventoryPanel->arrangeGround(); // refresh ui
+	_inventoryPanel->arrangeGround(); // update ui
 	updateStats();
 	refreshMouse();
 } */

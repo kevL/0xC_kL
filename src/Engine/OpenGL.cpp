@@ -68,7 +68,7 @@ typedef union
 /**
  *
  */
-inline static GenericFunctionPointer glGetProcAddress(const char* label)
+inline static GenericFunctionPointer glGetProcAddress(const char* const label)
 {
 	UnsafePointerContainer pc;
 	pc.ObjectPointer = SDL_GL_GetProcAddress(label);
@@ -113,8 +113,8 @@ OpenGL::OpenGL()
 		vertexshader(0u),
 		buffer(nullptr),
 		buffer_surface(nullptr),
-		iwidth(0u),
-		iheight(0u),
+		iwidth(0),
+		iheight(0),
 		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before...
 		ibpp(32u)								// ...nor this
 {}
@@ -129,10 +129,12 @@ OpenGL::~OpenGL()
 
 /**
  * Because you're too cool to initialize everything in the constructor.
+ * @param width		- width
+ * @param height	- height
  */
 void OpenGL::init(
-		int w,
-		int h)
+		int width,
+		int height)
 {
 	// disable unused features
 	glDisable(GL_ALPHA_TEST);
@@ -187,7 +189,7 @@ void OpenGL::init(
 		glprogram = glCreateProgram();
 
 	// create surface texture
-	resize(static_cast<unsigned>(w), static_cast<unsigned>(h));
+	resize(width, height);
 }
 
 /**
@@ -206,7 +208,7 @@ void OpenGL::terminate() // private.
 	{
 		buffer	= nullptr;
 		iwidth	=
-		iheight	= 0u;
+		iheight	= 0;
 	}
 
 	delete buffer_surface;
@@ -229,10 +231,10 @@ void OpenGL::clear() // private.
  */
 void OpenGL::refresh(
 		bool smooth,
-		unsigned inwidth,
-		unsigned inheight,
-		unsigned outwidth,
-		unsigned outheight,
+		int inwidth,
+		int inheight,
+		int outwidth,
+		int outheight,
 		int topBlackBand,
 		int bottomBlackBand,
 		int leftBlackBand,
@@ -314,8 +316,8 @@ void OpenGL::refresh(
 			-1., 1.);
 	glViewport(
 			0,0,
-			static_cast<int>(outwidth),
-			static_cast<int>(outheight));
+			outwidth,
+			outheight);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -334,8 +336,8 @@ void OpenGL::refresh(
 				/* mip-map level = */ 0,
 				/* x = */ 0,
 				/* y = */ 0,
-				static_cast<int>(iwidth),
-				static_cast<int>(iheight),
+				iwidth,
+				iheight,
 				GL_BGRA,
 				iformat,
 				buffer);
@@ -349,8 +351,8 @@ void OpenGL::refresh(
 		h (static_cast<float>(inheight) / static_cast<float>(iheight));
 	const int
 		u1 (leftBlackBand),
-		u2 (static_cast<int>(outwidth) - rightBlackBand),
-		v1 (static_cast<int>(outheight) - topBlackBand),
+		u2 (outwidth - rightBlackBand),
+		v1 (outheight - topBlackBand),
 		v2 (bottomBlackBand);
 
 	glBegin(GL_TRIANGLE_STRIP);
@@ -383,25 +385,25 @@ void OpenGL::refresh(
  * Resizes the internal buffer.
  */
 void OpenGL::resize( // private.
-		unsigned width,
-		unsigned height)
+		int width,
+		int height)
 {
 	if (gltexture == 0u)
 		glGenTextures(1, &gltexture);
 
 	glErrorCheck();
 
-	iwidth = width;
+	iwidth  = width;
 	iheight = height;
 
 	if (buffer_surface)
 		delete buffer_surface;
 
 	buffer_surface = new Surface( // use OpenXcom's Surface class to get an aligned-buffer with bonus SDL_Surface
-								static_cast<int>(iwidth),
-								static_cast<int>(iheight),
-								0,0,
-								static_cast<int>(ibpp));
+							iwidth,
+							iheight,
+							0,0,
+							static_cast<int>(ibpp));
 
 	buffer = static_cast<uint32_t*>(buffer_surface->getSurface()->pixels);
 
@@ -411,14 +413,14 @@ void OpenGL::resize( // private.
 	glErrorCheck();
 	glPixelStorei(
 				GL_UNPACK_ROW_LENGTH,
-				static_cast<int>(iwidth));
+				iwidth);
 	glErrorCheck();
 	glTexImage2D(
 				GL_TEXTURE_2D,
 				/* mip-map level = */ 0,
 				/* internal format = */ GL_RGB16_EXT,
-				static_cast<int>(width),
-				static_cast<int>(height),
+				width,
+				height,
 				/* border = */ 0,
 				/* format = */ GL_BGRA,
 				iformat,

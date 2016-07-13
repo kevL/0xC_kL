@@ -65,6 +65,7 @@ void SoundSet::loadCat(
 {
 	// Load CAT file
 	CatFile sndFile (file.c_str());
+//	if (!sndFile)
 	if (!sndFile)
 	{
 		throw Exception(file + " not found");
@@ -107,7 +108,6 @@ void SoundSet::loadCat(
 						j != bytes;
 						++j)
 				{
-//					sound[j] *= 4; // scale to 8 bits
 					sound[j] = static_cast<unsigned char>(sound[j] << 2u); // scale to 8 bits
 				}
 
@@ -155,14 +155,14 @@ void SoundSet::loadCat(
 			}
 		}
 		else if (0x40 == sound[0x18]
-			&& 0x1F == sound[0x19]
-			&& 0x00 == sound[0x1A]
-			&& 0x00 == sound[0x1B])
+			&&   0x1F == sound[0x19]
+			&&   0x00 == sound[0x1A]
+			&&   0x00 == sound[0x1B])
 		{
-			// so it's WAV, but in 8 khz, we have to convert it to 11 khz sound
-			unsigned char* const sound2 (new unsigned char[bytes * 2u]);
+			// so it's WAV, but in 8-khz, we have to convert it to 11-khz sound
+			unsigned char* const sound2 (new unsigned char[bytes << 1u]);
 
-			// rewrite the samplerate in the header to 11 khz
+			// rewrite the samplerate in the header to 11-khz
 			sound[0x18] = 0x11;
 			sound[0x19] = 0x2B;
 			sound[0x1C] = 0x11;
@@ -174,7 +174,7 @@ void SoundSet::loadCat(
 					sound,
 					bytes);
 
-			const Uint32 step16 ((8000u << 16) / 11025u);
+			const Uint32 step16 ((8000u << 16u) / 11025u);
 			Uint8* wet (sound2 + 44u);
 			unsigned newsize (0u);
 			for (Uint32

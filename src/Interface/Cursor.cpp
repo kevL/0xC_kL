@@ -143,7 +143,7 @@ void Cursor::draw()
 				color);
 
 		++x1;
-		y1 = static_cast<Sint16>(static_cast<int>(y1) + 2);
+		y1 = static_cast<Sint16>(y1 + 2);
 
 		--y2;
 		--x2;

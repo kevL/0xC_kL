@@ -220,7 +220,7 @@ void ComboBox::drawArrow() // private.
 	switch (_color)
 	{
 		case 255u: color = 1u; break; // TODO: Not sure that is necessary.
-		default:   color = static_cast<Uint8>(static_cast<unsigned>(_color) + 1u);
+		default:   color = static_cast<Uint8>(_color + 1u);
 	}
 
 	SDL_Rect rect;
@@ -233,13 +233,13 @@ void ComboBox::drawArrow() // private.
 	for (
 			;
 			rect.w > 1u;
-			rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
+			rect.w = static_cast<Uint16>(rect.w - 2u))
 	{
-		_arrow->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
+		_arrow->drawRect(&rect, static_cast<Uint8>(color + 2u));
 		++rect.x;
 		++rect.y;
 	}
-	_arrow->drawRect(&rect, static_cast<Uint8>(static_cast<unsigned>(color) + 2u));
+	_arrow->drawRect(&rect, static_cast<Uint8>(color + 2u));
 
 	rect.x = // draw arrow triangle 2
 	rect.y = 2;
@@ -249,7 +249,7 @@ void ComboBox::drawArrow() // private.
 	for (
 			;
 			rect.w > 1u;
-			rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u))
+			rect.w = static_cast<Uint16>(rect.w - 2u))
 	{
 		_arrow->drawRect(&rect, color);
 		++rect.x;

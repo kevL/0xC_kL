@@ -203,8 +203,8 @@ void CraftArmorState::btnOkClick(Action*)
 void CraftArmorState::lstSoldiersPress(Action* action)
 {
 	const double mX (action->getAbsoluteMouseX());
-	if (   mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge())
-		&& mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge()))
+	if (   mX >= static_cast<double>(_lstSoldiers->getArrowsLeftEdge())
+		&& mX <  static_cast<double>(_lstSoldiers->getArrowsRightEdge()))
 	{
 		return;
 	}

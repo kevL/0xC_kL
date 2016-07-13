@@ -102,7 +102,8 @@ DebriefingState::DebriefingState()
 		_aliensStunned(0),
 		_playerDead(0),
 		_playerLive(0),
-		_isHostileStanding(0)
+		_isHostileStanding(0),
+		_destroyBasePenalty(0)
 {
 	Options::baseXResolution = Options::baseXGeoscape;
 	Options::baseYResolution = Options::baseYGeoscape;
@@ -271,14 +272,9 @@ DebriefingState::DebriefingState()
 	{
 		if (_destroyPlayerBase == true)
 		{
-//			const int score ((_diff + 1) * 235); // was 200 in BaseDestroyedState.
-			const int score (_rules->getBaseLostScore()
-						  *  _base->getQuantityFacilities()
-						  * (_diff + 1));
-
-			_region->addActivityAlien(score);
-			_region->recentActivityAlien();
-		}
+			_region->addActivityAlien(_destroyBasePenalty);	// NOTE: Could use SavedGame::scorePoints() for these
+			_region->recentActivityAlien();					// but since Region and Country are already defined here
+		}													// let it go through as is.
 		else
 		{
 			_region->addActivityXCom(_tactical->score);
@@ -290,12 +286,7 @@ DebriefingState::DebriefingState()
 	{
 		if (_destroyPlayerBase == true)
 		{
-//			const int score ((_diff + 1) * 235); // was 200 in BaseDestroyedState.
-			const int score (_rules->getBaseLostScore()
-						  *  _base->getQuantityFacilities()
-						  * (_diff + 1));
-
-			_country->addActivityAlien(score);
+			_country->addActivityAlien(_destroyBasePenalty);
 			_country->recentActivityAlien();
 		}
 		else
@@ -1573,6 +1564,8 @@ void DebriefingState::prepareDebriefing() // private.
 	switch (tacType)
 	{
 		case TCT_BASEDEFENSE:
+			_destroyBasePenalty = _base->calcLostScore(); // cache this.
+
 			if (_destroyPlayerBase == false || _isQuickBattle == true)
 			{
 				for (std::vector<Craft*>::const_iterator
@@ -1591,7 +1584,7 @@ void DebriefingState::prepareDebriefing() // private.
 						i != _gameSave->getBases()->end();
 						++i)
 				{
-					if (*i == _base)
+					if (*i == _base) // IMPORTANT: Base is destroyed here!
 					{
 						delete *i;
 						_gameSave->getBases()->erase(i);

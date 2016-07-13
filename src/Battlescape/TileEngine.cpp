@@ -2083,8 +2083,8 @@ void TileEngine::hit(
 					&& tile->getMapData(O_OBJECT)->isBaseObject() == true
 					&& tile->getMapData(O_OBJECT)->getArmor() <= power)
 				{
-					_battleSave->baseDestruct()[static_cast<size_t>((targetVoxel.x >> 4) / 10)]
-											   [static_cast<size_t>((targetVoxel.y >> 4) / 10)].second--;
+					_battleSave->baseDestruct()[static_cast<size_t>((targetVoxel.x >> 4u) / 10)]
+											   [static_cast<size_t>((targetVoxel.y >> 4u) / 10)].second--;
 				}
 				tile->hitTile(partType, power, _battleSave);
 			}

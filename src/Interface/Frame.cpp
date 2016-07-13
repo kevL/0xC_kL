@@ -73,8 +73,8 @@ void Frame::setColor(Uint8 color)
  */
 void Frame::setBorderColor(Uint8 color)
 {
-	_color = color; // NOTE: This simply overrides setColor().
-	_redraw = true; // I'd guess it aliases "border" in Interfaces.rul to "color".
+	_color = color; // NOTE: This simply overwrites setColor().
+	_redraw = true; // I'd guess its purpose is to alias "border" in Interfaces.rul to "color".
 }
 
 /**
@@ -141,7 +141,7 @@ void Frame::draw()
 	rect.h = static_cast<Uint16>(getHeight());
 
 	Uint8
-		darkest	(static_cast<Uint8>(Palette::blockOffset(static_cast<Uint8>(static_cast<int>(_color) >> 4u)) + 15u)), // fuck you, c/G++ Thanks.
+		darkest	(static_cast<Uint8>(Palette::blockOffset(static_cast<Uint8>(_color >> 4u)) + 15u)), // fuck you, c/G++ Thanks.
 		// interpretation: darkest = Palette::blockOffset(_color / 16) + 15;
 		color	(_color);
 

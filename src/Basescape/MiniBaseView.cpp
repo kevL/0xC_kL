@@ -152,7 +152,6 @@ void MiniBaseView::draw()
 				if (base->getBaseExposed() == true)
 					color = RED_D;
 			}
-
 			drawRect(&rect, color);
 		}
 
@@ -167,14 +166,9 @@ void MiniBaseView::draw()
 
 			switch (_mode)
 			{
-				case MBV_RESEARCH:
-					if (base->hasResearch() == false) continue;
-					break;
-				case MBV_PRODUCTION:
-					if (base->hasProduction() == false) continue;
-					break;
-				case MBV_CONTAINMENT:
-					if (base->hasContainment() == false) continue;
+				case MBV_RESEARCH:	  if (base->hasResearch()    == false) continue; break;
+				case MBV_PRODUCTION:  if (base->hasProduction()  == false) continue; break;
+				case MBV_CONTAINMENT: if (base->hasContainment() == false) continue;
 			}
 
 			lock();
@@ -194,30 +188,30 @@ void MiniBaseView::draw()
 				rect.y = static_cast<Sint16>(2 + ((*j)->getY() << 1u));
 				rect.w =
 				rect.h = static_cast<Uint16>((*j)->getRules()->getSize() << 1u);
-				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 3)); // g++ Go figur.
+				drawRect(&rect, static_cast<Uint8>(color + 3u)); // g++ Go figur.
 
 				++rect.x;
 				++rect.y;
 				--rect.w;
 				--rect.h;
-				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 5));
+				drawRect(&rect, static_cast<Uint8>(color + 5u));
 
 				--rect.x;
 				--rect.y;
-				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 2));
+				drawRect(&rect, static_cast<Uint8>(color + 2u));
 
 				++rect.x;
 				++rect.y;
 				--rect.w;
 				--rect.h;
-				drawRect(&rect, static_cast<Uint8>(static_cast<int>(color) + 3));
+				drawRect(&rect, static_cast<Uint8>(color + 3u));
 
 				--rect.x;
 				--rect.y;
 				setPixelColor(
 							rect.x,
 							rect.y,
-							static_cast<Uint8>(static_cast<int>(color) + 1));
+							static_cast<Uint8>(color + 1u));
 			}
 			unlock();
 
@@ -364,15 +358,13 @@ void MiniBaseView::blink()
 
 		x = static_cast<int>(i) * (MINI_SIZE + 2);
 
-		if (base->getScientists() != 0 // unused Scientists &/or Engineers &/or PsiLab space
-			|| base->getEngineers() != 0
+		if (   base->getScientists() != 0 // unused Scientists &/or Engineers &/or PsiLab space
+			|| base->getEngineers()  != 0
 			|| (base->getUsedPsiLabs() != base->getTotalPsiLabs()
 				&& base->getUsedPsiLabs() < static_cast<int>(base->getSoldiers()->size())))
 		{
-			if (_blink == true)
-				color = RED_L;
-			else
-				color = 0u;
+			if (_blink == true)	color = RED_L;
+			else				color = 0u;
 
 			setPixelColor(
 						x + 2,
@@ -414,13 +406,11 @@ void MiniBaseView::blink()
 				}
 
 				crRule = (*j)->getRules();
-				if (crRule->getWeaponCapacity() != 0 // craft needs Weapons mounted.
+				if (   crRule->getWeaponCapacity() != 0 // craft needs Weapons mounted.
 					&& crRule->getWeaponCapacity() != (*j)->getQtyWeapons())
 				{
-					if (_blink == true)
-						color = BLUE;
-					else
-						color = 0u;
+					if (_blink == true)	color = BLUE;
+					else				color = 0u;
 
 					setPixelColor(
 								x + 10,

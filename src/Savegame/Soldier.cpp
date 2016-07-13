@@ -49,18 +49,18 @@ namespace OpenXcom
 /**
  * Creates a brand new Soldier from scratch.
  * @param solRule	- pointer to RuleSoldier
- * @param armorRule	- pointer to RuleArmor
+ * @param arRule	- pointer to RuleArmor
  * @param id		- unique-ID from soldier-generation
 // * @param names	- pointer to a vector of pointers to SoldierNamePool (default nullptr)
  */
 Soldier::Soldier(
 		const RuleSoldier* const solRule,
-		const RuleArmor* const armorRule,
+		const RuleArmor* const arRule,
 		int id)
 //		const std::vector<SoldierNamePool*>* const names,
 	:
 		_solRule(solRule),
-		_armorRule(armorRule),
+		_armorRule(arRule),
 		_id(id),
 		_rank(RANK_ROOKIE),
 		_craft(nullptr),
@@ -577,11 +577,11 @@ const RuleArmor* Soldier::getArmor() const
 
 /**
  * Sets this Soldier's current armor.
- * @param armorRule - pointer to Armor rule
+ * @param arRule - pointer to Armor rule
  */
-void Soldier::setArmor(RuleArmor* const armorRule)
+void Soldier::setArmor(RuleArmor* const arRule)
 {
-	_armorRule = armorRule;
+	_armorRule = arRule;
 }
 
 /**

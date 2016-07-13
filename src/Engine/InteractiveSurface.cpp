@@ -25,7 +25,7 @@
 namespace OpenXcom
 {
 
-const SDLKey InteractiveSurface::SDLK_ANY = static_cast<SDLKey>(-1); // using an unused keycode to represent "any key"
+const SDLKey InteractiveSurface::SDLK_ANY = static_cast<SDLKey>(-1); // using an unused keycode to represent "any key" = g++ WARNING.
 
 
 /**
@@ -51,7 +51,7 @@ InteractiveSurface::InteractiveSurface(
 		_out(nullptr),
 		_isHovered(false),
 		_isFocused(true),
-		_listButton(false)
+		_isListButton(false)
 {}
 
 /**
@@ -166,13 +166,13 @@ void InteractiveSurface::handle( // virtual.
 					mouseIn(action, state);
 				}
 
-				if (_listButton == true
+				if (_isListButton == true
 					&& action->getDetails()->type == SDL_MOUSEMOTION)
 				{
 					_buttonsPressed = SDL_GetMouseState(nullptr, nullptr);
 					for (Uint8
 							i = 1u;
-							i <= NUM_BUTTONS;
+							i <= MOUSEBUTTONS;
 							++i)
 					{
 						if (isButtonPressed(i) == true)
@@ -192,12 +192,12 @@ void InteractiveSurface::handle( // virtual.
 					_isHovered = false;
 					mouseOut(action, state);
 
-					if (_listButton == true
+					if (_isListButton == true
 						&& action->getDetails()->type == SDL_MOUSEMOTION)
 					{
 						for (Uint8
 								i = 1u;
-								i <= NUM_BUTTONS;
+								i <= MOUSEBUTTONS;
 								++i)
 						{
 							if (isButtonPressed(i) == true)
@@ -549,7 +549,7 @@ void InteractiveSurface::onKeyboardPress(
  * @a keyRelease is left at default SDLK_ANY. Any repercussions of that need to
  * be handled in the final functions.
  * @param handler		- ActionHandler
- * @param keyRelease	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY) // kL_note: I disabled the SDLK_ANY hocus-pocus.
+ * @param keyRelease	- keyboard-key to check for, set to 0 for any key (default SDLK_ANY) // kL_note: Fix the SDLK_ANY hocus-pocus.
  */
 void InteractiveSurface::onKeyboardRelease(
 		ActionHandler handler,
@@ -566,7 +566,7 @@ void InteractiveSurface::onKeyboardRelease(
  */
 void InteractiveSurface::setListButton()
 {
-	_listButton = true;
+	_isListButton = true;
 }
 
 }

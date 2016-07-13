@@ -105,39 +105,39 @@ SoldierArmorState::SoldierArmorState(
 	_lstArmor->setBackground(_window);
 	_lstArmor->setSelectable();
 
-	RuleArmor* armorRule;
+	RuleArmor* arRule;
 	const std::vector<std::string>& allArmors (_game->getRuleset()->getArmorsList());
 	for (std::vector<std::string>::const_reverse_iterator
 			rit = allArmors.rbegin();
 			rit != allArmors.rend();
 			++rit)
 	{
-		armorRule = _game->getRuleset()->getArmor(*rit);
-		if (armorRule->getUnits().empty() == true
+		arRule = _game->getRuleset()->getArmor(*rit);
+		if (arRule->getUnits().empty() == true
 			|| std::find(
-					armorRule->getUnits().begin(),
-					armorRule->getUnits().end(),
-					_sol->getRules()->getType()) != armorRule->getUnits().end())
+					arRule->getUnits().begin(),
+					arRule->getUnits().end(),
+					_sol->getRules()->getType()) != arRule->getUnits().end())
 		{
-			if (_base->getStorageItems()->getItemQuantity(armorRule->getStoreItem()) != 0) //|| isQuickBattle == true)
+			if (_base->getStorageItems()->getItemQuantity(arRule->getStoreItem()) != 0) //|| isQuickBattle == true)
 			{
-				_armors.push_back(armorRule);
+				_armors.push_back(arRule);
 
 				std::wostringstream woststr;
 				if (_game->getSavedGame()->getMonthsPassed() != -1)
-					woststr << _base->getStorageItems()->getItemQuantity(armorRule->getStoreItem());
+					woststr << _base->getStorageItems()->getItemQuantity(arRule->getStoreItem());
 				else
 					woststr << L"-";
 
 				_lstArmor->addRow(
 								2,
-								tr(armorRule->getType()).c_str(),
+								tr(arRule->getType()).c_str(),
 								woststr.str().c_str());
 			}
-			else if (armorRule->isBasic() == true)
+			else if (arRule->isBasic() == true)
 			{
-				_armors.push_back(armorRule);
-				_lstArmor->addRow(1, tr(armorRule->getType()).c_str());
+				_armors.push_back(arRule);
+				_lstArmor->addRow(1, tr(arRule->getType()).c_str());
 			}
 		}
 	}

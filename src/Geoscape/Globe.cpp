@@ -415,9 +415,9 @@ void Globe::polarToCart( // Orthographic projection
 		Sint16* x,
 		Sint16* y) const
 {
-	*x = static_cast<Sint16>(static_cast<double>(_cenX) + std::floor(_radius * std::cos(lat) * std::sin(lon - _cenLon)));
-	*y = static_cast<Sint16>(static_cast<double>(_cenY) + static_cast<Sint16>(std::floor(_radius * (std::cos(_cenLat) * std::sin(lat)
-																	- std::sin(_cenLat) * std::cos(lat) * std::cos(lon - _cenLon)))));
+	*x = static_cast<Sint16>(_cenX + static_cast<int>(std::floor(_radius * std::cos(lat) * std::sin(lon - _cenLon))));
+	*y = static_cast<Sint16>(_cenY + static_cast<int>(std::floor(_radius * (std::cos(_cenLat) * std::sin(lat)
+													- std::sin(_cenLat) * std::cos(lat) * std::cos(lon - _cenLon)))));
 	// casting 'irregularities' irritate
 }
 
@@ -1524,7 +1524,7 @@ void Globe::XuLine( // private.
 				if (   colorBlock == C_OCEAN
 					|| colorBlock == C_OCEAN + 16u)
 				{
-					tcol = static_cast<Uint8>(static_cast<int>(C_OCEAN) + shade + 8); // this pixel is Ocean
+					tcol = static_cast<Uint8>(C_OCEAN + shade + 8); // this pixel is Ocean
 				}
 				else // this pixel is land
 				{
@@ -1562,14 +1562,13 @@ void Globe::drawRadars()
 	{
 		double range;
 
-		const std::vector<std::string>& facilities (_game->getRuleset()->getBaseFacilitiesList());
+		const std::vector<std::string>& allFacilities (_game->getRuleset()->getBaseFacilitiesList());
 		for (std::vector<std::string>::const_iterator
-				i = facilities.begin();
-				i != facilities.end();
+				i = allFacilities.begin();
+				i != allFacilities.end();
 				++i)
 		{
-			range = static_cast<double>(_game->getRuleset()->getBaseFacility(*i)->getRadarRange());
-			if (range > 0.)
+			if ((range = static_cast<double>(_game->getRuleset()->getBaseFacility(*i)->getRadarRange())) > 0.)
 			{
 				range *= unitToRads;
 				drawGlobeCircle(
@@ -1647,8 +1646,7 @@ void Globe::drawRadars()
 					if ((*j)->getCraftStatus() == CS_OUT
 						&& (*j)->hasLeftGround() == true)
 					{
-						range = static_cast<double>((*j)->getRules()->getRadarRange());
-						if (range > 0.)
+						if ((range = static_cast<double>((*j)->getRules()->getRadarRange())) > 0.)
 						{
 							range *= unitToRads;
 							drawGlobeCircle( // Craft radars.

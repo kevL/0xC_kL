@@ -81,7 +81,7 @@ void ImageButton::setGroup(ImageButton** group)
 	_group = group;
 
 	if (_group != nullptr && *_group == this)
-		invert(static_cast<Uint8>(static_cast<unsigned>(_color) + 3u));
+		invert(static_cast<Uint8>(_color + 3u));
 }
 
 /**
@@ -96,9 +96,9 @@ void ImageButton::mousePress(Action* action, State* state)
 	{
 		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 		{
-			(*_group)->invert(static_cast<Uint8>(static_cast<unsigned>((*_group)->getColor()) + 3u));
+			(*_group)->invert(static_cast<Uint8>((*_group)->getColor() + 3u));
 			*_group = this;
-			invert(static_cast<Uint8>(static_cast<unsigned>(_color) + 3u));
+			invert(static_cast<Uint8>(_color + 3u));
 		}
 	}
 	else if (_inverted == false
@@ -106,7 +106,7 @@ void ImageButton::mousePress(Action* action, State* state)
 		&& isButtonHandled(action->getDetails()->button.button) == true)
 	{
 		_inverted = true;
-		invert(static_cast<Uint8>(static_cast<unsigned>(_color) + 3u));
+		invert(static_cast<Uint8>(_color + 3u));
 	}
 
 	InteractiveSurface::mousePress(action, state);
@@ -123,7 +123,7 @@ void ImageButton::mouseRelease(Action* action, State* state)
 		&& isButtonHandled(action->getDetails()->button.button) == true)
 	{
 		_inverted = false;
-		invert(static_cast<Uint8>(static_cast<unsigned>(_color) + 3u));
+		invert(static_cast<Uint8>(_color + 3u));
 	}
 
 	InteractiveSurface::mouseRelease(action, state);
@@ -139,7 +139,7 @@ void ImageButton::toggle(bool press)
 	if (_inverted != press)
 	{
 		_inverted = !_inverted;
-		invert(static_cast<Uint8>(static_cast<unsigned>(_color) + 3u));
+		invert(static_cast<Uint8>(_color + 3u));
 	}
 }
 
@@ -149,9 +149,9 @@ void ImageButton::toggle(bool press)
  */
 void ImageButton::releaseButtonGroup()
 {
-	(*_group)->invert(static_cast<Uint8>(static_cast<unsigned>((*_group)->getColor()) + 3u));
+	(*_group)->invert(static_cast<Uint8>((*_group)->getColor() + 3u));
 	*_group = this;
-	invert(static_cast<Uint8>(static_cast<unsigned>(_color) + 3u));
+	invert(static_cast<Uint8>(_color + 3u));
 }
 
 }

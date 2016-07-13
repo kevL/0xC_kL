@@ -1040,7 +1040,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		if (rule != nullptr) rule->load(*i);
 	}
 
-/*	for (std::vector<std::string>::const_iterator // refresh _psiRequirements for psiStrengthEval
+/*	for (std::vector<std::string>::const_iterator // update _psiRequirements for psiStrengthEval
 			i = _facilitiesIndex.begin();
 			i != _facilitiesIndex.end();
 			++i)

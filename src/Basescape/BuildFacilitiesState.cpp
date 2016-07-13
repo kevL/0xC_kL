@@ -44,7 +44,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the BuildFacilities window.
  * @param base	- pointer to the Base to get info from
- * @param state	- pointer to the base State to refresh
+ * @param state	- pointer to the base State to update
  */
 BuildFacilitiesState::BuildFacilitiesState(
 		Base* const base,

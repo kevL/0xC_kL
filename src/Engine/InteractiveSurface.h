@@ -46,7 +46,7 @@ class InteractiveSurface
 {
 
 private:
-	static const Uint8 NUM_BUTTONS = 7u;
+	static const Uint8 MOUSEBUTTONS = 7u;
 	static const SDLKey SDLK_ANY;
 
 	Uint8 _buttonsPressed;
@@ -56,7 +56,7 @@ private:
 		bool
 			_isFocused,
 			_isHovered,
-			_listButton;
+			_isListButton;
 
 		ActionHandler
 			_in,

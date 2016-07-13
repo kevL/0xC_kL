@@ -273,8 +273,8 @@ void CraftsState::btnOkClick(Action*)
 void CraftsState::lstCraftsPress(Action* action)
 {
 	const double mX (action->getAbsoluteMouseX());
-	if (   mX <  static_cast<double>(_lstCrafts->getArrowsRightEdge())
-		&& mX >= static_cast<double>(_lstCrafts->getArrowsLeftEdge()))
+	if (   mX >= static_cast<double>(_lstCrafts->getArrowsLeftEdge())
+		&& mX <  static_cast<double>(_lstCrafts->getArrowsRightEdge()))
 	{
 		return;
 	}

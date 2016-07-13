@@ -267,7 +267,7 @@ void TextButton::draw()
 	{
 //		if (color > topColor) color = topColor;
 		if (i == 0)
-			color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(_contrast) * 5u));
+			color = static_cast<Uint8>(_color + (_contrast * 5u));
 
 		drawRect(&rect, color);
 
@@ -291,20 +291,20 @@ void TextButton::draw()
 				break;
 
 			case 1:
-				color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(_contrast) * 2u));
+				color = static_cast<Uint8>(_color + (_contrast * 2u));
 				break;
 
 			case 2:
-				color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(_contrast) * 4u));
+				color = static_cast<Uint8>(_color + (_contrast * 4u));
 //				if (color > topColor) color = topColor;
 				setPixelColor(
-						static_cast<int>(rect.w) + 1,
+						rect.w + 1,
 						1,
 						color);
 				break;
 
 			case 3:
-				color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(_contrast) * 3u));
+				color = static_cast<Uint8>(_color + (_contrast * 3u));
 //				break;
 //
 //			case 4:
@@ -327,7 +327,7 @@ void TextButton::draw()
 //		if (_geoscapeButton == true)
 //			this->invert(_color + (_contrast * 2u));
 //		else
-		this->invert(static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(_contrast) * 3u)));
+		this->invert(static_cast<Uint8>(_color + (_contrast * 3u)));
 	}
 
 	_text->setInvert(press);

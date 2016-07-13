@@ -1380,10 +1380,9 @@ void TextList::mouseOver(Action* action, State* state)
 {
 	if (_selectable == true)
 	{
-		int h (_font->getHeight() + _font->getSpacing());
+		int height (_font->getHeight() + _font->getSpacing());
 		_selRow = std::max(0u,
-						   _scroll + static_cast<size_t>(std::floor(action->getRelativeMouseY()
-										/ (static_cast<double>(h) * action->getScaleY()))));
+						   _scroll + static_cast<size_t>(std::floor(action->getRelativeMouseY() / (height * action->getScaleY()))));
 
 		if (   _selRow < _texts.size()
 			&& _selRow < _scroll + _visibleRows
@@ -1395,19 +1394,19 @@ void TextList::mouseOver(Action* action, State* state)
 			//Log(LOG_INFO) << ". text at [" << _selRow << "] = " << Language::wstrToFs(_texts[_selRow][0]->getText());
 			const Text* const selText (_texts[_rows[_selRow]].front());
 			int y (getY() + selText->getY());
-			h = selText->getHeight() + _font->getSpacing();
+			height = selText->getHeight() + _font->getSpacing();
 
-			if (y < getY() || y + h > getY() + getHeight())
-				h /= 2;
+			if (y < getY() || y + height > getY() + getHeight())
+				height >>= 1u;
 
 			if (y < getY()) y = getY();
 
-			if (_selector->getHeight() != h)
+			if (_selector->getHeight() != height)
 			{
 				delete _selector; // resizing doesn't work, but recreating does. Make it so!
 				_selector = new Surface(
 									getWidth(),
-									h,
+									height,
 									getX(),
 									y);
 				_selector->setPalette(getPalette());

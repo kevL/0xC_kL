@@ -1124,7 +1124,7 @@ void BattleUnit::startWalking(
 /**
  * This will increment '_walkPhase'.
  * @param tileBelow	- pointer to tile currently below this unit
- * @param recache	- true to refresh the unit cache / redraw this unit's sprite
+ * @param recache	- true to update the unit cache / redraw this unit's sprite
  */
 void BattleUnit::keepWalking(
 		const Tile* const tileBelow,

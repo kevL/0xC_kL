@@ -155,16 +155,11 @@ BaseDestroyedState::~BaseDestroyedState()
 void BaseDestroyedState::finish()
 {
 	_game->popState();
-
-//	const int score ((static_cast<int>(_game->getSavedGame()->getDifficulty()) + 1) * 200); // was 235 in DebriefingState.
-	const int score (_game->getRuleset()->getBaseLostScore()
-				  *  _base->getQuantityFacilities()
-				  * (static_cast<int>(_game->getSavedGame()->getDifficulty()) + 1));
-
 	_game->getSavedGame()->scorePoints(
 									_base->getLongitude(),
 									_base->getLatitude(),
-									score, true);
+									_base->calcLostScore(),
+									true);
 
 	std::vector<Base*>* const baseList (_game->getSavedGame()->getBases());
 	for (std::vector<Base*>::const_iterator

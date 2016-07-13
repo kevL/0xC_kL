@@ -51,7 +51,7 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 		ArticleState(defs->id)
 {
 	RuleUnit* const unitRule (_game->getRuleset()->getUnitRule(defs->id));
-	const RuleArmor* const armorRule (_game->getRuleset()->getArmor(unitRule->getArmorType()));
+	const RuleArmor* const arRule (_game->getRuleset()->getArmor(unitRule->getArmorType()));
 	const RuleItem* const itRule (_game->getRuleset()->getItemRule(defs->id));
 
 	_txtTitle	= new Text(310,  17,  5,  23);
@@ -98,26 +98,26 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 	_lstStats->addRow(
 				2,
 				tr("STR_FRONT_ARMOR").c_str(),
-				Text::intWide(armorRule->getFrontArmor()).c_str());
+				Text::intWide(arRule->getFrontArmor()).c_str());
 
 	_lstStats->addRow(
 				2,
 				tr("STR_LEFT_ARMOR").c_str(),
-				Text::intWide(armorRule->getSideArmor()).c_str());
+				Text::intWide(arRule->getSideArmor()).c_str());
 	_lstStats->addRow(
 				2,
 				tr("STR_RIGHT_ARMOR").c_str(),
-				Text::intWide(armorRule->getSideArmor()).c_str());
+				Text::intWide(arRule->getSideArmor()).c_str());
 
 	_lstStats->addRow(
 				2,
 				tr("STR_REAR_ARMOR").c_str(),
-				Text::intWide(armorRule->getRearArmor()).c_str());
+				Text::intWide(arRule->getRearArmor()).c_str());
 
 	_lstStats->addRow(
 				2,
 				tr("STR_UNDER_ARMOR").c_str(),
-				Text::intWide(armorRule->getUnderArmor()).c_str());
+				Text::intWide(arRule->getUnderArmor()).c_str());
 
 	_lstStats->addRow(
 				2,

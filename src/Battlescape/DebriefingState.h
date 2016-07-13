@@ -119,6 +119,7 @@ private:
 		_isQuickBattle;
 	int
 		_aliensStunned,
+		_destroyBasePenalty,
 		_diff,
 		_missionCost,
 		_playerDead,

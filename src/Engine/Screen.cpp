@@ -752,28 +752,28 @@ void Screen::updateScale( // static.
 	switch (type)
 	{
 		case SCALE_15X:
-			width	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_WIDTH) * 1.5);
-			height	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_HEIGHT) * 1.5);
+			width	= static_cast<int>(Screen::ORIGINAL_WIDTH  * 1.5);
+			height	= static_cast<int>(Screen::ORIGINAL_HEIGHT * 1.5);
 			break;
 
 		case SCALE_2X:
-			width	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_WIDTH) * 2.);
-			height	= static_cast<int>(static_cast<double>(Screen::ORIGINAL_HEIGHT) * 2.);
+			width	= static_cast<int>(Screen::ORIGINAL_WIDTH  * 2.);
+			height	= static_cast<int>(Screen::ORIGINAL_HEIGHT * 2.);
 			break;
 
 		case SCALE_SCREEN_DIV_3:
-			width	= static_cast<int>(static_cast<double>(Options::displayWidth) / 3.);
-			height	= static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / 3.);
+			width	= static_cast<int>(Options::displayWidth  /  3.);
+			height	= static_cast<int>(Options::displayHeight / (3. * pixelRatioY));
 			break;
 
 		case SCALE_SCREEN_DIV_2:
-			width	= static_cast<int>(static_cast<double>(Options::displayWidth) / 2.);
-			height	= static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY / 2.);
+			width	= static_cast<int>(Options::displayWidth  /  2.);
+			height	= static_cast<int>(Options::displayHeight / (2. * pixelRatioY));
 			break;
 
 		case SCALE_SCREEN:
 			width	= Options::displayWidth;
-			height	= static_cast<int>(static_cast<double>(Options::displayHeight) / pixelRatioY);
+			height	= static_cast<int>(Options::displayHeight / pixelRatioY);
 			break;
 
 		default:

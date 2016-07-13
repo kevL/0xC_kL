@@ -101,7 +101,7 @@ protected:
 				int max_x,
 				int max_y)
 			:
-				_orgin(&(f[0])),
+				_orgin(&f[0u]),
 				_range_base(
 						max_x,
 						max_y),
@@ -193,7 +193,7 @@ protected:
 				int max_x,
 				int max_y)
 			:
-				_orgin(&(f[0])),
+				_orgin(&f[0u]),
 				_range_base(
 						max_x,
 						max_y),
@@ -272,7 +272,6 @@ protected:
 		 */
 		inline ShaderBase(Surface* s)
 			:
-//				_orgin((Uint8*)s->getSurface()->pixels),
 				_orgin(static_cast<Uint8*>(s->getSurface()->pixels)),
 				_range_base(
 						s->getWidth(),
@@ -298,7 +297,7 @@ protected:
 				int max_x,
 				int max_y)
 			:
-				_orgin(&(f[0])),
+				_orgin(&f[0u]),
 				_range_base(
 						max_x,
 						max_y),
@@ -386,7 +385,6 @@ protected:
 		 */
 		inline ShaderBase(const Surface* s)
 			:
-//				_orgin((Uint8*) s->getSurface()->pixels),
 				_orgin(static_cast<Uint8*>(s->getSurface()->pixels)),
 				_range_base(
 						s->getWidth(),
@@ -412,7 +410,7 @@ protected:
 				int max_x,
 				int max_y)
 			:
-				_orgin(&(f[0])),
+				_orgin(&f[0u]),
 				_range_base(
 						max_x,
 						max_y),
@@ -668,14 +666,14 @@ struct controler<ShaderBase<Pixel>>
 	controler(
 			const ShaderBase<Pixel>& f)
 		:
-			base_type(f.ptr(),
-			f.getDomain(),
-			f.getImage(),
-			std::make_pair(
-						1,
-						f.pitch()))
+			base_type(
+					f.ptr(),
+					f.getDomain(),
+					f.getImage(),
+					std::make_pair(
+								1,
+								f.pitch()))
 	{}
-
 };
 
 }

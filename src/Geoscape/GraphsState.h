@@ -63,7 +63,8 @@ private:
 	static const int
 		MONTHS			= 12,
 		YEARS			= 6,
-		GRIDCELLS_y		= 9;
+		GRIDCELLS_y		= 9,
+		HEIGHT_btn		= 10;
 
 	static const float PIXELS_y;
 
@@ -210,11 +211,11 @@ private:
 		/// Handler for clicking the finance icon.
 		void btnFinanceClick(Action* action);
 		/// Handler for clicking on a region button.
-		void btnRegionListClick(Action* action);
+		void btnRegionListPress(Action* action);
 		/// Handler for clicking on a country button.
-		void btnCountryListClick(Action* action);
+		void btnCountryListPress(Action* action);
 		/// Handler for clicking  on a finances button.
-		void btnFinanceListClick(Action* action);
+		void btnFinanceListPress(Action* action);
 };
 
 }

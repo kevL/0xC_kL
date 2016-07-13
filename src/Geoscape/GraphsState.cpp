@@ -56,7 +56,7 @@ namespace OpenXcom
 {
 
 static int recallPage (-1);
-static size_t recallCountry (0);
+static size_t recallCountry (0u);
 static GraphsUserFactor recallFactor (GUF_DEFAULT);
 
 static int
@@ -111,8 +111,8 @@ struct GraphBtnInfo
  */
 GraphsState::GraphsState()
 	:
-//		_btnRegionOffset(0),
-		_btnCountryOffset(0),
+//		_btnRegionOffset(0u),
+		_btnCountryOffset(0u),
 		_init(true),
 		_reset(false),
 		_forceVis(true),
@@ -170,7 +170,7 @@ GraphsState::GraphsState()
 	_isfGeoscape	= new InteractiveSurface(31, 24, 289);
 
 	_btnReset		= new TextButton(40, 16, 96, 26);
-	_btnToggleAll	= new ToggleTextButton(24, 10, 66, 0); // y is set according to page.
+	_btnToggleAll	= new ToggleTextButton(24, HEIGHT_btn, 66, 0); // y is set according to page.
 
 	_btnFactor1		= new TextButton(16, 16, 272, 26);
 	_btnFactor2		= new TextButton(16, 16, 288, 26);
@@ -179,14 +179,9 @@ GraphsState::GraphsState()
 	switch (recallFactor)
 	{
 		default:
-		case GUF_DEFAULT:
-			_userFactor = _btnFactor1;
-			break;
-		case GUF_HALF:
-			_userFactor = _btnFactor2;
-			break;
-		case GUF_QUARTER:
-			_userFactor = _btnFactor4;
+		case GUF_DEFAULT:	_userFactor = _btnFactor1; break;
+		case GUF_HALF:		_userFactor = _btnFactor2; break;
+		case GUF_QUARTER:	_userFactor = _btnFactor4;
 	}
 
 	_txtTitle	= new Text(220, 16, 100, 28);
@@ -225,15 +220,15 @@ GraphsState::GraphsState()
 			++i)
 	{
 		_txtScale.push_back(new Text(
-									32,10,
+									32,9,
 									91,
 									171 - (static_cast<int>(i) * 14)));
 		add(_txtScale.at(i), "scale", "graphs");
 	}
 
 	static const Uint8
-		COL_OFF_BTN (13u),
-		COL_OFF_TXT (16u);
+		C_OFFSET_btn (13u),
+		C_OFFSET_txt (16u);
 
 	size_t btnOffset (0u);
 	unsigned colorOffset (0u);
@@ -262,10 +257,10 @@ GraphsState::GraphsState()
 		// put all the regions into toggles
 		_regionToggles.push_back(new GraphBtnInfo(
 												tr((*i)->getRules()->getType()), // name of Region
-												static_cast<Uint8>(color + COL_OFF_BTN),
+												static_cast<Uint8>(color + C_OFFSET_btn),
 												actA,
 												actX,
-												static_cast<Uint8>(color + COL_OFF_TXT),
+												static_cast<Uint8>(color + C_OFFSET_txt),
 												blinkA,
 												blinkX));
 
@@ -273,28 +268,28 @@ GraphsState::GraphsState()
 		if (btnOffset < GRAPH_BUTTONS) // leave a slot for the TOTAL btn.
 		{
 			_btnRegions.push_back(new ToggleTextButton(
-													65,10,
+													65, HEIGHT_btn,
 													0,
-													static_cast<int>(btnOffset) * 10));
+													static_cast<int>(btnOffset) * HEIGHT_btn));
 			_btnRegions.at(btnOffset)->setText(tr((*i)->getRules()->getType())); // name of Region
-			_btnRegions.at(btnOffset)->setInvertColor(static_cast<Uint8>(color + COL_OFF_BTN));
-			_btnRegions.at(btnOffset)->onMousePress(static_cast<ActionHandler>(&GraphsState::btnRegionListClick),
+			_btnRegions.at(btnOffset)->setInvertColor(static_cast<Uint8>(color + C_OFFSET_btn));
+			_btnRegions.at(btnOffset)->onMousePress(static_cast<ActionHandler>(&GraphsState::btnRegionListPress),
 													SDL_BUTTON_LEFT);
 			add(_btnRegions.at(btnOffset), "button", "graphs");
 
 			_txtRegionActA.push_back(new Text(
-											24,10,
+											24,9,
 											66,
-											(static_cast<int>(btnOffset) * 10) + 1));
-			_txtRegionActA.at(btnOffset)->setColor(static_cast<Uint8>(color + COL_OFF_TXT));
+											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
+			_txtRegionActA.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
 			_txtRegionActA.at(btnOffset)->setText(Text::intWide(actA));
 			add(_txtRegionActA.at(btnOffset));
 
 			_txtRegionActX.push_back(new Text(
-											24,10,
+											24,9,
 											66,
-											(static_cast<int>(btnOffset) * 10) + 1));
-			_txtRegionActX.at(btnOffset)->setColor(static_cast<Uint8>(color + COL_OFF_TXT));
+											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
+			_txtRegionActX.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
 			_txtRegionActX.at(btnOffset)->setText(Text::intWide(actX));
 			add(_txtRegionActX.at(btnOffset));
 
@@ -315,12 +310,12 @@ GraphsState::GraphsState()
 	if (_regionToggles.size() < GRAPH_BUTTONS)
 		btnTotal_y = static_cast<int>(_regionToggles.size());
 	else
-		btnTotal_y = static_cast<int>(GRAPH_BUTTONS) * 10;
+		btnTotal_y = static_cast<int>(GRAPH_BUTTONS);
 
 	_btnRegionTotal = new ToggleTextButton( // TOTAL btn.
-										65,10,
+										65, HEIGHT_btn,
 										0,
-										btnTotal_y * 10);
+										btnTotal_y * HEIGHT_btn);
 
 	color = static_cast<Uint8>(_uiGraphs->getElement("regionTotal")->color);
 
@@ -331,7 +326,7 @@ GraphsState::GraphsState()
 											false,false));
 	_btnRegionTotal->setInvertColor(color);
 	_btnRegionTotal->setText(tr("STR_TOTAL_UC"));
-	_btnRegionTotal->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnRegionListClick),
+	_btnRegionTotal->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnRegionListPress),
 									SDL_BUTTON_LEFT);
 
 	add(_btnRegionTotal, "button", "graphs");
@@ -363,10 +358,10 @@ GraphsState::GraphsState()
 		// put all the countries into toggles
 		_countryToggles.push_back(new GraphBtnInfo(
 												tr((*i)->getRules()->getType()), // name of Country
-												static_cast<Uint8>(color + COL_OFF_BTN),
+												static_cast<Uint8>(color + C_OFFSET_btn),
 												actA,
 												actX,
-												static_cast<Uint8>(color + COL_OFF_TXT),
+												static_cast<Uint8>(color + C_OFFSET_txt),
 												blinkA,
 												blinkX));
 
@@ -374,28 +369,28 @@ GraphsState::GraphsState()
 		if (btnOffset < GRAPH_BUTTONS) // leave a slot for the TOTAL btn.
 		{
 			_btnCountries.push_back(new ToggleTextButton(
-													65,10,
+													65, HEIGHT_btn,
 													0,
-													static_cast<int>(btnOffset) * 10));
+													static_cast<int>(btnOffset) * HEIGHT_btn));
 			_btnCountries.at(btnOffset)->setText(tr((*i)->getRules()->getType())); // name of Country
-			_btnCountries.at(btnOffset)->setInvertColor(static_cast<Uint8>(color + COL_OFF_BTN));
-			_btnCountries.at(btnOffset)->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnCountryListClick),
+			_btnCountries.at(btnOffset)->setInvertColor(static_cast<Uint8>(color + C_OFFSET_btn));
+			_btnCountries.at(btnOffset)->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnCountryListPress),
 														SDL_BUTTON_LEFT);
 			add(_btnCountries.at(btnOffset), "button", "graphs");
 
 			_txtCountryActA.push_back(new Text(
-											24,10,
+											24,9,
 											66,
-											(static_cast<int>(btnOffset) * 10) + 1));
-			_txtCountryActA.at(btnOffset)->setColor(static_cast<Uint8>(color + COL_OFF_TXT));
+											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
+			_txtCountryActA.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
 			_txtCountryActA.at(btnOffset)->setText(Text::intWide(actA));
 			add(_txtCountryActA.at(btnOffset));
 
 			_txtCountryActX.push_back(new Text(
-											24,10,
+											24,9,
 											66,
-											(static_cast<int>(btnOffset) * 10) + 1));
-			_txtCountryActX.at(btnOffset)->setColor(static_cast<Uint8>(color + COL_OFF_TXT));
+											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
+			_txtCountryActX.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
 			_txtCountryActX.at(btnOffset)->setText(Text::intWide(actX));
 			add(_txtCountryActX.at(btnOffset));
 
@@ -421,9 +416,9 @@ GraphsState::GraphsState()
 		btnTotal_y = static_cast<int>(GRAPH_BUTTONS);
 
 	_btnCountryTotal = new ToggleTextButton( // TOTAL btn.
-										65,10,
+										65, HEIGHT_btn,
 										0,
-										btnTotal_y * 10);
+										btnTotal_y * HEIGHT_btn);
 
 	color = static_cast<Uint8>(_uiGraphs->getElement("countryTotal")->color);
 
@@ -435,7 +430,7 @@ GraphsState::GraphsState()
 
 	_btnCountryTotal->setInvertColor(color);
 	_btnCountryTotal->setText(tr("STR_TOTAL_UC"));
-	_btnCountryTotal->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnCountryListClick),
+	_btnCountryTotal->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnCountryListPress),
 									SDL_BUTTON_LEFT);
 
 	add(_btnCountryTotal, "button", "graphs");
@@ -451,7 +446,7 @@ GraphsState::GraphsState()
 
 
 	/* FINANCE */
-	unsigned multer;
+	unsigned hueFactor;
 	for (size_t
 			i = 0u;
 			i != 5u;
@@ -465,14 +460,14 @@ GraphsState::GraphsState()
 
 		switch (i) // switch colors for Income (was yellow) and Maintenance (was green)
 		{
-			case 0: multer = 2u; break;
-			case 2: multer = 0u; break;
+			case 0: hueFactor = 2u; break;
+			case 2: hueFactor = 0u; break;
 			default:
-				multer = i;
+				hueFactor = i;
 		}
 
-		_btnFinances.at(i)->setInvertColor(static_cast<Uint8>(multer * 8u + static_cast<unsigned>(COL_OFF_BTN)));
-		_btnFinances.at(i)->onMousePress(static_cast<ActionHandler>(&GraphsState::btnFinanceListClick));
+		_btnFinances.at(i)->setInvertColor(static_cast<Uint8>((hueFactor << 3u) + C_OFFSET_btn));
+		_btnFinances.at(i)->onMousePress(static_cast<ActionHandler>(&GraphsState::btnFinanceListPress));
 
 		add(_btnFinances.at(i), "button", "graphs");
 
@@ -504,7 +499,7 @@ GraphsState::GraphsState()
 	{
 		_regionToggles[i]->_pushed = (graphRegionToggles[i] == '0') ? false : true;
 
-		if (_regionToggles.size() - 1 == i)
+		if (_regionToggles.size() - 1u == i)
 			_btnRegionTotal->setPressed(_regionToggles[i]->_pushed);
 		else if (i < GRAPH_BUTTONS)
 			_btnRegions.at(i)->setPressed(_regionToggles[i]->_pushed);
@@ -522,7 +517,7 @@ GraphsState::GraphsState()
 	{
 		_countryToggles[i]->_pushed = (graphCountryToggles[i] == '0') ? false : true;
 
-		if (_countryToggles.size() - 1 == i)
+		if (_countryToggles.size() - 1u == i)
 			_btnCountryTotal->setPressed(_countryToggles[i]->_pushed);
 		else if (i < GRAPH_BUTTONS)
 			_btnCountries.at(i)->setPressed(_countryToggles[i]->_pushed);
@@ -605,7 +600,7 @@ GraphsState::GraphsState()
 				if (i == 4)
 					color = 0u;
 				else
-					color = static_cast<Uint8>(static_cast<int>(colorGrid) + 1 + i);
+					color = static_cast<Uint8>(colorGrid + 1 + i);
 
 				_bg->drawRect(
 							x,y,
@@ -630,7 +625,7 @@ GraphsState::GraphsState()
 
 	const GameTime* const gt (_game->getSavedGame()->getTime());
 	const int yr (gt->getYear());
-	size_t th (static_cast<size_t>(gt->getMonth() - 1));
+	size_t th (static_cast<size_t>(gt->getMonth()) - 1u);
 
 	for (size_t
 			i = 0u;
@@ -640,16 +635,16 @@ GraphsState::GraphsState()
 		if (i == 1u)
 		{
 			if (th == 11u)
-				_lstYears->setCellText(0,0, Text::intWide(yr));
+				_lstYears->setCellText(0u,0u, Text::intWide(yr));
 			else
-				_lstYears->setCellText(0,0, Text::intWide(yr - 1));
+				_lstYears->setCellText(0u,0u, Text::intWide(yr - 1));
 		}
 		else if (th == 0u)
-			_lstYears->setCellText(0, i / 2, Text::intWide(yr));
+			_lstYears->setCellText(0u, i / 2u, Text::intWide(yr));
 
 		if (++th == 12u) th = 0u;
 
-		_lstMonths->setCellText(0, i, tr(GameTime::GAME_MONTHS[th]));
+		_lstMonths->setCellText(0u, i, tr(GameTime::GAME_MONTHS[th]));
 	}
 
 	for (std::vector<Text*>::const_iterator // set up the vertical measurement units
@@ -700,8 +695,8 @@ GraphsState::GraphsState()
 
 	initButtons();
 
-	TOGGLEALL_yReg = static_cast<int>(_btnRegions.size()) * 10;
-	TOGGLEALL_yCnt = static_cast<int>(_btnCountries.size()) * 10;
+	TOGGLEALL_yReg = static_cast<int>(_btnRegions.size())   * HEIGHT_btn;
+	TOGGLEALL_yCnt = static_cast<int>(_btnCountries.size()) * HEIGHT_btn;
 
 	switch (recallPage)
 	{
@@ -813,7 +808,7 @@ void GraphsState::blink() // private.
 	else
 		vis = !vis;
 
-	size_t offset = 0u;
+	size_t offset (0u);
 
 	if (_alien == true
 		&& _income == false
@@ -1136,7 +1131,7 @@ void GraphsState::btnFinanceClick(Action*)
  * Handles a click on a region button.
  * @param action - pointer to an Action
  */
-void GraphsState::btnRegionListClick(Action* action)
+void GraphsState::btnRegionListPress(Action* action)
 {
 	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
@@ -1163,7 +1158,7 @@ void GraphsState::btnRegionListClick(Action* action)
  * Handles a click on a country button.
  * @param action - pointer to an Action
  */
-void GraphsState::btnCountryListClick(Action* action)
+void GraphsState::btnCountryListPress(Action* action)
 {
 	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
@@ -1193,7 +1188,7 @@ void GraphsState::btnCountryListClick(Action* action)
  * Handles a click on a finance button.
  * @param action - pointer to an Action
  */
-void GraphsState::btnFinanceListClick(Action* action)
+void GraphsState::btnFinanceListPress(Action* action)
 {
 	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
@@ -1470,7 +1465,7 @@ void GraphsState::boxLines(Surface* const srf) // private.
 				x != 313;	// grid right edge
 				++x)
 		{
-			srf->setPixelColor(x,y, 0);
+			srf->setPixelColor(x,y, 0u);
 		}
 	}
 }
@@ -1573,8 +1568,8 @@ void GraphsState::drawRegionLines() // private.
 
 	switch (recallFactor)
 	{
-		case GUF_QUARTER: delta >>= 1; // no break.
-		case GUF_HALF:	  delta >>= 1;
+		case GUF_QUARTER: delta >>= 1u; // no break.
+		case GUF_HALF:	  delta >>= 1u;
 	}
 
 	int test (10);
@@ -1624,7 +1619,7 @@ void GraphsState::drawRegionLines() // private.
 				if (j < region->getActivityAlien().size())
 				{
 					reduction = region->getActivityAlien().at(region->getActivityAlien().size() - (j + 1u));
-					y = static_cast<Sint16>(static_cast<int>(y) - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
+					y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
 					totals[j] += reduction;
 				}
 			}
@@ -1633,7 +1628,7 @@ void GraphsState::drawRegionLines() // private.
 				if (j < region->getActivityXCom().size())
 				{
 					reduction = region->getActivityXCom().at(region->getActivityXCom().size() - (j + 1u));
-					y = static_cast<Sint16>(static_cast<int>(y) - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
+					y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
 					totals[j] += reduction;
 				}
 			}
@@ -1650,9 +1645,9 @@ void GraphsState::drawRegionLines() // private.
 				{
 					_alienRegionLines.at(i)->drawLine(
 													x,y,
-													static_cast<Sint16>(static_cast<int>(x) + 17),
+													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
-													static_cast<Uint8>(static_cast<unsigned>(_regionToggles.at(i)->_colorPushed) + 4u));
+													static_cast<Uint8>(_regionToggles.at(i)->_colorPushed + 4u));
 //					switch (recallFactor)
 //					{
 //						case GUF_HALF:
@@ -1664,9 +1659,9 @@ void GraphsState::drawRegionLines() // private.
 				{
 					_xcomRegionLines.at(i)->drawLine(
 													x,y,
-													static_cast<Sint16>(static_cast<int>(x) + 17),
+													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
-													static_cast<Uint8>(static_cast<unsigned>(_regionToggles.at(i)->_colorPushed) + 4u));
+													static_cast<Uint8>(_regionToggles.at(i)->_colorPushed + 4u));
 //					switch (recallFactor)
 //					{
 //						case GUF_HALF:
@@ -1700,7 +1695,7 @@ void GraphsState::drawRegionLines() // private.
 		y = static_cast<Sint16>(175 + static_cast<int>(Round(static_cast<float>(scaleLow) / pixelUnits)));
 
 		if (totals[i] > 0)
-			y = static_cast<Sint16>(static_cast<int>(y) - static_cast<int>(Round(static_cast<float>(totals[i]) / pixelUnits)));
+			y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(totals[i]) / pixelUnits)));
 
 		lineVector.push_back(y);
 
@@ -1712,7 +1707,7 @@ void GraphsState::drawRegionLines() // private.
 			{
 				_alienRegionLines.back()->drawLine(
 												x,y,
-												static_cast<Sint16>(static_cast<int>(x) + 17),
+												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
 
@@ -1727,7 +1722,7 @@ void GraphsState::drawRegionLines() // private.
 			{
 				_xcomRegionLines.back()->drawLine(
 												x,y,
-												static_cast<Sint16>(static_cast<int>(x) + 17),
+												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
 
@@ -1864,7 +1859,7 @@ void GraphsState::drawCountryLines() // private.
 				if (j < country->getActivityAlien().size())
 				{
 					reduction = country->getActivityAlien().at(country->getActivityAlien().size() - (j + 1u));
-					y = static_cast<Sint16>(static_cast<int>(y) - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
+					y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
 					totals[j] += reduction;
 				}
 			}
@@ -1873,7 +1868,7 @@ void GraphsState::drawCountryLines() // private.
 				if (j < country->getFunding().size())
 				{
 					reduction = country->getFunding().at(country->getFunding().size() - (j + 1u));
-					y = static_cast<Sint16>(static_cast<int>(y) - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
+					y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
 					totals[j] += reduction;
 				}
 			}
@@ -1882,7 +1877,7 @@ void GraphsState::drawCountryLines() // private.
 				if (j < country->getActivityXCom().size())
 				{
 					reduction = country->getActivityXCom().at(country->getActivityXCom().size() - (j + 1u));
-					y = static_cast<Sint16>(static_cast<int>(y) - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
+					y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
 					totals[j] += reduction;
 				}
 			}
@@ -1899,9 +1894,9 @@ void GraphsState::drawCountryLines() // private.
 				{
 					_alienCountryLines.at(i)->drawLine(
 													x,y,
-													static_cast<Sint16>(static_cast<int>(x) + 17),
+													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
-													static_cast<Uint8>(static_cast<unsigned>(_countryToggles.at(i)->_colorPushed) + 4u));
+													static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
 //					switch (recallFactor)
 //					{
 //						case GUF_HALF:
@@ -1913,9 +1908,9 @@ void GraphsState::drawCountryLines() // private.
 				{
 					_incomeLines.at(i)->drawLine(
 												x,y,
-												static_cast<Sint16>(static_cast<int>(x) + 17),
+												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
-												static_cast<Uint8>(static_cast<unsigned>(_countryToggles.at(i)->_colorPushed) + 4u));
+												static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
 //					switch (recallFactor)
 //					{
 //						case GUF_HALF:
@@ -1927,9 +1922,9 @@ void GraphsState::drawCountryLines() // private.
 				{
 					_xcomCountryLines.at(i)->drawLine(
 													x,y,
-													static_cast<Sint16>(static_cast<int>(x) + 17),
+													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
-													static_cast<Uint8>(static_cast<unsigned>(_countryToggles.at(i)->_colorPushed) + 4u));
+													static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
 //					switch (recallFactor)
 //					{
 //						case GUF_HALF:
@@ -1967,7 +1962,7 @@ void GraphsState::drawCountryLines() // private.
 		y = static_cast<Sint16>(175 + static_cast<int>(Round(static_cast<float>(scaleLow) / pixelUnits)));
 
 		if (totals[i] > 0)
-			y = static_cast<Sint16>(static_cast<int>(y) - static_cast<int>(Round(static_cast<float>(totals[i]) / pixelUnits)));
+			y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(totals[i]) / pixelUnits)));
 
 		lineVector.push_back(y);
 
@@ -1979,7 +1974,7 @@ void GraphsState::drawCountryLines() // private.
 			{
 				_alienCountryLines.back()->drawLine(
 												x,y,
-												static_cast<Sint16>(static_cast<int>(x) + 17),
+												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
 //				switch (recallFactor)
@@ -1993,7 +1988,7 @@ void GraphsState::drawCountryLines() // private.
 			{
 				_incomeLines.back()->drawLine(
 											x,y,
-											static_cast<Sint16>(static_cast<int>(x) + 17),
+											static_cast<Sint16>(x + 17),
 											lineVector.at(lineVector.size() - 2u),
 											color);
 //				switch (recallFactor)
@@ -2007,7 +2002,7 @@ void GraphsState::drawCountryLines() // private.
 			{
 				_xcomCountryLines.back()->drawLine(
 												x,y,
-												static_cast<Sint16>(static_cast<int>(x) + 17),
+												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
 //				switch (recallFactor)
@@ -2066,19 +2061,19 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 					j != _game->getSavedGame()->getBases()->end();
 					++j)
 			{
-				baseIncomes += (*j)->getCashIncome();
+				baseIncomes  += (*j)->getCashIncome();
 				baseExpenses += (*j)->getCashSpent();
 			}
 
-			income[i] = baseIncomes / 1000; // perhaps add Country funding
-			expenditure[i] = baseExpenses / 1000;
-			maintenance[i] = _game->getSavedGame()->getBaseMaintenances() / 1000; // use current
+			income[i]		= baseIncomes  / 1000; // perhaps add Country funding
+			expenditure[i]	= baseExpenses / 1000;
+			maintenance[i]	= _game->getSavedGame()->getBaseMaintenances() / 1000; // use current
 		}
 		else
 		{
-			income[i] = static_cast<int>(_game->getSavedGame()->getIncomeList().at(rit) / 1000); // perhaps add Country funding
-			expenditure[i] = static_cast<int>(_game->getSavedGame()->getExpenditureList().at(rit) / 1000);
-			maintenance[i] = static_cast<int>(_game->getSavedGame()->getMaintenanceList().at(rit) / 1000);
+			income[i]		= static_cast<int>(_game->getSavedGame()->getIncomeList().at(rit)      / 1000); // perhaps add Country funding
+			expenditure[i]	= static_cast<int>(_game->getSavedGame()->getExpenditureList().at(rit) / 1000);
+			maintenance[i]	= static_cast<int>(_game->getSavedGame()->getMaintenanceList().at(rit) / 1000);
 		}
 
 		balance[i] = static_cast<int>(_game->getSavedGame()->getFundsList().at(rit) / 1000);
@@ -2180,7 +2175,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 	const float pixelUnits (static_cast<float>(scaleHigh - scaleLow) / PIXELS_y);
 
 	Uint8 color;
-	unsigned multer;
+	unsigned hueFactor;
 	Sint16
 		reduction,
 		x,y;
@@ -2233,18 +2228,18 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 				switch (i) // switch colors for Income (was yellow) and Maintenance (was green)
 				{
-					case 0u: multer = 2u; break;
-					case 2u: multer = 0u; break;
+					case 0u: hueFactor = 2u; break;
+					case 2u: hueFactor = 0u; break;
 					default:
-						multer = i;
+						hueFactor = i;
 				}
 
-				color = static_cast<Uint8>(Palette::blockOffset(static_cast<Uint8>(multer / 2u + 1u)) + color);
+				color = static_cast<Uint8>(Palette::blockOffset(static_cast<Uint8>((hueFactor >> 1u) + 1u)) + color);
 
 				x = static_cast<Sint16>(312 - static_cast<int>(j) * 17);
 				_financeLines.at(i)->drawLine(
 											x,y,
-											static_cast<Sint16>(static_cast<int>(x) + 17),
+											static_cast<Sint16>(x + 17),
 											lineVector.at(lineVector.size() - 2u),
 											color);
 

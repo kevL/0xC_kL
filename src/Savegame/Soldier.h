@@ -108,7 +108,7 @@ private:
 		/// Creates a Soldier from scratch.
 		Soldier(
 				const RuleSoldier* const solRule,
-				const RuleArmor* const armorRule,
+				const RuleArmor* const arRule,
 //				const std::vector<SoldierNamePool*>* const names = nullptr,
 				int id);
 		/// Creates a Soldier to be filled w/ YAML data.

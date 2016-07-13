@@ -42,7 +42,7 @@ private:
 
 	public:
 		/// Creates a CAT-file.
-		explicit CatFile(const char* path);
+		explicit CatFile(const char* const path);
 		/// Cleans up the CAT-file.
 		~CatFile();
 

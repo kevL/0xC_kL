@@ -547,7 +547,7 @@ void IntroState::init()
 					true); */
 	_game->getScreen()->resetDisplay(false);
 
-	// I can't get a real refresh/update to work here or on forward to MainMenu,
+	// I can't get a real update to work here or on forward to MainMenu,
 	// unfortunately. So this ensures merely that the cursor appears centered.
 	SDL_WarpMouse(
 			static_cast<Uint16>(_game->getScreen()->getWidth()  >> 1u),

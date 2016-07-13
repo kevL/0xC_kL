@@ -179,16 +179,16 @@ void BattlescapeButton::altSurface()
 	_altSurface->setPalette(getPalette());
 
 	_altSurface->lock();
+	Uint8 pixel;
 	for (int
 			x = 0, y = 0;
 			x < getWidth() && y < getHeight();
 			)
 	{
-		const Uint8 pixel (getPixelColor(x,y));
-		if (pixel != 0u)
+		if ((pixel = getPixelColor(x,y)) != 0u)
 			_altSurface->setPixelIterative(
 										&x,&y,
-										static_cast<Uint8>(static_cast<unsigned>(pixel) + 2u * (static_cast<unsigned>(_color) + 3u - static_cast<unsigned>(pixel))));
+										static_cast<Uint8>(pixel + ((_color + 3u - pixel) << 1u)));
 		else
 			_altSurface->setPixelIterative(
 										&x,&y,

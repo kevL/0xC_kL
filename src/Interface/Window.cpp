@@ -65,12 +65,12 @@ Window::Window(
 			x,y),
 		_state(state),
 		_popType(popType),
+		_popStep(0.f),
 		_toggle(toggle),
 		_bg(nullptr),
 		_dX(-x),
 		_dY(-y),
 		_color(0u),
-		_popStep(0.f),
 		_contrast(false),
 		_fullScreen(false),
 		_thinBorder(false),
@@ -182,36 +182,28 @@ void Window::draw()
 			rect.h = static_cast<Uint16>(getHeight());
 			break;
 
-		case POPUP_BOTH:
-			rect.x = static_cast<Sint16>(
-					(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep))) / 2;
-			rect.w = static_cast<Uint16>(
-					 static_cast<float>(getWidth()) * _popStep);
+		case POPUP_BOTH: // I take it, then, floats get 'promoted' to ints. ->
+			rect.x = static_cast<Sint16>(static_cast<int>(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep)) >> 1u);
+			rect.w = static_cast<Uint16>(static_cast<float>(getWidth()) * _popStep);
 
-			rect.y = static_cast<Sint16>(
-					(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep))) / 2;
-			rect.h = static_cast<Uint16>(
-					 static_cast<float>(getHeight()) * _popStep);
+			rect.y = static_cast<Sint16>(static_cast<int>(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep)) >> 1u);
+			rect.h = static_cast<Uint16>(static_cast<float>(getHeight()) * _popStep);
 			break;
 
 		case POPUP_HORIZONTAL:
-			rect.x = static_cast<Sint16>(
-					(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep))) / 2;
-			rect.w = static_cast<Uint16>(
-					 static_cast<float>(getWidth()) * _popStep);
+			rect.x = static_cast<Sint16>(static_cast<int>(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep)) >> 1u);
+			rect.w = static_cast<Uint16>(static_cast<float>(getWidth()) * _popStep);
 
 			rect.y = 0;
 			rect.h = static_cast<Uint16>(getHeight());
 			break;
 
 		case POPUP_VERTICAL:
-			rect.y = static_cast<Sint16>(
-					(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep))) / 2;
-			rect.h = static_cast<Uint16>(
-					 static_cast<float>(getHeight()) * _popStep);
-
 			rect.x = 0;
 			rect.w = static_cast<Uint16>(getWidth());
+
+			rect.y = static_cast<Sint16>(static_cast<int>(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep)) >> 1u);
+			rect.h = static_cast<Uint16>(static_cast<float>(getHeight()) * _popStep);
 	}
 
 	Uint8
@@ -221,7 +213,7 @@ void Window::draw()
 	if (_contrast == true)	gradient = 2u;
 	else					gradient = 1u;
 
-	color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 3u));
+	color = static_cast<Uint8>(_color + (gradient * 3u));
 
 	if (_thinBorder == true)
 	{
@@ -245,18 +237,18 @@ void Window::draw()
 			switch (i)
 			{
 				case 0:
-					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 5u));
+					color = static_cast<Uint8>(_color + (gradient * 5u));
 					setPixelColor(static_cast<int>(rect.w), 0, color);
 					break;
 				case 1:
-					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 2u));
+					color = static_cast<Uint8>(_color + (gradient * 2u));
 					break;
 				case 2:
-					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 4u));
+					color = static_cast<Uint8>(_color + (gradient * 4u));
 					setPixelColor(static_cast<int>(rect.w) + 1, 1, color);
 					break;
 				case 3:
-					color = static_cast<Uint8>(static_cast<unsigned>(_color) + (static_cast<unsigned>(gradient) * 3u));
+					color = static_cast<Uint8>(_color + (gradient * 3u));
 			}
 		}
 	}
@@ -276,10 +268,10 @@ void Window::draw()
 			++rect.x;
 			++rect.y;
 
-			if (rect.w > 1u) rect.w = static_cast<Uint16>(static_cast<unsigned>(rect.w) - 2u);
+			if (rect.w > 1u) rect.w = static_cast<Uint16>(rect.w - 2u);
 			else			 rect.w = 0u;
 
-			if (rect.h > 1u) rect.h = static_cast<Uint16>(static_cast<unsigned>(rect.h) - 2u);
+			if (rect.h > 1u) rect.h = static_cast<Uint16>(rect.h - 2u);
 			else			 rect.h = 0u;
 		}
 	}
@@ -288,8 +280,8 @@ void Window::draw()
 	{
 		if (_bg != nullptr)
 		{
-			_bg->getCrop()->x = static_cast<Sint16>(static_cast<int>(rect.x) - _dX - _bgX);
-			_bg->getCrop()->y = static_cast<Sint16>(static_cast<int>(rect.y) - _dY - _bgY);
+			_bg->getCrop()->x = static_cast<Sint16>(rect.x - _dX - _bgX);
+			_bg->getCrop()->y = static_cast<Sint16>(rect.y - _dY - _bgY);
 			_bg->getCrop()->w = rect.w;
 			_bg->getCrop()->h = rect.h;
 

@@ -31,7 +31,7 @@ namespace OpenXcom
  * contained within. Each file consists of a filename followed by its contents.
  * @param path - pointer to the full path of the CAT-file
  */
-CatFile::CatFile(const char* path)
+CatFile::CatFile(const char* const path)
 	:
 		std::ifstream(
 					path,
@@ -46,13 +46,13 @@ CatFile::CatFile(const char* path)
 					sizeof(_qtyObjects));
 
 	_qtyObjects = SDL_SwapLE32(_qtyObjects);
-	_qtyObjects /= 2 * sizeof(_qtyObjects);
+	_qtyObjects /= 2u * sizeof(_qtyObjects);
 
 	// Get object offsets
 	std::ifstream::seekg(0, std::ios::beg);
 
 	_offset = new unsigned[_qtyObjects];
-	_size = new unsigned[_qtyObjects];
+	_size   = new unsigned[_qtyObjects];
 
 	for (unsigned
 			i = 0u;

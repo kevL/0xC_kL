@@ -1787,7 +1787,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
  */
 void BattlescapeGenerator::setTacticalSprites() const // private.
 {
-	RuleArmor* const armorRule (_rules->getArmor(_terrainRule->getPyjamaType()));
+	RuleArmor* const arRule (_rules->getArmor(_terrainRule->getPyjamaType()));
 
 	Base* base;
 	if (_craft != nullptr)
@@ -1803,7 +1803,7 @@ void BattlescapeGenerator::setTacticalSprites() const // private.
 		if ((_craft == nullptr || (*i)->getCraft() == _craft)
 			&& (*i)->getArmor()->isBasic() == true)
 		{
-			(*i)->setArmor(armorRule);
+			(*i)->setArmor(arRule);
 		}
 	}
 }
@@ -2923,10 +2923,10 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 												   [static_cast<size_t>(y)] != nullptr)
 										{
 											loadMAP(
-												_blocks[static_cast<size_t>(x)]
-													   [static_cast<size_t>(y)],
-												x * 10, y * 10,
-												_terrainRule);
+													_blocks[static_cast<size_t>(x)]
+														   [static_cast<size_t>(y)],
+													x * 10, y * 10,
+													_terrainRule);
 										}
 									}
 								}
@@ -2980,12 +2980,10 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 													   [static_cast<size_t>(y)];
 
 										if (block != nullptr)
-										{
 											loadMAP(
 													block,
 													x * 10, y * 10,
 													_terrainRule);
-										}
 									}
 								}
 								success = true;
@@ -3492,10 +3490,10 @@ void BattlescapeGenerator::loadNodes() // private.
 					|| _landingzone[x][y] == false) // TODO: look closer at this.
 				{
 					loadRMP(
-						_blocks[x][y],
-						static_cast<int>(x) * 10,
-						static_cast<int>(y) * 10,
-						segOffset++);
+							_blocks[x][y],
+							static_cast<int>(x) * 10,
+							static_cast<int>(y) * 10,
+							segOffset++);
 				}
 			}
 		}
@@ -3949,12 +3947,12 @@ bool BattlescapeGenerator::addBlock( // private.
 	_blocks[xt][yt] = block;
 
 	loadMAP(
-		_blocks[xt][yt],
-		x * 10,
-		y * 10,
-		_terrainRule,
-		0,
-		_battleSave->getTacType() == TCT_BASEDEFENSE);
+			_blocks[xt][yt],
+			x * 10,
+			y * 10,
+			_terrainRule,
+			0,
+			_battleSave->getTacType() == TCT_BASEDEFENSE);
 
 	return true;
 }

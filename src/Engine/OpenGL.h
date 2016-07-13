@@ -73,8 +73,8 @@ private:
 
 	/// Resizes the internal buffer.
 	void resize(
-			unsigned width,
-			unsigned height);
+			int width,
+			int height);
 
 	/// Sets a fragment-shader.
 	void set_fragment_shader(const char* source);
@@ -88,9 +88,10 @@ private:
 		bool
 			linear,
 			shader_support;
-		unsigned
+		int
 			iwidth,
-			iheight,
+			iheight;
+		unsigned
 			iformat,
 			ibpp;
 
@@ -117,10 +118,10 @@ private:
 		/// Makes the buffer show up on-screen.
 		void refresh(
 				bool smooth,
-				unsigned inwidth,
-				unsigned inheight,
-				unsigned outwidth,
-				unsigned outheight,
+				int inwidth,
+				int inheight,
+				int outwidth,
+				int outheight,
 				int topBlackBand,
 				int bottomBlackBand,
 				int leftBlackBand,
