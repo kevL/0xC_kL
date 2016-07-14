@@ -217,34 +217,42 @@
 
 
 // 0xC ./Engine includes
-// subdirs Adlib and Scalers not included.
+// subdir /Adlib not included (is disabled).
+#include "./Engine/Scalers/common.h"
+#include "./Engine/Scalers/config.h"
+#include "./Engine/Scalers/hqx.h"
+#include "./Engine/Scalers/scale2x.h"
+#include "./Engine/Scalers/scale3x.h"
+#include "./Engine/Scalers/scalebit.h"
+#include "./Engine/Scalers/xbrz.h"
+
 #include "./Engine/Action.h"
-//#include "./Engine/AdlibMusic.h" // not used atm.
+//#include "./Engine/AdlibMusic.h"			// is disabled.
 #include "./Engine/CatFile.h"
 #include "./Engine/CrossPlatform.h"
-//#include "./Engine/DosFont.h" // handled via Font.h
+//#include "./Engine/DosFont.h"				// handled via Font.h
 #include "./Engine/Exception.h"
 #include "./Engine/FastLineClip.h"
 #include "./Engine/FlcPlayer.h"
 #include "./Engine/Font.h"
-//#include "./Engine/GMCat.h" // not used atm.
+//#include "./Engine/GMCat.h"				// is disabled.
 #include "./Engine/Game.h"
-//#include "./Engine/GraphSubset.h" // handled via ShaderDrawHelper.h
+//#include "./Engine/GraphSubset.h"			// handled via ShaderDrawHelper.h
 #include "./Engine/InteractiveSurface.h"
 #include "./Engine/Language.h"
 #include "./Engine/LanguagePlurality.h"
 #include "./Engine/LocalizedText.h"
-#include "./Engine/Logger.h" // For debug assistance.
+#include "./Engine/Logger.h"				// For debug assistance.
 #include "./Engine/Music.h"
 #include "./Engine/OpenGL.h"
 #include "./Engine/OptionInfo.h"
 #include "./Engine/Options.h"
-//#include "./Engine/Options.inc.h" // handled via Options.h & .cpp
+//#include "./Engine/Options.inc.h"			// handled via Options.h
 #include "./Engine/Palette.h"
 #include "./Engine/RNG.h"
 #include "./Engine/Screen.h"
-//#include "./Engine/ShaderDraw.h" // handled via ShaderMove.h, ShaderRepeat.h, Surface.h
-//#include "./Engine/ShaderDrawHelper.h" // handled via ShaderDraw.h
+//#include "./Engine/ShaderDraw.h"			// handled via ShaderMove.h, ShaderRepeat.h, Surface.h
+//#include "./Engine/ShaderDrawHelper.h"	// handled via ShaderDraw.h
 #include "./Engine/ShaderMove.h"
 #include "./Engine/ShaderRepeat.h"
 #include "./Engine/Sound.h"
