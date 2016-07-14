@@ -36,13 +36,13 @@ int scale_precondition(
 
 ///
 void scale(
-	unsigned scale,
-	void* void_dst,
-	unsigned dst_slice,
-	const void* void_src,
-	unsigned src_slice,
-	unsigned pixel,
-	unsigned width,
-	unsigned height);
+		unsigned scale,
+		void* void_dst,
+		unsigned dst_slice,
+		const void* void_src,
+		unsigned src_slice,
+		unsigned pixel,
+		unsigned width,
+		unsigned height);
 
 #endif

@@ -21,29 +21,28 @@
 
 
 uint32_t
-	RGBtoYUV[16777216],
+	RGBtoYUV[16777216u],
 	YUV1,
 	YUV2;
 
 HQX_API void HQX_CALLCONV hqxInit(void)
 {
-	// Initialize RGB to YUV lookup table
-	uint32_t
+	uint32_t // Initialize RGB to YUV lookup table.
 		c,
 		r,g,b,
 		y,u,v;
 
 	for (
-			c = 0;
-			c < 16777215;
+			c = 0u;
+			c < 16777215u;
 			++c)
 	{
 		r = (c & 0xFF0000) >> 16;
 		g = (c & 0x00FF00) >> 8;
 		b = (c & 0x0000FF);
-		y = (uint32_t)( 0.299 * r + 0.587 * g + 0.114 * b);
-		u = (uint32_t)(-0.169 * r - 0.331 * g + 0.5   * b) + 128;
-		v = (uint32_t)( 0.5   * r - 0.419 * g - 0.081 * b) + 128;
+		y = static_cast<uint32_t>( 0.299 * r + 0.587 * g + 0.114 * b);
+		u = static_cast<uint32_t>(-0.169 * r - 0.331 * g + 0.5   * b) + 128u;
+		v = static_cast<uint32_t>( 0.5   * r - 0.419 * g - 0.081 * b) + 128u;
 
 		RGBtoYUV[c] = (y << 16) + (u << 8) + v;
 	}

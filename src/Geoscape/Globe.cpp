@@ -1372,8 +1372,7 @@ Cord Globe::getSunDirection( // private.
 		double today;
 		if (year % 4 == 0 // spring equinox (start of astronomic year)
 			&& !
-				(year % 100 == 0
-					&& year % 400 != 0))
+				(year % 100 == 0 && year % 400 != 0))
 		{
 			today = (static_cast<double>(monthDays2[month] + day) + tm) / 366. - 0.219;
 		}
@@ -1416,18 +1415,18 @@ Cord Globe::getSunDirection( // private.
  */
 void Globe::drawShadow()
 {
-	ShaderMove<Cord> earth = ShaderMove<Cord>(
+	ShaderMove<Cord> earth (ShaderMove<Cord>(
 										_earthData[_zoom],
 										getWidth(),
-										getHeight());
-	ShaderRepeat<Sint16> noise = ShaderRepeat<Sint16>(
+										getHeight()));
+	ShaderRepeat<Sint16> noise (ShaderRepeat<Sint16>(
 											_terminatorFluxions,
 											static_data.random_surf_size,
-											static_data.random_surf_size);
+											static_data.random_surf_size));
 
 	earth.setMove(
-			_cenX-getWidth() / 2,
-			_cenY-getHeight() / 2);
+			_cenX-getWidth()  >> 1u,
+			_cenY-getHeight() >> 1u);
 
 	lock();
 	ShaderDraw<CreateShadow>(

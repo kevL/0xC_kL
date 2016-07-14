@@ -128,7 +128,7 @@ bool FlcPlayer::init(
 {
 	if (_fileBuf != nullptr)
 	{
-		Log(LOG_ERROR) << "Tried to init a video player that is already initialized - EXIT FlcPlayer::init()";
+		Log(LOG_ERROR) << "FlcPlayer::init() Tried to init a video player that was already initialized.";
 		return false;
 	}
 

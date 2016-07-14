@@ -23,7 +23,7 @@
  */
 
 #if HAVE_CONFIG_H
-	#include <config.h>
+#	include <config.h>
 #endif
 
 #include "scale3x.h"
@@ -31,9 +31,9 @@
 #include <assert.h>
 
 #if (_MSC_VER >= 1400)
-	#define restrict __restrict
+#	define restrict __restrict
 #else
-	#define restrict
+#	define restrict
 #endif
 
 // kL_note: invalid parameter "a" according to VS2013 doc

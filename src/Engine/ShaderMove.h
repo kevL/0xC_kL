@@ -131,11 +131,11 @@ struct controler<ShaderMove<Pixel>>
 	controler(const ShaderMove<Pixel>& f)
 		:
 			base_type(f.ptr(),
-			f.getDomain(),
-			f.getImage(),
-			std::make_pair(
-						1,
-						f.pitch()))
+					f.getDomain(),
+					f.getImage(),
+					std::make_pair(
+								1,
+								f.pitch()))
 	{}
 };
 

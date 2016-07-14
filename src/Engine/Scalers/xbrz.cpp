@@ -170,7 +170,7 @@ public:
     {
         static const size_t I_old = MatrixRotation<rotDeg, I, J, N>::I_old;
         static const size_t J_old = MatrixRotation<rotDeg, I, J, N>::J_old;
-        return *(out_ + J_old + I_old * outWidth_);
+        return *(out_ + J_old + I_old * static_cast<size_t>(outWidth_));
     }
 
 private:
@@ -272,7 +272,7 @@ void rgbtoLab(uint32_t c, unsigned char& L, signed char& A, signed char& B)
     L = static_cast<unsigned char>(116 * var_Y  - 16);
     A = static_cast<  signed char>(500 * (var_X - var_Y));
     B = static_cast<  signed char>(200 * (var_Y - var_Z));
-};
+}
 
 /**
  *
@@ -498,9 +498,9 @@ double colorDist(uint32_t pix1, uint32_t pix2, double luminanceWeight)
 //
 enum BlendType
 {
-    BLEND_NONE = 0,
-    BLEND_NORMAL,   //a normal indication to blend
-    BLEND_DOMINANT, //a strong indication to blend
+    BLEND_NONE		= 0,
+    BLEND_NORMAL,	// 1 //a normal indication to blend
+    BLEND_DOMINANT,	// 2 //a strong indication to blend
     //attention: BlendType must fit into the value range of 2 bit!!!
 };
 
@@ -524,11 +524,11 @@ struct Kernel_4x4 //kernel for preprocessing step
 
 //
 inline
-double dist(uint32_t col1, uint32_t col2, const xbrz::ScalerCfg& cfg) { return colorDist(col1, col2, cfg.luminanceWeight_); };
+double dist(uint32_t col1, uint32_t col2, const xbrz::ScalerCfg& cfg) { return colorDist(col1, col2, cfg.luminanceWeight_); }
 
 //
 inline
-bool eq(uint32_t col1, uint32_t col2, const xbrz::ScalerCfg& cfg) { return colorDist(col1, col2, cfg.luminanceWeight_) < cfg.equalColorTolerance_; };
+bool eq(uint32_t col1, uint32_t col2, const xbrz::ScalerCfg& cfg) { return colorDist(col1, col2, cfg.luminanceWeight_) < cfg.equalColorTolerance_; }
 
 /*
 input kernel area naming convention:
@@ -617,23 +617,22 @@ DEF_GETTER(g, a) DEF_GETTER(h, d) DEF_GETTER(i,	g)
 
 
 //compress four blend types into a single byte
-inline BlendType getTopL   (unsigned char b) { return static_cast<BlendType>(0x3 & b); }
+inline BlendType getTopL   (unsigned char b) { return static_cast<BlendType>(0x3 &  b); }
 inline BlendType getTopR   (unsigned char b) { return static_cast<BlendType>(0x3 & (b >> 2)); }
 inline BlendType getBottomR(unsigned char b) { return static_cast<BlendType>(0x3 & (b >> 4)); }
 inline BlendType getBottomL(unsigned char b) { return static_cast<BlendType>(0x3 & (b >> 6)); }
 
-inline void setTopL   (unsigned char& b, BlendType bt) { b |= bt; } //buffer is assumed to be initialized before preprocessing!
-inline void setTopR   (unsigned char& b, BlendType bt) { b |= (bt << 2); }
-inline void setBottomR(unsigned char& b, BlendType bt) { b |= (bt << 4); }
-inline void setBottomL(unsigned char& b, BlendType bt) { b |= (bt << 6); }
+inline void setTopL   (unsigned char& b, BlendType bt) { b  = static_cast<unsigned char>(b | bt); } //buffer is assumed to be initialized before preprocessing!
+inline void setTopR   (unsigned char& b, BlendType bt) { b |= static_cast<unsigned char>(bt << 2); }
+inline void setBottomR(unsigned char& b, BlendType bt) { b |= static_cast<unsigned char>(bt << 4); }
+inline void setBottomL(unsigned char& b, BlendType bt) { b |= static_cast<unsigned char>(bt << 6); }
 
 inline bool blendingNeeded(unsigned char b) { return b != 0; }
 
-template <RotationDegree rotDeg> inline
-unsigned char rotateBlendInfo(unsigned char b) { return b; }
-template <> inline unsigned char rotateBlendInfo<ROT_90 >(unsigned char b) { return ((b << 2) | (b >> 6)) & 0xff; }
-template <> inline unsigned char rotateBlendInfo<ROT_180>(unsigned char b) { return ((b << 4) | (b >> 4)) & 0xff; }
-template <> inline unsigned char rotateBlendInfo<ROT_270>(unsigned char b) { return ((b << 6) | (b >> 2)) & 0xff; }
+template<RotationDegree rotDeg> inline unsigned char rotateBlendInfo(unsigned char b) { return b; }
+template<> inline unsigned char rotateBlendInfo<ROT_90 >(unsigned char b) { return static_cast<unsigned char>(((b << 2) | (b >> 6)) & 0xff); }
+template<> inline unsigned char rotateBlendInfo<ROT_180>(unsigned char b) { return static_cast<unsigned char>(((b << 4) | (b >> 4)) & 0xff); }
+template<> inline unsigned char rotateBlendInfo<ROT_270>(unsigned char b) { return static_cast<unsigned char>(((b << 6) | (b >> 2)) & 0xff); }
 
 
 /*#ifndef NDEBUG
@@ -877,7 +876,11 @@ void scaleImage(const uint32_t* src, uint32_t* trg, int srcWidth, int srcHeight,
             }
 
             //fill block of size scale * scale with the given color
-            fillBlock(out, trgWidth * sizeof(uint32_t), s_0[x], Scaler::scale); //place *after* preprocessing step, to not overwrite the results while processing the last pixel!
+            fillBlock( //place *after* preprocessing step, to not overwrite the results while processing the last pixel!
+					out,
+					trgWidth * static_cast<int>(sizeof(uint32_t)),
+					s_0[static_cast<size_t>(x)],
+					Scaler::scale);
 
             //blend four corners of current pixel
             if (blendingNeeded(blend_xy)) //good 20% perf-improvement
