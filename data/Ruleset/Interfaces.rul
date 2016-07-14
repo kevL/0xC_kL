@@ -102,6 +102,7 @@ interfaces:
     elements:
       - id: backpal
         color: 6     # oxide
+        color2: 5    # dk-red for delete-savefile confirmation
       - id: window
         color: 133   # minty green
       - id: text

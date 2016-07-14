@@ -21,7 +21,7 @@
 
 //#include <algorithm>
 
-#include "DeleteGameState.h"
+#include "DeleteSaveState.h"
 
 #include "../Engine/Action.h"
 #include "../Engine/CrossPlatform.h"
@@ -396,7 +396,7 @@ void ListGamesState::lstSavesPress(Action* action) // virtual.
 		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT
 		&& _lstSaves->getSelectedRow() >= _firstValid)
 	{
-		_game->pushState(new DeleteGameState(
+		_game->pushState(new DeleteSaveState(
 										_origin,
 										_saves[_lstSaves->getSelectedRow() - _firstValid].file));
 	}

@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OPENXCOM_DELETEGAMESTATE_H
-#define OPENXCOM_DELETEGAMESTATE_H
+#ifndef OPENXCOM_DELETESAVESTATE_H
+#define OPENXCOM_DELETESAVESTATE_H
 
 //#include <string>
 
@@ -37,7 +37,7 @@ class Window;
 /**
  * Window used to confirm saved-game deletion.
  */
-class DeleteGameState
+class DeleteSaveState
 	:
 		public State
 {
@@ -54,12 +54,12 @@ private:
 
 
 	public:
-		/// Creates a DeleteGame state.
-		DeleteGameState(
+		/// Creates a DeleteSave state.
+		DeleteSaveState(
 				OptionsOrigin origin,
 				const std::string& file);
-		/// Cleans up the DeleteGame state.
-		~DeleteGameState();
+		/// Cleans up the DeleteSave state.
+		~DeleteSaveState();
 
 		/// Handler for clicking the confirm button.
 		void btnYesClick(Action* action);

@@ -97,7 +97,7 @@ std::string State::getStateLabel() const // virtual.
  * @note Also sets the Palette for the State.
  * @param category		- reference to the category of the interface from an Interfaces ruleset
  * @param altBackpal	- true to swap out the backpal-colors (default false)
- * @param tactical		- true to use Battlescape Palette (applies only to options screens) (default false)
+ * @param tactical		- true to use Battlescape Palette, applies only to options screens (default false)
  */
 void State::setInterface(
 		const std::string& category,
@@ -122,8 +122,8 @@ void State::setInterface(
 				elBackpal = _uiRuleParent->getElement("backpal");
 		}
 
-		if (elBackpal != nullptr && tactical == false)
-		{
+		if (elBackpal != nullptr && tactical == false)	// why no-switch BackPals in battlescape.
+		{												// Because they're always B&W.
 			int color;
 			if (altBackpal == true)	color = elBackpal->color2;
 			else					color = elBackpal->color;

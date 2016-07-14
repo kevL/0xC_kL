@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DeleteGameState.h"
+#include "DeleteSaveState.h"
 
 #include "ErrorMessageState.h"
 
@@ -40,11 +40,11 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the DeleteGame screen.
+ * Initializes all the elements in the DeleteSave screen.
  * @param origin	- game section that originated this state
  * @param file		- name of the save file to delete
  */
-DeleteGameState::DeleteGameState(
+DeleteSaveState::DeleteSaveState(
 		OptionsOrigin origin,
 		const std::string& file)
 	:
@@ -53,16 +53,16 @@ DeleteGameState::DeleteGameState(
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 256, 100, 32, 50, POPUP_BOTH);
+	_window		= new Window(this, 256, 100, 32, 50, POPUP_HORIZONTAL);
 
 	_txtMessage	= new Text(246, 32, 37, 70);
 
-	_btnNo		= new TextButton(60, 18,  60, 122);
-	_btnYes		= new TextButton(60, 18, 200, 122);
+	_btnNo		= new TextButton(80, 18,  60, 122);
+	_btnYes		= new TextButton(80, 18, 180, 122);
 
 	setInterface(
 			"saveMenus",
-			false,
+			true,
 			_origin == OPT_BATTLESCAPE);
 
 
@@ -77,15 +77,15 @@ DeleteGameState::DeleteGameState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick(		static_cast<ActionHandler>(&DeleteGameState::btnYesClick));
-	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteGameState::btnYesClick),
+	_btnYes->onMouseClick(		static_cast<ActionHandler>(&DeleteSaveState::btnYesClick));
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteSaveState::btnYesClick),
 								Options::keyOk);
-	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteGameState::btnYesClick),
+	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteSaveState::btnYesClick),
 								Options::keyOkKeypad);
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick(	static_cast<ActionHandler>(&DeleteGameState::btnNoClick));
-	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&DeleteGameState::btnNoClick),
+	_btnNo->onMouseClick(	static_cast<ActionHandler>(&DeleteSaveState::btnNoClick));
+	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&DeleteSaveState::btnNoClick),
 							Options::keyCancel);
 
 	_txtMessage->setAlign(ALIGN_CENTER);
@@ -100,13 +100,13 @@ DeleteGameState::DeleteGameState(
 /**
  * dTor.
  */
-DeleteGameState::~DeleteGameState()
+DeleteSaveState::~DeleteSaveState()
 {}
 
 /**
  * Cancels this state.
  */
-void DeleteGameState::btnNoClick(Action*)
+void DeleteSaveState::btnNoClick(Action*)
 {
 	_game->popState();
 }
@@ -114,7 +114,7 @@ void DeleteGameState::btnNoClick(Action*)
 /**
  * Cancels this state and attempts to delete the focused entry.
  */
-void DeleteGameState::btnYesClick(Action*)
+void DeleteSaveState::btnYesClick(Action*)
 {
 	_game->popState();
 
