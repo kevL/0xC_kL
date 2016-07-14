@@ -79,95 +79,97 @@ std::string UnitTurnBState::getBattleStateLabel() const
  */
 void UnitTurnBState::init()
 {
-	if (_unit->isOut_t(OUT_STAT) == false)
+//	if (_unit->isOut_t(OUT_STAT) == false)
+	switch (_unit->getUnitStatus())
 	{
-		_action.TU = 0;
-		_unit->setStopShot(false);
+		case STATUS_STANDING:
+			_action.TU = 0;
+			_unit->setStopShot(false);
 
-		// if unit has a turret and it's either strafing or turning during
-		// targeting then only the turret turns
-		_turret = _unit->getTurretType() != TRT_NONE
-			   && (_action.strafe == true || _action.targeting == true);
+			// if unit has a turret and it's either strafing or turning during
+			// targeting then only the turret turns
+			_turret = _unit->getTurretType() != TRT_NONE
+				   && (_action.strafe == true || _action.targeting == true);
 
-		switch (_action.value)
-		{
-			case -1:
-				if (   _unit->getPosition().x != _action.posTarget.x
-					|| _unit->getPosition().y != _action.posTarget.y)
-				{
-					_unit->setDirectionTo(_action.posTarget, _turret); // -> STATUS_TURNING
-				}
-				break;
-
-			default:
-				_unit->setDirectionTo(_action.value, _turret); // -> STATUS_TURNING
-		}
-
-		switch (_unit->getUnitStatus())
-		{
-			case STATUS_TURNING:
-				if (_chargeTu == true)						// reaction fire & panic permit free turning
-				{
-					if (_unit->getTurretType() != TRT_NONE	// if turreted vehicle
-						&& _action.strafe == false			// but not swivelling turret
-						&& _action.targeting == false)		// and not taking a shot at something...
+			switch (_action.value)
+			{
+				case -1:
+					if (   _unit->getPosition().x != _action.posTarget.x
+						|| _unit->getPosition().y != _action.posTarget.y)
 					{
-						switch (_unit->getMoveTypeUnit())
+						_unit->setDirectionTo(_action.posTarget, _turret); // -> STATUS_TURNING
+					}
+					break;
+
+				default:
+					_unit->setDirectionTo(_action.value, _turret); // -> STATUS_TURNING
+			}
+
+			switch (_unit->getUnitStatus())
+			{
+				case STATUS_TURNING:
+					if (_chargeTu == true)						// reaction fire & panic permit free turning
+					{
+						if (_unit->getTurretType() != TRT_NONE	// if turreted vehicle
+							&& _action.strafe == false			// but not swivelling turret
+							&& _action.targeting == false)		// and not taking a shot at something...
 						{
-							case MT_FLY: _tu = 2; break;	// hover vehicles cost 2 per facing change
-							default:	 _tu = 3;			// large tracked vehicles cost 3 per facing change
+							switch (_unit->getMoveTypeUnit())
+							{
+								case MT_FLY: _tu = 2; break;	// hover vehicles cost 2 per facing change
+								default:	 _tu = 3;			// large tracked vehicles cost 3 per facing change
+							}
 						}
+						else
+							_tu = 1;							// one tu per facing change
 					}
+
+					Uint32 interval;
+					if (_unit->getFaction() == FACTION_PLAYER)
+						interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
 					else
-						_tu = 1;							// one tu per facing change
-				}
+						interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 
-				Uint32 interval;
-				if (_unit->getFaction() == FACTION_PLAYER)
-					interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
-				else
-					interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+					_parent->setStateInterval(interval);
+					break;
 
-				_parent->setStateInterval(interval);
-				break;
-
-			case STATUS_STANDING: // try to open a door
-				if (_chargeTu == true && _action.type == BA_NONE)
-				{
-					int soundId;
-					switch (_parent->getTileEngine()->unitOpensDoor(_unit))
+				case STATUS_STANDING: // try to open a door
+					if (_chargeTu == true && _action.type == BA_NONE)
 					{
-						case DR_WOOD_OPEN:
-							soundId = static_cast<int>(ResourcePack::DOOR_OPEN);
-							break;
-						case DR_UFO_OPEN:
-							soundId = static_cast<int>(ResourcePack::SLIDING_DOOR_OPEN);
-							break;
-						case DR_ERR_TU:
-							_action.result = BattlescapeGame::PLAYER_ERROR[0u];
-							soundId = -1;
-							break;
-						case DR_ERR_RESERVE:
-							_action.result = "STR_TUS_RESERVED"; // no break;
+						int soundId;
+						switch (_parent->getTileEngine()->unitOpensDoor(_unit))
+						{
+							case DR_WOOD_OPEN:
+								soundId = static_cast<int>(ResourcePack::DOOR_OPEN);
+								break;
+							case DR_UFO_OPEN:
+								soundId = static_cast<int>(ResourcePack::SLIDING_DOOR_OPEN);
+								break;
+							case DR_ERR_TU:
+								_action.result = BattlescapeGame::PLAYER_ERROR[0u];
+								soundId = -1;
+								break;
+							case DR_ERR_RESERVE:
+								_action.result = "STR_TUS_RESERVED"; // no break;
 
-						default:
-							soundId = -1;
-					}
+							default:
+								soundId = -1;
+						}
 
-					if (soundId != -1)
-						_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-													->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
-				} // no break;
+						if (soundId != -1)
+							_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+														->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+					} // no break;
 
-			default: // safety.
-				_unit->clearTurnDirection();
-				_parent->popBattleState();
-		}
-	}
-	else
-	{
-		_unit->clearTurnDirection();
-		_parent->popBattleState();
+				default: // safety.
+					_unit->clearTurnDirection();
+					_parent->popBattleState();
+			}
+			break;
+
+		default:
+			_unit->clearTurnDirection();
+			_parent->popBattleState();
 	}
 }
 

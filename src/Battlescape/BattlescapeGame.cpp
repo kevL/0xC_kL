@@ -1373,6 +1373,9 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 //				getMap()->cacheUnits();
 				getMap()->cacheUnit(unit);
 
+				// NOTE: Might want to do a calcFoV for the AI, not sure.
+				// Although UnitWalkBState ought handle it.
+
 				return true;
 			}
 		}

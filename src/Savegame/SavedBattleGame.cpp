@@ -2252,9 +2252,9 @@ void SavedBattleGame::reviveUnit(
 			unit->setRevived();
 
 			_te->calculateUnitLighting();
-			pos = unit->getPosition();
-			_te->calcFovTiles_pos(pos);
-			_te->calcFovUnits_pos(pos);
+			if (unit->getFaction() == FACTION_PLAYER)
+				_te->calcFovTiles(unit);
+			_te->calcFovUnits_pos(unit->getPosition());
 			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();
