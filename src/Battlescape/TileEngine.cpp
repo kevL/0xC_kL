@@ -507,7 +507,13 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 			dir = unit->getTurretDirection();
 	}
 
-	const bool swapXY (dir == 0 || dir == 4);
+	bool swapXY;
+	switch (dir)
+	{
+		case 0:
+		case 4:  swapXY = true; break;
+		default: swapXY = false;
+	}
 
 	static const int
 		sign_x[8u] { 1, 1, 1, 1,-1,-1,-1,-1},
@@ -582,7 +588,7 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 					if (_battleSave->getTile(posTest) != nullptr)
 					{
 						// this sets tiles to discovered if they are in FoV ->
-						// NOTE: Tile visibility is calculated not in voxel-space but in tile-space.
+						// NOTE: Tile visibility is calculated not in voxel-space but tile-space.
 						for (int
 								dX = 0;
 								dX != unitSize;

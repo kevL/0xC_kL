@@ -876,18 +876,20 @@ void Map::drawTerrain(Surface* const surface) // private.
 					// end cursor bg
 
 // Draw Tile Background
-// Draw west wall
 					if (_tile->isVoid(true, false) == false)
 					{
+// Draw west wall
 						if ((sprite = _tile->getSprite(O_WESTWALL)) != nullptr)
 						{
-							if (_tile->isRevealed(ST_WEST) == true
-								&& _tile->getMapData(O_WESTWALL)->isDoor() == true)
+							if (_tile->isRevealed(ST_WEST) == true)
 							{
-								shade = std::min(_tile->getShade(), SHADE_DOOR);
+								if (_tile->getMapData(O_WESTWALL)->isDoor() == true)
+									shade = std::min(_tile->getShade(), SHADE_DOOR);
+								else
+									shade = tileShade;
 							}
 							else
-								shade = tileShade;
+								shade = SHADE_BLACK;
 
 							sprite->blitNShade(
 									surface,
@@ -899,13 +901,15 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw North Wall
 						if ((sprite = _tile->getSprite(O_NORTHWALL)) != nullptr)
 						{
-							if (_tile->isRevealed(ST_NORTH) == true
-								&& _tile->getMapData(O_NORTHWALL)->isDoor() == true)
+							if (_tile->isRevealed(ST_NORTH) == true)
 							{
-								shade = std::min(_tile->getShade(), SHADE_DOOR);
+								if (_tile->getMapData(O_NORTHWALL)->isDoor() == true)
+									shade = std::min(_tile->getShade(), SHADE_DOOR);
+								else
+									shade = tileShade;
 							}
 							else
-								shade = tileShade;
+								shade = SHADE_BLACK;
 
 							sprite->blitNShade(
 									surface,

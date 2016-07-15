@@ -552,18 +552,16 @@ void Tile::setRevealed(
 {
 	if (_revealed[section] != revealed)
 	{
-		_revealed[section] = revealed;
-
-		if (revealed == true && section == ST_CONTENT)
+		if ((_revealed[section] = revealed) == true
+			&& section == ST_CONTENT)
 		{
-			if (_parts[O_OBJECT] == nullptr
+			if (    _parts[O_OBJECT] == nullptr
 				|| (_parts[O_OBJECT]->getBigwall() & 0x6) == 0) // NeSw, NwSe: Try no-reveal (walls) if content is diag BigWall.
 			{
-				_revealed[ST_WEST] = // if object+floor is revealed set west- & north-walls revealed also.
+				_revealed[ST_WEST]  = // if object+floor is revealed set west- & north-walls revealed also.
 				_revealed[ST_NORTH] = true;
 			}
 		}
-
 		if (_unit != nullptr) _unit->flagCache();
 	}
 }

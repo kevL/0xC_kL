@@ -34,9 +34,9 @@ class ListLoadState
 		public ListGamesState
 {
 	public:
-		/// Creates a ListGames state.
+		/// Creates a ListLoad state.
 		explicit ListLoadState(OptionsOrigin origin);
-		/// Cleans up the ListGames state.
+		/// Cleans up the ListLoad state.
 		~ListLoadState();
 
 		/// Handler for clicking the List.

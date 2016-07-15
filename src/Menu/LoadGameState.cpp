@@ -191,7 +191,7 @@ void LoadGameState::think()
 					Options::baseYResolution = Screen::ORIGINAL_HEIGHT;
 					_game->getScreen()->resetDisplay(false);
 
-					_game->setState(new StatisticsState); // TODO: A way of saving non-Ironman saves for re-viewing post-game statistics.
+					_game->setState(new StatisticsState); // TODO: A way of saving non-Ironman saves for reviewing post-game statistics.
 					break;
 
 				case END_NONE:

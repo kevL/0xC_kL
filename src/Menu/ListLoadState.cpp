@@ -83,17 +83,25 @@ void ListLoadState::lstSavesPress(Action* action)
 					break;
 
 				case OPT_GEOSCAPE:
-					if (_saves[_lstSaves->getSelectedRow()].mode == SM_BATTLESCAPE)
-						fade = true;
-					else
-						fade = false;
+					switch (_saves[_lstSaves->getSelectedRow()].mode)
+					{
+						case SM_BATTLESCAPE:
+							fade = true;
+							break;
+						default:
+							fade = false;
+					}
 					break;
 
 				case OPT_BATTLESCAPE:
-					if (_saves[_lstSaves->getSelectedRow()].mode == SM_GEOSCAPE)
-						fade = true;
-					else
-						fade = false;
+					switch (_saves[_lstSaves->getSelectedRow()].mode)
+					{
+						case SM_GEOSCAPE:
+							fade = true;
+							break;
+						default:
+							fade = false;
+					}
 			}
 			if (fade == true)
 				_game->getResourcePack()->fadeMusic(_game, 1123);
