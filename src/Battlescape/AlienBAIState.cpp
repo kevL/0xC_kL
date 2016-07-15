@@ -39,8 +39,6 @@
 namespace OpenXcom
 {
 
-//bool const kL_bDebug = true;
-
 /**
  * Sets up an AlienBAIState w/ BattleAIState.
  * @param battleSave	- pointer to SavedBattleGame
@@ -1706,13 +1704,13 @@ void AlienBAIState::faceMelee() // private.
  */
 bool AlienBAIState::wayPointAction() // private.
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "AlienBAIState::wayPointAction() id-" << _unit->getId() << " w/ " << _attackAction->weapon->getRules()->getType();
+	if (_traceAI) Log(LOG_INFO) << "";
+	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::wayPointAction() id-" << _unit->getId() << " w/ " << _attackAction->weapon->getRules()->getType();
 	_attackAction->TU = _unit->getActionTu(
 										BA_LAUNCH,
 										_attackAction->weapon);
-	//Log(LOG_INFO) << ". actionTU = " << _attackAction->TU;
-	//Log(LOG_INFO) << ". unitTU = " << _unit->getTimeUnits();
+	if (_traceAI) Log(LOG_INFO) << ". actionTU = " << _attackAction->TU;
+	if (_traceAI) Log(LOG_INFO) << ". unitTU = " << _unit->getTimeUnits();
 
 	if (_attackAction->TU <= _unit->getTimeUnits())
 	{
@@ -1726,21 +1724,21 @@ bool AlienBAIState::wayPointAction() // private.
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			//Log(LOG_INFO) << ". . test Vs unit id-" << (*i)->getId() << " pos " << (*i)->getPosition();
+			if (_traceAI) Log(LOG_INFO) << ". . test Vs unit id-" << (*i)->getId() << " pos " << (*i)->getPosition();
 			if (validTarget(*i, true, true) == true)
 			{
-				//Log(LOG_INFO) << ". . . unit VALID";
+				if (_traceAI) Log(LOG_INFO) << ". . . unit VALID";
 				if (explosiveEfficacy(
 								(*i)->getPosition(),
 								_unit,
 								explRadius,
 								_attackAction->diff) == true)
 				{
-					//Log(LOG_INFO) << ". . . . explEff VALID";
+					if (_traceAI) Log(LOG_INFO) << ". . . . explEff VALID";
 					if (pathWaypoints(*i) == true)
 						targets.push_back(*i);
 				}
-				//else Log(LOG_INFO) << ". . . . explEff invalid";
+				else if (_traceAI) Log(LOG_INFO) << ". . . . explEff invalid";
 
 				_pf->abortPath();
 			}
@@ -1779,9 +1777,9 @@ bool AlienBAIState::wayPointAction() // private.
  */
 bool AlienBAIState::pathWaypoints(const BattleUnit* const unit) // private.
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "AlienBAIState::pathWaypoints() vs id-" << unit->getId() << " pos " << unit->getPosition();
-	//Log(LOG_INFO) << ". actor id-" << _unit->getId() << " pos " << _unit->getPosition();
+	if (_traceAI) Log(LOG_INFO) << "";
+	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::pathWaypoints() vs id-" << unit->getId() << " pos " << unit->getPosition();
+	if (_traceAI) Log(LOG_INFO) << ". actor id-" << _unit->getId() << " pos " << _unit->getPosition();
 
 	_pf->setPathingUnit(_unit);
 	_pf->calculatePath(
@@ -1811,11 +1809,11 @@ bool AlienBAIState::pathWaypoints(const BattleUnit* const unit) // private.
 			}
 			// dir changed:
 			_attackAction->waypoints.push_back(pos); // place wp. Auto-explodes at last wp. Or when it hits anything, lulz.
-			//Log(LOG_INFO) << ". . place WP " << pos;
+			if (_traceAI) Log(LOG_INFO) << ". . place WP " << pos;
 		}
 
 		// pathing done & wp's have been positioned:
-		//Log(LOG_INFO) << ". . qty WP's = " << _attackAction->waypoints.size() << " / max WP's = " << _attackAction->weapon->getRules()->isWaypoints();
+		if (_traceAI) Log(LOG_INFO) << ". . qty WP's = " << _attackAction->waypoints.size() << " / max WP's = " << _attackAction->weapon->getRules()->isWaypoints();
 		if (_attackAction->waypoints.size() != 0u)
 		{
 			int wp (_attackAction->weapon->getRules()->isWaypoints()
@@ -1824,15 +1822,14 @@ bool AlienBAIState::pathWaypoints(const BattleUnit* const unit) // private.
 			if (wp < 1) wp = 1;
 			if (static_cast<int>(_attackAction->waypoints.size()) <= wp)
 			{
-				//Log(LOG_INFO) << ". path valid, ret TRUE";
+				if (_traceAI) Log(LOG_INFO) << ". . . path valid, ret TRUE";
 				return true;
 			}
+			if (_traceAI) Log(LOG_INFO) << ". . too many WP's !!";
 		}
-		//Log(LOG_INFO) << ". . too many WP's !!";
 	}
 
-	//Log(LOG_INFO) << ". path or WP's invalid, ret FALSE";
-	//Log(LOG_INFO) << "";
+	if (_traceAI) Log(LOG_INFO) << ". path or WP's invalid, ret FALSE";
 	return false;
 }
 

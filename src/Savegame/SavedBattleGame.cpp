@@ -1133,69 +1133,67 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 		_selectedUnit->dontReselect();
 
 
-	std::vector<BattleUnit*>::const_iterator
-		iterFirst,
-		iterLast,
-		iterUnit;
-
 	std::vector<BattleUnit*>* units;
-	if (_shuffleUnits.empty() == true // < needed for Base/craft Equip.
+	if (_shuffleUnits.empty() == true // <- for Base/Craft equip screen.
 		|| _shuffleUnits[0u] == nullptr)
 	{
 		units = &_units;
 	}
-	else // non-player turn Use shuffledUnits. See endFactionTurn() ....
+	else // non-player turn: Use shuffledUnits. See endFactionTurn() ....
 		units = &_shuffleUnits;
 
-	if (dir > 0)
+	std::vector<BattleUnit*>::const_iterator
+		iterFirst,
+		iterLast,
+		iterNext;
+
+	switch (dir)
 	{
-		iterFirst = units->begin();
-		iterLast = units->end() - 1;
-	}
-	else
-	{
-		iterFirst = units->end() - 1;
-		iterLast = units->begin();
+		case +1:
+			iterFirst = units->begin();
+			iterLast  = units->end() - 1;
+			break;
+
+		case -1:
+			iterFirst = units->end() - 1;
+			iterLast  = units->begin();
 	}
 
-	iterUnit = std::find(
+	iterNext = std::find(
 					units->begin(),
 					units->end(),
 					_selectedUnit);
 	do
 	{
-		if (iterUnit != units->end())
+		if (iterNext != units->end())
 		{
-			if (iterUnit != iterLast)
-				iterUnit += dir;
+			if (iterNext != iterLast)
+				iterNext += dir;
 			else
-				iterUnit = iterFirst;
+				iterNext = iterFirst;
 
-			if (*iterUnit == _selectedUnit)
+			if (*iterNext == _selectedUnit) // iter returned to itself
 			{
-				if (checkReselect == true
-					&& _selectedUnit->reselectAllowed() == false)
-				{
+				if (checkReselect == true && _selectedUnit->reselectAllowed() == false)
 					_selectedUnit = nullptr;
-				}
 
 				return _selectedUnit;
 			}
-			else if (_selectedUnit == nullptr
-				&& iterUnit == iterFirst)
+			else if (_selectedUnit == nullptr // no units can be selected
+				&& iterNext == iterFirst)
 			{
 				return nullptr;
 			}
 		}
 		else
-			iterUnit = iterFirst;
+			iterNext = iterFirst;
 	}
-	while ((*iterUnit)->isSelectable(
+	while ((*iterNext)->isSelectable(
 								_side,
 								checkReselect,
 								checkInventory) == false);
 
-	return (_selectedUnit = *iterUnit);
+	return (_selectedUnit = *iterNext);
 }
 
 /**
@@ -1381,6 +1379,7 @@ bool SavedBattleGame::endFactionTurn()
 			}
 		}
 	}
+
 
 	// ** _side HAS ADVANCED to next faction after here!!! ** //
 

@@ -756,7 +756,7 @@ void ProjectileFlyBState::think()
 //						->hasNoFloor(_battleSave->getTile(_unit->getPosition() + Position(0,0,-1))) == false)
 //				|| _unit->getMoveTypeUnit() == MT_FLY))
 		{
-			createProjectile();
+			createProjectile(); // autoshot.
 		}
 		else // think() FINISH.
 		{
@@ -821,10 +821,12 @@ void ProjectileFlyBState::think()
 				case BA_PSICONTROL:
 					break;
 
+				case BA_LAUNCH:
+					if (_prjImpact == VOXEL_EMPTY) break;
+					// no break;
 				case BA_SNAPSHOT:
 				case BA_AUTOSHOT:
 				case BA_AIMEDSHOT:
-				case BA_LAUNCH:
 					_load->spendBullet(
 									*_battleSave,
 									*_action.weapon);
@@ -970,8 +972,8 @@ void ProjectileFlyBState::think()
 						Tile* const tileTrue (_parent->getBattlescapeState()->getSavedBattleGame()->getTile(pos));
 						_parent->getTileEngine()->setTrueTile(tileTrue);
 
-						explVoxel.x -= _prjVector.x << 4; // note there is no safety on these for OoB.
-						explVoxel.y -= _prjVector.y << 4;
+						explVoxel.x -= _prjVector.x << 4u; // note there is no safety on these for OoB.
+						explVoxel.y -= _prjVector.y << 4u;
 					}
 					else
 						_parent->getTileEngine()->setTrueTile();

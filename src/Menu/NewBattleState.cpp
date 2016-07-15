@@ -278,7 +278,7 @@ void NewBattleState::configLoad(const std::string& file)
 			if (doc["rng"] && Options::reSeedOnLoad == false)
 				RNG::setSeed(doc["rng"].as<uint64_t>());
 			else
-				RNG::setSeed(0u);
+				RNG::setSeed();
 
 			if (doc["base"])
 			{
@@ -364,7 +364,7 @@ void NewBattleState::configSave(const std::string& file)
  */
 void NewBattleState::configCreate()
 {
-	RNG::setSeed(0u);
+	RNG::setSeed();
 
 	SavedGame* const gameSave (new SavedGame(_rules));
 	_game->setSavedGame(gameSave);
@@ -653,9 +653,9 @@ void NewBattleState::btnCancelClick(Action*)
  */
 void NewBattleState::btnRandClick(Action*)
 {
-//	configCreate();		// <- Do NOT reset Soldiers/Craft/etc (the Base) here.
-	RNG::setSeed(0u);	// TODO: Add buttons to run configCreate() and/or to reset RNG-seed.
-						// else do it the old-fashioned way and delete 'battle.cfg' ...
+//	configCreate();	// <- Do NOT reset Soldiers/Craft/etc (the Base) here.
+	RNG::setSeed();	// TODO: Add buttons to run configCreate() and/or to reset RNG-seed.
+					// else do it the old-fashioned way and delete 'battle.cfg' ...
 
 	_cbxMission->setSelected(RNG::pick(_missionTypes.size()));
 	cbxMissionChange(nullptr);

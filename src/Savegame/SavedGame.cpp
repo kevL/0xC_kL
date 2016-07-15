@@ -430,7 +430,7 @@ void SavedGame::load(
 	}
 	else
 	{
-		RNG::setSeed(0u);
+		RNG::setSeed();
 		//Log(LOG_INFO) << ". reSeed x= " << RNG::getSeed();
 	}
 

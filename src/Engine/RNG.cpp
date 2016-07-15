@@ -32,6 +32,18 @@ namespace OpenXcom
 namespace RNG
 {
 
+static uint64_t
+	x, // internal RNG
+	y; // external RNG
+// Note: 'internal' means the state is saved to file. 'external' will be used
+// for throwaway values such as animation states. The idea is to preserve the
+// internal RNG so that it will reproduce predictable results for testing or
+// debugging and so it cannot be subject to user-induced temporal anomalies
+// (such as the duration between mouse-clicks). Be aware that this is
+// problematic on the Geoscape, since timed-events there will access the
+// internal RNG.
+
+
 /*	Written in 2014 by Sebastiano Vigna (vigna@acm.org)
 
 To the extent possible under law, the author has dedicated all copyright
@@ -44,27 +56,15 @@ See <http://creativecommons.org/publicdomain/zero/1.0/>. */
 	we rather suggest to use a xorshift128+ (for maximum speed) or
 	xorshift1024* (for speed and very long period) generator. */
 
-
-static uint64_t
-	x, // internal RNG
-	y; // external RNG
-// Note: 'internal' means the state is saved to file. 'external' will be used
-// for throwaway values such as animation states. The idea is to preserve the
-// internal RNG so that it will reproduce predictable results for testing or
-// debugging and so it cannot be subject to user-induced temporal anomalies
-// (such as the duration between mouse-clicks). Be aware that this is
-// problematic on the Geoscape, since events there will access the internal RNG.
-
-
 /**
  * Advances the internal RNG.
  * @return, next integer
  */
 uint64_t next_x()
 {
-	x ^= x >> 12u; // a
-	x ^= x << 25u; // b
-	x ^= x >> 27u; // c
+	x ^= x >> 12; // a
+	x ^= x << 25; // b
+	x ^= x >> 27; // c
 
 	//uLL = 18446744073709551615 Max
 	//Log(LOG_INFO) << "RNG x = " << x;
@@ -80,9 +80,9 @@ uint64_t next_x()
  */
 uint64_t next_y()
 {
-	y ^= y >> 12u; // a
-	y ^= y << 25u; // b
-	y ^= y >> 27u; // c
+	y ^= y >> 12; // a
+	y ^= y << 25; // b
+	y ^= y >> 27; // c
 
 	//Log(LOG_INFO) << "RNG y = " << y;
 	return y * 2685821657736338717uLL;
@@ -106,11 +106,14 @@ void setSeed(uint64_t seed)
 {
 	y = static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count());
 
-	if (seed == 0uLL)
-		x = y + 1uLL; // nudge x so it's out of sync w/ y.
-	else
-		x = seed;
-
+	switch (seed)
+	{
+		case 0uLL:
+			x = y + 1uLL; // nudge x so it's out of sync w/ y.
+			break;
+		default:
+			x = seed;
+	}
 	//Log(LOG_INFO) << "SET x = " << x;
 }
 
@@ -263,7 +266,8 @@ double boxMuller(double deviation)
 
 /**
  * Decides whether a percentage chance happens successfully.
- * @param valPct - value as a percentage (accepts values less than 0 or greater than 100)
+ * @note Accepts input-values less than 0 or greater than 100.
+ * @param valPct - value as a percentage
  * @return, true if succeeded
  */
 bool percent(int valPct)

@@ -42,7 +42,7 @@ uint64_t next_y();
 /// Gets the internal seed in use.
 uint64_t getSeed();
 /// Sets the internal/external seed(s) in use.
-void setSeed(uint64_t seed = 0u);
+void setSeed(uint64_t seed = 0uLL);
 
 /// Generates an integer, inclusive.
 int generate(
@@ -78,7 +78,7 @@ size_t pick(
 
 /**
  * Shuffles elements in an STL container.
- * @note Based on std::random_shuffle() using the internal RNG.
+ * @note This probably does one unnecessary extra loop.
  * @param first	- RAI to first element (random access iterator)
  * @param last	- RAI to last element (random access iterator)
  */
@@ -87,14 +87,17 @@ void shuffle(
 		iter first,
 		iter last)
 {
-    for (std::ptrdiff_t
-			i = last - first - 1;
-			i > 0;
-			--i)
+	std::ptrdiff_t r;
+	const std::ptrdiff_t delta (last - first);
+	for (std::ptrdiff_t
+			i = 0;
+			i < delta; // NOTE: Could likely get away with (delta-1)
+			++i)
 	{
+		r = static_cast<std::ptrdiff_t>(next_x() % static_cast<uint64_t>(delta - i) + static_cast<uint64_t>(i));
 		std::swap(
 				first[i],
-				first[static_cast<std::ptrdiff_t>(next_x()) % (i + 1)]);
+				first[r]);
 	}
 }
 

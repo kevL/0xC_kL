@@ -1123,7 +1123,7 @@ T* Ruleset::loadRule( // protected.
 SavedGame* Ruleset::createSave(Game* const game) const
 {
 	//Log(LOG_INFO) << "Ruleset::createSave()";
-	RNG::setSeed(0u);
+	RNG::setSeed();
 
 	SavedGame* const gameSave (new SavedGame(this));
 	game->setSavedGame(gameSave);
