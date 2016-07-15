@@ -603,7 +603,7 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 													false);
 								trjLength = trj.size();
 
-								if (blockType == VOXEL_FLOOR) // NOTE: Not really a floor here, just a return-value.
+								if (blockType == TRJ_DECREASE) // NOTE: Not a voxel-type here, just a return-value.
 									--trjLength;
 
 								for (size_t
@@ -4923,7 +4923,7 @@ bool TileEngine::closeSlideDoors() const
 	return ret;
 }
 
-/** NEW CODE (based on karadoc's)
+/**
  * Calculates a line trajectory using bresenham algorithm in 3D.
  * @note Accuracy is NOT considered; this is a true path/trajectory.
  * @param origin		- reference to the origin (voxel-space for 'doVoxelCheck'; tile-space otherwise)
@@ -4931,7 +4931,7 @@ bool TileEngine::closeSlideDoors() const
  * @param storeTrj		- true will store the whole trajectory; otherwise only the last position gets stored
  * @param trj			- pointer to a vector of Positions in which the trajectory will be stored
  * @param excludeUnit	- pointer to a BattleUnit to be excluded from collision detection
- * @param doVoxelCheck	- true to check against a voxel; false to check tile blocking for FoV
+ * @param doVoxelCheck	- true to check against a voxel; false to check tile-blocking for FoV
  *						  (true for unit visibility and LoS/LoF; false for terrain visibility) (default true)
  * @param onlyVisible	- true to skip invisible units (default false) [used in FPS view]
  * @param excludeAllBut	- pointer to a unit that's to be considered exclusively for targeting (default nullptr)
@@ -4940,7 +4940,7 @@ bool TileEngine::closeSlideDoors() const
  *			0-3 tile-part
  *			  4 unit
  *			  5 out-of-map
- *		   +/-1 special case for calcFov() to remove or not the last tile in the trajectory
+ *		    6/7 special cases for calcFov() to remove or not the last tile in the trajectory
  * VOXEL_EMPTY			// -1
  * VOXEL_FLOOR			//  0
  * VOXEL_WESTWALL		//  1
@@ -4948,7 +4948,9 @@ bool TileEngine::closeSlideDoors() const
  * VOXEL_OBJECT			//  3
  * VOXEL_UNIT			//  4
  * VOXEL_OUTOFBOUNDS	//  5
- *
+ * TRJ_STANDARD			//  6
+ * TRJ_DECREASE			//  7
+ */
 VoxelType TileEngine::plotLine(
 		const Position& origin,
 		const Position& target,
@@ -4961,15 +4963,24 @@ VoxelType TileEngine::plotLine(
 {
 	//if (_debug) Log(LOG_INFO) << "TileEngine::plotLine()";
 	VoxelType voxelType;
+
 	int
 		x,x0,x1,
 		y,y0,y1,
 		z,z0,z1,
 
+		drift_xy,
+		drift_xz,
+
+		cx,cy,cz,
+
 		horiBlock,
 		vertBlock;
 
-	Position posLast (origin);
+	Position posStart (origin); // for FoV only ->
+	Tile
+		* tileStart,
+		* tileStop;
 
 	x0 = origin.x; // start & end points
 	x1 = target.x;
@@ -4994,17 +5005,6 @@ VoxelType TileEngine::plotLine(
 		std::swap(x1,z1);
 	}
 
-	const bool swap_yz (std::abs(z1 - z0) > std::abs(y1 - y0)); // step y/z plane, make sure delta-y is bigger than delta-z
-	if (swap_yz == true)
-	{
-		std::swap(y0, z0);
-		std::swap(y1, z1);
-	}
-
-	const int& cx (swap_xy ? (swap_yz ? z : y) : (swap_xz ? z : x)); // set references to the true values
-	const int& cy (swap_xy ? (swap_xz ? z : x) : (swap_yz ? z : y)); // as opposed to the swapped values
-	const int& cz (swap_xz ?                x  : (swap_yz ? y : z));
-
 	const int
 		delta_x (std::abs(x1 - x0)), // delta is length in each plane
 		delta_y (std::abs(y1 - y0)),
@@ -5014,16 +5014,20 @@ VoxelType TileEngine::plotLine(
 		step_y ((y0 > y1) ? -1 : 1),
 		step_z ((z0 > z1) ? -1 : 1);
 
-	int
-		drift_xy (delta_x >> 1u),	// drift controls when to step in shallow planes
-		drift_xz (drift_xy);		// starting value keeps line centered
+	drift_xy =					// drift controls when to step in shallow planes
+	drift_xz = (delta_x >> 1u);	// starting value keeps line centered
 
-	x = x0; y = y0; z = z0;			// starting point
+	x = x0; y = y0; z = z0;		// starting point
 	for (
-			;						// step through longest delta that has been swapped to x-axis
+			;					// step through longest delta that has been swapped to x-axis
 			x != x1 + step_x;
 			x += step_x)
 	{
+		cx = x; cy = y; cz = z;					// copy x/y/z
+
+		if (swap_xz == true) std::swap(cx,cz);	// unswap - in reverse
+		if (swap_xy == true) std::swap(cx,cy);
+
 		if (storeTrj == true) // && trj != nullptr)
 			trj->push_back(Position(cx,cy,cz));
 
@@ -5039,51 +5043,51 @@ VoxelType TileEngine::plotLine(
 			if (voxelType != VOXEL_EMPTY) // hit.
 			{
 				//if (_debug) Log(LOG_INFO) << "pL() ret[1] " << MapData::debugVoxelType(voxelType) << " vs"
-				//						    << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+				//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
-//				if (trj != nullptr)
-				trj->push_back(Position(cx,cy,cz));	// store the position of impact
-													// NOTE: This stores the final position twice if storeTrj=TRUE.
-				return voxelType;					// Cf. plotParabola() where that is explicitly not done.
+//				if (trj != nullptr)					// store the position of impact
+				trj->push_back(Position(cx,cy,cz));	// NOTE: This stores the final position twice if storeTrj=TRUE.
+													// Cf. plotParabola() where that is explicitly not done.
+				return voxelType;
 			}
 		}
 		else // for Terrain visibility, ie. FoV / Fog of War.
 		{
-			Tile
-				* const tileStart (_battleSave->getTile(posLast)),
-				* const tileDest  (_battleSave->getTile(Position(cx,cy,cz)));
+			tileStart = _battleSave->getTile(posStart);
+			tileStop  = _battleSave->getTile(posStart = Position(cx,cy,cz));
 
-			//if (_debug) Log(LOG_INFO) << "pL() tileStart" << posLast << " tileDest" << Position(cx,cy,cz);
+			//if (_debug) Log(LOG_INFO) << "pL() tileStart" << posStart << " tileStop" << Position(cx,cy,cz);
 			horiBlock = horizontalBlockage(
 									tileStart,
-									tileDest,
+									tileStop,
 									DT_NONE);
 			vertBlock = verticalBlockage(
 									tileStart,
-									tileDest,
+									tileStop,
 									DT_NONE);
 			//if (_debug) {
 			//	Log(LOG_INFO) << ". horiBlock= " << horiBlock;
 			//	Log(LOG_INFO) << ". vertBlock= " << vertBlock; }
 
-			// TODO: These returns should be mapped to something more meaningful before
-			// it's passed back to calcFov() (which is the only call that uses this bit).
 			if (horiBlock < 0) // hit object-part
 			{
-				if (vertBlock < 1) return VOXEL_EMPTY; // -1
+				if (vertBlock < 1) return TRJ_STANDARD;
 				horiBlock = 0;
 			}
-
-			if (horiBlock + vertBlock != 0) return VOXEL_FLOOR; // 0
-
-			posLast = Position(cx,cy,cz);
+			if (horiBlock + vertBlock != 0) return TRJ_DECREASE;
 		}
 
 		if ((drift_xy -= delta_y) < 0) // step along y-axis
 		{
 			y += step_y;
-			if (doVoxelCheck == true) // check for x/y diagonal intermediate voxel step for Unit visibility
+
+			if (doVoxelCheck == true) // check for xy diagonal intermediate voxel step, for Unit visibility
 			{
+				cx = x; cy = y; cz = z;					// copy x/y/z
+
+				if (swap_xz == true) std::swap(cx,cz);
+				if (swap_xy == true) std::swap(cx,cy);
+
 				voxelType = voxelCheck(
 									Position(cx,cy,cz),
 									excludeUnit,
@@ -5094,7 +5098,7 @@ VoxelType TileEngine::plotLine(
 				if (voxelType != VOXEL_EMPTY)
 				{
 					//if (_debug) Log(LOG_INFO) << "pL() ret[2] " << MapData::debugVoxelType(voxelType) << " vs"
-					//						    << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
 //					if (trj != nullptr)
 					trj->push_back(Position(cx,cy,cz)); // store the position of impact
@@ -5108,8 +5112,14 @@ VoxelType TileEngine::plotLine(
 		if ((drift_xz -= delta_z) < 0) // step along z-axis
 		{
 			z += step_z;
+
 			if (doVoxelCheck == true) // check for x/z diagonal intermediate voxel step
 			{
+				cx = x; cy = y; cz = z;					// copy x/y/z
+
+				if (swap_xz == true) std::swap(cx,cz);
+				if (swap_xy == true) std::swap(cx,cy);
+
 				voxelType = voxelCheck(
 									Position(cx,cy,cz),
 									excludeUnit,
@@ -5120,7 +5130,7 @@ VoxelType TileEngine::plotLine(
 				if (voxelType != VOXEL_EMPTY)
 				{
 					//if (_debug) Log(LOG_INFO) << "pL() ret[3] " << MapData::debugVoxelType(voxelType) << " vs"
-					//						    << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
 //					if (trj != nullptr)
 					trj->push_back(Position(cx,cy,cz));	// store the position of impact
@@ -5129,234 +5139,6 @@ VoxelType TileEngine::plotLine(
 				}
 			}
 			drift_xz += delta_x;
-		}
-	}
-
-	//if (_debug) Log(LOG_INFO) << "ret VOXEL_EMPTY";
-	return VOXEL_EMPTY;
-} */
-/** OLD CODE
- * Calculates a line trajectory using bresenham algorithm in 3D.
- * @note Accuracy is NOT considered; this is a true path/trajectory.
- * @param origin		- reference to the origin (voxel-space for 'doVoxelCheck'; tile-space otherwise)
- * @param target		- reference to the target (voxel-space for 'doVoxelCheck'; tile-space otherwise)
- * @param storeTrj		- true will store the whole trajectory; otherwise only the last position gets stored
- * @param trj			- pointer to a vector of Positions in which the trajectory will be stored
- * @param excludeUnit	- pointer to a BattleUnit to be excluded from collision detection
- * @param doVoxelCheck	- true to check against a voxel; false to check tile blocking for FoV
- *						  (true for unit visibility and LoS/LoF; false for terrain visibility) (default true)
- * @param onlyVisible	- true to skip invisible units (default false) [used in FPS view]
- * @param excludeAllBut	- pointer to a unit that's to be considered exclusively for targeting (default nullptr)
- * @return, VoxelType (MapData.h)
- *			 -1 hit nothing
- *			0-3 tile-part
- *			  4 unit
- *			  5 out-of-map
- *		   +/-1 special case for calcFov() to remove or not the last tile in the trajectory
- * VOXEL_EMPTY			// -1
- * VOXEL_FLOOR			//  0
- * VOXEL_WESTWALL		//  1
- * VOXEL_NORTHWALL		//  2
- * VOXEL_OBJECT			//  3
- * VOXEL_UNIT			//  4
- * VOXEL_OUTOFBOUNDS	//  5
- */
-VoxelType TileEngine::plotLine(
-		const Position& origin,
-		const Position& target,
-		const bool storeTrj,
-		std::vector<Position>* const trj,
-		const BattleUnit* const excludeUnit,
-		const bool doVoxelCheck, // false is used only for calcFov()
-		const bool onlyVisible,
-		const BattleUnit* const excludeAllBut) const
-{
-	//if (_debug) Log(LOG_INFO) << "TileEngine::plotLine()";
-	VoxelType voxelTest;
-	bool
-		swap_xy,
-		swap_xz;
-	int
-		x,x0,x1, delta_x, step_x,
-		y,y0,y1, delta_y, step_y,
-		z,z0,z1, delta_z, step_z,
-
-		drift_xy,
-		drift_xz,
-
-		cx,cy,cz,
-
-		horiBlock,
-		vertBlock;
-
-	Position posLast (origin);
-
-
-	x0 = origin.x; // start & end points
-	x1 = target.x;
-
-	y0 = origin.y;
-	y1 = target.y;
-
-	z0 = origin.z;
-	z1 = target.z;
-
-	swap_xy = std::abs(y1 - y0) > std::abs(x1 - x0); // 'steep' xy Line, make longest delta x plane
-	if (swap_xy == true)
-	{
-		std::swap(x0,y0);
-		std::swap(x1,y1);
-	}
-
-	swap_xz = std::abs(z1 - z0) > std::abs(x1 - x0); // do same for xz
-	if (swap_xz == true)
-	{
-		std::swap(x0,z0);
-		std::swap(x1,z1);
-	}
-
-	delta_x = std::abs(x1 - x0); // delta is Length in each plane
-	delta_y = std::abs(y1 - y0);
-	delta_z = std::abs(z1 - z0);
-
-	drift_xy =				// drift controls when to step in 'shallow' planes;
-	drift_xz = delta_x / 2;	// starting value keeps Line centered
-
-	step_x =				// direction of Line
-	step_y = step_z = 1;
-	if (x0 > x1) step_x = -1;
-	if (y0 > y1) step_y = -1;
-	if (z0 > z1) step_z = -1;
-
-	y = y0; // starting point
-	z = z0;
-	for (
-			x = x0; // step through longest delta (which has been swapped to x)
-			x != x1 + step_x;
-			x += step_x)
-	{
-		cx = x; cy = y; cz = z; // copy position
-		if (swap_xz == true) std::swap(cx,cz); // unswap (in reverse)
-		if (swap_xy == true) std::swap(cx,cy);
-
-		if (storeTrj == true) // && trj != nullptr)
-			trj->push_back(Position(cx,cy,cz));
-
-		if (doVoxelCheck == true) // passes through this voxel, for Unit visibility & LoS/LoF
-		{
-			voxelTest = voxelCheck(
-								Position(cx,cy,cz),
-								excludeUnit,
-								false,
-								onlyVisible,
-								excludeAllBut);
-
-			if (voxelTest != VOXEL_EMPTY) // hit.
-			{
-				//if (_debug) Log(LOG_INFO) << "pL() ret[1] " << MapData::debugVoxelType(voxelTest) << " vs"
-				//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
-
-//				if (trj != nullptr)					// store the position of impact
-				trj->push_back(Position(cx,cy,cz));	// NOTE: This stores the final position twice if storeTrj=TRUE.
-													// Cf. plotParabola() where that is explicitly not done.
-				return voxelTest;
-			}
-		}
-		else // for Terrain visibility, ie. FoV / Fog of War.
-		{
-			Tile
-				* const tileStart (_battleSave->getTile(posLast)),
-				* const tileDest (_battleSave->getTile(Position(cx,cy,cz)));
-
-			//if (_debug) Log(LOG_INFO) << "pL() tileStart" << posLast << " tileDest" << Position(cx,cy,cz);
-			horiBlock = horizontalBlockage(
-									tileStart,
-									tileDest,
-									DT_NONE);
-			vertBlock = verticalBlockage(
-									tileStart,
-									tileDest,
-									DT_NONE);
-			//if (_debug) {
-			//	Log(LOG_INFO) << ". horiBlock= " << horiBlock;
-			//	Log(LOG_INFO) << ". vertBlock= " << vertBlock; }
-
-			// TODO: These returns should be mapped to something more meaningful before
-			// it's passed back to calcFov() (which is the only call that uses this bit).
-			if (horiBlock < 0) // hit object-part
-			{
-				if (vertBlock < 1) return VOXEL_EMPTY; // -1
-				horiBlock = 0;
-			}
-
-			if (horiBlock + vertBlock != 0) return VOXEL_FLOOR; // 0
-
-			posLast = Position(cx,cy,cz);
-		}
-
-		drift_xy = drift_xy - delta_y; // update progress in other planes
-		drift_xz = drift_xz - delta_z;
-
-		if (drift_xy < 0) // step in y plane
-		{
-			y = y + step_y;
-			drift_xy = drift_xy + delta_x;
-
-			if (doVoxelCheck == true) // check for xy diagonal intermediate voxel step, for Unit visibility
-			{
-				cx = x; cy = y; cz = z;
-				if (swap_xz == true) std::swap(cx,cz);
-				if (swap_xy == true) std::swap(cx,cy);
-
-				voxelTest = voxelCheck(
-									Position(cx,cy,cz),
-									excludeUnit,
-									false,
-									onlyVisible,
-									excludeAllBut);
-
-				if (voxelTest != VOXEL_EMPTY)
-				{
-					//if (_debug) Log(LOG_INFO) << "pL() ret[2] " << MapData::debugVoxelType(voxelTest) << " vs"
-					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
-
-//					if (trj != nullptr)
-					trj->push_back(Position(cx,cy,cz)); // store the position of impact
-
-					return voxelTest;
-				}
-			}
-		}
-
-		if (drift_xz < 0) // same in z
-		{
-			z = z + step_z;
-			drift_xz = drift_xz + delta_x;
-
-			if (doVoxelCheck == true) // check for xz diagonal intermediate voxel step
-			{
-				cx = x; cy = y; cz = z;
-				if (swap_xz == true) std::swap(cx,cz);
-				if (swap_xy == true) std::swap(cx,cy);
-
-				voxelTest = voxelCheck(
-									Position(cx,cy,cz),
-									excludeUnit,
-									false,
-									onlyVisible,
-									excludeAllBut);
-
-				if (voxelTest != VOXEL_EMPTY)
-				{
-					//if (_debug) Log(LOG_INFO) << "pL() ret[3] " << MapData::debugVoxelType(voxelTest) << " vs"
-					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
-
-//					if (trj != nullptr)
-					trj->push_back(Position(cx,cy,cz));	// store the position of impact
-
-					return voxelTest;
-				}
-			}
 		}
 	}
 

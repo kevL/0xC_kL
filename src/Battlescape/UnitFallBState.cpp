@@ -47,7 +47,7 @@ namespace OpenXcom
 UnitFallBState::UnitFallBState(BattlescapeGame* const parent)
 	:
 		BattleState(parent),
-		_terrain(parent->getTileEngine()),
+		_te(parent->getTileEngine()),
 		_battleSave(parent->getBattleSave())
 {}
 
@@ -433,14 +433,14 @@ void UnitFallBState::think()
 //													*i);
 					}
 
-					_terrain->calculateUnitLighting();
+					_te->calculateUnitLighting();
 
 					(*i)->flagCache();
 					_parent->getMap()->cacheUnit(*i);
 
 					if ((*i)->getFaction() == FACTION_PLAYER)
-						_terrain->calcFovTiles(*i);
-					_terrain->calcFovUnits_pos((*i)->getPosition(), true);
+						_te->calcFovTiles(*i);
+					_te->calcFovUnits_pos((*i)->getPosition(), true);
 
 					_parent->checkProxyGrenades(*i);
 					// kL_add: Put checkForSilacoid() here!

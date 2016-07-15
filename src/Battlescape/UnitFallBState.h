@@ -48,7 +48,7 @@ private:
 	std::vector<Tile*> _tilesToFallInto;
 
 	SavedBattleGame* _battleSave;
-	TileEngine* _terrain;
+	TileEngine* _te;
 
 
 	public:

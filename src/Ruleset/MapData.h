@@ -42,7 +42,9 @@ enum VoxelType
 	VOXEL_NORTHWALL,	//  2
 	VOXEL_OBJECT,		//  3
 	VOXEL_UNIT,			//  4
-	VOXEL_OUTOFBOUNDS	//  5
+	VOXEL_OUTOFBOUNDS,	//  5
+	TRJ_STANDARD,		//  6 - special case for TileEngine::calcFovTiles() only.
+	TRJ_DECREASE		//  7 - special case for TileEngine::calcFovTiles() only.
 };
 
 enum MapDataType
