@@ -1,17 +1,17 @@
-// ****************************************************************************
-// * This file is part of the HqMAME project. It is distributed under         *
-// * GNU General Public License: http://www.gnu.org/licenses/gpl.html         *
-// * Copyright (C) Zenju (zenju AT gmx DOT de) - All Rights Reserved          *
-// *                                                                          *
-// * Additionally and as a special exception, the author gives permission     *
-// * to link the code of this program with the MAME library (or with modified *
-// * versions of MAME that use the same license as MAME), and distribute      *
-// * linked combinations including the two. You must obey the GNU General     *
-// * Public License in all respects for all of the code used other than MAME. *
-// * If you modify this file, you may extend this exception to your version   *
-// * of the file, but you are not obligated to do so. If you do not wish to   *
-// * do so, delete this exception statement from your version.                *
-// ****************************************************************************
+// ******************************************************************************
+// * This file is part of the HqMAME project. It is distributed under			*
+// * GNU General Public License: http://www.gnu.org/licenses/gpl.html			*
+// * Copyright (C) Zenju (zenju AT gmx DOT de) - All Rights Reserved			*
+// *																			*
+// * Additionally and as a special exception, the author gives permission		*
+// * to link the code of this program with the MAME library (or with modified	*
+// * versions of MAME that use the same license as MAME), and distribute		*
+// * linked combinations including the two. You must obey the GNU General		*
+// * Public License in all respects for all of the code used other than MAME.	*
+// * If you modify this file, you may extend this exception to your version		*
+// * of the file, but you are not obligated to do so. If you do not wish to		*
+// * do so, delete this exception statement from your version.					*
+// ******************************************************************************
 
 #ifndef XBRZ_HEADER_3847894708239054
 #define XBRZ_HEADER_3847894708239054
@@ -54,7 +54,7 @@ http://board.byuu.org/viewtopic.php?f=10&t=2248
 
 THREAD-SAFETY: - parts of the same image may be scaled by multiple threads as
 				 long as the [yFirst, yLast) ranges do not overlap!
-               - there is a minor inefficiency for the first row of a slice, so
+			   - there is a minor inefficiency for the first row of a slice, so
 				 avoid processing single rows only.
 */
 
