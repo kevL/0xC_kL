@@ -7,12 +7,11 @@
 // '--preprocessor=i686-w64-mingw32-gcc.exe' ... ps. I tried using --include-dir(s)
 // but that didn't work.
 
-// not work: _DEBUG .... always uses the '_r' string
-//#ifdef _DEBUG
-//#	define RC_FILE "0xC_kL_d.exe\0"
-//#else
+#ifdef _DEBUG
+#	define RC_FILE "0xC_kL_d.exe\0"
+#else
 #	define RC_FILE "0xC_kL_r.exe\0"
-//#endif
+#endif
 
 #define RC_DESC "0xC_kL\0"
 
@@ -45,7 +44,7 @@ BEGIN
 			VALUE "OriginalFilename", RC_FILE
 			VALUE "ProductName",      RC_DESC
 			VALUE "ProductVersion",   "1.0.0.kL\0" //OPENXCOM_VERSION_LONG
-			VALUE "Comments",         "kevL build MinGW-w64 32bit\0"
+			VALUE "Comments",         "kevL build MinGW-w64 5.4 32bit\0"
 		END
 	END
 

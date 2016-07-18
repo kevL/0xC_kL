@@ -19,7 +19,7 @@
 
 #include "Polyline.h"
 
-#include <cmath>
+#include "../fmath.h"
 
 
 namespace OpenXcom

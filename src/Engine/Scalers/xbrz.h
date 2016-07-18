@@ -16,8 +16,8 @@
 #ifndef XBRZ_HEADER_3847894708239054
 #define XBRZ_HEADER_3847894708239054
 
-//#include <cstddef>	// size_t
-//#include <stdint.h>	// uint32_t (includes 'size_t')
+#include <cstddef>		// size_t
+//#include <stdint.h>	// uint32_t
 #include <cstdint>
 #include <limits>
 
@@ -58,6 +58,7 @@ THREAD-SAFETY: - parts of the same image may be scaled by multiple threads as
 				 avoid processing single rows only.
 */
 
+//
 void scale(
 		size_t factor, // valid range: 2 - 5
 		const uint32_t* src,
@@ -68,6 +69,7 @@ void scale(
 		int yFirst = 0,
 		int yLast = std::numeric_limits<int>::max()); // slice of source image
 
+//
 void nearestNeighborScale(
 		const uint32_t* src,
 		int srcWidth,
@@ -82,6 +84,7 @@ enum SliceType
 	NN_SCALE_SLICE_TARGET,
 };
 
+//
 void nearestNeighborScale(
 		const uint32_t* src,
 		int srcWidth,

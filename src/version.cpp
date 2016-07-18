@@ -51,20 +51,20 @@ namespace Version
  */
 std::string timeStamp()
 {
-	time_t timeOut = std::time(nullptr);
-	const struct tm* const timeInfo = std::localtime(&timeOut);
+	time_t timeOut (std::time(nullptr));
+	const struct tm* const timeInfo (std::localtime(&timeOut));
 
-	char verDate[7];
+	char verDate[7u];
 	std::strftime(
 				verDate,
-				7,
+				7u,
 				"%y%m%d",
 				timeInfo);
 
-	char verTime[7];
+	char verTime[7u];
 	std::strftime(
 				verTime,
-				7,
+				7u,
 				"%H%M%S",
 				timeInfo);
 
@@ -75,7 +75,7 @@ std::string timeStamp()
 }
 
 /**
- * Gets version as a time string.
+ * Gets version as a time-string.
  * @note This is the (local) compile-time date & time.
  * @param built - true to add "built" preface (default true)
  * @return, current build date of executable
@@ -95,21 +95,20 @@ std::string getBuildDate(bool built)
 
 #ifdef _WIN32
 	TIME_ZONE_INFORMATION tziTest;
-	const DWORD dwRet = GetTimeZoneInformation(&tziTest);
+	const DWORD dwRet (GetTimeZoneInformation(&tziTest));
 	if (dwRet == TIME_ZONE_ID_DAYLIGHT)
 		tz = " MDT"; // wprintf(L"%s\n", tziTest.DaylightName);
-	else if (dwRet == TIME_ZONE_ID_STANDARD
-		|| dwRet == TIME_ZONE_ID_UNKNOWN)
+	else if (dwRet == TIME_ZONE_ID_STANDARD || dwRet == TIME_ZONE_ID_UNKNOWN)
 		tz = " MST"; // wprintf(L"%s\n", tziTest.StandardName);
 //	else printf("GTZI failed (%d)\n", GetLastError());
 #endif
 
 	oststr << __DATE__ << " " << __TIME__ << tz;
-	std::string st = oststr.str();
+	std::string st (oststr.str());
 
-	const size_t pos = st.find("  "); // remove possible double-space between month & single-digit days
+	const size_t pos (st.find("  ")); // remove possible double-space between month & single-digit days
 	if (pos != std::string::npos)
-		st.erase(pos, 1);
+		st.erase(pos, 1u);
 
 	return st;
 }

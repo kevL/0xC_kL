@@ -20,7 +20,7 @@
 #include "UnitFallBState.h"
 
 //#include <algorithm>	// std::find()
-//#include <list>		// std::list
+//#include <list>		// std::list<>
 
 #include "BattlescapeState.h"
 #include "Camera.h"
@@ -89,7 +89,7 @@ void UnitFallBState::init()
 			interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 	}
 
-	//Log(LOG_INFO) << "unitFallB: init() set interval = " << interval;
+	//Log(LOG_INFO) << "unitFallB: init() set interval= " << interval;
 	_parent->setStateInterval(interval);
 }
 
@@ -106,14 +106,14 @@ void UnitFallBState::think()
 	Position
 		posStop,
 		pos;
-	const Position posBelow (Position(0,0,-1));
+	const Position& posBelow (Position(0,0,-1));
 
 	for (std::list<BattleUnit*>::const_iterator
 			i = _battleSave->getFallingUnits()->begin();
 			i != _battleSave->getFallingUnits()->end();
 			)
 	{
-		//Log(LOG_INFO) << ". falling ID " << (*i)->getId();
+		//Log(LOG_INFO) << ". falling id-" << (*i)->getId();
 		if ((*i)->isOut_t(OUT_HLTH_STUN) == true) // wtf. god only knows at this pt.
 //		if ((*i)->getHealth() == 0
 //			|| (*i)->getStun() >= (*i)->getHealth())
@@ -335,8 +335,7 @@ void UnitFallBState::think()
 											&& alreadyTaken == false
 											&& aboutToBeOccupiedFromAbove == false
 											&& blocked == false
-											&& (hasFloor == true
-												|| unitCanFly == true));
+											&& (hasFloor == true || unitCanFly == true));
 
 							if (canMoveToTile == true)
 								++k; // Check next section of the unit.
@@ -416,7 +415,7 @@ void UnitFallBState::think()
 				else // done falling just standing around ...
 				{
 					//Log(LOG_INFO) << ". . burnFloors, checkProxies, Erase.i";
-					if ((*i)->getSpecialAbility() == SPECAB_BURN) // if the unit burns floortiles, burn floortiles
+					if ((*i)->getSpecialAbility() == SPECAB_BURN) // burn floortiles
 					{
 						// Put burnedBySilacoid() here! etc
 						(*i)->burnTile((*i)->getUnitTile());
@@ -431,6 +430,8 @@ void UnitFallBState::think()
 //													power,
 //													DT_IN,
 //													*i);
+						if ((*i)->getUnitStatus() != STATUS_STANDING) // ie. burned a hole in the floor and fell through it
+							_parent->getPathfinding()->abortPath();
 					}
 
 					_te->calculateUnitLighting();
@@ -445,15 +446,17 @@ void UnitFallBState::think()
 					_parent->checkProxyGrenades(*i);
 					// kL_add: Put checkForSilacoid() here!
 
-					if (_parent->getTileEngine()->checkReactionFire(*i) == true)	// TODO: Not so sure I want RF on these guys ....
+					if ((*i)->getUnitStatus() == STATUS_STANDING)
 					{
-						if ((*i)->getFaction() == _battleSave->getSide())			// Eg. this would need a vector to be accurate.
-							_battleSave->rfTriggerOffset(_parent->getMap()->getCamera()->getMapOffset());
+						if (_parent->getTileEngine()->checkReactionFire(*i) == true)	// TODO: Not so sure I want RF on these guys ....
+						{
+							if ((*i)->getFaction() == _battleSave->getSide())			// Eg. this would need a vector to be accurate.
+								_battleSave->rfTriggerOffset(_parent->getMap()->getCamera()->getMapOffset());
 
-						_parent->getPathfinding()->abortPath();						// In fact this whole state should be bypassed.
+							_parent->getPathfinding()->abortPath();						// In fact this whole state should be bypassed.
+						}
+						i = _battleSave->getFallingUnits()->erase(i);
 					}
-
-					i = _battleSave->getFallingUnits()->erase(i);
 				}
 				break;
 

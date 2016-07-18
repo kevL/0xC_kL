@@ -19,7 +19,7 @@
 
 #include "Polygon.h"
 
-#include <cmath>
+#include "../fmath.h"
 
 
 namespace OpenXcom

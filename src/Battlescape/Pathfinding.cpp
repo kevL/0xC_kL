@@ -935,8 +935,8 @@ int Pathfinding::getTuCostPf(
 				if (_unit->getSpecialAbility() != SPECAB_BURN)
 					cost += 2 + (dir & 1);
 
-				if (_unit->avoidsFire() == true)
-					cost += TU_FIRE_AVOID;	// cf. UnitWalkBState::doStatusStand() - this gets subtracted.
+				if (_unit->avoidsFire() == true)	// NOTE: Uses vulnr instead of Specab_Burn.
+					cost += TU_FIRE_AVOID;			// cf. UnitWalkBState::doStatusStand() - this gets subtracted.
 			}
 
 			// Propose: if flying then no extra TU cost

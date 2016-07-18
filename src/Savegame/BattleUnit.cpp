@@ -4829,7 +4829,6 @@ bool BattleUnit::avoidsFire() const
 	{
 		return true;
 	}
-
 	return false;
 }
 

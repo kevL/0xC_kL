@@ -19,7 +19,7 @@
 
 #include "RuleCountry.h"
 
-#include <cmath>
+#include "../fmath.h"
 
 #include "../Engine/RNG.h"
 

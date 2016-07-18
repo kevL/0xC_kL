@@ -459,9 +459,9 @@ bool UnitWalkBState::doStatusStand() // private.
 		&& _unit->avoidsFire() == true)
 	{
 		//Log(LOG_INFO) << ". . subtract tu inflation for a fireTile";
-		// The TU cost was artificially inflated by 32 points in getTuCostPf
+		// The TU-cost was artificially inflated by 32 points in _pf::getTuCostPf()
 		// so it has to be deflated again here under the same conditions.
-		// See: Pathfinding::getTuCostPf(), where TU cost was inflated.
+		// See: Pathfinding::getTuCostPf() where TU cost was inflated.
 		tuCost -= Pathfinding::TU_FIRE_AVOID;
 	}
 
@@ -488,9 +488,7 @@ bool UnitWalkBState::doStatusStand() // private.
 				enCost -= _pf->getDoorCost();
 				enCost = ((enCost * 3) >> 1u);
 			}
-
-			enCost -= _unit->getArmor()->getAgility();
-			if (enCost < 0) enCost = 0;
+			if ((enCost -= _unit->getArmor()->getAgility()) < 0) enCost = 0;
 		}
 		else // gravLift
 		{

@@ -59,27 +59,41 @@
 #		define WIN32_LEAN_AND_MEAN
 #	endif
 
+//#	include <windows.h>
 #	include <shlobj.h>
 #	include <shlwapi.h>
+//#	include <dbghelp.h>
 
 #	ifndef SHGFP_TYPE_CURRENT
 #		define SHGFP_TYPE_CURRENT 0
 #	endif
 
+#	ifndef LOCALE_INVARIANT
+#		define LOCALE_INVARIANT 0x007f
+#	endif
+
+//#	define EXCEPTION_CODE_CXX 0xe06d7363
+
 #	ifndef __GNUC__
 #		pragma comment(lib, "advapi32.lib")
 #		pragma comment(lib, "shell32.lib")
 #		pragma comment(lib, "shlwapi.lib")
+//#		pragma comment(lib, "dbghelp.lib")
 #	endif
 #else
 #	include <cstdio>
 #	include <cstdlib>
 #	include <cstring>
+//#	include <execinfo.h>
+//#	include <fstream>
+//#	include <iostream>
 #	include <pwd.h>
 #	include <unistd.h>
 
 #	include <sys/param.h>
 #	include <sys/types.h>
+
+//#	include <SDL_image.h>
 #endif
 
 

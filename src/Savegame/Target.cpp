@@ -19,7 +19,7 @@
 
 #include "Target.h"
 
-#include <cmath>
+#include "../fmath.h"
 
 #include "Craft.h"
 #include "SerializationHelper.h"
