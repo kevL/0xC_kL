@@ -609,7 +609,12 @@ void BattlescapeGame::popBattleState()
 
 			//Log(LOG_INFO) << ". set Camera to triggerPos " << _battleSave->rfTriggerOffset();
 			SDL_Delay(Screen::SCREEN_PAUSE);
+		}
+
+		if (_battleSave->rfTriggerOffset().z != -1)	// NOTE: Since non-vis reactors don't set isReaction() TRUE
+		{											// the camera-to-original-position must be handled separately.
 			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
+			_battleSave->rfTriggerOffset(Position(0,0,-1));
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)

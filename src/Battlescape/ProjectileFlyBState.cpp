@@ -772,7 +772,7 @@ void ProjectileFlyBState::think()
 					if (_action.posCamera.z != -1
 						|| _parent->getTileEngine()->isReaction() == true)
 					{
-						//Log(LOG_INFO) << "FlyB: . . resetting Camera to shooter pos";
+						//Log(LOG_INFO) << "FlyB: . . setting Camera to shooter pos";
 						Camera* const shotCam (_parent->getMap()->getCamera());
 						if (shotCam->getPauseAfterShot() == true)	// TODO: Move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
 //						if (_action.pauseAfterShot == true)			// NOTE: That trying to store the camera position in the BattleAction didn't work either ... double numby.
@@ -797,9 +797,13 @@ void ProjectileFlyBState::think()
 						}
 
 						if (_parent->getTileEngine()->isReaction() == true)
+						{
+							//Log(LOG_INFO) << ". . is Reaction - set Camera to center on reactor";
 							shotCam->centerOnPosition(_unit->getPosition());
+						}
 						else
 						{
+							//Log(LOG_INFO) << ". . is NOT Reaction - set Camera to cached position";
 							shotCam->setMapOffset(_action.posCamera);
 							_parent->getMap()->draw(); // NOTE: Might not be needed. Ie, the camera-offset seems to take hold okay without.
 						}

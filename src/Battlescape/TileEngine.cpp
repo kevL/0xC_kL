@@ -1985,7 +1985,7 @@ void TileEngine::chooseFireMethod()
 
 /**
  * Accesses a boolean that flags reaction-fire for Camera repositioning.
- * @return, reference to the isReaction flag
+ * @return, reference to the flag
  */
 bool& TileEngine::isReaction()
 {
