@@ -164,13 +164,13 @@ private:
 			const Tile* const tile6,
 			const Tile* const tile5,
 			const BattleUnit* unit = nullptr,
-			bool* halfRight = nullptr) const;
+			bool* const halfRight = nullptr) const;
 	 /// Checks if a northeasterly wall should suppress unit-sprite drawing.
 	bool checkNorth(
 			const Tile* const tile0,
 //			const Tile* const tile1,
 			const BattleUnit* unit = nullptr,
-			bool* halfLeft = nullptr) const;
+			bool* const halfLeft = nullptr) const;
 
 	/// Gets if a Tile is a/the true location of unit.
 	bool isTrueLoc(
