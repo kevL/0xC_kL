@@ -1197,20 +1197,6 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 }
 
 /**
- * Gets the unit at Position if it's valid and conscious.
- * @param pos - reference to a Position
- * @return, pointer to the BattleUnit or nullptr
- */
-BattleUnit* SavedBattleGame::selectUnit(const Position& pos)
-{
-	BattleUnit* const unit (getTile(pos)->getTileUnit());
-	if (unit != nullptr) //&& unit->isOut_t(OUT_STAT) == false) // <- tiles don't have dead/unconscious units.
-		return unit;
-
-	return nullptr;
-}
-
-/**
  * Gets the list of Nodes.
  * @return, pointer to a vector of pointers to the Nodes
  */

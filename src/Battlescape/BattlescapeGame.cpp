@@ -2652,9 +2652,9 @@ bool BattlescapeGame::isBusy() const
  */
 void BattlescapeGame::primaryAction(const Position& pos)
 {
-	_tacAction.actor = _battleSave->getSelectedUnit();
-	BattleUnit* const targetUnit (_battleSave->selectUnit(pos));
+	BattleUnit* const targetUnit (_battleSave->getTile(pos)->getTileUnit());
 
+	_tacAction.actor = _battleSave->getSelectedUnit();
 	if (_tacAction.actor != nullptr && _tacAction.targeting == true)
 	{
 		_tacAction.strafe = false;

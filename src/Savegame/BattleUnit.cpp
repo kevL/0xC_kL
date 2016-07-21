@@ -2232,10 +2232,11 @@ double BattleUnit::getAccuracy(
 	const RuleItem* const itRule (action.weapon->getRules());
 
 	BattleActionType baType;
-	if (bat == BA_NONE)
-		baType = action.type;
-	else
-		baType = bat;
+	switch (bat)
+	{
+		case BA_NONE:	baType = action.type; break;
+		default:		baType = bat;
+	}
 
 	switch (baType)
 	{
@@ -2266,8 +2267,8 @@ double BattleUnit::getAccuracy(
 				case BA_AUTOSHOT:
 					ret = static_cast<double>(itRule->getAccuracyAuto()) * PCT;
 					break;
-
 				default:
+				case BA_SNAPSHOT:
 					ret = static_cast<double>(itRule->getAccuracySnap()) * PCT;
 			}
 
@@ -2278,12 +2279,6 @@ double BattleUnit::getAccuracy(
 
 	ret *= getAccuracyModifier(action.weapon);
 
-//	if (itRule->isTwoHanded() == true
-//		&& getItem(ST_RIGHTHAND) != nullptr
-//		&& getItem(ST_LEFTHAND) != nullptr)
-//	{
-//		ret *= 0.79;
-//	}
 	if (action.weapon == getItem(ST_RIGHTHAND))
 	{
 		const BattleItem* const itLeft (getItem(ST_LEFTHAND));
