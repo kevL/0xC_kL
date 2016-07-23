@@ -2234,7 +2234,7 @@ void SavedBattleGame::reviveUnit(
 
 			unit->flagCache();
 			unit->setUnitDirection(RNG::generate(0,7));
-			unit->setTimeUnits();
+			unit->setTu();
 			unit->setEnergy();
 			unit->setRevived();
 

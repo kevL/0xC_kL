@@ -423,7 +423,7 @@ private:
 		void aim(bool aim = true);
 
 		/// Gets the BattleUnit's turn-units.
-		int getTimeUnits() const;
+		int getTu() const;
 		/// Gets the BattleUnit's stamina.
 		int getEnergy() const;
 		/// Gets the BattleUnit's health.
@@ -488,16 +488,16 @@ private:
 				const BattleActionType bat,
 				const RuleItem* itRule = nullptr) const;
 
-		/// Spends turn-units if possible.
+		/// Expends turn-units if possible.
 		bool expendTu(int tu);
-		/// Spends energy if possible.
+		/// Expends energy if possible.
 		bool expendEnergy(int energy);
 		/// Expends TU and Energy.
 		void expendTuEnergy(
 				int tu,
 				int energy);
 		/// Sets the BattleUnit's turn-units.
-		void setTimeUnits(int tu = 0);
+		void setTu(int tu = 0);
 		/// Sets the BattleUnit's energy-level.
 		void setEnergy(int energy = 0);
 
@@ -801,9 +801,9 @@ private:
 				const DifficultyLevel diff,
 				const int month);
 
-		/// Sets the BattleUnit's cover-reserve TU.
-		void setCoverReserve(int tuReserve);
-		/// Gets the BattleUnit's cover-reserve TU.
+		/// Sets the BattleUnit's reserved-TU for finding cover.
+		void setCoverReserve(int tuReserved);
+		/// Gets the BattleUnit's reserved-TU for finding cover.
 		int getCoverReserve() const;
 
 		/// Initializes a death spin.

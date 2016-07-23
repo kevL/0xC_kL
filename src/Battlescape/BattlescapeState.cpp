@@ -2707,7 +2707,7 @@ void BattlescapeState::btnZeroTuClick(Action* /*action*/)
 //			Action a (Action(&ev, 0.,0.,0,0));
 //			action->getSender()->mousePress(&a, this); // why mouse event, for keyboard-press perhaps
 
-			unit->setTimeUnits();
+			unit->setTu();
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
 
@@ -2731,7 +2731,7 @@ void BattlescapeState::keyZeroTuPress(Action* action)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (_battleGame->noActionsPending(unit) == true)
 		{
-			unit->setTimeUnits();
+			unit->setTu();
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
 
@@ -3028,7 +3028,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 
 	double stat (static_cast<double>(selUnit->getBattleStats()->tu));
-	const int tu (selUnit->getTimeUnits());
+	const int tu (selUnit->getTu());
 	_numTimeUnits->setValue(static_cast<unsigned>(tu));
 	_barTimeUnits->setValue(std::ceil(
 							static_cast<double>(tu) / stat * 100.));

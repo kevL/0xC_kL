@@ -469,8 +469,8 @@ DoorResult Tile::openDoor(
 			}
 
 			if (unit != nullptr
-				&& unit->getTimeUnits() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
-//											+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
+				&& unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
+//									+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
 			{
 				return DR_ERR_TU;
 			}
@@ -490,8 +490,8 @@ DoorResult Tile::openDoor(
 			if (_curFrame[partType] == 0) // ufo door part 0 - door is closed
 			{
 				if (unit != nullptr
-					&& unit->getTimeUnits() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
-//												+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
+					&& unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
+//										+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
 				{
 					return DR_ERR_TU;
 				}

@@ -1404,7 +1404,7 @@ void BattleUnit::aim(bool aim)
  * Gets this BattleUnit's current TU.
  * @return, current turn-units
  */
-int BattleUnit::getTimeUnits() const
+int BattleUnit::getTu() const
 {
 	return _tu;
 }
@@ -2047,9 +2047,9 @@ int BattleUnit::getActionTu(
 }
 
 /**
- * Spends turn-units if it can, returns false if it can't.
+ * Expends turn-units if it can, returns false if it can't.
  * @param tu - the TU to check & spend
- * @return, true if this unit could spend the turn-units
+ * @return, true if this unit could expend the turn-units
  */
 bool BattleUnit::expendTu(int tu)
 {
@@ -2062,7 +2062,7 @@ bool BattleUnit::expendTu(int tu)
 }
 
 /**
- * Spends energy if it can, returns false if it can't.
+ * Expends energy if it can, returns false if it can't.
  * @param energy - the stamina to check & expend
  * @return, true if this unit could expend the stamina
  */
@@ -2096,14 +2096,14 @@ void BattleUnit::expendTuEnergy(
  * accurate action-cancellations in or about BattlescapeGame::popState().
  * @param tu - the TU to set for this unit (default 0)
  */
-void BattleUnit::setTimeUnits(int tu)
+void BattleUnit::setTu(int tu)
 {
 	if ((_tu = tu) < 0) _tu = 0;
 }
 
 /**
- * Sets a specific quantity of energy.
- * @param energy - the energy to set for this unit (default 0)
+ * Sets a specified quantity of energy.
+ * @param energy - the stamina to set for this unit (default 0)
  */
 void BattleUnit::setEnergy(int energy)
 {
@@ -2114,7 +2114,7 @@ void BattleUnit::setEnergy(int energy)
 }
 
 /**
- * Sets whether this BattleUnit is visible to the player - that is should it be drawn.
+ * Sets whether this BattleUnit is visible to the player, should it be drawn.
  * @param flag - true if visible (default true)
  */
 void BattleUnit::setUnitVisible(bool flag)
@@ -2395,7 +2395,7 @@ int BattleUnit::getArmor(UnitSide side) const
 int BattleUnit::getInitiative(const int tuSpent) const
 {
 	double ret (static_cast<double>(
-				_stats.reactions * (getTimeUnits() - tuSpent))
+				_stats.reactions * (getTu() - tuSpent))
 				/ static_cast<double>(_stats.tu));
 
 	ret *= getAccuracyModifier();
@@ -4402,16 +4402,16 @@ void BattleUnit::adjustStats(
 }
 
 /**
- * Sets the amount of TUs reserved for cover.
- * @param tuReserve - reserved turn-units
+ * Sets the quantity of TUs reserved for finding cover.
+ * @param tuReserved - reserved turn-units
  */
-void BattleUnit::setCoverReserve(int tuReserve)
+void BattleUnit::setCoverReserve(int tuReserved)
 {
-	_coverReserve = tuReserve;
+	_coverReserve = tuReserved;
 }
 
 /**
- * Gets the amount of TUs reserved for cover.
+ * Gets the quantity of TUs reserved for finding cover.
  * @return, reserved turn-units
  */
 int BattleUnit::getCoverReserve() const

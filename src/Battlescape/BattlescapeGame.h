@@ -230,8 +230,8 @@ private:
 
 
 	BattleAction
-//		_aiAction,	// for aLiens, per handleUnitAI()
-		_tacAction; // for Player
+//		_aiAction,		// for aLiens, per handleUnitAI()
+		_playerAction;	// for Player
 
 	BattleItem
 		* _alienPsi,

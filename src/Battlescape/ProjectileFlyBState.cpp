@@ -130,7 +130,7 @@ void ProjectileFlyBState::init()
 		{
 			popThis = true;
 		}
-		else if (_unit->getTimeUnits() >= _action.TU // go ->
+		else if (_unit->getTu() >= _action.TU // go ->
 			|| _action.type == BA_MELEE
 			|| _parent->playerPanicHandled() == false
 			|| _unit->getFaction() != FACTION_PLAYER)
@@ -151,7 +151,7 @@ void ProjectileFlyBState::init()
 
 			if (fireValid == false || _unit->getStopShot() == true)
 			{
-				_unit->setTimeUnits(_unit->getTimeUnits() + _action.TU);
+				_unit->setTu(_unit->getTu() + _action.TU);
 				popThis = true;
 			}
 		}

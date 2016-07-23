@@ -216,7 +216,7 @@ void CivilianBAIState::setupEscape() // private.
 	std::vector<Position> tileSearch (_battleSave->getTileSearch());
 	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
-	const int tuHalf (_unit->getTimeUnits() >> 1u);
+	const int tuHalf (_unit->getTu() >> 1u);
 	_reachable = _pf->findReachable(_unit, tuHalf);
 
 //	bool coverFound (false);

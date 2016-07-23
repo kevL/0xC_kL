@@ -402,40 +402,43 @@ bool UnitWalkBState::doStatusStand() // private.
 		}
 
 		const Tile* const tile (_battleSave->getTile(posStart));
-		gravLift = dir >= Pathfinding::DIR_UP // Assumes tops & bottoms of gravLifts always have floors/ceilings.
-				&& tile->getMapData(O_FLOOR) != nullptr
-				&& tile->getMapData(O_FLOOR)->isGravLift() == true;
+		gravLift = dir >= Pathfinding::DIR_UP						// Assumes tops & bottoms of gravLifts always have floors/ceilings.
+				&& tile->getMapData(O_FLOOR) != nullptr				// that is, gravLifts on roofs of UFOs can screw this up.
+				&& tile->getMapData(O_FLOOR)->isGravLift() == true;	// Unless a further check is made for a gravLift-floor on the stopTile.
 
-		if (_kneelCheck == true					// check if unit is kneeled
-			&& _unit->isKneeled() == true		// unit is kneeled
-			&& gravLift == false				// not on a gravLift
-			&& _pf->getPath().empty() == false)	// not the final tile of path; that is, the unit is actually going to move.
+		if (_kneelCheck == true) // check if unit is kneeled
 		{
-			//Log(LOG_INFO) << ". kneeled, and path Valid";
+			//Log(LOG_INFO) << ". do kneelCheck";
 			_kneelCheck = false;
 
-			if (_parent->kneelToggle(_unit) == true)
+			if (_unit->isKneeled() == true			// unit is kneeled
+				&& gravLift == false				// not on a gravLift
+				&& _pf->getPath().empty() == false)	// not the final tile of path; that is, the unit is actually going to move. Might be unnecessary after refactor above^
 			{
-				//Log(LOG_INFO) << ". . Stand up";
-//				_unit->flagCache();					// <- These are handled by BattleUnit::kneel() [invalidate cache]
-//				_parent->getMap()->cacheUnit(_unit);	// <- and BattlescapeGame::kneel() [cache units]
-
-				if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop.
+				//Log(LOG_INFO) << ". . kneeled and path Valid";
+				if (_parent->kneelToggle(_unit) == true)
 				{
-					//Log(LOG_INFO) << ". . . RF triggered";
-					_battleSave->rfTriggerOffset(_walkCamera->getMapOffset());
+					//Log(LOG_INFO) << ". . . Stand up";
+//					_unit->flagCache();						// <- These are handled by BattleUnit::kneel() [invalidate cache]
+//					_parent->getMap()->cacheUnit(_unit);	// <- and BattlescapeGame::kneel() [cache units]
 
+					if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop.
+					{
+						//Log(LOG_INFO) << ". . . RF triggered";
+						_battleSave->rfTriggerOffset(_walkCamera->getMapOffset());
+
+						abortState(false);
+						return false;
+					}
+				}
+				else
+				{
+					//Log(LOG_INFO) << ". . don't stand: not enough TU";
+					_action.result = BattlescapeGame::PLAYER_ERROR[0u];	// NOTE: redundant w/ bg:kneelToggle() error messages ...
+																		// But '_action.result' might need to be set for bg:popBattleState() to deal with stuff.
 					abortState(false);
 					return false;
 				}
-			}
-			else
-			{
-				//Log(LOG_INFO) << ". . don't stand: not enough TU";
-				_action.result = BattlescapeGame::PLAYER_ERROR[0u]; // NOTE: redundant w/ kneel() error messages ...
-
-				abortState(false);
-				return false;
 			}
 		}
 	}
@@ -527,9 +530,9 @@ bool UnitWalkBState::doStatusStand() // private.
 		}
 
 		//Log(LOG_INFO) << ". check tuCost + stamina, etc. TU = " << tuCost;
-		//Log(LOG_INFO) << ". unit->TU = " << _unit->getTimeUnits();
+		//Log(LOG_INFO) << ". unit->TU = " << _unit->getTu();
 		static const int FAIL (255);
-		if (tuCost - _pf->getDoorCost() > _unit->getTimeUnits())
+		if (tuCost - _pf->getDoorCost() > _unit->getTu())
 		{
 			//Log(LOG_INFO) << ". . tuCost > _unit->TU()";
 			if (_unit->getFaction() == FACTION_PLAYER
@@ -859,7 +862,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 		const BattlescapeState* const battleState (_battleSave->getBattleState());
 
 		double stat (static_cast<double>(_unit->getBattleStats()->tu));
-		const int tu (_unit->getTimeUnits());
+		const int tu (_unit->getTu());
 		battleState->getTuField()->setValue(static_cast<unsigned>(tu));
 		battleState->getTuBar()->setValue(std::ceil(
 											static_cast<double>(tu) / stat * 100.));
@@ -1153,7 +1156,7 @@ void UnitWalkBState::postPathProcedures() // private.
 		}
 	}
 	else if (_parent->playerPanicHandled() == false) // is Faction_Player
-		_unit->setTimeUnits();
+		_unit->setTu();
 
 	if (_door == true) // in case a door opened AND state was aborted.
 	{

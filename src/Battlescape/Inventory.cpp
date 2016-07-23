@@ -994,7 +994,7 @@ void Inventory::moveItem( // private.
 				item->getItemUnit()->setPosition(Position(-1,-1,-1));
 
 			if (_tuMode == true) // To prevent units from picking up large objects and running around on the same turn with nearly full TU
-				_selUnit->setTimeUnits(_selUnit->getTimeUnits() - item->getRules()->getWeight()); // its weight becomes an extra tu-burden.
+				_selUnit->setTu(_selUnit->getTu() - item->getRules()->getWeight()); // its weight becomes an extra tu-burden.
 		}
 
 		item->setInventorySection(inRule); // above, or simply moving item from one section to another

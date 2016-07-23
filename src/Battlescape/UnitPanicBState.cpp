@@ -79,7 +79,7 @@ void UnitPanicBState::think()
 		_unit->moraleChange(10 + RNG::generate(0,10));
 	}
 
-	_unit->setTimeUnits();
+	_unit->setTu();
 	_unit->setDashing(false);
 
 	if (_parent->getBattleSave()->getSide() == FACTION_PLAYER

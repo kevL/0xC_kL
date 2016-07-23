@@ -1679,7 +1679,7 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 		//Log(LOG_INFO) << ". check id-" << (*i)->getId();
 		if ((*i)->getFaction() != _battleSave->getSide()
 			&& (*i)->getFaction() != FACTION_NEUTRAL
-			&& (*i)->getTimeUnits() != 0
+			&& (*i)->getTu() != 0
 			&& (*i)->isOut_t() == false)
 //			&& (*i)->getSpawnType().empty() == true)
 		{
@@ -1839,7 +1839,7 @@ bool TileEngine::reactionShot(
 			_rfAction->type = BA_MELEE;
 			_rfAction->TU = _rfAction->actor->getActionTu(BA_MELEE, _rfAction->weapon);
 			if (_rfAction->TU == 0
-				|| _rfAction->TU > _rfAction->actor->getTimeUnits())
+				|| _rfAction->TU > _rfAction->actor->getTu())
 			{
 				return false;
 			}
@@ -1915,7 +1915,7 @@ void TileEngine::chooseFireMethod()
 	const RuleItem* const itRule (_rfAction->weapon->getRules());
 	if (dist <= itRule->getMaxRange() && dist >= itRule->getMinRange())
 	{
-		const int tu (_rfAction->actor->getTimeUnits());
+		const int tu (_rfAction->actor->getTu());
 
 		if (dist <= itRule->getAutoRange())
 		{
@@ -6300,7 +6300,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							const int tuLoss ((statsActor->psiSkill + 2) / 3);
 							//Log(LOG_INFO) << ". . . tuLoss = " << tuLoss;
 //							if (tuLoss != 0) // safety.
-							victim->setTimeUnits(victim->getTimeUnits() - tuLoss);
+							victim->setTu(victim->getTu() - tuLoss);
 						}
 					}
 

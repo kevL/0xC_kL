@@ -1753,7 +1753,7 @@ bool Pathfinding::previewPath(bool discard)
 			unitSize (_unit->getArmor()->getSize()),
 			agility (_unit->getArmor()->getAgility());
 		int
-			unitTu (_unit->getTimeUnits()),
+			unitTu (_unit->getTu()),
 			unitEn (_unit->getEnergy()),
 			tuCost,			// cost per tile
 			tuTally (0),	// only for soldiers reserving TUs

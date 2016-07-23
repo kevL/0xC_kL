@@ -445,7 +445,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 						break;
 
 					case BT_MINDPROBE:
-						if (_action->TU > _action->actor->getTimeUnits())
+						if (_action->TU > _action->actor->getTu())
 							_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 						else
 							_action->targeting = true;
@@ -460,7 +460,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			case BA_LAUNCH:
 				if (_action->weapon->getAmmoItem() == nullptr)
 					_action->result = BattlescapeGame::PLAYER_ERROR[2u];
-				else if (_action->TU > _action->actor->getTimeUnits())
+				else if (_action->TU > _action->actor->getTu())
 					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 				else
 					_action->targeting = true;
@@ -471,7 +471,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			case BA_MELEE:
 				if (_game->getSavedGame()->getBattleSave()->getTileEngine()->validMeleeRange(_action->actor) == false)
 					_action->result = BattlescapeGame::PLAYER_ERROR[7u];
-				else if (_action->TU > _action->actor->getTimeUnits())
+				else if (_action->TU > _action->actor->getTu())
 					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 
 				_game->popState();
@@ -486,7 +486,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			case BA_PSIPANIC:
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
-				if (_action->TU > _action->actor->getTimeUnits())
+				if (_action->TU > _action->actor->getTu())
 					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 				else
 					_action->targeting = true;

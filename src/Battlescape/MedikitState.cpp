@@ -501,7 +501,7 @@ void MedikitState::update()
 
 	// TU of the Medikit user
 	stat = static_cast<double>(_action->actor->getBattleStats()->tu);
-	const int tu (_action->actor->getTimeUnits());
+	const int tu (_action->actor->getTu());
 	_numTimeUnits->setValue(static_cast<unsigned>(tu));
 	_barTimeUnits->setValue(std::ceil(
 							static_cast<double>(tu) / stat * 100.));

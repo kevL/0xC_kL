@@ -568,7 +568,7 @@ void InventoryState::updateStats() // private.
 		_numOrder->setVisible(false);
 
 	if (_tuMode == true)
-		_txtTUs->setText(tr("STR_TIME_UNITS_SHORT").arg(selUnit->getTimeUnits()));
+		_txtTUs->setText(tr("STR_TIME_UNITS_SHORT").arg(selUnit->getTu()));
 
 	const int
 		weight (selUnit->getCarriedWeight(_inventoryPanel->getSelectedItem())),

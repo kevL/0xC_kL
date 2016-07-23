@@ -595,7 +595,7 @@ void UnitInfoState::init()
 	_txtName->setBig();
 
 	// TU, Health, & Bravery ->
-	int stat (_unit->getTimeUnits());
+	int stat (_unit->getTu());
 	_numTimeUnits->setText(Text::intWide(stat));
 	_barTimeUnits->setMaxValue(static_cast<double>(_unit->getBattleStats()->tu));
 	_barTimeUnits->setValue(static_cast<double>(stat));
@@ -854,9 +854,9 @@ void UnitInfoState::exitClick(Action*) // private.
 	if (_mindProbe == true)
 	{
 		const BattleUnit* const unit (_battleSave->getSelectedUnit());
-		if (unit->getTimeUnits() < unit->getActionTu(
-												BA_USE,
-												_game->getRuleset()->getItemRule("STR_MIND_PROBE")))
+		if (unit->getTu() < unit->getActionTu(
+											BA_USE,
+											_game->getRuleset()->getItemRule("STR_MIND_PROBE")))
 		{
 			_battleSave->getBattleGame()->cancelTacticalAction();
 		}

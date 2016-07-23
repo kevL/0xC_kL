@@ -175,7 +175,7 @@ void ExecuteState::lstTargetPress(Action* action)
 {
 	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
-		if (_action->TU > _action->actor->getTimeUnits())
+		if (_action->TU > _action->actor->getTu())
 			_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 		else
 		{

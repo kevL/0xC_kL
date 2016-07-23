@@ -70,10 +70,15 @@ AlienBAIState::AlienBAIState(
 	//if (_unit->getId() != 1000020) _traceAI = 0;
 	//Log(LOG_INFO) << "Create AlienBAIState traceAI= " << _traceAI;
 
-	if (_unit->getOriginalFaction() != FACTION_HOSTILE)
-		_aggression = 10;
-	else
-		_aggression = _unit->getAggression();
+	switch (_unit->getOriginalFaction())
+	{
+		case FACTION_HOSTILE:
+			_aggression = _unit->getAggression();
+			break;
+		case FACTION_PLAYER:
+		case FACTION_NEUTRAL:
+			_aggression = 10; // ie. the penalty brigade.
+	}
 
 	_escapeAction	= new BattleAction();
 	_patrolAction	= new BattleAction();
@@ -169,7 +174,7 @@ void AlienBAIState::think(BattleAction* const action)
 	}
 
 	_pf->setPathingUnit(_unit);
-	_reachable = _pf->findReachable(_unit, _unit->getTimeUnits());
+	_reachable = _pf->findReachable(_unit, _unit->getTu());
 
 	int tuReserve (-1);
 	if (action->weapon != nullptr)
@@ -186,14 +191,14 @@ void AlienBAIState::think(BattleAction* const action)
 				{
 					if (_traceAI) Log(LOG_INFO) << ". . . blaster TRUE";
 					_hasBlaster = true;
-					tuReserve = _unit->getTimeUnits()
+					tuReserve = _unit->getTu()
 							  - _unit->getActionTu(BA_LAUNCH, action->weapon);
 				}
 				else
 				{
 					if (_traceAI) Log(LOG_INFO) << ". . . rifle TRUE";
 					_hasRifle = true;
-					tuReserve = _unit->getTimeUnits()
+					tuReserve = _unit->getTu()
 							  - _unit->getActionTu(
 												itRule->getDefaultAction(), // note: this needs chooseFireMethod() ...
 												action->weapon);
@@ -203,7 +208,7 @@ void AlienBAIState::think(BattleAction* const action)
 			case BT_MELEE:
 				if (_traceAI) Log(LOG_INFO) << ". . melee TRUE";
 				_hasMelee = true;
-				tuReserve = _unit->getTimeUnits()
+				tuReserve = _unit->getTu()
 						  - _unit->getActionTu(BA_MELEE, action->weapon);
 				break;
 
@@ -359,9 +364,9 @@ void AlienBAIState::think(BattleAction* const action)
 
 				case BA_MOVE:
 					if (_hasRifle == true
-						&& _unit->getTimeUnits() > _unit->getActionTu(
-																BA_SNAPSHOT, // TODO: Hook this into _reserve/ selectFireMethod().
-																action->weapon))
+						&& _unit->getTu() > _unit->getActionTu(
+															BA_SNAPSHOT, // TODO: Hook this into _reserve/ selectFireMethod().
+															action->weapon))
 					{
 						if (_traceAI) Log(LOG_INFO) << ". . Move w/ rifle + tu for COMBAT";
 						action->AIcount -= 1;
@@ -1024,7 +1029,7 @@ void AlienBAIState::evaluateAiMode() // private.
 			ambushOdds (13.f),
 			escapeOdds (13.f);
 
-		if (_unit->getTimeUnits() > (_unit->getBattleStats()->tu >> 1u)
+		if (_unit->getTu() > (_unit->getBattleStats()->tu >> 1u)
 			|| _unit->getChargeTarget() != nullptr)
 		{
 			escapeOdds = 5.f;
@@ -1326,7 +1331,7 @@ int AlienBAIState::selectNearestTarget() // private.
 			{
 				canTarget = false;
 				if (_hasMelee == true && _hasRifle == false)
-					canTarget = findMeleePosition(*i, _unit->getTimeUnits());
+					canTarget = findMeleePosition(*i, _unit->getTu());
 				else
 				{
 					origin = _te->getSightOriginVoxel(_unit);
@@ -1345,7 +1350,7 @@ int AlienBAIState::selectNearestTarget() // private.
 //											&target,
 //											_unit);
 //				}
-//				else if (findMeleePosition(*i, _unit->getTimeUnits()) == true)
+//				else if (findMeleePosition(*i, _unit->getTu()) == true)
 //				{
 //					dir = TileEngine::getDirectionTo(
 //												_attackAction->target,
@@ -1501,10 +1506,10 @@ bool AlienBAIState::findFirePosition() // private.
 															_unit) == true)
 				{
 					_pf->calculatePath(_unit, pos);
-					if (_pf->getStartDirection() != -1) // && _pf->getTuCostTotalPf() <= _unit->getTimeUnits()
+					if (_pf->getStartDirection() != -1) // && _pf->getTuCostTotalPf() <= _unit->getTu()
 					{
 						scoreTest = BASE_SUCCESS_SYSTEMATIC - tallySpotters(pos) * EXPOSURE_PENALTY;
-						scoreTest += _unit->getTimeUnits() - _pf->getTuCostTotalPf();
+						scoreTest += _unit->getTu() - _pf->getTuCostTotalPf();
 
 						if (_unitAggro->checkViewSector(pos) == false)
 							scoreTest += 15;
@@ -1620,7 +1625,7 @@ bool AlienBAIState::findMeleePosition( // private.
  */
 void AlienBAIState::meleeAction() // private.
 {
-//	if (_unit->getTimeUnits() < _unit->getActionTu(BA_MELEE, _unit->getMeleeWeapon()))
+//	if (_unit->getTu() < _unit->getActionTu(BA_MELEE, _unit->getMeleeWeapon()))
 //		return;
 
 	int dir;
@@ -1638,10 +1643,8 @@ void AlienBAIState::meleeAction() // private.
 		}
 	}
 
-	const int tuReserve (_unit->getTimeUnits()
-					   - _unit->getActionTu(
-										BA_MELEE,
-										_attackAction->weapon));
+	const int tuReserve (_unit->getTu()
+					   - _unit->getActionTu(BA_MELEE, _attackAction->weapon));
 	int
 		dist ((tuReserve >> 2u) + 1),
 		distTest;
@@ -1704,15 +1707,18 @@ void AlienBAIState::faceMelee() // private.
  */
 bool AlienBAIState::wayPointAction() // private.
 {
-	if (_traceAI) Log(LOG_INFO) << "";
-	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::wayPointAction() id-" << _unit->getId() << " w/ " << _attackAction->weapon->getRules()->getType();
 	_attackAction->TU = _unit->getActionTu(
 										BA_LAUNCH,
 										_attackAction->weapon);
-	if (_traceAI) Log(LOG_INFO) << ". actionTU = " << _attackAction->TU;
-	if (_traceAI) Log(LOG_INFO) << ". unitTU = " << _unit->getTimeUnits();
+	if (_traceAI)
+	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "AlienBAIState::wayPointAction() id-" << _unit->getId() << " w/ " << _attackAction->weapon->getRules()->getType();
+		Log(LOG_INFO) << ". actionTU = " << _attackAction->TU;
+		Log(LOG_INFO) << ". unitTU = " << _unit->getTu();
+	}
 
-	if (_attackAction->TU <= _unit->getTimeUnits())
+	if (_attackAction->TU <= _unit->getTu())
 	{
 		_pf->setPathingUnit(_unit); // jic.
 
@@ -1869,7 +1875,7 @@ void AlienBAIState::chooseFireMethod() // private.
 		return;
 	}
 
-	int tuReserve (_unit->getTimeUnits());
+	int tuReserve (_unit->getTu());
 	if (_tuEscape != -1
 		&& RNG::generate(0,_aggression) == 0)
 	{
@@ -1972,7 +1978,7 @@ bool AlienBAIState::grenadeAction() // private.
 				tuCost += _unit->getActionTu(BA_PRIME, grenade);
 			tuCost += _unit->getActionTu(BA_THROW, grenade); // the Prime itself is done 'auto' in ProjectileFlyBState.
 
-			if (tuCost <= _unit->getTimeUnits())
+			if (tuCost <= _unit->getTu())
 			{
 				BattleAction action;
 				action.actor = _unit;
@@ -2153,7 +2159,7 @@ bool AlienBAIState::psiAction() // private.
 		if (_tuEscape != -1)
 			tuCost += _tuEscape;
 		if (_traceAI) Log(LOG_INFO) << ". tuCost = " << tuCost;
-		if (_unit->getTimeUnits() >= tuCost)
+		if (_unit->getTu() >= tuCost)
 		{
 			const int attack (static_cast<int>(static_cast<float>(
 							 _unit->getBattleStats()->psiStrength * _unit->getBattleStats()->psiSkill) / 50.f));
@@ -2347,7 +2353,7 @@ void AlienBAIState::chooseMeleeOrRanged() // private.
 				if (RNG::percent(meleeOdds) == true)
 				{
 					_hasRifle = false;
-					const int tuReserve (_unit->getTimeUnits()
+					const int tuReserve (_unit->getTu()
 									   - _unit->getActionTu(BA_MELEE, itRule));
 					_pf->setPathingUnit(_unit);
 					_reachableAttack = _pf->findReachable(_unit, tuReserve);
