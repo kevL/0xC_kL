@@ -4601,7 +4601,7 @@ bool BattleUnit::isSelectable(
 	return _faction == faction
 		&& _status == STATUS_STANDING
 		&& (checkReselect == false || _dontReselect == false)
-		&& (checkInventory == false || hasInventory() == true);
+		&& (checkInventory == false || canInventory() == true);
 }
 
 /**
@@ -4609,9 +4609,9 @@ bool BattleUnit::isSelectable(
  * @note Large units and/or terror units shouldn't show inventories generally.
  * @return, true if an inventory is available
  */
-bool BattleUnit::hasInventory() const
+bool BattleUnit::canInventory() const
 {
-	return _armor->hasInventory() == true
+	return _armor->canInventory() == true
 		&& (_geoscapeSoldier != nullptr
 			|| (_unitRule->isMechanical() == false
 				&& _rank != "STR_LIVE_TERRORIST"));

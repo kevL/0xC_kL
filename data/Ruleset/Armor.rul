@@ -115,7 +115,7 @@ armors:
     forcedTorso: 2
   - type: TANK_ARMOR
     spriteSheet: TANKS.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - TANK_CORPSE_1
       - TANK_CORPSE_2
@@ -141,7 +141,7 @@ armors:
     loftSet: [92,89,90,91]
   - type: HOVERTANK_ARMOR
     spriteSheet: TANKS.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - HOVERTANK_CORPSE_1
       - HOVERTANK_CORPSE_2

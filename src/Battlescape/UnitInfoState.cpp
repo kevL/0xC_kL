@@ -870,7 +870,7 @@ void UnitInfoState::exitClick(Action*) // private.
 //			_game->getScreen()->resetDisplay(false);
 //		}
 //	} else
-	if (_mindProbe == true || _unit->hasInventory() == true)
+	if (_mindProbe == true || _unit->canInventory() == true)
 		_game->popState();
 	else if (_preBattle == false)
 	{

@@ -60,7 +60,7 @@ private:
 		_type;
 	bool
 		_constantAnimation,
-		_hasInventory,
+		_accessInventory,
 		_isBasic,
 		_isSpacesuit;
 	int
@@ -191,7 +191,7 @@ private:
 		int getColorRank(int id) const;
 
 		/// Checks if an Armor's inventory can be accessed.
-		bool hasInventory() const;
+		bool canInventory() const;
 
 		/// Gets an Armor's applicable BattleUnits.
 		const std::vector<std::string>& getUnits() const;

@@ -300,7 +300,7 @@ void UnitDieBState::convertToBody() // private.
 	if (_hidden == false)
 		_battleSave->getBattleState()->showPsiButton(false);	// ... why is this here ...
 																// any reason it's not in, say, the cTor or init()
-	if (_unit->hasInventory() == true
+	if (_unit->canInventory() == true
 		&& (Options::battleWeaponSelfDestruction == false
 			|| _unit->getOriginalFaction() != FACTION_HOSTILE
 			|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS))

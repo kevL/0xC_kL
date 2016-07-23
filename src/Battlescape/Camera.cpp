@@ -752,8 +752,9 @@ bool Camera::getShowLayers() const
 }
 
 /**
- * Checks if map-coordinates x/y/z are on-screen.
- * @note This does not care about the Map's z-level, only whether @a posField is on screen.
+ * Checks if a specified position is displayed on-screen.
+ * @note This does not care about the Map's z-level, only whether @a posField
+ * is on screen.
  * @param posField - reference to the coordinates to check
  * @return, true if the map-coordinates are on-screen
  */
@@ -766,13 +767,40 @@ bool Camera::isOnScreen(const Position& posField) const
 	posScreen.x += _offsetField.x;
 	posScreen.y += _offsetField.y;
 
-	static const int border (28); // buffer the edges a bit.
+	static const int border (32); // buffer the edges a bit.
 
-	return posScreen.x > 8 + border // -> try these
+	return posScreen.x > 8 + border
 		&& posScreen.x < _screenWidth - 8 - _spriteWidth - border
 		&& posScreen.y > -16 + border
 		&& posScreen.y < _screenHeight - 80 - border; // <- icons.
 }
+
+/**
+ * Checks if a specified position is displayed within a tighter bounding-box
+ * than isOnScreen().
+ * @param posField - reference to the coordinates to check
+ * @return, true if the map-coordinates are on-focus
+ * @sa Camera::isOnScreen()
+ */
+bool Camera::isOnFocus(const Position& posField) const
+{
+	Position posScreen;
+	convertMapToScreen(
+					posField,		// tile Position
+					&posScreen);	// pixel Position
+	posScreen.x += _offsetField.x;
+	posScreen.y += _offsetField.y;
+
+	const int
+		border_x ((_screenWidth  >> 1u) - 100), // buffer the edges a bit more.
+		border_y ((_screenHeight >> 1u) -  80);
+
+	return posScreen.x > 8 + border_x
+		&& posScreen.x < _screenWidth - 8 - _spriteWidth - border_x
+		&& posScreen.y > -16 + border_y
+		&& posScreen.y < _screenHeight - 80 - border_y; // <- icons.
+}
+
 /**
  * Checks if map coordinates X,Y,Z are on screen.
  * @param posField Coordinates to check.

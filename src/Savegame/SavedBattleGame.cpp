@@ -1126,6 +1126,7 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 		bool checkReselect,
 		bool checkInventory)
 {
+	//Log(LOG_INFO) << "sbg:selectFactionUnit()";
 //	if (_units.empty() == true) // how can this ever happen.
 //		return (_selectedUnit = _lastSelectedUnit = nullptr);
 
@@ -1193,6 +1194,7 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 								checkReselect,
 								checkInventory) == false);
 
+	//Log(LOG_INFO) << ". id-" << (*iterNext)->getId();
 	return (_selectedUnit = *iterNext);
 }
 
@@ -2446,7 +2448,7 @@ bool SavedBattleGame::placeUnitNearPosition(
 
 /**
  * Adds this unit to the vector of falling units if it doesn't already exist there.
- * @param unit - the unit to add
+ * @param unit - pointer to the unit to add
  * @return, true if the unit was added
  */
 bool SavedBattleGame::addFallingUnit(BattleUnit* const unit)
@@ -2456,14 +2458,10 @@ bool SavedBattleGame::addFallingUnit(BattleUnit* const unit)
 			i != _fallingUnits.end();
 			++i)
 	{
-		if (unit == *i)
-			return false;
+		if (unit == *i) return false;
 	}
-
 	_fallingUnits.push_front(unit);
-	_unitsFalling = true;
-
-	return true;
+	return (_unitsFalling = true);
 }
 
 /**
@@ -2476,19 +2474,11 @@ std::list<BattleUnit*>* SavedBattleGame::getFallingUnits()
 }
 
 /**
- * Toggles the switch that says "there are units falling, start the fall state".
- * @param fall - true if there are any units falling in the battlescap
+ * Accesses the '_unitsFalling' bool.
+ * @note The flag that says: Units Falling, start UnitFallBState.
+ * @return, reference to the toggle
  */
-void SavedBattleGame::setUnitsFalling(bool fall)
-{
-	_unitsFalling = fall;
-}
-
-/**
- * Returns whether there are any units falling in the battlescape.
- * @return, true if there are any units falling in the battlescape
- */
-bool SavedBattleGame::getUnitsFalling() const
+bool& SavedBattleGame::unitsFalling()
 {
 	return _unitsFalling;
 }

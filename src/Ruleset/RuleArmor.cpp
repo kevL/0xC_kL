@@ -44,7 +44,7 @@ RuleArmor::RuleArmor(const std::string& type)
 		_shootFrames(0),
 		_firePhase(0),
 		_constantAnimation(false),
-		_hasInventory(true),
+		_accessInventory(true),
 		_forcedTorso(TORSO_STANDARD),
 		_colorGroupFace(0),
 		_colorGroupHair(0),
@@ -90,10 +90,10 @@ RuleArmor::~RuleArmor()
  */
 void RuleArmor::load(const YAML::Node& node)
 {
-	_type			= node["type"]			.as<std::string>(_type);
-	_spriteSheet	= node["spriteSheet"]	.as<std::string>(_spriteSheet);
-	_spriteImage	= node["spriteImage"]	.as<std::string>(_spriteImage);
-	_hasInventory	= node["allowInv"]		.as<bool>(_hasInventory);
+	_type				= node["type"]				.as<std::string>(_type);
+	_spriteSheet		= node["spriteSheet"]		.as<std::string>(_spriteSheet);
+	_spriteImage		= node["spriteImage"]		.as<std::string>(_spriteImage);
+	_accessInventory	= node["accessInventory"]	.as<bool>(_accessInventory);
 
 	if (node["corpseBattle"])
 	{
@@ -462,9 +462,9 @@ int RuleArmor::getColorRank(int id) const
  * Checks if the Armor's inventory be accessed.
  * @return, true if inventory can be opened by player
  */
-bool RuleArmor::hasInventory() const
+bool RuleArmor::canInventory() const
 {
-	return _hasInventory;
+	return _accessInventory;
 }
 
 /**

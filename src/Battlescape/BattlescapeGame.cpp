@@ -208,7 +208,7 @@ void BattlescapeGame::reinit()
  */
 void BattlescapeGame::think()
 {
-	//Log(LOG_INFO) << "BattlescapeGame::think()";
+	//Log(LOG_INFO) << "bg:think()";
 	if (_battleStates.empty() == true) // nothing is happening -> see if they need some aLien AI or units panicking or whatever
 	{
 		switch (_battleSave->getSide())
@@ -236,30 +236,39 @@ void BattlescapeGame::think()
 			case FACTION_NEUTRAL:
 				if (_debugPlay == false)
 				{
-					BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+					BattleUnit* selUnit (_battleSave->getSelectedUnit());
 					if (selUnit != nullptr)
 					{
 						_parentState->printDebug(Text::intWide(selUnit->getId()));
 						if (handlePanickingUnit(selUnit) == false)
 						{
-							//Log(LOG_INFO) << "BattlescapeGame::think() call handleUnitAI() " << selUnit->getId();
+							//Log(LOG_INFO) << "bg:think() . call handleUnitAI() " << selUnit->getId();
 							handleUnitAI(selUnit);
 						}
 					}
-					else if (_battleSave->selectNextFactionUnit( // find 1st AI-unit else endTurn
-															_AISecondMove == true,
-															true) == nullptr)
+					else if ((selUnit = _battleSave->selectNextFactionUnit( // find 1st AI-unit else endTurn
+																	_AISecondMove == true,
+																	true)) != nullptr)
 					{
-						endAiTurn();
+						if (selUnit->getUnitVisible() == true
+							&& selUnit != _battleSave->getWalkUnit()) // safety. There should be a NULL walkUnit here.
+						{
+							_battleSave->setWalkUnit(selUnit);
+
+							if (getMap()->getCamera()->isOnFocus(selUnit->getPosition()) == false)
+								centerOnUnit(selUnit); // if you're going to reveal the map at least center the 1st aLien.
+						}
 					}
+					else
+						endAiTurn();
 				}
 		}
 
-		if (_battleSave->getUnitsFalling() == true)
+		if (_battleSave->unitsFalling() == true)
 		{
-			//Log(LOG_INFO) << "BattlescapeGame::think(), get/setUnitsFalling() ID " << _battleSave->getSelectedUnit()->getId();
+			//Log(LOG_INFO) << "bg:think() . Units are Falling() selUnit id-" << _battleSave->getSelectedUnit()->getId();
+			_battleSave->unitsFalling() = false;
 			statePushFront(new UnitFallBState(this));
-			_battleSave->setUnitsFalling(false);
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::think() EXIT";
@@ -705,6 +714,7 @@ void BattlescapeGame::centerOnUnit( // private.
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 {
+//	Log(LOG_INFO) << "bg:handleUnitAI id-" << unit->getId();
 //	if (unit->getId() == 1000028)	_debug = true;
 //	else							_debug = false;
 //	if (_debug)
@@ -738,13 +748,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 
 
 //	unit->setUnitVisible(false); // <- why is this even handled here Cf. UnitWalkBState::doStatusStand_end() also
-
-//	if (unit->getUnitVisible() == true
-//		&& unit != _battleSave->getWalkUnit())
-//	{
-//		if (_debug) Log(LOG_INFO) << ". unit is Vis & unit != walkUnit: center Unit";
-//		centerOnUnit(unit); // if you're going to reveal the map at least center the first aLien.
-//	}
 
 	getTileEngine()->calcFovUnits_pos(unit->getPosition());
 
@@ -855,12 +858,12 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		//Log(LOG_INFO) << ". x= " << RNG::getSeed();
 	}
 
-	bool center (false);
+//	bool center (false);
 	switch (aiAction.type)
 	{
 		case BA_MOVE:
 		{
-			center = true;
+//			center = true;
 
 			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(aiAction.actor);
@@ -886,7 +889,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		case BA_LAUNCH:
 		case BA_MELEE:
 		case BA_THROW:
-			center = true;
+//			center = true;
 			// no break;
 		case BA_PSICONTROL:
 		case BA_PSIPANIC:
@@ -948,14 +951,14 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			selectNextAiUnit(unit);
 	}
 
-	if (center == true
-		&& unit->getUnitVisible() == true
-		&& unit != _battleSave->getWalkUnit())
-	{
-		//if (_debug) Log(LOG_INFO) << ". center AI Unit (vis) - set walkUnit";
-		_battleSave->setWalkUnit(unit);
-		centerOnUnit(unit); // if you're going to reveal the map at least center the aLien.
-	}
+//	if (center == true
+//		&& unit->getUnitVisible() == true
+//		&& unit != _battleSave->getWalkUnit())
+//	{
+//		//if (_debug) Log(LOG_INFO) << ". center AI Unit (vis) - set walkUnit";
+//		_battleSave->setWalkUnit(unit);
+//		centerOnUnit(unit); // if you're going to reveal the map at least center the aLien.
+//	}
 	//if (debug) Log(LOG_INFO) << ". EXIT x= " << RNG::getSeed();
 }
 
@@ -982,7 +985,15 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 																	true));
 	if (nextUnit != nullptr)
 	{
-//		centerOnUnit(nextUnit); // -> let handleUnitAI() handle it.
+		if (nextUnit->getUnitVisible() == true
+			&& nextUnit != _battleSave->getWalkUnit())
+		{
+			_battleSave->setWalkUnit(nextUnit);
+
+			if (getMap()->getCamera()->isOnFocus(nextUnit->getPosition()) == false)
+				centerOnUnit(nextUnit);	// -> let handleUnitAI() handle it. NOPE: State Machine
+		}								// burps out a map-reveal before handleUnitAI() can center.
+
 		_parentState->updateSoldierInfo(false); // try no calcFov() ... calcFoV(pos) is going to happen in handleUnitAI() before AI-battlestate-think.
 
 		if (_battleSave->getDebugTac() == true)
@@ -1024,7 +1035,7 @@ void BattlescapeGame::endAiTurn()
 	}
 	else
 	{
-		_battleSave->selectNextFactionUnit(); // select Player unit.
+		_battleSave->selectNextFactionUnit();
 		_debugPlay = true;
 	}
 }

@@ -394,10 +394,8 @@ private:
 		bool addFallingUnit(BattleUnit* const unit);
 		/// Gets the list of falling BattleUnits.
 		std::list<BattleUnit*>* getFallingUnits();
-		/// Toggles the flag that says "there are units falling - start the fall state".
-		void setUnitsFalling(bool fall);
-		/// Checks the status of the flag that says "there are units falling".
-		bool getUnitsFalling() const;
+		/// Accesses the '_unitsFalling' bool.
+		bool& unitsFalling();
 
 		/// Gets the highest ranked, living unit of faction.
 		const BattleUnit* getHighestRanked(

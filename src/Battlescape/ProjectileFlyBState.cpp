@@ -837,7 +837,7 @@ void ProjectileFlyBState::think()
 					// no break;
 				default: // NOTE: Probably only BA_THROW left here.
 					if (_unit->getFaction() == _battleSave->getSide()
-						&& _battleSave->getUnitsFalling() == false)
+						&& _battleSave->unitsFalling() == false)
 					{
 						//Log(LOG_INFO) << "ProjectileFlyBState::think() CALL te::checkReactionFire()"
 						//			    << " id-" << _unit->getId()

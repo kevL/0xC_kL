@@ -842,7 +842,7 @@ private:
 				bool checkInventory = false) const;
 
 		/// Returns true if the BattleUnit has an inventory.
-		bool hasInventory() const;
+		bool canInventory() const;
 
 		/// Gets the BattleUnit's movement type.
 		MoveType getMoveTypeUnit() const;

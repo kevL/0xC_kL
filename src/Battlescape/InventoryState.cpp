@@ -466,15 +466,15 @@ void InventoryState::init()
 		return;
 	}
 
-	if (unit->hasInventory() == false) // skip to the first unit with inventory
+	if (unit->canInventory() == false) // skip to the first unit with an accessible Inventory
 	{
 		if (_parent != nullptr)
-			_parent->selectNextPlayerUnit(false,false,true);
+			_parent->selectNextPlayerUnit(false, false, true);
 		else
-			_battleSave->selectNextFactionUnit(false,false,true);
+			_battleSave->selectNextFactionUnit(false, false, true);
 
 		if ((unit = _battleSave->getSelectedUnit()) == nullptr
-			 || unit->hasInventory() == false)
+			 || unit->canInventory() == false)
 		{
 			btnOkClick(nullptr);
 			return; // starting a mission with just vehicles. kL_note: DISALLOWED!!!

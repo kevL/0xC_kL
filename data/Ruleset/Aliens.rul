@@ -2215,7 +2215,7 @@ armors:
     loftSet: [2]
   - type: CYBERDISC_ARMOR
     spriteSheet: CYBER.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - CYBERDISC_CORPSE_1
       - CYBERDISC_CORPSE_2
@@ -2244,7 +2244,7 @@ armors:
     loftSet: [92,89,90,91]
   - type: REAPER_ARMOR
     spriteSheet: X_REAP.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - REAPER_CORPSE_1
       - REAPER_CORPSE_2
@@ -2271,7 +2271,7 @@ armors:
     loftSet: [92,89,90,91]
   - type: SECTOPOD_ARMOR
     spriteSheet: X_ROB.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - SECTOPOD_CORPSE_1
       - SECTOPOD_CORPSE_2
@@ -2537,7 +2537,7 @@ armors:
     loftSet: [3]
   - type: CHRYSSALID_ARMOR
     spriteSheet: CHRYS.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - STR_CHRYSSALID_CORPSE
     frontArmor: 41
@@ -2559,7 +2559,7 @@ armors:
     loftSet: [3]
   - type: ZOMBIE_ARMOR
     spriteSheet: ZOMBIE.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - STR_ZOMBIE_CORPSE
     frontArmor: 5
@@ -2582,7 +2582,7 @@ armors:
     loftSet: [3]
   - type: SILACOID_ARMOR
     spriteSheet: SILACOID.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - STR_SILACOID_CORPSE
     frontArmor: 57
@@ -2606,7 +2606,7 @@ armors:
     loftSet: [5]
   - type: CELATID_ARMOR
     spriteSheet: CELATID.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - STR_CELATID_CORPSE
     frontArmor: 24

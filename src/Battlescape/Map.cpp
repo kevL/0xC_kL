@@ -383,12 +383,12 @@ void Map::draw()
 
 		static bool delayHide;
 
-		//if (_battleSave->getSelectedUnit() != nullptr
-		//	&& _battleSave->getSelectedUnit()->getId() == 1000023)
-		//{
-		//	Log(LOG_INFO) << ". id-1000023 " << _battleSave->getSelectedUnit()->getPosition()
-		//				  << " bat= " << BattleAction::debugBat(_battleGame->getCurrentAiAction().type);
-		//}
+//		if (_battleSave->getSelectedUnit() != nullptr
+//			&& _battleSave->getSelectedUnit()->getUnitVisible() == true)
+//		{
+//			Log(LOG_INFO) << "draw id-" << _battleSave->getSelectedUnit()->getId()
+//						  << " " << _battleSave->getSelectedUnit()->getPosition();
+//		}
 
 		if (   _battleSave->getSelectedUnit() == nullptr
 			|| _battleSave->getSelectedUnit()->getUnitVisible() == true
@@ -404,7 +404,7 @@ void Map::draw()
 			|| _battleSave->getDebugTac() == true)
 		{
 			// REVEAL //
-			//Log(LOG_INFO) << "map: REVEAL";
+			//Log(LOG_INFO) << ". REVEAL";
 			delayHide = true;
 			_mapIsHidden = false;
 			drawTerrain(this);
@@ -414,7 +414,7 @@ void Map::draw()
 			// HIDE //
 			if (delayHide == true)
 			{
-				//Log(LOG_INFO) << "map: HIDE !!!";
+				//Log(LOG_INFO) << ". HIDE";
 				delayHide = false;
 				SDL_Delay(Screen::SCREEN_PAUSE);
 			}

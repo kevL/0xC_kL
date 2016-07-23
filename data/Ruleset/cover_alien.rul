@@ -152,7 +152,7 @@ armors:
     loftSet: [3]
   - type: CYBERMITE_ARMOR
     spriteSheet: CYBERMITE.PCK
-    allowInv: false
+    accessInventory: false
     corpseBattle:
       - STR_CYBERMITE_CORPSE
     frontArmor: 20
