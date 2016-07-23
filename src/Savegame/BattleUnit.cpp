@@ -1325,8 +1325,8 @@ void BattleUnit::setCache(
 		Surface* const cache,
 		int quadrant)
 {
-	_cacheInvalid = false;
 	_cache[static_cast<size_t>(quadrant)] = cache;
+	_cacheInvalid = false;
 }
 
 /**
@@ -1402,7 +1402,7 @@ void BattleUnit::aim(bool aim)
 
 /**
  * Gets this BattleUnit's current TU.
- * @return, current time units
+ * @return, current turn-units
  */
 int BattleUnit::getTimeUnits() const
 {
@@ -1945,7 +1945,7 @@ bool BattleUnit::isOut_t(OutCheck test) const
 }
 
 /**
- * Gets the number of time units a certain action takes for this BattleUnit.
+ * Gets the number of turn-units a certain action takes for this BattleUnit.
  * @param bat	- BattleActionType (BattlescapeGame.h)
  * @param item	- pointer to BattleItem for TU-cost
  * @return, TUs to perform action
@@ -1961,7 +1961,7 @@ int BattleUnit::getActionTu( // TODO: Refactor these ....
 }
 
 /**
- * Gets the number of time units a certain action takes for this BattleUnit.
+ * Gets the number of turn-units a certain action takes for this BattleUnit.
  * @param bat		- BattleActionType (BattlescapeGame.h)
  * @param itRule	- pointer to RuleItem for TU-costs (default nullptr -- see BattlescapeGame::checkReservedTu())
  * @return, TUs to perform action
@@ -2047,11 +2047,11 @@ int BattleUnit::getActionTu(
 }
 
 /**
- * Spends time units if it can, returns false if it can't.
+ * Spends turn-units if it can, returns false if it can't.
  * @param tu - the TU to check & spend
- * @return, true if this unit could spend the time units
+ * @return, true if this unit could spend the turn-units
  */
-bool BattleUnit::spendTimeUnits(int tu)
+bool BattleUnit::expendTu(int tu)
 {
 	if (tu <= _tu)
 	{
@@ -2066,7 +2066,7 @@ bool BattleUnit::spendTimeUnits(int tu)
  * @param energy - the stamina to check & expend
  * @return, true if this unit could expend the stamina
  */
-bool BattleUnit::spendEnergy(int energy)
+bool BattleUnit::expendEnergy(int energy)
 {
 	if (energy <= _energy)
 	{
@@ -2077,10 +2077,24 @@ bool BattleUnit::spendEnergy(int energy)
 }
 
 /**
- * Sets a specific number of TUs.
+ * Expends TU and Energy.
+ * @note Called by UnitWalkBState::doStatusStand() after checks are done.
+ * @param tu		- tu
+ * @param energy	- stamina
+ */
+void BattleUnit::expendTuEnergy(
+		int tu,
+		int energy)
+{
+	_tu -= tu;
+	_energy -= energy;
+}
+
+/**
+ * Sets a specified quantity of TUs.
  * @note This must be allowed to go above the unit's Tu-cap to allow for
  * accurate action-cancellations in or about BattlescapeGame::popState().
- * @param tu - the TU to set for this unit
+ * @param tu - the TU to set for this unit (default 0)
  */
 void BattleUnit::setTimeUnits(int tu)
 {
@@ -2088,8 +2102,8 @@ void BattleUnit::setTimeUnits(int tu)
 }
 
 /**
- * Sets a specific number of energy.
- * @param energy - the energy to set for this unit
+ * Sets a specific quantity of energy.
+ * @param energy - the energy to set for this unit (default 0)
  */
 void BattleUnit::setEnergy(int energy)
 {
@@ -2461,7 +2475,7 @@ void BattleUnit::prepUnit(bool preBattle)
 }
 
 /**
- * Calculates and resets this BattleUnit's time units and energy.
+ * Calculates and resets this BattleUnit's turn-units and energy.
  * @param preBattle		- true for pre-battle initialization (default false)
  * @param isPanicked	- true if unit has just panicked (default false)
  * @param reverted		- true if unit has just reverted from MC (default false)
@@ -2522,8 +2536,7 @@ void BattleUnit::prepTu(
 			if (_geoscapeSoldier != nullptr)
 				energy -= _energy * getFatalWound(BODYPART_TORSO) / 10;
 
-			energy += _energy;
-			setEnergy(std::max(12, energy));
+			setEnergy(std::max(12, _energy + energy));
 		}
 	}
 }
@@ -3738,7 +3751,7 @@ bool BattleUnit::hasPowerSuit() const
 {
 	std::string armorType = _armor->getType();
 
-	if (armorType == "STR_POWER_SUIT_UC"
+	if (   armorType == "STR_POWER_SUIT_UC"
 		|| armorType == "STR_BLACK_ARMOR_UC"
 		|| armorType == "STR_BLUE_ARMOR_UC"
 		|| armorType == "STR_GREEN_ARMOR_UC"
@@ -3761,7 +3774,7 @@ bool BattleUnit::hasFlightSuit() const
 {
 	std::string armorType = _armor->getType();
 
-	if (armorType == "STR_FLYING_SUIT_UC"
+	if (   armorType == "STR_FLYING_SUIT_UC"
 		|| armorType == "STR_BLACKSUIT_ARMOR_UC"
 		|| armorType == "STR_BLUESUIT_ARMOR_UC"
 		|| armorType == "STR_GREENSUIT_ARMOR_UC"
@@ -3781,7 +3794,7 @@ bool BattleUnit::hasFlightSuit() const
  * @note An aLien's name is the translation of its race and rank; hence the
  * language pointer needed.
  * @param lang		- pointer to Language (default nullptr)
- * @param debugId	- append unit ID to name for debug purposes (default false)
+ * @param debugId	- append unit-ID for debug purposes (default false)
  * @return, name of this BattleUnit
  */
 std::wstring BattleUnit::getName(
@@ -4390,7 +4403,7 @@ void BattleUnit::adjustStats(
 
 /**
  * Sets the amount of TUs reserved for cover.
- * @param tuReserve - reserved time units
+ * @param tuReserve - reserved turn-units
  */
 void BattleUnit::setCoverReserve(int tuReserve)
 {
@@ -4399,7 +4412,7 @@ void BattleUnit::setCoverReserve(int tuReserve)
 
 /**
  * Gets the amount of TUs reserved for cover.
- * @return, reserved time units
+ * @return, reserved turn-units
  */
 int BattleUnit::getCoverReserve() const
 {
@@ -4576,8 +4589,8 @@ bool BattleUnit::getTakenFire() const
  * Checks if this BattleUnit can be selected.
  * @#note Only conscious units belonging to the specified faction can be selected.
  * @param faction			- the faction to compare
- * @param checkReselect		- check if the unit is reselectable
- * @param checkInventory	- check if the unit has an inventory
+ * @param checkReselect		- true to check the unit's reselectable flag (default false)
+ * @param checkInventory	- true to check if the unit has no inventory (default false)
  * @return, true if the unit can be selected, false otherwise
  */
 bool BattleUnit::isSelectable(
@@ -4586,8 +4599,8 @@ bool BattleUnit::isSelectable(
 		bool checkInventory) const
 {
 	return _faction == faction
-		&& isOut_t(OUT_STAT) == false
-		&& (checkReselect == false || reselectAllowed() == true)
+		&& _status == STATUS_STANDING
+		&& (checkReselect == false || _dontReselect == false)
 		&& (checkInventory == false || hasInventory() == true);
 }
 
@@ -4605,7 +4618,7 @@ bool BattleUnit::hasInventory() const
 }
 
 /**
- * Gets this BattleUnit's movement type.
+ * Gets this BattleUnit's movement-type.
  * @note Use this instead of checking the rules of the armor.
  * @return, MoveType (MapData.h)
  */
@@ -4631,7 +4644,6 @@ static inline BattleItem* createItem(SavedBattleGame *save, BattleUnit *unit, Ru
 	save->removeItem(item); //item outside inventory, deleted when SavedBattleGame dTors.
 	return item;
 } */
-
 /**
  * Sets special weapon that is handled outside inventory.
  * @param save -
@@ -4657,7 +4669,6 @@ void BattleUnit::setSpecialWeapon(SavedBattleGame* save, const Ruleset* rule)
 			_specWeapon[i++] = createItem(save, this, item);
 	}
 } */
-
 /**
  * Gets special weapon.
  * @param type -
@@ -4672,7 +4683,7 @@ BattleItem* BattleUnit::getSpecialWeapon(BattleType type) const
 } */
 
 /**
- * Get this BattleUnit's battle statistics.
+ * Get this BattleUnit's battle-statistics.
  * @return, pointer to BattleUnitStatistics
  */
 BattleUnitStatistics* BattleUnit::getStatistics() const

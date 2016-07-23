@@ -718,23 +718,6 @@ void InventoryState::btnOkClick(Action*)
 }
 
 /**
- * Selects the previous eligible unit.
- * @param action - pointer to an Action
- */
-void InventoryState::btnPrevClick(Action*)
-{
-	if (_inventoryPanel->getSelectedItem() == nullptr)
-	{
-		if (_parent != nullptr)
-			_parent->selectPreviousPlayerUnit(false,false,true);
-		else
-			_battleSave->selectPreviousFactionUnit(false,false,true);
-
-		init();
-	}
-}
-
-/**
  * Selects the next eligible unit.
  * @param action - pointer to an Action
  */
@@ -743,9 +726,26 @@ void InventoryState::btnNextClick(Action*)
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
 		if (_parent != nullptr)
-			_parent->selectNextPlayerUnit(false,false,true);
+			_parent->selectNextPlayerUnit(false, false, true);
 		else
-			_battleSave->selectNextFactionUnit(false,false,true);
+			_battleSave->selectNextFactionUnit(false, false, true);
+
+		init();
+	}
+}
+
+/**
+ * Selects the previous eligible unit.
+ * @param action - pointer to an Action
+ */
+void InventoryState::btnPrevClick(Action*)
+{
+	if (_inventoryPanel->getSelectedItem() == nullptr)
+	{
+		if (_parent != nullptr)
+			_parent->selectPreviousPlayerUnit(false, false, true);
+		else
+			_battleSave->selectPreviousFactionUnit(false, false, true);
 
 		init();
 	}

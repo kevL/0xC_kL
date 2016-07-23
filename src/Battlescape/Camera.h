@@ -130,7 +130,7 @@ private:
 
 		/// Converts map-coordinates to screen-coordinates.
 		void convertMapToScreen(
-				const Position& posMap,
+				const Position& posField,
 				Position* const posScreen) const;
 		/// Converts voxel-coordinates to screen-coordinates.
 		void convertVoxelToScreen(
@@ -145,8 +145,8 @@ private:
 
 		/// Centers the Map on a position.
 		void centerOnPosition(
-				const Position& posMap,
-				bool redraw = true);
+				const Position& posField,
+				bool draw = true);
 		/// Gets the Map's center-position.
 		Position getCenterPosition();
 
@@ -158,7 +158,7 @@ private:
 		/// Gets the Map's x/y screen-offset.
 		Position getMapOffset() const;
 		/// Sets the map x/y screen-offset.
-		void setMapOffset(const Position& pos);
+		void setMapOffset(const Position& posOffset);
 
 		/// Toggles showing all map-layers.
 		bool toggleShowLayers();
@@ -166,7 +166,7 @@ private:
 		bool getShowLayers() const;
 
 		/// Checks if map-coordinates x/y/z are on-screen.
-		bool isOnScreen(const Position& posMap) const;
+		bool isOnScreen(const Position& posField) const;
 
 		/// Resizes the viewable area.
 		void resize();

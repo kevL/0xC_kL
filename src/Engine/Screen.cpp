@@ -184,10 +184,11 @@ void Screen::handle(Action* action)
 #endif
 				switch (Timer::coreInterval)
 				{
-					case 1: Timer::coreInterval =  6u; break;
-					case 6: Timer::coreInterval = 14u; break;
-					default:
-						Timer::coreInterval = 1u;
+					case  1u:	Timer::coreInterval =  2u; break;
+					case  2u:	Timer::coreInterval =  5u; break;
+					case  5u:	Timer::coreInterval = 10u; break;
+					case 10u:	Timer::coreInterval = 15u; break;
+					default:	Timer::coreInterval = 1u;
 				}
 				break;
 

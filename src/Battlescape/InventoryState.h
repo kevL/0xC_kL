@@ -140,10 +140,10 @@ private:
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 
-		/// Handler for clicking the Previous button.
-		void btnPrevClick(Action* action);
 		/// Handler for clicking the Next button.
 		void btnNextClick(Action* action);
+		/// Handler for clicking the Previous button.
+		void btnPrevClick(Action* action);
 
 		/// Handler for clicking the Unload button.
 		void btnLoadIconClick(Action* action);

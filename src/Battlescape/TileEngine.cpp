@@ -1885,7 +1885,7 @@ bool TileEngine::reactionShot(
 	}
 
 	if (_rfAction->targeting == true
-		&& _rfAction->actor->spendTimeUnits(_rfAction->TU) == true)
+		&& _rfAction->actor->expendTu(_rfAction->TU) == true)
 	{
 		//Log(LOG_INFO) << "TE: rf by Actor id-" << _rfAction->actor->getId();
 		_rfAction->TU = 0;
@@ -4660,7 +4660,7 @@ DoorResult TileEngine::unitOpensDoor(
 			|| _battleSave->getBattleGame()->checkReservedTu(unit, tuCost) == true)
 		{
 			//Log(LOG_INFO) << "check reserved tu";
-			if (unit->spendTimeUnits(tuCost) == true)
+			if (unit->expendTu(tuCost) == true)
 			{
 				//Log(LOG_INFO) << "spend tu";
 				if (rtClick == true) // try this one ...... <-- let UnitWalkBState handle FoV & new unit visibility when walking (ie, not for RMB here).

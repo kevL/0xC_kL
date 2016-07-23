@@ -1039,7 +1039,7 @@ void ProjectileFlyBState::think()
 				{
 					Position shotVoxel;
 
-					int pelletsLeft (_load->getRules()->getShotgunPellets() - 1); // shotgun pellets after 1st
+					int pelletsLeft (_load->getRules()->getShotgunPellets() - 1); // shotgun pellets after 1st^
 					while (pelletsLeft > 0)
 					{
 						Projectile* const prj (new Projectile(
@@ -1082,7 +1082,8 @@ void ProjectileFlyBState::think()
 
 								Uint32 interval (static_cast<Uint32>(
 												 std::max(1,
-														  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - _load->getRules()->getExplosionSpeed())));
+														  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION)
+																- _load->getRules()->getExplosionSpeed())));
 								_parent->setStateInterval(interval);
 							}
 							_battleSave->getTileEngine()->hit(

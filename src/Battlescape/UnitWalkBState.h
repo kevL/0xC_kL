@@ -45,11 +45,14 @@ class UnitWalkBState
 {
 
 private:
+//	static bool _debug;
+
 	bool
 		_door,
 		_fall,
 		_kneelCheck,
 		_isVisible,
+//		_isVisibleChanged, // unit walked into Player's view in middle of state.
 		_playFly,
 		_tileSwitchDone,
 		_preStepTurn;
@@ -58,7 +61,7 @@ private:
 		_dirStart;
 
 	BattleUnit* _unit;
-	Camera* _walkCam;
+	Camera* _walkCamera;
 	Pathfinding* _pf;
 	SavedBattleGame* _battleSave;
 	TileEngine* _te;
@@ -89,7 +92,7 @@ private:
 	/// Handles the stepping sounds.
 	void playMoveSound();
 
-	/// For determining if a flying-unit turns flight off at start of movement.
+	/// Determines if a flying-unit turns off flight at the start of movement.
 	void doFallCheck();
 	/// Checks if there is ground below when unit is falling.
 	bool groundCheck() const;

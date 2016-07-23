@@ -107,10 +107,8 @@ void Camera::intMinMax( // private.
 		int minValue,
 		int maxValue) const
 {
-	if (*value < minValue)
-		*value = minValue;
-	else if (*value > maxValue)
-		*value = maxValue;
+	if		(*value < minValue) *value = minValue;
+	else if	(*value > maxValue) *value = maxValue;
 }
 
 /**
@@ -156,7 +154,7 @@ void Camera::mouseRelease(Action* action, State*)
 		_scrollMouseTimer->stop();
 		_scrollTrigger = false;
 
-		int
+		const int
 			posX (action->getMouseX()),
 			posY (action->getMouseY());
 
@@ -181,7 +179,7 @@ void Camera::mouseOver(Action* action, State*)
 		&& (Options::battleEdgeScroll == MAP_SCROLL_AUTO
 			|| _scrollTrigger == true))
 	{
-		int
+		const int
 			posX (action->getMouseX()),
 			posY (action->getMouseY()),
 			scrollSpeed (Options::battleScrollSpeed);
@@ -574,12 +572,13 @@ void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() cau
 /**
  * Centers the Map on a certain battlefield Position.
  * @param posField	- reference to the position to center on
- * @param redraw	- true to redraw the map (default true)
+ * @param draw		- true to redraw the map (default true)
  */
 void Camera::centerOnPosition(
 		const Position& posField,
-		bool redraw)
+		bool draw)
 {
+	Log(LOG_INFO) << "Camera::centerOnPosition() " << posField;
 	_centerField = posField;
 
 	intMinMax(
@@ -602,7 +601,7 @@ void Camera::centerOnPosition(
 
 	_map->getBattleSave()->getBattleState()->setLayerValue(_offsetField.z);
 
-	if (redraw == true) _map->draw();
+	if (draw == true) _map->draw();
 }
 
 /**
@@ -727,11 +726,11 @@ Position Camera::getMapOffset() const
 
 /**
  * Sets the map-offset.
- * @param pos - the map-position offset
+ * @param posOffset - the map-position offset
  */
-void Camera::setMapOffset(const Position& pos)
+void Camera::setMapOffset(const Position& posOffset)
 {
-	_offsetField = pos;
+	_offsetField = posOffset;
 }
 
 /**

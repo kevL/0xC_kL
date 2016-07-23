@@ -207,8 +207,6 @@ void UnitFallBState::think()
 			case STATUS_FLYING:
 				//Log(LOG_INFO) << ". . call keepWalking()";
 				(*i)->keepWalking(tileBelow, true);	// advances the phase
-
-				(*i)->flagCache();					// kL
 				_parent->getMap()->cacheUnit(*i);	// make sure the fallUnit sprites are up to date
 		}
 

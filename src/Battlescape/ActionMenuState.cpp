@@ -415,7 +415,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				break;
 
 			case BA_DROP:
-				if (_action->actor->spendTimeUnits(_action->TU) == true)
+				if (_action->actor->expendTu(_action->TU) == true)
 					_action->actor->setActiveHand(_action->actor->getActiveHand());
 				else
 					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
@@ -432,7 +432,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 						break;
 
 					case BT_SCANNER:
-						if (_action->actor->spendTimeUnits(_action->TU) == true)
+						if (_action->actor->expendTu(_action->TU) == true)
 						{
 							_game->popState();
 							_game->pushState(new ScannerState(_action->actor));

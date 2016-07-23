@@ -107,7 +107,7 @@ private:
 	BattleUnit
 		* _selectedUnit,
 		* _lastSelectedUnit;
-	const BattleUnit* _walkUnit;
+	const BattleUnit* _walkUnit; // -> "prior AI active actor" (used to stop Camera re-centering when it's already more-or-less centered)
 	Pathfinding* _pf;
 	Tile
 		* _equiptTile,
@@ -154,9 +154,9 @@ private:
 	/// Selects a BattleUnit.
 	BattleUnit* selectFactionUnit(
 			int dir,
-			bool checkReselect = false,
-			bool dontReselect = false,
-			bool checkInventory = false);
+			bool dontReselect,
+			bool checkReselect,
+			bool checkInventory);
 
 	/// Sets the TacticalType based on a specified mission-type.
 	void setTacType(const std::string& type);
@@ -268,13 +268,13 @@ private:
 		void setSelectedUnit(BattleUnit* const unit = nullptr);
 		/// Selects the next BattleUnit.
 		BattleUnit* selectNextFactionUnit(
-				bool checkReselect = false,
 				bool dontReselect = false,
+				bool checkReselect = false,
 				bool checkInventory = false);
 		/// Selects the previous BattleUnit.
 		BattleUnit* selectPreviousFactionUnit(
-				bool checkReselect = false,
 				bool dontReselect = false,
+				bool checkReselect = false,
 				bool checkInventory = false);
 
 		/// Gets a pointer to the list of nodes.
@@ -480,7 +480,7 @@ private:
 		int getDropTu() const;
 
 		/// Sets the previous walking unit.
-		void setWalkUnit(const BattleUnit* const unit);
+		void setWalkUnit(const BattleUnit* const unit = nullptr);
 		/// Gets the previous walking unit.
 		const BattleUnit* getWalkUnit() const;
 

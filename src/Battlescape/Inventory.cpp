@@ -567,7 +567,7 @@ void Inventory::mouseClick(Action* action, State* state)
 								{
 									const RuleInventory* const toSection (_game->getRuleset()->getInventoryRule(ST_GROUND));
 									if (_tuMode == false
-										|| _selUnit->spendTimeUnits(overItem->getInventorySection()->getCost(toSection)) == true)
+										|| _selUnit->expendTu(overItem->getInventorySection()->getCost(toSection)) == true)
 									{
 										placed = true;
 										moveItem(overItem, toSection);
@@ -652,7 +652,7 @@ void Inventory::mouseClick(Action* action, State* state)
 							&& inRule->fitItemInSlot(_selItem->getRules(), x,y) == true)
 						{
 							if (_tuMode == false
-								|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
+								|| _selUnit->expendTu(_selItem->getInventorySection()->getCost(inRule)) == true)
 							{
 								_tuCost = -1;
 
@@ -674,7 +674,7 @@ void Inventory::mouseClick(Action* action, State* state)
 						else if (stack == true)
 						{
 							if (_tuMode == false
-								|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
+								|| _selUnit->expendTu(_selItem->getInventorySection()->getCost(inRule)) == true)
 							{
 								_tuCost = -1;
 
@@ -746,7 +746,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									tuReload = 0; // safety, not used.
 
 								if (_tuMode == false
-									|| _selUnit->spendTimeUnits(tuReload) == true)
+									|| _selUnit->expendTu(tuReload) == true)
 								{
 									_tuCost = -1;
 
@@ -791,7 +791,7 @@ void Inventory::mouseClick(Action* action, State* state)
 						if (canStack(overItem, _selItem) == true)
 						{
 							if (_tuMode == false
-								|| _selUnit->spendTimeUnits(_selItem->getInventorySection()->getCost(inRule)) == true)
+								|| _selUnit->expendTu(_selItem->getInventorySection()->getCost(inRule)) == true)
 							{
 								moveItem(
 										_selItem,
@@ -993,9 +993,8 @@ void Inventory::moveItem( // private.
 			if (item->getItemUnit() != nullptr) //&& item->getItemUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
 				item->getItemUnit()->setPosition(Position(-1,-1,-1));
 
-			if (_tuMode == true)					// To prevent units from picking up large objects and running around with
-				_selUnit->setTimeUnits(std::max(0,	// nearly full TU on the same turn its weight becomes an extra tu-burden.
-												_selUnit->getTimeUnits() - item->getRules()->getWeight()));
+			if (_tuMode == true) // To prevent units from picking up large objects and running around on the same turn with nearly full TU
+				_selUnit->setTimeUnits(_selUnit->getTimeUnits() - item->getRules()->getWeight()); // its weight becomes an extra tu-burden.
 		}
 
 		item->setInventorySection(inRule); // above, or simply moving item from one section to another
@@ -1038,7 +1037,7 @@ bool Inventory::fitItem( // private.
 							x,y) == false)
 				{
 					if (_tuMode == false
-						|| _selUnit->spendTimeUnits(item->getInventorySection()->getCost(inRule)) == true)
+						|| _selUnit->expendTu(item->getInventorySection()->getCost(inRule)) == true)
 					{
 						// NOTE: Called only in mouseClick() and item will be from Ground.
 //						_stackLevel[static_cast<size_t>(item->getSlotX())]
@@ -1360,7 +1359,7 @@ bool Inventory::unload()
 			}
 		}
 
-		if (_selUnit->spendTimeUnits(_selItem->getRules()->getUnloadTu()) == false)
+		if (_selUnit->expendTu(_selItem->getRules()->getUnloadTu()) == false)
 		{
 			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u])); // not enough TU
 			return false;

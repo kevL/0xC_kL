@@ -1805,6 +1805,7 @@ alienMissions:
     score: 100
     objectiveType: 1
     objectiveZone: 4 #for alien base
+    terrorType: STR_ALIEN_BASE_ASSAULT #huh This should not be needed.
     weightsRace:
       0:
         STR_FLOATER: 20

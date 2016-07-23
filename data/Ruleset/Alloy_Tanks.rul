@@ -12,7 +12,7 @@ items:
     fireSound: 12
     compatibleAmmo:
       - STR_HWP_CANNON_SHELLS
-    accuracySnap: 58
+    accuracySnap: 59
     accuracyAimed: 98
     tuSnap: 34
     tuAimed: 83
@@ -35,7 +35,7 @@ items:
     fireSound: 52
     compatibleAmmo:
       - STR_HWP_ROCKETS
-    accuracySnap: 58
+    accuracySnap: 67
     accuracyAimed: 119
     tuSnap: 43
     tuAimed: 64
@@ -60,9 +60,9 @@ items:
     fireSoundHit: 19
     fireHitAni: 10
     power: 186
-    accuracySnap: 56
+    accuracySnap: 75
     accuracyAimed: 128
-    tuSnap: 37
+    tuSnap: 39
     tuAimed: 93
     fixedWeapon: true
     fullClip: -1
@@ -104,8 +104,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 20
-      firing: 60
+      reactions: 23
+      firing: 65
       throwing: 0
       strength: 60
       psiStrength: 200
@@ -127,8 +127,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 20
-      firing: 60
+      reactions: 23
+      firing: 65
       throwing: 0
       strength: 60
       psiStrength: 200
@@ -150,8 +150,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 20
-      firing: 60
+      reactions: 23
+      firing: 65
       throwing: 0
       strength: 60
       psiStrength: 200

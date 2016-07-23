@@ -333,7 +333,7 @@ void MedikitState::healClick(Action*)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
 		{
-			if (_action->actor->spendTimeUnits(_action->TU) == true)
+			if (_action->actor->expendTu(_action->TU) == true)
 			{
 				++_action->actor->getStatistics()->medikitApplications;
 
@@ -381,7 +381,7 @@ void MedikitState::stimClick(Action*)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
 		{
-			if (_action->actor->spendTimeUnits(_action->TU) == true)
+			if (_action->actor->expendTu(_action->TU) == true)
 			{
 				++_action->actor->getStatistics()->medikitApplications;
 
@@ -425,7 +425,7 @@ void MedikitState::painClick(Action*)
 	{
 		if (_action->targetUnit->getOriginalFaction() != FACTION_HOSTILE)
 		{
-			if (_action->actor->spendTimeUnits(_action->TU) == true)
+			if (_action->actor->expendTu(_action->TU) == true)
 			{
 				++_action->actor->getStatistics()->medikitApplications;
 

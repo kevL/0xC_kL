@@ -1074,60 +1074,60 @@ void SavedBattleGame::setSelectedUnit(BattleUnit* const unit)
  * Selects the next BattleUnit.
  * @note Also used for/by the AI in BattlescapeGame::think(), popState(),
  * handleUnitAI(), and in SavedBattleGame::endFactionTurn().
- * @param checkReselect		- true to check the reselectable flag (default false)
- * @param dontReselect		- true to set the reselectable flag FALSE (default false)
- * @param checkInventory	- true to check if the unit has an inventory (default false)
+ * @param dontReselect		- true to set the current unit's reselectable flag FALSE (default false)
+ * @param checkReselect		- true to check the next unit's reselectable flag (default false)
+ * @param checkInventory	- true to check if the next unit has no inventory (default false)
  * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
  * @sa selectFactionUnit
  */
 BattleUnit* SavedBattleGame::selectNextFactionUnit(
-		bool checkReselect,
 		bool dontReselect,
+		bool checkReselect,
 		bool checkInventory)
 {
 	return selectFactionUnit(
 						+1,
-						checkReselect,
 						dontReselect,
+						checkReselect,
 						checkInventory);
 }
 
 /**
  * Selects the previous BattleUnit.
- * @param checkReselect		- true to check the reselectable flag (default false)
- * @param dontReselect		- true to set the reselectable flag FALSE (default false)
- * @param checkInventory	- true to check if the unit has an inventory (default false)
+ * @param dontReselect		- true to set the current unit's reselectable flag FALSE (default false)
+ * @param checkReselect		- true to check the next unit's reselectable flag (default false)
+ * @param checkInventory	- true to check if the next unit has no inventory (default false)
  * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
-* @sa selectFactionUnit
-*/
+ * @sa selectFactionUnit
+ */
 BattleUnit* SavedBattleGame::selectPreviousFactionUnit(
-		bool checkReselect,
 		bool dontReselect,
+		bool checkReselect,
 		bool checkInventory)
 {
 	return selectFactionUnit(
 						-1,
-						checkReselect,
 						dontReselect,
+						checkReselect,
 						checkInventory);
 }
 
 /**
  * Selects the next BattleUnit in a certain direction.
  * @param dir				- direction to iterate (+1 for next and -1 for previous)
- * @param checkReselect		- true to check the reselectable flag (default false)
- * @param dontReselect		- true to set the reselectable flag FALSE (default false)
- * @param checkInventory	- true to check if the unit has an inventory (default false)
+ * @param dontReselect		- true to set the current unit's reselectable flag FALSE
+ * @param checkReselect		- true to check the next unit's reselectable flag
+ * @param checkInventory	- true to check if the next unit has no inventory
  * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
  */
 BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 		int dir,
-		bool checkReselect,
 		bool dontReselect,
+		bool checkReselect,
 		bool checkInventory)
 {
-	if (_units.empty() == true)
-		return (_selectedUnit = _lastSelectedUnit = nullptr);
+//	if (_units.empty() == true) // how can this ever happen.
+//		return (_selectedUnit = _lastSelectedUnit = nullptr);
 
 	if (_selectedUnit != nullptr && dontReselect == true)
 		_selectedUnit->dontReselect();
@@ -1340,6 +1340,8 @@ bool SavedBattleGame::endFactionTurn()
 				_shuffleUnits.end(),
 				nullptr);
 
+		_walkUnit = nullptr;
+
 		tileVolatiles(); // do Tile stuff
 		++_turn;
 
@@ -1482,7 +1484,7 @@ void SavedBattleGame::selectPlayerUnit() // private.
 	while (_selectedUnit != nullptr
 		&& _selectedUnit->getFaction() != FACTION_PLAYER)
 	{
-		selectNextFactionUnit(true);
+		selectNextFactionUnit(false, true);
 	}
 }
 
@@ -2232,8 +2234,8 @@ void SavedBattleGame::reviveUnit(
 
 			unit->flagCache();
 			unit->setUnitDirection(RNG::generate(0,7));
-			unit->setTimeUnits(0);
-			unit->setEnergy(0);
+			unit->setTimeUnits();
+			unit->setEnergy();
 			unit->setRevived();
 
 			_te->calculateUnitLighting();
@@ -3005,7 +3007,7 @@ int SavedBattleGame::getDropTu() const
  * @note Used for controlling the Camera during aLien movement incl/ panic.
  * Stops the Camera from recentering on a unit that just moved and so is already
  * nearly centered but is getting another slice from the AI-engine.
- * @param unit - pointer to a BattleUnit
+ * @param unit - pointer to a BattleUnit (default nullptr)
  */
 void SavedBattleGame::setWalkUnit(const BattleUnit* const unit)
 {

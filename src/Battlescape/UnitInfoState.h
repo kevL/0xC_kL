@@ -156,10 +156,10 @@ private:
 		/// Handler for clicking stuff.
 		void handle(Action* action) override;
 
-		/// Handler for clicking the Previous button.
-		void btnPrevClick(Action* action);
 		/// Handler for clicking the Next button.
 		void btnNextClick(Action* action);
+		/// Handler for clicking the Previous button.
+		void btnPrevClick(Action* action);
 };
 
 }

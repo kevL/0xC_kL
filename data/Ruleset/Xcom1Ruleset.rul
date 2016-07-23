@@ -53,8 +53,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 20
-      firing: 60
+      reactions: 23
+      firing: 65
       throwing: 0
       strength: 60
       psiStrength: 200
@@ -77,8 +77,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 20
-      firing: 60
+      reactions: 23
+      firing: 65
       throwing: 0
       strength: 60
       psiStrength: 200
@@ -101,8 +101,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 20
-      firing: 60
+      reactions: 23
+      firing: 65
       throwing: 0
       strength: 60
       psiStrength: 200
@@ -125,8 +125,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 30
-      firing: 60
+      reactions: 33
+      firing: 75
       throwing: 0
       strength: 60
       psiStrength: 200
@@ -150,8 +150,8 @@ units:
       stamina: 100
       health: 90
       bravery: 110
-      reactions: 30
-      firing: 60
+      reactions: 33
+      firing: 75
       throwing: 0
       strength: 60
       psiStrength: 200

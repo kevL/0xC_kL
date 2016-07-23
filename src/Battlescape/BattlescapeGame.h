@@ -204,6 +204,8 @@ class BattlescapeGame
 {
 
 private:
+//	static bool _debug;
+
 	bool
 		_AISecondMove,
 //		_endTurnProcessed,
@@ -227,7 +229,9 @@ private:
 		_killStatPoints;
 
 
-	BattleAction _tacAction; // for Player, aLiens get their own unique actions w/ handleUnitAI()
+	BattleAction
+//		_aiAction,	// for aLiens, per handleUnitAI()
+		_tacAction; // for Player
 
 	BattleItem
 		* _alienPsi,
@@ -319,6 +323,8 @@ private:
 
 		/// Handles non-player BattleUnit AI.
 		void handleUnitAI(BattleUnit* const unit);
+		/// Gets the current AI BattleAction struct.
+//		const BattleAction& getCurrentAiAction();
 
 		/// Handles the result of non-target battle-actions like priming a grenade.
 		void handleNonTargetAction();

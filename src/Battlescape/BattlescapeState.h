@@ -341,13 +341,13 @@ private:
 
 		/// Selects the player's next BattleUnit.
 		void selectNextPlayerUnit(
-				bool checkReselect = false,
 				bool dontReselect = false,
+				bool checkReselect = false,
 				bool checkInventory = false);
 		/// Selects the player's previous BattleUnit.
 		void selectPreviousPlayerUnit(
-				bool checkReselect = false,
 				bool dontReselect = false,
+				bool checkReselect = false,
 				bool checkInventory = false);
 
 		/// Handler for clicking the Show Layers button.

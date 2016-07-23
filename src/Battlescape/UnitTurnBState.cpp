@@ -188,7 +188,7 @@ void UnitTurnBState::think()
 		_unit->setUnitStatus(STATUS_STANDING);
 		pop = true;
 	}
-	else if (_unit->spendTimeUnits(_tu) == true)
+	else if (_unit->expendTu(_tu) == true)
 	{
 		_unit->turn(_turret); // done-> STATUS_STANDING
 

@@ -2004,7 +2004,7 @@ void BattlescapeState::btnNextUnitPress(Action*)
 		&& allowButtons() == true)
 	{
 		_overlay->getFrame(4)->blit(_btnNextUnit);
-		selectNextPlayerUnit(true);
+		selectNextPlayerUnit(false, true);
 		refreshMousePosition();
 	}
 }
@@ -2052,7 +2052,7 @@ void BattlescapeState::btnPrevUnitPress(Action*)
 		&& allowButtons() == true)
 	{
 		_overlay->getFrame(4)->blit(_btnNextUnit);
-		selectPreviousPlayerUnit(true);
+		selectPreviousPlayerUnit(false, true);
 		refreshMousePosition();
 	}
 }
@@ -2092,26 +2092,32 @@ void BattlescapeState::btnPrevStopRelease(Action*)
 
 /**
  * Selects the player's next BattleUnit.
- * @param checkReselect		- don't select a unit that has been previously flagged (default false)
- * @param dontReselect		- flag the current unit first (default false)
- * @param checkInventory	- don't select a unit that has no inventory (default false)
+ * @param dontReselect		- true to set the current unit's reselectable flag FALSE (default false)
+ * @param checkReselect		- true to check the next unit's reselectable flag (default false)
+ * @param checkInventory	- true to check if the next unit has no inventory (default false)
  */
 void BattlescapeState::selectNextPlayerUnit(
-		bool checkReselect,
 		bool dontReselect,
+		bool checkReselect,
 		bool checkInventory)
 {
 //	if (allowButtons() == true)
 //		&& _battleGame->getTacticalAction()->type == BA_NONE)
 //	{
 	BattleUnit* const unit (_battleSave->selectNextFactionUnit(
-															checkReselect,
 															dontReselect,
+															checkReselect,
 															checkInventory));
 	updateSoldierInfo(false); // try no calcFov()
 
 	if (unit != nullptr)
-		_map->getCamera()->centerOnPosition(unit->getPosition());
+	{
+		Camera* const camera (_map->getCamera());
+		if (camera->isOnScreen(unit->getPosition()) == false)
+			camera->centerOnPosition(unit->getPosition());
+		else if	(camera->getViewLevel() != unit->getPosition().z)
+			camera->setViewLevel(unit->getPosition().z);
+	}
 
 	_battleGame->cancelTacticalAction();
 	_battleGame->setupSelector();
@@ -2120,26 +2126,32 @@ void BattlescapeState::selectNextPlayerUnit(
 
 /**
  * Selects the player's previous BattleUnit.
- * @param checkReselect		- don't select a unit that has been previously flagged (default false)
- * @param dontReselect		- flag the current unit first (default false)
- * @param checkInventory	- don't select a unit that has no inventory (default false)
+ * @param dontReselect		- true to set the current unit's reselectable flag FALSE (default false)
+ * @param checkReselect		- true to check the next unit's reselectable flag (default false)
+ * @param checkInventory	- true to check if the next unit has no inventory (default false)
  */
 void BattlescapeState::selectPreviousPlayerUnit(
-		bool checkReselect,
 		bool dontReselect,
+		bool checkReselect,
 		bool checkInventory)
 {
 //	if (allowButtons() == true)
 //		&& _battleGame->getTacticalAction()->type == BA_NONE)
 //	{
 	BattleUnit* const unit (_battleSave->selectPreviousFactionUnit(
-																checkReselect,
 																dontReselect,
+																checkReselect,
 																checkInventory));
 	updateSoldierInfo(false); // try no calcFov()
 
 	if (unit != nullptr)
-		_map->getCamera()->centerOnPosition(unit->getPosition());
+	{
+		Camera* const camera (_map->getCamera());
+		if (camera->isOnScreen(unit->getPosition()) == false)
+			camera->centerOnPosition(unit->getPosition());
+		else if	(camera->getViewLevel() != unit->getPosition().z)
+			camera->setViewLevel(unit->getPosition().z);
+	}
 
 	_battleGame->cancelTacticalAction();
 	_battleGame->setupSelector();
@@ -2695,7 +2707,7 @@ void BattlescapeState::btnZeroTuClick(Action* /*action*/)
 //			Action a (Action(&ev, 0.,0.,0,0));
 //			action->getSender()->mousePress(&a, this); // why mouse event, for keyboard-press perhaps
 
-			unit->setTimeUnits(0);
+			unit->setTimeUnits();
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
 
@@ -2719,7 +2731,7 @@ void BattlescapeState::keyZeroTuPress(Action* action)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (_battleGame->noActionsPending(unit) == true)
 		{
-			unit->setTimeUnits(0);
+			unit->setTimeUnits();
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
 

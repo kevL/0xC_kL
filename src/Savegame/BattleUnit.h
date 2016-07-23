@@ -422,7 +422,7 @@ private:
 		/// Aims the BattleUnit's weapon.
 		void aim(bool aim = true);
 
-		/// Gets the BattleUnit's time units.
+		/// Gets the BattleUnit's turn-units.
 		int getTimeUnits() const;
 		/// Gets the BattleUnit's stamina.
 		int getEnergy() const;
@@ -480,7 +480,7 @@ private:
 		/// Gets if the BattleUnit is out - either dead or unconscious.
 		bool isOut_t(OutCheck test = OUT_ALL) const;
 
-		/// Gets the number of time units a certain action takes.
+		/// Gets the number of turn-units a certain action takes.
 		int getActionTu(
 				const BattleActionType bat,
 				const BattleItem* item) const;
@@ -488,14 +488,18 @@ private:
 				const BattleActionType bat,
 				const RuleItem* itRule = nullptr) const;
 
-		/// Spends time units if possible.
-		bool spendTimeUnits(int tu);
+		/// Spends turn-units if possible.
+		bool expendTu(int tu);
 		/// Spends energy if possible.
-		bool spendEnergy(int energy);
-		/// Sets time units.
-		void setTimeUnits(int tu);
-		/// Sets the BattleUnit's energy level.
-		void setEnergy(int energy);
+		bool expendEnergy(int energy);
+		/// Expends TU and Energy.
+		void expendTuEnergy(
+				int tu,
+				int energy);
+		/// Sets the BattleUnit's turn-units.
+		void setTimeUnits(int tu = 0);
+		/// Sets the BattleUnit's energy-level.
+		void setEnergy(int energy = 0);
 
 		/// Sets whether the BattleUnit is visible.
 		void setUnitVisible(bool flag = true);
@@ -545,7 +549,7 @@ private:
 
 		/// Prepares the BattleUnit for a new turn.
 		void prepUnit(bool preBattle = false);
-		/// Calculates and resets the BattleUnit's time units and energy.
+		/// Calculates and resets the BattleUnit's turn-units and energy.
 		void prepTu(
 				bool preBattle = false,
 				bool isPanicked = false,
@@ -831,7 +835,7 @@ private:
 		/// Gets if the BattleUnit has aleady been damaged in a single fire.
 		bool getTakenFire() const;
 
-		/// Returns true if the BattleUnit is selectable.
+		/// Checks if the BattleUnit is selectable.
 		bool isSelectable(
 				UnitFaction faction,
 				bool checkReselect = false,

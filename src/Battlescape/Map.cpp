@@ -383,8 +383,19 @@ void Map::draw()
 
 		static bool delayHide;
 
+		//if (_battleSave->getSelectedUnit() != nullptr
+		//	&& _battleSave->getSelectedUnit()->getId() == 1000023)
+		//{
+		//	Log(LOG_INFO) << ". id-1000023 " << _battleSave->getSelectedUnit()->getPosition()
+		//				  << " bat= " << BattleAction::debugBat(_battleGame->getCurrentAiAction().type);
+		//}
+
 		if (   _battleSave->getSelectedUnit() == nullptr
 			|| _battleSave->getSelectedUnit()->getUnitVisible() == true
+//				&& (_battleSave->getSelectedUnit()->getFaction() == FACTION_PLAYER
+//					|| (_battleGame->getCurrentAiAction().type != BA_NONE
+//						&& _battleGame->getCurrentAiAction().type != BA_THINK
+//						&& _battleSave->getSelectedUnit()->getUnitStatus() != STATUS_STANDING)))
 			|| _unitDying == true
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
@@ -1145,7 +1156,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 																	_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
 																	nullptr,
 																	&halfRight);
-													Log(LOG_INFO) << ". drawUnit/redrawWall= " << draw << " hRight= " << halfRight;
+													//Log(LOG_INFO) << ". drawUnit/redrawWall= " << draw << " hRight= " << halfRight;
 													break;
 
 												case 1:

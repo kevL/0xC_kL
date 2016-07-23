@@ -353,7 +353,7 @@ void AlienBAIState::think(BattleAction* const action)
 						if (action->weapon->getFuse() == -1)
 							costTu += _unit->getActionTu(BA_PRIME, action->weapon);
 
-						_unit->spendTimeUnits(costTu); // cf. grenadeAction() - priming the fuse is done in ProjectileFlyBState.
+						_unit->expendTu(costTu); // cf. grenadeAction() - priming the fuse is done in ProjectileFlyBState.
 					}
 					break;
 

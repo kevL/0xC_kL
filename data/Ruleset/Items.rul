@@ -65,7 +65,7 @@ items:
     fireSound: 2
     compatibleAmmo:
       - STR_HWP_CANNON_SHELLS
-    accuracySnap: 58
+    accuracySnap: 59
     accuracyAimed: 98
     tuSnap: 34
     tuAimed: 83
@@ -97,7 +97,7 @@ items:
     fireSound: 52
     compatibleAmmo:
       - STR_HWP_ROCKETS
-    accuracySnap: 58
+    accuracySnap: 67
     accuracyAimed: 119
     tuSnap: 43
     tuAimed: 64
@@ -131,9 +131,9 @@ items:
     fireHitAni: 10
     power: 186
     damageType: 4
-    accuracySnap: 56
+    accuracySnap: 75
     accuracyAimed: 128
-    tuSnap: 37
+    tuSnap: 39
     tuAimed: 93
     battleType: 1
     fixedWeapon: true
@@ -152,7 +152,7 @@ items:
     power: 127
     damageType: 5
     fireHitAni: 20
-    accuracySnap: 83
+    accuracySnap: 82
     accuracyAimed: 110
     tuSnap: 33
     tuAimed: 68
@@ -172,8 +172,8 @@ items:
     compatibleAmmo:
       - STR_HWP_FUSION_BOMB
     accuracyAimed: 120
-    tuAimed: 52
-    tuLaunch: 78
+    tuAimed: 53
+    tuLaunch: 79
     battleType: 1
     fixedWeapon: true
     fullClip: 5
