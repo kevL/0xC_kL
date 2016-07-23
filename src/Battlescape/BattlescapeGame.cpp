@@ -481,8 +481,8 @@ void BattlescapeGame::popBattleState()
 									case BA_PSICONFUSE:
 									case BA_PSICOURAGE:
 										if (action.actor->getTu() < action.actor->getActionTu(
-																								action.type,
-																								action.weapon))
+																							action.type,
+																							action.weapon))
 										{
 											cancelTacticalAction(true); // NOTE: Not sure if these needs to be 'forced' ->
 										}
@@ -500,8 +500,8 @@ void BattlescapeGame::popBattleState()
 									case BA_AIMEDSHOT:
 										if (action.weapon->getAmmoItem() == nullptr
 											|| action.actor->getTu() < action.actor->getActionTu(
-																									action.type,
-																									action.weapon))
+																								action.type,
+																								action.weapon))
 										{
 											cancelTacticalAction(true);
 										}
@@ -1167,11 +1167,10 @@ void BattlescapeGame::handleNonTargetAction()
 void BattlescapeGame::liquidateUnit() // private.
 {
 	_playerAction.actor->aim();
-//	_playerAction.actor->flagCache();
 	getMap()->cacheUnit(_playerAction.actor);
 
 	const RuleItem* const itRule (_playerAction.weapon->getRules());
-	BattleItem* const ammo (_playerAction.weapon->getAmmoItem());
+	BattleItem* const load (_playerAction.weapon->getAmmoItem());
 	ExplosionType explType;
 	int
 		soundId,
@@ -1186,9 +1185,9 @@ void BattlescapeGame::liquidateUnit() // private.
 			else
 				explType = ET_BULLET;
 
-			aniStart = ammo->getRules()->getFireHitAnimation();
+			aniStart = load->getRules()->getFireHitAnimation();
 
-			if ((soundId = ammo->getRules()->getFireHitSound()) == -1)
+			if ((soundId = load->getRules()->getFireHitSound()) == -1)
 				soundId = itRule->getFireHitSound();
 			break;
 
@@ -1202,7 +1201,7 @@ void BattlescapeGame::liquidateUnit() // private.
 		getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 							->play(-1, getMap()->getSoundAngle(_playerAction.actor->getPosition()));
 
-	ammo->spendBullet(
+	load->spendBullet(
 				*_battleSave,
 				*_playerAction.weapon);
 

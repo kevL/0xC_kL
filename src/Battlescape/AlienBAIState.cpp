@@ -364,8 +364,8 @@ void AlienBAIState::think(BattleAction* const action)
 
 				case BA_MOVE:
 					if (_hasRifle == true
-						&& _unit->getTu() > _unit->getActionTu(
-															BA_SNAPSHOT, // TODO: Hook this into _reserve/ selectFireMethod().
+						&& _unit->getTu() > _unit->getActionTu(				// Should this include TU for specific move ....
+															BA_SNAPSHOT,	// TODO: Hook this into _reserve/ selectFireMethod().
 															action->weapon))
 					{
 						if (_traceAI) Log(LOG_INFO) << ". . Move w/ rifle + tu for COMBAT";
@@ -1029,16 +1029,16 @@ void AlienBAIState::evaluateAiMode() // private.
 			ambushOdds (13.f),
 			escapeOdds (13.f);
 
-		if (_unit->getTu() > (_unit->getBattleStats()->tu >> 1u)
-			|| _unit->getChargeTarget() != nullptr)
+		if (_unit->getChargeTarget() != nullptr
+			|| _unit->getTu() > (_unit->getBattleStats()->tu >> 1u)) // has over half TU.
 		{
-			escapeOdds = 5.f;
+			escapeOdds = 4.3f;
 		}
 		else if (_hasMelee == true)
 			escapeOdds = 10.5f;
 
 		if (_targetsVisible != 0)
-			patrolOdds = 8.f;
+			patrolOdds = 8.2f;
 
 		if (_spottersOrigin != 0)
 		{
@@ -1124,7 +1124,7 @@ void AlienBAIState::evaluateAiMode() // private.
 		if (_spottersOrigin != 0)
 		{
 			escapeOdds *= (10.f * static_cast<float>(_spottersOrigin + 10) / 100.f);
-			combatOdds *= (5.f * static_cast<float>(_spottersOrigin + 20) / 100.f);
+			combatOdds *= ( 5.f * static_cast<float>(_spottersOrigin + 20) / 100.f);
 		}
 		else
 			escapeOdds /= 2.f;
