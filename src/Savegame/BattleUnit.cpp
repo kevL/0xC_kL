@@ -2409,9 +2409,9 @@ int BattleUnit::getInitiative(const int tuSpent) const
  * faction's next turn.
  * @param preBattle - true to skip the full process (default false)
  */
-void BattleUnit::prepUnit(bool preBattle)
+void BattleUnit::prepareUnit(bool preBattle)
 {
-	//Log(LOG_INFO) << "BattleUnit::prepUnit() id-" << _id;
+	//Log(LOG_INFO) << "BattleUnit::prepareUnit() id-" << _id;
 //	bool debug = _id == 257;
 
 	_hostileUnitsThisTurn.clear();
@@ -2471,7 +2471,7 @@ void BattleUnit::prepUnit(bool preBattle)
 	}
 
 	if (_status != STATUS_UNCONSCIOUS)
-		prepTu(preBattle, isPanicked, reverted);
+		prepTuEnergy(preBattle, isPanicked, reverted);
 }
 
 /**
@@ -2480,7 +2480,7 @@ void BattleUnit::prepUnit(bool preBattle)
  * @param isPanicked	- true if unit has just panicked (default false)
  * @param reverted		- true if unit has just reverted from MC (default false)
  */
-void BattleUnit::prepTu(
+void BattleUnit::prepTuEnergy(
 		bool preBattle,
 		bool isPanicked,
 		bool reverted)
@@ -2587,7 +2587,7 @@ bool BattleUnit::reselectAllowed() const
  * Sets the amount of turns this BattleUnit is on fire.
  * @param fire - amount of turns this unit will be on fire (no fire 0)
  */
-void BattleUnit::setFireUnit(int fire)
+void BattleUnit::setUnitFire(int fire)
 {
 	if (_specab != SPECAB_BURN)
 		_fire = fire;
@@ -2597,7 +2597,7 @@ void BattleUnit::setFireUnit(int fire)
  * Gets the amount of turns this BattleUnit is on fire.
  * @return, amount of turns this unit will be on fire (0 - no fire)
  */
-int BattleUnit::getFireUnit() const
+int BattleUnit::getUnitFire() const
 {
 	return _fire;
 }
@@ -2605,7 +2605,7 @@ int BattleUnit::getFireUnit() const
 /**
  * Gives this BattleUnit damage from personal fire.
  */
-void BattleUnit::takeFire()
+void BattleUnit::hitUnitFire()
 {
 	if (_fire != 0)
 	{
@@ -4078,10 +4078,17 @@ void BattleUnit::putDown()
 		}
 	}
 
+	_faction = _originalFaction;
+	_turnsExposed = -1;	// don't risk aggro per the AI
+
+	if (_spawnType.empty() == true) // else convertUnit() will take care of it.
+		_visible = false;
+
 	_hasBeenStunned = true;
 	_energy = 0;
 
 	_kneeled = // don't get hunkerdown bonus against HE detonations
+	_dashing =
 	_aboutToCollapse =
 	_hasCried = false;
 
@@ -4123,21 +4130,9 @@ void BattleUnit::putDown()
 	}
 
 
-	_faction = _originalFaction;
-
-	if (_spawnType.empty() == true) // else convertUnit() will take care of it.
-		_visible = false;
-
-	_turnsExposed = -1;	// don't risk aggro per the AI
-/*	// taken care of in SavedBattleGame::endFactionTurn()
-	if (_faction != FACTION_HOSTILE)
-		_turnsExposed = 255;	// don't risk aggro per the AI
-	else
-		_turnsExposed = 0;		// aLiens always exposed. */
-
 	// These don't seem to affect anything:
+	// ... but they could matter if a unit is later revived.
 //	_floating = false;
-//	_dashing = false;
 //	_stopShot = false;
 //	_takenExpl = false;
 //	_takenFire = false;
@@ -4544,7 +4539,7 @@ void BattleUnit::setDashing(bool dash)
  * Gets if this BattleUnit is dashing.
  * @return, true if dashing
  */
-bool BattleUnit::isDashing() const
+bool BattleUnit::getDashing() const
 {
 	return _dashing;
 }

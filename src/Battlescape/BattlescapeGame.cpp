@@ -257,6 +257,8 @@ void BattlescapeGame::think()
 
 							if (getMap()->getCamera()->isOnFocus(selUnit->getPosition()) == false)
 								centerOnUnit(selUnit); // if you're going to reveal the map at least center the 1st aLien.
+							else
+								getMap()->getCamera()->setViewLevel(selUnit->getPosition().z);
 						}
 					}
 					else
@@ -992,7 +994,9 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 
 			if (getMap()->getCamera()->isOnFocus(nextUnit->getPosition()) == false)
 				centerOnUnit(nextUnit);	// -> let handleUnitAI() handle it. NOPE: State Machine
-		}								// burps out a map-reveal before handleUnitAI() can center.
+			else						// burps out a map-reveal before handleUnitAI() can center.
+				getMap()->getCamera()->setViewLevel(nextUnit->getPosition().z);
+		}
 
 		_parentState->updateSoldierInfo(false); // try no calcFov() ... calcFoV(pos) is going to happen in handleUnitAI() before AI-battlestate-think.
 
@@ -1098,7 +1102,7 @@ void BattlescapeGame::handleNonTargetAction()
 					showWarning = WARN;
 				else if (_playerAction.targetUnit != nullptr)
 				{
-					_battleSave->reviveUnit(_playerAction.targetUnit);
+					_battleSave->checkUnitRevival(_playerAction.targetUnit);
 					_playerAction.targetUnit = nullptr;
 				}
 				break;

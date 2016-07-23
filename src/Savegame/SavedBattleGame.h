@@ -373,7 +373,7 @@ private:
 		/// Revives unconscious units of @a faction.
 //		void reviveUnits(const UnitFaction faction);
 		/// Revives unconscious units.
-		void reviveUnit(
+		void checkUnitRevival(
 				BattleUnit* const unit,
 				bool turnOver = false);
 		/// Sends the body-item that corresponds to a BattleUnit to the deleted vector.

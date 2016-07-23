@@ -1077,8 +1077,8 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 			{
 				const int dur (RNG::generate(1,
 											 static_cast<int>(Round(5.f * vulnr))));
-				if (dur > _unit->getFireUnit())
-					_unit->setFireUnit(dur);
+				if (dur > _unit->getUnitFire())
+					_unit->setUnitFire(dur);
 			}
 		}
 	}
@@ -1317,7 +1317,7 @@ int Tile::getCorpseSprite(bool* fired) const
 					weight = weightTest;
 					sprite = (*i)->getRules()->getFloorSprite();
 
-					if ((*i)->getItemUnit()->getFireUnit() != 0)
+					if ((*i)->getItemUnit()->getUnitFire() != 0)
 						*fired = true;
 				}
 			}
@@ -1339,7 +1339,7 @@ int Tile::getCorpseSprite(bool* fired) const
 						weight = weightTest;
 						sprite = (*i)->getRules()->getFloorSprite();
 
-						if ((*i)->getItemUnit()->getFireUnit() != 0)
+						if ((*i)->getItemUnit()->getUnitFire() != 0)
 							*fired = true;
 					}
 				}

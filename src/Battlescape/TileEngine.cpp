@@ -261,7 +261,7 @@ void TileEngine::calculateUnitLighting() const
 			light = LIGHT_UNIT;
 		}
 
-		if ((*i)->getFireUnit() != 0)	// add lighting of units on fire
+		if ((*i)->getUnitFire() != 0)	// add lighting of units on fire
 			light = std::max(light,
 							 static_cast<int>(LIGHT_FIRE)); // kludgy STL::nerf
 
@@ -2127,8 +2127,8 @@ void TileEngine::hit(
 
 						const int burn (RNG::generate(0,
 													  static_cast<int>(Round(vulnr * 5.f))));
-						if (targetUnit->getFireUnit() < burn)
-							targetUnit->setFireUnit(burn); // catch fire and burn
+						if (targetUnit->getUnitFire() < burn)
+							targetUnit->setUnitFire(burn); // catch fire and burn!!
 					}
 				}
 
@@ -2753,8 +2753,8 @@ void TileEngine::explode(
 								{
 									const int burn (RNG::generate(0,
 																  static_cast<int>(Round(5.f * vulnr))));
-									if (targetUnit->getFireUnit() < burn)
-										targetUnit->setFireUnit(burn); // catch fire and burn!!
+									if (targetUnit->getUnitFire() < burn)
+										targetUnit->setUnitFire(burn); // catch fire and burn!!
 								}
 							}
 
@@ -2806,8 +2806,8 @@ void TileEngine::explode(
 								{
 									const int burn (RNG::generate(0,
 																  static_cast<int>(Round(5.f * vulnr))));
-									if (targetUnit->getFireUnit() < burn)
-										targetUnit->setFireUnit(burn); // catch fire and burn!!
+									if (targetUnit->getUnitFire() < burn)
+										targetUnit->setUnitFire(burn); // catch fire and burn!!
 								}
 							}
 
@@ -6281,7 +6281,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							}
 
 							victim->setFaction(action->actor->getFaction());
-							victim->prepTu();
+							victim->prepTuEnergy();
 							victim->allowReselect();
 							victim->setUnitStatus(STATUS_STANDING);
 

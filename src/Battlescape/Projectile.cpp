@@ -667,7 +667,7 @@ double Projectile::targetAccuracy( // private.
 		if (targetUnit->isKneeled() == true)
 			ret -= 7;
 
-		if (targetUnit->isDashing() == true)
+		if (targetUnit->getDashing() == true)
 			ret -= 16;
 
 		if (tileTarget == nullptr) tileTarget = targetUnit->getUnitTile();

@@ -548,9 +548,9 @@ private:
 		int getInitiative(const int tuSpent = 0) const;
 
 		/// Prepares the BattleUnit for a new turn.
-		void prepUnit(bool preBattle = false);
+		void prepareUnit(bool preBattle = false);
 		/// Calculates and resets the BattleUnit's turn-units and energy.
-		void prepTu(
+		void prepTuEnergy(
 				bool preBattle = false,
 				bool isPanicked = false,
 				bool reverted = false);
@@ -566,11 +566,11 @@ private:
 		bool reselectAllowed() const;
 
 		/// Sets the BattleUnit's fire value.
-		void setFireUnit(int fire);
+		void setUnitFire(int fire);
 		/// Gets the BattleUnit's fire value.
-		int getFireUnit() const;
+		int getUnitFire() const;
 		/// Gives the BattleUnit damage from personal fire.
-		void takeFire();
+		void hitUnitFire();
 
 		/// Gets the list of items in the BattleUnit's inventory.
 		std::vector<BattleItem*>* getInventory();
@@ -823,7 +823,7 @@ private:
 		/// Sets the BattleUnit as dashing.
 		void setDashing(bool dash = true);
 		/// Gets if the BattleUnit is dashing.
-		bool isDashing() const;
+		bool getDashing() const;
 
 		/// Sets the BattleUnit as having been damaged in a single explosion.
 		void setTakenExpl(bool beenhit = true);

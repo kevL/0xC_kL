@@ -1908,7 +1908,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 //				++i)
 //		{
 //			if ((*i)->getFaction() == _battleSave->getSide())
-//				(*i)->prepUnit();
+//				(*i)->prepareUnit();
 //			updateSoldierInfo();
 //		}
 //	}

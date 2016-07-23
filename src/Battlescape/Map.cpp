@@ -809,7 +809,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 																		posScreen.y + walkOffset.y -  8 + offsetZ_y,
 																		shade);
 
-																if (unitNorth->getFireUnit() != 0)
+																if (unitNorth->getUnitFire() != 0)
 																{
 																	sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 																	//if (sprite != nullptr)
@@ -1192,7 +1192,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										shade, halfRight,
 										0, halfLeft);
 
-								if (_unit->getFireUnit() != 0)
+								if (_unit->getUnitFire() != 0)
 								{
 									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 									//if (sprite != nullptr)
@@ -1358,7 +1358,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											posScreen.y + walkOffset.y + 24,
 											shade);
 
-									if (unitBelow->getFireUnit() != 0)
+									if (unitBelow->getUnitFire() != 0)
 									{
 										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
 										//if (sprite != nullptr)
@@ -1383,7 +1383,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							shade = 0;
 						}
 						else if (_tile->getSmoke() != 0
-							&& (hasUnit == false || _unit->getFireUnit() == 0))
+							&& (hasUnit == false || _unit->getUnitFire() == 0))
 						{
 							st = "SmokeCloud";
 							spriteId = _tile->getSmoke() >> 1u; //+ ResourcePack::SMOKE_OFFSET

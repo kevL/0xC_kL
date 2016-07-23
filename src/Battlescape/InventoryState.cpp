@@ -641,7 +641,7 @@ void InventoryState::updateWounds() // private.
 {
 	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
 
-	unsigned wound (static_cast<unsigned>(selUnit->getFireUnit()));
+	unsigned wound (static_cast<unsigned>(selUnit->getUnitFire()));
 	_numFire->setValue(wound);
 	_numFire->setVisible(wound != 0u);
 
@@ -711,7 +711,7 @@ void InventoryState::btnOkClick(Action*)
 					++i)
 			{
 				if ((*i)->getFaction() == FACTION_PLAYER)
-					(*i)->prepUnit(true);
+					(*i)->prepareUnit(true);
 			}
 		}
 	}

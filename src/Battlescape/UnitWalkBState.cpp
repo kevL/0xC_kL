@@ -833,8 +833,8 @@ bool UnitWalkBState::doStatusStand_end() // private.
 											static_cast<double>(energy) / stat * 100.));
 	}
 
-	if (_unit->getFireUnit() != 0) // TODO: Also add to falling and/or all quadrants of large units.
-		_unit->getUnitTile()->addSmoke(1); //(_unit->getFireUnit() + 1) >> 1u);
+	if (_unit->getUnitFire() != 0) // TODO: Also add to falling and/or all quadrants of large units.
+		_unit->getUnitTile()->addSmoke(1); //(_unit->getUnitFire() + 1) >> 1u);
 
 
 	if (_fall == false

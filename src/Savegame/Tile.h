@@ -269,7 +269,7 @@ private:
 		/// Gets fire.
 		int getFire() const;	// kL_note: Made this inline, but may result in UB if say BattleUnit->getFire() conflicts.
 //		{ return _fire; }		// So ... don't. ie: change function names, THANKS c++
-								// ps. I changed the BattleUnit class function identifier to "getFireUnit" .....
+								// ps. I changed the BattleUnit class function identifier to "getUnitFire" .....
 
 		/// Adds smoke to the Tile.
 		void addSmoke(int turns);

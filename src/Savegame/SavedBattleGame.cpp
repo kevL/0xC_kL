@@ -1345,8 +1345,8 @@ bool SavedBattleGame::endFactionTurn()
 		_walkUnit = nullptr;
 
 		tileVolatiles(); // do Tile stuff
-		++_turn;
 
+		++_turn;
 		_side = FACTION_PLAYER;
 
 		selectPlayerUnit();
@@ -1410,31 +1410,38 @@ bool SavedBattleGame::endFactionTurn()
 				break;
 
 			case STATUS_DEAD: // burning corpses eventually sputter out.
-				if ((*i)->getFaction() == _side && (*i)->getFireUnit() != 0)
-					(*i)->setFireUnit((*i)->getFireUnit() - 1);
+				if ((*i)->getFaction() == _side && (*i)->getUnitFire() != 0)
+					(*i)->setUnitFire((*i)->getUnitFire() - 1);
 				break;
 
 			default:
 				(*i)->setUnitStatus(STATUS_STANDING); // safety.
 				// no break;
-			case STATUS_STANDING:
-			case STATUS_UNCONSCIOUS:
-				(*i)->setDashing(false);	// Safety. no longer dashing; dash is effective
-											// vs. Reaction Fire only and is/ought be
-											// reset/removed every time BattlescapeGame::primaryAction()
-											// uses the Pathfinding object. Other, more ideal
-											// places for this safety are UnitWalkBState dTor
-											// and/or BattlescapeGame::popState().
-				if ((*i)->getOriginalFaction() == _side)
-				{
-					reviveUnit(*i, true);
-					(*i)->takeFire();
-				}
 
+			case STATUS_UNCONSCIOUS:
+				if ((*i)->getFaction() == _side)
+				{
+					checkUnitRevival(*i, true);
+					if ((*i)->getUnitStatus() != STATUS_STANDING)
+					{
+						(*i)->hitUnitFire();	// NOTE: This could get funky and there should probably
+						break;					// be a checkCasualties() call for that.
+					}
+				}
+				// no break;
+
+			case STATUS_STANDING:
 				if ((*i)->getFaction() == _side)	// This causes an Mc'd unit to lose its turn.
-					(*i)->prepUnit();				// REVERTS FACTION, does tu/stun recovery, Fire damage, etc.
+					(*i)->prepareUnit();			// REVERTS FACTION, does tu/stun/fire recovery, etc.
 				// if newSide=XCOM, xCom agents DO NOT revert to xCom; MC'd aLiens revert to aLien.
 				// if newSide=Alien, xCom agents revert to xCom; MC'd aLiens DO NOT revert to aLien.
+
+				(*i)->setDashing(false);	// Safety. no longer dashing; dash is effective vs. Reaction Fire only and
+											// is/ought be reset/removed every time BattlescapeGame::primaryAction()
+											// uses the Pathfinding object. Other, more ideal places for this safety
+											// are UnitWalkBState dTor and/or BattlescapeGame::popState().
+				if ((*i)->getOriginalFaction() == _side)	// NOTE: This could get funky and there should probably
+					(*i)->hitUnitFire();					// be a checkCasualties() call for that.
 
 				if ((*i)->getFaction() == FACTION_HOSTILE				// aLiens always know where their buddies are,
 					|| (*i)->getOriginalFaction() == FACTION_HOSTILE	// Mc'd or not.
@@ -1445,9 +1452,9 @@ bool SavedBattleGame::endFactionTurn()
 				else if (_side == FACTION_PLAYER)
 				{
 					int exposure ((*i)->getExposed());
-					if (exposure++ != -1)
+					if (exposure != -1)
 					{
-						if (exposure > aLienIntel)
+						if (++exposure > aLienIntel)
 							(*i)->setExposed(-1);
 						else
 							(*i)->setExposed(exposure);
@@ -2171,7 +2178,7 @@ void SavedBattleGame::reviveUnits(const UnitFaction faction)
 		if ((*i)->getOriginalFaction() == faction
 			&& (*i)->getUnitStatus() != STATUS_DEAD) // etc. See below_
 		{
-			reviveUnit(*i, true);
+			checkUnitRevival(*i, true);
 		}
 	}
 } */
@@ -2184,7 +2191,7 @@ void SavedBattleGame::reviveUnits(const UnitFaction faction)
  * @param unit		- pointer to a BattleUnit to try to revive
  * @param turnOver	- true if called from SavedBattleGame::endFactionTurn (default false)
  */
-void SavedBattleGame::reviveUnit(
+void SavedBattleGame::checkUnitRevival(
 		BattleUnit* const unit,
 		bool turnOver)
 {
@@ -2218,8 +2225,6 @@ void SavedBattleGame::reviveUnit(
 
 		if (placeUnitNearPosition(unit, pos, isLargeUnit) == true)
 		{
-			unit->setUnitStatus(STATUS_STANDING);
-
 			switch (unit->getFaction()) // faction will be Original here due to death/stun sequence.
 			{
 				case FACTION_HOSTILE:
@@ -2229,11 +2234,14 @@ void SavedBattleGame::reviveUnit(
 				case FACTION_PLAYER:
 					unit->setUnitVisible();
 					if (unit->getGeoscapeSoldier() != nullptr)
-						unit->kneelUnit(true); // no break;
+						unit->kneelUnit(true);
+					// no break;
+
 				case FACTION_NEUTRAL:
 					unit->setExposed(-1);
 			}
 
+			unit->setUnitStatus(STATUS_STANDING);
 			unit->flagCache();
 			unit->setUnitDirection(RNG::generate(0,7));
 			unit->setTu();
@@ -2244,6 +2252,7 @@ void SavedBattleGame::reviveUnit(
 			if (unit->getFaction() == FACTION_PLAYER)
 				_te->calcFovTiles(unit);
 			_te->calcFovUnits_pos(unit->getPosition());
+
 			deleteBody(unit);
 
 			_battleState->hotWoundsRefresh();
