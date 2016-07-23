@@ -122,38 +122,17 @@ void UnitWalkBState::init()
 //		else Log(LOG_INFO) << ". walkUnit NOT Valid";
 //	}
 
-	_isVisible = _unit->getUnitVisible() == true
-			  || _battleSave->getDebugTac() == true;
-	//if (_debug) Log(LOG_INFO) << ". _isVisible = " << _unit->getUnitVisible();
-
-/*	if (_isVisible == true
-		&& _unit->getFaction() != FACTION_PLAYER)
-//		&& _unit != _battleSave->getWalkUnit()) // See.
-	{
-		if (_debug) Log(LOG_INFO) << ". . center Pos id-" << _unit->getId() << " walkUnit SET";
-
-//		_battleSave->setWalkUnit(_unit);
-		_walkCamera->centerOnPosition(_unit->getPosition());
-	} */
-
 	_pf->setPathingUnit(_unit);
 	_dirStart = _pf->getStartDirection();
-	//Log(LOG_INFO) << ". strafe = " << (int)_action.strafe;
-	//Log(LOG_INFO) << ". StartDirection(init) = " << _dirStart;
-	//Log(LOG_INFO) << ". getUnitDirection(init) = " << _unit->getUnitDirection();
+
 	if (_action.strafe == false						// not strafing
 		&& _dirStart > -1 && _dirStart < 8			// moving but not up or down
 		&& _dirStart != _unit->getUnitDirection())	// not facing in direction of movement
-	{
-		// if unit is not facing in the direction that it's about to walk toward ...
-		// This makes the unit expend tu's if it spots a new alien when turning,
-		// but stops before actually walking.
-		// Also expends tu if cancel() is called before first step.
-		_preStepTurn = true;
-	}
-
+	{												// NOTE: If unit is not facing in the direction that it's about to walk
+		_preStepTurn = true;						// toward ... this makes the unit expend TUs if it spots a new aLien
+	}												// when turning but stops before actually walking. Also expends TU if
+													// cancel() is called before first step.
 	doFallCheck();
-	//Log(LOG_INFO) << "UnitWalkBState::init() EXIT";
 }
 
 /**
@@ -161,9 +140,6 @@ void UnitWalkBState::init()
  */
 void UnitWalkBState::think()
 {
-	_isVisible = _unit->getUnitVisible() == true
-			  || _battleSave->getDebugTac() == true;
-
 //	if (_debug)
 //	{
 //		Log(LOG_INFO) << "";
@@ -172,29 +148,19 @@ void UnitWalkBState::think()
 //					  << " vis= " << _unit->getUnitVisible();
 //	}
 
-	if (_unit->isOut_t() == true)
+	_isVisible = _unit->getUnitVisible() == true
+			  || _battleSave->getDebugTac() == true;
+
+	if (   _unit->getHealth() == 0
+		|| _unit->getHealth() <= _unit->getStun())
 	{
 		//Log(LOG_INFO) << ". . isOut() abort.";
 		abortState(false);
 		return;
 	}
 
-//	if (_battleSave->getDebugTac() == false
-//		&& _isVisible != _unit->getUnitVisible())
-//	{
-//		_isVisible = _unit->getUnitVisible();
-//		_isVisibleChanged = true;
-//		if (_debug) Log(LOG_INFO) << ". think() id-" << _unit->getId() << " _isVisible = " << _isVisible;
-//	}
-//	else
-//		_isVisibleChanged = false;
 
-//	_isVisible = _unit->getUnitVisible() == true
-//			  || _battleSave->getDebugTac() == true;
-	//Log(LOG_INFO) << ". _isVisible = " << _isVisible;
-
-
-/* _oO **** STATUS WALKING **** Oo_ */// #2
+// #2 _oO **** STATUS WALKING **** Oo_
 
 	switch (_unit->getUnitStatus())
 	{
@@ -218,7 +184,7 @@ void UnitWalkBState::think()
 			}
 
 
-/* _oO **** STATUS STANDING end **** Oo_ */// #3
+// #3 _oO **** STATUS STANDING end **** Oo_
 
 			// walkPhase reset as the unit completes its transition to the next tile
 			if (_unit->getUnitStatus() == STATUS_STANDING)
@@ -287,7 +253,7 @@ void UnitWalkBState::think()
 	}
 
 
-/* _oO **** STATUS STANDING **** Oo_ */// #1 & #4
+// #1 & #4 _oO **** STATUS STANDING **** Oo_
 
 	switch (_unit->getUnitStatus())
 	{
@@ -324,7 +290,7 @@ void UnitWalkBState::think()
 	}
 
 
-/* _oO **** STATUS TURNING **** Oo_ */
+// _oO **** STATUS TURNING **** Oo_
 
 	if (_unit->getUnitStatus() == STATUS_TURNING) // turning during walking costs no TU
 	{
@@ -419,10 +385,7 @@ bool UnitWalkBState::doStatusStand() // private.
 				if (_parent->kneelToggle(_unit) == true)
 				{
 					//Log(LOG_INFO) << ". . . Stand up";
-//					_unit->flagCache();						// <- These are handled by BattleUnit::kneel() [invalidate cache]
-//					_parent->getMap()->cacheUnit(_unit);	// <- and BattlescapeGame::kneel() [cache units]
-
-					if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop.
+					if (_te->checkReactionFire(_unit) == true) // got fired at -> stop.
 					{
 						//Log(LOG_INFO) << ". . . RF triggered";
 						_battleSave->rfTriggerOffset(_walkCamera->getMapOffset());
@@ -441,41 +404,37 @@ bool UnitWalkBState::doStatusStand() // private.
 				}
 			}
 		}
+
+		if (_action.strafe == true)
+		{
+			if (_unit->getGeoscapeSoldier() != nullptr
+				|| _unit->getUnitRules()->isMechanical() == false)
+			{
+				_unit->setFaceDirection(_unit->getUnitDirection());
+				const int delta (std::min(
+										std::abs(8 + _dirStart - _unit->getUnitDirection()),
+										std::min(
+											std::abs(_unit->getUnitDirection() - _dirStart),
+											std::abs(8 + _unit->getUnitDirection() - _dirStart))));
+				if (delta > 2) _unit->flagStrafeBackwards();
+			}
+			else // turret-swivel.
+			{
+				const int dirStrafe ((_dirStart + 4) % 8);
+				_unit->setFaceDirection(dirStrafe);
+
+				if (_unit->getTurretType() != TRT_NONE)
+				{
+					const int dirTurret (_unit->getTurretDirection() - _unit->getUnitDirection());
+					_unit->setTurretDirection((dirTurret + dirStrafe) % 8);
+				}
+			}
+		}
 	}
 
 	_tileSwitchDone = false;
 
 	//Log(LOG_INFO) << "enter (dir!= -1) : " << _unit->getId();
-	if (_action.strafe == true
-		&& _pf->getPath().empty() == false) // <- don't bother with this if it's the end of movement/ State.
-	{
-		if (_unit->getGeoscapeSoldier() != nullptr
-			|| _unit->getUnitRules()->isMechanical() == false)
-		{
-			//Log(LOG_INFO) << ". STANDING strafeMove, setFaceDirection() -> " << _unit->getUnitDirection();
-			_unit->setFaceDirection(_unit->getUnitDirection());
-			const int delta (std::min(
-									std::abs(8 + _dirStart - _unit->getUnitDirection()),
-									std::min(
-										std::abs(_unit->getUnitDirection() - _dirStart),
-										std::abs(8 + _unit->getUnitDirection() - _dirStart))));
-			if (delta > 2) _unit->flagStrafeBackwards();
-		}
-		else
-		{
-			const int dirStrafe ((_dirStart + 4) % 8);
-			_unit->setFaceDirection(dirStrafe);
-			//Log(LOG_INFO) << ". STANDING strafeTank, setFaceDirection() -> " << dirStrafe;
-
-			if (_unit->getTurretType() != TRT_NONE)
-			{
-				const int dirTurret (_unit->getTurretDirection() - _unit->getUnitDirection());
-				_unit->setTurretDirection((dirTurret + dirStrafe) % 8);
-				//Log(LOG_INFO) << ". STANDING strafeTank, setTurretDirection() -> " << (turretOffset + dirStrafe);
-			}
-		}
-	}
-	//else Log(LOG_INFO) << ". STANDING no strafe.";
 
 	//Log(LOG_INFO) << ". getTuCostPf() & posStop";
 	Position posStop;

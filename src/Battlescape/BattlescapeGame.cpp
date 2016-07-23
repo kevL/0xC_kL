@@ -703,7 +703,7 @@ void BattlescapeGame::centerOnUnit( // private.
  * @note Called by BattlescapeGame::think().
  * @param unit - pointer to a BattleUnit
  */
-void BattlescapeGame::handleUnitAI(BattleUnit* const unit)
+void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 {
 //	if (unit->getId() == 1000028)	_debug = true;
 //	else							_debug = false;
@@ -1024,7 +1024,7 @@ void BattlescapeGame::endAiTurn()
 	}
 	else
 	{
-		_battleSave->selectNextFactionUnit();
+		_battleSave->selectNextFactionUnit(); // select Player unit.
 		_debugPlay = true;
 	}
 }

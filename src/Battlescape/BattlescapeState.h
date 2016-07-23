@@ -252,8 +252,8 @@ private:
 
 
 	public:
-//		static const Uint32 STATE_INTERVAL_STANDARD = 90; // for fast shaders - Raw, Quillez, etc.
 		static const Uint32
+//			STATE_INTERVAL_STANDARD		=  90u; // for fast shaders - Raw, Quillez, etc.
 			STATE_INTERVAL_STANDARD		=  76u, // for slow shaders - 4xHQX & above. TODO: Ruleset.
 			STATE_INTERVAL_FAST			=  15u,
 			STATE_INTERVAL_DEATHSPIN	=  21u,

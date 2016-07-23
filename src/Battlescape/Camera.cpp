@@ -578,7 +578,7 @@ void Camera::centerOnPosition(
 		const Position& posField,
 		bool draw)
 {
-	Log(LOG_INFO) << "Camera::centerOnPosition() " << posField;
+	//Log(LOG_INFO) << "Camera::centerOnPosition() " << posField;
 	_centerField = posField;
 
 	intMinMax(

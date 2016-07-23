@@ -251,6 +251,8 @@ private:
 	void centerOnUnit(
 			const BattleUnit* const unit,
 			bool draw = false) const;
+	/// Handles non-player BattleUnit AI.
+	void handleUnitAI(BattleUnit* const unit);
 	/// Selects the next AI unit.
 	void selectNextAiUnit(const BattleUnit* const unit);
 	/// Ends the AI turn.
@@ -321,8 +323,6 @@ private:
 		/// Sets the BattleState->think() interval.
 		void setStateInterval(Uint32 interval);
 
-		/// Handles non-player BattleUnit AI.
-		void handleUnitAI(BattleUnit* const unit);
 		/// Gets the current AI BattleAction struct.
 //		const BattleAction& getCurrentAiAction();
 

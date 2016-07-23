@@ -2066,7 +2066,8 @@ int Pathfinding::getDoorCost() const
 
 /**
  * Checks whether a path is ready and returns the first direction.
- * @return, direction where the unit needs to go next, -1 if it's the end of the path
+ * @return, direction where the unit needs to go next
+ *			-1 if it's the end of the path or there is no valid path
  */
 int Pathfinding::getStartDirection() const
 {
