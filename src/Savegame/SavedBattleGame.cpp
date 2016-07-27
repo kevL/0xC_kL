@@ -72,7 +72,7 @@ SavedBattleGame::SavedBattleGame(
 		_mapsize_z(0),
 		_qtyTilesTotal(0u),
 		_selectedUnit(nullptr),
-		_lastSelectedUnit(nullptr),
+		_selectedUnit_pre(nullptr),
 		_pf(nullptr),
 		_te(nullptr),
 		_tacticalShade(0),
@@ -363,8 +363,8 @@ void SavedBattleGame::load(
 			switch (faction)
 			{
 				case FACTION_PLAYER:
-					if (unit->getId() == selUnitId
-						|| (_selectedUnit == nullptr && unit->isOut_t(OUT_STAT) == false))
+					if ((_selectedUnit == nullptr || unit->getId() == selUnitId)
+						&& unit->getUnitStatus() == STATUS_STANDING)
 					{
 						_selectedUnit = unit;
 					}
@@ -1078,18 +1078,18 @@ void SavedBattleGame::setSelectedUnit(BattleUnit* const unit)
  * @param checkReselect		- true to check the next unit's reselectable flag (default false)
  * @param checkInventory	- true to check if the next unit has no inventory (default false)
  * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
- * @sa selectFactionUnit
+ * @sa selectUnit
  */
-BattleUnit* SavedBattleGame::selectNextFactionUnit(
+BattleUnit* SavedBattleGame::selectNextUnit(
 		bool dontReselect,
 		bool checkReselect,
 		bool checkInventory)
 {
-	return selectFactionUnit(
-						+1,
-						dontReselect,
-						checkReselect,
-						checkInventory);
+	return selectUnit(
+					+1,
+					dontReselect,
+					checkReselect,
+					checkInventory);
 }
 
 /**
@@ -1098,18 +1098,18 @@ BattleUnit* SavedBattleGame::selectNextFactionUnit(
  * @param checkReselect		- true to check the next unit's reselectable flag (default false)
  * @param checkInventory	- true to check if the next unit has no inventory (default false)
  * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
- * @sa selectFactionUnit
+ * @sa selectUnit
  */
-BattleUnit* SavedBattleGame::selectPreviousFactionUnit(
+BattleUnit* SavedBattleGame::selectPrevUnit(
 		bool dontReselect,
 		bool checkReselect,
 		bool checkInventory)
 {
-	return selectFactionUnit(
-						-1,
-						dontReselect,
-						checkReselect,
-						checkInventory);
+	return selectUnit(
+					-1,
+					dontReselect,
+					checkReselect,
+					checkInventory);
 }
 
 /**
@@ -1120,28 +1120,42 @@ BattleUnit* SavedBattleGame::selectPreviousFactionUnit(
  * @param checkInventory	- true to check if the next unit has no inventory
  * @return, pointer to newly selected BattleUnit or nullptr if none can be selected
  */
-BattleUnit* SavedBattleGame::selectFactionUnit( // private.
+BattleUnit* SavedBattleGame::selectUnit( // private.
 		int dir,
 		bool dontReselect,
 		bool checkReselect,
 		bool checkInventory)
 {
-	//Log(LOG_INFO) << "sbg:selectFactionUnit()";
+	//Log(LOG_INFO) << "sbg:selectUnit()";
 //	if (_units.empty() == true) // how can this ever happen.
-//		return (_selectedUnit = _lastSelectedUnit = nullptr);
+//		return (_selectedUnit = _selectedUnit_pre = nullptr);
 
-	if (_selectedUnit != nullptr && dontReselect == true)
-		_selectedUnit->dontReselect();
+	if (dontReselect == true && _selectedUnit != nullptr)
+	{
+		//Log(LOG_INFO) << ". set dontReselect id-" << _selectedUnit->getId();
+		_selectedUnit->setReselect(false);
+	}
 
 
 	std::vector<BattleUnit*>* units;
-	if (_shuffleUnits.empty() == true // <- for Base/Craft equip screen.
-		|| _shuffleUnits[0u] == nullptr)
+	switch (_side)
 	{
-		units = &_units;
+		default:
+		case FACTION_PLAYER:  units = &_units; break;
+		case FACTION_HOSTILE:
+		case FACTION_NEUTRAL: units = &_shuffleUnits;
 	}
-	else // non-player turn: Use shuffledUnits. See endFactionTurn() ....
-		units = &_shuffleUnits;
+//	if (_shuffleUnits.empty() == true // <- for Base/Craft equip screen.
+//		|| _shuffleUnits[0u] == nullptr)
+//	{
+//		Log(LOG_INFO) << ". shuffleUnits NULL use Units";
+//		units = &_units;
+//	}
+//	else // non-player turn: Use shuffledUnits. See endFactionTurn() ....
+//	{
+//		Log(LOG_INFO) << ". use shuffleUnits!";
+//		units = &_shuffleUnits;
+//	}
 
 	std::vector<BattleUnit*>::const_iterator
 		iterFirst,
@@ -1164,38 +1178,368 @@ BattleUnit* SavedBattleGame::selectFactionUnit( // private.
 					units->begin(),
 					units->end(),
 					_selectedUnit);
+	//Log(LOG_INFO) << ". sel id-" << ((iterNext != units->end()) ? (*iterNext)->getId() : 0);
 	do
 	{
+		//Log(LOG_INFO) << ". . do (is NOT Selectable)";
 		if (iterNext != units->end())
 		{
+			//Log(LOG_INFO) << ". . . sel is VALID id-" << (*iterNext)->getId();
 			if (iterNext != iterLast)
 				iterNext += dir;
 			else
 				iterNext = iterFirst;
+			//Log(LOG_INFO) << ". . . next id-" << (*iterNext)->getId();
 
 			if (*iterNext == _selectedUnit) // iter returned to itself
 			{
-				if (checkReselect == true && _selectedUnit->reselectAllowed() == false)
+				//Log(LOG_INFO) << ". . . . iter returned to itself";
+				if (checkReselect == true && _selectedUnit->getReselect() == false)
+				{
+					//Log(LOG_INFO) << ". . . . . unit cannot be reselected - set sel to NULL";
 					_selectedUnit = nullptr;
+				}
 
+				//Log(LOG_INFO) << ". . . . ret id-" << (_selectedUnit ? _selectedUnit->getId() : 0);
 				return _selectedUnit;
 			}
-			else if (_selectedUnit == nullptr // no units can be selected
-				&& iterNext == iterFirst)
+			else if (_selectedUnit == nullptr && iterNext == iterFirst) // no units can be selected
 			{
+				//Log(LOG_INFO) << ". . . . no units can be selected";
 				return nullptr;
 			}
 		}
 		else
+		{
+			//Log(LOG_INFO) << ". . . next is NOT Valid - set iter to begin()";
 			iterNext = iterFirst;
+		}
 	}
 	while ((*iterNext)->isSelectable(
 								_side,
 								checkReselect,
 								checkInventory) == false);
 
-	//Log(LOG_INFO) << ". id-" << (*iterNext)->getId();
+	//Log(LOG_INFO) << ". Ret id-" << (*iterNext)->getId();
 	return (_selectedUnit = *iterNext);
+}
+
+/**
+ * Gets the faction-side currently playing.
+ * @return, the faction currently playing (BattleUnit.h)
+ */
+UnitFaction SavedBattleGame::getSide() const
+{
+	return _side;
+}
+
+/**
+ * Gets the current turn.
+ * @return, the current turn
+ */
+int SavedBattleGame::getTurn() const
+{
+	return _turn;
+}
+
+/**
+ * Ends the current faction's turn and progresses to the next.
+ * @note Called from BattlescapeGame::endTurn().
+ * @return, true if the turn rolls-over to Faction_Player
+ */
+bool SavedBattleGame::endFactionTurn()
+{
+	//Log(LOG_INFO) << "sbg:endFactionTurn() side= " << _side;
+	for (std::vector<BattleUnit*>::const_iterator	// set *all* units non-selectable
+			i = _units.begin();						// Units of the upcoming turn's faction are
+			i != _units.end();						// set selectable at the end.
+			++i)
+	{
+		(*i)->setReselect(false);
+	}
+
+	switch (_side)
+	{
+		case FACTION_PLAYER: // end of Player turn.
+			if (_selectedUnit != nullptr
+				&& _selectedUnit->isMindControlled() == false)
+			{
+				_selectedUnit_pre = _selectedUnit;
+			}
+			else
+				_selectedUnit_pre = nullptr;
+
+			_selectedUnit = nullptr;
+
+			_scanDots.clear();
+
+			_shuffleUnits = _units; // Only Faction_Player turns use the regular '_units' vector to keep their Battle Order correct;
+			RNG::shuffle(_shuffleUnits.begin(), _shuffleUnits.end()); // _Hostile and _Neutral use '_shuffleUnits'.
+			// TODO: It no longer seems necessary to NULL '_shuffleUnits' at the start of Player turns below_
+
+			_side = FACTION_HOSTILE;
+			break;
+
+		case FACTION_HOSTILE: // end of Alien turn.
+			if (firstFactionUnit(FACTION_NEUTRAL) != nullptr)
+			{
+				//Log(LOG_INFO) << ". end Hostile - selUnit id-" << _selectedUnit->getId();
+				_side = FACTION_NEUTRAL;
+				break;
+			}
+			//else Log(LOG_INFO) << ". end Hostile - selUnit NONE";
+			// no break;
+
+		case FACTION_NEUTRAL: // end of Civilian turn.
+		default:
+			_side = FACTION_PLAYER;
+	}
+	//Log(LOG_INFO) << ". side= " << _side;
+
+
+	// ** _side HAS ADVANCED to next faction after here!!! ** //
+
+	int aLienIntel (0);
+	switch (_side)
+	{
+		case FACTION_PLAYER:
+		{
+			std::fill(
+					_shuffleUnits.begin(),
+					_shuffleUnits.end(),
+					nullptr);
+
+			_walkUnit = nullptr;
+
+			tileVolatiles(); // do Tile stuff
+
+			++_turn;
+
+			firstFactionUnit(FACTION_PLAYER); // set '_selectedUnit'
+
+			int aLienIntelTest;
+			for (std::vector<BattleUnit*>::const_iterator
+					i = _units.begin();
+					i != _units.end();
+					++i)
+			{
+				if ((*i)->getOriginalFaction() == FACTION_HOSTILE)
+				{
+					switch ((*i)->getUnitStatus())	// set non-aLien units not-Exposed if their current
+					{								// exposure exceeds aLien's max-intel. See below_
+						case STATUS_STANDING:
+						case STATUS_UNCONSCIOUS:	// NOTE: Status_Unconscious does not break exposure. psycho aLiens!
+							if ((aLienIntelTest = (*i)->getIntelligence()) > aLienIntel)
+								aLienIntel = aLienIntelTest;
+					}
+				}
+			}
+			break;
+		}
+
+		case FACTION_HOSTILE:
+			if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Exposure rule.
+				&& _turn > (_cheatTurn >> 2u))
+			{
+				for (std::vector<BattleUnit*>::const_iterator // find a conscious non-MC'd aLien ...
+						i = _units.begin();
+						i != _units.end();
+						++i)
+				{
+					if ((*i)->getOriginalFaction() == FACTION_HOSTILE
+						&& (*i)->isMindControlled() == false
+						&& (*i)->isOut_t(OUT_STAT) == false)
+					{
+						const int r (RNG::generate(0,5));
+						if (_turn > _cheatTurn - 3 + r
+							|| _battleState->getBattleGame()->tallyHostiles() < r - 1)
+						{
+							_cheatAI = true;
+						}
+						break;
+					}
+				}
+			}
+	}
+
+	for (std::vector<BattleUnit*>::const_iterator
+			i = _units.begin();
+			i != _units.end();
+			++i)
+	{
+		switch ((*i)->getUnitStatus())
+		{
+			case STATUS_LATENT:
+			case STATUS_LATENT_START:
+				break;
+
+			case STATUS_DEAD: // burning corpses eventually sputter out.
+				if ((*i)->getFaction() == _side && (*i)->getUnitFire() != 0)
+					(*i)->setUnitFire((*i)->getUnitFire() - 1);
+				break;
+
+			default:
+			case STATUS_WALKING:
+			case STATUS_FLYING:
+			case STATUS_TURNING:
+			case STATUS_AIMING:
+			case STATUS_COLLAPSING:
+			case STATUS_PANICKING:
+			case STATUS_BERSERK:
+				(*i)->setUnitStatus(STATUS_STANDING); // safety.
+				// no break;
+
+			case STATUS_STANDING:
+				if (_cheatAI == true									// aLiens know where xCom is when cheating ~turn20
+					|| (*i)->getFaction() == FACTION_HOSTILE			// aLiens always know where their buddies are,
+					|| (*i)->getOriginalFaction() == FACTION_HOSTILE)	// Mc'd or not.
+				{
+					(*i)->setExposed();
+				}
+				else if (_side == FACTION_PLAYER)
+				{
+					int exposure ((*i)->getExposed());
+					if (exposure != -1)
+					{
+						if (++exposure > aLienIntel)
+							(*i)->setExposed(-1);
+						else
+							(*i)->setExposed(exposure);
+					}
+				}
+				// no break;
+
+			case STATUS_UNCONSCIOUS:
+				//Log(LOG_INFO) << "";
+				//Log(LOG_INFO) << ". id-" << (*i)->getId() << " status= " << (*i)->getUnitStatus();
+
+				if ((*i)->getOriginalFaction() == _side)	// NOTE: This could get funky and there should probably
+					(*i)->hitUnitFire();					// be a checkCasualties() call for that.
+
+				if ((*i)->getFaction() == _side)	// This causes an Mc'd unit to lose its turn.
+				{
+					(*i)->prepareUnit();			// set Reselectable, REVERT FACTION, do tu/stun/fire recovery, determine panic, etc.
+					checkUnitRevival(*i);
+				}
+				// if newSide=XCOM, xCom agents DO NOT revert to xCom; MC'd aLiens revert to aLien.
+				// if newSide=Alien, xCom agents revert to xCom; MC'd aLiens DO NOT revert to aLien.
+				// etc.
+
+				switch ((*i)->getUnitStatus())	// NOTE: prepareUnit() can change status to Panic or Berserk.
+				{								// NOTE: checkUnitRevival() can change status to Standing.
+					case STATUS_STANDING:
+					case STATUS_PANICKING:
+					case STATUS_BERSERK:
+						(*i)->setUnitVisible((*i)->getFaction() == FACTION_PLAYER);
+
+						(*i)->setDashing(false);	// - no longer dashing; dash is effective vs. Reaction Fire only and
+													// is/ought be reset/removed every time BattlescapeGame::primaryAction()
+													// uses the Pathfinding object. Other, more ideal places for this
+													// are UnitWalkBState dTor and/or BattlescapeGame::popState().
+													//
+													// NOTE: Panic also uses dash; but UnitPanicBState turns it off again.
+				}
+		}
+	}
+
+	_te->calculateSunShading();
+	_te->calculateTerrainLighting();
+	_te->calculateUnitLighting(); // turn off MC'd aLien-lighting.
+
+	_te->calcFovUnits_all(); // do calcFov() *after* aLiens & civies have been set non-visible above^
+
+	return (_side == FACTION_PLAYER);
+//	if (_side != FACTION_PLAYER)
+//	{
+//		selectNextUnit();	// NOTE: This seems redundant w/ BattlescapeGame::think().
+//		return false;				// So Let think() take care of it.
+//	}
+//	return true;
+}
+
+/**
+ * Selects one of the Player's units when he/she begins each turn.
+ *
+void SavedBattleGame::selectFirstPlayerUnit() // private.
+{
+	if (_selectedUnit_pre != nullptr
+		&& _selectedUnit_pre->isSelectable(FACTION_PLAYER) == true)
+	{
+		_selectedUnit = _selectedUnit_pre;
+	}
+	else
+		selectNextUnit();
+
+	while (_selectedUnit != nullptr
+		&& _selectedUnit->getFaction() != FACTION_PLAYER)
+	{
+		selectNextUnit(false, true);
+	}
+} */
+
+/**
+ * Selects the first BattleUnit of faction at the start of each faction-turn.
+ * @note This does NOT set '_selectedUnit' unless it's the beginning of a Player
+ * turn or no unit of faction can be found -- otherwise bg:think() handles it.
+ * @param faction - faction of unit to select (BattleUnit.h)
+ * @return, pointer to the selected unit or nullptr
+ */
+BattleUnit* SavedBattleGame::firstFactionUnit(UnitFaction faction)
+{
+	if (_side == FACTION_PLAYER && _selectedUnit_pre != nullptr
+		&& _selectedUnit_pre->isSelectable(FACTION_PLAYER) == true)
+	{
+		return (_selectedUnit = _selectedUnit_pre);
+	}
+
+	std::vector<BattleUnit*>* units;
+	switch (_side)
+	{
+		default:
+		case FACTION_PLAYER:  units = &_units; break;
+		case FACTION_HOSTILE:
+		case FACTION_NEUTRAL: units = &_shuffleUnits;
+	}
+
+	for (std::vector<BattleUnit*>::const_iterator
+			i = units->begin();
+			i != units->end();
+			++i)
+	{
+		if ((*i)->isSelectable(faction) == true)
+		{
+			if (_side == FACTION_PLAYER)
+				_selectedUnit = *i;
+			return *i;
+		}
+	}
+
+	return (_selectedUnit = nullptr);
+}
+
+/**
+ * Turns on tactical debug-mode.
+ */
+void SavedBattleGame::debugTac()
+{
+	_debugTac = true;
+
+	for (size_t // reveal tiles.
+			i = 0u;
+			i != _qtyTilesTotal;
+			++i)
+	{
+		_tiles[i]->setRevealed();
+	}
+}
+
+/**
+ * Gets the current tactical debug-mode setting.
+ * @return, debug mode
+ */
+bool SavedBattleGame::getDebugTac() const
+{
+	return _debugTac;
 }
 
 /**
@@ -1259,267 +1603,6 @@ TileEngine* SavedBattleGame::getTileEngine() const
 std::vector<MapDataSet*>* SavedBattleGame::getMapDataSets()
 {
 	return &_mapDataSets;
-}
-
-/**
- * Gets the faction-side currently playing.
- * @return, the faction currently playing (BattleUnit.h)
- */
-UnitFaction SavedBattleGame::getSide() const
-{
-	return _side;
-}
-
-/**
- * Gets the current turn.
- * @return, the current turn
- */
-int SavedBattleGame::getTurn() const
-{
-	return _turn;
-}
-
-/**
- * Ends the current faction-turn and progresses to the next one.
- * @note Called from BattlescapeGame::endTurn()
- * @return, true if the turn rolls-over back to faction Player
- */
-bool SavedBattleGame::endFactionTurn()
-{
-	//Log(LOG_INFO) << "SavedBattleGame::endFactionTurn()";
-	for (std::vector<BattleUnit*>::const_iterator // -> would it be safe to exclude Dead & Unconscious units
-			i = _units.begin();
-			i != _units.end();
-			++i)
-	{
-		if ((*i)->getFaction() == _side)
-		{
-			(*i)->setRevived(false);
-			if (_side == FACTION_PLAYER)
-				(*i)->dontReselect();
-		}
-	}
-
-	bool playerTurn;
-	switch (_side)
-	{
-		case FACTION_PLAYER: // end of Player turn.
-			_side = FACTION_HOSTILE;
-			playerTurn = false;
-
-			if (_selectedUnit != nullptr
-				&& _selectedUnit->isMindControlled() == false)
-			{
-				_lastSelectedUnit = _selectedUnit;
-			}
-			_selectedUnit = nullptr;
-
-			_scanDots.clear();
-
-			_shuffleUnits = _units;
-			RNG::shuffle(_shuffleUnits.begin(), _shuffleUnits.end());
-			break;
-
-		case FACTION_HOSTILE: // end of Alien turn.
-			_side = FACTION_NEUTRAL;
-			if (selectNextFactionUnit() == nullptr)
-				playerTurn = true;
-			else
-				playerTurn = false;
-			break;
-
-		default:
-		case FACTION_NEUTRAL: // end of Civilian turn.
-			//Log(LOG_INFO) << ". end Neutral phase -> PLAYER";
-			playerTurn = true;
-	}
-
-	int aLienIntel (0);
-	if (playerTurn == true)
-	{
-		std::fill(
-				_shuffleUnits.begin(),
-				_shuffleUnits.end(),
-				nullptr);
-
-		_walkUnit = nullptr;
-
-		tileVolatiles(); // do Tile stuff
-
-		++_turn;
-		_side = FACTION_PLAYER;
-
-		selectPlayerUnit();
-
-		int aLienIntelTest;
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _units.begin();
-				i != _units.end();
-				++i)
-		{
-			if ((*i)->getOriginalFaction() == FACTION_HOSTILE)
-			{
-				switch ((*i)->getUnitStatus())	// set non-aLien units not-Exposed if their current
-				{								// exposure exceeds aLien's max-intel. See below_
-					case STATUS_STANDING:
-					case STATUS_UNCONSCIOUS:	// NOTE: Status_Unconscious does not break exposure. psycho aLiens!
-						if ((aLienIntelTest = (*i)->getIntelligence()) > aLienIntel)
-							aLienIntel = aLienIntelTest;
-				}
-			}
-		}
-	}
-
-
-	// ** _side HAS ADVANCED to next faction after here!!! ** //
-
-	if (_cheatAI == false // pseudo the Turn-20 / less-than-3-aliens-left Reveal rule.
-		&& _side == FACTION_HOSTILE
-		&& _turn > (_cheatTurn >> 2u))
-	{
-		for (std::vector<BattleUnit*>::const_iterator // find a conscious non-MC'd aLien ...
-				i = _units.begin();
-				i != _units.end();
-				++i)
-		{
-			if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-				&& (*i)->isMindControlled() == false
-				&& (*i)->isOut_t(OUT_STAT) == false)
-			{
-				const int r (RNG::generate(0,5));
-				if (_turn > _cheatTurn - 3 + r
-					|| _battleState->getBattleGame()->tallyHostiles() < r - 1)
-				{
-					_cheatAI = true;
-				}
-				break;
-			}
-		}
-	}
-
-	//Log(LOG_INFO) << ". side = " << (int)_side;
-	for (std::vector<BattleUnit*>::const_iterator // -> would it be safe to exclude Dead & Unconscious units
-			i = _units.begin();
-			i != _units.end();
-			++i)
-	{
-		switch ((*i)->getUnitStatus())
-		{
-			case STATUS_LATENT:
-			case STATUS_LATENT_START:
-				break;
-
-			case STATUS_DEAD: // burning corpses eventually sputter out.
-				if ((*i)->getFaction() == _side && (*i)->getUnitFire() != 0)
-					(*i)->setUnitFire((*i)->getUnitFire() - 1);
-				break;
-
-			default:
-				(*i)->setUnitStatus(STATUS_STANDING); // safety.
-				// no break;
-
-			case STATUS_UNCONSCIOUS:
-				if ((*i)->getFaction() == _side)
-				{
-					checkUnitRevival(*i, true);
-					if ((*i)->getUnitStatus() != STATUS_STANDING)
-					{
-						(*i)->hitUnitFire();	// NOTE: This could get funky and there should probably
-						break;					// be a checkCasualties() call for that.
-					}
-				}
-				// no break;
-
-			case STATUS_STANDING:
-				if ((*i)->getFaction() == _side)	// This causes an Mc'd unit to lose its turn.
-					(*i)->prepareUnit();			// REVERTS FACTION, does tu/stun/fire recovery, etc.
-				// if newSide=XCOM, xCom agents DO NOT revert to xCom; MC'd aLiens revert to aLien.
-				// if newSide=Alien, xCom agents revert to xCom; MC'd aLiens DO NOT revert to aLien.
-
-				(*i)->setDashing(false);	// Safety. no longer dashing; dash is effective vs. Reaction Fire only and
-											// is/ought be reset/removed every time BattlescapeGame::primaryAction()
-											// uses the Pathfinding object. Other, more ideal places for this safety
-											// are UnitWalkBState dTor and/or BattlescapeGame::popState().
-				if ((*i)->getOriginalFaction() == _side)	// NOTE: This could get funky and there should probably
-					(*i)->hitUnitFire();					// be a checkCasualties() call for that.
-
-				if ((*i)->getFaction() == FACTION_HOSTILE				// aLiens always know where their buddies are,
-					|| (*i)->getOriginalFaction() == FACTION_HOSTILE	// Mc'd or not.
-					|| _cheatAI == true)								// aLiens know where xCom is when cheating ~turn20
-				{
-					(*i)->setExposed();
-				}
-				else if (_side == FACTION_PLAYER)
-				{
-					int exposure ((*i)->getExposed());
-					if (exposure != -1)
-					{
-						if (++exposure > aLienIntel)
-							(*i)->setExposed(-1);
-						else
-							(*i)->setExposed(exposure);
-					}
-				}
-
-				(*i)->setUnitVisible((*i)->getFaction() == FACTION_PLAYER);
-		}
-	}
-
-	_te->calculateSunShading();
-	_te->calculateTerrainLighting();
-	_te->calculateUnitLighting(); // turn off MC'd aLien-lighting.
-
-	_te->calcFovUnits_all(); // do calcFov() *after* aLiens & civies have been set non-visible above^
-
-	if (_side != FACTION_PLAYER)
-		selectNextFactionUnit();
-
-	return playerTurn;
-}
-
-/**
- * Selects one of the Player's units when he/she begins each turn.
- */
-void SavedBattleGame::selectPlayerUnit() // private.
-{
-	if (_lastSelectedUnit != nullptr
-		&& _lastSelectedUnit->isSelectable(FACTION_PLAYER) == true)
-	{
-		_selectedUnit = _lastSelectedUnit;
-	}
-	else
-		selectNextFactionUnit();
-
-	while (_selectedUnit != nullptr
-		&& _selectedUnit->getFaction() != FACTION_PLAYER)
-	{
-		selectNextFactionUnit(false, true);
-	}
-}
-
-/**
- * Turns on tactical debug-mode.
- */
-void SavedBattleGame::debugTac()
-{
-	_debugTac = true;
-
-	for (size_t // reveal tiles.
-			i = 0u;
-			i != _qtyTilesTotal;
-			++i)
-	{
-		_tiles[i]->setRevealed();
-	}
-}
-
-/**
- * Gets the current tactical debug-mode setting.
- * @return, debug mode
- */
-bool SavedBattleGame::getDebugTac() const
-{
-	return _debugTac;
 }
 
 /**
@@ -2188,15 +2271,12 @@ void SavedBattleGame::reviveUnits(const UnitFaction faction)
  * @note Revived units need a tile to stand on. If the unit's current position
  * is occupied then all directions around the tile are searched for a free tile
  * to place the unit on. If no free tile is found the unit stays unconscious.
- * @param unit		- pointer to a BattleUnit to try to revive
- * @param turnOver	- true if called from SavedBattleGame::endFactionTurn (default false)
+ * @param unit - pointer to a BattleUnit to try to revive
  */
-void SavedBattleGame::checkUnitRevival(
-		BattleUnit* const unit,
-		bool turnOver)
+void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 {
 	if (unit->isRevivable() == true
-		&& unit->getStun() < unit->getHealth() + static_cast<int>(turnOver)) // do health=stun if unit is about to get healed in Prep Turn.
+		&& unit->getStun() < unit->getHealth())
 	{
 		Position pos (unit->getPosition());
 
@@ -2244,9 +2324,9 @@ void SavedBattleGame::checkUnitRevival(
 			unit->setUnitStatus(STATUS_STANDING);
 			unit->flagCache();
 			unit->setUnitDirection(RNG::generate(0,7));
-			unit->setTu();
-			unit->setEnergy();
-			unit->setRevived();
+//			unit->setTu(); // -> was done in BattleUnit::putDown() when unit went unconscious.
+//			unit->setEnergy();
+			unit->setReselect(unit->getFaction() == _side);
 
 			_te->calculateUnitLighting();
 			if (unit->getFaction() == FACTION_PLAYER)

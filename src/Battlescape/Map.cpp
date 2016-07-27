@@ -312,9 +312,10 @@ void Map::think()
  */
 void Map::draw()
 {
+	//Log(LOG_INFO) << "Map::draw()";
 	if (_noDraw == false) // don't draw if MiniMap is open. Or if Inventory is open.
 	{
-	// removed setting this here and in BattlescapeGame::handleState(),
+	// removed setting this here and in BattlescapeGame::handleBattleState(),
 	// Camera::scrollXY(), ProjectileFlyBState::think() x2.
 //	if (_redraw == false) return;
 //	_redraw = false;
@@ -381,7 +382,9 @@ void Map::draw()
 			_explosionInFOV = false; //_battleSave->getDebugTac(); // reveals Map in debugmode; hides battlefield if no explosions waiting.
 
 
-		static bool delayHide;
+		static bool delayHide (false);
+
+//		static int debug (1);
 
 //		if (_battleSave->getSelectedUnit() != nullptr
 //			&& _battleSave->getSelectedUnit()->getUnitVisible() == true)
@@ -404,7 +407,19 @@ void Map::draw()
 			|| _battleSave->getDebugTac() == true)
 		{
 			// REVEAL //
-			//Log(LOG_INFO) << ". REVEAL";
+//			if (debug == 1)
+//			{
+//				debug = 2; Log(LOG_INFO) << ". REVEAL";
+//				Log(LOG_INFO)
+//						<< "\n\tselUnit=\t"		<< ((_battleSave->getSelectedUnit() != nullptr) ? _battleSave->getSelectedUnit()->getId() : 0)
+//						<< "\n\tisVis=\t\t"		<< ((_battleSave->getSelectedUnit() != nullptr) ? _battleSave->getSelectedUnit()->getUnitVisible() : false)
+//						<< "\n\treveal=\t\t"	<< _reveal
+//						<< "\n\tdying=\t\t"		<< _unitDying
+//						<< "\n\texpl=\t\t"		<< _explosionInFOV
+//						<< "\n\tprj=\t\t"		<< _projectileInFOV
+//						<< "\n\treaction=\t"	<< _te->isReaction();
+//			}
+
 			delayHide = true;
 			_mapIsHidden = false;
 			drawTerrain(this);
@@ -414,7 +429,19 @@ void Map::draw()
 			// HIDE //
 			if (delayHide == true)
 			{
-				//Log(LOG_INFO) << ". HIDE";
+//				if (debug == 2)
+//				{
+//					debug = 1; Log(LOG_INFO) << ". HIDE";
+//					Log(LOG_INFO)
+//							<< "\n\tselUnit=\t"		<< ((_battleSave->getSelectedUnit() != nullptr) ? _battleSave->getSelectedUnit()->getId() : 0)
+//							<< "\n\tisVis=\t\t"		<< ((_battleSave->getSelectedUnit() != nullptr) ? _battleSave->getSelectedUnit()->getUnitVisible() : false)
+//							<< "\n\treveal=\t\t"	<< _reveal
+//							<< "\n\tdying=\t\t"		<< _unitDying
+//							<< "\n\texpl=\t\t"		<< _explosionInFOV
+//							<< "\n\tprj=\t\t"		<< _projectileInFOV
+//							<< "\n\treaction=\t"	<< _te->isReaction();
+//				}
+
 				delayHide = false;
 				SDL_Delay(Screen::SCREEN_PAUSE);
 			}
@@ -423,6 +450,7 @@ void Map::draw()
 			_hiddenScreen->blit(this);
 		}
 	}
+	//else Log(LOG_INFO) << ". noDraw TRUE";
 }
 
 /**

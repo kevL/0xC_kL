@@ -149,7 +149,6 @@ private:
 		_hidingForTurn,
 		_kneeled,
 		_psiBlock,
-		_revived,
 		_stopShot, // to stop a unit from firing/throwing if it spots a new opponent during turning
 		_takenExpl, // used to stop large units from taking damage for each part.
 		_takenFire,
@@ -558,12 +557,15 @@ private:
 		/// Changes the BattleUnit's morale.
 		void moraleChange(int change);
 
-		/// Don't reselect the BattleUnit.
-		void dontReselect();
-		/// Reselect the BattleUnit.
-		void allowReselect();
-		/// Checks whether reselecting the BattleUnit is allowed.
-		bool reselectAllowed() const;
+		/// Sets the BattleUnit's dontReselect flag.
+		void setReselect(bool reselect = true);
+		/// Gets the BattleUnit's dontReselect flag.
+		bool getReselect() const;
+		/// Checks if the BattleUnit is selectable.
+		bool isSelectable(
+				UnitFaction faction,
+				bool checkReselect = false,
+				bool checkInventory = false) const;
 
 		/// Sets the BattleUnit's fire value.
 		void setUnitFire(int fire);
@@ -835,12 +837,6 @@ private:
 		/// Gets if the BattleUnit has aleady been damaged in a single fire.
 		bool getTakenFire() const;
 
-		/// Checks if the BattleUnit is selectable.
-		bool isSelectable(
-				UnitFaction faction,
-				bool checkReselect = false,
-				bool checkInventory = false) const;
-
 		/// Returns true if the BattleUnit has an inventory.
 		bool canInventory() const;
 
@@ -878,9 +874,6 @@ private:
 		void setTurnDirection(int dir);
 		/// Clears turn direction.
 		void clearTurnDirection();
-
-		/// Sets the BattleUnit as having just revived during a Turnover.
-		void setRevived(bool revived = true);
 
 		/// Gets all units in the battlescape that are valid RF-spotters of the BattleUnit.
 		std::list<BattleUnit*>* getRfSpotters();

@@ -404,13 +404,13 @@ void Game::run()
 				if (_blitDelay == true)
 				{
 					_blitDelay = false;
-					SDL_Delay(Screen::SCREEN_PAUSE);
+					SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
 				}
 
 				std::list<State*>::const_iterator i (_states.end());
 				do
 				{
-					--i; // find top underlying fullscreen state
+					--i; // find top underlying fullscreen-state
 				}
 				while (i != _states.begin() && (*i)->isFullScreen() == false);
 
@@ -419,12 +419,13 @@ void Game::run()
 						i != _states.end();
 						++i)
 				{
-					(*i)->blit(); // blit top underlying fullscreen state and those on top of it
+					(*i)->blit(); // blit top underlying fullscreen-state and those on top of it
 				}
 
 				_fpsCounter->blit(_screen->getSurface());
 				_cursor->blit(_screen->getSurface());
 
+				//Log(LOG_INFO) << "F";
 				_screen->flip();
 			}
 
@@ -673,13 +674,13 @@ void Game::run()
 						if (_blitDelay == true)
 						{
 							_blitDelay = false;
-							SDL_Delay(Screen::SCREEN_PAUSE);
+							SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
 						}
 
 						std::list<State*>::const_iterator i (_states.end());
 						do
 						{
-							--i; // find top underlying fullscreen state
+							--i; // find top underlying fullscreen-state
 						}
 						while (i != _states.begin() && (*i)->isFullScreen() == false);
 
@@ -688,7 +689,7 @@ void Game::run()
 								i != _states.end();
 								++i)
 						{
-							(*i)->blit(); // blit top underlying fullscreen state and those on top of it
+							(*i)->blit(); // blit top underlying fullscreen-state and those on top of it
 						}
 
 						_fpsCounter->blit(_screen->getSurface());

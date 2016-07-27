@@ -493,7 +493,7 @@ private:
 				int& dY) override;
 
 		/// Updates the turn text.
-		void updateTurn();
+		void updateTurnText();
 
 		/// Toggles the icons' surfaces' visibility for Hidden Movement.
 		void toggleIcons(bool vis);

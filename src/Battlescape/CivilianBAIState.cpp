@@ -140,7 +140,7 @@ void CivilianBAIState::think(BattleAction* const action)
 			action->AIcount = 3;
 			action->desperate = true;
 
-			_unit->dontReselect();
+			_unit->setReselect(false);
 //			_battleSave->getBattleGame()->setReservedAction(BA_NONE, false);
 	}
 

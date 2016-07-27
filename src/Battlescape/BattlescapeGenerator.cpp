@@ -860,7 +860,7 @@ void BattlescapeGenerator::nextStage()
 //		|| selUnit->getUnitStatus() != STATUS_STANDING
 //		|| selUnit->getFaction() != FACTION_PLAYER)
 //	{
-//		_battleSave->selectNextFactionUnit(); // NOTE: This runs only if the only player-unit still conscious is a support-unit.
+//		_battleSave->selectNextUnit(); // NOTE: This runs only if the only player-unit still conscious is a support-unit.
 //	}
 
 	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
@@ -965,6 +965,7 @@ void BattlescapeGenerator::nextStage()
 /**
  * Determines and sets the latency-status of a specified BattleUnit at the start
  * of next-stage tactical battles.
+ * TODO: Latent units probably can and should be put through BattleUnit::putDown().
  * @param unit - pointer to a BattleUnit
  */
 void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.

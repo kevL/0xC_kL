@@ -106,7 +106,7 @@ private:
 	BattlescapeState* _battleState;
 	BattleUnit
 		* _selectedUnit,
-		* _lastSelectedUnit;
+		* _selectedUnit_pre;
 	const BattleUnit* _walkUnit; // -> "prior AI active actor" (used to stop Camera re-centering when it's already more-or-less centered)
 	Pathfinding* _pf;
 	Tile
@@ -149,10 +149,10 @@ private:
 //		_dragPixelTolerance;	// this is a cache for Options::getInt("battleScrollDragPixelTolerance")
 
 	/// Selects one of the Player's units when he/she begins each turn.
-	void selectPlayerUnit();
+//	void selectFirstPlayerUnit();
 
 	/// Selects a BattleUnit.
-	BattleUnit* selectFactionUnit(
+	BattleUnit* selectUnit(
 			int dir,
 			bool dontReselect,
 			bool checkReselect,
@@ -267,15 +267,29 @@ private:
 		/// Sets the currently selected BattleUnit.
 		void setSelectedUnit(BattleUnit* const unit = nullptr);
 		/// Selects the next BattleUnit.
-		BattleUnit* selectNextFactionUnit(
+		BattleUnit* selectNextUnit(
 				bool dontReselect = false,
 				bool checkReselect = false,
 				bool checkInventory = false);
 		/// Selects the previous BattleUnit.
-		BattleUnit* selectPreviousFactionUnit(
+		BattleUnit* selectPrevUnit(
 				bool dontReselect = false,
 				bool checkReselect = false,
 				bool checkInventory = false);
+
+		/// Gets the playing side.
+		UnitFaction getSide() const;
+		/// Gets the turn.
+		int getTurn() const;
+		/// Ends the turn.
+		bool endFactionTurn();
+		/// Selects the first BattleUnit of faction.
+		BattleUnit* firstFactionUnit(UnitFaction faction);
+
+		/// Sets debug mode.
+		void debugTac();
+		/// Gets debug mode.
+		bool getDebugTac() const;
 
 		/// Gets a pointer to the list of nodes.
 		std::vector<Node*>* getNodes();
@@ -293,19 +307,6 @@ private:
 
 		/// Gets the game's mapdatafiles.
 		std::vector<MapDataSet*>* getMapDataSets();
-
-		/// Gets the playing side.
-		UnitFaction getSide() const;
-
-		/// Gets the turn.
-		int getTurn() const;
-		/// Ends the turn.
-		bool endFactionTurn();
-
-		/// Sets debug mode.
-		void debugTac();
-		/// Gets debug mode.
-		bool getDebugTac() const;
 
 		/// Gets a pointer to the SavedGame.
 		SavedGame* getSavedGame() const;
@@ -373,9 +374,7 @@ private:
 		/// Revives unconscious units of @a faction.
 //		void reviveUnits(const UnitFaction faction);
 		/// Revives unconscious units.
-		void checkUnitRevival(
-				BattleUnit* const unit,
-				bool turnOver = false);
+		void checkUnitRevival(BattleUnit* const unit);
 		/// Sends the body-item that corresponds to a BattleUnit to the deleted vector.
 		void deleteBody(const BattleUnit* const unit);
 

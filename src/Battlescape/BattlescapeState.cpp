@@ -1603,7 +1603,7 @@ inline void BattlescapeState::handle(Action* action)
 							if (casualties == true)
 							{
 								_battleGame->checkCasualties(nullptr, nullptr, true);
-								_battleGame->handleState();
+//								_battleGame->handleBattleState(); // why. Let the regular call by the tactical-timer handle it.
 							}
 						}
 					}
@@ -2104,19 +2104,20 @@ void BattlescapeState::selectNextPlayerUnit(
 //	if (allowButtons() == true)
 //		&& _battleGame->getTacticalAction()->type == BA_NONE)
 //	{
-	BattleUnit* const unit (_battleSave->selectNextFactionUnit(
-															dontReselect,
-															checkReselect,
-															checkInventory));
+	BattleUnit* const unit (_battleSave->selectNextUnit(
+													dontReselect,
+													checkReselect,
+													checkInventory));
 	updateSoldierInfo(false); // try no calcFov()
 
 	if (unit != nullptr)
 	{
-		Camera* const camera (_map->getCamera());
-		if (camera->isOnScreen(unit->getPosition()) == false)
-			camera->centerOnPosition(unit->getPosition());
-		else if	(camera->getViewLevel() != unit->getPosition().z)
-			camera->setViewLevel(unit->getPosition().z);
+		_map->getCamera()->centerOnPosition(unit->getPosition());
+//		Camera* const camera (_map->getCamera());
+//		if (camera->isOnScreen(unit->getPosition()) == false)
+//			camera->centerOnPosition(unit->getPosition());
+//		else if	(camera->getViewLevel() != unit->getPosition().z)
+//			camera->setViewLevel(unit->getPosition().z);
 	}
 
 	_battleGame->cancelTacticalAction();
@@ -2138,19 +2139,20 @@ void BattlescapeState::selectPreviousPlayerUnit(
 //	if (allowButtons() == true)
 //		&& _battleGame->getTacticalAction()->type == BA_NONE)
 //	{
-	BattleUnit* const unit (_battleSave->selectPreviousFactionUnit(
-																dontReselect,
-																checkReselect,
-																checkInventory));
+	BattleUnit* const unit (_battleSave->selectPrevUnit(
+													dontReselect,
+													checkReselect,
+													checkInventory));
 	updateSoldierInfo(false); // try no calcFov()
 
 	if (unit != nullptr)
 	{
-		Camera* const camera (_map->getCamera());
-		if (camera->isOnScreen(unit->getPosition()) == false)
-			camera->centerOnPosition(unit->getPosition());
-		else if	(camera->getViewLevel() != unit->getPosition().z)
-			camera->setViewLevel(unit->getPosition().z);
+		_map->getCamera()->centerOnPosition(unit->getPosition());
+//		Camera* const camera (_map->getCamera());
+//		if (camera->isOnScreen(unit->getPosition()) == false)
+//			camera->centerOnPosition(unit->getPosition());
+//		else if	(camera->getViewLevel() != unit->getPosition().z)
+//			camera->setViewLevel(unit->getPosition().z);
 	}
 
 	_battleGame->cancelTacticalAction();
@@ -2838,7 +2840,7 @@ void BattlescapeState::keyTurnUnit(Action* action)
 				}
 				tacAction->value = (dir + 8) % 8;
 
-				_battleGame->statePushBack(new UnitTurnBState(_battleGame, *tacAction));
+				_battleGame->stateBPushBack(new UnitTurnBState(_battleGame, *tacAction));
 			}
 	}
 }
@@ -3329,6 +3331,7 @@ void BattlescapeState::hotWoundsRefresh()
 	}
 
 	const bool vis (_battleSave->getSide() == FACTION_PLAYER);
+
 	const BattleUnit* unit;
 	Tile* tile;
 	for (size_t
@@ -3338,8 +3341,7 @@ void BattlescapeState::hotWoundsRefresh()
 	{
 		tile = _battleSave->getTiles()[i];
 
-		unit = tile->getTileUnit();
-		if (unit != nullptr
+		if ((unit = tile->getTileUnit()) != nullptr
 			&& unit->getFatalWounds() != 0
 			&& unit->getFaction() == FACTION_PLAYER
 			&& unit->isMindControlled() == false
@@ -3360,8 +3362,7 @@ void BattlescapeState::hotWoundsRefresh()
 				j != tile->getInventory()->end();
 				++j)
 		{
-			unit = (*j)->getItemUnit();
-			if (unit != nullptr
+			if ((unit = (*j)->getItemUnit()) != nullptr
 				&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
 				&& unit->getFatalWounds() != 0
 				&& unit->getFaction() == FACTION_PLAYER
@@ -3714,11 +3715,11 @@ void BattlescapeState::itemAction( // private.
 
 /**
  * Handles the top BattleState.
- * @note Called by the tactical Timer.
+ * @note Called by the tactical-timer.
  */
 void BattlescapeState::handleState()
 {
-	_battleGame->handleState();
+	_battleGame->handleBattleState();
 }
 
 /**
@@ -4143,7 +4144,7 @@ void BattlescapeState::resize(
 /**
  * Updates the turn-text.
  */
-void BattlescapeState::updateTurn()
+void BattlescapeState::updateTurnText()
 {
 	_txtTurn->setText(tr("STR_TURN").arg(_battleSave->getTurn()));
 }
@@ -4154,6 +4155,7 @@ void BattlescapeState::updateTurn()
  */
 void BattlescapeState::toggleIcons(bool vis)
 {
+	//Log(LOG_INFO) << "bs:toggleIcons() vis= " << vis;
 	_iconsHidden = !vis;
 
 	_icons->setVisible(vis);

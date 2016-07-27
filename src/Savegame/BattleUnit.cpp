@@ -115,7 +115,6 @@ BattleUnit::BattleUnit(
 		_turnsExposed(-1),
 		_hidingForTurn(false),
 		_battleOrder(0),
-		_revived(false),
 		_stopShot(false),
 		_dashing(false),
 		_takenExpl(false),
@@ -269,7 +268,6 @@ BattleUnit::BattleUnit(
 		_aimPhase(0),
 		_kneeled(false),
 		_floating(false),
-		_dontReselect(false),
 		_fire(0),
 		_unitAIState(nullptr),
 		_visible(false),
@@ -291,7 +289,6 @@ BattleUnit::BattleUnit(
 		_takenExpl(false),
 		_takenFire(false),
 		_battleOrder(0),
-		_revived(false),
 		_hasCried(false),
 		_hasBeenStunned(false),
 
@@ -337,15 +334,21 @@ BattleUnit::BattleUnit(
 
 	_isZombie = (_race == "STR_ZOMBIE");
 
-	switch (faction)
+	switch (_faction)
 	{
+		case FACTION_PLAYER:
+			_dontReselect = false;
+			_turnsExposed = -1;
+			break;
+
 		case FACTION_HOSTILE:
+			_dontReselect = true;
 			_turnsExposed = 0;
 			adjustStats(diff, month);
 			break;
 
-		case FACTION_PLAYER:
 		case FACTION_NEUTRAL:
+			_dontReselect = true;
 			_turnsExposed = -1;
 	}
 
@@ -636,11 +639,8 @@ YAML::Node BattleUnit::save() const
 	if (_unitAIState != nullptr)
 		node["AI"] = _unitAIState->save();
 
-	if (_faction == FACTION_PLAYER
-		&& _dontReselect == true)
-	{
+	if (_dontReselect == true && _faction == FACTION_PLAYER)
 		node["dontReselect"] = _dontReselect;
-	}
 
 	if (_spawnType.empty() == false)
 		node["spawnType"] = _spawnType;
@@ -2414,8 +2414,9 @@ void BattleUnit::prepareUnit(bool preBattle)
 	//Log(LOG_INFO) << "BattleUnit::prepareUnit() id-" << _id;
 //	bool debug = _id == 257;
 
-	_hostileUnitsThisTurn.clear();
 	_dontReselect = false;
+
+	_hostileUnitsThisTurn.clear();
 	_motionPoints = 0;
 
 	bool reverted;
@@ -2454,16 +2455,25 @@ void BattleUnit::prepareUnit(bool preBattle)
 		if (_status != STATUS_UNCONSCIOUS)
 		{
 			const int panicPct (100 - (getMorale() << 1u));
+			//Log(LOG_INFO) << ". panicPct= " << panicPct;
 			if (RNG::percent(panicPct) == true)
 			{
+				//Log(LOG_INFO) << ". . has Panicked";
 				isPanicked = true;
 				if (reverted == false) // stay STATUS_STANDING if just coming out of Mc. But init tu/stamina as if panicked.
 				{
 					if (RNG::percent(30) == true)
+					{
+						//Log(LOG_INFO) << ". . . set Status_Berserk";
 						_status = STATUS_BERSERK;	// shoot stuff.
+					}
 					else
+					{
+						//Log(LOG_INFO) << ". . . set Status_Panicking";
 						_status = STATUS_PANICKING;	// panic is either flee or freeze - determined later
+					}
 				}
+				//else Log(LOG_INFO) << ". . . but has reverted so won't panic";
 			}
 			else if (panicPct > 0 && _geoscapeSoldier != nullptr) // successfully avoided Panic
 				++_expBravery;
@@ -2485,59 +2495,50 @@ void BattleUnit::prepTuEnergy(
 		bool isPanicked,
 		bool reverted)
 {
-	if (_revived == true)
+	_tu = _stats.tu;
+
+	const int overBurden (getCarriedWeight() - getStrength());
+	if (overBurden > 0)
+		_tu -= overBurden;
+
+	if (_geoscapeSoldier != nullptr) // Each fatal wound to the left or right leg reduces a Soldier's TUs by 10%.
+		_tu -= _tu * (getFatalWound(BODYPART_LEFTLEG) + getFatalWound(BODYPART_RIGHTLEG)) / 10;
+
+	if (isPanicked == true)
 	{
-		_revived = false;
-		_tu =
-		_energy = 0;
-	}
-	else
-	{
-		_tu = _stats.tu;
+		if (reverted == false)
+			_tu = _tu * RNG::generate(0,100) / 100; // this is how many TU the unit gets to run around/shoot with.
+		else
+			_tu = 0;	// if unit fails its panic-roll when reverting from MC (at
+	}					// the beginning of opponent's turn) it simply loses its TU.
 
-		const int overBurden (getCarriedWeight() - getStrength());
-		if (overBurden > 0)
-			_tu -= overBurden;
+	if (isPanicked == false || reverted == false)
+		_tu = std::max(_tu,
+					   _battleGame->getBattleSave()->getDropTu());
 
-		if (_geoscapeSoldier != nullptr) // Each fatal wound to the left or right leg reduces a Soldier's TUs by 10%.
-			_tu -= _tu * (getFatalWound(BODYPART_LEFTLEG) + getFatalWound(BODYPART_RIGHTLEG)) / 10;
 
-		if (isPanicked == true)
+	if (preBattle == false)				// no energy recovery needed at battle start
+	{									// and none wanted for next stage battles:
+		int energy (_stats.stamina);	// advanced Energy recovery ->
+		if (_geoscapeSoldier != nullptr)
 		{
-			if (reverted == false)
-				_tu = _tu * RNG::generate(0,100) / 100; // this is how many TU the unit gets to run around/shoot with.
+			if (_kneeled == true)
+				energy >>= 1u;
 			else
-				_tu = 0;	// if unit fails its panic-roll when reverting from MC (at
-		}					// the beginning of opponent's turn) it simply loses its TU.
-
-		if (isPanicked == false || reverted == false)
-			_tu = std::max(_tu,
-						   _battleGame->getBattleSave()->getDropTu());
-
-
-		if (preBattle == false)				// no energy recovery needed at battle start
-		{									// and none wanted for next stage battles:
-			int energy (_stats.stamina);	// advanced Energy recovery ->
-			if (_geoscapeSoldier != nullptr)
-			{
-				if (_kneeled == true)
-					energy >>= 1u;
-				else
-					energy /= 3;
-			}
-			else // aLiens & Tanks. and Dogs ...
-				energy = energy * _unitRule->getEnergyRecovery() / 100;
-
-			energy = static_cast<int>(Round(static_cast<double>(energy) * getAccuracyModifier()));
-
-			// Each fatal wound to the body reduces a Soldier's
-			// energy recovery by 10% of his/her current energy.
-			// note: only xCom Soldiers get fatal wounds, atm
-			if (_geoscapeSoldier != nullptr)
-				energy -= _energy * getFatalWound(BODYPART_TORSO) / 10;
-
-			setEnergy(std::max(12, _energy + energy));
+				energy /= 3;
 		}
+		else // aLiens & Tanks. and Dogs ...
+			energy = energy * _unitRule->getEnergyRecovery() / 100;
+
+		energy = static_cast<int>(Round(static_cast<double>(energy) * getAccuracyModifier()));
+
+		// Each fatal wound to the body reduces a Soldier's
+		// energy recovery by 10% of his/her current energy.
+		// note: only xCom Soldiers get fatal wounds, atm
+		if (_geoscapeSoldier != nullptr)
+			energy -= _energy * getFatalWound(BODYPART_TORSO) / 10;
+
+		setEnergy(std::max(12, _energy + energy));
 	}
 }
 
@@ -2550,37 +2551,46 @@ void BattleUnit::moraleChange(int change)
 	if (isMoralable() == true)
 	{
 		_morale += change;
-
-		if (_morale > 100)
-			_morale = 100;
-		else if (_morale < 0)
-			_morale = 0;
+		if		(_morale > 100)	_morale = 100;
+		else if	(_morale <   0)	_morale =   0;
 	}
 }
 
 /**
- * Marks this BattleUnit as not reselectable.
+ * Sets this BattleUnit's dontReselect flag.
+ * @param reselect - true to allow reselect (default true)
  */
-void BattleUnit::dontReselect()
+void BattleUnit::setReselect(bool reselect)
 {
-	_dontReselect = true;
+	_dontReselect = (reselect == false);
 }
 
 /**
- * Marks this BattleUnit as reselectable.
- */
-void BattleUnit::allowReselect()
-{
-	_dontReselect = false;
-}
-
-/**
- * Checks whether reselecting this BattleUnit is allowed.
+ * Gets this BattleUnit's dontReselect flag.
  * @return, true if reselect allowed
  */
-bool BattleUnit::reselectAllowed() const
+bool BattleUnit::getReselect() const
 {
 	return (_dontReselect == false);
+}
+
+/**
+ * Checks if this BattleUnit can be selected.
+ * @#note Only conscious units belonging to the specified faction can be selected.
+ * @param faction			- the faction to compare
+ * @param checkReselect		- true to check the unit's reselectable flag (default false)
+ * @param checkInventory	- true to check if the unit has no inventory (default false)
+ * @return, true if the unit can be selected, false otherwise
+ */
+bool BattleUnit::isSelectable(
+		UnitFaction faction,
+		bool checkReselect,
+		bool checkInventory) const
+{
+	return _faction == faction
+		&& (_status == STATUS_STANDING || _status == STATUS_PANICKING || _status == STATUS_BERSERK)
+		&& (checkReselect == false || _dontReselect == false)
+		&& (checkInventory == false || canInventory() == true);
 }
 
 /**
@@ -4084,7 +4094,10 @@ void BattleUnit::putDown()
 	if (_spawnType.empty() == true) // else convertUnit() will take care of it.
 		_visible = false;
 
+	_dontReselect =
 	_hasBeenStunned = true;
+
+	_tu =
 	_energy = 0;
 
 	_kneeled = // don't get hunkerdown bonus against HE detonations
@@ -4581,25 +4594,6 @@ bool BattleUnit::getTakenFire() const
 }
 
 /**
- * Checks if this BattleUnit can be selected.
- * @#note Only conscious units belonging to the specified faction can be selected.
- * @param faction			- the faction to compare
- * @param checkReselect		- true to check the unit's reselectable flag (default false)
- * @param checkInventory	- true to check if the unit has no inventory (default false)
- * @return, true if the unit can be selected, false otherwise
- */
-bool BattleUnit::isSelectable(
-		UnitFaction faction,
-		bool checkReselect,
-		bool checkInventory) const
-{
-	return _faction == faction
-		&& _status == STATUS_STANDING
-		&& (checkReselect == false || _dontReselect == false)
-		&& (checkInventory == false || canInventory() == true);
-}
-
-/**
  * Checks if this BattleUnit has an inventory.
  * @note Large units and/or terror units shouldn't show inventories generally.
  * @return, true if an inventory is available
@@ -4755,16 +4749,8 @@ void BattleUnit::clearTurnDirection()
 }
 
 /**
- * Sets this BattleUnit as having just revived or not.
- * @param revived - true if unit has just revived during a Turnover (default true)
- */
-void BattleUnit::setRevived(bool revived)
-{
-	_revived = revived;
-}
-
-/**
- * Gets all units in the battlescape that are valid RF-spotters of this BattleUnit.
+ * Gets all units in the battlescape that are valid RF-spotters of this
+ * BattleUnit.
  * @return, pointer to a list of pointers to BattleUnits that are spotting
  */
 std::list<BattleUnit*>* BattleUnit::getRfSpotters()

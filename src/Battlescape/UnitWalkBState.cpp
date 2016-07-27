@@ -790,7 +790,7 @@ bool UnitWalkBState::doStatusWalk() // private.
 						_battleSave->addFallingUnit(_unit);
 
 						//Log(LOG_INFO) << "UnitWalkBState::think(), addFallingUnit() ID " << _unit->getId();
-						_parent->statePushFront(new UnitFallBState(_parent));
+						_parent->stateBPushFront(new UnitFallBState(_parent));
 						return false;
 					}
 					//else Log(LOG_INFO) << ". . otherTileBelow Does NOT contain other unit";
@@ -851,9 +851,10 @@ bool UnitWalkBState::doStatusStand_end() // private.
 //			_unit->flagCache();
 //			_parent->getMap()->cacheUnit(_unit);
 //			_parent->popState();
-			return false;
+			return false; // NOTE: This should probably set unit non-vis and be allowed to do a recalc Fov by other units.
 		}
 	}
+
 
 	_te->calculateUnitLighting();
 
@@ -864,9 +865,9 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	else if (_unit->getFaction() == FACTION_PLAYER)
 		_te->calcFovTiles(_unit);
 
-	// This needs to be done *before* calcFovPos() below_ or else any units
-	// spotted would be flagged-visible before a call to visForUnits() has had
-	// a chance to catch a newly spotted unit (that was not-visible).
+	// This needs to be done *before* calcFovUnits_pos() below_ or else any
+	// units spotted would be flagged-visible before a call to visForUnits()
+	// has had a chance to catch a newly spotted unit (that was not-visible).
 	const bool spot (visForUnits());
 
 /*	// debug -->
@@ -882,6 +883,9 @@ bool UnitWalkBState::doStatusStand_end() // private.
 			break;
 		}
 	} // debug_end. */
+
+	if (_unit->getFaction() != FACTION_PLAYER)	// set aLien/Civie non-visible
+		_unit->setUnitVisible(false);			// then re-calc
 
 	UnitFaction faction;
 	switch (_unit->getFaction())
@@ -1059,7 +1063,7 @@ void UnitWalkBState::postPathProcedures() // private.
 	if (_unit->getFaction() == FACTION_HOSTILE)
 	{
 		if (_action.finalAction == true) // set by AlienBAI Ambush/Escape.
-			_unit->dontReselect();
+			_unit->setReselect(false);
 
 		int dir;
 
@@ -1090,14 +1094,14 @@ void UnitWalkBState::postPathProcedures() // private.
 					action.type = BA_MELEE;
 					action.TU = _unit->getActionTu(action.type, action.weapon);
 
-					_parent->statePushBack(new ProjectileFlyBState(_parent, action));
+					_parent->stateBPushBack(new ProjectileFlyBState(_parent, action));
 				}
 			}
 		}
 		else if (_unit->isHiding() == true) // set by AI_ESCAPE Mode.
 		{
 			_unit->setHiding(false);
-			_unit->dontReselect();
+			_unit->setReselect(false);
 			dir = RNG::generate(0,7);
 //			dir = (_unit->getUnitDirection() + 4) % 8u; // turn 180 deg.
 		}

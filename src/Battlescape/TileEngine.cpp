@@ -254,14 +254,14 @@ void TileEngine::calculateUnitLighting() const
 			++i)
 	{
 		light = 0;
-		if (_unitLighting == true		// add lighting of soldiers
+		if (_unitLighting == true		// add lighting of player-units
 			&& (*i)->getFaction() == FACTION_PLAYER
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
 			light = LIGHT_UNIT;
 		}
 
-		if ((*i)->getUnitFire() != 0)	// add lighting of units on fire
+		if ((*i)->getUnitFire() != 0)	// add lighting of any units on fire
 			light = std::max(light,
 							 static_cast<int>(LIGHT_FIRE)); // kludgy STL::nerf
 
@@ -757,9 +757,9 @@ void TileEngine::calcFovUnits_pos(
 			i != j;
 			++i)
 	{
-		if (((faction == FACTION_NONE && (*i)->getFaction() != FACTION_NEUTRAL)
-				|| (*i)->getFaction() == faction)
-			&& (*i)->getUnitTile() != nullptr
+		if ((*i)->getUnitTile() != nullptr
+			&& ((*i)->getFaction() == faction
+				|| ((*i)->getFaction() != FACTION_NEUTRAL && faction == FACTION_NONE))
 			&& distSqr((*i)->getPosition(), pos) <= SIGHTDIST_TSp_Sqr)
 		{
 			calcFovUnits(*i);
@@ -1891,11 +1891,11 @@ bool TileEngine::reactionShot(
 		_rfAction->TU = 0;
 		_rfAction->value = -1;
 
-		_battleSave->getBattleGame()->statePushBack(new UnitTurnBState(
+		_battleSave->getBattleGame()->stateBPushBack(new UnitTurnBState(
 																_battleSave->getBattleGame(),
 																*_rfAction,
 																false));
-		_battleSave->getBattleGame()->statePushBack(new ProjectileFlyBState(
+		_battleSave->getBattleGame()->stateBPushBack(new ProjectileFlyBState(
 																	_battleSave->getBattleGame(),
 																	*_rfAction));
 		return true;
@@ -2201,7 +2201,7 @@ void TileEngine::hit(
 								&& dType != DT_HE		// don't explode if taken down w/ explosives -> wait a sec, this is hit() not explode() ...
 								&& dType != DT_IN)))	//&& dType != DT_MELEE
 					{
-						_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+						_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
 																					_battleSave->getBattleGame(),
 																					centerUnitVoxel,
 																					nullptr,
@@ -2665,7 +2665,7 @@ void TileEngine::explode(
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
-											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
 																										(*i)->getRules(),
@@ -2679,7 +2679,7 @@ void TileEngine::explode(
 											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
 											(*i)->setFuse(-2);
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
-											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
 																										(*i)->getRules(),
@@ -2858,7 +2858,7 @@ void TileEngine::explode(
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
-											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
 																										(*i)->getRules(),
@@ -2870,7 +2870,7 @@ void TileEngine::explode(
 										{
 											(*i)->setFuse(-2);
 											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
-											_battleSave->getBattleGame()->statePushNext(new ExplosionBState(
+											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
 																										_battleSave->getBattleGame(),
 																										explVoxel,
 																										(*i)->getRules(),
@@ -6282,7 +6282,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 
 							victim->setFaction(action->actor->getFaction());
 							victim->prepTuEnergy();
-							victim->allowReselect();
+							victim->setReselect();
 							victim->setUnitStatus(STATUS_STANDING);
 
 							calculateUnitLighting();

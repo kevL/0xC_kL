@@ -257,7 +257,7 @@ void ProjectileFlyBState::init()
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
 				//Log(LOG_INFO) << ". . BA_PSIPANIC/CONTROL/CONFUSE/COURAGE, new ExplosionBState - EXIT flyBState::init()";
-				_parent->statePushFront(new ExplosionBState(
+				_parent->stateBPushFront(new ExplosionBState(
 														_parent,
 														Position::toVoxelSpaceCentered(_action.posTarget, 10),
 														_action.weapon->getRules(),
@@ -886,7 +886,7 @@ void ProjectileFlyBState::think()
 				if (throwItem->getRules()->getBattleType() == BT_GRENADE
 					&& throwItem->getFuse() == 0) //&& Options::battleInstantGrenade == true // -> moved to PrimeGrenadeState (0 cannot be set w/out InstantGrenades)
 				{
-					_parent->statePushFront(new ExplosionBState( // it's a hot potato set to explode on contact
+					_parent->stateBPushFront(new ExplosionBState( // it's a hot potato set to explode on contact
 															_parent,
 															throwVoxel,
 															throwItem->getRules(),
@@ -926,7 +926,7 @@ void ProjectileFlyBState::think()
 				if (_action.posTarget == _posOrigin) blasterFlyB->_targetFloor = true;
 
 				_parent->getMap()->getCamera()->centerOnPosition(_posOrigin); // this follows BL as it hits through waypoints
-				_parent->statePushNext(blasterFlyB);
+				_parent->stateBPushNext(blasterFlyB);
 			}
 			else // shoot -> impact.
 			{
@@ -982,7 +982,7 @@ void ProjectileFlyBState::think()
 					else
 						_parent->getTileEngine()->setTrueTile();
 
-					_parent->statePushFront(new ExplosionBState(
+					_parent->stateBPushFront(new ExplosionBState(
 															_parent,
 															explVoxel,
 															_load->getRules(),
@@ -1249,7 +1249,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 								&hitVoxel);
 	hitVoxel = Position::toVoxelSpaceCentered(_action.posTarget, height) - (hitVoxel * 2);
 
-	_parent->statePushNext(new ExplosionBState(
+	_parent->stateBPushNext(new ExplosionBState(
 											_parent,
 											hitVoxel,
 											_action.weapon->getRules(),

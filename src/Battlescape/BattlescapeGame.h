@@ -247,10 +247,13 @@ private:
 
 	/// Clears the trace-AI markers on all battlefield Tiles.
 	void resetTraceTiles();
+
 	/// Centers the battlefield Camera on a BattleUnit.
 	void centerOnUnit(
 			const BattleUnit* const unit,
 			bool draw = false) const;
+	/// Focuses the battlescape Camera on a newly selected AI-unit.
+	void focusOnUnit(BattleUnit* const unit);
 	/// Handles non-player BattleUnit AI.
 	void handleUnitAI(BattleUnit* const unit);
 	/// Selects the next AI unit.
@@ -260,8 +263,10 @@ private:
 
 	/// Coup de grace - a non-target action.
 	void liquidateUnit();
+
 	/// Ends the turn.
 	void endTurn();
+
 	/// Picks the first Soldier that is panicking.
 	bool handlePanickingPlayer();
 	/// Common function for handling panicking units.
@@ -308,14 +313,14 @@ private:
 		/// Checks for units panicking or falling and so on.
 		void think();
 
-		/// Handles the BattleState timer.
-		void handleState();
+		/// Handles BattleStates per the tactical-timer.
+		void handleBattleState();
 		/// Pushes a BattleState to the front of the list.
-		void statePushFront(BattleState* const battleState);
+		void stateBPushFront(BattleState* const battleState);
 		/// Pushes a BattleState to second on the list.
-		void statePushNext(BattleState* const battleState);
+		void stateBPushNext(BattleState* const battleState);
 		/// Pushes a BattleState to the back of the list.
-		void statePushBack(BattleState* const battleState = nullptr);
+		void stateBPushBack(BattleState* const battleState = nullptr);
 		/// Pops the current BattleState and handles any after-effects.
 		void popBattleState();
 		/// Checks that there are no BattleStates pending for a specified actor.

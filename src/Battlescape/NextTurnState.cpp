@@ -21,11 +21,11 @@
 
 //#include <sstream>
 
-#include "BattlescapeGame.h"			// kL, for terrain explosions
+#include "BattlescapeGame.h"			// for terrain explosions
 #include "BattlescapeState.h"
-#include "ExplosionBState.h"			// kL, for terrain explosions
-#include "TileEngine.h"					// kL, for terrain explosions
-#include "Position.h"					// kL, for terrain explosions
+#include "ExplosionBState.h"			// for terrain explosions
+#include "TileEngine.h"					// for terrain explosions
+#include "Position.h"					// for terrain explosions
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
@@ -44,7 +44,7 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/SavedBattleGame.h"
-#include "../Savegame/Tile.h"			// kL, for terrain explosions
+#include "../Savegame/Tile.h"			// for terrain explosions
 
 
 namespace OpenXcom
@@ -65,6 +65,7 @@ NextTurnState::NextTurnState(
 		_state(state),
 		_aliensPacified(aliensPacified)
 {
+	//Log(LOG_INFO) << "NextTurnState:cTor";
 	_window = new Window(this, 320, 200);
 
 	if (aliensPacified == false)
@@ -183,7 +184,7 @@ void NextTurnState::handle(Action* action)
 	{
 		case SDL_KEYDOWN:
 		case SDL_MOUSEBUTTONDOWN:
-			_state->updateTurn();
+			_state->updateTurnText();
 			nextTurn();
 	}
 }
@@ -193,6 +194,7 @@ void NextTurnState::handle(Action* action)
  */
 void NextTurnState::nextTurn() // private.
 {
+	//Log(LOG_INFO) << "NextTurnState:nextTurn() side= " << _battleSave->getSide();
 	static bool switchMusic (true);
 
 	// Done here and in DebriefingState but removed from ~BattlescapeGame.
@@ -205,8 +207,8 @@ void NextTurnState::nextTurn() // private.
 	_state->getBattleGame()->tallyUnits(
 									liveHostile,
 									livePlayer);
-	if ((liveHostile == 0 && _battleSave->getObjectiveTileType() != MUST_DESTROY)	// <- not the final mission
-		|| livePlayer < 1)		// final tactical determination done in BattlescapeGame::endTurn() -> finishBattle()
+	if (  (liveHostile == 0 && _battleSave->getObjectiveTileType() != MUST_DESTROY) // <- not the final mission
+		|| livePlayer  <  1)	// final tactical determination done in BattlescapeGame::endTurn() -> finishBattle()
 	{							// or AbortMissionState::btnOkClick() -> finishBattle().
 		switchMusic = true;
 		_state->finishBattle(false, livePlayer);
@@ -230,7 +232,7 @@ void NextTurnState::nextTurn() // private.
 				}
 
 				if (turn != 1)
-					_battleSave->getBattleGame()->setPlayerPanic();
+					_battleSave->getBattleGame()->setPlayerPanic(); // what about 2-stage missions ...
 
 				if (turn != 1 && switchMusic == true)
 				{
@@ -250,7 +252,7 @@ void NextTurnState::nextTurn() // private.
 				if (tile != nullptr)
 				{
 					const Position pos (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
-					_battleSave->getBattleGame()->statePushBack(new ExplosionBState(
+					_battleSave->getBattleGame()->stateBPushBack(new ExplosionBState(
 																				_battleSave->getBattleGame(),
 																				pos,
 																				nullptr, nullptr,

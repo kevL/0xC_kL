@@ -31,6 +31,7 @@ namespace OpenXcom
 
 /**
  * Sets up the UnitPanicBState.
+ * @note It's rather silly that this is a full BattleState.
  * @param parent	- pointer to the BattlescapeGame
  * @param unit		- pointer to a panicking BattleUnit
  */
@@ -64,8 +65,8 @@ std::string UnitPanicBState::getBattleStateLabel() const
 
 /**
  *
- */
-//void UnitPanicBState::init(){}
+ *
+void UnitPanicBState::init(){} */
 
 /**
  * Runs BattleState functionality every cycle.
@@ -75,11 +76,12 @@ void UnitPanicBState::think()
 {
 	if (_unit->isOut_t(OUT_STAT) == false)
 	{
-		_unit->setUnitStatus(STATUS_STANDING);
+//		_unit->setUnitStatus(STATUS_STANDING); // done in BattlescapeGame::handlePanickingUnit().
 		_unit->moraleChange(10 + RNG::generate(0,10));
 	}
 
 	_unit->setTu();
+	_unit->setEnergy();
 	_unit->setDashing(false);
 
 	if (_parent->getBattleSave()->getSide() == FACTION_PLAYER

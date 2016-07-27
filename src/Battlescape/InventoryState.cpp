@@ -471,7 +471,7 @@ void InventoryState::init()
 		if (_parent != nullptr)
 			_parent->selectNextPlayerUnit(false, false, true);
 		else
-			_battleSave->selectNextFactionUnit(false, false, true);
+			_battleSave->selectNextUnit(false, false, true);
 
 		if ((unit = _battleSave->getSelectedUnit()) == nullptr
 			 || unit->canInventory() == false)
@@ -698,7 +698,7 @@ void InventoryState::btnOkClick(Action*)
 	{
 		_game->popState();
 
-		if (_parent != nullptr && _tuMode == false) // pre-battle but going into tactical!
+		if (_tuMode == false && _parent != nullptr) // pre-battle but going into tactical!
 		{
 			_battleSave->resetUnitsOnTiles();
 
@@ -728,7 +728,7 @@ void InventoryState::btnNextClick(Action*)
 		if (_parent != nullptr)
 			_parent->selectNextPlayerUnit(false, false, true);
 		else
-			_battleSave->selectNextFactionUnit(false, false, true);
+			_battleSave->selectNextUnit(false, false, true);
 
 		init();
 	}
@@ -745,7 +745,7 @@ void InventoryState::btnPrevClick(Action*)
 		if (_parent != nullptr)
 			_parent->selectPreviousPlayerUnit(false, false, true);
 		else
-			_battleSave->selectPreviousFactionUnit(false, false, true);
+			_battleSave->selectPrevUnit(false, false, true);
 
 		init();
 	}

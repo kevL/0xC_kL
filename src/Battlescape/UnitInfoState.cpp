@@ -814,7 +814,7 @@ void UnitInfoState::btnNextClick(Action*)
 	if (_parent != nullptr)				// this is from a Battlescape Game
 		_parent->selectNextPlayerUnit();
 	else								// this is from the Craft Equipment screen
-		_battleSave->selectNextFactionUnit(false, false, true); // no tanks.
+		_battleSave->selectNextUnit(false, false, true); // no tanks.
 
 	_unit = _battleSave->getSelectedUnit();
 
@@ -833,7 +833,7 @@ void UnitInfoState::btnPrevClick(Action*)
 	if (_parent != nullptr)					// so you are here from a Battlescape Game -> no, I'm here from Picadilly.
 		_parent->selectPreviousPlayerUnit();
 	else									// so you are here from the Craft Equipment screen
-		_battleSave->selectPreviousFactionUnit(false, false, true); // no tanks.
+		_battleSave->selectPrevUnit(false, false, true); // no tanks.
 
 	_unit = _battleSave->getSelectedUnit();
 

@@ -216,18 +216,18 @@ void BattlescapeGame::think()
 			case FACTION_PLAYER:
 				if (_playerPanicHandled == false) // not all panicking units have been handled
 				{
-					//Log(LOG_INFO) << "bg:think() . panic Handled is FALSE";
+					//Log(LOG_INFO) << ". panic Handled is FALSE";
 					if ((_playerPanicHandled = handlePanickingPlayer()) == true)
 					{
-						//Log(LOG_INFO) << "bg:think() . panic Handled TRUE";
+						//Log(LOG_INFO) << ". panic Handled TRUE";
 						getTileEngine()->calcFovTiles_all();
 						getTileEngine()->calcFovUnits_all();
-						_battleSave->getBattleState()->updateSoldierInfo(false);
+						_battleSave->getBattleState()->updateSoldierInfo(false); // start Player turn.
 					}
 				}
 				else
 				{
-					//Log(LOG_INFO) << "bg:think() . panic Handled is TRUE";
+					//Log(LOG_INFO) << ". panic Handled is TRUE";
 					_parentState->updateExperienceInfo();
 				}
 				break;
@@ -239,38 +239,37 @@ void BattlescapeGame::think()
 					BattleUnit* selUnit (_battleSave->getSelectedUnit());
 					if (selUnit != nullptr)
 					{
+						//Log(LOG_INFO) << "bg:think() selUnit VALID id-" << selUnit->getId();
 						_parentState->printDebug(Text::intWide(selUnit->getId()));
 						if (handlePanickingUnit(selUnit) == false)
 						{
-							//Log(LOG_INFO) << "bg:think() . call handleUnitAI() " << selUnit->getId();
+							//Log(LOG_INFO) << "bg:think() . handleUnitAI()";
 							handleUnitAI(selUnit);
 						}
 					}
-					else if ((selUnit = _battleSave->selectNextFactionUnit( // find 1st AI-unit else endTurn
-																	_AISecondMove == true,
-																	true)) != nullptr)
+//					else if ((selUnit = _battleSave->selectNextUnit(					// find 1st AI-unit else end turn.
+//																_AISecondMove == true,	// NOTE: Used to be done in SavedBattleGame::endFactionTurn()
+//																true)) != nullptr)		// but moved here to keep AI-unit-selection in one place.
+//					{																	// Also because walkUnit and camera-centering is done here ....
+					else if ((selUnit = _battleSave->firstFactionUnit(_battleSave->getSide())) != nullptr)
 					{
-						if (selUnit->getUnitVisible() == true
-							&& selUnit != _battleSave->getWalkUnit()) // safety. There should be a NULL walkUnit here.
-						{
-							_battleSave->setWalkUnit(selUnit);
-
-							if (getMap()->getCamera()->isOnFocus(selUnit->getPosition()) == false)
-								centerOnUnit(selUnit); // if you're going to reveal the map at least center the 1st aLien.
-							else
-								getMap()->getCamera()->setViewLevel(selUnit->getPosition().z);
-						}
+						//Log(LOG_INFO) << "bg:think() next VALID id-" << selUnit->getId();
+						_battleSave->setSelectedUnit(selUnit);
+						focusOnUnit(selUnit);
 					}
 					else
+					{
+						//Log(LOG_INFO) << "bg:think() endAiTurn (think)";
 						endAiTurn();
+					}
 				}
 		}
 
 		if (_battleSave->unitsFalling() == true)
 		{
-			//Log(LOG_INFO) << "bg:think() . Units are Falling() selUnit id-" << _battleSave->getSelectedUnit()->getId();
+			//Log(LOG_INFO) << ". Units are Falling() selUnit id-" << _battleSave->getSelectedUnit()->getId();
 			_battleSave->unitsFalling() = false;
-			statePushFront(new UnitFallBState(this));
+			stateBPushFront(new UnitFallBState(this));
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::think() EXIT";
@@ -280,7 +279,7 @@ void BattlescapeGame::think()
  * Gives a slice to the front BattleState and redraws the battlefield.
  * @note The period is controlled by '_tacticalTimer' in BattlescapeState.
  */
-void BattlescapeGame::handleState()
+void BattlescapeGame::handleBattleState()
 {
 	if (_battleStates.empty() == false)
 	{
@@ -293,6 +292,7 @@ void BattlescapeGame::handleState()
 		else
 		{
 			_battleStates.pop_front();
+			//Log(LOG_INFO) << "bg:handleBattleState() endTurn.";
 			endTurn();
 		}
 	}
@@ -302,7 +302,7 @@ void BattlescapeGame::handleState()
  * Pushes a BattleState to the front of the queue and starts it.
  * @param battleState - pointer to BattleState
  */
-void BattlescapeGame::statePushFront(BattleState* const battleState)
+void BattlescapeGame::stateBPushFront(BattleState* const battleState)
 {
 	_battleStates.push_front(battleState);
 	battleState->init();
@@ -312,7 +312,7 @@ void BattlescapeGame::statePushFront(BattleState* const battleState)
  * Pushes a BattleState as the next state after the current one.
  * @param battleState - pointer to BattleState
  */
-void BattlescapeGame::statePushNext(BattleState* const battleState)
+void BattlescapeGame::stateBPushNext(BattleState* const battleState)
 {
 	if (_battleStates.empty() == false)
 		_battleStates.insert(
@@ -330,7 +330,7 @@ void BattlescapeGame::statePushNext(BattleState* const battleState)
  * @note Passing in NULL causes an end-turn request.
  * @param battleState - pointer to BattleState (default nullptr)
  */
-void BattlescapeGame::statePushBack(BattleState* const battleState)
+void BattlescapeGame::stateBPushBack(BattleState* const battleState)
 {
 	if (_battleStates.empty() == false)
 		_battleStates.push_back(battleState);
@@ -340,7 +340,10 @@ void BattlescapeGame::statePushBack(BattleState* const battleState)
 		battleState->init();
 	}
 	else
+	{
+		//Log(LOG_INFO) << "bg:stateBPushBack() endTurn.";
 		endTurn();
+	}
 }
 
 /**
@@ -544,8 +547,9 @@ void BattlescapeGame::popBattleState()
 							}
 
 							if (_battleStates.empty() == true // nothing left for Actor to do
-								&& _battleSave->selectNextFactionUnit(false, true) == nullptr)
+								&& _battleSave->selectNextUnit(false, true) == nullptr)
 							{
+								//Log(LOG_INFO) << "bg:popBattleState() -> endAiTurn()";
 								endAiTurn(); // NOTE: This is probly handled just as well in think().
 							}
 
@@ -580,6 +584,7 @@ void BattlescapeGame::popBattleState()
 					_battleStates.push_back(nullptr);
 				else
 				{
+					//Log(LOG_INFO) << "bg:popBattleState() endTurn.";
 					endTurn();
 					return;
 				}
@@ -602,7 +607,7 @@ void BattlescapeGame::popBattleState()
 
 				case FACTION_HOSTILE:
 				case FACTION_NEUTRAL:
-					_battleSave->selectNextFactionUnit(true, true);
+					_battleSave->selectNextUnit(true, true);
 			}
 		}
 
@@ -710,6 +715,25 @@ void BattlescapeGame::centerOnUnit( // private.
 }
 
 /**
+ * Focuses the battlescape Camera on a newly selected AI-unit.
+ * @param unit - pointer to a BattleUnit
+ */
+void BattlescapeGame::focusOnUnit(BattleUnit* const unit) // private.
+{
+	unit->setUnitVisible(false);
+
+	if (unit != _battleSave->getWalkUnit()) //unit->getUnitVisible() == true &&
+	{
+		_battleSave->setWalkUnit(unit);
+
+		if (getMap()->getCamera()->isOnFocus(unit->getPosition()) == false)
+			centerOnUnit(unit);
+		else
+			getMap()->getCamera()->setViewLevel(unit->getPosition().z);
+	}
+}
+
+/**
  * Handles the processing of the AI-state of a non-player BattleUnit.
  * @note Called by BattlescapeGame::think().
  * @param unit - pointer to a BattleUnit
@@ -739,18 +763,20 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			//Log(LOG_INFO) << ". x= " << RNG::getSeed();
 	}
 
-	if (unit->getTu() == 0)
-		unit->dontReselect();
+	if (unit->getTu() == 0) unit->setReselect(false);
 
-	if (unit->reselectAllowed() == false || _AIActionCounter > 1)
+	if (unit->getReselect() == false || _AIActionCounter > 1)
 	{
+		//Log(LOG_INFO) << "bg:handleUnitAI() select next[1]";
+		//Log(LOG_INFO) << ". curr Unit id-" << (_battleSave->getSelectedUnit() ? _battleSave->getSelectedUnit()->getId() : 0);
 		selectNextAiUnit(unit);
+		//Log(LOG_INFO) << ". next Unit id-" << (_battleSave->getSelectedUnit() ? _battleSave->getSelectedUnit()->getId() : 0);
 		return;
 	}
 
 
-//	unit->setUnitVisible(false); // <- why is this even handled here Cf. UnitWalkBState::doStatusStand_end() also
-
+	unit->setUnitVisible(false);	// <- why is this even handled here -- Cf. UnitWalkBState::doStatusStand_end() also.
+									// Should probly be done in think->selectNextUnit and selectNextAiUnit instead of here.
 	getTileEngine()->calcFovUnits_pos(unit->getPosition());
 
 	if (unit->getAIState() == nullptr)
@@ -880,7 +906,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			{															// Or ensure that AIState does not return BA_MOVE if so.
 				pf->calculatePath(aiAction.actor, aiAction.posTarget);	// TODO: AI will choose a position to move to that unit cannot move
 				if (pf->getStartDirection() != -1)						// to ... stop that (unless blocked by unseen player- or neutral-unit).
-					statePushBack(new UnitWalkBState(this, aiAction));	// TODO: If aiAction.desperate use 'dash' interval-speed.
+					stateBPushBack(new UnitWalkBState(this, aiAction));	// TODO: If aiAction.desperate use 'dash' interval-speed.
 			}
 			break;
 		}
@@ -909,7 +935,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 
 				default:
 					aiAction.value = -1;
-					statePushBack(new UnitTurnBState(this, aiAction));
+					stateBPushBack(new UnitTurnBState(this, aiAction));
 					// NOTE: See below_ for (aiAction.type == BA_MELEE).
 			}
 
@@ -920,7 +946,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 				Log(LOG_INFO) << ". aiAction.posTarget = " << aiAction.posTarget;
 				Log(LOG_INFO) << ". aiAction.weapon = " << aiAction.weapon->getRules()->getName().c_str();
 			}
-			statePushBack(new ProjectileFlyBState(this, aiAction));
+			stateBPushBack(new ProjectileFlyBState(this, aiAction));
 
 			switch (aiAction.type)
 			{
@@ -950,6 +976,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		default:
 		case BA_NONE:
 		case BA_THINK:
+			//Log(LOG_INFO) << "bg:handleUnitAI() select next[2]";
 			selectNextAiUnit(unit);
 	}
 
@@ -980,15 +1007,18 @@ const BattleAction& BattlescapeGame::getCurrentAiAction()
  */
 void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 {
+	//Log(LOG_INFO) << "bg:selectNextAiUnit()";
 	_AIActionCounter = 0;
 
-	const BattleUnit* const nextUnit (_battleSave->selectNextFactionUnit(
-																	_AISecondMove == true,
-																	true));
+	/*const*/ BattleUnit* const nextUnit (_battleSave->selectNextUnit(
+																_AISecondMove == true,
+																true));
 	if (nextUnit != nullptr)
 	{
-		if (nextUnit->getUnitVisible() == true
-			&& nextUnit != _battleSave->getWalkUnit())
+		//Log(LOG_INFO) << ". id-" << nextUnit->getId();
+		nextUnit->setUnitVisible(false);
+		if (//nextUnit->getUnitVisible() == true &&
+			nextUnit != _battleSave->getWalkUnit())
 		{
 			_battleSave->setWalkUnit(nextUnit);
 
@@ -1024,7 +1054,10 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 		}
 	}
 	else
+	{
+		//Log(LOG_INFO) << ". endAiTurn (selectNextAiUnit)";
 		endAiTurn();
+	}
 }
 
 /**
@@ -1032,14 +1065,15 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
  */
 void BattlescapeGame::endAiTurn()
 {
+	//Log(LOG_INFO) << "bg:endAiTurn()";
 	if (_battleSave->getDebugTac() == false)
 	{
 		_endTurnRequested = true;
-		statePushBack();
+		stateBPushBack();
 	}
-	else
+	else // do not show NextTurn screen at the end of hostile/neutral turns if debugPlay.
 	{
-		_battleSave->selectNextFactionUnit();
+		_battleSave->selectNextUnit();
 		_debugPlay = true;
 	}
 }
@@ -1122,7 +1156,7 @@ void BattlescapeGame::handleNonTargetAction()
 				}
 				else
 				{
-					statePushBack(new ProjectileFlyBState(this, _playerAction));
+					stateBPushBack(new ProjectileFlyBState(this, _playerAction));
 					return;
 				}
 				break;
@@ -1438,14 +1472,14 @@ void BattlescapeGame::endTurn() // private.
 				pos = Position::toVoxelSpaceCentered(
 												tile->getPosition(),
 												FLOOR_TLEVEL - tile->getTerrainLevel());
-				statePushNext(new ExplosionBState(
+				stateBPushNext(new ExplosionBState(
 												this,
 												pos,
 												(*j)->getRules(),
 												(*j)->getPriorOwner()));
 				_battleSave->toDeleteItem(*j);
 
-				statePushBack();
+				stateBPushBack(); // recycle endTurn() call.
 				return;
 			}
 		}
@@ -1462,7 +1496,7 @@ void BattlescapeGame::endTurn() // private.
 		// Further info: what happens is that an explosive part of a tile gets destroyed by fire
 		// during an end-turn sequence, has its setExplosive() set, then is somehow triggered
 		// by the next projectile hit against whatever.
-		statePushNext(new ExplosionBState(
+		stateBPushNext(new ExplosionBState(
 										this,
 										pos,
 										nullptr,
@@ -1471,7 +1505,7 @@ void BattlescapeGame::endTurn() // private.
 
 //		tile = getTileEngine()->checkForTerrainExplosives();
 
-		statePushBack();	// this will repeatedly call another endTurn() so there's
+		stateBPushBack();	// this will repeatedly call another endTurn() so there's
 		return;				// no need to continue this one till all explosions are done.
 							// The problem arises because _battleSave->endFactionTurn() below
 							// causes *more* destruction of explosive objects, that won't explode
@@ -1554,13 +1588,13 @@ void BattlescapeGame::endTurn() // private.
 						tile->getPosition().x * 16 + 8,
 						tile->getPosition().y * 16 + 8,
 						tile->getPosition().z * 24 + 10);
-			statePushNext(new ExplosionBState(
+			stateBPushNext(new ExplosionBState(
 											this,
 											pos,
 											nullptr,
 											nullptr,
 											tile));
-			statePushBack();
+			stateBPushBack();
 			_endTurnProcessed = true;
 			return;
 		} */
@@ -1609,27 +1643,27 @@ void BattlescapeGame::endTurn() // private.
 		}
 
 		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != MUST_DESTROY)
-								 || livePlayer < 1);
+								 || livePlayer  <  1);
 
 		if (battleComplete == false)
 		{
 			showInfoBoxQueue();
 			_parentState->updateSoldierInfo(false); // try no calcFov()
 
-			if (_battleSave->getSide() == FACTION_HOSTILE
-				&& _battleSave->getDebugTac() == false)
-			{
-				getMap()->setSelectorType(CT_NONE);
-				_battleSave->getBattleState()->toggleIcons(false);
-			}
-			else
+			if (_battleSave->getSide() == FACTION_PLAYER
+				|| _battleSave->getDebugTac() == true)
 			{
 				setupSelector();
-				if (playableUnitSelected() == true)
+				if (playableUnitSelected() == true) // ... there's better be a unit selected here!
 					centerOnUnit(_battleSave->getSelectedUnit());
 
 				if (_battleSave->getDebugTac() == false)
 					_battleSave->getBattleState()->toggleIcons(true);
+			}
+			else
+			{
+				getMap()->setSelectorType(CT_NONE);
+				_battleSave->getBattleState()->toggleIcons(false);
 			}
 
 			_battleSave->setPacified(pacified);
@@ -1787,7 +1821,7 @@ void BattlescapeGame::checkCasualties(
 						else
 							dType = DT_NONE; // -> STR_HAS_DIED_FROM_A_FATAL_WOUND
 
-						statePushNext(new UnitDieBState( // This is where units get sent to DEATH!
+						stateBPushNext(new UnitDieBState( // This is where units get sent to DEATH!
 													this,
 													defender,
 													dType,
@@ -1824,7 +1858,7 @@ void BattlescapeGame::checkCasualties(
 					if (defender->getGeoscapeSoldier() != nullptr)
 						defender->getStatistics()->wasUnconscious = true;
 
-					statePushNext(new UnitDieBState( // This is where units get sent to STUNNED.
+					stateBPushNext(new UnitDieBState( // This is where units get sent to STUNNED.
 												this,
 												defender,
 												DT_STUN,
@@ -2393,7 +2427,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				|| unit->getUnitVisible() == true)
 			{
 				//Log(LOG_INFO) << "bg: panic id-" << unit->getId();
-				centerOnUnit(unit, unit->getUnitVisible());
+				centerOnUnit(unit, (unit->getUnitVisible() == true));
 
 				Game* const game (_parentState->getGame());
 				std::string st;
@@ -2423,6 +2457,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 			}
 
 			unit->setUnitStatus(STATUS_STANDING);
+
 			BattleAction action;
 			action.actor = unit;
 			int tu (unit->getTu());
@@ -2470,7 +2505,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 						action.actor->setDashing();
 						action.dash = true;
 						action.type = BA_MOVE;
-						statePushBack(new UnitWalkBState(this, action));
+						stateBPushBack(new UnitWalkBState(this, action));
 					}
 					break;
 				}
@@ -2490,7 +2525,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 												unit->getPosition().x + RNG::generate(-5,5),
 												unit->getPosition().y + RNG::generate(-5,5),
 												unit->getPosition().z);
-						statePushBack(new UnitTurnBState(this, action, false));
+						stateBPushBack(new UnitTurnBState(this, action, false));
 					}
 
 					action.weapon = unit->getRangedWeapon(true);	// unit->getMainHandWeapon(true); unit->getMeleeWeapon();
@@ -2506,7 +2541,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 								if (_battleSave->getTile(action.posTarget) != nullptr)
 								{
 									action.value = -1;
-									statePushBack(new UnitTurnBState(this, action, false));
+									stateBPushBack(new UnitTurnBState(this, action, false));
 
 									action.type = BA_SNAPSHOT;
 									if (action.weapon->getAmmoItem() == nullptr
@@ -2529,7 +2564,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 											i != shots;
 											++i)
 									{
-										statePushBack(new ProjectileFlyBState(this, action));
+										stateBPushBack(new ProjectileFlyBState(this, action));
 									}
 								}
 								break;
@@ -2551,7 +2586,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 									if (_battleSave->getTile(action.posTarget) != nullptr)
 									{
 										action.value = -1;
-										statePushBack(new UnitTurnBState(this, action, false));
+										stateBPushBack(new UnitTurnBState(this, action, false));
 
 										const Position
 											originVoxel (getTileEngine()->getOriginVoxel(action)),
@@ -2566,7 +2601,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 										{
 											action.type = BA_THROW;
 											action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
-											statePushBack(new ProjectileFlyBState(this, action));
+											stateBPushBack(new ProjectileFlyBState(this, action));
 											break;
 										}
 									}
@@ -2578,7 +2613,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				}
 			}
 
-			statePushBack(new UnitPanicBState(this, unit));
+			stateBPushBack(new UnitPanicBState(this, unit)); // <- ends Panic/Berserk.
 			return true;
 	}
 	return false;
@@ -2758,7 +2793,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 							{
 									_playerAction.posCamera = Position(0,0,-1);
 
-									statePushBack(new ProjectileFlyBState(this, _playerAction)); // TODO: Clear out the redundancy that occurs in ProjFlyB::init().
+									stateBPushBack(new ProjectileFlyBState(this, _playerAction)); // TODO: Clear out the redundancy that occurs in ProjFlyB::init().
 
 									if (getTileEngine()->psiAttack(&_playerAction) == true)
 									{
@@ -2815,7 +2850,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				_battleStates.push_back(new ProjectileFlyBState(this, _playerAction));	// TODO: should check for valid LoF/LoT *before* invoking this
 																						// instead of the (flakey) checks in that state. Then conform w/ AI ...
 				_playerAction.value = -1;
-				statePushFront(new UnitTurnBState(this, _playerAction));
+				stateBPushFront(new UnitTurnBState(this, _playerAction));
 		}
 	}
 	else if (targetUnit != nullptr && targetUnit != _playerAction.actor
@@ -2865,7 +2900,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 			_playerAction.value = (_playerAction.actor->getUnitDirection() + 4) % 8;
 
-			statePushBack(new UnitTurnBState(this, _playerAction));
+			stateBPushBack(new UnitTurnBState(this, _playerAction));
 		}
 		else
 		{
@@ -2906,7 +2941,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					getMap()->setSelectorType(CT_NONE);
 					_parentState->getGame()->getCursor()->setHidden();
 
-					statePushBack(new UnitWalkBState(this, _playerAction));
+					stateBPushBack(new UnitWalkBState(this, _playerAction));
 				}
 			}
 		}
@@ -2928,7 +2963,7 @@ void BattlescapeGame::secondaryAction(const Position& pos)
 							&& (SDL_GetModState() & KMOD_CTRL) != 0
 							&& Options::battleStrafe == true;
 
-		statePushBack(new UnitTurnBState(this, _playerAction)); // turn, rotate turret, or open door
+		stateBPushBack(new UnitTurnBState(this, _playerAction)); // turn, rotate turret, or open door
 	}
 	else
 		_parentState->btnKneelClick(nullptr); // could put just about anything here Orelly.
@@ -2951,7 +2986,7 @@ void BattlescapeGame::launchAction()
 	_playerAction.value = -1;
 
 	_battleStates.push_back(new ProjectileFlyBState(this, _playerAction));
-	statePushFront(new UnitTurnBState(this, _playerAction));
+	stateBPushFront(new UnitTurnBState(this, _playerAction));
 }
 
 /**
@@ -2996,21 +3031,22 @@ void BattlescapeGame::moveUpDown(
 				_playerAction.actor,
 				_playerAction.posTarget);
 
-	statePushBack(new UnitWalkBState(this, _playerAction));
+	stateBPushBack(new UnitWalkBState(this, _playerAction));
 }
 
 /**
- * Requests the end of the turn.
+ * The Player requests to end the turn.
  * @note Waits for explosions etc to really end the turn.
  */
 void BattlescapeGame::requestEndTurn()
 {
+	//Log(LOG_INFO) << "bg:requestEndTurn()";
 	cancelTacticalAction();
 
-	if (_endTurnRequested == false)
+	if (_endTurnRequested == false)	// unnecessary.
 	{
 		_endTurnRequested = true;
-		statePushBack();
+		stateBPushBack();			// think() will pop as many NULL states as are stacked.
 	}
 }
 
@@ -3820,7 +3856,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 									pos = Position::toVoxelSpaceCentered(
 																	tile->getPosition(),
 																	FLOOR_TLEVEL - (tile->getTerrainLevel()));
-									statePushNext(new ExplosionBState(
+									stateBPushNext(new ExplosionBState(
 																	this,
 																	pos,
 																	(*i)->getRules(),

@@ -620,7 +620,7 @@ void ExplosionBState::explode() // private.
 	if (tile != nullptr)
 	{
 		const Position explVoxel (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
-		_parent->statePushFront(new ExplosionBState(
+		_parent->stateBPushFront(new ExplosionBState(
 												_parent,
 												explVoxel,
 												nullptr,
