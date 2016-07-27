@@ -168,7 +168,7 @@ private:
 		/// Checks if map-coordinates x/y/z are on-screen.
 		bool isOnScreen(const Position& posField) const;
 		/// Checks if map-coordinates x/y/z are on-focus.
-		bool isOnFocus(const Position& posField) const;
+		bool isInFocus(const Position& posField) const;
 
 		/// Resizes the viewable area.
 		void resize();

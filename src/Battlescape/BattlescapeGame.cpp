@@ -244,16 +244,12 @@ void BattlescapeGame::think()
 						if (handlePanickingUnit(selUnit) == false)
 						{
 							//Log(LOG_INFO) << "bg:think() . handleUnitAI()";
-							handleUnitAI(selUnit);
+							handleUnitAI(selUnit); // will select next AI-unit when the current unit is done.
 						}
 					}
-//					else if ((selUnit = _battleSave->selectNextUnit(					// find 1st AI-unit else end turn.
-//																_AISecondMove == true,	// NOTE: Used to be done in SavedBattleGame::endFactionTurn()
-//																true)) != nullptr)		// but moved here to keep AI-unit-selection in one place.
-//					{																	// Also because walkUnit and camera-centering is done here ....
 					else if ((selUnit = _battleSave->firstFactionUnit(_battleSave->getSide())) != nullptr)
 					{
-						//Log(LOG_INFO) << "bg:think() next VALID id-" << selUnit->getId();
+						//Log(LOG_INFO) << "bg:think() first VALID id-" << selUnit->getId();
 						_battleSave->setSelectedUnit(selUnit);
 						focusOnUnit(selUnit);
 					}
@@ -720,17 +716,18 @@ void BattlescapeGame::centerOnUnit( // private.
  */
 void BattlescapeGame::focusOnUnit(BattleUnit* const unit) // private.
 {
-	unit->setUnitVisible(false);
+//	unit->setUnitVisible(false);
 
-	if (unit != _battleSave->getWalkUnit()) //unit->getUnitVisible() == true &&
-	{
-		_battleSave->setWalkUnit(unit);
+//	if (unit != _battleSave->getLastVisibleAiUnit()) //unit->getUnitVisible() == true &&
+//	{
+//		_battleSave->setLastVisibleAiUnit(unit);
 
-		if (getMap()->getCamera()->isOnFocus(unit->getPosition()) == false)
-			centerOnUnit(unit);
-		else
-			getMap()->getCamera()->setViewLevel(unit->getPosition().z);
-	}
+	Camera* const camera (getMap()->getCamera());
+	if (camera->isInFocus(unit->getPosition()) == false)
+		centerOnUnit(unit);
+	else if (unit->getPosition().z != camera->getViewLevel())
+		camera->setViewLevel(unit->getPosition().z);
+//	}
 }
 
 /**
@@ -747,7 +744,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 //	{
 //		Log(LOG_INFO) << "";
 //		Log(LOG_INFO) << "bg::handleUnitAI() id-" << unit->getId()
-//					  << " (walkUnit id-" << (_battleSave->getWalkUnit() ? _battleSave->getWalkUnit()->getId() : 0) << ")";
+//					  << " (walkUnit id-" << (_battleSave->getLastVisibleAiUnit() ? _battleSave->getLastVisibleAiUnit()->getId() : 0) << ")";
 //					  << " vis= " << unit->getUnitVisible()
 //					  << " " << unit->getPosition();
 //	}
@@ -775,9 +772,9 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 	}
 
 
-	unit->setUnitVisible(false);	// <- why is this even handled here -- Cf. UnitWalkBState::doStatusStand_end() also.
-									// Should probly be done in think->selectNextUnit and selectNextAiUnit instead of here.
-	getTileEngine()->calcFovUnits_pos(unit->getPosition());
+//	unit->setUnitVisible(false);
+//	getTileEngine()->calcFovUnits_pos(unit->getPosition());
+	getTileEngine()->calcFovUnits(unit); // refresh unit's "targets"
 
 	if (unit->getAIState() == nullptr)
 	{
@@ -886,13 +883,10 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		//Log(LOG_INFO) << ". x= " << RNG::getSeed();
 	}
 
-//	bool center (false);
 	switch (aiAction.type)
 	{
 		case BA_MOVE:
 		{
-//			center = true;
-
 			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(aiAction.actor);
 //			if (aiAction.actor->getId() == 1000023)
@@ -917,8 +911,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		case BA_LAUNCH:
 		case BA_MELEE:
 		case BA_THROW:
-//			center = true;
-			// no break;
 		case BA_PSICONTROL:
 		case BA_PSIPANIC:
 			switch (aiAction.type)
@@ -979,15 +971,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			//Log(LOG_INFO) << "bg:handleUnitAI() select next[2]";
 			selectNextAiUnit(unit);
 	}
-
-//	if (center == true
-//		&& unit->getUnitVisible() == true
-//		&& unit != _battleSave->getWalkUnit())
-//	{
-//		//if (_debug) Log(LOG_INFO) << ". center AI Unit (vis) - set walkUnit";
-//		_battleSave->setWalkUnit(unit);
-//		centerOnUnit(unit); // if you're going to reveal the map at least center the aLien.
-//	}
 	//if (debug) Log(LOG_INFO) << ". EXIT x= " << RNG::getSeed();
 }
 
@@ -1010,24 +993,13 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 	//Log(LOG_INFO) << "bg:selectNextAiUnit()";
 	_AIActionCounter = 0;
 
-	/*const*/ BattleUnit* const nextUnit (_battleSave->selectNextUnit(
-																_AISecondMove == true,
-																true));
+	BattleUnit* const nextUnit (_battleSave->selectNextUnit(
+														_AISecondMove == true,
+														true));
 	if (nextUnit != nullptr)
 	{
 		//Log(LOG_INFO) << ". id-" << nextUnit->getId();
-		nextUnit->setUnitVisible(false);
-		if (//nextUnit->getUnitVisible() == true &&
-			nextUnit != _battleSave->getWalkUnit())
-		{
-			_battleSave->setWalkUnit(nextUnit);
-
-			if (getMap()->getCamera()->isOnFocus(nextUnit->getPosition()) == false)
-				centerOnUnit(nextUnit);	// -> let handleUnitAI() handle it. NOPE: State Machine
-			else						// burps out a map-reveal before handleUnitAI() can center.
-				getMap()->getCamera()->setViewLevel(nextUnit->getPosition().z);
-		}
-
+		focusOnUnit(nextUnit);
 		_parentState->updateSoldierInfo(false); // try no calcFov() ... calcFoV(pos) is going to happen in handleUnitAI() before AI-battlestate-think.
 
 		if (_battleSave->getDebugTac() == true)
@@ -1680,7 +1652,7 @@ void BattlescapeGame::endTurn() // private.
 					// no break;
 				case FACTION_HOSTILE:
 				case FACTION_PLAYER:
-					_parentState->getGame()->delayBlit();
+//					_parentState->getGame()->delayBlit(); // TODO: Move this to NextTurnState::ctor and out of the core-engine cycle.
 					_parentState->getGame()->pushState(new NextTurnState(
 																	_battleSave,
 																	_parentState,
@@ -2434,8 +2406,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				switch (status)
 				{
 					default:
-					case STATUS_PANICKING:	st = "STR_HAS_PANICKED"; break;
-					case STATUS_BERSERK:	st = "STR_HAS_GONE_BERSERK";
+					case STATUS_PANICKING: st = "STR_HAS_PANICKED"; break;
+					case STATUS_BERSERK:   st = "STR_HAS_GONE_BERSERK";
 				}
 				game->pushState(new InfoboxState(
 											game->getLanguage()->getString(st, unit->getGender())
@@ -2446,13 +2418,9 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 			{
 				switch (unit->getOriginalFaction())
 				{
-					case FACTION_PLAYER:
-						unit->setAIState();
-						break;
-
+					case FACTION_PLAYER:  unit->setAIState(); break;
 					case FACTION_HOSTILE:
-					case FACTION_NEUTRAL:
-						unit->getAIState()->resetAI();
+					case FACTION_NEUTRAL: unit->getAIState()->resetAI();
 				}
 			}
 
@@ -3151,7 +3119,7 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::convertUnit() " << conType;
-	const bool vis (potato->getUnitVisible());
+	const bool antecedentVisibility (potato->getUnitVisible());
 
 	_battleSave->getBattleState()->showPsiButton(false);
 
@@ -3159,7 +3127,8 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 	{
 		case STATUS_UNCONSCIOUS:
 			potato->setUnitStatus(STATUS_DEAD);
-			potato->setHealth(0); // no break;
+			potato->setHealth(0);
+			// no break;
 		case STATUS_DEAD:
 			_battleSave->deleteBody(potato);
 			break;
@@ -3177,7 +3146,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 
 
 	RuleUnit* const unitRule (getRuleset()->getUnitRule(potato->getSpawnType()));
-	const Position pos (potato->getPosition());
+	const Position& pos (potato->getPosition());
 	potato = new BattleUnit(
 						unitRule,
 						FACTION_HOSTILE,
@@ -3217,7 +3186,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 	}
 
 	getMap()->cacheUnit(potato);
-	potato->setUnitVisible(vis);
+	potato->setUnitVisible(antecedentVisibility);
 
 	getTileEngine()->applyGravity(potato->getUnitTile());
 	getTileEngine()->calculateUnitLighting();
@@ -3225,54 +3194,6 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 
 	return potato;
 }
-
-/**
- * Converts a BattleUnit for DebriefingState.
- * @param unit - pointer to a BattleUnit to convert
- * DON'T USE THIS IT CAN BREAK THE ITERATOR in DebriefingState.
- *
-void BattlescapeGame::speedyConvert(BattleUnit* const unit)
-{
-	_battleSave->deleteBody(unit); // in case the unit was unconscious
-
-	unit->instaKill();
-	unit->setSpecialAbility(SPECAB_NONE);
-
-	for (std::vector<BattleItem*>::const_iterator
-			i = unit->getInventory()->begin();
-			i != unit->getInventory()->end();
-			++i)
-	{
-		dropItem(unit->getPosition(), *i);
-		(*i)->setOwner();
-	}
-	unit->getInventory()->clear();
-
-	unit->setUnitTile();
-	_battleSave->getTile(unit->getPosition())->setTileUnit(nullptr);
-
-
-	std::string st (unit->getSpawnType());
-	RuleUnit* const unitRule (getRuleset()->getUnitRule(st));
-	st = unitRule->getArmor();
-
-	BattleUnit* const conUnit (new BattleUnit(
-											unitRule,
-											FACTION_HOSTILE,
-											_battleSave->getUnits()->back()->getId() + 1,
-											getRuleset()->getArmor(st),
-											_parentState->getGame()->getSavedGame()->getDifficulty(),
-											_parentState->getGame()->getSavedGame()->getMonthsPassed(),
-											this));
-
-	const Position posUnit (unit->getPosition());
-	_battleSave->getTile(posUnit)->setTileUnit(
-										conUnit,
-										_battleSave->getTile(posUnit + Position(0,0,-1)));
-	conUnit->setPosition(posUnit);
-
-	_battleSave->getUnits()->push_back(conUnit);
-} */
 
 /**
  * Gets the battlefield Map.

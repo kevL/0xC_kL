@@ -72,13 +72,13 @@ Game::Game(const std::string& title)
 		_gameSave(nullptr),
 		_rules(nullptr),
 		_quit(false),
-		_init(false),
+		_init(true),
 		_inputActive(true),
 		_ticksTillNextSlice(0),
 		_tickOfLastSlice(0u),
 		_debugCycle(-1),
-		_debugCycle_b(-1),
-		_blitDelay(false)
+		_debugCycle_b(-1)
+//		_blitDelay(false)
 {
 	Options::reload = false;
 #ifdef _DEBUG
@@ -227,9 +227,9 @@ void Game::run()
 				_deleted.pop_back();
 			}
 
-			if (_init == false) // initialize active state
+			if (_init == true) // initialize active state
 			{
-				_init = true;
+				_init = false;
 				_states.back()->init();
 				_states.back()->resetAll(); // unpress buttons
 
@@ -279,18 +279,18 @@ void Game::run()
 									screenHeight (Screen::ORIGINAL_HEIGHT);
 
 								Options::newDisplayWidth =
-								Options::displayWidth  = std::max(screenWidth,
-																 _event.resize.w);
+								Options::displayWidth	 = std::max(screenWidth,
+																   _event.resize.w);
 								Options::newDisplayHeight =
-								Options::displayHeight = std::max(screenHeight,
-																 _event.resize.h);
+								Options::displayHeight	  = std::max(screenHeight,
+																	_event.resize.h);
 //#else
 //								Options::newDisplayWidth =
-//								Options::displayWidth  = std::max(Screen::ORIGINAL_WIDTH,
-//																 _event.resize.w);
+//								Options::displayWidth	 = std::max(Screen::ORIGINAL_WIDTH,
+//																   _event.resize.w);
 //								Options::newDisplayHeight =
-//								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-//																 _event.resize.h);
+//								Options::displayHeight	  = std::max(Screen::ORIGINAL_HEIGHT,
+//																	_event.resize.h);
 //#endif
 								Screen::updateScale(
 												Options::battlescapeScale,
@@ -391,7 +391,7 @@ void Game::run()
 			_states.back()->think(); // process logic
 			_fpsCounter->think();
 
-			if (_init == true) // process rendering
+			if (_init == false) // process rendering
 			{
 #ifdef _DEBUG
 				if (false) { Log(LOG_INFO) << "go fucking figure."; } // The player's ActionMenu won't blit/draw/flip without this. g++ debug configuration
@@ -401,11 +401,11 @@ void Game::run()
 
 				_screen->clear();
 
-				if (_blitDelay == true)
-				{
-					_blitDelay = false;
-					SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
-				}
+//				if (_blitDelay == true)
+//				{
+//					_blitDelay = false;
+//					SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
+//				}
 
 				std::list<State*>::const_iterator i (_states.end());
 				do
@@ -443,9 +443,9 @@ void Game::run()
 				_deleted.pop_back();
 			}
 
-			if (_init == false) // initialize active state
+			if (_init == true) // initialize active state
 			{
-				_init = true;
+				_init = false;
 				_states.back()->init();
 				_states.back()->resetAll(); // unpress buttons
 
@@ -645,7 +645,7 @@ void Game::run()
 				_states.back()->think(); // process logic
 				_fpsCounter->think();
 
-				if (_init == true) // process rendering
+				if (_init == false) // process rendering
 				{
 					if (Options::FPS != 0 // update slice-delay-time based on the time of the last draw
 						&& !(Options::useOpenGL == true && Options::vSyncForOpenGL == true)) // if not using OpenGL, or if you are you're not using OpenGL vSync
@@ -671,11 +671,11 @@ void Game::run()
 
 						_screen->clear();
 
-						if (_blitDelay == true)
-						{
-							_blitDelay = false;
-							SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
-						}
+//						if (_blitDelay == true)
+//						{
+//							_blitDelay = false;
+//							SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
+//						}
 
 						std::list<State*>::const_iterator i (_states.end());
 						do
@@ -757,11 +757,11 @@ void Game::setInputActive(bool active)
 
 /**
  * Causes the engine to delay blitting the top state.
- */
+ *
 void Game::delayBlit()
 {
 	_blitDelay = true;
-}
+} */
 
 /**
  * Pops all the states currently in the state-stack and pushes in a new state.
@@ -775,7 +775,7 @@ void Game::setState(State* const state)
 		popState();
 
 	pushState(state);
-	_init = false;
+	_init = true;
 }
 
 /**
@@ -786,7 +786,7 @@ void Game::setState(State* const state)
 void Game::pushState(State* const state)
 {
 	_states.push_back(state);
-	_init = false;
+	_init = true;
 }
 
 /**
@@ -799,7 +799,7 @@ void Game::popState()
 {
 	_deleted.push_back(_states.back());
 	_states.pop_back();
-	_init = false;
+	_init = true;
 }
 
 /**

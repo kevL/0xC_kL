@@ -3301,9 +3301,9 @@ void BattlescapeState::hotSqrsUpdate()
 		i != _battleSave->getUnits()->end() && j != HOTSQRS;
 		++i)
 	{
-		if ((*i)->getFaction() == FACTION_HOSTILE
-			&& (*i)->getUnitVisible() == true
-			&& (*i)->isOut_t(OUT_STAT) == false)
+		if (   (*i)->getFaction()     == FACTION_HOSTILE
+			&& (*i)->getUnitStatus()  == STATUS_STANDING
+			&& (*i)->getUnitVisible() == true)
 		{
 			_btnHostileUnit[j]->setVisible();
 			_numHostileUnit[j]->setVisible();

@@ -52,7 +52,6 @@ private:
 		_fall,
 		_kneelCheck,
 		_isVisible,
-//		_isVisibleChanged, // unit walked into Player's view in middle of state.
 		_playFly,
 		_tileSwitchDone,
 		_preStepTurn;

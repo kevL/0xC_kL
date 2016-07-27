@@ -53,7 +53,6 @@ namespace OpenXcom
 
 //bool UnitWalkBState::_debug = false; // static.
 
-
 /**
  * Sets up the UnitWalkBState.
  * @param parent - pointer to the BattlescapeGame
@@ -73,7 +72,6 @@ UnitWalkBState::UnitWalkBState(
 		_preStepCost(0),
 		_tileSwitchDone(false),
 		_isVisible(false),
-//		_isVisibleChanged(false),
 		_walkCamera(parent->getMap()->getCamera()),
 		_dirStart(-1),
 		_kneelCheck(true),
@@ -118,7 +116,7 @@ void UnitWalkBState::init()
 //		Log(LOG_INFO) << "";
 //		Log(LOG_INFO) << "walkB:init() id-" << _unit->getId();
 //		Log(LOG_INFO) << ". " << _unit->getPosition() << " to " << _action.posTarget;
-//		if (_battleSave->getWalkUnit()) Log(LOG_INFO) << ". walkUnit id-" << _battleSave->getWalkUnit()->getId();
+//		if (_battleSave->getLastVisibleAiUnit()) Log(LOG_INFO) << ". walkUnit id-" << _battleSave->getLastVisibleAiUnit()->getId();
 //		else Log(LOG_INFO) << ". walkUnit NOT Valid";
 //	}
 
@@ -640,9 +638,8 @@ bool UnitWalkBState::doStatusStand() // private.
 	if (_isVisible == true)
 	{
 		if (_unit->getFaction() != FACTION_PLAYER
-//			&& _unit != _battleSave->getWalkUnit()
+//			&& _unit != _battleSave->getLastVisibleAiUnit()
 			&& _walkCamera->isOnScreen(_unit->getPosition()) == false)
-//				|| _isVisibleChanged == true))
 		{
 			//if (_debug)
 			//Log(LOG_INFO) << "walkB:doStatusStand() centerPos id-" << _unit->getId();
@@ -899,18 +896,16 @@ bool UnitWalkBState::doStatusStand_end() // private.
 
 	if (_unit->getUnitVisible() == true)
 	{
-		if (_isVisible == false)
+		if (_isVisible == false
+			&& _walkCamera->isInFocus(_unit->getPosition()) == false)
 		{
-			_isVisible = true;
-//			_isVisibleChanged = true;
-
 			//if (_debug)
 			//Log(LOG_INFO) << "walkB:doStatusStand_end() vis changed - centerPos id-" << _unit->getId() << " - set walkUnit";
 //									  << " " << _unit->getPosition();
-			_battleSave->setWalkUnit(_unit);
+//			_battleSave->setLastVisibleAiUnit(_unit);
 			_walkCamera->centerOnPosition(_unit->getPosition());
 		}
-		else
+		else if (_unit->getPosition().z != _walkCamera->getViewLevel())
 		{
 			//Log(LOG_INFO) << "walkB:doStatusStand_end() set viewLevel id-" << _unit->getId();
 			_walkCamera->setViewLevel(pos.z);
@@ -920,7 +915,7 @@ bool UnitWalkBState::doStatusStand_end() // private.
 //	if (_isVisible == true)
 //	{
 //		if (   _unit->getFaction() != FACTION_PLAYER
-//			&& _unit != _battleSave->getWalkUnit()
+//			&& _unit != _battleSave->getLastVisibleAiUnit()
 //			&& _pf->getStartDirection() == -1) // about to end.
 //		{
 //			if (_debug) Log(LOG_INFO) << ". walkUnit Changed: center Pos id-" << _unit->getId()

@@ -55,7 +55,7 @@ private:
 	bool
 		_init,
 		_inputActive,
-		_blitDelay,
+//		_blitDelay,
 		_quit;
 	int
 		_debugCycle,	// for debugging country-zones.
@@ -96,7 +96,7 @@ private:
 		void setInputActive(bool active);
 
 		/// Causes the engine to delay blitting the top state.
-		void delayBlit();
+//		void delayBlit();
 
 		/// Resets a state-stack to a new state.
 		void setState(State* const state);

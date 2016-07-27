@@ -31,15 +31,15 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements.
+ * Initializes all the elements of the InfoboxState.
  * @param msg - reference to a message wide-string
  */
 InfoboxState::InfoboxState(const std::wstring& msg)
 {
 	_fullScreen = false;
 
-	_frame	= new Frame(260, 90, 30, 86);
-	_text	= new Text(250, 80, 35, 91);
+	_frame	= new Frame(260, 90, 30, 110);
+	_text	= new Text(250, 80, 35, 115);
 
 	setPalette(PAL_BATTLESCAPE);
 
@@ -60,7 +60,7 @@ InfoboxState::InfoboxState(const std::wstring& msg)
 	_text->setWordWrap();
 	_text->setBig();
 
-	_timer = new Timer(INFOBOX_DELAY);
+	_timer = new Timer(INFOBOX_DURATION);
 	_timer->onTimer(static_cast<StateHandler>(&InfoboxState::exit));
 	_timer->start();
 }
@@ -74,7 +74,7 @@ InfoboxState::~InfoboxState()
 }
 
 /**
- * Closes the window.
+ * This InfoboxState can be closed early with a key- or mouse-down event.
  * @param action - pointer to an Action
  */
 void InfoboxState::handle(Action* action)
@@ -90,7 +90,7 @@ void InfoboxState::handle(Action* action)
 }
 
 /**
- * Keeps the Timer running.
+ * Exits this InfoboxState on a single timer-tick.
  */
 void InfoboxState::think()
 {
@@ -98,7 +98,7 @@ void InfoboxState::think()
 }
 
 /**
- * Closes the window.
+ * Exits this InfoboxState.
  */
 void InfoboxState::exit()
 {

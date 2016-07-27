@@ -72,7 +72,7 @@ SavedBattleGame::SavedBattleGame(
 		_mapsize_z(0),
 		_qtyTilesTotal(0u),
 		_selectedUnit(nullptr),
-		_selectedUnit_pre(nullptr),
+		_recallUnit(nullptr),
 		_pf(nullptr),
 		_te(nullptr),
 		_tacticalShade(0),
@@ -96,7 +96,7 @@ SavedBattleGame::SavedBattleGame(
 		_pacified(false),
 		_rfTriggerOffset(0,0,-1),
 		_dropTu(0),
-		_walkUnit(nullptr),
+		_lastVisibleAIUnit(nullptr),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_TURN_DEFAULT)
@@ -1128,7 +1128,7 @@ BattleUnit* SavedBattleGame::selectUnit( // private.
 {
 	//Log(LOG_INFO) << "sbg:selectUnit()";
 //	if (_units.empty() == true) // how can this ever happen.
-//		return (_selectedUnit = _selectedUnit_pre = nullptr);
+//		return (_selectedUnit = _recallUnit = nullptr);
 
 	if (dontReselect == true && _selectedUnit != nullptr)
 	{
@@ -1225,6 +1225,30 @@ BattleUnit* SavedBattleGame::selectUnit( // private.
 }
 
 /**
+ * Sets the previously selected AI-unit.
+ * @note Used for controlling the Camera during aLien movement incl/ panic.
+ * Stops the Camera from recentering on a unit that just moved and so is already
+ * nearly centered but is getting another slice from the AI-engine.
+ * @param unit - pointer to a BattleUnit (default nullptr)
+ */
+void SavedBattleGame::setLastVisibleAiUnit(const BattleUnit* const unit)
+{
+	_lastVisibleAIUnit = unit;
+}
+
+/**
+ * Gets the previously selected AI-unit.
+ * @note Used for controlling the Camera during aLien movement incl/ panic.
+ * Stops the Camera from recentering on a unit that just moved and so is
+ * already nearly centered but is getting another slice from the AI-engine.
+ * @return, pointer to a BattleUnit
+ */
+const BattleUnit* SavedBattleGame::getLastVisibleAiUnit() const
+{
+	return _lastVisibleAIUnit;
+}
+
+/**
  * Gets the faction-side currently playing.
  * @return, the faction currently playing (BattleUnit.h)
  */
@@ -1264,10 +1288,10 @@ bool SavedBattleGame::endFactionTurn()
 			if (_selectedUnit != nullptr
 				&& _selectedUnit->isMindControlled() == false)
 			{
-				_selectedUnit_pre = _selectedUnit;
+				_recallUnit = _selectedUnit;
 			}
 			else
-				_selectedUnit_pre = nullptr;
+				_recallUnit = nullptr;
 
 			_selectedUnit = nullptr;
 
@@ -1309,7 +1333,7 @@ bool SavedBattleGame::endFactionTurn()
 					_shuffleUnits.end(),
 					nullptr);
 
-			_walkUnit = nullptr;
+			_lastVisibleAIUnit = nullptr;
 
 			tileVolatiles(); // do Tile stuff
 
@@ -1343,20 +1367,23 @@ bool SavedBattleGame::endFactionTurn()
 			{
 				for (std::vector<BattleUnit*>::const_iterator // find a conscious non-MC'd aLien ...
 						i = _units.begin();
-						i != _units.end();
+						i != _units.end() && _cheatAI == false;
 						++i)
 				{
 					if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-						&& (*i)->isMindControlled() == false
-						&& (*i)->isOut_t(OUT_STAT) == false)
+						&& (*i)->isMindControlled() == false)
 					{
-						const int r (RNG::generate(0,5));
-						if (_turn > _cheatTurn - 3 + r
-							|| _battleState->getBattleGame()->tallyHostiles() < r - 1)
+						switch ((*i)->getUnitStatus())
 						{
-							_cheatAI = true;
+							case STATUS_STANDING:
+							case STATUS_UNCONSCIOUS:
+								const int r (RNG::generate(0,5));
+								if (_turn > _cheatTurn - 3 + r
+									|| _battleState->getBattleGame()->tallyHostiles() < r - 1)
+								{
+									_cheatAI = true;
+								}
 						}
-						break;
 					}
 				}
 			}
@@ -1462,10 +1489,10 @@ bool SavedBattleGame::endFactionTurn()
  *
 void SavedBattleGame::selectFirstPlayerUnit() // private.
 {
-	if (_selectedUnit_pre != nullptr
-		&& _selectedUnit_pre->isSelectable(FACTION_PLAYER) == true)
+	if (_recallUnit != nullptr
+		&& _recallUnit->isSelectable(FACTION_PLAYER) == true)
 	{
-		_selectedUnit = _selectedUnit_pre;
+		_selectedUnit = _recallUnit;
 	}
 	else
 		selectNextUnit();
@@ -1486,10 +1513,10 @@ void SavedBattleGame::selectFirstPlayerUnit() // private.
  */
 BattleUnit* SavedBattleGame::firstFactionUnit(UnitFaction faction)
 {
-	if (_side == FACTION_PLAYER && _selectedUnit_pre != nullptr
-		&& _selectedUnit_pre->isSelectable(FACTION_PLAYER) == true)
+	if (_side == FACTION_PLAYER && _recallUnit != nullptr
+		&& _recallUnit->isSelectable(FACTION_PLAYER) == true)
 	{
-		return (_selectedUnit = _selectedUnit_pre);
+		return (_selectedUnit = _recallUnit);
 	}
 
 	std::vector<BattleUnit*>* units;
@@ -3073,36 +3100,12 @@ const std::vector<std::pair<int,int>>& SavedBattleGame::scannerDots() const
 }
 
 /**
- * Gets the minimum TU that a unit has at start of its turn.
+ * Gets the minimum TU that a unit has at the start of its turn.
  * @return, min TU value
  */
 int SavedBattleGame::getDropTu() const
 {
 	return _dropTu;
-}
-
-/**
- * Sets the previous walking unit.
- * @note Used for controlling the Camera during aLien movement incl/ panic.
- * Stops the Camera from recentering on a unit that just moved and so is already
- * nearly centered but is getting another slice from the AI-engine.
- * @param unit - pointer to a BattleUnit (default nullptr)
- */
-void SavedBattleGame::setWalkUnit(const BattleUnit* const unit)
-{
-	_walkUnit = unit;
-}
-
-/**
- * Gets the previous walking unit.
- * @note Used for controlling the Camera during aLien movement incl/ panic.
- * Stops the Camera from re-centering on a unit that just moved and so is
- * already nearly centered but is getting another slice from the AI-engine.
- * @return, pointer to a BattleUnit
- */
-const BattleUnit* SavedBattleGame::getWalkUnit() const
-{
-	return _walkUnit;
 }
 
 /**

@@ -47,14 +47,14 @@ private:
 
 
 	public:
-		static const int INFOBOX_DELAY = 2500;
+		static const int INFOBOX_DURATION = 2500;
 
-		/// Creates the Infobox state.
+		/// Creates an Infobox state.
 		explicit InfoboxState(const std::wstring& msg);
 		/// Cleans up the Infobox state.
 		~InfoboxState();
 
-		/// Handler for clicking anything.
+		/// Handler for hardware interrupts.
 		void handle(Action* action) override;
 
 		/// Handles the Timer.

@@ -46,7 +46,6 @@ private:
 
 	BattlescapeState* _state;
 	SavedBattleGame* _battleSave;
-//	Surface* _bg;
 	Text
 		* _txtTitle,
 		* _txtTurn,

@@ -126,7 +126,7 @@ struct BattleAction
 			dash(false),
 			diff(0),
 			autoShotCount(0),
-			posCamera(0,0,-1),
+			posCamera(Position(0,0,-1)),
 			desperate(false),
 			finalFacing(-1),
 			finalAction(false),
@@ -392,8 +392,6 @@ private:
 
 		/// Converts a BattleUnit into a different type of BattleUnit.
 		BattleUnit* convertUnit(BattleUnit* potato);
-		/// Converts a BattleUnit for DebriefingState.
-//		void speedyConvert(BattleUnit* const unit);
 
 		/// Gets the battlefield Map.
 		Map* getMap() const;

@@ -79,7 +79,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_prjVector(0,0,-1),
 		_init(true),
 		_targetFloor(false),
-		_initUnitAni(0),
+		_prjStart(0),
 		_prj(nullptr)
 {
 	if (_posOrigin.z == -1)
@@ -724,8 +724,8 @@ void ProjectileFlyBState::think()
 	if (_unit->getUnitStatus() == STATUS_AIMING
 		&& _unit->getArmor()->getShootFrames() != 0)
 	{
-		if (_initUnitAni == 0)
-			_initUnitAni = 1;
+		if (_prjStart == 0)
+			_prjStart = 1;
 
 		_unit->keepAiming();
 
@@ -733,9 +733,9 @@ void ProjectileFlyBState::think()
 			return;
 	}
 
-	if (_initUnitAni == 1)
+	if (_prjStart == 1)
 	{
-		_initUnitAni = 2;
+		_prjStart = 2;
 		_parent->getMap()->showProjectile();
 	}
 
@@ -760,24 +760,25 @@ void ProjectileFlyBState::think()
 		}
 		else // think() FINISH.
 		{
-			//Log(LOG_INFO) << "";
-			//Log(LOG_INFO) << "ProjectileFlyBState::think() -> finish actorId-" << _action.actor->getId();
+			//const bool debug (_action.actor->getId() == 381);
+			//if (debug) Log(LOG_INFO) << "";
+			//if (debug) Log(LOG_INFO) << "ProjectileFlyBState::think() -> finish actorId-" << _action.actor->getId();
 			switch (_action.type) // possible Camera re/positioning to pre-shot or post-RF position
 			{
 				case BA_THROW:
 				case BA_AUTOSHOT:
 				case BA_SNAPSHOT:
 				case BA_AIMEDSHOT:
-					//Log(LOG_INFO) << "FlyB: . stored posCamera " << _action.posCamera;
+					//if (debug) Log(LOG_INFO) << "FlyB: . stored posCamera " << _action.posCamera;
 					if (_action.posCamera.z != -1
 						|| _parent->getTileEngine()->isReaction() == true)
 					{
-						//Log(LOG_INFO) << "FlyB: . . setting Camera to shooter pos";
-						Camera* const shotCam (_parent->getMap()->getCamera());
-						if (shotCam->getPauseAfterShot() == true)	// TODO: Move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
-//						if (_action.pauseAfterShot == true)			// NOTE: That trying to store the camera position in the BattleAction didn't work either ... double numby.
+						//if (debug) Log(LOG_INFO) << "FlyB: . . setting Camera to shooter pos";
+						Camera* const shotCamera (_parent->getMap()->getCamera());
+						if (shotCamera->getPauseAfterShot() == true)	// TODO: Move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
+//						if (_action.pauseAfterShot == true)				// NOTE: That trying to store the camera position in the BattleAction didn't work either ... double numby.
 						{
-							shotCam->setPauseAfterShot(false);
+							shotCamera->setPauseAfterShot(false);
 
 							switch (_prjImpact)
 							{
@@ -787,7 +788,7 @@ void ProjectileFlyBState::think()
 								case VOXEL_NORTHWALL:
 								case VOXEL_OBJECT:
 								case VOXEL_UNIT:
-									//Log(LOG_INFO) << "FlyB: . . . . delay";
+									//if (debug) Log(LOG_INFO) << "FlyB: . . . . delay";
 									SDL_Delay(Screen::SCREEN_PAUSE); // screen-pause when shot hits target before reverting camera to shooter.
 //									break;
 //
@@ -798,19 +799,22 @@ void ProjectileFlyBState::think()
 
 						if (_parent->getTileEngine()->isReaction() == true)
 						{
-							//Log(LOG_INFO) << ". . is Reaction - set Camera to center on reactor";
-							shotCam->centerOnPosition(_unit->getPosition());
+							//if (debug) Log(LOG_INFO) << ". . is Reaction - set Camera to center on reactor";
+							if (shotCamera->isOnScreen(_unit->getPosition()) == false)
+								shotCamera->centerOnPosition(_unit->getPosition());
+							else if (_unit->getPosition().z != shotCamera->getViewLevel())
+								shotCamera->setViewLevel(_unit->getPosition().z);
 						}
 						else
 						{
-							//Log(LOG_INFO) << ". . is NOT Reaction - set Camera to cached position";
-							shotCam->setMapOffset(_action.posCamera);
+							//if (debug) Log(LOG_INFO) << ". . is NOT Reaction - set Camera to cached position";
+							shotCamera->setMapOffset(_action.posCamera);
 							_parent->getMap()->draw(); // NOTE: Might not be needed. Ie, the camera-offset seems to take hold okay without.
 						}
 //						_action.posCamera = Position(0,0,-1);
 //						_parent->getMap()->invalidate();
 
-						//Log(LOG_INFO) << "FlyB: . . . Screw you, State Machine.";
+						//if (debug) Log(LOG_INFO) << "FlyB: . . . Screw you, State Machine.";
 						_parent->getBattlescapeState()->blit();
 						_parent->getBattlescapeState()->getGame()->getScreen()->flip();
 						SDL_Delay(Screen::SCREEN_PAUSE);

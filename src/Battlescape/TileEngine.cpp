@@ -1677,10 +1677,10 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 			++i)
 	{
 		//Log(LOG_INFO) << ". check id-" << (*i)->getId();
-		if ((*i)->getFaction() != _battleSave->getSide()
+		if (   (*i)->getFaction() != _battleSave->getSide()
 			&& (*i)->getFaction() != FACTION_NEUTRAL
-			&& (*i)->getTu() != 0
-			&& (*i)->isOut_t() == false)
+			&& (*i)->getUnitStatus() == STATUS_STANDING
+			&& (*i)->getTu() != 0)
 //			&& (*i)->getSpawnType().empty() == true)
 		{
 			if ((((*i)->getFaction() == FACTION_HOSTILE							// Mc'd xCom units will RF on loyal xCom units
@@ -6153,16 +6153,9 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				attack -= defense;
 				switch (action->type)
 				{
-					case BA_PSICONFUSE:
-						attack += 60.f;
-						break;
-
-					case BA_PSIPANIC:
-						attack += 45.f;
-						break;
-
-					case BA_PSICONTROL:
-						attack += 15.f;
+					case BA_PSICONFUSE:	attack += 60.f; break;
+					case BA_PSIPANIC:	attack += 45.f; break;
+					case BA_PSICONTROL:	attack += 15.f;
 				}
 				attack *= 100.f;
 				attack /= 56.f;
@@ -6281,9 +6274,10 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							}
 
 							victim->setFaction(action->actor->getFaction());
+							victim->setUnitVisible(victim->getFaction() == FACTION_PLAYER);
+							victim->setUnitStatus(STATUS_STANDING);
 							victim->prepTuEnergy();
 							victim->setReselect();
-							victim->setUnitStatus(STATUS_STANDING);
 
 							calculateUnitLighting();
 							if (victim->getFaction() == FACTION_PLAYER)

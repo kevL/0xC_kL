@@ -394,11 +394,11 @@ void UnitDieBState::convertToBody() // private.
  */
 void UnitDieBState::centerOnDeath() // private.
 {
-	Camera* const deathCam (_parent->getMap()->getCamera());
-	if (deathCam->isOnScreen(_unit->getPosition()) == false)
-		deathCam->centerOnPosition(_unit->getPosition());
-	else if (_unit->getPosition().z != deathCam->getViewLevel())
-		deathCam->setViewLevel(_unit->getPosition().z);
+	Camera* const deathCamera (_parent->getMap()->getCamera());
+	if (deathCamera->isOnScreen(_unit->getPosition()) == false)
+		deathCamera->centerOnPosition(_unit->getPosition());
+	else if (_unit->getPosition().z != deathCamera->getViewLevel())
+		deathCamera->setViewLevel(_unit->getPosition().z);
 }
 
 /**

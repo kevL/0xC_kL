@@ -106,8 +106,8 @@ private:
 	BattlescapeState* _battleState;
 	BattleUnit
 		* _selectedUnit,
-		* _selectedUnit_pre;
-	const BattleUnit* _walkUnit; // -> "prior AI active actor" (used to stop Camera re-centering when it's already more-or-less centered)
+		* _recallUnit;
+	const BattleUnit* _lastVisibleAIUnit; // -> "prior AI active actor" (used to stop Camera re-centering when it's already more-or-less centered)
 	Pathfinding* _pf;
 	Tile
 		* _equiptTile,
@@ -276,6 +276,11 @@ private:
 				bool dontReselect = false,
 				bool checkReselect = false,
 				bool checkInventory = false);
+
+		/// Sets the previously selected AI-unit.
+		void setLastVisibleAiUnit(const BattleUnit* const unit = nullptr);
+		/// Gets the previously selected AI-unit.
+		const BattleUnit* getLastVisibleAiUnit() const;
 
 		/// Gets the playing side.
 		UnitFaction getSide() const;
@@ -473,13 +478,8 @@ private:
 		/// Gets a read-only ref to the scanner-dots vector.
 		const std::vector<std::pair<int,int>>& scannerDots() const;
 
-		/// Gets the minimum TU that a unit has at start of its turn.
+		/// Gets the minimum TU that a unit has at the start of its turn.
 		int getDropTu() const;
-
-		/// Sets the previous walking unit.
-		void setWalkUnit(const BattleUnit* const unit = nullptr);
-		/// Gets the previous walking unit.
-		const BattleUnit* getWalkUnit() const;
 
 		/// Sets the turn-limit for tactical.
 		void setTurnLimit(int limit);

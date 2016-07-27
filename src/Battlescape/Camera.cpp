@@ -782,7 +782,7 @@ bool Camera::isOnScreen(const Position& posField) const
  * @return, true if the map-coordinates are on-focus
  * @sa Camera::isOnScreen()
  */
-bool Camera::isOnFocus(const Position& posField) const
+bool Camera::isInFocus(const Position& posField) const
 {
 	Position posScreen;
 	convertMapToScreen(

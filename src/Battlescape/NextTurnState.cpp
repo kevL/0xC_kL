@@ -66,9 +66,20 @@ NextTurnState::NextTurnState(
 		_aliensPacified(aliensPacified)
 {
 	//Log(LOG_INFO) << "NextTurnState:cTor";
+	switch (_battleSave->getSide())
+	{
+		case FACTION_PLAYER:					// in case a Hostile/Neutral unit just revealed the screen
+			SDL_Delay(Screen::SCREEN_PAUSE);	// sustain the reveal.
+			break;
+
+		case FACTION_HOSTILE:
+			if (_battleSave->getDebugTac() == false)
+				_game->getCursor()->setVisible(false);
+	}
+
 	_window = new Window(this, 320, 200);
 
-	if (aliensPacified == false)
+	if (_aliensPacified == false)
 	{
 		_txtTitle	= new Text(320, 17, 0,  68);
 		_txtTurn	= new Text(320, 17, 0,  93);
@@ -78,46 +89,24 @@ NextTurnState::NextTurnState(
 	else
 		_txtMessage	= new Text(320, 200);
 
-//	_bg = new Surface(_game->getScreen()->getWidth(), _game->getScreen()->getHeight());
-
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_window);
 	add(_txtMessage,	"messageWindows", "battlescape");
-	if (aliensPacified == false)
+	if (_aliensPacified == false)
 	{
 		add(_txtTitle,	"messageWindows", "battlescape");
 		add(_txtTurn,	"messageWindows", "battlescape");
 		add(_txtSide,	"messageWindows", "battlescape");
 	}
-//	add(_bg);
 
 	centerAllSurfaces();
 
 
-/*	_bg->setX(0);
-	_bg->setY(0);
-	SDL_Rect rect;
-	rect.w = _bg->getWidth();
-	rect.h = _bg->getHeight();
-	rect.x = rect.y = 0;
-	_bg->drawRect(&rect, 15); */
-/*	// line this screen up with the hidden movement screen
-	const int msg_y = state->getMap()->getMessageY();
-	_window->setY(msg_y);
-	if (aliensPacified == false)
-	{
-		_txtTitle->setY(msg_y + 68);
-		_txtTurn->setY(msg_y + 93);
-		_txtSide->setY(msg_y + 109);
-		_txtMessage->setY(msg_y + 149);
-	}
-	else _txtMessage->setY(msg_y); */
-
 	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
 	_window->setHighContrast();
 
-	if (aliensPacified == false)
+	if (_aliensPacified == false)
 	{
 		_txtTitle->setBig();
 		_txtTitle->setAlign(ALIGN_CENTER);
@@ -133,8 +122,8 @@ NextTurnState::NextTurnState(
 		if (_battleSave->getTurnLimit() != 0)
 		{
 			woststr << L" / " << _battleSave->getTurnLimit();
-			if (_battleSave->getTurnLimit() - _battleSave->getTurn() < 4)
-				_txtTurn->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2)); // borrow 'overweight' color ...
+			if (_battleSave->getTurnLimit() - _battleSave->getTurn() < 4) // borrow 'overweight' color ...
+				_txtTurn->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("weight")->color2));
 		}
 		_txtTurn->setText(woststr.str());
 
@@ -143,10 +132,9 @@ NextTurnState::NextTurnState(
 		_txtSide->setHighContrast();
 		_txtSide->setText(tr("STR_SIDE")
 							.arg(tr(_battleSave->getSide() == FACTION_PLAYER ? "STR_XCOM" : "STR_ALIENS")));
-	}
 
-	if (aliensPacified == false)
 		_txtMessage->setText(tr("STR_PRESS_BUTTON_TO_CONTINUE"));
+	}
 	else
 	{
 		_txtMessage->setText(tr("STR_ALIENS_PACIFIED"));
@@ -157,13 +145,6 @@ NextTurnState::NextTurnState(
 	_txtMessage->setBig();
 
 	_state->clearMouseScrollingState();
-
-
-	if (_battleSave->getSide() != FACTION_PLAYER
-		&& _battleSave->getDebugTac() == false)
-	{
-		_game->getCursor()->setVisible(false);
-	}
 }
 
 /**
