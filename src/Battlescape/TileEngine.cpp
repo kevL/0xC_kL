@@ -1657,6 +1657,10 @@ bool TileEngine::checkReactionFire(
 		}
 //		spotters.clear();
 	}
+
+	if (ret == false)
+		_battleSave->rfTriggerOffset(Position(0,0,-1));
+
 	return ret;
 }
 

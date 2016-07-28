@@ -1701,11 +1701,11 @@ void BattlescapeState::btnUnitUpPress(Action*)
 									Pathfinding::DIR_UP))
 			{
 				case FLY_CANT:
-					warning(BattlescapeGame::PLAYER_ERROR[12]);
+					warning(BattlescapeGame::PLAYER_ERROR[12u]);
 					break;
 
 				case FLY_BLOCKED:
-					warning(BattlescapeGame::PLAYER_ERROR[13]);
+					warning(BattlescapeGame::PLAYER_ERROR[13u]);
 					break;
 
 				case FLY_GRAVLIFT:
@@ -1718,7 +1718,7 @@ void BattlescapeState::btnUnitUpPress(Action*)
 			}
 		}
 		else
-			warning(BattlescapeGame::PLAYER_ERROR[12]);
+			warning(BattlescapeGame::PLAYER_ERROR[12u]);
 	}
 }
 
@@ -2414,25 +2414,6 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 						_srfTargeter->setX(posScreen.x);
 						_srfTargeter->setY(posScreen.y);
 					}
-//					if (camera->isOnScreen(pos) == false)
-//					{
-//						camera->centerPosition(pos);
-//						_srfTargeter->setX((Options::baseXResolution >> 1u) - 16);
-//						_srfTargeter->setY((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);
-//					}
-//					else
-//					{
-//						if (camera->getViewLevel() != pos.z)
-//							camera->setViewLevel(pos.z);
-//
-//						Position posScreen;
-//						camera->convertMapToScreen(
-//												pos,
-//												&posScreen);
-//						posScreen += camera->getMapOffset();
-//						_srfTargeter->setX(posScreen.x);
-//						_srfTargeter->setY(posScreen.y);
-//					}
 
 					_srfTargeter->setVisible();
 					_targeterFrame = 0;
@@ -2503,13 +2484,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 
 							_battleGame->setupSelector();
 						}
-
 						_map->getCamera()->focusPosition(nextSpotter->getPosition());
-//						Camera* const camera (_map->getCamera());
-//						if (camera->isOnScreen(nextSpotter->getPosition()) == false)
-//							camera->centerPosition(nextSpotter->getPosition());
-//						else if	(camera->getViewLevel() != nextSpotter->getPosition().z)
-//							camera->setViewLevel(nextSpotter->getPosition().z);
 					}
 				}
 			}
@@ -2614,75 +2589,6 @@ void BattlescapeState::btnPsiClick(Action* action)
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
-
-/**
- * Reserves time units.
- * @param action - pointer to an Action
- *
-void BattlescapeState::btnReserveClick(Action* action)
-{
-	if (allowButtons())
-	{
-		SDL_Event ev;
-		ev.type = SDL_MOUSEBUTTONDOWN;
-		ev.button.button = SDL_BUTTON_LEFT;
-		Action a = Action(&ev, 0.,0., 0,0);
-		action->getSender()->mousePress(&a, this);
-
-		if		(_reserve == _btnReserveNone)	_battleGame->setReservedAction(BA_NONE);
-		else if (_reserve == _btnReserveSnap)	_battleGame->setReservedAction(BA_SNAPSHOT);
-		else if (_reserve == _btnReserveAimed)	_battleGame->setReservedAction(BA_AIMEDSHOT);
-		else if (_reserve == _btnReserveAuto)	_battleGame->setReservedAction(BA_AUTOSHOT);
-
-		// update any path preview
-		if (_battleGame->getPathfinding()->isPathPreviewed())
-		{
-			_battleGame->getPathfinding()->clearPreview();
-			_battleGame->getPathfinding()->previewPath();
-		}
-	}
-} */
-/**
- * Reserves time units for kneeling.
- * @param action - pointer to an Action
- *
-void BattlescapeState::btnReserveKneelClick(Action* action)
-{
-	if (allowButtons())
-	{
-		SDL_Event ev;
-		ev.type = SDL_MOUSEBUTTONDOWN;
-		ev.button.button = SDL_BUTTON_LEFT;
-
-		Action a = Action(&ev, 0.,0., 0,0);
-		action->getSender()->mousePress(&a, this);
-		_battleGame->setKneelReserved(!_battleGame->getKneelReserved());
-//		_btnReserveKneel->invert(_btnReserveKneel->getColor()+3);
-		_btnReserveKneel->toggle(_battleGame->getKneelReserved());
-
-		// update any path preview
-		if (_battleGame->getPathfinding()->isPathPreviewed())
-		{
-			_battleGame->getPathfinding()->clearPreview();
-			_battleGame->getPathfinding()->previewPath();
-		}
-	}
-} */
-/**
- * Reloads a weapon in hand.
- * @note Checks right hand then left.
- * @param action - pointer to an Action
- *
-void BattlescapeState::btnReloadClick(Action*)
-{
-	if (playableUnitSelected() == true
-		&& _battleSave->getSelectedUnit()->checkReload() == true)
-	{
-		_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_RELOAD)
-									->play(-1, _map->getSoundAngle(_battleSave->getSelectedUnit()->getPosition()));
-		updateSoldierInfo(false);
-	}
-} */
 
 /**
  * Zeroes TU of the currently selected BattleUnit w/ mouse-click.
@@ -2838,29 +2744,6 @@ void BattlescapeState::keyTurnUnit(Action* action)
 			}
 	}
 }
-
-/**
- * Shows a tooltip for the appropriate button.
- * @param action - pointer to an Action
- *
-void BattlescapeState::txtTooltipIn(Action* action)
-{
-	if (allowButtons() && Options::battleTooltips)
-	{
-		_currentTooltip = action->getSender()->getTooltip();
-		_txtTooltip->setText(tr(_currentTooltip));
-	}
-} */
-/**
- * Clears the tooltip text.
- * @param action - pointer to an Action
- *
-void BattlescapeState::txtTooltipOut(Action* action)
-{
-	if (allowButtons() && Options::battleTooltips)
-		if (_currentTooltip == action->getSender()->getTooltip())
-			_txtTooltip->setText(L"");
-} */
 
 /**
  * Determines whether the player is allowed to press buttons.
@@ -3900,7 +3783,7 @@ void BattlescapeState::finishBattle(
 			ironsave = false;
 		}
 		else
-			ironsave = _gameSave->isIronman() == true;
+			ironsave = (_gameSave->isIronman() == true);
 
 		if (ironsave == true)
 		{
@@ -5051,5 +4934,97 @@ void BattlescapeState::saveVoxelMap()
 			Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
 	}
 }
+
+/**
+ * Reserves time units.
+ * @param action - pointer to an Action
+ *
+void BattlescapeState::btnReserveClick(Action* action)
+{
+	if (allowButtons())
+	{
+		SDL_Event ev;
+		ev.type = SDL_MOUSEBUTTONDOWN;
+		ev.button.button = SDL_BUTTON_LEFT;
+		Action a = Action(&ev, 0.,0., 0,0);
+		action->getSender()->mousePress(&a, this);
+
+		if		(_reserve == _btnReserveNone)	_battleGame->setReservedAction(BA_NONE);
+		else if (_reserve == _btnReserveSnap)	_battleGame->setReservedAction(BA_SNAPSHOT);
+		else if (_reserve == _btnReserveAimed)	_battleGame->setReservedAction(BA_AIMEDSHOT);
+		else if (_reserve == _btnReserveAuto)	_battleGame->setReservedAction(BA_AUTOSHOT);
+
+		// update any path preview
+		if (_battleGame->getPathfinding()->isPathPreviewed())
+		{
+			_battleGame->getPathfinding()->clearPreview();
+			_battleGame->getPathfinding()->previewPath();
+		}
+	}
+} */
+/**
+ * Reserves time units for kneeling.
+ * @param action - pointer to an Action
+ *
+void BattlescapeState::btnReserveKneelClick(Action* action)
+{
+	if (allowButtons())
+	{
+		SDL_Event ev;
+		ev.type = SDL_MOUSEBUTTONDOWN;
+		ev.button.button = SDL_BUTTON_LEFT;
+
+		Action a = Action(&ev, 0.,0., 0,0);
+		action->getSender()->mousePress(&a, this);
+		_battleGame->setKneelReserved(!_battleGame->getKneelReserved());
+//		_btnReserveKneel->invert(_btnReserveKneel->getColor()+3);
+		_btnReserveKneel->toggle(_battleGame->getKneelReserved());
+
+		// update any path preview
+		if (_battleGame->getPathfinding()->isPathPreviewed())
+		{
+			_battleGame->getPathfinding()->clearPreview();
+			_battleGame->getPathfinding()->previewPath();
+		}
+	}
+} */
+/**
+ * Reloads a weapon in hand.
+ * @note Checks right hand then left.
+ * @param action - pointer to an Action
+ *
+void BattlescapeState::btnReloadClick(Action*)
+{
+	if (playableUnitSelected() == true
+		&& _battleSave->getSelectedUnit()->checkReload() == true)
+	{
+		_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_RELOAD)
+									->play(-1, _map->getSoundAngle(_battleSave->getSelectedUnit()->getPosition()));
+		updateSoldierInfo(false);
+	}
+} */
+
+/**
+ * Shows a tooltip for the appropriate button.
+ * @param action - pointer to an Action
+ *
+void BattlescapeState::txtTooltipIn(Action* action)
+{
+	if (allowButtons() && Options::battleTooltips)
+	{
+		_currentTooltip = action->getSender()->getTooltip();
+		_txtTooltip->setText(tr(_currentTooltip));
+	}
+} */
+/**
+ * Clears the tooltip text.
+ * @param action - pointer to an Action
+ *
+void BattlescapeState::txtTooltipOut(Action* action)
+{
+	if (allowButtons() && Options::battleTooltips)
+		if (_currentTooltip == action->getSender()->getTooltip())
+			_txtTooltip->setText(L"");
+} */
 
 }

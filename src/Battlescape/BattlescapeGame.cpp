@@ -249,6 +249,8 @@ void BattlescapeGame::think()
 					else if ((selUnit = _battleSave->firstFactionUnit(_battleSave->getSide())) != nullptr)
 					{
 						//Log(LOG_INFO) << "bg:think() first VALID id-" << selUnit->getId();
+						_AIActionCounter = 0;
+
 						_battleSave->setSelectedUnit(selUnit);
 						getMap()->getCamera()->centerPosition(selUnit->getPosition(), false);
 					}
@@ -617,13 +619,12 @@ void BattlescapeGame::popBattleState()
 		{
 			//Log(LOG_INFO) << "PopState: rfShooter VALID - clear!";
 			getTileEngine()->isReaction() = false;
-
-			//Log(LOG_INFO) << ". set Camera to triggerPos " << _battleSave->rfTriggerOffset();
 			SDL_Delay(Screen::SCREEN_PAUSE);
 		}
 
 		if (_battleSave->rfTriggerOffset().z != -1)	// NOTE: Since non-vis reactors don't set isReaction() TRUE
 		{											// the camera-to-original-position must be handled independently.
+			//Log(LOG_INFO) << ". set Camera to triggerPos " << _battleSave->rfTriggerOffset();
 			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
 			_battleSave->rfTriggerOffset(Position(0,0,-1));
 		}

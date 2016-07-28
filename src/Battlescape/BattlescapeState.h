@@ -392,14 +392,6 @@ private:
 		/// Handler for clicking the use psi button.
 		void btnPsiClick(Action* action);
 
-		/// Handler for clicking a reserved button.
-//		void btnReserveClick(Action* action);
-		/// Handler for clicking the reserve TUs to kneel button.
-//		void btnReserveKneelClick(Action* action);
-
-		/// Handler for clicking the reload button.
-//		void btnReloadClick(Action* action);
-
 		/// Handler for clicking the expend all TUs button.
 		void btnZeroTuClick(Action* action);
 		/// Handler for pressing the expend all TUs key.
@@ -416,11 +408,6 @@ private:
 
 		/// Handler for turning a selected BattleUnit with the keyboard.
 		void keyTurnUnit(Action* action);
-
-		/// Handler for showing tooltip.
-//		void txtTooltipIn(Action* action);
-		/// Handler for hiding tooltip.
-//		void txtTooltipOut(Action* action);
 
 		/// Determines whether a playable unit is selected.
 		bool playableUnitSelected();
@@ -519,6 +506,18 @@ private:
 		void saveVoxelMap();
 		/// Saves a first-person voxel view of the battlescape.
 		void saveVoxelView();
+
+		/// Handler for clicking a reserved button.
+//		void btnReserveClick(Action* action);
+		/// Handler for clicking the reserve TUs to kneel button.
+//		void btnReserveKneelClick(Action* action);
+		/// Handler for clicking the reload button.
+//		void btnReloadClick(Action* action);
+
+		/// Handler for showing tooltip.
+//		void txtTooltipIn(Action* action);
+		/// Handler for hiding tooltip.
+//		void txtTooltipOut(Action* action);
 };
 
 }

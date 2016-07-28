@@ -94,7 +94,7 @@ SavedBattleGame::SavedBattleGame(
 		_controlDestroyed(false),
 		_tiles(nullptr),
 		_pacified(false),
-		_rfTriggerOffset(0,0,-1),
+		_rfTriggerOffset(Position(0,0,-1)),
 		_dropTu(0),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
