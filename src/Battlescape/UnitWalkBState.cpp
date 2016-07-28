@@ -116,8 +116,6 @@ void UnitWalkBState::init()
 //		Log(LOG_INFO) << "";
 //		Log(LOG_INFO) << "walkB:init() id-" << _unit->getId();
 //		Log(LOG_INFO) << ". " << _unit->getPosition() << " to " << _action.posTarget;
-//		if (_battleSave->getLastVisibleAiUnit()) Log(LOG_INFO) << ". walkUnit id-" << _battleSave->getLastVisibleAiUnit()->getId();
-//		else Log(LOG_INFO) << ". walkUnit NOT Valid";
 //	}
 
 	_pf->setPathingUnit(_unit);
@@ -165,15 +163,15 @@ void UnitWalkBState::think()
 		case STATUS_WALKING:
 		case STATUS_FLYING:
 			//Log(LOG_INFO) << "STATUS_WALKING or FLYING : " << _unit->getId();
-/*			if (_isVisible == true)
-			{
-				const int stopZ = _unit->getStopPosition().z;
-				if (_walkCamera->isOnScreen(_unit->getPosition()) == true
-					&& _walkCamera->getViewLevel() < stopZ)
-				{
-					_walkCamera->setViewLevel(stopZ);
-				}
-			} */
+//			if (_isVisible == true)
+//			{
+//				const int stopZ = _unit->getStopPosition().z;
+//				if (_walkCamera->isOnScreen(_unit->getPosition()) == true
+//					&& _walkCamera->getViewLevel() < stopZ)
+//				{
+//					_walkCamera->setViewLevel(stopZ);
+//				}
+//			}
 
 			if (doStatusWalk() == false)
 			{
@@ -190,26 +188,26 @@ void UnitWalkBState::think()
 				//Log(LOG_INFO) << "STATUS_STANDING_end in UnitWalkBState _WALKING or _FLYING !!!" ;
 				clearTilesLink(true);
 
-/*				if (_isVisible == true)
-				{
-					const Position pos = _unit->getPosition();
-
-					if (_unit->getFaction() != FACTION_PLAYER
-						&& _walkCamera->isOnScreen(pos) == false)
-					{
-						_walkCamera->centerOnPosition(pos);
-						_walkCamera->setViewLevel(_unit->getStopPosition().z);
-					}
-					else if (_walkCamera->isOnScreen(pos) == true)
-					{
-						const int stopZ = _unit->getStopPosition().z;
-						if (_walkCamera->getViewLevel() > stopZ
-							&& (_pf->getPath().size() == 0 || _pf->getPath().back() != Pathfinding::DIR_UP))
-						{
-							_walkCamera->setViewLevel(stopZ);
-						}
-					}
-				} */
+//				if (_isVisible == true)
+//				{
+//					const Position pos = _unit->getPosition();
+//
+//					if (_unit->getFaction() != FACTION_PLAYER
+//						&& _walkCamera->isOnScreen(pos) == false)
+//					{
+//						_walkCamera->centerPosition(pos);
+//						_walkCamera->setViewLevel(_unit->getStopPosition().z);
+//					}
+//					else if (_walkCamera->isOnScreen(pos) == true)
+//					{
+//						const int stopZ = _unit->getStopPosition().z;
+//						if (_walkCamera->getViewLevel() > stopZ
+//							&& (_pf->getPath().size() == 0 || _pf->getPath().back() != Pathfinding::DIR_UP))
+//						{
+//							_walkCamera->setViewLevel(stopZ);
+//						}
+//					}
+//				}
 
 				if (doStatusStand_end() == false)
 				{
@@ -265,26 +263,26 @@ void UnitWalkBState::think()
 			}
 
 			// Destination is not valid until *after* doStatusStand() runs.
-/*			if (_isVisible == true)
-			{
-				//Log(LOG_INFO) << ". onScreen";
-				const Position pos = _unit->getPosition();
-
-				if (_unit->getFaction() != FACTION_PLAYER
-					&& _walkCamera->isOnScreen(pos) == false)
-				{
-					_walkCamera->centerOnPosition(pos);
-					_walkCamera->setViewLevel(pos.z);
-				}
-				else if (_walkCamera->isOnScreen(pos) == true) // is Faction_Player
-				{
-					const int stopZ = _unit->getStopPosition().z;
-					if (pos.z == stopZ || (pos.z < stopZ && _walkCamera->getViewLevel() < stopZ))
-					{
-						_walkCamera->setViewLevel(pos.z);
-					}
-				}
-			} */
+//			if (_isVisible == true)
+//			{
+//				//Log(LOG_INFO) << ". onScreen";
+//				const Position pos = _unit->getPosition();
+//
+//				if (_unit->getFaction() != FACTION_PLAYER
+//					&& _walkCamera->isOnScreen(pos) == false)
+//				{
+//					_walkCamera->centerPosition(pos);
+//					_walkCamera->setViewLevel(pos.z);
+//				}
+//				else if (_walkCamera->isOnScreen(pos) == true) // is Faction_Player
+//				{
+//					const int stopZ = _unit->getStopPosition().z;
+//					if (pos.z == stopZ || (pos.z < stopZ && _walkCamera->getViewLevel() < stopZ))
+//					{
+//						_walkCamera->setViewLevel(pos.z);
+//					}
+//				}
+//			}
 	}
 
 
@@ -638,12 +636,11 @@ bool UnitWalkBState::doStatusStand() // private.
 	if (_isVisible == true)
 	{
 		if (_unit->getFaction() != FACTION_PLAYER
-//			&& _unit != _battleSave->getLastVisibleAiUnit()
 			&& _walkCamera->isOnScreen(_unit->getPosition()) == false)
 		{
 			//if (_debug)
 			//Log(LOG_INFO) << "walkB:doStatusStand() centerPos id-" << _unit->getId();
-			_walkCamera->centerOnPosition(posStart);
+			_walkCamera->centerPosition(posStart);
 		}
 		else
 		{
@@ -894,54 +891,16 @@ bool UnitWalkBState::doStatusStand_end() // private.
 	}
 	_te->calcFovUnits_pos(pos, false, faction);
 
-	if (_unit->getUnitVisible() == true)
+	if (_unit->getFaction() != FACTION_PLAYER
+		&& _unit->getUnitVisible() == true)
 	{
-		if (_isVisible == false
-			&& _walkCamera->isInFocus(_unit->getPosition()) == false)
-		{
-			//if (_debug)
-			//Log(LOG_INFO) << "walkB:doStatusStand_end() vis changed - centerPos id-" << _unit->getId() << " - set walkUnit";
-//									  << " " << _unit->getPosition();
-//			_battleSave->setLastVisibleAiUnit(_unit);
-			_walkCamera->centerOnPosition(_unit->getPosition());
-		}
-		else if (_unit->getPosition().z != _walkCamera->getViewLevel())
-		{
-			//Log(LOG_INFO) << "walkB:doStatusStand_end() set viewLevel id-" << _unit->getId();
-			_walkCamera->setViewLevel(pos.z);
-		}
+		if (_isVisible == false)
+			_walkCamera->centerPosition(_unit->getPosition(), false);
+		else
+			_walkCamera->focusPosition(
+									_unit->getPosition(),
+									false, false);
 	}
-
-//	if (_isVisible == true)
-//	{
-//		if (   _unit->getFaction() != FACTION_PLAYER
-//			&& _unit != _battleSave->getLastVisibleAiUnit()
-//			&& _pf->getStartDirection() == -1) // about to end.
-//		{
-//			if (_debug) Log(LOG_INFO) << ". walkUnit Changed: center Pos id-" << _unit->getId()
-//									  << " " << _unit->getPosition();
-//			_walkCamera->centerOnPosition(_unit->getPosition());
-//			// Okay, better write something about this. When the last aLien unit to
-//			// do its AI (or perhaps a Civie) is marked unselectable in handleUnitAI()
-//			// or thereabouts, but it moves into Player-unit's view when *entering
-//			// its last tile* the Hidden Movement is revealed ... but it won't be
-//			// centered because it didn't start its walk-step in Player view. This,
-//			// simply by checking if the aLien is low on TU -- change: has no start
-//			// direction -- allows a forced "center on Position" to be done here.
-//			// (An unconditionally forced center otherwise would cause the camera to
-//			// jolt along with each tile-step.)
-//			//
-//			// That works in conjunction with the extended-reveal granted by
-//			// Game::delayBlit(), btw.
-//			//
-//			// NOTE: This could probably be superceded by using '_isVisibleChanged'.
-//			// No. The walkUnit works to prevent the Camera re-centering between
-//			// two consecutive AI slices of a BattleUnit.
-//		}
-//		else
-//			_walkCamera->setViewLevel(pos.z);
-//	}
-
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{

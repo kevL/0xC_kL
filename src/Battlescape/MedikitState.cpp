@@ -449,7 +449,9 @@ void MedikitState::painClick(Action*)
 
 					battleSave->getBattleGame()->setupSelector();
 
-					battleSave->getBattleGame()->getMap()->getCamera()->centerOnPosition(_action->targetUnit->getPosition());
+					battleSave->getBattleGame()->getMap()->getCamera()->centerPosition(
+																					_action->targetUnit->getPosition(),
+																					false);
 
 					closeClick(nullptr);
 				}

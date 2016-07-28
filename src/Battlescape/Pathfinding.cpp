@@ -468,7 +468,7 @@ bool Pathfinding::aStarPath( // private.
 				&& _unit->getUnitRules() != nullptr
 				&& _unit->getUnitRules()->isMechanical() == true)
 			{
-				const int delta (std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection())); // no u.
+				const int delta (std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection()));
 				if (delta > 1 && delta != 7)
 				{
 					_path.clear(); // safety.

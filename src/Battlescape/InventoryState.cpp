@@ -481,7 +481,7 @@ void InventoryState::init()
 		}
 	}
 
-//	if (_parent) _parent->getMap()->getCamera()->centerOnPosition(unit->getPosition(), false);
+//	if (_parent) _parent->getMap()->getCamera()->centerPosition(unit->getPosition(), false);
 
 	unit->flagCache();
 

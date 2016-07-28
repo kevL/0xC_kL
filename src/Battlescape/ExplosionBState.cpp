@@ -274,14 +274,10 @@ void ExplosionBState::init()
 				_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 											->play(-1, _parent->getMap()->getSoundAngle(posTarget));
 
-			Camera* const exploCam (_parent->getMap()->getCamera());
-			if (_forceCamera == true
-				|| exploCam->isOnScreen(posTarget) == false)
-			{
-				exploCam->centerOnPosition(posTarget, false);
-			}
-			else if (exploCam->getViewLevel() != posTarget.z)
-				exploCam->setViewLevel(posTarget.z);
+			if (_forceCamera == true)
+				_parent->getMap()->getCamera()->centerPosition(posTarget);
+			else
+				_parent->getMap()->getCamera()->focusPosition(posTarget);
 		}
 		else
 			_parent->popBattleState();
@@ -378,10 +374,10 @@ void ExplosionBState::init()
 			|| (exploCam->isOnScreen(posTarget) == false
 				&& (_battleSave->getSide() != FACTION_PLAYER
 					|| _itRule->getBattleType() != BT_PSIAMP))
-			|| (_battleSave->getSide() != FACTION_PLAYER
-				&& _itRule->getBattleType() == BT_PSIAMP))
+			|| (_itRule->getBattleType() == BT_PSIAMP
+				&& _battleSave->getSide() != FACTION_PLAYER))
 		{
-			exploCam->centerOnPosition(posTarget, false);
+			exploCam->centerPosition(posTarget, false);
 		}
 		else if (exploCam->getViewLevel() != posTarget.z)
 			exploCam->setViewLevel(posTarget.z);

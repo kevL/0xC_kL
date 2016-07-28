@@ -84,7 +84,7 @@ UnitDieBState::UnitDieBState(
 	if (_hidden == false)
 	{
 		_unit->setUnitVisible();
-		centerOnDeath();
+		_parent->getMap()->getCamera()->focusPosition(_unit->getPosition());
 
 		switch (_unit->getFaction())
 		{
@@ -166,7 +166,7 @@ void UnitDieBState::think()
 		if (_init == true)
 		{
 			_init = false;
-			centerOnDeath();
+			_parent->getMap()->getCamera()->focusPosition(_unit->getPosition());
 		}
 
 		if (_doneScream == false
@@ -390,20 +390,8 @@ void UnitDieBState::convertToBody() // private.
 }															// and account for possible obscuring effects too.
 
 /**
- * Centers the Camera on the collapsing unit.
- */
-void UnitDieBState::centerOnDeath() // private.
-{
-	Camera* const deathCamera (_parent->getMap()->getCamera());
-	if (deathCamera->isOnScreen(_unit->getPosition()) == false)
-		deathCamera->centerOnPosition(_unit->getPosition());
-	else if (_unit->getPosition().z != deathCamera->getViewLevel())
-		deathCamera->setViewLevel(_unit->getPosition().z);
-}
-
-/**
  * Dying cannot be cancelled.
- *
-void UnitDieBState::cancel(){} */
+ */
+//void UnitDieBState::cancel(){}
 
 }

@@ -96,7 +96,6 @@ SavedBattleGame::SavedBattleGame(
 		_pacified(false),
 		_rfTriggerOffset(0,0,-1),
 		_dropTu(0),
-		_lastVisibleAIUnit(nullptr),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_TURN_DEFAULT)
@@ -717,16 +716,16 @@ YAML::Node SavedBattleGame::save() const
 				Tile::serializationKey.index,
 				static_cast<int>(i));
 		_tiles[i]->saveBinary(&writeBuffer);
-/*		if (_tiles[i]->isVoid() == false)
-		{
-			serializeInt(
-					&writeBuffer,
-					Tile::serializationKey.index,
-					static_cast<int>(i));
-			_tiles[i]->saveBinary(&writeBuffer);
-		}
-		else
-			tilesDataSize -= Tile::serializationKey.totalBytes; */
+//		if (_tiles[i]->isVoid() == false)	// NOTE: Save *all* tiles because otherwise it creates problems
+//		{									// with ... stuff.
+//			serializeInt(
+//					&writeBuffer,
+//					Tile::serializationKey.index,
+//					static_cast<int>(i));
+//			_tiles[i]->saveBinary(&writeBuffer);
+//		}
+//		else
+//			tilesDataSize -= Tile::serializationKey.totalBytes;
 	}
 
 	node["totalTiles"]	= tilesDataSize / Tile::serializationKey.totalBytes; // not strictly necessary, just convenient
@@ -907,26 +906,16 @@ void SavedBattleGame::initUtilities(const ResourcePack* const res)
  */
 void SavedBattleGame::setTacType(const std::string& type) // private.
 {
-	if (type.compare("STR_UFO_CRASH_RECOVERY") == 0)
-		_tacType = TCT_UFOCRASHED;
-	else if (type.compare("STR_UFO_GROUND_ASSAULT") == 0)
-		_tacType = TCT_UFOLANDED;
-	else if (type.compare("STR_BASE_DEFENSE") == 0)
-		_tacType = TCT_BASEDEFENSE;
-	else if (type.compare("STR_ALIEN_BASE_ASSAULT") == 0)
-		_tacType = TCT_BASEASSAULT;
-	else if (type.compare("STR_TERROR_MISSION") == 0
-		|| type.compare("STR_PORT_ATTACK") == 0)
-	{
-		_tacType = TCT_TERRORSITE;
-	}
-	else if (type.compare("STR_MARS_CYDONIA_LANDING") == 0)
-		_tacType = TCT_MARS1;
-	else if (type.compare("STR_MARS_THE_FINAL_ASSAULT") == 0)
-		_tacType = TCT_MARS2;
-	else
-		_tacType = TCT_DEFAULT;	// <- the default should probly be TCT_UFOCRASHED.
-}								// Or even TCT_ARBITRARY/CUSTOM.
+	if		(type.compare("STR_UFO_CRASH_RECOVERY") == 0)		_tacType = TCT_UFOCRASHED;
+	else if	(type.compare("STR_UFO_GROUND_ASSAULT") == 0)		_tacType = TCT_UFOLANDED;
+	else if	(type.compare("STR_BASE_DEFENSE") == 0)				_tacType = TCT_BASEDEFENSE;
+	else if	(type.compare("STR_ALIEN_BASE_ASSAULT") == 0)		_tacType = TCT_BASEASSAULT;
+	else if	(type.compare("STR_TERROR_MISSION") == 0
+		||	 type.compare("STR_PORT_ATTACK") == 0)				_tacType = TCT_TERRORSITE;
+	else if	(type.compare("STR_MARS_CYDONIA_LANDING") == 0)		_tacType = TCT_MARS1;
+	else if	(type.compare("STR_MARS_THE_FINAL_ASSAULT") == 0)	_tacType = TCT_MARS2;
+	else														_tacType = TCT_DEFAULT;	// <- the default should probly be TCT_UFOCRASHED.
+}																						// Or even TCT_ARBITRARY/CUSTOM.
 
 /**
  * Gets the TacticalType of this battle.
@@ -1127,9 +1116,6 @@ BattleUnit* SavedBattleGame::selectUnit( // private.
 		bool checkInventory)
 {
 	//Log(LOG_INFO) << "sbg:selectUnit()";
-//	if (_units.empty() == true) // how can this ever happen.
-//		return (_selectedUnit = _recallUnit = nullptr);
-
 	if (dontReselect == true && _selectedUnit != nullptr)
 	{
 		//Log(LOG_INFO) << ". set dontReselect id-" << _selectedUnit->getId();
@@ -1145,17 +1131,6 @@ BattleUnit* SavedBattleGame::selectUnit( // private.
 		case FACTION_HOSTILE:
 		case FACTION_NEUTRAL: units = &_shuffleUnits;
 	}
-//	if (_shuffleUnits.empty() == true // <- for Base/Craft equip screen.
-//		|| _shuffleUnits[0u] == nullptr)
-//	{
-//		Log(LOG_INFO) << ". shuffleUnits NULL use Units";
-//		units = &_units;
-//	}
-//	else // non-player turn: Use shuffledUnits. See endFactionTurn() ....
-//	{
-//		Log(LOG_INFO) << ". use shuffleUnits!";
-//		units = &_shuffleUnits;
-//	}
 
 	std::vector<BattleUnit*>::const_iterator
 		iterFirst,
@@ -1225,30 +1200,6 @@ BattleUnit* SavedBattleGame::selectUnit( // private.
 }
 
 /**
- * Sets the previously selected AI-unit.
- * @note Used for controlling the Camera during aLien movement incl/ panic.
- * Stops the Camera from recentering on a unit that just moved and so is already
- * nearly centered but is getting another slice from the AI-engine.
- * @param unit - pointer to a BattleUnit (default nullptr)
- */
-void SavedBattleGame::setLastVisibleAiUnit(const BattleUnit* const unit)
-{
-	_lastVisibleAIUnit = unit;
-}
-
-/**
- * Gets the previously selected AI-unit.
- * @note Used for controlling the Camera during aLien movement incl/ panic.
- * Stops the Camera from recentering on a unit that just moved and so is
- * already nearly centered but is getting another slice from the AI-engine.
- * @return, pointer to a BattleUnit
- */
-const BattleUnit* SavedBattleGame::getLastVisibleAiUnit() const
-{
-	return _lastVisibleAIUnit;
-}
-
-/**
  * Gets the faction-side currently playing.
  * @return, the faction currently playing (BattleUnit.h)
  */
@@ -1307,11 +1258,9 @@ bool SavedBattleGame::endFactionTurn()
 		case FACTION_HOSTILE: // end of Alien turn.
 			if (firstFactionUnit(FACTION_NEUTRAL) != nullptr)
 			{
-				//Log(LOG_INFO) << ". end Hostile - selUnit id-" << _selectedUnit->getId();
 				_side = FACTION_NEUTRAL;
 				break;
 			}
-			//else Log(LOG_INFO) << ". end Hostile - selUnit NONE";
 			// no break;
 
 		case FACTION_NEUTRAL: // end of Civilian turn.
@@ -1332,8 +1281,6 @@ bool SavedBattleGame::endFactionTurn()
 					_shuffleUnits.begin(),
 					_shuffleUnits.end(),
 					nullptr);
-
-			_lastVisibleAIUnit = nullptr;
 
 			tileVolatiles(); // do Tile stuff
 
@@ -1437,9 +1384,6 @@ bool SavedBattleGame::endFactionTurn()
 				// no break;
 
 			case STATUS_UNCONSCIOUS:
-				//Log(LOG_INFO) << "";
-				//Log(LOG_INFO) << ". id-" << (*i)->getId() << " status= " << (*i)->getUnitStatus();
-
 				if ((*i)->getOriginalFaction() == _side)	// NOTE: This could get funky and there should probably
 					(*i)->hitUnitFire();					// be a checkCasualties() call for that.
 
@@ -1476,33 +1420,7 @@ bool SavedBattleGame::endFactionTurn()
 	_te->calcFovUnits_all(); // do calcFov() *after* aLiens & civies have been set non-visible above^
 
 	return (_side == FACTION_PLAYER);
-//	if (_side != FACTION_PLAYER)
-//	{
-//		selectNextUnit();	// NOTE: This seems redundant w/ BattlescapeGame::think().
-//		return false;				// So Let think() take care of it.
-//	}
-//	return true;
 }
-
-/**
- * Selects one of the Player's units when he/she begins each turn.
- *
-void SavedBattleGame::selectFirstPlayerUnit() // private.
-{
-	if (_recallUnit != nullptr
-		&& _recallUnit->isSelectable(FACTION_PLAYER) == true)
-	{
-		_selectedUnit = _recallUnit;
-	}
-	else
-		selectNextUnit();
-
-	while (_selectedUnit != nullptr
-		&& _selectedUnit->getFaction() != FACTION_PLAYER)
-	{
-		selectNextUnit(false, true);
-	}
-} */
 
 /**
  * Selects the first BattleUnit of faction at the start of each faction-turn.

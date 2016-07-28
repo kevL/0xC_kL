@@ -49,29 +49,35 @@ private:
 		_mapsize_x,
 		_mapsize_y,
 		_mapsize_z,
+
+		_playableHeight,
+
 		_screenHeight,
 		_screenWidth,
-		_scrollMouseX,
-		_scrollMouseY,
-		_scrollKeyX,
-		_scrollKeyY,
 		_spriteHeight,
 		_spriteWidth,
-		_playableHeight;
+
+		_scrollKeyX,
+		_scrollKeyY,
+		_scrollMouseX,
+		_scrollMouseY;
 
 	Map* _map;
 	Position
-		_offsetField,
-		_centerField;
+		_centerField,
+		_offsetField;
 	Timer
-		* _scrollMouseTimer,
-		* _scrollKeyTimer;
+		* _scrollKeyTimer,
+		* _scrollMouseTimer;
 
-	///
-	void intMinMax(
+	/// Sets the value to min if it is below min and to max if it is above max.
+	static void intMinMax(
 			int* value,
 			int minValue,
-			int maxValue) const;
+			int maxValue);
+
+	/// Checks if x/y coordinates are inside a central bounding-box.
+	bool isInFocus(const Position& posField) const;
 
 
 	public:
@@ -84,7 +90,7 @@ private:
 				int mapsize_x,
 				int mapsize_y,
 				int mapsize_z,
-				Map* battleField,
+				Map* const battleField,
 				int playableHeight);
 		/// Cleans up the Camera.
 		~Camera();
@@ -143,12 +149,17 @@ private:
 				int* mapX,
 				int* mapY) const;
 
-		/// Centers the Map on a position.
-		void centerOnPosition(
+		/// Gets the Camera's center-position.
+		Position getCenterPosition();
+		/// Centers the Camera on a position.
+		void centerPosition(
 				const Position& posField,
 				bool draw = true);
-		/// Gets the Map's center-position.
-		Position getCenterPosition();
+		/// Focuses the Camera on a position.
+		bool focusPosition(
+				const Position& posField,
+				bool checkScreen = true,
+				bool draw = true);
 
 		/// Gets the Map's size-x.
 		int getMapSizeX() const;
@@ -165,10 +176,8 @@ private:
 		/// Checks if the Camera is showing all map-layers.
 		bool getShowLayers() const;
 
-		/// Checks if map-coordinates x/y/z are on-screen.
+		/// Checks if x/y coordinates are inside the screen.
 		bool isOnScreen(const Position& posField) const;
-		/// Checks if map-coordinates x/y/z are on-focus.
-		bool isInFocus(const Position& posField) const;
 
 		/// Resizes the viewable area.
 		void resize();

@@ -107,7 +107,6 @@ private:
 	BattleUnit
 		* _selectedUnit,
 		* _recallUnit;
-	const BattleUnit* _lastVisibleAIUnit; // -> "prior AI active actor" (used to stop Camera re-centering when it's already more-or-less centered)
 	Pathfinding* _pf;
 	Tile
 		* _equiptTile,
@@ -148,9 +147,6 @@ private:
 //		_dragTimeTolerance,		// this is a cache for Options::getInt("battleScrollDragTimeTolerance")
 //		_dragPixelTolerance;	// this is a cache for Options::getInt("battleScrollDragPixelTolerance")
 
-	/// Selects one of the Player's units when he/she begins each turn.
-//	void selectFirstPlayerUnit();
-
 	/// Selects a BattleUnit.
 	BattleUnit* selectUnit(
 			int dir,
@@ -163,7 +159,7 @@ private:
 
 
 	public:
-		static const size_t SEARCH_SIZE = SEARCH_DIST * SEARCH_DIST;
+		static const size_t SEARCH_SIZE = (SEARCH_DIST * SEARCH_DIST);
 
 		/// Creates a new battle save based on the current generic save.
 		explicit SavedBattleGame(
@@ -276,11 +272,6 @@ private:
 				bool dontReselect = false,
 				bool checkReselect = false,
 				bool checkInventory = false);
-
-		/// Sets the previously selected AI-unit.
-		void setLastVisibleAiUnit(const BattleUnit* const unit = nullptr);
-		/// Gets the previously selected AI-unit.
-		const BattleUnit* getLastVisibleAiUnit() const;
 
 		/// Gets the playing side.
 		UnitFaction getSide() const;

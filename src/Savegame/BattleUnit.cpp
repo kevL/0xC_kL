@@ -4873,4 +4873,31 @@ void BattleUnit::burnTile(Tile* const tile)
 	}
 }
 
+/**
+ * Converts UnitStatus to a string for the Logfile.
+ * @param status - status (BattleUnit.h)
+ * @return, status as a string
+ */
+std::string BattleUnit::debugStatus(UnitStatus status) // static
+{
+	switch (status)
+	{
+		case STATUS_STANDING:		return "standing";
+		case STATUS_WALKING:		return "walking";
+		case STATUS_FLYING:			return "flying";
+		case STATUS_TURNING:		return "turning";
+		case STATUS_AIMING:			return "aiming";
+		case STATUS_COLLAPSING:		return "collapsing";
+		case STATUS_DEAD:			return "dead";
+		case STATUS_UNCONSCIOUS:	return "unconscious";
+		case STATUS_PANICKING:		return "panicking";
+		case STATUS_BERSERK:		return "berserk";
+		case STATUS_LATENT:			return "latent";
+		case STATUS_LATENT_START:	return "latent_start";
+
+		default:
+			return "error: no status";
+	}
+}
+
 }

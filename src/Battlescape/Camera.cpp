@@ -52,7 +52,7 @@ Camera::Camera(
 		int mapsize_x,
 		int mapsize_y,
 		int mapsize_z,
-		Map* battleField,
+		Map* const battleField,
 		int playableHeight)
 	:
 		_spriteWidth(spriteWidth),
@@ -102,10 +102,10 @@ void Camera::setScrollTimers(
  * @param minValue	- the minimum value
  * @param maxValue	- the maximum value
  */
-void Camera::intMinMax( // private.
+void Camera::intMinMax( // private/static.
 		int* value,
 		int minValue,
-		int maxValue) const
+		int maxValue)
 {
 	if		(*value < minValue) *value = minValue;
 	else if	(*value > maxValue) *value = maxValue;
@@ -570,15 +570,25 @@ void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() cau
 }
 
 /**
- * Centers the Map on a certain battlefield Position.
+ * Gets this Camera's center-position.
+ * @note Called only by MiniMapView.
+ * @return, center Position
+ */
+Position Camera::getCenterPosition()
+{
+	_centerField.z = _offsetField.z;
+	return _centerField;
+}
+
+/**
+ * Centers this Camera on a specified battlefield Position.
  * @param posField	- reference to the position to center on
  * @param draw		- true to redraw the map (default true)
  */
-void Camera::centerOnPosition(
+void Camera::centerPosition(
 		const Position& posField,
 		bool draw)
 {
-	//Log(LOG_INFO) << "Camera::centerOnPosition() " << posField;
 	_centerField = posField;
 
 	intMinMax(
@@ -605,13 +615,32 @@ void Camera::centerOnPosition(
 }
 
 /**
- * Gets the Map's center-position.
- * @return, center Position
+ * Focuses this Camera on a specified battlefield Position.
+ * @note A position will be considered OnScreen even if it is on a different
+ * view-level than current. This function will correct the view-level if it's
+ * different than @a posField.
+ * @param posField		- reference to the position to center on
+ * @param checkScreen	- true to use screen-edge as bounding box
+ *						  false to use "focus" dimensions (default true)
+ * @param draw			- true to redraw the map (default true)
+ * @return, true if @a posField was NOT OnScreen or InFocus, ie. the camera warps
  */
-Position Camera::getCenterPosition()
+bool Camera::focusPosition(
+		const Position& posField,
+		bool checkScreen,
+		bool draw)
 {
-	_centerField.z = _offsetField.z;
-	return _centerField;
+	if (   (checkScreen == true  && isOnScreen(posField) == false)
+		|| (checkScreen == false && isInFocus(posField)  == false))
+	{
+		centerPosition(posField, draw);
+		return true;
+	}
+
+	if (posField.z != _offsetField.z)
+		setViewLevel(posField.z);
+
+	return false;
 }
 
 /**
@@ -754,55 +783,64 @@ bool Camera::getShowLayers() const
 /**
  * Checks if a specified position is displayed on-screen.
  * @note This does not care about the Map's z-level, only whether @a posField
- * is on screen.
+ * is OnScreen.
+ * @sa Camera::isInFocus()
  * @param posField - reference to the coordinates to check
- * @return, true if the map-coordinates are on-screen
+ * @return, true if the coordinates are on-screen
  */
 bool Camera::isOnScreen(const Position& posField) const
 {
+//	if (posField.z == _offsetField.z)
+//	{
 	Position posScreen;
 	convertMapToScreen(
-					posField,		// tile Position
-					&posScreen);	// pixel Position
+					posField,
+					&posScreen);
 	posScreen.x += _offsetField.x;
 	posScreen.y += _offsetField.y;
 
-	static const int border (32); // buffer the edges a bit.
-
-	return posScreen.x > 8 + border
-		&& posScreen.x < _screenWidth - 8 - _spriteWidth - border
-		&& posScreen.y > -16 + border
-		&& posScreen.y < _screenHeight - 80 - border; // <- icons.
+	return posScreen.x > 16 // NOTE: The top-left corner pixel of a "sprite" is used to determine screen-position.
+		&& posScreen.x < _screenWidth - _spriteWidth - 16
+		&& posScreen.y > 16
+		&& posScreen.y < _playableHeight - _spriteHeight;
+//	}
+//	return false;
 }
 
 /**
  * Checks if a specified position is displayed within a tighter bounding-box
  * than isOnScreen().
- * @param posField - reference to the coordinates to check
- * @return, true if the map-coordinates are on-focus
+ * @note This does not care about the Map's z-level, only whether @a posField
+ * is InFocus.
  * @sa Camera::isOnScreen()
+ * @param posField - reference to the coordinates to check
+ * @return, true if the coordinates are in-focus
  */
-bool Camera::isInFocus(const Position& posField) const
+bool Camera::isInFocus(const Position& posField) const // private.
 {
+//	if (posField.z == _offsetField.z)
+//	{
 	Position posScreen;
 	convertMapToScreen(
-					posField,		// tile Position
-					&posScreen);	// pixel Position
+					posField,
+					&posScreen);
 	posScreen.x += _offsetField.x;
 	posScreen.y += _offsetField.y;
 
 	const int
-		border_x ((_screenWidth  >> 1u) - 100), // buffer the edges a bit more.
-		border_y ((_screenHeight >> 1u) -  80);
+		border_x ((_screenWidth  - 360) >> 1u), // arbitrary.
+		border_y ((_screenHeight - 280) >> 1u);
 
-	return posScreen.x > 8 + border_x
-		&& posScreen.x < _screenWidth - 8 - _spriteWidth - border_x
-		&& posScreen.y > -16 + border_y
-		&& posScreen.y < _screenHeight - 80 - border_y; // <- icons.
+	return posScreen.x > 16 + border_x // NOTE: The top-left corner pixel of a "sprite" is used to determine screen-position.
+		&& posScreen.x < _screenWidth - _spriteWidth - 16 - border_x
+		&& posScreen.y > 16 + border_y
+		&& posScreen.y < _playableHeight - _spriteHeight - border_y;
+//	}
+//	return false;
 }
 
 /**
- * Checks if map coordinates X,Y,Z are on screen.
+ * Checks if map coordinates X/Y are on screen.
  * @param posField Coordinates to check.
  * @param unitWalking True to offset coordinates for a unit walking.
  * @param unitSize size of unit (0 - single, 1 - 2x2, etc, used for walking only

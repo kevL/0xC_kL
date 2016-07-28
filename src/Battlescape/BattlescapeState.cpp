@@ -136,11 +136,12 @@ BattlescapeState::BattlescapeState()
 	STATE_INTERVAL_XCOM		= static_cast<Uint32>(Options::battleXcomSpeed);
 	STATE_INTERVAL_XCOMDASH	= (STATE_INTERVAL_XCOM << 1u) / 3u;
 
+	const RuleInterface* const uiRule (_rules->getInterface("battlescape"));
 	const int
 		screenWidth		(Options::baseXResolution),
 		screenHeight	(Options::baseYResolution),
-		iconsWidth		(_rules->getInterface("battlescape")->getElement("icons")->w), // 320
-		iconsHeight		(_rules->getInterface("battlescape")->getElement("icons")->h), // 56
+		iconsWidth		(uiRule->getElement("icons")->w), // 320
+		iconsHeight		(uiRule->getElement("icons")->h), // 56
 		playableHeight	(screenHeight - iconsHeight),
 		x				((screenWidth - iconsWidth) >> 1u),
 		y				(screenHeight - iconsHeight);
@@ -217,8 +218,8 @@ BattlescapeState::BattlescapeState()
 	_numMediR2			= new NumberText(7, 5, x + 281, y + 39);
 	_numMediR3			= new NumberText(7, 5, x + 281, y + 46);
 //	const int
-//		visibleUnitX = _rules->getInterface("battlescape")->getElement("visibleUnits")->x,
-//		visibleUnitY = _rules->getInterface("battlescape")->getElement("visibleUnits")->y;
+//		visibleUnitX = uiRule->getElement("visibleUnits")->x,
+//		visibleUnitY = uiRule->getElement("visibleUnits")->y;
 
 	_srfTargeter = new Surface(
 							32,40,
@@ -330,9 +331,9 @@ BattlescapeState::BattlescapeState()
 
 	setPalette(PAL_BATTLESCAPE);
 
-	if (_rules->getInterface("battlescape")->getElement("pathfinding") != nullptr)
+	if (uiRule->getElement("pathfinding") != nullptr)
 	{
-		const Element* const el (_rules->getInterface("battlescape")->getElement("pathfinding"));
+		const Element* const el (uiRule->getElement("pathfinding"));
 		Pathfinding::green	= static_cast<Uint8>(el->color);
 		Pathfinding::yellow	= static_cast<Uint8>(el->color2);
 		Pathfinding::red	= static_cast<Uint8>(el->border);
@@ -470,8 +471,8 @@ BattlescapeState::BattlescapeState()
 	_txtDebug->setHighContrast();
 	_txtDebug->setAlign(ALIGN_RIGHT);
 
-	_warning->setTextColor(static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color));
-	_warning->setColor(    static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("warning")->color2));
+	_warning->setTextColor(static_cast<Uint8>(uiRule->getElement("warning")->color));
+	_warning->setColor(    static_cast<Uint8>(uiRule->getElement("warning")->color2));
 
 	if (_battleSave->getOperation().empty() == false)
 	{
@@ -933,7 +934,7 @@ BattlescapeState::BattlescapeState()
 //		Options::keyBattleCenterEnemy10
 //	};
 
-	const Uint8 color (static_cast<Uint8>(_rules->getInterface("battlescape")->getElement("visibleUnits")->color));
+	const Uint8 color (static_cast<Uint8>(uiRule->getElement("visibleUnits")->color));
 	for (size_t
 			i = 0u;
 			i != HOTSQRS;
@@ -1025,7 +1026,7 @@ void BattlescapeState::init()
 		_firstInit = false;
 		_battleGame->setupSelector();
 
-		_map->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition(), false);
+		_map->getCamera()->centerPosition(_battleSave->getSelectedUnit()->getPosition(), false);
 
 		std::string
 			track,
@@ -1979,7 +1980,7 @@ void BattlescapeState::btnCenterPress(Action* action)
 		if (action != nullptr) // prevent NextTurnState from depressing btn.
 			_overlay->getFrame(10)->blit(_btnCenter);
 
-		_map->getCamera()->centerOnPosition(_battleSave->getSelectedUnit()->getPosition());
+		_map->getCamera()->centerPosition(_battleSave->getSelectedUnit()->getPosition());
 		refreshMousePosition();
 	}
 }
@@ -2101,8 +2102,7 @@ void BattlescapeState::selectNextPlayerUnit(
 		bool checkReselect,
 		bool checkInventory)
 {
-//	if (allowButtons() == true)
-//		&& _battleGame->getTacticalAction()->type == BA_NONE)
+//	if (allowButtons() == true && _battleGame->getTacticalAction()->type == BA_NONE)
 //	{
 	BattleUnit* const unit (_battleSave->selectNextUnit(
 													dontReselect,
@@ -2111,14 +2111,7 @@ void BattlescapeState::selectNextPlayerUnit(
 	updateSoldierInfo(false); // try no calcFov()
 
 	if (unit != nullptr)
-	{
-		_map->getCamera()->centerOnPosition(unit->getPosition());
-//		Camera* const camera (_map->getCamera());
-//		if (camera->isOnScreen(unit->getPosition()) == false)
-//			camera->centerOnPosition(unit->getPosition());
-//		else if	(camera->getViewLevel() != unit->getPosition().z)
-//			camera->setViewLevel(unit->getPosition().z);
-	}
+		_map->getCamera()->centerPosition(unit->getPosition());
 
 	_battleGame->cancelTacticalAction();
 	_battleGame->setupSelector();
@@ -2136,8 +2129,7 @@ void BattlescapeState::selectPreviousPlayerUnit(
 		bool checkReselect,
 		bool checkInventory)
 {
-//	if (allowButtons() == true)
-//		&& _battleGame->getTacticalAction()->type == BA_NONE)
+//	if (allowButtons() == true && _battleGame->getTacticalAction()->type == BA_NONE)
 //	{
 	BattleUnit* const unit (_battleSave->selectPrevUnit(
 													dontReselect,
@@ -2146,14 +2138,7 @@ void BattlescapeState::selectPreviousPlayerUnit(
 	updateSoldierInfo(false); // try no calcFov()
 
 	if (unit != nullptr)
-	{
-		_map->getCamera()->centerOnPosition(unit->getPosition());
-//		Camera* const camera (_map->getCamera());
-//		if (camera->isOnScreen(unit->getPosition()) == false)
-//			camera->centerOnPosition(unit->getPosition());
-//		else if	(camera->getViewLevel() != unit->getPosition().z)
-//			camera->setViewLevel(unit->getPosition().z);
-	}
+		_map->getCamera()->centerPosition(unit->getPosition());
 
 	_battleGame->cancelTacticalAction();
 	_battleGame->setupSelector();
@@ -2411,27 +2396,16 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 			{
 				case SDL_BUTTON_LEFT:
 				{
-					// *** cppCheck false positive ***
-					// kL_note: Invoke cppCheck w/ "--inline-suppr BattlescapeState.cpp"
-					// it says this is going to try accessing _hostileUnit[] at index=HOTSQRS.
-					// cppcheck-suppress arrayIndexOutOfBounds
-//					_map->getCamera()->centerOnPosition(_hostileUnit[i]->getPosition());
-					// (but note that it makes no such burp against _hostileUnit[] below_)
-
-					const Position pos (_hostileUnit[i]->getPosition());
+					const Position& pos (_hostileUnit[i]->getPosition());
 
 					Camera* const camera (_map->getCamera());
-					if (camera->isOnScreen(pos) == false)
+					if (camera->focusPosition(pos) == true)
 					{
-						camera->centerOnPosition(pos);
 						_srfTargeter->setX((Options::baseXResolution >> 1u) - 16);
 						_srfTargeter->setY((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);
 					}
 					else
 					{
-						if (camera->getViewLevel() != pos.z)
-							camera->setViewLevel(pos.z);
-
 						Position posScreen;
 						camera->convertMapToScreen(
 												pos,
@@ -2440,6 +2414,25 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 						_srfTargeter->setX(posScreen.x);
 						_srfTargeter->setY(posScreen.y);
 					}
+//					if (camera->isOnScreen(pos) == false)
+//					{
+//						camera->centerPosition(pos);
+//						_srfTargeter->setX((Options::baseXResolution >> 1u) - 16);
+//						_srfTargeter->setY((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);
+//					}
+//					else
+//					{
+//						if (camera->getViewLevel() != pos.z)
+//							camera->setViewLevel(pos.z);
+//
+//						Position posScreen;
+//						camera->convertMapToScreen(
+//												pos,
+//												&posScreen);
+//						posScreen += camera->getMapOffset();
+//						_srfTargeter->setX(posScreen.x);
+//						_srfTargeter->setY(posScreen.y);
+//					}
 
 					_srfTargeter->setVisible();
 					_targeterFrame = 0;
@@ -2511,11 +2504,12 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 							_battleGame->setupSelector();
 						}
 
-						Camera* const camera (_map->getCamera());
-						if (camera->isOnScreen(nextSpotter->getPosition()) == false)
-							camera->centerOnPosition(nextSpotter->getPosition());
-						else if	(camera->getViewLevel() != nextSpotter->getPosition().z)
-							camera->setViewLevel(nextSpotter->getPosition().z);
+						_map->getCamera()->focusPosition(nextSpotter->getPosition());
+//						Camera* const camera (_map->getCamera());
+//						if (camera->isOnScreen(nextSpotter->getPosition()) == false)
+//							camera->centerPosition(nextSpotter->getPosition());
+//						else if	(camera->getViewLevel() != nextSpotter->getPosition().z)
+//							camera->setViewLevel(nextSpotter->getPosition().z);
 					}
 				}
 			}
@@ -2551,7 +2545,7 @@ void BattlescapeState::btnWoundedPress(Action* action)
 			{
 				if (_btnWounded[i] == action->getSender())
 				{
-					_map->getCamera()->centerOnPosition(_tileWounded[i]->getPosition());
+					_map->getCamera()->centerPosition(_tileWounded[i]->getPosition());
 
 					if (btnId == SDL_BUTTON_LEFT)
 					{

@@ -56,8 +56,6 @@ private:
 
 	/// Converts the BattleUnit to a body-item.
 	void convertToBody();
-	/// Centers the Camera on the collapsing unit.
-	void centerOnDeath();
 
 
 	public:

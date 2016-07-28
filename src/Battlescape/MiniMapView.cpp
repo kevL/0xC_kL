@@ -375,7 +375,7 @@ void MiniMapView::centerUnit()
 	const BattleUnit* const unit (_battleSave->getSelectedUnit());
 	if (unit != nullptr)
 	{
-		_camera->centerOnPosition(
+		_camera->centerPosition(
 								unit->getPosition(),
 								false);
 		_redraw = true;
@@ -433,7 +433,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
-				_camera->centerOnPosition(_posPreDragScroll, false);
+				_camera->centerPosition(_posPreDragScroll, false);
 				_redraw = true;
 			}
 
@@ -455,7 +455,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 		{
 			_isMouseScrolled = false;
 
-			_camera->centerOnPosition(_posPreDragScroll, false);
+			_camera->centerPosition(_posPreDragScroll, false);
 			_redraw = true;
 		}
 
@@ -472,7 +472,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 				offsetX ((mX / CELL_WIDTH)  - (_surface->w / 2 / CELL_WIDTH)), // get offset (in cells) of the click relative to center of screen
 				offsetY ((mY / CELL_HEIGHT) - (_surface->h / 2 / CELL_HEIGHT));
 
-			_camera->centerOnPosition(
+			_camera->centerPosition(
 									Position(
 										_camera->getCenterPosition().x + offsetX,
 										_camera->getCenterPosition().y + offsetY,
@@ -510,7 +510,7 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 			if (_mouseOverThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
-				_camera->centerOnPosition(_posPreDragScroll, false);
+				_camera->centerPosition(_posPreDragScroll, false);
 				_redraw = true;
 			}
 
@@ -531,7 +531,7 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 		_mouseScrollX -= static_cast<int>(action->getDetails()->motion.xrel);
 		_mouseScrollY -= static_cast<int>(action->getDetails()->motion.yrel);
 
-		_camera->centerOnPosition(
+		_camera->centerPosition(
 								Position(
 									_posPreDragScroll.x + (_mouseScrollX / 11),
 									_posPreDragScroll.y + (_mouseScrollY / 11),
@@ -562,7 +562,7 @@ void MiniMapView::mouseIn(Action* action, State* state) // private.
  */
 void MiniMapView::keyScroll() // private.
 {
-	_camera->centerOnPosition(
+	_camera->centerPosition(
 							Position(
 								_camera->getCenterPosition().x - _scrollKeyX,
 								_camera->getCenterPosition().y - _scrollKeyY,

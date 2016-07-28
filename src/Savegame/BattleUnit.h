@@ -902,6 +902,9 @@ private:
 
 		/// Tries to burn a Tile if this BattleUnit is capable of doing so.
 		void burnTile(Tile* const tile);
+
+		/// Converts UnitStatus to a string for the Logfile.
+		static std::string debugStatus(UnitStatus status);
 };
 
 }

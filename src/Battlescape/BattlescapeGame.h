@@ -229,9 +229,7 @@ private:
 		_killStatPoints;
 
 
-	BattleAction
-//		_aiAction,		// for aLiens, per handleUnitAI()
-		_playerAction;	// for Player
+	BattleAction _playerAction;
 
 	BattleItem
 		* _alienPsi,
@@ -248,12 +246,6 @@ private:
 	/// Clears the trace-AI markers on all battlefield Tiles.
 	void resetTraceTiles();
 
-	/// Centers the battlefield Camera on a BattleUnit.
-	void centerOnUnit(
-			const BattleUnit* const unit,
-			bool draw = false) const;
-	/// Focuses the battlescape Camera on a newly selected AI-unit.
-	void focusOnUnit(BattleUnit* const unit);
 	/// Handles non-player BattleUnit AI.
 	void handleUnitAI(BattleUnit* const unit);
 	/// Selects the next AI unit.
@@ -327,9 +319,6 @@ private:
 		bool noActionsPending(const BattleUnit* const unit) const;
 		/// Sets the BattleState->think() interval.
 		void setStateInterval(Uint32 interval);
-
-		/// Gets the current AI BattleAction struct.
-//		const BattleAction& getCurrentAiAction();
 
 		/// Handles the result of non-target battle-actions like priming a grenade.
 		void handleNonTargetAction();
@@ -438,15 +427,6 @@ private:
 		/// Tallies conscious hostile-units.
 		int tallyHostiles() const;
 
-		/// Sets the TU reserved type.
-//		void setReservedAction(BattleActionType bat);
-		/// Gets the type of action that is reserved.
-//		BattleActionType getReservedAction() const;
-		/// Sets the kneel reservation setting.
-//		void setKneelReserved(bool reserved) const;
-		/// Checks the kneel reservation setting.
-//		bool getKneelReserved() const;
-
 		/// Checks for and triggers proximity grenades.
 		bool checkProxyGrenades(BattleUnit* const unit);
 
@@ -473,6 +453,15 @@ private:
 		void setShotgun(bool shotgun = true);
 		/// Gets if a shotgun blast is underway.
 		bool getShotgun() const;
+
+		/// Sets the TU reserved type.
+//		void setReservedAction(BattleActionType bat);
+		/// Gets the type of action that is reserved.
+//		BattleActionType getReservedAction() const;
+		/// Sets the kneel reservation setting.
+//		void setKneelReserved(bool reserved) const;
+		/// Checks the kneel reservation setting.
+//		bool getKneelReserved() const;
 };
 
 }

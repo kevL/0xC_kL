@@ -345,8 +345,7 @@ void Map::draw()
 		if (_projectile != nullptr) //&& _battleSave->getSide() == FACTION_PLAYER)
 		{
 			_projectileInFOV = true;; // just show the darn projectiles <-
-//			tile = _battleSave->getTile(Position::toTileSpace(_projectile->getPosition()));
-//			if (tile != nullptr
+//			if ((tile = _battleSave->getTile(Position::toTileSpace(_projectile->getPosition()))) != nullptr
 //				&& (tile->getTileVisible() == true
 //					|| _battleSave->getSide() != FACTION_PLAYER)) // shows projectile during aLien berserk
 //			{
@@ -364,11 +363,9 @@ void Map::draw()
 //					i != _explosions.end();
 //					++i)
 //			{
-//				tile = _battleSave->getTile(Position::toTileSpace((*i)->getPosition()));
-//				if (tile != nullptr
+//				if ((tile = _battleSave->getTile(Position::toTileSpace((*i)->getPosition()))) != nullptr
 //					&& (tile->getTileVisible() == true
-//						|| (tile->getTileUnit() != nullptr
-//							&& tile->getTileUnit()->getUnitVisible() == true)
+//						|| (tile->getTileUnit() != nullptr && tile->getTileUnit()->getUnitVisible() == true)
 //						|| (*i)->isAoE() == true
 //						|| (*i)->isTorch() == true
 //						|| _battleSave->getSide() != FACTION_PLAYER)) // shows hit-explosion during aLien berserk
@@ -386,19 +383,8 @@ void Map::draw()
 
 //		static int debug (1);
 
-//		if (_battleSave->getSelectedUnit() != nullptr
-//			&& _battleSave->getSelectedUnit()->getUnitVisible() == true)
-//		{
-//			Log(LOG_INFO) << "draw id-" << _battleSave->getSelectedUnit()->getId()
-//						  << " " << _battleSave->getSelectedUnit()->getPosition();
-//		}
-
 		if (   _battleSave->getSelectedUnit() == nullptr
 			|| _battleSave->getSelectedUnit()->getUnitVisible() == true
-//				&& (_battleSave->getSelectedUnit()->getFaction() == FACTION_PLAYER
-//					|| (_battleGame->getCurrentAiAction().type != BA_NONE
-//						&& _battleGame->getCurrentAiAction().type != BA_THINK
-//						&& _battleSave->getSelectedUnit()->getUnitStatus() != STATUS_STANDING)))
 			|| _unitDying == true
 			|| _explosionInFOV == true
 			|| _projectileInFOV == true
@@ -535,7 +521,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						|| action->weapon->getAmmoItem() == nullptr // unless it's shotgun pellets.
 						|| action->weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
 					{
-						_camera->centerOnPosition(
+						_camera->centerPosition(
 												Position(
 													bulletLowX,
 													bulletLowY,
@@ -2814,7 +2800,7 @@ void Map::setHeight(int height)
 		height = 200;
 
 	_hiddenScreen->setHeight(height);
-	_hiddenScreen->setY((_playableHeight - _hiddenScreen->getHeight()) / 2);
+	_hiddenScreen->setY((_playableHeight - _hiddenScreen->getHeight()) >> 1u);
 }
 
 /**
@@ -2824,7 +2810,7 @@ void Map::setHeight(int height)
 void Map::setWidth(int width)
 {
 	Surface::setWidth(width);
-	_hiddenScreen->setX(_hiddenScreen->getX() + (width - getWidth()) / 2);
+	_hiddenScreen->setX(_hiddenScreen->getX() + (width - getWidth()) >> 1u);
 }
 
 /**

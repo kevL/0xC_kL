@@ -134,7 +134,6 @@ BattlescapeGame::BattlescapeGame(
 //	_playerAction.type = BA_NONE;
 //	_playerAction.targeting = false;
 	_playerAction.clearAction();
-//	_aiAction.clearAction();
 
 	_universalFist = new BattleItem(
 								getRuleset()->getItemRule("STR_FIST"),
@@ -251,7 +250,7 @@ void BattlescapeGame::think()
 					{
 						//Log(LOG_INFO) << "bg:think() first VALID id-" << selUnit->getId();
 						_battleSave->setSelectedUnit(selUnit);
-						focusOnUnit(selUnit);
+						getMap()->getCamera()->centerPosition(selUnit->getPosition(), false);
 					}
 					else
 					{
@@ -288,7 +287,6 @@ void BattlescapeGame::handleBattleState()
 		else
 		{
 			_battleStates.pop_front();
-			//Log(LOG_INFO) << "bg:handleBattleState() endTurn.";
 			endTurn();
 		}
 	}
@@ -336,10 +334,7 @@ void BattlescapeGame::stateBPushBack(BattleState* const battleState)
 		battleState->init();
 	}
 	else
-	{
-		//Log(LOG_INFO) << "bg:stateBPushBack() endTurn.";
 		endTurn();
-	}
 }
 
 /**
@@ -521,7 +516,7 @@ void BattlescapeGame::popBattleState()
 					}
 					break;
 
-				default: // action.actor is NOT Faction_Player
+				default: // action.actor is NOT Faction_Player ->
 				case FACTION_HOSTILE:
 				case FACTION_NEUTRAL:
 					//Log(LOG_INFO) << ". action -> NOT Faction_Player";
@@ -551,7 +546,7 @@ void BattlescapeGame::popBattleState()
 
 							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
 							{
-								getMap()->getCamera()->centerOnPosition(selUnit->getPosition());
+								getMap()->getCamera()->centerPosition(selUnit->getPosition());
 								if (_battleSave->getDebugTac() == true)
 								{
 									_parentState->refreshMousePosition();
@@ -628,7 +623,7 @@ void BattlescapeGame::popBattleState()
 		}
 
 		if (_battleSave->rfTriggerOffset().z != -1)	// NOTE: Since non-vis reactors don't set isReaction() TRUE
-		{											// the camera-to-original-position must be handled separately.
+		{											// the camera-to-original-position must be handled independently.
 			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
 			_battleSave->rfTriggerOffset(Position(0,0,-1));
 		}
@@ -692,61 +687,23 @@ void BattlescapeGame::resetTraceTiles() // private.
 }
 
 /**
- * Centers the battlefield-camera on a specified BattleUnit.
- * @param unit - pointer to a BattleUnit
- * @param draw - true to redraw the battlefield (default false)
- */
-void BattlescapeGame::centerOnUnit( // private.
-		const BattleUnit* const unit,
-		bool draw) const
-{
-//	if (_debug)
-//	{
-//		Log(LOG_INFO) << "";
-//		Log(LOG_INFO) << "bg:centerOnUnit() id-" << unit->getId()
-//					  << " " << unit->getPosition()
-//					  << " vis= " << unit->getUnitVisible();
-//	}
-	getMap()->getCamera()->centerOnPosition(unit->getPosition(), draw);
-}
-
-/**
- * Focuses the battlescape Camera on a newly selected AI-unit.
- * @param unit - pointer to a BattleUnit
- */
-void BattlescapeGame::focusOnUnit(BattleUnit* const unit) // private.
-{
-//	unit->setUnitVisible(false);
-
-//	if (unit != _battleSave->getLastVisibleAiUnit()) //unit->getUnitVisible() == true &&
-//	{
-//		_battleSave->setLastVisibleAiUnit(unit);
-
-	Camera* const camera (getMap()->getCamera());
-	if (camera->isInFocus(unit->getPosition()) == false)
-		centerOnUnit(unit);
-	else if (unit->getPosition().z != camera->getViewLevel())
-		camera->setViewLevel(unit->getPosition().z);
-//	}
-}
-
-/**
  * Handles the processing of the AI-state of a non-player BattleUnit.
  * @note Called by BattlescapeGame::think().
  * @param unit - pointer to a BattleUnit
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 {
-//	Log(LOG_INFO) << "bg:handleUnitAI id-" << unit->getId();
+//	bool _debug;
 //	if (unit->getId() == 1000028)	_debug = true;
 //	else							_debug = false;
 //	if (_debug)
 //	{
 //		Log(LOG_INFO) << "";
 //		Log(LOG_INFO) << "bg::handleUnitAI() id-" << unit->getId()
-//					  << " (walkUnit id-" << (_battleSave->getLastVisibleAiUnit() ? _battleSave->getLastVisibleAiUnit()->getId() : 0) << ")";
 //					  << " vis= " << unit->getUnitVisible()
-//					  << " " << unit->getPosition();
+//					  << " " << unit->getPosition()
+//					  << " status= " << BattleUnit::debugStatus(unit->getUnitStatus())
+//					  << " tu= " << unit->getTu();
 //	}
 
 	const int debug (Options::traceAI);
@@ -760,7 +717,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			//Log(LOG_INFO) << ". x= " << RNG::getSeed();
 	}
 
-	if (unit->getTu() == 0) unit->setReselect(false);
+	if (unit->getTu() < 12) unit->setReselect(false);
 
 	if (unit->getReselect() == false || _AIActionCounter > 1)
 	{
@@ -794,7 +751,6 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		unit->setHiding(false);
 	}
 
-//	_aiAction.clearAction();
 	BattleAction aiAction;
 	aiAction.actor = unit;
  	aiAction.type = BA_THINK;
@@ -888,17 +844,23 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		case BA_MOVE:
 		{
 			Pathfinding* const pf (_battleSave->getPathfinding());
-			pf->setPathingUnit(aiAction.actor);
-//			if (aiAction.actor->getId() == 1000023)
+			pf->setPathingUnit(unit);
+//			if (_debug)
 //			{
-//				Log(LOG_INFO) << "handleUnitAI() id-1000023";
-//				Log(LOG_INFO) << ". " << aiAction.actor->getPosition();
+//				Log(LOG_INFO) << "handleUnitAI() id-" << unit->getId() << " status= " << BattleUnit::debugStatus(unit->getUnitStatus());
+//				Log(LOG_INFO) << ". " << unit->getPosition();
 //				Log(LOG_INFO) << ". " << aiAction.posTarget;
 //			}
 
 			if (_battleSave->getTile(aiAction.posTarget) != nullptr)	// TODO: Check that .posTarget is not unit's current Tile.
 			{															// Or ensure that AIState does not return BA_MOVE if so.
-				pf->calculatePath(aiAction.actor, aiAction.posTarget);	// TODO: AI will choose a position to move to that unit cannot move
+				pf->calculatePath(unit, aiAction.posTarget);			// TODO: AI will choose a position to move to that unit cannot move
+//				if (_debug)
+//				{
+//					Log(LOG_INFO) << ". . posTarget VALID";
+//					Log(LOG_INFO) << ". . start dir= " << pf->getStartDirection();
+//					Log(LOG_INFO) << ". . tu= " << unit->getTu();
+//				}
 				if (pf->getStartDirection() != -1)						// to ... stop that (unless blocked by unseen player- or neutral-unit).
 					stateBPushBack(new UnitWalkBState(this, aiAction));	// TODO: If aiAction.desperate use 'dash' interval-speed.
 			}
@@ -967,21 +929,12 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 
 		default:
 		case BA_NONE:
-		case BA_THINK:
+		case BA_THINK: // <- should never happen.
 			//Log(LOG_INFO) << "bg:handleUnitAI() select next[2]";
 			selectNextAiUnit(unit);
 	}
 	//if (debug) Log(LOG_INFO) << ". EXIT x= " << RNG::getSeed();
 }
-
-/**
- * Gets read-only access to the AI's current BattleAction.
- * @return, const-ref to the battle-action
- *
-const BattleAction& BattlescapeGame::getCurrentAiAction()
-{
-	return _aiAction;
-} */
 
 /**
  * Selects the next AI-unit.
@@ -991,15 +944,15 @@ const BattleAction& BattlescapeGame::getCurrentAiAction()
 void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 {
 	//Log(LOG_INFO) << "bg:selectNextAiUnit()";
-	_AIActionCounter = 0;
-
 	BattleUnit* const nextUnit (_battleSave->selectNextUnit(
 														_AISecondMove == true,
 														true));
 	if (nextUnit != nullptr)
 	{
 		//Log(LOG_INFO) << ". id-" << nextUnit->getId();
-		focusOnUnit(nextUnit);
+		_AIActionCounter = 0;
+
+		getMap()->getCamera()->centerPosition(nextUnit->getPosition(), false);
 		_parentState->updateSoldierInfo(false); // try no calcFov() ... calcFoV(pos) is going to happen in handleUnitAI() before AI-battlestate-think.
 
 		if (_battleSave->getDebugTac() == true)
@@ -1627,7 +1580,9 @@ void BattlescapeGame::endTurn() // private.
 			{
 				setupSelector();
 				if (playableUnitSelected() == true) // ... there's better be a unit selected here!
-					centerOnUnit(_battleSave->getSelectedUnit());
+					getMap()->getCamera()->centerPosition(
+													_battleSave->getSelectedUnit()->getPosition(),
+													false);
 
 				if (_battleSave->getDebugTac() == false)
 					_battleSave->getBattleState()->toggleIcons(true);
@@ -1755,7 +1710,6 @@ void BattlescapeGame::checkCasualties(
 					if (attacker != nullptr) // attacker's Morale Bonus & diary ->
 					{
 						defender->killerFaction(attacker->getFaction()); // used in DebriefingState.
-						//Log(LOG_INFO) << "BSG::checkCasualties() " << defender->getId() << " killedByFaction = " << (int)attacker->getFaction();
 
 						if (attacker->getGeoscapeSoldier() != nullptr)
 						{
@@ -2399,7 +2353,9 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				|| unit->getUnitVisible() == true)
 			{
 				//Log(LOG_INFO) << "bg: panic id-" << unit->getId();
-				centerOnUnit(unit, (unit->getUnitVisible() == true));
+				getMap()->getCamera()->centerPosition(
+												unit->getPosition(),
+												(unit->getUnitVisible() == true)); // NOTE: Should not have to redraw Map.
 
 				Game* const game (_parentState->getGame());
 				std::string st;
@@ -2411,7 +2367,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				}
 				game->pushState(new InfoboxState(
 											game->getLanguage()->getString(st, unit->getGender())
-																	.arg(unit->getName(game->getLanguage()))));
+																.arg(unit->getName(game->getLanguage()))));
 			}
 
 			if (unit->getAIState() != nullptr)
@@ -3687,39 +3643,6 @@ int BattlescapeGame::tallyHostiles() const
 }
 
 /**
- * Sets the TU reserved type as a BattleAction.
- * @param bat - a battleactiontype (BattlescapeGame.h)
- *
-void BattlescapeGame::setReservedAction(BattleActionType bat)
-{
-	_battleSave->setBatReserved(bat);
-} */
-/**
- * Gets the action type that is reserved.
- * @return, the BattleActionType that is reserved
- *
-BattleActionType BattlescapeGame::getReservedAction() const
-{
-	return _battleSave->getBatReserved();
-} */
-/**
- * Sets the kneel reservation setting.
- * @param reserved - true to reserve an extra 4 TUs to kneel
- *
-void BattlescapeGame::setKneelReserved(bool reserved) const
-{
-	_battleSave->setKneelReserved(reserved);
-} */
-/**
- * Gets the kneel reservation setting.
- * @return, kneel reservation setting
- *
-bool BattlescapeGame::getKneelReserved() const
-{
-	return _battleSave->getKneelReserved();
-} */
-
-/**
  * Checks if a unit has moved next to a proximity grenade.
  * @note Checks one tile around the unit in every direction. For a large unit
  * check around every tile the unit occupies.
@@ -3892,3 +3815,36 @@ bool BattlescapeGame::getShotgun() const
 }
 
 }
+
+/**
+ * Sets the TU reserved type as a BattleAction.
+ * @param bat - a battleactiontype (BattlescapeGame.h)
+ *
+void BattlescapeGame::setReservedAction(BattleActionType bat)
+{
+	_battleSave->setBatReserved(bat);
+} */
+/**
+ * Gets the action type that is reserved.
+ * @return, the BattleActionType that is reserved
+ *
+BattleActionType BattlescapeGame::getReservedAction() const
+{
+	return _battleSave->getBatReserved();
+} */
+/**
+ * Sets the kneel reservation setting.
+ * @param reserved - true to reserve an extra 4 TUs to kneel
+ *
+void BattlescapeGame::setKneelReserved(bool reserved) const
+{
+	_battleSave->setKneelReserved(reserved);
+} */
+/**
+ * Gets the kneel reservation setting.
+ * @return, kneel reservation setting
+ *
+bool BattlescapeGame::getKneelReserved() const
+{
+	return _battleSave->getKneelReserved();
+} */

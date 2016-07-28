@@ -800,10 +800,7 @@ void ProjectileFlyBState::think()
 						if (_parent->getTileEngine()->isReaction() == true)
 						{
 							//if (debug) Log(LOG_INFO) << ". . is Reaction - set Camera to center on reactor";
-							if (shotCamera->isOnScreen(_unit->getPosition()) == false)
-								shotCamera->centerOnPosition(_unit->getPosition());
-							else if (_unit->getPosition().z != shotCamera->getViewLevel())
-								shotCamera->setViewLevel(_unit->getPosition().z);
+							shotCamera->focusPosition(_unit->getPosition());
 						}
 						else
 						{
@@ -929,7 +926,7 @@ void ProjectileFlyBState::think()
 				blasterFlyB->_originVoxel = _prj->getPosition(); // was (offset= -1) -> tada, fixed.
 				if (_action.posTarget == _posOrigin) blasterFlyB->_targetFloor = true;
 
-				_parent->getMap()->getCamera()->centerOnPosition(_posOrigin); // this follows BL as it hits through waypoints
+				_parent->getMap()->getCamera()->centerPosition(_posOrigin, false); // this follows BL as it hits through waypoints
 				_parent->stateBPushNext(blasterFlyB);
 			}
 			else // shoot -> impact.
@@ -1184,10 +1181,7 @@ void ProjectileFlyBState::cancel()
 	if (_prj != nullptr)
 	{
 		_prj->skipTrajectory();
-
-		const Position pos (Position::toTileSpace(_prj->getPosition()));
-		if (_parent->getMap()->getCamera()->isOnScreen(pos) == false)
-			_parent->getMap()->getCamera()->centerOnPosition(pos); // TODO: Change zLevel to projectile-zLevel.
+		_parent->getMap()->getCamera()->focusPosition(Position::toTileSpace(_prj->getPosition())); // NOTE: Wouldn't surprise me if this is entirely unnecessary.
 	}
 }
 
