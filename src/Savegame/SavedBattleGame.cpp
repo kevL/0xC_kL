@@ -382,19 +382,14 @@ void SavedBattleGame::load(
 							if (const YAML::Node& ai = (*i)["AI"])
 							{
 								BattleAIState* aiState;
-
 								switch (faction)
 								{
-									case FACTION_HOSTILE:
-										aiState = new AlienBAIState(this, unit);
-										break;
-									case FACTION_NEUTRAL:
-										aiState = new CivilianBAIState(this, unit);
+									case FACTION_HOSTILE: aiState = new AlienBAIState(this, unit); break;
+									case FACTION_NEUTRAL: aiState = new CivilianBAIState(this, unit);
 								}
-
-								aiState->load(ai);
-								unit->setAIState(aiState);
-							}
+								aiState->load(ai);			// NOTE: Cannot init() AI-state here, Pathfinding
+								unit->setAIState(aiState);	// and TileEngine haven't been instantiated yet. So
+							}								// it's done in BattlescapeGame::cTor.
 					}
 			}
 		}

@@ -142,12 +142,15 @@ BattlescapeGame::BattlescapeGame(
 							getRuleset()->getItemRule("ALIEN_PSI_WEAPON"),
 							battleSave->getCanonicalBattleId());
 
-	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
+	for (std::vector<BattleUnit*>::const_iterator	// NOTE: This stuff needs to be done *after*
+			i = _battleSave->getUnits()->begin();	// all the tactical-related class-objects
+			i != _battleSave->getUnits()->end();	// have finished instantiating ->
 			++i)
 	{
 		(*i)->setBattleForUnit(this);
+
+		if ((*i)->getAIState() != nullptr) // check for faction/ unconscious etc. units
+			(*i)->getAIState()->init();
 	}
 
 	_parentState->getMap()->setBattleGame(this);
@@ -736,14 +739,15 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 
 	if (unit->getAIState() == nullptr)
 	{
+		BattleAIState* aiState;
 		switch (unit->getFaction())
 		{
-			case FACTION_HOSTILE:
-				unit->setAIState(new AlienBAIState(_battleSave, unit, nullptr));
-				break;
-			case FACTION_NEUTRAL:
-				unit->setAIState(new CivilianBAIState(_battleSave, unit, nullptr));
+			default:
+			case FACTION_HOSTILE: aiState = new AlienBAIState(_battleSave, unit); break;
+			case FACTION_NEUTRAL: aiState = new CivilianBAIState(_battleSave, unit);
 		}
+		aiState->init();
+		unit->setAIState(aiState);
 	}
 
 	if (++_AIActionCounter == 1)
@@ -2162,9 +2166,9 @@ bool BattlescapeGame::checkReservedTu(
 
 	if (_battleSave->getSide() == FACTION_HOSTILE && _debugPlay == false)
 	{
-		const AlienBAIState* const ai (dynamic_cast<AlienBAIState*>(unit->getAIState()));
-		if (ai != nullptr)
-			batReserved = ai->getReservedAiAction();
+		const AlienBAIState* const aiState (dynamic_cast<AlienBAIState*>(unit->getAIState()));
+		if (aiState != nullptr)
+			batReserved = aiState->getReservedAiAction();
 		else
 			batReserved = BA_NONE;	// something went ... wrong. Should always be an AI for non-player units (although i
 									// guess it could-maybe-but-unlikely be a CivilianBAIState here in checkReservedTu()).
@@ -3128,7 +3132,9 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 
 	_battleSave->getUnits()->push_back(potato);
 
-	potato->setAIState(new AlienBAIState(_battleSave, potato));
+	AlienBAIState* const aiState (new AlienBAIState(_battleSave, potato));
+	aiState->init();
+	potato->setAIState(aiState);
 
 	const RuleItem* const itRule (getRuleset()->getItemRule(unitRule->getRace().substr(4u) + "_WEAPON"));
 	if (itRule != nullptr)

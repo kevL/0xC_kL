@@ -135,9 +135,6 @@ void AlienBAIState::think(BattleAction* const action)
 		Log(LOG_INFO) << ". agression= " << _aggression;
 	}
 
-	_pf = _battleSave->getPathfinding();
-	_te = _battleSave->getTileEngine();
-
 	if (_unit->getChargeTarget() != nullptr
 		&& _unit->getChargeTarget()->isOut_t(OUT_STAT) == true)
 	{

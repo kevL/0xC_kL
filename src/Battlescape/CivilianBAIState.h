@@ -59,7 +59,7 @@ private:
 
 
 	public:
-		/// Creates a new BattleAIState linked to the game and a specific unit.
+		/// Creates a CivilianBAIState for a specified BattleUnit.
 		CivilianBAIState(
 				SavedBattleGame* const battleSave,
 				BattleUnit* const unit,

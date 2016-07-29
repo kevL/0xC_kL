@@ -2423,11 +2423,8 @@ void BattleUnit::prepareUnit(bool preBattle)
 	if (_faction != _originalFaction) // reverting from Mind Control at start of MC-ing faction's next turn
 	{
 		reverted = true;
-		if ((_faction = _originalFaction) == FACTION_PLAYER
-			&& _unitAIState != nullptr)
-		{
+		if ((_faction = _originalFaction) == FACTION_PLAYER)
 			setAIState();
-		}
 	}
 	else
 		reverted = false;
@@ -4079,12 +4076,8 @@ void BattleUnit::putDown()
 	{
 		switch (_status)
 		{
-			case STATUS_DEAD:
-				setAIState();
-				break;
-
-			case STATUS_UNCONSCIOUS:
-				_unitAIState->resetAI();
+			case STATUS_DEAD: setAIState(); break;
+			case STATUS_UNCONSCIOUS: _unitAIState->resetAI();
 		}
 	}
 

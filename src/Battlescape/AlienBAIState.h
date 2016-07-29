@@ -131,7 +131,7 @@ private:
 
 
 	public:
-		/// Creates an AlienBAIState for a BattleUnit.
+		/// Creates an AlienBAIState for a specified BattleUnit.
 		AlienBAIState(
 				SavedBattleGame* const battleSave,
 				BattleUnit* const unit,

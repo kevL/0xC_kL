@@ -123,6 +123,8 @@ protected:
 //		virtual void enter();
 		/// Exits the state.
 //		virtual void exit();
+		/// Initializes Pathfinding and TileEngine.
+		virtual void init();
 		/// Runs state functionality every AI-cycle.
 		virtual void think(BattleAction* const action);
 

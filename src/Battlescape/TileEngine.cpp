@@ -1870,15 +1870,16 @@ bool TileEngine::reactionShot(
 
 	if (unit->getFaction() == FACTION_HOSTILE)
 	{
-		AlienBAIState* ai (dynamic_cast<AlienBAIState*>(unit->getAIState()));
-		if (ai == nullptr)
+		AlienBAIState* aiState (dynamic_cast<AlienBAIState*>(unit->getAIState()));
+		if (aiState == nullptr)
 		{
-			ai = new AlienBAIState(_battleSave, unit);
-			unit->setAIState(ai);
+			aiState = new AlienBAIState(_battleSave, unit);
+			aiState->init();
+			unit->setAIState(aiState);
 		}
 
 		if (_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius() > 0
-			&& ai->explosiveEfficacy(
+			&& aiState->explosiveEfficacy(
 								_rfAction->posTarget,
 								unit,
 								_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
@@ -6278,6 +6279,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 								switch (victim->getOriginalFaction())
 								{
 									case FACTION_PLAYER:  victim->setAIState(); break;
+
 									case FACTION_HOSTILE:
 									case FACTION_NEUTRAL: victim->getAIState()->resetAI();
 								}

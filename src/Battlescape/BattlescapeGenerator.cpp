@@ -2193,10 +2193,9 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 										node->getPosition()) == true)
 		|| placeUnitNearFaction(unit) == true)
 	{
-		unit->setAIState(new AlienBAIState(
-										_battleSave,
-										unit,
-										node));
+		AlienBAIState* const aiState (new AlienBAIState(_battleSave, unit, node));
+		aiState->init();
+		unit->setAIState(aiState);
 		unit->setRankInt(aLienRank);
 
 		const Position posCraft (_unitList->at(0u)->getPosition()); // aLiens face Craft
@@ -2300,7 +2299,9 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
 			&& _battleSave->setUnitPosition(unit, node->getPosition()) == true)
 		|| placeUnitNearFaction(unit) == true)
 	{
-		unit->setAIState(new CivilianBAIState(_battleSave, unit, node));
+		CivilianBAIState* const aiState (new CivilianBAIState(_battleSave, unit, node));
+		aiState->init();
+		unit->setAIState(aiState);
 		unit->setUnitDirection(RNG::generate(0,7));
 		unit->preBattleMotion();
 

@@ -88,10 +88,6 @@ YAML::Node CivilianBAIState::save() const
 void CivilianBAIState::think(BattleAction* const action)
 {
 	//Log(LOG_INFO) << "CivilianBAIState::think()";
-
-	_pf = _battleSave->getPathfinding();
-	_te = _battleSave->getTileEngine();
-
 	action->type = BA_THINK;
 
 	_pf->setPathingUnit(_unit);
