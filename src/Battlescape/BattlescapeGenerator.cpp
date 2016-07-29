@@ -469,7 +469,7 @@ void BattlescapeGenerator::nextStage()
 	// non-player units will have a Latency set, either Latent_Start or just
 	// Latent depending on what tile they're on at the end of the 1st-stage. If
 	// aborted, player-units will be set latent unless they're on an End_Point.
-	const Position posBogus (Position(-1,-1,-1));
+	const Position& posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator	// set all living hostile/neutral units Latent
 			i = _unitList->begin();					// and deal with player-units not in endpoint-area if aborted
 			i != _unitList->end();					// plus break all unit-tile links and unit-positions.

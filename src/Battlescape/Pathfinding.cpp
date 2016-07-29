@@ -677,8 +677,8 @@ int Pathfinding::getTuCostPf(
 
 	Position posOffset;
 	const Position
-		posAbove (Position(0,0, 1)),
-		posBelow (Position(0,0,-1));
+		& posAbove (Position(0,0, 1)),
+		& posBelow (Position(0,0,-1));
 
 	const int
 		unitSize  (_unit->getArmor()->getSize()),
@@ -752,7 +752,7 @@ int Pathfinding::getTuCostPf(
 			}
 
 
-			Position posOffsetVertical (0,0,0); // this will later be used to re-init the start Tile
+			Position posOffsetVertical; // this will later be used to re-init the start Tile [inits to (0,0,0)]
 
 			tileStopBelow = _battleSave->getTile(*posStop + posOffset + posBelow),
 			tileStopAbove = _battleSave->getTile(*posStop + posOffset + posAbove);
@@ -802,7 +802,7 @@ int Pathfinding::getTuCostPf(
 				&& tileStopBelow != nullptr
 				&& tileStopBelow->getTileUnit() != nullptr
 				&& tileStopBelow->getTileUnit() != _unit
-				&& tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > UNIT_HEIGHT) // cf. UnitWalkBState::doStatusStand()
+				&& tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > UNIT_HEIGHT) // cf. UnitWalkBState::statusStand()
 			{
 				return FAIL;
 			}
@@ -936,7 +936,7 @@ int Pathfinding::getTuCostPf(
 					cost += 2 + (dir & 1);
 
 				if (_unit->avoidsFire() == true)	// NOTE: Uses vulnr instead of Specab_Burn.
-					cost += TU_FIRE_AVOID;			// cf. UnitWalkBState::doStatusStand() - this gets subtracted.
+					cost += TU_FIRE_AVOID;			// cf. UnitWalkBState::statusStand() - this gets subtracted.
 			}
 
 			// Propose: if flying then no extra TU cost

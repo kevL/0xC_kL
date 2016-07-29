@@ -173,9 +173,9 @@ void UnitWalkBState::think()
 //				}
 //			}
 
-			if (doStatusWalk() == false)
+			if (statusWalk() == false)
 			{
-				//Log(LOG_INFO) << ". . doStatusWalk() FALSE return";
+				//Log(LOG_INFO) << ". . statusWalk() FALSE return";
 				return;
 			}
 
@@ -209,9 +209,9 @@ void UnitWalkBState::think()
 //					}
 //				}
 
-				if (doStatusStand_end() == false)
+				if (statusStand_end() == false)
 				{
-					//Log(LOG_INFO) << ". . doStatusStand_end() FALSE return";
+					//Log(LOG_INFO) << ". . statusStand_end() FALSE return";
 					return;
 				}
 
@@ -256,13 +256,13 @@ void UnitWalkBState::think()
 		case STATUS_STANDING:
 		case STATUS_PANICKING:
 			//Log(LOG_INFO) << "STATUS_STANDING or PANICKING : " << _unit->getId();
-			if (doStatusStand() == false)
+			if (statusStand() == false)
 			{
-				//Log(LOG_INFO) << ". . doStatusStand() FALSE return";
+				//Log(LOG_INFO) << ". . statusStand() FALSE return";
 				return;
 			}
 
-			// Destination is not valid until *after* doStatusStand() runs.
+			// Destination is not valid until *after* statusStand() runs.
 //			if (_isVisible == true)
 //			{
 //				//Log(LOG_INFO) << ". onScreen";
@@ -291,7 +291,7 @@ void UnitWalkBState::think()
 	if (_unit->getUnitStatus() == STATUS_TURNING) // turning during walking costs no TU
 	{
 		//Log(LOG_INFO) << "STATUS_TURNING : " << _unit->getId();
-		doStatusTurn();
+		statusTurn();
 	}
 	//Log(LOG_INFO) << "think() : " << _unit->getId() << " EXIT ";
 }
@@ -320,12 +320,12 @@ void UnitWalkBState::cancel()
  * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
-bool UnitWalkBState::doStatusStand() // private.
+bool UnitWalkBState::statusStand() // private.
 {
 	const Position posStart (_unit->getPosition());
 //	if (_debug)
 //	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::doStatusStand()\t\tid-" << _unit->getId()
+//		Log(LOG_INFO) << "***** UnitWalkBState::statusStand()\t\tid-" << _unit->getId()
 //					  << " " << posStart
 //					  << " vis= " << _unit->getUnitVisible();
 //	}
@@ -360,7 +360,7 @@ bool UnitWalkBState::doStatusStand() // private.
 			_parent->getMap()->cacheUnit(_unit);
 
 			postPathProcedures();	// NOTE: This is the only call for which _door==TRUE might be needed.
-			return false;			// Update: '_door' is also used for calcFovTiles_pos() in doStatusStand_end().
+			return false;			// Update: '_door' is also used for calcFovTiles_pos() in statusStand_end().
 		}
 
 		const Tile* const tile (_battleSave->getTile(posStart));
@@ -522,8 +522,8 @@ bool UnitWalkBState::doStatusStand() // private.
 		_unit->flagCache();													// clicked to move but tries to go further than TUs allow; because
 		_parent->getMap()->cacheUnit(_unit);								// either the AI or the panic-code should not try to
 		_pf->abortPath();													// move a unit farther than its [reserved] TUs would allow
-		return false;
-	}
+		return false;														// WOULD THAT RESULT IN AN ENDLESS LOOP.
+	} // TODO: Conform all the ambiguous returns.
 
 	if (dir < Pathfinding::DIR_UP)
 	{
@@ -567,7 +567,7 @@ bool UnitWalkBState::doStatusStand() // private.
 
 	// TODO: Put checkForSilacoid() around here!
 
-	if (_parent->checkProxyGrenades(_unit) == true) // proxy blows up in face after door opens - copied doStatusStand_end()
+	if (_parent->checkProxyGrenades(_unit) == true) // proxy blows up in face after door opens - copied statusStand_end()
 	{
 		abortState();
 		return false;
@@ -639,12 +639,12 @@ bool UnitWalkBState::doStatusStand() // private.
 			&& _walkCamera->isOnScreen(_unit->getPosition()) == false)
 		{
 			//if (_debug)
-			//Log(LOG_INFO) << "walkB:doStatusStand() centerPos id-" << _unit->getId();
+			//Log(LOG_INFO) << "walkB:statusStand() centerPos id-" << _unit->getId();
 			_walkCamera->centerPosition(posStart);
 		}
 		else
 		{
-			//Log(LOG_INFO) << "walkB:doStatusStand() set viewLevel id-" << _unit->getId();
+			//Log(LOG_INFO) << "walkB:statusStand() set viewLevel id-" << _unit->getId();
 			switch (dir)
 			{
 				case Pathfinding::DIR_DOWN:
@@ -668,11 +668,11 @@ bool UnitWalkBState::doStatusStand() // private.
  * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
-bool UnitWalkBState::doStatusWalk() // private.
+bool UnitWalkBState::statusWalk() // private.
 {
 //	if (_debug)
 //	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::doStatusWalk()\t\tid-" << _unit->getId()
+//		Log(LOG_INFO) << "***** UnitWalkBState::statusWalk()\t\tid-" << _unit->getId()
 //					  << " " << _unit->getPosition()
 //					  << " vis= " << _unit->getUnitVisible();
 //	}
@@ -800,11 +800,11 @@ bool UnitWalkBState::doStatusWalk() // private.
  * @note Called from think().
  * @return, true to continue moving, false to exit think()
  */
-bool UnitWalkBState::doStatusStand_end() // private.
+bool UnitWalkBState::statusStand_end() // private.
 {
 //	if (_debug)
 //	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::doStatusStand_end()\tid-" << _unit->getId()
+//		Log(LOG_INFO) << "***** UnitWalkBState::statusStand_end()\tid-" << _unit->getId()
 //					  << " " << _unit->getPosition()
 //					  << " vis= " << _unit->getUnitVisible();
 //	}
@@ -938,11 +938,11 @@ bool UnitWalkBState::doStatusStand_end() // private.
  * Swivels unit.
  * @note Called from think().
  */
-void UnitWalkBState::doStatusTurn() // private.
+void UnitWalkBState::statusTurn() // private.
 {
 //	if (_debug)
 //	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::doStatusTurn()\t\tid-" << _unit->getId()
+//		Log(LOG_INFO) << "***** UnitWalkBState::statusTurn()\t\tid-" << _unit->getId()
 //					  << " " << _unit->getPosition()
 //					  << " vis= " << _unit->getUnitVisible();
 //	}

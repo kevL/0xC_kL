@@ -240,8 +240,8 @@ private:
 	/// Draws a shotgun blast explosion on the Map.
 	void shotgunExplosion();
 
-	/// Popups a context-sensitive-list of battle-actions for the player.
-	void itemAction(
+	/// Popups a context-sensitive-list of BattleActions for the player.
+	void popupActionMenu(
 			BattleItem* const item,
 			bool injured = false);
 

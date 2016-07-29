@@ -875,7 +875,7 @@ Position Projectile::getFinalPosition() const
  */
 Position Projectile::getStrikeVector() const
 {
-	Position posVect; // inits to Position(0,0,0)
+	Position posVect; // inits to (0,0,0)
 
 	const size_t trjSize (_trj.size());
 	if (trjSize > 2u)

@@ -2296,9 +2296,9 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 		_map->cacheUnit(unit);
 		_map->draw();
 
-		itemAction(
-				unit->getItem(ST_LEFTHAND),
-				unit->getFatalWound(BODYPART_LEFTARM) != 0);
+		popupActionMenu(
+					unit->getItem(ST_LEFTHAND),
+					unit->getFatalWound(BODYPART_LEFTARM) != 0);
 	}
 }
 
@@ -2338,9 +2338,9 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 		_map->cacheUnit(unit);
 		_map->draw();
 
-		itemAction(
-				unit->getItem(ST_RIGHTHAND),
-				unit->getFatalWound(BODYPART_LEFTARM) != 0);
+		popupActionMenu(
+					unit->getItem(ST_RIGHTHAND),
+					unit->getFatalWound(BODYPART_RIGHTARM) != 0);
 	}
 }
 
@@ -3557,11 +3557,11 @@ void BattlescapeState::shotgunExplosion() // private.
 }
 
 /**
- * Popups a context-sensitive-list of battle-actions for the player.
+ * Popups a context-sensitive-list of BattleActions for the player.
  * @param item		- pointer to the BattleItem (righthand/lefthand)
  * @param injured	- true if the arm using @a item is injured (default false)
  */
-void BattlescapeState::itemAction( // private.
+void BattlescapeState::popupActionMenu( // private.
 		BattleItem* const item,
 		bool injured)
 {
@@ -3576,8 +3576,9 @@ void BattlescapeState::itemAction( // private.
 //		else if (action->actor->getUnitRules() != nullptr
 //			&& action->actor->getUnitRules()->getMeleeWeapon() == "STR_FIST")
 		{
-			// TODO: This can be generalized later; right now the only 'meleeWeapon' is "STR_FIST" - the Universal Fist!!!
-//			const RuleItem* const itRule = _rules->getItemRule(action->actor->getUnitRules()->getMeleeWeapon());
+			// TODO: This can be generalized later; right now the only
+			// 'meleeWeapon' is "STR_FIST" - the Universal Fist!!!
+//			const RuleItem* const itRule (_rules->getItemRule(action->actor->getUnitRules()->getMeleeWeapon()));
 			action->weapon = action->actor->getMeleeWeapon();
 		}
 

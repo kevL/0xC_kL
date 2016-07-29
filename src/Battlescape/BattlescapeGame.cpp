@@ -2599,7 +2599,7 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 
 /**
  * Gets a pointer to access BattleAction struct members directly.
- * @note This appears to be for Player's units only.
+ * @note This is for Player's units only.
  * @return, pointer to BattleAction
  */
 BattleAction* BattlescapeGame::getTacticalAction()
@@ -2608,7 +2608,7 @@ BattleAction* BattlescapeGame::getTacticalAction()
 }
 
 /**
- * Determines whether an action is currently going on.
+ * Checks whether a BattleState is currently in progress.
  * @return, true or false
  */
 bool BattlescapeGame::isBusy() const

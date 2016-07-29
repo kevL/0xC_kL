@@ -5161,12 +5161,18 @@ VoxelType TileEngine::plotLine(
  * @note Accuracy is NOT considered; this is a true path/trajectory.
  * @param originVoxel	- reference to the origin in voxelspace
  * @param targetVoxel	- reference to the target in voxelspace
- * @param storeTrj		- true will store the whole trajectory - otherwise it stores the last position only
- * @param trj			- pointer to a vector of Positions in which the trajectory will be stored
- * @param excludeUnit	- pointer to a unit to exclude - makes sure the trajectory does not hit the shooter itself
- * @param arc			- how high the parabola goes: 1.0 is almost straight throw, 3.0 is a very high throw, to throw over a fence for example
+ * @param storeTrj		- true will store the whole trajectory,
+ *						  otherwise it stores the last position only
+ * @param trj			- pointer to a vector of Positions in which the
+ *						  trajectory will be stored
+ * @param excludeUnit	- pointer to a unit to exclude, makes sure the
+ *						  trajectory does not hit the shooter itself
+ * @param arc			- how high the parabola goes:
+ *						  1.0 is almost straight throw
+ *						  3.0 is a very high throw to throw over a fence eg.
  * @param allowCeil		- true to allow arching shots to hit a ceiling ... (default false)
- * @param deltaVoxel	- reference to the deviation of the angles that should be taken into account (0,0,0) is perfection (default Position(0,0,0))
+ * @param deltaVoxel	- reference to the deviation of the angles that should be taken
+ *						  into account (0,0,0) is perfection (default Position(0,0,0))
  * @return, VoxelType (MapData.h)
  *			 -1 hit nothing
  *			0-3 tile-part (floor / westwall / northwall / object)

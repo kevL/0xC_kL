@@ -66,13 +66,13 @@ private:
 	TileEngine* _te;
 
 	/// Begins unit-walk and may also end unit-walk.
-	bool doStatusStand();
+	bool statusStand();
 	/// Continues unit-walk.
-	bool doStatusWalk();
+	bool statusWalk();
 	/// Ends unit-walk.
-	bool doStatusStand_end();
+	bool statusStand_end();
 	/// Swivels unit.
-	void doStatusTurn();
+	void statusTurn();
 
 	/// Resets the unit-cache, aborts the path and the State.
 	void abortState(bool recache = true);
@@ -103,7 +103,7 @@ private:
 
 
 	public:
-		/// Creates a UnitWalkBState class.
+		/// Creates a UnitWalkBState.
 		UnitWalkBState(
 				BattlescapeGame* const parent,
 				BattleAction _action);

@@ -156,7 +156,7 @@ BattleUnit::BattleUnit(
 
 		_stats(*sol->getCurrentStats()),
 
-		_lastCover(Position(-1,-1,-1))
+		_lastCover(-1,-1,-1)
 {
 	//Log(LOG_INFO) << "Create BattleUnit 1 : soldier ID = " << getId();
 	_stats += *_armor->getStats();
@@ -327,7 +327,7 @@ BattleUnit::BattleUnit(
 
 		_stats(*unitRule->getStats()),
 
-		_lastCover(Position(-1,-1,-1))
+		_lastCover(-1,-1,-1)
 {
 	//Log(LOG_INFO) << "Create BattleUnit 2 : alien ID = " << getId();
 	_stats += *_armor->getStats();
@@ -2078,7 +2078,7 @@ bool BattleUnit::expendEnergy(int energy)
 
 /**
  * Expends TU and Energy.
- * @note Called by UnitWalkBState::doStatusStand() after checks are done.
+ * @note Called by UnitWalkBState::statusStand() after checks are done.
  * @param tu		- tu
  * @param energy	- stamina
  */

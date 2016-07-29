@@ -126,7 +126,7 @@ struct BattleAction
 			dash(false),
 			diff(0),
 			autoShotCount(0),
-			posCamera(Position(0,0,-1)),
+			posCamera(0,0,-1),
 			desperate(false),
 			finalFacing(-1),
 			finalAction(false),
@@ -351,7 +351,7 @@ private:
 		/// Gets a pointer for access to the battle-action-struct directly.
 		BattleAction* getTacticalAction();
 
-		/// Determines whether there is a battle-action currently going on.
+		/// Checks whether a BattleState is currently in progress.
 		bool isBusy() const;
 
 		/// Left click activates a primary action.
