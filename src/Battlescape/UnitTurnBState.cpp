@@ -202,7 +202,8 @@ void UnitTurnBState::think()
 				_parent->getTileEngine()->calcFovTiles(_unit);
 				// no break;
 			case FACTION_HOSTILE:
-				spot = _parent->getTileEngine()->calcFovUnits(_unit);
+				spot = _parent->playerPanicHandled() == true // short-circuit of calcFovUnits() is intentional.
+					&& _parent->getTileEngine()->calcFovUnits(_unit);
 				break;
 
 			case FACTION_NEUTRAL:
@@ -238,10 +239,12 @@ void UnitTurnBState::think()
 
 			default:
 				pop = false;
-				if (_chargeTu == true && _unit->getFaction() /*_parent->getBattleSave()->getSide()*/ == FACTION_PLAYER)
+				if (_chargeTu == true && _unit->getFaction() == FACTION_PLAYER)
 				{
 					_parent->getBattlescapeState()->hotSqrsClear();
-					_parent->getBattlescapeState()->hotSqrsUpdate();
+
+					if (_parent->playerPanicHandled() == true)
+						_parent->getBattlescapeState()->hotSqrsUpdate();
 				}
 		}
 	}
@@ -261,7 +264,7 @@ void UnitTurnBState::think()
 
 /**
  * Unit turning cannot be cancelled.
- *
-void UnitTurnBState::cancel(){} */
+ */
+//void UnitTurnBState::cancel(){}
 
 }

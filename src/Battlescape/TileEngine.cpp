@@ -6279,7 +6279,6 @@ bool TileEngine::psiAttack(BattleAction* const action)
 								switch (victim->getOriginalFaction())
 								{
 									case FACTION_PLAYER:  victim->setAIState(); break;
-
 									case FACTION_HOSTILE:
 									case FACTION_NEUTRAL: victim->getAIState()->resetAI();
 								}

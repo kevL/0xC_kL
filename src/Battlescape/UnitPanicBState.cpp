@@ -65,8 +65,8 @@ std::string UnitPanicBState::getBattleStateLabel() const
 
 /**
  *
- *
-void UnitPanicBState::init(){} */
+ */
+//void UnitPanicBState::init(){}
 
 /**
  * Runs BattleState functionality every cycle.
@@ -74,11 +74,8 @@ void UnitPanicBState::init(){} */
  */
 void UnitPanicBState::think()
 {
-	if (_unit->isOut_t(OUT_STAT) == false)
-	{
-//		_unit->setUnitStatus(STATUS_STANDING); // done in BattlescapeGame::handlePanickingUnit().
+	if (_unit->getUnitStatus() == STATUS_STANDING)
 		_unit->moraleChange(10 + RNG::generate(0,10));
-	}
 
 	_unit->setTu();
 	_unit->setEnergy();

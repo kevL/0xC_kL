@@ -101,7 +101,7 @@ private:
 	/// Selects the nearest reachable position relative to a target.
 	bool findMeleePosition(
 			const BattleUnit* const targetUnit,
-			int maxTuCost) const;
+			int tuCap) const;
 
 	/// Sets up a melee/charge sub-action of AI_COMBAT.
 	void meleeAction();
@@ -145,7 +145,7 @@ private:
 		YAML::Node save() const override;
 
 		/// Runs state functionality every AI-cycle.
-		void think(BattleAction* const action) override;
+		void thinkOnce(BattleAction* const aiAction) override;
 
 		/// Decides if it's okay to create an explosion.
 		bool explosiveEfficacy(

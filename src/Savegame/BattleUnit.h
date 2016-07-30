@@ -578,7 +578,7 @@ private:
 		std::vector<BattleItem*>* getInventory();
 
 		/// Lets AI do its thing.
-		void think(BattleAction* const action);
+		void thinkAi(BattleAction* const action);
 		/// Gets current AI state.
 		BattleAIState* getAIState() const;
 		/// Sets next AI State.

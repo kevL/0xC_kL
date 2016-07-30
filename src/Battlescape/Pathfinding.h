@@ -64,6 +64,7 @@ private:
 //		_zPath;
 	int
 		_doorCost, // to get an accurate preview when dashing through doors etc.
+		_tuFirst,
 		_tuCostTotal;
 
 	BattleUnit* _unit;
@@ -85,7 +86,7 @@ private:
 			const Position& posOrigin,
 			const Position& posTarget,
 			const BattleUnit* const launchTarget,
-			int maxTuCost);
+			int tuCap);
 //			bool sneak);
 
 	/// Gets the PathfindingNode at a specified Position.
@@ -148,14 +149,17 @@ private:
 		void calculatePath(
 				const BattleUnit* const unit,
 				Position posStop,
-				int maxTuCost = TU_INFINITE,
+				int tuCap = TU_INFINITE,
 				const BattleUnit* const launchTarget = nullptr,
 				bool strafeRejected = false);
+
+		/// Gets the TU-cost for the first tile of motion.
+		int getTuFirst() const;
 
 		/// Gets all reachable tile-indices based on TU.
 		std::vector<size_t> findReachable(
 				const BattleUnit* const unit,
-				int maxTuCost);
+				int tuCap);
 
 		/// Gets the TU cost to move from 1 tile to the other.
 		int getTuCostPf(

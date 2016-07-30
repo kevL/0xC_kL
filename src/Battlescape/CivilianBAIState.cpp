@@ -42,6 +42,9 @@ CivilianBAIState::CivilianBAIState(
 {
 	_escapeAction = new BattleAction();
 	_patrolAction = new BattleAction();
+
+	_escapeAction->actor =
+	_patrolAction->actor = _unit; // NOTE: Not really used.
 }
 
 /**
@@ -82,16 +85,16 @@ YAML::Node CivilianBAIState::save() const
 //void CivilianBAIState::exit(){}
 
 /**
- * Runs any code the state needs to keep updating every AI cycle.
- * @param action - AI BattleAction to execute after thinking is done (BattlescapeGame.h)
+ * Runs any code the state needs to keep updating every AI-cycle.
+ * @param aiAction - pointer to a BattleAction to fill w/ data (BattlescapeGame.h)
  */
-void CivilianBAIState::think(BattleAction* const action)
+void CivilianBAIState::thinkOnce(BattleAction* const aiAction)
 {
 	//Log(LOG_INFO) << "CivilianBAIState::think()";
-	action->type = BA_THINK;
+	aiAction->type = BA_THINK;
 
-	_pf->setPathingUnit(_unit);
-
+//	_pf->setPathingUnit(_unit);	// done in BattlescapeGame::handleUnitAi().
+								// NOTE: Pathing-unit does not change during Civilian BAI.
 	_spottersOrigin = tallySpotters(_unit->getPosition());
 	_targetsHostile = selectHostile(); // sets _unitAggro.
 
@@ -100,48 +103,32 @@ void CivilianBAIState::think(BattleAction* const action)
 	if (_tuEscape == -1 && _spottersOrigin != 0)
 		setupEscape();
 
-	bool evaluate (false);
-	switch (_AIMode)
+	if (_AIMode != AI_PATROL
+		|| _targetsHostile != 0 || RNG::percent(10) == true)
 	{
-		case AI_PATROL:
-			if (_spottersOrigin != 0 || _targetsHostile != 0
-				|| RNG::percent(10) == true)
-			{
-				evaluate = true;
-			}
-			break;
-
-		case AI_ESCAPE:
-			if (_spottersOrigin == 0)
-				evaluate = true;
+		evaluateAiMode();
 	}
 
-	if (evaluate == false && _spottersOrigin != 0) // (_spottersOrigin != 0 || _unit->getHealth() < _unit->getBattleStats()->health * 2 / 3)
-		evaluate = true;
-
-	if (evaluate == true)
-		evaluateAiMode();
-
 	switch (_AIMode)
 	{
 		case AI_PATROL:
-			action->type = _patrolAction->type;
-			action->posTarget = _patrolAction->posTarget;
+			aiAction->type		= _patrolAction->type;
+			aiAction->posTarget	= _patrolAction->posTarget;
+			aiAction->firstTU	= _patrolAction->firstTU;
 			break;
 
 		case AI_ESCAPE:
-			action->type = _escapeAction->type;
-			action->posTarget = _escapeAction->posTarget;
-//			action->finalAction = true; // <- AlienBAI uses this instead of AICount= 3 <--
-			action->AIcount = 3;
-			action->desperate = true;
+			aiAction->type			= _escapeAction->type;
+			aiAction->posTarget		= _escapeAction->posTarget;
+			aiAction->firstTU		= _escapeAction->firstTU;
+			aiAction->finalAction	=
+			aiAction->desperate		= true;
 
-			_unit->setReselect(false);
 //			_battleSave->getBattleGame()->setReservedAction(BA_NONE, false);
 	}
 
-	if (action->type == BA_MOVE
-		&& action->posTarget != _unit->getPosition())
+	if (aiAction->type == BA_MOVE
+		&& aiAction->posTarget != _unit->getPosition())
 	{
 		_tuEscape = -1;
 	}
@@ -171,8 +158,10 @@ void CivilianBAIState::setupPatrol() // private.
 		_pf->calculatePath(_unit, _stopNode->getPosition());
 		if (_pf->getStartDirection() == -1)
 			_stopNode = nullptr;
+		else
+			_patrolAction->firstTU = _pf->getTuFirst();
 
-		_pf->abortPath();
+//		_pf->abortPath(); // done every time calculatePath() is called.
 	}
 
 	if (_stopNode != nullptr)
@@ -181,7 +170,10 @@ void CivilianBAIState::setupPatrol() // private.
 		_patrolAction->posTarget = _stopNode->getPosition();
 	}
 	else
+	{
 		_patrolAction->type = BA_THINK;
+		_patrolAction->firstTU = -1;
+	}
 }
 
 /**
@@ -208,77 +200,77 @@ void CivilianBAIState::setupEscape() // private.
 	int
 		score (ESCAPE_FAIL),
 		scoreTest;
+	Position pos;
 
 	std::vector<Position> tileSearch (_battleSave->getTileSearch());
 	RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
-	const int tuHalf (_unit->getTu() >> 1u);
-	_reachable = _pf->findReachable(_unit, tuHalf);
+//	const int tuHalf (_unit->getTu() >> 1u);
+//	_reachable = _pf->findReachable(_unit, tuHalf); // done in BattlescapeGame::handleUnitAi().
 
 //	bool coverFound (false);
 	size_t i (0u);
 	while (/*coverFound == false &&*/ i <= SavedBattleGame::SEARCH_SIZE)
 	{
-		_escapeAction->posTarget = _unit->getPosition();
+		pos = _unit->getPosition();
 
 		if (i < SavedBattleGame::SEARCH_SIZE)
 		{
 			scoreTest = BASE_SUCCESS_SYSTEMATIC;
 
-			_escapeAction->posTarget.x += tileSearch[i].x;
-			_escapeAction->posTarget.y += tileSearch[i].y;
+			pos.x += tileSearch[i].x;
+			pos.y += tileSearch[i].y;
 
-			if (_escapeAction->posTarget == _unit->getPosition())
+			if (pos == _unit->getPosition())
 			{
 //				if (spottersOrigin != 0)
 				if (_spottersOrigin != 0)
 				{
-					_escapeAction->posTarget.x += RNG::generate(-20,20);
-					_escapeAction->posTarget.y += RNG::generate(-20,20);
+					pos.x += RNG::generate(-20,20);
+					pos.y += RNG::generate(-20,20);
 				}
 				else
 					scoreTest += CUR_TILE_PREF;
 			}
 		}
-		else
+		else // last ditch chance.
 		{
 			scoreTest = BASE_SUCCESS_DESPERATE;
 
-			_escapeAction->posTarget = _unit->getPosition();
-			_escapeAction->posTarget.x += RNG::generate(-10,10);
-			_escapeAction->posTarget.y += RNG::generate(-10,10);
-			_escapeAction->posTarget.z = _unit->getPosition().z + RNG::generate(-1,1);
+			pos = _unit->getPosition();
+			pos.x += RNG::generate(-10,10);
+			pos.y += RNG::generate(-10,10);
+			pos.z = _unit->getPosition().z + RNG::generate(-1,1);
 
-			if (_escapeAction->posTarget.z < 0)
-				_escapeAction->posTarget.z = 0;
-			else if (_escapeAction->posTarget.z >= _battleSave->getMapSizeZ())
-				_escapeAction->posTarget.z = _battleSave->getMapSizeZ();
+			if (pos.z < 0)
+				pos.z = 0;
+			else if (pos.z >= _battleSave->getMapSizeZ())
+				pos.z = _battleSave->getMapSizeZ();
 		}
 		i += static_cast<size_t>(RNG::generate(1,10));
 
 
-		if (_unitAggro != nullptr)
-			distAggroTarget = TileEngine::distance(
-												_escapeAction->posTarget,
-												_unitAggro->getPosition());
-		else
-			distAggroTarget = 0;
-
-		scoreTest += (distAggroTarget - distAggroOrigin) * EXPOSURE_PENALTY;
-
-		if ((tile = _battleSave->getTile(_escapeAction->posTarget)) != nullptr
+		if ((tile = _battleSave->getTile(pos)) != nullptr
 			&& std::find(
 					_reachable.begin(),
 					_reachable.end(),
 					_battleSave->getTileIndex(tile->getPosition())) != _reachable.end())
 		{
-//			scoreTest += (spottersOrigin - tallySpotters(_escapeAction->target)) * EXPOSURE_PENALTY;
-			scoreTest += (_spottersOrigin - tallySpotters(_escapeAction->posTarget)) * EXPOSURE_PENALTY;
+			if (_unitAggro != nullptr)
+				distAggroTarget = TileEngine::distance(
+													pos,
+													_unitAggro->getPosition());
+			else
+				distAggroTarget = 0;
+
+			scoreTest += (distAggroTarget - distAggroOrigin)    * EXPOSURE_PENALTY;
+//			scoreTest += (spottersOrigin - tallySpotters(pos))  * EXPOSURE_PENALTY;
+			scoreTest += (_spottersOrigin - tallySpotters(pos)) * EXPOSURE_PENALTY;
 
 			if (tile->getFire() != 0)
 				scoreTest -= FIRE_PENALTY;
 			else
-				scoreTest += tile->getSmoke() * SMOKE_BONUS_MULT;
+				scoreTest += tile->getSmoke() * SMOKE_BONUS;
 
 			if (_traceAI) {
 				tile->setPreviewColor(debugTraceColor(false, scoreTest));
@@ -288,14 +280,16 @@ void CivilianBAIState::setupEscape() // private.
 			if (scoreTest > score)
 			{
 				_pf->calculatePath(
-							_unit,
-							_escapeAction->posTarget,
-							tuHalf);
-
-				if (_pf->getStartDirection() != -1
-					|| _escapeAction->posTarget == _unit->getPosition())
+								_unit,
+								pos,
+								_unit->getTu() >> 1u);
+				if (_pf->getStartDirection() != -1 || pos == _unit->getPosition())
 				{
 					score = scoreTest;
+
+					_escapeAction->posTarget = pos;
+					_escapeAction->firstTU = _pf->getTuFirst();
+
 					_tuEscape = _pf->getTuCostTotalPf();
 
 					if (_traceAI) {
@@ -303,7 +297,7 @@ void CivilianBAIState::setupEscape() // private.
 						tile->setPreviewDir(TRACE_DIR);
 						tile->setPreviewTu(scoreTest); }
 				}
-				_pf->abortPath();
+//				_pf->abortPath(); // done every time calculatePath() is called.
 
 //				if (score > FAST_PASS_THRESHOLD)
 //					coverFound = true;
@@ -313,12 +307,13 @@ void CivilianBAIState::setupEscape() // private.
 
 	if (score != ESCAPE_FAIL)
 	{
-		if (_traceAI) _battleSave->getTile(_escapeAction->posTarget)->setPreviewColor(TRACE_PURPLE);
+//		if (_traceAI) _battleSave->getTile(_escapeAction->posTarget)->setPreviewColor(TRACE_PURPLE);
 		_escapeAction->type = BA_MOVE;
 	}
 	else
 	{
 		_escapeAction->type = BA_THINK;
+		_escapeAction->firstTU = -1;
 		_tuEscape = -1;
 	}
 }

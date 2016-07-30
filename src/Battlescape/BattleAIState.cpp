@@ -123,12 +123,21 @@ void BattleAIState::init() // virtual.
 }
 
 /**
- * Runs any code the state needs to keep updating every AI cycle.
- * Called by BattleUnit::think().
- * @param action - (possible) AI BattleAction to execute after thinking is done.
+ * Runs any code the state needs to keep updating every AI-cycle.
+ * @note Called by BattleUnit::thinkAi().
+ * @param action - pointer to a BattleAction to fill w/ data (BattlescapeGame.h)
  */
-void BattleAIState::think(BattleAction* const) // virtual.
+void BattleAIState::thinkOnce(BattleAction* const) // virtual.
 {}
+
+/**
+ * Accesses the reachable-tiles vector.
+ * @return, reference to a vector of tile-IDs
+ */
+std::vector<size_t>& BattleAIState::reachableTiles()
+{
+	return _reachable;
+}
 
 /**
  * Resets the unit's saved parameters.

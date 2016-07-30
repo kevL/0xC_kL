@@ -62,6 +62,7 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 		_previewed(false),
 		_strafe(false),
 		_tuCostTotal(0),
+		_tuFirst(-1),
 		_ctrl(false),
 		_alt(false),
 //		_zPath(false), // currently not implemented; open for ideas!
@@ -112,7 +113,7 @@ void Pathfinding::setPathingUnit(BattleUnit* const unit)
 
 	if (unit != nullptr)
 		setMoveType();
-	else
+	else // I really don't think this ever happens. TODO: set to MT_FLY if ai-BlasterLaunch.
 		_mType = MT_WALK;
 }
 
@@ -178,7 +179,7 @@ void Pathfinding::abortPath()
  * @note 'launchTarget' is required only when called by AlienBAIState::pathWaypoints().
  * @param unit				- pointer to a BattleUnit
  * @param posStop			- destination Position
- * @param maxTuCost			- maximum time units this path can cost (default TU_INFINITE)
+ * @param tuCap				- maximum time units this path can cost (default TU_INFINITE)
  * @param launchTarget		- pointer to a targeted BattleUnit, used only by
  *							  AlienBAIState::pathWaypoints() (default nullptr)
  * @param strafeRejected	- true if path needs to be recalculated w/out strafe (default false)
@@ -186,7 +187,7 @@ void Pathfinding::abortPath()
 void Pathfinding::calculatePath(
 		const BattleUnit* const unit, // -> should not need 'unit' here anymore; done in setPathingUnit() unless FACTION_PLAYER ...
 		Position posStop,
-		int maxTuCost,
+		int tuCap,
 		const BattleUnit* const launchTarget,
 		bool strafeRejected)
 {
@@ -366,7 +367,7 @@ void Pathfinding::calculatePath(
 					posStart,
 					posStop,
 					launchTarget,
-					maxTuCost) == true)
+					tuCap) == true)
 //					sneak) == true)
 		{
 			if (_path.empty() == false)
@@ -376,7 +377,7 @@ void Pathfinding::calculatePath(
 					calculatePath( // iterate this function ONCE ->
 								unit,
 								posStop_cache,
-								maxTuCost,
+								tuCap,
 								nullptr,
 								true); // <- sets '_strafe' FALSE so loop never gets back in here.
 				}
@@ -413,7 +414,7 @@ void Pathfinding::calculatePath(
  * @param posOrigin		- reference to the position to start from
  * @param posTarget		- reference to the position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
- * @param maxTuCost		- maximum time units this path can cost
+ * @param tuCap			- maximum time units this path can cost
 // * @param sneak		- true if the unit is sneaking
  * @return, true if a path is found
  */
@@ -421,7 +422,7 @@ bool Pathfinding::aStarPath( // private.
 		const Position& posOrigin,
 		const Position& posTarget,
 		const BattleUnit* const launchTarget,
-		int maxTuCost)
+		int tuCap)
 //		bool sneak)
 {
 	//Log(LOG_INFO) << "";
@@ -445,6 +446,7 @@ bool Pathfinding::aStarPath( // private.
 
 	Position posStop;
 	int tuCost;
+	_tuFirst = -1; // ... could go in abortPath()
 
 	while (nodes.isNodeSetEmpty() == false)
 	{
@@ -500,12 +502,12 @@ bool Pathfinding::aStarPath( // private.
 				nodeStop = getNode(posStop);
 				if (nodeStop->getChecked() == false)
 				{
-					_tuCostTotal = tuCost + nodeStart->getTuCostNode(launchTarget != nullptr);
+					_tuCostTotal = nodeStart->getTuCostNode(launchTarget != nullptr) + tuCost;
 					//Log(LOG_INFO) << ". tuCostTotal= " << _tuCostTotal;
 
 					if ((nodeStop->inOpenSet() == false
-							|| nodeStop->getTuCostNode(launchTarget != nullptr) > _tuCostTotal)
-						&& _tuCostTotal <= maxTuCost)
+							|| nodeStop->getTuCostNode(launchTarget != nullptr) > _tuCostTotal) // eg. costTotal is still 0.
+						&& _tuCostTotal <= tuCap)
 					{
 						nodeStop->linkNode(
 										_tuCostTotal,
@@ -513,6 +515,8 @@ bool Pathfinding::aStarPath( // private.
 										dir,
 										posTarget);
 						nodes.addNode(nodeStop);
+
+						if (_tuFirst == -1) _tuFirst = tuCost;
 					}
 				}
 			}
@@ -522,17 +526,26 @@ bool Pathfinding::aStarPath( // private.
 }
 
 /**
- * Locates all tiles reachable to @a unit with a TU cost no more than @a maxTuCost.
+ * Gets the TU-cost for the first tile of motion.
+ * @return, TU-cost for the first tile of motion.
+ */
+int Pathfinding::getTuFirst() const
+{
+	return _tuFirst;
+}
+
+/**
+ * Locates all tiles reachable to @a unit with a TU cost no more than @a tuCap.
  * @note Uses Dijkstra's algorithm.
  * @sa aStarPath().
- * @param unit		- pointer to a BattleUnit
- * @param maxTuCost	- the maximum cost of the path to each tile
+ * @param unit	- pointer to a BattleUnit
+ * @param tuCap	- the maximum cost of the path to each tile
  * @return, vector of reachable tile-indices sorted in ascending order of cost;
  *			the first tile is the start-location itself
  */
 std::vector<size_t> Pathfinding::findReachable(
 		const BattleUnit* const unit,
-		int maxTuCost)
+		int tuCap)
 {
 	for (std::vector<PathfindingNode>::iterator
 			i = _nodes.begin();
@@ -551,8 +564,8 @@ std::vector<size_t> Pathfinding::findReachable(
 	PathfindingOpenSet nodes;
 	nodes.addNode(nodeStart);
 
-	std::vector<PathfindingNode*> set; // note these are not route-nodes perse: *every Tile* is a PathfindingNode.
-
+	std::vector<PathfindingNode*> nodeList;	// NOTE: These are not route-nodes perse,
+											// *every Tile* is a PathfindingNode.
 	Position posStop;
 	int
 		tuCost,
@@ -576,9 +589,9 @@ std::vector<size_t> Pathfinding::findReachable(
 			if (tuCost < FAIL)
 			{
 				tuCostTotal = nodeStart->getTuCostNode() + tuCost;
-				if (   tuCostTotal <= maxTuCost
-					&& tuCostTotal <= unit->getEnergy())
-				{
+				if (   tuCostTotal <= tuCap
+					&& tuCostTotal <= unit->getEnergy())	// NOTE: This does not account for less energy-expenditure
+				{											// on gravLifts or for opening doors.
 					nodeStop = getNode(posStop);
 					if (nodeStop->getChecked() == false)
 					{
@@ -595,27 +608,26 @@ std::vector<size_t> Pathfinding::findReachable(
 				}
 			}
 		}
-
 		nodeStart->setChecked();
-		set.push_back(nodeStart);
+		nodeList.push_back(nodeStart);
 	}
 
 	std::sort(
-			set.begin(),
-			set.end(),
+			nodeList.begin(),
+			nodeList.end(),
 			MinNodeCosts());
 
-	std::vector<size_t> tileIds;
-	tileIds.reserve(set.size());
+	std::vector<size_t> reachableIdList;
+	reachableIdList.reserve(nodeList.size());
 	for (std::vector<PathfindingNode*>::const_iterator
-			i = set.begin();
-			i != set.end();
+			i = nodeList.begin();
+			i != nodeList.end();
 			++i)
 	{
 		//Log(LOG_INFO) << "pf: " << _battleSave->getTileIndex((*i)->getPosition());
-		tileIds.push_back(_battleSave->getTileIndex((*i)->getPosition()));
+		reachableIdList.push_back(_battleSave->getTileIndex((*i)->getPosition()));
 	}
-	return tileIds;
+	return reachableIdList;
 }
 
 /**

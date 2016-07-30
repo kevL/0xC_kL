@@ -77,8 +77,8 @@ private:
 		/// Exits the state.
 //		void exit();
 
-		/// Runs state functionality every AI cycle.
-		void think(BattleAction* const action) override;
+		/// Runs state functionality every AI-cycle.
+		void thinkOnce(BattleAction* const aiAction) override;
 };
 
 }

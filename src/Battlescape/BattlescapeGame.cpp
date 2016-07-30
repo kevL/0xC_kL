@@ -64,15 +64,45 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/BattleItem.h"
-//#include "../Savegame/BattleUnit.h"
+#include "../Savegame/BattleUnit.h"
 #include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/SavedBattleGame.h"
-//#include "../Savegame/SavedGame.h"
 #include "../Savegame/Tile.h"
 
 
 namespace OpenXcom
 {
+
+/// Outputs the BattleAction as a string.
+std::string BattleAction::debugBAction(const BattleAction& action) // static.
+{
+	std::ostringstream oststr;
+	oststr
+		<< "\n"
+		<< "\ttype= "			<< debugBat(action.type) << "\n"
+		<< "\tactor= "			<< (action.actor ? std::to_string(action.actor->getId()) : "NONE") << "\n"
+		<< "\ttargetUnit= "		<< (action.targetUnit ? std::to_string(action.targetUnit->getId()) : "NONE") << "\n"
+		<< "\tposTarget= "		<< action.posTarget << "\n"
+		<< "\tweapon= "			<< (action.weapon ? action.weapon->getRules()->getType() : "NONE") << "\n"
+		<< "\tTU= "				<< action.TU << "\n"
+		<< "\tfirstTU= "		<< action.firstTU << "\n"
+		<< "\ttargeting= "		<< action.targeting << "\n"
+		<< "\tvalue= "			<< action.value << "\n"
+		<< "\tresult= "			<< action.result << "\n"
+		<< "\tstrafe= "			<< action.strafe << "\n"
+		<< "\tdash= "			<< action.dash << "\n"
+		<< "\tdiff= "			<< action.diff << "\n"
+		<< "\tautoShotCount= "	<< action.autoShotCount << "\n"
+		<< "\tposCamera= "		<< action.posCamera << "\n"
+		<< "\tdesperate= "		<< action.desperate << "\n"
+		<< "\tfinalFacing= "	<< action.finalFacing << "\n"
+		<< "\tfinalAction= "	<< action.finalAction << "\n"
+		<< "\tAIcount= "		<< action.AIcount << "\n"
+		<< "\ttakenXp= "		<< action.takenXp << "\n"
+		<< "\twaypoints= "		<< action.waypoints.size();
+	return oststr.str();
+}
+
 
 //bool BattlescapeGame::_debug = false;		// static.
 bool BattlescapeGame::_debugPlay = false;	// static.
@@ -697,18 +727,17 @@ void BattlescapeGame::resetTraceTiles() // private.
  */
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 {
-//	bool _debug;
-//	if (unit->getId() == 1000028)	_debug = true;
-//	else							_debug = false;
-//	if (_debug)
-//	{
-//		Log(LOG_INFO) << "";
-//		Log(LOG_INFO) << "bg::handleUnitAI() id-" << unit->getId()
-//					  << " vis= " << unit->getUnitVisible()
-//					  << " " << unit->getPosition()
-//					  << " status= " << BattleUnit::debugStatus(unit->getUnitStatus())
-//					  << " tu= " << unit->getTu();
-//	}
+	bool _debug (false);
+	//if (unit->getId() == 1000028)	_debug = true;
+	//else							_debug = false;
+	if (_debug) {
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << "bg::handleUnitAI() id-" << unit->getId()
+					  << " vis= " << unit->getUnitVisible()
+					  << " " << unit->getPosition()
+					  << " status= " << BattleUnit::debugStatus(unit->getUnitStatus())
+					  << " tu= " << unit->getTu();
+	}
 
 	const int debug (Options::traceAI);
 	switch (debug)
@@ -718,20 +747,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			// no break;
 //		case 1:
 			//Log(LOG_INFO) << "BattlescapeGame::handleUnitAI() id-" << unit->getId();
-			//Log(LOG_INFO) << ". x= " << RNG::getSeed();
 	}
-
-	if (unit->getTu() < 12) unit->setReselect(false);
-
-	if (unit->getReselect() == false || _AIActionCounter > 1)
-	{
-		//Log(LOG_INFO) << "bg:handleUnitAI() select next[1]";
-		//Log(LOG_INFO) << ". curr Unit id-" << (_battleSave->getSelectedUnit() ? _battleSave->getSelectedUnit()->getId() : 0);
-		selectNextAiUnit(unit);
-		//Log(LOG_INFO) << ". next Unit id-" << (_battleSave->getSelectedUnit() ? _battleSave->getSelectedUnit()->getId() : 0);
-		return;
-	}
-
 
 //	unit->setUnitVisible(false);
 //	getTileEngine()->calcFovUnits_pos(unit->getPosition());
@@ -750,7 +766,29 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 		unit->setAIState(aiState);
 	}
 
-	if (++_AIActionCounter == 1)
+
+	Pathfinding* const pf (_battleSave->getPathfinding());
+	pf->setPathingUnit(unit);
+
+	unit->getAIState()->reachableTiles() = pf->findReachable(unit, unit->getTu());
+	if (unit->getAIState()->reachableTiles().size() < 2) // not enough TU to really do anything ...
+	{
+		if (debug) Log(LOG_INFO) << ". no reachableTiles/low TU - flag dontReselect";
+		unit->setReselect(false);
+	}
+
+	if (unit->getReselect() == false || ++_AIActionCounter > 1)
+	{
+		if (debug) {
+			Log(LOG_INFO) << ". select next[1]";
+			Log(LOG_INFO) << ". curr id-" << (_battleSave->getSelectedUnit() ? _battleSave->getSelectedUnit()->getId() : 0);
+		}
+
+		selectNextAiUnit(unit);
+		if (debug) Log(LOG_INFO) << ". next id-" << (_battleSave->getSelectedUnit() ? _battleSave->getSelectedUnit()->getId() : 0);
+		return;
+	}
+	else if (_AIActionCounter == 1)
 	{
 		_playedAggroSound = false;
 		unit->setHiding(false);
@@ -758,116 +796,101 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 
 	BattleAction aiAction;
 	aiAction.actor = unit;
- 	aiAction.type = BA_THINK;
-	aiAction.AIcount = _AIActionCounter;
-	if (debug)
-	{
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
-		Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << aiAction.AIcount;
-	}
-	unit->think(&aiAction);
-	if (debug)
-	{
-		Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(aiAction.type);
-		Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << aiAction.AIcount;
-	}
 
-	if (aiAction.type == BA_THINK)
-	{
-		if (debug)
-		{
-			Log(LOG_INFO) << "";
-			Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
-			Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << aiAction.AIcount;
-		}
-		unit->think(&aiAction);
-		if (debug)
-		{
-			Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(aiAction.type);
-			Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << aiAction.AIcount;
-		}
-	}
-	_AIActionCounter = aiAction.AIcount;
-
+	bool doThink;
 	if (unit->getFaction() == FACTION_HOSTILE // pickup Item ->
 		&& unit->getMainHandWeapon() == nullptr
-		&& unit->getRankString() != "STR_LIVE_TERRORIST" // TODO: new funct. hasFixedWeapon().
-		&& pickupItem(&aiAction) == true)
+		&& unit->getRankString() != "STR_LIVE_TERRORIST") // TODO: new funct. hasFixedWeapon().
 	{
-		if (debug) Log(LOG_INFO) << ". pickup Weapon ...";
-		if (_battleSave->getDebugTac() == true) // <- order matters.
+		if (pickupItem(&aiAction) == true)
 		{
-			_parentState->updateSoldierInfo(false);
+			if (debug) Log(LOG_INFO) << ". pickup Weapon ... do think";
+			doThink = true;
+			if (_battleSave->getDebugTac() == true) // <- order matters.
+				_parentState->updateSoldierInfo(false);
+		}
+		else
+		{
+			if (debug) Log(LOG_INFO) << ". MOVE to pickup Weapon ... no think req'd";
+			doThink = false;
 		}
 	}
+	else
+		doThink = true;
 
-	if (_playedAggroSound == false
-		&& unit->getChargeTarget() != nullptr)
+	if (doThink == true)
 	{
-		_playedAggroSound = true;
+		aiAction.type = BA_THINK;
+		aiAction.AIcount = _AIActionCounter;
+		if (debug) {
+			Log(LOG_INFO) << "";
+			Log(LOG_INFO) << "";
+			Log(LOG_INFO) << "";
+			Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
+			Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << aiAction.AIcount;
+		}
+		unit->thinkAi(&aiAction);
+		if (debug) {
+			Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(aiAction.type);
+			Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << aiAction.AIcount;
+		}
 
-		const int soundId (unit->getAggroSound());
-		if (soundId != -1)
-			getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-								->play(-1, getMap()->getSoundAngle(unit->getPosition()));
+		if (aiAction.type == BA_THINK)
+		{
+			if (debug) {
+				Log(LOG_INFO) << "";
+				Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
+				Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << aiAction.AIcount;
+			}
+			unit->thinkAi(&aiAction);
+			if (debug) {
+				Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(aiAction.type);
+				Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << aiAction.AIcount;
+			}
+		}
+		_AIActionCounter = aiAction.AIcount;
+
+		if (_playedAggroSound == false && unit->getChargeTarget() != nullptr)
+		{
+			_playedAggroSound = true;
+
+			const int soundId (unit->getAggroSound());
+			if (soundId != -1)
+				getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+									->play(-1, getMap()->getSoundAngle(unit->getPosition()));
+		}
 	}
 
 	std::wstring wst (Language::fsToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
 	_parentState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
-	if (debug)
-	{
-		Log(LOG_INFO)
-			<< "\n"
-			<< "\ttype = "			<< BattleAction::debugBat(aiAction.type) << "\n"
-			<< "\tactor = "			<< (aiAction.actor ? std::to_string(aiAction.actor->getId()) : "NONE") << "\n"
-			<< "\ttargetUnit = "	<< (aiAction.targetUnit ? std::to_string(aiAction.targetUnit->getId()) : "NONE") << "\n"
-			<< "\tposTarget = "		<< aiAction.posTarget << "\n"
-			<< "\tweapon = "		<< (aiAction.weapon ? aiAction.weapon->getRules()->getType() : "NONE") << "\n"
-			<< "\tTU = "			<< aiAction.TU << "\n"
-			<< "\ttargeting = "		<< aiAction.targeting << "\n"
-			<< "\tvalue = "			<< aiAction.value << "\n"
-			<< "\tresult = "		<< aiAction.result << "\n"
-			<< "\tstrafe = "		<< aiAction.strafe << "\n"
-			<< "\tdash = "			<< aiAction.dash << "\n"
-			<< "\tdiff = "			<< aiAction.diff << "\n"
-			<< "\tautoShotCount = "	<< aiAction.autoShotCount << "\n"
-			<< "\tposCamera = "		<< aiAction.posCamera << "\n"
-			<< "\tdesperate = "		<< aiAction.desperate << "\n"
-			<< "\tfinalFacing = "	<< aiAction.finalFacing << "\n"
-			<< "\tfinalAction = "	<< aiAction.finalAction << "\n"
-			<< "\tAIcount = "		<< aiAction.AIcount << "\n"
-			<< "\ttakenXp = "		<< aiAction.takenXp << "\n"
-			<< "\twaypoints = "		<< aiAction.waypoints.size();
-		//Log(LOG_INFO) << ". x= " << RNG::getSeed();
-	}
+	if (debug) Log(LOG_INFO) << BattleAction::debugBAction(aiAction);
 
 	switch (aiAction.type)
 	{
 		case BA_MOVE:
 		{
-			Pathfinding* const pf (_battleSave->getPathfinding());
 			pf->setPathingUnit(unit);
-//			if (_debug)
-//			{
-//				Log(LOG_INFO) << "handleUnitAI() id-" << unit->getId() << " status= " << BattleUnit::debugStatus(unit->getUnitStatus());
-//				Log(LOG_INFO) << ". " << unit->getPosition();
-//				Log(LOG_INFO) << ". " << aiAction.posTarget;
-//			}
+			if (_debug) {
+				Log(LOG_INFO) << "handleUnitAI() id-" << unit->getId() << " status= " << BattleUnit::debugStatus(unit->getUnitStatus());
+				Log(LOG_INFO) << ". " << unit->getPosition();
+				Log(LOG_INFO) << ". " << aiAction.posTarget;
+			}
 
 			if (_battleSave->getTile(aiAction.posTarget) != nullptr)	// TODO: Check that .posTarget is not unit's current Tile.
 			{															// Or ensure that AIState does not return BA_MOVE if so.
 				pf->calculatePath(unit, aiAction.posTarget);			// TODO: AI will choose a position to move to that unit cannot move
-//				if (_debug)
-//				{
-//					Log(LOG_INFO) << ". . posTarget VALID";
-//					Log(LOG_INFO) << ". . start dir= " << pf->getStartDirection();
-//					Log(LOG_INFO) << ". . tu= " << unit->getTu();
-//				}
+				if (_debug) {
+					Log(LOG_INFO) << ". . posTarget VALID";
+					Log(LOG_INFO) << ". . start dir= " << pf->getStartDirection();
+					Log(LOG_INFO) << ". . tu= " << unit->getTu();
+					Log(LOG_INFO) << ". . firstTU= " << aiAction.firstTU;
+				}
 				if (pf->getStartDirection() != -1)						// to ... stop that (unless blocked by unseen player- or neutral-unit).
+//					&& unit->getTu() >= aiAction.firstTU)
+				{
 					stateBPushBack(new UnitWalkBState(this, aiAction));	// TODO: If aiAction.desperate use 'dash' interval-speed.
+				}
+				// else select next AI unit.
 			}
 			break;
 		}
@@ -898,8 +921,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 					// NOTE: See below_ for (aiAction.type == BA_MELEE).
 			}
 
-			if (debug)
-			{
+			if (debug) {
 				Log(LOG_INFO) << "BATTLESCAPE: Attack:";
 				Log(LOG_INFO) << ". aiAction.type = " << BattleAction::debugBat(aiAction.type);
 				Log(LOG_INFO) << ". aiAction.posTarget = " << aiAction.posTarget;
@@ -934,11 +956,10 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 
 		default:
 		case BA_NONE:
-		case BA_THINK: // <- should never happen.
-			//Log(LOG_INFO) << "bg:handleUnitAI() select next[2]";
+//		case BA_THINK: // <- should never happen.
+			if (debug) Log(LOG_INFO) << ". select next[2]";
 			selectNextAiUnit(unit);
 	}
-	//if (debug) Log(LOG_INFO) << ". EXIT x= " << RNG::getSeed();
 }
 
 /**
@@ -2428,7 +2449,6 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 								action.actor,
 								action.posTarget,
 								tu);
-
 					if (pf->getStartDirection() != -1)
 					{
 						action.actor->setDashing();
@@ -2942,7 +2962,6 @@ void BattlescapeGame::moveUpDown(
 		int dir)
 {
 	_playerAction.posTarget = unit->getPosition();
-
 	switch (dir)
 	{
 		case Pathfinding::DIR_UP:
@@ -3215,34 +3234,34 @@ const Ruleset* BattlescapeGame::getRuleset() const
 /**
  * Tries to find a BattleItem and pick it up if possible.
  * @note Called by handleUnitAI().
- * @param action - pointer to an AI-BattleAction struct
+ * @param aiAction - pointer to an AI-BattleAction struct
  * @return, true if an item was actually picked up
  */
-bool BattlescapeGame::pickupItem(BattleAction* const action) const
+bool BattlescapeGame::pickupItem(BattleAction* const aiAction) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::findItem()";
-	BattleItem* const targetItem (surveyItems(action->actor));
+	BattleItem* const targetItem (surveyItems(aiAction->actor));
 	if (targetItem != nullptr)
 	{
 		//Log(LOG_INFO) << ". found " << targetItem->getRules()->getType();
-//		if (targetItem->getTile()->getPosition() == action->actor->getPosition())
-		if (targetItem->getItemTile() == action->actor->getUnitTile())
+//		if (targetItem->getTile()->getPosition() == aiAction->actor->getPosition())
+		if (targetItem->getItemTile() == aiAction->actor->getUnitTile())
 		{
 			//Log(LOG_INFO) << ". . pickup on spot";
-			if (takeItemFromGround(targetItem, action->actor) == true
+			if (takeItemFromGround(targetItem, aiAction->actor) == true
 				&& targetItem->getRules()->getBattleType() == BT_FIREARM
 				&& targetItem->getAmmoItem() == nullptr)
 			{
 				//Log(LOG_INFO) << ". . . check Ammo.";
-				action->actor->checkReload();
+				aiAction->actor->checkReload();
 			}
 			return true;
 		}
 		else
 		{
 			//Log(LOG_INFO) << ". . move to spot";
-			action->type = BA_MOVE;
-			action->posTarget = targetItem->getItemTile()->getPosition();
+			aiAction->type = BA_MOVE;
+			aiAction->posTarget = targetItem->getItemTile()->getPosition();
 		}
 	}
 	return false;
@@ -3443,10 +3462,9 @@ bool BattlescapeGame::takeItemFromGround(
 	const RuleInventory
 		* const rhRule (getRuleset()->getInventoryRule(ST_RIGHTHAND)),
 		* const grdRule (getRuleset()->getInventoryRule(ST_GROUND));
-	const int cost = grdRule->getCost(rhRule);
+	const int cost (grdRule->getCost(rhRule));
 
-	if (unit->getTu() >= cost
-		&& takeItem(item, unit) == true)
+	if (unit->getTu() >= cost && takeItem(item, unit) == true)
 	{
 		unit->expendTu(cost);
 		item->getItemTile()->removeItem(item);

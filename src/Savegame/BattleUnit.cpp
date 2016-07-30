@@ -2648,7 +2648,7 @@ std::vector<BattleItem*>* BattleUnit::getInventory()
  * @note Called by BattlescapeGame::handleUnitAI().
  * @param action - current AI action
  */
-void BattleUnit::think(BattleAction* const action)
+void BattleUnit::thinkAi(BattleAction* const action)
 {
 	bool debug = Options::traceAI;
 	if (debug)
@@ -2662,8 +2662,8 @@ void BattleUnit::think(BattleAction* const action)
 	if (checkReload() == true)
 		_cacheInvalid = true; // <- reloading a weapon could switch a unit's preferred weapon-hand.
 
-	if (debug) Log(LOG_INFO) << ". _unitAIState->think()";
-	_unitAIState->think(action);
+	if (debug) Log(LOG_INFO) << ". _unitAIState->thinkOnce()";
+	_unitAIState->thinkOnce(action);
 
 	if (debug)
 	{

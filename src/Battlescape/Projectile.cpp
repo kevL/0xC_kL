@@ -421,7 +421,6 @@ void Projectile::applyAccuracy( // private.
 			deviation /= accuracy + 0.16;
 
 			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
-			//Log(LOG_INFO) << ". calc bulls-eye x= " << RNG::getSeed();
 			if (RNG::percent(autoHit) == true)
 				deviation /= 10.;
 

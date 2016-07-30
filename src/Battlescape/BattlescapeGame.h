@@ -92,10 +92,11 @@ struct BattleAction
 		takenXp,
 		targeting;
 	int
+		AIcount, // first action of turn, second, etc.
 		autoShotCount,
 		diff,
 		finalFacing,
-		AIcount, // first action of turn, second, etc.
+		firstTU, // is setup but not used.
 		TU,
 		value;
 
@@ -120,6 +121,7 @@ struct BattleAction
 			targetUnit(nullptr),
 			weapon(nullptr),
 			TU(0),
+			firstTU(-1),
 			targeting(false),
 			value(0),
 			strafe(false),
@@ -147,6 +149,7 @@ struct BattleAction
 		targetUnit = nullptr;
 		weapon = nullptr;
 		TU = 0;
+		firstTU = -1;
 		targeting = false;
 		value = 0;
 		result = "";
@@ -169,7 +172,7 @@ struct BattleAction
 	 * @param type - the BattleActionType (BattlescapeGame.h)
 	 * @return, the action-type as a string
 	 */
-	static std::string debugBat(const BattleActionType type)
+	static std::string debugBat(const BattleActionType& type)
 	{
 		switch (type)
 		{
@@ -194,6 +197,9 @@ struct BattleAction
 			case BA_PSICOURAGE:	return "psi-courage";
 		}
 	}
+
+	/// Outputs the BattleAction as a string.
+	static std::string debugBAction(const BattleAction& action);
 };
 
 
@@ -402,7 +408,7 @@ private:
 		void setPlayerPanic() { _playerPanicHandled = false; }
 
 		/// Tries to find an item and pick it up if possible.
-		bool pickupItem(BattleAction* const action) const;
+		bool pickupItem(BattleAction* const aiAction) const;
 		/// Checks through all items on the ground and picks one.
 		BattleItem* surveyItems(BattleUnit* const unit) const;
 		/// Evaluates if it's worthwhile to take an item.

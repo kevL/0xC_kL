@@ -63,8 +63,8 @@ class PathfindingOpenSet
 private:
 	std::priority_queue<OpenSetEntry*, std::vector<OpenSetEntry*>, EntryCompare> _queue;
 
-	/// Removes reachable discarded entries.
-	void removeDiscarded();
+	/// Discards entries.
+	void discard();
 
 
 	public:

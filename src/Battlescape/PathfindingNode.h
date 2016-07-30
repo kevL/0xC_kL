@@ -49,12 +49,12 @@ private:
 	OpenSetEntry* _openSetEntry; // invasive field needed by PathfindingOpenSet
 	PathfindingNode* _prevNode;
 
-	Position _pos;
+	const Position _pos;
 
 
 	public:
 		/// Creates a PathfindingNode.
-		explicit PathfindingNode(Position pos);
+		explicit PathfindingNode(const Position& pos);
 		/// Cleans up the PathfindingNode.
 		~PathfindingNode();
 

@@ -63,13 +63,13 @@ protected:
 	static const int
 		FAST_PASS_THRESHOLD		= 100,
 		BASE_SUCCESS_SYSTEMATIC	= 100,
-		BASE_SUCCESS_DESPERATE	= 15 + BASE_SUCCESS_SYSTEMATIC,
-		BASE_SUCCESS			= 73,
-		EXPOSURE_PENALTY		= 12,
-		FIRE_PENALTY			= 37,
-		COVER_BONUS				= 29,
-		SMOKE_BONUS_MULT		= 3,
-		CUR_TILE_PREF			= 16,
+		BASE_SUCCESS_DESPERATE	= 115,
+		BASE_SUCCESS			=  73,
+		EXPOSURE_PENALTY		=  12,
+		FIRE_PENALTY			=  37,
+		COVER_BONUS				=  29,
+		SMOKE_BONUS				=   3,
+		CUR_TILE_PREF			=  10,
 
 		ESCAPE_FAIL				= -100000,
 
@@ -126,7 +126,10 @@ protected:
 		/// Initializes Pathfinding and TileEngine.
 		virtual void init();
 		/// Runs state functionality every AI-cycle.
-		virtual void think(BattleAction* const action);
+		virtual void thinkOnce(BattleAction* const action);
+
+		/// Accesses the reachable-tiles vector.
+		std::vector<size_t>& reachableTiles();
 
 		/// Resets the unit's saved parameters.
 		void resetAI();

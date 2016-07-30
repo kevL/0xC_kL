@@ -215,11 +215,12 @@ void UnitWalkBState::think()
 					return;
 				}
 
-				if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
-					&& _parent->playerPanicHandled() == true)
+				if (_unit->getFaction() == FACTION_PLAYER)
 				{
 					_parent->getBattlescapeState()->hotSqrsClear();
-					_parent->getBattlescapeState()->hotSqrsUpdate();
+
+					if (_parent->playerPanicHandled() == true)
+						_parent->getBattlescapeState()->hotSqrsUpdate();
 				}
 			}
 			else if (_isVisible == true) // keep walking ... make sure the unit sprites are up to date
@@ -891,15 +892,24 @@ bool UnitWalkBState::statusStand_end() // private.
 	}
 	_te->calcFovUnits_pos(pos, false, faction);
 
-	if (_unit->getFaction() != FACTION_PLAYER
-		&& _unit->getUnitVisible() == true)
+	switch (_unit->getFaction())
 	{
-		if (_isVisible == false)
-			_walkCamera->centerPosition(_unit->getPosition(), false);
-		else
-			_walkCamera->focusPosition(
-									_unit->getPosition(),
-									false, false);
+		case FACTION_PLAYER:
+			if (_walkCamera->isOnScreen(_unit->getPosition()))
+				_walkCamera->setViewLevel(_unit->getPosition().z);
+			break;
+
+		case FACTION_HOSTILE:
+		case FACTION_NEUTRAL:
+			if (_unit->getUnitVisible() == true)
+			{
+				if (_isVisible == false)
+					_walkCamera->centerPosition(_unit->getPosition(), false);
+				else
+					_walkCamera->focusPosition(
+											_unit->getPosition(),
+											false, false);
+			}
 	}
 
 	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
@@ -981,11 +991,12 @@ void UnitWalkBState::statusTurn() // private.
 		_unit->setUnitStatus(STATUS_STANDING);
 		abortState(false);
 	}
-	else if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
-		&& _parent->playerPanicHandled() == true)
+	else if (_unit->getFaction() == FACTION_PLAYER)
 	{
 		_parent->getBattlescapeState()->hotSqrsClear();
-		_parent->getBattlescapeState()->hotSqrsUpdate();
+
+		if (_parent->playerPanicHandled() == true)
+			_parent->getBattlescapeState()->hotSqrsUpdate();
 	}
 }
 
@@ -1072,8 +1083,6 @@ void UnitWalkBState::postPathProcedures() // private.
 			}
 		}
 	}
-	else if (_parent->playerPanicHandled() == false) // is Faction_Player
-		_unit->setTu();
 
 	if (_door == true) // in case a door opened AND state was aborted.
 	{

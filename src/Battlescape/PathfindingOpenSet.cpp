@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Cleans up all the entries still in set.
+ * Cleans up all the entries still in the OpenSet.
  */
 PathfindingOpenSet::~PathfindingOpenSet()
 {
@@ -42,12 +42,11 @@ PathfindingOpenSet::~PathfindingOpenSet()
 }
 
 /**
- * Keeps removing all discarded entries that have come to the top of the queue.
+ * Discards entries that have come to the top of the queue.
  */
-void PathfindingOpenSet::removeDiscarded()
+void PathfindingOpenSet::discard() // private.
 {
-	while (_queue.empty() == false
-		&& _queue.top()->_node == nullptr)
+	while (_queue.empty() == false && _queue.top()->_node == nullptr)
 	{
 		const OpenSetEntry* const entry (_queue.top());
 		_queue.pop();
@@ -57,7 +56,7 @@ void PathfindingOpenSet::removeDiscarded()
 }
 
 /**
- * Gets the node with the least cost.
+ * Gets the PathfindingNode with the least cost.
  * @note After this call the node is no longer in the set. It is an error to
  * call this when the set is empty.
  * @return, pointer to the node which had the least cost
@@ -73,13 +72,13 @@ PathfindingNode* PathfindingOpenSet::getNode()
 	delete entry;
 	node->_openSetEntry = nullptr;
 
-	removeDiscarded(); // Discarded entries might be visible now.
+	discard(); // non-eligible entries might be visible.
 
 	return node;
 }
 
 /**
- * Places the node in the set.
+ * Places a specified PathfindingNode in this OpenSet.
  * @note If the node was already in the set the previous entry is discarded. It
  * is the caller's responsibility to never re-add a node with a higher cost.
  * @param node - pointer to the node to add
