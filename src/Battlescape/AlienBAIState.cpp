@@ -574,8 +574,6 @@ void AlienBAIState::setupPatrol() // private.
 		}
 		else
 			_stopNode = nullptr;
-
-//		_pf->abortPath(); // done every time calculatePath() is called.
 	}
 
 	if (_stopNode == nullptr)
@@ -1032,8 +1030,6 @@ void AlienBAIState::setupEscape() // private.
 						tile->setPreviewTu(score);
 					}
 				}
-//				_pf->abortPath(); // done every time calculatePath() is called.
-
 //				if (score > FAST_PASS_THRESHOLD)
 //					coverFound = true;
 			}
@@ -1675,7 +1671,6 @@ bool AlienBAIState::findMeleePosition( // private.
 								_attackAction->posTarget = pos;
 								_attackAction->firstTU = _pf->getTuFirst();
 							}
-							_pf->abortPath(); // done every time calculatePath() is called.
 						}
 					}
 				}
@@ -1813,8 +1808,6 @@ bool AlienBAIState::wayPointAction() // private.
 						targets.push_back(*i);
 				}
 				else if (_traceAI) Log(LOG_INFO) << ". . . . explEff invalid";
-
-//				_pf->abortPath(); // done every time calculatePath() is called in pathWaypoints().
 			}
 		}
 

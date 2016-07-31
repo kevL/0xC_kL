@@ -314,7 +314,7 @@ units:
       throwing: 58
       strength: 45
       psiStrength: 89
-      psiSkill: 41
+      psiSkill: 35
       melee: 18
     armor: SECTOID_ARMOR1
     standHeight: 16
@@ -336,8 +336,8 @@ units:
       firing: 52
       throwing: 58
       strength: 50
-      psiStrength: 109
-      psiSkill: 42
+      psiStrength: 99
+      psiSkill: 35
       melee: 23
     armor: SECTOID_ARMOR2
     standHeight: 16
@@ -847,7 +847,7 @@ units:
       firing: 74
       throwing: 80
       strength: 48
-      psiStrength: 99
+      psiStrength: 100
       psiSkill: 35
       melee: 56
     armor: ETHEREAL_ARMOR0
@@ -871,8 +871,8 @@ units:
       firing: 74
       throwing: 80
       strength: 48
-      psiStrength: 114
-      psiSkill: 36
+      psiStrength: 115
+      psiSkill: 35
       melee: 66
     armor: ETHEREAL_ARMOR1
     standHeight: 20
@@ -895,8 +895,8 @@ units:
       firing: 74
       throwing: 80
       strength: 48
-      psiStrength: 133
-      psiSkill: 37
+      psiStrength: 130
+      psiSkill: 35
       melee: 78
     armor: ETHEREAL_ARMOR2
     standHeight: 20

@@ -160,8 +160,6 @@ void CivilianBAIState::setupPatrol() // private.
 			_stopNode = nullptr;
 		else
 			_patrolAction->firstTU = _pf->getTuFirst();
-
-//		_pf->abortPath(); // done every time calculatePath() is called.
 	}
 
 	if (_stopNode != nullptr)
@@ -297,7 +295,6 @@ void CivilianBAIState::setupEscape() // private.
 						tile->setPreviewDir(TRACE_DIR);
 						tile->setPreviewTu(scoreTest); }
 				}
-//				_pf->abortPath(); // done every time calculatePath() is called.
 
 //				if (score > FAST_PASS_THRESHOLD)
 //					coverFound = true;

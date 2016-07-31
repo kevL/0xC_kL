@@ -779,8 +779,8 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 	pf->setPathingUnit(unit);
 
 	unit->getAIState()->reachableTiles() = pf->findReachable(unit, unit->getTu());
-	if (unit->getAIState()->reachableTiles().size() < 2) // not enough TU to really do anything ...
-	{
+	if (unit->getAIState()->reachableTiles().size() < 2)	// not enough TU to really do anything ...
+	{														// NOTE: That won't work well w/ no-energy stationary emplacement guns.
 		if (debug) Log(LOG_INFO) << ". no reachableTiles/low TU - flag dontReselect";
 		unit->setReselect(false);
 	}
