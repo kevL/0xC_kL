@@ -97,7 +97,6 @@ std::string BattleAction::debugBAction(const BattleAction& action) // static.
 		<< "\tdesperate= "		<< action.desperate << "\n"
 		<< "\tfinalFacing= "	<< action.finalFacing << "\n"
 		<< "\tfinalAction= "	<< action.finalAction << "\n"
-		<< "\tAIcount= "		<< action.AIcount << "\n"
 		<< "\ttakenXp= "		<< action.takenXp << "\n"
 		<< "\twaypoints= "		<< action.waypoints.size();
 	return oststr.str();
@@ -560,9 +559,11 @@ void BattlescapeGame::popBattleState()
 					if (_battleSave->getSide() != FACTION_PLAYER && _debugPlay == false)
 					{
 						BattleUnit* selUnit (_battleSave->getSelectedUnit());
-						if (_AIActionCounter > 2	// AI does two things per unit before switching to the next
-							|| selUnit == nullptr	// unit or it got killed before doing its second thing.
-							|| selUnit->isOut_t() == true)
+						if (_AIActionCounter > 2	// AI does two think-cycles per unit before switching to the next
+							|| selUnit == nullptr	// unit -- or unit got killed before doing its second think.
+							|| selUnit->getHealth() == 0
+							|| selUnit->getStun() >= selUnit->getHealth())
+//							|| selUnit->isOut_t() == true)
 						{
 							_AIActionCounter = 0;
 
@@ -572,11 +573,18 @@ void BattlescapeGame::popBattleState()
 								getMap()->cacheUnit(selUnit);
 							}
 
-							if (_battleStates.empty() == true // nothing left for Actor to do
-								&& _battleSave->selectNextUnit(false, true) == nullptr)
+							if (_battleStates.empty() == true) // nothing left for current Actor to do
 							{
-								//Log(LOG_INFO) << "bg:popBattleState() -> endAiTurn()";
-								endAiTurn(); // NOTE: This is probly handled just as well in think().
+								if (_battleSave->selectNextUnit(false, true) != nullptr)
+								{
+									Log(LOG_INFO) << "bg:popBattleState() selUnit funky - next id-" << _battleSave->getSelectedUnit()->getId();
+									_AIActionCounter = 0;
+								}
+								else
+								{
+									Log(LOG_INFO) << "bg:popBattleState() -> endAiTurn()";
+									endAiTurn(); // NOTE: This is probly handled just as well in think().
+								}
 							}
 
 							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
@@ -821,18 +829,17 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 	if (doThink == true)
 	{
 		aiAction.type = BA_THINK;
-		aiAction.AIcount = _AIActionCounter;
 		if (debug) {
 			Log(LOG_INFO) << "";
 			Log(LOG_INFO) << "";
 			Log(LOG_INFO) << "";
 			Log(LOG_INFO) << "BATTLESCAPE::handleUnitAI id-" << unit->getId();
-			Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << aiAction.AIcount;
+			Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [in] = " << _AIActionCounter;
 		}
 		unit->thinkAi(&aiAction);
 		if (debug) {
 			Log(LOG_INFO) << "BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(aiAction.type);
-			Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << aiAction.AIcount;
+			Log(LOG_INFO) << "BATTLESCAPE: AIActionCount [out] = " << _AIActionCounter;
 		}
 
 		if (aiAction.type == BA_THINK)
@@ -840,15 +847,16 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			if (debug) {
 				Log(LOG_INFO) << "";
 				Log(LOG_INFO) << ". BATTLESCAPE: Re-Think id-" << unit->getId();
-				Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << aiAction.AIcount;
+				Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [in] = " << _AIActionCounter;
 			}
+
 			unit->thinkAi(&aiAction);
+
 			if (debug) {
 				Log(LOG_INFO) << ". BATTLESCAPE: id-" << unit->getId() << " bat = " << BattleAction::debugBat(aiAction.type);
-				Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << aiAction.AIcount;
+				Log(LOG_INFO) << ". BATTLESCAPE: AIActionCount [out] = " << _AIActionCounter;
 			}
 		}
-		_AIActionCounter = aiAction.AIcount;
 
 		if (_playedAggroSound == false && unit->getChargeTarget() != nullptr)
 		{
@@ -960,6 +968,14 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			if (debug) Log(LOG_INFO) << ". select next[2]";
 			selectNextAiUnit(unit);
 	}
+}
+
+/**
+ * Decreases the AI-counter by one pip.
+ */
+void BattlescapeGame::decAiActionCount()
+{
+	--_AIActionCounter;
 }
 
 /**

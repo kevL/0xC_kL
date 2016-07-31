@@ -160,9 +160,6 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 	_attackAction->weapon = aiAction->weapon;
 	_attackAction->diff = static_cast<int>(_battleSave->getSavedGame()->getDifficulty()); // for grenade-efficacy and blaster-waypoints.
 
-//	_attackAction->AIcount = aiAction->AIcount;
-//	_escapeAction->AIcount = aiAction->AIcount;
-
 	_spottersOrigin = tallySpotters(_unit->getPosition());
 	_targetsExposed = tallyTargets();
 	_targetsVisible = selectNearestTarget(); // sets _unitAggro.
@@ -176,19 +173,19 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 
 //	_pf->setPathingUnit(_unit);
 //	_reachable = _pf->findReachable(_unit, _unit->getTu()); // done in BattlescapeGame::handleUnitAi().
-	if (_traceAI) {
-		Log(LOG_INFO) << ". reachable IDs";
-		int x,y,z;
-		for (std::vector<size_t>::const_iterator
-				i = _reachable.begin();
-				i != _reachable.end();
-				++i)
-		{
-			_battleSave->tileCoords(*i, &x,&y,&z);
-			Log(LOG_INFO) << ". . " << (*i)
-						  << "\t(" << x << "," << y << "," << z << ")";
-		}
-	}
+//	if (_traceAI) {
+//		Log(LOG_INFO) << ". reachable IDs";
+//		int x,y,z;
+//		for (std::vector<size_t>::const_iterator
+//				i = _reachable.begin();
+//				i != _reachable.end();
+//				++i)
+//		{
+//			_battleSave->tileCoords(*i, &x,&y,&z);
+//			Log(LOG_INFO) << ". . " << (*i)
+//						  << "\t(" << x << "," << y << "," << z << ")";
+//		}
+//	}
 
 	int tuReserve (-1);
 	if (aiAction->weapon != nullptr)
@@ -267,10 +264,10 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 	if (_psiAction->type != BA_NONE && _hasPsiBeenSet == false)
 	{
 		_hasPsiBeenSet = true;
+		_battleSave->getBattleGame()->decAiActionCount();
 
 		aiAction->type = _psiAction->type;
 		aiAction->posTarget = _psiAction->posTarget;
-		aiAction->AIcount -= 1;
 
 		if (_traceAI) Log(LOG_INFO) << "AlienBAIState::think() EXIT, Psi";
 		return;
@@ -285,8 +282,8 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 		case AI_PATROL:
 			if (   _spottersOrigin != 0
 				|| _targetsVisible != 0
-				|| _targetsExposed != 0)
-//				|| RNG::percent(9) == true)
+				|| _targetsExposed != 0
+				|| RNG::percent(10) == true)
 			{
 				evaluate = true;
 			}
@@ -313,8 +310,8 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 				evaluate = true;
 			}
 	}
-	if (_traceAI) Log(LOG_INFO) << ". do Evaluate = " << evaluate;
 
+	if (_traceAI) Log(LOG_INFO) << ". do Evaluate = " << evaluate;
 	if (evaluate == true
 		|| (_spottersOrigin > 1
 			|| _unit->getHealth() < (_unit->getBattleStats()->health << 1u) / 3
@@ -328,9 +325,8 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 		evaluateAiMode();
 		if (_traceAI) Log(LOG_INFO) << ". . AIMode post-Evaluate = " << BattleAIState::debugAiMode(_AIMode);
 	}
-
 	if (_traceAI) Log(LOG_INFO) << ". evaluate [2] " << BattleAIState::debugAiMode(_AIMode);
-	_reserve = BA_NONE;
+
 	switch (_AIMode)
 	{
 		case AI_PATROL:
@@ -347,6 +343,8 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 					default: _reserve = BA_SNAPSHOT;
 				}
 			}
+			else
+				_reserve = BA_NONE;
 
 			aiAction->type		= _patrolAction->type;
 			aiAction->posTarget	= _patrolAction->posTarget;
@@ -355,6 +353,8 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 			break;
 
 		case AI_COMBAT:
+			_reserve = BA_NONE;
+
 			aiAction->type		= _attackAction->type;
 			aiAction->posTarget	= _attackAction->posTarget;
 			aiAction->firstTU	= _attackAction->firstTU;
@@ -385,7 +385,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 															aiAction->weapon))
 					{
 						if (_traceAI) Log(LOG_INFO) << ". . Move w/ rifle + tu for COMBAT";
-						aiAction->AIcount -= 1;
+						_battleSave->getBattleGame()->decAiActionCount();
 					}
 					break;
 
@@ -402,6 +402,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 			break;
 
 		case AI_AMBUSH:
+			_reserve = BA_NONE;
 			_unit->setChargeTarget();
 
 			aiAction->type			= _ambushAction->type;
@@ -414,6 +415,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 			break;
 
 		case AI_ESCAPE:
+			_reserve = BA_NONE;
 			_unit->setChargeTarget();
 
 			aiAction->type			= _escapeAction->type;
@@ -429,17 +431,17 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 	if (aiAction->type == BA_MOVE)
 	{
 		if (_traceAI) Log(LOG_INFO) << ". BA_MOVE";
-		if (aiAction->posTarget == _unit->getPosition())
-		{
-			if (_traceAI) Log(LOG_INFO) << ". . Stay put";
-			aiAction->type = BA_NONE;
-		}
-		else
-		{
-			if (_traceAI) Log(LOG_INFO) << ". . Move";
-			_tuAmbush =
-			_tuEscape = -1; // if moving re-evaluate Ambush/Escape target.
-		}
+//		if (aiAction->posTarget == _unit->getPosition())	// leave this in because unit could conceivably
+//		{													// do a finalFacing pivot.
+//			if (_traceAI) Log(LOG_INFO) << ". . Stay put";
+//			aiAction->type = BA_NONE;
+//		}
+//		else
+//		{
+//			if (_traceAI) Log(LOG_INFO) << ". . Move";
+		_tuAmbush =
+		_tuEscape = -1; // if moving re-evaluate Ambush/Escape target.
+//		}
 	}
 	//Log(LOG_INFO) << "AlienBAIState::think() EXIT";
 }
@@ -692,7 +694,6 @@ void AlienBAIState::setupAmbush() // private.
 	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::setupAmbush() id-" << _unit->getId();
 	_ambushAction->type = BA_THINK;
 	_ambushAction->firstTU = -1;
-	_tuAmbush = -1;
 
 //	if (selectPlayerTarget() == true) // sets _unitAggro.
 	if (_unitAggro != nullptr)

@@ -92,7 +92,6 @@ struct BattleAction
 		takenXp,
 		targeting;
 	int
-		AIcount, // first action of turn, second, etc.
 		autoShotCount,
 		diff,
 		finalFacing,
@@ -132,7 +131,6 @@ struct BattleAction
 			desperate(false),
 			finalFacing(-1),
 			finalAction(false),
-			AIcount(0),
 			takenXp(false)
 //			pauseAfterShot(false)
 	{}
@@ -161,7 +159,6 @@ struct BattleAction
 		desperate = false;
 		finalFacing = -1;
 		finalAction = false;
-		AIcount = 0;
 		takenXp = false;
 		waypoints.clear();
 //		pauseAfterShot = false;
@@ -221,7 +218,7 @@ private:
 		_playedAggroSound,
 		_playerPanicHandled,
 		_shotgunProgress;
-	int _AIActionCounter;
+	int _AIActionCounter; // first action of turn, second, etc.
 
 
 	std::string // SoldierDiary killStat info ->
@@ -325,6 +322,9 @@ private:
 		bool noActionsPending(const BattleUnit* const unit) const;
 		/// Sets the BattleState->think() interval.
 		void setStateInterval(Uint32 interval);
+
+		/// Decreases the AI-counter by one pip.
+		void decAiActionCount();
 
 		/// Handles the result of non-target battle-actions like priming a grenade.
 		void handleNonTargetAction();
