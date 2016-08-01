@@ -2399,7 +2399,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					const Position& pos (_hostileUnit[i]->getPosition());
 
 					Camera* const camera (_map->getCamera());
-					if (camera->focusPosition(pos) == true)
+					if (camera->focusPosition(pos, false) == true)
 					{
 						_srfTargeter->setX((Options::baseXResolution >> 1u) - 16);
 						_srfTargeter->setY((Options::baseYResolution - _rules->getInterface("battlescape")->getElement("icons")->h) >> 1u);

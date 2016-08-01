@@ -89,7 +89,7 @@ std::string MapDataSet::getType() const
 
 /**
  * Gets the MapDataSet size.
- * @return, the size in quantity of records
+ * @return, the quantity of records
  */
 size_t MapDataSet::getSize() const
 {
@@ -120,204 +120,203 @@ SurfaceSet* MapDataSet::getSurfaceset() const
  */
 void MapDataSet::loadData()
 {
-	if (_loaded == true) // prevents loading twice
-		return;
-
-	_loaded = true;
+	if (_loaded == false) // prevents loading twice
+	{
+		_loaded = true;
 
 #pragma pack(push, 1)	// align the incoming MCD-values with 1-byte boundaries
-	struct MCD			// This struct helps to read the .MCD file format.
-	{
-		unsigned char	Frame[8u];
-		unsigned char	LOFT[12u];
-		unsigned short	ScanG;
-		unsigned char	u23;
-		unsigned char	u24;
-		unsigned char	u25;
-		unsigned char	u26;
-		unsigned char	u27;
-		unsigned char	u28;
-		unsigned char	u29;
-		unsigned char	u30;
-		unsigned char	UFO_Door;
-		unsigned char	Stop_LOS;
-		unsigned char	No_Floor;
-		unsigned char	Big_Wall;
-		unsigned char	Gravlift;
-		unsigned char	Door;
-		unsigned char	Block_Fire;
-		unsigned char	Block_Smoke;
-		unsigned char	u39;
-		unsigned char	TU_Walk;
-		unsigned char	TU_Slide;
-		unsigned char	TU_Fly;
-		unsigned char	Armor;
-		unsigned char	HE_Block;
-		unsigned char	Die_MCD;
-		unsigned char	Flammable;
-		unsigned char	Alt_MCD;
-		unsigned char	u48;
-		signed char		T_Level;
-		unsigned char	P_Level;
-		unsigned char	u51;
-		unsigned char	Light_Block;
-		unsigned char	Footstep;
-		unsigned char	Tile_Type;
-		unsigned char	HE_Type;
-		unsigned char	HE_Strength;
-		unsigned char	Smoke_Blockage;
-		unsigned char	Fuel;
-		unsigned char	Light_Source;
-		unsigned char	Target_Type;
-		unsigned char	Xcom_Base;
-		unsigned char	u62;
-	};
+		struct MCD		// This struct helps to read the .MCD file format.
+		{
+			unsigned char	Frame[8u];
+			unsigned char	LOFT[12u];
+			unsigned short	ScanG;
+			unsigned char	u23;
+			unsigned char	u24;
+			unsigned char	u25;
+			unsigned char	u26;
+			unsigned char	u27;
+			unsigned char	u28;
+			unsigned char	u29;
+			unsigned char	u30;
+			unsigned char	UFO_Door;
+			unsigned char	Stop_LOS;
+			unsigned char	No_Floor;
+			unsigned char	Big_Wall;
+			unsigned char	Gravlift;
+			unsigned char	Door;
+			unsigned char	Block_Fire;
+			unsigned char	Block_Smoke;
+			unsigned char	u39;
+			unsigned char	TU_Walk;
+			unsigned char	TU_Slide;
+			unsigned char	TU_Fly;
+			unsigned char	Armor;
+			unsigned char	HE_Block;
+			unsigned char	Die_MCD;
+			unsigned char	Flammable;
+			unsigned char	Alt_MCD;
+			unsigned char	u48;
+			signed char		T_Level;
+			unsigned char	P_Level;
+			unsigned char	u51;
+			unsigned char	Light_Block;
+			unsigned char	Footstep;
+			unsigned char	Tile_Type;
+			unsigned char	HE_Type;
+			unsigned char	HE_Strength;
+			unsigned char	Smoke_Blockage;
+			unsigned char	Fuel;
+			unsigned char	Light_Source;
+			unsigned char	Target_Type;
+			unsigned char	Xcom_Base;
+			unsigned char	u62;
+		};
 #pragma pack(pop) // revert to standard byte-alignment
 
-	MCD mcd;
+		MCD mcd;
 
-	// Load all terrain-data in from an MCD file.
-	std::string file ("TERRAIN/" + _type + ".MCD");
-	std::ifstream ifstr ( // load file
+		// Load all terrain-part-data from the MCD-file '_type'.
+		std::string file ("TERRAIN/" + _type + ".MCD");
+		std::ifstream ifstr (
 						CrossPlatform::getDataFile(file).c_str(),
 						std::ios::in | std::ios::binary);
-	if (ifstr.fail() == true)
-	{
-		throw Exception("MapDataSet::loadData() " + file + " not found");
-	}
+		if (ifstr.fail() == true)
+		{
+			throw Exception("MapDataSet::loadData() " + file + " not found");
+		}
 
 
-	MapData* to;
-	int objNumber (0);
-	while (ifstr.read(
-					reinterpret_cast<char*>(&mcd),
-					sizeof(MCD)))
-	{
-		to = new MapData(this);
-		_records.push_back(to);
+		MapData* part;
+		int objNumber (0);
+		while (ifstr.read(
+						reinterpret_cast<char*>(&mcd),
+						sizeof(MCD)))
+		{
+			part = new MapData(this);
+			_records.push_back(part);
 
-		// Set all the terrain/tile-part properties:
-		for (size_t
-				i = 0u;
-				i != 8u; // sprite-frames (Battlescape tactical animations)
+			// Set all the terrain-tilepart properties:
+			for (size_t
+					i = 0u;
+					i != 8u; // sprite-frames (battlescape tactical animations)
+					++i)
+			{
+				part->setSprite(i, static_cast<int>(mcd.Frame[i]));
+			}
+
+			part->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
+			part->setTileType(static_cast<TileType>(mcd.Target_Type));
+			part->setOffsetY(static_cast<int>(mcd.P_Level));
+			part->setTUCosts(
+					static_cast<int>(mcd.TU_Walk),
+					static_cast<int>(mcd.TU_Fly),
+					static_cast<int>(mcd.TU_Slide));
+			part->setFlags(
+					mcd.UFO_Door != 0,
+					mcd.Stop_LOS != 0,
+					mcd.No_Floor != 0,
+					static_cast<int>(mcd.Big_Wall),
+					mcd.Gravlift != 0,
+					mcd.Door != 0,
+					mcd.Block_Fire != 0,
+					mcd.Block_Smoke != 0,
+					mcd.Xcom_Base != 0);
+			part->setTerrainLevel(static_cast<int>(mcd.T_Level));
+			part->setFootstepSound(static_cast<int>(mcd.Footstep));
+			part->setAltMCD(static_cast<int>(mcd.Alt_MCD));
+			part->setDieMCD(static_cast<int>(mcd.Die_MCD));
+			part->setBlock(
+					static_cast<int>(mcd.Light_Block),
+					static_cast<int>(mcd.Stop_LOS),
+					static_cast<int>(mcd.HE_Block),
+					static_cast<int>(mcd.Block_Smoke),
+					static_cast<int>(mcd.Flammable),
+					static_cast<int>(mcd.HE_Block));
+			part->setLightSource(static_cast<int>(mcd.Light_Source));
+			part->setArmor(static_cast<int>(mcd.Armor));
+			part->setFlammable(static_cast<int>(mcd.Flammable));
+			part->setFuel(static_cast<int>(mcd.Fuel));
+			part->setExplosiveType(static_cast<int>(mcd.HE_Type));
+			part->setExplosive(static_cast<int>(mcd.HE_Strength));
+
+			mcd.ScanG = SDL_SwapLE16(mcd.ScanG);
+			part->setMiniMapIndex(mcd.ScanG);
+
+			for (size_t
+					loft = 0u;
+					loft != 12u; // LoFT layers (each layer is doubled to give a total height of 24 voxels)
+					++loft)
+			{
+				part->setLoftId(
+							static_cast<size_t>(mcd.LOFT[loft]),
+							loft);
+			}
+
+			// Store the 2 tiles of 'blanks' as static so they are accessible to all MapData-instantiations.
+			if ((objNumber == 0 || objNumber == 1)
+				&& _type.compare("BLANKS") == 0)
+			{
+				switch (objNumber)
+				{
+					case 0:
+						MapDataSet::_blankTile = part;
+						break;
+					case 1:
+						MapDataSet::_scorchedTile = part;
+				}
+			}
+			++objNumber;
+		}
+
+
+		if (ifstr.eof() == false)
+		{
+			throw Exception("MapDataSet::loadData() Invalid MCD file");
+		}
+
+		ifstr.close();
+
+		// process the MapDataSet to put 'block' values on floortiles (as they don't exist in UFO::Orig)
+		for (std::vector<MapData*>::const_iterator
+				i = _records.begin();
+				i != _records.end();
 				++i)
 		{
-			to->setSprite(i, static_cast<int>(mcd.Frame[i]));
-		}
-
-		to->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
-		to->setTileType(static_cast<TileType>(mcd.Target_Type));
-		to->setOffsetY(static_cast<int>(mcd.P_Level));
-		to->setTUCosts(
-				static_cast<int>(mcd.TU_Walk),
-				static_cast<int>(mcd.TU_Fly),
-				static_cast<int>(mcd.TU_Slide));
-		to->setFlags(
-				mcd.UFO_Door != 0,
-				mcd.Stop_LOS != 0,
-				mcd.No_Floor != 0,
-				static_cast<int>(mcd.Big_Wall),
-				mcd.Gravlift != 0,
-				mcd.Door != 0,
-				mcd.Block_Fire != 0,
-				mcd.Block_Smoke != 0,
-				mcd.Xcom_Base != 0);
-		to->setTerrainLevel(static_cast<int>(mcd.T_Level));
-		to->setFootstepSound(static_cast<int>(mcd.Footstep));
-		to->setAltMCD(static_cast<int>(mcd.Alt_MCD));
-		to->setDieMCD(static_cast<int>(mcd.Die_MCD));
-		to->setBlock(
-				static_cast<int>(mcd.Light_Block),
-				static_cast<int>(mcd.Stop_LOS),
-				static_cast<int>(mcd.HE_Block),
-				static_cast<int>(mcd.Block_Smoke),
-				static_cast<int>(mcd.Flammable),
-				static_cast<int>(mcd.HE_Block));
-		to->setLightSource(static_cast<int>(mcd.Light_Source));
-		to->setArmor(static_cast<int>(mcd.Armor));
-		to->setFlammable(static_cast<int>(mcd.Flammable));
-		to->setFuel(static_cast<int>(mcd.Fuel));
-		to->setExplosiveType(static_cast<int>(mcd.HE_Type));
-		to->setExplosive(static_cast<int>(mcd.HE_Strength));
-
-		mcd.ScanG = SDL_SwapLE16(mcd.ScanG);
-		to->setMiniMapIndex(mcd.ScanG);
-
-		for (size_t
-				loft = 0u;
-				loft != 12u; // LoFT layers (each layer is doubled to give a total height of 24 voxels)
-				++loft)
-		{
-			to->setLoftId(
-						static_cast<size_t>(mcd.LOFT[loft]),
-						loft);
-		}
-
-		// Store the 2 tiles of 'blanks' as static so they are accessible to all MapData-instantiations.
-		if ((objNumber == 0 || objNumber == 1)
-			&& _type.compare("BLANKS") == 0)
-		{
-			switch (objNumber)
+			if ((*i)->getPartType() == O_FLOOR && (*i)->getBlock(DT_HE) == 0)
 			{
-				case 0:
-					MapDataSet::_blankTile = to;
-					break;
-				case 1:
-					MapDataSet::_scorchedTile = to;
+				const int armor ((*i)->getArmor());
+				(*i)->setBlock(
+							1,		// light
+							1,		// LoS
+							armor,	// HE
+							1,		// smoke
+							1,		// fire
+							1);		// gas
+
+				if ((*i)->getDieMCD() != 0)
+					_records.at(static_cast<size_t>((*i)->getDieMCD()))->setBlock(
+																				1,
+																				1,
+																				armor,
+																				1,
+																				1,
+																				1);
+				if ((*i)->isGravLift() == false) (*i)->setStopLOS();
 			}
 		}
-		++objNumber;
-	}
 
-
-	if (ifstr.eof() == false)
-	{
-		throw Exception("MapDataSet::loadData() Invalid MCD file");
-	}
-
-	ifstr.close();
-
-	// process the MapDataSet to put 'block' values on floortiles (as they don't exist in UFO::Orig)
-	for (std::vector<MapData*>::const_iterator
-			i = _records.begin();
-			i != _records.end();
-			++i)
-	{
-		if ((*i)->getPartType() == O_FLOOR && (*i)->getBlock(DT_HE) == 0)
+		// Load terrain sprites/surfaces/PCK files into a SurfaceSet.
+		// Let any defined extra-sprites overrule the stock terrain-sprites.
+		SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet(_type + ".PCK"));
+		if (srt != nullptr)
+			_surfaceSet = srt;
+		else
 		{
-			const int armor ((*i)->getArmor());
-			(*i)->setBlock(
-						1,		// light
-						1,		// LoS
-						armor,	// HE
-						1,		// smoke
-						1,		// fire
-						1);		// gas
-
-			if ((*i)->getDieMCD() != 0)
-				_records.at(static_cast<size_t>((*i)->getDieMCD()))->setBlock(
-																			1,
-																			1,
-																			armor,
-																			1,
-																			1,
-																			1);
-			if ((*i)->isGravLift() == false)
-				(*i)->setStopLOS();
+			_surfaceSet = new SurfaceSet(32,40);
+			_surfaceSet->loadPck(
+							CrossPlatform::getDataFile("TERRAIN/" + _type + ".PCK"),
+							CrossPlatform::getDataFile("TERRAIN/" + _type + ".TAB"));
 		}
-	}
-
-	// Load terrain sprites/surfaces/PCK files into a SurfaceSet.
-	// Let any defined extra-sprites overrule the stock terrain-sprites.
-	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet(_type + ".PCK"));
-	if (srt != nullptr)
-		_surfaceSet = srt;
-	else
-	{
-		_surfaceSet = new SurfaceSet(32,40);
-		_surfaceSet->loadPck(
-						CrossPlatform::getDataFile("TERRAIN/" + _type + ".PCK"),
-						CrossPlatform::getDataFile("TERRAIN/" + _type + ".TAB"));
 	}
 }
 
