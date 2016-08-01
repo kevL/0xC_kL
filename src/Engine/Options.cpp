@@ -117,7 +117,8 @@ void create()
 	_info.push_back(OptionInfo("battleDragScrollButton", &battleDragScrollButton, SDL_BUTTON_MIDDLE));
 	_info.push_back(OptionInfo("dragScrollTimeTolerance", &dragScrollTimeTolerance, 300)); // milliSecond
 	_info.push_back(OptionInfo("dragScrollPixelTolerance", &dragScrollPixelTolerance, 10)); // count of pixels
-	_info.push_back(OptionInfo("battleFireSpeed", &battleFireSpeed, 6));
+	_info.push_back(OptionInfo("battleFireSpeed", &battleFireSpeed, 12));
+	_info.push_back(OptionInfo("battleThrowSpeed", &battleThrowSpeed, 6)); // NOTE: Not represented in Options state.
 	_info.push_back(OptionInfo("battleXcomSpeed", &battleXcomSpeed, 30));
 	_info.push_back(OptionInfo("battleAlienSpeed", &battleAlienSpeed, 30));
 	_info.push_back(OptionInfo("battlePreviewPath", reinterpret_cast<int*>(&battlePreviewPath), PATH_NONE)); // requires double-click to confirm moves
@@ -278,6 +279,8 @@ void create()
 	_info.push_back(OptionInfo("keyInvClear", &keyInvClear, SDLK_x, "STR_CLEAR_INVENTORY", "STR_BATTLESCAPE"));
 //	_info.push_back(OptionInfo("keyInvCreateTemplate", &keyInvCreateTemplate, SDLK_c, "STR_CREATE_INVENTORY_TEMPLATE", "STR_BATTLESCAPE"));
 //	_info.push_back(OptionInfo("keyInvApplyTemplate", &keyInvApplyTemplate, SDLK_v, "STR_APPLY_INVENTORY_TEMPLATE", "STR_BATTLESCAPE"));
+
+	// NOTE: Options for key-pivot are not here or in Options state.
 
 // hardcoded keys:
 // BattlescapeState::handle() only if debug=TRUE in 'options.cfg'

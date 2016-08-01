@@ -19,6 +19,7 @@ items:
     tuAimed: 55
     battleType: 1
     arcingShot: true
+    bulletSpeed: -6
     twoHanded: true
 #    noReaction: true
     invWidth: 1

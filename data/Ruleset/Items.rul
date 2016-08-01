@@ -1403,6 +1403,7 @@ items:
     fullClip: -1
     recover: false
     arcingShot: true
+    bulletSpeed: -6
   - type: SILACOID_WEAPON
     weight: 3
     bigSprite: -4

@@ -92,16 +92,13 @@ Projectile::Projectile(
 		{
 			case BA_THROW:
 				_throwSprite = res->getSurfaceSet("FLOOROB.PCK")->getFrame(_action.weapon->getRules()->getFloorSprite());
-				_speed >>= 2u;
+				_speed = Options::battleThrowSpeed; // this is the distance in pixels that the sprite will move between frames
 				break;
 
 //			default: // ba_SHOOT!! or hit, or spit
 			case BA_SNAPSHOT:
 			case BA_AUTOSHOT:
 			case BA_AIMEDSHOT:
-				if (_action.weapon->getRules()->isArcingShot() == true)
-					_speed >>= 1u;
-				// no break;
 			case BA_LAUNCH:
 			{
 				const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers
@@ -354,12 +351,13 @@ void Projectile::applyAccuracy( // private.
 		double accuracy,
 		const Tile* const tileTarget)
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "Projectile::applyAccuracy() id-" << _action.actor->getId() << " acu= " << accuracy;
 	//Log(LOG_INFO) << ". in x= " << targetVoxel->x;
 	//Log(LOG_INFO) << ". in y= " << targetVoxel->y;
 	//Log(LOG_INFO) << ". in z= " << targetVoxel->z;
 
-	//Log(LOG_INFO) << "input Target = " << (*targetVoxel);
+	//Log(LOG_INFO) << "input Target " << (*targetVoxel) << " ts" << Position::toTileSpace(*targetVoxel);
 	static const double ACU_MIN (0.01);
 	const int
 		delta_x (originVoxel.x - targetVoxel->x),
@@ -367,11 +365,10 @@ void Projectile::applyAccuracy( // private.
 	// Do not use Z-axis. It messes up pure vertical shots.
 	const double targetDist (std::sqrt(
 							 static_cast<double>((delta_x * delta_x) + (delta_y * delta_y))));
-	//Log(LOG_INFO) << ". targetDist= " << targetDist;
+	//Log(LOG_INFO) << ". targetDist= " << targetDist << " (" << static_cast<int>(targetDist / 16.) << " tiles)";
 
 	const RuleItem* const itRule (_action.weapon->getRules()); // <- after reading up, 'const' is basically worthless & wordy waste of effort.
-	if (_action.type != BA_THROW
-		&& itRule->isArcingShot() == false)
+	if (_action.type != BA_THROW && itRule->isArcingShot() == false)
 	{
 		if (_action.autoShotCount == 1)
 		{
@@ -520,28 +517,36 @@ void Projectile::applyAccuracy( // private.
 			accuracy = std::max(ACU_MIN, accuracy);
 
 			if (_action.actor->getGeoscapeSoldier() != nullptr)
-				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().firing);
+				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().firing) + 10.;
 			else
 				perfect = 150.; // higher value makes non-Soldiers less accurate at spitting/arcing shot.
+			//Log(LOG_INFO) << ". . arcshot perfect= " << perfect;
 		}
 		else // Throw
 		{
 			if (_action.actor->getGeoscapeSoldier() != nullptr)
-				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().throwing);
+				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().throwing) + 10.;
 			else
 				perfect = 150.; // higher value makes non-Soldiers less accurate at throwing.
+			//Log(LOG_INFO) << ". . throw perfect= " << perfect;
 		}
 
-		accuracy = accuracy * 50. + 72.6; // arbitrary adjustment.
+		accuracy = accuracy * 50. + 72.2; // arbitrary adjustment.
+		//Log(LOG_INFO) << ". acu= " << accuracy;
 
 		double deviation (perfect - accuracy);
-		deviation = std::max(ACU_MIN,
-							 deviation * targetDist * PCT);
+		//Log(LOG_INFO) << ". deviation[0]= " << deviation;
+		deviation = std::max(deviation * targetDist * PCT,
+							 ACU_MIN);
+		//Log(LOG_INFO) << ". deviation[1]= " << deviation;
 
 		const double
 			dx (RNG::boxMuller(deviation) / 4.),
 			dy (RNG::boxMuller(deviation) / 4.),
-			dz (RNG::boxMuller(deviation) / 6.);
+			dz (RNG::boxMuller(deviation) / 8.);
+		//Log(LOG_INFO) << ". dx= " << dx;
+		//Log(LOG_INFO) << ". dy= " << dy;
+		//Log(LOG_INFO) << ". dz= " << dz;
 
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[1] " << *targetVoxel;
 		targetVoxel->x += static_cast<int>(Round(dx));
@@ -563,13 +568,13 @@ void Projectile::applyAccuracy( // private.
 		{
 			const Tile* const tile (_battleSave->getTile(Position::toTileSpace(*targetVoxel)));
 			const int lift (std::max(2,
-									 -tile->getTerrainLevel()));
+									-tile->getTerrainLevel()));
 
-			targetVoxel->x = (targetVoxel->x & 0xfff0) + 8;
-			targetVoxel->y = (targetVoxel->y & 0xfff0) + 8;
+			targetVoxel->x = (targetVoxel->x & 0xfff0)  + 8;
+			targetVoxel->y = (targetVoxel->y & 0xfff0)  + 8;
 			targetVoxel->z = (targetVoxel->z / 24 * 24) + lift;
 		}
-		//Log(LOG_INFO) << "Proj: applyAccuracy target[3] " << *targetVoxel;
+		//Log(LOG_INFO) << "Proj: applyAccuracy target[3] " << *targetVoxel << " ts" << Position::toTileSpace(*targetVoxel);
 	}
 }
 /*		if (extendLine == true)
@@ -771,7 +776,7 @@ bool Projectile::verifyTarget( // private.
 
 /**
  * Steps this Projectile further along its trajectory.
- * @return, true if projectile is still pathing
+ * @return, true if projectile is still trajecting
  */
 bool Projectile::traceProjectile()
 {

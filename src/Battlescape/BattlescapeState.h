@@ -74,7 +74,7 @@ private:
 		ORANGE		=  16u,
 		ORANGE_D	=  20u,
 		RED			=  32u,
-		RED_M		=  39u,
+		RED_M		=  38u,
 		RED_D		=  42u,
 		GREEN		=  48u,
 		GREEN_D		=  52u,

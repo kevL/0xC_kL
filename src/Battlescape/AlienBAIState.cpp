@@ -1940,7 +1940,7 @@ void AlienBAIState::chooseFireMethod() // private.
 
 	int tuReserve (_unit->getTu());
 	if (_tuEscape != -1
-		&& RNG::generate(0,_aggression) == 0)
+		&& RNG::generate(0, _aggression) == 0)
 	{
 		tuReserve -= _tuEscape;
 	}
