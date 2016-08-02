@@ -114,13 +114,13 @@ void CivilianBAIState::thinkOnce(BattleAction* const aiAction)
 		case AI_PATROL:
 			aiAction->type		= _patrolAction->type;
 			aiAction->posTarget	= _patrolAction->posTarget;
-			aiAction->firstTU	= _patrolAction->firstTU;
+//			aiAction->firstTU	= _patrolAction->firstTU;
 			break;
 
 		case AI_ESCAPE:
 			aiAction->type			= _escapeAction->type;
 			aiAction->posTarget		= _escapeAction->posTarget;
-			aiAction->firstTU		= _escapeAction->firstTU;
+//			aiAction->firstTU		= _escapeAction->firstTU;
 			aiAction->finalAction	=
 			aiAction->desperate		= true;
 
@@ -158,8 +158,8 @@ void CivilianBAIState::setupPatrol() // private.
 		_pf->calculatePath(_unit, _stopNode->getPosition());
 		if (_pf->getStartDirection() == -1)
 			_stopNode = nullptr;
-		else
-			_patrolAction->firstTU = _pf->getTuFirst();
+//		else
+//			_patrolAction->firstTU = _pf->getTuFirst();
 	}
 
 	if (_stopNode != nullptr)
@@ -170,7 +170,7 @@ void CivilianBAIState::setupPatrol() // private.
 	else
 	{
 		_patrolAction->type = BA_THINK;
-		_patrolAction->firstTU = -1;
+//		_patrolAction->firstTU = -1;
 	}
 }
 
@@ -286,7 +286,7 @@ void CivilianBAIState::setupEscape() // private.
 					score = scoreTest;
 
 					_escapeAction->posTarget = pos;
-					_escapeAction->firstTU = _pf->getTuFirst();
+//					_escapeAction->firstTU = _pf->getTuFirst();
 
 					_tuEscape = _pf->getTuCostTotalPf();
 
@@ -310,7 +310,7 @@ void CivilianBAIState::setupEscape() // private.
 	else
 	{
 		_escapeAction->type = BA_THINK;
-		_escapeAction->firstTU = -1;
+//		_escapeAction->firstTU = -1;
 		_tuEscape = -1;
 	}
 }

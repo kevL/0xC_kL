@@ -95,7 +95,7 @@ struct BattleAction
 		autoShotCount,
 		diff,
 		finalFacing,
-		firstTU, // is setup but not used.
+//		firstTU, // is setup but not used.
 		TU,
 		value;
 
@@ -120,7 +120,7 @@ struct BattleAction
 			targetUnit(nullptr),
 			weapon(nullptr),
 			TU(0),
-			firstTU(-1),
+//			firstTU(-1),
 			targeting(false),
 			value(0),
 			strafe(false),
@@ -147,7 +147,7 @@ struct BattleAction
 		targetUnit = nullptr;
 		weapon = nullptr;
 		TU = 0;
-		firstTU = -1;
+//		firstTU = -1;
 		targeting = false;
 		value = 0;
 		result = "";

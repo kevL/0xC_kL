@@ -348,7 +348,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 
 			aiAction->type		= _patrolAction->type;
 			aiAction->posTarget	= _patrolAction->posTarget;
-			aiAction->firstTU	= _patrolAction->firstTU;
+//			aiAction->firstTU	= _patrolAction->firstTU;
 			if (_traceAI) Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugBat(aiAction->type);
 			break;
 
@@ -357,7 +357,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 
 			aiAction->type		= _attackAction->type;
 			aiAction->posTarget	= _attackAction->posTarget;
-			aiAction->firstTU	= _attackAction->firstTU;
+//			aiAction->firstTU	= _attackAction->firstTU;
 			aiAction->weapon	= _attackAction->weapon;
 
 			if (_traceAI) Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugBat(aiAction->type);
@@ -407,7 +407,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 
 			aiAction->type			= _ambushAction->type;
 			aiAction->posTarget		= _ambushAction->posTarget;
-			aiAction->firstTU		= _ambushAction->firstTU;
+//			aiAction->firstTU		= _ambushAction->firstTU;
 			aiAction->finalFacing	= _ambushAction->finalFacing;
 			aiAction->finalAction	= true;
 
@@ -420,7 +420,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 
 			aiAction->type			= _escapeAction->type;
 			aiAction->posTarget		= _escapeAction->posTarget;
-			aiAction->firstTU		= _escapeAction->firstTU;
+//			aiAction->firstTU		= _escapeAction->firstTU;
 			aiAction->finalAction	=
 			aiAction->desperate		= true;
 
@@ -570,7 +570,7 @@ void AlienBAIState::setupPatrol() // private.
 			_stopNode->allocateNode();
 			_patrolAction->type = BA_MOVE;
 			_patrolAction->posTarget = _stopNode->getPosition();
-			_patrolAction->firstTU = _pf->getTuFirst();
+//			_patrolAction->firstTU = _pf->getTuFirst();
 		}
 		else
 			_stopNode = nullptr;
@@ -579,7 +579,7 @@ void AlienBAIState::setupPatrol() // private.
 	if (_stopNode == nullptr)
 	{
 		_patrolAction->type = BA_THINK;
-		_patrolAction->firstTU = -1;
+//		_patrolAction->firstTU = -1;
 	}
 
 	if (_traceAI) {
@@ -691,7 +691,7 @@ void AlienBAIState::setupAmbush() // private.
 {
 	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::setupAmbush() id-" << _unit->getId();
 	_ambushAction->type = BA_THINK;
-	_ambushAction->firstTU = -1;
+//	_ambushAction->firstTU = -1;
 
 //	if (selectPlayerTarget() == true) // sets _unitAggro.
 	if (_unitAggro != nullptr)
@@ -700,8 +700,8 @@ void AlienBAIState::setupAmbush() // private.
 		int
 			score (0),
 			scoreTest,
-			tu,
-			tuFirst;
+			tu;
+//			tuFirst;
 
 		std::vector<int> targetPath;
 
@@ -769,7 +769,7 @@ void AlienBAIState::setupAmbush() // private.
 					if (_pf->getStartDirection() != -1)
 					{
 						tu = _pf->getTuCostTotalPf();
-						tuFirst = _pf->getTuFirst();
+//						tuFirst = _pf->getTuFirst();
 
 						//Log(LOG_INFO) << ". . . . . calc Path for TARGET to pos";
 						_pf->setPathingUnit(_unitAggro);
@@ -793,7 +793,7 @@ void AlienBAIState::setupAmbush() // private.
 								targetPath = _pf->copyPath();
 
 								_ambushAction->posTarget = pos;
-								_ambushAction->firstTU = tuFirst;
+//								_ambushAction->firstTU = tuFirst;
 								_tuAmbush = tu;
 								//Log(LOG_INFO) << ". . . . . . . pos " << pos;
 								//Log(LOG_INFO) << ". . . . . . . tu = " << tu;
@@ -1016,11 +1016,11 @@ void AlienBAIState::setupEscape() // private.
 					if (_traceAI) Log(LOG_INFO) << ". . . . set score= " << score;
 
 					_escapeAction->posTarget = pos;
-					_escapeAction->firstTU = _pf->getTuFirst();
+//					_escapeAction->firstTU = _pf->getTuFirst();
 					_tuEscape = _pf->getTuCostTotalPf();
 
 					if (_traceAI) {
-						Log(LOG_INFO) << ". . . . firstTU= " << _escapeAction->firstTU;
+//						Log(LOG_INFO) << ". . . . firstTU= " << _escapeAction->firstTU;
 						Log(LOG_INFO) << ". . . . tuTotal= " << _tuEscape;
 					}
 
@@ -1046,7 +1046,7 @@ void AlienBAIState::setupEscape() // private.
 	{
 		if (_traceAI) Log(LOG_INFO) << ". set bat BA_THINK";
 		_escapeAction->type = BA_THINK;
-		_escapeAction->firstTU = -1;
+//		_escapeAction->firstTU = -1;
 		_tuEscape = -1;
 	}
 
@@ -1577,7 +1577,7 @@ bool AlienBAIState::findFirePosition() // private.
 						{
 							score = scoreTest;
 							_attackAction->posTarget = pos;
-							_attackAction->firstTU = _pf->getTuFirst();
+//							_attackAction->firstTU = _pf->getTuFirst();
 							_attackAction->finalFacing = TileEngine::getDirectionTo(
 																				pos,
 																				_unitAggro->getPosition());
@@ -1608,7 +1608,7 @@ bool AlienBAIState::findFirePosition() // private.
 		Log(LOG_INFO) << "";
 	}
 
-	_attackAction->firstTU = -1;
+//	_attackAction->firstTU = -1;
 	return false;
 }
 
@@ -1669,7 +1669,7 @@ bool AlienBAIState::findMeleePosition( // private.
 								ret = true;
 								dist = _pf->getPath().size();
 								_attackAction->posTarget = pos;
-								_attackAction->firstTU = _pf->getTuFirst();
+//								_attackAction->firstTU = _pf->getTuFirst();
 							}
 						}
 					}
@@ -1678,9 +1678,7 @@ bool AlienBAIState::findMeleePosition( // private.
 		}
 	}
 
-	if (ret == false)
-		_attackAction->firstTU = -1;
-
+//	if (ret == false) _attackAction->firstTU = -1;
 	return ret;
 }
 

@@ -207,10 +207,10 @@ void MapDataSet::loadData()
 			part->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
 			part->setTileType(static_cast<TileType>(mcd.Target_Type));
 			part->setOffsetY(static_cast<int>(mcd.P_Level));
-			part->setTUCosts(
+			part->setTuCosts(
 					static_cast<int>(mcd.TU_Walk),
-					static_cast<int>(mcd.TU_Fly),
-					static_cast<int>(mcd.TU_Slide));
+					static_cast<int>(mcd.TU_Slide),
+					static_cast<int>(mcd.TU_Fly));
 			part->setFlags(
 					mcd.UFO_Door != 0,
 					mcd.Stop_LOS != 0,

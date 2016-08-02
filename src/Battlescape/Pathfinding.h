@@ -64,7 +64,7 @@ private:
 //		_zPath;
 	int
 		_doorCost, // to get an accurate preview when dashing through doors etc.
-		_tuFirst,
+//		_tuFirst,
 		_tuCostTotal;
 
 	BattleUnit* _unit;
@@ -154,7 +154,7 @@ private:
 				bool strafeRejected = false);
 
 		/// Gets the TU-cost for the first tile of motion.
-		int getTuFirst() const;
+//		int getTuFirst() const;
 
 		/// Gets all reachable tile-indices based on TU.
 		std::vector<size_t> findReachable(

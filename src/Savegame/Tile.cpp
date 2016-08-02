@@ -327,9 +327,8 @@ int Tile::getTuCostTile(
 		MapDataType partType,
 		MoveType type) const
 {
-	if (_parts[partType] != nullptr
-		&& (_parts[partType]->isSlideDoor() == false
-			|| _curFrame[partType] < 2))
+	if (    _parts[partType] != nullptr
+		&& (_parts[partType]->isSlideDoor() == false || _curFrame[partType] < 2))
 	{
 		switch (partType)
 		{

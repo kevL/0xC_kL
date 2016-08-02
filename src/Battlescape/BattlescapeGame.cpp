@@ -85,7 +85,7 @@ std::string BattleAction::debugBAction(const BattleAction& action) // static.
 		<< "\tposTarget= "		<< action.posTarget << "\n"
 		<< "\tweapon= "			<< (action.weapon ? action.weapon->getRules()->getType() : "NONE") << "\n"
 		<< "\tTU= "				<< action.TU << "\n"
-		<< "\tfirstTU= "		<< action.firstTU << "\n"
+//		<< "\tfirstTU= "		<< action.firstTU << "\n"
 		<< "\ttargeting= "		<< action.targeting << "\n"
 		<< "\tvalue= "			<< action.value << "\n"
 		<< "\tresult= "			<< action.result << "\n"
@@ -891,7 +891,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 					Log(LOG_INFO) << ". . posTarget VALID";
 					Log(LOG_INFO) << ". . start dir= " << pf->getStartDirection();
 					Log(LOG_INFO) << ". . tu= " << unit->getTu();
-					Log(LOG_INFO) << ". . firstTU= " << aiAction.firstTU;
+//					Log(LOG_INFO) << ". . firstTU= " << aiAction.firstTU;
 				}
 				if (pf->getStartDirection() != -1)						// to ... stop that (unless blocked by unseen player- or neutral-unit).
 //					&& unit->getTu() >= aiAction.firstTU)

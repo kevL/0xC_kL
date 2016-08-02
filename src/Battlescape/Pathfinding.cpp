@@ -62,7 +62,7 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 		_previewed(false),
 		_strafe(false),
 		_tuCostTotal(0),
-		_tuFirst(-1),
+//		_tuFirst(-1),
 		_ctrl(false),
 		_alt(false),
 //		_zPath(false), // currently not implemented; open for ideas!
@@ -175,7 +175,7 @@ void Pathfinding::abortPath()
 }
 
 /**
- * Calculates the shortest path; tries bresenham then A* algorithms.
+ * Calculates the shortest path w/ A* algorithm.
  * @note 'launchTarget' is required only when called by AlienBAIState::pathWaypoints().
  * @param unit				- pointer to a BattleUnit
  * @param posStop			- destination Position
@@ -294,7 +294,7 @@ void Pathfinding::calculatePath(
 
 			static const int dir[3u] {4,2,3};
 
-			size_t i (0);
+			size_t i (0u);
 			for (int
 					x = 0;
 					x != 2;
@@ -320,7 +320,7 @@ void Pathfinding::calculatePath(
 						}
 
 						tileTest = _battleSave->getTile(posStop + Position(x,y,0));
-						if (x != 0 && y != 0
+						if (x == 1 && y == 1
 							&& ((tileTest->getMapData(O_NORTHWALL) != nullptr
 									&& tileTest->getMapData(O_NORTHWALL)->isHingeDoor() == true)
 								|| (tileTest->getMapData(O_WESTWALL) != nullptr
@@ -353,7 +353,7 @@ void Pathfinding::calculatePath(
 		_strafe = strafeRejected == false
 			   && Options::battleStrafe == true
 			   && (    (_ctrl == true && isMech == false)
-					|| (_alt == true  && isMech == true))
+					|| (_alt  == true && isMech == true))
 			   && (std::abs(
 						(_battleSave->getTile(posStop)->getTerrainLevel()  - posStop.z  * 24)
 					  - (_battleSave->getTile(posStart)->getTerrainLevel() - posStart.z * 24)) < 9)
@@ -446,7 +446,7 @@ bool Pathfinding::aStarPath( // private.
 
 	Position posStop;
 	int tuCost;
-	_tuFirst = -1; // ... could go in abortPath()
+//	_tuFirst = -1; // ... could go in abortPath()
 
 	while (nodes.isNodeSetEmpty() == false)
 	{
@@ -516,7 +516,7 @@ bool Pathfinding::aStarPath( // private.
 										posTarget);
 						nodes.addNode(nodeStop);
 
-						if (_tuFirst == -1) _tuFirst = tuCost;
+//						if (_tuFirst == -1) _tuFirst = tuCost;
 					}
 				}
 			}
@@ -528,11 +528,11 @@ bool Pathfinding::aStarPath( // private.
 /**
  * Gets the TU-cost for the first tile of motion.
  * @return, TU-cost for the first tile of motion.
- */
+ *
 int Pathfinding::getTuFirst() const
 {
 	return _tuFirst;
-}
+} */
 
 /**
  * Locates all tiles reachable to @a unit with a TU cost no more than @a tuCap.
@@ -744,7 +744,7 @@ int Pathfinding::getTuCostPf(
 				}
 			}
 
-			if (x != 0 && y != 0 // don't let large units phase through doors
+			if (x == 1 && y == 1 // don't let large units phase through doors
 				&& ((tileStop->getMapData(O_NORTHWALL) != nullptr
 						&& tileStop->getMapData(O_NORTHWALL)->isHingeDoor() == true)
 					|| (tileStop->getMapData(O_WESTWALL) != nullptr
@@ -901,7 +901,8 @@ int Pathfinding::getTuCostPf(
 				|| isBlocked(
 							tileStop,
 							O_OBJECT,
-							launchTarget) == true)
+							launchTarget) == true
+				|| tileStop->getTuCostTile(O_OBJECT, _mType) == FAIL)
 			{
 				return FAIL;
 			}
@@ -1643,16 +1644,17 @@ bool Pathfinding::isBlocked( // private.
 
 			if (blockUnit != nullptr)
 			{
-				if (blockUnit == _unit
+				if (   blockUnit == _unit
 					|| blockUnit == launchTarget
-					|| blockUnit->isOut_t(OUT_STAT) == true)
+					|| blockUnit->getUnitStatus() != STATUS_STANDING)
+//					|| blockUnit->isOut_t(OUT_STAT) == true)
 				{
 					return false;
 				}
 
-				if (launchTarget != nullptr // <- isAI
+				if (   launchTarget != nullptr // <- isAI
 					&& launchTarget != blockUnit
-					&& blockUnit->getFaction() == FACTION_HOSTILE)
+					&& blockUnit->getFaction() == FACTION_HOSTILE) // huh. ||isNeutral && isVis. i'd guess
 				{
 					return true;
 				}
@@ -1669,9 +1671,8 @@ bool Pathfinding::isBlocked( // private.
 								return true;
 							break;
 
-						default:
 						case FACTION_HOSTILE:
-						case FACTION_NEUTRAL:
+						case FACTION_NEUTRAL: // TODO: Perhaps use (exposed<intelligence) instead of hostileUnitsThisTurn.
 							if (std::find(
 									_unit->getHostileUnitsThisTurn().begin(),
 									_unit->getHostileUnitsThisTurn().end(),
@@ -1696,8 +1697,9 @@ bool Pathfinding::isBlocked( // private.
 						if (_unit != nullptr && _unit->getArmor()->getSize() == 2)	// don't let large units fall on other units
 							return true;
 
-						if (blockUnit != launchTarget								// don't let any units fall on large units
-							&& blockUnit->isOut_t(OUT_STAT) == false
+						if (   blockUnit != launchTarget							// don't let any units fall on large units
+							&& blockUnit->getUnitStatus() == STATUS_STANDING
+//							&& blockUnit->isOut_t(OUT_STAT) == false
 							&& blockUnit->getArmor()->getSize() == 2)
 						{
 							return true;
@@ -1713,7 +1715,7 @@ bool Pathfinding::isBlocked( // private.
 		}
 	}
 
-	static const int TU_LARGEBLOCK (5); // stop large units from going through hedges and over fences
+	static const int TU_LARGEBLOCK (6); // stop large units from going through hedges and over fences
 
 	const int partCost (tile->getTuCostTile(partType, _mType));
 	if (partCost == FAIL

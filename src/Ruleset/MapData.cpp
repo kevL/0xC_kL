@@ -386,17 +386,17 @@ int MapData::getTuCostPart(MoveType type) const
 /**
  * Sets the TU cost to move over this tile-part.
  * @param walk	- the walking TU cost
- * @param fly	- the flying TU cost
  * @param slide	- the sliding TU cost
+ * @param fly	- the flying TU cost
  */
-void MapData::setTUCosts(
+void MapData::setTuCosts(
 		int walk,
-		int fly,
-		int slide)
+		int slide,
+		int fly)
 {
 	_tuWalk  = walk;
-	_tuFly   = fly;
 	_tuSlide = slide;
+	_tuFly   = fly;
 }
 
 /**

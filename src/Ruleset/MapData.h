@@ -234,10 +234,10 @@ private:
 		/// Gets the TU cost to move over the part.
 		int getTuCostPart(MoveType type) const;
 		/// Sets the TU cost to move over the part.
-		void setTUCosts(
+		void setTuCosts(
 				int walk,
-				int fly,
-				int slide);
+				int slide,
+				int fly);
 
 		/// Gets the y-offset for units/items on the part.
 		int getTerrainLevel() const;
