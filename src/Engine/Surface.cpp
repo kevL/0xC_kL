@@ -188,16 +188,16 @@ Surface::Surface(
 
 /**
  * Performs a deep copy of an existing Surface.
- * @param other - reference to a Surface to copy
+ * @param copyThat - reference to a Surface to copy
  */
-Surface::Surface(const Surface& other)
+Surface::Surface(const Surface& copyThat)
 {
-	if (other._alignedBuffer) // if native OpenXcom aligned surface
+	if (copyThat._alignedBuffer) // if native OpenXcom aligned surface
 	{
 		const int
-			width	(other.getWidth()),
-			height	(other.getHeight()),
-			bpp		(static_cast<int>(other._surface->format->BitsPerPixel)),
+			width	(copyThat.getWidth()),
+			height	(copyThat.getHeight()),
+			bpp		(static_cast<int>(copyThat._surface->format->BitsPerPixel)),
 			pitch	(GetPitch(bpp, width));
 
 		_alignedBuffer = NewAligned(bpp, width, height);
@@ -216,20 +216,20 @@ Surface::Surface(const Surface& other)
 		// can't call 'setPalette' because it's a virtual function and don't work correctly in constructor
 		SDL_SetColors(
 					_surface,
-					other.getPalette(),
+					copyThat.getPalette(),
 					0,255);
 
 		std::memcpy(
 				_alignedBuffer,
-				other._alignedBuffer,
+				copyThat._alignedBuffer,
 				static_cast<size_t>(height * pitch));
 	}
 	else
 	{
 		_surface = SDL_ConvertSurface(
-									other._surface,
-									other._surface->format,
-									other._surface->flags);
+									copyThat._surface,
+									copyThat._surface->format,
+									copyThat._surface->flags);
 		_alignedBuffer = nullptr;
 	}
 
@@ -238,22 +238,22 @@ Surface::Surface(const Surface& other)
 		throw Exception(SDL_GetError());
 	}
 
-	_x = other._x;
-	_y = other._y;
+	_x = copyThat._x;
+	_y = copyThat._y;
 
-	_crop.x = other._crop.x;
-	_crop.y = other._crop.y;
-	_crop.w = other._crop.w;
-	_crop.h = other._crop.h;
+	_crop.x = copyThat._crop.x;
+	_crop.y = copyThat._crop.y;
+	_crop.w = copyThat._crop.w;
+	_crop.h = copyThat._crop.h;
 
-	_clear.x = other._clear.x;
-	_clear.y = other._clear.y;
-	_clear.w = other._clear.w;
-	_clear.h = other._clear.h;
+	_clear.x = copyThat._clear.x;
+	_clear.y = copyThat._clear.y;
+	_clear.w = copyThat._clear.w;
+	_clear.h = copyThat._clear.h;
 
-	_visible = other._visible;
-	_hidden = other._hidden;
-	_redraw = other._redraw;
+	_visible = copyThat._visible;
+	_hidden = copyThat._hidden;
+	_redraw = copyThat._redraw;
 }
 
 /**

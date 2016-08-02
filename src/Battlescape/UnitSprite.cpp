@@ -61,7 +61,7 @@ UnitSprite::UnitSprite(
 		_itSetRT(nullptr),
 		_itSetLT(nullptr),
 		_quad(0),
-		_aniFrame(0),
+		_aniCycle(0),
 		_drawRoutine(0),
 		_color(nullptr),
 		_colorSize(0)
@@ -212,12 +212,12 @@ void UnitSprite::drawRecolored(Surface* const src) // private.
 }
 
 /**
- * Sets the animation frame for animated units.
- * @param frame - frame number
+ * Sets the animation state for animating units.
+ * @param cycle - cycle state of battlescape Map
  */
-void UnitSprite::setAnimationFrame(int frame)
+void UnitSprite::setAnimationCycle(int cycle)
 {
-	_aniFrame = frame;
+	_aniCycle = cycle;
 }
 
 /**
@@ -946,7 +946,7 @@ void UnitSprite::drawRoutine2() // private.
 
 	if (_quad != 0 && hover != 0)
 	{
-		quad = _unitSet->getFrame(((_quad - 1) << 3u) + _aniFrame + walk);
+		quad = _unitSet->getFrame(((_quad - 1) << 3u) + _aniCycle + walk);
 		quad->setX(OFFSET);
 		drawRecolored(quad);
 	}
@@ -1044,7 +1044,7 @@ void UnitSprite::drawRoutine3() // private.
 
 	if (_quad != 0)
 	{
-		quad = _unitSet->getFrame(((_quad - 1) << 3u) + _aniFrame + walk);
+		quad = _unitSet->getFrame(((_quad - 1) << 3u) + _aniCycle + walk);
 		quad->setX(OFFSET);
 		drawRecolored(quad);
 	}
@@ -1635,7 +1635,7 @@ void UnitSprite::drawRoutine8() // private.
 			break;
 
 		default:
-			sprite = _unitSet->getFrame(body + pulsate[_aniFrame]);
+			sprite = _unitSet->getFrame(body + pulsate[_aniCycle]);
 	}
 
 	sprite->setX(OFFSET);
@@ -1690,7 +1690,7 @@ void UnitSprite::drawRoutine9() // private.
 		}
 
 		default:
-			sprite = _unitSet->getFrame(body + _aniFrame);
+			sprite = _unitSet->getFrame(body + _aniCycle);
 	}
 
 	sprite->setX(OFFSET);

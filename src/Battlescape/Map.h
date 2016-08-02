@@ -107,7 +107,7 @@ private:
 		_smoothingEngaged,
 		_unitDying;
 	int
-		_aniFrame,
+		_aniCycle,
 		_selectorSize,
 		_iconHeight,
 		_iconWidth,
@@ -139,8 +139,9 @@ private:
 	Surface
 		* _arrow,
 		* _arrow_kneel,
-		* _srfRookiBadge,
-		* _srfCross;
+		* _srfCross,
+		* _srfFuse,
+		* _srfRookiBadge;
 	SurfaceSet* _projectileSet;
 	Tile* _tile;
 	TileEngine* _te;

@@ -309,9 +309,9 @@ private:
 		void removeItem(BattleItem* const item);
 
 		/// Gets corpse-sprite.
-		int getCorpseSprite(bool* fired) const;
-		/// Gets top-most item-sprite.
-		int getTopSprite(bool* primed) const;
+		int getCorpseSprite(bool* fire) const;
+		/// Gets top-most floorob-sprite.
+		int getTopSprite(bool* fuse) const;
 		/// Gets if the Tile has an unconscious unit in its inventory.
 		int hasUnconsciousUnit(bool playerOnly = true) const;
 

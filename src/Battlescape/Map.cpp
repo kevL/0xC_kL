@@ -106,7 +106,7 @@ Map::Map(
 		_mY(0),
 		_selectorType(CT_CUBOID),
 		_selectorSize(1),
-		_aniFrame(0),
+		_aniCycle(0),
 		_projectile(nullptr),
 		_projectileSet(nullptr),
 		_projectileInFOV(false),
@@ -179,6 +179,8 @@ Map::Map(
 
 	_srfRookiBadge = _res->getSurface("RANK_ROOKIE");
 	_srfCross = _res->getSurfaceSet("SCANG.DAT")->getFrame(11);
+
+	_srfFuse = new Surface(3,1);
 }
 
 /**
@@ -195,6 +197,7 @@ Map::~Map()
 	delete _numAccuracy;
 	delete _numExposed;
 	delete _numWaypoint;
+	delete _srfFuse;
 }
 
 /**
@@ -825,7 +828,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 																if (unitNorth->getUnitFire() != 0)
 																{
-																	sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
+																	sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniCycle >> 1u));
 																	//if (sprite != nullptr)
 																		sprite->blitNShade(
 																				surface,
@@ -858,7 +861,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								case CT_TARGET:
 									if (hasUnit == true)
-										spriteId = 7 + (_aniFrame >> 1u);	// yellow animated crosshairs
+										spriteId = 7 + (_aniCycle >> 1u);	// yellow animated crosshairs
 									else
 										spriteId = 6;						// red static crosshairs
 									break;
@@ -875,7 +878,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 												|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{
-										spriteId = (_aniFrame & 1);	// yellow flashing box
+										spriteId = (_aniCycle & 1);	// yellow flashing box
 									}
 									else
 										spriteId = 0;				// red static box
@@ -979,7 +982,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (var == true && _tile->isRevealed() == true)
 							{
-								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
+								sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniCycle >> 1u));
 								//if (sprite != nullptr)
 									sprite->blitNShade(
 											surface,
@@ -1000,13 +1003,19 @@ void Map::drawTerrain(Surface* const surface) // private.
 										tileShade);
 
 								if (var == true && _tile->isRevealed() == true)
+								{
 									for (int
 											x = 0;
 											x != 3;
 											++x)
-										sprite->setPixelColor(
-															x + 15, 28,
-															_fuseColor);
+									{
+										_srfFuse->setPixelColor(x, 0, _fuseColor);
+									}
+									_srfFuse->blitNShade(
+											surface,
+											posScreen.x + 15,
+											posScreen.y + 28 + _tile->getTerrainLevel());
+								}
 							}
 						}
 
@@ -1208,7 +1217,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 								if (_unit->getUnitFire() != 0)
 								{
-									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
+									sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniCycle >> 1u));
 									//if (sprite != nullptr)
 										sprite->blitNShade(
 												surface,
@@ -1288,7 +1297,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											if (exposure != -1)
 											{
 												Uint8 color;
-												switch (_aniFrame)
+												switch (_aniCycle)
 												{
 													default:
 													case 0:
@@ -1338,7 +1347,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 											surface,
 											posScreen.x + 2,
 											posScreen.y + 1,
-											(_aniFrame << 1u),
+											(_aniCycle << 1u),
 											false, color);
 						}
 					}
@@ -1374,7 +1383,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 									if (unitBelow->getUnitFire() != 0)
 									{
-										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniFrame >> 1u));
+										sprite = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniCycle >> 1u));
 										//if (sprite != nullptr)
 											sprite->blitNShade(
 													surface,
@@ -1408,7 +1417,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 						if (spriteId != -1)
 						{
-							aniOffset = (_aniFrame >> 1u) + _tile->getAnimationOffset();
+							aniOffset = (_aniCycle >> 1u) + _tile->getAnimationOffset();
 							if (aniOffset > 3) aniOffset -= 4;
 							spriteId += aniOffset;
 
@@ -1487,7 +1496,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							{
 								case CT_TARGET:
 									if (hasUnit == true)
-										spriteId = 7 + (_aniFrame >> 1u);	// yellow animated crosshairs
+										spriteId = 7 + (_aniCycle >> 1u);	// yellow animated crosshairs
 									else
 										spriteId = 6;						// red static crosshairs
 									break;
@@ -1504,7 +1513,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 												|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{
-										spriteId = 3 + (_aniFrame & 1);	// yellow flashing box
+										spriteId = 3 + (_aniCycle & 1);	// yellow flashing box
 									}
 									else
 										spriteId = 3;					// red static box
@@ -1674,7 +1683,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								case CT_TOSS:
 								{
 									static const int cursorSprites[6u] {0,0,0,11,13,15};
-									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_selectorType] + (_aniFrame >> 2u));
+									sprite = _res->getSurfaceSet("CURSOR.PCK")->getFrame(cursorSprites[_selectorType] + (_aniCycle >> 2u));
 									sprite->blitNShade(
 											surface,
 											posScreen.x,
@@ -1804,20 +1813,20 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 					posScreen.x += _spriteWidth_2;
 
-//					const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_aniFrame + 1))));
+//					const int phaseCycle (static_cast<int>(4. * std::sin(22.5 / static_cast<double>(_aniCycle + 1))));
 					static const int phaseCycle[8u] {0,-3,3,-2,-3,-2,0,1};
 
 					if (_unit->isKneeled() == true)
 						_arrow_kneel->blitNShade(
 								surface,
 								posScreen.x - (_arrow_kneel->getWidth() >> 1u),
-								posScreen.y -  _arrow_kneel->getHeight() - 4 - phaseCycle[_aniFrame]);
+								posScreen.y -  _arrow_kneel->getHeight() - 4 - phaseCycle[_aniCycle]);
 //								posScreen.y -  _arrow_kneel->getHeight() - 4 - phaseCycle);
 					else
 						_arrow->blitNShade(
 								surface,
 								posScreen.x - (_arrow->getWidth() >> 1u),
-								posScreen.y -  _arrow->getHeight() + phaseCycle[_aniFrame]);
+								posScreen.y -  _arrow->getHeight() + phaseCycle[_aniCycle]);
 //								posScreen.y -  _arrow->getHeight() + phaseCycle);
 				}
 			}
@@ -2036,7 +2045,7 @@ void Map::drawRankIcon( // private.
 								this,
 								offset_x + 4,
 								offset_y + 4,
-								(_aniFrame << 1u),
+								(_aniCycle << 1u),
 								false, RED);
 	}
 }
@@ -2307,13 +2316,14 @@ void Map::keyboardRelease(Action* action, State* state)
 }
 
 /**
- * Animates any/all Tiles and BattleUnits that need animating.
- * @note 8 frames per animation [0..7].
+ * Animates any/all Tiles and BattleUnits that require regular animation and
+ * steps the fuse-color.
+ * @note There are 8 ticks per cycle [0..7].
  * @param redraw - true to redraw the battlefield (default true)
  */
 void Map::animateMap(bool redraw)
 {
- 	if (++_aniFrame == 8) _aniFrame = 0;
+ 	if (++_aniCycle == 8) _aniCycle = 0;
 
 	for (size_t
 			i = 0u;
@@ -2328,7 +2338,7 @@ void Map::animateMap(bool redraw)
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if ((*i)->isOut_t(OUT_STAT) == false
+		if ((*i)->getUnitTile() != nullptr //(*i)->isOut_t(OUT_STAT) == false
 			&& (*i)->getArmor()->getConstantAnimation() == true)
 		{
 			(*i)->flagCache();
@@ -2690,7 +2700,7 @@ void Map::cacheUnit(BattleUnit* const unit)
 							_res->getSurfaceSet(unit->getArmor()->getSpriteSheet()),
 							_res->getSurfaceSet("HANDOB.PCK"),
 							_res->getSurfaceSet("HANDOB2.PCK"));
-			sprite->setAnimationFrame(_aniFrame);
+			sprite->setAnimationCycle(_aniCycle);
 
 			cache->clear();
 			sprite->blit(cache);

@@ -44,7 +44,7 @@ private:
 	static const int OFFSET = 16;	// to account for the fact that unit-sprites
 									// are created double-width.
 	int
-		_aniFrame,
+		_aniCycle,
 		_colorSize,
 		_drawRoutine,
 		_quad;
@@ -112,8 +112,8 @@ private:
 		void setBattleItRH(const BattleItem* const item = nullptr);
 		/// Sets the left-hand BattleItem to be rendered.
 		void setBattleItLH(const BattleItem* const item = nullptr);
-		/// Sets the animation frame.
-		void setAnimationFrame(int frame);
+		/// Sets the unit's animation state.
+		void setAnimationCycle(int cycle);
 
 		/// Draws the unit.
 		void draw() override;

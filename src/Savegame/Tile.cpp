@@ -1289,15 +1289,16 @@ void Tile::removeItem(BattleItem* const item)
 
 /**
  * Gets a corpse-sprite to draw on the battlefield.
- * @param fired - pointer to set fire true
- * @return, sprite ID in floorobs (-1 none)
+ * @param fire - pointer to set fire true
+ * @return, sprite-ID in floorobs (-1 none)
  */
-int Tile::getCorpseSprite(bool* fired) const
+int Tile::getCorpseSprite(bool* fire) const
 {
-	int sprite (-1);
+	*fire = false;
+
+	int spriteId (-1);
 	if (_inventory.empty() == false)
 	{
-		*fired = false;
 		int
 			weight (-1),
 			weightTest;
@@ -1307,22 +1308,20 @@ int Tile::getCorpseSprite(bool* fired) const
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getItemUnit() != nullptr
-				&& (*i)->getItemUnit()->getGeoscapeSoldier() != nullptr)
+			if ((*i)->getRules()->getBattleType() == BT_CORPSE
+				&& (*i)->getItemUnit() != nullptr
+				&& (*i)->getItemUnit()->getGeoscapeSoldier() != nullptr
+				&& (weightTest = (*i)->getRules()->getWeight()) > weight)
 			{
-				weightTest = (*i)->getRules()->getWeight();
-				if (weightTest > weight)
-				{
-					weight = weightTest;
-					sprite = (*i)->getRules()->getFloorSprite();
+				weight = weightTest;
+				spriteId = (*i)->getRules()->getFloorSprite();
 
-					if ((*i)->getItemUnit()->getUnitFire() != 0)
-						*fired = true;
-				}
+				if ((*i)->getItemUnit()->getUnitFire() != 0)
+					*fire = true;
 			}
 		}
 
-		if (sprite == -1)
+		if (spriteId == -1)
 		{
 			weight = -1;
 			for (std::vector<BattleItem*>::const_iterator // 2. non-soldier body
@@ -1330,21 +1329,19 @@ int Tile::getCorpseSprite(bool* fired) const
 					i != _inventory.end();
 					++i)
 			{
-				if ((*i)->getItemUnit() != nullptr)
+				if ((*i)->getRules()->getBattleType() == BT_CORPSE
+					&& (*i)->getItemUnit() != nullptr
+					&& (weightTest = (*i)->getRules()->getWeight()) > weight)
 				{
-					weightTest = (*i)->getRules()->getWeight();
-					if (weightTest > weight)
-					{
-						weight = weightTest;
-						sprite = (*i)->getRules()->getFloorSprite();
+					weight = weightTest;
+					spriteId = (*i)->getRules()->getFloorSprite();
 
-						if ((*i)->getItemUnit()->getUnitFire() != 0)
-							*fired = true;
-					}
+					if ((*i)->getItemUnit()->getUnitFire() != 0)
+						*fire = true;
 				}
 			}
 
-			if (sprite == -1)
+			if (spriteId == -1)
 			{
 				weight = -1;
 				for (std::vector<BattleItem*>::const_iterator // 3. corpse
@@ -1352,60 +1349,57 @@ int Tile::getCorpseSprite(bool* fired) const
 						i != _inventory.end();
 						++i)
 				{
-					if ((*i)->getRules()->getBattleType() == BT_CORPSE)
+					if ((*i)->getRules()->getBattleType() == BT_CORPSE
+						&& (weightTest = (*i)->getRules()->getWeight()) > weight)
 					{
-						weightTest = (*i)->getRules()->getWeight();
-						if (weightTest > weight)
-						{
-							weight = weightTest;
-							sprite = (*i)->getRules()->getFloorSprite();
-						}
+						weight = weightTest;
+						spriteId = (*i)->getRules()->getFloorSprite();
 					}
 				}
 			}
 		}
 	}
-
-	return sprite;
+	return spriteId;
 }
 
 /**
- * Gets the topmost item sprite to draw on the battlefield.
- * @param primed - pointer to set primed true
- * @return, sprite ID in floorobs (-1 none)
+ * Gets the topmost floorob-sprite to draw on the battlefield.
+ * @param fuse - pointer to set fuse true
+ * @return, sprite-ID in floorobs (-1 none)
  */
-int Tile::getTopSprite(bool* primed) const
+int Tile::getTopSprite(bool* fuse) const
 {
-	int sprite (-1);
+	*fuse = false;
+
+	int spriteId (-1);
 	if (_inventory.empty() == false)
 	{
 		const BattleItem* grenade (nullptr);
-		*primed = false;
-		BattleType bType;
 
 		for (std::vector<BattleItem*>::const_iterator
 				i = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
-			if ((*i)->getFuse() > -1)
+			if ((*i)->getRules()->getBattleType() != BT_CORPSE
+				&& (*i)->getFuse() > -1)
 			{
-				bType = (*i)->getRules()->getBattleType();
-				if (bType == BT_PROXYGRENADE)
+				switch ((*i)->getRules()->getBattleType())
 				{
-					*primed = true;
-					return (*i)->getRules()->getFloorSprite();
-				}
-				else if (bType == BT_GRENADE)
-				{
-					*primed = true;
-					grenade = *i;
+					case BT_GRENADE:
+						*fuse = true;
+						grenade = *i;
+						break;
+
+					case BT_PROXYGRENADE: // proxy has precedence over grenades
+						*fuse = true;
+						return (*i)->getRules()->getFloorSprite();
 				}
 			}
 		}
 
 		if (grenade != nullptr)
-			return grenade->getRules()->getFloorSprite();
+			return grenade->getRules()->getFloorSprite(); // TODO: Find heaviest fused grenade if more than one.
 
 		int
 			weight (-1),
@@ -1416,16 +1410,15 @@ int Tile::getTopSprite(bool* primed) const
 				i != _inventory.end();
 				++i)
 		{
-			weightTest = (*i)->getRules()->getWeight();
-			if (weightTest > weight)
+			if ((*i)->getRules()->getBattleType() != BT_CORPSE
+				&& (weightTest = (*i)->getRules()->getWeight()) > weight)
 			{
 				weight = weightTest;
-				sprite = (*i)->getRules()->getFloorSprite();
+				spriteId = (*i)->getRules()->getFloorSprite();
 			}
 		}
 	}
-
-	return sprite;
+	return spriteId;
 }
 
 /**

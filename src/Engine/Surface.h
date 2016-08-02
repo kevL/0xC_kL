@@ -76,7 +76,7 @@ protected:
 				int y = 0,
 				int bpp = 8);
 		/// Creates a Surface from an existing one.
-		Surface(const Surface& other);
+		Surface(const Surface& copyThat);
 		/// Cleans up the Surface.
 		virtual ~Surface();
 
