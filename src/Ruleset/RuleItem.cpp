@@ -911,9 +911,9 @@ int RuleItem::getExplosionSpeed() const
 }
 
 /**
-* Gets the quantity of auto-shots fired by the Item.
-* @return, the quantity of shots
-*/
+ * Gets the quantity of auto-shots fired by the Item.
+ * @return, the quantity of shots
+ */
 int RuleItem::getAutoShots() const
 {
 	return _autoShots;
@@ -928,24 +928,24 @@ int RuleItem::getAutoKick() const
 }
 
 /**
-* Gets if the Item is a rifle.
-* @return, true if rifle
-*/
+ * Gets if the Item is a rifle (two-handed weapon).
+ * @return, true if rifle
+ */
 bool RuleItem::isRifle() const
 {
 	return _twoHanded == true
-			&& (_battleType == BT_FIREARM
+			&& (   _battleType == BT_FIREARM
 				|| _battleType == BT_MELEE);
 }
 
 /**
-* Gets if the Item is a pistol.
-* @return, true if pistol
-*/
+ * Gets if the Item is a pistol (one-handed weapon).
+ * @return, true if pistol
+ */
 bool RuleItem::isPistol() const
 {
 	return _twoHanded == false
-			&& (_battleType == BT_FIREARM
+			&& (   _battleType == BT_FIREARM
 				|| _battleType == BT_MELEE);
 }
 

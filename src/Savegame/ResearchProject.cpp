@@ -179,7 +179,7 @@ bool ResearchProject::getOffline() const
 /**
  * Returns a string describing lab-progress.
  * @return, progress-string
-*/
+ */
 std::string ResearchProject::getResearchProgress() const
 {
 /*	if (_scientists == 0)

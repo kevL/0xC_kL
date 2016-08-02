@@ -567,11 +567,11 @@ void Language::load(
 }
 
 /**
-* Replaces all special string markers with the appropriate characters and
-* converts the string encoding.
-* @param stIn - reference to the original UTF-8 string
-* @return, new widechar-string
-*/
+ * Replaces all special string markers with the appropriate characters and
+ * converts the string encoding.
+ * @param stIn - reference to the original UTF-8 string
+ * @return, new widechar-string
+ */
 std::wstring Language::loadString(const std::string& stIn) const // private.
 {
 	std::string stOut (stIn);

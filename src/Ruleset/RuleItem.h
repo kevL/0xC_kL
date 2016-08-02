@@ -369,11 +369,11 @@ private:
 		/// Gets how much kick the weapon gives on auto-shot.
 		int getAutoKick() const;
 
-		/// Checks if this item is a 2 handed weapon.
+		/// Checks if this item is a two-handed weapon.
 		bool isRifle() const;
-		/// Checks if this item is a single handed weapon.
+		/// Checks if this item is a one-handed weapon.
 		bool isPistol() const;
-		/// Checks if this item is a grenade weapon.
+		/// Checks if this item is a grenade.
 		bool isGrenade() const;
 
 		/// Gets the max range of this weapon.

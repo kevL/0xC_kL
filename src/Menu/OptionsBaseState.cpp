@@ -340,20 +340,20 @@ void OptionsBaseState::btnGroupPress(Action* action)
 //	}
 }
 
-/*
-* Shows a tooltip for the appropriate button.
-* @param action Pointer to an action.
-*
+/**
+ * Shows a tooltip for the appropriate button.
+ * @param action Pointer to an action.
+ *
 void OptionsBaseState::txtTooltipIn(Action* action)
 {
 	_currentTooltip = action->getSender()->getTooltip();
 	_txtTooltip->setText(tr(_currentTooltip));
 } */
 
-/*
-* Clears the tooltip text.
-* @param action Pointer to an action.
-*
+/**
+ * Clears the tooltip text.
+ * @param action Pointer to an action.
+ *
 void OptionsBaseState::txtTooltipOut(Action* action)
 {
 	if (_currentTooltip == action->getSender()->getTooltip())

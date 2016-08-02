@@ -663,7 +663,7 @@ int Base::getTotalQuarters() const
 /**
  * Returns personel space not used.
  * @return, free space
-*/
+ */
 int Base::getFreeQuarters() const
 {
 	return getTotalQuarters() - getUsedQuarters();
@@ -798,7 +798,7 @@ int Base::getTotalLaboratories() const
 /**
  * Returns laboratory space not used by ResearchProjects.
  * @return, free space
-*/
+ */
 int Base::getFreeLaboratories() const
 {
 	return getTotalLaboratories() - getUsedLaboratories();

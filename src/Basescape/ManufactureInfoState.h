@@ -39,7 +39,7 @@ class Window;
 
 /**
  * Screen that allows changing of Manufacture settings.
-*/
+ */
 class ManufactureInfoState
 	:
 		public State

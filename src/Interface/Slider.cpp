@@ -289,9 +289,9 @@ void Slider::setValue(int value)
 }
 
 /**
-* Gets the current value of this Slider.
-* @return, value
-*/
+ * Gets the current value of this Slider.
+ * @return, value
+ */
 int Slider::getValue() const
 {
 	return _value;

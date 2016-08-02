@@ -116,9 +116,9 @@ void Frame::setHighContrast(bool contrast)
 }
 
 /**
-* Changes the thickness of the border to draw.
-* @param thickness - thickness in pixels (default 5)
-*/
+ * Changes the thickness of the border to draw.
+ * @param thickness - thickness in pixels (default 5)
+ */
 void Frame::setThickness(int thickness)
 {
 	_thickness = thickness;

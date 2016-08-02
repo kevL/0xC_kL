@@ -190,7 +190,7 @@ void ManufactureListState::btnCancelClick(Action*)
 /**
  * Opens the Production settings screen.
  * @param action - pointer to an Action
-*/
+ */
 void ManufactureListState::lstProdClick(Action*)
 {
 	_scroll = _lstManufacture->getScroll();

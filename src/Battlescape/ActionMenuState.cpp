@@ -396,16 +396,24 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 			}
 
 			case BA_PRIME:
-				switch (itRule->getBattleType())
+				if (_action->TU > _action->actor->getTu())
 				{
-					case BT_PROXYGRENADE:
-					case BT_FLARE:
-						_action->value = 0;
-						_game->popState();
-						break;
+					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
+					_game->popState();
+				}
+				else
+				{
+					switch (itRule->getBattleType())
+					{
+						case BT_PROXYGRENADE:
+						case BT_FLARE:
+							_action->value = 0;
+							_game->popState();
+							break;
 
-					default:
-						_game->pushState(new PrimeGrenadeState(_action, false, nullptr));
+						case BT_GRENADE:
+							_game->pushState(new PrimeGrenadeState(_action, false, nullptr));
+					}
 				}
 				break;
 

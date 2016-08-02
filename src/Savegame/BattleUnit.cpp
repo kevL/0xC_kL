@@ -711,11 +711,11 @@ YAML::Node BattleUnit::save() const
 }
 
 /**
-* Prepare vector values for recolor.
-* @param basicLook	- select index for hair and face color
-* @param utileLook	- select index for utile color
-* @param rankLook	- select index for rank color
-*/
+ * Prepare vector values for recolor.
+ * @param basicLook	- select index for hair and face color
+ * @param utileLook	- select index for utile color
+ * @param rankLook	- select index for rank color
+ */
 void BattleUnit::setRecolor(
 		int basicLook,
 		int utileLook,
