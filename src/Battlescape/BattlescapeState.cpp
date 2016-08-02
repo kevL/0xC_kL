@@ -202,11 +202,11 @@ BattlescapeState::BattlescapeState()
 
 	_btnLeftHandItem	= new InteractiveSurface(32, 48, x +   8, y + 5);
 	_btnRightHandItem	= new InteractiveSurface(32, 48, x + 280, y + 5);
-	_numAmmoL			= new NumberText(7, 5, x +  33, y + 4);
-	_numAmmoR			= new NumberText(7, 5, x + 305, y + 4);
+	_numAmmoL			= new NumberText(7, 5, x +  33, y + 5);
+	_numAmmoR			= new NumberText(7, 5, x + 305, y + 5);
 
-	_numFuseL			= new NumberText(7, 5, x +   8, y + 4);
-	_numFuseR			= new NumberText(7, 5, x + 280, y + 4);
+	_numFuseL			= new NumberText(7, 5, x +   8, y + 5);
+	_numFuseR			= new NumberText(7, 5, x + 280, y + 5);
 
 	_numTwohandL		= new NumberText(7, 5, x +  33, y + 46, true);
 	_numTwohandR		= new NumberText(7, 5, x + 305, y + 46, true);
