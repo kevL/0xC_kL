@@ -73,7 +73,10 @@ protected:
 
 		ESCAPE_FAIL				= -100000,
 
-		TRACE_DIR				= 10;
+		TRACE_DIR				= 10,
+
+		CAP_DIST				= 1000,
+		CAP_DIST_SQR			= 1000000;
 
 	static const Uint8
 		TRACE_RED		=  3u,

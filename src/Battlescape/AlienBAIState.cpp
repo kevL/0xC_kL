@@ -64,7 +64,7 @@ AlienBAIState::AlienBAIState(
 		_doGrenade(false),
 		_doPsi(false),
 		_hasPsiBeenSet(false),
-		_distClosest(1000),
+		_distClosest(CAP_DIST),
 		_reserve(BA_NONE)
 {
 	//if (_unit->getId() != 1000006) _traceAI = 0;
@@ -522,7 +522,7 @@ void AlienBAIState::setupPatrol() // private.
 		else
 		{
 			int // find closest objective-node which is not already allocated
-				dist (1000000),
+				dist (CAP_DIST_SQR),
 				distTest;
 
 			for (std::vector<Node*>::const_iterator
@@ -1364,7 +1364,7 @@ int AlienBAIState::tallySpotters(const Position& pos) const // private.
 int AlienBAIState::selectNearestTarget() // private.
 {
 	_unitAggro = nullptr;
-	_distClosest = 1000;
+	_distClosest = CAP_DIST;
 
 	Position
 		origin,
@@ -1452,7 +1452,7 @@ bool AlienBAIState::selectPlayerTarget() // private.
 
 	_unitAggro = nullptr;
 	int
-		dist (1000000),
+		dist (CAP_DIST_SQR),
 		distTest;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -1489,7 +1489,7 @@ bool AlienBAIState::selectTarget() // private.
 {
 	_unitAggro = nullptr;
 	int
-		dist (-1000000),
+		dist (-CAP_DIST_SQR),
 		distTest;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -1627,13 +1627,12 @@ bool AlienBAIState::findMeleePosition( // private.
 	const int
 		actorSize (_unit->getArmor()->getSize()),
 		targetSize (targetUnit->getArmor()->getSize());
-	size_t dist (1000);
+	size_t dist (static_cast<size_t>(CAP_DIST));
 
 	_pf->setPathingUnit(_unit);
 
-	Position
-		pos,
-		posTarget;
+	Position pos;
+	const Position& posTarget (targetUnit->getPosition());
 	for (int
 			z = -1;
 			z != 2;
@@ -1651,7 +1650,6 @@ bool AlienBAIState::findMeleePosition( // private.
 			{
 				if (x != 0 || y != 0) // skip the unit itself
 				{
-					posTarget = targetUnit->getPosition();
 					pos = posTarget + Position(x,y,z);
 					if (_battleSave->getTile(pos) != nullptr
 						&& std::find(

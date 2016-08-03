@@ -395,7 +395,7 @@ int CivilianBAIState::selectHostile() // private.
 {
 	int
 		tally (0),
-		dist (1000000),
+		dist (CAP_DIST_SQR),
 		distTest;
 
 	_unitAggro = nullptr;
