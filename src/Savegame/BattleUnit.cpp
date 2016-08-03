@@ -38,7 +38,7 @@
 #include "../Battlescape/TileEngine.h"
 
 #include "../Engine/Language.h"
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -2650,26 +2650,23 @@ std::vector<BattleItem*>* BattleUnit::getInventory()
  */
 void BattleUnit::thinkAi(BattleAction* const action)
 {
-	bool debug = Options::traceAI;
-	if (debug)
-	{
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "BattleUnit::think() id-" << _id;
-
-		Log(LOG_INFO) << ". checkReload()";
-	}
+	//bool debug = Options::traceAI;
+	//if (debug) {
+	//	Log(LOG_INFO) << "";
+	//	Log(LOG_INFO) << "BattleUnit::think() id-" << _id;
+	//	Log(LOG_INFO) << ". checkReload()";
+	//}
 
 	if (checkReload() == true)
 		_cacheInvalid = true; // <- reloading a weapon could switch a unit's preferred weapon-hand.
 
-	if (debug) Log(LOG_INFO) << ". _unitAIState->thinkOnce()";
+	//if (debug) Log(LOG_INFO) << ". _unitAIState->thinkOnce()";
 	_unitAIState->thinkOnce(action);
 
-	if (debug)
-	{
-		Log(LOG_INFO) << "BattleUnit::think() EXIT";
-		Log(LOG_INFO) << "";
-	}
+	//if (debug) {
+	//	Log(LOG_INFO) << "BattleUnit::think() EXIT";
+	//	Log(LOG_INFO) << "";
+	//}
 }
 
 /**

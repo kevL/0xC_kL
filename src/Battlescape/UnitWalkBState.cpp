@@ -1017,12 +1017,14 @@ void UnitWalkBState::abortState(bool recache) // private.
 
 /**
  * Handles some calculations when the path is finished.
- * @note Used mostly to finish an AI BA_MOVE but also to set player-units' TU to
- * zero after panick. Also updates lighting, FoV, sprites, and pops state.
+ * @note Used mostly to finish an AI BA_MOVE but also to set player-unit's TU
+ * to zero after panic. Also updates lighting, FoV, sprites, and pops this
+ * BattleState.
  */
 void UnitWalkBState::postPathProcedures() // private.
 {
-	//Log(LOG_INFO) << "UnitWalkBState::postPathProcedures(), unit = " << _unit->getId();
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "UnitWalkBState::postPathProcedures() id-" << _unit->getId();
 	_action.TU = 0;
 
 	if (_unit->getFaction() == FACTION_HOSTILE)
@@ -1035,9 +1037,10 @@ void UnitWalkBState::postPathProcedures() // private.
 		const BattleUnit* const chargeUnit (_unit->getChargeTarget());
 		if (chargeUnit != nullptr)
 		{
-			//Log(LOG_INFO) << ". . charging = TRUE";
+			//Log(LOG_INFO) << ". . charging vs id-" << chargeUnit->getId();
 			const Position posTarget (chargeUnit->getPosition());
 			dir = TileEngine::getDirectionTo(_unit->getPosition(), posTarget);
+			//Log(LOG_INFO) << ". . pos" << _unit->getPosition() << " target" << posTarget << " dir= " << dir;
 			// kL_notes (pre-above):
 			// put an appropriate facing direction here
 			// don't stare at a wall. Get if aggro, face closest xCom op <- might be done somewhere already.
@@ -1047,31 +1050,37 @@ void UnitWalkBState::postPathProcedures() // private.
 
 			if (_te->validMeleeRange(_unit, dir, chargeUnit) == true)
 			{
+				//Log(LOG_INFO) << ". . . range VALID";
 				_unit->setChargeTarget();
 
 				BattleAction action;
 				action.weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist
 				if (action.weapon != nullptr) // also checked in getActionTu() & ProjectileFlyBState::init()
 				{
-					action.actor = _unit;
-					action.posTarget = posTarget;
-					action.targeting = true;
-					action.type = BA_MELEE;
-					action.TU = _unit->getActionTu(action.type, action.weapon);
+					action.actor		= _unit;
+					action.posTarget	= posTarget;
+					action.targeting	= true;
+					action.type			= BA_MELEE;
+					action.TU			= _unit->getActionTu(action.type, action.weapon);
 
 					_parent->stateBPushBack(new ProjectileFlyBState(_parent, action));
+					//Log(LOG_INFO) << ". . . . FlyB melee vs " << posTarget;
 				}
 			}
 		}
 		else if (_unit->isHiding() == true) // set by AI_ESCAPE Mode.
 		{
+			//Log(LOG_INFO) << ". . hiding";
 			_unit->setHiding(false);
 			_unit->setReselect(false);
 			dir = RNG::generate(0,7);
 //			dir = (_unit->getUnitDirection() + 4) % 8u; // turn 180 deg.
 		}
 		else if ((dir = _action.finalFacing) == -1) // set by AlienBAIState::setupAmbush() & findFirePosition()
+		{
 			dir = getFinalDirection();
+			//Log(LOG_INFO) << ". . final dir= " << dir;
+		}
 
 		if (dir != -1)
 		{

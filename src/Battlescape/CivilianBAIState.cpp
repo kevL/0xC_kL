@@ -366,8 +366,8 @@ void CivilianBAIState::evaluateAiMode() // private.
 				break;
 			case 1:
 				break;
-			default:
 			case 2:
+			default:
 				escapeOdds *= 0.7f;
 		}
 

@@ -370,7 +370,7 @@ units:
     deathSound: 23
     moveSound: 40
     intelligence: 4
-    aggression: 1
+    aggression: 3
     energyRecovery: 100
     specab: 1
     livingWeapon: true
@@ -475,7 +475,7 @@ units:
     deathSound: 255
     moveSound: 15
     intelligence: 7
-    aggression: 2
+    aggression: 3
     energyRecovery: 42
   - type: STR_FLOATER_LEADER
     race: STR_FLOATER
@@ -549,7 +549,7 @@ units:
     deathSound: 48
     aggroSound: 48
     intelligence: 2
-    aggression: 2
+    aggression: 6
     energyRecovery: 80
     livingWeapon: true
     hasHands: false
@@ -576,7 +576,7 @@ units:
     deathSound: 8
     moveSound: 0
     intelligence: 2
-    aggression: 1
+    aggression: 2
     energyRecovery: 80
     meleeWeapon: STR_FIST
   - type: STR_SNAKEMAN_NAVIGATOR
@@ -626,7 +626,7 @@ units:
     deathSound: 8
     moveSound: 0
     intelligence: 4
-    aggression: 2
+    aggression: 3
     energyRecovery: 80
     meleeWeapon: STR_FIST
   - type: STR_SNAKEMAN_LEADER
@@ -676,7 +676,7 @@ units:
     deathSound: 8
     moveSound: 0
     intelligence: 6
-    aggression: 2
+    aggression: 3
     energyRecovery: 80
     meleeWeapon: STR_FIST
   - type: STR_CHRYSSALID_TERRORIST
@@ -701,7 +701,7 @@ units:
     deathSound: 49
     aggroSound: 49
     intelligence: 2
-    aggression: 2
+    aggression: 7
     energyRecovery: 80
     livingWeapon: true
     hasHands: false
@@ -727,7 +727,7 @@ units:
     score: 13
     deathSound: 6
     intelligence: 2
-    aggression: 2
+    aggression: 3
     energyRecovery: 90
     meleeWeapon: STR_FIST
   - type: STR_MUTON_NAVIGATOR
@@ -751,7 +751,7 @@ units:
     score: 15
     deathSound: 6
     intelligence: 3
-    aggression: 2
+    aggression: 3
     energyRecovery: 90
     meleeWeapon: STR_FIST
   - type: STR_MUTON_ENGINEER
@@ -775,7 +775,7 @@ units:
     score: 17
     deathSound: 6
     intelligence: 4
-    aggression: 2
+    aggression: 3
     energyRecovery: 90
     meleeWeapon: STR_FIST
   - type: STR_SILACOID_TERRORIST
@@ -800,7 +800,7 @@ units:
     deathSound: 7
     moveSound: 47
     intelligence: 1
-    aggression: 2
+    aggression: 5
     energyRecovery: 80
     specab: 2
     specabPower: 40
@@ -830,7 +830,7 @@ units:
     deathSound: 7
     moveSound: 16
     intelligence: 3
-    aggression: 2
+    aggression: 3
     energyRecovery: 70
     livingWeapon: true
     hasHands: false
@@ -928,7 +928,7 @@ units:
     score: 27
     deathSound: 23
     intelligence: 5
-    aggression: 2
+    aggression: 5
     energyRecovery: 100
     livingWeapon: true
     mechanical: true
@@ -954,7 +954,7 @@ units:
     score: 15
     deathSound: 71
     intelligence: 0
-    aggression: 2
+    aggression: 10
     energyRecovery: 40
     spawnType: STR_CHRYSSALID_TERRORIST
     livingWeapon: true

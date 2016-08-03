@@ -32,7 +32,7 @@
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
 //#include "../Engine/Palette.h"
-//#include "../Engine/Screen.h"
+#include "../Engine/Screen.h"
 
 #include "../Interface/Cursor.h"
 #include "../Interface/Text.h"

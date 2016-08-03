@@ -67,7 +67,7 @@ AlienBAIState::AlienBAIState(
 		_distClosest(1000),
 		_reserve(BA_NONE)
 {
-	//if (_unit->getId() != 1000028) _traceAI = 0;
+	//if (_unit->getId() != 1000006) _traceAI = 0;
 	//Log(LOG_INFO) << "Create AlienBAIState traceAI= " << _traceAI;
 
 	switch (_unit->getOriginalFaction())
@@ -355,10 +355,14 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 		case AI_COMBAT:
 			_reserve = BA_NONE;
 
-			aiAction->type		= _attackAction->type;
-			aiAction->posTarget	= _attackAction->posTarget;
-//			aiAction->firstTU	= _attackAction->firstTU;
-			aiAction->weapon	= _attackAction->weapon;
+			aiAction->type			= _attackAction->type;
+			aiAction->posTarget		= _attackAction->posTarget;
+//			aiAction->firstTU		= _attackAction->firstTU;
+			aiAction->weapon		= _attackAction->weapon;
+			aiAction->finalFacing	= _attackAction->finalFacing;
+			aiAction->TU			= _unit->getActionTu(
+													aiAction->type,
+													aiAction->weapon);
 
 			if (_traceAI) Log(LOG_INFO) << ". . ActionType = " << BattleAction::debugBat(aiAction->type);
 			switch (aiAction->type)
@@ -395,10 +399,6 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 			}
 
 //			_battleSave->getBattleGame()->setReservedAction(BA_NONE, false); // don't worry about reserving TUs, factored that in already.
-			aiAction->finalFacing	= _attackAction->finalFacing;
-			aiAction->TU			= _unit->getActionTu(
-													aiAction->type,
-													aiAction->weapon);
 			break;
 
 		case AI_AMBUSH:
@@ -910,10 +910,10 @@ void AlienBAIState::setupEscape() // private.
 	size_t t (SavedBattleGame::SEARCH_SIZE);
 	while (/*coverFound == false &&*/ t <= SavedBattleGame::SEARCH_SIZE)
 	{
-		if (_traceAI) Log(LOG_INFO) << ". t= " << t;
+		//if (_traceAI) Log(LOG_INFO) << ". t= " << t;
 		if (first == true)
 		{
-			if (_traceAI) Log(LOG_INFO) << ". . first";
+			//if (_traceAI) Log(LOG_INFO) << ". . first";
 			first = false;
 
 			t = 0u;
@@ -926,7 +926,7 @@ void AlienBAIState::setupEscape() // private.
 		}
 		else if (t < SavedBattleGame::SEARCH_SIZE)
 		{
-			if (_traceAI) Log(LOG_INFO) << ". . in Search_Size";
+			//if (_traceAI) Log(LOG_INFO) << ". . in Search_Size";
 			scoreTest = BASE_SUCCESS_SYSTEMATIC;
 
 			pos = _unit->getPosition();
@@ -949,7 +949,7 @@ void AlienBAIState::setupEscape() // private.
 		else // last ditch chance.
 		{
 			++t;
-			if (_traceAI) Log(LOG_INFO) << ". . out Search_Size";
+			//if (_traceAI) Log(LOG_INFO) << ". . out Search_Size";
 			scoreTest = BASE_SUCCESS_DESPERATE;
 
 			pos = _unit->getPosition();
@@ -964,7 +964,7 @@ void AlienBAIState::setupEscape() // private.
 		}
 
 
-		if (_traceAI) Log(LOG_INFO) << ". posTarget " << pos;
+		//if (_traceAI) Log(LOG_INFO) << ". posTarget " << pos;
 
 		if ((tile = _battleSave->getTile(pos)) != nullptr
 			&& std::find(
@@ -972,7 +972,7 @@ void AlienBAIState::setupEscape() // private.
 					_reachable.end(),
 					_battleSave->getTileIndex(pos)) != _reachable.end())
 		{
-			if (_traceAI) Log(LOG_INFO) << ". . is Reachable";
+			//if (_traceAI) Log(LOG_INFO) << ". . is Reachable";
 
 			if (_unitAggro != nullptr)
 				distAggroTarget = TileEngine::distance(
@@ -993,7 +993,7 @@ void AlienBAIState::setupEscape() // private.
 			if (tile->getDangerous() == true)
 				scoreTest -= BASE_SUCCESS_SYSTEMATIC;
 
-			if (_traceAI) Log(LOG_INFO) << ". . scoreTest= " << scoreTest;
+			//if (_traceAI) Log(LOG_INFO) << ". . scoreTest= " << scoreTest;
 
 			if (_traceAI > 1) {
 				tile->setPreviewColor(BattleAIState::debugTraceColor(false, scoreTest));
@@ -1004,25 +1004,25 @@ void AlienBAIState::setupEscape() // private.
 			if (scoreTest > score)
 			{
 				_pf->calculatePath(_unit, pos);
-				if (_traceAI) {
-					Log(LOG_INFO) << ". . . calculatePath() dir= " << _pf->getStartDirection();
-					Log(LOG_INFO) << ". . . on pos= " << (pos == _unit->getPosition());
-				}
+				//if (_traceAI) {
+				//	Log(LOG_INFO) << ". . . calculatePath() dir= " << _pf->getStartDirection();
+				//	Log(LOG_INFO) << ". . . on pos= " << (pos == _unit->getPosition());
+				//}
 
 				if (_pf->getStartDirection() != -1
 					|| pos == _unit->getPosition())
 				{
 					score = scoreTest;
-					if (_traceAI) Log(LOG_INFO) << ". . . . set score= " << score;
+					//if (_traceAI) Log(LOG_INFO) << ". . . . set score= " << score;
 
 					_escapeAction->posTarget = pos;
 //					_escapeAction->firstTU = _pf->getTuFirst();
 					_tuEscape = _pf->getTuCostTotalPf();
 
-					if (_traceAI) {
+					//if (_traceAI) {
 //						Log(LOG_INFO) << ". . . . firstTU= " << _escapeAction->firstTU;
-						Log(LOG_INFO) << ". . . . tuTotal= " << _tuEscape;
-					}
+					//	Log(LOG_INFO) << ". . . . tuTotal= " << _tuEscape;
+					//}
 
 					if (_traceAI > 1) {
 						tile->setPreviewColor(BattleAIState::debugTraceColor(true, scoreTest));
@@ -1069,7 +1069,7 @@ void AlienBAIState::evaluateAiMode() // private.
 	if (_unit->getChargeTarget() != nullptr
 		&& _attackAction->type != BA_THINK)
 	{
-		if (_traceAI) Log(LOG_INFO) << ". chargeTarget NOT Think - return COMBAT";
+		if (_traceAI) Log(LOG_INFO) << ". chargeTarget VALID - Not Think - return COMBAT";
 		_AIMode = AI_COMBAT;
 		return;
 	}
@@ -1631,9 +1631,9 @@ bool AlienBAIState::findMeleePosition( // private.
 
 	_pf->setPathingUnit(_unit);
 
-	Position pos;
-	int dir;
-
+	Position
+		pos,
+		posTarget;
 	for (int
 			z = -1;
 			z != 2;
@@ -1651,23 +1651,28 @@ bool AlienBAIState::findMeleePosition( // private.
 			{
 				if (x != 0 || y != 0) // skip the unit itself
 				{
-					pos = targetUnit->getPosition() + Position(x,y,z);
+					posTarget = targetUnit->getPosition();
+					pos = posTarget + Position(x,y,z);
 					if (_battleSave->getTile(pos) != nullptr
 						&& std::find(
 								_reachable.begin(),
 								_reachable.end(),
 								_battleSave->getTileIndex(pos)) != _reachable.end())
 					{
-						dir = TileEngine::getDirectionTo(pos, targetUnit->getPosition());
-						if (_te->validMeleeRange(pos, dir, _unit, targetUnit) == true
+						if (_te->validMeleeRange(
+											pos,
+											TileEngine::getDirectionTo(pos, posTarget),
+											_unit,
+											targetUnit) == true
 							&& _battleSave->setUnitPosition(_unit, pos, true) == true
-							&& _battleSave->getTile(pos)->getDangerous() == false)
+							&& (_battleSave->getTile(pos)->getDangerous() == false
+								|| RNG::generate(0, _aggression) != 0))
 						{
 							_pf->calculatePath(_unit, pos, tuCap);
 							if (_pf->getStartDirection() != -1 && _pf->getPath().size() < dist)
 							{
-								ret = true;
 								dist = _pf->getPath().size();
+								ret = true;
 								_attackAction->posTarget = pos;
 //								_attackAction->firstTU = _pf->getTuFirst();
 							}
@@ -1693,7 +1698,8 @@ void AlienBAIState::meleeAction() // private.
 	int dir;
 
 	if (_unitAggro != nullptr
-		&& _unitAggro->isOut_t(OUT_STAT) == false)
+		&& _unitAggro->getUnitStatus() == STATUS_STANDING)
+//		&& _unitAggro->isOut_t(OUT_STAT) == false)
 	{
 		dir = TileEngine::getDirectionTo(
 									_unit->getPosition(),
@@ -1752,15 +1758,15 @@ void AlienBAIState::meleeAction() // private.
  */
 void AlienBAIState::faceMelee() // private.
 {
-	const int offset (_unit->getArmor()->getSize() - 1);
-	_unit->setDirectionTo(_unitAggro->getPosition() + Position(offset, offset, 0));
-
+//	const int offset (_unit->getArmor()->getSize() - 1);
+//	_unit->setDirectionTo(_unitAggro->getPosition() + Position(offset, offset, 0));
+	_unit->setDirectionTo(_unitAggro->getPosition());
 	while (_unit->getUnitStatus() == STATUS_TURNING)
 		_unit->turn();
 
-	//if (_traceAI) Log(LOG_INFO) << "Attack unit: " << _unitAggro->getId();
-	_attackAction->posTarget = _unitAggro->getPosition();
-	_attackAction->type = BA_MELEE;
+//	_attackAction->finalFacing	= _unit->getUnitDirection();
+	_attackAction->posTarget	= _unitAggro->getPosition();
+	_attackAction->type			= BA_MELEE;
 }
 
 /**
@@ -2357,8 +2363,9 @@ bool AlienBAIState::validTarget( // private.
 		&& unit->isOut_t(OUT_STAT) == false					// ignore targets that are dead/unconscious
 		&& unit->getExposed() != -1
 		&& unit->getExposed() <= _unit->getIntelligence()	// target must be a unit that this aLien 'knows about'
-		&& (unit->getUnitTile()->getDangerous() == false
-			|| dangerTile == false))						// target has not been grenaded
+		&& (dangerTile == false
+			|| unit->getUnitTile()->getDangerous() == false
+			|| RNG::generate(0, _aggression) != 0))			// target has not been grenaded
 	{
 		return true;
 	}

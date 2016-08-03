@@ -381,7 +381,7 @@ void BattlescapeGame::stateBPushBack(BattleState* const battleState)
 void BattlescapeGame::popBattleState()
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "BattlescapeGame::popState() qtyStates= " << _battleStates.size();
+	//Log(LOG_INFO) << "BattlescapeGame::popBattleState() qtyStates= " << _battleStates.size();
 
 	//for (std::list<BattleState*>::const_iterator
 	//		i = _battleStates.begin();
@@ -390,7 +390,7 @@ void BattlescapeGame::popBattleState()
 	//	Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
 
 //	if (Options::traceAI)
-//		Log(LOG_INFO) << "BattlescapeGame::popState() "
+//		Log(LOG_INFO) << "BattlescapeGame::popBattleState() "
 //					  << "id-" << (_playerAction.actor ? std::to_string(_playerAction.actor->getId()) : " Actor NONE")
 //					  << " AIActionCounter = " << _AIActionCounter
 //					  << " tuSelected = " << (_battleSave->getSelectedUnit() ? std::to_string(_battleSave->getSelectedUnit()->getTu()) : "selUnit NONE");
@@ -418,7 +418,7 @@ void BattlescapeGame::popBattleState()
 		if (getMap()->getExplosions()->empty() == true)						// Explosions need to continue to run fast after
 		{																	// popping ProjectileFlyBState etc etc.
 			setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);	// So don't set core-speed to Standard until they're done.
-			//Log(LOG_INFO) << "bg: popState() set interval= " << BattlescapeState::STATE_INTERVAL_STANDARD;
+			//Log(LOG_INFO) << "bg:popBattleState() set interval= " << BattlescapeState::STATE_INTERVAL_STANDARD;
 		}
 
 		const BattleAction action (_battleStates.front()->getAction());
@@ -565,8 +565,6 @@ void BattlescapeGame::popBattleState()
 							|| selUnit->getStun() >= selUnit->getHealth())
 //							|| selUnit->isOut_t() == true)
 						{
-							_AIActionCounter = 0;
-
 							if (selUnit != nullptr) // NOTE: This is getting silly.
 							{
 								selUnit->flagCache();
@@ -577,12 +575,12 @@ void BattlescapeGame::popBattleState()
 							{
 								if (_battleSave->selectNextUnit(false, true) != nullptr)
 								{
-									Log(LOG_INFO) << "bg:popBattleState() selUnit funky - next id-" << _battleSave->getSelectedUnit()->getId();
+									//Log(LOG_INFO) << "bg:popBattleState() selUnit funky - next id-" << _battleSave->getSelectedUnit()->getId();
 									_AIActionCounter = 0;
 								}
 								else
 								{
-									Log(LOG_INFO) << "bg:popBattleState() -> endAiTurn()";
+									//Log(LOG_INFO) << "bg:popBattleState() -> endAiTurn()";
 									endAiTurn(); // NOTE: This is probly handled just as well in think().
 								}
 							}
@@ -677,7 +675,7 @@ void BattlescapeGame::popBattleState()
 			setupSelector();
 		}
 	}
-	//Log(LOG_INFO) << "BattlescapeGame::popState() EXIT";
+	//Log(LOG_INFO) << "BattlescapeGame::popBattleState() EXIT";
 }
 
 /**
@@ -736,8 +734,9 @@ void BattlescapeGame::resetTraceTiles() // private.
 void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 {
 	bool _debug (false);
-	//if (unit->getId() == 1000028)	_debug = true;
+	//if (unit->getId() == 1000006)	_debug = true;
 	//else							_debug = false;
+
 	if (_debug) {
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << "bg::handleUnitAI() id-" << unit->getId()
