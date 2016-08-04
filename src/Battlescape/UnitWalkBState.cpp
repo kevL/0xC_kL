@@ -76,7 +76,8 @@ UnitWalkBState::UnitWalkBState(
 		_dirStart(-1),
 		_kneelCheck(true),
 		_playFly(false),
-		_door(false)
+		_door(false),
+		_tilesLinked(false)
 {
 //	Log(LOG_INFO) << "";
 //	Log(LOG_INFO) << "walkB:cTor id-" << _unit->getId();
@@ -323,7 +324,7 @@ void UnitWalkBState::cancel()
  */
 bool UnitWalkBState::statusStand() // private.
 {
-	const Position posStart (_unit->getPosition());
+	const Position& posStart (_unit->getPosition());
 //	if (_debug)
 //	{
 //		Log(LOG_INFO) << "***** UnitWalkBState::statusStand()\t\tid-" << _unit->getId()
@@ -612,7 +613,7 @@ bool UnitWalkBState::statusStand() // private.
 			}
 		}
 
-		//Log(LOG_INFO) << ". WalkBState: spend TU & Energy";
+		//Log(LOG_INFO) << ". walkB:spend TU & Energy";
 		_unit->expendTuEnergy(tuCost, enCost);
 	}
 
@@ -627,12 +628,10 @@ bool UnitWalkBState::statusStand() // private.
 
 	setWalkSpeed(gravLift);
 
-	//Log(LOG_INFO) << ". WalkBState: startWalking()";
+	//Log(LOG_INFO) << ". walkB:startWalking()";
 	_unit->startWalking(
 					dir, posStop,
 					_battleSave->getTile(posStart + Position(0,0,-1)));
-	//Log(LOG_INFO) << ". WalkBState: establishTilesLink()";
-	establishTilesLink();
 
 	if (_isVisible == true)
 	{
@@ -685,15 +684,17 @@ bool UnitWalkBState::statusWalk() // private.
 		// btw, these have probably been already checked...
 		|| _battleSave->getTile(_unit->getStopPosition())->getTileUnit() == _unit)	// why aren't all quadrants checked.
 	{																				// Or was this all checked in Pathfinding already.
-		//Log(LOG_INFO) << ". WalkBState, keepWalking()";
+		//Log(LOG_INFO) << ". . walkB: keepWalking()";
 		if (_isVisible == true) playMoveSound();
 		_unit->keepWalking( // advances _walkPhase
 						_battleSave->getTile(_unit->getPosition() + Position(0,0,-1)),
 						_isVisible == true);
+		//Log(LOG_INFO) << ". . walkB: establishTilesLink()";
+		if (_tilesLinked == false) establishTilesLink();
 	}
 	else if (_fall == false) // walked into an unseen unit
 	{
-		//Log(LOG_INFO) << ". WalkBState, !falling Abort path; another unit is blocking path";
+		//Log(LOG_INFO) << ". . walkB: !falling Abort path; another unit is blocking path";
 		clearTilesLink(false);
 		_unit->setDirectionTo( // turn to blocking unit. TODO: This likely needs sprite-caching ....
 						_unit->getStopPosition(),
@@ -703,12 +704,12 @@ bool UnitWalkBState::statusWalk() // private.
 		_unit->setUnitStatus(STATUS_STANDING);
 	}
 
-	//Log(LOG_INFO) << ". . unitPos " << _unit->getPosition();
+	//Log(LOG_INFO) << ". pos " << _unit->getPosition();
 	// unit moved from one tile to the other, update the tiles & investigate new flooring
 	if (_tileSwitchDone == false
 		&& _unit->getPosition() != _unit->getStartPosition())
 	{
-		//Log(LOG_INFO) << ". tile switch from _posStart to _posStop";
+		//Log(LOG_INFO) << ". . tile switch from _posStart to _posStop";
 		_tileSwitchDone = true;
 
 		Tile* tile;
@@ -724,7 +725,7 @@ bool UnitWalkBState::statusWalk() // private.
 					y != -1;
 					--y)
 			{
-				//Log(LOG_INFO) << ". . remove unit from previous tile";
+				//Log(LOG_INFO) << ". . . clear unit from start tile " << _unit->getStartPosition();
 				tile = _battleSave->getTile(_unit->getStartPosition() + Position(x,y,0));
 				tile->setTileUnit();
 				tile->setTransitUnit(_unit); // IMPORTANT: lastTile transiently holds onto this unit (all quads) for Map drawing.
@@ -742,16 +743,17 @@ bool UnitWalkBState::statusWalk() // private.
 					y != -1;
 					--y)
 			{
+				//Log(LOG_INFO) << ". . . set unit on stop tile " << _unit->getPosition();
 				tile = _battleSave->getTile(_unit->getPosition() + Position(x,y,0));
 				tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
+				tile->setTileUnit(_unit, tileBelow);
+
 				if (tile->hasNoFloor(tileBelow) == false)
 				{
-					//Log(LOG_INFO) << ". . . hasFloor ( doFallCheck set FALSE )";
+					//Log(LOG_INFO) << ". . . . hasFloor ( doFallCheck set FALSE )";
 					doFallCheck = false;
 				}
-				//Log(LOG_INFO) << ". . set unit on new tile";
-				tile->setTileUnit(_unit, tileBelow);
-				//Log(LOG_INFO) << ". . . NEW unitPos " << _unit->getPosition();
+				//else Log(LOG_INFO) << ". . . . no Floor ( doFallCheck TRUE )";
 			}
 		}
 
@@ -761,7 +763,7 @@ bool UnitWalkBState::statusWalk() // private.
 
 		if (_fall == true)
 		{
-			//Log(LOG_INFO) << ". falling";
+			//Log(LOG_INFO) << ". . . falling";
 			for (int
 					x = unitSize;
 					x != -1;
@@ -773,10 +775,10 @@ bool UnitWalkBState::statusWalk() // private.
 						--y)
 				{
 					tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
-					//if (tileBelow) Log(LOG_INFO) << ". . otherTileBelow exists";
+					//if (tileBelow) Log(LOG_INFO) << ". . . . otherTileBelow exists";
 					if (tileBelow != nullptr && tileBelow->getTileUnit() != nullptr)
 					{
-						//Log(LOG_INFO) << ". . . another unit already occupies lower tile";
+						//Log(LOG_INFO) << ". . . . . another unit already occupies lower tile";
 						clearTilesLink(true);
 
 						_fall = false;
@@ -784,11 +786,11 @@ bool UnitWalkBState::statusWalk() // private.
 						_pf->dequeuePath();
 						_battleSave->addFallingUnit(_unit);
 
-						//Log(LOG_INFO) << "UnitWalkBState::think(), addFallingUnit() ID " << _unit->getId();
+						//Log(LOG_INFO) << "UnitWalkBState::think() addFallingUnit() id-" << _unit->getId();
 						_parent->stateBPushFront(new UnitFallBState(_parent));
 						return false;
 					}
-					//else Log(LOG_INFO) << ". . otherTileBelow Does NOT contain other unit";
+					//else Log(LOG_INFO) << ". . . . . otherTileBelow Does NOT contain other unit";
 				}
 			}
 		}
@@ -928,7 +930,7 @@ bool UnitWalkBState::statusStand_end() // private.
 
 	if (_fall == false) // check for reaction fire
 	{
-		//Log(LOG_INFO) << ". . WalkBState: NOT falling, checkReactionFire()";
+		//Log(LOG_INFO) << ". . walkB:NOT falling, checkReactionFire()";
 		if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
 		{
 			//Log(LOG_INFO) << ". . . RF triggered - cacheUnit/pop state";
@@ -937,7 +939,7 @@ bool UnitWalkBState::statusStand_end() // private.
 			abortState();
 			return false;
 		}
-		//else Log(LOG_INFO) << ". . WalkBState: checkReactionFire() FALSE - no caching";
+		//else Log(LOG_INFO) << ". . walkB:checkReactionFire() FALSE - no caching";
 	}
 
 	_door = false;
@@ -1380,9 +1382,11 @@ bool UnitWalkBState::groundCheck() const // private.
 /**
  * Establishes unit's transient link(s) to its destination Tile(s).
  */
-void UnitWalkBState::establishTilesLink() const // private.
+void UnitWalkBState::establishTilesLink() // private.
 {
 	//Log(LOG_INFO) << "UnitWalkBState::establishTilesLink()";
+	_tilesLinked = true;
+
 	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
 			x = unitSize;
@@ -1401,11 +1405,13 @@ void UnitWalkBState::establishTilesLink() const // private.
 
 /**
  * Clears unit's transient link(s) to other Tile(s).
- * @param origin - true if start-tile should be cleared, false for stop-tile
+ * @param origin - true if start-tile(s) should be cleared, false for stop-tile(s)
  */
-void UnitWalkBState::clearTilesLink(bool origin) const // private.
+void UnitWalkBState::clearTilesLink(bool origin) // private.
 {
 	//Log(LOG_INFO) << "UnitWalkBState::clearTilesLink()";
+	_tilesLinked = false;
+
 	std::vector<Position> posCurrent;
 	Position
 		pos (_unit->getPosition()),

@@ -274,6 +274,9 @@ private:
 			int utileLook,
 			int rankLook);
 
+	/// Calculates the mid- and end-phases for unit-movement.
+	void cacheWalkPhases();
+
 	/// Gets if a grenade-type is suitable for an AI or panic situation.
 	bool isGrenadeSuitable(const BattleItem* const grenade) const;
 
@@ -370,8 +373,6 @@ private:
 		void keepWalking(
 				const Tile* const tileBelow,
 				bool recache);
-		/// Calculates the mid- and end-phases for unit-movement.
-		void cacheWalkPhases();
 		/// Flags the BattleUnit as doing a backwards-ish strafe move.
 		void flagStrafeBackwards();
 		/// Checks if the BattleUnit is strafing in a backwards-ish direction.

@@ -53,6 +53,7 @@ private:
 		_kneelCheck,
 		_isVisible,
 		_playFly,
+		_tilesLinked,
 		_tileSwitchDone,
 		_preStepTurn;
 	int
@@ -97,9 +98,9 @@ private:
 	bool groundCheck() const;
 
 	/// Establishes unit's transient link(s) to its destination Tile(s).
-	void establishTilesLink() const;
+	void establishTilesLink();
 	/// Clears unit's transient link(s) to other Tile(s).
-	void clearTilesLink(bool origin) const;
+	void clearTilesLink(bool origin);
 
 
 	public:

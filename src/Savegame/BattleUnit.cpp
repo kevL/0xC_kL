@@ -1080,7 +1080,7 @@ int BattleUnit::getWalkPhase() const
 /**
  * Initializes variables to start walking.
  * @param dir		- the direction to walk
- * @param dest		- reference to the Position the unit should end up at
+ * @param posStop	- reference to the Position the unit should end up at
  * @param tileBelow	- pointer to the Tile below destination position
  */
 void BattleUnit::startWalking(
@@ -1170,7 +1170,7 @@ void BattleUnit::keepWalking(
  * Calculates and stores the half- and full-phase cutoffs for this BattleUnit's
  * sprite-drawing.
  */
-void BattleUnit::cacheWalkPhases()
+void BattleUnit::cacheWalkPhases() // private.
 {
 	switch (_dirVertical)
 	{

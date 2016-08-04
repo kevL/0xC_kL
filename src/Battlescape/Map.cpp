@@ -1155,7 +1155,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 //									switch (_unit->getUnitDirection())
 //									{
 //										default:
-//											if (_unit->getWalkPhase() == 0) break;
+//											if (_unit->getWalkPhase() == 0) break; // ... think I took care of this better in UnitWalkBState.
 //										case 1:
 //										case 2: // weird.
 //										case 4:
@@ -1228,11 +1228,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 								}
 
 								if (redrawEastwall == true
-									&& (_tile->getMapData(O_OBJECT) == nullptr
+									&& (   _tile->getMapData(O_OBJECT) == nullptr
 										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST))
 								{
 									const Tile* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
-									if (tileNorth != nullptr // safety. perhaps
+									if (   tileNorth != nullptr // safety. perhaps
 										&& tileNorth->getMapData(O_OBJECT) != nullptr
 										&& tileNorth->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST)
 									{
@@ -1245,11 +1245,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 									}
 								}
 								else if (redrawSouthwall == true
-									&& (_tile->getMapData(O_OBJECT) == nullptr
+									&& (   _tile->getMapData(O_OBJECT) == nullptr
 										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH))
 								{
 									const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
-									if (tileWest != nullptr
+									if (   tileWest != nullptr
 										&& tileWest->getMapData(O_OBJECT) != nullptr
 										&& tileWest->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH)
 									{

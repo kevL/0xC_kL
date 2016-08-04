@@ -40,6 +40,7 @@ class NumberText;
 class Projectile;
 class ResourcePack;
 class SavedBattleGame;
+class Surface;
 class SurfaceSet;
 class Tile;
 class TileEngine;
