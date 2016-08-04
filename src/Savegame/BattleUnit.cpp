@@ -639,8 +639,12 @@ YAML::Node BattleUnit::save() const
 	if (_unitAIState != nullptr)
 		node["AI"] = _unitAIState->save();
 
-	if (_dontReselect == true && _faction == FACTION_PLAYER)
+	if (_faction == FACTION_PLAYER
+		&& (_dontReselect == true
+			|| (_originalFaction != FACTION_PLAYER && _dontReselect == false)))
+	{
 		node["dontReselect"] = _dontReselect;
+	}
 
 	if (_spawnType.empty() == false)
 		node["spawnType"] = _spawnType;
@@ -670,13 +674,13 @@ YAML::Node BattleUnit::save() const
 
 		if (_kneeled == true) node["kneeled"] = _kneeled;
 
-		if (_expBravery != 0)		node["expBravery"]		= _expBravery;
-		if (_expReactions != 0)		node["expReactions"]	= _expReactions;
-		if (_expFiring != 0)		node["expFiring"]		= _expFiring;
-		if (_expThrowing != 0)		node["expThrowing"]		= _expThrowing;
-		if (_expPsiSkill != 0)		node["expPsiSkill"]		= _expPsiSkill;
-		if (_expPsiStrength != 0)	node["expPsiStrength"]	= _expPsiStrength;
-		if (_expMelee != 0)			node["expMelee"]		= _expMelee;
+		if (_expBravery		!= 0) node["expBravery"]		= _expBravery;
+		if (_expReactions	!= 0) node["expReactions"]		= _expReactions;
+		if (_expFiring		!= 0) node["expFiring"]			= _expFiring;
+		if (_expThrowing	!= 0) node["expThrowing"]		= _expThrowing;
+		if (_expPsiSkill	!= 0) node["expPsiSkill"]		= _expPsiSkill;
+		if (_expPsiStrength	!= 0) node["expPsiStrength"]	= _expPsiStrength;
+		if (_expMelee		!= 0) node["expMelee"]			= _expMelee;
 	}
 
 //	for (size_t i = 0; i != _recolor.size(); ++i)
@@ -687,9 +691,8 @@ YAML::Node BattleUnit::save() const
 //		node["recolor"].push_back(p);
 //	}
 
-	if (_faction == FACTION_PLAYER
-		&& _originalFaction == FACTION_PLAYER
-		&& isOut_t(OUT_STAT) == false)
+	if (_faction == FACTION_PLAYER && _originalFaction == FACTION_PLAYER
+		&& _status == STATUS_STANDING) //isOut_t(OUT_STAT) == false)
 	{
 		for (size_t
 				i = 0u;
@@ -4769,10 +4772,10 @@ void BattleUnit::hostileMcValues(
 
 		default: // set params
 			_mcStrength	= strength - ((_stats.psiStrength + 2) / 3);
-			_mcSkill	= skill - ((_stats.psiSkill + 2) / 3);
+			_mcSkill	= skill    - ((_stats.psiSkill    + 2) / 3);
 
 			if (_mcStrength < 0) _mcStrength = 0;
-			if (_mcSkill < 0) _mcSkill = 0;
+			if (_mcSkill    < 0) _mcSkill    = 0;
 	}
 }
 
