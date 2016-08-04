@@ -1289,20 +1289,13 @@ void Base::researchHelp(const std::string& aLien)
 		{
 			resType = (*i)->getRules()->getType();
 
-			if (aLien.find("_SOLDIER") != std::string::npos)
-				coef = getSoldierHelp(resType);
-			else if (aLien.find("_NAVIGATOR") != std::string::npos)
-				coef = getNavigatorHelp(resType);
-			else if (aLien.find("_MEDIC") != std::string::npos)
-				coef = getMedicHelp(resType);
-			else if (aLien.find("_ENGINEER") != std::string::npos)
-				coef = getEngineerHelp(resType);
-			else if (aLien.find("_LEADER") != std::string::npos)
-				coef = getLeaderHelp(resType);
-			else if (aLien.find("_COMMANDER") != std::string::npos)
-				coef = getCommanderHelp(resType);
-			else
-				coef = 0.;
+			if		(aLien.find("_SOLDIER")		!= std::string::npos)	coef = getSoldierHelp(resType);
+			else if	(aLien.find("_NAVIGATOR")	!= std::string::npos)	coef = getNavigatorHelp(resType);
+			else if	(aLien.find("_MEDIC")		!= std::string::npos)	coef = getMedicHelp(resType);
+			else if	(aLien.find("_ENGINEER")	!= std::string::npos)	coef = getEngineerHelp(resType);
+			else if	(aLien.find("_LEADER")		!= std::string::npos)	coef = getLeaderHelp(resType);
+			else if	(aLien.find("_COMMANDER")	!= std::string::npos)	coef = getCommanderHelp(resType);
+			else														coef = 0.;
 
 			if (AreSame(coef, 0.) == false)
 			{
@@ -1328,14 +1321,14 @@ void Base::researchHelp(const std::string& aLien)
  */
 double Base::getSoldierHelp(const std::string& resType) // private/static.
 {
-	if (resType.compare("STR_ALIEN_GRENADE") == 0
+	if (   resType.compare("STR_ALIEN_GRENADE") == 0
 		|| resType.compare("STR_ALIEN_ENTERTAINMENT") == 0
 		|| resType.compare("STR_PERSONAL_ARMOR") == 0)
 	{
 		return 0.5;
 	}
 
-	if (resType.compare("STR_HEAVY_PLASMA_CLIP") == 0
+	if (   resType.compare("STR_HEAVY_PLASMA_CLIP") == 0
 		|| resType.compare("STR_PLASMA_RIFLE_CLIP") == 0
 		|| resType.compare("STR_PLASMA_PISTOL_CLIP") == 0)
 	{
@@ -1348,7 +1341,7 @@ double Base::getSoldierHelp(const std::string& resType) // private/static.
 	if (resType.compare("STR_ALIEN_ORIGINS") == 0)
 		return 0.2;
 
-	if (resType.compare("STR_THE_MARTIAN_SOLUTION") == 0
+	if (   resType.compare("STR_THE_MARTIAN_SOLUTION") == 0
 		|| resType.compare("STR_HEAVY_PLASMA") == 0
 		|| resType.compare("STR_PLASMA_RIFLE") == 0
 		|| resType.compare("STR_PLASMA_PISTOL") == 0)
@@ -1365,19 +1358,19 @@ double Base::getSoldierHelp(const std::string& resType) // private/static.
  */
 double Base::getNavigatorHelp(const std::string& resType) // private/static.
 {
-	if (resType.compare("STR_HYPER_WAVE_DECODER") == 0
+	if (   resType.compare("STR_HYPER_WAVE_DECODER") == 0
 		|| resType.compare("STR_UFO_NAVIGATION") == 0)
 	{
 		return 0.8;
 	}
 
-	if (resType.compare("STR_MOTION_SCANNER") == 0
+	if (   resType.compare("STR_MOTION_SCANNER") == 0
 		|| resType.compare("STR_ALIEN_ENTERTAINMENT") == 0)
 	{
 		return 0.5;
 	}
 
-	if (resType.compare("STR_GRAV_SHIELD") == 0
+	if (   resType.compare("STR_GRAV_SHIELD") == 0
 		|| resType.compare("STR_ALIEN_ALLOYS") == 0)
 	{
 		return 0.4;
@@ -1389,14 +1382,14 @@ double Base::getNavigatorHelp(const std::string& resType) // private/static.
 	if (resType.compare("STR_FLYING_SUIT") == 0)
 		return 0.3;
 
-	if (resType.compare("STR_UFO_POWER_SOURCE") == 0
+	if (   resType.compare("STR_UFO_POWER_SOURCE") == 0
 		|| resType.compare("STR_UFO_CONSTRUCTION") == 0
 		|| resType.compare("STR_THE_MARTIAN_SOLUTION") == 0)
 	{
 		return 0.25;
 	}
 
-	if (resType == "STR_HEAVY_PLASMA"
+	if (   resType == "STR_HEAVY_PLASMA"
 		|| resType == "STR_HEAVY_PLASMA_CLIP"
 		|| resType == "STR_PLASMA_RIFLE"
 		|| resType == "STR_PLASMA_RIFLE_CLIP"
@@ -1413,7 +1406,7 @@ double Base::getNavigatorHelp(const std::string& resType) // private/static.
 		return 0.2;
 	}
 
-	if (resType.compare("STR_CYDONIA_OR_BUST") == 0
+	if (   resType.compare("STR_CYDONIA_OR_BUST") == 0
 		|| resType.compare("STR_POWER_SUIT") == 0)
 	{
 		return 0.15;
@@ -1428,7 +1421,7 @@ double Base::getNavigatorHelp(const std::string& resType) // private/static.
  */
 double Base::getMedicHelp(const std::string& resType) // private/static.
 {
-	if (resType.compare("STR_ALIEN_FOOD") == 0
+	if (   resType.compare("STR_ALIEN_FOOD") == 0
 		|| resType.compare("STR_ALIEN_SURGERY") == 0
 		|| resType.compare("STR_EXAMINATION_ROOM") == 0
 		|| resType.compare("STR_ALIEN_REPRODUCTION") == 0)
@@ -1436,7 +1429,7 @@ double Base::getMedicHelp(const std::string& resType) // private/static.
 		return 0.8;
 	}
 
-	if (resType.compare("STR_PSI_AMP") == 0
+	if (   resType.compare("STR_PSI_AMP") == 0
 		|| resType.compare("STR_SMALL_LAUNCHER") == 0
 		|| resType.compare("STR_STUN_BOMB") == 0
 		|| resType.compare("STR_MIND_PROBE") == 0
@@ -1452,7 +1445,7 @@ double Base::getMedicHelp(const std::string& resType) // private/static.
 	if (resType == "STR_MEDI_KIT")
 		return 0.4;
 
-	if (resType.compare("STR_ALIEN_ORIGINS") == 0
+	if (   resType.compare("STR_ALIEN_ORIGINS") == 0
 		|| resType.compare("STR_ALIEN_ENTERTAINMENT") == 0)
 	{
 		return 0.2;
@@ -1470,13 +1463,13 @@ double Base::getMedicHelp(const std::string& resType) // private/static.
  */
 double Base::getEngineerHelp(const std::string& resType) // private/static.
 {
-	if (resType.compare("STR_BLASTER_LAUNCHER") == 0
+	if (   resType.compare("STR_BLASTER_LAUNCHER") == 0
 		|| resType.compare("STR_BLASTER_BOMB") == 0)
 	{
 		return 0.7;
 	}
 
-	if (resType.compare("STR_MOTION_SCANNER") == 0
+	if (   resType.compare("STR_MOTION_SCANNER") == 0
 		|| resType.compare("STR_HEAVY_PLASMA") == 0
 		|| resType.compare("STR_HEAVY_PLASMA_CLIP") == 0
 		|| resType.compare("STR_PLASMA_RIFLE") == 0
@@ -1500,14 +1493,14 @@ double Base::getEngineerHelp(const std::string& resType) // private/static.
 		return 0.5;
 	}
 
-	if (resType.compare("STR_NEW_FIGHTER_CRAFT") == 0 // + "STR_IMPROVED_INTERCEPTOR" <- uses Alien Alloys.
+	if (   resType.compare("STR_NEW_FIGHTER_CRAFT") == 0 // + "STR_IMPROVED_INTERCEPTOR" <- uses Alien Alloys.
 		|| resType.compare("STR_NEW_FIGHTER_TRANSPORTER") == 0
 		|| resType.compare("STR_ULTIMATE_CRAFT") == 0)
 	{
 		return 0.3;
 	}
 
-	if (resType.compare("STR_ALIEN_ORIGINS") == 0
+	if (   resType.compare("STR_ALIEN_ORIGINS") == 0
 		|| resType.compare("STR_SMALL_LAUNCHER") == 0
 		|| resType.compare("STR_STUN_BOMB") == 0)
 	{
@@ -1541,7 +1534,7 @@ double Base::getLeaderHelp(const std::string& resType) // private/static.
 	if (resType.compare("STR_PSI_AMP") == 0)
 		return 0.25;
 
-	if (resType.compare("STR_HEAVY_PLASMA") == 0
+	if (   resType.compare("STR_HEAVY_PLASMA") == 0
 		|| resType.compare("STR_HEAVY_PLASMA_CLIP") == 0
 		|| resType.compare("STR_PLASMA_RIFLE") == 0
 		|| resType.compare("STR_PLASMA_RIFLE_CLIP") == 0
@@ -1562,7 +1555,7 @@ double Base::getLeaderHelp(const std::string& resType) // private/static.
 		return 0.2;
 	}
 
-	if (resType.compare("STR_NEW_FIGHTER_CRAFT") == 0 // + "STR_IMPROVED_INTERCEPTOR" <- uses Alien Alloys.
+	if (   resType.compare("STR_NEW_FIGHTER_CRAFT") == 0 // + "STR_IMPROVED_INTERCEPTOR" <- uses Alien Alloys.
 		|| resType.compare("STR_NEW_FIGHTER_TRANSPORTER") == 0
 		|| resType.compare("STR_ULTIMATE_CRAFT") == 0)
 	{
@@ -1578,7 +1571,7 @@ double Base::getLeaderHelp(const std::string& resType) // private/static.
  */
 double Base::getCommanderHelp(const std::string& resType) // private/static.
 {
-	if (resType.compare("STR_BLASTER_LAUNCHER") == 0
+	if (   resType.compare("STR_BLASTER_LAUNCHER") == 0
 		|| resType.compare("STR_EXAMINATION_ROOM") == 0)
 	{
 		return 0.8;
@@ -1590,13 +1583,13 @@ double Base::getCommanderHelp(const std::string& resType) // private/static.
 	if (resType.compare("STR_THE_MARTIAN_SOLUTION") == 0)
 		return 0.6;
 
-	if (resType.compare("STR_PSI_AMP") == 0
+	if (   resType.compare("STR_PSI_AMP") == 0
 		|| resType.compare("STR_CYDONIA_OR_BUST") == 0)
 	{
 		return 0.5;
 	}
 
-	if (resType.compare("STR_BLASTER_BOMB") == 0
+	if (   resType.compare("STR_BLASTER_BOMB") == 0
 		|| resType.compare("STR_ELERIUM_115") == 0
 		|| resType.compare("STR_ALIEN_ALLOYS") == 0
 		|| resType.compare("STR_PERSONAL_ARMOR") == 0
@@ -1606,7 +1599,7 @@ double Base::getCommanderHelp(const std::string& resType) // private/static.
 		return 0.25;
 	}
 
-	if (resType.compare("STR_HEAVY_PLASMA") == 0
+	if (   resType.compare("STR_HEAVY_PLASMA") == 0
 		|| resType.compare("STR_HEAVY_PLASMA_CLIP") == 0
 		|| resType.compare("STR_PLASMA_RIFLE") == 0
 		|| resType.compare("STR_PLASMA_RIFLE_CLIP") == 0
@@ -1696,7 +1689,6 @@ bool Base::getHyperDetection() const
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -1755,12 +1747,10 @@ int Base::getShortRangeTotal() const
 			if (range != 0 && range <= _rules->getRadarCutoffRange())
 			{
 				total += (*i)->getRules()->getRadarChance();
-				if (total > 100)
-					return 100;
+				if (total > 100) return 100;
 			}
 		}
 	}
-
 	return total;
 }
 
@@ -1784,7 +1774,6 @@ int Base::getLongRangeDetection() const
 			total++;
 		}
 	}
-
 	return total;
 } */
 
@@ -1805,11 +1794,9 @@ int Base::getLongRangeTotal() const
 			&& (*i)->getRules()->getRadarRange() > _rules->getRadarCutoffRange())
 		{
 			total += (*i)->getRules()->getRadarChance();
-			if (total > 100)
-				return 100;
+			if (total > 100) return 100;
 		}
 	}
-
 	return total;
 }
 
@@ -1830,7 +1817,6 @@ int Base::detect(Target* const target) const
 		return 0;
 
 	int ret (0);
-
 	if (targetDist < 0.)
 	{
 		++ret;
@@ -1838,7 +1824,6 @@ int Base::detect(Target* const target) const
 	}
 
 	int pct (0);
-
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _facilities.begin();
 			i != _facilities.end();
@@ -1963,9 +1948,8 @@ int Base::getDetectionChance(
 {
 	if (facQty != nullptr)
 	{
-		*facQty =
+		*facQty  =
 		*shields = 0;
-
 		for (std::vector<BaseFacility*>::const_iterator
 				i = _facilities.begin();
 				i != _facilities.end();
@@ -1978,14 +1962,12 @@ int Base::getDetectionChance(
 					++(*shields);
 			}
 		}
-
 		return calcDetChance(diff, *facQty, *shields);
 	}
 
 	int
 		facQty0  (0),
 		shields0 (0);
-
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _facilities.begin();
 			i != _facilities.end();
@@ -1998,7 +1980,6 @@ int Base::getDetectionChance(
 				++shields0;
 		}
 	}
-
 	return calcDetChance(diff, facQty0, shields0);
 }
 
@@ -2009,10 +1990,10 @@ int Base::getDetectionChance(
  * @param facQty	- the quantity of facilities
  * @param shields	- the quantity of shield facilities
  */
-int Base::calcDetChance( // private.
+int Base::calcDetChance( // private/static.
 		int diff,
 		int facQty,
-		int shields) const
+		int shields)
 {
 	return (facQty / 6 + 9) / (shields * 2 + 1) + diff;
 }
@@ -2162,12 +2143,12 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 
 	std::pair<std::vector<BaseFacility*>::const_iterator, bool>* facBool_coord[BASE_SIZE][BASE_SIZE];
 	for (size_t
-			x = 0;
+			x = 0u;
 			x != BASE_SIZE;
 			++x)
 	{
 		for (size_t
-				y = 0;
+				y = 0u;
 				y != BASE_SIZE;
 				++y)
 		{
@@ -2189,12 +2170,12 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 				lift = *i;
 
 			for (size_t
-					x = 0;
+					x = 0u;
 					x != (*i)->getRules()->getSize();
 					++x)
 			{
 				for (size_t
-						y = 0;
+						y = 0u;
 						y != (*i)->getRules()->getSize();
 						++y)
 				{
@@ -2244,73 +2225,73 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 
 			fac = *(facBool_coord[x][y]->first);
 
-			if (x > 0
-				&& facBool_coord[x - 1][y] != nullptr)
+			if (x > 0u
+				&& facBool_coord[x - 1u][y] != nullptr)
 			{
-				borLeft = *(facBool_coord[x - 1][y]->first);
+				borLeft = *(facBool_coord[x - 1u][y]->first);
 			}
 			else
 				borLeft = nullptr;
 
-			if (x + 1 < BASE_SIZE
-				&& facBool_coord[x + 1][y] != nullptr)
+			if (x + 1u < BASE_SIZE
+				&& facBool_coord[x + 1u][y] != nullptr)
 			{
-				borRight = *(facBool_coord[x + 1][y]->first);
+				borRight = *(facBool_coord[x + 1u][y]->first);
 			}
 			else
 				borRight = nullptr;
 
-			if (y > 0
-				&& facBool_coord[x][y - 1] != nullptr)
+			if (y > 0u
+				&& facBool_coord[x][y - 1u] != nullptr)
 			{
-				borTop = *(facBool_coord[x][y - 1]->first);
+				borTop = *(facBool_coord[x][y - 1u]->first);
 			}
 			else
 				borTop = nullptr;
 
-			if (y + 1 < BASE_SIZE
-				&& facBool_coord[x][y + 1] != nullptr)
+			if (y + 1u < BASE_SIZE
+				&& facBool_coord[x][y + 1u] != nullptr)
 			{
-				borBottom = *(facBool_coord[x][y + 1]->first);
+				borBottom = *(facBool_coord[x][y + 1u]->first);
 			}
 			else
 				borBottom = nullptr;
 
 
-			if (x > 0
+			if (x > 0u
 				&& (fac->buildFinished() == true
 					|| (borLeft != nullptr
 						&& (borLeft == fac
 							|| borLeft->getBuildTime() > borLeft->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(x - 1, y));
+				stuff.push(std::make_pair(x - 1u, y));
 			}
 
-			if (x < BASE_SIZE - 1
+			if (x < BASE_SIZE - 1u
 				&& (fac->buildFinished() == true
 					|| (borRight != nullptr
 						&& (borRight == fac
 							|| borRight->getBuildTime() > borRight->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(x + 1, y));
+				stuff.push(std::make_pair(x + 1u, y));
 			}
 
-			if (y > 0
+			if (y > 0u
 				&& (fac->buildFinished() == true
 					|| (borTop != nullptr
 						&& (borTop == fac
 							|| borTop->getBuildTime() > borTop->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(x, y - 1));
+				stuff.push(std::make_pair(x, y - 1u));
 			}
 
-			if (y < BASE_SIZE - 1
+			if (y < BASE_SIZE - 1u
 				&& (fac->buildFinished() == true
 					|| (borBottom != nullptr
 						&& (borBottom == fac
 							|| borBottom->getBuildTime() > borBottom->getRules()->getBuildTime()))))
 			{
-				stuff.push(std::make_pair(x, y + 1));
+				stuff.push(std::make_pair(x, y + 1u));
 			}
 		}
 	}
@@ -2754,10 +2735,10 @@ void Base::setRecallRow(
 {
 	switch (recallType)
 	{
-		case REC_SOLDIER:	_recallSoldier	= row; break;
-		case REC_TRANSFER:	_recallTransfer	= row; break;
-		case REC_PURCHASE:	_recallPurchase	= row; break;
-		case REC_SELL:		_recallSell		= row;
+		case RCL_SOLDIER:	_recallSoldier	= row; break;
+		case RCL_TRANSFER:	_recallTransfer	= row; break;
+		case RCL_PURCHASE:	_recallPurchase	= row; break;
+		case RCL_SELL:		_recallSell		= row;
 	}
 }
 
@@ -2770,10 +2751,10 @@ size_t Base::getRecallRow(RecallType recallType) const
 {
 	switch (recallType)
 	{
-		case REC_SOLDIER:	return _recallSoldier;
-		case REC_TRANSFER:	return _recallTransfer;
-		case REC_PURCHASE:	return _recallPurchase;
-		case REC_SELL:		return _recallSell;
+		case RCL_SOLDIER:	return _recallSoldier;
+		case RCL_TRANSFER:	return _recallTransfer;
+		case RCL_PURCHASE:	return _recallPurchase;
+		case RCL_SELL:		return _recallSell;
 	}
 	return 0;
 }

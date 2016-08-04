@@ -469,7 +469,7 @@ void TransferItemsState::init()
 		}
 	}
 
-	_lstItems->scrollTo(_baseSource->getRecallRow(REC_TRANSFER));
+	_lstItems->scrollTo(_baseSource->getRecallRow(RCL_TRANSFER));
 	_lstItems->draw();
 
 	std::wostringstream woststr;
@@ -488,7 +488,7 @@ void TransferItemsState::init()
 void TransferItemsState::btnOkClick(Action*)
 {
 	_resetAll = false;
-	_baseSource->setRecallRow(REC_TRANSFER, _lstItems->getScroll()); // note that if TransferConfirmState gets cancelled this still takes effect.
+	_baseSource->setRecallRow(RCL_TRANSFER, _lstItems->getScroll()); // note that if TransferConfirmState gets cancelled this still takes effect.
 	_game->pushState(new TransferConfirmState(_baseTarget, this));
 }
 
@@ -498,7 +498,7 @@ void TransferItemsState::btnOkClick(Action*)
  */
 void TransferItemsState::btnCancelClick(Action*)
 {
-	_baseSource->setRecallRow(REC_TRANSFER, _lstItems->getScroll());
+	_baseSource->setRecallRow(RCL_TRANSFER, _lstItems->getScroll());
 	_game->popState(); // pop main Transfer (this)
 //	_game->popState(); // pop choose Destination
 }

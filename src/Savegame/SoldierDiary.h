@@ -161,8 +161,8 @@ private:
 		std::map<std::string, int> getAlienRaceTotal() const;
 		/// Gets the list of kills, mapped by weapon used.
 		std::map<std::string, int> getWeaponTotal() const;
-		/// Gets the list of kills, mapped by weapon ammo used.
-		std::map<std::string, int> getWeaponAmmoTotal() const;
+		/// Gets the list of kills, mapped by weapon load used.
+//		std::map<std::string, int> getLoadTotal() const;
 
 		/// Gets the quantities of missions mapped by Region.
 		std::map<std::string, int> getRegionTotal(const std::vector<MissionStatistics*>* const tacticals) const;

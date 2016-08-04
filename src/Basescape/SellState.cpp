@@ -332,7 +332,7 @@ SellState::SellState(Base* const base)
 		}
 	}
 
-	_lstItems->scrollTo(_base->getRecallRow(REC_SELL));
+	_lstItems->scrollTo(_base->getRecallRow(RCL_SELL));
 
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
@@ -357,7 +357,7 @@ SellState::~SellState()
  */
 void SellState::btnOkClick(Action*)
 {
-	_base->setRecallRow(REC_SELL, _lstItems->getScroll());
+	_base->setRecallRow(RCL_SELL, _lstItems->getScroll());
 
 	if (_costTotal != 0)
 	{
@@ -437,7 +437,7 @@ void SellState::btnOkClick(Action*)
  */
 void SellState::btnCancelClick(Action*)
 {
-	_base->setRecallRow(REC_SELL, _lstItems->getScroll());
+	_base->setRecallRow(RCL_SELL, _lstItems->getScroll());
 	_game->popState();
 }
 

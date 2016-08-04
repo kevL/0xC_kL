@@ -179,7 +179,7 @@ void CraftArmorState::init()
 		}
 	}
 
-	_lstSoldiers->scrollTo(_base->getRecallRow(REC_SOLDIER));
+	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));
 	_lstSoldiers->draw();
 }
 
@@ -190,7 +190,7 @@ void CraftArmorState::init()
 void CraftArmorState::btnOkClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	_game->popState();
 }
@@ -210,7 +210,7 @@ void CraftArmorState::lstSoldiersPress(Action* action)
 	}
 
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	switch (action->getDetails()->button.button)
@@ -249,7 +249,7 @@ void CraftArmorState::lstSoldiersPress(Action* action)
 void CraftArmorState::lstLeftArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t r (_lstSoldiers->getSelectedRow());
@@ -272,7 +272,7 @@ void CraftArmorState::lstLeftArrowClick(Action* action)
 				else
 				{
 					_base->setRecallRow(
-									REC_SOLDIER,
+									RCL_SOLDIER,
 									_lstSoldiers->getScroll() - 1u);
 					_lstSoldiers->scrollUp();
 				}
@@ -284,7 +284,7 @@ void CraftArmorState::lstLeftArrowClick(Action* action)
 			case SDL_BUTTON_RIGHT:
 			{
 				_base->setRecallRow(
-								REC_SOLDIER,
+								RCL_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
 				Soldier* const sol (_base->getSoldiers()->at(r));
@@ -306,7 +306,7 @@ void CraftArmorState::lstLeftArrowClick(Action* action)
 void CraftArmorState::lstRightArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t qtySoldiers (_base->getSoldiers()->size());
@@ -332,7 +332,7 @@ void CraftArmorState::lstRightArrowClick(Action* action)
 					else
 					{
 						_base->setRecallRow(
-										REC_SOLDIER,
+										RCL_SOLDIER,
 										_lstSoldiers->getScroll() + 1u);
 						_lstSoldiers->scrollDown();
 					}

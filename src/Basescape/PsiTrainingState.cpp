@@ -181,7 +181,7 @@ void PsiTrainingState::init()
 		_lstSoldiers->setRowColor(r, color);
 	}
 
-	_lstSoldiers->scrollTo(_base->getRecallRow(REC_SOLDIER));
+	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));
 	_lstSoldiers->draw();
 }
 
@@ -192,7 +192,7 @@ void PsiTrainingState::init()
 void PsiTrainingState::btnOkClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	_game->popState();
 }
@@ -243,7 +243,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 
 		case SDL_BUTTON_RIGHT:
 			_base->setRecallRow(
-							REC_SOLDIER,
+							RCL_SOLDIER,
 							_lstSoldiers->getScroll());
 
 			_game->pushState(new SoldierInfoState(
@@ -260,7 +260,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 void PsiTrainingState::lstLeftArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t r (_lstSoldiers->getSelectedRow());
@@ -283,7 +283,7 @@ void PsiTrainingState::lstLeftArrowClick(Action* action)
 				else
 				{
 					_base->setRecallRow(
-									REC_SOLDIER,
+									RCL_SOLDIER,
 									_lstSoldiers->getScroll() - 1u);
 					_lstSoldiers->scrollUp();
 				}
@@ -295,7 +295,7 @@ void PsiTrainingState::lstLeftArrowClick(Action* action)
 			case SDL_BUTTON_RIGHT:
 			{
 				_base->setRecallRow(
-								REC_SOLDIER,
+								RCL_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
 				Soldier* const sol (_base->getSoldiers()->at(r));
@@ -317,7 +317,7 @@ void PsiTrainingState::lstLeftArrowClick(Action* action)
 void PsiTrainingState::lstRightArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t qtySoldiers (_base->getSoldiers()->size());
@@ -343,7 +343,7 @@ void PsiTrainingState::lstRightArrowClick(Action* action)
 					else
 					{
 						_base->setRecallRow(
-										REC_SOLDIER,
+										RCL_SOLDIER,
 										_lstSoldiers->getScroll() + 1u);
 						_lstSoldiers->scrollDown();
 					}

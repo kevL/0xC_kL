@@ -33,10 +33,10 @@ namespace OpenXcom
 
 enum RecallType
 {
-	REC_SOLDIER,	// 0
-	REC_TRANSFER,	// 1
-	REC_PURCHASE,	// 2
-	REC_SELL		// 3
+	RCL_SOLDIER,	// 0
+	RCL_TRANSFER,	// 1
+	RCL_PURCHASE,	// 2
+	RCL_SELL		// 3
 };
 
 enum PurchaseSellTransferType
@@ -116,10 +116,10 @@ private:
 	static double getCommanderHelp(const std::string& rp);
 
 	/// Calculates the chance that aLiens have to detect the Base.
-	int calcDetChance(
+	static int calcDetChance(
 			int diff,
 			int facQty,
-			int shields) const;
+			int shields);
 
 
 	public:
@@ -340,17 +340,17 @@ private:
 		/// Gets the Base's total monthly maintenance.
 		int getMonthlyMaintenace() const;
 
-		/// Changes the Base's total income-value.
+		/// Changes the Base's total-income value.
 		void addCashIncome(int cash);
-		/// Gets the Base's total income-value.
+		/// Gets the Base's total-income value.
 		int getCashIncome() const;
-		/// Zeros the Base's income-value.
+		/// Zeros the Base's total-income value.
 		void zeroCashIncome();
-		/// Changes the Base's total expenditure-value.
+		/// Changes the Base's total-expenditure value.
 		void addCashSpent(int cash);
-		/// Gets the Base's total expenditure-value.
+		/// Gets the Base's total-expenditure value.
 		int getCashSpent() const;
-		/// Zeros the Base's expenditure-value.
+		/// Zeros the Base's total-expenditure value.
 		void zeroCashSpent();
 
 		/// Sets various recalls for the Base.

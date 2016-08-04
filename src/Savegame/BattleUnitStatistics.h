@@ -39,7 +39,7 @@ struct BattleUnitKill
 		_rank,
 		_race,
 		_weapon,
-		_weaponAmmo;
+		_load;
 	int
 		_mission,
 		_turn,
@@ -54,7 +54,7 @@ struct BattleUnitKill
 			std::string unitRank,
 			std::string race,
 			std::string weapon,
-			std::string weaponAmmo,
+			std::string load,
 			UnitFaction faction,
 			UnitStatus status,
 			int mission,
@@ -64,7 +64,7 @@ struct BattleUnitKill
 			_rank(unitRank),
 			_race(race),
 			_weapon(weapon),
-			_weaponAmmo(weaponAmmo),
+			_load(load),
 			_faction(faction),
 			_status(status),
 			_mission(mission),
@@ -88,7 +88,7 @@ struct BattleUnitKill
 		_rank		= node["rank"]		.as<std::string>(_rank);
 		_race		= node["race"]		.as<std::string>(_race);
 		_weapon		= node["weapon"]	.as<std::string>(_weapon);
-		_weaponAmmo	= node["weaponAmmo"].as<std::string>(_weaponAmmo);
+		_load		= node["load"]		.as<std::string>(_load);
 		_mission	= node["mission"]	.as<int>(_mission);
 		_turn		= node["turn"]		.as<int>(_turn);
 		_points		= node["points"]	.as<int>(_points);
@@ -102,16 +102,16 @@ struct BattleUnitKill
 	{
 		YAML::Node node;
 
-		node["rank"]		= _rank;
-		node["race"]		= _race;
-		node["weapon"]		= _weapon;
-		node["weaponAmmo"]	= _weaponAmmo;
-		node["mission"]		= _mission;
-		node["turn"]		= _turn;
-		node["points"]		= _points;
+		node["rank"]	= _rank;
+		node["race"]	= _race;
+		node["weapon"]	= _weapon;
+		node["load"]	= _load;
+		node["mission"]	= _mission;
+		node["turn"]	= _turn;
+		node["points"]	= _points;
 
-		node["status"]		= static_cast<int>(_status);
-		node["faction"]		= static_cast<int>(_faction);
+		node["status"]	= static_cast<int>(_status);
+		node["faction"]	= static_cast<int>(_faction);
 
 		return node;
 	}

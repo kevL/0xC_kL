@@ -244,7 +244,7 @@ void SoldiersState::init()
 			}
 		}
 	}
-	_lstSoldiers->scrollTo(_base->getRecallRow(REC_SOLDIER));
+	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));
 	_lstSoldiers->draw();
 }
 
@@ -255,7 +255,7 @@ void SoldiersState::init()
 void SoldiersState::btnOkClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	_game->popState();
 }
@@ -267,7 +267,7 @@ void SoldiersState::btnOkClick(Action*)
 void SoldiersState::btnArmorClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	_game->pushState(new CraftArmorState(_base));
 }
@@ -279,7 +279,7 @@ void SoldiersState::btnArmorClick(Action*)
 void SoldiersState::btnEquipClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	SavedBattleGame* const battleSave (new SavedBattleGame());
@@ -299,7 +299,7 @@ void SoldiersState::btnEquipClick(Action*)
 void SoldiersState::btnPsiTrainingClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	_game->pushState(new PsiTrainingState(_base));
 }
@@ -323,7 +323,7 @@ std::sort(vPair.begin(), vPair.end(), sort_second()); */
 void SoldiersState::btnSortClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	_base->sortSoldiers();
 
@@ -338,7 +338,7 @@ void SoldiersState::btnSortClick(Action*)
 void SoldiersState::btnAutoStatClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	for (std::vector<Soldier*>::const_iterator
@@ -369,7 +369,7 @@ void SoldiersState::lstSoldiersPress(Action* action)
 		case SDL_BUTTON_LEFT:
 		case SDL_BUTTON_RIGHT:
 			_base->setRecallRow(
-							REC_SOLDIER,
+							RCL_SOLDIER,
 							_lstSoldiers->getScroll());
 			_game->pushState(new SoldierInfoState(
 												_base,
@@ -385,7 +385,7 @@ void SoldiersState::lstSoldiersPress(Action* action)
 void SoldiersState::lstLeftArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t r (_lstSoldiers->getSelectedRow());
@@ -408,7 +408,7 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 				else
 				{
 					_base->setRecallRow(
-									REC_SOLDIER,
+									RCL_SOLDIER,
 									_lstSoldiers->getScroll() - 1u);
 					_lstSoldiers->scrollUp();
 				}
@@ -420,7 +420,7 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 			case SDL_BUTTON_RIGHT:
 			{
 				_base->setRecallRow(
-								REC_SOLDIER,
+								RCL_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
 				Soldier* const sol (_base->getSoldiers()->at(r));
@@ -442,7 +442,7 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 void SoldiersState::lstRightArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t qtySoldiers (_base->getSoldiers()->size());
@@ -468,7 +468,7 @@ void SoldiersState::lstRightArrowClick(Action* action)
 					else
 					{
 						_base->setRecallRow(
-										REC_SOLDIER,
+										RCL_SOLDIER,
 										_lstSoldiers->getScroll() + 1u);
 						_lstSoldiers->scrollDown();
 					}

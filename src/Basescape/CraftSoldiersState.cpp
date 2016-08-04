@@ -218,7 +218,7 @@ void CraftSoldiersState::init()
 	displayExtraButtons();
 	calculateTacticalCost();
 
-	_lstSoldiers->scrollTo(_base->getRecallRow(REC_SOLDIER));
+	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));
 	_lstSoldiers->draw();
 }
 
@@ -229,7 +229,7 @@ void CraftSoldiersState::init()
 void CraftSoldiersState::btnOkClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	_game->popState();
 }
@@ -253,7 +253,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 	}
 
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 	init();
 }
@@ -332,7 +332,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 
 		case SDL_BUTTON_RIGHT:
 			_base->setRecallRow(
-							REC_SOLDIER,
+							RCL_SOLDIER,
 							_lstSoldiers->getScroll());
 			_game->pushState(new SoldierInfoState(
 											_base,
@@ -348,7 +348,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 void CraftSoldiersState::lstLeftArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t r (_lstSoldiers->getSelectedRow());
@@ -371,7 +371,7 @@ void CraftSoldiersState::lstLeftArrowClick(Action* action)
 				else
 				{
 					_base->setRecallRow(
-									REC_SOLDIER,
+									RCL_SOLDIER,
 									_lstSoldiers->getScroll() - 1u);
 					_lstSoldiers->scrollUp();
 				}
@@ -383,7 +383,7 @@ void CraftSoldiersState::lstLeftArrowClick(Action* action)
 			case SDL_BUTTON_RIGHT:
 			{
 				_base->setRecallRow(
-								REC_SOLDIER,
+								RCL_SOLDIER,
 								_lstSoldiers->getScroll() + 1u);
 
 				Soldier* const sol (_base->getSoldiers()->at(r));
@@ -405,7 +405,7 @@ void CraftSoldiersState::lstLeftArrowClick(Action* action)
 void CraftSoldiersState::lstRightArrowClick(Action* action)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	const size_t qtySoldiers (_base->getSoldiers()->size());
@@ -431,7 +431,7 @@ void CraftSoldiersState::lstRightArrowClick(Action* action)
 					else
 					{
 						_base->setRecallRow(
-										REC_SOLDIER,
+										RCL_SOLDIER,
 										_lstSoldiers->getScroll() + 1u);
 						_lstSoldiers->scrollDown();
 					}
@@ -462,7 +462,7 @@ void CraftSoldiersState::lstRightArrowClick(Action* action)
 void CraftSoldiersState::btnInventoryClick(Action*)
 {
 	_base->setRecallRow(
-					REC_SOLDIER,
+					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
 	SavedBattleGame* const battleSave (new SavedBattleGame());

@@ -132,7 +132,7 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 				unitRank (copyThat._killList.at(i)->_rank),
 				race (copyThat._killList.at(i)->_race),
 				weapon (copyThat._killList.at(i)->_weapon),
-				weaponAmmo (copyThat._killList.at(i)->_weaponAmmo);
+				load (copyThat._killList.at(i)->_load);
 			int
 				mission (copyThat._killList.at(i)->_mission),
 				turn (copyThat._killList.at(i)->_turn),
@@ -145,7 +145,7 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 												unitRank,
 												race,
 												weapon,
-												weaponAmmo,
+												load,
 												faction,
 												status,
 												mission,
@@ -255,7 +255,7 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 					unitRank (assignThat._killList.at(i)->_rank),
 					race (assignThat._killList.at(i)->_race),
 					weapon (assignThat._killList.at(i)->_weapon),
-					weaponAmmo (assignThat._killList.at(i)->_weaponAmmo);
+					load (assignThat._killList.at(i)->_load);
 				int
 					mission (assignThat._killList.at(i)->_mission),
 					turn (assignThat._killList.at(i)->_turn),
@@ -268,7 +268,7 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 													unitRank,
 													race,
 													weapon,
-													weaponAmmo,
+													load,
 													faction,
 													status,
 													mission,
@@ -726,18 +726,18 @@ bool SoldierDiary::manageAwards(
 
 								const RuleItem // if there are NO matches break and try the next Criteria.
 									* const weapon (rules->getItemRule((*kill)->_weapon)),
-									* const weaponAmmo (rules->getItemRule((*kill)->_weaponAmmo));
+									* const load (rules->getItemRule((*kill)->_load));
 
-								if (   weapon == nullptr		//(*kill)->_weapon == "STR_WEAPON_UNKNOWN"
-									|| weaponAmmo == nullptr	//(*kill)->_weaponAmmo == "STR_WEAPON_UNKNOWN"
+								if (   weapon == nullptr	//(*kill)->_weapon == "STR_WEAPON_UNKNOWN"
+									|| load == nullptr		//(*kill)->_load == "STR_WEAPON_UNKNOWN"
 									|| (   (*kill)->_rank != *detail
 										&& (*kill)->_race != *detail
 										&& (*kill)->_weapon != *detail
-										&& (*kill)->_weaponAmmo != *detail
+										&& (*kill)->_load != *detail
 										&& (*kill)->getUnitStatusString() != *detail
 										&& (*kill)->getUnitFactionString() != *detail
 										&& weapon->getBattleType() != static_cast<BattleType>(bType)
-										&& weaponAmmo->getDamageType() != static_cast<DamageType>(dType)))
+										&& load->getDamageType() != static_cast<DamageType>(dType)))
 								{
 									//Log(LOG_INFO) << ". . . . . . . . no more Matching - break DETAIL";
 									found = false;
@@ -869,7 +869,7 @@ std::map<std::string, int> SoldierDiary::getAlienRaceTotal() const
 
 /**
  * Gets list of kills by weapon.
- * @return, map of weapons to qty killed with
+ * @return, map of weapons to qty killed
  */
 std::map<std::string, int> SoldierDiary::getWeaponTotal() const
 {
@@ -886,9 +886,9 @@ std::map<std::string, int> SoldierDiary::getWeaponTotal() const
 
 /**
  * Gets list of kills by ammo.
- * @return, map of ammos to qty killed with
- */
-std::map<std::string, int> SoldierDiary::getWeaponAmmoTotal() const
+ * @return, map of ammos to qty killed
+ *
+std::map<std::string, int> SoldierDiary::getLoadTotal() const
 {
 	std::map<std::string, int> ret;
 	for(std::vector<BattleUnitKill*>::const_iterator
@@ -896,10 +896,10 @@ std::map<std::string, int> SoldierDiary::getWeaponAmmoTotal() const
 			i != _killList.end();
 			++i)
 	{
-		++ret[(*i)->_weaponAmmo];
+		++ret[(*i)->_load];
 	}
 	return ret;
-}
+} */
 
 /**
  * Gets a list of quantities of tacticals done by Region-type.

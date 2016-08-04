@@ -443,7 +443,7 @@ PurchaseState::PurchaseState(Base* const base)
 		}
 	}
 
-	_lstItems->scrollTo(_base->getRecallRow(REC_PURCHASE));
+	_lstItems->scrollTo(_base->getRecallRow(RCL_PURCHASE));
 
 	_timerInc = new Timer(Timer::SCROLL_SLOW);
 	_timerInc->onTimer(static_cast<StateHandler>(&PurchaseState::onIncrease));
@@ -467,7 +467,7 @@ PurchaseState::~PurchaseState()
  */
 void PurchaseState::btnOkClick(Action*)
 {
-	_base->setRecallRow(REC_PURCHASE, _lstItems->getScroll());
+	_base->setRecallRow(RCL_PURCHASE, _lstItems->getScroll());
 
 	if (_costTotal != 0)
 	{
@@ -557,7 +557,7 @@ void PurchaseState::btnOkClick(Action*)
  */
 void PurchaseState::btnCancelClick(Action*)
 {
-	_base->setRecallRow(REC_PURCHASE, _lstItems->getScroll());
+	_base->setRecallRow(RCL_PURCHASE, _lstItems->getScroll());
 	_game->popState();
 }
 
