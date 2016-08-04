@@ -642,6 +642,12 @@ bool ProjectileFlyBState::createProjectile() // private.
 			_prjImpact = _prj->calculateShot(_unit->getAccuracy(_action)); // this should probly be TE:plotLine() - cf. else(error) below_
 			//Log(LOG_INFO) << ". shoot weapon[1], voxelType = " << (int)_prjImpact;
 			//Log(LOG_INFO) << "prjFlyB accuracy = " << _unit->getAccuracy(_action);
+
+			if (TileEngine::distance(_posOrigin, _prj->getFinalPosition())
+					> _action.weapon->getRules()->getMaxRange())
+			{
+				_prjImpact = VOXEL_EMPTY; // TODO: Change warning from no-LoS to beyond-max-range.
+			}
 		}
 		//Log(LOG_INFO) << ". shoot weapon, voxelType = " << (int)_prjImpact;
 		//Log(LOG_INFO) << ". finalTarget = " << _prj->getFinalPosition();
@@ -724,9 +730,7 @@ void ProjectileFlyBState::think()
 	if (_unit->getUnitStatus() == STATUS_AIMING
 		&& _unit->getArmor()->getShootFrames() != 0)
 	{
-		if (_prjStart == 0)
-			_prjStart = 1;
-
+		if (_prjStart == 0) _prjStart = 1;
 		_unit->keepAiming();
 
 		if (_unit->getAimingPhase() < _unit->getArmor()->getFirePhase())

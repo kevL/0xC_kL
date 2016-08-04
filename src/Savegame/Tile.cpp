@@ -665,11 +665,9 @@ void Tile::destroyTilepart(
 		else
 			setMapData(nullptr,-1,-1, partType);
 
-
-		if (data->getExplosive() != 0)
-			setExplosive(
-					data->getExplosive(),
-					data->getExplosiveType());
+		if (data->getExplosive() != 0) setExplosive(
+												data->getExplosive(),
+												data->getExplosiveType());
 	}
 
 	if (partType == O_FLOOR) // check if the floor-part on the lowest level is gone.
@@ -679,7 +677,7 @@ void Tile::destroyTilepart(
 					MapDataSet::getScorchedEarthTile(),
 					1,0, O_FLOOR);
 
-		if (_parts[O_OBJECT] != nullptr // destroy object-part if the floor-part is gone.
+		if (   _parts[O_OBJECT] != nullptr // destroy object-part if the floor-part is gone.
 			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)
 		{
 			destroyTilepart(O_OBJECT, battleSave, true); // stop floating haybales.
@@ -689,7 +687,7 @@ void Tile::destroyTilepart(
 	if (tLevel == -24) // destroy the object-part above if its support is gone.
 	{
 		Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
-		if (tileAbove != nullptr
+		if (   tileAbove != nullptr
 			&& tileAbove->getMapData(O_FLOOR) == nullptr
 			&& tileAbove->getMapData(O_OBJECT) != nullptr
 			&& tileAbove->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NONE)
@@ -710,7 +708,9 @@ void Tile::hitTile(
 		int power,
 		SavedBattleGame* const battleSave)
 {
-	//Log(LOG_INFO) << "Tile::damage() vs partType = " << partType << ", hp = " << _parts[partType]->getArmor();
+	//Log(LOG_INFO) << "Tile::hitTile() partType= " << partType
+	//			  << " hp= " << _parts[partType]->getArmor()
+	//			  << " power= " << power;
 	if (power >= _parts[partType]->getArmor())
 		destroyTilepart(partType, battleSave);
 }

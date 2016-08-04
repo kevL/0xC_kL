@@ -496,7 +496,8 @@ void ExplosionBState::explode() // private.
 
 				if (_unit != nullptr)
 				{
-					if (_unit->isOut_t() == false)
+					if (_unit->getHealth() != 0 //_unit->isOut_t() == false
+						&& _unit->getHealth() > _unit->getStun())
 					{
 						_unit->aim(false);
 //						_unit->flagCache();

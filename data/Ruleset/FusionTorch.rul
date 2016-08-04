@@ -86,7 +86,7 @@ extraSprites:
   - type: HANDOB.PCK
     files:
       128: Resources/FusionTorch/HANDOB/
-  - type: SMOKE.PCK
+  - type: ProjectileHits
     height: 80
     width: 160
     subX: 32

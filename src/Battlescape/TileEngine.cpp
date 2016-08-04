@@ -2067,8 +2067,11 @@ void TileEngine::hit(
 					power = ((power * 3) + 19) / 20;	// 15%
 					break;
 				case DT_LASER:
-					if (tile->getMapData(partType)->getTileType() != ALIEN_ALLOYS)
+					if (   tile->getMapData(partType)->getTileType() != ALIEN_ALLOYS
+						&& tile->getMapData(partType)->getTileType() != DEAD_TILE)
+					{
 						power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
+					}
 					break;
 				case DT_IN:
 					power = (power + 3) / 4;			// 25%
@@ -2176,7 +2179,7 @@ void TileEngine::hit(
 
 				power = RNG::generate(power1, power2) // bell curve
 					  + RNG::generate(power1, power2);
-				power /= 2;
+				power >>= 1u;
 				power += extraPower;
 
 				power = targetUnit->takeDamage(
@@ -2238,9 +2241,11 @@ void TileEngine::hit(
 	}
 
 	applyGravity(tile);
+
 	calculateSunShading();		// roofs could have been destroyed
 	calculateTerrainLighting();	// fires could have been started
 //	calculateUnitLighting();	// units could have collapsed <- done in UnitDieBState
+
 	calcFovTiles_pos(posTarget);
 	calcFovUnits_pos(posTarget, true);
 }
@@ -5109,7 +5114,7 @@ VoxelType TileEngine::plotLine(
 				if (voxelType != VOXEL_EMPTY)
 				{
 					//if (_debug) Log(LOG_INFO) << "pL() ret[2] " << MapData::debugVoxelType(voxelType) << " vs"
-					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+					//							<< Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
 //					if (trj != nullptr)
 					trj->push_back(Position(cx,cy,cz)); // store the position of impact
