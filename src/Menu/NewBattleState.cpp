@@ -676,7 +676,7 @@ void NewBattleState::btnRandClick(Action*)
 }
 
 /**
- * Shows the Craft Info screen.
+ * Shows the CraftInfo screen.
  * @param action - pointer to an Action
  */
 void NewBattleState::btnEquipClick(Action*)

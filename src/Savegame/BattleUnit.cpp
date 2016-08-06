@@ -833,7 +833,7 @@ const Position& BattleUnit::getStartPosition() const
 }
 
 /**
- * Gets the Position at which this BattleUnit will stop walking Tile-toTile.
+ * Gets the Position at which this BattleUnit will stop walking Tile-to-Tile.
  * @note This is one step only - UnitWalkBState updates it after *every* tile.
  * @return, reference to the destination
  */
@@ -1389,18 +1389,30 @@ bool BattleUnit::isFloating() const
 }
 
 /**
- * Shows the righthand sprite with weapon aiming.
- * @param aim - true to aim, false to stand there like an idiot (default true)
- */
-void BattleUnit::aim(bool aim)
+ * Shows this BattleUnit's sprite with its arm(s) and weapon up & shooting.
+ * @param shoot - true to shoot, false to stand there like an idiot (default true)
+ *
+void BattleUnit::setShoot(bool shoot)
 {
-	if (aim == true)
-		_status = STATUS_AIMING;
-	else
-		_status = STATUS_STANDING;
-
-//	if (_visible == true)
+	if (shoot == true)	_status = STATUS_AIMING;
+	else				_status = STATUS_STANDING;
 	_cacheInvalid = true;
+} */
+void BattleUnit::toggleShoot()
+{
+	switch (_status)
+	{
+		case STATUS_STANDING:
+			_status = STATUS_AIMING;
+			_cacheInvalid = true;
+			_battleGame->getMap()->cacheUnitSprite(this);
+			break;
+
+		case STATUS_AIMING:
+			_status = STATUS_STANDING;
+			_cacheInvalid = true;
+			_battleGame->getMap()->cacheUnitSprite(this);
+	}
 }
 
 /**

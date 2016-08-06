@@ -252,8 +252,8 @@ Surface::Surface(const Surface& copyThat)
 	_clear.h = copyThat._clear.h;
 
 	_visible = copyThat._visible;
-	_hidden = copyThat._hidden;
-	_redraw = copyThat._redraw;
+	_hidden  = copyThat._hidden;
+	_redraw  = copyThat._redraw;
 }
 
 /**

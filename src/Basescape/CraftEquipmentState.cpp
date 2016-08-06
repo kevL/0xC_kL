@@ -79,8 +79,6 @@ CraftEquipmentState::CraftEquipmentState(
 {
 	_window			= new Window(this, 320, 200);
 
-	_txtCost		= new Text(150, 9, 24, -10);
-
 	_txtTitle		= new Text(300, 17,  16, 8);
 	_txtBaseLabel	= new Text( 80,  9, 224, 8);
 
@@ -102,7 +100,6 @@ CraftEquipmentState::CraftEquipmentState(
 	_ammoColor = static_cast<Uint8>(_rules->getInterface("craftEquipment")->getElement("ammoColor")->color);
 
 	add(_window,		"window",	"craftEquipment");
-	add(_txtCost,		"text",		"craftEquipment");
 	add(_txtTitle,		"text",		"craftEquipment");
 	add(_txtBaseLabel,	"text",		"craftEquipment");
 	add(_txtSpace,		"text",		"craftEquipment");
@@ -114,6 +111,12 @@ CraftEquipmentState::CraftEquipmentState(
 	add(_btnClear,		"button",	"craftEquipment");
 	add(_btnInventory,	"button",	"craftEquipment");
 	add(_btnOk,			"button",	"craftEquipment");
+
+	if (_isQuickBattle == false)
+	{
+		_txtCost = new Text(150, 9, 24, -10);
+		add(_txtCost, "text", "craftEquipment");
+	}
 
 	centerAllSurfaces();
 
@@ -199,8 +202,8 @@ void CraftEquipmentState::init()
 	}
 
 	updateList();
-	calcTacticalCost();
-	showExtraButtons();
+	showButtons();
+	if (_isQuickBattle == false) tacticalCost();
 }
 
 /**
@@ -288,7 +291,7 @@ void CraftEquipmentState::updateList() // private.
 /**
  * Sets current cost to send the Craft out to battle.
  */
-void CraftEquipmentState::calcTacticalCost() const // private.
+void CraftEquipmentState::tacticalCost() const // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
 				  + _craft->getRules()->getSoldierCapacity() * 1000);
@@ -298,7 +301,7 @@ void CraftEquipmentState::calcTacticalCost() const // private.
 /**
  * Decides whether to show extra buttons - unload-craft and Inventory.
  */
-void CraftEquipmentState::showExtraButtons() const // private.
+void CraftEquipmentState::showButtons() const // private.
 {
 	const bool vis (_craft->getCraftItems()->getTotalQuantity() != 0);
 	_btnClear->setVisible(vis || _craft->getVehicles()->empty() == false);
@@ -653,8 +656,8 @@ void CraftEquipmentState::updateListrow() const // private.
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
 						.arg(_craft->getLoadCapacity())
 						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
-	calcTacticalCost();
-	showExtraButtons();
+	showButtons();
+	if (_isQuickBattle == false) tacticalCost();
 }
 
 /**
@@ -684,7 +687,7 @@ void CraftEquipmentState::btnInventoryClick(Action*) // private.
 	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-	bGen.runInventory(_craft, nullptr, _selUnitId);
+	bGen.runFakeInventory(_craft, nullptr, _selUnitId);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());

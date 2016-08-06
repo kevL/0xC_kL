@@ -44,6 +44,8 @@ class CraftSoldiersState final
 {
 
 private:
+	bool _isQuickBattle;
+
 	static const Uint8
 		GREEN	=  48u,
 		ORANGE	=  96u,
@@ -68,9 +70,9 @@ private:
 	Window* _window;
 
 	/// Sets current cost to send the Craft on a mission.
-	void calculateTacticalCost();
+	void tacticalCost();
 	/// Decides whether to show extra buttons - unload-soldiers and Inventory.
-	void displayExtraButtons() const;
+	void showButtons() const;
 
 
 	public:

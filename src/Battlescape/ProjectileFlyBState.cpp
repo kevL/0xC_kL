@@ -548,7 +548,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 
 				_prjItem->changeOwner();
 				_unit->flagCache();
-				_parent->getMap()->cacheUnit(_unit);
+				_parent->getMap()->cacheUnitSprite(_unit);
 
 				soundId = static_cast<int>(ResourcePack::ITEM_THROW);
 
@@ -608,8 +608,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				soundId = _action.weapon->getRules()->getFireSound();
 
 			_unit->startAiming();
-			_unit->flagCache();
-			_parent->getMap()->cacheUnit(_unit);
+			_parent->getMap()->cacheUnitSprite(_unit);
 		}
 		else // no line of fire; Note that BattleUnit accuracy^ should *not* be considered before this. Unless this is some sort of failsafe/exploit for the AI ...
 		{
@@ -646,7 +645,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			if (TileEngine::distance(_posOrigin, _prj->getFinalPosition())
 					> _action.weapon->getRules()->getMaxRange())
 			{
-				_prjImpact = VOXEL_EMPTY; // TODO: Change warning from no-LoS to beyond-max-range.
+				_prjImpact = VOXEL_EMPTY; // TODO: Change warning from no-LoF to beyond-max-range.
 			}
 		}
 		//Log(LOG_INFO) << ". shoot weapon, voxelType = " << (int)_prjImpact;
@@ -660,14 +659,12 @@ bool ProjectileFlyBState::createProjectile() // private.
 			{
 				const Tile* const tile (_battleSave->getTile(_prj->getFinalPosition()));
 //				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT ....
+				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{
-					switch (tile->getMapData(O_OBJECT)->getBigwall())
-					{
 						case BIGWALL_NESW:
-						case BIGWALL_NWSE:
-//							_prj->storeProjectileDirection();		// Used to handle direct-explosive-hits against diagonal bigWalls.
-							_prjVector = _prj->getStrikeVector();	// ^supercedes storeProjectileDirection() above^
-					}
+					case BIGWALL_NWSE:
+//						_prj->storeProjectileDirection();		// Used to handle direct-explosive-hits against diagonal bigWalls.
+						_prjVector = _prj->getStrikeVector();	// ^supercedes storeProjectileDirection() above^
 				}
 			}
 
@@ -679,14 +676,14 @@ bool ProjectileFlyBState::createProjectile() // private.
 			}
 
 			// lift-off
-			soundId = _load->getRules()->getFireSound();
-			if (soundId == -1)
+			if ((soundId = _load->getRules()->getFireSound()) == -1)
 				soundId = _action.weapon->getRules()->getFireSound();
 
 			if (_originVoxel.z == -1) // not a BL-waypoint
 			{
-				_unit->aim();
-				_parent->getMap()->cacheUnit(_unit);
+				_unit->toggleShoot();
+//				_unit->setShoot();
+//				_parent->getMap()->cacheUnitSprite(_unit);
 			}
 			//Log(LOG_INFO) << "FlyB: . okay to shoot";
 		}
@@ -707,7 +704,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 
 	if (soundId != -1)
 		_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-			->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+					->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
 
 	if (_unit->getArmor()->getShootFrames() != 0) // postpone showing the Celatid spit-blob till later
 		_parent->getMap()->showProjectile(false);
@@ -1113,10 +1110,9 @@ void ProjectileFlyBState::think()
 
 					if (_prjImpact == VOXEL_OUTOFBOUNDS) // else ExplosionBState will lower weapon above^
 					{
-						_unit->aim(false);
-//						_unit->flagCache();
-//						_parent->getMap()->cacheUnits(); // NOTE: Is that needed for like the unit(s) that got hit or something. no, Out_of_Bounds here.
-						_parent->getMap()->cacheUnit(_unit);
+						_unit->toggleShoot();
+//						_unit->setShoot(false);
+//						_parent->getMap()->cacheUnitSprite(_unit);
 					}
 				}
 
@@ -1196,9 +1192,9 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "fB:performMeleeAttack() id-" << _unit->getId();
-	_unit->aim();
-//	_unit->flagCache();
-	_parent->getMap()->cacheUnit(_unit);
+	_unit->toggleShoot();
+//	_unit->setShoot();
+//	_parent->getMap()->cacheUnitSprite(_unit);
 
 	_action.posTarget = _battleSave->getTileEngine()->getMeleePosition(_unit);
 	//Log(LOG_INFO) << ". target " << _action.target;

@@ -66,11 +66,10 @@ CraftSoldiersState::CraftSoldiersState(
 		size_t craftId)
 	:
 		_base(base),
-		_craft(base->getCrafts()->at(craftId))
+		_craft(base->getCrafts()->at(craftId)),
+		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1)
 {
 	_window			= new Window(this, 320, 200);
-
-	_txtCost		= new Text(150, 9, 24, -10);
 
 	_txtTitle		= new Text(300, 17, 16, 8);
 	_txtBaseLabel	= new Text( 80, 9, 224, 8);
@@ -91,7 +90,6 @@ CraftSoldiersState::CraftSoldiersState(
 	setInterface("craftSoldiers");
 
 	add(_window,		"window",	"craftSoldiers");
-	add(_txtCost,		"text",		"craftSoldiers");
 	add(_txtTitle,		"text",		"craftSoldiers");
 	add(_txtBaseLabel,	"text",		"craftSoldiers");
 	add(_txtSpace,		"text",		"craftSoldiers");
@@ -103,6 +101,12 @@ CraftSoldiersState::CraftSoldiersState(
 	add(_btnUnload,		"button",	"craftSoldiers");
 	add(_btnInventory,	"button",	"craftSoldiers");
 	add(_btnOk,			"button",	"craftSoldiers");
+
+	if (_isQuickBattle == false)
+	{
+		_txtCost = new Text(150, 9, 24, -10);
+		add(_txtCost, "text", "craftSoldiers");
+	}
 
 	centerAllSurfaces();
 
@@ -215,8 +219,8 @@ void CraftSoldiersState::init()
 					.arg(_craft->getLoadCapacity())
 					.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
 
-	displayExtraButtons();
-	calculateTacticalCost();
+	showButtons();
+	if (_isQuickBattle == false) tacticalCost();
 
 	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));
 	_lstSoldiers->draw();
@@ -324,8 +328,8 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 								.arg(_craft->getLoadCapacity())
 								.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
 
-				displayExtraButtons();
-				calculateTacticalCost();
+				showButtons();
+				if (_isQuickBattle == false) tacticalCost();
 			}
 			break;
 		}
@@ -469,7 +473,7 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-	bGen.runInventory(_craft);
+	bGen.runFakeInventory(_craft);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());
@@ -478,7 +482,7 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 /**
  * Sets the current cost to send the Craft on a mission.
  */
-void CraftSoldiersState::calculateTacticalCost() // private.
+void CraftSoldiersState::tacticalCost() // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
 				  + _craft->getRules()->getSoldierCapacity() * 1000);
@@ -488,7 +492,7 @@ void CraftSoldiersState::calculateTacticalCost() // private.
 /**
  * Decides whether to show extra buttons - unload-soldiers and Inventory.
  */
-void CraftSoldiersState::displayExtraButtons() const // private.
+void CraftSoldiersState::showButtons() const // private.
 {
 	const bool vis (_craft->getQtySoldiers() != 0);
 	_btnUnload->setVisible(vis);

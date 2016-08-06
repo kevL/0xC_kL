@@ -2343,8 +2343,7 @@ bool SavedBattleGame::setUnitPosition(
 						break;
 					}
 
-					if ((tile->getTileUnit() != nullptr
-							&& tile->getTileUnit() != unit)
+					if ((tile->getTileUnit() != nullptr && tile->getTileUnit() != unit)
 						|| tile->getTuCostTile(
 											O_OBJECT,
 											unit->getMoveTypeUnit()) == 255
@@ -2406,8 +2405,8 @@ bool SavedBattleGame::setUnitPosition(
 						--y)
 				{
 					getTile(posTest + Position(x,y,0))->setTileUnit(
-															unit,
-															getTile(posTest + Position(x,y,-1)));
+																unit,
+																getTile(posTest + Position(x,y,-1)));
 				}
 			}
 		}

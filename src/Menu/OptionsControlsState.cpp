@@ -63,7 +63,7 @@ OptionsControlsState::OptionsControlsState(OptionsOrigin origin)
 	_lstControls->onMouseClick(		static_cast<ActionHandler>(&OptionsControlsState::lstControlsClick),
 									0u);
 	_lstControls->onKeyboardPress(	static_cast<ActionHandler>(&OptionsControlsState::lstControlsKeyPress));
-	_lstControls->setFocus(true);
+	_lstControls->setFocus();
 //	_lstControls->onMouseIn(static_cast<ActionHandler>(&OptionsControlsState::txtTooltipIn));
 //	_lstControls->onMouseOut(static_cast<ActionHandler>(&OptionsControlsState::txtTooltipOut));
 //	_lstControls->setTooltip("STR_CONTROLS_DESC");

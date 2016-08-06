@@ -1303,7 +1303,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 													case 0:
 													case 1:
 													case 2:
-													case 3: color = WHITE_u; break;
+													case 3: color = WHITE; break;
 													case 4:
 													case 5:
 													case 6:
@@ -1340,8 +1340,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 							switch (hurt)
 							{
 								default:
-								case 1: color = WHITE; break;	// unconscious soldier here
-								case 2: color = RED;			// wounded unconscious soldier
+								case 1: color = WHITE_i; break;	// unconscious soldier here
+								case 2: color = RED_i;			// wounded unconscious soldier
 							}
 							_srfCross->blitNShade(				// small gray cross
 											surface,
@@ -1768,7 +1768,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 //									surface,
 //									posScreen.x + 14,
 //									posScreen.y + 30,
-//									0, false, RED);
+//									0, false, RED_i);
 //						}
 //					}
 					// end scanner dots.
@@ -2046,7 +2046,7 @@ void Map::drawRankIcon( // private.
 								offset_x + 4,
 								offset_y + 4,
 								(_aniCycle << 1u),
-								false, RED);
+								false, RED_i);
 	}
 }
 
@@ -2342,7 +2342,7 @@ void Map::animateMap(bool redraw)
 			&& (*i)->getArmor()->getConstantAnimation() == true)
 		{
 			(*i)->flagCache();
-			cacheUnit(*i);
+			cacheUnitSprite(*i);
 		}
 	}
 
@@ -2636,16 +2636,16 @@ SelectorType Map::getSelectorType() const
 }
 
 /**
- * Checks all units for need to be redrawn and if so updates sprite(s).
+ * Checks all units for need to be redrawn and if so updates their sprite(s).
  */
-void Map::cacheUnits()
+void Map::cacheUnitSprites()
 {
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		cacheUnit(*i);
+		cacheUnitSprite(*i);
 	}
 }
 
@@ -2653,12 +2653,12 @@ void Map::cacheUnits()
  * Check if a BattleUnit needs to be redrawn and if so updates its sprite(s).
  * @param unit - pointer to a BattleUnit
  */
-void Map::cacheUnit(BattleUnit* const unit)
+void Map::cacheUnitSprite(BattleUnit* const unit)
 {
 	if (unit->getCacheInvalid() == true)
 	{
 		UnitSprite* const sprite (new UnitSprite(
-											_spriteWidth * 2,
+											_spriteWidth << 1u,
 											_spriteHeight));
 		sprite->setPalette(this->getPalette());
 
@@ -2672,7 +2672,7 @@ void Map::cacheUnit(BattleUnit* const unit)
 			if (cache == nullptr)
 			{
 				cache = new Surface(
-								_spriteWidth * 2,
+								_spriteWidth << 1u,
 								_spriteHeight);
 				cache->setPalette(this->getPalette());
 			}

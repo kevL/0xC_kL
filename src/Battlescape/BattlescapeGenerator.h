@@ -248,7 +248,7 @@ private:
 		void nextStage();
 
 		/// Generates a fake battlescape for Craft & Base soldier-inventory.
-		void runInventory(
+		void runFakeInventory(
 				Craft* const craft,
 				Base* const base = nullptr,
 				size_t selUnitId = 0u);

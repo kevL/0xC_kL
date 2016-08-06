@@ -24,6 +24,7 @@
 //#include <assert.h>
 
 #include "AlienBAIState.h"
+#include "BattlescapeState.h"
 #include "CivilianBAIState.h"
 #include "Inventory.h"
 #include "Pathfinding.h"
@@ -952,10 +953,7 @@ void BattlescapeGenerator::nextStage()
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
 
-//	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed. no.
-
-//	if (_battleSave->getBattleGame() != nullptr) // safety. Shall be valid for nextStage() start here.
-	_battleSave->getBattleGame()->reinit();
+	_battleSave->getBattleState()->reinit();
 
 	_battleSave->getShuffleUnits()->assign(
 										_unitList->size(),
@@ -1118,12 +1116,12 @@ void BattlescapeGenerator::deployXcom() // private.
 				&& ((*i)->getCraft() == nullptr
 					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
-			//Log(LOG_INFO) << ". . addPlayerUnit " << (*i)->getId();
+			//Log(LOG_INFO) << ". . addPlayerUnit id-" << (*i)->getId();
 			BattleUnit* const unit (addPlayerUnit(new BattleUnit(*i, _gameSave->getDifficulty())));
 			if (unit != nullptr)
 			{
-				//Log(LOG_INFO) << "bGen::deployXcom() ID " << unit->getId() << " battleOrder = " << _battleOrder + 1;
 				unit->setBattleOrder(++_battleOrder);
+				//Log(LOG_INFO) << ". . . battleOrder = " << _battleOrder;
 
 				if (_battleSave->getSelectedUnit() == nullptr)
 					_battleSave->setSelectedUnit(unit);
@@ -1535,11 +1533,16 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
  */
 BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // private.
 {
-	//Log(LOG_INFO) << "bsg:addPlayerUnit()";
-	if ((_craft == nullptr || _craftDeployed == false)	// (_missionType == "STR_ALIEN_BASE_ASSAULT"
-		&& _isFakeInventory == false)					// || _missionType == "STR_MARS_THE_FINAL_ASSAULT")
-	{													// ^ taken care of in MapScripting.
-		//Log(LOG_INFO) << ". no Craft";
+	//Log(LOG_INFO) << "bGen:addPlayerUnit()";
+	if (_isFakeInventory == true)
+	{
+		//Log(LOG_INFO) << ". fake inventory";
+		_unitList->push_back(unit);
+		return unit;
+	}
+	if (_craft == nullptr || _craftDeployed == false)	// (  _missionType == "STR_ALIEN_BASE_ASSAULT"
+	{													// || _missionType == "STR_MARS_THE_FINAL_ASSAULT")
+		//Log(LOG_INFO) << ". no Craft";				// ^ taken care of in MapScripting.
 		const Node* const node (_battleSave->getSpawnNode(NR_XCOM, unit));
 		if (node != nullptr)
 		{
@@ -1567,8 +1570,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 		}
 	}
 	else if (_craft != nullptr // Transport Craft deployments (Lightning & Avenger)
-		&& _craft->getRules()->getCraftDeployment().empty() == false
-		&& _isFakeInventory == false)
+		&& _craft->getRules()->getCraftDeployment().empty() == false)
 	{
 		//Log(LOG_INFO) << ". Craft valid - use Deployment";
 		bool canPlace;
@@ -1614,9 +1616,9 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 			}
 		}
 	}
-	else // mission w/ transport craft that does not have ruleset Deployments. Or it's a craft/base Equip.
+	else // mission w/ transport-craft that does not have ruleset-deployment.
 	{
-		//Log(LOG_INFO) << ". baseEquip OR Craft w/out Deployment rule";
+		//Log(LOG_INFO) << ". Craft w/out deployment-rule";
 		Tile* tile;
 		int supportOrder (0);
 		for (size_t
@@ -1668,7 +1670,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
  */
 bool BattlescapeGenerator::canPlacePlayerUnit(Tile* const tile) // private.
 {
-	if (tile != nullptr												// is a tile
+	if (   tile != nullptr											// is a tile
 		&& tile->getMapData(O_FLOOR) != nullptr						// has a floor
 		&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT	// is a 'start point', ie. cargo tile
 		&& tile->getMapData(O_OBJECT) == nullptr					// no object content
@@ -2725,35 +2727,12 @@ void BattlescapeGenerator::explodePowerSources() // private.
  * @param base		- pointer to Base to handle (default nullptr)
  * @param selUnitId	- soldier to display in battle pre-equip inventory (default 0)
  */
-void BattlescapeGenerator::runInventory(
+void BattlescapeGenerator::runFakeInventory(
 		Craft* const craft,
 		Base* const base,
 		size_t selUnitId)
 {
 	_isFakeInventory = true;
-
-	if (craft != nullptr)
-	{
-		setCraft(craft);
-
-		if (selUnitId != 0 && static_cast<int>(selUnitId) <= craft->getQtySoldiers())
-		{
-			size_t j (0u);
-			for (std::vector<BattleUnit*>::const_iterator
-					i = _unitList->begin();
-					i != _unitList->end();
-					++i)
-			{
-				if (++j == selUnitId)
-				{
-					_battleSave->setSelectedUnit(*i);
-					break;
-				}
-			}
-		}
-	}
-	else
-		setBase(base);
 
 	_battleSave->initMap(			// -> fake a Map for soldier placement ->
 					_mapsize_x = 1,	// All units go on the same tile
@@ -2779,10 +2758,34 @@ void BattlescapeGenerator::runInventory(
 									false,
 									false,
 									false);
-	deployXcom(); // generate BattleItems for the equipt-Tile and place all units on that tile.
+	_tileEquipt = tile;
 
 	delete data;
 	delete dataSet;
+
+	if (craft != nullptr)
+		setCraft(craft);
+	else
+		setBase(base);
+
+	deployXcom(); // generate BattleItems for the equipt-tile and place all units on that Tile.
+
+	if (craft != nullptr && selUnitId != 0
+		&& static_cast<int>(selUnitId) <= craft->getQtySoldiers())
+	{
+		size_t j (0u);
+		for (std::vector<BattleUnit*>::const_iterator
+				i = _unitList->begin();
+				i != _unitList->end();
+				++i)
+		{
+			if (++j == selUnitId)
+			{
+				_battleSave->setSelectedUnit(*i);
+				break;
+			}
+		}
+	}
 }
 
 /**

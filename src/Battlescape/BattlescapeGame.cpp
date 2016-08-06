@@ -145,7 +145,6 @@ BattlescapeGame::BattlescapeGame(
 		_AISecondMove(false),
 		_playedAggroSound(false),
 		_endTurnRequested(false),
-		_init(true),
 		_executeProgress(false),
 		_shotgunProgress(false),
 		_killStatMission(0),
@@ -204,33 +203,6 @@ BattlescapeGame::~BattlescapeGame()
 
 	delete _universalFist;
 	delete _alienPsi;
-}
-
-/**
- * Initializes this BattlescapeGame.
- */
-void BattlescapeGame::init()
-{
-	if (_init == true)
-	{
-		_init = false;
-														// done in one of
-//		getTileEngine()->calculateSunShading();			// (a) BattlescapeGenerator::run()
-//		getTileEngine()->calculateTerrainLighting();	// (b) BattlescapeGenerator::nextStage()
-//		getTileEngine()->calculateUnitLighting();		// (c) SavedBattleGame::loadMapResources()
-
-		getTileEngine()->calcFovTiles_all();			// NOTE: Also done in BattlescapeGenerator::run() & nextStage(). done & done.
-		getTileEngine()->calcFovUnits_all();
-	}
-}
-
-/**
- * Sets a flag to re-initialize this BattlescapeGame.
- * @note Called by BattlescapeGenerator::nextStage() to reveal Tiles.
- */
-void BattlescapeGame::reinit()
-{
-	_init = true;
 }
 
 /**
@@ -568,7 +540,7 @@ void BattlescapeGame::popBattleState()
 							if (selUnit != nullptr) // NOTE: This is getting silly.
 							{
 								selUnit->flagCache();
-								getMap()->cacheUnit(selUnit);
+								getMap()->cacheUnitSprite(selUnit);
 							}
 
 							if (_battleStates.empty() == true) // nothing left for current Actor to do
@@ -1181,8 +1153,9 @@ void BattlescapeGame::handleNonTargetAction()
  */
 void BattlescapeGame::liquidateUnit() // private.
 {
-	_playerAction.actor->aim();
-	getMap()->cacheUnit(_playerAction.actor);
+	_playerAction.actor->toggleShoot();
+//	_playerAction.actor->setShoot();
+//	getMap()->cacheUnitSprite(_playerAction.actor);
 
 	const RuleItem* const itRule (_playerAction.weapon->getRules());
 	BattleItem* const load (_playerAction.weapon->getAmmoItem());
@@ -1344,8 +1317,7 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 						// But updateSoldierInfo() also does does calcFov(), so ...
 //						getTileEngine()->calcFov(unit);
 
-//						getMap()->cacheUnits();
-						getMap()->cacheUnit(unit);
+						getMap()->cacheUnitSprite(unit);
 
 //						_parentState->updateSoldierInfo(false); // <- also does calcFov() !
 						// wait... shouldn't one of those calcFoV's actually trigger!! ? !
@@ -1384,8 +1356,7 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 				unit->expendEnergy(energyCost);
 
 				unit->kneelUnit(false);
-//				getMap()->cacheUnits();
-				getMap()->cacheUnit(unit);
+				getMap()->cacheUnitSprite(unit);
 
 				// NOTE: Might want to do a calcFoV for the AI, not sure.
 				// Although UnitWalkBState ought handle it.
@@ -3182,7 +3153,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 		_battleSave->getItems()->push_back(weapon);
 	}
 
-	getMap()->cacheUnit(potato);
+	getMap()->cacheUnitSprite(potato);
 	potato->setUnitVisible(antecedentVisibility);
 
 	getTileEngine()->applyGravity(potato->getUnitTile());
@@ -3748,7 +3719,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 									_battleSave->toDeleteItem(*i);
 
 									unit->flagCache();
-									getMap()->cacheUnit(unit);
+									getMap()->cacheUnitSprite(unit);
 									return true;
 								}
 							}

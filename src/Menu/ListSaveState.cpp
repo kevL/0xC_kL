@@ -147,7 +147,7 @@ void ListSaveState::lstSavesPress(Action* action)
 				_edtSave->setX(_lstSaves->getColumnX(0));
 				_edtSave->setY(_lstSaves->getRowY(static_cast<size_t>(_selected)));
 				_edtSave->setVisible();
-				_edtSave->setFocusEdit(true, false); // NOTE: modal=false allows keypress Enter to save.
+				_edtSave->setFocusEdit(); // NOTE: modal=false allows keypress Enter to save.
 
 				ListGamesState::disableSort();
 				break;

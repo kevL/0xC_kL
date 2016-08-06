@@ -173,7 +173,7 @@ void ExplosionBState::init()
 	{
 		_power = _parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getPower();
 		const int
-			power1 ((_power << 1u) / 3),
+			power1 ((_power << 1u) / 3), // 66% to 150%
 			power2 ((_power * 3) >> 1u);
 		_power = RNG::generate(power1, power2)
 			   + RNG::generate(power1, power2);
@@ -246,18 +246,17 @@ void ExplosionBState::init()
 					explVoxel.x = _centerVoxel.x + RNG::generate(-offset, offset);
 					explVoxel.y = _centerVoxel.y + RNG::generate(-offset, offset);
 
-					if (RNG::percent(65) == true)
-						++aniDelay;
+					if (RNG::percent(65) == true) ++aniDelay;
 				}
 
 				if (aniStart != -1)
 				{
+					_parent->setStateInterval(interval);
 					_parent->getMap()->getExplosions()->push_back(new Explosion(
 																			ET_AOE,
 																			explVoxel - Position(16,16,0), // jog downward on the screen.
 																			aniStart,
 																			aniDelay));
-					_parent->setStateInterval(interval);
 				}
 			}
 
@@ -288,9 +287,9 @@ void ExplosionBState::init()
 			explType_att,
 			explType_hit;
 		int
-			soundId,
 			aniStart_att,
-			aniStart_hit;
+			aniStart_hit,
+			soundId;
 
 		_melee = _buttHurt
 			  || _itRule->getBattleType() == BT_MELEE
@@ -309,45 +308,44 @@ void ExplosionBState::init()
 						aniStart_att = -1;
 						if (_meleeSuccess == true)
 						{
-							soundId = _itRule->getMeleeHitSound();
 							aniStart_hit = _itRule->getMeleeHitAnimation();
+							soundId = _itRule->getMeleeHitSound();
 						}
 						else
-							soundId = aniStart_hit = -1;
+							aniStart_hit =
+							soundId = -1;
 					}
 					else
 					{
-						soundId = _itRule->getMeleeHitSound();
 						aniStart_att = _itRule->getMeleeAnimation();
 						if (_meleeSuccess == true)
 							aniStart_hit = _itRule->getMeleeHitAnimation();
 						else
 							aniStart_hit = -1;
+
+						soundId = _itRule->getMeleeHitSound();
 					}
 					break;
 
-				case BT_PSIAMP:
-					explType_hit = explType_att = ET_PSI;
-					soundId = _itRule->getMeleeHitSound();
-					aniStart_hit = _itRule->getMeleeHitAnimation();
+				case BT_PSIAMP: // TODO: Psiamp FX should be OnAttack rather than OnHit.
+					explType_att =
+					explType_hit = ET_PSI;
 					aniStart_att = -1;
+					aniStart_hit = _itRule->getMeleeHitAnimation();
+					soundId = _itRule->getMeleeHitSound();
 			}
 		}
 		else
 		{
-			soundId = _itRule->getFireHitSound();
-			aniStart_hit = _itRule->getFireHitAnimation();
-			aniStart_att = -1;
-
 			if (_itRule->getType() == "STR_FUSION_TORCH_POWER_CELL")
 				explType_hit = explType_att = ET_TORCH;
 			else
 				explType_hit = explType_att = ET_BULLET;
-		}
 
-		if (soundId != -1)
-			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-										->play(-1, _parent->getMap()->getSoundAngle(posTarget));
+			aniStart_att = -1;
+			aniStart_hit = _itRule->getFireHitAnimation();
+			soundId = _itRule->getFireHitSound();
+		}
 
 		if (aniStart_att != -1 || aniStart_hit != -1)
 		{
@@ -368,6 +366,10 @@ void ExplosionBState::init()
 									  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - _itRule->getExplosionSpeed())));
 			_parent->setStateInterval(interval);
 		}
+
+		if (soundId != -1)
+			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+										->play(-1, _parent->getMap()->getSoundAngle(posTarget));
 
 		Camera* const exploCam (_parent->getMap()->getCamera());
 		if (_forceCamera == true
@@ -496,12 +498,10 @@ void ExplosionBState::explode() // private.
 
 				if (_unit != nullptr)
 				{
-					if (_unit->getHealth() != 0 //_unit->isOut_t() == false
-						&& _unit->getHealth() > _unit->getStun())
-					{
-						_unit->aim(false);
-//						_unit->flagCache();
-					}
+//					if (_unit->getHealth() != 0 //_unit->isOut_t() == false
+//						&& _unit->getHealth() > _unit->getStun())
+//					if (_unit->getUnitStatus() == STATUS_AIMING)
+//						_unit->setShoot(false);
 
 					if (_unit->getGeoscapeSoldier() != nullptr
 						&& _unit->isMindControlled() == false)
@@ -530,7 +530,10 @@ void ExplosionBState::explode() // private.
 				if (_meleeSuccess == false) // MISS.
 				{
 					_parent->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
-					_parent->getMap()->cacheUnits();
+
+					if (_unit != nullptr) // safety.
+						_unit->toggleShoot();
+//					_parent->getMap()->cacheUnitSprites();
 					_parent->popBattleState();
 					return;
 				}
@@ -595,20 +598,20 @@ void ExplosionBState::explode() // private.
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			if ((*i)->isOut_t(OUT_HEALTH) == false)
-				(*i)->hasCried(false);
+//			if ((*i)->getHealth() != 0) //(*i)->isOut_t(OUT_HEALTH) == false
+			(*i)->hasCried(false);
 		}
 	}
 
 	if (_lowerWeapon == true // if this hit/explosion was caused by a unit put the weapon down
-		&& _unit != nullptr
-		&& _unit->isOut_t(OUT_STAT) == false)
+		&& _unit != nullptr)
+//		&& _unit->getUnitStatus() == STATUS_AIMING) //_unit->isOut_t(OUT_STAT) == false
 	{
-		_unit->aim(false);
-//		_unit->flagCache();
+		_unit->toggleShoot();
+//		_unit->setShoot(false);
 	}
 
-	_parent->getMap()->cacheUnits();
+	_parent->getMap()->cacheUnitSprites();
 	_parent->popBattleState();
 	//Log(LOG_INFO) << ". . pop";
 

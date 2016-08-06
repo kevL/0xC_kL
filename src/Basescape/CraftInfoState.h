@@ -89,7 +89,7 @@ private:
 	Window* _window;
 
 	/// Sets current cost to send the Craft on a mission.
-	void calculateTacticalCost();
+	void tacticalCost();
 
 
 	public:

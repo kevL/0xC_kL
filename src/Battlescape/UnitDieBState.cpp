@@ -285,7 +285,7 @@ void UnitDieBState::think()
 	}
 
 	if (_hidden == false)
-		_parent->getMap()->cacheUnit(_unit);
+		_parent->getMap()->cacheUnitSprite(_unit);
 }
 
 /**

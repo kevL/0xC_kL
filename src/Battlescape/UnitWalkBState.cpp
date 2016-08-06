@@ -238,14 +238,14 @@ void UnitWalkBState::think()
 										false);
 
 //					_unit->flagCache(); // might play around with Strafe anim's ......
-					_parent->getMap()->cacheUnit(_unit);
+					_parent->getMap()->cacheUnitSprite(_unit);
 					_unit->setUnitDirection(dirStrafe, false);
 				}
 				else
 				{
-					//Log(LOG_INFO) << ". WALKING no strafe, cacheUnit()";
+					//Log(LOG_INFO) << ". WALKING no strafe, cacheUnitSprite()";
 					_unit->flagCache(); // might play around with non-Strafe anim's ......
-					_parent->getMap()->cacheUnit(_unit);
+					_parent->getMap()->cacheUnitSprite(_unit);
 				}
 			}
 	}
@@ -359,7 +359,7 @@ bool UnitWalkBState::statusStand() // private.
 			_unit->setHiding(false);
 
 			_unit->flagCache();
-			_parent->getMap()->cacheUnit(_unit);
+			_parent->getMap()->cacheUnitSprite(_unit);
 
 			postPathProcedures();	// NOTE: This is the only call for which _door==TRUE might be needed.
 			return false;			// Update: '_door' is also used for calcFovTiles_pos() in statusStand_end().
@@ -522,7 +522,7 @@ bool UnitWalkBState::statusStand() // private.
 	{																		// Tbh, other code should have rendered the playerPanicHandled() redundant.
 		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// That is to say this should kick in *only* when player has actively
 		_unit->flagCache();													// clicked to move but tries to go further than TUs allow; because
-		_parent->getMap()->cacheUnit(_unit);								// either the AI or the panic-code should not try to
+		_parent->getMap()->cacheUnitSprite(_unit);							// either the AI or the panic-code should not try to
 		_pf->abortPath();													// move a unit farther than its [reserved] TUs would allow
 		return false;														// WOULD THAT RESULT IN AN ENDLESS LOOP.
 	} // TODO: Conform all the ambiguous returns.
@@ -535,7 +535,7 @@ bool UnitWalkBState::statusStand() // private.
 			_unit->setDirectionTo(dir);
 
 			_unit->flagCache();
-			_parent->getMap()->cacheUnit(_unit);
+			_parent->getMap()->cacheUnitSprite(_unit);
 			return false;
 		}
 
@@ -846,7 +846,7 @@ bool UnitWalkBState::statusStand_end() // private.
 
 			_pf->abortPath();
 //			_unit->flagCache();
-//			_parent->getMap()->cacheUnit(_unit);
+//			_parent->getMap()->cacheUnitSprite(_unit);
 //			_parent->popState();
 			return false; // NOTE: This should probably set unit non-vis and be allowed to do a recalc Fov by other units.
 		}
@@ -933,7 +933,7 @@ bool UnitWalkBState::statusStand_end() // private.
 		//Log(LOG_INFO) << ". . walkB:NOT falling, checkReactionFire()";
 		if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
 		{
-			//Log(LOG_INFO) << ". . . RF triggered - cacheUnit/pop state";
+			//Log(LOG_INFO) << ". . . RF triggered - cacheUnitSprite/pop state";
 			_battleSave->rfTriggerOffset(_walkCamera->getMapOffset());
 
 			abortState();
@@ -965,7 +965,7 @@ void UnitWalkBState::statusTurn() // private.
 	_unit->turn();
 
 	_unit->flagCache();
-	_parent->getMap()->cacheUnit(_unit);
+	_parent->getMap()->cacheUnitSprite(_unit);
 
 	if (_unit->getFaction() == FACTION_PLAYER)
 		_te->calcFovTiles(_unit);
@@ -1011,7 +1011,7 @@ void UnitWalkBState::abortState(bool recache) // private.
 	if (recache == true)
 	{
 		_unit->flagCache();
-		_parent->getMap()->cacheUnit(_unit);
+		_parent->getMap()->cacheUnitSprite(_unit);
 	}
 	_pf->abortPath();
 	_parent->popBattleState();
@@ -1102,7 +1102,7 @@ void UnitWalkBState::postPathProcedures() // private.
 	}
 
 	_unit->flagCache();
-	_parent->getMap()->cacheUnit(_unit);
+	_parent->getMap()->cacheUnitSprite(_unit);
 
 	if (_fall == false)
 		_parent->popBattleState();

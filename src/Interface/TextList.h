@@ -62,11 +62,11 @@ private:
 		_selectable,
 		_wrap;
 	int
-		_arrowPos,
+		_arrow_x,
 		_arrowsLeftEdge,
 		_arrowsRightEdge,
 		_margin,
-		_scrollPos;
+		_scroller_x;
 	size_t
 		_scroll,
 		_selRow,
@@ -281,7 +281,7 @@ private:
 		/// Sets the TextList scrollable.
 		void setScrollable(
 				bool scrollable = true,
-				int scrollPos = 0);
+				int scroller_x = 0);
 
 		/// Gets the current scroll-depth.
 		size_t getScroll();

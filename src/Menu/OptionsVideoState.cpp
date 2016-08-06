@@ -157,7 +157,7 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 
 	_edtDisplayWidth->setAlign(ALIGN_CENTER);
 	_edtDisplayWidth->setBig();
-	_edtDisplayWidth->setNumerical(true);
+	_edtDisplayWidth->setConstraint(TEC_UNSIGNED);
 	_edtDisplayWidth->onTextChange(static_cast<ActionHandler>(&OptionsVideoState::txtDisplayWidthChange));
 
 	_txtDisplayX->setText(L"x");
@@ -166,7 +166,7 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 
 	_edtDisplayHeight->setAlign(ALIGN_CENTER);
 	_edtDisplayHeight->setBig();
-	_edtDisplayHeight->setNumerical(true);
+	_edtDisplayHeight->setConstraint(TEC_UNSIGNED);
 	_edtDisplayHeight->onTextChange(static_cast<ActionHandler>(&OptionsVideoState::txtDisplayHeightChange));
 
 	_edtDisplayWidth ->setText(Text::intWide(Options::displayWidth));

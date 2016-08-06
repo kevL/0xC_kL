@@ -48,10 +48,10 @@ TextEdit::TextEdit(
 			height,
 			x,y),
 		_blink(true),
-		_modal(true),
+		_lock(true),
 		_ascii(L'A'),
 		_caretPlace(0u),
-		_numerical(false),
+		_inputConstraint(TEC_NONE),
 		_change(nullptr),
 		_state(state)
 {
@@ -89,45 +89,45 @@ void TextEdit::handle(Action* action, State* state)
 	InteractiveSurface::handle(action, state);
 
 	if (_isFocused == true
-		&& _modal == true
+		&& _lock == true
 		&& action->getDetails()->type == SDL_MOUSEBUTTONDOWN
 		&& (   action->getAbsoluteMouseX() <  getX()
 			|| action->getAbsoluteMouseX() >= getX() + getWidth()
 			|| action->getAbsoluteMouseY() <  getY()
 			|| action->getAbsoluteMouseY() >= getY() + getHeight()))
 	{
-		setFocusEdit(false, true);
+		setFocusEdit(false);
 	}
 }
 
 /**
  * Controls the blinking animation when this TextEdit is focused.
- * @param focus		- true if focused
- * @param pokeModal	- true to lock input to this control
+ * @param focus	- true if focused (default true)
+ * @param lock	- true to lock input to this control (default false)
  */
 void TextEdit::setFocusEdit(
 		bool focus,
-		bool pokeModal)
+		bool lock)
 {
-	_modal = pokeModal;
+	_lock = lock;
 
 	if (focus != _isFocused)
 	{
+		_isFocused = focus;
 		_redraw = true;
-		InteractiveSurface::setFocus(focus);
 
 		if (_isFocused == true)
 		{
+			_blink = true;
+			_timer->start();
+
+			_caretPlace = _edit.length();
+
 			SDL_EnableKeyRepeat(
 							180, //SDL_DEFAULT_REPEAT_DELAY,
 							60); //SDL_DEFAULT_REPEAT_INTERVAL);
 
-			_caretPlace = _edit.length();
-			_blink = true;
-			_timer->start();
-
-			if (_modal == true)
-				_state->setModal(this);
+			if (_lock == true) _state->setModal(this);
 		}
 		else
 		{
@@ -136,8 +136,7 @@ void TextEdit::setFocusEdit(
 
 			SDL_EnableKeyRepeat(0, SDL_DEFAULT_REPEAT_INTERVAL);
 
-			if (_modal == true)
-				_state->setModal(nullptr);
+			_state->setModal(nullptr);
 		}
 	}
 }
@@ -269,12 +268,12 @@ void TextEdit::setVerticalAlign(TextVAlign valign)
 }
 
 /**
- * Restricts the text to only numerical input.
- * @param numerical - numerical restriction (default true)
+ * Restricts the text to only numerical input or signed numerical input.
+ * @param constraint - TextEditConstraint to be applied (TextEdit.h)
  */
-void TextEdit::setNumerical(bool numerical)
+void TextEdit::setConstraint(TextEditConstraint constraint)
 {
-	_numerical = numerical;
+	_inputConstraint = constraint;
 }
 
 /**
@@ -444,6 +443,40 @@ bool TextEdit::exceedsMaxWidth(wchar_t fontChar) // private.
 }
 
 /**
+ * Checks if input-key character is valid to be inserted at the caret position
+ * without breaking the TextEditConstraint.
+ * @param key - keycode
+ * @return, true if character can be inserted
+ */
+bool TextEdit::isValidChar(Uint16 key) // private.
+{
+	switch (_inputConstraint)
+	{
+		case TEC_NONE:
+			return (key > 31 && key < 127); // NOTE: Does not include extended characters.
+//			return (key >= L' ' && key <= L'~') || key >= 160;
+
+		// If constraint is signed need to check:
+		// - user does not input a digit before '+' or '-'
+		// - user can enter a digit anywhere but a sign only at the first position
+		case TEC_SIGNED:
+			if (_caretPlace == 0u)
+			{
+				return ((key > 47 && key < 58) || key == 43 || key == 45)
+					&& (_edit.size() == 0u || (_edit[0u] != 43 && _edit[0u] != 45));
+//				return ((key >= L'0' && key <= L'9') || key == L'+' || key == L'-')
+//					&& (_edit.size() == 0u || (_edit[0u] != L'+' && _edit[0u] != L'-'));
+			}
+			// no break;
+
+		case TEC_UNSIGNED:
+			return (key > 47 && key < 58);
+//			return (key >= L'0' && key <= L'9');
+	}
+	return false;
+}
+
+/**
  * Focuses this TextEdit when it's pressed on; positions the caret otherwise.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
@@ -480,7 +513,6 @@ void TextEdit::mousePress(Action* action, State* state)
 				_caretPlace = 0u;
 		}
 	}
-
 	InteractiveSurface::mousePress(action, state);
 }
 
@@ -492,82 +524,75 @@ void TextEdit::mousePress(Action* action, State* state)
  */
 void TextEdit::keyboardPress(Action* action, State* state)
 {
-	if (Options::keyboardMode == KEYBOARD_OFF)
+	switch (Options::keyboardMode)
 	{
-		switch (action->getDetails()->key.keysym.sym)
-		{
-			case SDLK_UP:
-				++_ascii;
-				if (_ascii > L'~')
-					_ascii = L' ';
-				break;
-			case SDLK_DOWN:
-				--_ascii;
-				if (_ascii < L' ')
-					_ascii = L'~';
-				break;
-			case SDLK_LEFT:
-				if (_edit.length() > 0u)
-					_edit.resize(_edit.length() - 1u);
-				break;
-			case SDLK_RIGHT:
-				if (exceedsMaxWidth(_ascii) == false)
-					_edit += _ascii;
-		}
-	}
-	else if (Options::keyboardMode == KEYBOARD_ON)
-	{
-		switch (action->getDetails()->key.keysym.sym)
-		{
-			case SDLK_LEFT:
-				if (_caretPlace > 0u)
-					--_caretPlace;
-				break;
-			case SDLK_RIGHT:
-				if (_caretPlace < _edit.length())
-					++_caretPlace;
-				break;
-			case SDLK_HOME:
-				_caretPlace = 0u;
-				break;
-			case SDLK_END:
-				_caretPlace = _edit.length();
-				break;
-			case SDLK_BACKSPACE:
-				if (_caretPlace > 0u)
-				{
-					_edit.erase(_caretPlace - 1u, 1u);
-					--_caretPlace;
-				}
-				break;
-			case SDLK_DELETE:
-				if (_caretPlace < _edit.length())
-					_edit.erase(_caretPlace, 1u);
-				break;
-			case SDLK_RETURN:
-			case SDLK_KP_ENTER:
-				if (_edit.empty() == false)
-					setFocusEdit(false, true);
-				break;
+		case KEYBOARD_OFF:
+			switch (action->getDetails()->key.keysym.sym)
+			{
+				case SDLK_UP:
+					if (++_ascii > L'~')
+						_ascii = L' ';
+					break;
+				case SDLK_DOWN:
+					if (--_ascii < L' ')
+						_ascii = L'~';
+					break;
+				case SDLK_LEFT:
+					if (_edit.length() > 0u)
+						_edit.resize(_edit.length() - 1u);
+					break;
+				case SDLK_RIGHT:
+					if (exceedsMaxWidth(_ascii) == false)
+						_edit += _ascii;
+			}
+			break;
 
-			default:
-				const Uint16 keyId (action->getDetails()->key.keysym.unicode);
-				if (((_numerical == true
-							&& keyId >= L'0' && keyId <= L'9')
-						|| (_numerical == false
-							&& ((keyId >= L' ' && keyId <= L'~')
-								|| keyId >= 160u)))
-					&& exceedsMaxWidth(static_cast<wchar_t>(keyId)) == false)
-				{
-					_edit.insert(
-								_caretPlace,
-								1u,
-								static_cast<wchar_t>(action->getDetails()->key.keysym.unicode));
-					++_caretPlace;
-				}
-		}
-	}
+		case KEYBOARD_ON:
+			switch (action->getDetails()->key.keysym.sym)
+			{
+				case SDLK_LEFT:
+					if (_caretPlace > 0u)
+						--_caretPlace;
+					break;
+				case SDLK_RIGHT:
+					if (_caretPlace < _edit.length())
+						++_caretPlace;
+					break;
+				case SDLK_HOME:
+					_caretPlace = 0u;
+					break;
+				case SDLK_END:
+					_caretPlace = _edit.length();
+					break;
+				case SDLK_BACKSPACE:
+					if (_caretPlace > 0u)
+					{
+						_edit.erase(_caretPlace - 1u, 1u);
+						--_caretPlace;
+					}
+					break;
+				case SDLK_DELETE:
+					if (_caretPlace < _edit.length())
+						_edit.erase(_caretPlace, 1u);
+					break;
+				case SDLK_RETURN:
+				case SDLK_KP_ENTER:
+					if (_edit.empty() == false)
+						setFocusEdit(false);
+					break;
 
+				default:
+					const Uint16 keycode (action->getDetails()->key.keysym.unicode);
+					if (isValidChar(keycode) && exceedsMaxWidth(static_cast<wchar_t>(keycode)) == false)
+					{
+						_edit.insert(
+									_caretPlace,
+									1u,
+									static_cast<wchar_t>(keycode));
+						++_caretPlace;
+					}
+			}
+	}
 	_redraw = true;
 
 	if (_change != nullptr)

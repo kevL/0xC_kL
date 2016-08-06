@@ -286,7 +286,7 @@ void SoldiersState::btnEquipClick(Action*)
 	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-	bGen.runInventory(nullptr, _base);
+	bGen.runFakeInventory(nullptr, _base);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());

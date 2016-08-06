@@ -28,6 +28,13 @@
 namespace OpenXcom
 {
 
+enum TextEditConstraint
+{
+	TEC_NONE,				// 0
+	TEC_SIGNED,		// 1
+	TEC_UNSIGNED	// 2
+};
+
 class Timer;
 
 
@@ -43,7 +50,7 @@ class TextEdit final
 private:
 	bool
 		_blink,
-		_modal,
+		_lock,
 		_numerical;
 	size_t _caretPlace;
 	wchar_t _ascii;
@@ -59,8 +66,12 @@ private:
 		* _text;
 	Timer* _timer;
 
+	TextEditConstraint _inputConstraint;
+
 	/// Checks if a character will exceed the maximum width.
 	bool exceedsMaxWidth(wchar_t fontChar);
+	/// Checks if character is valid to be inserted at caret position.
+	bool isValidChar(Uint16 keycode);
 
 
 	public:
@@ -79,8 +90,8 @@ private:
 
 		/// Sets focus on the TextEdit.
 		void setFocusEdit(
-				bool focus,
-				bool pokeModal);
+				bool focus = true,
+				bool lock = false);
 
 		/// Sets the text size to big.
 		void setBig();
@@ -115,8 +126,8 @@ private:
 		/// Sets the vertical alignment.
 		void setVerticalAlign(TextVAlign valign);
 
-		/// Sets the edit to numerical input.
-		void setNumerical(bool numerical = true);
+		/// Sets the text edit constraint.
+		void setConstraint(TextEditConstraint constraint);
 
 		/// Sets the color.
 		void setColor(Uint8 color) override;

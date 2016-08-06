@@ -374,7 +374,7 @@ void CraftInfoState::init()
 		}
 
 		if (_isQuickBattle == false)
-			calculateTacticalCost();
+			tacticalCost();
 		else
 			_txtCost->setVisible(false);
 	}
@@ -577,7 +577,7 @@ void CraftInfoState::btnInventoryClick(Action*)
 		_game->getSavedGame()->setBattleSave(battleSave);
 
 		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-		bGen.runInventory(_craft);
+		bGen.runFakeInventory(_craft);
 
 		_game->getScreen()->clear();
 		_game->pushState(new InventoryState());
@@ -596,7 +596,7 @@ void CraftInfoState::edtCraftChange(Action*)
 /**
  * Sets current cost to send the Craft on a mission.
  */
-void CraftInfoState::calculateTacticalCost() // private.
+void CraftInfoState::tacticalCost() // private.
 {
 	const int cost (_base->calcSoldierBonuses(_craft)
 				  + _craft->getRules()->getSoldierCapacity() * 1000);

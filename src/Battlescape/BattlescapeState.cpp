@@ -118,7 +118,7 @@ BattlescapeState::BattlescapeState()
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
 		_mouseOverThreshold(false),
-		_firstInit(true),
+		_init(true),
 		_mouseOverIcons(false),
 		_isMouseScrolled(false),
 		_isMouseScrolling(false),
@@ -1000,33 +1000,27 @@ BattlescapeState::~BattlescapeState()
  */
 void BattlescapeState::init()
 {
+	//Log(LOG_INFO) << "BattlescapeState::init()";
 	State::init();
 
-	_aniTimer->start();
-	_tacticalTimer->start();
-
-	_map->setFocus(true);
-	_map->cacheUnits();
-	_map->draw();
-
-	_battleGame->init();
-
-	updateSoldierInfo(false); // NOTE: Does not need calcFoV, done in BattlescapeGame::init(first init).
-
-//	switch (_battleSave->getBatReserved())
-//	{
-//		case BA_SNAPSHOT: _reserve = _btnReserveSnap; break;
-//		case BA_AIMEDSHOT: _reserve = _btnReserveAimed; break;
-//		case BA_AUTOSHOT: _reserve = _btnReserveAuto; break;
-//		default: _reserve = _btnReserveNone; break;
-//	}
-
-	if (_firstInit == true && playableUnitSelected() == true)
+	if (_init == true)
 	{
-		_firstInit = false;
-		_battleGame->setupSelector();
+		_init = false;
 
-		_map->getCamera()->centerPosition(_battleSave->getSelectedUnit()->getPosition(), false);
+		if (_aniTimer->isRunning() == false) // do NOT restart timers if/when 2nd state starts.
+			_aniTimer->start();
+		if (_tacticalTimer->isRunning() == false)
+			_tacticalTimer->start();
+
+		_map->setFocus();
+		_map->cacheUnitSprites();
+		_map->draw();
+
+		_battleGame->getTileEngine()->calcFovTiles_all();
+		_battleGame->getTileEngine()->calcFovUnits_all();
+
+		_battleGame->setupSelector();
+		updateSoldierInfo(false);
 
 		std::string
 			track,
@@ -1034,20 +1028,30 @@ void BattlescapeState::init()
 		_battleSave->calibrateMusic(track, terrain);
 		_game->getResourcePack()->playMusic(track, terrain);
 
+		if (playableUnitSelected() == true)
+			_map->getCamera()->centerPosition(_battleSave->getSelectedUnit()->getPosition(), false);
+
+		_numLayers->setValue(static_cast<unsigned>(_map->getCamera()->getViewLevel()) + 1);
+
+//		switch (_battleSave->getBatReserved())
+//		{
+//			case BA_SNAPSHOT:	_reserve = _btnReserveSnap;  break;
+//			case BA_AIMEDSHOT:	_reserve = _btnReserveAimed; break;
+//			case BA_AUTOSHOT:	_reserve = _btnReserveAuto;  break;
+//			default:			_reserve = _btnReserveNone;  break;
+//		}
 //		_btnReserveNone->setGroup(&_reserve);
 //		_btnReserveSnap->setGroup(&_reserve);
 //		_btnReserveAimed->setGroup(&_reserve);
 //		_btnReserveAuto->setGroup(&_reserve);
 	}
 
-	_numLayers->setValue(static_cast<unsigned>(_map->getCamera()->getViewLevel()) + 1);
-
 	if (_battleSave->getControlDestroyed() == true && _iconsHidden == false)
 		_txtControlDestroyed->setVisible();
 	else
 		_txtControlDestroyed->setVisible(false);
 
-	if (_autosave == true)
+	if (_autosave == true) // flagged by NextTurnState::nextTurn()
 	{
 		_autosave = false;
 		if (_gameSave->isIronman() == true)
@@ -1061,14 +1065,20 @@ void BattlescapeState::init()
 											SAVE_AUTO_BATTLESCAPE,
 											_palette));
 	}
-
 //	_txtTooltip->setText(L"");
 //	if (_battleSave->getKneelReserved())
 //		_btnReserveKneel->invert(_btnReserveKneel->getColor()+3);
 //	_btnReserveKneel->toggle(_battleSave->getKneelReserved());
 //	_battleGame->setKneelReserved(_battleSave->getKneelReserved());
+}
 
-	//Log(LOG_INFO) << "BattlescapeState::init() EXIT";
+/**
+ * Sets a flag to re-initialize this BattlescapeState.
+ * @note Called by BattlescapeGenerator::nextStage().
+ */
+void BattlescapeState::reinit()
+{
+	_init = true;
 }
 
 /**
@@ -1503,7 +1513,7 @@ void BattlescapeState::mapIn(Action*)
  */
 inline void BattlescapeState::handle(Action* action)
 {
-	if (_firstInit == true)
+	if (_init == true)
 		return;
 
 	bool doit;
@@ -2293,7 +2303,7 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		unit->setActiveHand(AH_LEFT);
 
-		_map->cacheUnit(unit);
+		_map->cacheUnitSprite(unit);
 		_map->draw();
 
 		popupActionMenu(
@@ -2316,7 +2326,7 @@ void BattlescapeState::btnLeftHandRightClick(Action*)
 		unit->setActiveHand(AH_LEFT);
 		updateSoldierInfo(false);
 
-		_map->cacheUnit(unit);
+		_map->cacheUnitSprite(unit);
 		_map->draw();
 	}
 }
@@ -2335,7 +2345,7 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		unit->setActiveHand(AH_RIGHT);
 
-		_map->cacheUnit(unit);
+		_map->cacheUnitSprite(unit);
 		_map->draw();
 
 		popupActionMenu(
@@ -2358,7 +2368,7 @@ void BattlescapeState::btnRightHandRightClick(Action*)
 		unit->setActiveHand(AH_RIGHT);
 		updateSoldierInfo(false);
 
-		_map->cacheUnit(unit);
+		_map->cacheUnitSprite(unit);
 		_map->draw();
 	}
 }
@@ -2761,7 +2771,7 @@ bool BattlescapeState::allowButtons(bool allowSave) const // private
 					|| _battleSave->getSide() == FACTION_PLAYER
 					|| _battleSave->getDebugTac() == true)
 				&& (_battleGame->playerPanicHandled() == true
-					|| _firstInit == true)
+					|| _init == true) // huh.
 				&& _map->getProjectile() == nullptr);
 }
 
@@ -3525,9 +3535,10 @@ void BattlescapeState::liquidationExplosion() // private.
 	{
 		_battleGame->endLiquidate();
 
-		BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-		selUnit->aim(false);
-		_map->cacheUnit(selUnit);
+		_battleSave->getSelectedUnit()->toggleShoot();
+//		BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+//		selUnit->setShoot(false);
+//		_map->cacheUnitSprite(selUnit);
 	}
 }
 
@@ -4363,8 +4374,9 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 /**
  * Autosave the game the next time the Battlescape is init'd.
+ * note Called from NextTurnState::nextTurn().
  */
-void BattlescapeState::autosave()
+void BattlescapeState::requestAutosave()
 {
 	_autosave = true;
 }

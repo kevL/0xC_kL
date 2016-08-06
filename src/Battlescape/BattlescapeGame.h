@@ -214,7 +214,6 @@ private:
 //		_endTurnProcessed,
 		_endTurnRequested,
 		_executeProgress,
-		_init,
 		_playedAggroSound,
 		_playerPanicHandled,
 		_shotgunProgress;
@@ -301,10 +300,6 @@ private:
 		/// Cleans up the BattlescapeGame.
 		~BattlescapeGame();
 
-		/// Initializes the BattlescapeGame.
-		void init();
-		/// Sets a flag to re-initialize the BattlescapeGame.
-		void reinit();
 		/// Checks for units panicking or falling and so on.
 		void think();
 

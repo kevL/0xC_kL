@@ -86,8 +86,8 @@ private:
 
 	bool
 		_autosave,
-		_firstInit,
 		_iconsHidden,
+		_init,
 		_isMouseScrolled,
 		_isMouseScrolling,
 		_isOverweight,
@@ -270,8 +270,11 @@ private:
 		/// Cleans up the BattlescapeState.
 		~BattlescapeState();
 
-		/// Initializes this BattlescapeState.
+		/// Initializes the BattlescapeState.
 		void init() override;
+		/// Sets a flag to re-initialize the BattlescapeState.
+		void reinit();
+
 		/// Runs the timers and handles popups.
 		void think() override;
 
@@ -498,7 +501,7 @@ private:
 		void updateExperienceInfo();
 
 		/// Autosave next turn.
-		void autosave();
+		void requestAutosave();
 
 		/// Saves a map as used by the AI.
 		void saveAIMap();

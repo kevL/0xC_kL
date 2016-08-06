@@ -73,15 +73,15 @@ private:
 
 //		DIST_ARC_SMOOTH_Sqr = 64,
 
-		WHITE = 1,
-		RED   = 3;
+		WHITE_i = 1,
+		RED_i   = 3;
 
 	const int // can't be static (debug cfg.) go fucking figure.
 		SHADE_UNIT = 5,
 		SHADE_DOOR = 6;
 
 	static const Uint8
-		WHITE_u		=  1u,
+		WHITE		=  1u,
 		BLACK		= 14u,
 		ORANGE		= 16u,
 		ACU_ORANGE	= 18u,
@@ -249,9 +249,9 @@ private:
 		SelectorType getSelectorType() const;
 
 		/// Caches all unit-sprites.
-		void cacheUnits();
+		void cacheUnitSprites();
 		/// Caches a unit's sprite.
-		void cacheUnit(BattleUnit* const unit);
+		void cacheUnitSprite(BattleUnit* const unit);
 
 		/// Sets a projectile.
 		void setProjectile(Projectile* const projectile = nullptr);
@@ -305,7 +305,7 @@ private:
 
 		/// Sets whether to draw or not.
 		void setNoDraw(bool noDraw = true);
-		/// Gets if the Hidden Movement screen is displayed.
+		/// Gets if the hidden-movement screen is displayed.
 		bool getMapHidden() const;
 
 		/// Gets the SavedBattleGame.

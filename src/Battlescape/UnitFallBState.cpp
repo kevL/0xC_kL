@@ -206,8 +206,8 @@ void UnitFallBState::think()
 			case STATUS_WALKING:
 			case STATUS_FLYING:
 				//Log(LOG_INFO) << ". . call keepWalking()";
-				(*i)->keepWalking(tileBelow, true);	// advances the phase
-				_parent->getMap()->cacheUnit(*i);	// make sure the fallUnit sprites are up to date
+				(*i)->keepWalking(tileBelow, true);		// advances the phase
+				_parent->getMap()->cacheUnitSprite(*i);	// make sure the fallUnit sprites are up to date
 		}
 
 		fall = fallCheck
@@ -406,7 +406,7 @@ void UnitFallBState::think()
 									tileBelow);
 
 					(*i)->flagCache();
-					_parent->getMap()->cacheUnit(*i);
+					_parent->getMap()->cacheUnitSprite(*i);
 
 					++i;
 				}
@@ -435,7 +435,7 @@ void UnitFallBState::think()
 					_te->calculateUnitLighting();
 
 					(*i)->flagCache();
-					_parent->getMap()->cacheUnit(*i);
+					_parent->getMap()->cacheUnitSprite(*i);
 
 					if ((*i)->getFaction() == FACTION_PLAYER)
 						_te->calcFovTiles(*i);

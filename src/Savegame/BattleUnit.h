@@ -420,7 +420,8 @@ private:
 		bool isFloating() const;
 
 		/// Aims the BattleUnit's weapon.
-		void aim(bool aim = true);
+//		void setShoot(bool shoot = true);
+		void toggleShoot();
 
 		/// Gets the BattleUnit's turn-units.
 		int getTu() const;

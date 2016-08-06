@@ -193,7 +193,7 @@ void UnitTurnBState::think()
 		_unit->turn(_turret); // done-> STATUS_STANDING
 
 		_unit->flagCache();
-		_parent->getMap()->cacheUnit(_unit);
+		_parent->getMap()->cacheUnitSprite(_unit);
 
 		bool spot;
 		switch (_unit->getFaction())

@@ -74,8 +74,8 @@ TextList::TextList(
 		_selector(nullptr),
 		_margin(8),
 		_scrollable(true),
-		_arrowPos(-1),
-		_scrollPos(0),
+		_arrow_x(-1),
+		_scroller_x(0),
 		_arrowType(ARROW_VERTICAL),
 		_leftClick(nullptr),
 		_leftPress(nullptr),
@@ -90,16 +90,16 @@ TextList::TextList(
 	_up = new ArrowButton(
 						ARROW_BIG_UP,
 						13,13,
-						getX() + getWidth() + _scrollPos,
-						getY());
+						_x + getWidth(),// + _scroller_x, // NOTE: Currently inits to zip/zero/zilch/nada.
+						_y);
 	_up->setVisible(false);
 	_up->setTextList(this);
 
 	_down = new ArrowButton(
 						ARROW_BIG_DOWN,
 						13,13,
-						getX() + getWidth() + _scrollPos,
-						getY() + getHeight() - 12);
+						_x + getWidth(),// + _scroller_x,
+						_y + getHeight() - 12);
 	_down->setVisible(false);
 	_down->setTextList(this);
 
@@ -108,7 +108,7 @@ TextList::TextList(
 	_scrollbar = new ScrollBar(
 							_up->getWidth(),
 							h,
-							getX() + getWidth() + _scrollPos,
+							_x + getWidth(),// + _scroller_x,
 							_up->getY() + _up->getHeight());
 	_scrollbar->setVisible(false);
 	_scrollbar->setTextList(this);
@@ -153,14 +153,14 @@ TextList::~TextList()
  */
 void TextList::setX(int x)
 {
-	Surface::setX(x);
+	_x = x;
 
-	_up->setX(getX() + getWidth() + _scrollPos);
-	_down->setX(getX() + getWidth() + _scrollPos);
-	_scrollbar->setX(getX() + getWidth() + _scrollPos);
+	_up->setX(x = _x + getWidth() + _scroller_x);
+	_down->setX(x);
+	_scrollbar->setX(x);
 
 	if (_selector != nullptr)
-		_selector->setX(getX());
+		_selector->setX(_x);
 }
 
 /**
@@ -169,14 +169,14 @@ void TextList::setX(int x)
  */
 void TextList::setY(int y)
 {
-	Surface::setY(y);
+	_y = y;
 
-	_up->setY(getY());
-	_down->setY(getY() + getHeight() - 12);
+	_up->setY(_y);
+	_down->setY(_y + getHeight() - 12);
 	_scrollbar->setY(_up->getY() + _up->getHeight());
 
 	if (_selector != nullptr)
-		_selector->setY(getY());
+		_selector->setY(_y);
 }
 
 /**
@@ -298,7 +298,7 @@ void TextList::setCellText(
  */
 int TextList::getColumnX(size_t column) const
 {
-	return getX() + _texts[0][column]->getX();
+	return _x + _texts[0][column]->getX();
 }
 
 /**
@@ -308,7 +308,7 @@ int TextList::getColumnX(size_t column) const
  */
 int TextList::getRowY(size_t row) const
 {
-	return getY() + _texts[row][0u]->getY();
+	return _y + _texts[row][0u]->getY();
 }
 
 /**
@@ -472,8 +472,8 @@ void TextList::addRow(
 		_rows.push_back(_texts.size() - 1u);
 
 
-	if (_arrowPos != -1)	// place arrow-buttons
-	{						// Position defined wrt main window - *not* the TextList's Surface.
+	if (_arrow_x != -1)	// place arrow-buttons
+	{					// Position defined wrt main window - *not* the TextList's Surface.
 		ArrowShape
 			shape1,
 			shape2;
@@ -494,8 +494,8 @@ void TextList::addRow(
 		ArrowButton* const a1 (new ArrowButton(
 											shape1,
 											11,8,
-											getX() + _arrowPos,
-											getY()));
+											_x + _arrow_x,
+											_y));
 		a1->setListButton();
 		a1->setPalette(this->getPalette());
 		a1->setColor(_up->getColor());
@@ -507,8 +507,8 @@ void TextList::addRow(
 		ArrowButton* const a2 (new ArrowButton(
 											shape2,
 											11,8,
-											getX() + _arrowPos + 12,
-											getY()));
+											_x + _arrow_x + 12,
+											_y));
 		a2->setListButton();
 		a2->setPalette(this->getPalette());
 		a2->setColor(_up->getColor());
@@ -612,8 +612,8 @@ void TextList::initText(
 	_selector = new Surface(
 						getWidth(),
 						_font->getHeight() + _font->getSpacing(),
-						getX(),
-						getY());
+						_x,
+						_y);
 	_selector->setPalette(getPalette());
 	_selector->setVisible(false);
 	updateVisible();
@@ -627,7 +627,7 @@ void TextList::setHeight(int height)
 {
 	Surface::setHeight(height);
 
-	setY(getY());
+	setY(_y);
 
 	const int h = std::max(1, _down->getY() - _up->getY() - _up->getHeight());
 	_scrollbar->setHeight(h);
@@ -795,8 +795,8 @@ void TextList::setBig()
 	_selector = new Surface(
 						getWidth(),
 						_font->getHeight() + _font->getSpacing(),
-						getX(),
-						getY());
+						_x,
+						_y);
 	_selector->setPalette(getPalette());
 	_selector->setVisible(false);
 	updateVisible();
@@ -812,8 +812,8 @@ void TextList::setSmall()
 	_selector = new Surface(
 						getWidth(),
 						_font->getHeight() + _font->getSpacing(),
-						getX(),
-						getY());
+						_x,
+						_y);
 	_selector->setPalette(getPalette());
 	_selector->setVisible(false);
 	updateVisible();
@@ -890,8 +890,8 @@ void TextList::setArrow(
 {
 	_arrowType = type;
 
-	_arrowPos = pos;
-	_arrowsLeftEdge = getX() + _arrowPos;
+	_arrow_x = pos;
+	_arrowsLeftEdge = _x + _arrow_x;
 	_arrowsRightEdge = _arrowsLeftEdge + _up->getWidth() + _down->getWidth() - 1;
 }
 
@@ -1051,21 +1051,21 @@ void TextList::scrollDown(
 
 /**
  * Sets whether this TextList can be scrolled.
- * @param scrolling - true allows scrolling (default true)
- * @param scrollPos - custom +/- x_offset for the scroll buttons (default 0)
+ * @param scrolling		- true allows scrolling (default true)
+ * @param scroller_x	- x-offset for the scroll-buttons and -rail (default 0)
  */
 void TextList::setScrollable(
 		bool scrollable,
-		int scrollPos)
+		int scroller_x)
 {
 	_scrollable = scrollable;
 
-	if (_scrollPos != scrollPos)
+	if (_scroller_x != scroller_x)
 	{
-		_scrollPos = scrollPos;
-		_up->setX(getX() + getWidth() + _scrollPos);
-		_down->setX(getX() + getWidth() + _scrollPos);
-		_scrollbar->setX(getX() + getWidth() + _scrollPos);
+		_scroller_x = scroller_x;
+		_up->setX(scroller_x = _x + getWidth() + _scroller_x);
+		_down->setX(scroller_x);
+		_scrollbar->setX(scroller_x);
 	}
 }
 
@@ -1194,9 +1194,9 @@ void TextList::blit(const Surface* const srf)
 
 		Surface::blit(srf); // NOTE: Also checks visible and hidden vars (redundant).
 
-		if (_arrowPos != -1 && _rows.empty() == false)
+		if (_arrow_x != -1 && _rows.empty() == false)
 		{
-			int y (getY());
+			int y (_y);
 			for (size_t
 					row = _scroll;
 					row != 0u && _rows[row] == _rows[row - 1u];
@@ -1205,7 +1205,7 @@ void TextList::blit(const Surface* const srf)
 				y -= _font->getHeight() + _font->getSpacing();
 			}
 
-			int maxY (getY() + getHeight());
+			int maxY (_y + getHeight());
 			for (size_t
 					i = _rows[_scroll];
 					i != _texts.size() && i != _rows[_scroll] + _visibleRows && y < maxY;
@@ -1214,7 +1214,7 @@ void TextList::blit(const Surface* const srf)
 				_arrowLeft[i]->setY(y);
 				_arrowRight[i]->setY(y);
 
-				if (y >= getY()) // only blit arrows that belong to texts that have their first row on-screen
+				if (y >= _y) // only blit arrows that belong to texts that have their first row on-screen
 				{
 					_arrowLeft[i]->blit(srf);
 					_arrowRight[i]->blit(srf);
@@ -1248,7 +1248,7 @@ void TextList::handle(Action* action, State* state)
 		_down->handle(action, state);
 		_scrollbar->handle(action, state);
 
-		if (_arrowPos != -1 && _rows.empty() == false)
+		if (_arrow_x != -1 && _rows.empty() == false)
 		{
 			size_t startId (_rows[_scroll]);
 			if (_scroll > 0u && _rows[_scroll] == _rows[_scroll - 1u])
@@ -1380,7 +1380,7 @@ void TextList::mouseOver(Action* action, State* state)
 {
 	if (_selectable == true)
 	{
-		int height (_font->getHeight() + _font->getSpacing());
+		int height (_font->getHeight() + _font->getSpacing()); // theoretical line height
 		_selRow = std::max(0u,
 						   _scroll + static_cast<size_t>(std::floor(action->getRelativeMouseY() / (height * action->getScaleY()))));
 
@@ -1393,13 +1393,13 @@ void TextList::mouseOver(Action* action, State* state)
 																// is added, but there are no soldiers nor awards for it.
 			//Log(LOG_INFO) << ". text at [" << _selRow << "] = " << Language::wstrToFs(_texts[_selRow][0]->getText());
 			const Text* const selText (_texts[_rows[_selRow]].front());
-			int y (getY() + selText->getY());
-			height = selText->getHeight() + _font->getSpacing();
+			int y (_y + selText->getY());
+			height = selText->getHeight() + _font->getSpacing(); // current line height
 
-			if (y < getY() || y + height > getY() + getHeight())
+			if (y < _y || y + height > _y + getHeight())
 				height >>= 1u;
 
-			if (y < getY()) y = getY();
+			if (y < _y) y = _y;
 
 			if (_selector->getHeight() != height)
 			{
@@ -1407,7 +1407,7 @@ void TextList::mouseOver(Action* action, State* state)
 				_selector = new Surface(
 									getWidth(),
 									height,
-									getX(),
+									_x,
 									y);
 				_selector->setPalette(getPalette());
 			}

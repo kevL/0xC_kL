@@ -1056,7 +1056,7 @@ void GeoscapeState::init()
 	_globe->onMouseClick(static_cast<ActionHandler>(&GeoscapeState::globeClick));
 	_globe->onMouseOver(nullptr);
 //	_globe->rotateStop();
-	_globe->setFocus(true);
+	_globe->setFocus();
 	_globe->draw();
 
 	if (_gameSave->isIronman() == true
