@@ -107,12 +107,13 @@ protected:
 		/// Handles any events.
 		virtual void handle(Action* action);
 
-		/// Hides all the State Surfaces.
+		/// Hides all the State's Surfaces.
 		void hideAll();
-		/// Shows all the State Surfaces.
+		/// Shows all the State's Surfaces.
 		void showAll();
-		/// Resets all the State Surfaces.
-		void resetAll();
+
+		/// Resets all the State's Surfaces.
+		void resetSurfaces();
 
 		/// Gets a LocalizedText.
 		const LocalizedText& tr(const std::string& id) const;

@@ -1012,7 +1012,11 @@ void BattlescapeState::init()
 		if (_tacticalTimer->isRunning() == false)
 			_tacticalTimer->start();
 
-		_map->setFocus();
+//		_map->setFocus();	// -> NOTE: InteractiveSurface is initialized w/ (_isFocused=TRUE)
+							// and only State::resetSurfaces() sets a Surface unfocused; resetSurfaces()
+							// is called from Game::run() on each state-initialization, but
+							// that's back-asswards. So (_isFocused=FALSE) has been disabled
+							// in resetSurfaces() .... See also GeoscapeState::init().
 		_map->cacheUnitSprites();
 		_map->draw();
 

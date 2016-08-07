@@ -367,9 +367,12 @@ void State::showAll()
 }
 
 /**
- * Resets the status of all the Surface child-elements like unpressing buttons.
+ * Resets the status of all the Surface child-elements.
+ * @note Unpresses buttons and turns off focus. Except ... InteractiveSurfaces
+ * are initialized with focus ON. So this is not a "reset". TODO: Initialize
+ * InteractiveSurfaces with focus OFF, and toggle focus when/as/if required.
  */
-void State::resetAll()
+void State::resetSurfaces()
 {
 	InteractiveSurface* srf;
 	for (std::vector<Surface*>::const_iterator
@@ -380,12 +383,12 @@ void State::resetAll()
 		if ((srf = dynamic_cast<InteractiveSurface*>(*i)) != nullptr)
 		{
 			srf->unpress(this);
-//			srf->setFocus(false);
-		}
-	}
-}
-
-/**
+//			srf->setFocus(false);	// TODO: '_isFocused' appears to NOT be properly implemented for
+		}							// toggling between geoscape and battlescape (or anything else really).
+	}								// That is, Globe-surfaces are never set unfocused when going to
+}									// battlescape and Map-surfaces are never set unfocused when returning
+									// to geoscape. Instead they are set unfocused and are immediately refocused every time they initialize.
+/**									// So ... all Surfaces are effectively *always focused* (except TextEdits).
  * Gets the LocalizedText for dictionary key @a id.
  * @note This function forwards the call to Language::getString(const std::string&).
  * @param id - reference to the dictionary key to search for

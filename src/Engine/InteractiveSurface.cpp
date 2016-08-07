@@ -66,10 +66,14 @@ InteractiveSurface::~InteractiveSurface() // virtual.
  */
 bool InteractiveSurface::isButtonPressed(Uint8 btn) const
 {
-	if (btn != 0u)
-		return (_buttonsPressed & SDL_BUTTON(btn)) != 0u;
+	switch (btn)
+	{
+		case 0u:
+			return (_buttonsPressed != 0u);
 
-	return (_buttonsPressed != 0u);
+		default:
+			return (_buttonsPressed & SDL_BUTTON(btn)) != 0u;
+	}
 }
 
 /**
@@ -112,9 +116,6 @@ void InteractiveSurface::setButtonPressed(
  */
 void InteractiveSurface::setVisible(bool visible)
 {
-//	Surface::setVisible(visible);
-//	if (_visible == false) // unpress button if it was not visible
-//		unpress(nullptr);
 	if ((_visible = visible) == false)
 		unpress(nullptr);
 }
@@ -249,7 +250,7 @@ void InteractiveSurface::handle( // virtual.
 
 /**
  * Changes this Surface's focus.
- * @note Surfaces will only receive keyboard-events if focused.
+ * @note Surfaces will receive keyboard-events only if focused.
  * @param focus - true if focused (default true)
  */
 void InteractiveSurface::setFocus(bool focus)
@@ -259,7 +260,7 @@ void InteractiveSurface::setFocus(bool focus)
 
 /**
  * Returns this Surface's focus.
- * @note Surfaces will only receive keyboard-events if focused.
+ * @note Surfaces will receive keyboard-events only if focused.
  * @return, true if focused
  */
 bool InteractiveSurface::isFocused() const
@@ -281,7 +282,7 @@ void InteractiveSurface::unpress(State* const state) // virtual.
 		SDL_Event event;
 		event.type = SDL_MOUSEBUTTONUP;
 		event.button.button = SDL_BUTTON_LEFT;
-		Action action = Action(&event, 0.,0., 0,0);
+		Action action (Action(&event, 0.,0., 0,0));
 		mouseRelease(&action, state);
 	}
 }

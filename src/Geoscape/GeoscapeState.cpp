@@ -1056,7 +1056,12 @@ void GeoscapeState::init()
 	_globe->onMouseClick(static_cast<ActionHandler>(&GeoscapeState::globeClick));
 	_globe->onMouseOver(nullptr);
 //	_globe->rotateStop();
-	_globe->setFocus();
+
+//	_globe->setFocus();	// -> NOTE: InteractiveSurface is initialized w/ (_isFocused=TRUE)
+						// and only State::resetSurfaces() sets a Surface unfocused; resetSurfaces()
+						// is called from Game::run() on each state-initialization, but
+						// that's back-asswards. So (_isFocused=FALSE) has been disabled
+						// in resetSurfaces() .... See also BattlescapeState::init().
 	_globe->draw();
 
 	if (_gameSave->isIronman() == true
@@ -1279,7 +1284,6 @@ void GeoscapeState::updateTimeDisplay()
 	{
 		const int sec (_gameSave->getTime()->getSecond());
 		_txtSec->setVisible(sec % 15 > 9);
-//		_txtSec->setVisible(_gameSave->getTime()->getSecond() % 15 == 0);
 	}
 
 	std::wostringstream
@@ -1292,24 +1296,15 @@ void GeoscapeState::updateTimeDisplay()
 	woststr2 << std::setfill(L'0') << std::setw(2) << _gameSave->getTime()->getHour();
 	_txtHour->setText(woststr2.str());
 
-	int date (_gameSave->getTime()->getDay());
-	if (_day != date)
+	int date;
+	if ((date = _gameSave->getTime()->getDay()) != _day)
 	{
-		_day = date;
-		_txtDay->setText(Text::intWide(_day));
-
-		date = _gameSave->getTime()->getMonth();
-		if (_month != date)
+		_txtDay->setText(Text::intWide(_day = date));
+		if ((date = _gameSave->getTime()->getMonth()) != _month)
 		{
-			_month = date;
-			_txtMonth->setText(convertDateToMonth(_month));
-
-			date = _gameSave->getTime()->getYear();
-			if (_year != date)
-			{
-				_year = date;
-				_txtYear->setText(Text::intWide(_year));
-			}
+			_txtMonth->setText(convertDateToMonth(_month = date));
+			if ((date = _gameSave->getTime()->getYear()) != _year)
+				_txtYear->setText(Text::intWide(_year = date));
 		}
 	}
 }

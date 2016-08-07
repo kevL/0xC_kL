@@ -221,19 +221,19 @@ void Game::run()
 		Log(LOG_INFO) << "Starting roadrunner engine.";
 		while (_quit == false)
 		{
-			while (_deleted.empty() == false) // clean up states
+			while (_deleted.empty() == false)	// clean up States
 			{
 				delete _deleted.back();
 				_deleted.pop_back();
 			}
 
-			if (_init == true) // initialize active state
+			if (_init == true)					// initialize the active State
 			{
 				_init = false;
-				_states.back()->init();
-				_states.back()->resetAll(); // unpress buttons
+				_states.back()->resetSurfaces();		// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				_states.back()->init();			// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
-				SDL_Event event; // update mouse-position
+				SDL_Event event;				// update mouse-position
 				int
 					x,y;
 				SDL_GetMouseState(&x,&y);
@@ -249,11 +249,11 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1) // process SDL input-events
+			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
 			{
 				if (_inputActive == false && _event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE; // discard buffered events
+//					_event.type = SDL_IGNORE;	// discard buffered events
 					continue;
 				}
 
@@ -388,13 +388,14 @@ void Game::run()
 
 			_inputActive = true;
 
-			_states.back()->think(); // process logic
+			_states.back()->think();					// process logic
 			_fpsCounter->think();
 
-			if (_init == false) // process rendering
+			if (_init == false)							// process rendering
 			{
 #ifdef _DEBUG
-				if (false) { Log(LOG_INFO) << "go fucking figure."; } // The player's ActionMenu won't blit/draw/flip without this. g++ debug configuration
+				// The player's ActionMenu won't blit/draw/flip without this. g++ (4.2) debug configuration
+				if (false) { Log(LOG_INFO) << "go fucking figure."; }
 #endif
 
 				_fpsCounter->addFrame();
@@ -404,7 +405,7 @@ void Game::run()
 //				if (_blitDelay == true)
 //				{
 //					_blitDelay = false;
-//					SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
+//					SDL_Delay(Screen::SCREEN_PAUSE);	// prevents NextTurn screen from concealing the last non-player Actor's action.
 //				}
 
 				std::list<State*>::const_iterator i (_states.end());
@@ -419,7 +420,7 @@ void Game::run()
 						i != _states.end();
 						++i)
 				{
-					(*i)->blit(); // blit top underlying fullscreen-state and those on top of it
+					(*i)->blit();						// blit top underlying fullscreen-state and those on top of it
 				}
 
 				_fpsCounter->blit(_screen->getSurface());
@@ -437,19 +438,19 @@ void Game::run()
 		Log(LOG_INFO) << "Starting wilecoyote engine.";
 		while (_quit == false)
 		{
-			while (_deleted.empty() == false) // clean up states
+			while (_deleted.empty() == false)	// clean up States
 			{
 				delete _deleted.back();
 				_deleted.pop_back();
 			}
 
-			if (_init == true) // initialize active state
+			if (_init == true)					// initialize active State
 			{
 				_init = false;
-				_states.back()->init();
-				_states.back()->resetAll(); // unpress buttons
+				_states.back()->resetSurfaces();		// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				_states.back()->init();			// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
-				SDL_Event event; // update mouse-position
+				SDL_Event event;				// update mouse-position
 				int
 					x,y;
 				SDL_GetMouseState(&x,&y);
@@ -465,12 +466,12 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1) // process SDL input-events
+			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
 			{
 				if (_inputActive == false // kL->
 					&& _event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE; // discard buffered events
+//					_event.type = SDL_IGNORE;	// discard buffered events
 					continue;
 				}
 
@@ -642,13 +643,14 @@ void Game::run()
 
 			if (runState != PAUSED)
 			{
-				_states.back()->think(); // process logic
+				_states.back()->think();							// process logic
 				_fpsCounter->think();
 
-				if (_init == false) // process rendering
+				if (_init == false)									// process rendering
 				{
-					if (Options::FPS != 0 // update slice-delay-time based on the time of the last draw
-						&& !(Options::useOpenGL == true && Options::vSyncForOpenGL == true)) // if not using OpenGL, or if you are you're not using OpenGL vSync
+					if (Options::FPS != 0							// update slice-delay-time based on the time of the last draw
+						&& !(Options::useOpenGL == true
+							&& Options::vSyncForOpenGL == true))	// if not using OpenGL or if not using OpenGL vSync
 					{
 						int fpsUser;
 						if ((SDL_GetAppState() & SDL_APPINPUTFOCUS))
@@ -666,7 +668,7 @@ void Game::run()
 
 					if (_ticksTillNextSlice < 1)
 					{
-						_tickOfLastSlice = SDL_GetTicks(); // store when this slice occurred.
+						_tickOfLastSlice = SDL_GetTicks();			// store when this slice occurred.
 						_fpsCounter->addFrame();
 
 						_screen->clear();
@@ -674,7 +676,7 @@ void Game::run()
 //						if (_blitDelay == true)
 //						{
 //							_blitDelay = false;
-//							SDL_Delay(Screen::SCREEN_PAUSE); // prevents NextTurn screen from concealing the last non-player Actor's action.
+//							SDL_Delay(Screen::SCREEN_PAUSE);		// prevents NextTurn screen from concealing the last non-player Actor's action.
 //						}
 
 						std::list<State*>::const_iterator i (_states.end());
@@ -689,7 +691,7 @@ void Game::run()
 								i != _states.end();
 								++i)
 						{
-							(*i)->blit(); // blit top underlying fullscreen-state and those on top of it
+							(*i)->blit();							// blit top underlying fullscreen-state and those on top of it
 						}
 
 						_fpsCounter->blit(_screen->getSurface());
@@ -700,14 +702,14 @@ void Game::run()
 				}
 			}
 
-			switch (runState) // save on CPU
+			switch (runState)			// save on CPU
 			{
 				case STANDARD:
-					SDL_Delay(1u); // save CPU from going 100%
+					SDL_Delay(1u);		// save CPU from going 100%
 					break;
 				case SLOWED:
 				case PAUSED:
-					SDL_Delay(100u); // more slowing down
+					SDL_Delay(100u);	// more slowing down
 			}
 		} // end run loop.
 	}
@@ -840,10 +842,11 @@ bool Game::isState(const State* const state) const
 void Game::initAudio()
 {
 	Uint16 audioFormat;
-	if (Options::audioBitDepth == 8)
-		audioFormat = AUDIO_S8;
-	else
-		audioFormat = AUDIO_S16SYS;
+	switch (Options::audioBitDepth)
+	{
+		case 8:  audioFormat = AUDIO_S8; break;
+		default: audioFormat = AUDIO_S16SYS;
+	}
 
 	const int coefBuffer (std::max(1,
 								   Options::audioBuffer));
