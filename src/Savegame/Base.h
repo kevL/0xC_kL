@@ -361,7 +361,7 @@ private:
 		size_t getRecallRow(RecallType recallType) const;
 
 		/// Calculates the bonus-expense for Soldiers by rank.
-		int calcSoldierBonuses(const Craft* const craft = nullptr) const;
+		int soldierBonuses(const Craft* const craft = nullptr) const;
 		/// Calculates a Soldier's bonus-pay for doing a tactical mission.
 		int soldierExpense(
 				const Soldier* const sol,

@@ -44,7 +44,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up the BaseView with the specified size and position.
+ * Sets up the BaseView with a specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
@@ -654,7 +654,7 @@ void BaseView::draw()
 						x1 != facX + facSize_t;
 						++x1)
 				{
-					if (_facilities[x1][y] != nullptr
+					if (   _facilities[x1][y] != nullptr
 						&& _facilities[x1][y]->buildFinished() == true)
 					{
 						srf = _texture->getFrame(8);

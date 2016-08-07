@@ -2633,7 +2633,7 @@ int Base::getPersonnelMaintenance() const
 
 	total += getTotalEngineers() * _rules->getEngineerCost();
 	total += getTotalScientists() * _rules->getScientistCost();
-	total += calcSoldierBonuses();
+	total += soldierBonuses();
 
 	return total;
 }
@@ -2766,7 +2766,7 @@ size_t Base::getRecallRow(RecallType recallType) const
  * @param craft - pointer to the Craft for the sortie (default nullptr)
  * @return, cost
  */
-int Base::calcSoldierBonuses(const Craft* const craft) const
+int Base::soldierBonuses(const Craft* const craft) const
 {
 	int total (0);
 	for (std::vector<Soldier*>::const_iterator
