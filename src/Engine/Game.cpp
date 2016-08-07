@@ -221,19 +221,19 @@ void Game::run()
 		Log(LOG_INFO) << "Starting roadrunner engine.";
 		while (_quit == false)
 		{
-			while (_deleted.empty() == false)	// clean up States
+			while (_deleted.empty() == false)		// clean up States
 			{
 				delete _deleted.back();
 				_deleted.pop_back();
 			}
 
-			if (_init == true)					// initialize the active State
+			if (_init == true)						// initialize the active State
 			{
 				_init = false;
-				_states.back()->resetSurfaces();		// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
-				_states.back()->init();			// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
+				_states.back()->resetSurfaces();	// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
-				SDL_Event event;				// update mouse-position
+				SDL_Event event;					// update mouse-position
 				int
 					x,y;
 				SDL_GetMouseState(&x,&y);
@@ -249,11 +249,11 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
+			while (SDL_PollEvent(&_event) == 1)		// process SDL input-events
 			{
 				if (_inputActive == false && _event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE;	// discard buffered events
+//					_event.type = SDL_IGNORE;		// discard buffered events
 					continue;
 				}
 
@@ -411,7 +411,7 @@ void Game::run()
 				std::list<State*>::const_iterator i (_states.end());
 				do
 				{
-					--i; // find top underlying fullscreen-state
+					--i;								// find top underlying fullscreen-state
 				}
 				while (i != _states.begin() && (*i)->isFullScreen() == false);
 
@@ -438,19 +438,19 @@ void Game::run()
 		Log(LOG_INFO) << "Starting wilecoyote engine.";
 		while (_quit == false)
 		{
-			while (_deleted.empty() == false)	// clean up States
+			while (_deleted.empty() == false)		// clean up States
 			{
 				delete _deleted.back();
 				_deleted.pop_back();
 			}
 
-			if (_init == true)					// initialize active State
+			if (_init == true)						// initialize active State
 			{
 				_init = false;
-				_states.back()->resetSurfaces();		// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
-				_states.back()->init();			// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
+				_states.back()->resetSurfaces();	// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
-				SDL_Event event;				// update mouse-position
+				SDL_Event event;					// update mouse-position
 				int
 					x,y;
 				SDL_GetMouseState(&x,&y);
@@ -466,12 +466,12 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1)	// process SDL input-events
+			while (SDL_PollEvent(&_event) == 1)		// process SDL input-events
 			{
 				if (_inputActive == false // kL->
 					&& _event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE;	// discard buffered events
+//					_event.type = SDL_IGNORE;		// discard buffered events
 					continue;
 				}
 
@@ -682,7 +682,7 @@ void Game::run()
 						std::list<State*>::const_iterator i (_states.end());
 						do
 						{
-							--i; // find top underlying fullscreen-state
+							--i;									// find top underlying fullscreen-state
 						}
 						while (i != _states.begin() && (*i)->isFullScreen() == false);
 
