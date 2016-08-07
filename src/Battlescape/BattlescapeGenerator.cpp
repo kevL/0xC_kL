@@ -1109,8 +1109,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			i != _base->getSoldiers()->end();
 			++i)
 	{
-		if ((_craft != nullptr
-				&& (*i)->getCraft() == _craft)
+		if ((_craft != nullptr && (*i)->getCraft() == _craft)
 			|| (_craft == nullptr
 				&& (*i)->getSickbay() == 0
 				&& ((*i)->getCraft() == nullptr
@@ -2746,9 +2745,7 @@ void BattlescapeGenerator::runFakeInventory(
 				data,
 				0,0,
 				O_FLOOR);
-	tile->getMapData(O_FLOOR)->setTileType(START_POINT);
-	tile->getMapData(O_FLOOR)->setTuWalk(0);
-	tile->getMapData(O_FLOOR)->setFlags(
+	tile->getMapData(O_FLOOR)->setFlags( // NOTE: Tile-data is probably not needed anymore.
 									false,
 									false,
 									false,
@@ -2770,7 +2767,7 @@ void BattlescapeGenerator::runFakeInventory(
 
 	deployXcom(); // generate BattleItems for the equipt-tile and place all units on that Tile.
 
-	if (craft != nullptr && unitOrder != 0
+	if (craft != nullptr && unitOrder != 0u
 		&& static_cast<int>(unitOrder) <= craft->getQtySoldiers())
 	{
 		size_t j (0u);
