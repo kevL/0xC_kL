@@ -2725,12 +2725,12 @@ void BattlescapeGenerator::explodePowerSources() // private.
  * @note kids, don't try this at home! yer tellin' me.
  * @param craft		- pointer to Craft to handle
  * @param base		- pointer to Base to handle (default nullptr)
- * @param selUnitId	- soldier to display in battle pre-equip inventory (default 0)
+ * @param unitOrder	- soldier to display in battle pre-equip inventory (default 0)
  */
 void BattlescapeGenerator::runFakeInventory(
 		Craft* const craft,
 		Base* const base,
-		size_t selUnitId)
+		size_t unitOrder)
 {
 	_isFakeInventory = true;
 
@@ -2747,7 +2747,7 @@ void BattlescapeGenerator::runFakeInventory(
 				0,0,
 				O_FLOOR);
 	tile->getMapData(O_FLOOR)->setTileType(START_POINT);
-	tile->getMapData(O_FLOOR)->setTUWalk(0);
+	tile->getMapData(O_FLOOR)->setTuWalk(0);
 	tile->getMapData(O_FLOOR)->setFlags(
 									false,
 									false,
@@ -2770,8 +2770,8 @@ void BattlescapeGenerator::runFakeInventory(
 
 	deployXcom(); // generate BattleItems for the equipt-tile and place all units on that Tile.
 
-	if (craft != nullptr && selUnitId != 0
-		&& static_cast<int>(selUnitId) <= craft->getQtySoldiers())
+	if (craft != nullptr && unitOrder != 0
+		&& static_cast<int>(unitOrder) <= craft->getQtySoldiers())
 	{
 		size_t j (0u);
 		for (std::vector<BattleUnit*>::const_iterator
@@ -2779,7 +2779,7 @@ void BattlescapeGenerator::runFakeInventory(
 				i != _unitList->end();
 				++i)
 		{
-			if (++j == selUnitId)
+			if (++j == unitOrder)
 			{
 				_battleSave->setSelectedUnit(*i);
 				break;

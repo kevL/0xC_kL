@@ -647,30 +647,30 @@ void MapData::setBigWall(int bigWall)
 }
 
 /**
- * Sets the TUWalk value.
- * @param TUWalk - the new TUWalk value
+ * Sets the TU-walk value.
+ * @param tu - the TU value
  */
-void MapData::setTUWalk(const int TUWalk)
+void MapData::setTuWalk(int tu)
 {
-	_tuWalk = TUWalk;
+	_tuWalk = tu;
 }
 
 /**
- * Sets the TUFly value.
- * @param TUFly - the new TUFly value
+ * Sets the TU-slide value.
+ * @param tu - the TU value
  */
-void MapData::setTUFly(const int TUFly)
+void MapData::setTuSlide(int tu)
 {
-	_tuFly = TUFly;
+	_tuSlide = tu;
 }
 
 /**
- * Sets the TUSlide value.
- * @param TUSlide - the new TUSlide value
+ * Sets the TU-fly value.
+ * @param tu - the TU value
  */
-void MapData::setTUSlide(const int TUSlide)
+void MapData::setTuFly(int tu)
 {
-	_tuSlide = TUSlide;
+	_tuFly = tu;
 }
 
 /**

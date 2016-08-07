@@ -56,9 +56,9 @@ private:
 	bool _isQuickBattle;
 	size_t
 		_recall,
-		_sel,
-		_selUnitId;
-	Uint8 _ammoColor;
+		_row,
+		_unitOrder;
+	Uint8 _loadColor;
 
 	Base* _base;
 	Craft* _craft;

@@ -77,20 +77,20 @@ void MCDPatch::load(const YAML::Node& node) // TODO: fill this out with more dat
 											tuWalk));
 		}
 
-		if ((*i)["TUFly"])
-		{
-			const int tuFly ((*i)["TUFly"].as<int>());
-			_tuFlys.push_back(std::make_pair(
-										mcdIndex,
-										tuFly));
-		}
-
 		if ((*i)["TUSlide"])
 		{
 			const int tuSlide ((*i)["TUSlide"].as<int>());
 			_tuSlides.push_back(std::make_pair(
 											mcdIndex,
 											tuSlide));
+		}
+
+		if ((*i)["TUFly"])
+		{
+			const int tuFly ((*i)["TUFly"].as<int>());
+			_tuFlys.push_back(std::make_pair(
+										mcdIndex,
+										tuFly));
 		}
 
 		if ((*i)["deathTile"])
@@ -253,15 +253,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _tuWalks.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setTUWalk(i->second);
-	}
-
-	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _tuFlys.begin();
-			i != _tuFlys.end();
-			++i)
-	{
-		dataSet->getRecords()->at(i->first)->setTUFly(i->second);
+		dataSet->getRecords()->at(i->first)->setTuWalk(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -269,7 +261,15 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _tuSlides.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setTUSlide(i->second);
+		dataSet->getRecords()->at(i->first)->setTuSlide(i->second);
+	}
+
+	for (std::vector<std::pair<size_t, int>>::const_iterator
+			i = _tuFlys.begin();
+			i != _tuFlys.end();
+			++i)
+	{
+		dataSet->getRecords()->at(i->first)->setTuFly(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator

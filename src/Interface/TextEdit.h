@@ -30,7 +30,7 @@ namespace OpenXcom
 
 enum TextEditConstraint
 {
-	TEC_NONE,				// 0
+	TEC_NONE,		// 0
 	TEC_SIGNED,		// 1
 	TEC_UNSIGNED	// 2
 };
@@ -50,8 +50,7 @@ class TextEdit final
 private:
 	bool
 		_blink,
-		_lock,
-		_numerical;
+		_lock;
 	size_t _caretPlace;
 	wchar_t _ascii;
 

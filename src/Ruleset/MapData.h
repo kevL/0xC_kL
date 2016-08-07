@@ -302,11 +302,11 @@ private:
 		void setBigWall(int bigWall);
 
 		/// Sets the TU-walk value.
-		void setTUWalk(const int TUWalk);
-		/// Sets the TU-fly value.
-		void setTUFly(const int TUFly);
+		void setTuWalk(int tu);
 		/// Sets the TU-slide value.
-		void setTUSlide(const int TUSlide);
+		void setTuSlide(int tu);
+		/// Sets the TU-fly value.
+		void setTuFly(int tu);
 
 		/// Sets the part as not-a-floor.
 		void setNoFloor(bool isNoFloor);

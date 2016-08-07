@@ -72,8 +72,8 @@ CraftEquipmentState::CraftEquipmentState(
 		_base(base),
 		_craft(base->getCrafts()->at(craftId)),
 		_rules(_game->getRuleset()),
-		_sel(0u),
-		_selUnitId(0u),
+		_row(0u),
+		_unitOrder(0u),
 		_recall(0u),
 		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1)
 {
@@ -97,7 +97,7 @@ CraftEquipmentState::CraftEquipmentState(
 
 	setInterface("craftEquipment");
 
-	_ammoColor = static_cast<Uint8>(_rules->getInterface("craftEquipment")->getElement("ammoColor")->color);
+	_loadColor = static_cast<Uint8>(_rules->getInterface("craftEquipment")->getElement("ammoColor")->color);
 
 	add(_window,		"window",	"craftEquipment");
 	add(_txtTitle,		"text",		"craftEquipment");
@@ -196,7 +196,7 @@ void CraftEquipmentState::init()
 	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
 	if (battleSave != nullptr)
 	{
-		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
+		_unitOrder = battleSave->getSelectedUnit()->getBattleOrder();
 		_game->getSavedGame()->setBattleSave();
 		_craft->setTactical(false);
 	}
@@ -277,7 +277,7 @@ void CraftEquipmentState::updateList() // private.
 				if (craftQty != 0)
 					color = _lstEquipment->getSecondaryColor();
 				else if (itRule->getBattleType() == BT_AMMO)
-					color = _ammoColor;
+					color = _loadColor;
 				else
 					color = _lstEquipment->getColor();
 
@@ -314,7 +314,7 @@ void CraftEquipmentState::showButtons() const // private.
  */
 void CraftEquipmentState::lstRightArrowPress(Action* action)
 {
-	_sel = _lstEquipment->getSelectedRow();
+	_row = _lstEquipment->getSelectedRow();
 
 	switch (action->getDetails()->button.button)
 	{
@@ -349,7 +349,7 @@ void CraftEquipmentState::lstRightArrowRelease(Action* action)
  */
 void CraftEquipmentState::lstLeftArrowPress(Action* action)
 {
-	_sel = _lstEquipment->getSelectedRow();
+	_row = _lstEquipment->getSelectedRow();
 
 	switch (action->getDetails()->button.button)
 	{
@@ -406,7 +406,7 @@ void CraftEquipmentState::rightByValue(int delta)
 	{
 		int baseQty;
 		if (_isQuickBattle == false)
-			baseQty = _base->getStorageItems()->getItemQuantity(_items[_sel]);
+			baseQty = _base->getStorageItems()->getItemQuantity(_items[_row]);
 		else
 		{
 			if (delta == std::numeric_limits<int>::max())
@@ -420,13 +420,13 @@ void CraftEquipmentState::rightByValue(int delta)
 			bool overLoad (false);
 			delta = std::min(delta, baseQty);
 
-			const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
+			const RuleItem* const itRule (_rules->getItemRule(_items[_row]));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
 				const int vhclCap (_craft->getRules()->getVehicleCapacity());
 				if (vhclCap != 0)
 				{
-					int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_sel])->getArmorType())->getSize());
+					int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_row])->getArmorType())->getSize());
 					quadrants *= quadrants;
 
 					const int spaceAvailable (std::min(_craft->getSpaceAvailable(),
@@ -454,7 +454,7 @@ void CraftEquipmentState::rightByValue(int delta)
 							}
 
 							if (_isQuickBattle == false)
-								_base->getStorageItems()->removeItem(_items[_sel], delta);
+								_base->getStorageItems()->removeItem(_items[_row], delta);
 						}
 						else // tank needs Ammo.
 						{
@@ -482,7 +482,7 @@ void CraftEquipmentState::rightByValue(int delta)
 
 								if (_isQuickBattle == false)
 								{
-									_base->getStorageItems()->removeItem(_items[_sel], delta);
+									_base->getStorageItems()->removeItem(_items[_row], delta);
 									_base->getStorageItems()->removeItem(type, clipsRequired * delta);
 								}
 							}
@@ -528,10 +528,10 @@ void CraftEquipmentState::rightByValue(int delta)
 
 				if (delta > 0)
 				{
-					_craft->getCraftItems()->addItem(_items[_sel], delta);
+					_craft->getCraftItems()->addItem(_items[_row], delta);
 
 					if (_isQuickBattle == false)
-						_base->getStorageItems()->removeItem(_items[_sel], delta);
+						_base->getStorageItems()->removeItem(_items[_row], delta);
 				}
 			}
 
@@ -568,13 +568,13 @@ void CraftEquipmentState::onLeft()
  */
 void CraftEquipmentState::leftByValue(int delta)
 {
-	const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
+	const RuleItem* const itRule (_rules->getItemRule(_items[_row]));
 
 	int craftQty;
 	if (itRule->isFixed() == true)
-		craftQty = _craft->getVehicleCount(_items[_sel]);
+		craftQty = _craft->getVehicleCount(_items[_row]);
 	else
-		craftQty = _craft->getCraftItems()->getItemQuantity(_items[_sel]);
+		craftQty = _craft->getCraftItems()->getItemQuantity(_items[_row]);
 
 	if (craftQty != 0)
 	{
@@ -584,7 +584,7 @@ void CraftEquipmentState::leftByValue(int delta)
 		{
 			if (_isQuickBattle == false)
 			{
-				_base->getStorageItems()->addItem(_items[_sel], delta);
+				_base->getStorageItems()->addItem(_items[_row], delta);
 				if (itRule->getFullClip() > 0)
 					_base->getStorageItems()->addItem(
 													itRule->getCompatibleAmmo()->front(),
@@ -608,10 +608,10 @@ void CraftEquipmentState::leftByValue(int delta)
 		}
 		else
 		{
-			_craft->getCraftItems()->removeItem(_items[_sel], delta);
+			_craft->getCraftItems()->removeItem(_items[_row], delta);
 
 			if (_isQuickBattle == false)
-				_base->getStorageItems()->addItem(_items[_sel], delta);
+				_base->getStorageItems()->addItem(_items[_row], delta);
 		}
 
 		updateListrow();
@@ -623,17 +623,17 @@ void CraftEquipmentState::leftByValue(int delta)
  */
 void CraftEquipmentState::updateListrow() const // private.
 {
-	const RuleItem* const itRule (_rules->getItemRule(_items[_sel]));
+	const RuleItem* const itRule (_rules->getItemRule(_items[_row]));
 
 	int craftQty;
 	if (itRule->isFixed() == true)
-		craftQty = _craft->getVehicleCount(_items[_sel]);
+		craftQty = _craft->getVehicleCount(_items[_row]);
 	else
-		craftQty = _craft->getCraftItems()->getItemQuantity(_items[_sel]);
+		craftQty = _craft->getCraftItems()->getItemQuantity(_items[_row]);
 
 	std::wostringstream woststr;
 	if (_isQuickBattle == false)
-		woststr << _base->getStorageItems()->getItemQuantity(_items[_sel]);
+		woststr << _base->getStorageItems()->getItemQuantity(_items[_row]);
 	else
 		woststr << L"-";
 
@@ -641,13 +641,13 @@ void CraftEquipmentState::updateListrow() const // private.
 	if (craftQty != 0)
 		color = _lstEquipment->getSecondaryColor();
 	else if (itRule->getBattleType() == BT_AMMO)
-		color = _ammoColor;
+		color = _loadColor;
 	else
 		color = _lstEquipment->getColor();
 
-	_lstEquipment->setRowColor(_sel, color);
-	_lstEquipment->setCellText(_sel, 1u, woststr.str());
-	_lstEquipment->setCellText(_sel, 2u, Text::intWide(craftQty));
+	_lstEquipment->setRowColor(_row, color);
+	_lstEquipment->setCellText(_row, 1u, woststr.str());
+	_lstEquipment->setCellText(_row, 2u, Text::intWide(craftQty));
 
 	_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
 						.arg(_craft->getQtySoldiers())
@@ -667,9 +667,9 @@ void CraftEquipmentState::updateListrow() const // private.
 void CraftEquipmentState::btnUnloadCraftClick(Action*) // private.
 {
 	for (
-			_sel = 0u;
-			_sel != _items.size();
-			++_sel)
+			_row = 0u;
+			_row != _items.size();
+			++_row)
 	{
 		leftByValue(std::numeric_limits<int>::max());
 	}
@@ -687,7 +687,7 @@ void CraftEquipmentState::btnInventoryClick(Action*) // private.
 	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-	bGen.runFakeInventory(_craft, nullptr, _selUnitId);
+	bGen.runFakeInventory(_craft, nullptr, _unitOrder);
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());

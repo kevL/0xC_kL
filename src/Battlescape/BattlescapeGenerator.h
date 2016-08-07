@@ -251,7 +251,7 @@ private:
 		void runFakeInventory(
 				Craft* const craft,
 				Base* const base = nullptr,
-				size_t selUnitId = 0u);
+				size_t unitOrder = 0u);
 };
 
 }
