@@ -533,7 +533,7 @@ void ExplosionBState::explode() // private.
 
 					if (_unit != nullptr) // safety.
 						_unit->toggleShoot();
-//					_parent->getMap()->cacheUnitSprites();
+
 					_parent->popBattleState();
 					return;
 				}

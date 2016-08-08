@@ -530,24 +530,24 @@ void BattlescapeGame::popBattleState()
 
 					if (_battleSave->getSide() != FACTION_PLAYER && _debugPlay == false)
 					{
-						BattleUnit* selUnit (_battleSave->getSelectedUnit());
+						BattleUnit* aiUnit (_battleSave->getSelectedUnit());
 						if (_AIActionCounter > 2	// AI does two think-cycles per unit before switching to the next
-							|| selUnit == nullptr	// unit -- or unit got killed before doing its second think.
-							|| selUnit->getHealth() == 0
-							|| selUnit->getStun() >= selUnit->getHealth())
-//							|| selUnit->isOut_t() == true)
+							|| aiUnit == nullptr	// unit -- or unit got killed before doing its second think.
+							|| aiUnit->getHealth() == 0
+							|| aiUnit->getStun() >= aiUnit->getHealth())
+//							|| aiUnit->isOut_t() == true)
 						{
-							if (selUnit != nullptr) // NOTE: This is getting silly.
+							if (aiUnit != nullptr) // NOTE: This is getting silly.
 							{
-								selUnit->flagCache();
-								getMap()->cacheUnitSprite(selUnit);
+								aiUnit->flagCache();
+								getMap()->cacheUnitSprite(aiUnit);
 							}
 
 							if (_battleStates.empty() == true) // nothing left for current Actor to do
 							{
 								if (_battleSave->selectNextUnit(false, true) != nullptr)
 								{
-									//Log(LOG_INFO) << "bg:popBattleState() selUnit funky - next id-" << _battleSave->getSelectedUnit()->getId();
+									//Log(LOG_INFO) << "bg:popBattleState() aiUnit funky - next id-" << _battleSave->getSelectedUnit()->getId();
 									_AIActionCounter = 0;
 								}
 								else
@@ -557,9 +557,9 @@ void BattlescapeGame::popBattleState()
 								}
 							}
 
-							if ((selUnit = _battleSave->getSelectedUnit()) != nullptr)
+							if ((aiUnit = _battleSave->getSelectedUnit()) != nullptr)
 							{
-								getMap()->getCamera()->centerPosition(selUnit->getPosition());
+								getMap()->getCamera()->centerPosition(aiUnit->getPosition());
 								if (_battleSave->getDebugTac() == true)
 								{
 									_parentState->refreshMousePosition();

@@ -263,17 +263,21 @@ void UnitDieBState::think()
 		}
 	}
 //	#4
-	else if (_unit->isOut_t(OUT_STAT) == true) // and this ought be Status_Dead OR _Unconscious.
+	else if (_unit->getUnitStatus() == STATUS_DEAD
+		||   _unit->getUnitStatus() == STATUS_UNCONSCIOUS)
 	{
 		_extraTicks = 1;
 
-		if (_unit->getSpecialAbility() == SPECAB_EXPLODE
-			&& _unit->getUnitStatus() == STATUS_UNCONSCIOUS)
+		switch (_unit->getUnitStatus())
 		{
-			_unit->instaKill();
+			case STATUS_DEAD:
+				_unit->putDown(); // TODO: Straighten these out vis-a-vis the cTor, knockOut().
+				break;
+
+			case STATUS_UNCONSCIOUS:
+				if (_unit->getSpecialAbility() == SPECAB_EXPLODE)
+					_unit->instaKill();
 		}
-		else
-			_unit->putDown(); // TODO: Straighten these out vis-a-vis the cTor, knockOut().
 
 		if (_unit->getSpawnType().empty() == false)
 			_parent->convertUnit(_unit);
@@ -299,7 +303,7 @@ void UnitDieBState::convertToBody() // private.
 
 	if (_hidden == false)
 		_battleSave->getBattleState()->showPsiButton(false);	// ... why is this here ...
-																// any reason it's not in, say, the cTor or init()
+																// any reason it's not in, say, the cTor or init() or popBattleState()
 	if (_unit->canInventory() == true
 		&& (Options::battleWeaponSelfDestruction == false
 			|| _unit->getOriginalFaction() != FACTION_HOSTILE
