@@ -292,8 +292,8 @@ private:
 
 		/// Sets a specified BattleUnit on the Tile.
 		void setTileUnit(
-				BattleUnit* const unit = nullptr,
-				const Tile* const tileBelow = nullptr);
+				BattleUnit* const unit = nullptr);
+//				const Tile* const tileBelow = nullptr);
 		/// Sets a specified BattleUnit transitorily on the Tile.
 		void setTransitUnit(BattleUnit* const unit);
 		/**

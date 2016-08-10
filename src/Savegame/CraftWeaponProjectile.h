@@ -107,9 +107,9 @@ private:
 		void stepProjectile();
 
 		/// Sets the CraftWeaponProjectile's y-position.
-		void setPosition(int pos);
+		void setCwpPosition(int pos);
 		/// Gets the CraftWeaponProjectile's y-position.
-		int getPosition() const;
+		int getCwpPosition() const;
 		/// Sets the CraftWeaponProjectile's horizontal position. This determines from which weapon it has been fired.
 		void setHorizontalPosition(int pos);
 		/// Gets the CraftWeaponProjectile's horizontal position.

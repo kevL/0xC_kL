@@ -107,7 +107,7 @@ void RuleCraft::load(
 	_transferTime	= node["transferTime"]	.as<int>(_transferTime);
 	_score			= node["score"]			.as<int>(_score);
 	_spacecraft		= node["spacecraft"]	.as<bool>(_spacecraft);
-	_deployment		= node["deployment"]	.as<std::vector<std::vector<int>>>(_deployment);
+	_unitLocations	= node["unitLocations"]	.as<std::vector<std::vector<int>>>(_unitLocations);
 
 	if (const YAML::Node& terrain = node["battlescapeTerrainData"])
 	{
@@ -331,8 +331,8 @@ RuleTerrain* RuleCraft::getTacticalTerrainData()
 }
 
 /**
- * Checks if this ship is capable of going to mars.
- * @return, true if this ship is capable of going to Mars
+ * Checks if the Craft is capable of going to Mars.
+ * @return, true if ship is space-worthy
  */
 bool RuleCraft::getSpacecraft() const
 {
@@ -349,12 +349,12 @@ int RuleCraft::getListOrder() const
 }
 
 /**
- * Gets the deployment layout for the Craft.
- * @return, reference to a vector of vectors representing the deployment layout
+ * Gets the unit-location spawn-points for the Craft.
+ * @return, reference to a vector of vectors of unit-locations
  */
-std::vector<std::vector<int>>& RuleCraft::getCraftDeployment()
+std::vector<std::vector<int>>& RuleCraft::getUnitLocations()
 {
-	return _deployment;
+	return _unitLocations;
 }
 
 }

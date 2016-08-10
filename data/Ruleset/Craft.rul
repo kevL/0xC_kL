@@ -83,7 +83,7 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
         - type: LIGHTNIN
           width: 20
           length: 10
-    deployment:
+    unitLocations:
       - [10, 5, 1, 2]
       - [10, 6, 1, 2]
       - [10, 4, 1, 2]
@@ -216,8 +216,8 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
     prjType: 3
     prjSpeed: 7
 #
-# LIGHTNING deployment:
-#    deployment:
+# LIGHTNING unitLocations:
+#    unitLocations:
 #      - [10, 5, 1, 2]
 #      - [10, 6, 1, 2]
 #      - [10, 4, 1, 2]
@@ -230,8 +230,8 @@ craftWeapons: #new order: stingray,avalanche,cannon,fusionball,lasercannon,plasm
 #      - [6, 6, 1, 2]
 #      - [6, 4, 1, 2]
 #      - [6, 5, 1, 2]
-# AVENGER deployment:
-#    deployment:
+# AVENGER unitLocations:
+#    unitLocations:
 #      - [4, 9, 1, 0]
 #      - [5, 9, 1, 0]
 #      - [4, 10, 1, 0]

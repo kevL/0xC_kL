@@ -365,8 +365,8 @@ void Inventory::drawItems()
 			const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
 									  [(*i)->getSlotY()]);
 			int fatals;
-			if ((*i)->getItemUnit() != nullptr)
-				fatals = (*i)->getItemUnit()->getFatalWounds();
+			if ((*i)->getBodyUnit() != nullptr)
+				fatals = (*i)->getBodyUnit()->getFatalWounds();
 			else
 				fatals = 0;
 
@@ -979,8 +979,8 @@ void Inventory::moveItem( // private.
 			item->changeOwner(); // NOTE: Already done in case of unload() during pre-battle equip.
 			_selUnit->getUnitTile()->addItem(item);
 
-			if (item->getItemUnit() != nullptr) //&& item->getItemUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				item->getItemUnit()->setPosition(_selUnit->getPosition());
+			if (item->getBodyUnit() != nullptr) //&& item->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+				item->getBodyUnit()->setPosition(_selUnit->getPosition());
 		}
 		else if (item->getInventorySection() == nullptr) // unload a weapon-clip to left hand
 			item->changeOwner(_selUnit);
@@ -990,8 +990,8 @@ void Inventory::moveItem( // private.
 
 			_selUnit->getUnitTile()->removeItem(item);
 
-			if (item->getItemUnit() != nullptr) //&& item->getItemUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				item->getItemUnit()->setPosition(Position(-1,-1,-1));
+			if (item->getBodyUnit() != nullptr) //&& item->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+				item->getBodyUnit()->setPosition(Position(-1,-1,-1));
 
 			if (_tuMode == true) // To prevent units from picking up large objects and running around on the same turn with nearly full TU
 				_selUnit->setTu(_selUnit->getTu() - item->getRules()->getWeight()); // its weight becomes an extra tu-burden.
@@ -1079,7 +1079,7 @@ bool Inventory::canStack( // private.
 				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()						// and the same ammo type
 				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
 		&& itemA->getFuse() == itemB->getFuse()															// and both have the same fuse-setting
-		&& itemA->getItemUnit() == nullptr && itemB->getItemUnit() == nullptr							// and neither is a corpse or unconscious unit
+		&& itemA->getBodyUnit() == nullptr && itemB->getBodyUnit() == nullptr							// and neither is a corpse or unconscious unit
 		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
 		&& itemA->getHealQuantity() == itemB->getHealQuantity()
 		&& itemA->getStimulantQuantity() == itemB->getStimulantQuantity());
@@ -1097,7 +1097,7 @@ void Inventory::arrangeGround(int dir)
 
 	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 
-	// first move all items out of the way -> a big number in X direction to right
+	// first move all items out of the way -> a big number in x-direction to right
 	for (std::vector<BattleItem*>::const_iterator
 			i = _selUnit->getUnitTile()->getInventory()->begin();
 			i != _selUnit->getUnitTile()->getInventory()->end();

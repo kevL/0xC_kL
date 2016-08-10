@@ -328,7 +328,7 @@ private:
 		bool psiAttack(BattleAction* const action);
 
 		/// Applies gravity to anything that occupies a Tile.
-		Tile* applyGravity(Tile* const tile) const;
+		void applyGravity(Tile* const tile) const;
 
 		/// Gets the AI to look through a window.
 		int faceWindow(const Position& pos) const;

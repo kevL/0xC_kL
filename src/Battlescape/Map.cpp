@@ -2341,7 +2341,7 @@ void Map::animateMap(bool redraw)
 		if ((*i)->getUnitTile() != nullptr //(*i)->isOut_t(OUT_STAT) == false
 			&& (*i)->getArmor()->getConstantAnimation() == true)
 		{
-			(*i)->flagCache();
+			(*i)->setCacheInvalid();
 			cacheUnitSprite(*i);
 		}
 	}

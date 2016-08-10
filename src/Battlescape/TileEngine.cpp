@@ -1595,7 +1595,8 @@ bool TileEngine::checkReactionFire(
 	if (_battleSave->getSide() != FACTION_NEUTRAL						// no reaction on civilian turn.
 		&& triggerUnit->getFaction() == _battleSave->getSide()			// spotted unit must be current side's faction
 		&& triggerUnit->getUnitTile() != nullptr						// and must be on map
-		&& triggerUnit->isOut_t(OUT_HLTH_STUN) == false					// and must be conscious
+		&& triggerUnit->getHealth() != 0								// and must be conscious
+		&& triggerUnit->isStunned() == false
 //		&& _battleSave->getBattleGame()->playerPanicHandled() == true)	// and ... nahhh. Note that doesn't affect aLien RF anyway.
 		&& (triggerUnit->getFaction() == FACTION_PLAYER					// Mc'd aLiens do not RF and Xcom does not RF on Mc'd Xcom-units.
 			|| triggerUnit->isMindControlled() == false))
@@ -2192,9 +2193,9 @@ void TileEngine::hit(
 				if (power != 0)
 				{
 					if (attacker != nullptr
-						&& (antecedentWounds < targetUnit->getFatalWounds()
-							|| targetUnit->isOut_t(OUT_HEALTH) == true))	// ... just do this here and bDone with it.
-					{														// Regularly done in BattlescapeGame::checkCasualties()
+						&& (targetUnit->getHealth() == 0
+							|| antecedentWounds < targetUnit->getFatalWounds()))	// ... just do this here and bDone with it.
+					{																// Regularly done in BattlescapeGame::checkCasualties()
 						targetUnit->killerFaction(attacker->getFaction());
 					}
 					// NOTE: Not so sure that's been setup right (cf. other kill-credit code as well as DebriefingState)
@@ -2202,7 +2203,8 @@ void TileEngine::hit(
 					// And, probly don't have to state if killed by aLiens: probly assumed in DebriefingState.
 
 					if (targetUnit->getSpecialAbility() == SPECAB_EXPLODE // cyberdiscs, usually. Also, cybermites ... (and Zombies, on fire).
-						&& targetUnit->isOut_t(OUT_HLTH_STUN) == true
+						&& (targetUnit->getHealth() == 0 || targetUnit->isStunned() == true)
+//						&& targetUnit->isOut_t(OUT_HLTH_STUN) == true
 						&& (targetUnit->isZombie() == true
 							|| (   dType != DT_STUN		// don't explode if stunned. Maybe... see above.
 								&& dType != DT_SMOKE
@@ -2542,7 +2544,7 @@ void TileEngine::explode(
 									i != tileStop->getInventory()->end();
 									++i)
 							{
-								if ((bu = (*i)->getItemUnit()) != nullptr
+								if ((bu = (*i)->getBodyUnit()) != nullptr
 									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 									&& bu->getTakenExpl() == false)
 								{
@@ -2626,7 +2628,7 @@ void TileEngine::explode(
 								{
 									//Log(LOG_INFO) << "pos " << tileStop->getPosition();
 									//Log(LOG_INFO) << ". . INVENTORY: Item = " << (*i)->getRules()->getType();
-									if ((bu = (*i)->getItemUnit()) != nullptr
+									if ((bu = (*i)->getBodyUnit()) != nullptr
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 										&& bu->getTakenExpl() == false)
 									{
@@ -2645,7 +2647,7 @@ void TileEngine::explode(
 										bu->takeDamage(Position(0,0,0), power_OnUnit, DT_HE);
 										//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
 
-										if (bu->isOut_t(OUT_HEALTH) == true)
+										if (bu->getHealth() == 0)
 										{
 											//Log(LOG_INFO) << ". . . . INVENTORY: instaKill";
 //											bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
@@ -2733,7 +2735,7 @@ void TileEngine::explode(
 									i != tileStop->getInventory()->end();
 									++i)
 							{
-								if ((bu = (*i)->getItemUnit()) != nullptr
+								if ((bu = (*i)->getBodyUnit()) != nullptr
 									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 									&& bu->getTakenExpl() == false)
 								{
@@ -2831,7 +2833,7 @@ void TileEngine::explode(
 										i != tileFire->getInventory()->end();
 										)
 								{
-									if ((bu = (*i)->getItemUnit()) != nullptr
+									if ((bu = (*i)->getBodyUnit()) != nullptr
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
 										&& bu->getTakenExpl() == false)
 									{
@@ -2841,7 +2843,7 @@ void TileEngine::explode(
 																(_powerE * 3) >> 2u);
 										bu->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
 
-										if (bu->isOut_t(OUT_HEALTH) == true)
+										if (bu->getHealth() == 0)
 										{
 //											bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
 											if (attacker != nullptr)
@@ -2907,8 +2909,7 @@ void TileEngine::explode(
 						// kL_note: See Above^
 						if (attacker != nullptr)
 						{
-//							if (targetUnit->getHealth() == 0
-							if (targetUnit->isOut_t(OUT_HEALTH) == true
+							if (targetUnit->getHealth() == 0
 								|| antecedentWounds < targetUnit->getFatalWounds())
 							{
 								targetUnit->killerFaction(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkCasualties()
@@ -6365,152 +6366,132 @@ bool TileEngine::psiAttack(BattleAction* const action)
 }
 
 /**
- * Applies gravity to a tile - causes items and units to drop.
- * @param tile - pointer to a Tile to check
- * @return, pointer to the Tile where stuff ends up
+ * Applies gravity to a specified Tile.
+ * @note BattleItems and BattleUnits will drop to a lower Tile if @a tile does
+ * not have a proper floor.
+ * @param tile - pointer to a tile
  */
-Tile* TileEngine::applyGravity(Tile* const tile) const
+void TileEngine::applyGravity(Tile* const tile) const
 {
-	if (tile == nullptr)
-		return nullptr;
+	if (tile == nullptr) return; // safety.
 
 	const Position pos (tile->getPosition());
-	if (pos.z == 0)
-		return tile;
-
-
-	const bool nulItems (tile->getInventory()->empty());
-	BattleUnit* const unit (tile->getTileUnit());
-
-	if (unit == nullptr && nulItems == true)
-		return tile;
-
-
-	Tile
-		* deltaTile (tile),
-		* deltaTileBelow (nullptr);
-	Position posBelow (pos);
-
-	if (unit != nullptr)
+	if (pos.z == 0
+		|| tile->hasNoFloor(_battleSave->getTile(pos + Position(0,0,-1))) == false)
 	{
-		const int unitSize (unit->getArmor()->getSize());
-		while (posBelow.z > 0)
+		return; // early out.
+	}
+
+
+	BattleUnit* const unit (tile->getTileUnit()); // NOTE: This could be any quadrant of a large unit.
+
+	const bool hasItems (tile->getInventory()->empty() == false);
+
+	if (hasItems == true || unit != nullptr)
+	{
+		Tile
+			* tileDest,
+			* tileDestBelow;
+		Position posDest;
+
+		if (hasItems == true)
 		{
-			bool canFall (true);
-			for (int
-					y = 0;
-					y != unitSize && canFall == true;
-					++y)
+			posDest = pos;
+			while (posDest.z != 0)
 			{
-				for (int
-						x = 0;
-						x != unitSize && canFall == true;
-						++x)
-				{
-					deltaTile = _battleSave->getTile(Position(
-															posBelow.x + x,
-															posBelow.y + y,
-															posBelow.z));
-					deltaTileBelow = _battleSave->getTile(Position(
-															posBelow.x + x,
-															posBelow.y + y,
-															posBelow.z - 1));
-					if (deltaTile->hasNoFloor(deltaTileBelow) == false)	// note: polar water has no floor, so units that die on them ... uh, sink.
-						canFall = false;								// ... before I changed the loop condition to > 0, that is
-				}
+				tileDest = _battleSave->getTile(posDest);
+				tileDestBelow = _battleSave->getTile(Position(
+															posDest.x,
+															posDest.y,
+															posDest.z - 1));
+				if (tileDest->hasNoFloor(tileDestBelow) == true)
+					--posDest.z;
+				else
+					break;
 			}
 
-			if (canFall == false)
-				break;
-
-			--posBelow.z;
+			if (posDest.z != pos.z)
+			{
+				tileDest = _battleSave->getTile(posDest);
+				for (std::vector<BattleItem*>::const_iterator
+						i = tile->getInventory()->begin();
+						i != tile->getInventory()->end();
+						++i)
+				{
+					tileDest->addItem(*i);
+					if ((*i)->getBodyUnit() != nullptr) //&& (*i)->getBodyUnit()->getPosition() == pos
+						(*i)->getBodyUnit()->setPosition(posDest);
+				}
+				tile->getInventory()->clear();
+			}
 		}
 
-		if (posBelow != pos)
+		if (unit != nullptr)
 		{
-			if (unit->isOut_t(OUT_STAT) == true)
+			// TODO: This routine should do a test w/ sbg:setUnitPosition()
+			// else a falling large unit could splice through a wall, etc.
+			bool canFall (true);
+			const int unitSize (unit->getArmor()->getSize());
+
+			posDest = unit->getPosition();
+			while (posDest.z != 0 && canFall == true)
 			{
+				canFall = true;
 				for (int
-						y = unitSize - 1;
-						y != -1;
-						--y)
+						y = 0;
+						y != unitSize && canFall == true;
+						++y)
 				{
 					for (int
-							x = unitSize - 1;
-							x != -1;
-							--x)
+							x = 0;
+							x != unitSize && canFall == true;
+							++x)
 					{
-						_battleSave->getTile(pos + Position(x,y,0))->setTileUnit();
+						tileDest = _battleSave->getTile(Position(
+																posDest.x + x,
+																posDest.y + y,
+																posDest.z));
+						tileDestBelow = _battleSave->getTile(Position(
+																posDest.x + x,
+																posDest.y + y,
+																posDest.z - 1));
+						if (tileDest->hasNoFloor(tileDestBelow) == false)	// NOTE: Water has no floor so units that die on them ... try to sink.
+							canFall = false;								// ... before I changed the loop condition to > 0, that is
 					}
 				}
-				unit->setPosition(posBelow);
+				if (canFall == true) --posDest.z;
 			}
-			else
+
+			if (posDest.z != pos.z)
 			{
+				unit->kneelUnit(false);
 				switch (unit->getMoveTypeUnit())
 				{
-					case MT_FLY:
-						if (unit->isKneeled() == true)
-							unit->flagCache();
-
-						unit->startWalking(							// move to the position you're already in.
-										unit->getUnitDirection(),	// this will unset the kneeling flag, set the floating flag, etc.
-										unit->getPosition(),
-										_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
-						unit->setUnitStatus(STATUS_STANDING);		// and set Status_Standing rather than _Walking or _Flying to avoid weirdness.
-						break;
-
 					case MT_WALK:
 					case MT_SLIDE:
-						unit->startWalking(
+//						tileDest = _battleSave->getTile(Position(
+//															unit->getPosition().x,
+//															unit->getPosition().y,
+//															posDest.z));
+						//Log(LOG_INFO) << "te:applyGravity() -> addFallingUnit() id-" << unit->getId();
+						unit->startWalking( // TODO: Figure out how UnitFallBState really works, or should work.
 										Pathfinding::DIR_DOWN,
 										unit->getPosition() + Position(0,0,-1),
 										_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
-						//Log(LOG_INFO) << "TileEngine::applyGravity(), addFallingUnit() ID " << unit->getId();
 						_battleSave->addFallingUnit(unit);
+						break;
+
+					case MT_FLY:
+						tileDest = unit->getUnitTile();
+						tileDestBelow = _battleSave->getTile(tileDest->getPosition() + Position(0,0,-1));
+						if (tileDest->hasNoFloor(tileDestBelow) == true)
+							unit->setFloating();
+						else
+							unit->setFloating(false);
 				}
 			}
 		}
 	}
-
-	deltaTile = tile;
-	posBelow = pos;
-
-	while (posBelow.z > 0)
-	{
-		deltaTile = _battleSave->getTile(posBelow);
-		deltaTileBelow = _battleSave->getTile(Position(
-													posBelow.x,
-													posBelow.y,
-													posBelow.z - 1));
-
-		if (deltaTile->hasNoFloor(deltaTileBelow) == false)
-			break;
-
-		--posBelow.z;
-	}
-
-	if (posBelow != pos)
-	{
-		deltaTile = _battleSave->getTile(posBelow);
-		if (nulItems == false)
-		{
-			for (std::vector<BattleItem*>::const_iterator
-					i = tile->getInventory()->begin();
-					i != tile->getInventory()->end();
-					++i)
-			{
-				if ((*i)->getItemUnit() != nullptr
-					&& tile->getPosition() == (*i)->getItemUnit()->getPosition())
-				{
-					(*i)->getItemUnit()->setPosition(deltaTile->getPosition());
-				}
-				deltaTile->addItem(*i);
-			}
-			tile->getInventory()->clear();
-		}
-	}
-	return deltaTile;
 }
 
 /**
@@ -6523,7 +6504,7 @@ int TileEngine::faceWindow(const Position& pos) const
 	const Tile* tile;
 	if ((tile = _battleSave->getTile(pos)) != nullptr)
 	{
-		if (tile->getMapData(O_NORTHWALL) != nullptr
+		if (   tile->getMapData(O_NORTHWALL) != nullptr
 			&& tile->getMapData(O_NORTHWALL)->stopLOS() == false)
 		{
 			if (pos.y != 0)
@@ -6532,7 +6513,7 @@ int TileEngine::faceWindow(const Position& pos) const
 				return -1; // do not look into the Void.
 		}
 
-		if (tile->getMapData(O_WESTWALL) != nullptr
+		if (   tile->getMapData(O_WESTWALL) != nullptr
 			&& tile->getMapData(O_WESTWALL)->stopLOS() == false)
 		{
 			if (pos.x != 0)
@@ -6558,8 +6539,6 @@ int TileEngine::faceWindow(const Position& pos) const
 	{
 		if (pos.y != _battleSave->getMapSizeY() - 1)
 			return 4;
-//		else
-//			return -1;
 	}
 
 	return -1;

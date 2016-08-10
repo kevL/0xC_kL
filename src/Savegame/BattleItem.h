@@ -150,7 +150,7 @@ private:
 		int getId() const;
 
 		/// Gets the BattleItem's corpse-unit if any.
-		BattleUnit* getItemUnit() const;
+		BattleUnit* getBodyUnit() const;
 		/// Sets the BattleItem's corpse-unit.
 		void setItemUnit(BattleUnit* unit);
 

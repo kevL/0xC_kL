@@ -862,7 +862,7 @@ void DogfightState::updateDogfight()
 			switch ((*i)->getDirection())
 			{
 				case PD_UP: // Projectiles fired by interceptor.
-					if (((*i)->getPosition() >= _dist // Projectile reached the UFO - determine if it's been hit.
+					if (((*i)->getCwpPosition() >= _dist // Projectile reached the UFO - determine if it's been hit.
 							|| ((*i)->getGlobalType() == PGT_BEAM
 								&& (*i)->isFinished() == true))
 						&& _ufo->isCrashed() == false
@@ -924,7 +924,7 @@ void DogfightState::updateDogfight()
 
 					if ((*i)->getGlobalType() == PGT_MISSILE) // Check if projectile passed its maximum range.
 					{
-						if ((*i)->getPosition() >= (*i)->getRange())
+						if ((*i)->getCwpPosition() >= (*i)->getRange())
 							(*i)->endProjectile();
 						else if (_ufo->isCrashed() == false)
 							prjInFlight = true;
@@ -1000,7 +1000,7 @@ void DogfightState::updateDogfight()
 				)
 		{
 			if ((*i)->isFinished() == true
-				|| ((*i)->getMissed() == true && (*i)->getPosition() < 1))
+				|| ((*i)->getMissed() == true && (*i)->getCwpPosition() < 1))
 			{
 				delete *i;
 				i = _projectiles.erase(i);
@@ -1358,7 +1358,7 @@ void DogfightState::fireWeaponUfo()
 	prj->setPower(_ufo->getRules()->getWeaponPower());
 	prj->setDirection(PD_DOWN);
 	prj->setHorizontalPosition(PH_CENTER);
-	prj->setPosition(_dist - (_ufoSize >> 1u));
+	prj->setCwpPosition(_dist - (_ufoSize >> 1u));
 	_projectiles.push_back(prj);
 
 	_game->getResourcePack()->playSoundFx(
@@ -1880,7 +1880,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 		case PGT_MISSILE:
 		{
 			--pos_x;
-			const int pos_y (_battleScope->getHeight() - (prj->getPosition() >> 3u));
+			const int pos_y (_battleScope->getHeight() - (prj->getCwpPosition() >> 3u));
 			for (int
 					x = 0;
 					x != 3;

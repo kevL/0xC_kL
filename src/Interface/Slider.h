@@ -62,7 +62,7 @@ private:
 	TextButton *_button;
 
 	/// Sets the Slider's position.
-	void setPosition(double pos);
+	void setSliderPosition(double pos);
 
 
 	public:

@@ -145,7 +145,7 @@ void CraftWeaponProjectile::stepProjectile()
  * dogfight-radar.
  * @param pos - y-position
  */
-void CraftWeaponProjectile::setPosition(int pos)
+void CraftWeaponProjectile::setCwpPosition(int pos)
 {
 	_pos = pos;
 }
@@ -155,7 +155,7 @@ void CraftWeaponProjectile::setPosition(int pos)
  * dogfight-radar.
  * @return, the y-position
  */
-int CraftWeaponProjectile::getPosition() const
+int CraftWeaponProjectile::getCwpPosition() const
 {
 	return _pos;
 }

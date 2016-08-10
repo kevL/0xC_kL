@@ -692,7 +692,7 @@ YAML::Node BattleUnit::save() const
 //	}
 
 	if (_faction == FACTION_PLAYER && _originalFaction == FACTION_PLAYER
-		&& _status == STATUS_STANDING) //isOut_t(OUT_STAT) == false)
+		&& _status == STATUS_STANDING)
 	{
 		for (size_t
 				i = 0u;
@@ -801,15 +801,9 @@ Soldier* BattleUnit::getGeoscapeSoldier() const
 /**
  * Sets this BattleUnit's Position.
  * @param pos			- reference to a position
- * @param updateLast	- true to update old position (default true)
  */
-void BattleUnit::setPosition(
-		const Position& pos,
-		bool updateLast)
+void BattleUnit::setPosition(const Position& pos)
 {
-	if (updateLast == true)
-		_posStart = _pos;
-
 	_pos = pos;
 }
 
@@ -825,7 +819,7 @@ const Position& BattleUnit::getPosition() const
 /**
  * Gets the Position at which this BattleUnit started walking Tile-to-Tile.
  * @note This is one step only - UnitWalkBState updates it after *every* tile.
- * @return, reference to the position
+ * @return, reference to the origin
  */
 const Position& BattleUnit::getStartPosition() const
 {
@@ -1110,7 +1104,7 @@ void BattleUnit::startWalking(
 
 		default:
 			_dir = dir;
-			if (_tile->hasNoFloor(tileBelow) == true)
+			if (_tile->hasNoFloor(tileBelow) == true) // NOTE: The tile is the Tile of only the primary quadrant for large units.
 			{
 				_status = STATUS_FLYING;
 				_floating = true;
@@ -1335,7 +1329,7 @@ void BattleUnit::setCache(
 /**
  * Clears this BattleUnit's sprite-cached flag.
  */
-void BattleUnit::flagCache()
+void BattleUnit::setCacheInvalid()
 {
 	_cacheInvalid = true;
 }
@@ -1365,8 +1359,11 @@ const std::vector<std::pair<Uint8, Uint8>>& BattleUnit::getRecolor() const
  */
 void BattleUnit::kneelUnit(bool kneel)
 {
-	_kneeled = kneel;
-	_cacheInvalid = true;
+	if (_kneeled != kneel)
+	{
+		_kneeled = kneel;
+		_cacheInvalid = true;
+	}
 }
 
 /**
@@ -1376,6 +1373,15 @@ void BattleUnit::kneelUnit(bool kneel)
 bool BattleUnit::isKneeled() const
 {
 	return _kneeled;
+}
+
+/**
+ * Sets the BattleUnit floating.
+ * param isAirborne - true if floating (default true)
+ */
+void BattleUnit::setFloating(bool isAirborne)
+{
+	_floating = isAirborne;
 }
 
 /**
@@ -1634,7 +1640,7 @@ int BattleUnit::takeDamage(
 				}
 		}
 
-		if (isOut_t(OUT_HEALTH) == false && selfAware == true)
+		if (_health != 0 && selfAware == true)
 		{
 			moraleChange(-wounds * 3);
 
@@ -1660,8 +1666,11 @@ int BattleUnit::takeDamage(
 			}
 		}
 
-		if (_status != STATUS_UNCONSCIOUS && isOut_t(OUT_HLTH_STUN) == true) // if not already collapsed but about to be.
+		if (_status != STATUS_UNCONSCIOUS // if not already collapsed but about to be.
+			&& (_health == 0 || isStunned() == true))
+		{
 			_aboutToCollapse = true;
+		}
 	}
 
 	// TODO: give a short "ugh" if hit causes no damage or perhaps stuns ( power must be > 0 though );
@@ -1761,13 +1770,13 @@ void BattleUnit::setHealth(int health)
 }
 
 /**
- * Does an amount of stun-recovery.
- * @param power - stun to recover
+ * Reduces this BattleUnit's stun-level.
+ * @param stun - stun to recover
  * @return, true if unit revives
  */
-bool BattleUnit::healStun(int power)
+bool BattleUnit::reduceStun(int stun)
 {
-	if ((_stunLevel -= power) < 0)
+	if ((_stunLevel -= stun) < 0)
 		_stunLevel = 0;
 
 	if (_status == STATUS_UNCONSCIOUS && _stunLevel < _health)
@@ -1777,8 +1786,8 @@ bool BattleUnit::healStun(int power)
 }
 
 /**
- * Gets the amount of stun-damage this BattleUnit has.
- * @return, stun-level
+ * Gets this BattleUnit's stun-level.
+ * @return, quantity of stun
  */
 int BattleUnit::getStun() const
 {
@@ -1787,10 +1796,20 @@ int BattleUnit::getStun() const
 
 /**
  * Sets this BattleUnit's stun-level.
+ * @param stun - quantity of stun
  */
 void BattleUnit::setStun(int stun)
 {
 	_stunLevel = stun;
+}
+
+/**
+ * Checks if this BattleUnit is currently stunned.
+ * return, true if stunned
+ */
+bool BattleUnit::isStunned()
+{
+	return _stunLevel >= _health;
 }
 
 /**
@@ -2461,7 +2480,7 @@ void BattleUnit::prepareUnit(bool preBattle)
 			&& (_geoscapeSoldier != nullptr
 				|| _unitRule->isMechanical() == false))
 		{
-			healStun(RNG::generate(1,3)); // recover stun
+			reduceStun(RNG::generate(1,3)); // recover stun
 		}
 
 		if (_status != STATUS_UNCONSCIOUS)
@@ -3565,19 +3584,19 @@ int BattleUnit::improveStat(int xp) const // private.
 
 /**
  * Get this BattleUnit's minimap sprite index.
- * @note Used to display the unit on the minimap.
- * @return, the unit minimap index
+ * @note Used to display the unit on the MiniMap.
+ * @return, the unit's ScanG-index
  */
 int BattleUnit::getMiniMapSpriteIndex() const
 {
-	// minimap sprite index:
-	// * 0-2   : Xcom soldier
-	// * 3-5   : Alien
-	// * 6-8   : Civilian
-	// * 9-11  : Item
-	// * 12-23 : Xcom HWP
-	// * 24-35 : Alien big terror unit(cyberdisk, ...)
-	if (isOut_t(OUT_STAT) == true)
+	// ScanG sprite index:
+	// 0-2   - Xcom soldier
+	// 3-5   - Alien
+	// 6-8   - Civilian
+	// 9-11  - Item
+	// 12-23 - Xcom HWP
+	// 24-35 - Alien big terror unit (cyberdisk, etc)
+	if (_status != STATUS_STANDING)
 		return 9;
 
 	switch (_faction)
@@ -3682,22 +3701,19 @@ void BattleUnit::morphine()
 						   _morale + 50 - static_cast<int>(30.f * healthPct));
 	}
 
-	if (isOut_t(OUT_HEALTH) == true			// just died. Use death animations
-		|| (isOut_t(OUT_STUNNED) == true	// unless already unconscious.
-			&& isOut_t(OUT_STAT) == false))
+	if (_health == 0												// just died. Use death animations
+		|| (isStunned() == true && _status != STATUS_UNCONSCIOUS))	// unless already unconscious.
 	{
 		_battleGame->checkCasualties(
 								_battleGame->getTacticalAction()->weapon->getRules(),
 								_battleGame->getTacticalAction()->actor);
-//								false, false,
-//								isOut_t(OUT_STAT) == true); // 'execution' (no death animations) unless unit is unconscious already.
 	}
 }
 
 /**
- * Restores this BattleUnit's energy and reduces its stun level.
- * @param energy	- the amount of energy to add
- * @param stun		- the amount of stun level to reduce
+ * Restores this BattleUnit's energy and reduces its stun-level.
+ * @param energy	- the quantity of energy to add
+ * @param stun		- the quantity of stun-level to recover
  * @return, true if unit regains consciousness
  */
 bool BattleUnit::amphetamine(
@@ -3708,7 +3724,7 @@ bool BattleUnit::amphetamine(
 	if (_energy > _stats.stamina)
 		_energy = _stats.stamina;
 
-	return healStun(stun);
+	return reduceStun(stun);
 }
 
 /**

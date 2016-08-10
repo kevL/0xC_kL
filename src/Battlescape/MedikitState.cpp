@@ -347,7 +347,7 @@ void MedikitState::healClick(Action*)
 				_mediView->invalidate();
 
 				if (_action->targetUnit->getUnitStatus() == STATUS_UNCONSCIOUS
-					&& _action->targetUnit->getStun() < _action->targetUnit->getHealth())
+					&& _action->targetUnit->isStunned() == false)
 				{
 					_action->actor->getStatistics()->revivedSoldier += 2;
 					closeClick(nullptr); // if the unit has revived quit this screen automatically

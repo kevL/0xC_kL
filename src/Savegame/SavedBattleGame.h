@@ -314,8 +314,8 @@ private:
 		/// Sets the pointer to the BattlescapeState.
 		void setBattleState(BattlescapeState* const battleState);
 
-		/// Sets all BattleUnits onto their start Tile(s) at the end of pre-battle equip.
-		void resetUnitsOnTiles();
+		/// Places all BattleUnits at their start-Tile(s) at the end of pre-battle Equip.
+		void positionUnits();
 
 		/// Gives access to the storage-tiles vector.
 		std::vector<Position>& storagePositions();
@@ -374,16 +374,16 @@ private:
 		/// Sends the body-item that corresponds to a BattleUnit to the deleted vector.
 		void deleteBody(const BattleUnit* const unit);
 
-		/// Sets or tries to set a unit of a certain size on a certain position of the map.
+		/// Sets or tries to set a BattleUnit of a certain size on a certain Position of the battlefield.
 		bool setUnitPosition(
 				BattleUnit* const unit,
 				const Position& pos,
 				bool test = false) const;
 		/// Attempts to place a unit on or near a specified Position.
-		bool placeUnitNearPosition(
+		bool placeUnitByPosition(
 				BattleUnit* const unit,
 				const Position& pos,
-				bool isLarge) const;
+				bool large) const;
 
 		/// Adds this unit to the list of falling BattleUnits.
 		bool addFallingUnit(BattleUnit* const unit);

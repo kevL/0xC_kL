@@ -320,9 +320,7 @@ private:
 		Soldier* getGeoscapeSoldier() const;
 
 		/// Sets the BattleUnit's position.
-		void setPosition(
-				const Position& pos,
-				bool updateLast = true);
+		void setPosition(const Position& pos);
 		/// Gets the BattleUnit's position.
 		const Position& getPosition() const;
 		/// Gets the BattleUnit's position.
@@ -404,7 +402,7 @@ private:
 				Surface* const cache,
 				int quadrant = 0);
 		/// Clears the BattleUnit's sprite-cache flag.
-		void flagCache();
+		void setCacheInvalid();
 		/// Gets if the BattleUnit's sprite-cache is invalid.
 		bool getCacheInvalid() const;
 
@@ -416,6 +414,8 @@ private:
 		/// Gets if the BattleUnit is kneeled.
 		bool isKneeled() const;
 
+		/// Sets the BattleUnit floating.
+		void setFloating(bool isAirborne = true);
 		/// Gets if the BattleUnit is floating.
 		bool isFloating() const;
 
@@ -452,12 +452,14 @@ private:
 		/// Sets the BattleUnit's health level.
 		void setHealth(int health);
 
-		/// Heals stun level of the BattleUnit.
-		bool healStun(int power);
-		/// Gets the BattleUnit's stun level.
+		/// Heals stun-level of the BattleUnit.
+		bool reduceStun(int stun);
+		/// Gets the BattleUnit's stun-level.
 		int getStun() const;
-		/// Sets the BattleUnit's stun level.
+		/// Sets the BattleUnit's stun-level.
 		void setStun(int stun);
+		/// Checks if the BattleUnit is currently stunned.
+		bool isStunned();
 
 		/// Knocks the BattleUnit out instantly.
 		void knockOut();

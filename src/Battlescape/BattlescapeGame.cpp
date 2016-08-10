@@ -534,12 +534,11 @@ void BattlescapeGame::popBattleState()
 						if (_AIActionCounter > 2	// AI does two think-cycles per unit before switching to the next
 							|| aiUnit == nullptr	// unit -- or unit got killed before doing its second think.
 							|| aiUnit->getHealth() == 0
-							|| aiUnit->getStun() >= aiUnit->getHealth())
-//							|| aiUnit->isOut_t() == true)
+							|| aiUnit->isStunned() == true)
 						{
 							if (aiUnit != nullptr) // NOTE: This is getting silly.
 							{
-								aiUnit->flagCache();
+								aiUnit->setCacheInvalid();
 								getMap()->cacheUnitSprite(aiUnit);
 							}
 
@@ -1104,7 +1103,7 @@ void BattlescapeGame::handleNonTargetAction()
 					showWarning = WARN;
 				else
 				{
-					_playerAction.actor->flagCache();
+					_playerAction.actor->setCacheInvalid();
 
 					const Position pos (_playerAction.actor->getPosition());
 					dropItem(_playerAction.weapon, pos, DROP_FROMINVENTORY);
@@ -1703,7 +1702,7 @@ void BattlescapeGame::checkCasualties(
 				// no break;
 
 			default:
-				dead = defender->getHealth() == 0;
+				dead = (defender->getHealth() == 0);
 				converted = false;
 
 				if (dead == false) // for converting infected units that aren't dead. Dead-conversions are handled in UnitDieBState.
@@ -1713,7 +1712,7 @@ void BattlescapeGame::checkCasualties(
 						converted = true; // do morale-changes and SoldierDiary but not collapsing animations.
 						convertedUnits.push_back(defender);
 					}
-					else if (defender->getHealth() > defender->getStun())
+					else if (defender->isStunned() == false) // unit Okay -> next unit.
 						break;
 				}
 
@@ -2418,7 +2417,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 							dropItem(item, unit->getPosition(), DROP_FROMINVENTORY);
 					}
 
-					unit->flagCache();
+					unit->setCacheInvalid();
 
 					Pathfinding* const pf (_battleSave->getPathfinding());
 					pf->setPathingUnit(unit);
@@ -3007,8 +3006,8 @@ void BattlescapeGame::dropItem(
 		item->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
 		_battleSave->getTile(pos)->addItem(item);
 
-		if (item->getItemUnit() != nullptr)
-			item->getItemUnit()->setPosition(pos);
+		if (item->getBodyUnit() != nullptr)
+			item->getBodyUnit()->setPosition(pos);
 
 		switch (dropType)
 		{
@@ -3054,8 +3053,8 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 				(*i)->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
 				_battleSave->getTile(pos)->addItem(*i);
 
-				if ((*i)->getItemUnit() != nullptr)
-					(*i)->getItemUnit()->setPosition(pos);
+				if ((*i)->getBodyUnit() != nullptr)
+					(*i)->getBodyUnit()->setPosition(pos);
 
 				if ((*i)->getRules()->getBattleType() == BT_FLARE
 					&& (*i)->getFuse() != -1)
@@ -3107,12 +3106,12 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 
 	dropUnitInventory(potato);
 
-	potato->setUnitTile();										// TODO: Run potato through putDown().
-	_battleSave->getTile(potato->getPosition())->setTileUnit();	// NOTE: This could, theoretically, be a large potato.
+	// TODO: Run potato through putDown().
+	potato->setUnitTile();
 
+	const Position& pos (potato->getPosition());
 
 	RuleUnit* const unitRule (getRuleset()->getUnitRule(potato->getSpawnType()));
-	const Position& pos (potato->getPosition());
 	potato = new BattleUnit(
 						unitRule,
 						FACTION_HOSTILE,
@@ -3122,10 +3121,11 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 						_parentState->getGame()->getSavedGame()->getMonthsPassed(),
 						this);
 
-	_battleSave->getTile(pos)->setTileUnit(
-										potato,
-										_battleSave->getTile(pos + Position(0,0,-1)));
 	potato->setPosition(pos);
+	potato->setUnitTile(
+					_battleSave->getTile(pos),
+					_battleSave->getTile(pos + Position(0,0,-1)));
+	_battleSave->getTile(pos)->setTileUnit(potato); // NOTE: This could, theoretically, be a large potato.
 
 	int dir;
 	if (potato->isZombie() == true)
@@ -3158,7 +3158,7 @@ BattleUnit* BattlescapeGame::convertUnit(BattleUnit* potato)
 
 	getTileEngine()->applyGravity(potato->getUnitTile());
 	getTileEngine()->calculateUnitLighting();
-	getTileEngine()->calcFovUnits_pos(potato->getPosition(), true);
+	getTileEngine()->calcFovUnits_pos(pos, true);
 
 	return potato;
 }
@@ -3718,7 +3718,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 																	(*i)->getPriorOwner()));
 									_battleSave->toDeleteItem(*i);
 
-									unit->flagCache();
+									unit->setCacheInvalid();
 									getMap()->cacheUnitSprite(unit);
 									return true;
 								}

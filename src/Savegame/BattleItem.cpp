@@ -516,7 +516,7 @@ int BattleItem::getId() const
  * Gets the BattleUnit that this BattleItem is a corpse of if any.
  * @return, pointer to BattleUnit or nullptr
  */
-BattleUnit* BattleItem::getItemUnit() const
+BattleUnit* BattleItem::getBodyUnit() const
 {
 	return _unit;
 }

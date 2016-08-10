@@ -547,7 +547,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				}
 
 				_prjItem->changeOwner();
-				_unit->flagCache();
+				_unit->setCacheInvalid();
 				_parent->getMap()->cacheUnitSprite(_unit);
 
 				soundId = static_cast<int>(ResourcePack::ITEM_THROW);

@@ -483,7 +483,7 @@ void InventoryState::init()
 
 //	if (_parent) _parent->getMap()->getCamera()->centerPosition(unit->getPosition(), false);
 
-	unit->flagCache();
+	unit->setCacheInvalid();
 
 	_srfRagdoll->clear();
 	_btnRank->clear();
@@ -700,7 +700,7 @@ void InventoryState::btnOkClick(Action*)
 
 		if (_tuMode == false && _parent != nullptr) // pre-battle but going into tactical!
 		{
-			_battleSave->resetUnitsOnTiles();
+			_battleSave->positionUnits();
 
 			Tile* const inTile (_battleSave->getBattleInventory());
 			_battleSave->distributeEquipt(inTile);
@@ -1231,7 +1231,7 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 	{
 		isArt = false;
 
-		const BattleUnit* const corpseUnit (selOver->getItemUnit());
+		const BattleUnit* const corpseUnit (selOver->getBodyUnit());
 		if (corpseUnit != nullptr)
 		{
 			if (corpseUnit->getType().compare(0u,11u, "STR_FLOATER") == 0 // special handling for Floaters.

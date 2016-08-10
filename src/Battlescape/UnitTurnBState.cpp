@@ -192,7 +192,7 @@ void UnitTurnBState::think()
 	{
 		_unit->turn(_turret); // done-> STATUS_STANDING
 
-		_unit->flagCache();
+		_unit->setCacheInvalid();
 		_parent->getMap()->cacheUnitSprite(_unit);
 
 		bool spot;

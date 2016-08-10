@@ -148,8 +148,7 @@ void UnitWalkBState::think()
 	_isVisible = _unit->getUnitVisible() == true
 			  || _battleSave->getDebugTac() == true;
 
-	if (   _unit->getHealth() == 0
-		|| _unit->getHealth() <= _unit->getStun())
+	if (_unit->getHealth() == 0 || _unit->isStunned() == true)
 	{
 		//Log(LOG_INFO) << ". . isOut() abort.";
 		abortState(false);
@@ -237,14 +236,14 @@ void UnitWalkBState::think()
 										_unit->getFaceDirection(),
 										false);
 
-//					_unit->flagCache(); // might play around with Strafe anim's ......
+//					_unit->setCacheInvalid(); // might play around with Strafe anim's ......
 					_parent->getMap()->cacheUnitSprite(_unit);
 					_unit->setUnitDirection(dirStrafe, false);
 				}
 				else
 				{
 					//Log(LOG_INFO) << ". WALKING no strafe, cacheUnitSprite()";
-					_unit->flagCache(); // might play around with non-Strafe anim's ......
+					_unit->setCacheInvalid(); // might play around with non-Strafe anim's ......
 					_parent->getMap()->cacheUnitSprite(_unit);
 				}
 			}
@@ -358,7 +357,7 @@ bool UnitWalkBState::statusStand() // private.
 //			if (_unit->getFaction() != FACTION_PLAYER)
 			_unit->setHiding(false);
 
-			_unit->flagCache();
+			_unit->setCacheInvalid();
 			_parent->getMap()->cacheUnitSprite(_unit);
 
 			postPathProcedures();	// NOTE: This is the only call for which _door==TRUE might be needed.
@@ -521,7 +520,7 @@ bool UnitWalkBState::statusStand() // private.
 		&& _parent->checkReservedTu(_unit, tuCost) == false)				// Only player's units will *bypass* abortPath() due to panicking ....
 	{																		// Tbh, other code should have rendered the playerPanicHandled() redundant.
 		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// That is to say this should kick in *only* when player has actively
-		_unit->flagCache();													// clicked to move but tries to go further than TUs allow; because
+		_unit->setCacheInvalid();											// clicked to move but tries to go further than TUs allow; because
 		_parent->getMap()->cacheUnitSprite(_unit);							// either the AI or the panic-code should not try to
 		_pf->abortPath();													// move a unit farther than its [reserved] TUs would allow
 		return false;														// WOULD THAT RESULT IN AN ENDLESS LOOP.
@@ -534,7 +533,7 @@ bool UnitWalkBState::statusStand() // private.
 			//Log(LOG_INFO) << ". . dir != _unit->getUnitDirection() -> turn";
 			_unit->setDirectionTo(dir);
 
-			_unit->flagCache();
+			_unit->setCacheInvalid();
 			_parent->getMap()->cacheUnitSprite(_unit);
 			return false;
 		}
@@ -732,6 +731,10 @@ bool UnitWalkBState::statusWalk() // private.
 			}
 		}
 
+		_unit->setUnitTile(
+						_battleSave->getTile(_unit->getPosition()),
+						_battleSave->getTile(_unit->getPosition() + Position(0,0,-1)));
+
 		bool doFallCheck (true);
 		for (int
 				x = unitSize;
@@ -745,10 +748,10 @@ bool UnitWalkBState::statusWalk() // private.
 			{
 				//Log(LOG_INFO) << ". . . set unit on stop tile " << _unit->getPosition();
 				tile = _battleSave->getTile(_unit->getPosition() + Position(x,y,0));
-				tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
-				tile->setTileUnit(_unit, tileBelow);
+				tile->setTileUnit(_unit);
 
-				if (tile->hasNoFloor(tileBelow) == false)
+				tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
+				if (tile->hasNoFloor(tileBelow) == false) // NOTE: I hae a suspicion this should be checked for the primary quadrant only.
 				{
 					//Log(LOG_INFO) << ". . . . hasFloor ( doFallCheck set FALSE )";
 					doFallCheck = false;
@@ -845,7 +848,7 @@ bool UnitWalkBState::statusStand_end() // private.
 //			_action.TU = 0;
 
 			_pf->abortPath();
-//			_unit->flagCache();
+//			_unit->setCacheInvalid();
 //			_parent->getMap()->cacheUnitSprite(_unit);
 //			_parent->popState();
 			return false; // NOTE: This should probably set unit non-vis and be allowed to do a recalc Fov by other units.
@@ -964,7 +967,7 @@ void UnitWalkBState::statusTurn() // private.
 
 	_unit->turn();
 
-	_unit->flagCache();
+	_unit->setCacheInvalid();
 	_parent->getMap()->cacheUnitSprite(_unit);
 
 	if (_unit->getFaction() == FACTION_PLAYER)
@@ -1010,7 +1013,7 @@ void UnitWalkBState::abortState(bool recache) // private.
 {
 	if (recache == true)
 	{
-		_unit->flagCache();
+		_unit->setCacheInvalid();
 		_parent->getMap()->cacheUnitSprite(_unit);
 	}
 	_pf->abortPath();
@@ -1101,7 +1104,7 @@ void UnitWalkBState::postPathProcedures() // private.
 		_te->calcFovUnits_pos(_unit->getPosition(), true);
 	}
 
-	_unit->flagCache();
+	_unit->setCacheInvalid();
 	_parent->getMap()->cacheUnitSprite(_unit);
 
 	if (_fall == false)

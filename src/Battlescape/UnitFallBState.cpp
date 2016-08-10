@@ -102,10 +102,14 @@ void UnitFallBState::think()
 	//Log(LOG_INFO) << "UnitFallBState::think()";
 	BattleUnit* unitBelow;
 	const Tile* tile;
-	Tile* tileBelow;
+	Tile
+		* tileBelow,
+		* tileStart;
 	Position
+		pos,
+		posStart,
 		posStop,
-		pos;
+		posQuad;
 	const Position& posBelow (Position(0,0,-1));
 
 	for (std::list<BattleUnit*>::const_iterator
@@ -114,9 +118,7 @@ void UnitFallBState::think()
 			)
 	{
 		//Log(LOG_INFO) << ". falling id-" << (*i)->getId();
-		if ((*i)->isOut_t(OUT_HLTH_STUN) == true) // wtf. god only knows at this pt.
-//		if ((*i)->getHealth() == 0
-//			|| (*i)->getStun() >= (*i)->getHealth())
+		if ((*i)->getHealth() == 0 || (*i)->isStunned() == true)
 		{
 			//Log(LOG_INFO) << ". dead OR stunned, Erase & cont";
 			i = _battleSave->getFallingUnits()->erase(i);
@@ -125,7 +127,7 @@ void UnitFallBState::think()
 
 		if ((*i)->getUnitStatus() == STATUS_TURNING)
 		{
-			//Log(LOG_INFO) << ". STATUS_TURNING, abortTurn()";
+			//Log(LOG_INFO) << ". Status_Turning -> Status_Standing";
 			(*i)->setUnitStatus(STATUS_STANDING);
 		}
 
@@ -135,6 +137,8 @@ void UnitFallBState::think()
 //			onScreen = (*i)->getUnitVisible()
 //					&& _parent->getMap()->getCamera()->isOnScreen(posStart);
 //		bool onScreen = ((*i)->getVisible() && _parent->getMap()->getCamera()->isOnScreen(posStart, true, size, false));
+
+		pos = (*i)->getPosition();
 
 		const int unitSize ((*i)->getArmor()->getSize() - 1);
 		for (int
@@ -147,9 +151,8 @@ void UnitFallBState::think()
 					y != -1;
 					--y)
 			{
-				tileBelow = _battleSave->getTile((*i)->getPosition() + Position(x,y,-1));
-				if (_battleSave->getTile((*i)->getPosition() + Position(x,y,0))
-												->hasNoFloor(tileBelow) == false
+				tileBelow = _battleSave->getTile(pos + Position(x,y,-1));
+				if (_battleSave->getTile(pos + Position(x,y,0))->hasNoFloor(tileBelow) == false
 					|| (*i)->getMoveTypeUnit() == MT_FLY)
 				{
 					//Log(LOG_INFO) << ". . fallCheck set FALSE";
@@ -158,11 +161,11 @@ void UnitFallBState::think()
 			}
 		}
 
-		tileBelow = _battleSave->getTile((*i)->getPosition() + posBelow);
+		tileBelow = _battleSave->getTile(pos + posBelow);
 
-		fall = fallCheck
-			&& (*i)->getPosition().z != 0
-			&& (*i)->getUnitTile()->hasNoFloor(tileBelow)
+		fall = fallCheck == true // why are there two 'fall' determinations. See below_
+			&& pos.z != 0
+			&& (*i)->getUnitTile()->hasNoFloor(tileBelow) == true
 //			&& (*i)->getMoveTypeUnit() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
 
@@ -178,7 +181,7 @@ void UnitFallBState::think()
 						y != -1;
 						--y)
 				{
-					tileBelow = _battleSave->getTile((*i)->getPosition() + Position(x,y,-1));
+					tileBelow = _battleSave->getTile(pos + Position(x,y,-1));
 					_tilesToFallInto.push_back(tileBelow);
 				}
 			}
@@ -210,8 +213,8 @@ void UnitFallBState::think()
 				_parent->getMap()->cacheUnitSprite(*i);	// make sure the fallUnit sprites are up to date
 		}
 
-		fall = fallCheck
-			&& (*i)->getPosition().z != 0
+		fall = fallCheck == true // why are there two 'fall' determinations. See above^
+			&& pos.z != 0
 			&& (*i)->getUnitTile()->hasNoFloor(tileBelow)
 //			&& (*i)->getMovementType() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
@@ -219,8 +222,8 @@ void UnitFallBState::think()
 		//Log(LOG_INFO) << ". new fallCheck = " << fallCheck;
 
 
-		if ((*i)->getPosition() != (*i)->getStartPosition())	// the unit has moved from one tile to the other.
-		{														// kL_note: Can prob. use _tileSwitchDone around here ... plus use transient tile.
+		if ((posStart = (*i)->getStartPosition()) != pos)	// the unit has moved from one tile to the other.
+		{													// kL_note: Can prob. use _tileSwitchDone around here ... plus use transient tile(s).
 			for (int // reset tiles moved from
 					x = unitSize;
 					x != -1;
@@ -231,14 +234,18 @@ void UnitFallBState::think()
 						y != -1;
 						--y)
 				{
-					if (*i == _battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->getTileUnit())	// another falling unit might have already taken up
-					{																							// this position so check that that unit is still there.
-						//Log(LOG_INFO) << ". Tile is not occupied";
-						_battleSave->getTile((*i)->getStartPosition() + Position(x,y,0))->setTileUnit();
+					tileStart = _battleSave->getTile(posStart + Position(x,y,0));
+					if (*i == tileStart->getTileUnit())
+					{
+						//Log(LOG_INFO) << ". clear startTile's unit";
+						tileStart->setTileUnit();
 					}
 				}
 			}
 
+			(*i)->setUnitTile(
+							_battleSave->getTile(pos),
+							_battleSave->getTile(pos + Position(0,0,-1)));
 			for (int // update tiles moved to.
 					x = unitSize;
 					x != -1;
@@ -250,10 +257,7 @@ void UnitFallBState::think()
 						--y)
 				{
 					//Log(LOG_INFO) << ". setTileUnit to belowTile";
-					_battleSave->getTile((*i)->getPosition() + Position(x,y,0))
-									->setTileUnit(
-											*i,
-											_battleSave->getTile((*i)->getPosition() + Position(x,y,-1)));
+					_battleSave->getTile(pos + Position(x,y,0))->setTileUnit(*i);
 				}
 			}
 
@@ -303,9 +307,9 @@ void UnitFallBState::think()
 								)
 						{
 							//Log(LOG_INFO) << ". . . checking bodysections";
-							pos = *k;
-							tile = _battleSave->getTile(pos + posVect);
-							tileBelow = _battleSave->getTile(pos + posVect + posBelow);
+							posQuad = *k;
+							tile = _battleSave->getTile(posQuad + posVect);
+							tileBelow = _battleSave->getTile(posQuad + posVect + posBelow);
 
 							bool
 								aboutToBeOccupiedFromAbove (tile != nullptr
@@ -324,7 +328,7 @@ void UnitFallBState::think()
 								hasFloor (tile != nullptr
 									   && tile->hasNoFloor(tileBelow) == false),
 								blocked (_battleSave->getPathfinding()->isBlockedPath(
-																					_battleSave->getTile(pos),
+																					_battleSave->getTile(posQuad),
 																					dir,
 																					unitBelow)),
 								unitCanFly (unitBelow->getMoveTypeUnit() == MT_FLY),
@@ -369,7 +373,7 @@ void UnitFallBState::think()
 									unitBelow->startWalking(
 														dir,
 														unitBelow->getPosition() + posVect,
-														_battleSave->getTile(pos + posBelow));
+														_battleSave->getTile(posQuad + posBelow));
 
 									j = _unitsToMove.erase(j);
 								}
@@ -397,7 +401,7 @@ void UnitFallBState::think()
 				if (fall == true)
 				{
 					//Log(LOG_INFO) << ". . still falling -> startWalking()";
-					posStop = (*i)->getPosition() + posBelow;
+					posStop = pos + posBelow;
 
 					tileBelow = _battleSave->getTile(posStop);
 					(*i)->startWalking(
@@ -405,7 +409,7 @@ void UnitFallBState::think()
 									posStop,
 									tileBelow);
 
-					(*i)->flagCache();
+					(*i)->setCacheInvalid();
 					_parent->getMap()->cacheUnitSprite(*i);
 
 					++i;
@@ -421,7 +425,7 @@ void UnitFallBState::think()
 //						const int power ((*i)->getUnitRules()->getSpecabPower());
 //						(*i)->getTile()->igniteTile(power / 10);
 //						const Position targetVoxel (Position::toVoxelSpaceCentered(
-//																			(*i)->getPosition(),
+//																			pos,
 //																			-(*i)->getTile()->getTerrainLevel()));
 //						_parent->getTileEngine()->hit(
 //													targetVoxel,
@@ -434,12 +438,12 @@ void UnitFallBState::think()
 
 					_te->calculateUnitLighting();
 
-					(*i)->flagCache();
+					(*i)->setCacheInvalid();
 					_parent->getMap()->cacheUnitSprite(*i);
 
 					if ((*i)->getFaction() == FACTION_PLAYER)
 						_te->calcFovTiles(*i);
-					_te->calcFovUnits_pos((*i)->getPosition(), true);
+					_te->calcFovUnits_pos(pos, true);
 
 					_parent->checkProxyGrenades(*i);
 					// kL_add: Put checkForSilacoid() here!

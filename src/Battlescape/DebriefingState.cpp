@@ -765,7 +765,7 @@ void DebriefingState::prepareDebriefing() // private.
 			case STATUS_LATENT:
 				(*i)->setUnitTile(tileOrigin);
 
-				if ((*i)->getHealth() > (*i)->getStun())
+				if ((*i)->isStunned() == false)
 					(*i)->setUnitStatus(STATUS_STANDING);
 				else
 					(*i)->setUnitStatus(STATUS_UNCONSCIOUS);
@@ -774,7 +774,7 @@ void DebriefingState::prepareDebriefing() // private.
 			case STATUS_LATENT_START:
 				(*i)->setUnitTile(tileEquipt);
 
-				if ((*i)->getHealth() > (*i)->getStun())
+				if ((*i)->isStunned() == false)
 					(*i)->setUnitStatus(STATUS_STANDING);
 				else
 					(*i)->setUnitStatus(STATUS_UNCONSCIOUS);
@@ -804,8 +804,8 @@ void DebriefingState::prepareDebriefing() // private.
 								j != _battleSave->getItems()->end();
 								++j)
 						{
-							if ((*j)->getItemUnit() != nullptr					// found it: corpse is a dead or unconscious BattleUnit!!
-								&& (*j)->getItemUnit() == *i)
+							if ((*j)->getBodyUnit() != nullptr					// found it: corpse is a dead or unconscious BattleUnit!!
+								&& (*j)->getBodyUnit() == *i)
 							{
 								if ((*j)->getOwner() != nullptr)				// corpse of BattleUnit has an Owner (ie. is being carried by another BattleUnit)
 									pos = (*j)->getOwner()->getPosition();		// Put the corpse down .. slowly.
@@ -1820,7 +1820,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 					{
 						case BT_CORPSE:
 						{
-							if ((unit = (*i)->getItemUnit()) != nullptr)
+							if ((unit = (*i)->getBodyUnit()) != nullptr)
 							{
 								switch (unit->getUnitStatus())
 								{

@@ -104,6 +104,71 @@ SavedBattleGame::SavedBattleGame(
 //		_dragTimeTolerance(0),
 //		_dragPixelTolerance(0)
 {
+/*	// debug TEST ->
+	Position pos;
+	int size1, size2;
+	Log(LOG_INFO) << "size 1 large FALSE";
+	size1 = -1;//(-unit->getArmor()->getSize()),
+	size2 =  1;//((large == true) ? 2 : 1),
+	int
+		xArray1[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
+		yArray1[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
+	for (unsigned
+			i = 0u;
+			i != 8u;
+			++i)
+	{
+		pos = Position(xArray1[i], yArray1[i], 0);
+		Log(LOG_INFO) << ". i= " << i << (pos);
+	}
+
+	Log(LOG_INFO) << "size 2 large FALSE";
+	size1 = -2;//(-unit->getArmor()->getSize()),
+	size2 =  1;//((large == true) ? 2 : 1),
+	int
+		xArray2[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
+		yArray2[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
+	for (unsigned
+			i = 0u;
+			i != 8u;
+			++i)
+	{
+		pos = Position(xArray2[i], yArray2[i], 0);
+		Log(LOG_INFO) << ". i= " << i << (pos);
+	}
+
+	Log(LOG_INFO) << "size 1 large TRUE";
+	size1 = -1;//(-unit->getArmor()->getSize()),
+	size2 =  2;//((large == true) ? 2 : 1),
+	int
+		xArray3[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
+		yArray3[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
+	for (unsigned
+			i = 0u;
+			i != 8u;
+			++i)
+	{
+		pos = Position(xArray3[i], yArray3[i], 0);
+		Log(LOG_INFO) << ". i= " << i << (pos);
+	}
+
+	Log(LOG_INFO) << "size 2 large TRUE";
+	size1 = -2;//(-unit->getArmor()->getSize()),
+	size2 =  2;//((large == true) ? 2 : 1),
+	int
+		xArray4[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
+		yArray4[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
+	for (unsigned
+			i = 0u;
+			i != 8u;
+			++i)
+	{
+		pos = Position(xArray4[i], yArray4[i], 0);
+		Log(LOG_INFO) << ". i= " << i << (pos);
+	} // end_TEST.
+*/
+
+
 	//Log(LOG_INFO) << "\nCreate SavedBattleGame";
 	if (rules != nullptr) // ie. not craft- or base-equip screen.
 		_dropTu = rules->getHighestDropCost();
@@ -410,7 +475,7 @@ void SavedBattleGame::load(
 
 
 	Log(LOG_INFO) << ". reset tiles";
-	resetUnitsOnTiles(); // matches up tiles and units
+	positionUnits(); // matches up tiles and units
 
 	Log(LOG_INFO) << ". load items";
 	static const size_t LIST_TYPE (3u);
@@ -1587,50 +1652,38 @@ void SavedBattleGame::setBattleState(BattlescapeState* const battleState)
 }
 
 /**
- * Sets all BattleUnits onto their start Tile(s) at the end of pre-battle equip.
+ * Places all BattleUnits at their start-Tile(s) at the end of pre-battle Equip.
  */
-void SavedBattleGame::resetUnitsOnTiles()
+void SavedBattleGame::positionUnits()
 {
-	Tile* tile;
-	Position
-		pos,
-		posOffset;
+	Position pos;
 	const Position& posBelow (Position(0,0,-1));
+
+	for (size_t
+			i = 0u;
+			i != _qtyTilesTotal;
+			++i)
+	{
+		_tiles[i]->setTileUnit(); // first break all Tile->BattleUnit links.
+	}
 
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _units.begin();
 			i != _units.end();
 			++i)
 	{
-
 		if ((*i)->getUnitStatus() == STATUS_STANDING)
 		{
 			if ((*i)->getFaction() == FACTION_PLAYER)
 				(*i)->setUnitVisible();
 
-			const int unitSize ((*i)->getArmor()->getSize() - 1);
-
-			if ((tile = (*i)->getUnitTile()) != nullptr // clear Tile's link to its current unit
-				&& tile->getTileUnit() == *i)
-			{
-				pos = tile->getPosition();
-				for (int
-						x = unitSize;
-						x != -1;
-						--x)
-				{
-					for (int
-							y = unitSize;
-							y != -1;
-							--y)
-					{
-						getTile(pos + Position(x,y,0))->setTileUnit();
-					}
-				}
-			}
-
 			pos = (*i)->getPosition();
-			for (int // set Tile's link to its current unit
+			(*i)->setUnitTile(
+							getTile(pos),
+							getTile(pos + posBelow)); // second set BattleUnit->Tile link for the unit's primary quadrant
+
+			const int unitSize ((*i)->getArmor()->getSize() - 1);
+			for (int
 					x = unitSize;
 					x != -1;
 					--x)
@@ -1640,11 +1693,7 @@ void SavedBattleGame::resetUnitsOnTiles()
 						y != -1;
 						--y)
 				{
-					posOffset = pos + Position(x,y,0);
-					tile = getTile(posOffset);
-					tile->setTileUnit(
-									*i,
-									getTile(posOffset + posBelow));
+					getTile(pos + Position(x,y,0))->setTileUnit(*i); // third set Tile->BattleUnit links for each unit-quadrant
 				}
 			}
 		}
@@ -1878,25 +1927,20 @@ Node* SavedBattleGame::getSpawnNode(
 		BattleUnit* const unit)
 {
 	std::vector<Node*> spawnNodes;
-
 	for (std::vector<Node*>::const_iterator
 			i = _nodes.begin();
 			i != _nodes.end();
 			++i)
 	{
-		if ((*i)->getPriority() != 0						// spawn-priority 0 is not spawnplace
-			&& (*i)->getNodeRank() == unitRank				// ranks must match
-			&& isNodeType(*i, unit)
-//			&& (!((*i)->getNodeType() & Node::TYPE_SMALL)	// the small unit bit is not set on the node
-//				|| unit->getArmor()->getSize() == 1)			// or the unit is small
-//			&& (!((*i)->getNodeType() & Node::TYPE_FLYING)	// the flying unit bit is not set on the node
-//				|| unit->getMovementType() == MT_FLY)			// or the unit can fly
-			&& setUnitPosition(								// check if unit can be set at this node
-							unit,								// ie. it's big enough
-							(*i)->getPosition(),				// and there's not already a unit there.
-							true) == true)					// testOnly, runs again w/ FALSE on return to bgen::addAlien()
+		if ((*i)->getPriority() != 0			// spawn-priority 0 is not spawnplace
+			&& (*i)->getNodeRank() == unitRank	// ranks must match
+			&& isNodeType(*i, unit)				// unit's size and walk-type must match node's
+			&& setUnitPosition(					// check if unit can be set at this node
+							unit,					// ie. node is big enough
+							(*i)->getPosition(),	// and there's not already a unit there.
+							true) == true)			// test-only: runs again w/ FALSE on return to bgen::addAlien()
 		{
-			for (int										// weight each eligible node by its Priority.
+			for (int // weight each eligible node by its Priority.
 					j = (*i)->getPriority();
 					j != 0;
 					--j)
@@ -1950,23 +1994,21 @@ Node* SavedBattleGame::getPatrolNode(
 			else
 				node = getNodes()->at(static_cast<size_t>(startNode->getNodeLinks()->at(i)));
 
-			if ((node->getPatrol() != 0
+			if ((node->getPatrol() != 0										// for non-scouts find a node with a desirability above 0
 					|| node->getNodeRank() > NR_SCOUT
-					|| scout == true)										// for non-scouts find a node with a desirability above 0
+					|| scout == true)
 				&& node->isAllocated() == false								// check if not allocated
 				&& isNodeType(node, unit)
 				&& setUnitPosition(											// check if unit can be set at this node
 								unit,											// ie. it's big enough
 								node->getPosition(),							// and there's not already a unit there.
 								true) == true									// but don't actually set the unit...
-				&& getTile(node->getPosition()) != nullptr						// the node is on a valid tile
+				&& getTile(node->getPosition()) != nullptr					// the node is on a valid tile
 				&& getTile(node->getPosition())->getFire() == 0				// you are not a firefighter; do not patrol into fire
 				&& (getTile(node->getPosition())->getDangerous() == false	// aliens don't run into a grenade blast
 					|| unit->getFaction() != FACTION_HOSTILE)					// but civies do!
 				&& (node != startNode										// scouts push forward
-					|| scout == false))											// others can mill around.. ie, stand there
-//				&& node->getPosition().x > -1								// x-pos valid
-//				&& node->getPosition().y > -1)								// y-pos valid
+					|| scout == false))											// others can mill around.. ie, stand there.
 			{
 				for (int
 						j = node->getPatrol(); // weight each eligible node by its patrol-Flags.
@@ -1988,7 +2030,7 @@ Node* SavedBattleGame::getPatrolNode(
 
 	if (scoutNodes.empty() == true)
 	{
-		if (scout == false && unit->getArmor()->getSize() > 1)
+		if (scout == false && unit->getArmor()->getSize() == 2)
 		{
 //			return Sectopod::CTD();
 			return getPatrolNode(true, unit, startNode);
@@ -2215,8 +2257,7 @@ void SavedBattleGame::reviveUnits(const UnitFaction faction)
  */
 void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 {
-	if (unit->isRevivable() == true
-		&& unit->getStun() < unit->getHealth())
+	if (unit->isRevivable() == true && unit->isStunned() == false)
 	{
 		Position pos (unit->getPosition());
 
@@ -2227,8 +2268,8 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 					i != _items.end();
 					++i)
 			{
-				if ((*i)->getItemUnit() != nullptr
-					&& (*i)->getItemUnit() == unit
+				if ((*i)->getBodyUnit() != nullptr
+					&& (*i)->getBodyUnit() == unit
 					&& (*i)->getOwner() != nullptr)
 				{
 					pos = (*i)->getOwner()->getPosition();
@@ -2238,12 +2279,12 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 		}
 
 		const Tile* const tile (getTile(pos));
-		bool isLargeUnit (tile != nullptr
-					   && tile->getTileUnit() != nullptr
-					   && tile->getTileUnit() != unit
-					   && tile->getTileUnit()->getArmor()->getSize() == 2);
+		bool largeOther (tile != nullptr
+					  && tile->getTileUnit() != nullptr
+					  && tile->getTileUnit() != unit
+					  && tile->getTileUnit()->getArmor()->getSize() == 2);
 
-		if (placeUnitNearPosition(unit, pos, isLargeUnit) == true)
+		if (placeUnitByPosition(unit, pos, largeOther) == true)
 		{
 			switch (unit->getFaction()) // faction will be Original here due to death/stun sequence.
 			{
@@ -2262,7 +2303,7 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 			}
 
 			unit->setUnitStatus(STATUS_STANDING);
-			unit->flagCache();
+			unit->setCacheInvalid();
 			unit->setUnitDirection(RNG::generate(0,7));
 //			unit->setTu(); // -> was done in BattleUnit::putDown() when unit went unconscious.
 //			unit->setEnergy();
@@ -2292,7 +2333,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 			i != _items.end();
 			)
 	{
-		if ((*i)->getItemUnit() == unit)
+		if ((*i)->getBodyUnit() == unit)
 		{
 			i = toDeleteItem(*i);
 			if (--quadrants == 0) return;
@@ -2303,11 +2344,13 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 }
 
 /**
- * Places units on the map.
- * @note Also handles large units that are placed on multiple tiles.
+ * Sets or tries to set a BattleUnit of a certain size on a certain Position of
+ * the battlefield.
+ * @note Also handles large units that are placed on multiple tiles unlike
+ * BattleUnit::setPosition().
  * @param unit	- pointer to a unit to be placed
  * @param pos	- reference to the position to place the unit
- * @param test	- true only checks if unit can be placed at the position (default false)
+ * @param test	- true only checks if unit can be placed at @a pos (default false)
  * @return, true if unit was placed successfully
  */
 bool SavedBattleGame::setUnitPosition(
@@ -2315,12 +2358,87 @@ bool SavedBattleGame::setUnitPosition(
 		const Position& pos,
 		bool test) const
 {
-	if (unit != nullptr)
-	{
-//		_pf->setPathingUnit(unit); // <- this is not valid when doing base equip.
-		Position posTest (pos); // strip const.
+//	if (unit != nullptr)
+//	{
+//	_pf->setPathingUnit(unit); // <- this is not valid when doing fake-inventory. NOTE: Craft/Base-equip & pre-battle equip prob. don't call this anymore.
+	Position pos0 (pos); // strip const.
+	const Tile* tile;
 
-		const int unitSize (unit->getArmor()->getSize() - 1);
+	const int unitSize (unit->getArmor()->getSize() - 1);
+	for (int
+			x = unitSize;
+			x != -1;
+			--x)
+	{
+		for (int
+				y = unitSize;
+				y != -1;
+				--y)
+		{
+			if ((tile = getTile(pos0 + Position(x,y,0))) != nullptr)
+			{
+				if (tile->getTerrainLevel() == -24) // NOTE: This never runs ... hopefully.
+				{
+					pos0 += Position(0,0,1);
+					x =
+					y = unitSize + 1; // start over.
+					break;
+				}
+
+				if ((tile->getTileUnit() != nullptr && tile->getTileUnit() != unit)
+					|| tile->getTuCostTile(
+										O_OBJECT,
+										unit->getMoveTypeUnit()) == 255
+					|| (unit->getMoveTypeUnit() != MT_FLY // <- so just use the unit's moveType.
+						&& tile->hasNoFloor(getTile(pos0 + Position(x,y,-1))) == true))
+				{
+					return false;
+				}
+
+				if (tile->getMapData(O_OBJECT) != nullptr)
+				{
+					switch (tile->getMapData(O_OBJECT)->getBigwall())
+					{
+						case BIGWALL_BLOCK:
+						case BIGWALL_NESW:
+						case BIGWALL_NWSE:
+							return false;
+					}
+				}
+
+				const Tile* const tileAbove (getTile(pos0 + Position(x,y,1))); // TODO: check for ceiling also.
+				if (tileAbove != nullptr
+					&& tileAbove->getTileUnit() != nullptr
+					&& tileAbove->getTileUnit() != unit
+					&& unit->getHeight(true) - tile->getTerrainLevel() > Pathfinding::UNIT_HEIGHT) // don't stuck yer head up someone's flying arse.
+				{
+					return false;
+				}
+			}
+			else
+				return false;
+		}
+	}
+
+	if (unitSize == 1) // -> however, large units never use base equip, so _pf is valid here.
+	{
+		_pf->setPathingUnit(unit);
+		for (int
+				dir = 2;
+				dir != 5;
+				++dir)
+		{
+			if (_pf->isBlockedPath(getTile(pos0), dir) == true)
+				return false;
+		}
+	}
+
+	if (test == false)
+	{
+		unit->setPosition(pos0);
+		unit->setUnitTile(
+						getTile(pos0),
+						getTile(pos0 + Position(0,0,-1)));
 		for (int
 				x = unitSize;
 				x != -1;
@@ -2331,132 +2449,52 @@ bool SavedBattleGame::setUnitPosition(
 					y != -1;
 					--y)
 			{
-				const Tile* const tile (getTile(posTest + Position(x,y,0)));
-				if (tile != nullptr)
-				{
-					if (tile->getTerrainLevel() == -24)
-					{
-						posTest += Position(0,0,1);
-						x =
-						y = unitSize + 1; // start over.
-
-						break;
-					}
-
-					if ((tile->getTileUnit() != nullptr && tile->getTileUnit() != unit)
-						|| tile->getTuCostTile(
-											O_OBJECT,
-											unit->getMoveTypeUnit()) == 255
-						|| (unit->getMoveTypeUnit() != MT_FLY // <- so just use the unit's moveType.
-							&& tile->hasNoFloor(getTile(posTest + Position(x,y,-1))) == true))
-					{
-						return false;
-					}
-
-					if (tile->getMapData(O_OBJECT) != nullptr)
-					{
-						switch (tile->getMapData(O_OBJECT)->getBigwall())
-						{
-							case BIGWALL_BLOCK:
-							case BIGWALL_NESW:
-							case BIGWALL_NWSE:
-								return false;
-						}
-					}
-
-					const Tile* const tileAbove (getTile(posTest + Position(x,y,1))); // TODO: check for ceiling also.
-					if (tileAbove != nullptr
-						&& tileAbove->getTileUnit() != nullptr
-						&& tileAbove->getTileUnit() != unit
-						&& unit->getHeight(true) - tile->getTerrainLevel() > Pathfinding::UNIT_HEIGHT) // don't stuck yer head up someone's flying arse.
-					{
-						return false;
-					}
-				}
-				else
-					return false;
+				getTile(pos0 + Position(x,y,0))->setTileUnit(unit);
 			}
 		}
-
-		if (unitSize != 0) // -> however, large units never use base equip, so _pf is valid here.
-		{
-			_pf->setPathingUnit(unit);
-			for (int
-					dir = 2;
-					dir != 5;
-					++dir)
-			{
-				if (_pf->isBlockedPath(getTile(posTest), dir) == true)
-					return false;
-			}
-		}
-
-		if (test == false)
-		{
-			unit->setPosition(posTest);
-			for (int
-					x = unitSize;
-					x != -1;
-					--x)
-			{
-				for (int
-						y = unitSize;
-						y != -1;
-						--y)
-				{
-					getTile(posTest + Position(x,y,0))->setTileUnit(
-																unit,
-																getTile(posTest + Position(x,y,-1)));
-				}
-			}
-		}
-		return true;
 	}
-	return false;
+	return true;
+//	}
+//	return false;
 }
 
 /**
- * Places a unit on or near a specified Position.
- * @param unit		- pointer to a BattleUnit to place
- * @param pos		- reference to the position around which to attempt to place @a unit
- * @param isLarge	- true if @a unit is large
+ * Places a specified BattleUnit at or near a specified Position.
+ * @param unit	- pointer to a BattleUnit to place
+ * @param pos	- reference to the position at or around which to attempt to place @a unit
+ * @param large	- true to account for large unit at @a pos
  * @return, true if placed
  */
-bool SavedBattleGame::placeUnitNearPosition(
+bool SavedBattleGame::placeUnitByPosition(
 		BattleUnit* const unit,
 		const Position& pos,
-		bool isLarge) const
+		bool large) const
 {
-	if (unit == nullptr)
-		return false;
-
 	if (setUnitPosition(unit, pos) == true)
 		return true;
 
 	int
-		size1 (0 - unit->getArmor()->getSize()),
-		size2 ((isLarge == true) ? 2 : 1),
+		size1 (-unit->getArmor()->getSize()),
+		size2 ((large == true) ? 2 : 1),
 		xArray[8u] {    0, size2, size2, size2,     0, size1, size1, size1},
 		yArray[8u] {size1, size1,     0, size2, size2, size2,     0, size1};
 
 	const Tile* tile;
+	Position pos0;
+
 	const unsigned dir (static_cast<unsigned>(RNG::generate(0,7)));
 	for (unsigned
 			i = dir;
 			i != dir + 8u;
 			++i)
 	{
-		Position posOffset (Position(
-									xArray[i % 8],
-									yArray[i % 8],
-									0));
-//		getPathfinding()->directionToVector(i % 8, &posOffset);
-
-//		tile = getTile(pos + posOffset);
-		if ((tile = getTile(pos + (posOffset / 2))) != nullptr
+		pos0 = pos + Position(				// TODO: If unit is large and/or there is a large unit at pos
+							xArray[i % 8],	// this algorithm skips Tiles that should be valid to check.
+							yArray[i % 8],
+							0);
+		if ((tile = getTile(pos0)) != nullptr
 			&& getPathfinding()->isBlockedPath(tile, static_cast<int>(dir)) == false
-//			&& getPathfinding()->isBlockedPath(getTile(pos), i) == false
-			&& setUnitPosition(unit, pos + posOffset) == true)
+			&& setUnitPosition(unit, pos0) == true)
 		{
 			return true;
 		}

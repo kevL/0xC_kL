@@ -110,40 +110,41 @@ private:
 
 	/// Deploys XCOM units and equipment for tactical.
 	void deployXcom();
-	/// Constructs a vector of Vehicles that can participate in BaseDefense tacticals.
-	void prepBaseVehicles(std::vector<Vehicle*>& vehicles);
+	/// Constructs a vector of Vehicles that can participate in base-defense tacticals.
+	void prepareBaseDefenseVehicles(std::vector<Vehicle*>& vehicles);
 	/// Prepares a support-unit to be added to the Battlescape.
 	BattleUnit* convertVehicle(Vehicle* const vehicle);
 	/// Adds a unit to the Battlescape.
 	BattleUnit* addPlayerUnit(BattleUnit* const unit);
 	/// Runs necessary checks before setting a unit's position.
-	bool canPlacePlayerUnit(Tile* const tile);
+	bool isStartTile(Tile* const tile);
 	/// Loads a weapon that's lying on the XCOM-equipment Tile.
 	void loadGroundWeapon(BattleItem* const item);
 	/// Places a BattleItem on a Soldier based on that Soldier's equipment-layout.
 	void placeLayout(BattleItem* const item);
+
 	/// Sets XCOM Soldiers' combat-clothing style - ie. spritesheets & paperdolls.
 	void setTacticalSprites() const;
 
-	/// Places a BattleItem on a BattleUnit and adds it to the Battlescape.
+	/// Places a BattleItem on a BattleUnit and adds it to the battlescape.
 	bool placeGeneric(
 			BattleItem* const item,
 			BattleUnit* const unit) const;
 
-	/// Deploys the aLiens according to an RuleAlienDeployment rule.
+	/// Deploys the aLiens according to a specified RuleAlienDeployment.
 	void deployAliens(const RuleAlienDeployment* const ruleDeploy);
-	/// Adds an aLien to the Battlescape.
+	/// Adds an aLien BattleUnit to the Battlescape.
 	BattleUnit* addAlien(
 			RuleUnit* const unitRule,
 			int aLienRank,
 			bool outside);
-	/// Finds a tile near an ally to spawn at.
-	bool placeUnitNearFaction(BattleUnit* const unit);
-
 	/// Spawns civilians for a terror-mission.
 	void deployCivilians(int civilians);
-	/// Adds a civilian to the Battlescape.
+	/// Adds a civilian BattleUnit to the battlefield.
 	void addCivilian(RuleUnit* const unitRule);
+
+	/// Finds a Tile near an ally to spawn at.
+	bool placeUnitBesideAlly(BattleUnit* const unit);
 
 	/// Loads a MAP file.
 	int loadMAP(

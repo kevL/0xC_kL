@@ -1235,29 +1235,29 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 				const BattleItem* const item (tile->getInventory()->at(i));
 				const RuleItem* const itRule (item->getRules());
 
-				if (item->getItemUnit() != nullptr)
+				if (item->getBodyUnit() != nullptr)
 				{
-					if (item->getItemUnit()->getType().compare(0u,11u, "STR_FLOATER") == 0) // See medikit w/ Autopsy OR inventory w/ Autopsy+Race research.
+					if (item->getBodyUnit()->getType().compare(0u,11u, "STR_FLOATER") == 0) // See medikit w/ Autopsy OR inventory w/ Autopsy+Race research.
 					{
 						wst1 += tr("STR_FLOATER");
 //						wst1 += L" (status doubtful)";
 					}
 					else
 					{
-						switch (item->getItemUnit()->getUnitStatus())
+						switch (item->getBodyUnit()->getUnitStatus())
 						{
 							case STATUS_UNCONSCIOUS:
-								wst1 += item->getItemUnit()->getName(_game->getLanguage());
+								wst1 += item->getBodyUnit()->getName(_game->getLanguage());
 
-								if (item->getItemUnit()->getGeoscapeSoldier() != nullptr)
-									wst1 += L" (" + Text::intWide(item->getItemUnit()->getHealth() - item->getItemUnit()->getStun() - 1) + L")";
+								if (item->getBodyUnit()->getGeoscapeSoldier() != nullptr)
+									wst1 += L" (" + Text::intWide(item->getBodyUnit()->getHealth() - item->getBodyUnit()->getStun() - 1) + L")";
 								break;
 
 							case STATUS_DEAD:
 								wst1 += tr(itRule->getType());
 
-								if (item->getItemUnit()->getGeoscapeSoldier() != nullptr)
-									wst1 += L" (" + item->getItemUnit()->getName(_game->getLanguage()) + L")";
+								if (item->getBodyUnit()->getGeoscapeSoldier() != nullptr)
+									wst1 += L" (" + item->getBodyUnit()->getName(_game->getLanguage()) + L")";
 						}
 					}
 				}
@@ -3253,7 +3253,7 @@ void BattlescapeState::hotWoundsRefresh()
 				j != tile->getInventory()->end();
 				++j)
 		{
-			if ((unit = (*j)->getItemUnit()) != nullptr
+			if ((unit = (*j)->getBodyUnit()) != nullptr
 				&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
 				&& unit->getFatalWounds() != 0
 				&& unit->getFaction() == FACTION_PLAYER

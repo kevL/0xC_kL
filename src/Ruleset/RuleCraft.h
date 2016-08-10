@@ -83,7 +83,7 @@ private:
 
 	RuleTerrain* _tacticalTerrainData;
 
-	std::vector<std::vector<int>> _deployment;
+	std::vector<std::vector<int>> _unitLocations;
 	std::vector<std::string> _required;
 
 
@@ -162,8 +162,8 @@ private:
 		/// Gets the list weight for a Craft.
 		int getListOrder() const;
 
-		/// Gets the deployment priority for a Craft.
-		std::vector<std::vector<int>>& getCraftDeployment();
+		/// Gets the unit-locations for a Craft.
+		std::vector<std::vector<int>>& getUnitLocations();
 };
 
 }

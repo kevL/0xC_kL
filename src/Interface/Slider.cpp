@@ -252,7 +252,7 @@ void Slider::handle(Action* action, State* state)
  * Moves this Slider to the new value position.
  * @param value - new value
  */
-void Slider::setPosition(double pos)
+void Slider::setSliderPosition(double pos)
 {
 	_pos = pos;
 	_button->setX(static_cast<int>(std::floor(
@@ -285,7 +285,7 @@ void Slider::setValue(int value)
 	else
 		_value = std::min(std::max(_max, value), _min);
 
-	setPosition(static_cast<double>(_value - _min) / static_cast<double>(_max - _min));
+	setSliderPosition(static_cast<double>(_value - _min) / static_cast<double>(_max - _min));
 }
 
 /**
