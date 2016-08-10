@@ -173,8 +173,8 @@ private:
 				MapDataType partType,
 				MoveType type) const;
 
-		/// Checks if the Tile has a floor.
-		bool hasNoFloor(const Tile* const tileBelow = nullptr) const;
+		/// Checks if the Tile has a solid floor.
+		bool solidFloor(const Tile* const tileBelow = nullptr) const;
 
 		/// Checks if the Tile is a big wall.
 //		bool isBigWall() const;

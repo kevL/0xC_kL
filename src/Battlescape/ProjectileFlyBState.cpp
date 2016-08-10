@@ -751,10 +751,10 @@ void ProjectileFlyBState::think()
 			&& _unit->isOut_t() == false
 			&& (_unit->getMoveTypeUnit() == MT_FLY
 				|| _battleSave->getTile(pos = _unit->getPosition())
-						->hasNoFloor(_battleSave->getTile(pos + Position(0,0,-1))) == false))
+						->solidFloor(_battleSave->getTile(pos + Position(0,0,-1))) == true))
 //			&& ((_battleSave->getTile(_unit->getPosition()) != nullptr // wtf. ->
 //					&& _battleSave->getTile(_unit->getPosition())
-//						->hasNoFloor(_battleSave->getTile(_unit->getPosition() + Position(0,0,-1))) == false)
+//						->solidFloor(_battleSave->getTile(_unit->getPosition() + Position(0,0,-1))) == true)
 //				|| _unit->getMoveTypeUnit() == MT_FLY))
 		{
 			createProjectile(); // autoshot.

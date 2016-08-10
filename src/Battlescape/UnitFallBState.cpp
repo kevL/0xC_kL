@@ -41,7 +41,7 @@ namespace OpenXcom
 {
 
 /**
- * Sets up an UnitFallBState.
+ * Sets up the UnitFallBState.
  * @param parent - pointer to the BattlescapeGame
  */
 UnitFallBState::UnitFallBState(BattlescapeGame* const parent)
@@ -49,7 +49,9 @@ UnitFallBState::UnitFallBState(BattlescapeGame* const parent)
 		BattleState(parent),
 		_te(parent->getTileEngine()),
 		_battleSave(parent->getBattleSave())
-{}
+{
+	//Log(LOG_INFO) << "UnitFallBState:cTor";
+}
 
 /**
  * Deletes the UnitWalkBState.
@@ -152,7 +154,7 @@ void UnitFallBState::think()
 					--y)
 			{
 				tileBelow = _battleSave->getTile(pos + Position(x,y,-1));
-				if (_battleSave->getTile(pos + Position(x,y,0))->hasNoFloor(tileBelow) == false
+				if (_battleSave->getTile(pos + Position(x,y,0))->solidFloor(tileBelow) == true
 					|| (*i)->getMoveTypeUnit() == MT_FLY)
 				{
 					//Log(LOG_INFO) << ". . fallCheck set FALSE";
@@ -165,7 +167,7 @@ void UnitFallBState::think()
 
 		fall = fallCheck == true // why are there two 'fall' determinations. See below_
 			&& pos.z != 0
-			&& (*i)->getUnitTile()->hasNoFloor(tileBelow) == true
+			&& (*i)->getUnitTile()->solidFloor(tileBelow) == false
 //			&& (*i)->getMoveTypeUnit() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
 
@@ -215,7 +217,7 @@ void UnitFallBState::think()
 
 		fall = fallCheck == true // why are there two 'fall' determinations. See above^
 			&& pos.z != 0
-			&& (*i)->getUnitTile()->hasNoFloor(tileBelow)
+			&& (*i)->getUnitTile()->solidFloor(tileBelow) == false
 //			&& (*i)->getMovementType() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
 
@@ -326,7 +328,7 @@ void UnitFallBState::think()
 											  && tile->getTileUnit() != nullptr
 											  && tile->getTileUnit() != unitBelow),
 								hasFloor (tile != nullptr
-									   && tile->hasNoFloor(tileBelow) == false),
+									   && tile->solidFloor(tileBelow) == true),
 								blocked (_battleSave->getPathfinding()->isBlockedPath(
 																					_battleSave->getTile(posQuad),
 																					dir,

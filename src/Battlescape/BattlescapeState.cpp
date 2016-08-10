@@ -4266,14 +4266,14 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 				tuCost = tile->getTuCostTile(O_FLOOR, mType);
 			else
 			{
-				if (tile->hasNoFloor() == false)
+				if (tile->solidFloor() == true)
 				{
 					const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
 					if (tileBelow->getMapData(O_OBJECT) != nullptr)
 						tuCost = 4 + tileBelow->getTuCostTile(O_OBJECT, mType);
 					else
-						tuCost = 4;	// safety. If tile has no floor-object but hasNoFloor=FALSE
-				}					// there'd better be an object w/ tLevel -24 in tileBelow.
+						tuCost = 4;	// safety. If tile has no floor-object but solidFloor=TRUE
+				}					// there'd better be an object w/ tLevel -24 in tileBelow!
 				else
 				{
 					switch (mType)
@@ -4295,7 +4295,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 		const int info[]
 		{
-			static_cast<int>(tile->hasNoFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)))),
+			static_cast<int>(tile->solidFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)))),
 			tile->getSmoke(),
 			tile->getFire(),
 			tuCost
@@ -4319,14 +4319,14 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 				std::wstring hasFloor;
 				switch (info[i])
 				{
-					case 0:					// Floor
-						hasFloor = L"F";
-						color = GREEN;
-						break;
-					case 1:					// NO Floor
 					default:
+					case 0:					// NO Floor
 						hasFloor = L"-";
 						color = ORANGE;
+						break;
+					case 1:					// Floor
+						hasFloor = L"F";
+						color = GREEN;
 				}
 
 				_lstTileInfo->addRow(
@@ -4521,7 +4521,7 @@ void BattlescapeState::saveAIMap()
 				}
 
 				--pos.z;
-				if (z > 0 && tile->hasNoFloor(_battleSave->getTile(pos)) == false)
+				if (z > 0 && tile->solidFloor(_battleSave->getTile(pos)) == true)
 					break; // no seeing through floors
 			}
 

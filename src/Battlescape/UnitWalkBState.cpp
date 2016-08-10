@@ -736,7 +736,7 @@ bool UnitWalkBState::statusWalk() // private.
 				tile->setTileUnit(_unit);
 
 				tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
-				if (tile->hasNoFloor(tileBelow) == false) // NOTE: I hae a suspicion this should be checked for the primary quadrant only.
+				if (tile->solidFloor(tileBelow) == true) // NOTE: I have a suspicion this should be checked for the primary quadrant only.
 				{
 					//Log(LOG_INFO) << ". . . . hasFloor ( doFallCheck set FALSE )";
 					doFallCheck = false;
@@ -1360,7 +1360,7 @@ bool UnitWalkBState::groundCheck() const // private.
 		{
 			pos = _unit->getPosition() + Position(x,y,0);
 			tileBelow = _battleSave->getTile(pos + Position(0,0,-1));
-			if (_battleSave->getTile(pos)->hasNoFloor(tileBelow) == false)
+			if (_battleSave->getTile(pos)->solidFloor(tileBelow) == true)
 				return true;
 		}
 	}

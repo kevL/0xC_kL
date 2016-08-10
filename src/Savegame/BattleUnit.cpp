@@ -1104,7 +1104,7 @@ void BattleUnit::startWalking(
 
 		default:
 			_dir = dir;
-			if (_tile->hasNoFloor(tileBelow) == true) // NOTE: The tile is the Tile of only the primary quadrant for large units.
+			if (_tile->solidFloor(tileBelow) == false) // NOTE: The tile is the Tile of only the primary quadrant for large units.
 			{
 				_status = STATUS_FLYING;
 				_floating = true;
@@ -1138,7 +1138,7 @@ void BattleUnit::keepWalking(
 		_status = STATUS_STANDING;
 		_dirVertical = Pathfinding::DIR_VERT_NONE;
 
-		if (_floating == true && _tile->hasNoFloor(tileBelow) == false)
+		if (_floating == true && _tile->solidFloor(tileBelow) == true)
 			_floating = false;
 
 		if (_dirFace != -1) // finish strafing move facing the correct way.
@@ -2742,7 +2742,7 @@ void BattleUnit::setUnitTile(
 		{
 			case STATUS_WALKING:
 				if (_mType == MT_FLY
-					&& _tile->hasNoFloor(tileBelow) == true)
+					&& _tile->solidFloor(tileBelow) == false)
 				{
 					_status = STATUS_FLYING;
 					_floating = true;
@@ -2751,7 +2751,7 @@ void BattleUnit::setUnitTile(
 
 			case STATUS_FLYING:
 				if (_dirVertical == Pathfinding::DIR_VERT_NONE // <- wait. What if unit went down onto solid floor.
-					&& _tile->hasNoFloor(tileBelow) == false)
+					&& _tile->solidFloor(tileBelow) == true)
 				{
 					_status = STATUS_WALKING;
 					_floating = false;
@@ -2760,7 +2760,7 @@ void BattleUnit::setUnitTile(
 
 			case STATUS_UNCONSCIOUS: // revived.
 				_floating = _mType == MT_FLY
-						 && _tile->hasNoFloor(tileBelow) == true;
+						 && _tile->solidFloor(tileBelow) == false;
 		}
 	}
 	else

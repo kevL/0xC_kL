@@ -733,13 +733,13 @@ int Pathfinding::getTuCostPf(
 				else
 				{
 					tileStartBelow = _battleSave->getTile(posStart + posOffset + posBelow);
-					if (tileStart->hasNoFloor(tileStartBelow) == true
+					if (tileStart->solidFloor(tileStartBelow) == false
 						&& ++partsOnAir == quadrants)
 					{
 						if (dir != DIR_DOWN) return FAIL;
 
 						fall = true;
-						//if (_debug) Log(LOG_INFO) << ". . not Fly, hasNoFloor, ++partsOnAir=quadrants -- fall= " << fall;
+						//if (_debug) Log(LOG_INFO) << ". . not Fly, no Floor, ++partsOnAir=quadrants -- fall= " << fall;
 					}
 				}
 			}
@@ -773,7 +773,7 @@ int Pathfinding::getTuCostPf(
 				&& dir < DIR_UP
 				&& tileStart->getTerrainLevel() < -15
 				&& tileStopAbove != nullptr
-				&& tileStopAbove->hasNoFloor(tileStop) == false)
+				&& tileStopAbove->solidFloor(tileStop) == true)
 			{
 				if (++partsGoingUp == quadrants)
 				{
@@ -1683,8 +1683,8 @@ bool Pathfinding::isBlocked( // private.
 					}
 				}
 			}
-			else if (tile->hasNoFloor() == true	// This section is devoted to ensuring that large units
-				&& _mType != MT_FLY)			// do not take part in any kind of falling behaviour.
+			else if (tile->solidFloor() == false	// This section is devoted to ensuring that large units
+				&& _mType != MT_FLY)				// do not take part in any kind of falling behaviour.
 			{
 				Position pos (tile->getPosition());
 				while (pos.z != -1)
@@ -1706,7 +1706,7 @@ bool Pathfinding::isBlocked( // private.
 						}
 					}
 
-					if (testTile->hasNoFloor() == false)
+					if (testTile->solidFloor() == true)
 						break;
 
 					--pos.z;
@@ -1957,7 +1957,7 @@ bool Pathfinding::canFallDown( // private
  */
 bool Pathfinding::canFallDown(const Tile* const tile) const // private
 {
-	return tile->hasNoFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
+	return (tile->solidFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1))) == false);
 }
 
 /**
@@ -2013,9 +2013,9 @@ UpDownCheck Pathfinding::validateUpDown(
 		|| (dir == DIR_DOWN && _alt == true))
 	{
 		if ((dir == DIR_UP
-				&& stopTile->hasNoFloor(startTile))
+				&& stopTile->solidFloor(startTile) == false)
 			|| (dir == DIR_DOWN
-				&& startTile->hasNoFloor(_battleSave->getTile(posStart + Position(0,0,-1)))))
+				&& startTile->solidFloor(_battleSave->getTile(posStart + Position(0,0,-1))) == false))
 		{
 //			if (launch == true)
 //			{

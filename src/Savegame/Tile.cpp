@@ -352,22 +352,22 @@ int Tile::getTuCostTile(
 }
 
 /**
- * Checks whether this Tile has a reasonable floor or not.
+ * Checks whether or not this Tile has a reasonable floor.
  * @param tileBelow - the tile below this Tile (default nullptr)
- * @return, true if tile has no floor
+ * @return, true if tile has an effective floor
  */
-bool Tile::hasNoFloor(const Tile* const tileBelow) const
+bool Tile::solidFloor(const Tile* const tileBelow) const
 {
 	if (_pos.z == 0
 		|| (tileBelow != nullptr && tileBelow->getTerrainLevel() == -24))
 	{
-		return false;
+		return true;
 	}
 
 	if (_parts[O_FLOOR] != nullptr)
-		return _parts[O_FLOOR]->isNoFloor();
+		return (_parts[O_FLOOR]->isNoFloor() == false);
 
-	return true;
+	return false;
 }
 
 /**

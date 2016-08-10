@@ -349,7 +349,7 @@ void UnitDieBState::convertToBody() // private.
 						&& tileExpl->getPosition().z > 0	// safety.
 //						&& tileExpl->getMapData(O_OBJECT) == nullptr
 //						&& tileExpl->getMapData(O_FLOOR) == nullptr
-						&& tileExpl->hasNoFloor(tileExplBelow) == true)
+						&& tileExpl->solidFloor(tileExplBelow) == false)
 					{
 						tileExpl = tileExplBelow;
 						tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
