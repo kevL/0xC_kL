@@ -709,33 +709,18 @@ bool UnitWalkBState::statusWalk() // private.
 		&& _unit->getPosition() != _unit->getStartPosition())
 	{
 		//Log(LOG_INFO) << ". . tile switch from _posStart to _posStop";
+		// IMPORTANT: startTile transiently holds onto this unit (all quads) for Map drawing.
 		_tileSwitchDone = true;
-
-		Tile* tile;
-		const Tile* tileBelow;
-		const int unitSize (_unit->getArmor()->getSize() - 1);
-		for (int
-				x = unitSize;
-				x != -1;
-				--x)
-		{
-			for (int
-					y = unitSize;
-					y != -1;
-					--y)
-			{
-				//Log(LOG_INFO) << ". . . clear unit from start tile " << _unit->getStartPosition();
-				tile = _battleSave->getTile(_unit->getStartPosition() + Position(x,y,0));
-				tile->setTileUnit();
-				tile->setTransitUnit(_unit); // IMPORTANT: lastTile transiently holds onto this unit (all quads) for Map drawing.
-			}
-		}
 
 		_unit->setUnitTile(
 						_battleSave->getTile(_unit->getPosition()),
 						_battleSave->getTile(_unit->getPosition() + Position(0,0,-1)));
 
+		Tile* tile;
+		const Tile* tileBelow;
+
 		bool doFallCheck (true);
+		const int unitSize (_unit->getArmor()->getSize() - 1);
 		for (int
 				x = unitSize;
 				x != -1;
@@ -1355,7 +1340,7 @@ void UnitWalkBState::doFallCheck() // private.
 /**
  * Checks if there is ground below when unit is falling.
  * @note Pathfinding already has a function canFallDown() that could be used.
- * @return, true if unit hits a Floor
+ * @return, true if unit is on solid floor
  */
 bool UnitWalkBState::groundCheck() const // private.
 {
@@ -1401,7 +1386,7 @@ void UnitWalkBState::establishTilesLink() // private.
 				y != -1;
 				--y)
 		{
-			_battleSave->getTile(_unit->getStopPosition() + Position(x,y,0))->setTransitUnit(_unit);
+			_battleSave->getTile(_unit->getStopPosition() + Position(x,y,0))->setTileUnit(_unit);
 		}
 	}
 }
@@ -1415,50 +1400,63 @@ void UnitWalkBState::clearTilesLink(bool origin) // private.
 	//Log(LOG_INFO) << "UnitWalkBState::clearTilesLink()";
 	_tilesLinked = false;
 
-	std::vector<Position> posCurrent;
-	Position
-		pos (_unit->getPosition()),
-		posTest;
+	Position pos;
 
 	const int unitSize (_unit->getArmor()->getSize() - 1);
-	for (int
-			x = unitSize;
-			x != -1;
-			--x)
+	switch (unitSize)
 	{
-		for (int
-				y = unitSize;
-				y != -1;
-				--y)
-		{
-			posCurrent.push_back(pos + Position(x,y,0));
-		}
-	}
+		case 0:
+			if (origin == true)
+				pos = _unit->getStartPosition();
+			else
+				pos = _unit->getStopPosition();
 
-	if (origin == true)
-		pos = _unit->getStartPosition();
-	else
-		pos = _unit->getStopPosition();
+			_battleSave->getTile(pos)->setTileUnit(); // clear Tile's unit.
+			break;
 
-	for (int
-			x = unitSize;
-			x != -1;
-			--x)
-	{
-		for (int
-				y = unitSize;
-				y != -1;
-				--y)
-		{
-			posTest = pos + Position(x,y,0);
-			if (std::find(
-						posCurrent.begin(),
-						posCurrent.end(),
-						posTest) == posCurrent.end())
+		case 1:
+			pos = _unit->getPosition();
+			std::vector<Position> posCurrent;	// gather unit's current Positions
+			for (int							// so they're not cleared.
+					x = unitSize;
+					x != -1;
+					--x)
 			{
-				_battleSave->getTile(posTest)->setTransitUnit(nullptr);
+				for (int
+						y = unitSize;
+						y != -1;
+						--y)
+				{
+					posCurrent.push_back(pos + Position(x,y,0));
+				}
 			}
-		}
+
+			if (origin == true)
+				pos = _unit->getStartPosition();
+			else
+				pos = _unit->getStopPosition();
+
+			Position posTest;
+			for (int
+					x = unitSize;
+					x != -1;
+					--x)
+			{
+				for (int
+						y = unitSize;
+						y != -1;
+						--y)
+				{
+					posTest = pos + Position(x,y,0);
+					if (std::find(
+								posCurrent.begin(),
+								posCurrent.end(),
+								posTest) == posCurrent.end())
+					{
+						_battleSave->getTile(posTest)->setTileUnit(); // clear Tiles' unit.
+					}
+				}
+			}
 	}
 }
 

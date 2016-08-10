@@ -1234,27 +1234,10 @@ Surface* Tile::getSprite(MapDataType partType) const
 }
 
 /**
- * Sets a unit on this Tile.
- * @param unit		- pointer to a BattleUnit (default nullptr)
-// * @param tileBelow	- pointer to the Tile below this Tile (default nullptr)
+ * Sets a BattleUnit on this Tile.
+ * @param unit - pointer to a BattleUnit (default nullptr)
  */
-void Tile::setTileUnit(
-		BattleUnit* const unit)
-//		const Tile* const tileBelow)
-{
-	_unit = unit;
-/*	if ((_unit = unit) != nullptr) // && quadrant == 0
-	{
-		_unit->setUnitTile(this, tileBelow);
-//		_unit->setPosition(pos);
-	} */
-}
-
-/**
- * Sets a unit transitorily on this Tile.
- * @param unit - pointer to a BattleUnit
- */
-void Tile::setTransitUnit(BattleUnit* const unit)
+void Tile::setTileUnit(BattleUnit* const unit)
 {
 	_unit = unit;
 }

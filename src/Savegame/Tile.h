@@ -291,13 +291,9 @@ private:
 		Surface* getSprite(MapDataType partType) const;
 
 		/// Sets a specified BattleUnit on the Tile.
-		void setTileUnit(
-				BattleUnit* const unit = nullptr);
-//				const Tile* const tileBelow = nullptr);
-		/// Sets a specified BattleUnit transitorily on the Tile.
-		void setTransitUnit(BattleUnit* const unit);
+		void setTileUnit(BattleUnit* const unit = nullptr);
 		/**
-		 * Gets the (conscious) BattleUnit on the Tile.
+		 * Gets the BattleUnit on the Tile.
 		 * @return, pointer to a BattleUnit
 		 */
 		BattleUnit* getTileUnit() const

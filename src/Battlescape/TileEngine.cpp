@@ -2186,16 +2186,16 @@ void TileEngine::hit(
 				power = targetUnit->takeDamage(
 											relationalVoxel,
 											power, dType,
-											dType == DT_STUN || dType == DT_SMOKE);	// stun ignores armor... does now! UHM.... note it
-																					// still gets Vuln.modifier, but not armorReduction.
+											dType == DT_STUN || dType == DT_SMOKE);	// stun ignores armor ... it still gets
+																					// Vulnr.modifier, but not armorReduction.
 				if (shotgun == true) targetUnit->hasCried(true);
 
 				if (power != 0)
 				{
 					if (attacker != nullptr
-						&& (targetUnit->getHealth() == 0
-							|| antecedentWounds < targetUnit->getFatalWounds()))	// ... just do this here and bDone with it.
-					{																// Regularly done in BattlescapeGame::checkCasualties()
+						&& (targetUnit->getHealth() == 0							// ... just do this here and bDone with it.
+							|| antecedentWounds < targetUnit->getFatalWounds()))	// Regularly done in BattlescapeGame::checkCasualties()
+					{
 						targetUnit->killerFaction(attacker->getFaction());
 					}
 					// NOTE: Not so sure that's been setup right (cf. other kill-credit code as well as DebriefingState)
@@ -2204,7 +2204,6 @@ void TileEngine::hit(
 
 					if (targetUnit->getSpecialAbility() == SPECAB_EXPLODE // cyberdiscs, usually. Also, cybermites ... (and Zombies, on fire).
 						&& (targetUnit->getHealth() == 0 || targetUnit->isStunned() == true)
-//						&& targetUnit->isOut_t(OUT_HLTH_STUN) == true
 						&& (targetUnit->isZombie() == true
 							|| (   dType != DT_STUN		// don't explode if stunned. Maybe... see above.
 								&& dType != DT_SMOKE

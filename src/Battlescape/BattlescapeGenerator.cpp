@@ -3124,7 +3124,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 	}
 
 //	if (craftBlock != nullptr)
-	if (_craftDeployed == true) // There's better be a craftBlock if _craftDeployed=TRUE.
+	if (_craftDeployed == true) // There'd better be a craftBlock if _craftDeployed=TRUE.
 	{
 		for (std::vector<MapDataSet*>::const_iterator
 				i = _craft->getRules()->getTacticalTerrainData()->getMapDataSets()->begin();

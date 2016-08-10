@@ -2738,7 +2738,7 @@ void BattleUnit::setUnitTile(
 {
 	if ((_tile = tile) != nullptr)
 	{
-		switch (_status)
+		switch (_status) // if moving or revived ->
 		{
 			case STATUS_WALKING:
 				if (_mType == MT_FLY
@@ -2750,7 +2750,7 @@ void BattleUnit::setUnitTile(
 				break;
 
 			case STATUS_FLYING:
-				if (_dirVertical == Pathfinding::DIR_VERT_NONE
+				if (_dirVertical == Pathfinding::DIR_VERT_NONE // <- wait. What if unit went down onto solid floor.
 					&& _tile->hasNoFloor(tileBelow) == false)
 				{
 					_status = STATUS_WALKING;
