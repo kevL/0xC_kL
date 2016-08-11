@@ -386,7 +386,7 @@ void Camera::keyboardRelease(Action* action, State*)
  */
 void Camera::scrollMouse()
 {
-	scrollXY(
+	scroll(
 			_scrollMouseX,
 			_scrollMouseY,
 			true);
@@ -397,19 +397,19 @@ void Camera::scrollMouse()
  */
 void Camera::scrollKey()
 {
-	scrollXY(
+	scroll(
 			_scrollKeyX,
 			_scrollKeyY,
 			true);
 }
 
 /**
- * Handles scrolling with given delta.
+ * Handles scrolling the Screen with specified delta.
  * @param x			- x-delta
  * @param y			- y-delta
  * @param redraw	- true to redraw Map
  */
-void Camera::scrollXY(
+void Camera::scroll(
 		int x,
 		int y,
 		bool redraw)
@@ -493,12 +493,11 @@ void Camera::scrollXY(
 }
 
 /**
- * Jumps the view-port for projectile-motion and when resizing the
- * battlefield-window.
- * @param x - x-deviation
- * @param y - y-deviation
+ * Warps the Screen for projectile-motion and when resizing the battlefield-window.
+ * @param x - x-delta
+ * @param y - y-delta
  */
-void Camera::jumpXY(
+void Camera::warp(
 		int x,
 		int y)
 {
@@ -555,11 +554,11 @@ int Camera::getViewLevel() const
 
 /**
  * Sets the view-level.
- * @param viewLevel - level to display
+ * @param level - level to display
  */
-void Camera::setViewLevel(int viewLevel)	// The call from Map::drawTerrain() causes a stack overflow loop when projectile in FoV.
-{											// Solution: remove draw() call below_
-	_offsetField.z = viewLevel;				// - might have to pass in a 'redraw' bool to compensate for other calls ...
+void Camera::setViewLevel(int level)	// The call from Map::drawTerrain() causes a stack overflow loop when projectile in FoV.
+{										// Solution: remove draw() call below_
+	_offsetField.z = level;				// - might have to pass in a 'redraw' bool to compensate for other calls ...
 	intMinMax(
 			&_offsetField.z,
 			0,
@@ -910,7 +909,7 @@ void Camera::resize()
 /**
  * Stops any mouse-scrolling.
  */
-void Camera::stopMouseScrolling()
+void Camera::stopMouseScroll()
 {
 	_scrollMouseTimer->stop();
 }

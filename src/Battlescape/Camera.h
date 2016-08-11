@@ -39,8 +39,8 @@ class Camera
 {
 
 private:
-	static const int SCROLL_DIAGONAL_EDGE = 65;
-
+	static const int SCROLL_DIAGONAL_EDGE = 65;	// distance in Px from screen-corners less
+												// than which diagonal scroll takes effect.
 	bool
 		_pauseAfterShot,
 		_scrollTrigger,
@@ -81,8 +81,8 @@ private:
 
 
 	public:
-		static const int SCROLL_BORDER = 2;
-
+		static const int SCROLL_BORDER = 2;	// distance in Px from screen-edges less
+											// than which scrolling takes effect.
 		/// Creates a Camera.
 		Camera(
 				int spriteWidth,
@@ -110,29 +110,29 @@ private:
 		void setScrollTimers(
 				Timer* const mouseTimer,
 				Timer* const keyboardTimer);
-		/// Scrolls the view for mouse-scrolling.
+		/// Scrolls the battlefield-screen by mouse-motion.
 		void scrollMouse();
-		/// Scrolls the view for keyboard-scrolling.
+		/// Scrolls the battlefield-screen by keyboard-presses.
 		void scrollKey();
-		/// Scrolls the view a specified amount.
-		void scrollXY(
+		/// Scrolls the battlefield-screen by a specified x/y delta.
+		void scroll(
 				int x,
 				int y,
 				bool redraw);
-		/// Handles jumping the view-port by a given deviation.
-		void jumpXY(
+		/// Warps the battlefield-screen by a specified x/y delta.
+		void warp(
 				int x,
 				int y);
 
-		/// Moves the map-layer up.
+		/// Moves the map-level up.
 		bool up();
-		/// Moves the map-layer down.
+		/// Moves the map-level down.
 		bool down();
 
-		/// Gets the Map's displayed level.
+		/// Gets the Map's view-level.
 		int getViewLevel() const;
-		/// Sets the view-level.
-		void setViewLevel(int viewLevel);
+		/// Sets the Map's view-level.
+		void setViewLevel(int level);
 
 		/// Converts map-coordinates to screen-coordinates.
 		void convertMapToScreen(
@@ -151,11 +151,11 @@ private:
 
 		/// Gets the Camera's center-position.
 		Position getCenterPosition();
-		/// Centers the Camera on a position.
+		/// Centers the Camera on a Position.
 		void centerPosition(
 				const Position& posField,
 				bool draw = true);
-		/// Focuses the Camera on a position.
+		/// Focuses the Camera on a Position.
 		bool focusPosition(
 				const Position& posField,
 				bool checkScreen = true,
@@ -171,23 +171,23 @@ private:
 		/// Sets the map x/y screen-offset.
 		void setMapOffset(const Position& posOffset);
 
-		/// Toggles showing all map-layers.
+		/// Toggles showing all view-levels.
 		bool toggleShowLayers();
-		/// Checks if the Camera is showing all map-layers.
+		/// Checks if the Camera is showing all view-levels.
 		bool getShowLayers() const;
 
-		/// Checks if x/y coordinates are inside the screen.
+		/// Checks if x/y coordinates are inside the Screen.
 		bool isOnScreen(const Position& posField) const;
 
 		/// Resizes the viewable area.
 		void resize();
 
-		/// Stops mouse-scrolling.
-		void stopMouseScrolling();
+		/// Cancels mouse-scrolling.
+		void stopMouseScroll();
 
-		/// Sets whether to pause the Camera before reverting its position.
+		/// Sets whether to pause the Camera before reverting its Position.
 		void setPauseAfterShot(bool pause = true);
-		/// Gets whether to pause the Camera before reverting its position.
+		/// Gets whether to pause the Camera before reverting its Position.
 		bool getPauseAfterShot() const;
 };
 

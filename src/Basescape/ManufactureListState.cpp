@@ -56,7 +56,7 @@ ManufactureListState::ManufactureListState(
 		Base* const base)
 	:
 		_base(base),
-		_scroll(0)
+		_scroll(0u)
 {
 	_fullScreen = false;
 

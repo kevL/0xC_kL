@@ -144,7 +144,7 @@ NextTurnState::NextTurnState(
 	_txtMessage->setHighContrast();
 	_txtMessage->setBig();
 
-	_state->clearMouseScrollingState();
+	_state->clearMouseScroll();
 }
 
 /**

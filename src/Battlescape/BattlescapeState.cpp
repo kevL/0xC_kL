@@ -1164,14 +1164,14 @@ void BattlescapeState::mapOver(Action* action)
 
 		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
 		{
-			_map->getCamera()->scrollXY(
+			_map->getCamera()->scroll(
 									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
 									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
 									false);
 			_map->setSelectorType(CT_NONE);
 		}
 		else
-			_map->getCamera()->scrollXY(
+			_map->getCamera()->scroll(
 									static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getScaleX()),
 									static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getScaleY()),
 									false);
@@ -3894,9 +3894,9 @@ void BattlescapeState::showPsiButton(bool show)
 }
 
 /**
- * Clears mouse-scrolling state (isMouseScrolling).
+ * Clears mouse-scrolling.
  */
-void BattlescapeState::clearMouseScrollingState()
+void BattlescapeState::clearMouseScroll()
 {
 	_isMouseScrolling = false;
 }
@@ -4014,7 +4014,7 @@ void BattlescapeState::resize(
 	_map->setWidth(Options::baseXResolution);
 	_map->setHeight(Options::baseYResolution);
 	_map->getCamera()->resize();
-	_map->getCamera()->jumpXY(dX / 2, dY / 2);
+	_map->getCamera()->warp(dX >> 1u, dY >> 1u);
 
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();

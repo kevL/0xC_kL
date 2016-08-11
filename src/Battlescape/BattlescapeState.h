@@ -464,8 +464,8 @@ private:
 		/// Shows the PSI button.
 		void showPsiButton(bool show = true);
 
-		/// Clears mouse-scrolling state.
-		void clearMouseScrollingState();
+		/// Clears mouse-scrolling.
+		void clearMouseScroll();
 
 		/// Returns a pointer to the battlegame, in case we need its functions.
 		BattlescapeGame* getBattleGame();

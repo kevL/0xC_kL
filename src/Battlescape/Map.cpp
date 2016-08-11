@@ -319,7 +319,7 @@ void Map::draw()
 	if (_noDraw == false) // don't draw if MiniMap is open. Or if Inventory is open.
 	{
 	// removed setting this here and in BattlescapeGame::handleBattleState(),
-	// Camera::scrollXY(), ProjectileFlyBState::think() x2.
+	// Camera::scroll(), ProjectileFlyBState::think() x2.
 //	if (_redraw == false) return;
 //	_redraw = false;
 
@@ -545,9 +545,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 					_te->isReaction() = true;
 			}
 			else if (_smoothingEngaged == true)
-				_camera->jumpXY(
+				_camera->warp(
 							(surface->getWidth() >> 1u) - bullet.x,
-							(_playableHeight >> 1u) - bullet.y);
+							(_playableHeight     >> 1u) - bullet.y);
 
 			if (_smoothingEngaged == true
 				|| posFinal.z != action->actor->getPosition().z
@@ -572,22 +572,22 @@ void Map::drawTerrain(Surface* const surface) // private.
 					enough = true;
 					if (bullet.x < 0)
 					{
-						_camera->jumpXY(surface->getWidth(), 0);
+						_camera->warp(surface->getWidth(), 0);
 						enough = false;
 					}
 					else if (bullet.x > surface->getWidth())
 					{
-						_camera->jumpXY(-surface->getWidth(), 0);
+						_camera->warp(-surface->getWidth(), 0);
 						enough = false;
 					}
 					else if (bullet.y < 0)
 					{
-						_camera->jumpXY(0, _playableHeight);
+						_camera->warp(0, _playableHeight);
 						enough = false;
 					}
 					else if (bullet.y > _playableHeight)
 					{
-						_camera->jumpXY(0, -_playableHeight);
+						_camera->warp(0, -_playableHeight);
 						enough = false;
 					}
 					_camera->convertVoxelToScreen(

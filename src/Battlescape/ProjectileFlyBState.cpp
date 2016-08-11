@@ -478,8 +478,8 @@ void ProjectileFlyBState::init()
 
 		if (createProjectile() == true)
 		{
-			_parent->getMap()->setSelectorType(CT_NONE);			// might be already done in primaryAction(). Nope --
-			_parent->getMap()->getCamera()->stopMouseScrolling();	// the cursor is hidden there, the selector is hidden here.
+			_parent->getMap()->setSelectorType(CT_NONE);		// might be already done in primaryAction(). Nope:
+			_parent->getMap()->getCamera()->stopMouseScroll();	// the cursor is hidden there, the selector is hidden here.
 		}
 	}
 	//Log(LOG_INFO) << "ProjectileFlyBState::init() EXIT";
@@ -740,7 +740,7 @@ void ProjectileFlyBState::think()
 		_parent->getMap()->showProjectile();
 	}
 
-	_battleSave->getBattleState()->clearMouseScrollingState();
+	_battleSave->getBattleState()->clearMouseScroll();
 
 	if (_prj == nullptr)
 	{
@@ -1036,7 +1036,7 @@ void ProjectileFlyBState::think()
 					} */
 				}
 
-				// Special Shotgun Behaviour: determine *extra* projectile paths and add bullet hits at their termination points.
+				// Special Shotgun Behaviour: determine *extra* projectile-paths and add bullet-hits at their termination points.
 				if (_load != nullptr)
 				{
 					Position shotVoxel;
