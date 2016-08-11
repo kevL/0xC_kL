@@ -262,8 +262,8 @@ void Tile::saveBinary(Uint8** buffer) const
 /**
  * Sets the MapData references of parts 0 to 3.
  * @param part		- pointer to MapData
- * @param partId	- dataID
- * @param partSetId	- dataSetID
+ * @param partId	- data-ID
+ * @param partSetId	- dataSet-ID
  * @param partType	- the part-type (MapData.h)
  */
 void Tile::setMapData(
@@ -279,8 +279,8 @@ void Tile::setMapData(
 
 /**
  * Gets the MapData references of parts 0 to 3.
- * @param partId	- pointer to dataID
- * @param partSetId	- pointer to dataSetID
+ * @param partId	- pointer to data-ID
+ * @param partSetId	- pointer to dataSet-ID
  * @param partType	- the part-type (MapData.h)
  */
 void Tile::getMapData(
@@ -640,8 +640,8 @@ int Tile::destroyTilepart(
 		bool obliterate)
 {
 	int
-		ret    (-1),
-		tLevel ( 0);
+		ret,
+		tLevel (0);
 
 	const MapData* const part (_parts[partType]);
 	if (part != nullptr)
@@ -715,11 +715,9 @@ int Tile::destroyTilepart(
 /**
  * Damages terrain (check against terrain-part armor).
  * @note Called by TileEngine::hit().
- * TODO: Cycle through the part and its death-parts until the full power of the
- * hit has been expended: at present the death-part always gets left in place.
  * @param partType		- part of tile to check (MapData.h)
- * @param power			- power of the damage
- * @param battleSave	- pointer to the SavedBattleGame
+ * @param power			- power of the hit
+ * @param battleSave	- pointer to SavedBattleGame
  */
 void Tile::hitTile(
 		MapDataType partType,
@@ -729,8 +727,6 @@ void Tile::hitTile(
 	//Log(LOG_INFO) << "Tile::hitTile() partType= " << partType
 	//			  << " hp= " << _parts[partType]->getArmor()
 	//			  << " power= " << power;
-//	if (power >= _parts[partType]->getArmor())
-//		destroyTilepart(partType, battleSave);
 	int expend;
 	while (power > 0
 		&& _parts[partType] != nullptr // early out + safety: Also handled in destroyTilepart().
@@ -741,6 +737,8 @@ void Tile::hitTile(
 		else
 			break;
 	}
+	// NOTE: A part's death-part can cycle or loop back to itself -- which if so
+	// should be corrected in the part's Tileset itself.
 }
 
 /**

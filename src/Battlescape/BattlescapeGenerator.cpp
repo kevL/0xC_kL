@@ -2301,45 +2301,47 @@ int BattlescapeGenerator::loadMAP( // private.
 {
 	std::ostringstream file;
 	file << "MAPS/" << block->getType() << ".MAP";
+
 	std::ifstream ifstr (
-						CrossPlatform::getDataFile(file.str()).c_str(),
-						std::ios::in | std::ios::binary);
+					CrossPlatform::getDataFile(file.str()).c_str(),
+					std::ios::in | std::ios::binary);
 	if (ifstr.fail() == true)
 	{
 		throw Exception("bGen:loadMAP() " + file.str() + " not found.");
 	}
 
-	char array_Map[3u];
+	char xyz[3u];
 	ifstr.read(
-			reinterpret_cast<char*>(&array_Map),
-			sizeof(array_Map));
+			reinterpret_cast<char*>(&xyz),
+			sizeof(xyz));
 	const int
-		size_x (static_cast<int>(array_Map[1u])), // note X-Y switch!
-		size_y (static_cast<int>(array_Map[0u])), // note X-Y switch!
-		size_z (static_cast<int>(array_Map[2u]));
-
-	block->setSizeZ(size_z);
+		size_x (static_cast<int>(xyz[1u])), // note X-Y switch!
+		size_y (static_cast<int>(xyz[0u])), // note X-Y switch!
+		size_z (static_cast<int>(xyz[2u]));
 
 	std::ostringstream oststr;
 	if (size_z > _battleSave->getMapSizeZ())
 	{
-		oststr << "bGen:loadMAP() Height of " + file.str() + " is too big for the mission. Block is "
-			   << size_z << " expected: " << _battleSave->getMapSizeZ();
+		oststr << "bGen:loadMAP() Height of " + file.str() + " is too big for the battlescape. Block is "
+			   << size_z << ". Expected: " << _battleSave->getMapSizeZ();
 		throw Exception(oststr.str());
 	}
-	else if (size_x != block->getSizeX() || size_y != block->getSizeY())
+
+	if (size_x != block->getSizeX() || size_y != block->getSizeY())
 	{
-		oststr << "bGen:loadMAP() Map block is not of the size specified. " + file.str() + " is "
-			   << size_x << "x" << size_y << " expected: " << block->getSizeX() << "x" << block->getSizeY();
+		oststr << "bGen:loadMAP() MapBlock is not of the size specified in its ruleset. " + file.str() + " is "
+			   << size_x << "x" << size_y << ". Expected: " << block->getSizeX() << "x" << block->getSizeY();
 		throw Exception(oststr.str());
 	}
+
+	block->setSizeZ(size_z);
 
 	int
 		x (offset_x),
 		y (offset_y),
 		z (size_z - 1);
 
-	for (int // check if there is already a layer - if so, move Z up
+	for (int // if there is already a level increase Z
 			i = _mapsize_z - 1;
 			i != 0;
 			--i)
@@ -2358,16 +2360,16 @@ int BattlescapeGenerator::loadMAP( // private.
 
 	if (z > _battleSave->getMapSizeZ() - 1)
 	{
-		throw Exception("bGen:loadMAP() Craft/UFO map is too tall.");
+		throw Exception("bGen:loadMAP() Craft/UFO is too tall.");
 	}
 
-	unsigned char array_Parts[Tile::PARTS_TILE];
+	unsigned char parts[Tile::PARTS_TILE];
 	unsigned partId;
 
 	bool revealDone;
 	while (ifstr.read(
-					reinterpret_cast<char*>(&array_Parts),
-					sizeof(array_Parts)))
+					reinterpret_cast<char*>(&parts),
+					sizeof(parts)))
 	{
 		revealDone = false;
 
@@ -2376,12 +2378,12 @@ int BattlescapeGenerator::loadMAP( // private.
 				i != Tile::PARTS_TILE;
 				++i)
 		{
-			partId = static_cast<unsigned>(array_Parts[i]);
+			partId = static_cast<unsigned>(parts[i]);
 
 			// Remove natural terrain that is inside Craft or Ufo.
-			if (i != 0u						// not if it's a floor since Craft/Ufo part will overwrite it anyway
-				&& partId == 0u				// and only if no Craft/Ufo part would overwrite the part
-				&& array_Parts[0u] != 0u)	// but only if there *is* a floor-part to the Craft/Ufo so it would (have) be(en) inside the Craft/Ufo
+			if (i != 0u				// not if it's a floor since Craft/Ufo part will overwrite it anyway
+				&& partId == 0u		// and only if no Craft/Ufo part would overwrite the part
+				&& parts[0u] != 0u)	// but only if there *is* a floor-part to the Craft/Ufo so it would (have) be(en) inside the Craft/Ufo
 			{
 				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, static_cast<MapDataType>(i));
 			}
@@ -2390,7 +2392,7 @@ int BattlescapeGenerator::loadMAP( // private.
 			// nb. See sequence of map-loading in generateMap() (1st terrain, 2nd Ufo, 3rd Craft) <- preMapScripting.
 			if (partId > 0u)
 			{
-				unsigned int dataId (partId);
+				unsigned dataId (partId);
 				int dataSetId (dataSetIdOffset);
 
 				MapData* const data (terraRule->getMapData(&dataId, &dataSetId));
@@ -2492,14 +2494,12 @@ void BattlescapeGenerator::loadRMP( // private.
 		int offset_y,
 		int segment)
 {
-	char dataArray[24u];
-
 	std::ostringstream file;
 	file << "ROUTES/" << block->getType() << ".RMP";
 
 	std::ifstream ifstr (
-						CrossPlatform::getDataFile(file.str()).c_str(),
-						std::ios::in | std::ios::binary);
+					CrossPlatform::getDataFile(file.str()).c_str(),
+					std::ios::in | std::ios::binary);
 	if (ifstr.fail() == true)
 	{
 		throw Exception("bGen:loadRMP() " + file.str() + " not found");
@@ -2523,6 +2523,7 @@ void BattlescapeGenerator::loadRMP( // private.
 	Node* node;
 	Position pos;
 
+	char dataArray[24u];
 	while (ifstr.read(
 					reinterpret_cast<char*>(&dataArray),
 					sizeof(dataArray)))
