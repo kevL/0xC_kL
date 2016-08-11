@@ -632,59 +632,72 @@ int Tile::getShade() const
  * @param partType		- this Tile's part for destruction (MapData.h)
  * @param battleSave	- pointer to the SavedBattleGame
  * @param obliterate	- true to bypass the death-part (default false)
+ * @return, the power that was required to destroy the part (-1 not destroyed)
  */
-void Tile::destroyTilepart(
+int Tile::destroyTilepart(
 		MapDataType partType,
 		SavedBattleGame* const battleSave,
 		bool obliterate)
 {
-	int tLevel (0);
+	int
+		ret    (-1),
+		tLevel ( 0);
 
-	const MapData* const data (_parts[partType]);
-	if (data != nullptr)
+	const MapData* const part (_parts[partType]);
+	if (part != nullptr)
 	{
-		if (data->getArmor() == 255 || data->isGravLift() == true)
-			return;
-
-		if (data->getTileType() == battleSave->getObjectiveTileType())
-			battleSave->addDestroyedObjective();
-
-		if (partType == O_OBJECT)
-			tLevel = _parts[O_OBJECT]->getTerrainLevel();
-
-		const int deadId (data->getDieMCD());
-		if (deadId != 0 && obliterate == false)
+		if (part->getArmor() != 255 && part->isGravLift() == false)
 		{
-			MapData* const partDead (data->getDataset()->getRecords()->at(static_cast<size_t>(deadId)));
-			setMapData(
-					partDead,
-					deadId,
-					_partSetId[partType],
-					partDead->getPartType());
+			ret = part->getArmor();
+
+			if (part->getTileType() == battleSave->getObjectiveTileType())
+				battleSave->addDestroyedObjective();
+
+			if (partType == O_OBJECT)
+				tLevel = _parts[O_OBJECT]->getTerrainLevel();
+
+			setMapData(nullptr,-1,-1, partType); // destroy current part.
+
+			if (obliterate == false)
+			{
+				const int deadId (part->getDieMCD());
+				if (deadId != 0) // instantiate a death-part if there is one.
+				{
+					MapData* const partDead (part->getDataset()->getRecords()->at(static_cast<size_t>(deadId)));
+					setMapData(
+							partDead,
+							deadId,
+							_partSetId[partType],
+							partDead->getPartType());
+				}
+
+				if (part->getExplosive() != 0) // do not explode if 'obliterate' is TRUE.
+					setExplosive(
+							part->getExplosive(),
+							part->getExplosiveType());
+			}
 		}
-		else
-			setMapData(nullptr,-1,-1, partType);
-
-		if (data->getExplosive() != 0) setExplosive(
-												data->getExplosive(),
-												data->getExplosiveType());
+		else // indestructable.
+			return -1;
 	}
+	else
+		ret = -1;
 
-	if (partType == O_FLOOR) // check if the floor-part on the lowest level is gone.
+	if (partType == O_FLOOR) // check if the floor-part on the ground-level is gone.
 	{
-		if (_pos.z == 0 && _parts[O_FLOOR] == nullptr)
-			setMapData( // replace with scorched earth
-					MapDataSet::getScorchedEarthTile(),
+		if (_pos.z == 0 && _parts[O_FLOOR] == nullptr) // replace with scorched earth
+			setMapData(
+					MapDataSet::getScorchedEarth(),
 					1,0, O_FLOOR);
 
-		if (   _parts[O_OBJECT] != nullptr // destroy object-part if the floor-part is gone.
+		if (   _parts[O_OBJECT] != nullptr // destroy object-part if the floor-part was just destroyed.
 			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)
 		{
 			destroyTilepart(O_OBJECT, battleSave, true); // stop floating haybales.
 		}
 	}
 
-	if (tLevel == -24) // destroy the object-part above if its support is gone.
+	if (tLevel == -24) // destroy the object-part above if all its support was destroyed.
 	{
 		Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
 		if (   tileAbove != nullptr
@@ -692,13 +705,18 @@ void Tile::destroyTilepart(
 			&& tileAbove->getMapData(O_OBJECT) != nullptr
 			&& tileAbove->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NONE)
 		{
-			tileAbove->destroyTilepart(O_OBJECT, battleSave, true); // stop floating lampposts.
+			tileAbove->destroyTilepart(O_OBJECT, battleSave, true); // stop floating lamposts. Trees would be more difficult.
 		}
 	}
+
+	return ret;
 }
 
 /**
  * Damages terrain (check against terrain-part armor).
+ * @note Called by TileEngine::hit().
+ * TODO: Cycle through the part and its death-parts until the full power of the
+ * hit has been expended: at present the death-part always gets left in place.
  * @param partType		- part of tile to check (MapData.h)
  * @param power			- power of the damage
  * @param battleSave	- pointer to the SavedBattleGame
@@ -711,8 +729,18 @@ void Tile::hitTile(
 	//Log(LOG_INFO) << "Tile::hitTile() partType= " << partType
 	//			  << " hp= " << _parts[partType]->getArmor()
 	//			  << " power= " << power;
-	if (power >= _parts[partType]->getArmor())
-		destroyTilepart(partType, battleSave);
+//	if (power >= _parts[partType]->getArmor())
+//		destroyTilepart(partType, battleSave);
+	int expend;
+	while (power > 0
+		&& _parts[partType] != nullptr // early out + safety: Also handled in destroyTilepart().
+		&& _parts[partType]->getArmor() <= power)
+	{
+		if ((expend = destroyTilepart(partType, battleSave)) != -1)
+			power -= expend;
+		else
+			break;
+	}
 }
 
 /**

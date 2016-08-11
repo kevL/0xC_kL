@@ -37,8 +37,8 @@ namespace OpenXcom
 {
 
 MapData // static.
-	* MapDataSet::_blankTile (nullptr),
-	* MapDataSet::_scorchedTile (nullptr);
+	* MapDataSet::_floorBlank  (nullptr),
+	* MapDataSet::_floorScorch (nullptr);
 
 
 /**
@@ -146,7 +146,7 @@ void MapDataSet::loadData()
 			unsigned char	Door;
 			unsigned char	Block_Fire;
 			unsigned char	Block_Smoke;
-			unsigned char	u39;
+			unsigned char	u39; // NOTE: so-called 'Start_Phase' is around here. See MCDEdit v1.17i
 			unsigned char	TU_Walk;
 			unsigned char	TU_Slide;
 			unsigned char	TU_Fly;
@@ -187,7 +187,7 @@ void MapDataSet::loadData()
 
 
 		MapData* part;
-		int objNumber (0);
+		int partId (0); // <- used only for BLANKS tileset.
 		while (ifstr.read(
 						reinterpret_cast<char*>(&mcd),
 						sizeof(MCD)))
@@ -252,20 +252,17 @@ void MapDataSet::loadData()
 							loft);
 			}
 
-			// Store the 2 tiles of 'blanks' as static so they are accessible to all MapData-instantiations.
-			if ((objNumber == 0 || objNumber == 1)
-				&& _type.compare("BLANKS") == 0)
+			// Load the two tiles of the BLANKS dataset as static so that they
+			// are accessible to all MapDataSet-instantiations.
+			if (_type.compare("BLANKS") == 0)
 			{
-				switch (objNumber)
+				switch (partId)
 				{
-					case 0:
-						MapDataSet::_blankTile = part;
-						break;
-					case 1:
-						MapDataSet::_scorchedTile = part;
+					case 0: MapDataSet::_floorBlank  = part; break; // not used.
+					case 1: MapDataSet::_floorScorch = part;
 				}
 			}
-			++objNumber;
+			++partId;
 		}
 
 
@@ -378,21 +375,22 @@ void MapDataSet::loadLoft( // static.
 }
 
 /**
- * Gets this part's blank-floor part.
- * @return, pointer to a blank-floor part
- */
-MapData* MapDataSet::getBlankFloorTile() // static.
+ * Gets the universal blank-floor part.
+ * @note Not used.
+ * @return, pointer to blank-floor part
+ *
+MapData* MapDataSet::getBlankFloor() // static.
 {
-	return MapDataSet::_blankTile;
-}
+	return MapDataSet::_floorBlank;
+} */
 
 /**
- * Gets this part's scorched-earth part.
+ * Gets the universal scorched-earth part.
  * @return, pointer to scorched-earth part
  */
-MapData* MapDataSet::getScorchedEarthTile() // static.
+MapData* MapDataSet::getScorchedEarth() // static.
 {
-	return MapDataSet::_scorchedTile;
+	return MapDataSet::_floorScorch;
 }
 
 }

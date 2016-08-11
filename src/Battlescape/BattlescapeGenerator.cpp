@@ -3206,7 +3206,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 			tile = _battleSave->getTile(Position(x,y,0));
 			if (tile->getMapData(O_FLOOR) == nullptr)
 				tile->setMapData(
-							MapDataSet::getScorchedEarthTile(),
+							MapDataSet::getScorchedEarth(),
 							1,0,
 							O_FLOOR);
 		}

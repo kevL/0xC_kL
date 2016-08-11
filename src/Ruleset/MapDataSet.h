@@ -51,8 +51,8 @@ private:
 	std::string _type;
 
 	static MapData
-		* _blankTile,
-		* _scorchedTile;
+		* _floorBlank,
+		* _floorScorch;
 
 	const Game* _game;
 	SurfaceSet* _surfaceSet;
@@ -93,10 +93,10 @@ private:
 				const std::string& file,
 				std::vector<Uint16>* const voxelData);
 
-		/// Gets the part's blank-floor-part.
-		static MapData* getBlankFloorTile();
-		/// Gets the part's scorched-earth-part.
-		static MapData* getScorchedEarthTile();
+		/// Gets the universal blank-floor part.
+//		static MapData* getBlankFloor(); // not used.
+		/// Gets the universal scorched-earth part.
+		static MapData* getScorchedEarth();
 };
 
 }

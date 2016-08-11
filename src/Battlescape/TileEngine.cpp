@@ -4279,203 +4279,204 @@ void TileEngine::setProjectileDirection(const int dir)
  */
 void TileEngine::detonateTile(Tile* const tile) const
 {
-	int power (tile->getExplosive());	// <- power that hit tile.
-	if (power == 0) return;				// <- no explosive applied to tile
-
-	//bool debug (tile->getPosition() == Position(20,30,3));
-	//Log(LOG_INFO) << "";
-	//if (debug) Log(LOG_INFO) << "TileEngine::detonateTile() " << tile->getPosition() << " power = " << power;
-	tile->clearExplosive(); // reset Tile's '_explosive' value to 0
-
-
-	const Position pos (tile->getPosition());
-
-	Tile* tiles[9u];
-	tiles[0u] = _battleSave->getTile(Position(		// tileAbove, do floor
-										pos.x,
-										pos.y,
-										pos.z + 1));
-	tiles[1u] = _battleSave->getTile(Position(		// tileEast, do westwall
-										pos.x + 1,
-										pos.y,
-										pos.z));
-	tiles[2u] = _battleSave->getTile(Position(		// tileSouth, do northwall
-										pos.x,
-										pos.y + 1,
-										pos.z));
-	tiles[3u] =										// central tile, do floor
-	tiles[4u] =										// central tile, do westwall
-	tiles[5u] =										// central tile, do northwall
-	tiles[6u] = tile;								// central tile, do object
-
-	tiles[7u] = _battleSave->getTile(Position(		// tileNorth, do bigwall south
-										pos.x,
-										pos.y - 1,
-										pos.z));
-	tiles[8u] = _battleSave->getTile(Position(		// tileWest, do bigwall east
-										pos.x - 1,
-										pos.y,
-										pos.z));
-	static const MapDataType parts[9u]
+	int power (tile->getExplosive());
+	if (power != 0)
 	{
-		O_FLOOR,		// 0 - in tileAbove
-		O_WESTWALL,		// 1 - in tileEast
-		O_NORTHWALL,	// 2 - in tileSouth
-		O_FLOOR,		// 3 - in central tile
-		O_WESTWALL,		// 4 - in central tile
-		O_NORTHWALL,	// 5 - in central tile
-		O_OBJECT,		// 6 - in central tile
-		O_OBJECT,		// 7 - in tileNorth, bigwall south
-		O_OBJECT		// 8 - in tileWest, bigwall east
-	};
+		//bool debug (tile->getPosition() == Position(20,30,3));
+		//Log(LOG_INFO) << "";
+		//if (debug) Log(LOG_INFO) << "TileEngine::detonateTile() " << tile->getPosition() << " power = " << power;
+		tile->clearExplosive(); // reset Tile's '_explosive' value to 0
 
-	int
-		powerTest,
-		density (0),
-		dieMCD;
 
-	MapDataType
-		partTest,
-		partT;
+		const Position pos (tile->getPosition());
 
-	bool diagWallDestroyed (true);
+		Tile* tiles[9u];
+		tiles[0u] = _battleSave->getTile(Position(		// tileAbove, do floor
+											pos.x,
+											pos.y,
+											pos.z + 1));
+		tiles[1u] = _battleSave->getTile(Position(		// tileEast, do westwall
+											pos.x + 1,
+											pos.y,
+											pos.z));
+		tiles[2u] = _battleSave->getTile(Position(		// tileSouth, do northwall
+											pos.x,
+											pos.y + 1,
+											pos.z));
+		tiles[3u] =										// central tile, do floor
+		tiles[4u] =										// central tile, do westwall
+		tiles[5u] =										// central tile, do northwall
+		tiles[6u] = tile;								// central tile, do object
 
-	MapData* part;
-
-	Tile* tileTest;
-	for (size_t
-			i = 8u;
-			i != std::numeric_limits<size_t>::max();
-			--i)
-	{
-		if ((tileTest = tiles[i]) == nullptr
-			|| ((partTest = parts[i]) == O_FLOOR && diagWallDestroyed == false) // don't hit Floor if there's still a BigWall
-			|| (part = tileTest->getMapData(partTest)) == nullptr)
+		tiles[7u] = _battleSave->getTile(Position(		// tileNorth, do bigwall south
+											pos.x,
+											pos.y - 1,
+											pos.z));
+		tiles[8u] = _battleSave->getTile(Position(		// tileWest, do bigwall east
+											pos.x - 1,
+											pos.y,
+											pos.z));
+		static const MapDataType parts[9u]
 		{
-			continue;
-		}
+			O_FLOOR,		// 0 - in tileAbove
+			O_WESTWALL,		// 1 - in tileEast
+			O_NORTHWALL,	// 2 - in tileSouth
+			O_FLOOR,		// 3 - in central tile
+			O_WESTWALL,		// 4 - in central tile
+			O_NORTHWALL,	// 5 - in central tile
+			O_OBJECT,		// 6 - in central tile
+			O_OBJECT,		// 7 - in tileNorth, bigwall south
+			O_OBJECT		// 8 - in tileWest, bigwall east
+		};
 
-		if (tile->getMapData(O_OBJECT) != nullptr) // if central tile has object-part
+		int
+			powerTest,
+			density (0),
+			dieMCD;
+
+		MapDataType
+			partTest,
+			partNext;
+
+		bool diagWallDestroyed (true);
+
+		MapData* part;
+
+		Tile* tileTest;
+		for (size_t
+				i = 8u;
+				i != std::numeric_limits<size_t>::max();
+				--i)
 		{
-			switch (tile->getMapData(O_OBJECT)->getBigwall())
+			if ((tileTest = tiles[i]) == nullptr
+				|| ((partTest = parts[i]) == O_FLOOR && diagWallDestroyed == false) // don't hit Floor if there's still a BigWall
+				|| (part = tileTest->getMapData(partTest)) == nullptr)
 			{
-				case BIGWALL_E_S: // don't hit tileEast westwall or tileSouth northwall if s/e bigWall exists
-					if (i == 1u || i == 2u) continue;
-					break;
-
-				case BIGWALL_EAST: // don't hit tileEast westwall if eastern bigWall exists
-					if (i == 1u) continue;
-					break;
-
-				case BIGWALL_SOUTH: // don't hit tileSouth northwall if southern bigWall exists
-					if (i == 2u) continue;
+				continue;
 			}
-		}
 
-		const BigwallType bigWall (part->getBigwall());
-
-		switch (i) // don't hit a tile-part that's not supposed to get hit in that tile.
-		{
-			case 7u: // tileNorth bigwall south
-			case 8u: // tileWest bigwall east
-				switch (bigWall)
+			if (tile->getMapData(O_OBJECT) != nullptr) // if central tile has object-part
+			{
+				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{
-//					BIGWALL_BLOCK	// <- always hit this
-//					BIGWALL_E_S		// <- always hit this
-
-					case BIGWALL_NONE: // never hit these if (i= 7 or i= 8)
-					case BIGWALL_NESW:
-					case BIGWALL_NWSE:
-					case BIGWALL_WEST:
-					case BIGWALL_NORTH:
-//					case BIGWALL_W_N: // NOT USED in stock UFO.
-						continue;
-
-					case BIGWALL_SOUTH:
-						if (i != 7u) continue;
+					case BIGWALL_E_S: // don't hit tileEast westwall or tileSouth northwall if s/e bigWall exists
+						if (i == 1u || i == 2u) continue;
 						break;
 
-					case BIGWALL_EAST:
-						if (i != 8u) continue;
-				}
-		}
+					case BIGWALL_EAST: // don't hit tileEast westwall if eastern bigWall exists
+						if (i == 1u) continue;
+						break;
 
-
-		powerTest = power;
-
-		if (i == 6u)
-		{
-			switch (bigWall)
-			{
-				case BIGWALL_NESW: // diagonals
-				case BIGWALL_NWSE:
-					if ((part->getArmor() << 1u) > powerTest) // not enough to destroy
-						diagWallDestroyed = false;
-			}
-		}
-
-		// Check tile-part's HP then iterate through and destroy its death-tiles if enough powerTest.
-		while (part != nullptr
-			&& part->getArmor() != 255
-			&& (part->getArmor() << 1u) <= powerTest)
-		{
-			if (powerTest == power) // only once per initial part destroyed.
-			{
-				for (size_t // get a yes/no volume for the object by checking its LoFT-layers.
-						j = 0u;
-						j != LOFT_LAYERS;
-						++j)
-				{
-					if (part->getLoftId(j) != 0)
-						++density;
+					case BIGWALL_SOUTH: // don't hit tileSouth northwall if southern bigWall exists
+						if (i == 2u) continue;
 				}
 			}
 
-			powerTest -= part->getArmor() << 1u;
+			const BigwallType bigWall (part->getBigwall());
+
+			switch (i) // don't hit a tile-part that's not supposed to get hit in that tile.
+			{
+				case 7u: // tileNorth bigwall south
+				case 8u: // tileWest bigwall east
+					switch (bigWall)
+					{
+//						BIGWALL_BLOCK	// <- always hit this
+//						BIGWALL_E_S		// <- always hit this
+
+						case BIGWALL_NONE: // never hit these if (i= 7 or i= 8)
+						case BIGWALL_NESW:
+						case BIGWALL_NWSE:
+						case BIGWALL_WEST:
+						case BIGWALL_NORTH:
+//						case BIGWALL_W_N: // NOT USED in stock UFO.
+							continue;
+
+						case BIGWALL_SOUTH:
+							if (i != 7u) continue;
+							break;
+
+						case BIGWALL_EAST:
+							if (i != 8u) continue;
+					}
+			}
+
+
+			powerTest = power;
 
 			if (i == 6u)
 			{
 				switch (bigWall)
 				{
-					case BIGWALL_NESW: // diagonals for the central tile
+					case BIGWALL_NESW: // diagonals
 					case BIGWALL_NWSE:
-						diagWallDestroyed = true;
+						if ((part->getArmor() << 1u) > powerTest) // not enough to destroy
+							diagWallDestroyed = false;
 				}
 			}
 
-			if (_battleSave->getTacType() == TCT_BASEDEFENSE
-				&& part->isBaseObject() == true)
+			// Check tile-part's HP then iterate through and destroy its death-tiles if enough powerTest.
+			while (part != nullptr
+				&& part->getArmor() != 255
+				&& (part->getArmor() << 1u) <= powerTest)
 			{
-				_battleSave->baseDestruct()[static_cast<size_t>(tile->getPosition().x / 10)]
-										   [static_cast<size_t>(tile->getPosition().y / 10)].second--;
+				if (powerTest == power) // only once per initial part destroyed.
+				{
+					for (size_t // get a yes/no volume for the object by checking its LoFT-layers.
+							j = 0u;
+							j != LOFT_LAYERS;
+							++j)
+					{
+						if (part->getLoftId(j) != 0)
+							++density;
+					}
+				}
+
+				powerTest -= part->getArmor() << 1u;
+
+				if (i == 6u)
+				{
+					switch (bigWall)
+					{
+						case BIGWALL_NESW: // diagonals for the central tile
+						case BIGWALL_NWSE:
+							diagWallDestroyed = true;
+					}
+				}
+
+				if (_battleSave->getTacType() == TCT_BASEDEFENSE
+					&& part->isBaseObject() == true)
+				{
+					_battleSave->baseDestruct()[static_cast<size_t>(tile->getPosition().x / 10)]
+											   [static_cast<size_t>(tile->getPosition().y / 10)].second--;
+				}
+
+				// This tracks dead object-parts (object-part can become a floor-part ... unless your MCDs are correct!)
+				if ((dieMCD = part->getDieMCD()) != 0)
+					partNext = part->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
+				else
+					partNext = partTest;
+
+				tileTest->destroyTilepart(partTest, _battleSave); // DESTROY HERE <-|||
+
+				part = tileTest->getMapData(partTest = partNext);
 			}
-
-			// This tracks dead object-parts (object-part can become a floor-part ... unless your MCDs are correct!)
-			if ((dieMCD = part->getDieMCD()) != 0)
-				partT = part->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
-			else
-				partT = partTest;
-
-			tileTest->destroyTilepart(partTest, _battleSave); // DESTROY HERE <-|||
-
-			part = tileTest->getMapData(partTest = partT);
 		}
-	}
 
 
-	power = (power + 29) / 30;
+		power = (power + 29) / 30;
 
-	if (tile->igniteTile((power + 1) >> 1u) == false)
-		tile->addSmoke((power + density + 1) >> 1u);
+		if (tile->igniteTile((power + 1) >> 1u) == false)
+			tile->addSmoke((power + density + 1) >> 1u);
 
-	if (tile->getSmoke() != 0) // add smoke to tiles above
-	{
-		Tile* const tileAbove (_battleSave->getTile(tile->getPosition() + Position(0,0,1)));
-		if (tileAbove != nullptr
-			&& tileAbove->solidFloor(tile) == false				// <- TODO: use verticalBlockage() instead
-			&& RNG::percent(tile->getSmoke() << 3u) == true)	// <- unfortunately the state-machine may cause an unpredictable
-		{														//	  quantity of calls to this ... via ExplosionBState::think().
-			tileAbove->addSmoke(tile->getSmoke() / 3);			//	  Did I actually sort this out ....
+		if (tile->getSmoke() != 0) // add smoke to tiles above
+		{
+			Tile* const tileAbove (_battleSave->getTile(tile->getPosition() + Position(0,0,1)));
+			if (tileAbove != nullptr
+				&& tileAbove->solidFloor(tile) == false				// <- TODO: use verticalBlockage() instead
+				&& RNG::percent(tile->getSmoke() << 3u) == true)	// <- unfortunately the state-machine may cause an unpredictable
+			{														//	  quantity of calls to this ... via ExplosionBState::think().
+				tileAbove->addSmoke(tile->getSmoke() / 3);			//	  Did I actually sort this out ....
+			}
 		}
 	}
 }
@@ -6473,7 +6474,12 @@ void TileEngine::applyGravity(Tile* const tile) const
 //															unit->getPosition().y,
 //															posDest.z));
 						//Log(LOG_INFO) << "te:applyGravity() -> addFallingUnit() id-" << unit->getId();
-						unit->startWalking( // TODO: Figure out how UnitFallBState really works, or should work.
+
+						// TODO: Figure out how UnitFallBState really works, or should work.
+						// This should probably merely setup and run UnitWalkBState; that would
+						// instantiate fallingUnits from there if needed. Then fallingUnits could
+						// likely be handled one at a time instead of enmasse as they are at present.
+						unit->startWalking(
 										Pathfinding::DIR_DOWN,
 										unit->getPosition() + Position(0,0,-1),
 										_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));

@@ -154,13 +154,13 @@ private:
 		/// Sets the pointer to the mapdata for a specific part of the Tile.
 		void setMapData(
 				MapData* const part,
-				const int partID,
-				const int partSetID,
+				const int partId,
+				const int partSetId,
 				const MapDataType partType);
 		/// Gets the IDs of the mapdata for a specific part of the Tile.
 		void getMapData(
-				int* partID,
-				int* partSetID,
+				int* partId,
+				int* partSetId,
 				MapDataType partType) const;
 
 		/// Gets whether the Tile has no objects
@@ -231,7 +231,7 @@ private:
 		int getShade() const;
 
 		/// Destroys a tile-part.
-		void destroyTilepart(
+		int destroyTilepart(
 				MapDataType partType,
 				SavedBattleGame* const battleSave,
 				bool obliterate = false);
