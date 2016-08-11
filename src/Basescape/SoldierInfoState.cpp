@@ -103,59 +103,59 @@ SoldierInfoState::SoldierInfoState(
 	static const int STEP_y (11);
 	int yPos (80);
 
-	_txtTimeUnits	= new Text(120, 9,   6, yPos);
-	_numTimeUnits	= new Text( 18, 9, 131, yPos);
-	_barTimeUnits	= new Bar( 234, 7, 150, yPos + 1);
+	_txtTimeUnits		= new Text(120, 9,   6, yPos);
+	_txtTimeUnits_i		= new Text( 18, 9, 131, yPos);
+	_barTimeUnits		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtStamina		= new Text(120, 9,   6, yPos);
-	_numStamina		= new Text( 18, 9, 131, yPos);
-	_barStamina		= new Bar( 234, 7, 150, yPos + 1);
+	_txtStamina			= new Text(120, 9,   6, yPos);
+	_txtEnergy_i		= new Text( 18, 9, 131, yPos);
+	_barStamina			= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtHealth		= new Text(120, 9,   6, yPos);
-	_numHealth		= new Text( 18, 9, 131, yPos);
-	_barHealth		= new Bar( 234, 7, 150, yPos + 1);
+	_txtHealth			= new Text(120, 9,   6, yPos);
+	_txtHealth_i		= new Text( 18, 9, 131, yPos);
+	_barHealth			= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtBravery		= new Text(120, 9,   6, yPos);
-	_numBravery		= new Text( 18, 9, 131, yPos);
-	_barBravery		= new Bar( 234, 7, 150, yPos + 1);
+	_txtBravery			= new Text(120, 9,   6, yPos);
+	_txtBravery_i		= new Text( 18, 9, 131, yPos);
+	_barBravery			= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtReactions	= new Text(120, 9,   6, yPos);
-	_numReactions	= new Text( 18, 9, 131, yPos);
-	_barReactions	= new Bar( 234, 7, 150, yPos + 1);
+	_txtReactions		= new Text(120, 9,   6, yPos);
+	_txtReactions_i		= new Text( 18, 9, 131, yPos);
+	_barReactions		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtFiring		= new Text(120, 9,   6, yPos);
-	_numFiring		= new Text( 18, 9, 131, yPos);
-	_barFiring		= new Bar( 234, 7, 150, yPos + 1);
+	_txtFiring			= new Text(120, 9,   6, yPos);
+	_txtFiring_i		= new Text( 18, 9, 131, yPos);
+	_barFiring			= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtThrowing	= new Text(120, 9,   6, yPos);
-	_numThrowing	= new Text( 18, 9, 131, yPos);
-	_barThrowing	= new Bar( 234, 7, 150, yPos + 1);
+	_txtThrowing		= new Text(120, 9,   6, yPos);
+	_txtThrowing_i		= new Text( 18, 9, 131, yPos);
+	_barThrowing		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtMelee		= new Text(120, 9,   6, yPos);
-	_numMelee		= new Text( 18, 9, 131, yPos);
-	_barMelee		= new Bar( 234, 7, 150, yPos + 1);
+	_txtMelee			= new Text(120, 9,   6, yPos);
+	_txtMelee_i			= new Text( 18, 9, 131, yPos);
+	_barMelee			= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtStrength	= new Text(120, 9,   6, yPos);
-	_numStrength	= new Text( 18, 9, 131, yPos);
-	_barStrength	= new Bar( 234, 7, 150, yPos + 1);
+	_txtStrength		= new Text(120, 9,   6, yPos);
+	_txtStrength_i		= new Text( 18, 9, 131, yPos);
+	_barStrength		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtPsiStrength	= new Text(120, 9,   6, yPos);
-	_numPsiStrength	= new Text( 18, 9, 131, yPos);
-	_barPsiStrength	= new Bar( 234, 7, 150, yPos + 1);
+	_txtPsiStrength		= new Text(120, 9,   6, yPos);
+	_txtPsiStrength_i	= new Text( 18, 9, 131, yPos);
+	_barPsiStrength		= new Bar( 234, 7, 150, yPos + 1);
 
 	yPos += STEP_y;
-	_txtPsiSkill	= new Text(120, 9,   6, yPos);
-	_numPsiSkill	= new Text( 18, 9, 131, yPos);
-	_barPsiSkill	= new Bar( 234, 7, 150, yPos + 1);
+	_txtPsiSkill		= new Text(120, 9,   6, yPos);
+	_txtPsiSkill_i		= new Text( 18, 9, 131, yPos);
+	_barPsiSkill		= new Bar( 234, 7, 150, yPos + 1);
 
 	setInterface("soldierInfo");
 
@@ -184,47 +184,47 @@ SoldierInfoState::SoldierInfoState(
 	add(_btnDiary,			"button",			"soldierInfo");
 
 	add(_txtTimeUnits,		"text2",			"soldierInfo");
-	add(_numTimeUnits,		"numbers",			"soldierInfo");
+	add(_txtTimeUnits_i,	"numbers",			"soldierInfo");
 	add(_barTimeUnits,		"barTUs",			"soldierInfo");
 
 	add(_txtStamina,		"text2",			"soldierInfo");
-	add(_numStamina,		"numbers",			"soldierInfo");
+	add(_txtEnergy_i,		"numbers",			"soldierInfo");
 	add(_barStamina,		"barEnergy",		"soldierInfo");
 
 	add(_txtHealth,			"text2",			"soldierInfo");
-	add(_numHealth,			"numbers",			"soldierInfo");
+	add(_txtHealth_i,		"numbers",			"soldierInfo");
 	add(_barHealth,			"barHealth",		"soldierInfo");
 
 	add(_txtBravery,		"text2",			"soldierInfo");
-	add(_numBravery,		"numbers",			"soldierInfo");
+	add(_txtBravery_i,		"numbers",			"soldierInfo");
 	add(_barBravery,		"barBravery",		"soldierInfo");
 
 	add(_txtReactions,		"text2",			"soldierInfo");
-	add(_numReactions,		"numbers",			"soldierInfo");
+	add(_txtReactions_i,	"numbers",			"soldierInfo");
 	add(_barReactions,		"barReactions",		"soldierInfo");
 
 	add(_txtFiring,			"text2",			"soldierInfo");
-	add(_numFiring,			"numbers",			"soldierInfo");
+	add(_txtFiring_i,		"numbers",			"soldierInfo");
 	add(_barFiring,			"barFiring",		"soldierInfo");
 
 	add(_txtThrowing,		"text2",			"soldierInfo");
-	add(_numThrowing,		"numbers",			"soldierInfo");
+	add(_txtThrowing_i,		"numbers",			"soldierInfo");
 	add(_barThrowing,		"barThrowing",		"soldierInfo");
 
 	add(_txtMelee,			"text2",			"soldierInfo");
-	add(_numMelee,			"numbers",			"soldierInfo");
+	add(_txtMelee_i,		"numbers",			"soldierInfo");
 	add(_barMelee,			"barMelee",			"soldierInfo");
 
 	add(_txtStrength,		"text2",			"soldierInfo");
-	add(_numStrength,		"numbers",			"soldierInfo");
+	add(_txtStrength_i,		"numbers",			"soldierInfo");
 	add(_barStrength,		"barStrength",		"soldierInfo");
 
 	add(_txtPsiStrength,	"text2",			"soldierInfo");
-	add(_numPsiStrength,	"numbers",			"soldierInfo");
+	add(_txtPsiStrength_i,	"numbers",			"soldierInfo");
 	add(_barPsiStrength,	"barPsiStrength",	"soldierInfo");
 
 	add(_txtPsiSkill,		"text2",			"soldierInfo");
-	add(_numPsiSkill,		"numbers",			"soldierInfo");
+	add(_txtPsiSkill_i,		"numbers",			"soldierInfo");
 	add(_barPsiSkill,		"barPsiSkill",		"soldierInfo");
 
 	centerAllSurfaces();
@@ -350,7 +350,7 @@ void SoldierInfoState::init()
 	std::wostringstream woststr;
 
 	woststr << armored.tu;
-	_numTimeUnits->setText(woststr.str());
+	_txtTimeUnits_i->setText(woststr.str());
 	_barTimeUnits->setValue(armored.tu);
 	if (initial->tu > current->tu)
 		_barTimeUnits->setMaxValue(initial->tu);
@@ -369,7 +369,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.stamina;
-	_numStamina->setText(woststr.str());
+	_txtEnergy_i->setText(woststr.str());
 	_barStamina->setValue(armored.stamina);
 	if (initial->stamina > current->stamina)
 		_barStamina->setMaxValue(initial->stamina);
@@ -388,7 +388,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.health;
-	_numHealth->setText(woststr.str());
+	_txtHealth_i->setText(woststr.str());
 	_barHealth->setValue(armored.health);
 	if (initial->health > current->health)
 		_barHealth->setMaxValue(initial->health);
@@ -407,7 +407,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.bravery;
-	_numBravery->setText(woststr.str());
+	_txtBravery_i->setText(woststr.str());
 	_barBravery->setValue(armored.bravery);
 	if (initial->bravery > current->bravery)
 		_barBravery->setMaxValue(initial->bravery);
@@ -426,7 +426,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.reactions;
-	_numReactions->setText(woststr.str());
+	_txtReactions_i->setText(woststr.str());
 	_barReactions->setValue(armored.reactions);
 	if (initial->reactions > current->reactions)
 		_barReactions->setMaxValue(initial->reactions);
@@ -445,7 +445,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.firing;
-	_numFiring->setText(woststr.str());
+	_txtFiring_i->setText(woststr.str());
 	_barFiring->setValue(armored.firing);
 	if (initial->firing > current->firing)
 		_barFiring->setMaxValue(initial->firing);
@@ -464,7 +464,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.throwing;
-	_numThrowing->setText(woststr.str());
+	_txtThrowing_i->setText(woststr.str());
 	_barThrowing->setValue(armored.throwing);
 	if (initial->throwing > current->throwing)
 		_barThrowing->setMaxValue(initial->throwing);
@@ -483,7 +483,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.melee;
-	_numMelee->setText(woststr.str());
+	_txtMelee_i->setText(woststr.str());
 	_barMelee->setValue(armored.melee);
 	if (initial->melee > current->melee)
 		_barMelee->setMaxValue(initial->melee);
@@ -502,7 +502,7 @@ void SoldierInfoState::init()
 
 	woststr.str(L"");
 	woststr << armored.strength;
-	_numStrength->setText(woststr.str());
+	_txtStrength_i->setText(woststr.str());
 	_barStrength->setValue(armored.strength);
 	if (initial->strength > current->strength)
 		_barStrength->setMaxValue(initial->strength);
@@ -587,17 +587,17 @@ void SoldierInfoState::init()
 	switch (current->psiSkill)
 	{
 		case 0:
-			_numPsiStrength->setVisible(false);
+			_txtPsiStrength_i->setVisible(false);
 			_barPsiStrength->setVisible(false);
 
-			_numPsiSkill->setVisible(false);
+			_txtPsiSkill_i->setVisible(false);
 			_barPsiSkill->setVisible(false);
 			break;
 
 		default:
 			woststr.str(L"");
 			woststr << armored.psiStrength;
-			_numPsiStrength->setText(woststr.str());
+			_txtPsiStrength_i->setText(woststr.str());
 			_barPsiStrength->setValue(armored.psiStrength);
 			if (initial->psiStrength > current->psiStrength)
 				_barPsiStrength->setMaxValue(initial->psiStrength);
@@ -614,12 +614,12 @@ void SoldierInfoState::init()
 					_barPsiStrength->setValue2(armored.psiStrength);
 			}
 
-			_numPsiStrength->setVisible();
+			_txtPsiStrength_i->setVisible();
 			_barPsiStrength->setVisible();
 
 			woststr.str(L"");
 			woststr << armored.psiSkill;
-			_numPsiSkill->setText(woststr.str());
+			_txtPsiSkill_i->setText(woststr.str());
 			_barPsiSkill->setValue(armored.psiSkill);
 			if (initial->psiSkill > current->psiSkill)
 				_barPsiSkill->setMaxValue(initial->psiSkill);
@@ -636,7 +636,7 @@ void SoldierInfoState::init()
 					_barPsiSkill->setValue2(armored.psiSkill);
 			}
 
-			_numPsiSkill->setVisible();
+			_txtPsiSkill_i->setVisible();
 			_barPsiSkill->setVisible();
 	}
 

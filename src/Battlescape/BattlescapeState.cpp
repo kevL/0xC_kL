@@ -2280,15 +2280,15 @@ void BattlescapeState::btnStatsClick(Action* action)
 
 		if (_battleGame->getTacticalAction()->type == BA_LAUNCH)	// clean up any BL-waypoints
 		{															// probly handled in cancelTacticalAction() below_
-			_battleGame->getTacticalAction()->waypoints.clear();	// but i don't want to look it up atm.
+			_battleGame->getTacticalAction()->waypoints.clear();	// but i don't want to look it up.
 			_map->getWaypoints()->clear();
 			_btnLaunch->setVisible(false);
 		}
 
 		_battleGame->cancelTacticalAction(true);
-		popup(new UnitInfoState(
-							_battleSave->getSelectedUnit(),
-							this));
+		popupTac(new UnitInfoState(
+								_battleSave->getSelectedUnit(),
+								this));
 		_game->getScreen()->fadeScreen();
 	}
 }
@@ -3598,7 +3598,7 @@ void BattlescapeState::popupActionMenu( // private.
 		}
 
 		if (action->weapon != nullptr)
-			popup(new ActionMenuState(
+			popupTac(new ActionMenuState(
 									action,
 									_icons->getX(),
 									_icons->getY() + 16,
@@ -3688,11 +3688,11 @@ void BattlescapeState::warning(
 }
 
 /**
- * Adds a new popup-window to the popups-queue.
+ * Adds a popup-window to the popups-queue.
  * @note This prevents popups from overlapping.
  * @param state - pointer to popup State
  */
-void BattlescapeState::popup(State* const state)
+void BattlescapeState::popupTac(State* const state)
 {
 	_popups.push_back(state);
 }

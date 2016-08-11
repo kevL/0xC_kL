@@ -138,7 +138,7 @@ private:
 //		void think();
 
 		/// Handler for clicking the OK button.
-		void btnOkClick(Action* action);
+		void btnOkClick(Action* action = nullptr);
 
 		/// Handler for clicking the Next button.
 		void btnNextClick(Action* action);

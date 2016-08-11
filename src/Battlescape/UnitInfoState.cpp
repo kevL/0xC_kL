@@ -83,198 +83,198 @@ UnitInfoState::UnitInfoState(
 //		_game->getScreen()->resetDisplay(false);
 //	}
 
-	_bg			= new Surface(320, 200);
-	_exit		= new InteractiveSurface(
-//									320, 180, 0, 20);
-									Options::baseXResolution,
-									Options::baseYResolution,
-									-(Options::baseXResolution - 320) / 2,
-									-(Options::baseYResolution - 200) / 2);
-	_txtName	= new Text(288, 17, 16, 4);
+	_bg		= new Surface(320, 200);
+	_exit	= new InteractiveSurface(
+//								320, 180, 0, 20);
+								Options::baseXResolution,
+								Options::baseYResolution,
+								-((Options::baseXResolution - 320) >> 1u),
+								-((Options::baseYResolution - 200) >> 1u));
 
-	_gender		= new Surface(7, 7, 22, 4);
-	_numOrder	= new NumberText(7, 5, 0, 5); // x-value is set in init()
+	_txtName		= new Text(288, 17, 16, 4);
+	_gender			= new Surface(7, 7, 22, 4);
+	_battleOrder	= new NumberText(7, 5, 0, 5); // x-value is set in init()
 
 	static const int STEP_y (9);
 	int yPos (38);
 
-	_txtTimeUnits	= new Text(140, 9,   8, yPos);
-	_numTimeUnits	= new Text( 18, 9, 151, yPos);
-	_barTimeUnits	= new Bar( 280, 5, 170, yPos + 1);
+	_txtTimeUnits		= new Text(140, 9,   8, yPos);
+	_txtTimeUnits_i		= new Text( 18, 9, 151, yPos);
+	_barTimeUnits		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtEnergy		= new Text(140, 9,   8, yPos);
-	_numEnergy		= new Text( 18, 9, 151, yPos);
-	_barEnergy		= new Bar( 280, 5, 170, yPos + 1);
+	_txtEnergy			= new Text(140, 9,   8, yPos);
+	_txtEnergy_i		= new Text( 18, 9, 151, yPos);
+	_barEnergy			= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtHealth		= new Text(140, 9,   8, yPos);
-	_numHealth		= new Text( 18, 9, 151, yPos);
-	_numStun		= new Text( 18, 9, 127, yPos);
-	_barHealth		= new Bar( 280, 5, 170, yPos + 1);
+	_txtHealth			= new Text(140, 9,   8, yPos);
+	_txtHealth_i		= new Text( 18, 9, 151, yPos);
+	_txtStun_i			= new Text( 18, 9, 127, yPos);
+	_barHealth			= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtFatalWounds	= new Text(140, 9,   8, yPos);
-	_numFatalWounds	= new Text( 18, 9, 151, yPos);
-	_barFatalWounds	= new Bar( 280, 5, 170, yPos + 1);
+	_txtFatals			= new Text(140, 9,   8, yPos);
+	_txtFatals_i		= new Text( 18, 9, 151, yPos);
+	_barFatals			= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtBravery		= new Text(140, 9,   8, yPos);
-	_numBravery		= new Text( 18, 9, 151, yPos);
-	_barBravery		= new Bar( 280, 5, 170, yPos + 1);
+	_txtBravery			= new Text(140, 9,   8, yPos);
+	_txtBravery_i		= new Text( 18, 9, 151, yPos);
+	_barBravery			= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtMorale		= new Text(140, 9,   8, yPos);
-	_numMorale		= new Text( 18, 9, 151, yPos);
-	_barMorale		= new Bar( 280, 5, 170, yPos + 1);
+	_txtMorale			= new Text(140, 9,   8, yPos);
+	_txtMorale_i		= new Text( 18, 9, 151, yPos);
+	_barMorale			= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtReactions	= new Text(140, 9,   8, yPos);
-	_numReactions	= new Text( 18, 9, 151, yPos);
-	_barReactions	= new Bar( 280, 5, 170, yPos + 1);
+	_txtReactions		= new Text(140, 9,   8, yPos);
+	_txtReactions_i		= new Text( 18, 9, 151, yPos);
+	_barReactions		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtFiring		= new Text(140, 9,   8, yPos);
-	_numFiring		= new Text( 18, 9, 151, yPos);
-	_barFiring		= new Bar( 280, 5, 170, yPos + 1);
+	_txtFiring			= new Text(140, 9,   8, yPos);
+	_txtFiring_i		= new Text( 18, 9, 151, yPos);
+	_barFiring			= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtThrowing	= new Text(140, 9,   8, yPos);
-	_numThrowing	= new Text( 18, 9, 151, yPos);
-	_barThrowing	= new Bar( 280, 5, 170, yPos + 1);
+	_txtThrowing		= new Text(140, 9,   8, yPos);
+	_txtThrowing_i		= new Text( 18, 9, 151, yPos);
+	_barThrowing		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtMelee		= new Text(140, 9,   8, yPos);
-	_numMelee		= new Text( 18, 9, 151, yPos);
-	_barMelee		= new Bar( 280, 5, 170, yPos + 1);
+	_txtMelee			= new Text(140, 9,   8, yPos);
+	_txtMelee_i			= new Text( 18, 9, 151, yPos);
+	_barMelee			= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtStrength	= new Text(140, 9,   8, yPos);
-	_numStrength	= new Text( 18, 9, 151, yPos);
-	_barStrength	= new Bar( 280, 5, 170, yPos + 1);
+	_txtStrength		= new Text(140, 9,   8, yPos);
+	_txtStrength_i		= new Text( 18, 9, 151, yPos);
+	_barStrength		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtPsiStrength	= new Text(140, 9,   8, yPos);
-	_numPsiStrength	= new Text( 18, 9, 151, yPos);
-	_barPsiStrength	= new Bar( 280, 5, 170, yPos + 1);
+	_txtPsiStrength		= new Text(140, 9,   8, yPos);
+	_txtPsiStrength_i	= new Text( 18, 9, 151, yPos);
+	_barPsiStrength		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtPsiSkill	= new Text(140, 9,   8, yPos);
-	_numPsiSkill	= new Text( 18, 9, 151, yPos);
-	_barPsiSkill	= new Bar( 280, 5, 170, yPos + 1);
+	_txtPsiSkill		= new Text(140, 9,   8, yPos);
+	_txtPsiSkill_i		= new Text( 18, 9, 151, yPos);
+	_barPsiSkill		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtFrontArmor	= new Text(140, 9,   8, yPos);
-	_numFrontArmor	= new Text( 18, 9, 151, yPos);
-	_barFrontArmor	= new Bar( 280, 5, 170, yPos + 1);
+	_txtFrontArmor		= new Text(140, 9,   8, yPos);
+	_txtFrontArmor_i	= new Text( 18, 9, 151, yPos);
+	_barFrontArmor		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtLeftArmor	= new Text(140, 9,   8, yPos);
-	_numLeftArmor	= new Text( 18, 9, 151, yPos);
-	_barLeftArmor	= new Bar( 280, 5, 170, yPos + 1);
+	_txtLeftArmor		= new Text(140, 9,   8, yPos);
+	_txtLeftArmor_i		= new Text( 18, 9, 151, yPos);
+	_barLeftArmor		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtRightArmor	= new Text(140, 9,   8, yPos);
-	_numRightArmor	= new Text( 18, 9, 151, yPos);
-	_barRightArmor	= new Bar( 280, 5, 170, yPos + 1);
+	_txtRightArmor		= new Text(140, 9,   8, yPos);
+	_txtRightArmor_i	= new Text( 18, 9, 151, yPos);
+	_barRightArmor		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtRearArmor	= new Text(140, 9,   8, yPos);
-	_numRearArmor	= new Text( 18, 9, 151, yPos);
-	_barRearArmor	= new Bar( 280, 5, 170, yPos + 1);
+	_txtRearArmor		= new Text(140, 9,   8, yPos);
+	_txtRearArmor_i		= new Text( 18, 9, 151, yPos);
+	_barRearArmor		= new Bar( 280, 5, 170, yPos + 1);
 
 	yPos += STEP_y;
-	_txtUnderArmor	= new Text(140, 9,   8, yPos);
-	_numUnderArmor	= new Text( 18, 9, 151, yPos);
-	_barUnderArmor	= new Bar( 280, 5, 170, yPos + 1);
+	_txtUnderArmor		= new Text(140, 9,   8, yPos);
+	_txtUnderArmor_i	= new Text( 18, 9, 151, yPos);
+	_barUnderArmor		= new Bar( 280, 5, 170, yPos + 1);
 
 	if (_mindProbe == false)
 	{
-		_btnPrev	= new TextButton(18, 18,   2, 2);
-		_btnNext	= new TextButton(18, 18, 300, 2);
+		_btnPrev = new TextButton(18, 18,   2, 2);
+		_btnNext = new TextButton(18, 18, 300, 2);
 	}
 
 	setPalette(PAL_BATTLESCAPE);
 
 	add(_bg);
 	add(_exit);
-	add(_txtName, "textName", "stats");
+	add(_txtName,			"textName",			"stats");
 
 	add(_gender);
-	add(_numOrder);
+	add(_battleOrder);
 
 	add(_txtTimeUnits);
-	add(_numTimeUnits);
-	add(_barTimeUnits, "barTUs", "stats");
+	add(_txtTimeUnits_i);
+	add(_barTimeUnits,		"barTUs",			"stats");
 
 	add(_txtEnergy);
-	add(_numEnergy);
-	add(_barEnergy, "barEnergy", "stats");
+	add(_txtEnergy_i);
+	add(_barEnergy,			"barEnergy",		"stats");
 
 	add(_txtHealth);
-	add(_numHealth);
-	add(_numStun);
-	add(_barHealth, "barHealth", "stats");
+	add(_txtHealth_i);
+	add(_txtStun_i);
+	add(_barHealth,			"barHealth",		"stats");
 
-	add(_txtFatalWounds);
-	add(_numFatalWounds);
-	add(_barFatalWounds, "barWounds", "stats");
+	add(_txtFatals);
+	add(_txtFatals_i);
+	add(_barFatals,			"barWounds",		"stats");
 
 	add(_txtBravery);
-	add(_numBravery);
-	add(_barBravery, "barBravery", "stats");
+	add(_txtBravery_i);
+	add(_barBravery,		"barBravery",		"stats");
 
 	add(_txtMorale);
-	add(_numMorale);
-	add(_barMorale, "barMorale", "stats");
+	add(_txtMorale_i);
+	add(_barMorale,			"barMorale",		"stats");
 
 	add(_txtReactions);
-	add(_numReactions);
-	add(_barReactions, "barReactions", "stats");
+	add(_txtReactions_i);
+	add(_barReactions,		"barReactions",		"stats");
 
 	add(_txtFiring);
-	add(_numFiring);
-	add(_barFiring, "barFiring", "stats");
+	add(_txtFiring_i);
+	add(_barFiring,			"barFiring",		"stats");
 
 	add(_txtThrowing);
-	add(_numThrowing);
-	add(_barThrowing, "barThrowing", "stats");
+	add(_txtThrowing_i);
+	add(_barThrowing,		"barThrowing",		"stats");
 
 	add(_txtMelee);
-	add(_numMelee);
-	add(_barMelee, "barMelee", "stats");
+	add(_txtMelee_i);
+	add(_barMelee,			"barMelee",			"stats");
 
 	add(_txtStrength);
-	add(_numStrength);
-	add(_barStrength, "barStrength", "stats");
+	add(_txtStrength_i);
+	add(_barStrength,		"barStrength",		"stats");
 
 	add(_txtPsiStrength);
-	add(_numPsiStrength);
-	add(_barPsiStrength, "barPsiStrength", "stats");
+	add(_txtPsiStrength_i);
+	add(_barPsiStrength,	"barPsiStrength",	"stats");
 
 	add(_txtPsiSkill);
-	add(_numPsiSkill);
-	add(_barPsiSkill, "barPsiSkill", "stats");
+	add(_txtPsiSkill_i);
+	add(_barPsiSkill,		"barPsiSkill",		"stats");
 
 	add(_txtFrontArmor);
-	add(_numFrontArmor);
-	add(_barFrontArmor, "barFrontArmor", "stats");
+	add(_txtFrontArmor_i);
+	add(_barFrontArmor,		"barFrontArmor",	"stats");
 
 	add(_txtLeftArmor);
-	add(_numLeftArmor);
-	add(_barLeftArmor, "barLeftArmor", "stats");
+	add(_txtLeftArmor_i);
+	add(_barLeftArmor,		"barLeftArmor",		"stats");
 
 	add(_txtRightArmor);
-	add(_numRightArmor);
-	add(_barRightArmor, "barRightArmor", "stats");
+	add(_txtRightArmor_i);
+	add(_barRightArmor,		"barRightArmor",	"stats");
 
 	add(_txtRearArmor);
-	add(_numRearArmor);
-	add(_barRearArmor, "barRearArmor", "stats");
+	add(_txtRearArmor_i);
+	add(_barRearArmor,		"barRearArmor",		"stats");
 
 	add(_txtUnderArmor);
-	add(_numUnderArmor);
-	add(_barUnderArmor, "barUnderArmor", "stats");
+	add(_txtUnderArmor_i);
+	add(_barUnderArmor,		"barUnderArmor",	"stats");
 
 	if (_mindProbe == false)
 	{
@@ -307,174 +307,119 @@ UnitInfoState::UnitInfoState(
 	_txtName->setBig();
 	_txtName->setHighContrast();
 
-	_numOrder->setColor(WHITE);
-	_numOrder->setVisible(false);
+	_battleOrder->setColor(WHITE);
+	_battleOrder->setVisible(false);
 
 	_txtTimeUnits->setText(tr("STR_TIME_UNITS"));
 	_txtTimeUnits->setColor(color);
 	_txtTimeUnits->setHighContrast();
-
-	_numTimeUnits->setColor(color2);
-	_numTimeUnits->setHighContrast();
-//	_barTimeUnits->setScale();
-
+	_txtTimeUnits_i->setColor(color2);
+	_txtTimeUnits_i->setHighContrast();
 
 	_txtEnergy->setText(tr("STR_ENERGY"));
 	_txtEnergy->setColor(color);
 	_txtEnergy->setHighContrast();
-
-	_numEnergy->setColor(color2);
-	_numEnergy->setHighContrast();
-//	_barEnergy->setScale();
-
+	_txtEnergy_i->setColor(color2);
+	_txtEnergy_i->setHighContrast();
 
 	_txtHealth->setText(tr("STR_HEALTH"));
 	_txtHealth->setColor(color);
 	_txtHealth->setHighContrast();
+	_txtHealth_i->setColor(color2);
+	_txtHealth_i->setHighContrast();
+	_txtStun_i->setColor(BROWN_L);
+	_txtStun_i->setHighContrast();
+	_txtStun_i->setAlign(ALIGN_RIGHT);
 
-	_numHealth->setColor(color2);
-	_numHealth->setHighContrast();
-
-	_numStun->setColor(BROWN_L);
-	_numStun->setHighContrast();
-	_numStun->setAlign(ALIGN_RIGHT);
-//	_barHealth->setScale();
-
-
-	_txtFatalWounds->setText(tr("STR_FATAL_WOUNDS"));
-	_txtFatalWounds->setColor(color);
-	_txtFatalWounds->setHighContrast();
-
-	_numFatalWounds->setColor(color2);
-	_numFatalWounds->setHighContrast();
-//	_barFatalWounds->setScale();
-
+	_txtFatals->setText(tr("STR_FATAL_WOUNDS"));
+	_txtFatals->setColor(color);
+	_txtFatals->setHighContrast();
+	_txtFatals_i->setColor(color2);
+	_txtFatals_i->setHighContrast();
 
 	_txtBravery->setText(tr("STR_BRAVERY"));
 	_txtBravery->setColor(color);
 	_txtBravery->setHighContrast();
-
-	_numBravery->setColor(color2);
-	_numBravery->setHighContrast();
-//	_barBravery->setScale();
-
+	_txtBravery_i->setColor(color2);
+	_txtBravery_i->setHighContrast();
 
 	_txtMorale->setText(tr("STR_MORALE"));
 	_txtMorale->setColor(color);
 	_txtMorale->setHighContrast();
-
-	_numMorale->setColor(color2);
-	_numMorale->setHighContrast();
-//	_barMorale->setScale();
-
+	_txtMorale_i->setColor(color2);
+	_txtMorale_i->setHighContrast();
 
 	_txtReactions->setText(tr("STR_REACTIONS"));
 	_txtReactions->setColor(color);
 	_txtReactions->setHighContrast();
-
-	_numReactions->setColor(color2);
-	_numReactions->setHighContrast();
-//	_barReactions->setScale();
-
+	_txtReactions_i->setColor(color2);
+	_txtReactions_i->setHighContrast();
 
 	_txtFiring->setText(tr("STR_FIRING_ACCURACY"));
 	_txtFiring->setColor(color);
 	_txtFiring->setHighContrast();
-
-	_numFiring->setColor(color2);
-	_numFiring->setHighContrast();
-//	_barFiring->setScale();
-
+	_txtFiring_i->setColor(color2);
+	_txtFiring_i->setHighContrast();
 
 	_txtThrowing->setText(tr("STR_THROWING_ACCURACY"));
 	_txtThrowing->setColor(color);
 	_txtThrowing->setHighContrast();
-
-	_numThrowing->setColor(color2);
-	_numThrowing->setHighContrast();
-//	_barThrowing->setScale();
-
+	_txtThrowing_i->setColor(color2);
+	_txtThrowing_i->setHighContrast();
 
 	_txtMelee->setText(tr("STR_MELEE_ACCURACY"));
 	_txtMelee->setColor(color);
 	_txtMelee->setHighContrast();
-
-	_numMelee->setColor(color2);
-	_numMelee->setHighContrast();
-//	_barMelee->setScale();
-
+	_txtMelee_i->setColor(color2);
+	_txtMelee_i->setHighContrast();
 
 	_txtStrength->setText(tr("STR_STRENGTH"));
 	_txtStrength->setColor(color);
 	_txtStrength->setHighContrast();
-
-	_numStrength->setColor(color2);
-	_numStrength->setHighContrast();
-//	_barStrength->setScale();
-
+	_txtStrength_i->setColor(color2);
+	_txtStrength_i->setHighContrast();
 
 	_txtPsiStrength->setText(tr("STR_PSIONIC_STRENGTH"));
 	_txtPsiStrength->setColor(color);
 	_txtPsiStrength->setHighContrast();
-
-	_numPsiStrength->setColor(color2);
-	_numPsiStrength->setHighContrast();
-//	_barPsiStrength->setScale();
-
+	_txtPsiStrength_i->setColor(color2);
+	_txtPsiStrength_i->setHighContrast();
 
 	_txtPsiSkill->setText(tr("STR_PSIONIC_SKILL"));
 	_txtPsiSkill->setColor(color);
 	_txtPsiSkill->setHighContrast();
-
-	_numPsiSkill->setColor(color2);
-	_numPsiSkill->setHighContrast();
-//	_barPsiSkill->setScale();
-
+	_txtPsiSkill_i->setColor(color2);
+	_txtPsiSkill_i->setHighContrast();
 
 	_txtFrontArmor->setText(tr("STR_FRONT_ARMOR_UC"));
 	_txtFrontArmor->setColor(color);
 	_txtFrontArmor->setHighContrast();
-
-	_numFrontArmor->setColor(color2);
-	_numFrontArmor->setHighContrast();
-//	_barFrontArmor->setScale();
-
+	_txtFrontArmor_i->setColor(color2);
+	_txtFrontArmor_i->setHighContrast();
 
 	_txtLeftArmor->setText(tr("STR_LEFT_ARMOR_UC"));
 	_txtLeftArmor->setColor(color);
 	_txtLeftArmor->setHighContrast();
-
-	_numLeftArmor->setColor(color2);
-	_numLeftArmor->setHighContrast();
-//	_barLeftArmor->setScale();
-
+	_txtLeftArmor_i->setColor(color2);
+	_txtLeftArmor_i->setHighContrast();
 
 	_txtRightArmor->setText(tr("STR_RIGHT_ARMOR_UC"));
 	_txtRightArmor->setColor(color);
 	_txtRightArmor->setHighContrast();
-
-	_numRightArmor->setColor(color2);
-	_numRightArmor->setHighContrast();
-//	_barRightArmor->setScale();
-
+	_txtRightArmor_i->setColor(color2);
+	_txtRightArmor_i->setHighContrast();
 
 	_txtRearArmor->setText(tr("STR_REAR_ARMOR_UC"));
 	_txtRearArmor->setColor(color);
 	_txtRearArmor->setHighContrast();
-
-	_numRearArmor->setColor(color2);
-	_numRearArmor->setHighContrast();
-//	_barRearArmor->setScale();
-
+	_txtRearArmor_i->setColor(color2);
+	_txtRearArmor_i->setHighContrast();
 
 	_txtUnderArmor->setText(tr("STR_UNDER_ARMOR_UC"));
 	_txtUnderArmor->setColor(color);
 	_txtUnderArmor->setHighContrast();
-
-	_numUnderArmor->setColor(color2);
-	_numUnderArmor->setHighContrast();
-//	_barUnderArmor->setScale();
-
+	_txtUnderArmor_i->setColor(color2);
+	_txtUnderArmor_i->setHighContrast();
 
 	if (_mindProbe == false)
 	{
@@ -574,18 +519,18 @@ void UnitInfoState::init()
 		{
 			const unsigned order (_unit->getBattleOrder());
 			if (order < 10u)
-				_numOrder->setX(_btnNext->getX() - 6);
+				_battleOrder->setX(_btnNext->getX() - 6);
 			else
-				_numOrder->setX(_btnNext->getX() - 10);
+				_battleOrder->setX(_btnNext->getX() - 10);
 
-			_numOrder->setValue(order);
-			_numOrder->setVisible();
+			_battleOrder->setValue(order);
+			_battleOrder->setVisible();
 		}
 		else
-			_numOrder->setVisible(false);
+			_battleOrder->setVisible(false);
 	}
 	else
-		_numOrder->setVisible(false);
+		_battleOrder->setVisible(false);
 
 	// NAME ->
 	woststr << _unit->getName(
@@ -596,25 +541,25 @@ void UnitInfoState::init()
 
 	// TU, Health, & Bravery ->
 	int stat (_unit->getTu());
-	_numTimeUnits->setText(Text::intWide(stat));
+	_txtTimeUnits_i->setText(Text::intWide(stat));
 	_barTimeUnits->setMaxValue(static_cast<double>(_unit->getBattleStats()->tu));
 	_barTimeUnits->setValue(static_cast<double>(stat));
 
 	stat = _unit->getEnergy();
-	_numEnergy->setText(Text::intWide(stat));
+	_txtEnergy_i->setText(Text::intWide(stat));
 	_barEnergy->setMaxValue(static_cast<double>(_unit->getBattleStats()->stamina));
 	_barEnergy->setValue(static_cast<double>(stat));
 
 	stat = _unit->getHealth();
-	_numHealth->setText(Text::intWide(stat));
+	_txtHealth_i->setText(Text::intWide(stat));
 	const int stat2 (_unit->getStun());
 	if (stat2 != 0)
 	{
-		_numStun->setText(Text::intWide(stat2));
-		_numStun->setVisible();
+		_txtStun_i->setText(Text::intWide(stat2));
+		_txtStun_i->setVisible();
 	}
 	else
-		_numStun->setVisible(false);
+		_txtStun_i->setVisible(false);
 	_barHealth->setMaxValue(static_cast<double>(_unit->getBattleStats()->health));
 	_barHealth->setValue(static_cast<double>(stat));
 	_barHealth->setValue2(static_cast<double>(stat2));
@@ -625,16 +570,16 @@ void UnitInfoState::init()
 		stat = _unit->getFatalWounds();
 		woststr << stat;
 
-		_barFatalWounds->setMaxValue(static_cast<double>(stat));
-		_barFatalWounds->setValue(static_cast<double>(stat));
-		_barFatalWounds->setVisible();
+		_barFatals->setMaxValue(static_cast<double>(stat));
+		_barFatals->setValue(static_cast<double>(stat));
+		_barFatals->setVisible();
 	}
 	else
 	{
 		woststr << L"-";
-		_barFatalWounds->setVisible(false);
+		_barFatals->setVisible(false);
 	}
-	_numFatalWounds->setText(woststr.str());
+	_txtFatals_i->setText(woststr.str());
 
 	woststr.str(L"");
 	stat = _unit->getBattleStats()->bravery;
@@ -650,7 +595,7 @@ void UnitInfoState::init()
 		woststr << L"oo";
 		_barBravery->setVisible(false);
 	}
-	_numBravery->setText(woststr.str());
+	_txtBravery_i->setText(woststr.str());
 
 	woststr.str(L"");
 	if (_unit->isMoralable() == true)
@@ -666,7 +611,7 @@ void UnitInfoState::init()
 		woststr << L"oo";
 		_barMorale->setVisible(false);
 	}
-	_numMorale->setText(woststr.str());
+	_txtMorale_i->setText(woststr.str());
 
 	// Primary Abilities ->
 	const double acuModi (_unit->getAccuracyModifier());
@@ -676,35 +621,35 @@ void UnitInfoState::init()
 	arbitraryVariable *= acuModi;
 	_barReactions->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
-	_numReactions->setText(Text::intWide(stat));
+	_txtReactions_i->setText(Text::intWide(stat));
 
 	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->firing);
 	_barFiring->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barFiring->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
-	_numFiring->setText(Text::intWide(stat));
+	_txtFiring_i->setText(Text::intWide(stat));
 
 	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->throwing);
 	_barThrowing->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barThrowing->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
-	_numThrowing->setText(Text::intWide(stat));
+	_txtThrowing_i->setText(Text::intWide(stat));
 
 	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->melee);
 	_barMelee->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi;
 	_barMelee->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
-	_numMelee->setText(Text::intWide(stat));
+	_txtMelee_i->setText(Text::intWide(stat));
 
 	arbitraryVariable = static_cast<double>(_unit->getBattleStats()->strength);
 	_barStrength->setMaxValue(arbitraryVariable);
 	arbitraryVariable *= acuModi / 2. + 0.5;
 	_barStrength->setValue(arbitraryVariable);
 	stat = static_cast<int>(Round(arbitraryVariable));
-	_numStrength->setText(Text::intWide(stat));
+	_txtStrength_i->setText(Text::intWide(stat));
 
 	// Psionics ->
 	const int psiSkill (_unit->getBattleStats()->psiSkill);
@@ -724,57 +669,57 @@ void UnitInfoState::init()
 			woststr << L"oo";
 			_barPsiStrength->setVisible(false);
 		}
-		_numPsiStrength->setText(woststr.str());
-		_numPsiStrength->setVisible();
+		_txtPsiStrength_i->setText(woststr.str());
+		_txtPsiStrength_i->setVisible();
 
 		if (psiSkill != 0)
 		{
-			_numPsiSkill->setText(Text::intWide(psiSkill));
+			_txtPsiSkill_i->setText(Text::intWide(psiSkill));
 			_barPsiSkill->setMaxValue(static_cast<double>(psiSkill));
 			_barPsiSkill->setValue(static_cast<double>(psiSkill));
 
-			_numPsiSkill->setVisible();
+			_txtPsiSkill_i->setVisible();
 			_barPsiSkill->setVisible();
 		}
 		else
 		{
-			_numPsiSkill->setVisible(false);
+			_txtPsiSkill_i->setVisible(false);
 			_barPsiSkill->setVisible(false);
 		}
 	}
 	else // Soldier w/out psiSkill
 	{
 //		_barPsiSkill->setMaxValue(0.); // TODO: revert those class defaults.
-		_numPsiSkill->setVisible(false);
+		_txtPsiSkill_i->setVisible(false);
 		_barPsiSkill->setVisible(false);
-		_numPsiStrength->setVisible(false);
+		_txtPsiStrength_i->setVisible(false);
 		_barPsiStrength->setVisible(false);
 	}
 
 	// Armor ->
 	stat = _unit->getArmor(SIDE_FRONT);
-	_numFrontArmor->setText(Text::intWide(stat));
+	_txtFrontArmor_i->setText(Text::intWide(stat));
 	_barFrontArmor->setMaxValue(static_cast<double>(_unit->getArmor()->getFrontArmor()));
 	_barFrontArmor->setValue(static_cast<double>(stat));
 
 	arbitraryVariable = _unit->getArmor()->getSideArmor(); // haha!!
 	stat = _unit->getArmor(SIDE_LEFT);
-	_numLeftArmor->setText(Text::intWide(stat));
+	_txtLeftArmor_i->setText(Text::intWide(stat));
 	_barLeftArmor->setMaxValue(arbitraryVariable);
 	_barLeftArmor->setValue(static_cast<double>(stat));
 
 	stat = _unit->getArmor(SIDE_RIGHT);
-	_numRightArmor->setText(Text::intWide(stat));
+	_txtRightArmor_i->setText(Text::intWide(stat));
 	_barRightArmor->setMaxValue(arbitraryVariable);
 	_barRightArmor->setValue(static_cast<double>(stat));
 
 	stat = _unit->getArmor(SIDE_REAR);
-	_numRearArmor->setText(Text::intWide(stat));
+	_txtRearArmor_i->setText(Text::intWide(stat));
 	_barRearArmor->setMaxValue(_unit->getArmor()->getRearArmor());
 	_barRearArmor->setValue(static_cast<double>(stat));
 
 	stat = _unit->getArmor(SIDE_UNDER);
-	_numUnderArmor->setText(Text::intWide(stat));
+	_txtUnderArmor_i->setText(Text::intWide(stat));
 	_barUnderArmor->setMaxValue(_unit->getArmor()->getUnderArmor());
 	_barUnderArmor->setValue(static_cast<double>(stat));
 }
@@ -821,7 +766,7 @@ void UnitInfoState::btnNextClick(Action*)
 	if (_unit != nullptr)
 		init();
 	else
-		exitClick(nullptr);
+		exitClick();
 }
 
 /**
@@ -840,7 +785,7 @@ void UnitInfoState::btnPrevClick(Action*)
 	if (_unit != nullptr)
 		init();
 	else
-		exitClick(nullptr);
+		exitClick();
 }
 
 /**

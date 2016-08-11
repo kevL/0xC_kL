@@ -79,7 +79,7 @@ private:
 		* _txtWound;
 
 	/// Handler for the end button.
-	void closeClick(Action* action);
+	void closeClick(Action* action = nullptr);
 	/// Handler for the heal button.
 	void healClick(Action* action);
 	/// Handler for the stimulant button.

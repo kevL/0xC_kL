@@ -37,7 +37,7 @@ class TextButton;
 
 
 /**
- * UnitInfo screen that shows the tactical-info of a specified unit.
+ * UnitInfo screen that shows the tactical-info of a specified BattleUnit.
  */
 class UnitInfoState final
 	:
@@ -58,7 +58,7 @@ private:
 		* _barTimeUnits,
 		* _barEnergy,
 		* _barHealth,
-		* _barFatalWounds,
+		* _barFatals,
 		* _barBravery,
 		* _barMorale,
 		* _barReactions,
@@ -77,7 +77,7 @@ private:
 	BattlescapeState* _parent;
 	const BattleUnit* _unit;
 	InteractiveSurface* _exit;
-	NumberText* _numOrder;
+	NumberText* _battleOrder;
 	SavedBattleGame* _battleSave;
 	Surface
 		* _bg,
@@ -88,7 +88,7 @@ private:
 		* _txtTimeUnits,
 		* _txtEnergy,
 		* _txtHealth,
-		* _txtFatalWounds,
+		* _txtFatals,
 		* _txtBravery,
 		* _txtMorale,
 		* _txtReactions,
@@ -99,20 +99,20 @@ private:
 		* _txtPsiStrength,
 		* _txtPsiSkill,
 
-		* _numTimeUnits,
-		* _numEnergy,
-		* _numHealth,
-		* _numStun,
-		* _numFatalWounds,
-		* _numBravery,
-		* _numMorale,
-		* _numReactions,
-		* _numFiring,
-		* _numThrowing,
-		* _numMelee,
-		* _numStrength,
-		* _numPsiStrength,
-		* _numPsiSkill,
+		* _txtTimeUnits_i,
+		* _txtEnergy_i,
+		* _txtHealth_i,
+		* _txtStun_i,
+		* _txtFatals_i,
+		* _txtBravery_i,
+		* _txtMorale_i,
+		* _txtReactions_i,
+		* _txtFiring_i,
+		* _txtThrowing_i,
+		* _txtMelee_i,
+		* _txtStrength_i,
+		* _txtPsiStrength_i,
+		* _txtPsiSkill_i,
 
 		* _txtFrontArmor,
 		* _txtLeftArmor,
@@ -120,11 +120,11 @@ private:
 		* _txtRearArmor,
 		* _txtUnderArmor,
 
-		* _numFrontArmor,
-		* _numLeftArmor,
-		* _numRightArmor,
-		* _numRearArmor,
-		* _numUnderArmor;
+		* _txtFrontArmor_i,
+		* _txtLeftArmor_i,
+		* _txtRightArmor_i,
+		* _txtRearArmor_i,
+		* _txtUnderArmor_i;
 	TextButton
 		* _btnNext,
 		* _btnPrev;

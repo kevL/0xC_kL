@@ -1016,8 +1016,8 @@ void BattlescapeGame::endAiTurn()
 }
 
 /**
- * Handles the result of non target actions like priming a grenade or performing
- * a melee attack or using a medikit.
+ * Handles the result of non-target actions like priming a grenade or performing
+ * a melee-attack or using a medikit.
  * @note The action is set up in ActionMenuState.
  */
 void BattlescapeGame::handleNonTargetAction()

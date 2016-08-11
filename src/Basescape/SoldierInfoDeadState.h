@@ -86,17 +86,17 @@ private:
 		* _txtPsiStrength,
 		* _txtPsiSkill,
 
-		* _numTimeUnits,
-		* _numStamina,
-		* _numHealth,
-		* _numBravery,
-		* _numReactions,
-		* _numFiring,
-		* _numThrowing,
-		* _numMelee,
-		* _numStrength,
-		* _numPsiStrength,
-		* _numPsiSkill;
+		* _txtTimeUnits_i,
+		* _txtEnergy_i,
+		* _txtHealth_i,
+		* _txtBravery_i,
+		* _txtReactions_i,
+		* _txtFiring_i,
+		* _txtThrowing_i,
+		* _txtMelee_i,
+		* _txtStrength_i,
+		* _txtPsiStrength_i,
+		* _txtPsiSkill_i;
 	TextButton
 		* _btnNext,
 		* _btnOk,

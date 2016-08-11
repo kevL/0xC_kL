@@ -462,7 +462,7 @@ void InventoryState::init()
 	BattleUnit* unit (_battleSave->getSelectedUnit());
 	if (unit == nullptr) // no selected unit, close inventory
 	{
-		btnOkClick(nullptr);
+		btnOkClick();
 		return;
 	}
 
@@ -476,7 +476,7 @@ void InventoryState::init()
 		if ((unit = _battleSave->getSelectedUnit()) == nullptr
 			 || unit->canInventory() == false)
 		{
-			btnOkClick(nullptr);
+			btnOkClick();
 			return; // starting a mission with just vehicles. kL_note: DISALLOWED!!!
 		}
 	}
@@ -690,20 +690,19 @@ void InventoryState::updateWounds() // private.
 
 /**
  * Exits to the previous screen.
- * @param action - pointer to an Action
+ * @param action - pointer to an Action (default nullptr)
  */
 void InventoryState::btnOkClick(Action*)
 {
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
+		_parent->updateSoldierInfo(false);
 		_game->popState();
 
 		if (_tuMode == false && _parent != nullptr) // pre-battle but going into tactical!
 		{
 			_battleSave->positionUnits();
-
-			Tile* const inTile (_battleSave->getBattleInventory());
-			_battleSave->distributeEquipt(inTile);
+			_battleSave->distributeEquipt(_battleSave->getBattleInventory());
 
 			for (std::vector<BattleUnit*>::const_iterator
 					i = _battleSave->getUnits()->begin();

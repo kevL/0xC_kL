@@ -987,7 +987,7 @@ void GeoscapeState::handle(Action* action)
 			if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave
 			{
 				beep = true;
-				popup(new SaveGameState(
+				popupGeo(new SaveGameState(
 									OPT_GEOSCAPE,
 									SAVE_QUICK,
 									_palette));
@@ -995,7 +995,7 @@ void GeoscapeState::handle(Action* action)
 			else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad
 			{
 				beep = true;
-				popup(new LoadGameState(
+				popupGeo(new LoadGameState(
 									OPT_GEOSCAPE,
 									SAVE_QUICK,
 									_palette));
@@ -1067,7 +1067,7 @@ void GeoscapeState::init()
 	if (_gameSave->isIronman() == true
 		&& _gameSave->getName().empty() == false)
 	{
-		popup(new ListSaveState(OPT_GEOSCAPE));
+		popupGeo(new ListSaveState(OPT_GEOSCAPE));
 	}
 
 	if (kL_geoMusicPlaying == true)
@@ -1405,7 +1405,7 @@ void GeoscapeState::time5Seconds()
 	if (_gameSave->getBases()->empty() == true) // Game Over if there are no more bases.
 	{
 		_gameSave->setEnding(END_LOSE);
-		popup(new DefeatState());
+		popupGeo(new DefeatState());
 		if (_gameSave->isIronman() == true)
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
@@ -1460,7 +1460,7 @@ void GeoscapeState::time5Seconds()
 									&& (*i)->getUfoStatus() == Ufo::LANDED))
 						{
 							resetTimer();
-							popup(new UfoLostState((*i)->getName(_game->getLanguage())));
+							popupGeo(new UfoLostState((*i)->getName(_game->getLanguage())));
 						}
 
 						if (qtySites < _gameSave->getTerrorSites()->size()) // new TerrorSite appeared when UFO reached waypoint, above^
@@ -1468,7 +1468,7 @@ void GeoscapeState::time5Seconds()
 							TerrorSite* const site (_gameSave->getTerrorSites()->back());
 							site->setDetected();
 
-							popup(new TerrorDetectedState(site, this));
+							popupGeo(new TerrorDetectedState(site, this));
 						}
 
 						if ((*i)->getUfoStatus() == Ufo::DESTROYED) // if UFO was destroyed don't spawn missions
@@ -1483,7 +1483,7 @@ void GeoscapeState::time5Seconds()
 							(*i)->setDestination();
 
 							if (base->setupBaseDefense() == true)
-								popup(new BaseDefenseState(base, *i, this));
+								popupGeo(new BaseDefenseState(base, *i, this));
 								// should/could this Return;
 							else
 							{
@@ -1508,7 +1508,7 @@ void GeoscapeState::time5Seconds()
 						&& (*i)->getTargeters()->empty() == false)
 					{
 						resetTimer();
-						popup(new UfoLostState((*i)->getName(_game->getLanguage())));
+						popupGeo(new UfoLostState((*i)->getName(_game->getLanguage())));
 					}
 				}
 				break;
@@ -1601,7 +1601,7 @@ void GeoscapeState::time5Seconds()
 									// will be used to position the targeter in GeoscapeCraftState.
 
 									resetTimer();
-									popup(new GeoscapeCraftState(*j, this, wp));
+									popupGeo(new GeoscapeCraftState(*j, this, wp));
 								}
 							}
 						}
@@ -1688,7 +1688,7 @@ void GeoscapeState::time5Seconds()
 																	ufo->getLongitude(),
 																	ufo->getLatitude(),
 																	&texId, &shade);
-									popup(new ConfirmLandingState(
+									popupGeo(new ConfirmLandingState(
 															*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
 															_rules->getGlobe()->getTextureRule(texId),
 															shade,
@@ -1697,7 +1697,7 @@ void GeoscapeState::time5Seconds()
 								break;
 
 							case Ufo::DESTROYED: // just before expiration
-									popup(new CraftPatrolState(*j, this));
+									popupGeo(new CraftPatrolState(*j, this));
 									(*j)->setDestination();
 
 //								if ((*j)->getQtySoldiers() != 0)
@@ -1737,14 +1737,14 @@ void GeoscapeState::time5Seconds()
 												site->getLongitude(),
 												site->getLatitude(),
 												&shade);
-							popup(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
+							popupGeo(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
 													*j,
 													_rules->getGlobe()->getTextureRule(texId),
 													shade,
 													(*j)->getQtySoldiers() != 0));
 						}
 						else // aLien Base.
-							popup(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
+							popupGeo(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
 													*j,
 													nullptr,
 													-1,
@@ -1752,7 +1752,7 @@ void GeoscapeState::time5Seconds()
 					}
 					else // do Patrol at waypoint. NOTE: This will also handle target-UFOs that just vanished.
 					{
-						popup(new CraftPatrolState(*j, this));
+						popupGeo(new CraftPatrolState(*j, this));
 						(*j)->setDestination();
 					}
 				}
@@ -1941,7 +1941,7 @@ void GeoscapeState::time10Minutes()
 					(*j)->setLowFuel();
 					(*j)->returnToBase();
 
-					popup(new LowFuelState(*j, this));
+					popupGeo(new LowFuelState(*j, this));
 				}
 
 //				if ((*j)->getDestination() == nullptr) // Remove that: patrolling for aBases/10min was getting too bothersome.
@@ -1968,7 +1968,7 @@ void GeoscapeState::time10Minutes()
 							{
 								//Log(LOG_INFO) << ". . . . aLienBase discovered";
 								resetTimer();
-								popup(new AlienBaseDetectedState(*k, true));
+								popupGeo(new AlienBaseDetectedState(*k, true));
 							}
 						}
 					}
@@ -2079,7 +2079,7 @@ void GeoscapeState::time10Minutes()
 					|| (hyperDet == true && hyperDet_pre == false))
 				{
 					++_windowPops;
-					popup(new UfoDetectedState(
+					popupGeo(new UfoDetectedState(
 											*i,
 											this,
 											true,
@@ -2136,7 +2136,7 @@ void GeoscapeState::time10Minutes()
 				if (hyperDet == true && hyperDet_pre == false)
 				{
 					++_windowPops;
-					popup(new UfoDetectedState(
+					popupGeo(new UfoDetectedState(
 											*i,
 											this,
 											false,
@@ -2149,7 +2149,7 @@ void GeoscapeState::time10Minutes()
 					&& (*i)->getTargeters()->empty() == false)
 				{
 					resetTimer();
-					popup(new UfoLostState((*i)->getName(_game->getLanguage())));
+					popupGeo(new UfoLostState((*i)->getName(_game->getLanguage())));
 				}
 			}
 		}
@@ -2296,7 +2296,7 @@ void GeoscapeState::time30Minutes()
 														.arg(tr(refuelItem))
 														.arg((*j)->getName(_game->getLanguage()))
 														.arg((*i)->getName()));
-							popup(new CraftErrorState(this, wst));
+							popupGeo(new CraftErrorState(this, wst));
 						}
 					}
 					break;
@@ -2313,7 +2313,7 @@ void GeoscapeState::time30Minutes()
 													.arg(tr(rearmClip))
 													.arg((*j)->getName(_game->getLanguage()))
 													.arg((*i)->getName()));
-						popup(new CraftErrorState(this, wst));
+						popupGeo(new CraftErrorState(this, wst));
 					}
 					break;
 				}
@@ -2322,7 +2322,7 @@ void GeoscapeState::time30Minutes()
 			}
 
 			if ((*j)->showReady() == true)
-				popup(new CraftReadyState(
+				popupGeo(new CraftReadyState(
 										this, *j,
 										tr("STR_CRAFT_READY")
 											.arg((*i)->getName())
@@ -2532,7 +2532,7 @@ void GeoscapeState::time1Hour()
 		if ((*i)->storesOverfull() == true)
 		{
 			resetTimer();
-			popup(new ErrorMessageState(
+			popupGeo(new ErrorMessageState(
 								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName()),
 								_palette,
 								_rules->getInterface("geoscape")->getElement("errorMessage")->color,
@@ -2547,7 +2547,7 @@ void GeoscapeState::time1Hour()
 			j != prodEvents.end();
 			++j)
 	{
-		popup(new ProductionCompleteState(
+		popupGeo(new ProductionCompleteState(
 										j->base,
 										j->item,
 										this,
@@ -2556,7 +2556,7 @@ void GeoscapeState::time1Hour()
 	}
 
 	if (arrivals == true)
-		popup(new ItemsArrivingState(this));
+		popupGeo(new ItemsArrivingState(this));
 
 
 	// TFTD stuff: 'detected' see TerrorSite class
@@ -2568,7 +2568,7 @@ void GeoscapeState::time1Hour()
 		if ((*i)->getDetected() == false)
 		{
 			(*i)->setDetected();
-			popup(new TerrorDetectedState(*i, this));
+			popupGeo(new TerrorDetectedState(*i, this));
 			break;
 		}
 	}
@@ -2698,7 +2698,7 @@ void GeoscapeState::time1Day()
 							if ((*j)->getArmor()->isBasic() == false) // return ex-Soldier's armor to Stores
 								(*i)->getStorageItems()->addItem((*j)->getArmor()->getStoreItem());
 
-							popup(new SoldierDiedState(
+							popupGeo(new SoldierDiedState(
 													(*j)->getName(),
 													(*i)->getName()));
 
@@ -2953,7 +2953,7 @@ void GeoscapeState::time1Day()
 			i != prodEvents.end();
 			++i)
 	{
-		popup(new ProductionCompleteState(
+		popupGeo(new ProductionCompleteState(
 									i->base,
 									i->item,
 									this,
@@ -2966,7 +2966,7 @@ void GeoscapeState::time1Day()
 			i != resEvents.end();
 			++i)
 	{
-		popup(*i);
+		popupGeo(*i);
 	}
 
 	for (std::vector<NewPossibleResearchInfo>::const_iterator
@@ -2974,7 +2974,7 @@ void GeoscapeState::time1Day()
 			i != newResEvents.end();
 			++i)
 	{
-		popup(new NewPossibleResearchState(
+		popupGeo(new NewPossibleResearchState(
 									i->base,
 									i->newPossibleResearch,
 									i->showResearchButton));
@@ -2985,7 +2985,7 @@ void GeoscapeState::time1Day()
 			i != newProdEvents.end();
 			++i)
 	{
-		popup(new NewPossibleManufactureState(
+		popupGeo(new NewPossibleManufactureState(
 										i->base,
 										i->newPossibleManufacture,
 										i->showManufactureButton));
@@ -3023,12 +3023,12 @@ void GeoscapeState::time1Day()
 	if (day == 10 || day == 20)
 	{
 		if (_gameSave->isIronman() == true)
-			popup(new SaveGameState(
+			popupGeo(new SaveGameState(
 								OPT_GEOSCAPE,
 								SAVE_IRONMAN,
 								_palette));
 		else if (Options::autosave == true) // NOTE: Auto-save points are fucked; they should be done *before* important events, not after.
-			popup(new SaveGameState(
+			popupGeo(new SaveGameState(
 								OPT_GEOSCAPE,
 								SAVE_AUTO_GEOSCAPE,
 								_palette));
@@ -3099,7 +3099,7 @@ void GeoscapeState::time1Month()
 	//Log(LOG_INFO) << "GeoscapeState::time1Month()";
 	resetTimer();
 
-	popup(new MonthlyReportState());
+	popupGeo(new MonthlyReportState());
 
 	if (_gameSave->getAlienBases()->empty() == false) // handle xCom Secret Agents discovering bases
 	{
@@ -3112,7 +3112,7 @@ void GeoscapeState::time1Month()
 					++i)
 			{
 				if ((*i)->isDetected() == false && RNG::percent(5 + pct) == true)
-					popup(new AlienBaseDetectedState(*i, false));
+					popupGeo(new AlienBaseDetectedState(*i, false));
 			}
 		}
 	}
@@ -3152,11 +3152,11 @@ bool GeoscapeState::is5Sec() const
 }
 
 /**
- * Adds a new popup-window to the queue and pauses the game-timer respectively.
+ * Adds a new popup-window to the popup-queue and pauses the Timer.
  * @note Doing it this way this prevents popups from overlapping.
  * @param state - pointer to popup state
  */
-void GeoscapeState::popup(State* const state)
+void GeoscapeState::popupGeo(State* const state)
 {
 	_pause = true;
 	_popups.push_back(state);
@@ -3770,10 +3770,10 @@ void GeoscapeState::baseDefenseTactical(
 		bGen.run();
 
 		_pause = true;
-		popup(new BriefingState(nullptr, base));
+		popupGeo(new BriefingState(nullptr, base));
 	}
 	else
-		popup(new BaseDestroyedState(base, _globe));
+		popupGeo(new BaseDestroyedState(base, _globe));
 }
 
 /**

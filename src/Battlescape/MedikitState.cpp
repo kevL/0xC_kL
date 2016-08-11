@@ -297,13 +297,13 @@ void MedikitState::handle(Action* action)
 	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN
 		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT)
 	{
-		closeClick(nullptr);
+		closeClick();
 	}
 }
 
 /**
  * Exits to the previous screen.
- * @param action - pointer to an Action
+ * @param action - pointer to an Action (default nullptr)
  */
 void MedikitState::closeClick(Action*)
 {
@@ -350,7 +350,7 @@ void MedikitState::healClick(Action*)
 					&& _action->targetUnit->isStunned() == false)
 				{
 					_action->actor->getStatistics()->revivedSoldier += 2;
-					closeClick(nullptr); // if the unit has revived quit this screen automatically
+					closeClick(); // if the unit has revived quit this screen automatically
 				}
 				else
 					update();
@@ -358,13 +358,13 @@ void MedikitState::healClick(Action*)
 			else
 			{
 				_action->result = BattlescapeGame::PLAYER_ERROR[0u];
-//				closeClick(nullptr);
+//				closeClick();
 			}
 		}
 		else
 		{
 			_action->result = BattlescapeGame::PLAYER_ERROR[4u];
-//			closeClick(nullptr);
+//			closeClick();
 		}
 	}
 }
@@ -394,7 +394,7 @@ void MedikitState::stimClick(Action*)
 					if (_action->targetUnit->getFatalWounds() != 0)
 						++_action->actor->getStatistics()->revivedSoldier;
 
-					closeClick(nullptr); // if the unit has revived quit this screen automatically
+					closeClick(); // if the unit has revived quit this screen automatically
 				}
 				else
 					update();
@@ -402,13 +402,13 @@ void MedikitState::stimClick(Action*)
 			else
 			{
 				_action->result = BattlescapeGame::PLAYER_ERROR[0u];
-//				closeClick(nullptr);
+//				closeClick();
 			}
 		}
 		else
 		{
 			_action->result = BattlescapeGame::PLAYER_ERROR[4u];
-//			closeClick(nullptr);
+//			closeClick();
 		}
 	}
 }
@@ -433,7 +433,7 @@ void MedikitState::painClick(Action*)
 				_action->targetUnit->morphine();
 
 				if (_action->targetUnit->getHealth() == 0) // overdose.
-					closeClick(nullptr);
+					closeClick();
 				else if (_action->targetUnit->getFaction() == FACTION_NEUTRAL) // take control of Civies.
 				{
 					_action->targetUnit->setFaction(FACTION_PLAYER);
@@ -452,8 +452,7 @@ void MedikitState::painClick(Action*)
 					battleSave->getBattleGame()->getMap()->getCamera()->centerPosition(
 																					_action->targetUnit->getPosition(),
 																					false);
-
-					closeClick(nullptr);
+					closeClick();
 				}
 				else
 					update();
@@ -461,13 +460,13 @@ void MedikitState::painClick(Action*)
 			else
 			{
 				_action->result = BattlescapeGame::PLAYER_ERROR[0u];
-//				closeClick(nullptr);
+//				closeClick();
 			}
 		}
 		else
 		{
 			_action->result = BattlescapeGame::PLAYER_ERROR[4u];
-//			closeClick(nullptr);
+//			closeClick();
 		}
 	}
 }

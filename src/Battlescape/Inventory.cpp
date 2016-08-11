@@ -888,7 +888,10 @@ void Inventory::mouseClick(Action* action, State* state)
 							}
 						}
 						else
+						{
+							_game->getSavedGame()->getBattleSave()->getBattleState()->updateSoldierInfo(false);
 							_game->popState(); // Close the inventory window on right-click if not in preBattle equip screen!
+						}
 					}
 				}
 				else // Open Ufopaedia article.
