@@ -124,9 +124,9 @@ BattlescapeState::BattlescapeState()
 		_isMouseScrolled(false),
 		_isMouseScrolling(false),
 		_mouseScrollStartTick(0u),
-		_fuseCycle(0),
+		_cycleFuse(0u),
 		_showConsole(2),
-		_targeterCycle(0),
+		_cycleTargeter(0u),
 		_showSoldierData(false),
 		_iconsHidden(false),
 		_isOverweight(false),
@@ -346,21 +346,23 @@ BattlescapeState::BattlescapeState()
 	_map->onMouseIn(	static_cast<ActionHandler>(&BattlescapeState::mapIn));
 
 
+	const ResourcePack* const res (_game->getResourcePack());
+
 	add(_icons);
-	Surface* const icons (_game->getResourcePack()->getSurface("TacIcons"));
-	if (_game->getResourcePack()->getSurface("Logo") != nullptr)
+	Surface* const icons (res->getSurface("TacIcons"));
+	if (res->getSurface("Logo") != nullptr)
 	{
-		Surface* const logo (_game->getResourcePack()->getSurface("Logo"));
+		Surface* const logo (res->getSurface("Logo"));
 		logo->setX(48);
 		logo->setY(32);
 		logo->blit(icons);
 	}
 	icons->blit(_icons);
 
-	_srtBigobs			= _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
-	_srtIconsOverlay		= _game->getResourcePack()->getSurfaceSet("TacIconsOverlay");
-	_srtScanG			= _game->getResourcePack()->getSurfaceSet("SCANG.DAT");
-	_srtTargeter	= _game->getResourcePack()->getSurfaceSet("Targeter");
+	_srtBigobs			= res->getSurfaceSet("BIGOBS.PCK");
+	_srtIconsOverlay	= res->getSurfaceSet("TacIconsOverlay");
+	_srtScanG			= res->getSurfaceSet("SCANG.DAT");
+	_srtTargeter		= res->getSurfaceSet("Targeter");
 
 
 	add(_srfRank,			"rank",					"battlescape", _icons);
@@ -442,11 +444,12 @@ BattlescapeState::BattlescapeState()
 	add(_btnLaunch);
 	add(_btnPsi);
 
-	_game->getResourcePack()->getSurfaceSet("SPICONS.DAT")->getFrame(0)->blit(_btnLaunch);
+	SurfaceSet* const srt (res->getSurfaceSet("SPICONS.DAT"));
+	srt->getFrame(0)->blit(_btnLaunch);
 	_btnLaunch->onMousePress(static_cast<ActionHandler>(&BattlescapeState::btnLaunchPress));
 	_btnLaunch->setVisible(false);
 
-	_game->getResourcePack()->getSurfaceSet("SPICONS.DAT")->getFrame(1)->blit(_btnPsi);
+	srt->getFrame(1)->blit(_btnPsi);
 	_btnPsi->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnPsiClick));
 	_btnPsi->setVisible(false);
 
@@ -2448,7 +2451,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					}
 
 					_srfTargeter->setVisible();
-					_targeterCycle = 0;
+					_cycleTargeter = 0u;
 					break;
 				}
 
@@ -2915,7 +2918,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	const Soldier* const sol (selUnit->getGeoscapeSoldier());
 	if (sol != nullptr)
 	{
-		SurfaceSet* const texture (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
+		static SurfaceSet* const texture (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
 		texture->getFrame(20 + sol->getRank())->blit(_srfRank);
 
 		if (selUnit->isKneeled() == true)
@@ -3402,8 +3405,8 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 	static const int pulse[PHASE_FUSE] { 2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
 										13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3};
 
-	if (_fuseCycle == PHASE_FUSE)
-		_fuseCycle = 0u;
+	if (_cycleFuse == PHASE_FUSE)
+		_cycleFuse = 0u;
 
 	const BattleItem* item (selUnit->getItem(ST_LEFTHAND));
 	if (item != nullptr && item->getFuse() != -1)
@@ -3418,7 +3421,7 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 							_isfLeftHand,
 							_isfLeftHand->getX() + 27,
 							_isfLeftHand->getY() -  1,
-							pulse[_fuseCycle],
+							pulse[_cycleFuse],
 							false, 3); // red
 				_isfLeftHand->unlock();
 		}
@@ -3436,12 +3439,12 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 							_isfRightHand,
 							_isfRightHand->getX() + 27,
 							_isfRightHand->getY() -  1,
-							pulse[_fuseCycle],
+							pulse[_cycleFuse],
 							false, 3); // red
 				_isfRightHand->unlock();
 		}
 	}
-	++_fuseCycle;
+	++_cycleFuse;
 }
 
 /**
@@ -3535,13 +3538,13 @@ void BattlescapeState::cycleHostileIcons(BattleUnit* const selUnit) // private.
  */
 void BattlescapeState::cycleTargeter() // private.
 {
-	static const int targeterFrames[PHASE_TARGET] {0,1,2,3,4,0}; // NOTE: Does not show the last frame.
+	static const int targeterFrames[PHASE_TARGET] {0,1,2,3,4,0};
 
-	Surface* const srfTargeter (_srtTargeter->getFrame(targeterFrames[_targeterCycle]));
+	Surface* const srfTargeter (_srtTargeter->getFrame(targeterFrames[_cycleTargeter]));
 	srfTargeter->blit(_srfTargeter);
 
-	if (++_targeterCycle == PHASE_TARGET)
-		_srfTargeter->setVisible(false);
+	if (++_cycleTargeter == PHASE_TARGET)
+		_srfTargeter->setVisible(false); // NOTE: The last phase will not be drawn.
 }
 
 /**
@@ -4168,6 +4171,7 @@ bool BattlescapeState::allowAlienIcons() const // private.
 		const int takedowns (selUnit->getTakedowns());
 		if (takedowns != 0)
 		{
+			static Surface* const srfAlien (_game->getResourcePack()->getSurface("AlienIcon"));
 			static const int ICONS (30);
 			int
 				x,y;
@@ -4180,7 +4184,6 @@ bool BattlescapeState::allowAlienIcons() const // private.
 				x = (j % 3) * 10;
 				y = (j / 3) * 12;
 
-				Surface* const srfAlien (_game->getResourcePack()->getSurface("AlienIcon"));
 				srfAlien->setX(x);
 				srfAlien->setY(y);
 				srfAlien->blit(_srfAlienIcon);

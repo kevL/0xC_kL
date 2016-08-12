@@ -951,8 +951,6 @@ void UnitWalkBState::statusTurn() // private.
 		++_preStepCost;
 
 	_unit->turn();
-
-//	_unit->setCacheInvalid();
 	_parent->getMap()->cacheUnitSprite(_unit);
 
 	if (_unit->getFaction() == FACTION_PLAYER)

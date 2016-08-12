@@ -191,7 +191,6 @@ void UnitTurnBState::think()
 	else if (_unit->expendTu(_tu) == true)
 	{
 		_unit->turn(_turret); // done-> STATUS_STANDING
-
 		_parent->getMap()->cacheUnitSprite(_unit);
 
 		bool spot;

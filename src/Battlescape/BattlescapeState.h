@@ -99,8 +99,8 @@ private:
 		_totalMouseMoveX,
 		_totalMouseMoveY;
 	size_t
-		_fuseCycle,
-		_targeterCycle;
+		_cycleFuse,
+		_cycleTargeter;
 
 	Uint32 _mouseScrollStartTick;
 

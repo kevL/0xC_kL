@@ -82,7 +82,8 @@ MiniMapView::MiniMapView(
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
 		_mousePastThreshold(false),
-		_set(game->getResourcePack()->getSurfaceSet("SCANG.DAT"))
+		_mouseScrollStartTick(0u),
+		_srtScanG(game->getResourcePack()->getSurfaceSet("SCANG.DAT"))
 {
 	_timerScroll = new Timer(SCROLL_INTERVAL);
 	_timerScroll->onTimer(static_cast<SurfaceHandler>(&MiniMapView::keyScroll));
@@ -116,189 +117,186 @@ void MiniMapView::draw()
 		static_cast<Sint16>(height),
 		0u);
 
-	if (_set != nullptr)
+//	if (_srtScanG != nullptr) // This had better well be there.
+//	{
+	static const int parts (static_cast<int>(Tile::PARTS_TILE));
+
+	Tile* tile;
+	Surface* srf;
+	const MapData* data;
+	const BattleUnit* unit;
+
+	this->lock();
+	for (int
+			lvl = 0;
+			lvl <= camera_Z;
+			++lvl)
 	{
-		static const int parts (static_cast<int>(Tile::PARTS_TILE));
-
-		Tile* tile;
-		Surface* srf;
-		const MapData* data;
-		const BattleUnit* unit;
-
-		this->lock();
+		int py (startY);
 		for (int
-				lvl = 0;
-				lvl <= camera_Z;
-				++lvl)
+				y = Surface::getY();
+				y < height + Surface::getY();
+				y += CELL_HEIGHT)
 		{
-			int py (startY);
+			int px (startX);
 			for (int
-					y = Surface::getY();
-					y < height + Surface::getY();
-					y += CELL_HEIGHT)
+					x = Surface::getX();
+					x < width + Surface::getX();
+					x += CELL_WIDTH)
 			{
-				int px (startX);
-				for (int
-						x = Surface::getX();
-						x < width + Surface::getX();
-						x += CELL_WIDTH)
+				if ((tile = _battleSave->getTile(Position(px, py, lvl))) != nullptr)
 				{
-					tile = _battleSave->getTile(Position(px, py, lvl));
+					int
+						colorGroup,
+						colorOffset;
 
-					if (tile != nullptr)
+					if (   px == 0 // edge markers
+						|| px == _battleSave->getMapSizeX() - 1
+						|| py == 0
+						|| py == _battleSave->getMapSizeY() - 1)
 					{
-						int
-							colorGroup,
-							colorOffset;
+						colorGroup  = 1; // greyscale
+						colorOffset = 5;
+					}
+					else if (tile->isRevealed() == true)
+					{
+						colorGroup  = 0;
+						colorOffset = tile->getShade();
+					}
+					else
+					{
+						colorGroup  = 0;
+						colorOffset = 15; // paint it ... black !
+					}
 
-						if (   px == 0 // edge markers
-							|| px == _battleSave->getMapSizeX() - 1
-							|| py == 0
-							|| py == _battleSave->getMapSizeY() - 1)
+					if (colorGroup == 1								// is along the edge
+						&& lvl == 0									// is ground level
+						&& tile->getMapData(O_OBJECT) == nullptr)	// but has no content-object
+					{
+						srf = _srtScanG->getFrame(377);				// draw edge marker
+						srf->blitNShade(
+									this,
+									x,y,
+									colorOffset,
+									false,
+									colorGroup);
+					}
+					else // draw tile parts
+					{
+						for (int
+								i = 0;
+								i != parts;
+								++i)
 						{
-							colorGroup  = 1; // greyscale
-							colorOffset = 5;
-						}
-						else if (tile->isRevealed() == true)
-						{
-							colorGroup  = 0;
-							colorOffset = tile->getShade();
-						}
-						else
-						{
-							colorGroup  = 0;
-							colorOffset = 15; // paint it ... black !
-						}
-
-						if (colorGroup == 1								// is along the edge
-							&& lvl == 0									// is ground level
-							&& tile->getMapData(O_OBJECT) == nullptr)	// but has no content-object
-						{
-							srf = _set->getFrame(377);					// draw edge marker
-							srf->blitNShade(
-										this,
-										x,y,
-										colorOffset,
-										false,
-										colorGroup);
-						}
-						else // draw tile parts
-						{
-							for (int
-									i = 0;
-									i != parts;
-									++i)
+							if ((data = tile->getMapData(static_cast<MapDataType>(i))) != nullptr
+								&& data->getMiniMapIndex() != 0)
 							{
-								data = tile->getMapData(static_cast<MapDataType>(i));
-								if (data != nullptr && data->getMiniMapIndex() != 0)
-								{
-									srf = _set->getFrame(data->getMiniMapIndex() + 35);
-									if (srf != nullptr)
-										srf->blitNShade(
-													this,
-													x,y,
-													colorOffset,
-													false,
-													colorGroup);
-									else Log(LOG_WARNING) << "MiniMapView::draw() no data for Tile["
-														  << i << "] pos " << tile->getPosition()
-														  << " frame = " << data->getMiniMapIndex() + 35;
-								}
-							}
-
-							if (tile->getFire() != 0 && tile->isRevealed() == true) // draw fire
-							{
-								int fire;
-								switch (_cycle)
-								{
-									default:
-									case 0:
-										fire = 469; // custom scanG's
-										break;
-									case 1:
-										fire = 470;
-								}
-								srf = _set->getFrame(fire);
-								srf->blitNShade(this, x,y);
+								if ((srf = _srtScanG->getFrame(data->getMiniMapIndex() + 35)) != nullptr)
+									srf->blitNShade(
+												this,
+												x,y,
+												colorOffset,
+												false,
+												colorGroup);
+								else Log(LOG_WARNING) << "MiniMapView::draw() no data for Tile["
+													  << i << "] pos " << tile->getPosition()
+													  << " frame = " << data->getMiniMapIndex() + 35;
 							}
 						}
 
-						if ((unit = tile->getTileUnit()) != nullptr && unit->getUnitVisible() == true) // alive visible units
+						if (tile->getFire() != 0 && tile->isRevealed() == true) // draw fire
 						{
-							const int
-								armorSize (unit->getArmor()->getSize()),
-								frame (unit->getMiniMapSpriteIndex()
-									 + tile->getPosition().x - unit->getPosition().x
-									 + (tile->getPosition().y - unit->getPosition().y) * armorSize
-									 + _cycle * armorSize * armorSize);
-
-							srf = _set->getFrame(frame);
-
-							if (unit == _battleSave->getSelectedUnit())		// selected unit
+							int fire;
+							switch (_cycle)
 							{
-								colorGroup  = 4;							// pale green palette-block
-								colorOffset = 0;
+								default:
+								case 0:
+									fire = 469; // custom scanG's
+									break;
+								case 1:
+									fire = 470;
 							}
-							else if (unit->getFaction() == FACTION_PLAYER	// Mc'd aLien or civie
-								&& unit->isMindControlled() == true)
-							{
-								colorGroup  = 11;							// brown palette-block
-								colorOffset =  1;
-							}
-							else if (unit->getFaction() == FACTION_HOSTILE	// Mc'd xCom
-								&& unit->isMindControlled() == true)
-							{
-								colorGroup  = 8;							// steel blue palette-block
-								colorOffset = 0;
-							}
-							else											// else aLien.
-							{
-								colorGroup =
-								colorOffset = 0;
-							}
-
-							srf->blitNShade(
-										this,
-										x,y,
-										colorOffset,
-										false,
-										colorGroup);
-						}
-
-						if (tile->isRevealed() == true
-							&& tile->getInventory()->empty() == false)		// at least one item on this tile
-						{
-							int color;
-							if (tile->hasPrimedGrenade() == true)
-								color = YELLOW;
-							else
-								color = 0;
-
-							srf = _set->getFrame(_cycle + 9);				// white cross
-							srf->blitNShade(this, x,y, 0, false, color);
-						}
-
-						if (_cycle == 0 && _battleSave->scannerDots().empty() == false)
-						{
-							std::pair<int,int> dotTest (std::make_pair(px,py));
-							if (std::find(
-									_battleSave->scannerDots().begin(),
-									_battleSave->scannerDots().end(),
-									dotTest) != _battleSave->scannerDots().end())
-							{
-								srf = _set->getFrame(_cycle + 9);			// white cross
-								srf->blitNShade(this, x,y, 0, false, RED);
-							}
+							srf = _srtScanG->getFrame(fire);
+							srf->blitNShade(this, x,y);
 						}
 					}
-					++px;
+
+					if ((unit = tile->getTileUnit()) != nullptr
+						&& unit->getUnitVisible() == true) // alive visible units
+					{
+						if (unit == _battleSave->getSelectedUnit())		// selected unit
+						{
+							colorGroup  = 4;							// pale green palette-block
+							colorOffset = 0;
+						}
+						else if (unit->getFaction() == FACTION_PLAYER	// Mc'd aLien or civie
+							&& unit->isMindControlled() == true)
+						{
+							colorGroup  = 11;							// brown palette-block
+							colorOffset =  1;
+						}
+						else if (unit->getFaction() == FACTION_HOSTILE	// Mc'd xCom
+							&& unit->isMindControlled() == true)
+						{
+							colorGroup  = 8;							// steel blue palette-block
+							colorOffset = 0;
+						}
+						else											// else aLien.
+						{
+							colorGroup  =
+							colorOffset = 0;
+						}
+
+						const int
+							unitSize (unit->getArmor()->getSize()),
+							spriteId (unit->getMiniMapSpriteIndex()
+									+  tile->getPosition().x - unit->getPosition().x
+									+ (tile->getPosition().y - unit->getPosition().y) * unitSize
+									+ _cycle * unitSize * unitSize); // holy mother-of-pearl spriteId batman.
+
+						srf = _srtScanG->getFrame(spriteId);
+						srf->blitNShade(
+									this,
+									x,y,
+									colorOffset,
+									false,
+									colorGroup);
+					}
+
+					if (tile->isRevealed() == true
+						&& tile->getInventory()->empty() == false)		// at least one item on this tile
+					{
+						int color;
+						if (tile->hasPrimedGrenade() == true)
+							color = YELLOW;
+						else
+							color = 0;
+
+						srf = _srtScanG->getFrame(_cycle + 9);			// white cross
+						srf->blitNShade(this, x,y, 0, false, color);
+					}
+
+					if (_cycle == 0 && _battleSave->scannerDots().empty() == false)
+					{
+						std::pair<int,int> dotTest (std::make_pair(px,py));
+						if (std::find(
+								_battleSave->scannerDots().begin(),
+								_battleSave->scannerDots().end(),
+								dotTest) != _battleSave->scannerDots().end())
+						{
+							srf = _srtScanG->getFrame(_cycle + 9);		// white cross
+							srf->blitNShade(this, x,y, 0, false, RED);
+						}
+					}
 				}
-				++py;
+				++px;
 			}
+			++py;
 		}
-		this->unlock();
 	}
-	else Log(LOG_WARNING) << "MiniMapView::draw() SCANG.DAT not available";
+	this->unlock();
+//	}
+//	else Log(LOG_WARNING) << "MiniMapView::draw() SCANG.DAT not available";
 
 
 	// looks like the crosshairs for the MiniMap
@@ -383,8 +381,8 @@ void MiniMapView::centerUnit()
 }
 
 /**
- * Handles mouse presses on the MiniMap.
- * @note Enters mouse-moving mode when the drag-scroll button is used.
+ * Handles mouse-presses on the MiniMap.
+ * @note Enters mouse-moving mode when the drag-scroll button is deployed.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -405,7 +403,7 @@ void MiniMapView::mousePress(Action* action, State* state) // private.
 		_totalMouseMoveY = 0;
 
 		_mousePastThreshold = false;
-		_mouseScrollStartTime = SDL_GetTicks();
+		_mouseScrollStartTick = SDL_GetTicks();
 	}
 }
 
@@ -431,7 +429,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 		{
 			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				_camera->centerPosition(_posPreDragScroll, false);
 				_redraw = true;
@@ -451,7 +449,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 
 		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 		if (_mousePastThreshold == false
-			&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+			&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
 			_isMouseScrolled = false;
 
@@ -488,7 +486,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 }
 
 /**
- * Handles moving over the MiniMap.
+ * Handles mouse-overs on the MiniMap.
  * @note Will change the camera center when the mouse is moved in mouse-moving mode.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
@@ -508,7 +506,7 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 		if ((SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 		{
 			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				_camera->centerPosition(_posPreDragScroll, false);
 				_redraw = true;
@@ -544,7 +542,7 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 }
 
 /**
- * Handles moving into the MiniMap.
+ * Handles mouse-ins on the MiniMap.
  * @note Stops the mouse-scrolling mode if it was left on.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
@@ -572,7 +570,7 @@ void MiniMapView::keyScroll() // private.
 }
 
 /**
- * Handles keyboard presses for the MiniMap.
+ * Handles keyboard-presses for the MiniMap.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */
@@ -626,7 +624,7 @@ void MiniMapView::keyboardPress(Action* action, State* state) // private.
 }
 
 /**
- * Handles keyboard releases for the MiniMap.
+ * Handles keyboard-releases for the MiniMap.
  * @param action	- pointer to an Action
  * @param state		- State that the ActionHandlers belong to
  */

@@ -322,7 +322,7 @@ Globe::Globe(
 		_isMouseScrolled(false),
 		_isMouseScrolling(false),
 		_mousePastThreshold(false),
-		_mouseScrollStartTime(0),
+		_mouseScrollStartTick(0u),
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
 		_lonPreMouseScroll(0.),
@@ -2560,7 +2560,7 @@ void Globe::mouseOver(Action* action, State* state)
 		{
 			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				center(
 					_lonPreMouseScroll,
@@ -2633,7 +2633,7 @@ void Globe::mousePress(Action* action, State* state)
 		_totalMouseMoveY = 0;
 
 		_mousePastThreshold = false;
-		_mouseScrollStartTime = SDL_GetTicks();
+		_mouseScrollStartTick = SDL_GetTicks();
 	}
 
 	if (isNaNorInf(lon,lat) == false)
@@ -2695,7 +2695,7 @@ void Globe::mouseClick(Action* action, State* state)
 		{
 			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				center(
 					_lonPreMouseScroll,
@@ -2713,7 +2713,7 @@ void Globe::mouseClick(Action* action, State* state)
 
 		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
 		if (_mousePastThreshold == false
-			&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+			&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
 			_isMouseScrolled = false;
 			center(

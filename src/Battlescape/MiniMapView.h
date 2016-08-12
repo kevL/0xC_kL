@@ -69,24 +69,24 @@ private:
 		_totalMouseMoveX,
 		_totalMouseMoveY;
 
-	Camera* _camera;
-	const Game* _game;
-	const SavedBattleGame* _battleSave;
-	SurfaceSet* _set;
-	Timer* _timerScroll;
+	Uint32 _mouseScrollStartTick;
 
 	Position _posPreDragScroll;
 
-	Uint32 _mouseScrollStartTime;
+	Camera* _camera;
+	const Game* _game;
+	const SavedBattleGame* _battleSave;
+	SurfaceSet* _srtScanG;
+	Timer* _timerScroll;
 
 
-	/// Handles pressing on the MiniMap.
+	/// Handles mouse-presses on the MiniMap.
 	void mousePress(Action* action, State* state) override;
-	/// Handles clicking on the MiniMap.
+	/// Handles mouse-clicks on the MiniMap.
 	void mouseClick(Action* action, State* state) override;
-	/// Handles moving mouse over the MiniMap.
+	/// Handles mouse-overs on the MiniMap.
 	void mouseOver(Action* action, State* state) override;
-	/// Handles moving the mouse into the MiniMap surface.
+	/// Handles mouse-ins on the MiniMap.
 	void mouseIn(Action* action, State* state) override;
 
 	/// Scrolls the MiniMap by keyboard.
@@ -95,6 +95,7 @@ private:
 	void keyboardPress(Action* action, State* state) override;
 	/// Handling for keyboard-releases.
 	void keyboardRelease(Action* action, State* state) override;
+
 	/// Controls timer-start and timer-stop.
 	void handleTimer();
 

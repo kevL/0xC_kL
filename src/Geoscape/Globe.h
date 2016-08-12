@@ -101,7 +101,7 @@ private:
 	Sint16
 		_cenX,
 		_cenY;
-	Uint32 _mouseScrollStartTime;
+	Uint32 _mouseScrollStartTick;
 	size_t
 		_zoom,
 		_texOffset;

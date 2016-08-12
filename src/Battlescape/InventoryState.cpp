@@ -560,8 +560,8 @@ void InventoryState::updateStats() // private.
 {
 	if (_unit->getGeoscapeSoldier() != nullptr)
 	{
-		_battleOrder->setVisible();
 		_battleOrder->setValue(_unit->getBattleOrder());
+		_battleOrder->setVisible();
 	}
 	else
 		_battleOrder->setVisible(false);
