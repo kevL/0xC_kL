@@ -678,11 +678,11 @@ private:
 		/// Gets the turret-type of the BattleUnit.
 		TurretType getTurretType() const;
 
-		/// Gets the BattleUnit's total number of fatal wounds.
-		int getFatalWounds() const;
-		/// Gets fatal wound amount of a body part.
-		int getFatalWound(UnitBodyPart part) const;
-		/// Heals fatal wounds.
+		/// Gets the BattleUnit's total quantity of fatal wounds.
+		int getFatalsTotal() const;
+		/// Gets the fatals on a specified body-part.
+		int getFatals(UnitBodyPart part) const;
+		/// Heals fatal wounds and replenishes health/morale.
 		void heal(
 				UnitBodyPart part,
 				int wounds,

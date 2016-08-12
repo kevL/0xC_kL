@@ -567,7 +567,7 @@ void UnitInfoState::init()
 	woststr.str(L"");
 	if (_unit->isWoundable() == true)
 	{
-		stat = _unit->getFatalWounds();
+		stat = _unit->getFatalsTotal();
 		woststr << stat;
 
 		_barFatals->setMaxValue(static_cast<double>(stat));

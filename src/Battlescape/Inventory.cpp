@@ -366,7 +366,7 @@ void Inventory::drawItems()
 									  [(*i)->getSlotY()]);
 			int fatals;
 			if ((*i)->getBodyUnit() != nullptr)
-				fatals = (*i)->getBodyUnit()->getFatalWounds();
+				fatals = (*i)->getBodyUnit()->getFatalsTotal();
 			else
 				fatals = 0;
 

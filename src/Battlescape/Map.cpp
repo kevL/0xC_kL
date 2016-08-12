@@ -2019,7 +2019,7 @@ void Map::drawRankIcon( // private.
 								unit->getPosition(),
 								unit->getArmor()->getSize());
 
-	switch (unit->getFatalWounds())
+	switch (unit->getFatalsTotal())
 	{
 		case 0:
 		{

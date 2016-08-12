@@ -1117,7 +1117,7 @@ void BattlescapeState::think()
 		else // Handle popups
 		{
 			popped = true;
-			_game->pushState(*_popups.begin());
+			_game->pushState(_popups.front());
 			_popups.erase(_popups.begin());
 		}
 	}
@@ -2312,7 +2312,7 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 
 		popupActionMenu(
 					unit->getItem(ST_LEFTHAND),
-					unit->getFatalWound(BODYPART_LEFTARM) != 0);
+					unit->getFatals(BODYPART_LEFTARM) != 0);
 	}
 }
 
@@ -2354,7 +2354,7 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 
 		popupActionMenu(
 					unit->getItem(ST_RIGHTHAND),
-					unit->getFatalWound(BODYPART_RIGHTARM) != 0);
+					unit->getFatals(BODYPART_RIGHTARM) != 0);
 	}
 }
 
@@ -3233,7 +3233,7 @@ void BattlescapeState::hotWoundsRefresh()
 		tile = _battleSave->getTiles()[i];
 
 		if ((unit = tile->getTileUnit()) != nullptr
-			&& unit->getFatalWounds() != 0
+			&& unit->getFatalsTotal() != 0
 			&& unit->getFaction() == FACTION_PLAYER
 			&& unit->isMindControlled() == false
 			&& unit->getGeoscapeSoldier() != nullptr
@@ -3242,7 +3242,7 @@ void BattlescapeState::hotWoundsRefresh()
 			srfBadge->blit(_btnWounded[k]);
 			_btnWounded[k]->setVisible(vis);
 
-			_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalWounds()));
+			_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalsTotal()));
 			_numWounded[k]->setVisible(vis);
 
 			_tileWounded[k++] = tile;
@@ -3255,14 +3255,14 @@ void BattlescapeState::hotWoundsRefresh()
 		{
 			if ((unit = (*j)->getBodyUnit()) != nullptr
 				&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
-				&& unit->getFatalWounds() != 0
+				&& unit->getFatalsTotal() != 0
 				&& unit->getFaction() == FACTION_PLAYER
 				&& unit->getGeoscapeSoldier() != nullptr)
 			{
 				srfBadge->blit(_btnWounded[k]);
 				_btnWounded[k]->setVisible(vis);
 
-				_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalWounds()));
+				_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalsTotal()));
 				_numWounded[k]->setVisible(vis);
 
 				_tileWounded[k++] = tile;
@@ -3350,7 +3350,7 @@ void BattlescapeState::animate()
 				hotSqrsCycle(selUnit);
 				cycleFuses(selUnit);
 
-				if (selUnit->getFatalWounds() != 0)
+				if (selUnit->getFatalsTotal() != 0)
 					blinkHealthBar();
 
 				if (_srfTargeter->getVisible() == true)

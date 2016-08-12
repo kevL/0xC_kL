@@ -652,7 +652,7 @@ void InventoryState::updateWounds() // private.
 			++i)
 	{
 		bodyPart = static_cast<UnitBodyPart>(i);
-		wound = static_cast<unsigned>(selUnit->getFatalWound(bodyPart));
+		wound = static_cast<unsigned>(selUnit->getFatals(bodyPart));
 
 		switch (bodyPart)
 		{

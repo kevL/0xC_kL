@@ -1454,7 +1454,7 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 			&& (unit->getOriginalFaction() == FACTION_PLAYER
 				|| playerOnly == false))
 		{
-			if (playerOnly == true && unit->getFatalWounds() == 0)
+			if (playerOnly == true && unit->getFatalsTotal() == 0)
 				ret = 1;
 			else
 				return 2;

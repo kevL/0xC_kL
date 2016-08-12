@@ -2469,7 +2469,7 @@ void BattleUnit::prepareUnit(bool preBattle)
 	{
 		if (_fire != 0) --_fire;
 
-		if ((_health -= getFatalWounds()) < 1) // suffer from fatal wounds
+		if ((_health -= getFatalsTotal()) < 1) // suffer from fatal wounds
 		{
 			_health = 0;
 			setAIState(); // if unit is dead AI state disappears
@@ -2533,7 +2533,7 @@ void BattleUnit::prepTuEnergy(
 		_tu -= overBurden;
 
 	if (_geoscapeSoldier != nullptr) // Each fatal wound to the left or right leg reduces a Soldier's TUs by 10%.
-		_tu -= _tu * (getFatalWound(BODYPART_LEFTLEG) + getFatalWound(BODYPART_RIGHTLEG)) / 10;
+		_tu -= _tu * (getFatals(BODYPART_LEFTLEG) + getFatals(BODYPART_RIGHTLEG)) / 10;
 
 	if (isPanicked == true)
 	{
@@ -2567,7 +2567,7 @@ void BattleUnit::prepTuEnergy(
 		// energy recovery by 10% of his/her current energy.
 		// note: only xCom Soldiers get fatal wounds, atm
 		if (_geoscapeSoldier != nullptr)
-			energy -= _energy * getFatalWound(BODYPART_TORSO) / 10;
+			energy -= _energy * getFatals(BODYPART_TORSO) / 10;
 
 		setEnergy(std::max(12, _energy + energy));
 	}
@@ -3638,10 +3638,10 @@ TurretType BattleUnit::getTurretType() const
 }
 
 /**
- * Gets total amount of fatal wounds this BattleUnit has.
- * @return, number of fatal wounds
+ * Gets the total quantity of fatal wounds this BattleUnit has.
+ * @return, quantity of fatals
  */
-int BattleUnit::getFatalWounds() const
+int BattleUnit::getFatalsTotal() const
 {
 	int ret (0);
 	for (size_t
@@ -3655,29 +3655,30 @@ int BattleUnit::getFatalWounds() const
 }
 
 /**
- * Gets the amount of fatal wounds for a body-part.
+ * Gets the quantity of fatal wounds for a specified body-part.
  * @param part - the body part in the range 0-5 (BattleUnit.h)
  * @return, fatal wounds @a part has
  */
-int BattleUnit::getFatalWound(UnitBodyPart part) const
+int BattleUnit::getFatals(UnitBodyPart part) const
 {
 	return _fatalWounds[part];
 }
 
 /**
  * Heals a fatal wound of this BattleUnit.
- * @param part		- the body part to heal (BattleUnit.h)
- * @param wounds	- the amount of fatal wounds to heal
- * @param health	- the amount of health to add to soldier health
+ * @param part		- the body-part to heal (BattleUnit.h)
+ * @param wounds	- the quantity of fatal wounds to heal
+ * @param health	- the quantity of health to add
  */
 void BattleUnit::heal(
 		UnitBodyPart part,
 		int wounds,
 		int health)
 {
-	if (getFatalWound(part) != 0)
+	if (getFatals(part) != 0)
 	{
-		_fatalWounds[part] -= wounds;
+		if ((_fatalWounds[part] -= wounds) < 0)
+			_fatalWounds[part] = 0;
 
 		if ((_health += health) > _stats.health)
 			_health = _stats.health;

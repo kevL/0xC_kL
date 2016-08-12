@@ -391,7 +391,7 @@ void MedikitState::stimClick(Action*)
 												itRule->getEnergyRecovery(),
 												itRule->getStunRecovery()) == true)
 				{
-					if (_action->targetUnit->getFatalWounds() != 0)
+					if (_action->targetUnit->getFatalsTotal() != 0)
 						++_action->actor->getStatistics()->revivedSoldier;
 
 					closeClick(); // if the unit has revived quit this screen automatically

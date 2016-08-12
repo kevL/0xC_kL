@@ -2118,7 +2118,7 @@ void TileEngine::hit(
 
 			if (targetUnit != nullptr)
 			{
-				const int antecedentWounds (targetUnit->getFatalWounds());
+				const int antecedentWounds (targetUnit->getFatalsTotal());
 
 				if (attacker != nullptr
 					&& attacker->getSpecialAbility() == SPECAB_BURN) // Silacoids can set targets on fire!!
@@ -2194,7 +2194,7 @@ void TileEngine::hit(
 				{
 					if (attacker != nullptr
 						&& (targetUnit->getHealth() == 0							// ... just do this here and bDone with it.
-							|| antecedentWounds < targetUnit->getFatalWounds()))	// Regularly done in BattlescapeGame::checkCasualties()
+							|| antecedentWounds < targetUnit->getFatalsTotal()))	// Regularly done in BattlescapeGame::checkCasualties()
 					{
 						targetUnit->killerFaction(attacker->getFaction());
 					}
@@ -2520,7 +2520,7 @@ void TileEngine::explode(
 						antecedentWounds;
 
 					if (attacker != nullptr && targetUnit != nullptr)
-						antecedentWounds = targetUnit->getFatalWounds();
+						antecedentWounds = targetUnit->getFatalsTotal();
 					else
 						antecedentWounds = 0;
 
@@ -2909,7 +2909,7 @@ void TileEngine::explode(
 						if (attacker != nullptr)
 						{
 							if (targetUnit->getHealth() == 0
-								|| antecedentWounds < targetUnit->getFatalWounds())
+								|| antecedentWounds < targetUnit->getFatalsTotal())
 							{
 								targetUnit->killerFaction(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkCasualties()
 								//Log(LOG_INFO) << "TE::explode() " << targetUnit->getId() << " killedByFaction = " << (int)attacker->getFaction();

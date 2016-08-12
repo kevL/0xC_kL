@@ -99,7 +99,7 @@ void MedikitView::draw()
 			i != BattleUnit::PARTS_BODY;
 			++i)
 	{
-		if (_unit->getFatalWound(static_cast<UnitBodyPart>(i)) != 0)
+		if (_unit->getFatals(static_cast<UnitBodyPart>(i)) != 0)
 			color = el->color2;
 		else
 			color = el->color;
@@ -122,7 +122,7 @@ void MedikitView::draw()
 		_txtPart->setText(_game->getLanguage()->getString(BODY_PARTS[_selectedPart]));
 
 		std::wostringstream woststr;
-		woststr << _unit->getFatalWound(_selectedPart);
+		woststr << _unit->getFatals(_selectedPart);
 		_txtWound->setText(woststr.str());
 	}
 }
@@ -175,7 +175,7 @@ void MedikitView::autoSelectPart()
 			i != BattleUnit::PARTS_BODY;
 			++i)
 	{
-		if (_unit->getFatalWound(static_cast<UnitBodyPart>(i)) != 0)
+		if (_unit->getFatals(static_cast<UnitBodyPart>(i)) != 0)
 		{
 			_selectedPart = static_cast<UnitBodyPart>(i);
 			return;
