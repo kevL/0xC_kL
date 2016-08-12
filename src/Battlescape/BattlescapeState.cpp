@@ -1094,9 +1094,15 @@ void BattlescapeState::think()
 	//Log(LOG_INFO) << "BattlescapeState::think()";
 	if (_tacticalTimer->isRunning() == true)
 	{
-		static bool popped;
+		static bool popped (false);
 
-		if (_popups.empty() == true)
+		if (_popups.empty() == false) // handle popups. NOTE: Only showActionMenu() uses 'popups'.
+		{
+			popped = true;
+			_game->pushState(_popups.front());
+			_popups.erase(_popups.begin());
+		}
+		else
 		{
 			State::think();
 
@@ -1114,14 +1120,18 @@ void BattlescapeState::think()
 				_battleGame->handleNonTargetAction();
 			}
 		}
-		else // Handle popups
-		{
-			popped = true;
-			_game->pushState(_popups.front());
-			_popups.erase(_popups.begin());
-		}
 	}
 	//Log(LOG_INFO) << "BattlescapeState::think() EXIT";
+}
+
+/**
+ * Adds a popup-window to the popups-queue.
+ * @note This prevents popups from overlapping. wtf is "overlap"
+ * @param state - pointer to popup State
+ */
+void BattlescapeState::popupTac(State* const state)
+{
+	_popups.push_back(state);
 }
 
 /**
@@ -2286,9 +2296,9 @@ void BattlescapeState::btnStatsClick(Action* action)
 		}
 
 		_battleGame->cancelTacticalAction(true);
-		popupTac(new UnitInfoState(
-								_battleSave->getSelectedUnit(),
-								this));
+		_game->pushState(new UnitInfoState(
+										_battleSave->getSelectedUnit(),
+										this));
 		_game->getScreen()->fadeScreen();
 	}
 }
@@ -2310,7 +2320,7 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 		_map->cacheUnitSprite(unit);
 		_map->draw();
 
-		popupActionMenu(
+		showActionMenu(
 					unit->getItem(ST_LEFTHAND),
 					unit->getFatals(BODYPART_LEFTARM) != 0);
 	}
@@ -2352,7 +2362,7 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 		_map->cacheUnitSprite(unit);
 		_map->draw();
 
-		popupActionMenu(
+		showActionMenu(
 					unit->getItem(ST_RIGHTHAND),
 					unit->getFatals(BODYPART_RIGHTARM) != 0);
 	}
@@ -3576,7 +3586,7 @@ void BattlescapeState::shotgunExplosion() // private.
  * @param item		- pointer to the BattleItem (righthand/lefthand)
  * @param injured	- true if the arm using @a item is injured (default false)
  */
-void BattlescapeState::popupActionMenu( // private.
+void BattlescapeState::showActionMenu( // private.
 		BattleItem* const item,
 		bool injured)
 {
@@ -3685,16 +3695,6 @@ void BattlescapeState::warning(
 		_warning->showMessage(tr(st));
 	else
 		_warning->showMessage(tr(st).arg(arg));
-}
-
-/**
- * Adds a popup-window to the popups-queue.
- * @note This prevents popups from overlapping.
- * @param state - pointer to popup State
- */
-void BattlescapeState::popupTac(State* const state)
-{
-	_popups.push_back(state);
 }
 
 /**

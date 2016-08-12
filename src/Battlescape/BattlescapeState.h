@@ -241,7 +241,7 @@ private:
 	void shotgunExplosion();
 
 	/// Popups a context-sensitive-list of BattleActions for the player.
-	void popupActionMenu(
+	void showActionMenu(
 			BattleItem* const item,
 			bool injured = false);
 
@@ -277,6 +277,9 @@ private:
 
 		/// Runs the timers and handles popups.
 		void think() override;
+
+		/// Displays a popup window.
+		void popupTac(State* const state);
 
 		/// Handler for moving mouse over the Map.
 		void mapOver(Action* action);
@@ -450,9 +453,6 @@ private:
 		void warning(
 				const std::string& st,
 				int arg = std::numeric_limits<int>::max());
-
-		/// Displays a popup window.
-		void popupTac(State* const state);
 
 		/// Finishes tactical battle.
 		void finishBattle(
