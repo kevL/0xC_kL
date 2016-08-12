@@ -81,7 +81,7 @@ MiniMapView::MiniMapView(
 		_scrollKeyY(0),
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
-		_mouseOverThreshold(false),
+		_mousePastThreshold(false),
 		_set(game->getResourcePack()->getSurfaceSet("SCANG.DAT"))
 {
 	_timerScroll = new Timer(SCROLL_INTERVAL);
@@ -404,7 +404,7 @@ void MiniMapView::mousePress(Action* action, State* state) // private.
 		_totalMouseMoveX =
 		_totalMouseMoveY = 0;
 
-		_mouseOverThreshold = false;
+		_mousePastThreshold = false;
 		_mouseScrollStartTime = SDL_GetTicks();
 	}
 }
@@ -430,7 +430,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 		{
 			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mouseOverThreshold == false
+			if (_mousePastThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				_camera->centerPosition(_posPreDragScroll, false);
@@ -450,7 +450,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 		_isMouseScrolling = false;
 
 		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-		if (_mouseOverThreshold == false
+		if (_mousePastThreshold == false
 			&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
 			_isMouseScrolled = false;
@@ -507,7 +507,7 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 		// This part handles the release if it's missed and another button is used.
 		if ((SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
 		{
-			if (_mouseOverThreshold == false
+			if (_mousePastThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				_camera->centerPosition(_posPreDragScroll, false);
@@ -524,8 +524,8 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
 		_totalMouseMoveY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_mouseOverThreshold == false)
-			_mouseOverThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
+		if (_mousePastThreshold == false)
+			_mousePastThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
 							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
 
 		_mouseScrollX -= static_cast<int>(action->getDetails()->motion.xrel);

@@ -2338,7 +2338,7 @@ void Map::animateMap(bool redraw)
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if ((*i)->getUnitTile() != nullptr //(*i)->isOut_t(OUT_STAT) == false
+		if ((*i)->getUnitTile() != nullptr
 			&& (*i)->getArmor()->getConstantAnimation() == true)
 		{
 			(*i)->setCacheInvalid();

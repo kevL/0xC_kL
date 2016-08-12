@@ -1049,9 +1049,8 @@ void BattleUnit::turn(bool turret)
 	}
 
 	if (   (turret == false && _dirTo == _dir)
-		|| (turret == true  && _dirToTurret == _dirTurret)
-		|| _status == STATUS_UNCONSCIOUS)	// -> used when reviving unconscious units;
-	{										// -> they need to go to Status_Standing. NOTE: Might not be required ... animo'.
+		|| (turret == true  && _dirToTurret == _dirTurret))
+	{
 		_status = STATUS_STANDING;
 	}
 }
@@ -2916,8 +2915,8 @@ void BattleUnit::setActiveHand(ActiveHand hand)
 
 	if (_activeHand != hand)
 	{
-		_cacheInvalid = true;
 		_activeHand = hand;
+		_cacheInvalid = true;
 		//if (debug) Log(LOG_INFO) << ". switch= " << (int)_activeHand;
 	}
 }

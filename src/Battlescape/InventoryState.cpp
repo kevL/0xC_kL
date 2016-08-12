@@ -79,12 +79,12 @@ InventoryState::InventoryState(
 		BattlescapeState* const parent)
 	:
 		_tuMode(tuMode),
-		_parent(parent)
+		_parent(parent),
+		_battleSave(_game->getSavedGame()->getBattleSave()),
+		_unit(nullptr)
 {
-	_battleSave = _game->getSavedGame()->getBattleSave();
-
-	if (_battleSave->getBattleGame() != nullptr)
-		_battleSave->getBattleGame()->getMap()->setNoDraw();
+	if (_parent != nullptr)
+		_parent->getMap()->setNoDraw();
 
 /*	if (Options::maximizeInfoScreens)
 	{
@@ -117,8 +117,9 @@ InventoryState::InventoryState(
 	_txtThrowTU	= new Text(40, 9, 245, 132);
 	_txtPsiTU	= new Text(40, 9, 245, 141);
 
-	_numOrder	= new NumberText(7, 5, 228,  4);
-	_numTuCost	= new NumberText(7, 5, 310, 60);
+	_battleOrder	= new NumberText(7, 5, 228,  4);
+
+	_tuCost			= new NumberText(7, 5, 310, 60);
 
 	_numHead		= new NumberText(7, 5,  79,  31);
 	_numTorso		= new NumberText(7, 5,  79, 144);
@@ -173,8 +174,8 @@ InventoryState::InventoryState(
 	add(_txtPStr,		"textPsiStrength",	"inventory", _srfBg);
 	add(_txtPSkill,		"textPsiSkill",		"inventory", _srfBg);
 
-	add(_numOrder);
-	add(_numTuCost);
+	add(_battleOrder);
+	add(_tuCost);
 
 	add(_txtItem,		"textItem",			"inventory", _srfBg);
 	add(_txtAmmo,		"textAmmo",			"inventory", _srfBg);
@@ -211,38 +212,38 @@ InventoryState::InventoryState(
 	_txtName->setBig();
 	_txtName->setHighContrast();
 
-	_txtWeight->setHighContrast();
-	_txtTUs->setHighContrast();
-	_txtFAcc->setHighContrast();
-	_txtReact->setHighContrast();
-	_txtThrow->setHighContrast();
-	_txtMelee->setHighContrast();
-	_txtPStr->setHighContrast();
-	_txtPSkill->setHighContrast();
-	_txtUseTU->setHighContrast();
-	_txtThrowTU->setHighContrast();
-	_txtPsiTU->setHighContrast();
+	_txtWeight	->setHighContrast();
+	_txtTUs		->setHighContrast();
+	_txtFAcc	->setHighContrast();
+	_txtReact	->setHighContrast();
+	_txtThrow	->setHighContrast();
+	_txtMelee	->setHighContrast();
+	_txtPStr	->setHighContrast();
+	_txtPSkill	->setHighContrast();
+	_txtUseTU	->setHighContrast();
+	_txtThrowTU	->setHighContrast();
+	_txtPsiTU	->setHighContrast();
 
-	_numOrder->setColor(WHITE);
-	_numOrder->setVisible(false);
+	_battleOrder->setColor(WHITE);
+	_battleOrder->setVisible(false);
 
-	_numTuCost->setColor(WHITE);
-	_numTuCost->setVisible(false);
+	_tuCost->setColor(WHITE);
+	_tuCost->setVisible(false);
 
-	_numHead->setColor(RED);
-	_numHead->setVisible(false);
-	_numTorso->setColor(RED);
-	_numTorso->setVisible(false);
-	_numRightArm->setColor(RED);
-	_numRightArm->setVisible(false);
-	_numLeftArm->setColor(RED);
-	_numLeftArm->setVisible(false);
-	_numRightLeg->setColor(RED);
-	_numRightLeg->setVisible(false);
-	_numLeftLeg->setColor(RED);
-	_numLeftLeg->setVisible(false);
-	_numFire->setColor(RED);
-	_numFire->setVisible(false);
+	_numHead		->setColor(RED);
+	_numHead		->setVisible(false);
+	_numTorso		->setColor(RED);
+	_numTorso		->setVisible(false);
+	_numRightArm	->setColor(RED);
+	_numRightArm	->setVisible(false);
+	_numLeftArm		->setColor(RED);
+	_numLeftArm		->setVisible(false);
+	_numRightLeg	->setColor(RED);
+	_numRightLeg	->setVisible(false);
+	_numLeftLeg		->setColor(RED);
+	_numLeftLeg		->setVisible(false);
+	_numFire		->setColor(RED);
+	_numFire		->setVisible(false);
 
 	_txtItem->setHighContrast();
 
@@ -345,7 +346,6 @@ InventoryState::InventoryState(
 	else
 		_updateTemplateButtons(true); */
 
-//	_inventoryPanel->setSelectedUnitInventory(_battleSave->getSelectedUnit());
 	_inventoryPanel->drawGrids();
 	_inventoryPanel->setTuMode(_tuMode);
 	_inventoryPanel->onMouseClick(	static_cast<ActionHandler>(&InventoryState::inClick),
@@ -385,19 +385,29 @@ InventoryState::~InventoryState()
 {
 //	_clearInventoryTemplate(_curInventoryTemplate);
 //	delete _timer;
+
 	if (_parent != nullptr)
 	{
 		TileEngine* const te (_battleSave->getTileEngine());
-
-		Tile* const tile (_battleSave->getSelectedUnit()->getUnitTile());
-		te->applyGravity(tile);
-
+		for (std::vector<BattleUnit*>::const_iterator
+				i = _battleSave->getUnits()->begin();
+				i != _battleSave->getUnits()->end();
+				++i)
+		{
+			if (   (*i)->getFaction() == FACTION_PLAYER
+				&& (*i)->getUnitStatus() == STATUS_STANDING
+				&& (*i)->getCacheInvalid() == true)
+			{
+				te->applyGravity((*i)->getUnitTile());
+				_parent->getMap()->cacheUnitSprite(*i); // can disable cache-invalid check.
+			}
+		}
 		te->calculateTerrainLighting();
 		te->calcFovUnits_all(true);
 
-		_battleSave->getBattleGame()->getMap()->setNoDraw(false);
+		_parent->updateSoldierInfo(false);
+		_parent->getMap()->setNoDraw(false);
 	}
-
 	_game->getScreen()->fadeScreen();
 }
 //	if (_battleSave->getTileEngine())
@@ -459,41 +469,32 @@ void InventoryState::init()
 {
 	State::init();
 
-	BattleUnit* unit (_battleSave->getSelectedUnit());
-	if (unit == nullptr) // no selected unit, close inventory
-	{
-		btnOkClick();
-		return;
-	}
-
-	if (unit->canInventory() == false) // skip to the first unit with an accessible Inventory
+	_unit = _battleSave->getSelectedUnit();
+	if (_unit == nullptr || _unit->canInventory() == false) // skip to a BattleUnit with an accessible Inventory
 	{
 		if (_parent != nullptr)
-			_parent->selectNextPlayerUnit(false, false, true);
+			_unit = _parent->selectNextPlayerUnit(false, false, true);
 		else
-			_battleSave->selectNextUnit(false, false, true);
+			_unit = _battleSave->selectNextUnit(false, false, true);
 
-		if ((unit = _battleSave->getSelectedUnit()) == nullptr
-			 || unit->canInventory() == false)
+		if (_unit == nullptr) // safety. This should never happen (unless tank-only tactical is allowed).
 		{
 			btnOkClick();
-			return; // starting a mission with just vehicles. kL_note: DISALLOWED!!!
+			return;
 		}
 	}
 
-//	if (_parent) _parent->getMap()->getCamera()->centerPosition(unit->getPosition(), false);
+	_unit->setCacheInvalid();
 
-	unit->setCacheInvalid();
+	_srfRagdoll	->clear();
+	_btnRank	->clear();
+	_srfGender	->clear();
 
-	_srfRagdoll->clear();
-	_btnRank->clear();
-	_srfGender->clear();
+	_txtName->setText(_unit->getName(_game->getLanguage()));
 
-	_txtName->setText(unit->getName(_game->getLanguage()));
+	_inventoryPanel->setSelectedUnitInventory(_unit);
 
-	_inventoryPanel->setSelectedUnitInventory(unit);
-
-	const Soldier* const sol (unit->getGeoscapeSoldier());
+	const Soldier* const sol (_unit->getGeoscapeSoldier());
 	if (sol != nullptr)
 	{
 		SurfaceSet* const srtRank (_game->getResourcePack()->getSurfaceSet("SMOKE.PCK"));
@@ -542,7 +543,7 @@ void InventoryState::init()
 		Surface* const dolphins (_game->getResourcePack()->getSurface("Dolphins"));
 		dolphins->blit(_btnRank);
 
-		Surface* const ragdoll (_game->getResourcePack()->getSurface(unit->getArmor()->getSpriteInventory()));
+		Surface* const ragdoll (_game->getResourcePack()->getSurface(_unit->getArmor()->getSpriteInventory()));
 		if (ragdoll != nullptr)
 			ragdoll->blit(_srfRagdoll);
 	}
@@ -553,26 +554,24 @@ void InventoryState::init()
 }
 
 /**
- * Updates the selected unit's info - weight, TU, etc.
+ * Updates the current unit's info - weight, TU, etc.
  */
 void InventoryState::updateStats() // private.
 {
-	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-
-	if (selUnit->getGeoscapeSoldier() != nullptr)
+	if (_unit->getGeoscapeSoldier() != nullptr)
 	{
-		_numOrder->setVisible();
-		_numOrder->setValue(selUnit->getBattleOrder());
+		_battleOrder->setVisible();
+		_battleOrder->setValue(_unit->getBattleOrder());
 	}
 	else
-		_numOrder->setVisible(false);
+		_battleOrder->setVisible(false);
 
 	if (_tuMode == true)
-		_txtTUs->setText(tr("STR_TIME_UNITS_SHORT").arg(selUnit->getTu()));
+		_txtTUs->setText(tr("STR_TIME_UNITS_SHORT").arg(_unit->getTu()));
 
 	const int
-		weight (selUnit->getCarriedWeight(_inventoryPanel->getSelectedItem())),
-		strength (selUnit->getStrength());
+		weight   (_unit->getCarriedWeight(_inventoryPanel->getSelectedItem())),
+		strength (_unit->getStrength());
 
 	_txtWeight->setText(tr("STR_WEIGHT").arg(weight).arg(strength));
 	const RuleInterface* const uiRule (_game->getRuleset()->getInterface("inventory"));
@@ -581,11 +580,10 @@ void InventoryState::updateStats() // private.
 	else
 		_txtWeight->setSecondaryColor(static_cast<Uint8>(uiRule->getElement("weight")->color));
 
-	const int psiSkill (selUnit->getBattleStats()->psiSkill);
-
+	const int psiSkill (_unit->getBattleStats()->psiSkill);
 	if (_tuMode == true)
 	{
-		switch (selUnit->getBattleStats()->throwing)
+		switch (_unit->getBattleStats()->throwing)
 		{
 			case 0:
 				_txtThrowTU->setVisible(false);
@@ -593,7 +591,7 @@ void InventoryState::updateStats() // private.
 
 			default:
 				_txtThrowTU->setVisible();
-				_txtThrowTU->setText(tr("STR_THROW_").arg(selUnit->getActionTu(BA_THROW)));
+				_txtThrowTU->setText(tr("STR_THROW_").arg(_unit->getActionTu(BA_THROW)));
 		}
 
 		switch (psiSkill)
@@ -603,11 +601,11 @@ void InventoryState::updateStats() // private.
 				break;
 
 			default:
-				if (selUnit->getOriginalFaction() == FACTION_HOSTILE)
+				if (_unit->getOriginalFaction() == FACTION_HOSTILE)
 				{
 					_txtPsiTU->setVisible();
 					_txtPsiTU->setText(tr("STR_PSI_")
-								.arg(selUnit->getActionTu(
+								.arg(_unit->getActionTu(
 													BA_PSIPANIC,
 													_parent->getBattleGame()->getAlienPsi())));
 				}
@@ -615,21 +613,21 @@ void InventoryState::updateStats() // private.
 	}
 	else
 	{
-		_txtFAcc->setText(tr("STR_ACCURACY_SHORT").arg(selUnit->getBattleStats()->firing));
-		_txtReact->setText(tr("STR_REACTIONS_SHORT").arg(selUnit->getBattleStats()->reactions));
-		_txtThrow->setText(tr("STR_THROWACC_SHORT").arg(selUnit->getBattleStats()->throwing));
-		_txtMelee->setText(tr("STR_MELEEACC_SHORT").arg(selUnit->getBattleStats()->melee));
+		_txtFAcc ->setText(tr("STR_ACCURACY_SHORT") .arg(_unit->getBattleStats()->firing));
+		_txtReact->setText(tr("STR_REACTIONS_SHORT").arg(_unit->getBattleStats()->reactions));
+		_txtThrow->setText(tr("STR_THROWACC_SHORT") .arg(_unit->getBattleStats()->throwing));
+		_txtMelee->setText(tr("STR_MELEEACC_SHORT") .arg(_unit->getBattleStats()->melee));
 
 		switch (psiSkill)
 		{
 			case 0:
-				_txtPStr->setText(L"");
+				_txtPStr  ->setText(L"");
 				_txtPSkill->setText(L"");
 				break;
 
 			default:
-				_txtPStr->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(selUnit->getBattleStats()->psiStrength));
-				_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT").arg(psiSkill));
+				_txtPStr  ->setText(tr("STR_PSIONIC_STRENGTH_SHORT").arg(_unit->getBattleStats()->psiStrength));
+				_txtPSkill->setText(tr("STR_PSIONIC_SKILL_SHORT")   .arg(psiSkill));
 		}
 	}
 }
@@ -639,9 +637,7 @@ void InventoryState::updateStats() // private.
  */
 void InventoryState::updateWounds() // private.
 {
-	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-
-	unsigned wound (static_cast<unsigned>(selUnit->getUnitFire()));
+	unsigned wound (static_cast<unsigned>(_unit->getUnitFire()));
 	_numFire->setValue(wound);
 	_numFire->setVisible(wound != 0u);
 
@@ -652,7 +648,7 @@ void InventoryState::updateWounds() // private.
 			++i)
 	{
 		bodyPart = static_cast<UnitBodyPart>(i);
-		wound = static_cast<unsigned>(selUnit->getFatals(bodyPart));
+		wound = static_cast<unsigned>(_unit->getFatals(bodyPart));
 
 		switch (bodyPart)
 		{
@@ -689,19 +685,18 @@ void InventoryState::updateWounds() // private.
 }
 
 /**
- * Exits to the previous screen.
+ * Exits the Inventory.
  * @param action - pointer to an Action (default nullptr)
  */
 void InventoryState::btnOkClick(Action*)
 {
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
-		_parent->updateSoldierInfo(false);
 		_game->popState();
 
-		if (_tuMode == false && _parent != nullptr) // pre-battle but going into tactical!
-		{
-			_battleSave->positionUnits();
+		if (_tuMode == false && _parent != nullptr)	// pre-battle but going into tactical!
+		{											// why shouldn't this be done someplace reasonable like BattlescapeState::init().
+			_battleSave->positionUnits();			// you know, somewhere you'd expect to find it instead of where some guy jerked off on a wall.
 			_battleSave->distributeEquipt(_battleSave->getBattleInventory());
 
 			for (std::vector<BattleUnit*>::const_iterator
@@ -717,7 +712,7 @@ void InventoryState::btnOkClick(Action*)
 }
 
 /**
- * Selects the next eligible unit.
+ * Selects the next eligible BattleUnit.
  * @param action - pointer to an Action
  */
 void InventoryState::btnNextClick(Action*)
@@ -725,9 +720,9 @@ void InventoryState::btnNextClick(Action*)
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
 		if (_parent != nullptr)
-			_parent->selectNextPlayerUnit(false, false, true);
+			_unit = _parent->selectNextPlayerUnit(false, false, true);
 		else
-			_battleSave->selectNextUnit(false, false, true);
+			_unit = _battleSave->selectNextUnit(false, false, true);
 
 		init();
 	}
@@ -742,9 +737,9 @@ void InventoryState::btnPrevClick(Action*)
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
 		if (_parent != nullptr)
-			_parent->selectPreviousPlayerUnit(false, false, true);
+			_unit = _parent->selectPreviousPlayerUnit(false, false, true);
 		else
-			_battleSave->selectPrevUnit(false, false, true);
+			_unit = _battleSave->selectPrevUnit(false, false, true);
 
 		init();
 	}
@@ -769,7 +764,7 @@ void InventoryState::btnLoadIconClick(Action*)
 	}
 	else if (_tuMode == false
 		&& _inventoryPanel->getSelectedItem() == nullptr
-		&& saveLayout(_battleSave->getSelectedUnit()) == true)
+		&& saveLayout(_unit) == true)
 	{
 		_inventoryPanel->showWarning(tr("STR_EQUIP_LAYOUT_SAVED"));
 	}
@@ -895,14 +890,13 @@ void InventoryState::btnClearUnitClick(Action*)
 	if (_tuMode == false									// don't accept clicks in battlescape because this doesn't cost TU.
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse is holding an item
 	{
-		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		std::vector<BattleItem*>* const equiptList (unit->getInventory());
+		std::vector<BattleItem*>* const equiptList (_unit->getInventory());
 		if (equiptList->empty() == false)
 		{
 			_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
 
 			const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
-			Tile* const tile (unit->getUnitTile());
+			Tile* const tile (_unit->getUnitTile());
 			for (std::vector<BattleItem*>::const_iterator
 					i = equiptList->begin();
 					i != equiptList->end();
@@ -956,7 +950,7 @@ void InventoryState::btnClearGroundClick(Action*)
 
 		if (craft != nullptr) // safety, not base-equip screen.
 		{
-			Tile* const tile (_battleSave->getSelectedUnit()->getUnitTile());
+			Tile* const tile (_unit->getUnitTile());
 			std::vector<BattleItem*>* const grdList (tile->getInventory());
 			if (grdList->empty() == false)
 			{
@@ -1009,7 +1003,7 @@ void InventoryState::btnRankClick(Action*)
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
 		_game->pushState(new UnitInfoState(
-										_battleSave->getSelectedUnit(),
+										_unit,
 										_parent,
 										true, false,
 										_tuMode == false));
@@ -1023,7 +1017,7 @@ void InventoryState::btnRankClick(Action*)
  */
 void InventoryState::inClick(Action*)
 {
-	_numTuCost->setVisible(false);
+	_tuCost->setVisible(false);
 
 	// kL_note: This function has only updateStats() in the stock code,
 	// since induction of Copy/Paste Inventory Layouts ... that is, the
@@ -1094,19 +1088,19 @@ void InventoryState::inMouseOver(Action*)
 {
 	if (_inventoryPanel->getSelectedItem() != nullptr)
 	{
-//		_numTuCost->setValue(static_cast<unsigned>(_inventoryPanel->getTuCostInventory()));
-//		_numTuCost->setVisible(_tuMode == true
+//		_tuCost->setValue(static_cast<unsigned>(_inventoryPanel->getTuCostInventory()));
+//		_tuCost->setVisible(_tuMode == true
 //							&& _inventoryPanel->getTuCostInventory() > 0);
 		if (_tuMode == true)
 		{
 			const int costTu (_inventoryPanel->getTuCostInventory());
 			if (costTu > 0)
 			{
-				_numTuCost->setValue(static_cast<unsigned>(costTu));
-				_numTuCost->setVisible();
+				_tuCost->setValue(static_cast<unsigned>(costTu));
+				_tuCost->setVisible();
 			}
 			else
-				_numTuCost->setVisible(false);
+				_tuCost->setVisible(false);
 		}
 //		_updateTemplateButtons(false);
 	}
@@ -1186,7 +1180,7 @@ void InventoryState::inMouseOver(Action*)
  */
 void InventoryState::inMouseOut(Action*)
 {
-	_numTuCost->setVisible(false);
+	_tuCost->setVisible(false);
 
 	_txtItem->setText(L"");
 	_txtAmmo->setText(L"");
@@ -1278,38 +1272,34 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 	_txtUseTU->setText(L"");
 	if (isArt == false)
 	{
-		const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-		if (selUnit != nullptr)
+		const BattleActionType bat (itRule->getDefaultAction(selOver->getFuse() != -1));
+		if (bat != BA_NONE || itRule->getBattleType() == BT_AMMO)
 		{
-			const BattleActionType bat (itRule->getDefaultAction(selOver->getFuse() != -1));
-			if (bat != BA_NONE || itRule->getBattleType() == BT_AMMO)
+			int tu;
+			std::string actionType;
+			switch (itRule->getBattleType())
 			{
-				int tu;
-				std::string actionType;
-				switch (itRule->getBattleType())
-				{
-					case BT_AMMO:
-						tu = itRule->getReloadTu();
-						actionType = "STR_RELOAD_";
-						break;
+				case BT_AMMO:
+					tu = itRule->getReloadTu();
+					actionType = "STR_RELOAD_";
+					break;
 
-					default:
-						tu = selUnit->getActionTu(bat, selOver);
-						switch (bat)
-						{
-							case BA_LAUNCH:		actionType = "STR_LAUNCH_";	break;
-							case BA_SNAPSHOT:	actionType = "STR_SNAP_";	break;
-							case BA_AUTOSHOT:	actionType = "STR_BURST_";	break;
-							case BA_AIMEDSHOT:	actionType = "STR_SCOPE_";	break;
-							case BA_PRIME:		actionType = "STR_PRIME_";	break;
-							case BA_DEFUSE:		actionType = "STR_DEFUSE_";	break;
-							case BA_USE:		actionType = "STR_USE_";	break;
-							case BA_PSIPANIC:	actionType = "STR_PSI_";	break;
-							case BA_MELEE:		actionType = "STR_ATTACK_";
-						}
-				}
-				_txtUseTU->setText(tr(actionType).arg(tu));
+				default:
+					tu = _unit->getActionTu(bat, selOver);
+					switch (bat)
+					{
+						case BA_LAUNCH:		actionType = "STR_LAUNCH_";	break;
+						case BA_SNAPSHOT:	actionType = "STR_SNAP_";	break;
+						case BA_AUTOSHOT:	actionType = "STR_BURST_";	break;
+						case BA_AIMEDSHOT:	actionType = "STR_SCOPE_";	break;
+						case BA_PRIME:		actionType = "STR_PRIME_";	break;
+						case BA_DEFUSE:		actionType = "STR_DEFUSE_";	break;
+						case BA_USE:		actionType = "STR_USE_";	break;
+						case BA_PSIPANIC:	actionType = "STR_PSI_";	break;
+						case BA_MELEE:		actionType = "STR_ATTACK_";
+					}
 			}
+			_txtUseTU->setText(tr(actionType).arg(tu));
 		}
 	}
 }

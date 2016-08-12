@@ -66,10 +66,11 @@ private:
 		* _btnApplyTemplate,
 		* _btnClearInventory; */
 	BattlescapeState* _parent;
+	BattleUnit* _unit;
 	Inventory* _inventoryPanel;
 	NumberText
-		* _numOrder,
-		* _numTuCost,
+		* _battleOrder,
+		* _tuCost,
 		* _numHead,
 		* _numTorso,
 		* _numRightArm,
@@ -105,7 +106,7 @@ private:
 	/// Advances to the next/previous Unit when right/left key is depressed.
 //	void keyRepeat(); // <- too twitchy.
 
-	/// Updates the selected unit's info - weight, TU, etc.
+	/// Updates the current unit's info - weight, TU, etc.
 	void updateStats();
 	/// Shows woundage values.
 	void updateWounds();

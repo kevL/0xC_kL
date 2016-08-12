@@ -78,7 +78,7 @@ private:
 		_hover,
 		_isMouseScrolled,
 		_isMouseScrolling,
-		_mouseOverThreshold,
+		_mousePastThreshold,
 		_blink;
 	int
 		_blinkVal,

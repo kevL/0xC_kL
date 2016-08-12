@@ -217,10 +217,10 @@ void UnitWalkBState::think()
 
 				if (_unit->getFaction() == FACTION_PLAYER)
 				{
-					_parent->getBattlescapeState()->hotSqrsClear();
+					_parent->getBattlescapeState()->clearHostileIcons();
 
 					if (_parent->playerPanicHandled() == true)
-						_parent->getBattlescapeState()->hotSqrsUpdate();
+						_parent->getBattlescapeState()->updateHostileIcons();
 				}
 			}
 			else if (_isVisible == true) // keep walking ... make sure the unit sprites are up to date
@@ -952,7 +952,7 @@ void UnitWalkBState::statusTurn() // private.
 
 	_unit->turn();
 
-	_unit->setCacheInvalid();
+//	_unit->setCacheInvalid();
 	_parent->getMap()->cacheUnitSprite(_unit);
 
 	if (_unit->getFaction() == FACTION_PLAYER)
@@ -983,10 +983,10 @@ void UnitWalkBState::statusTurn() // private.
 	}
 	else if (_unit->getFaction() == FACTION_PLAYER)
 	{
-		_parent->getBattlescapeState()->hotSqrsClear();
+		_parent->getBattlescapeState()->clearHostileIcons();
 
 		if (_parent->playerPanicHandled() == true)
-			_parent->getBattlescapeState()->hotSqrsUpdate();
+			_parent->getBattlescapeState()->updateHostileIcons();
 	}
 }
 

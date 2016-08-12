@@ -58,7 +58,7 @@ private:
 	bool
 		_isMouseScrolled,
 		_isMouseScrolling,
-		_mouseOverThreshold;
+		_mousePastThreshold;
 
 	int
 		_cycle,

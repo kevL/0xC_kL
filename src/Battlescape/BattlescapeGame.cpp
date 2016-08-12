@@ -1813,7 +1813,7 @@ void BattlescapeGame::checkCasualties(
 	}
 
 
-	_parentState->hotWoundsRefresh();
+	_parentState->updateMedicIcons();
 
 	if (hidden == false)
 	{

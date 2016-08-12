@@ -192,7 +192,6 @@ void UnitTurnBState::think()
 	{
 		_unit->turn(_turret); // done-> STATUS_STANDING
 
-		_unit->setCacheInvalid();
 		_parent->getMap()->cacheUnitSprite(_unit);
 
 		bool spot;
@@ -241,10 +240,10 @@ void UnitTurnBState::think()
 				pop = false;
 				if (_chargeTu == true && _unit->getFaction() == FACTION_PLAYER)
 				{
-					_parent->getBattlescapeState()->hotSqrsClear();
+					_parent->getBattlescapeState()->clearHostileIcons();
 
 					if (_parent->playerPanicHandled() == true)
-						_parent->getBattlescapeState()->hotSqrsUpdate();
+						_parent->getBattlescapeState()->updateHostileIcons();
 				}
 		}
 	}

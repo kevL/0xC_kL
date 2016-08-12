@@ -598,23 +598,20 @@ void ExplosionBState::explode() // private.
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-//			if ((*i)->getHealth() != 0) //(*i)->isOut_t(OUT_HEALTH) == false
 			(*i)->hasCried(false);
 		}
 	}
 
-	if (_lowerWeapon == true // if this hit/explosion was caused by a unit put the weapon down
-		&& _unit != nullptr)
-//		&& _unit->getUnitStatus() == STATUS_AIMING) //_unit->isOut_t(OUT_STAT) == false
+	if (_lowerWeapon == true	// if this hit/explosion was caused by a unit put the weapon down
+		&& _unit != nullptr)	// NOTE: This is a stupid place to toggle the unit-sprite: try popBattleState().
 	{
 		_unit->toggleShoot();
-//		_unit->setShoot(false);
 	}
 
-	_parent->getMap()->cacheUnitSprites();
-	_parent->popBattleState();
-	//Log(LOG_INFO) << ". . pop";
-
+//	_parent->getMap()->cacheUnitSprites();	// why do all sprites need re-caching: the only one that changes
+	_parent->popBattleState();				// is the shooter-weapon. and that's now done in toggleShoot(). Besides,
+	//Log(LOG_INFO) << ". . pop";			// only units flagged as needing re-caching get re-cached.
+											// Animations like death will get cached by their own States.
 
 	Tile* const tile (te->checkForTerrainExplosives()); // check for more exploding tiles
 	if (tile != nullptr)

@@ -321,7 +321,7 @@ Globe::Globe(
 		_hover(false),
 		_isMouseScrolled(false),
 		_isMouseScrolling(false),
-		_mouseOverThreshold(false),
+		_mousePastThreshold(false),
 		_mouseScrollStartTime(0),
 		_totalMouseMoveX(0),
 		_totalMouseMoveY(0),
@@ -2559,7 +2559,7 @@ void Globe::mouseOver(Action* action, State* state)
 		if ((SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
 		{
 			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mouseOverThreshold == false
+			if (_mousePastThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				center(
@@ -2576,8 +2576,8 @@ void Globe::mouseOver(Action* action, State* state)
 		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
 		_totalMouseMoveY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_mouseOverThreshold == false)
-			_mouseOverThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
+		if (_mousePastThreshold == false)
+			_mousePastThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
 							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
 
 		if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
@@ -2632,7 +2632,7 @@ void Globe::mousePress(Action* action, State* state)
 		_totalMouseMoveX =
 		_totalMouseMoveY = 0;
 
-		_mouseOverThreshold = false;
+		_mousePastThreshold = false;
 		_mouseScrollStartTime = SDL_GetTicks();
 	}
 
@@ -2694,7 +2694,7 @@ void Globe::mouseClick(Action* action, State* state)
 			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
 		{
 			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mouseOverThreshold == false
+			if (_mousePastThreshold == false
 				&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 			{
 				center(
@@ -2712,7 +2712,7 @@ void Globe::mouseClick(Action* action, State* state)
 		_isMouseScrolling = false;
 
 		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-		if (_mouseOverThreshold == false
+		if (_mousePastThreshold == false
 			&& SDL_GetTicks() - _mouseScrollStartTime <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
 			_isMouseScrolled = false;

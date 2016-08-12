@@ -2316,7 +2316,7 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 
 			deleteBody(unit);
 
-			_battleState->hotWoundsRefresh();
+			_battleState->updateMedicIcons();
 		}
 	}
 }

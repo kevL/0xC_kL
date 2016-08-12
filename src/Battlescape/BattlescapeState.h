@@ -62,10 +62,10 @@ class BattlescapeState final
 
 private:
 	static const size_t
-		HOTSQRS			= 20u,
-		WOUNDED			= 10u,
-		TARGET_FRAMES	=  6u,
-		PULSE_FRAMES	= 22u;
+		ICONS_HOSTILE	= 20u,
+		ICONS_MEDIC		= 10u,
+		PHASE_TARGET	=  6u,
+		PHASE_FUSE		= 22u;
 
 	static const Uint8
 		TRANSP		=   0u,
@@ -92,17 +92,17 @@ private:
 		_isMouseScrolling,
 		_isOverweight,
 		_mouseOverIcons,
-		_mouseOverThreshold,
+		_mousePastThreshold,
 		_showSoldierData;
 	int
 		_showConsole,
 		_totalMouseMoveX,
 		_totalMouseMoveY;
 	size_t
-		_fuseFrame,
-		_targeterFrame;
+		_fuseCycle,
+		_targeterCycle;
 
-	Uint32 _mouseScrollStartTime;
+	Uint32 _mouseScrollStartTick;
 
 //	std::string _currentTooltip;
 
@@ -133,21 +133,21 @@ private:
 //		* _reserve;
 //		* _btnReserveNone, * _btnReserveSnap, * _btnReserveAimed, * _btnReserveAuto, * _btnReserveKneel, * _btnZeroTUs;
 	BattlescapeGame* _battleGame;
-	BattleUnit* _hostileUnits[HOTSQRS];
+	BattleUnit* _hostileUnits[ICONS_HOSTILE];
 	InteractiveSurface
 		* _icons,
 		* _isfLeftHand,
 		* _isfRightHand,
 		* _isfStats,
-		* _isfHostiles[HOTSQRS],
-		* _isfWounded[WOUNDED],
+		* _isfHostiles[ICONS_HOSTILE],
+		* _isfMedic[ICONS_MEDIC],
 		* _isfLogo;
 //	ImageButton* _reserve;
 //	ImageButton* _btnReserveNone, * _btnReserveSnap, * _btnReserveAimed, * _btnReserveAuto, * _btnReserveKneel, * _btnZeroTUs;
 	Map* _map;
 	NumberText
-		* _numHostiles[HOTSQRS],
-		* _numWounded[WOUNDED],
+		* _numHostiles[ICONS_HOSTILE],
+		* _numMedic[ICONS_MEDIC],
 
 		* _numTUAim,
 		* _numTUAuto,
@@ -187,9 +187,11 @@ private:
 		* _srfTargeter,
 		* _srfTitle;
 	SurfaceSet
-		* _bigobs,
-		* _overlay;
-	Tile* _tileWounded[WOUNDED];
+		* _srtBigobs,
+		* _srtIconsOverlay,
+		* _srtScanG,
+		* _srtTargeter;
+	Tile* _tileMedic[ICONS_MEDIC];
 	Text
 		* _txtBaseLabel,
 		* _txtConsole1,
@@ -226,15 +228,15 @@ private:
 	bool allowButtons(bool allowSave = false) const;
 
 	/// Animates a red cross icon when an injured soldier is selected.
-	void flashMedic();
+	void cycleMedic();
 	/// Blinks the health bar when selected unit has fatal wounds.
-	void blinkHealthBar();
+	void cycleHealthBar();
 	/// Shows primer warnings on hand-held live grenades.
 	void cycleFuses(BattleUnit* const selUnit);
 	/// Shifts the colors of the visible unit buttons' backgrounds.
-	void hotSqrsCycle(BattleUnit* const selUnit);
+	void cycleHostileIcons(BattleUnit* const selUnit);
 	/// Animates a targeter over a hostile unit.
-	void hostileTargeter();
+	void cycleTargeter();
 	/// Draws an execution explosion on the Map.
 	void liquidationExplosion();
 	/// Draws a shotgun blast explosion on the Map.
@@ -346,12 +348,12 @@ private:
 		void btnPrevStopRelease(Action* action);
 
 		/// Selects the player's next BattleUnit.
-		void selectNextPlayerUnit(
+		BattleUnit* selectNextPlayerUnit(
 				bool dontReselect = false,
 				bool checkReselect = false,
 				bool checkInventory = false);
 		/// Selects the player's previous BattleUnit.
-		void selectPreviousPlayerUnit(
+		BattleUnit* selectPreviousPlayerUnit(
 				bool dontReselect = false,
 				bool checkReselect = false,
 				bool checkInventory = false);
@@ -421,12 +423,12 @@ private:
 		/// Updates unit stat display and other stuff.
 		void updateSoldierInfo(bool calcFoV = true);
 		/// Clears the hostile unit indicator squares.
-		void hotSqrsClear();
+		void clearHostileIcons();
 		/// Updates the hostile unit indicator squares.
-		void hotSqrsUpdate();
+		void updateHostileIcons();
 
-		/// Refreshes the wounded units indicators.
-		void hotWoundsRefresh();
+		/// Updates the wounded units indicators.
+		void updateMedicIcons();
 
 		/// Shows a selected BattleUnit's kneeled state.
 		void toggleKneelButton(const BattleUnit* const unit);
