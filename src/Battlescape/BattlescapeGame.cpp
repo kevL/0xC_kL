@@ -278,7 +278,7 @@ void BattlescapeGame::think()
 
 /**
  * Gives a slice to the front BattleState and redraws the battlefield.
- * @note The period is controlled by '_tacticalTimer' in BattlescapeState.
+ * @note The period is controlled by '_timerTactical' in BattlescapeState.
  */
 void BattlescapeGame::handleBattleState()
 {

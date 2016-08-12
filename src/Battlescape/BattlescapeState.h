@@ -133,20 +133,20 @@ private:
 //		* _reserve;
 //		* _btnReserveNone, * _btnReserveSnap, * _btnReserveAimed, * _btnReserveAuto, * _btnReserveKneel, * _btnZeroTUs;
 	BattlescapeGame* _battleGame;
-	BattleUnit* _hostileUnit[HOTSQRS];
+	BattleUnit* _hostileUnits[HOTSQRS];
 	InteractiveSurface
 		* _icons,
-		* _btnLeftHandItem,
-		* _btnRightHandItem,
-		* _btnStats,
-		* _btnHostileUnit[HOTSQRS],
-		* _btnWounded[WOUNDED],
-		* _btnLogo;
+		* _isfLeftHand,
+		* _isfRightHand,
+		* _isfStats,
+		* _isfHostiles[HOTSQRS],
+		* _isfWounded[WOUNDED],
+		* _isfLogo;
 //	ImageButton* _reserve;
 //	ImageButton* _btnReserveNone, * _btnReserveSnap, * _btnReserveAimed, * _btnReserveAuto, * _btnReserveKneel, * _btnZeroTUs;
 	Map* _map;
 	NumberText
-		* _numHostileUnit[HOTSQRS],
+		* _numHostiles[HOTSQRS],
 		* _numWounded[WOUNDED],
 
 		* _numTUAim,
@@ -209,8 +209,8 @@ private:
 		* _lstSoldierInfo,
 		* _lstTileInfo;
 	Timer
-		* _aniTimer,
-		* _tacticalTimer;
+		* _timerAnimate,
+		* _timerTactical;
 	WarningMessage* _warning;
 
 	std::vector<State*> _popups;
@@ -428,8 +428,8 @@ private:
 		/// Refreshes the wounded units indicators.
 		void hotWoundsRefresh();
 
-		/// Shows a selected unit's kneeled state.
-		void toggleKneelButton(BattleUnit* unit);
+		/// Shows a selected BattleUnit's kneeled state.
+		void toggleKneelButton(const BattleUnit* const unit);
 
 		/// Animates map objects on the Map, also smoke,fire, ...
 		void animate();

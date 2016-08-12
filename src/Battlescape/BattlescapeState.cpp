@@ -176,20 +176,20 @@ BattlescapeState::BattlescapeState()
 	_srfRank		= new Surface(26, 23, x + 107, y + 33);
 	_srfOverweight	= new Surface( 2,  2, x + 130, y + 34);
 
-	_btnUnitUp			= new BattlescapeButton(32,  16, x +  48, y);
-	_btnUnitDown		= new BattlescapeButton(32,  16, x +  48, y + 16);
-	_btnMapUp			= new BattlescapeButton(32,  16, x +  80, y);
-	_btnMapDown			= new BattlescapeButton(32,  16, x +  80, y + 16);
-	_btnMiniMap			= new BattlescapeButton(32,  16, x + 112, y);
-	_btnKneel			= new BattlescapeButton(32,  16, x + 112, y + 16);
-	_btnInventory		= new BattlescapeButton(32,  16, x + 144, y);
-	_btnCenter			= new BattlescapeButton(32,  16, x + 144, y + 16);
-	_btnNextUnit		= new BattlescapeButton(32,  16, x + 176, y);
-	_btnNextStop		= new BattlescapeButton(32,  16, x + 176, y + 16);
-	_btnShowLayers		= new BattlescapeButton(32,  16, x + 208, y);
-	_btnOptions			= new BattlescapeButton(32,  16, x + 208, y + 16);
-	_btnEndTurn			= new BattlescapeButton(32,  16, x + 240, y);
-	_btnAbort			= new BattlescapeButton(32,  16, x + 240, y + 16);
+	_btnUnitUp		= new BattlescapeButton(32,  16, x +  48, y);
+	_btnUnitDown	= new BattlescapeButton(32,  16, x +  48, y + 16);
+	_btnMapUp		= new BattlescapeButton(32,  16, x +  80, y);
+	_btnMapDown		= new BattlescapeButton(32,  16, x +  80, y + 16);
+	_btnMiniMap		= new BattlescapeButton(32,  16, x + 112, y);
+	_btnKneel		= new BattlescapeButton(32,  16, x + 112, y + 16);
+	_btnInventory	= new BattlescapeButton(32,  16, x + 144, y);
+	_btnCenter		= new BattlescapeButton(32,  16, x + 144, y + 16);
+	_btnNextUnit	= new BattlescapeButton(32,  16, x + 176, y);
+	_btnNextStop	= new BattlescapeButton(32,  16, x + 176, y + 16);
+	_btnShowLayers	= new BattlescapeButton(32,  16, x + 208, y);
+	_btnOptions		= new BattlescapeButton(32,  16, x + 208, y + 16);
+	_btnEndTurn		= new BattlescapeButton(32,  16, x + 240, y);
+	_btnAbort		= new BattlescapeButton(32,  16, x + 240, y + 16);
 
 /*	_btnReserveNone		= new BattlescapeButton(17, 11, x + 60, y + 33);
 	_btnReserveSnap		= new BattlescapeButton(17, 11, x + 78, y + 33);
@@ -197,26 +197,27 @@ BattlescapeState::BattlescapeState()
 	_btnReserveAuto		= new BattlescapeButton(17, 11, x + 78, y + 45);
 	_btnReserveKneel	= new BattlescapeButton(10, 23, x + 96, y + 33);
 	_btnZeroTUs			= new BattlescapeButton(10, 23, x + 49, y + 33); */
-	_btnStats			= new InteractiveSurface(164, 23, x + 107, y + 33);
-	_btnLogo			= new InteractiveSurface( 57, 23, x +  49, y + 33);
 
-	_btnLeftHandItem	= new InteractiveSurface(32, 48, x +   8, y + 5);
-	_btnRightHandItem	= new InteractiveSurface(32, 48, x + 280, y + 5);
-	_numAmmoL			= new NumberText(7, 5, x +  33, y + 5);
-	_numAmmoR			= new NumberText(7, 5, x + 305, y + 5);
+	_isfStats		= new InteractiveSurface(164, 23, x + 107, y + 33);
+	_isfLogo		= new InteractiveSurface( 57, 23, x +  49, y + 33);
 
-	_numFuseL			= new NumberText(7, 5, x +   8, y + 5);
-	_numFuseR			= new NumberText(7, 5, x + 280, y + 5);
+	_isfLeftHand	= new InteractiveSurface(32, 48, x +   8, y + 5);
+	_isfRightHand	= new InteractiveSurface(32, 48, x + 280, y + 5);
+	_numAmmoL		= new NumberText(7, 5, x +  33, y + 5);
+	_numAmmoR		= new NumberText(7, 5, x + 305, y + 5);
 
-	_numTwohandL		= new NumberText(7, 5, x +  33, y + 46, true);
-	_numTwohandR		= new NumberText(7, 5, x + 305, y + 46, true);
+	_numFuseL		= new NumberText(7, 5, x +   8, y + 5);
+	_numFuseR		= new NumberText(7, 5, x + 280, y + 5);
 
-	_numMediL1			= new NumberText(7, 5, x +   9, y + 32);
-	_numMediL2			= new NumberText(7, 5, x +   9, y + 39);
-	_numMediL3			= new NumberText(7, 5, x +   9, y + 46);
-	_numMediR1			= new NumberText(7, 5, x + 281, y + 32);
-	_numMediR2			= new NumberText(7, 5, x + 281, y + 39);
-	_numMediR3			= new NumberText(7, 5, x + 281, y + 46);
+	_numTwohandL	= new NumberText(7, 5, x +  33, y + 46, true);
+	_numTwohandR	= new NumberText(7, 5, x + 305, y + 46, true);
+
+	_numMediL1		= new NumberText(7, 5, x +   9, y + 32);
+	_numMediL2		= new NumberText(7, 5, x +   9, y + 39);
+	_numMediL3		= new NumberText(7, 5, x +   9, y + 46);
+	_numMediR1		= new NumberText(7, 5, x + 281, y + 32);
+	_numMediR2		= new NumberText(7, 5, x + 281, y + 39);
+	_numMediR3		= new NumberText(7, 5, x + 281, y + 46);
 //	const int
 //		visibleUnitX = uiRule->getElement("visibleUnits")->x,
 //		visibleUnitY = uiRule->getElement("visibleUnits")->y;
@@ -227,7 +228,7 @@ BattlescapeState::BattlescapeState()
 							playableHeight >> 1u);
 
 	std::fill_n(
-			_hostileUnit,
+			_hostileUnits,
 			HOTSQRS,
 			static_cast<BattleUnit*>(nullptr));
 
@@ -239,11 +240,11 @@ BattlescapeState::BattlescapeState()
 	{
 		if (i > 9) offsetX = 15;
 
-		_btnHostileUnit[i] = new InteractiveSurface(
-												15,13,
-												x + iconsWidth - 21 - offsetX,
-												y - 16 - (static_cast<int>(i) * 13));
-		_numHostileUnit[i] = new NumberText(
+		_isfHostiles[i] = new InteractiveSurface(
+										15,13,
+										x + iconsWidth - 21 - offsetX,
+										y - 16 - (static_cast<int>(i) * 13));
+		_numHostiles[i] = new NumberText(
 										8,6,
 										x + iconsWidth - 15 - offsetX,
 										y - 12 - (static_cast<int>(i) * 13));
@@ -254,7 +255,7 @@ BattlescapeState::BattlescapeState()
 			i != HOTSQRS;
 			++i)
 	{
-		_numHostileUnit[i]->setX(_numHostileUnit[i]->getX() - 2);
+		_numHostiles[i]->setX(_numHostiles[i]->getX() - 2);
 	}
 
 
@@ -268,7 +269,7 @@ BattlescapeState::BattlescapeState()
 			i != WOUNDED;
 			++i)
 	{
-		_btnWounded[i] = new InteractiveSurface(
+		_isfWounded[i] = new InteractiveSurface(
 											9,7,
 											x + 5,
 											y - 17 - (static_cast<int>(i) * 14));
@@ -378,7 +379,7 @@ BattlescapeState::BattlescapeState()
 	add(_btnOptions,		"buttonHelp",			"battlescape", _icons);
 	add(_btnEndTurn,		"buttonEndTurn",		"battlescape", _icons);
 	add(_btnAbort,			"buttonAbort",			"battlescape", _icons);
-	add(_btnStats,			"buttonStats",			"battlescape", _icons);
+	add(_isfStats,			"buttonStats",			"battlescape", _icons);
 	add(_numDir,			"numIcons",				"battlescape", _icons);
 	add(_numDirTur,			"numIcons",				"battlescape", _icons);
 	add(_numLayers,			"numIcons",				"battlescape", _icons);	// goes overtop _icons
@@ -401,9 +402,9 @@ BattlescapeState::BattlescapeState()
 	add(_btnReserveAimed,	"buttonReserveAimed",	"battlescape", _icons);
 	add(_btnReserveAuto,	"buttonReserveAuto",	"battlescape", _icons);
 	add(_btnReserveKneel,	"buttonReserveKneel",	"battlescape", _icons); */
-	add(_btnLogo,			"buttonZeroTUs",		"battlescape", _icons);
-	add(_btnLeftHandItem,	"buttonLeftHand",		"battlescape", _icons);
-	add(_btnRightHandItem,	"buttonRightHand",		"battlescape", _icons);
+	add(_isfLogo,			"buttonZeroTUs",		"battlescape", _icons);
+	add(_isfLeftHand,		"buttonLeftHand",		"battlescape", _icons);
+	add(_isfRightHand,		"buttonRightHand",		"battlescape", _icons);
 	add(_numAmmoL,			"numLight",				"battlescape", _icons);
 	add(_numAmmoR,			"numLight",				"battlescape", _icons);
 	add(_numFuseL,			"numLight",				"battlescape", _icons);
@@ -425,8 +426,8 @@ BattlescapeState::BattlescapeState()
 			i != HOTSQRS;
 			++i)
 	{
-		add(_btnHostileUnit[i]);
-		add(_numHostileUnit[i]);
+		add(_isfHostiles[i]);
+		add(_numHostiles[i]);
 	}
 
 	for (size_t
@@ -434,7 +435,7 @@ BattlescapeState::BattlescapeState()
 			i != WOUNDED;
 			++i)
 	{
-		add(_btnWounded[i]);
+		add(_isfWounded[i]);
 		add(_numWounded[i]);
 	}
 
@@ -830,32 +831,32 @@ BattlescapeState::BattlescapeState()
 //	_btnAbort->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //	_btnAbort->setTooltip("STR_ABORT_MISSION");
 
-	_btnStats->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnStatsClick));
-	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnStatsClick),
+	_isfStats->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnStatsClick));
+	_isfStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnStatsClick),
 								Options::keyBattleStats);
-//	_btnStats->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
-//	_btnStats->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
-//	_btnStats->setTooltip("STR_UNIT_STATS");
+//	_isfStats->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_isfStats->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
+//	_isfStats->setTooltip("STR_UNIT_STATS");
 
-	_btnLeftHandItem->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnLeftHandLeftClick),
-										SDL_BUTTON_LEFT);
-	_btnLeftHandItem->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnLeftHandRightClick),
-										SDL_BUTTON_RIGHT);
-	_btnLeftHandItem->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnLeftHandLeftClick),
-										Options::keyBattleUseLeftHand);
-//	_btnLeftHandItem->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
-//	_btnLeftHandItem->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
-//	_btnLeftHandItem->setTooltip("STR_USE_LEFT_HAND");
+	_isfLeftHand->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnLeftHandLeftClick),
+									SDL_BUTTON_LEFT);
+	_isfLeftHand->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnLeftHandRightClick),
+									SDL_BUTTON_RIGHT);
+	_isfLeftHand->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnLeftHandLeftClick),
+									Options::keyBattleUseLeftHand);
+//	_isfLeftHand->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_isfLeftHand->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
+//	_isfLeftHand->setTooltip("STR_USE_LEFT_HAND");
 
-	_btnRightHandItem->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandLeftClick),
-										SDL_BUTTON_LEFT);
-	_btnRightHandItem->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandRightClick),
-										SDL_BUTTON_RIGHT);
-	_btnRightHandItem->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandLeftClick),
-										Options::keyBattleUseRightHand);
-//	_btnRightHandItem->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
-//	_btnRightHandItem->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
-//	_btnRightHandItem->setTooltip("STR_USE_RIGHT_HAND");
+	_isfRightHand->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandLeftClick),
+									SDL_BUTTON_LEFT);
+	_isfRightHand->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandRightClick),
+									SDL_BUTTON_RIGHT);
+	_isfRightHand->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnRightHandLeftClick),
+									Options::keyBattleUseRightHand);
+//	_isfRightHand->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//	_isfRightHand->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
+//	_isfRightHand->setTooltip("STR_USE_RIGHT_HAND");
 
 /*	_btnReserveNone->onMouseClick(static_cast<ActionHandler>(&BattlescapeState::btnReserveClick));
 	_btnReserveNone->onKeyboardPress(
@@ -898,11 +899,11 @@ BattlescapeState::BattlescapeState()
 	_btnReserveKneel->allowToggleInversion();
 	_btnReserveKneel->setTooltip("STR_RESERVE_TIME_UNITS_FOR_KNEEL"); */
 
-	_btnLogo->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnZeroTuClick));
-	_btnLogo->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyZeroTuPress));		// NOTE: Can't use a specific SDLKey on this because it requires CTRL.
-	_btnLogo->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnUfoPaediaClick),	// ... InteractiveSurface handlers do not like that.
+	_isfLogo->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnZeroTuClick));
+	_isfLogo->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyZeroTuPress));		// NOTE: Can't use a specific SDLKey on this because it requires CTRL.
+	_isfLogo->onMouseClick(		static_cast<ActionHandler>(&BattlescapeState::btnUfoPaediaClick),	// ... InteractiveSurface handlers do not like that.
 								SDL_BUTTON_RIGHT);
-	_btnLogo->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnUfoPaediaClick),
+	_isfLogo->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnUfoPaediaClick),
 								Options::keyGeoUfopedia);
 
 //	_btnZeroTUs->onMouseIn(	static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
@@ -911,13 +912,13 @@ BattlescapeState::BattlescapeState()
 //	_btnZeroTUs->setTooltip("STR_EXPEND_ALL_TIME_UNITS");
 
 	// NOTE: The following shortcuts do not have a specific surface-button graphic.
-//	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnReloadClick), // NOTE: Reloading uses advanced conditions in the Inventory.
+//	_isfStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnReloadClick), // NOTE: Reloading uses advanced conditions in the Inventory.
 //								Options::keyBattleReload);
-	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyUnitLight),
+	_isfStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyUnitLight),
 								Options::keyBattlePersonalLighting);
-	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyConsoleToggle),
+	_isfStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyConsoleToggle),
 								Options::keyBattleConsole);
-	_btnStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyTurnUnit));	// NOTE: Can't use a specific SDLKey on this because it can require CTRL.
+	_isfStats->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::keyTurnUnit));	// NOTE: Can't use a specific SDLKey on this because it can require CTRL.
 																								// ... InteractiveSurface handlers do not like that.
 
 //	const SDLKey buttons[]
@@ -940,17 +941,17 @@ BattlescapeState::BattlescapeState()
 			i != HOTSQRS;
 			++i)
 	{
-		_btnHostileUnit[i]->onMousePress(	static_cast<ActionHandler>(&BattlescapeState::btnHostileUnitPress));
-//		_btnHostileUnit[i]->onKeyboardPress(static_cast<ActionHandler>(&BattlescapeState::btnHostileUnitPress),
+		_isfHostiles[i]->onMousePress(		static_cast<ActionHandler>(&BattlescapeState::btnHostileUnitPress));
+//		_isfHostiles[i]->onKeyboardPress(	static_cast<ActionHandler>(&BattlescapeState::btnHostileUnitPress),
 //											buttons[i]);
-//		_btnHostileUnit[i]->onMouseIn(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
-//		_btnHostileUnit[i]->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
+//		_isfHostiles[i]->onMouseIn(			static_cast<ActionHandler>(&BattlescapeState::txtTooltipIn));
+//		_isfHostiles[i]->onMouseOut(		static_cast<ActionHandler>(&BattlescapeState::txtTooltipOut));
 //		std::ostringstream tooltip;
 //		tooltip << "STR_CENTER_ON_ENEMY_" << (i + 1);
-//		_btnHostileUnit[i]->setTooltip(tooltip.str());
+//		_isfHostiles[i]->setTooltip(tooltip.str());
 
-		_numHostileUnit[i]->setColor(color);
-		_numHostileUnit[i]->setValue(i + 1u);
+		_numHostiles[i]->setColor(color);
+		_numHostiles[i]->setValue(i + 1u);
 	}
 
 	for (size_t
@@ -958,7 +959,7 @@ BattlescapeState::BattlescapeState()
 			i != WOUNDED;
 			++i)
 	{
-		_btnWounded[i]->onMousePress(static_cast<ActionHandler>(&BattlescapeState::btnWoundedPress));
+		_isfWounded[i]->onMousePress(static_cast<ActionHandler>(&BattlescapeState::btnWoundedPress));
 	}
 
 	_txtName->setHighContrast();
@@ -973,12 +974,12 @@ BattlescapeState::BattlescapeState()
 
 	_game->getFpsCounter()->setY(screenHeight - 6);
 
-	_aniTimer = new Timer(STATE_INTERVAL_TILE);				// setStateInterval() does NOT change this <-
-	_aniTimer->onTimer(static_cast<StateHandler>(&BattlescapeState::animate));
+	_timerAnimate = new Timer(STATE_INTERVAL_TILE);			// setStateInterval() does NOT change this <-
+	_timerAnimate->onTimer(static_cast<StateHandler>(&BattlescapeState::animate));
 
-	_tacticalTimer = new Timer(STATE_INTERVAL_STANDARD);	// setStateInterval() will change this <-
-	_tacticalTimer->onTimer(static_cast<StateHandler>(&BattlescapeState::handleState));
-	//_tacticalTimer->debug("BattlescapeState");
+	_timerTactical = new Timer(STATE_INTERVAL_STANDARD);	// setStateInterval() will change this <-
+	_timerTactical->onTimer(static_cast<StateHandler>(&BattlescapeState::handleState));
+	//_timerTactical->debug("BattlescapeState");
 
 	_battleGame = new BattlescapeGame(_battleSave, this);
 	//Log(LOG_INFO) << "Create BattlescapeState EXIT";
@@ -990,8 +991,8 @@ BattlescapeState::BattlescapeState()
 BattlescapeState::~BattlescapeState()
 {
 	//Log(LOG_INFO) << "Delete BattlescapeState";
-	delete _aniTimer;
-	delete _tacticalTimer;
+	delete _timerAnimate;
+	delete _timerTactical;
 	delete _battleGame;
 }
 
@@ -1007,10 +1008,10 @@ void BattlescapeState::init()
 	{
 		_init = false;
 
-		if (_aniTimer->isRunning() == false) // do NOT restart timers if/when 2nd state starts.
-			_aniTimer->start();
-		if (_tacticalTimer->isRunning() == false)
-			_tacticalTimer->start();
+		if (_timerAnimate->isRunning() == false) // do NOT restart timers if/when 2nd state starts.
+			_timerAnimate->start();
+		if (_timerTactical->isRunning() == false)
+			_timerTactical->start();
 
 //		_map->setFocus();	// -> NOTE: InteractiveSurface is initialized w/ (_isFocused=TRUE)
 							// and only State::resetSurfaces() sets a Surface unfocused; resetSurfaces()
@@ -1092,7 +1093,7 @@ void BattlescapeState::reinit()
 void BattlescapeState::think()
 {
 	//Log(LOG_INFO) << "BattlescapeState::think()";
-	if (_tacticalTimer->isRunning() == true)
+	if (_timerTactical->isRunning() == true)
 	{
 		static bool popped (false);
 
@@ -1108,10 +1109,10 @@ void BattlescapeState::think()
 
 			//Log(LOG_INFO) << "BattlescapeState::think() -> _battleGame.think()";
 			_battleGame->think();
-			//Log(LOG_INFO) << "BattlescapeState::think() -> _aniTimer.think()";
-			_aniTimer->think(this, nullptr);
-			//Log(LOG_INFO) << "BattlescapeState::think() -> _tacticalTimer.think()";
-			_tacticalTimer->think(this, nullptr);
+			//Log(LOG_INFO) << "BattlescapeState::think() -> _timerAnimate.think()";
+			_timerAnimate->think(this, nullptr);
+			//Log(LOG_INFO) << "BattlescapeState::think() -> _timerTactical.think()";
+			_timerTactical->think(this, nullptr);
 			//Log(LOG_INFO) << "BattlescapeState::think() -> back from thinks";
 
 			if (popped == true)
@@ -2412,7 +2413,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 					i != HOTSQRS;
 					++i)
 			{
-				if (_btnHostileUnit[i] == action->getSender())
+				if (_isfHostiles[i] == action->getSender())
 					break;
 			}
 
@@ -2420,7 +2421,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 			{
 				case SDL_BUTTON_LEFT:
 				{
-					const Position& pos (_hostileUnit[i]->getPosition());
+					const Position& pos (_hostileUnits[i]->getPosition());
 
 					Camera* const camera (_map->getCamera());
 					if (camera->focusPosition(pos, false) == true)
@@ -2469,7 +2470,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 							&& std::find(
 									(*j)->getHostileUnits().begin(),
 									(*j)->getHostileUnits().end(),
-									_hostileUnit[i]) != (*j)->getHostileUnits().end())
+									_hostileUnits[i]) != (*j)->getHostileUnits().end())
 						{
 							nextSpotter = *j;
 							break;
@@ -2488,7 +2489,7 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 								&& std::find(
 										(*j)->getHostileUnits().begin(),
 										(*j)->getHostileUnits().end(),
-										_hostileUnit[i]) != (*j)->getHostileUnits().end())
+										_hostileUnits[i]) != (*j)->getHostileUnits().end())
 							{
 								nextSpotter = *j;
 								break;
@@ -2542,7 +2543,7 @@ void BattlescapeState::btnWoundedPress(Action* action)
 					i != WOUNDED;
 					++i)
 			{
-				if (_btnWounded[i] == action->getSender())
+				if (_isfWounded[i] == action->getSender())
 				{
 					_map->getCamera()->centerPosition(_tileWounded[i]->getPosition());
 
@@ -2810,36 +2811,36 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 {
 	hotSqrsClear();
 
-	_srfRank			->clear();
-	_btnRightHandItem	->clear();
-	_btnLeftHandItem	->clear();
-	_btnKneel			->clear();
+	_srfRank		->clear();
+	_isfRightHand	->clear();
+	_isfLeftHand	->clear();
+	_btnKneel		->clear();
 
-	_btnLeftHandItem	->setVisible(false);
-	_btnRightHandItem	->setVisible(false);
-	_numAmmoL			->setVisible(false);
-	_numAmmoR			->setVisible(false);
-	_numFuseL			->setVisible(false);
-	_numFuseR			->setVisible(false);
+	_isfLeftHand	->setVisible(false);
+	_isfRightHand	->setVisible(false);
+	_numAmmoL		->setVisible(false);
+	_numAmmoR		->setVisible(false);
+	_numFuseL		->setVisible(false);
+	_numFuseR		->setVisible(false);
 
-	_numTwohandL		->setVisible(false);
-	_numTwohandR		->setVisible(false);
+	_numTwohandL	->setVisible(false);
+	_numTwohandR	->setVisible(false);
 
-	_numMediL1			->setVisible(false);
-	_numMediL2			->setVisible(false);
-	_numMediL3			->setVisible(false);
-	_numMediR1			->setVisible(false);
-	_numMediR2			->setVisible(false);
-	_numMediR3			->setVisible(false);
+	_numMediL1		->setVisible(false);
+	_numMediL2		->setVisible(false);
+	_numMediL3		->setVisible(false);
+	_numMediR1		->setVisible(false);
+	_numMediR2		->setVisible(false);
+	_numMediR3		->setVisible(false);
 
-	_srfOverweight		->setVisible(false);
-	_numDir				->setVisible(false);
-	_numDirTur			->setVisible(false);
+	_srfOverweight	->setVisible(false);
+	_numDir			->setVisible(false);
+	_numDirTur		->setVisible(false);
 
-	_numTULaunch		->setVisible(false);
-	_numTUAim			->setVisible(false);
-	_numTUAuto			->setVisible(false);
-	_numTUSnap			->setVisible(false);
+	_numTULaunch	->setVisible(false);
+	_numTUAim		->setVisible(false);
+	_numTUAuto		->setVisible(false);
+	_numTUSnap		->setVisible(false);
 
 	_isOverweight = false;
 
@@ -3039,8 +3040,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		itRule = rtItem->getRules();
 		itRule->drawHandSprite(
 							_bigobs,
-							_btnRightHandItem);
-		_btnRightHandItem->setVisible();
+							_isfRightHand);
+		_isfRightHand->setVisible();
 
 		if (itRule->isFixed() == false && itRule->isTwoHanded() == true)
 			_numTwohandR->setVisible();
@@ -3107,8 +3108,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 		itRule = ltItem->getRules();
 		itRule->drawHandSprite(
 							_bigobs,
-							_btnLeftHandItem);
-		_btnLeftHandItem->setVisible();
+							_isfLeftHand);
+		_isfLeftHand->setVisible();
 
 		if (itRule->isFixed() == false && itRule->isTwoHanded() == true)
 			_numTwohandL->setVisible();
@@ -3185,9 +3186,9 @@ void BattlescapeState::hotSqrsClear()
 			i != HOTSQRS;
 			++i)
 	{
-		_btnHostileUnit[i]->setVisible(false);
-		_numHostileUnit[i]->setVisible(false);
-		_hostileUnit[i] = nullptr;
+		_isfHostiles[i]->setVisible(false);
+		_numHostiles[i]->setVisible(false);
+		_hostileUnits[i] = nullptr;
 	}
 }
 
@@ -3206,9 +3207,9 @@ void BattlescapeState::hotSqrsUpdate()
 			&& (*i)->getUnitStatus()  == STATUS_STANDING
 			&& (*i)->getUnitVisible() == true)
 		{
-			_btnHostileUnit[j]->setVisible();
-			_numHostileUnit[j]->setVisible();
-			_hostileUnit[j++] = *i;
+			_isfHostiles[j]->setVisible();
+			_numHostiles[j]->setVisible();
+			_hostileUnits[j++] = *i;
 		}
 	}
 }
@@ -3225,8 +3226,8 @@ void BattlescapeState::hotWoundsRefresh()
 			i != WOUNDED;
 			++i)
 	{
-		_btnWounded[i]->clear();
-		_btnWounded[i]->setVisible(false);
+		_isfWounded[i]->clear();
+		_isfWounded[i]->setVisible(false);
 		_numWounded[i]->setVisible(false);
 		_tileWounded[i] = nullptr;
 	}
@@ -3249,8 +3250,8 @@ void BattlescapeState::hotWoundsRefresh()
 			&& unit->getGeoscapeSoldier() != nullptr
 			&& unit->isOut_t(OUT_HEALTH) == false)
 		{
-			srfBadge->blit(_btnWounded[k]);
-			_btnWounded[k]->setVisible(vis);
+			srfBadge->blit(_isfWounded[k]);
+			_isfWounded[k]->setVisible(vis);
 
 			_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalsTotal()));
 			_numWounded[k]->setVisible(vis);
@@ -3269,8 +3270,8 @@ void BattlescapeState::hotWoundsRefresh()
 				&& unit->getFaction() == FACTION_PLAYER
 				&& unit->getGeoscapeSoldier() != nullptr)
 			{
-				srfBadge->blit(_btnWounded[k]);
-				_btnWounded[k]->setVisible(vis);
+				srfBadge->blit(_isfWounded[k]);
+				_isfWounded[k]->setVisible(vis);
 
 				_numWounded[k]->setValue(static_cast<unsigned>(unit->getFatalsTotal()));
 				_numWounded[k]->setVisible(vis);
@@ -3294,15 +3295,15 @@ void BattlescapeState::flashMedic() // private.
 			i != WOUNDED;
 			++i)
 	{
-		if (_btnWounded[i]->getVisible() == true)
+		if (_isfWounded[i]->getVisible() == true)
 		{
-			_btnWounded[i]->lock();
+			_isfWounded[i]->lock();
 			srfCross->blitNShade(
-							_btnWounded[i],
-							_btnWounded[i]->getX() + 2,
-							_btnWounded[i]->getY() + 1,
+							_isfWounded[i],
+							_isfWounded[i]->getX() + 2,
+							_isfWounded[i]->getY() + 1,
 							phase, false, 3); // red
-			_btnWounded[i]->unlock();
+			_isfWounded[i]->unlock();
 
 			_numWounded[i]->setColor(static_cast<Uint8>(YELLOW + phase));
 		}
@@ -3314,14 +3315,14 @@ void BattlescapeState::flashMedic() // private.
 }
 
 /**
- * Blinks the health bar when selected unit has fatal wounds.
+ * Blinks the health-bar when selected unit has fatal wounds.
  */
 void BattlescapeState::blinkHealthBar() // private.
 {
 	static const int TICKS (5);
-	static int vis;
+	static int vis (0);
 
-	_barHealth->setVisible(++vis > TICKS / 2);
+	_barHealth->setVisible(++vis > (TICKS >> 1u));
 
 	if (vis == TICKS) vis = 0;
 }
@@ -3330,7 +3331,7 @@ void BattlescapeState::blinkHealthBar() // private.
  * Shows a selected unit's kneeled state.
  * @param unit - pointer to a BattleUnit
  */
-void BattlescapeState::toggleKneelButton(BattleUnit* unit)
+void BattlescapeState::toggleKneelButton(const BattleUnit* const unit)
 {
 	if (unit != nullptr && unit->isKneeled() == true)
 		_overlay->getFrame(9)->blit(_btnKneel);
@@ -3372,7 +3373,7 @@ void BattlescapeState::animate()
 				if (_isOverweight == true && RNG::seedless(0,3) == 0)
 					_srfOverweight->setVisible(!_srfOverweight->getVisible());
 
-				static int stickyTiks;
+				static int stickyTiks (0);
 				if (_srfBtnBorder->getVisible() == true
 					&& ++stickyTiks == 3)
 				{
@@ -3405,14 +3406,14 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 			case BT_GRENADE:
 			case BT_PROXYGRENADE:
 			case BT_FLARE:
-				_btnLeftHandItem->lock();
+				_isfLeftHand->lock();
 				srf->blitNShade(
-							_btnLeftHandItem,
-							_btnLeftHandItem->getX() + 27,
-							_btnLeftHandItem->getY() -  1,
+							_isfLeftHand,
+							_isfLeftHand->getX() + 27,
+							_isfLeftHand->getY() -  1,
 							pulse[_fuseFrame],
 							false, 3); // red
-				_btnLeftHandItem->unlock();
+				_isfLeftHand->unlock();
 		}
 	}
 
@@ -3423,14 +3424,14 @@ void BattlescapeState::cycleFuses(BattleUnit* const selUnit) // private.
 			case BT_GRENADE:
 			case BT_PROXYGRENADE:
 			case BT_FLARE:
-				_btnRightHandItem->lock();
+				_isfRightHand->lock();
 				srf->blitNShade(
-							_btnRightHandItem,
-							_btnRightHandItem->getX() + 27,
-							_btnRightHandItem->getY() -  1,
+							_isfRightHand,
+							_isfRightHand->getX() + 27,
+							_isfRightHand->getY() -  1,
 							pulse[_fuseFrame],
 							false, 3); // red
-				_btnRightHandItem->unlock();
+				_isfRightHand->unlock();
 		}
 	}
 	++_fuseFrame;
@@ -3456,25 +3457,37 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 			i != HOTSQRS;
 			++i)
 	{
-		if (_btnHostileUnit[i]->getVisible() == true)
+		if (_isfHostiles[i]->getVisible() == true)
 		{
 			isSpotted = false;
-
 			for (std::vector<BattleUnit*>::const_iterator
 				j = _battleSave->getUnits()->begin();
-				j != _battleSave->getUnits()->end();
+				j != _battleSave->getUnits()->end() && isSpotted == false;
 				++j)
 			{
-				if ((*j)->getFaction() == FACTION_PLAYER
-					&& (*j)->isOut_t(OUT_STAT) == false)
+				if ((*j)->getFaction() == FACTION_PLAYER)
 				{
-					if (std::find(
-								(*j)->getHostileUnits().begin(),
-								(*j)->getHostileUnits().end(),
-								_hostileUnit[i]) != (*j)->getHostileUnits().end())
+					switch ((*j)->getUnitStatus())
 					{
-						isSpotted = true;
-						break;
+						case STATUS_STANDING:
+						case STATUS_WALKING:
+						case STATUS_FLYING:
+						case STATUS_TURNING:
+						case STATUS_AIMING:
+							if (std::find(
+										(*j)->getHostileUnits().begin(),
+										(*j)->getHostileUnits().end(),
+										_hostileUnits[i]) != (*j)->getHostileUnits().end())
+							{
+								isSpotted = true;
+							}
+//						STATUS_COLLAPSING
+//						STATUS_DEAD
+//						STATUS_UNCONSCIOUS
+//						STATUS_PANICKING
+//						STATUS_BERSERK
+//						STATUS_LATENT
+//						STATUS_LATENT_START
 					}
 				}
 			}
@@ -3484,15 +3497,15 @@ void BattlescapeState::hotSqrsCycle(BattleUnit* const selUnit) // private.
 			else if (std::find(
 							selUnit->getHostileUnits().begin(),
 							selUnit->getHostileUnits().end(),
-							_hostileUnit[i]) != selUnit->getHostileUnits().end())
+							_hostileUnits[i]) != selUnit->getHostileUnits().end())
 			{
 				color = static_cast<Uint8>(colorRed);
 			}
 			else
 				color = static_cast<Uint8>(colorBlue);
 
-			_btnHostileUnit[i]->drawRect(0,0, 15,13, static_cast<Uint8>(color_border));
-			_btnHostileUnit[i]->drawRect(1,1, 13,11, color);
+			_isfHostiles[i]->drawRect(0,0, 15,13, static_cast<Uint8>(color_border));
+			_isfHostiles[i]->drawRect(1,1, 13,11, color);
 		}
 		else
 			break;
@@ -3626,12 +3639,12 @@ void BattlescapeState::handleState()
 }
 
 /**
- * Sets the '_tacticalTimer' interval for think() calls of the state.
+ * Sets the '_timerTactical' interval for think() calls of the state.
  * @param interval - an interval in ms
  */
 void BattlescapeState::setStateInterval(Uint32 interval)
 {
-	_tacticalTimer->setInterval(interval);
+	_timerTactical->setInterval(interval);
 }
 
 /**
@@ -3747,8 +3760,8 @@ void BattlescapeState::finishBattle(
 	}
 	else // end Mission.
 	{
-		_aniTimer->stop();
-		_tacticalTimer->stop();
+		_timerAnimate->stop();
+		_timerTactical->stop();
 		_game->popState();
 
 
@@ -4088,7 +4101,7 @@ void BattlescapeState::toggleIcons(bool vis)
 	{
 		if (_tileWounded[i] != nullptr)
 		{
-			_btnWounded[i]->setVisible(vis);
+			_isfWounded[i]->setVisible(vis);
 			_numWounded[i]->setVisible(vis);
 		}
 		else
