@@ -62,7 +62,7 @@ private:
 		* _btnOk,
 		* _btnTransfers;
 	TextList* _lstStores;
-	Timer* _blinkTimer;
+	Timer* _timerBlink;
 	Window* _window;
 
 

@@ -93,7 +93,7 @@ private:
 				_move_y(move_y)
 		{}
 
-		inline GraphSubset getImage() const
+		inline GraphSubset getImage() const // NOTE: Hides superclass ShaderBase::getImage().
 		{ return _base::_range_domain.offset(
 										_move_x,
 										_move_y); }

@@ -201,8 +201,8 @@ CraftInfoState::CraftInfoState(
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftInfoState::btnOkClick),
 							Options::keyCancel);
 
-	_blinkTimer = new Timer(325u);
-	_blinkTimer->onTimer(static_cast<StateHandler>(&CraftInfoState::blinkStatus));
+	_timerBlink = new Timer(325u);
+	_timerBlink->onTimer(static_cast<StateHandler>(&CraftInfoState::blinkStatus));
 }
 
 /**
@@ -210,7 +210,7 @@ CraftInfoState::CraftInfoState(
  */
 CraftInfoState::~CraftInfoState()
 {
-	delete _blinkTimer;
+	delete _timerBlink;
 }
 
 /**
@@ -250,8 +250,8 @@ void CraftInfoState::init()
 			case CS_READY: color = GREEN; break;
 			default:
 			{
-				if (_blinkTimer->isRunning() == false)
-					_blinkTimer->start();
+				if (_timerBlink->isRunning() == false)
+					_timerBlink->start();
 
 				switch (status)
 				{
@@ -492,8 +492,8 @@ void CraftInfoState::think()
 	{
 		_edtCraft->think();
 
-		if (_blinkTimer->isRunning() == true)
-			_blinkTimer->think(this, nullptr);
+		if (_timerBlink->isRunning() == true)
+			_timerBlink->think(this, nullptr);
 	}
 }
 

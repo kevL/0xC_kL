@@ -108,7 +108,7 @@ private:
 		* _btnRegionTotal,
 		* _btnToggleAll;
 
-	Timer* _blinkTimer;
+	Timer* _timerBlink;
 
 	std::vector<bool>
 		_blinkCountryAlien,

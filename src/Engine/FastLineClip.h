@@ -69,10 +69,10 @@ private:
 				double Wyt,
 				double Wyb)
 			:
-				FC_xn(0),
-				FC_yn(0),
-				FC_xk(0),
-				FC_yk(0)
+				FC_xn(0.),
+				FC_yn(0.),
+				FC_xk(0.),
+				FC_yk(0.)
 		{
 			Wxlef = Wxl;
 			Wxrig = Wxr;
@@ -83,7 +83,7 @@ private:
 		~FastLineClip()
 		{};
 
-		/// LineClip itself.
+		/// the LineClip itself.
 		int LineClip(
 				double* x0,
 				double* y0,

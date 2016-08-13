@@ -60,7 +60,7 @@ private:
 
 
 	public:
-		/// Creates the MultipleTargets state.
+		/// Creates a MultipleTargets state.
 		MultipleTargetsState(
 				std::vector<Target*> targets,
 				Craft* const craft,

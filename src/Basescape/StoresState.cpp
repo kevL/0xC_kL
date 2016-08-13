@@ -247,9 +247,9 @@ StoresState::StoresState(Base* const base)
 		_txtTotal->setHighContrast();
 		_txtTotal->setVisible(false); // wait for blink.
 
-		_blinkTimer = new Timer(325u);
-		_blinkTimer->onTimer(static_cast<StateHandler>(&StoresState::blink));
-		_blinkTimer->start();
+		_timerBlink = new Timer(325u);
+		_timerBlink->onTimer(static_cast<StateHandler>(&StoresState::blink));
+		_timerBlink->start();
 	}
 	else
 		_txtTotal->setColor(WHITE);
@@ -261,7 +261,7 @@ StoresState::StoresState(Base* const base)
 StoresState::~StoresState()
 {
 	if (_txtTotal->getColor() == RED)
-		delete _blinkTimer;
+		delete _timerBlink;
 }
 
 /**
@@ -272,7 +272,7 @@ void StoresState::think()
 	State::think();
 
 	if (_txtTotal->getColor() == RED)
-		_blinkTimer->think(this, nullptr);
+		_timerBlink->think(this, nullptr);
 }
 
 /**

@@ -61,9 +61,9 @@ LowFuelState::LowFuelState(
 	_btnOk5Secs	= new TextButton(90, 18,  30, 134);
 	_btnOk		= new TextButton(90, 18, 136, 134);
 
-	_blinkTimer = new Timer(325u);
-	_blinkTimer->onTimer(static_cast<StateHandler>(&LowFuelState::blink));
-	_blinkTimer->start();
+	_timerBlink = new Timer(325u);
+	_timerBlink->onTimer(static_cast<StateHandler>(&LowFuelState::blink));
+	_timerBlink->start();
 
 	setInterface("lowFuel");
 
@@ -118,7 +118,7 @@ LowFuelState::LowFuelState(
  */
 LowFuelState::~LowFuelState()
 {
-	delete _blinkTimer;
+	delete _timerBlink;
 }
 
 /**
@@ -138,7 +138,7 @@ void LowFuelState::think()
 	if (_window->isPopupDone() == false)
 		_window->think();
 	else
-		_blinkTimer->think(this, nullptr);
+		_timerBlink->think(this, nullptr);
 }
 
 /**

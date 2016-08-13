@@ -61,7 +61,7 @@ private:
 //		* _txtTimePeriod,
 		* _txtTitle;
 	TextButton* _btnOk;
-	Timer* _blinkTimer;
+	Timer* _timerBlink;
 	Window* _window;
 
 

@@ -53,7 +53,7 @@ private:
 	TextButton
 		* _btnOk,
 		* _btnOk5Secs;
-	Timer* _blinkTimer;
+	Timer* _timerBlink;
 	Window* _window;
 
 

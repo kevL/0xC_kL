@@ -270,15 +270,12 @@ struct CreateShadow
 			const Sint16& noise,
 			const int&) // whots this
 	{
-		if (dest != 0u
-			&& AreSame(earth.z, 0.) == false)
-		{
+		if (dest != 0u && AreSame(earth.z, 0.) == false)
 			dest = getShadowValue(
 								dest,
 								earth,
 								sun,
 								noise);
-		}
 		else
 			dest = 0u;
 	}
@@ -334,8 +331,8 @@ Globe::Globe(
 		_blink(true),
 		_blinkVal(-1),
 		_drawCrosshair(false),
-		_crosshairLat(0.),
-		_crosshairLon(0.)
+		_crosshairLon(0.),
+		_crosshairLat(0.)
 {
 	_texture	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeTextures")); //"TEXTURE.DAT"
 	_markerSet	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
@@ -349,12 +346,12 @@ Globe::Globe(
 								x, x + width,
 								y, y + height);
 
-	_blinkTimer = new Timer(200u);
-	_blinkTimer->onTimer(static_cast<SurfaceHandler>(&Globe::blink));
-	_blinkTimer->start();
+	_timerBlink = new Timer(200u);
+	_timerBlink->onTimer(static_cast<SurfaceHandler>(&Globe::blink));
+	_timerBlink->start();
 
-	_rotTimer = new Timer(static_cast<Uint32>(Options::geoScrollSpeed));
-	_rotTimer->onTimer(static_cast<SurfaceHandler>(&Globe::rotate));
+	_timerRot = new Timer(static_cast<Uint32>(Options::geoScrollSpeed));
+	_timerRot->onTimer(static_cast<SurfaceHandler>(&Globe::rotate));
 
 	_cenLon = _game->getSavedGame()->getGlobeLongitude();
 	_cenLat = _game->getSavedGame()->getGlobeLatitude();
@@ -384,8 +381,8 @@ Globe::~Globe()
 {
 	delete _texture;
 	delete _markerSet;
-	delete _blinkTimer;
-	delete _rotTimer;
+	delete _timerBlink;
+	delete _timerRot;
 	delete _countries;
 	delete _crosshair;
 	delete _markers;
@@ -635,8 +632,8 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
 void Globe::rotateLeft()
 {
 	_rotLon = -ROTATE_LONGITUDE;
-	if (_rotTimer->isRunning() == false)
-		_rotTimer->start();
+	if (_timerRot->isRunning() == false)
+		_timerRot->start();
 }
 
 /**
@@ -645,8 +642,8 @@ void Globe::rotateLeft()
 void Globe::rotateRight()
 {
 	_rotLon = ROTATE_LONGITUDE;
-	if (_rotTimer->isRunning() == false)
-		_rotTimer->start();
+	if (_timerRot->isRunning() == false)
+		_timerRot->start();
 }
 
 /**
@@ -655,8 +652,8 @@ void Globe::rotateRight()
 void Globe::rotateUp()
 {
 	_rotLat = -ROTATE_LATITUDE;
-	if (_rotTimer->isRunning() == false)
-		_rotTimer->start();
+	if (_timerRot->isRunning() == false)
+		_timerRot->start();
 }
 
 /**
@@ -665,8 +662,8 @@ void Globe::rotateUp()
 void Globe::rotateDown()
 {
 	_rotLat = ROTATE_LATITUDE;
-	if (_rotTimer->isRunning() == false)
-		_rotTimer->start();
+	if (_timerRot->isRunning() == false)
+		_timerRot->start();
 }
 
 /**
@@ -676,7 +673,7 @@ void Globe::rotateStop()
 {
 	_rotLon =
 	_rotLat = 0.;
-	_rotTimer->stop();
+	_timerRot->stop();
 }
 
 /**
@@ -686,7 +683,7 @@ void Globe::rotateStopLon()
 {
 	_rotLon = 0.;
 	if (AreSame(_rotLat, 0.))
-		_rotTimer->stop();
+		_timerRot->stop();
 }
 
 /**
@@ -696,7 +693,7 @@ void Globe::rotateStopLat()
 {
 	_rotLat = 0.;
 	if (AreSame(_rotLon, 0.))
-		_rotTimer->stop();
+		_timerRot->stop();
 }
 
 /**
@@ -708,42 +705,42 @@ void Globe::setupRadii( // private.
 		int width,
 		int height)
 {
-	_zoomRadii.clear();
+	_radii.clear();
 	const double height_d (static_cast<double>(height));
 
-	// These are the globe-zoom magnifications stored as a <vector> of 6 (doubles).
-	_zoomRadii.push_back(0.39 * height_d); // [-1]					// kL_extra z-out
-	_zoomRadii.push_back(0.47 * height_d); // 0 - Zoomed all out	// no detail
-	_zoomRadii.push_back(0.60 * height_d); // 1						// country borders
-	_zoomRadii.push_back(0.85 * height_d); // 2						// country labels
-	_zoomRadii.push_back(1.39 * height_d); // 3						// city markers
-	_zoomRadii.push_back(2.13 * height_d); // 4						// city labels & all detail
-	_zoomRadii.push_back(3.42 * height_d); // 5 - Zoomed all in
+	// These are the globe-zoom magnifications stored as a <vector> of 7 (doubles).
+	_radii.push_back(0.39 * height_d); // [-1]					// kL_extra z-out
+	_radii.push_back(0.47 * height_d); // 0 - Zoomed all out	// no detail
+	_radii.push_back(0.60 * height_d); // 1						// country borders
+	_radii.push_back(0.85 * height_d); // 2						// country labels
+	_radii.push_back(1.39 * height_d); // 3						// city markers
+	_radii.push_back(2.13 * height_d); // 4						// city labels & all detail
+	_radii.push_back(3.42 * height_d); // 5 - Zoomed all in
 
-	_radius = _zoomRadii[_zoom];
-	_radiusStep = (_zoomRadii[_zoomRadii.size() - 1u] - _zoomRadii[0u]) / 12.2;
+	_radius = _radii[_zoom];
+	_radiusStep = (_radii[_radii.size() - 1u] - _radii[0u]) / 12.2;
 
-	_earthData.resize(_zoomRadii.size());	// data for drawing sun-shadow.
-	for (size_t								// filling normal field for each radius
-			radId = 0u;
-			radId != _zoomRadii.size();
-			++radId)
+	_earthData.resize(_radii.size());	// data for drawing sun-shadow.
+	for (size_t							// filling normal field for each radius
+			i = 0u;
+			i != _radii.size();
+			++i)
 	{
-		_earthData[radId].resize(static_cast<size_t>(width * height));
+		_earthData[i].resize(static_cast<size_t>(width * height));
 		for (size_t
 				j = 0u;
 				j != static_cast<size_t>(height);
 				++j)
 			for (size_t
-					i = 0u;
-					i != static_cast<size_t>(width);
-					++i)
-				_earthData[radId]
-						  [static_cast<size_t>(width) * j + i] = static_data.circle_norm(
+					k = 0u;
+					k != static_cast<size_t>(width);
+					++k)
+				_earthData[i]
+						  [static_cast<size_t>(width) * j + k] = static_data.circle_norm(
 																					static_cast<double>(width) / 2.,
 																					height_d / 2.,
-																					_zoomRadii[radId],
-																					static_cast<double>(i) + 0.5,
+																					_radii[i],
+																					static_cast<double>(k) + 0.5,
 																					static_cast<double>(j) + 0.5);
 	}
 }
@@ -756,25 +753,25 @@ void Globe::setupRadii( // private.
 void Globe::setZoom(size_t level) // private.
 {
 	_zoom = std::min(level,
-					_zoomRadii.size() - 1u);
+					_radii.size() - 1u);
 
 //	_texOffset = (2u - (_zoom >> 1u)) * (_texture->getTotalFrames() / 3u);
 	switch (_zoom)
 	{
 		default:
-		case 0:							// far out
+		case 0:								// far out
 		case 1:
 		case 2: _texOffset = 26u; break;
-		case 3:							// mid
+		case 3:								// mid
 		case 4: _texOffset = 13u; break;
-		case 5:							// close up
+		case 5:								// close up
 		case 6: _texOffset =  0u;
 	}
 	// NOTE: The above^ relies on "GlobeTextures"/"WORLD.DAT" being divided up
 	// as 13 textures with 3 zoom-levels apiece. Globe-drawing is basically
 	// hard-coded to see things that way.
 
-	_radius = _zoomRadii[_zoom];
+	_radius = _radii[_zoom];
 	_game->getSavedGame()->setGlobeZoom(_zoom);
 
 	if (_isMouseScrolling == true)
@@ -803,24 +800,24 @@ size_t Globe::getZoom() const
  */
 size_t Globe::getZoomLevels() const
 {
-	return _zoomRadii.size();
+	return _radii.size();
 }
 
 /**
- * Increases the zoom-level on this Globe.
+ * Increases the zoom-level of this Globe.
  */
 void Globe::zoomIn()
 {
-	if (_zoom < _zoomRadii.size() - 1u)
+	if (_zoom < _radii.size() - 1u)
 		setZoom(_zoom + 1u);
 }
 
 /**
- * Decreases the zoom-level on this Globe.
+ * Decreases the zoom-level of this Globe.
  */
 void Globe::zoomOut()
 {
-	if (_zoom > 0)
+	if (_zoom > 0u)
 		setZoom(_zoom - 1u);
 }
 
@@ -829,7 +826,7 @@ void Globe::zoomOut()
  *
 void Globe::zoomMin()
 {
-	if (_zoom > 0) setZoom(0);
+	if (_zoom > 0u) setZoom(0u);
 } */
 
 /**
@@ -837,7 +834,7 @@ void Globe::zoomMin()
  *
 void Globe::zoomMax()
 {
-	if (_zoom < _zoomRadii.size() - 1) setZoom(_zoomRadii.size() - 1);
+	if (_zoom < _radii.size() - 1u) setZoom(_radii.size() - 1u);
 } */
 
 /**
@@ -846,17 +843,17 @@ void Globe::zoomMax()
  */
 bool Globe::zoomDogfightIn()
 {
-	const size_t dfZoom (_zoomRadii.size() - 1u);
+	const size_t dfZoom (_radii.size() - 1u);
 
 	if (_zoom < dfZoom)
 	{
 		const double radius (_radius);
 
-		if (radius + _radiusStep >= _zoomRadii[dfZoom])
+		if (radius + _radiusStep >= _radii[dfZoom])
 			setZoom(dfZoom);
 		else
 		{
-			if (radius + _radiusStep >= _zoomRadii[_zoom + 1u])
+			if (radius + _radiusStep >= _radii[_zoom + 1u])
 				++_zoom;
 
 			setZoom(_zoom);
@@ -879,11 +876,11 @@ bool Globe::zoomDogfightOut()
 	{
 		const double radius (_radius);
 
-		if (radius - _radiusStep <= _zoomRadii[preDfZoom])
+		if (radius - _radiusStep <= _radii[preDfZoom])
 			setZoom(preDfZoom);
 		else
 		{
-			if (radius - _radiusStep <= _zoomRadii[_zoom - 1u])
+			if (radius - _radiusStep <= _radii[_zoom - 1u])
 				--_zoom;
 
 			setZoom(_zoom);
@@ -1191,8 +1188,8 @@ void Globe::think()
 			_game->getSavedGame()->getGlobeLatitude());
 	}
 
-	_blinkTimer->think(nullptr, this);
-	_rotTimer->think(nullptr, this);
+	_timerBlink->think(nullptr, this);
+	_timerRot->think(nullptr, this);
 }
 
 /**
@@ -1245,8 +1242,7 @@ void Globe::rotate()
  */
 void Globe::draw()
 {
-	if (_redraw == true)
-		cachePolygons();
+	if (_redraw == true) cachePolygons();
 
 	Surface::draw();
 
@@ -1263,7 +1259,7 @@ void Globe::draw()
 }
 
 /**
- * Renders the ocean and shades it according to the time of day.
+ * Renders this Globe as a blue primordial ocean.
  */
 void Globe::drawOcean()
 {
@@ -1277,8 +1273,7 @@ void Globe::drawOcean()
 }
 
 /**
- * Renders the land taking all the visible world-polygons and texturing and
- * shading them appropriately.
+ * Renders the land with textured polygons.
  */
 void Globe::drawLand()
 {
@@ -1299,7 +1294,7 @@ void Globe::drawLand()
 			y[j] = (*i)->getY(j);
 		}
 
-		drawTexturedPolygon( // Apply textures according to zoom and shade
+		drawTexturedPolygon( // Apply textures according to zoom-level.
 						x,y,
 						(*i)->getPoints(),
 						_texture->getFrame(static_cast<int>((*i)->getPolyTexture() + _texOffset)),
@@ -1314,8 +1309,8 @@ void Globe::drawBevel()
 {
 	Uint8 p;
 	int
-		w (this->getWidth()),
-		h (this->getHeight());
+		w (getWidth()),
+		h (getHeight());
 
 	for (int
 			y = 0;
@@ -1327,21 +1322,18 @@ void Globe::drawBevel()
 				x != w;
 				++x)
 		{
-			if (this->getPixelColor(x,y) == C_OCEAN)
+			if (getPixelColor(x,y) == C_OCEAN
+				&& (p = getPixelColor(x - 1, y - 1)) != C_OCEAN
+				&& p != C_BLACK)
 			{
-				p = this->getPixelColor(x - 1, y - 1);
-				if (p != C_OCEAN
-					&& p != C_BLACK)
-				{
-					this->setPixelColor(x,y, C_BLACK);
-				}
+				setPixelColor(x,y, C_BLACK);
 			}
 		}
 	}
 }
 
 /**
- * Gets position of sun from point on this Globe.
+ * Gets direction of the sun from a point on this Globe.
  * @param lon - longitude of position
  * @param lat - latitude of position
  * @return, position of sun
@@ -1410,8 +1402,8 @@ Cord Globe::getSunDirection( // private.
 }
 
 /**
- * Shadows the earth according to the sun's direction.
- * @note Also handles the terminator-fluxions (noise).
+ * Shadows the earth and adds terminator-fluxions (noise) according to the
+ * sun-direction.
  */
 void Globe::drawShadow()
 {
@@ -1420,13 +1412,13 @@ void Globe::drawShadow()
 										getWidth(),
 										getHeight()));
 	ShaderRepeat<Sint16> noise (ShaderRepeat<Sint16>(
-											_terminatorFluxions,
-											static_data.random_surf_size,
-											static_data.random_surf_size));
+												_terminatorFluxions,
+												static_data.random_surf_size,
+												static_data.random_surf_size));
 
 	earth.setMove(
-			_cenX-getWidth()  >> 1u,
-			_cenY-getHeight() >> 1u);
+			_cenX - (getWidth()  >> 1u),
+			_cenY - (getHeight() >> 1u));
 
 	lock();
 	ShaderDraw<CreateShadow>(
@@ -1458,93 +1450,94 @@ void Globe::XuLine( // private.
 		int shade,
 		Uint8 color)
 {
-	if (_clipper->LineClip( // empty line
+	if (_clipper->LineClip(
 						&x1,&y1,
-						&x2,&y2) != 1)
+						&x2,&y2) == 1) // not empty line
 	{
-		return;
-	}
+		bool inv;
+		Uint8 tcol;
+		double
+			delta_x (x2 - x1),
+			delta_y (y2 - y1),
+			len,
+			x0,y0,
+			SX,SY;
 
-	bool inv;
-	Uint8 tcol;
-	double
-		delta_x (x2 - x1),
-		delta_y (y2 - y1),
-		len,
-		x0,y0,
-		SX,SY;
-
-	if (std::abs(static_cast<int>(y2) - static_cast<int>(y1)) > std::abs(static_cast<int>(x2) - static_cast<int>(x1)))
-	{
-		len = std::abs(static_cast<int>(y2) - static_cast<int>(y1));
-		inv = false;
-	}
-	else
-	{
-		len = std::abs(static_cast<int>(x2) - static_cast<int>(x1));
-		inv = true;
-	}
-
-	if (y2 < y1)
-		SY = -1;
-	else if (AreSame(delta_y, 0.))
-		SY = 0;
-	else
-		SY = 1;
-
-	if (x2 < x1)
-		SX = -1;
-	else if (AreSame(delta_x, 0.))
-		SX = 0;
-	else
-		SX = 1;
-
-	x0 = x1;
-	y0 = y1;
-
-	if (inv == true)
-		SY = (delta_y / len);
-	else
-		SX = (delta_x / len);
-
-	while (len > 0.)
-	{
-		tcol = src->getPixelColor(
-							static_cast<int>(x0),
-							static_cast<int>(y0));
-		if (tcol != 0u)
+		if (std::abs(static_cast<int>(y2) - static_cast<int>(y1)) > std::abs(static_cast<int>(x2) - static_cast<int>(x1)))
 		{
-			if (color != 0u)
-				tcol = color; // flight path or craft radar
-			else
-			{
-				const Uint8 colorBlock (tcol & helper::ColorGroup);
-
-				if (   colorBlock == C_OCEAN
-					|| colorBlock == C_OCEAN + 16u)
-				{
-					tcol = static_cast<Uint8>(C_OCEAN + shade + 8); // this pixel is Ocean
-				}
-				else // this pixel is land
-				{
-					const Uint8 colorShaded (static_cast<Uint8>(shade + static_cast<int>(tcol)));
-
-					if (colorShaded > colorBlock + helper::ColorShade)
-						tcol = static_cast<Uint8>(colorBlock + helper::ColorShade);
-					else
-						tcol = colorShaded;
-				}
-			}
-
-			surface->setPixelColor(
-								static_cast<int>(x0),
-								static_cast<int>(y0),
-								tcol);
+			len = std::abs(static_cast<int>(y2) - static_cast<int>(y1));
+			inv = false;
+		}
+		else
+		{
+			len = std::abs(static_cast<int>(x2) - static_cast<int>(x1));
+			inv = true;
 		}
 
-		x0 += SX;
-		y0 += SY;
-		len -= 1.;
+		if (y2 < y1)
+			SY = -1;
+		else if (AreSame(delta_y, 0.))
+			SY = 0;
+		else
+			SY = 1;
+
+		if (x2 < x1)
+			SX = -1;
+		else if (AreSame(delta_x, 0.))
+			SX = 0;
+		else
+			SX = 1;
+
+		x0 = x1;
+		y0 = y1;
+
+		if (inv == true)
+			SY = (delta_y / len);
+		else
+			SX = (delta_x / len);
+
+		while (len > 0.)
+		{
+			tcol = src->getPixelColor(
+								static_cast<int>(x0),
+								static_cast<int>(y0));
+			if (tcol != 0u)
+			{
+				switch (color)
+				{
+					case 0u:
+					{
+						const Uint8 colorBlock (tcol & helper::ColorGroup);
+						if (   colorBlock == C_OCEAN
+							|| colorBlock == C_OCEAN + 16u)
+						{
+							tcol = static_cast<Uint8>(C_OCEAN + shade + 8); // this pixel is Ocean
+						}
+						else // this pixel is land
+						{
+							const Uint8 colorShaded (static_cast<Uint8>(shade + static_cast<int>(tcol)));
+							if (colorShaded > colorBlock + helper::ColorShade)
+								tcol = static_cast<Uint8>(colorBlock + helper::ColorShade);
+							else
+								tcol = colorShaded;
+						}
+						break;
+					}
+
+					default:
+						tcol = color; // flight path or craft radar
+				}
+
+				surface->setPixelColor(
+									static_cast<int>(x0),
+									static_cast<int>(y0),
+									tcol);
+			}
+
+			x0 += SX;
+			y0 += SY;
+			len -= 1.;
+		}
 	}
 }
 
@@ -1685,7 +1678,7 @@ void Globe::drawGlobeCircle( // private.
 		lat1,
 		lon1;
 
-	for (double // 48 circle segments
+	for (double // 48 segments in circle
 			az = 0.;
 			az <= M_PI * 2. + 0.01;
 			az += M_PI * 2. / static_cast<double>(segments))
@@ -1814,7 +1807,7 @@ void Globe::drawVHLine( // private.
 		ln2 = lon1 + sx * static_cast<double>(i + 1);
 		lt2 = lat1 + sy * static_cast<double>(i + 1);
 
-		if (pointBack(ln2, lt2) == false
+		if (   pointBack(ln2, lt2) == false
 			&& pointBack(ln1, lt1) == false)
 		{
 			polarToCart(ln1, lt1, &x1, &y1);
@@ -2019,7 +2012,7 @@ void Globe::drawDetail()
 		switchDebugType = true;
 		int
 			cycle (_game->getDebugCycle()),
-			area (0),
+			area  (0),
 			color (0);
 
 		switch (_debugType)
@@ -2188,16 +2181,9 @@ void Globe::drawDetail()
 		switchDebugType = false;
 		switch (_debugType)
 		{
-			case DTG_COUNTRY:
-				_debugType = DTG_REGION;
-				break;
-
-			case DTG_REGION:
-				_debugType = DTG_ZONE;
-				break;
-
-			case DTG_ZONE:
-				_debugType = DTG_COUNTRY;
+			case DTG_COUNTRY:	_debugType = DTG_REGION;	break;
+			case DTG_REGION:	_debugType = DTG_ZONE;		break;
+			case DTG_ZONE:		_debugType = DTG_COUNTRY;
 		}
 	}
 }
@@ -2763,7 +2749,7 @@ void Globe::getPolygonTextureAndShade(
 		int* shade) const
 {
 	// this is shade conversion from 0..31 levels of geoscape to battlescape levels 0..15
-	const int worldshades[32]
+	const int worldshades[32u]
 	{
 		0, 1, 1, 1, 2, 2, 2, 3,
 		3, 3, 4, 4, 4, 5, 5, 5,
@@ -2814,7 +2800,7 @@ void Globe::getPolygonShade(
 		int* shade) const
 {
 	// this is shade conversion from 0..31 levels of geoscape to battlescape levels 0..15
-	const int worldshades[32]
+	const int worldshades[32u]
 	{
 		0, 1, 1, 1, 2, 2, 2, 3,
 		3, 3, 4, 4, 4, 5, 5, 5,
@@ -2834,7 +2820,7 @@ void Globe::getPolygonShade(
  */
 void Globe::resize()
 {
-	static const size_t SRF (4);
+	static const size_t SRF (4u);
 	Surface* const surfaces[SRF]
 	{
 		this,

@@ -117,9 +117,9 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 
 	if (_base->getBaseExposed() == true)
 	{
-		_blinkTimer = new Timer(325u);
-		_blinkTimer->onTimer(static_cast<StateHandler>(&BaseDetectionState::blink));
-		_blinkTimer->start();
+		_timerBlink = new Timer(325u);
+		_timerBlink->onTimer(static_cast<StateHandler>(&BaseDetectionState::blink));
+		_timerBlink->start();
 
 		_txtSpotted->setText(tr("STR_SPOTTED"));
 		_txtSpotted->setColor(RED);
@@ -182,7 +182,7 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 BaseDetectionState::~BaseDetectionState()
 {
 	if (_base->getBaseExposed() == true)
-		delete _blinkTimer;
+		delete _timerBlink;
 }
 
 /**
@@ -193,7 +193,7 @@ void BaseDetectionState::think()
 	if (_window->isPopupDone() == false)
 		_window->think();
 	else if (_base->getBaseExposed() == true)
-		_blinkTimer->think(this, nullptr);
+		_timerBlink->think(this, nullptr);
 }
 
 /**

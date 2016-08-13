@@ -46,7 +46,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Multiple Targets window.
+ * Initializes all the elements in the MultipleTargets window.
  * @param targets	- vector of pointers to Target for display
  * @param craft		- pointer to Craft to retarget (nullptr if none)
  * @param geoState	- pointer to the GeoscapeState
@@ -65,16 +65,16 @@ MultipleTargetsState::MultipleTargetsState(
 	if (_targets.size() > 1)
 	{
 		int
-			height ((BUTTON_HEIGHT * static_cast<int>(_targets.size()) + 1) + (SPACING * static_cast<int>(_targets.size())) + (MARGIN * 2)),
+			height ((BUTTON_HEIGHT * (static_cast<int>(_targets.size()) + 1)) // incl/ Cancel btn.
+				  + (SPACING       *  static_cast<int>(_targets.size()))
+				  + (MARGIN << 1u)),
 			window_y ((200 - height) >> 1u),
 			btn_y (window_y + MARGIN);
 
 		_window = new Window(
 							this,
-							136,
-							height,
-							60,
-							window_y,
+							136, height,
+							60,  window_y,
 							POPUP_VERTICAL);
 
 		setInterface("UFOInfo");

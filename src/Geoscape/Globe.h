@@ -119,8 +119,8 @@ private:
 		* _markerSet,
 		* _texture;
 	Timer
-		* _blinkTimer,
-		* _rotTimer;
+		* _timerBlink,
+		* _timerRot;
 
 	/// cache of geographical textures
 	std::list<Polygon*> _cacheLand;
@@ -129,7 +129,7 @@ private:
 	/// data-sample used for noise in terminator-shadow
 	std::vector<Sint16> _terminatorFluxions;
 	/// list of zoom-level dimensions on-screen
-	std::vector<double> _zoomRadii;
+	std::vector<double> _radii;
 
 	DebugTypeGlobe _debugType;
 

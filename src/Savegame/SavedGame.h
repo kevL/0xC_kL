@@ -276,15 +276,15 @@ private:
 
 		/// Gets the current Globe longitude.
 		double getGlobeLongitude() const;
-		/// Sets a new Globe longitude.
+		/// Sets Globe longitude.
 		void setGlobeLongitude(double lon);
 		/// Gets the current Globe latitude.
 		double getGlobeLatitude() const;
-		/// Sets a new Globe latitude.
+		/// Sets Globe latitude.
 		void setGlobeLatitude(double lat);
 		/// Gets the current Globe zoom.
 		size_t getGlobeZoom() const;
-		/// Sets a new Globe zoom.
+		/// Sets Globe zoom.
 		void setGlobeZoom(size_t zoom);
 
 		/// Gets the preDogfight Globe longitude.

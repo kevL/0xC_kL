@@ -690,8 +690,8 @@ GraphsState::GraphsState()
 	centerAllSurfaces();
 
 
-	_blinkTimer = new Timer(250u);
-	_blinkTimer->onTimer(static_cast<StateHandler>(&GraphsState::blink));
+	_timerBlink = new Timer(250u);
+	_timerBlink->onTimer(static_cast<StateHandler>(&GraphsState::blink));
 
 	initButtons();
 
@@ -715,7 +715,7 @@ GraphsState::GraphsState()
  */
 GraphsState::~GraphsState()
 {
-	delete _blinkTimer;
+	delete _timerBlink;
 
 	std::string toggles;
 	for (size_t
@@ -766,7 +766,7 @@ void GraphsState::initButtons() // private.
 	{
 		if ((*i)->_blinkA == true || (*i)->_blinkX == true)
 		{
-			_blinkTimer->start();
+			_timerBlink->start();
 			return;
 		}
 	}
@@ -777,7 +777,7 @@ void GraphsState::initButtons() // private.
 	{
 		if ((*i)->_blinkA == true || (*i)->_blinkX == true)
 		{
-			_blinkTimer->start();
+			_timerBlink->start();
 			return;
 		}
 	} */
@@ -788,7 +788,7 @@ void GraphsState::initButtons() // private.
  */
 void GraphsState::think()
 {
-	_blinkTimer->think(this, nullptr);
+	_timerBlink->think(this, nullptr);
 }
 
 /**
@@ -876,7 +876,7 @@ void GraphsState::blink() // private.
 	}
 
 	if (_reset == true)
-		_blinkTimer->stop();
+		_timerBlink->stop();
 }
 
 /**
@@ -915,7 +915,7 @@ void GraphsState::btnUfoRegionClick(Action*)
 		_btnToggleAll->setVisible();
 		initToggleAll();
 
-		_btnReset->setVisible(_blinkTimer->isRunning() == true);
+		_btnReset->setVisible(_timerBlink->isRunning() == true);
 		drawLines();
 
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_AREAS"));
@@ -957,7 +957,7 @@ void GraphsState::btnXcomRegionClick(Action*)
 		_btnToggleAll->setVisible();
 		initToggleAll();
 
-		_btnReset->setVisible(_blinkTimer->isRunning() == true);
+		_btnReset->setVisible(_timerBlink->isRunning() == true);
 		drawLines();
 
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_AREAS"));
@@ -999,7 +999,7 @@ void GraphsState::btnUfoCountryClick(Action*)
 		_btnToggleAll->setVisible();
 		initToggleAll();
 
-		_btnReset->setVisible(_blinkTimer->isRunning() == true);
+		_btnReset->setVisible(_timerBlink->isRunning() == true);
 		drawLines();
 
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_COUNTRIES"));
@@ -1041,7 +1041,7 @@ void GraphsState::btnXcomCountryClick(Action*)
 		_btnToggleAll->setVisible();
 		initToggleAll();
 
-		_btnReset->setVisible(_blinkTimer->isRunning() == true);
+		_btnReset->setVisible(_timerBlink->isRunning() == true);
 		drawLines();
 
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_COUNTRIES"));

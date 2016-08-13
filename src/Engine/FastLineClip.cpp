@@ -70,30 +70,35 @@ void FastLineClip::Clip1_Left(void)
 
 
 
-int FastLineClip::LineClip(double *x0, double *y0, double *x1, double *y1)
+int FastLineClip::LineClip(
+		double* x0,
+		double* y0,
+		double* x1,
+		double* y1)
 {
-	int Code= 0;
-	int visible= 0; // visible state
+	int
+		Code    = 0,
+		visible = 0; // visible state
 
-	FC_xn= *x0; FC_yn= *y0;
-	FC_xk= *x1; FC_yk= *y1;
+	FC_xn = *x0; FC_yn = *y0;
+	FC_xk = *x1; FC_yk = *y1;
 
 
 // "Code" evaluation - bits 0..3 - end point, bits 4..7 - start point.
 
 	//start point is
-	if (FC_yk > Wybot) Code|= 0x08; else	//lower
-	if (FC_yk < Wytop) Code|= 0x04; 		//higher
+	if (FC_yk > Wybot) Code |= 0x08; else	//lower
+	if (FC_yk < Wytop) Code |= 0x04; 		//higher
 
-	if (FC_xk > Wxrig) Code|= 0x02; else	//righter
-	if (FC_xk < Wxlef) Code|= 0x01;			//lefter
+	if (FC_xk > Wxrig) Code |= 0x02; else	//righter
+	if (FC_xk < Wxlef) Code |= 0x01;		//lefter
 
 					//end point is
-	if (FC_yn > Wybot) Code|= 0x80; else	//lower
-	if (FC_yn < Wytop) Code|= 0x40;			//higher
+	if (FC_yn > Wybot) Code |= 0x80; else	//lower
+	if (FC_yn < Wytop) Code |= 0x40;		//higher
 
-	if (FC_xn > Wxrig) Code|= 0x20; else	//righter
-	if (FC_xn < Wxlef) Code|= 0x10;			//lefter
+	if (FC_xn > Wxrig) Code |= 0x20; else	//righter
+	if (FC_xn < Wxlef) Code |= 0x10;		//lefter
 
 // Clipping for each of 81 cases.
 	switch (Code)
@@ -109,7 +114,7 @@ int FastLineClip::LineClip(double *x0, double *y0, double *x1, double *y1)
 		case 0x06: Clip1_Right();
 					if (FC_yk < Wytop) Clip1_Top();
 					++visible; break;
-		case 0x08: Clip1_Bottom();	++visible; break;
+		case 0x08: Clip1_Bottom(); ++visible; break;
 		case 0x09: Clip1_Left();
 					if (FC_yk > Wybot) Clip1_Bottom();
 					++visible; break;
@@ -353,18 +358,13 @@ int FastLineClip::LineClip(double *x0, double *y0, double *x1, double *y1)
 
 		// Error
 		default: visible = -1;
-		break;
 	} //Switch
 
 	if (visible > 0)
 	{
-		*x0= FC_xn;
-		*y0= FC_yn;
-
-		*x1= FC_xk;
-		*y1= FC_yk;
+		*x0 = FC_xn; *y0 = FC_yn;
+		*x1 = FC_xk; *y1 = FC_yk;
 	}
-
 	return visible;
 }
 

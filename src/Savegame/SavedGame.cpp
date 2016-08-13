@@ -458,9 +458,9 @@ void SavedGame::load(
 //	_radarLines				= doc["radarLines"]			.as<bool>(_radarLines);
 //	_detail					= doc["detail"]				.as<bool>(_detail);
 
-	_globeLon				= doc["globeLon"].as<double>(_globeLon);
-	_globeLat				= doc["globeLat"].as<double>(_globeLat);
-	_globeZoom				= static_cast<size_t>(doc["globeZoom"].as<int>(_globeZoom));
+	_globeLon	= doc["globeLon"].as<double>(_globeLon);
+	_globeLat	= doc["globeLat"].as<double>(_globeLat);
+	_globeZoom	= static_cast<size_t>(doc["globeZoom"].as<int>(_globeZoom));
 
 
 	Log(LOG_INFO) << ". load countries";
@@ -894,7 +894,7 @@ void SavedGame::setIronman(bool ironman)
 }
 
 /**
- * Gets the current longitude of the Geoscape globe.
+ * Gets the current longitude of the geoscape Globe.
  * @return, longitude
  */
 double SavedGame::getGlobeLongitude() const
@@ -903,7 +903,7 @@ double SavedGame::getGlobeLongitude() const
 }
 
 /**
- * Sets the current longitude of the Geoscape globe.
+ * Sets the current longitude of the geoscape Globe.
  * @param lon - longitude
  */
 void SavedGame::setGlobeLongitude(double lon)
@@ -912,7 +912,7 @@ void SavedGame::setGlobeLongitude(double lon)
 }
 
 /**
- * Gets the current latitude of the Geoscape globe.
+ * Gets the current latitude of the geoscape Globe.
  * @return, latitude
  */
 double SavedGame::getGlobeLatitude() const
@@ -921,7 +921,7 @@ double SavedGame::getGlobeLatitude() const
 }
 
 /**
- * Sets the current latitude of the Geoscape globe.
+ * Sets the current latitude of the geoscape Globe.
  * @param lat - latitude
  */
 void SavedGame::setGlobeLatitude(double lat)
@@ -930,7 +930,7 @@ void SavedGame::setGlobeLatitude(double lat)
 }
 
 /**
- * Gets the current zoom level of the Geoscape globe.
+ * Gets the current zoom-level of the geoscape Globe.
  * @return, zoom level
  */
 size_t SavedGame::getGlobeZoom() const
@@ -939,7 +939,7 @@ size_t SavedGame::getGlobeZoom() const
 }
 
 /**
- * Sets the current zoom level of the Geoscape globe.
+ * Sets the current zoom-level of the geoscape Globe.
  * @param zoom - zoom level
  */
 void SavedGame::setGlobeZoom(size_t zoom)
@@ -948,7 +948,7 @@ void SavedGame::setGlobeZoom(size_t zoom)
 }
 
 /**
- * Gets the preDogfight longitude of the Geoscape globe.
+ * Gets the preDogfight longitude of the geoscape Globe.
  * @return, longitude
  */
 double SavedGame::getDfLongitude() const
@@ -957,7 +957,7 @@ double SavedGame::getDfLongitude() const
 }
 
 /**
- * Sets the preDogfight longitude of the Geoscape globe.
+ * Sets the preDogfight longitude of the geoscape Globe.
  * @param lon - longitude
  */
 void SavedGame::setDfLongitude(double lon)
@@ -966,7 +966,7 @@ void SavedGame::setDfLongitude(double lon)
 }
 
 /**
- * Gets the preDogfight latitude of the Geoscape globe.
+ * Gets the preDogfight latitude of the geoscape Globe.
  * @return, latitude
  */
 double SavedGame::getDfLatitude() const
@@ -975,7 +975,7 @@ double SavedGame::getDfLatitude() const
 }
 
 /**
- * Sets the preDogfight latitude of the Geoscape globe.
+ * Sets the preDogfight latitude of the geoscape Globe.
  * @param lat - latitude
  */
 void SavedGame::setDfLatitude(double lat)
@@ -984,7 +984,7 @@ void SavedGame::setDfLatitude(double lat)
 }
 
 /**
- * Gets the preDogfight zoom-level of the Geoscape globe.
+ * Gets the preDogfight zoom-level of the geoscape Globe.
  * @return, zoom level
  */
 size_t SavedGame::getDfZoom() const
@@ -993,7 +993,7 @@ size_t SavedGame::getDfZoom() const
 }
 
 /**
- * Sets the preDogfight zoom-level of the Geoscape globe.
+ * Sets the preDogfight zoom-level of the geoscape Globe.
  * @param zoom - zoom level
  */
 void SavedGame::setDfZoom(size_t zoom)
@@ -1009,7 +1009,7 @@ void SavedGame::setDfZoom(size_t zoom)
 void SavedGame::balanceBudget()
 {
 	int
-		cashIn (0),
+		cashIn  (0),
 		cashOut (0);
 
 	for (std::vector<Base*>::const_iterator

@@ -85,7 +85,7 @@ private:
 		* _btnW1,
 		* _btnW2;
 	TextEdit* _edtCraft;
-	Timer* _blinkTimer;
+	Timer* _timerBlink;
 	Window* _window;
 
 	/// Sets current cost to send the Craft on a mission.

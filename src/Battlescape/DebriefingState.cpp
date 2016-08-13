@@ -1102,7 +1102,8 @@ void DebriefingState::prepareDebriefing() // private.
 						if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 						{
 							(*i)->getStatistics()->KIA = true;
-							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
+							(*i)->postMissionProcedures(true);
+//							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true); // don't bother showing dead soldier stats.
 
 							if (_isQuickBattle == false)
 								_missionCost += _base->soldierExpense(sol, true);
@@ -1208,7 +1209,8 @@ void DebriefingState::prepareDebriefing() // private.
 							if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 							{
 								(*i)->getStatistics()->MIA = true;
-								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true);
+								(*i)->postMissionProcedures(true);
+//								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true); // don't bother showing dead soldier stats.
 
 								addStat(
 									"STR_XCOM_AGENTS_MISSING",

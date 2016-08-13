@@ -194,7 +194,8 @@ DebriefExtraState::DebriefExtraState(
 	_lstSolStats->setMargin();
 	_lstSolStats->setVisible(false);
 
-	buildSoldierStats();
+	if (_solStatDeltas.empty() == false)
+		buildSoldierStats();
 
 
 	_lstGained	->setVisible(_curScreen == DES_LOOT_GAINED);

@@ -120,7 +120,7 @@ private:
 		* _btn1Day,
 
 		* _btnDetail,
-		* _timeComp;
+		* _btnGroup;
 //	InteractiveSurface* _btnRotateLeft, * _btnRotateRight, * _btnRotateUp, * _btnRotateDown, * _btnZoomIn, * _btnZoomOut;
 	InteractiveSurface
 		* _isfUfoBlobs[UFO_HOTBLOBS],
@@ -129,7 +129,7 @@ private:
 	Ruleset* _rules;
 	SavedGame* _gameSave;
 	Surface
-		* _sideBlack,
+		* _srfSideBlack,
 		* _srfSpace;
 	Text
 		* _txtDebug,
@@ -152,11 +152,11 @@ private:
 		* _sideTop,
 		* _sideBottom;
 	Timer
-		* _geoTimer,
-		* _dfZoomInTimer,
-		* _dfZoomOutTimer,
-		* _dfStartTimer,
-		* _dfTimer;
+		* _timerGeo,
+		* _timerDf,
+		* _timerDfStart,
+		* _timerDfZoomIn,
+		* _timerDfZoomOut;
 	Ufo* _hostileUfos[UFO_HOTBLOBS];
 
 	std::list<State*> _popups;
@@ -201,7 +201,7 @@ private:
 	public:
 		static const int _ufoBlobs[8u][13u][13u]; // used also by DogfightState
 
-		/// Creates the Geoscape state.
+		/// Creates a Geoscape state.
 		GeoscapeState();
 		/// Cleans up the Geoscape state.
 		~GeoscapeState();
