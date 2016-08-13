@@ -549,12 +549,17 @@ void DebriefingState::btnOkClick(Action*)
 												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
 			}
 
-			_game->pushState(new DebriefExtraState(
-												_base,
-												_battleSave->getOperation(),
-												_itemsGained,
-												_itemsLostProperty,
-												_soldierStatInc));
+			if (   _itemsGained.empty() == false
+				|| _itemsLostProperty.empty() == false
+				|| _soldierStatInc.empty() == false)
+			{
+				_game->pushState(new DebriefExtraState(
+													_base,
+													_battleSave->getOperation(),
+													_itemsGained,
+													_itemsLostProperty,
+													_soldierStatInc));
+			}
 
 			if (_base->storesOverfull() == true)
 			{

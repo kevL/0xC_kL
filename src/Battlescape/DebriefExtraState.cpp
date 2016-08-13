@@ -562,7 +562,8 @@ void DebriefExtraState::btnOkClick(Action*)
 				_txtBuyOrSell->setText(L"buy");
 				_lstLost->setVisible();
 				break;
-			} // no break;
+			}
+			// no break;
 
 		case DES_LOOT_LOST:
 			_lstLost->setVisible(false);
@@ -592,17 +593,21 @@ void DebriefExtraState::btnOkClick(Action*)
 				}
 			}
 
-			_curScreen = DES_SOL_STATS;
-			_txtScreen->setText(L"Stats");
-			_lstSolStats->setVisible();
-			break;
+			if (_solStatDeltas.empty() == false)
+			{
+				_curScreen = DES_SOL_STATS;
+				_txtScreen->setText(L"Stats");
+				_lstSolStats->setVisible();
+				break;
+			}
+			// no break;
 
 		case DES_SOL_STATS:
 			if (_game->getQtyStates() == 2u // ie: (1) this, (2) Geoscape
 				&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 			{
 				_game->getResourcePack()->fadeMusic(_game, 863);
-//				_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
+//				_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE); // starts auto on return to Geoscape.
 			}
 			_game->popState();
 	}
