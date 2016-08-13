@@ -2579,7 +2579,7 @@ void GeoscapeState::time1Hour()
 /**
  ** FUNCTOR ***
  * Attempts to generate a support-mission for an AlienBase.
- * @note Each AlienBase has a %chance to generate a mission.
+ * @note Each AlienBase has a chance to generate a mission.
  */
 struct GenerateSupportMission
 	:
@@ -2604,24 +2604,26 @@ private:
 		{}
 
 		/**
-		 * Checks and creates a support-mission.
+		 * Checks for and creates an AlienBase's support-mission.
 		 * @param aBase - pointer to an AlienBase
 		 */
 		void operator() (const AlienBase* const aBase) const;
 };
 
 /**
- * Checks and creates a supply-mission for a specified AlienBase.
- * @note There is a 4% chance of the mission spawning.
- * @param aBase - pointer to the AlienBase.
+ * Checks for and creates a base-generated AlienMission for a specified
+ * AlienBase.
+ * @note There is a 4% chance per day of a mission getting created.
+ * @param aBase - pointer to an AlienBase
  */
 void GenerateSupportMission::operator() (const AlienBase* const aBase) const
 {
 	const RuleAlienDeployment* const ruleDeploy (aBase->getAlienBaseDeployment());
-	const RuleAlienMission* const missionRule (_rules.getAlienMission(ruleDeploy->getMissionType()));
+	const std::string type (ruleDeploy->getBaseGeneratedType());
+	const RuleAlienMission* const missionRule (_rules.getAlienMission(type));
 	if (missionRule != nullptr)
 	{
-		if (RNG::percent(ruleDeploy->getMissionPercent()) == true)
+		if (RNG::percent(ruleDeploy->getBaseGeneratedPct()) == true)
 		{
 			AlienMission* const mission (new AlienMission(*missionRule, _gameSave));
 			mission->setRegion(
@@ -2635,10 +2637,10 @@ void GenerateSupportMission::operator() (const AlienBase* const aBase) const
 			_gameSave.getAlienMissions().push_back(mission);
 		}
 	}
-	else if (ruleDeploy->getMissionType().empty() == false)
+	else if (type.empty() == false)
 	{
-		std::string st ("AlienBase failed to generate an AlienMission from an ");
-		st += "undefined mission-type [" + ruleDeploy->getMissionType() + "]";
+		std::string st ("AlienBase failed to generate an AlienMission from type: ");
+		st += type + " - no RuleAlienMission was found.";
 		throw Exception(st);
  	}
 }
@@ -3013,7 +3015,7 @@ void GeoscapeState::time1Day()
 	}
 
 
-	std::for_each( // handle supply of aLien-bases
+	std::for_each( // handle possible generation of AlienBase support-mission
 			_gameSave->getAlienBases()->begin(),
 			_gameSave->getAlienBases()->end(),
 			GenerateSupportMission(*_rules, *_gameSave));

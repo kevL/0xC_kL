@@ -1197,8 +1197,9 @@ alienDeployments:
     objectiveType: 3
     objectiveComplete: [STR_ALIEN_BASE_CONTROL_DESTROYED, 500]
     objectivePopup: STR_ALIEN_BASE_CONTROL_DESTROYED
-    genMissionType: STR_ALIEN_SUPPLY
-    genMissionPct: 4
+    generatedMissionPct: 4 #pct per day
+    generatedMission:
+      STR_ALIEN_SUPPLY: 100
   - type: STR_BASE_DEFENSE
     data:
       - alienRank: 6 #terrorist1

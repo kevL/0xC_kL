@@ -163,7 +163,7 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR"),
 		_isAlienBase(false),
-		_genMissionPct(0)
+		_generatedMissionPct(0)
 {}
 
 /**
@@ -217,7 +217,6 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 		_objectiveCompleteText	= node["objectiveComplete"][0u].as<std::string>(_objectiveCompleteText);
 		_objectiveCompleteScore	= node["objectiveComplete"][1u].as<int>(_objectiveCompleteScore);
 	}
-
 	if (node["objectiveFailed"])
 	{
 		_objectiveFailedText	= node["objectiveFailed"][0u].as<std::string>(_objectiveFailedText);
@@ -228,9 +227,10 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 	_turnLimit		= node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult	= static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 
-	_isAlienBase	= node["isAlienBase"]	.as<bool>(_isAlienBase);
-	_genMissionType	= node["genMissionType"].as<std::string>(_genMissionType);
-	_genMissionPct	= node["genMissionPct"]	.as<int>(_genMissionPct);
+	_isAlienBase			= node["isAlienBase"]			.as<bool>(_isAlienBase);
+	_generatedMissionPct	= node["generatedMissionPct"]	.as<int>(_generatedMissionPct);
+	if (node["generatedMission"])
+		_generatedMission.load(node["generatedMission"]);
 }
 
 /**
@@ -459,7 +459,7 @@ bool RuleAlienDeployment::getObjectiveCompleteInfo(
 		std::string& text,
 		int& score) const
 {
-	text = _objectiveCompleteText;
+	text  = _objectiveCompleteText;
 	score = _objectiveCompleteScore;
 
 	return text.empty() == false;
@@ -530,20 +530,24 @@ bool RuleAlienDeployment::isAlienBase() const
 /**
  * Gets the type of AlienMission that an AlienBase can generate.
  * @note This is a supply-mission by default.
- * @return, reference to type of mission
+ * @return, type of AlienMission
  */
-const std::string& RuleAlienDeployment::getMissionType() const
+std::string RuleAlienDeployment::getBaseGeneratedType() const
 {
-	return _genMissionType;
+	const std::string type (_generatedMission.getOptionResult());
+	if (type.empty() == false)
+		return type;
+
+	return "STR_ALIEN_SUPPLY";
 }
 
 /**
  * Gets the chance of an AlienBase generating an AlienMission.
- * @return, percent chance of mission being generated
+ * @return, percent chance of a mission being generated per day
  */
-int RuleAlienDeployment::getMissionPercent() const
+int RuleAlienDeployment::getBaseGeneratedPct() const
 {
-	return _genMissionPct;
+	return _generatedMissionPct;
 }
 
 }

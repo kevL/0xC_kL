@@ -72,7 +72,7 @@ MiniMapView::MiniMapView(
 		_game(game),
 		_camera(camera),
 		_battleSave(battleSave),
-		_cycle(0),
+		_anicycle(0),
 		_isMouseScrolling(false),
 		_isMouseScrolled(false),
 		_mouseScrollX(0),
@@ -207,7 +207,7 @@ void MiniMapView::draw()
 						if (tile->getFire() != 0 && tile->isRevealed() == true) // draw fire
 						{
 							int fire;
-							switch (_cycle)
+							switch (_anicycle)
 							{
 								default:
 								case 0:
@@ -252,7 +252,7 @@ void MiniMapView::draw()
 							spriteId (unit->getMiniMapSpriteIndex()
 									+  tile->getPosition().x - unit->getPosition().x
 									+ (tile->getPosition().y - unit->getPosition().y) * unitSize
-									+ _cycle * unitSize * unitSize); // holy mother-of-pearl spriteId batman.
+									+ _anicycle * unitSize * unitSize); // holy mother-of-pearl spriteId batman.
 
 						srf = _srtScanG->getFrame(spriteId);
 						srf->blitNShade(
@@ -272,11 +272,11 @@ void MiniMapView::draw()
 						else
 							color = 0;
 
-						srf = _srtScanG->getFrame(_cycle + 9);			// white cross
+						srf = _srtScanG->getFrame(_anicycle + 9);			// white cross
 						srf->blitNShade(this, x,y, 0, false, color);
 					}
 
-					if (_cycle == 0 && _battleSave->scannerDots().empty() == false)
+					if (_anicycle == 0 && _battleSave->scannerDots().empty() == false)
 					{
 						std::pair<int,int> dotTest (std::make_pair(px,py));
 						if (std::find(
@@ -284,7 +284,7 @@ void MiniMapView::draw()
 								_battleSave->scannerDots().end(),
 								dotTest) != _battleSave->scannerDots().end())
 						{
-							srf = _srtScanG->getFrame(_cycle + 9);		// white cross
+							srf = _srtScanG->getFrame(_anicycle + 9);		// white cross
 							srf->blitNShade(this, x,y, 0, false, RED);
 						}
 					}
@@ -306,7 +306,7 @@ void MiniMapView::draw()
 		xOffset (static_cast<Sint16>(CELL_WIDTH  >> 1u)),
 		yOffset (static_cast<Sint16>(CELL_HEIGHT >> 1u));
 
-//	const Uint8 color (static_cast<Uint8>(WHITE + _cycle * 3)); // <- if you really want the crosshair to blink.
+//	const Uint8 color (static_cast<Uint8>(WHITE + _anicycle * 3)); // <- if you really want the crosshair to blink.
 	drawLine(
 			static_cast<Sint16>(centerX - CELL_WIDTH),	// top left
 			static_cast<Sint16>(centerY - CELL_HEIGHT),
@@ -467,8 +467,8 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 			const int
 				mX (static_cast<int>(action->getRelativeMouseX() / action->getScaleX())),
 				mY (static_cast<int>(action->getRelativeMouseY() / action->getScaleY())),
-				offsetX ((mX / CELL_WIDTH)  - (_surface->w / 2 / CELL_WIDTH)), // get offset (in cells) of the click relative to center of screen
-				offsetY ((mY / CELL_HEIGHT) - (_surface->h / 2 / CELL_HEIGHT));
+				offsetX ((mX / CELL_WIDTH)  - ((_surface->w >> 1u) / CELL_WIDTH)), // get offset (in cells) of the click relative to center of screen
+				offsetY ((mY / CELL_HEIGHT) - ((_surface->h >> 1u) / CELL_HEIGHT));
 
 			_camera->centerPosition(
 									Position(
@@ -660,18 +660,16 @@ void MiniMapView::keyboardRelease(Action* action, State* state) // private.
  */
 void MiniMapView::handleTimer() // private.
 {
-	if ((_scrollKeyX != 0 || _scrollKeyY != 0)
-		&& _timerScroll->isRunning() == false
-		&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
+	if (_timerScroll->isRunning() == false)
 	{
-		_timerScroll->start();
+		if ((_scrollKeyX != 0 || _scrollKeyY != 0)
+			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
+		{
+			_timerScroll->start();
+		}
 	}
-	else if (_timerScroll->isRunning() == true
-		&& _scrollKeyX == 0
-		&& _scrollKeyY == 0)
-	{
+	else if (_scrollKeyX == 0 && _scrollKeyY == 0) //&& _timerScroll->isRunning() == true
 		_timerScroll->stop();
-	}
 }
 
 /**
@@ -679,8 +677,8 @@ void MiniMapView::handleTimer() // private.
  */
 void MiniMapView::animate()
 {
-	if (++_cycle == CYCLE)
-		_cycle = 0;
+	if (++_anicycle == CYCLE)
+		_anicycle = 0;
 
 	_redraw = true;
 }

@@ -59,7 +59,6 @@ YAML::Node WeightedOptions::save() const
 	{
 		node[i->first] = i->second;
 	}
-
 	return node;
 }
 
@@ -72,26 +71,73 @@ YAML::Node WeightedOptions::save() const
  */
 std::string WeightedOptions::getOptionResult() const
 {
-	if (_totalWeight != 0)
+	if (_totalWeight != 0u)
 	{
 		const size_t pick (static_cast<size_t>(RNG::generate(1, // can't use RNG::pick() because '1'.
 															 static_cast<int>(_totalWeight))));
-		size_t tally (0);
+		size_t tally (0u);
 		std::map<std::string, size_t>::const_iterator i (_options.begin());
 		while (i != _options.end())
 		{
-			tally += i->second;
-			if (pick <= tally)
+			if (pick <= (tally += i->second))
 				return i->first;
-
 			++i;
 		}
 	}
-
 	return "";
 }
 
-/*
+/**
+ * Sets this WeightedOptions' weight.
+ * @note If @a weight is set to 0 the option is removed from the list of choices.
+ * @note If @a type already exists the new weight replaces the old one; otherwise
+ * @a type is added to the list of choices with @a weight as the weight.
+ * @param type		- reference to the option name
+ * @param weight	- the option's new weight
+ */
+void WeightedOptions::setWeight(
+		const std::string& type,
+		size_t weight)
+{
+	std::map<std::string, size_t>::iterator i (_options.find(type));
+	if (i != _options.end())
+	{
+		_totalWeight -= i->second;
+
+		if (weight != 0u)
+		{
+			i->second = weight;
+			_totalWeight += weight;
+		}
+		else
+			_options.erase(i);
+	}
+	else if (weight != 0u)
+	{
+		_options.insert(std::make_pair(type, weight));
+		_totalWeight += weight;
+	}
+}
+
+/**
+ * Gets the list of strings associated with these weights.
+ * @return, vector of strings in these weights
+ */
+std::vector<std::string> WeightedOptions::getTypes() const
+{
+	std::vector<std::string> types;
+	for (std::map<std::string, size_t>::const_iterator
+			i = _options.begin();
+			i != _options.end();
+			++i)
+	{
+		types.push_back((*i).first);
+	}
+	return types;
+}
+
+}
+/**
  * Selects the most likely option.
  * @note This MUST be called on non-empty objects. Currently used only to
  * determine race of initial alien mission -> GeoscapeState::deterAlienMissions(atGameStart=true)
@@ -120,55 +166,3 @@ std::string WeightedOptions::topChoice() const
 	}
 	return "";
 } */
-
-/**
- * Sets this WeightedOptions' weight.
- * @note If @a weight is set to 0 the option is removed from the list of choices.
- * @note If @a type already exists the new weight replaces the old one; otherwise
- * @a type is added to the list of choices with @a weight as the weight.
- * @param type		- reference to the option name
- * @param weight	- the option's new weight
- */
-void WeightedOptions::setWeight(
-		const std::string& type,
-		size_t weight)
-{
-	std::map<std::string, size_t>::iterator i (_options.find(type));
-	if (i != _options.end())
-	{
-		_totalWeight -= i->second;
-
-		if (weight != 0)
-		{
-			i->second = weight;
-			_totalWeight += weight;
-		}
-		else
-			_options.erase(i);
-	}
-	else if (weight != 0)
-	{
-		_options.insert(std::make_pair(type, weight));
-		_totalWeight += weight;
-	}
-}
-
-/**
- * Gets the list of strings associated with these weights.
- * @return, vector of strings in these weights
- */
-std::vector<std::string> WeightedOptions::getTypes() const
-{
-	std::vector<std::string> types;
-	for (std::map<std::string, size_t>::const_iterator
-			i = _options.begin();
-			i != _options.end();
-			++i)
-	{
-		types.push_back((*i).first);
-	}
-
-	return types;
-}
-
-}

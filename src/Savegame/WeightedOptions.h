@@ -46,7 +46,7 @@ private:
 		/// Creates an empty set.
 		WeightedOptions()
 			:
-				_totalWeight(0)
+				_totalWeight(0u)
 		{}
 
 		/// Updates the list with data from YAML.
@@ -56,8 +56,6 @@ private:
 
 		/// Selects from the items by probability.
 		std::string getOptionResult() const;
-		/// Selects the most likely item.
-//		std::string topChoice() const;
 
 		/// Sets an option's weight.
 		void setWeight(
@@ -66,16 +64,18 @@ private:
 
 		/// Gets if this set of options has no weight at all.
 		bool hasNoWeight() const
-		{ return (_totalWeight == 0); }
+		{ return (_totalWeight == 0u); }
 
 		/// Removes all weights and entries.
 		void clearWeights()
-		{	_totalWeight = 0;
+		{	_totalWeight = 0u;
 			_options.clear(); }
 
 		/// Gets the list of strings associated with these weights.
 		std::vector<std::string> getTypes() const;
 };
+		/// Selects the most likely item.
+//		std::string topChoice() const;
 
 }
 

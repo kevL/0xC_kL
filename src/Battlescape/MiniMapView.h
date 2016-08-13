@@ -61,7 +61,7 @@ private:
 		_mousePastThreshold;
 
 	int
-		_cycle,
+		_anicycle,
 		_mouseScrollX,
 		_mouseScrollY,
 		_scrollKeyX,

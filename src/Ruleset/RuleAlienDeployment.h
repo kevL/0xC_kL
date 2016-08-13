@@ -28,6 +28,8 @@
 
 #include "../Resource/XcomResourcePack.h"
 
+#include "../Savegame/WeightedOptions.h"
+
 
 namespace OpenXcom
 {
@@ -122,7 +124,7 @@ private:
 		_despawnPenalty,
 		_durationMax,
 		_durationMin,
-		_genMissionPct,
+		_generatedMissionPct,
 		_height,
 		_length,
 		_markerIcon,
@@ -136,7 +138,6 @@ private:
 	std::string
 		_alert,
 		_alertBg,
-		_genMissionType,
 		_markerType,
 		_nextStage,
 		_objectiveCompleteText,
@@ -154,6 +155,7 @@ private:
 	BriefingData _briefingData;
 	ChronoResult _chronoResult;
 	TileType _objectiveType;
+	WeightedOptions _generatedMission;
 
 	public:
 		/// Creates an RuleAlienDeployment ruleset.
@@ -250,9 +252,9 @@ private:
 		/// Gets if the deployment is for an AlienBase (for quick-battles).
 		bool isAlienBase() const;
 		/// Gets the type of AlienMission that an AlienBase can generate.
-		const std::string& getMissionType() const;
+		std::string getBaseGeneratedType() const;
 		/// Gets the chance of an AlienBase generating an AlienMission.
-		int getMissionPercent() const;
+		int getBaseGeneratedPct() const;
 };
 
 }
