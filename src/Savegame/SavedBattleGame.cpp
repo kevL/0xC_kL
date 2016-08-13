@@ -81,9 +81,9 @@ SavedBattleGame::SavedBattleGame(
 		_debugTac(false),
 		_aborted(false),
 		_itemId(0),
-		_objectiveType(TILE),
+		_objectiveTile(TILE),
+		_objectivesRequired(0),
 		_objectivesDestroyed(0),
-		_objectivesReq(0),
 		_unitsFalling(false),
 		_cheatAI(false),
 //		_batReserved(BA_NONE),
@@ -622,8 +622,8 @@ void SavedBattleGame::load(
 
 	Log(LOG_INFO) << ". set some vars";
 
-	_objectiveType = static_cast<TileType>(node["objectiveType"].as<int>(_objectiveType));
-	_objectivesReq			= node["objectivesReq"]			.as<int>(_objectivesReq);
+	_objectiveTile = static_cast<TileType>(node["objectiveTile"].as<int>(_objectiveTile));
+	_objectivesRequired		= node["objectivesRequired"]	.as<int>(_objectivesRequired);
 	_objectivesDestroyed	= node["objectivesDestroyed"]	.as<int>(_objectivesDestroyed);
 
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
@@ -717,10 +717,10 @@ YAML::Node SavedBattleGame::save() const
 {
 	YAML::Node node;
 
-	if (_objectivesReq != 0)
+	if (_objectivesRequired != 0)
 	{
-		node["objectiveType"]		= static_cast<int>(_objectiveType);
-		node["objectivesReq"]		= _objectivesReq;
+		node["objectiveTile"]		= static_cast<int>(_objectiveTile);
+		node["objectivesRequired"]	= _objectivesRequired;
 		node["objectivesDestroyed"]	= _objectivesDestroyed;
 	}
 
@@ -1831,7 +1831,7 @@ bool SavedBattleGame::isAborted() const
  */
 void SavedBattleGame::setObjectiveTileType(TileType type)
 {
-	_objectiveType = type;
+	_objectiveTile = type;
 }
 
 /**
@@ -1840,7 +1840,7 @@ void SavedBattleGame::setObjectiveTileType(TileType type)
  */
 TileType SavedBattleGame::getObjectiveTileType() const
 {
-	return _objectiveType;
+	return _objectiveTile;
 }
 
 /**
@@ -1851,9 +1851,9 @@ TileType SavedBattleGame::getObjectiveTileType() const
  * @param qty - quantity of objective-tiletype tile-parts that need to be
  *				destroyed for a/the tactical-objective to be achieved
  */
-void SavedBattleGame::setObjectiveTotal(int qty)
+void SavedBattleGame::initObjectives(int qty)
 {
-	_objectivesReq = qty;
+	_objectivesRequired = qty;
 	_objectivesDestroyed = 0;
 }
 
@@ -1869,7 +1869,7 @@ void SavedBattleGame::addDestroyedObjective()
 		if (allObjectivesDestroyed() == true)
 		{
 			_controlDestroyed = true;
-			_battleState->getBattleGame()->objectiveDone();
+			_battleState->getBattleGame()->objectiveSuccess();
 		}
 	}
 }
@@ -1880,8 +1880,8 @@ void SavedBattleGame::addDestroyedObjective()
  */
 bool SavedBattleGame::allObjectivesDestroyed() const
 {
-	return _objectivesReq != 0
-		&& _objectivesReq <= _objectivesDestroyed;
+	return _objectivesRequired != 0
+		&& _objectivesDestroyed >= _objectivesRequired;
 }
 
 /**

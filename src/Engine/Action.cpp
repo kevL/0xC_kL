@@ -24,7 +24,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a new action.
+ * Creates an Action as in hardware-event.
  * @param event			- pointer to an SDL_Event
  * @param scaleX		- screen's X scaling factor
  * @param scaleY		- screen's Y scaling factor

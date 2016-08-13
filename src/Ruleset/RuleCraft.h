@@ -108,7 +108,7 @@ private:
 
 		/// Gets a Craft's sprite.
 		int getSprite() const;
-		/// Gets a Craft's globe marker.
+		/// Gets a Craft's globe-marker.
 		int getMarker() const;
 
 		/// Gets a Craft's maximum fuel.

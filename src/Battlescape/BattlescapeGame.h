@@ -443,7 +443,7 @@ private:
 		BattleItem* getAlienPsi() const;
 
 		/// Sets up a mission complete notification.
-		void objectiveDone();
+		void objectiveSuccess();
 
 		/// Gets if a coup-de-grace action is underway and needs to be animated.
 		bool getLiquidate() const;

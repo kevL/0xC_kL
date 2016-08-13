@@ -3436,7 +3436,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	if (dead == false && stats->health > _health)
 	{
 		const int recovery (stats->health - _health);
-		_geoscapeSoldier->setRecovery(RNG::generate(
+		_geoscapeSoldier->setSickbay(RNG::generate(
 												(recovery + 1) >> 1u,
 												 recovery));
 	}
@@ -3446,66 +3446,53 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 
 	const UnitStats caps (_geoscapeSoldier->getRules()->getStatCaps());
 
-	if (_expBravery != 0
-		&& stats->bravery < caps.bravery)
+	if (_expBravery != 0 && stats->bravery < caps.bravery
+		&& _expBravery > RNG::generate(0,8))
 	{
-		if (_expBravery > RNG::generate(0,8))
-		{
-			stats->bravery += 10;
-			statIncs[0u] = 10;
-		}
+		stats->bravery += 10;
+		statIncs[0u] = 10;
 	}
 
 	int inc;
-	if (_expFiring != 0
-		&& stats->firing < caps.firing)
+	if (_expFiring != 0 && stats->firing < caps.firing)
 	{
 		inc = improveStat(_expFiring);
 		stats->firing += inc;
 		statIncs[1u] = inc;
 
-		// add a touch of reactions if good firing .....
-		if (_expFiring - 2 > 0
-			&& stats->reactions < caps.reactions)
-		{
-			_expReactions += _expFiring / 3;
-		}
+		if (_expFiring - 2 > 0 && stats->reactions < caps.reactions)
+			_expReactions += _expFiring / 3; // add a touch of reactions if good firing ......
 	}
 
-	if (_expReactions != 0
-		&& stats->reactions < caps.reactions)
+	if (_expReactions != 0 && stats->reactions < caps.reactions)
 	{
 		inc = improveStat(_expReactions);
 		stats->reactions += inc;
 		statIncs[2u] = inc;
 	}
 
-	if (_expMelee != 0
-		&& stats->melee < caps.melee)
+	if (_expMelee != 0 && stats->melee < caps.melee)
 	{
 		inc = improveStat(_expMelee);
 		stats->melee += inc;
 		statIncs[3u] = inc;
 	}
 
-	if (_expPsiSkill != 0
-		&& stats->psiSkill < caps.psiSkill)
+	if (_expPsiSkill != 0 && stats->psiSkill < caps.psiSkill)
 	{
 		inc = improveStat(_expPsiSkill);
 		stats->psiSkill += inc;
 		statIncs[4u] = inc;
 	}
 
-	if ((_expPsiStrength /= 3) != 0
-		&& stats->psiStrength < caps.psiStrength)
+	if ((_expPsiStrength /= 3) != 0 && stats->psiStrength < caps.psiStrength)
 	{
 		inc = improveStat(_expPsiStrength);
 		stats->psiStrength += inc;
 		statIncs[5u] = inc;
 	}
 
-	if (_expThrowing != 0
-		&& stats->throwing < caps.throwing)
+	if (_expThrowing != 0 && stats->throwing < caps.throwing)
 	{
 		inc = improveStat(_expThrowing);
 		stats->throwing += inc;
@@ -3513,14 +3500,13 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 	}
 
 
-	const bool expPri (_expBravery != 0
+	const bool expPri (_expBravery   != 0
 					|| _expReactions != 0
-					|| _expFiring != 0
-					|| _expMelee != 0);
+					|| _expFiring    != 0
+					|| _expMelee     != 0);
 
 	if (expPri == true
-		|| _expPsiSkill != 0
-		|| _expPsiStrength != 0)
+		|| _expPsiSkill != 0 || _expPsiStrength != 0)
 	{
 		if (hasFirstTakedown() == true)
 			_geoscapeSoldier->promoteRank();
@@ -3535,24 +3521,21 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 				statIncs[7u] = inc;
 			}
 
-			delta = caps.health - stats->health;
-			if (delta > 0)
+			if ((delta = caps.health - stats->health) > 0)
 			{
 				inc = RNG::generate(0, (delta / 10) + 2) - 1;
 				stats->health += inc;
 				statIncs[8u] = inc;
 			}
 
-			delta = caps.strength - stats->strength;
-			if (delta > 0)
+			if ((delta = caps.strength - stats->strength) > 0)
 			{
 				inc = RNG::generate(0, (delta / 10) + 2) - 1;
 				stats->strength += inc;
 				statIncs[9u] = inc;
 			}
 
-			delta = caps.stamina - stats->stamina;
-			if (delta > 0)
+			if ((delta = caps.stamina - stats->stamina) > 0)
 			{
 				inc = RNG::generate(0, (delta / 10) + 2) - 1;
 				stats->stamina += inc;
@@ -3560,7 +3543,6 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 			}
 		}
 	}
-
 	return statIncs;
 }
 

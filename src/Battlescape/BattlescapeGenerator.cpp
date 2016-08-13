@@ -4289,11 +4289,11 @@ bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // priv
  */
 void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const ruleDeploy) // private.
 {
-	const TileType tileType (ruleDeploy->getPlayerObjective());
-	if (tileType != TILE)
+	const TileType objectType (ruleDeploy->getPlayerObjective());
+	if (objectType != TILE)
 	{
 		int
-			req (ruleDeploy->getObjectivesRequired()),
+			qtyReq (ruleDeploy->getObjectivesRequired()),
 			inSitu (0);
 		MapDataType partType;
 		const Tile* tile;
@@ -4312,7 +4312,7 @@ void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const rule
 
 				tile = _battleSave->getTiles()[i];
 				if (tile->getMapData(partType) != nullptr
-					&& tile->getMapData(partType)->getTileType() == tileType)
+					&& tile->getMapData(partType)->getTileType() == objectType)
 				{
 					++inSitu;
 				}
@@ -4321,12 +4321,12 @@ void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const rule
 
 		if (inSitu != 0)
 		{
-			_battleSave->setObjectiveTileType(tileType);
+			_battleSave->setObjectiveTileType(objectType);
 
-			if (req == 0 || inSitu < req)
-				req = inSitu;
+			if (qtyReq == 0 || inSitu < qtyReq)
+				qtyReq = inSitu;
 
-			_battleSave->setObjectiveTotal(req);
+			_battleSave->initObjectives(qtyReq);
 		}
 	}
 }

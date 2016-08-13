@@ -90,7 +90,7 @@ private:
 		_mapsize_y,
 		_mapsize_z,
 		_objectivesDestroyed,
-		_objectivesReq,
+		_objectivesRequired,
 		_tacticalShade,
 		_turn,
 		_turnLimit;
@@ -99,7 +99,7 @@ private:
 //	BattleActionType _batReserved;
 	ChronoResult _chronoResult;
 	Position _rfTriggerOffset;
-	TileType _objectiveType;
+	TileType _objectiveTile;
 	TacticalType _tacType;
 	UnitFaction _side;
 
@@ -337,7 +337,7 @@ private:
 		/// Gets the objective-tiletype of this mission.
 		TileType getObjectiveTileType() const;
 		/// Sets how many objective-tiles need to be destroyed.
-		void setObjectiveTotal(int qty);
+		void initObjectives(int qty);
 		/// Increments the objective-tiles destroyed counter.
 		void addDestroyedObjective();
 		/// Checks if enough objective-tiles are destroyed.

@@ -345,7 +345,7 @@ void BaseInfoState::init()
 
 	if ((var = _base->getTotalSoldiers()) != 0)
 	{
-		var2 = _base->getAvailableSoldiers(true);
+		var2 = _base->getAvailableSoldiers();
 		woststr.str(L"");
 		woststr << var2 << L":" << var;
 		_numSoldiers->setText(woststr.str());

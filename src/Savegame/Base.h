@@ -172,8 +172,10 @@ private:
 		/// Sets the Base's engineers.
 		void setEngineers(int engineers);
 
-		/// Gets the Base's available soldiers.
-		int getAvailableSoldiers(const bool combatReady = false) const;
+		/// Gets the Base's combat-ready soldiers.
+		int getAvailableSoldiers() const;
+		/// Gets the Base's non-wounded soldiers.
+		int getHealthySoldiers() const;
 		/// Gets the Base's total soldiers.
 		int getTotalSoldiers() const;
 
@@ -245,10 +247,10 @@ private:
 		/// Gets the Base's total free hangar space.
 		int getFreeHangars() const;
 
-		/// Gets the Base's soldiers of a certain type.
-		int getSoldierCount(const std::string &soldier) const;
-		/// Gets the Base's crafts of a certain type.
-		int getCraftCount(const std::string& craft) const;
+		/// Gets the Base's Soldiers of a specified type.
+		int getSoldierCount(const std::string& type) const;
+		/// Gets the Base's Crafts of a specified type.
+		int getCraftCount(const std::string& type) const;
 
 		/// Adds a Production to the Base.
 		void addProduction(Production* const prod);
@@ -340,13 +342,13 @@ private:
 		/// Gets the Base's total monthly maintenance.
 		int getMonthlyMaintenace() const;
 
-		/// Changes the Base's total-income value.
+		/// Adds a specified quantity to the Base's total-income value.
 		void addCashIncome(int cash);
 		/// Gets the Base's total-income value.
 		int getCashIncome() const;
 		/// Zeros the Base's total-income value.
 		void zeroCashIncome();
-		/// Changes the Base's total-expenditure value.
+		/// Adds a specified quantity to the Base's total-expenditure value.
 		void addCashSpent(int cash);
 		/// Gets the Base's total-expenditure value.
 		int getCashSpent() const;

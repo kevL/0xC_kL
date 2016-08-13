@@ -128,9 +128,9 @@ private:
 		_height,
 		_length,
 		_markerIcon,
-		_objectiveCompleteScore,
+		_objectiveSuccessScore,
 		_objectiveFailedScore,
-		_objectivesReqd,
+		_objectivesRequired,
 		_shade,
 		_turnLimit,
 		_width;
@@ -140,9 +140,9 @@ private:
 		_alertBg,
 		_markerType,
 		_nextStage,
-		_objectiveCompleteText,
+		_objectiveSuccessText,
 		_objectiveFailedText,
-		_objectivePopup,
+		_objectiveNotice,
 		_race,
 		_script,
 		_type;
@@ -154,7 +154,7 @@ private:
 
 	BriefingData _briefingData;
 	ChronoResult _chronoResult;
-	TileType _objectiveType;
+	TileType _objectiveTile;
 	WeightedOptions _generatedMission;
 
 	public:
@@ -225,10 +225,10 @@ private:
 
 		/// Gets the objective-tiletype for the RuleAlienDeployment.
 		TileType getPlayerObjective() const;
-		/// Gets a fixed number of objective-tiles required if any.
+		/// Gets a fixed quantity of objective-tiles required if any.
 		int getObjectivesRequired() const;
-		/// Gets the string to pop up when enough objective-tiles are destroyed.
-		const std::string& getObjectivePopup() const;
+		/// Gets the string to show when enough objective-tiles are destroyed.
+		const std::string& getObjectiveNotice() const;
 		/// Gets the objective-complete info.
 		bool getObjectiveCompleteInfo(
 				std::string& text,

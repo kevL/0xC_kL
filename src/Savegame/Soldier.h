@@ -179,12 +179,12 @@ private:
 		/// Sets the Soldier armor.
 		void setArmor(const RuleArmor* const armor);
 
-		/// Gets the Soldier's wound recovery time.
+		/// Gets the Soldier's wound-recovery time.
 		int getSickbay() const;
-		/// Sets the Soldier's wound recovery time.
-		void setRecovery(int recovery);
+		/// Sets the Soldier's wound-recovery time.
+		void setSickbay(int recovery);
 		/// Gets a Soldier's wounds as a percent.
-		int getRecoveryPct() const;
+		int getPctWounds() const;
 		/// Heals wound recoveries.
 		void heal();
 
@@ -193,12 +193,12 @@ private:
 
 		/// Trains a Soldier's psionic abilities.
 		bool trainPsiDay();
-		/// Returns whether the unit is in psi training or not
+		/// Returns whether the unit is in psi-training or not
 		bool inPsiTraining() const;
 		/// Sets the psi training status
 		void togglePsiTraining();
 
-		/// Kills the Soldier and sends it to the dead soldiers' bin.
+		/// Kills the Soldier and sends him/her to the dead soldiers' bin.
 		void die(SavedGame* const gameSave);
 
 		/// Gets the Soldier's diary.

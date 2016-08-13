@@ -150,16 +150,16 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_finalMission(false),
 		_durationMin(0),
 		_durationMax(0),
-		_objectiveType(TILE),
-		_objectivesReqd(0),
-		_objectiveCompleteScore(0),
+		_objectiveTile(TILE),
+		_objectivesRequired(0),
+		_objectiveSuccessScore(0),
 		_objectiveFailedScore(0),
 		_despawnPenalty(0),
 		_turnLimit(0),
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_TURN_DEFAULT),
 		_markerIcon(-1),
-		_markerType(Target::stTarget[3u]),
+		_markerType(Target::stTarget[3u]), // default: Terror Site marker
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR"),
 		_isAlienBase(false),
@@ -206,16 +206,16 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 
 	_musics = node["music"].as<std::vector<std::string>>(_musics); // NOTE: might not be compatible w/ sza_MusicRules.
 
-	_objectiveType = static_cast<TileType>(node["objectiveType"].as<int>(_objectiveType));
-	_objectivesReqd	= node["objectivesReqd"].as<int>(_objectivesReqd);
-	_objectivePopup	= node["objectivePopup"].as<std::string>(_objectivePopup);
+	_objectiveTile = static_cast<TileType>(node["objectiveTile"].as<int>(_objectiveTile));
+	_objectivesRequired	= node["objectivesRequired"].as<int>(_objectivesRequired);
+	_objectiveNotice	= node["objectiveNotice"].as<std::string>(_objectiveNotice);
 
 	_despawnPenalty	= node["despawnPenalty"].as<int>(_despawnPenalty);
 
-	if (node["objectiveComplete"])
+	if (node["objectiveSuccess"])
 	{
-		_objectiveCompleteText	= node["objectiveComplete"][0u].as<std::string>(_objectiveCompleteText);
-		_objectiveCompleteScore	= node["objectiveComplete"][1u].as<int>(_objectiveCompleteScore);
+		_objectiveSuccessText	= node["objectiveSuccess"][0u].as<std::string>(_objectiveSuccessText);
+		_objectiveSuccessScore	= node["objectiveSuccess"][1u].as<int>(_objectiveSuccessScore);
 	}
 	if (node["objectiveFailed"])
 	{
@@ -427,7 +427,7 @@ const std::vector<std::string>& RuleAlienDeployment::getDeploymentMusics() const
  */
 TileType RuleAlienDeployment::getPlayerObjective() const
 {
-	return _objectiveType;
+	return _objectiveTile;
 }
 
 /**
@@ -436,16 +436,16 @@ TileType RuleAlienDeployment::getPlayerObjective() const
  */
 int RuleAlienDeployment::getObjectivesRequired() const
 {
-	return _objectivesReqd;
+	return _objectivesRequired;
 }
 
 /**
  * Gets the string for the popup to splash when objective-conditions are met.
  * @return, string to pop
  */
-const std::string& RuleAlienDeployment::getObjectivePopup() const
+const std::string& RuleAlienDeployment::getObjectiveNotice() const
 {
-	return _objectivePopup;
+	return _objectiveNotice;
 }
 
 /**
@@ -459,8 +459,8 @@ bool RuleAlienDeployment::getObjectiveCompleteInfo(
 		std::string& text,
 		int& score) const
 {
-	text  = _objectiveCompleteText;
-	score = _objectiveCompleteScore;
+	text  = _objectiveSuccessText;
+	score = _objectiveSuccessScore;
 
 	return text.empty() == false;
 }
@@ -476,7 +476,7 @@ bool RuleAlienDeployment::getObjectiveFailedInfo(
 		std::string& text,
 		int& score) const
 {
-	text = _objectiveFailedText;
+	text  = _objectiveFailedText;
 	score = _objectiveFailedScore;
 
 	return text.empty() == false;

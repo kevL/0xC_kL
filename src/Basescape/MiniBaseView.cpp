@@ -360,8 +360,8 @@ void MiniBaseView::blink()
 
 		if (   base->getScientists() != 0 // unused Scientists &/or Engineers &/or PsiLab space
 			|| base->getEngineers()  != 0
-			|| (base->getUsedPsiLabs() != base->getTotalPsiLabs()
-				&& base->getUsedPsiLabs() < static_cast<int>(base->getSoldiers()->size())))
+			|| (   base->getUsedPsiLabs() != base->getTotalPsiLabs()
+				&& base->getUsedPsiLabs() < base->getHealthySoldiers()))
 		{
 			if (_blink == true)	color = RED_L;
 			else				color = 0u;

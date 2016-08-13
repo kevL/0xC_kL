@@ -170,7 +170,7 @@ void CraftArmorState::init()
 
 		if ((*i)->getSickbay() != 0)
 		{
-			const int pct ((*i)->getRecoveryPct());
+			const int pct ((*i)->getPctWounds());
 			if		(pct > 50)	color = ORANGE;
 			else if	(pct > 10)	color = YELLOW;
 			else				color = GREEN;

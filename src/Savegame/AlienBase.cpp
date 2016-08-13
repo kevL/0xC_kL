@@ -70,11 +70,11 @@ YAML::Node AlienBase::save() const
 {
 	YAML::Node node (Target::save());
 
+	node["deployment"] = _ruleDeploy->getType();
+
 	node["id"]		= _id;
 	node["race"]	= _race;
 	node["edit"]	= _edit;
-
-	node["deployment"] = _ruleDeploy->getType();
 
 	if (_tactical == true) node["tactical"] = _tactical;
 	if (_detected == true) node["detected"] = _detected;
@@ -125,7 +125,7 @@ std::wstring AlienBase::getName(const Language* const lang) const
 }
 
 /**
- * Gets the globe marker for this AlienBase.
+ * Gets the globe-marker for this AlienBase.
  * @return, marker sprite #7 (-1 if none)
  */
 int AlienBase::getMarker() const

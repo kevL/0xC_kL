@@ -597,17 +597,20 @@ int Soldier::getSickbay() const
  * Sets the amount of time until this Soldier is fully healed.
  * @param recovery - quantity of days
  */
-void Soldier::setRecovery(int recovery)
+void Soldier::setSickbay(int recovery)
 {
-	if ((_recovery = recovery) != 0) // dismiss from craft
-		_craft = nullptr;
+	if ((_recovery = recovery) != 0)
+	{
+		_craft = nullptr;		// dismiss from craft
+		_psiTraining = false;	// dismiss from psi-training
+	}
 }
 
 /**
  * Gets this Soldier's remaining woundage as a percent.
- * @return, wounds as percent
+ * @return, recovery as percent
  */
-int Soldier::getRecoveryPct() const
+int Soldier::getPctWounds() const
 {
 	return static_cast<int>(std::floor(
 		   static_cast<float>(_recovery) / static_cast<float>(_currentStats.health) * 100.f));
@@ -637,15 +640,14 @@ std::vector<SoldierLayout*>* Soldier::getLayout()
  */
 bool Soldier::trainPsiDay()
 {
+	static const int
+		PSI_PCT    (5),		// pct per day to get psionically active
+		PSI_FACTOR (500);	// coefficient for chance of improvement
+
 	bool ret (false);
-
-	if (_psiTraining == true)
+	if (_psiTraining == true
+		&& _currentStats.psiSkill < _solRule->getStatCaps().psiSkill) // hard cap. Note this auto-caps psiStrength also.
 	{
-		static const int PSI_PCT (5); // % per day per soldier to become psionic-active
-
-//		if (_currentStats.psiSkill >= _solRule->getStatCaps().psiSkill)	// hard cap. Note this auto-caps psiStrength also
-//			return false;												// REMOVED: Allow psi to train past cap in PsiLabs.
-
 		switch (_currentStats.psiSkill)
 		{
 			case 0:
@@ -664,8 +666,7 @@ bool Soldier::trainPsiDay()
 
 			default: // Psi unlocked already.
 			{
-				int pct (std::max(1,
-								  500 / _currentStats.psiSkill));
+				int pct (std::max(1, PSI_FACTOR / _currentStats.psiSkill));
 				if (RNG::percent(pct) == true)
 				{
 					ret = true;
@@ -674,8 +675,7 @@ bool Soldier::trainPsiDay()
 
 				if (_currentStats.psiStrength < _solRule->getStatCaps().psiStrength) //&& Options::allowPsiStrengthImprovement
 				{
-					pct = std::max(1,
-								   500 / _currentStats.psiStrength);
+					pct = std::max(1, PSI_FACTOR / _currentStats.psiStrength);
 					if (RNG::percent(pct) == true)
 					{
 						ret = true;

@@ -2672,32 +2672,31 @@ void GeoscapeState::time1Day()
 				)
 		{
 			dead = false;
-
 			if ((*j)->getSickbay() != 0)
 			{
-				int chanceDeath ((*j)->getRecoveryPct());
-				if (chanceDeath > 10)
+				int pctDeath ((*j)->getPctWounds());
+				if (pctDeath > 10)
 				{
 					//Log(LOG_INFO) << "\n";
-					//Log(LOG_INFO) << ". Soldier = " << (*j)->getId() << " woundsPCT = " << chanceDeath;
-					const size_t latestMissionId (static_cast<size_t>((*j)->getDiary()->getMissionIdList().back()));
-					const std::map<int,int>* injured (&_gameSave->getMissionStatistics()->at(latestMissionId)->injuryList);
-					if (injured->find((*j)->getId()) != injured->end())
+					//Log(LOG_INFO) << ". soldier id-" << (*j)->getId() << " pctWounds= " << pctDeath;
+					const size_t missionId (static_cast<size_t>((*j)->getDiary()->getMissionIdList().back()));
+					const std::map<int,int>* injuryList (&_gameSave->getMissionStatistics()->at(missionId)->injuryList);
+					if (injuryList->find((*j)->getId()) != injuryList->end())
 					{
-						const float healthFactor (static_cast<float>(injured->at((*j)->getId()))
+						const float woundsLeft (static_cast<float>(injuryList->at((*j)->getId()))
 												/ static_cast<float>((*j)->getCurrentStats()->health));
-						//Log(LOG_INFO) << ". . daysWounded = " << injured->at((*j)->getId();
-						//Log(LOG_INFO) << ". . healthFactor = " << healthFactor;
-						chanceDeath = static_cast<int>(std::ceil(
-									  static_cast<float>(chanceDeath) * healthFactor));
+						//Log(LOG_INFO) << ". . total days wounded= " << injuryList->at((*j)->getId();
+						//Log(LOG_INFO) << ". . current days wounded= " << woundsLeft;
+						pctDeath = static_cast<int>(std::ceil(
+								   static_cast<float>(pctDeath) * woundsLeft));
 
-						//const int roll (RNG::generate(1,1000));
-						//Log(LOG_INFO) << ". . chance to Die = " << chanceDeath << " roll = " << roll;
-						if (RNG::generate(1,1000) <= chanceDeath)
+						const int roll (RNG::generate(1,1000));
+						//Log(LOG_INFO) << ". . chance to die= " << pctDeath << " roll= " << roll;
+						if (roll <= pctDeath)
 						{
-							//Log(LOG_INFO) << "he's dead, Jim!!";
+							//Log(LOG_INFO) << "It's dead, Jim!!";
 							resetTimer();
-							if ((*j)->getArmor()->isBasic() == false) // return ex-Soldier's armor to Stores
+							if ((*j)->getArmor()->isBasic() == false) // return former Soldier's armor to stores.
 								(*i)->getStorageItems()->addItem((*j)->getArmor()->getStoreItem());
 
 							popupGeo(new SoldierDiedState(
@@ -2734,7 +2733,7 @@ void GeoscapeState::time1Day()
 					j != (*i)->getSoldiers()->end();
 					++j)
 			{
-				if ((*j)->getSickbay() == 0 && (*j)->trainPsiDay() == true)
+				if ((*j)->trainPsiDay() == true)
 				{
 					(*j)->autoStat();
 //					sortSoldiers = true;
@@ -3760,7 +3759,7 @@ void GeoscapeState::baseDefenseTactical(
 {
 	ufo->setUfoStatus(Ufo::DESTROYED);
 
-	if (base->getAvailableSoldiers(true) != 0)
+	if (base->getAvailableSoldiers() != 0)
 	{
 		SavedBattleGame* const battleSave (new SavedBattleGame(&_rules->getOperations(), _rules));
 		_gameSave->setBattleSave(battleSave);

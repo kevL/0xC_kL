@@ -97,7 +97,7 @@ private:
 		size_t getRadius() const;
 		/// Gets the UFO's sprite.
 		int getSprite() const;
-		/// Gets the UFO's globe marker.
+		/// Gets the UFO's globe-marker.
 		int getMarker() const;
 
 		/// Gets the UFO's maximum damage.

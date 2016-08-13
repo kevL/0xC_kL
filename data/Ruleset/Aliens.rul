@@ -873,7 +873,7 @@ alienDeployments:
       - URBAN           #hobbes uses this
       - URBAN2          #Luke's Expanded Terror Sites
 #    alert: STR_ALIENS_TERRORISE #default
-#    alertBg: BACK03.SCR #default
+#    alertBg: BACK03.SCR         #default
 #    markerType: STR_TERROR_SITE #default
     briefing:
       palette: 2
@@ -1192,11 +1192,11 @@ alienDeployments:
       music: GEO_BRIEF_BASEASSAULT
       background: BACK01.SCR
     markerType: STR_ALIEN_BASE
-    markerIcon: 7 #Globe::GLM_ALIENBASE
-    isAlienBase: true #tells quick-battles what to do with this deployment
-    objectiveType: 3
-    objectiveComplete: [STR_ALIEN_BASE_CONTROL_DESTROYED, 500]
-    objectivePopup: STR_ALIEN_BASE_CONTROL_DESTROYED
+    markerIcon: 7          #Globe::GLM_ALIENBASE
+    isAlienBase: true      #tells quick-battles what to do with this deployment
+    objectiveTile: 3       #TileType:UFO_NAVIGATION
+    objectiveNotice: STR_ALIEN_BASE_CONTROL_DESTROYED
+    objectiveSuccess: [STR_ALIEN_BASE_CONTROL_DESTROYED, 500]
     generatedMissionPct: 4 #pct per day
     generatedMission:
       STR_ALIEN_SUPPLY: 100
@@ -1633,8 +1633,8 @@ alienDeployments:
 #      showTargetText: false
 #      showCraftText: false
 #      textOffset: -16
-    objectiveType: 14
-    objectivesReqd: 4
+    objectiveTile: 14 #TileType:MUST_DESTROY
+    objectivesRequired: 4
 #Alien Tech Level, http://openxcom.org/forum/index.php?topic=1356.0
 #kaiser_bill,
 #this links into the alien equipment loadouts specified under the UFO crew loadout section
@@ -1930,7 +1930,6 @@ alienMissions:
     objectiveZone: 3 #for terror city
 #    objectiveUfo: STR_TERROR_SHIP
 #    deployment: STR_TERROR_MISSION
-#    markerType: STR_TERROR_SITE
     weightsRace:
       0:
         STR_SECTOID: 30

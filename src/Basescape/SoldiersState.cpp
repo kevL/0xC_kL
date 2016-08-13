@@ -131,7 +131,7 @@ SoldiersState::SoldiersState(Base* base)
 
 	_btnEquip->setText(tr("STR_INVENTORY"));
 	_btnEquip->onMouseClick(static_cast<ActionHandler>(&SoldiersState::btnEquipClick));
-	_btnEquip->setVisible(_base->getAvailableSoldiers(true) != 0);
+	_btnEquip->setVisible(_base->getAvailableSoldiers() != 0);
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SoldiersState::btnOkClick));
@@ -235,7 +235,7 @@ void SoldiersState::init()
 			if ((*i)->getSickbay() != 0)
 			{
 				Uint8 color;
-				const int pct ((*i)->getRecoveryPct());
+				const int pct ((*i)->getPctWounds());
 				if		(pct > 50)	color = ORANGE;
 				else if	(pct > 10)	color = YELLOW;
 				else				color = GREEN;

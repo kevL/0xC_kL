@@ -102,10 +102,10 @@ PsiTrainingState::PsiTrainingState(Base* const base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(base->getName());
+	_txtBaseLabel->setText(_base->getName());
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
-	_labSpace = base->getFreePsiLabs();
+	_labSpace = _base->getFreePsiLabs();
 	_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(_labSpace));
 	_txtSpaceFree->setSecondaryColor(Palette::blockOffset(13u));
 
@@ -161,15 +161,26 @@ void PsiTrainingState::init()
 
 		std::wstring wst;
 		Uint8 color;
+		bool contrast;
 		if ((*i)->inPsiTraining() == true)
 		{
 			wst = tr("STR_YES");
 			color = _lstSoldiers->getSecondaryColor();
+			contrast = false;
 		}
 		else
 		{
 			wst = tr("STR_NO");
-			color = _lstSoldiers->getColor();
+			if ((*i)->getSickbay() != 0)
+			{
+				color = 80u; // light brown
+				contrast = true;
+			}
+			else
+			{
+				color = _lstSoldiers->getColor();
+				contrast = false;
+			}
 		}
 
 		_lstSoldiers->addRow(
@@ -178,7 +189,7 @@ void PsiTrainingState::init()
 						woststr1.str().c_str(),
 						woststr2.str().c_str(),
 						wst.c_str());
-		_lstSoldiers->setRowColor(r, color);
+		_lstSoldiers->setRowColor(r, color, contrast);
 	}
 
 	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));
@@ -217,11 +228,13 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 		{
 			const size_t r (_lstSoldiers->getSelectedRow());
 
-			if (_base->getSoldiers()->at(r)->inPsiTraining() == false)
+			Soldier* const sol (_base->getSoldiers()->at(r));
+			if (sol->inPsiTraining() == false)
 			{
-				if (_base->getUsedPsiLabs() < _base->getTotalPsiLabs())
+				if (sol->getSickbay() == 0
+					&& _base->getUsedPsiLabs() < _base->getTotalPsiLabs())
 				{
-					_base->getSoldiers()->at(r)->togglePsiTraining();
+					sol->togglePsiTraining();
 					_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(--_labSpace));
 					_lstSoldiers->setCellText(
 											r, 3u,
@@ -231,7 +244,7 @@ void PsiTrainingState::lstSoldiersPress(Action* action)
 			}
 			else
 			{
-				_base->getSoldiers()->at(r)->togglePsiTraining();
+				sol->togglePsiTraining();
 				_txtSpaceFree->setText(tr("STR_REMAINING_PSI_LAB_CAPACITY").arg(++_labSpace));
 				_lstSoldiers->setCellText(
 										r, 3u,

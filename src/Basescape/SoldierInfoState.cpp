@@ -551,7 +551,7 @@ void SoldierInfoState::init()
 		default:
 		{
 			Uint8 color;
-			const int pct (_sol->getRecoveryPct());
+			const int pct (_sol->getPctWounds());
 			if		(pct > 50)	color = ORANGE;
 			else if	(pct > 10)	color = YELLOW;
 			else				color = GREEN;

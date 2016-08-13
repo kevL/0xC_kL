@@ -59,16 +59,16 @@ TerrorSite::~TerrorSite()
  */
 void TerrorSite::load(const YAML::Node& node)
 {
+	// NOTE: "type" & "deployment" loaded by SavedGame and passed into cTor.
 	Target::load(node);
 
 	_id				= node["id"]			.as<int>(_id);
 	_texture		= node["texture"]		.as<int>(_texture);
-	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
 	_race			= node["race"]			.as<std::string>(_race);
-	_tactical		= node["tactical"]		.as<bool>(_tactical);
+	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
 	_detected		= node["detected"]		.as<bool>(_detected);
+	_tactical		= node["tactical"]		.as<bool>(_tactical);
 
-	// NOTE: "type" & "deployment" loaded by SavedGame and passed into cTor.
 }
 
 /**
@@ -79,14 +79,15 @@ YAML::Node TerrorSite::save() const
 {
 	YAML::Node node = Target::save();
 
-	node["id"]			= _id;
-	node["race"]		= _race;
-	node["texture"]		= _texture;
 	node["type"]		= _missionRule->getType();
 	node["deployment"]	= _ruleDeploy->getType();
 
-	if (_detected == true)	node["detected"]	= _detected;
+	node["id"]			= _id;
+	node["texture"]		= _texture;
+	node["race"]		= _race;
+
 	if (_secondsLeft != 0)	node["secondsLeft"]	= _secondsLeft;
+	if (_detected == true)	node["detected"]	= _detected;
 	if (_tactical == true)	node["tactical"]	= _tactical;
 
 	return node;
@@ -153,7 +154,7 @@ std::wstring TerrorSite::getName(const Language* const lang) const
 }
 
 /**
- * Gets the globe marker for this TerrorSite (default 5 if no marker is specified).
+ * Gets the globe-marker for this TerrorSite (default 5 if no marker is specified).
  * @return, marker sprite #5 (or special Deployment icon)
  */
 int TerrorSite::getMarker() const

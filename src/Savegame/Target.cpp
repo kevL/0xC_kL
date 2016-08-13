@@ -28,7 +28,7 @@
 namespace OpenXcom
 {
 
-const char* Target::stTarget[7u] // NOTE: A search for getCanonicalId() finds further possibilities.
+const char* Target::stTarget[7u] // static. // NOTE: A search for getCanonicalId() finds further possibilities.
 {
 	"STR_UFO",			// 0
 	"STR_BASE",			// 1

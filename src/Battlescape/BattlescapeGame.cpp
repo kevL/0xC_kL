@@ -3778,15 +3778,15 @@ BattleItem* BattlescapeGame::getAlienPsi() const
 /**
  * Sets up a mission complete notification.
  */
-void BattlescapeGame::objectiveDone()
+void BattlescapeGame::objectiveSuccess()
 {
 	const Game* const game (_parentState->getGame());
 	const RuleAlienDeployment* const ruleDeploy (game->getRuleset()->getDeployment(_battleSave->getTacticalType()));
 	if (ruleDeploy != nullptr)
 	{
-		const std::string messagePop (ruleDeploy->getObjectivePopup());
-		if (messagePop.empty() == false)
-			_infoboxQueue.push_back(new InfoboxDialogState(game->getLanguage()->getString(messagePop)));
+		const std::string notice (ruleDeploy->getObjectiveNotice());
+		if (notice.empty() == false)
+			_infoboxQueue.push_back(new InfoboxDialogState(game->getLanguage()->getString(notice)));
 	}
 }
 
