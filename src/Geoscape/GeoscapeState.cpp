@@ -1862,14 +1862,14 @@ bool DetectXCOMBase::operator() (const Ufo* const ufo) const
 			|| Options::aggressiveRetaliation == true))
 	{
 		const double
-			range (static_cast<double>(ufo->getRules()->getReconRange()) * greatCircleConversionFactor),
+			range (static_cast<double>(ufo->getRules()->getRangeRecon()) * greatCircleConversionFactor),
 			dist (_base.getDistance(ufo) * earthRadius);
 
 		if (dist <= range)
 		{
 			const double inverseFactor (dist * 12. / range); // TODO: Use log() ....
 			int pct (static_cast<int>(Round(
-					 static_cast<double>(_base.getDetectionChance(_diff) + ufo->getDetectors()) / inverseFactor)));
+					 static_cast<double>(_base.getExposedChance(_diff) + ufo->getDetectors()) / inverseFactor)));
 
 			if (ufo->getAlienMission()->getRules().getObjectiveType() == alm_RETAL
 				&& Options::aggressiveRetaliation == true) // Player wants *aggressive* retaliation search.
@@ -1948,16 +1948,16 @@ void GeoscapeState::time10Minutes()
 					if ((*k)->isDetected() == false)
 					{
 						const double
-							craftRadar (static_cast<double>((*j)->getRules()->getReconRange()) * greatCircleConversionFactor),
-							targetDist ((*j)->getDistance(*k) * earthRadius);
-						//Log(LOG_INFO) << ". . craftRadar = " << (int)craftRadar;
-						//Log(LOG_INFO) << ". . targetDist = " << (int)targetDist;
+							range (static_cast<double>((*j)->getRules()->getRangeRecon()) * greatCircleConversionFactor),
+							dist ((*j)->getDistance(*k) * earthRadius);
+						//Log(LOG_INFO) << ". . range = " << (int)range;
+						//Log(LOG_INFO) << ". . dist = " << (int)dist;
 
-						if (targetDist < craftRadar)
+						if (dist < range)
 						{
-							const int chance (100 - (diff * 10) - static_cast<int>(targetDist * 50. / craftRadar));
-							//Log(LOG_INFO) << ". . . craft in Range, chance = " << chance;
-							if (RNG::percent(chance) == true)
+							const int pct (100 - (diff * 10) - static_cast<int>(dist * 50. / range));
+							//Log(LOG_INFO) << ". . . craft in Range pct= " << pct;
+							if (RNG::percent(pct) == true)
 							{
 								//Log(LOG_INFO) << ". . . . aLienBase discovered";
 								resetTimer();
@@ -2160,7 +2160,7 @@ void GeoscapeState::time10Minutes()
 /**
  ** FUNCTOR ***
  * @brief Call AlienMission::think() with proper parameters.
- * @note This function object calls AlienMission::think() with the proper parameters.
+ * @note This function object calls AlienMission::think().
  */
 struct CallThink
 	:

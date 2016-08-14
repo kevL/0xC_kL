@@ -1124,7 +1124,7 @@ void Craft::refuel()
  */
 bool Craft::detect(const Target* const target) const
 {
-	const int radarRange (_crRule->getRadarRange());
+	const int radarRange (_crRule->getRangeRadar());
 	if (radarRange != 0)
 	{
 		const double

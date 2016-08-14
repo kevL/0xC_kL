@@ -1638,7 +1638,7 @@ void Globe::drawRadars()
 					if ((*j)->getCraftStatus() == CS_OUT
 						&& (*j)->hasLeftGround() == true)
 					{
-						if ((range = static_cast<double>((*j)->getRules()->getRadarRange())) > 0.)
+						if ((range = static_cast<double>((*j)->getRules()->getRangeRadar())) > 0.)
 						{
 							range *= unitToRads;
 							drawGlobeCircle( // Craft radars.

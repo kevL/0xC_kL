@@ -59,8 +59,8 @@ private:
 		_costSell,
 		_listOrder,
 		_marker,
-		_radarRange,
-		_reconRange,
+		_rangeRadar,
+		_rangeRecon,
 		_refuelRate,
 		_repairRate,
 		_score,
@@ -81,7 +81,7 @@ private:
 		_refuelItem,
 		_type;
 
-	RuleTerrain* _tacticalTerrainData;
+	RuleTerrain* _terrainRule;
 
 	std::vector<std::vector<int>> _unitLocations;
 	std::vector<std::string> _required;
@@ -144,9 +144,9 @@ private:
 		/// Gets a Craft's refuel rate.
 		int getRefuelRate() const;
 		/// Gets a Craft's radar range.
-		int getRadarRange() const;
+		int getRangeRadar() const;
 		/// Gets a Craft's sight range.
-		int getReconRange() const;
+		int getRangeRecon() const;
 		/// Gets a Craft's transfer time.
 		int getTransferTime() const;
 

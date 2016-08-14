@@ -116,7 +116,7 @@ private:
 	static double getCommanderHelp(const std::string& rp);
 
 	/// Calculates the chance that aLiens have to detect the Base.
-	static int calcDetChance(
+	static int exposedChance(
 			int diff,
 			int facQty,
 			int shields);
@@ -303,7 +303,7 @@ private:
 		double insideRadarRange(const Target* const target) const;
 
 		/// Gets the detection chance for the Base.
-		int getDetectionChance(
+		int getExposedChance(
 				int diff,
 				int* facQty = nullptr,
 				int* shields = nullptr) const;

@@ -89,14 +89,14 @@ ArticleStateUfo::ArticleStateUfo(const ArticleDefinitionUfo* const defs)
 	graphic->getCrop()->h = 29;
 	graphic->blit(_image); */
 
-/*	if (ufo->getModSprite().empty())
+/*	if (ufo->getSpriteString().empty())
 	{
 		graphic->getCrop()->y = 140 + 52 * static_cast<Sint16>(ufo->getSprite());
 		graphic->getCrop()->h = 52;
 	}
 	else
 	{
-		graphic = _game->getResourcePack()->getSurface(ufo->getModSprite());
+		graphic = _game->getResourcePack()->getSurface(ufo->getSpriteString());
 		graphic->setX(0);
 		graphic->setY(0);
 	}

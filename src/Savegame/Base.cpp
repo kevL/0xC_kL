@@ -1682,7 +1682,8 @@ bool Base::isBasePlaced() const
 }
 
 /**
- * Returns whether or not this Base is equipped with hyper-wave detection facilities.
+ * Returns whether or not this Base is equipped with hyper-wave detection
+ * facilities.
  * @return, true if hyper-wave detection
  */
 bool Base::getHyperDetection() const
@@ -1736,7 +1737,7 @@ int Base::getShortRangeDetection() const
 } */
 
 /**
- * Gets the total value of short range detection facilities at this base.
+ * Gets the total value of short range detection facilities at this Base.
  * @note Used for BaseInfoState bar.
  * @return, shortrange detection value as percent
  */
@@ -1750,14 +1751,12 @@ int Base::getShortRangeTotal() const
 			i != _facilities.end();
 			++i)
 	{
-		if ((*i)->buildFinished() == true)
+		if ((*i)->buildFinished() == true
+			&& (range = (*i)->getRules()->getRadarRange()) != 0
+			&& range <= _rules->getRadarRangeCutoff())
 		{
-			range = (*i)->getRules()->getRadarRange();
-			if (range != 0 && range <= _rules->getRadarCutoffRange())
-			{
-				total += (*i)->getRules()->getRadarChance();
-				if (total > 100) return 100;
-			}
+			total += (*i)->getRules()->getRadarChance();
+			if (total > 100) return 100;
 		}
 	}
 	return total;
@@ -1787,7 +1786,7 @@ int Base::getLongRangeDetection() const
 } */
 
 /**
- * Gets the total value of long range detection facilities at this base.
+ * Gets the total value of long range detection facilities at this Base.
  * @note Used for BaseInfoState bar.
  * @return, longrange detection value as percent
  */
@@ -1800,7 +1799,7 @@ int Base::getLongRangeTotal() const
 			++i)
 	{
 		if ((*i)->buildFinished() == true
-			&& (*i)->getRules()->getRadarRange() > _rules->getRadarCutoffRange())
+			&& (*i)->getRules()->getRadarRange() > _rules->getRadarRangeCutoff())
 		{
 			total += (*i)->getRules()->getRadarChance();
 			if (total > 100) return 100;
@@ -1820,19 +1819,20 @@ int Base::getLongRangeTotal() const
  */
 int Base::detect(Target* const target) const
 {
-	double targetDist (insideRadarRange(target));
+	double dist (insideRadarRange(target));
 
-	if (AreSame(targetDist, 0.))
+	if (AreSame(dist, 0.))
 		return 0;
 
 	int ret (0);
-	if (targetDist < 0.)
+	if (dist < 0.)
 	{
 		++ret;
-		targetDist = -targetDist;
+		dist = -dist;
 	}
 
 	int pct (0);
+	double range;
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _facilities.begin();
 			i != _facilities.end();
@@ -1840,8 +1840,8 @@ int Base::detect(Target* const target) const
 	{
 		if ((*i)->buildFinished() == true)
 		{
-			const double radarRange (static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor);
-			if (radarRange > targetDist)
+			range = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
+			if (range > dist)
 				pct += (*i)->getRules()->getRadarChance();
 		}
 	}
@@ -1867,12 +1867,14 @@ int Base::detect(Target* const target) const
  */
 double Base::insideRadarRange(const Target* const target) const
 {
-	const double targetDist (getDistance(target) * earthRadius);
-	if (targetDist > static_cast<double>(_rules->getMaxRadarRange()) * greatCircleConversionFactor)
+	const double dist (getDistance(target) * earthRadius);
+	if (dist > static_cast<double>(_rules->getRadarRangeBest()) * greatCircleConversionFactor)
 		return 0.;
 
 
-	double ret (0.); // lets hope UFO is not *right on top of Base* Lol
+	double
+		ret (0.), // lets hope UFO is not *right on top of Base* Lol
+		range;
 	bool hyperDet (false);
 
 	for (std::vector<BaseFacility*>::const_iterator
@@ -1882,10 +1884,10 @@ double Base::insideRadarRange(const Target* const target) const
 	{
 		if ((*i)->buildFinished() == true)
 		{
-			const double radarRange (static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor);
-			if (targetDist < radarRange)
+			range = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
+			if (dist < range)
 			{
-				ret = targetDist; // identical value for every i; looking only for hyperDet after 1st successful iteration.
+				ret = dist; // identical value for every i; looking only for hyperDet after 1st successful iteration.
 				if ((*i)->getRules()->isHyperwave() == true)
 					hyperDet = true;
 			}
@@ -1950,7 +1952,7 @@ double Base::insideRadarRange(const Target* const target) const
  * @param shields	- pointer to the quantity of shield facilities (default nullptr)
  * @return, detection chance
  */
-int Base::getDetectionChance(
+int Base::getExposedChance(
 		int diff,
 		int* facQty,
 		int* shields) const
@@ -1971,7 +1973,7 @@ int Base::getDetectionChance(
 					++(*shields);
 			}
 		}
-		return calcDetChance(diff, *facQty, *shields);
+		return exposedChance(diff, *facQty, *shields);
 	}
 
 	int
@@ -1989,17 +1991,17 @@ int Base::getDetectionChance(
 				++shields0;
 		}
 	}
-	return calcDetChance(diff, facQty0, shields0);
+	return exposedChance(diff, facQty0, shields0);
 }
 
 /**
  * Calculates the chance that aLiens have to detect this Base.
- * @note Helper for getDetectionChance() to ensure consistency.
+ * @note Helper for getExposedChance() to ensure consistency.
  * @param diff		- the game's difficulty setting
  * @param facQty	- the quantity of facilities
  * @param shields	- the quantity of shield facilities
  */
-int Base::calcDetChance( // private/static.
+int Base::exposedChance( // private/static.
 		int diff,
 		int facQty,
 		int shields)

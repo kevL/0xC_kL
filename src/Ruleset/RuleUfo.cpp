@@ -55,8 +55,8 @@ RuleUfo::RuleUfo(const std::string& type)
 		_scoreAct(0),
 		_reload(0),
 		_escape(0),
-		_reconRange(600),
-		_tacticalTerrainData(nullptr)
+		_rangeRecon(600),
+		_terrainRule(nullptr)
 {}
 
 /**
@@ -64,7 +64,7 @@ RuleUfo::RuleUfo(const std::string& type)
  */
 RuleUfo::~RuleUfo()
 {
-	delete _tacticalTerrainData;
+	delete _terrainRule;
 }
 
 /**
@@ -89,8 +89,8 @@ void RuleUfo::load(
 	_scoreAct	= node["scoreAct"]	.as<int>(_scoreAct);
 	_reload		= node["reload"]	.as<int>(_reload);
 	_escape		= node["escape"]	.as<int>(_escape);
-	_reconRange	= node["reconRange"].as<int>(_reconRange);
-	_modSprite	= node["modSprite"]	.as<std::string>(_modSprite);
+	_rangeRecon	= node["rangeRecon"].as<int>(_rangeRecon);
+	_spriteAlt	= node["spriteAlt"]	.as<std::string>(_spriteAlt);
 
 	if		(_size == stSize[0u]) _sizeType = UFO_VERYSMALL;
 	else if	(_size == stSize[1u]) _sizeType = UFO_SMALL;
@@ -98,13 +98,13 @@ void RuleUfo::load(
 	else if	(_size == stSize[3u]) _sizeType = UFO_LARGE;
 	else if	(_size == stSize[4u]) _sizeType = UFO_VERYLARGE;
 
-	if (const YAML::Node& terrain = node["battlescapeTerrainData"])
+	if (const YAML::Node& terrain = node["tacticalTerrain"])
 	{
-		delete _tacticalTerrainData;
+		delete _terrainRule;
 
-		RuleTerrain* const terrainRule (new RuleTerrain(terrain["name"].as<std::string>()));
+		RuleTerrain* const terrainRule (new RuleTerrain(terrain["rule"].as<std::string>()));
 		terrainRule->load(terrain, rules);
-		_tacticalTerrainData = terrainRule;
+		_terrainRule = terrainRule;
 	}
 }
 
@@ -235,16 +235,16 @@ int RuleUfo::getActivityScore() const
 }
 
 /**
- * Gets the terrain-data needed to draw this type of UFO in the battlescape.
+ * Gets the RuleTerrain to draw this type of UFO on the battlefield.
  * @return, pointer to RuleTerrain
  */
 RuleTerrain* RuleUfo::getTacticalTerrainData() const
 {
-	return _tacticalTerrainData;
+	return _terrainRule;
 }
 
 /**
- * Gets the UFO's weapon reload time.
+ * Gets the UFO's weapon reload period.
  * @return, ticks
  */
 int RuleUfo::getWeaponReload() const
@@ -253,30 +253,30 @@ int RuleUfo::getWeaponReload() const
 }
 
 /**
- * Gets the UFO's break off time.
+ * Gets the UFO's break off period.
  * @return, ticks
  */
-int RuleUfo::getEscapeTime() const
+int RuleUfo::getEscape() const
 {
 	return _escape;
 }
 
 /**
- * For user-defined UFOs use a surface for the preview image.
- * @return, the string-ID of the surface that represents the UFO
+ * For user-defined UFOs use an alternate Surface for the dogfight preview.
+ * @return, the string-ID for the surface
  */
-std::string RuleUfo::getModSprite() const
+std::string RuleUfo::getSpriteString() const
 {
-	return _modSprite;
+	return _spriteAlt;
 }
 
 /**
- * Gets the UFO's radar range for detecting bases.
+ * Gets the UFO's radar-range for detecting bases.
  * @return, the range in nautical miles
  */
-int RuleUfo::getReconRange() const
+int RuleUfo::getRangeRecon() const
 {
-	return _reconRange;
+	return _rangeRecon;
 }
 
 }

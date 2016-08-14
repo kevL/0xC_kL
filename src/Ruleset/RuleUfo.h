@@ -57,20 +57,20 @@ private:
 		_marker,
 		_power,
 		_range,
-		_reconRange,
+		_rangeRecon,
 		_reload,
 		_score,
 		_scoreAct,
 		_speedMax,
 		_sprite;
 	std::string
-		_modSprite,
+		_spriteAlt,
 		_size,
 		_type;
 
 	UfoSizeType _sizeType;
 
-	RuleTerrain* _tacticalTerrainData;
+	RuleTerrain* _terrainRule;
 
 
 	public:
@@ -123,12 +123,12 @@ private:
 		/// Gets the reload time of the UFO's weapon.
 		int getWeaponReload() const;
 		/// Gets the UFO's escape time.
-		int getEscapeTime() const;
+		int getEscape() const;
 
 		/// Gets the name of the surface that represents this UFO.
-		std::string getModSprite() const;
+		std::string getSpriteString() const;
 		/// Gets the UFO's radar range.
-		int getReconRange() const;
+		int getRangeRecon() const;
 };
 
 }

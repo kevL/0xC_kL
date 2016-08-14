@@ -393,9 +393,9 @@ private:
 		/// Gets the minimum radar-range.
 //		int getMinRadarRange() const;
 		/// Gets maximum radar-range of all Facilities.
-		int getMaxRadarRange() const;
+		int getRadarRangeBest() const;
 		/// Gets the cutoff between small & large radars.
-		int getRadarCutoffRange() const;
+		int getRadarRangeCutoff() const;
 
 		/// Gets the turn that aLiens are allowed to throw their first grenades.
 		int getFirstGrenade() const;

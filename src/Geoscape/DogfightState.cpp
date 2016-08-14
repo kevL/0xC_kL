@@ -247,7 +247,7 @@ DogfightState::DogfightState(
 	graphic->getCrop()->h = 29;
 	graphic->blit(_previewUfo);
 
-	if (ufo->getRules()->getModSprite().empty())
+	if (ufo->getRules()->getSpriteString().empty())
 	{
 		graphic->setY(15);
 		graphic->getCrop()->y = 140 + 52 * _ufo->getRules()->getSprite();
@@ -255,7 +255,7 @@ DogfightState::DogfightState(
 	}
 	else
 	{
-		graphic = _game->getResourcePack()->getSurface(ufo->getRules()->getModSprite());
+		graphic = _game->getResourcePack()->getSurface(ufo->getRules()->getSpriteString());
 		graphic->setX(0);
 		graphic->setY(15);
 	}
@@ -460,7 +460,7 @@ DogfightState::DogfightState(
 	{
 		_ufo->setFireCountdown(0); // UFO is ready to Fire pronto.
 
-		int escape (_ufo->getRules()->getEscapeTime());
+		int escape (_ufo->getRules()->getEscape());
 		escape += RNG::generate(0, escape);
 		escape /= _diff + 1; // escape -= _diff * 30;
 		if (escape < 1) escape = 1;

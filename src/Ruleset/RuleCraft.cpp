@@ -47,11 +47,11 @@ RuleCraft::RuleCraft(const std::string& type)
 		_costSell(0),
 		_repairRate(1),
 		_refuelRate(1),
-		_radarRange(600),
-		_reconRange(900),
+		_rangeRadar(600),
+		_rangeRecon(900),
 		_transferTime(0),
 		_score(0),
-		_tacticalTerrainData(nullptr),
+		_terrainRule(nullptr),
 		_spacecraft(false),
 		_listOrder(0)
 {}
@@ -61,7 +61,7 @@ RuleCraft::RuleCraft(const std::string& type)
  */
 RuleCraft::~RuleCraft()
 {
-	delete _tacticalTerrainData;
+	delete _terrainRule;
 }
 
 /**
@@ -102,18 +102,18 @@ void RuleCraft::load(
 	_refuelItem		= node["refuelItem"]	.as<std::string>(_refuelItem);
 	_repairRate		= node["repairRate"]	.as<int>(_repairRate);
 	_refuelRate		= node["refuelRate"]	.as<int>(_refuelRate);
-	_radarRange		= node["radarRange"]	.as<int>(_radarRange);
-	_reconRange		= node["reconRange"]	.as<int>(_reconRange);
+	_rangeRadar		= node["rangeRadar"]	.as<int>(_rangeRadar);
+	_rangeRecon		= node["rangeRecon"]	.as<int>(_rangeRecon);
 	_transferTime	= node["transferTime"]	.as<int>(_transferTime);
 	_score			= node["score"]			.as<int>(_score);
 	_spacecraft		= node["spacecraft"]	.as<bool>(_spacecraft);
 	_unitLocations	= node["unitLocations"]	.as<std::vector<std::vector<int>>>(_unitLocations);
 
-	if (const YAML::Node& terrain = node["battlescapeTerrainData"])
+	if (const YAML::Node& terrain = node["tacticalTerrain"])
 	{
-		RuleTerrain* const terrainRule (new RuleTerrain(terrain["terrain"].as<std::string>()));
+		RuleTerrain* const terrainRule (new RuleTerrain(terrain["rule"].as<std::string>()));
 		terrainRule->load(terrain, rules);
-		_tacticalTerrainData = terrainRule;
+		_terrainRule = terrainRule;
 	}
 
 	_listOrder = node["listOrder"].as<int>(_listOrder);
@@ -289,18 +289,18 @@ int RuleCraft::getRefuelRate() const
  * Gets the Craft's radar range for detecting UFOs.
  * @return, the range in nautical miles
  */
-int RuleCraft::getRadarRange() const
+int RuleCraft::getRangeRadar() const
 {
-	return _radarRange;
+	return _rangeRadar;
 }
 
 /**
  * Gets the Craft's sight range for detecting bases.
  * @return, the range in nautical miles
  */
-int RuleCraft::getReconRange() const
+int RuleCraft::getRangeRecon() const
 {
-	return _reconRange;
+	return _rangeRecon;
 }
 
 /**
@@ -327,7 +327,7 @@ int RuleCraft::getScore() const
  */
 RuleTerrain* RuleCraft::getTacticalTerrainData()
 {
-	return _tacticalTerrainData;
+	return _terrainRule;
 }
 
 /**

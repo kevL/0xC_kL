@@ -2354,7 +2354,6 @@ std::string Ruleset::getFontName() const
 int Ruleset::getMinRadarRange() const
 {
 	static int minRadarRange = -1;
-
 	if (minRadarRange < 0)
 	{
 		minRadarRange = 0;
@@ -2376,18 +2375,18 @@ int Ruleset::getMinRadarRange() const
 			}
 		}
 	}
-
 	return minRadarRange;
 } */
 
 /**
- * Gets maximum radar range out of all facilities.
+ * Gets best radar range of all facilities.
  * @return, maximum range
  */
-int Ruleset::getMaxRadarRange() const
+int Ruleset::getRadarRangeBest() const
 {
-	int ret (0);
-	int range;
+	int
+		ret (0),
+		range;
 
 	const RuleBaseFacility* facRule;
 	for (std::vector<std::string>::const_iterator
@@ -2395,11 +2394,10 @@ int Ruleset::getMaxRadarRange() const
 			i != _facilitiesIndex.end();
 			++i)
 	{
-		if ((facRule = getBaseFacility(*i)) != nullptr)
+		if ((facRule = getBaseFacility(*i)) != nullptr
+			&& (range = facRule->getRadarRange()) > ret)
 		{
-			range = facRule->getRadarRange();
-			if (range > ret)
-				ret = range;
+			ret = range;
 		}
 	}
 	return ret;
@@ -2409,7 +2407,7 @@ int Ruleset::getMaxRadarRange() const
  * Gets the cutoff between small & large radars for determining base info values.
  * @return, range boundary between small & large radars
  */
-int Ruleset::getRadarCutoffRange() const
+int Ruleset::getRadarRangeCutoff() const
 {
 	return _radarCutoff;
 }

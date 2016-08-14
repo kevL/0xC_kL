@@ -140,7 +140,7 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 	int
 		facQty,
 		shields,
-		det = _base->getDetectionChance(
+		det = _base->getExposedChance(
 									static_cast<int>(_game->getSavedGame()->getDifficulty()),
 									&facQty,
 									&shields);
