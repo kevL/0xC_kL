@@ -6,13 +6,10 @@ ufos:
     damageMax: 96
     speedMax: 2175
     accel: 12
-    power: 0
-    range: 0
     score: 25
-    reload: 0
     escape: 180
-    battlescapeTerrainData:
-      name: UFO1A
+    tacticalTerrain:
+      rule: UFO1A
       mapDataSets:
         - BLANKS
         - UFO1
@@ -31,8 +28,8 @@ ufos:
     score: 46
     reload: 50
     escape: 230
-    battlescapeTerrainData:
-      name: UFO_110
+    tacticalTerrain:
+      rule: UFO_110
       mapDataSets:
         - BLANKS
         - U_EXT02
@@ -75,8 +72,8 @@ ufos:
     score: 65
     reload: 40
     escape: 270
-    battlescapeTerrainData:
-      name: UFO_120
+    tacticalTerrain:
+      rule: UFO_120
       mapDataSets:
         - BLANKS
         - U_EXT02
@@ -134,8 +131,8 @@ ufos:
     score: 125
     reload: 44
     escape: 330
-    battlescapeTerrainData:
-      name: UFO_130
+    tacticalTerrain:
+      rule: UFO_130
       mapDataSets:
         - BLANKS
         - U_EXT02
@@ -191,8 +188,8 @@ ufos:
     score: 125
     reload: 32
     escape: 360
-    battlescapeTerrainData:
-      name: UFO_140
+    tacticalTerrain:
+      rule: UFO_140
       mapDataSets:
         - BLANKS
         - U_EXT02
@@ -245,8 +242,8 @@ ufos:
     score: 250
     reload: 26
     escape: 1600
-    battlescapeTerrainData:
-      name: UFO_150
+    tacticalTerrain:
+      rule: UFO_150
       mapDataSets:
         - BLANKS
         - U_EXT02
@@ -290,8 +287,8 @@ ufos:
     score: 350
     reload: 20
     escape: 2400
-    battlescapeTerrainData:
-      name: UFO_160
+    tacticalTerrain:
+      rule: UFO_160
       mapDataSets:
         - BLANKS
         - U_EXT02
@@ -328,8 +325,8 @@ ufos:
     score: 200
     reload: 32
     escape: 1200
-    battlescapeTerrainData:
-      name: UFO_170
+    tacticalTerrain:
+      rule: UFO_170
       mapDataSets:
         - BLANKS
         - U_EXT02

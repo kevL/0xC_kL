@@ -11,12 +11,12 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     costBuy: 450000
     costRent: 295000
     refuelRate: 5000
-    radarRange: 400
-    reconRange: 600
+    rangeRadar: 400
+    rangeRecon: 600
     transferTime: 72
     score: 250
-    battlescapeTerrainData:
-      terrain: PLANE
+    tacticalTerrain:
+      rule: PLANE
       mapDataSets:
         - BLANKS
         - PLANE
@@ -34,8 +34,8 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     costBuy: 750000
     costRent: 520000
     refuelRate: 5000
-#    radarRange: 600 #default
-#    reconRange: 900 #default
+#    rangeRadar: 600 #default
+#    rangeRecon: 900 #default
     transferTime: 96
     score: 300
   - type: STR_FIRESTORM
@@ -52,8 +52,8 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     refuelItem: STR_ELERIUM_115
     refuelRate: 5
     repairRate: 2
-    radarRange: 800
-    reconRange: 1200
+    rangeRadar: 800
+    rangeRecon: 1200
     score: 350
   - type: STR_LIGHTNING
     required:
@@ -71,11 +71,11 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     refuelItem: STR_ELERIUM_115
     refuelRate: 5
     repairRate: 3
-    radarRange: 800
-    reconRange: 1200
+    rangeRadar: 800
+    rangeRecon: 1200
     score: 375
-    battlescapeTerrainData:
-      terrain: LIGHTNIN
+    tacticalTerrain:
+      rule: LIGHTNIN
       mapDataSets:
         - BLANKS
         - LIGHTNIN
@@ -113,12 +113,12 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     refuelItem: STR_ELERIUM_115
     refuelRate: 5
     repairRate: 5
-    radarRange: 1000
-    reconRange: 1500
+    rangeRadar: 1000
+    rangeRecon: 1500
     score: 475
     spacecraft: true
-    battlescapeTerrainData:
-      terrain: AVENGER
+    tacticalTerrain:
+      rule: AVENGER
       mapDataSets:
         - BLANKS
         - AVENGER

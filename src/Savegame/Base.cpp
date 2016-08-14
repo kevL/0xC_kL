@@ -1753,10 +1753,10 @@ int Base::getShortRangeTotal() const
 	{
 		if ((*i)->buildFinished() == true
 			&& (range = (*i)->getRules()->getRadarRange()) != 0
-			&& range <= _rules->getRadarRangeCutoff())
+			&& range <= _rules->getRadarRangeCutoff()
+			&& (total += (*i)->getRules()->getRadarChance()) >= 100)
 		{
-			total += (*i)->getRules()->getRadarChance();
-			if (total > 100) return 100;
+			return 100;
 		}
 	}
 	return total;
@@ -1799,10 +1799,10 @@ int Base::getLongRangeTotal() const
 			++i)
 	{
 		if ((*i)->buildFinished() == true
-			&& (*i)->getRules()->getRadarRange() > _rules->getRadarRangeCutoff())
+			&& (*i)->getRules()->getRadarRange() > _rules->getRadarRangeCutoff()
+			&& (total += (*i)->getRules()->getRadarChance()) >= 100)
 		{
-			total += (*i)->getRules()->getRadarChance();
-			if (total > 100) return 100;
+			return 100;
 		}
 	}
 	return total;
@@ -1819,43 +1819,38 @@ int Base::getLongRangeTotal() const
  */
 int Base::detect(Target* const target) const
 {
-	double dist (insideRadarRange(target));
-
-	if (AreSame(dist, 0.))
-		return 0;
-
 	int ret (0);
-	if (dist < 0.)
+	double dist (insideRadarRange(target));
+	if (AreSame(dist, 0.) == false)
 	{
-		++ret;
-		dist = -dist;
-	}
-
-	int pct (0);
-	double range;
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end();
-			++i)
-	{
-		if ((*i)->buildFinished() == true)
+		if (dist < 0.)
 		{
-			range = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
-			if (range > dist)
+			++ret;
+			dist = -dist;
+		}
+
+		int pct (0);
+		for (std::vector<BaseFacility*>::const_iterator
+				i = _facilities.begin();
+				i != _facilities.end();
+				++i)
+		{
+			if ((*i)->buildFinished() == true
+				&& dist <= (static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor))
+			{
 				pct += (*i)->getRules()->getRadarChance();
+			}
+		}
+
+		const Ufo* const ufo (dynamic_cast<Ufo*>(target)); // errr, what else would one be detecting apart from a UFO.
+		if (ufo != nullptr)
+		{
+			pct += ufo->getVisibility();
+			pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10-min.
+			if (RNG::percent(pct) == true)
+				ret += 2;
 		}
 	}
-
-	const Ufo* const ufo (dynamic_cast<Ufo*>(target));
-	if (ufo != nullptr)
-	{
-		pct += ufo->getVisibility();
-		pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10-min.
-
-		if (RNG::percent(pct) == true)
-			ret += 2;
-	}
-
 	return ret;
 }
 
@@ -1867,34 +1862,26 @@ int Base::detect(Target* const target) const
  */
 double Base::insideRadarRange(const Target* const target) const
 {
+	double ret (0.); // lets hope UFO is not *right on top of Base* Lol
 	const double dist (getDistance(target) * earthRadius);
-	if (dist > static_cast<double>(_rules->getRadarRangeBest()) * greatCircleConversionFactor)
-		return 0.;
-
-
-	double
-		ret (0.), // lets hope UFO is not *right on top of Base* Lol
-		range;
-	bool hyperDet (false);
-
-	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
-			i != _facilities.end() && hyperDet == false;
-			++i)
+	if (dist <= static_cast<double>(_rules->getRadarRangeBest()) * greatCircleConversionFactor)
 	{
-		if ((*i)->buildFinished() == true)
+		bool hyperDet (false);
+		for (std::vector<BaseFacility*>::const_iterator
+				i = _facilities.begin();
+				i != _facilities.end() && hyperDet == false;
+				++i)
 		{
-			range = static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor;
-			if (dist < range)
+			if ((*i)->buildFinished() == true
+				&& dist <= (static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor))
 			{
 				ret = dist; // identical value for every i; looking only for hyperDet after 1st successful iteration.
 				if ((*i)->getRules()->isHyperwave() == true)
 					hyperDet = true;
 			}
 		}
+		if (hyperDet == true) ret = -ret; // <- use negative value to pass (hyperdetection= true)
 	}
-
-	if (hyperDet == true) ret = -ret; // <- use negative value to pass (hyperdetection= true)
 	return ret;
 }
 
