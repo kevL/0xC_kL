@@ -2395,7 +2395,7 @@ int BattlescapeGenerator::loadMAP( // private.
 				unsigned dataId (partId);
 				int dataSetId (dataSetIdOffset);
 
-				MapData* const data (terraRule->getMapData(&dataId, &dataSetId));
+				MapData* const data (terraRule->getTerrainPart(&dataId, &dataSetId));
 //				if (dataSetIdOffset > 0) // ie: ufo or craft.
 //					_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1,3); // erase content-object
 
@@ -2865,7 +2865,10 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 					case MSC_ADDCRAFT:
 						if (_craft != nullptr)
 						{
-							craftBlock = _craft->getRules()->getTacticalTerrainData()->getMapBlockRand(999,999, 0, false);
+							craftBlock = _craft->getRules()->getTacticalTerrainData()->getTerrainBlock(
+																									999,999,
+																									MBT_DEFAULT,
+																									false);
 							if (addCraft(craftBlock, *i, _craftPos) == true)
 							{
 								// By default addCraft adds blocks from group 1.
@@ -2925,7 +2928,10 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 						if (ufoTerrain != nullptr)
 						{
-							block = ufoTerrain->getMapBlockRand(999,999, 0, false);
+							block = ufoTerrain->getTerrainBlock(
+															999,999,
+															MBT_DEFAULT,
+															false);
 							Log(LOG_INFO) << "bGen:generateMap() ufo-type " << block->getType();
 
 							SDL_Rect ufoPosTest;
@@ -3268,8 +3274,8 @@ void BattlescapeGenerator::generateBaseMap() // private.
 					newname << mapnum;
 
 					addBlock(
-						x,y,
-						_terrainRule->getMapBlock(newname.str()));
+							x,y,
+							_terrainRule->getTerrainBlock(newname.str()));
 
 					_drillMap[static_cast<size_t>(x)]
 							 [static_cast<size_t>(y)] = static_cast<int>(MD_NONE);
@@ -3820,10 +3826,10 @@ bool BattlescapeGenerator::addLine( // private.
 		if (block == nullptr)
 			addBlock(
 					x,y,
-					_terrainRule->getMapBlockRand(10,10, type));
+					_terrainRule->getTerrainBlock(10,10, type));
 		else if (block->isInGroup(typeTest) == true)
 		{
-			block = _terrainRule->getMapBlockRand(10,10, MBT_CROSSROAD);
+			block = _terrainRule->getTerrainBlock(10,10, MBT_CROSSROAD);
 			clearModule(
 					x * 10,
 					y * 10,

@@ -607,7 +607,6 @@ void DebriefExtraState::btnOkClick(Action*)
 				&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 			{
 				_game->getResourcePack()->fadeMusic(_game, 863);
-//				_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE); // starts auto on return to Geoscape.
 			}
 			_game->popState();
 	}

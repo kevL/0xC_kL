@@ -77,18 +77,18 @@ private:
 		/// Gets the terrain's mapdatafiles.
 		const std::vector<MapDataSet*>* getMapDataSets() const;
 
-		/// Gets a random mapblock.
-		MapBlock* getMapBlockRand(
+		/// Gets a random MapBlock.
+		MapBlock* getTerrainBlock(
 				int sizeX,
 				int sizeY,
 				int group,
 				bool force = true) const;
-		/// Gets a mapblock given its type.
-		MapBlock* getMapBlock(const std::string& type) const;
-		/// Gets the mapdata object.
-		MapData* getMapData(
-				unsigned int* id,
-				int* mapDataSetId) const;
+		/// Gets a MapBlock given its type.
+		MapBlock* getTerrainBlock(const std::string& type) const;
+		/// Gets the MapData object.
+		MapData* getTerrainPart(
+				unsigned int* dataId,
+				int* dataSetId) const;
 
 		/// Gets the civilian types to use.
 		const std::vector<std::string>& getCivilianTypes() const;

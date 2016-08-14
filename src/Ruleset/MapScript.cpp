@@ -272,7 +272,7 @@ void MapScript::load(const YAML::Node& node)
 	_executionChance	= node["executionChance"]	.as<int>(_executionChance);
 	_executions			= node["executions"]		.as<int>(_executions);
 	_ufoType			= node["ufoType"]			.as<std::string>(_ufoType);
-	_label				= std::abs(node["label"]	.as<int>(_label)); // take no chances, don't accept negative values here.
+	_label				= std::abs(node["label"]	.as<int>(_label)); // take no chances, use Head & Shoulders.
 }
 
 /**
@@ -305,7 +305,7 @@ void MapScript::init()
  * if all the max-uses are used up it will return undefined.
  * @return, group number
  */
-int MapScript::getGroupNumber() // private.
+int MapScript::getGroup() // private.
 {
 	if (_groups.size() == 0u)
 		return 0;// MBT_DEFAULT; // NOTE: Returning a MapBlockType is ... misleading.
@@ -347,7 +347,7 @@ int MapScript::getGroupNumber() // private.
  * @note If no blocks are defined it will use a group instead.
  * @return, block number
  */
-int MapScript::getBlockNumber() // private.
+int MapScript::getBlock() // private.
 {
 	if (_cumulativeFrequency > 0)
 	{
@@ -362,15 +362,13 @@ int MapScript::getBlockNumber() // private.
 			if (pick < _frequenciesTemp.at(i))
 			{
 				const int ret (_blocksTemp.at(i));
-				if (_maxUsesTemp.at(i) > 0)
+				if (_maxUsesTemp.at(i) > 0
+					&& --_maxUsesTemp.at(i) == 0)
 				{
-					if (--_maxUsesTemp.at(i) == 0)
-					{
-						_blocksTemp.erase(_blocksTemp.begin() + static_cast<std::ptrdiff_t>(i));
-						_cumulativeFrequency -= _frequenciesTemp.at(i);
-						_frequenciesTemp.erase(_frequenciesTemp.begin() + static_cast<std::ptrdiff_t>(i));
-						_maxUsesTemp.erase(_maxUsesTemp.begin() + static_cast<std::ptrdiff_t>(i));
-					}
+					_blocksTemp.erase(_blocksTemp.begin() + static_cast<std::ptrdiff_t>(i));
+					_cumulativeFrequency -= _frequenciesTemp.at(i);
+					_frequenciesTemp.erase(_frequenciesTemp.begin() + static_cast<std::ptrdiff_t>(i));
+					_maxUsesTemp.erase(_maxUsesTemp.begin() + static_cast<std::ptrdiff_t>(i));
 				}
 				return ret;
 			}
@@ -389,12 +387,12 @@ int MapScript::getBlockNumber() // private.
 MapBlock* MapScript::getNextBlock(const RuleTerrain* const terrainRule)
 {
 	if (_blocks.empty() == true)
-		return terrainRule->getMapBlockRand(
+		return terrainRule->getTerrainBlock(
 										_sizeX * 10,
 										_sizeY * 10,
-										getGroupNumber());
+										getGroup());
 
-	const int blockId (getBlockNumber());
+	const int blockId (getBlock());
 	if (blockId != -1// MBT_UNDEFINED) // NOTE: Comparing 'blockId' with a MapBlockType is ... misleading.
 		&& blockId < static_cast<int>(terrainRule->getMapBlocks()->size()))
 	{

@@ -115,10 +115,10 @@ private:
 		_maxUsesTemp;
 	std::vector<SDL_Rect*> _rects;
 
-	/// Randomly generate a group from within the array.
-	int getGroupNumber();
-	/// Randomly generate a block number from within the array.
-	int getBlockNumber();
+	/// Randomly generates a group from the array.
+	int getGroup();
+	/// Randomly generates a block number from the array.
+	int getBlock();
 
 
 	public:

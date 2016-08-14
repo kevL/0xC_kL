@@ -1137,7 +1137,7 @@ void BattleUnit::keepWalking(
 		_status = STATUS_STANDING;
 		_dirVertical = Pathfinding::DIR_VERT_NONE;
 
-		if (_floating == true && _tile->solidFloor(tileBelow) == true)
+		if (_tile->solidFloor(tileBelow) == true)
 			_floating = false;
 
 		if (_dirFace != -1) // finish strafing move facing the correct way.

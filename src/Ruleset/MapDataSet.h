@@ -37,9 +37,9 @@ class SurfaceSet;
 
 
 /**
- * Represents a Terrain Map Datafile that corresponds to an XCom MCD & PCK file.
- * Popularly known as a tileset.
- * @note The list of map datafiles is stored in RuleSet but referenced in RuleTerrain.
+ * Represents the MapControlData of an MCD & PCK/TAB fileset.
+ * @note Popularly known as a tileset. The list of datafiles is stored in
+ * RuleSet but referenced in RuleTerrain.
  * @sa http://www.ufopaedia.org/index.php?title=MCD
  */
 class MapDataSet
@@ -51,7 +51,7 @@ private:
 	std::string _type;
 
 	static MapData
-		* _floorBlank,
+		* _floorBlank, // used only to fix broken tileset entries. See RuleTerrain::getTerrainPart().
 		* _floorScorch;
 
 	const Game* _game;
@@ -74,8 +74,8 @@ private:
 		/// Gets the dataset-type used for MAP generation.
 		std::string getType() const;
 
-		/// Gets the dataset-size.
-		size_t getSize() const;
+		/// Gets the quantity of records in the MapDataSet.
+		size_t getRecordsQty() const;
 
 		/// Gets the parts/entries in the MapDataSet.
 		std::vector<MapData*>* getRecords();

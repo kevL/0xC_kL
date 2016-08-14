@@ -89,24 +89,24 @@ MapDataSet* MapData::getDataset() const
 
 /**
  * Gets the sprite index.
- * @param aniFrame - animation frame 0-7
+ * @param aniCycle - animation frame 0-7
  * @return, the original sprite index
  */
-int MapData::getSprite(int aniFrame) const
+int MapData::getSprite(int aniCycle) const
 {
-	return _sprite[static_cast<size_t>(aniFrame)];
+	return _sprite[static_cast<size_t>(aniCycle)];
 }
 
 /**
  * Sets the sprite index for a certain frame.
- * @param aniFrame	- animation frame
+ * @param aniCycle	- animation frame
  * @param id		- the sprite index in the surfaceset of the mapdataset
  */
 void MapData::setSprite(
-		size_t aniFrame,
+		size_t aniCycle,
 		int id)
 {
-	_sprite[aniFrame] = id;
+	_sprite[aniCycle] = id;
 }
 
 /**

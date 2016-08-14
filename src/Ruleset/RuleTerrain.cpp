@@ -145,13 +145,13 @@ const std::string& RuleTerrain::getType() const
  * @param force - true to enforce block-size at the max-size (default true)
  * @return, pointer to a MapBlock or nullptr if none found
  */
-MapBlock* RuleTerrain::getMapBlockRand(
+MapBlock* RuleTerrain::getTerrainBlock(
 		int sizeX,
 		int sizeY,
 		int group,
 		bool force) const
 {
-	//Log(LOG_INFO) << "getMapBlockRand()";
+	//Log(LOG_INFO) << "getTerrainBlock()";
 	//Log(LOG_INFO) << "sizeX = " << sizeX << " sizeY = " << sizeY << " group = " << group << " force = " << force;
 	std::vector<MapBlock*> blocks;
 
@@ -184,7 +184,7 @@ MapBlock* RuleTerrain::getMapBlockRand(
  * @param type - reference to the type of a MapBlock
  * @return, pointer to a MapBlock or nullptr if not found
  */
-MapBlock* RuleTerrain::getMapBlock(const std::string& type) const
+MapBlock* RuleTerrain::getTerrainBlock(const std::string& type) const
 {
 	for (std::vector<MapBlock*>::const_iterator
 			i = _blocks.begin();
@@ -199,13 +199,13 @@ MapBlock* RuleTerrain::getMapBlock(const std::string& type) const
 
 /**
  * Gets a MapData object.
- * @param id			- pointer to the ID of the terrain
- * @param mapDataSetId	- pointer to the ID of the MapDataSet
+ * @param dataId	- pointer to the ID of the part
+ * @param dataSetId	- pointer to the ID of the tileset
  * @return, pointer to MapData object
  */
-MapData* RuleTerrain::getMapData(
-		unsigned int* id,
-		int* mapDataSetId) const
+MapData* RuleTerrain::getTerrainPart(
+		unsigned int* dataId,
+		int* dataSetId) const
 {
 	MapDataSet* dataSet;
 
@@ -217,21 +217,21 @@ MapData* RuleTerrain::getMapData(
 	{
 		dataSet = *pDataSet;
 
-		if (*id < dataSet->getSize())
+		if (*dataId < dataSet->getRecordsQty()) // found.
 			break;
 
-		*id -= dataSet->getSize();
-		++(*mapDataSetId);
+		*dataId -= dataSet->getRecordsQty();
+		++(*dataSetId);
 	}
 
-	if (pDataSet == _dataSets.end()) // Set this broken tile-reference to BLANKS 0.
+	if (pDataSet == _dataSets.end()) // Set this broken part-reference to "BLANKS" id-0.
 	{
 		dataSet = _dataSets.front();
-		*id = 0u;
-		*mapDataSetId = 0;
+		*dataId = 0u;
+		*dataSetId = 0;
 	}
 
-	return dataSet->getRecords()->at(*id);
+	return dataSet->getRecords()->at(*dataId);
 }
 
 /**

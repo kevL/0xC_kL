@@ -91,7 +91,7 @@ std::string MapDataSet::getType() const
  * Gets the MapDataSet size.
  * @return, the quantity of records
  */
-size_t MapDataSet::getSize() const
+size_t MapDataSet::getRecordsQty() const
 {
 	return _records.size();
 }

@@ -163,10 +163,10 @@ private:
 		MapDataSet* getDataset() const;
 
 		/// Gets the sprite-index for a specified frame.
-		int getSprite(int aniFrame) const;
+		int getSprite(int aniCycle) const;
 		/// Sets the sprite-index for a specified frame.
 		void setSprite(
-				size_t aniFrame,
+				size_t aniCycle,
 				int id);
 
 		/// Gets if this tile-part is either a normal door or a ufo-door.
