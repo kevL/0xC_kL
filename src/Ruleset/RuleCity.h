@@ -62,7 +62,7 @@ private:
 		/// Gets a City's name as a raw string.
 		const std::string& getName() const;
 
-		/// Gets a City's marker.
+		/// Gets a City's globe-marker.
 		int getMarker() const override;
 
 		/// Gets the level of zoom that shows a City's name.

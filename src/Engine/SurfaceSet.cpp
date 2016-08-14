@@ -287,13 +287,13 @@ int SurfaceSet::getHeight() const
 }
 
 /**
- * Gets the total amount of frames currently stored in this SurfaceSet.
- * @return, number of frames
- */
+ * Gets the total quantity of frames in this SurfaceSet.
+ * @return, quantity of frames
+ *
 size_t SurfaceSet::getTotalFrames() const
 {
 	return _frames.size();
-}
+} */
 
 /**
  * Replaces a certain amount of colors in all of the frames.

@@ -120,7 +120,7 @@ const RuleAlienMission* TerrorSite::getRules() const
  * Gets the rule for this TerrorSite's deployment.
  * @return, pointer to RuleAlienDeployment rule
  */
-const RuleAlienDeployment* TerrorSite::getTerrorDeployment() const
+const RuleAlienDeployment* TerrorSite::getTerrorDeployed() const
 {
 	return _ruleDeploy;
 }
@@ -154,15 +154,15 @@ std::wstring TerrorSite::getName(const Language* const lang) const
 }
 
 /**
- * Gets the globe-marker for this TerrorSite (default 5 if no marker is specified).
- * @return, marker sprite #5 (or special Deployment icon)
+ * Gets the globe-marker for this TerrorSite.
+ * @return, marker-ID (-1 if not detected)
  */
 int TerrorSite::getMarker() const
 {
 	if (_detected == true)
 	{
-		const int ret (_ruleDeploy->getMarkerIcon());
-		if (ret != -1) return ret; // for a custom marker.
+		const int id (_ruleDeploy->getMarkerIcon());
+		if (id != -1) return id;
 
 		return Globe::GLM_TERRORSITE;
 	}

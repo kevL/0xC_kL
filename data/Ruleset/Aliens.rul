@@ -874,7 +874,6 @@ alienDeployments:
       - URBAN2          #Luke's Expanded Terror Sites
 #    alert: STR_ALIENS_TERRORISE #default
 #    alertBg: BACK03.SCR         #default
-#    markerType: STR_TERROR_SITE #default
     briefing:
       palette: 2
       music: GEO_BRIEF_TERRORSITE
@@ -1191,8 +1190,6 @@ alienDeployments:
     briefing:
       music: GEO_BRIEF_BASEASSAULT
       background: BACK01.SCR
-    markerType: STR_ALIEN_BASE
-    markerIcon: 7          #Globe::GLM_ALIENBASE
     isAlienBase: true      #tells quick-battles what to do with this deployment
     objectiveTile: 3       #TileType:UFO_NAVIGATION
     objectiveNotice: STR_ALIEN_BASE_CONTROL_DESTROYED

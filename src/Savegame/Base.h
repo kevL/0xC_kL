@@ -148,7 +148,7 @@ private:
 		std::wstring getName(const Language* const lang = nullptr) const override;
 		/// Sets the Base's name.
 		void setName(const std::wstring& wst);
-		/// Gets the Base's marker.
+		/// Gets the Base's globe-marker.
 		int getMarker() const override;
 
 		/// Gets the Base's facilities.

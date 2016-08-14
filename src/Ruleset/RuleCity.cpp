@@ -86,7 +86,7 @@ const std::string& RuleCity::getName() const
 
 /**
  * Gets the globe-marker for this RuleCity.
- * @return, marker-sprite #8
+ * @return, marker-ID
  */
 int RuleCity::getMarker() const
 {

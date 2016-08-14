@@ -76,7 +76,7 @@ private:
 		/// Gets the TerrorSite's ruleset.
 		const RuleAlienMission* getRules() const;
 		/// Gets the TerrorSite's deployment.
-		const RuleAlienDeployment* getTerrorDeployment() const;
+		const RuleAlienDeployment* getTerrorDeployed() const;
 
 		/// Gets the TerrorSite's ID.
 		int getId() const;
@@ -86,7 +86,7 @@ private:
 		/// Gets the TerrorSite's name.
 		std::wstring getName(const Language* const lang) const override;
 
-		/// Gets the TerrorSite site's marker.
+		/// Gets the TerrorSite globe-marker.
 		int getMarker() const override;
 
 		/// Gets the seconds until the TerrorSite expires.

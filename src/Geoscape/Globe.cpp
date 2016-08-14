@@ -1201,14 +1201,23 @@ void Globe::blink()
 	{
 		_blinkVal = -_blinkVal; // can't use static because, reload.
 
-		const int j (static_cast<int>(_markerSet->getTotalFrames()));
-		for (int
-				i = 0;
-				i != j;
+		for (std::map<int, Surface*>::const_iterator
+				i  = _markerSet->getFrames()->begin();
+				i != _markerSet->getFrames()->end();
 				++i)
 		{
-			if (i != GLM_CITY)
-				_markerSet->getFrame(i)->offset(_blinkVal);
+//			GLM_BASE		= 0
+//			GLM_CRAFT		= 1
+//			GLM_UFO_FLYING	= 2
+//			GLM_UFO_LANDED	= 3
+//			GLM_UFO_CRASHED	= 4
+//			GLM_TERRORSITE	= 5
+//			GLM_WAYPOINT	= 6
+//			GLM_ALIENBASE	= 7
+//			GLM_CITY		= 8
+
+			if (i->first != GLM_CITY)
+				i->second->offset(_blinkVal);
 		}
 		drawMarkers();
 	}
@@ -1228,8 +1237,8 @@ void Globe::toggleBlink()
  */
 void Globe::rotate()
 {
-	_cenLon += _rotLon * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1);
-	_cenLat += _rotLat * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1);
+	_cenLon += _rotLon * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1u);
+	_cenLat += _rotLat * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1u);
 
 	_game->getSavedGame()->setGlobeLongitude(_cenLon);
 	_game->getSavedGame()->setGlobeLatitude(_cenLat);
@@ -1238,7 +1247,7 @@ void Globe::rotate()
 }
 
 /**
- * Draws this whole Globe part by part.
+ * Draws this Globe blit by blit.
  */
 void Globe::draw()
 {
@@ -1273,7 +1282,7 @@ void Globe::drawOcean()
 }
 
 /**
- * Renders the land with textured polygons.
+ * Renders the land with textured Polygons.
  */
 void Globe::drawLand()
 {
@@ -1403,7 +1412,7 @@ Cord Globe::getSunDirection( // private.
 
 /**
  * Shadows the earth and adds terminator-fluxions (noise) according to the
- * sun-direction.
+ * sun's direction.
  */
 void Globe::drawShadow()
 {
@@ -2353,8 +2362,8 @@ void Globe::drawTarget( // private.
 		const Target* const target,
 		Surface* const srfGlobe)
 {
-	const int markerId (target->getMarker());
-	if (markerId != -1)
+	const int id (target->getMarker());
+	if (id != -1)
 	{
 		const double
 			lon (target->getLongitude()),
@@ -2368,18 +2377,18 @@ void Globe::drawTarget( // private.
 					lon,lat,
 					&x,&y);
 
-			Surface* const marker (_markerSet->getFrame(markerId));
+			Surface* const marker (_markerSet->getFrame(id));
 			marker->setX(x - 1);
 			marker->setY(y - 1);
 			marker->blit(srfGlobe);
 
-			switch (markerId)
+			switch (id)
 			{
 				case Globe::GLM_CRAFT:
 				case Globe::GLM_UFO_FLYING:
 					_flightData->setX(x);
 
-					unsigned data; // headingInt[1-digit] - altitudeInt[1-digit] - 0 - speed[4-digits]
+					unsigned data; // "headingInt[1 digit] - altitudeInt[1 digit] - 0 - speed[4 digits]"
 
 					const Craft* const craft (dynamic_cast<const Craft*>(target));
 					if (craft != nullptr)

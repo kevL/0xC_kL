@@ -159,7 +159,7 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_TURN_DEFAULT),
 		_markerIcon(-1),
-		_markerType(Target::stTarget[3u]), // default: Terror Site marker
+//		_markerType(Target::stTarget[3u]), // default: Terror Site marker
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR"),
 		_isAlienBase(false),
@@ -193,10 +193,31 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 	_finalMission		= node["finalMission"]		.as<bool>(_finalMission);
 	_script				= node["script"]			.as<std::string>(_script);
 	_briefingData		= node["briefing"]			.as<BriefingData>(_briefingData);
-	_markerType			= node["markerType"]		.as<std::string>(_markerType);
-	_markerIcon			= node["markerIcon"]		.as<int>(_markerIcon);
 	_alert				= node["alert"]				.as<std::string>(_alert);
 	_alertBg			= node["alertBg"]			.as<std::string>(_alertBg);
+	_markerIcon			= node["markerIcon"]		.as<int>(_markerIcon);
+	_markerType			= node["markerType"]		.as<std::string>("");
+
+	if (_markerType.empty() == true)
+	{
+		if		(_type == "STR_ALIEN_BASE_ASSAULT")	_markerType = Target::stTarget[2u]; // "STR_ALIEN_BASE"
+		else if	(_type == "STR_TERROR_MISSION"
+			||	 _type == "STR_PORT_ATTACK")		_markerType = Target::stTarget[3u]; // "STR_TERROR_SITE"
+		// not relevant:
+		// STR_BASE_DEFENSE
+		// STR_MARS_CYDONIA_LANDING
+		// STR_MARS_THE_FINAL_ASSAULT
+		//
+		// unhandled (ie. handled by Ufo instantiations):
+		// STR_SMALL_SCOUT
+		// STR_MEDIUM_SCOUT
+		// STR_LARGE_SCOUT
+		// STR_HARVESTER
+		// STR_ABDUCTOR
+		// STR_TERROR_SHIP
+		// STR_BATTLESHIP
+		// STR_SUPPLY_SHIP
+	}
 
 	if (node["duration"])
 	{
@@ -234,9 +255,9 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 }
 
 /**
- * Gets the language string that names this deployment.
- * @note Each deployment type has a unique name.
- * @return, deployment name
+ * Gets the string that types this deployment.
+ * @note Each deployment has a unique type.
+ * @return, reference to the deployment-type
  */
 const std::string& RuleAlienDeployment::getType() const
 {
@@ -378,7 +399,7 @@ BriefingData RuleAlienDeployment::getBriefingData() const
 
 /**
  * Gets the globe-marker-type for this RuleAlienDeployment.
- * @return, marker-type
+ * @return, reference to the marker-type
  */
 const std::string& RuleAlienDeployment::getMarkerType() const
 {
@@ -386,8 +407,8 @@ const std::string& RuleAlienDeployment::getMarkerType() const
 }
 
 /**
- * Gets the globe-marker-icon for this RuleAlienDeployment.
- * @return, marker-sprite (-1 if not set)
+ * Gets the globe-marker for this RuleAlienDeployment.
+ * @return, marker-ID (-1 if not defined in ruleset)
  */
 int RuleAlienDeployment::getMarkerIcon() const
 {

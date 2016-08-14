@@ -76,7 +76,7 @@ private:
 		int getHeight() const;
 
 		/// Gets the total frames in the set.
-		size_t getTotalFrames() const;
+//		size_t getTotalFrames() const;
 
 		/// Sets the SurfaceSet's Palette.
 		void setPalette(

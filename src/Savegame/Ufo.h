@@ -125,7 +125,7 @@ private:
 		/// Gets the Ufo's name.
 		std::wstring getName(const Language* const lang) const override;
 
-		/// Gets the Ufo's marker.
+		/// Gets the Ufo's globe-marker.
 		int getMarker() const override;
 
 		/// Sets the Ufo's amount of damage.

@@ -137,7 +137,7 @@ UfoSizeType RuleUfo::getSizeType() const
 }
 
 /**
- * Gets the radius of this type of UFO on the dogfighting window.
+ * Gets the radius of this type of UFO for the Dogfight window.
  * @return, the radius in pixels
  */
 size_t RuleUfo::getRadius() const
@@ -155,7 +155,7 @@ size_t RuleUfo::getRadius() const
 
 /**
  * Gets the ID of the sprite used to draw the UFO in the Dogfight window.
- * @return, the sprite ID
+ * @return, the sprite-ID
  */
 int RuleUfo::getSprite() const
 {
@@ -164,7 +164,7 @@ int RuleUfo::getSprite() const
 
 /**
  * Gets the globe-marker for the UFO type.
- * @return, marker sprite -1 if none defined in YAML
+ * @return, marker-ID (-1 if not defined in ruleset)
  */
 int RuleUfo::getMarker() const
 {

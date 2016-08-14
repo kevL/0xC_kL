@@ -198,13 +198,13 @@ ConfirmLandingState::ConfirmLandingState(
 					if (terrainList.empty() == true)
 					{
 						// get a Terrain from RuleAlienDeployment
-						const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployment());
+						const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployed());
 						terrainList = ruleDeploy->getDeployTerrains();
 					} */
 
 					// get a Terrain from RuleAlienDeployment first
 					Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleAlienDeployment";
-					const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployment());
+					const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployed());
 					terrainList = ruleDeploy->getDeployTerrains();
 
 					// second, check for Terrains in Globe-Texture(INT) ...
@@ -409,7 +409,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	}
 	else if (terrorSite != nullptr)
 	{
-		battleSave->setTacticalType(terrorSite->getTerrorDeployment()->getType()); // "STR_TERROR_MISSION" / "STR_PORT_ATTACK"
+		battleSave->setTacticalType(terrorSite->getTerrorDeployed()->getType()); // "STR_TERROR_MISSION" / "STR_PORT_ATTACK"
 
 		bGen.setTerrorSite(terrorSite);
 		bGen.setAlienRace(terrorSite->getAlienRace());

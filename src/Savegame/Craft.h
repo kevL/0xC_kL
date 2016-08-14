@@ -130,7 +130,7 @@ private:
 		/// Sets the Craft's name.
 		void setName(const std::wstring& wst);
 
-		/// Gets the Craft's marker.
+		/// Gets the Craft's globe-marker.
 		int getMarker() const override;
 
 		/// Gets the Craft's base.

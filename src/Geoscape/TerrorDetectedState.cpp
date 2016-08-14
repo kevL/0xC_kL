@@ -76,7 +76,7 @@ TerrorDetectedState::TerrorDetectedState(
 	centerAllSurfaces();
 
 
-	_window->setBackground(_game->getResourcePack()->getSurface(_terrorSite->getTerrorDeployment()->getAlertBackground()));
+	_window->setBackground(_game->getResourcePack()->getSurface(_terrorSite->getTerrorDeployed()->getAlertBackground()));
 
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
 	_btnIntercept->onMouseClick(static_cast<ActionHandler>(&TerrorDetectedState::btnInterceptClick));
@@ -93,7 +93,7 @@ TerrorDetectedState::TerrorDetectedState(
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&TerrorDetectedState::btnCancelClick),
 								Options::keyCancel);
 
-	_txtTitle->setText(tr(_terrorSite->getTerrorDeployment()->getAlertMessage()));
+	_txtTitle->setText(tr(_terrorSite->getTerrorDeployed()->getAlertMessage()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setWordWrap();

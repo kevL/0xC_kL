@@ -62,7 +62,7 @@ private:
 		/// Gets the Waypoint's name.
 		std::wstring getName(const Language* const lang) const override;
 
-		/// Gets the Waypoint's marker.
+		/// Gets the Waypoint's globe-marker.
 		int getMarker() const override;
 };
 

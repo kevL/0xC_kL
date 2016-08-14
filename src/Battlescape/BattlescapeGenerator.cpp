@@ -3500,22 +3500,22 @@ void BattlescapeGenerator::attachNodeLinks() // private.
 		if (static_cast<int>(x) == (_mapsize_x / 10) - 1)
 			borSegs[0u] = -1;
 		else
-			borSegs[0u] = _seg[x + 1][y];
+			borSegs[0u] = _seg[x + 1u][y];
 
 		if (static_cast<int>(y) == (_mapsize_y / 10) - 1)
 			borSegs[1u] = -1;
 		else
-			borSegs[1u] = _seg[x][y + 1];
+			borSegs[1u] = _seg[x][y + 1u];
 
 		if (x == 0u)
 			borSegs[2u] = -1;
 		else
-			borSegs[2u] = _seg[x - 1][y];
+			borSegs[2u] = _seg[x - 1u][y];
 
 		if (y == 0u)
 			borSegs[3u] = -1;
 		else
-			borSegs[3u] = _seg[x][y - 1];
+			borSegs[3u] = _seg[x][y - 1u];
 
 		for (std::vector<int>::iterator
 				j = (*i)->getNodeLinks()->begin();

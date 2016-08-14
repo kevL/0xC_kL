@@ -74,7 +74,7 @@ protected:
 		/// Gets the Target's name.
 		virtual std::wstring getName(const Language* const lang) const = 0;
 
-		/// Gets the Target's marker.
+		/// Gets the Target's globe-marker.
 		virtual int getMarker() const = 0;
 
 		/// Gets the Target's targeters.

@@ -73,7 +73,7 @@ private:
 
 		/// Gets the AlienBase's name.
 		std::wstring getName(const Language* const lang) const override;
-		/// Gets the AlienBase's marker.
+		/// Gets the AlienBase's globe-marker.
 		int getMarker() const override;
 
 		/// Gets the AlienBase's alien race.

@@ -403,7 +403,7 @@ void Base::setName(const std::wstring& wst)
 
 /**
  * Gets the globe-marker for this Base.
- * @return, marker sprite #0 (-1 if none)
+ * @return, marker-ID (-1 if not placed)
  */
 int Base::getMarker() const
 {

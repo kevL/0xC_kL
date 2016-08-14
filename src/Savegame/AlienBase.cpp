@@ -21,7 +21,7 @@
 
 #include "../Engine/Language.h"
 
-//#include "../Geoscape/Globe.h" // Globe::GLM_ALIENBASE
+#include "../Geoscape/Globe.h" // Globe::GLM_ALIENBASE
 
 #include "../Ruleset/RuleAlienDeployment.h"
 
@@ -126,13 +126,17 @@ std::wstring AlienBase::getName(const Language* const lang) const
 
 /**
  * Gets the globe-marker for this AlienBase.
- * @return, marker sprite #7 (-1 if none)
+ * @return, marker-ID (-1 if not detected)
  */
 int AlienBase::getMarker() const
 {
 	if (_detected == true)
-		return _ruleDeploy->getMarkerIcon(); // Globe::GLM_ALIENBASE;
+	{
+		const int id (_ruleDeploy->getMarkerIcon());
+		if (id != -1) return id;
 
+		return Globe::GLM_ALIENBASE;
+	}
 	return -1;
 }
 

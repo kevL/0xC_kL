@@ -268,7 +268,7 @@ void Craft::loadCraft(
 					++i)
 			{
 				if ((*i)->getId() == id
-					&& (*i)->getTerrorDeployment()->getMarkerType() == type) // is this necessary. not for UFO.
+					&& (*i)->getTerrorDeployed()->getMarkerType() == type) // is this necessary. not for UFO.
 				{
 					setDestination(*i);
 					break;
@@ -430,14 +430,14 @@ void Craft::setName(const std::wstring& wst)
 
 /**
  * Gets the globe-marker for this Craft.
- * @return, marker sprite (-1 if based)
+ * @return, marker-ID (-1 if not out)
  */
 int Craft::getMarker() const
 {
 	if (_status == CS_OUT)
 	{
-		const int ret (_crRule->getMarker());
-		if (ret != -1) return ret; // for a custom marker.
+		const int markerId (_crRule->getMarker());
+		if (markerId != -1) return markerId;
 
 		return Globe::GLM_CRAFT;
 	}

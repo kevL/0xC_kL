@@ -334,14 +334,14 @@ std::wstring Ufo::getName(const Language* const lang) const
 
 /**
  * Gets the globe-marker for this UFO.
- * @return, marker sprite #2,3,4 (-1 if not detected)
+ * @return, marker-ID (-1 if not detected)
  */
 int Ufo::getMarker() const
 {
 	if (_detected == true)
 	{
-		const int ret (_ufoRule->getMarker());
-		if (ret != -1) return ret; // for a custom marker.
+		const int id (_ufoRule->getMarker());
+		if (id != -1) return id; // NOTE: This does not differentiate between Flying/Crashed/Landed.
 
 		switch (_status)
 		{
