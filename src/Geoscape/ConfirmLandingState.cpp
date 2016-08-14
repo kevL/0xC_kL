@@ -419,7 +419,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	}
 	else if (alienBase != nullptr)
 	{
-		battleSave->setTacticalType(alienBase->getAlienBaseDeployment()->getType()); // "STR_ALIEN_BASE_ASSAULT"
+		battleSave->setTacticalType(alienBase->getAlienBaseDeployed()->getType()); // "STR_ALIEN_BASE_ASSAULT"
 
 		bGen.setAlienBase(alienBase);
 		bGen.setAlienRace(alienBase->getAlienRace());

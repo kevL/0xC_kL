@@ -97,7 +97,7 @@ private:
 		void setDetected(bool detected = true);
 
 		/// Gets the AlienBase's deployment-rule.
-		const RuleAlienDeployment* getAlienBaseDeployment() const;
+		const RuleAlienDeployment* getAlienBaseDeployed() const;
 };
 
 }

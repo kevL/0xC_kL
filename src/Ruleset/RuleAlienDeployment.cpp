@@ -159,7 +159,6 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_chronoResult(FORCE_LOSE),
 		_cheatTurn(CHEAT_TURN_DEFAULT),
 		_markerIcon(-1),
-//		_markerType(Target::stTarget[3u]), // default: Terror Site marker
 		_alert("STR_ALIENS_TERRORISE"),
 		_alertBg("BACK03.SCR"),
 		_isAlienBase(false),

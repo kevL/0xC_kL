@@ -30,7 +30,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes an AlienBase.
+ * Initializes the AlienBase.
  */
 AlienBase::AlienBase(const RuleAlienDeployment* const ruleDeploy)
 	:
@@ -213,10 +213,10 @@ void AlienBase::setDetected(bool detected)
 }
 
 /**
- * Gets this AlienBase's deployment-rule.
+ * Gets the rule for this AlienBase's deployment.
  * @return, pointer to RuleAlienDeployment
  */
-const RuleAlienDeployment* AlienBase::getAlienBaseDeployment() const
+const RuleAlienDeployment* AlienBase::getAlienBaseDeployed() const
 {
 	return _ruleDeploy;
 }

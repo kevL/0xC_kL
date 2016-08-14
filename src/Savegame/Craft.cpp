@@ -244,34 +244,39 @@ void Craft::loadCraft(
 				}
 			}
 		}
-		else if (type == Target::stTarget[2u])
+		else // there could be either an AlienBase-type or a TerrorSite-type here ...
 		{
+			bool found (false);
+
 			const std::vector<AlienBase*>* const abList (rules->getGame()->getSavedGame()->getAlienBases());
-			for (std::vector<AlienBase*>::const_iterator
+			for (std::vector<AlienBase*>::const_iterator //(type == Target::stTarget[2u])
 					i = abList->begin();
 					i != abList->end();
 					++i)
 			{
-				if ((*i)->getId() == id)
+				if ((*i)->getId() == id
+					&& (*i)->getAlienBaseDeployed()->getMarkerType() == type) // is this necessary. not for stock UFO.
 				{
+					found = true;
 					setDestination(*i);
 					break;
 				}
 			}
-		}
-		else if (type == Target::stTarget[3u])
-		{
-			const std::vector<TerrorSite*>* const terrorList (rules->getGame()->getSavedGame()->getTerrorSites());
-			for (std::vector<TerrorSite*>::const_iterator
-					i = terrorList->begin();
-					i != terrorList->end();
-					++i)
+
+			if (found == false)
 			{
-				if ((*i)->getId() == id
-					&& (*i)->getTerrorDeployed()->getMarkerType() == type) // is this necessary. not for UFO.
+				const std::vector<TerrorSite*>* const terrorList (rules->getGame()->getSavedGame()->getTerrorSites());
+				for (std::vector<TerrorSite*>::const_iterator //(type == Target::stTarget[3u])
+						i = terrorList->begin();
+						i != terrorList->end();
+						++i)
 				{
-					setDestination(*i);
-					break;
+					if ((*i)->getId() == id
+						&& (*i)->getTerrorDeployed()->getMarkerType() == type) // is this necessary. not for stock UFO.
+					{
+						setDestination(*i);
+						break;
+					}
 				}
 			}
 		}

@@ -2611,7 +2611,7 @@ private:
  */
 void GenerateSupportMission::operator() (const AlienBase* const aBase) const
 {
-	const RuleAlienDeployment* const ruleDeploy (aBase->getAlienBaseDeployment());
+	const RuleAlienDeployment* const ruleDeploy (aBase->getAlienBaseDeployed());
 	const std::string type (ruleDeploy->getBaseGeneratedType());
 	const RuleAlienMission* const missionRule (_rules.getAlienMission(type));
 	if (missionRule != nullptr)
