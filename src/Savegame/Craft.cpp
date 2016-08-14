@@ -436,8 +436,8 @@ int Craft::getMarker() const
 {
 	if (_status == CS_OUT)
 	{
-		const int markerId (_crRule->getMarker());
-		if (markerId != -1) return markerId;
+		const int id (_crRule->getMarker());
+		if (id != -1) return id;
 
 		return Globe::GLM_CRAFT;
 	}
