@@ -87,7 +87,7 @@ SackSoldierState::SackSoldierState(
 	_txtTitle->setText(tr("STR_SACK"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	_txtSoldier->setText(_base->getSoldiers()->at(_solId)->getName());
+	_txtSoldier->setText(_base->getSoldiers()->at(_solId)->getLabel());
 	_txtSoldier->setAlign(ALIGN_CENTER);
 }
 

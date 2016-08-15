@@ -137,7 +137,7 @@ SellState::SellState(Base* const base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 	_txtSales->setText(tr("STR_VALUE_OF_SALES")
 						.arg(Text::formatCurrency(_costTotal)));
 	_txtFunds->setText(tr("STR_FUNDS")
@@ -177,7 +177,7 @@ SellState::SellState(Base* const base)
 			_soldiers.push_back(*i);
 			_lstItems->addRow(
 							4,
-							(*i)->getName().c_str(),
+							(*i)->getLabel().c_str(),
 							L"1",L"0",L"-");
 //							Text::formatCurrency(0).c_str());
 		}
@@ -225,7 +225,7 @@ SellState::SellState(Base* const base)
 				wst = L"-";
 			_lstItems->addRow(
 							4,
-							(*i)->getName(_game->getLanguage()).c_str(),
+							(*i)->getLabel(_game->getLanguage()).c_str(),
 							L"1",L"0",
 							wst.c_str());
 		}

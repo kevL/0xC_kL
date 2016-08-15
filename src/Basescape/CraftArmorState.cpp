@@ -109,7 +109,7 @@ CraftArmorState::CraftArmorState(
 	_txtTitle->setText(tr("STR_SELECT_ARMOR"));
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 
 	_txtName->setText(tr("STR_NAME_UC"));
 	_txtCraft->setText(tr("STR_CRAFT"));
@@ -154,7 +154,7 @@ void CraftArmorState::init()
 	{
 		_lstSoldiers->addRow(
 						3,
-						(*i)->getName().c_str(),
+						(*i)->getLabel().c_str(),
 						tr((*i)->getArmor()->getType()).c_str(),
 						(*i)->getCraftString(_game->getLanguage()).c_str());
 

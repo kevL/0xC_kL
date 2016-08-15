@@ -148,8 +148,8 @@ void Base::loadBase(
 	Target::load(node);
 	//Log(LOG_INFO) << ". target loaded";
 
-	_name = Language::utf8ToWstr(node["name"].as<std::string>(""));
-	//Log(LOG_INFO) << ". name is set";
+	_label = Language::utf8ToWstr(node["label"].as<std::string>(""));
+	//Log(LOG_INFO) << ". label is set";
 
 	std::string type;
 
@@ -316,7 +316,7 @@ YAML::Node Base::save() const
 {
 	YAML::Node node (Target::save());
 
-	node["name"] = Language::wstrToUtf8(_name);
+	node["label"] = Language::wstrToUtf8(_label);
 
 	for (std::vector<BaseFacility*>::const_iterator
 			i = _facilities.begin();
@@ -371,7 +371,7 @@ YAML::Node Base::save() const
  * Saves this Base's unique-ID to a YAML file.
  * @return, YAML node
  */
-YAML::Node Base::saveId() const
+YAML::Node Base::saveIdentificator() const
 {
 	YAML::Node node (Target::save());
 
@@ -382,23 +382,23 @@ YAML::Node Base::saveId() const
 }
 
 /**
- * Gets the player-specified name for this Base.
+ * Gets the player-specified label for this Base.
  * @note The Language-ptr is neither used nor needed for Base-Targets.
  * @param lang - pointer to Language to get strings from (default nullptr)
- * @return, the base-name as a wide-string
+ * @return, the base-label as a wide-string
  */
-std::wstring Base::getName(const Language* const) const
+std::wstring Base::getLabel(const Language* const) const
 {
-	return _name;
+	return _label;
 }
 
 /**
- * Sets the player-specified name for this Base.
- * @param name - reference to a wide-string
+ * Sets the player-specified label for this Base.
+ * @param label - reference to a wide-string
  */
-void Base::setName(const std::wstring& wst)
+void Base::setLabel(const std::wstring& label)
 {
-	_name = wst;
+	_label = label;
 }
 
 /**

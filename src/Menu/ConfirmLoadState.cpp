@@ -39,16 +39,16 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the ConfirmLoad screen.
  * @param origin	- game section that originated this state
- * @param fileName	- reference to the name of the save file without extension
+ * @param file		- reference to the name of the save file without extension
  * @param parent	- pointer to parent ListLoadState
  */
 ConfirmLoadState::ConfirmLoadState(
 		OptionsOrigin origin,
-		const std::string& fileName,
+		const std::string& file,
 		ListLoadState* const parent)
 	:
 		_origin(origin),
-		_fileName(fileName),
+		_file(file),
 		_parent(parent)
 {
 	_fullScreen = false;
@@ -112,7 +112,7 @@ void ConfirmLoadState::btnYesClick(Action*)
 	_game->popState();
 	_game->pushState(new LoadGameState(
 									_origin,
-									_fileName,
+									_file,
 									_palette,
 									_parent));
 }

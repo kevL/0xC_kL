@@ -356,7 +356,7 @@ private:
 		const GameTime& getStartingTime() const;
 
 		/// Gets an MCDPatch.
-		MCDPatch* getMCDPatch(const std::string& name) const;
+		MCDPatch* getMCDPatch(const std::string& type) const;
 
 		/// Gets the music rules.
 		std::vector<std::pair<std::string, RuleMusic*>> getMusicTracks() const;

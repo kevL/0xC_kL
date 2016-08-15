@@ -93,7 +93,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
-	_txtTitle->setText(tr("STR_MONTHLY_COSTS_").arg(base->getName()));
+	_txtTitle->setText(tr("STR_MONTHLY_COSTS_").arg(base->getLabel()));
 	_txtTitle->setBig();
 
 	_txtUnitCost->setText(tr("STR_COST_PER_UNIT"));

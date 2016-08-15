@@ -114,10 +114,10 @@ CraftSoldiersState::CraftSoldiersState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
 
 	_txtTitle->setText(tr("STR_SELECT_SQUAD_FOR_CRAFT")
-						.arg(_craft->getName(_game->getLanguage())));
+						.arg(_craft->getLabel(_game->getLanguage())));
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
 	_txtName->setText(tr("STR_NAME_UC"));
@@ -187,7 +187,7 @@ void CraftSoldiersState::init()
 	{
 		_lstSoldiers->addRow(
 						3,
-						(*i)->getName().c_str(),
+						(*i)->getLabel().c_str(),
 						tr((*i)->getRankString()).c_str(),
 						(*i)->getCraftString(_game->getLanguage()).c_str());
 
@@ -300,7 +300,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 								_game->getSavedGame()->getMonthsPassed() == -1);
 					_lstSoldiers->setCellText(
 											r, 2u,
-											_craft->getName(_game->getLanguage()));
+											_craft->getLabel(_game->getLanguage()));
 				}
 				else
 				{

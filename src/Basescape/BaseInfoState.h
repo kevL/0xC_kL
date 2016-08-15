@@ -129,7 +129,7 @@ private:
 		/// Updates the Base's stats.
 		void init() override;
 
-		/// Handler for changing the text on the name-edit.
+		/// Handler for changing the text on the label-edit.
 		void edtLabelChange(Action* action);
 
 		/// Handler for clicking the Ok button.

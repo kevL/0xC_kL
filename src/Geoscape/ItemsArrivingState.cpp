@@ -184,9 +184,9 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 
 				_lstTransfers->addRow(
 									3,
-									(*j)->getName(_game->getLanguage()).c_str(),
+									(*j)->getLabel(_game->getLanguage()).c_str(),
 									Text::intWide((*j)->getQuantity()).c_str(),
-									(*i)->getName().c_str());
+									(*i)->getLabel().c_str());
 
 				delete *j;
 				j = (*i)->getTransfers()->erase(j);

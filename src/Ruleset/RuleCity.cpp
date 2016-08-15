@@ -30,7 +30,7 @@ namespace OpenXcom
 {
 
 /**
- * Instantiates a rule for a City.
+ * Instantiates the rule for a City.
  * @note A City is a 1-pixel MissionArea within a MissionZone as defined in
  * RuleRegion.
  */
@@ -49,7 +49,7 @@ RuleCity::~RuleCity()
 {}
 
 /**
- * Loads the rule from a YAML file.
+ * Loads this rule from a YAML file.
  * @param node - reference a YAML node
  */
 void RuleCity::load(const YAML::Node& node)
@@ -57,7 +57,7 @@ void RuleCity::load(const YAML::Node& node)
 	_lon		= node["lon"]		.as<double>(_lon) * M_PI / 180.; // radians
 	_lat		= node["lat"]		.as<double>(_lat) * M_PI / 180.;
 	_texture	= node["texture"]	.as<int>(_texture);
-	_name		= node["name"]		.as<std::string>(_name);
+	_label		= node["label"]		.as<std::string>(_label);
 	_zoomLevel	= node["zoomLevel"]	.as<size_t>(_zoomLevel);
 	_labelTop	= node["labelTop"]	.as<bool>(_labelTop);
 
@@ -66,22 +66,22 @@ void RuleCity::load(const YAML::Node& node)
 }
 
 /**
- * Returns this RuleCity's name as seen on the Globe.
+ * Returns this RuleCity's label as seen on the Globe.
  * @param lang - pointer to Language to get strings from
- * @return, a city's IG name
+ * @return, a city's IG label
  */
-std::wstring RuleCity::getName(const Language* const lang) const
+std::wstring RuleCity::getLabel(const Language* const lang) const
 {
-	return lang->getString(_name);
+	return lang->getString(_label);
 }
 
 /**
- * Returns this RuleCity's name as a raw string.
+ * Returns this RuleCity's label as a raw string.
  * @return, a city's ID string
  */
-const std::string& RuleCity::getName() const
+const std::string& RuleCity::getLabel() const
 {
-	return _name;
+	return _label;
 }
 
 /**
@@ -94,7 +94,7 @@ int RuleCity::getMarker() const
 }
 
 /**
- * Gets the minimal zoom-level that is required to show name of this RuleCity.
+ * Gets the minimal zoom-level that is required to show label of this RuleCity.
  * @return, minimum zoom-level
  */
 size_t RuleCity::getZoomLevel() const

@@ -171,7 +171,7 @@ UfoDetectedState::UfoDetectedState(
 						_game->getResourcePack()->getSurface("BACK15.SCR"),
 						1,3); // x&y offsets.
 
-	_txtUfo->setText(_ufo->getName(_game->getLanguage()));
+	_txtUfo->setText(_ufo->getLabel(_game->getLanguage()));
 	_txtUfo->setBig();
 
 	if (firstDetect == true)
@@ -370,7 +370,7 @@ UfoDetectedState::UfoDetectedState(
 					i != hyperBases->end();
 					++i)
 			{
-				bases << (*i)->getName() << L"\n";
+				bases << (*i)->getLabel() << L"\n";
 			}
 			_txtBases->setText(bases.str());
 		}
@@ -421,7 +421,7 @@ UfoDetectedState::UfoDetectedState(
 							&& _ufo->getLatitude() >= 0.)))
 				{
 					//Log(LOG_INFO) << ". . . terrainRule-texture MATCH found: tex = " << texture";
-					terrain = terrainRule->getName();
+					terrain = terrainRule->getLabel();
 				}
 			}
 		}

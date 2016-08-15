@@ -28,7 +28,7 @@
 namespace OpenXcom
 {
 
-const char* Target::stTarget[7u] // static. // NOTE: A search for getCanonicalId() finds further possibilities.
+const char* Target::stTarget[8u] // static.
 {
 	"STR_UFO",			// 0
 	"STR_BASE",			// 1
@@ -36,7 +36,8 @@ const char* Target::stTarget[7u] // static. // NOTE: A search for getCanonicalId
 	"STR_TERROR_SITE",	// 3
 	"STR_WAYPOINT",		// 4
 	"STR_LANDING_SITE",	// 5
-	"STR_CRASH_SITE"	// 6
+	"STR_CRASH_SITE",	// 6
+	"STR_ALIEN_MISSION"	// 7
 };
 
 
@@ -45,6 +46,7 @@ const char* Target::stTarget[7u] // static. // NOTE: A search for getCanonicalId
  */
 Target::Target()
 	:
+		_id(0),
 		_lon(0.),
 		_lat(0.)
 {}
@@ -92,6 +94,24 @@ YAML::Node Target::save() const // virtual.
 	node["lat"] = serializeDouble(_lat);
 
 	return node;
+}
+
+/**
+ * Sets this Target's unique-ID.
+ * @param id - id
+ */
+void Target::setId(int id)
+{
+	_id = id;
+}
+
+/**
+ * Returns this Target's unique-ID.
+ * @return, id
+ */
+int Target::getId() const
+{
+	return _id;
 }
 
 /**

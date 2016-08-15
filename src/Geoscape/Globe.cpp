@@ -1974,7 +1974,7 @@ void Globe::drawDetail()
 
 						label->setX(x - 50);
 						label->setY(y + offset_y);
-						label->setText((*j)->getName(_game->getLanguage()));
+						label->setText((*j)->getLabel(_game->getLanguage()));
 
 						label->blit(_countries);
 					}
@@ -2003,7 +2003,7 @@ void Globe::drawDetail()
 
 					label->setX(x - 3);
 					label->setY(y - 10);
-					label->setText((*i)->getName());
+					label->setText((*i)->getLabel());
 
 					label->blit(_countries);
 				}

@@ -91,7 +91,7 @@ TransfersState::TransfersState(Base* const base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_TRANSFERS_UC"));
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 
 	_txtItem->setText(tr("STR_ITEM"));
 
@@ -110,7 +110,7 @@ TransfersState::TransfersState(Base* const base)
 	{
 		_lstTransfers->addRow(
 							3,
-							(*i)->getName(_game->getLanguage()).c_str(),
+							(*i)->getLabel(_game->getLanguage()).c_str(),
 							Text::intWide((*i)->getQuantity()).c_str(),
 							Text::intWide((*i)->getHours()).c_str());
 	}

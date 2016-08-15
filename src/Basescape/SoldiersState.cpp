@@ -112,7 +112,7 @@ SoldiersState::SoldiersState(Base* base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 
 	_txtSoldiers->setAlign(ALIGN_RIGHT);
 
@@ -225,7 +225,7 @@ void SoldiersState::init()
 	{
 		_lstSoldiers->addRow(
 						3,
-						(*i)->getName().c_str(),
+						(*i)->getLabel().c_str(),
 						tr((*i)->getRankString()).c_str(),
 						(*i)->getCraftString(_game->getLanguage()).c_str());
 

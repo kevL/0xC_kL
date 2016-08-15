@@ -133,7 +133,7 @@ PurchaseState::PurchaseState(Base* const base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 
 	_txtFunds->setText(tr("STR_CURRENT_FUNDS_")
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));

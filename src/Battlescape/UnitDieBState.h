@@ -69,7 +69,7 @@ private:
 		/// Cleans up the UnitDieBState.
 		~UnitDieBState();
 
-		/// Gets the name of the BattleState.
+		/// Gets the label of the BattleState.
 		std::string getBattleStateLabel() const override;
 
 		/// Initializes the BattleState.

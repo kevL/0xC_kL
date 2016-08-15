@@ -903,7 +903,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 				Log(LOG_INFO) << "BATTLESCAPE: Attack:";
 				Log(LOG_INFO) << ". aiAction.type = " << BattleAction::debugBat(aiAction.type);
 				Log(LOG_INFO) << ". aiAction.posTarget = " << aiAction.posTarget;
-				Log(LOG_INFO) << ". aiAction.weapon = " << aiAction.weapon->getRules()->getName().c_str();
+				Log(LOG_INFO) << ". aiAction.weapon = " << aiAction.weapon->getRules()->getLabel().c_str();
 			}
 			stateBPushBack(new ProjectileFlyBState(this, aiAction));
 
@@ -924,7 +924,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 								break;
 							case BA_PSICONTROL:
 								wst = lang->getString("STR_IS_UNDER_ALIEN_CONTROL", psiVictim->getGender())
-														.arg(psiVictim->getName(lang))
+														.arg(psiVictim->getLabel(lang))
 														.arg(aiAction.value);
 						}
 						_parentState->getGame()->pushState(new InfoboxState(wst));
@@ -2378,7 +2378,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				}
 				game->pushState(new InfoboxState(
 											game->getLanguage()->getString(st, unit->getGender())
-																.arg(unit->getName(game->getLanguage()))));
+																.arg(unit->getLabel(game->getLanguage()))));
 			}
 
 			if (unit->getAIState() != nullptr)
@@ -3391,7 +3391,7 @@ bool BattlescapeGame::worthTaking(
 //									j != item->getRules()->getCompatibleAmmo()->end();
 //									++j)
 //							{
-//								if (*j == (*i)->getRules()->getName())
+//								if (*j == (*i)->getRules()->getLabel())
 //								{
 //									//Log(LOG_INFO) << ". ret [2] TRUE";
 //									return true;

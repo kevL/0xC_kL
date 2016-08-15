@@ -80,7 +80,7 @@ YAML::Node MovingTarget::save() const // virtual.
 	{
 		const Ufo* const ufo (dynamic_cast<const Ufo*>(this));
 		if (ufo == nullptr || ufo->getUfoStatus() != Ufo::CRASHED) // Ie, is Craft or UFO-flying or -landed.
-			node["dest"] = _dest->saveId();
+			node["dest"] = _dest->saveIdentificator();
 	}
 
 	if (_speed != 0)

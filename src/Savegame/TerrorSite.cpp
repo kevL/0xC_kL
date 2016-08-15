@@ -40,7 +40,6 @@ TerrorSite::TerrorSite(
 		Target(),
 		_missionRule(missionRule),
 		_ruleDeploy(ruleDeploy),
-		_id(0),
 		_texture(-1),
 		_secondsLeft(0),
 		_tactical(false),
@@ -97,7 +96,7 @@ YAML::Node TerrorSite::save() const
  * Saves this TerrorSite's unique-ID to a YAML file.
  * @return, YAML node
  */
-YAML::Node TerrorSite::saveId() const
+YAML::Node TerrorSite::saveIdentificator() const
 {
 	YAML::Node node (Target::save());
 
@@ -126,29 +125,11 @@ const RuleAlienDeployment* TerrorSite::getTerrorDeployed() const
 }
 
 /**
- * Gets this TerrorSite's unique-ID.
- * @return, unique-ID
- */
-int TerrorSite::getId() const
-{
-	return _id;
-}
-
-/**
- * Sets this TerrorSite's unique-ID.
- * @param id - unique-ID
- */
-void TerrorSite::setId(const int id)
-{
-	_id = id;
-}
-
-/**
  * Gets this TerrorSite's uniquely identifying label.
  * @param lang - pointer to Language to get strings from
- * @return, full name
+ * @return, label
  */
-std::wstring TerrorSite::getName(const Language* const lang) const
+std::wstring TerrorSite::getLabel(const Language* const lang) const
 {
 	return lang->getString(_ruleDeploy->getMarkerType()).arg(_id);
 }

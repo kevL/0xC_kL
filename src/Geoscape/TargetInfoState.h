@@ -66,7 +66,7 @@ private:
 		/// Cleans up the TargetInfo state.
 		~TargetInfoState();
 
-		/// Edits an aLienBase's name.
+		/// Edits an aLienBase's label.
 		void edtTargetChange(Action* action);
 
 		/// Handler for clicking the Intercept button.

@@ -84,7 +84,7 @@ BaseDestroyedState::BaseDestroyedState(
 	_txtMessage->setBig();
 	_txtMessage->setWordWrap();
 	_txtMessage->setText(tr("STR_BASE_DESTROYED_BY_ALIENS")
-							.arg(_base->getName()));
+							.arg(_base->getLabel()));
 
 	_btnCenter->setText(tr("STR_CENTER"));
 	_btnCenter->onMouseClick(static_cast<ActionHandler>(&BaseDestroyedState::btnCenterClick));

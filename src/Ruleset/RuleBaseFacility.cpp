@@ -124,8 +124,8 @@ void RuleBaseFacility::load(
 			_hitSound += modIndex;
 	}
 
-	_mapName		= node["mapName"]	.as<std::string>(_mapName);
-	_listOrder		= node["listOrder"]	.as<int>(_listOrder);
+	_blockType = node["blockType"].as<std::string>(_blockType);
+	_listOrder = node["listOrder"].as<int>(_listOrder);
 	if (_listOrder == 0)
 		_listOrder	= listOrder;
 }
@@ -353,13 +353,13 @@ int RuleBaseFacility::getHitRatio() const
 }
 
 /**
- * Gets the battlescape map-block name for this facility to construct the base
- * defense mission map.
- * @return, map name
+ * Gets the MapBlock type for this facility to construct a base-defense
+ * battlefield.
+ * @return, block-type
  */
-std::string RuleBaseFacility::getMapName() const
+std::string RuleBaseFacility::getBlockType() const
 {
-	return _mapName;
+	return _blockType;
 }
 
 /**

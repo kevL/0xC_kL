@@ -196,7 +196,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	if (_listBase != nullptr)
 	{
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
-		_txtBaseLabel->setText(base->getName());
+		_txtBaseLabel->setText(base->getLabel());
 
 		if (_rows > 1u)
 		{
@@ -453,13 +453,13 @@ void SoldierDiaryPerformanceState::init()
 	{
 		const Soldier* const soldier (_listBase->at(_solId));
 		_diary = soldier->getDiary();
-		_txtTitle->setText(soldier->getName());
+		_txtTitle->setText(soldier->getLabel());
 	}
 	else
 	{
 		const SoldierDead* const deadSoldier (_listDead->at(_solId));
 		_diary = deadSoldier->getDiary();
-		_txtTitle->setText(deadSoldier->getName());
+		_txtTitle->setText(deadSoldier->getLabel());
 	}
 
 	std::vector<MissionStatistics*>* tacticals (_game->getSavedGame()->getMissionStatistics());

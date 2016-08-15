@@ -206,7 +206,7 @@ void ManufactureState::init()
 {
 	State::init();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 	fillProductionList();
 }
 
@@ -375,7 +375,7 @@ void ManufactureState::miniClick(Action*)
 }
 
 /**
- * Displays the name of the Base the mouse is over.
+ * Displays the label of the Base the mouse is over.
  * @param action - pointer to an Action
  */
 void ManufactureState::miniMouseOver(Action*)
@@ -387,14 +387,14 @@ void ManufactureState::miniMouseOver(Action*)
 		&& base != _base
 		&& base->hasProduction() == true)
 	{
-		_txtHoverBase->setText(base->getName().c_str());
+		_txtHoverBase->setText(base->getLabel().c_str());
 	}
 	else
 		_txtHoverBase->setText(L"");
 }
 
 /**
- * Clears the hovered Base name.
+ * Clears the hovered Base label.
  * @param action - pointer to an Action
  */
 void ManufactureState::miniMouseOut(Action*)

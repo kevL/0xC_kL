@@ -266,7 +266,7 @@ MedikitState::MedikitState(BattleAction* const action)
 	_txtPart->setHighContrast();
 	_txtWound->setHighContrast();
 
-	_txtUnit->setText(_action->targetUnit->getName(_game->getLanguage()));
+	_txtUnit->setText(_action->targetUnit->getLabel(_game->getLanguage()));
 	_txtUnit->setColor(WHITE);
 	_txtUnit->setHighContrast();
 	_txtUnit->setAlign(ALIGN_RIGHT);

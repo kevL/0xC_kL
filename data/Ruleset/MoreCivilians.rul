@@ -1,6 +1,6 @@
 items:
   - type: MALE_CIVILIAN2_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 32
     bigSprite: 200
     floorSprite: 200
@@ -11,7 +11,7 @@ items:
     armor: 12
     recover: false
   - type: MALE_CIVILIAN3_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 32
     bigSprite: 201
     floorSprite: 201
@@ -22,7 +22,7 @@ items:
     armor: 12
     recover: false
   - type: MALE_CIVILIAN4_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 32
     bigSprite: 202
     floorSprite: 202
@@ -33,7 +33,7 @@ items:
     armor: 12
     recover: false
   - type: MALE_CIVILIAN5_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 32
     bigSprite: 203
     floorSprite: 203
@@ -44,7 +44,7 @@ items:
     armor: 12
     recover: false
   - type: MALE_CIVILIAN6_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 32
     bigSprite: 204
     floorSprite: 204
@@ -55,7 +55,7 @@ items:
     armor: 12
     recover: false
   - type: MALE_CIVILIAN7_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 32
     bigSprite: 207
     floorSprite: 207
@@ -66,7 +66,7 @@ items:
     armor: 12
     recover: false
   - type: FEMALE_CIVILIAN2_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 28
     bigSprite: 205
     floorSprite: 205
@@ -77,7 +77,7 @@ items:
     armor: 12
     recover: false
   - type: FEMALE_CIVILIAN3_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 28
     bigSprite: 206
     floorSprite: 206

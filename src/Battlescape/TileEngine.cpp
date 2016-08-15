@@ -2663,7 +2663,7 @@ void TileEngine::explode(
 												game->pushState(new InfoboxDialogState(game->getLanguage()->getString( // "has exploded ..."
 																													"STR_HAS_BEEN_KILLED",
 																													bu->getGender())
-																												.arg(bu->getName(game->getLanguage()))));
+																												.arg(bu->getLabel(game->getLanguage()))));
 											}
 										}
 									}
@@ -2858,7 +2858,7 @@ void TileEngine::explode(
 												game->pushState(new InfoboxDialogState(game->getLanguage()->getString( // "has been killed with Fire ..."
 																													"STR_HAS_BEEN_KILLED",
 																													bu->getGender())
-																												.arg(bu->getName(game->getLanguage()))));
+																												.arg(bu->getLabel(game->getLanguage()))));
 											}
 										}
 									}

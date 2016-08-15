@@ -91,7 +91,7 @@ private:
 	const Ruleset* const _rules;
 	SavedGame* _gameSave;
 
-	std::wstring _name;
+	std::wstring _label;
 
 	std::vector<BaseFacility*>
 		_defenses,
@@ -142,12 +142,12 @@ private:
 		/// Saves the Base to YAML.
 		YAML::Node save() const override;
 		/// Saves the Base's unique-ID to YAML.
-		YAML::Node saveId() const override;
+		YAML::Node saveIdentificator() const override;
 
-		/// Gets the Base's name.
-		std::wstring getName(const Language* const lang = nullptr) const override;
-		/// Sets the Base's name.
-		void setName(const std::wstring& wst);
+		/// Gets the Base's label.
+		std::wstring getLabel(const Language* const lang = nullptr) const override;
+		/// Sets the Base's label.
+		void setLabel(const std::wstring& label);
 		/// Gets the Base's globe-marker.
 		int getMarker() const override;
 

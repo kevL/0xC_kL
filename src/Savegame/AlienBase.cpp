@@ -35,7 +35,6 @@ namespace OpenXcom
 AlienBase::AlienBase(const RuleAlienDeployment* const ruleDeploy)
 	:
 		Target(),
-		_id(0),
 		_tactical(false),
 		_detected(false),
 		_ruleDeploy(ruleDeploy)
@@ -86,7 +85,7 @@ YAML::Node AlienBase::save() const
  * Saves this AlienBase's unique-ID to a YAML file.
  * @return, YAML node
  */
-YAML::Node AlienBase::saveId() const
+YAML::Node AlienBase::saveIdentificator() const
 {
 	YAML::Node node (Target::save());
 
@@ -97,29 +96,11 @@ YAML::Node AlienBase::saveId() const
 }
 
 /**
- * Returns this AlienBase's unique-ID.
- * @return, unique-ID
- */
-int AlienBase::getId() const
-{
-	return _id;
-}
-
-/**
- * Changes this AlienBase's unique-ID.
- * @param id - unique-ID
- */
-void AlienBase::setId(int id)
-{
-	_id = id;
-}
-
-/**
- * Returns this AlienBase's uniquely identifying name.
+ * Returns this AlienBase's uniquely identifying label.
  * @param lang - pointer to Language to get strings from
- * @return, full name
+ * @return, label
  */
-std::wstring AlienBase::getName(const Language* const lang) const
+std::wstring AlienBase::getLabel(const Language* const lang) const
 {
 	return lang->getString(_ruleDeploy->getMarkerType() + "_").arg(_id); //"STR_ALIEN_BASE_"
 }

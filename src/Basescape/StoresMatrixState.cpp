@@ -116,7 +116,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	_txtTitle->setColor(BLUE);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(base->getName());
+	_txtBaseLabel->setText(base->getLabel());
 	_txtBaseLabel->setColor(BLUE);
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
@@ -152,7 +152,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			qtyScientist[i]	= base->getTotalScientists();
 			qtyEngineer[i]	= base->getTotalEngineers();
 
-			wst = base->getName().substr(0,4);
+			wst = base->getLabel().substr(0,4);
 			freeSpace = static_cast<int>(static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.5);
 
 			std::wostringstream woststr;

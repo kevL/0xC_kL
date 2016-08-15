@@ -94,7 +94,7 @@ UnitWalkBState::~UnitWalkBState()
 }
 
 /**
- * Gets the name of this BattleState.
+ * Gets the label of this BattleState.
  * @return, label of the substate
  */
 std::string UnitWalkBState::getBattleStateLabel() const

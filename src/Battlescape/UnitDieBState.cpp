@@ -134,7 +134,7 @@ UnitDieBState::~UnitDieBState()
 {}
 
 /**
- * Gets the name of this BattleState.
+ * Gets the label of this BattleState.
  * @return, label of the substate
  */
 std::string UnitDieBState::getBattleStateLabel() const
@@ -258,7 +258,7 @@ void UnitDieBState::think()
 				Game* const game (_battleSave->getBattleState()->getGame());
 				const Language* const lang (game->getLanguage());
 				game->pushState(new InfoboxDialogState(lang->getString(stInfo, _unit->getGender())
-															.arg(_unit->getName(lang))));
+															.arg(_unit->getLabel(lang))));
 			}
 		}
 	}

@@ -729,9 +729,9 @@ void Game::quit(bool force)
 	if (force == false
 		&& _gameSave != nullptr // always save ironman
 		&& _gameSave->isIronman() == true
-		&& _gameSave->getName().empty() == false)
+		&& _gameSave->getLabel().empty() == false)
 	{
-		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getName())));
+		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getLabel())));
 		_gameSave->save(file + SavedGame::SAVE_EXT);
 	}
 	_quit = true;

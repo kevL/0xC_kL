@@ -8,7 +8,7 @@ facilities:
     monthlyCost: 12500 # 5% of buildCost
     radarRange: 600 # just to give a 600 radii
     radarChance: 5 # ditto, plus a bit for visual sightings
-    mapName: XBASE_00
+    blockType: XBASE_00
   - type: STR_LIVING_QUARTERS
     spriteShape: 1
     spriteFacility: 18
@@ -16,7 +16,7 @@ facilities:
     buildTime: 16
     monthlyCost: 17500
     personnel: 50
-    mapName: XBASE_01
+    blockType: XBASE_01
   - type: STR_LABORATORY
     spriteShape: 1
     spriteFacility: 19
@@ -24,7 +24,7 @@ facilities:
     buildTime: 26
     monthlyCost: 40000
     labs: 50
-    mapName: XBASE_02
+    blockType: XBASE_02
   - type: STR_WORKSHOP
     spriteShape: 1
     spriteFacility: 20
@@ -32,7 +32,7 @@ facilities:
     buildTime: 32
     monthlyCost: 50000
     workshops: 50
-    mapName: XBASE_03
+    blockType: XBASE_03
   - type: STR_SMALL_RADAR_SYSTEM
     spriteShape: 2
     spriteFacility: 21
@@ -41,7 +41,7 @@ facilities:
     monthlyCost: 25000
     radarRange: 1500 #1695
     radarChance: 10
-    mapName: XBASE_04
+    blockType: XBASE_04
   - type: STR_LARGE_RADAR_SYSTEM
     spriteShape: 1
     spriteFacility: 22
@@ -50,7 +50,7 @@ facilities:
     monthlyCost: 40000
     radarRange: 2250 #2577
     radarChance: 20
-    mapName: XBASE_05
+    blockType: XBASE_05
   - type: STR_MISSILE_DEFENSES
     spriteShape: 2
     spriteFacility: 23
@@ -61,7 +61,7 @@ facilities:
     hitRatio: 50
     fireSound: 5
     hitSound: 10
-    mapName: XBASE_06
+    blockType: XBASE_06
   - type: STR_GENERAL_STORES
     spriteShape: 1
     spriteFacility: 24
@@ -69,7 +69,7 @@ facilities:
     buildTime: 10
     monthlyCost: 7500
     storage: 75
-    mapName: XBASE_07
+    blockType: XBASE_07
   - type: STR_ALIEN_CONTAINMENT
     required:
       - STR_ALIEN_CONTAINMENT
@@ -79,7 +79,7 @@ facilities:
     buildTime: 18
     monthlyCost: 18750
     aliens: 10
-    mapName: XBASE_08
+    blockType: XBASE_08
   - type: STR_LASER_DEFENSES
     required:
       - STR_LASER_DEFENSE
@@ -92,7 +92,7 @@ facilities:
     hitRatio: 60
     fireSound: 8
     hitSound: 10
-    mapName: XBASE_09
+    blockType: XBASE_09
   - type: STR_PLASMA_DEFENSES
     required:
       - STR_PLASMA_DEFENSE
@@ -105,7 +105,7 @@ facilities:
     hitRatio: 70
     fireSound: 9
     hitSound: 10
-    mapName: XBASE_10
+    blockType: XBASE_10
   - type: STR_FUSION_BALL_DEFENSES
     required:
       - STR_FUSION_DEFENSE
@@ -118,7 +118,7 @@ facilities:
     hitRatio: 80
     fireSound: 7
     hitSound: 10
-    mapName: XBASE_11
+    blockType: XBASE_11
   - type: STR_GRAV_SHIELD
     required:
       - STR_GRAV_SHIELD
@@ -128,7 +128,7 @@ facilities:
     buildCost: 1350000
     buildTime: 38
     monthlyCost: 67500
-    mapName: XBASE_12
+    blockType: XBASE_12
   - type: STR_MIND_SHIELD
     required:
       - STR_MIND_SHIELD
@@ -138,7 +138,7 @@ facilities:
     buildCost: 1350000
     buildTime: 33
     monthlyCost: 67500
-    mapName: XBASE_13
+    blockType: XBASE_13
   - type: STR_PSIONIC_LABORATORY
     required:
       - STR_PSI_LAB
@@ -148,7 +148,7 @@ facilities:
     buildTime: 24
     monthlyCost: 33750
     psiLabs: 10
-    mapName: XBASE_14
+    blockType: XBASE_14
   - type: STR_HYPER_WAVE_DECODER
     required:
       - STR_HYPER_WAVE_DECODER
@@ -160,7 +160,7 @@ facilities:
     monthlyCost: 87500
     radarRange: 2400 #2759
     radarChance: 50
-    mapName: XBASE_15
+    blockType: XBASE_15
   - type: STR_HANGAR
     spriteShape: 9
     spriteFacility: 9
@@ -169,4 +169,4 @@ facilities:
     buildTime: 25
     monthlyCost: 13500
     crafts: 1
-    mapName: XBASE_16
+    blockType: XBASE_16

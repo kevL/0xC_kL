@@ -232,14 +232,14 @@ void Transfer::setTransferItems(
 }
 
 /**
- * Gets the name of the contents of this Transfer.
+ * Gets the label of the contents of this Transfer.
  * @param lang - pointer to a Language to get text from
  * @return, wide-string
  */
-std::wstring Transfer::getName(const Language* const lang) const
+std::wstring Transfer::getLabel(const Language* const lang) const
 {
-	if (_soldier != nullptr)	return _soldier->getName();
-	if (_craft != nullptr)		return _craft->getName(lang);
+	if (_soldier != nullptr)	return _soldier->getLabel();
+	if (_craft != nullptr)		return _craft->getLabel(lang);
 	if (_scientists != 0)		return lang->getString("STR_SCIENTISTS");
 	if (_engineers != 0)		return lang->getString("STR_ENGINEERS");
 

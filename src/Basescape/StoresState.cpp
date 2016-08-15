@@ -106,7 +106,7 @@ StoresState::StoresState(Base* const base)
 	_txtTitle->setBig();
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 
 	_txtItem->setText(tr("STR_ITEM"));
 

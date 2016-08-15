@@ -45,7 +45,7 @@ private:
 	int _texture;
 	size_t _zoomLevel;
 
-	std::string _name;
+	std::string _label;
 
 
 	public:
@@ -57,15 +57,15 @@ private:
 		/// Loads the rule from YAML.
 		void load(const YAML::Node& node) override;
 
-		/// Gets a City's name.
-		std::wstring getName(const Language* const lang) const override;
-		/// Gets a City's name as a raw string.
-		const std::string& getName() const;
+		/// Gets a City's label.
+		std::wstring getLabel(const Language* const lang) const override;
+		/// Gets a City's label as a raw string.
+		const std::string& getLabel() const;
 
 		/// Gets a City's globe-marker.
 		int getMarker() const override;
 
-		/// Gets the level of zoom that shows a City's name.
+		/// Gets the level of zoom that shows a City's label.
 		size_t getZoomLevel() const;
 
 		/// Gets if a City's label is above or below its marker.
@@ -75,7 +75,7 @@ private:
 		int getTextureId() const;
 
 		/// Blanked function to stop C++ complaints.
-		YAML::Node saveId() const override
+		YAML::Node saveIdentificator() const override
 		{
 			YAML::Node node;
 			return node;

@@ -106,9 +106,9 @@ PromotionsState::PromotionsState()
 			if ((*j)->isPromoted() == true)
 				_lstSoldiers->addRow(
 								3,
-								(*j)->getName().c_str(),
+								(*j)->getLabel().c_str(),
 								tr((*j)->getRankString()).c_str(),
-								(*i)->getName().c_str());
+								(*i)->getLabel().c_str());
 		}
 	}
 }

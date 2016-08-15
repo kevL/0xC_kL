@@ -100,8 +100,8 @@ CraftPatrolState::CraftPatrolState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_txtDestination->setText(tr("STR_CRAFT_HAS_REACHED_DESTINATION")
-								 .arg(_craft->getName(_game->getLanguage()))
-								 .arg(_craft->getDestination()->getName(_game->getLanguage())));
+								 .arg(_craft->getLabel(_game->getLanguage()))
+								 .arg(_craft->getDestination()->getLabel(_game->getLanguage())));
 	_txtDestination->setAlign(ALIGN_CENTER);
 	_txtDestination->setBig();
 	_txtDestination->setWordWrap();

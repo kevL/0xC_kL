@@ -331,7 +331,7 @@ DogfightState::DogfightState(
 	_btnMinimizedIcon->setVisible(false);
 
 	std::wostringstream woststr;
-	woststr << _craft->getName(_game->getLanguage()) << L" >" << _craft->getBase()->getName();
+	woststr << _craft->getLabel(_game->getLanguage()) << L" >" << _craft->getBase()->getLabel();
 	_txtTitle->setText(woststr.str());
 
 	_txtInterception->setText(woststr.str());
@@ -1206,7 +1206,7 @@ void DogfightState::updateDogfight()
 																							alm_RETAL,
 																							static_cast<size_t>(_game->getSavedGame()->getMonthsPassed())));
 						AlienMission* const mission (new AlienMission(missionRule, *_gameSave));
-						mission->setId(_gameSave->getCanonicalId("STR_ALIEN_MISSION"));
+						mission->setId(_gameSave->getCanonicalId(Target::stTarget[7u]));
 						mission->setRegion(
 										targetRegion,
 										*_game->getRuleset());

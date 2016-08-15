@@ -490,7 +490,7 @@ void InventoryState::init()
 	_btnRank	->clear();
 	_srfGender	->clear();
 
-	_txtName->setText(_unit->getName(_game->getLanguage()));
+	_txtName->setText(_unit->getLabel(_game->getLanguage()));
 
 	_inventoryPanel->setSelectedUnitInventory(_unit);
 
@@ -1240,11 +1240,11 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 					case STATUS_DEAD:
 						label << tr(itRule->getType());
 						if (corpseUnit->getOriginalFaction() == FACTION_PLAYER)
-							label << L" (" + corpseUnit->getName(_game->getLanguage()) + L")";
+							label << L" (" + corpseUnit->getLabel(_game->getLanguage()) + L")";
 						break;
 
 					case STATUS_UNCONSCIOUS:
-						label << corpseUnit->getName(_game->getLanguage());
+						label << corpseUnit->getLabel(_game->getLanguage());
 				}
 			}
 		}

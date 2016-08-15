@@ -140,7 +140,7 @@ private:
 		/// Gets the baseId for a keypress.
 		size_t getKeyedBaseId(SDLKey keyId) const;
 
-		/// Handler for changing the text in the base-name editor.
+		/// Handler for changing the text in the base-label editor.
 		void edtLabelChange(Action* action);
 
 		/// Allows the storage-overfull warning to be displayed to the player.

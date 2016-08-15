@@ -185,7 +185,7 @@ void MediTargetState::init()
 
 				_lstTarget->addRow(
 								5,
-								(*i)->getName(_game->getLanguage()).c_str(),
+								(*i)->getLabel(_game->getLanguage()).c_str(),
 								Text::intWide(_targetUnits.back()->getFatalsTotal()).c_str(),
 								woststr1.str().c_str(),
 								woststr2.str().c_str(),

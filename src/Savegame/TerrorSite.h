@@ -46,7 +46,6 @@ private:
 		_detected,
 		_tactical;
 	int
-		_id,
 		_secondsLeft,
 		_texture;
 	std::string
@@ -71,20 +70,15 @@ private:
 		/// Saves the TerrorSite to YAML.
 		YAML::Node save() const override;
 		/// Saves the TerrorSite's unique-ID to YAML.
-		YAML::Node saveId() const override;
+		YAML::Node saveIdentificator() const override;
 
 		/// Gets the TerrorSite's ruleset.
 		const RuleAlienMission* getRules() const;
 		/// Gets the TerrorSite's deployment.
 		const RuleAlienDeployment* getTerrorDeployed() const;
 
-		/// Gets the TerrorSite's ID.
-		int getId() const;
-		/// Sets the TerrorSite's ID.
-		void setId(const int id);
-
-		/// Gets the TerrorSite's name.
-		std::wstring getName(const Language* const lang) const override;
+		/// Gets the TerrorSite's label.
+		std::wstring getLabel(const Language* const lang) const override;
 
 		/// Gets the TerrorSite globe-marker.
 		int getMarker() const override;

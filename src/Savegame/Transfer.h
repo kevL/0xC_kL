@@ -93,8 +93,8 @@ private:
 				const std::string& id,
 				int qty = 1);
 
-		/// Gets the name of the Transfer.
-		std::wstring getName(const Language* const lang) const;
+		/// Gets the label of the Transfer.
+		std::wstring getLabel(const Language* const lang) const;
 
 		/// Gets the hours remaining of the Transfer.
 		int getHours() const;

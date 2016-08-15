@@ -85,7 +85,7 @@ private:
 		_missions,
 		_recovery;
 
-	std::wstring _name;
+	std::wstring _label;
 //		_statString;
 
 	Craft* _craft;
@@ -134,11 +134,11 @@ private:
 		/// Gets the Soldier's unique-ID.
 		int getId() const;
 
-		/// Gets the Soldier's name.
-		std::wstring getName() const;
-//		std::wstring getName(bool statstring = false, size_t maxLength = 20) const;
-		/// Sets the Soldier's name.
-		void setName(const std::wstring& name);
+		/// Sets the Soldier's label.
+		void setLabel(const std::wstring& label);
+		/// Gets the Soldier's label.
+		std::wstring getLabel() const;
+//		std::wstring getLabel(bool statstring = false, size_t maxLength = 20) const;
 
 		/// Gets the Soldier's Craft.
 		Craft* getCraft() const;

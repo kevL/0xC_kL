@@ -259,7 +259,7 @@ void SoldierInfoDeadState::init()
 		_solId = 0;
 
 	_sol = _listDead->at(_solId);
-	_txtSoldier->setText(_sol->getName());
+	_txtSoldier->setText(_sol->getLabel());
 
 	SurfaceSet* const baseBits (_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	baseBits->getFrame(_sol->getRankSprite())->setX(0);

@@ -142,7 +142,7 @@ void ExecuteState::init()
 					_targetUnits.push_back(targetUnit);
 					_lstTarget->addRow(
 									1,
-									targetUnit->getName(_game->getLanguage()).c_str());
+									targetUnit->getLabel(_game->getLanguage()).c_str());
 				}
 			}
 		}
@@ -161,7 +161,7 @@ void ExecuteState::init()
 				_targetUnits.push_back(targetUnit);
 				_lstTarget->addRow(
 								1,
-								targetUnit->getName(_game->getLanguage()).c_str());
+								targetUnit->getLabel(_game->getLanguage()).c_str());
 			}
 		}
 	}

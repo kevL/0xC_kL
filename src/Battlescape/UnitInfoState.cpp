@@ -533,7 +533,7 @@ void UnitInfoState::init()
 		_battleOrder->setVisible(false);
 
 	// NAME ->
-	woststr << _unit->getName(
+	woststr << _unit->getLabel(
 						_game->getLanguage(),
 						_battleSave->getDebugTac() == true); //BattlescapeGame::_debugPlay == true);
 	_txtName->setText(woststr.str());

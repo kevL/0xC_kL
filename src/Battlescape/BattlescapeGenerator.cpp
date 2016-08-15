@@ -318,14 +318,14 @@ void BattlescapeGenerator::run()
 		}
 		else
 		{
-			Log(LOG_INFO) << ". ufo mission siteTerrain = " << _siteTerrain->getName();
+			Log(LOG_INFO) << ". ufo mission siteTerrain = " << _siteTerrain->getLabel();
 			_terrainRule = _siteTerrain; // kL
 		}
 	}
 	else if (_siteTerrain != nullptr // kL ->
 		&& _missionType == "STR_TERROR_MISSION")
 	{
-		Log(LOG_INFO) << ". terror mission siteTerrain = " << _siteTerrain->getName();
+		Log(LOG_INFO) << ". terror mission siteTerrain = " << _siteTerrain->getLabel();
 		_terrainRule = _siteTerrain; // kL_end.
 	}
 	else // set-piece battle like Cydonia or Terror site or Base assault/defense
@@ -1686,7 +1686,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 	{
 		if ((*i)->getGeoscapeSoldier() != nullptr)
 		{
-			//Log(LOG_INFO) << ". on " << (*i)->getGeoscapeSoldier()->getName().c_str();
+			//Log(LOG_INFO) << ". on " << (*i)->getGeoscapeSoldier()->getLabel().c_str();
 			const std::vector<SoldierLayout*>* const layout ((*i)->getGeoscapeSoldier()->getLayout());
 			for (std::vector<SoldierLayout*>::const_iterator
 					j = layout->begin();
@@ -3259,7 +3259,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 					// lots of crazy stuff here, which is for the hangars or other large base facilities
 					// TODO: clean this mess up, make the mapNames a vector in the base module defs
 					// also figure out how to do the terrain sets on a per-block basis.
-					const std::string mapname ((*i)->getRules()->getMapName());
+					const std::string mapname ((*i)->getRules()->getBlockType());
 					std::ostringstream newname;
 					newname << mapname.substr(
 											0u,

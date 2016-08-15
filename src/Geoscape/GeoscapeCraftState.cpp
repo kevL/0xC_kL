@@ -190,7 +190,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCancelOrRedirectClick),
 								Options::keyOkKeypad);
 
-	_txtTitle->setText(_craft->getName(_game->getLanguage()));
+	_txtTitle->setText(_craft->getLabel(_game->getLanguage()));
 	_txtTitle->setBig();
 
 	if (_craft->getRules()->getWeaponCapacity() != 0)
@@ -232,15 +232,15 @@ GeoscapeCraftState::GeoscapeCraftState(
 				status = tr("STR_INTERCEPTING_UFO").arg(ufo->getId());
 			else
 				status = tr("STR_DESTINATION_UC_")
-							.arg(ufo->getName(_game->getLanguage()));
+							.arg(ufo->getLabel(_game->getLanguage()));
 		}
 		else
 			status = tr("STR_DESTINATION_UC_")
-						.arg(_craft->getDestination()->getName(_game->getLanguage()));
+						.arg(_craft->getDestination()->getLabel(_game->getLanguage()));
 	}
 	_txtStatus->setText(tr("STR_STATUS_").arg(status));
 
-	_txtBase->setText(tr("STR_BASE_UC").arg(_craft->getBase()->getName()));
+	_txtBase->setText(tr("STR_BASE_UC").arg(_craft->getBase()->getLabel()));
 
 	_txtSpeed->setText(tr("STR_SPEED_").arg(speed));
 	_txtMaxSpeed->setText(tr("STR_MAXIMUM_SPEED_UC")

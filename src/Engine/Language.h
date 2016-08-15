@@ -118,8 +118,8 @@ private:
 
 		/// Gets the language's ID.
 		std::string getId() const;
-		/// Gets the language's name.
-		std::wstring getName() const;
+		/// Gets the language's label.
+		std::wstring getLabel() const;
 
 		/// Outputs the language to a HTML file.
 //		void toHtml(const std::string& file) const;

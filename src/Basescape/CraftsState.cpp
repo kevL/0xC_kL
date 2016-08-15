@@ -102,8 +102,8 @@ CraftsState::CraftsState(Base* base)
 	_txtTitle->setText(tr("STR_INTERCEPTION_CRAFT"));
 
 	_txtBase->setBig();
-	_txtBase->setText(tr("STR_BASE_").arg(_base->getName()));
-//	_txtBase->setText(_base->getName(_game->getLanguage()));
+	_txtBase->setText(tr("STR_BASE_").arg(_base->getLabel()));
+//	_txtBase->setText(_base->getLabel(_game->getLanguage()));
 
 	_txtName->setText(tr("STR_NAME_UC"));
 	_txtStatus->setText(tr("STR_STATUS"));
@@ -170,7 +170,7 @@ void CraftsState::init()
 		std::wstring status (getAltStatus(*i));
 		_lstCrafts->addRow(
 						5,
-						(*i)->getName(_game->getLanguage()).c_str(),
+						(*i)->getLabel(_game->getLanguage()).c_str(),
 						status.c_str(),
 						woststr1.str().c_str(),
 						woststr2.str().c_str(),
@@ -244,11 +244,11 @@ std::wstring CraftsState::getAltStatus(Craft* const craft) // private.
 				status = tr("STR_INTERCEPTING_UFO").arg(ufo->getId());
 			else
 				status = tr("STR_DESTINATION_UC_")
-							.arg(ufo->getName(_game->getLanguage()));
+							.arg(ufo->getLabel(_game->getLanguage()));
 		}
 		else
 			status = tr("STR_DESTINATION_UC_")
-						.arg(craft->getDestination()->getName(_game->getLanguage()));
+						.arg(craft->getDestination()->getLabel(_game->getLanguage()));
 
 		_cellColor = YELLOW;
 	}

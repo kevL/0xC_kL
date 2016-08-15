@@ -104,7 +104,7 @@ class RuleTerrain;
  * Contains constant info about an Alien Deployment like the number of aliens
  * for each alien type and what items they carry (itemset depends on alien
  * technology advancement level).
- * - deployment type can be a craft's name but also alien base or cydonia
+ * - deployment type can be a craft's label but also alien base or cydonia
  * - alienRank is used to check which nodeRanks can be used to deploy this unit
  *   + to match to a specific unit (=race/rank combination) that should be deployed
  * @sa Node

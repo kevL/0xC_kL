@@ -218,7 +218,7 @@ int RuleArmor::getUnderArmor() const
 
 /**
  * Gets the corpse item used in the Geoscape.
- * @return, name of the corpse item
+ * @return, label of the corpse item
  */
 std::string RuleArmor::getCorpseGeoscape() const
 {
@@ -246,7 +246,7 @@ std::string RuleArmor::getStoreItem() const
 
 /**
  * Gets the type of special weapon.
- * @return, the name of the special weapon
+ * @return, the label of the special weapon
  *
 std::string RuleArmor::getSpecialWeapon() const
 {

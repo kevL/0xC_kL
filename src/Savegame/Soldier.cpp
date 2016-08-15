@@ -109,17 +109,17 @@ Soldier::Soldier(
 		|| RNG::percent(static_cast<int>(Round(male / total * 100.))))
 	{
 		_gender = GENDER_MALE;
-		_name = L"pfc.Fritz";
+		_label = L"pfc.Fritz";
 	}
 	else
 	{
 		_gender = GENDER_FEMALE;
-		_name = L"pfc.Frita";
+		_label = L"pfc.Frita";
 	}
 //		if (names->empty() == false)
 //		{
 //			size_t nationality (RNG::generate(0, names->size() - 1));
-//			_name = names->at(nationality)->genName(&_gender, _solRule->getFemaleFrequency());
+//			_label = names->at(nationality)->genName(&_gender, _solRule->getFemaleFrequency());
 //
 //			// Once the ability to mod in extra looks is added this will need to
 //			// reference the ruleset for a max-quantity of look-types.
@@ -129,8 +129,8 @@ Soldier::Soldier(
 //		{
 //			_gender = (RNG::percent(_solRule->getFemaleFrequency()) ? GENDER_FEMALE : GENDER_MALE);
 //			_look = (SoldierLook)RNG::generate(0, 3);
-//			_name = (_gender == GENDER_FEMALE) ? L"Astrid" : L"Rupert";
-//			_name += L" Hutzinger";
+//			_label = (_gender == GENDER_FEMALE) ? L"Astrid" : L"Rupert";
+//			_label += L" Hutzinger";
 //		}
 //	}
 }
@@ -185,7 +185,7 @@ void Soldier::load(
 		const Ruleset* const rules)
 {
 	//Log(LOG_INFO) << "Soldier::load()";
-	_name = Language::utf8ToWstr(node["name"].as<std::string>(""));
+	_label = Language::utf8ToWstr(node["label"].as<std::string>(""));
 
 	_id				= node["id"]			.as<int>(_id);
 	_missions		= node["missions"]		.as<int>(_missions);
@@ -246,7 +246,7 @@ YAML::Node Soldier::save() const
 {
 	YAML::Node node;
 
-	node["name"]	= Language::wstrToUtf8(_name);
+	node["label"]	= Language::wstrToUtf8(_label);
 
 	node["type"]	= _solRule->getType();
 	node["id"]		= _id;
@@ -265,7 +265,7 @@ YAML::Node Soldier::save() const
 
 	node["armor"] = _arRule->getType();
 
-	if (_craft != nullptr) node["craft"] = _craft->saveId();
+	if (_craft != nullptr) node["craft"] = _craft->saveIdentificator();
 
 	for (std::vector<SoldierLayout*>::const_iterator
 			i = _layout.begin();
@@ -322,36 +322,36 @@ int Soldier::getId() const
 }
 
 /**
- * Gets this Soldier's full name and optionally statString.
- * @param statstring	- true to add stat string
- * @param maxLength		- restrict length to this value
- * @return, soldier name
+ * Sets this Soldier's label.
+ * @param label - reference to the label
  */
-std::wstring Soldier::getName() const
+void Soldier::setLabel(const std::wstring& label)
 {
-	return _name;
+	_label = label;
 }
-/* std::wstring Soldier::getName(
+
+/**
+ * Gets this Soldier's label and optionally statString.
+// * @param statstring	- true to add stat string
+// * @param maxLength	- restrict length to this value
+ * @return, soldier label
+ */
+std::wstring Soldier::getLabel() const
+{
+	return _label;
+}
+/* std::wstring Soldier::getLabel(
 		bool statstring,
 		size_t maxLength) const
 {
 	if (statstring == true && _statString.empty() == false)
 	{
-		if (_name.length() + _statString.length() > maxLength)
-			return _name.substr(0, maxLength - _statString.length()) + L"/" + _statString;
-		else return _name + L"/" + _statString;
+		if (_label.length() + _statString.length() > maxLength)
+			return _label.substr(0, maxLength - _statString.length()) + L"/" + _statString;
+		else return _label + L"/" + _statString;
 	}
-	return _name;
+	return _label;
 } */
-
-/**
- * Changes this Soldier's full name.
- * @param name - reference to the soldier name
- */
-void Soldier::setName(const std::wstring& name)
-{
-	_name = name;
-}
 
 /**
  * Gets the Craft this Soldier is assigned to.
@@ -445,7 +445,7 @@ void Soldier::setCraft(
 
 /**
  * Gets this Soldier's craft-string, which is either the
- * soldier's wounded status, the assigned craft name, or none.
+ * soldier's wounded status, the assigned craft label, or none.
  * @param lang - pointer to Language to get translations from
  * @return, wide-string
  */
@@ -455,7 +455,7 @@ std::wstring Soldier::getCraftString(const Language* const lang) const
 		return lang->getString("STR_WOUNDED").arg(_recovery);
 
 	if (_craft != nullptr)
-		return _craft->getName(lang);
+		return _craft->getLabel(lang);
 
 	return lang->getString("STR_NONE_UC");
 }
@@ -715,7 +715,7 @@ void Soldier::die(SavedGame* const gameSave)
 	death->setTime(*gameSave->getTime());
 
 	SoldierDead* const deadSoldier (new SoldierDead(
-												_name,
+												_label,
 												_id,
 												_rank,
 												_gender,
@@ -799,7 +799,7 @@ void Soldier::autoStat()
 		stat << (_currentStats.psiStrength * _currentStats.psiSkill / 100);
 	}
 
-	_name = stat.str();
+	_label = stat.str();
 }
 
 }

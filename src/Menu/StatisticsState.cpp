@@ -342,7 +342,7 @@ void StatisticsState::listStats()
 		}
 	}
 
-	std::map<std::string, int> ids (gameSave->getObjectIds());
+	std::map<std::string, int> ids (gameSave->getTargetIds());
 	const int
 		ufosDetected (std::max(0, ids[Target::stTarget[0u]] - 1)),
 		alienBases   (std::max(0, ids[Target::stTarget[2u]] - 1)), // detected only.

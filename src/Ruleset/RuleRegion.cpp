@@ -115,7 +115,7 @@ void RuleRegion::load(const YAML::Node& node)
 			area.latMin =
 			area.latMax = city->getLatitude();
 
-			area.site = city->getName();
+			area.site = city->getLabel();
 			area.texture = city->getTextureId();
 
 			_zones.at(MZ_CITY).areas.push_back(area);

@@ -134,7 +134,7 @@ SoldierMemorialState::SoldierMemorialState()
 		death = (*rit)->getDeath();
 		_lstSoldiers->addRow(
 						5,
-						(*rit)->getName().c_str(),
+						(*rit)->getLabel().c_str(),
 						tr((*rit)->getRankString()).c_str(),
 						death->getTime()->getDayString(_game->getLanguage()).c_str(),
 						tr(death->getTime()->getMonthString()).c_str(),

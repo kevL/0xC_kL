@@ -204,7 +204,7 @@ int RuleSoldier::getFloatHeight() const
 
 /**
  * Gets the armor issued to this type of Soldier by default.
- * @return, the armor name
+ * @return, the armor-type
  */
 const std::string& RuleSoldier::getArmor() const
 {

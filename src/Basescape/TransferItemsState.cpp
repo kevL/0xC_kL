@@ -148,8 +148,8 @@ TransferItemsState::TransferItemsState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setText(tr("STR_TRANSFER"));
 
-	_txtBaseSource->setText(_baseSource->getName());
-	_txtBaseTarget->setText(_baseTarget->getName());
+	_txtBaseSource->setText(_baseSource->getLabel());
+	_txtBaseTarget->setText(_baseTarget->getLabel());
 	_txtBaseTarget->setAlign(ALIGN_RIGHT);
 
 	_txtSpaceSource->setAlign(ALIGN_RIGHT);
@@ -259,7 +259,7 @@ void TransferItemsState::init()
 			_soldiers.push_back(*i);
 
 			std::wostringstream woststr;
-			woststr << (*i)->getName();
+			woststr << (*i)->getLabel();
 
 			if ((*i)->getSickbay() != 0)
 				woststr << L" (" << (*i)->getSickbay() << L" dy)";
@@ -317,7 +317,7 @@ void TransferItemsState::init()
 
 			_lstItems->addRow(
 							4,
-							(*i)->getName(_game->getLanguage()).c_str(),
+							(*i)->getLabel(_game->getLanguage()).c_str(),
 							L"1",L"0",L"0");
 		}
 	}

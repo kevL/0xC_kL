@@ -107,19 +107,19 @@ ProductionCompleteState::ProductionCompleteState(
 	{
 		case PROGRESS_CONSTRUCTION:
 			wst = tr("STR_CONSTRUCTION_OF_FACILITY_AT_BASE_IS_COMPLETE")
-					.arg(item).arg(base->getName());
+					.arg(item).arg(base->getLabel());
 			break;
 		case PROGRESS_COMPLETE:
 			wst = tr("STR_PRODUCTION_OF_ITEM_AT_BASE_IS_COMPLETE")
-					.arg(item).arg(base->getName());
+					.arg(item).arg(base->getLabel());
 			break;
 		case PROGRESS_NOT_ENOUGH_MONEY:
 			wst = tr("STR_NOT_ENOUGH_MONEY_TO_PRODUCE_ITEM_AT_BASE")
-					.arg(item).arg(base->getName());
+					.arg(item).arg(base->getLabel());
 			break;
 		case PROGRESS_NOT_ENOUGH_MATERIALS:
 			wst = tr("STR_NOT_ENOUGH_SPECIAL_MATERIALS_TO_PRODUCE_ITEM_AT_BASE")
-					.arg(item).arg(base->getName());
+					.arg(item).arg(base->getLabel());
 //			break;
 //		default: assert(false);
 	}

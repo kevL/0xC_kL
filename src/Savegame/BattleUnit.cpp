@@ -143,7 +143,7 @@ BattleUnit::BattleUnit(
 		_activeHand(AH_NONE),
 		_fist(nullptr),
 
-		_name(sol->getName()),
+		_label(sol->getLabel()),
 		_id(sol->getId()),
 		_rank(sol->getRankString()),
 		_armor(sol->getArmor()),
@@ -591,8 +591,8 @@ YAML::Node BattleUnit::save() const
 
 	node["id"] = _id;
 
-	if (getName().empty() == false)
-		node["name"] = Language::wstrToUtf8(getName());
+	if (getLabel().empty() == false)
+		node["label"] = Language::wstrToUtf8(getLabel());
 
 	node["genUnitType"]		= _type;
 	node["genUnitArmor"]	= _armor->getType();
@@ -3807,14 +3807,14 @@ bool BattleUnit::hasFlightSuit() const
 } */
 
 /**
- * Gets a unit's name.
- * @note An aLien's name is the translation of its race and rank; hence the
+ * Gets a unit's label.
+ * @note An aLien's label is the translation of its race and rank; hence the
  * language pointer needed.
  * @param lang		- pointer to Language (default nullptr)
  * @param debugId	- append unit-ID for debug purposes (default false)
- * @return, name of this BattleUnit
+ * @return, label of this BattleUnit
  */
-std::wstring BattleUnit::getName(
+std::wstring BattleUnit::getLabel(
 		const Language* const lang,
 		bool debugId) const
 {
@@ -3835,7 +3835,7 @@ std::wstring BattleUnit::getName(
 		return ret;
 	}
 
-	return _name;
+	return _label;
 }
 
 /**

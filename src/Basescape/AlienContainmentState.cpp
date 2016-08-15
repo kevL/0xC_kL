@@ -204,7 +204,7 @@ void AlienContainmentState::init()
 {
 	State::init();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 
 	_lstAliens->clearList();
 	_qtysCorpsify.clear();
@@ -258,7 +258,7 @@ void AlienContainmentState::init()
 					interrogations.erase(j);
 				}
 
-				_lstAliens->addRow( // show its name on the list.
+				_lstAliens->addRow( // show its type on the list.
 								4,
 								tr(*i).c_str(),
 								Text::intWide(qtyAliens).c_str(),
@@ -532,7 +532,7 @@ void AlienContainmentState::miniClick(Action*)
 }
 
 /**
- * Displays the name of the Base the mouse is over.
+ * Displays the label of the Base the mouse is over.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::miniMouseOver(Action*)
@@ -544,14 +544,14 @@ void AlienContainmentState::miniMouseOver(Action*)
 		&& base != _base
 		&& base->hasContainment() == true)
 	{
-		_txtHoverBase->setText(base->getName().c_str());
+		_txtHoverBase->setText(base->getLabel().c_str());
 	}
 	else
 		_txtHoverBase->setText(L"");
 }
 
 /**
- * Clears the hovered Base name.
+ * Clears the hovered Base label.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::miniMouseOut(Action*)

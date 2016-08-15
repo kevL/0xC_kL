@@ -66,7 +66,7 @@ private:
 	size_t _size;
 
 	std::string
-		_mapName,
+		_blockType,
 		_type;
 
 	std::vector<std::string> _required;
@@ -139,8 +139,8 @@ private:
 		/// Gets the facility's weapon hit ratio.
 		int getHitRatio() const;
 
-		/// Gets the facility's battlescape map name.
-		std::string getMapName() const;
+		/// Gets the facility's battlescape type.
+		std::string getBlockType() const;
 
 		/// Gets the facility's fire sound.
 		int getFireSound() const;

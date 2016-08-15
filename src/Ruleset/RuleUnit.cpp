@@ -270,7 +270,7 @@ int RuleUnit::getSpecabPower() const
 
 /**
  * Gets the unit that is spawned when this one dies.
- * @return, the unit's spawn unit
+ * @return, the unit's spawn-unit type
  */
 const std::string& RuleUnit::getSpawnType() const
 {
@@ -301,7 +301,7 @@ bool RuleUnit::isLivingWeapon() const
 
 /**
  * Gets this unit's built in melee weapon if any.
- * @return, the name of the weapon
+ * @return, the type of the weapon
  */
 const std::string& RuleUnit::getMeleeWeapon() const
 {

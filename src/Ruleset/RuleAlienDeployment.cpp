@@ -217,6 +217,12 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 		// STR_BATTLESHIP
 		// STR_SUPPLY_SHIP
 	}
+//	if (node["markerIcon"]) // jic I go back to user-defined rulesets. which I doubt.
+//	{
+//		_markerIcon = node["markerIcon"].as<int>(_markerIcon);
+//		if (_markerIcon > 8)
+//			_markerIcon += rules->getModOffset(); // pass in Ruleset
+//	}
 
 	if (node["duration"])
 	{

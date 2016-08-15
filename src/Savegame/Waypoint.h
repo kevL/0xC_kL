@@ -37,10 +37,6 @@ class Waypoint final
 		public Target
 {
 
-private:
-	int _id;
-
-
 	public:
 		/// Creates a Waypoint.
 		Waypoint();
@@ -52,15 +48,10 @@ private:
 		/// Saves the Waypoint to YAML.
 		YAML::Node save() const override;
 		/// Saves the Waypoint's unique-ID to YAML.
-		YAML::Node saveId() const override;
+		YAML::Node saveIdentificator() const override;
 
-		/// Gets the Waypoint's ID.
-		int getId() const;
-		/// Sets the Waypoint's ID.
-		void setId(int id);
-
-		/// Gets the Waypoint's name.
-		std::wstring getName(const Language* const lang) const override;
+		/// Gets the Waypoint's label.
+		std::wstring getLabel(const Language* const lang) const override;
 
 		/// Gets the Waypoint's globe-marker.
 		int getMarker() const override;

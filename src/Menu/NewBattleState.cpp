@@ -374,7 +374,7 @@ void NewBattleState::configCreate()
 	const YAML::Node& node (_rules->getStartingBase());
 	base->loadBase(node, true, true);
 	gameSave->getBases()->push_back(base);
-	base->setName(L"tactical");
+	base->setLabel(L"tactical");
 
 	// Clear and generate Craft.
 	for (std::vector<Craft*>::const_iterator

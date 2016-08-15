@@ -542,7 +542,7 @@ void DebriefingState::btnOkClick(Action*)
 			{
 				_game->pushState(new AlienContainmentState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(
-												tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getName()),
+												tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getLabel()),
 												_palette,
 												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
 												"BACK04.SCR",
@@ -565,7 +565,7 @@ void DebriefingState::btnOkClick(Action*)
 			{
 //				_game->pushState(new SellState(_base, OPT_BATTLESCAPE));
 				_game->pushState(new ErrorMessageState(
-												tr("STR_STORAGE_EXCEEDED").arg(_base->getName()),
+												tr("STR_STORAGE_EXCEEDED").arg(_base->getLabel()),
 												_palette,
 												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
 												_game->getResourcePack()->getBackgroundRand(),
@@ -890,7 +890,7 @@ void DebriefingState::prepareDebriefing() // private.
 		if ((*i)->getTactical() == true) // in case this DON'T have a Craft, ie. BaseDefense
 		{
 			_base = *i;
-			_txtBaseLabel->setText(_base->getName());
+			_txtBaseLabel->setText(_base->getLabel());
 
 			lon = _base->getLongitude();
 			lat = _base->getLatitude();
@@ -1108,7 +1108,7 @@ void DebriefingState::prepareDebriefing() // private.
 						{
 							(*i)->getStatistics()->KIA = true;
 							(*i)->postMissionProcedures(true);
-//							_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true); // don't bother showing dead soldier stats.
+//							_soldierStatInc[sol->getLabel()] = (*i)->postMissionProcedures(true); // don't bother showing dead soldier stats.
 
 							if (_isQuickBattle == false)
 								_missionCost += _base->soldierExpense(sol, true);
@@ -1166,7 +1166,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 							if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 							{
-								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures();
+								_soldierStatInc[sol->getLabel()] = (*i)->postMissionProcedures();
 
 								if (_isQuickBattle == false)
 									_missionCost += _base->soldierExpense(sol);
@@ -1215,7 +1215,7 @@ void DebriefingState::prepareDebriefing() // private.
 							{
 								(*i)->getStatistics()->MIA = true;
 								(*i)->postMissionProcedures(true);
-//								_soldierStatInc[sol->getName()] = (*i)->postMissionProcedures(true); // don't bother showing dead soldier stats.
+//								_soldierStatInc[sol->getLabel()] = (*i)->postMissionProcedures(true); // don't bother showing dead soldier stats.
 
 								addStat(
 									"STR_XCOM_AGENTS_MISSING",
@@ -1676,7 +1676,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			{
 				i->first,
 				qtyLost,
-				craft->getName(_game->getLanguage())
+				craft->getLabel(_game->getLanguage())
 			};
 			_cannotReequip.push_back(stat);
 		}
@@ -1714,7 +1714,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				{
 					i->first,
 					i->second - baseQty,
-					craft->getName(_game->getLanguage())
+					craft->getLabel(_game->getLanguage())
 				};
 				_cannotReequip.push_back(stat);
 			}
@@ -1753,7 +1753,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 					{
 						type,
 						qtyLost,
-						craft->getName(_game->getLanguage())
+						craft->getLabel(_game->getLanguage())
 					};
 					_cannotReequip.push_back(stat);
 				}

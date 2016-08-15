@@ -34,12 +34,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Soldier Died window.
- * @param name - reference to the name of the Soldier
- * @param base - reference to the title of the Soldier's base
+ * Initializes all the elements in the SoldierDied window.
+ * @param soldier	- reference to the label of the Soldier
+ * @param base		- reference to the label of the Soldier's Base
  */
 SoldierDiedState::SoldierDiedState(
-		const std::wstring& name,
+		const std::wstring& soldier,
 		const std::wstring& base)
 {
 	_fullScreen = false;
@@ -72,10 +72,10 @@ SoldierDiedState::SoldierDiedState(
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SoldierDiedState::btnOkClick),
 							Options::keyCancel);
 
-	std::wstring msg (name);
-	msg += L'\n';
-	msg += tr("STR_SOLDIER_DIED");
-	_txtTitle->setText(msg);
+	std::wstring notice (soldier);
+	notice += L'\n';
+	notice += tr("STR_SOLDIER_DIED");
+	_txtTitle->setText(notice);
 	_txtTitle->setColor(CYAN);
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);

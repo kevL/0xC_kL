@@ -190,7 +190,7 @@ private:
 	double _size;
 
 	std::string
-		_name, // two types of objects can have the same name
+		_label, // two types of objects can have the same label
 		_type, // but the types are always unique
 		_zombieUnit;
 
@@ -218,8 +218,8 @@ private:
 
 		/// Gets the item's type.
 		const std::string& getType() const;
-		/// Gets the item's name.
-		const std::string& getName() const;
+		/// Gets the item's label.
+		const std::string& getLabel() const;
 
 		/// Gets the item's research requirements.
 		const std::vector<std::string>& getRequirements() const;

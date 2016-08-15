@@ -145,7 +145,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 
 					std::wostringstream woststr;
 					woststr << L"  ";
-					woststr << (*j)->getName();
+					woststr << (*j)->getLabel();
 
 					int
 						lastInt (-2),

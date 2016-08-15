@@ -1058,7 +1058,7 @@ void GeoscapeState::init()
 	_globe->draw();
 
 	if (_gameSave->isIronman() == true
-		&& _gameSave->getName().empty() == false)
+		&& _gameSave->getLabel().empty() == false)
 	{
 		popupGeo(new ListSaveState(OPT_GEOSCAPE));
 	}
@@ -1453,7 +1453,7 @@ void GeoscapeState::time5Seconds()
 									&& (*i)->getUfoStatus() == Ufo::LANDED))
 						{
 							resetTimer();
-							popupGeo(new UfoLostState((*i)->getName(_game->getLanguage())));
+							popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
 						}
 
 						if (qtySites < _gameSave->getTerrorSites()->size()) // new TerrorSite appeared when UFO reached waypoint, above^
@@ -1501,7 +1501,7 @@ void GeoscapeState::time5Seconds()
 						&& (*i)->getTargeters()->empty() == false)
 					{
 						resetTimer();
-						popupGeo(new UfoLostState((*i)->getName(_game->getLanguage())));
+						popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
 					}
 				}
 				break;
@@ -2142,7 +2142,7 @@ void GeoscapeState::time10Minutes()
 					&& (*i)->getTargeters()->empty() == false)
 				{
 					resetTimer();
-					popupGeo(new UfoLostState((*i)->getName(_game->getLanguage())));
+					popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
 				}
 			}
 		}
@@ -2287,8 +2287,8 @@ void GeoscapeState::time30Minutes()
 							(*j)->setWarning(CW_CANTREFUEL);
 							const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE")
 														.arg(tr(refuelItem))
-														.arg((*j)->getName(_game->getLanguage()))
-														.arg((*i)->getName()));
+														.arg((*j)->getLabel(_game->getLanguage()))
+														.arg((*i)->getLabel()));
 							popupGeo(new CraftErrorState(this, wst));
 						}
 					}
@@ -2304,8 +2304,8 @@ void GeoscapeState::time30Minutes()
 						(*j)->setWarned();
 						const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
 													.arg(tr(rearmClip))
-													.arg((*j)->getName(_game->getLanguage()))
-													.arg((*i)->getName()));
+													.arg((*j)->getLabel(_game->getLanguage()))
+													.arg((*i)->getLabel()));
 						popupGeo(new CraftErrorState(this, wst));
 					}
 					break;
@@ -2318,8 +2318,8 @@ void GeoscapeState::time30Minutes()
 				popupGeo(new CraftReadyState(
 										this, *j,
 										tr("STR_CRAFT_READY")
-											.arg((*i)->getName())
-											.arg((*j)->getName(_game->getLanguage()))));
+											.arg((*i)->getLabel())
+											.arg((*j)->getLabel(_game->getLanguage()))));
 		}
 	}
 
@@ -2526,7 +2526,7 @@ void GeoscapeState::time1Hour()
 		{
 			resetTimer();
 			popupGeo(new ErrorMessageState(
-								tr("STR_STORAGE_EXCEEDED").arg((*i)->getName()),
+								tr("STR_STORAGE_EXCEEDED").arg((*i)->getLabel()),
 								_palette,
 								_rules->getInterface("geoscape")->getElement("errorMessage")->color,
 								"BACK12.SCR", // "BACK13.SCR"
@@ -2622,7 +2622,7 @@ void GenerateSupportMission::operator() (const AlienBase* const aBase) const
 			mission->setRegion(
 						_gameSave.locateRegion(*aBase)->getRules()->getType(),
 						_rules);
-			mission->setId(_gameSave.getCanonicalId("STR_ALIEN_MISSION"));
+			mission->setId(_gameSave.getCanonicalId(Target::stTarget[7u]));
 			mission->setRace(aBase->getAlienRace());
 			mission->setAlienBase(aBase);
 			mission->start();
@@ -2693,8 +2693,8 @@ void GeoscapeState::time1Day()
 								(*i)->getStorageItems()->addItem((*j)->getArmor()->getStoreItem());
 
 							popupGeo(new SoldierDiedState(
-													(*j)->getName(),
-													(*i)->getName()));
+													(*j)->getLabel(),
+													(*i)->getLabel()));
 
 							(*j)->die(_gameSave); // holy * This copies the SoldierDiary-object
 							// so to delete Soldier-instance I need to use a copy-constructor
@@ -4158,7 +4158,7 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 												*missionRule,
 												*_gameSave));
 	mission->setRace(typeRace);
-	mission->setId(_gameSave->getCanonicalId("STR_ALIEN_MISSION"));
+	mission->setId(_gameSave->getCanonicalId(Target::stTarget[7u]));
 	mission->setRegion(typeRegion, *_rules);
 	mission->setTerrorZone(terrorZoneId);
 	strategy.addMissionRun(directive->getVarType());
@@ -4199,7 +4199,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 		AlienMission* const alienMission = new AlienMission(
 														missionRule,
 														*_gameSave);
-		alienMission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
+		alienMission->setId(_gameSave->getId(Target::stTarget[7u]));
 		alienMission->setRegion(
 							region,
 							*_rules);
@@ -4228,7 +4228,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 		AlienMission* const alienMission = new AlienMission(
 														missionRule,
 														*_gameSave);
-		alienMission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
+		alienMission->setId(_gameSave->getId(Target::stTarget[7u]));
 		alienMission->setRegion(
 							region,
 							*_rules);
@@ -4290,7 +4290,7 @@ void GeoscapeState::setupLandMission() // private.
 		AlienMission* const mission = new AlienMission(
 													missionRule,
 													*_gameSave);
-		mission->setId(_gameSave->getId("STR_ALIEN_MISSION"));
+		mission->setId(_gameSave->getId(Target::stTarget[7u]));
 		mission->setRegion(
 						regRule->getType(),
 						*_rules);

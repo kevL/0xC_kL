@@ -593,10 +593,10 @@ std::string Language::getId() const
 }
 
 /**
- * Returns this Language's name in its native language.
+ * Returns this Language's label in its native language.
  * @return, translation as a wide-string
  */
-std::wstring Language::getName() const
+std::wstring Language::getLabel() const
 {
 	return _langList[_id];
 }

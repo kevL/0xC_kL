@@ -32,8 +32,7 @@ namespace OpenXcom
  */
 Waypoint::Waypoint()
 	:
-		Target(),
-		_id(0)
+		Target()
 {}
 
 /**
@@ -70,7 +69,7 @@ YAML::Node Waypoint::save() const
  * Saves this Waypoint's unique-ID to a YAML file.
  * @return, YAML node
  */
-YAML::Node Waypoint::saveId() const
+YAML::Node Waypoint::saveIdentificator() const
 {
 	YAML::Node node (Target::save());
 
@@ -81,29 +80,11 @@ YAML::Node Waypoint::saveId() const
 }
 
 /**
- * Returns this Waypoint's ID.
- * @return, unique-ID
- */
-int Waypoint::getId() const
-{
-	return _id;
-}
-
-/**
- * Changes this Waypoint's unique-ID.
- * @param id - unique-ID
- */
-void Waypoint::setId(int id)
-{
-	_id = id;
-}
-
-/**
- * Returns this Waypoint's unique identifying name.
+ * Returns this Waypoint's unique identifying label.
  * @param lang - pointer to Language to get strings from
- * @return, full name
+ * @return, label
  */
-std::wstring Waypoint::getName(const Language* const lang) const
+std::wstring Waypoint::getLabel(const Language* const lang) const
 {
 	return lang->getString("STR_WAY_POINT_").arg(_id);
 }

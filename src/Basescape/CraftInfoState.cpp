@@ -149,7 +149,7 @@ CraftInfoState::CraftInfoState(
 	_edtCraft->setAlign(ALIGN_CENTER);
 	_edtCraft->onTextChange(static_cast<ActionHandler>(&CraftInfoState::edtCraftChange));
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 	_txtStatus->setAlign(ALIGN_RIGHT);
 
 	_txtRadar->setAlign(ALIGN_CENTER);
@@ -231,7 +231,7 @@ void CraftInfoState::init()
 						   && _craft->getCraftItems()->getTotalQuantity() != 0
 						   && _isQuickBattle == false);
 
-	_edtCraft->setText(_craft->getName(_game->getLanguage()));
+	_edtCraft->setText(_craft->getLabel(_game->getLanguage()));
 
 	const RuleCraft* const crRule (_craft->getRules());
 
@@ -585,12 +585,12 @@ void CraftInfoState::btnInventoryClick(Action*)
 }
 
 /**
- * Changes the Craft's name.
+ * Changes the Craft's label.
  * @param action - pointer to an Action
  */
 void CraftInfoState::edtCraftChange(Action*)
 {
-	_craft->setName(_edtCraft->getText());
+	_craft->setLabel(_edtCraft->getText());
 }
 
 /**

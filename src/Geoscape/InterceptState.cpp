@@ -153,7 +153,7 @@ InterceptState::InterceptState(
 					j != (*i)->getCrafts()->end();
 					++j)
 			{
-				_bases.push_back((*i)->getName().c_str());
+				_bases.push_back((*i)->getLabel().c_str());
 				_crafts.push_back(*j);
 
 				std::wostringstream
@@ -180,7 +180,7 @@ InterceptState::InterceptState(
 
 				_lstCrafts->addRow(
 								5,
-								(*j)->getName(_game->getLanguage()).c_str(),
+								(*j)->getLabel(_game->getLanguage()).c_str(),
 								getAltStatus(*j).c_str(),
 								woststr1.str().c_str(),
 								woststr2.str().c_str(),
@@ -191,7 +191,7 @@ InterceptState::InterceptState(
 	}
 
 	if (_base != nullptr)
-		_txtBase->setText(_base->getName());
+		_txtBase->setText(_base->getLabel());
 }
 
 /**
@@ -261,11 +261,11 @@ std::wstring InterceptState::getAltStatus(Craft* const craft) // private.
 				status = tr("STR_INTERCEPTING_UFO").arg(ufo->getId());
 			else
 				status = tr("STR_DESTINATION_UC_")
-							.arg(ufo->getName(_game->getLanguage()));
+							.arg(ufo->getLabel(_game->getLanguage()));
 		}
 		else
 			status = tr("STR_DESTINATION_UC_")
-						.arg(craft->getDestination()->getName(_game->getLanguage()));
+						.arg(craft->getDestination()->getLabel(_game->getLanguage()));
 
 		_cellColor = PURPLE;
 	}

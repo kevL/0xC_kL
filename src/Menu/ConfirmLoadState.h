@@ -48,7 +48,7 @@ class ConfirmLoadState
 private:
 	OptionsOrigin _origin;
 
-	std::string _fileName;
+	std::string _file;
 
 	ListLoadState* _parent;
 	Text* _txtText;
@@ -62,7 +62,7 @@ private:
 		/// Creates a ConfirmLoad state.
 		ConfirmLoadState(
 				OptionsOrigin origin,
-				const std::string& fileName,
+				const std::string& file,
 				ListLoadState* const parent);
 		/// Cleans up the ConfirmLoad state.
 		virtual ~ConfirmLoadState();

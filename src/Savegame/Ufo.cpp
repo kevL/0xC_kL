@@ -56,7 +56,6 @@ Ufo::Ufo(
 	:
 		MovingTarget(gameSave),
 		_ufoRule(ufoRule),
-		_id(0),
 		_idCrashed(0),
 		_idLanded(0),
 		_damage(0),
@@ -262,7 +261,7 @@ YAML::Node Ufo::save() const
  * Saves this UFO's unique-ID to a YAML file.
  * @return, YAML node
  */
-YAML::Node Ufo::saveId() const
+YAML::Node Ufo::saveIdentificator() const
 {
 	YAML::Node node (Target::save());
 
@@ -292,30 +291,11 @@ void Ufo::changeRules(const RuleUfo* const ufoRule)
 }
 
 /**
- * Sets this UFO's unique-ID.
- * @param id - unique-ID
- */
-void Ufo::setId(int id)
-{
-	_id = id;
-}
-
-/**
- * Gets this UFO's unique-ID.
- * @note If it's 0 this UFO has never been detected.
- * @return, unique-ID
- */
-int Ufo::getId() const
-{
-	return _id;
-}
-
-/**
  * Gets this UFO's unique identifier.
  * @param lang - pointer to Language to get strings from
  * @return, label
  */
-std::wstring Ufo::getName(const Language* const lang) const
+std::wstring Ufo::getLabel(const Language* const lang) const
 {
 	switch (_status)
 	{

@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BaseNameState.h"
+#include "BaseLabelState.h"
 
 #include "Globe.h"
 
@@ -42,12 +42,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the BaseName window.
- * @param base		- pointer to the Base to name
+ * Initializes all the elements in the BaseLabel window.
+ * @param base		- pointer to the Base to label
  * @param globe		- pointer to the Geoscape globe
  * @param firstBase	- true if this is the first base in the game (default false)
  */
-BaseNameState::BaseNameState(
+BaseLabelState::BaseLabelState(
 		Base* const base,
 		Globe* const globe,
 		bool firstBase)
@@ -62,14 +62,14 @@ BaseNameState::BaseNameState(
 
 	_window		= new Window(this, 192, 88, 32, 60, POPUP_BOTH);
 	_txtTitle	= new Text(182, 17, 37, 70);
-	_edtName	= new TextEdit(this, 127, 16, 59, 94);
+	_edtLabel	= new TextEdit(this, 127, 16, 59, 94);
 	_btnOk		= new TextButton(162, 16, 47, 118);
 
 	setInterface("baseNaming");
 
 	add(_window,	"window",	"baseNaming");
 	add(_txtTitle,	"text",		"baseNaming");
-	add(_edtName,	"text",		"baseNaming");
+	add(_edtLabel,	"text",		"baseNaming");
 	add(_btnOk,		"button",	"baseNaming");
 
 	centerAllSurfaces();
@@ -78,10 +78,10 @@ BaseNameState::BaseNameState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BaseNameState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseNameState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BaseLabelState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseLabelState::btnOkClick),
 							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseNameState::btnOkClick),
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseLabelState::btnOkClick),
 							Options::keyOkKeypad);
 	_btnOk->setVisible(false);
 
@@ -89,31 +89,31 @@ BaseNameState::BaseNameState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_edtName->setBig();
-	_edtName->setFocusEdit();
-	_edtName->onTextChange(static_cast<ActionHandler>(&BaseNameState::edtLabelChange));
+	_edtLabel->setBig();
+	_edtLabel->setFocusEdit();
+	_edtLabel->onTextChange(static_cast<ActionHandler>(&BaseLabelState::edtLabelChange));
 }
 
 /**
  * dTor.
  */
-BaseNameState::~BaseNameState()
+BaseLabelState::~BaseLabelState()
 {}
 
 /**
- * Updates the base name and disables the OK button if no name is entered.
+ * Updates the base label and disables the OK button if no label is entered.
  * @param action - pointer to an Action
  */
-void BaseNameState::edtLabelChange(Action* action)
+void BaseLabelState::edtLabelChange(Action* action)
 {
-	_base->setName(_edtName->getText());
+	_base->setLabel(_edtLabel->getText());
 
-	if (_edtName->getText().empty() == true)
+	if (_edtLabel->getText().empty() == true)
 		_btnOk->setVisible(false);
 	else if (action->getDetails()->key.keysym.sym == Options::keyCancel)
 	{
 		_btnOk->setVisible(false);
-		_edtName->setText(L"");
+		_edtLabel->setText(L"");
 	}
 	else
 		_btnOk->setVisible();
@@ -123,7 +123,7 @@ void BaseNameState::edtLabelChange(Action* action)
  * Goes to the PlaceLift screen.
  * @param action - pointer to an Action
  */
-void BaseNameState::btnOkClick(Action*)
+void BaseLabelState::btnOkClick(Action*)
 {
 	_game->popState();
 	_game->popState();

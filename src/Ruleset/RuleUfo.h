@@ -125,7 +125,7 @@ private:
 		/// Gets the UFO's escape time.
 		int getEscape() const;
 
-		/// Gets the name of the surface that represents this UFO.
+		/// Gets the string-ID of the Surface that represents this UFO.
 		std::string getSpriteString() const;
 		/// Gets the UFO's radar range.
 		int getRangeRecon() const;

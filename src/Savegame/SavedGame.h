@@ -178,7 +178,7 @@ private:
 	const Ruleset* const _rules;
 	SavedBattleGame* _battleSave;
 
-	std::wstring _name;
+	std::wstring _label;
 	std::string
 		_debugArg,
 		_graphRegionToggles,
@@ -249,10 +249,10 @@ private:
 		/// Saves the SavedGame to YAML.
 		void save(const std::string& file) const;
 
-		/// Gets the SavedGame's name.
-		std::wstring getName() const;
-		/// Sets the SavedGame's name.
-		void setName(const std::wstring& name);
+		/// Gets the SavedGame's label.
+		std::wstring getLabel() const;
+		/// Sets the SavedGame's label.
+		void setLabel(const std::wstring& label);
 
 		/// Gets this SavedGame's Ruleset.
 //		const Ruleset* getRules() const;
@@ -324,10 +324,10 @@ private:
 		/// Sets the current GameTime.
 		void setTime(GameTime gt);
 
-		/// Gets an ID to assign for an object-type.
-		int getCanonicalId(const std::string& objectType);
-	 	/// Gets all the canonical-IDs.
-		const std::map<std::string, int>& getObjectIds() const;
+		/// Gets an ID to assign to a Target type.
+		int getCanonicalId(const std::string& targetType);
+	 	/// Gets a list of all canonical-IDs.
+		const std::map<std::string, int>& getTargetIds() const;
 		/// Resets the list of object-IDs.
 //		void setCanonicalIds(const std::map<std::string, int>& ids);
 

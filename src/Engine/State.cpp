@@ -84,7 +84,7 @@ State::~State()
 }
 
 /**
- * Gets the name of this State.
+ * Gets the label of this State.
  * @return, label of the substate if any else "parent State"
  *
 std::string State::getStateLabel() const // virtual.

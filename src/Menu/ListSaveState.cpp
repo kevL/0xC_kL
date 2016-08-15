@@ -210,7 +210,7 @@ void ListSaveState::saveGame() // private.
 //	_lstSaves->setScrollable();			// don't need this either ....
 
 	hideElements();
-	_game->getSavedGame()->setName(_edtSave->getText());
+	_game->getSavedGame()->setLabel(_edtSave->getText());
 
 	std::string
 		file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_edtSave->getText()))),

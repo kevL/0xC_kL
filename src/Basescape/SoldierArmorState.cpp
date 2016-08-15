@@ -94,7 +94,7 @@ SoldierArmorState::SoldierArmorState(
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SoldierArmorState::btnCancelClick),
 								Options::keyOkKeypad);
 
-	_txtSoldier->setText(_sol->getName());
+	_txtSoldier->setText(_sol->getLabel());
 	_txtSoldier->setAlign(ALIGN_CENTER);
 
 	_txtType->setText(tr("STR_TYPE"));

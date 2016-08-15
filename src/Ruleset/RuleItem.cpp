@@ -36,7 +36,7 @@ namespace OpenXcom
 RuleItem::RuleItem(const std::string& type)
 	:
 		_type(type),
-		_name(type),
+		_label(type),
 		_size(0.),
 		_costBuy(0),
 		_costSell(0),
@@ -134,7 +134,7 @@ void RuleItem::load(
 		int listOrder)
 {
 	_type			= node["type"]			.as<std::string>(_type);
-	_name			= node["name"]			.as<std::string>(_name);
+	_label			= node["label"]			.as<std::string>(_label);
 	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_size			= node["size"]			.as<double>(_size);
 	_costBuy		= node["costBuy"]		.as<int>(_costBuy);
@@ -306,11 +306,11 @@ const std::string& RuleItem::getType() const
  * Gets the string that names the Item.
  * @note This is not necessarily unique. Currently used only to differentiate
  * corpses from their respective battlefield parts.
- * @return, the item's name
+ * @return, the item's label
  */
-const std::string& RuleItem::getName() const
+const std::string& RuleItem::getLabel() const
 {
-	return _name;
+	return _label;
 }
 
 /**

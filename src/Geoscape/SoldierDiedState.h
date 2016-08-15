@@ -42,7 +42,7 @@ class SoldierDiedState
 {
 
 private:
-	static const Uint8 CYAN = 133;
+	static const Uint8 CYAN = 133u;
 
 	Text
 		* _txtBase,
@@ -52,9 +52,9 @@ private:
 
 
 	public:
-		/// Creates the SoldierDied state.
+		/// Creates a SoldierDied state.
 		SoldierDiedState(
-				const std::wstring& name,
+				const std::wstring& soldier,
 				const std::wstring& base);
 		/// Cleans up the SoldierDied state.
 		~SoldierDiedState();

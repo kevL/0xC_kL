@@ -98,7 +98,7 @@ TargetInfoState::TargetInfoState(
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	std::wostringstream woststr;
-	woststr << L'\x01' << _target->getName(_game->getLanguage());
+	woststr << L'\x01' << _target->getLabel(_game->getLanguage());
 	_txtTitle->setText(woststr.str());
 
 	for (std::vector<AlienBase*>::const_iterator
@@ -127,7 +127,7 @@ TargetInfoState::TargetInfoState(
 			i != _target->getTargeters()->end();
 			++i)
 	{
-		woststr << (*i)->getName(_game->getLanguage()) << L'\n';
+		woststr << (*i)->getLabel(_game->getLanguage()) << L'\n';
 
 		if (targeted == false)
 		{
@@ -149,7 +149,7 @@ TargetInfoState::~TargetInfoState()
 {}
 
 /**
- * Edits an aLienBase's name.
+ * Edits an aLienBase's label.
  * @note For player to type in suspected race.
  * @param action - pointer to an Action
  */

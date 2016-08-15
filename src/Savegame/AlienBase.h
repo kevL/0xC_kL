@@ -44,7 +44,6 @@ private:
 	bool
 		_detected,
 		_tactical;
-	int _id;
 
 	std::string
 		_edit,
@@ -64,15 +63,10 @@ private:
 		/// Saves the AlienBase to YAML.
 		YAML::Node save() const override;
 		/// Saves the AlienBase's unique-ID to YAML.
-		YAML::Node saveId() const override;
+		YAML::Node saveIdentificator() const override;
 
-		/// Gets the AlienBase's ID.
-		int getId() const;
-		/// Sets the AlienBase's ID.
-		void setId(int id);
-
-		/// Gets the AlienBase's name.
-		std::wstring getName(const Language* const lang) const override;
+		/// Gets the AlienBase's label.
+		std::wstring getLabel(const Language* const lang) const override;
 		/// Gets the AlienBase's globe-marker.
 		int getMarker() const override;
 

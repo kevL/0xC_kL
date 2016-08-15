@@ -136,7 +136,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	if (_listBase != nullptr)
 	{
 		_txtBaseLabel->setAlign(ALIGN_CENTER);
-		_txtBaseLabel->setText(_base->getName());
+		_txtBaseLabel->setText(_base->getLabel());
 
 		if (_rows > 1u)
 		{
@@ -242,13 +242,13 @@ void SoldierDiaryOverviewState::init()
 	{
 		const Soldier* const sol (_listBase->at(_solId));
 		diary = sol->getDiary();
-		_txtTitle->setText(sol->getName());
+		_txtTitle->setText(sol->getLabel());
 	}
 	else
 	{
 		const SoldierDead* const solDead (_listDead->at(_solId));
 		diary = solDead->getDiary();
-		_txtTitle->setText(solDead->getName());
+		_txtTitle->setText(solDead->getLabel());
 	}
 
 

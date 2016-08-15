@@ -531,7 +531,7 @@ BattlescapeState::BattlescapeState()
 		if ((*i)->getTactical() == true)
 		{
 			target = dynamic_cast<Target*>(*i);
-			baseLabel = (*i)->getName();
+			baseLabel = (*i)->getLabel();
 			missionLabel = tr("STR_BASE_DEFENSE");
 			break;
 		}
@@ -544,7 +544,7 @@ BattlescapeState::BattlescapeState()
 			if ((*j)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*j);
-				baseLabel = (*i)->getName();
+				baseLabel = (*i)->getLabel();
 			}
 		}
 	}
@@ -571,7 +571,7 @@ BattlescapeState::BattlescapeState()
 				else
 					woststr << tr("STR_UFO_GROUND_ASSAULT");
 
-				woststr << L"> " << (*i)->getName(_game->getLanguage());
+				woststr << L"> " << (*i)->getLabel(_game->getLanguage());
 			}
 		}
 
@@ -583,7 +583,7 @@ BattlescapeState::BattlescapeState()
 			if ((*i)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*i);
-				woststr << tr("STR_TERROR_MISSION") << L"> " << (*i)->getName(_game->getLanguage()); // <- not necessarily a Terror Mission ...
+				woststr << tr("STR_TERROR_MISSION") << L"> " << (*i)->getLabel(_game->getLanguage()); // <- not necessarily a Terror Mission ...
 			}
 		}
 
@@ -595,7 +595,7 @@ BattlescapeState::BattlescapeState()
 			if ((*i)->getTactical() == true)
 			{
 				target = dynamic_cast<Target*>(*i);
-				woststr << tr("STR_ALIEN_BASE_ASSAULT") << L"> " << (*i)->getName(_game->getLanguage());
+				woststr << tr("STR_ALIEN_BASE_ASSAULT") << L"> " << (*i)->getLabel(_game->getLanguage());
 			}
 		}
 
@@ -1261,7 +1261,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 						switch (item->getBodyUnit()->getUnitStatus())
 						{
 							case STATUS_UNCONSCIOUS:
-								wst1 += item->getBodyUnit()->getName(_game->getLanguage());
+								wst1 += item->getBodyUnit()->getLabel(_game->getLanguage());
 
 								if (item->getBodyUnit()->getGeoscapeSoldier() != nullptr)
 									wst1 += L" (" + Text::intWide(item->getBodyUnit()->getHealth() - item->getBodyUnit()->getStun() - 1) + L")";
@@ -1271,7 +1271,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 								wst1 += tr(itRule->getType());
 
 								if (item->getBodyUnit()->getGeoscapeSoldier() != nullptr)
-									wst1 += L" (" + item->getBodyUnit()->getName(_game->getLanguage()) + L")";
+									wst1 += L" (" + item->getBodyUnit()->getLabel(_game->getLanguage()) + L")";
 						}
 					}
 				}
@@ -2911,7 +2911,7 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 	if (_battleSave->getSide() == FACTION_PLAYER)
 		updateHostileIcons();
 
-	_txtName->setText(selUnit->getName(
+	_txtName->setText(selUnit->getLabel(
 									_game->getLanguage(),
 									false));
 

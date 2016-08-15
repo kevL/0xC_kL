@@ -67,7 +67,6 @@ private:
 		_escapeCountdown,
 		_fireCountdown,
 		_hitFrame,
-		_id,
 		_idCrashed,
 		_idLanded,
 		_secondsLeft;
@@ -108,7 +107,7 @@ private:
 		/// Saves the Ufo to YAML.
 		YAML::Node save() const override;
 		/// Saves the Ufo's unique-ID to YAML.
-		YAML::Node saveId() const override;
+		YAML::Node saveIdentificator() const override;
 
 		/// Gets the Ufo's ruleset.
 		const RuleUfo* getRules() const;
@@ -118,12 +117,8 @@ private:
 		/// Handles Ufo logic.
 		void think();
 
-		/// Sets the Ufo's ID.
-		void setId(int id);
-		/// Gets the Ufo's ID.
-		int getId() const;
-		/// Gets the Ufo's name.
-		std::wstring getName(const Language* const lang) const override;
+		/// Gets the Ufo's label.
+		std::wstring getLabel(const Language* const lang) const override;
 
 		/// Gets the Ufo's globe-marker.
 		int getMarker() const override;

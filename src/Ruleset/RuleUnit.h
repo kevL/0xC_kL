@@ -309,9 +309,9 @@ private:
 		/// Gets stamina recovery per turn as a percentage.
 		int getEnergyRecovery() const;
 
-		/// Checks if this unit has a built in weapon.
+		/// Checks if this unit has an intrinsic weapon.
 		bool isLivingWeapon() const;
-		/// Gets the name of any melee weapon that may be built in to this unit.
+		/// Gets the type of a melee-weapon built into this unit.
 		const std::string& getMeleeWeapon() const;
 		/// Gets a vector of integrated items this unit has available.
 //		const std::vector<std::string>& getBuiltInWeapons() const;

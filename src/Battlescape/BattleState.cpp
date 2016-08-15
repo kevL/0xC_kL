@@ -45,7 +45,7 @@ BattleState::~BattleState() // virtual.
 {}
 
 /**
- * Gets the name of this BattleState.
+ * Gets the label of this BattleState.
  * @return, label of the substate if any else "parent BattleState"
  */
 std::string BattleState::getBattleStateLabel() const // virtual.

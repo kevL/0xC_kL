@@ -35,7 +35,7 @@ class Window;
 
 /**
  * Screen that allows the player to confirm placing a Sase on the Globe.
- * @note This is different from the starting base screen, BaseNameState
+ * @note This is different from the starting base screen, BaseLabelState
  */
 class ConfirmNewBaseState
 	:

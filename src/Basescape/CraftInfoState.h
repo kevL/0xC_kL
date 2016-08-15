@@ -122,7 +122,7 @@ private:
 		/// Handler for clicking the inventory button.
 		void btnInventoryClick(Action* action);
 
-		/// Handler for changing the text on the name-edit.
+		/// Handler for changing the text on the label-edit.
 		void edtCraftChange(Action* action);
 };
 

@@ -102,7 +102,7 @@ PsiTrainingState::PsiTrainingState(Base* const base)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
 
 	_labSpace = _base->getFreePsiLabs();
@@ -185,7 +185,7 @@ void PsiTrainingState::init()
 
 		_lstSoldiers->addRow(
 						4,
-						(*i)->getName().c_str(),
+						(*i)->getLabel().c_str(),
 						woststr1.str().c_str(),
 						woststr2.str().c_str(),
 						wst.c_str());

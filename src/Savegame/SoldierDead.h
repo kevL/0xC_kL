@@ -47,7 +47,7 @@ private:
 		_kills,
 		_missions;
 
-	std::wstring _name;
+	std::wstring _label;
 
 	SoldierDeath* _death;
 	SoldierDiary* _diary;
@@ -63,7 +63,7 @@ private:
 	public:
 		/// Creates a SoldierDead. Used for Soldiers dying IG.
 		SoldierDead(
-				const std::wstring& name,
+				const std::wstring& label,
 				const int id,
 				const SoldierRank rank,
 				const SoldierGender gender,
@@ -84,8 +84,8 @@ private:
 		/// Saves the SoldierDead to YAML.
 		YAML::Node save() const;
 
-		/// Gets the SoldierDead's name.
-		std::wstring getName() const;
+		/// Gets the SoldierDead's label.
+		std::wstring getLabel() const;
 
 		/// Gets a string version of the SoldierDead's rank.
 		std::string getRankString() const;

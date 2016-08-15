@@ -332,8 +332,8 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 	}
 	else
 	{
-		if (doc["name"])
-			save.label = Language::utf8ToWstr(doc["name"].as<std::string>());
+		if (doc["label"])
+			save.label = Language::utf8ToWstr(doc["label"].as<std::string>());
 		else
 			save.label = Language::fsToWstr(CrossPlatform::noExt(file));
 
@@ -412,10 +412,10 @@ void SavedGame::load(
 
 	_time->load(brief["time"]);
 
-	if (brief["name"])
-		_name = Language::utf8ToWstr(brief["name"].as<std::string>());
+	if (brief["label"])
+		_label = Language::utf8ToWstr(brief["label"].as<std::string>());
 	else
-		_name = Language::fsToWstr(file);
+		_label = Language::fsToWstr(file);
 
 	_ironman = brief["ironman"].as<bool>(_ironman);
 
@@ -658,7 +658,7 @@ void SavedGame::save(const std::string& file) const
 
 	YAML::Node brief; // the brief-info used for the saves list
 
-	brief["name"]		= Language::wstrToUtf8(_name);
+	brief["label"]		= Language::wstrToUtf8(_label);
 	brief["edition"]	= OPENXCOM_VERSION_GIT;
 //	brief["version"]	= OPENXCOM_VERSION_SHORT;
 
@@ -672,7 +672,7 @@ void SavedGame::save(const std::string& file) const
 	brief["time"]		= _time->save();
 
 	const Base* const base (_bases.front());
-	brief["base"] = Language::wstrToUtf8(base->getName());
+	brief["base"] = Language::wstrToUtf8(base->getLabel());
 
 	if (_battleSave != nullptr)
 	{
@@ -794,21 +794,21 @@ void SavedGame::save(const std::string& file) const
 }
 
 /**
- * Gets this SavedGame's name shown in save-screens.
- * @return, name-string
+ * Gets this SavedGame's label shown in save-screens.
+ * @return, label-string
  */
-std::wstring SavedGame::getName() const
+std::wstring SavedGame::getLabel() const
 {
-	return _name;
+	return _label;
 }
 
 /**
- * Sets this SavedGame's name shown in save-screens.
- * @param name - reference to the name-string
+ * Sets this SavedGame's label shown in save-screens.
+ * @param label - reference to the label-string
  */
-void SavedGame::setName(const std::wstring& name)
+void SavedGame::setLabel(const std::wstring& label)
 {
-	_name = name;
+	_label = label;
 }
 
 /**
@@ -1144,25 +1144,26 @@ void SavedGame::setTime(GameTime gt)
 }
 
 /**
- * Gets the highest ID for the specified object and increments it.
- * @param objectType - reference to an object-type
- * @return, highest ID
+ * Gets the high-ID for a specified Target type and then increments the
+ * cache to the next ID value.
+ * @param objectType - reference to a Target type
+ * @return, the high-ID
  */
-int SavedGame::getCanonicalId(const std::string& objectType)
+int SavedGame::getCanonicalId(const std::string& targetType)
 {
-	std::map<std::string, int>::iterator i (_ids.find(objectType));
+	std::map<std::string, int>::iterator i (_ids.find(targetType));
 	if (i != _ids.end())
 		return i->second++;
 
-	_ids[objectType] = 1;
-	return _ids[objectType]++;
+	_ids[targetType] = 1;
+	return _ids[targetType]++;
 }
 
 /**
- * Gets all the canonical-IDs.
+ * Gets a list of all canonical-IDs.
  * @return, reference to a map of strings w/ ints
  */
-const std::map<std::string, int>& SavedGame::getObjectIds() const
+const std::map<std::string, int>& SavedGame::getTargetIds() const
 {
 	return _ids;
 }

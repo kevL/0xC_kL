@@ -125,7 +125,7 @@ DebriefExtraState::DebriefExtraState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 	_txtQtyAtBase->setText(L"base");
 
 

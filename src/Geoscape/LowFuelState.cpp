@@ -80,7 +80,7 @@ LowFuelState::LowFuelState(
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
-	_txtTitle->setText(_craft->getName(_game->getLanguage()));
+	_txtTitle->setText(_craft->getLabel(_game->getLanguage()));
 
 	_txtMessage->setText(tr("STR_IS_LOW_ON_FUEL_RETURNING_TO_BASE"));
 	_txtMessage->setAlign(ALIGN_CENTER);

@@ -115,7 +115,7 @@ ConfirmLandingState::ConfirmLandingState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK15.SCR"));
 
-	_txtBase->setText(craft->getBase()->getName());
+	_txtBase->setText(craft->getBase()->getLabel());
 
 	_txtShade->setText(tr("STR_SHADE_").arg(shade));
 	_txtShade->setAlign(ALIGN_RIGHT);
@@ -152,7 +152,7 @@ ConfirmLandingState::ConfirmLandingState(
 					{
 //						_city = *j;
 						city = true;
-						Log(LOG_INFO) << ". . . city found = " << (*j)->getName();
+						Log(LOG_INFO) << ". . . city found = " << (*j)->getLabel();
 					}
 				}
 			}
@@ -289,7 +289,7 @@ ConfirmLandingState::ConfirmLandingState(
 	}
 
 	_txtMessage->setText(tr("STR_CRAFT_READY_TO_LAND_AT")
-						 .arg(_craft->getName(_game->getLanguage())));
+						 .arg(_craft->getLabel(_game->getLanguage())));
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setBig();
 
@@ -303,7 +303,7 @@ ConfirmLandingState::ConfirmLandingState(
 			woststr << L" : " << tr(ufo->getAlienRace());
 	}
 	_txtMessage2->setText(tr("STR_CRAFT_DESTINATION")
-						 .arg(_craft->getDestination()->getName(_game->getLanguage()))
+						 .arg(_craft->getDestination()->getLabel(_game->getLanguage()))
 						 .arg(woststr.str()));
 	_txtMessage2->setBig();
 	_txtMessage2->setAlign(ALIGN_CENTER);
@@ -504,7 +504,7 @@ RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
 	{
 		const size_t pick = static_cast<size_t>(RNG::generate(0,
 															  static_cast<int>(terrains.size()) - 1));
-		Log(LOG_INFO) << ". . selected terrain = " << terrains.at(pick)->getName();
+		Log(LOG_INFO) << ". . selected terrain = " << terrains.at(pick)->getLabel();
 		return terrains.at(pick);
 	}
 
@@ -534,13 +534,13 @@ RuleTerrain* ConfirmLandingState::selectCityTerrain(const double lat)
 	return terrainRule;
 } */
 /*	if (lat < 0. // northern hemisphere
-		&& terrainRule->getName() == "NATIVEURBAN")
+		&& terrainRule->getLabel() == "NATIVEURBAN")
 	{
 		Log(LOG_INFO) << ". north: switching from Native to Dawn A";
 		terrainRule = _game->getRuleset()->getTerrain("DAWNURBANA");
 	}
 	else if (lat > 0. // southern hemisphere
-		&& terrainRule->getName() == "DAWNURBANA")
+		&& terrainRule->getLabel() == "DAWNURBANA")
 	{
 		Log(LOG_INFO) << ". south: switching from Dawn A to Native";
 		terrainRule = _game->getRuleset()->getTerrain("NATIVEURBAN");

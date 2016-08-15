@@ -122,9 +122,8 @@ void RuleCraft::load(
 }
 
 /**
- * Gets the language string that names the Craft.
- * Each craft type has a unique name.
- * @return, the Craft's name
+ * Gets the type-string of the Craft.
+ * @return, the craft's type
  */
 std::string RuleCraft::getType() const
 {

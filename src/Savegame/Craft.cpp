@@ -70,7 +70,6 @@ Craft::Craft(
 		MovingTarget(gameSave),
 		_crRule(crRule),
 		_base(base),
-		_id(id),
 		_fuel(0),
 		_damage(0),
 		_takeOffDelay(0),
@@ -85,6 +84,8 @@ Craft::Craft(
 		_showReady(false),
 		_interceptLanded(false)
 {
+	_id = id;
+
 	_items = new ItemContainer();
 
 	for (int
@@ -205,16 +206,24 @@ void Craft::loadCraft(
 	_tacticalDone	= node["tacticalDone"]	.as<bool>(_tacticalDone);
 	_kills			= node["kills"]			.as<int>(_kills);
 
-	if (const YAML::Node& name = node["name"])
-		_name = Language::utf8ToWstr(name.as<std::string>());
+	if (const YAML::Node& label = node["label"])
+		_label = Language::utf8ToWstr(label.as<std::string>());
 
 	if (const YAML::Node& dest = node["dest"])
 	{
 		int id (dest["id"].as<int>());
 
-		if ((type = dest["type"].as<std::string>()) == Target::stTarget[1u])
+//		"STR_UFO",			// 0.
+//		"STR_BASE",			// 1.
+//		"STR_ALIEN_BASE",	// 2.
+//		"STR_TERROR_SITE",	// 3.
+//		"STR_WAYPOINT",		// 4.
+//		"STR_LANDING_SITE",	// 5
+//		"STR_CRASH_SITE"	// 6
+
+		if ((type = dest["type"].as<std::string>()) == Target::stTarget[1u]) // "STR_BASE"
 			returnToBase();
-		else if (type == Target::stTarget[0u])
+		else if (type == Target::stTarget[0u]) // "STR_UFO" // is this *always* "STR_UFO" .........
 		{
 			const std::vector<Ufo*>* const ufoList (rules->getGame()->getSavedGame()->getUfos());
 			for (std::vector<Ufo*>::const_iterator
@@ -229,7 +238,7 @@ void Craft::loadCraft(
 				}
 			}
 		}
-		else if (type == Target::stTarget[4u])
+		else if (type == Target::stTarget[4u]) // "STR_WAYPOINT"
 		{
 			const std::vector<Waypoint*>* const wpList (rules->getGame()->getSavedGame()->getWaypoints());
 			for (std::vector<Waypoint*>::const_iterator
@@ -244,12 +253,42 @@ void Craft::loadCraft(
 				}
 			}
 		}
+/*		else if (type == Target::stTarget[2u]) // "STR_ALIEN_BASE"
+		{
+			const std::vector<AlienBase*>* const abList (rules->getGame()->getSavedGame()->getAlienBases());
+			for (std::vector<AlienBase*>::const_iterator
+					i = abList->begin();
+					i != abList->end();
+					++i)
+			{
+				if ((*i)->getId() == id)
+				{
+					setDestination(*i);
+					break;
+				}
+			}
+		}
+		else if (type == Target::stTarget[3u]) // "STR_TERROR_SITE"
+		{
+			const std::vector<TerrorSite*>* const terrorList (rules->getGame()->getSavedGame()->getTerrorSites());
+			for (std::vector<TerrorSite*>::const_iterator
+					i = terrorList->begin();
+					i != terrorList->end();
+					++i)
+			{
+				if ((*i)->getId() == id)
+				{
+					setDestination(*i);
+					break;
+				}
+			}
+		} */
 		else // there could be either an AlienBase-type or a TerrorSite-type here ...
 		{
 			bool found (false);
 
 			const std::vector<AlienBase*>* const abList (rules->getGame()->getSavedGame()->getAlienBases());
-			for (std::vector<AlienBase*>::const_iterator //(type == Target::stTarget[2u])
+			for (std::vector<AlienBase*>::const_iterator
 					i = abList->begin();
 					i != abList->end();
 					++i)
@@ -331,7 +370,7 @@ YAML::Node Craft::save() const
 	if (_tactical == true)		node["tactical"]		= _tactical;
 	if (_kills != 0)			node["kills"]			= _kills;
 	if (_takeOffDelay != 0)		node["takeOff"]			= _takeOffDelay;
-	if (_name.empty() == false)	node["name"]			= Language::wstrToUtf8(_name);
+	if (_label.empty() == false)	node["label"]			= Language::wstrToUtf8(_label);
 	if (_warning != CW_NONE)	node["warning"]			= static_cast<int>(_warning);
 
 	return node;
@@ -353,7 +392,7 @@ CraftId Craft::loadId(const YAML::Node& node) // static.
  * Saves this Craft's unique-ID to a YAML file.
  * @return, YAML node
  */
-YAML::Node Craft::saveId() const
+YAML::Node Craft::saveIdentificator() const
 {
 	YAML::Node node;
 
@@ -372,16 +411,6 @@ CraftId Craft::getUniqueId() const
 	return std::make_pair(
 					_crRule->getType(),
 					_id);
-}
-
-/**
- * Gets this Craft's ID.
- * @note Each craft can be identified by its type and ID.
- * @return, unique-ID
- */
-int Craft::getId() const
-{
-	return _id;
 }
 
 /**
@@ -411,26 +440,26 @@ void Craft::changeRules(RuleCraft* const crRule)
 }
 
 /**
- * Gets this Craft's uniquely identifying name.
- * @note If there's not a custom-name the language default is used.
+ * Gets this Craft's uniquely identifying label.
+ * @note If there's not a custom-label the language default is used.
  * @param lang - pointer to a Language to get strings from (default nullptr)
- * @return, full name of craft
+ * @return, label of craft
  */
-std::wstring Craft::getName(const Language* const lang) const
+std::wstring Craft::getLabel(const Language* const lang) const
 {
-	if (_name.empty() == true)
+	if (_label.empty() == true)
 		return lang->getString("STR_CRAFTNAME").arg(lang->getString(_crRule->getType())).arg(_id);
 
-	return _name;
+	return _label;
 }
 
 /**
- * Sets this Craft's custom-name.
- * @param newName - reference a new custom-name; if blank the language default will be used
+ * Sets this Craft's custom-label.
+ * @param label - reference a new custom-label; if blank the language default will be used
  */
-void Craft::setName(const std::wstring& wst)
+void Craft::setLabel(const std::wstring& label)
 {
-	_name = wst;
+	_label = label;
 }
 
 /**

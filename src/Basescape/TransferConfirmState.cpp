@@ -91,7 +91,7 @@ TransferConfirmState::TransferConfirmState(
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
-	_txtTitle->setText(tr("STR_TRANSFER_ITEMS_TO").arg(_base->getName()));
+	_txtTitle->setText(tr("STR_TRANSFER_ITEMS_TO").arg(_base->getLabel()));
 
 	_txtCost->setBig();
 	_txtCost->setText(tr("STR_COST_LC"));

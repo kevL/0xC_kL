@@ -316,7 +316,7 @@ void SoldierInfoState::init()
 		_solId = 0;
 
 	_sol = _listBase->at(_solId);
-	_edtSoldier->setText(_sol->getName());
+	_edtSoldier->setText(_sol->getLabel());
 
 	SurfaceSet* const baseBits (_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	baseBits->getFrame(_sol->getRankSprite())->setX(0);
@@ -533,7 +533,7 @@ void SoldierInfoState::init()
 	if (_sol->getCraft() == nullptr)
 		craft = tr("STR_NONE_UC");
 	else
-		craft = _sol->getCraft()->getName(_game->getLanguage());
+		craft = _sol->getCraft()->getLabel(_game->getLanguage());
 	_txtCraft->setText(tr("STR_CRAFT_").arg(craft));
 
 
@@ -653,7 +653,7 @@ void SoldierInfoState::init()
  */
 void SoldierInfoState::btnAutoStat(Action*)
 {
-	_sol->setName(_edtSoldier->getText());
+	_sol->setLabel(_edtSoldier->getText());
 	_sol->autoStat();
 
 	init();
@@ -677,7 +677,7 @@ void SoldierInfoState::btnAutoStatAll(Action*)
 		sol = _listBase->at(i);
 
 		if (sol == _sol)
-			sol->setName(_edtSoldier->getText());
+			sol->setLabel(_edtSoldier->getText());
 
 		sol->autoStat();
 
@@ -711,12 +711,12 @@ void SoldierInfoState::setSoldierId(size_t solId)
 }
 
 /**
- * Changes the Soldier's name.
+ * Changes the Soldier's label.
  * @param action - pointer to an Action
  */
 void SoldierInfoState::edtSoldierChange(Action*)
 {
-	_sol->setName(_edtSoldier->getText());
+	_sol->setLabel(_edtSoldier->getText());
 }
 
 /**

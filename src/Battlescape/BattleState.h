@@ -46,7 +46,7 @@ protected:
 		/// Cleans up the BattleState.
 		virtual ~BattleState();
 
-		/// Gets the name of the BattleState.
+		/// Gets the label of the BattleState.
 		virtual std::string getBattleStateLabel() const;
 
 		/// Initializes the BattleState.

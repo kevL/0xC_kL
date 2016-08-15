@@ -73,12 +73,11 @@ private:
 		_loadCap,
 		_damage,
 		_fuel,
-		_id,
 		_takeOffDelay,
 
 		_kills;
 
-	std::wstring _name;
+	std::wstring _label;
 
 	CraftStatus _status;
 	CraftWarning _warning;
@@ -111,24 +110,22 @@ private:
 		/// Saves the Craft to YAML.
 		YAML::Node save() const override;
 		/// Saves the Craft's ID to YAML.
-		YAML::Node saveId() const override;
+		YAML::Node saveIdentificator() const override;
 		/// Loads the Craft's ID from YAML.
 		static CraftId loadId(const YAML::Node& node);
 
 		/// Gets the Craft's unique-ID.
 		CraftId getUniqueId() const;
-		/// Gets the Craft's ID.
-		int getId() const;
 
 		/// Gets the Craft's ruleset.
 		RuleCraft* getRules() const;
 		/// Sets the Craft's ruleset.
 		void changeRules(RuleCraft* const crRule);
 
-		/// Gets the Craft's name.
-		std::wstring getName(const Language* const lang) const override;
-		/// Sets the Craft's name.
-		void setName(const std::wstring& wst);
+		/// Gets the Craft's label.
+		std::wstring getLabel(const Language* const lang) const override;
+		/// Sets the Craft's label.
+		void setLabel(const std::wstring& label);
 
 		/// Gets the Craft's globe-marker.
 		int getMarker() const override;

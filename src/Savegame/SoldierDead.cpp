@@ -31,7 +31,7 @@ namespace OpenXcom
 /**
  * Creates the SoldierDead from a Soldier with a pre-existing SoldierDiary.
  * @note Used by Soldiers dying IG.
- * @param name			-
+ * @param label			-
  * @param id			-
  * @param rank			-
  * @param gender		-
@@ -44,7 +44,7 @@ namespace OpenXcom
  * @param diary			- copy of SoldierDiary from the recently deceased Soldier
  */
 SoldierDead::SoldierDead(
-		const std::wstring& name,
+		const std::wstring& label,
 		const int id,
 		const SoldierRank rank,
 		const SoldierGender gender,
@@ -56,7 +56,7 @@ SoldierDead::SoldierDead(
 		const UnitStats& currentStats,
 		SoldierDiary diary) // + Base if I want to ...
 	:
-		_name(name),
+		_label(label),
 		_id(id),
 		_rank(rank),
 		_gender(gender),
@@ -80,7 +80,7 @@ SoldierDead::SoldierDead(
  */
 SoldierDead::SoldierDead()
 	:
-		_name(L""),
+		_label(L""),
 		_id(0),
 		_rank(RANK_ROOKIE),
 		_gender(GENDER_MALE),
@@ -109,7 +109,7 @@ SoldierDead::~SoldierDead()
  */
 void SoldierDead::load(const YAML::Node& node)
 {
-	_name = Language::utf8ToWstr(node["name"].as<std::string>(""));
+	_label = Language::utf8ToWstr(node["label"].as<std::string>(""));
 
 	_id			= node["id"]		.as<int>(_id);
 	_missions	= node["missions"]	.as<int>(_missions);
@@ -137,7 +137,7 @@ YAML::Node SoldierDead::save() const
 {
 	YAML::Node node;
 
-	node["name"]			= Language::wstrToUtf8(_name);
+	node["label"]			= Language::wstrToUtf8(_label);
 
 	node["id"]				= _id;
 	node["missions"]		= _missions;
@@ -162,12 +162,12 @@ YAML::Node SoldierDead::save() const
 }
 
 /**
- * Gets this SoldierDead's name.
- * @return, name-string
+ * Gets this SoldierDead's label.
+ * @return, label-string
  */
-std::wstring SoldierDead::getName() const
+std::wstring SoldierDead::getLabel() const
 {
-	return _name;
+	return _label;
 }
 
 /**
@@ -245,7 +245,7 @@ SoldierLook SoldierDead::getLook() const
 
 /**
  * Gets this SoldierDead's unique-ID.
- * @note Each dead soldier can be identified by its ID (not it's name).
+ * @note Each dead soldier can be identified by its ID (not it's label).
  * @return, unique-ID
  */
 int SoldierDead::getId() const

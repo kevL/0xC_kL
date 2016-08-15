@@ -247,7 +247,7 @@ private:
 		_rank,
 		_type;
 
-	std::wstring _name;
+	std::wstring _label;
 
 	std::vector<size_t> _loftSet;
 	std::vector<std::pair<Uint8, Uint8>> _recolor;
@@ -702,8 +702,8 @@ private:
 		/// Calculates arbitrary pre-battle TU and motion-points.
 		void preBattleMotion();
 
-		/// Gets the BattleUnit's name.
-		std::wstring getName(
+		/// Gets the BattleUnit's label.
+		std::wstring getLabel(
 				const Language* const lang = nullptr,
 				bool debugId = false) const;
 

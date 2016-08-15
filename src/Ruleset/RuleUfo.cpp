@@ -262,7 +262,7 @@ int RuleUfo::getEscape() const
 }
 
 /**
- * For user-defined UFOs use an alternate Surface for the dogfight preview.
+ * User-defined UFOs use an alternate Surface for the dogfight preview.
  * @return, the string-ID for the surface
  */
 std::string RuleUfo::getSpriteString() const

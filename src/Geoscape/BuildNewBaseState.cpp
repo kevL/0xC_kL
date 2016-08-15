@@ -21,7 +21,7 @@
 
 //#include "../fmath.h"
 
-#include "BaseNameState.h"
+#include "BaseLabelState.h"
 #include "ConfirmNewBaseState.h"
 #include "Globe.h"
 
@@ -274,7 +274,7 @@ void BuildNewBaseState::globeClick(Action* action)
 			}
 
 			if (_firstBase == true)
-				_game->pushState(new BaseNameState(_base, _globe, true));
+				_game->pushState(new BaseLabelState(_base, _globe, true));
 			else
 				_game->pushState(new ConfirmNewBaseState(_base, _globe));
 		}

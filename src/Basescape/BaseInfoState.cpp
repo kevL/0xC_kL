@@ -317,7 +317,7 @@ void BaseInfoState::init()
 {
 	State::init();
 
-	_edtBase->setText(_base->getName());
+	_edtBase->setText(_base->getLabel());
 
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
@@ -546,12 +546,12 @@ void BaseInfoState::init()
 }
 
 /**
- * Changes the Base's name.
+ * Changes the Base's label.
  * @param action - pointer to an Action
  */
 void BaseInfoState::edtLabelChange(Action*)
 {
-	_base->setName(_edtBase->getText());
+	_base->setLabel(_edtBase->getText());
 }
 
 /**
@@ -640,7 +640,7 @@ void BaseInfoState::miniMouseClick(Action*)
 }
 
 /**
- * Displays the name and region of the Base the mouse is over.
+ * Displays the label and region of the Base the mouse is over.
  * @param action - pointer to an Action
  */
 void BaseInfoState::miniMouseOver(Action*)
@@ -654,7 +654,7 @@ void BaseInfoState::miniMouseOver(Action*)
 		if (base != _base)
 		{
 			clearText = false;
-			_txtHoverBase->setText(base->getName().c_str());
+			_txtHoverBase->setText(base->getLabel().c_str());
 
 			for (std::vector<Region*>::const_iterator
 					i = _game->getSavedGame()->getRegions()->begin();
@@ -680,7 +680,7 @@ void BaseInfoState::miniMouseOver(Action*)
 }
 
 /**
- * Clears the hovered Base name and region.
+ * Clears the hovered Base label and region.
  * @param action - pointer to an Action
  */
 void BaseInfoState::miniMouseOut(Action*)

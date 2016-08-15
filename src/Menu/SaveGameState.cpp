@@ -104,7 +104,7 @@ SaveGameState::SaveGameState(
 
 		case SAVE_IRONMAN:
 		case SAVE_IRONMAN_END:
-			_file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getName())) + SavedGame::SAVE_EXT;
+			_file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getLabel())) + SavedGame::SAVE_EXT;
 	}
 
 	buildUi(palette);
@@ -183,7 +183,7 @@ void SaveGameState::think()
 			case SAVE_QUICK: // automatic save - Give it a default name.
 			case SAVE_AUTO_GEOSCAPE:
 			case SAVE_AUTO_BATTLESCAPE:
-				_game->getSavedGame()->setName(Language::fsToWstr(_file));
+				_game->getSavedGame()->setLabel(Language::fsToWstr(_file));
 		}
 
 

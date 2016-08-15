@@ -253,7 +253,7 @@ void BasescapeState::init()
 
 	_baseLayout->setBase(_base);
 	_miniBases->draw();
-	_edtBase->setText(_base->getName());
+	_edtBase->setText(_base->getLabel());
 
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
@@ -370,7 +370,7 @@ void BasescapeState::init()
 
 		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("basescape"));
 		_game->pushState(new ErrorMessageState(
-										tr("STR_STORAGE_EXCEEDED").arg(_base->getName()).c_str(),
+										tr("STR_STORAGE_EXCEEDED").arg(_base->getLabel()).c_str(),
 										_palette,
 										uiRule->getElement("errorMessage")->color,
 										_game->getResourcePack()->getBackgroundRand(),
@@ -706,7 +706,7 @@ void BasescapeState::layoutRightClick(Action*)
 }
 
 /**
- * Displays either the name of the Facility the mouse is over or the name of the
+ * Displays either the label of the Facility the mouse is over or the label of the
  * Base the mouse is over.
  * @param action - pointer to an Action
  */
@@ -724,7 +724,7 @@ void BasescapeState::layoutMouseOver(Action*)
 
 			if (fac->getCraft() != nullptr)
 				woststr << L" " << tr("STR_CRAFT_")
-									.arg(fac->getCraft()->getName(_game->getLanguage()));
+									.arg(fac->getCraft()->getLabel(_game->getLanguage()));
 		}
 		else
 		{
@@ -734,7 +734,7 @@ void BasescapeState::layoutMouseOver(Action*)
 				if (_base != _baseList->at(baseId))
 				{
 					_txtFacility->setAlign(ALIGN_RIGHT);
-					woststr << _baseList->at(baseId)->getName().c_str();
+					woststr << _baseList->at(baseId)->getLabel().c_str();
 				}
 			}
 			else if (baseId == _baseList->size() && baseId < Base::MAX_BASES)
@@ -748,7 +748,7 @@ void BasescapeState::layoutMouseOver(Action*)
 }
 
 /**
- * Clears the Facility or other Base's name.
+ * Clears the Facility or other Base's label.
  * @param action - pointer to an Action
  */
 void BasescapeState::layoutMouseOut(Action*)
@@ -873,12 +873,12 @@ size_t BasescapeState::getKeyedBaseId(SDLKey keyId) const
 }
 
 /**
- * Changes the Base name.
+ * Changes the Base label.
  * @param action - pointer to an Action
  */
 void BasescapeState::edtLabelChange(Action*)
 {
-	_base->setName(_edtBase->getText());
+	_base->setLabel(_edtBase->getText());
 }
 
 /**

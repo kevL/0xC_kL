@@ -124,7 +124,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 	{
 		_lstSoldiersLost->addRow(
 							2,
-							(*i)->getName().c_str(),
+							(*i)->getLabel().c_str(),
 							tr((*i)->getDiary()->getKiaOrMia()).c_str());
 		_lstSoldiersLost->setCellColor(r, 1u, SLATE, true);
 	}
@@ -181,7 +181,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //
 //					std::wostringstream woststr;
 //					woststr << L"  ";
-//					woststr << (*j)->getName();
+//					woststr << (*j)->getLabel();
 //
 //					int
 //						skip (0),

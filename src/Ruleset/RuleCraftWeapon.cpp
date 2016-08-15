@@ -91,9 +91,8 @@ void RuleCraftWeapon::load(
 }
 
 /**
- * Gets the language string that names the CraftWeapon.
- * @note Each craft weapon type has a unique name.
- * @return, the CraftWeapon's name
+ * Gets the type-string of the CraftWeapon.
+ * @return, the CraftWeapon's label
  */
 std::string RuleCraftWeapon::getType() const
 {

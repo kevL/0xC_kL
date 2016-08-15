@@ -56,7 +56,7 @@ private:
 		/// Cleans up the UnitTurnBState.
 		~UnitTurnBState();
 
-		/// Gets the name of the BattleState.
+		/// Gets the label of the BattleState.
 		std::string getBattleStateLabel() const override;
 
 		/// Initializes the BattleState.

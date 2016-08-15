@@ -708,7 +708,7 @@ items:
     twoHanded: true
     recover: false
   - type: STR_CORPSE_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 27
     bigSprite: 28
     floorSprite: 40
@@ -719,7 +719,7 @@ items:
     armor: 30
     recover: false
   - type: STR_CORPSE_SUIT
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 44
     floorSprite: 41
@@ -1165,7 +1165,7 @@ items:
     costSell: 15000
     battleType: 11
   - type: REAPER_CORPSE_1
-    name: STR_REAPER_CORPSE
+    label: STR_REAPER_CORPSE
     floorSprite: 52
     invWidth: 0
     invHeight: 0
@@ -1194,7 +1194,7 @@ items:
     costSell: 25000
     battleType: 11
   - type: SECTOPOD_CORPSE_1
-    name: STR_SECTOPOD_CORPSE
+    label: STR_SECTOPOD_CORPSE
     floorSprite: 60
     invWidth: 0
     invHeight: 0
@@ -1225,7 +1225,7 @@ items:
     power: 100
     blastRadius: 5
   - type: CYBERDISC_CORPSE_1
-    name: STR_CYBERDISC_CORPSE
+    label: STR_CYBERDISC_CORPSE
     floorSprite: 56
     invWidth: 0
     invHeight: 0
@@ -1298,7 +1298,7 @@ items:
     battleType: 11
     recover: false
   - type: CIVM_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 32
     bigSprite: 57
     floorSprite: 50
@@ -1309,7 +1309,7 @@ items:
     recover: false
     twoHanded: true
   - type: CIVF_CORPSE
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 28
     bigSprite: 58
     floorSprite: 51

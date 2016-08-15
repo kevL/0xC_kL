@@ -19,7 +19,7 @@
 
 #include "ConfirmNewBaseState.h"
 
-#include "BaseNameState.h"
+#include "BaseLabelState.h"
 #include "Globe.h"
 
 #include "../Engine/Game.h"
@@ -116,7 +116,7 @@ ConfirmNewBaseState::~ConfirmNewBaseState()
 {}
 
 /**
- * Go to the BaseNameState screen.
+ * Go to the BaseLabelState screen.
  * @param action - pointer to an Action
  */
 void ConfirmNewBaseState::btnOkClick(Action*)
@@ -127,7 +127,7 @@ void ConfirmNewBaseState::btnOkClick(Action*)
 		_base->addCashSpent(_cost);
 
 		_game->getSavedGame()->getBases()->push_back(_base);
-		_game->pushState(new BaseNameState(_base, _globe));
+		_game->pushState(new BaseLabelState(_base, _globe));
 	}
 	else
 	{

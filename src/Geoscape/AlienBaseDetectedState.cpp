@@ -32,6 +32,7 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleCountry.h"
 #include "../Ruleset/RuleRegion.h"
 
@@ -88,8 +89,8 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 	_txtTitle->setWordWrap();
 
 
+	_aBase->setId(_game->getSavedGame()->getCanonicalId(_aBase->getAlienBaseDeployed()->getMarkerType())); //Target::stTarget[2u]
 	_aBase->setDetected();
-	_aBase->setId(_game->getSavedGame()->getCanonicalId(Target::stTarget[2u]));
 
 
 	const double

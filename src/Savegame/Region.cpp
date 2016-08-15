@@ -86,8 +86,8 @@ RuleRegion* Region::getRules() const
 }
 
 /**
- * Gets the region's name.
- * @return, region name
+ * Gets the region's type.
+ * @return, region type
  */
 std::string Region::getType() const
 {

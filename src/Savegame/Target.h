@@ -39,6 +39,8 @@ class Target
 {
 
 protected:
+	int _id;	// NOTE: This is required by AlienBase, TerrorSite, Craft, Ufo, Waypoint;
+				// Base always uses 0. RuleCity needs none.
 	double
 		_lat,
 		_lon;
@@ -50,7 +52,7 @@ protected:
 
 
 	public:
-		static const char* stTarget[7u];
+		static const char* stTarget[8u];
 
 		/// Cleans up the Target.
 		virtual ~Target();
@@ -60,7 +62,12 @@ protected:
 		/// Saves the Target to YAML.
 		virtual YAML::Node save() const;
 		/// Saves the Target's unique-ID to YAML.
-		virtual YAML::Node saveId() const = 0;
+		virtual YAML::Node saveIdentificator() const = 0;
+
+		/// Sets the Target's ID.
+		void setId(int id);
+		/// Gets the Target's ID.
+		int getId() const;
 
 		/// Gets the Target's longitude.
 		double getLongitude() const;
@@ -71,8 +78,8 @@ protected:
 		/// Sets the Target's latitude.
 		void setLatitude(double lat);
 
-		/// Gets the Target's name.
-		virtual std::wstring getName(const Language* const lang) const = 0;
+		/// Gets the Target's label.
+		virtual std::wstring getLabel(const Language* const lang) const = 0;
 
 		/// Gets the Target's globe-marker.
 		virtual int getMarker() const = 0;

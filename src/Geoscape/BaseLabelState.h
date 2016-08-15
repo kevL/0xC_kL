@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_BASENAMESTATE_H
-#define OPENXCOM_BASENAMESTATE_H
+#ifndef OPENXCOM_BASELABELSTATE_H
+#define OPENXCOM_BASELABELSTATE_H
 
 #include "../Engine/State.h"
 
@@ -35,11 +35,11 @@ class Window;
 
 
 /**
- * Window used to input a name for a Base.
+ * Window used to input a label for a Base.
  * @note Player's first Base uses this screen; additional bases use
  * ConfirmNewBaseState.
  */
-class BaseNameState
+class BaseLabelState
 	:
 		public State
 {
@@ -51,18 +51,18 @@ private:
 	Globe* _globe;
 	Text* _txtTitle;
 	TextButton* _btnOk;
-	TextEdit* _edtName;
+	TextEdit* _edtLabel;
 	Window* _window;
 
 
 	public:
 		/// Creates a BaseName state.
-		BaseNameState(
+		BaseLabelState(
 				Base* const base,
 				Globe* const globe,
 				bool firstBase = false);
 		/// Cleans up the BaseName state.
-		~BaseNameState();
+		~BaseLabelState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

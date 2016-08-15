@@ -142,11 +142,11 @@ CraftEquipmentState::CraftEquipmentState(
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftEquipmentState::btnOkClick),
 							Options::keyOkKeypad);
 
-	_txtTitle->setText(tr("STR_EQUIPMENT_FOR_CRAFT").arg(_craft->getName(_game->getLanguage())));
+	_txtTitle->setText(tr("STR_EQUIPMENT_FOR_CRAFT").arg(_craft->getLabel(_game->getLanguage())));
 	_txtTitle->setBig();
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);
-	_txtBaseLabel->setText(_base->getName());
+	_txtBaseLabel->setText(_base->getLabel());
 
 	_txtItem->setText(tr("STR_ITEM"));
 	_txtStores->setText(tr("STR_STORES"));

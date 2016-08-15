@@ -93,7 +93,7 @@ MultipleTargetsState::MultipleTargetsState(
 										70,
 										btn_y));
 			add(btn, "button", "UFOInfo");
-			btn->setText(_targets[i]->getName(_game->getLanguage()));
+			btn->setText(_targets[i]->getLabel(_game->getLanguage()));
 			btn->onMouseClick(static_cast<ActionHandler>(&MultipleTargetsState::btnTargetClick));
 
 			_btnTargets.push_back(btn);

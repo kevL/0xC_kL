@@ -1,7 +1,7 @@
 # SHADICS_COLORED_ARMORS + BetterPersonalArmor
 items:
   - type: STR_CORPSE_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 27
     bigSprite: 28
     floorSprite: 40
@@ -17,7 +17,7 @@ items:
     listOrder: 7501
     noResearch: true
   - type: STR_CORPSE_BLACKSUIT_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 65
     floorSprite: 78
@@ -33,7 +33,7 @@ items:
     listOrder: 7502
     noResearch: true
   - type: STR_CORPSE_BLUESUIT_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 66
     floorSprite: 79
@@ -49,7 +49,7 @@ items:
     listOrder: 7503
     noResearch: true
   - type: STR_CORPSE_GREENSUIT_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 67
     floorSprite: 80
@@ -65,7 +65,7 @@ items:
     listOrder: 7504
     noResearch: true
   - type: STR_CORPSE_ORANGESUIT_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 68
     floorSprite: 81
@@ -81,7 +81,7 @@ items:
     listOrder: 7505
     noResearch: true
   - type: STR_CORPSE_PINKSUIT_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 69
     floorSprite: 82
@@ -97,7 +97,7 @@ items:
     listOrder: 7506
     noResearch: true
   - type: STR_CORPSE_PURPLESUIT_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 70
     floorSprite: 83
@@ -113,7 +113,7 @@ items:
     listOrder: 7507
     noResearch: true
   - type: STR_CORPSE_REDSUIT_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 71
     floorSprite: 84
@@ -129,7 +129,7 @@ items:
     listOrder: 7401
     noResearch: true
   - type: STR_CORPSE_BLACK_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 65
     floorSprite: 78
@@ -145,7 +145,7 @@ items:
     listOrder: 7402
     noResearch: true
   - type: STR_CORPSE_BLUE_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 66
     floorSprite: 79
@@ -161,7 +161,7 @@ items:
     listOrder: 7403
     noResearch: true
   - type: STR_CORPSE_GREEN_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 67
     floorSprite: 80
@@ -177,7 +177,7 @@ items:
     listOrder: 7404
     noResearch: true
   - type: STR_CORPSE_ORANGE_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 68
     floorSprite: 81
@@ -193,7 +193,7 @@ items:
     listOrder: 7405
     noResearch: true
   - type: STR_CORPSE_PINK_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 69
     floorSprite: 82
@@ -209,7 +209,7 @@ items:
     listOrder: 7406
     noResearch: true
   - type: STR_CORPSE_PURPLE_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 70
     floorSprite: 83
@@ -225,7 +225,7 @@ items:
     listOrder: 7407
     noResearch: true
   - type: STR_CORPSE_RED_ARMOR
-    name: STR_CORPSE
+    label: STR_CORPSE
     weight: 33
     bigSprite: 71
     floorSprite: 84

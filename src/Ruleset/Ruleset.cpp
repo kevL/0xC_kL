@@ -1958,12 +1958,12 @@ const GameTime& Ruleset::getStartingTime() const
 
 /**
  * Gets an MCDPatch.
- * @param id - the ID of the MCDPatch
- * @return, pointer to the MCDPatch based on ID or nullptr if none defined
+ * @param type - the type of the MCDPatch
+ * @return, pointer to the MCDPatch or nullptr if none
  */
-MCDPatch* Ruleset::getMCDPatch(const std::string& id) const
+MCDPatch* Ruleset::getMCDPatch(const std::string& type) const
 {
-	std::map<std::string, MCDPatch*>::const_iterator i (_MCDPatches.find(id));
+	std::map<std::string, MCDPatch*>::const_iterator i (_MCDPatches.find(type));
 	if (i != _MCDPatches.end())
 		return i->second;
 
@@ -2297,7 +2297,7 @@ Soldier* Ruleset::genSoldier(
 						&& duplicate == false;
 					++j)
 			{
-				if ((*j)->getName() == soldier->getName())
+				if ((*j)->getLabel() == soldier->getLabel())
 					duplicate = true;
 			}
 			for (std::vector<Transfer*>::const_iterator
@@ -2307,7 +2307,7 @@ Soldier* Ruleset::genSoldier(
 					++j)
 			{
 				if ((*j)->getType() == TRANSFER_SOLDIER
-					&& (*j)->getSoldier()->getName() == soldier->getName())
+					&& (*j)->getSoldier()->getLabel() == soldier->getLabel())
 				{
 					duplicate = true;
 				}

@@ -92,7 +92,7 @@ std::string WeightedOptions::getOptionResult() const
  * @note If @a weight is set to 0 the option is removed from the list of choices.
  * @note If @a type already exists the new weight replaces the old one; otherwise
  * @a type is added to the list of choices with @a weight as the weight.
- * @param type		- reference to the option name
+ * @param type		- reference to the option type
  * @param weight	- the option's new weight
  */
 void WeightedOptions::setWeight(
