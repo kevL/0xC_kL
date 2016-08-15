@@ -2203,7 +2203,7 @@ void SavedBattleGame::tileVolatiles()
 		{
 			if ((var = (*i)->getSmoke() >> 1u) > 2
 				&& (tile = getTile((*i)->getPosition() + Position(0,0,1))) != nullptr
-				&& tile->solidFloor(*i) == false) // TODO: Use verticalBlockage() instead.
+				&& tile->isFloored(*i) == false) // TODO: Use verticalBlockage() instead.
 			{
 				tile->addSmoke(var / 3);
 			}
@@ -2390,7 +2390,7 @@ bool SavedBattleGame::setUnitPosition(
 										O_OBJECT,
 										unit->getMoveTypeUnit()) == 255
 					|| (unit->getMoveTypeUnit() != MT_FLY // <- so just use the unit's moveType.
-						&& tile->solidFloor(getTile(pos0 + Position(x,y,-1))) == false))
+						&& tile->isFloored(getTile(pos0 + Position(x,y,-1))) == false))
 				{
 					return false;
 				}
@@ -2505,7 +2505,7 @@ bool SavedBattleGame::placeUnitByPosition(
 //	{
 //		Tile* tile = getTile(pos + Position(0,0,1));
 //		if (tile
-//			&& tile->solidFloor(getTile(pos)) == false
+//			&& tile->isFloored(getTile(pos)) == false
 //			&& setUnitPosition(unit, pos + Position(0,0,1)))
 //		{
 //			return true;

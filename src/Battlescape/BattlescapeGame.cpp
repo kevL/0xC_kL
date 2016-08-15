@@ -1217,7 +1217,6 @@ void BattlescapeGame::liquidateUnit() // private.
 	checkCasualties(
 				_playerAction.weapon->getRules(),
 				_playerAction.actor);
-//				false, false, true);
 }
 
 /**
@@ -1632,17 +1631,17 @@ void BattlescapeGame::endTurn() // private.
  * Checks for casualties and adjusts morale accordingly.
  * @note Etc.
 // * @note Also checks if Alien Base Control was destroyed in a BaseAssault tactical.
- * @param itRule	- pointer to the weapon's rule (default nullptr)
- * @param attacker	- pointer to credit the kill (default nullptr)
- * @param hidden	- true for UFO Power Source explosions at the start of
- *					  battlescape (default false)
- * @param terrain	- true for terrain explosions (default false)
+ * @param itRule		- pointer to the weapon's rule (default nullptr)
+ * @param attacker		- pointer to credit the kill (default nullptr)
+ * @param isPreTactical	- true for UFO power-source explosions at the start of
+ *						  tactical (default false)
+ * @param isTerrain		- true for terrain explosions (default false)
  */
 void BattlescapeGame::checkCasualties(
 		const RuleItem* const itRule,
 		BattleUnit* attacker,
-		bool hidden,
-		bool terrain)
+		bool isPreTactical,
+		bool isTerrain)
 {
 	//Log(LOG_INFO) << "BattlescapeGame::checkCasualties()"; if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
 
@@ -1753,7 +1752,7 @@ void BattlescapeGame::checkCasualties(
 						DamageType dType;
 						if (itRule != nullptr)
 							dType = itRule->getDamageType();
-						else if (hidden == true || terrain == true)
+						else if (isPreTactical == true || isTerrain == true)
 							dType = DT_HE;
 						else
 							dType = DT_NONE; // -> STR_HAS_DIED_FROM_A_FATAL_WOUND
@@ -1762,8 +1761,8 @@ void BattlescapeGame::checkCasualties(
 													this,
 													defender,
 													dType,
-													hidden,
-													hidden));
+													isPreTactical == true,		// silent
+													isPreTactical == true));	// pre-tactical
 					}
 				}
 				else // recently stunned.
@@ -1799,7 +1798,8 @@ void BattlescapeGame::checkCasualties(
 												this,
 												defender,
 												DT_STUN,
-												true));
+												true,						// silent
+												isPreTactical == true));	// pre-tactical
 				}
 		} // end defender-Status switch.
 	} // end BattleUnits loop.
@@ -1815,7 +1815,7 @@ void BattlescapeGame::checkCasualties(
 
 	_parentState->updateMedicIcons();
 
-	if (hidden == false)
+	if (isPreTactical == false)
 	{
 		if (_battleSave->getSide() == FACTION_PLAYER)
 		{

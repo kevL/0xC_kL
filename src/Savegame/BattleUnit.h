@@ -754,8 +754,8 @@ private:
 		/// Gets if the BattleUnit is a Rookie and has made his/her first takedown.
 		bool hasFirstTakedown() const;
 
-		/// Gets if the BattleUnit is about to die.
-		bool getAboutToCollapse() const;
+		/// Checks if the BattleUnit is about to collapse.
+		bool isAboutToCollapse() const;
 
 		/// Sets the BattleUnit's health to 0 and status to dead.
 		void instaKill();

@@ -43,11 +43,9 @@ class UnitDieBState
 
 private:
 	bool
-		_doneScream,
-		_init,
-		_hidden,
-		_noScream;
-	int _extraTicks;
+		_isPreTactical,
+		_isSilent;
+	int _post;
 
 	BattleUnit* _unit;
 	SavedBattleGame* _battleSave;
@@ -64,8 +62,8 @@ private:
 				BattlescapeGame* const parent,
 				BattleUnit* const unit,
 				const DamageType dType,
-				const bool noScream = false,
-				const bool hidden = false);
+				const bool isSilent = false,
+				const bool isPreTactical = false);
 		/// Cleans up the UnitDieBState.
 		~UnitDieBState();
 

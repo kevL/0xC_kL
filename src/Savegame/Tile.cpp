@@ -356,7 +356,7 @@ int Tile::getTuCostTile(
  * @param tileBelow - the tile below this Tile (default nullptr)
  * @return, true if tile has an effective floor
  */
-bool Tile::solidFloor(const Tile* const tileBelow) const
+bool Tile::isFloored(const Tile* const tileBelow) const
 {
 	if (_pos.z == 0
 		|| (tileBelow != nullptr && tileBelow->getTerrainLevel() == -24))

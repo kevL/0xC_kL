@@ -337,8 +337,8 @@ private:
 		void checkCasualties(
 				const RuleItem* const itRule = nullptr,
 				BattleUnit* attacker = nullptr,
-				bool hidden = false,
-				bool terrain = false);
+				bool isPreTactical = false,
+				bool isTerrain = false);
 		/// Checks if a BattleUnit gets exposed after making a melee-attack.
 		void checkExposedByMelee(BattleUnit* const unit) const;
 

@@ -174,7 +174,7 @@ private:
 				MoveType type) const;
 
 		/// Checks if the Tile has a solid floor.
-		bool solidFloor(const Tile* const tileBelow = nullptr) const;
+		bool isFloored(const Tile* const tileBelow = nullptr) const;
 
 		/// Checks if the Tile is a big wall.
 //		bool isBigWall() const;

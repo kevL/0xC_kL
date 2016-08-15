@@ -1095,7 +1095,7 @@ void BattleUnit::startWalking(
 	{
 		case Pathfinding::DIR_UP:
 		case Pathfinding::DIR_DOWN:
-			_status = STATUS_FLYING; // controls walking sound in UnitWalkBState, what else
+			_status = STATUS_FLYING; // controls walking sound in UnitWalkBState, what else: leg-sprites.
 			_dirVertical = dir;
 			_floating = _tile->getMapData(O_FLOOR) == nullptr
 					 || _tile->getMapData(O_FLOOR)->isGravLift() == false;
@@ -1103,7 +1103,7 @@ void BattleUnit::startWalking(
 
 		default:
 			_dir = dir;
-			if (_tile->solidFloor(tileBelow) == false) // NOTE: The tile is the Tile of only the primary quadrant for large units.
+			if (_tile->isFloored(tileBelow) == false) // NOTE: The '_tile' is the Tile of only the primary quadrant for large units.
 			{
 				_status = STATUS_FLYING;
 				_floating = true;
@@ -1137,7 +1137,7 @@ void BattleUnit::keepWalking(
 		_status = STATUS_STANDING;
 		_dirVertical = Pathfinding::DIR_VERT_NONE;
 
-		if (_tile->solidFloor(tileBelow) == true)
+		if (_tile->isFloored(tileBelow) == true)
 			_floating = false;
 
 		if (_dirFace != -1) // finish strafing move facing the correct way.
@@ -1672,9 +1672,9 @@ int BattleUnit::takeDamage(
 		}
 	}
 
-	// TODO: give a short "ugh" if hit causes no damage or perhaps stuns ( power must be > 0 though );
-	// a longer "uuuhghghgh" if hit causes damage ... and let DieBState handle deathscreams.
-	if (_aboutToCollapse == false //&& _visible == true && _health > 0 && _health > _stunLevel
+	// THIS IS FOR UNITS THAT GET HIT BUT NEITHER DIE NOR GO UNCONSCIOUS
+	// ... let UnitDieBState handle true death-screams:
+	if (_aboutToCollapse == false
 		&& _hasCried == false
 		&& _status != STATUS_UNCONSCIOUS
 		&& dType != DT_STUN
@@ -2741,7 +2741,7 @@ void BattleUnit::setUnitTile(
 		{
 			case STATUS_WALKING:
 				if (_mType == MT_FLY
-					&& _tile->solidFloor(tileBelow) == false)
+					&& _tile->isFloored(tileBelow) == false)
 				{
 					_status = STATUS_FLYING;
 					_floating = true;
@@ -2750,7 +2750,7 @@ void BattleUnit::setUnitTile(
 
 			case STATUS_FLYING:
 				if (_dirVertical == Pathfinding::DIR_VERT_NONE // <- wait. What if unit went down onto solid floor.
-					&& _tile->solidFloor(tileBelow) == true)
+					&& _tile->isFloored(tileBelow) == true)
 				{
 					_status = STATUS_WALKING;
 					_floating = false;
@@ -2759,7 +2759,7 @@ void BattleUnit::setUnitTile(
 
 			case STATUS_UNCONSCIOUS: // revived.
 				_floating = _mType == MT_FLY
-						 && _tile->solidFloor(tileBelow) == false;
+						 && _tile->isFloored(tileBelow) == false;
 		}
 	}
 	else
@@ -4056,11 +4056,11 @@ bool BattleUnit::hasFirstTakedown() const
 }
 
 /**
- * Gets if this BattleUnit is in the awkward phase between getting killed or
- * stunned and the end of its collapse-sequence.
- * @return, true if about to die
+ * Checks if this BattleUnit is in the awkward phase between getting killed or
+ * stunned and the end of its collapse-animation.
+ * @return, true if about to collapse
  */
-bool BattleUnit::getAboutToCollapse() const
+bool BattleUnit::isAboutToCollapse() const
 {
 	return _aboutToCollapse;
 }

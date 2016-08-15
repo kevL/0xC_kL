@@ -1354,7 +1354,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 					// end unconscious soldier icon.
 
 // re-Draw unitBelow if it is on raised ground (on tileBelow) & there is no Floor.
-					if (itZ > 0 && _tile->solidFloor(tileBelow) == false)
+					if (itZ > 0 && _tile->isFloored(tileBelow) == false)
 					{
 						const int tLevel (tileBelow->getTerrainLevel());
 						if (tLevel < 0) // probly more like -4 or -8
@@ -1436,7 +1436,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						&& _tile->getPreviewDir() != -1
 						&& _tile->isRevealed(ST_WEST) == true) // what.
 					{
-						if (itZ > 0 && _tile->solidFloor(tileBelow) == false)
+						if (itZ > 0 && _tile->isFloored(tileBelow) == false)
 						{
 							sprite = _res->getSurfaceSet("Pathfinding")->getFrame(11);
 							//if (sprite != nullptr)
@@ -1872,7 +1872,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 							if (_previewSetting & PATH_ARROWS) // arrows semi-transparent
 							{
 								tileBelow = _battleSave->getTile(posField + Position(0,0,-1));
-								if (itZ > 0 && _tile->solidFloor(tileBelow) == false)
+								if (itZ > 0 && _tile->isFloored(tileBelow) == false)
 								{
 									sprite = _res->getSurfaceSet("Pathfinding")->getFrame(23);
 									//if (sprite != nullptr)

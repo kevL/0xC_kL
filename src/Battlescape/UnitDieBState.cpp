@@ -51,79 +51,72 @@ namespace OpenXcom
  * Creates a UnitDieBState.
  * @note If a unit is already unconscious when it dies then it should never get
  * sent through this state; handle it more simply with instaKill() or whatever.
- * @param parent	- pointer to BattlescapeGame
- * @param unit		- pointer to a dying BattleUnit
- * @param dType		- type of damage that caused the death (RuleItem.h)
- * @param noScream	- true to disable death-sound of stunned units (default false)
- * @param hidden	- true to speed things along through pre-battle powersource
- *					  explosions (default false)
+ * @param parent		- pointer to BattlescapeGame
+ * @param unit			- pointer to the hurt BattleUnit
+ * @param dType			- type of damage that caused the unit to collapse (RuleItem.h)
+ * @param isSilent		- true to disable focusing (and peripherally the death-sound)
+ *						  of stunned units (default false)
+ * @param isPreTactical	- true to speed things along through pre-battle powersource
+ *						  explosions (default false)
  */
 UnitDieBState::UnitDieBState(
 		BattlescapeGame* const parent,
 		BattleUnit* const unit,
 		const DamageType dType,
-		const bool noScream,
-		const bool hidden)
+		const bool isSilent,
+		const bool isPreTactical)
 	:
 		BattleState(parent),
 		_unit(unit),
 		_dType(dType),
-		_noScream(noScream),
-		_hidden(hidden),
+		_isSilent(isSilent),
+		_isPreTactical(isPreTactical),
 		_battleSave(parent->getBattleSave()),
-		_doneScream(false),
-		_extraTicks(-1),
-		_init(true)
+		_post(0)
 {
-	// TODO: '_noScream' and '_hidden' even '_extraTicks' can be combined into
+	// TODO: '_isSilent' and '_isPreTactical' even '_extraTicks' can be combined into
 	// an int-var or an enum: DeathPhase or DeathMode or similar. Do straighten
 	// this hodge-podge out ...!
 //	_unit->clearVisibleTiles();
 //	_unit->clearHostileUnits();
 
-	if (_hidden == false)
+	if (_isPreTactical == true) // power-source explosion
 	{
-		_unit->setUnitVisible();
-		_parent->getMap()->getCamera()->focusPosition(_unit->getPosition());
-
+		switch (_unit->getHealth())
+		{
+			case 0:  _unit->instaKill(); break;
+			default: _unit->knockOut(); // convert if has a "spawnType" set. Else sets health=0 / stun=health.
+		}
+	}
+	else
+	{
 		switch (_unit->getFaction())
 		{
 			case FACTION_HOSTILE:
-			{
-				const std::vector<Node*>* const nodeList (_battleSave->getNodes());
-				if (nodeList != nullptr) // this had better happen.
+				for (std::vector<Node*>::const_iterator // flag nearby Nodes as Type_Dangerous.
+						i = _battleSave->getNodes()->begin();
+						i != _battleSave->getNodes()->end();
+						++i)
 				{
-					for (std::vector<Node*>::const_iterator
-							i = nodeList->begin();
-							i != nodeList->end();
-							++i)
-					{
-						if (TileEngine::distance(
-											(*i)->getPosition(),
-											_unit->getPosition()) < 3)
-						{
-							(*i)->setNodeType((*i)->getNodeType() | Node::TYPE_DANGEROUS);
-						}
-					}
+					if (TileEngine::distance(
+										(*i)->getPosition(),
+										_unit->getPosition()) < 6)
+						(*i)->setNodeType((*i)->getNodeType() | Node::TYPE_DANGEROUS);
 				}
-				break;
-			}
+				// no break;
+
+			case FACTION_NEUTRAL:
+				_unit->setUnitVisible();	// reveal Map if '_unit' is currently selected by the AI
+				break;						// NOTE: player-units are always visible.
 
 			case FACTION_PLAYER:
-				_parent->getMap()->setUnitDying();
+				_parent->getMap()->setUnitDying(); // reveal Map for the duration ....
 		}
 
 		if (_unit->getSpawnType().empty() == false)
 			_unit->setDirectionTo(3); // -> STATUS_TURNING if not facing correctly. Else STATUS_STANDING
 		else
 			_unit->initDeathSpin(); // -> STATUS_TURNING
-	}
-	else // pre-battle hidden power-source explosion death
-	{
-		if (_unit->getHealth() == 0)
-			_unit->instaKill();
-		else
-			_unit->knockOut(); // convert if has a "spawnType" set. Else sets health=0 / stun=health.
 	}
 }
 
@@ -161,134 +154,144 @@ std::string UnitDieBState::getBattleStateLabel() const
 void UnitDieBState::think()
 {
 //	#0
-	if (_noScream == false)
+	if (_isSilent == false)
 	{
-		if (_init == true)
-		{
-			_init = false;
-			_parent->getMap()->getCamera()->focusPosition(_unit->getPosition());
-		}
+		_isSilent = true; // done.
 
-		if (_doneScream == false
-			&& _unit->isOut_t(OUT_STUNNED) == false
+		_parent->getMap()->getCamera()->focusPosition(_unit->getPosition());	// NOTE: Can't be done in cTor or init() because
+																				// ... BattleState machine gets confused.
+		if (   _unit->getHealth() == 0
 			&& _unit->hasCried() == false
 			&& _unit->getOverDose() == false)
 		{
-			_doneScream = true;
 			_unit->playDeathSound();
 		}
 	}
 
-//	#1
-	if (_unit->getUnitStatus() == STATUS_TURNING)
-	{
-		if (_unit->getSpinPhase() != -1)
-		{
-			//Log(LOG_INFO) << "unitDieB: think() set interval = " << BattlescapeState::STATE_INTERVAL_DEATHSPIN;
-			_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_DEATHSPIN);
-			_unit->contDeathSpin(); // -> STATUS_STANDING
-		}
-		else // spawn conversion is going to happen
-			_unit->turn(); // -> STATUS_STANDING
-	}
-//	#3
-	else if (_unit->getUnitStatus() == STATUS_COLLAPSING)
-	{
-		_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS ie. isOut_t()
-	}
-//	#2
-	else if (_unit->isOut_t(OUT_STAT) == false)
-	{
-		//Log(LOG_INFO) << "unitDieB: think() set interval = " << BattlescapeState::STATE_INTERVAL_STANDARD;
-		_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
-		_unit->startCollapsing(); // -> STATUS_COLLAPSING
+//	STATUS_STANDING,	//  0
+//	STATUS_WALKING,		//  1
+//	STATUS_FLYING,		//  2
+//	STATUS_TURNING,		//  3
+//	STATUS_AIMING,		//  4
+//	STATUS_COLLAPSING,	//  5
+//	STATUS_DEAD,		//  6
+//	STATUS_UNCONSCIOUS,	//  7
+//	STATUS_PANICKING,	//  8
+//	STATUS_BERSERK,		//  9
+//	STATUS_LATENT,		// 10
+//	STATUS_LATENT_START	// 11
 
-		if (_unit->getSpawnType().empty() == false)
-		{
-			while (_unit->getUnitStatus() == STATUS_COLLAPSING)
-				_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS ( ie. isOut() ) -> goto #4
-		}
-	}
-
-//	#5 - finish.
-	if (--_extraTicks == 0)
+	switch (_unit->getUnitStatus())
 	{
-		bool moreDead (false);
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
-				++i)
-		{
-			if ((*i)->getAboutToCollapse() == true)
+		case STATUS_TURNING:
+			switch (_unit->getSpinPhase())
 			{
-				moreDead = true;
-				break;
-			}
-		}
-		if (moreDead == false)
-			_parent->getMap()->setUnitDying(false);
-
-		_parent->getTileEngine()->calculateUnitLighting();
-		_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popState().
-
-		// need to freshen visUnit-indicators in case other units were hiding behind the one who just fell
-		_battleSave->getBattleState()->updateSoldierInfo(false);
-
-		if (_unit->getGeoscapeSoldier() != nullptr)
-		{
-			std::string stInfo;
-			switch (_unit->getUnitStatus())
-			{
-				case STATUS_DEAD:
-					if (_dType == DT_NONE
-						&& _unit->getSpawnType().empty() == true)
-					{
-						stInfo = "STR_HAS_DIED_FROM_A_FATAL_WOUND"; // ... or a Morphine overdose.
-					}
-					else if (Options::battleNotifyDeath == true)
-						stInfo = "STR_HAS_BEEN_KILLED";
+				case -1: // unit-convert here.
+					_unit->turn();
 					break;
 
-				case STATUS_UNCONSCIOUS:
-					stInfo = "STR_HAS_BECOME_UNCONSCIOUS";
+				default:
+					//Log(LOG_INFO) << "unitDieB: think() set interval " << BattlescapeState::STATE_INTERVAL_DEATHSPIN;
+					_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_DEATHSPIN);
+					_unit->contDeathSpin();
+					break;
 			}
+			break; // -> STATUS_STANDING
 
-			if (stInfo.empty() == false)
+		case STATUS_STANDING:
+			//Log(LOG_INFO) << "unitDieB: think() set interval " << BattlescapeState::STATE_INTERVAL_STANDARD;
+			_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
+			_unit->startCollapsing();
+
+			if (_unit->getSpawnType().empty() == false) // collapse immediately.
 			{
-				Game* const game (_battleSave->getBattleState()->getGame());
-				const Language* const lang (game->getLanguage());
-				game->pushState(new InfoboxDialogState(lang->getString(stInfo, _unit->getGender())
-															.arg(_unit->getLabel(lang))));
+				while (_unit->getUnitStatus() == STATUS_COLLAPSING)
+					_unit->keepCollapsing();
 			}
-		}
+			break; // -> STATUS_COLLAPSING -> STATUS_DEAD or STATUS_UNCONSCIOUS
+
+		case STATUS_COLLAPSING:
+			_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS
+			break;
+
+		case STATUS_DEAD:
+		case STATUS_UNCONSCIOUS:
+			switch (_post)
+			{
+				case 0:
+					_post = 1;
+
+					switch (_unit->getUnitStatus())
+					{
+						case STATUS_DEAD:
+							_unit->putDown(); // TODO: Straighten these out vis-a-vis the cTor, knockOut().
+							break;
+
+						case STATUS_UNCONSCIOUS:
+							if (_unit->getSpecialAbility() == SPECAB_EXPLODE)
+								_unit->instaKill();
+					}
+
+					if (_unit->getSpawnType().empty() == false)
+						_parent->convertUnit(_unit);
+					else
+						convertToBody();
+
+					if (_isPreTactical == true)
+						_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
+					break;
+
+				case 1:
+				{
+					bool persistReveal (false);
+					for (std::vector<BattleUnit*>::const_iterator
+							i = _battleSave->getUnits()->begin();
+							i != _battleSave->getUnits()->end();
+							++i)
+					{
+						if ((*i)->isAboutToCollapse() == true)
+						{
+							persistReveal = true;
+							break;
+						}
+					}
+					if (persistReveal == false)
+						_parent->getMap()->setUnitDying(false);
+
+					_parent->getTileEngine()->calculateUnitLighting();
+					_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
+
+					_battleSave->getBattleState()->updateSoldierInfo();	// update visUnit-indicators in case other units
+																		// were hiding behind the one who just fell, etc.
+					if (_unit->getGeoscapeSoldier() != nullptr)
+					{
+						std::string stInfo;
+						switch (_unit->getUnitStatus())
+						{
+							case STATUS_DEAD:
+								if (_dType == DT_NONE && _unit->getSpawnType().empty() == true)
+									stInfo = "STR_HAS_DIED_FROM_A_FATAL_WOUND"; // ... or a Morphine overdose.
+								else if (Options::battleNotifyDeath == true)
+									stInfo = "STR_HAS_BEEN_KILLED";
+								break;
+
+							case STATUS_UNCONSCIOUS:
+								stInfo = "STR_HAS_BECOME_UNCONSCIOUS";
+						}
+
+						if (stInfo.empty() == false)
+						{
+							Game* const game (_battleSave->getBattleState()->getGame());
+							const Language* const lang (game->getLanguage());
+							game->pushState(new InfoboxDialogState(lang->getString(stInfo, _unit->getGender())
+																			.arg(_unit->getLabel(lang))));
+						}
+					}
+				}
+			}
 	}
-//	#4
-	else if (_unit->getUnitStatus() == STATUS_DEAD
-		||   _unit->getUnitStatus() == STATUS_UNCONSCIOUS)
-	{
-		_extraTicks = 1;
 
-		switch (_unit->getUnitStatus())
-		{
-			case STATUS_DEAD:
-				_unit->putDown(); // TODO: Straighten these out vis-a-vis the cTor, knockOut().
-				break;
-
-			case STATUS_UNCONSCIOUS:
-				if (_unit->getSpecialAbility() == SPECAB_EXPLODE)
-					_unit->instaKill();
-		}
-
-		if (_unit->getSpawnType().empty() == false)
-			_parent->convertUnit(_unit);
-		else
-			convertToBody();
-
-		if (_hidden == true)
-			_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popState().
-	}
-
-	if (_hidden == false)
+	if (_isPreTactical == false)
 		_parent->getMap()->cacheUnitSprite(_unit);
 }
 
@@ -301,7 +304,7 @@ void UnitDieBState::convertToBody() // private.
 {
 	_unit->setUnitTile(); // This should have never been done. Only the Tile's link to unit should be broken.
 
-	if (_hidden == false)
+	if (_isPreTactical == false)
 		_battleSave->getBattleState()->showPsiButton(false);	// ... why is this here ...
 																// any reason it's not in, say, the cTor or init() or popBattleState()
 	if (_unit->canInventory() == true
@@ -317,7 +320,7 @@ void UnitDieBState::convertToBody() // private.
 		* tileExpl,
 		* tileExplBelow;
 	bool
-		playSound (true),
+		playSound  (true),
 		calcLights (false);
 
 	int unitSize (_unit->getArmor()->getSize());
@@ -337,7 +340,7 @@ void UnitDieBState::convertToBody() // private.
 		{
 			tile = _battleSave->getTile(pos + Position(x,y,0));
 
-			if (_unit->getUnitRules() != nullptr
+			if (   _unit->getUnitRules() != nullptr
 				&& _unit->getUnitRules()->isMechanical() == true)
 			{
 				if (RNG::percent(6) == true)
@@ -345,17 +348,14 @@ void UnitDieBState::convertToBody() // private.
 					tileExpl = tile;
 					tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
 
-					while (tileExpl != nullptr				// safety.
-						&& tileExpl->getPosition().z > 0	// safety.
-//						&& tileExpl->getMapData(O_OBJECT) == nullptr
-//						&& tileExpl->getMapData(O_FLOOR) == nullptr
-						&& tileExpl->solidFloor(tileExplBelow) == false)
+					while (tileExpl != nullptr // safety.
+						&& tileExpl->isFloored(tileExplBelow) == false)
 					{
 						tileExpl = tileExplBelow;
 						tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
 					}
 
-					if (tileExpl != nullptr // safety.
+					if (   tileExpl != nullptr // safety.
 						&& tileExpl->getFire() == 0)
 					{
 						if ((calcLights = tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2))) == false)

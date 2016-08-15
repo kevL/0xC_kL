@@ -154,7 +154,7 @@ void UnitFallBState::think()
 					--y)
 			{
 				tileBelow = _battleSave->getTile(pos + Position(x,y,-1));
-				if (_battleSave->getTile(pos + Position(x,y,0))->solidFloor(tileBelow) == true
+				if (_battleSave->getTile(pos + Position(x,y,0))->isFloored(tileBelow) == true
 					|| (*i)->getMoveTypeUnit() == MT_FLY)
 				{
 					//Log(LOG_INFO) << ". . fallCheck set FALSE";
@@ -167,7 +167,7 @@ void UnitFallBState::think()
 
 		fall = fallCheck == true // why are there two 'fall' determinations. See below_
 			&& pos.z != 0
-			&& (*i)->getUnitTile()->solidFloor(tileBelow) == false
+			&& (*i)->getUnitTile()->isFloored(tileBelow) == false
 //			&& (*i)->getMoveTypeUnit() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
 
@@ -217,7 +217,7 @@ void UnitFallBState::think()
 
 		fall = fallCheck == true // why are there two 'fall' determinations. See above^
 			&& pos.z != 0
-			&& (*i)->getUnitTile()->solidFloor(tileBelow) == false
+			&& (*i)->getUnitTile()->isFloored(tileBelow) == false
 //			&& (*i)->getMovementType() != MT_FLY // done above in fallCheck
 			&& (*i)->getWalkPhase() == 0;
 
@@ -328,7 +328,7 @@ void UnitFallBState::think()
 											  && tile->getTileUnit() != nullptr
 											  && tile->getTileUnit() != unitBelow),
 								hasFloor (tile != nullptr
-									   && tile->solidFloor(tileBelow) == true),
+									   && tile->isFloored(tileBelow) == true),
 								blocked (_battleSave->getPathfinding()->isBlockedPath(
 																					_battleSave->getTile(posQuad),
 																					dir,

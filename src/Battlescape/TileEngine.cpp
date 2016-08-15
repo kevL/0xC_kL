@@ -553,7 +553,7 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 	if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > 31) // arbitrary 24+8, could use Pathfinding::UNIT_HEIGHT
 	{
 		const Tile* const tileAbove (_battleSave->getTile(posUnit + Position(0,0,1)));
-		if (tileAbove != nullptr && tileAbove->solidFloor() == false)
+		if (tileAbove != nullptr && tileAbove->isFloored() == false)
 			++posUnit.z;
 	}
 
@@ -945,7 +945,7 @@ const BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const	// now
 		if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
 			return tile->getTileUnit();
 
-		if (tile->getPosition().z > 0 && tile->solidFloor() == false)
+		if (tile->getPosition().z > 0 && tile->isFloored() == false)
 		{
 			const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
 			if (tileBelow->getTileUnit() != nullptr)
@@ -977,7 +977,7 @@ Position TileEngine::getSightOriginVoxel(
 	if (ceilingZ < originVoxel.z)
 	{
 		const Tile* const tileAbove (_battleSave->getTile(*pos + Position(0,0,1)));
-		if (tileAbove == nullptr || tileAbove->solidFloor() == true)
+		if (tileAbove == nullptr || tileAbove->isFloored() == true)
 			originVoxel.z = ceilingZ; // careful with that ceiling, Eugene.
 	}
 
@@ -2109,7 +2109,7 @@ void TileEngine::hit(
 		case VOXEL_UNIT: // BattleUnit voxelType HIT SUCCESS.
 		{
 			if (targetUnit == nullptr
-				&& _battleSave->getTile(posTarget)->solidFloor() == false)
+				&& _battleSave->getTile(posTarget)->isFloored() == false)
 			{
 				const Tile* const tileBelow (_battleSave->getTile(posTarget + Position(0,0,-1)));
 				if (tileBelow != nullptr && tileBelow->getTileUnit() != nullptr)
@@ -2775,10 +2775,9 @@ void TileEngine::explode(
 
 							while (tileFire != nullptr				// safety.
 								&& tileFire->getPosition().z > 0	// safety.
-								&& (tileFire->getMapData(O_OBJECT) == nullptr
+								&& (    tileFire->getMapData(O_OBJECT) == nullptr
 									|| (tileFire->getMapData(O_OBJECT)->getBigwall() & 0xfe) == 1)
-//								&& tileFire->getMapData(O_FLOOR) == nullptr
-								&& tileFire->solidFloor(tileBelow) == false)
+								&& tileFire->isFloored(tileBelow) == false)
 							{
 								tileFire = tileBelow;
 								tileBelow = _battleSave->getTile(tileFire->getPosition() + Position(0,0,-1));
@@ -4472,7 +4471,7 @@ void TileEngine::detonateTile(Tile* const tile) const
 		{
 			Tile* const tileAbove (_battleSave->getTile(tile->getPosition() + Position(0,0,1)));
 			if (tileAbove != nullptr
-				&& tileAbove->solidFloor(tile) == false				// <- TODO: use verticalBlockage() instead
+				&& tileAbove->isFloored(tile) == false				// <- TODO: use verticalBlockage() instead
 				&& RNG::percent(tile->getSmoke() << 3u) == true)	// <- unfortunately the state-machine may cause an unpredictable
 			{														//	  quantity of calls to this ... via ExplosionBState::think().
 				tileAbove->addSmoke(tile->getSmoke() / 3);			//	  Did I actually sort this out ....
@@ -6034,7 +6033,7 @@ VoxelType TileEngine::voxelCheck(
 		const BattleUnit* targetUnit (tile->getTileUnit());
 
 		if (targetUnit == nullptr
-			&& tile->solidFloor() == false
+			&& tile->isFloored() == false
 			&& (tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) != nullptr)
 		{
 			targetUnit = tileBelow->getTileUnit();
@@ -6377,7 +6376,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 
 	const Position pos (tile->getPosition());
 	if (pos.z == 0
-		|| tile->solidFloor(_battleSave->getTile(pos + Position(0,0,-1))) == true)
+		|| tile->isFloored(_battleSave->getTile(pos + Position(0,0,-1))) == true)
 	{
 		return; // early out.
 	}
@@ -6404,7 +6403,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 															posDest.x,
 															posDest.y,
 															posDest.z - 1));
-				if (tileDest->solidFloor(tileDestBelow) == false)
+				if (tileDest->isFloored(tileDestBelow) == false)
 					--posDest.z;
 				else
 					break;
@@ -6455,8 +6454,8 @@ void TileEngine::applyGravity(Tile* const tile) const
 																posDest.x + x,
 																posDest.y + y,
 																posDest.z - 1));
-						if (tileDest->solidFloor(tileDestBelow) == true)	// NOTE: Water has no floor so units that die on them ... try to sink.
-							canFall = false;								// ... before I changed the loop condition to > 0, that is
+						if (tileDest->isFloored(tileDestBelow) == true)	// NOTE: Water has no floor so units that die on them ... try to sink.
+							canFall = false;							// ... before I changed the loop condition to > 0, that is
 					}
 				}
 				if (canFall == true) --posDest.z;
@@ -6489,7 +6488,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 					case MT_FLY:
 						tileDest = unit->getUnitTile();
 						tileDestBelow = _battleSave->getTile(tileDest->getPosition() + Position(0,0,-1));
-						if (tileDest->solidFloor(tileDestBelow) == false)
+						if (tileDest->isFloored(tileDestBelow) == false)
 							unit->setFloating();
 						else
 							unit->setFloating(false);

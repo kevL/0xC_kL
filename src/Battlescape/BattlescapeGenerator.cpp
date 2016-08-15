@@ -3293,7 +3293,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 							if (_battleSave->getTile(Position(
 															x * 10,
 															y * 10,
-															grdLevel))->solidFloor() == true)
+															grdLevel))->isFloored() == true)
 							{
 								break;
 							}

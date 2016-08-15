@@ -2815,9 +2815,9 @@ bool BattlescapeState::playableUnitSelected()
 
 /**
  * Updates a unit's onScreen stats & info.
- * @param calcFoV - true to run calcFov() for the unit (default true)
+ * @param spot - true to run calcFov() for the unit (default true)
  */
-void BattlescapeState::updateSoldierInfo(bool calcFoV)
+void BattlescapeState::updateSoldierInfo(bool spot)
 {
 	clearHostileIcons();
 
@@ -2905,8 +2905,8 @@ void BattlescapeState::updateSoldierInfo(bool calcFoV)
 
 
 	BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-	if (calcFoV == true)
-		_battleSave->getTileEngine()->calcFovUnits(selUnit); // try no tile-reveal.
+	if (spot == true)
+		_battleSave->getTileEngine()->calcFovUnits(selUnit);
 
 	if (_battleSave->getSide() == FACTION_PLAYER)
 		updateHostileIcons();
@@ -4289,13 +4289,13 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 				tuCost = tile->getTuCostTile(O_FLOOR, mType);
 			else
 			{
-				if (tile->solidFloor() == true)
+				if (tile->isFloored() == true)
 				{
 					const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
 					if (tileBelow->getMapData(O_OBJECT) != nullptr)
 						tuCost = 4 + tileBelow->getTuCostTile(O_OBJECT, mType);
 					else
-						tuCost = 4;	// safety. If tile has no floor-object but solidFloor=TRUE
+						tuCost = 4;	// safety. If tile has no floor-object but isFloored=TRUE
 				}					// there'd better be an object w/ tLevel -24 in tileBelow!
 				else
 				{
@@ -4318,7 +4318,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 		const int info[]
 		{
-			static_cast<int>(tile->solidFloor(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)))),
+			static_cast<int>(tile->isFloored(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)))),
 			tile->getSmoke(),
 			tile->getFire(),
 			tuCost
@@ -4544,7 +4544,7 @@ void BattlescapeState::saveAIMap()
 				}
 
 				--pos.z;
-				if (z > 0 && tile->solidFloor(_battleSave->getTile(pos)) == true)
+				if (z > 0 && tile->isFloored(_battleSave->getTile(pos)) == true)
 					break; // no seeing through floors
 			}
 

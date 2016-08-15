@@ -421,7 +421,7 @@ private:
 		bool playableUnitSelected();
 
 		/// Updates unit stat display and other stuff.
-		void updateSoldierInfo(bool calcFoV = true);
+		void updateSoldierInfo(bool spot = true);
 		/// Clears the hostile unit indicator squares.
 		void clearHostileIcons();
 		/// Updates the hostile unit indicator squares.
