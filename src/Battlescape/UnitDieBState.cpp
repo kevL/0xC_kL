@@ -74,9 +74,6 @@ UnitDieBState::UnitDieBState(
 		_battleSave(parent->getBattleSave()),
 		_post(0)
 {
-	// TODO: '_isSilent' and '_isPreTactical' even '_extraTicks' can be combined into
-	// an int-var or an enum: DeathPhase or DeathMode or similar. Do straighten
-	// this hodge-podge out ...!
 //	_unit->clearVisibleTiles();
 //	_unit->clearHostileUnits();
 
@@ -219,8 +216,6 @@ void UnitDieBState::think()
 			switch (_post)
 			{
 				case 0:
-					_post = 1;
-
 					switch (_unit->getUnitStatus())
 					{
 						case STATUS_DEAD:
@@ -239,7 +234,9 @@ void UnitDieBState::think()
 
 					if (_isPreTactical == true)
 						_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
-					break;
+					else
+						_post = 1;
+					return; // no draw.
 
 				case 1:
 				{
@@ -287,6 +284,7 @@ void UnitDieBState::think()
 																			.arg(_unit->getLabel(lang))));
 						}
 					}
+					return; // no draw.
 				}
 			}
 	}

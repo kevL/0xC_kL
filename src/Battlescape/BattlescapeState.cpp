@@ -2814,8 +2814,8 @@ bool BattlescapeState::playableUnitSelected()
 }
 
 /**
- * Updates a unit's onScreen stats & info.
- * @param spot - true to run calcFov() for the unit (default true)
+ * Updates the currently selected unit's OnScreen stats & info.
+ * @param spot - true to run calcFovUnits() (default true)
  */
 void BattlescapeState::updateSoldierInfo(bool spot)
 {

@@ -197,40 +197,56 @@ struct ColorReplace
 
 void UnitSprite::drawRecolored(Surface* const src) // private.
 {
-	if (_colorSize != 0)
+	switch (_colorSize)
 	{
-		lock();
-		ShaderDraw<ColorReplace>(
-							ShaderSurface(this),
-							ShaderSurface(src),
-							ShaderScalar(_color),
-							ShaderScalar(_colorSize));
-		unlock();
+		case 0:
+			src->blit(this);
+			break;
+
+		default:
+			lock();
+			ShaderDraw<ColorReplace>(
+								ShaderSurface(this),
+								ShaderSurface(src),
+								ShaderScalar(_color),
+								ShaderScalar(_colorSize));
+			unlock();
 	}
-	else
-		src->blit(this);
 }
 
 /**
- * Sets the animation state for animating units.
- * @param cycle - cycle state of battlescape Map
+ * Sets the animation-phase for the BattleUnit.
+ * @param cycle - cycle of battlescape Map
  */
-void UnitSprite::setAnimationCycle(int cycle)
+void UnitSprite::setSpriteCycle(int cycle)
 {
 	_aniCycle = cycle;
 }
 
 /**
- * Draws a unit using the drawing rules for the unit.
- * @note This function is called by Map for each BattleUnit in the viewable area
- * of the screen.
- */
+ * Draws a BattleUnit using the drawing rules for that unit.
+ * @note This function is called by Map for each unit in the viewable area of
+ * the Screen.
+ *
+ * STATUS_STANDING,		//  0
+ * STATUS_WALKING,		//  1
+ * STATUS_FLYING,		//  2
+ * STATUS_TURNING,		//  3
+ * STATUS_AIMING,		//  4
+ * STATUS_COLLAPSING,	//  5
+ * STATUS_DEAD,			//  6
+ * STATUS_UNCONSCIOUS,	//  7
+ * STATUS_PANICKING,	//  8
+ * STATUS_BERSERK,		//  9
+ * STATUS_LATENT,		// 10
+ * STATUS_LATENT_START	// 11
+*/
 void UnitSprite::draw()
 {
-	//Log(LOG_INFO) << "UnitSprite::draw() Routine " << _drawRoutine;
-	Surface::draw();
+	//Log(LOG_INFO) << "UnitSprite::draw() routine " << _drawRoutine;
+	Surface::draw(); // clears the Surface. sets '_redraw' FALSE.
 
-	void (UnitSprite::*routines[])() // Array of drawing routines.
+	static void (UnitSprite::*routines[])() // Array of drawing routines.
 	{
 		&UnitSprite::drawRoutine0,
 		&UnitSprite::drawRoutine1,
@@ -245,7 +261,18 @@ void UnitSprite::draw()
 		&UnitSprite::drawRoutine0
 	};
 
-	(this->*(routines[_drawRoutine]))(); // Call the matching routine.
+	switch (_unit->getUnitStatus())
+	{
+		case STATUS_STANDING:
+		case STATUS_WALKING:
+		case STATUS_FLYING:
+		case STATUS_TURNING:
+		case STATUS_AIMING:
+		case STATUS_COLLAPSING:
+		case STATUS_PANICKING:
+		case STATUS_BERSERK:
+			(this->*(routines[_drawRoutine]))(); // Call the matching routine.
+	}
 }
 
 /**
@@ -254,9 +281,6 @@ void UnitSprite::draw()
  */
 void UnitSprite::drawRoutine0() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int // magic static numbers
@@ -715,9 +739,6 @@ void UnitSprite::drawRoutine0() // private.
  */
 void UnitSprite::drawRoutine1() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int // magic static numbers
@@ -932,9 +953,6 @@ void UnitSprite::drawRoutine1() // private.
  */
 void UnitSprite::drawRoutine2() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int walk (104); // magic static number
@@ -1033,9 +1051,6 @@ void UnitSprite::drawRoutine2() // private.
  */
 void UnitSprite::drawRoutine3() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int walk (32); // magic static number
@@ -1060,9 +1075,6 @@ void UnitSprite::drawRoutine3() // private.
  */
 void UnitSprite::drawRoutine4() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int // magic static numbers
@@ -1210,9 +1222,6 @@ void UnitSprite::drawRoutine4() // private.
  */
 void UnitSprite::drawRoutine5() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int walk (32); // magic static number
@@ -1241,9 +1250,6 @@ void UnitSprite::drawRoutine5() // private.
  */
 void UnitSprite::drawRoutine6() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int // magic static numbers
@@ -1509,9 +1515,6 @@ void UnitSprite::drawRoutine6() // private.
  */
 void UnitSprite::drawRoutine7() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	// what no _redraw!
 
 	static const int // magic static numbers
@@ -1610,9 +1613,6 @@ void UnitSprite::drawRoutine7() // private.
  */
 void UnitSprite::drawRoutine8() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	_redraw = true;
 
 	static const int // magic static numbers
@@ -1647,9 +1647,6 @@ void UnitSprite::drawRoutine8() // private.
  */
 void UnitSprite::drawRoutine9() // private.
 {
-	if (_unit->isOut_t(OUT_STAT) == true)
-		return;
-
 	_redraw = true;
 
 	static const int // magic static numbers

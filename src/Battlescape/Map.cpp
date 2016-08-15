@@ -2700,7 +2700,7 @@ void Map::cacheUnitSprite(BattleUnit* const unit)
 							_res->getSurfaceSet(unit->getArmor()->getSpriteSheet()),
 							_res->getSurfaceSet("HANDOB.PCK"),
 							_res->getSurfaceSet("HANDOB2.PCK"));
-			sprite->setAnimationCycle(_aniCycle);
+			sprite->setSpriteCycle(_aniCycle);
 
 			cache->clear();
 			sprite->blit(cache);

@@ -420,7 +420,7 @@ private:
 		/// Determines whether a playable unit is selected.
 		bool playableUnitSelected();
 
-		/// Updates unit stat display and other stuff.
+		/// Updates stat-display and other stuff.
 		void updateSoldierInfo(bool spot = true);
 		/// Clears the hostile unit indicator squares.
 		void clearHostileIcons();

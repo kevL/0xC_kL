@@ -104,18 +104,19 @@ private:
 				SurfaceSet* const unitSet,
 				SurfaceSet* const itSetRT,
 				SurfaceSet* const itSetLT);
-		/// Sets the battleunit to be rendered.
+		/// Sets the BattleUnit to be rendered.
 		void setBattleUnit(
 				BattleUnit* const unit,
-				int part = 0);
+				int quad = 0);
 		/// Sets the right-hand BattleItem to be rendered.
 		void setBattleItRH(const BattleItem* const item = nullptr);
 		/// Sets the left-hand BattleItem to be rendered.
 		void setBattleItLH(const BattleItem* const item = nullptr);
-		/// Sets the unit's animation state.
-		void setAnimationCycle(int cycle);
 
-		/// Draws the unit.
+		/// Sets the unit's animation state.
+		void setSpriteCycle(int cycle);
+
+		/// Draws the BattleUnit.
 		void draw() override;
 };
 
