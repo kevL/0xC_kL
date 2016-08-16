@@ -163,6 +163,9 @@ private:
 				int* partSetId,
 				MapDataType partType) const;
 
+		/// Gets the Tile below this Tile.
+		Tile* getTileBelow(const SavedBattleGame* const battleSave) const;
+
 		/// Gets whether the Tile has no objects
 		bool isVoid(
 				const bool testInventory = true,

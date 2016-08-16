@@ -1291,8 +1291,8 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 	{
 		if (unit->isMindControlled() == false)
 		{
-			if (unit->isFloating() == false // This prevents flying soldiers from 'kneeling' .....
-				|| unit->getUnitTile()->isFloored(unit->getUnitTileBelow()) == true) // static-flight
+//			if (unit->isFloating() == false											// This prevents flying soldiers from 'kneeling' unless ...
+			if (unit->getUnitTile()->isFloored(unit->getUnitTileBelow()) == true)	// <- static-flight
 			{
 				int tu;
 				if (unit->isKneeled() == true)
@@ -1300,8 +1300,8 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 				else
 				{
 					tu = Pathfinding::TU_KNEEL;
-					if (unit->isFloating() == true) // static-flight
-						++tu; // NOTE: Be careful that this does not equate to TU_STAND.
+					if (unit->isFloating() == true)									// static-flight
+						++tu;														// NOTE: Be careful that this does not equate to TU_STAND.
 				}
 
 //				if (checkReservedTu(unit, tu) == true)

@@ -293,6 +293,16 @@ void Tile::getMapData(
 }
 
 /**
+ * Gets the Tile below this Tile.
+ * @param battleSave - pointer to the SavedBattleGame
+ * @return, pointer to tile-below (can be nullptr)
+ */
+Tile* Tile::getTileBelow(const SavedBattleGame* const battleSave) const
+{
+	return battleSave->getTile(_pos + Position(0,0,-1));
+}
+
+/**
  * Gets whether this Tile has no objects.
  * @note The function does not check for a BattleUnit in this Tile.
  * @param testInventory - true to check for inventory items (default true)
