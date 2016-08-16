@@ -1439,7 +1439,7 @@ void DebriefingState::prepareDebriefing() // private.
 					++i)
 			{
 				tile = _battleSave->getTiles()[i];
-				if (tile->getMapData(O_FLOOR) != nullptr
+				if (   tile->getMapData(O_FLOOR) != nullptr
 					&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT)
 				{
 					recoverItems(_battleSave->getTiles()[i]->getInventory());
@@ -1452,38 +1452,64 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		recoverItems(_battleSave->recoverConditional());
 
-		const int parts (static_cast<int>(Tile::PARTS_TILE));
-		MapDataType partType;
-		int qtyRuinedAlloys (0);
+		TileType
+			tileType,
+			objectType;
 
+		if (ruleDeploy != nullptr)
+			objectType = ruleDeploy->getPlayerObjective();
+		else
+			objectType = TILE;
+
+		const int parts (static_cast<int>(Tile::PARTS_TILE));
+		const MapData* part;
+
+		int qtyAlloysRuined (0);
+
+		Tile* tile;
 		for (size_t
 				i = 0u;
 				i != _battleSave->getMapSizeXYZ();
 				++i)
 		{
-			recoverItems(_battleSave->getTiles()[i]->getInventory());
+			tile = _battleSave->getTiles()[i];
+			recoverItems(tile->getInventory());
 
 			for (int
 					j = 0;
 					j != parts;
 					++j)
 			{
-				partType = static_cast<MapDataType>(j);
-				if (_battleSave->getTiles()[i]->getMapData(partType) != nullptr)
-				{
-					const TileType tileType (_battleSave->getTiles()[i]->getMapData(partType)->getTileType());
-
+				if ((part = tile->getMapData(static_cast<MapDataType>(j))) != nullptr
+					&& (tileType = part->getTileType()) != objectType)	// not sure why parts of objectType should not be recovered.
+				{														// in fact I think it's just another wotWarboybogus.
 					switch (tileType)
 					{
-						case DEAD_TILE:
-							++qtyRuinedAlloys;
+						case TILE:
+						case START_POINT:
+						case END_POINT:
+						case MUST_DESTROY:
+							break;				// NOTE: These are not included in '_specialTypes' above^
+
+						case DEAD_TILE:			// NOTE: This is in '_specialTypes' above^ (adds half-value to Alloys' pts)
+							++qtyAlloysRuined;	// but not included on the statList displayed for Debriefing.
 							break;
 
-						default: // TODO: Expand these using legit values above^
-							if (_specialTypes.find(tileType) != _specialTypes.end())
-								addStat(
-									_specialTypes[tileType]->type,
-									_specialTypes[tileType]->value);
+//						default:
+						case UFO_POWER_SOURCE:	// NOTE: These are all in '_specialTypes' above^
+						case UFO_NAVIGATION:
+						case UFO_CONSTRUCTION:
+						case ALIEN_FOOD:
+						case ALIEN_REPRODUCTION:
+						case ALIEN_ENTERTAINMENT:
+						case ALIEN_SURGERY:
+						case EXAM_ROOM:
+						case ALIEN_ALLOYS:
+						case ALIEN_HABITAT:
+//							if (_specialTypes.find(tileType) != _specialTypes.end())
+							addStat(
+								_specialTypes[tileType]->type,
+								_specialTypes[tileType]->value);
 					}
 				}
 			}
@@ -1503,8 +1529,8 @@ void DebriefingState::prepareDebriefing() // private.
 					default:				alloyDivisor = 15;
 				}
 
-				(*i)->qty = ((*i)->qty + (qtyRuinedAlloys >> 1u)) / alloyDivisor;
-				(*i)->score = ((*i)->score + ((qtyRuinedAlloys * _specialTypes[DEAD_TILE]->value) >> 1u)) / alloyDivisor;
+				(*i)->qty = ((*i)->qty + (qtyAlloysRuined >> 1u)) / alloyDivisor;
+				(*i)->score = ((*i)->score + ((qtyAlloysRuined * _specialTypes[DEAD_TILE]->value) >> 1u)) / alloyDivisor;
 
 				if ((*i)->qty != 0 && (*i)->recover == true)
 					_itemsGained[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().

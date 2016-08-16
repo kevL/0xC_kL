@@ -704,7 +704,7 @@ bool UnitWalkBState::statusWalk() // private.
 	}
 
 	Position pos;
-	//Log(LOG_INFO) << ". pos " << pos;
+	//Log(LOG_INFO) << ". pos " << _unit->getPosition();
 	// unit moved from one tile to the other, update the tiles & investigate new flooring
 	if (_tileSwitchDone == false
 		&& (pos = _unit->getPosition()) != _unit->getStartPosition())
