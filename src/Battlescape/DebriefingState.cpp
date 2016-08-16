@@ -680,7 +680,7 @@ void DebriefingState::prepareDebriefing() // private.
 			case ALIEN_REPRODUCTION:	//  6
 			case ALIEN_ENTERTAINMENT:	//  7
 			case ALIEN_SURGERY:			//  8
-			case EXAM_ROOM:				//  9
+			case ALIEN_EXAMINATION:		//  9
 			case ALIEN_ALLOYS:			// 10
 			case ALIEN_HABITAT:			// 11
 			case DEAD_TILE:				// 12 -> give half-Alloy value for ruined alloy-tiles.
@@ -1503,7 +1503,7 @@ void DebriefingState::prepareDebriefing() // private.
 						case ALIEN_REPRODUCTION:
 						case ALIEN_ENTERTAINMENT:
 						case ALIEN_SURGERY:
-						case EXAM_ROOM:
+						case ALIEN_EXAMINATION:
 						case ALIEN_ALLOYS:
 						case ALIEN_HABITAT:
 //							if (_specialTypes.find(tileType) != _specialTypes.end())
