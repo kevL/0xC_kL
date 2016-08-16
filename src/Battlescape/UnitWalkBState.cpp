@@ -703,18 +703,19 @@ bool UnitWalkBState::statusWalk() // private.
 		_unit->setUnitStatus(STATUS_STANDING);
 	}
 
-	//Log(LOG_INFO) << ". pos " << _unit->getPosition();
+	Position pos;
+	//Log(LOG_INFO) << ". pos " << pos;
 	// unit moved from one tile to the other, update the tiles & investigate new flooring
 	if (_tileSwitchDone == false
-		&& _unit->getPosition() != _unit->getStartPosition())
+		&& (pos = _unit->getPosition()) != _unit->getStartPosition())
 	{
 		//Log(LOG_INFO) << ". . tile switch from _posStart to _posStop";
 		// IMPORTANT: startTile transiently holds onto this unit (all quads) for Map drawing.
 		_tileSwitchDone = true;
 
 		_unit->setUnitTile(
-						_battleSave->getTile(_unit->getPosition()),
-						_battleSave->getTile(_unit->getPosition() + Position(0,0,-1)));
+						_battleSave->getTile(pos),
+						_battleSave->getTile(pos + Position(0,0,-1)));
 
 		Tile* tile;
 		const Tile* tileBelow;
@@ -731,11 +732,11 @@ bool UnitWalkBState::statusWalk() // private.
 					y != -1;
 					--y)
 			{
-				//Log(LOG_INFO) << ". . . set unit on stop tile " << _unit->getPosition();
-				tile = _battleSave->getTile(_unit->getPosition() + Position(x,y,0));
+				//Log(LOG_INFO) << ". . . set unit on stop tile " << pos;
+				tile = _battleSave->getTile(pos + Position(x,y,0));
 				tile->setTileUnit(_unit);
 
-				tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
+				tileBelow = _battleSave->getTile(pos + Position(x,y,-1));
 				if (tile->isFloored(tileBelow) == true) // NOTE: I have a suspicion this should be checked for the primary quadrant only.
 				{
 					//Log(LOG_INFO) << ". . . . hasFloor ( doFallCheck set FALSE )";
@@ -747,7 +748,7 @@ bool UnitWalkBState::statusWalk() // private.
 
 		_fall = doFallCheck == true
 			 && _pf->getMoveTypePf() != MT_FLY
-			 && _unit->getPosition().z != 0;
+			 && pos.z != 0;
 
 		if (_fall == true)
 		{
@@ -762,9 +763,9 @@ bool UnitWalkBState::statusWalk() // private.
 						y != -1;
 						--y)
 				{
-					tileBelow = _battleSave->getTile(_unit->getPosition() + Position(x,y,-1));
 					//if (tileBelow) Log(LOG_INFO) << ". . . . otherTileBelow exists";
-					if (tileBelow != nullptr && tileBelow->getTileUnit() != nullptr)
+					if ((tileBelow = _battleSave->getTile(pos + Position(x,y,-1))) != nullptr
+						&& tileBelow->getTileUnit() != nullptr)
 					{
 						//Log(LOG_INFO) << ". . . . . another unit already occupies lower tile";
 						clearTilesLink(true);
@@ -772,7 +773,7 @@ bool UnitWalkBState::statusWalk() // private.
 						_fall = false;
 
 						_pf->dequeuePath();
-						_battleSave->addFallingUnit(_unit);
+						_battleSave->addFallingUnit(_unit); // if '_unit' is about to fall onto another unit use UnitFallBState.
 
 						//Log(LOG_INFO) << "UnitWalkBState::think() addFallingUnit() id-" << _unit->getId();
 						_parent->stateBPushFront(new UnitFallBState(_parent));

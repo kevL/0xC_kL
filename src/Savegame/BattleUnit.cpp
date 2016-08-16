@@ -1076,7 +1076,7 @@ int BattleUnit::getWalkPhase() const
 /**
  * Initializes variables to start walking.
  * @param dir		- the direction to walk
- * @param posStop	- reference to the Position the unit should end up at
+ * @param posStop	- reference to the Position this unit should end up at
  * @param tileBelow	- pointer to the Tile below destination position
  */
 void BattleUnit::startWalking(
@@ -1103,24 +1103,26 @@ void BattleUnit::startWalking(
 
 		default:
 			_dir = dir;
-			if (_tile->isFloored(tileBelow) == false) // NOTE: The '_tile' is the Tile of only the primary quadrant for large units.
-			{
-				_status = STATUS_FLYING;
-				_floating = true;
-			}
-			else
+			if (_tile->isFloored(tileBelow) == true // NOTE: The '_tile' is the Tile of only the primary quadrant for large units.
+				&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight TEST
 			{
 				_status = STATUS_WALKING;
 				_floating = false;
 			}
+			else
+			{
+				_status = STATUS_FLYING;
+				_floating = true;
+			}
 	}
+
 	cacheWalkPhases();
 }
 
 /**
  * This will increment '_walkPhase'.
  * @param tileBelow	- pointer to tile currently below this unit
- * @param recache	- true to update the unit cache / redraw this unit's sprite
+ * @param recache	- true to recache this unit's sprites
  */
 void BattleUnit::keepWalking(
 		const Tile* const tileBelow,
@@ -1137,8 +1139,11 @@ void BattleUnit::keepWalking(
 		_status = STATUS_STANDING;
 		_dirVertical = Pathfinding::DIR_VERT_NONE;
 
-		if (_tile->isFloored(tileBelow) == true)
+		if (_tile->isFloored(tileBelow) == true
+			&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight TEST
+		{
 			_floating = false;
+		}
 
 		if (_dirFace != -1) // finish strafing move facing the correct way.
 		{
@@ -2750,7 +2755,8 @@ void BattleUnit::setUnitTile(
 
 			case STATUS_FLYING:
 				if (_dirVertical == Pathfinding::DIR_VERT_NONE // <- wait. What if unit went down onto solid floor.
-					&& _tile->isFloored(tileBelow) == true)
+					&& _tile->isFloored(tileBelow) == true
+					&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight TEST
 				{
 					_status = STATUS_WALKING;
 					_floating = false;

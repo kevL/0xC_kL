@@ -21,7 +21,6 @@
 
 //#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
-//#include "../Engine/ShaderDraw.h"
 #include "../Engine/ShaderMove.h"
 #include "../Engine/SurfaceSet.h"
 
@@ -258,7 +257,7 @@ void UnitSprite::draw()
 		&UnitSprite::drawRoutine7,
 		&UnitSprite::drawRoutine8,
 		&UnitSprite::drawRoutine9,
-		&UnitSprite::drawRoutine0
+		&UnitSprite::drawRoutine0 // 10
 	};
 
 	switch (_unit->getUnitStatus())
@@ -415,9 +414,9 @@ void UnitSprite::drawRoutine0() // private.
 
 		torso->setY(torsoHandsWeaponY);
 
-		rightArm	= _unitSet->getFrame(walkPhase + rarmWalk[unitDir]);
-		leftArm		= _unitSet->getFrame(walkPhase + larmWalk[unitDir]);
-		legs		= _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
+		rightArm = _unitSet->getFrame(walkPhase + rarmWalk[unitDir]);
+		leftArm  = _unitSet->getFrame(walkPhase + larmWalk[unitDir]);
+		legs     = _unitSet->getFrame(walkPhase + legsWalk[unitDir]);
 	}
 	else
 	{
@@ -433,8 +432,8 @@ void UnitSprite::drawRoutine0() // private.
 		else
 			legs = _unitSet->getFrame(unitDir + legsStand);
 
-		rightArm	= _unitSet->getFrame(unitDir + rarmStand);
-		leftArm		= _unitSet->getFrame(unitDir + larmStand);
+		rightArm = _unitSet->getFrame(unitDir + rarmStand);
+		leftArm  = _unitSet->getFrame(unitDir + larmStand);
 	}
 
 	sortHandObjects();
@@ -442,7 +441,7 @@ void UnitSprite::drawRoutine0() // private.
 	if (_itRT != nullptr)
 	{
 		if (_unit->getUnitStatus() == STATUS_AIMING
-			&& (_itRT->getRules()->isTwoHanded() == true
+			&& (   _itRT->getRules()->isTwoHanded() == true
 				|| _itRT->getRules()->getBattleType() == BT_MELEE))
 		{
 			itRT = _itSetRT->getFrame((unitDir + 2) % 8 + _itRT->getRules()->getHandSprite());
@@ -475,7 +474,7 @@ void UnitSprite::drawRoutine0() // private.
 			}
 		}
 
-		if (_itRT->getRules()->isTwoHanded() == true
+		if (   _itRT->getRules()->isTwoHanded() == true
 			|| _itRT->getRules()->getBattleType() == BT_MELEE)
 		{
 			leftArm = _unitSet->getFrame(unitDir + larm2H);
@@ -509,7 +508,7 @@ void UnitSprite::drawRoutine0() // private.
 			rightArm->setY(torsoHandsWeaponY);
 			itRT->setY(itRT->getY() + torsoHandsWeaponY);
 
-			if (_itRT->getRules()->isTwoHanded() == true
+			if (   _itRT->getRules()->isTwoHanded() == true
 				|| _itRT->getRules()->getBattleType() == BT_MELEE)
 			{
 				leftArm->setY(torsoHandsWeaponY);
@@ -546,7 +545,7 @@ void UnitSprite::drawRoutine0() // private.
 		}
 
 		if (_unit->getUnitStatus() == STATUS_AIMING
-			&& (_itLT->getRules()->isTwoHanded() == true
+			&& (   _itLT->getRules()->isTwoHanded() == true
 				|| _itLT->getRules()->getBattleType() == BT_MELEE))
 		{
 			itLT = _itSetLT->getFrame((unitDir + 2) % 8 + _itLT->getRules()->getHandSprite());
@@ -571,7 +570,7 @@ void UnitSprite::drawRoutine0() // private.
 			leftArm->setY(torsoHandsWeaponY);
 			itLT->setY(itLT->getY() + torsoHandsWeaponY);
 
-			if (_itLT->getRules()->isTwoHanded() == true
+			if (   _itLT->getRules()->isTwoHanded() == true
 				|| _itLT->getRules()->getBattleType() == BT_MELEE)
 			{
 				rightArm->setY(torsoHandsWeaponY);
@@ -641,7 +640,7 @@ void UnitSprite::drawRoutine0() // private.
 
 		case 3:
 			if (_unit->getUnitStatus() != STATUS_AIMING
-				&& ((_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
+				&& (   (_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
 					|| (_itLT != nullptr && _itLT->getRules()->isTwoHanded() == true)))
 			{
 				drawRecolored(legs);
@@ -673,7 +672,7 @@ void UnitSprite::drawRoutine0() // private.
 
 		case 5:
 			if (_unit->getUnitStatus() != STATUS_AIMING
-				&& ((_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
+				&& (   (_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
 					|| (_itLT != nullptr && _itLT->getRules()->isTwoHanded() == true)))
 			{
 				drawRecolored(rightArm);
@@ -705,7 +704,7 @@ void UnitSprite::drawRoutine0() // private.
 
 		case 7:
 			if (_unit->getUnitStatus() != STATUS_AIMING
-				&& ((_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
+				&& (   (_itRT != nullptr && _itRT->getRules()->isTwoHanded() == true)
 					|| (_itLT != nullptr && _itLT->getRules()->isTwoHanded() == true)))
 			{
 				drawRecolored(rightArm);

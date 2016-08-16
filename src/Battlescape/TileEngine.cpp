@@ -6488,10 +6488,10 @@ void TileEngine::applyGravity(Tile* const tile) const
 					case MT_FLY:
 						tileDest = unit->getUnitTile();
 						tileDestBelow = _battleSave->getTile(tileDest->getPosition() + Position(0,0,-1));
-						if (tileDest->isFloored(tileDestBelow) == false)
-							unit->setFloating();
-						else
+						if (tileDest->isFloored(tileDestBelow) == true)
 							unit->setFloating(false);
+						else
+							unit->setFloating();
 				}
 			}
 		}
