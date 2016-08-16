@@ -77,7 +77,8 @@ UnitWalkBState::UnitWalkBState(
 		_kneelCheck(true),
 		_playFly(false),
 		_door(false),
-		_tilesLinked(false)
+		_tilesLinked(false),
+		_changeViewlevel(false)
 {
 //	Log(LOG_INFO) << "";
 //	Log(LOG_INFO) << "walkB:cTor id-" << _unit->getId();
@@ -647,7 +648,8 @@ bool UnitWalkBState::statusStand() // private.
 			switch (dir)
 			{
 				case Pathfinding::DIR_DOWN:
-					_walkCamera->setViewLevel(posStart.z - 1);
+					_changeViewlevel = true;
+//					_walkCamera->setViewLevel(posStart.z - 1); // do this on walkPhase= 1
 					break;
 				default:
 					_walkCamera->setViewLevel(posStart.z);
@@ -690,6 +692,12 @@ bool UnitWalkBState::statusWalk() // private.
 						_isVisible == true);
 		//Log(LOG_INFO) << ". . walkB: establishTilesLink()";
 		if (_tilesLinked == false) establishTilesLink();
+
+		if (_changeViewlevel == true && _unit->getWalkPhase() == 1)
+		{
+			_changeViewlevel = false;
+			_walkCamera->setViewLevel(_unit->getStartPosition().z - 1);
+		}
 	}
 	else if (_fall == false) // walked into an unseen unit
 	{

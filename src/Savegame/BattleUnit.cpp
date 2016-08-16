@@ -1104,7 +1104,7 @@ void BattleUnit::startWalking(
 		default:
 			_dir = dir;
 			if (_tile->isFloored(tileBelow) == true // NOTE: The '_tile' is the Tile of only the primary quadrant for large units.
-				&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight TEST
+				&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight
 			{
 				_status = STATUS_WALKING;
 				_floating = false;
@@ -1140,7 +1140,7 @@ void BattleUnit::keepWalking(
 		_dirVertical = Pathfinding::DIR_VERT_NONE;
 
 		if (_tile->isFloored(tileBelow) == true
-			&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight TEST
+			&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight
 		{
 			_floating = false;
 		}
@@ -2756,7 +2756,7 @@ void BattleUnit::setUnitTile(
 			case STATUS_FLYING:
 				if (_dirVertical == Pathfinding::DIR_VERT_NONE // <- wait. What if unit went down onto solid floor.
 					&& _tile->isFloored(tileBelow) == true
-					&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight TEST
+					&& _battleGame->getPathfinding()->getMoveTypePf() != MT_FLY) // static-flight
 				{
 					_status = STATUS_WALKING;
 					_floating = false;
@@ -2780,6 +2780,16 @@ void BattleUnit::setUnitTile(
 Tile* BattleUnit::getUnitTile() const
 {
 	return _tile;
+}
+
+/**
+ * Gets the Tile below this BattleUnit.
+ * WARNING: BattleGame is not instantiated at the start of pre-tactical.
+ * @return, pointer to tile-below (can be nullptr)
+ */
+Tile* BattleUnit::getUnitTileBelow() const
+{
+	return _battleGame->getBattleSave()->getTile(_pos + Position(0,0,-1));
 }
 
 /**

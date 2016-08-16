@@ -1279,10 +1279,10 @@ bool BattlescapeGame::playableUnitSelected() const
 }
 
 /**
- * Toggles the kneel/stand status of a unit.
+ * Toggles the kneel/stand status of a specified BattleUnit.
  * TODO: allow Civilian units to kneel when controlled by medikit or by AI.
  * @param unit - pointer to a BattleUnit
- * @return, true if the action succeeded
+ * @return, true if the toggle succeeded
  */
 bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 {
@@ -1291,41 +1291,32 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 	{
 		if (unit->isMindControlled() == false)
 		{
-			if (unit->isFloating() == false) // This prevents flying soldiers from 'kneeling' .....
+			if (unit->isFloating() == false // This prevents flying soldiers from 'kneeling' .....
+				|| unit->getUnitTile()->isFloored(unit->getUnitTileBelow()) == true) // static-flight
 			{
 				int tu;
 				if (unit->isKneeled() == true)
 					tu = Pathfinding::TU_STAND;
 				else
+				{
 					tu = Pathfinding::TU_KNEEL;
+					if (unit->isFloating() == true) // static-flight
+						++tu; // NOTE: Be careful that this does not equate to TU_STAND.
+				}
 
 //				if (checkReservedTu(unit, tu) == true)
 //					|| (tu == Pathfinding::TU_KNEEL && _battleSave->getKneelReserved() == true))
 //				{
 				if (unit->getTu() >= tu)
 				{
-					if (tu == Pathfinding::TU_KNEEL
-						|| (tu == Pathfinding::TU_STAND
-							&& unit->expendEnergy(std::max(0,
-														   Pathfinding::EN_STAND - unit->getArmor()->getAgility())) == true))
+					if (tu != Pathfinding::TU_STAND
+						|| unit->expendEnergy(std::max(0,
+													   Pathfinding::EN_STAND - unit->getArmor()->getAgility())) == true)
 					{
 						unit->expendTu(tu);
 						unit->kneelUnit(unit->isKneeled() == false);
-						// kneeling or standing up can reveal new terrain or units. I guess. -> sure can!
-						// But updateSoldierInfo() also does does calcFov(), so ...
-//						getTileEngine()->calcFov(unit);
 
 						getMap()->cacheUnitSprite(unit);
-
-//						_parentState->updateSoldierInfo(false); // <- also does calcFov() !
-						// wait... shouldn't one of those calcFoV's actually trigger!! ? !
-						// Hopefully it's done after returning, in another updateSoldierInfo... or newVis check.
-						// So.. I put this in BattlescapeState::btnKneelClick() instead; updates will
-						// otherwise be handled by walking or what have you. Doing it this way conforms
-						// updates/FoV checks with my newVis routines.
-
-//						getTileEngine()->checkReactionFire(unit);
-						// ditto..
 
 						_parentState->toggleKneelButton(unit);
 						return true;
@@ -1336,13 +1327,13 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 				else
 					_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
 //				}
-//				else // note that checkReservedTu() sends its own warnings ....
+//				else // NOTE: checkReservedTu() sends its own warnings.
 //					_parentState->warning("STR_TIME_UNITS_RESERVED");
 			}
 			else
 				_parentState->warning(BattlescapeGame::PLAYER_ERROR[3u]); // not allowed: Float
 		}
-		else //if (unit->getGeoscapeSoldier() != nullptr) // MC'd xCom agent, trying to stand & walk by AI.
+		else // MC'd xCom agent trying to stand & walk by AI.
 		{
 			const int energyCost (std::max(0,
 										   Pathfinding::EN_STAND - unit->getArmor()->getAgility()));

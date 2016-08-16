@@ -48,6 +48,7 @@ private:
 //	static bool _debug;
 
 	bool
+		_changeViewlevel,
 		_door,
 		_fall,
 		_kneelCheck,

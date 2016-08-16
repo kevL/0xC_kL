@@ -594,6 +594,8 @@ private:
 				const Tile* const tileBelow = nullptr);
 		/// Gets the BattleUnit's Tile.
 		Tile* getUnitTile() const;
+		/// Gets the Tile below the BattleUnit.
+		Tile* getUnitTileBelow() const;
 
 		/// Gets the item in the specified slot of the BattleUnit's inventory.
 		BattleItem* getItem(
