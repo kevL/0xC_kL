@@ -220,12 +220,13 @@ void BattlescapeGame::think()
 				if (_playerPanicHandled == false) // not all panicking units have been handled
 				{
 					//Log(LOG_INFO) << ". panic Handled is FALSE";
-					if ((_playerPanicHandled = handlePanickingPlayer()) == true)
+					_battleSave->getBattleState()->updateSoldierInfo(false);		// update HUD.
+					if ((_playerPanicHandled = handlePanickingPlayer()) == true)	// start Player turn.
 					{
 						//Log(LOG_INFO) << ". panic Handled TRUE";
 						getTileEngine()->calcFovTiles_all();
 						getTileEngine()->calcFovUnits_all();
-						_battleSave->getBattleState()->updateSoldierInfo(false); // start Player turn.
+						_battleSave->getBattleState()->updateSoldierInfo(false);	// update HUD.
 					}
 				}
 				else
@@ -1548,29 +1549,27 @@ void BattlescapeGame::endTurn() // private.
 	{
 		_parentState->finishBattle(false, livePlayer);
 	}
+	else if (_battleSave->getTurnLimit() != 0
+		&&   _battleSave->getTurnLimit() < _battleSave->getTurn())
+	{
+		switch (_battleSave->getChronoResult())
+		{
+			case FORCE_WIN:
+				_parentState->finishBattle(false, livePlayer);
+				break;
+
+			case FORCE_LOSE:
+				_battleSave->isAborted(true);
+				_parentState->finishBattle(true, 0);
+				break;
+
+			case FORCE_ABORT:
+				_battleSave->isAborted(true);
+				_parentState->finishBattle(true, tallyPlayerExit());
+		}
+	}
 	else
 	{
-		if (_battleSave->getTurnLimit() != 0
-			&& _battleSave->getTurnLimit() < _battleSave->getTurn())
-		{
-			switch (_battleSave->getChronoResult())
-			{
-				case FORCE_WIN:
-					_parentState->finishBattle(false, livePlayer);
-					break;
-
-				case FORCE_LOSE:
-					_battleSave->isAborted(true);
-					_parentState->finishBattle(true, 0);
-					break;
-
-				case FORCE_ABORT:
-					_battleSave->isAborted(true);
-					_parentState->finishBattle(true, tallyPlayerExit());
-			}
-			return;
-		}
-
 		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != MUST_DESTROY)
 								 || livePlayer  <  1);
 
@@ -1583,7 +1582,7 @@ void BattlescapeGame::endTurn() // private.
 				|| _battleSave->getDebugTac() == true)
 			{
 				setupSelector();
-				if (playableUnitSelected() == true) // ... there's better be a unit selected here!
+				if (playableUnitSelected() == true) // ... there'd better be a unit selected here!
 					getMap()->getCamera()->centerPosition(
 													_battleSave->getSelectedUnit()->getPosition(),
 													false);
@@ -1611,7 +1610,7 @@ void BattlescapeGame::endTurn() // private.
 					// no break;
 				case FACTION_HOSTILE:
 				case FACTION_PLAYER:
-//					_parentState->getGame()->delayBlit(); // TODO: Move this to NextTurnState::ctor and out of the core-engine cycle.
+//					_parentState->getGame()->delayBlit(); // DONE: Move this to NextTurnState::ctor and out of the core-engine cycle.
 					_parentState->getGame()->pushState(new NextTurnState(
 																	_battleSave,
 																	_parentState,
