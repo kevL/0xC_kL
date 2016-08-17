@@ -1301,7 +1301,10 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 				{
 					tu = Pathfinding::TU_KNEEL;
 					if (unit->isFloating() == true)									// static-flight
+					{
+						unit->setFloating(false);									// TODO: rethink BattleUnit::_floating var.
 						++tu;														// NOTE: Be careful that this does not equate to TU_STAND.
+					}
 				}
 
 //				if (checkReservedTu(unit, tu) == true)
