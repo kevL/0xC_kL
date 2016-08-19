@@ -52,7 +52,9 @@
 #include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
 
+#include "../Interface/Bar.h"
 #include "../Interface/Cursor.h"
+#include "../Interface/NumberText.h"
 #include "../Interface/Text.h"
 
 #include "../Resource/ResourcePack.h"
@@ -2858,9 +2860,20 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				const Tile* const tile (_playerAction.actor->getUnitTile());
 				if (tile->isFloored(tile->getTileBelow(_battleSave)) == true)
 				{
-					_playerAction.actor->setFloating(false);
-					_playerAction.actor->setCacheInvalid();
-					_parentState->getMap()->cacheUnitSprite(_playerAction.actor);
+					if (_playerAction.actor->expendTu(1) == true)
+					{
+						_playerAction.actor->setFloating(false);
+						_playerAction.actor->setCacheInvalid();
+						_parentState->getMap()->cacheUnitSprite(_playerAction.actor);
+
+						double stat (static_cast<double>(_playerAction.actor->getBattleStats()->tu));
+						const int tu (_playerAction.actor->getTu());
+						_parentState->getTuField()->setValue(static_cast<unsigned>(tu));
+						_parentState->getTuBar()->setValue(std::ceil(
+														   static_cast<double>(tu) / stat * 100.));
+					}
+					else
+						_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
 				}
 			}
 		}

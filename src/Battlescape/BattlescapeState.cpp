@@ -1777,7 +1777,7 @@ void BattlescapeState::btnUnitDownPress(Action*)
 		{
 			case FLY_CANT:
 			case FLY_BLOCKED:
-				warning(BattlescapeGame::PLAYER_ERROR[14]);
+				warning(BattlescapeGame::PLAYER_ERROR[14u]);
 				break;
 
 			case FLY_GRAVLIFT:
@@ -3682,8 +3682,8 @@ Map* BattlescapeState::getMap() const
 }
 
 /**
- * Shows a debug message in the topleft corner.
- * @param wst - reference a debug message
+ * Prints a debug-message onScreen.
+ * @param wst - reference to a widestring
  */
 void BattlescapeState::printDebug(const std::wstring& wst)
 {
@@ -3692,7 +3692,7 @@ void BattlescapeState::printDebug(const std::wstring& wst)
 }
 
 /**
- * Shows a warning message.
+ * Shows a red warning message that fades overlaid on the HUD-icons.
  * @note Currently uses 'arg' only to show psi-percent & fuse-timer.
  * @param st	- reference to a message-string usually a warning
  * @param arg	- the argument to show as an integer (default INT_MAX)

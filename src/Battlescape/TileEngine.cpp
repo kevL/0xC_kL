@@ -6355,7 +6355,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				}
 			}
 			else if (action->actor->getFaction() == FACTION_PLAYER)
-				_battleSave->getBattleState()->warning(BattlescapeGame::PLAYER_ERROR[11]); // psi-immune
+				_battleSave->getBattleState()->warning(BattlescapeGame::PLAYER_ERROR[11u]); // psi-immune
 		}
 	}
 

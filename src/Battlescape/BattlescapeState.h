@@ -449,9 +449,9 @@ private:
 		/// Gets map.
 		Map* getMap() const;
 
-		/// Show debug message onScreen.
+		/// Prints a debug-message onScreen.
 		void printDebug(const std::wstring& wst);
-		/// Show warning message.
+		/// Shows a red warning message that fades overlaid on the HUD-icons.
 		void warning(
 				const std::string& st,
 				int arg = std::numeric_limits<int>::max());

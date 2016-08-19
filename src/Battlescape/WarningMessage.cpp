@@ -125,7 +125,7 @@ void WarningMessage::setPalette(
 
 /**
  * Displays this WarningMessage.
- * @param wst - reference a message string
+ * @param wst - reference to a widestring
  */
 void WarningMessage::showMessage(const std::wstring& wst)
 {
