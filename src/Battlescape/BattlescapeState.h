@@ -464,7 +464,7 @@ private:
 		/// Shows the launch button.
 		void showLaunchButton(bool show = true);
 		/// Shows the PSI button.
-		void showPsiButton(bool show = true);
+		void showPsiButton(bool show);
 
 		/// Clears mouse-scrolling.
 		void clearMouseScroll();

@@ -67,7 +67,7 @@ CraftSoldiersState::CraftSoldiersState(
 	:
 		_base(base),
 		_craft(base->getCrafts()->at(craftId)),
-		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1)
+		_isQuickBattle(_game->getSavedGame()->getMonthsElapsed() == -1)
 {
 	_window			= new Window(this, 320, 200);
 
@@ -253,7 +253,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 			(*i)->setCraft(
 						nullptr,
 						_base,
-						_game->getSavedGame()->getMonthsPassed() == -1);
+						_game->getSavedGame()->getMonthsElapsed() == -1);
 	}
 
 	_base->setRecallRow(
@@ -297,7 +297,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 					sol->setCraft(
 								_craft,
 								_base,
-								_game->getSavedGame()->getMonthsPassed() == -1);
+								_game->getSavedGame()->getMonthsElapsed() == -1);
 					_lstSoldiers->setCellText(
 											r, 2u,
 											_craft->getLabel(_game->getLanguage()));
@@ -312,7 +312,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 						sol->setCraft(
 									nullptr,
 									_base,
-									_game->getSavedGame()->getMonthsPassed() == -1);
+									_game->getSavedGame()->getMonthsElapsed() == -1);
 						_lstSoldiers->setCellText(
 												r, 2u,
 												tr("STR_NONE_UC"));
@@ -469,7 +469,7 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	SavedBattleGame* const battleSave (new SavedBattleGame());
+	SavedBattleGame* const battleSave (new SavedBattleGame(_game->getSavedGame()));
 	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);

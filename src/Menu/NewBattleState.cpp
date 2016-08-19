@@ -547,6 +547,7 @@ void NewBattleState::btnOkClick(Action*)
 	}
 
 	SavedBattleGame* const battleSave (new SavedBattleGame(
+														_game->getSavedGame(),
 														nullptr, // &_rules->getOperations(),
 														_rules));
 	_game->getSavedGame()->setBattleSave(battleSave);

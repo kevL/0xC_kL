@@ -230,7 +230,7 @@ SavedGame::~SavedGame()
 			++i)
 		delete *i;
 
-	delete _battleSave;
+	if (_battleSave != nullptr) delete _battleSave;
 }
 
 /**
@@ -634,9 +634,12 @@ void SavedGame::load(
 	if (const YAML::Node& battle = doc["battleGame"])
 	{
 		Log(LOG_INFO) << "SavedGame: loading tactical";
-		_battleSave = new SavedBattleGame(nullptr, _rules);
+		_battleSave = new SavedBattleGame(
+									this,
+									nullptr,
+									_rules);
 //		Ruleset* const rules (const_cast<Ruleset*>(_rules)); // strip const.
-		_battleSave->load(battle, rules, this);
+		_battleSave->load(battle, rules);
 		Log(LOG_INFO) << "SavedGame: loading tactical DONE";
 	}
 }
@@ -1258,15 +1261,6 @@ std::vector<TerrorSite*>* SavedGame::getTerrorSites()
 }
 
 /**
- * Get pointer to the SavedBattleGame object.
- * @return, pointer to the SavedBattleGame
- */
-SavedBattleGame* SavedGame::getBattleSave()
-{
-	return _battleSave;
-}
-
-/**
  * Set SavedBattleGame object.
  * @param battleSave - pointer to a SavedBattleGame (default nullptr)
  */
@@ -1276,6 +1270,15 @@ void SavedGame::setBattleSave(SavedBattleGame* const battleSave)
 		delete _battleSave;
 
 	_battleSave = battleSave;
+}
+
+/**
+ * Get pointer to the SavedBattleGame object.
+ * @return, pointer to the SavedBattleGame
+ */
+SavedBattleGame* SavedGame::getBattleSave()
+{
+	return _battleSave;
 }
 
 /**
@@ -2228,7 +2231,7 @@ Region* SavedGame::locateRegion(const Target& target) const
  * Gets the month-count.
  * @return, the month-count
  */
-int SavedGame::getMonthsPassed() const
+int SavedGame::getMonthsElapsed() const
 {
 	return _monthsPassed;
 }

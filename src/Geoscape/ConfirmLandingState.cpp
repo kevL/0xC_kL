@@ -380,6 +380,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 	AlienBase* const alienBase (dynamic_cast<AlienBase*>(_craft->getDestination()));
 
 	SavedBattleGame* const battleSave (new SavedBattleGame(
+													_game->getSavedGame(),
 													&_game->getRuleset()->getOperations(),
 													_game->getRuleset()));
 	_game->getSavedGame()->setBattleSave(battleSave);

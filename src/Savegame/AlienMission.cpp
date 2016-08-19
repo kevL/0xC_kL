@@ -211,7 +211,7 @@ void AlienMission::setRegion(
  * this on a finished mission has no effect.
  * @param minutes - the minutes until the next UFO wave will spawn
  */
-void AlienMission::setWaveCountdown(int minutes)
+void AlienMission::setCountdown(int minutes)
 {
 //	assert(minutes != 0 && minutes % 30 == 0);
 	if (isOver() == false)
@@ -249,7 +249,7 @@ void AlienMission::start(int countdown)
 	switch (countdown)
 	{
 		case 0:
-			calcCountdown(0u);
+			initiateCountdown(0u);
 			break;
 		default:
 			_spawnTime = countdown;
@@ -331,7 +331,7 @@ void AlienMission::think(
 				case alm_RETAL:
 				case alm_SUPPLY:
 					if (_waveCount != _missionRule.getWaveTotal())
-						calcCountdown(_waveCount);
+						initiateCountdown(_waveCount);
 			}
 		}
 	}
@@ -342,7 +342,7 @@ void AlienMission::think(
  * @note These come in increments of 30sec (or min?) apiece.
  * @param waveId - the wave to check
  */
-void AlienMission::calcCountdown(size_t waveId) // private.
+void AlienMission::initiateCountdown(size_t waveId) // private.
 {
 	_spawnTime = _missionRule.getWave(waveId).spawnTimer / 30;
 	_spawnTime = (RNG::generate(0, _spawnTime) + (_spawnTime >> 1u)) * 30;
@@ -961,7 +961,7 @@ void AlienMission::ufoShotDown(const Ufo& ufo)
 		case Ufo::CRASHED:
 		case Ufo::DESTROYED:
 			if (_waveCount != _missionRule.getWaveTotal())
-				_spawnTime += (RNG::generate(0,48) + 400) * 30; // delay next wave
+				_spawnTime += (RNG::generate(0,400) + 48) * 30; // delay the next wave
 	}
 }
 
@@ -1111,17 +1111,17 @@ void AlienMission::addScore( // private.
 			case alm_INFILT:
 			case alm_BASE:
 				aLienPts += static_cast<int>(_gameSave.getDifficulty()) * 20	// TODO: Instead of '20' use a UFO-size modifier. 'Cause this
-						 + (_gameSave.getMonthsPassed() << 1u);					// is gonna rack up *huge pts* in ufoLifting() as it is now.
+						 + (_gameSave.getMonthsElapsed() << 1u);				// is gonna rack up *huge pts* in ufoLifting() as it is now.
 				break;
 
 			case alm_SUPPLY:
 				aLienPts += static_cast<int>(_gameSave.getDifficulty()) * 10
-						 + (_gameSave.getMonthsPassed() >> 1u);
+						 + (_gameSave.getMonthsElapsed() >> 1u);
 				break;
 
 			case alm_SCORE:
 				aLienPts += (static_cast<int>(_gameSave.getDifficulty()) << 1u)
-						 + _gameSave.getMonthsPassed();
+						 + _gameSave.getMonthsElapsed();
 		}
 		_gameSave.scorePoints(lon,lat, aLienPts, true);
 	}

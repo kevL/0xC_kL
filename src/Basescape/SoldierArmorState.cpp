@@ -124,7 +124,7 @@ SoldierArmorState::SoldierArmorState(
 				_armors.push_back(arRule);
 
 				std::wostringstream woststr;
-				if (_game->getSavedGame()->getMonthsPassed() != -1)
+				if (_game->getSavedGame()->getMonthsElapsed() != -1)
 					woststr << _base->getStorageItems()->getItemQuantity(arRule->getStoreItem());
 				else
 					woststr << L"-";
@@ -165,7 +165,7 @@ void SoldierArmorState::btnCancelClick(Action*)
  */
 void SoldierArmorState::lstArmorClick(Action*)
 {
-	if (_game->getSavedGame()->getMonthsPassed() != -1)
+	if (_game->getSavedGame()->getMonthsElapsed() != -1)
 	{
 		if (_sol->getArmor()->isBasic() == false)
 			_base->getStorageItems()->addItem(_sol->getArmor()->getStoreItem());

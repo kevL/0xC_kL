@@ -67,7 +67,7 @@ private:
 		_agility,
 
 		_firePhase,
-		_deathFrames,
+		_collapseFrames,
 		_shootFrames,
 
 		_frontArmor,
@@ -161,7 +161,7 @@ private:
 		int getWeight() const;
 
 		/// Gets number of death frames.
-		int getDeathFrames() const;
+		int getCollapseFrames() const;
 		/// Gets number of shoot frames.
 		int getShootFrames() const;
 		/// Gets the frame of an Armor's aiming-animation that first shows a projectile.

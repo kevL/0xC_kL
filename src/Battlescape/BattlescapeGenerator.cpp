@@ -941,7 +941,7 @@ void BattlescapeGenerator::nextStage()
 /**
  * Determines and sets the latency-status of a specified BattleUnit at the start
  * of next-stage tactical battles.
- * TODO: Latent units probably can and should be put through BattleUnit::putDown().
+ * TODO: Latent units probably can and should be put through BattleUnit::putdown().
  * @param unit - pointer to a BattleUnit
  */
 void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
@@ -1094,7 +1094,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
 			//Log(LOG_INFO) << ". . addPlayerUnit id-" << (*i)->getId();
-			BattleUnit* const unit (addPlayerUnit(new BattleUnit(*i, _gameSave->getDifficulty())));
+			BattleUnit* const unit (addPlayerUnit(new BattleUnit(*i, _battleSave)));
 			if (unit != nullptr)
 			{
 				unit->setBattleOrder(++_battleOrder);
@@ -1157,7 +1157,7 @@ void BattlescapeGenerator::deployXcom() // private.
 
 		// Add only items in Craft that are at the Base for skirmish mode; ie.
 		// Do NOT add items from the Base itself in skirmish mode.
-		if (_gameSave->getMonthsPassed() != -1)									// Add items that are at the Base.
+		if (_gameSave->getMonthsElapsed() != -1)								// Add items that are at the Base.
 		{
 			//Log(LOG_INFO) << "";
 			//Log(LOG_INFO) << ". . addBaseItems";
@@ -1436,7 +1436,8 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 															unitRule,
 															FACTION_PLAYER,
 															_unitSequence++,
-															_rules->getArmor(unitRule->getArmorType()))));
+															_rules->getArmor(unitRule->getArmorType()),
+															_battleSave)));
 	if (supportUnit != nullptr)
 	{
 		supportUnit->setTurretType(vehicle->getRules()->getTurretType());
@@ -1937,7 +1938,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
  */
 void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDeploy) // private.
 {
-	int elapsed (_gameSave->getMonthsPassed());
+	int elapsed (_gameSave->getMonthsElapsed());
 	if (elapsed != -1)
 	{
 		const int levelHigh (static_cast<int>(_rules->getAlienItemLevels().size()) - 1);
@@ -2116,14 +2117,12 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 		int aLienRank,
 		bool outside)
 {
-	const DifficultyLevel diff (_gameSave->getDifficulty());
 	BattleUnit* const unit (new BattleUnit(
 										unitRule,
 										FACTION_HOSTILE,
 										_unitSequence++,
 										_rules->getArmor(unitRule->getArmorType()),
-										diff,
-										_gameSave->getMonthsPassed()));
+										_battleSave));
 
 	if (aLienRank > 7) // safety to avoid index out of bounds errors
 		aLienRank = 7;
@@ -2165,7 +2164,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 
 		const Position posCraft (_unitList->at(0u)->getPosition()); // aLiens face Craft
 		int dir;
-		if (RNG::percent((diff + 1) * 20) == true
+		if (RNG::percent((_gameSave->getDifficulty() + 1) * 20) == true
 			&& TileEngine::distance(
 								node->getPosition(),
 								posCraft) < 25)
@@ -2224,7 +2223,8 @@ void BattlescapeGenerator::addCivilian(RuleUnit* const unitRule) // private.
 										unitRule,
 										FACTION_NEUTRAL,
 										_unitSequence++,
-										_rules->getArmor(unitRule->getArmorType())));
+										_rules->getArmor(unitRule->getArmorType()),
+										_battleSave));
 
 	Node* const node (_battleSave->getSpawnNode(NR_SCOUT, unit));
 	if ((node != nullptr && _battleSave->setUnitPosition(

@@ -381,7 +381,7 @@ private:
 		void dropUnitInventory(BattleUnit* const unit);
 
 		/// Converts a BattleUnit into a different type of BattleUnit.
-		BattleUnit* convertUnit(BattleUnit* potato);
+		void convertUnit(BattleUnit* potato);
 
 		/// Gets the battlefield Map.
 		Map* getMap() const;

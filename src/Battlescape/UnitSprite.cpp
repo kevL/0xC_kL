@@ -330,7 +330,7 @@ void UnitSprite::drawRoutine0() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -764,7 +764,7 @@ void UnitSprite::drawRoutine1() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -1092,7 +1092,7 @@ void UnitSprite::drawRoutine4() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		sprite = _unitSet->getFrame(_unit->getCollapsePhase() + die);
 		sprite->setX(OFFSET);
 		drawRecolored(sprite);
 		return;
@@ -1279,7 +1279,7 @@ void UnitSprite::drawRoutine6() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -1533,7 +1533,7 @@ void UnitSprite::drawRoutine7() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -1626,7 +1626,7 @@ void UnitSprite::drawRoutine8() // private.
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+			sprite = _unitSet->getFrame(_unit->getCollapsePhase() + die);
 			break;
 
 		case STATUS_AIMING:
@@ -1658,7 +1658,7 @@ void UnitSprite::drawRoutine9() // private.
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			sprite = _unitSet->getFrame(_unit->getCollapsingPhase() + die);
+			sprite = _unitSet->getFrame(_unit->getCollapsePhase() + die);
 			break;
 
 		case STATUS_AIMING:

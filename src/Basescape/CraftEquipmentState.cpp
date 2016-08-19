@@ -75,7 +75,7 @@ CraftEquipmentState::CraftEquipmentState(
 		_row(0u),
 		_unitOrder(0u),
 		_recall(0u),
-		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1)
+		_isQuickBattle(_game->getSavedGame()->getMonthsElapsed() == -1)
 {
 	_window			= new Window(this, 320, 200);
 
@@ -683,7 +683,7 @@ void CraftEquipmentState::btnInventoryClick(Action*) // private.
 {
 	_recall = _lstEquipment->getScroll();
 
-	SavedBattleGame* const battleSave (new SavedBattleGame());
+	SavedBattleGame* const battleSave (new SavedBattleGame(_game->getSavedGame()));
 	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);

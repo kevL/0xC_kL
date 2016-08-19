@@ -1083,7 +1083,7 @@ void GeoscapeState::init()
 
 	_globe->unsetNewBaseHover();
 
-	if (_gameSave->getMonthsPassed() == -1							// run once
+	if (_gameSave->getMonthsElapsed() == -1							// run once
 		&& _gameSave->getBases()->empty() == false					// as long as there's a base
 		&& _gameSave->getBases()->front()->isBasePlaced() == true)	// THIS prevents missions running prior to the first base being placed.
 	{
@@ -1235,7 +1235,7 @@ void GeoscapeState::updateTimeDisplay()
 {
 	_txtFunds->setText(Text::formatCurrency(_gameSave->getFunds()));
 
-	if (_gameSave->getMonthsPassed() != -1) // update Player's current score
+	if (_gameSave->getMonthsElapsed() != -1) // update Player's current score
 	{
 		const size_t id (_gameSave->getFundsList().size() - 1u); // use fundsList to determine which entries in other vectors to use for the current month.
 
@@ -1472,7 +1472,7 @@ void GeoscapeState::time5Seconds()
 						{
 							resetTimer();
 
-							mission->setWaveCountdown((RNG::generate(0,48) + 400) * 30);
+							mission->setCountdown((RNG::generate(0,400) + 48) * 30);
 							(*i)->setDestination();
 
 							if (base->setupBaseDefense() == true)
@@ -2345,7 +2345,7 @@ void GeoscapeState::time30Minutes()
  */
 void GeoscapeState::scoreUfos(bool hour) const // private.
 {
-	const int basic (((_gameSave->getMonthsPassed() + 2) >> 2u)
+	const int basic (((_gameSave->getMonthsElapsed() + 2) >> 2u)
 					 + static_cast<int>(_gameSave->getDifficulty())); // basic score
 	int score;
 	for (std::vector<Ufo*>::const_iterator
@@ -2397,7 +2397,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // pri
 
 	const int
 		diff (static_cast<int>(_gameSave->getDifficulty())),
-		elapsed (_gameSave->getMonthsPassed());
+		elapsed (_gameSave->getMonthsElapsed());
 	int score;
 
 	if (terrorSite->getSecondsLeft() > 1799)
@@ -2989,7 +2989,7 @@ void GeoscapeState::time1Day()
 
 	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
 																alm_BASE,
-																static_cast<size_t>(_gameSave->getMonthsPassed())));
+																static_cast<size_t>(_gameSave->getMonthsElapsed())));
 	const int aLienPts ((missionRule->getMissionScore() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
 	if (aLienPts != 0)
 	{
@@ -3756,7 +3756,10 @@ void GeoscapeState::baseDefenseTactical(
 
 	if (base->getAvailableSoldiers() != 0)
 	{
-		SavedBattleGame* const battleSave (new SavedBattleGame(&_rules->getOperations(), _rules));
+		SavedBattleGame* const battleSave (new SavedBattleGame(
+														_game->getSavedGame(),
+														&_rules->getOperations(),
+														_rules));
 		_gameSave->setBattleSave(battleSave);
 		battleSave->setTacticalType("STR_BASE_DEFENSE");
 
@@ -3777,7 +3780,7 @@ void GeoscapeState::baseDefenseTactical(
  */
 void GeoscapeState::deterAlienMissions() // private.
 {
-	const int elapsed (_gameSave->getMonthsPassed());
+	const int elapsed (_gameSave->getMonthsElapsed());
 
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
 	std::vector<RuleMissionScript*> availableMissions;
@@ -3880,7 +3883,7 @@ void GeoscapeState::deterAlienMissions() // private.
  */
 bool GeoscapeState::processDirective(RuleMissionScript* const directive) // private.
 {
-	const size_t elapsed (static_cast<size_t>(_gameSave->getMonthsPassed()));
+	const size_t elapsed (static_cast<size_t>(_gameSave->getMonthsElapsed()));
 
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
 	const RuleAlienMission* missionRule;
@@ -4194,7 +4197,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 
 		// Choose race for this mission.
 		const RuleAlienMission& missionRule = *_rules->getAlienMission(mission);
-		const std::string& race = missionRule.generateRace(_gameSave->getMonthsPassed());
+		const std::string& race = missionRule.generateRace(_gameSave->getMonthsElapsed());
 
 		AlienMission* const alienMission = new AlienMission(
 														missionRule,
@@ -4232,7 +4235,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
 		alienMission->setRegion(
 							region,
 							*_rules);
-		const std::string sectoid = missionRule.getTopRace(_gameSave->getMonthsPassed());
+		const std::string sectoid = missionRule.getTopRace(_gameSave->getMonthsElapsed());
 		alienMission->setRace(sectoid);
 		alienMission->start(150);
 
@@ -4252,7 +4255,7 @@ void GeoscapeState::setupLandMission() // private.
 {
 	const RuleAlienMission& missionRule = *_rules->getMissionRand(
 															alm_TERROR,
-															_gameSave->getMonthsPassed());
+															_gameSave->getMonthsElapsed());
 
 	// Determine a random region with a valid mission zone and no mission already running.
 	const RuleRegion* regRule = nullptr; // avoid VC++ linker warning.
@@ -4294,7 +4297,7 @@ void GeoscapeState::setupLandMission() // private.
 		mission->setRegion(
 						regRule->getType(),
 						*_rules);
-		const std::string& race = missionRule.generateRace(static_cast<size_t>(_gameSave->getMonthsPassed()));
+		const std::string& race = missionRule.generateRace(static_cast<size_t>(_gameSave->getMonthsElapsed()));
 		mission->setRace(race);
 		mission->start(150);
 

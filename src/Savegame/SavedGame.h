@@ -350,11 +350,10 @@ private:
 		/// Gets the list of current mission-sites.
 		std::vector<TerrorSite*>* getTerrorSites();
 
-		/// Gets the current SavedBattleGame.
-		SavedBattleGame* getBattleSave();
 		/// Sets the current SavedBattleGame.
 		void setBattleSave(SavedBattleGame* const battleSave = nullptr);
-
+		/// Gets the current SavedBattleGame.
+		SavedBattleGame* getBattleSave();
 
 		/// Gets the ResearchGenerals.
 		std::vector<ResearchGeneral*>& getResearchGenerals();
@@ -455,7 +454,7 @@ private:
 				const Target& target) const;
 
 		/// Gets the month-count.
-		int getMonthsPassed() const;
+		int getMonthsElapsed() const;
 		/// Increments the month-count.
 		void addMonth();
 

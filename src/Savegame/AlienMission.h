@@ -74,7 +74,7 @@ private:
 	SavedGame& _gameSave;
 
 	/// Calculates time remaining until the next wave generates.
-	void calcCountdown(size_t waveId);
+	void initiateCountdown(size_t waveId);
 
 	/// Spawns a UFO based on the mission rules.
 	Ufo* createUfo(
@@ -155,7 +155,7 @@ private:
 //		size_t getWaveCountdown() const
 //		{ return _spawnTime; }
 		/// Sets the minutes until next wave spawns.
-		void setWaveCountdown(int minutes);
+		void setCountdown(int minutes);
 
 		/// Gets the wave of a UFO in the agenda of the AlienMission.
 		size_t getWaveCount()

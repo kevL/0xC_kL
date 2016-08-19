@@ -282,7 +282,7 @@ void SoldiersState::btnEquipClick(Action*)
 					RCL_SOLDIER,
 					_lstSoldiers->getScroll());
 
-	SavedBattleGame* const battleSave (new SavedBattleGame());
+	SavedBattleGame* const battleSave (new SavedBattleGame(_game->getSavedGame()));
 	_game->getSavedGame()->setBattleSave(battleSave);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);

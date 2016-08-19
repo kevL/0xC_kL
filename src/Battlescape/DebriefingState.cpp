@@ -90,7 +90,7 @@ DebriefingState::DebriefingState()
 		_unitList(_game->getSavedGame()->getBattleSave()->getUnits()),
 		_aborted(_game->getSavedGame()->getBattleSave()->isAborted()),
 		_diff(static_cast<int>(_game->getSavedGame()->getDifficulty())),
-		_isQuickBattle(_game->getSavedGame()->getMonthsPassed() == -1),
+		_isQuickBattle(_game->getSavedGame()->getMonthsElapsed() == -1),
 		_region(nullptr),
 		_country(nullptr),
 		_base(nullptr),

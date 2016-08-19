@@ -163,9 +163,6 @@ private:
 				int* partSetId,
 				MapDataType partType) const;
 
-		/// Gets the Tile below this Tile.
-		Tile* getTileBelow(const SavedBattleGame* const battleSave) const;
-
 		/// Gets whether the Tile has no objects
 		bool isVoid(
 				const bool testInventory = true,
@@ -178,6 +175,9 @@ private:
 
 		/// Checks if the Tile has a solid floor.
 		bool isFloored(const Tile* const tileBelow = nullptr) const;
+
+		/// Gets the Tile below this Tile.
+		Tile* getTileBelow(const SavedBattleGame* const battleSave) const;
 
 		/// Checks if the Tile is a big wall.
 //		bool isBigWall() const;

@@ -957,7 +957,7 @@ void InventoryState::btnClearGroundClick(Action*)
 				_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
 
 				Base* const base (craft->getBase());
-				const bool isQuickBattle (_game->getSavedGame()->getMonthsPassed() == -1);
+				const bool isQuickBattle (_game->getSavedGame()->getMonthsElapsed() == -1);
 
 				BattleItem* load;
 

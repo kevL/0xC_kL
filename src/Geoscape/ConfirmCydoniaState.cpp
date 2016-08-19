@@ -107,6 +107,7 @@ void ConfirmCydoniaState::btnYesClick(Action*)
 	_game->popState();
 
 	SavedBattleGame* const battleSave (new SavedBattleGame(
+													_game->getSavedGame(),
 													&_game->getRuleset()->getOperations(),
 													_game->getRuleset()));
 	_game->getSavedGame()->setBattleSave(battleSave);

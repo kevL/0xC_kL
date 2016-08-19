@@ -40,6 +40,10 @@
 namespace OpenXcom
 {
 
+// TODO: GET RID OF THIS STATE and disallow units from walking over/falling onto
+// other units via Pathfinding and AI.
+
+
 /**
  * Sets up the UnitFallBState.
  * @param parent - pointer to the BattlescapeGame
@@ -386,7 +390,7 @@ void UnitFallBState::think()
 					if (escape == false)
 					{
 						//Log(LOG_INFO) << ". . . NOT escape";
-						unitBelow->knockOut();
+//						unitBelow->knockOut(); // needs conversion check. THIS FUNCTION HAS BEEN REMOVED.
 						j = _unitsToMove.erase(j);
 					}
 				}

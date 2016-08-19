@@ -108,6 +108,7 @@ private:
 		* _selectedUnit,
 		* _recallUnit;
 	Pathfinding* _pf;
+	SavedGame* _gameSave;
 	Tile
 		* _equiptTile,
 		** _tiles;
@@ -161,21 +162,21 @@ private:
 	public:
 		static const size_t SEARCH_SIZE = (SEARCH_DIST * SEARCH_DIST);
 
-		/// Creates a new battle save based on the current generic save.
-		explicit SavedBattleGame(
+		/// Creates a SavedBattleGame based on the current SavedGame.
+		SavedBattleGame(
+				SavedGame* const gameSave,
 				const std::vector<OperationPool*>* const titles = nullptr,
 				const Ruleset* const rules = nullptr);
-		/// Cleans up the saved game.
+		/// Cleans up the SavedBattleGame.
 		~SavedBattleGame();
 
-		/// Loads a saved battle game from YAML.
+		/// Loads the SavedBattleGame from YAML.
 		void load(
 				const YAML::Node& node,
-				Ruleset* const rules,
-				const SavedGame* const gameSave);
+				Ruleset* const rules);
 		/// Load map resources.
 		void loadMapResources(const Game* const game);
-		/// Saves a saved battle game to YAML.
+		/// Saves the SavedBattleGame to YAML.
 		YAML::Node save() const;
 
 		/// Gets a pointer to the tiles.
@@ -189,12 +190,12 @@ private:
 		/// Initialises the Pathfinding and TileEngine.
 		void initUtilities(const ResourcePack* const res);
 
+		/// Sets the tactical-type.
+		void setTacticalType(const std::string& type);
+		/// Gets the tactical-type.
+		std::string getTacticalType() const;
 		/// Gets the TacticalType of this battle.
 		TacticalType getTacType() const;
-		/// Sets the mission type.
-		void setTacticalType(const std::string& type);
-		/// Gets the mission type.
-		std::string getTacticalType() const;
 
 		/// Sets the global shade.
 		void setTacticalShade(int shade);

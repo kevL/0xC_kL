@@ -293,16 +293,6 @@ void Tile::getMapData(
 }
 
 /**
- * Gets the Tile below this Tile.
- * @param battleSave - pointer to the SavedBattleGame
- * @return, pointer to tile-below (can be nullptr)
- */
-Tile* Tile::getTileBelow(const SavedBattleGame* const battleSave) const
-{
-	return battleSave->getTile(_pos + Position(0,0,-1));
-}
-
-/**
  * Gets whether this Tile has no objects.
  * @note The function does not check for a BattleUnit in this Tile.
  * @param testInventory - true to check for inventory items (default true)
@@ -378,6 +368,16 @@ bool Tile::isFloored(const Tile* const tileBelow) const
 		return (_parts[O_FLOOR]->isNoFloor() == false);
 
 	return false;
+}
+
+/**
+ * Gets the Tile below this Tile.
+ * @param battleSave - pointer to the SavedBattleGame
+ * @return, pointer to tile-below (can be nullptr)
+ */
+Tile* Tile::getTileBelow(const SavedBattleGame* const battleSave) const
+{
+	return battleSave->getTile(_pos + Position(0,0,-1));
 }
 
 /**
@@ -1170,8 +1170,8 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 
 							if (unit->getHealth() == 0)
 							{
-								unit->instaKill();
-								unit->killerFaction(unit->getFaction()); // killed by self ....
+								unit->putdown(true);
+								unit->killerFaction(FACTION_NONE);
 							}
 						}
 						done = (++i == _inventory.end());

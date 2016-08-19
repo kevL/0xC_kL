@@ -94,7 +94,7 @@ TileEngine::TileEngine(
 }
 
 /**
- * Deletes the TileEngine.
+ * Deletes this TileEngine.
  */
 TileEngine::~TileEngine()
 {
@@ -2223,7 +2223,7 @@ void TileEngine::hit(
 						|| targetUnit->getUnitRules()->getRace() == "STR_CIVILIAN")
 					&& targetUnit->getSpawnType().empty() == true)
 				{
-					targetUnit->setSpawnUnit(infection);
+					targetUnit->setSpawnType(infection);
 				}
 
 				if (melee == false
@@ -2627,9 +2627,9 @@ void TileEngine::explode(
 								{
 									//Log(LOG_INFO) << "pos " << tileStop->getPosition();
 									//Log(LOG_INFO) << ". . INVENTORY: Item = " << (*i)->getRules()->getType();
-									if ((bu = (*i)->getBodyUnit()) != nullptr
-										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
-										&& bu->getTakenExpl() == false)
+									if ((bu = (*i)->getBodyUnit()) != nullptr			// NOTE: This will send the unit through checkCasualties()
+										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS	// to log the kill in attacker's Diary and do morale but will
+										&& bu->getTakenExpl() == false)					// bypass UnitDieBState and its death-notice (no convert).
 									{
 										//Log(LOG_INFO) << ". . . vs Unit unconscious";
 										bu->setTakenExpl();
@@ -2648,8 +2648,7 @@ void TileEngine::explode(
 
 										if (bu->getHealth() == 0)
 										{
-											//Log(LOG_INFO) << ". . . . INVENTORY: instaKill";
-//											bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
+											//Log(LOG_INFO) << ". . . . INVENTORY: dead";
 											if (attacker != nullptr)
 											{
 												bu->killerFaction(attacker->getFaction());
@@ -2685,23 +2684,23 @@ void TileEngine::explode(
 										//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
 										_battleSave->toDeleteItem(*i);
 										break;
-/*										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
-										{
-											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
-											(*i)->setFuse(-2);
-											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
-											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
-																										_battleSave->getBattleGame(),
-																										explVoxel,
-																										(*i)->getRules(),
-																										attacker));
-										}
-										else if ((*i)->getFuse() != -2)
-										{
-											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
-											_battleSave->toDeleteItem(*i);
-											break;
-										} */
+//										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
+//										{
+//											//Log(LOG_INFO) << ". . . . INVENTORY: primed grenade";
+//											(*i)->setFuse(-2);
+//											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
+//											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
+//																										_battleSave->getBattleGame(),
+//																										explVoxel,
+//																										(*i)->getRules(),
+//																										attacker));
+//										}
+//										else if ((*i)->getFuse() != -2)
+//										{
+//											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
+//											_battleSave->toDeleteItem(*i);
+//											break;
+//										}
 									}
 									//else Log(LOG_INFO) << ". . . INVENTORY: bypass item = " << (*i)->getRules()->getType();
 									done = (++i == tileStop->getInventory()->end());
@@ -2831,9 +2830,9 @@ void TileEngine::explode(
 										i != tileFire->getInventory()->end();
 										)
 								{
-									if ((bu = (*i)->getBodyUnit()) != nullptr
-										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
-										&& bu->getTakenExpl() == false)
+									if ((bu = (*i)->getBodyUnit()) != nullptr			// NOTE: This will send the unit through checkCasualties()
+										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS	// to log the kill in attacker's Diary and do morale but will
+										&& bu->getTakenExpl() == false)					// bypass UnitDieBState and its death-notice (no convert).
 									{
 										bu->setTakenExpl();
 										power_OnUnit = RNG::generate( // 25% - 75%
@@ -2843,7 +2842,7 @@ void TileEngine::explode(
 
 										if (bu->getHealth() == 0)
 										{
-//											bu->instaKill(); // TODO: Log the kill in Soldier's Diary.
+											//Log(LOG_INFO) << ". . . . INVENTORY: dead";
 											if (attacker != nullptr)
 											{
 												bu->killerFaction(attacker->getFaction());
@@ -2876,21 +2875,21 @@ void TileEngine::explode(
 										}
 										_battleSave->toDeleteItem(*i);
 										break;
-/*										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
-										{
-											(*i)->setFuse(-2);
-											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
-											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
-																										_battleSave->getBattleGame(),
-																										explVoxel,
-																										(*i)->getRules(),
-																										attacker));
-										}
-										else if ((*i)->getFuse() != -2)
-										{
-											_battleSave->toDeleteItem(*i);
-											break;
-										} */
+//										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
+//										{
+//											(*i)->setFuse(-2);
+//											const Position explVoxel (Position::toVoxelSpaceCentered(tileStop->getPosition(), FLOOR_TLEVEL));
+//											_battleSave->getBattleGame()->stateBPushNext(new ExplosionBState(
+//																										_battleSave->getBattleGame(),
+//																										explVoxel,
+//																										(*i)->getRules(),
+//																										attacker));
+//										}
+//										else if ((*i)->getFuse() != -2)
+//										{
+//											_battleSave->toDeleteItem(*i);
+//											break;
+//										}
 									}
 									done = (++i == tileStop->getInventory()->end());
 								}
@@ -2972,7 +2971,7 @@ void TileEngine::explode(
 				applyGravity(*i);
 				Tile* const tileAbove (_battleSave->getTile((*i)->getPosition() + Position(0,0,1)));
 				if (tileAbove != nullptr)
-					applyGravity(tileAbove);
+					applyGravity(tileAbove); // ... are you sure.
 			}
 		}
 		//Log(LOG_INFO) << ". explode Tiles DONE";

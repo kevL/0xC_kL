@@ -185,7 +185,7 @@ void Ufo::loadUfo(
 		_status = FLYING; // <- already done in cTor init.
 
 	const SavedGame* const gameSave (rules.getGame()->getSavedGame());
-	if (gameSave->getMonthsPassed() != -1)
+	if (gameSave->getMonthsElapsed() != -1)
 	{
 		const int missionId (node["mission"].as<int>());
 		std::vector<AlienMission*>::const_iterator mission (std::find_if(

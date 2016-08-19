@@ -40,7 +40,7 @@ RuleArmor::RuleArmor(const std::string& type)
 		_mType(MT_WALK),
 		_size(1),
 		_weight(0),
-		_deathFrames(3),
+		_collapseFrames(3),
 		_shootFrames(0),
 		_firePhase(0),
 		_constantAnimation(false),
@@ -134,7 +134,7 @@ void RuleArmor::load(const YAML::Node& node)
 	}
 
 	_loftSet			= node["loftSet"]			.as<std::vector<size_t>>(_loftSet);
-	_deathFrames		= node["deathFrames"]		.as<int>(_deathFrames);
+	_collapseFrames		= node["collapseFrames"]	.as<int>(_collapseFrames);
 	_shootFrames		= node["shootFrames"]		.as<int>(_shootFrames);
 	_firePhase			= node["firePhase"]			.as<int>(_firePhase);
 	_constantAnimation	= node["constantAnimation"]	.as<bool>(_constantAnimation);
@@ -322,17 +322,17 @@ int RuleArmor::getWeight() const
 }
 
 /**
- * Gets the number of death frames.
- * @return, frames
+ * Gets the number of collapse frames.
+ * @return, collapse-frames
  */
-int RuleArmor::getDeathFrames() const
+int RuleArmor::getCollapseFrames() const
 {
-	return _deathFrames;
+	return _collapseFrames;
 }
 
 /**
  * Gets the number of shoot frames.
- * @return, frames
+ * @return, shoot-frames
  */
 int RuleArmor::getShootFrames() const
 {

@@ -59,13 +59,16 @@ namespace OpenXcom
 
 /**
  * Creates and initializes a SavedBattleGame.
+ * @param gameSave	- pointer to the SavedGame
  * @param titles	- pointer to a vector of pointers to OperationPool (default nullptr)
  * @param rules		- pointer to the Ruleset (default nullptr)
  */
 SavedBattleGame::SavedBattleGame(
+		SavedGame* const gameSave,
 		const std::vector<OperationPool*>* const titles,
 		const Ruleset* const rules)
 	:
+		_gameSave(gameSave),
 		_battleState(nullptr),
 		_mapsize_x(0),
 		_mapsize_y(0),
@@ -267,14 +270,12 @@ SavedBattleGame::~SavedBattleGame()
 
 /**
  * Loads the SavedBattleGame from a YAML file.
- * @param node		- reference a YAML node
- * @param rules		- pointer to the Ruleset
- * @param gameSave	- pointer to the SavedGame
+ * @param node	- reference a YAML node
+ * @param rules	- pointer to the Ruleset
  */
 void SavedBattleGame::load(
 		const YAML::Node& node,
-		Ruleset* const rules,
-		const SavedGame* const gameSave)
+		Ruleset* const rules)
 {
 	//Log(LOG_INFO) << "SavedBattleGame::load()";
 	_mapsize_x		= node["width"]		.as<int>(_mapsize_x);
@@ -395,11 +396,10 @@ void SavedBattleGame::load(
 		faction		= static_cast<UnitFaction>((*i)["faction"]			.as<int>());
 		factionOrg	= static_cast<UnitFaction>((*i)["originalFaction"]	.as<int>(faction)); // .. technically, static_cast<int>(faction).
 
-		const DifficultyLevel diff (gameSave->getDifficulty());
 		if (id < BattleUnit::MAX_SOLDIER_ID)			// instance a BattleUnit from a geoscape-soldier
 			unit = new BattleUnit(
-							gameSave->getSoldier(id),
-							diff);
+							_gameSave->getSoldier(id),
+							this);
 		else											// instance a BattleUnit as an aLien, civie, or support-unit
 		{
 			const std::string
@@ -412,8 +412,7 @@ void SavedBattleGame::load(
 									factionOrg,
 									id,
 									rules->getArmor(armor),
-									diff,
-									gameSave->getMonthsPassed());
+									this);
 			else
 				unit = nullptr;
 		}
@@ -465,8 +464,8 @@ void SavedBattleGame::load(
 			i != _units.size();
 			++i)
 	{
-		if (_units.at(i)->isOut_t(OUT_STAT) == false)
-			_units.at(i)->loadSpotted(this); // convert unit-ID's into pointers to BattleUnits
+		if (_units.at(i)->getUnitStatus() == STATUS_STANDING) // safety.
+			_units.at(i)->loadSpotted(); // convert unit-ID's into pointers to BattleUnits
 	}
 
 	_shuffleUnits.assign(
@@ -978,17 +977,8 @@ void SavedBattleGame::setTacType(const std::string& type) // private.
 }																						// Or even TCT_ARBITRARY/CUSTOM.
 
 /**
- * Gets the TacticalType of this battle.
- * @return, the TacticalType (SavedBattleGame.h)
- */
-TacticalType SavedBattleGame::getTacType() const
-{
-	return _tacType;
-}
-
-/**
- * Sets the mission-type.
- * @param type - reference to a mission-type
+ * Sets the tactical-type.
+ * @param type - reference to a tactical-type
  */
 void SavedBattleGame::setTacticalType(const std::string& type)
 {
@@ -996,15 +986,24 @@ void SavedBattleGame::setTacticalType(const std::string& type)
 }
 
 /**
- * Gets the mission-type.
+ * Gets the tactical-type as a string.
  * @note This should return a const ref except perhaps when there's a nextStage
  * that deletes this SavedBattleGame ... and creates a new one wherein the ref
  * is no longer valid.
- * @return, the mission-type
+ * @return, the tactical-type
  */
 std::string SavedBattleGame::getTacticalType() const
 {
 	return _tacticalType;
+}
+
+/**
+ * Gets the TacticalType of this battle.
+ * @return, the TacticalType (SavedBattleGame.h)
+ */
+TacticalType SavedBattleGame::getTacType() const
+{
+	return _tacType;
 }
 
 /**
@@ -1444,8 +1443,8 @@ bool SavedBattleGame::endFactionTurn()
 				// no break;
 
 			case STATUS_UNCONSCIOUS:
-				if ((*i)->getOriginalFaction() == _side)	// NOTE: This could get funky and there should probably
-					(*i)->hitUnitFire();					// be a checkCasualties() call for that.
+				if ((*i)->getOriginalFaction() == _side)
+					(*i)->hitUnitFire();			// the return to BattlescapeGame::endTurn() will handle casualties.
 
 				if ((*i)->getFaction() == _side)	// This causes an Mc'd unit to lose its turn.
 				{
@@ -1612,12 +1611,11 @@ std::vector<MapDataSet*>* SavedBattleGame::getMapDataSets()
 
 /**
  * Gets a pointer to the Geoscape save.
- * @note During battlescape-generation BattlescapeState is not valid yet.
  * @return, pointer to SavedGame
  */
 SavedGame* SavedBattleGame::getSavedGame() const
 {
-	return _battleState->getGame()->getSavedGame();
+	return _gameSave;
 }
 
 /**
@@ -1635,6 +1633,7 @@ BattlescapeGame* SavedBattleGame::getBattleGame() const
 
 /**
  * Gets the BattlescapeState.
+ * @note During battlescape-generation BattlescapeState is not valid yet.
  * @return, pointer to the BattlescapeState
  */
 BattlescapeState* SavedBattleGame::getBattleState() const
@@ -2270,7 +2269,7 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 			{
 				if ((*i)->getBodyUnit() != nullptr
 					&& (*i)->getBodyUnit() == unit
-					&& (*i)->getOwner() != nullptr)
+					&& (*i)->getOwner() != nullptr) // safety.
 				{
 					pos = (*i)->getOwner()->getPosition();
 					break;
@@ -2305,16 +2304,16 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 			unit->setUnitStatus(STATUS_STANDING);
 			unit->setCacheInvalid();
 			unit->setUnitDirection(RNG::generate(0,7));
-//			unit->setTu(); // -> was done in BattleUnit::putDown() when unit went unconscious.
-//			unit->setEnergy();
 			unit->setReselect(unit->getFaction() == _side);
+
+			deleteBody(unit);
+
+			_te->applyGravity(unit->getUnitTile()); // if unit was carried by a flying unit.
 
 			_te->calculateUnitLighting();
 			if (unit->getFaction() == FACTION_PLAYER)
 				_te->calcFovTiles(unit);
 			_te->calcFovUnits_pos(unit->getPosition());
-
-			deleteBody(unit);
 
 			_battleState->updateMedicIcons();
 		}

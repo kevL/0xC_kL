@@ -1204,7 +1204,7 @@ void DogfightState::updateDogfight()
 					{
 						const RuleAlienMission& missionRule (*_game->getRuleset()->getMissionRand(
 																							alm_RETAL,
-																							static_cast<size_t>(_game->getSavedGame()->getMonthsPassed())));
+																							static_cast<size_t>(_game->getSavedGame()->getMonthsElapsed())));
 						AlienMission* const mission (new AlienMission(missionRule, *_gameSave));
 						mission->setId(_gameSave->getCanonicalId(Target::stTarget[7u]));
 						mission->setRegion(

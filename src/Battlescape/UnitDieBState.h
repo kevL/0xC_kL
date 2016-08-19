@@ -22,8 +22,6 @@
 
 #include "BattleState.h"
 
-#include "../Ruleset/RuleItem.h"
-
 
 namespace OpenXcom
 {
@@ -43,6 +41,8 @@ class UnitDieBState
 
 private:
 	bool
+		_isInfected,
+		_isInjury,
 		_isPreTactical,
 		_isSilent;
 	int _post;
@@ -50,10 +50,8 @@ private:
 	BattleUnit* _unit;
 	SavedBattleGame* _battleSave;
 
-	DamageType _dType;
-
 	/// Converts the BattleUnit to a body-item.
-	void convertToBody();
+	void drop();
 
 
 	public:
@@ -61,9 +59,9 @@ private:
 		UnitDieBState(
 				BattlescapeGame* const parent,
 				BattleUnit* const unit,
-				const DamageType dType,
-				const bool isSilent = false,
-				const bool isPreTactical = false);
+				const bool isPreTactical,
+				const bool isSilent = true,
+				const bool isInjury = false);
 		/// Cleans up the UnitDieBState.
 		~UnitDieBState();
 

@@ -115,3 +115,10 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/xcom_2/xcom_2.png
+  - type: ZOMBIE.PCK
+    width: 256
+    height: 480
+    subX: 32
+    subY: 40
+    files:
+      0: Resources/Sprites/Units/zombie/zombie.png

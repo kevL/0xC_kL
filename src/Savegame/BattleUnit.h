@@ -141,7 +141,7 @@ private:
 		_aboutToCollapse,
 		_cacheInvalid,
 		_dashing,
-		_diedByFire,
+		_isFireDeath,
 		_dontReselect,
 		_floating,
 		_hasBeenStunned,
@@ -173,7 +173,6 @@ private:
 		_expPsiStrength,
 		_expReactions,
 		_expThrowing,
-		_fallPhase,
 		_fatalWounds[PARTS_BODY],
 		_fire,
 		_health,
@@ -189,6 +188,7 @@ private:
 		_walkPhase,
 		_walkPhaseHalf,
 		_walkPhaseFull,
+		_collapsePhase,
 		_mcStrength,
 		_mcSkill;
 	size_t _battleOrder;
@@ -198,6 +198,7 @@ private:
 	BattleItem* _fist;
 	BattlescapeGame* _battleGame;
 	BattleUnit* _charging;
+	SavedBattleGame* _battleSave;
 	Surface* _cache[PARTS_ARMOR];
 	Tile* _tile;
 
@@ -252,7 +253,7 @@ private:
 	std::vector<size_t> _loftSet;
 	std::vector<std::pair<Uint8, Uint8>> _recolor;
 
-	const RuleArmor* _armor;
+	const RuleArmor* _arRule;
 	Soldier* _geoscapeSoldier;
 	const RuleUnit* _unitRule;
 
@@ -282,20 +283,21 @@ private:
 
 
 	public:
-		static const int MAX_SOLDIER_ID = 1000000;
+		static const int
+			MAX_SOLDIER_ID = 1000000,
+			DIR_FACEPLAYER = 3;
 
 		/// Creates a BattleUnit from a geoscape Soldier.
 		BattleUnit( // xCom operatives
 				Soldier* const sol,
-				const DifficultyLevel diff); // for VictoryPts value per death.
+				SavedBattleGame* const battleSave);
 		/// Creates a BattleUnit from a RuleUnit.
 		BattleUnit( // aLiens, civies, & Tanks
 				RuleUnit* const unitRule,
 				const UnitFaction faction,
 				const int id,
 				RuleArmor* const armor,
-				const DifficultyLevel diff = DIFF_BEGINNER,
-				const int month = 0, // for upping aLien-stats as time progresses.
+				SavedBattleGame* const battleSave,
 				BattlescapeGame* const battleGame = nullptr);
 		/// Cleans up the BattleUnit.
 		~BattleUnit();
@@ -303,7 +305,7 @@ private:
 		/// Loads the BattleUnit from YAML.
 		void load(const YAML::Node& node);
 		/// Loads the vector of units-spotted this turn during SavedBattleGame load.
-		void loadSpotted(SavedBattleGame* const battleSave);
+		void loadSpotted();
 		/// Saves the BattleUnit to YAML.
 		YAML::Node save() const;
 
@@ -419,8 +421,7 @@ private:
 		/// Gets if the BattleUnit is floating.
 		bool isFloating() const;
 
-		/// Aims the BattleUnit's weapon.
-//		void setShoot(bool shoot = true);
+		/// Aims or lowers the BattleUnit's weapon.
 		void toggleShoot();
 
 		/// Gets the BattleUnit's turn-units.
@@ -459,25 +460,31 @@ private:
 		/// Sets the BattleUnit's stun-level.
 		void setStun(int stun);
 		/// Checks if the BattleUnit is currently stunned.
-		bool isStunned();
+		bool isStunned() const;
 
-		/// Knocks the BattleUnit out instantly.
-		void knockOut();
+		/// Starts a death-spin.
+		void startSpinning();
+		/// Continues a death-spin.
+		void keepSpinning();
+		/// Gets the spin-phase of the BattleUnit.
+//		int getSpinPhase() const;
+		/// Sets the spin-phase of the BattleUnit.
+//		void setSpinPhase(int phase);
 
-		/// Starts the collapsing sequence.
+		/// Starts a collapsing sequence.
 		void startCollapsing();
-		/// Advances the collapsing sequence.
+		/// Advances a collapsing sequence.
 		void keepCollapsing();
 		/// Gets the collapsing sequence phase.
-		int getCollapsingPhase() const;
+		int getCollapsePhase() const;
 
-		/// Starts the aiming sequence. This is only for celatids.
+		/// Starts an aiming sequence. This is only for celatids.
 		void startAiming();
-		/// Advances the aiming sequence.
+		/// Advances an aiming sequence.
 		void keepAiming();
-		/// Gets aiming sequence phase.
+		/// Gets the aiming sequence phase.
 		int getAimingPhase() const;
-		/// Sets aiming sequence phase.
+		/// Sets the aiming sequence phase.
 		void setAimingPhase(int phase);
 
 		/// Gets if the BattleUnit is out - either dead or unconscious.
@@ -583,10 +590,13 @@ private:
 
 		/// Lets AI do its thing.
 		void thinkAi(BattleAction* const action);
-		/// Gets current AI state.
-		BattleAIState* getAIState() const;
 		/// Sets next AI State.
 		void setAIState(BattleAIState* const aiState = nullptr);
+		/// Gets current AI state.
+		BattleAIState* getAIState() const;
+
+		/// Clears the BattleUnit from its current Tiles.
+		void clearTileQuadrants() const;
 
 		/// Sets the Tile that the BattleUnit occupies.
 		void setUnitTile(
@@ -744,10 +754,15 @@ private:
 		/// Gets the BattleUnit's aggression.
 		int getAggression() const;
 
-		/// Gets the BattleUnit's special ability.
+		/// Gets the BattleUnit's SpecialAbility.
 		SpecialAbility getSpecialAbility() const;
-		/// Sets the BattleUnit's special ability.
+		/// Sets the BattleUnit's SpecialAbility.
 		void setSpecialAbility(const SpecialAbility specab);
+
+		/// Gets the BattleUnit's spawn unit.
+		std::string getSpawnType() const;
+		/// Sets the BattleUnit's spawn unit.
+		void setSpawnType(const std::string& spawnType);
 
 		/// Adds a takedown.
 		void addTakedown();
@@ -759,15 +774,8 @@ private:
 		/// Checks if the BattleUnit is about to collapse.
 		bool isAboutToCollapse() const;
 
-		/// Sets the BattleUnit's health to 0 and status to dead.
-		void instaKill();
-		/// Sets the BattleUnit's parameters as down (collapsed/ unconscious/ dead).
-		void putDown();
-
-		/// Gets the BattleUnit's spawn unit.
-		std::string getSpawnType() const;
-		/// Sets the BattleUnit's spawn unit.
-		void setSpawnUnit(const std::string& spawnType);
+		/// Sets the BattleUnit's variables as unconscious/dead.
+		void putdown(bool autokill);
 
 		/// Gets the faction that killed the BattleUnit.
 		UnitFaction killerFaction() const;
@@ -805,23 +813,12 @@ private:
 		bool checkViewSector(const Position& pos) const;
 
 		/// Adjusts the BattleUnit's stats according to difficulty.
-		void adjustStats(
-				const DifficultyLevel diff,
-				const int month);
+		void adjustStats();
 
 		/// Sets the BattleUnit's reserved-TU for finding cover.
 		void setCoverReserve(int tuReserved);
 		/// Gets the BattleUnit's reserved-TU for finding cover.
 		int getCoverReserve() const;
-
-		/// Initializes a death spin.
-		void initDeathSpin();
-		/// Continues a death spin.
-		void contDeathSpin();
-		/// Regulates inititialization, direction & duration of the death spin-cycle.
-		int getSpinPhase() const;
-		/// Sets the spinPhase of the BattleUnit.
-		void setSpinPhase(int spinphase);
 
 		/// Sets whether to stop a unit from firing/throwing.
 		void setStopShot(bool stop = true);

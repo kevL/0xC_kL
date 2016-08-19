@@ -363,7 +363,7 @@ void BasescapeState::init()
 
 	if (_allowStoresWarning == true
 		&& _base->storesOverfull() == true
-		&& _game->getSavedGame()->getMonthsPassed() != -1)
+		&& _game->getSavedGame()->getMonthsElapsed() != -1)
 	{
 		_allowStoresWarning = false;
 //		_game->pushState(new SellState(_base));

@@ -567,7 +567,7 @@ void SoldierInfoState::init()
 
 	_txtRank->setText(tr("STR_RANK_").arg(tr(_sol->getRankString())));
 
-	switch (_game->getSavedGame()->getMonthsPassed())
+	switch (_game->getSavedGame()->getMonthsElapsed())
 	{
 		case -1: // quick battle.
 			_txtMissions->setText(tr("STR_MISSIONS_").arg(L"-"));
@@ -643,7 +643,7 @@ void SoldierInfoState::init()
 	_btnSack->setVisible(!
 						(_sol->getCraft() != nullptr
 							&& _sol->getCraft()->getCraftStatus() == CS_OUT)
-					&& _game->getSavedGame()->getMonthsPassed() != -1);
+					&& _game->getSavedGame()->getMonthsElapsed() != -1);
 }
 
 /**

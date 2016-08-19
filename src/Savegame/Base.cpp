@@ -1877,7 +1877,10 @@ double Base::insideRadarRange(const Target* const target) const
 			{
 				ret = dist; // identical value for every i; looking only for hyperDet after 1st successful iteration.
 				if ((*i)->getRules()->isHyperwave() == true)
+				{
 					hyperDet = true;
+					break;
+				}
 			}
 		}
 		if (hyperDet == true) ret = -ret; // <- use negative value to pass (hyperdetection= true)
@@ -1886,22 +1889,22 @@ double Base::insideRadarRange(const Target* const target) const
 }
 
 /**
+ ** FUNCTOR **
  * Functor to check for mind shield capability.
- */
-/* struct isMindShield
+ *
+struct isMindShield
 	:
 		public std::unary_function<BaseFacility*, bool>
 {
 	/// Check isMindShield() for @a facility.
 	bool operator()(const BaseFacility* facility) const;
 }; */
-
 /**
  * Only fully operational facilities are checked.
  * @param facility Pointer to the facility to check.
  * @return, If @a facility can act as a mind shield.
- */
-/* bool isMindShield::operator()(const BaseFacility* facility) const
+ *
+bool isMindShield::operator()(const BaseFacility* facility) const
 {
 	if (facility->buildFinished() == false)
 		return false; // Still building this
@@ -1909,24 +1912,23 @@ double Base::insideRadarRange(const Target* const target) const
 	return facility->getRules()->isMindShield();
 } */
 
-
 /**
+ ** FUNCTOR **
  * Functor to check for completed facilities.
- */
-/* struct isCompleted
+ *
+struct isCompleted
 	:
 		public std::unary_function<BaseFacility*, bool>
 {
 	/// Check isCompleted() for @a facility.
 	bool operator()(const BaseFacility* facility) const;
 }; */
-
 /**
  * Facilities are checked for construction completion.
  * @param, facility Pointer to the facility to check.
  * @return, If @a facility has completed construction.
- */
-/* bool isCompleted::operator()(const BaseFacility* facility) const
+ *
+bool isCompleted::operator()(const BaseFacility* facility) const
 {
 	return facility->buildFinished() == true;
 } */
@@ -1948,7 +1950,7 @@ int Base::getExposedChance(
 	{
 		*facQty  =
 		*shields = 0;
-		for (std::vector<BaseFacility*>::const_iterator
+		for (std::vector<BaseFacility*>::const_iterator	// NOTE: Used by BaseDetectionState.
 				i = _facilities.begin();
 				i != _facilities.end();
 				++i)
@@ -1959,6 +1961,8 @@ int Base::getExposedChance(
 				if ((*i)->getRules()->isMindShield() == true)
 					++(*shields);
 			}
+			else
+				*facQty += 2; // unfinished facilities count double
 		}
 		return exposedChance(diff, *facQty, *shields);
 	}
@@ -1966,7 +1970,7 @@ int Base::getExposedChance(
 	int
 		facQty0  (0),
 		shields0 (0);
-	for (std::vector<BaseFacility*>::const_iterator
+	for (std::vector<BaseFacility*>::const_iterator		// NOTE: Used by GeoscapeState.
 			i = _facilities.begin();
 			i != _facilities.end();
 			++i)
@@ -1977,6 +1981,8 @@ int Base::getExposedChance(
 			if ((*i)->getRules()->isMindShield() == true)
 				++shields0;
 		}
+		else
+			facQty0 += 2; // unfinished facilities count double
 	}
 	return exposedChance(diff, facQty0, shields0);
 }

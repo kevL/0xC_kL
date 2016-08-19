@@ -3765,7 +3765,7 @@ void BattlescapeState::finishBattle(
 
 
 		bool debrief;
-		if (_gameSave->getMonthsPassed() != -1)
+		if (_gameSave->getMonthsElapsed() != -1)
 		{
 			if (ruleDeploy != nullptr)
 			{
@@ -3829,7 +3829,7 @@ void BattlescapeState::finishBattle(
 		{												// This concludes to defeat when in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
 			if (ruleDeploy != nullptr
 				&& ruleDeploy->isNoRetreat() == true
-				&& _gameSave->getMonthsPassed() != -1)
+				&& _gameSave->getMonthsElapsed() != -1)
 			{
 				_gameSave->setEnding(END_LOSE);
 				ironsave = _gameSave->isIronman() == true;
@@ -3845,7 +3845,7 @@ void BattlescapeState::finishBattle(
 		{												// This concludes to victory when in a 'final' mission, like Mars aLien base.
 			if (ruleDeploy != nullptr
 				&& ruleDeploy->isFinalMission() == true	// <- do *not* win if all units dead both Player and Hostile
-				&& _gameSave->getMonthsPassed() != -1)
+				&& _gameSave->getMonthsElapsed() != -1)
 			{
 				_gameSave->setEnding(END_WIN);
 				ironsave = _gameSave->isIronman() == true;
@@ -3898,7 +3898,7 @@ void BattlescapeState::showLaunchButton(bool show)
 
 /**
  * Shows the PSI button.
- * @param show - true to show PSI button (default true)
+ * @param show - true to show PSI button
  */
 void BattlescapeState::showPsiButton(bool show)
 {

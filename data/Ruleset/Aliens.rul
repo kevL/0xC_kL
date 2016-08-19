@@ -2564,7 +2564,7 @@ armors:
     rearArmor: 5
     underArmor: 5
     drawRoutine: 4
-    deathFrames: 18
+    collapseFrames: 18
     damageModifier:
       - 1.0 #none
       - 0.6 #ap
