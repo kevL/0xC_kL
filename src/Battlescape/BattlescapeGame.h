@@ -280,7 +280,7 @@ private:
 	/// Adjusts morale of units by faction when a BattleUnit dies.
 	void factionMorale(
 			const BattleUnit* const defender,
-			bool converted,
+			bool isConvert,
 			bool half = false) const;
 
 	/// Shows any infoboxes in the queue.

@@ -346,8 +346,7 @@ void Pathfinding::calculatePath(
 
 		const Position posStart (unit->getPosition());
 
-		const bool isMech (unit->getUnitRules() != nullptr
-						&& unit->getUnitRules()->isMechanical());
+		const bool isMech (unit->isMechanical() == true);
 
 		_pathAction->strafe =
 		_strafe = strafeRejected == false
@@ -466,9 +465,7 @@ bool Pathfinding::aStarPath( // private.
 				nodeStart = nodeStart->getPrevNode();
 			}
 
-			if (_strafe == true
-				&& _unit->getUnitRules() != nullptr
-				&& _unit->getUnitRules()->isMechanical() == true)
+			if (_strafe == true && _unit->isMechanical() == true) // is Tracked vehicle actually.
 			{
 				const int delta (std::abs((_path.back() + 4) % 8 - _unit->getUnitDirection()));
 				if (delta > 1 && delta != 7)

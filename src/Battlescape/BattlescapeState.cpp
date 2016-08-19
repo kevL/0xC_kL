@@ -1935,9 +1935,7 @@ void BattlescapeState::btnInventoryClick(Action*)
 	{
 		const BattleUnit* const unit (_battleSave->getSelectedUnit());
 
-		if (unit->getGeoscapeSoldier() != nullptr
-			|| (unit->getUnitRules()->isMechanical() == false
-				&& unit->getRankString() != "STR_LIVE_TERRORIST")
+		if ((unit->isMechanical() == false && unit->getRankString() != "STR_LIVE_TERRORIST")
 			|| _battleSave->getDebugTac() == true)
 		{
 			if (_battleGame->getTacticalAction()->type == BA_LAUNCH) // clean up the waypoints

@@ -2015,12 +2015,12 @@ void BattlescapeGame::attackerMorale( // private.
  * Adjusts morale of units by faction when a BattleUnit dies.
  * @note Helper for checkCasualties().
  * @param defender	- pointer to a BattleUnit that died
- * @param converted	- true if unit was converted to another lifeform
+ * @param isConvert	- true if unit was converted to another lifeform
  * @param half		- true for half-value if defender unconscious (default false)
  */
 void BattlescapeGame::factionMorale( // private.
 		const BattleUnit* const defender,
-		bool converted,
+		bool isConvert,
 		bool half) const
 {
 	// penalty for the death of a unit; civilians & MC'd aLien units return 100.
@@ -2064,20 +2064,26 @@ void BattlescapeGame::factionMorale( // private.
 				if (morale > 0) // pure safety, ain't gonna happen really.
 				{
 					morale = ((morale * loss) << 1u) / bTeam;
-					if (converted == true)
-						morale = (morale * 5 + 3) >> 2u; // extra loss if xCom or civie turns into a Zombie.
-					else if (defender->getUnitRules() != nullptr)
+					if (isConvert == true
+						&& (   defender->getGeoscapeSoldier() != nullptr
+							|| defender->getOriginalFaction() == FACTION_NEUTRAL))
 					{
-						if (defender->getUnitRules()->isMechanical() == true)
+						morale = (morale * 5 + 3) >> 2u;							// extra loss if Soldier or civilian turns into a ZOMBIE.
+					}
+					else if (defender->getUnitRules() != nullptr)					// not a Soldier
+					{
+						if (defender->isMechanical() == true)
 							morale >>= 2u;
-						else
+						else if (defender->getOriginalFaction() == FACTION_PLAYER	// a support unit
+							||   defender->getRankString() == "STR_LIVE_TERRORIST")	// an aLien terrorist
+						{
 							morale >>= 1u;
+						}
 					}
 
-					if (half == false)
-						(*j)->moraleChange(-morale);
-					else
-						(*j)->moraleChange(-(morale >> 1u));
+					if (half == true) morale >>= 1u;								// went unconscious.
+
+					(*j)->moraleChange(-morale);
 				}
 //				if (attacker
 //					&& attacker->getFaction() == FACTION_PLAYER
@@ -2095,10 +2101,10 @@ void BattlescapeGame::factionMorale( // private.
 						|| defender->getOriginalFaction() == FACTION_NEUTRAL)))
 			{
 				// winning faction(s) all get a morale boost unaffected by rank of the dead unit
-				if (half == false)
-					(*j)->moraleChange(aTeam / 10);
-				else
-					(*j)->moraleChange(aTeam / 20);
+				if (half == false)	aTeam /= 10;
+				else				aTeam /= 20;
+
+				(*j)->moraleChange(aTeam);
 			}
 		}
 	}

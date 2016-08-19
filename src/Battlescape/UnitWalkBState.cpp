@@ -405,8 +405,7 @@ bool UnitWalkBState::statusStand() // private.
 
 		if (_action.strafe == true)
 		{
-			if (_unit->getGeoscapeSoldier() != nullptr
-				|| _unit->getUnitRules()->isMechanical() == false)
+			if (_unit->isMechanical() == false)
 			{
 				_unit->setFaceDirection(_unit->getUnitDirection());
 				const int delta (std::min(
@@ -1290,11 +1289,8 @@ void UnitWalkBState::playMoveSound() // private.
 							soundId = static_cast<int>(ResourcePack::GRAVLIFT_SOUND);
 						else
 						{
-							if (_unit->getUnitRules() != nullptr
-								&& _unit->getUnitRules()->isMechanical() == true)
-							{
+							if (_unit->isMechanical() == true)
 								soundId = static_cast<int>(ResourcePack::FLYING_SOUND);		// hoverSound flutter
-							}
 							else
 								soundId = static_cast<int>(ResourcePack::FLYING_SOUND_HQ);	// HQ hoverSound
 						}

@@ -617,8 +617,8 @@ void AlienMission::ufoReachedWaypoint(
 				&& trajectory.getZone(wpId) == _missionRule.getObjectiveZone())	// NOTE: Supply-missions bypasses this although it has (objective=true)
 			{																	// because it does not have an 'objectiveZone' set in its rule.
 				addScore( // alm_TERROR
-					ufo.getLongitude(),
-					ufo.getLatitude());
+						ufo.getLongitude(),
+						ufo.getLatitude());
 
 				ufo.setUfoStatus(Ufo::DESTROYED);
 
@@ -791,8 +791,8 @@ void AlienMission::createAlienBase( // private.
 		_gameSave.getAlienBases()->push_back(aBase);
 
 		addScore( // alm_BASE, alm_INFILT
-			pos.first,
-			pos.second);
+				pos.first,
+				pos.second);
 	}
 }
 
@@ -1093,12 +1093,14 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 
 /**
  * Adds aLien-points to the Country and Region at specified coordinates.
- * @param lon - longitudinal coordinate to check
- * @param lat - latitudinal coordinate to check
+ * @param lon		- longitudinal coordinate to check
+ * @param lat		- latitudinal coordinate to check
+ * @param ufoSize	- the UfoSizeType for infiltration and aLien-Base (RuleUfo.h) (default UFO_VERYLARGE)
  */
 void AlienMission::addScore( // private.
 		const double lon,
-		const double lat) const
+		const double lat,
+		const UfoSizeType ufoSize) const
 {
 	int aLienPts (_missionRule.getMissionScore());
 	if (aLienPts != 0)
@@ -1110,8 +1112,8 @@ void AlienMission::addScore( // private.
 
 			case alm_INFILT:
 			case alm_BASE:
-				aLienPts += _gameSave.getDifficultyInt() * 20		// TODO: Instead of '20' use a UFO-size modifier. 'Cause this
-						 + (_gameSave.getMonthsElapsed() << 1u);	// is gonna rack up *huge pts* in ufoLifting() as it is now.
+				aLienPts += _gameSave.getDifficultyInt() * (static_cast<int>(ufoSize) + 1) * 4
+						 + (_gameSave.getMonthsElapsed() << 1u);
 				break;
 
 			case alm_SUPPLY:

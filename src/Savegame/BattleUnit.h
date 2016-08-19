@@ -141,12 +141,13 @@ private:
 		_aboutToCollapse,
 		_cacheInvalid,
 		_dashing,
-		_isFireDeath,
 		_dontReselect,
 		_floating,
 		_hasBeenStunned,
 		_hasCried,
 		_hidingForTurn,
+		_isFireDeath,
+		_isMechanical,
 		_kneeled,
 		_psiBlock,
 		_stopShot, // to stop a unit from firing/throwing if it spots a new opponent during turning
@@ -840,7 +841,7 @@ private:
 		/// Gets if the BattleUnit has aleady been damaged in a single fire.
 		bool getTakenFire() const;
 
-		/// Returns true if the BattleUnit has an inventory.
+		/// Checks if the BattleUnit has a player-accessible Inventory.
 		bool canInventory() const;
 
 		/// Gets the BattleUnit's movement type.
@@ -890,6 +891,8 @@ private:
 
 		/// Gets if the BattleUnit is a Zombie.
 		bool isZombie() const;
+		/// Gets if the BattleUnit is a mechanical apparatus.
+		bool isMechanical() const;
 
 		/// Gets if the BattleUnit avoids fire-tiles.
 		bool avoidsFire() const;

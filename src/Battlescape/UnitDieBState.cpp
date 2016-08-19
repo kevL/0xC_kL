@@ -224,15 +224,15 @@ void UnitDieBState::think()
 
 					drop();
 					_unit->putdown(_isInfected == true
-								|| _unit->getSpecialAbility() == SPECAB_EXPLODE
-								|| (   _unit->getUnitRules() != nullptr
-									&& _unit->getUnitRules()->isMechanical() == true)); // TODO: Copy isMechanical to BattleUnit.
+								|| _unit->isMechanical() == true
+								|| _unit->getSpecialAbility() == SPECAB_EXPLODE);
 
 					if (_isPreTactical == true)
 						_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
 					else
 						++_post;
-					return; // no draw.
+					break;
+//					return; // no draw.
 
 				case 1:
 				{
@@ -281,7 +281,7 @@ void UnitDieBState::think()
 																			.arg(_unit->getLabel(lang))));
 						}
 					}
-					return; // no draw.
+//					return; // no draw.
 				}
 			}
 	}
@@ -329,8 +329,7 @@ void UnitDieBState::drop() // private.
 				x != -1;
 				--x)
 		{
-			if (   _unit->getUnitRules() != nullptr
-				&& _unit->getUnitRules()->isMechanical() == true)
+			if (_unit->isMechanical() == true)
 			{
 				tile = _battleSave->getTile(pos + Position(x,y,0));
 

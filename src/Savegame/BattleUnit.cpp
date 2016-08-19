@@ -126,6 +126,7 @@ BattleUnit::BattleUnit(
 		_mcSkill(0),
 		_drugDose(0),
 		_isZombie(false),
+		_isMechanical(false),
 		_hasCried(false),
 		_hasBeenStunned(false),
 		_psiBlock(false),
@@ -159,7 +160,7 @@ BattleUnit::BattleUnit(
 
 		_lastCover(-1,-1,-1)
 {
-	//Log(LOG_INFO) << "Create BattleUnit 1 : soldier ID = " << getId();
+	//Log(LOG_INFO) << "Create BattleUnit [1] id-" << getId();
 	_stats += *_arRule->getStats();
 
 	int rankValue;
@@ -330,10 +331,12 @@ BattleUnit::BattleUnit(
 
 		_lastCover(-1,-1,-1)
 {
-	//Log(LOG_INFO) << "Create BattleUnit 2 : alien ID = " << getId();
+	//Log(LOG_INFO) << "Create BattleUnit [2] id-" << getId();
 	_stats += *_arRule->getStats();
 
 	_isZombie = (_race == "STR_ZOMBIE");
+	_isMechanical = (_unitRule->isMechanical() == true);
+
 
 	switch (_faction)
 	{
@@ -1591,9 +1594,7 @@ int BattleUnit::takeDamage(
 
 	if (power > 0)
 	{
-		const bool selfAware (_geoscapeSoldier != nullptr
-						  || (_unitRule->isMechanical() == false
-								&& _isZombie == false));
+		const bool selfAware (_isMechanical == false && _isZombie == false);
 		int wounds (0);
 
 		switch (dType)
@@ -1673,8 +1674,7 @@ int BattleUnit::takeDamage(
 		&& _hasCried == false
 		&& _status != STATUS_UNCONSCIOUS
 		&& dType != DT_STUN
-		&& (_geoscapeSoldier != nullptr
-			|| _unitRule->isMechanical() == false))
+		&& _isMechanical == false)
 	{
 		playDeathSound(true);
 	}
@@ -2534,12 +2534,8 @@ void BattleUnit::prepareUnit(bool preBattle)
 			return;
 		}
 
-		if (_stunLevel != 0
-			&& (_geoscapeSoldier != nullptr
-				|| _unitRule->isMechanical() == false))
-		{
-			reduceStun(RNG::generate(1,3)); // recover stun
-		}
+		if (_stunLevel != 0 && _isMechanical == false) // recover stun
+			reduceStun(RNG::generate(1,3));
 
 		if (_status != STATUS_UNCONSCIOUS)
 		{
@@ -4036,7 +4032,7 @@ bool BattleUnit::isWoundable() const
 		&& _status != STATUS_DEAD
 		&& (_geoscapeSoldier != nullptr
 			|| (Options::battleAlienBleeding == true
-				&& _unitRule->isMechanical() == false
+				&& _isMechanical == false
 				&& _isZombie == false));
 }
 
@@ -4050,9 +4046,8 @@ bool BattleUnit::isMoralable() const
 		&& _status != STATUS_LATENT_START
 		&& _status != STATUS_DEAD
 		&& _status != STATUS_UNCONSCIOUS
-		&& (_geoscapeSoldier != nullptr
-			|| (_unitRule->isMechanical() == false
-				&& _isZombie == false));
+		&& _isMechanical == false
+		&& _isZombie == false;
 }
 
 /**
@@ -4064,9 +4059,8 @@ bool BattleUnit::isHealable() const
 	return _status != STATUS_LATENT
 		&& _status != STATUS_LATENT_START
 		&& _status != STATUS_DEAD
-		&& (_geoscapeSoldier != nullptr
-			|| (_unitRule->isMechanical() == false
-				&& _isZombie == false));
+		&& _isMechanical == false
+		&& _isZombie == false;
 }
 
 /**
@@ -4076,10 +4070,9 @@ bool BattleUnit::isHealable() const
 bool BattleUnit::isRevivable() const
 {
 	return _status == STATUS_UNCONSCIOUS
-		&& (_geoscapeSoldier != nullptr
-			|| (_unitRule->isMechanical() == false
-				&& _arRule->getSize() == 1
-				&& _isZombie == false));
+		&& _isMechanical == false
+		&& _isZombie == false
+		&& _arRule->getSize() == 1;
 }
 
 /**
@@ -4602,16 +4595,15 @@ bool BattleUnit::getTakenFire() const
 }
 
 /**
- * Checks if this BattleUnit has an inventory.
+ * Checks if this BattleUnit has a player-accessible inventory.
  * @note Large units and/or terror units shouldn't show inventories generally.
  * @return, true if an inventory is available
  */
 bool BattleUnit::canInventory() const
 {
 	return _arRule->canInventory() == true
-		&& (_geoscapeSoldier != nullptr
-			|| (_unitRule->isMechanical() == false
-				&& _rank != "STR_LIVE_TERRORIST"));
+		&& _isMechanical == false
+		&& _rank != "STR_LIVE_TERRORIST";
 }
 
 /**
@@ -4810,6 +4802,15 @@ bool BattleUnit::isMindControlled() const
 bool BattleUnit::isZombie() const
 {
 	return _isZombie;
+}
+
+/**
+ * Gets if this BattleUnit is a mechanical apparatus.
+ * @return, true if mechanical
+ */
+bool BattleUnit::isMechanical() const
+{
+	return _isMechanical;
 }
 
 /**

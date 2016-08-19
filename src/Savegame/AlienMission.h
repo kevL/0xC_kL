@@ -24,6 +24,8 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "../Ruleset/RuleUfo.h"
+
 
 namespace OpenXcom
 {
@@ -111,7 +113,8 @@ private:
 	/// Handles points for mission success.
 	void addScore(
 			const double lon,
-			const double lat) const;
+			const double lat,
+			const UfoSizeType ufoSize = UFO_VERYLARGE) const;
 
 
 	public:
