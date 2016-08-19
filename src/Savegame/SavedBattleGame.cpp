@@ -2648,7 +2648,7 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 					{
 						case TCT_MARS1:	// "STR_MARS_CYDONIA_LANDING"
 						case TCT_MARS2:	// "STR_MARS_THE_FINAL_ASSAULT"
-							ret /= 2;	// less hit for losing a unit on Cydonia.
+							ret >>= 1u;	// less hit for losing a unit on Cydonia.
 					}
 				}
 				//Log(LOG_INFO) << ". . aLien lossModifi = " << ret;

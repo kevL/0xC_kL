@@ -211,8 +211,8 @@ void UnitDieBState::think()
 			break; // -> STATUS_COLLAPSING -> STATUS_DEAD or STATUS_UNCONSCIOUS
 
 		case STATUS_COLLAPSING:
-			_unit->keepCollapsing(); // -> STATUS_DEAD or STATUS_UNCONSCIOUS
-			break;
+			if (_unit->keepCollapsing() == false) break; // -> STATUS_DEAD or STATUS_UNCONSCIOUS
+			// no break;
 
 		case STATUS_DEAD:
 		case STATUS_UNCONSCIOUS:
@@ -231,8 +231,7 @@ void UnitDieBState::think()
 						_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
 					else
 						++_post;
-					break;
-//					return; // no draw.
+					return; // don't bother w/ sprite-cache.
 
 				case 1:
 				{
@@ -281,7 +280,7 @@ void UnitDieBState::think()
 																			.arg(_unit->getLabel(lang))));
 						}
 					}
-//					return; // no draw.
+					return; // don't bother w/ sprite-cache.
 				}
 			}
 	}

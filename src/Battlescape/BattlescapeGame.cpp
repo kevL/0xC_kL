@@ -2101,10 +2101,11 @@ void BattlescapeGame::factionMorale( // private.
 						|| defender->getOriginalFaction() == FACTION_NEUTRAL)))
 			{
 				// winning faction(s) all get a morale boost unaffected by rank of the dead unit
-				if (half == false)	aTeam /= 10;
-				else				aTeam /= 20;
+				int morale;
+				if (half == false)	morale = aTeam / 10;
+				else				morale = aTeam / 20;
 
-				(*j)->moraleChange(aTeam);
+				if (morale != 0) (*j)->moraleChange(morale);
 			}
 		}
 	}
@@ -2782,38 +2783,12 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		Pathfinding* const pf (_battleSave->getPathfinding());
 		pf->setPathingUnit(_playerAction.actor);
 
-		const bool ctrl ((SDL_GetModState() & KMOD_CTRL) != 0);
+		const bool
+			ctrl ((SDL_GetModState() & KMOD_CTRL) != 0),
+			alt  ((SDL_GetModState() & KMOD_ALT)  != 0);
 
-		if (ctrl == true
-			&& targetUnit != nullptr
-			&& targetUnit == _playerAction.actor
-			&& _playerAction.actor->getArmor()->getSize() == 1)
+		if (targetUnit == nullptr || targetUnit->getUnitVisible() == false)
 		{
-			if (allowPreview == true)
-				pf->clearPreview();
-
-			Position
-				pxScreen,
-				pxPointer;
-
-			getMap()->getCamera()->convertMapToScreen(pos, &pxScreen);
-			pxScreen += getMap()->getCamera()->getMapOffset();
-
-			getMap()->findMousePointer(pxPointer);
-
-			if (pxPointer.x > pxScreen.x + 16)
-				_playerAction.actor->setTurnDirection(-1);
-			else
-				_playerAction.actor->setTurnDirection(+1);
-
-			_playerAction.value = (_playerAction.actor->getUnitDirection() + 4) % 8;
-
-			stateBPushBack(new UnitTurnBState(this, _playerAction));
-		}
-		else
-		{
-			const bool alt ((SDL_GetModState() & KMOD_ALT)  != 0);
-
 //			bool zPath;
 //			const Uint8* const keystate (SDL_GetKeyState(nullptr));
 //			if (keystate[SDLK_z] != 0)
@@ -2824,8 +2799,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			if (allowPreview == true
 				&& (_playerAction.posTarget != pos
 					|| pf->isModCtrl() != ctrl
-					|| pf->isModAlt() != alt))
-//					|| pf->isZPath() != zPath))
+					|| pf->isModAlt()  != alt))
+//					|| pf->isZPath()   != zPath))
 			{
 				pf->clearPreview();
 			}
@@ -2850,6 +2825,42 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					_parentState->getGame()->getCursor()->setHidden();
 
 					stateBPushBack(new UnitWalkBState(this, _playerAction));
+				}
+			}
+		}
+		else if (targetUnit == _playerAction.actor)
+		{
+			if (allowPreview == true)
+				pf->clearPreview();
+
+			if (ctrl == true && _playerAction.actor->getArmor()->getSize() == 1)
+			{
+				Position
+					pxScreen,
+					pxPointer;
+
+				getMap()->getCamera()->convertMapToScreen(pos, &pxScreen);
+				pxScreen += getMap()->getCamera()->getMapOffset();
+
+				getMap()->findMousePointer(pxPointer);
+
+				if (pxPointer.x > pxScreen.x + 16)
+					_playerAction.actor->setTurnDirection(-1);
+				else
+					_playerAction.actor->setTurnDirection(+1);
+
+				_playerAction.value = (_playerAction.actor->getUnitDirection() + 4) % 8;
+
+				stateBPushBack(new UnitTurnBState(this, _playerAction));
+			}
+			else if (alt == true && _playerAction.actor->isFloating() == true)
+			{
+				const Tile* const tile (_playerAction.actor->getUnitTile());
+				if (tile->isFloored(tile->getTileBelow(_battleSave)) == true)
+				{
+					_playerAction.actor->setFloating(false);
+					_playerAction.actor->setCacheInvalid();
+					_parentState->getMap()->cacheUnitSprite(_playerAction.actor);
 				}
 			}
 		}

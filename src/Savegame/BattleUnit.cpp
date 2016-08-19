@@ -1910,9 +1910,12 @@ void BattleUnit::startCollapsing()
 
 /**
  * Advances the phase of a collapsing sequence.
+ * @return, true if collapse is finished
  */
-void BattleUnit::keepCollapsing()
+bool BattleUnit::keepCollapsing()
 {
+	_cacheInvalid = true;
+
 	if (_isFireDeath == true)
 		_collapsePhase = _arRule->getCollapseFrames();
 	else
@@ -1927,8 +1930,9 @@ void BattleUnit::keepCollapsing()
 			case 0:  _status = STATUS_DEAD; break;
 			default: _status = STATUS_UNCONSCIOUS;
 		}
+		return true;
 	}
-	_cacheInvalid = true;
+	return false;
 }
 
 /**
@@ -4681,7 +4685,7 @@ BattleUnitStatistics* BattleUnit::getStatistics() const
 }
 
 /**
- * Sets this BattleUnit's murderer's ID.
+ * Sets this BattleUnit's murderer-ID.
  * @param id - murderer ID
  */
 void BattleUnit::setMurdererId(int id)
@@ -4690,7 +4694,7 @@ void BattleUnit::setMurdererId(int id)
 }
 
 /**
- * Gets this BattleUnit's murderer's ID.
+ * Gets this BattleUnit's murderer-ID.
  * @return, murderer ID
  */
 int BattleUnit::getMurdererId() const

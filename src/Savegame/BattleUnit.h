@@ -475,7 +475,7 @@ private:
 		/// Starts a collapsing sequence.
 		void startCollapsing();
 		/// Advances a collapsing sequence.
-		void keepCollapsing();
+		bool keepCollapsing();
 		/// Gets the collapsing sequence phase.
 		int getCollapsePhase() const;
 
@@ -847,12 +847,12 @@ private:
 		/// Gets the BattleUnit's movement type.
 		MoveType getMoveTypeUnit() const;
 
-		/// Gets if the BattleUnit is hiding or not.
-		bool isHiding() const
-		{ return _hidingForTurn; };
 		/// Sets the BattleUnit hiding or not.
 		void setHiding(bool hiding = true)
 		{ _hidingForTurn = hiding; };
+		/// Checks if the BattleUnit is hiding or not.
+		bool isHiding() const
+		{ return _hidingForTurn; };
 
 		/// Creates special weapon for the BattleUnit.
 //		void setSpecialWeapon(SavedBattleGame* save, const Ruleset* rule);
@@ -861,9 +861,9 @@ private:
 
 		/// Gets the BattleUnit's mission statistics.
 		BattleUnitStatistics* getStatistics() const;
-		/// Sets the BattleUnit murderer's id.
+		/// Sets the BattleUnit's murderer-ID.
 		void setMurdererId(int id);
-		/// Gets the BattleUnit murderer's id.
+		/// Gets the BattleUnit's murderer-ID.
 		int getMurdererId() const;
 
 		/// Sets the BattleUnit's order in battle.
@@ -889,18 +889,18 @@ private:
 		/// Gets if the BattleUnit is mind-controlled.
 		bool isMindControlled() const;
 
-		/// Gets if the BattleUnit is a Zombie.
+		/// Checks if the BattleUnit is a Zombie.
 		bool isZombie() const;
-		/// Gets if the BattleUnit is a mechanical apparatus.
+		/// Checks if the BattleUnit is a mechanical apparatus.
 		bool isMechanical() const;
 
-		/// Gets if the BattleUnit avoids fire-tiles.
+		/// Checks if the BattleUnit avoids fire-tiles.
 		bool avoidsFire() const;
 
-		/// Gets if the BattleUnit is immune to psionic attacks.
+		/// Checks if the BattleUnit is immune to psionic attacks.
 		bool psiBlock() const;
 
-		/// Gets if the BattleUnit has been stunned before.
+		/// Checks if the BattleUnit has been stunned before.
 		bool beenStunned() const;
 
 		/// Gets the BattleUnit's last-cover Position.
