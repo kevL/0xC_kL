@@ -2875,6 +2875,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					else
 						_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
 				}
+				else
+					_parentState->btnUnitDownPress(nullptr);
 			}
 		}
 	}
