@@ -1087,7 +1087,7 @@ void GeoscapeState::init()
 		&& _gameSave->getBases()->empty() == false					// as long as there's a base
 		&& _gameSave->getBases()->front()->isBasePlaced() == true)	// THIS prevents missions running prior to the first base being placed.
 	{
-		_gameSave->addMonth();
+		_gameSave->elapseMonth();
 		_gameSave->setFunds(_gameSave->getFunds() - static_cast<int64_t>(_gameSave->getBases()->front()->getMonthlyMaintenace()));
 
 		deterAlienMissions();
@@ -1911,7 +1911,7 @@ struct SetRetaliationStatus
 void GeoscapeState::time10Minutes()
 {
 	//Log(LOG_INFO) << "GeoscapeState::time10Minutes()";
-	const int diff (static_cast<int>(_gameSave->getDifficulty()));
+	const int diff (_gameSave->getDifficultyInt());
 
 	for (std::vector<Base*>::const_iterator
 			i = _gameSave->getBases()->begin();
@@ -2345,8 +2345,8 @@ void GeoscapeState::time30Minutes()
  */
 void GeoscapeState::scoreUfos(bool hour) const // private.
 {
-	const int basic (((_gameSave->getMonthsElapsed() + 2) >> 2u)
-					 + static_cast<int>(_gameSave->getDifficulty())); // basic score
+	const int basic (((_gameSave->getMonthsElapsed() + 2) >> 2u) // basic score
+					 + _gameSave->getDifficultyInt());
 	int score;
 	for (std::vector<Ufo*>::const_iterator
 			i = _gameSave->getUfos()->begin();
@@ -2396,7 +2396,7 @@ bool GeoscapeState::processTerrorSite(TerrorSite* const terrorSite) const // pri
 	bool expired;
 
 	const int
-		diff (static_cast<int>(_gameSave->getDifficulty())),
+		diff (_gameSave->getDifficultyInt()),
 		elapsed (_gameSave->getMonthsElapsed());
 	int score;
 
@@ -2990,7 +2990,7 @@ void GeoscapeState::time1Day()
 	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
 																alm_BASE,
 																static_cast<size_t>(_gameSave->getMonthsElapsed())));
-	const int aLienPts ((missionRule->getMissionScore() * (static_cast<int>(_gameSave->getDifficulty()) + 1)) / 100);
+	const int aLienPts ((missionRule->getMissionScore() * (_gameSave->getDifficultyInt() + 1)) / 100);
 	if (aLienPts != 0)
 	{
 		for (std::vector<AlienBase*>::const_iterator
@@ -3097,7 +3097,7 @@ void GeoscapeState::time1Month()
 
 	if (_gameSave->getAlienBases()->empty() == false) // handle xCom Secret Agents discovering bases
 	{
-		const int pct (20 - (static_cast<int>(_gameSave->getDifficulty()) * 5));
+		const int pct (20 - (_gameSave->getDifficultyInt() * 5));
 		if (RNG::percent(50 + pct) == true)
 		{
 			for (std::vector<AlienBase*>::const_iterator
@@ -3111,7 +3111,7 @@ void GeoscapeState::time1Month()
 		}
 	}
 
-	_gameSave->addMonth();
+	_gameSave->elapseMonth();
 	deterAlienMissions(); // determine aLien-mission-possibilities for the new month.
 
 	_game->getResourcePack()->fadeMusic(_game, 1232);

@@ -1149,7 +1149,7 @@ int UnitWalkBState::getFinalDirection() const // private.
 
 	if (unitFaced == nullptr)
 	{
-		const int diff (static_cast<int>(_parent->getBattlescapeState()->getSavedGame()->getDifficulty()));
+		const int diff (_parent->getBattlescapeState()->getSavedGame()->getDifficultyInt());
 		if (RNG::percent((diff + 1) * 20 - _unit->getRankInt() * 5) == true)
 		{
 			dist = 100000;

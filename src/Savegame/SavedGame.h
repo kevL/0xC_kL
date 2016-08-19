@@ -159,7 +159,7 @@ private:
 		_debugArgDone,
 		_ironman,
 		_warned;
-	int _monthsPassed;
+	int _monthsElapsed;
 	size_t
 		_dfZoom,
 		_globeZoom;
@@ -456,7 +456,7 @@ private:
 		/// Gets the month-count.
 		int getMonthsElapsed() const;
 		/// Increments the month-count.
-		void addMonth();
+		void elapseMonth();
 
 		/// Gets the GraphRegionToggles.
 		const std::string& getGraphRegionToggles() const;

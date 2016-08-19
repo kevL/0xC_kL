@@ -2928,7 +2928,7 @@ int Base::calcLostScore() const
 	}
 	return ret
 		* _rules->getBaseLostScore()
-		* (static_cast<int>(_gameSave->getDifficulty()) + 1);
+		* (_gameSave->getDifficultyInt() + 1);
 }
 
 }

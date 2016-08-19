@@ -136,7 +136,7 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_battleSave(nullptr),
 		_debugGeo(false),
 		_warned(false),
-		_monthsPassed(-1),
+		_monthsElapsed(-1),
 		_debugArgDone(false)
 //		_detail(true),
 //		_radarLines(false),
@@ -444,7 +444,7 @@ void SavedGame::load(
 
 	_end = static_cast<EndType>(doc["end"].as<int>(_end));
 
-	_monthsPassed			= doc["monthsPassed"]		.as<int>(_monthsPassed);
+	_monthsElapsed			= doc["monthsElapsed"]		.as<int>(_monthsElapsed);
 	_warned					= doc["warned"]				.as<bool>(_warned);
 	_graphRegionToggles		= doc["graphRegionToggles"]	.as<std::string>(_graphRegionToggles);
 	_graphCountryToggles	= doc["graphCountryToggles"].as<std::string>(_graphCountryToggles);
@@ -700,7 +700,7 @@ void SavedGame::save(const std::string& file) const
 	node["difficulty"]	= static_cast<int>(_difficulty);
 
 	if (_end != END_NONE)		node["end"]				= static_cast<int>(_end);
-	if (_monthsPassed != -1)	node["monthsPassed"]	= _monthsPassed;
+	if (_monthsElapsed != -1)	node["monthsElapsed"]	= _monthsElapsed;
 	if (_warned == true)		node["warned"]			= _warned;
 
 	node["graphRegionToggles"]	= _graphRegionToggles;
@@ -853,8 +853,8 @@ int SavedGame::getDifficultyInt() const
 		case DIFF_EXPERIENCED:	return 1;
 		case DIFF_VETERAN:		return 2;
 		case DIFF_GENIUS:		return 3;
-		default:
-		case DIFF_SUPERHUMAN:	return 4;
+		case DIFF_SUPERHUMAN:
+		default:				return 4;
 	}
 }
 
@@ -2233,15 +2233,15 @@ Region* SavedGame::locateRegion(const Target& target) const
  */
 int SavedGame::getMonthsElapsed() const
 {
-	return _monthsPassed;
+	return _monthsElapsed;
 }
 
 /**
  * Increments the month-count.
  */
-void SavedGame::addMonth()
+void SavedGame::elapseMonth()
 {
-	++_monthsPassed;
+	++_monthsElapsed;
 }
 
 /**

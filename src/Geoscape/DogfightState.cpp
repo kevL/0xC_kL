@@ -125,7 +125,7 @@ DogfightState::DogfightState(
 		_ufo(ufo),
 		_geoState(geoState),
 		_gameSave(_game->getSavedGame()),
-		_diff(static_cast<int>(_game->getSavedGame()->getDifficulty())),
+		_diff(_game->getSavedGame()->getDifficultyInt()),
 		_timeout(MSG_TIMEOUT),
 		_dist(DST_ENGAGE),
 		_desired(DST_STANDOFF),

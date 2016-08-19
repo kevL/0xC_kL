@@ -142,7 +142,7 @@ MonthlyReportState::MonthlyReportState()
 	_txtMonth->setText(tr("STR_MONTH").arg(tr(st)).arg(year));
 
 	const int
-		diff (static_cast<int>(_gameSave->getDifficulty())),
+		diff (_gameSave->getDifficultyInt()),
 		ratingThreshold (_game->getRuleset()->getDefeatScore() + diff * 250);
 
 	std::string track;
@@ -307,7 +307,7 @@ void MonthlyReportState::init()
  */
 void MonthlyReportState::calculateChanges() // private.
 {
-	const int diff (static_cast<int>(_gameSave->getDifficulty()));
+	const int diff (_gameSave->getDifficultyInt());
 	if (diff != 0)
 	{
 		int pactScore;

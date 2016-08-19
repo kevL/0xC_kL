@@ -1884,7 +1884,7 @@ bool TileEngine::reactionShot(
 								_rfAction->posTarget,
 								unit,
 								_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
-								_battleSave->getBattleState()->getSavedGame()->getDifficulty()) == false)
+								_battleSave->getBattleState()->getSavedGame()->getDifficultyInt()) == false)
 		{
 			_rfAction->targeting = false;
 		}

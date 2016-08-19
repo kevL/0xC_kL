@@ -2164,7 +2164,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 
 		const Position posCraft (_unitList->at(0u)->getPosition()); // aLiens face Craft
 		int dir;
-		if (RNG::percent((_gameSave->getDifficulty() + 1) * 20) == true
+		if (RNG::percent((_gameSave->getDifficultyInt() + 1) * 20) == true
 			&& TileEngine::distance(
 								node->getPosition(),
 								posCraft) < 25)

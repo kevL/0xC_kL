@@ -158,7 +158,7 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 //		aiAction->weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist
 
 	_attackAction->weapon = aiAction->weapon;
-	_attackAction->diff = static_cast<int>(_battleSave->getSavedGame()->getDifficulty()); // for grenade-efficacy and blaster-waypoints.
+	_attackAction->diff = _battleSave->getSavedGame()->getDifficultyInt(); // for grenade-efficacy and blaster-waypoints.
 
 	_spottersOrigin = tallySpotters(_unit->getPosition());
 	_targetsExposed = tallyTargets();

@@ -392,7 +392,7 @@ void StatisticsState::listStats()
 			++researchDone;
 	}
 
-	const std::string difficulty[]
+	const std::string difficulty[5u]
 	{
 		"STR_1_BEGINNER",
 		"STR_2_EXPERIENCED",
@@ -401,7 +401,7 @@ void StatisticsState::listStats()
 		"STR_5_SUPERHUMAN"
 	};
 
-	_lstStats->addRow(2, tr("STR_DIFFICULTY").c_str(),				tr(difficulty[gameSave->getDifficulty()]).c_str());
+	_lstStats->addRow(2, tr("STR_DIFFICULTY").c_str(),				tr(difficulty[static_cast<size_t>(gameSave->getDifficulty())]).c_str());
 	_lstStats->addRow(2, tr("STR_AVERAGE_MONTHLY_RATING").c_str(),	Text::intWide(monthlyScore).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_INCOME").c_str(),			Text::formatCurrency(totalIncome).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_EXPENDITURE").c_str(),		Text::formatCurrency(totalExpenses).c_str());

@@ -229,7 +229,7 @@ bool AlienMission::isOver() const
 	if (_liveUfos == 0
 		&& _waveCount == _missionRule.getWaveTotal()
 		&& _missionRule.getObjectiveType() != alm_INFILT) // Infiltrations continue for ever. Almost.
-// ->		|| RNG::percent(static_cast<int>(_gameSave.getDifficulty()) * 20) == false))
+// ->		|| RNG::percent(_gameSave.getDifficultyInt() * 20) == false
 	{
 		return true;
 	}
@@ -605,7 +605,7 @@ void AlienMission::ufoReachedWaypoint(
 			size_t wave;
 			switch (_waveCount)
 			{
-				case 0u: // restart AlienMission -> if (RNG::percent(static_cast<int>(_gameSave.getDifficulty()) * 20) == false)
+				case 0u: // restart AlienMission -> if (RNG::percent(_gameSave.getDifficultyInt() * 20) == false)
 					wave = _missionRule.getWaveTotal() - 1u;
 					break;
 				default:
@@ -986,7 +986,7 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		size_t wave;
 		switch (_waveCount)
 		{
-			case 0u: // restart AlienMission -> if (RNG::percent(static_cast<int>(_gameSave.getDifficulty()) * 20) == false)
+			case 0u: // restart AlienMission -> if (RNG::percent(_gameSave.getDifficultyInt() * 20) == false)
 				wave = _missionRule.getWaveTotal() - 1u;
 				break;
 			default:
@@ -1105,23 +1105,23 @@ void AlienMission::addScore( // private.
 	{
 		switch (_missionRule.getObjectiveType())
 		{
-//			case alm_TERROR: break;	// use default pt-value
-//			case alm_RETAL: break;	// use default pt-value <- has 0 pts.
+//			case alm_TERROR: break; // use default pt-value
+//			case alm_RETAL:  break; // use default pt-value <- has 0 pts.
 
 			case alm_INFILT:
 			case alm_BASE:
-				aLienPts += static_cast<int>(_gameSave.getDifficulty()) * 20	// TODO: Instead of '20' use a UFO-size modifier. 'Cause this
-						 + (_gameSave.getMonthsElapsed() << 1u);				// is gonna rack up *huge pts* in ufoLifting() as it is now.
+				aLienPts += _gameSave.getDifficultyInt() * 20		// TODO: Instead of '20' use a UFO-size modifier. 'Cause this
+						 + (_gameSave.getMonthsElapsed() << 1u);	// is gonna rack up *huge pts* in ufoLifting() as it is now.
 				break;
 
 			case alm_SUPPLY:
-				aLienPts += static_cast<int>(_gameSave.getDifficulty()) * 10
+				aLienPts += _gameSave.getDifficultyInt() * 10
 						 + (_gameSave.getMonthsElapsed() >> 1u);
 				break;
 
 			case alm_SCORE:
-				aLienPts += (static_cast<int>(_gameSave.getDifficulty()) << 1u)
-						 + _gameSave.getMonthsElapsed();
+				aLienPts += (_gameSave.getDifficultyInt() << 1u)
+						 +   _gameSave.getMonthsElapsed();
 		}
 		_gameSave.scorePoints(lon,lat, aLienPts, true);
 	}
