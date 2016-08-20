@@ -113,8 +113,7 @@ std::string UnitWalkBState::getBattleStateLabel() const
  */
 void UnitWalkBState::init()
 {
-//	if (_debug)
-//	{
+//	if (_debug) {
 //		Log(LOG_INFO) << "";
 //		Log(LOG_INFO) << "walkB:init() id-" << _unit->getId();
 //		Log(LOG_INFO) << ". " << _unit->getPosition() << " to " << _action.posTarget;
@@ -138,8 +137,7 @@ void UnitWalkBState::init()
  */
 void UnitWalkBState::think()
 {
-//	if (_debug)
-//	{
+//	if (_debug) {
 //		Log(LOG_INFO) << "";
 //		Log(LOG_INFO) << "***** UnitWalkBState::think()\t\t\t\tid-" << _unit->getId()
 //					  << " " << _unit->getPosition() << " to " << _unit->getStopPosition()
@@ -325,12 +323,9 @@ void UnitWalkBState::cancel()
 bool UnitWalkBState::statusStand() // private.
 {
 	const Position& posStart (_unit->getPosition());
-//	if (_debug)
-//	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::statusStand()\t\tid-" << _unit->getId()
-//					  << " " << posStart
-//					  << " vis= " << _unit->getUnitVisible();
-//	}
+//	if (_debug) Log(LOG_INFO) << "***** UnitWalkBState::statusStand()\t\tid-" << _unit->getId()
+//							  << " " << posStart
+//							  << " vis= " << _unit->getUnitVisible();
 
 	bool gravLift (false);
 
@@ -634,12 +629,13 @@ bool UnitWalkBState::statusStand() // private.
 
 	if (_isVisible == true)
 	{
-		if (_unit->getFaction() != FACTION_PLAYER
-			&& _walkCamera->isOnScreen(_unit->getPosition()) == false)
+		if (_walkCamera->isOnScreen(_unit->getPosition()) == false)
 		{
-			//if (_debug)
-			//Log(LOG_INFO) << "walkB:statusStand() centerPos id-" << _unit->getId();
-			_walkCamera->centerPosition(posStart);
+			if (_unit->getFaction() != FACTION_PLAYER)
+			{
+				//Log(LOG_INFO) << "walkB:statusStand() centerPos id-" << _unit->getId();
+				_walkCamera->centerPosition(posStart);
+			}
 		}
 		else
 		{
@@ -648,7 +644,6 @@ bool UnitWalkBState::statusStand() // private.
 			{
 				case Pathfinding::DIR_DOWN:
 					_changeViewlevel = true;
-//					_walkCamera->setViewLevel(posStart.z - 1); // do this on walkPhase= 1
 					break;
 				default:
 					_walkCamera->setViewLevel(posStart.z);
@@ -670,12 +665,9 @@ bool UnitWalkBState::statusStand() // private.
  */
 bool UnitWalkBState::statusWalk() // private.
 {
-//	if (_debug)
-//	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::statusWalk()\t\tid-" << _unit->getId()
-//					  << " " << _unit->getPosition()
-//					  << " vis= " << _unit->getUnitVisible();
-//	}
+//	if (_debug) Log(LOG_INFO) << "***** UnitWalkBState::statusWalk()\t\tid-" << _unit->getId()
+//							  << " " << _unit->getPosition()
+//							  << " vis= " << _unit->getUnitVisible();
 
 	if (_battleSave->getTile(_unit->getStopPosition())->getTileUnit() == nullptr	// next tile must be not occupied
 		// And, if not flying, the position directly below the tile must not be
@@ -801,12 +793,9 @@ bool UnitWalkBState::statusWalk() // private.
  */
 bool UnitWalkBState::statusStand_end() // private.
 {
-//	if (_debug)
-//	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::statusStand_end()\tid-" << _unit->getId()
-//					  << " " << _unit->getPosition()
-//					  << " vis= " << _unit->getUnitVisible();
-//	}
+//	if (_debug) Log(LOG_INFO) << "***** UnitWalkBState::statusStand_end()\tid-" << _unit->getId()
+//							  << " " << _unit->getPosition()
+//							  << " vis= " << _unit->getUnitVisible();
 
 	if (_unit->getFaction() == FACTION_PLAYER
 		|| _battleSave->getDebugTac() == true)
@@ -948,12 +937,9 @@ bool UnitWalkBState::statusStand_end() // private.
  */
 void UnitWalkBState::statusTurn() // private.
 {
-//	if (_debug)
-//	{
-//		Log(LOG_INFO) << "***** UnitWalkBState::statusTurn()\t\tid-" << _unit->getId()
-//					  << " " << _unit->getPosition()
-//					  << " vis= " << _unit->getUnitVisible();
-//	}
+//	if (_debug) Log(LOG_INFO) << "***** UnitWalkBState::statusTurn()\t\tid-" << _unit->getId()
+//							  << " " << _unit->getPosition()
+//							  << " vis= " << _unit->getUnitVisible();
 
 	if (_preStepTurn == true) // turning during walking costs no tu unless aborted.
 		++_preStepCost;
