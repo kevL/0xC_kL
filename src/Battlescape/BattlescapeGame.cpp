@@ -2789,7 +2789,9 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			ctrl ((SDL_GetModState() & KMOD_CTRL) != 0),
 			alt  ((SDL_GetModState() & KMOD_ALT)  != 0);
 
-		if (targetUnit == nullptr || targetUnit->getUnitVisible() == false)
+		if (targetUnit == nullptr || targetUnit->getUnitVisible() == false
+			|| (targetUnit == _playerAction.actor
+				&& _playerAction.actor->getPosition() != pos))
 		{
 //			bool zPath;
 //			const Uint8* const keystate (SDL_GetKeyState(nullptr));
