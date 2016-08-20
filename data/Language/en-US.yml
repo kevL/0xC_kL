@@ -969,7 +969,7 @@ en-US:
   STR_SAVE_SUCCESSFUL: "saveSsuccess"
   STR_DELETE: "DELETE"
   STR_DELETE_UNSUCCESSFUL: "deleteFail"
-  STR_CONFIRM_DELETE_SAVED_GAME: "Be sure you want to delete ..."
+  STR_CONFIRM_DELETE_SAVED_GAME_: "Be sure you want to delete ...{NEWLINE}{NEWLINE}{0}"
   STR_LOADING: "Loading ..."
   STR_UNIT: "UNIT> {0}"
   STR_ENERGY: "stamina"

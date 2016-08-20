@@ -55,7 +55,7 @@ DeleteSaveState::DeleteSaveState(
 
 	_window		= new Window(this, 256, 100, 32, 50, POPUP_HORIZONTAL);
 
-	_txtMessage	= new Text(246, 32, 37, 70);
+	_txtMessage	= new Text(246, 50, 37, 70);
 
 	_btnNo		= new TextButton(80, 18,  60, 122);
 	_btnYes		= new TextButton(80, 18, 180, 122);
@@ -90,8 +90,7 @@ DeleteSaveState::DeleteSaveState(
 
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setBig();
-	_txtMessage->setWordWrap();
-	_txtMessage->setText(tr("STR_CONFIRM_DELETE_SAVED_GAME"));
+	_txtMessage->setText(tr("STR_CONFIRM_DELETE_SAVED_GAME_").arg(Language::fsToWstr(file)));
 
 	if (_origin == OPT_BATTLESCAPE)
 		applyBattlescapeTheme();
@@ -120,23 +119,29 @@ void DeleteSaveState::btnYesClick(Action*)
 
 	if (CrossPlatform::deleteFile(_file) == false)
 	{
-		std::wstring error (tr("STR_DELETE_UNSUCCESSFUL"));
+		const std::wstring error (tr("STR_DELETE_UNSUCCESSFUL"));
 
 		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("errorMessages"));
-		if (_origin != OPT_BATTLESCAPE)
-			_game->pushState(new ErrorMessageState(
-												error,
-												_palette,
-												uiRule->getElement("geoscapeColor")->color,
-												"BACK01.SCR",
-												uiRule->getElement("geoscapePalette")->color));
-		else
-			_game->pushState(new ErrorMessageState(
-												error,
-												_palette,
-												uiRule->getElement("battlescapeColor")->color,
-												"Diehard",
-												uiRule->getElement("battlescapePalette")->color));
+		switch (_origin)
+		{
+			case OPT_MENU:
+			case OPT_GEOSCAPE:
+				_game->pushState(new ErrorMessageState(
+													error,
+													_palette,
+													uiRule->getElement("geoscapeColor")->color,
+													"BACK01.SCR",
+													uiRule->getElement("geoscapePalette")->color));
+				break;
+
+			case OPT_BATTLESCAPE:
+				_game->pushState(new ErrorMessageState(
+													error,
+													_palette,
+													uiRule->getElement("battlescapeColor")->color,
+													"Diehard",
+													uiRule->getElement("battlescapePalette")->color));
+		}
 	}
 }
 
