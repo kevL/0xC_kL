@@ -1729,11 +1729,11 @@ void BattlescapeState::btnUnitUpPress(Action*)
 									Pathfinding::DIR_UP))
 			{
 				case FLY_CANT:
-					warning(BattlescapeGame::PLAYER_ERROR[12u]);
+					warning(BattlescapeGame::PLAYER_ERROR[12u]); // cant fly
 					break;
 
 				case FLY_BLOCKED:
-					warning(BattlescapeGame::PLAYER_ERROR[13u]);
+					warning(BattlescapeGame::PLAYER_ERROR[13u]); // not allowed: roof
 					break;
 
 				case FLY_GRAVLIFT:
@@ -1746,7 +1746,7 @@ void BattlescapeState::btnUnitUpPress(Action*)
 			}
 		}
 		else
-			warning(BattlescapeGame::PLAYER_ERROR[12u]);
+			warning(BattlescapeGame::PLAYER_ERROR[12u]); // cant fly
 	}
 }
 
@@ -1777,7 +1777,7 @@ void BattlescapeState::btnUnitDownPress(Action*)
 		{
 			case FLY_CANT:
 			case FLY_BLOCKED:
-				warning(BattlescapeGame::PLAYER_ERROR[14u]);
+				warning(BattlescapeGame::PLAYER_ERROR[14u]); // not allowed: floor
 				break;
 
 			case FLY_GRAVLIFT:

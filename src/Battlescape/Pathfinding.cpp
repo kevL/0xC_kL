@@ -1989,7 +1989,7 @@ UpDownCheck Pathfinding::validateUpDown(
 			case BIGWALL_NONE:
 				if (stopTile->getMapData(O_OBJECT)->getTuCostPart(_mType) != 255)
 					break;
-				// 'else' no break;
+				// no break;
 
 			case BIGWALL_BLOCK:
 			case BIGWALL_NESW:
@@ -1998,7 +1998,7 @@ UpDownCheck Pathfinding::validateUpDown(
 		}
 	}
 
-	if (startTile->getMapData(O_FLOOR) != nullptr
+	if (   startTile->getMapData(O_FLOOR) != nullptr
 		&& startTile->getMapData(O_FLOOR)->isGravLift()
 		&& stopTile->getMapData(O_FLOOR) != nullptr
 		&& stopTile->getMapData(O_FLOOR)->isGravLift())
@@ -2012,11 +2012,12 @@ UpDownCheck Pathfinding::validateUpDown(
 		if ((dir == DIR_UP
 				&& stopTile->isFloored(startTile) == false)
 			|| (dir == DIR_DOWN
-				&& startTile->isFloored(_battleSave->getTile(posStart + Position(0,0,-1))) == false))
+				&& startTile->isFloored(startTile->getTileBelow(_battleSave)) == false))
+//				&& startTile->isFloored(_battleSave->getTile(posStart + Position(0,0,-1))) == false))
 		{
 //			if (launch == true)
 //			{
-//				if ((dir == DIR_UP && stopTile->getMapData(O_FLOOR)->getLoftId(0) != 0)
+//				if (   (dir == DIR_UP   && stopTile-> getMapData(O_FLOOR)->getLoftId(0) != 0)
 //					|| (dir == DIR_DOWN && startTile->getMapData(O_FLOOR)->getLoftId(0) != 0))
 //				{
 //					return FLY_BLOCKED;
@@ -2031,7 +2032,7 @@ UpDownCheck Pathfinding::validateUpDown(
 
 /**
  * Checks whether a modifier key was used to enable strafing or running.
- * @return, true if modifier was used
+ * @return, true if CTRL was used
  */
 bool Pathfinding::isModCtrl() const
 {
@@ -2040,7 +2041,7 @@ bool Pathfinding::isModCtrl() const
 
 /**
  * Checks whether a modifier key was used to enable forced walking.
- * @return, true if modifier was used
+ * @return, true if ALT was used
  */
 bool Pathfinding::isModAlt() const
 {
@@ -2049,7 +2050,7 @@ bool Pathfinding::isModAlt() const
 
 /**
  * Gets the zPath-modifier setting.
- * @return, true if modifier was used
+ * @return, true if key-Z was used
  *
 bool Pathfinding::isZPath() const
 {

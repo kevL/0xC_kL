@@ -2875,8 +2875,17 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					else
 						_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
 				}
-				else
-					_parentState->btnUnitDownPress(nullptr);
+				else // BattlescapeState::btnUnitDownPress()
+				{
+					Pathfinding* const pf (_battleSave->getPathfinding());
+					pf->setInputModifiers();
+					pf->setPathingUnit(_playerAction.actor);
+
+					if (pf->validateUpDown(pos, Pathfinding::DIR_DOWN) == FLY_GOOD)
+						moveUpDown(
+								_playerAction.actor,
+								Pathfinding::DIR_DOWN);
+				}
 			}
 		}
 	}
