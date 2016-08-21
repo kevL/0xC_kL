@@ -81,6 +81,9 @@ private:
 	/// Sets the movement-type.
 	void setMoveType();
 
+	/// Finds the real terrain-level of a destination Tile.
+	int findTerrainLevel(const Tile* const tile) const;
+
 	/// Tries to find a path between two Positions.
 	bool aStarPath(
 			const Position& posOrigin,
