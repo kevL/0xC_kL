@@ -1852,7 +1852,6 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 					switch (bType) // shuttle all times instantly to the Base
 					{
 						case BT_CORPSE:
-						{
 							if ((unit = (*i)->getBodyUnit()) != nullptr)
 							{
 								switch (unit->getUnitStatus())
@@ -1878,7 +1877,6 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 								}
 							}
 							break;
-						}
 
 						case BT_AMMO:
 							_clips[itRule] += (*i)->getAmmoQuantity();

@@ -68,7 +68,7 @@ private:
 		_tuCostTotal;
 
 	BattleUnit* _unit;
-	SavedBattleGame* _battleSave;
+	const SavedBattleGame* _battleSave;
 
 	BattleAction* _pathAction;
 
@@ -82,7 +82,9 @@ private:
 	void setMoveType();
 
 	/// Finds the real terrain-level of a destination Tile.
-	int findTerrainLevel(const Tile* const tile) const;
+	int findTerrainLevel(
+			const Tile* tile,
+			int levelZ) const;
 
 	/// Tries to find a path between two Positions.
 	bool aStarPath(
@@ -150,7 +152,7 @@ private:
 
 		/// Calculates the shortest path.
 		void calculatePath(
-				const BattleUnit* const unit,
+				BattleUnit* const unit,
 				Position posStop,
 				int tuCap = TU_INFINITE,
 				const BattleUnit* const launchTarget = nullptr,

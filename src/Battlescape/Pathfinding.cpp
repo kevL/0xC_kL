@@ -185,7 +185,7 @@ void Pathfinding::abortPath()
  * @param strafeRejected	- true if path needs to be recalculated w/out strafe (default false)
  */
 void Pathfinding::calculatePath(
-		const BattleUnit* const unit, // -> should not need 'unit' here anymore; done in setPathingUnit() unless FACTION_PLAYER ...
+		BattleUnit* const unit, // -> should not need 'unit' here anymore; done in setPathingUnit() unless FACTION_PLAYER ...
 		Position posStop,
 		int tuCap,
 		const BattleUnit* const launchTarget,
@@ -213,6 +213,8 @@ void Pathfinding::calculatePath(
 
 	abortPath();
 
+	_unit = unit; // Or, setPathingUnit()
+
 	if (launchTarget != nullptr)
 	{
 		_mType = MT_FLY;
@@ -221,7 +223,7 @@ void Pathfinding::calculatePath(
 	else
 		setMoveType(); // redundant in some cases ...
 
-	if (unit->getFaction() != FACTION_PLAYER)
+	if (_unit->getFaction() != FACTION_PLAYER)
 		strafeRejected = true;
 
 	const Tile* tileStop;
@@ -277,8 +279,7 @@ void Pathfinding::calculatePath(
 		{
 			--posStop.z;
 			tileStop = _battleSave->getTile(posStop);
-
-			//Log(LOG_INFO) << ". . drop to " << tileStop->getPosition();
+			//Log(LOG_INFO) << ". . drop to " << posStop;
 		}
 	}
 
@@ -315,7 +316,7 @@ void Pathfinding::calculatePath(
 						if (isBlockedPath(
 										tileStop,
 										dir[i],
-										unit) == true
+										_unit) == true
 							&& isBlockedPath(
 										tileStop,
 										dir[i],
@@ -337,7 +338,7 @@ void Pathfinding::calculatePath(
 						}
 
 						if ((unitTest = tileTest->getTileUnit()) != nullptr
-							&& unitTest != unit
+							&& unitTest != _unit
 							&& unitTest != launchTarget
 							&& unitTest->getUnitVisible() == true)
 						{
@@ -352,11 +353,11 @@ void Pathfinding::calculatePath(
 		}
 
 
-		const Position posStart (unit->getPosition());
+		const Position posStart (_unit->getPosition());
 		//Log(LOG_INFO) << "posStart " << posStart;
 		//Log(LOG_INFO) << "posStop  " << posStop;
 
-		const bool isMech (unit->isMechanical() == true);
+		const bool isMech (_unit->isMechanical() == true);
 
 		_pathAction->strafe =
 		_strafe = strafeRejected == false
@@ -364,14 +365,16 @@ void Pathfinding::calculatePath(
 			   && (    (_ctrl == true && isMech == false)
 					|| (_alt  == true && isMech == true))
 			   && (std::abs(
-						findTerrainLevel(_battleSave->getTile(posStop))
-					  - (_battleSave->getTile(posStart)->getTerrainLevel() - posStart.z * 24)) < 9)
+						findTerrainLevel(_battleSave->getTile(posStop), posStart.z)
+					  - findTerrainLevel(_battleSave->getTile(posStart), posStop.z) < 9))
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
 		//Log(LOG_INFO) << "strafe= " << _strafe;
+		//Log(LOG_INFO) << "tLevel stop= " << findTerrainLevel(_battleSave->getTile(posStop), posStart.z);
+		//Log(LOG_INFO) << "tLevel start= " << findTerrainLevel(_battleSave->getTile(posStart), posStop.z);
 
 //		const bool sneak (Options::sneakyAI == true
-//					   && unit->getFaction() == FACTION_HOSTILE);
+//					   && _unit->getFaction() == FACTION_HOSTILE);
 
 		if (aStarPath(
 					posStart,
@@ -384,8 +387,9 @@ void Pathfinding::calculatePath(
 			{
 				if (_strafe == true && _path.size() > 2u)
 				{
+					//Log(LOG_INFO) << ". recalc Path - strafeRejected";
 					calculatePath( // iterate this function ONCE ->
-								unit,
+								_unit,
 								posStop_cache,
 								tuCap,
 								nullptr,
@@ -393,11 +397,12 @@ void Pathfinding::calculatePath(
 				}
 				else if (Options::battleStrafe == true
 					&& _ctrl == true
-					&& unit->getGeoscapeSoldier() != nullptr
+					&& _unit->getGeoscapeSoldier() != nullptr
 					&& (_strafe == false
 						|| (_path.size() == 1u
-							&& unit->getUnitDirection() == _path.front())))
+							&& _unit->getUnitDirection() == _path.front())))
 				{
+					//Log(LOG_INFO) << ". strafeRejected - dashing";
 					_strafe =
 					_pathAction->strafe = false;
 					_pathAction->dash = true;
@@ -406,6 +411,7 @@ void Pathfinding::calculatePath(
 				}
 				else
 				{
+					//Log(LOG_INFO) << ". regular.";
 					_pathAction->dash = false;
 					if (_pathAction->actor != nullptr)
 						_pathAction->actor->setDashing(false);
@@ -413,24 +419,33 @@ void Pathfinding::calculatePath(
 			}
 		}
 		else
+		{
+			//Log(LOG_INFO) << "ABORTED";
 			abortPath();
+		}
 	}
 }
 
 /**
  * Finds the real terrain-level of a destination Tile.
  * @note Helper for calculatePath(). Used in the odd situation of a large unit
- * moving south and up a level; the primary quadrant will be in the air and so
- * its real terrain-level will be misrepresented when determining whether a
- * tank-strafe is valid. This corrects that inaccurate z-level discrepancy.
- * @param pos - pointer to a tile
+ * moving south and up a level, or north and down a level; the primary quadrant
+ * will be in the air and so its real terrain-level will be misrepresented when
+ * determining whether a tank-strafe is valid. This corrects that inaccurate
+ * z-level discrepancy.
+ * @param pos		- pointer to a tile
+ * @param levelZ	- z-level of other tile
  * @return, terrain-level
  */
-int Pathfinding::findTerrainLevel(const Tile* tile) const // private.
+int Pathfinding::findTerrainLevel(
+		const Tile* tile,
+		int levelZ) const // private.
 {
-	while (tile->isFloored() == false)
-		tile = tile->getTileBelow(_battleSave);
-
+	if (tile->getPosition().z != levelZ)
+	{
+		while (tile->isFloored() == false)
+			tile = tile->getTileBelow(_battleSave);
+	}
 	return tile->getTerrainLevel() - tile->getPosition().z * 24;
 }
 
@@ -1825,7 +1840,7 @@ bool Pathfinding::previewPath(bool discard)
 	{
 		const int
 			unitSize (_unit->getArmor()->getSize()),
-			agility (_unit->getArmor()->getAgility());
+			agility  (_unit->getArmor()->getAgility());
 		int
 			unitTu (_unit->getTu()),
 			unitEn (_unit->getEnergy()),
