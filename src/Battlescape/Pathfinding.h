@@ -81,7 +81,7 @@ private:
 	/// Sets the movement-type.
 	void setMoveType();
 
-	/// Finds the real terrain-level of a destination Tile.
+	/// Finds the effective terrain-level of a specified Tile.
 	int findTerrainLevel(
 			const Tile* tile,
 			int levelZ) const;
@@ -104,18 +104,16 @@ private:
 			const Tile* const tileStop);
 
 	/// Determines whether a specified Tile blocks a movement-type.
-	bool isBlocked(
+	bool isBlockedTile(
 			const Tile* const tile,
 			const MapDataType partType,
 			const BattleUnit* const launchTarget = nullptr,
 			const BigwallType diagExclusion = BIGWALL_NONE) const;
 
-	/// Determines whether a unit can fall down from a specified Tile.
-	bool canFallDown(
+	/// Checks if a unit can fall down a level.
+	bool isUnitFloored(
 			const Tile* const tile,
-			int armorSize) const;
-	/// Determines whether a unit can fall down from a specified Tile.
-	bool canFallDown(const Tile* const tile) const;
+			int unitSize) const;
 
 
 	public:
@@ -177,7 +175,7 @@ private:
 		{ return _tuCostTotal; }
 
 		/// Determines whether or not movement between startTile and endTile is possible in the direction.
-		bool isBlockedPath(
+		bool isBlockedDir(
 				const Tile* const startTile,
 				const int dir,
 				const BattleUnit* const launchTarget = nullptr) const;

@@ -377,7 +377,9 @@ bool Tile::isFloored(const Tile* const tileBelow) const
  */
 Tile* Tile::getTileBelow(const SavedBattleGame* const battleSave) const
 {
-	return battleSave->getTile(_pos + Position(0,0,-1));
+	static const Position& posBelow (Position(0,0,-1));
+
+	return battleSave->getTile(_pos + posBelow);
 }
 
 /**

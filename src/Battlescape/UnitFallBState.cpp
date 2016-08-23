@@ -333,7 +333,7 @@ void UnitFallBState::think()
 											  && tile->getTileUnit() != unitBelow),
 								hasFloor (tile != nullptr
 									   && tile->isFloored(tileBelow) == true),
-								blocked (_battleSave->getPathfinding()->isBlockedPath(
+								blocked (_battleSave->getPathfinding()->isBlockedDir(
 																					_battleSave->getTile(posQuad),
 																					dir,
 																					unitBelow)),

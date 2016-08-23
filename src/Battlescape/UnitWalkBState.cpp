@@ -1328,13 +1328,12 @@ void UnitWalkBState::doFallCheck() // private.
 
 /**
  * Checks if there is ground below when unit is falling.
- * @note Pathfinding already has a function canFallDown() that could be used.
  * @return, true if unit is on solid floor
  */
 bool UnitWalkBState::groundCheck() const // private.
 {
-	const Tile* tileBelow;
-	Position pos;
+	const Tile* tile;
+	const Position& pos (_unit->getPosition());
 
 	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
@@ -1347,9 +1346,8 @@ bool UnitWalkBState::groundCheck() const // private.
 				y != -1;
 				--y)
 		{
-			pos = _unit->getPosition() + Position(x,y,0);
-			tileBelow = _battleSave->getTile(pos + Position(0,0,-1));
-			if (_battleSave->getTile(pos)->isFloored(tileBelow) == true)
+			tile = _battleSave->getTile(pos + Position(x,y,0));
+			if (tile->isFloored(tile->getTileBelow(_battleSave)) == true)
 				return true;
 		}
 	}
@@ -1364,6 +1362,8 @@ void UnitWalkBState::establishTilesLink() // private.
 	//Log(LOG_INFO) << "UnitWalkBState::establishTilesLink()";
 	_tilesLinked = true;
 
+	const Position& posStop (_unit->getStopPosition());
+
 	const int unitSize (_unit->getArmor()->getSize() - 1);
 	for (int
 			x = unitSize;
@@ -1375,7 +1375,7 @@ void UnitWalkBState::establishTilesLink() // private.
 				y != -1;
 				--y)
 		{
-			_battleSave->getTile(_unit->getStopPosition() + Position(x,y,0))->setTileUnit(_unit);
+			_battleSave->getTile(posStop + Position(x,y,0))->setTileUnit(_unit);
 		}
 	}
 }

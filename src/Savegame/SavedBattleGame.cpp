@@ -2427,7 +2427,7 @@ bool SavedBattleGame::setUnitPosition(
 				dir != 5;
 				++dir)
 		{
-			if (_pf->isBlockedPath(getTile(pos0), dir) == true)
+			if (_pf->isBlockedDir(getTile(pos0), dir) == true)
 				return false;
 		}
 	}
@@ -2492,7 +2492,7 @@ bool SavedBattleGame::placeUnitByPosition(
 							yArray[i % 8],
 							0);
 		if ((tile = getTile(pos0)) != nullptr
-			&& getPathfinding()->isBlockedPath(tile, static_cast<int>(dir)) == false
+			&& getPathfinding()->isBlockedDir(tile, static_cast<int>(dir)) == false
 			&& setUnitPosition(unit, pos0) == true)
 		{
 			return true;

@@ -237,26 +237,24 @@ void Pathfinding::calculatePath(
 				y != unitSize;
 				++y)
 		{
-			if ((tileStop = _battleSave->getTile(posStop + Position(x,y,0))) != nullptr)
+			if ((tileStop = _battleSave->getTile(posStop + Position(x,y,0))) == nullptr)
 			{
-				if (isBlocked(
-							tileStop,
-							O_FLOOR,
-							launchTarget) == true
-					|| isBlocked(
-							tileStop,
-							O_OBJECT,
-							launchTarget) == true
-					|| tileStop->getTuCostTile(O_OBJECT, _mType) == FAIL)
-				{
-					//Log(LOG_INFO) << ". early out [1]";
-					return;
-				}
+				//Log(LOG_INFO) << ". early out [1]";
+				return; // <- probly also done again below_ Pertains only to large units.
 			}
-			else
+
+			if (isBlockedTile(
+						tileStop,
+						O_FLOOR,
+						launchTarget) == true
+				|| isBlockedTile(
+						tileStop,
+						O_OBJECT,
+						launchTarget) == true
+				|| tileStop->getTuCostTile(O_OBJECT, _mType) == FAIL)
 			{
 				//Log(LOG_INFO) << ". early out [2]";
-				return; // <- probly also done again below_ Pertains only to large units.
+				return;
 			}
 		}
 	}
@@ -275,7 +273,7 @@ void Pathfinding::calculatePath(
 	if (_mType != MT_FLY)
 	{
 		//Log(LOG_INFO) << ". drop tileStop " << tileStop->getPosition();
-		while (canFallDown(tileStop, unitSize))
+		while (isUnitFloored(tileStop, unitSize) == false)
 		{
 			--posStop.z;
 			tileStop = _battleSave->getTile(posStop);
@@ -284,11 +282,11 @@ void Pathfinding::calculatePath(
 	}
 
 
-	if (isBlocked( // TODO: Check all quadrants. See above^.
+	if (isBlockedTile( // TODO: Check all quadrants. See above^.
 			tileStop,
 			O_FLOOR,
 			launchTarget) == false
-		&& isBlocked(
+		&& isBlockedTile(
 				tileStop,
 				O_OBJECT,
 				launchTarget) == false)
@@ -313,11 +311,11 @@ void Pathfinding::calculatePath(
 				{
 					if (x != 0 || y != 0)
 					{
-						if (isBlockedPath(
+						if (isBlockedDir(
 										tileStop,
 										dir[i],
 										_unit) == true
-							&& isBlockedPath(
+							&& isBlockedDir(
 										tileStop,
 										dir[i],
 										launchTarget) == true)
@@ -427,19 +425,19 @@ void Pathfinding::calculatePath(
 }
 
 /**
- * Finds the real terrain-level of a destination Tile.
+ * Finds the effective terrain-level of a specified Tile.
  * @note Helper for calculatePath(). Used in the odd situation of a large unit
- * moving south and up a level, or north and down a level; the primary quadrant
- * will be in the air and so its real terrain-level will be misrepresented when
- * determining whether a tank-strafe is valid. This corrects that inaccurate
- * z-level discrepancy.
+ * reversing south and up a level, or north and down a level; the primary
+ * quadrant will be in the air and so its real terrain-level will be
+ * misrepresented when determining whether a tank-strafe is valid. This corrects
+ * that inaccurate z-level discrepancy.
  * @param pos		- pointer to a tile
  * @param levelZ	- z-level of other tile
  * @return, terrain-level
  */
-int Pathfinding::findTerrainLevel(
+int Pathfinding::findTerrainLevel( // private.
 		const Tile* tile,
-		int levelZ) const // private.
+		int levelZ) const
 {
 	if (tile->getPosition().z != levelZ)
 	{
@@ -775,15 +773,15 @@ int Pathfinding::getTuCostPf(
 			if (_mType != MT_FLY)
 			{
 				if (x == 0 && y == 0
-					&& canFallDown(
+					&& isUnitFloored(
 								tileStart,
-								unitSize) == true)
+								unitSize) == false)
 				{
 					if (dir != DIR_DOWN) return FAIL;
 
 					fall = true;
 					++partsOnAir;
-					//if (_debug) Log(LOG_INFO) << ". . not Fly, canFallDown, ++partsOnAir -- fall= " << fall;
+					//if (_debug) Log(LOG_INFO) << ". . not Fly, not Floored, ++partsOnAir -- fall= " << fall;
 				}
 				else
 				{
@@ -810,7 +808,7 @@ int Pathfinding::getTuCostPf(
 
 			if (dir < DIR_UP && tileStart->getTerrainLevel() > -16
 				&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
-					|| isBlockedPath(
+					|| isBlockedDir(
 								tileStart,
 								dir,
 								launchTarget) == true))
@@ -843,7 +841,7 @@ int Pathfinding::getTuCostPf(
 			else if (fall == false
 				&& dir < DIR_UP
 				&& _mType != MT_FLY
-				&& canFallDown(tileStop) == true
+				&& tileStop->isFloored(tileStop->getTileBelow(_battleSave)) == false
 				&& tileStopBelow != nullptr
 				&& tileStopBelow->getTerrainLevel() < -11)
 			{
@@ -919,7 +917,7 @@ int Pathfinding::getTuCostPf(
 				default:
 					if (posStop->z == tileStart->getPosition().z
 						&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
-							|| isBlockedPath(
+							|| isBlockedDir(
 										tileStart,
 										dir,
 										launchTarget) == true))
@@ -931,7 +929,7 @@ int Pathfinding::getTuCostPf(
 			if (_mType != MT_FLY
 				&& dir != DIR_DOWN
 				&& fall == false
-				&& canFallDown(tileStart) == true)
+				&& tileStart->isFloored(tileStart->getTileBelow(_battleSave)) == false)
 			{
 				//if (_debug) Log(LOG_INFO) << ". . . falling";
 				if (++partsFalling == quadrants)
@@ -949,7 +947,7 @@ int Pathfinding::getTuCostPf(
 
 			if (dir < DIR_UP && partsGoingUp != 0
 				&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
-					|| isBlockedPath(
+					|| isBlockedDir(
 								tileStart,
 								dir,
 								launchTarget) == true))
@@ -957,11 +955,11 @@ int Pathfinding::getTuCostPf(
 				return FAIL;
 			}
 
-			if (isBlocked(
+			if (isBlockedTile(
 						tileStop,
 						O_FLOOR,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 							tileStop,
 							O_OBJECT,
 							launchTarget) == true
@@ -1046,7 +1044,7 @@ int Pathfinding::getTuCostPf(
 //		}
 
 		const Tile* const ulTile (_battleSave->getTile(*posStop));
-		if (isBlockedPath(
+		if (isBlockedDir(
 					ulTile,
 					3,
 					launchTarget) == true)
@@ -1057,7 +1055,7 @@ int Pathfinding::getTuCostPf(
 
 		// - then check the path between part 1,0 and part 0,1 at destination position
 		const Tile* const urTile (_battleSave->getTile(*posStop + Position(1,0,0)));
-		if (isBlockedPath(
+		if (isBlockedDir(
 					urTile,
 					5,
 					launchTarget) == true)
@@ -1126,63 +1124,60 @@ int Pathfinding::getWallTuCost( // private.
 //				tile = tileStart;
 
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
 			{
-				tile = tileStart;
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
+				tuTotal += partCost;
 
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost; // don't let large unit parts reset _doorCost prematurely.
-				}
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost; // don't let large unit parts reset _doorCost prematurely.
 			}
+//			}
 			break;
 
 		case 1:
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
 			{
-				tile = tileStart;
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
+				tuTotal += partCost;
+				++walls;
 
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = _battleSave->getTile(tileStart->getPosition() + Position(1,0,0)); // tileEast
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,-1,0)); // tileNorthEast
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if (walls != 0) // && _doorCost == 0
-					tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls; // add 50% and round up.
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
 			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(1,0,0)); // tileEast
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,-1,0)); // tileNorthEast
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+//			}
 			break;
 
 		case 2:
@@ -1192,63 +1187,60 @@ int Pathfinding::getWallTuCost( // private.
 //				tile = tileStop;
 
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = tileStop;
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
 			{
-				tile = tileStop;
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
+				tuTotal += partCost;
 
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
 			}
+//			}
 			break;
 
 		case 3:
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(1,0,0)); // tileEast
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
 			{
-				tile = _battleSave->getTile(tileStart->getPosition() + Position(1,0,0)); // tileEast
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
+				tuTotal += partCost;
+				++walls;
 
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,1,0)); // tileSouthEast
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if (walls != 0)
-					tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls;
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
 			}
+
+			tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(1,1,0)); // tileSouthEast
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+//			}
 			break;
 
 		case 4:
@@ -1258,63 +1250,60 @@ int Pathfinding::getWallTuCost( // private.
 //				tile = tileStop;
 
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = tileStop;
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
 			{
-				tile = tileStop;
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
+				tuTotal += partCost;
 
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
 			}
+//			}
 			break;
 
 		case 5:
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
 			{
-				tile = tileStart;
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
+				tuTotal += partCost;
+				++walls;
 
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(-1,1,0)); // tileSouthWest
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if (walls != 0)
-					tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls;
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
 			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(0,1,0)); // tileSouth
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			tile = tileStop; //_battleSave->getTile(tileStart->getPosition() + Position(-1,1,0)); // tileSouthWest
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+//			}
 			break;
 
 		case 6:
@@ -1324,64 +1313,64 @@ int Pathfinding::getWallTuCost( // private.
 //				tile = tileStart;
 
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
 			{
-				tile = tileStart;
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
+				tuTotal += partCost;
 
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
 			}
+//			}
 			break;
 
 		case 7:
 //			if (tileStart->getPosition().z == tileStop->getPosition().z)
+//			{
+			tile = tileStart;
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
 			{
-				tile = tileStart;
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
+				tuTotal += partCost;
+				++walls;
 
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = _battleSave->getTile(tileStart->getPosition() + Position(-1,0,0)); // tileWest
-				if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,-1,0)); // tileNorth
-				if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
-				{
-					tuTotal += partCost;
-					++walls;
-
-					if (tile->getMapData(O_WESTWALL)->isDoor() == true)
-						if (partCost > _doorCost) _doorCost = partCost;
-				}
-
-				if (walls != 0)
-					tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls;
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
 			}
+
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(-1,0,0)); // tileWest
+			if ((partCost = tile->getTuCostTile(O_NORTHWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_NORTHWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+
+			tile = _battleSave->getTile(tileStart->getPosition() + Position(0,-1,0)); // tileNorth
+			if ((partCost = tile->getTuCostTile(O_WESTWALL, _mType)) > 0)
+			{
+				tuTotal += partCost;
+				++walls;
+
+				if (tile->getMapData(O_WESTWALL)->isDoor() == true)
+					if (partCost > _doorCost) _doorCost = partCost;
+			}
+//			}
 	}
+
+	if (walls != 0) // && _doorCost == 0
+		tuTotal = ((tuTotal + (tuTotal >> 1u)) + walls - 1) / walls;
 
 //	if ((dir & 1) == 1)
 //	{
@@ -1404,12 +1393,12 @@ int Pathfinding::getWallTuCost( // private.
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
  * @return, true if path is blocked
  */
-bool Pathfinding::isBlockedPath(
+bool Pathfinding::isBlockedDir(
 		const Tile* const startTile,
 		const int dir,
 		const BattleUnit* const launchTarget) const
 {
-	//Log(LOG_INFO) << "Pathfinding::isBlockedPath()";
+	//Log(LOG_INFO) << "Pathfinding::isBlockedDir()";
 	const Position pos (startTile->getPosition());
 
 	static const Position
@@ -1423,7 +1412,7 @@ bool Pathfinding::isBlockedPath(
 	{
 		case 0:	// north
 			//Log(LOG_INFO) << ". try North";
-			if (isBlocked(
+			if (isBlockedTile(
 						startTile,
 						O_NORTHWALL,
 						launchTarget) == true)
@@ -1434,28 +1423,28 @@ bool Pathfinding::isBlockedPath(
 
 		case 1: // north-east
 			//Log(LOG_INFO) << ". try NorthEast";
-			if (isBlocked(
+			if (isBlockedTile(
 						startTile,
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast),
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast),
 						O_OBJECT,
 						launchTarget,
 						BIGWALL_NESW) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast + posNorth),
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posNorth),
 						O_OBJECT,
 						launchTarget,
@@ -1467,7 +1456,7 @@ bool Pathfinding::isBlockedPath(
 
 		case 2: // east
 			//Log(LOG_INFO) << ". try East";
-			if (isBlocked(
+			if (isBlockedTile(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
 						launchTarget) == true)
@@ -1478,28 +1467,28 @@ bool Pathfinding::isBlockedPath(
 
 		case 3: // south-east
 			//Log(LOG_INFO) << ". try SouthEast";
-			if (isBlocked(
+			if (isBlockedTile(
 						_battleSave->getTile(pos + posEast),
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast),
 						O_OBJECT,
 						launchTarget,
 						BIGWALL_NWSE) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast + posSouth),
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast + posSouth),
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
 						O_OBJECT,
 						launchTarget,
@@ -1511,7 +1500,7 @@ bool Pathfinding::isBlockedPath(
 
 		case 4: // south
 			//Log(LOG_INFO) << ". try South";
-			if (isBlocked(
+			if (isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
 						launchTarget) == true)
@@ -1522,28 +1511,28 @@ bool Pathfinding::isBlockedPath(
 
 		case 5: // south-west
 			//Log(LOG_INFO) << ". try SouthWest";
-			if (isBlocked(
+			if (isBlockedTile(
 						startTile,
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
 						O_OBJECT,
 						launchTarget,
 						BIGWALL_NESW) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth + posWest),
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posWest),
 						O_OBJECT,
 						launchTarget,
@@ -1555,7 +1544,7 @@ bool Pathfinding::isBlockedPath(
 
 		case 6: // west
 			//Log(LOG_INFO) << ". try West";
-			if (isBlocked(
+			if (isBlockedTile(
 						startTile,
 						O_WESTWALL,
 						launchTarget) == true)
@@ -1566,28 +1555,28 @@ bool Pathfinding::isBlockedPath(
 
 		case 7: // north-west
 			//Log(LOG_INFO) << ". try NorthWest";
-			if (isBlocked(
+			if (isBlockedTile(
 						startTile,
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						startTile,
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posWest),
 						O_NORTHWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posWest),
 						O_OBJECT,
 						launchTarget,
 						BIGWALL_NWSE) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posNorth),
 						O_WESTWALL,
 						launchTarget) == true
-				|| isBlocked(
+				|| isBlockedTile(
 						_battleSave->getTile(pos + posNorth),
 						O_OBJECT,
 						launchTarget,
@@ -1607,13 +1596,13 @@ bool Pathfinding::isBlockedPath(
  * @param diagExclusion	- to exclude diagonal bigWalls (Pathfinding.h) (default BIGWALL_NONE)
  * @return, true if path is blocked
  */
-bool Pathfinding::isBlocked( // private.
+bool Pathfinding::isBlockedTile( // private.
 		const Tile* const tile,
 		const MapDataType partType,
 		const BattleUnit* const launchTarget,
 		const BigwallType diagExclusion) const
 {
-	//Log(LOG_INFO) << "Pathfinding::isBlocked()";
+	//Log(LOG_INFO) << "Pathfinding::isBlockedTile()";
 	if (tile == nullptr) return true;
 
 	const MapData* part;
@@ -1774,7 +1763,6 @@ bool Pathfinding::isBlocked( // private.
 
 						if (   blockUnit != launchTarget							// don't let any units fall on large units
 							&& blockUnit->getUnitStatus() == STATUS_STANDING
-//							&& blockUnit->isOut_t(OUT_STAT) == false
 							&& blockUnit->getArmor()->getSize() == 2)
 						{
 							return true;
@@ -1798,10 +1786,10 @@ bool Pathfinding::isBlocked( // private.
 			&& _unit != nullptr
 			&& _unit->getArmor()->getSize() == 2))
 	{
-		//Log(LOG_INFO) << "isBlocked() EXIT true, partType = " << partType << " MT = " << (int)_mType;
+		//Log(LOG_INFO) << "isBlockedTile() EXIT true, partType = " << partType << " MT = " << (int)_mType;
 		return true;
 	}
-	//Log(LOG_INFO) << "isBlocked() EXIT false, partType = " << partType << " MT = " << (int)_mType;
+	//Log(LOG_INFO) << "isBlockedTile() EXIT false, partType = " << partType << " MT = " << (int)_mType;
 	return false;
 }
 
@@ -1884,9 +1872,9 @@ bool Pathfinding::previewPath(bool discard)
 			energyLimit = unitEn;
 
 			fall = _mType != MT_FLY
-				&& canFallDown(
+				&& isUnitFloored(
 							_battleSave->getTile(posStart),
-							unitSize);
+							unitSize) == false;
 			//Log(LOG_INFO) << ". fall= " << (int)fall;
 			if (fall == false)
 			{
@@ -1998,16 +1986,17 @@ bool Pathfinding::isPathPreviewed() const
 }
 
 /**
- * Checks if large units can fall down a level.
- * @note Wrapper for canFallDown(Tile*).
+ * Checks if a unit can fall down from a specified Tile.
  * @param tile		- pointer to a tile
  * @param unitSize	- size of the unit
- * @return, true if unit on @a tile can fall to a lower level
+ * @return, true if unit on @a tile has at least one quadrant on a solidly floored tile
  */
-bool Pathfinding::canFallDown( // private
+bool Pathfinding::isUnitFloored( // private
 		const Tile* const tile,
 		int unitSize) const
 {
+	const Tile* tileTest;
+	const Position& pos (tile->getPosition());
 	for (int
 			x = 0;
 			x != unitSize;
@@ -2018,21 +2007,12 @@ bool Pathfinding::canFallDown( // private
 				y != unitSize;
 				++y)
 		{
-			if (canFallDown(_battleSave->getTile(tile->getPosition() + Position(x,y,0))) == false)
-				return false;
+			tileTest = _battleSave->getTile(pos + Position(x,y,0));
+			if (tileTest->isFloored(tileTest->getTileBelow(_battleSave)) == true)
+				return true;
 		}
 	}
-	return true;
-}
-
-/**
- * Checks if a unit can fall down a level.
- * @param tile - pointer to a tile
- * @return, true if unit on @a tile can fall to a lower level
- */
-bool Pathfinding::canFallDown(const Tile* const tile) const // private
-{
-	return (tile->isFloored(_battleSave->getTile(tile->getPosition() + Position(0,0,-1))) == false);
+	return false;
 }
 
 /**

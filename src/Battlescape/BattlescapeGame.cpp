@@ -3679,7 +3679,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 								Pathfinding::vectorToDirection(
 															Position(dx,dy,0),
 															dir);
-								if (_battleSave->getPathfinding()->isBlockedPath(
+								if (_battleSave->getPathfinding()->isBlockedDir(
 																			_battleSave->getTile(unit->getPosition() + Position(x,y,0)),
 																			dir,
 																			unit) == false)	// try passing in OBJECT_SELF as a missile target to kludge for closed doors.
