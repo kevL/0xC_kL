@@ -472,7 +472,7 @@ void MedikitState::painClick(Action*)
 }
 
 /**
- * Updates the Medikit state.
+ * Updates this Medikit state.
  */
 void MedikitState::update()
 {
@@ -480,11 +480,17 @@ void MedikitState::update()
 	_txtStim->setText(toString(_action->weapon->getStimulantQuantity()));
 	_txtHeal->setText(toString(_action->weapon->getHealQuantity()));
 
-	// Health/ Stamina/ Morale of the recipient
+	// Health/ Stun/ Stamina/ Morale of the recipient
 	double stat (static_cast<double>(_action->targetUnit->getBattleStats()->health));
 	const int health (_action->targetUnit->getHealth());
 	_numHealth->setValue(static_cast<unsigned>(health));
-	_numStun->setValue(static_cast<unsigned>(_action->targetUnit->getStun()));
+	if (_action->targetUnit->getStun() != 0)
+	{
+		_numStun->setValue(static_cast<unsigned>(_action->targetUnit->getStun()));
+		_numStun->setVisible();
+	}
+	else
+		_numStun->setVisible(false);
 	_barHealth->setValue(std::ceil(
 							static_cast<double>(health) / stat * 100.));
 	_barHealth->setValue2(std::ceil(

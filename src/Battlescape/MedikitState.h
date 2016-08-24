@@ -36,8 +36,8 @@ struct BattleAction;
 
 
 /**
- * The Medikit User Interface.
- * @note Medikit is an item for healing a soldier.
+ * The Medikit UI.
+ * @note Medikit is an item for healing a BattleUnit.
  */
 class MedikitState
 	:
@@ -84,7 +84,7 @@ private:
 	void healClick(Action* action);
 	/// Handler for the stimulant button.
 	void stimClick(Action* action);
-	/// Handler for the pain killer button.
+	/// Handler for the painkiller button.
 	void painClick(Action* action);
 
 	/// Updates the medikit interface.

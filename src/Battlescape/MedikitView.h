@@ -51,12 +51,12 @@ private:
 		* _txtPart,
 		* _txtWound;
 
-	/// Handles clicking on the body view.
+	/// Handles clicking on the MedikitView.
 	void mouseClick(Action* action, State* state) override;
 
 
 	public:
-		/// Creates the MedikitView.
+		/// Creates a MedikitView.
 		MedikitView(
 				int w,
 				int h,
@@ -67,12 +67,12 @@ private:
 				Text* const part,
 				Text* const wound);
 
-		/// Draws the body view.
+		/// Draws the MedikitView.
 		void draw() override;
 
-		/// Gets the selected body part.
+		/// Gets any selected body-part.
 		UnitBodyPart getSelectedPart() const;
-		/// Automatically selects a wounded body part.
+		/// Selects a wounded body-part if any automatically.
 		void autoSelectPart();
 };
 

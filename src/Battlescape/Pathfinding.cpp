@@ -760,7 +760,7 @@ int Pathfinding::getTuCostPf(
 				++y)
 		{
 // first, CHECK FOR BLOCKAGE ->> then calc TU cost after.
-			if (_debug) Log(LOG_INFO) << ". . (" << x << "," << y << ")";
+			//if (_debug) Log(LOG_INFO) << ". . (" << x << "," << y << ")";
 			cost = 0;
 
 			posOffset = Position(x,y,0);
@@ -870,7 +870,7 @@ int Pathfinding::getTuCostPf(
 				&& tileStopBelow->getTileUnit() != _unit
 				&& tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > UNIT_HEIGHT) // cf. UnitWalkBState::statusStand()
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . flight clipped by a unit above FAIL";
+				//if (_debug) Log(LOG_INFO) << ". . . flight clipped by a unit below FAIL";
 				return FAIL;
 			}
 

@@ -38,7 +38,7 @@ namespace OpenXcom
 /**
  * A array of strings that define body parts.
  */
-const std::string MedikitView::BODY_PARTS[BattleUnit::PARTS_BODY] =
+const std::string MedikitView::BODY_PARTS[BattleUnit::PARTS_BODY] // static.
 {
 	"STR_HEAD",			// 0
 	"STR_TORSO",		// 1
@@ -50,7 +50,7 @@ const std::string MedikitView::BODY_PARTS[BattleUnit::PARTS_BODY] =
 
 
 /**
- * Initializes the Medikit view.
+ * Initializes the MedikitView.
  * @param w		- the MedikitView width
  * @param h		- the MedikitView height
  * @param x		- the MedikitView x origin
@@ -84,7 +84,7 @@ MedikitView::MedikitView(
 }
 
 /**
- * Draws the medikit view.
+ * Draws this MedikitView.
  */
 void MedikitView::draw()
 {
@@ -120,15 +120,12 @@ void MedikitView::draw()
 	if (_selectedPart != BODYPART_NONE)
 	{
 		_txtPart->setText(_game->getLanguage()->getString(BODY_PARTS[_selectedPart]));
-
-		std::wostringstream woststr;
-		woststr << _unit->getFatals(_selectedPart);
-		_txtWound->setText(woststr.str());
+		_txtWound->setText(Text::intWide(_unit->getFatals(_selectedPart)));
 	}
 }
 
 /**
- * Handles clicks on the medikit view.
+ * Handles mouse-clicks on this MedikitView.
  * @param action - pointer to an Action
  * @param state - state that the ActionHandlers belong to
  */
@@ -157,8 +154,8 @@ void MedikitView::mouseClick(Action* action, State*)
 }
 
 /**
- * Gets the selected body part.
- * @return, the selected body part
+ * Gets the currently selected body-part.
+ * @return, selected body-part (BattleUnit.h)
  */
 UnitBodyPart MedikitView::getSelectedPart() const
 {
@@ -166,7 +163,7 @@ UnitBodyPart MedikitView::getSelectedPart() const
 }
 
 /**
- * Automatically selects a wounded body part.
+ * Automatically selects a wounded body-part.
  */
 void MedikitView::autoSelectPart()
 {
