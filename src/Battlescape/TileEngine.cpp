@@ -4519,7 +4519,8 @@ DoorResult TileEngine::unitOpensDoor(
 		const bool rtClick,
 		int dir)
 {
-	//Log(LOG_INFO) << "unitOpensDoor()";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "te:unitOpensDoor()";
 	if (dir == -1)
 		dir = unit->getUnitDirection();
 
@@ -4544,7 +4545,7 @@ DoorResult TileEngine::unitOpensDoor(
 		z;
 	DoorResult ret (DR_NONE);
 
-	if (unit->getUnitTile()->getTerrainLevel() < -12)
+	if (unit->getUnitTile()->getTerrainLevel() < -11)
 		z = 1; // if standing on stairs check the tile above instead
 	else
 		z = 0;
@@ -4623,12 +4624,12 @@ DoorResult TileEngine::unitOpensDoor(
 						++i)
 				{
 					tileDoor = _battleSave->getTile(posDoor = pos + i->first);
-					//Log(LOG_INFO) << ". . iter wallCheck " << posDoor << " partType = " << i->second;
+					//Log(LOG_INFO) << ". . iter wallCheck " << posDoor << " partType= " << i->second;
 					if (tileDoor != nullptr)
 					{
 						partType = i->second;
 //						ret = tileDoor->openDoor(partType, unit); //_battleSave->getBatReserved());
-						//Log(LOG_INFO) << ". . . openDoor = " << ret;
+						//Log(LOG_INFO) << ". . . openDoor= " << ret;
 
 						switch (ret = tileDoor->openDoor(partType, unit)) //_battleSave->getBatReserved());
 						{
@@ -4647,7 +4648,8 @@ DoorResult TileEngine::unitOpensDoor(
 								break;
 
 							case DR_UFO_OPEN:
-								openAdjacentDoors(posDoor, partType); // no break.
+								openAdjacentDoors(posDoor, partType);
+								// no break.
 							case DR_ERR_TU:
 								calcTu = true;
 						}
@@ -4659,11 +4661,11 @@ DoorResult TileEngine::unitOpensDoor(
 		}
 	}
 
-	//Log(LOG_INFO) << "tuCost = " << tuCost;
+	//Log(LOG_INFO) << "tuCost= " << tuCost;
 	if (calcTu == true)
 	{
 		tuCost = tileDoor->getTuCostTile(partType, unit->getMoveTypeUnit());
-		//Log(LOG_INFO) << ". . ret = " << ret << ", partType = " << partType << ", tuCost = " << tuCost;
+		//Log(LOG_INFO) << ". . ret= " << ret << " partType= " << partType << " tuCost= " << tuCost;
 
 		if (unit->getFaction() == FACTION_PLAYER // <- no Reserve tolerance.
 			|| _battleSave->getBattleGame()->checkReservedTu(unit, tuCost) == true)
@@ -4712,106 +4714,6 @@ DoorResult TileEngine::unitOpensDoor(
 	//Log(LOG_INFO) << "unitOpensDoor() ret = " << ret;
 	return ret;
 }
-/*				switch (dir)
-				{
-					case 0: // north
-							checkPos.push_back(std::make_pair(Position(0, 0, 0), O_NORTHWALL));		// origin
-						if (x != 0)
-							checkPos.push_back(std::make_pair(Position(0,-1, 0), O_WESTWALL));		// one tile north
-					break;
-
-					case 1: // north east
-							checkPos.push_back(std::make_pair(Position(0, 0, 0), O_NORTHWALL));		// origin
-							checkPos.push_back(std::make_pair(Position(1,-1, 0), O_WESTWALL));		// one tile north-east
-//						if (rtClick == true)
-//						{
-//							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
-//							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_NORTHWALL));		// one tile east
-//						} */
-/*						if (rtClick
-							|| testAdjacentDoor(posUnit, O_NORTHWALL, 1)) // kL
-						{
-							checkPos.push_back(std::make_pair(Position(0, 0, 0), O_NORTHWALL));		// origin
-							checkPos.push_back(std::make_pair(Position(1,-1, 0), O_WESTWALL));		// one tile north-east
-							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
-							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_NORTHWALL));		// one tile east
-						} *
-					break;
-
-					case 2: // east
-							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
-					break;
-
-					case 3: // south-east
-						if (y == 0)
-							checkPos.push_back(std::make_pair(Position(1, 1, 0), O_WESTWALL));		// one tile south-east
-						if (x == 0)
-							checkPos.push_back(std::make_pair(Position(1, 1, 0), O_NORTHWALL));		// one tile south-east
-//						if (rtClick == true)
-//						{
-//							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
-//							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));		// one tile south
-//						} */
-/*						if (rtClick
-							|| testAdjacentDoor(posUnit, O_NORTHWALL, 3)) // kL
-						{
-							checkPos.push_back(std::make_pair(Position(1, 0, 0), O_WESTWALL));		// one tile east
-							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));		// one tile south
-							checkPos.push_back(std::make_pair(Position(1, 1, 0), O_WESTWALL));		// one tile south-east
-							checkPos.push_back(std::make_pair(Position(1, 1, 0), O_NORTHWALL));		// one tile south-east
-						} *
-					break;
-
-					case 4: // south
-							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));		// one tile south
-					break;
-
-					case 5: // south-west
-							checkPos.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));		// origin
-							checkPos.push_back(std::make_pair(Position(-1, 1, 0), O_NORTHWALL));	// one tile south-west
-//						if (rtClick == true)
-//						{
-//							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_WESTWALL));		// one tile south
-//							checkPos.push_back(std::make_pair(Position(0, 1, 0), O_NORTHWALL));		// one tile south
-//						} */
-/*						if (rtClick
-							|| testAdjacentDoor(posUnit, O_NORTHWALL, 5)) // kL
-						{
-							checkPos.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));		// origin
-							checkPos.push_back(std::make_pair(Position( 0, 1, 0), O_WESTWALL));		// one tile south
-							checkPos.push_back(std::make_pair(Position( 0, 1, 0), O_NORTHWALL));	// one tile south
-							checkPos.push_back(std::make_pair(Position(-1, 1, 0), O_NORTHWALL));	// one tile south-west
-						} *
-					break;
-
-					case 6: // west
-							checkPos.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));		// origin
-						if (y != 0)
-							checkPos.push_back(std::make_pair(Position(-1, 0, 0), O_NORTHWALL));	// one tile west
-					break;
-
-					case 7: // north-west
-							checkPos.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));		// origin
-							checkPos.push_back(std::make_pair(Position( 0, 0, 0), O_NORTHWALL));	// origin
-						if (x != 0)
-							checkPos.push_back(std::make_pair(Position(-1,-1, 0), O_WESTWALL));		// one tile north
-						if (y != 0)
-							checkPos.push_back(std::make_pair(Position(-1,-1, 0), O_NORTHWALL));	// one tile north
-//						if (rtClick == true)
-//						{
-//							checkPos.push_back(std::make_pair(Position( 0,-1, 0), O_WESTWALL));		// one tile north
-//							checkPos.push_back(std::make_pair(Position(-1, 0, 0), O_NORTHWALL));	// one tile west
-//						} */
-/*						if (rtClick
-							|| testAdjacentDoor(posUnit, O_NORTHWALL, 7)) // kL
-						{
-							//Log(LOG_INFO) << ". north-west";
-							checkPos.push_back(std::make_pair(Position( 0, 0, 0), O_WESTWALL));		// origin
-							checkPos.push_back(std::make_pair(Position( 0, 0, 0), O_NORTHWALL));	// origin
-							checkPos.push_back(std::make_pair(Position( 0,-1, 0), O_WESTWALL));		// one tile north
-							checkPos.push_back(std::make_pair(Position(-1, 0, 0), O_NORTHWALL));	// one tile west
-						} *
-				} */
 
 /**
  * Checks for a door connected to a wall at this position,
@@ -4858,14 +4760,13 @@ void TileEngine::openAdjacentDoors( // private.
 {
 	Tile* tile;
 	Position offset;
-	const bool westSide (partType == O_WESTWALL);
 
 	for (int
 			i = 1;
 			;
 			++i)
 	{
-		offset = (westSide == true) ? Position(0,i,0) : Position(i,0,0);
+		offset = (partType == O_WESTWALL) ? Position(0,i,0) : Position(i,0,0);
 		if ((tile = _battleSave->getTile(pos + offset)) != nullptr
 			&& tile->getMapData(partType) != nullptr
 			&& tile->getMapData(partType)->isSlideDoor() == true)
@@ -4881,7 +4782,7 @@ void TileEngine::openAdjacentDoors( // private.
 			;
 			--i)
 	{
-		offset = (westSide == true) ? Position(0,i,0) : Position(i,0,0);
+		offset = (partType == O_WESTWALL) ? Position(0,i,0) : Position(i,0,0);
 		if ((tile = _battleSave->getTile(pos + offset)) != nullptr
 			&& tile->getMapData(partType) != nullptr
 			&& tile->getMapData(partType)->isSlideDoor() == true)
@@ -4912,7 +4813,6 @@ bool TileEngine::closeSlideDoors() const
 			++i)
 	{
 		tile = _battleSave->getTiles()[i];
-
 		if ((unit = tile->getTileUnit()) != nullptr
 			&& unit->getArmor()->getSize() == 2)
 		{
@@ -4932,7 +4832,6 @@ bool TileEngine::closeSlideDoors() const
 				continue;
 			}
 		}
-
 		ret |= tile->closeSlideDoor();
 	}
 	return ret;
