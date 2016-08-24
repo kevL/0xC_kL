@@ -34,6 +34,7 @@
 #include "../Battlescape/BattlescapeGame.h"
 #include "../Battlescape/BattlescapeState.h"
 #include "../Battlescape/ExplosionBState.h"
+#include "../Battlescape/Map.h"
 #include "../Battlescape/Pathfinding.h"
 #include "../Battlescape/Position.h"
 #include "../Battlescape/TileEngine.h"
@@ -2302,9 +2303,11 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 			}
 
 			unit->setUnitStatus(STATUS_STANDING);
-			unit->setCacheInvalid();
 			unit->setUnitDirection(RNG::generate(0,7));
 			unit->setReselect(unit->getFaction() == _side);
+
+			unit->setCacheInvalid();
+			_battleState->getMap()->cacheUnitSprite(unit);
 
 			deleteBody(unit);
 
