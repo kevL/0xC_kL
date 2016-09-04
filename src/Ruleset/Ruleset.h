@@ -430,7 +430,7 @@ private:
 		int getDefeatFunds() const;
 		/// Gets low-score threshold for defeat condition.
 		int getDefeatScore() const;
-		/// Gets the player-penalty for losing a Base.
+		/// Gets the basic player-penalty factor for losing a Base.
 		int getBaseLostScore() const;
 
 		/// Gets the current Game-ptr.

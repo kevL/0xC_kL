@@ -67,7 +67,7 @@ private:
 		_interceptLanded,
 		_lowFuel,
 		_showReady,
-		_tacticalDone,
+		_tacticalReturn,
 		_warned;
 	int
 		_loadCap,

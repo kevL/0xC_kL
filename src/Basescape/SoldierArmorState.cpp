@@ -99,7 +99,7 @@ SoldierArmorState::SoldierArmorState(
 
 	_txtType->setText(tr("STR_TYPE"));
 
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 
 	_lstArmor->setColumns(2, 110,35);
 	_lstArmor->setBackground(_window);

@@ -83,7 +83,7 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 	_txtTitle->setBig();
 
 	_txtItem->setText(tr("STR_ITEM"));
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 	_txtCraft->setText(tr("STR_CRAFT"));
 
 	_lstItems->setColumns(3, 154,46,72);

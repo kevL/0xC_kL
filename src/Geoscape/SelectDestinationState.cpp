@@ -151,28 +151,28 @@ SelectDestinationState::SelectDestinationState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick(static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick));
-	_btnCancel->onKeyboardPress(
-					static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick),
-					Options::keyCancel);
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SelectDestinationState::btnCancelClick),
+								Options::keyCancel);
 
 //	_txtTitle->setText(tr("STR_SELECT_DESTINATION"));
 //	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
 //	_txtTitle->setWordWrap();
 
 	if (_craft->getRules()->getSpacecraft() == true
-		&& _game->getSavedGame()->isResearched(_game->getRuleset()->getFinalResearch()) == true
-		&& _craft->getQtySoldiers() != 0)
+		&& _craft->getFuel() == _craft->getRules()->getMaxFuel()
+		&& _craft->getQtySoldiers() != 0 //|| _craft->getQtyVehicles() > 0
+		&& _game->getSavedGame()->isResearched(_game->getRuleset()->getFinalResearch()) == true)
 	{
 		for (std::vector<Soldier*>::const_iterator // if all Soldiers have Power or Flight suits .......
 			i = _craft->getBase()->getSoldiers()->begin();
 			i != _craft->getBase()->getSoldiers()->end();
 			++i)
 		{
-			if ((*i)->getCraft() == _craft						// TODO: Allow click but then give warning in
-				&& (*i)->getArmor()->isSpacesuit() == false)	// ConfirmCydoniaState if not suited appropriately.
-			{
-				_btnCydonia->setVisible(false);
+			if ((*i)->getCraft() == _craft						// TODO: Allow click but then give warning in btnCydoniaClick()
+				&& (*i)->getArmor()->isSpacesuit() == false)	// - if no soldiers aboard,
+			{													// - if not suited appropriately,
+				_btnCydonia->setVisible(false);					// - if fuel not full.
 				break;
 			}
 		}
@@ -328,14 +328,12 @@ void SelectDestinationState::btnCancelClick(Action*)
 void SelectDestinationState::btnCydoniaClick(Action*)
 {
 	//Log(LOG_INFO) << "SelectDestinationState::btnCydoniaClick()";
-	if (_ufoLost == true)
+	if (_ufoLost == true) // NOTE: This is kinda pointless ....
 	{
 		_globe->clearCrosshair();
 		_craft->setDestination();
 	}
-
-	if (_craft->getQtySoldiers() != 0) //|| _craft->getQtyVehicles() > 0)
-		_game->pushState(new ConfirmCydoniaState(_craft));
+	_game->pushState(new ConfirmCydoniaState(_craft));
 }
 
 /**
@@ -354,7 +352,7 @@ void SelectDestinationState::resize(
 	{
 		(*i)->setX((*i)->getX() + dX / 2);
 
-		if (*i != _window
+		if (   *i != _window
 			&& *i != _btnCancel
 //			&& *i != _txtTitle
 			&& *i != _btnCydonia)

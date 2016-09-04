@@ -105,7 +105,7 @@ CraftWeaponsState::CraftWeaponsState(
 
 	_txtArmament->setText(tr("STR_ARMAMENT"));
 
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 
 	_txtAmmunition->setText(tr("STR_AMMUNITION_AVAILABLE"));
 

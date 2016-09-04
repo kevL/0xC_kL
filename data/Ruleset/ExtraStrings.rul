@@ -239,6 +239,7 @@ extraStrings:
       STR_RADARS_NONE_UC: "OFF"
       STR_ON_UC: "ON"
       STR_OFF_UC: "OFF"
+      STR_CASUALTIES: "Casualties"
 #      STR_MORE_REPORTS: "> reports >"
 #      STR_PLASMA_BEAM_H: PB
 #Extra strings:

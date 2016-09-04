@@ -280,7 +280,7 @@ void Inventory::drawGrids()
 }
 
 /**
- * Draws the items contained in the unit's inventory.
+ * Draws the items contained in the currently selected unit's inventory.
  */
 void Inventory::drawItems()
 {
@@ -292,7 +292,7 @@ void Inventory::drawItems()
 	const RuleInventory* inRule;
 
 	std::vector<BattleItem*>* list (_selUnit->getInventory());
-	for (std::vector<BattleItem*>::const_iterator // Unit sections.
+	for (std::vector<BattleItem*>::const_iterator // draw Unit sections.
 			i = list->begin();
 			i != list->end();
 			++i)

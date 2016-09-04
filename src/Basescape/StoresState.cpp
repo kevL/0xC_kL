@@ -110,7 +110,7 @@ StoresState::StoresState(Base* const base)
 
 	_txtItem->setText(tr("STR_ITEM"));
 
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 
 //	_txtSpaceUsed->setText(tr("STR_SPACE_USED_UC"));
 	_txtSpaceUsed->setText(tr("STR_VOLUME"));

@@ -2540,8 +2540,9 @@ int Ruleset::getDefeatScore() const
 }
 
 /**
- * Gets the player-penalty for losing a Base.
- * @return, penalty for losing a base
+ * Gets the basic player-penalty factor for losing a Base.
+ * TODO: Implement a basic 'base lost' score and an additonal 'per facility' score.
+ * @return, penalty for losing a base (per Facility that's finished constructing)
  */
 int Ruleset::getBaseLostScore() const
 {

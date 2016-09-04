@@ -95,7 +95,7 @@ TransfersState::TransfersState(Base* const base)
 
 	_txtItem->setText(tr("STR_ITEM"));
 
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 
 	_txtArrivalTime->setText(tr("STR_ARRIVAL_TIME_HOURS"));
 

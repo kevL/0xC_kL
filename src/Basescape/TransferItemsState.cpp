@@ -158,7 +158,7 @@ TransferItemsState::TransferItemsState(
 	_txtSpaceTarget->setColor(WHITE);
 
 	_txtItem->setText(tr("STR_ITEM"));
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 
 //	_txtTransferQty->setText(tr("STR_AMOUNT_TO_TRANSFER"));
 	_txtQtyTarget->setText(tr("STR_AMOUNT_AT_DESTINATION"));

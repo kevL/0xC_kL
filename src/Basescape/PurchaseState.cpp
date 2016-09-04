@@ -150,8 +150,8 @@ PurchaseState::PurchaseState(Base* const base)
 	_txtStorage->setAlign(ALIGN_RIGHT);
 	_txtStorage->setColor(WHITE);
 
-	_txtCost->setText(tr("STR_COST_PER_UNIT_UC"));
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtCost->setText(tr("STR_COST_PER_UNIT"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 
 	_lstItems->setColumns(4, 142,55,46,32);
 	_lstItems->setSelectable();

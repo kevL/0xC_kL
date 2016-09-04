@@ -19,7 +19,7 @@
 
 #include "Zoom.h"
 
-#include "Logger.h"
+//#include "Logger.h"
 #include "Options.h"
 #include "Screen.h"
 #include "Surface.h"
@@ -783,8 +783,6 @@ int Zoom::_zoomSurfaceY( // static.
 	Uint8
 		* sp,* dp,* csp;
 
-	static bool proclaimed (false);
-
 	if (Screen::is32bitEnabled() == true)
 	{
 		if (Options::useXBRZFilter == true)
@@ -933,11 +931,13 @@ int Zoom::_zoomSurfaceY( // static.
 		if (dst->w == src->w * 4) return zoomSurface4X_XAxis_32bit(src, dst);
 		else if (dst->w == src->w * 2) return zoomSurface2X_XAxis_32bit(src, dst);
 	} */
-	if (proclaimed == false)
-	{
-		Log(LOG_INFO) << "Using software scaling routine. For best results, try an OpenGL filter.";
-		proclaimed = true;
-	}
+
+//	static bool proclaimed (false);
+//	if (proclaimed == false)
+//	{
+//		proclaimed = true;
+//		Log(LOG_INFO) << "Using software scaling routine. For best results, try an OpenGL filter.";
+//	}
 
 	// Allocate memory for row increments.
 	if ((sax = static_cast<Uint32*>(realloc(sax, static_cast<size_t>((dst->w + 1)) * sizeof(Uint32)))) == nullptr)

@@ -110,16 +110,20 @@ class DebriefingState
 {
 
 private:
+
+	static const char
+		* const TAC_RESULT[12u],
+		* const TAC_RATING[ 6u];
+
 	bool
 		_aborted,
 		_alienDies,
-		_destroyPlayerBase,
 		_manageContainment,
 		_isHostileStanding,
 		_isQuickBattle;
 	int
 		_aliensStunned,
-		_destroyBasePenalty,
+		_destroyPlayerBase,
 		_diff,
 		_missionCost,
 		_playerDead,
@@ -137,7 +141,7 @@ private:
 	Text
 		* _txtBaseLabel,
 		* _txtCost,
-		* _txtItem,
+		* _txtCasualties,
 		* _txtQuantity,
 		* _txtRating,
 		* _txtRecovery,
@@ -150,7 +154,7 @@ private:
 		* _lstTotal;
 	Window* _window;
 
-	MissionStatistics* _tactical;
+	MissionStatistics* _tacstats;
 
 	std::map<TileType, SpecialType*> _specialTypes;
 	std::map<const RuleItem*, int>

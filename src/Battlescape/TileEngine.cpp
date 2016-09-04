@@ -4930,6 +4930,17 @@ VoxelType TileEngine::plotLine(
 
 	drift_xy =					// drift controls when to step in shallow planes
 	drift_xz = (delta_x >> 1u);	// starting value keeps line centered
+	// round up to prevent overflow drift at the end - karadoc fix ...
+	// http://openxcom.org/forum/index.php/topic,4726.msg71322.html#msg71322
+	// commit 1b132b82be31a341bacce7dfa6b281d7a43d25a8
+	// Author: karadoc
+	// Date: Sun Sep 4 10:43:47 2016 +1000
+	// Fixed TileEngine::calculateLine to avoid checking outside the range.
+	// On 45 degree angles, the starting value of drift needs to be rounded up
+	// to avoid drifting further than the primary axis on the final step.
+//	drift_xy =							// drift controls when to step in shallow planes
+//	drift_xz = ((delta_x + 1) >> 1u);	// starting value keeps line centered
+	// kL_note: keep an eye on that. ... okay: remark it until a problem shows up.
 
 	x = x0; y = y0; z = z0;		// starting point
 	for (
@@ -4937,9 +4948,9 @@ VoxelType TileEngine::plotLine(
 			x != x1 + step_x;
 			x += step_x)
 	{
-		cx = x; cy = y; cz = z;					// copy x/y/z
+		cx = x; cy = y; cz = z; // copy x/y/z
 
-		if (swap_xz == true) std::swap(cx,cz);	// unswap - in reverse
+		if (swap_xz == true) std::swap(cx,cz); // unswap - in reverse
 		if (swap_xy == true) std::swap(cx,cy);
 
 		if (storeTrj == true) // && trj != nullptr)
@@ -4997,7 +5008,7 @@ VoxelType TileEngine::plotLine(
 
 			if (doVoxelCheck == true) // check for xy diagonal intermediate voxel step, for Unit visibility
 			{
-				cx = x; cy = y; cz = z;					// copy x/y/z
+				cx = x; cy = y; cz = z; // copy x/y/z
 
 				if (swap_xz == true) std::swap(cx,cz);
 				if (swap_xy == true) std::swap(cx,cy);
@@ -5029,7 +5040,7 @@ VoxelType TileEngine::plotLine(
 
 			if (doVoxelCheck == true) // check for x/z diagonal intermediate voxel step
 			{
-				cx = x; cy = y; cz = z;					// copy x/y/z
+				cx = x; cy = y; cz = z; // copy x/y/z
 
 				if (swap_xz == true) std::swap(cx,cz);
 				if (swap_xy == true) std::swap(cx,cy);
@@ -5044,7 +5055,7 @@ VoxelType TileEngine::plotLine(
 				if (voxelType != VOXEL_EMPTY)
 				{
 					//if (_debug) Log(LOG_INFO) << "pL() ret[3] " << MapData::debugVoxelType(voxelType) << " vs"
-					//						  << Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
+					//							<< Position(cx,cy,cz) << " ts" << Position::toTileSpace(Position(cx,cy,cz));
 
 //					if (trj != nullptr)
 					trj->push_back(Position(cx,cy,cz));	// store the position of impact

@@ -2926,9 +2926,12 @@ int Base::calcLostScore() const
 		if ((*i)->buildFinished() == true)
 			++ret;
 	}
-	return ret
-		* _rules->getBaseLostScore()
+	ret *= _rules->getBaseLostScore()
 		* (_gameSave->getDifficultyInt() + 1);
+
+	if (ret < 0) ret = 0; // safety for DebriefingState.
+
+	return ret;
 }
 
 }

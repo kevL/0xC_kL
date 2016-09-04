@@ -123,7 +123,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 
 	_txtItem->setText(tr("STR_ITEM"));
 
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 
 	_txtDestination->setText(tr("STR_DESTINATION_UC"));
 

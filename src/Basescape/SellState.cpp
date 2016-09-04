@@ -150,7 +150,7 @@ SellState::SellState(Base* const base)
 	_txtStorage->setAlign(ALIGN_RIGHT);
 	_txtStorage->setColor(WHITE);
 
-	_txtQuantity->setText(tr("STR_QUANTITY_UC"));
+	_txtQuantity->setText(tr("STR_QUANTITY"));
 	_txtSell->setText(tr("STR_SELL_SACK"));
 	_txtValue->setText(tr("STR_VALUE"));
 
