@@ -1049,57 +1049,42 @@ void DebriefingState::prepareDebriefing() // private.
 				break;
 			}
 		}
-	}
 
-	if (found == false)
-	{
-		for (std::vector<AlienBase*>::const_iterator // Third - search for aLienBase.
-				i = _gameSave->getAlienBases()->begin();
-				i != _gameSave->getAlienBases()->end();
-				++i)
+		if (found == false)
 		{
-			if ((*i)->getTactical() == true)
+			for (std::vector<AlienBase*>::const_iterator // Third - search for aLienBase.
+					i = _gameSave->getAlienBases()->begin();
+					i != _gameSave->getAlienBases()->end();
+					++i)
 			{
-				_txtRecovery->setText(tr("STR_ALIEN_BASE_RECOVERY"));
-
-				if (_tacstats->success == true)
+				if ((*i)->getTactical() == true)
 				{
-					if (objectiveText.empty() == false)
-					{
-						objectiveScore = std::max((objectiveScore + 9) / 10,
-												   objectiveScore - (_diff * 50));
-						addStat(
-							objectiveText,
-							objectiveScore);
-					}
+					_txtRecovery->setText(tr("STR_ALIEN_BASE_RECOVERY"));
 
-					std::for_each(
-							_gameSave->getAlienMissions().begin(),
-							_gameSave->getAlienMissions().end(),
-							ClearAlienBase(*i));
-
-					for (std::vector<Target*>::const_iterator
-							j = (*i)->getTargeters()->begin();
-							j != (*i)->getTargeters()->end();
-							)
+					if (_tacstats->success == true)
 					{
-						Craft* const craft (dynamic_cast<Craft*>(*j));
-						if (craft != nullptr)
+						if (objectiveText.empty() == false)
 						{
-							craft->returnToBase();
-							j = (*i)->getTargeters()->begin();
+							objectiveScore = std::max((objectiveScore + 9) / 10,
+													   objectiveScore - (_diff * 50));
+							addStat(
+								objectiveText,
+								objectiveScore);
 						}
-						else
-							++j;
+
+						std::for_each(
+								_gameSave->getAlienMissions().begin(),
+								_gameSave->getAlienMissions().end(),
+								ClearAlienBase(*i));
+
+						delete *i; // NOTE: dTor sends targeters back to Base.
+						_gameSave->getAlienBases()->erase(i);
 					}
+					else
+						(*i)->setTactical(false);
 
-					delete *i;
-					_gameSave->getAlienBases()->erase(i);
+					break;
 				}
-				else
-					(*i)->setTactical(false);
-
-				break;
 			}
 		}
 	}

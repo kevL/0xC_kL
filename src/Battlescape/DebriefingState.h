@@ -136,8 +136,9 @@ private:
 	Country* _country;
 	Region* _region;
 	Ruleset* _rules;
-	SavedGame* _gameSave;
 	SavedBattleGame* _battleSave;
+	SavedGame* _gameSave;
+
 	Text
 		* _txtBaseLabel,
 		* _txtCost,
