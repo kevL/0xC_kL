@@ -78,10 +78,10 @@ Game::Game(const std::string& title)
 		_tickOfLastSlice(0u),
 		_debugCycle(-1),
 		_debugCycle_b(-1),
-		_rodentState(0u),
-		_warp(false),
-		_warpX(0u),
-		_warpY(0u)
+		_rodentState(0u)
+//		_warp(false),
+//		_warpX(0u),
+//		_warpY(0u)
 //		_blitDelay(false)
 {
 	Options::reload = false;
@@ -248,8 +248,8 @@ void Game::run()
 									&event,
 									_screen->getScaleX(),
 									_screen->getScaleY(),
-									_screen->getCursorTopBlackBand(),
-									_screen->getCursorLeftBlackBand(),
+									_screen->getBorderTop(),
+									_screen->getBorderLeft(),
 									_rodentState));
 				_states.back()->handle(&action);
 			}
@@ -325,27 +325,28 @@ void Game::run()
 
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						if (static_cast<Uint32>(_event.button.button) < 32u)
+						if (   static_cast<Uint32>(_event.button.button) != 0u
+							&& static_cast<Uint32>(_event.button.button) < 32u)
 						{
 							switch (_event.button.state)
 							{
-								case SDL_RELEASED:
-									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
-									break;
 								case SDL_PRESSED:
 									_rodentState |=  (1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									break;
+								case SDL_RELEASED:
+									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
 							}
 						}
 						// no break;
 
-					case SDL_MOUSEMOTION:
-						if (_warp == true
-							&& _event.motion.x == _warpX
-							&& _event.motion.y == _warpY)
-						{
-							_warp = false;
-							continue;
-						}
+//					case SDL_MOUSEMOTION:
+//						if (_warp == true
+//							&& _event.motion.x == _warpX
+//							&& _event.motion.y == _warpY)
+//						{
+//							_warp = false;
+//							continue;
+//						}
 						// no break;
 
 					default:
@@ -353,8 +354,8 @@ void Game::run()
 											&_event,
 											_screen->getScaleX(),
 											_screen->getScaleY(),
-											_screen->getCursorTopBlackBand(),
-											_screen->getCursorLeftBlackBand(),
+											_screen->getBorderTop(),
+											_screen->getBorderLeft(),
 											_rodentState));
 						_screen->handle(&action);
 						_cursor->handle(&action);
@@ -492,8 +493,8 @@ void Game::run()
 									&event,
 									_screen->getScaleX(),
 									_screen->getScaleY(),
-									_screen->getCursorTopBlackBand(),
-									_screen->getCursorLeftBlackBand(),
+									_screen->getBorderTop(),
+									_screen->getBorderLeft(),
 									_rodentState));
 				_states.back()->handle(&action);
 			}
@@ -585,27 +586,28 @@ void Game::run()
 
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						if (static_cast<Uint32>(_event.button.button) < 32u)
+						if (   static_cast<Uint32>(_event.button.button) != 0u
+							&& static_cast<Uint32>(_event.button.button) < 32u)
 						{
 							switch (_event.button.state)
 							{
-								case SDL_RELEASED:
-									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
-									break;
 								case SDL_PRESSED:
 									_rodentState |=  (1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									break;
+								case SDL_RELEASED:
+									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
 							}
 						}
 						// no break;
 
-					case SDL_MOUSEMOTION:
-						if (_warp == true
-							&& _event.motion.x == _warpX
-							&& _event.motion.y == _warpY)
-						{
-							_warp = false;
-							continue;
-						}
+//					case SDL_MOUSEMOTION:
+//						if (_warp == true
+//							&& _event.motion.x == _warpX
+//							&& _event.motion.y == _warpY)
+//						{
+//							_warp = false;
+//							continue;
+//						}
 						runState = STANDARD;		// re-gain focus on mouse-over or mouse-press.
 						// no break;				// feed the event to others ->>>
 
@@ -614,8 +616,8 @@ void Game::run()
 											&_event,
 											_screen->getScaleX(),
 											_screen->getScaleY(),
-											_screen->getCursorTopBlackBand(),
-											_screen->getCursorLeftBlackBand(),
+											_screen->getBorderTop(),
+											_screen->getBorderLeft(),
 											_rodentState));
 						_screen->handle(&action);
 						_cursor->handle(&action);
@@ -1252,8 +1254,8 @@ Action* Game::getSynthMouseDown(int btnId) const
 					&_event,
 					_screen->getScaleX(),
 					_screen->getScaleY(),
-					_screen->getCursorTopBlackBand(),
-					_screen->getCursorLeftBlackBand(),
+					_screen->getBorderTop(),
+					_screen->getBorderLeft(),
 					_rodentState & ~(1u << (static_cast<Uint32>(btnId) - 1u))));
 }
 
@@ -1272,8 +1274,8 @@ Action* Game::getSynthMouseUp(int btnId) const
 					&_event,
 					_screen->getScaleX(),
 					_screen->getScaleY(),
-					_screen->getCursorTopBlackBand(),
-					_screen->getCursorLeftBlackBand(),
+					_screen->getBorderTop(),
+					_screen->getBorderLeft(),
 					_rodentState | (1u << (static_cast<Uint32>(btnId) - 1u))));
 }
 

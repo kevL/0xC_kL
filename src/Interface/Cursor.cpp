@@ -70,11 +70,11 @@ void Cursor::handle(Action* action)
 		{
 			setX(static_cast<int>(
 				 static_cast<double>(
-				 static_cast<int>(action->getDetails()->motion.x) - action->getLeftBlackBand())
+				 static_cast<int>(action->getDetails()->motion.x) - action->getBorderLeft())
 					/ action->getScaleX()));
 			setY(static_cast<int>(
 				 static_cast<double>(
-				 static_cast<int>(action->getDetails()->motion.y) - action->getTopBlackBand())
+				 static_cast<int>(action->getDetails()->motion.y) - action->getBorderTop())
 					/ action->getScaleY()));
 		}
 		else

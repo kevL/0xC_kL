@@ -57,8 +57,8 @@ private:
 		_init,
 		_inputActive,
 //		_blitDelay,
-		_quit,
-		_warp;
+		_quit;
+//		_warp;
 	int
 		_debugCycle,	// for debugging country-zones.
 		_debugCycle_b,	// for debugging country-zones.
@@ -66,9 +66,9 @@ private:
 	Uint32
 		_rodentState,
 		_tickOfLastSlice;
-	Uint16
-		_warpX,
-		_warpY;
+//	Uint16
+//		_warpX,
+//		_warpY;
 
 	Cursor* _cursor;
 	FpsCounter* _fpsCounter;

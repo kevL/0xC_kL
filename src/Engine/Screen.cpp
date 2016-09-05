@@ -53,7 +53,7 @@ Screen::Screen()
 		_scaleX(1.),
 		_scaleY(1.),
 		_flags(0u),
-		_numColors(0),
+		_qtyColors(0),
 		_firstColor(0),
 		_pushPalette(false),
 		_surface(nullptr),
@@ -153,7 +153,7 @@ void Screen::setVideoFlags() // private.
 
 	_bpp = (is32bitEnabled() == true || isOpenGLEnabled() == true) ? 32 : 8;
 
-	_baseWidth = Options::baseXResolution;
+	_baseWidth  = Options::baseXResolution;
 	_baseHeight = Options::baseYResolution;
 }
 
@@ -249,10 +249,10 @@ void Screen::flip()
 		Zoom::flipWithZoom(
 					_surface->getSurface(),
 					_screen,
-					_topBlackBand,
-					_bottomBlackBand,
-					_leftBlackBand,
-					_rightBlackBand,
+					_borderTop,
+					_borderBot,
+					_borderLeft,
+					_borderRight,
 					&_glOutput);
 	}
 	else
@@ -263,19 +263,19 @@ void Screen::flip()
 				nullptr);
 
 	if (_pushPalette == true // perform any requested palette update
-		&& _numColors != 0
+		&& _qtyColors != 0
 		&& _screen->format->BitsPerPixel == 8u)
 	{
 		if (SDL_SetColors(
 						_screen,
 						&(_deferredPalette[static_cast<size_t>(_firstColor)]),
 						_firstColor,
-						_numColors) == 0)
+						_qtyColors) == 0)
 		{
 			Log(LOG_INFO) << "Display palette doesn't match requested palette.";
 		}
 
-		_numColors = 0;
+		_qtyColors = 0;
 		_pushPalette = false;
 	}
 
@@ -416,52 +416,52 @@ void Screen::resetDisplay(bool resetVideo)
 		{
 			const int targetWidth (static_cast<int>(std::floor(_scaleY * static_cast<double>(_baseWidth))));
 
-			_topBlackBand =
-			_bottomBlackBand = 0;
-			_leftBlackBand = (_screen->w - targetWidth) / 2;
-			if (_leftBlackBand < 0) _leftBlackBand = 0;
+			_borderTop =
+			_borderBot = 0;
+			_borderLeft = (_screen->w - targetWidth) >> 1u;
+			if (_borderLeft < 0) _borderLeft = 0;
 
-			_rightBlackBand = _screen->w - targetWidth - _leftBlackBand;
-			_cursorTopBlackBand = 0;
+			_borderRight = _screen->w - targetWidth - _borderLeft;
+			_borderTopCursor = 0;
 
 			if (cursorInBlackBands == true)
 			{
 				_scaleX = _scaleY;
-				_cursorLeftBlackBand = _leftBlackBand;
+				_borderLeftCursor = _borderLeft;
 			}
 			else
-				_cursorLeftBlackBand = 0;
+				_borderLeftCursor = 0;
 		}
 		else if (_scaleX < _scaleY)
 		{
 			const int targetHeight (static_cast<int>(std::floor(_scaleX * static_cast<double>(_baseHeight) * pixelRatioY)));
 
-			_topBlackBand = (_screen->h - targetHeight) / 2;
-			if (_topBlackBand < 0) _topBlackBand = 0;
+			_borderTop = (_screen->h - targetHeight) >> 1u;
+			if (_borderTop < 0) _borderTop = 0;
 
-			_bottomBlackBand = _screen->h - targetHeight - _topBlackBand;
-			if (_bottomBlackBand < 0) _bottomBlackBand = 0;
+			_borderBot = _screen->h - targetHeight - _borderTop;
+			if (_borderBot < 0) _borderBot = 0;
 
-			_leftBlackBand =
-			_rightBlackBand =
-			_cursorLeftBlackBand = 0;
+			_borderLeft =
+			_borderRight =
+			_borderLeftCursor = 0;
 
 			if (cursorInBlackBands == true)
 			{
 				_scaleY = _scaleX;
-				_cursorTopBlackBand = _topBlackBand;
+				_borderTopCursor = _borderTop;
 			}
 			else
-				_cursorTopBlackBand = 0;
+				_borderTopCursor = 0;
 		}
 	}
 	else
-		_topBlackBand =
-		_bottomBlackBand =
-		_leftBlackBand =
-		_rightBlackBand =
-		_cursorTopBlackBand =
-		_cursorLeftBlackBand = 0;
+		_borderTop =
+		_borderBot =
+		_borderLeft =
+		_borderRight =
+		_borderTopCursor =
+		_borderLeftCursor = 0;
 
 #ifndef __NO_OPENGL
 	if (isOpenGLEnabled() == true)
@@ -498,8 +498,8 @@ void Screen::setPalette(
 		int ncolors,
 		bool immediately)
 {
-	if (_numColors != 0
-		&& _numColors != ncolors
+	if (_qtyColors != 0
+		&& _qtyColors != ncolors
 		&& _firstColor != firstcolor)
 	{
 		// an initial palette setup has not been committed to the screen yet
@@ -508,7 +508,7 @@ void Screen::setPalette(
 				&(_deferredPalette[static_cast<size_t>(firstcolor)]),
 				colors,
 				sizeof(SDL_Color) * static_cast<size_t>(ncolors));
-		_numColors = 256; // all the use cases are just a full palette with 16-color follow-ups
+		_qtyColors = 256; // all the use cases are just a full palette with 16-color follow-ups
 		_firstColor = 0;
 	}
 	else
@@ -517,7 +517,7 @@ void Screen::setPalette(
 				&(_deferredPalette[static_cast<size_t>(firstcolor)]),
 				colors,
 				sizeof(SDL_Color) * static_cast<size_t>(ncolors));
-		_numColors = ncolors;
+		_qtyColors = ncolors;
 		_firstColor = firstcolor;
 	}
 
@@ -621,18 +621,18 @@ int Screen::getDY() const
  * Gets this Screen's top black forbidden-to-cursor band's height.
  * @return, height in pixels
  */
-int Screen::getCursorTopBlackBand() const
+int Screen::getBorderTop() const
 {
-	return _cursorTopBlackBand;
+	return _borderTopCursor;
 }
 
 /**
  * Gets this Screen's left black forbidden-to-cursor band's width.
  * @return, width in pixels
  */
-int Screen::getCursorLeftBlackBand() const
+int Screen::getBorderLeft() const
 {
-	return _cursorLeftBlackBand;
+	return _borderLeftCursor;
 }
 
 /**

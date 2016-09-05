@@ -25,12 +25,12 @@ namespace OpenXcom
 
 /**
  * Creates an Action as in hardware-event.
- * @param event				- pointer to an SDL_Event
- * @param scaleX			- the Screen's x-scaling factor
- * @param scaleY			- the Screen's y-scaling factor
- * @param topBlackBand		- the Screen's top black band height
- * @param leftBlackBand		- the Screen's left black band width
- * @param mouseButtonState	-
+ * @param event			- pointer to an SDL_Event
+ * @param scaleX		- the Screen's x-scaling factor
+ * @param scaleY		- the Screen's y-scaling factor
+ * @param topBlackBand	- the Screen's top black band height
+ * @param leftBlackBand	- the Screen's left black band width
+ * @param rodentState	- state of the rodent
  */
 Action::Action(
 		SDL_Event* const event,
@@ -38,19 +38,19 @@ Action::Action(
 		double scaleY,
 		int topBlackBand,
 		int leftBlackBand,
-		const Uint32 mouseButtonState)
+		const Uint32 rodentState)
 	:
 		_event(event),
 		_scaleX(scaleX),
 		_scaleY(scaleY),
-		_topBlackBand(topBlackBand),
-		_leftBlackBand(leftBlackBand),
+		_borderTop(topBlackBand),
+		_borderLeft(leftBlackBand),
 		_mouseX(-1),
 		_mouseY(-1),
 		_surfaceX(-1),
 		_surfaceY(-1),
 		_sender(nullptr),
-		_rodentState(mouseButtonState)
+		_rodentState(rodentState)
 {}
 
 /**
@@ -92,8 +92,8 @@ void Action::setMouseAction(
 		int surfaceX,
 		int surfaceY)
 {
-	_mouseX = mX - _leftBlackBand;
-	_mouseY = mY - _topBlackBand;
+	_mouseX = mX - _borderLeft;
+	_mouseY = mY - _borderTop;
 
 	_surfaceX = surfaceX;
 	_surfaceY = surfaceY;
@@ -110,12 +110,12 @@ bool Action::isMouseAction() const
 
 /**
  * Gets if a specified mouse-button invoked this Action.
- * @param btn - btn-ID
+ * @param btnId - btn-ID
  * @return, true if so
  */
-bool Action::getMouseButtonState(int btn) const
+bool Action::getMouseButtonState(int btnId) const
 {
-	return _rodentState & (1u << (static_cast<Uint32>(btn) - 1u));
+	return _rodentState & (1u << (static_cast<Uint32>(btnId) - 1u));
 }
 
 /**
@@ -132,18 +132,18 @@ Uint32 Action::getMouseState() const
  * Gets the height in pixels of the top black band if any.
  * @return, Screen's top black band
  */
-int Action::getTopBlackBand() const
+int Action::getBorderTop() const
 {
-	return _topBlackBand;
+	return _borderTop;
 }
 
 /**
  * Gets the width in pixels of the left black band if any.
  * @return, Screen's left black band
  */
-int Action::getLeftBlackBand() const
+int Action::getBorderLeft() const
 {
-	return _leftBlackBand;
+	return _borderLeft;
 }
 
 /**

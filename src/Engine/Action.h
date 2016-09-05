@@ -44,8 +44,8 @@ private:
 		_mouseY,
 		_surfaceX,
 		_surfaceY,
-		_topBlackBand,
-		_leftBlackBand;
+		_borderTop,
+		_borderLeft;
 	Uint32 _rodentState;
 	double
 		_scaleX,
@@ -63,7 +63,7 @@ private:
 				double scaleY,
 				int topBlackBand,
 				int leftBlackBand,
-				Uint32 mouseButtonState);
+				Uint32 rodentState);
 		/// Cleans up the Action.
 		~Action();
 
@@ -82,14 +82,14 @@ private:
 		bool isMouseAction() const;
 
 		/// Gets a specified mouse-button's state.
-		bool getMouseButtonState(int btn) const;
+		bool getMouseButtonState(int btnId) const;
 		/// Gets the overall mouse-buttons' state.
 		Uint32 getMouseState() const;
 
 		/// Gets the top-black-band's height.
-		int getTopBlackBand() const;
+		int getBorderTop() const;
 		/// Gets the left-black-band's width.
-		int getLeftBlackBand() const;
+		int getBorderLeft() const;
 
 		/// Gets the mouse's x-position.
 		int getMouseX() const;

@@ -51,13 +51,13 @@ private:
 		_baseWidth,
 		_bpp,
 		_firstColor,
-		_numColors,
-		_topBlackBand,
-		_bottomBlackBand,
-		_leftBlackBand,
-		_rightBlackBand,
-		_cursorTopBlackBand,
-		_cursorLeftBlackBand;
+		_qtyColors,
+		_borderTop,
+		_borderBot,
+		_borderLeft,
+		_borderRight,
+		_borderTopCursor,
+		_borderLeftCursor;
 	double
 		_scaleX,
 		_scaleY;
@@ -126,9 +126,9 @@ private:
 		int getDY() const;
 
 		/// Gets the Screen's top black forbidden-to-cursor band's height.
-		int getCursorTopBlackBand() const;
+		int getBorderTop() const;
 		/// Gets the Screen's left black forbidden-to-cursor band's width.
-		int getCursorLeftBlackBand() const;
+		int getBorderLeft() const;
 
 		/// Takes a screenshot.
 		void screenshot(const std::string& file) const;

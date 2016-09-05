@@ -324,8 +324,8 @@ void CraftsState::lstLeftArrowClick(Action* action)
 
 				if (r != _lstCrafts->getScroll())
 					SDL_WarpMouse(
-							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-							static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+							static_cast<Uint16>(action->getBorderLeft() + action->getMouseX()),
+							static_cast<Uint16>(action->getBorderTop() + action->getMouseY()
 								- static_cast<int>(8. * action->getScaleY())));
 				else
 					_lstCrafts->scrollUp();
@@ -371,8 +371,8 @@ void CraftsState::lstRightArrowClick(Action* action)
 
 					if (r != _lstCrafts->getVisibleRows() + _lstCrafts->getScroll() - 1u)
 						SDL_WarpMouse(
-								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-								static_cast<Uint16>(action->getTopBlackBand() + action->getMouseY()
+								static_cast<Uint16>(action->getBorderLeft() + action->getMouseX()),
+								static_cast<Uint16>(action->getBorderTop() + action->getMouseY()
 									+ static_cast<int>(8. * action->getScaleY())));
 					else
 						_lstCrafts->scrollDown();

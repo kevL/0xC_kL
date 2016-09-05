@@ -402,8 +402,8 @@ void SoldiersState::lstLeftArrowClick(Action* action)
 
 				if (r != _lstSoldiers->getScroll())
 					SDL_WarpMouse(
-							static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-							static_cast<Uint16>(action->getTopBlackBand()  + action->getMouseY()
+							static_cast<Uint16>(action->getBorderLeft() + action->getMouseX()),
+							static_cast<Uint16>(action->getBorderTop()  + action->getMouseY()
 								- static_cast<int>(8. * action->getScaleY())));
 				else
 				{
@@ -462,8 +462,8 @@ void SoldiersState::lstRightArrowClick(Action* action)
 
 					if (r != _lstSoldiers->getVisibleRows() + _lstSoldiers->getScroll() - 1u)
 						SDL_WarpMouse(
-								static_cast<Uint16>(action->getLeftBlackBand() + action->getMouseX()),
-								static_cast<Uint16>(action->getTopBlackBand()  + action->getMouseY()
+								static_cast<Uint16>(action->getBorderLeft() + action->getMouseX()),
+								static_cast<Uint16>(action->getBorderTop()  + action->getMouseY()
 									+ static_cast<int>(8. * action->getScaleY())));
 					else
 					{
