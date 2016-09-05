@@ -2546,26 +2546,6 @@ void Globe::mouseOver(Action* action, State* state)
 	if (_isMouseScrolling == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		// What follows is a workaround for a rare problem where sometimes the
-		// mouse-release event is missed for some reason. However if SDL also
-		// missed the release event then this won't work.
-		//
-		// This part handles the release if it's missed and another button is used.
-		if ((SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
-		{
-			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
-			{
-				center(
-					_lonPreMouseScroll,
-					_latPreMouseScroll);
-			}
-
-			_isMouseScrolled =
-			_isMouseScrolling = false;
-			return;
-		}
 		_isMouseScrolled = true;
 
 		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
@@ -2575,24 +2555,24 @@ void Globe::mouseOver(Action* action, State* state)
 			_mousePastThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
 							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
 
-		if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
-		{
-			const double
-				newLon ((static_cast<double>(_totalMouseMoveX) / action->getScaleX()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
-				newLat ((static_cast<double>(_totalMouseMoveY) / action->getScaleY()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
-			center(
-				_lonPreMouseScroll + newLon / static_cast<double>(Options::geoScrollSpeed),
-				_latPreMouseScroll + newLat / static_cast<double>(Options::geoScrollSpeed));
-		}
-		else
-		{
-			const double
-				newLon (static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
-				newLat (static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
-			center(
-				_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed),
-				_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed));
-		}
+//		if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
+//		{
+//			const double
+//				newLon ((static_cast<double>(_totalMouseMoveX) / action->getScaleX()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
+//				newLat ((static_cast<double>(_totalMouseMoveY) / action->getScaleY()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
+//			center(
+//				_lonPreMouseScroll + newLon / static_cast<double>(Options::geoScrollSpeed),
+//				_latPreMouseScroll + newLat / static_cast<double>(Options::geoScrollSpeed));
+//		}
+//		else
+//		{
+		const double
+			newLon (static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1u) / 2.),
+			newLat (static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1u) / 2.);
+		center(
+			_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed),
+			_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed));
+//		}
 		_game->getCursor()->handle(action);
 	}
 
@@ -2664,11 +2644,8 @@ void Globe::mouseClick(Action* action, State* state)
 	const Uint8 btnId (action->getDetails()->button.button);
 	switch (btnId)
 	{
-		case SDL_BUTTON_WHEELUP:
-			zoomIn();
-			break;
-		case SDL_BUTTON_WHEELDOWN:
-			zoomOut();
+		case SDL_BUTTON_WHEELUP:	zoomIn();	return; // i think these can return;
+		case SDL_BUTTON_WHEELDOWN:	zoomOut();	return;
 	}
 
 	double
@@ -2677,28 +2654,6 @@ void Globe::mouseClick(Action* action, State* state)
 			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
 			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
-
-	// What follows is a workaround for a rare problem where sometimes the
-	// mouse-release event is missed for some reason. However if SDL also
-	// missed the release event then this won't work.
-	//
-	// This part handles the release if it's missed and another button is used.
-	if (_isMouseScrolling == true)
-	{
-		if (btnId != Options::geoDragScrollButton
-			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::geoDragScrollButton)) == 0)
-		{
-			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
-			{
-				center(
-					_lonPreMouseScroll,
-					_latPreMouseScroll);
-			}
-			_isMouseScrolled = _isMouseScrolling = false;
-		}
-	}
 
 	if (_isMouseScrolling == true) // dragScroll-button release: release mouse-scroll-mode
 	{
@@ -2739,8 +2694,7 @@ void Globe::keyboardPress(Action* action, State* state)
 
 	if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleDetail)
 		toggleDetail();
-
-	if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleRadar)
+	else if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleRadar)
 		toggleRadarLines();
 }
 

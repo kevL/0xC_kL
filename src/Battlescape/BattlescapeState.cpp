@@ -1147,25 +1147,6 @@ void BattlescapeState::mapOver(Action* action)
 	if (_isMouseScrolling == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		// What follows is a workaround for a rare problem where sometimes the
-		// mouse-release event is missed for some reason. However if SDL also
-		// missed the release event then this won't work.
-		//
-		// This part handles the release if it's missed and another button is used.
-		if ((SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
-		{
-			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
-			{
-				_map->getCamera()->setMapOffset(_offsetPreDragScroll);
-			}
-
-			_isMouseScrolled =
-			_isMouseScrolling = false;
-			return;
-		}
-
 		_isMouseScrolled = true;
 
 		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
@@ -1175,20 +1156,19 @@ void BattlescapeState::mapOver(Action* action)
 			_mousePastThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
 							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
 
-
-		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
-		{
-			_map->getCamera()->scroll(
-									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
-									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
-									false);
-			_map->setSelectorType(CT_NONE);
-		}
-		else
-			_map->getCamera()->scroll(
-									static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getScaleX()),
-									static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getScaleY()),
-									false);
+//		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
+//		{
+//			_map->getCamera()->scroll(
+//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
+//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
+//									false);
+//			_map->setSelectorType(CT_NONE);
+//		}
+//		else
+		_map->getCamera()->scroll(
+								static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getScaleX()),
+								static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getScaleY()),
+								false);
 
 		_game->getCursor()->handle(action);
 	}
@@ -1430,28 +1410,6 @@ void BattlescapeState::mapPress(Action* action)
  */
 void BattlescapeState::mapClick(Action* action)
 {
-	// What follows is a workaround for a rare problem where sometimes the
-	// mouse-release event is missed for some reason. However if SDL also
-	// missed the release event then this won't work.
-	//
-	// This part handles the release if it's missed and another button is used.
-	if (_isMouseScrolling == true)
-	{
-		if (action->getDetails()->button.button != Options::battleDragScrollButton
-			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
-		{
-			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
-			{
-				_map->getCamera()->setMapOffset(_offsetPreDragScroll);
-			}
-
-			_isMouseScrolled =
-			_isMouseScrolling = false;
-		}
-	}
-
 	if (_isMouseScrolling == true) // dragScroll-button release: release mouse-scroll-mode
 	{
 		if (action->getDetails()->button.button != Options::battleDragScrollButton) // other buttons are ineffective while scrolling
@@ -2625,11 +2583,9 @@ void BattlescapeState::btnZeroTuClick(Action* /*action*/)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (_battleGame->noActionsPending(unit) == true)
 		{
-//			SDL_Event ev;
-//			ev.type = SDL_MOUSEBUTTONDOWN;
-//			ev.button.button = SDL_BUTTON_LEFT;
-//			Action a (Action(&ev, 0.,0.,0,0));
-//			action->getSender()->mousePress(&a, this); // why mouse event, for keyboard-press perhaps
+//			Action* a (_game->getSynthMouseDown());
+//			action->getSender()->mousePress(a, this);
+//			delete a;
 
 			unit->setTu();
 			_numTimeUnits->setValue(0u);
@@ -2648,7 +2604,7 @@ void BattlescapeState::btnZeroTuClick(Action* /*action*/)
 void BattlescapeState::keyZeroTuPress(Action* action)
 {
 	if ((SDL_GetModState() & KMOD_CTRL) != 0
-		&& (action->getDetails()->key.keysym.sym == Options::keyBattleZeroTUs
+		&& (   action->getDetails()->key.keysym.sym == Options::keyBattleZeroTUs
 			|| action->getDetails()->key.keysym.sym == SDLK_KP_PERIOD)
 		&& playableUnitSelected() == true)
 	{
@@ -4970,11 +4926,9 @@ void BattlescapeState::btnReserveClick(Action* action)
 {
 	if (allowButtons())
 	{
-		SDL_Event ev;
-		ev.type = SDL_MOUSEBUTTONDOWN;
-		ev.button.button = SDL_BUTTON_LEFT;
-		Action a = Action(&ev, 0.,0., 0,0);
-		action->getSender()->mousePress(&a, this);
+		Action* a (_game->getSynthMouseDown());
+		action->getSender()->mousePress(a, this);
+		delete a;
 
 		if		(_reserve == _btnReserveNone)	_battleGame->setReservedAction(BA_NONE);
 		else if (_reserve == _btnReserveSnap)	_battleGame->setReservedAction(BA_SNAPSHOT);
@@ -4997,14 +4951,12 @@ void BattlescapeState::btnReserveKneelClick(Action* action)
 {
 	if (allowButtons())
 	{
-		SDL_Event ev;
-		ev.type = SDL_MOUSEBUTTONDOWN;
-		ev.button.button = SDL_BUTTON_LEFT;
+		Action* a (_game->getSynthMouseDown());
+		action->getSender()->mousePress(a, this);
+		delete a;
 
-		Action a = Action(&ev, 0.,0., 0,0);
-		action->getSender()->mousePress(&a, this);
 		_battleGame->setKneelReserved(!_battleGame->getKneelReserved());
-//		_btnReserveKneel->invert(_btnReserveKneel->getColor()+3);
+//		_btnReserveKneel->invert(_btnReserveKneel->getColor() + 3);
 		_btnReserveKneel->toggle(_battleGame->getKneelReserved());
 
 		// update any path preview

@@ -1316,14 +1316,14 @@ void GraphsState::btnTogglePress(Action*) // private.
  */
 void GraphsState::btnFactorPress(Action* action) // private.
 {
-	if (action->getSender() == _btnFactor1)
-		recallFactor = GUF_DEFAULT;
-	else if (action->getSender() == _btnFactor2)
-		recallFactor = GUF_HALF;
-	else if (action->getSender() == _btnFactor4)
-		recallFactor = GUF_QUARTER;
+	if (action->getSender() != _userFactor)
+	{
+		if		(action->getSender() == _btnFactor1) recallFactor = GUF_DEFAULT;
+		else if	(action->getSender() == _btnFactor2) recallFactor = GUF_HALF;
+		else if	(action->getSender() == _btnFactor4) recallFactor = GUF_QUARTER;
 
-	drawLines(false);
+		drawLines(false);
+	}
 }
 
 /**
@@ -1332,28 +1332,34 @@ void GraphsState::btnFactorPress(Action* action) // private.
  */
 void GraphsState::keyFactor(Action* action)
 {
-	SDL_Event ev; // need to fake a mouse-click for the group to toggle
-	ev.type = SDL_MOUSEBUTTONDOWN;
-	ev.button.button = SDL_BUTTON_LEFT;
-
-	Action act (Action(&ev, 0.,0., 0,0));
-
+	Action* a (_game->getSynthMouseDown()); // need to fake a mouse-click for the group to toggle
 	switch (action->getDetails()->key.keysym.sym)
 	{
 		case SDLK_1:
-			recallFactor = GUF_DEFAULT;
-			_btnFactor1->mousePress(&act, this);
+			if (_userFactor != _btnFactor1)
+			{
+				_btnFactor1->mousePress(a, this);
+				recallFactor = GUF_DEFAULT;
+			}
 			break;
 
 		case SDLK_2:
-			recallFactor = GUF_HALF;
-			_btnFactor2->mousePress(&act, this);
+			if (_userFactor != _btnFactor2)
+			{
+				_btnFactor2->mousePress(a, this);
+				recallFactor = GUF_HALF;
+			}
 			break;
 
 		case SDLK_3:
-			recallFactor = GUF_QUARTER;
-			_btnFactor4->mousePress(&act, this);
+			if (_userFactor != _btnFactor4)
+			{
+				_btnFactor4->mousePress(a, this);
+				recallFactor = GUF_QUARTER;
+			}
 	}
+	delete a;
+
 	drawLines(false);
 }
 

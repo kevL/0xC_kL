@@ -227,7 +227,7 @@ private:
 		void mouseOver(Action* action, State* state) override;
 
 		/// Finds the current mouse-position x/y on the Map.
-		void findMousePointer(Position& pos);
+		void findMousePointer(Position& pos) const;
 
 		/// Special handling for key-presses.
 		void keyboardPress(Action* action, State* state) override;

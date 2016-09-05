@@ -96,15 +96,15 @@ private:
 		~Camera();
 
 		/// Special handling for mouse-presses.
-		void mousePress(Action* action, State* state);
+		void mousePress(Action* action);
 		/// Special handling for mouse-releases.
-		void mouseRelease(Action* action, State* state);
+		void mouseRelease(Action* action);
 		/// Special handling for mouse-overs.
-		void mouseOver(Action* action, State* state);
+		void mouseOver(Action* action);
 		/// Special handling for key-presses.
-		void keyboardPress(Action* action, State* state);
+		void keyboardPress(Action* action);
 		/// Special handling for key-releases.
-		void keyboardRelease(Action* action, State* state);
+		void keyboardRelease(Action* action);
 
 		/// Sets the Camera's scroll-timers.
 		void setScrollTimers(

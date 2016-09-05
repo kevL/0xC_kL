@@ -77,7 +77,11 @@ Game::Game(const std::string& title)
 		_ticksTillNextSlice(0),
 		_tickOfLastSlice(0u),
 		_debugCycle(-1),
-		_debugCycle_b(-1)
+		_debugCycle_b(-1),
+		_rodentState(0u),
+		_warp(false),
+		_warpX(0u),
+		_warpY(0u)
 //		_blitDelay(false)
 {
 	Options::reload = false;
@@ -245,7 +249,8 @@ void Game::run()
 									_screen->getScaleX(),
 									_screen->getScaleY(),
 									_screen->getCursorTopBlackBand(),
-									_screen->getCursorLeftBlackBand()));
+									_screen->getCursorLeftBlackBand(),
+									_rodentState));
 				_states.back()->handle(&action);
 			}
 
@@ -318,13 +323,39 @@ void Game::run()
 						}
 						break;
 
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+						if (static_cast<Uint32>(_event.button.button) < 32u)
+						{
+							switch (_event.button.state)
+							{
+								case SDL_RELEASED:
+									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									break;
+								case SDL_PRESSED:
+									_rodentState |=  (1u << (static_cast<Uint32>(_event.button.button) - 1u));
+							}
+						}
+						// no break;
+
+					case SDL_MOUSEMOTION:
+						if (_warp == true
+							&& _event.motion.x == _warpX
+							&& _event.motion.y == _warpY)
+						{
+							_warp = false;
+							continue;
+						}
+						// no break;
+
 					default:
 						Action action (Action(
 											&_event,
 											_screen->getScaleX(),
 											_screen->getScaleY(),
 											_screen->getCursorTopBlackBand(),
-											_screen->getCursorLeftBlackBand()));
+											_screen->getCursorLeftBlackBand(),
+											_rodentState));
 						_screen->handle(&action);
 						_cursor->handle(&action);
 						_fpsCounter->handle(&action);
@@ -462,14 +493,14 @@ void Game::run()
 									_screen->getScaleX(),
 									_screen->getScaleY(),
 									_screen->getCursorTopBlackBand(),
-									_screen->getCursorLeftBlackBand()));
+									_screen->getCursorLeftBlackBand(),
+									_rodentState));
 				_states.back()->handle(&action);
 			}
 
 			while (SDL_PollEvent(&_event) == 1)		// process SDL input-events
 			{
-				if (_inputActive == false // kL->
-					&& _event.type != SDL_MOUSEMOTION)
+				if (_inputActive == false && _event.type != SDL_MOUSEMOTION)
 				{
 //					_event.type = SDL_IGNORE;		// discard buffered events
 					continue;
@@ -554,18 +585,38 @@ void Game::run()
 
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
+						if (static_cast<Uint32>(_event.button.button) < 32u)
+						{
+							switch (_event.button.state)
+							{
+								case SDL_RELEASED:
+									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									break;
+								case SDL_PRESSED:
+									_rodentState |=  (1u << (static_cast<Uint32>(_event.button.button) - 1u));
+							}
+						}
+						// no break;
+
 					case SDL_MOUSEMOTION:
-//						if (_inputActive == false)	// Skip [ie. postpone] mouse-events if they're disabled. Moved below_
-//							continue;
-						runState = STANDARD;		// re-gain focus on mouse-over or mouse-press. no break;
-													// feed the event to others ->>>
+						if (_warp == true
+							&& _event.motion.x == _warpX
+							&& _event.motion.y == _warpY)
+						{
+							_warp = false;
+							continue;
+						}
+						runState = STANDARD;		// re-gain focus on mouse-over or mouse-press.
+						// no break;				// feed the event to others ->>>
+
 					default:
 						Action action (Action(
 											&_event,
 											_screen->getScaleX(),
 											_screen->getScaleY(),
 											_screen->getCursorTopBlackBand(),
-											_screen->getCursorLeftBlackBand()));
+											_screen->getCursorLeftBlackBand(),
+											_rodentState));
 						_screen->handle(&action);
 						_cursor->handle(&action);
 						_fpsCounter->handle(&action);
@@ -1181,9 +1232,64 @@ int Game::getDebugCycle() const
  * Sets the country-cycle for debugging country-zones.
  * @param cycle - the country-cycle value to set
  */
-void Game::setDebugCycle(const int cycle)
+void Game::setDebugCycle(int cycle)
 {
 	_debugCycle = cycle;
 }
+
+/**
+ * Gets a synthetic mouse-down Action.
+ * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
+ * @return, pointer to an Action
+ */
+Action* Game::getSynthMouseDown(int btnId) const
+{
+	SDL_Event _event;
+	_event.type = SDL_MOUSEBUTTONDOWN;
+	_event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
+
+	return (new Action(
+					&_event,
+					_screen->getScaleX(),
+					_screen->getScaleY(),
+					_screen->getCursorTopBlackBand(),
+					_screen->getCursorLeftBlackBand(),
+					_rodentState & ~(1u << (static_cast<Uint32>(btnId) - 1u))));
+}
+
+/**
+ * Gets a synthetic mouse-up Action.
+ * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
+ * @return, pointer to an Action
+ */
+Action* Game::getSynthMouseUp(int btnId) const
+{
+	SDL_Event _event;
+	_event.type = SDL_MOUSEBUTTONUP;
+	_event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
+
+	return (new Action(
+					&_event,
+					_screen->getScaleX(),
+					_screen->getScaleY(),
+					_screen->getCursorTopBlackBand(),
+					_screen->getCursorLeftBlackBand(),
+					_rodentState | (1u << (static_cast<Uint32>(btnId) - 1u))));
+}
+
+/**
+ * Warps the mouse and records its event-parameters for later ignoring it.
+ * @param x -
+ * @param y -
+ *
+void Game::warpMouse(
+		Uint16 x,
+		Uint16 y)
+{
+	_warp = true;
+	_warpX = x;
+	_warpY = y;
+	SDL_WarpMouse(x,y);
+} */
 
 }

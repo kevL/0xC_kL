@@ -3124,16 +3124,9 @@ void GeoscapeState::resetTimer()
 {
 	_globe->rotateStop();
 
-	SDL_Event ev;
-	ev.button.button = SDL_BUTTON_LEFT;
-	Action act( // TODO: 0.0,0.0, 0,0
-			&ev,
-			_game->getScreen()->getScaleX(),
-			_game->getScreen()->getScaleY(),
-			_game->getScreen()->getCursorTopBlackBand(),
-			_game->getScreen()->getCursorLeftBlackBand());
-
-	_btn5Secs->mousePress(&act, this);
+	Action* a (_game->getSynthMouseDown());
+	_btn5Secs->mousePress(a, this);
+	delete a;
 }
 
 /**
@@ -4317,12 +4310,9 @@ void GeoscapeState::keyTimeCompression(Action* action) // private.
 	{
 		_timeCache = 0;
 
-		SDL_Event ev; // so let's fake a mouse-click
-		ev.type = SDL_MOUSEBUTTONDOWN;
-		ev.button.button = SDL_BUTTON_LEFT;
-
-		Action act = Action(&ev, 0.,0., 0,0);
-		action->getSender()->mousePress(&act, this);
+		Action* a (_game->getSynthMouseDown()); // so let's fake a mouse-click
+		action->getSender()->mousePress(a, this);
+		delete a;
 	}
 }
 

@@ -2253,7 +2253,7 @@ void Map::setPalette(
 void Map::mousePress(Action* action, State* state)
 {
 	InteractiveSurface::mousePress(action, state);
-	_camera->mousePress(action, state);
+	_camera->mousePress(action);
 }
 
 /**
@@ -2264,7 +2264,7 @@ void Map::mousePress(Action* action, State* state)
 void Map::mouseRelease(Action* action, State* state)
 {
 	InteractiveSurface::mouseRelease(action, state);
-	_camera->mouseRelease(action, state);
+	_camera->mouseRelease(action);
 }
 
 /**
@@ -2275,7 +2275,7 @@ void Map::mouseRelease(Action* action, State* state)
 void Map::mouseOver(Action* action, State* state)
 {
 	InteractiveSurface::mouseOver(action, state);
-	_camera->mouseOver(action, state);
+	_camera->mouseOver(action);
 
 	_mX = static_cast<int>(action->getAbsoluteMouseX());
 	_mY = static_cast<int>(action->getAbsoluteMouseY());
@@ -2286,7 +2286,7 @@ void Map::mouseOver(Action* action, State* state)
  * Finds the current mouse-position x/y on this Map.
  * @param pos - reference to the mouse-position
  */
-void Map::findMousePointer(Position& pos)
+void Map::findMousePointer(Position& pos) const
 {
 	pos.x = _mX;
 	pos.y = _mY;
@@ -2301,7 +2301,7 @@ void Map::findMousePointer(Position& pos)
 void Map::keyboardPress(Action* action, State* state)
 {
 	InteractiveSurface::keyboardPress(action, state);
-	_camera->keyboardPress(action, state);
+	_camera->keyboardPress(action);
 }
 
 /**
@@ -2312,7 +2312,7 @@ void Map::keyboardPress(Action* action, State* state)
 void Map::keyboardRelease(Action* action, State* state)
 {
 	InteractiveSurface::keyboardRelease(action, state);
-	_camera->keyboardRelease(action, state);
+	_camera->keyboardRelease(action);
 }
 
 /**

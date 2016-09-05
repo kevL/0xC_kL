@@ -401,7 +401,7 @@ private:
 		void btnPsiClick(Action* action);
 
 		/// Handler for clicking the expend all TUs button.
-		void btnZeroTuClick(Action* action);
+		void btnZeroTuClick(Action* /*action*/);
 		/// Handler for pressing the expend all TUs key.
 		void keyZeroTuPress(Action* action);
 

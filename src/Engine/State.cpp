@@ -616,8 +616,8 @@ void State::recenter(
 			i != _surfaces.end();
 			++i)
 	{
-		(*i)->setX((*i)->getX() + dX / 2);
-		(*i)->setY((*i)->getY() + dY / 2);
+		(*i)->setX((*i)->getX() + (dX >> 1u));
+		(*i)->setY((*i)->getY() + (dY >> 1u));
 	}
 }
 
@@ -626,9 +626,18 @@ void State::recenter(
  * @note This pointer can be used universally by all child-states.
  * @param game - THE pointer to Game
  */
-void State::setGamePtr(Game* game)
+void State::setGamePtr(Game* const game) // static.
 {
 	_game = game;
+}
+
+/**
+ * Gets the pointer to the Game-object.
+ * @return, THE pointer to Game
+ */
+Game* State::getGamePtr() // static.
+{
+    return _game;
 }
 
 /**

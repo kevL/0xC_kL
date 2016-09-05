@@ -46,6 +46,7 @@ private:
 		_surfaceY,
 		_topBlackBand,
 		_leftBlackBand;
+	Uint32 _rodentState;
 	double
 		_scaleX,
 		_scaleY;
@@ -55,13 +56,14 @@ private:
 
 
 	public:
-		/// Creates an Action with given event-data.
+		/// Creates an Action with specified event-data.
 		Action(
 				SDL_Event* const event,
 				double scaleX,
 				double scaleY,
 				int topBlackBand,
-				int leftBlackBand);
+				int leftBlackBand,
+				Uint32 mouseButtonState);
 		/// Cleans up the Action.
 		~Action();
 
@@ -78,6 +80,11 @@ private:
 				int surfaceY);
 		/// Gets if the Action is a mouse-action.
 		bool isMouseAction() const;
+
+		/// Gets a specified mouse-button's state.
+		bool getMouseButtonState(int btn) const;
+		/// Gets the overall mouse-buttons' state.
+		Uint32 getMouseState() const;
 
 		/// Gets the top-black-band's height.
 		int getTopBlackBand() const;

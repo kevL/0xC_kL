@@ -25,18 +25,20 @@ namespace OpenXcom
 
 /**
  * Creates an Action as in hardware-event.
- * @param event			- pointer to an SDL_Event
- * @param scaleX		- screen's X scaling factor
- * @param scaleY		- screen's Y scaling factor
- * @param topBlackBand	- screen's top black band height
- * @param leftBlackBand	- screen's left black band width
+ * @param event				- pointer to an SDL_Event
+ * @param scaleX			- the Screen's x-scaling factor
+ * @param scaleY			- the Screen's y-scaling factor
+ * @param topBlackBand		- the Screen's top black band height
+ * @param leftBlackBand		- the Screen's left black band width
+ * @param mouseButtonState	-
  */
 Action::Action(
 		SDL_Event* const event,
 		double scaleX,
 		double scaleY,
 		int topBlackBand,
-		int leftBlackBand)
+		int leftBlackBand,
+		const Uint32 mouseButtonState)
 	:
 		_event(event),
 		_scaleX(scaleX),
@@ -47,7 +49,8 @@ Action::Action(
 		_mouseY(-1),
 		_surfaceX(-1),
 		_surfaceY(-1),
-		_sender(nullptr)
+		_sender(nullptr),
+		_rodentState(mouseButtonState)
 {}
 
 /**
@@ -103,6 +106,26 @@ void Action::setMouseAction(
 bool Action::isMouseAction() const
 {
 	return (_mouseX != -1);
+}
+
+/**
+ * Gets if a specified mouse-button invoked this Action.
+ * @param btn - btn-ID
+ * @return, true if so
+ */
+bool Action::getMouseButtonState(int btn) const
+{
+	return _rodentState & (1u << (static_cast<Uint32>(btn) - 1u));
+}
+
+/**
+ * Gets the overall mouse-buttons' state.
+ * @return, non-SDL-proprietary mouse-button Id
+ */
+Uint32 Action::getMouseState() const
+{
+//	SDL_GetMouseState(x,y); (nullptr,nullptr) does nothing.
+	return _rodentState;
 }
 
 /**

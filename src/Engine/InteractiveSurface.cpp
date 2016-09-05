@@ -45,7 +45,7 @@ InteractiveSurface::InteractiveSurface(
 			width,
 			height,
 			x,y),
-		_buttonsPressed(0u),
+		_rodentState(0u),
 		_in(nullptr),
 		_over(nullptr),
 		_out(nullptr),
@@ -62,51 +62,51 @@ InteractiveSurface::~InteractiveSurface() // virtual.
 
 /**
  * Checks if a button has been pressed.
- * @param btn - an SDL-button identifier (default 0)
+ * @param btnId - an SDL-button identifier (default 0)
  */
-bool InteractiveSurface::isButtonPressed(Uint8 btn) const
+bool InteractiveSurface::isButtonPressed(Uint8 btnId) const
 {
-	switch (btn)
+	switch (btnId)
 	{
 		case 0u:
-			return (_buttonsPressed != 0u);
+			return (_rodentState != 0u);
 
 		default:
-			return (_buttonsPressed & SDL_BUTTON(btn)) != 0u;
+			return (_rodentState & SDL_BUTTON(btnId)) != 0u;
 	}
 }
 
 /**
  * Checks if a button has been handled.
- * @param btn - an SDL-button identifier (default 0)
+ * @param btnId - an SDL-button identifier (default 0)
  */
-bool InteractiveSurface::isButtonHandled(Uint8 btn) // virtual.
+bool InteractiveSurface::isButtonHandled(Uint8 btnId) // virtual.
 {
 	bool handled = (_click.find(0u) != _click.end()
 				|| _press.find(0u) != _press.end()
 				|| _release.find(0u) != _release.end());
 
-	if (handled == false && btn != 0u)
-		handled = (_click.find(btn) != _click.end()
-				|| _press.find(btn) != _press.end()
-				|| _release.find(btn) != _release.end());
+	if (handled == false && btnId != 0u)
+		handled = (_click.find(btnId) != _click.end()
+				|| _press.find(btnId) != _press.end()
+				|| _release.find(btnId) != _release.end());
 
 	return handled;
 }
 
 /**
  * Sets a button as pressed.
- * @param btn		- an SDL-button identifier
+ * @param btnId		- an SDL-button identifier
  * @param pressed	- true if pressed
  */
 void InteractiveSurface::setButtonPressed(
-		Uint8 btn,
+		Uint8 btnId,
 		bool pressed)
 {
 	if (pressed == true)
-		_buttonsPressed = static_cast<Uint8>(_buttonsPressed | SDL_BUTTON(btn));
+		_rodentState = _rodentState |   SDL_BUTTON(btnId);
 	else
-		_buttonsPressed = static_cast<Uint8>(_buttonsPressed & (!SDL_BUTTON(btn)));
+		_rodentState = _rodentState & (!SDL_BUTTON(btnId));
 }
 
 /**
@@ -170,7 +170,7 @@ void InteractiveSurface::handle( // virtual.
 				if (_isListButton == true
 					&& action->getDetails()->type == SDL_MOUSEMOTION)
 				{
-					_buttonsPressed = SDL_GetMouseState(nullptr, nullptr);
+					_rodentState = action->getMouseState();
 					for (Uint8
 							i = 1u;
 							i <= MOUSEBUTTONS;
@@ -277,13 +277,11 @@ void InteractiveSurface::unpress(State* const state) // virtual.
 {
 	if (isButtonPressed() == true)
 	{
-		_buttonsPressed = 0u;
+		_rodentState = 0u;
 
-		SDL_Event event;
-		event.type = SDL_MOUSEBUTTONUP;
-		event.button.button = SDL_BUTTON_LEFT;
-		Action action (Action(&event, 0.,0., 0,0));
-		mouseRelease(&action, state);
+		Action* a (State::getGamePtr()->getSynthMouseUp());
+		mouseRelease(a, state);
+		delete a;
 	}
 }
 
@@ -457,46 +455,46 @@ void InteractiveSurface::keyboardRelease(Action* action, State* state) // virtua
 /**
  * Sets a function to be called every time this Surface is mouse-pressed.
  * @param handler	- ActionHandler
- * @param btn		- mouse-button to check for, set to 0 for any button (default 0)
+ * @param btnId		- mouse-button to check for, set to 0 for any button (default 0)
  */
 void InteractiveSurface::onMousePress(
 		ActionHandler handler,
-		Uint8 btn)
+		Uint8 btnId)
 {
 	if (handler != nullptr)
-		_press[btn] = handler;
+		_press[btnId] = handler;
 	else
-		_press.erase(btn);
+		_press.erase(btnId);
 }
 
 /**
  * Sets a function to be called every time this Surface is mouse-released.
  * @param handler	- ActionHandler
- * @param btn		- mouse-button to check for, set to 0 for any button (default 0)
+ * @param btnId		- mouse-button to check for, set to 0 for any button (default 0)
  */
 void InteractiveSurface::onMouseRelease(
 		ActionHandler handler,
-		Uint8 btn)
+		Uint8 btnId)
 {
 	if (handler != nullptr)
-		_release[btn] = handler;
+		_release[btnId] = handler;
 	else
-		_release.erase(btn);
+		_release.erase(btnId);
 }
 
 /**
  * Sets a function to be called every time this Surface is mouse-clicked.
  * @param handler	- ActionHandler
- * @param btn		- mouse-button to check for, set to 0 for any button (default SDL_BUTTON_LEFT=1)
+ * @param btnId		- mouse-button to check for, set to 0 for any button (default SDL_BUTTON_LEFT=1)
  */
 void InteractiveSurface::onMouseClick(
 		ActionHandler handler,
-		Uint8 btn)
+		Uint8 btnId)
 {
 	if (handler != nullptr)
-		_click[btn] = handler;
+		_click[btnId] = handler;
 	else
-		_click.erase(btn);
+		_click.erase(btnId);
 }
 
 /**

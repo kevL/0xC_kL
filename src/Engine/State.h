@@ -131,7 +131,9 @@ protected:
 		void applyBattlescapeTheme();
 
 		/// Sets the Game-object pointer.
-		static void setGamePtr(Game* game);
+		static void setGamePtr(Game* const game);
+		/// Gets the Game-object pointer.
+		static Game* getGamePtr();
 
 		/// Sets a modal Surface.
 		void setModal(InteractiveSurface* const srf);

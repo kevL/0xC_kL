@@ -29,6 +29,7 @@
 namespace OpenXcom
 {
 
+class Action;
 class Cursor;
 class FpsCounter;
 class Language;
@@ -56,12 +57,18 @@ private:
 		_init,
 		_inputActive,
 //		_blitDelay,
-		_quit;
+		_quit,
+		_warp;
 	int
 		_debugCycle,	// for debugging country-zones.
 		_debugCycle_b,	// for debugging country-zones.
 		_ticksTillNextSlice;
-	Uint32 _tickOfLastSlice;
+	Uint32
+		_rodentState,
+		_tickOfLastSlice;
+	Uint16
+		_warpX,
+		_warpY;
 
 	Cursor* _cursor;
 	FpsCounter* _fpsCounter;
@@ -153,7 +160,16 @@ private:
 		/// Gets the country-cycle for debugging country-zones.
 		int getDebugCycle() const;
 		/// Sets the country-cycle for debugging country-zones.
-		void setDebugCycle(const int cycle);
+		void setDebugCycle(int cycle);
+
+		/// Gets a synthetic mouse-down Action.
+		Action* getSynthMouseDown(int btnId = SDL_BUTTON_LEFT) const;
+		/// Gets a synthetic mouse-up Action.
+		Action* getSynthMouseUp(int btnId = SDL_BUTTON_LEFT) const;
+		/// Warps the mouse-cursor and deals with the fallout.
+//		void warpMouse(
+//				Uint16 x,
+//				Uint16 y);
 };
 
 }

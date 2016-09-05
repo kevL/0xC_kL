@@ -35,7 +35,7 @@ typedef void (State::*ActionHandler)(Action*);
 
 
 /**
- * Surface that the user can interact with.
+ * A Surface that the user can interact with.
  * @note Specialized version of the standard Surface that processes all the
  * various SDL events and turns them into useful interactions with the Surface
  * so specialized subclasses don't need to worry about it.
@@ -49,7 +49,7 @@ private:
 	static const Uint8 MOUSEBUTTONS = 7u;
 	static const SDLKey SDLK_ANY;
 
-	Uint8 _buttonsPressed;
+	Uint32 _rodentState;
 
 
 	protected:
@@ -72,12 +72,12 @@ private:
 			_release;
 
 		/// Checks if mouse-button is pressed.
-		bool isButtonPressed(Uint8 btn = 0u) const;
+		bool isButtonPressed(Uint8 btnId = 0u) const;
 		/// Checks if mouse-button event handled.
-		virtual bool isButtonHandled(Uint8 btn = 0u);
+		virtual bool isButtonHandled(Uint8 btnId = 0u);
 		/// Set a mouse-button's internal state.
 		void setButtonPressed(
-				Uint8 btn,
+				Uint8 btnId,
 				bool pressed);
 
 
@@ -128,15 +128,15 @@ private:
 			/// Hooks an ActionHandler to a mouse-press on the Surface.
 			void onMousePress(
 					ActionHandler handler,
-					Uint8 btn = 0u);
+					Uint8 btnId = 0u);
 			/// Hooks an ActionHandler to a mouse-release on the Surface.
 			void onMouseRelease(
 					ActionHandler handler,
-					Uint8 btn = 0u);
+					Uint8 btnId = 0u);
 			/// Hooks an ActionHandler to a mouse-click on the Surface.
 			void onMouseClick(
 					ActionHandler handler,
-					Uint8 btn = SDL_BUTTON_LEFT);
+					Uint8 btnId = SDL_BUTTON_LEFT);
 
 			/// Hooks an ActionHandler to moving the mouse into the Surface.
 			void onMouseIn(ActionHandler handler);

@@ -417,29 +417,6 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 {
 	InteractiveSurface::mouseClick(action, state);
 
-	// What follows is a workaround for a rare problem where sometimes the
-	// mouse-release event is missed for some reason. However if SDL also
-	// missed the release event then this won't work.
-	//
-	// This part handles the release if it's missed and another button is used.
-	if (_isMouseScrolling == true)
-	{
-		if (action->getDetails()->button.button != Options::battleDragScrollButton
-			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
-		{
-			// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
-			{
-				_camera->centerPosition(_posPreDragScroll, false);
-				_redraw = true;
-			}
-
-			_isMouseScrolled =
-			_isMouseScrolling = false;
-		}
-	}
-
 	if (_isMouseScrolling == true) // dragScroll-button release: release mouse-scroll-mode
 	{
 		if (action->getDetails()->button.button != Options::battleDragScrollButton) // other buttons are ineffective while scrolling
@@ -471,11 +448,11 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 				offsetY ((mY / CELL_HEIGHT) - ((_surface->h >> 1u) / CELL_HEIGHT));
 
 			_camera->centerPosition(
-									Position(
-										_camera->getCenterPosition().x + offsetX,
-										_camera->getCenterPosition().y + offsetY,
-										_camera->getViewLevel()),
-									false);
+								Position(
+									_camera->getCenterPosition().x + offsetX,
+									_camera->getCenterPosition().y + offsetY,
+									_camera->getViewLevel()),
+								false);
 			_redraw = true;
 			break;
 		}
@@ -498,25 +475,6 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 	if (_isMouseScrolling == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		// What follows is a workaround for a rare problem where sometimes the
-		// mouse-release event is missed for some reason. However if SDL also
-		// missed the release event then this won't work.
-		//
-		// This part handles the release if it's missed and another button is used.
-		if ((SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
-		{
-			if (_mousePastThreshold == false
-				&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
-			{
-				_camera->centerPosition(_posPreDragScroll, false);
-				_redraw = true;
-			}
-
-			_isMouseScrolled =
-			_isMouseScrolling = false;
-			return;
-		}
-
 		_isMouseScrolled = true;
 
 		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
@@ -561,11 +519,11 @@ void MiniMapView::mouseIn(Action* action, State* state) // private.
 void MiniMapView::keyScroll() // private.
 {
 	_camera->centerPosition(
-							Position(
-								_camera->getCenterPosition().x - _scrollKeyX,
-								_camera->getCenterPosition().y - _scrollKeyY,
-								_camera->getViewLevel()),
-							false);
+						Position(
+							_camera->getCenterPosition().x - _scrollKeyX,
+							_camera->getCenterPosition().y - _scrollKeyY,
+							_camera->getViewLevel()),
+						false);
 	_redraw = true;
 }
 
@@ -663,7 +621,7 @@ void MiniMapView::handleTimer() // private.
 	if (_timerScroll->isRunning() == false)
 	{
 		if ((_scrollKeyX != 0 || _scrollKeyY != 0)
-			&& (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0)
+			&& _isMouseScrolling == false) //(SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0
 		{
 			_timerScroll->start();
 		}
