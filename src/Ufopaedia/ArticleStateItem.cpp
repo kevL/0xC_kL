@@ -148,9 +148,10 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 				else
 					tu = Text::formatPercent(itRule->getAutoTu());
 
+				std::wstring wst (tr("STR_SHOT_TYPE_AUTO_").arg(itRule->getAutoShots()));
 				_lstInfo->addRow(
 								3,
-								tr("STR_SHOT_TYPE_AUTO").c_str(),
+								wst.c_str(),
 								Text::intWide(itRule->getAccuracyAuto()).c_str(),
 								tu.c_str());
 				_lstInfo->setCellColor(current_row++, 0u, uPed_BLUE_SLATE);

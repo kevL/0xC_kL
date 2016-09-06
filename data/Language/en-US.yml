@@ -422,7 +422,7 @@ en-US:
   STR_TIME_UNIT_COST: "TU"
   STR_DAMAGE_UC: "Damage"
   STR_AMMO: "Ammo"
-  STR_SHOT_TYPE_AUTO: "burst"
+  STR_SHOT_TYPE_AUTO_: "burst x{0}"
   STR_SHOT_TYPE_SNAP: "snap"
   STR_SHOT_TYPE_AIMED: "scope"
   STR_CONSTRUCTION_TIME: "Construction time"
