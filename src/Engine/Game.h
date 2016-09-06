@@ -78,8 +78,6 @@ private:
 	SavedGame* _gameSave;
 	Screen* _screen;
 
-	SDL_Event _event;
-
 	std::list<State*>
 		_deleted,
 		_states;

@@ -220,6 +220,8 @@ void Game::run()
 	// for the heap-allocation-error it causes.
 	bool startupEvent (Options::allowResize == true);
 
+	static SDL_Event event;
+
 	if (Options::engineLooper == "roadrunner")
 	{
 		Log(LOG_INFO) << "Starting roadrunner engine.";
@@ -237,8 +239,7 @@ void Game::run()
 				_states.back()->resetSurfaces();	// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
 				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
-				SDL_Event event;					// update mouse-position
-				int
+				int									// update mouse-position
 					x,y;
 				SDL_GetMouseState(&x,&y);
 				event.type = SDL_MOUSEMOTION;
@@ -254,18 +255,18 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1)		// process SDL input-events
+			while (SDL_PollEvent(&event) == 1)		// process SDL input-events
 			{
-				if (_inputActive == false && _event.type != SDL_MOUSEMOTION)
+				if (_inputActive == false && event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE;		// discard buffered events
+//					event.type = SDL_IGNORE;		// discard buffered events
 					continue;
 				}
 
-				if (CrossPlatform::isQuitShortcut(_event) == true)
-					_event.type = SDL_QUIT;
+				if (CrossPlatform::isQuitShortcut(event) == true)
+					event.type = SDL_QUIT;
 
-				switch (_event.type)
+				switch (event.type)
 				{
 //					case SDL_IGNORE: break;
 					case SDL_QUIT: quit(); break;
@@ -285,17 +286,17 @@ void Game::run()
 
 								Options::newDisplayWidth =
 								Options::displayWidth	 = std::max(screenWidth,
-																   _event.resize.w);
+																	event.resize.w);
 								Options::newDisplayHeight =
 								Options::displayHeight	  = std::max(screenHeight,
-																	_event.resize.h);
+																	 event.resize.h);
 //#else
 //								Options::newDisplayWidth =
 //								Options::displayWidth	 = std::max(Screen::ORIGINAL_WIDTH,
-//																   _event.resize.w);
+//																	event.resize.w);
 //								Options::newDisplayHeight =
 //								Options::displayHeight	  = std::max(Screen::ORIGINAL_HEIGHT,
-//																	_event.resize.h);
+//																	 event.resize.h);
 //#endif
 								Screen::updateScale(
 												Options::battlescapeScale,
@@ -325,24 +326,24 @@ void Game::run()
 
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						if (   static_cast<Uint32>(_event.button.button) != 0u
-							&& static_cast<Uint32>(_event.button.button) < 32u)
+						if (   static_cast<Uint32>(event.button.button) != 0u
+							&& static_cast<Uint32>(event.button.button) < 32u)
 						{
-							switch (_event.button.state)
+							switch (event.button.state)
 							{
 								case SDL_PRESSED:
-									_rodentState |=  (1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									_rodentState |=  (1u << (static_cast<Uint32>(event.button.button) - 1u));
 									break;
 								case SDL_RELEASED:
-									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									_rodentState &= !(1u << (static_cast<Uint32>(event.button.button) - 1u));
 							}
 						}
 						// no break;
 
 //					case SDL_MOUSEMOTION:
 //						if (_warp == true
-//							&& _event.motion.x == _warpX
-//							&& _event.motion.y == _warpY)
+//							&& event.motion.x == _warpX
+//							&& event.motion.y == _warpY)
 //						{
 //							_warp = false;
 //							continue;
@@ -351,7 +352,7 @@ void Game::run()
 
 					default:
 						Action action (Action(
-											&_event,
+											&event,
 											_screen->getScaleX(),
 											_screen->getScaleY(),
 											_screen->getBorderTop(),
@@ -482,8 +483,7 @@ void Game::run()
 				_states.back()->resetSurfaces();	// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
 				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
-				SDL_Event event;					// update mouse-position
-				int
+				int									// update mouse-position
 					x,y;
 				SDL_GetMouseState(&x,&y);
 				event.type = SDL_MOUSEMOTION;
@@ -499,18 +499,18 @@ void Game::run()
 				_states.back()->handle(&action);
 			}
 
-			while (SDL_PollEvent(&_event) == 1)		// process SDL input-events
+			while (SDL_PollEvent(&event) == 1)		// process SDL input-events
 			{
-				if (_inputActive == false && _event.type != SDL_MOUSEMOTION)
+				if (_inputActive == false && event.type != SDL_MOUSEMOTION)
 				{
-//					_event.type = SDL_IGNORE;		// discard buffered events
+//					event.type = SDL_IGNORE;		// discard buffered events
 					continue;
 				}
 
-				if (CrossPlatform::isQuitShortcut(_event) == true)
-					_event.type = SDL_QUIT;
+				if (CrossPlatform::isQuitShortcut(event) == true)
+					event.type = SDL_QUIT;
 
-				switch (_event.type)
+				switch (event.type)
 				{
 //					case SDL_IGNORE: break;
 					case SDL_QUIT: quit(); break;
@@ -530,17 +530,17 @@ void Game::run()
 
 								Options::newDisplayWidth =
 								Options::displayWidth  = std::max(screenWidth,
-																 _event.resize.w);
+																  event.resize.w);
 								Options::newDisplayHeight =
 								Options::displayHeight = std::max(screenHeight,
-																 _event.resize.h);
+																  event.resize.h);
 //#else
 //								Options::newDisplayWidth =
 //								Options::displayWidth  = std::max(Screen::ORIGINAL_WIDTH,
-//																 _event.resize.w);
+//																  event.resize.w);
 //								Options::newDisplayHeight =
 //								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-//																 _event.resize.h);
+//																  event.resize.h);
 //#endif
 								Screen::updateScale(
 												Options::battlescapeScale,
@@ -569,14 +569,14 @@ void Game::run()
 						break;
 
 					case SDL_ACTIVEEVENT:
-						switch (reinterpret_cast<SDL_ActiveEvent*>(&_event)->state) // NOTE: Neither of these always want to *re-gain* focus.
+						switch (reinterpret_cast<SDL_ActiveEvent*>(&event)->state) // NOTE: Neither of these always want to *re-gain* focus.
 						{
 							case SDL_APPACTIVE:		// 0xC app is minimized or restored NOTE: Getting a response from this only when the taskbar's context menu is open for this app.
-								runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : appFocusLost[Options::pauseMode];
+								runState = (reinterpret_cast<SDL_ActiveEvent*>(&event)->gain) ? STANDARD : appFocusLost[Options::pauseMode];
 								break;
 
 							case SDL_APPINPUTFOCUS:	// 0xC app loses or gains focus NOTE: This seems reversed w/ SDL_APPACTIVE.
-								runState = (reinterpret_cast<SDL_ActiveEvent*>(&_event)->gain) ? STANDARD : keyboardFocusLost[Options::pauseMode];
+								runState = (reinterpret_cast<SDL_ActiveEvent*>(&event)->gain) ? STANDARD : keyboardFocusLost[Options::pauseMode];
 //								break;
 
 //							case SDL_APPMOUSEFOCUS: // 0xC app gains or loses mouse-over; sub-Consciously ignore it.
@@ -586,24 +586,24 @@ void Game::run()
 
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						if (   static_cast<Uint32>(_event.button.button) != 0u
-							&& static_cast<Uint32>(_event.button.button) < 32u)
+						if (   static_cast<Uint32>(event.button.button) != 0u
+							&& static_cast<Uint32>(event.button.button) < 32u)
 						{
-							switch (_event.button.state)
+							switch (event.button.state)
 							{
 								case SDL_PRESSED:
-									_rodentState |=  (1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									_rodentState |=  (1u << (static_cast<Uint32>(event.button.button) - 1u));
 									break;
 								case SDL_RELEASED:
-									_rodentState &= !(1u << (static_cast<Uint32>(_event.button.button) - 1u));
+									_rodentState &= !(1u << (static_cast<Uint32>(event.button.button) - 1u));
 							}
 						}
 						// no break;
 
 //					case SDL_MOUSEMOTION:
 //						if (_warp == true
-//							&& _event.motion.x == _warpX
-//							&& _event.motion.y == _warpY)
+//							&& event.motion.x == _warpX
+//							&& event.motion.y == _warpY)
 //						{
 //							_warp = false;
 //							continue;
@@ -613,7 +613,7 @@ void Game::run()
 
 					default:
 						Action action (Action(
-											&_event,
+											&event,
 											_screen->getScaleX(),
 											_screen->getScaleY(),
 											_screen->getBorderTop(),
@@ -1246,12 +1246,12 @@ void Game::setDebugCycle(int cycle)
  */
 Action* Game::getSynthMouseDown(int btnId) const
 {
-	SDL_Event _event;
-	_event.type = SDL_MOUSEBUTTONDOWN;
-	_event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
+	SDL_Event event;
+	event.type = SDL_MOUSEBUTTONDOWN;
+	event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
 
 	return (new Action(
-					&_event,
+					&event,
 					_screen->getScaleX(),
 					_screen->getScaleY(),
 					_screen->getBorderTop(),
@@ -1266,12 +1266,12 @@ Action* Game::getSynthMouseDown(int btnId) const
  */
 Action* Game::getSynthMouseUp(int btnId) const
 {
-	SDL_Event _event;
-	_event.type = SDL_MOUSEBUTTONUP;
-	_event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
+	SDL_Event event;
+	event.type = SDL_MOUSEBUTTONUP;
+	event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
 
 	return (new Action(
-					&_event,
+					&event,
 					_screen->getScaleX(),
 					_screen->getScaleY(),
 					_screen->getBorderTop(),
