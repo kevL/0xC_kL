@@ -148,7 +148,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 				else
 					tu = Text::formatPercent(itRule->getAutoTu());
 
-				std::wstring wst (tr("STR_SHOT_TYPE_AUTO_").arg(itRule->getAutoShots()));
+				const std::wstring wst (tr("STR_SHOT_TYPE_AUTO_").arg(itRule->getAutoShots()));
 				_lstInfo->addRow(
 								3,
 								wst.c_str(),

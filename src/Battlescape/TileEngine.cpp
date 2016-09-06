@@ -4920,7 +4920,7 @@ VoxelType TileEngine::plotLine(
 	}
 
 	const int
-		delta_x (std::abs(x1 - x0)), // delta is length in each plane
+		delta_x (std::abs(x1 - x0)), // delta is length along each axis
 		delta_y (std::abs(y1 - y0)),
 		delta_z (std::abs(z1 - z0)),
 
@@ -5002,7 +5002,7 @@ VoxelType TileEngine::plotLine(
 			if (horiBlock + vertBlock != 0) return TRJ_DECREASE;
 		}
 
-		if ((drift_xy -= delta_y) < 0) // step along y-axis
+		if ((drift_xy -= delta_y) < 0) // step along y-axis ... karadoc: && y!=y1
 		{
 			y += step_y;
 
@@ -5034,7 +5034,7 @@ VoxelType TileEngine::plotLine(
 			drift_xy += delta_x;
 		}
 
-		if ((drift_xz -= delta_z) < 0) // step along z-axis
+		if ((drift_xz -= delta_z) < 0) // step along z-axis ... karadoc: && z!=z1
 		{
 			z += step_z;
 

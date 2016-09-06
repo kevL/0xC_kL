@@ -73,6 +73,13 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/silacoid/silacoid.png
+  - type: SNAKEMAN.PCK
+    width: 256
+    height: 680
+    subX: 32
+    subY: 40
+    files:
+      0: Resources/Sprites/Units/snakeman/snakeman.png
   - type: TANKS.PCK
     width: 512
     height: 320
