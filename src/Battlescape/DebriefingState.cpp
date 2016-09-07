@@ -580,9 +580,6 @@ void DebriefingState::btnOkClick(Action*)
 												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
 			}
 
-			Log(LOG_INFO) << "DebriefingState surplusItems= " << _surplusItems.empty();
-			Log(LOG_INFO) << "DebriefingState lostProperty= " << _lostProperty.empty();
-			Log(LOG_INFO) << "DebriefingState solStatIncr= " << _solStatIncr.empty();
 			if (   _surplusItems.empty() == false
 				|| _lostProperty.empty() == false
 				|| _solStatIncr .empty() == false)
