@@ -38,9 +38,9 @@ namespace OpenXcom
 {
 
 /**
- * Container for tracking loot after tactical.
+ * Container for tracking results incl/ loot after tactical.
  */
-struct DebriefingStat
+struct DebriefStat
 {
 	bool recover;
 	int
@@ -50,17 +50,17 @@ struct DebriefingStat
 
 	/**
 	 * cTor.
-	 * @param typeId	- reference to a type of stuff
-	 * @param recovery	- true to recover the stuff and send it to base-stores
+	 * @param typeId	- reference to a type of result
+	 * @param reco		- true to recover the result and send it to base-stores
 	 */
-	DebriefingStat(
+	DebriefStat(
 			const std::string& typeId,
-			bool recovery = false)
+			bool reco = false)
 		:
 			type(typeId),
 			score(0),
 			qty(0),
-			recover(recovery)
+			recover(reco)
 	{};
 };
 
@@ -102,7 +102,7 @@ class Window;
 
 
 /**
- * Debriefing screen shown after a Battlescape mission that displays the results.
+ * Debriefing screen shown after a Battlescape mission that displays results.
  */
 class DebriefingState
 	:
@@ -161,21 +161,21 @@ private:
 	std::map<const RuleItem*, int>
 		_clips,
 		_clipsProperty,
-		_itemsGained,
-		_itemsLostProperty;
+		_surplusItems,
+		_lostProperty;
 
 
-	std::map<std::wstring, std::vector<int>> _soldierStatInc;
+	std::map<std::wstring, std::vector<int>> _solStatIncr;
 
 	std::vector<ReequipStat> _cannotReequip;
 
 	std::vector<BattleUnit*>* _unitList;
-	std::vector<DebriefingStat*> _statList;
+	std::vector<DebriefStat*> _statList;
 	std::vector<Soldier*> _soldiersFeted;
 	std::vector<SoldierDead*> _soldiersLost;
 
-	/// Adds a DebriefingStat.
-	void addStat(
+	/// Adds a DebriefStat.
+	void addResultStat(
 			const std::string& type,
 			int score,
 			int qty = 1);
