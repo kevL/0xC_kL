@@ -72,10 +72,10 @@ enum TurretType
 	TRT_BLASTER		//  4
 };
 
-enum TileType
+enum TileType // NOTE: These are actually special designations of part-types.
 {
 	TILE,					//  0
-	START_POINT,			//  1
+	START_TILE,				//  1
 	UFO_POWER_SOURCE,		//  2
 	UFO_NAVIGATION,			//  3
 	UFO_CONSTRUCTION,		//  4
@@ -86,9 +86,9 @@ enum TileType
 	ALIEN_EXAMINATION,		//  9
 	ALIEN_ALLOYS,			// 10
 	ALIEN_HABITAT,			// 11
-	DEAD_TILE,				// 12
-	END_POINT,				// 13
-	MUST_DESTROY			// 14
+	RUINED_ALLOYS,			// 12
+	EXIT_TILE,				// 13
+	OBJECT_TILE				// 14
 };
 
 

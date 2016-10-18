@@ -442,20 +442,20 @@ void Craft::changeRules(RuleCraft* const crRule)
 /**
  * Gets this Craft's uniquely identifying label.
  * @note If there's not a custom-label the language default is used.
- * @param lang - pointer to a Language to get strings from (default nullptr)
+ * @param lang - pointer to a Language to get strings from
  * @return, label of craft
  */
 std::wstring Craft::getLabel(const Language* const lang) const
 {
 	if (_label.empty() == true)
-		return lang->getString("STR_CRAFTNAME").arg(lang->getString(_crRule->getType())).arg(_id);
+		return lang->getString("STR_CRAFTLABEL").arg(lang->getString(_crRule->getType())).arg(_id);
 
 	return _label;
 }
 
 /**
  * Sets this Craft's custom-label.
- * @param label - reference a new custom-label; if blank the language default will be used
+ * @param label - reference to a new custom-label; if blank the language default will be used
  */
 void Craft::setLabel(const std::wstring& label)
 {

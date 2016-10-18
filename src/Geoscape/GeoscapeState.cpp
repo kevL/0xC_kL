@@ -3606,7 +3606,7 @@ void GeoscapeState::thinkDogfights()
 
 		(*pDf)->think();
 
-		if ((*pDf)->dogfightEnded() == true)
+		if ((*pDf)->isDogfightStopped() == true)
 		{
 			if ((*pDf)->isMinimized() == true)
 				--_dfMinimized;

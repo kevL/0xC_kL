@@ -59,7 +59,7 @@ class Ufo;
 
 
 /**
- * Shows a dogfight (interception) between a player's Craft and a UFO.
+ * Shows a Dogfight (interception port) between a player's Craft and a UFO.
  */
 class DogfightState final
 	:
@@ -81,7 +81,7 @@ private:
 		_destroyUfo,
 		_destroyCraft,
 		_end,
-		_endDogfight,
+		_stopDogfight,
 		_minimized,
 		_ufoBreakingOff,
 		_w1Enabled,
@@ -153,8 +153,8 @@ private:
 	void resetStatus(const std::string& status);
 	/// Moves window to new position.
 	void placePort();
-	/// Ends the dogfight.
-	void endDogfight();
+	/// Ends the Dogfight.
+	void stopDogfight();
 	/// Gets the globe texture icon to display for the interception.
 	const std::string& getTextureIcon() const;
 
@@ -171,10 +171,10 @@ private:
 
 		/// Runs the timers.
 		void think() override;
-		/// Animates the window.
-		void animate();
-		/// Updates the craft.
-		void updateDogfight();
+		/// Animates the Dogfight view-port.
+		void aniPort();
+		/// Advances the Dogfight and updates the view-port.
+		void advanceDogfight();
 
 		/// Fires the first Craft weapon.
 		void fireWeapon1();
@@ -203,9 +203,9 @@ private:
 		void btnUfoClick(Action* action);
 		/// Handler for clicking the Preview graphic.
 		void previewClick(Action* action);
-		/// Handler for clicking the Minimize dogfight button.
+		/// Handler for clicking the Minimize Dogfight button.
 		void btnMinimizeDfClick(Action* action);
-		/// Handler for clicking the Maximize dogfight icon.
+		/// Handler for clicking the Maximize Dogfight icon.
 		void btnMaximizeDfPress(Action* action);
 
 		/// Returns true if state is minimized.
@@ -217,9 +217,9 @@ private:
 		void drawUfo();
 		/// Draws projectiles.
 		void drawProjectile(const CraftWeaponProjectile* const prj);
-		/// Animates craft damage.
-		void animateCraftDamage();
-		/// Updates craft damage.
+		/// Animates Craft damage.
+		void aniCraftDamage();
+		/// Draws Craft damage.
 		void drawCraftDamage(bool init = false);
 
 		/// Toggles usage of weapon 1.
@@ -243,16 +243,16 @@ private:
 				size_t dfOpen,
 				size_t dfOpenTotal);
 
-		/// Checks if the dogfight should be ended.
-		bool dogfightEnded() const;
+		/// Checks if the Dogfight should be stopped.
+		bool isDogfightStopped() const;
 
-		/// Gets pointer to the UFO in this dogfight.
+		/// Gets pointer to the UFO in the Dogfight.
 		Ufo* getUfo() const;
-		/// Sets the UFO associated with this dogfight to nullptr.
+		/// Sets the UFO associated with the Dogfight to nullptr.
 		void clearUfo();
-		/// Gets pointer to the xCom Craft in this dogfight.
+		/// Gets pointer to the xCom Craft in the Dogfight.
 		Craft* getCraft() const;
-		/// Sets pointer to the xCom Craft in this dogfight to nullptr.
+		/// Sets pointer to the xCom Craft in the Dogfight to nullptr.
 		void clearCraft();
 
 		/// Gets the current distance between UFO and Craft.

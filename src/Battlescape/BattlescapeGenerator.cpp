@@ -406,7 +406,7 @@ void BattlescapeGenerator::run()
 		for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 		{
 			if (_battleSave->getTiles()[i]->getMapData(O_FLOOR)
-				&& (_battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT
+				&& (_battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_TILE
 					|| (_battleSave->getTiles()[i]->getPosition().z == 1
 						&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
 						&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))))
@@ -420,7 +420,7 @@ void BattlescapeGenerator::run()
 		for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 		{
 			if (_battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-				&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
+				&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_TILE)
 //					|| (_battleSave->getTiles()[i]->getPosition().z == _mapsize_z - 1
 //						&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
 //						&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))
@@ -549,7 +549,7 @@ void BattlescapeGenerator::nextStage()
 								&& (_battleSave->isAborted() == false
 									|| ((tile = (*i)->getItemTile()) != nullptr
 										&& tile->getMapData(O_FLOOR) != nullptr
-										&& tile->getMapData(O_FLOOR)->getTileType() == END_POINT)))
+										&& tile->getMapData(O_FLOOR)->getTileType() == EXIT_TILE)))
 							{
 								dst = &forwardGround;
 							}
@@ -610,10 +610,10 @@ void BattlescapeGenerator::nextStage()
 					{
 						switch (tile->getMapData(O_FLOOR)->getTileType())
 						{
-							case START_POINT: dst = guaranteed;
+							case START_TILE: dst = guaranteed;
 								break;
 
-							case END_POINT:
+							case EXIT_TILE:
 								if (_gameSave->isResearched((*i)->getRules()->getRequirements()) == true)
 								{
 									dst = &forwardGround;
@@ -918,7 +918,7 @@ void BattlescapeGenerator::nextStage()
 	for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
 	{
 		if (_battleSave->getTiles()[i]->getMapData(O_FLOOR) != nullptr
-			&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_POINT)
+			&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_TILE)
 //				|| (_battleSave->getTiles()[i]->getPosition().z == 1
 //					&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
 //					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))
@@ -967,14 +967,14 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 						{
 							found = true;
 
-							if ((*i)->isOnTiletype(START_POINT) == true)
+							if ((*i)->isOnTiletype(START_TILE) == true)
 								unit->setUnitStatus(STATUS_LATENT_START);
 							else
 							{
 								switch (unit->getOriginalFaction())
 								{
 									case FACTION_PLAYER:
-										if ((*i)->isOnTiletype(END_POINT) == true	// the unit's carrier is on an End_Tile and is carrying said
+										if ((*i)->isOnTiletype(EXIT_TILE) == true	// the unit's carrier is on an End_Tile and is carrying said
 											&& unit->isHealable() == true)			// unit to the next stage. So remain Unconscious @ pos(-1,-1,-1)
 										{
 											break;
@@ -996,11 +996,11 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 				{
 					switch (tile->getMapData(O_FLOOR)->getTileType())
 					{
-						case START_POINT:
+						case START_TILE:
 							unit->setUnitStatus(STATUS_LATENT_START);
 							break;
 
-						case END_POINT:
+						case EXIT_TILE:
 							if (unit->getOriginalFaction() == FACTION_PLAYER	// if Faction_Player the unit is lying Unconscious on an End_Tile and will
 								&& unit->isHealable() == true)					// appear on the next stage's equipt-tile. So just stay Unconscious
 							{
@@ -1018,14 +1018,14 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 			break;
 
 		case STATUS_STANDING: // TODO: Check that MC'd units are reset to original faction ....
-			if (unit->isOnTiletype(START_POINT) == true)
+			if (unit->isOnTiletype(START_TILE) == true)
 				unit->setUnitStatus(STATUS_LATENT_START);
 			else
 			{
 				switch (unit->getOriginalFaction())
 				{
 					case FACTION_PLAYER:
-						if (unit->isOnTiletype(END_POINT) == true)
+						if (unit->isOnTiletype(EXIT_TILE) == true)
 							break;
 						// no break;
 					case FACTION_HOSTILE:
@@ -1637,7 +1637,7 @@ bool BattlescapeGenerator::isStartTile(Tile* const tile) // private.
 {
 	if (   tile != nullptr											// is a tile
 		&& tile->getMapData(O_FLOOR) != nullptr						// has a floor
-		&& tile->getMapData(O_FLOOR)->getTileType() == START_POINT	// is a 'start point', ie. cargo tile
+		&& tile->getMapData(O_FLOOR)->getTileType() == START_TILE	// is a 'start point', ie. cargo tile
 		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) != 255	// is walkable.
 		&& tile->getMapData(O_OBJECT) == nullptr					// no object content
 		&& tile->getTileUnit() == nullptr)							// and no unit on Tile.

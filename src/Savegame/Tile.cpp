@@ -1220,7 +1220,7 @@ void Tile::animateTile()
 						nextFrame = _curFrame[i] + 1;
 
 						if (_parts[i]->isSlideDoor() == true // special handling for Avenger & Lightning doors
-							&& _parts[i]->getTileType() == START_POINT
+							&& _parts[i]->getTileType() == START_TILE
 							&& nextFrame == 3)
 						{
 							nextFrame = 7;

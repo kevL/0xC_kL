@@ -1546,7 +1546,7 @@ void BattlescapeGame::endTurn() // private.
 								liveHostile,
 								livePlayer));
 
-	if (_battleSave->getObjectiveTileType() == MUST_DESTROY // brain death, end Final Mission.
+	if (_battleSave->getObjectiveTileType() == OBJECT_TILE // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
 		_parentState->finishBattle(false, livePlayer);
@@ -1572,7 +1572,7 @@ void BattlescapeGame::endTurn() // private.
 	}
 	else
 	{
-		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != MUST_DESTROY)
+		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != OBJECT_TILE)
 								 || livePlayer  <  1);
 
 		if (battleComplete == false)
@@ -3600,7 +3600,7 @@ int BattlescapeGame::tallyPlayerExit() const
 	{
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
 			&& (*i)->isMindControlled() == false
-			&& (*i)->isOnTiletype(END_POINT) == true) // NOTE: Unit will be Status_Standing to be on tile.
+			&& (*i)->isOnTiletype(EXIT_TILE) == true) // NOTE: Unit will be Status_Standing to be on tile.
 		{
 			++ret;
 		}

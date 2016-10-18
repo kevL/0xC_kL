@@ -348,6 +348,10 @@ void ProjectileFlyBState::init()
 //					_targetVoxel.z += 2; // borkity bork.
 					//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
 				}
+//				else if (!_parent->getTileEngine()->canTargetUnit(&originVoxel, targetTile, &_targetVoxel, _unit)) // <- their code.
+//				{
+//					_targetVoxel = Position(-16,-16,-24); // out of bounds, even after voxel to tile calculation. // lo..
+//				}
 				else if (_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
 															&originVoxel,
 															tileTarget,
@@ -494,17 +498,6 @@ bool ProjectileFlyBState::createProjectile() // private.
 {
 	//Log(LOG_INFO) << "ProjectileFlyBState::createProjectile()";
 	//Log(LOG_INFO) << ". _action_type = " << _action.type;
-	if (++_action.autoShotCount == 1
-		&& _unit->getGeoscapeSoldier() != nullptr)
-	{
-		switch (_action.type)
-		{
-			case BA_SNAPSHOT:
-			case BA_AUTOSHOT:
-			case BA_AIMEDSHOT:
-				++_unit->getStatistics()->shotsFiredCounter;
-		}
-	}
 
 	//Log(LOG_INFO) << "projFlyB create() originTile = " << _posOrigin;
 	//Log(LOG_INFO) << "projFlyB create() targetVoxel = " << _targetVoxel;
@@ -661,7 +654,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 //				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT ....
 				switch (tile->getMapData(O_OBJECT)->getBigwall())
 				{
-						case BIGWALL_NESW:
+					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
 //						_prj->storeProjectileDirection();		// Used to handle direct-explosive-hits against diagonal bigWalls.
 						_prjVector = _prj->getStrikeVector();	// ^supercedes storeProjectileDirection() above^
@@ -709,8 +702,21 @@ bool ProjectileFlyBState::createProjectile() // private.
 	if (_unit->getArmor()->getShootFrames() != 0) // postpone showing the Celatid spit-blob till later
 		_parent->getMap()->showProjectile(false);
 
+	if (++_action.autoShotCount == 1
+		&& _unit->getGeoscapeSoldier() != nullptr)
+	{
+		switch (_action.type)
+		{
+			case BA_SNAPSHOT:
+			case BA_AUTOSHOT:
+			case BA_AIMEDSHOT:
+				++_unit->getStatistics()->shotsFiredCounter;
+		}
+	}
+
 	//Log(LOG_INFO) << ". createProjectile() ret TRUE";
 	_parent->getMap()->setProjectile(_prj); // add projectile to Map.
+
 	return true;
 }
 

@@ -104,8 +104,8 @@ AbortMissionState::AbortMissionState(
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
-			if (   (nextStage.empty() == true  && (*i)->isOnTiletype(START_POINT) == true)
-				|| (nextStage.empty() == false && (*i)->isOnTiletype(END_POINT)   == true))
+			if (   (nextStage.empty() == true  && (*i)->isOnTiletype(START_TILE) == true)
+				|| (nextStage.empty() == false && (*i)->isOnTiletype(EXIT_TILE)   == true))
 			{
 				++_insideExit;
 			}

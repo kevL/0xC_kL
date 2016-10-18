@@ -590,9 +590,15 @@ void NewBattleState::btnOkClick(Action*)
 		bGen.setUfo(ufo);
 
 		if (RNG::percent(50) == true)
+		{
 			battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
+			ufo->setUfoStatus(Ufo::LANDED);
+		}
 		else
+		{
 			battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
+			ufo->setUfoStatus(Ufo::CRASHED);
+		}
 
 		_game->getSavedGame()->getUfos()->push_back(ufo);
 	}

@@ -2069,7 +2069,7 @@ void TileEngine::hit(
 					break;
 				case DT_LASER:
 					if (   tile->getMapData(partType)->getTileType() != ALIEN_ALLOYS
-						&& tile->getMapData(partType)->getTileType() != DEAD_TILE)
+						&& tile->getMapData(partType)->getTileType() != RUINED_ALLOYS)
 					{
 						power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
 					}
@@ -5220,7 +5220,7 @@ VoxelType TileEngine::plotParabola(
 }
 
 /**
- * Checks if a throw action is permissible.
+ * Checks if a throw-action is permissible.
  * @note Accuracy is NOT considered; this checks for a true path/trajectory.
  * @sa Projectile::calculateThrow()
  * @param action		- reference to the action to validate
@@ -5277,7 +5277,7 @@ bool TileEngine::validateThrow(
 		// out that an item *can* be throw onto the upper tile of a gravLift if
 		// there is a BattleUnit standing on it ... interesting quirk that.
 		if (tile->getPosition().z != 0
-			&& tile->getTileUnit() == nullptr // <---||
+			&& tile->getTileUnit() == nullptr // <---||||
 			&& tile->getMapData(O_FLOOR) != nullptr
 			&& tile->getMapData(O_FLOOR)->isGravLift() == true)
 		{

@@ -136,7 +136,7 @@ DogfightState::DogfightState(
 		_w1Enabled(true),
 		_w2Enabled(true),
 		_minimized(false),
-		_endDogfight(false),
+		_stopDogfight(false),
 		_animatingHit(false),
 		_cautionLevel(2),
 		_ufoSize(static_cast<int>(ufo->getRules()->getRadius())),
@@ -454,7 +454,7 @@ DogfightState::DogfightState(
 	srf = srtInticon->getFrame(_craft->getRules()->getSprite() + 11);
 	srf->blit(_damage);
 
-	_craftDamageAnimTimer->onTimer(static_cast<StateHandler>(&DogfightState::animateCraftDamage));
+	_craftDamageAnimTimer->onTimer(static_cast<StateHandler>(&DogfightState::aniCraftDamage));
 
 	if (_ufo->getEscapeCountdown() == 0) // UFO is *not* engaged already in a different dogfight/Intercept slot.
 	{
@@ -545,12 +545,12 @@ DogfightState::~DogfightState()
  */
 void DogfightState::think()
 {
-	if (_endDogfight == false)
+	if (_stopDogfight == false)
 	{
-		updateDogfight();
+		advanceDogfight();
 		_craftDamageAnimTimer->think(this, nullptr);
 
-		if (_endDogfight == false //_timeout == 0 && // appears to be a safety.
+		if (_stopDogfight == false //_timeout == 0 && // appears to be a safety.
 			&& (_craft->getDestination() != _ufo
 				|| _ufo->getUfoStatus() == Ufo::LANDED
 				|| _craft->inDogfight() == false))
@@ -560,7 +560,7 @@ void DogfightState::think()
 			//oststr << st1 << "-" << (_craft->getId()) << " to= " << _timeout;
 			//Log(LOG_INFO) << "df Think END " << oststr.str().c_str();
 
-			endDogfight();
+			stopDogfight();
 		}
 	}
 }
@@ -568,7 +568,7 @@ void DogfightState::think()
 /**
  * Animates interceptor damage by changing the color and redrawing the image.
  */
-void DogfightState::animateCraftDamage()
+void DogfightState::aniCraftDamage()
 {
 	if (_minimized == false)
 		drawCraftDamage();
@@ -646,9 +646,9 @@ void DogfightState::drawCraftDamage(bool init)
 }
 
 /**
- * Animates the window with a palette effect.
+ * Animates the view-port via palette cycling.
  */
-void DogfightState::animate()
+void DogfightState::aniPort()
 {
 	for (int // Animate radar waves and other stuff.
 			x = 0;
@@ -715,16 +715,16 @@ void DogfightState::animate()
 }
 
 /**
- * Updates all the elements in this Dogfight.
+ * Advances this Dogfight and updates all the elements in the view-port.
  * @note Includes ufo movement, weapons fire, projectile movement, ufo escape
  * conditions, craft and ufo destruction conditions, and retaliation mission
  * generation as applicable.
  */
-void DogfightState::updateDogfight()
+void DogfightState::advanceDogfight()
 {
-	bool finalRun (false);
+	bool finalStep (false);
 
-	if (_endDogfight == false										// This runs for Craft that *do not* get the KILL. uhhh
+	if (_stopDogfight == false										// This runs for Craft that *do not* get the KILL. uhhh
 		&& (_ufo != dynamic_cast<Ufo*>(_craft->getDestination())	// check if Craft's destination has changed
 			|| _craft->getLowFuel() == true							// check if Craft is low on fuel
 			|| (_timeout == 0 && _ufo->isCrashed() == true)			// check if UFO has been shot down
@@ -735,13 +735,13 @@ void DogfightState::updateDogfight()
 		//oststr << st1 << "-" << (_craft->getId()) << " to= " << _timeout;
 		//Log(LOG_INFO) << "df Update END [1] " << oststr.str().c_str();
 
-		endDogfight();
+		stopDogfight();
 		return;
 	}
 
 	if (_minimized == false)
 	{
-		animate();
+		aniPort();
 
 		if (_ufo->isCrashed() == false
 			&& _craft->isDestroyed() == false
@@ -770,7 +770,7 @@ void DogfightState::updateDogfight()
 	if (_ufo->getSpeed() > _craft->getRules()->getMaxSpeed()) // Crappy craft is chasing UFO.
 	{
 		_ufoBreakingOff = true;
-		finalRun = true;
+		finalStep = true;
 		resetStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
 
 		if (_geoState->getDfCCC() == false) // should need to run this only once per.
@@ -891,7 +891,7 @@ void DogfightState::updateDogfight()
 
 									_ufoBreakingOff = // if the ufo got shotdown here these no longer apply ->
 									_end =
-									finalRun = false;
+									finalStep = false;
 								}
 
 								if (_ufo->getHitFrame() == 0)
@@ -1131,7 +1131,7 @@ void DogfightState::updateDogfight()
 
 
 	if (_end == true // dogfight is over. This runs for Craft that gets the KILL. uhhh
-		&& ((_timeout == 0 && _ufo->isCrashed() == true)
+		&& ((_timeout == 0 && _ufo->isCrashed() == true) //(_ufo->isCrashed() || _craft->isDestroyed()) -> their code.
 			|| ((_minimized == true || _dist > DST_ENGAGE)
 				&& (_ufoBreakingOff == true || _craftStance == _btnDisengage))))
 	{
@@ -1144,22 +1144,34 @@ void DogfightState::updateDogfight()
 		if (_destroyCraft == false
 			&& (_destroyUfo == true || _craftStance == _btnDisengage))
 		{
-			_craft->returnToBase();
+			_craft->returnToBase(); // NOTE: This would also be done on the UFO's dTor.
 		}
 
-		if (_endDogfight == false)
+//		if (_ufo->isCrashed())	// their code. -> I don't think I actually *want* this. Or I've
+//		{						// likely handled it with a different result ... above^ or below_
+//			for (std::vector<Target*>::iterator i = _ufo->getFollowers()->begin(); i != _ufo->getFollowers()->end(); ++i)
+//			{
+//				Craft* c = dynamic_cast<Craft*>(*i);
+//				if (c != 0 && c->getNumSoldiers() == 0 && c->getNumVehicles() == 0)
+//				{
+//					c->returnToBase();
+//				}
+//			}
+//		}
+
+		if (_stopDogfight == false)
 		{
 			//std::string st1 = _craft->getRules()->getType();
 			//std::ostringstream oststr;
 			//oststr << st1 << "-" << (_craft->getId()) << " to= " << _timeout;
 			//Log(LOG_INFO) << "df Update END [2] " << oststr.str().c_str();
 
-			endDogfight();
+			stopDogfight();
 		}
 	}
 
 	if (_ufoBreakingOff == true && _dist > DST_ENGAGE)
-		finalRun = true;
+		finalStep = true;
 
 
 	if (_end == false)
@@ -1170,7 +1182,7 @@ void DogfightState::updateDogfight()
 			_timeout <<= 1u;
 			_game->getResourcePack()->playSoundFx(ResourcePack::INTERCEPTOR_EXPLODE);
 
-			finalRun =
+			finalStep =
 			_destroyCraft = true;
 			_ufo->setShootingAt(0u);
 		}
@@ -1278,20 +1290,20 @@ void DogfightState::updateDogfight()
 				_timeout <<= 1u; // persist this port twice normal duration.
 			}
 
-			finalRun = true;
+			finalStep = true;
 		}
 		else if (_ufo->getUfoStatus() == Ufo::LANDED)
 		{
 			_timeout <<= 1u;
-			finalRun = true;
+			finalStep = true;
 			_ufo->setShootingAt(0u);
 		}
 	}
 
 
-	if (prjInFlight == false && finalRun == true)
-		_end = true; // prevent further Craft/UFO destruction; send existing Craft/UFO on their way and flag dogfight for deletion.
-}
+	if (prjInFlight == false && finalStep == true)
+		_end = true;	// prevent further Craft/UFO destruction, send existing
+}						// Craft/UFO on their way, and flag this Dogfight for deletion.
 
 /**
  * Fires a shot from the first weapon equipped on the Craft.
@@ -2150,15 +2162,15 @@ void DogfightState::placePort() // private.
 	_btnMinimizedIcon->setY(_minimizedIconY);
 
 	_txtInterception->setX(_minimizedIconX + 18);
-	_txtInterception->setY(_minimizedIconY + 6);
+	_txtInterception->setY(_minimizedIconY +  6);
 }
 
 /**
  * Ends this Dogfight.
  */
-void DogfightState::endDogfight() // private.
+void DogfightState::stopDogfight() // private.
 {
-	_endDogfight = true;
+	_stopDogfight = true;
 
 	if (_craft != nullptr)
 		_craft->inDogfight(false);
@@ -2167,12 +2179,12 @@ void DogfightState::endDogfight() // private.
 }
 
 /**
- * Checks whether this Dogfight should end.
+ * Checks if this Dogfight should stop.
  * @return, true if finished
  */
-bool DogfightState::dogfightEnded() const
+bool DogfightState::isDogfightStopped() const
 {
-	return _endDogfight;
+	return _stopDogfight;
 }
 
 /**
