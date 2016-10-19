@@ -254,22 +254,20 @@ ProductionProgress Production::step(
 												gameSave->getCanonicalId(i->first)));
 					craft->setCraftStatus(CS_REFUELLING);
 					base->getCrafts()->push_back(craft);
-					break;
+					break; // <- Craft Production produces 1 craft period.
+				}
+				// NOTE: Craft cannot be set for auto-sell.
+
+				if (_sell == true) // sales takes precedence over refurbish.
+				{
+					const int profit (rules->getItemRule(i->first)->getSellCost() * i->second);
+					gameSave->setFunds(gameSave->getFunds() + profit);
+					base->addCashIncome(profit);
 				}
 				else
 				{
-					const RuleItem* const itRule (rules->getItemRule(i->first));
-					if (_sell == true)
-					{
-						const int profit (itRule->getSellCost() * i->second);
-						gameSave->setFunds(gameSave->getFunds() + profit);
-						base->addCashIncome(profit);
-					}
-					else
-					{
-						base->getStorageItems()->addItem(i->first, i->second);
-						base->refurbishCraft(i->first);
-					}
+					base->getStorageItems()->addItem(i->first, i->second);
+					base->refurbishCraft(i->first);
 				}
 			}
 
@@ -298,7 +296,7 @@ ProductionProgress Production::step(
 		if (enoughMaterials(base, rules) == false)
 			return PROGRESS_NOT_ENOUGH_MATERIALS;
 
-		startProduction(base, gameSave, rules);
+		startProduction(base, gameSave, rules); // start the next iteration
 	}
 
 	return PROGRESS_NOT_COMPLETE;
