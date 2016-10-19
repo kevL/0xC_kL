@@ -4177,7 +4177,7 @@ bool BattleUnit::isAboutToCollapse() const
  */
 void BattleUnit::putdown(bool autokill)
 {
-	Log(LOG_INFO) << "bu:putdown()";
+	//Log(LOG_INFO) << "bu:putdown()";
 
 	_tile = nullptr;
 	clearTileQuadrants();

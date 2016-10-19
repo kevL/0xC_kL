@@ -258,41 +258,7 @@ ProductionProgress Production::step(
 				}
 				else
 				{
-					const RuleItem* const itRule (rules->getItemRule(i->first)); // check if it's fuel for a Craft or ammunition-rounds for a CraftWeapon
-					if (itRule->getBattleType() == BT_NONE)
-					{
-						for (std::vector<Craft*>::const_iterator // see also ItemsArrivingState cTor.
-								j = base->getCrafts()->begin();
-								j != base->getCrafts()->end();
-								++j)
-						{
-							if ((*j)->getWarned() == true)
-							{
-								switch ((*j)->getCraftStatus())
-								{
-									case CS_REFUELLING:
-										if ((*j)->getRules()->getRefuelItem() == i->first)
-											(*j)->setWarned(false);
-										break;
-
-									case CS_REARMING:
-										for (std::vector<CraftWeapon*>::const_iterator
-												k = (*j)->getWeapons()->begin();
-												k != (*j)->getWeapons()->end();
-												++k)
-										{
-											if (*k != nullptr
-												&& (*k)->getRules()->getClipType() == i->first)
-											{
-												(*k)->setCantLoad(false);
-												(*j)->setWarned(false);
-											}
-										}
-								}
-							}
-						}
-					}
-
+					const RuleItem* const itRule (rules->getItemRule(i->first));
 					if (_sell == true)
 					{
 						const int profit (itRule->getSellCost() * i->second);
@@ -300,7 +266,10 @@ ProductionProgress Production::step(
 						base->addCashIncome(profit);
 					}
 					else
+					{
 						base->getStorageItems()->addItem(i->first, i->second);
+						base->refurbishCraft(i->first);
+					}
 				}
 			}
 

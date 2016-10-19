@@ -154,7 +154,7 @@ CraftInfoState::CraftInfoState(
 
 	_txtRadar->setAlign(ALIGN_CENTER);
 
-	if (_craft->getKills() != 0) //&& _craft->getRules()->getWeapons() != 0
+	if (_craft->getKills() != 0) //&& _craft->getRules()->getWeaponCapacity() != 0u
 	{
 		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getKills()));
 		_txtKills->setAlign(ALIGN_CENTER);
@@ -166,11 +166,13 @@ CraftInfoState::CraftInfoState(
 	_btnW1->onMouseClick(	static_cast<ActionHandler>(&CraftInfoState::btnW1Click));
 	_btnW1->onKeyboardPress(static_cast<ActionHandler>(&CraftInfoState::btnW1Click),
 							SDLK_1);
+	_btnW1->setVisible(false);
 
 	_btnW2->setText(L"2");
 	_btnW2->onMouseClick(	static_cast<ActionHandler>(&CraftInfoState::btnW2Click));
 	_btnW2->onKeyboardPress(static_cast<ActionHandler>(&CraftInfoState::btnW2Click),
 							SDLK_2);
+	_btnW2->setVisible(false);
 
 	_btnCrew->setText(tr("STR_CREW"));
 	_btnCrew->onMouseClick(		static_cast<ActionHandler>(&CraftInfoState::btnCrewClick));
@@ -389,95 +391,74 @@ void CraftInfoState::init()
 	}
 
 
-	const RuleCraftWeapon* cwRule;
 	const CraftWeapon* cw;
+	const RuleCraftWeapon* cwRule;
+	const Surface* cwSprite;
+	Text
+		* cwLabel,
+		* cwLoad;
+	TextButton* cwBtn;
 
-	if (crRule->getWeaponCapacity() > 0 && _isQuickBattle == false)
+	if (_isQuickBattle == false)
 	{
-		if ((cw = _craft->getWeapons()->at(0u)) != nullptr)
+		const size_t hardpoints (crRule->getWeaponCapacity());
+		for (size_t
+				i = 0u;
+				i != hardpoints;
+				++i)
 		{
-			cwRule = cw->getRules();
-
-			bit = baseBits->getFrame(cwRule->getSprite() + 48);
-			bit->blit(_weapon1);
-
-			std::wostringstream woststr;
-
-			woststr << L'\x01' << tr(cwRule->getType());
-			_txtW1Name->setText(woststr.str());
-
-			woststr.str(L"");
-			woststr << tr("STR_AMMO_").arg(cw->getCwLoad())
-					<< L"\n\x01"
-					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
-			if (cw->getCwLoad() < cwRule->getLoadCapacity())
+			switch (i)
 			{
-				hrs = static_cast<int>(std::ceil(
-					  static_cast<double>(cwRule->getLoadCapacity() - cw->getCwLoad()) / static_cast<double>(cwRule->getRearmRate())
-					  / 2.)); // rearm every half-hour.
-				woststr << L"\n" << _game->getSavedGame()->formatCraftDowntime(
-																			hrs,
-																			cw->getCantLoad(),
-																			_game->getLanguage());
+				default:
+				case 0u:
+					cwSprite	= _weapon1;
+					cwLabel		= _txtW1Name;
+					cwLoad		= _txtW1Ammo;
+					cwBtn		= _btnW1;
+					break;
+				case 1u:
+					cwSprite	= _weapon2;
+					cwLabel		= _txtW2Name;
+					cwLoad		= _txtW2Ammo;
+					cwBtn		= _btnW2;
 			}
-			_txtW1Ammo->setText(woststr.str());
-		}
-		else
-		{
-			_txtW1Name->setText(L"");
-			_txtW1Ammo->setText(L"");
-		}
-	}
-	else
-	{
-		_weapon1->setVisible(false);
-		_btnW1->setVisible(false);
-		_txtW1Name->setVisible(false);
-		_txtW1Ammo->setVisible(false);
-	}
 
-	if (crRule->getWeaponCapacity() > 1 && _isQuickBattle == false)
-	{
-		if ((cw = _craft->getWeapons()->at(1u)) != nullptr)
-		{
-			cwRule = cw->getRules();
+			cwBtn->setVisible();
 
-			bit = baseBits->getFrame(cwRule->getSprite() + 48);
-			bit->blit(_weapon2);
-
-			std::wostringstream woststr;
-
-			woststr << L'\x01' << tr(cwRule->getType());
-			_txtW2Name->setText(woststr.str());
-
-			woststr.str(L"");
-			woststr << tr("STR_AMMO_").arg(cw->getCwLoad())
-					<< L"\n\x01"
-					<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
-			if (cw->getCwLoad() < cwRule->getLoadCapacity())
+			if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
 			{
-				hrs = static_cast<int>(std::ceil(
-					  static_cast<double>(cwRule->getLoadCapacity() - cw->getCwLoad()) / static_cast<double>(cwRule->getRearmRate())
-					  / 2.)); // rearm every half-hour.
-				woststr << L"\n" << _game->getSavedGame()->formatCraftDowntime(
-																			hrs,
-																			cw->getCantLoad(),
-																			_game->getLanguage());
+				cwRule = cw->getRules();
+
+				bit = baseBits->getFrame(cwRule->getSprite() + 48);
+				bit->blit(cwSprite);
+
+				std::wostringstream woststr;
+
+				woststr << L'\x01' << tr(cwRule->getType());
+				cwLabel->setText(woststr.str());
+
+				woststr.str(L"");
+				woststr << tr("STR_AMMO_").arg(cw->getCwLoad())
+						<< L"\n\x01"
+						<< tr("STR_MAX_").arg(cwRule->getLoadCapacity());
+				if (cw->getCwLoad() < cwRule->getLoadCapacity())
+				{
+					hrs = static_cast<int>(std::ceil(
+						  static_cast<double>(cwRule->getLoadCapacity() - cw->getCwLoad()) / static_cast<double>(cwRule->getRearmRate())
+						  / 2.)); // rearm every half-hour.
+					woststr << L"\n" << _game->getSavedGame()->formatCraftDowntime(
+																				hrs,
+																				cw->getCantLoad(),
+																				_game->getLanguage());
+				}
+				cwLoad->setText(woststr.str());
 			}
-			_txtW2Ammo->setText(woststr.str());
+			else
+			{
+				cwLabel->setText(L"");
+				cwLoad->setText(L"");
+			}
 		}
-		else
-		{
-			_txtW2Name->setText(L"");
-			_txtW2Ammo->setText(L"");
-		}
-	}
-	else
-	{
-		_weapon2->setVisible(false);
-		_btnW2->setVisible(false);
-		_txtW2Name->setVisible(false);
-		_txtW2Ammo->setVisible(false);
 	}
 }
 

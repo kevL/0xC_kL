@@ -89,7 +89,7 @@ CwpGlobal CraftWeaponProjectile::getGlobalType() const
  */
 void CraftWeaponProjectile::setDirection(CwpDirection dir)
 {
-	if ((_dir = dir) == PD_UP)
+	if ((_dir = dir) == PD_CRAFT)
 		_pos = 0;
 }
 
@@ -122,11 +122,11 @@ void CraftWeaponProjectile::stepProjectile()
 			else
 				delta = _speed;
 
-//			switch (_dir)	// -> at present there are no PGT_MISSILE w/ PD_DOWN for UFOs, which fire PGT_BREAM exclusively;
+//			switch (_dir)	// -> at present there are no PGT_MISSILE w/ PD_UFO for UFOs, which fire PGT_BREAM exclusively;
 //			{				// in fact I don't think the Dogfight code even accounts for such a case currently.
-//				case PD_UP:
+//				case PD_CRAFT:
 			_pos += delta; //break;
-//				case PD_DOWN:
+//				case PD_UFO:
 //					_pos -= delta;
 //			}
 

@@ -130,7 +130,7 @@ DebriefingState::DebriefingState()
 		_aliensStunned(0),
 		_playerDead(0),
 		_playerLive(0),
-		_isHostileStanding(0)
+		_isHostileStanding(false)
 {
 	Options::baseXResolution = Options::baseXGeoscape;
 	Options::baseYResolution = Options::baseYGeoscape;
@@ -1338,7 +1338,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	if (_craft != nullptr
-		&& (_aborted == false || _isHostileStanding == true))
+		&& (_isHostileStanding == true && _aborted == false))
 	{
 		//Log(LOG_INFO) << ". craft LOST";
 		addResultStat(
@@ -1847,8 +1847,9 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 		if (itRule->isFixed() == false && itRule->isRecoverable() == true)
 		{
-			bType = itRule->getBattleType();
+			_base->refurbishCraft(type = itRule->getType());
 
+			bType = itRule->getBattleType();
 			switch (bType)
 			{
 				case BT_FUEL:
@@ -1860,8 +1861,6 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 					break;
 
 				default:
-					type = itRule->getType();
-
 					if (bType != BT_CORPSE && _gameSave->isResearched(type) == false)
 						addResultStat(
 									TAC_RESULT[3u], // aLien artefacts recovered

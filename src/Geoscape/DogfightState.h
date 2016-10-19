@@ -128,26 +128,29 @@ private:
 	InteractiveSurface
 		* _btnMinimize,
 		* _previewUfo,
-		* _weapon1,
-		* _weapon2;
+		* _isfCw1,
+		* _isfCw2;
 	InteractiveSurface* _btnMinimizedIcon;
 	SavedGame* _gameSave;
 	Surface
 		* _battleScope,
 		* _damage,
-		* _range1,
-		* _range2,
+		* _srfCwRange1,
+		* _srfCwRange2,
 		* _texture,
 		* _window;
 	Text
-		* _txtAmmo1,
-		* _txtAmmo2,
+		* _txtLoad1,
+		* _txtLoad2,
 		* _txtDistance,
 		* _txtInterception,
 		* _txtStatus,
 		* _txtTitle;
 	Timer* _craftDamageAnimTimer;
 	Ufo* _ufo;
+
+	/// Closes or extends interceptor distance.
+	void adjustDistance(bool hasWeapons = true);
 
 	/// Changes the status text.
 	void resetStatus(const std::string& status);
@@ -182,10 +185,6 @@ private:
 		void fireWeapon2();
 		/// Fires UFO weapon.
 		void fireWeaponUfo();
-		/// Sets the Craft to maximum distance.
-		void maximumDistance();
-		/// Sets the Craft to minimum distance.
-		void minimumDistance();
 
 		/// Handler for the escape/cancel keyboard button.
 		void keyEscape(Action* action);
@@ -226,11 +225,6 @@ private:
 		void weapon1Click(Action* action);
 		/// Toggles usage of weapon 2.
 		void weapon2Click(Action* action);
-
-		/// Changes colors of weapon stuffs.
-		void recolor(
-				const int hardPoint,
-				const bool enabled);
 
 		/// Gets interception slot.
 		size_t getInterceptSlot() const;

@@ -46,14 +46,14 @@ enum CwpType
 enum CwpDirection
 {
 	PD_NONE,	// 0
-	PD_UP,		// 1
-	PD_DOWN		// 2
+	PD_CRAFT,	// 1
+	PD_UFO		// 2
 };
 
 const int
 	PH_LEFT		= -1,
 	PH_CENTER	=  0,
-	PH_RIGHT	=  1;
+	PH_RIGHT	= +1;
 
 
 class CraftWeaponProjectile

@@ -38,7 +38,7 @@ RuleCraft::RuleCraft(const std::string& type)
 		_damageMax(0),
 		_speedMax(0),
 		_accel(0),
-		_weapons(0),
+		_weapons(0u),
 		_soldiers(0),
 		_vehicles(0),
 		_items(0),
@@ -92,7 +92,7 @@ void RuleCraft::load(
 	_damageMax		= node["damageMax"]		.as<int>(_damageMax);
 	_speedMax		= node["speedMax"]		.as<int>(_speedMax);
 	_accel			= node["accel"]			.as<int>(_accel);
-	_weapons		= node["weapons"]		.as<int>(_weapons);
+	_weapons		= node["weapons"]		.as<size_t>(_weapons);
 	_soldiers		= node["soldiers"]		.as<int>(_soldiers);
 	_vehicles		= node["vehicles"]		.as<int>(_vehicles);
 	_items			= node["items"]			.as<int>(_items);
@@ -198,7 +198,7 @@ int RuleCraft::getAcceleration() const
  * Gets the maximum number of weapons that can be equipped onto the Craft.
  * @return, the weapon capacity
  */
-int RuleCraft::getWeaponCapacity() const
+size_t RuleCraft::getWeaponCapacity() const
 {
 	return _weapons;
 }

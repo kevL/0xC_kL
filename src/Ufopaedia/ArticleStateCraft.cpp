@@ -99,7 +99,7 @@ ArticleStateCraft::ArticleStateCraft(const ArticleDefinitionCraft* const defs)
 			<< tr("STR_FUEL_CAPACITY")		.arg(range) << L'\n'
 			<< tr("STR_DAMAGE_CAPACITY_UC")	.arg(craftRule->getMaxDamage());
 
-	if (craftRule->getWeaponCapacity() != 0)
+	if (craftRule->getWeaponCapacity() != 0u)
 		woststr << L'\n' << tr("STR_WEAPON_PODS").arg(craftRule->getWeaponCapacity());
 	if (craftRule->getSoldierCapacity() != 0)
 		woststr << L'\n' << tr("STR_CARGO_SPACE").arg(craftRule->getSoldierCapacity());

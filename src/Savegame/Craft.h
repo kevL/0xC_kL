@@ -155,7 +155,7 @@ private:
 		void setDestination(Target* const dest = nullptr) override;
 
 		/// Gets the Craft's amount of weapons.
-		int getQtyWeapons() const;
+		size_t getQtyWeapons() const;
 		/// Gets the Craft's amount of soldiers.
 		int getQtySoldiers() const;
 		/// Gets the Craft's amount of equipment.
@@ -164,7 +164,7 @@ private:
 		int getQtyVehicles(bool tiles = false) const;
 
 		/// Gets the Craft's weapons.
-		std::vector<CraftWeapon*>* getWeapons();
+		std::vector<CraftWeapon*>* getCraftWeapons();
 
 		/// Gets the Craft's items.
 		ItemContainer* getCraftItems() const;

@@ -128,6 +128,7 @@ void MiniBaseView::draw()
 	Surface::draw();
 
 	Base* base;
+	const RuleCraft* crRule;
 	int
 		x,y;
 	Uint8 color;
@@ -229,7 +230,6 @@ void MiniBaseView::draw()
 
 				if (base->getCrafts()->empty() == false)
 				{
-					const RuleCraft* craftRule;
 					y = 17;
 
 					for (std::vector<Craft*>::const_iterator
@@ -259,9 +259,9 @@ void MiniBaseView::draw()
 										GREEN);
 
 
-						craftRule = (*j)->getRules();
+						crRule = (*j)->getRules();
 
-						if (craftRule->getRefuelItem().empty() == false)
+						if (crRule->getRefuelItem().empty() == false)
 							color = YELLOW_L;
 						else
 							color = YELLOW_D;
@@ -271,8 +271,8 @@ void MiniBaseView::draw()
 									y,
 									color);
 
-						if (craftRule->getWeaponCapacity() != 0
-							&& craftRule->getWeaponCapacity() == (*j)->getQtyWeapons())
+						if (   crRule->getWeaponCapacity() != 0u
+							&& crRule->getWeaponCapacity() == (*j)->getQtyWeapons())
 						{
 							setPixelColor(
 										x + 10,
@@ -280,13 +280,13 @@ void MiniBaseView::draw()
 										BLUE);
 						}
 
-						if (craftRule->getSoldierCapacity() != 0)
+						if (crRule->getSoldierCapacity() != 0)
 							setPixelColor(
 										x + 8,
 										y,
 										BROWN);
 
-						if (craftRule->getVehicleCapacity() != 0)
+						if (crRule->getVehicleCapacity() != 0)
 							setPixelColor(
 										x + 6,
 										y,
@@ -344,6 +344,7 @@ void MiniBaseView::blink()
 	_blink = !_blink;
 
 	Base* base;
+	const RuleCraft* crRule;
 	CraftStatus stat;
 	int
 		x,y;
@@ -374,7 +375,6 @@ void MiniBaseView::blink()
 
 		if (base->getCrafts()->empty() == false)
 		{
-			const RuleCraft* crRule;
 			y = 17;
 
 			for (std::vector<Craft*>::const_iterator
@@ -406,7 +406,7 @@ void MiniBaseView::blink()
 				}
 
 				crRule = (*j)->getRules();
-				if (   crRule->getWeaponCapacity() != 0 // craft needs Weapons mounted.
+				if (   crRule->getWeaponCapacity() != 0u // craft needs Weapons mounted.
 					&& crRule->getWeaponCapacity() != (*j)->getQtyWeapons())
 				{
 					if (_blink == true)	color = BLUE;

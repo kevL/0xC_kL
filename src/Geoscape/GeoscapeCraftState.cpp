@@ -193,7 +193,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_txtTitle->setText(_craft->getLabel(_game->getLanguage()));
 	_txtTitle->setBig();
 
-	if (_craft->getRules()->getWeaponCapacity() != 0)
+	if (_craft->getRules()->getWeaponCapacity() != 0u)
 	{
 		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getKills()));
 		_txtKills->setAlign(ALIGN_RIGHT);
@@ -284,38 +284,45 @@ GeoscapeCraftState::GeoscapeCraftState(
 		_txtHWP->setVisible(false);
 
 
-	if (_craft->getRules()->getWeaponCapacity() != 0
-		&& _craft->getWeapons()->at(0) != nullptr)
-	{
-		const CraftWeapon* const w1 (_craft->getWeapons()->at(0));
-		_txtW1Name->setText(tr("STR_WEAPON_ONE").arg(tr(w1->getRules()->getType())));
+	const CraftWeapon* cw;
+	const RuleCraftWeapon* cwRule;
+	Text
+		* cwLabel,
+		* cwLoad;
 
-		woststr.str(L"");
-		woststr << tr("STR_ROUNDS_").arg(w1->getCwLoad())
-				<< L" (" << w1->getRules()->getLoadCapacity() << L")";
-		_txtW1Ammo->setText(woststr.str());
-	}
-	else
+	const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
+	for (size_t
+			i = 0u;
+			i != hardpoints;
+			++i)
 	{
-		_txtW1Name->setVisible(false);
-		_txtW1Ammo->setVisible(false);
-	}
+		switch (i)
+		{
+			default:
+			case 0u:
+				cwLabel	= _txtW1Name;
+				cwLoad	= _txtW1Ammo;
+				break;
+			case 1u:
+				cwLabel	= _txtW2Name;
+				cwLoad	= _txtW2Ammo;
+		}
 
-	if (_craft->getRules()->getWeaponCapacity() > 1
-		&& _craft->getWeapons()->at(1) != nullptr)
-	{
-		const CraftWeapon* const w2 (_craft->getWeapons()->at(1));
-		_txtW2Name->setText(tr("STR_WEAPON_TWO").arg(tr(w2->getRules()->getType())));
+		if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
+		{
+			cwRule = cw->getRules();
+			cwLabel->setText(tr("STR_WEAPON_ONE").arg(tr(cwRule->getType())));
 
-		woststr.str(L"");
-		woststr << tr("STR_ROUNDS_").arg(w2->getCwLoad())
-				<< L" (" << w2->getRules()->getLoadCapacity() << L")";
-		_txtW2Ammo->setText(woststr.str());
-	}
-	else
-	{
-		_txtW2Name->setVisible(false);
-		_txtW2Ammo->setVisible(false);
+			woststr.str(L"");
+			woststr << tr("STR_ROUNDS_").arg(cw->getCwLoad())
+					<< L" (" << cwRule->getLoadCapacity() << L")";
+			cwLoad->setText(woststr.str());
+		}
+		else
+		{
+			cwLabel->setVisible(false);
+			cwLoad->setVisible(false);
+		}
 	}
 
 

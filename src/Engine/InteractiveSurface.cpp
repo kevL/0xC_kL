@@ -20,6 +20,7 @@
 #include "InteractiveSurface.h"
 
 #include "Action.h"
+#include "Game.h"
 
 
 namespace OpenXcom

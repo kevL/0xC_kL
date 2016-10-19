@@ -162,10 +162,10 @@ DogfightState::DogfightState(
 
 	_battleScope			= new Surface(77, 74, _x +  3, _y +  3);
 	_damage					= new Surface(22, 25, _x + 93, _y + 40);
-	_range1					= new Surface(21, 74, _x + 19, _y +  3);
-	_range2					= new Surface(21, 74, _x + 43, _y +  3);
-	_weapon1				= new InteractiveSurface(15, 17, _x +  4, _y + 52);
-	_weapon2				= new InteractiveSurface(15, 17, _x + 64, _y + 52);
+	_srfCwRange1			= new Surface(21, 74, _x + 19, _y +  3);
+	_srfCwRange2			= new Surface(21, 74, _x + 43, _y +  3);
+	_isfCw1					= new InteractiveSurface(15, 17, _x +  4, _y + 52);
+	_isfCw2					= new InteractiveSurface(15, 17, _x + 64, _y + 52);
 
 	_btnMinimize			= new InteractiveSurface( 12, 12, _x, _y);
 	_previewUfo				= new InteractiveSurface(160, 96, _x, _y);
@@ -181,8 +181,8 @@ DogfightState::DogfightState(
 
 	_texture				= new Surface(9, 9, _x + 147, _y + 72);
 
-	_txtAmmo1				= new Text( 16, 9, _x +   4, _y + 70);
-	_txtAmmo2				= new Text( 16, 9, _x +  64, _y + 70);
+	_txtLoad1				= new Text( 16, 9, _x +   4, _y + 70);
+	_txtLoad2				= new Text( 16, 9, _x +  64, _y + 70);
 	_txtDistance			= new Text( 40, 9, _x + 116, _y + 72);
 	_txtStatus				= new Text(150, 9, _x +   4, _y + 85);
 	_txtTitle				= new Text(160, 9, _x,       _y -  9);
@@ -196,10 +196,10 @@ DogfightState::DogfightState(
 
 	add(_window);
 	add(_battleScope);
-	add(_weapon1);
-	add(_range1);
-	add(_weapon2);
-	add(_range2);
+	add(_isfCw1);
+	add(_srfCwRange1);
+	add(_isfCw2);
+	add(_srfCwRange2);
 	add(_damage);
 	add(_btnMinimize);
 	add(_btnDisengage,		"disengageButton",	"dogfight", _window);
@@ -209,8 +209,8 @@ DogfightState::DogfightState(
 	add(_btnCautious,		"cautiousButton",	"dogfight", _window);
 	add(_btnStandoff,		"standoffButton",	"dogfight", _window);
 	add(_texture);
-	add(_txtAmmo1,			"numbers",			"dogfight", _window);
-	add(_txtAmmo2,			"numbers",			"dogfight", _window);
+	add(_txtLoad1,			"numbers",			"dogfight", _window);
+	add(_txtLoad2,			"numbers",			"dogfight", _window);
 	add(_txtDistance,		"distance",			"dogfight", _window);
 	add(_previewUfo);
 	add(_txtStatus,			"text",				"dogfight", _window);
@@ -354,10 +354,9 @@ DogfightState::DogfightState(
 
 
 	const CraftWeapon* cw;
-	Surface
-		* srfWeapon,
-		* srfRange;
-	Text* txtLoad;
+	InteractiveSurface* cwSprite;
+	Surface* cwRange;
+	Text* cwLoad;
 	int
 		x1,x2,
 		rangeY, // 1 km = 1 pixel
@@ -365,52 +364,62 @@ DogfightState::DogfightState(
 		minY,
 		maxY;
 
+	const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 	for (size_t
 			i = 0u;
-			i != static_cast<size_t>(_craft->getRules()->getWeaponCapacity());
+			i != hardpoints;
 			++i)
 	{
-		if ((cw = _craft->getWeapons()->at(i)) != nullptr)
+		switch (i)
+		{
+			default:
+			case 0u:
+				cwSprite	= _isfCw1;
+				cwRange		= _srfCwRange1;
+				cwLoad		= _txtLoad1;
+				break;
+			case 1u:
+				cwSprite	= _isfCw2;
+				cwRange		= _srfCwRange2;
+				cwLoad		= _txtLoad2;
+		}
+
+		if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
 		{
 			switch (i)
 			{
 				default:
 				case 0u:
-					srfWeapon	= _weapon1;
-					srfRange	= _range1;
-					txtLoad		= _txtAmmo1;
-					x1			= 2;
-					x2			= 0;
+					_w1FireInterval = _craft->getCraftWeapons()->at(i)->getRules()->getStandardReload();
+					cwSprite->onMouseClick(static_cast<ActionHandler>(&DogfightState::weapon1Click));
+					x1 = 2; x2 = 0;
 					break;
-
 				case 1u:
-					srfWeapon	= _weapon2;
-					srfRange	= _range2;
-					txtLoad		= _txtAmmo2;
-					x1			= 0;
-					x2			= 18;
+					_w2FireInterval = _craft->getCraftWeapons()->at(i)->getRules()->getStandardReload();
+					cwSprite->onMouseClick(static_cast<ActionHandler>(&DogfightState::weapon2Click));
+					x1 = 0; x2 = 18;
 			}
 
 			srf = srtInticon->getFrame(cw->getRules()->getSprite() + 5);
 //			srf->setX(0);
 //			srf->setY(0);
-			srf->blit(srfWeapon);
+			srf->blit(cwSprite);
 
 			woststr.str(L"");
 			woststr << cw->getCwLoad();
-			txtLoad->setText(woststr.str());
+			cwLoad->setText(woststr.str());
 
-			srfRange->lock();
-			rangeY = srfRange->getHeight() - cw->getRules()->getRange();
+			cwRange->lock();
+			rangeY = cwRange->getHeight() - cw->getRules()->getRange();
 
 			for (int
 					x = x1;
 					x < x1 + 19;
 					x += 2)
 			{
-				srfRange->setPixelColor(
-								x, rangeY,
-								_colors[RANGE_METER]);
+				cwRange->setPixelColor(
+									x, rangeY,
+									_colors[RANGE_METER]);
 			}
 
 			minY =
@@ -432,9 +441,9 @@ DogfightState::DogfightState(
 					y != maxY + 1;
 					++y)
 			{
-				srfRange->setPixelColor(
-								x1 + x2, y,
-								_colors[RANGE_METER]);
+				cwRange->setPixelColor(
+									x1 + x2, y,
+									_colors[RANGE_METER]);
 			}
 
 			for (int
@@ -442,11 +451,17 @@ DogfightState::DogfightState(
 					x != x2 + 3;
 					++x)
 			{
-				srfRange->setPixelColor(
-								x, connectY,
-								_colors[RANGE_METER]);
+				cwRange->setPixelColor(
+									x, connectY,
+									_colors[RANGE_METER]);
 			}
-			srfRange->unlock();
+			cwRange->unlock();
+		}
+		else
+		{
+			cwSprite->setVisible(false);
+			cwRange->setVisible(false);
+			cwLoad->setVisible(false);
 		}
 	}
 
@@ -465,32 +480,6 @@ DogfightState::DogfightState(
 		escape /= _diff + 1; // escape -= _diff * 30;
 		if (escape < 1) escape = 1;
 		_ufo->setEscapeCountdown(escape);
-	}
-
-	if (_craft->getRules()->getWeaponCapacity() > 0
-		&& _craft->getWeapons()->at(0u) != nullptr)
-	{
-		_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getStandardReload();
-		_weapon1->onMouseClick(static_cast<ActionHandler>(&DogfightState::weapon1Click));
-	}
-	else
-	{
-		_weapon1->setVisible(false);
-		_range1->setVisible(false);
-		_txtAmmo1->setVisible(false);
-	}
-
-	if (_craft->getRules()->getWeaponCapacity() > 1
-		&& _craft->getWeapons()->at(1u) != nullptr)
-	{
-		_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getStandardReload();
-		_weapon2->onMouseClick(static_cast<ActionHandler>(&DogfightState::weapon2Click));
-	}
-	else
-	{
-		_weapon2->setVisible(false);
-		_range2->setVisible(false);
-		_txtAmmo2->setVisible(false);
 	}
 
 
@@ -834,7 +823,7 @@ void DogfightState::advanceDogfight()
 							i != _projectiles.end();
 							++i)
 					{
-						if ((*i)->getGlobalType() == PGT_MISSILE) //&& (*i)->getDirection() == PD_UP)
+						if ((*i)->getGlobalType() == PGT_MISSILE) //&& (*i)->getDirection() == PD_CRAFT)
 							(*i)->setRange((*i)->getRange() + delta); // Don't let interceptor mystically push or pull its fired projectiles. Sorta ....
 					}
 				}
@@ -861,7 +850,7 @@ void DogfightState::advanceDogfight()
 
 			switch ((*i)->getDirection())
 			{
-				case PD_UP: // Projectiles fired by interceptor.
+				case PD_CRAFT: // Projectiles fired by interceptor.
 					if (((*i)->getCwpPosition() >= _dist // Projectile reached the UFO - determine if it's been hit.
 							|| ((*i)->getGlobalType() == PGT_BEAM
 								&& (*i)->isFinished() == true))
@@ -931,7 +920,7 @@ void DogfightState::advanceDogfight()
 					}
 					break;
 
-				case PD_DOWN: // Projectiles fired by UFO.
+				case PD_UFO: // Projectiles fired by UFO.
 					if ((*i)->getGlobalType() == PGT_MISSILE
 						|| ((*i)->getGlobalType() == PGT_BEAM
 							&& (*i)->isFinished() == true))
@@ -1010,21 +999,20 @@ void DogfightState::advanceDogfight()
 		}
 
 		const CraftWeapon* cw;
+		const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 		for (size_t // Handle weapons and craft distance.
 				i = 0u;
-				i != static_cast<size_t>(_craft->getRules()->getWeaponCapacity());
+				i != hardpoints;
 				++i)
 		{
-			if ((cw = _craft->getWeapons()->at(i)) != nullptr)
+			if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
 			{
 				int fireCountdown;
 				switch (i)
 				{
 					default:
-					case 0u:
-						fireCountdown = _w1FireCountdown; break;
-					case 1u:
-						fireCountdown = _w2FireCountdown;
+					case 0u: fireCountdown = _w1FireCountdown; break;
+					case 1u: fireCountdown = _w2FireCountdown;
 				}
 
 				switch (fireCountdown)
@@ -1059,10 +1047,7 @@ void DogfightState::advanceDogfight()
 					&& prjInFlight == false
 					&& _craft->isDestroyed() == false)
 				{
-					if (_craftStance == _btnCautious)
-						maximumDistance();
-					else if (_craftStance == _btnStandard)
-						minimumDistance();
+					adjustDistance();
 				}
 			}
 		}
@@ -1155,7 +1140,10 @@ void DogfightState::advanceDogfight()
 //				if (c != 0 && c->getNumSoldiers() == 0 && c->getNumVehicles() == 0)
 //				{
 //					c->returnToBase();
+//					i = _ufo->getFollowers()->begin();
 //				}
+//				else
+//					++i;
 //			}
 //		}
 
@@ -1310,7 +1298,7 @@ void DogfightState::advanceDogfight()
  */
 void DogfightState::fireWeapon1()
 {
-	CraftWeapon* const cw (_craft->getWeapons()->at(0u));
+	CraftWeapon* const cw (_craft->getCraftWeapons()->at(0u));
 	if (cw->setCwLoad(cw->getCwLoad() - 1))
 	{
 		_w1FireCountdown = _w1FireInterval;
@@ -1318,10 +1306,10 @@ void DogfightState::fireWeapon1()
 
 		std::wostringstream woststr;
 		woststr << cw->getCwLoad();
-		_txtAmmo1->setText(woststr.str());
+		_txtLoad1->setText(woststr.str());
 
 		CraftWeaponProjectile* const prj (cw->fire());
-		prj->setDirection(PD_UP);
+		prj->setDirection(PD_CRAFT);
 		prj->setHorizontalPosition(PH_LEFT);
 		_projectiles.push_back(prj);
 
@@ -1336,7 +1324,7 @@ void DogfightState::fireWeapon1()
  */
 void DogfightState::fireWeapon2()
 {
-	CraftWeapon* const cw (_craft->getWeapons()->at(1u));
+	CraftWeapon* const cw (_craft->getCraftWeapons()->at(1u));
 	if (cw->setCwLoad(cw->getCwLoad() - 1))
 	{
 		_w2FireCountdown = _w2FireInterval;
@@ -1344,10 +1332,10 @@ void DogfightState::fireWeapon2()
 
 		std::wostringstream woststr;
 		woststr << cw->getCwLoad();
-		_txtAmmo2->setText(woststr.str());
+		_txtLoad2->setText(woststr.str());
 
 		CraftWeaponProjectile* const prj (cw->fire());
-		prj->setDirection(PD_UP);
+		prj->setDirection(PD_CRAFT);
 		prj->setHorizontalPosition(PH_RIGHT);
 		_projectiles.push_back(prj);
 
@@ -1368,7 +1356,7 @@ void DogfightState::fireWeaponUfo()
 	prj->setType(PT_PLASMA_BEAM);
 	prj->setAccuracy(60);
 	prj->setPower(_ufo->getRules()->getWeaponPower());
-	prj->setDirection(PD_DOWN);
+	prj->setDirection(PD_UFO);
 	prj->setHorizontalPosition(PH_CENTER);
 	prj->setCwpPosition(_dist - (_ufoSize >> 1u));
 	_projectiles.push_back(prj);
@@ -1388,58 +1376,64 @@ void DogfightState::fireWeaponUfo()
 }
 
 /**
- * Sets the craft to the maximum distance required to fire a weapon.
+ * Closes or extends interceptor distance.
+ * @param hasWeapons - true if the Craft has weapons (default true)
  */
-void DogfightState::maximumDistance()
+void DogfightState::adjustDistance(bool hasWeapons) // private.
 {
-	int dist (0);
-	for (std::vector<CraftWeapon*>::const_iterator
-			i = _craft->getWeapons()->begin();
-			i != _craft->getWeapons()->end();
-			++i)
+	if (_craftStance == _btnCautious) // range of longest loaded weapon
 	{
-		if (*i != nullptr
-			&& (*i)->getCwLoad() != 0
-			&& (*i)->getRules()->getRange() > dist)
+		int dist (0);
+		if (hasWeapons == true)
 		{
-			dist = (*i)->getRules()->getRange();
+			for (std::vector<CraftWeapon*>::const_iterator
+					i = _craft->getCraftWeapons()->begin();
+					i != _craft->getCraftWeapons()->end();
+					++i)
+			{
+				if (*i != nullptr
+					&& (*i)->getCwLoad() != 0
+					&& (*i)->getRules()->getRange() > dist)
+				{
+					dist = (*i)->getRules()->getRange();
+				}
+			}
+		}
+
+		switch (dist)
+		{
+			case 0:
+				_desired = DST_STANDOFF; break;
+			default:
+				_desired = dist << 3u; // <- convert ruleset-value to IG Dogfight distance.
 		}
 	}
-
-	switch (dist)
+	else if (_craftStance == _btnStandard) // range of shortest loaded weapon
 	{
-		case 0:
-			_desired = DST_STANDOFF; break;
-		default:
-			_desired = dist << 3u; // <- convert ruleset-value to IG Dogfight distance.
-	}
-}
-
-/**
- * Sets the craft to the minimum distance required to fire a weapon.
- */
-void DogfightState::minimumDistance()
-{
-	int dist (1000);
-	for (std::vector<CraftWeapon*>::const_iterator
-			i = _craft->getWeapons()->begin();
-			i != _craft->getWeapons()->end();
-			++i)
-	{
-		if (*i != nullptr
-			&& (*i)->getCwLoad() != 0
-			&& (*i)->getRules()->getRange() < dist)
+		int dist (1000);
+		if (hasWeapons == true)
 		{
-			dist = (*i)->getRules()->getRange();
+			for (std::vector<CraftWeapon*>::const_iterator
+					i = _craft->getCraftWeapons()->begin();
+					i != _craft->getCraftWeapons()->end();
+					++i)
+			{
+				if (*i != nullptr
+					&& (*i)->getCwLoad() != 0
+					&& (*i)->getRules()->getRange() < dist)
+				{
+					dist = (*i)->getRules()->getRange();
+				}
+			}
 		}
-	}
 
-	switch (dist)
-	{
-		case 1000:
-			_desired = DST_STANDOFF; break;
-		default:
-			_desired = dist << 3u; // <- convert ruleset-value to IG Dogfight distance.
+		switch (dist)
+		{
+			case 1000:
+				_desired = DST_STANDOFF; break;
+			default:
+				_desired = dist << 3u; // <- convert ruleset-value to IG Dogfight distance.
+		}
 	}
 }
 
@@ -1499,7 +1493,7 @@ void DogfightState::keyEscape(Action*)
 }
 
 /**
- * Switches to Standoff mode - maximum range.
+ * Switches to Standoff mode - standoff range.
  * @param action - pointer to an Action
  */
 void DogfightState::btnStandoffClick(Action*)
@@ -1527,19 +1521,30 @@ void DogfightState::btnCautiousClick(Action*)
 		_end = false;
 		resetStatus("STR_CAUTIOUS_ATTACK");
 
-		if (_craft->getRules()->getWeaponCapacity() > 0
-			&& _craft->getWeapons()->at(0u) != nullptr)
+		bool hasWeapons = false;
+
+		const CraftWeapon* cw;
+		int fireInterval;
+		const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
+		for (size_t
+				i = 0u;
+				i != hardpoints;
+				++i)
 		{
-			_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getCautiousReload();
+			if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
+			{
+				hasWeapons = true;
+
+				fireInterval = cw->getRules()->getCautiousReload();
+				switch (i)
+				{
+					case 0u: _w1FireInterval = fireInterval; break;
+					case 1u: _w2FireInterval = fireInterval;
+				}
+			}
 		}
 
-		if (_craft->getRules()->getWeaponCapacity() > 1
-			&& _craft->getWeapons()->at(1u) != nullptr)
-		{
-			_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getCautiousReload();
-		}
-
-		maximumDistance();
+		adjustDistance(hasWeapons);
 	}
 }
 
@@ -1556,24 +1561,35 @@ void DogfightState::btnStandardClick(Action*)
 		_end = false;
 		resetStatus("STR_STANDARD_ATTACK");
 
-		if (_craft->getRules()->getWeaponCapacity() > 0
-			&& _craft->getWeapons()->at(0u) != nullptr)
+		bool hasWeapons = false;
+
+		const CraftWeapon* cw;
+		int fireInterval;
+		const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
+		for (size_t
+				i = 0u;
+				i != hardpoints;
+				++i)
 		{
-			_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getStandardReload();
+			if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
+			{
+				hasWeapons = true;
+
+				fireInterval = cw->getRules()->getStandardReload();
+				switch (i)
+				{
+					case 0u: _w1FireInterval = fireInterval; break;
+					case 1u: _w2FireInterval = fireInterval;
+				}
+			}
 		}
 
-		if (_craft->getRules()->getWeaponCapacity() > 1
-			&& _craft->getWeapons()->at(1u) != nullptr)
-		{
-			_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getStandardReload();
-		}
-
-		minimumDistance();
+		adjustDistance(hasWeapons);
 	}
 }
 
 /**
- * Switches to Aggressive mode - minimum range.
+ * Switches to Aggressive mode - close range.
  * @param action - pointer to an Action
  */
 void DogfightState::btnAggressiveClick(Action*)
@@ -1585,16 +1601,23 @@ void DogfightState::btnAggressiveClick(Action*)
 		_end = false;
 		resetStatus("STR_AGGRESSIVE_ATTACK");
 
-		if (_craft->getRules()->getWeaponCapacity() > 0
-			&& _craft->getWeapons()->at(0u) != nullptr)
+		const CraftWeapon* cw;
+		int fireInterval;
+		const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
+		for (size_t
+				i = 0u;
+				i != hardpoints;
+				++i)
 		{
-			_w1FireInterval = _craft->getWeapons()->at(0u)->getRules()->getAggressiveReload();
-		}
-
-		if (_craft->getRules()->getWeaponCapacity() > 1
-			&& _craft->getWeapons()->at(1u) != nullptr)
-		{
-			_w2FireInterval = _craft->getWeapons()->at(1u)->getRules()->getAggressiveReload();
+			if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
+			{
+				fireInterval = cw->getRules()->getAggressiveReload();
+				switch (i)
+				{
+					case 0u: _w1FireInterval = fireInterval; break;
+					case 1u: _w2FireInterval = fireInterval;
+				}
+			}
 		}
 
 		_desired = DST_CLOSE;
@@ -1647,8 +1670,8 @@ void DogfightState::btnUfoClick(Action* action)
 			_btnUfo->setVisible(false);
 			_texture->setVisible(false);
 			_btnMinimize->setVisible(false);
-			_weapon1->setVisible(false);
-			_weapon2->setVisible(false);
+			_isfCw1->setVisible(false);
+			_isfCw2->setVisible(false);
 	}
 }
 
@@ -1673,8 +1696,8 @@ void DogfightState::previewClick(Action* action)
 			_btnUfo->setVisible();
 			_texture->setVisible();
 			_btnMinimize->setVisible();
-			_weapon1->setVisible();
-			_weapon2->setVisible();
+			_isfCw1->setVisible();
+			_isfCw2->setVisible();
 	}
 }
 
@@ -1707,13 +1730,13 @@ void DogfightState::btnMinimizeDfClick(Action*)
 				_texture->setVisible(false);
 				_btnMinimize->setVisible(false);
 				_battleScope->setVisible(false);
-				_weapon1->setVisible(false);
-				_range1->setVisible(false);
-				_weapon2->setVisible(false);
-				_range2->setVisible(false);
+				_isfCw1->setVisible(false);
+				_srfCwRange1->setVisible(false);
+				_isfCw2->setVisible(false);
+				_srfCwRange2->setVisible(false);
 				_damage->setVisible(false);
-				_txtAmmo1->setVisible(false);
-				_txtAmmo2->setVisible(false);
+				_txtLoad1->setVisible(false);
+				_txtLoad2->setVisible(false);
 				_txtDistance->setVisible(false);
 				_previewUfo->setVisible(false);
 				_txtStatus->setVisible(false);
@@ -1770,13 +1793,13 @@ void DogfightState::btnMaximizeDfPress(Action* action)
 			_texture->setVisible();
 			_btnMinimize->setVisible();
 			_battleScope->setVisible();
-			_weapon1->setVisible();
-			_range1->setVisible();
-			_weapon2->setVisible();
-			_range2->setVisible();
+			_isfCw1->setVisible();
+			_srfCwRange1->setVisible();
+			_isfCw2->setVisible();
+			_srfCwRange2->setVisible();
 			_damage->setVisible();
-			_txtAmmo1->setVisible();
-			_txtAmmo2->setVisible();
+			_txtLoad1->setVisible();
+			_txtLoad2->setVisible();
 			_txtDistance->setVisible();
 			_txtStatus->setVisible();
 			_txtTitle->setVisible();
@@ -1939,7 +1962,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 			{
 				switch (prj->getDirection())
 				{
-					case PD_UP:
+					case PD_CRAFT:
 						color = _window->getPixelColor(
 													pos_x + 3,
 													y + 3);
@@ -1949,7 +1972,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 						break;
 
 					default:
-					case PD_DOWN:
+					case PD_UFO:
 						color = 128u; // red
 				}
 				_battleScope->setPixelColor(pos_x, y, color);
@@ -1964,8 +1987,15 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
  */
 void DogfightState::weapon1Click(Action*)
 {
-	_w1Enabled = !_w1Enabled;
-	recolor(0, _w1Enabled);
+	int i;
+	if (_w1Enabled = !_w1Enabled)
+		i = -1;
+	else
+		i = +1;
+
+	_isfCw1		->offset(_colors[DISABLED_WEAPON] * i);
+	_srfCwRange1->offset(_colors[DISABLED_RANGE]  * i);
+	_txtLoad1	->offset(_colors[DISABLED_AMMO]   * i);
 }
 
 /**
@@ -1974,54 +2004,15 @@ void DogfightState::weapon1Click(Action*)
  */
 void DogfightState::weapon2Click(Action*)
 {
-	_w2Enabled = !_w2Enabled;
-	recolor(1, _w2Enabled);
-}
-
-/**
- * Changes the colors of craft's weapon icons, range indicators, and ammo texts
- * based on current weapon state.
- * @param hardPoint	- craft-weapon to change color
- * @param enabled	- true if weapon is enabled
- */
-void DogfightState::recolor(
-		const int hardPoint,
-		const bool enabled)
-{
-	InteractiveSurface* isfWeapon;
-	Surface* srfWeapon;
-	Text* txtLoad;
-
-	switch (hardPoint)
-	{
-		case 0:
-			isfWeapon	= _weapon1;
-			srfWeapon	= _range1;
-			txtLoad		= _txtAmmo1;
-			break;
-
-		case 1:
-			isfWeapon	= _weapon2;
-			srfWeapon	= _range2;
-			txtLoad		= _txtAmmo2;
-			break;
-
-		default:
-			return;
-	}
-
-	if (enabled == true)
-	{
-		isfWeapon	->offset(-_colors[DISABLED_WEAPON]);
-		txtLoad		->offset(-_colors[DISABLED_AMMO]);
-		srfWeapon	->offset(-_colors[DISABLED_RANGE]);
-	}
+	int i;
+	if (_w2Enabled = !_w2Enabled)
+		i = -1;
 	else
-	{
-		isfWeapon	->offset(_colors[DISABLED_WEAPON]);
-		txtLoad		->offset(_colors[DISABLED_AMMO]);
-		srfWeapon	->offset(_colors[DISABLED_RANGE]);
-	}
+		i = +1;
+
+	_isfCw2		->offset(-_colors[DISABLED_WEAPON] * i);
+	_srfCwRange2->offset(-_colors[DISABLED_RANGE]  * i);
+	_txtLoad2	->offset(-_colors[DISABLED_AMMO]   * i);
 }
 
 /**

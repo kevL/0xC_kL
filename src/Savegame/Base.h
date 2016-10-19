@@ -378,8 +378,11 @@ private:
 		/// Sorts the Base's Soldiers according to a pre-determined algorithm.
 		void sortSoldiers();
 
-		/// Calculates the penalty-score for losing this Base.
+		/// Calculates the penalty-score for losing the Base.
 		int calcLostScore() const;
+
+		/// Checks if any Craft at the Base can be refurbished.
+		void refurbishCraft(const std::string& itType);
 };
 
 }

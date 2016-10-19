@@ -137,7 +137,7 @@ void CraftsState::init()
 
 	_lstCrafts->clearList();
 
-	const RuleCraft* craftRule;
+	const RuleCraft* crRule;
 
 	size_t r (0u);
 	for (std::vector<Craft*>::const_iterator
@@ -150,19 +150,19 @@ void CraftsState::init()
 			woststr2,
 			woststr3;
 
-		craftRule = (*i)->getRules();
+		crRule = (*i)->getRules();
 
-		if (craftRule->getWeaponCapacity() != 0)
-			woststr1 << (*i)->getQtyWeapons() << L"/" << craftRule->getWeaponCapacity();
+		if (crRule->getWeaponCapacity() != 0u)
+			woststr1 << (*i)->getQtyWeapons() << L"/" << crRule->getWeaponCapacity();
 		else
 			woststr1 << L"-";
 
-		if (craftRule->getSoldierCapacity() != 0)
+		if (crRule->getSoldierCapacity() != 0)
 			woststr2 << (*i)->getQtySoldiers();
 		else
 			woststr2 << L"-";
 
-		if (craftRule->getVehicleCapacity() != 0)
+		if (crRule->getVehicleCapacity() != 0)
 			woststr3 << (*i)->getQtyVehicles();
 		else
 			woststr3 << L"-";

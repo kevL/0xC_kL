@@ -2901,7 +2901,7 @@ void Base::sortSoldiers()
 		// possibly using a comparoperator functor. /cheers)
 	}
 
-	size_t j (0);
+	size_t j (0u);
 	for (std::multimap<int, Soldier*>::const_iterator
 			i = soldiersOrdered.begin();
 			i != soldiersOrdered.end();
@@ -2932,6 +2932,48 @@ int Base::calcLostScore() const
 	if (ret < 0) ret = 0; // safety for DebriefingState.
 
 	return ret;
+}
+
+/**
+ * Checks if any Craft at this Base needs to and can be refurbished.
+ * @note Called by DebriefingState, ItemsArrivingState, Production.
+ * @param itType - reference to an item-type
+ */
+void Base::refurbishCraft(const std::string& itType)
+{
+	std::vector<Craft*>::const_iterator last (_crafts.end());
+	for (std::vector<Craft*>::const_iterator
+			i = _crafts.begin();
+			i != last;
+			++i)
+	{
+		if ((*i)->getWarned() == true)
+		{
+			switch ((*i)->getCraftStatus())
+			{
+				case CS_REFUELLING:
+					if ((*i)->getRules()->getRefuelItem() == itType)
+						(*i)->setWarned(false);
+					break;
+
+				case CS_REARMING:
+					if ((*i)->getRules()->getWeaponCapacity() != 0u) // safety. is Rearming, ergo has weaponry.
+					{
+						for (std::vector<CraftWeapon*>::const_iterator
+								j = (*i)->getCraftWeapons()->begin();
+								j != (*i)->getCraftWeapons()->end();
+								++j)
+						{
+							if (*j != nullptr && (*j)->getRules()->getClipType() == itType)
+							{
+								(*j)->setCantLoad(false);
+								(*i)->setWarned(false);
+							}
+						}
+					}
+			}
+		}
+	}
 }
 
 }

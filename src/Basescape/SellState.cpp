@@ -578,8 +578,8 @@ void SellState::changeByValue(
 			double storesReq (0.);
 			Craft* const craft (_crafts[getCraftIndex(_sel)]);
 			for (std::vector<CraftWeapon*>::const_iterator
-					i = craft->getWeapons()->begin();
-					i != craft->getWeapons()->end();
+					i = craft->getCraftWeapons()->begin();
+					i != craft->getCraftWeapons()->end();
 					++i)
 			{
 				if (*i != nullptr)

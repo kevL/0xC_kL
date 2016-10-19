@@ -47,7 +47,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Craft Weapons window.
+ * Initializes all the elements in the CraftWeapons state.
  * @param base		- pointer to the Base to get info from
  * @param craftId	- ID of the selected craft
  * @param pod		- hardpoint for the weapon
@@ -172,14 +172,14 @@ void CraftWeaponsState::btnCancelClick(Action*)
 }
 
 /**
- * Equips the weapon on the craft and exits to the previous screen.
+ * Equips/de-equips a CraftWeapon and exits to the previous screen.
  * @param action - pointer to an Action
  */
 void CraftWeaponsState::lstWeaponsClick(Action*)
 {
 	ItemContainer* const storage (_base->getStorageItems());
 
-	CraftWeapon* cw (_craft->getWeapons()->at(_pod));
+	CraftWeapon* cw (_craft->getCraftWeapons()->at(_pod));
 	const RuleCraftWeapon* cwRule (_cwRules[_lstWeapons->getSelectedRow()]);
 
 	std::string laType;
@@ -202,7 +202,7 @@ void CraftWeaponsState::lstWeaponsClick(Action*)
 					cw->getClipsLoaded(_game->getRuleset()));
 
 		delete cw;
-		_craft->getWeapons()->at(_pod) = nullptr;
+		_craft->getCraftWeapons()->at(_pod) = nullptr;
 	}
 
 	if (laType.empty() == false)
@@ -211,14 +211,16 @@ void CraftWeaponsState::lstWeaponsClick(Action*)
 
 		cw = new CraftWeapon(cwRule);
 		cw->setRearming();
-		_craft->getWeapons()->at(_pod) = cw;
-		_craft->checkup();
+		_craft->getCraftWeapons()->at(_pod) = cw;
 
 		cwRule = nullptr;
 	}
 
 	if (cwRule == nullptr)
+	{
+		_craft->checkup();
 		_game->popState();
+	}
 }
 
 }

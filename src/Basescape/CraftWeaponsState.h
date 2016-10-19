@@ -63,17 +63,17 @@ private:
 
 
 	public:
-		/// Creates the Craft Weapons state.
+		/// Creates a CraftWeapons state.
 		CraftWeaponsState(
 				Base* const base,
 				size_t craftId,
 				size_t pod);
-		/// Cleans up the Craft Weapons state.
+		/// Cleans up the CraftWeapons state.
 		~CraftWeaponsState();
 
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
-		/// Handler for clicking the Weapons list.
+		/// Handler for clicking the CraftWeapons list.
 		void lstWeaponsClick(Action* action);
 };
 

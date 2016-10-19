@@ -88,8 +88,8 @@ Craft::Craft(
 
 	_items = new ItemContainer();
 
-	for (int
-			i = 0;
+	for (size_t
+			i = 0u;
 			i != _crRule->getWeaponCapacity();
 			++i)
 		_weapons.push_back(nullptr);
@@ -145,7 +145,7 @@ void Craft::loadCraft(
 			i != node["weapons"].end();
 			++i)
 	{
-		if (_crRule->getWeaponCapacity() > static_cast<int>(j))
+		if (_crRule->getWeaponCapacity() > j)
 		{
 			type = (*i)["type"].as<std::string>();
 			if (type != "0"
@@ -429,11 +429,11 @@ RuleCraft* Craft::getRules() const
  */
 void Craft::changeRules(RuleCraft* const crRule)
 {
-	_crRule = crRule;
 	_weapons.clear();
 
-	for (int
-			i = 0;
+	_crRule = crRule;
+	for (size_t
+			i = 0u;
 			i != _crRule->getWeaponCapacity();
 			++i)
 		_weapons.push_back(nullptr);
@@ -674,11 +674,11 @@ void Craft::setDestination(Target* const dest)
  * Gets the quantity of weapons equipped on this Craft.
  * @return, quantity of weapons
  */
-int Craft::getQtyWeapons() const
+size_t Craft::getQtyWeapons() const
 {
-	if (_crRule->getWeaponCapacity() != 0)
+	if (_crRule->getWeaponCapacity() != 0u)
 	{
-		int ret (0);
+		size_t ret (0u);
 		for (std::vector<CraftWeapon*>::const_iterator
 				i = _weapons.begin();
 				i != _weapons.end();
@@ -689,7 +689,7 @@ int Craft::getQtyWeapons() const
 		}
 		return ret;
 	}
-	return 0;
+	return 0u;
 }
 
 /**
@@ -737,15 +737,15 @@ int Craft::getQtyVehicles(bool tiles) const
 	{
 		if (tiles == true)
 		{
-			int area (0);
+			int quads (0);
 			for (std::vector<Vehicle*>::const_iterator
 					i = _vehicles.begin();
 					i != _vehicles.end();
 					++i)
 			{
-				area += (*i)->getQuads();
+				quads += (*i)->getQuads();
 			}
-			return area;
+			return quads;
 		}
 		return static_cast<int>(_vehicles.size());
 	}
@@ -756,7 +756,7 @@ int Craft::getQtyVehicles(bool tiles) const
  * Gets the CraftWeapons currently equipped on this Craft.
  * @return, pointer to a vector of pointers to CraftWeapon
  */
-std::vector<CraftWeapon*>* Craft::getWeapons()
+std::vector<CraftWeapon*>* Craft::getCraftWeapons()
 {
 	return &_weapons;
 }
@@ -1010,18 +1010,21 @@ void Craft::checkup()
 		cw (0),
 		armok (0);
 
-	for (std::vector<CraftWeapon*>::const_iterator
-			i = _weapons.begin();
-			i != _weapons.end();
-			++i)
+	if (_crRule->getWeaponCapacity() != 0u)
 	{
-		if (*i != nullptr)
+		for (std::vector<CraftWeapon*>::const_iterator
+				i = _weapons.begin();
+				i != _weapons.end();
+				++i)
 		{
-			++cw;
-			if ((*i)->getCwLoad() < (*i)->getRules()->getLoadCapacity())
-				(*i)->setRearming();
-			else
-				++armok;
+			if (*i != nullptr)
+			{
+				++cw;
+				if ((*i)->getCwLoad() < (*i)->getRules()->getLoadCapacity())
+					(*i)->setRearming();
+				else
+					++armok;
+			}
 		}
 	}
 
@@ -1515,7 +1518,7 @@ void Craft::unloadCraft(
 		}
 	}
 
-	if (updateCraft == false && _crRule->getWeaponCapacity() != 0)
+	if (updateCraft == false && _crRule->getWeaponCapacity() != 0u)
 	{
 		for (std::vector<CraftWeapon*>::const_iterator
 				i = _weapons.begin();

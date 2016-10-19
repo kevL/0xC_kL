@@ -74,8 +74,8 @@ private:
 
 		_items,
 		_soldiers,
-		_vehicles,
-		_weapons;
+		_vehicles;
+	size_t _weapons;
 
 	std::string
 		_refuelItem,
@@ -121,7 +121,7 @@ private:
 		int getAcceleration() const;
 
 		/// Gets a Craft's weapon capacity.
-		int getWeaponCapacity() const;
+		size_t getWeaponCapacity() const;
 		/// Gets a Craft's soldier capacity.
 		int getSoldierCapacity() const;
 		/// Gets a Craft's vehicle capacity.
