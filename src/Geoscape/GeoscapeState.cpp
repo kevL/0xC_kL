@@ -1578,7 +1578,7 @@ void GeoscapeState::time5Seconds()
 								case Ufo::DESTROYED:
 									if (ufo->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN)
 									{
-										(*j)->returnToBase();
+										(*j)->returnToBase(); // NOTE: ufo dTor would handle that.
 										break;
 									}
 									// no break;
@@ -1587,6 +1587,7 @@ void GeoscapeState::time5Seconds()
 									Waypoint* const wp (new Waypoint());
 									wp->setLongitude((*j)->getMeetLongitude());
 									wp->setLatitude((*j)->getMeetLatitude());
+									wp->setId(ufo->getId());
 
 									// NOTE: The Waypoint is the reconnaissance destination-target;
 									// it also flags GeoscapeCraftState as a special instance.
