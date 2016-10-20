@@ -249,8 +249,8 @@ private:
 		/// Gets which turn the aLiens start cheating on.
 		int getCheatTurn() const;
 
-		/// Gets if the deployment is for an AlienBase (for quick-battles).
-		bool isAlienBase() const;
+		/// Checks if the deployment is for an AlienBase.
+		bool isAlienBaseDeploy() const;
 		/// Gets the type of AlienMission that an AlienBase can generate.
 		std::string getBaseGeneratedType() const;
 		/// Gets the chance of an AlienBase generating an AlienMission.

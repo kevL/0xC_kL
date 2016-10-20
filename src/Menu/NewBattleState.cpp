@@ -564,7 +564,7 @@ void NewBattleState::btnOkClick(Action*)
 		_craft = nullptr; // kL_note: may need to remove this for .. some reason.
 	}
 //	else if (_missionTypes[_cbxMission->getSelected()] == "STR_ALIEN_BASE_ASSAULT")
-	else if (_game->getRuleset()->getDeployment(battleSave->getTacticalType())->isAlienBase() == true)
+	else if (_game->getRuleset()->getDeployment(battleSave->getTacticalType())->isAlienBaseDeploy() == true)
 	{
 		base = nullptr;
 

@@ -545,10 +545,10 @@ int RuleAlienDeployment::getCheatTurn() const
 }
 
 /**
- * Gets if this deployment is for an aLien Base (for quick-battles).
+ * Gets if this deployment is for an aLien Base (for quick-battles only).
  * @return, true if aLien Base
  */
-bool RuleAlienDeployment::isAlienBase() const
+bool RuleAlienDeployment::isAlienBaseDeploy() const
 {
 	return _isAlienBase;
 }

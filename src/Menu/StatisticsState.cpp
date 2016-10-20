@@ -40,6 +40,7 @@
 
 #include "../Resource/ResourcePack.h"
 
+#include "../Savegame/AlienBase.h"
 #include "../Savegame/Base.h"
 #include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/Country.h"
@@ -154,15 +155,17 @@ void StatisticsState::listStats()
 	const int monthlyScore (total(gameSave->getResearchScores()) // huh. Is this total. no.
 						  / static_cast<int>(gameSave->getResearchScores().size()));
 	const int64_t
-		totalIncome (total(gameSave->getIncomeList())),			// Check these also.
+		totalIncome   (total(gameSave->getIncomeList())),		// Check these also.
 		totalExpenses (total(gameSave->getExpenditureList()));	// They are inaccurate after 12+ months (because only the latest 12 months are maintained).
 
 	int
-		missionsWin		(0),
-		missionsLoss	(0),
-		nightMissions	(0),
-		bestScore		(-9999),
-		worstScore		( 9999);
+		missionsWin			(0),
+		missionsLoss		(0),
+		nightMissions		(0),
+		bestScore			(std::numeric_limits<int>::min()),
+		worstScore			(std::numeric_limits<int>::max()),
+		alienBasesDestroyed	(0),
+		xcomBasesLost		(0);
 
 	for (std::vector<MissionStatistics*>::const_iterator
 			i = gameSave->getMissionStatistics()->begin();
@@ -179,10 +182,15 @@ void StatisticsState::listStats()
 
 		if ((*i)->shade >= MissionStatistics::NIGHT_SHADE)
 			++nightMissions;
+
+		if ((*i)->isAlienBase() && (*i)->success)
+			++alienBasesDestroyed;
+		else if ((*i)->isBaseDefense() && !(*i)->success)
+			++xcomBasesLost;
 	}
 
-	bestScore  = (bestScore == -9999) ? 0 : bestScore; // make sure dorky values aren't left in
-	worstScore = (worstScore == 9999) ? 0 : worstScore;
+	bestScore  = (bestScore  == std::numeric_limits<int>::min()) ? 0 : bestScore; // make sure dorky values aren't left in
+	worstScore = (worstScore == std::numeric_limits<int>::max()) ? 0 : worstScore;
 
 	std::vector<Soldier*> solLive;
 	for (std::vector<Base*>::const_iterator
@@ -342,11 +350,21 @@ void StatisticsState::listStats()
 		}
 	}
 
+	int alienBases (0);
+	for (std::vector<AlienBase*>::const_iterator
+			i = gameSave->getAlienBases()->begin();
+			i != gameSave->getAlienBases()->end();
+			++i)
+	{
+		if ((*i)->isDetected())
+			++alienBases;
+	}
+
 	std::map<std::string, int> ids (gameSave->getTargetIds());
 	const int
-		ufosDetected (std::max(0, ids[Target::stTarget[0u]] - 1)),
-		alienBases   (std::max(0, ids[Target::stTarget[2u]] - 1)), // detected only.
-		terrorSites  (std::max(0, ids[Target::stTarget[3u]] - 1));
+//		alienBases   (std::max(0, ids[Target::stTarget[2u]] - 1)), // detected only.
+		terrorSites  (std::max(0, ids[Target::stTarget[3u]] - 1)),
+		ufosDetected (std::max(0, ids[Target::stTarget[0u]] - 1));
 
 	int totalCrafts (0);
 	for (std::vector<std::string>::const_iterator
@@ -358,7 +376,7 @@ void StatisticsState::listStats()
 			totalCrafts += ids[*i] - 1; // TODO: Show quantity of Craft lost ... or sold.
 	}
 
-	const int currentBases (static_cast<int>(gameSave->getBases()->size()));
+	const int xcomBases (static_cast<int>(gameSave->getBases()->size()));
 
 	int
 		currentScientists (0),
@@ -369,7 +387,7 @@ void StatisticsState::listStats()
 			++i)
 	{
 		currentScientists += (*i)->getTotalScientists();
-		currentEngineers += (*i)->getTotalEngineers();
+		currentEngineers  += (*i)->getTotalEngineers();
 	}
 
 	int countriesLost (0);
@@ -421,10 +439,12 @@ void StatisticsState::listStats()
 	_lstStats->addRow(2, tr("STR_LONGEST_SERVICE").c_str(),			Text::intWide(longestMonths).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_DAYS_WOUNDED").c_str(),		Text::intWide(daysWounded).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_UFOS").c_str(),				Text::intWide(ufosDetected).c_str());
-	_lstStats->addRow(2, tr("STR_TOTAL_ALIEN_BASES").c_str(),		Text::intWide(alienBases).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_ALIEN_BASES").c_str(),		Text::intWide(alienBases).c_str());				// active & discovered.
+	_lstStats->addRow(2, tr("STR_ALIEN_BASES_DESTROYED").c_str(),	Text::intWide(alienBasesDestroyed).c_str());	// destroyed.
 	_lstStats->addRow(2, tr("STR_COUNTRIES_LOST").c_str(),			Text::intWide(countriesLost).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_TERROR_SITES").c_str(),		Text::intWide(terrorSites).c_str());
-	_lstStats->addRow(2, tr("STR_TOTAL_BASES").c_str(),				Text::intWide(currentBases).c_str());
+	_lstStats->addRow(2, tr("STR_TOTAL_BASES").c_str(),				Text::intWide(xcomBases).c_str());
+	_lstStats->addRow(2, tr("STR_BASES_LOST").c_str(),				Text::intWide(xcomBasesLost).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_CRAFT").c_str(),				Text::intWide(totalCrafts).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_SCIENTISTS").c_str(),		Text::intWide(currentScientists).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_ENGINEERS").c_str(),			Text::intWide(currentEngineers).c_str());
