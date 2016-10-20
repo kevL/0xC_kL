@@ -356,7 +356,7 @@ void StatisticsState::listStats()
 			i != gameSave->getAlienBases()->end();
 			++i)
 	{
-		if ((*i)->isDetected())
+		if ((*i)->isDetected() == true)
 			++alienBases;
 	}
 
@@ -364,7 +364,7 @@ void StatisticsState::listStats()
 	const int
 //		alienBases   (std::max(0, ids[Target::stTarget[2u]] - 1)), // detected only.
 		terrorSites  (std::max(0, ids[Target::stTarget[3u]] - 1)),
-		ufosDetected (std::max(0, ids[Target::stTarget[0u]] - 1));
+		ufosDetected (std::max(0, ids[Target::stTarget[0u]] - 1)); // is this really detected-only or do UFOs get an Id when spawned.
 
 	int totalCrafts (0);
 	for (std::vector<std::string>::const_iterator

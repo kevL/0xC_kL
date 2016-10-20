@@ -4824,8 +4824,8 @@ bool BattleUnit::isMechanical() const
 bool BattleUnit::avoidsFire() const
 {
 	if (_faction != FACTION_PLAYER // used by the AI only.
-		&& (_arRule->getDamageModifier(DT_IN) > 0.f
-			|| _isZombie == false))
+		&& _isZombie == false
+		&& _arRule->getDamageModifier(DT_IN) > 0.f)
 	{
 		return true;
 	}
