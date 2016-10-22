@@ -336,11 +336,12 @@ void ProjectileFlyBState::init()
 			if (tileTarget->getTileUnit() != nullptr
 				&& (_unit->getFaction() != FACTION_PLAYER
 					|| (   (SDL_GetModState() & KMOD_SHIFT) == 0
-						&& (SDL_GetModState() & KMOD_CTRL)  == 0)))
+						&& (SDL_GetModState() & KMOD_CTRL)  == 0
+						&& tileTarget->getTileUnit()->getUnitVisible() == true)))
 			{
 				//Log(LOG_INFO) << ". tileTarget has unit";
-				if (_action.posTarget == _posOrigin
-					|| tileTarget->getTileUnit() == _unit)
+				if (tileTarget->getTileUnit() == _unit
+					|| _action.posTarget == _posOrigin)
 				{
 					//Log(LOG_INFO) << "projFlyB targetPos[2] = " << _action.target;
 					_targetVoxel.x += 8; // don't shoot yourself but shoot at the floor
@@ -348,11 +349,11 @@ void ProjectileFlyBState::init()
 //					_targetVoxel.z += 2; // borkity bork.
 					//Log(LOG_INFO) << "projFlyB targetVoxel[2] = " << _targetVoxel;
 				}
-//				else if (!_parent->getTileEngine()->canTargetUnit(&originVoxel, targetTile, &_targetVoxel, _unit)) // <- their code.
+//				else if (!_parent->getTileEngine()->doTargetUnit(&originVoxel, targetTile, &_targetVoxel, _unit)) // <- their code.
 //				{
 //					_targetVoxel = Position(-16,-16,-24); // out of bounds, even after voxel to tile calculation. // lo..
 //				}
-				else if (_parent->getTileEngine()->canTargetUnit( // <- this is a normal shot by xCom or aLiens.
+				else if (_parent->getTileEngine()->doTargetUnit( // <- this is a normal shot by xCom or aLiens.
 															&originVoxel,
 															tileTarget,
 															&_targetVoxel,
@@ -360,20 +361,26 @@ void ProjectileFlyBState::init()
 															nullptr,
 															&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
 				{
+//					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
+//					_targetVoxel.x += 8;
+//					_targetVoxel.y += 8;
+//					_targetVoxel.z += 10;
+					// question: where does no-LoF popup -- oh yeah in a convoluted crap.
+
 					// karadoc: if this action requires direct line-of-sight, should abort.
 					// iff it's a line-shot (not arcing).
 					// kL_note: You're playing around with the AI here, dude -- and I don't think you've considered that AT ALL.
 					// Apart from that, I'm not so sure this is needed with the changes I've made to
-					// - canTargetUnit()
+					// - doTargetUnit()
 					// - plotLine()
 					// - plotParabola()
 					// - etc etc etc.
 					// - validateThrow()
 					// - validateTarget()
 					// - verifyTarget()
-					// - canTargetTilepart()
+					// - doTargetTilepart()
 					// - &tc.
-					// On the bright side, the AI may well have already done a canTargetUnit() call, and so this would
+					// On the bright side, the AI may well have already done a doTargetUnit() call, and so this would
 					// always be true for the AI if and whenever it gets to here.
 					//
 					// ... but disable it anyway.
@@ -389,7 +396,7 @@ void ProjectileFlyBState::init()
 //								_unit->setUnitStatus(STATUS_STANDING);
 								_parent->popState();
 								return;
-								//Log(LOG_INFO) << ". canTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
+								//Log(LOG_INFO) << ". doTargetUnit() targetVoxel " << _targetVoxel << " targetTile " << Position::toTileSpace(_targetVoxel);
 							}
 					} */
 				}
@@ -400,7 +407,7 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has content-object";
 				if (tileTarget->isRevealed() == false
-					|| _parent->getTileEngine()->canTargetTilepart(
+					|| _parent->getTileEngine()->doTargetTilepart(
 															&originVoxel,
 															tileTarget,
 															O_OBJECT,
@@ -419,7 +426,7 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has northwall";
 				if (tileTarget->isRevealed(ST_NORTH) == false
-					|| _parent->getTileEngine()->canTargetTilepart(
+					|| _parent->getTileEngine()->doTargetTilepart(
 															&originVoxel,
 															tileTarget,
 															O_NORTHWALL,
@@ -436,7 +443,7 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has westwall";
 				if (tileTarget->isRevealed(ST_WEST) == false
-					|| _parent->getTileEngine()->canTargetTilepart(
+					|| _parent->getTileEngine()->doTargetTilepart(
 															&originVoxel,
 															tileTarget,
 															O_WESTWALL,
@@ -453,7 +460,7 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has floor";
 				if (tileTarget->isRevealed() == false
-					|| _parent->getTileEngine()->canTargetTilepart(
+					|| _parent->getTileEngine()->doTargetTilepart(
 															&originVoxel,
 															tileTarget,
 															O_FLOOR,

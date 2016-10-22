@@ -251,7 +251,7 @@ void Pathfinding::calculatePath(
 						tileStop,
 						O_OBJECT,
 						launchTarget) == true
-				|| tileStop->getTuCostTile(O_OBJECT, _mType) == FAIL)
+				|| tileStop->getTuCostTile(O_OBJECT, _mType) == PF_FAIL_TU)
 			{
 				//Log(LOG_INFO) << ". early out [2]";
 				return;
@@ -532,7 +532,7 @@ bool Pathfinding::aStarPath( // private.
 							&posStop,
 							launchTarget);
 			//Log(LOG_INFO) << ". dir= " << dir << " tuCost=" << tuCost;
-			if (tuCost < FAIL)
+			if (tuCost < PF_FAIL_TU)
 			{
 //				if (sneak == true && _battleSave->getTile(posStop)->getTileVisible() == true)
 //					tuCost *= 2;
@@ -624,7 +624,7 @@ std::vector<size_t> Pathfinding::findReachable(
 							dir,
 							&posStop);
 
-			if (tuCost < FAIL)
+			if (tuCost < PF_FAIL_TU)
 			{
 				tuCostTotal = nodeStart->getTuCostNode() + tuCost;
 				if (   tuCostTotal <= tuCap
@@ -768,7 +768,7 @@ int Pathfinding::getTuCostPf(
 			if (   (tileStart = _battleSave->getTile(posStart + posOffset)) == nullptr
 				|| (tileStop  = _battleSave->getTile(*posStop + posOffset)) == nullptr)
 			{
-				return FAIL;
+				return PF_FAIL_TU;
 			}
 
 			if (_mType != MT_FLY)
@@ -778,7 +778,7 @@ int Pathfinding::getTuCostPf(
 								tileStart,
 								unitSize) == false)
 				{
-					if (dir != DIR_DOWN) return FAIL;
+					if (dir != DIR_DOWN) return PF_FAIL_TU;
 
 					fall = true;
 					++partsOnAir;
@@ -787,7 +787,7 @@ int Pathfinding::getTuCostPf(
 				else if (tileStart->isFloored(tileStart->getTileBelow(_battleSave)) == false
 					&& ++partsOnAir == quadrants)
 				{
-					if (dir != DIR_DOWN) return FAIL;
+					if (dir != DIR_DOWN) return PF_FAIL_TU;
 
 					fall = true;
 					//if (_debug) Log(LOG_INFO) << ". . . not Fly no Floor fall TRUE partsOnAir= " << partsOnAir;
@@ -800,8 +800,8 @@ int Pathfinding::getTuCostPf(
 					||    (tileStop->getMapData(O_WESTWALL) != nullptr
 						&& tileStop->getMapData(O_WESTWALL)->isHingeDoor() == true)))
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . clipped by hinged door FAIL";
-				return FAIL;
+				//if (_debug) Log(LOG_INFO) << ". . . clipped by hinged door PF_FAIL_TU";
+				return PF_FAIL_TU;
 			}
 
 			if (dir < DIR_UP && tileStart->getTerrainLevel() > -16
@@ -811,8 +811,8 @@ int Pathfinding::getTuCostPf(
 								dir,
 								launchTarget) == true))
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . tLevel too great Or tile block FAIL [1]";
-				return FAIL;
+				//if (_debug) Log(LOG_INFO) << ". . . tLevel too great Or tile block PF_FAIL_TU [1]";
+				return PF_FAIL_TU;
 			}
 
 
@@ -870,14 +870,14 @@ int Pathfinding::getTuCostPf(
 				&& tileStopBelow->getTileUnit() != _unit
 				&& tileStopBelow->getTileUnit()->getHeight(true) - tileStopBelow->getTerrainLevel() > UNIT_HEIGHT) // cf. UnitWalkBState::statusStand()
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . flight clipped by a unit below FAIL";
-				return FAIL;
+				//if (_debug) Log(LOG_INFO) << ". . . flight clipped by a unit below PF_FAIL_TU";
+				return PF_FAIL_TU;
 			}
 
 			if (tileStop == nullptr)
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . tileStop Invalid FAIL";
-				return FAIL;
+				//if (_debug) Log(LOG_INFO) << ". . . tileStop Invalid PF_FAIL_TU";
+				return PF_FAIL_TU;
 			}
 
 			switch (dir)
@@ -893,8 +893,8 @@ int Pathfinding::getTuCostPf(
 						{
 							case FLY_CANT:
 							case FLY_BLOCKED:
-								//if (_debug) Log(LOG_INFO) << ". . . fly blocked FAIL";
-								return FAIL;
+								//if (_debug) Log(LOG_INFO) << ". . . fly blocked PF_FAIL_TU";
+								return PF_FAIL_TU;
 
 							case FLY_GRAVLIFT:
 							case FLY_GOOD:
@@ -909,7 +909,7 @@ int Pathfinding::getTuCostPf(
 										case BIGWALL_NESW:
 										case BIGWALL_NWSE:
 											cost += tileStop->getTuCostTile(O_OBJECT, _mType);
-											// TODO: Early-exit if cost>FAIL.
+											// TODO: Early-exit if cost>PF_FAIL_TU.
 									}
 								}
 						}
@@ -924,8 +924,8 @@ int Pathfinding::getTuCostPf(
 										dir,
 										launchTarget) == true))
 					{
-						//if (_debug) Log(LOG_INFO) << ". . . tLevel too great Or tile block FAIL [2]";
-						return FAIL;
+						//if (_debug) Log(LOG_INFO) << ". . . tLevel too great Or tile block PF_FAIL_TU [2]";
+						return PF_FAIL_TU;
 					}
 			}
 
@@ -955,8 +955,8 @@ int Pathfinding::getTuCostPf(
 								dir,
 								launchTarget) == true))
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . tLevel too great Or tile block FAIL [3]";
-				return FAIL;
+				//if (_debug) Log(LOG_INFO) << ". . . tLevel too great Or tile block PF_FAIL_TU [3]";
+				return PF_FAIL_TU;
 			}
 
 			if (isBlockedTile(
@@ -967,10 +967,10 @@ int Pathfinding::getTuCostPf(
 							tileStop,
 							O_OBJECT,
 							launchTarget) == true
-				|| tileStop->getTuCostTile(O_OBJECT, _mType) == FAIL)
+				|| tileStop->getTuCostTile(O_OBJECT, _mType) == PF_FAIL_TU)
 			{
-				//if (_debug) Log(LOG_INFO) << ". . . tile blocked or tileCost FAIL";
-				return FAIL;
+				//if (_debug) Log(LOG_INFO) << ". . . tile blocked or tileCost PF_FAIL_TU";
+				return PF_FAIL_TU;
 			}
 // CHECK FOR BLOCKAGE_end.
 
@@ -999,9 +999,9 @@ int Pathfinding::getTuCostPf(
 				if ((dir & 1) == 1)
 					cost += (cost + 1) >> 1u;									// end_Copy.
 
-				// TODO: Early-exit if cost>FAIL.
-//				if (cost >= FAIL) return FAIL; // quick outs ->
-//				else if (launchTarget != nullptr) return 0; // <- provided walls have actually been blocked already, not based on TU > FAIL
+				// TODO: Early-exit if cost>PF_FAIL_TU.
+//				if (cost >= PF_FAIL_TU) return PF_FAIL_TU; // quick outs ->
+//				else if (launchTarget != nullptr) return 0; // <- provided walls have actually been blocked already, not based on TU > PF_FAIL_TU
 
 //				if (posOffsetVertical.z > 0) ++cost;
 
@@ -1055,7 +1055,7 @@ int Pathfinding::getTuCostPf(
 					launchTarget) == true)
 		{
 			//if (_debug) Log(LOG_INFO) << ". . large blocked [1]";
-			return FAIL;
+			return PF_FAIL_TU;
 		}
 
 		// - then check the path between part 1,0 and part 0,1 at destination position
@@ -1066,7 +1066,7 @@ int Pathfinding::getTuCostPf(
 					launchTarget) == true)
 		{
 			//if (_debug) Log(LOG_INFO) << ". . large blocked [2]";
-			return FAIL;
+			return PF_FAIL_TU;
 		}
 
 		if (fall == false)
@@ -1089,7 +1089,7 @@ int Pathfinding::getTuCostPf(
 			if (std::abs(maxLevel - minLevel) > 8)
 			{
 				//if (_debug) Log(LOG_INFO) << ". . large blocked [3]";
-//				return FAIL;
+//				return PF_FAIL_TU;
 			}
 		}
 
@@ -1786,7 +1786,7 @@ bool Pathfinding::isBlockedTile( // private.
 	static const int TU_LARGEBLOCK (6); // stop large units from going through hedges and over fences
 
 	const int partCost (tile->getTuCostTile(partType, _mType));
-	if (partCost == FAIL
+	if (partCost == PF_FAIL_TU
 		|| (partCost > TU_LARGEBLOCK
 			&& _unit != nullptr
 			&& _unit->getArmor()->getSize() == 2))

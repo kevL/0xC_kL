@@ -1259,10 +1259,10 @@ void Globe::draw()
 	drawLand();
 	drawBevel();
 	drawRadars();
+	drawFlightPaths();
 	drawShadow();
 	drawMarkers();
 	drawDetail();
-	drawFlightPaths();
 
 	if (_drawCrosshair == true) drawCrosshair();
 }
@@ -1714,7 +1714,7 @@ void Globe::drawGlobeCircle( // private.
 				this,
 				x,y,
 				x2,y2,
-				4,
+				6,
 				color);
 
 		x2 = x;

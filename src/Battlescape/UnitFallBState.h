@@ -50,11 +50,14 @@ private:
 	SavedBattleGame* _battleSave;
 	TileEngine* _te;
 
+	/// Checks if a BattleUnit can fall to the next lower level.
+	bool canFall(const BattleUnit* const unit);
+
 
 	public:
-		/// Creates a UnitWalkBState.
+		/// Creates a UnitFallBState.
 		explicit UnitFallBState(BattlescapeGame* const parent);
-		/// Cleans up the UnitWalkBState.
+		/// Cleans up the UnitFallBState.
 		~UnitFallBState();
 
 		/// Gets the label of the BattleState.

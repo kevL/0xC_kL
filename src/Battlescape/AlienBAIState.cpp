@@ -754,7 +754,7 @@ void AlienBAIState::setupAmbush() // private.
 				const int spotters (tallySpotters(pos));
 				//Log(LOG_INFO) << ". . . spotters = " << spotters;
 				if (spotters /*tallySpotters(pos)*/ == 0
-					&& _te->canTargetUnit(
+					&& _te->doTargetUnit(
 									&originVoxel,
 									tile,
 									&scanVoxel,
@@ -831,7 +831,7 @@ void AlienBAIState::setupAmbush() // private.
 				targetPath.pop_back();
 
 				tile = _battleSave->getTile(pos = posNext);
-				if (_te->canTargetUnit(
+				if (_te->doTargetUnit(
 									&originVoxel,
 									tile,
 									&scanVoxel,
@@ -1341,7 +1341,7 @@ int AlienBAIState::tallySpotters(const Position& pos) const // private.
 			&& TileEngine::distSqr(pos, (*i)->getPosition()) <= TileEngine::SIGHTDIST_TSp_Sqr) // Could use checkViewSector() and/or visible()
 		{
 			originVoxel = _te->getSightOriginVoxel(*i);
-			if (_te->canTargetUnit(				// check if xCom agent can target on position
+			if (_te->doTargetUnit(				// check if xCom agent can target on position
 								&originVoxel,	// WARNING: Does not include visible() check.
 								_battleSave->getTile(pos),
 								&targetVoxel,
@@ -1397,7 +1397,7 @@ int AlienBAIState::selectNearestTarget() // private.
 				else
 				{
 					origin = _te->getSightOriginVoxel(_unit);
-					canTarget = _te->canTargetUnit(
+					canTarget = _te->doTargetUnit(
 											&origin,
 											(*i)->getUnitTile(),
 											&target,
@@ -1406,7 +1406,7 @@ int AlienBAIState::selectNearestTarget() // private.
 //				if (_hasRifle == true || _hasMelee == false) // -> is ambiguity like that required.
 //				{
 //					origin = _te->getOriginVoxel(action);
-//					canTarget = _te->canTargetUnit(
+//					canTarget = _te->doTargetUnit(
 //											&origin,
 //											(*i)->getTile(),
 //											&target,
@@ -1558,7 +1558,7 @@ bool AlienBAIState::findFirePosition() // private.
 						_battleSave->getTileIndex(pos)) != _reachableAttack.end())
 			{
 				originVoxel = _te->getSightOriginVoxel(_unit, &pos);
-				if (_battleSave->getTileEngine()->canTargetUnit(
+				if (_battleSave->getTileEngine()->doTargetUnit(
 															&originVoxel,
 															_unitAggro->getUnitTile(),
 															&targetVoxel,
@@ -2260,7 +2260,7 @@ bool AlienBAIState::psiAction() // private.
 										(*i)->getPosition(),
 										_unit->getPosition()) << 1u;
 					originVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(_unit);
-					losTest = static_cast<int>(_battleSave->getTileEngine()->canTargetUnit(
+					losTest = static_cast<int>(_battleSave->getTileEngine()->doTargetUnit(
 																						&originVoxel,
 																						(*i)->getUnitTile(),
 																						&targetVoxel,
@@ -2490,7 +2490,7 @@ bool AlienBAIState::getNodeOfBestEfficacy(BattleAction* action)
 													_unit->getPosition());
 		if (dist < 21
 			&& dist > action->weapon->getRules()->getExplosionRadius()
-			&& _battleSave->getTileEngine()->canTargetTilepart(
+			&& _battleSave->getTileEngine()->doTargetTilepart(
 															&originVoxel,
 															_battleSave->getTile((*i)->getPosition()),
 															O_FLOOR,
@@ -2511,7 +2511,7 @@ bool AlienBAIState::getNodeOfBestEfficacy(BattleAction* action)
 					&& dist < action->weapon->getRules()->getExplosionRadius())
 				{
 					Position targetOriginVoxel = _battleSave->getTileEngine()->getSightOriginVoxel(*j);
-					if (_battleSave->getTileEngine()->canTargetTilepart(
+					if (_battleSave->getTileEngine()->doTargetTilepart(
 																	&targetOriginVoxel,
 																	_battleSave->getTile((*i)->getPosition()),
 																	O_FLOOR,

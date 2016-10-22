@@ -184,7 +184,7 @@ private:
 				const BattleAction& action,
 				const Tile* const tile = nullptr) const;
 		/// Gets the validity of targeting a BattleUnit by voxel-type.
-		bool canTargetUnit(
+		bool doTargetUnit(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
 				Position* const scanVoxel,
@@ -192,7 +192,7 @@ private:
 				const BattleUnit* targetUnit = nullptr,
 				bool* const force = nullptr) const;
 		/// Gets the validity of targeting a tile-part by voxel-type.
-		bool canTargetTilepart(
+		bool doTargetTilepart(
 				const Position* const originVoxel,
 				const Tile* const tileTarget,
 				const MapDataType tilePart,

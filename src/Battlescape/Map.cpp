@@ -1550,7 +1550,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									}
 
 									// TODO: Use stuff from ProjectileFlyBState::init()
-									// as well as TileEngine::canTargetUnit() & TileEngine::canTargetTilepart()
+									// as well as TileEngine::doTargetUnit() & TileEngine::doTargetTilepart()
 									// to turn accuracy to 'red 0' if target is out of LoS/LoF.
 									//
 									// TODO: use Projectile::rangeAccuracy() as a static function.
@@ -1564,7 +1564,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									{
 										const Position originVoxel (_te->getSightOriginVoxel(action->actor));
 										Position scanVoxel;
-										zero = _te->canTargetUnit(
+										zero = _te->doTargetUnit(
 															&originVoxel,
 															_tile,
 															&scanVoxel,

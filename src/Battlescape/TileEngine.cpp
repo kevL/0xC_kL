@@ -884,7 +884,7 @@ bool TileEngine::visible(
 					{
 						const Position originVoxel (getSightOriginVoxel(unit));
 						Position scanVoxel;
-						if (canTargetUnit(
+						if (doTargetUnit(
 										&originVoxel,
 										tile,
 										&scanVoxel,
@@ -940,7 +940,7 @@ bool TileEngine::visible(
  */
 const BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const	// now I love const; it does absolutely nothing other than
 {																			// cause problems and make a pretty blue color in the IDE.
-	if (tile != nullptr) // safety for canTargetUnit().
+	if (tile != nullptr) // safety for doTargetUnit().
 	{
 		if (tile->getTileUnit() != nullptr) // warning: Careful not to use this when UnitWalkBState has transient units placed.
 			return tile->getTileUnit();
@@ -1028,7 +1028,7 @@ Position TileEngine::getOriginVoxel(
  *						  automatically verified in Projectile instantiation (default nullptr not used)
  * @return, true if a unit can be targeted in @a tileTarget
  */
-bool TileEngine::canTargetUnit(
+bool TileEngine::doTargetUnit(
 		const Position* const originVoxel,
 		const Tile* const tileTarget,
 		Position* const scanVoxel,
@@ -1048,7 +1048,7 @@ bool TileEngine::canTargetUnit(
 		debugged =
 		debug = true;
 		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "TileEngine::canTargetUnit() shooter id-" << _battleSave->getSelectedUnit()->getId();
+		Log(LOG_INFO) << "TileEngine::doTargetUnit() shooter id-" << _battleSave->getSelectedUnit()->getId();
 	}
 	else debug = false; */
 
@@ -1266,7 +1266,7 @@ bool TileEngine::canTargetUnit(
 	// kL_note: Except I'm not so sure that I haven't fixed the glitch. If I
 	// have that could throw my fix off again.
 
-	//if (debug) Log(LOG_INFO) << "TileEngine::canTargetUnit() exit FALSE";
+	//if (debug) Log(LOG_INFO) << "TileEngine::doTargetUnit() exit FALSE";
 	return false;
 }
 
@@ -1279,7 +1279,7 @@ bool TileEngine::canTargetUnit(
  * @param excludeUnit	- pointer to unitSelf (to not hit self)
  * @return, true if tile-part can be targeted
  */
-bool TileEngine::canTargetTilepart(
+bool TileEngine::doTargetTilepart(
 		const Position* const originVoxel,
 		const Tile* const tileTarget,
 		const MapDataType tilePart,
@@ -1348,7 +1348,7 @@ bool TileEngine::canTargetTilepart(
 			break;
 
 		default:
-			//Log(LOG_INFO) << "TileEngine::canTargetTilepart() EXIT, ret False (tilePart is O_NULPART)";
+			//Log(LOG_INFO) << "TileEngine::doTargetTilepart() EXIT, ret False (tilePart is O_NULPART)";
 			return false;
 	}
 
@@ -1380,7 +1380,7 @@ bool TileEngine::canTargetTilepart(
 			}
 		}
 	}
-	//Log(LOG_INFO) << "canTargetTilepart minZ = " << zMin;
+	//Log(LOG_INFO) << "doTargetTilepart minZ = " << zMin;
 
 	if (foundMinZ == false)
 		return false; // empty object!!!
@@ -1413,7 +1413,7 @@ bool TileEngine::canTargetTilepart(
 		}
 	}
 
-	//Log(LOG_INFO) << "canTargetTilepart maxZ = " << zMax;
+	//Log(LOG_INFO) << "doTargetTilepart maxZ = " << zMax;
 	if (foundMaxZ == true)
 	{
 		if (zMin > zMax) zMin = zMax;
@@ -1516,7 +1516,7 @@ int TileEngine::checkVoxelExposure(
 		relX,	relY,
 		-relX,	-relY
 	};
-//	int targetSlices[10] = // taken from "canTargetUnit()"
+//	int targetSlices[10] = // taken from "doTargetUnit()"
 //	{
 //		0,		0,
 //		relX,	relY,
@@ -5573,7 +5573,7 @@ bool TileEngine::validMeleeRange(
 															posOrigin,
 															actor->getHeight(true) + EYE_OFFSET
 																- tileOrigin->getTerrainLevel());
-					if (canTargetUnit(
+					if (doTargetUnit(
 								&voxelOrigin,
 								tileTarget,
 								&voxelTarget,
@@ -5644,7 +5644,7 @@ Position TileEngine::getMeleePosition(const BattleUnit* const actor) const
 															posOrigin,
 															actor->getHeight(true) + EYE_OFFSET
 																- tileOrigin->getTerrainLevel());
-					if (canTargetUnit(
+					if (doTargetUnit(
 									&voxelOrigin,
 									tileTarget,
 									&voxelTarget,
@@ -5712,7 +5712,7 @@ Tile* TileEngine::getExecutionTile(const BattleUnit* const actor) const
 															posOrigin,
 															actor->getHeight(true) + EYE_OFFSET
 																- tileOrigin->getTerrainLevel());
-					if (canTargetTilepart(
+					if (doTargetTilepart(
 										&voxelOrigin,
 										tileOrigin,
 										O_FLOOR,

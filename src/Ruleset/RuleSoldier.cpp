@@ -97,7 +97,7 @@ void RuleSoldier::load(const YAML::Node& node)
 	_floatHeight	= node["floatHeight"]	.as<int>(_floatHeight);
 
 //	if (_floatHeight + _standHeight > 24)
-	if (_standHeight > 24) // reasons. See TileEngine::canTargetUnit()
+	if (_standHeight > 24) // reasons. See TileEngine::doTargetUnit()
 	{
 //		throw Exception("Error with unit " + _type + ": Soldier height + float height may not exceed 24");
 		throw Exception("Error with Soldier " + _type + ": Soldier height shall not exceed 24");

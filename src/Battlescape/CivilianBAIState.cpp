@@ -417,7 +417,7 @@ int CivilianBAIState::selectHostile() // private.
 										_unit->getPosition(),
 										(*i)->getPosition());
 			if (distTest < dist
-				&& _te->canTargetUnit(
+				&& _te->doTargetUnit(
 								&originVoxel,
 								(*i)->getUnitTile(),
 								&targetVoxel,
@@ -463,7 +463,7 @@ int CivilianBAIState::tallySpotters(const Position& pos) const // private.
 			&& TileEngine::distSqr(pos, (*i)->getPosition()) <= TileEngine::SIGHTDIST_TSp_Sqr) // Could use checkViewSector() and/or visible()
 		{
 			originVoxel = _te->getSightOriginVoxel(*i);
-			if (_te->canTargetUnit(
+			if (_te->doTargetUnit(
 							&originVoxel,
 							_battleSave->getTile(pos),
 							&targetVoxel,

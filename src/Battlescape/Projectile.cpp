@@ -921,7 +921,7 @@ Position Projectile::getStrikeVector() const
 
 /**
  * Sets a forced-shot against a Unit.
- * @note This is used in rare circumstances when TileEngine::canTargetUnit()
+ * @note This is used in rare circumstances when TileEngine::doTargetUnit()
  * determines a targetVoxel that's inbetween a targetUnit's upper and lower
  * exposed areas -- so that verifyTarget() will allow a shot against a Voxel_Unit
  * despite the plotted voxel belonging to an object-part. In this case you'll

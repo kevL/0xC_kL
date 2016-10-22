@@ -54,8 +54,6 @@ class Pathfinding
 private:
 	static bool _debug;
 
-	static const int FAIL = 255;
-
 	bool
 		_alt,
 		_ctrl,
@@ -119,15 +117,17 @@ private:
 	public:
 		static const int
 			TU_INFINITE		= std::numeric_limits<int>::max(),
-			TU_FIRE_AVOID	= 32,
-			TU_KNEEL		=  3, // NOTE: Tu_Kneel and _Stand values *must* be different
-			TU_STAND		= 10, // for BattlescapeGame::kneelToggle() to work correctly.
-			EN_STAND		=  5,
+			TU_FIRE_AVOID	=  32,
+			TU_KNEEL		=   3, // NOTE: Tu_Kneel and _Stand values *must* be different
+			TU_STAND		=  10, // for BattlescapeGame::kneelToggle() to work correctly.
+			EN_STAND		=   5,
 
-			DIR_VERT_NONE	=  0, // be careful w/ that, it's not a real direction; should be used only for '_dirVertical' in BattleUnit class.
-			DIR_UP			=  8,
-			DIR_DOWN		=  9,
-			UNIT_HEIGHT		= 26;
+			DIR_VERT_NONE	=   0, // be careful w/ that, it's not a real direction; should be used only for '_dirVertical' in BattleUnit class.
+			DIR_UP			=   8,
+			DIR_DOWN		=   9,
+			UNIT_HEIGHT		=  26,
+
+			PF_FAIL_TU		= 255;
 
 		static Uint8
 			red,
