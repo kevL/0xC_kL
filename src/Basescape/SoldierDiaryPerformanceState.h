@@ -85,8 +85,8 @@ private:
 	SoldierDiaryOverviewState* _overview;
 
 	SurfaceSet
-		* _srtAward,
-		* _srtAwardLevel;
+		* _srtAwards,
+		* _srtLevels;
 	Text
 		* _txtTitle,
 		* _txtBaseLabel,

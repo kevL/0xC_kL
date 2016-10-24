@@ -123,8 +123,8 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 
 	// Award sprites
-	_srtAward = _game->getResourcePack()->getSurfaceSet("Awards");
-	_srtAwardLevel = _game->getResourcePack()->getSurfaceSet("AwardDecorations");
+	_srtAwards = _game->getResourcePack()->getSurfaceSet("Awards");
+	_srtLevels = _game->getResourcePack()->getSurfaceSet("AwardDecorations");
 	for (size_t
 			i = 0u;
 			i != SPRITE_ROWS;
@@ -628,10 +628,10 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 			{
 				awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // draw each award's sprite
 				sprite = awardRule->getSprite();
-				_srtAward->getFrame(sprite)->blit(_srfAward[j - scroll]);
+				_srtAwards->getFrame(sprite)->blit(_srfAward[j - scroll]);
 
 				if ((sprite = static_cast<int>((*i)->getAwardLevel())) != 0) // draw each award's level-sprite
-					_srtAwardLevel->getFrame(sprite)->blit(_srfLevel[j - scroll]);
+					_srtLevels->getFrame(sprite)->blit(_srfLevel[j - scroll]);
 			}
 		}
 	}
