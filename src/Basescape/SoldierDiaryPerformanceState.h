@@ -78,15 +78,15 @@ private:
 	const std::vector<Soldier*>* _listBase;
 	const std::vector<SoldierDead*>* _listDead;
 	std::vector<Surface*>
-		_srfSprite,
+		_srfAward,
 		_srfLevel;
 
 	SoldierDiary* _diary;
 	SoldierDiaryOverviewState* _overview;
 
 	SurfaceSet
-		* _srtSprite,
-		* _srtDecor;
+		* _srtAward,
+		* _srtAwardLevel;
 	Text
 		* _txtTitle,
 		* _txtBaseLabel,

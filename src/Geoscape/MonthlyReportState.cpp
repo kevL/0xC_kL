@@ -101,7 +101,7 @@ MonthlyReportState::MonthlyReportState()
 //	add(_txtMaintenance,	"text1", "monthlyReport");
 //	add(_txtBalance,		"text1", "monthlyReport");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

@@ -76,7 +76,7 @@ NewGameState::NewGameState()
 	add(_btnOk,				"button",	"newGameMenu");
 	add(_btnCancel,			"button",	"newGameMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

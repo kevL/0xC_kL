@@ -73,7 +73,7 @@ LowFuelState::LowFuelState(
 	add(_btnOk5Secs,	"button",	"lowFuel");
 	add(_btnOk,			"button",	"lowFuel");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));

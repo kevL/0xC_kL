@@ -58,7 +58,7 @@ InfoboxDialogState::InfoboxDialogState(const std::wstring& msg)
 	add(_txtTitle,	"infoBoxOK",		"battlescape");
 	add(_btnOk,		"infoBoxOKButton",	"battlescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_frame->setHighContrast();

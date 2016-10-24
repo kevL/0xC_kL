@@ -53,7 +53,7 @@ ListLoadState::ListLoadState(OptionsOrigin origin)
 {
 	_txtTitle->setText(tr("STR_SELECT_GAME_TO_LOAD"));
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

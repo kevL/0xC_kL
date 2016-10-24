@@ -53,7 +53,7 @@ ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
 	add(_btnOk,		"button",	"geoResearch");
 	add(_txtTitle,	"text1",	"geoResearch");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));

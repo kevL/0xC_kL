@@ -89,7 +89,7 @@ BaseDefenseState::BaseDefenseState(
 	add(_txtDestroyed,	"text",		"baseDefense");
 	add(_btnOk,			"button",	"baseDefense");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));

@@ -293,7 +293,7 @@ ArticleStateBaseFacility::ArticleStateBaseFacility(const ArticleDefinitionBaseFa
 		_lstInfo->setCellColor(row, 1u, BASESCAPE_WHITE);
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

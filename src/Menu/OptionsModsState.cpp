@@ -50,7 +50,7 @@ OptionsModsState::OptionsModsState(OptionsOrigin origin)
 	_lstMods = new TextList(200, 137, 94, 8);
 	add(_lstMods, "optionLists", "modsMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 	// how much room do you need for YES/NO
 	Text text (Text(100, 9));

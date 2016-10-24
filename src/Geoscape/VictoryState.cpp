@@ -98,7 +98,7 @@ VictoryState::VictoryState()
 
 	_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_WIN);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 //	_timer->onTimer((StateHandler)& VictoryState::screenTimer);

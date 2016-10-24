@@ -83,7 +83,7 @@ CraftsState::CraftsState(Base* base)
 	add(_lstCrafts,		"list",		"craftSelect");
 	add(_btnOk,			"button",	"craftSelect");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));

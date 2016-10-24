@@ -50,7 +50,7 @@ NoContainmentState::NoContainmentState()
 	add(_txtTitle,	"text",		"noContainment");
 	add(_btnOk,		"button",	"noContainment");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

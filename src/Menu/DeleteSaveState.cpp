@@ -72,7 +72,7 @@ DeleteSaveState::DeleteSaveState(
 	add(_btnNo,			"confirmDelete", "saveMenus");
 	add(_btnYes,		"confirmDelete", "saveMenus");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
@@ -94,7 +94,7 @@ DeleteSaveState::DeleteSaveState(
 	_txtMessage->setText(tr("STR_CONFIRM_DELETE_SAVED_GAME_").arg(Language::fsToWstr(file)));
 
 	if (_origin == OPT_BATTLESCAPE)
-		applyBattlescapeTheme();
+		applyBattlescapeColors();
 }
 
 /**

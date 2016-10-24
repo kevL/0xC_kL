@@ -210,7 +210,7 @@ BaseInfoState::BaseInfoState(
 //		_barPsiLabs->setScale();
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_game->getResourcePack()->getSurface("ALTBACK07.SCR")->blit(_bg);

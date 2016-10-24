@@ -122,7 +122,7 @@ void ResearchInfoState::buildUi() // private.
 	add(_btnCancel,		"button2",	"allocateResearch");
 	add(_btnStartStop,	"button2",	"allocateResearch");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));

@@ -143,7 +143,7 @@ BriefingState::BriefingState(
 	add(_txtBriefing,	"text",		"briefing");
 	add(_btnOk,			"button",	"briefing");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_btnOk->setText(tr("STR_OK"));

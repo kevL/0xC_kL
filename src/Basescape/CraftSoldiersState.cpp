@@ -108,7 +108,7 @@ CraftSoldiersState::CraftSoldiersState(
 		add(_txtCost, "text", "craftSoldiers");
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));

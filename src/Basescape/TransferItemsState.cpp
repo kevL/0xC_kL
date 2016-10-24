@@ -126,7 +126,7 @@ TransferItemsState::TransferItemsState(
 	add(_btnCancel,			"button",	"transferMenu");
 	add(_btnOk,				"button",	"transferMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

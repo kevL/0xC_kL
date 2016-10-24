@@ -109,7 +109,7 @@ SoldierDiaryMissionState::SoldierDiaryMissionState(
 	add(_lstKills,			"list",		"awardsMissionInfo");
 	add(_btnOk,				"button",	"awardsMissionInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK16.SCR"));

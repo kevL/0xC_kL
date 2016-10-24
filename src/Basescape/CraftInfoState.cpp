@@ -140,7 +140,7 @@ CraftInfoState::CraftInfoState(
 	add(_txtCost,		"text1",	"craftInfo");
 	add(_btnOk,			"button",	"craftInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));

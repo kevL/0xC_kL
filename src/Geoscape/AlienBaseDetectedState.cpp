@@ -69,7 +69,7 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 	add(_txtTitle,	"text",		"alienBase");
 	add(_btnOk,		"button",	"alienBase");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

@@ -50,7 +50,7 @@ AliensCrashState::AliensCrashState()
 	add(_txtTitle,	"messageWindows",		"battlescape");
 	add(_btnOk,		"messageWindowButtons",	"battlescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));

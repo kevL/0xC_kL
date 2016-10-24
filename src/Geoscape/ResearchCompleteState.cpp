@@ -70,7 +70,7 @@ ResearchCompleteState::ResearchCompleteState(
 	add(_btnReport,		"button",	"geoResearch");
 	add(_btnOk,			"button",	"geoResearch");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));

@@ -254,7 +254,7 @@ MedikitState::MedikitState(BattleAction* const action)
 	add(_txtUnit);
 	add(_btnClose);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_game->getResourcePack()->getSurface("MEDIBORD.PCK")->blit(_bg);

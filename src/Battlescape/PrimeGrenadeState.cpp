@@ -169,7 +169,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 		_txtTurn[i]->setVerticalAlign(ALIGN_MIDDLE);
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 	lowerAllSurfaces();
 }
 

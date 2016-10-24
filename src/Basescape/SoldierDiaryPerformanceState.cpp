@@ -123,15 +123,15 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 
 	// Award sprites
-	_srtSprite = _game->getResourcePack()->getSurfaceSet("Awards");
-	_srtDecor = _game->getResourcePack()->getSurfaceSet("AwardDecorations");
+	_srtAward = _game->getResourcePack()->getSurfaceSet("Awards");
+	_srtAwardLevel = _game->getResourcePack()->getSurfaceSet("AwardDecorations");
 	for (size_t
 			i = 0u;
 			i != SPRITE_ROWS;
 			++i)
 	{
 		const int offset_y (SPRITES_y + (static_cast<int>(i) * 8));
-		_srfSprite.push_back(new Surface(31, 7, 16, offset_y));
+		_srfAward.push_back(new Surface(31, 7, 16, offset_y));
 		_srfLevel.push_back(new Surface(31, 7, 16, offset_y));
 	}
 
@@ -177,15 +177,15 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 	// Award sprites
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != SPRITE_ROWS;
 			++i)
 	{
-		add(_srfSprite[i]);
+		add(_srfAward[i]);
 		add(_srfLevel[i]);
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
@@ -360,7 +360,7 @@ void SoldierDiaryPerformanceState::init()
 			i != SPRITE_ROWS;
 			++i)
 	{
-		_srfSprite[i]->clear();
+		_srfAward[i]->clear();
 		_srfLevel[i]->clear();
 	}
 
@@ -457,9 +457,9 @@ void SoldierDiaryPerformanceState::init()
 	}
 	else
 	{
-		const SoldierDead* const deadSoldier (_listDead->at(_solId));
-		_diary = deadSoldier->getDiary();
-		_txtTitle->setText(deadSoldier->getLabel());
+		const SoldierDead* const deceased (_listDead->at(_solId));
+		_diary = deceased->getDiary();
+		_txtTitle->setText(deceased->getLabel());
 	}
 
 	std::vector<MissionStatistics*>* tacticals (_game->getSavedGame()->getMissionStatistics());
@@ -609,7 +609,7 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 				i != SPRITE_ROWS;
 				++i)
 		{
-			_srfSprite[i]->clear();
+			_srfAward[i]->clear();
 			_srfLevel[i]->clear();
 		}
 
@@ -618,33 +618,33 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 		int sprite;
 
 		size_t j (0u);
-		for (std::vector<SoldierAward*>::const_iterator
+		for (std::vector<SoldierAward*>::const_iterator // show awards that are on the Soldier's list
 				i = _diary->getSoldierAwards()->begin();
 				i != _diary->getSoldierAwards()->end();
 				++i, ++j)
 		{
-			if (j >= scroll // show awards that are visible on the list
-				&& j - scroll < _srfSprite.size())
+			if (j >= scroll
+				&& j - scroll < _srfAward.size())
 			{
-				awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // handle award's sprites
+				awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // draw each award's sprite
 				sprite = awardRule->getSprite();
-				_srtSprite->getFrame(sprite)->blit(_srfSprite[j - scroll]);
+				_srtAward->getFrame(sprite)->blit(_srfAward[j - scroll]);
 
-				if ((sprite = static_cast<int>((*i)->getClassLevel())) != 0) // handle award's decoration-sprites
-					_srtDecor->getFrame(sprite)->blit(_srfLevel[j - scroll]);
+				if ((sprite = static_cast<int>((*i)->getAwardLevel())) != 0) // draw each award's level-sprite
+					_srtAwardLevel->getFrame(sprite)->blit(_srfLevel[j - scroll]);
 			}
 		}
 	}
 }
 
 /**
- * Exits to the previous screen.
+ * Exits this state and also pops SoldierDiaryOverviewState.
  * @param action - pointer to an Action
  */
 void SoldierDiaryPerformanceState::btnOkClick(Action*)
 {
-	_game->popState();
-	_game->popState();
+	_game->popState(); // <- this
+	_game->popState(); // <- SoldierDiaryOverviewState
 }
 
 /**

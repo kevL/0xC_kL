@@ -86,7 +86,7 @@ ArticleStateTextImage::ArticleStateTextImage(const ArticleDefinitionTextImage* c
 							&& showInfoBtn() == true);
 	_btnExtraInfo->onMouseClick(static_cast<ActionHandler>(&ArticleStateTextImage::btnInfo));
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

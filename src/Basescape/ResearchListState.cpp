@@ -69,7 +69,7 @@ ResearchListState::ResearchListState(
 	add(_lstResearch,	"list",		"selectNewResearch");
 	add(_btnCancel,		"button",	"selectNewResearch");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));

@@ -74,7 +74,7 @@ CraftReadyState::CraftReadyState(
 	add(_btnOk5Secs,	"button",	"geoCraftScreens");
 	add(_btnOk,			"button",	"geoCraftScreens");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));

@@ -89,7 +89,7 @@ MainMenuState::MainMenuState()
 	add(_btnIntro,		"button",	"mainMenu");
 	add(_btnQuit,		"button",	"mainMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

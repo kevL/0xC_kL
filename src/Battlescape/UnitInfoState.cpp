@@ -282,7 +282,7 @@ UnitInfoState::UnitInfoState(
 		add(_btnNext, "button", "stats");
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_game->getResourcePack()->getSurface("UNIBORD.PCK")->blit(_bg);

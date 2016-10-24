@@ -137,7 +137,7 @@ void LoadGameState::buildUi(SDL_Color* const palette)
 			_txtStatus->setHighContrast();
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_txtStatus->setText(tr("STR_LOADING_GAME"));

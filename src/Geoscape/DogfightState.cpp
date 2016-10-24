@@ -1028,7 +1028,8 @@ void DogfightState::advanceDogfight()
 							switch (i)
 							{
 								case 0u:
-									if (_w1Enabled == true) fireWeapon1(); break;
+									if (_w1Enabled == true) fireWeapon1();
+									break;
 								case 1u:
 									if (_w2Enabled == true) fireWeapon2();
 							}

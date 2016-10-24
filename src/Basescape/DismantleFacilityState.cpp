@@ -80,7 +80,7 @@ DismantleFacilityState::DismantleFacilityState(
 	add(_btnCancel,		"button",	"dismantleFacility");
 	add(_btnOk,			"button",	"dismantleFacility");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

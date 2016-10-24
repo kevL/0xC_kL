@@ -84,7 +84,7 @@ StoresState::StoresState(Base* const base)
 	add(_btnTransfers,	"button",	"storesInfo");
 	add(_btnOk,			"button",	"storesInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

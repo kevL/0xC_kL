@@ -119,7 +119,7 @@ ArticleStateUfo::ArticleStateUfo(const ArticleDefinitionUfo* const defs)
 	_lstInfo = new TextList(300, 65,10,68);
 	add(_lstInfo);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_lstInfo->setColor(GEOSCAPE_CYAN);

@@ -85,7 +85,7 @@ ManufactureListState::ManufactureListState(
 	add(_btnCostTable,		"button",	"selectNewManufacture");
 	add(_btnCancel,			"button",	"selectNewManufacture");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));

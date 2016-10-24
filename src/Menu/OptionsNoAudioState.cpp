@@ -41,7 +41,7 @@ OptionsNoAudioState::OptionsNoAudioState(OptionsOrigin origin)
 
 	add(_txtError, "text", "audioMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_txtError->setText(tr("STR_NO_AUDIO_HARDWARE_DETECTED"));

@@ -53,7 +53,7 @@ ArticleStateText::ArticleStateText(const ArticleDefinitionText* const defs)
 	add(_txtTitle);
 	add(_txtInfo);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_game->getResourcePack()->getSurface("BACK10.SCR")->blit(_bg);

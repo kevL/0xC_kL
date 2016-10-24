@@ -143,7 +143,7 @@ NewBattleState::NewBattleState()
 	add(_cbxCraft,			"button1",	"newBattleMenu");
 	add(_cbxMission,		"button1",	"newBattleMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

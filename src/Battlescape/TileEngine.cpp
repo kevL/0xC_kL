@@ -4636,15 +4636,15 @@ DoorResult TileEngine::unitOpensDoor(
 							case DR_WOOD_OPEN:
 								if (rtClick == true)
 									calcTu = true;
-									switch (partType)
-									{
-										default:
-										case O_WESTWALL:
-											partType = O_NORTHWALL;
-											break;
-										case O_NORTHWALL:
-											partType = O_WESTWALL;
-									}
+								switch (partType)
+								{
+									default:
+									case O_WESTWALL:
+										partType = O_NORTHWALL;
+										break;
+									case O_NORTHWALL:
+										partType = O_WESTWALL;
+								}
 								break;
 
 							case DR_UFO_OPEN:

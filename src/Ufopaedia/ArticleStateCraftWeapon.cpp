@@ -123,7 +123,7 @@ ArticleStateCraftWeapon::ArticleStateCraftWeapon(const ArticleDefinitionCraftWea
 		_lstInfo->setCellColor(i, 1, uPed_GREEN_SLATE);
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

@@ -111,7 +111,7 @@ ManufactureState::ManufactureState(
 	add(_btnNew,			"button",	"manufactureMenu");
 	add(_btnOk,				"button",	"manufactureMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));

@@ -81,7 +81,7 @@ SoldierMemorialState::SoldierMemorialState()
 	add(_btnStatistics,	"button",	"soldierMemorial");
 	add(_btnOk,			"button",	"soldierMemorial");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));

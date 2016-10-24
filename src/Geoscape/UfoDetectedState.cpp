@@ -164,7 +164,7 @@ UfoDetectedState::UfoDetectedState(
 		add(_txtBases,		"text", "UFOInfo");
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(

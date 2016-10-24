@@ -116,7 +116,7 @@ MultipleTargetsState::MultipleTargetsState(
 		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick),
 									Options::keyOkKeypad);
 
-		centerAllSurfaces();
+		centerSurfaces();
 	}
 }
 

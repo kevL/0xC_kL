@@ -185,7 +185,7 @@ DebriefingState::DebriefingState()
 	add(_txtRating,		"text",		"debriefing");
 	add(_btnOk,			"button",	"debriefing");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

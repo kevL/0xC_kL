@@ -88,7 +88,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	add(_txtIncome,			"text2",	"costsInfo");
 	add(_btnOk,				"button",	"costsInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

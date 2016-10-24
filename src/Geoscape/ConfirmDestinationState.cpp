@@ -72,7 +72,7 @@ ConfirmDestinationState::ConfirmDestinationState(
 	add(_btnCancel,	"button",	"confirmDestination");
 	add(_btnOk,		"button",	"confirmDestination");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));

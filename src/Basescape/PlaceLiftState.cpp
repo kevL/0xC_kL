@@ -65,7 +65,7 @@ PlaceLiftState::PlaceLiftState(
 	add(_baseLayout,	"baseView",	"basescape");
 	add(_txtTitle,		"text",		"placeFacility");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));

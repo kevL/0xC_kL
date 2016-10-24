@@ -70,7 +70,7 @@ ExecuteState::ExecuteState(BattleAction* const action)
 	add(_lstTarget);
 	add(_btnCancel,	"messageWindowButtons",	"battlescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));

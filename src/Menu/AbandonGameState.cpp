@@ -74,7 +74,7 @@ AbandonGameState::AbandonGameState(OptionsOrigin origin)
 	add(_btnNo,		"genericButton2",	"geoscape");
 	add(_btnYes,	"genericButton2",	"geoscape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
@@ -102,7 +102,7 @@ AbandonGameState::AbandonGameState(OptionsOrigin origin)
 								SDLK_q);
 
 	if (_origin == OPT_BATTLESCAPE)
-		applyBattlescapeTheme();
+		applyBattlescapeColors();
 }
 
 /**

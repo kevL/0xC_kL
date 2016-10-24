@@ -73,7 +73,7 @@ StatisticsState::StatisticsState()
 	add(_txtTitle,	"text",		"gameStatistics");
 	add(_lstStats,	"list",		"gameStatistics");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

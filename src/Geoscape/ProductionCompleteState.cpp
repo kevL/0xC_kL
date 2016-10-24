@@ -79,7 +79,7 @@ ProductionCompleteState::ProductionCompleteState(
 	add(_btnOk5Secs,	"button",	"geoManufacture");
 	add(_btnOk,			"button",	"geoManufacture");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));

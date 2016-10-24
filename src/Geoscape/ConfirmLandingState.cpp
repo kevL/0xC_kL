@@ -110,7 +110,7 @@ ConfirmLandingState::ConfirmLandingState(
 	add(_btnPatrol,		"button",	"confirmLanding");
 	add(_btnYes,		"button",	"confirmLanding");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK15.SCR"));

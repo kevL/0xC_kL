@@ -118,7 +118,7 @@ CraftEquipmentState::CraftEquipmentState(
 		add(_txtCost, "text", "craftEquipment");
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK04.SCR"));

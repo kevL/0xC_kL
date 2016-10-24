@@ -103,7 +103,7 @@ SoldiersState::SoldiersState(Base* base)
 	add(_btnEquip,		"button",	"soldierList");
 	add(_btnOk,			"button",	"soldierList");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));

@@ -79,7 +79,7 @@ TransferBaseState::TransferBaseState(Base* base)
 	add(_btnMatrix,		"button",	"transferBaseSelect");
 	add(_btnCancel,		"button",	"transferBaseSelect");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

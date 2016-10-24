@@ -206,7 +206,7 @@ InventoryState::InventoryState(
 	add(_srfLoad);
 	add(_inventoryPanel);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_txtName->setBig();

@@ -64,7 +64,7 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 	add(_lstItems,		"list",		"cannotReequip");
 	add(_btnOk,			"button",	"cannotReequip");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

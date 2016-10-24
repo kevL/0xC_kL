@@ -395,7 +395,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 			_txtAmmoDamage[0u]->setText(Text::intWide(itRule->getPower()));
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

@@ -88,7 +88,7 @@ PlaceFacilityState::PlaceFacilityState(
 	add(_txtMaintAmount,	"numbers",	"placeFacility");
 	add(_btnCancel,			"button",	"placeFacility");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

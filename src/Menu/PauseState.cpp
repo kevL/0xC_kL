@@ -90,7 +90,7 @@ PauseState::PauseState(OptionsOrigin origin)
 //	add(_btnOptions,	"button",	"pauseMenu");
 	add(_btnCancel,		"button",	"pauseMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
@@ -142,7 +142,7 @@ PauseState::PauseState(OptionsOrigin origin)
 		case OPT_BATTLESCAPE:
 			_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
 										Options::keyBattleOptions);
-			applyBattlescapeTheme();
+			applyBattlescapeColors();
 	}
 
 	if (_game->getSavedGame()->isIronman() == true)

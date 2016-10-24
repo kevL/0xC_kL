@@ -82,7 +82,7 @@ OptionsGeoscapeState::OptionsGeoscapeState(OptionsOrigin origin)
 	add(_txtDragScroll, "text", "geoscapeMenu");
 	add(_cbxDragScroll, "button", "geoscapeMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_txtDragScroll->setText(tr("STR_DRAG_SCROLL"));

@@ -76,7 +76,7 @@ ManufactureCostsState::ManufactureCostsState()
 	add(_lstProduction,	"list",		"allocateManufacture");
 	add(_btnCancel,		"button",	"allocateManufacture");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));

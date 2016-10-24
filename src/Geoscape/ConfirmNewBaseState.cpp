@@ -75,7 +75,7 @@ ConfirmNewBaseState::ConfirmNewBaseState(
 	add(_btnCancel,	"genericButton2",	"geoscape");
 	add(_btnOk,		"genericButton2",	"geoscape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

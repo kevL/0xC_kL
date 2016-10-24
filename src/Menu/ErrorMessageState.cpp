@@ -131,7 +131,7 @@ void ErrorMessageState::create(
 	add(_btnOk);
 	add(_txtMessage);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setColor(color);

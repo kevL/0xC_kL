@@ -53,7 +53,7 @@ OptionsControlsState::OptionsControlsState(OptionsOrigin origin)
 	else
 		add(_lstControls, "optionLists", "battlescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_lstControls->setColumns(2, 152, 48);

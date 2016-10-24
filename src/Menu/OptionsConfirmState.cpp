@@ -67,7 +67,7 @@ OptionsConfirmState::OptionsConfirmState(OptionsOrigin origin)
 	add(_txtTitle,	"confirmVideo", "mainMenu");
 	add(_txtTimer,	"confirmVideo", "mainMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
@@ -87,7 +87,7 @@ OptionsConfirmState::OptionsConfirmState(OptionsOrigin origin)
 	_txtTimer->setText(tr("STR_DISPLAY_OPTIONS_REVERT").arg(_countdown));
 
 	if (_origin == OPT_BATTLESCAPE)
-		applyBattlescapeTheme();
+		applyBattlescapeColors();
 
 	_timer->onTimer(static_cast<StateHandler>(&OptionsConfirmState::countdown));
 	_timer->start();

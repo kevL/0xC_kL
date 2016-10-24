@@ -96,7 +96,7 @@ MiniMapState::MiniMapState(
 	Surface* const srf (_game->getResourcePack()->getSurface("Scanbord_640")); // "Scanbord" original 320px
 	srf->blit(_bg);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 	_btnLvlUp	= new BattlescapeButton(36, 39,  15, 121); // do not 'center' these ->
 	_btnLvlDown	= new BattlescapeButton(36, 39,  15, 171);

@@ -156,7 +156,7 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 					tr("STR_WEAPON_POWER").c_str(),
 					Text::intWide(itRule->getPower()).c_str());
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

@@ -78,7 +78,7 @@ TargetInfoState::TargetInfoState(
 	add(_btnIntercept,	"button",	"targetInfo");
 	add(_btnOk,			"button",	"targetInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

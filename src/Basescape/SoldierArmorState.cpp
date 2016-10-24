@@ -80,7 +80,7 @@ SoldierArmorState::SoldierArmorState(
 	add(_lstArmor,		"list",		"soldierArmor");
 	add(_btnCancel,		"button",	"soldierArmor");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));

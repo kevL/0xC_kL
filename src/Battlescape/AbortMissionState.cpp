@@ -78,7 +78,7 @@ AbortMissionState::AbortMissionState(
 	add(_btnCancel,			"messageWindowButtons",	"battlescape");
 	add(_btnOk,				"messageWindowButtons",	"battlescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));

@@ -73,7 +73,7 @@ TransfersState::TransfersState(Base* const base)
 	add(_lstTransfers,		"list",		"transferInfo");
 	add(_btnOk,				"button",	"transferInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

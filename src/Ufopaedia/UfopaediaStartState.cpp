@@ -116,7 +116,7 @@ UfopaediaStartState::UfopaediaStartState(bool tactical)
 						offset_y + 4);
 	add(_btnOk, "button1", "ufopaedia");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"), offset_x);

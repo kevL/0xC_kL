@@ -687,7 +687,7 @@ GraphsState::GraphsState()
 	_isfGeoscape->onKeyboardPress(	static_cast<ActionHandler>(&GraphsState::btnGeoscapeClick),
 									Options::keyGeoGraphs);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_timerBlink = new Timer(250u);

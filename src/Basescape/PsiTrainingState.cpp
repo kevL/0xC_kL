@@ -84,7 +84,7 @@ PsiTrainingState::PsiTrainingState(Base* const base)
 	add(_lstSoldiers,		"list",		"allocatePsi");
 	add(_btnOk,				"button",	"allocatePsi");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

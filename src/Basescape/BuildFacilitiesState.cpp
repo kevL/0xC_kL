@@ -71,7 +71,7 @@ BuildFacilitiesState::BuildFacilitiesState(
 	add(_lstFacilities,	"list",		"selectFacility");
 	add(_btnOk,			"button",	"selectFacility");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));

@@ -493,8 +493,8 @@ bool SoldierDiary::manageAwards(
 		{
 			if ((*j)->getType() == i->first)
 			{
-				//Log(LOG_INFO) << ". . set Level[" << ((*j)->getClassLevel() + 1)  << "] req'd for Qualifier \"" << (*j)->getQualifier() << "\"";
-				levelReq[(*j)->getQualifier()] = (*j)->getClassLevel() + 1;
+				//Log(LOG_INFO) << ". . set Level[" << ((*j)->getAwardLevel() + 1)  << "] req'd for Qualifier \"" << (*j)->getQualifier() << "\"";
+				levelReq[(*j)->getQualifier()] = (*j)->getAwardLevel() + 1;
 			}
 		}
 
@@ -812,7 +812,7 @@ bool SoldierDiary::manageAwards(
 					{
 						//Log(LOG_INFO) << ". . . . found = " << i->first;
 						firstOfType = false;
-						(*k)->addClassLevel();
+						(*k)->addAwardLevel();
 						break;
 					}
 				}
@@ -1575,7 +1575,25 @@ const std::string SoldierAward::getQualifier() const
 }
 
 /**
- * Gets this SoldierAward's level-type.
+ * Gets this SoldierAward's level as an integer.
+ * @return, decoration-level as int
+ */
+size_t SoldierAward::getAwardLevel() const
+{
+	return _level;
+}
+
+/**
+ * Adds a level to this SoldierAward.
+ */
+void SoldierAward::addAwardLevel()
+{
+	++_level;
+	_recent = true;
+}
+
+/**
+ * Gets this SoldierAward's class-type.
  * @param skip -
  * @return, decoration-level as string
  */
@@ -1587,16 +1605,7 @@ const std::string SoldierAward::getClassType(size_t skip) const
 }
 
 /**
- * Gets this SoldierAward's level as an integer.
- * @return, decoration-level as int
- */
-size_t SoldierAward::getClassLevel() const
-{
-	return _level;
-}
-
-/**
- * Gets this SoldierAward's level-description.
+ * Gets this SoldierAward's class-description.
  * @return, decoration-level description
  */
 const std::string SoldierAward::getClassDescription() const
@@ -1607,7 +1616,7 @@ const std::string SoldierAward::getClassDescription() const
 }
 
 /**
- * Gets this SoldierAward's level-class - represents quantity of stars.
+ * Gets this SoldierAward's class-degree - represents quantity of stars.
  * @return, decoration-level class
  */
 const std::string SoldierAward::getClassDegree() const
@@ -1632,15 +1641,6 @@ bool SoldierAward::isAwardRecent() const
 void SoldierAward::clearRecent()
 {
 	_recent = false;
-}
-
-/**
- * Adds a level of decoration to this SoldierAward.
- */
-void SoldierAward::addClassLevel()
-{
-	++_level;
-	_recent = true;
 }
 
 }

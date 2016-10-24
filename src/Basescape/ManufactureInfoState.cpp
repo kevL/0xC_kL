@@ -151,7 +151,7 @@ void ManufactureInfoState::buildUi() // private.
 	add(_btnStop,			"button2",	"manufactureInfo");
 	add(_btnOk,				"button2",	"manufactureInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));

@@ -63,7 +63,7 @@ ExtraAlienInfoState::ExtraAlienInfoState(const ArticleDefinitionTextImage* const
 	add(_lstInfo);
 	add(_lstWeapon);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	const ResourcePack* const rp (_game->getResourcePack());

@@ -125,7 +125,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 	add(_btnAwards,		"button2",	"awards");
 	add(_btnOk,			"button2",	"awards");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
@@ -307,6 +307,7 @@ void SoldierDiaryOverviewState::init()
 
 /**
  * Sets the current Soldier by his/her ID.
+ * @param solId - the soldier-id
  */
 void SoldierDiaryOverviewState::setSoldierId(size_t solId)
 {

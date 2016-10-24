@@ -72,7 +72,7 @@ BaseLabelState::BaseLabelState(
 	add(_edtLabel,	"text",		"baseNaming");
 	add(_btnOk,		"button",	"baseNaming");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

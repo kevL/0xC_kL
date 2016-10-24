@@ -72,7 +72,7 @@ BaseDestroyedState::BaseDestroyedState(
 	add(_btnCenter,		"button",	"UFOInfo");
 	add(_btnOk,			"button",	"UFOInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(

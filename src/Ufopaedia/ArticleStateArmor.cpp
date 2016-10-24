@@ -136,7 +136,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	addStat("STR_PSIONIC_STRENGTH",		arRule->getStats()->psiStrength,	true);
 	addStat("STR_PSIONIC_SKILL",		arRule->getStats()->psiSkill,		true);
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

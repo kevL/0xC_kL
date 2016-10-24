@@ -100,7 +100,7 @@ NextTurnState::NextTurnState(
 		add(_txtSide,	"messageWindows", "battlescape");
 	}
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("Diehard"));

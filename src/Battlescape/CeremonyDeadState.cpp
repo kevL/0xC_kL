@@ -65,7 +65,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //	add(_txtMedalInfo);
 	add(_btnOk);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setColor(GREEN);
@@ -194,7 +194,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //							l != (*i).second->getCriteria()->begin()->second.end();
 //							++l)
 //					{
-//						if (nextLevel == (*k)->getClassLevel() + 1u)
+//						if (nextLevel == (*k)->getAwardLevel() + 1u)
 //							break;
 //
 //						thisInt = *l;

@@ -103,7 +103,7 @@ ResearchState::ResearchState(
 	add(_btnNew,		"button",	"researchMenu");
 	add(_btnOk,			"button",	"researchMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));

@@ -72,7 +72,7 @@ ArticleStateAward::ArticleStateAward(const ArticleDefinitionAward* const defs)
 	_txtInfo->setSecondaryColor(uPed_BLUE_SLATE);
 	_txtInfo->setWordWrap();
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

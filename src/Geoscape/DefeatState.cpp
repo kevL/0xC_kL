@@ -94,7 +94,7 @@ DefeatState::DefeatState()
 
 	_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_LOSE);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 //	_timer->onTimer(static_cast<StateHandler>(&DefeatState::screenTimer));

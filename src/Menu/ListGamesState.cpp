@@ -205,7 +205,7 @@ void ListGamesState::init()
 	State::init();
 
 	if (_origin == OPT_BATTLESCAPE)
-		applyBattlescapeTheme();
+		applyBattlescapeColors();
 
 	try
 	{

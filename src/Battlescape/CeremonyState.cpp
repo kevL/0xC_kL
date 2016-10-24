@@ -61,7 +61,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 	add(_txtMedalInfo);
 	add(_btnOk);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setColor(GREEN);
@@ -159,7 +159,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 							l != (*i).second->getCriteria()->begin()->second.end();
 							++l)
 					{
-						if (nextLevel == (*k)->getClassLevel() + 1u)
+						if (nextLevel == (*k)->getAwardLevel() + 1u)
 							break;
 
 						thisInt = *l;

@@ -66,7 +66,7 @@ ConfirmCydoniaState::ConfirmCydoniaState(Craft* const craft)
 	add(_btnNo,			"button",	"confirmCydonia");
 	add(_btnYes,		"button",	"confirmCydonia");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));

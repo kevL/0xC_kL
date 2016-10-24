@@ -69,22 +69,23 @@ private:
 		const std::string getType() const;
 		/// Gets the SoldierAward's noun/qualifier.
 		const std::string getQualifier() const;
-		/// Gets the SoldierAward decoration-level type.
+
+		/// Gets the SoldierAward's level as an integer.
+		size_t getAwardLevel() const;
+		/// Adds a level to this SoldierAward.
+		void addAwardLevel();
+
+		/// Gets the SoldierAward's class-type.
 		const std::string getClassType(size_t skip) const;
-		/// Gets the SoldierAward's decoration-level-ID.
-		size_t getClassLevel() const;
-		/// Gets the SoldierAward's decoration-description.
+		/// Gets the SoldierAward's class-description.
 		const std::string getClassDescription() const;
-		/// Gets the SoldierAward's decoration-class.
+		/// Gets the SoldierAward's class-degree.
 		const std::string getClassDegree() const;
 
-		/// Gets whether the SoldierAward was recently awarded.
+		/// Gets if the SoldierAward was recently awarded.
 		bool isAwardRecent() const;
 		/// Clears the SoldierAward's recent-flag.
 		void clearRecent();
-
-		/// Increments the decoration-level-ID and flags '_recent'.
-		void addClassLevel();
 };
 
 

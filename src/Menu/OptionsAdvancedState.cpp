@@ -54,7 +54,7 @@ OptionsAdvancedState::OptionsAdvancedState(OptionsOrigin origin)
 	else
 		add(_lstOptions, "optionLists", "battlescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 	Text text = Text(100, 9); // how much room do we need for YES/NO
 	text.initText(

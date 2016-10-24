@@ -84,7 +84,7 @@ FundingState::FundingState()
 	add(_lstTotal,		"text2",	"fundingWindow");
 	add(_btnOk,			"button",	"fundingWindow");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"), dX);

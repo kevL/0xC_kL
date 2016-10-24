@@ -69,7 +69,7 @@ ConfirmLoadState::ConfirmLoadState(
 	add(_btnNo,		"confirmLoad", "saveMenus");
 	add(_txtText,	"confirmLoad", "saveMenus");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
@@ -92,7 +92,7 @@ ConfirmLoadState::ConfirmLoadState(
 	_txtText->setWordWrap();
 
 	if (_origin == OPT_BATTLESCAPE)
-		applyBattlescapeTheme();
+		applyBattlescapeColors();
 }
 
 /**

@@ -68,7 +68,7 @@ UfopaediaSelectState::UfopaediaSelectState(
 	add(_btnOk,			"button2",	"ufopaedia");
 	add(_lstSelection,	"list",		"ufopaedia");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"), dX);

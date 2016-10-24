@@ -71,7 +71,7 @@ TestState::TestState()
 	add(_slider);
 	add(_comboBox);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setColor(Palette::blockOffset(15)+1);

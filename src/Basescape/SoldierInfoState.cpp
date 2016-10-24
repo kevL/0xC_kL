@@ -227,7 +227,7 @@ SoldierInfoState::SoldierInfoState(
 	add(_txtPsiSkill_i,		"numbers",			"soldierInfo");
 	add(_barPsiSkill,		"barPsiSkill",		"soldierInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_game->getResourcePack()->getSurface("BACK06.SCR")->blit(_bg);

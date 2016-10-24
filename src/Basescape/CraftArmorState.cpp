@@ -90,7 +90,7 @@ CraftArmorState::CraftArmorState(
 	add(_lstSoldiers,	"list",		"craftArmor");
 	add(_btnOk,			"button",	"craftArmor");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));

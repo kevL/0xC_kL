@@ -124,11 +124,11 @@ protected:
 		/// Redraws all the text-type Surfaces.
 		void redrawText();
 		/// Centers all Surfaces relative to the screen.
-		void centerAllSurfaces();
+		void centerSurfaces();
 		/// Lowers all Surfaces by half the screen-height.
 		void lowerAllSurfaces();
 		/// Switches colors to use the Battlescape Palette.
-		void applyBattlescapeTheme();
+		void applyBattlescapeColors();
 
 		/// Sets the Game-object pointer.
 		static void setGamePtr(Game* const game);

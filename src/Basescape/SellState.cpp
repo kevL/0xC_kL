@@ -111,7 +111,7 @@ SellState::SellState(Base* const base)
 	add(_btnCancel,		"button",	"sellMenu");
 	add(_btnOk,			"button",	"sellMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 //	bool overfull = _base->storesOverfull() == true;

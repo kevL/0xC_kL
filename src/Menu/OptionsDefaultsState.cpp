@@ -62,7 +62,7 @@ OptionsDefaultsState::OptionsDefaultsState(
 	add(_btnNo,		"confirmDefaults", "mainMenu");
 	add(_txtTitle,	"confirmDefaults", "mainMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
@@ -83,7 +83,7 @@ OptionsDefaultsState::OptionsDefaultsState(
 	_txtTitle->setWordWrap();
 
 	if (_origin == OPT_BATTLESCAPE)
-		applyBattlescapeTheme();
+		applyBattlescapeColors();
 }
 
 /**

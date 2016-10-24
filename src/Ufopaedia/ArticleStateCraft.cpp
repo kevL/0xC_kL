@@ -107,7 +107,7 @@ ArticleStateCraft::ArticleStateCraft(const ArticleDefinitionCraft* const defs)
 		woststr << L'\n' << tr("STR_HWP_CAPACITY").arg(craftRule->getVehicleCapacity());
 	_txtStats->setText(woststr.str());
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

@@ -67,7 +67,7 @@ SackSoldierState::SackSoldierState(
 	add(_btnCancel,		"button",	"sackSoldier");
 	add(_btnOk,			"button",	"sackSoldier");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

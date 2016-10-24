@@ -93,7 +93,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 	add(_btnOk5Secs,		"button",	"itemsArriving");
 	add(_btnOk,				"button",	"itemsArriving");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

@@ -111,7 +111,7 @@ PurchaseState::PurchaseState(Base* const base)
 	add(_btnCancel,		"button",	"buyMenu");
 	add(_btnOk,			"button",	"buyMenu");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

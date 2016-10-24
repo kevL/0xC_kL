@@ -111,7 +111,7 @@ AlienContainmentState::AlienContainmentState(
 	add(_btnCancel,		"button",	"manageContainment");
 	add(_btnOk,			"button",	"manageContainment");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_mini->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));

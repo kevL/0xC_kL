@@ -85,7 +85,7 @@ CraftWeaponsState::CraftWeaponsState(
 	add(_lstWeapons,	"list",		"craftWeapons");
 	add(_btnCancel,		"button",	"craftWeapons");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK14.SCR"));

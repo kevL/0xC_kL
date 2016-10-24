@@ -66,7 +66,7 @@ ScannerState::ScannerState(const BattleUnit* const selUnit)
 	add(_scanView);
 	add(_bg);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_game->getResourcePack()->getSurface("DETBORD.PCK")->blit(_bg);

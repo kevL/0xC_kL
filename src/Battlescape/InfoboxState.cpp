@@ -46,7 +46,7 @@ InfoboxState::InfoboxState(const std::wstring& msg)
 	add(_frame,	"infoBox", "battlescape");
 	add(_text,	"infoBox", "battlescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_frame->setThickness(8);

@@ -65,7 +65,7 @@ PromotionsState::PromotionsState()
 	add(_lstSoldiers,	"list",		"promotions");
 	add(_btnOk,			"button",	"promotions");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));

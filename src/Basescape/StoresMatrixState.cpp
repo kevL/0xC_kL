@@ -96,7 +96,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	add(_lstMatrix);
 	add(_btnOk);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

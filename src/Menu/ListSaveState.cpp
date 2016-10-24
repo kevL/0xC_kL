@@ -72,7 +72,7 @@ ListSaveState::ListSaveState(OptionsOrigin origin)
 	_btnSaveGame->onMouseClick(static_cast<ActionHandler>(&ListSaveState::btnSaveClick));
 	_btnSaveGame->setVisible(false);
 
-	centerAllSurfaces();
+	centerSurfaces();
 }
 
 /**

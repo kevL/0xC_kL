@@ -103,7 +103,7 @@ ManufactureStartState::ManufactureStartState(
 	add(_btnCancel,		"button", "allocateManufacture");
 	add(_btnStart,		"button", "allocateManufacture");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));

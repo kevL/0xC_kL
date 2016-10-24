@@ -72,7 +72,7 @@ TransferConfirmState::TransferConfirmState(
 	add(_btnCancel,	"button",	"transferConfirm");
 	add(_btnOk,		"button",	"transferConfirm");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));

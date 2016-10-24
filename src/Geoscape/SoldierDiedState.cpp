@@ -56,7 +56,7 @@ SoldierDiedState::SoldierDiedState(
 	add(_txtBase);
 	add(_btnOk);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setColor(CYAN);

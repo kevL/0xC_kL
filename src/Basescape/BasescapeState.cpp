@@ -144,7 +144,7 @@ BasescapeState::BasescapeState(
 	add(_btnGeoscape,		"button",		"basescape");
 //	add(_btnNewBase,		"button",		"basescape");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));

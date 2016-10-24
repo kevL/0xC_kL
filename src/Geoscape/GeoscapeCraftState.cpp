@@ -138,7 +138,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	add(_srfTarget);
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));

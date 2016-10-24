@@ -54,7 +54,7 @@ UfoLostState::UfoLostState(const std::wstring& id)
 	add(_txtTitle,	"text",		"UFOInfo");
 	add(_btnOk,		"button",	"UFOInfo");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK15.SCR"));

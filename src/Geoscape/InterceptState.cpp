@@ -99,7 +99,7 @@ InterceptState::InterceptState(
 	add(_btnGoto,		"button",	"geoCraftScreens");
 	add(_btnCancel,		"button",	"geoCraftScreens");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"), dX);

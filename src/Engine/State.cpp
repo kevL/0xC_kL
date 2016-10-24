@@ -416,7 +416,7 @@ LocalizedText State::tr(
 /**
  * Centers all the Surfaces on the screen.
  */
-void State::centerAllSurfaces()
+void State::centerSurfaces()
 {
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();
@@ -445,7 +445,7 @@ void State::lowerAllSurfaces()
 /**
  * Switches all the colors to something a little more Battlescape appropriate.
  */
-void State::applyBattlescapeTheme()
+void State::applyBattlescapeColors()
 {
 	const Element* const el (_game->getRuleset()->getInterface("mainMenu")->getElement("battlescapeTheme"));
 

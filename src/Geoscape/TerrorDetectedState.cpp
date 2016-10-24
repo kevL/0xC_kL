@@ -73,7 +73,7 @@ TerrorDetectedState::TerrorDetectedState(
 	add(_btnCenter,		"button",	"terrorSite");
 	add(_btnCancel,		"button",	"terrorSite");
 
-	centerAllSurfaces();
+	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface(_terrorSite->getTerrorDeployed()->getAlertBackground()));
