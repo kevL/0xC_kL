@@ -77,13 +77,17 @@ inline static GenericFunctionPointer glGetProcAddress(const char* const label)
 
 #ifndef __APPLE__
 PFNGLCREATEPROGRAMPROC		glCreateProgram			= nullptr;
+PFNGLDELETEPROGRAMPROC		glDeleteProgram			= nullptr;
 PFNGLUSEPROGRAMPROC			glUseProgram			= nullptr;
+PFNGLISPROGRAMPROC			glIsProgram				= nullptr;
+PFNGLISSHADERPROC			glIsShader				= nullptr;
 PFNGLCREATESHADERPROC		glCreateShader			= nullptr;
 PFNGLDELETESHADERPROC		glDeleteShader			= nullptr;
 PFNGLSHADERSOURCEPROC		glShaderSource			= nullptr;
 PFNGLCOMPILESHADERPROC		glCompileShader			= nullptr;
 PFNGLATTACHSHADERPROC		glAttachShader			= nullptr;
 PFNGLDETACHSHADERPROC		glDetachShader			= nullptr;
+PFNGLGETATTACHEDSHADERSPROC	glGetAttachedShaders	= nullptr;
 PFNGLLINKPROGRAMPROC		glLinkProgram			= nullptr;
 PFNGLGETUNIFORMLOCATIONPROC	glGetUniformLocation	= nullptr;
 PFNGLUNIFORM1IPROC			glUniform1i				= nullptr;
@@ -142,21 +146,27 @@ void OpenGL::init(
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_POLYGON_SMOOTH);
 	glDisable(GL_STENCIL_TEST);
+	glErrorCheck();
 
 	// enable useful and required features
 	glEnable(GL_DITHER);
 	glEnable(GL_TEXTURE_2D);
+	glErrorCheck();
 
 	// bind shader functions
 #ifndef __APPLE__
 	glCreateProgram			= reinterpret_cast<PFNGLCREATEPROGRAMPROC>					(glGetProcAddress("glCreateProgram"));
+	glDeleteProgram			= reinterpret_cast<PFNGLDELETEPROGRAMPROC>					(glGetProcAddress("glDeleteProgram"));
 	glUseProgram			= reinterpret_cast<PFNGLUSEPROGRAMPROC>						(glGetProcAddress("glUseProgram"));
+	glIsProgram				= reinterpret_cast<PFNGLISPROGRAMPROC>						(glGetProcAddress("glIsProgram"));
+	glIsShader				= reinterpret_cast<PFNGLISSHADERPROC>						(glGetProcAddress("glIsShader"));
 	glCreateShader			= reinterpret_cast<PFNGLCREATESHADERPROC>					(glGetProcAddress("glCreateShader"));
 	glDeleteShader			= reinterpret_cast<PFNGLDELETESHADERPROC>					(glGetProcAddress("glDeleteShader"));
 	glShaderSource			= reinterpret_cast<PFNGLSHADERSOURCEPROC>					(glGetProcAddress("glShaderSource"));
 	glCompileShader			= reinterpret_cast<PFNGLCOMPILESHADERPROC>					(glGetProcAddress("glCompileShader"));
 	glAttachShader			= reinterpret_cast<PFNGLATTACHSHADERPROC>					(glGetProcAddress("glAttachShader"));
 	glDetachShader			= reinterpret_cast<PFNGLDETACHSHADERPROC>					(glGetProcAddress("glDetachShader"));
+	glGetAttachedShaders	= reinterpret_cast<PFNGLGETATTACHEDSHADERSPROC>				(glGetProcAddress("glGetAttachedShaders"));
 	glLinkProgram			= reinterpret_cast<PFNGLLINKPROGRAMPROC>					(glGetProcAddress("glLinkProgram"));
 	glGetUniformLocation	= reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>				(glGetProcAddress("glGetUniformLocation"));
 	glUniform1i				= reinterpret_cast<PFNGLUNIFORM1IPROC>						(glGetProcAddress("glUniform1i"));
@@ -172,6 +182,7 @@ void OpenGL::init(
 
 
 	shader_support = glCreateProgram		!= nullptr
+				  && glDeleteProgram		!= nullptr
 				  && glUseProgram			!= nullptr
 				  && glCreateShader			!= nullptr
 				  && glDeleteShader			!= nullptr
@@ -181,15 +192,26 @@ void OpenGL::init(
 				  && glDetachShader			!= nullptr
 				  && glLinkProgram			!= nullptr
 				  && glGetUniformLocation	!= nullptr
+				  && glIsProgram			!= nullptr
+				  && glIsShader				!= nullptr
 				  && glUniform1i			!= nullptr
 				  && glUniform2fv			!= nullptr
-				  && glUniform4fv			!= nullptr;
+				  && glUniform4fv			!= nullptr
+				  && glGetAttachedShaders	!= nullptr;
 
 	if (shader_support == true)
-		glprogram = glCreateProgram();
+	{
+		if (glprogram != 0u && glIsProgram(glprogram))
+		{
+			glDeleteProgram(glprogram);
+			glErrorCheck();
+		}
 
-	// create surface texture
-	resize(width, height);
+		glprogram = glCreateProgram();
+		glErrorCheck();
+	}
+
+	resize(width, height); // create surface texture
 }
 
 /**
@@ -201,7 +223,17 @@ void OpenGL::terminate() // private.
 	if (gltexture != 0u)
 	{
 		glDeleteTextures(1, &gltexture);
+		glErrorCheck();
+
 		gltexture = 0u;
+	}
+
+	if (glprogram != 0u)
+	{
+		glDeleteProgram(glprogram);
+		glErrorCheck(); // eh
+
+		glprogram = 0u;
 	}
 
 	if (buffer != nullptr)
@@ -220,9 +252,12 @@ void OpenGL::terminate() // private.
 void OpenGL::clear() // private.
 {
 	glClearColor(0.f,0.f,0.f,1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glFlush();
+	glErrorCheck();
 
+	glClear(GL_COLOR_BUFFER_BIT);
+	glErrorCheck();
+
+	glFlush();
 	glErrorCheck();
 }
 
@@ -248,6 +283,8 @@ void OpenGL::refresh(
 		&& (fragmentshader != 0u || vertexshader != 0u))
 	{
 		glUseProgram(glprogram);
+		glErrorCheck();
+
 		GLint location;
 
 		float inputSize[2u]
@@ -285,9 +322,9 @@ void OpenGL::refresh(
 					location,
 					1,
 					textureSize);
-	}
 
-	glErrorCheck();
+		glErrorCheck();
+	}
 
 	glTexParameteri(
 				GL_TEXTURE_2D,
@@ -370,15 +407,16 @@ void OpenGL::refresh(
 	glVertex3i(u2, v2, 0);
 
 	glEnd();
-
 	glErrorCheck();
 
 	glFlush();
-
 	glErrorCheck();
 
 	if (shader_support == true)
+	{
 		glUseProgram(0u);
+		glErrorCheck();
+	}
 }
 
 /**
@@ -389,9 +427,10 @@ void OpenGL::resize( // private.
 		int height)
 {
 	if (gltexture == 0u)
+	{
 		glGenTextures(1, &gltexture);
-
-	glErrorCheck();
+		glErrorCheck(); // was outside (below) scope.
+	}
 
 	iwidth  = width;
 	iheight = height;
@@ -435,22 +474,67 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 {
 	if (shader_support == true)
 	{
+		GLsizei tCount;
+		GLuint tShader[2u];
+
 		if (fragmentshader != 0u)
 		{
-			glDetachShader(
-						glprogram,
-						fragmentshader);
-			glDeleteShader(fragmentshader);
-			fragmentshader = 0u;
+			if (glprogram != 0u)
+			{
+				glGetAttachedShaders(
+								glprogram,
+								2,
+								&tCount,
+								tShader);
+				glErrorCheck();
+
+				if (    (tCount > 0 && tShader[0u] == fragmentshader)
+					 || (tCount > 1 && tShader[1u] == fragmentshader)) // necessary check
+				{
+					glDetachShader(
+								glprogram,
+								fragmentshader);
+					glErrorCheck();
+				}
+			}
+
+			if (glIsShader(fragmentshader))
+			{
+				glDeleteShader(fragmentshader);
+				glErrorCheck();
+
+				fragmentshader = 0u;
+			}
 		}
 
 		if (vertexshader != 0u)
 		{
-			glDetachShader(
-						glprogram,
-						vertexshader);
-			glDeleteShader(vertexshader);
-			vertexshader = 0u;
+			if (glprogram != 0u)
+			{
+				glGetAttachedShaders(
+								glprogram,
+								2,
+								&tCount,
+								tShader);
+				glErrorCheck();
+
+				if (   (tCount > 0 && tShader[0u] == vertexshader)
+					|| (tCount > 1 && tShader[1u] == vertexshader)) // necessary check
+				{
+					glDetachShader(
+								glprogram,
+								vertexshader);
+					glErrorCheck();
+				}
+			}
+
+			if (glIsShader(vertexshader))
+			{
+				glDeleteShader(vertexshader);
+				glErrorCheck();
+
+				vertexshader = 0u;
+			}
 		}
 
 		if (source_yaml_filename != nullptr
@@ -482,6 +566,7 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 		}
 
 		glLinkProgram(glprogram);
+		glErrorCheck();
 	}
 }
 
@@ -491,15 +576,22 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 void OpenGL::set_fragment_shader(const char* source) // private.
 {
 	fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
+	glErrorCheck();
+
 	glShaderSource(
 				fragmentshader,
 				1,
 				&source,
 				nullptr);
+	glErrorCheck();
+
 	glCompileShader(fragmentshader);
+	glErrorCheck();
+
 	glAttachShader(
 				glprogram,
 				fragmentshader);
+	glErrorCheck();
 }
 
 /**
@@ -508,15 +600,22 @@ void OpenGL::set_fragment_shader(const char* source) // private.
 void OpenGL::set_vertex_shader(const char* source) // private.
 {
 	vertexshader = glCreateShader(GL_VERTEX_SHADER);
+	glErrorCheck();
+
 	glShaderSource(
 				vertexshader,
 				1,
 				&source,
 				nullptr);
+	glErrorCheck();
+
 	glCompileShader(vertexshader);
+	glErrorCheck();
+
 	glAttachShader(
 				glprogram,
 				vertexshader);
+	glErrorCheck();
 }
 
 /**
@@ -576,20 +675,28 @@ void OpenGL::setVSync(bool sync)
 		&& glXSwapIntervalEXT		!= nullptr)
 	{
 		void* display (glXGetCurrentDisplay());
+		glErrorCheck();
 
 		const Uint32 drawable (glXGetCurrentDrawable());
+		glErrorCheck();
+
 		if (drawable != 0u)
+		{
 			glXSwapIntervalEXT(
 							display,
 							drawable,
 							interval);
+			glErrorCheck();
+			//Log(LOG_INFO) << "Made an attempt to set vsync via GLX.";
+		}
 	}
 	else if (wglSwapIntervalEXT != nullptr)
+	{
 		wglSwapIntervalEXT(interval);	// Other:
-										// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
-										// SDL_GL_SetSwapInterval(0)
-										// cf. Screen::setVideoFlags()
-}
+		glErrorCheck();					// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+		//Log(LOG_INFO) << "Made an attempt to set vsync via WGL.";
+	}									// SDL_GL_SetSwapInterval(0)
+}										// cf. Screen::setVideoFlags()
 
 /**
  * Sets a pointer to a data-buffer where an image is stored.
