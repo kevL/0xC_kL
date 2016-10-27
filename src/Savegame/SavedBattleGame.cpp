@@ -966,14 +966,14 @@ void SavedBattleGame::initUtilities(const ResourcePack* const res)
  */
 void SavedBattleGame::setTacType(const std::string& type) // private.
 {
-	if		(type.compare("STR_UFO_CRASH_RECOVERY") == 0)		_tacType = TCT_UFOCRASHED;
-	else if	(type.compare("STR_UFO_GROUND_ASSAULT") == 0)		_tacType = TCT_UFOLANDED;
-	else if	(type.compare("STR_BASE_DEFENSE") == 0)				_tacType = TCT_BASEDEFENSE;
-	else if	(type.compare("STR_ALIEN_BASE_ASSAULT") == 0)		_tacType = TCT_BASEASSAULT;
-	else if	(type.compare("STR_TERROR_MISSION") == 0
-		||	 type.compare("STR_PORT_ATTACK") == 0)				_tacType = TCT_TERRORSITE;
-	else if	(type.compare("STR_MARS_CYDONIA_LANDING") == 0)		_tacType = TCT_MARS1;
-	else if	(type.compare("STR_MARS_THE_FINAL_ASSAULT") == 0)	_tacType = TCT_MARS2;
+	if		(type.compare("STR_UFO_CRASH_RECOVERY")		== 0)	_tacType = TCT_UFOCRASHED;
+	else if	(type.compare("STR_UFO_GROUND_ASSAULT")		== 0)	_tacType = TCT_UFOLANDED;
+	else if	(type.compare("STR_BASE_DEFENSE")			== 0)	_tacType = TCT_BASEDEFENSE;
+	else if	(type.compare("STR_ALIEN_BASE_ASSAULT")		== 0)	_tacType = TCT_BASEASSAULT;
+	else if	(type.compare("STR_TERROR_MISSION")			== 0
+		||	 type.compare("STR_PORT_ATTACK")			== 0)	_tacType = TCT_TERRORSITE;
+	else if	(type.compare("STR_MARS_CYDONIA_LANDING")	== 0)	_tacType = TCT_MARS1;
+	else if	(type.compare("STR_MARS_THE_FINAL_ASSAULT")	== 0)	_tacType = TCT_MARS2;
 	else														_tacType = TCT_DEFAULT;	// <- the default should probly be TCT_UFOCRASHED.
 }																						// Or even TCT_ARBITRARY/CUSTOM.
 
