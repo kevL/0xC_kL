@@ -89,7 +89,9 @@ void create()
 	_info.push_back(OptionInfo("traceAI", &traceAI, 0));
 	_info.push_back(OptionInfo("verboseLogging", &verboseLogging, false));
 	_info.push_back(OptionInfo("stereoSound", &stereoSound, true));
-	_info.push_back(OptionInfo("audioChunkSize", &audioChunkSize, 2));
+	_info.push_back(OptionInfo("audioSampleRate", &audioSampleRate, 22050));
+	_info.push_back(OptionInfo("audioBitDepth", &audioBitDepth, 16));
+	_info.push_back(OptionInfo("audioChunkSize", &audioChunkSize, 2048));
 	_info.push_back(OptionInfo("baseXResolution", &baseXResolution, Screen::ORIGINAL_WIDTH));
 	_info.push_back(OptionInfo("baseYResolution", &baseYResolution, Screen::ORIGINAL_HEIGHT));
 	_info.push_back(OptionInfo("baseXGeoscape", &baseXGeoscape, Screen::ORIGINAL_WIDTH));
@@ -127,8 +129,6 @@ void create()
 	_info.push_back(OptionInfo("globeRadarLines", &globeRadarLines, true));
 	_info.push_back(OptionInfo("globeFlightPaths", &globeFlightPaths, true));
 	_info.push_back(OptionInfo("globeAllRadarsOnBaseBuild", &globeAllRadarsOnBaseBuild, true));
-	_info.push_back(OptionInfo("audioSampleRate", &audioSampleRate, 22050));
-	_info.push_back(OptionInfo("audioBitDepth", &audioBitDepth, 16));
 	_info.push_back(OptionInfo("pauseMode", &pauseMode, 0));
 	_info.push_back(OptionInfo("battleNotifyDeath", &battleNotifyDeath, false));
 	_info.push_back(OptionInfo("showFundsOnGeoscape", &showFundsOnGeoscape, false));

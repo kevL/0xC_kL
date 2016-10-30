@@ -907,6 +907,8 @@ void Game::initAudio()
 		Options::audioChunkSize = std::max(1028, Options::audioChunkSize);
 	else if (Options::audioSampleRate >= 11025)
 		Options::audioChunkSize = std::max(512, Options::audioChunkSize);
+	else
+		Options::audioChunkSize = std::max(256, Options::audioChunkSize);
 
 	if (Mix_OpenAudio(
 				Options::audioSampleRate,
