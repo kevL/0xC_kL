@@ -102,8 +102,9 @@ int main(
 						// yet it works fine in Game::run() before quitting.
 						// Ps. why are they even doing Options::save() twice
 						// ... now they both fuck up. BYE!
+						// ah, Sup finally caught that eh.
 
-	// Comment this for faster exit.
+	// Comment this for faster exit. by an attosecond ...
 	delete ptrG;
 
 	Log(LOG_INFO) << "0xC_kL is shutting down.";

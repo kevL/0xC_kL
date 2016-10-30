@@ -74,8 +74,7 @@ private:
 		GL_STRING;
 
 	int
-		_gameCurrent,
-		_resAmount,
+		_resQuantity,
 		_resCurrent;
 
 	std::vector<std::string>
@@ -116,7 +115,11 @@ private:
 	InteractiveSurface* _displaySurface;
 	SDL_Rect** _res;
 
-	///
+
+	/// Capitalizes each word in a string.
+	std::string ucWords(std::string st);
+
+	/// Updates the display resolution based on the selection.
 	void updateDisplayResolution();
 
 

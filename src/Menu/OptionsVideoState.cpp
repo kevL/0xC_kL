@@ -49,7 +49,8 @@ const std::string
 OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	:
 		OptionsBaseState(origin),
-		_gameCurrent(0)
+		_resCurrent (-1),
+		_resQuantity (0)
 //		_displayMode(nullptr),
 //		_btnWindowed(nullptr),
 //		_btnFullscreen(nullptr),
@@ -92,11 +93,9 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	if (   _res != reinterpret_cast<SDL_Rect**>(-1)	// NOT all resolutions available for Fullscreen
 		&& _res != nullptr)							// NOT  no resolutions available for Fullscreen
 	{
-		_resCurrent = -1;
-
-		int i (0);
+		size_t i (0u);
 		for (
-				i = 0;
+				i = 0u;
 				_res[i] != nullptr;
 				++i)
 		{
@@ -104,15 +103,13 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 				&& (  (_res[i]->w == Options::displayWidth && _res[i]->h <= Options::displayHeight)
 					|| _res[i]->w <  Options::displayWidth))
 			{
-				_resCurrent = i;
+				_resCurrent = static_cast<int>(i);
 			}
 		}
-		_resAmount = i;
+		_resQuantity = static_cast<int>(i);
 	}
 	else
 	{
-		_resCurrent = -1;
-		_resAmount = 0;
 		_btnDisplayResolutionDown->setVisible(false);
 		_btnDisplayResolutionUp->setVisible(false);
 		Log(LOG_WARNING) << "Couldn't get display resolutions.";
@@ -225,18 +222,16 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 	_filters.push_back(""); // 3 - xBRZ
 
 #ifndef __NO_OPENGL
-	std::string file;
 	const std::vector<std::string> shaders (CrossPlatform::getFolderContents(CrossPlatform::getDataFolder(GL_FOLDER), GL_EXT));
 	for (std::vector<std::string>::const_iterator
 			i = shaders.begin();
 			i != shaders.end();
 			++i)
 	{
-		file = *i;
-		_filters.push_back(GL_FOLDER + file); // 4+ OpenGL shader-filters
-		filterLabels.push_back(Language::fsToWstr(file.substr(0u, file.length() - GL_EXT.length() - 1u) + GL_STRING));
+		_filters.push_back(GL_FOLDER + *i);
+		filterLabels.push_back(Language::fsToWstr(ucWords(i->substr(0u, i->length() - GL_EXT.length() - 1u) + GL_STRING)));
 	}
-#endif // __NO_OPENGL
+#endif
 
 	size_t selFilter (0u);
 	if (Screen::isOpenGLEnabled() == true)
@@ -253,7 +248,7 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 				break;
 			}
 		}
-#endif // __NO_OPENGL
+#endif
 	}
 	else if (Options::useScaleFilter == true)
 		selFilter = 1u;
@@ -324,15 +319,43 @@ OptionsVideoState::~OptionsVideoState()
 {}
 
 /**
+ * Capitalizes each word in a string.
+ * @param str - source string
+ * @return, destination string
+ */
+std::string OptionsVideoState::ucWords(std::string st) // private.
+{
+	for (size_t
+			i = 0u;
+			i != st.length();
+			++i)
+	{
+		switch (i)
+		{
+			case 0u: st[i] = toupper(st[i]);
+				break;
+
+			default:
+				if (st[i] == '-' || st[i] == '_')
+					st[i] = ' ';
+
+				if (st[i] == ' ' && st.length() > i + 1u)
+					st[i + 1u] = toupper(st[i + 1u]);
+		}
+	}
+	return st;
+}
+
+/**
  * Selects a bigger display resolution.
  * @param action - pointer to an Action
  */
 void OptionsVideoState::btnDisplayResolutionUpClick(Action*)
 {
-	if (_resAmount != 0)
+	if (_resQuantity != 0)
 	{
 		if (_resCurrent < 1)
-			_resCurrent = _resAmount - 1;
+			_resCurrent = _resQuantity - 1;
 		else
 			--_resCurrent;
 
@@ -346,9 +369,9 @@ void OptionsVideoState::btnDisplayResolutionUpClick(Action*)
  */
 void OptionsVideoState::btnDisplayResolutionDownClick(Action*)
 {
-	if (_resAmount != 0)
+	if (_resQuantity != 0)
 	{
-		if (_resCurrent > _resAmount - 2)
+		if (_resCurrent > _resQuantity - 2)
 			_resCurrent = 0;
 		else
 			++_resCurrent;

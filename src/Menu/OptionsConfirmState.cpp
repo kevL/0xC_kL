@@ -107,7 +107,6 @@ OptionsConfirmState::~OptionsConfirmState()
 void OptionsConfirmState::think()
 {
 	State::think();
-
 	_timer->think(this, nullptr);
 }
 
@@ -118,9 +117,9 @@ void OptionsConfirmState::countdown()
 {
 	--_countdown;
 
-	std::wostringstream ss;
-	ss << std::setfill(L'0') << std::setw(2) << _countdown;
-	_txtTimer->setText(tr("STR_DISPLAY_OPTIONS_REVERT").arg(ss.str()));
+	std::wostringstream ststr;
+	ststr << std::setfill(L'0') << std::setw(2) << _countdown;
+	_txtTimer->setText(tr("STR_DISPLAY_OPTIONS_REVERT").arg(ststr.str()));
 
 	if (_countdown == 0)
 		btnNoClick(nullptr);
@@ -132,6 +131,8 @@ void OptionsConfirmState::countdown()
  */
 void OptionsConfirmState::btnYesClick(Action*)
 {
+	_game->getScreen()->resetShader(); // kL
+
 	_game->popState();
 	OptionsBaseState::restart(_origin);
 }

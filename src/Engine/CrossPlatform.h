@@ -36,6 +36,12 @@ namespace OpenXcom
 namespace CrossPlatform
 {
 
+#ifdef _WIN32
+const char PATH_SEPARATOR = '\\';
+#else
+const char PATH_SEPARATOR = '/';
+#endif
+
 /// Displays an error-message.
 void showFatalError(const std::string& error);
 

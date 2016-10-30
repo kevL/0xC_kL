@@ -103,12 +103,6 @@ namespace OpenXcom
 namespace CrossPlatform
 {
 
-#ifdef _WIN32
-const char PATH_SEPARATOR = '\\';
-#else
-const char PATH_SEPARATOR = '/';
-#endif
-
 /**
  * Displays a message-box with an error-message.
  * @param error - reference to an error-message

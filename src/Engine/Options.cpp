@@ -89,7 +89,7 @@ void create()
 	_info.push_back(OptionInfo("traceAI", &traceAI, 0));
 	_info.push_back(OptionInfo("verboseLogging", &verboseLogging, false));
 	_info.push_back(OptionInfo("stereoSound", &stereoSound, true));
-	_info.push_back(OptionInfo("audioBuffer", &audioBuffer, 2));
+	_info.push_back(OptionInfo("audioChunkSize", &audioChunkSize, 2));
 	_info.push_back(OptionInfo("baseXResolution", &baseXResolution, Screen::ORIGINAL_WIDTH));
 	_info.push_back(OptionInfo("baseYResolution", &baseYResolution, Screen::ORIGINAL_HEIGHT));
 	_info.push_back(OptionInfo("baseXGeoscape", &baseXGeoscape, Screen::ORIGINAL_WIDTH));
@@ -725,18 +725,18 @@ const std::vector<OptionInfo>& getOptionInfo()
  */
 void backupDisplay()
 {
-	Options::newDisplayWidth		= Options::displayWidth;
-	Options::newDisplayHeight		= Options::displayHeight;
+	newDisplayWidth		= displayWidth;
+	newDisplayHeight	= displayHeight;
 
-	Options::newGeoscapeScale		= Options::geoscapeScale;
-	Options::newBattlescapeScale	= Options::battlescapeScale;
+	newGeoscapeScale	= geoscapeScale;
+	newBattlescapeScale	= battlescapeScale;
 
-	Options::newScaleFilter			= Options::useScaleFilter;
-	Options::newHQXFilter			= Options::useHQXFilter;
-	Options::newXBRZFilter			= Options::useXBRZFilter;
-	Options::newOpenGL				= Options::useOpenGL;
+	newScaleFilter		= useScaleFilter;
+	newHQXFilter		= useHQXFilter;
+	newXBRZFilter		= useXBRZFilter;
+	newOpenGL			= useOpenGL;
 
-	Options::newOpenGLShader		= Options::openGLShader;
+	newOpenGLShader		= openGLShader;
 }
 
 /**

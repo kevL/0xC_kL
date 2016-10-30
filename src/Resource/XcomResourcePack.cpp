@@ -887,7 +887,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			start = j->first;
 			st2 = j->second;
 
-			if (st2.substr(st2.length() - 1u, 1u) == "/")
+			if (st2.substr(st2.length() - 1u, 1u) == "/") // is Folder
 			{
 				//Log(LOG_VERBOSE) << "Loading sound set from folder: " << st2 << " starting at index: " << start;
 				offset = start;

@@ -901,13 +901,18 @@ void Game::initAudio()
 		default: audioFormat = AUDIO_S16SYS;
 	}
 
-	const int coefBuffer (std::max(1,
-								   Options::audioBuffer));
+	if (Options::audioSampleRate >= 44100)
+		Options::audioChunkSize = std::max(2048, Options::audioChunkSize);
+	else if (Options::audioSampleRate >= 22050)
+		Options::audioChunkSize = std::max(1028, Options::audioChunkSize);
+	else if (Options::audioSampleRate >= 11025)
+		Options::audioChunkSize = std::max(512, Options::audioChunkSize);
+
 	if (Mix_OpenAudio(
 				Options::audioSampleRate,
 				audioFormat,
 				2,
-				1024 * coefBuffer) != 0)
+				Options::audioChunkSize) != 0)
 	{
 		Log(LOG_WARNING) << "No sound device detected, audio disabled.";
 		Log(LOG_ERROR) << Mix_GetError();

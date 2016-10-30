@@ -23,7 +23,7 @@ OPT int
 	uiVolume,
 	audioSampleRate,
 	audioBitDepth,
-	audioBuffer,
+	audioChunkSize,
 	autosaveFrequency,
 	mousewheelSpeed,
 	FPS,

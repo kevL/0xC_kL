@@ -63,6 +63,8 @@ private:
 		_scaleY;
 	Uint32 _flags;
 
+	std::string _shader;
+
 	SDL_Rect _clear;
 
 	SDL_Surface* _screen;
@@ -100,6 +102,8 @@ private:
 
 		/// Resets the Screen's display.
 		void resetDisplay(bool resetVideo = true);
+		/// Resets the OpenGL shader.
+		void resetShader();
 
 		/// Sets the Screen's 8-bpp palette.
 		void setPalette(

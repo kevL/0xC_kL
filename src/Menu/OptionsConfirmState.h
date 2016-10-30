@@ -28,10 +28,10 @@
 namespace OpenXcom
 {
 
-class TextButton;
-class Window;
 class Text;
+class TextButton;
 class Timer;
+class Window;
 
 
 /**

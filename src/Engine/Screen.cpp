@@ -64,6 +64,12 @@ Screen::Screen()
 			_deferredPalette,
 			0,
 			sizeof(SDL_Color) * 256u);
+
+#ifdef _DEBUG // <- this has to be changed to debug shaders
+	_shader = CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader");
+#else
+	_shader = CrossPlatform::getDataFile(Options::openGLShader); // NOTE: Don't delete your shaders ....
+#endif
 }
 
 /**
@@ -467,14 +473,8 @@ void Screen::resetDisplay(bool resetVideo)
 	if (isOpenGLEnabled() == true)
 	{
 		_glOutput.init(_baseWidth, _baseHeight);
-
-#	ifdef _DEBUG
-		_glOutput.set_shader(CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader").c_str());
-#	else
-		_glOutput.set_shader(CrossPlatform::getDataFile(Options::openGLShader).c_str());
-#	endif
-
-		_glOutput.linear = Options::useOpenGLSmoothing; // the setting in the shader-file will override this though. So put it after the shader-invocation.
+		_glOutput.linear = Options::useOpenGLSmoothing;	// the setting in the shader-file will override this though.
+		_glOutput.set_shader(_shader.c_str());			// Could put it after the shader-invocation.
 		_glOutput.setVSync(Options::vSyncForOpenGL);
 
 		OpenGL::checkErrors = Options::checkOpenGLErrors;
@@ -483,6 +483,16 @@ void Screen::resetDisplay(bool resetVideo)
 
 	if (_screen->format->BitsPerPixel == 8u)
 		setPalette(getPalette());
+}
+
+/**
+ * Resets the OpenGL shader.
+ */
+void Screen::resetShader()
+{
+#ifndef _DEBUG // <- this has to be removed to debug shaders
+	_shader = CrossPlatform::getDataFile(Options::openGLShader);
+#endif
 }
 
 /**

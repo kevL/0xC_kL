@@ -934,7 +934,8 @@ void FlcPlayer::initAudio(
 
 	if (err != 0)
 	{
-		printf("Failed to open audio (%d)\n", err);
+		Log(LOG_WARNING) << Mix_GetError();
+		Log(LOG_WARNING) << "Failed to init cutscene audio.";
 		return;
 	}
 
