@@ -23,7 +23,7 @@
 #include <string> // std::string, std::wstring
 #include <vector> // std::vector
 
-#include <SDL_events.h>
+#include <SDL/SDL_events.h>
 
 
 namespace OpenXcom

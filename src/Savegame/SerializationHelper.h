@@ -22,7 +22,7 @@
 
 
 #include <string>
-#include <SDL_stdinc.h>
+#include <SDL/SDL_stdinc.h>
 
 
 namespace OpenXcom

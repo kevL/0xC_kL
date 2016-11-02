@@ -21,7 +21,7 @@
 #define OPENXCOM_TILEENGINE_H
 
 //#include <vector>
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "BattlescapeGame.h"
 #include "Position.h"

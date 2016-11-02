@@ -22,7 +22,7 @@
 
 #include <map>
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "State.h"
 #include "Surface.h"

@@ -22,7 +22,7 @@
 #include <cmath>
 #include <fstream>
 
-//#include <SDL_endian.h>
+//#include <SDL/SDL_endian.h>
 
 #include "Polygon.h"
 #include "Polyline.h"

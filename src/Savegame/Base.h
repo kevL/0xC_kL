@@ -145,7 +145,9 @@ private:
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the Base's label.
-		std::wstring getLabel(const Language* const lang = nullptr) const override;
+		std::wstring getLabel(
+				const Language* const lang = nullptr,
+				bool id = true) const override;
 		/// Sets the Base's label.
 		void setLabel(const std::wstring& label);
 		/// Gets the Base's globe-marker.

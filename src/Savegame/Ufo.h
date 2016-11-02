@@ -118,7 +118,9 @@ private:
 		void think();
 
 		/// Gets the Ufo's label.
-		std::wstring getLabel(const Language* const lang) const override;
+		std::wstring getLabel(
+				const Language* const lang,
+				bool id = true) const override;
 
 		/// Gets the Ufo's globe-marker.
 		int getMarker() const override;

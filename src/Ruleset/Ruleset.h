@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include <yaml-cpp/yaml.h>
 

@@ -540,7 +540,7 @@ void DogfightState::think()
 		_craftDamageAnimTimer->think(this, nullptr);
 
 		if (_stopDogfight == false //_timeout == 0 && // appears to be a safety.
-			&& (_craft->getDestination() != _ufo
+			&& (_craft->getTarget() != _ufo
 				|| _ufo->getUfoStatus() == Ufo::LANDED
 				|| _craft->inDogfight() == false))
 		{
@@ -714,7 +714,7 @@ void DogfightState::advanceDogfight()
 	bool finalStep (false);
 
 	if (_stopDogfight == false										// This runs for Craft that *do not* get the KILL. uhhh
-		&& (_ufo != dynamic_cast<Ufo*>(_craft->getDestination())	// check if Craft's destination has changed
+		&& (_ufo != dynamic_cast<Ufo*>(_craft->getTarget())	// check if Craft's destination has changed
 			|| _craft->getLowFuel() == true							// check if Craft is low on fuel
 			|| (_timeout == 0 && _ufo->isCrashed() == true)			// check if UFO has been shot down
 			|| _craft->inDogfight() == false))
@@ -875,7 +875,7 @@ void DogfightState::advanceDogfight()
 								if (_ufo->isCrashed() == true)
 								{
 									_ufo->setShotDownByCraftId(_craft->getUniqueId());
-									_ufo->setSpeed(0);
+									_ufo->setSpeed();
 									_craft->addKill();
 
 									_ufoBreakingOff = // if the ufo got shotdown here these no longer apply ->
@@ -1124,7 +1124,7 @@ void DogfightState::advanceDogfight()
 		if (_ufoBreakingOff == true)
 		{
 			_ufo->stepTarget();
-			_craft->setDestination(_ufo);
+			_craft->setTarget(_ufo);
 		}
 
 		if (_destroyCraft == false
@@ -1249,7 +1249,7 @@ void DogfightState::advanceDogfight()
 				}
 				else if (_ufo->getCrashId() == 0) // Set up Crash site.
 				{
-					_ufo->setDestination();
+					_ufo->setTarget();
 					_ufo->setCrashId(_gameSave->getCanonicalId(Target::stTarget[6u]));
 
 					_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.

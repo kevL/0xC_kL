@@ -58,7 +58,9 @@ private:
 		void load(const YAML::Node& node) override;
 
 		/// Gets a City's label.
-		std::wstring getLabel(const Language* const lang) const override;
+		std::wstring getLabel(
+				const Language* const lang,
+				bool id = true) const override;
 		/// Gets a City's label as a raw string.
 		const std::string& getLabel() const;
 

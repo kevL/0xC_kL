@@ -116,7 +116,7 @@ void ConfirmDestinationState::btnOkClick(Action*)
 		_game->getSavedGame()->getWaypoints()->push_back(_waypoint);
 	}
 
-	_craft->setDestination(_target);
+	_craft->setTarget(_target);
 	_craft->setCraftStatus(CS_OUT);
 
 	_game->popState();

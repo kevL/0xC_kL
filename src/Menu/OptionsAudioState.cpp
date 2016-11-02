@@ -20,7 +20,7 @@
 #include "OptionsAudioState.h"
 
 //#include <sstream>
-//#include <SDL_mixer.h>
+//#include <SDL/SDL_mixer.h>
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"

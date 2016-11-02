@@ -67,10 +67,13 @@ void RuleCity::load(const YAML::Node& node)
 
 /**
  * Returns this RuleCity's label as seen on the Globe.
- * @param lang - pointer to Language to get strings from
+ * @param lang	- pointer to Language to get strings from
+ * @param id	- true to show the Id (default true)
  * @return, a city's IG label
  */
-std::wstring RuleCity::getLabel(const Language* const lang) const
+std::wstring RuleCity::getLabel(
+		const Language* const lang,
+		bool) const
 {
 	return lang->getString(_label);
 }

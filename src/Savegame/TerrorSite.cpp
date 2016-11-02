@@ -126,12 +126,18 @@ const RuleAlienDeployment* TerrorSite::getTerrorDeployed() const
 
 /**
  * Gets this TerrorSite's uniquely identifying label.
- * @param lang - pointer to Language to get strings from
+ * @param lang	- pointer to Language to get strings from
+ * @param id	- true to show the Id (default true)
  * @return, label
  */
-std::wstring TerrorSite::getLabel(const Language* const lang) const
+std::wstring TerrorSite::getLabel(
+		const Language* const lang,
+		bool id) const
 {
-	return lang->getString(_ruleDeploy->getMarkerType()).arg(_id);
+	if (id == true)
+		return lang->getString(_ruleDeploy->getMarkerType()).arg(_id);
+
+	return lang->getString(_ruleDeploy->getMarkerType());
 }
 
 /**

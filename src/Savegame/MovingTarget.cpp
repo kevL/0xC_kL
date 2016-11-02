@@ -49,7 +49,7 @@ const char* MovingTarget::stAltitude[5u] // static.
 MovingTarget::MovingTarget(SavedGame* const gameSave)
 	:
 		Target(),
-		_dest(nullptr),
+		_target(nullptr),
 		_speedLon(0.),
 		_speedLat(0.),
 		_speedRadian(0.),
@@ -76,11 +76,11 @@ YAML::Node MovingTarget::save() const // virtual.
 {
 	YAML::Node node (Target::save());
 
-	if (_dest != nullptr)
+	if (_target != nullptr)
 	{
 		const Ufo* const ufo (dynamic_cast<const Ufo*>(this));
 		if (ufo == nullptr || ufo->getUfoStatus() != Ufo::CRASHED) // Ie, is Craft or UFO-flying or -landed.
-			node["dest"] = _dest->saveIdentificator();
+			node["target"] = _target->saveIdentificator();
 	}
 
 	if (_speed != 0)
@@ -110,14 +110,14 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
 
 /**
  * Sets the destination-target of this MovingTarget.
- * @param dest - pointer to Target destination (default nullptr)
+ * @param target - pointer to Target destination (default nullptr)
  */
-void MovingTarget::setDestination(Target* const dest) // virtual.
+void MovingTarget::setTarget(Target* const target) // virtual.
 {
 	checkOtherTargeters();
 
-	if ((_dest = dest) != nullptr)
-		_dest->getTargeters()->push_back(this);
+	if ((_target = target) != nullptr)
+		_target->getTargeters()->push_back(this);
 
 	calculateSpeed();
 }
@@ -126,9 +126,9 @@ void MovingTarget::setDestination(Target* const dest) // virtual.
  * Gets the destination-target of this MovingTarget.
  * @return, pointer to Target destination
  */
-Target* MovingTarget::getDestination() const
+Target* MovingTarget::getTarget() const
 {
-	return _dest;
+	return _target;
 }
 
 /**
@@ -137,9 +137,9 @@ Target* MovingTarget::getDestination() const
  */
 bool MovingTarget::reachedDestination() const
 {
-	if (_dest != nullptr)
-		return AreSame(_lon, _dest->getLongitude())
-			&& AreSame(_lat, _dest->getLatitude());
+	if (_target != nullptr)
+		return AreSame(_lon, _target->getLongitude())
+			&& AreSame(_lat, _target->getLatitude());
 
 	return false;
 }
@@ -150,16 +150,16 @@ bool MovingTarget::reachedDestination() const
  */
 void MovingTarget::checkOtherTargeters() // private.
 {
-	if (_dest != nullptr)
+	if (_target != nullptr)
 	{
 		bool destTargeter (false);
 		for (std::vector<Target*>::const_iterator
-				i = _dest->getTargeters()->begin();
-				i != _dest->getTargeters()->end();
+				i = _target->getTargeters()->begin();
+				i != _target->getTargeters()->end();
 				)
 		{
 			if (*i == this)
-				i = _dest->getTargeters()->erase(i);
+				i = _target->getTargeters()->erase(i);
 			else
 			{
 				destTargeter = true;
@@ -169,7 +169,7 @@ void MovingTarget::checkOtherTargeters() // private.
 
 		if (destTargeter == false)
 		{
-			const Waypoint* const wpPre (dynamic_cast<Waypoint*>(_dest));
+			const Waypoint* const wpPre (dynamic_cast<Waypoint*>(_target));
 			if (wpPre != nullptr)
 			{
 				delete wpPre;
@@ -193,14 +193,15 @@ void MovingTarget::checkOtherTargeters() // private.
 /**
  * Sets the speed of this MovingTarget and converts it from standard knots
  * (nautical miles-per-hour) into radians-per-5-IG-seconds.
- * @param speed - speed in knots
+ * @param speed - speed in knots (default 0)
  */
-void MovingTarget::setSpeed(const int speed)
+void MovingTarget::setSpeed(int speed)
 {
-	_speed = speed;
-
-	// Each nautical mile is 1/60th of a degree; each hour contains 720 5-second periods.
-	_speedRadian = static_cast<double>(_speed) * unitToRads / 720.;
+	if ((_speed = speed) == 0)
+		_speedRadian = 0.;
+	else
+		// Each nautical mile is 1/60th of a degree; each hour contains 720 5-second periods.
+		_speedRadian = static_cast<double>(_speed) * unitToRads / 720.;
 
 	calculateSpeed();
 }
@@ -221,17 +222,17 @@ void MovingTarget::stepTarget()
 {
 	calculateSpeed();
 
-	if (_dest != nullptr)
+	if (_target != nullptr)
 	{
-		if (getDistance(_dest) > _speedRadian)
+		if (getDistance(_target) > _speedRadian)
 		{
 			setLongitude(_lon + _speedLon);
 			setLatitude( _lat + _speedLat);
 		}
 		else
 		{
-			setLongitude(_dest->getLongitude());
-			setLatitude( _dest->getLatitude());
+			setLongitude(_target->getLongitude());
+			setLatitude( _target->getLatitude());
 		}
 	}
 }
@@ -242,7 +243,7 @@ void MovingTarget::stepTarget()
  */
 void MovingTarget::calculateSpeed() // protected/virtual.
 {
-	if (_dest != nullptr)
+	if (_target != nullptr)
 	{
 		calculateMeetPoint();
 
@@ -277,21 +278,21 @@ void MovingTarget::calculateSpeed() // protected/virtual.
  */
 void MovingTarget::calculateMeetPoint() // private.
 {
-	_meetPointLon = _dest->getLongitude();
-	_meetPointLat = _dest->getLatitude();
+	_meetPointLon = _target->getLongitude();
+	_meetPointLat = _target->getLatitude();
 
-	MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_dest));
+	MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_target));
 	if (ufo != nullptr
-		&& ufo->getDestination() != nullptr
+		&& ufo->getTarget() != nullptr
 		&& AreSame(ufo->_speedRadian, 0.) == false)
 	{
 		const double speedRatio (_speedRadian / ufo->_speedRadian);
 		double
-			nx (std::cos(ufo->getLatitude()) * std::sin(ufo->getLongitude()) * std::sin(ufo->getDestination()->getLatitude())
-			  - std::sin(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::sin(ufo->getDestination()->getLongitude())),
-			ny (std::sin(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::cos(ufo->getDestination()->getLongitude())
-			  - std::cos(ufo->getLatitude()) * std::cos(ufo->getLongitude()) * std::sin(ufo->getDestination()->getLatitude())),
-			nz (std::cos(ufo->getLatitude()) * std::cos(ufo->getDestination()->getLatitude()) * std::sin(ufo->getDestination()->getLongitude()
+			nx (std::cos(ufo->getLatitude()) * std::sin(ufo->getLongitude()) * std::sin(ufo->getTarget()->getLatitude())
+			  - std::sin(ufo->getLatitude()) * std::cos(ufo->getTarget()->getLatitude()) * std::sin(ufo->getTarget()->getLongitude())),
+			ny (std::sin(ufo->getLatitude()) * std::cos(ufo->getTarget()->getLatitude()) * std::cos(ufo->getTarget()->getLongitude())
+			  - std::cos(ufo->getLatitude()) * std::cos(ufo->getLongitude()) * std::sin(ufo->getTarget()->getLatitude())),
+			nz (std::cos(ufo->getLatitude()) * std::cos(ufo->getTarget()->getLatitude()) * std::sin(ufo->getTarget()->getLongitude()
 			  - ufo->getLongitude()));
 
 		const double nk (_speedRadian / std::sqrt(nx * nx + ny * ny + nz * nz));

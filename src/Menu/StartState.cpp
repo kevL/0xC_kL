@@ -19,8 +19,8 @@
 
 #include "StartState.h"
 
-//#include <SDL_mixer.h>
-//#include <SDL_thread.h>
+//#include <SDL/SDL_mixer.h>
+//#include <SDL/SDL_thread.h>
 
 #include "ErrorMessageState.h"
 #include "IntroState.h"

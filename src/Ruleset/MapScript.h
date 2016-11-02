@@ -24,7 +24,7 @@
 //#include <string>
 #include <vector>
 
-#include <SDL_video.h>
+#include <SDL/SDL_video.h>
 
 #include <yaml-cpp/yaml.h>
 

@@ -78,7 +78,9 @@ private:
 		const RuleAlienDeployment* getTerrorDeployed() const;
 
 		/// Gets the TerrorSite's label.
-		std::wstring getLabel(const Language* const lang) const override;
+		std::wstring getLabel(
+				const Language* const lang,
+				bool id = true) const override;
 
 		/// Gets the TerrorSite globe-marker.
 		int getMarker() const override;

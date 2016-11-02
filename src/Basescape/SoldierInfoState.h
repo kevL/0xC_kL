@@ -39,7 +39,7 @@ class TextEdit;
 
 
 /**
- * Soldier Info screen that shows all the info of a specific Soldier.
+ * SoldierInfo screen that shows all the info of a specific Soldier.
  */
 class SoldierInfoState final
 	:
@@ -48,14 +48,13 @@ class SoldierInfoState final
 
 private:
 	static const Uint8
-		GREEN			=  48,
-		PURPLE_GHOST	=  73,
-		ORANGE			=  96,
-		YELLOW			= 144,
-		BROWN			= 160,
-		PURPLE			= 246;
+		PURPLE_GHOST	=  73u,
+		BROWN			= 160u,
+		PURPLE			= 246u;
 
-	bool _allowExit;
+	bool
+		_allowExit,
+		_isQuickBattle;
 	size_t _solId;
 
 	std::vector<Soldier*>* _listBase;
@@ -134,7 +133,7 @@ private:
 	public:
 		/// Creates a SoldierInfo state.
 		SoldierInfoState(
-				Base* base,
+				Base* const base,
 				size_t solId);
 		/// Cleans up the SoldierInfo state.
 		~SoldierInfoState();

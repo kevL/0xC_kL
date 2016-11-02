@@ -123,8 +123,8 @@ ConfirmLandingState::ConfirmLandingState(
 	// NOTE: the following terrain determination will fall through to
 	// BattlescapeGenerator for Base assault/defense and Cydonia missions;
 	// concerned only with UFOs and TerrorSites here.
-	Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getDestination()));
-	TerrorSite* const site (dynamic_cast<TerrorSite*>(_craft->getDestination()));
+	Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getTarget()));
+	TerrorSite* const site (dynamic_cast<TerrorSite*>(_craft->getTarget()));
 
 	if (ufo != nullptr || site != nullptr) // ... else it's an aLienBase assault (NOT defense nor Cydonia).
 	{
@@ -231,7 +231,7 @@ ConfirmLandingState::ConfirmLandingState(
 				}
 //				else	// SAFETY: for terrorSite that's not at a City.
 						// This should be the same as for NOT City!!!
-//					terrainType = _texRule->getTextureTerrain(_craft->getDestination());
+//					terrainType = _texRule->getTextureTerrain(_craft->getTarget());
 					// note: that should crash if on Water tex
 
 				site->setSiteTerrainType(terrainType);
@@ -265,8 +265,8 @@ ConfirmLandingState::ConfirmLandingState(
 				else // UFO not at City
 				{
 					Log(LOG_INFO) << ". . UFO not at City";
-//					terrainType = _texRule->getTextureTerrain(_craft->getDestination());
-					terrainType = texRule->getTextureTerrain(_craft->getDestination());
+//					terrainType = _texRule->getTextureTerrain(_craft->getTarget());
+					terrainType = texRule->getTextureTerrain(_craft->getTarget());
 //->				_terrainRule = selectTerrain(lat);
 				}
 
@@ -303,7 +303,7 @@ ConfirmLandingState::ConfirmLandingState(
 			woststr << L" : " << tr(ufo->getAlienRace());
 	}
 	_txtMessage2->setText(tr("STR_CRAFT_DESTINATION")
-						 .arg(_craft->getDestination()->getLabel(_game->getLanguage()))
+						 .arg(_craft->getTarget()->getLabel(_game->getLanguage()))
 						 .arg(woststr.str()));
 	_txtMessage2->setBig();
 	_txtMessage2->setAlign(ALIGN_CENTER);
@@ -375,9 +375,9 @@ void ConfirmLandingState::btnYesClick(Action*)
 	_game->getResourcePack()->fadeMusic(_game, 335);
 	_game->popState();
 
-	Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getDestination()));
-	TerrorSite* const terrorSite (dynamic_cast<TerrorSite*>(_craft->getDestination()));
-	AlienBase* const alienBase (dynamic_cast<AlienBase*>(_craft->getDestination()));
+	Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getTarget()));
+	TerrorSite* const terrorSite (dynamic_cast<TerrorSite*>(_craft->getTarget()));
+	AlienBase* const alienBase (dynamic_cast<AlienBase*>(_craft->getTarget()));
 
 	SavedBattleGame* const battleSave (new SavedBattleGame(
 													_game->getSavedGame(),
@@ -442,7 +442,7 @@ void ConfirmLandingState::btnYesClick(Action*)
  */
 void ConfirmLandingState::btnPatrolClick(Action*)
 {
-	_craft->setDestination();
+	_craft->setTarget();
 	_game->popState();
 }
 

@@ -114,7 +114,9 @@ CraftSoldiersState::CraftSoldiersState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK02.SCR"));
 
 	_txtTitle->setText(tr("STR_SELECT_SQUAD_FOR_CRAFT")
-						.arg(_craft->getLabel(_game->getLanguage())));
+						.arg(_craft->getLabel(
+										_game->getLanguage(),
+										_isQuickBattle == false)));
 	_txtTitle->setBig();
 
 	_txtBaseLabel->setText(_base->getLabel());
@@ -177,9 +179,9 @@ void CraftSoldiersState::init()
 
 	_lstSoldiers->clearList();
 
-	size_t r (0u);
 	Uint8 color;
 
+	size_t r (0u);
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
@@ -189,7 +191,7 @@ void CraftSoldiersState::init()
 						3,
 						(*i)->getLabel().c_str(),
 						tr((*i)->getRankString()).c_str(),
-						(*i)->getCraftString(_game->getLanguage()).c_str());
+						(*i)->getCraftLabel(_game->getLanguage()).c_str());
 
 		if ((*i)->getCraft() == nullptr)
 			color = _lstSoldiers->getColor();
@@ -201,14 +203,7 @@ void CraftSoldiersState::init()
 		_lstSoldiers->setRowColor(r, color);
 
 		if ((*i)->getSickbay() != 0)
-		{
-			const int pct ((*i)->getPctWounds());
-			if		(pct > 50)	color = ORANGE;
-			else if	(pct > 10)	color = YELLOW;
-			else				color = GREEN;
-
-			_lstSoldiers->setCellColor(r, 2u, color, true);
-		}
+			_lstSoldiers->setCellColor(r, 2u, (*i)->getSickbayColor(), true);
 	}
 
 	_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
@@ -253,7 +248,7 @@ void CraftSoldiersState::btnUnloadClick(Action*)
 			(*i)->setCraft(
 						nullptr,
 						_base,
-						_game->getSavedGame()->getMonthsElapsed() == -1);
+						_isQuickBattle == true);
 	}
 
 	_base->setRecallRow(
@@ -297,10 +292,12 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 					sol->setCraft(
 								_craft,
 								_base,
-								_game->getSavedGame()->getMonthsElapsed() == -1);
+								_isQuickBattle == true);
 					_lstSoldiers->setCellText(
 											r, 2u,
-											_craft->getLabel(_game->getLanguage()));
+											_craft->getLabel(
+														_game->getLanguage(),
+														_isQuickBattle == false));
 				}
 				else
 				{
@@ -312,7 +309,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 						sol->setCraft(
 									nullptr,
 									_base,
-									_game->getSavedGame()->getMonthsElapsed() == -1);
+									_isQuickBattle == true);
 						_lstSoldiers->setCellText(
 												r, 2u,
 												tr("STR_NONE_UC"));

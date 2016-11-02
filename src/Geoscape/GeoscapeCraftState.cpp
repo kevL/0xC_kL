@@ -214,13 +214,13 @@ GeoscapeCraftState::GeoscapeCraftState(
 		status = tr("STR_LOW_FUEL_RETURNING_TO_BASE");
 	else if (missionComplete == true)
 		status = tr("STR_MISSION_COMPLETE_RETURNING_TO_BASE");
-	else if (_craft->getDestination() == dynamic_cast<Target*>(_craft->getBase()))
+	else if (_craft->getTarget() == dynamic_cast<Target*>(_craft->getBase()))
 		status = tr("STR_RETURNING_TO_BASE");
-	else if (_craft->getDestination() == nullptr)
+	else if (_craft->getTarget() == nullptr)
 		status = tr("STR_PATROLLING");
 	else
 	{
-		const Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getDestination()));
+		const Ufo* const ufo (dynamic_cast<Ufo*>(_craft->getTarget()));
 		if (ufo != nullptr)
 		{
 			if (_craft->inDogfight() == true)
@@ -236,7 +236,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		}
 		else
 			status = tr("STR_DESTINATION_UC_")
-						.arg(_craft->getDestination()->getLabel(_game->getLanguage()));
+						.arg(_craft->getTarget()->getLabel(_game->getLanguage()));
 	}
 	_txtStatus->setText(tr("STR_STATUS_").arg(status));
 
@@ -349,9 +349,9 @@ GeoscapeCraftState::GeoscapeCraftState(
 					_btnTarget->setVisible(false);
 		}
 	}
-	else if (_craft->getDestination() == dynamic_cast<Target*>(_craft->getBase()))
+	else if (_craft->getTarget() == dynamic_cast<Target*>(_craft->getBase()))
 		_btnRebase->setVisible(false);
-	else if (_craft->getDestination() == nullptr)
+	else if (_craft->getTarget() == nullptr)
 		_btnPatrol->setVisible(false);
 
 	SurfaceSet* const srt (_game->getResourcePack()->getSurfaceSet("INTICON.PCK"));
@@ -402,7 +402,7 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 		return;
 	}
 
-	_craft->setDestination();
+	_craft->setTarget();
 	_geoState->setPaused();
 	_geoState->resetTimer();
 	_geoState->getGlobe()->clearCrosshair();
@@ -459,7 +459,7 @@ void GeoscapeCraftState::btnPatrolClick(Action*)
 		_game->popState();
 
 	_game->popState();
-	_craft->setDestination();
+	_craft->setTarget();
 	_geoState->getGlobe()->clearCrosshair();
 
 	if (_waypoint != nullptr)
@@ -477,7 +477,7 @@ void GeoscapeCraftState::btnCancelOrRedirectClick(Action*)
 	{
 		_waypoint->setId(_game->getSavedGame()->getCanonicalId(Target::stTarget[4u]));
 		_game->getSavedGame()->getWaypoints()->push_back(_waypoint);
-		_craft->setDestination(_waypoint);
+		_craft->setTarget(_waypoint);
 		_geoState->getGlobe()->clearCrosshair();
 	}
 	_game->popState(); // and Cancel.
@@ -535,8 +535,8 @@ void GeoscapeCraftState::targeter() // private.
 	if (_waypoint != nullptr)
 	{
 		_geoState->getGlobe()->setCrosshair(
-										_craft->getDestination()->getLongitude(),
-										_craft->getDestination()->getLatitude());
+										_craft->getTarget()->getLongitude(),
+										_craft->getTarget()->getLatitude());
 		_geoState->getGlobe()->draw();
 	}
 }

@@ -20,7 +20,7 @@
 #include "WarningMessage.h"
 
 //#include <string>
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "../Engine/Timer.h"
 

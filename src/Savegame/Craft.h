@@ -123,7 +123,9 @@ private:
 		void changeRules(RuleCraft* const crRule);
 
 		/// Gets the Craft's label.
-		std::wstring getLabel(const Language* const lang) const override;
+		std::wstring getLabel(
+				const Language* const lang,
+				bool id = true) const override;
 		/// Sets the Craft's label.
 		void setLabel(const std::wstring& label);
 
@@ -151,8 +153,8 @@ private:
 		/// Gets the Craft's heading as an integer.
 		unsigned getHeadingInt() const;
 
-		/// Sets the Craft's destination.
-		void setDestination(Target* const dest = nullptr) override;
+		/// Sets the Craft's destination-target.
+		void setTarget(Target* const target = nullptr) override;
 
 		/// Gets the Craft's amount of weapons.
 		size_t getQtyWeapons() const;

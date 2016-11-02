@@ -77,6 +77,7 @@ class Soldier
 
 private:
 	bool
+		_isQuickBattle,
 		_psiTraining,
 		_recentlyPromoted;
 	int
@@ -148,7 +149,7 @@ private:
 				Base* const base = nullptr,
 				bool isQuickBattle = false);
 		/// Gets the Soldier's craft-string.
-		std::wstring getCraftString(const Language* const lang) const;
+		std::wstring getCraftLabel(const Language* const lang) const;
 
 		/// Gets a string version of the Soldier's rank.
 		std::string getRankString() const;
@@ -183,6 +184,8 @@ private:
 		int getSickbay() const;
 		/// Sets the Soldier's wound-recovery time.
 		void setSickbay(int recovery);
+		/// Gets the color for the Soldier's wound-recovery time.
+		Uint8 getSickbayColor();
 		/// Gets a Soldier's wounds as a percent.
 		int getPctWounds() const;
 		/// Heals wound recoveries.
@@ -191,12 +194,15 @@ private:
 		/// Gets the Soldier's equipment-layout.
 		std::vector<SoldierLayout*>* getLayout();
 
-		/// Trains a Soldier's psionic abilities.
+		/// Trains the Soldier's psionic abilities.
 		bool trainPsiDay();
-		/// Returns whether the unit is in psi-training or not
+		/// Gets whether the Soldier is in psi-training or not.
 		bool inPsiTraining() const;
-		/// Sets the psi training status
+		/// Toggles the psi-training status of the Soldier.
 		void togglePsiTraining();
+
+		/// Sets the Soldier as a quick-battle soldier.
+		void setQuickBattle();
 
 		/// Kills the Soldier and sends him/her to the dead soldiers' bin.
 		void die(SavedGame* const gameSave);

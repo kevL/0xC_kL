@@ -74,10 +74,11 @@ namespace OpenXcom
  */
 NewBattleState::NewBattleState()
 	:
-		_craft(nullptr)
+		_craft(nullptr),
+		_base(nullptr),
+		_gameSave(nullptr),
+		_rules(_game->getRuleset())
 {
-	_rules = _game->getRuleset();
-
 	_window				= new Window(this, 320, 200, 0,0, POPUP_BOTH);
 	_txtTitle			= new Text(320, 17, 0, 9);
 
@@ -91,7 +92,7 @@ NewBattleState::NewBattleState()
 
 	_txtCraft			= new Text(100, 9, 8, 50);
 	_cbxCraft			= new ComboBox(this, 106, 16, 98, 46);
-	_btnEquip			= new TextButton(106, 16, 206, 46);
+	_btnCraft			= new TextButton(106, 16, 206, 46);
 
 	_txtDarkness		= new Text(120, 9, 22, 83);
 	_slrDarkness		= new Slider(120, 16, 22, 93);
@@ -108,9 +109,10 @@ NewBattleState::NewBattleState()
 	_txtAlienTech		= new Text(120, 9, 178, 143);
 	_slrAlienTech		= new Slider(120, 16, 178, 153);
 
-	_btnCancel			= new TextButton(100, 16,   8, 176);
-	_btnRandom			= new TextButton(100, 16, 110, 176);
-	_btnOk				= new TextButton(100, 16, 212, 176);
+	_btnCancel			= new TextButton(75, 16,  10, 176);
+	_btnGenerate		= new TextButton(75, 16,  85, 176);
+	_btnRandom			= new TextButton(75, 16, 160, 176);
+	_btnOk				= new TextButton(75, 16, 235, 176);
 
 	setInterface("newBattleMenu");
 
@@ -123,7 +125,7 @@ NewBattleState::NewBattleState()
 
 	add(_txtMission,		"text",		"newBattleMenu");
 	add(_txtCraft,			"text",		"newBattleMenu");
-	add(_btnEquip,			"button1",	"newBattleMenu");
+	add(_btnCraft,			"button1",	"newBattleMenu");
 
 	add(_txtDarkness,		"text",		"newBattleMenu");
 	add(_slrDarkness,		"button1",	"newBattleMenu");
@@ -133,9 +135,10 @@ NewBattleState::NewBattleState()
 	add(_txtAlienTech,		"text",		"newBattleMenu");
 	add(_slrAlienTech,		"button1",	"newBattleMenu");
 
-	add(_btnOk,				"button2",	"newBattleMenu");
 	add(_btnCancel,			"button2",	"newBattleMenu");
+	add(_btnGenerate,		"button2",	"newBattleMenu");
 	add(_btnRandom,			"button2",	"newBattleMenu");
+	add(_btnOk,				"button2",	"newBattleMenu");
 
 	add(_cbxTerrain,		"button1",	"newBattleMenu");
 	add(_cbxAlienRace,		"button1",	"newBattleMenu");
@@ -203,8 +206,11 @@ NewBattleState::NewBattleState()
 
 	_cbxTerrain->setBackgroundFill(BROWN_D);
 
-	_btnEquip->setText(tr("STR_EQUIP_CRAFT"));
-	_btnEquip->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnEquipClick));
+	_btnCraft->setText(tr("STR_EQUIP_CRAFT"));
+	_btnCraft->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnCraftClick));
+
+	_btnGenerate->setText(tr("STR_GENERATE"));
+	_btnGenerate->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnGenerateClick));
 
 	_btnRandom->setText(tr("STR_RANDOMIZE"));
 	_btnRandom->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnRandClick));
@@ -278,30 +284,30 @@ void NewBattleState::configLoad(const std::string& file)
 			if (doc["rng"] && Options::reSeedOnLoad == false)
 				RNG::setSeed(doc["rng"].as<uint64_t>());
 			else
-				RNG::setSeed();
+				RNG::setSeed(); // savescrub.
 
 			if (doc["base"])
 			{
-				SavedGame* const gameSave (new SavedGame(_rules));
-				_game->setSavedGame(gameSave);
+				_gameSave = new SavedGame(_rules);
+				_game->setSavedGame(_gameSave);
 
-				Base* const base (new Base(_rules, gameSave));
-				base->loadBase(doc["base"]); // NOTE: considered as neither a 'firstBase' nor a 'quick-battle' ...
-				gameSave->getBases()->push_back(base);
+				_base = new Base(_rules, _gameSave);
+				_base->loadBase(doc["base"]); // NOTE: considered as neither a 'firstBase' nor a 'quickBattle' ...
+				_gameSave->getBases()->push_back(_base);
 
-				if (base->getCrafts()->empty() == true)
+				if (_base->getCrafts()->empty() == true)
 				{
 					const std::string craftType (_crafts[_cbxCraft->getSelected()]);
 					_craft = new Craft(
 									_rules->getCraft(craftType),
-									base,
-									gameSave,
-									gameSave->getCanonicalId(craftType));
-					base->getCrafts()->push_back(_craft);
+									_base,
+									_gameSave,
+									_gameSave->getCanonicalId(craftType));
+					_base->getCrafts()->push_back(_craft);
 				}
 				else // fix potentially invalid contents
 				{
-					_craft = base->getCrafts()->front();
+					_craft = _base->getCrafts()->front();
 					for (std::map<std::string, int>::iterator
 							i = _craft->getCraftItems()->getContents()->begin();
 							i != _craft->getCraftItems()->getContents()->end();
@@ -312,8 +318,8 @@ void NewBattleState::configLoad(const std::string& file)
 					}
 				}
 
-				resetStorage(base);			// Clear and generate Base storage.
-				resetResearch(gameSave);	// Add research - setup ResearchGenerals.
+				resetStorage();		// Clear and generate Base storage.
+				resetResearch();	// Add research - setup ResearchGenerals.
 			}
 			else
 				configCreate();
@@ -341,7 +347,7 @@ void NewBattleState::configSave(const std::string& file)
 		return;
 	}
 
-	YAML::Emitter emit;
+	YAML::Emitter out;
 
 	YAML::Node node;
 	node["mission"]		= _cbxMission->getSelected();
@@ -351,11 +357,11 @@ void NewBattleState::configSave(const std::string& file)
 	node["alienRace"]	= _cbxAlienRace->getSelected();
 	node["difficulty"]	= _cbxDifficulty->getSelected();
 	node["alienTech"]	= _slrAlienTech->getValue();
-	node["base"]		= _game->getSavedGame()->getBases()->front()->save();
+	node["base"]		= _base->save();
 	node["rng"]			= RNG::getSeed();
-	emit << node;
+	out << node;
 
-	ofstr << emit.c_str();
+	ofstr << out.c_str();
 	ofstr.close();
 }
 
@@ -366,43 +372,58 @@ void NewBattleState::configCreate()
 {
 	RNG::setSeed();
 
-	SavedGame* const gameSave (new SavedGame(_rules));
-	_game->setSavedGame(gameSave);
+	_gameSave = new SavedGame(_rules);
+	_game->setSavedGame(_gameSave);
 
-	Base* const base (new Base(_rules, gameSave));
+	_base = new Base(_rules, _gameSave);
 
 	const YAML::Node& node (_rules->getStartingBase());
-	base->loadBase(node, true, true);
-	gameSave->getBases()->push_back(base);
-	base->setLabel(L"tactical");
+	_base->loadBase(node, true, true);
+	_gameSave->getBases()->push_back(_base);
+	_base->setLabel(L"tactical");
 
 	// Clear and generate Craft.
 	for (std::vector<Craft*>::const_iterator
-			i = base->getCrafts()->begin();
-			i != base->getCrafts()->end();
+			i = _base->getCrafts()->begin();
+			i != _base->getCrafts()->end();
 			++i)
 	{
 		delete *i;
 	}
-	base->getCrafts()->clear();
+	_base->getCrafts()->clear();
 
 	_craft = new Craft(
 					_rules->getCraft(_crafts[_cbxCraft->getSelected()]),
-					base,
-					gameSave,
+					_base,
+					_gameSave,
 					1);
-	base->getCrafts()->push_back(_craft);
+	_base->getCrafts()->push_back(_craft);
 
+	_base->setEngineers(0);
+	_base->setScientists(0);
 
+	configSoldiers();
+
+	resetStorage();		// Clear and generate Base storage.
+	resetResearch();	// Add research - setup ResearchGenerals.
+
+	cbxMissionChange(nullptr);
+}
+
+/**
+ * Generates the Soldiers.
+ */
+void NewBattleState::configSoldiers()
+{
 	// Clear and generate Soldiers.
 	for (std::vector<Soldier*>::const_iterator
-			i = base->getSoldiers()->begin();
-			i != base->getSoldiers()->end();
+			i = _base->getSoldiers()->begin();
+			i != _base->getSoldiers()->end();
 			++i)
 	{
 		delete *i;
 	}
-	base->getSoldiers()->clear();
+	_base->getSoldiers()->clear();
 
 	const UnitStats statCaps (_rules->getSoldier("STR_SOLDIER")->getStatCaps());
 	UnitStats* stats;
@@ -416,18 +437,20 @@ void NewBattleState::configCreate()
 			++i)
 	{
 		Soldier* const sol (_rules->genSoldier(
-											gameSave,
+											_gameSave,
 											_rules->getSoldiersList().at(RNG::pick(_rules->getSoldiersList().size()))));
-		stats = sol->getCurrentStats();
+		_base->getSoldiers()->push_back(sol);
 
 		hasRookieStats = true;
+
+		stats = sol->getCurrentStats();
 		for (int
 				j = 0;
 				j != 13; // arbitrary ....
 				++j)
 		{
 			if (RNG::percent(11 - static_cast<int>(sol->getRank()))
-				&& sol->getRank() != RANK_COMMANDER
+				&&  sol->getRank() != RANK_COMMANDER
 				&& (sol->getRank() != RANK_COLONEL || hasCdr == false))
 			{
 				sol->promoteRank();
@@ -441,17 +464,17 @@ void NewBattleState::configCreate()
 			{
 				hasRookieStats = false;
 //				UnitStats* const stats = sol->getCurrentStats();
-				stats->tu			+= RNG::generate(0,6);
-				stats->stamina		+= RNG::generate(0,6);
-				stats->health		+= RNG::generate(0,5);
-				stats->bravery		+= RNG::generate(0,5);
-				stats->reactions	+= RNG::generate(0,5);
-				stats->firing		+= RNG::generate(0,7);
-				stats->throwing		+= RNG::generate(0,6);
-				stats->strength		+= RNG::generate(0,8);
-				stats->melee		+= RNG::generate(0,5);
-				stats->psiStrength	+= RNG::generate(0,4);
-				stats->psiSkill		+= RNG::generate(0,25);
+				stats->tu			+= RNG::generate(0, 6);
+				stats->stamina		+= RNG::generate(0, 6);
+				stats->health		+= RNG::generate(0, 5);
+				stats->bravery		+= RNG::generate(0, 5);
+				stats->reactions	+= RNG::generate(0, 5);
+				stats->firing		+= RNG::generate(0, 7);
+				stats->throwing		+= RNG::generate(0, 6);
+				stats->strength		+= RNG::generate(0, 8);
+				stats->melee		+= RNG::generate(0, 5);
+				stats->psiStrength	+= RNG::generate(0, 4);
+				stats->psiSkill		+= RNG::generate(0,20);
 			}
 		}
 
@@ -459,41 +482,32 @@ void NewBattleState::configCreate()
 		{
 			stats->bravery = stats->bravery / 10 * 10;
 
-			if (stats->tu > statCaps.tu)					stats->tu = statCaps.tu;
-			if (stats->stamina > statCaps.stamina)			stats->stamina = statCaps.stamina;
-			if (stats->health > statCaps.health)			stats->health = statCaps.health;
-			if (stats->bravery > statCaps.bravery)			stats->bravery = statCaps.bravery;
-			if (stats->reactions > statCaps.reactions)		stats->reactions = statCaps.reactions;
-			if (stats->firing > statCaps.firing)			stats->firing = statCaps.firing;
-			if (stats->throwing > statCaps.throwing)		stats->throwing = statCaps.throwing;
-			if (stats->strength > statCaps.strength)		stats->strength = statCaps.strength;
-			if (stats->melee > statCaps.melee)				stats->melee = statCaps.melee;
-			if (stats->psiStrength > statCaps.psiStrength)	stats->psiStrength = statCaps.psiStrength;
-			if (stats->psiSkill > statCaps.psiSkill)		stats->psiSkill = statCaps.psiSkill;
+			if (stats->tu			> statCaps.tu)			stats->tu			= statCaps.tu;
+			if (stats->stamina		> statCaps.stamina)		stats->stamina		= statCaps.stamina;
+			if (stats->health		> statCaps.health)		stats->health		= statCaps.health;
+			if (stats->bravery		> statCaps.bravery)		stats->bravery		= statCaps.bravery;
+			if (stats->reactions	> statCaps.reactions)	stats->reactions	= statCaps.reactions;
+			if (stats->firing		> statCaps.firing)		stats->firing		= statCaps.firing;
+			if (stats->throwing		> statCaps.throwing)	stats->throwing		= statCaps.throwing;
+			if (stats->strength		> statCaps.strength)	stats->strength		= statCaps.strength;
+			if (stats->melee		> statCaps.melee)		stats->melee		= statCaps.melee;
+			if (stats->psiStrength	> statCaps.psiStrength)	stats->psiStrength	= statCaps.psiStrength;
+			if (stats->psiSkill		> statCaps.psiSkill)	stats->psiSkill		= statCaps.psiSkill;
 		}
 
 		sol->autoStat();
-
-		base->getSoldiers()->push_back(sol);
-//		if (i < _craft->getRules()->getSoldiers())
-//			sol->setCraft(_craft);
+		sol->setQuickBattle();
 	}
-	base->sortSoldiers();
 
-
-	resetStorage(base);			// Clear and generate Base storage.
-	resetResearch(gameSave);	// Add research - setup ResearchGenerals.
-
-	cbxMissionChange(nullptr);
+	_base->sortSoldiers();
 }
 
 /**
  * Clears and generates Base storage-items.
- * @param base - pointer to the base
  */
-void NewBattleState::resetStorage(Base* const base) const // private.
+void NewBattleState::resetStorage() const // private.
 {
-	base->getStorageItems()->getContents()->clear();
+	_base->getStorageItems()->getContents()->clear();
 
 	const RuleItem* itRule;
 	const std::vector<std::string>& allItems (_rules->getItemsList());
@@ -507,7 +521,7 @@ void NewBattleState::resetStorage(Base* const base) const // private.
 			&& itRule->isLiveAlien() == false
 			&& itRule->isRecoverable() == true)
 		{
-			base->getStorageItems()->addItem(*i);
+			_base->getStorageItems()->addItem(*i);
 		}
 	}
 }
@@ -515,9 +529,8 @@ void NewBattleState::resetStorage(Base* const base) const // private.
 /**
  * Generates all research.
  * @note The Game and SavedGame objects take care of deletion.
- * @param gameSave - pointer to the SavedGame
  */
-void NewBattleState::resetResearch(SavedGame* const gameSave) const // private.
+void NewBattleState::resetResearch() const // private.
 {
 	const std::vector<std::string>& allResearch (_rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
@@ -525,9 +538,9 @@ void NewBattleState::resetResearch(SavedGame* const gameSave) const // private.
 			i != allResearch.end();
 			++i)
 	{
-		gameSave->getResearchGenerals().push_back(new ResearchGeneral(
-																_rules->getResearch(*i),
-																true));
+		_gameSave->getResearchGenerals().push_back(new ResearchGeneral(
+																	_rules->getResearch(*i),
+																	true));
 	}
 }
 
@@ -547,10 +560,10 @@ void NewBattleState::btnOkClick(Action*)
 	}
 
 	SavedBattleGame* const battleSave (new SavedBattleGame(
-														_game->getSavedGame(),
+														_gameSave,
 														nullptr, // &_rules->getOperations(),
 														_rules));
-	_game->getSavedGame()->setBattleSave(battleSave);
+	_gameSave->setBattleSave(battleSave);
 	battleSave->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
 
 	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
@@ -571,10 +584,10 @@ void NewBattleState::btnOkClick(Action*)
 		AlienBase* const aBase (new AlienBase(_game->getRuleset()->getDeployment(battleSave->getTacticalType())));
 		aBase->setId(1);
 		aBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
-		_craft->setDestination(aBase);
+		_craft->setTarget(aBase);
 		bGen.setAlienBase(aBase);
 
-		_game->getSavedGame()->getAlienBases()->push_back(aBase);
+		_gameSave->getAlienBases()->push_back(aBase);
 	}
 	else if (_craft != nullptr
 		&& _rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr)
@@ -583,13 +596,13 @@ void NewBattleState::btnOkClick(Action*)
 
 		Ufo* const ufo (new Ufo(
 							_rules->getUfo(_missionTypes[_cbxMission->getSelected()]),
-							_game->getSavedGame()));
+							_gameSave));
 		ufo->setQuickBattle();
 		ufo->setId(1);
-		_craft->setDestination(ufo);
+		_craft->setTarget(ufo);
 		bGen.setUfo(ufo);
 
-		if (RNG::percent(50) == true)
+		if (RNG::percent(50) == true) // TODO: Put this as an option in NewBattleState.
 		{
 			battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
 			ufo->setUfoStatus(Ufo::LANDED);
@@ -600,7 +613,7 @@ void NewBattleState::btnOkClick(Action*)
 			ufo->setUfoStatus(Ufo::CRASHED);
 		}
 
-		_game->getSavedGame()->getUfos()->push_back(ufo);
+		_gameSave->getUfos()->push_back(ufo);
 	}
 	else
 	{
@@ -609,24 +622,24 @@ void NewBattleState::btnOkClick(Action*)
 		const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
 		const RuleAlienMission* const mission (_rules->getAlienMission(_rules->getAlienMissionList().front())); // doesn't matter
 		TerrorSite* const terrorSite (new TerrorSite(
-													mission,
-													ruleDeploy));
+												mission,
+												ruleDeploy));
 		terrorSite->setId(1);
 		terrorSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
 
-		_craft->setDestination(terrorSite);
+		_craft->setTarget(terrorSite);
 
 		bGen.setTerrorSite(terrorSite);
-		_game->getSavedGame()->getTerrorSites()->push_back(terrorSite);
+		_gameSave->getTerrorSites()->push_back(terrorSite);
 	}
 
 	if (_craft != nullptr)
 	{
-		_craft->setSpeed(0);
+		_craft->setSpeed();
 		bGen.setCraft(_craft);
 	}
 
-	_game->getSavedGame()->setDifficulty(static_cast<DifficultyLevel>(_cbxDifficulty->getSelected()));
+	_gameSave->setDifficulty(static_cast<DifficultyLevel>(_cbxDifficulty->getSelected()));
 
 	bGen.setShade(_slrDarkness->getValue());
 	bGen.setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
@@ -686,11 +699,18 @@ void NewBattleState::btnRandClick(Action*)
  * Shows the CraftInfo screen.
  * @param action - pointer to an Action
  */
-void NewBattleState::btnEquipClick(Action*)
+void NewBattleState::btnCraftClick(Action*)
 {
-	_game->pushState(new CraftInfoState(
-									_game->getSavedGame()->getBases()->front(),
-									0u));
+	_game->pushState(new CraftInfoState(_base, 0u));
+}
+
+/**
+ * Generates a new group of Soldiers.
+ * @param action - pointer to an Action
+ */
+void NewBattleState::btnGenerateClick(Action*)
+{
+	configSoldiers();
 }
 
 /**
@@ -795,23 +815,23 @@ void NewBattleState::cbxCraftChange(Action*)
 {
 	_craft->changeRules(_rules->getCraft(_crafts[_cbxCraft->getSelected()]));
 
-	const int maxSoldiers (_craft->getRules()->getSoldierCapacity());
-	int curSoldiers (_craft->getQtySoldiers());
-	if (curSoldiers > maxSoldiers)
+	const int solCap (_craft->getRules()->getSoldierCapacity());
+	int solCur (_craft->getQtySoldiers());
+	if (solCur > solCap)
 	{
-		std::vector<Soldier*>* const soldiers (_craft->getBase()->getSoldiers()); // NOTE: Perhaps should not reverse-iterate since AutoStat ran.
+		std::vector<Soldier*>* const soldiers (_base->getSoldiers()); // NOTE: Perhaps should not reverse-iterate since AutoStat ran.
 		for (std::vector<Soldier*>::const_reverse_iterator
 				rit = soldiers->rbegin();
-				rit != soldiers->rend() && curSoldiers > maxSoldiers;
+				rit != soldiers->rend() && solCur > solCap;
 				++rit)
 		{
 			if ((*rit)->getCraft() == _craft) // TODO: Remove excess luggage/support units also.
 			{
 				(*rit)->setCraft(
 							nullptr,
-							_craft->getBase(),
+							_base,
 							true);
-				--curSoldiers;
+				--solCur;
 			}
 		}
 	}

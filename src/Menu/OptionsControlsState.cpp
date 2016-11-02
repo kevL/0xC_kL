@@ -19,7 +19,7 @@
 
 #include "OptionsControlsState.h"
 
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "../Engine/Language.h"
 #include "../Engine/Options.h"

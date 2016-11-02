@@ -97,12 +97,18 @@ YAML::Node AlienBase::saveIdentificator() const
 
 /**
  * Returns this AlienBase's uniquely identifying label.
- * @param lang - pointer to Language to get strings from
+ * @param lang	- pointer to Language to get strings from
+ * @param id	- true to show the Id (default true)
  * @return, label
  */
-std::wstring AlienBase::getLabel(const Language* const lang) const
+std::wstring AlienBase::getLabel(
+		const Language* const lang,
+		bool id) const
 {
-	return lang->getString(_ruleDeploy->getMarkerType() + "_").arg(_id); //"STR_ALIEN_BASE_"
+	if (id == true)
+		return lang->getString(_ruleDeploy->getMarkerType() + "_").arg(_id); //"STR_ALIEN_BASE_"
+
+	return lang->getString(_ruleDeploy->getMarkerType());
 }
 
 /**

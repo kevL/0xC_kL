@@ -51,7 +51,9 @@ class Waypoint final
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the Waypoint's label.
-		std::wstring getLabel(const Language* const lang) const override;
+		std::wstring getLabel(
+				const Language* const lang,
+				bool id = true) const override;
 
 		/// Gets the Waypoint's globe-marker.
 		int getMarker() const override;

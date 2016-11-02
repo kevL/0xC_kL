@@ -58,9 +58,9 @@ class BattlescapeGenerator
 
 private:
 	bool
-		_isFakeInventory,
 		_craftDeployed,
-		_generateFuel;
+		_generateFuel,
+		_isFakeInventory;
 //		_error;
 	int
 		_alienItemLevel,
@@ -85,19 +85,19 @@ private:
 	std::vector<BattleItem*>* _itemList;
 	std::vector<BattleUnit*>* _unitList;
 
-	AlienBase* _alienBase;
-	Base* _base;
-	Craft* _craft;
-	Game* _game;
-	MapBlock* _testBlock;
-	TerrorSite* _terrorSite;
-	ResourcePack* _res;
-	Ruleset* _rules;
-	RuleTerrain* _terrainRule;
-	SavedBattleGame* _battleSave;
-	SavedGame* _gameSave;
-	Tile* _tileEquipt;
-	Ufo* _ufo;
+	AlienBase*			_alienBase;
+	Base*				_base;
+	Craft*				_craft;
+	Game*				_game;
+	MapBlock*			_testBlock;
+	TerrorSite*			_terrorSite;
+	ResourcePack*		_res;
+	Ruleset*			_rules;
+	RuleTerrain*		_terrainRule;
+	SavedBattleGame*	_battleSave;
+	SavedGame*			_gameSave;
+	Tile*				_tileEquipt;
+	Ufo*				_ufo;
 
 	std::string _alienRace;
 
@@ -111,7 +111,7 @@ private:
 	/// Deploys XCOM units and equipment for tactical.
 	void deployXcom();
 	/// Constructs a vector of Vehicles that can participate in base-defense tacticals.
-	void prepareBaseDefenseVehicles(std::vector<Vehicle*>& vehicles);
+	void prepareBaseDefenseVehicles(std::vector<Vehicle*>* vehicles);
 	/// Prepares a support-unit to be added to the Battlescape.
 	BattleUnit* convertVehicle(Vehicle* const vehicle);
 	/// Adds a unit to the Battlescape.
@@ -234,10 +234,12 @@ private:
 		void setTerrorSite(TerrorSite* const terrorSite);
 		/// Sets the AlienBase.
 		void setAlienBase(AlienBase* const base);
+
 		/// Sets the terrain-rule.
 		void setTerrain(RuleTerrain* const terrain);
 		/// Sets the tactical shade.
 		void setShade(int shade);
+
 		/// Sets the alien-race.
 		void setAlienRace(const std::string& alienRace);
 		/// Sets the alien-item-level.
@@ -248,7 +250,7 @@ private:
 		/// Sets up the next stage (for Cydonia/2-stage missions).
 		void nextStage();
 
-		/// Generates a fake battlescape for Craft & Base soldier-inventory.
+		/// Generates a fake battlescape for a Craft's or Base's soldier-inventory.
 		void runFakeInventory(
 				Craft* const craft,
 				Base* const base = nullptr,

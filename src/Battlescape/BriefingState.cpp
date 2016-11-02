@@ -60,7 +60,7 @@ namespace OpenXcom
  */
 BriefingState::BriefingState(
 		const Craft* const craft,
-		Base* const base)
+		const Base* const base)
 {
 	_window			= new Window(this, 320, 200);
 	_txtTitle		= new Text(288, 17, 16, 22);
@@ -79,7 +79,7 @@ BriefingState::BriefingState(
 	if (ruleDeploy == nullptr // landing site or crash site -> define BG & Music by ufoType instead
 		&& craft != nullptr)
 	{
-		const Ufo* const ufo (dynamic_cast<Ufo*>(craft->getDestination()));
+		const Ufo* const ufo (dynamic_cast<Ufo*>(craft->getTarget()));
 		if (ufo != nullptr) // landing site or crash site.
 			ruleDeploy = _game->getRuleset()->getDeployment(ufo->getRules()->getType()); // check, Xcom1Ruleset->alienDeployments for a ufoType
 	}
@@ -161,28 +161,34 @@ BriefingState::BriefingState(
 	_txtBriefing->setText(tr(description));
 	_txtBriefing->setWordWrap();
 
-	std::wstring craftLabel;
+	const bool isQuickBattle (_game->getSavedGame()->getMonthsElapsed() == -1);
+
+	std::wstring label;
 	if (craft != nullptr)
 	{
-		craftLabel = tr("STR_CRAFT_UC_").arg(craft->getLabel(_game->getLanguage()));
+		label = tr("STR_CRAFT_UC_").arg(craft->getLabel(
+													_game->getLanguage(),
+													isQuickBattle == false));
 
-		if (craft->getDestination() != nullptr)
+		if (craft->getTarget() != nullptr)
 		{
-			_txtTarget->setText(craft->getDestination()->getLabel(_game->getLanguage()));
 			_txtTarget->setBig();
+			_txtTarget->setText(craft->getTarget()->getLabel(
+															_game->getLanguage(),
+															isQuickBattle == false));
 		}
 		else
 			_txtTarget->setVisible(false);
 	}
 	else if (base != nullptr)
 	{
-		craftLabel = tr("STR_BASE_UC_").arg(base->getLabel());
+		label = tr("STR_BASE_UC_").arg(base->getLabel());
 		_txtTarget->setVisible(false);
 	}
 
-	if (craftLabel.empty() == false)
+	if (label.empty() == false)
 	{
-		_txtCraft->setText(craftLabel);
+		_txtCraft->setText(label);
 		_txtCraft->setBig();
 	}
 	else
@@ -223,27 +229,29 @@ void BriefingState::btnOkClick(Action*)
 	battleState->getBattleGame()->tallyUnits(
 										liveHostile,
 										livePlayer);
-	if (liveHostile != 0)
-	{
-		Options::baseXResolution = Options::baseXBattlescape;
-		Options::baseYResolution = Options::baseYBattlescape;
 
-		_game->pushState(battleState);
-		_game->getSavedGame()->getBattleSave()->setBattleState(battleState);
-		_game->pushState(new NextTurnState(
-										_game->getSavedGame()->getBattleSave(),
-										battleState));
-		_game->pushState(new InventoryState(
-										false,
-										battleState));
-	}
-	else
+	switch (liveHostile)
 	{
-		Options::baseXResolution = Options::baseXGeoscape;
-		Options::baseYResolution = Options::baseYGeoscape;
+		case 0:
+			Options::baseXResolution = Options::baseXGeoscape;
+			Options::baseYResolution = Options::baseYGeoscape;
 
-		delete battleState;
-		_game->pushState(new AliensCrashState());
+			delete battleState;
+			_game->pushState(new AliensCrashState());
+			break;
+
+		default:
+			Options::baseXResolution = Options::baseXBattlescape;
+			Options::baseYResolution = Options::baseYBattlescape;
+
+			_game->pushState(battleState);
+			_game->getSavedGame()->getBattleSave()->setBattleState(battleState);
+			_game->pushState(new NextTurnState(
+											_game->getSavedGame()->getBattleSave(),
+											battleState));
+			_game->pushState(new InventoryState(
+											false,
+											battleState));
 	}
 
 	_game->getScreen()->resetDisplay(false);

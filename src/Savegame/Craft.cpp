@@ -209,9 +209,9 @@ void Craft::loadCraft(
 	if (const YAML::Node& label = node["label"])
 		_label = Language::utf8ToWstr(label.as<std::string>());
 
-	if (const YAML::Node& dest = node["dest"])
+	if (const YAML::Node& target = node["target"])
 	{
-		int id (dest["id"].as<int>());
+		int id (target["id"].as<int>());
 
 //		"STR_UFO",			// 0.
 //		"STR_BASE",			// 1.
@@ -221,7 +221,7 @@ void Craft::loadCraft(
 //		"STR_LANDING_SITE",	// 5
 //		"STR_CRASH_SITE"	// 6
 
-		if ((type = dest["type"].as<std::string>()) == Target::stTarget[1u]) // "STR_BASE"
+		if ((type = target["type"].as<std::string>()) == Target::stTarget[1u]) // "STR_BASE"
 			returnToBase();
 		else if (type == Target::stTarget[0u]) // "STR_UFO" // is this *always* "STR_UFO" .........
 		{
@@ -233,7 +233,7 @@ void Craft::loadCraft(
 			{
 				if ((*i)->getId() == id)
 				{
-					setDestination(*i);
+					setTarget(*i);
 					break;
 				}
 			}
@@ -248,7 +248,7 @@ void Craft::loadCraft(
 			{
 				if ((*i)->getId() == id)
 				{
-					setDestination(*i);
+					setTarget(*i);
 					break;
 				}
 			}
@@ -263,7 +263,7 @@ void Craft::loadCraft(
 			{
 				if ((*i)->getId() == id)
 				{
-					setDestination(*i);
+					setTarget(*i);
 					break;
 				}
 			}
@@ -278,7 +278,7 @@ void Craft::loadCraft(
 			{
 				if ((*i)->getId() == id)
 				{
-					setDestination(*i);
+					setTarget(*i);
 					break;
 				}
 			}
@@ -297,7 +297,7 @@ void Craft::loadCraft(
 					&& (*i)->getAlienBaseDeployed()->getMarkerType() == type) // is this necessary. not for stock UFO.
 				{
 					found = true;
-					setDestination(*i);
+					setTarget(*i);
 					break;
 				}
 			}
@@ -313,7 +313,7 @@ void Craft::loadCraft(
 					if ((*i)->getId() == id
 						&& (*i)->getTerrorDeployed()->getMarkerType() == type) // is this necessary. not for stock UFO.
 					{
-						setDestination(*i);
+						setTarget(*i);
 						break;
 					}
 				}
@@ -323,8 +323,8 @@ void Craft::loadCraft(
 
 	_takeOffDelay	= node["takeOff"]	.as<int>(_takeOffDelay);
 	_tactical		= node["tactical"]	.as<bool>(_tactical);
-	if (_tactical == true)
-		setSpeed(0);
+
+	if (_tactical == true) setSpeed();
 }
 
 /**
@@ -442,14 +442,21 @@ void Craft::changeRules(RuleCraft* const crRule)
 /**
  * Gets this Craft's uniquely identifying label.
  * @note If there's not a custom-label the language default is used.
- * @param lang - pointer to a Language to get strings from
+ * @param lang	- pointer to Language to get strings from
+ * @param id	- true to show the Id (default true)
  * @return, label of craft
  */
-std::wstring Craft::getLabel(const Language* const lang) const
+std::wstring Craft::getLabel(
+		const Language* const lang,
+		bool id) const
 {
 	if (_label.empty() == true)
-		return lang->getString("STR_CRAFTLABEL").arg(lang->getString(_crRule->getType())).arg(_id);
+	{
+		if (id == true)
+			return lang->getString("STR_CRAFTLABEL").arg(lang->getString(_crRule->getType())).arg(_id);
 
+		return lang->getString(_crRule->getType());
+	}
 	return _label;
 }
 
@@ -551,10 +558,10 @@ std::string Craft::getAltitude() const
 	else if	(_takeOffDelay > 25) return MovingTarget::stAltitude[1u];
 	else if (_takeOffDelay != 0) return MovingTarget::stAltitude[2u];
 
-	if (_dest == nullptr)
+	if (_target == nullptr)
 		return MovingTarget::stAltitude[2u];
 
-	const Ufo* const ufo (dynamic_cast<Ufo*>(_dest));
+	const Ufo* const ufo (dynamic_cast<Ufo*>(_target));
 	if (ufo != nullptr)
 	{
 		if (ufo->getAltitude() == MovingTarget::stAltitude[0u])
@@ -583,10 +590,10 @@ unsigned Craft::getAltitudeInt() const
 	else if	(_takeOffDelay > 25) return 1u;
 	else if (_takeOffDelay != 0) return 2u;
 
-	if (_dest == nullptr)
+	if (_target == nullptr)
 		return 2u;
 
-	const Ufo* const ufo (dynamic_cast<Ufo*>(_dest));
+	const Ufo* const ufo (dynamic_cast<Ufo*>(_target));
 	if (ufo != nullptr)
 	{
 		if (ufo->getAltitude() == MovingTarget::stAltitude[0u])
@@ -650,10 +657,10 @@ unsigned Craft::getHeadingInt() const
 }
 
 /**
- * Sets the destination of this Craft.
- * @param dest - pointer to Target destination (default nullptr)
+ * Sets the destination-target of this Craft.
+ * @param target - pointer to Target destination (default nullptr)
  */
-void Craft::setDestination(Target* const dest)
+void Craft::setTarget(Target* const target)
 {
 	_interceptLanded = false;
 
@@ -662,12 +669,12 @@ void Craft::setDestination(Target* const dest)
 		_takeOffDelay = 75;
 		setSpeed(_crRule->getMaxSpeed() / 10);
 	}
-	else if (dest == nullptr)
+	else if (target == nullptr)
 		setSpeed(_crRule->getMaxSpeed() >> 1u);
 	else
 		setSpeed(_crRule->getMaxSpeed());
 
-	MovingTarget::setDestination(dest);
+	MovingTarget::setTarget(target);
 }
 
 /**
@@ -893,10 +900,10 @@ int Craft::getFuelLimit() const
 {
 //	return calcFuelLimit(_base);
 	double dist;
-	if (_dest == nullptr)
+	if (_target == nullptr)
 		dist = getDistance(_base);
 	else
-		dist = getDistance(_dest) + _base->getDistance(_dest);
+		dist = getDistance(_target) + _base->getDistance(_target);
 
 	const double speed (static_cast<double>(_crRule->getMaxSpeed()) * unitToRads / 6.);
 
@@ -916,10 +923,10 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
 		dist,
 		patrol_factor;
 
-	if (_dest != nullptr)
+	if (_target != nullptr)
 	{
 		patrol_factor = 1.;
-		dist = getDistance(_dest) + _base->getDistance(_dest);
+		dist = getDistance(_target) + _base->getDistance(_target);
 	}
 	else
 	{
@@ -941,7 +948,7 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
  */
 void Craft::returnToBase()
 {
-	setDestination(_base);
+	setTarget(_base);
 }
 
 /**
@@ -960,7 +967,7 @@ bool Craft::getTacticalReturn() const
  */
 void Craft::setTacticalReturn()
 {
-	setDestination(_base);
+	setTarget(_base);
 	_tacticalReturn = true;
 	_tactical = false;
 }
@@ -976,10 +983,10 @@ void Craft::think()
 			stepTarget();
 
 			if (reachedDestination() == true
-				&& _dest == dynamic_cast<Target*>(_base))
+				&& _target == dynamic_cast<Target*>(_base))
 			{
-				setDestination();
-				setSpeed(0);
+				setTarget();
+				setSpeed();
 
 				_lowFuel =
 				_tacticalReturn = false;
@@ -1192,7 +1199,7 @@ bool Craft::getTactical() const
 void Craft::setTactical(bool tactical)
 {
 	if ((_tactical = tactical) == true)
-		setSpeed(0);
+		setSpeed();
 }
 
 /**

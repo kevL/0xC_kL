@@ -422,7 +422,7 @@ Ufo* AlienMission::createUfo( // private.
 				wp->setLongitude(baseTargets[pick]->getLongitude());
 				wp->setLatitude(baseTargets[pick]->getLatitude());
 
-				ufo->setDestination(wp);
+				ufo->setTarget(wp);
 				return ufo;
 			}
 			break; // if no XCOM Base is exposed create a regular UFO below_
@@ -475,7 +475,7 @@ Ufo* AlienMission::createUfo( // private.
 				wp->setLongitude(coord.first);
 				wp->setLatitude(coord.second);
 
-				ufo->setDestination(wp);
+				ufo->setTarget(wp);
 				return ufo;
 			}
 			return nullptr; // No base to supply!
@@ -522,7 +522,7 @@ Ufo* AlienMission::createUfo( // private.
 		wp->setLongitude(coord.first);
 		wp->setLatitude(coord.second);
 
-		ufo->setDestination(wp);
+		ufo->setTarget(wp);
 		return ufo;
 	}
 	return nullptr;
@@ -598,7 +598,7 @@ void AlienMission::ufoReachedWaypoint(
 														regionRule));
 		wp->setLongitude(coord.first);
 		wp->setLatitude(coord.second);
-		ufo.setDestination(wp);
+		ufo.setTarget(wp);
 
 		if (ufo.getAltitude() == MovingTarget::stAltitude[0u]) // UFO landed.
 		{
@@ -648,7 +648,7 @@ void AlienMission::ufoReachedWaypoint(
 						Craft* const craft (dynamic_cast<Craft*>(*i));
 						if (craft != nullptr)
 						{
-							craft->setDestination(site);
+							craft->setTarget(site);
 							i = ufo.getTargeters()->begin();
 						}
 						else
@@ -666,7 +666,7 @@ void AlienMission::ufoReachedWaypoint(
 																					ufo.getLongitude(),
 																					ufo.getLatitude())));
 				if (i != _gameSave.getBases()->end())
-					ufo.setDestination(*i);
+					ufo.setTarget(*i);
 				else
 					ufo.setUfoStatus(Ufo::DESTROYED);
 			}

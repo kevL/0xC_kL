@@ -66,7 +66,9 @@ private:
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the AlienBase's label.
-		std::wstring getLabel(const Language* const lang) const override;
+		std::wstring getLabel(
+				const Language* const lang,
+				bool id = true) const override;
 		/// Gets the AlienBase's globe-marker.
 		int getMarker() const override;
 

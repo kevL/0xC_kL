@@ -552,7 +552,6 @@ terrains:
         length: 10
         groups: 4
   - type: CULTA
-    pyjamaType: STR_ARMOR_NONE_UC
     script: FARM
     mapDataSets:
       - BLANKS

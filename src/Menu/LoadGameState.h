@@ -24,7 +24,7 @@
 
 //#include <string>
 
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "OptionsBaseState.h"
 

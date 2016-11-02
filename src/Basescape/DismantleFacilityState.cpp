@@ -192,8 +192,8 @@ void DismantleFacilityState::calcRefund() // private.
 			++i)
 	{
 		if ((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
-			&& AreSame((*i)->getDestination()->getLongitude(), _base->getLongitude())
-			&& AreSame((*i)->getDestination()->getLatitude(),  _base->getLatitude()))
+			&& AreSame((*i)->getTarget()->getLongitude(), _base->getLongitude())
+			&& AreSame((*i)->getTarget()->getLatitude(),  _base->getLatitude()))
 		{
 			_refund = 0;
 			return;

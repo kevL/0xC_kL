@@ -22,7 +22,7 @@
 
 //#include <list>
 //#include <vector>
-//#include <SDL_types.h>
+//#include <SDL/SDL_types.h>
 
 #include "BattleUnit.h"
 

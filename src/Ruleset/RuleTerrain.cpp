@@ -37,7 +37,7 @@ RuleTerrain::RuleTerrain(const std::string& type)
 	:
 		_type(type),
 		_script("DEFAULT"),
-		_pyjamaType("STR_ARMOR_NONE_UC")
+		_basicArmor("STR_ARMOR_NONE_UC")
 {}
 
 /**
@@ -107,7 +107,7 @@ void RuleTerrain::load(
 		_musics.push_back((*i).as<std::string>()); // NOTE: might not be compatible w/ sza_MusicRules.
 	}
 
-	_pyjamaType = node["pyjamaType"].as<std::string>(_pyjamaType);
+	_basicArmor = node["basicArmor"].as<std::string>(_basicArmor);
 }
 
 /**
@@ -235,7 +235,7 @@ MapData* RuleTerrain::getTerrainPart(
 }
 
 /**
- * Gets the list of civilian-types to use on this terrain.
+ * Gets the list of civilian-types to use on this RuleTerrain.
  * @return, list of civilian-types (default MALE_CIVILIAN and FEMALE_CIVILIAN)
  */
 const std::vector<std::string>& RuleTerrain::getCivilianTypes() const
@@ -253,7 +253,7 @@ const std::string& RuleTerrain::getScriptType() const
 }
 
 /**
- * Gets the list of music-tracks this terrain can choose from.
+ * Gets the list of music-tracks this RuleTerrain can choose from.
  * @return, list of music-tracks
  */
 const std::vector<std::string>& RuleTerrain::getTerrainMusics() const
@@ -264,12 +264,13 @@ const std::vector<std::string>& RuleTerrain::getTerrainMusics() const
 /**
  * Gets the pyjama-type.
  * @note Used in BattlescapeGenerator::setTacticalSprites() to outfit soldiers
- * in camo suitable for the RuleTerrain.
+ * in basic camoflage that's suitable for this RuleTerrain.
  * @return, the pyjama-type
  */
-const std::string& RuleTerrain::getPyjamaType() const
+const std::string& RuleTerrain::getBasicArmorType() const
 {
-	return _pyjamaType;
-}
-
-}
+	return _basicArmor;	// TODO: Add camo-outfits to Terrains.rul ....
+}						// STR_STREET_ARCTIC_UC	(EqualTerms_kL.rul)
+						// STR_STREET_JUNGLE_UC		"
+}						// STR_STREET_URBAN_UC		"
+						// STR_ARMOR_NONE_UC	(Armor.rul, default)

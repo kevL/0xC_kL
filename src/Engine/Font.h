@@ -23,7 +23,7 @@
 #include <map>
 #include <string>
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include <yaml-cpp/yaml.h>
 

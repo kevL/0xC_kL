@@ -40,8 +40,8 @@
 
 #include <sys/stat.h>	// stat()
 
-#include <SDL_image.h>
-#include <SDL_syswm.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_syswm.h>
 
 #include "../dirent.h"
 

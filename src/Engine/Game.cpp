@@ -26,7 +26,7 @@
 //#include <sstream>	// std::ostringstream
 //#include <vector>		// std::vector
 
-#include <SDL_mixer.h>
+#include <SDL/SDL_mixer.h>
 
 #include "Action.h"
 #include "CrossPlatform.h"

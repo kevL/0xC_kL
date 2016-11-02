@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "Palette.h"
 

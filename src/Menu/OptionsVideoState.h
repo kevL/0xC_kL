@@ -20,7 +20,7 @@
 #ifndef OPENXCOM_OPTIONSVIDEOSTATE_H
 #define OPENXCOM_OPTIONSVIDEOSTATE_H
 
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "OptionsBaseState.h"
 

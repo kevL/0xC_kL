@@ -68,7 +68,8 @@ Soldier::Soldier(
 		_kills(0),
 		_recovery(0),
 		_psiTraining(false),
-		_recentlyPromoted(false)
+		_recentlyPromoted(false),
+		_isQuickBattle(false)
 //		_gender(GENDER_MALE),
 //		_look(LOOK_BLONDE),
 {
@@ -155,6 +156,7 @@ Soldier::Soldier(const RuleSoldier* const solRule)
 		_recovery(0),
 		_psiTraining(false),
 		_recentlyPromoted(false),
+		_isQuickBattle(false),
 		_initialStats(UnitStats()),
 		_currentStats(UnitStats())
 {
@@ -192,6 +194,7 @@ void Soldier::load(
 	_kills			= node["kills"]			.as<int>(_kills);
 	_recovery		= node["recovery"]		.as<int>(_recovery);
 	_psiTraining	= node["psiTraining"]	.as<bool>(_psiTraining);
+	_isQuickBattle	= node["isQuickBattle"]	.as<bool>(_isQuickBattle);
 
 	_rank	= static_cast<SoldierRank>(node["rank"]		.as<int>(0));
 	_gender	= static_cast<SoldierGender>(node["gender"]	.as<int>(0));
@@ -251,14 +254,15 @@ YAML::Node Soldier::save() const
 	node["type"]	= _solRule->getType();
 	node["id"]		= _id;
 
-	if (_missions != 0)			node["missions"]	= _missions;
-	if (_kills != 0)			node["kills"]		= _kills;
-	if (_recovery != 0)			node["recovery"]	= _recovery;
-	if (_psiTraining == true)	node["psiTraining"]	= _psiTraining;
+	if (_missions != 0)			node["missions"]		= _missions;
+	if (_kills != 0)			node["kills"]			= _kills;
+	if (_recovery != 0)			node["recovery"]		= _recovery;
+	if (_psiTraining == true)	node["psiTraining"]		= _psiTraining;
+	if (_isQuickBattle == true)	node["isQuickBattle"]	= _isQuickBattle;
 
-	if (_rank != RANK_ROOKIE)	node["rank"]	= static_cast<int>(_rank);
-	if (_gender != GENDER_MALE)	node["gender"]	= static_cast<int>(_gender);
-	if (_look != LOOK_BLONDE)	node["look"]	= static_cast<int>(_look);
+	if (_rank	!= RANK_ROOKIE) node["rank"]	= static_cast<int>(_rank);
+	if (_gender	!= GENDER_MALE) node["gender"]	= static_cast<int>(_gender);
+	if (_look	!= LOOK_BLONDE) node["look"]	= static_cast<int>(_look);
 
 	node["initialStats"] = _initialStats;
 	node["currentStats"] = _currentStats;
@@ -445,17 +449,17 @@ void Soldier::setCraft(
 
 /**
  * Gets this Soldier's craft-string, which is either the
- * soldier's wounded status, the assigned craft label, or none.
+ * soldier's wounded status, the assigned craft-label, or none.
  * @param lang - pointer to Language to get translations from
- * @return, wide-string
+ * @return, craft-label as a wide-string
  */
-std::wstring Soldier::getCraftString(const Language* const lang) const
+std::wstring Soldier::getCraftLabel(const Language* const lang) const
 {
 	if (_recovery != 0)
 		return lang->getString("STR_WOUNDED").arg(_recovery);
 
 	if (_craft != nullptr)
-		return _craft->getLabel(lang);
+		return _craft->getLabel(lang, _isQuickBattle == false);
 
 	return lang->getString("STR_NONE_UC");
 }
@@ -607,6 +611,27 @@ void Soldier::setSickbay(int recovery)
 }
 
 /**
+ * Gets the color for the Soldier's wound-recovery time.
+ * @return, color
+ */
+Uint8 Soldier::getSickbayColor()
+{
+	static const Uint8
+		GREEN	=  48u,
+		ORANGE	=  96u,
+		YELLOW	= 144u;
+
+	const int pct (getPctWounds());
+	if (pct > 50)
+		return ORANGE;
+
+	if (pct > 10)
+		return YELLOW;
+
+	return GREEN;
+}
+
+/**
  * Gets this Soldier's remaining woundage as a percent.
  * @return, recovery as percent
  */
@@ -703,6 +728,14 @@ bool Soldier::inPsiTraining() const
 void Soldier::togglePsiTraining()
 {
 	_psiTraining = !_psiTraining;
+}
+
+/**
+ * Sets this Soldier as a quick-battle soldier.
+ */
+void Soldier::setQuickBattle()
+{
+	_isQuickBattle = true;
 }
 
 /**

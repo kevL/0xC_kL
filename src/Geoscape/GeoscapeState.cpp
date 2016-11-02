@@ -1467,13 +1467,13 @@ void GeoscapeState::time5Seconds()
 						if ((*i)->getUfoStatus() == Ufo::DESTROYED) // if UFO was destroyed don't spawn missions
 							return;
 
-						Base* const base (dynamic_cast<Base*>((*i)->getDestination()));
+						Base* const base (dynamic_cast<Base*>((*i)->getTarget()));
 						if (base != nullptr)
 						{
 							resetTimer();
 
 							mission->setCountdown((RNG::generate(0,400) + 48) * 30);
-							(*i)->setDestination();
+							(*i)->setTarget();
 
 							if (base->setupBaseDefense() == true)
 								popupGeo(new BaseDefenseState(base, *i, this));
@@ -1561,9 +1561,9 @@ void GeoscapeState::time5Seconds()
 			}
 			else // craft okay.
 			{
-				if ((*j)->getDestination() != nullptr)
+				if ((*j)->getTarget() != nullptr)
 				{
-					const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getDestination()));
+					const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
 					if (ufo != nullptr)
 					{
 						if (ufo->getUfoStatus() != Ufo::FLYING)
@@ -1625,10 +1625,10 @@ void GeoscapeState::time5Seconds()
 
 				if ((*j)->reachedDestination() == true)
 				{
-					Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getDestination()));
-					const Waypoint* const wp (dynamic_cast<Waypoint*>((*j)->getDestination()));
-					const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getDestination()));
-//					const AlienBase* const aBase (dynamic_cast<AlienBase*>((*j)->getDestination()));
+					Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
+					const Waypoint* const wp (dynamic_cast<Waypoint*>((*j)->getTarget()));
+					const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getTarget()));
+//					const AlienBase* const aBase (dynamic_cast<AlienBase*>((*j)->getTarget()));
 
 					if (ufo != nullptr)
 					{
@@ -1692,7 +1692,7 @@ void GeoscapeState::time5Seconds()
 
 							case Ufo::DESTROYED: // just before expiration
 									popupGeo(new CraftPatrolState(*j, this));
-									(*j)->setDestination();
+									(*j)->setTarget();
 
 //								if ((*j)->getQtySoldiers() != 0)
 //								{
@@ -1715,7 +1715,7 @@ void GeoscapeState::time5Seconds()
 //								else if (ufo->getUfoStatus() != Ufo::LANDED)
 //								{
 //									popup(new CraftPatrolState(*j, this));
-//									(*j)->setDestination();
+//									(*j)->setTarget();
 //								}
 						}
 					}
@@ -1747,7 +1747,7 @@ void GeoscapeState::time5Seconds()
 					else // do Patrol at waypoint. NOTE: This will also handle target-UFOs that just vanished.
 					{
 						popupGeo(new CraftPatrolState(*j, this));
-						(*j)->setDestination();
+						(*j)->setTarget();
 					}
 				}
 				++j;
@@ -1938,7 +1938,7 @@ void GeoscapeState::time10Minutes()
 					popupGeo(new LowFuelState(*j, this));
 				}
 
-//				if ((*j)->getDestination() == nullptr) // Remove that: patrolling for aBases/10min was getting too bothersome.
+//				if ((*j)->getTarget() == nullptr) // Remove that: patrolling for aBases/10min was getting too bothersome.
 //				{
 				//Log(LOG_INFO) << ". Patrol for alienBases";
 				for (std::vector<AlienBase*>::const_iterator // patrol for aLien bases.

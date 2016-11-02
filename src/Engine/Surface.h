@@ -22,7 +22,7 @@
 
 #include <string>	// std::string
 
-#include <SDL.h>	// typedefs, functions
+#include <SDL/SDL.h>	// typedefs, functions
 
 
 namespace OpenXcom

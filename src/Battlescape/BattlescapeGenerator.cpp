@@ -107,7 +107,7 @@ BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 		_craftDeployed(false),
 		_craftZ(0),
 		_isFakeInventory(false),
-		_battleOrder(0),
+		_battleOrder(0u),
 		_blocksLeft(0),
 		_testBlock(nullptr)
 //		_error(false)
@@ -1041,11 +1041,14 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
  */
 void BattlescapeGenerator::deployXcom() // private.
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "BattlescapeGenerator::deployXcom()";
-	// A vehicle is actually an item that you will never see since it is
-	// converted to a unit -- the item itself however becomes its weapon.
-	std::vector<Vehicle*>* pSupports;
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "BattlescapeGenerator::deployXcom()";
+
+	// NOTE: A Vehicle is actually a BattleItem that you will never see since it
+	// gets converted to a BattleUnit -- the item itself however becomes the
+	// unit's (BattleItem) weapon.
+
+	std::vector<Vehicle*> supports;
 
 	if (_craft != nullptr)
 	{
@@ -1053,32 +1056,29 @@ void BattlescapeGenerator::deployXcom() // private.
 		_base = _craft->getBase();
 
 		if (_isFakeInventory == false)
-			pSupports = _craft->getVehicles();
-		else
-			pSupports = nullptr;
+			supports = *_craft->getVehicles();
 	}
-	else if (_base != nullptr && _isFakeInventory == false)
+	else if (_base != nullptr)
 	{
 		//Log(LOG_INFO) << ". base VALID";
-		std::vector<Vehicle*> supports;
-		prepareBaseDefenseVehicles(supports);
-		pSupports = &supports;
+		if (_isFakeInventory == false)
+			prepareBaseDefenseVehicles(&supports);
 	}
 	else
-		pSupports = nullptr;
-
-	if (pSupports != nullptr)
 	{
-		for (std::vector<Vehicle*>::const_iterator
-				i = pSupports->begin();
-				i != pSupports->end();
-				++i)
-		{
-			//Log(LOG_INFO) << ". . convertVehicle " << (int)*i;
-			BattleUnit* const unit (convertVehicle(*i));
-			if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
-				_battleSave->setSelectedUnit(unit);
-		}
+		throw Exception("bGen:deployXcom() Craft AND Base are invalid.");
+	}
+
+	for (std::vector<Vehicle*>::const_iterator
+			i = supports.begin();
+			i != supports.end();
+			++i)
+	{
+		Log(LOG_INFO) << ". convert vehicle type= " << (*i)->getRules()->getType();
+		BattleUnit* const unit (convertVehicle(*i));
+
+		if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
+			_battleSave->setSelectedUnit(unit);
 	}
 
 
@@ -1093,12 +1093,12 @@ void BattlescapeGenerator::deployXcom() // private.
 				&& ((*i)->getCraft() == nullptr
 					|| (*i)->getCraft()->getCraftStatus() != CS_OUT)))
 		{
-			//Log(LOG_INFO) << ". . addPlayerUnit id-" << (*i)->getId();
+			Log(LOG_INFO) << ". . addPlayerUnit id-" << (*i)->getId();
 			BattleUnit* const unit (addPlayerUnit(new BattleUnit(*i, _battleSave)));
 			if (unit != nullptr)
 			{
 				unit->setBattleOrder(++_battleOrder);
-				//Log(LOG_INFO) << ". . . battleOrder = " << _battleOrder;
+				Log(LOG_INFO) << ". . . battleOrder = " << _battleOrder;
 
 				if (_battleSave->getSelectedUnit() == nullptr)
 					_battleSave->setSelectedUnit(unit);
@@ -1110,7 +1110,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	{
 		throw Exception("bGen:deployXcom() No player units deployed.");
 	}
-	//Log(LOG_INFO) << ". addPlayerUnit(s) DONE";
+	Log(LOG_INFO) << ". addPlayerUnit(s) DONE";
 
 	for (std::vector<BattleUnit*>::const_iterator // pre-battle Equip; give all Faction_Player units access to the equipt-Tile.
 			i = _unitList->begin();
@@ -1120,28 +1120,28 @@ void BattlescapeGenerator::deployXcom() // private.
 		(*i)->setUnitTile(_tileEquipt);	// set all Faction_Player units non-visible and linked to equipt-Tile. later,
 		(*i)->setUnitVisible(false);	// InventoryState::btnOkClick() calls SavedBattleGame::positionUnits() before battle starts.
 	}
-	//Log(LOG_INFO) << ". setTileUnit(s) DONE";
+	Log(LOG_INFO) << ". setTileUnit(s) DONE";
 
 
 	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 
 	if (_craft != nullptr) // UFO or Base Assault or Craft-equip.
 	{
-		//Log(LOG_INFO) << "";
-		//Log(LOG_INFO) << ". . addCraftItems";
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << ". . add craft items for UFO or Base Assault, or Craft-equip";
 		BattleItem* item;
 		for (std::map<std::string, int>::const_iterator // Add items that are in the Craft.
 				i = _craft->getCraftItems()->getContents()->begin();
 				i != _craft->getCraftItems()->getContents()->end();
 				++i)
 		{
-			//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
+			Log(LOG_INFO) << ". . . item type= " << i->first << " (" << i->second << ")";
 			for (int
 					j = 0;
 					j != i->second;
 					++j)
 			{
-				//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
+				Log(LOG_INFO) << ". . . . addItem() to _tileEquipt iter= " << (j + 1);
 				item = new BattleItem(
 									_rules->getItemRule(i->first),
 									_battleSave->getCanonicalBattleId());
@@ -1153,21 +1153,23 @@ void BattlescapeGenerator::deployXcom() // private.
 	}
 	else // Base Defense or Base-equip.
 	{
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << ". . add items for Base Defense, or Base-equip";
 		BattleItem* item;
 
 		// Add only items in Craft that are at the Base for skirmish mode; ie.
 		// Do NOT add items from the Base itself in skirmish mode.
 		if (_gameSave->getMonthsElapsed() != -1)								// Add items that are at the Base.
 		{
-			//Log(LOG_INFO) << "";
-			//Log(LOG_INFO) << ". . addBaseItems";
+			Log(LOG_INFO) << "";
+			Log(LOG_INFO) << ". . is NOT quick battle: add base items";
 			const RuleItem* itRule;
 			for (std::map<std::string, int>::const_iterator						// Add items that are in the Base's storage.
 					i = _base->getStorageItems()->getContents()->begin();
 					i != _base->getStorageItems()->getContents()->end();
 					)
 			{
-				//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
+				Log(LOG_INFO) << ". . . check type= " << i->first << " (" << i->second << ")";
 				itRule = _rules->getItemRule(i->first);
 				switch (itRule->getBattleType())
 				{
@@ -1185,13 +1187,13 @@ void BattlescapeGenerator::deployXcom() // private.
 							&& itRule->isFixed() == false
 							&& _gameSave->isResearched(itRule->getRequirements()) == true)
 						{
-							//Log(LOG_INFO) << ". . . item = " << i->first << " (" << i->second << ")";
+							Log(LOG_INFO) << ". . . . add type= " << i->first << " (" << i->second << ")";
 							for (int
 									j = 0;
 									j != i->second;
 									++j)
 							{
-								//Log(LOG_INFO) << ". . . . addItem() ToTile iter = " << (j + 1);
+								Log(LOG_INFO) << ". . . . . addItem() to _tileEquipt iter= " << (j + 1);
 								item = new BattleItem(
 													itRule,
 													_battleSave->getCanonicalBattleId());
@@ -1201,7 +1203,7 @@ void BattlescapeGenerator::deployXcom() // private.
 
 							if (_isFakeInventory == false)
 							{
-								//Log(LOG_INFO) << ". . . . remove item from Stores";
+								Log(LOG_INFO) << ". . . . . NOT fake: remove item from Stores";
 								i = _base->getStorageItems()->getContents()->erase(i);
 								break;
 							}
@@ -1214,30 +1216,30 @@ void BattlescapeGenerator::deployXcom() // private.
 				}
 			}
 		}
-		//Log(LOG_INFO) << "";
-		//Log(LOG_INFO) << ". . addBaseBaseItems DONE, add BaseCraftItems";
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << ". . addBaseBaseItems DONE, add BaseCraftItems";
 
 		for (std::vector<Craft*>::const_iterator								// Add items that are in the Crafts at the Base.
 				i = _base->getCrafts()->begin();
 				i != _base->getCrafts()->end();
 				++i)
 		{
-			//Log(LOG_INFO) << ". . . check if Craft at base";
+			Log(LOG_INFO) << ". . . check if Craft at base";
 			if ((*i)->getCraftStatus() != CS_OUT)
 			{
-				//Log(LOG_INFO) << ". . . Craft IS at base";
+				Log(LOG_INFO) << ". . . . Craft IS at base";
 				for (std::map<std::string, int>::const_iterator
 						j = (*i)->getCraftItems()->getContents()->begin();
 						j != (*i)->getCraftItems()->getContents()->end();
 						++j)
 				{
-					//Log(LOG_INFO) << ". . . . item = " << j->first << " (" << j->second << ")";
+					Log(LOG_INFO) << ". . . . . item type= " << j->first << " (" << j->second << ")";
 					for (int
 							k = 0;
 							k != j->second;
 							++k)
 					{
-						//Log(LOG_INFO) << ". . . . . addItem() ToTile iter = " << (k + 1);
+						Log(LOG_INFO) << ". . . . . . addItem() to _tileEquipt iter= " << (k + 1);
 						item = new BattleItem(
 											_rules->getItemRule(j->first),
 											_battleSave->getCanonicalBattleId());
@@ -1247,9 +1249,10 @@ void BattlescapeGenerator::deployXcom() // private.
 				}
 			}
 		}
-		//Log(LOG_INFO) << ". . addBaseCraftItems DONE";
+		Log(LOG_INFO) << ". . addBaseCraftItems DONE";
 	}
-	//Log(LOG_INFO) << ". addItem(s) DONE";
+	Log(LOG_INFO) << ". addItem(s) DONE";
+	Log(LOG_INFO) << "";
 
 
 	// kL_note: ALL ITEMS STAY ON THE GROUNDTILE, _tileEquipt,
@@ -1333,26 +1336,33 @@ void BattlescapeGenerator::deployXcom() // private.
 
 /**
  * Constructs a vector of Vehicles that can participate in BaseDefense tacticals.
- * @param vehicles - reference to a vector of pointers to Vehicles
+ * @param vehicles - pointer to a vector of pointers to Vehicles
  */
-void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>& vehicles) // private.
+void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>* vehicles) // private.
 {
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "bGen::prepareBaseDefenseVehicles()";
+
 	for (std::vector<Craft*>::const_iterator // add Vehicles that are in Crafts at the Base.
 			i = _base->getCrafts()->begin();
 			i != _base->getCrafts()->end();
 			++i)
 	{
+		Log(LOG_INFO) << ". check craft";
 		if ((*i)->getCraftStatus() != CS_OUT)
 		{
+			Log(LOG_INFO) << ". . is based";
 			for (std::vector<Vehicle*>::const_iterator
 					j = (*i)->getVehicles()->begin();
 					j != (*i)->getVehicles()->end();
 					++j)
 			{
-				vehicles.push_back(*j);
+				Log(LOG_INFO) << ". . . push Vehicle type= " << (*j)->getRules()->getType();
+				vehicles->push_back(*j);
 			}
 		}
 	}
+	//Log(LOG_INFO) << "";
 
 	const RuleItem* itRule;
 	int quadrants;
@@ -1364,8 +1374,11 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>& veh
 			)
 	{
 		itRule = _rules->getItemRule(i->first);
+		Log(LOG_INFO) << ". check stores type= " << itRule->getType();
+
 		if (itRule->isFixed() == true)
 		{
+			Log(LOG_INFO) << ". . is Fixed";
 			quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmorType())->getSize();
 			quadrants *= quadrants;
 
@@ -1376,7 +1389,8 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>& veh
 						j != i->second;
 						++j)
 				{
-					vehicles.push_back(new Vehicle(
+					Log(LOG_INFO) << ". . . push Vehicle[1]";
+					vehicles->push_back(new Vehicle(
 												itRule,
 												itRule->getFullClip(),
 												quadrants));
@@ -1402,7 +1416,8 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>& veh
 							j != tanks;
 							++j)
 					{
-						vehicles.push_back(new Vehicle(
+						Log(LOG_INFO) << ". . . push Vehicle[2]";
+						vehicles->push_back(new Vehicle(
 													itRule,
 													clipsRequired,
 													quadrants));
@@ -1429,6 +1444,10 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>& veh
  */
 BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // private.
 {
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "bGen:convertVehicle()";
+	Log(LOG_INFO) << ". . type= " << vehicle->getRules()->getType();
+
 	std::string type (vehicle->getRules()->getType());				// Convert this item-type ...
 	RuleUnit* const unitRule (_rules->getUnitRule(type));			// ... to a unitRule. tata!
 
@@ -1510,10 +1529,13 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
  */
 BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // private.
 {
-	//Log(LOG_INFO) << "bGen:addPlayerUnit()";
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "bGen:addPlayerUnit() id-" << unit->getId();
+	if (_tileEquipt != nullptr) Log(LOG_INFO) << ". _tileEquipt " << _tileEquipt->getPosition();
+
 	if (_isFakeInventory == true)
 	{
-		//Log(LOG_INFO) << ". fake inventory";
+		Log(LOG_INFO) << ". fake inventory EXIT";
 		_unitList->push_back(unit);
 		return unit;
 	}
@@ -1522,15 +1544,24 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 	// but _craftDeployed is FALSE. See generateMap().
 	if (_craft == nullptr || _craftDeployed == false) // Base defense, aLien base assault, or eg. Final Mission ....
 	{
-		//Log(LOG_INFO) << ". no Craft";
+		Log(LOG_INFO) << ". no Craft";
 		const Node* const node (_battleSave->getSpawnNode(NR_XCOM, unit));
 		if (node != nullptr || placeUnitBesideAlly(unit) == true) //( && _battleSave->getTacType() != TCT_BASEDEFENSE)
 		{
+			Log(LOG_INFO) << ". . spawnNode is Valid OR unit is placed beside ally";
+
 			if (node != nullptr)
+			{
+				Log(LOG_INFO) << ". . . spawnNode is VALID";
 				_battleSave->setUnitPosition(unit, node->getPosition());
+			}
 
 			if (_tileEquipt == nullptr)
+			{
+				Log(LOG_INFO) << ". . . set _tileEquipt[1]";
 				_battleSave->setBattleInventory(_tileEquipt = unit->getUnitTile());
+			}
+			else Log(LOG_INFO) << ". . . _tileEquipt has already been set.";
 
 			unit->setUnitDirection(RNG::generate(0,7));
 
@@ -1540,7 +1571,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 	}
 	else if (_craft->getRules()->getUnitLocations().empty() == false) // Transport Craft w/ unit-locations.
 	{
-		//Log(LOG_INFO) << ". Craft w/ locations";
+		Log(LOG_INFO) << ". Craft w/ locations";
 		Position pos;
 		bool canPlace;
 		const int unitSize (unit->getArmor()->getSize());
@@ -1572,7 +1603,10 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 			if (canPlace == true && _battleSave->setUnitPosition(unit, pos) == true)
 			{
 				if (_tileEquipt == nullptr)
+				{
+					Log(LOG_INFO) << ". . set _tileEquipt[2]";
 					_battleSave->setBattleInventory(_tileEquipt = unit->getUnitTile());
+				}
 
 				unit->setUnitDirection((*i)[3u]);
 
@@ -1583,7 +1617,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 	}
 	else // Transport Craft w/out unit-locations.
 	{
-		//Log(LOG_INFO) << ". Craft w/out locations";
+		Log(LOG_INFO) << ". Craft w/out locations";
 		Tile* tile;
 		int supportOrder (0);
 		for (size_t
@@ -1603,7 +1637,10 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 													tile->getPosition()) == true)
 					{
 						if (_tileEquipt == nullptr)
+						{
+							Log(LOG_INFO) << ". . set _tileEquipt[3]";
 							_battleSave->setBattleInventory(_tileEquipt = tile);
+						}
 
 						_unitList->push_back(unit);
 						return unit;
@@ -1614,7 +1651,10 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 												tile->getPosition()) == true)
 				{
 					if (_tileEquipt == nullptr)
+					{
+						Log(LOG_INFO) << ". . set _tileEquipt[4]";
 						_battleSave->setBattleInventory(_tileEquipt = tile);
+					}
 
 					_unitList->push_back(unit);
 					return unit;
@@ -1755,7 +1795,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
  */
 void BattlescapeGenerator::setTacticalSprites() const // private.
 {
-	RuleArmor* const arRule (_rules->getArmor(_terrainRule->getPyjamaType()));
+	RuleArmor* const arRule (_rules->getArmor(_terrainRule->getBasicArmorType()));
 
 	Base* base;
 	if (_craft != nullptr)
@@ -3332,11 +3372,15 @@ void BattlescapeGenerator::generateBaseMap() // private.
 						}
 
 						if (_tileEquipt == nullptr) // put the inventory tile on the lowest floor, jic.
+						{
 							_tileEquipt = _battleSave->getTile(Position(
 																	x * 10 + 5,
 																	y * 10 + 5,
 																	std::max(0,
 																			 grdLevel - 1)));
+							_battleSave->setBattleInventory(_tileEquipt);
+							//Log(LOG_INFO) << "bGen:generateBaseMap() set _tileEquipt " << _tileEquipt->getPosition();
+						}
 					}
 				}
 			}

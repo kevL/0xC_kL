@@ -157,21 +157,21 @@ void Ufo::loadUfo(
 	_quickBattle	= node["quickBattle"]	.as<bool>(_quickBattle);
 
 	double
-		destLon,
-		destLat;
-	if (const YAML::Node& dest = node["dest"])
+		targetLon,
+		targetLat;
+	if (const YAML::Node& target = node["target"])
 	{
-		destLon = dest["lon"].as<double>();
-		destLat = dest["lat"].as<double>();
+		targetLon = target["lon"].as<double>();
+		targetLat = target["lat"].as<double>();
 	}
 	else
 	{
-		destLon = _lon;
-		destLat = _lat;
+		targetLon = _lon;
+		targetLat = _lat;
 	}
-	_dest = new Waypoint();
-	_dest->setLongitude(destLon);
-	_dest->setLatitude(destLat);
+	_target = new Waypoint();
+	_target->setLongitude(targetLon);
+	_target->setLatitude(targetLat);
 
 	if (const YAML::Node& status = node["status"])
 		_status = static_cast<UfoStatus>(status.as<int>());
@@ -206,8 +206,7 @@ void Ufo::loadUfo(
 	_fireCountdown		= node["fireCountdown"]		.as<int>(_fireCountdown);
 	_escapeCountdown	= node["escapeCountdown"]	.as<int>(_escapeCountdown);
 
-	if (_tactical == true)
-		setSpeed(0);
+	if (_tactical == true) setSpeed();
 }
 
 /**
@@ -292,22 +291,34 @@ void Ufo::changeRules(const RuleUfo* const ufoRule)
 
 /**
  * Gets this UFO's unique identifier.
- * @param lang - pointer to Language to get strings from
+ * @param lang	- pointer to Language to get strings from
+ * @param id	- true to show the Id (default true)
  * @return, label
  */
-std::wstring Ufo::getLabel(const Language* const lang) const
+std::wstring Ufo::getLabel(
+		const Language* const lang,
+		bool id) const
 {
 	switch (_status)
 	{
 		case FLYING:
 		case DESTROYED: // Destroyed also means leaving Earth.
-			return lang->getString("STR_UFO_").arg(_id);
+			if (id == true)
+				return lang->getString("STR_UFO_").arg(_id);
+
+			return lang->getString("STR_UFO");
 
 		case LANDED:
-			return lang->getString("STR_LANDING_SITE_").arg(_idLanded);
+			if (id == true)
+				return lang->getString("STR_LANDING_SITE_").arg(_idLanded);
+
+			return lang->getString("STR_LANDING_SITE");
 
 		case CRASHED:
-			return lang->getString("STR_CRASH_SITE_").arg(_idCrashed);
+			if (id == true)
+				return lang->getString("STR_CRASH_SITE_").arg(_idCrashed);
+
+			return lang->getString("STR_CRASH_SITE");
 	}
 	return L"";
 }
@@ -605,7 +616,7 @@ void Ufo::think()
 		case FLYING:
 			stepTarget();
 			if (reachedDestination() == true)
-				setSpeed(0);
+				setSpeed();
 			break;
 
 		case LANDED:
@@ -626,7 +637,7 @@ void Ufo::think()
 void Ufo::setTactical(bool tactical)
 {
 	if ((_tactical = tactical) == true)
-		setSpeed(0);
+		setSpeed();
 }
 
 /**

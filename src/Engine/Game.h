@@ -23,7 +23,7 @@
 #include <list>		// std::list
 #include <string>	// std::string
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 
 namespace OpenXcom

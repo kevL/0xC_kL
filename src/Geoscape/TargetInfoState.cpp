@@ -51,7 +51,6 @@ TargetInfoState::TargetInfoState(
 		Target* const target,
 		GeoscapeState* const geoState)
 	:
-		_target(target),
 		_geoState(geoState),
 		_aBase(nullptr)
 {
@@ -98,7 +97,7 @@ TargetInfoState::TargetInfoState(
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	std::wostringstream woststr;
-	woststr << L'\x01' << _target->getLabel(_game->getLanguage());
+	woststr << L'\x01' << target->getLabel(_game->getLanguage());
 	_txtTitle->setText(woststr.str());
 
 	for (std::vector<AlienBase*>::const_iterator
@@ -106,7 +105,7 @@ TargetInfoState::TargetInfoState(
 			i != _game->getSavedGame()->getAlienBases()->end();
 			++i)
 	{
-		if (_target == dynamic_cast<Target*>(*i))
+		if (target == dynamic_cast<Target*>(*i))
 		{
 			_aBase = *i;
 			const std::wstring edit (Language::utf8ToWstr((*i)->getUserLabel()));
@@ -123,8 +122,8 @@ TargetInfoState::TargetInfoState(
 	_txtTargeters->setAlign(ALIGN_CENTER);
 	woststr.str(L"");
 	for (std::vector<Target*>::const_iterator
-			i = _target->getTargeters()->begin();
-			i != _target->getTargeters()->end();
+			i = target->getTargeters()->begin();
+			i != target->getTargeters()->end();
 			++i)
 	{
 		woststr << (*i)->getLabel(_game->getLanguage()) << L'\n';

@@ -39,7 +39,7 @@
 #include <string.h>
 #include <cmath>
 
-#include <SDL_stdinc.h> // for 'Uint8'(etc) types
+#include <SDL/SDL_stdinc.h> // for 'Uint8'(etc) types
 
 //#include "driver.h" /* use M.A.M.E. */
 

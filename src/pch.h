@@ -195,21 +195,21 @@
 #		include <GLUT/glut.h>
 #	endif
 
-#	include <SDL_opengl.h>
+#	include <SDL/SDL_opengl.h>
 #endif
 
-#include <SDL.h>
-//#include <SDL_endian.h>
-#include <SDL_events.h>
-#include <SDL_gfxPrimitives.h>
-#include <SDL_image.h>
-//#include <SDL_keysym.h>
-#include <SDL_mixer.h>
-#include <SDL_stdinc.h> // for 'Uint8'(etc) types
-//#include <SDL_syswm.h>
-//#include <SDL_thread.h>
-//#include <SDL_types.h>
-#include <SDL_video.h>
+#include <SDL/SDL.h>
+//#include <SDL/SDL_endian.h>
+#include <SDL/SDL_events.h>
+#include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_image.h>
+//#include <SDL/SDL_keysym.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL_stdinc.h> // for 'Uint8'(etc) types
+//#include <SDL/SDL_syswm.h>
+//#include <SDL/SDL_thread.h>
+//#include <SDL/SDL_types.h>
+#include <SDL/SDL_video.h>
 
 
 #include <yaml-cpp/yaml.h>

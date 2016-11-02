@@ -101,7 +101,7 @@ CraftPatrolState::CraftPatrolState(
 
 	_txtDestination->setText(tr("STR_CRAFT_HAS_REACHED_DESTINATION")
 								 .arg(_craft->getLabel(_game->getLanguage()))
-								 .arg(_craft->getDestination()->getLabel(_game->getLanguage())));
+								 .arg(_craft->getTarget()->getLabel(_game->getLanguage())));
 	_txtDestination->setAlign(ALIGN_CENTER);
 	_txtDestination->setBig();
 	_txtDestination->setWordWrap();

@@ -24,7 +24,7 @@
 #include <iomanip>
 //#include <sstream>
 
-#include <SDL_gfxPrimitives.h>
+#include <SDL/SDL_gfxPrimitives.h>
 
 //#include "../fmath.h"
 #include "../lodepng.h"

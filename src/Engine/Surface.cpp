@@ -23,8 +23,8 @@
 #include <fstream>	// std::ifstream
 //#include <vector>	// std::vector
 
-#include <SDL_gfxPrimitives.h>
-#include <SDL_image.h>
+#include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_image.h>
 
 #include "../lodepng.h"
 

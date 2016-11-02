@@ -252,7 +252,7 @@ void SelectDestinationState::globeClick(Action* action)
 		{
 			_ufoLost = false;
 			_globe->clearCrosshair();
-			_craft->setDestination();
+			_craft->setTarget();
 			_globe->draw();
 		}
 
@@ -289,7 +289,7 @@ void SelectDestinationState::globeClick(Action* action)
 			std::vector<Target*>::const_iterator i (std::find( // do not show Craft's current Target
 															targets.begin(),
 															targets.end(),
-															_craft->getDestination()));
+															_craft->getTarget()));
 			if (i != targets.end())
 				targets.erase(i);
 
@@ -316,7 +316,7 @@ void SelectDestinationState::btnCancelClick(Action*)
 	if (_ufoLost == true)
 	{
 		_globe->clearCrosshair();
-		_craft->setDestination();
+		_craft->setTarget();
 	}
 	_game->popState();
 }
@@ -331,7 +331,7 @@ void SelectDestinationState::btnCydoniaClick(Action*)
 	if (_ufoLost == true) // NOTE: This is kinda pointless ....
 	{
 		_globe->clearCrosshair();
-		_craft->setDestination();
+		_craft->setTarget();
 	}
 	_game->pushState(new ConfirmCydoniaState(_craft));
 }

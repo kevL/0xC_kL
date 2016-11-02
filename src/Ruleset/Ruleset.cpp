@@ -1831,7 +1831,7 @@ const std::vector<std::string>& Ruleset::getManufactureList() const
  * Generates and returns a list of facilities for custom-bases.
  * @note The list contains all the facilities that are listed in the 'startBase'
  * part of the ruleset.
- * @return, vector of pointers to RuleBaseFacility as the list of facilities for custom-bases
+ * @return, vector of pointers to RuleBaseFacility
  */
 std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 {
@@ -1855,7 +1855,7 @@ std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 /**
  * Gets the data for a specified ufo-trajectory.
  * @param id - reference to the UfoTrajectory ID
- * @return, a pointer to data in UfoTrajectory
+ * @return, a pointer to UfoTrajectory
  */
 const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
 {

@@ -54,18 +54,19 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Soldier Info screen.
+ * Initializes all the elements in the SoldierInfo screen.
  * @param base	- pointer to the Base to get info from
  * @param solId	- ID of the selected Soldier
  */
 SoldierInfoState::SoldierInfoState(
-		Base* base,
+		Base* const base,
 		size_t solId)
 	:
 		_base(base),
 		_solId(solId),
 		_sol(nullptr),
-		_allowExit(true)
+		_allowExit(true),
+		_isQuickBattle(_game->getSavedGame()->getMonthsElapsed() == -1)
 {
 	_listBase = _base->getSoldiers();
 
@@ -291,6 +292,17 @@ SoldierInfoState::SoldierInfoState(
 	_txtStrength->		setText(tr("STR_STRENGTH"));
 	_txtPsiStrength->	setText(tr("STR_PSIONIC_STRENGTH"));
 	_txtPsiSkill->		setText(tr("STR_PSIONIC_SKILL"));
+
+	if (_isQuickBattle == true)
+	{
+		_btnDiary	->setVisible(false);
+		_btnAutoStat->setVisible(false);
+		_btnSack	->setVisible(false);
+		_txtDay		->setVisible(false);
+		_txtPsionic	->setVisible(false);
+		_txtMissions->setVisible(false);
+		_txtKills	->setVisible(false);
+	}
 }
 
 /**
@@ -533,7 +545,9 @@ void SoldierInfoState::init()
 	if (_sol->getCraft() == nullptr)
 		craft = tr("STR_NONE_UC");
 	else
-		craft = _sol->getCraft()->getLabel(_game->getLanguage());
+		craft = _sol->getCraft()->getLabel(
+										_game->getLanguage(),
+										_isQuickBattle == false);
 	_txtCraft->setText(tr("STR_CRAFT_").arg(craft));
 
 
@@ -550,34 +564,18 @@ void SoldierInfoState::init()
 
 		default:
 		{
-			Uint8 color;
-			const int pct (_sol->getPctWounds());
-			if		(pct > 50)	color = ORANGE;
-			else if	(pct > 10)	color = YELLOW;
-			else				color = GREEN;
-
 			_txtRecovery->setText(tr("STR_WOUND_RECOVERY_").arg(tr("")));
 			_txtRecovery->setVisible();
 
-			_txtDay->setColor(color);
+			_txtDay->setColor(_sol->getSickbayColor());
 			_txtDay->setText(tr("STR_DAY", static_cast<unsigned>(recovery)));
 			_txtDay->setVisible();
 		}
 	}
 
-	_txtRank->setText(tr("STR_RANK_").arg(tr(_sol->getRankString())));
-
-	switch (_game->getSavedGame()->getMonthsElapsed())
-	{
-		case -1: // quick battle.
-			_txtMissions->setText(tr("STR_MISSIONS_").arg(L"-"));
-			_txtKills->setText(tr("STR_KILLS_").arg(L"-"));
-			break;
-
-		default:
-			_txtMissions->setText(tr("STR_MISSIONS_").arg(_sol->getMissions()));
-			_txtKills->setText(tr("STR_KILLS_").arg(_sol->getKills()));
-	}
+	_txtRank	->setText(tr("STR_RANK_")    .arg(tr(_sol->getRankString())));
+	_txtMissions->setText(tr("STR_MISSIONS_").arg(   _sol->getMissions()));
+	_txtKills	->setText(tr("STR_KILLS_")   .arg(   _sol->getKills()));
 
 	_txtPsionic->setVisible(_sol->inPsiTraining());
 
@@ -640,10 +638,9 @@ void SoldierInfoState::init()
 			_barPsiSkill->setVisible();
 	}
 
-	_btnSack->setVisible(!
-						(_sol->getCraft() != nullptr
-							&& _sol->getCraft()->getCraftStatus() == CS_OUT)
-					&& _game->getSavedGame()->getMonthsElapsed() != -1);
+	_btnSack->setVisible(_isQuickBattle == false
+					 && (  _sol->getCraft() == nullptr
+						|| _sol->getCraft()->getCraftStatus() != CS_OUT));
 }
 
 /**

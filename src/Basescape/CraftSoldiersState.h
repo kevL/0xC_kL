@@ -46,11 +46,6 @@ class CraftSoldiersState final
 private:
 	bool _isQuickBattle;
 
-	static const Uint8
-		GREEN	=  48u,
-		ORANGE	=  96u,
-		YELLOW	= 144u;
-
 	Base* _base;
 	Craft* _craft;
 	Text

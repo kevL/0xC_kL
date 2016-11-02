@@ -81,12 +81,18 @@ YAML::Node Waypoint::saveIdentificator() const
 
 /**
  * Returns this Waypoint's unique identifying label.
- * @param lang - pointer to Language to get strings from
+ * @param lang	- pointer to Language to get strings from
+ * @param id	- true to show the Id (default true)
  * @return, label
  */
-std::wstring Waypoint::getLabel(const Language* const lang) const
+std::wstring Waypoint::getLabel(
+		const Language* const lang,
+		bool id) const
 {
-	return lang->getString("STR_WAY_POINT_").arg(_id);
+	if (id == true)
+		return lang->getString("STR_WAY_POINT_").arg(_id);
+
+	return lang->getString("STR_WAY_POINT");
 }
 
 /**

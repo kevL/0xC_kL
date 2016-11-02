@@ -146,6 +146,8 @@ void CraftArmorState::init()
 	else
 		craft = nullptr;
 
+	Uint8 color;
+
 	size_t r (0u);
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
@@ -156,9 +158,8 @@ void CraftArmorState::init()
 						3,
 						(*i)->getLabel().c_str(),
 						tr((*i)->getArmor()->getType()).c_str(),
-						(*i)->getCraftString(_game->getLanguage()).c_str());
+						(*i)->getCraftLabel(_game->getLanguage()).c_str());
 
-		Uint8 color;
 		if ((*i)->getCraft() == nullptr)
 			color = _lstSoldiers->getColor();
 		else if ((*i)->getCraft() == craft)
@@ -169,14 +170,7 @@ void CraftArmorState::init()
 		_lstSoldiers->setRowColor(r, color);
 
 		if ((*i)->getSickbay() != 0)
-		{
-			const int pct ((*i)->getPctWounds());
-			if		(pct > 50)	color = ORANGE;
-			else if	(pct > 10)	color = YELLOW;
-			else				color = GREEN;
-
-			_lstSoldiers->setCellColor(r, 2u, color, true);
-		}
+			_lstSoldiers->setCellColor(r, 2u, (*i)->getSickbayColor(), true);
 	}
 
 	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));

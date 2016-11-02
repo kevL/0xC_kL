@@ -55,7 +55,7 @@ private:
 		/// Creates the Briefing state.
 		BriefingState(
 				const Craft* const craft = nullptr,
-				Base* const base = nullptr);
+				const Base* const base = nullptr);
 		/// Cleans up the Briefing state.
 		~BriefingState();
 

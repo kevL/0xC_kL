@@ -2298,14 +2298,14 @@ void Globe::drawFlightPaths()
 					++j)
 			{
 				if ((*j)->getCraftStatus() == CS_OUT
-					&& (*j)->getDestination() != nullptr)
+					&& (*j)->getTarget() != nullptr)
 				{
 					static const double MIN_Diff (0.005); // radians
 					const double
 						lon1 ((*j)->getLongitude()),
 						lat1 ((*j)->getLatitude()),
-						lon2 ((*j)->getDestination()->getLongitude()),
-						lat2 ((*j)->getDestination()->getLatitude()),
+						lon2 ((*j)->getTarget()->getLongitude()),
+						lat2 ((*j)->getTarget()->getLatitude()),
 						lon3 ((*j)->getMeetLongitude()),
 						lat3 ((*j)->getMeetLatitude());
 					drawPath(

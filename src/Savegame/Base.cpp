@@ -384,10 +384,13 @@ YAML::Node Base::saveIdentificator() const
 /**
  * Gets the player-specified label for this Base.
  * @note The Language-ptr is neither used nor needed for Base-Targets.
- * @param lang - pointer to Language to get strings from (default nullptr)
+ * @param lang	- pointer to Language to get strings from (default nullptr)
+ * @param id	- true to show the Id (default true)
  * @return, the base-label as a wide-string
  */
-std::wstring Base::getLabel(const Language* const) const
+std::wstring Base::getLabel(
+		const Language* const,
+		bool) const
 {
 	return _label;
 }

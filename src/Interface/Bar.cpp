@@ -21,7 +21,7 @@
 
 #include "../fmath.h"
 
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 
 namespace OpenXcom

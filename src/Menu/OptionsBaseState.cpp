@@ -19,7 +19,7 @@
 
 #include "OptionsBaseState.h"
 
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "MainMenuState.h"
 #include "OptionsAdvancedState.h"

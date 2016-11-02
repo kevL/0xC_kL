@@ -240,19 +240,19 @@ std::wstring InterceptState::getAltStatus(Craft* const craft) // private.
 		status = tr("STR_MISSION_COMPLETE_RETURNING_TO_BASE");
 		_cellColor = BROWN;
 	}
-	else if (craft->getDestination() == dynamic_cast<Target*>(craft->getBase()))
+	else if (craft->getTarget() == dynamic_cast<Target*>(craft->getBase()))
 	{
 		status = tr("STR_RETURNING_TO_BASE");
 		_cellColor = BROWN;
 	}
-	else if (craft->getDestination() == nullptr)
+	else if (craft->getTarget() == nullptr)
 	{
 		status = tr("STR_PATROLLING");
 		_cellColor = OLIVE;
 	}
 	else
 	{
-		const Ufo* const ufo (dynamic_cast<Ufo*>(craft->getDestination()));
+		const Ufo* const ufo (dynamic_cast<Ufo*>(craft->getTarget()));
 		if (ufo != nullptr)
 		{
 			if (craft->inDogfight() == true)
@@ -265,7 +265,7 @@ std::wstring InterceptState::getAltStatus(Craft* const craft) // private.
 		}
 		else
 			status = tr("STR_DESTINATION_UC_")
-						.arg(craft->getDestination()->getLabel(_game->getLanguage()));
+						.arg(craft->getTarget()->getLabel(_game->getLanguage()));
 
 		_cellColor = PURPLE;
 	}

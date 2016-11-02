@@ -62,7 +62,7 @@ private:
 			_speedLat,
 			_speedLon;
 
-		Target* _dest;
+		Target* _target;
 
 		/// Calculates a new speed-vector to a destination.
 		virtual void calculateSpeed();
@@ -82,16 +82,16 @@ private:
 			/// Loads the MovingTarget from YAML.
 			virtual void load(const YAML::Node& node) override;
 
-			/// Sets the MovingTarget's destination.
-			virtual void setDestination(Target* const dest = nullptr);
-			/// Gets the MovingTarget's destination.
-			Target* getDestination() const;
+			/// Sets the MovingTarget's destination-target.
+			virtual void setTarget(Target* const target = nullptr);
+			/// Gets the MovingTarget's destination-target.
+			Target* getTarget() const;
 
 			/// Checks if the MovingTarget has reached its destination.
 			bool reachedDestination() const;
 
 			/// Sets the MovingTarget's speed.
-			void setSpeed(const int speed);
+			void setSpeed(int speed = 0);
 			/// Gets the MovingTarget's speed.
 			int getSpeed() const;
 

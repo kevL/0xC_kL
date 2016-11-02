@@ -23,7 +23,7 @@
 //#include <string>
 //#include <vector>
 
-#include <SDL_stdinc.h>
+#include <SDL/SDL_stdinc.h>
 
 #include <yaml-cpp/yaml.h>
 

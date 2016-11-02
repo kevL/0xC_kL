@@ -227,7 +227,7 @@ void SoldiersState::init()
 						3,
 						(*i)->getLabel().c_str(),
 						tr((*i)->getRankString()).c_str(),
-						(*i)->getCraftString(_game->getLanguage()).c_str());
+						(*i)->getCraftLabel(_game->getLanguage()).c_str());
 
 		if ((*i)->getCraft() == nullptr)
 		{

@@ -46,7 +46,6 @@ class TargetInfoState
 private:
 	AlienBase* _aBase;
 	GeoscapeState* _geoState;
-	Target* _target;
 	Text
 		* _txtTitle,
 		* _txtTargeted,

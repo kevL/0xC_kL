@@ -46,7 +46,7 @@ class RuleTerrain
 
 private:
 	std::string
-		_pyjamaType,
+		_basicArmor,
 		_type,
 		_script;
 
@@ -61,7 +61,7 @@ private:
 	public:
 		/// Constructs a RuleTerrain object.
 		explicit RuleTerrain(const std::string& type);
-		/// Destructs this RuleTerrain object.
+		/// Destructs the RuleTerrain object.
 		~RuleTerrain();
 
 		/// Loads the terrain from YAML.
@@ -69,12 +69,12 @@ private:
 				const YAML::Node& node,
 				Ruleset* const rules);
 
-		/// Gets the terrain's type (used for MAP generation).
+		/// Gets the RuleTerrain's type (used for MAP generation).
 		const std::string& getType() const;
 
-		/// Gets the terrain's mapblocks.
+		/// Gets the RuleTerrain's mapblocks.
 		const std::vector<MapBlock*>* getMapBlocks() const;
-		/// Gets the terrain's mapdatafiles.
+		/// Gets the RuleTerrain's mapdatafiles.
 		const std::vector<MapDataSet*>* getMapDataSets() const;
 
 		/// Gets a random MapBlock.
@@ -100,7 +100,7 @@ private:
 		const std::vector<std::string>& getTerrainMusics() const;
 
 		/// Gets the pyjama type.
-		const std::string& getPyjamaType() const;
+		const std::string& getBasicArmorType() const;
 };
 
 }

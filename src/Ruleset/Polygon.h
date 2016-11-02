@@ -20,7 +20,7 @@
 #ifndef OPENXCOM_POLYGON_H
 #define OPENXCOM_POLYGON_H
 
-#include <SDL_stdinc.h>
+#include <SDL/SDL_stdinc.h>
 
 #include <yaml-cpp/yaml.h>
 

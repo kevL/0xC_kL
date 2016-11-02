@@ -42,11 +42,6 @@ class CraftArmorState final
 {
 
 private:
-	static const Uint8
-		GREEN	=  48u,
-		ORANGE	=  96u,
-		YELLOW	= 144u;
-
 	size_t _craftId;
 
 	Base* _base;

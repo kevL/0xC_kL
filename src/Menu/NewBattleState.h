@@ -52,17 +52,21 @@ class NewBattleState
 private:
 	static const Uint8 BROWN_D = 58u;
 
+	Base* _base;
+	Craft* _craft;
+	SavedGame* _gameSave;
+
+	const Ruleset* _rules;
+
 	ComboBox
 		* _cbxMission,
 		* _cbxCraft,
 		* _cbxTerrain,
 		* _cbxDifficulty,
 		* _cbxAlienRace;
-	Craft* _craft;
 	Frame
 		* _frameLeft,
 		* _frameRight;
-	Ruleset* _rules;
 	Slider
 		* _slrDarkness,
 		* _slrAlienTech;
@@ -80,7 +84,8 @@ private:
 	TextButton
 		* _btnOk,
 		* _btnCancel,
-		* _btnEquip,
+		* _btnCraft,
+		* _btnGenerate,
 		* _btnRandom;
 	Window* _window;
 
@@ -91,9 +96,9 @@ private:
 		_crafts;
 
 	/// Clears and generates Base storage-items.
-	void resetStorage(Base* const base) const;
+	void resetStorage() const;
 	/// Generates all research.
-	void resetResearch(SavedGame* const gameSave) const;
+	void resetResearch() const;
 
 
 	public:
@@ -108,8 +113,10 @@ private:
 		void configLoad(const std::string& file = "battle");
 		/// Saves NewBattle settings.
 		void configSave(const std::string& file = "battle");
-		/// Creates a SavedGame.
+		/// Creates the necessary SavedGame.
 		void configCreate();
+		/// Generates the Soldiers.
+		void configSoldiers();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
@@ -118,7 +125,10 @@ private:
 		/// Handler for clicking the Randomize button.
 		void btnRandClick(Action* action);
 		/// Handler for clicking the Equip Craft button.
-		void btnEquipClick(Action* action);
+		void btnCraftClick(Action* action);
+		/// Handler for clicking the Generate button.
+		void btnGenerateClick(Action* action);
+
 		/// Handler for changing the Mission combobox.
 		void cbxMissionChange(Action* action);
 		/// Handler for changing the Craft combobox.

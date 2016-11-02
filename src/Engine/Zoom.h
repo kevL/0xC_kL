@@ -20,7 +20,7 @@
 #ifndef ZOOM_H
 #define ZOOM_H
 
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "OpenGL.h"
 

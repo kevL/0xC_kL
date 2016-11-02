@@ -79,7 +79,9 @@ protected:
 		void setLatitude(double lat);
 
 		/// Gets the Target's label.
-		virtual std::wstring getLabel(const Language* const lang) const = 0;
+		virtual std::wstring getLabel(
+				const Language* const lang,
+				bool id = true) const = 0;
 
 		/// Gets the Target's globe-marker.
 		virtual int getMarker() const = 0;

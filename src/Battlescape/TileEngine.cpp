@@ -22,7 +22,7 @@
 //#include <climits>
 //#include <set>
 //#include <assert.h>
-//#include <SDL.h>
+//#include <SDL/SDL.h>
 
 #include "../fmath.h"
 
