@@ -334,7 +334,7 @@ void BasescapeState::init()
 			if ((*i)->getRules()->getStorage() != 0)
 			{
 				hasStorage = true;
-				if (_base->getStorageItems()->getTotalQuantity() != 0)
+				if (_base->getStorageItems()->isEmpty() == false)
 					 hasStores = true;
 			}
 		}
@@ -611,7 +611,7 @@ void BasescapeState::layoutLeftClick(Action*)
 			}
 			else if (fac->getRules()->getStorage() != 0)
 			{
-				if (_base->getStorageItems()->getTotalQuantity() != 0)
+				if (_base->getStorageItems()->isEmpty() == false)
 				{
 					_game->pushState(new StoresState(_base));
 					bPop = true;

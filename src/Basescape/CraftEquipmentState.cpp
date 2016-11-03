@@ -303,7 +303,7 @@ void CraftEquipmentState::tacticalCost() const // private.
  */
 void CraftEquipmentState::showButtons() const // private.
 {
-	const bool vis (_craft->getCraftItems()->getTotalQuantity() != 0);
+	const bool vis (_craft->getCraftItems()->isEmpty() == false);
 	_btnClear->setVisible(vis || _craft->getVehicles()->empty() == false);
 	_btnInventory->setVisible(vis && _craft->getQtySoldiers() != 0);
 }

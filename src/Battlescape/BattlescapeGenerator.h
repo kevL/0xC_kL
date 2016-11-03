@@ -60,7 +60,8 @@ private:
 	bool
 		_craftDeployed,
 		_generateFuel,
-		_isFakeInventory;
+		_isFakeInventory,
+		_isQuickBattle;
 //		_error;
 	int
 		_alienItemLevel,

@@ -74,6 +74,9 @@ private:
 		/// Gets the total quantity of items in the container.
 		int getTotalQuantity() const;
 
+		/// Checks if the container is empty.
+		bool isEmpty();
+
 		/// Gets the total size of items in the container.
 		double getTotalSize(const Ruleset* const rule) const;
 

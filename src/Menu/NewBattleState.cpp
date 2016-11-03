@@ -523,7 +523,6 @@ void NewBattleState::resetBaseStores() const // private.
 			i != allItems.end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". check type= " << *i;
 		if (_rules->getAlienFuelType() != *i)
 		{
 			craftOrdnance = false;
@@ -532,40 +531,28 @@ void NewBattleState::resetBaseStores() const // private.
 					j != cwList.end();
 					++j)
 			{
-				//Log(LOG_INFO) << ". cwType= " << (*j);
 				cwRule = _rules->getCraftWeapon(*j);
-				//Log(LOG_INFO) << ". cw LauncherType= " << cwRule->getLauncherType();
-//				if (_rules->getItemRule(cwRule->getLauncherType()) == itRule)
 				if (cwRule->getLauncherType() == *i)
 				{
 					craftOrdnance = true;
 					break;
 				}
 
-				//Log(LOG_INFO) << ". cw ClipType= " << cwRule->getClipType();
-//				if (_rules->getItemRule(cwRule->getClipType()) == itRule)
 				if (cwRule->getClipType() == *i)
 				{
 					craftOrdnance = true;
 					break;
 				}
 			}
-			//Log(LOG_INFO) << ". . craftOrdnance= " << craftOrdnance;
 
 			if (craftOrdnance == false)
 			{
 				itRule = _rules->getItemRule(*i);
-
-				//Log(LOG_INFO) << ". . . is NOT Corpse= " << (itRule->getBattleType() != BT_CORPSE);
-				//Log(LOG_INFO) << ". . . is NOT LiveAl= " << (itRule->isLiveAlien() == false);
-				//Log(LOG_INFO) << ". . . is Recoverabl= " << (itRule->isRecoverable() == true);
-				//Log(LOG_INFO) << ". . . NO SpecialTyp= " << (itRule->getTileType() == TILE);
 				if (   itRule->getBattleType() != BT_CORPSE
 					&& itRule->isLiveAlien() == false
 					&& itRule->isRecoverable() == true
 					&& itRule->getTileType() == TILE) // ie. is NOT AlienHabitat or whatnot.
 				{
-					//Log(LOG_INFO) << ". . add type= " << itRule->getType();
 					_base->getStorageItems()->addItem(*i);
 				}
 			}

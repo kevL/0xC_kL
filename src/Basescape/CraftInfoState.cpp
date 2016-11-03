@@ -230,7 +230,7 @@ void CraftInfoState::init()
 	}
 
 	_btnInventory->setVisible(_craft->getQtySoldiers() != 0
-						   && _craft->getCraftItems()->getTotalQuantity() != 0
+						   && _craft->getCraftItems()->isEmpty() == false
 						   && _isQuickBattle == false);
 
 	_edtCraft->setText(_craft->getLabel(

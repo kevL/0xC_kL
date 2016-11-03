@@ -173,6 +173,23 @@ int ItemContainer::getTotalQuantity() const
 }
 
 /**
+ * Checks if the container is empty.
+ * return, true if empty
+ */
+bool ItemContainer::isEmpty()
+{
+	for (std::map<std::string, int>::const_iterator
+			i = _contents.begin();
+			i != _contents.end();
+			++i)
+	{
+		if (i->second != 0)
+			return false;
+	}
+	return true;
+}
+
+/**
  * Gets the total size (in storage-units) of the items in the container.
  * @param rules - pointer to Ruleset
  * @return, total item size

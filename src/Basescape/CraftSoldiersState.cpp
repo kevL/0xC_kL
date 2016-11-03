@@ -493,7 +493,7 @@ void CraftSoldiersState::showButtons() const // private.
 {
 	const bool vis (_craft->getQtySoldiers() != 0);
 	_btnUnload->setVisible(vis);
-	_btnInventory->setVisible(vis && _craft->getCraftItems()->getTotalQuantity() != 0);
+	_btnInventory->setVisible(vis && _craft->getCraftItems()->isEmpty() == false);
 }
 
 }
