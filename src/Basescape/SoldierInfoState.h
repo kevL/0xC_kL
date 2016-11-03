@@ -48,7 +48,7 @@ class SoldierInfoState final
 
 private:
 	static const Uint8
-		PURPLE_GHOST	=  73u,
+		PURPLE_CRAFTOUT	=  73u,
 		BROWN			= 160u,
 		PURPLE			= 246u;
 

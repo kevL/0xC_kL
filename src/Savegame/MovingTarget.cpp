@@ -52,10 +52,10 @@ MovingTarget::MovingTarget(SavedGame* const gameSave)
 		_target(nullptr),
 		_speedLon(0.),
 		_speedLat(0.),
-		_speedRadian(0.),
+		_speedRads(0.),
 		_speed(0),
-		_meetPointLon(0.),
-		_meetPointLat(0.),
+		_lonPoint(0.),
+		_latPoint(0.),
 		_gameSave(gameSave)
 {}
 
@@ -86,7 +86,7 @@ YAML::Node MovingTarget::save() const // virtual.
 	if (_speed != 0)
 	{
 		node["speed"]		= _speed;
-		node["speedRadian"]	= serializeDouble(_speedRadian);
+		node["speedRads"]	= serializeDouble(_speedRads);
 		node["speedLon"]	= serializeDouble(_speedLon);
 		node["speedLat"]	= serializeDouble(_speedLat);
 	}
@@ -102,10 +102,10 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
 {
 	Target::load(node);
 
-	_speedLon		= node["speedLon"]		.as<double>(_speedLon);
-	_speedLat		= node["speedLat"]		.as<double>(_speedLat);
-	_speedRadian	= node["speedRadian"]	.as<double>(_speedRadian);
-	_speed			= node["speed"]			.as<int>(_speed);
+	_speedLon	= node["speedLon"]		.as<double>(_speedLon);
+	_speedLat	= node["speedLat"]		.as<double>(_speedLat);
+	_speedRads	= node["speedRads"]	.as<double>(_speedRads);
+	_speed		= node["speed"]			.as<int>(_speed);
 }
 
 /**
@@ -198,10 +198,10 @@ void MovingTarget::checkOtherTargeters() // private.
 void MovingTarget::setSpeed(int speed)
 {
 	if ((_speed = speed) == 0)
-		_speedRadian = 0.;
+		_speedRads = 0.;
 	else
 		// Each nautical mile is 1/60th of a degree; each hour contains 720 5-second periods.
-		_speedRadian = static_cast<double>(_speed) * unitToRads / 720.;
+		_speedRads = static_cast<double>(_speed) * unitToRads / 720.;
 
 	calculateSpeed();
 }
@@ -224,7 +224,7 @@ void MovingTarget::stepTarget()
 
 	if (_target != nullptr)
 	{
-		if (getDistance(_target) > _speedRadian)
+		if (getDistance(_target) > _speedRads)
 		{
 			setLongitude(_lon + _speedLon);
 			setLatitude( _lat + _speedLat);
@@ -248,16 +248,16 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 		calculateMeetPoint();
 
 		const double
-			dLon (std::sin(_meetPointLon - _lon)
-				* std::cos(_meetPointLat)),
+			dLon (std::sin(_lonPoint - _lon)
+				* std::cos(_latPoint)),
 			dLat (std::cos(_lat)
-				* std::sin(_meetPointLat) - std::sin(_lat)
-				* std::cos(_meetPointLat)
-				* std::cos(_meetPointLon - _lon)),
+				* std::sin(_latPoint) - std::sin(_lat)
+				* std::cos(_latPoint)
+				* std::cos(_lonPoint - _lon)),
 			dist (std::sqrt((dLon * dLon) + (dLat * dLat)));
 
-		_speedLat = dLat / dist * _speedRadian;
-		_speedLon = dLon / dist * _speedRadian / std::cos(_lat + _speedLat);
+		_speedLat = dLat / dist * _speedRads;
+		_speedLon = dLon / dist * _speedRads / std::cos(_lat + _speedLat);
 
 		// Check for invalid speeds when a division-by-zero occurs due to near-lightspeed values.
 		if (isNaNorInf(_speedLon, _speedLat) == true)
@@ -278,24 +278,42 @@ void MovingTarget::calculateSpeed() // protected/virtual.
  */
 void MovingTarget::calculateMeetPoint() // private.
 {
-	_meetPointLon = _target->getLongitude();
-	_meetPointLat = _target->getLatitude();
+	_lonPoint = _target->getLongitude();
+	_latPoint = _target->getLatitude();
 
 	MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_target));
 	if (ufo != nullptr
 		&& ufo->getTarget() != nullptr
-		&& AreSame(ufo->_speedRadian, 0.) == false)
+		&& AreSame(ufo->_speedRads, 0.) == false)
 	{
-		const double speedRatio (_speedRadian / ufo->_speedRadian);
-		double
-			nx (std::cos(ufo->getLatitude()) * std::sin(ufo->getLongitude()) * std::sin(ufo->getTarget()->getLatitude())
-			  - std::sin(ufo->getLatitude()) * std::cos(ufo->getTarget()->getLatitude()) * std::sin(ufo->getTarget()->getLongitude())),
-			ny (std::sin(ufo->getLatitude()) * std::cos(ufo->getTarget()->getLatitude()) * std::cos(ufo->getTarget()->getLongitude())
-			  - std::cos(ufo->getLatitude()) * std::cos(ufo->getLongitude()) * std::sin(ufo->getTarget()->getLatitude())),
-			nz (std::cos(ufo->getLatitude()) * std::cos(ufo->getTarget()->getLatitude()) * std::sin(ufo->getTarget()->getLongitude()
-			  - ufo->getLongitude()));
+		const double
+			lonUfo					(ufo->getLongitude()),
+			lonUfoTarget			(ufo->getTarget()->getLongitude()),
 
-		const double nk (_speedRadian / std::sqrt(nx * nx + ny * ny + nz * nz));
+			sin_lonUfo				(std::sin(lonUfo)),
+			cos_lonUfo				(std::cos(lonUfo)),
+			sin_lonUfoTarget		(std::sin(lonUfoTarget)),
+			cos_lonUfoTarget		(std::cos(lonUfoTarget)),
+
+			latUfo					(ufo->getLatitude()),
+			latUfoTarget			(ufo->getTarget()->getLatitude()),
+			sin_latUfo				(std::sin(latUfo)),
+			cos_latUfo				(std::cos(latUfo)),
+			sin_latUfoTarget		(std::sin(latUfoTarget)),
+			cos_latUfoTarget		(std::cos(latUfoTarget)),
+
+			sin_lonUfoTarget_lonUfo	(std::sin(lonUfoTarget - lonUfo));
+
+		double
+			nx (cos_latUfo * sin_lonUfo       * sin_latUfoTarget
+			  - sin_latUfo * cos_latUfoTarget * sin_lonUfoTarget),
+
+			ny (sin_latUfo * cos_latUfoTarget * cos_lonUfoTarget
+			  - cos_latUfo * cos_lonUfo       * sin_latUfoTarget),
+
+			nz (cos_latUfo * cos_latUfoTarget * sin_lonUfoTarget_lonUfo);
+
+		const double nk (_speedRads / std::sqrt(nx * nx + ny * ny + nz * nz));
 		nx *= nk;
 		ny *= nk;
 		nz *= nk;
@@ -304,48 +322,50 @@ void MovingTarget::calculateMeetPoint() // private.
 			path (0.),
 			dist;
 		double
-			old_pdist,
-			new_pdist (std::acos(
+			old_path,
+			new_path (std::acos(
 								std::cos(_lat)
-							  * std::cos(_meetPointLat)
-							  * std::cos(_meetPointLon - _lon)
+							  * std::cos(_latPoint)
+							  * std::cos(_lonPoint - _lon)
 							  + std::sin(_lat)
-							  * std::sin(_meetPointLat)));
+							  * std::sin(_latPoint)));
+		const double speedRatio (_speedRads / ufo->_speedRads);
+
 		do
 		{
-			old_pdist = new_pdist;
-			_meetPointLat += nx * std::sin(_meetPointLon)
-						   - ny * std::cos(_meetPointLon);
+			old_path = new_path;
+			_latPoint += nx * std::sin(_lonPoint)
+					   - ny * std::cos(_lonPoint);
 
-			if (std::fabs(_meetPointLat) < M_PI_2)
-				_meetPointLon += nz
-							  - (nx * std::cos(_meetPointLon)
-							  +  ny * std::sin(_meetPointLon))
-							  * std::tan(_meetPointLat);
+			if (std::fabs(_latPoint) < M_PI_2)
+				_lonPoint += nz
+							  - (nx * std::cos(_lonPoint)
+							  +  ny * std::sin(_lonPoint))
+							  * std::tan(_latPoint);
 			else
-				_meetPointLon += M_PI;
+				_lonPoint += M_PI;
 
-			path += _speedRadian;
+			path += _speedRads;
 			dist = std::acos(
 							std::cos(_lat)
-						  * std::cos(_meetPointLat)
-						  * std::cos(_meetPointLon - _lon)
+						  * std::cos(_latPoint)
+						  * std::cos(_lonPoint - _lon)
 						  + std::sin(_lat)
-						  * std::sin(_meetPointLat));
-			new_pdist = dist - path * speedRatio;
+						  * std::sin(_latPoint));
+			new_path = dist - path * speedRatio;
 		}
-		while (path < M_PI && new_pdist > 0. && old_pdist > new_pdist);
+		while (path < M_PI && new_path > 0. && old_path > new_path);
 
-		while (std::fabs(_meetPointLon) > M_PI)
-			_meetPointLon -= std::copysign(M_PI * 2., _meetPointLon);
+		while (std::fabs(_lonPoint) > M_PI)
+			_lonPoint -= std::copysign(M_PI * 2., _lonPoint);
 
-		while (std::fabs(_meetPointLat) > M_PI)
-			_meetPointLat -= std::copysign(M_PI * 2., _meetPointLat);
+		while (std::fabs(_latPoint) > M_PI)
+			_latPoint -= std::copysign(M_PI * 2., _latPoint);
 
-		if (std::fabs(_meetPointLat) > M_PI_2)
+		if (std::fabs(_latPoint) > M_PI_2)
 		{
-			_meetPointLon -= std::copysign(M_PI, _meetPointLon);
-			_meetPointLat  = std::copysign(M_PI * 2. - std::fabs(_meetPointLat), _meetPointLat);
+			_lonPoint -= std::copysign(M_PI, _lonPoint);
+			_latPoint  = std::copysign(M_PI * 2. - std::fabs(_latPoint), _latPoint);
 		}
 	}
 }
@@ -357,7 +377,7 @@ void MovingTarget::calculateMeetPoint() // private.
  */
 double MovingTarget::getMeetLongitude() const
 {
-	return _meetPointLon;
+	return _lonPoint;
 }
 
 /**
@@ -367,7 +387,7 @@ double MovingTarget::getMeetLongitude() const
  */
 double MovingTarget::getMeetLatitude() const
 {
-	return _meetPointLat;
+	return _latPoint;
 }
 
 }

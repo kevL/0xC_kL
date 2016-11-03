@@ -539,7 +539,7 @@ void SoldierInfoState::init()
 		_btnArmor->setColor(PURPLE);
 	}
 	else
-		_btnArmor->setColor(PURPLE_GHOST);
+		_btnArmor->setColor(PURPLE_CRAFTOUT);
 
 	std::wstring craft;
 	if (_sol->getCraft() == nullptr)

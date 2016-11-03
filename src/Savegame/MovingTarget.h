@@ -43,9 +43,9 @@ class MovingTarget
 
 private:
 	double
-		_meetPointLon,
-		_meetPointLat,
-		_speedRadian;
+		_lonPoint,
+		_latPoint,
+		_speedRads;
 
 	SavedGame* _gameSave;
 

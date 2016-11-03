@@ -233,7 +233,9 @@ void CraftInfoState::init()
 						   && _craft->getCraftItems()->getTotalQuantity() != 0
 						   && _isQuickBattle == false);
 
-	_edtCraft->setText(_craft->getLabel(_game->getLanguage(), _isQuickBattle == false));
+	_edtCraft->setText(_craft->getLabel(
+									_game->getLanguage(),
+									_isQuickBattle == false));
 
 	const RuleCraft* const crRule (_craft->getRules());
 
