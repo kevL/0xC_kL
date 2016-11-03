@@ -522,9 +522,9 @@ void SavedGame::load(
 		if (_rules->getAlienMission(type) != nullptr)
 		{
 			const RuleAlienMission& missionRule (*_rules->getAlienMission(type));
-			std::auto_ptr<AlienMission> mission (new AlienMission(missionRule, *this));
+			AlienMission* mission (new AlienMission(missionRule, *this));
 			mission->load(*i);
-			_activeMissions.push_back(mission.release());
+			_activeMissions.push_back(mission);
 		}
 		else Log(LOG_ERROR) << "Failed to load mission: Type [" << type << "]";
 	}

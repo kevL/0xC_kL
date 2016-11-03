@@ -640,13 +640,13 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["music"].end();
 			++i)
 	{
-		std::auto_ptr<RuleMusic> ruleMusic (new RuleMusic());
+		RuleMusic* ruleMusic (new RuleMusic());
 		ruleMusic->load(*i);
 
 		type = (*i)["type"].as<std::string>();
 		_music.push_back(std::make_pair(
 									type,
-									ruleMusic.release()));
+									ruleMusic));
 		_musicIndex.push_back(type);
 	}
 
@@ -845,9 +845,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			_MCDPatches[type]->load(*i);
 		else
 		{
-			std::auto_ptr<MCDPatch> patch (new MCDPatch());
+			MCDPatch* patch (new MCDPatch());
 			patch->load(*i);
-			_MCDPatches[type] = patch.release();
+			_MCDPatches[type] = patch;
 			_MCDPatchesIndex.push_back(type);
 		}
 	}
@@ -858,7 +858,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		std::auto_ptr<ExtraSprites> extraSprites (new ExtraSprites());
+		ExtraSprites* extraSprites (new ExtraSprites());
 
 //		if (type != "TEXTURE.DAT") // doesn't support modIndex
 		if (type != "GlobeTextures")
@@ -866,7 +866,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		else
 			extraSprites->load(*i, 0);
 
-		_extraSprites.push_back(std::make_pair(type, extraSprites.release()));
+		_extraSprites.push_back(std::make_pair(type, extraSprites));
 		_extraSpritesIndex.push_back(type);
 	}
 
@@ -876,9 +876,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		std::auto_ptr<ExtraSounds> extraSounds (new ExtraSounds());
+		ExtraSounds* extraSounds (new ExtraSounds());
 		extraSounds->load(*i, _modIndex);
-		_extraSounds.push_back(std::make_pair(type, extraSounds.release()));
+		_extraSounds.push_back(std::make_pair(type, extraSounds));
 		_extraSoundsIndex.push_back(type);
 	}
 
@@ -892,9 +892,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			_extraStrings[type]->load(*i);
 		else
 		{
-			std::auto_ptr<ExtraStrings> extraStrings (new ExtraStrings());
+			ExtraStrings* extraStrings (new ExtraStrings());
 			extraStrings->load(*i);
-			_extraStrings[type] = extraStrings.release();
+			_extraStrings[type] = extraStrings;
 			_extraStringsIndex.push_back(type);
 		}
 	}
@@ -905,9 +905,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		std::auto_ptr<RuleAward> award (new RuleAward());
+		RuleAward* award (new RuleAward());
 		award->load(*i);
-		_awards[type] = award.release();
+		_awards[type] = award;
 	}
 
 //	for (YAML::const_iterator i = doc["statStrings"].begin(); i != doc["statStrings"].end(); ++i)
@@ -1025,9 +1025,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 				j != (*i)["directs"].end();
 				++j)
 		{
-			std::auto_ptr<MapScript> mapScript (new MapScript());
+			MapScript* mapScript (new MapScript());
 			mapScript->load(*j);
-			_mapScripts[terrainType].push_back(mapScript.release());
+			_mapScripts[terrainType].push_back(mapScript);
 		}
 	}
 

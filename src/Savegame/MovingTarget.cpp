@@ -287,22 +287,23 @@ void MovingTarget::calculateMeetPoint() // private.
 		&& AreSame(ufo->_speedRads, 0.) == false)
 	{
 		const double
-			lonUfo					(ufo->getLongitude()),
-			lonUfoTarget			(ufo->getTarget()->getLongitude()),
+			lonUfo				(ufo->getLongitude()),
+			sin_lonUfo			(std::sin(lonUfo)),
+			cos_lonUfo			(std::cos(lonUfo)),
 
-			sin_lonUfo				(std::sin(lonUfo)),
-			cos_lonUfo				(std::cos(lonUfo)),
-			sin_lonUfoTarget		(std::sin(lonUfoTarget)),
-			cos_lonUfoTarget		(std::cos(lonUfoTarget)),
+			latUfo				(ufo->getLatitude()),
+			sin_latUfo			(std::sin(latUfo)),
+			cos_latUfo			(std::cos(latUfo)),
 
-			latUfo					(ufo->getLatitude()),
-			latUfoTarget			(ufo->getTarget()->getLatitude()),
-			sin_latUfo				(std::sin(latUfo)),
-			cos_latUfo				(std::cos(latUfo)),
-			sin_latUfoTarget		(std::sin(latUfoTarget)),
-			cos_latUfoTarget		(std::cos(latUfoTarget)),
+			lonUfoTarget		(ufo->getTarget()->getLongitude()),
+			sin_lonUfoTarget	(std::sin(lonUfoTarget)),
+			cos_lonUfoTarget	(std::cos(lonUfoTarget)),
 
-			sin_lonUfoTarget_lonUfo	(std::sin(lonUfoTarget - lonUfo));
+			latUfoTarget		(ufo->getTarget()->getLatitude()),
+			sin_latUfoTarget	(std::sin(latUfoTarget)),
+			cos_latUfoTarget	(std::cos(latUfoTarget)),
+
+			sin_lon				(std::sin(lonUfoTarget - lonUfo));
 
 		double
 			nx (cos_latUfo * sin_lonUfo       * sin_latUfoTarget
@@ -311,7 +312,7 @@ void MovingTarget::calculateMeetPoint() // private.
 			ny (sin_latUfo * cos_latUfoTarget * cos_lonUfoTarget
 			  - cos_latUfo * cos_lonUfo       * sin_latUfoTarget),
 
-			nz (cos_latUfo * cos_latUfoTarget * sin_lonUfoTarget_lonUfo);
+			nz (cos_latUfo * cos_latUfoTarget * sin_lon);
 
 		const double nk (_speedRads / std::sqrt(nx * nx + ny * ny + nz * nz));
 		nx *= nk;

@@ -134,12 +134,12 @@ void RuleAlienMission::load(const YAML::Node& node)
 			Associative::const_iterator existing (assoc.find(elapsed));
 			if (assoc.end() == existing) // new entry, load and add it.
 			{
-				std::auto_ptr<WeightedOptions> weight (new WeightedOptions);
+				WeightedOptions* weight (new WeightedOptions);
 				weight->load(i->second);
 
 				assoc.insert(std::make_pair(
 										elapsed,
-										weight.release()));
+										weight));
 			}
 			else
 				existing->second->load(i->second); // existing entry, update it.
