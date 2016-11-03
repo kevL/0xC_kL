@@ -117,7 +117,7 @@ void ProjectileFlyBState::init()
 	//Log(LOG_INFO) << "ProjectileFlyBState::init()";
 	if (_init == true)
 	{
-		//Log(LOG_INFO) << "projFlyB init() targetPosTile = " << _action.target;
+		//Log(LOG_INFO) << "projFlyB init() targetPosTile = " << _action.posTarget;
 		_init = false;
 
 		_unit = _action.actor;
@@ -512,6 +512,8 @@ bool ProjectileFlyBState::createProjectile() // private.
 	//Log(LOG_INFO) << "projFlyB create() targetVoxel.y = " << static_cast<float>(_targetVoxel.y) / 16.f;
 	//Log(LOG_INFO) << "projFlyB create() targetVoxel.z = " << static_cast<float>(_targetVoxel.z) / 24.f;
 
+	++_action.autoShotCount;
+
 	_prj = new Projectile(
 						_parent->getResourcePack(),
 						_battleSave,
@@ -651,7 +653,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 		//Log(LOG_INFO) << ". shoot weapon, voxelType = " << (int)_prjImpact;
 		//Log(LOG_INFO) << ". finalTarget = " << _prj->getFinalPosition();
 
-		if (_prjImpact != VOXEL_EMPTY || _action.type == BA_LAUNCH)
+		if (_prjImpact != VOXEL_EMPTY || _action.type == BA_LAUNCH) //&& _targetVoxel != Position(-16,-16,-24) // <- their code.
 		{
 			//Log(LOG_INFO) << ". . _prjImpact AIM";
 			if (_prjImpact == VOXEL_OBJECT
@@ -709,8 +711,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 	if (_unit->getArmor()->getShootFrames() != 0) // postpone showing the Celatid spit-blob till later
 		_parent->getMap()->showProjectile(false);
 
-	if (++_action.autoShotCount == 1
-		&& _unit->getGeoscapeSoldier() != nullptr)
+	if (_action.autoShotCount == 1 && _unit->getGeoscapeSoldier() != nullptr)
 	{
 		switch (_action.type)
 		{
