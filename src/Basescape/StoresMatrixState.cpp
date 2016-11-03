@@ -320,6 +320,9 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	std::wstring item;
 	Uint8 color;
 
+	const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+	bool craftOrdnance;
+
 	const std::vector<std::string>& allItems (rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
 			i = allItems.begin();
@@ -410,11 +413,10 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			if (qty[7u] != 0) woststr7 << qty[7u];
 
 
-			bool craftOrdnance (false);
-			const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+			craftOrdnance = false;
 			for (std::vector<std::string>::const_iterator
 					j = cwList.begin();
-					j != cwList.end() && craftOrdnance == false;
+					j != cwList.end();
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
@@ -422,6 +424,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 					|| itRule == rules->getItemRule(cwRule->getClipType()))
 				{
 					craftOrdnance = true;
+					break;
 				}
 			}
 
@@ -431,8 +434,8 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			if (    itRule->getBattleType() == BT_AMMO
 				|| (itRule->getBattleType() == BT_NONE && itRule->getFullClip() != 0))
 			{
-				color = PURPLE;
 				item.insert(0, L"  ");
+				color = PURPLE;
 			}
 
 			if (gameSave->isResearched(itRule->getType()) == false				// not researched or is research exempt

@@ -127,6 +127,9 @@ StoresState::StoresState(Base* const base)
 		* clRule;
 	const RuleCraftWeapon* cwRule;
 
+	const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+	bool craftOrdnance;
+
 	std::wstring item;
 
 	size_t r (0u);
@@ -151,8 +154,7 @@ StoresState::StoresState(Base* const base)
 
 				item = tr(*i);
 
-				bool craftOrdnance (false);
-				const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+				craftOrdnance = false;
 				for (std::vector<std::string>::const_iterator
 						j = cwList.begin();
 						j != cwList.end() && craftOrdnance == false;

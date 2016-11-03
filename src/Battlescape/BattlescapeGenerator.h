@@ -113,7 +113,7 @@ private:
 	/// Constructs a vector of Vehicles that can participate in base-defense tacticals.
 	void prepareBaseDefenseVehicles(std::vector<Vehicle*>* vehicles);
 	/// Prepares a support-unit to be added to the Battlescape.
-	BattleUnit* convertVehicle(Vehicle* const vehicle);
+	BattleUnit* addPlayerSupportUnit(Vehicle* const vehicle);
 	/// Adds a unit to the Battlescape.
 	BattleUnit* addPlayerUnit(BattleUnit* const unit);
 	/// Runs necessary checks before setting a unit's position.

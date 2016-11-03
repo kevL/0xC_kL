@@ -330,6 +330,9 @@ void TransferItemsState::init()
 		* clRule;
 	const RuleCraftWeapon* cwRule;
 
+	const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+	bool craftOrdnance;
+
 	std::string type;
 	std::wstring item;
 
@@ -403,11 +406,10 @@ void TransferItemsState::init()
 
 			item = tr(*i);
 
-			bool craftOrdnance (false);
-			const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+			craftOrdnance = false;
 			for (std::vector<std::string>::const_iterator
 					j = cwList.begin();
-					j != cwList.end() && craftOrdnance == false;
+					j != cwList.end();
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
@@ -416,12 +418,15 @@ void TransferItemsState::init()
 					craftOrdnance = true;
 					if ((clip = cwRule->getLoadCapacity()) > 0)
 						item += (L" (" + Text::intWide(clip) + L")");
+					break;
 				}
-				else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule)
+
+				if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule)
 				{
 					craftOrdnance = true;
 					if ((clip = clRule->getFullClip()) > 1)
 						item += (L"s (" + Text::intWide(clip) + L")");
+					break;
 				}
 			}
 
@@ -883,7 +888,7 @@ void TransferItemsState::updateListrow() // private.
 					++i)
 			{
 				cwRule = rules->getCraftWeapon(*i);
-				if (itRule == rules->getItemRule(cwRule->getLauncherType())
+				if (   itRule == rules->getItemRule(cwRule->getLauncherType())
 					|| itRule == rules->getItemRule(cwRule->getClipType()))
 				{
 					craftOrdnance = true;

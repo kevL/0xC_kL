@@ -1074,8 +1074,8 @@ void BattlescapeGenerator::deployXcom() // private.
 			i != supports.end();
 			++i)
 	{
-		Log(LOG_INFO) << ". convert vehicle type= " << (*i)->getRules()->getType();
-		BattleUnit* const unit (convertVehicle(*i));
+		Log(LOG_INFO) << ". convert and add vehicle type= " << (*i)->getRules()->getType();
+		BattleUnit* const unit (addPlayerSupportUnit(*i));
 
 		if (unit != nullptr && _battleSave->getSelectedUnit() == nullptr)
 			_battleSave->setSelectedUnit(unit);
@@ -1442,10 +1442,10 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>* veh
  * @param vehicle - pointer to Vehicle
  * @return, pointer to the spawned unit; nullptr if unable to instantiate and equip itself
  */
-BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // private.
+BattleUnit* BattlescapeGenerator::addPlayerSupportUnit(Vehicle* const vehicle) // private.
 {
 	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "bGen:convertVehicle()";
+	Log(LOG_INFO) << "bGen:addPlayerSupportUnit()";
 	Log(LOG_INFO) << ". . type= " << vehicle->getRules()->getType();
 
 	std::string type (vehicle->getRules()->getType());				// Convert this item-type ...
@@ -1461,12 +1461,12 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 	{
 		supportUnit->setTurretType(vehicle->getRules()->getTurretType());
 
-		BattleItem* const weapon (new BattleItem(					// add Vehicle as a weapon-item and assign the unit itself as the owner of the weapon.
+		BattleItem* const weapon (new BattleItem(					// add Vehicle as a weapon-item and assign it the unit itself as the owner of the weapon.
 											_rules->getItemRule(type),
 											_battleSave->getCanonicalBattleId()));
 		if (placeGeneric(weapon, supportUnit) == false)
 		{
-			Log(LOG_WARNING) << "bGen:convertVehicle() Could not add " << type;
+			Log(LOG_WARNING) << "bGen:addPlayerSupportUnit() Could not add " << type;
 
 			--_unitSequence;
 			delete weapon;
@@ -1483,7 +1483,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 												_battleSave->getCanonicalBattleId()));
 			if (placeGeneric(load, supportUnit) == false)
 			{
-				Log(LOG_WARNING) << "bGen:convertVehicle() Could not add " << type << " to " << vehicle->getRules()->getType();
+				Log(LOG_WARNING) << "bGen:addPlayerSupportUnit() Could not add " << type << " to " << vehicle->getRules()->getType();
 
 				--_unitSequence;
 				delete load;
@@ -1509,7 +1509,7 @@ BattleUnit* BattlescapeGenerator::convertVehicle(Vehicle* const vehicle) // priv
 					weapon = new BattleItem(itRule, _battleSave->getCanonicalBattleId());
 					if (placeGeneric(weapon, supportUnit) == false)
 					{
-						Log(LOG_WARNING) << "bGen:convertVehicle() Could not add " << itRule->getType() << " to " << vhclType;
+						Log(LOG_WARNING) << "bGen:addPlayerSupportUnit() Could not add " << itRule->getType() << " to " << vhclType;
 						delete weapon;
 					}
 				}

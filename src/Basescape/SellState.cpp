@@ -239,6 +239,9 @@ SellState::SellState(Base* const base)
 		* clRule;
 	const RuleCraftWeapon* cwRule;
 
+	const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+	bool craftOrdnance;
+
 	std::wstring item;
 
 	int
@@ -265,11 +268,10 @@ SellState::SellState(Base* const base)
 			itRule = rules->getItemRule(*i);
 			//Log(LOG_INFO) << (*i) << " sell listOrder " << itRule->getListOrder(); // Prints listOrder to LOG.
 
-			bool craftOrdnance (false);
-			const std::vector<std::string>& cwList (rules->getCraftWeaponsList());
+			craftOrdnance = false;
 			for (std::vector<std::string>::const_iterator
 					j = cwList.begin();
-					j != cwList.end() && craftOrdnance == false;
+					j != cwList.end();
 					++j)
 			{
 				cwRule = rules->getCraftWeapon(*j);
@@ -278,12 +280,15 @@ SellState::SellState(Base* const base)
 					craftOrdnance = true;
 					if ((clip = cwRule->getLoadCapacity()) != 0)
 						item += (L" (" + Text::intWide(clip) + L")");
+					break;
 				}
-				else if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule)
+
+				if ((clRule = rules->getItemRule(cwRule->getClipType())) == itRule)
 				{
 					craftOrdnance = true;
 					if ((clip = clRule->getFullClip()) > 1)
 						item += (L"s (" + Text::intWide(clip) + L")");
+					break;
 				}
 			}
 

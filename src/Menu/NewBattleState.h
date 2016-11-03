@@ -96,9 +96,9 @@ private:
 		_crafts;
 
 	/// Clears and generates Base storage-items.
-	void resetStorage() const;
-	/// Generates all research.
-	void resetResearch() const;
+	void resetBaseStores() const;
+	/// Clears and generates all ResearchGenerals.
+	void resetResearchGenerals() const;
 
 
 	public:

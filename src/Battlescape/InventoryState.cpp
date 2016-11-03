@@ -694,9 +694,9 @@ void InventoryState::btnOkClick(Action*)
 	{
 		_game->popState();
 
-		if (_tuMode == false && _parent != nullptr)	// pre-battle but going into tactical!
-		{											// why shouldn't this be done someplace reasonable like BattlescapeState::init().
-			_battleSave->positionUnits();			// you know, somewhere you'd expect to find it instead of where some guy jerked off on a wall.
+		if (_tuMode == false && _parent != nullptr)	// pre-battle equip -> going into tactical!
+		{
+			_battleSave->positionUnits();
 			_battleSave->distributeEquipt(_battleSave->getBattleInventory());
 
 			for (std::vector<BattleUnit*>::const_iterator

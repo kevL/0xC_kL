@@ -49,6 +49,7 @@
 #include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleAlienMission.h"
 //#include "../Ruleset/RuleCraft.h"
+#include "../Ruleset/RuleCraftWeapon.h"
 #include "../Ruleset/RuleGlobe.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
@@ -318,8 +319,8 @@ void NewBattleState::configLoad(const std::string& file)
 					}
 				}
 
-				resetStorage();		// Clear and generate Base storage.
-				resetResearch();	// Add research - setup ResearchGenerals.
+				resetBaseStores();
+				resetResearchGenerals();
 			}
 			else
 				configCreate();
@@ -404,8 +405,8 @@ void NewBattleState::configCreate()
 
 	configSoldiers();
 
-	resetStorage();		// Clear and generate Base storage.
-	resetResearch();	// Add research - setup ResearchGenerals.
+	resetBaseStores();
+	resetResearchGenerals();
 
 	cbxMissionChange(nullptr);
 }
@@ -505,9 +506,15 @@ void NewBattleState::configSoldiers()
 /**
  * Clears and generates Base storage-items.
  */
-void NewBattleState::resetStorage() const // private.
+void NewBattleState::resetBaseStores() const // private.
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "NewBattleState::resetBaseStores()";
 	_base->getStorageItems()->getContents()->clear();
+
+	const RuleCraftWeapon* cwRule;
+	const std::vector<std::string>& cwList (_rules->getCraftWeaponsList());
+	bool craftOrdnance;
 
 	const RuleItem* itRule;
 	const std::vector<std::string>& allItems (_rules->getItemsList());
@@ -516,22 +523,69 @@ void NewBattleState::resetStorage() const // private.
 			i != allItems.end();
 			++i)
 	{
-		itRule = _rules->getItemRule(*i);
-		if (   itRule->getBattleType() != BT_CORPSE
-			&& itRule->isLiveAlien() == false
-			&& itRule->isRecoverable() == true)
+		//Log(LOG_INFO) << ". check type= " << *i;
+		if (_rules->getAlienFuelType() != *i)
 		{
-			_base->getStorageItems()->addItem(*i);
+			craftOrdnance = false;
+			for (std::vector<std::string>::const_iterator
+					j = cwList.begin();
+					j != cwList.end();
+					++j)
+			{
+				//Log(LOG_INFO) << ". cwType= " << (*j);
+				cwRule = _rules->getCraftWeapon(*j);
+				//Log(LOG_INFO) << ". cw LauncherType= " << cwRule->getLauncherType();
+//				if (_rules->getItemRule(cwRule->getLauncherType()) == itRule)
+				if (cwRule->getLauncherType() == *i)
+				{
+					craftOrdnance = true;
+					break;
+				}
+
+				//Log(LOG_INFO) << ". cw ClipType= " << cwRule->getClipType();
+//				if (_rules->getItemRule(cwRule->getClipType()) == itRule)
+				if (cwRule->getClipType() == *i)
+				{
+					craftOrdnance = true;
+					break;
+				}
+			}
+			//Log(LOG_INFO) << ". . craftOrdnance= " << craftOrdnance;
+
+			if (craftOrdnance == false)
+			{
+				itRule = _rules->getItemRule(*i);
+
+				//Log(LOG_INFO) << ". . . is NOT Corpse= " << (itRule->getBattleType() != BT_CORPSE);
+				//Log(LOG_INFO) << ". . . is NOT LiveAl= " << (itRule->isLiveAlien() == false);
+				//Log(LOG_INFO) << ". . . is Recoverabl= " << (itRule->isRecoverable() == true);
+				//Log(LOG_INFO) << ". . . NO SpecialTyp= " << (itRule->getTileType() == TILE);
+				if (   itRule->getBattleType() != BT_CORPSE
+					&& itRule->isLiveAlien() == false
+					&& itRule->isRecoverable() == true
+					&& itRule->getTileType() == TILE) // ie. is NOT AlienHabitat or whatnot.
+				{
+					//Log(LOG_INFO) << ". . add type= " << itRule->getType();
+					_base->getStorageItems()->addItem(*i);
+				}
+			}
 		}
 	}
 }
 
 /**
- * Generates all research.
- * @note The Game and SavedGame objects take care of deletion.
+ * Clears and generates all ResearchGenerals.
  */
-void NewBattleState::resetResearch() const // private.
+void NewBattleState::resetResearchGenerals() const // private.
 {
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _gameSave->getResearchGenerals().begin();
+			i != _gameSave->getResearchGenerals().end();
+			++i)
+	{
+		delete *i;
+	}
+
 	const std::vector<std::string>& allResearch (_rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
 			i = allResearch.begin();
