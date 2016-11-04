@@ -68,6 +68,7 @@
 #include "../Savegame/Soldier.h"
 #include "../Savegame/TerrorSite.h"
 #include "../Savegame/Ufo.h"
+#include "../Savegame/Vehicle.h"
 
 
 namespace OpenXcom
@@ -269,24 +270,6 @@ void NewBattleState::configLoad(const std::string& file)
 		{
 			YAML::Node doc (YAML::LoadFile(config));
 
-			_cbxMission->setSelected(std::min(
-										doc["mission"].as<size_t>(0u),
-										_missionTypes.size() - 1u));
-			cbxMissionChange(nullptr);
-
-			_cbxCraft->setSelected(std::min(
-										doc["craft"].as<size_t>(0u),
-										_crafts.size() - 1u));
-			_slrDarkness->setValue(doc["darkness"].as<int>(0));
-			_cbxTerrain->setSelected(std::min(
-										doc["terrain"].as<size_t>(0u),
-										_terrainTypes.size() - 1u));
-			_cbxAlienRace->setSelected(std::min(
-											doc["alienRace"].as<size_t>(0u),
-											_alienRaces.size() - 1u));
-			_cbxDifficulty->setSelected(doc["difficulty"].as<size_t>(0u));
-			_slrAlienTech->setValue(doc["alienTech"].as<int>(0));
-
 			if (doc["rng"] && Options::reSeedOnLoad == false)
 				RNG::setSeed(doc["rng"].as<uint64_t>());
 			else
@@ -329,6 +312,24 @@ void NewBattleState::configLoad(const std::string& file)
 			}
 			else
 				configCreate();
+
+			_cbxMission->setSelected(std::min(
+										doc["mission"].as<size_t>(0u),
+										_missionTypes.size() - 1u));
+			cbxMissionChange(nullptr); // NOTE: The '_base' must be instantiated first.
+
+			_cbxCraft->setSelected(std::min(
+										doc["craft"].as<size_t>(0u),
+										_crafts.size() - 1u));
+			_slrDarkness->setValue(doc["darkness"].as<int>(0));
+			_cbxTerrain->setSelected(std::min(
+										doc["terrain"].as<size_t>(0u),
+										_terrainTypes.size() - 1u));
+			_cbxAlienRace->setSelected(std::min(
+											doc["alienRace"].as<size_t>(0u),
+											_alienRaces.size() - 1u));
+			_cbxDifficulty->setSelected(doc["difficulty"].as<size_t>(0u));
+			_slrAlienTech->setValue(doc["alienTech"].as<int>(0));
 		}
 		catch (YAML::Exception& e)
 		{
@@ -411,7 +412,7 @@ void NewBattleState::configCreate()
 	resetBaseStores();
 	resetResearchGenerals();
 
-	cbxMissionChange(nullptr);
+	cbxMissionChange(nullptr); // NOTE: The '_base' must be instantiated first.
 }
 
 /**
@@ -770,6 +771,23 @@ void NewBattleState::btnGenerateClick(Action*)
 void NewBattleState::cbxMissionChange(Action*)
 {
 	//Log(LOG_INFO) << "NewBattleState::cbxMissionChange()";
+	if (_missionTypes[_cbxMission->getSelected()] == "STR_BASE_DEFENSE")
+		_base->setQuickDefense();		// allow unlimited support-units; Soldiers and Items should be loaded first by player.
+	else if (_base->isQuickDefense() == true)
+	{
+		_base->setQuickDefense(false);
+
+		for (std::vector<Vehicle*>::const_iterator
+				i = _craft->getVehicles()->begin();
+				i != _craft->getVehicles()->end();
+				++i)
+		{
+			delete *i;
+		}
+		_craft->getVehicles()->clear();	// clear all support-units from the Craft; only base-defense allows unlimited support.
+	}
+
+
 	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_missionTypes[_cbxMission->getSelected()]));
 	//Log(LOG_INFO) << ". ruleDeploy = " << ruleDeploy->getType();
 

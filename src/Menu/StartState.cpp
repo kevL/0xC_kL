@@ -494,8 +494,11 @@ void StartState::doDosart() // private.
 				_loadPhase = LOADING_SUCCESSFUL;
 			}
 		}
-		else if (_dosStep % 45 == 0)
+		else if (_dosStep % 60 == 0)
 		{
+			if (_dosStep == 234) // roughly.
+				addNewline();
+
 			addWait();
 			addCaret();
 		}

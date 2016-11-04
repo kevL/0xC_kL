@@ -84,7 +84,8 @@ Base::Base(
 		_recallSell(0),
 		_recallSoldier(0),
 		_recallTransfer(0),
-		_placed(false)
+		_placed(false),
+		_isQuickDefense(false)
 {
 	_items = new ItemContainer();
 }
@@ -306,6 +307,8 @@ void Base::loadBase(
 
 	_cashIncome	= node["cashIncome"].as<int>(_cashIncome);
 	_cashSpent	= node["cashSpent"]	.as<int>(_cashSpent);
+
+	_isQuickDefense = node["isQuickDefense"].as<bool>(_isQuickDefense);
 }
 
 /**
@@ -363,6 +366,8 @@ YAML::Node Base::save() const
 
 	if (_cashIncome != 0)	node["cashIncome"]	= _cashIncome;
 	if (_cashSpent != 0)	node["cashSpent"]	= _cashSpent;
+
+	if (_isQuickDefense == true) node["isQuickDefense"] = _isQuickDefense;
 
 	return node;
 }
@@ -2977,6 +2982,24 @@ void Base::refurbishCraft(const std::string& itType)
 			}
 		}
 	}
+}
+
+/**
+ * Checks if this Base is a quick-battle base for a base-defense tactical.
+ * @return, true if quick-battle base-defense
+ */
+bool Base::isQuickDefense() const
+{
+	return _isQuickDefense;
+}
+
+/**
+ * Sets the Base as a quick-battle base for a base-defense tactical.
+ * @param - quickDefense - true if quick-battle base-defense (default true)
+ */
+void Base::setQuickDefense(bool quickDefense)
+{
+	_isQuickDefense = quickDefense;
 }
 
 }

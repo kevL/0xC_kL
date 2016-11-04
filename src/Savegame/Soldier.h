@@ -23,6 +23,8 @@
 //#include <string>
 //#include <yaml-cpp/yaml.h>
 
+#include <SDL/SDL.h>
+
 //#include "../Ruleset/StatString.h"
 #include "../Ruleset/RuleUnit.h"
 

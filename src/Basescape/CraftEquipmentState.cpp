@@ -436,21 +436,26 @@ void CraftEquipmentState::rightByValue(int delta)
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
 				const int vhclCap (_craft->getRules()->getVehicleCapacity());
-				if (vhclCap != 0)
+				if (vhclCap != 0 || _base->isQuickDefense() == true)
 				{
 					int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_row])->getArmorType())->getSize());
 					quadrants *= quadrants;
 
-					const int spaceAvailable (std::min(_craft->getSpaceAvailable(),
-														vhclCap - _craft->getQtyVehicles(true))
-													/ quadrants);
-
+					int spaceAvailable;
+					if (_base->isQuickDefense() == true)
+						spaceAvailable = std::numeric_limits<int>::max();
+					else
+						spaceAvailable = std::min(_craft->getSpaceAvailable(),
+												  vhclCap - _craft->getQtyVehicles(true))
+												/ quadrants;
 					if (spaceAvailable > 0
-						&& _craft->getLoadCapacity() - _craft->calcLoadCurrent() >= quadrants * 10) // note: 10 is the 'load' that a single 'space' uses.
+						&& (_craft->getLoadCapacity() - _craft->calcLoadCurrent() >= quadrants * 10 // note: 10 is the 'load' that a single 'space' uses.
+							|| _base->isQuickDefense() == true))
 					{
 						delta = std::min(delta, spaceAvailable);
-						delta = std::min(delta,
-										(_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (quadrants * 10));
+						if (_base->isQuickDefense() == false)
+							delta = std::min(delta,
+											(_craft->getLoadCapacity() - _craft->calcLoadCurrent()) / (quadrants * 10));
 
 						if (itRule->getFullClip() < 1) // no Ammo required.
 						{

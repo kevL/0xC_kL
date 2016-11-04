@@ -73,14 +73,15 @@ class Base final
 private:
 	bool
 		_exposed,
-		_tactical,
-		_placed;
+		_isQuickDefense,
+		_placed,
+		_tactical;
 	int
-		_cashSpent,
 		_cashIncome,
+		_cashSpent,
+		_defenseResult,
 		_engineers,
-		_scientists,
-		_defenseResult;
+		_scientists;
 	size_t
 		_recallPurchase,
 		_recallSell,
@@ -385,6 +386,11 @@ private:
 
 		/// Checks if any Craft at the Base can be refurbished.
 		void refurbishCraft(const std::string& itType);
+
+		/// Checks if the Base is a quick-battle base for a base-defense tactical.
+		bool isQuickDefense() const;
+		/// Sets the Base as a quick-battle base for a base-defense tactical.
+		void setQuickDefense(bool quickDefense = true);
 };
 
 }
