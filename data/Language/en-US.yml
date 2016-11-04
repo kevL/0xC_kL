@@ -1417,3 +1417,4 @@ en-US:
   STR_PSILAB_CAP: "Psionic Lab space"
   STR_DEFENSE_VALUE: "Defense value"
   STR_HIT_RATIO: "Hit ratio"
+  STR_ERROR_MUST_HAVE_SOLDIER: "There must be at least one soldier onboard the craft."

@@ -1089,7 +1089,7 @@ Language* Game::getLanguage() const
 
 /**
  * Sets a ResourcePack for this Game to use.
- * @param res - pointer to the ResourcePack
+ * @param res - pointer to the ResourcePack (default nullptr)
  */
 void Game::setResourcePack(ResourcePack* const res)
 {
@@ -1111,7 +1111,7 @@ ResourcePack* Game::getResourcePack() const
  */
 void Game::loadRuleset()
 {
-	Options::badMods.clear();
+	Options::badRules.clear();
 
 	_rules = new Ruleset(this);
 
@@ -1132,8 +1132,8 @@ void Game::loadRuleset()
 		{
 			Log(LOG_WARNING) << e.what();
 
-			Options::badMods.push_back(*i);
-			Options::badMods.push_back(e.what());
+			Options::badRules.push_back(*i);
+			Options::badRules.push_back(e.what());
 
 			i = Options::rulesets.erase(i);
 		}

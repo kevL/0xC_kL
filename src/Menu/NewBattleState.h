@@ -65,8 +65,8 @@ private:
 		* _cbxDifficulty,
 		* _cbxAlienRace;
 	Frame
-		* _frameLeft,
-		* _frameRight;
+		* _frameL,
+		* _frameR;
 	Slider
 		* _slrDarkness,
 		* _slrAlienTech;
@@ -115,8 +115,8 @@ private:
 		void configSave(const std::string& file = "battle");
 		/// Creates the necessary SavedGame.
 		void configCreate();
-		/// Generates the Soldiers.
-		void configSoldiers();
+		/// Clears and generates the Soldiers.
+		void resetSoldiers();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

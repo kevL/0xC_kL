@@ -174,8 +174,8 @@ BriefingState::BriefingState(
 		{
 			_txtTarget->setBig();
 			_txtTarget->setText(craft->getTarget()->getLabel(
-															_game->getLanguage(),
-															isQuickBattle == false));
+														_game->getLanguage(),
+														isQuickBattle == false));
 		}
 		else
 			_txtTarget->setVisible(false);

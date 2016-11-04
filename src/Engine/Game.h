@@ -136,7 +136,7 @@ private:
 		/// Gets the Game's currently loaded ResourcePack.
 		ResourcePack* getResourcePack() const;
 		/// Sets a ResourcePack for the Game.
-		void setResourcePack(ResourcePack* const res);
+		void setResourcePack(ResourcePack* const res = nullptr);
 
 		/// Loads a Ruleset for the Game.
 		void loadRuleset();

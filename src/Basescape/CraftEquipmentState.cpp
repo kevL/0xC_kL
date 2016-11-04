@@ -226,6 +226,7 @@ void CraftEquipmentState::updateList() // private.
 	Uint8 color;
 
 	const RuleItem* itRule;
+	BattleType bType;
 
 	const std::vector<std::string>& allItems (_rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
@@ -234,55 +235,73 @@ void CraftEquipmentState::updateList() // private.
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
-		if (itRule->getBigSprite() > -1 // see also BattlescapeGenerator::deployXcom().
-			&& itRule->getBattleType() != BT_NONE
-			&& itRule->getBattleType() != BT_CORPSE
-			&& itRule->getBattleType() != BT_FUEL
-			&& _game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
+		bType = itRule->getBattleType();
+
+		switch (bType)
 		{
-			if (itRule->isFixed() == true)
-				craftQty = _craft->getVehicleCount(*i);
-			else
-				craftQty = _craft->getCraftItems()->getItemQuantity(*i);
+			case BT_NONE:
+			case BT_CORPSE:
+			case BT_FUEL:
+				break;
 
-			if (_base->getStorageItems()->getItemQuantity(*i) != 0 || craftQty != 0) //|| isQuickBattle == true)
-			{
-				_items.push_back(*i);
-
-				woststr.str(L"");
-				if (_isQuickBattle == false)
-					woststr << _base->getStorageItems()->getItemQuantity(*i);
-				else
-					woststr << "-";
-
-				wst = tr(*i);
-				if (itRule->getBattleType() == BT_AMMO) // weapon clips
+			case BT_FIREARM:
+			case BT_AMMO:
+			case BT_MELEE:
+			case BT_GRENADE: // -> includes SmokeGrenade, HE-Satchel, and AlienGrenade (see Ruleset)
+			case BT_PROXYGRENADE:
+			case BT_MEDIKIT:
+			case BT_SCANNER:
+			case BT_MINDPROBE:
+			case BT_PSIAMP:
+			case BT_FLARE:
+//				if (itRule->getBigSprite() > -1 // see also BattlescapeGenerator::deployXcom(). Inventory also uses this "bigSprite" trick. NOTE: Stop using the "bigSprite" trick.
+//				if (itRule->isFixed() == false
+				if (_game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
 				{
-					wst.insert(0u, L"  ");
-					if ((clip = itRule->getFullClip()) > 1)
-						wst += (L" (" + Text::intWide(clip) + L")");
+					if (itRule->isFixed() == true)
+						craftQty = _craft->getVehicleCount(*i);
+					else
+						craftQty = _craft->getCraftItems()->getItemQuantity(*i);
+
+					if (_base->getStorageItems()->getItemQuantity(*i) != 0 || craftQty != 0) //|| isQuickBattle == true)
+					{
+						_items.push_back(*i);
+
+						woststr.str(L"");
+						if (_isQuickBattle == false)
+							woststr << _base->getStorageItems()->getItemQuantity(*i);
+						else
+							woststr << "-";
+
+						wst = tr(*i);
+						if (bType == BT_AMMO) // weapon clips
+						{
+							wst.insert(0u, L"  ");
+							if ((clip = itRule->getFullClip()) > 1)
+								wst += (L" (" + Text::intWide(clip) + L")");
+						}
+						else if (itRule->isFixed() == true // tank w/ Ordnance.
+							&& (clip = itRule->getFullClip()) > 0)
+						{
+							wst += (L" (" + Text::intWide(clip) + L")");
+						}
+
+						_lstEquipment->addRow(
+											3,
+											wst.c_str(),
+											woststr.str().c_str(),
+											Text::intWide(craftQty).c_str());
+
+						if (craftQty != 0)
+							color = _lstEquipment->getSecondaryColor();
+						else if (bType == BT_AMMO)
+							color = _loadColor;
+						else
+							color = _lstEquipment->getColor();
+
+						_lstEquipment->setRowColor(r++, color);
+					}
 				}
-				else if (itRule->isFixed() == true // tank w/ Ordnance.
-					&& (clip = itRule->getFullClip()) > 0)
-				{
-					wst += (L" (" + Text::intWide(clip) + L")");
-				}
-
-				_lstEquipment->addRow(
-									3,
-									wst.c_str(),
-									woststr.str().c_str(),
-									Text::intWide(craftQty).c_str());
-
-				if (craftQty != 0)
-					color = _lstEquipment->getSecondaryColor();
-				else if (itRule->getBattleType() == BT_AMMO)
-					color = _loadColor;
-				else
-					color = _lstEquipment->getColor();
-
-				_lstEquipment->setRowColor(r++, color);
-			}
 		}
 	}
 	_lstEquipment->scrollTo(_recall);

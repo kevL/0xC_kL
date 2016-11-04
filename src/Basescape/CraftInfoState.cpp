@@ -150,9 +150,6 @@ CraftInfoState::CraftInfoState(
 	_edtCraft->onTextChange(static_cast<ActionHandler>(&CraftInfoState::edtCraftChange));
 
 	_txtBaseLabel->setText(_base->getLabel());
-	_txtStatus->setAlign(ALIGN_RIGHT);
-
-	_txtRadar->setAlign(ALIGN_CENTER);
 
 	if (_craft->getKills() != 0) //&& _craft->getRules()->getWeaponCapacity() != 0u
 	{
@@ -241,8 +238,10 @@ void CraftInfoState::init()
 
 	if (_isQuickBattle == true)
 	{
-		_txtStatus->setText(L"");
 		_craft->setFuel(crRule->getMaxFuel()); // top up Craft for insta-Battle mode.
+
+		_txtStatus->setVisible(false);
+		_txtRadar->setVisible(false);
 	}
 	else
 	{
@@ -269,6 +268,10 @@ void CraftInfoState::init()
 		_txtStatus->setText(tr(_craft->getCraftStatusString()));
 		_txtStatus->setColor(color);
 		_txtStatus->setHighContrast();
+		_txtStatus->setAlign(ALIGN_RIGHT);
+
+		_txtRadar->setText(tr("STR_RADAR_RANGE_").arg(crRule->getRangeRadar()));
+		_txtRadar->setAlign(ALIGN_CENTER);
 	}
 
 
@@ -289,9 +292,6 @@ void CraftInfoState::init()
 																	_game->getLanguage());
 	}
 	_txtFuel->setText(woststr1.str());
-
-	_txtRadar->setText(tr("STR_RADAR_RANGE_")
-						.arg(crRule->getRangeRadar()));
 
 	woststr2 << tr("STR_HULL_").arg(Text::formatPercent(100 - _craft->getCraftDamagePct()));
 	if (_craft->getCraftDamage() != 0)

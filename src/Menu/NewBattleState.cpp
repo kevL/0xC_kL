@@ -44,6 +44,8 @@
 #include "../Interface/TextButton.h"
 #include "../Interface/Window.h"
 
+#include "../Menu/ErrorMessageState.h"
+
 #include "../Resource/XcomResourcePack.h"
 
 #include "../Ruleset/RuleAlienDeployment.h"
@@ -51,6 +53,7 @@
 //#include "../Ruleset/RuleCraft.h"
 #include "../Ruleset/RuleCraftWeapon.h"
 #include "../Ruleset/RuleGlobe.h"
+#include "../Ruleset/RuleInterface.h"
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
 #include "../Ruleset/RuleSoldier.h"
@@ -78,15 +81,18 @@ NewBattleState::NewBattleState()
 		_craft(nullptr),
 		_base(nullptr),
 		_gameSave(nullptr),
-		_rules(_game->getRuleset())
+		_rules(_game->getRuleset()),
+		_missionTypes(_game->getRuleset()->getDeploymentsList())
 {
 	_window				= new Window(this, 320, 200, 0,0, POPUP_BOTH);
+
 	_txtTitle			= new Text(320, 17, 0, 9);
 
 	_txtMapOptions		= new Text(148, 9, 8, 68);
-	_frameLeft			= new Frame(148, 96, 8, 78);
 	_txtAlienOptions	= new Text(148, 9, 164, 68);
-	_frameRight			= new Frame(148, 96, 164, 78);
+
+	_frameL				= new Frame(148, 96, 8, 78);
+	_frameR				= new Frame(148, 96, 164, 78);
 
 	_txtMission			= new Text(100, 9, 8, 30);
 	_cbxMission			= new ComboBox(this, 214, 16, 98, 26);
@@ -120,9 +126,9 @@ NewBattleState::NewBattleState()
 	add(_window,			"window",	"newBattleMenu");
 	add(_txtTitle,			"heading",	"newBattleMenu");
 	add(_txtMapOptions,		"heading",	"newBattleMenu");
-	add(_frameLeft,			"frames",	"newBattleMenu");
+	add(_frameL,			"frames",	"newBattleMenu");
 	add(_txtAlienOptions,	"heading",	"newBattleMenu");
-	add(_frameRight,		"frames",	"newBattleMenu");
+	add(_frameR,			"frames",	"newBattleMenu");
 
 	add(_txtMission,		"text",		"newBattleMenu");
 	add(_txtCraft,			"text",		"newBattleMenu");
@@ -156,20 +162,19 @@ NewBattleState::NewBattleState()
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_frameLeft->setThickness(3);
-	_frameRight->setThickness(3);
+	_frameL->setThickness(3);
+	_frameR->setThickness(3);
 
-	_txtMapOptions->setText(tr("STR_MAP_OPTIONS"));
-	_txtAlienOptions->setText(tr("STR_ALIEN_OPTIONS"));
-	_txtMission->setText(tr("STR_MISSION"));
-	_txtCraft->setText(tr("STR_CRAFT"));
-	_txtDarkness->setText(tr("STR_MAP_DARKNESS"));
-	_txtTerrain->setText(tr("STR_MAP_TERRAIN"));
-	_txtDifficulty->setText(tr("STR_DIFFICULTY"));
-	_txtAlienRace->setText(tr("STR_ALIEN_RACE"));
-	_txtAlienTech->setText(tr("STR_ALIEN_TECH_LEVEL"));
+	_txtMapOptions->	setText(tr("STR_MAP_OPTIONS"));
+	_txtAlienOptions->	setText(tr("STR_ALIEN_OPTIONS"));
+	_txtMission->		setText(tr("STR_MISSION"));
+	_txtCraft->			setText(tr("STR_CRAFT"));
+	_txtDarkness->		setText(tr("STR_MAP_DARKNESS"));
+	_txtTerrain->		setText(tr("STR_MAP_TERRAIN"));
+	_txtDifficulty->	setText(tr("STR_DIFFICULTY"));
+	_txtAlienRace->		setText(tr("STR_ALIEN_RACE"));
+	_txtAlienTech->		setText(tr("STR_ALIEN_TECH_LEVEL"));
 
-	_missionTypes = _rules->getDeploymentsList();
 	_cbxMission->setOptions(_missionTypes);
 	_cbxMission->setBackgroundFill(BROWN_D);
 	_cbxMission->onComboChange(static_cast<ActionHandler>(&NewBattleState::cbxMissionChange));
@@ -383,8 +388,7 @@ void NewBattleState::configCreate()
 	_gameSave->getBases()->push_back(_base);
 	_base->setLabel(L"tactical");
 
-	// Clear and generate Craft.
-	for (std::vector<Craft*>::const_iterator
+	for (std::vector<Craft*>::const_iterator // Clear and generate Craft.
 			i = _base->getCrafts()->begin();
 			i != _base->getCrafts()->end();
 			++i)
@@ -403,8 +407,7 @@ void NewBattleState::configCreate()
 	_base->setEngineers(0);
 	_base->setScientists(0);
 
-	configSoldiers();
-
+	resetSoldiers();
 	resetBaseStores();
 	resetResearchGenerals();
 
@@ -412,11 +415,10 @@ void NewBattleState::configCreate()
 }
 
 /**
- * Generates the Soldiers.
+ * Clears and generates the Soldiers.
  */
-void NewBattleState::configSoldiers()
+void NewBattleState::resetSoldiers()
 {
-	// Clear and generate Soldiers.
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
@@ -446,8 +448,8 @@ void NewBattleState::configSoldiers()
 
 		stats = sol->getCurrentStats();
 		for (int
-				j = 0;
-				j != 13; // arbitrary ....
+				j = 0;		// promote rank and stats
+				j != 13;	// arbitrary iterations ...
 				++j)
 		{
 			if (RNG::percent(11 - static_cast<int>(sol->getRank()))
@@ -464,7 +466,7 @@ void NewBattleState::configSoldiers()
 					|| hasRookieStats == true))
 			{
 				hasRookieStats = false;
-//				UnitStats* const stats = sol->getCurrentStats();
+
 				stats->tu			+= RNG::generate(0, 6);
 				stats->stamina		+= RNG::generate(0, 6);
 				stats->health		+= RNG::generate(0, 5);
@@ -593,107 +595,114 @@ void NewBattleState::btnOkClick(Action*)
 {
 	configSave();
 
-	if (_missionTypes[_cbxMission->getSelected()] != "STR_BASE_DEFENSE"
-		&& _craft->getQtySoldiers() == 0)
-//		&& _craft->getQtyVehicles() == 0)
+	if (_craft->getQtySoldiers() == 0)
+//		&& _craft->getQtyVehicles() == 0
+//		&& _missionTypes[_cbxMission->getSelected()] != "STR_BASE_DEFENSE")
 	{
-		return; // TODO: Popup that tells player why no-workie.
-	}
-
-	SavedBattleGame* const battleSave (new SavedBattleGame(
-														_gameSave,
-														nullptr, // &_rules->getOperations(),
-														_rules));
-	_gameSave->setBattleSave(battleSave);
-	battleSave->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
-
-	BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-	bGen.setTerrain(_rules->getTerrain(_terrainTypes[_cbxTerrain->getSelected()]));
-
-	Base* base;
-	if (_missionTypes[_cbxMission->getSelected()] == "STR_BASE_DEFENSE")
-	{
-		base = _craft->getBase();
-		bGen.setBase(base);
-		_craft = nullptr; // kL_note: may need to remove this for .. some reason.
-	}
-//	else if (_missionTypes[_cbxMission->getSelected()] == "STR_ALIEN_BASE_ASSAULT")
-	else if (_game->getRuleset()->getDeployment(battleSave->getTacticalType())->isAlienBaseDeploy() == true)
-	{
-		base = nullptr;
-
-		AlienBase* const aBase (new AlienBase(_game->getRuleset()->getDeployment(battleSave->getTacticalType())));
-		aBase->setId(1);
-		aBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
-		_craft->setTarget(aBase);
-		bGen.setAlienBase(aBase);
-
-		_gameSave->getAlienBases()->push_back(aBase);
-	}
-	else if (_craft != nullptr
-		&& _rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr)
-	{
-		base = nullptr;
-
-		Ufo* const ufo (new Ufo(
-							_rules->getUfo(_missionTypes[_cbxMission->getSelected()]),
-							_gameSave));
-		ufo->setQuickBattle();
-		ufo->setId(1);
-		_craft->setTarget(ufo);
-		bGen.setUfo(ufo);
-
-		if (RNG::percent(50) == true) // TODO: Put this as an option in NewBattleState.
-		{
-			battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
-			ufo->setUfoStatus(Ufo::LANDED);
-		}
-		else
-		{
-			battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
-			ufo->setUfoStatus(Ufo::CRASHED);
-		}
-
-		_gameSave->getUfos()->push_back(ufo);
+		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("newBattleMenu"));
+		_game->pushState(new ErrorMessageState(
+											tr("STR_ERROR_MUST_HAVE_SOLDIER"),
+											_palette,
+											uiRule->getElement("errorMessage")->color,
+											"BACK01.SCR",
+											uiRule->getElement("errorPalette")->color));
 	}
 	else
 	{
-		base = nullptr;
+		SavedBattleGame* const battleSave (new SavedBattleGame(
+															_gameSave,
+															nullptr, // &_rules->getOperations(),
+															_rules));
+		_gameSave->setBattleSave(battleSave);
+		battleSave->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
 
-		const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
-		const RuleAlienMission* const mission (_rules->getAlienMission(_rules->getAlienMissionList().front())); // doesn't matter
-		TerrorSite* const terrorSite (new TerrorSite(
-												mission,
-												ruleDeploy));
-		terrorSite->setId(1);
-		terrorSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
+		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
+		bGen.setTerrain(_rules->getTerrain(_terrainTypes[_cbxTerrain->getSelected()]));
 
-		_craft->setTarget(terrorSite);
+		if (_missionTypes[_cbxMission->getSelected()] == "STR_BASE_DEFENSE")										// BASE DEFENSE
+		{
+			_craft = nullptr;
+			bGen.setBase(_base);
+		}
+//		else if (_missionTypes[_cbxMission->getSelected()] == "STR_ALIEN_BASE_ASSAULT")
+		else if (_game->getRuleset()->getDeployment(battleSave->getTacticalType())->isAlienBaseDeploy() == true)	// ALIEN BASE ASSAULT
+		{
+			_base = nullptr;
 
-		bGen.setTerrorSite(terrorSite);
-		_gameSave->getTerrorSites()->push_back(terrorSite);
+			_craft->setSpeed();
+			bGen.setCraft(_craft);
+
+			AlienBase* const aBase (new AlienBase(_game->getRuleset()->getDeployment(battleSave->getTacticalType())));
+			aBase->setId(1);
+			aBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
+			_craft->setTarget(aBase);
+			bGen.setAlienBase(aBase);
+
+			_gameSave->getAlienBases()->push_back(aBase);
+		}
+		else if (_rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr)								// UFO CRASHED or LANDED
+		{
+			_base = nullptr;
+
+			_craft->setSpeed();
+			bGen.setCraft(_craft);
+
+			Ufo* const ufo (new Ufo(
+								_rules->getUfo(_missionTypes[_cbxMission->getSelected()]),
+								_gameSave));
+			ufo->setQuickBattle();
+			ufo->setId(1);
+			_craft->setTarget(ufo);
+			bGen.setUfo(ufo);
+
+			if (RNG::percent(50) == true) // TODO: Put this as an option in NewBattleState.
+			{
+				battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
+				ufo->setUfoStatus(Ufo::LANDED);
+			}
+			else
+			{
+				battleSave->setTacticalType("STR_UFO_CRASH_RECOVERY");
+				ufo->setUfoStatus(Ufo::CRASHED);
+			}
+
+			_gameSave->getUfos()->push_back(ufo);
+		}
+		else																										// TERROR SITE
+		{
+			_base = nullptr;
+
+			_craft->setSpeed();
+			bGen.setCraft(_craft);
+
+			const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
+			const RuleAlienMission* const mission (_rules->getAlienMission(_rules->getAlienMissionList().front())); // doesn't matter
+			TerrorSite* const terrorSite (new TerrorSite(
+													mission,
+													ruleDeploy));
+			terrorSite->setId(1);
+			terrorSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
+
+			_craft->setTarget(terrorSite);
+
+			bGen.setTerrorSite(terrorSite);
+			_gameSave->getTerrorSites()->push_back(terrorSite);
+		}
+
+		_gameSave->setDifficulty(static_cast<DifficultyLevel>(_cbxDifficulty->getSelected()));
+
+		bGen.setShade(_slrDarkness->getValue());
+		bGen.setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
+		bGen.setAlienItemlevel(_slrAlienTech->getValue());
+		bGen.run();
+
+		_game->popState(); // <- this
+		_game->popState(); // <- quah
+
+		_game->pushState(new BriefingState(_craft, _base));
+
+//		_game->getResourcePack()->fadeMusic(_game, 335); // TODO: sort out musicFade from NewBattleState to Briefing ...
 	}
-
-	if (_craft != nullptr)
-	{
-		_craft->setSpeed();
-		bGen.setCraft(_craft);
-	}
-
-	_gameSave->setDifficulty(static_cast<DifficultyLevel>(_cbxDifficulty->getSelected()));
-
-	bGen.setShade(_slrDarkness->getValue());
-	bGen.setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
-	bGen.setAlienItemlevel(_slrAlienTech->getValue());
-	bGen.run();
-
-	_game->popState();
-	_game->popState();
-
-	_game->pushState(new BriefingState(_craft, base));
-
-	_craft = nullptr;
-//	_game->getResourcePack()->fadeMusic(_game, 335); // TODO: sort out musicFade from NewBattleState to Briefing ...
 }
 
 /**
@@ -714,9 +723,9 @@ void NewBattleState::btnCancelClick(Action*)
  */
 void NewBattleState::btnRandClick(Action*)
 {
-//	configCreate();	// <- Do NOT reset Soldiers/Craft/etc (the Base) here.
-	RNG::setSeed();	// TODO: Add buttons to run configCreate() and/or to reset RNG-seed.
-					// else do it the old-fashioned way and delete 'battle.cfg' ...
+//	configCreate();	// <- Do NOT reset Base/Craft/Soldiers here.
+	RNG::setSeed();	// TODO: Add buttons to run configCreate() and/or reset RNG-seed.
+					// -> else do it the old-fashioned way and delete 'battle.cfg'
 
 	_cbxMission->setSelected(RNG::pick(_missionTypes.size()));
 	cbxMissionChange(nullptr);
@@ -751,7 +760,7 @@ void NewBattleState::btnCraftClick(Action*)
  */
 void NewBattleState::btnGenerateClick(Action*)
 {
-	configSoldiers();
+	resetSoldiers();
 }
 
 /**

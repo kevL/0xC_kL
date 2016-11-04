@@ -33,6 +33,10 @@ interfaces:
         color: 239   # bright green
       - id: button2
         color: 133   # minty green
+      - id: errorMessage
+        color: 133   # minty green
+      - id: errorPalette
+        color: 0     # brown
   - type: newGameMenu
     elements:
       - id: backpal

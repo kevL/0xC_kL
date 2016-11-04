@@ -1098,7 +1098,7 @@ void flashWindow()
 
 /**
  * Gets the executable path in DOS-style (short) form.
- * For non-Windows systems, just use a dummy path.
+ * @note For non-Windows systems, just use a dummy path.
  * @return, executable path
  */
 std::string getDosPath()

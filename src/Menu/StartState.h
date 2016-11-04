@@ -52,12 +52,17 @@ class StartState
 {
 
 private:
-	size_t _anim;
+	static LoadingPhase _loadPhase;
+	static bool _ready;
+	static std::string _error;
+
+	int _charWidth;
+	size_t _dosStep;
 
 	Font* _font;
 	Language* _lang;
 	Text
-		* _cursor,
+		* _caret,
 		* _text;
 	Timer* _timer;
 
@@ -66,12 +71,25 @@ private:
 	std::wostringstream _output;
 	std::wstring _dosart;
 
+	/// Loads game resources.
+	static int load(void* ptrG);
+
+	/// Animates the dos-terminal.
+	void doDosart();
+
+	/// Adds a line of dos-text.
+	void addLine(const std::wstring& line);
+	/// Adds a newline to dos-text
+	void addNewline();
+	/// Adds a character to dos-text.
+	void addChar(size_t pos);
+	/// Adds a caret to dos-text.
+	void addCaret();
+	/// Adds a wait to dos-text.
+	void addWait();
+
 
 	public:
-		static LoadingPhase loading;
-		static std::string error;
-		static bool kL_ready;
-
 		/// Creates a Start state.
 		StartState();
 		/// Cleans up the Start state.
@@ -79,25 +97,12 @@ private:
 
 		/// Reset everything.
 		void init() override;
-		/// Displays messages.
+		/// Displays fake ASCII print.
 		void think() override;
 
 		/// Handles key clicks.
 		void handle(Action* action) override;
 
-		/// Animates the terminal.
-		void animate();
-		/// Adds a line of text.
-		void addLine(const std::wstring& line);
-		///
-		void addLine_kL();
-		///
-		void addChar_kL(const size_t nextChar);
-		///
-		void addCursor_kL();
-
-		/// Loads the game resources.
-		static int load(void* ptrG);
 };
 
 }

@@ -57,7 +57,7 @@ private:
 			int bgColor);
 
 	public:
-		/// Creates an ErrorMessage state.
+		/// Creates an ErrorMessage state w/ string.
 		ErrorMessageState(
 				const std::string& st,
 				SDL_Color* palette,
@@ -65,7 +65,7 @@ private:
 				const std::string& bg,
 				int bgColor,
 				bool quit = false);
-		/// Creates an ErrorMessage state.
+		/// Creates an ErrorMessage state w/ wide-string.
 		ErrorMessageState(
 				const std::wstring& wst,
 				SDL_Color* palette,

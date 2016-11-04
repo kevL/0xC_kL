@@ -1191,8 +1191,8 @@ void BattlescapeGenerator::deployXcom() // private.
 					case BT_MINDPROBE:
 					case BT_PSIAMP:
 					case BT_FLARE:
-						if (itRule->getBigSprite() > -1 // See also CraftEquipmentState cTor. Inventory also uses this "bigSprite" trick.
-							&& itRule->isFixed() == false
+//						if (itRule->getBigSprite() > -1	// See also CraftEquipmentState cTor. Inventory also uses this "bigSprite" trick. NOTE: Stop using the "bigSprite" trick.
+						if (itRule->isFixed() == false	// <- supports are already handled.
 							&& _gameSave->isResearched(itRule->getRequirements()) == true)
 						{
 							//Log(LOG_INFO) << ". . . . add type= " << i->first << " (" << i->second << ")";

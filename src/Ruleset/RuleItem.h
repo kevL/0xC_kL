@@ -31,6 +31,8 @@
 namespace OpenXcom
 {
 
+const int BIGSPRITE_NONE = -99;
+
 enum DamageType
 {
 	DT_NONE,	// 0

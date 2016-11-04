@@ -217,7 +217,7 @@ OPT int
 OPT std::string newOpenGLShader;
 OPT std::vector<std::string>
 	rulesets,
-	badMods;
+	badRules;
 OPT SoundFormat currentSound;
 
 //#endif
