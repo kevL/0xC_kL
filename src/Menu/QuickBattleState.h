@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_NEWBATTLESTATE_H
-#define OPENXCOM_NEWBATTLESTATE_H
+#ifndef OPENXCOM_QUICKBATTLESTATE_H
+#define OPENXCOM_QUICKBATTLESTATE_H
 
 //#include <string>
 //#include <vector>
@@ -42,9 +42,9 @@ class Window;
 
 
 /**
- * New Battle that displays a list of options to configure a standalone mission.
+ * QuickBattle that displays a list of options to configure a standalone mission.
  */
-class NewBattleState
+class QuickBattleState
 	:
 		public State
 {
@@ -103,9 +103,9 @@ private:
 
 	public:
 		/// Creates a NewBattle state.
-		NewBattleState();
+		QuickBattleState();
 		/// Cleans up the NewBattle state.
-		~NewBattleState();
+		~QuickBattleState();
 
 		/// Resets state.
 		void init() override;

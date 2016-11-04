@@ -277,7 +277,7 @@ void BattlescapeGenerator::run()
 						&_mapsize_y,
 						&_mapsize_z);
 
-	if (_terrainRule == nullptr) // '_terrainRule' NOT set for Cydonia, Base assault/defense. Already set for NewBattleState ...... & UFO, & terrorSite.
+	if (_terrainRule == nullptr) // '_terrainRule' NOT set for Cydonia, Base assault/defense. Already set for QuickBattleState ...... & UFO, & terrorSite.
 	{
 		_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(RNG::pick(ruleDeploy->getDeployTerrains().size())));
 		if (_terrainRule == nullptr)

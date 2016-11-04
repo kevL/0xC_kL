@@ -184,7 +184,7 @@ ConfirmLandingState::ConfirmLandingState(
 					// PROFIT!!
 					// conclusion: choose among Globe-Texture's def'd deployments first;
 					// if none found, choose among Deployment def'd terrains ....
-					// Note: cf. NewBattleState::cbxMissionChange()
+					// Note: cf. QuickBattleState::cbxMissionChange()
 
 					// BZZZT. Do it the opposite way; check deployTerrains first, then textureTerrains.
 

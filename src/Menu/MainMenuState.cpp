@@ -23,7 +23,7 @@
 
 #include "IntroState.h"
 #include "ListLoadState.h"
-#include "NewBattleState.h"
+#include "QuickBattleState.h"
 #include "NewGameState.h"
 #include "OptionsVideoState.h"
 
@@ -178,7 +178,7 @@ void MainMenuState::btnNewGameClick(Action*)
  */
 void MainMenuState::btnNewBattleClick(Action*)
 {
-	_game->pushState(new NewBattleState());
+	_game->pushState(new QuickBattleState());
 }
 
 /**

@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NewBattleState.h"
+#include "QuickBattleState.h"
 
 //#include <algorithm>
 //#include <cmath>
@@ -77,7 +77,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the New Battle window.
  */
-NewBattleState::NewBattleState()
+QuickBattleState::QuickBattleState()
 	:
 		_craft(nullptr),
 		_base(nullptr),
@@ -178,7 +178,7 @@ NewBattleState::NewBattleState()
 
 	_cbxMission->setOptions(_missionTypes);
 	_cbxMission->setBackgroundFill(BROWN_D);
-	_cbxMission->onComboChange(static_cast<ActionHandler>(&NewBattleState::cbxMissionChange));
+	_cbxMission->onComboChange(static_cast<ActionHandler>(&QuickBattleState::cbxMissionChange));
 
 	const std::vector<std::string>& allCraft (_rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
@@ -191,7 +191,7 @@ NewBattleState::NewBattleState()
 	}
 	_cbxCraft->setOptions(_crafts);
 	_cbxCraft->setBackgroundFill(BROWN_D);
-	_cbxCraft->onComboChange(static_cast<ActionHandler>(&NewBattleState::cbxCraftChange));
+	_cbxCraft->onComboChange(static_cast<ActionHandler>(&QuickBattleState::cbxCraftChange));
 
 	_slrDarkness->setRange(0,15);
 
@@ -214,24 +214,24 @@ NewBattleState::NewBattleState()
 	_cbxTerrain->setBackgroundFill(BROWN_D);
 
 	_btnCraft->setText(tr("STR_EQUIP_CRAFT"));
-	_btnCraft->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnCraftClick));
+	_btnCraft->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnCraftClick));
 
 	_btnGenerate->setText(tr("STR_GENERATE"));
-	_btnGenerate->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnGenerateClick));
+	_btnGenerate->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnGenerateClick));
 
 	_btnRandom->setText(tr("STR_RANDOMIZE"));
-	_btnRandom->onMouseClick(static_cast<ActionHandler>(&NewBattleState::btnRandClick));
+	_btnRandom->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnRandClick));
 
 	_btnOk->setText(tr("STR_COMBAT_UC"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewBattleState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewBattleState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&QuickBattleState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnOkClick),
 							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewBattleState::btnOkClick),
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnOkClick),
 							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&NewBattleState::btnCancelClick));
-	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&NewBattleState::btnCancelClick),
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&QuickBattleState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnCancelClick),
 								Options::keyCancel);
 
 	configLoad();
@@ -240,13 +240,13 @@ NewBattleState::NewBattleState()
 /**
  * dTor.
  */
-NewBattleState::~NewBattleState()
+QuickBattleState::~QuickBattleState()
 {}
 
 /**
  * Resets the menu music and savegame when coming back from the battlescape.
  */
-void NewBattleState::init()
+void QuickBattleState::init()
 {
 	State::init();
 
@@ -258,7 +258,7 @@ void NewBattleState::init()
  * Loads configuration from a YAML file.
  * @param file - reference a YAML filename (default "battle")
  */
-void NewBattleState::configLoad(const std::string& file)
+void QuickBattleState::configLoad(const std::string& file)
 {
 	const std::string config (Options::getConfigFolder() + file + ".cfg");
 
@@ -343,7 +343,7 @@ void NewBattleState::configLoad(const std::string& file)
  * Saves configuration to a YAML file.
  * @param file - reference a YAML filename (default "battle")
  */
-void NewBattleState::configSave(const std::string& file)
+void QuickBattleState::configSave(const std::string& file)
 {
 	const std::string config (Options::getConfigFolder() + file + ".cfg");
 
@@ -375,7 +375,7 @@ void NewBattleState::configSave(const std::string& file)
 /**
  * Creates a SavedGame with everything necessary.
  */
-void NewBattleState::configCreate()
+void QuickBattleState::configCreate()
 {
 	RNG::setSeed();
 
@@ -418,7 +418,7 @@ void NewBattleState::configCreate()
 /**
  * Clears and generates the Soldiers.
  */
-void NewBattleState::resetSoldiers()
+void QuickBattleState::resetSoldiers()
 {
 	for (std::vector<Soldier*>::const_iterator
 			i = _base->getSoldiers()->begin();
@@ -509,10 +509,10 @@ void NewBattleState::resetSoldiers()
 /**
  * Clears and generates Base storage-items.
  */
-void NewBattleState::resetBaseStores() const // private.
+void QuickBattleState::resetBaseStores() const // private.
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "NewBattleState::resetBaseStores()";
+	//Log(LOG_INFO) << "QuickBattleState::resetBaseStores()";
 	_base->getStorageItems()->getContents()->clear();
 
 	const RuleCraftWeapon* cwRule;
@@ -566,7 +566,7 @@ void NewBattleState::resetBaseStores() const // private.
 /**
  * Clears and generates all ResearchGenerals.
  */
-void NewBattleState::resetResearchGenerals() const // private.
+void QuickBattleState::resetResearchGenerals() const // private.
 {
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _gameSave->getResearchGenerals().begin();
@@ -592,7 +592,7 @@ void NewBattleState::resetResearchGenerals() const // private.
  * Starts the battle.
  * @param action - pointer to an Action
  */
-void NewBattleState::btnOkClick(Action*)
+void QuickBattleState::btnOkClick(Action*)
 {
 	configSave();
 
@@ -656,7 +656,7 @@ void NewBattleState::btnOkClick(Action*)
 			_craft->setTarget(ufo);
 			bGen.setUfo(ufo);
 
-			if (RNG::percent(50) == true) // TODO: Put this as an option in NewBattleState.
+			if (RNG::percent(50) == true) // TODO: Put this as an option in QuickBattleState.
 			{
 				battleSave->setTacticalType("STR_UFO_GROUND_ASSAULT");
 				ufo->setUfoStatus(Ufo::LANDED);
@@ -702,7 +702,7 @@ void NewBattleState::btnOkClick(Action*)
 
 		_game->pushState(new BriefingState(_craft, _base));
 
-//		_game->getResourcePack()->fadeMusic(_game, 335); // TODO: sort out musicFade from NewBattleState to Briefing ...
+//		_game->getResourcePack()->fadeMusic(_game, 335); // TODO: sort out musicFade from QuickBattleState to Briefing ...
 	}
 }
 
@@ -710,7 +710,7 @@ void NewBattleState::btnOkClick(Action*)
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void NewBattleState::btnCancelClick(Action*)
+void QuickBattleState::btnCancelClick(Action*)
 {
 	configSave();
 
@@ -722,7 +722,7 @@ void NewBattleState::btnCancelClick(Action*)
  * Randomize the state
  * @param action - pointer to an Action
  */
-void NewBattleState::btnRandClick(Action*)
+void QuickBattleState::btnRandClick(Action*)
 {
 //	configCreate();	// <- Do NOT reset Base/Craft/Soldiers here.
 	RNG::setSeed();	// TODO: Add buttons to run configCreate() and/or reset RNG-seed.
@@ -750,7 +750,7 @@ void NewBattleState::btnRandClick(Action*)
  * Shows the CraftInfo screen.
  * @param action - pointer to an Action
  */
-void NewBattleState::btnCraftClick(Action*)
+void QuickBattleState::btnCraftClick(Action*)
 {
 	_game->pushState(new CraftInfoState(_base, 0u));
 }
@@ -759,7 +759,7 @@ void NewBattleState::btnCraftClick(Action*)
  * Generates a new group of Soldiers.
  * @param action - pointer to an Action
  */
-void NewBattleState::btnGenerateClick(Action*)
+void QuickBattleState::btnGenerateClick(Action*)
 {
 	resetSoldiers();
 }
@@ -768,9 +768,9 @@ void NewBattleState::btnGenerateClick(Action*)
  * Updates Map Options based on the current Mission type.
  * @param action - pointer to an Action
  */
-void NewBattleState::cbxMissionChange(Action*)
+void QuickBattleState::cbxMissionChange(Action*)
 {
-	//Log(LOG_INFO) << "NewBattleState::cbxMissionChange()";
+	//Log(LOG_INFO) << "QuickBattleState::cbxMissionChange()";
 	if (_missionTypes[_cbxMission->getSelected()] == "STR_BASE_DEFENSE")
 		_base->setQuickDefense();		// allow unlimited support-units; Soldiers and Items should be loaded first by player.
 	else if (_base->isQuickDefense() == true)
@@ -872,14 +872,14 @@ void NewBattleState::cbxMissionChange(Action*)
 	_cbxTerrain->setOptions(terrainOptions);
 	_cbxTerrain->setSelected(0u);
 
-	//Log(LOG_INFO) << "NewBattleState::cbxMissionChange() EXIT";
+	//Log(LOG_INFO) << "QuickBattleState::cbxMissionChange() EXIT";
 }
 
 /**
  * Updates Craft accordingly.
  * @param action - pointer to an Action
  */
-void NewBattleState::cbxCraftChange(Action*)
+void QuickBattleState::cbxCraftChange(Action*)
 {
 	_craft->changeRules(_rules->getCraft(_crafts[_cbxCraft->getSelected()]));
 
