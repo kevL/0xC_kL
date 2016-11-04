@@ -214,11 +214,24 @@ void CraftSoldiersState::init()
 					.arg(_craft->getLoadCapacity())
 					.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
 
-	showButtons();
-	if (_isQuickBattle == false) tacticalCost();
+	extra();
 
 	_lstSoldiers->scrollTo(_base->getRecallRow(RCL_SOLDIER));
 	_lstSoldiers->draw();
+}
+
+/**
+ * Decides whether to show extra buttons -- unload-craft and Inventory -- and
+ * whether to show tactical-costs.
+ */
+void CraftSoldiersState::extra() const // private.
+{
+	const bool vis (_craft->getQtySoldiers() != 0);
+	_btnUnload->setVisible(vis);
+	_btnInventory->setVisible(vis && _craft->getCraftItems()->isEmpty() == false);
+
+	if (_isQuickBattle == false)
+		_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_craft->getOperationalExpense())));
 }
 
 /**
@@ -325,8 +338,7 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 								.arg(_craft->getLoadCapacity())
 								.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
 
-				showButtons();
-				if (_isQuickBattle == false) tacticalCost();
+				extra();
 			}
 			break;
 		}
@@ -474,26 +486,6 @@ void CraftSoldiersState::btnInventoryClick(Action*)
 
 	_game->getScreen()->clear();
 	_game->pushState(new InventoryState());
-}
-
-/**
- * Sets the current cost to send the Craft on a mission.
- */
-void CraftSoldiersState::tacticalCost() // private.
-{
-	const int cost (_base->soldierBonuses(_craft)
-				  + _craft->getRules()->getSoldierCapacity() * 1000);
-	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
-}
-
-/**
- * Decides whether to show extra buttons - unload-soldiers and Inventory.
- */
-void CraftSoldiersState::showButtons() const // private.
-{
-	const bool vis (_craft->getQtySoldiers() != 0);
-	_btnUnload->setVisible(vis);
-	_btnInventory->setVisible(vis && _craft->getCraftItems()->isEmpty() == false);
 }
 
 }

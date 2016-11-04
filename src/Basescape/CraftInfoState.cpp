@@ -378,7 +378,7 @@ void CraftInfoState::init()
 		}
 
 		if (_isQuickBattle == false)
-			tacticalCost();
+			_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_craft->getOperationalExpense())));
 		else
 			_txtCost->setVisible(false);
 	}
@@ -574,16 +574,6 @@ void CraftInfoState::btnInventoryClick(Action*)
 void CraftInfoState::edtCraftChange(Action*)
 {
 	_craft->setLabel(_edtCraft->getText());
-}
-
-/**
- * Sets current cost to send the Craft on a mission.
- */
-void CraftInfoState::tacticalCost() // private.
-{
-	const int cost (_base->soldierBonuses(_craft)
-				  + _craft->getRules()->getSoldierCapacity() * 1000);
-	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
 }
 
 }

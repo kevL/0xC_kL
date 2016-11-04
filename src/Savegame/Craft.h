@@ -275,7 +275,10 @@ private:
 		/// Sets the Craft as intercepting a land-site.
 		void interceptLanded(bool intercept);
 		/// Gets if the Craft is intercepting a land-site.
-		bool interceptLanded();
+		bool interceptLanded() const;
+
+		/// Gets the Craft's cost for tactical.
+		int getOperationalExpense() const;
 };
 
 }

@@ -280,7 +280,8 @@ void Inventory::drawGrids()
 }
 
 /**
- * Draws the items contained in the currently selected unit's inventory.
+ * Draws the items contained in the currently selected unit's inventory and
+ * ground-tile.
  */
 void Inventory::drawItems()
 {

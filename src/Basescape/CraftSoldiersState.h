@@ -64,10 +64,8 @@ private:
 	TextList* _lstSoldiers;
 	Window* _window;
 
-	/// Sets current cost to send the Craft on a mission.
-	void tacticalCost();
-	/// Decides whether to show extra buttons - unload-soldiers and Inventory.
-	void showButtons() const;
+	/// Decides whether to show extra buttons and tactical-costs.
+	void extra() const;
 
 
 	public:

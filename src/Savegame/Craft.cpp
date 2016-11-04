@@ -1569,9 +1569,18 @@ void Craft::interceptLanded(bool intercept)
  * Gets if this Craft is intercepting a land-site.
  * @return, true if intercept
  */
-bool Craft::interceptLanded()
+bool Craft::interceptLanded() const
 {
 	return _interceptLanded;
+}
+
+/**
+ * Gets this Craft's cost for tactical.
+ * @return, cost
+ */
+int Craft::getOperationalExpense() const
+{
+	return _base->getOperationalExpenses(this) + _crRule->getSoldierCapacity() * 1000;
 }
 
 }

@@ -946,7 +946,7 @@ void DebriefingState::prepareDebriefing() // private.
 				found = true;
 
 				if (_isQuickBattle == false)
-					_missionCost = (*i)->craftExpense(*j);
+					_missionCost = (*i)->expenseCraft(*j);
 
 				lon = (*j)->getLongitude();
 				lat = (*j)->getLatitude();
@@ -1093,7 +1093,7 @@ void DebriefingState::prepareDebriefing() // private.
 //							_solStatIncr[sol->getLabel()] = (*i)->postMissionProcedures(true); // don't bother showing dead soldier stat increases.
 
 							if (_isQuickBattle == false)
-								_missionCost += _base->soldierExpense(sol, true);
+								_missionCost += _base->expenseSoldier(sol, true);
 
 							addResultStat(
 										TAC_RESULT[8u], // agent killed
@@ -1116,7 +1116,7 @@ void DebriefingState::prepareDebriefing() // private.
 						else // support unit.
 						{
 							if (_isQuickBattle == false)
-								_missionCost += _base->supportExpense(
+								_missionCost += _base->expenseSupport(
 																(*i)->getArmor()->getSize() * (*i)->getArmor()->getSize(),
 																true);
 							addResultStat(
@@ -1152,7 +1152,7 @@ void DebriefingState::prepareDebriefing() // private.
 								_solStatIncr[sol->getLabel()] = (*i)->postMissionProcedures();
 
 								if (_isQuickBattle == false)
-									_missionCost += _base->soldierExpense(sol);
+									_missionCost += _base->expenseSoldier(sol);
 
 //								sol->calcStatString(
 //												_rules->getStatStrings(),
@@ -1164,7 +1164,7 @@ void DebriefingState::prepareDebriefing() // private.
 								if (_isQuickBattle == false)
 								{
 									const int unitSize ((*i)->getArmor()->getSize());
-									_missionCost += _base->supportExpense(unitSize * unitSize);
+									_missionCost += _base->expenseSupport(unitSize * unitSize);
 								}
 
 								_base->getStorageItems()->addItem((*i)->getType());	// return the support-unit to base-stores.

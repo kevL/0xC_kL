@@ -89,10 +89,8 @@ private:
 
 	/// Updates all values.
 	void updateList();
-	/// Sets current cost to send the Craft out to battle.
-	void tacticalCost() const;
-	/// Decides whether to show extra buttons - unload-craft and Inventory.
-	void showButtons() const;
+	/// Decides whether to show extra buttons and tactical-costs.
+	void extra() const;
 
 	/// Updates list-values for the selected item.
 	void updateListrow() const;

@@ -365,17 +365,17 @@ private:
 		size_t getRecallRow(RecallType recallType) const;
 
 		/// Calculates the bonus-expense for Soldiers by rank.
-		int soldierBonuses(const Craft* const craft = nullptr) const;
+		int getOperationalExpenses(const Craft* const craft = nullptr) const;
 		/// Calculates a Soldier's bonus-pay for doing a tactical mission.
-		int soldierExpense(
+		int expenseSoldier(
 				const Soldier* const sol,
-				const bool dead = false);
+				bool dead = false);
 		/// Calculates the expense of sending HWPs/doggies on a tactical mission.
-		int supportExpense(
+		int expenseSupport(
 				const int quadrants,
-				const bool dead = false);
+				bool dead = false);
 		/// Calculates the expense of sending a transport-craft on a tactical mission.
-		int craftExpense(const Craft* const craft);
+		int expenseCraft(const Craft* const craft);
 
 		/// Sorts the Base's Soldiers according to a pre-determined algorithm.
 		void sortSoldiers();

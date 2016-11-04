@@ -835,4 +835,16 @@ void Soldier::autoStat()
 	_label = stat.str();
 }
 
+/**
+ * Gets this Soldier's wage for battles or salary.
+ * @param tactical - true for tactical-cost, false for monthly salary (default true)
+ */
+int Soldier::getSoldierExpense(bool tactical) const
+{
+	if (tactical == true)
+		return static_cast<int>(_rank) * 1500;
+
+	return static_cast<int>(_rank) * 5000;
+}
+
 }

@@ -88,9 +88,6 @@ private:
 	Timer* _timerBlink;
 	Window* _window;
 
-	/// Sets current cost to send the Craft on a mission.
-	void tacticalCost();
-
 
 	public:
 		/// Creates a CraftInfo state.

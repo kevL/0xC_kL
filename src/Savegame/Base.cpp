@@ -2640,7 +2640,7 @@ int Base::getPersonnelMaintenance() const
 
 	total += getTotalEngineers() * _rules->getEngineerCost();
 	total += getTotalScientists() * _rules->getScientistCost();
-	total += soldierBonuses();
+	total += getOperationalExpenses();
 
 	return total;
 }
@@ -2767,13 +2767,15 @@ size_t Base::getRecallRow(RecallType recallType) const
 }
 
 /**
- * Calculates the bonus cost for soldiers by rank. Also adds cost to maintain Vehicles.
- * If @a craft is specified this returns the cost for a tactical mission;
- * if @a craft is nullptr it returns this Base's monthly cost for Soldiers' bonus salaries.
- * @param craft - pointer to the Craft for the sortie (default nullptr)
- * @return, cost
+ * Calculates the salaries or tactical-cost for Soldiers, and adds the expense
+ * for Vehicles if tactical.
+ * @note If 'craft' is specified this returns the cost for a tactical battle; if
+ * 'craft' is nullptr it returns this Base's monthly costs only for Soldiers'
+ * salaries.
+ * @param craft - pointer to a Craft (default nullptr)
+ * @return, total cost
  */
-int Base::soldierBonuses(const Craft* const craft) const
+int Base::getOperationalExpenses(const Craft* const craft) const
 {
 	int total (0);
 	for (std::vector<Soldier*>::const_iterator
@@ -2781,10 +2783,7 @@ int Base::soldierBonuses(const Craft* const craft) const
 			i != _soldiers.end();
 			++i)
 	{
-		if (craft == nullptr)
-			total += (*i)->getRank() * 5000;
-		else if ((*i)->getCraft() == craft)
-			total += (*i)->getRank() * 1500;
+		total += (*i)->getSoldierExpense(craft != nullptr);
 	}
 
 	if (craft != nullptr)
@@ -2800,11 +2799,11 @@ int Base::soldierBonuses(const Craft* const craft) const
  * @param dead	- true if soldier dies while on tactical (default false)
  * @return, the expense
  */
-int Base::soldierExpense(
+int Base::expenseSoldier(
 		const Soldier* const sol,
-		const bool dead)
+		bool dead)
 {
-	int cost (sol->getRank() * 1500);
+	int cost (sol->getSoldierExpense());
 	if (dead == true) cost /= 2;
 
 	_cashSpent += cost;
@@ -2836,9 +2835,9 @@ int Base::soldierExpense(
  * @param dead		- true if HWP got destroyed while on tactical (default false)
  * @return, the expense
  */
-int Base::supportExpense(
+int Base::expenseSupport(
 		const int quadrants,
-		const bool dead)
+		bool dead)
 {
 	int cost (quadrants * 750);
 	if (dead == true) cost /= 2;
@@ -2855,10 +2854,11 @@ int Base::supportExpense(
  * @param craft - pointer to a Craft
  * @return, the expense
  */
-int Base::craftExpense(const Craft* const craft)
+int Base::expenseCraft(const Craft* const craft)
 {
 	const int cost (craft->getRules()->getSoldierCapacity() * 1000);
 	_cashSpent += cost;
+	_rules->getGame()->getSavedGame()->setFunds(_rules->getGame()->getSavedGame()->getFunds() - static_cast<int64_t>(cost));
 
 	return cost;
 }

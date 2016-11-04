@@ -202,8 +202,7 @@ void CraftEquipmentState::init()
 	}
 
 	updateList();
-	showButtons();
-	if (_isQuickBattle == false) tacticalCost();
+	extra();
 }
 
 /**
@@ -308,23 +307,17 @@ void CraftEquipmentState::updateList() // private.
 }
 
 /**
- * Sets current cost to send the Craft out to battle.
+ * Decides whether to show extra buttons -- unload-craft and Inventory -- and
+ * whether to show tactical-costs.
  */
-void CraftEquipmentState::tacticalCost() const // private.
-{
-	const int cost (_base->soldierBonuses(_craft)
-				  + _craft->getRules()->getSoldierCapacity() * 1000);
-	_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(cost)));
-}
-
-/**
- * Decides whether to show extra buttons - unload-craft and Inventory.
- */
-void CraftEquipmentState::showButtons() const // private.
+void CraftEquipmentState::extra() const // private.
 {
 	const bool vis (_craft->getCraftItems()->isEmpty() == false);
 	_btnClear->setVisible(vis || _craft->getVehicles()->empty() == false);
 	_btnInventory->setVisible(vis && _craft->getQtySoldiers() != 0);
+
+	if (_isQuickBattle == false)
+		_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_craft->getOperationalExpense())));
 }
 
 /**
@@ -675,8 +668,7 @@ void CraftEquipmentState::updateListrow() const // private.
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
 						.arg(_craft->getLoadCapacity())
 						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
-	showButtons();
-	if (_isQuickBattle == false) tacticalCost();
+	extra();
 }
 
 /**
