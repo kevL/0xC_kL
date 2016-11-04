@@ -70,6 +70,10 @@ StartState::StartState()
 		_thread(nullptr),
 		_dosStep(0u)
 {
+	_loadPhase = LOADING_STARTED;	// leave these in until I figure out of they
+	_error = "";					// actually need to be static.
+	_ready = false;
+
 	// updateScale() uses newDisplayWidth/Height and needs to be set ahead of time
 //kL	Options::newDisplayWidth	= Options::displayWidth;
 //kL	Options::newDisplayHeight	= Options::displayHeight;
