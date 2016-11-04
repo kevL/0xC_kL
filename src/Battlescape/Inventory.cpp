@@ -908,7 +908,8 @@ void Inventory::mouseClick(Action* action, State* state)
 						if (overItem != nullptr)
 						{
 							std::string article (overItem->getRules()->getType()); // strip const. yay,
-							Ufopaedia::openArticle(_game, article);
+							if (_game->getSavedGame()->isResearched(article) == true)
+								Ufopaedia::openArticle(_game, article);
 						}
 					}
 				}

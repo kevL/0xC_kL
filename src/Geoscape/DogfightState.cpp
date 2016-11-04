@@ -63,6 +63,8 @@
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Ufo.h"
 
+#include "../Ufopaedia/Ufopaedia.h"
+
 
 namespace OpenXcom
 {
@@ -1651,7 +1653,7 @@ void DogfightState::btnDisengageClick(Action*)
 }
 
 /**
- * Shows a front view of the UFO.
+ * Shows a side-view of the UFO.
  * @param action - pointer to an Action
  */
 void DogfightState::btnUfoClick(Action* action)
@@ -1677,7 +1679,7 @@ void DogfightState::btnUfoClick(Action* action)
 }
 
 /**
- * Hides the front view of the UFO.
+ * Hides the sideview of the UFO.
  * @param action - pointer to an Action
  */
 void DogfightState::previewClick(Action* action)
@@ -1685,6 +1687,13 @@ void DogfightState::previewClick(Action* action)
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
+		{
+			std::string article (_ufo->getRules()->getType()); // strip const. yay,
+			if (_gameSave->isResearched(article) == true)
+				Ufopaedia::openArticle(_game, article);
+			break;
+		}
+
 		case SDL_BUTTON_RIGHT:
 			_previewUfo->setVisible(false);
 
