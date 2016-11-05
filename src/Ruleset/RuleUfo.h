@@ -54,6 +54,7 @@ private:
 		_accel,
 		_damageMax,
 		_escape,
+		_fireSound,
 		_marker,
 		_power,
 		_range,
@@ -111,6 +112,9 @@ private:
 		int getWeaponPower() const;
 		/// Gets the UFO's weapon range.
 		int getWeaponRange() const;
+
+		/// Gets the UFO's weapon-sound.
+		unsigned getUfoFireSound() const;
 
 		/// Gets the UFO's score.
 		int getScore() const;

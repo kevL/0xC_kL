@@ -21,6 +21,8 @@
 
 #include "RuleTerrain.h"
 
+#include "../Resource/ResourcePack.h"
+
 
 namespace OpenXcom
 {
@@ -56,7 +58,8 @@ RuleUfo::RuleUfo(const std::string& type)
 		_reload(0),
 		_escape(0),
 		_rangeRecon(600),
-		_terrainRule(nullptr)
+		_terrainRule(nullptr),
+		_fireSound(ResourcePack::UFO_FIRE)
 {}
 
 /**
@@ -91,6 +94,7 @@ void RuleUfo::load(
 	_escape		= node["escape"]	.as<int>(_escape);
 	_rangeRecon	= node["rangeRecon"].as<int>(_rangeRecon);
 	_spriteAlt	= node["spriteAlt"]	.as<std::string>(_spriteAlt);
+	_fireSound	= node["fireSound"]	.as<unsigned>(_fireSound);
 
 	if		(_size == stSize[0u]) _sizeType = UFO_VERYSMALL;
 	else if	(_size == stSize[1u]) _sizeType = UFO_SMALL;
@@ -214,6 +218,15 @@ int RuleUfo::getWeaponPower() const
 int RuleUfo::getWeaponRange() const
 {
 	return _range << 3u; // convert from "kilometers" ... to Dogfight distance.
+}
+
+/**
+ * Gets the UFO's weapon-sound.
+ * @return, the fire-sound ID
+ */
+unsigned RuleUfo::getUfoFireSound() const
+{
+	return _fireSound;
 }
 
 /**

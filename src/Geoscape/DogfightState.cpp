@@ -1365,7 +1365,7 @@ void DogfightState::fireWeaponUfo()
 	_projectiles.push_back(prj);
 
 	_game->getResourcePack()->playSoundFx(
-									ResourcePack::UFO_FIRE,
+									_ufo->getRules()->getUfoFireSound(),
 									true);
 
 
