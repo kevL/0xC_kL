@@ -205,8 +205,7 @@ void MiniMapState::btnOkClick(Action* action)
  */
 void MiniMapState::btnLevelUpClick(Action* action)
 {
-//	_miniView->up();
-	_txtLevel->setText(Text::intWide((_miniView->up() + 1) /*% 10*/));
+	_txtLevel->setText(Text::intWide((_miniView->up() + 1))); // %10
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
@@ -217,8 +216,7 @@ void MiniMapState::btnLevelUpClick(Action* action)
  */
 void MiniMapState::btnLevelDownClick(Action* action)
 {
-//	_miniView->down();
-	_txtLevel->setText(Text::intWide((_miniView->down() + 1) /*% 10*/));
+	_txtLevel->setText(Text::intWide((_miniView->down() + 1))); // %10
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }

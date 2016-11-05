@@ -88,21 +88,21 @@ private:
 		_autosave,
 		_iconsHidden,
 		_init,
-		_isMouseScrolled,
-		_isMouseScrolling,
+		_dragScroll,
+		_dragScrollStepDone,
+		_dragScrollPastThreshold,
 		_isOverweight,
 		_mouseOverIcons,
-		_mousePastThreshold,
 		_showSoldierData;
 	int
 		_showConsole,
-		_totalMouseMoveX,
-		_totalMouseMoveY;
+		_dragScrollTotalX,
+		_dragScrollTotalY;
 	size_t
 		_cycleFuse,
 		_cycleTargeter;
 
-	Uint32 _mouseScrollStartTick;
+	Uint32 _dragScrollStartTick;
 
 //	std::string _currentTooltip;
 
@@ -217,7 +217,7 @@ private:
 
 	std::vector<State*> _popups;
 
-	Position _offsetPreDragScroll;
+	Position _dragScrollPre;
 //		_cursorPosition,
 
 
@@ -466,8 +466,8 @@ private:
 		/// Shows the PSI button.
 		void showPsiButton(bool show);
 
-		/// Clears mouse-scrolling.
-		void clearMouseScroll();
+		/// Clears drag-scrolling.
+		void clearDragScroll();
 
 		/// Returns a pointer to the battlegame, in case we need its functions.
 		BattlescapeGame* getBattleGame();

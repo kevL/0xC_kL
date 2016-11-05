@@ -72,6 +72,8 @@ private:
 		BLOBSIZE	 = 13u;
 
 	static const Uint8
+		YELLOW_D	=  11u,
+		BLACK		=  15u,
 		BROWN		=  53u,
 		GREEN		= 112u,
 		RED			= 133u,

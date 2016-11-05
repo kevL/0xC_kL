@@ -754,7 +754,7 @@ void ProjectileFlyBState::think()
 		_parent->getMap()->showProjectile();
 	}
 
-	_battleSave->getBattleState()->clearMouseScroll();
+	_battleSave->getBattleState()->clearDragScroll();
 
 	if (_prj == nullptr)
 	{

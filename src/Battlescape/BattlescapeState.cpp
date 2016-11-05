@@ -116,14 +116,14 @@ BattlescapeState::BattlescapeState()
 		_battleSave(_game->getSavedGame()->getBattleSave()),
 		_rules(_game->getRuleset()),
 //		_reserve(0),
-		_totalMouseMoveX(0),
-		_totalMouseMoveY(0),
-		_mousePastThreshold(false),
+		_dragScroll(false),
+		_dragScrollStepDone(false),
+		_dragScrollPastThreshold(false),
+		_dragScrollStartTick(0u),
+		_dragScrollTotalX(0),
+		_dragScrollTotalY(0),
 		_init(true),
 		_mouseOverIcons(false),
-		_isMouseScrolled(false),
-		_isMouseScrolling(false),
-		_mouseScrollStartTick(0u),
 		_cycleFuse(0u),
 		_showConsole(2),
 		_cycleTargeter(0u),
@@ -1144,17 +1144,17 @@ void BattlescapeState::popupTac(State* const state)
  */
 void BattlescapeState::mapOver(Action* action)
 {
-	if (_isMouseScrolling == true
+	if (_dragScroll == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		_isMouseScrolled = true;
+		_dragScrollStepDone = true;
 
-		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
-		_totalMouseMoveY += static_cast<int>(action->getDetails()->motion.yrel);
+		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
+		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_mousePastThreshold == false)
-			_mousePastThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
-							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
+		if (_dragScrollPastThreshold == false)
+			_dragScrollPastThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
+									|| std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
 
 //		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
 //		{
@@ -1392,15 +1392,15 @@ void BattlescapeState::mapPress(Action* action)
 	if (_mouseOverIcons == false
 		&& action->getDetails()->button.button == Options::battleDragScrollButton)
 	{
-		_isMouseScrolling = true;
-		_isMouseScrolled = false;
+		_dragScroll = true;
+		_dragScrollStepDone = false;
 
-		_offsetPreDragScroll = _map->getCamera()->getMapOffset();
+		_dragScrollPre = _map->getCamera()->getMapOffset();
 
-		_totalMouseMoveX =
-		_totalMouseMoveY = 0;
-		_mousePastThreshold = false;
-		_mouseScrollStartTick = SDL_GetTicks();
+		_dragScrollTotalX =
+		_dragScrollTotalY = 0;
+		_dragScrollPastThreshold = false;
+		_dragScrollStartTick = SDL_GetTicks();
 	}
 }
 
@@ -1410,21 +1410,23 @@ void BattlescapeState::mapPress(Action* action)
  */
 void BattlescapeState::mapClick(Action* action)
 {
-	if (_isMouseScrolling == true) // dragScroll-button release: release mouse-scroll-mode
+	// NOTE: mapPress() inititates drag-scrolling and this mapClick() acts as a *release*
+	if (_dragScroll == true) // dragScroll-button release: release mouse-scroll-mode
 	{
 		if (action->getDetails()->button.button != Options::battleDragScrollButton) // other buttons are ineffective while scrolling
 			return;
 
-		_isMouseScrolling = false;
+		_dragScroll = false;
 
-		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-		if (_mousePastThreshold == false
-			&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+		// Check if the scrolling should be revoked because it was too short in time/distance and hence was a click.
+		if (_dragScrollPastThreshold == false
+			&& SDL_GetTicks() - _dragScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
-			_isMouseScrolled = false;
+			_dragScrollStepDone = false;
+			_map->getCamera()->setMapOffset(_dragScrollPre);
 		}
 
-		if (_isMouseScrolled == true) return;
+		if (_dragScrollStepDone == true) return;
 	}
 
 
@@ -1479,7 +1481,7 @@ void BattlescapeState::mapClick(Action* action)
  */
 void BattlescapeState::mapIn(Action*)
 {
-	_isMouseScrolling = false;
+	_dragScroll = false;
 	_map->setButtonsPressed(static_cast<Uint8>(Options::battleDragScrollButton), false);
 }
 
@@ -1764,8 +1766,7 @@ void BattlescapeState::btnUnitDownRelease(Action*)
  */
 void BattlescapeState::btnMapUpPress(Action* action)
 {
-	if (allowButtons() == true
-		&& _map->getCamera()->up() == true)
+	if (allowButtons() == true && _map->getCamera()->up() == true)
 	{
 		if (action != nullptr) // prevent hotSqrs from depressing btn.
 			_srtIconsOverlay->getFrame(1)->blit(_btnMapUp);
@@ -1789,8 +1790,7 @@ void BattlescapeState::btnMapUpRelease(Action*)
  */
 void BattlescapeState::btnMapDownPress(Action* action)
 {
-	if (allowButtons() == true
-		&& _map->getCamera()->down() == true)
+	if (allowButtons() == true && _map->getCamera()->down() == true)
 	{
 		if (action != nullptr) // prevent hotSqrs from depressing btn.
 			_srtIconsOverlay->getFrame(8)->blit(_btnMapDown);
@@ -3860,11 +3860,11 @@ void BattlescapeState::showPsiButton(bool show)
 }
 
 /**
- * Clears mouse-scrolling.
+ * Clears drag-scrolling.
  */
-void BattlescapeState::clearMouseScroll()
+void BattlescapeState::clearDragScroll()
 {
-	_isMouseScrolling = false;
+	_dragScroll = false;
 }
 
 /**

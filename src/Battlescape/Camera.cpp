@@ -120,10 +120,12 @@ void Camera::mousePress(Action* action)
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_WHEELUP:
+			_map->getBattleSave()->getBattleState()->clearDragScroll();
 			down();
 			break;
 
 		case SDL_BUTTON_WHEELDOWN:
+			_map->getBattleSave()->getBattleState()->clearDragScroll();
 			up();
 			break;
 

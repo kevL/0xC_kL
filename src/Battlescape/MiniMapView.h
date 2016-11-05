@@ -56,22 +56,22 @@ private:
 	static const Uint32 SCROLL_INTERVAL	= 63u;
 
 	bool
-		_isMouseScrolled,
-		_isMouseScrolling,
-		_mousePastThreshold;
+		_dragScroll,
+		_dragScrollStepDone,
+		_dragScrollPastThreshold;
 
 	int
 		_anicycle,
-		_mouseScrollX,
-		_mouseScrollY,
+		_dragScrollX,
+		_dragScrollY,
 		_scrollKeyX,
 		_scrollKeyY,
-		_totalMouseMoveX,
-		_totalMouseMoveY;
+		_dragScrollTotalX,
+		_dragScrollTotalY;
 
-	Uint32 _mouseScrollStartTick;
+	Uint32 _dragScrollStartTick;
 
-	Position _posPreDragScroll;
+	Position _dragScrollPre;
 
 	Camera* _camera;
 	const Game* _game;

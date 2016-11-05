@@ -73,16 +73,16 @@ MiniMapView::MiniMapView(
 		_camera(camera),
 		_battleSave(battleSave),
 		_anicycle(0),
-		_isMouseScrolling(false),
-		_isMouseScrolled(false),
-		_mouseScrollX(0),
-		_mouseScrollY(0),
+		_dragScroll(false),
+		_dragScrollStepDone(false),
+		_dragScrollX(0),
+		_dragScrollY(0),
 		_scrollKeyX(0),
 		_scrollKeyY(0),
-		_totalMouseMoveX(0),
-		_totalMouseMoveY(0),
-		_mousePastThreshold(false),
-		_mouseScrollStartTick(0u),
+		_dragScrollTotalX(0),
+		_dragScrollTotalY(0),
+		_dragScrollPastThreshold(false),
+		_dragScrollStartTick(0u),
 		_srtScanG(game->getResourcePack()->getSurfaceSet("SCANG.DAT"))
 {
 	_timerScroll = new Timer(SCROLL_INTERVAL);
@@ -105,10 +105,10 @@ void MiniMapView::draw()
 	InteractiveSurface::draw();
 
 	const int
-		width  (getWidth()),
-		height (getHeight()),
-		startX (_camera->getCenterPosition().x - ((width  >> 1u) / CELL_WIDTH)),
-		startY (_camera->getCenterPosition().y - ((height >> 1u) / CELL_HEIGHT)),
+		width    (getWidth()),
+		height   (getHeight()),
+		startX   (_camera->getCenterPosition().x - ((width  >> 1u) / CELL_WIDTH)),
+		startY   (_camera->getCenterPosition().y - ((height >> 1u) / CELL_HEIGHT)),
 		camera_Z (_camera->getCenterPosition().z);
 
 	drawRect(
@@ -347,6 +347,8 @@ void MiniMapView::think()
  */
 int MiniMapView::up()
 {
+	_dragScroll = false;
+
 	_camera->setViewLevel(_camera->getViewLevel() + 1);
 	_redraw = true;
 
@@ -359,6 +361,8 @@ int MiniMapView::up()
  */
 int MiniMapView::down()
 {
+	_dragScroll = false;
+
 	_camera->setViewLevel(_camera->getViewLevel() - 1);
 	_redraw = true;
 
@@ -392,18 +396,18 @@ void MiniMapView::mousePress(Action* action, State* state) // private.
 
 	if (action->getDetails()->button.button == Options::battleDragScrollButton)
 	{
-		_isMouseScrolling = true;
-		_isMouseScrolled = false;
+		_dragScroll = true;
+		_dragScrollStepDone = false;
 
-		_posPreDragScroll = _camera->getCenterPosition();
+		_dragScrollPre = _camera->getCenterPosition();
 
-		_mouseScrollX =
-		_mouseScrollY =
-		_totalMouseMoveX =
-		_totalMouseMoveY = 0;
+		_dragScrollX =
+		_dragScrollY =
+		_dragScrollTotalX =
+		_dragScrollTotalY = 0;
 
-		_mousePastThreshold = false;
-		_mouseScrollStartTick = SDL_GetTicks();
+		_dragScrollPastThreshold = false;
+		_dragScrollStartTick = SDL_GetTicks();
 	}
 }
 
@@ -417,24 +421,25 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 {
 	InteractiveSurface::mouseClick(action, state);
 
-	if (_isMouseScrolling == true) // dragScroll-button release: release mouse-scroll-mode
+	// NOTE: mousePress() inititates drag-scrolling and this mouseClick() acts as a *release*
+	if (_dragScroll == true) // dragScroll-button release: release mouse-scroll-mode
 	{
 		if (action->getDetails()->button.button != Options::battleDragScrollButton) // other buttons are ineffective while scrolling
 			return;
 
-		_isMouseScrolling = false;
+		_dragScroll = false;
 
-		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-		if (_mousePastThreshold == false
-			&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+		// Check if the scrolling should be revoked because it was too short in time/distance and hence was a click.
+		if (_dragScrollPastThreshold == false
+			&& SDL_GetTicks() - _dragScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
-			_isMouseScrolled = false;
+			_dragScrollStepDone = false;
 
-			_camera->centerPosition(_posPreDragScroll, false);
+			_camera->centerPosition(_dragScrollPre, false);
 			_redraw = true;
 		}
 
-		if (_isMouseScrolled == true) return;
+		if (_dragScrollStepDone == true) return;
 	}
 
 	switch (action->getDetails()->button.button)
@@ -472,25 +477,25 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 {
 	InteractiveSurface::mouseOver(action, state);
 
-	if (_isMouseScrolling == true
+	if (_dragScroll == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		_isMouseScrolled = true;
+		_dragScrollStepDone = true;
 
-		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
-		_totalMouseMoveY += static_cast<int>(action->getDetails()->motion.yrel);
+		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
+		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_mousePastThreshold == false)
-			_mousePastThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
-							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
+		if (_dragScrollPastThreshold == false)
+			_dragScrollPastThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
+									|| std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
 
-		_mouseScrollX -= static_cast<int>(action->getDetails()->motion.xrel);
-		_mouseScrollY -= static_cast<int>(action->getDetails()->motion.yrel);
+		_dragScrollX -= static_cast<int>(action->getDetails()->motion.xrel);
+		_dragScrollY -= static_cast<int>(action->getDetails()->motion.yrel);
 
 		_camera->centerPosition(
 								Position(
-									_posPreDragScroll.x + (_mouseScrollX / 11),
-									_posPreDragScroll.y + (_mouseScrollY / 11),
+									_dragScrollPre.x + (_dragScrollX / 11),
+									_dragScrollPre.y + (_dragScrollY / 11),
 									_camera->getViewLevel()),
 								false);
 		_redraw = true;
@@ -509,7 +514,7 @@ void MiniMapView::mouseIn(Action* action, State* state) // private.
 {
 	InteractiveSurface::mouseIn(action, state);
 
-	_isMouseScrolling = false;
+	_dragScroll = false;
 	setButtonPressed(SDL_BUTTON_RIGHT, false);
 }
 
@@ -621,7 +626,7 @@ void MiniMapView::handleTimer() // private.
 	if (_timerScroll->isRunning() == false)
 	{
 		if ((_scrollKeyX != 0 || _scrollKeyY != 0)
-			&& _isMouseScrolling == false) //(SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0
+			&& _dragScroll == false) //(SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(Options::battleDragScrollButton)) == 0
 		{
 			_timerScroll->start();
 		}

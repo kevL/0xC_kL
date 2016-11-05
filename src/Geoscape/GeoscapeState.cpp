@@ -522,7 +522,7 @@ GeoscapeState::GeoscapeState()
 
 		add(_numUfoBlobs[i]);
 		_numUfoBlobs[i]->setVisible(false);
-		_numUfoBlobs[i]->setColor(11); // dk.yellow
+		_numUfoBlobs[i]->setColor(YELLOW_D);
 	}
 
 	add(_isfTime);
@@ -545,7 +545,7 @@ GeoscapeState::GeoscapeState()
 						0,0,
 						static_cast<Sint16>(_srfSideBlack->getWidth()),
 						static_cast<Sint16>(_srfSideBlack->getHeight()),
-						15u); // black
+						BLACK);
 
 /*	_btnIntercept->initText(_game->getResourcePack()->getFont("FONT_GEO_BIG"), _game->getResourcePack()->getFont("FONT_GEO_SMALL"), _game->getLanguage());
 	_btnIntercept->setText(tr("STR_INTERCEPT"));

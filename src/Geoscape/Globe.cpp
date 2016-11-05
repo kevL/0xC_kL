@@ -91,8 +91,8 @@ Uint8 // these are only fallbacks for Geography.rul->globe
 namespace
 {
 
-/// A helper struct for drawing shadows & noise on the Globe.
-struct GlobeStaticData
+/// A helper struct for drawing the terminator and its shadow-fluxions (noise).
+struct Terminator
 {
 	/// array of shading gradient
 	Sint16 shade_gradient[240u];
@@ -116,44 +116,64 @@ struct GlobeStaticData
 			double y)
 	{
 		const double
-			limit (r * r),
-			norm (1. / r);
+			limit  (r * r),
+			normal (1. / r);
 
-		Cord ret;
-		ret.x = (x - ox);
-		ret.y = (y - oy);
+		Cord cord;
+		cord.x = (x - ox);
+		cord.y = (y - oy);
 
-		const double temp (ret.x * ret.x + ret.y * ret.y);
-		if (limit > temp)
+		const double t (cord.x * cord.x + cord.y * cord.y);
+		if (limit > t)
 		{
-			ret.x *= norm;
-			ret.y *= norm;
-			ret.z = std::sqrt(limit - temp) * norm;
-			return ret;
+			cord.x *= normal;
+			cord.y *= normal;
+			cord.z = std::sqrt(limit - t) * normal;
+			return cord;
 		}
-		else
-		{
-			ret.x =
-			ret.y =
-			ret.z = 0.;
-			return ret;
-		}
+
+		cord.x =
+		cord.y =
+		cord.z = 0.;
+		return cord;
 	}
 
-	/// initialization
-	GlobeStaticData()
+
+	/**
+	 * Constructs a Terminator object and initializes it.
+	 */
+	Terminator()
 		:
 			random_surf_size(60)
 	{
-		// filling terminator gradient LUT
-		for (int
-				i = 0;
-				i != 240;
+		// filling terminator-gradient LUT ...
+		int j;
+		for (size_t
+				i = 0u;
+				i != 240u; // -120 .. +119
 				++i)
 		{
-			int j (i - 120);
+			j = static_cast<int>(i) - 120;
 
-			if		(j < -66) j = -16;
+//			if		(j < -64) j = -16; // bladum -> no.
+//			else if	(j < -56) j = -15;
+//			else if	(j < -48) j = -14;
+//			else if	(j < -40) j = -13;
+//			else if	(j < -32) j = -12;
+//			else if	(j < -24) j = -11;
+//			else if	(j < -16) j = -10;
+//			else if	(j <  -8) j =  -9;
+//
+//			else if	(j >  64) j =  16;
+//			else if	(j >  56) j =  15;
+//			else if	(j >  48) j =  14;
+//			else if	(j >  40) j =  13;
+//			else if	(j >  32) j =  12;
+//			else if	(j >  24) j =  11;
+//			else if	(j >  16) j =  10;
+//			else if	(j >   8) j =   9;
+
+			if		(j < -66) j = -16; // stock ->
 			else if (j < -48) j = -15;
 			else if (j < -33) j = -14;
 			else if (j < -22) j = -13;
@@ -161,7 +181,7 @@ struct GlobeStaticData
 			else if (j < -11) j = -11;
 			else if (j <  -9) j = -10;
 
-			if		(j > 120) j =  19;
+			else if	(j > 120) j =  19;
 			else if (j >  98) j =  18;
 			else if (j >  86) j =  17;
 			else if (j >  74) j =  16;
@@ -173,7 +193,7 @@ struct GlobeStaticData
 			else if (j >  10) j =  10;
 			else if (j >   8) j =   9;
 
-			shade_gradient[static_cast<size_t>(i)] = static_cast<Sint16>(j + 16);
+			shade_gradient[i] = static_cast<Sint16>(j + 16);
 		}
 	}
 } static_data;
@@ -196,43 +216,41 @@ struct Ocean
 
 
 ///
-struct CreateShadow
+struct CreateTerminator
 {
 	///
-	static inline Uint8 getShadowValue(
+	static inline Uint8 getTerminatorShade(
 			const Uint8& dest,
 			const Cord& earth,
 			const Cord& sun,
 			const Sint16& noise)
 	{
-		Cord temp (earth);
-		temp -= sun;		// diff
-		temp.x *= temp.x;	// norm
-		temp.y *= temp.y;
-		temp.z *= temp.z;
-		temp.x += temp.z + temp.y; // we have norm of distance between 2 vectors, now stored in 'x'
+		Cord cord (earth); // copy 'earth'
+		cord -= sun;
 
-		temp.x -= 2.;
-		temp.x *= 125.;
+		double sqr (cord.x * cord.x + cord.y * cord.y + cord.z * cord.z);
 
-		if (temp.x < -110.)
-			temp.x = -31.;
-		else if (temp.x > 120.)
-			temp.x = 50.;
+		sqr -= 2.;
+		sqr *= 125.;
+
+		if (sqr < -110.)
+			sqr = -31.;
+		else if (sqr > 120.)
+			sqr = 50.;
 		else
-			temp.x = static_cast<double>(static_data.shade_gradient[static_cast<size_t>(temp.x) + 120u]);
+			sqr = static_cast<double>(static_data.shade_gradient[static_cast<size_t>(sqr) + 120u]);
 
-		temp.x -= static_cast<double>(noise);
+		sqr -= static_cast<double>(noise);
 
-		if (temp.x > 0.)
+		if (sqr > 0.)
 		{
 			const Uint8 d (dest & helper::ColorGroup);
 			Uint8 val;
 
-			if (temp.x > 31.)
+			if (sqr > 31.)
 				val = 31u;
 			else
-				val = static_cast<Uint8>(temp.x);
+				val = static_cast<Uint8>(sqr);
 
 			if (   d == Globe::C_OCEAN
 				|| d == Globe::C_OCEAN + 16u)
@@ -243,7 +261,6 @@ struct CreateShadow
 			if (dest == 0u)
 				return val; // this pixel is land
 
-//			const Uint8 e (static_cast<Uint8>(dest + (val / 3u)));
 			const Uint8 e (static_cast<Uint8>(static_cast<unsigned>(dest) + (static_cast<unsigned>(val) / 3u))); // to be precise & explicit.
 
 			if (e > (d + helper::ColorShade))
@@ -271,11 +288,11 @@ struct CreateShadow
 			const int&) // whots this
 	{
 		if (dest != 0u && AreSame(earth.z, 0.) == false)
-			dest = getShadowValue(
-								dest,
-								earth,
-								sun,
-								noise);
+			dest = getTerminatorShade(
+									dest,
+									earth,
+									sun,
+									noise);
 		else
 			dest = 0u;
 	}
@@ -316,14 +333,14 @@ Globe::Globe(
 		_game(game),
 		_rules(game->getRuleset()->getGlobe()),
 		_hover(false),
-		_isMouseScrolled(false),
-		_isMouseScrolling(false),
-		_mousePastThreshold(false),
-		_mouseScrollStartTick(0u),
-		_totalMouseMoveX(0),
-		_totalMouseMoveY(0),
-		_lonPreMouseScroll(0.),
-		_latPreMouseScroll(0.),
+		_dragScroll(false),
+		_dragScrollStepDone(false),
+		_dragScrollPastThreshold(false),
+		_dragScrollStartTick(0u),
+		_dragScrollTotalX(0),
+		_dragScrollTotalY(0),
+		_dragScrollLon(0.),
+		_dragScrollLat(0.),
 		_radius(0.),
 		_radiusStep(0.),
 		_debugType(DTG_COUNTRY),
@@ -674,7 +691,9 @@ void Globe::rotateStop()
 	_rotLon =
 	_rotLat = 0.;
 	_timerRot->stop();
-}
+
+	_dragScroll = false;	// NOTE: If a message-window displays while drag-scrolling
+}							// '_dragScroll' needs to be cleared manually here.
 
 /**
  * Resets longitude rotation speed and timer.
@@ -752,6 +771,9 @@ void Globe::setupRadii( // private.
  */
 void Globe::setZoom(size_t level) // private.
 {
+	if (_dragScroll == true)
+		rotateStop();
+
 	_zoom = std::min(level,
 					_radii.size() - 1u);
 
@@ -774,15 +796,7 @@ void Globe::setZoom(size_t level) // private.
 	_radius = _radii[_zoom];
 	_game->getSavedGame()->setGlobeZoom(_zoom);
 
-	if (_isMouseScrolling == true)
-	{
-		_lonPreMouseScroll = _cenLon;
-		_latPreMouseScroll = _cenLat;
-		_totalMouseMoveX =
-		_totalMouseMoveY = 0;
-	}
-
-	invalidate();
+	_redraw = true;
 }
 
 /**
@@ -903,7 +917,7 @@ void Globe::center(
 	_game->getSavedGame()->setGlobeLongitude(_cenLon = lon);
 	_game->getSavedGame()->setGlobeLatitude(_cenLat = lat);
 
-	invalidate();
+	_redraw = true;
 }
 
 /**
@@ -1243,7 +1257,7 @@ void Globe::rotate()
 	_game->getSavedGame()->setGlobeLongitude(_cenLon);
 	_game->getSavedGame()->setGlobeLatitude(_cenLat);
 
-	invalidate();
+	_redraw = true;
 }
 
 /**
@@ -1430,11 +1444,11 @@ void Globe::drawShadow()
 			_cenY - (getHeight() >> 1u));
 
 	lock();
-	ShaderDraw<CreateShadow>(
-						ShaderSurface(this),
-						earth,
-						ShaderScalar(getSunDirection(_cenLon, _cenLat)),
-						noise);
+	ShaderDraw<CreateTerminator>(
+							ShaderSurface(this),
+							earth,
+							ShaderScalar(getSunDirection(_cenLon, _cenLat)),
+							noise);
 	unlock();
 }
 
@@ -2543,26 +2557,26 @@ void Globe::mouseOver(Action* action, State* state)
 			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
-	if (_isMouseScrolling == true
+	if (_dragScroll == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		_isMouseScrolled = true;
+		_dragScrollStepDone = true;
 
-		_totalMouseMoveX += static_cast<int>(action->getDetails()->motion.xrel);
-		_totalMouseMoveY += static_cast<int>(action->getDetails()->motion.yrel);
+		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
+		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_mousePastThreshold == false)
-			_mousePastThreshold = std::abs(_totalMouseMoveX) > Options::dragScrollPixelTolerance
-							   || std::abs(_totalMouseMoveY) > Options::dragScrollPixelTolerance;
+		if (_dragScrollPastThreshold == false)
+			_dragScrollPastThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
+									|| std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
 
 //		if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
 //		{
 //			const double
-//				newLon ((static_cast<double>(_totalMouseMoveX) / action->getScaleX()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
-//				newLat ((static_cast<double>(_totalMouseMoveY) / action->getScaleY()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
+//				newLon ((static_cast<double>(_dragScrollTotalX) / action->getScaleX()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
+//				newLat ((static_cast<double>(_dragScrollTotalY) / action->getScaleY()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
 //			center(
-//				_lonPreMouseScroll + newLon / static_cast<double>(Options::geoScrollSpeed),
-//				_latPreMouseScroll + newLat / static_cast<double>(Options::geoScrollSpeed));
+//				_dragScrollLon + newLon / static_cast<double>(Options::geoScrollSpeed),
+//				_dragScrollLat + newLat / static_cast<double>(Options::geoScrollSpeed));
 //		}
 //		else
 //		{
@@ -2598,17 +2612,17 @@ void Globe::mousePress(Action* action, State* state)
 
 	if (action->getDetails()->button.button == Options::geoDragScrollButton)
 	{
-		_isMouseScrolling = true;
-		_isMouseScrolled = false;
+		_dragScroll = true;
+		_dragScrollStepDone = false;
 
-		_lonPreMouseScroll = _cenLon;
-		_latPreMouseScroll = _cenLat;
+		_dragScrollLon = _cenLon;
+		_dragScrollLat = _cenLat;
 
-		_totalMouseMoveX =
-		_totalMouseMoveY = 0;
+		_dragScrollTotalX =
+		_dragScrollTotalY = 0;
 
-		_mousePastThreshold = false;
-		_mouseScrollStartTick = SDL_GetTicks();
+		_dragScrollPastThreshold = false;
+		_dragScrollStartTick = SDL_GetTicks();
 	}
 
 	if (isNaNorInf(lon,lat) == false)
@@ -2655,23 +2669,24 @@ void Globe::mouseClick(Action* action, State* state)
 			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
-	if (_isMouseScrolling == true) // dragScroll-button release: release mouse-scroll-mode
+	// NOTE: mousePress() inititates drag-scrolling and this mouseClick() acts as a *release*
+	if (_dragScroll == true) // dragScroll-button release: release mouse-scroll-mode
 	{
 		if (btnId != Options::geoDragScrollButton) return; // other buttons are ineffective while scrolling
 
-		_isMouseScrolling = false;
+		_dragScroll = false;
 
-		// Check if the scrolling has to be revoked because it was too short in time and hence was a click.
-		if (_mousePastThreshold == false
-			&& SDL_GetTicks() - _mouseScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+		// Check if the scrolling should be revoked because it was too short in time/distance and hence was a click.
+		if (_dragScrollPastThreshold == false
+			&& SDL_GetTicks() - _dragScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 		{
-			_isMouseScrolled = false;
+			_dragScrollStepDone = false;
 			center(
-				_lonPreMouseScroll,
-				_latPreMouseScroll);
+				_dragScrollLon,
+				_dragScrollLat);
 		}
 
-		if (_isMouseScrolled == true) return;
+		if (_dragScrollStepDone == true) return;
 	}
 
 	if (isNaNorInf(lon,lat) == false)
@@ -2720,11 +2735,11 @@ void Globe::getPolygonTextureAndShade(
 		9, 9,10,11,12,13,14,15
 	}; // terminator @ 25
 
-	*shade = worldshades[CreateShadow::getShadowValue(
-													0,
-													Cord(0.,0.,1.),
-													getSunDirection(lon,lat),
-													0)];
+	*shade = worldshades[CreateTerminator::getTerminatorShade(
+															0,
+															Cord(0.,0.,1.),
+															getSunDirection(lon,lat),
+															0)];
 
 	const Polygon* const poly (getPolygonAtCoord(lon,lat));
 	if (poly != nullptr)
@@ -2771,11 +2786,11 @@ void Globe::getPolygonShade(
 		9, 9,10,11,12,13,14,15
 	}; // terminator @ 25
 
-	*shade = worldshades[CreateShadow::getShadowValue(
-													0,
-													Cord(0.,0.,1.),
-													getSunDirection(lon,lat),
-													0)];
+	*shade = worldshades[CreateTerminator::getTerminatorShade(
+															0,
+															Cord(0.,0.,1.),
+															getSunDirection(lon,lat),
+															0)];
 }
 
 /**
@@ -2797,7 +2812,7 @@ void Globe::resize()
 		height (Options::baseYGeoscape);
 
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != SRF;
 			++i)
 	{
@@ -2812,7 +2827,8 @@ void Globe::resize()
 	_cenY = static_cast<Sint16>(height / 2);
 
 	setupRadii(width, height);
-	invalidate();
+
+	_redraw = true;
 }
 
 }

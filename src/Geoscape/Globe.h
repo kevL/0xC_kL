@@ -76,15 +76,15 @@ private:
 	bool
 		_drawCrosshair,
 		_hover,
-		_isMouseScrolled,
-		_isMouseScrolling,
-		_mousePastThreshold,
+		_dragScroll,
+		_dragScrollStepDone,
+		_dragScrollPastThreshold,
 		_blink;
 	int
 		_blinkVal,
 		_radarDetail,
-		_totalMouseMoveX,
-		_totalMouseMoveY;
+		_dragScrollTotalX,
+		_dragScrollTotalY;
 	double
 		_cenLat,
 		_cenLon,
@@ -92,8 +92,8 @@ private:
 		_crosshairLon,
 		_hoverLat,
 		_hoverLon,
-		_latPreMouseScroll,
-		_lonPreMouseScroll,
+		_dragScrollLat,
+		_dragScrollLon,
 		_rotLat,
 		_rotLon,
 		_radius,
@@ -101,7 +101,7 @@ private:
 	Sint16
 		_cenX,
 		_cenY;
-	Uint32 _mouseScrollStartTick;
+	Uint32 _dragScrollStartTick;
 	size_t
 		_zoom,
 		_texOffset;

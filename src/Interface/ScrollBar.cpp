@@ -198,7 +198,7 @@ void ScrollBar::blit(const Surface* const srf)
 		_track->blit(srf);
 		_btn->blit(srf);
 
-		invalidate();
+		_redraw = true;
 	}
 }
 
