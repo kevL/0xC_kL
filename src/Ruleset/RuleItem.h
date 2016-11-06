@@ -162,6 +162,8 @@ private:
 		_fullClip,
 		_waypoint,
 
+		_acuCrouch,
+
 		_accuracyAimed,
 		_accuracyAuto,
 		_accuracyMelee,
@@ -435,6 +437,9 @@ private:
 
 		/// Gets if an explosion of the item causes an electro-magnetic pulse.
 		bool defusePulse() const;
+
+		/// Gets the Item's accuracy-modifier for crouched units.
+		double getCrouch() const;
 };
 
 }

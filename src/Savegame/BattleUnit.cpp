@@ -2384,7 +2384,7 @@ double BattleUnit::getAccuracy(
 
 			ret *= static_cast<double>(_stats.firing) * PCT;
 			if (_kneeled == true)
-				ret *= 1.16;
+				ret *= itRule->getCrouch();
 	}
 
 	ret *= getAccuracyModifier(action.weapon);

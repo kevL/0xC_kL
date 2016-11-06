@@ -113,7 +113,8 @@ RuleItem::RuleItem(const std::string& type)
 		_meleeSoundHit(-1),
 		_specialType(TILE),
 		_canExecute(false),
-		_defusePulse(false)
+		_defusePulse(false),
+		_acuCrouch(1.16)
 {}
 
 /**
@@ -276,6 +277,7 @@ void RuleItem::load(
 	_noReaction			= node["noReaction"]		.as<bool>(_noReaction);
 	_noResearch			= node["noResearch"]		.as<bool>(_noResearch);
 	_defusePulse		= node["defusePulse"]		.as<bool>(_defusePulse);
+	_acuCrouch			= node["acuCrouch"]			.as<double>(_acuCrouch);
 
 	switch (_dType)
 	{
@@ -1179,6 +1181,16 @@ bool RuleItem::canExecute() const
 bool RuleItem::defusePulse() const
 {
 	return _defusePulse;
+}
+
+/**
+ * Gets the Item's accuracy-modifier when fired by crouched units.
+ * @note Is used only for flat- or arching-shots; not for throwing or melee.
+ * @return, the crouched coefficient
+ */
+double RuleItem::getCrouch() const
+{
+	return _acuCrouch;
 }
 
 }
