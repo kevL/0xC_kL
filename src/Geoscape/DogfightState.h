@@ -82,6 +82,8 @@ private:
 		DST_CLOSE		=  64,
 		MSG_TIMEOUT		=  25;
 
+	static const Uint8 RED = 128u;
+
 
 	bool
 		_animatingHit,

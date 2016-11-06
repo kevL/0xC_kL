@@ -1995,7 +1995,9 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 			colorOffset = prj->getBeamPhase();
 			const int
 				stop  (_battleScope->getHeight() - 2),
-				start (_battleScope->getHeight() - (_dist >> 3u));
+				start (_battleScope->getHeight() - (_dist >> 3u)),
+				intensity (_ufo->getRules()->getWeaponPower() / 50),
+				width (std::min(intensity, 3));
 
 			for (int
 					y = stop;
@@ -2008,16 +2010,30 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 						color = _window->getPixelColor(
 													pos_x + 3,
 													y + 3);
-						color = static_cast<Uint8>(color - colorOffset);
-						if (color < _colors[BLOB_MIN])
-							color = _colors[BLOB_MIN];
+						for (int
+								x = 0;
+								x != width;
+								++x)
+						{
+							color = static_cast<Uint8>(color - colorOffset - intensity + (x << 1u));
+							if (color < _colors[BLOB_MIN])
+								color = _colors[BLOB_MIN];
+
+							_battleScope->setPixelColor(pos_x + x, y, color);
+							_battleScope->setPixelColor(pos_x - x, y, color);
+						}
 						break;
 
-					default:
 					case PD_UFO:
-						color = 128u; // red
+						for (int
+								x = 0;
+								x != width;
+								++x)
+						{
+							_battleScope->setPixelColor(pos_x + x, y, RED);
+							_battleScope->setPixelColor(pos_x - x, y, RED);
+						}
 				}
-				_battleScope->setPixelColor(pos_x, y, color);
 			}
 		}
 	}
