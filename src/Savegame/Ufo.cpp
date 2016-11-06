@@ -362,15 +362,6 @@ void Ufo::setUfoHull(int inflict)
 }
 
 /**
- * Gets this Ufo's hull.
- * @return, hull
- *
-int Ufo::getUfoHull() const
-{
-	return _hull;
-} */
-
-/**
  * Gets this Ufo's hull-percentage.
  * @return, hull pct
  */

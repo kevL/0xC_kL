@@ -127,8 +127,6 @@ private:
 
 		/// Sets the Ufo's hull after inflicted hurt.
 		void setUfoHull(int inflict);
-		/// Gets the Ufo's hull.
-//		int getUfoHull() const;
 		/// Gets the Ufo's hull-percentage.
 		int getUfoHullPct() const;
 

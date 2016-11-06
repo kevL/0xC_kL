@@ -865,6 +865,8 @@ void DogfightState::advanceDogfight()
 						//Log(LOG_INFO) << "df: Craft pType = " << (*i)->getType() << " hp = " << hitprob;
 						if (RNG::percent(hitprob) == true)
 						{
+							(*i)->setFinished();
+
 							int power;
 							power = RNG::generate(
 											((*i)->getPower() + 1) >> 1u, // Round up.
@@ -872,22 +874,15 @@ void DogfightState::advanceDogfight()
 							// TODO: Subtract UFO-armor value ala OXCE.
 							std::string status;
 							if (power < 1)
-							{
-								status = "STR_UFO_HIT_NO_DAMAGE";
-								// TODO: sFx play "ping" sound.
-							}
+								status = "STR_UFO_HIT_NO_DAMAGE"; // TODO: sFx play "ping" sound.
 							else
 							{
 								_ufo->setUfoHull(power);
 
 								if (power <= _ufo->getRules()->getUfoHullCap())
-								{
 									status = "STR_UFO_HIT_GLANCING";
-								}
 								else
-								{
 									status = "STR_UFO_HIT";
-								}
 
 								if (_ufo->isCrashed() == true)
 								{
@@ -912,7 +907,6 @@ void DogfightState::advanceDogfight()
 								_animatingHit = true;
 								_ufo->setHitFrame(3);
 							}
-							(*i)->setFinished();
 						}
 						else // Missed.
 						{
@@ -942,6 +936,8 @@ void DogfightState::advanceDogfight()
 //						|| ((*i)->getGlobalType() == PGT_BEAM && (*i)->isFinished() == true))
 					if ((*i)->isFinished() == true)
 					{
+						(*i)->setFinished(); // wtf. See also PD_CRAFT above^ -- ditto.
+
 						int hitprob;
 						hitprob = (*i)->getAccuracy();
 
@@ -1017,8 +1013,6 @@ void DogfightState::advanceDogfight()
 								}
 							}
 						}
-
-						(*i)->setFinished();
 					}
 			}
 		}
