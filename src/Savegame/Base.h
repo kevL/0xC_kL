@@ -79,7 +79,7 @@ private:
 	int
 		_cashIncome,
 		_cashSpent,
-		_defenseResult,
+		_defenseReduction,
 		_engineers,
 		_scientists;
 	size_t
@@ -320,12 +320,10 @@ private:
 		bool setupBaseDefense();
 		/// Cleans up the Base defenses.
 		void clearBaseDefense();
-		/// Sets the result of the Base's defense against aLien attacks.
-		void setDefenseResult(int result);
-		/// Gets the result of the Base's defense against aLien attacks.
-		int getDefenseResult() const;
-		/// Clears the result of the Base's defense against aLien attacks.
-		void clearDefenseResult();
+		/// Sets a reduction to the quantity of aLiens deployed in a base-defense tactical.
+		void setDefenseReduction(int reduction = 0);
+		/// Gets a reduction to the quantity of aLiens deployed in a base-defense tactical.
+		int getDefenseReduction() const;
 		/// Gets a list of defensive Facilities.
 		std::vector<BaseFacility*>* getDefenses();
 

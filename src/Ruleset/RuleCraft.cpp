@@ -34,9 +34,9 @@ RuleCraft::RuleCraft(const std::string& type)
 		_type(type),
 		_sprite(-1),
 		_marker(-1),
-		_fuelMax(0),
-		_damageMax(0),
-		_speedMax(0),
+		_fuel(0),	// NOTE: Do not assign "0" else potential div-by-zero.
+		_hull(0),	// NOTE: Do not assign "0" else potential div-by-zero.
+		_speed(0),
 		_accel(0),
 		_weapons(0u),
 		_soldiers(0),
@@ -88,9 +88,9 @@ void RuleCraft::load(
 	}
 
 	_marker			= node["marker"]		.as<int>(_marker);
-	_fuelMax		= node["fuelMax"]		.as<int>(_fuelMax);
-	_damageMax		= node["damageMax"]		.as<int>(_damageMax);
-	_speedMax		= node["speedMax"]		.as<int>(_speedMax);
+	_fuel			= node["fuel"]			.as<int>(_fuel);
+	_hull			= node["hull"]			.as<int>(_hull);
+	_speed			= node["speed"]			.as<int>(_speed);
 	_accel			= node["accel"]			.as<int>(_accel);
 	_weapons		= node["weapons"]		.as<size_t>(_weapons);
 	_soldiers		= node["soldiers"]		.as<int>(_soldiers);
@@ -162,31 +162,31 @@ int RuleCraft::getMarker() const
  * Gets the maximum fuel the Craft can contain.
  * @return, the fuel amount
  */
-int RuleCraft::getMaxFuel() const
+int RuleCraft::getFuelCapacity() const
 {
-	return _fuelMax;
+	return _fuel;
 }
 
 /**
  * Gets the maximum damage the Craft can take before it's destroyed.
  * @return, the maximum damage
  */
-int RuleCraft::getMaxDamage() const
+int RuleCraft::getCraftHullCap() const
 {
-	return _damageMax;
+	return _hull;
 }
 
 /**
  * Gets the maximum speed of the Craft flying around the Geoscape.
- * @return, the speed in knots
+ * @return, the top speed in knots
  */
-int RuleCraft::getMaxSpeed() const
+int RuleCraft::getTopSpeed() const
 {
-	return _speedMax;
+	return _speed;
 }
 
 /**
- * Gets the acceleration of the Craft for taking off / stopping.
+ * Gets the acceleration of the Craft for closing/disengaging UFOs.
  * @return, the acceleration
  */
 int RuleCraft::getAcceleration() const

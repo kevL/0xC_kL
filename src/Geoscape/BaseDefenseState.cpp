@@ -279,7 +279,7 @@ void BaseDefenseState::next() // private.
 						power = RNG::generate( // vary power between 75% and 133% ( stock is 50..150% )
 											(power * 3) >> 2u,
 											(power << 2u) / 3);
-						_ufo->setUfoDamage(_ufo->getUfoDamage() + power);
+						_ufo->setUfoHull(power);
 
 						_lstDefenses->setCellText(
 											_row - 1u, 2u,
@@ -331,7 +331,7 @@ void BaseDefenseState::btnOkClick(Action*)
 		case Ufo::FLYING:
 		case Ufo::LANDED:
 		case Ufo::CRASHED:
-			_base->setDefenseResult(_ufo->getUfoDamagePct());
+			_base->setDefenseReduction(100 - _ufo->getUfoHullPct());
 			_geo->baseDefenseTactical(_base, _ufo);
 			break;
 

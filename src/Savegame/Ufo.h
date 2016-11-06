@@ -59,14 +59,14 @@ private:
 	bool
 		_detected,
 		_hyperDetected,
+		_isQuickBattle,
 		_processedIntercept,
-		_quickBattle,
 		_tactical;
 	int
-		_damage,
 		_escapeCountdown,
 		_fireCountdown,
 		_hitFrame,
+		_hull,
 		_idCrashed,
 		_idLanded,
 		_secondsLeft;
@@ -125,12 +125,17 @@ private:
 		/// Gets the Ufo's globe-marker.
 		int getMarker() const override;
 
-		/// Sets the Ufo's amount of damage.
-		void setUfoDamage(int damage);
-		/// Gets the Ufo's amount of damage.
-		int getUfoDamage() const;
-		/// Gets the Ufo's percentage of damage.
-		int getUfoDamagePct() const;
+		/// Sets the Ufo's hull after inflicted hurt.
+		void setUfoHull(int inflict);
+		/// Gets the Ufo's hull.
+//		int getUfoHull() const;
+		/// Gets the Ufo's hull-percentage.
+		int getUfoHullPct() const;
+
+		/// Checks if the Ufo has crashed.
+		bool isCrashed() const;
+		/// Checks if the Ufo has been destroyed.
+		bool isDestroyed() const;
 
 		/// Sets the Ufo's detection status.
 		void setDetected(bool detected = true);
@@ -163,11 +168,6 @@ private:
 		/// Set the Ufo's status.
 		void setUfoStatus(UfoStatus status)
 		{ _status = status; }
-
-		/// Gets if the Ufo has crashed.
-		bool isCrashed() const;
-		/// Gets if the Ufo has been destroyed.
-		bool isDestroyed() const;
 
 		/// Sets the Ufo's battlescape status.
 		void setTactical(bool tactical = true);

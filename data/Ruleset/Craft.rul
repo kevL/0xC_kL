@@ -1,9 +1,9 @@
 crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
   - type: STR_SKYRANGER
     sprite: 0
-    fuelMax: 122500
-    damageMax: 230
-    speedMax: 783
+    fuel: 122500
+    hull: 230
+    speed: 783
     accel: 2
     soldiers: 14
     vehicles: 8
@@ -26,9 +26,9 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
           length: 20
   - type: STR_INTERCEPTOR
     sprite: 3
-    fuelMax: 93000
-    damageMax: 140
-    speedMax: 2052
+    fuel: 93000
+    hull: 140
+    speed: 2052
     accel: 3
     weapons: 2
     costBuy: 750000
@@ -42,9 +42,9 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     required:
       - STR_NEW_FIGHTER_CRAFT
     sprite: 4
-    fuelMax: 32
-    damageMax: 559
-    speedMax: 4225
+    fuel: 32
+    hull: 559
+    speed: 4225
     accel: 11
     weapons: 2
     costRent: 50000
@@ -59,9 +59,9 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     required:
       - STR_NEW_FIGHTER_TRANSPORTER
     sprite: 1
-    fuelMax: 37
-    damageMax: 735
-    speedMax: 3142
+    fuel: 37
+    hull: 735
+    speed: 3142
     accel: 7
     weapons: 1
     costRent: 100000
@@ -100,9 +100,9 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     required:
       - STR_ULTIMATE_CRAFT
     sprite: 2
-    fuelMax: 67
-    damageMax: 1263
-    speedMax: 5275
+    fuel: 67
+    hull: 1263
+    speed: 5275
     accel: 9
     weapons: 2
     costRent: 150000

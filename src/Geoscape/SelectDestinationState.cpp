@@ -160,7 +160,7 @@ SelectDestinationState::SelectDestinationState(
 //	_txtTitle->setWordWrap();
 
 	if (_craft->getRules()->getSpacecraft() == true
-		&& _craft->getFuel() == _craft->getRules()->getMaxFuel()
+		&& _craft->getFuel() == _craft->getRules()->getFuelCapacity()
 		&& _craft->getQtySoldiers() != 0 //|| _craft->getQtyVehicles() > 0
 		&& _game->getSavedGame()->isResearched(_game->getRuleset()->getFinalResearch()) == true)
 	{
@@ -271,7 +271,7 @@ void SelectDestinationState::globeClick(Action* action)
 		int range (_craft->getFuel());
 		const RuleCraft* const crRule (_craft->getRules());
 		if (crRule->getRefuelItem().empty() == false)
-			range *= crRule->getMaxSpeed();
+			range *= crRule->getTopSpeed();
 
 		range /= 6; // six doses per hour on Geoscape.
 

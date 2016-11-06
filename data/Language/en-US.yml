@@ -922,6 +922,8 @@ en-US:
   STR_AGGRESSIVE_ATTACK: "Aggressive"
   STR_DISENGAGING: "Disengage"
   STR_UFO_HIT: "H I T !"
+  STR_UFO_HIT_NO_DAMAGE: "H I T - B O U N C E D !"
+  STR_UFO_HIT_GLANCING: "H I T - G L A N C E D !"
   STR_UFO_CRASH_LANDS: "! ! C R A S H ! !"
   STR_STANDOFF_RANGE_ONLY: "only Standoff Range"
   STR_PROJECTILE_IN_FLIGHT: "Projectile in Flight"

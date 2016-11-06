@@ -130,7 +130,7 @@ ArticleStateUfo::ArticleStateUfo(const ArticleDefinitionUfo* const defs)
 	_lstInfo->addRow(
 				2,
 				tr("STR_DAMAGE_CAPACITY").c_str(),
-				Text::intWide(ufo->getMaxDamage()).c_str());
+				Text::intWide(ufo->getUfoHullCap()).c_str());
 	_lstInfo->addRow(
 				2,
 				tr("STR_WEAPON_POWER").c_str(),
@@ -142,7 +142,7 @@ ArticleStateUfo::ArticleStateUfo(const ArticleDefinitionUfo* const defs)
 	_lstInfo->addRow(
 				2,
 				tr("STR_MAXIMUM_SPEED").c_str(),
-				tr("STR_KNOTS").arg(ufo->getMaxSpeed()).c_str());
+				tr("STR_KNOTS").arg(ufo->getTopSpeed()).c_str());
 }
 
 /**

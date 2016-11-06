@@ -374,7 +374,7 @@ void ResourcePack::playSoundFx(
  */
 Palette* ResourcePack::getPalette(const PaletteType palType) const
 {
-	return _palettesPt.at(palType);
+	return _paletteTypes.at(palType);
 }
 
 /**

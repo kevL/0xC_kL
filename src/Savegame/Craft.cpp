@@ -71,7 +71,7 @@ Craft::Craft(
 		_crRule(crRule),
 		_base(base),
 		_fuel(0),
-		_damage(0),
+		_hull(crRule->getCraftHullCap()),
 		_takeOffDelay(0),
 		_status(CS_READY),
 		_lowFuel(false),
@@ -131,9 +131,9 @@ void Craft::loadCraft(
 {
 	MovingTarget::load(node);
 
-	_id			= node["id"]	.as<int>(_id);
-	_fuel		= node["fuel"]	.as<int>(_fuel);
-	_damage		= node["damage"].as<int>(_damage);
+	_id		= node["id"]	.as<int>(_id);
+	_fuel	= node["fuel"]	.as<int>(_fuel);
+	_hull	= node["hull"]	.as<int>(_hull);
 
 	_warning = static_cast<CraftWarning>(node["warning"].as<int>(_warning));
 
@@ -361,10 +361,10 @@ YAML::Node Craft::save() const
 		node["vehicles"].push_back((*i)->save());
 	}
 
-	node["status"] = static_cast<int>(_status);
+	node["status"]	= static_cast<int>(_status);
+	node["hull"]	= _hull;
 
 	if (_fuel != 0)					node["fuel"]			= _fuel;
-	if (_damage != 0)				node["damage"]			= _damage;
 	if (_lowFuel == true)			node["lowFuel"]			= _lowFuel;
 	if (_tacticalReturn == true)	node["tacticalReturn"]	= _tacticalReturn;
 	if (_tactical == true)			node["tactical"]		= _tactical;
@@ -667,12 +667,12 @@ void Craft::setTarget(Target* const target)
 	if (_status != CS_OUT)
 	{
 		_takeOffDelay = 75;
-		setSpeed(_crRule->getMaxSpeed() / 10);
+		setSpeed(_crRule->getTopSpeed() / 10);
 	}
 	else if (target == nullptr)
-		setSpeed(_crRule->getMaxSpeed() >> 1u);
+		setSpeed(_crRule->getTopSpeed() >> 1u);
 	else
-		setSpeed(_crRule->getMaxSpeed());
+		setSpeed(_crRule->getTopSpeed());
 
 	MovingTarget::setTarget(target);
 }
@@ -787,34 +787,44 @@ std::vector<Vehicle*>* Craft::getVehicles()
 }
 
 /**
- * Gets the quantity of damage that this Craft has taken.
- * @return, quantity of damage
+ * Sets this Craft's hull after inflicted hurt.
+ * @param inflict - inflicted hurt
  */
-int Craft::getCraftDamage() const
+void Craft::setCraftHull(int inflict)
 {
-	return _damage;
+	if ((_hull -= inflict) < 0) _hull = 0;
 }
 
 /**
- * Sets the quantity of damage that this Craft has taken.
- * @param damage - quantity of damage
+ * Gets this Craft's hull.
+ * @return, hull
  */
-void Craft::setCraftDamage(const int damage)
+int Craft::getCraftHull() const
 {
-	_damage = damage;
-
-	if (_damage < 0) _damage = 0;
+	return _hull;
 }
 
 /**
- * Gets the ratio between the quantity of damage this Craft has taken and the
- * total it can take before being destroyed.
- * @return, damage as a percentage
+ * Gets this Craft's hull-percentage.
+ * @return, hull pct
  */
-int Craft::getCraftDamagePct() const
+int Craft::getCraftHullPct() const
 {
+	if (_hull == 0) return 0;
+
 	return static_cast<int>(std::ceil(
-		   static_cast<double>(_damage) / static_cast<double>(_crRule->getMaxDamage()) * 100.));
+		   static_cast<float>(_hull) / static_cast<float>(_crRule->getCraftHullCap()) * 100.f));
+}
+
+/**
+ * Checks if this Craft has been destroyed.
+ * @note If the amount of damage a Craft takes is more than its health it will
+ * be destroyed.
+ * @return, true if destroyed
+ */
+bool Craft::isDestroyed() const
+{
+	return _hull == 0;
 }
 
 /**
@@ -832,8 +842,8 @@ int Craft::getFuel() const
  */
 void Craft::setFuel(int fuel)
 {
-	if (fuel > _crRule->getMaxFuel())
-		fuel = _crRule->getMaxFuel();
+	if (fuel > _crRule->getFuelCapacity())
+		fuel = _crRule->getFuelCapacity();
 	else if (fuel < 0)
 		fuel = 0;
 
@@ -848,7 +858,7 @@ void Craft::setFuel(int fuel)
 int Craft::getFuelPct() const
 {
 	return static_cast<int>(std::ceil(
-		   static_cast<double>(_fuel) / static_cast<double>(_crRule->getMaxFuel()) * 100.));
+		   static_cast<float>(_fuel) / static_cast<float>(_crRule->getFuelCapacity()) * 100.f));
 }
 
 /**
@@ -905,7 +915,7 @@ int Craft::getFuelLimit() const
 	else
 		dist = getDistance(_target) + _base->getDistance(_target);
 
-	const double speed (static_cast<double>(_crRule->getMaxSpeed()) * unitToRads / 6.);
+	const double speed (static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.);
 
 	return static_cast<int>(std::ceil(
 		   static_cast<double>(getFuelConsumption()) * dist / speed));
@@ -937,7 +947,7 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
 			patrol_factor = 2.;
 	}
 
-	const double speed = static_cast<double>(_crRule->getMaxSpeed()) * unitToRads / 6.;
+	const double speed = static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.;
 
 	return static_cast<int>(std::ceil(
 		   static_cast<double>(getFuelConsumption()) * dist * patrol_factor / speed));
@@ -999,7 +1009,7 @@ void Craft::think()
 
 		default:
 			if (--_takeOffDelay == 0)
-				setSpeed(_crRule->getMaxSpeed());
+				setSpeed(_crRule->getTopSpeed());
 	}
 }
 
@@ -1035,11 +1045,11 @@ void Craft::checkup()
 		}
 	}
 
-	if (_damage > 0)
+	if (_hull < _crRule->getCraftHullCap())
 		_status = CS_REPAIRS;		// 1st stage
 	else if (cw > armok)
 		_status = CS_REARMING;		// 2nd stage
-	else if (_fuel < _crRule->getMaxFuel())
+	else if (_fuel < _crRule->getFuelCapacity())
 		_status = CS_REFUELLING;	// 3rd stage
 	else
 		_status = CS_READY;			// 4th Ready.
@@ -1070,11 +1080,13 @@ void Craft::repair()
 	_warning = CW_NONE;
 	_warned = false;
 
-	setCraftDamage(_damage - _crRule->getRepairRate());
-	// TODO: prepare to set CW_CANTREPAIR ...
-
-	if (_damage == 0)
+	const int hullCap (_crRule->getCraftHullCap());
+	if ((_hull += _crRule->getRepairRate()) >= hullCap)
+	{
+		_hull = hullCap;
 		checkup();
+	}
+	// TODO: prepare to set CW_CANTREPAIR ...
 }
 
 /**
@@ -1159,7 +1171,7 @@ void Craft::refuel()
 
 	setFuel(_fuel + _crRule->getRefuelRate());
 
-	if (_fuel == _crRule->getMaxFuel())
+	if (_fuel == _crRule->getFuelCapacity())
 		checkup();
 }
 
@@ -1200,17 +1212,6 @@ void Craft::setTactical(bool tactical)
 {
 	if ((_tactical = tactical) == true)
 		setSpeed();
-}
-
-/**
- * Gets whether this Craft has been destroyed.
- * @note If the amount of damage a Craft takes is more than its health it will
- * be destroyed.
- * @return, true if destroyed
- */
-bool Craft::isDestroyed() const
-{
-	return (_damage >= _crRule->getMaxDamage());
 }
 
 /**
@@ -1342,11 +1343,11 @@ int Craft::getDowntime(bool& isDelayed)
 	isDelayed = false;
 
 	int hours (0);
-	if (_damage > 0)
+	if (_hull < _crRule->getCraftHullCap())
 	{
 		hours += static_cast<int>(std::ceil(
-				 static_cast<double>(_damage) / static_cast<double>(_crRule->getRepairRate())
-				 / 2.));
+				 static_cast<float>(_crRule->getCraftHullCap() - _hull) / static_cast<float>(_crRule->getRepairRate())
+				 / 2.f));
 	}
 
 	for (std::vector<CraftWeapon*>::const_iterator
@@ -1360,9 +1361,8 @@ int Craft::getDowntime(bool& isDelayed)
 			const int reqQty ((*i)->getRules()->getLoadCapacity() - (*i)->getCwLoad());
 
 			hours += static_cast<int>(std::ceil(
-					 static_cast<double>(reqQty)
-						/ static_cast<double>((*i)->getRules()->getRearmRate())
-					 / 2.));
+					 static_cast<float>(reqQty) / static_cast<float>((*i)->getRules()->getRearmRate())
+					 / 2.f));
 
 			if (isDelayed == false)
 			{
@@ -1395,14 +1395,13 @@ int Craft::getDowntime(bool& isDelayed)
 		}
 	}
 
-	if (_fuel < _crRule->getMaxFuel())
+	if (_fuel < _crRule->getFuelCapacity())
 	{
-		const int reqQty (_crRule->getMaxFuel() - _fuel);
+		const int reqQty (_crRule->getFuelCapacity() - _fuel);
 
 		hours += static_cast<int>(std::ceil(
-				 static_cast<double>(reqQty)
-					/ static_cast<double>(_crRule->getRefuelRate())
-				 / 2.));
+				 static_cast<float>(reqQty) / static_cast<float>(_crRule->getRefuelRate())
+				 / 2.f));
 
 		if (isDelayed == false)
 		{

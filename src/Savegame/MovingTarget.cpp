@@ -26,7 +26,7 @@
 #include "Ufo.h"
 #include "Waypoint.h"
 
-#include "../Geoscape/GeoscapeState.h"
+#include "../Geoscape/GeoscapeState.h" // unitToRads
 
 
 namespace OpenXcom
@@ -49,14 +49,14 @@ const char* MovingTarget::stAltitude[5u] // static.
 MovingTarget::MovingTarget(SavedGame* const gameSave)
 	:
 		Target(),
+		_gameSave(gameSave),
 		_target(nullptr),
 		_speedLon(0.),
 		_speedLat(0.),
 		_speedRads(0.),
 		_speed(0),
 		_lonPoint(0.),
-		_latPoint(0.),
-		_gameSave(gameSave)
+		_latPoint(0.)
 {}
 
 /**
@@ -65,7 +65,7 @@ MovingTarget::MovingTarget(SavedGame* const gameSave)
  */
 MovingTarget::~MovingTarget() // virtual.
 {
-	checkOtherTargeters();
+	checkTargets();
 }
 
 /**
@@ -76,19 +76,19 @@ YAML::Node MovingTarget::save() const // virtual.
 {
 	YAML::Node node (Target::save());
 
-	if (_target != nullptr)
-	{
-		const Ufo* const ufo (dynamic_cast<const Ufo*>(this));
-		if (ufo == nullptr || ufo->getUfoStatus() != Ufo::CRASHED) // Ie, is Craft or UFO-flying or -landed.
-			node["target"] = _target->saveIdentificator();
-	}
-
 	if (_speed != 0)
 	{
 		node["speed"]		= _speed;
 		node["speedRads"]	= serializeDouble(_speedRads);
 		node["speedLon"]	= serializeDouble(_speedLon);
 		node["speedLat"]	= serializeDouble(_speedLat);
+	}
+
+	if (_target != nullptr)
+	{
+		const Ufo* const ufo (dynamic_cast<const Ufo*>(this));
+		if (ufo == nullptr || ufo->getUfoStatus() != Ufo::CRASHED)	// ie, only Craft or UFO-flying or -landed
+			node["target"] = _target->saveIdentificator();			// can have a target.
 	}
 
 	return node;
@@ -102,10 +102,10 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
 {
 	Target::load(node);
 
-	_speedLon	= node["speedLon"]		.as<double>(_speedLon);
-	_speedLat	= node["speedLat"]		.as<double>(_speedLat);
+	_speed		= node["speed"]		.as<int>(_speed);
 	_speedRads	= node["speedRads"]	.as<double>(_speedRads);
-	_speed		= node["speed"]			.as<int>(_speed);
+	_speedLon	= node["speedLon"]	.as<double>(_speedLon);
+	_speedLat	= node["speedLat"]	.as<double>(_speedLat);
 }
 
 /**
@@ -114,7 +114,7 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
  */
 void MovingTarget::setTarget(Target* const target) // virtual.
 {
-	checkOtherTargeters();
+	checkTargets();
 
 	if ((_target = target) != nullptr)
 		_target->getTargeters()->push_back(this);
@@ -145,14 +145,15 @@ bool MovingTarget::reachedDestination() const
 }
 
 /**
- * Checks this MovingTarget's current destination for other targeters and if
- * none are found deletes its Waypoint if applicable.
+ * Checks this MovingTarget for targeters and erases it from their
+ * target-vectors, and also checks its current destination-target for other
+ * targeters and if none are found deletes the Waypoint if applicable.
  */
-void MovingTarget::checkOtherTargeters() // private.
+void MovingTarget::checkTargets() // private.
 {
 	if (_target != nullptr)
 	{
-		bool destTargeter (false);
+		bool destroy (true);
 		for (std::vector<Target*>::const_iterator
 				i = _target->getTargeters()->begin();
 				i != _target->getTargeters()->end();
@@ -162,24 +163,24 @@ void MovingTarget::checkOtherTargeters() // private.
 				i = _target->getTargeters()->erase(i);
 			else
 			{
-				destTargeter = true;
+				destroy = false;
 				++i;
 			}
 		}
 
-		if (destTargeter == false)
+		if (destroy == true)
 		{
-			const Waypoint* const wpPre (dynamic_cast<Waypoint*>(_target));
-			if (wpPre != nullptr)
+			const Waypoint* const wp (dynamic_cast<Waypoint*>(_target));
+			if (wp != nullptr)
 			{
-				delete wpPre;
+				delete wp;
 
 				for (std::vector<Waypoint*>::const_iterator
 						i = _gameSave->getWaypoints()->begin();
 						i != _gameSave->getWaypoints()->end();
 						++i)
 				{
-					if (*i == wpPre)
+					if (*i == wp)
 					{
 						_gameSave->getWaypoints()->erase(i);
 						break;

@@ -171,14 +171,14 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 		*colors = gradient[i];
 	}
 
-	_palettesPt[PAL_NONE]			= nullptr; // Convert palettes-by-string to palettes-by-enumerator ->
-	_palettesPt[PAL_BACKPALS]		= _palettes.at("BACKPALS.DAT");
-	_palettesPt[PAL_BASESCAPE]		= _palettes.at("PAL_BASESCAPE");
-	_palettesPt[PAL_BATTLEPEDIA]	= _palettes.at("PAL_BATTLEPEDIA");
-	_palettesPt[PAL_BATTLESCAPE]	= _palettes.at("PAL_BATTLESCAPE");
-	_palettesPt[PAL_GEOSCAPE]		= _palettes.at("PAL_GEOSCAPE");
-	_palettesPt[PAL_GRAPHS]			= _palettes.at("PAL_GRAPHS");
-	_palettesPt[PAL_UFOPAEDIA]		= _palettes.at("PAL_UFOPAEDIA");
+	_paletteTypes[PAL_NONE]			= nullptr; // Convert palettes-by-string to palettes-by-enumerator ->
+	_paletteTypes[PAL_BACKPALS]		= _palettes.at("BACKPALS.DAT");
+	_paletteTypes[PAL_BASESCAPE]	= _palettes.at("PAL_BASESCAPE");
+	_paletteTypes[PAL_BATTLEPEDIA]	= _palettes.at("PAL_BATTLEPEDIA");
+	_paletteTypes[PAL_BATTLESCAPE]	= _palettes.at("PAL_BATTLESCAPE");
+	_paletteTypes[PAL_GEOSCAPE]		= _palettes.at("PAL_GEOSCAPE");
+	_paletteTypes[PAL_GRAPHS]		= _palettes.at("PAL_GRAPHS");
+	_paletteTypes[PAL_UFOPAEDIA]	= _palettes.at("PAL_UFOPAEDIA");
 
 
 	/* FONT */

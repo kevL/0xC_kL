@@ -2046,9 +2046,9 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 
 		qty += RNG::generate(0, (*i).extraQty);
 
-		if (_base != nullptr && _base->getDefenseResult() != 0)
+		if (_base != nullptr && _base->getDefenseReduction() != 0)
 			qty = std::max(qty >> 1u,
-						   qty - (qty * _base->getDefenseResult() / 100));
+						   qty - (qty * _base->getDefenseReduction() / 100));
 
 		for (int
 				j = 0;
@@ -2150,7 +2150,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 	}
 
 	if (_base != nullptr)
-		_base->clearDefenseResult();
+		_base->setDefenseReduction();
 }
 
 /**
@@ -2700,12 +2700,13 @@ void BattlescapeGenerator::explodePowerSources() // private.
 			++i)
 	{
 		tile = _battleSave->getTiles()[i];
-		if (tile->getMapData(O_OBJECT) != nullptr
+		if (   tile->getMapData(O_OBJECT) != nullptr
 			&& tile->getMapData(O_OBJECT)->getTileType() == UFO_POWER_SOURCE
 			&& RNG::percent(80) == true)
 		{
-			double power (static_cast<double>(_ufo->getUfoDamagePct()));	// range: ~50+ to ~100-
-			if (RNG::percent(static_cast<int>(power) >> 1u) == true)		// chance for full range Explosion (even if crash took low damage)
+			double power (static_cast<double>(100 - _ufo->getUfoHullPct()));	// range: ~50+ to ~100-
+
+			if (RNG::percent(static_cast<int>(power) >> 1u) == true)			// chance for full range Explosion (even if crash took low damage)
 				power = RNG::generate(1.,100.);
 
 			power *= RNG::generate(0.1,2.);

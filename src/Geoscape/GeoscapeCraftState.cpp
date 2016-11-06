@@ -244,7 +244,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	_txtSpeed->setText(tr("STR_SPEED_").arg(speed));
 	_txtMaxSpeed->setText(tr("STR_MAXIMUM_SPEED_UC")
-							.arg(_craft->getRules()->getMaxSpeed()));
+							.arg(_craft->getRules()->getTopSpeed()));
 
 	std::string alt;
 	switch (stat)
@@ -260,7 +260,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_txtAltitude->setText(tr("STR_ALTITUDE_").arg(tr(alt)));
 
 	_txtFuel->setText(tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct())));
-	_txtDamage->setText(tr("STR_HULL_").arg(Text::formatPercent(100 - _craft->getCraftDamagePct())));
+	_txtDamage->setText(tr("STR_HULL_").arg(Text::formatPercent(_craft->getCraftHullPct())));
 
 	std::wostringstream woststr;
 

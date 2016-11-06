@@ -5,9 +5,9 @@ crafts:
       - STR_IMPROVED_INTERCEPTOR
     listOrder: 204
     sprite: 23
-    fuelMax: 87000
-    damageMax: 378
-    speedMax: 2835
+    fuel: 87000
+    hull: 378
+    speed: 2835
     accel: 6
     weapons: 1
     costRent: 50000

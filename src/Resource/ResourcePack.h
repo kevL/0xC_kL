@@ -77,7 +77,7 @@ private:
 
 		std::vector<Uint16> _voxelData;
 
-		std::map<PaletteType, Palette*> _palettesPt;
+		std::map<PaletteType, Palette*> _paletteTypes;
 
 
 		public:

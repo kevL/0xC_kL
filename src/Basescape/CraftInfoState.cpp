@@ -238,7 +238,7 @@ void CraftInfoState::init()
 
 	if (_isQuickBattle == true)
 	{
-		_craft->setFuel(crRule->getMaxFuel()); // top up Craft for insta-Battle mode.
+		_craft->setFuel(crRule->getFuelCapacity()); // top up Craft for insta-Battle mode.
 
 		_txtStatus->setVisible(false);
 		_txtRadar->setVisible(false);
@@ -281,11 +281,11 @@ void CraftInfoState::init()
 		woststr2; // hull
 
 	woststr1 << tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct()));
-	if (crRule->getMaxFuel() - _craft->getFuel() > 0)
+	if (crRule->getFuelCapacity() - _craft->getFuel() > 0)
 	{
 		hrs = static_cast<int>(std::ceil(
-			  static_cast<double>(crRule->getMaxFuel() - _craft->getFuel()) / static_cast<double>(crRule->getRefuelRate())
-			  / 2.)); // refuel every half-hour.
+			  static_cast<float>(crRule->getFuelCapacity() - _craft->getFuel()) / static_cast<float>(crRule->getRefuelRate())
+			  / 2.f)); // refuel every half-hour.
 		woststr1 << L"\n" << _game->getSavedGame()->formatCraftDowntime(
 																	hrs,
 																	_craft->getWarning() == CW_CANTREFUEL,
@@ -293,12 +293,12 @@ void CraftInfoState::init()
 	}
 	_txtFuel->setText(woststr1.str());
 
-	woststr2 << tr("STR_HULL_").arg(Text::formatPercent(100 - _craft->getCraftDamagePct()));
-	if (_craft->getCraftDamage() != 0)
+	woststr2 << tr("STR_HULL_").arg(Text::formatPercent(_craft->getCraftHullPct()));
+	if (_craft->getCraftHull() < _craft->getRules()->getCraftHullCap())
 	{
 		hrs = static_cast<int>(std::ceil(
-			  static_cast<double>(_craft->getCraftDamage()) / static_cast<double>(crRule->getRepairRate())
-			  / 2.)); // repair every half-hour.
+			  static_cast<float>(_craft->getRules()->getCraftHullCap() - _craft->getCraftHull()) / static_cast<float>(crRule->getRepairRate())
+			  / 2.f)); // repair every half-hour.
 		woststr2 << L"\n" << _game->getSavedGame()->formatCraftDowntime(
 																	hrs,
 																	false, // ... unless item is required to repair Craft.

@@ -140,7 +140,7 @@ DogfightState::DogfightState(
 		_minimized(false),
 		_stopDogfight(false),
 		_animatingHit(false),
-		_cautionLevel(2),
+		_cautionLevel(CAUTION_HIGH),
 		_ufoSize(static_cast<int>(ufo->getRules()->getRadius())),
 		_craftHeight(0),
 		_craftHeight_pre(0),
@@ -576,8 +576,8 @@ void DogfightState::aniCraftDamage()
  */
 void DogfightState::drawCraftDamage(bool init)
 {
-	const int pct (_craft->getCraftDamagePct());
-	if (pct > 0)
+	const int hurtPct (100 - _craft->getCraftHullPct());
+	if (hurtPct > 0)
 	{
 		if (_craftDamageAnimTimer->isRunning() == false)
 		{
@@ -586,15 +586,15 @@ void DogfightState::drawCraftDamage(bool init)
 		}
 
 		int rowsToColor (static_cast<int>(std::floor(
-						 static_cast<float>(_craftHeight * pct) / 100.f)));
+						 static_cast<float>(_craftHeight * hurtPct) / 100.f)));
 
 		if (rowsToColor != 0)
 		{
-			if (pct > 99) ++rowsToColor;
+			if (hurtPct > 99) ++rowsToColor;
 
 			Uint8
 				color,
-				testColor;
+				colorPre;
 
 			if (init == true)
 				color = _colors[DAMAGE_MAX];
@@ -611,22 +611,22 @@ void DogfightState::drawCraftDamage(bool init)
 						x != 23;
 						++x)
 				{
-					testColor = _damage->getPixelColor(x,y);
+					colorPre = _damage->getPixelColor(x,y);
 
-					if (   testColor >= _colors[CRAFT_MIN]
-						&& testColor <  _colors[CRAFT_MAX])
+					if (   colorPre >= _colors[CRAFT_MIN]
+						&& colorPre <  _colors[CRAFT_MAX])
 					{
 						_damage->setPixelColor(x,y, color);
 					}
-					else if (testColor == _colors[DAMAGE_MIN])
+					else if (colorPre == _colors[DAMAGE_MIN])
 						_damage->setPixelColor(
 											x,y,
 											_colors[DAMAGE_MAX]);
 
-//					if ((testColor > _colors[DAMAGE_MIN] - 1
-//							&& testColor < _colors[DAMAGE_MAX] + 1)
-//						|| (testColor > _colors[CRAFT_MIN] - 1
-//							&& testColor < _colors[CRAFT_MAX]))
+//					if ((      colorPre > _colors[DAMAGE_MIN] - 1
+//							&& colorPre < _colors[DAMAGE_MAX] + 1)
+//						|| (   colorPre > _colors[CRAFT_MIN] - 1
+//							&& colorPre < _colors[CRAFT_MAX]))
 //					{
 //						_damage->setPixelColor(x,y, _currentCraftDamageColor);
 //					}
@@ -749,7 +749,7 @@ void DogfightState::advanceDogfight()
 					_ufo->setEscapeCountdown(--escapeTicks);
 
 				if (escapeTicks == 0) // UFO is breaking off.
-					_ufo->setSpeed(_ufo->getRules()->getMaxSpeed());
+					_ufo->setSpeed(_ufo->getRules()->getTopSpeed());
 			}
 
 			const int fireTicks (_ufo->getFireCountdown());
@@ -758,11 +758,11 @@ void DogfightState::advanceDogfight()
 		}
 	}
 
-	if (_ufo->getSpeed() > _craft->getRules()->getMaxSpeed()) // Crappy craft is chasing UFO.
+	if (_ufo->getSpeed() > _craft->getRules()->getTopSpeed()) // Crappy craft is chasing UFO.
 	{
 		_ufoBreakingOff = true;
 		finalStep = true;
-		resetStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
+		updateStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
 
 		if (_geoState->getDfCCC() == false) // should need to run this only once per.
 		{
@@ -840,25 +840,23 @@ void DogfightState::advanceDogfight()
 		_dist += delta;
 		_txtDistance->setText(Text::intWide(_dist));
 
+
 		for (std::vector<CraftWeaponProjectile*>::const_iterator // Move projectiles and check for hits.
 				i = _projectiles.begin();
 				i != _projectiles.end();
 				++i)
 		{
 			(*i)->stepProjectile();
-			int
-				hitprob,
-				power;
 
 			switch ((*i)->getDirection())
 			{
 				case PD_CRAFT: // Projectiles fired by interceptor.
-					if (((*i)->getCwpPosition() >= _dist // Projectile reached the UFO - determine if it's been hit.
-							|| ((*i)->getGlobalType() == PGT_BEAM
-								&& (*i)->isFinished() == true))
-						&& _ufo->isCrashed() == false
-						&& (*i)->getMissed() == false)
+					if (_ufo->isCrashed() == false
+						&& (*i)->isMissed() == false
+						&& ((*i)->getCwpPosition() >= _dist // Projectile reached the UFO - determine if it's been hit.
+							|| ((*i)->getGlobalType() == PGT_BEAM && (*i)->isFinished() == true)))
 					{
+						int hitprob;
 						hitprob = (*i)->getAccuracy(); // NOTE: Could include UFO speed here ... and/or acceleration-delta.
 						hitprob += _ufoSize * 3;
 						hitprob -= _diff * 5;
@@ -867,12 +865,29 @@ void DogfightState::advanceDogfight()
 						//Log(LOG_INFO) << "df: Craft pType = " << (*i)->getType() << " hp = " << hitprob;
 						if (RNG::percent(hitprob) == true)
 						{
+							int power;
 							power = RNG::generate(
 											((*i)->getPower() + 1) >> 1u, // Round up.
 											 (*i)->getPower());
-							if (power != 0)
+							// TODO: Subtract UFO-armor value ala OXCE.
+							std::string status;
+							if (power < 1)
 							{
-								_ufo->setUfoDamage(_ufo->getUfoDamage() + power);
+								status = "STR_UFO_HIT_NO_DAMAGE";
+								// TODO: sFx play "ping" sound.
+							}
+							else
+							{
+								_ufo->setUfoHull(power);
+
+								if (power <= _ufo->getRules()->getUfoHullCap())
+								{
+									status = "STR_UFO_HIT_GLANCING";
+								}
+								else
+								{
+									status = "STR_UFO_HIT";
+								}
 
 								if (_ufo->isCrashed() == true)
 								{
@@ -885,30 +900,30 @@ void DogfightState::advanceDogfight()
 									finalStep = false;
 								}
 
-								if (_ufo->getHitFrame() == 0)
-								{
-									_animatingHit = true;
-									_ufo->setHitFrame(3);
-								}
-
-								resetStatus("STR_UFO_HIT");
-								(*i)->endProjectile();
-
 								_game->getResourcePack()->playSoundFx(
 																ResourcePack::UFO_HIT,
 																true);
 							}
+
+							updateStatus(status);
+
+							if (_ufo->getHitFrame() == 0)
+							{
+								_animatingHit = true;
+								_ufo->setHitFrame(3);
+							}
+							(*i)->setFinished();
 						}
 						else // Missed.
 						{
 							switch ((*i)->getGlobalType())
 							{
 								case PGT_MISSILE:
-									(*i)->setMissed(true);
+									(*i)->setMissed();
 									break;
 
 								case PGT_BEAM:
-									(*i)->endProjectile();
+									(*i)->setFinished();
 							}
 						}
 					}
@@ -916,17 +931,18 @@ void DogfightState::advanceDogfight()
 					if ((*i)->getGlobalType() == PGT_MISSILE) // Check if projectile passed its maximum range.
 					{
 						if ((*i)->getCwpPosition() >= (*i)->getRange())
-							(*i)->endProjectile();
+							(*i)->setFinished();
 						else if (_ufo->isCrashed() == false)
 							prjInFlight = true;
 					}
 					break;
 
 				case PD_UFO: // Projectiles fired by UFO.
-					if ((*i)->getGlobalType() == PGT_MISSILE
-						|| ((*i)->getGlobalType() == PGT_BEAM
-							&& (*i)->isFinished() == true))
+//					if (    (*i)->getGlobalType() == PGT_MISSILE
+//						|| ((*i)->getGlobalType() == PGT_BEAM && (*i)->isFinished() == true))
+					if ((*i)->isFinished() == true)
 					{
+						int hitprob;
 						hitprob = (*i)->getAccuracy();
 
 						if (   _craftStance == _btnCautious
@@ -943,44 +959,66 @@ void DogfightState::advanceDogfight()
 						//Log(LOG_INFO) << "df: UFO pType = " << (*i)->getType() << " hp = " << hitprob;
 						if (RNG::percent(hitprob) == true)
 						{
+							int power;
 							power = RNG::generate(
 											(_ufo->getRules()->getWeaponPower() + 9) / 10, // Round up.
 											 _ufo->getRules()->getWeaponPower());
+							// TODO: Subtract Craft-armor value ala OXCE.
+							// TODO: Rig-up damage messages ala above^ under Craft projectiles.
 							if (power != 0)
 							{
-								_craft->setCraftDamage(_craft->getCraftDamage() + power);
+								_craft->setCraftHull(power);
 
 								drawCraftDamage();
-								resetStatus("STR_INTERCEPTOR_DAMAGED");
+								updateStatus("STR_INTERCEPTOR_DAMAGED");
 								_game->getResourcePack()->playSoundFx(
 																ResourcePack::INTERCEPTOR_HIT,
 																true);
 
-								if (_ufo->isCrashed() == false
+								if (_cautionLevel != CAUTION_NONE
+									&& _ufo->isCrashed() == false
 									&& _craft->isDestroyed() == false
-									&& _ufoBreakingOff == false
-									&& ((_cautionLevel > 1
-											&& _craftStance == _btnCautious
-											&& _craft->getCraftDamagePct() > 35)
-										|| (_cautionLevel > 0
-											&& _craftStance == _btnStandard
-											&& _craft->getCraftDamagePct() > 60)))
+									&& _ufoBreakingOff == false)
 								{
-									if (_craftStance == _btnCautious)
-										_cautionLevel = 1;
-									else
-										_cautionLevel = 0;
+									const int hullPct (_craft->getCraftHullPct());
 
-									_btnStandoff->releaseButtonGroup();
+									bool engageStandoff (false);
+									switch (_cautionLevel)
+									{
+										case CAUTION_HIGH:
+											if (   (_craftStance == _btnCautious && hullPct < 66)
+												|| (_craftStance == _btnStandard && hullPct < 41))
+											{
+												engageStandoff = true;
 
-									_end = false;
-									resetStatus("STR_STANDOFF");
-									_desired = DST_STANDOFF;
+												if (hullPct > 40)
+													_cautionLevel = CAUTION_LOW;
+												else
+													_cautionLevel = CAUTION_NONE;
+											}
+											break;
+
+										case CAUTION_LOW:
+											if (_craftStance == _btnCautious && hullPct < 41)
+											{
+												engageStandoff = true;
+												_cautionLevel = CAUTION_NONE;
+											}
+									}
+
+									if (engageStandoff == true)
+									{
+										_btnStandoff->releaseButtonGroup();
+
+										_end = false;
+										updateStatus("STR_STANDOFF");
+										_desired = DST_STANDOFF;
+									}
 								}
 							}
 						}
 
-						(*i)->endProjectile();
+						(*i)->setFinished();
 					}
 			}
 		}
@@ -991,7 +1029,7 @@ void DogfightState::advanceDogfight()
 				)
 		{
 			if ((*i)->isFinished() == true
-				|| ((*i)->getMissed() == true && (*i)->getCwpPosition() < 1))
+				|| ((*i)->isMissed() == true && (*i)->getCwpPosition() < 1))
 			{
 				delete *i;
 				i = _projectiles.erase(i);
@@ -1169,7 +1207,7 @@ void DogfightState::advanceDogfight()
 	{
 		if (_craft->isDestroyed() == true) // End dogfight if craft is destroyed.
 		{
-			resetStatus("STR_INTERCEPTOR_DESTROYED");
+			updateStatus("STR_INTERCEPTOR_DESTROYED");
 			_timeout <<= 1u;
 			_game->getResourcePack()->playSoundFx(ResourcePack::INTERCEPTOR_EXPLODE);
 
@@ -1229,7 +1267,7 @@ void DogfightState::advanceDogfight()
 
 				if (_ufo->getShotDownByCraftId() == _craft->getUniqueId())
 				{
-					resetStatus("STR_UFO_DESTROYED");
+					updateStatus("STR_UFO_DESTROYED");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE);
 
 					pts = _ufo->getRules()->getScore() << 1u;
@@ -1237,7 +1275,7 @@ void DogfightState::advanceDogfight()
 			}
 			else if (_ufo->getShotDownByCraftId() == _craft->getUniqueId()) // crashed.
 			{
-				resetStatus("STR_UFO_CRASH_LANDS");
+				updateStatus("STR_UFO_CRASH_LANDS");
 				_game->getResourcePack()->playSoundFx(ResourcePack::UFO_CRASH);
 
 				pts = _ufo->getRules()->getScore();
@@ -1353,7 +1391,7 @@ void DogfightState::fireWeapon2()
  */
 void DogfightState::fireWeaponUfo()
 {
-	resetStatus("STR_UFO_RETURN_FIRE");
+	updateStatus("STR_UFO_RETURN_FIRE");
 
 	CraftWeaponProjectile* const prj (new CraftWeaponProjectile());
 	prj->setType(PT_PLASMA_BEAM);
@@ -1444,7 +1482,7 @@ void DogfightState::adjustDistance(bool hasWeapons) // private.
  * Updates the status text and restarts the message-timeout counter.
  * @param status - reference to status
  */
-void DogfightState::resetStatus(const std::string& status) // private.
+void DogfightState::updateStatus(const std::string& status) // private.
 {
 	_txtStatus->setText(tr(status));
 	_timeout = MSG_TIMEOUT;
@@ -1506,7 +1544,7 @@ void DogfightState::btnStandoffClick(Action*)
 		&& _ufoBreakingOff == false)
 	{
 		_end = false;
-		resetStatus("STR_STANDOFF");
+		updateStatus("STR_STANDOFF");
 		_desired = DST_STANDOFF;
 	}
 }
@@ -1522,7 +1560,7 @@ void DogfightState::btnCautiousClick(Action*)
 		&& _ufoBreakingOff == false)
 	{
 		_end = false;
-		resetStatus("STR_CAUTIOUS_ATTACK");
+		updateStatus("STR_CAUTIOUS_ATTACK");
 
 		bool hasWeapons = false;
 
@@ -1562,7 +1600,7 @@ void DogfightState::btnStandardClick(Action*)
 		&& _ufoBreakingOff == false)
 	{
 		_end = false;
-		resetStatus("STR_STANDARD_ATTACK");
+		updateStatus("STR_STANDARD_ATTACK");
 
 		bool hasWeapons = false;
 
@@ -1602,7 +1640,7 @@ void DogfightState::btnAggressiveClick(Action*)
 		&& _ufoBreakingOff == false)
 	{
 		_end = false;
-		resetStatus("STR_AGGRESSIVE_ATTACK");
+		updateStatus("STR_AGGRESSIVE_ATTACK");
 
 		const CraftWeapon* cw;
 		int fireInterval;
@@ -1638,7 +1676,7 @@ void DogfightState::btnDisengageClick(Action*)
 		&& _ufoBreakingOff == false)
 	{
 		_end = true;
-		resetStatus("STR_DISENGAGING");
+		updateStatus("STR_DISENGAGING");
 		_desired = DST_ENGAGE + 10;
 	}
 
@@ -1767,10 +1805,10 @@ void DogfightState::btnMinimizeDfClick(Action*)
 					_geoState->resetInterceptPorts();
 			}
 			else
-				resetStatus("STR_PROJECTILE_IN_FLIGHT");
+				updateStatus("STR_PROJECTILE_IN_FLIGHT");
 		}
 		else
-			resetStatus("STR_STANDOFF_RANGE_ONLY");
+			updateStatus("STR_STANDOFF_RANGE_ONLY");
 	}
 }
 

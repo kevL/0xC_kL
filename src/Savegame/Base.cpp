@@ -79,7 +79,7 @@ Base::Base(
 		_exposed(false),
 		_cashIncome(0),
 		_cashSpent(0),
-		_defenseResult(0),
+		_defenseReduction(0),
 		_recallPurchase(0),
 		_recallSell(0),
 		_recallSoldier(0),
@@ -2080,29 +2080,21 @@ void Base::clearBaseDefense()
 }
 
 /**
- * Sets the effect of this Base's defense-facilities before BaseDefense starts.
- * @param result - the defense result
+ * Sets a reduction to the quantity of aLiens deployed in a base-defense tactical.
+ * @param result - the defense reduction (default 0)
  */
-void Base::setDefenseResult(int result)
+void Base::setDefenseReduction(int reduction)
 {
-	_defenseResult = result;
+	_defenseReduction = reduction;
 }
 
 /**
- * Gets the effect of this Base's defense-facilities before BaseDefense starts.
- * @return, the defense result
+ * Gets a reduction to the quantity of aLiens deployed in a base-defense tactical.
+ * @return, the defense reduction
  */
-int Base::getDefenseResult() const
+int Base::getDefenseReduction() const
 {
-	return _defenseResult;
-}
-
-/**
- * Clears the result of the Base's defense against aLien attacks.
- */
-void Base::clearDefenseResult()
-{
-	_defenseResult = 0;
+	return _defenseReduction;
 }
 
 /**

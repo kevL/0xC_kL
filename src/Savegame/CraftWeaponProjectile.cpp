@@ -184,7 +184,7 @@ int CraftWeaponProjectile::getHorizontalPosition() const
 /**
  * Flags this CraftWeaponProjectile for removal.
  */
-void CraftWeaponProjectile::endProjectile()
+void CraftWeaponProjectile::setFinished()
 {
 	_done = true;
 }
@@ -246,19 +246,20 @@ int CraftWeaponProjectile::getAccuracy() const
 }
 
 /**
- * Sets this CraftWeaponProjectile as having missed its target.
- * @param missed - true for missed (default true)
+ * Flags this CraftWeaponProjectile as having missed its target.
+ * @note Only for projectiles not beams.
  */
-void CraftWeaponProjectile::setMissed(bool missed)
+void CraftWeaponProjectile::setMissed()
 {
-	_missed = missed;
+	_missed = true;
 }
 
 /**
- * Gets if this CraftWeaponProjectile missed its target.
+ * Checks if this CraftWeaponProjectile already missed its target.
+ * @note Only for projectiles not beams.
  * @return, true if missed
  */
-bool CraftWeaponProjectile::getMissed() const
+bool CraftWeaponProjectile::isMissed() const
 {
 	return _missed;
 }

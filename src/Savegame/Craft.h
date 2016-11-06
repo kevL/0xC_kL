@@ -70,9 +70,9 @@ private:
 		_tacticalReturn,
 		_warned;
 	int
-		_loadCap,
-		_damage,
 		_fuel,
+		_hull,
+		_loadCap,
 		_takeOffDelay,
 
 		_kills;
@@ -173,12 +173,15 @@ private:
 		/// Gets the Craft's vehicles.
 		std::vector<Vehicle*>* getVehicles();
 
-		/// Gets the Craft's amount of damage.
-		int getCraftDamage() const;
-		/// Sets the Craft's amount of damage.
-		void setCraftDamage(const int damage);
-		/// Gets the Craft's percentage of damage.
-		int getCraftDamagePct() const;
+		/// Sets the Craft's hull after inflicted hurt.
+		void setCraftHull(int inflict);
+		/// Gets the Craft's hull.
+		int getCraftHull() const;
+		/// Gets the Craft's hull-percentage.
+		int getCraftHullPct() const;
+
+		/// Checks if the Craft is destroyed during dogfights.
+		bool isDestroyed() const;
 
 		/// Gets the Craft's amount of fuel.
 		int getFuel() const;
@@ -226,9 +229,6 @@ private:
 		void setTactical(bool tactical = true);
 		/// Gets if the Craft is participating in a tactical mission.
 		bool getTactical() const;
-
-		/// Gets if Craft is destroyed during dogfights.
-		bool isDestroyed() const;
 
 		/// Gets the amount of space available inside Craft.
 		int getSpaceAvailable() const;

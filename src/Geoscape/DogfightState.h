@@ -44,6 +44,13 @@ enum ColorDf
 	DISABLED_RANGE		// 10
 };
 
+enum CautionLevel
+{
+	CAUTION_NONE,	// 0
+	CAUTION_LOW,	// 1
+	CAUTION_HIGH	// 2
+};
+
 
 class Craft;
 class CraftWeaponProjectile;
@@ -87,7 +94,6 @@ private:
 		_w1Enabled,
 		_w2Enabled;
 	int
-		_cautionLevel,
 		_diff,
 		_timeout,
 		_dist,
@@ -111,6 +117,8 @@ private:
 		_totalIntercepts;
 	Uint8 _colors[11u]; // see ColorDf enum above^
 //		_currentCraftDamageColor;
+
+	CautionLevel _cautionLevel;
 
 	std::vector<CraftWeaponProjectile*> _projectiles;
 
@@ -153,7 +161,7 @@ private:
 	void adjustDistance(bool hasWeapons = true);
 
 	/// Changes the status text.
-	void resetStatus(const std::string& status);
+	void updateStatus(const std::string& status);
 	/// Moves window to new position.
 	void placePort();
 	/// Ends the Dogfight.

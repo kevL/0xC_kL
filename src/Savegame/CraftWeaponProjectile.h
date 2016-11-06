@@ -116,7 +116,7 @@ private:
 		int getHorizontalPosition() const;
 
 		/// Flags the CraftWeaponProjectile for removal.
-		void endProjectile();
+		void setFinished();
 		/// Checks if the CraftWeaponProjectile should be removed.
 		bool isFinished() const;
 
@@ -133,10 +133,10 @@ private:
 		/// Gets the accuracy of the CraftWeaponProjectile.
 		int getAccuracy() const;
 
-		/// Sets the CraftWeaponProjectile to a 'missed' status.
-		void setMissed(bool missed = true);
-		/// Gets the CraftWeaponProjectile's 'missed' status.
-		bool getMissed() const;
+		/// Sets the CraftWeaponProjectile as having missed its target.
+		void setMissed();
+		/// Checks if this CraftWeaponProjectile already missed its target.
+		bool isMissed() const;
 
 		/// Sets the maximum range of the CraftWeaponProjectile.
 		void setRange(

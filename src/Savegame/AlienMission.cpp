@@ -415,7 +415,7 @@ Ufo* AlienMission::createUfo( // private.
 
 				ufo->setAltitude(trjBattleship.getAltitude(0u));
 				ufo->setSpeed(static_cast<int>(std::ceil(
-							  trjBattleship.getSpeedPct(0u) * static_cast<float>(battleshipRule.getMaxSpeed()))));
+							  trjBattleship.getSpeedPct(0u) * static_cast<float>(battleshipRule.getTopSpeed()))));
 
 				wp = new Waypoint();
 				const size_t pick (RNG::pick(baseTargets.size()));
@@ -453,7 +453,7 @@ Ufo* AlienMission::createUfo( // private.
 
 				ufo->setAltitude(trajectory.getAltitude(0u));
 				ufo->setSpeed(static_cast<int>(std::ceil(
-							  trajectory.getSpeedPct(0u) * static_cast<float>(ufoRule->getMaxSpeed()))));
+							  trajectory.getSpeedPct(0u) * static_cast<float>(ufoRule->getTopSpeed()))));
 
 				if (trajectory.getAltitude(1u) == MovingTarget::stAltitude[0u])
 				{
@@ -511,7 +511,7 @@ Ufo* AlienMission::createUfo( // private.
 			speedPct = trajectory.getSpeedPct(0u);
 
 		ufo->setSpeed(static_cast<int>(std::ceil(
-					  speedPct * static_cast<float>(ufoRule->getMaxSpeed()))));
+					  speedPct * static_cast<float>(ufoRule->getTopSpeed()))));
 
 		coord = coordsWaypoint(
 							trajectory,
@@ -695,7 +695,7 @@ void AlienMission::ufoReachedWaypoint(
 									trajectory.getSpeedPct(wpId),
 									trajectory.getSpeedPct(wpId_next)));
 			ufo.setSpeed(static_cast<int>(std::ceil(
-						 speedPct * static_cast<float>(ufo.getRules()->getMaxSpeed()))));
+						 speedPct * static_cast<float>(ufo.getRules()->getTopSpeed()))));
 		}
 	}
 	else // UFO left earth's atmosphere.
@@ -929,7 +929,7 @@ void AlienMission::ufoLifting(
 				speedPct = trj.getSpeedPct(wpId);
 
 			ufo.setSpeed(static_cast<int>(std::ceil(
-						  speedPct * static_cast<float>(ufo.getRules()->getMaxSpeed()))));
+						  speedPct * static_cast<float>(ufo.getRules()->getTopSpeed()))));
 			break;
 		}
 

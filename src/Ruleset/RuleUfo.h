@@ -52,7 +52,7 @@ class RuleUfo
 private:
 	int
 		_accel,
-		_damageMax,
+		_hull,
 		_escape,
 		_fireSound,
 		_marker,
@@ -62,7 +62,7 @@ private:
 		_reload,
 		_score,
 		_scoreAct,
-		_speedMax,
+		_speed,
 		_sprite;
 	std::string
 		_spriteAlt,
@@ -102,9 +102,9 @@ private:
 		int getMarker() const;
 
 		/// Gets the UFO's maximum damage.
-		int getMaxDamage() const;
+		int getUfoHullCap() const;
 		/// Gets the UFO's maximum speed.
-		int getMaxSpeed() const;
+		int getTopSpeed() const;
 		/// Gets the UFO's acceleration.
 		int getAcceleration() const;
 
@@ -131,6 +131,7 @@ private:
 
 		/// Gets the string-ID of the Surface that represents this UFO.
 		std::string getSpriteString() const;
+
 		/// Gets the UFO's radar range.
 		int getRangeRecon() const;
 };

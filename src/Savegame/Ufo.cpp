@@ -58,14 +58,14 @@ Ufo::Ufo(
 		_ufoRule(ufoRule),
 		_idCrashed(0),
 		_idLanded(0),
-		_damage(0),
+		_hull(ufoRule->getUfoHullCap()),
 		_heading("STR_NORTH"),
 		_headingInt(8u),
 		_altitude(MovingTarget::stAltitude[3u]),
 		_status(FLYING),
 		_secondsLeft(0),
 		_tactical(false),
-		_quickBattle(false), // TODO: Might be able to use id=-1 for this.
+		_isQuickBattle(false), // TODO: Might be able to use id=-1 for this.
 		_mission(nullptr),
 		_trajectory(nullptr),
 		_trajectoryWp(0u),
@@ -145,7 +145,7 @@ void Ufo::loadUfo(
 	_id				= node["id"]			.as<int>(_id);
 	_idCrashed		= node["idCrashed"]		.as<int>(_idCrashed);
 	_idLanded		= node["idLanded"]		.as<int>(_idLanded);
-	_damage			= node["damage"]		.as<int>(_damage);
+	_hull			= node["hull"]			.as<int>(_hull);
 	_altitude		= node["altitude"]		.as<std::string>(_altitude);
 	_heading		= node["direction"]		.as<std::string>(_heading);
 	_headingInt		= node["dirInt"]		.as<unsigned>(_headingInt);
@@ -154,7 +154,7 @@ void Ufo::loadUfo(
 	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
 	_tactical		= node["tactical"]		.as<bool>(_tactical);
 	_terrain		= node["terrain"]		.as<std::string>(_terrain);
-	_quickBattle	= node["quickBattle"]	.as<bool>(_quickBattle);
+	_isQuickBattle	= node["isQuickBattle"]	.as<bool>(_isQuickBattle);
 
 	double
 		lonTarget,
@@ -175,14 +175,16 @@ void Ufo::loadUfo(
 
 	if (const YAML::Node& status = node["status"])
 		_status = static_cast<UfoStatus>(status.as<int>());
-	else if (_damage >= _ufoRule->getMaxDamage())
-		_status = DESTROYED;
-	else if (_damage >= (_ufoRule->getMaxDamage() >> 1u))
+
+	else if (_hull == 0)									// I believe these cases are pointless ->
+		_status = DESTROYED;								// ie. 'status' is always saved.
+	else if (_hull <= (_ufoRule->getUfoHullCap() >> 1u))
 		_status = CRASHED;
 	else if (_altitude == MovingTarget::stAltitude[0u])
 		_status = LANDED;
 	else
-		_status = FLYING; // <- already done in cTor init.
+		_status = FLYING;									// <- already done in cTor init.
+
 
 	const SavedGame* const gameSave (rules.getGame()->getSavedGame());
 	if (gameSave->getMonthsElapsed() != -1)
@@ -230,20 +232,21 @@ YAML::Node Ufo::save() const
 	node["dirInt"]		= _headingInt;
 	node["status"]		= static_cast<int>(_status);
 
-	if (_damage != 0)				node["damage"]			= _damage;
+	node["hull"]		= _hull;
+
 	if (_detected != false)			node["detected"]		= _detected;
 	if (_hyperDetected != false)	node["hyperDetected"]	= _hyperDetected;
 	if (_secondsLeft != 0)			node["secondsLeft"]		= _secondsLeft;
 	if (_tactical != false)			node["tactical"]		= _tactical;
 
-	if (_quickBattle == false) // TODO: Do not save trajectory-info if UFO was shot down.
+	if (_isQuickBattle == false) // TODO: Do not save trajectory-info if UFO was shot down.
 	{
 		node["mission"]			= _mission->getId();
 		node["trajectory"]		= _trajectory->getId();
 		node["trajectoryWp"]	= _trajectoryWp;
 	}
 	else
-		node["quickBattle"]		= _quickBattle;
+		node["isQuickBattle"]	= _isQuickBattle;
 
 	switch (_status)
 	{
@@ -345,37 +348,56 @@ int Ufo::getMarker() const
 }
 
 /**
- * Sets the quantity of damage this UFO has taken.
- * @param damage - amount of damage
+ * Sets this Ufo's hull after inflicted hurt.
+ * @param inflict - inflicted hurt
  */
-void Ufo::setUfoDamage(int damage)
+void Ufo::setUfoHull(int inflict)
 {
-	if ((_damage = damage) < 0) _damage = 0;
+	if ((_hull -= inflict) < 0) _hull = 0;
 
-	if (isDestroyed() == true)
+	if (_hull == 0)
 		_status = DESTROYED;
 	else if (isCrashed() == true)
 		_status = CRASHED;
 }
 
 /**
- * Gets the quantity of damage this UFO has taken.
- * @return, amount of damage
- */
-int Ufo::getUfoDamage() const
+ * Gets this Ufo's hull.
+ * @return, hull
+ *
+int Ufo::getUfoHull() const
 {
-	return _damage;
+	return _hull;
+} */
+
+/**
+ * Gets this Ufo's hull-percentage.
+ * @return, hull pct
+ */
+int Ufo::getUfoHullPct() const
+{
+	if (_hull == 0) return 0;
+
+	return static_cast<int>(std::ceil(
+		   static_cast<float>(_hull) / static_cast<float>(_ufoRule->getUfoHullCap()) * 100.f));
 }
 
 /**
- * Gets the ratio between the amount of damage this UFO
- * has taken and the total it can take before it's destroyed.
- * @return, damage percent
+ * Checks if this Ufo took enough hurt to crash it.
+ * @return, true if crashed
  */
-int Ufo::getUfoDamagePct() const
+bool Ufo::isCrashed() const
 {
-	return static_cast<int>(std::floor(
-		   static_cast<float>(_damage) / static_cast<float>(_ufoRule->getMaxDamage()) * 100.f));
+	return _hull <= (_ufoRule->getUfoHullCap() >> 1u);
+}
+
+/**
+ * Checks if this Ufo took enough hurt to destroy it.
+ * @return, true if destroyed
+ */
+bool Ufo::isDestroyed() const
+{
+	return _hull == 0;
 }
 
 /**
@@ -489,24 +511,6 @@ std::string Ufo::getHeading() const
 unsigned Ufo::getHeadingInt() const
 {
 	return _headingInt;
-}
-
-/**
- * Gets if this Ufo took enough damage to cause it to crash.
- * @return, true if crashed
- */
-bool Ufo::isCrashed() const
-{
-	return _damage >= (_ufoRule->getMaxDamage() >> 1u);
-}
-
-/**
- * Gets if this Ufo took enough damage to destroy it.
- * @return, true if destroyed
- */
-bool Ufo::isDestroyed() const
-{
-	return _damage >= _ufoRule->getMaxDamage();
 }
 
 /**
@@ -654,7 +658,7 @@ bool Ufo::getTactical() const
  */
 void Ufo::setQuickBattle()
 {
-	_quickBattle = true;
+	_isQuickBattle = true;
 }
 
 /**

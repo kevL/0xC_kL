@@ -48,8 +48,8 @@ RuleUfo::RuleUfo(const std::string& type)
 		_sizeType(UFO_VERYSMALL),
 		_sprite(-1),
 		_marker(-1),
-		_damageMax(0),
-		_speedMax(0),
+		_hull(0), // NOTE: Do not assign "0" else potential div-by-zero.
+		_speed(0),
 		_accel(0),
 		_power(0),
 		_range(0),
@@ -83,8 +83,8 @@ void RuleUfo::load(
 	_size		= node["size"]		.as<std::string>(_size);
 	_sprite		= node["sprite"]	.as<int>(_sprite);
 	_marker		= node["marker"]	.as<int>(_marker);
-	_damageMax	= node["damageMax"]	.as<int>(_damageMax);
-	_speedMax	= node["speedMax"]	.as<int>(_speedMax);
+	_hull		= node["hull"]		.as<int>(_hull);
+	_speed		= node["speedMax"]	.as<int>(_speed);
 	_accel		= node["accel"]		.as<int>(_accel);
 	_power		= node["power"]		.as<int>(_power);
 	_range		= node["range"]		.as<int>(_range);
@@ -179,18 +179,18 @@ int RuleUfo::getMarker() const
  * Gets the maximum damage (damage the UFO can take) of the UFO.
  * @return, the maximum damage
  */
-int RuleUfo::getMaxDamage() const
+int RuleUfo::getUfoHullCap() const
 {
-	return _damageMax;
+	return _hull;
 }
 
 /**
  * Gets the maximum speed of the UFO flying around the Geoscape.
  * @return, the maximum speed
  */
-int RuleUfo::getMaxSpeed() const
+int RuleUfo::getTopSpeed() const
 {
-	return _speedMax;
+	return _speed;
 }
 
 /**

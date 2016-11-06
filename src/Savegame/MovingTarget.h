@@ -50,7 +50,7 @@ private:
 	SavedGame* _gameSave;
 
 	/// Checks the MovingTarget's current destination for safe deletion.
-	void checkOtherTargeters();
+	void checkTargets();
 
 	/// Calculates a meet-point with a destination-target.
 	void calculateMeetPoint();

@@ -68,9 +68,9 @@ private:
 		_transferTime,
 
 		_accel,
-		_damageMax,
-		_fuelMax,
-		_speedMax,
+		_fuel,
+		_hull,
+		_speed,
 
 		_items,
 		_soldiers,
@@ -112,11 +112,11 @@ private:
 		int getMarker() const;
 
 		/// Gets a Craft's maximum fuel.
-		int getMaxFuel() const;
+		int getFuelCapacity() const;
 		/// Gets a Craft's maximum damage.
-		int getMaxDamage() const;
+		int getCraftHullCap() const;
 		/// Gets a Craft's maximum speed.
-		int getMaxSpeed() const;
+		int getTopSpeed() const;
 		/// Gets a Craft's acceleration.
 		int getAcceleration() const;
 
