@@ -879,7 +879,7 @@ void DogfightState::advanceDogfight()
 							{
 								_ufo->setUfoHull(power);
 
-								if (power <= _ufo->getRules()->getUfoHullCap())
+								if (power < (_ufo->getRules()->getUfoHullCap() + 19) / 20) // 5% rounded up.
 									status = "STR_UFO_HIT_GLANCING";
 								else
 									status = "STR_UFO_HIT";
