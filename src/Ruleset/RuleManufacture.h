@@ -44,18 +44,18 @@ private:
 		_cost,
 		_listOrder,
 		_space,
-		_time;
+		_hours;
 
 	std::string
 		_category,
 		_type;
 
-	std::vector<std::string> _required;
+	std::vector<std::string> _reqResearch;
 
 	std::map<std::string, int>
-		_manufacturedItems,
-		_requiredItems,
-		_requiredFacilities;
+		_partsProduced,
+		_partsRequired,
+		_reqFacs;
 
 
 	public:
@@ -73,11 +73,8 @@ private:
 		/// Gets the RuleManufacture's category.
 		const std::string& getCategory() const;
 
-		/// Gets if the RuleManufacture produces a Craft.
+		/// Checks if the RuleManufacture produces a Craft.
 		bool isCraft() const;
-
-		/// Gets the RuleManufacture's required-research.
-		const std::vector<std::string>& getResearchRequirements() const;
 
 		/// Gets required workshop-space.
 		int getSpaceRequired() const;
@@ -86,12 +83,15 @@ private:
 		/// Gets cost to produce one object.
 		int getManufactureCost() const;
 
+		/// Gets the RuleManufacture's required-research.
+		const std::vector<std::string>& getRequiredResearch() const;
 		/// Gets the list of BaseFacilities required to produce the products.
 		const std::map<std::string, int>& getRequiredFacilities() const;
-		/// Gets the list of items required to produce the products.
-		const std::map<std::string, int>& getRequiredItems() const;
-		/// Gets the list of items produced by completing one iteration of the project.
-		const std::map<std::string, int>& getManufacturedItems() const;
+
+		/// Gets the list of parts required for one iteration of the project.
+		const std::map<std::string, int>& getPartsRequired() const;
+		/// Gets the list of parts manufactured by one iteration of the project.
+		const std::map<std::string, int>& getPartsProduced() const;
 
 		/// Gets the list-weight for the RuleManufacture.
 		int getListOrder() const;

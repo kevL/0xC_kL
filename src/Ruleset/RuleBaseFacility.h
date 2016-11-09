@@ -69,7 +69,7 @@ private:
 		_blockType,
 		_type;
 
-	std::vector<std::string> _required;
+	std::vector<std::string> _reqResearch;
 
 
 	public:
@@ -88,9 +88,9 @@ private:
 		std::string getType() const;
 
 		/// Gets the facility's requirements.
-		const std::vector<std::string>& getResearchRequirements() const;
+		const std::vector<std::string>& getRequiredResearch() const;
 
-		/// Gets the facility's shape sprite.
+		/// Gets the facility's outline sprite.
 		int getSpriteShape() const;
 		/// Gets the facility's content sprite.
 		int getSpriteFacility() const;

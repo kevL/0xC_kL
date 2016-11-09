@@ -96,10 +96,10 @@ void ArticleDefinition::load(
 		int listOrder)
 {
 	id			=
-	title		= node["id"]		.as<std::string>(id);
-	title		= node["title"]		.as<std::string>(title);
-	section		= node["section"]	.as<std::string>(section);
-	required	= node["required"]	.as<std::vector<std::string>>(required);
+	title		= node["id"]			.as<std::string>(id);
+	title		= node["title"]			.as<std::string>(title);
+	section		= node["section"]		.as<std::string>(section);
+	reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(reqResearch);
 
 //	_type_id	= (UfopaediaTypeId)node["type_id"].as<int>(_type_id); // This got set in the cTor.
 

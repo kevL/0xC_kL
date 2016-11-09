@@ -67,8 +67,8 @@ int Ufopaedia::getArticleIndex( // protected/static.
 			++i)
 	{
 		for (std::vector<std::string>::const_iterator
-				j = articles[i]->required.begin();
-				j != articles[i]->required.end();
+				j = articles[i]->reqResearch.begin();
+				j != articles[i]->reqResearch.end();
 				++j)
 		{
 			if (*j == article_id)
@@ -170,7 +170,7 @@ bool Ufopaedia::isArticleAvailable( // static.
 		const SavedGame* const gameSave,
 		const ArticleDefinition* const article)
 {
-	return gameSave->isResearched(article->required);
+	return gameSave->isResearched(article->reqResearch);
 }
 
 /**

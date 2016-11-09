@@ -84,7 +84,7 @@ private:
 	RuleTerrain* _terrainRule;
 
 	std::vector<std::vector<int>> _unitLocations;
-	std::vector<std::string> _required;
+	std::vector<std::string> _reqResearch;
 
 
 	public:
@@ -104,7 +104,7 @@ private:
 		std::string getType() const;
 
 		/// Gets a Craft's requirements.
-		const std::vector<std::string>& getResearchRequirements() const;
+		const std::vector<std::string>& getRequiredResearch() const;
 
 		/// Gets a Craft's sprite.
 		int getSprite() const;

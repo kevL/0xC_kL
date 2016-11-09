@@ -233,8 +233,8 @@ void ManufactureInfoState::initProfit() // private.
 {
 	int sellValue;
 	for (std::map<std::string, int>::const_iterator
-			i = _mfRule->getManufacturedItems().begin();
-			i != _mfRule->getManufacturedItems().end();
+			i = _mfRule->getPartsProduced().begin();
+			i != _mfRule->getPartsProduced().end();
 			++i)
 	{
 		if (_mfRule->isCraft() == true)

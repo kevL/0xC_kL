@@ -128,7 +128,7 @@ CraftWeaponsState::CraftWeaponsState(
 		cwRule = _game->getRuleset()->getCraftWeapon(*i);
 		laRule = _game->getRuleset()->getItemRule(cwRule->getLauncherType());
 
-		if (_game->getSavedGame()->isResearched(laRule->getResearchRequirements()) == true)
+		if (_game->getSavedGame()->isResearched(laRule->getRequiredResearch()) == true)
 		{
 			_cwRules.push_back(cwRule);
 

@@ -77,8 +77,8 @@ void RuleCraft::load(
 		int modIndex,
 		int listOrder)
 {
-	_type		= node["type"]		.as<std::string>(_type);
-	_required	= node["required"]	.as<std::vector<std::string>>(_required);
+	_type			= node["type"]			.as<std::string>(_type);
+	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
 
 	if (node["sprite"])
 	{
@@ -131,12 +131,12 @@ std::string RuleCraft::getType() const
 }
 
 /**
- * Gets the list of research required to acquire the Craft.
+ * Gets the list of required-research to acquire the Craft.
  * @return, reference to a vector of strings that lists the needed research IDs
  */
-const std::vector<std::string>& RuleCraft::getResearchRequirements() const
+const std::vector<std::string>& RuleCraft::getRequiredResearch() const
 {
-	return _required;
+	return _reqResearch;
 }
 
 /**

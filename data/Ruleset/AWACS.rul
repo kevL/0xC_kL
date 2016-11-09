@@ -31,7 +31,7 @@ crafts:
     transferTime: 96
     score: 225
   - type: STR_DARKSTAR
-    required:
+    reqResearch:
       - STR_UNMANNED_AIRCRAFT
     listOrder: 209
     sprite: 28
@@ -60,12 +60,12 @@ manufacture:
   - type: STR_DARKSTAR
     category: STR_CRAFT
     listOrder: 3507
-    required:
+    reqResearch:
       - STR_UNMANNED_AIRCRAFT
     space: 27
-    time: 15000
+    hours: 15000
     cost: 735000
-    requiredItems:
+    partsRequired:
       STR_ALIEN_ALLOYS: 46
       STR_UFO_NAVIGATION: 2
 #-----------------------------------
@@ -108,7 +108,7 @@ ufopaedia:
     image_id: DARKSTAR_BIG
     text: STR_DARKSTAR_UFOPEDIA
     listOrder: 509
-    required:
+    reqResearch:
       - STR_UNMANNED_AIRCRAFT
     rect_stats:
       x: 5

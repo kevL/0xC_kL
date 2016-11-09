@@ -136,7 +136,7 @@ void RuleItem::load(
 {
 	_type			= node["type"]			.as<std::string>(_type);
 	_label			= node["label"]			.as<std::string>(_label);
-	_required		= node["required"]		.as<std::vector<std::string>>(_required);
+	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
 	_size			= node["size"]			.as<double>(_size);
 	_costBuy		= node["costBuy"]		.as<int>(_costBuy);
 	_costSell		= node["costSell"]		.as<int>(_costSell);
@@ -316,12 +316,12 @@ const std::string& RuleItem::getLabel() const
 }
 
 /**
- * Gets the list of research required to use the Item.
+ * Gets the list of required-research to use the Item.
  * @return, the list of research IDs
  */
-const std::vector<std::string>& RuleItem::getResearchRequirements() const
+const std::vector<std::string>& RuleItem::getRequiredResearch() const
 {
-	return _required;
+	return _reqResearch;
 }
 
 /**

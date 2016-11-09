@@ -1683,7 +1683,7 @@ void SavedGame::tabulateAvailableManufacture(
 			++i)
 	{
 		mfRule = _rules->getManufacture(*i);
-		if (isResearched(mfRule->getResearchRequirements()) == true
+		if (isResearched(mfRule->getRequiredResearch()) == true
 			&& std::find_if(
 						base->getManufacture().begin(),
 						base->getManufacture().end(),
@@ -1788,11 +1788,11 @@ void SavedGame::getPopupManufacture(
 			++i)
 	{
 		mfRule = _rules->getManufacture(*i);
-		if (isResearched(mfRule->getResearchRequirements()) == true
+		if (isResearched(mfRule->getRequiredResearch()) == true
 			&& std::find(
-					mfRule->getResearchRequirements().begin(),
-					mfRule->getResearchRequirements().end(),
-					resRule->getType()) != mfRule->getResearchRequirements().end())
+					mfRule->getRequiredResearch().begin(),
+					mfRule->getRequiredResearch().end(),
+					resRule->getType()) != mfRule->getRequiredResearch().end())
 		{
 			dependents.push_back(mfRule);
 		}

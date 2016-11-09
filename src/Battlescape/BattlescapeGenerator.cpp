@@ -601,7 +601,7 @@ void BattlescapeGenerator::nextStage()
 
 					if (fullSuccess == true) // all aLiens were put down on previous stage
 					{
-						if (_gameSave->isResearched((*i)->getRules()->getResearchRequirements()) == true)
+						if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 							dst = &forwardGround;
 						else
 							dst = guaranteed;
@@ -615,7 +615,7 @@ void BattlescapeGenerator::nextStage()
 								break;
 
 							case EXIT_TILE:
-								if (_gameSave->isResearched((*i)->getRules()->getResearchRequirements()) == true)
+								if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 								{
 									dst = &forwardGround;
 									break;
@@ -632,7 +632,7 @@ void BattlescapeGenerator::nextStage()
 				{
 					if (fullSuccess == true) // no hostiles left standing so they shouldn't be carrying anything; neutrals might still be packing an apple or two ...
 					{
-						if (_gameSave->isResearched((*i)->getRules()->getResearchRequirements()) == true)
+						if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 							dst = &forwardCarried;
 						else
 							dst = guaranteed;
@@ -648,7 +648,7 @@ void BattlescapeGenerator::nextStage()
 										break;
 
 									default:
-										if (_gameSave->isResearched((*i)->getRules()->getResearchRequirements()) == true)
+										if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 										{
 											dst = &forwardCarried;	// Not so sure that I really want unresearched stuff getting shuttled around automagically !
 											break;
@@ -1193,7 +1193,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					case BT_FLARE:
 //						if (itRule->getBigSprite() > -1	// See also CraftEquipmentState cTor. Inventory also uses this "bigSprite" trick. NOTE: Stop using the "bigSprite" trick.
 						if (itRule->isFixed() == false	// <- supports are already handled.
-							&& _gameSave->isResearched(itRule->getResearchRequirements()) == true)
+							&& _gameSave->isResearched(itRule->getRequiredResearch()) == true)
 						{
 							//Log(LOG_INFO) << ". . . . add type= " << i->first << " (" << i->second << ")";
 							for (int

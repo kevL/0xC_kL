@@ -33,19 +33,19 @@ items:
     transferTime: 48
     fullClip: 1
   - type: STR_LASER_CANNON
-    required:
+    reqResearch:
       - STR_LASER_CANNON #This is only for populating CraftWeaponsState
     size: 1.8
     costSell: 250740 #835800
     transferTime: 48
   - type: STR_PLASMA_BEAM
-    required:
+    reqResearch:
       - STR_PLASMA_CANNON #This is only for populating CraftWeaponsState
     size: 1.2
     costSell: 442680 #1475600
     transferTime: 48
   - type: STR_FUSION_BALL_LAUNCHER
-    required:
+    reqResearch:
       - STR_FUSION_MISSILE #This is only for populating CraftWeaponsState
     size: 1.5
     costSell: 148290 #494300 x 0.1 (triple this for equip NOT on Battlescape)
@@ -647,7 +647,7 @@ items:
     tuUse: 10
     flatRate: true
   - type: STR_PSI_AMP
-    required:
+    reqResearch:
       - STR_PSI_AMP
     size: 0.3
     costSell: 86310 #287700
@@ -730,7 +730,7 @@ items:
     armor: 40
     recover: false
   - type: STR_HEAVY_PLASMA
-    required:
+    reqResearch:
       - STR_HEAVY_PLASMA
     size: 0.5
     costSell: 50800 #508000
@@ -756,7 +756,7 @@ items:
     armor: 50
     attraction: 8
   - type: STR_HEAVY_PLASMA_CLIP
-    required:
+    reqResearch:
       - STR_HEAVY_PLASMA_CLIP
     size: 0.2
     costSell: 11350 #113500
@@ -772,7 +772,7 @@ items:
     score: 1
     attraction: 6
   - type: STR_PLASMA_RIFLE
-    required:
+    reqResearch:
       - STR_PLASMA_RIFLE
     size: 0.4
     costSell: 38300 #383000
@@ -799,7 +799,7 @@ items:
     armor: 50
     attraction: 8
   - type: STR_PLASMA_RIFLE_CLIP
-    required:
+    reqResearch:
       - STR_PLASMA_RIFLE_CLIP
     size: 0.2
     costSell: 9450 #94500
@@ -815,7 +815,7 @@ items:
     score: 1
     attraction: 6
   - type: STR_PLASMA_PISTOL
-    required:
+    reqResearch:
       - STR_PLASMA_PISTOL
     size: 0.2
     costSell: 26300 #263000
@@ -841,7 +841,7 @@ items:
     armor: 45
     attraction: 8
   - type: STR_PLASMA_PISTOL_CLIP
-    required:
+    reqResearch:
       - STR_PLASMA_PISTOL_CLIP
     size: 0.1
     costSell: 7650 #76500
@@ -857,7 +857,7 @@ items:
     score: 1
     attraction: 6
   - type: STR_BLASTER_LAUNCHER
-    required:
+    reqResearch:
       - STR_BLASTER_LAUNCHER
     size: 0.3
     costSell: 23900 #239000
@@ -882,7 +882,7 @@ items:
     armor: 40
     attraction: 9
   - type: STR_BLASTER_BOMB
-    required:
+    reqResearch:
       - STR_BLASTER_BOMB
     size: 0.3
     costSell: 35750 #357500
@@ -903,7 +903,7 @@ items:
     defusePulse: true
     attraction: 7
   - type: STR_SMALL_LAUNCHER
-    required:
+    reqResearch:
       - STR_SMALL_LAUNCHER
     size: 0.3
     costSell: 19900 #199000
@@ -926,7 +926,7 @@ items:
     score: 4
     attraction: 7
   - type: STR_STUN_BOMB
-    required:
+    reqResearch:
       - STR_STUN_BOMB
     size: 0.1
     costSell: 20830 #208300
@@ -944,7 +944,7 @@ items:
     explosionSpeed: -45
     attraction: 6
   - type: STR_ALIEN_GRENADE
-    required:
+    reqResearch:
       - STR_ALIEN_GRENADE
     size: 0.1
     costSell: 19200 #192000
@@ -963,7 +963,7 @@ items:
     attraction: 7
     tuPrime: 35
   - type: STR_MIND_PROBE
-    required:
+    reqResearch:
       - STR_MIND_PROBE
     size: 0.1
     costSell: 200500 #401000 (x 0.5)

@@ -65,7 +65,7 @@ private:
 		_statCaps;
 	RuleGender _genderRatio;
 
-	std::vector<std::string> _required;
+	std::vector<std::string> _reqResearch;
 
 
 	public:
@@ -79,8 +79,8 @@ private:
 
 		/// Gets the Soldier's type.
 		const std::string& getType() const;
-		/// Gets the Soldier's requirements.
-		const std::vector<std::string>& getResearchRequirements() const;
+		/// Gets the Soldier's required-research.
+		const std::vector<std::string>& getRequiredResearch() const;
 
 		/// Gets the minimum stats for the random stats generator.
 		UnitStats getMinStats() const;

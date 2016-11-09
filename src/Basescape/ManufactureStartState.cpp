@@ -135,7 +135,7 @@ ManufactureStartState::ManufactureStartState(
 				 && _game->getSavedGame()->getFunds() >= _mfRule->getManufactureCost(),
 		showReqs;
 
-	const std::map<std::string, int>& requiredItems (_mfRule->getRequiredItems());
+	const std::map<std::string, int>& requiredItems (_mfRule->getPartsRequired());
 	if (requiredItems.empty() == false)
 	{
 		showReqs = true;
@@ -218,8 +218,8 @@ void ManufactureStartState::init()
 		{
 			bool allowCraft (false);
 			for (std::map<std::string, int>::const_iterator
-					i = _mfRule->getRequiredItems().begin();
-					i != _mfRule->getRequiredItems().end();
+					i = _mfRule->getPartsRequired().begin();
+					i != _mfRule->getPartsRequired().end();
 					++i)
 			{
 				if (rules->getItemRule(i->first) == nullptr

@@ -369,7 +369,7 @@ items:
 #    aimRange: 25
 #    snapRange: 9
 #    dropoff: 5
-    required:
+    reqResearch:
       - STR_REINFORCED_SHOTGUN
 #------------------------------------------------------------------------------
   - type: STR_SHOTGUN_SHELLS
@@ -406,7 +406,7 @@ items:
     battleType: 2
     shotgunPellets: 6
     shotgunPattern: 6
-    required:
+    reqResearch:
       - STR_ALLOY_SHOTGUN_SHELLS
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
@@ -425,7 +425,7 @@ items:
     battleType: 2
     shotgunPellets: 4
     shotgunPattern: 4
-    required:
+    reqResearch:
       - STR_ELERIUM_SHOTGUN_SHELLS
 #------------------------------------------------------------------------------
   - type: STR_INCENDIARY_GRENADE
@@ -1232,7 +1232,7 @@ ufopaedia:
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_REINFORCED_SHOTGUN_UFOPEDIA
     listOrder: 2102
-    required:
+    reqResearch:
       - STR_REINFORCED_SHOTGUN
   - id: STR_INCENDIARY_GRENADE
     listOrder: 3911
@@ -1269,12 +1269,12 @@ ufopaedia:
   - id: STR_ALLOY_SHOTGUN_SHELLS
     type_id: 4
     section: STR_NOT_AVAILABLE
-    required:
+    reqResearch:
       - STR_ALLOY_SHOTGUN_SHELLS
   - id: STR_ELERIUM_SHOTGUN_SHELLS
     type_id: 4
     section: STR_NOT_AVAILABLE
-    required:
+    reqResearch:
       - STR_ELERIUM_SHOTGUN_SHELLS
 #------------------------------------------------------------------------------
 # ARMORs
@@ -1362,34 +1362,34 @@ manufacture:
   - type: STR_REINFORCED_SHOTGUN
     listOrder: 1101
     category: STR_WEAPON
-    required:
+    reqResearch:
       - STR_REINFORCED_SHOTGUN
     space: 4
-    time: 820
+    hours: 820
     cost: 18000
-    requiredItems:
+    partsRequired:
       STR_ALIEN_ALLOYS: 3
 #------------------------------------------------------------------------------
   - type: STR_ALLOY_SHOTGUN_SHELLS
     listOrder: 1102
     category: STR_AMMUNITION
-    required:
+    reqResearch:
       - STR_ALLOY_SHOTGUN_SHELLS
     space: 4
-    time: 80
+    hours: 80
     cost: 2000
-    requiredItems:
+    partsRequired:
       STR_ALIEN_ALLOYS: 1
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
     listOrder: 1103
     category: STR_AMMUNITION
-    required:
+    reqResearch:
       - STR_ELERIUM_SHOTGUN_SHELLS
     space: 4
-    time: 90
+    hours: 90
     cost: 4000
-    requiredItems:
+    partsRequired:
       STR_ELERIUM_115: 1
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

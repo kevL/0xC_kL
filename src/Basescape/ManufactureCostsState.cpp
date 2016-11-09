@@ -140,7 +140,7 @@ void ManufactureCostsState::init()
 	{
 		mfRule = rules->getManufacture(*i);
 
-		if (_game->getSavedGame()->isResearched(mfRule->getResearchRequirements()) == true)
+		if (_game->getSavedGame()->isResearched(mfRule->getRequiredResearch()) == true)
 			unlocked.push_back(mfRule);
 	}
 
@@ -148,8 +148,8 @@ void ManufactureCostsState::init()
 	std::wostringstream woststr;
 	int
 		profit,
-		requiredCosts,
-		salesCost;
+		costDebit,
+		costCredit;
 	float profitAspect;
 
 	for (std::vector<const RuleManufacture*>::const_iterator
@@ -169,19 +169,22 @@ void ManufactureCostsState::init()
 							L"");
 //							tr((*i)->getCategory ()).c_str());
 
-		requiredCosts = 0;
+		costDebit = 0;
 
 		for (std::map<std::string, int>::const_iterator
-				j = (*i)->getRequiredItems().begin();
-				j != (*i)->getRequiredItems().end();
+				j = (*i)->getPartsRequired().begin();
+				j != (*i)->getPartsRequired().end();
 				++j)
 		{
-			requiredCosts += rules->getItemRule((*j).first)->getSellCost() * (*j).second;
+			if (rules->getItemRule(j->first) == nullptr && rules->getCraft(j->first) != nullptr)
+				costDebit += rules->getCraft(j->first)->getSellCost() * j->second;
+			else
+				costDebit += rules->getItemRule(j->first)->getSellCost() * j->second;
 
 			woststr.str(L"");
-			woststr << L"(" << (*j).second << L") " << tr((*j).first);
+			woststr << L"(" << j->second << L") " << tr(j->first);
 
-			if (j == (*i)->getRequiredItems().begin())
+			if (j == (*i)->getPartsRequired().begin())
 				_lstProduction->setCellText(r, 4u, woststr.str());
 			else
 			{
@@ -198,35 +201,35 @@ void ManufactureCostsState::init()
 		profit = 0;
 
 		for (std::map<std::string, int>::const_iterator
-				j = (*i)->getManufacturedItems().begin();
-				j != (*i)->getManufacturedItems().end();
+				j = (*i)->getPartsProduced().begin();
+				j != (*i)->getPartsProduced().end();
 				++j)
 		{
 			woststr.str(L"");
-			woststr << L"< " << tr((*j).first);
+			woststr << L"< " << tr(j->first);
 
 			if ((*i)->isCraft() == true)
-				salesCost = rules->getCraft((*j).first)->getSellCost();
+				costCredit = rules->getCraft(j->first)->getSellCost();
 			else
-				salesCost = rules->getItemRule((*j).first)->getSellCost();
+				costCredit = rules->getItemRule(j->first)->getSellCost();
 
-			salesCost *= (*j).second;
-			profit += salesCost;
+			costCredit *= j->second;
+			profit += costCredit;
 
 			std::wostringstream qty;
-			qty << L"*" << (*j).second;
+			qty << L"*" << j->second;
 
 			_lstProduction->addRow(
 								5,
 								woststr.str().c_str(),
-								Text::formatCurrency(salesCost).c_str(),
+								Text::formatCurrency(costCredit).c_str(),
 								qty.str().c_str(),
 								L"",L"");
 			_lstProduction->setRowColor(++r, GREEN, true);
 		}
 
 		profit -= (*i)->getManufactureCost();
-		profit -= requiredCosts;
+		profit -= costDebit;
 		profitAspect = static_cast<float>(profit) / static_cast<float>((*i)->getManufactureTime());
 
 		woststr.str(L"");

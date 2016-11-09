@@ -69,7 +69,7 @@ private:
 				id,
 				title,
 				section;
-			std::vector<std::string> required;
+			std::vector<std::string> reqResearch;
 
 			/// Destructor.
 			virtual ~ArticleDefinition();

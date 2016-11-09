@@ -175,7 +175,7 @@ PurchaseState::PurchaseState(Base* const base)
 	{
 		solRule = rules->getSoldier(*i);
 		if (solRule->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(solRule->getResearchRequirements()) == true)
+			&& _game->getSavedGame()->isResearched(solRule->getRequiredResearch()) == true)
 		{
 			_orderQty.push_back(0);
 			_soldiers.push_back(*i);
@@ -215,7 +215,7 @@ PurchaseState::PurchaseState(Base* const base)
 	{
 		crRule = rules->getCraft(*i);
 		if (crRule->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(crRule->getResearchRequirements()) == true)
+			&& _game->getSavedGame()->isResearched(crRule->getRequiredResearch()) == true)
 		{
 			_orderQty.push_back(0);
 			_crafts.push_back(*i);
@@ -358,7 +358,7 @@ PurchaseState::PurchaseState(Base* const base)
 		//Log(LOG_INFO) << (*i) << " list# " << itRule->getListOrder(); // Prints listOrder to LOG.
 
 		if (itRule->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(itRule->getResearchRequirements()) == true)
+			&& _game->getSavedGame()->isResearched(itRule->getRequiredResearch()) == true)
 		{
 			_orderQty.push_back(0);
 			_items.push_back(*i);

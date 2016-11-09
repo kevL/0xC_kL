@@ -197,12 +197,12 @@ StoresState::StoresState(Base* const base)
 					}
 				}
 
-				if (gameSave->isResearched(itRule->getType()) == false						// not researched or is research exempt
-					&& (gameSave->isResearched(itRule->getResearchRequirements()) == false	// and has requirements to use that have not been researched
-//						|| rules->getItemRule(*i)->isLiveAlien() == true						// or is an alien
-						|| itRule->getBattleType() == BT_CORPSE									// or is a corpse
-						|| itRule->getBattleType() == BT_NONE)									// or is not a battlefield item
-					&& craftOrdnance == false)												// and is not craft ordnance
+				if (gameSave->isResearched(itRule->getType()) == false					// not researched or is research exempt
+					&& (gameSave->isResearched(itRule->getRequiredResearch()) == false	// and has requirements to use that have not been researched
+//						|| rules->getItemRule(*i)->isLiveAlien() == true					// or is an alien
+						|| itRule->getBattleType() == BT_CORPSE								// or is a corpse
+						|| itRule->getBattleType() == BT_NONE)								// or is not a battlefield item
+					&& craftOrdnance == false)											// and is not craft ordnance
 				{
 					// well, that was !NOT! easy.
 					color = YELLOW;

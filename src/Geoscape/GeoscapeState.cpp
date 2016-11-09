@@ -2656,13 +2656,16 @@ void GenerateSupportMission::operator() (const AlienBase* const aBase) const
 void GeoscapeState::time1Day()
 {
 	//Log(LOG_INFO) << "GeoscapeState::time1Day()";
-	// Create vectors of pending-events integrated for all Bases so that
-	// slightly different dialog-layouts can be shown for the last event of each
-	// type.
+
+	// Create vectors of pending-events integrated for all Bases so that slightly
+	// different dialog-layouts can be shown for the last event of each type.
+
 	std::vector<State*> resEvents;
+
 	std::vector<ManufactureCompleteInfo> runtEvents;
-	std::vector<NewPossibleResearchInfo> newResEvents;
-	std::vector<NewPossibleManufactureInfo> newProdEvents;
+
+	std::vector<NewPossibleResearchInfo> resEventsPopped;
+	std::vector<NewPossibleManufactureInfo> runtEventsPopped;
 
 	for (std::vector<Base*>::const_iterator
 			i = _gameSave->getBases()->begin();
@@ -2754,8 +2757,7 @@ void GeoscapeState::time1Day()
 				j != (*i)->getFacilities()->end();
 				++j)
 		{
-			if ((*j)->buildFinished() == false
-				&& (*j)->buildFacility() == true) // completed.
+			if ((*j)->buildFinished() == false && (*j)->buildFacility() == true) // completed.
 			{
 				if (runtEvents.empty() == false) // set the previous event to NOT show btn.
 					runtEvents.back().gotoBaseBtn = false;
@@ -2794,9 +2796,9 @@ void GeoscapeState::time1Day()
 			(*i)->clearResearchProject(*j, isLiveAlien == true);
 
 			bool
-				gofCrack,
-				forcesCrack;	// TODO: that <- The issue is that the 'forces' are not an independent vector, but instead are
-								// redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
+				crackGof,
+				crackForced;	// TODO: that <- The issue is that the 'forced' resTypes are not an independent vector, but instead
+								// are redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
 			if (isLiveAlien == true)
 			{
 				if (resRule->needsItem() == true
@@ -2808,20 +2810,20 @@ void GeoscapeState::time1Day()
 
 				getAlienCracks(
 							resType,
-							gofCrack,
-							forcesCrack);
+							crackGof,
+							crackForced);
 			}
 			else
 			{
 				if (resRule->needsItem() == true && resRule->destroyItem() == false)
 					(*i)->getStorageItems()->addItem(resType);
 
-				gofCrack =
-				forcesCrack = true; // <- not implemented yet. See above^
+				crackGof =
+				crackForced = true; // <- not implemented yet. See above^
 			}
 
 			const RuleResearch* gofRule (nullptr);
-			if (gofCrack == true && resRule->getGetOneFree().empty() == false)
+			if (crackGof == true && resRule->getGetOneFree().empty() == false)
 			{
 				std::vector<std::string> gofList;
 				for (std::vector<std::string>::const_iterator
@@ -2887,16 +2889,16 @@ void GeoscapeState::time1Day()
 				{
 					const RuleManufacture* const mfRule (_rules->getManufacture(itRule->getType()));
 					if (mfRule != nullptr
-						&& mfRule->getResearchRequirements().empty() == false)
+						&& mfRule->getRequiredResearch().empty() == false)
 					{
-						const std::vector<std::string>& required (mfRule->getResearchRequirements());
+						const std::vector<std::string>& required (mfRule->getRequiredResearch());
 						const RuleItem* const aRule (_rules->getItemRule(itRule->getCompatibleAmmo()->front()));
 						if (aRule != nullptr
 							&& std::find(
 									required.begin(),
 									required.end(),
 									aRule->getType()) != required.end()
-							&& _gameSave->isResearched(mfRule->getResearchRequirements()) == false)
+							&& _gameSave->isResearched(mfRule->getRequiredResearch()) == false)
 						{
 							resEvents.push_back(new ResearchRequiredState(itRule));
 						}
@@ -2906,18 +2908,18 @@ void GeoscapeState::time1Day()
 
 			if (popupResearch.empty() == false)
 			{
-				if (newResEvents.empty() == false) // only show the "allocate research" button for the last notification
-					newResEvents.back().showResearchButton = false;
+				if (resEventsPopped.empty() == false) // only show the "allocate research" button for the last notification
+					resEventsPopped.back().showResearchButton = false;
 
-				newResEvents.push_back(NewPossibleResearchInfo(*i, popupResearch, true));
+				resEventsPopped.push_back(NewPossibleResearchInfo(*i, popupResearch, true));
 			}
 
 			if (popupManufacture.empty() == false)
 			{
-				if (newProdEvents.empty() == false) // only show the "allocate production" button for the last notification
-					newProdEvents.back().showManufactureButton = false;
+				if (runtEventsPopped.empty() == false) // only show the "allocate production" button for the last notification
+					runtEventsPopped.back().showManufactureButton = false;
 
-				newProdEvents.push_back(NewPossibleManufactureInfo(*i, popupManufacture, true));
+				runtEventsPopped.push_back(NewPossibleManufactureInfo(*i, popupManufacture, true));
 			}
 
 			if (isLiveAlien == false)
@@ -2952,8 +2954,8 @@ void GeoscapeState::time1Day()
 	// kL_note: already taken care of. Just reset time-compression to 5sec and
 	// let ResearchCompleteState poke the player.
 
-//	if (resEvents.empty() == false && newResEvents.empty() == true)
-//		newResEvents.push_back(NewPossibleResearchInfo(std::vector<const RuleResearch*>(), true));
+//	if (resEvents.empty() == false && resEventsPopped.empty() == true)
+//		resEventsPopped.push_back(NewPossibleResearchInfo(std::vector<const RuleResearch*>(), true));
 
 
 	// show Popup Events:
@@ -2963,11 +2965,11 @@ void GeoscapeState::time1Day()
 			++i)
 	{
 		popupGeo(new ManufactureCompleteState(
-									i->base,
-									i->item,
-									this,
-									i->gotoBaseBtn,
-									i->endType)); // ie. PROGRESS_CONSTRUCTION
+											i->base,
+											i->item,
+											this,
+											i->gotoBaseBtn,
+											i->endType)); // ie. PROGRESS_CONSTRUCTION
 	}
 
 	for (std::vector<State*>::const_iterator
@@ -2979,25 +2981,25 @@ void GeoscapeState::time1Day()
 	}
 
 	for (std::vector<NewPossibleResearchInfo>::const_iterator
-			i = newResEvents.begin();
-			i != newResEvents.end();
+			i = resEventsPopped.begin();
+			i != resEventsPopped.end();
 			++i)
 	{
 		popupGeo(new NewPossibleResearchState(
-									i->base,
-									i->newPossibleResearch,
-									i->showResearchButton));
+											i->base,
+											i->newPossibleResearch,
+											i->showResearchButton));
 	}
 
 	for (std::vector<NewPossibleManufactureInfo>::const_iterator
-			i = newProdEvents.begin();
-			i != newProdEvents.end();
+			i = runtEventsPopped.begin();
+			i != runtEventsPopped.end();
 			++i)
 	{
 		popupGeo(new NewPossibleManufactureState(
-										i->base,
-										i->newPossibleManufacture,
-										i->showManufactureButton));
+											i->base,
+											i->newPossibleManufacture,
+											i->showManufactureButton));
 	}
 	// done Popup Events.
 

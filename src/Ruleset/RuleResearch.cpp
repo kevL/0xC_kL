@@ -60,7 +60,7 @@ void RuleResearch::load(
 	_prerequisite	= node["prerequisite"]	.as<std::vector<std::string>>(_prerequisite);
 	_forced			= node["forced"]		.as<std::vector<std::string>>(_forced);
 	_getOneFree		= node["getOneFree"]	.as<std::vector<std::string>>(_getOneFree);
-	_required		= node["required"]		.as<std::vector<std::string>>(_required);
+	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
 	_needsItem		= node["needsItem"]		.as<bool>(_needsItem);
 	_destroyItem	= node["destroyItem"]	.as<bool>(_destroyItem);
 	_markSeen		= node["markSeen"]		.as<bool>(_markSeen);
@@ -112,7 +112,7 @@ const std::vector<std::string>& RuleResearch::getPrerequisites() const
  */
 const std::vector<std::string>& RuleResearch::getRequiredResearch() const
 {
-	return _required;
+	return _reqResearch;
 }
 
 /**

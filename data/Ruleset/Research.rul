@@ -186,7 +186,7 @@ research:
   - type: STR_ALIEN_CONTAINMENT
     cost: 1500
     points: 15
-    required:
+    reqResearch:
       - STR_ALIEN_FOOD
       - STR_ALIEN_HABITAT
     prerequisite:
@@ -207,7 +207,7 @@ research:
   - type: STR_PSI_LAB
     cost: 42000
     points: 25
-    required:
+    reqResearch:
       - STR_ALIEN_ENTERTAINMENT
     prerequisite:
       - STR_ETHEREAL_COMMANDER
@@ -228,7 +228,7 @@ research:
   - type: STR_HYPER_WAVE_DECODER
     cost: 67000
     points: 25
-    required:
+    reqResearch:
       - STR_UFO_NAVIGATION
     prerequisite:
       - STR_FLOATER_NAVIGATOR
@@ -278,7 +278,7 @@ research:
       - STR_WASPITE_SOLDIER
 #      - STR_CYBERMITE_TERRORIST
   - type: STR_LEADER_PLUS #why are these PLUS-things even used
-    required:
+    reqResearch:
       - STR_ALIEN_ORIGINS
     prerequisite:
       - STR_SECTOID_COMMANDER
@@ -300,7 +300,7 @@ research:
   - type: STR_COMMANDER_PLUS #why are these PLUS-things even used
 #    forced:
 #      - STR_CYDONIA_OR_BUST
-    required:
+    reqResearch:
       - STR_THE_MARTIAN_SOLUTION
     prerequisite:
       - STR_SECTOID_COMMANDER
@@ -320,7 +320,7 @@ research:
     cost: 45000
     points: 30
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_ALLOYS
     prerequisite:
       - STR_FLOATER_NAVIGATOR
@@ -333,7 +333,7 @@ research:
     cost: 45000
     points: 30
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
     prerequisite:
@@ -405,7 +405,7 @@ research:
     points: 50
     uPed: STR_FLOATER_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -415,7 +415,7 @@ research:
     points: 50
     uPed: STR_SECTOID_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -425,7 +425,7 @@ research:
     points: 50
     uPed: STR_SNAKEMAN_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -435,7 +435,7 @@ research:
     points: 50
     uPed: STR_MUTON_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -445,7 +445,7 @@ research:
     points: 50
     uPed: STR_ETHEREAL_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -455,7 +455,7 @@ research:
     points: 50
     uPed: STR_WASPITE_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -465,7 +465,7 @@ research:
     points: 50
     uPed: STR_ZOMBIE_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -476,7 +476,7 @@ research:
     points: 50
     uPed: STR_REAPER_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -486,7 +486,7 @@ research:
     points: 50
     uPed: STR_CYBERDISC_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -496,7 +496,7 @@ research:
     points: 50
     uPed: STR_CHRYSSALID_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -506,7 +506,7 @@ research:
     points: 50
     uPed: STR_SILACOID_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -516,7 +516,7 @@ research:
     points: 50
     uPed: STR_CELATID_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -526,7 +526,7 @@ research:
     points: 50
     uPed: STR_SECTOPOD_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -536,7 +536,7 @@ research:
     points: 50
     uPed: STR_CYBERMITE_AUTOPSY
     needsItem: true
-    required:
+    reqResearch:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
     forced:
@@ -548,7 +548,7 @@ research:
     points: 50
     uPed: STR_FLOATER
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION #redundant; to interrogate needs Containment, which needs corpse, which needs Reproduction. Solution, remove Reproduction from autopsy requirement
     forced:
@@ -558,7 +558,7 @@ research:
     points: 50
     uPed: STR_FLOATER
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -579,7 +579,7 @@ research:
     points: 50
     uPed: STR_FLOATER
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -615,7 +615,7 @@ research:
     points: 50
     uPed: STR_FLOATER
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -635,7 +635,7 @@ research:
     points: 50
     uPed: STR_FLOATER
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -646,7 +646,7 @@ research:
     points: 50
     uPed: STR_FLOATER
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -659,7 +659,7 @@ research:
     points: 50
     uPed: STR_SECTOID
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -669,7 +669,7 @@ research:
     points: 50
     uPed: STR_SECTOID
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -689,7 +689,7 @@ research:
     cost: 192
     points: 50
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -726,7 +726,7 @@ research:
     points: 50
     uPed: STR_SECTOID
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -745,7 +745,7 @@ research:
     cost: 192
     points: 50
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -758,7 +758,7 @@ research:
     points: 50
     uPed: STR_SECTOID
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -772,7 +772,7 @@ research:
     points: 50
     uPed: STR_SNAKEMAN
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -782,7 +782,7 @@ research:
     points: 50
     uPed: STR_SNAKEMAN
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -803,7 +803,7 @@ research:
     points: 50
     uPed: STR_SNAKEMAN
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -839,7 +839,7 @@ research:
     points: 50
     uPed: STR_SNAKEMAN
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -859,7 +859,7 @@ research:
     points: 50
     uPed: STR_SNAKEMAN
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -870,7 +870,7 @@ research:
     points: 50
     uPed: STR_SNAKEMAN
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -883,7 +883,7 @@ research:
     points: 50
     uPed: STR_MUTON
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -893,7 +893,7 @@ research:
     points: 50
     uPed: STR_MUTON
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -914,7 +914,7 @@ research:
     points: 50
     uPed: STR_MUTON
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -935,7 +935,7 @@ research:
     points: 50
     uPed: STR_ETHEREAL
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -946,7 +946,7 @@ research:
     points: 50
     uPed: STR_ETHEREAL
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -958,7 +958,7 @@ research:
     points: 50
     uPed: STR_ETHEREAL
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -972,7 +972,7 @@ research:
     points: 50
     uPed: STR_WASPITE
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -982,7 +982,7 @@ research:
     points: 50
     uPed: STR_WASPITE
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1003,7 +1003,7 @@ research:
     points: 50
     uPed: STR_WASPITE
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1039,7 +1039,7 @@ research:
     points: 50
     uPed: STR_WASPITE
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1059,7 +1059,7 @@ research:
     points: 50
     uPed: STR_WASPITE
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1070,7 +1070,7 @@ research:
     points: 50
     uPed: STR_WASPITE
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1083,7 +1083,7 @@ research:
     points: 50
     uPed: STR_REAPER
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1093,7 +1093,7 @@ research:
     points: 50
     uPed: STR_CYBERDISC
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1103,7 +1103,7 @@ research:
     points: 50
     uPed: STR_CHRYSSALID
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1113,7 +1113,7 @@ research:
     points: 50
     uPed: STR_SILACOID
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1123,7 +1123,7 @@ research:
     points: 50
     uPed: STR_CELATID
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1133,7 +1133,7 @@ research:
     points: 50
     uPed: STR_SECTOPOD
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:
@@ -1143,7 +1143,7 @@ research:
     points: 50
     uPed: STR_CYBERMITE
     needsItem: true
-    required:
+    reqResearch:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
     forced:

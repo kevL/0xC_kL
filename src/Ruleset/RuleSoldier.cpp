@@ -88,7 +88,7 @@ RuleSoldier::~RuleSoldier()
 void RuleSoldier::load(const YAML::Node& node)
 {
 	_type			= node["type"]			.as<std::string>(_type);
-	_required		= node["required"]		.as<std::vector<std::string>>(_required);
+	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
 	_armor			= node["armor"]			.as<std::string>(_armor);
 	_costBuy		= node["costBuy"]		.as<int>(_costBuy);
 	_costSalary		= node["costSalary"]	.as<int>(_costSalary);
@@ -122,12 +122,12 @@ const std::string& RuleSoldier::getType() const
 }
 
 /**
- * Gets the list of research required to acquire this type of Soldier.
- * @return, reference to the list of research-IDs
+ * Gets the list of required-research to hire this type of Soldier.
+ * @return, reference to a list of research-IDs
  */
-const std::vector<std::string>& RuleSoldier::getResearchRequirements() const
+const std::vector<std::string>& RuleSoldier::getRequiredResearch() const
 {
-	return _required;
+	return _reqResearch;
 }
 
 /**

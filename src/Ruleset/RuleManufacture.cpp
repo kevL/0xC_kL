@@ -35,12 +35,12 @@ RuleManufacture::RuleManufacture(const std::string& type)
 	:
 		_type(type),
 		_space(0),
-		_time(0),
+		_hours(0),
 		_cost(0),
 		_isCraft(false),
 		_listOrder(0)
 {
-	_manufacturedItems[_type] = 1; // produce 1 item of 'type' (at least)
+	_partsProduced[_type] = 1; // produce 1 item of 'type' (at least)
 }
 
 /**
@@ -54,27 +54,27 @@ void RuleManufacture::load(
 		const Ruleset* const rules)
 {
 	// why ->
-	const bool inOut (_manufacturedItems.size() == 1
-				   && _type == _manufacturedItems.begin()->first);
+	const bool inOut (_partsProduced.size() == 1
+				   && _type == _partsProduced.begin()->first);
 
 	_type = node["type"].as<std::string>(_type);
 
 	if (inOut == true)
 	{
-		const int qtyOut (_manufacturedItems.begin()->second);
-		_manufacturedItems.clear();
-		_manufacturedItems[_type] = qtyOut;
-	} // End_why. Perhaps to overwrite a previous entry with a subsequently loaded ID-string, perhaps.
+		const int qtyOut (_partsProduced.begin()->second);
+		_partsProduced.clear();
+		_partsProduced[_type] = qtyOut;
+	} // End_why. Perhaps to overwrite a previous entry with a subsequently loaded string-ID, perhaps.
 
-	_required			= node["required"]			.as<std::vector<std::string>>(_required);
-	_space				= node["space"]				.as<int>(_space);
-	_time				= node["time"]				.as<int>(_time);
-	_cost				= node["cost"]				.as<int>(_cost);
-	_requiredFacilities	= node["requiredFacilities"].as<std::map<std::string, int>>(_requiredFacilities);
-	_requiredItems		= node["requiredItems"]		.as<std::map<std::string, int>>(_requiredItems);
-	_manufacturedItems	= node["manufacturedItems"]	.as<std::map<std::string, int>>(_manufacturedItems);
-	_category			= node["category"]			.as<std::string>(_category);
-	_listOrder			= node["listOrder"]			.as<int>(_listOrder);
+	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
+	_space			= node["space"]			.as<int>(_space);
+	_hours			= node["hours"]			.as<int>(_hours);
+	_cost			= node["cost"]			.as<int>(_cost);
+	_reqFacs		= node["reqFacs"]		.as<std::map<std::string, int>>(_reqFacs);
+	_partsRequired	= node["partsRequired"]	.as<std::map<std::string, int>>(_partsRequired);
+	_partsProduced	= node["partsProduced"]	.as<std::map<std::string, int>>(_partsProduced);
+	_category		= node["category"]		.as<std::string>(_category);
+	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
 
 	if (_listOrder == 0)
 		_listOrder = listOrder;
@@ -85,16 +85,9 @@ void RuleManufacture::load(
 	_isCraft = false;
 	int qty (0);
 
-//	if (rules->getItemRule(_type) == nullptr // NOTE: '_type' was added to '_manufacturedItems' in cTor.
-//		&& rules->getCraft(_type) != nullptr)
-//	{
-//		_isCraft = true;
-//		++qty;
-//	}
-
 	for (std::map<std::string, int>::const_iterator
-			i = _manufacturedItems.begin();
-			i != _manufacturedItems.end();
+			i = _partsProduced.begin();
+			i != _partsProduced.end();
 			++i)
 	{
 		if (rules->getItemRule(i->first) == nullptr
@@ -132,21 +125,12 @@ const std::string& RuleManufacture::getCategory() const
 }
 
 /**
- * Gets if this RuleManufacture produces a Craft.
+ * Checks if this RuleManufacture produces a Craft.
  * @return, true if a Craft will be produced
  */
 bool RuleManufacture::isCraft() const
 {
 	return _isCraft;
-}
-
-/**
- * Gets a list of required-research for the project.
- * @return, reference to a vector of research-types
- */
-const std::vector<std::string>& RuleManufacture::getResearchRequirements() const
-{
-	return _required;
 }
 
 /**
@@ -164,7 +148,7 @@ int RuleManufacture::getSpaceRequired() const
  */
 int RuleManufacture::getManufactureTime() const
 {
-	return _time;
+	return _hours;
 }
 
 /**
@@ -177,32 +161,41 @@ int RuleManufacture::getManufactureCost() const
 }
 
 /**
+ * Gets the list of required-research for the project.
+ * @return, reference to a vector of research-types
+ */
+const std::vector<std::string>& RuleManufacture::getRequiredResearch() const
+{
+	return _reqResearch;
+}
+
+/**
  * Gets the list of BaseFacilities required for the project.
- * @return, reference to the list of required base-facilities
+ * @return, reference to a list of required base-facilities
  */
 const std::map<std::string, int>& RuleManufacture::getRequiredFacilities() const
 {
-	return _requiredFacilities;
+	return _reqFacs;
 }
 
 /**
- * Gets the list of items required for one iteration of the project.
- * @return, reference to the list of required item-types
+ * Gets the list of parts required for one iteration of the project.
+ * @return, reference to a list of required parts
  */
-const std::map<std::string, int>& RuleManufacture::getRequiredItems() const
+const std::map<std::string, int>& RuleManufacture::getPartsRequired() const
 {
-	return _requiredItems;
+	return _partsRequired;
 }
 
 /**
- * Gets the list of items manufactured by one iteration of the project.
- * @note By default it contains only the item's ID-string with a value of 1 (rf.
+ * Gets the list of parts manufactured by one iteration of the project.
+ * @note By default it contains only the part's string-ID with a value of 1 (rf.
  * constructor).
- * @return, reference to the list of items produced
+ * @return, reference to a list of parts produced
  */
-const std::map<std::string, int>& RuleManufacture::getManufacturedItems() const
+const std::map<std::string, int>& RuleManufacture::getPartsProduced() const
 {
-	return _manufacturedItems;
+	return _partsProduced;
 }
 
 /**

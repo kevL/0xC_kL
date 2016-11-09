@@ -1048,7 +1048,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		const RuleBaseFacility* const rule = getBaseFacility(*i);
 		if (rule->getPsiLaboratories() != 0)
 		{
-			_psiRequirements = rule->getResearchRequirements();
+			_psiRequirements = rule->getRequiredResearch();
 			break;
 		}
 	} */
@@ -1211,7 +1211,7 @@ SavedGame* Ruleset::createSave(Game* const game) const
 			i != allSoldiers.end();
 			)
 	{
-		if (getSoldier(*i)->getResearchRequirements().empty() == false)
+		if (getSoldier(*i)->getRequiredResearch().empty() == false)
 			i = allSoldiers.erase(i);
 		else
 			++i;

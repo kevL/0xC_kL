@@ -63,7 +63,7 @@ private:
 		_forced,
 		_getOneFree,
 		_prerequisite,
-		_required;
+		_reqResearch;
 
 
 	public:

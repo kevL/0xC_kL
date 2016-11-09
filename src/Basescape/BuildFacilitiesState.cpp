@@ -118,7 +118,7 @@ void BuildFacilitiesState::populateBuildList() // virtual. Cf, SelectStartFacili
 			++i)
 	{
 		facRule = _game->getRuleset()->getBaseFacility(*i);
-		if (_game->getSavedGame()->isResearched(facRule->getResearchRequirements()) == true
+		if (_game->getSavedGame()->isResearched(facRule->getRequiredResearch()) == true
 			&& facRule->isLift() == false)
 		{
 			_facilities.push_back(facRule);

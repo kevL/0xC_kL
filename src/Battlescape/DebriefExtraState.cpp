@@ -690,9 +690,9 @@ void DebriefExtraState::styleList( // private.
 			color = GRAY;
 			contrast = true;
 		}
-		else if (_game->getSavedGame()->isResearched(type) == false									// not researched or is research exempt
-			&& (_game->getSavedGame()->isResearched(i->first->getResearchRequirements()) == false	// and has requirements to use that have not been researched
-				|| i->first->getBattleType() == BT_CORPSE))												// or is a corpse
+		else if (_game->getSavedGame()->isResearched(type) == false								// not researched or is research exempt
+			&& (_game->getSavedGame()->isResearched(i->first->getRequiredResearch()) == false	// and has requirements to use that have not been researched
+				|| i->first->getBattleType() == BT_CORPSE))											// or is a corpse
 		{
 			color = GREEN;
 			contrast = false;

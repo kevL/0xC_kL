@@ -205,7 +205,7 @@ private:
 
 	std::vector<std::string>
 		_compatibleAmmo,
-		_required;
+		_reqResearch;
 
 
 	public:
@@ -226,7 +226,7 @@ private:
 		const std::string& getLabel() const;
 
 		/// Gets the item's research requirements.
-		const std::vector<std::string>& getResearchRequirements() const;
+		const std::vector<std::string>& getRequiredResearch() const;
 
 		/// Gets the item's size.
 		double getStoreSize() const;

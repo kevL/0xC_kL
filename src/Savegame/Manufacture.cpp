@@ -190,8 +190,8 @@ bool Manufacture::hasEnoughMaterials( // private.
 		const Ruleset* const rules) const
 {
 	for (std::map<std::string, int>::const_iterator
-			i = _mfRule->getRequiredItems().begin();
-			i != _mfRule->getRequiredItems().end();
+			i = _mfRule->getPartsRequired().begin();
+			i != _mfRule->getPartsRequired().end();
 			++i)
 	{
 		if ((rules->getItemRule(i->first) != nullptr
@@ -241,8 +241,8 @@ ManufactureProgress Manufacture::step(
 		do
 		{
 			for (std::map<std::string, int>::const_iterator
-					i = _mfRule->getManufacturedItems().begin();
-					i != _mfRule->getManufacturedItems().end();
+					i = _mfRule->getPartsProduced().begin();
+					i != _mfRule->getPartsProduced().end();
 					++i)
 			{
 				if (_mfRule->isCraft() == true)
@@ -318,8 +318,8 @@ void Manufacture::startManufacture(
 	const Ruleset* const rules (gameSave->getRules());
 
 	for (std::map<std::string, int>::const_iterator
-			i = _mfRule->getRequiredItems().begin();
-			i != _mfRule->getRequiredItems().end();
+			i = _mfRule->getPartsRequired().begin();
+			i != _mfRule->getPartsRequired().end();
 			++i)
 	{
 		if (rules->getItemRule(i->first) != nullptr)
