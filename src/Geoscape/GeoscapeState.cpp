@@ -2489,7 +2489,7 @@ void GeoscapeState::time1Hour()
 	}
 
 
-	std::vector<ManufactureCompleteInfo> manEvents;
+	std::vector<ManufactureCompleteInfo> runtEvents;
 	// Note that if transfers arrive at the same time Manufacture(s) complete
 	// the gotoBase button handling below is obviated by RMB on transfers ....
 	// But that's been amended by showing Transfers after ProdCompleted screens;
@@ -2521,10 +2521,10 @@ void GeoscapeState::time1Hour()
 				case PROGRESS_COMPLETE:
 				case PROGRESS_NOT_ENOUGH_MONEY:
 				case PROGRESS_NOT_ENOUGH_MATERIALS:
-					if (manEvents.empty() == false) // set the previous event to NOT show btn.
-						manEvents.back().gotoBaseBtn = false;
+					if (runtEvents.empty() == false) // set the previous event to NOT show btn.
+						runtEvents.back().gotoBaseBtn = false;
 
-					manEvents.push_back(ManufactureCompleteInfo(
+					runtEvents.push_back(ManufactureCompleteInfo(
 															*i,
 															tr(j->first->getRules()->getType()),
 															(arrivals == false),
@@ -2547,8 +2547,8 @@ void GeoscapeState::time1Hour()
 	}
 
 	for (std::vector<ManufactureCompleteInfo>::const_iterator
-			j = manEvents.begin();
-			j != manEvents.end();
+			j = runtEvents.begin();
+			j != runtEvents.end();
 			++j)
 	{
 		popupGeo(new ManufactureCompleteState(
@@ -2660,7 +2660,7 @@ void GeoscapeState::time1Day()
 	// slightly different dialog-layouts can be shown for the last event of each
 	// type.
 	std::vector<State*> resEvents;
-	std::vector<ManufactureCompleteInfo> manEvents;
+	std::vector<ManufactureCompleteInfo> runtEvents;
 	std::vector<NewPossibleResearchInfo> newResEvents;
 	std::vector<NewPossibleManufactureInfo> newProdEvents;
 
@@ -2757,10 +2757,10 @@ void GeoscapeState::time1Day()
 			if ((*j)->buildFinished() == false
 				&& (*j)->buildFacility() == true) // completed.
 			{
-				if (manEvents.empty() == false) // set the previous event to NOT show btn.
-					manEvents.back().gotoBaseBtn = false;
+				if (runtEvents.empty() == false) // set the previous event to NOT show btn.
+					runtEvents.back().gotoBaseBtn = false;
 
-				manEvents.push_back(ManufactureCompleteInfo(
+				runtEvents.push_back(ManufactureCompleteInfo(
 														*i,
 														tr((*j)->getRules()->getType()),
 														true,
@@ -2958,8 +2958,8 @@ void GeoscapeState::time1Day()
 
 	// show Popup Events:
 	for (std::vector<ManufactureCompleteInfo>::const_iterator
-			i = manEvents.begin();
-			i != manEvents.end();
+			i = runtEvents.begin();
+			i != runtEvents.end();
 			++i)
 	{
 		popupGeo(new ManufactureCompleteState(
