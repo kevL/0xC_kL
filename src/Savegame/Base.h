@@ -175,7 +175,7 @@ private:
 		/// Sets the Base's engineers.
 		void setEngineers(int engineers);
 
-		/// Gets the Base's combat-ready soldiers.
+		/// Gets the Base's combat-available soldiers.
 		int getAvailableSoldiers() const;
 		/// Gets the Base's healthy soldiers.
 		int getHealthySoldiers() const;
@@ -184,70 +184,70 @@ private:
 
 		/// Gets the Base's total scientists.
 		int getTotalScientists() const;
-		/// Gets the number of scientists at work.
+		/// Gets the quantity of scientists at work.
 		int getAllocatedScientists() const;
 		/// Gets the Base's total engineers.
 		int getTotalEngineers() const;
-		/// Gets the number of engineers at work.
+		/// Gets the quantity of engineers at work.
 		int getAllocatedEngineers() const;
 
 		/// Gets the Base's used living quarters.
 		int getUsedQuarters() const;
-		/// Gets the Base's available living quarters.
+		/// Gets the Base's total living quarters.
 		int getTotalQuarters() const;
-		/// Gets the Base's total free personel space.
+		/// Gets the Base's available living quarters.
 		int getFreeQuarters() const;
 
 		/// Gets the Base's used storage space.
 		double getUsedStores() const;
-		/// Gets the Base's available storage space.
+		/// Gets the Base's total storage space.
 		int getTotalStores() const;
 		/// Checks if the Base's stores are overfull.
 		bool storesOverfull(double offset = 0.) const;
 
 		/// Gets the Base's used laboratory space.
 		int getUsedLaboratories() const;
-		/// Gets the Base's available laboratory space.
+		/// Gets the Base's total laboratory space.
 		int getTotalLaboratories() const;
-		/// Gets the number of available space lab (not used by a ResearchProject).
+		/// Gets the Base's available laboratory space.
 		int getFreeLaboratories() const;
 		/// Checks if the Base has research facilities.
 		bool hasResearch() const;
 
 		/// Gets the Base's used workshop space.
 		int getUsedWorkshops() const;
-		/// Gets the Base's available workshop space.
+		/// Gets the Base's total workshop space.
 		int getTotalWorkshops() const;
-		/// Gets the number of available space lab (not used by a Manufacture).
+		/// Gets the Base's available workshop space.
 		int getFreeWorkshops() const;
 		/// Checks if the Base has production facilities.
 		bool hasProduction() const;
 
-		/// Gets the Base's used psi lab space.
+		/// Gets the Base's used psi-lab space.
 		int getUsedPsiLabs() const;
-		/// Gets the Base's total available psi lab space.
+		/// Gets the Base's total psi-lab space.
 		int getTotalPsiLabs() const;
-		/// Gets the Base's total free psi lab space.
+		/// Gets the Base's available psi-lab space.
 		int getFreePsiLabs() const;
-		/// Checks if the Base has psi labs.
+		/// Checks if the Base has psi-lab facilities.
 		bool hasPsiLabs() const;
 
-		/// Gets the total amount of used containment space.
+		/// Gets the Base's used containment space.
 		int getUsedContainment() const;
-		/// Gets the total amount of containment space.
+		/// Gets the Base's total containment space.
 		int getTotalContainment() const;
-		/// Gets the Base's total free containment space.
+		/// Gets the Base's available containment space.
 		int getFreeContainment() const;
-		/// Checks if the Base has alien containment.
+		/// Checks if the Base has alien containment facilities.
 		bool hasContainment() const;
 		/// Gets the quantity of aLiens currently under interrogation.
 		int getInterrogatedAliens() const;
 
-		/// Gets the Base's used hangars.
+		/// Gets the Base's used hangar space.
 		int getUsedHangars() const;
-		/// Gets the Base's available hangars.
+		/// Gets the Base's total hangar space.
 		int getTotalHangars() const;
-		/// Gets the Base's total free hangar space.
+		/// Gets the Base's available hangar space.
 		int getFreeHangars() const;
 
 		/// Gets the Base's Soldiers of a specified type.

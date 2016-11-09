@@ -166,7 +166,7 @@ void ManufactureListState::init()
 {
 	State::init();
 
-	buildProjectList();
+	fillProjectList();
 	_lstManufacture->scrollTo(_scroll);
 }
 
@@ -218,13 +218,13 @@ void ManufactureListState::lstStartClick(Action*)
  */
 void ManufactureListState::cbxCategoryChange(Action*)
 {
-	buildProjectList();
+	fillProjectList();
 }
 
 /**
  * Fills the list with unlocked Manufacture.
  */
-void ManufactureListState::buildProjectList() // private.
+void ManufactureListState::fillProjectList() // private.
 {
 	_recallCategory = _categoryTypes[_cbxCategory->getSelected()];
 

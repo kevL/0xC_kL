@@ -231,11 +231,11 @@ void ManufactureState::init()
 		}
 		woststr1 << tr((*i)->getRules()->getType());
 
-		woststr2 << (*i)->getProducedQuantity() << L"/";
+		woststr2 << (*i)->getQuantityManufactured() << L"/";
 		if ((*i)->getInfinite() == true)
 			woststr2 << L"oo";
 		else
-			woststr2 << (*i)->getProductionTotal();
+			woststr2 << (*i)->getManufactureTotal();
 
 		int
 			days,

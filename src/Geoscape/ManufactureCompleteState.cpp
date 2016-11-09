@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ProductionCompleteState.h"
+#include "ManufactureCompleteState.h"
 
 //#include <assert.h>
 
@@ -44,19 +44,19 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in a Manufacture Complete window.
- * @param base			- pointer to Base the production belongs to
- * @param item			- reference to the item that finished producing
- * @param geoState		- pointer to GeoscapeState
- * @param gotoBaseBtn	- true to show the goToBase button
- * @param endType		- what ended the production (Manufacture.h)
+ * Initializes all the elements in the ManufactureComplete window.
+ * @param base		- pointer to Base the project belongs to
+ * @param item		- reference to the item that completed
+ * @param geoState	- pointer to GeoscapeState
+ * @param allocate	- true to show the goToBase button
+ * @param endType	- what ended the production (Manufacture.h)
  */
-ProductionCompleteState::ProductionCompleteState(
+ManufactureCompleteState::ManufactureCompleteState(
 		Base* const base,
 		const std::wstring& item,
 		GeoscapeState* const geoState,
-		bool gotoBaseBtn,
-		ProductionProgress endType)
+		bool allocate,
+		ManufactureProgress endType)
 	:
 		_base(base),
 		_geoState(geoState)
@@ -84,22 +84,22 @@ ProductionCompleteState::ProductionCompleteState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_btnOk->setText(tr((gotoBaseBtn == true) ? "STR_OK" : "STR_MORE"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ProductionCompleteState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ProductionCompleteState::btnOkClick),
+	_btnOk->setText(tr((allocate == true) ? "STR_OK" : "STR_MORE"));
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ManufactureCompleteState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureCompleteState::btnOkClick),
 							Options::keyCancel);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-	_btnOk5Secs->onMouseClick(		static_cast<ActionHandler>(&ProductionCompleteState::btnOk5SecsClick));
-	_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&ProductionCompleteState::btnOk5SecsClick),
+	_btnOk5Secs->onMouseClick(		static_cast<ActionHandler>(&ManufactureCompleteState::btnOk5SecsClick));
+	_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnOk5SecsClick),
 									Options::keyGeoSpeed1);
 
 	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
-	_btnGotoBase->setVisible(gotoBaseBtn == true);
-	_btnGotoBase->onMouseClick(		static_cast<ActionHandler>(&ProductionCompleteState::btnGotoBaseClick));
-	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ProductionCompleteState::btnGotoBaseClick),
+	_btnGotoBase->setVisible(allocate == true);
+	_btnGotoBase->onMouseClick(		static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick));
+	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick),
 									Options::keyOk);
-	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ProductionCompleteState::btnGotoBaseClick),
+	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick),
 									Options::keyOkKeypad);
 
 	std::wstring wst;
@@ -133,13 +133,13 @@ ProductionCompleteState::ProductionCompleteState(
 /**
  * dTor.
  */
-ProductionCompleteState::~ProductionCompleteState()
+ManufactureCompleteState::~ManufactureCompleteState()
 {}
 
 /**
  * Initializes the state.
  */
-void ProductionCompleteState::init()
+void ManufactureCompleteState::init()
 {
 	State::init();
 	_btnOk5Secs->setVisible(_geoState->is5Sec() == false);
@@ -149,7 +149,7 @@ void ProductionCompleteState::init()
  * Closes the window.
  * @param action - pointer to an Action
  */
-void ProductionCompleteState::btnOkClick(Action*)
+void ManufactureCompleteState::btnOkClick(Action*)
 {
 	_game->popState();
 }
@@ -158,17 +158,17 @@ void ProductionCompleteState::btnOkClick(Action*)
  * Reduces the speed to 5 Secs and returns to the previous screen.
  * @param action - pointer to an Action
  */
-void ProductionCompleteState::btnOk5SecsClick(Action*)
+void ManufactureCompleteState::btnOk5SecsClick(Action*)
 {
 	_geoState->resetTimer();
 	_game->popState();
 }
 
 /**
- * Goes to the base for the respective production.
+ * Goes to the Base where the Manufacture completed.
  * @param action - pointer to an Action
  */
-void ProductionCompleteState::btnGotoBaseClick(Action*)
+void ManufactureCompleteState::btnGotoBaseClick(Action*)
 {
 	_game->getScreen()->fadeScreen();
 

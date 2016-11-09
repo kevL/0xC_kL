@@ -46,7 +46,7 @@
 #include "MultipleTargetsState.h"
 #include "NewPossibleManufactureState.h"
 #include "NewPossibleResearchState.h"
-#include "ProductionCompleteState.h"
+#include "ManufactureCompleteState.h"
 #include "ResearchCompleteState.h"
 #include "ResearchRequiredState.h"
 #include "SoldierDiedState.h"
@@ -267,22 +267,26 @@ const int GeoscapeState::_ufoBlobs[8u][BLOBSIZE][BLOBSIZE]
 };
 
 
-// struct definitions used when enqueuing notification events
-struct ProductionCompleteInfo
+/* struct definitions used when enqueuing notification events */
+
+/**
+ *
+ */
+struct ManufactureCompleteInfo
 {
 	bool gotoBaseBtn;
 	std::wstring item;
 
 	Base* base;
 
-	ProductionProgress endType;
+	ManufactureProgress endType;
 
 	/// cTor.
-	ProductionCompleteInfo(
+	ManufactureCompleteInfo(
 			Base* const a_base,
 			const std::wstring& a_item,
 			bool a_gotoBaseBtn,
-			ProductionProgress a_endType)
+			ManufactureProgress a_endType)
 		:
 			base(a_base),
 			item(a_item),
@@ -291,6 +295,9 @@ struct ProductionCompleteInfo
 	{}
 };
 
+/**
+ *
+ */
 struct NewPossibleResearchInfo
 {
 	bool showResearchButton;
@@ -310,6 +317,9 @@ struct NewPossibleResearchInfo
 	{}
 };
 
+/**
+ *
+ */
 struct NewPossibleManufactureInfo
 {
 	bool showManufactureButton;
@@ -2479,7 +2489,7 @@ void GeoscapeState::time1Hour()
 	}
 
 
-	std::vector<ProductionCompleteInfo> prodEvents;
+	std::vector<ManufactureCompleteInfo> manEvents;
 	// Note that if transfers arrive at the same time Manufacture(s) complete
 	// the gotoBase button handling below is obviated by RMB on transfers ....
 	// But that's been amended by showing Transfers after ProdCompleted screens;
@@ -2491,7 +2501,7 @@ void GeoscapeState::time1Hour()
 			i != _gameSave->getBases()->end();
 			++i)
 	{
-		std::map<Manufacture*, ProductionProgress> progress;
+		std::map<Manufacture*, ManufactureProgress> progress;
 
 		for (std::vector<Manufacture*>::const_iterator
 				j = (*i)->getManufacture().begin();
@@ -2501,7 +2511,7 @@ void GeoscapeState::time1Hour()
 			progress[*j] = (*j)->step(*i, _gameSave);
 		}
 
-		for (std::map<Manufacture*, ProductionProgress>::const_iterator
+		for (std::map<Manufacture*, ManufactureProgress>::const_iterator
 				j = progress.begin();
 				j != progress.end();
 				++j)
@@ -2511,10 +2521,10 @@ void GeoscapeState::time1Hour()
 				case PROGRESS_COMPLETE:
 				case PROGRESS_NOT_ENOUGH_MONEY:
 				case PROGRESS_NOT_ENOUGH_MATERIALS:
-					if (prodEvents.empty() == false) // set the previous event to NOT show btn.
-						prodEvents.back().gotoBaseBtn = false;
+					if (manEvents.empty() == false) // set the previous event to NOT show btn.
+						manEvents.back().gotoBaseBtn = false;
 
-					prodEvents.push_back(ProductionCompleteInfo(
+					manEvents.push_back(ManufactureCompleteInfo(
 															*i,
 															tr(j->first->getRules()->getType()),
 															(arrivals == false),
@@ -2536,12 +2546,12 @@ void GeoscapeState::time1Hour()
 		}
 	}
 
-	for (std::vector<ProductionCompleteInfo>::const_iterator
-			j = prodEvents.begin();
-			j != prodEvents.end();
+	for (std::vector<ManufactureCompleteInfo>::const_iterator
+			j = manEvents.begin();
+			j != manEvents.end();
 			++j)
 	{
-		popupGeo(new ProductionCompleteState(
+		popupGeo(new ManufactureCompleteState(
 										j->base,
 										j->item,
 										this,
@@ -2650,7 +2660,7 @@ void GeoscapeState::time1Day()
 	// slightly different dialog-layouts can be shown for the last event of each
 	// type.
 	std::vector<State*> resEvents;
-	std::vector<ProductionCompleteInfo> prodEvents;
+	std::vector<ManufactureCompleteInfo> manEvents;
 	std::vector<NewPossibleResearchInfo> newResEvents;
 	std::vector<NewPossibleManufactureInfo> newProdEvents;
 
@@ -2747,10 +2757,10 @@ void GeoscapeState::time1Day()
 			if ((*j)->buildFinished() == false
 				&& (*j)->buildFacility() == true) // completed.
 			{
-				if (prodEvents.empty() == false) // set the previous event to NOT show btn.
-					prodEvents.back().gotoBaseBtn = false;
+				if (manEvents.empty() == false) // set the previous event to NOT show btn.
+					manEvents.back().gotoBaseBtn = false;
 
-				prodEvents.push_back(ProductionCompleteInfo(
+				manEvents.push_back(ManufactureCompleteInfo(
 														*i,
 														tr((*j)->getRules()->getType()),
 														true,
@@ -2936,19 +2946,23 @@ void GeoscapeState::time1Day()
 		} // DONE Research.
 	}
 
-	// if research has been completed but no new research events are triggered show an empty
-	// NewPossibleResearchState so players have a chance to allocate the now-free scientists.
-	// kL_note: already taken care of. Just reset timer to 5sec and let ResearchCompleteState poke the player.
+	// if research has been discovered but no new research events are triggered
+	// show an empty NewPossibleResearchState so players have a chance to
+	// allocate the now-free scientists.
+	// kL_note: already taken care of. Just reset time-compression to 5sec and
+	// let ResearchCompleteState poke the player.
+
 //	if (resEvents.empty() == false && newResEvents.empty() == true)
 //		newResEvents.push_back(NewPossibleResearchInfo(std::vector<const RuleResearch*>(), true));
 
+
 	// show Popup Events:
-	for (std::vector<ProductionCompleteInfo>::const_iterator
-			i = prodEvents.begin();
-			i != prodEvents.end();
+	for (std::vector<ManufactureCompleteInfo>::const_iterator
+			i = manEvents.begin();
+			i != manEvents.end();
 			++i)
 	{
-		popupGeo(new ProductionCompleteState(
+		popupGeo(new ManufactureCompleteState(
 									i->base,
 									i->item,
 									this,

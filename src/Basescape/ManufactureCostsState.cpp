@@ -198,8 +198,8 @@ void ManufactureCostsState::init()
 		profit = 0;
 
 		for (std::map<std::string, int>::const_iterator
-				j = (*i)->getProducedItems().begin();
-				j != (*i)->getProducedItems().end();
+				j = (*i)->getManufacturedItems().begin();
+				j != (*i)->getManufacturedItems().end();
 				++j)
 		{
 			woststr.str(L"");

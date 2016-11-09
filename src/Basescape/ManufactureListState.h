@@ -72,7 +72,7 @@ private:
 		_unlockedTypes;
 
 	/// Fills the list with unlocked Manufacture.
-	void buildProjectList();
+	void fillProjectList();
 
 
 	public:

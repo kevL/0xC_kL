@@ -53,7 +53,7 @@ private:
 	std::vector<std::string> _required;
 
 	std::map<std::string, int>
-		_producedItems,
+		_manufacturedItems,
 		_requiredItems,
 		_requiredFacilities;
 
@@ -76,24 +76,24 @@ private:
 		/// Gets if the RuleManufacture produces a Craft.
 		bool isCraft() const;
 
-		/// Gets the RuleManufacture's requirements.
+		/// Gets the RuleManufacture's required-research.
 		const std::vector<std::string>& getResearchRequirements() const;
 
-		/// Gets the required workshop-space.
+		/// Gets required workshop-space.
 		int getSpaceRequired() const;
-		/// Gets the time required to produce one object.
+		/// Gets time required to produce one object.
 		int getManufactureTime() const;
-		/// Gets the cost to produce one object.
+		/// Gets cost to produce one object.
 		int getManufactureCost() const;
 
 		/// Gets the list of BaseFacilities required to produce the products.
 		const std::map<std::string, int>& getRequiredFacilities() const;
-		/// Gets the list of items required to produce one object.
+		/// Gets the list of items required to produce the products.
 		const std::map<std::string, int>& getRequiredItems() const;
-		/// Gets the list of items produced by completing one object.
-		const std::map<std::string, int>& getProducedItems() const;
+		/// Gets the list of items produced by completing one iteration of the project.
+		const std::map<std::string, int>& getManufacturedItems() const;
 
-		/// Gets the list weight for the RuleManufacture.
+		/// Gets the list-weight for the RuleManufacture.
 		int getListOrder() const;
 };
 

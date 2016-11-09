@@ -9,50 +9,50 @@ research:
   - type: STR_PSI_AMP
     cost: 50000
     points: 20
-    prerequisites:
+    prerequisite:
       - STR_MIND_PROBE
       - STR_PSI_LAB
 #---- Laser Weapons -----------------------------------------------------------#
   - type: STR_LASER_WEAPONS
     cost: 500
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_ELERIUM_115
   - type: STR_LASER_PISTOL
     cost: 1000
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_LASER_WEAPONS
   - type: STR_LASER_RIFLE
     cost: 3000
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_LASER_PISTOL
   - type: STR_HEAVY_LASER
     cost: 4600
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
       - STR_LASER_RIFLE
   - type: STR_LASER_CANNON
     cost: 4200
     points: 15
-    prerequisites:
+    prerequisite:
       - STR_HEAVY_LASER
   - type: STR_LASER_DEFENSE
     cost: 5100
     points: 15
-    prerequisites:
+    prerequisite:
       - STR_LASER_CANNON
   - type: STR_FUSION_TORCH
     cost: 4800
     points: 20
-    prerequisites:
+    prerequisite:
       - STR_HEAVY_LASER
   - type: STR_FUSION_TORCH_POWER_CELL
     cost: 1200
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_FUSION_TORCH
 #---- Alloys & Elerium --------------------------------------------------------#
   - type: STR_ALIEN_ALLOYS
@@ -68,91 +68,91 @@ research:
     cost: 60000
     points: 20
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
   - type: STR_PLASMA_PISTOL_CLIP
     cost: 40000
     points: 5
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_ELERIUM_115
       - STR_PLASMA_PISTOL
   - type: STR_PLASMA_RIFLE
     cost: 70000
     points: 25
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_PLASMA_PISTOL_CLIP
   - type: STR_PLASMA_RIFLE_CLIP
     cost: 40000
     points: 6
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_PLASMA_RIFLE
   - type: STR_HEAVY_PLASMA
     cost: 80000
     points: 30
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_PLASMA_RIFLE_CLIP
   - type: STR_HEAVY_PLASMA_CLIP
     cost: 40000
     points: 7
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_HEAVY_PLASMA
   - type: STR_PLASMA_CANNON
     cost: 66000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_HEAVY_PLASMA_CLIP
   - type: STR_PLASMA_DEFENSE
     cost: 62000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_PLASMA_CANNON
 #---- Fusion Weapons ----------------------------------------------------------#
   - type: STR_BLASTER_LAUNCHER
     cost: 90000
     points: 10
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
   - type: STR_BLASTER_BOMB
     cost: 30000
     points: 10
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_ELERIUM_115
   - type: STR_FUSION_MISSILE
     cost: 88000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_BLASTER_LAUNCHER
       - STR_BLASTER_BOMB
   - type: STR_FUSION_DEFENSE
     cost: 80000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_FUSION_MISSILE
 #---- aLien Artefacts ---------------------------------------------------------#
   - type: STR_SMALL_LAUNCHER
     cost: 55000
     points: 30
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
   - type: STR_STUN_BOMB
     cost: 18000
     points: 10
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_ELERIUM_115
   - type: STR_ALIEN_GRENADE
     cost: 20000
     points: 20
     needsItem: true
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
   - type: STR_MIND_PROBE
@@ -163,24 +163,24 @@ research:
   - type: STR_PERSONAL_ARMOR
     cost: 9000
     points: 15
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
   - type: STR_POWER_SUIT
     cost: 20500
     points: 20
-    prerequisites:
+    prerequisite:
       - STR_PERSONAL_ARMOR
       - STR_UFO_POWER_SOURCE
   - type: STR_FLYING_SUIT
     cost: 33000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_POWER_SUIT
       - STR_UFO_NAVIGATION
   - type: STR_ALLOY_TANK_ARMOR
     cost: 4200
     points: 20
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
 #---- XCom Facilities ---------------------------------------------------------#
   - type: STR_ALIEN_CONTAINMENT
@@ -189,7 +189,7 @@ research:
     required:
       - STR_ALIEN_FOOD
       - STR_ALIEN_HABITAT
-    prerequisites:
+    prerequisite:
       - STR_ZOMBIE_CORPSE
       - STR_CELATID_CORPSE
       - STR_ETHEREAL_CORPSE
@@ -209,7 +209,7 @@ research:
     points: 25
     required:
       - STR_ALIEN_ENTERTAINMENT
-    prerequisites:
+    prerequisite:
       - STR_ETHEREAL_COMMANDER
       - STR_ETHEREAL_LEADER
       - STR_ETHEREAL_SOLDIER
@@ -218,19 +218,19 @@ research:
   - type: STR_MIND_SHIELD
     cost: 36000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_PSI_LAB
   - type: STR_GRAV_SHIELD
     cost: 93000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_ULTIMATE_CRAFT
   - type: STR_HYPER_WAVE_DECODER
     cost: 67000
     points: 25
     required:
       - STR_UFO_NAVIGATION
-    prerequisites:
+    prerequisite:
       - STR_FLOATER_NAVIGATOR
       - STR_SNAKEMAN_NAVIGATOR
       - STR_MUTON_NAVIGATOR
@@ -240,7 +240,7 @@ research:
   - type: STR_ALIEN_ORIGINS
     cost: 30000
     points: 60
-    prerequisites:
+    prerequisite:
       - STR_SECTOID_COMMANDER
       - STR_SECTOID_LEADER
       - STR_SECTOID_ENGINEER
@@ -280,7 +280,7 @@ research:
   - type: STR_LEADER_PLUS #why are these PLUS-things even used
     required:
       - STR_ALIEN_ORIGINS
-    prerequisites:
+    prerequisite:
       - STR_SECTOID_COMMANDER
       - STR_SECTOID_LEADER
       - STR_SNAKEMAN_COMMANDER
@@ -294,15 +294,15 @@ research:
   - type: STR_THE_MARTIAN_SOLUTION
     cost: 50000
     points: 60
-    prerequisites:
+    prerequisite:
 #      - STR_ALIEN_ORIGINS # note LeaderPlus already REQUIRES origins
       - STR_LEADER_PLUS
   - type: STR_COMMANDER_PLUS #why are these PLUS-things even used
-#    forces:
+#    forced:
 #      - STR_CYDONIA_OR_BUST
     required:
       - STR_THE_MARTIAN_SOLUTION
-    prerequisites:
+    prerequisite:
       - STR_SECTOID_COMMANDER
       - STR_SNAKEMAN_COMMANDER
       - STR_ETHEREAL_COMMANDER
@@ -313,7 +313,7 @@ research:
     cost: 60000
     points: 60
     unlockFinalMission: true
-    prerequisites:
+    prerequisite:
       - STR_COMMANDER_PLUS
 #---- aLien UFO Components ----------------------------------------------------#
   - type: STR_UFO_NAVIGATION
@@ -322,7 +322,7 @@ research:
     needsItem: true
     required:
       - STR_ALIEN_ALLOYS
-    prerequisites:
+    prerequisite:
       - STR_FLOATER_NAVIGATOR
       - STR_SECTOID_NAVIGATOR
       - STR_SNAKEMAN_NAVIGATOR
@@ -336,7 +336,7 @@ research:
     required:
       - STR_ALIEN_ALLOYS
       - STR_ELERIUM_115
-    prerequisites:
+    prerequisite:
       - STR_FLOATER_ENGINEER
       - STR_SNAKEMAN_ENGINEER
       - STR_MUTON_ENGINEER
@@ -345,34 +345,34 @@ research:
   - type: STR_UFO_CONSTRUCTION
     cost: 45000
     points: 30
-    prerequisites:
+    prerequisite:
       - STR_UFO_POWER_SOURCE
       - STR_UFO_NAVIGATION
 #---- XCom Craft --------------------------------------------------------------#
   - type: STR_IMPROVED_INTERCEPTOR
     cost: 12000
     points: 25
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
   - type: STR_UNMANNED_AIRCRAFT
     cost: 6000
     points: 20
-    prerequisites:
+    prerequisite:
       - STR_UFO_CONSTRUCTION
   - type: STR_NEW_FIGHTER_CRAFT
     cost: 60000
     points: 30
-    prerequisites:
+    prerequisite:
       - STR_UFO_CONSTRUCTION
   - type: STR_NEW_FIGHTER_TRANSPORTER
     cost: 70000
     points: 30
-    prerequisites:
+    prerequisite:
       - STR_NEW_FIGHTER_CRAFT
   - type: STR_ULTIMATE_CRAFT
     cost: 90000
     points: 30
-    prerequisites:
+    prerequisite:
       - STR_NEW_FIGHTER_TRANSPORTER
 #---- aLien UFO Facilities ----------------------------------------------------#
   - type: STR_ALIEN_ENTERTAINMENT
@@ -408,7 +408,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SECTOID_CORPSE
     cost: 1800
@@ -418,7 +418,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SNAKEMAN_CORPSE
     cost: 1800
@@ -428,7 +428,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_MUTON_CORPSE
     cost: 1800
@@ -438,7 +438,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_ETHEREAL_CORPSE
     cost: 1800
@@ -448,7 +448,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_WASPITE_CORPSE
     cost: 1800
@@ -458,7 +458,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_ZOMBIE_CORPSE #note Can't get one of these
     cost: 1800
@@ -468,7 +468,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
 #-------- Terrorist autopsies -------------------------------------------------#
   - type: STR_REAPER_CORPSE
@@ -479,7 +479,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CYBERDISC_CORPSE
     cost: 1800
@@ -489,7 +489,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CHRYSSALID_CORPSE
     cost: 1800
@@ -499,7 +499,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SILACOID_CORPSE
     cost: 1800
@@ -509,7 +509,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CELATID_CORPSE
     cost: 1800
@@ -519,7 +519,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_SECTOPOD_CORPSE
     cost: 1800
@@ -529,7 +529,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
   - type: STR_CYBERMITE_CORPSE
     cost: 1800
@@ -539,7 +539,7 @@ research:
     required:
       - STR_ALIEN_SURGERY
 #      - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_CONTAINMENT
 #---- aLien Interrogations ----------------------------------------------------#
 #-------- Floaters ------------------------------------------------------------#
@@ -551,7 +551,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION #redundant; to interrogate needs Containment, which needs corpse, which needs Reproduction. Solution, remove Reproduction from autopsy requirement
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_FLOATER_NAVIGATOR
     cost: 192
@@ -561,7 +561,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -582,7 +582,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
     getOneFree:
       - STR_SECTOID
@@ -618,7 +618,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -638,7 +638,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_LEADER_PLUS
       - STR_ALIEN_ORIGINS
   - type: STR_FLOATER_COMMANDER
@@ -649,7 +649,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
       - STR_ALIEN_ORIGINS
@@ -662,7 +662,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_SECTOID_NAVIGATOR
     cost: 192
@@ -672,7 +672,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -692,7 +692,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
     uPed: STR_SECTOID
     getOneFree:
@@ -729,7 +729,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -748,7 +748,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_PSI_LAB
@@ -761,7 +761,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
@@ -775,7 +775,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_SNAKEMAN_NAVIGATOR
     cost: 192
@@ -785,7 +785,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -806,7 +806,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
     getOneFree:
       - STR_SECTOID
@@ -842,7 +842,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -862,7 +862,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
   - type: STR_SNAKEMAN_COMMANDER
@@ -873,7 +873,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
@@ -886,7 +886,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_MUTON_NAVIGATOR
     cost: 192
@@ -896,7 +896,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -917,7 +917,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -938,7 +938,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_PSI_LAB
   - type: STR_ETHEREAL_LEADER
@@ -949,7 +949,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_PSI_LAB
@@ -961,7 +961,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
@@ -975,7 +975,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_WASPITE_NAVIGATOR
     cost: 192
@@ -985,7 +985,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_HYPER_WAVE_DECODER
       - STR_UFO_NAVIGATION
@@ -1006,7 +1006,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
     getOneFree:
       - STR_SECTOID
@@ -1042,7 +1042,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
     getOneFree:
@@ -1062,7 +1062,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
   - type: STR_WASPITE_COMMANDER
@@ -1073,7 +1073,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
       - STR_LEADER_PLUS
       - STR_COMMANDER_PLUS
@@ -1086,7 +1086,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_CYBERDISC_TERRORIST
     cost: 170
@@ -1096,7 +1096,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_CHRYSSALID_TERRORIST
     cost: 170
@@ -1106,7 +1106,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_SILACOID_TERRORIST
     cost: 170
@@ -1116,7 +1116,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_CELATID_TERRORIST
     cost: 170
@@ -1126,7 +1126,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_SECTOPOD_TERRORIST
     cost: 170
@@ -1136,7 +1136,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
   - type: STR_CYBERMITE_TERRORIST
     cost: 170
@@ -1146,7 +1146,7 @@ research:
     required:
       - STR_EXAMINATION_ROOM
       - STR_ALIEN_REPRODUCTION
-    forces:
+    forced:
       - STR_ALIEN_ORIGINS
 #---- aLien Race lookups ------------------------------------------------------#
   - type: STR_FLOATER

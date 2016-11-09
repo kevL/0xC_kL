@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_PRODUCTIONCOMPLETESTATE_H
-#define OPENXCOM_PRODUCTIONCOMPLETESTATE_H
+#ifndef OPENXCOM_MANUFACTURECOMPLETESTATE_H
+#define OPENXCOM_MANUFACTURECOMPLETESTATE_H
 
 //#include <string>
 
@@ -38,9 +38,9 @@ class Window;
 
 
 /**
- * Window used to notify the player when a production is completed.
+ * Window used to notify the player when a Manufacture project is completed.
  */
-class ProductionCompleteState
+class ManufactureCompleteState
 	:
 		public State
 {
@@ -58,15 +58,15 @@ private:
 
 
 	public:
-		/// Creates the Manufacture Complete state.
-		ProductionCompleteState(
+		/// Creates a ManufactureComplete state.
+		ManufactureCompleteState(
 				Base* const base,
 				const std::wstring& item,
 				GeoscapeState* const geoState,
-				bool gotoBaseBtn,
-				ProductionProgress endType);
-		/// Cleans up the Manufacture Complete state.
-		~ProductionCompleteState();
+				bool allocate,
+				ManufactureProgress endType);
+		/// Cleans up the ManufactureComplete state.
+		~ManufactureCompleteState();
 
 		/// Initializes the state.
 		void init() override;

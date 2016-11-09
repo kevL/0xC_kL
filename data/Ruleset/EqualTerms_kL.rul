@@ -1338,21 +1338,21 @@ research:
     listOrder: 901
     cost: 800
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_ALIEN_ALLOYS
 #------------------------------------------------------------------------------
   - type: STR_ALLOY_SHOTGUN_SHELLS
     listOrder: 902
     cost: 400
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_REINFORCED_SHOTGUN
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
     listOrder: 903
     cost: 500
     points: 10
-    prerequisites:
+    prerequisite:
       - STR_ALLOY_SHOTGUN_SHELLS
       - STR_ELERIUM_115
 #------------------------------------------------------------------------------

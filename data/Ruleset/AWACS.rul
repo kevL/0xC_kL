@@ -53,7 +53,7 @@ crafts:
 #    listOrder: 3107
 #    cost: 300
 #    points: 20
-#    prerequisites:
+#    prerequisite:
 #      - STR_UFO_CONSTRUCTION
 #-----------------------------------
 manufacture:

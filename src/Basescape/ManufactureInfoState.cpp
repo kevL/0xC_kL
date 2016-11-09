@@ -233,8 +233,8 @@ void ManufactureInfoState::initProfit() // private.
 {
 	int sellValue;
 	for (std::map<std::string, int>::const_iterator
-			i = _mfRule->getProducedItems().begin();
-			i != _mfRule->getProducedItems().end();
+			i = _mfRule->getManufacturedItems().begin();
+			i != _mfRule->getManufacturedItems().end();
 			++i)
 	{
 		if (_mfRule->isCraft() == true)
@@ -263,7 +263,7 @@ void ManufactureInfoState::btnStopClick(Action*) // private.
 void ManufactureInfoState::btnOkClick(Action*) // private.
 {
 	if (_start == true)
-		_manufacture->startProduction(
+		_manufacture->startManufacture(
 								_base,
 								_game->getSavedGame());
 	exitState();
@@ -314,7 +314,7 @@ void ManufactureInfoState::assignEngineers() // private.
 	if (_manufacture->getInfinite() == true)
 		woststr << L"oo";
 	else
-		woststr << _manufacture->getProductionTotal();
+		woststr << _manufacture->getManufactureTotal();
 	_txtUnits->setText(woststr.str());
 
 	woststr.str(L"");
@@ -367,7 +367,7 @@ int ManufactureInfoState::calcProfit() // private.
 	if (_manufacture->getInfinite() == true)
 		qty = 1;
 	else
-		qty = _manufacture->getProductionTotal() - _manufacture->getProducedQuantity();
+		qty = _manufacture->getManufactureTotal() - _manufacture->getQuantityManufactured();
 
 	return qty * (sellValue - _mfRule->getManufactureCost());
 }
@@ -544,7 +544,7 @@ void ManufactureInfoState::unitsLessClick(Action* action) // private.
 
 		case SDL_BUTTON_RIGHT:
 			_manufacture->setInfinite(false);
-			_manufacture->setProductionTotal(_manufacture->getProducedQuantity() + 1);
+			_manufacture->setManufactureTotal(_manufacture->getQuantityManufactured() + 1);
 			assignEngineers();
 	}
 }
@@ -647,14 +647,14 @@ void ManufactureInfoState::unitsMoreByValue(int delta) // private.
 	}
 	else
 	{
-		const int total (_manufacture->getProductionTotal());
+		const int total (_manufacture->getManufactureTotal());
 		delta = std::min(delta,
 						 std::numeric_limits<int>::max() - total);
 
 		if (_mfRule->isCraft() == true)
 			delta = std::min(delta,
 							_base->getFreeHangars());
-		_manufacture->setProductionTotal(total + delta);
+		_manufacture->setManufactureTotal(total + delta);
 		assignEngineers();
 	}
 }
@@ -674,10 +674,10 @@ void ManufactureInfoState::onUnitsLess() // private.
  */
 void ManufactureInfoState::unitsLessByValue(int delta) // private.
 {
-	const int total (_manufacture->getProductionTotal());
+	const int total (_manufacture->getManufactureTotal());
 	delta = std::min(delta,
-					 total - (_manufacture->getProducedQuantity() + 1));
-	_manufacture->setProductionTotal(total - delta);
+					 total - (_manufacture->getQuantityManufactured() + 1));
+	_manufacture->setManufactureTotal(total - delta);
 	assignEngineers();
 }
 
