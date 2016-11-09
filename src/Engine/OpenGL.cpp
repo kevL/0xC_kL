@@ -88,6 +88,10 @@ PFNGLCOMPILESHADERPROC		glCompileShader			= nullptr;
 PFNGLATTACHSHADERPROC		glAttachShader			= nullptr;
 PFNGLDETACHSHADERPROC		glDetachShader			= nullptr;
 PFNGLGETATTACHEDSHADERSPROC	glGetAttachedShaders	= nullptr;
+PFNGLGETPROGRAMINFOLOGPROC	glGetProgramInfoLog		= nullptr;
+PFNGLGETPROGRAMIVPROC		glGetProgramiv			= nullptr;
+PFNGLGETSHADERINFOLOGPROC	glGetShaderInfoLog		= nullptr;
+PFNGLGETSHADERIVPROC		glGetShaderiv			= nullptr;
 PFNGLLINKPROGRAMPROC		glLinkProgram			= nullptr;
 PFNGLGETUNIFORMLOCATIONPROC	glGetUniformLocation	= nullptr;
 PFNGLUNIFORM1IPROC			glUniform1i				= nullptr;
@@ -167,15 +171,19 @@ void OpenGL::init(
 	glAttachShader			= reinterpret_cast<PFNGLATTACHSHADERPROC>					(glGetProcAddress("glAttachShader"));
 	glDetachShader			= reinterpret_cast<PFNGLDETACHSHADERPROC>					(glGetProcAddress("glDetachShader"));
 	glGetAttachedShaders	= reinterpret_cast<PFNGLGETATTACHEDSHADERSPROC>				(glGetProcAddress("glGetAttachedShaders"));
+	glGetProgramiv			= reinterpret_cast<PFNGLGETPROGRAMIVPROC>					(glGetProcAddress("glGetProgramiv"));
+	glGetProgramInfoLog		= reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC>				(glGetProcAddress("glGetProgramInfoLog"));
+	glGetShaderiv			= reinterpret_cast<PFNGLGETSHADERIVPROC>					(glGetProcAddress("glGetShaderiv"));
+	glGetShaderInfoLog		= reinterpret_cast<PFNGLGETSHADERINFOLOGPROC>				(glGetProcAddress("glGetShaderInfoLog"));
 	glLinkProgram			= reinterpret_cast<PFNGLLINKPROGRAMPROC>					(glGetProcAddress("glLinkProgram"));
 	glGetUniformLocation	= reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>				(glGetProcAddress("glGetUniformLocation"));
 	glUniform1i				= reinterpret_cast<PFNGLUNIFORM1IPROC>						(glGetProcAddress("glUniform1i"));
 	glUniform2fv			= reinterpret_cast<PFNGLUNIFORM2FVPROC>						(glGetProcAddress("glUniform2fv"));
 	glUniform4fv			= reinterpret_cast<PFNGLUNIFORM4FVPROC>						(glGetProcAddress("glUniform4fv"));
 #endif
-	glXGetCurrentDisplay	= reinterpret_cast<void* (APIENTRYP)()>						(glGetProcAddress("glXGetCurrentDisplay"));
+	glXGetCurrentDisplay	= reinterpret_cast<void*  (APIENTRYP)()>					(glGetProcAddress("glXGetCurrentDisplay"));
 	glXGetCurrentDrawable	= reinterpret_cast<Uint32 (APIENTRYP)()>					(glGetProcAddress("glXGetCurrentDrawable"));
-	glXSwapIntervalEXT		= reinterpret_cast<void (APIENTRYP)(void*, Uint32, int)>	(glGetProcAddress("glXSwapIntervalEXT"));
+	glXSwapIntervalEXT		= reinterpret_cast<void   (APIENTRYP)(void*, Uint32, int)>	(glGetProcAddress("glXSwapIntervalEXT"));
 
 	wglSwapIntervalEXT		= reinterpret_cast<Uint32 (APIENTRYP)(int)>					(glGetProcAddress("wglSwapIntervalEXT"));
 	// kL_note: f*ck I hate re-direction.
@@ -197,7 +205,11 @@ void OpenGL::init(
 				  && glUniform1i			!= nullptr
 				  && glUniform2fv			!= nullptr
 				  && glUniform4fv			!= nullptr
-				  && glGetAttachedShaders	!= nullptr;
+				  && glGetAttachedShaders	!= nullptr
+				  && glGetShaderiv			!= nullptr
+				  && glGetShaderInfoLog		!= nullptr
+				  && glGetProgramiv			!= nullptr
+				  && glGetProgramInfoLog	!= nullptr;
 
 	if (shader_support == true)
 	{
@@ -567,7 +579,101 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 
 		glLinkProgram(glprogram);
 		glErrorCheck();
+
+		GLint linkStatus;
+		glGetProgramiv(
+					glprogram,
+					GL_LINK_STATUS,
+					&linkStatus);
+		glErrorCheck();
+
+		if (linkStatus != GL_TRUE)
+		{
+			GLint infoLogLength;
+			glGetProgramiv(
+						glprogram,
+						GL_INFO_LOG_LENGTH,
+						&infoLogLength);
+			glErrorCheck();
+
+			GLchar* infoLog (new GLchar[infoLogLength]);
+			glGetProgramInfoLog(
+							glprogram,
+							infoLogLength,
+							NULL,
+							infoLog);
+			glErrorCheck();
+
+			Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed \"" << infoLog << "\"\n";
+
+			delete[] infoLog;
+
+			glDeleteProgram(glprogram);
+			glErrorCheck();
+
+			glprogram = 0u;
+		}
 	}
+}
+
+/**
+ *
+ */
+static GLuint createShader(
+		GLenum type,
+		const char* source)
+{
+	GLuint shader (glCreateShader(type));
+	glErrorCheck();
+
+	glShaderSource(
+				shader,
+				1u,
+				&source,
+				nullptr);
+	glErrorCheck();
+
+	glCompileShader(shader);
+	glErrorCheck();
+
+	GLint compileSuccess;
+	glGetShaderiv(
+				shader,
+				GL_COMPILE_STATUS,
+				&compileSuccess);
+	glErrorCheck();
+
+	Log(LOG_WARNING) << source;
+
+	if (compileSuccess != GL_TRUE)
+	{
+		GLint infoLogLength;
+		glGetShaderiv(
+					shader,
+					GL_INFO_LOG_LENGTH,
+					&infoLogLength);
+		glErrorCheck();
+
+		GLchar* infoLog (new GLchar[infoLogLength]);
+		glGetShaderInfoLog(
+						shader,
+						infoLogLength,
+						NULL,
+						infoLog);
+		glErrorCheck();
+
+		Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: \"" << infoLog << "\"\n";
+
+		delete[] infoLog;
+
+		glDeleteShader(shader);
+		glErrorCheck();
+
+		shader = 0u;
+	}
+	// NOTE: This does not call glAttachShader()
+	// - see old code for set_fragment_shader() and set_vertex_shader() below_
+	return shader;
 }
 
 /**
@@ -575,23 +681,24 @@ void OpenGL::set_shader(const char* source_yaml_filename)
  */
 void OpenGL::set_fragment_shader(const char* source) // private.
 {
-	fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-	glErrorCheck();
-
-	glShaderSource(
-				fragmentshader,
-				1,
-				&source,
-				nullptr);
-	glErrorCheck();
-
-	glCompileShader(fragmentshader);
-	glErrorCheck();
-
-	glAttachShader(
-				glprogram,
-				fragmentshader);
-	glErrorCheck();
+	fragmentshader = createShader(GL_FRAGMENT_SHADER, source);
+//	fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
+//	glErrorCheck();
+//
+//	glShaderSource(
+//				fragmentshader,
+//				1u,
+//				&source,
+//				nullptr);
+//	glErrorCheck();
+//
+//	glCompileShader(fragmentshader);
+//	glErrorCheck();
+//
+//	glAttachShader(
+//				glprogram,
+//				fragmentshader);
+//	glErrorCheck();
 }
 
 /**
@@ -599,23 +706,24 @@ void OpenGL::set_fragment_shader(const char* source) // private.
  */
 void OpenGL::set_vertex_shader(const char* source) // private.
 {
-	vertexshader = glCreateShader(GL_VERTEX_SHADER);
-	glErrorCheck();
-
-	glShaderSource(
-				vertexshader,
-				1,
-				&source,
-				nullptr);
-	glErrorCheck();
-
-	glCompileShader(vertexshader);
-	glErrorCheck();
-
-	glAttachShader(
-				glprogram,
-				vertexshader);
-	glErrorCheck();
+	vertexshader = createShader(GL_VERTEX_SHADER, source);
+//	vertexshader = glCreateShader(GL_VERTEX_SHADER);
+//	glErrorCheck();
+//
+//	glShaderSource(
+//				vertexshader,
+//				1,
+//				&source,
+//				nullptr);
+//	glErrorCheck();
+//
+//	glCompileShader(vertexshader);
+//	glErrorCheck();
+//
+//	glAttachShader(
+//				glprogram,
+//				vertexshader);
+//	glErrorCheck();
 }
 
 /**
@@ -694,9 +802,11 @@ void OpenGL::setVSync(bool sync)
 	{
 		wglSwapIntervalEXT(interval);	// Other:
 		glErrorCheck();					// SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+										// SDL_GL_SetSwapInterval(0)
+										// cf. Screen::setVideoFlags()
 		//Log(LOG_INFO) << "Made an attempt to set vsync via WGL.";
-	}									// SDL_GL_SetSwapInterval(0)
-}										// cf. Screen::setVideoFlags()
+	}
+}
 
 /**
  * Sets a pointer to a data-buffer where an image is stored.
