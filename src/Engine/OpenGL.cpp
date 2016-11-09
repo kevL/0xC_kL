@@ -117,8 +117,8 @@ OpenGL::OpenGL()
 		gltexture(0u),
 		glprogram(0u),
 		fragmentshader(0u),
-		linear(false),
 		vertexshader(0u),
+		linear(false),
 		buffer(nullptr),
 		buffer_surface(nullptr),
 		iwidth(0),
@@ -267,9 +267,6 @@ void OpenGL::clear() // private.
 	glErrorCheck();
 
 	glClear(GL_COLOR_BUFFER_BIT);
-	glErrorCheck();
-
-	glFlush();
 	glErrorCheck();
 }
 
@@ -421,9 +418,6 @@ void OpenGL::refresh(
 	glEnd();
 	glErrorCheck();
 
-	glFlush();
-	glErrorCheck();
-
 	if (shader_support == true)
 	{
 		glUseProgram(0u);
@@ -482,16 +476,16 @@ void OpenGL::resize( // private.
 /**
  * Sets a shader!
  */
-void OpenGL::set_shader(const char* source_yaml_filename)
+bool OpenGL::set_shader(const char* source_yaml_filename)
 {
 	if (shader_support == true)
 	{
-		GLsizei tCount;
-		GLuint tShader[2u];
-
-		if (fragmentshader != 0u)
+		if (glprogram != 0u) // first: clear any old vertex & fragment shaders ->
 		{
-			if (glprogram != 0u)
+			GLsizei tCount;
+			GLuint tShader[2u];
+
+			if (fragmentshader != 0u)
 			{
 				glGetAttachedShaders(
 								glprogram,
@@ -501,7 +495,7 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 				glErrorCheck();
 
 				if (    (tCount > 0 && tShader[0u] == fragmentshader)
-					 || (tCount > 1 && tShader[1u] == fragmentshader)) // necessary check
+					 || (tCount > 1 && tShader[1u] == fragmentshader))
 				{
 					glDetachShader(
 								glprogram,
@@ -517,11 +511,8 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 
 				fragmentshader = 0u;
 			}
-		}
 
-		if (vertexshader != 0u)
-		{
-			if (glprogram != 0u)
+			if (vertexshader != 0u)
 			{
 				glGetAttachedShaders(
 								glprogram,
@@ -531,7 +522,7 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 				glErrorCheck();
 
 				if (   (tCount > 0 && tShader[0u] == vertexshader)
-					|| (tCount > 1 && tShader[1u] == vertexshader)) // necessary check
+					|| (tCount > 1 && tShader[1u] == vertexshader))
 				{
 					glDetachShader(
 								glprogram,
@@ -549,7 +540,7 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 			}
 		}
 
-		if (source_yaml_filename != nullptr
+		if (source_yaml_filename != nullptr // second: apply new shaders ->
 			&& std::strlen(source_yaml_filename) != 0u)
 		{
 			try
@@ -577,7 +568,7 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 			}
 		}
 
-		glLinkProgram(glprogram);
+		glLinkProgram(glprogram); // third: check integrity ->
 		glErrorCheck();
 
 		GLint linkStatus;
@@ -596,7 +587,7 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 						&infoLogLength);
 			glErrorCheck();
 
-			GLchar* infoLog (new GLchar[infoLogLength]);
+			GLchar* const infoLog (new GLchar[infoLogLength]);
 			glGetProgramInfoLog(
 							glprogram,
 							infoLogLength,
@@ -613,13 +604,20 @@ void OpenGL::set_shader(const char* source_yaml_filename)
 
 			glprogram = 0u;
 		}
+
+		return glprogram		!= 0u
+			&& fragmentshader	!= 0u
+			&& vertexshader		!= 0u;
 	}
+	return false;
 }
 
 /**
- *
+ * Compiles a shader.
+ * @note If this is declared in the header GCC 6.2 spews a warning that it's an
+ * unused function. hint: It's not.
  */
-static GLuint createShader(
+static GLuint createShader( // private.
 		GLenum type,
 		const char* source)
 {
@@ -642,8 +640,6 @@ static GLuint createShader(
 				GL_COMPILE_STATUS,
 				&compileSuccess);
 	glErrorCheck();
-
-	Log(LOG_WARNING) << source;
 
 	if (compileSuccess != GL_TRUE)
 	{
@@ -671,59 +667,31 @@ static GLuint createShader(
 
 		shader = 0u;
 	}
-	// NOTE: This does not call glAttachShader()
-	// - see old code for set_fragment_shader() and set_vertex_shader() below_
 	return shader;
 }
 
 /**
  * Sets a fragment-shader.
  */
-void OpenGL::set_fragment_shader(const char* source) // private.
+void OpenGL::set_fragment_shader(const char* const source) // private.
 {
-	fragmentshader = createShader(GL_FRAGMENT_SHADER, source);
-//	fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-//	glErrorCheck();
-//
-//	glShaderSource(
-//				fragmentshader,
-//				1u,
-//				&source,
-//				nullptr);
-//	glErrorCheck();
-//
-//	glCompileShader(fragmentshader);
-//	glErrorCheck();
-//
-//	glAttachShader(
-//				glprogram,
-//				fragmentshader);
-//	glErrorCheck();
+	if ((fragmentshader = createShader(GL_FRAGMENT_SHADER, source)) != 0u)
+	{
+		glAttachShader(glprogram, fragmentshader);
+		glErrorCheck();
+	}
 }
 
 /**
  * Sets a vertex-shader.
  */
-void OpenGL::set_vertex_shader(const char* source) // private.
+void OpenGL::set_vertex_shader(const char* const source) // private.
 {
-	vertexshader = createShader(GL_VERTEX_SHADER, source);
-//	vertexshader = glCreateShader(GL_VERTEX_SHADER);
-//	glErrorCheck();
-//
-//	glShaderSource(
-//				vertexshader,
-//				1,
-//				&source,
-//				nullptr);
-//	glErrorCheck();
-//
-//	glCompileShader(vertexshader);
-//	glErrorCheck();
-//
-//	glAttachShader(
-//				glprogram,
-//				vertexshader);
-//	glErrorCheck();
+	if ((vertexshader = createShader(GL_VERTEX_SHADER, source)) != 0u)
+	{
+		glAttachShader(glprogram, vertexshader);
+		glErrorCheck();
+	}
 }
 
 /**

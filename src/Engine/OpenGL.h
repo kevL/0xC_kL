@@ -27,30 +27,6 @@ namespace OpenXcom
 class Surface;
 
 
-#ifndef __APPLE__
-	extern PFNGLCREATEPROGRAMPROC		glCreateProgram;
-	extern PFNGLDELETEPROGRAMPROC		glDeleteProgram;
-	extern PFNGLUSEPROGRAMPROC			glUseProgram;
-	extern PFNGLISPROGRAMPROC			glIsProgram;
-	extern PFNGLISSHADERPROC			glIsShader;
-	extern PFNGLCREATESHADERPROC		glCreateShader;
-	extern PFNGLDELETESHADERPROC		glDeleteShader;
-	extern PFNGLSHADERSOURCEPROC		glShaderSource;
-	extern PFNGLCOMPILESHADERPROC		glCompileShader;
-	extern PFNGLATTACHSHADERPROC		glAttachShader;
-	extern PFNGLDETACHSHADERPROC		glDetachShader;
-	extern PFNGLGETATTACHEDSHADERSPROC	glGetAttachedShaders;
-	extern PFNGLGETPROGRAMINFOLOGPROC	glGetProgramInfoLog;
-	extern PFNGLGETPROGRAMIVPROC		glGetProgramiv;
-	extern PFNGLGETSHADERINFOLOGPROC	glGetShaderInfoLog;
-	extern PFNGLGETSHADERIVPROC			glGetShaderiv;
-	extern PFNGLLINKPROGRAMPROC			glLinkProgram;
-	extern PFNGLGETUNIFORMLOCATIONPROC	glGetUniformLocation;
-	extern PFNGLUNIFORM1IPROC			glUniform1i;
-	extern PFNGLUNIFORM2FVPROC			glUniform2fv;
-	extern PFNGLUNIFORM4FVPROC			glUniform4fv;
-#endif
-
 /// Returns an OpenGL error-string.
 std::string strGLError(GLenum glErr);
 
@@ -85,9 +61,9 @@ private:
 			int height);
 
 	/// Sets a fragment-shader.
-	void set_fragment_shader(const char* source);
+	void set_fragment_shader(const char* const source);
 	/// Sets a vertex-shader.
-	void set_vertex_shader(const char* source);
+	void set_vertex_shader(const char* const source);
 
 
 	public:
@@ -100,14 +76,14 @@ private:
 			iwidth,
 			iheight;
 		unsigned
-			iformat,
-			ibpp;
+			ibpp,
+			iformat;
 
 		uint32_t* buffer;
 
 		GLuint
-			gltexture,
 			glprogram,
+			gltexture,
 			fragmentshader,
 			vertexshader;
 
@@ -136,7 +112,7 @@ private:
 				int rightBlackBand);
 
 		/// Sets a shader!
-		void set_shader(const char* source_yaml_filename);
+		bool set_shader(const char* source_yaml_filename);
 
 		/// Tries to set VSync! decidedly uncool if it doesn't work.
 		void setVSync(bool sync);
@@ -149,9 +125,9 @@ private:
 
 }
 
-#else // !__NO_OPENGL
+#else
 namespace OpenXcom
 { class OpenGL{}; }
-#endif // !__NO_OPENGL
+#endif
 
 #endif

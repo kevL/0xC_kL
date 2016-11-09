@@ -381,6 +381,9 @@ void Screen::resetDisplay(bool resetVideo)
 									_flags);
 			if (_screen == nullptr)
 			{
+				if ((_flags & SDL_OPENGL) != 0u)
+					Options::useOpenGL = false;
+
 				throw Exception(SDL_GetError());
 			}
 		}
@@ -472,12 +475,15 @@ void Screen::resetDisplay(bool resetVideo)
 #ifndef __NO_OPENGL
 	if (isOpenGLEnabled() == true)
 	{
+		OpenGL::checkErrors = Options::checkOpenGLErrors;
+
 		_glOutput.init(_baseWidth, _baseHeight);
 		_glOutput.linear = Options::useOpenGLSmoothing;	// the setting in the shader-file will override this though.
-		_glOutput.set_shader(_shader.c_str());			// Could put it after the shader-invocation.
-		_glOutput.setVSync(Options::vSyncForOpenGL);
+														// Could put it after the shader-invocation.
+		if (_glOutput.set_shader(_shader.c_str()) == false)
+			Options::openGLShader = "";
 
-		OpenGL::checkErrors = Options::checkOpenGLErrors;
+		_glOutput.setVSync(Options::vSyncForOpenGL);
 	}
 #endif
 

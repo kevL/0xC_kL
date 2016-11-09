@@ -54,16 +54,16 @@ void RuleManufacture::load(
 		const Ruleset* const rules)
 {
 	// why ->
-	const bool inOut (_partsProduced.size() == 1
-				   && _type == _partsProduced.begin()->first);
+	const bool isDefault (_partsProduced.size() == 1u
+					   && _partsProduced.begin()->first == _type);
 
 	_type = node["type"].as<std::string>(_type);
 
-	if (inOut == true)
+	if (isDefault == true)
 	{
-		const int qtyOut (_partsProduced.begin()->second);
+		const int qtyProduced (_partsProduced.begin()->second);
 		_partsProduced.clear();
-		_partsProduced[_type] = qtyOut;
+		_partsProduced[_type] = qtyProduced;
 	} // End_why. Perhaps to overwrite a previous entry with a subsequently loaded string-ID, perhaps.
 
 	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
@@ -72,7 +72,7 @@ void RuleManufacture::load(
 	_cost			= node["cost"]			.as<int>(_cost);
 	_reqFacs		= node["reqFacs"]		.as<std::map<std::string, int>>(_reqFacs);
 	_partsRequired	= node["partsRequired"]	.as<std::map<std::string, int>>(_partsRequired);
-	_partsProduced	= node["partsProduced"]	.as<std::map<std::string, int>>(_partsProduced);
+	_partsProduced	= node["partsProduced"]	.as<std::map<std::string, int>>(_partsProduced); // question: Does this add to the vector or overwrite it.
 	_category		= node["category"]		.as<std::string>(_category);
 	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
 
