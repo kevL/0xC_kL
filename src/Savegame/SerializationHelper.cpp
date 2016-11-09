@@ -34,6 +34,12 @@ int unserializeInt(
 		Uint8** buffer,
 		Uint8 sizeKey)
 {
+	// The C-spec explicitly requires *(Type*) pointer-accesses to be
+	// * sizeof(Type) aligned. This is not guaranteed by the Uint8** buffer
+	// * passed in here.
+	// * memcpy() is explicitly designed to cope with any address alignment so
+	// * use that to avoid undefined behaviour.
+
 	int ret (0);
 	switch (sizeKey)
 	{
@@ -41,14 +47,24 @@ int unserializeInt(
 			ret = static_cast<int>(**buffer);
 			break;
 		case 2u:
-			ret = *(reinterpret_cast<Sint16*>(*buffer));
+		{
+//			ret = *(reinterpret_cast<Sint16*>(*buffer));
+			Sint16 t;
+			std::memcpy(&t, *buffer, sizeof(t));
+			ret = t;
 			break;
+		}
 		case 3u:
 			assert(false); // no.
 			break;
 		case 4u:
-			ret = static_cast<int>(*(reinterpret_cast<Uint32*>(*buffer)));
+		{
+//			ret = static_cast<int>(*(reinterpret_cast<Uint32*>(*buffer)));
+			Uint32 t;
+			std::memcpy(&t, *buffer, sizeof(t));
+			ret = t;
 			break;
+		}
 
 		default:
 			assert(false); // get out.
@@ -67,6 +83,12 @@ void serializeInt(
 		Uint8 sizeKey,
 		int value)
 {
+	// The C-spec explicitly requires *(Type*) pointer-accesses to be
+	// * sizeof(Type) aligned. This is not guaranteed by the Uint8** buffer
+	// * passed in here.
+	// * memcpy() is explicitly designed to cope with any address alignment so
+	// * use that to avoid undefined behaviour.
+
 	switch (sizeKey)
 	{
 		case 1u:
@@ -74,16 +96,24 @@ void serializeInt(
 			**buffer = static_cast<Uint8>(value);
 			break;
 		case 2u:
+		{
 			assert(value < 65536);
-			*(reinterpret_cast<Sint16*>(*buffer)) = static_cast<Sint16>(value);
+//			*(reinterpret_cast<Sint16*>(*buffer)) = static_cast<Sint16>(value);
+			Sint16 s16Value (value);
+			std::memcpy(*buffer, &s16Value, sizeof(Sint16));
 			break;
+		}
 		case 3u:
 			assert(false); // no.
 			break;
 		case 4u:
+		{
 			assert(value < 4294967296);
-			*(reinterpret_cast<Uint32*>(*buffer)) = static_cast<Uint32>(value);
+//			*(reinterpret_cast<Uint32*>(*buffer)) = static_cast<Uint32>(value);
+			Uint32 u32Value (value);
+			std::memcpy(*buffer, &u32Value, sizeof(Uint32));
 			break;
+		}
 
 		default:
 			assert(false); // get out.
