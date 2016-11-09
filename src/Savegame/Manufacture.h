@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_PRODUCTION_H
-#define OPENXCOM_PRODUCTION_H
+#ifndef OPENXCOM_MANUFACTURE_H
+#define OPENXCOM_MANUFACTURE_H
 
 #include <yaml-cpp/yaml.h>
 
@@ -43,11 +43,11 @@ enum ProductionProgress
 };
 
 
-class Production
+class Manufacture
 {
 
 private:
-	const RuleManufacture* _manfRule;
+	const RuleManufacture* _mfRule;
 
 	bool
 		_infinite,
@@ -67,16 +67,16 @@ private:
 
 	public:
 		/// Tracks a Base manufacturing project.
-		explicit Production(const RuleManufacture* const manfRule);
+		explicit Manufacture(const RuleManufacture* const mfRule);
 		/// Cleans the Base manufacturing project.
-		~Production();
+		~Manufacture();
 
 		/// Loads from YAML.
 		void load(const YAML::Node& node);
 		/// Saves to YAML.
 		YAML::Node save() const;
 
-		/// Gets the rules for the Production.
+		/// Gets the rules for the Manufacture.
 		const RuleManufacture* getRules() const;
 
 		/// Gets the total quantity to produce.
@@ -84,14 +84,14 @@ private:
 		/// Sets the total quantity to produce.
 		void setProductionTotal(int quantity);
 
-		/// Gets if the Production is to produce an infinite quantity.
+		/// Gets if the Manufacture is to produce an infinite quantity.
 		bool getInfinite() const;
-		/// Sets if the Production is to produce an infinite quantity.
+		/// Sets if the Manufacture is to produce an infinite quantity.
 		void setInfinite(bool infinite);
 
-		/// Gets the quantity of assigned engineers to the Production.
+		/// Gets the quantity of assigned engineers to the Manufacture.
 		int getAssignedEngineers() const;
-		/// Gets the quantity of assigned engineers to the Production.
+		/// Gets the quantity of assigned engineers to the Manufacture.
 		void setAssignedEngineers(int engineers);
 
 		/// Gets if the produced items are to be sold immediately.
@@ -102,26 +102,24 @@ private:
 		/// Gets the quantity of produced items so far.
 		int getProducedQuantity() const;
 
-		/// Advances the Production by a step.
+		/// Advances the Manufacture.
 		ProductionProgress step(
 				Base* const base,
-				SavedGame* const gameSave,
-				const Ruleset* const rules);
+				SavedGame* const gameSave);
 
-		/// Starts the Production.
+		/// Starts the Manufacture.
 		void startProduction(
 				Base* const base,
-				SavedGame* const gameSave,
-				const Ruleset* const rules) const;
+				SavedGame* const gameSave) const;
 
-		/// Gets the time till the Production is completed.
+		/// Gets the time till the Manufacture is completed.
 		bool tillFinish(
 				int& days,
 				int& hours) const;
 
-		/// Gets the time spent on the Production so far.
+		/// Gets the time spent on the Manufacture so far.
 //		int getTimeSpent() const;
-		/// Sets the time spent on the Production so far.
+		/// Sets the time spent on the Manufacture so far.
 //		void setTimeSpent(int spent);
 };
 

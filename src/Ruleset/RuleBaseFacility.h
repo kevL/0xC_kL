@@ -88,7 +88,7 @@ private:
 		std::string getType() const;
 
 		/// Gets the facility's requirements.
-		const std::vector<std::string>& getRequirements() const;
+		const std::vector<std::string>& getResearchRequirements() const;
 
 		/// Gets the facility's shape sprite.
 		int getSpriteShape() const;

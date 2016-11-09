@@ -64,7 +64,7 @@ private:
 		/// dTor.
 		~ManufactureCostsState();
 
-		/// Populates the table with manufacture-information.
+		/// Populates the table with Manufacture info.
 		void init() override;
 
 		/// Handler for the Cancel button.

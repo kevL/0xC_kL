@@ -207,15 +207,15 @@ private:
 	std::vector<Ufo*> _ufos;
 	std::vector<Waypoint*> _waypoints;
 
-	/// Checks whether a ResearchProject can be started.
-	bool isProjectAvailable(const RuleResearch* const resRule) const;
-	/// Checks whether a RuleResearch has all its prerequisites met.
-	bool checkPrerequisites(const RuleResearch* const resRule) const;
-	/// Checks whether or not required research has been met.
-	bool hasRequiredResearch(const RuleResearch* const resRule) const;
-	/// Fills a vector with the forced-types of completed ResearchProjects.
-	void tabulateForced(std::vector<const RuleResearch*>& forced) const;
-	/// Gets the list of newly available ResearchProjects that appear when a project is completed.
+	/// Checks if a ResearchProject can be started.
+	bool isProjectOpen(const RuleResearch* const resRule) const;
+	/// Checks if a RuleResearch has had any of its prerequisites discovered.
+	bool checkPrerequisiteResearch(const RuleResearch* const resRule) const;
+	/// Checks if a RuleResearch has had all its required research discovered.
+	bool checkRequiredResearch(const RuleResearch* const resRule) const;
+	/// Tabulates a list with the forced-dependents of completed ResearchProjects.
+	void tabulateForcedResearch(std::vector<const RuleResearch*>& forced) const;
+	/// Tabulates a list with available ResearchProjects when a project is completed.
 	void getDependentResearchBasic(
 			std::vector<const RuleResearch*>& dependents,
 			const RuleResearch* const resRule,
@@ -255,7 +255,7 @@ private:
 		void setLabel(const std::wstring& label);
 
 		/// Gets this SavedGame's Ruleset.
-//		const Ruleset* getRules() const;
+		const Ruleset* getRules() const;
 
 		/// Sets the SavedGame's difficulty.
 		void setDifficulty(DifficultyLevel diff);
@@ -360,36 +360,36 @@ private:
 		/// Searches through ResearchGenerals for specified research-type & status.
 		bool searchResearch(
 				const std::string& type,
-				const ResearchStatus status = RS_COMPLETED) const;
+				const ResearchStatus status = RG_DISCOVERED) const;
 		/// Searches through ResearchGenerals for specified research-rule & status.
 		bool searchResearch(
 				const RuleResearch* resRule,
-				const ResearchStatus status = RS_COMPLETED) const;
+				const ResearchStatus status = RG_DISCOVERED) const;
 		/// Sets the status of a ResearchGeneral by research-type.
 		bool setResearchStatus(
 				const std::string& type,
-				const ResearchStatus status = RS_COMPLETED);
+				const ResearchStatus status = RG_DISCOVERED);
 		/// Sets the status of a ResearchGeneral by research-rule.
 		bool setResearchStatus(
-				const RuleResearch* resRule,
-				const ResearchStatus status = RS_COMPLETED);
+				const RuleResearch* const resRule,
+				const ResearchStatus status = RG_DISCOVERED);
 
 		/// Adds a finished ResearchProject.
 		void addFinishedResearch(const RuleResearch* const resRule);
-		/// Gets a list of ResearchProjects that can be started at a particular Base.
-		void getAvailableResearchProjects(
+		/// Tabulates a list of ResearchProjects that can be started at a Base.
+		void tabulateOpenResearchProjects(
 				std::vector<const RuleResearch*>& availableProjects,
 				Base* const base) const;
-		/// Gets a list of Productions that can be manufactured at a particular Base.
-		void getAvailableProductions(
-				std::vector<const RuleManufacture*>& availableProductions,
+		/// Tabulates a list of Manufacture that can be started at a Base.
+		void tabulateAvailableManufacture(
+				std::vector<const RuleManufacture*>& availableProjects,
 				const Base* const base) const;
-		/// Gets the list of newly available ResearchProjects that appear when a ResearchProject is completed.
+		/// Tabulates a list of ResearchProjects that appears when a ResearchProject is completed.
 		void getPopupResearch(
 				std::vector<const RuleResearch*>& dependents,
 				const RuleResearch* const resRule,
 				Base* const base) const;
-		/// Gets the list of newly available Productions that appear when a ResearchProject is completed.
+		/// Tabulates a list of Manufacture that appears when a ResearchProject is completed.
 		void getPopupManufacture(
 				std::vector<const RuleManufacture*>& dependents,
 				const RuleResearch* const resRule) const;

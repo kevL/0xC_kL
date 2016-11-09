@@ -1255,7 +1255,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 						}
 					}
 				}
-				else if (_gameSave->isResearched(itRule->getRequirements()) == true)
+				else if (_gameSave->isResearched(itRule->getResearchRequirements()) == true)
 				{
 					wst1 += tr(itRule->getType());
 

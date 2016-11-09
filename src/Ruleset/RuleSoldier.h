@@ -80,7 +80,7 @@ private:
 		/// Gets the Soldier's type.
 		const std::string& getType() const;
 		/// Gets the Soldier's requirements.
-		const std::vector<std::string>& getRequirements() const;
+		const std::vector<std::string>& getResearchRequirements() const;
 
 		/// Gets the minimum stats for the random stats generator.
 		UnitStats getMinStats() const;

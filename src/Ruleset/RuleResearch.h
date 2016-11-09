@@ -60,9 +60,9 @@ private:
 		_points;
 
 	std::vector<std::string>
-		_forces,
+		_forced,
 		_getOneFree,
-		_prerequisites,
+		_prerequisite,
 		_required;
 
 
@@ -92,24 +92,24 @@ private:
 		/// Gets the absolute requirements for this RuleResearch.
 		const std::vector<std::string>& getRequiredResearch() const;
 
-		/// Gets the list of RuleResearch's unlocked by this RuleResearch.
+		/// Gets a list of research-types unlocked by this RuleResearch.
 		const std::vector<std::string>& getForcedResearch() const;
 
-		/// Gets the list of research-types granted randomly for free by this one.
+		/// Gets a list of research-types granted randomly for free by this RuleResearch.
 		const std::vector<std::string>& getGetOneFree() const;
 
-		/// Gets an alternate look-up for the Ufopaedia.
+		/// Gets an alternate look-up string for the Ufopaedia.
 		const std::string& getUfopaediaEntry() const;
 
-		/// Checks if this RuleResearch needs a corresponding Item for research.
+		/// Checks if this RuleResearch needs a corresponding item for research.
 		bool needsItem() const;
-		/// Checks if this RuleResearch consumes its corresponding Item when research completes.
+		/// Checks if this RuleResearch consumes its corresponding item when research completes.
 		bool destroyItem() const;
 
 		/// Gets if this RuleResearch should be flagged as seen by default.
 		bool getMarkSeen() const;
 
-		/// Gets the list priority for this RuleResearch.
+		/// Gets the list-priority for this RuleResearch.
 		int getListOrder() const;
 };
 

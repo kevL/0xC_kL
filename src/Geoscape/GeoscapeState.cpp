@@ -110,7 +110,7 @@
 #include "../Savegame/GameTime.h"
 #include "../Savegame/ItemContainer.h"
 #include "../Savegame/MissionStatistics.h"
-#include "../Savegame/Production.h"
+#include "../Savegame/Manufacture.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/ResearchProject.h"
 #include "../Savegame/SavedBattleGame.h"
@@ -2480,28 +2480,28 @@ void GeoscapeState::time1Hour()
 
 
 	std::vector<ProductionCompleteInfo> prodEvents;
-	// Note that if transfers arrive at the same time Production(s) complete
+	// Note that if transfers arrive at the same time Manufacture(s) complete
 	// the gotoBase button handling below is obviated by RMB on transfers ....
 	// But that's been amended by showing Transfers after ProdCompleted screens;
 	// although I'm not sure how this will interact with time1Day()'s facility
 	// construction and research completed screens.
 
-	for (std::vector<Base*>::const_iterator // handle Production
+	for (std::vector<Base*>::const_iterator // handle Manufacture
 			i = _gameSave->getBases()->begin();
 			i != _gameSave->getBases()->end();
 			++i)
 	{
-		std::map<Production*, ProductionProgress> progress;
+		std::map<Manufacture*, ProductionProgress> progress;
 
-		for (std::vector<Production*>::const_iterator
-				j = (*i)->getProductions().begin();
-				j != (*i)->getProductions().end();
+		for (std::vector<Manufacture*>::const_iterator
+				j = (*i)->getManufacture().begin();
+				j != (*i)->getManufacture().end();
 				++j)
 		{
-			progress[*j] = (*j)->step(*i, _gameSave, _rules);
+			progress[*j] = (*j)->step(*i, _gameSave);
 		}
 
-		for (std::map<Production*, ProductionProgress>::const_iterator
+		for (std::map<Manufacture*, ProductionProgress>::const_iterator
 				j = progress.begin();
 				j != progress.end();
 				++j)
@@ -2519,7 +2519,7 @@ void GeoscapeState::time1Hour()
 															tr(j->first->getRules()->getType()),
 															(arrivals == false),
 															j->second));
-					(*i)->removeProduction(j->first);
+					(*i)->clearManufactureProject(j->first);
 			}
 		}
 
@@ -2781,7 +2781,7 @@ void GeoscapeState::time1Day()
 			const std::string& resType (resRule->getType());
 
 			const bool isLiveAlien (_rules->getUnitRule(resType) != nullptr);
-			(*i)->removeResearch(*j, isLiveAlien == true);
+			(*i)->clearResearchProject(*j, isLiveAlien == true);
 
 			bool
 				gofCrack,
@@ -2855,7 +2855,7 @@ void GeoscapeState::time1Day()
 			{
 				if ((*k)->getCost() == 0
 					|| _rules->getUnitRule((*k)->getType()) != nullptr
-					|| _gameSave->searchResearch(*k, RS_HIDDEN) == false)
+					|| _gameSave->searchResearch(*k, RG_LOCKED) == false)
 				{
 					k = popupResearch.erase(k); // do NOT show (1)no-cost (2)liveAliens (3)twice.
 				}
@@ -2875,18 +2875,18 @@ void GeoscapeState::time1Day()
 					&& itRule->getBattleType() == BT_FIREARM
 					&& itRule->getCompatibleAmmo()->empty() == false)
 				{
-					const RuleManufacture* const manfRule (_rules->getManufacture(itRule->getType()));
-					if (manfRule != nullptr
-						&& manfRule->getRequirements().empty() == false)
+					const RuleManufacture* const mfRule (_rules->getManufacture(itRule->getType()));
+					if (mfRule != nullptr
+						&& mfRule->getResearchRequirements().empty() == false)
 					{
-						const std::vector<std::string>& required (manfRule->getRequirements());
+						const std::vector<std::string>& required (mfRule->getResearchRequirements());
 						const RuleItem* const aRule (_rules->getItemRule(itRule->getCompatibleAmmo()->front()));
 						if (aRule != nullptr
 							&& std::find(
 									required.begin(),
 									required.end(),
 									aRule->getType()) != required.end()
-							&& _gameSave->isResearched(manfRule->getRequirements()) == false)
+							&& _gameSave->isResearched(mfRule->getResearchRequirements()) == false)
 						{
 							resEvents.push_back(new ResearchRequiredState(itRule));
 						}
@@ -2924,7 +2924,7 @@ void GeoscapeState::time1Day()
 					{
 						if ((*l)->getRules() == resRule)
 						{
-							(*k)->removeResearch(*l);
+							(*k)->clearResearchProject(*l);
 							if (resRule->needsItem() == true)
 								(*k)->getStorageItems()->addItem(resType);
 

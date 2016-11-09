@@ -46,43 +46,50 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
-#include "../Savegame/Production.h"
+#include "../Savegame/Manufacture.h"
 
 
 namespace OpenXcom
 {
 
 /**
- * Initializes all elements in the Production settings screen (start Production).
+ * Initializes all elements in the ManufactureInfo screen (start Manufacture).
  * @param base		- pointer to the Base to get info from
- * @param manfRule	- pointer to the RuleManufacture to produce
+ * @param mfRule	- pointer to the RuleManufacture to start
  */
 ManufactureInfoState::ManufactureInfoState(
 		Base* const base,
-		const RuleManufacture* const manfRule)
+		const RuleManufacture* const mfRule)
 	:
 		_base(base),
-		_manfRule(manfRule),
-		_production(nullptr),
-		_producedValue(0)
+		_mfRule(mfRule),
+		_manufacture(nullptr),
+		_valueProduct(0),
+		_start(true)
 {
+	_manufacture = new Manufacture(_mfRule);
+	_base->addManufactureProject(_manufacture);
+
 	buildUi();
 }
 
 /**
- * Initializes all elements in the Production settings screen (modify Production).
+ * Initializes all elements in the ManufactureInfo screen (adjust Manufacture).
  * @param base			- pointer to the Base to get info from
- * @param production	- pointer to the Production to modify
+ * @param manufacture	- pointer to the Manufacture to adjust
  */
 ManufactureInfoState::ManufactureInfoState(
 		Base* const base,
-		Production* const production)
+		Manufacture* const manufacture)
 	:
 		_base(base),
-		_manfRule(nullptr),
-		_production(production),
-		_producedValue(0)
+		_mfRule(nullptr),
+		_manufacture(manufacture),
+		_valueProduct(0),
+		_start(false)
 {
+	_mfRule = _manufacture->getRules();
+
 	buildUi();
 }
 
@@ -156,7 +163,7 @@ void ManufactureInfoState::buildUi() // private.
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_txtTitle->setText(tr(_manfRule != nullptr ? _manfRule->getType() : _production->getRules()->getType()));
+	_txtTitle->setText(tr(_mfRule->getType()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
@@ -202,13 +209,7 @@ void ManufactureInfoState::buildUi() // private.
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureInfoState::btnOkClick),
 							Options::keyOkKeypad);
 
-	if (_production == nullptr)
-	{
-		_production = new Production(_manfRule);
-		_base->addProduction(_production);
-	}
-
-	_btnSell->setPressed(_production->getAutoSales() == true);
+	_btnSell->setPressed(_manufacture->getAutoSales() == true);
 
 	initProfit();
 	assignEngineers();
@@ -226,47 +227,45 @@ void ManufactureInfoState::buildUi() // private.
 }
 
 /**
- * Caches production-value for profit calculations.
+ * Caches manufacture-value for profit calculations.
  */
 void ManufactureInfoState::initProfit() // private.
 {
 	int sellValue;
-	const RuleManufacture* const manfRule (_production->getRules());
 	for (std::map<std::string, int>::const_iterator
-			i = manfRule->getProducedItems().begin();
-			i != manfRule->getProducedItems().end();
+			i = _mfRule->getProducedItems().begin();
+			i != _mfRule->getProducedItems().end();
 			++i)
 	{
-		if (manfRule->isCraft() == true)
+		if (_mfRule->isCraft() == true)
 			sellValue = _game->getRuleset()->getCraft(i->first)->getSellCost();
 		else
 			sellValue = _game->getRuleset()->getItemRule(i->first)->getSellCost();
 
-		_producedValue += sellValue * i->second;
+		_valueProduct += sellValue * i->second;
 	}
 }
 
 /**
- * Stops this Production. Exits to the previous screen.
+ * Stops this Manufacture and exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::btnStopClick(Action*) // private.
 {
-	_base->removeProduction(_production);
+	_base->clearManufactureProject(_manufacture);
 	exitState();
 }
 
 /**
- * Starts this Production (if new). Exits to the previous screen.
+ * Starts the Manufacture if '_start' and exits to the previous screen.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::btnOkClick(Action*) // private.
 {
-	if (_manfRule != nullptr)
-		_production->startProduction(
+	if (_start == true)
+		_manufacture->startProduction(
 								_base,
-								_game->getSavedGame(),
-								_game->getRuleset());
+								_game->getSavedGame());
 	exitState();
 }
 
@@ -276,13 +275,11 @@ void ManufactureInfoState::btnOkClick(Action*) // private.
 void ManufactureInfoState::exitState() // private.
 {
 	_game->popState();
-
-	if (_manfRule != nullptr)
-		_game->popState();
+	if (_start == true) _game->popState();
 }
 
 /**
- * Flags auto-sales of production.
+ * Flags auto-sales of manufacture.
  * @note This needs to be done on mouse-release for ... uh, some quirky reason.
  * Probably to get/set an accurate state for pressed/unpressed ....
  * @param action - pointer to an Action
@@ -293,7 +290,7 @@ void ManufactureInfoState::btnSellRelease(Action* action) // private.
 	{
 		case SDL_BUTTON_LEFT:
 		case SDL_BUTTON_RIGHT:
-			_production->setAutoSales(_btnSell->getPressed() == true);
+			_manufacture->setAutoSales(_btnSell->getPressed() == true);
 			assignEngineers();
 	}
 }
@@ -309,15 +306,15 @@ void ManufactureInfoState::assignEngineers() // private.
 
 	std::wostringstream woststr;
 
-	woststr << L"> \x01" << _production->getAssignedEngineers();
+	woststr << L"> \x01" << _manufacture->getAssignedEngineers();
 	_txtEngineers->setText(woststr.str());
 
 	woststr.str(L"");
 	woststr << L"> \x01";
-	if (_production->getInfinite() == true)
+	if (_manufacture->getInfinite() == true)
 		woststr << L"oo";
 	else
-		woststr << _production->getProductionTotal();
+		woststr << _manufacture->getProductionTotal();
 	_txtUnits->setText(woststr.str());
 
 	woststr.str(L"");
@@ -330,7 +327,7 @@ void ManufactureInfoState::assignEngineers() // private.
 	}
 	else
 		st = "STR_MONTHLY_COST_";
-	if (_production->getInfinite() == true) //|| _production->getAutoSales() == true
+	if (_manufacture->getInfinite() == true) //|| _manufacture->getAutoSales() == true
 		woststr << L" per";
 	_txtProfit->setText(tr(st).arg(woststr.str()));
 
@@ -338,10 +335,10 @@ void ManufactureInfoState::assignEngineers() // private.
 	int
 		days,
 		hours;
-	if (_production->tillFinish(days, hours) == true)
+	if (_manufacture->tillFinish(days, hours) == true)
 	{
 		woststr << days << L"\n" << hours;
-		if (_production->getInfinite() == true) //|| _production->getAutoSales() == true
+		if (_manufacture->getInfinite() == true) //|| _manufacture->getAutoSales() == true
 			woststr << L" per";
 	}
 	else
@@ -362,17 +359,17 @@ int ManufactureInfoState::calcProfit() // private.
 		qty,
 		sellValue;
 
-	if (_production->getAutoSales() == true)
-		sellValue = _producedValue;
+	if (_manufacture->getAutoSales() == true)
+		sellValue = _valueProduct;
 	else
 		sellValue = 0;
 
-	if (_production->getInfinite() == true)
+	if (_manufacture->getInfinite() == true)
 		qty = 1;
 	else
-		qty = _production->getProductionTotal() - _production->getProducedQuantity();
+		qty = _manufacture->getProductionTotal() - _manufacture->getProducedQuantity();
 
-	return qty * (sellValue - _production->getRules()->getManufactureCost());
+	return qty * (sellValue - _mfRule->getManufactureCost());
 }
 
 /**
@@ -381,7 +378,7 @@ int ManufactureInfoState::calcProfit() // private.
  * @param woststr	- reference to the result-string
  * @return, true if profit else cost
  */
-bool ManufactureInfoState::formatProfit( // private.
+bool ManufactureInfoState::formatProfit( // private/static.
 		int profit,
 		std::wostringstream& woststr)
 {
@@ -462,7 +459,7 @@ void ManufactureInfoState::engineersLessRelease(Action* action) // private.
  */
 void ManufactureInfoState::unitsMorePress(Action* action) // private.
 {
-	if (_production->getInfinite() == false // We can't increase over infinite :) [cf. Cantor]
+	if (_manufacture->getInfinite() == false // We can't increase over infinite :) [cf. Cantor]
 		&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		_timerUnitsMore->setInterval(Timer::SCROLL_SLOW);
@@ -486,7 +483,7 @@ void ManufactureInfoState::unitsMoreRelease(Action* action) // private.
  */
 void ManufactureInfoState::unitsMoreClick(Action* action) // private.
 {
-	if (_production->getInfinite() == false) // We can't increase over infinite :) [cf. Cantor]
+	if (_manufacture->getInfinite() == false) // We can't increase over infinite :) [cf. Cantor]
 	{
 		switch (action->getDetails()->button.button)
 		{
@@ -495,11 +492,11 @@ void ManufactureInfoState::unitsMoreClick(Action* action) // private.
 				break;
 
 			case SDL_BUTTON_RIGHT:
-				if (_production->getRules()->isCraft() == true)
+				if (_manufacture->getRules()->isCraft() == true)
 					unitsMoreByValue(std::numeric_limits<int>::max());
 				else
 				{
-					_production->setInfinite(true);
+					_manufacture->setInfinite(true);
 					assignEngineers();
 				}
 		}
@@ -538,7 +535,7 @@ void ManufactureInfoState::unitsLessClick(Action* action) // private.
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
-			if (_production->getInfinite() == false)
+			if (_manufacture->getInfinite() == false)
 			{
 				unitsLessByValue(stepDelta());
 				break;
@@ -546,8 +543,8 @@ void ManufactureInfoState::unitsLessClick(Action* action) // private.
 			// no break;
 
 		case SDL_BUTTON_RIGHT:
-			_production->setInfinite(false);
-			_production->setProductionTotal(_production->getProducedQuantity() + 1);
+			_manufacture->setInfinite(false);
+			_manufacture->setProductionTotal(_manufacture->getProducedQuantity() + 1);
 			assignEngineers();
 	}
 }
@@ -567,7 +564,7 @@ void ManufactureInfoState::think() // private.
 }
 
 /**
- * Adds engineers to the production.
+ * Adds engineers to the manufacture.
  */
 void ManufactureInfoState::onEngineersMore() // private.
 {
@@ -576,7 +573,7 @@ void ManufactureInfoState::onEngineersMore() // private.
 }
 
 /**
- * Adds a given quantity of engineers to the production if possible.
+ * Adds a given quantity of engineers to the manufacture if possible.
  * @param delta - quantity to add
  */
 void ManufactureInfoState::engineersMoreByValue(int delta) // private.
@@ -590,14 +587,14 @@ void ManufactureInfoState::engineersMoreByValue(int delta) // private.
 		delta = std::min(delta,
 						 std::min(availableEngineers,
 								  availableWorkSpace));
-		_production->setAssignedEngineers(_production->getAssignedEngineers() + delta);
+		_manufacture->setAssignedEngineers(_manufacture->getAssignedEngineers() + delta);
 		_base->setEngineers(_base->getEngineers() - delta);
 		assignEngineers();
 	}
 }
 
 /**
- * Subtracts engineers from the production.
+ * Subtracts engineers from the manufacture.
  */
 void ManufactureInfoState::onEngineersLess() // private.
 {
@@ -606,16 +603,16 @@ void ManufactureInfoState::onEngineersLess() // private.
 }
 
 /**
- * Subtracts a given quantity of engineers from the production if possible.
+ * Subtracts a given quantity of engineers from the manufacture if possible.
  * @param delta - quantity to subtract
  */
 void ManufactureInfoState::engineersLessByValue(int delta) // private.
 {
-	const int assigned (_production->getAssignedEngineers());
+	const int assigned (_manufacture->getAssignedEngineers());
 	if (assigned != 0)
 	{
 		delta = std::min(delta, assigned);
-		_production->setAssignedEngineers(assigned - delta);
+		_manufacture->setAssignedEngineers(assigned - delta);
 		_base->setEngineers(_base->getEngineers() + delta);
 		assignEngineers();
 	}
@@ -636,8 +633,7 @@ void ManufactureInfoState::onUnitsMore() // private.
  */
 void ManufactureInfoState::unitsMoreByValue(int delta) // private.
 {
-	if (_production->getRules()->isCraft() == true
-		&& _base->getFreeHangars() == 0)
+	if (_mfRule->isCraft() == true && _base->getFreeHangars() == 0)
 	{
 		_timerUnitsMore->stop();
 
@@ -651,14 +647,14 @@ void ManufactureInfoState::unitsMoreByValue(int delta) // private.
 	}
 	else
 	{
-		const int total (_production->getProductionTotal());
+		const int total (_manufacture->getProductionTotal());
 		delta = std::min(delta,
 						 std::numeric_limits<int>::max() - total);
 
-		if (_production->getRules()->isCraft() == true)
+		if (_mfRule->isCraft() == true)
 			delta = std::min(delta,
 							_base->getFreeHangars());
-		_production->setProductionTotal(total + delta);
+		_manufacture->setProductionTotal(total + delta);
 		assignEngineers();
 	}
 }
@@ -678,10 +674,10 @@ void ManufactureInfoState::onUnitsLess() // private.
  */
 void ManufactureInfoState::unitsLessByValue(int delta) // private.
 {
-	const int total (_production->getProductionTotal());
+	const int total (_manufacture->getProductionTotal());
 	delta = std::min(delta,
-					 total - (_production->getProducedQuantity() + 1));
-	_production->setProductionTotal(total - delta);
+					 total - (_manufacture->getProducedQuantity() + 1));
+	_manufacture->setProductionTotal(total - delta);
 	assignEngineers();
 }
 

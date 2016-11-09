@@ -64,7 +64,7 @@ private:
 		* _timerMore;
 	Window* _window;
 
-	/// Builds dialog.
+	/// Builds the UI.
 	void buildUi();
 	/// Updates counts of assigned/free scientists and available lab-space.
 	void updateInfo();
@@ -97,11 +97,11 @@ private:
 
 
 	public:
-		/// Creates a ResearchProject state.
+		/// Creates a ResearchInfo state.
 		ResearchInfoState(
 				Base* const base,
 				const RuleResearch* const resRule);
-		/// Creates a ResearchProject state.
+		/// Creates a ResearchInfo state.
 		ResearchInfoState(
 				Base* const base,
 				ResearchProject* const project);

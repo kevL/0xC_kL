@@ -45,7 +45,7 @@ namespace OpenXcom
 {
 
 /**
- * Screen that displays a table of manufacturing costs.
+ * Screen that displays a table of Manufacture costs.
  */
 ManufactureCostsState::ManufactureCostsState()
 {
@@ -124,23 +124,24 @@ ManufactureCostsState::~ManufactureCostsState()
 {}
 
 /**
- * Populates the table with manufacture information.
+ * Populates the table with Manufacture info.
  */
 void ManufactureCostsState::init()
 {
-	std::vector<const RuleManufacture*> prodRules;
-	const RuleManufacture* prodRule;
+	const Ruleset* const rules (_game->getRuleset());
 
-	const std::vector<std::string>& allProduction (_game->getRuleset()->getManufactureList());
+	std::vector<const RuleManufacture*> unlocked;
+	const RuleManufacture* mfRule;
+
 	for (std::vector<std::string>::const_iterator
-			i = allProduction.begin();
-			i != allProduction.end();
+			i = rules->getManufactureList().begin();
+			i != rules->getManufactureList().end();
 			++i)
 	{
-		prodRule = _game->getRuleset()->getManufacture(*i);
+		mfRule = rules->getManufacture(*i);
 
-		if (_game->getSavedGame()->isResearched(prodRule->getRequirements()) == true)
-			prodRules.push_back(prodRule);
+		if (_game->getSavedGame()->isResearched(mfRule->getResearchRequirements()) == true)
+			unlocked.push_back(mfRule);
 	}
 
 	size_t r (0u);
@@ -152,8 +153,8 @@ void ManufactureCostsState::init()
 	float profitAspect;
 
 	for (std::vector<const RuleManufacture*>::const_iterator
-			i = prodRules.begin();
-			i != prodRules.end();
+			i = unlocked.begin();
+			i != unlocked.end();
 			++i, r += 3u)
 	{
 		woststr.str(L"");
@@ -170,18 +171,17 @@ void ManufactureCostsState::init()
 
 		requiredCosts = 0;
 
-		const std::map<std::string, int> required ((*i)->getRequiredItems());
 		for (std::map<std::string, int>::const_iterator
-				j = required.begin();
-				j != required.end();
+				j = (*i)->getRequiredItems().begin();
+				j != (*i)->getRequiredItems().end();
 				++j)
 		{
-			requiredCosts += _game->getRuleset()->getItemRule((*j).first)->getSellCost() * (*j).second;
+			requiredCosts += rules->getItemRule((*j).first)->getSellCost() * (*j).second;
 
 			woststr.str(L"");
 			woststr << L"(" << (*j).second << L") " << tr((*j).first);
 
-			if (j == required.begin())
+			if (j == (*i)->getRequiredItems().begin())
 				_lstProduction->setCellText(r, 4u, woststr.str());
 			else
 			{
@@ -197,19 +197,18 @@ void ManufactureCostsState::init()
 
 		profit = 0;
 
-		const std::map<std::string, int> producedItems ((*i)->getProducedItems());
 		for (std::map<std::string, int>::const_iterator
-				j = producedItems.begin();
-				j != producedItems.end();
+				j = (*i)->getProducedItems().begin();
+				j != (*i)->getProducedItems().end();
 				++j)
 		{
 			woststr.str(L"");
 			woststr << L"< " << tr((*j).first);
 
 			if ((*i)->isCraft() == true)
-				salesCost = _game->getRuleset()->getCraft((*j).first)->getSellCost();
+				salesCost = rules->getCraft((*j).first)->getSellCost();
 			else
-				salesCost = _game->getRuleset()->getItemRule((*j).first)->getSellCost();
+				salesCost = rules->getItemRule((*j).first)->getSellCost();
 
 			salesCost *= (*j).second;
 			profit += salesCost;

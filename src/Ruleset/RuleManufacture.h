@@ -29,6 +29,9 @@
 namespace OpenXcom
 {
 
+class Ruleset;
+
+
 /**
  * Represents the information needed to manufacture an object.
  */
@@ -51,7 +54,8 @@ private:
 
 	std::map<std::string, int>
 		_producedItems,
-		_requiredItems;
+		_requiredItems,
+		_requiredFacilities;
 
 
 	public:
@@ -61,7 +65,8 @@ private:
 		/// Loads the RuleManufacture from YAML.
 		void load(
 				const YAML::Node& node,
-				int listOrder);
+				int listOrder,
+				const Ruleset* const rules);
 
 		/// Gets the RuleManufacture's type.
 		const std::string& getType() const;
@@ -72,7 +77,7 @@ private:
 		bool isCraft() const;
 
 		/// Gets the RuleManufacture's requirements.
-		const std::vector<std::string>& getRequirements() const;
+		const std::vector<std::string>& getResearchRequirements() const;
 
 		/// Gets the required workshop-space.
 		int getSpaceRequired() const;
@@ -81,6 +86,8 @@ private:
 		/// Gets the cost to produce one object.
 		int getManufactureCost() const;
 
+		/// Gets the list of BaseFacilities required to produce the products.
+		const std::map<std::string, int>& getRequiredFacilities() const;
 		/// Gets the list of items required to produce one object.
 		const std::map<std::string, int>& getRequiredItems() const;
 		/// Gets the list of items produced by completing one object.

@@ -319,7 +319,7 @@ const std::string& RuleItem::getLabel() const
  * Gets the list of research required to use the Item.
  * @return, the list of research IDs
  */
-const std::vector<std::string>& RuleItem::getRequirements() const
+const std::vector<std::string>& RuleItem::getResearchRequirements() const
 {
 	return _required;
 }

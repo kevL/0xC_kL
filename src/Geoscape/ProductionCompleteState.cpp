@@ -44,12 +44,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in a Production Complete window.
+ * Initializes all the elements in a Manufacture Complete window.
  * @param base			- pointer to Base the production belongs to
  * @param item			- reference to the item that finished producing
  * @param geoState		- pointer to GeoscapeState
  * @param gotoBaseBtn	- true to show the goToBase button
- * @param endType		- what ended the production (Production.h)
+ * @param endType		- what ended the production (Manufacture.h)
  */
 ProductionCompleteState::ProductionCompleteState(
 		Base* const base,

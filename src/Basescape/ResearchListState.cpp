@@ -45,7 +45,7 @@ namespace OpenXcom
 
 /**
  * List that allows player to choose what to research.
- * @note Initializes all the elements in the research list screen.
+ * @note Initializes all the elements in the ResearchList screen.
  * @param base - pointer to the Base to get info from
  */
 ResearchListState::ResearchListState(
@@ -178,7 +178,7 @@ void ResearchListState::fillProjectList() // private.
 	const Uint8 color (_lstResearch->getSecondaryColor());
 	std::string type;
 
-	_game->getSavedGame()->getAvailableResearchProjects(_resRules, _base); // fills '_resRules'
+	_game->getSavedGame()->tabulateOpenResearchProjects(_resRules, _base); // fills '_resRules'
 	for (std::vector<const RuleResearch*>::const_iterator
 			i = _resRules.begin();
 			i != _resRules.end();

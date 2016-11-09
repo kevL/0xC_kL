@@ -53,7 +53,7 @@ class BaseFacility;
 class Craft;
 class ItemContainer;
 class Language;
-class Production;
+class Manufacture;
 class ResearchProject;
 class Ruleset;
 class SavedGame;
@@ -98,8 +98,8 @@ private:
 		_defenses,
 		_facilities;
 	std::vector<Craft*> _crafts;
-	std::vector<Production*> _productions;
-	std::vector<ResearchProject*> _researchProjects;
+	std::vector<Manufacture*> _projectsManufacture;
+	std::vector<ResearchProject*> _projectsResearch;
 	std::vector<Soldier*> _soldiers;
 	std::vector<Transfer*> _transfers;
 
@@ -177,7 +177,7 @@ private:
 
 		/// Gets the Base's combat-ready soldiers.
 		int getAvailableSoldiers() const;
-		/// Gets the Base's non-wounded soldiers.
+		/// Gets the Base's healthy soldiers.
 		int getHealthySoldiers() const;
 		/// Gets the Base's total soldiers.
 		int getTotalSoldiers() const;
@@ -218,7 +218,7 @@ private:
 		int getUsedWorkshops() const;
 		/// Gets the Base's available workshop space.
 		int getTotalWorkshops() const;
-		/// Gets the number of available space lab (not used by a Production).
+		/// Gets the number of available space lab (not used by a Manufacture).
 		int getFreeWorkshops() const;
 		/// Checks if the Base has production facilities.
 		bool hasProduction() const;
@@ -255,19 +255,19 @@ private:
 		/// Gets the Base's Crafts of a specified type.
 		int getCraftCount(const std::string& type) const;
 
-		/// Adds a Production to the Base.
-		void addProduction(Production* const prod);
-		/// Removes a Production from the Base.
-		void removeProduction(const Production* const prod);
-		/// Gets a list of the Base's Productions.
-		const std::vector<Production*>& getProductions() const;
+		/// Adds a Manufacture project to the Base.
+		void addManufactureProject(Manufacture* const project);
+		/// Clears a Manufacture project from the Base.
+		void clearManufactureProject(const Manufacture* const project);
+		/// Gets the list of the Base's Manufacture projects.
+		const std::vector<Manufacture*>& getManufacture() const;
 
 		/// Gets the list of the Base's ResearchProjects.
 		const std::vector<ResearchProject*>& getResearch() const;
 		/// Adds a fresh ResearchProject to the Base.
-		void addResearch(ResearchProject* const project);
-		/// Removes a ResearchProject from the Base.
-		void removeResearch(
+		void addResearchProject(ResearchProject* const project);
+		/// Clears a ResearchProject from the Base.
+		void clearResearchProject(
 				ResearchProject* const project,
 				bool grantHelp = false,
 				bool goOffline = false);

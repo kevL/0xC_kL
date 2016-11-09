@@ -57,8 +57,8 @@ void RuleResearch::load(
 	_uPed			= node["uPed"]			.as<std::string>(_uPed);
 	_cost			= node["cost"]			.as<int>(_cost);
 	_points			= node["points"]		.as<int>(_points);
-	_prerequisites	= node["prerequisites"]	.as<std::vector<std::string>>(_prerequisites);
-	_forces			= node["forces"]		.as<std::vector<std::string>>(_forces);
+	_prerequisite	= node["prerequisite"]	.as<std::vector<std::string>>(_prerequisite);
+	_forced			= node["forced"]		.as<std::vector<std::string>>(_forced);
 	_getOneFree		= node["getOneFree"]	.as<std::vector<std::string>>(_getOneFree);
 	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_needsItem		= node["needsItem"]		.as<bool>(_needsItem);
@@ -99,16 +99,16 @@ int RuleResearch::getPoints() const
 
 /**
  * Gets the prerequisites for this RuleResearch.
- * @return, reference to a vector of type strings
+ * @return, reference to a vector of research-type strings
  */
 const std::vector<std::string>& RuleResearch::getPrerequisites() const
 {
-	return _prerequisites;
+	return _prerequisite;
 }
 
 /**
  * Gets the absolute requirements for this RuleResearch.
- * @return, reference to a vector of type strings
+ * @return, reference to a vector of research-type strings
  */
 const std::vector<std::string>& RuleResearch::getRequiredResearch() const
 {
@@ -116,17 +116,17 @@ const std::vector<std::string>& RuleResearch::getRequiredResearch() const
 }
 
 /**
- * Gets the list of research types forced by this RuleResearch.
- * @return, reference to a vector of type strings
+ * Gets the list of research-types forced by this RuleResearch.
+ * @return, reference to a vector of research-type strings
  */
 const std::vector<std::string>& RuleResearch::getForcedResearch() const
 {
-	return _forces;
+	return _forced;
 }
 
 /**
- * Gets the list of research types granted at random for free by this RuleResearch.
- * @return, reference to a vector of type strings
+ * Gets the list of research-types granted at random by this RuleResearch.
+ * @return, reference to a vector of research-type strings
  */
 const std::vector<std::string>& RuleResearch::getGetOneFree() const
 {
@@ -135,7 +135,7 @@ const std::vector<std::string>& RuleResearch::getGetOneFree() const
 
 /**
  * Gets what article to look up in the Ufopedia.
- * @return, article to look up
+ * @return, reference to an article to look up
  */
 const std::string& RuleResearch::getUfopaediaEntry() const
 {
@@ -146,7 +146,7 @@ const std::string& RuleResearch::getUfopaediaEntry() const
 }
 
 /**
- * Checks if this RuleResearch needs a corresponding Item to be researched.
+ * Checks if this RuleResearch needs a corresponding item to begin research.
  * @return, true if item is required
  */
 bool RuleResearch::needsItem() const
@@ -155,7 +155,7 @@ bool RuleResearch::needsItem() const
 }
 
 /**
- * Checks if this RuleResearch consumes its corresponding Item when research completes.
+ * Checks if this RuleResearch consumes its item when research completes.
  * @return, true if item is consumed
  */
 bool RuleResearch::destroyItem() const
@@ -173,8 +173,8 @@ bool RuleResearch::getMarkSeen() const
 }
 
 /**
- * Gets the list priority for this RuleResearch.
- * @return, list priority
+ * Gets the list-priority for this RuleResearch.
+ * @return, list-priority
  */
 int RuleResearch::getListOrder() const
 {

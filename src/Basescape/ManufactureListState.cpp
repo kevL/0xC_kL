@@ -44,12 +44,12 @@ namespace OpenXcom
 {
 
 const std::string ManufactureListState::ALL_ITEMS ("STR_ALL_ITEMS");					// private/static.
-std::string ManufactureListState::_recallCatString (ManufactureListState::ALL_ITEMS);	// private/static.
+std::string ManufactureListState::_recallCategory (ManufactureListState::ALL_ITEMS);	// private/static.
 
 
 /**
- * List that allows player to choose what to manufacture.
- * @note Initializes all the elements in the productions list screen.
+ * List that allows player to choose what to Manufacture.
+ * @note Initializes all the elements in the Manufacture list screen.
  * @param base - pointer to the Base to get info from
  */
 ManufactureListState::ManufactureListState(
@@ -100,7 +100,7 @@ ManufactureListState::ManufactureListState(
 	_lstManufacture->setColumns(2, 132,145);
 	_lstManufacture->setBackground(_window);
 	_lstManufacture->setSelectable();
-	_lstManufacture->onMouseClick(static_cast<ActionHandler>(&ManufactureListState::lstProdClick));
+	_lstManufacture->onMouseClick(static_cast<ActionHandler>(&ManufactureListState::lstStartClick));
 
 	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
 	_btnCostTable->onMouseClick(static_cast<ActionHandler>(&ManufactureListState::btnCostsClick));
@@ -115,39 +115,40 @@ ManufactureListState::ManufactureListState(
 								Options::keyCancel);
 
 
-	_catStrings.push_back(ALL_ITEMS); // #0
+	_categoryTypes.push_back(ALL_ITEMS); // #0
+
 	std::string cat;
-	_game->getSavedGame()->getAvailableProductions(_available, _base);
+	_game->getSavedGame()->tabulateAvailableManufacture(_unlocked, _base);
 	for (std::vector<const RuleManufacture*>::const_iterator
-			i = _available.begin();
-			i != _available.end();
+			i = _unlocked.begin();
+			i != _unlocked.end();
 			++i)
 	{
 		cat = (*i)->getCategory();
 		if (std::find(
-				_catStrings.begin(),
-				_catStrings.end(),
-				cat) == _catStrings.end())
+				_categoryTypes.begin(),
+				_categoryTypes.end(),
+				cat) == _categoryTypes.end())
 		{
-			_catStrings.push_back(cat);
+			_categoryTypes.push_back(cat);
 		}
 	}
-	_cbxCategory->setOptions(_catStrings);
-	_cbxCategory->setBackgroundFill(58u); // green <- TODO: put this in Interfaces.rul
+	_cbxCategory->setOptions(_categoryTypes);
+	_cbxCategory->setBackgroundFill(GREEN); // TODO: put this in Interfaces.rul
 	_cbxCategory->onComboChange(static_cast<ActionHandler>(&ManufactureListState::cbxCategoryChange));
 
 	std::vector<std::string>::iterator i (std::find( // <- std::distance() below_ does not accept a const_iterator.
-												_catStrings.begin(),
-												_catStrings.end(),
-												_recallCatString));
-	if (i != _catStrings.end())
+												_categoryTypes.begin(),
+												_categoryTypes.end(),
+												_recallCategory));
+	if (i != _categoryTypes.end())
 	{
-		const size_t j (static_cast<size_t>(std::distance(_catStrings.begin(), i)));
+		const size_t j (static_cast<size_t>(std::distance(_categoryTypes.begin(), i)));
 		_cbxCategory->setSelected(j);
 	}
 	else // safety.
 	{
-		_recallCatString = ALL_ITEMS;
+		_recallCategory = ALL_ITEMS;
 		_cbxCategory->setSelected(0u);
 	}
 }
@@ -165,7 +166,7 @@ void ManufactureListState::init()
 {
 	State::init();
 
-	fillProductionList();
+	buildProjectList();
 	_lstManufacture->scrollTo(_scroll);
 }
 
@@ -188,28 +189,28 @@ void ManufactureListState::btnCancelClick(Action*)
 }
 
 /**
- * Opens the Production settings screen.
+ * Opens the ManufactureStart screen.
  * @param action - pointer to an Action
  */
-void ManufactureListState::lstProdClick(Action*)
+void ManufactureListState::lstStartClick(Action*)
 {
 	_scroll = _lstManufacture->getScroll();
 
-	const RuleManufacture* manfRule (nullptr);
+	const RuleManufacture* mfRule (nullptr);
 	for (std::vector<const RuleManufacture*>::iterator
-			i = _available.begin();
-			i != _available.end();
+			i = _unlocked.begin();
+			i != _unlocked.end();
 			++i)
 	{
-		if ((*i)->getType() == _manfStrings[_lstManufacture->getSelectedRow()])
+		if ((*i)->getType() == _unlockedTypes[_lstManufacture->getSelectedRow()])
 		{
-			manfRule = *i;
+			mfRule = *i;
 			break;
 		}
 	}
 
-	if (manfRule != nullptr) // safety.
-		_game->pushState(new ManufactureStartState(_base, manfRule));
+	if (mfRule != nullptr) // safety.
+		_game->pushState(new ManufactureStartState(_base, mfRule));
 }
 
 /**
@@ -217,33 +218,34 @@ void ManufactureListState::lstProdClick(Action*)
  */
 void ManufactureListState::cbxCategoryChange(Action*)
 {
-	fillProductionList();
+	buildProjectList();
 }
 
 /**
- * Fills the list of possible productions.
+ * Fills the list with unlocked Manufacture.
  */
-void ManufactureListState::fillProductionList() // private.
+void ManufactureListState::buildProjectList() // private.
 {
-	_recallCatString = _catStrings[_cbxCategory->getSelected()];
+	_recallCategory = _categoryTypes[_cbxCategory->getSelected()];
 
 	_lstManufacture->clearList();
-	_available.clear();
-	_manfStrings.clear();
 
-	_game->getSavedGame()->getAvailableProductions(_available, _base);
+	_unlocked.clear();
+	_unlockedTypes.clear();
+
+	_game->getSavedGame()->tabulateAvailableManufacture(_unlocked, _base);
 	for (std::vector<const RuleManufacture*>::const_iterator
-			i = _available.begin();
-			i != _available.end();
+			i = _unlocked.begin();
+			i != _unlocked.end();
 			++i)
 	{
-		if (_recallCatString == ALL_ITEMS || _recallCatString == (*i)->getCategory())
+		if (_recallCategory == ALL_ITEMS || _recallCategory == (*i)->getCategory())
 		{
 			_lstManufacture->addRow(
 								2,
 								tr((*i)->getType()).c_str(),
 								tr((*i)->getCategory()).c_str());
-			_manfStrings.push_back((*i)->getType());
+			_unlockedTypes.push_back((*i)->getType());
 		}
 	}
 }

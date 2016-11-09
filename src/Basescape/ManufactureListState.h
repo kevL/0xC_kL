@@ -47,8 +47,10 @@ class ManufactureListState
 {
 
 private:
+	static const Uint8 GREEN = 58u;
+
 	static const std::string ALL_ITEMS;
-	static std::string _recallCatString;
+	static std::string _recallCategory;
 
 	size_t _scroll;
 
@@ -64,17 +66,17 @@ private:
 	TextList* _lstManufacture;
 	Window* _window;
 
-	std::vector<const RuleManufacture*> _available;
+	std::vector<const RuleManufacture*> _unlocked;
 	std::vector<std::string>
-		_catStrings,
-		_manfStrings;
+		_categoryTypes,
+		_unlockedTypes;
 
-	/// Fills the list of possible productions.
-	void fillProductionList();
+	/// Fills the list with unlocked Manufacture.
+	void buildProjectList();
 
 
 	public:
-		/// Creates a NewManufactureList state.
+		/// Creates a ManufactureList state.
 		explicit ManufactureListState(Base* const base);
 		/// dTor.
 		~ManufactureListState();
@@ -87,7 +89,7 @@ private:
 		/// Handler for clicking the OK button.
 		void btnCancelClick(Action* action);
 		/// Handler for clicking on the list.
-		void lstProdClick(Action* action);
+		void lstStartClick(Action* action);
 		/// Handler for changing the category filter.
 		void cbxCategoryChange(Action* action);
 };

@@ -19,6 +19,10 @@
 
 #include "RuleManufacture.h"
 
+#include "Ruleset.h"
+
+#include "../Engine/Logger.h"
+
 
 namespace OpenXcom
 {
@@ -36,7 +40,7 @@ RuleManufacture::RuleManufacture(const std::string& type)
 		_isCraft(false),
 		_listOrder(0)
 {
-	_producedItems[type] = 1;
+	_producedItems[_type] = 1; // produce 1 item of 'type' (at least)
 }
 
 /**
@@ -46,7 +50,8 @@ RuleManufacture::RuleManufacture(const std::string& type)
  */
 void RuleManufacture::load(
 		const YAML::Node& node,
-		int listOrder)
+		int listOrder,
+		const Ruleset* const rules)
 {
 	// why ->
 	const bool inOut (_producedItems.size() == 1
@@ -61,20 +66,51 @@ void RuleManufacture::load(
 		_producedItems[_type] = qtyOut;
 	} // End_why. Perhaps to overwrite a previous entry with a subsequently loaded ID-string, perhaps.
 
-	_required		= node["required"]		.as<std::vector<std::string>>(_required);
-	_space			= node["space"]			.as<int>(_space);
-	_time			= node["time"]			.as<int>(_time);
-	_cost			= node["cost"]			.as<int>(_cost);
-	_requiredItems	= node["requiredItems"]	.as<std::map<std::string, int>>(_requiredItems);
-	_producedItems	= node["producedItems"]	.as<std::map<std::string, int>>(_producedItems);
-	_category		= node["category"]		.as<std::string>(_category);
-	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
+	_required			= node["required"]			.as<std::vector<std::string>>(_required);
+	_space				= node["space"]				.as<int>(_space);
+	_time				= node["time"]				.as<int>(_time);
+	_cost				= node["cost"]				.as<int>(_cost);
+	_requiredFacilities	= node["requiredFacilities"].as<std::map<std::string, int>>(_requiredFacilities);
+	_requiredItems		= node["requiredItems"]		.as<std::map<std::string, int>>(_requiredItems);
+	_producedItems		= node["producedItems"]		.as<std::map<std::string, int>>(_producedItems);
+	_category			= node["category"]			.as<std::string>(_category);
+	_listOrder			= node["listOrder"]			.as<int>(_listOrder);
 
 	if (_listOrder == 0)
 		_listOrder = listOrder;
 
-	if (_category == "STR_CRAFT")
-		_isCraft = true;
+//	if (_category == "STR_CRAFT")
+//		_isCraft = true;
+
+	_isCraft = false;
+	int qty (0);
+
+//	if (rules->getItemRule(_type) == nullptr // NOTE: '_type' was added to '_producedItems' in cTor.
+//		&& rules->getCraft(_type) != nullptr)
+//	{
+//		_isCraft = true;
+//		++qty;
+//	}
+
+	for (std::map<std::string, int>::const_iterator
+			i = _producedItems.begin();
+			i != _producedItems.end();
+			++i)
+	{
+		if (rules->getItemRule(i->first) == nullptr
+			&& rules->getCraft(i->first) != nullptr)
+		{
+			_isCraft = true;
+			qty += i->second;
+		}
+	}
+
+	if (qty > 1)
+	{
+		Log(LOG_WARNING) << "RuleManufacture::load() The rule for " << _type << " produces two+ Craft."
+						 << " The manufacturing subsystem allows production of only one Craft.";
+		// TODO: Delete 'this'.
+	}
 }
 
 /**
@@ -106,9 +142,9 @@ bool RuleManufacture::isCraft() const
 
 /**
  * Gets the list of research-requirements to produce this object.
- * @return, reference to a vector of research IDs
+ * @return, reference to a vector of research-types
  */
-const std::vector<std::string>& RuleManufacture::getRequirements() const
+const std::vector<std::string>& RuleManufacture::getResearchRequirements() const
 {
 	return _required;
 }
@@ -138,6 +174,15 @@ int RuleManufacture::getManufactureTime() const
 int RuleManufacture::getManufactureCost() const
 {
 	return _cost;
+}
+
+/**
+ * Gets the list of BaseFacilities required to produce the products.
+ * @return, reference to the list of required base-facilities
+ */
+const std::map<std::string, int>& RuleManufacture::getRequiredFacilities() const
+{
+	return _requiredFacilities;
 }
 
 /**

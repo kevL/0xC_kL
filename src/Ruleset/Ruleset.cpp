@@ -721,7 +721,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		if (rule != nullptr)
 		{
 			_manufactureListOrder += 100;
-			rule->load(*i, _manufactureListOrder);
+			rule->load(*i, _manufactureListOrder, this);
 		}
 	}
 
@@ -1048,7 +1048,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		const RuleBaseFacility* const rule = getBaseFacility(*i);
 		if (rule->getPsiLaboratories() != 0)
 		{
-			_psiRequirements = rule->getRequirements();
+			_psiRequirements = rule->getResearchRequirements();
 			break;
 		}
 	} */
@@ -1211,7 +1211,7 @@ SavedGame* Ruleset::createSave(Game* const game) const
 			i != allSoldiers.end();
 			)
 	{
-		if (getSoldier(*i)->getRequirements().empty() == false)
+		if (getSoldier(*i)->getResearchRequirements().empty() == false)
 			i = allSoldiers.erase(i);
 		else
 			++i;

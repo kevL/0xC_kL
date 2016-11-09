@@ -24,7 +24,7 @@
 
 #include "../Engine/State.h"
 
-#include "../Savegame/Production.h"
+#include "../Savegame/Manufacture.h"
 
 
 namespace OpenXcom
@@ -58,14 +58,14 @@ private:
 
 
 	public:
-		/// Creates the Production Complete state.
+		/// Creates the Manufacture Complete state.
 		ProductionCompleteState(
 				Base* const base,
 				const std::wstring& item,
 				GeoscapeState* const geoState,
 				bool gotoBaseBtn,
 				ProductionProgress endType);
-		/// Cleans up the Production Complete state.
+		/// Cleans up the Manufacture Complete state.
 		~ProductionCompleteState();
 
 		/// Initializes the state.

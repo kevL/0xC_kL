@@ -226,7 +226,7 @@ private:
 		const std::string& getLabel() const;
 
 		/// Gets the item's research requirements.
-		const std::vector<std::string>& getRequirements() const;
+		const std::vector<std::string>& getResearchRequirements() const;
 
 		/// Gets the item's size.
 		double getStoreSize() const;

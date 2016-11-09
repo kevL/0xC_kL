@@ -52,14 +52,14 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the productions start screen.
  * @param base		- pointer to the Base to get info from
- * @param manfRule	- pointer to RuleManufacture to produce
+ * @param mfRule	- pointer to RuleManufacture to produce
  */
 ManufactureStartState::ManufactureStartState(
 		Base* const base,
-		const RuleManufacture* const manfRule)
+		const RuleManufacture* const mfRule)
 	:
 		_base(base),
-		_manfRule(manfRule),
+		_mfRule(mfRule),
 		_init(true)
 {
 	_fullScreen = false;
@@ -108,7 +108,7 @@ ManufactureStartState::ManufactureStartState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_txtTitle->setText(tr(_manfRule->getType()));
+	_txtTitle->setText(tr(_mfRule->getType()));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
@@ -116,11 +116,11 @@ ManufactureStartState::ManufactureStartState(
 	_btnCostTable->onMouseClick(static_cast<ActionHandler>(&ManufactureStartState::btnCostsClick));
 
 	_txtManHour->setText(tr("STR_ENGINEER_HOURS_TO_PRODUCE_ONE_UNIT_")
-							.arg(_manfRule->getManufactureTime()));
+							.arg(_mfRule->getManufactureTime()));
 	_txtCost->setText(tr("STR_COST_PER_UNIT_")
-							.arg(Text::formatCurrency(_manfRule->getManufactureCost())));
+							.arg(Text::formatCurrency(_mfRule->getManufactureCost())));
 	_txtWorkSpace->setText(tr("STR_WORK_SPACE_REQUIRED_")
-							.arg(_manfRule->getSpaceRequired()));
+							.arg(_mfRule->getSpaceRequired()));
 
 	_txtRequiredItems->setText(tr("STR_SPECIAL_MATERIALS_REQUIRED"));
 
@@ -132,10 +132,10 @@ ManufactureStartState::ManufactureStartState(
 
 	bool
 		showStart = _base->getFreeWorkshops() != 0
-				 && _game->getSavedGame()->getFunds() >= _manfRule->getManufactureCost(),
+				 && _game->getSavedGame()->getFunds() >= _mfRule->getManufactureCost(),
 		showReqs;
 
-	const std::map<std::string, int>& requiredItems (_manfRule->getRequiredItems());
+	const std::map<std::string, int>& requiredItems (_mfRule->getRequiredItems());
 	if (requiredItems.empty() == false)
 	{
 		showReqs = true;
@@ -210,28 +210,28 @@ void ManufactureStartState::init()
 		_init = false;
 		const Ruleset* const rules (_game->getRuleset());
 
-		bool reqCraft (false);
-		for (std::map<std::string, int>::const_iterator
-				i = _manfRule->getRequiredItems().begin();
-				i != _manfRule->getRequiredItems().end();
-				++i)
-		{
-			if (rules->getItemRule(i->first) == nullptr
-				&& rules->getCraft(i->first) != nullptr)
-			{
-				reqCraft = true;
-				break;
-			}
-		}
-
 		std::string error;
-		if (_manfRule->getSpaceRequired() > _base->getFreeWorkshops())
+
+		if (_mfRule->getSpaceRequired() > _base->getFreeWorkshops())
 			error = "STR_NOT_ENOUGH_WORK_SPACE";
-		else if (reqCraft == false
-			&& _base->getFreeHangars() == 0
-			&& _manfRule->isCraft() == true)
+		else if (_mfRule->isCraft() == true && _base->getFreeHangars() == 0)
 		{
-			error = "STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION";
+			bool allowCraft (false);
+			for (std::map<std::string, int>::const_iterator
+					i = _mfRule->getRequiredItems().begin();
+					i != _mfRule->getRequiredItems().end();
+					++i)
+			{
+				if (rules->getItemRule(i->first) == nullptr
+					&& rules->getCraft(i->first) != nullptr)
+				{
+					allowCraft = true;
+					break;
+				}
+			}
+
+			if (allowCraft == false)
+				error = "STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION";
 		}
 
 		if (error.empty() == false)
@@ -266,12 +266,12 @@ void ManufactureStartState::btnCancelClick(Action*)
 }
 
 /**
- * Go to the Production settings screen.
+ * Go to the ManufactureInfo screen.
  * @param action - pointer to an Action
  */
 void ManufactureStartState::btnStartClick(Action*)
 {
-	_game->pushState(new ManufactureInfoState(_base, _manfRule));
+	_game->pushState(new ManufactureInfoState(_base, _mfRule));
 }
 
 }

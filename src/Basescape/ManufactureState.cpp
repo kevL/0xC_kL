@@ -43,7 +43,7 @@
 
 #include "../Savegame/Base.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/Production.h"
+#include "../Savegame/Manufacture.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Transfer.h"
 
@@ -200,43 +200,18 @@ ManufactureState::~ManufactureState()
 {}
 
 /**
- * Updates the production list after going to other screens.
+ * Updates the Manufacture list after going to other screens.
  */
 void ManufactureState::init()
 {
 	State::init();
 
 	_txtBaseLabel->setText(_base->getLabel());
-	fillProductionList();
-}
 
-/**
- * Exits to the previous screen.
- * @param action - pointer to an Action
- */
-void ManufactureState::btnOkClick(Action*)
-{
-	_game->popState();
-}
-
-/**
- * Opens the screen with a list of available Productions.
- * @param action - pointer to an Action
- */
-void ManufactureState::btnNewProductionClick(Action*)
-{
-	_game->pushState(new ManufactureListState(_base));
-}
-
-/**
- * Fills the list with current Base Productions.
- */
-void ManufactureState::fillProductionList()
-{
 	_lstManufacture->clearList();
 
-	const std::vector<Production*> baseProds (_base->getProductions());
-	for (std::vector<Production*>::const_iterator
+	const std::vector<Manufacture*> baseProds (_base->getManufacture());
+	for (std::vector<Manufacture*>::const_iterator
 			i = baseProds.begin();
 			i != baseProds.end();
 			++i)
@@ -336,12 +311,30 @@ void ManufactureState::fillProductionList()
 }
 
 /**
+ * Exits to the previous screen.
+ * @param action - pointer to an Action
+ */
+void ManufactureState::btnOkClick(Action*)
+{
+	_game->popState();
+}
+
+/**
+ * Opens the screen with a list of available Productions.
+ * @param action - pointer to an Action
+ */
+void ManufactureState::btnNewProductionClick(Action*)
+{
+	_game->pushState(new ManufactureListState(_base));
+}
+
+/**
  * Opens the screen displaying production settings.
  * @param action - pointer to an Action
  */
 void ManufactureState::lstManufactureClick(Action*)
 {
-	const std::vector<Production*> baseProds(_base->getProductions());
+	const std::vector<Manufacture*> baseProds(_base->getManufacture());
 	_game->pushState(new ManufactureInfoState(
 											_base,
 											baseProds[_lstManufacture->getSelectedRow()]));

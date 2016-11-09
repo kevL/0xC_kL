@@ -1327,7 +1327,7 @@ bool Inventory::unload()
 {
 	if (_selItem == nullptr
 		|| _selItem->selfPowered() == true
-		|| _game->getSavedGame()->isResearched(_selItem->getRules()->getRequirements()) == false)
+		|| _game->getSavedGame()->isResearched(_selItem->getRules()->getResearchRequirements()) == false)
 	{
 		return false;
 	}

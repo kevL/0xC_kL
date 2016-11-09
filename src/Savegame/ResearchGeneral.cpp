@@ -27,28 +27,22 @@ namespace OpenXcom
 
 /**
  * Constructs a ResearchGeneral project.
- * @param type - pointer to research-type
- * @param done - true to consider research completed for quick-battles (default false)
+ * @param resRule		- pointer to RuleResearch
+ * @param isQuickBattle	- true to consider research discovered (default false)
  */
 ResearchGeneral::ResearchGeneral(
 		const RuleResearch* const resRule,
-		bool done)
+		bool isQuickBattle)
 	:
 		_resRule(resRule),
-		_status(RS_HIDDEN),
 		_type(resRule->getType()),
 		_beenSeen(resRule->getMarkSeen())
 {
-	if (done == true) _status = RS_COMPLETED;
-//	init();
+	if (isQuickBattle == true)
+		_status = RG_DISCOVERED;
+	else
+		_status = RG_LOCKED;
 }
-
-/**
- *
- *
-void ResearchGeneral::init()
-{
-} */
 
 /**
  * dTor.

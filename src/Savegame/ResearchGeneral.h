@@ -28,9 +28,9 @@ namespace OpenXcom
 
 enum ResearchStatus
 {
-	RS_HIDDEN,		// 0
-	RS_AVAILABLE,	// 1
-	RS_COMPLETED	// 2
+	RG_LOCKED,		// 0
+	RG_OPEN,		// 1
+	RG_DISCOVERED	// 2
 //	RS_PROJECT,		// 3
 //	RS_OFFLINE,		// 4
 };
@@ -58,8 +58,7 @@ private:
 		/// Constructor.
 		ResearchGeneral(
 				const RuleResearch* const resRule,
-				bool done = false);
-//		void init();
+				bool isQuickBattle = false);
 		/// dTor.
 		~ResearchGeneral();
 

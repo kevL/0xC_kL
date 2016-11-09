@@ -255,7 +255,7 @@ void CraftEquipmentState::updateList() // private.
 			case BT_FLARE:
 //				if (itRule->getBigSprite() > -1 // see also BattlescapeGenerator::deployXcom(). Inventory also uses this "bigSprite" trick. NOTE: Stop using the "bigSprite" trick.
 //				if (itRule->isFixed() == false
-				if (_game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
+				if (_game->getSavedGame()->isResearched(itRule->getResearchRequirements()) == true)
 				{
 					if (itRule->isFixed() == true)
 						craftQty = _craft->getVehicleCount(*i);

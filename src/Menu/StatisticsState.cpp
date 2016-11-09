@@ -406,7 +406,7 @@ void StatisticsState::listStats()
 			i != gameSave->getResearchGenerals().end();
 			++i)
 	{
-		if ((*i)->getStatus() == RS_COMPLETED)
+		if ((*i)->getStatus() == RG_DISCOVERED)
 			++researchDone;
 	}
 

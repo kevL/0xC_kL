@@ -42,16 +42,17 @@
 
 namespace OpenXcom
 {
+
 /**
  * Initializes all the elements in the NewPossibleResearchState screen.
  * @param base		- pointer to the Base to get info from
- * @param resRules	- reference to the vector of pointers to RuleResearch projects
- * @param showBtn	- true to show new research button
+ * @param resRules	- reference to a vector of pointers to RuleResearch projects
+ * @param allocate	- true to show new research button
  */
 NewPossibleResearchState::NewPossibleResearchState(
 		Base* const base,
 		const std::vector<const RuleResearch*>& resRules,
-		bool showBtn)
+		bool allocate)
 	:
 		_base(base)
 {
@@ -78,7 +79,7 @@ NewPossibleResearchState::NewPossibleResearchState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 
-	_btnOk->setText(tr(showBtn ? "STR_OK" : "STR_MORE"));
+	_btnOk->setText(tr((allocate == true) ? "STR_OK" : "STR_MORE"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewPossibleResearchState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewPossibleResearchState::btnOkClick),
 							Options::keyCancel);
@@ -89,7 +90,7 @@ NewPossibleResearchState::NewPossibleResearchState(
 									Options::keyOk);
 	_btnResearch->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleResearchState::btnResearchClick),
 									Options::keyOkKeypad);
-	_btnResearch->setVisible(showBtn);
+	_btnResearch->setVisible(allocate == true);
 
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
@@ -103,7 +104,7 @@ NewPossibleResearchState::NewPossibleResearchState(
 			i != resRules.end();
 			++i)
 	{
-		_game->getSavedGame()->setResearchStatus(*i, RS_AVAILABLE);
+		_game->getSavedGame()->setResearchStatus(*i, RG_OPEN);
 		_lstPossibilities->addRow(1, tr((*i)->getType ()).c_str());
 	}
 

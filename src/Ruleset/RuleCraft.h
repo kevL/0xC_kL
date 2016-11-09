@@ -104,7 +104,7 @@ private:
 		std::string getType() const;
 
 		/// Gets a Craft's requirements.
-		const std::vector<std::string>& getRequirements() const;
+		const std::vector<std::string>& getResearchRequirements() const;
 
 		/// Gets a Craft's sprite.
 		int getSprite() const;

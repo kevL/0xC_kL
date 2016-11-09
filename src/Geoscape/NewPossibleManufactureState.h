@@ -35,8 +35,8 @@ class Window;
 
 
 /**
- * Window which inform the player of new possible manufacture projects.
- * @note Also lets the player to go to ManufactureState to dispatch engineers.
+ * Window that informs the player of new possible manufacture projects.
+ * @note Also lets the player to go to ManufactureState to allocate engineers.
  */
 class NewPossibleManufactureState
 	:
@@ -54,11 +54,11 @@ private:
 
 
 	public:
-		/// Creates the NewPossibleManufacture state.
+		/// Creates a NewPossibleManufacture state.
 		NewPossibleManufactureState(
 				Base* const base,
-				const std::vector<const RuleManufacture*>& possibilities,
-				bool showManufactureButton);
+				const std::vector<const RuleManufacture*>& projects,
+				bool allocate);
 		// Deconstructs the NewPossibleManufactureState.
 		~NewPossibleManufactureState();
 

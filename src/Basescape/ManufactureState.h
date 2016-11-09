@@ -36,7 +36,8 @@ class Window;
 
 
 /**
- * Manufacture screen that lets the player manage the production operations of a Base.
+ * Manufacture screen that lets the player manage the production operations of a
+ * Base.
  */
 class ManufactureState final
 	:
@@ -82,15 +83,12 @@ private:
 		/// Cleans up the Manufacture state.
 		~ManufactureState();
 
-		/// Updates the production list.
+		/// Updates the Manufacture list.
 		void init() override;
-
-		/// Fills the list of base-productions.
-		void fillProductionList();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
-		/// Handler for the New Production button.
+		/// Handler for the New Manufacture button.
 		void btnNewProductionClick(Action* action);
 
 		/// Handler for clicking the MiniBase view.

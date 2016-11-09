@@ -1251,7 +1251,7 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 		else
 			label << tr(itRule->getType());
 	}
-	else if (_game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
+	else if (_game->getSavedGame()->isResearched(itRule->getResearchRequirements()) == true)
 	{
 		isArt = false;
 		label << tr(itRule->getType());

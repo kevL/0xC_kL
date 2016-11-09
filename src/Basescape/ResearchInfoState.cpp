@@ -47,9 +47,9 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the ResearchProject screen.
+ * Initializes all the elements in the ResearchInfo screen (start project).
  * @param base		- pointer to the Base to get info from
- * @param resRule	- pointer to a RuleResearch which will be used to create a fresh ResearchProject
+ * @param resRule	- pointer to a RuleResearch to start
  */
 ResearchInfoState::ResearchInfoState(
 		Base* const base,
@@ -64,9 +64,9 @@ ResearchInfoState::ResearchInfoState(
 }
 
 /**
- * Initializes all the elements in the ResearchProject screen.
+ * Initializes all the elements in the ResearchInfo screen (adjust project).
  * @param base		- pointer to the Base to get info from
- * @param project	- pointer to a ResearchProject to modify
+ * @param project	- pointer to a ResearchProject to adjust
  */
 ResearchInfoState::ResearchInfoState(
 		Base* const base,
@@ -90,7 +90,7 @@ ResearchInfoState::~ResearchInfoState()
 }
 
 /**
- * Builds dialog.
+ * Builds the UI.
  */
 void ResearchInfoState::buildUi() // private.
 {
@@ -202,7 +202,7 @@ void ResearchInfoState::btnStartStopClick(Action*) // private.
 	{
 		_project->setCost(_resRule->getCost() * RNG::generate(65,130) / 100);
 
-		_base->addResearch(_project);
+		_base->addResearchProject(_project);
 		if (_resRule->needsItem() == true)
 			_base->getStorageItems()->removeItem(_resRule->getType());
 	}
@@ -213,7 +213,7 @@ void ResearchInfoState::btnStartStopClick(Action*) // private.
 		_resRule = _project->getRules();		// - other projects go offline.
 
 		const bool isLiveAlien (_game->getRuleset()->getUnitRule(_resRule->getType()) != nullptr);
-		_base->removeResearch(
+		_base->clearResearchProject(
 						_project,
 						false,
 						isLiveAlien == false);

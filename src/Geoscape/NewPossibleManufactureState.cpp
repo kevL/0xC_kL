@@ -39,16 +39,17 @@
 
 namespace OpenXcom
 {
+
 /**
- * Initializes all the elements in the EndManufacture screen.
- * @param base					- pointer to the Base to get info from
- * @param possibilities			- reference to the vector of pointers to RuleManufacture for projects
- * @param showManufactureButton	- true to show the goto manufacture button
+ * Initializes all the elements in the NewPossibleManufacture screen.
+ * @param base		- pointer to the Base to get info from
+ * @param projects	- reference to a vector of pointers to RuleManufacture for projects
+ * @param allocate	- true to show manufacture button
  */
 NewPossibleManufactureState::NewPossibleManufactureState(
 		Base* const base,
-		const std::vector<const RuleManufacture*>& possibilities,
-		bool showManufactureButton)
+		const std::vector<const RuleManufacture*>& projects,
+		bool allocate)
 	:
 		_base(base)
 {
@@ -75,7 +76,7 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
-	_btnOk->setText(tr(showManufactureButton ? "STR_OK" : "STR_MORE"));
+	_btnOk->setText(tr((allocate == true) ? "STR_OK" : "STR_MORE"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewPossibleManufactureState::btnOkClick),
 							Options::keyCancel);
@@ -86,7 +87,8 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 										Options::keyOk);
 	_btnManufacture->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnManufactureClick),
 										Options::keyOkKeypad);
-	_btnManufacture->setVisible(showManufactureButton && (base->hasProduction() == true));
+	_btnManufacture->setVisible(allocate == true
+							&& (base->hasProduction() == true));
 
 	_txtTitle->setText(tr("STR_WE_CAN_NOW_PRODUCE"));
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -97,8 +99,8 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 	_lstPossibilities->setBig();
 
 	for (std::vector<const RuleManufacture*>::const_iterator
-			i = possibilities.begin();
-			i != possibilities.end();
+			i = projects.begin();
+			i != projects.end();
 			++i)
 	{
 		_lstPossibilities->addRow(1, tr((*i)->getType()).c_str());

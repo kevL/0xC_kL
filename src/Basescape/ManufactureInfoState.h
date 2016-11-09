@@ -28,7 +28,7 @@ namespace OpenXcom
 
 class ArrowButton;
 class Base;
-class Production;
+class Manufacture;
 class RuleManufacture;
 class Text;
 class TextButton;
@@ -46,7 +46,9 @@ class ManufactureInfoState
 {
 
 private:
-	int _producedValue;
+	bool _start;
+
+	int _valueProduct;
 
 	ArrowButton
 		* _btnEngineerLess,
@@ -54,8 +56,8 @@ private:
 		* _btnUnitLess,
 		* _btnUnitMore;
 	Base* _base;
-	Production* _production;
-	const RuleManufacture* _manfRule;
+	Manufacture* _manufacture;
+	const RuleManufacture* _mfRule;
 	Text
 		* _txtFreeEngineer,
 		* _txtFreeSpace,
@@ -80,7 +82,7 @@ private:
 
 	/// Builds the User Interface.
 	void buildUi();
-	/// Caches production-value for profit calculations.
+	/// Caches manufacture-value for profit calculations.
 	void initProfit();
 
 	/// Handler for the Stop button.
@@ -98,7 +100,7 @@ private:
 	/// Calculates the monthly change in funds due to profit/expenses.
 	int calcProfit();
 	/// Formats the profit-value.
-	bool formatProfit(
+	static bool formatProfit(
 			int profit,
 			std::wostringstream& woststr);
 
@@ -129,13 +131,13 @@ private:
 	/// Runs state functionality every cycle.
 	void think() override;
 
-	/// Adds engineers to the production.
+	/// Adds engineers to the manufacture.
 	void onEngineersMore();
-	/// Adds a given quantity of engineers to the production if possible.
+	/// Adds a given quantity of engineers to the manufacture if possible.
 	void engineersMoreByValue(int delta);
-	/// Subtracts engineers from the production.
+	/// Subtracts engineers from the manufacture.
 	void onEngineersLess();
-	/// Subtracts a given quantity of engineers from the production if possible.
+	/// Subtracts a given quantity of engineers from the manufacture if possible.
 	void engineersLessByValue(int delta);
 
 	/// Increases quantity of units to produce.
@@ -149,14 +151,14 @@ private:
 
 
 	public:
-		/// Creates a ManufactureInfo state (new production).
+		/// Creates a ManufactureInfo state (start manufacture).
 		ManufactureInfoState(
 				Base* const base,
-				const RuleManufacture* const _manfRule);
-		/// Creates a ManufactureInfo (modify production).
+				const RuleManufacture* const _mfRule);
+		/// Creates a ManufactureInfo state (adjust manufacture).
 		ManufactureInfoState(
 				Base* const base,
-				Production* const production);
+				Manufacture* const manufacture);
 		/// Cleans up the ManufactureInfo state.
 		~ManufactureInfoState();
 };

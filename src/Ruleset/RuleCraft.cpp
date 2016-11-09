@@ -134,7 +134,7 @@ std::string RuleCraft::getType() const
  * Gets the list of research required to acquire the Craft.
  * @return, reference to a vector of strings that lists the needed research IDs
  */
-const std::vector<std::string>& RuleCraft::getRequirements() const
+const std::vector<std::string>& RuleCraft::getResearchRequirements() const
 {
 	return _required;
 }

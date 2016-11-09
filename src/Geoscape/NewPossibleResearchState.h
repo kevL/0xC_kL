@@ -36,7 +36,7 @@ class Window;
 
 /**
  * Window that informs the player of new possible research projects.
- * @note Also allows the player to go to ResearchState to dispatch scientists.
+ * @note Also allows the player to go to ResearchState to allocate scientists.
  */
 class NewPossibleResearchState
 	:
@@ -54,11 +54,11 @@ private:
 
 
 	public:
-		/// Creates the NewPossibleResearch state.
+		/// Creates a NewPossibleResearch state.
 		NewPossibleResearchState(
 				Base* const base,
 				const std::vector<const RuleResearch*>& resRules,
-				bool showBtn);
+				bool allocate);
 		// Deconstructs the NewPossibleResearchState.
 		~NewPossibleResearchState();
 

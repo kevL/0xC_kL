@@ -125,7 +125,7 @@ const std::string& RuleSoldier::getType() const
  * Gets the list of research required to acquire this type of Soldier.
  * @return, reference to the list of research-IDs
  */
-const std::vector<std::string>& RuleSoldier::getRequirements() const
+const std::vector<std::string>& RuleSoldier::getResearchRequirements() const
 {
 	return _required;
 }

@@ -46,7 +46,7 @@ private:
 	bool _init;
 
 	Base* _base;
-	const RuleManufacture* const _manfRule;
+	const RuleManufacture* const _mfRule;
 	Text
 		* _txtCost,
 		* _txtItemRequired,
@@ -68,7 +68,7 @@ private:
 		/// Creates the State.
 		ManufactureStartState(
 				Base* const base,
-				const RuleManufacture* const manfRule);
+				const RuleManufacture* const mfRule);
 		/// dTor.
 		~ManufactureStartState();
 

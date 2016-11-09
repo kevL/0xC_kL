@@ -111,7 +111,7 @@ ActionMenuState::ActionMenuState(
 		}
 	}
 
-	if (_game->getSavedGame()->isResearched(itRule->getRequirements()) == true)
+	if (_game->getSavedGame()->isResearched(itRule->getResearchRequirements()) == true)
 	{
 		if (itRule->getMeleeTu() != 0
 			&& hasHands == true && injured == false)

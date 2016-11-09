@@ -28,7 +28,7 @@
 #include "Craft.h"
 #include "CraftWeapon.h"
 #include "ItemContainer.h"
-#include "Production.h"
+#include "Manufacture.h"
 #include "ResearchProject.h"
 #include "Soldier.h"
 #include "Target.h"
@@ -119,15 +119,15 @@ Base::~Base()
 			++i)
 		delete *i;
 
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
+	for (std::vector<Manufacture*>::const_iterator
+			i = _projectsManufacture.begin();
+			i != _projectsManufacture.end();
 			++i)
 		delete *i;
 
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _researchProjects.begin();
-			i != _researchProjects.end();
+			i = _projectsResearch.begin();
+			i != _projectsResearch.end();
 			++i)
 		delete *i;
 
@@ -270,7 +270,7 @@ void Base::loadBase(
 		{
 			ResearchProject* const research (new ResearchProject(_rules->getResearch(type)));
 			research->load(*i);
-			_researchProjects.push_back(research);
+			_projectsResearch.push_back(research);
 		}
 		else
 		{
@@ -281,16 +281,16 @@ void Base::loadBase(
 
 	//Log(LOG_INFO) << ". load manufacturing projects";
 	for (YAML::const_iterator
-			i = node["productions"].begin();
-			i != node["productions"].end();
+			i = node["manufacture"].begin();
+			i != node["manufacture"].end();
 			++i)
 	{
 		type = (*i)["item"].as<std::string>();
 		if (_rules->getManufacture(type) != nullptr)
 		{
-			Production* const production (new Production(_rules->getManufacture(type)));
+			Manufacture* const production (new Manufacture(_rules->getManufacture(type)));
 			production->load(*i);
-			_productions.push_back(production);
+			_projectsManufacture.push_back(production);
 		}
 		else
 		{
@@ -348,16 +348,16 @@ YAML::Node Base::save() const
 		node["transfers"].push_back((*i)->save());
 
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _researchProjects.begin();
-			i != _researchProjects.end();
+			i = _projectsResearch.begin();
+			i != _projectsResearch.end();
 			++i)
 		node["research"].push_back((*i)->save());
 
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
+	for (std::vector<Manufacture*>::const_iterator
+			i = _projectsManufacture.begin();
+			i != _projectsManufacture.end();
 			++i)
-		node["productions"].push_back((*i)->save());
+		node["manufacture"].push_back((*i)->save());
 
 	if (_tactical == true)	node["tactical"]	= _tactical;
 	if (_exposed == true)	node["exposed"]		= _exposed;
@@ -503,8 +503,7 @@ void Base::setEngineers(int engineers)
 }
 
 /**
- * Gets the quantity of Soldiers neither on an outbound Craft nor wounded at
- * this Base.
+ * Gets the quantity of Soldiers neither on a sortie nor wounded at this Base.
  * @return, quantity of combat-ready soldiers
  */
 int Base::getAvailableSoldiers() const
@@ -525,7 +524,7 @@ int Base::getAvailableSoldiers() const
 }
 
 /**
- * Gets the quantity of non-wounded Soldiers at this Base.
+ * Gets the quantity of healthy Soldiers at this Base.
  * @return, quantity of non-wounded soldiers
  */
 int Base::getHealthySoldiers() const
@@ -555,7 +554,7 @@ int Base::getTotalSoldiers() const
 			++i)
 	{
 		if ((*i)->getTransferType() == PST_SOLDIER)
-			++total; //+= (*i)->getQuantity();
+			++total;
 	}
 	return total;
 }
@@ -576,10 +575,9 @@ int Base::getTotalScientists() const
 			total += (*i)->getQuantity();
 	}
 
-	const std::vector<ResearchProject*>& research (getResearch());
 	for (std::vector<ResearchProject*>::const_iterator
-			i = research.begin();
-			i != research.end();
+			i = _projectsResearch.begin();
+			i != _projectsResearch.end();
 			++i)
 	{
 		total += (*i)->getAssignedScientists();
@@ -595,10 +593,9 @@ int Base::getTotalScientists() const
 int Base::getAllocatedScientists() const
 {
 	int total (0);
-	const std::vector<ResearchProject*>& research (getResearch());
 	for (std::vector<ResearchProject*>::const_iterator
-			i = research.begin();
-			i != research.end();
+			i = _projectsResearch.begin();
+			i != _projectsResearch.end();
 			++i)
 	{
 		total += (*i)->getAssignedScientists();
@@ -622,9 +619,9 @@ int Base::getTotalEngineers() const
 			total += (*i)->getQuantity();
 	}
 
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
+	for (std::vector<Manufacture*>::const_iterator
+			i = _projectsManufacture.begin();
+			i != _projectsManufacture.end();
 			++i)
 	{
 		total += (*i)->getAssignedEngineers();
@@ -640,9 +637,9 @@ int Base::getTotalEngineers() const
 int Base::getAllocatedEngineers() const
 {
 	int total (0);
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
+	for (std::vector<Manufacture*>::const_iterator
+			i = _projectsManufacture.begin();
+			i != _projectsManufacture.end();
 			++i)
 	{
 		total += (*i)->getAssignedEngineers();
@@ -848,9 +845,9 @@ bool Base::hasResearch() const
 int Base::getUsedWorkshops() const
 {
 	int total (0);
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
+	for (std::vector<Manufacture*>::const_iterator
+			i = _projectsManufacture.begin();
+			i != _projectsManufacture.end();
 			++i)
 	{
 		total += (*i)->getAssignedEngineers() + (*i)->getRules()->getSpaceRequired();
@@ -1057,8 +1054,8 @@ int Base::getInterrogatedAliens() const
 	int total (0);
 	const RuleResearch* resRule;
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _researchProjects.begin();
-			i != _researchProjects.end();
+			i = _projectsResearch.begin();
+			i != _projectsResearch.end();
 			++i)
 	{
 		resRule = (*i)->getRules();
@@ -1088,12 +1085,12 @@ int Base::getUsedHangars() const
 			total += (*i)->getQuantity();
 	}
 
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
+	for (std::vector<Manufacture*>::const_iterator
+			i = _projectsManufacture.begin();
+			i != _projectsManufacture.end();
 			++i)
 	{
-		if ((*i)->getRules()->isCraft() == true) // TODO: This should account for the case when (*i)->getInfinite() == TRUE
+		if ((*i)->getRules()->isCraft() == true) // TODO: This needs to account for the case when (*i)->getInfinite() == TRUE
 			total += ((*i)->getProductionTotal() - (*i)->getProducedQuantity()); // Or disallow infinite Craft in ManufactureInfoState.
 	}
 
@@ -1194,72 +1191,72 @@ int Base::getCraftCount(const std::string& type) const
 }
 
 /**
- * Adds a specified Production to this Base.
- * @param prod - pointer to a Production
+ * Adds a specified Manufacture project to this Base.
+ * @param project - pointer to a project
  */
-void Base::addProduction(Production* const prod)
+void Base::addManufactureProject(Manufacture* const project)
 {
-	_productions.push_back(prod);
+	_projectsManufacture.push_back(project);
 }
 
 /**
- * Removes a specified Production from this Base.
- * @param prod - pointer to a Production
+ * Clears a specified Manufacture project from this Base.
+ * @param project - pointer to the project
  */
-void Base::removeProduction(const Production* const prod)
+void Base::clearManufactureProject(const Manufacture* const project)
 {
-	_engineers += prod->getAssignedEngineers();
+	_engineers += project->getAssignedEngineers();
 
-	for (std::vector<Production*>::const_iterator
-			i = _productions.begin();
-			i != _productions.end();
+	for (std::vector<Manufacture*>::const_iterator
+			i = _projectsManufacture.begin();
+			i != _projectsManufacture.end();
 			++i)
 	{
-		if (*i == prod)
+		if (*i == project)
 		{
 			delete *i;
-			_productions.erase(i);
+			_projectsManufacture.erase(i);
 			return;
 		}
 	}
 }
 
 /**
- * Gets the list of this Base's Productions.
- * @return, the list of Base Productions
+ * Gets the list of this Base's Manufacture projects.
+ * @return, reference to the list of projects
  */
-const std::vector<Production*>& Base::getProductions() const
+const std::vector<Manufacture*>& Base::getManufacture() const
 {
-	return _productions;
+	return _projectsManufacture;
 }
 
 /**
- * Gets the list of all this Base's ResearchProjects.
- * @return, list of base's ResearchProjects
+ * Gets the list of this Base's ResearchProjects.
+ * @return, reference to the list of projects
  */
 const std::vector<ResearchProject*>& Base::getResearch() const
 {
-	return _researchProjects;
+	return _projectsResearch;
 }
 
 /**
  * Adds a fresh ResearchProject to this Base.
- * @param project - project to add
+ * @param project - pointer to a project to add
  */
-void Base::addResearch(ResearchProject* const project)
+void Base::addResearchProject(ResearchProject* const project)
 {
-	_researchProjects.push_back(project);
+	_projectsResearch.push_back(project);
 }
 
 /**
- * Removes a ResearchProject from this base.
+ * Clears a ResearchProject from this Base.
  * @note Live Alien research never goes offline; they are returned to Containment
  * and the project is cancelled.
- * @param project	- pointer to a ResearchProject for removal
+ * @param project	- pointer to the project to clear
  * @param grantHelp	- true to apply researchHelp() (default false)
- * @param goOffline	- true to hide project but not remove it from base's ResearchProjects (default false)
+ * @param goOffline	- true to hide project but not remove it from the vector (default false)
  */
-void Base::removeResearch(
+void Base::clearResearchProject(
 		ResearchProject* const project,
 		bool grantHelp,
 		bool goOffline)
@@ -1267,10 +1264,10 @@ void Base::removeResearch(
 	_scientists += project->getAssignedScientists();
 
 	std::vector<ResearchProject*>::const_iterator i (std::find(
-															_researchProjects.begin(),
-															_researchProjects.end(),
+															_projectsResearch.begin(),
+															_projectsResearch.end(),
 															project));
-	if (i != _researchProjects.end())
+	if (i != _projectsResearch.end())
 	{
 		if (goOffline == true)
 		{
@@ -1283,7 +1280,7 @@ void Base::removeResearch(
 				researchHelp(project->getRules()->getType());
 
 			delete *i;
-			_researchProjects.erase(i);
+			_projectsResearch.erase(i);
 		}
 	}
 }
@@ -1298,8 +1295,8 @@ void Base::researchHelp(const std::string& aLien)
 	double coef;
 
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _researchProjects.begin();
-			i != _researchProjects.end();
+			i = _projectsResearch.begin();
+			i != _projectsResearch.end();
 			++i)
 	{
 		if ((*i)->getOffline() == false)
@@ -2300,21 +2297,19 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
 		}
 	}
 
-	const BaseFacility* preEntry (nullptr);
+	const BaseFacility* el_pre (nullptr);
 	for (std::vector<std::pair<std::vector<BaseFacility*>::const_iterator, bool>*>::const_iterator
 			i = facConnections.begin();
 			i != facConnections.end();
 			++i)
 	{
-		// not a connected fac -> push its iterator onto the list!
-		// And don't take duplicates of large-sized facilities.
-		if (*((*i)->first) != preEntry
-			&& (*i)->second == false)
+		if (*((*i)->first) != el_pre	// not a connected fac -> push its iterator onto the list!
+			&& (*i)->second == false)	// And don't take duplicates of large-sized facilities.
 		{
 			ret.push_back((*i)->first);
 		}
 
-		preEntry = *((*i)->first);
+		el_pre = *((*i)->first);
 		delete *i;
 	}
 
@@ -2328,8 +2323,7 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
  */
 std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 {
-	// TODO: Handle hangars that can hold more than one Craft.
-	if ((*pFac)->getRules()->getCrafts() != 0)
+	if ((*pFac)->getRules()->getCrafts() != 0) // TODO: Handle hangars that can hold more than one Craft.
 	{
 		// Destroy Craft or production of Craft since there will no longer be a hangar for it.
 		if ((*pFac)->getCraft() != nullptr)
@@ -2372,9 +2366,9 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		{
 			bool checkTransfers (true);
 
-			for (std::vector<Production*>::const_reverse_iterator // check Productions
-					rit = _productions.rbegin();
-					rit != _productions.rend();
+			for (std::vector<Manufacture*>::const_reverse_iterator // check Manufacture
+					rit = _projectsManufacture.rbegin();
+					rit != _projectsManufacture.rend();
 					++rit)
 			{
 				if ((*rit)->getRules()->isCraft() == true)
@@ -2383,7 +2377,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 					_engineers += (*rit)->getAssignedEngineers();
 
 					delete *rit;
-					_productions.erase((++rit).base());
+					_projectsManufacture.erase((++rit).base());
 					break;
 				}
 			}
@@ -2434,22 +2428,21 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		if (getTotalLaboratories() - destroyed == 0)
 		{
 			for (std::vector<ResearchProject*>::const_iterator
-					i = _researchProjects.begin();
-					i != _researchProjects.end();
+					i = _projectsResearch.begin();
+					i != _projectsResearch.end();
 					++i)
 			{
 				_scientists += (*i)->getAssignedScientists();
 				delete *i;
 			}
-			_researchProjects.clear();
+			_projectsResearch.clear();
 		}
 		else
 		{
 			del = destroyed - getFreeLaboratories();
-			// TODO: Reverse iteration.
-			for (std::vector<ResearchProject*>::const_iterator
-					i = _researchProjects.begin();
-					i != _researchProjects.end() && del > 0;
+			for (std::vector<ResearchProject*>::const_iterator // TODO: Reverse iteration.
+					i = _projectsResearch.begin();
+					i != _projectsResearch.end() && del > 0;
 					++i)
 			{
 				personel = (*i)->getAssignedScientists();
@@ -2473,23 +2466,22 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 	{
 		if (getTotalWorkshops() - destroyed == 0)
 		{
-			for (std::vector<Production*>::const_iterator
-					i = _productions.begin();
-					i != _productions.end();
+			for (std::vector<Manufacture*>::const_iterator
+					i = _projectsManufacture.begin();
+					i != _projectsManufacture.end();
 					++i)
 			{
 				_engineers += (*i)->getAssignedEngineers();
 				delete *i;
 			}
-			_productions.clear();
+			_projectsManufacture.clear();
 		}
 		else
 		{
 			del = destroyed - getFreeWorkshops();
-			// TODO: Reverse iteration.
-			for (std::vector<Production*>::const_iterator
-					i = _productions.begin();
-					i != _productions.end() && del > 0;
+			for (std::vector<Manufacture*>::const_iterator // TODO: Reverse iteration.
+					i = _projectsManufacture.begin();
+					i != _projectsManufacture.end() && del > 0;
 					++i)
 			{
 				personel = (*i)->getAssignedEngineers();
@@ -2507,7 +2499,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 				}
 			}
 		}
-		// TODO: Start removing _productions if their space-required still
+		// TODO: Start removing '_projectsManufacture' if their space-required still
 		// exceeds space-available.
 	}
 
@@ -2936,7 +2928,7 @@ int Base::calcLostScore() const
 
 /**
  * Checks if any Craft at this Base needs to and can be refurbished.
- * @note Called by DebriefingState, ItemsArrivingState, Production.
+ * @note Called by DebriefingState, ItemsArrivingState, Manufacture.
  * @param itType - reference to an item-type
  */
 void Base::refurbishCraft(const std::string& itType)

@@ -116,7 +116,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 			++i)
 	{
 		crRule = _game->getRuleset()->getCraft(*i);
-		if (_game->getSavedGame()->isResearched(crRule->getRequirements()) == true)
+		if (_game->getSavedGame()->isResearched(crRule->getResearchRequirements()) == true)
 		{
 			cost = crRule->getRentCost();
 			qty = base->getCraftCount(*i);
@@ -144,7 +144,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	{
 		solRule = _game->getRuleset()->getSoldier(*i);
 		if (solRule->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(solRule->getRequirements()))
+			&& _game->getSavedGame()->isResearched(solRule->getResearchRequirements()))
 		{
 			std::string type;
 			if (i == soldierList.begin())

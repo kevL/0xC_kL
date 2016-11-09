@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Production.h"
+#include "Manufacture.h"
 
 //#include <algorithm>
 //#include <limits>
@@ -41,11 +41,11 @@ namespace OpenXcom
 
 /**
  * Tracks a Base manufacturing project.
- * @param manfRule	- pointer to RuleManufacture
+ * @param mfRule - pointer to RuleManufacture
  */
-Production::Production(const RuleManufacture* const manfRule)
+Manufacture::Manufacture(const RuleManufacture* const mfRule)
 	:
-		_manfRule(manfRule),
+		_mfRule(mfRule),
 		_units(1),
 		_engineers(0),
 		_timeSpent(0),
@@ -56,14 +56,14 @@ Production::Production(const RuleManufacture* const manfRule)
 /**
  * dTor.
  */
-Production::~Production()
+Manufacture::~Manufacture()
 {}
 
 /**
  * Loads from YAML.
  * @param node - reference a YAML node
  */
-void Production::load(const YAML::Node& node)
+void Manufacture::load(const YAML::Node& node)
 {
 	_engineers	= node["engineers"]	.as<int>(_engineers);
 	_timeSpent	= node["timeSpent"]	.as<int>(_timeSpent);
@@ -76,11 +76,11 @@ void Production::load(const YAML::Node& node)
  * Saves to YAML.
  * @return, a YAML node
  */
-YAML::Node Production::save() const
+YAML::Node Manufacture::save() const
 {
 	YAML::Node node;
 
-	node["item"] = _manfRule->getType();
+	node["item"] = _mfRule->getType();
 
 	if (_engineers != 0)	node["engineers"]	= _engineers;
 	if (_timeSpent != 0)	node["timeSpent"]	= _timeSpent;
@@ -92,19 +92,19 @@ YAML::Node Production::save() const
 }
 
 /**
- * Gets the rules for this Production.
+ * Gets the rules for this Manufacture.
  * @return, pointer to RuleManufacture
  */
-const RuleManufacture* Production::getRules() const
+const RuleManufacture* Manufacture::getRules() const
 {
-	return _manfRule;
+	return _mfRule;
 }
 
 /**
  * Gets the total quantity to produce.
  * @return, total quantity
  */
-int Production::getProductionTotal() const
+int Manufacture::getProductionTotal() const
 {
 	return _units;
 }
@@ -113,43 +113,43 @@ int Production::getProductionTotal() const
  * Sets the total quantity to produce.
  * @param quantity - total quantity
  */
-void Production::setProductionTotal(int quantity)
+void Manufacture::setProductionTotal(int quantity)
 {
 	_units = quantity;
 }
 
 /**
- * Gets if this Production is to produce an infinite quantity.
+ * Gets if this Manufacture is to produce an infinite quantity.
  * @return, true if infinite
  */
-bool Production::getInfinite() const
+bool Manufacture::getInfinite() const
 {
 	return _infinite;
 }
 
 /**
- * Sets if this Production is to produce an infinite quantity.
+ * Sets if this Manufacture is to produce an infinite quantity.
  * @param infinite - true if infinite
  */
-void Production::setInfinite(bool infinite)
+void Manufacture::setInfinite(bool infinite)
 {
 	_infinite = infinite;
 }
 
 /**
- * Gets the quantity of assigned engineers to this Production.
+ * Gets the quantity of assigned engineers to this Manufacture.
  * @return, quantity of engineers
  */
-int Production::getAssignedEngineers() const
+int Manufacture::getAssignedEngineers() const
 {
 	return _engineers;
 }
 
 /**
- * Sets the quantity of assigned engineers to this Production.
+ * Sets the quantity of assigned engineers to this Manufacture.
  * @param engineers - quantity of engineers
  */
-void Production::setAssignedEngineers(int engineers)
+void Manufacture::setAssignedEngineers(int engineers)
 {
 	_engineers = engineers;
 }
@@ -158,7 +158,7 @@ void Production::setAssignedEngineers(int engineers)
  * Gets if the produced items are to be sold immediately.
  * @return, true if sell
  */
-bool Production::getAutoSales() const
+bool Manufacture::getAutoSales() const
 {
 	return _sell;
 }
@@ -167,7 +167,7 @@ bool Production::getAutoSales() const
  * Sets if the produced items are to be sold immediately.
  * @param sell - true if sell
  */
-void Production::setAutoSales(bool sell)
+void Manufacture::setAutoSales(bool sell)
 {
 	_sell = sell;
 }
@@ -176,22 +176,22 @@ void Production::setAutoSales(bool sell)
  * Checks if there is enough funds to continue production.
  * @return, true if funds available
  */
-bool Production::enoughMoney(const SavedGame* const gameSave) const // private.
+bool Manufacture::enoughMoney(const SavedGame* const gameSave) const // private.
 {
-	return (gameSave->getFunds() >= _manfRule->getManufactureCost());
+	return (gameSave->getFunds() >= _mfRule->getManufactureCost());
 }
 
 /**
  * Checks if there is enough resource material to continue production.
  * @return, true if materials are available
  */
-bool Production::enoughMaterials( // private.
+bool Manufacture::enoughMaterials( // private.
 		Base* const base,
 		const Ruleset* const rules) const
 {
 	for (std::map<std::string, int>::const_iterator
-			i = _manfRule->getRequiredItems().begin();
-			i != _manfRule->getRequiredItems().end();
+			i = _mfRule->getRequiredItems().begin();
+			i != _mfRule->getRequiredItems().end();
 			++i)
 	{
 		if ((rules->getItemRule(i->first) != nullptr
@@ -209,22 +209,22 @@ bool Production::enoughMaterials( // private.
  * Gets the quantity of produced items so far.
  * @return, quantity produced
  */
-int Production::getProducedQuantity() const
+int Manufacture::getProducedQuantity() const
 {
-	return _timeSpent / _manfRule->getManufactureTime();
+	return _timeSpent / _mfRule->getManufactureTime();
 }
 
 /**
- * Advances this Production by a step.
+ * Advances this Manufacture by a step.
  * @param base		- pointer to a Base
  * @param gameSave	- pointer to the SavedGame
- * @param rules		- pointer to the Ruleset
  */
-ProductionProgress Production::step(
+ProductionProgress Manufacture::step(
 		Base* const base,
-		SavedGame* const gameSave,
-		const Ruleset* const rules)
+		SavedGame* const gameSave)
 {
+	const Ruleset* const rules (gameSave->getRules());
+
 	const int qtyDone_pre (getProducedQuantity());
 	_timeSpent += _engineers;
 
@@ -241,11 +241,11 @@ ProductionProgress Production::step(
 		do
 		{
 			for (std::map<std::string, int>::const_iterator
-					i = _manfRule->getProducedItems().begin();
-					i != _manfRule->getProducedItems().end();
+					i = _mfRule->getProducedItems().begin();
+					i != _mfRule->getProducedItems().end();
 					++i)
 			{
-				if (_manfRule->isCraft() == true)
+				if (_mfRule->isCraft() == true)
 				{
 					Craft* const craft (new Craft(
 												rules->getCraft(i->first),
@@ -254,7 +254,7 @@ ProductionProgress Production::step(
 												gameSave->getCanonicalId(i->first)));
 					craft->setCraftStatus(CS_REFUELLING);
 					base->getCrafts()->push_back(craft);
-					break; // <- Craft Production produces 1 craft period.
+					break; // <- Craft Manufacture produces 1 craft period.
 				}
 				// NOTE: Craft cannot be set for auto-sell.
 
@@ -279,7 +279,7 @@ ProductionProgress Production::step(
 				if (enoughMaterials(base, rules) == false)
 					return PROGRESS_NOT_ENOUGH_MATERIALS;
 
-				startProduction(base, gameSave, rules); // remove resources for the next of multiple-items *in this step*
+				startProduction(base, gameSave); // remove resources for the next of multiple-items *in this step*
 			}
 		}
 		while (producedQty != 0);
@@ -296,29 +296,30 @@ ProductionProgress Production::step(
 		if (enoughMaterials(base, rules) == false)
 			return PROGRESS_NOT_ENOUGH_MATERIALS;
 
-		startProduction(base, gameSave, rules); // start the next iteration
+		startProduction(base, gameSave); // start the next iteration
 	}
 
 	return PROGRESS_NOT_COMPLETE;
 }
 
 /**
- * Starts this Production.
+ * Starts this Manufacture.
  * @param base		- pointer to a Base
  * @param gameSave	- pointer to the SavedGame
  */
-void Production::startProduction(
+void Manufacture::startProduction(
 		Base* const base,
-		SavedGame* const gameSave,
-		const Ruleset* const rules) const
+		SavedGame* const gameSave) const
 {
-	const int cost (_manfRule->getManufactureCost());
+	const int cost (_mfRule->getManufactureCost());
 	gameSave->setFunds(gameSave->getFunds() - cost);
 	base->addCashSpent(cost);
 
+	const Ruleset* const rules (gameSave->getRules());
+
 	for (std::map<std::string, int>::const_iterator
-			i = _manfRule->getRequiredItems().begin();
-			i != _manfRule->getRequiredItems().end();
+			i = _mfRule->getRequiredItems().begin();
+			i != _mfRule->getRequiredItems().end();
 			++i)
 	{
 		if (rules->getItemRule(i->first) != nullptr)
@@ -344,12 +345,12 @@ void Production::startProduction(
 }
 
 /**
- * Gets the time till this Production is completed.
+ * Gets the time till this Manufacture is completed.
  * param days	- reference to store days remaining
  * param hours	- reference to store hours remaining
  * @return, true if work is progressing
  */
-bool Production::tillFinish(
+bool Manufacture::tillFinish(
 		int& days,
 		int& hours) const
 {
@@ -361,7 +362,7 @@ bool Production::tillFinish(
 		else
 			qty = getProductionTotal();
 
-		hours = qty * _manfRule->getManufactureTime() - _timeSpent;
+		hours = qty * _mfRule->getManufactureTime() - _timeSpent;
 		hours = (hours + _engineers - 1) / _engineers;
 
 		days = hours / 24;
@@ -373,18 +374,18 @@ bool Production::tillFinish(
 }
 
 /**
- * Gets the time spent on this Production so far.
+ * Gets the time spent on this Manufacture so far.
  * @return, time spent
  *
-int Production::getTimeSpent() const
+int Manufacture::getTimeSpent() const
 {
 	return _timeSpent;
 } */
 /**
- * Sets the time spent on this Production so far.
+ * Sets the time spent on this Manufacture so far.
  * @param spent - time spent
  *
-void Production::setTimeSpent(int spent)
+void Manufacture::setTimeSpent(int spent)
 {
 	_timeSpent = spent;
 } */
