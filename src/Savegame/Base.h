@@ -255,7 +255,7 @@ private:
 		/// Gets the Base's Crafts of a specified type.
 		int getCraftCount(
 				const std::string& type,
-				bool excludeTransfers = false) const;
+				bool exclTransfers = false) const;
 
 		/// Adds a Manufacture project to the Base.
 		void addManufactureProject(Manufacture* const project);

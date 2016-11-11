@@ -1102,7 +1102,7 @@ int Base::getUsedHangars() const
 		}
 	}
 
-	total += static_cast<int>(_crafts.size()); // TODO: Be sure to clear input-craft AND output-craft from this Base's Crafts vector.
+	total += static_cast<int>(_crafts.size());
 
 	for (std::vector<Transfer*>::const_iterator
 			i = _transfers.begin();
@@ -1179,17 +1179,17 @@ int Base::getSoldierCount(const std::string& type) const
 /**
  * Gets the total quantity of Craft of a specified type stored at or being
  * transfered to this Base.
- * @param type				- reference to the craft-type
- * @param excludeTransfers	- true to count only craft in hangars (default false)
+ * @param type			- reference to the craft-type
+ * @param exclTransfers	- true to count only craft in hangars (default false)
  * @return, quantity of craft of @a type
  */
 int Base::getCraftCount(
 		const std::string& type,
-		bool excludeTransfers) const
+		bool exclTransfers) const
 {
 	int total (0);
 
-	if (excludeTransfers == false)
+	if (exclTransfers == false)
 	{
 		for (std::vector<Transfer*>::const_iterator
 				i = _transfers.begin();
