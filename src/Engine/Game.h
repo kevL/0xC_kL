@@ -139,7 +139,7 @@ private:
 		void setResourcePack(ResourcePack* const res = nullptr);
 
 		/// Loads a Ruleset.
-		void loadRuleset();
+		void loadRulesets();
 		/// Gets the currently loaded Ruleset.
 		Ruleset* getRuleset() const;
 

@@ -52,8 +52,8 @@ OptionsModsState::OptionsModsState(OptionsOrigin origin)
 
 	centerSurfaces();
 
-	// how much room do you need for YES/NO
-	Text text (Text(100, 9));
+
+	Text text (Text(100, 9)); // how much room do you need for YES/NO
 	text.initText(
 				_game->getResourcePack()->getFont("FONT_BIG"),
 				_game->getResourcePack()->getFont("FONT_SMALL"),
@@ -65,7 +65,7 @@ OptionsModsState::OptionsModsState(OptionsOrigin origin)
 		yes (text.getTextWidth()),
 		no  (text.getTextWidth()),
 		rightcol (std::max(yes, no) + 2),
-		leftcol  (_lstMods->getWidth() - rightcol);
+		leftcol (_lstMods->getWidth() - rightcol);
 
 	_lstMods->setAlign(ALIGN_RIGHT, 1);
 	_lstMods->setColumns(2, leftcol, rightcol);
@@ -104,19 +104,19 @@ OptionsModsState::OptionsModsState(OptionsOrigin origin)
 							L"_",
 							L" ");
 
-			if (ruleset != "Xcom1Ruleset") // ignore default ruleset
-			{
-				const bool ruleEnabled ((std::find(
-												Options::rulesets.begin(),
-												Options::rulesets.end(),
-												ruleset) != Options::rulesets.end()));
-				_lstMods->addRow(
-							2,
-							rulesetLabel.c_str(),
-							(ruleEnabled == true) ? tr("STR_YES").c_str() : tr("STR_NO").c_str());
+//			if (ruleset != "Xcom1Ruleset") // ignore default ruleset
+//			{
+			const bool ruleEnabled ((std::find(
+											Options::rulesets.begin(),
+											Options::rulesets.end(),
+											ruleset) != Options::rulesets.end()));
+			_lstMods->addRow(
+						2,
+						rulesetLabel.c_str(),
+						(ruleEnabled == true) ? tr("STR_YES").c_str() : tr("STR_NO").c_str());
 
-				_mods.push_back(ruleset);
-			}
+			_mods.push_back(ruleset);
+//			}
 		}
 	}
 }

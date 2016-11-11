@@ -137,10 +137,10 @@ struct PromotionInfo
 	/// Builds this struct.
 	PromotionInfo()
 		:
-			totalCommanders(0),
-			totalColonels(0),
-			totalCaptains(0),
-			totalSergeants(0)
+			totalCommanders	(0),
+			totalColonels	(0),
+			totalCaptains	(0),
+			totalSergeants	(0)
 	{}
 };
 

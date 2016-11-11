@@ -1109,14 +1109,14 @@ ResourcePack* Game::getResourcePack() const
 /**
  * Loads the rulesets specified in Options.
  */
-void Game::loadRuleset()
+void Game::loadRulesets()
 {
 	Options::badRules.clear();
 
 	_rules = new Ruleset(this);
 
-	if (Options::rulesets.empty() == true)
-		Options::rulesets.push_back("Xcom1Ruleset");
+//	if (Options::rulesets.empty() == true)
+//		Options::rulesets.push_back("Xcom1Ruleset");
 
 	for (std::vector<std::string>::const_iterator
 			i = Options::rulesets.begin();

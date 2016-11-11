@@ -140,7 +140,7 @@ void loadArgs(
 void setFolders();
 
 /// Updates Options from config-file and command-line.
-void updateOptions();
+void userOptions();
 
 /// Saves options to YAML.
 void save(const std::string& file = "options");
@@ -172,7 +172,7 @@ void switchDisplay();
 void resetDefaults();
 
 /// Creates all OptionInfo.
-void create();
+void createOptions();
 
 } // Options
 

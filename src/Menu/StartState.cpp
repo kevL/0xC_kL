@@ -208,9 +208,9 @@ int StartState::load(void* ptrG) // static/private.
 	Game* const game (static_cast<Game*>(ptrG));
 	try
 	{
-		Log(LOG_INFO) << "Loading ruleset ...";
-		game->loadRuleset();
-		Log(LOG_INFO) << "Ruleset loaded.";
+		Log(LOG_INFO) << "Loading rulesets ...";
+		game->loadRulesets();
+		Log(LOG_INFO) << "Rulesets loaded.";
 
 		Log(LOG_INFO) << "Loading resources ...";
 		game->setResourcePack(new XcomResourcePack(game->getRuleset()));

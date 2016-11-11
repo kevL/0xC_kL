@@ -72,6 +72,7 @@ std::map<std::string, std::string> _cLine;
 /**
  * Handles the initialization of default-options as well as finding and loading
  * any existing ones.
+ * @note This is the first call in main()!
  * @param argc - quantity of arguments
  * @param argv - pointer to an array of argument-strings
  * @return, true if initialization happened, false if help was invoked
@@ -86,15 +87,14 @@ bool init(
 
 		setFolders();
 
-		create();
+		createOptions();
 
 //		resetDefaults();
+//		rulesets.clear();
+//		rulesets.push_back("Xcom1Ruleset");
 		backupDisplay();
 
-		rulesets.clear();
-		rulesets.push_back("Xcom1Ruleset"); // TODO: Make that a const string.
-
-		updateOptions();
+		userOptions();
 
 
 		const std::string st (getUserFolder() + "openxcom.log");
@@ -324,7 +324,7 @@ void setFolders()
  * Updates Options with the stuff in the config-file if it exists or the
  * command-line if it exists.
  */
-void updateOptions()
+void userOptions()
 {
 	if (CrossPlatform::folderExists(_dirConfig)) // Load Options in config-file or create one.
 	{
@@ -538,13 +538,13 @@ void resetDefaults()
 	backupDisplay();
 
 	rulesets.clear();
-	rulesets.push_back("Xcom1Ruleset"); // TODO: Make that a const string.
+//	rulesets.push_back("Xcom1Ruleset");
 }
 
 /**
  * Sets up the Options by creating their OptionInfo metadata.
  */
-void create()
+void createOptions()
 {
 #ifdef DINGOO
 	_info.push_back(OptionInfo("displayWidth",							&displayWidth,  Screen::ORIGINAL_WIDTH));
@@ -677,42 +677,42 @@ void create()
 	_info.push_back(OptionInfo("battleAlienBleeding",					&battleAlienBleeding,            false, "STR_ALIENBLEEDING",                      "STR_BATTLESCAPE"));
 
 	// controls
-	_info.push_back(OptionInfo("keyOk",									&keyOk,						SDLK_RETURN,	"STR_OK",									"STR_GENERAL"));
-	_info.push_back(OptionInfo("keyOkKeypad",							&keyOkKeypad,				SDLK_KP_ENTER,	"STR_OK_KEYPAD",							"STR_GENERAL"));
-	_info.push_back(OptionInfo("keyCancel",								&keyCancel,					SDLK_ESCAPE,	"STR_CANCEL",								"STR_GENERAL"));
-	_info.push_back(OptionInfo("keyScreenshot",							&keyScreenshot,				SDLK_F12,		"STR_SCREENSHOT",							"STR_GENERAL"));
-	_info.push_back(OptionInfo("keyFps",								&keyFps,					SDLK_F7,		"STR_FPS_COUNTER",							"STR_GENERAL"));
-	_info.push_back(OptionInfo("keyQuickSave",							&keyQuickSave,				SDLK_F6,		"STR_QUICK_SAVE",							"STR_GENERAL"));
-	_info.push_back(OptionInfo("keyQuickLoad",							&keyQuickLoad,				SDLK_F5,		"STR_QUICK_LOAD",							"STR_GENERAL"));
+	_info.push_back(OptionInfo("keyOk",									&keyOk,						SDLK_RETURN,	"STR_OK",			"STR_GENERAL"));
+	_info.push_back(OptionInfo("keyOkKeypad",							&keyOkKeypad,				SDLK_KP_ENTER,	"STR_OK_KEYPAD",	"STR_GENERAL"));
+	_info.push_back(OptionInfo("keyCancel",								&keyCancel,					SDLK_ESCAPE,	"STR_CANCEL",		"STR_GENERAL"));
+	_info.push_back(OptionInfo("keyScreenshot",							&keyScreenshot,				SDLK_F12,		"STR_SCREENSHOT",	"STR_GENERAL"));
+	_info.push_back(OptionInfo("keyFps",								&keyFps,					SDLK_F7,		"STR_FPS_COUNTER",	"STR_GENERAL"));
+	_info.push_back(OptionInfo("keyQuickSave",							&keyQuickSave,				SDLK_F6,		"STR_QUICK_SAVE",	"STR_GENERAL"));
+	_info.push_back(OptionInfo("keyQuickLoad",							&keyQuickLoad,				SDLK_F5,		"STR_QUICK_LOAD",	"STR_GENERAL"));
 
-	_info.push_back(OptionInfo("keyGeoLeft",							&keyGeoLeft,				SDLK_LEFT,		"STR_ROTATE_LEFT",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoRight",							&keyGeoRight,				SDLK_RIGHT,		"STR_ROTATE_RIGHT",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoUp",								&keyGeoUp,					SDLK_UP,		"STR_ROTATE_UP",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoDown",							&keyGeoDown,				SDLK_DOWN,		"STR_ROTATE_DOWN",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoZoomIn",							&keyGeoZoomIn,				SDLK_PLUS,		"STR_ZOOM_IN",								"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoZoomOut",							&keyGeoZoomOut,				SDLK_MINUS,		"STR_ZOOM_OUT",								"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoSpeed1",							&keyGeoSpeed1,				SDLK_1,			"STR_5_SECONDS",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoSpeed2",							&keyGeoSpeed2,				SDLK_2,			"STR_1_MINUTE",								"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoSpeed3",							&keyGeoSpeed3,				SDLK_3,			"STR_5_MINUTES",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoSpeed4",							&keyGeoSpeed4,				SDLK_4,			"STR_30_MINUTES",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoSpeed5",							&keyGeoSpeed5,				SDLK_5,			"STR_1_HOUR",								"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoSpeed6",							&keyGeoSpeed6,				SDLK_6,			"STR_1_DAY",								"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoIntercept",						&keyGeoIntercept,			SDLK_i,			"STR_INTERCEPT",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoBases",							&keyGeoBases,				SDLK_b,			"STR_BASES",								"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoGraphs",							&keyGeoGraphs,				SDLK_g,			"STR_GRAPHS",								"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoUfopedia",						&keyGeoUfopedia,			SDLK_u,			"STR_UFOPAEDIA_UC",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoOptions",							&keyGeoOptions,				SDLK_ESCAPE,	"STR_OPTIONS_UC",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoFunding",							&keyGeoFunding,				SDLK_f,			"STR_FUNDING_UC",							"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoToggleDetail",					&keyGeoToggleDetail,		SDLK_TAB,		"STR_TOGGLE_COUNTRY_DETAIL",				"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyGeoToggleRadar",						&keyGeoToggleRadar,			SDLK_r,			"STR_TOGGLE_RADAR_RANGES",					"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect1",						&keyBaseSelect1,			SDLK_1,			"STR_SELECT_BASE_1",						"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect2",						&keyBaseSelect2,			SDLK_2,			"STR_SELECT_BASE_2",						"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect3",						&keyBaseSelect3,			SDLK_3,			"STR_SELECT_BASE_3",						"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect4",						&keyBaseSelect4,			SDLK_4,			"STR_SELECT_BASE_4",						"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect5",						&keyBaseSelect5,			SDLK_5,			"STR_SELECT_BASE_5",						"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect6",						&keyBaseSelect6,			SDLK_6,			"STR_SELECT_BASE_6",						"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect7",						&keyBaseSelect7,			SDLK_7,			"STR_SELECT_BASE_7",						"STR_GEOSCAPE"));
-	_info.push_back(OptionInfo("keyBaseSelect8",						&keyBaseSelect8,			SDLK_8,			"STR_SELECT_BASE_8",						"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoLeft",							&keyGeoLeft,				SDLK_LEFT,		"STR_ROTATE_LEFT",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoRight",							&keyGeoRight,				SDLK_RIGHT,		"STR_ROTATE_RIGHT",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoUp",								&keyGeoUp,					SDLK_UP,		"STR_ROTATE_UP",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoDown",							&keyGeoDown,				SDLK_DOWN,		"STR_ROTATE_DOWN",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoZoomIn",							&keyGeoZoomIn,				SDLK_PLUS,		"STR_ZOOM_IN",					"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoZoomOut",							&keyGeoZoomOut,				SDLK_MINUS,		"STR_ZOOM_OUT",					"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoSpeed1",							&keyGeoSpeed1,				SDLK_1,			"STR_5_SECONDS",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoSpeed2",							&keyGeoSpeed2,				SDLK_2,			"STR_1_MINUTE",					"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoSpeed3",							&keyGeoSpeed3,				SDLK_3,			"STR_5_MINUTES",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoSpeed4",							&keyGeoSpeed4,				SDLK_4,			"STR_30_MINUTES",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoSpeed5",							&keyGeoSpeed5,				SDLK_5,			"STR_1_HOUR",					"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoSpeed6",							&keyGeoSpeed6,				SDLK_6,			"STR_1_DAY",					"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoIntercept",						&keyGeoIntercept,			SDLK_i,			"STR_INTERCEPT",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoBases",							&keyGeoBases,				SDLK_b,			"STR_BASES",					"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoGraphs",							&keyGeoGraphs,				SDLK_g,			"STR_GRAPHS",					"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoUfopedia",						&keyGeoUfopedia,			SDLK_u,			"STR_UFOPAEDIA_UC",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoOptions",							&keyGeoOptions,				SDLK_ESCAPE,	"STR_OPTIONS_UC",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoFunding",							&keyGeoFunding,				SDLK_f,			"STR_FUNDING_UC",				"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoToggleDetail",					&keyGeoToggleDetail,		SDLK_TAB,		"STR_TOGGLE_COUNTRY_DETAIL",	"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyGeoToggleRadar",						&keyGeoToggleRadar,			SDLK_r,			"STR_TOGGLE_RADAR_RANGES",		"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect1",						&keyBaseSelect1,			SDLK_1,			"STR_SELECT_BASE_1",			"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect2",						&keyBaseSelect2,			SDLK_2,			"STR_SELECT_BASE_2",			"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect3",						&keyBaseSelect3,			SDLK_3,			"STR_SELECT_BASE_3",			"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect4",						&keyBaseSelect4,			SDLK_4,			"STR_SELECT_BASE_4",			"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect5",						&keyBaseSelect5,			SDLK_5,			"STR_SELECT_BASE_5",			"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect6",						&keyBaseSelect6,			SDLK_6,			"STR_SELECT_BASE_6",			"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect7",						&keyBaseSelect7,			SDLK_7,			"STR_SELECT_BASE_7",			"STR_GEOSCAPE"));
+	_info.push_back(OptionInfo("keyBaseSelect8",						&keyBaseSelect8,			SDLK_8,			"STR_SELECT_BASE_8",			"STR_GEOSCAPE"));
 
 	_info.push_back(OptionInfo("keyBattleLeft",							&keyBattleLeft,				SDLK_LEFT,		"STR_SCROLL_LEFT",							"STR_BATTLESCAPE"));
 	_info.push_back(OptionInfo("keyBattleRight",						&keyBattleRight,			SDLK_RIGHT,		"STR_SCROLL_RIGHT",							"STR_BATTLESCAPE"));
