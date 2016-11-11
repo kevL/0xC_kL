@@ -197,8 +197,8 @@ OPT SDLKey
 	keyBattleCenterEnemy10,
 	keyBattleVoxelView,
 	keyBattleConsole,
-	keyBattlePivotCCW,
-	keyBattlePivotCW,
+	keyBattlePivotCcw,
+	keyBattlePivotCw,
 	keyInvClear;
 //	keyInvCreateTemplate,
 //	keyInvApplyTemplate,

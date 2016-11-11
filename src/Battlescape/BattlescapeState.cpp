@@ -2686,40 +2686,35 @@ void BattlescapeState::keyConsoleToggle(Action*)
  */
 void BattlescapeState::keyTurnUnit(Action* action)
 {
-	switch (action->getDetails()->key.keysym.sym)
+	const SDLKey keyId (action->getDetails()->key.keysym.sym);
+
+	if (keyId == Options::keyBattlePivotCcw || keyId == Options::keyBattlePivotCw
+		&& playableUnitSelected() == true)
 	{
-		case SDLK_COMMA:
-		case SDLK_PERIOD:
-			if (playableUnitSelected() == true)
-			{
-				BattleAction* const tacAction (_battleGame->getTacticalAction());
-				tacAction->actor = _battleSave->getSelectedUnit();
-				tacAction->targeting = false;
+		BattleAction* const tacAction (_battleGame->getTacticalAction());
+		tacAction->actor = _battleSave->getSelectedUnit();
+		tacAction->targeting = false;
 
-				int dir;
-				switch (action->getDetails()->key.keysym.sym)
-				{
-					case SDLK_COMMA:  dir = -1; break;	// pivot unit counter-clockwise
-					case SDLK_PERIOD: dir = +1; break;	// pivot unit clockwise
+		int dir;
+		if (keyId == Options::keyBattlePivotCcw)
+			dir = -1; // pivot unit counter-clockwise
+		else
+			dir = +1; // pivot unit clockwise
 
-					default: dir = 0;					// should never happen.
-				}
+		if (tacAction->actor->getTurretType() != TRT_NONE
+			&& (SDL_GetModState() & KMOD_CTRL) != 0)
+		{
+			tacAction->strafe = true;
+			dir += tacAction->actor->getTurretDirection();
+		}
+		else
+		{
+			tacAction->strafe = false;
+			dir += tacAction->actor->getUnitDirection();
+		}
+		tacAction->value = (dir + 8) % 8;
 
-				if (tacAction->actor->getTurretType() != TRT_NONE
-					&& (SDL_GetModState() & KMOD_CTRL) != 0)
-				{
-					tacAction->strafe = true;
-					dir += tacAction->actor->getTurretDirection();
-				}
-				else
-				{
-					tacAction->strafe = false;
-					dir += tacAction->actor->getUnitDirection();
-				}
-				tacAction->value = (dir + 8) % 8;
-
-				_battleGame->stateBPushBack(new UnitTurnBState(_battleGame, *tacAction));
-			}
+		_battleGame->stateBPushBack(new UnitTurnBState(_battleGame, *tacAction));
 	}
 }
 

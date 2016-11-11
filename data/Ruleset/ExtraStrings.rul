@@ -178,6 +178,8 @@ extraStrings:
       STR_PER10MIN: "per 10 min"
       STR_SHOT_TYPE_LAUNCH: "launch"
       STR_CONSOLE: "toggle battlescape console"
+      STR_PIVOT_CCW: "pivot selected unit counter-clockwise"
+      STR_PIVOT_CW: "pivot selected unit clockwise"
       STR_SOLDIER_NOT_AT_BASE: "Soldier on Mission"
       STR_TRANSIT_LC: "Transfers"
       STR_RESET_UC: "reset"
