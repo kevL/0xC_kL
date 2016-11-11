@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Screen which displays needed elements to start productions.
+ * Screen which displays needed elements to start Manufacture.
  */
 class ManufactureStartState
 	:
@@ -65,21 +65,21 @@ private:
 
 
 	public:
-		/// Creates the State.
+		/// Creates a ManufactureStart state.
 		ManufactureStartState(
 				Base* const base,
 				const RuleManufacture* const mfRule);
 		/// dTor.
 		~ManufactureStartState();
 
-		/// Initializes state.
+		/// Initializes the State.
 		void init() override;
 
 		/// Handler for the Costs button.
 		void btnCostsClick(Action* action);
 		/// Handler for the Cancel button.
 		void btnCancelClick(Action* action);
-		/// Handler for the start button.
+		/// Handler for the Start button.
 		void btnStartClick(Action* action);
 };
 

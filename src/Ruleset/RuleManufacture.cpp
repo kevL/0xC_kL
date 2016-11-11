@@ -37,7 +37,7 @@ RuleManufacture::RuleManufacture(const std::string& type)
 		_space(0),
 		_hours(0),
 		_cost(0),
-		_isCraft(false),
+		_isCraftProduced(false),
 		_listOrder(0)
 {}
 
@@ -68,8 +68,9 @@ void RuleManufacture::load(
 	if (_listOrder == 0)
 		_listOrder = listOrder;
 
-	_isCraft = false;
-	int qty (0);
+
+	_isCraftProduced = false;
+	int qtyCraft (0);
 
 	for (std::map<std::string, int>::const_iterator
 			i = _partsProduced.begin();
@@ -79,16 +80,26 @@ void RuleManufacture::load(
 		if (rules->getItemRule(i->first) == nullptr
 			&& rules->getCraft(i->first) != nullptr)
 		{
-			_isCraft = true;
-			qty += i->second;
+			_isCraftProduced = true;
+			qtyCraft += i->second;
 		}
 	}
 
-	if (qty > 1)
+	if (_isCraftProduced == true)
 	{
-		Log(LOG_WARNING) << "RuleManufacture::load() The rule for " << _type << " produces " << qty << " Craft."
-						 << " The manufacturing subsystem allows production of only one Craft.";
-		// TODO: Delete 'this'.
+		if (qtyCraft > 1)
+		{
+			Log(LOG_WARNING) << "RuleManufacture::load() The rule for " << _type << " produces " << qtyCraft << " Craft."
+							 << " The manufacturing subsystem allows production of only one Craft.";
+			// TODO: Delete 'this'.
+		}
+
+		if (_partsProduced.size() > 1u)
+		{
+			Log(LOG_WARNING) << "RuleManufacture::load() The rule for " << _type << " produces " << qtyCraft << " Craft plus extra products."
+							 << " The manufacturing subsystem allows production of one Craft only without extra products.";
+			// TODO: Delete 'this'.
+		}
 	}
 }
 
@@ -114,9 +125,9 @@ const std::string& RuleManufacture::getCategory() const
  * Checks if this RuleManufacture produces a Craft.
  * @return, true if a Craft will be produced
  */
-bool RuleManufacture::isCraft() const
+bool RuleManufacture::isCraftProduced() const
 {
-	return _isCraft;
+	return _isCraftProduced;
 }
 
 /**
@@ -132,7 +143,7 @@ int RuleManufacture::getSpaceRequired() const
  * Gets the time needed to complete one iteration of the project.
  * @return, the time needed in man-hours
  */
-int RuleManufacture::getManufactureTime() const
+int RuleManufacture::getManufactureHours() const
 {
 	return _hours;
 }

@@ -25,13 +25,6 @@
 namespace OpenXcom
 {
 
-const float
-	PROGRESS_LIMIT_UNKNOWN	= 0.09f,
-	PROGRESS_LIMIT_POOR		= 0.23f,
-	PROGRESS_LIMIT_AVERAGE	= 0.55f,
-	PROGRESS_LIMIT_GOOD		= 0.86f;
-
-
 /**
  * Constructs a ResearchProject at a Base.
  * @param resRule - pointer to RuleResearch
@@ -182,35 +175,28 @@ bool ResearchProject::getOffline() const
  */
 std::string ResearchProject::getResearchProgress() const
 {
-/*	if (_scientists == 0)
-		return "STR_NONE";
-	const float progress = static_cast<float>(_daysSpent) / static_cast<float>(_daysCost);
-	if (progress < PROGRESS_LIMIT_UNKNOWN)	// < 0.1
-		return "STR_UNKNOWN";
-	if (progress < PROGRESS_LIMIT_POOR)		// < 0.2
-		return "STR_POOR";
-	if (progress < PROGRESS_LIMIT_AVERAGE)	// < 0.5
-		return "STR_AVERAGE";
-	if (progress < PROGRESS_LIMIT_GOOD)		// < 0.8
-		return "STR_GOOD";
-	return "STR_EXCELLENT"; */
+	static const float
+		LIMIT_UNKNOWN	= 0.09f, // 0.1
+		LIMIT_POOR		= 0.23f, // 0.2
+		LIMIT_AVERAGE	= 0.55f, // 0.5
+		LIMIT_GOOD		= 0.86f; // 0.8
 
 	if (_scientists == 0)
 		return "STR_NA"; //"STR_NONE"
 
-	if (static_cast<float>(_daysSpent) / static_cast<float>(_daysCost) < PROGRESS_LIMIT_UNKNOWN)
+	if (static_cast<float>(_daysSpent) / static_cast<float>(_daysCost) < LIMIT_UNKNOWN)
 		return "STR_UNKNOWN";
 
-	const float rating (static_cast<float>(_scientists)
-					  / static_cast<float>(_resRule->getCost()));
+	const float progress (static_cast<float>(_scientists)
+						/ static_cast<float>(_resRule->getCost()));
 
-	if (rating < PROGRESS_LIMIT_POOR)
+	if (progress < LIMIT_POOR)
 		return "STR_POOR";
 
-	if (rating < PROGRESS_LIMIT_AVERAGE)
+	if (progress < LIMIT_AVERAGE)
 		return "STR_AVERAGE";
 
-	if (rating < PROGRESS_LIMIT_GOOD)
+	if (progress < LIMIT_GOOD)
 		return "STR_GOOD";
 
 	return "STR_EXCELLENT";

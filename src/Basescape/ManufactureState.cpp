@@ -210,10 +210,9 @@ void ManufactureState::init()
 
 	_lstManufacture->clearList();
 
-	const std::vector<Manufacture*> baseProds (_base->getManufacture());
 	for (std::vector<Manufacture*>::const_iterator
-			i = baseProds.begin();
-			i != baseProds.end();
+			i = _base->getManufacture().begin();
+			i != _base->getManufacture().end();
 			++i)
 	{
 		std::wostringstream
@@ -245,8 +244,8 @@ void ManufactureState::init()
 		else
 			woststr3 << L"oo";
 
-		_lstManufacture->addRow
-							(5,
+		_lstManufacture->addRow(
+							5,
 							woststr1.str().c_str(),
 							Text::intWide((*i)->getAssignedEngineers()).c_str(),
 							woststr2.str().c_str(),
@@ -254,12 +253,9 @@ void ManufactureState::init()
 							woststr3.str().c_str());
 	}
 
-	_txtAvailable->setText(tr("STR_ENGINEERS_AVAILABLE_")
-							.arg(_base->getEngineers()));
-	_txtAllocated->setText(tr("STR_ENGINEERS_ALLOCATED_")
-							.arg(_base->getAllocatedEngineers()));
-	_txtSpace->setText(tr("STR_WORKSHOP_SPACE_AVAILABLE_")
-							.arg(_base->getFreeWorkshops()));
+	_txtAvailable->setText(tr("STR_ENGINEERS_AVAILABLE_") .arg(_base->getEngineers()));
+	_txtAllocated->setText(tr("STR_ENGINEERS_ALLOCATED_") .arg(_base->getAllocatedEngineers()));
+	_txtSpace->setText(tr("STR_WORKSHOP_SPACE_AVAILABLE_").arg(_base->getFreeWorkshops()));
 
 	int
 		qtyA (0),

@@ -39,7 +39,7 @@ class RuleManufacture
 {
 
 private:
-	bool _isCraft;
+	bool _isCraftProduced;
 	int
 		_cost,
 		_listOrder,
@@ -74,13 +74,13 @@ private:
 		const std::string& getCategory() const;
 
 		/// Checks if the RuleManufacture produces a Craft.
-		bool isCraft() const;
+		bool isCraftProduced() const;
 
 		/// Gets required workshop-space.
 		int getSpaceRequired() const;
-		/// Gets time required to produce one object.
-		int getManufactureTime() const;
-		/// Gets cost to produce one object.
+		/// Gets hours required for one iteration of the project.
+		int getManufactureHours() const;
+		/// Gets cost for one iteration of the project.
 		int getManufactureCost() const;
 
 		/// Gets the RuleManufacture's required-research.

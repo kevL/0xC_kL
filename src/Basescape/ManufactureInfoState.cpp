@@ -63,32 +63,32 @@ ManufactureInfoState::ManufactureInfoState(
 	:
 		_base(base),
 		_mfRule(mfRule),
-		_manufacture(nullptr),
+		_project(nullptr),
 		_valueProduct(0),
 		_start(true)
 {
-	_manufacture = new Manufacture(_mfRule);
-	_base->addManufactureProject(_manufacture);
+	_project = new Manufacture(_mfRule);
+	_base->addManufactureProject(_project);
 
 	buildUi();
 }
 
 /**
  * Initializes all elements in the ManufactureInfo screen (adjust Manufacture).
- * @param base			- pointer to the Base to get info from
- * @param manufacture	- pointer to the Manufacture to adjust
+ * @param base		- pointer to the Base to get info from
+ * @param project	- pointer to the Manufacture to adjust
  */
 ManufactureInfoState::ManufactureInfoState(
 		Base* const base,
-		Manufacture* const manufacture)
+		Manufacture* const project)
 	:
 		_base(base),
 		_mfRule(nullptr),
-		_manufacture(manufacture),
+		_project(project),
 		_valueProduct(0),
 		_start(false)
 {
-	_mfRule = _manufacture->getRules();
+	_mfRule = _project->getRules();
 
 	buildUi();
 }
@@ -209,10 +209,10 @@ void ManufactureInfoState::buildUi() // private.
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureInfoState::btnOkClick),
 							Options::keyOkKeypad);
 
-	_btnSell->setPressed(_manufacture->getAutoSales() == true);
+	_btnSell->setPressed(_project->getAutoSales() == true);
 
 	initProfit();
-	assignEngineers();
+	updateInfo();
 
 
 	_timerEngineersMore = new Timer(Timer::SCROLL_SLOW);
@@ -237,11 +237,13 @@ void ManufactureInfoState::initProfit() // private.
 			i != _mfRule->getPartsProduced().end();
 			++i)
 	{
-		if (_mfRule->isCraft() == true)
-			sellValue = _game->getRuleset()->getCraft(i->first)->getSellCost();
-		else
-			sellValue = _game->getRuleset()->getItemRule(i->first)->getSellCost();
+		if (_mfRule->isCraftProduced() == true)
+		{
+			_valueProduct = _game->getRuleset()->getCraft(i->first)->getSellCost();
+			break;
+		}
 
+		sellValue = _game->getRuleset()->getItemRule(i->first)->getSellCost();
 		_valueProduct += sellValue * i->second;
 	}
 }
@@ -252,7 +254,7 @@ void ManufactureInfoState::initProfit() // private.
  */
 void ManufactureInfoState::btnStopClick(Action*) // private.
 {
-	_base->clearManufactureProject(_manufacture);
+	_base->clearManufactureProject(_project);
 	exitState();
 }
 
@@ -263,7 +265,7 @@ void ManufactureInfoState::btnStopClick(Action*) // private.
 void ManufactureInfoState::btnOkClick(Action*) // private.
 {
 	if (_start == true)
-		_manufacture->startManufacture(
+		_project->startManufacture(
 								_base,
 								_game->getSavedGame());
 	exitState();
@@ -290,8 +292,8 @@ void ManufactureInfoState::btnSellRelease(Action* action) // private.
 	{
 		case SDL_BUTTON_LEFT:
 		case SDL_BUTTON_RIGHT:
-			_manufacture->setAutoSales(_btnSell->getPressed() == true);
-			assignEngineers();
+			_project->setAutoSales(_btnSell->getPressed() == true);
+			updateInfo();
 	}
 }
 
@@ -299,22 +301,22 @@ void ManufactureInfoState::btnSellRelease(Action* action) // private.
  * Updates display of assigned/available engineers/workshop-space and calculates
  * expenses/profits.
  */
-void ManufactureInfoState::assignEngineers() // private.
+void ManufactureInfoState::updateInfo() // private.
 {
 	_txtFreeEngineer->setText(tr("STR_ENGINEERS_AVAILABLE_UC_").arg(_base->getEngineers()));
 	_txtFreeSpace->setText(tr("STR_WORKSHOP_SPACE_AVAILABLE_UC_").arg(_base->getFreeWorkshops()));
 
 	std::wostringstream woststr;
 
-	woststr << L"> \x01" << _manufacture->getAssignedEngineers();
+	woststr << L"> \x01" << _project->getAssignedEngineers();
 	_txtEngineers->setText(woststr.str());
 
 	woststr.str(L"");
 	woststr << L"> \x01";
-	if (_manufacture->getInfinite() == true)
+	if (_project->getInfinite() == true)
 		woststr << L"oo";
 	else
-		woststr << _manufacture->getManufactureTotal();
+		woststr << _project->getManufactureTotal();
 	_txtUnits->setText(woststr.str());
 
 	woststr.str(L"");
@@ -327,7 +329,7 @@ void ManufactureInfoState::assignEngineers() // private.
 	}
 	else
 		st = "STR_MONTHLY_COST_";
-	if (_manufacture->getInfinite() == true) //|| _manufacture->getAutoSales() == true
+	if (_project->getInfinite() == true) //|| _project->getAutoSales() == true
 		woststr << L" per";
 	_txtProfit->setText(tr(st).arg(woststr.str()));
 
@@ -335,10 +337,10 @@ void ManufactureInfoState::assignEngineers() // private.
 	int
 		days,
 		hours;
-	if (_manufacture->tillFinish(days, hours) == true)
+	if (_project->tillFinish(days, hours) == true)
 	{
 		woststr << days << L"\n" << hours;
-		if (_manufacture->getInfinite() == true) //|| _manufacture->getAutoSales() == true
+		if (_project->getInfinite() == true) //|| _project->getAutoSales() == true
 			woststr << L" per";
 	}
 	else
@@ -359,15 +361,15 @@ int ManufactureInfoState::calcProfit() // private.
 		qty,
 		sellValue;
 
-	if (_manufacture->getAutoSales() == true)
+	if (_project->getAutoSales() == true)
 		sellValue = _valueProduct;
 	else
 		sellValue = 0;
 
-	if (_manufacture->getInfinite() == true)
+	if (_project->getInfinite() == true)
 		qty = 1;
 	else
-		qty = _manufacture->getManufactureTotal() - _manufacture->getQuantityManufactured();
+		qty = _project->getManufactureTotal() - _project->getQuantityManufactured();
 
 	return qty * (sellValue - _mfRule->getManufactureCost());
 }
@@ -396,7 +398,7 @@ bool ManufactureInfoState::formatProfit( // private/static.
 }
 
 /**
- * Starts the more engineers Timer.
+ * Starts the more-engineers Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::engineersMorePress(Action* action) // private.
@@ -415,7 +417,7 @@ void ManufactureInfoState::engineersMorePress(Action* action) // private.
 }
 
 /**
- * Stops the more engineers Timer.
+ * Stops the more-engineers Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::engineersMoreRelease(Action* action) // private.
@@ -425,7 +427,7 @@ void ManufactureInfoState::engineersMoreRelease(Action* action) // private.
 }
 
 /**
- * Starts the less engineers Timer.
+ * Starts the less-engineers Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::engineersLessPress(Action* action) // private.
@@ -444,7 +446,7 @@ void ManufactureInfoState::engineersLessPress(Action* action) // private.
 }
 
 /**
- * Stops the less engineers Timer.
+ * Stops the less-engineers Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::engineersLessRelease(Action* action) // private.
@@ -454,12 +456,12 @@ void ManufactureInfoState::engineersLessRelease(Action* action) // private.
 }
 
 /**
- * Starts the more units Timer.
+ * Starts the more-units Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::unitsMorePress(Action* action) // private.
 {
-	if (_manufacture->getInfinite() == false // We can't increase over infinite :) [cf. Cantor]
+	if (_project->getInfinite() == false // We can't increase over infinite :) [cf. Cantor]
 		&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 	{
 		_timerUnitsMore->setInterval(Timer::SCROLL_SLOW);
@@ -468,7 +470,7 @@ void ManufactureInfoState::unitsMorePress(Action* action) // private.
 }
 
 /**
- * Stops the more units Timer.
+ * Stops the more-units Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::unitsMoreRelease(Action* action) // private.
@@ -478,12 +480,12 @@ void ManufactureInfoState::unitsMoreRelease(Action* action) // private.
 }
 
 /**
- * Increases the quantity of units to produce.
+ * Increases the quantity of units.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::unitsMoreClick(Action* action) // private.
 {
-	if (_manufacture->getInfinite() == false) // We can't increase over infinite :) [cf. Cantor]
+	if (_project->getInfinite() == false) // We can't increase over infinite :) [cf. Cantor]
 	{
 		switch (action->getDetails()->button.button)
 		{
@@ -492,19 +494,20 @@ void ManufactureInfoState::unitsMoreClick(Action* action) // private.
 				break;
 
 			case SDL_BUTTON_RIGHT:
-				if (_manufacture->getRules()->isCraft() == true)
-					unitsMoreByValue(std::numeric_limits<int>::max());
+				if (_project->getRules()->isCraftProduced() == true)
+					unitsMoreByValue(stepDelta());
+//					unitsMoreByValue(std::numeric_limits<int>::max());
 				else
 				{
-					_manufacture->setInfinite(true);
-					assignEngineers();
+					_project->setInfinite();
+					updateInfo();
 				}
 		}
 	}
 }
 
 /**
- * Starts the less units Timer.
+ * Starts the less-units Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::unitsLessPress(Action* action) // private.
@@ -517,7 +520,7 @@ void ManufactureInfoState::unitsLessPress(Action* action) // private.
 }
 
 /**
- * Stops the less units Timer.
+ * Stops the less-units Timer.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::unitsLessRelease(Action* action) // private.
@@ -527,7 +530,7 @@ void ManufactureInfoState::unitsLessRelease(Action* action) // private.
 }
 
 /**
- * Decreases the quantity of units to produce.
+ * Decreases the quantity of units.
  * @param action - pointer to an Action
  */
 void ManufactureInfoState::unitsLessClick(Action* action) // private.
@@ -535,7 +538,7 @@ void ManufactureInfoState::unitsLessClick(Action* action) // private.
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
-			if (_manufacture->getInfinite() == false)
+			if (_project->getInfinite() == false)
 			{
 				unitsLessByValue(stepDelta());
 				break;
@@ -543,9 +546,9 @@ void ManufactureInfoState::unitsLessClick(Action* action) // private.
 			// no break;
 
 		case SDL_BUTTON_RIGHT:
-			_manufacture->setInfinite(false);
-			_manufacture->setManufactureTotal(_manufacture->getQuantityManufactured() + 1);
-			assignEngineers();
+			_project->setInfinite(false);
+			_project->setManufactureTotal(_project->getQuantityManufactured() + 1);
+			updateInfo();
 	}
 }
 
@@ -564,7 +567,7 @@ void ManufactureInfoState::think() // private.
 }
 
 /**
- * Adds engineers to the manufacture.
+ * Adds engineers to the project.
  */
 void ManufactureInfoState::onEngineersMore() // private.
 {
@@ -573,7 +576,7 @@ void ManufactureInfoState::onEngineersMore() // private.
 }
 
 /**
- * Adds a given quantity of engineers to the manufacture if possible.
+ * Adds a given quantity of engineers to the project if possible.
  * @param delta - quantity to add
  */
 void ManufactureInfoState::engineersMoreByValue(int delta) // private.
@@ -587,14 +590,14 @@ void ManufactureInfoState::engineersMoreByValue(int delta) // private.
 		delta = std::min(delta,
 						 std::min(availableEngineers,
 								  availableWorkSpace));
-		_manufacture->setAssignedEngineers(_manufacture->getAssignedEngineers() + delta);
+		_project->setAssignedEngineers(_project->getAssignedEngineers() + delta);
 		_base->setEngineers(_base->getEngineers() - delta);
-		assignEngineers();
+		updateInfo();
 	}
 }
 
 /**
- * Subtracts engineers from the manufacture.
+ * Subtracts engineers from the project.
  */
 void ManufactureInfoState::onEngineersLess() // private.
 {
@@ -603,18 +606,18 @@ void ManufactureInfoState::onEngineersLess() // private.
 }
 
 /**
- * Subtracts a given quantity of engineers from the manufacture if possible.
+ * Subtracts a given quantity of engineers from the project if possible.
  * @param delta - quantity to subtract
  */
 void ManufactureInfoState::engineersLessByValue(int delta) // private.
 {
-	const int assigned (_manufacture->getAssignedEngineers());
+	const int assigned (_project->getAssignedEngineers());
 	if (assigned != 0)
 	{
 		delta = std::min(delta, assigned);
-		_manufacture->setAssignedEngineers(assigned - delta);
+		_project->setAssignedEngineers(assigned - delta);
 		_base->setEngineers(_base->getEngineers() + delta);
-		assignEngineers();
+		updateInfo();
 	}
 }
 
@@ -628,39 +631,40 @@ void ManufactureInfoState::onUnitsMore() // private.
 }
 
 /**
- * Adds a given quantity of units to produce if possible.
+ * Adds a given quantity of units if possible.
  * @param delta - quantity to add
  */
 void ManufactureInfoState::unitsMoreByValue(int delta) // private.
 {
-	if (_mfRule->isCraft() == true && _base->getFreeHangars() == 0)
-	{
-		_timerUnitsMore->stop();
+//	if (_mfRule->isCraftProduced() == true && _base->getFreeHangars() == 0)
+//	{
+//		_timerUnitsMore->stop();
+//
+//		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("basescape"));
+//		_game->pushState(new ErrorMessageState(
+//											tr("STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION"),
+//											_palette,
+//											uiRule->getElement("errorMessage")->color,
+//											"BACK17.SCR",
+//											uiRule->getElement("errorPalette")->color));
+//	}
+//	else
+//	{
+	const int total (_project->getManufactureTotal());
+	delta = std::min(delta,
+					 std::numeric_limits<int>::max() - total); // safety, really. Nobody's going to set 'delta' that absurdly high.
 
-		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("basescape"));
-		_game->pushState(new ErrorMessageState(
-											tr("STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION"),
-											_palette,
-											uiRule->getElement("errorMessage")->color,
-											"BACK17.SCR",
-											uiRule->getElement("errorPalette")->color));
-	}
-	else
-	{
-		const int total (_manufacture->getManufactureTotal());
-		delta = std::min(delta,
-						 std::numeric_limits<int>::max() - total);
+//	if (_mfRule->isCraftProduced() == true)
+//		delta = std::min(delta,
+//						_base->getFreeHangars());
 
-		if (_mfRule->isCraft() == true)
-			delta = std::min(delta,
-							_base->getFreeHangars());
-		_manufacture->setManufactureTotal(total + delta);
-		assignEngineers();
-	}
+	_project->setManufactureTotal(total + delta);
+	updateInfo();
+//	}
 }
 
 /**
- * Decreases quantity of units to produce.
+ * Decreases the quantity of units to produce.
  */
 void ManufactureInfoState::onUnitsLess() // private.
 {
@@ -669,16 +673,16 @@ void ManufactureInfoState::onUnitsLess() // private.
 }
 
 /**
- * Subtracts a given quantity of units to produce if possible.
+ * Subtracts a given quantity of units if possible.
  * @param delta - quantity to subtract
  */
 void ManufactureInfoState::unitsLessByValue(int delta) // private.
 {
-	const int total (_manufacture->getManufactureTotal());
+	const int total (_project->getManufactureTotal());
 	delta = std::min(delta,
-					 total - (_manufacture->getQuantityManufactured() + 1));
-	_manufacture->setManufactureTotal(total - delta);
-	assignEngineers();
+					 total - (_project->getQuantityManufactured() + 1));
+	_project->setManufactureTotal(total - delta);
+	updateInfo();
 }
 
 }

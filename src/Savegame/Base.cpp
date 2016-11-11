@@ -1070,11 +1070,39 @@ int Base::getInterrogatedAliens() const
 
 /**
  * Gets the quantity of hangars used by Craft at this Base.
- * @return, used hangars incl/ transfers & production
+ * @return, used hangars incl/ Transfers & Manufacture
  */
 int Base::getUsedHangars() const
 {
-	int total (static_cast<int>(_crafts.size()));
+	int
+		total (0),
+		subTotal;
+
+	const RuleManufacture* mfRule;
+	for (std::vector<Manufacture*>::const_iterator	// Craft production requires 1 hangar + 1 hanger for
+			i = _projectsManufacture.begin();		// every input-craft over (1 if there's an output-craft).
+			i != _projectsManufacture.end();
+			++i)
+	{
+		subTotal = 0;
+
+		mfRule = (*i)->getRules();
+		for (std::map<std::string, int>::const_iterator
+				j = mfRule->getPartsRequired().begin();
+				j != mfRule->getPartsRequired().end();
+				++j)
+		{
+			if (_rules->getItemRule(j->first) == nullptr && _rules->getCraft(j->first) != nullptr)
+				subTotal += j->second;
+
+			if (subTotal == 0 && (*i)->getRules()->isCraftProduced() == true)
+				++subTotal;
+
+			total += subTotal;
+		}
+	}
+
+	total += static_cast<int>(_crafts.size()); // TODO: Be sure to clear input-craft AND output-craft from this Base's Crafts vector.
 
 	for (std::vector<Transfer*>::const_iterator
 			i = _transfers.begin();
@@ -1083,15 +1111,6 @@ int Base::getUsedHangars() const
 	{
 		if ((*i)->getTransferType() == PST_CRAFT)
 			total += (*i)->getQuantity();
-	}
-
-	for (std::vector<Manufacture*>::const_iterator
-			i = _projectsManufacture.begin();
-			i != _projectsManufacture.end();
-			++i)
-	{
-		if ((*i)->getRules()->isCraft() == true) // TODO: This needs to account for the case when (*i)->getInfinite() == TRUE
-			total += ((*i)->getManufactureTotal() - (*i)->getQuantityManufactured()); // Or disallow infinite Craft in ManufactureInfoState.
 	}
 
 	return total;
@@ -1160,21 +1179,28 @@ int Base::getSoldierCount(const std::string& type) const
 /**
  * Gets the total quantity of Craft of a specified type stored at or being
  * transfered to this Base.
- * @param type - reference to the craft-type
+ * @param type				- reference to the craft-type
+ * @param excludeTransfers	- true to count only craft in hangars (default false)
  * @return, quantity of craft of @a type
  */
-int Base::getCraftCount(const std::string& type) const
+int Base::getCraftCount(
+		const std::string& type,
+		bool excludeTransfers) const
 {
 	int total (0);
-	for (std::vector<Transfer*>::const_iterator
-			i = _transfers.begin();
-			i != _transfers.end();
-			++i)
+
+	if (excludeTransfers == false)
 	{
-		if ((*i)->getTransferType() == PST_CRAFT
-			&& (*i)->getCraft()->getRules()->getType() == type)
+		for (std::vector<Transfer*>::const_iterator
+				i = _transfers.begin();
+				i != _transfers.end();
+				++i)
 		{
-			total += (*i)->getQuantity();
+			if ((*i)->getTransferType() == PST_CRAFT
+				&& (*i)->getCraft()->getRules()->getType() == type)
+			{
+				total += (*i)->getQuantity();
+			}
 		}
 	}
 
@@ -2371,7 +2397,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 					rit != _projectsManufacture.rend();
 					++rit)
 			{
-				if ((*rit)->getRules()->isCraft() == true)
+				if ((*rit)->getRules()->isCraftProduced() == true)
 				{
 					checkTransfers = false;
 					_engineers += (*rit)->getAssignedEngineers();

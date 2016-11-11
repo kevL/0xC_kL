@@ -32,14 +32,14 @@ class Ruleset;
 class SavedGame;
 
 
-// Used by Manufacture and construction both by ManufactureCompleteState in geoscape.
+// Used by both Manufacture and Facility construction in ManufactureCompleteState.
 enum ManufactureProgress
 {
-	PROGRESS_NOT_COMPLETE,			// 0
-	PROGRESS_COMPLETE,				// 1
-	PROGRESS_NOT_ENOUGH_MONEY,		// 2
-	PROGRESS_NOT_ENOUGH_MATERIALS,	// 3
-	PROGRESS_CONSTRUCTION			// 4
+	PROG_NOT_COMPLETE,			// 0
+	PROG_COMPLETE,				// 1
+	PROG_NOT_ENOUGH_MONEY,		// 2
+	PROG_NOT_ENOUGH_MATERIALS,	// 3
+	PROG_CONSTRUCTION			// 4
 };
 
 
@@ -53,13 +53,13 @@ private:
 		_infinite,
 		_sell;
 	int
-		_units,
+		_qtyTotal,
 		_engineers,
-		_timeSpent;
+		_hoursSpent;
 
-	/// Checks if there is enough funds to continue Manufacture.
+	/// Checks if there is enough funds to start/continue the project.
 	bool hasEnoughMoney(const SavedGame* const gameSave) const;
-	/// Checks if there is enough resource material to continue Manufacture.
+	/// Checks if there is enough material to start/continue the project.
 	bool hasEnoughMaterials(
 			Base* const base,
 			const Ruleset* const rules) const;
@@ -80,12 +80,12 @@ private:
 		const RuleManufacture* getRules() const;
 
 		/// Sets the total quantity to produce.
-		void setManufactureTotal(int quantity);
+		void setManufactureTotal(int qty);
 		/// Gets the total quantity to produce.
 		int getManufactureTotal() const;
 
 		/// Sets if the Manufacture is to produce an infinite quantity.
-		void setInfinite(bool infinite);
+		void setInfinite(bool infinite = true);
 		/// Gets if the Manufacture is to produce an infinite quantity.
 		bool getInfinite() const;
 
@@ -94,33 +94,33 @@ private:
 		/// Gets the quantity of assigned engineers to the Manufacture.
 		int getAssignedEngineers() const;
 
-		/// Sets if the produced items are to be sold immediately.
+		/// Sets if the produced parts are to be sold immediately.
 		void setAutoSales(bool sell);
-		/// Gets if the produced items are to be sold immediately.
+		/// Gets if the produced parts are to be sold immediately.
 		bool getAutoSales() const;
 
-		/// Gets the quantity of items manufactured so far.
+		/// Gets the quantity of iterations completed so far.
 		int getQuantityManufactured() const;
-
-		/// Advances the Manufacture.
-		ManufactureProgress step(
-				Base* const base,
-				SavedGame* const gameSave);
 
 		/// Starts the Manufacture.
 		void startManufacture(
 				Base* const base,
 				SavedGame* const gameSave) const;
 
-		/// Gets the time till the Manufacture is completed.
+		/// Advances the Manufacture.
+		ManufactureProgress stepManufacture(
+				Base* const base,
+				SavedGame* const gameSave);
+
+		/// Calculates the duration till the Manufacture is completed.
 		bool tillFinish(
 				int& days,
 				int& hours) const;
 
-		/// Gets the time spent on the Manufacture so far.
-//		int getTimeSpent() const;
-		/// Sets the time spent on the Manufacture so far.
+		/// Sets the hours spent on the Manufacture so far.
 //		void setTimeSpent(int spent);
+		/// Gets the hours spent on the Manufacture so far.
+//		int getTimeSpent() const;
 };
 
 }

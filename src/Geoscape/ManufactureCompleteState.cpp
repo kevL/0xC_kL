@@ -105,19 +105,19 @@ ManufactureCompleteState::ManufactureCompleteState(
 	std::wstring wst;
 	switch (endType)
 	{
-		case PROGRESS_CONSTRUCTION:
+		case PROG_CONSTRUCTION:
 			wst = tr("STR_CONSTRUCTION_OF_FACILITY_AT_BASE_IS_COMPLETE")
 					.arg(item).arg(base->getLabel());
 			break;
-		case PROGRESS_COMPLETE:
+		case PROG_COMPLETE:
 			wst = tr("STR_PRODUCTION_OF_ITEM_AT_BASE_IS_COMPLETE")
 					.arg(item).arg(base->getLabel());
 			break;
-		case PROGRESS_NOT_ENOUGH_MONEY:
+		case PROG_NOT_ENOUGH_MONEY:
 			wst = tr("STR_NOT_ENOUGH_MONEY_TO_PRODUCE_ITEM_AT_BASE")
 					.arg(item).arg(base->getLabel());
 			break;
-		case PROGRESS_NOT_ENOUGH_MATERIALS:
+		case PROG_NOT_ENOUGH_MATERIALS:
 			wst = tr("STR_NOT_ENOUGH_SPECIAL_MATERIALS_TO_PRODUCE_ITEM_AT_BASE")
 					.arg(item).arg(base->getLabel());
 //			break;

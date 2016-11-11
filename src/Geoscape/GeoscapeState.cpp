@@ -2508,7 +2508,7 @@ void GeoscapeState::time1Hour()
 				j != (*i)->getManufacture().end();
 				++j)
 		{
-			progress[*j] = (*j)->step(*i, _gameSave);
+			progress[*j] = (*j)->stepManufacture(*i, _gameSave);
 		}
 
 		for (std::map<Manufacture*, ManufactureProgress>::const_iterator
@@ -2518,9 +2518,9 @@ void GeoscapeState::time1Hour()
 		{
 			switch (j->second)
 			{
-				case PROGRESS_COMPLETE:
-				case PROGRESS_NOT_ENOUGH_MONEY:
-				case PROGRESS_NOT_ENOUGH_MATERIALS:
+				case PROG_COMPLETE:
+				case PROG_NOT_ENOUGH_MONEY:
+				case PROG_NOT_ENOUGH_MATERIALS:
 					if (runtEvents.empty() == false) // set the previous event to NOT show btn.
 						runtEvents.back().gotoBaseBtn = false;
 
@@ -2766,7 +2766,7 @@ void GeoscapeState::time1Day()
 														*i,
 														tr((*j)->getRules()->getType()),
 														true,
-														PROGRESS_CONSTRUCTION));
+														PROG_CONSTRUCTION));
 			}
 		}
 
@@ -2969,7 +2969,7 @@ void GeoscapeState::time1Day()
 											i->item,
 											this,
 											i->gotoBaseBtn,
-											i->endType)); // ie. PROGRESS_CONSTRUCTION
+											i->endType)); // ie. PROG_CONSTRUCTION
 	}
 
 	for (std::vector<State*>::const_iterator

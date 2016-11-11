@@ -259,7 +259,7 @@ int RuleCraft::getSellCost() const
 
 /**
  * Gets what item is required to refuel the Craft.
- * @return, the item ID string or "" if none
+ * @return, the item-type or "" if none
  */
 std::string RuleCraft::getRefuelItem() const
 {

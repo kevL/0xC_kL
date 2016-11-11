@@ -56,7 +56,7 @@ private:
 		* _btnUnitLess,
 		* _btnUnitMore;
 	Base* _base;
-	Manufacture* _manufacture;
+	Manufacture* _project;
 	const RuleManufacture* _mfRule;
 	Text
 		* _txtFreeEngineer,
@@ -95,8 +95,8 @@ private:
 	/// Handler for releasing the Sell button.
 	void btnSellRelease(Action* action);
 
-	/// Updates display of assigned/available engineers and workshop-space.
-	void assignEngineers();
+	/// Updates the display.
+	void updateInfo();
 	/// Calculates the monthly change in funds due to profit/expenses.
 	int calcProfit();
 	/// Formats the profit-value.
@@ -104,49 +104,49 @@ private:
 			int profit,
 			std::wostringstream& woststr);
 
-	/// Handler for pressing the more engineer button.
+	/// Handler for pressing the more-engineers button.
 	void engineersMorePress(Action* action);
-	/// Handler for releasing the more engineer button.
+	/// Handler for releasing the more-engineers button.
 	void engineersMoreRelease(Action* action);
 
-	/// Handler for pressing the less engineer button.
+	/// Handler for pressing the less-engineers button.
 	void engineersLessPress(Action* action);
-	/// Handler for releasing the less engineer button.
+	/// Handler for releasing the less-engineers button.
 	void engineersLessRelease(Action* action);
 
-	/// Handler for pressing the more unit button.
+	/// Handler for pressing the more-units button.
 	void unitsMorePress(Action* action);
-	/// Handler for releasing the more unit button.
+	/// Handler for releasing the more-units button.
 	void unitsMoreRelease(Action* action);
-	/// Handler for clicking the more unit button.
+	/// Handler for clicking the more-units button.
 	void unitsMoreClick(Action* action);
 
-	/// Handler for pressing the less unit button.
+	/// Handler for pressing the less-units button.
 	void unitsLessPress(Action* action);
-	/// Handler for releasing the less unit button.
+	/// Handler for releasing the less-units button.
 	void unitsLessRelease(Action* action);
-	/// Handler for clicking the less unit button.
+	/// Handler for clicking the less-units button.
 	void unitsLessClick(Action* action);
 
 	/// Runs state functionality every cycle.
 	void think() override;
 
-	/// Adds engineers to the manufacture.
+	/// Adds engineers to the project.
 	void onEngineersMore();
-	/// Adds a given quantity of engineers to the manufacture if possible.
+	/// Adds a given quantity of engineers to the proejct if possible.
 	void engineersMoreByValue(int delta);
-	/// Subtracts engineers from the manufacture.
+	/// Subtracts engineers from the project.
 	void onEngineersLess();
-	/// Subtracts a given quantity of engineers from the manufacture if possible.
+	/// Subtracts a given quantity of engineers from the project if possible.
 	void engineersLessByValue(int delta);
 
-	/// Increases quantity of units to produce.
+	/// Increases quantity of units.
 	void onUnitsMore();
-	/// Adds a given quantity of units to produce if possible.
+	/// Adds a given quantity of units if possible.
 	void unitsMoreByValue(int delta);
-	/// Decreases quantity of units to produce.
+	/// Decreases quantity of units.
 	void onUnitsLess();
-	/// Subtracts a given quantity of units to produce if possible.
+	/// Subtracts a given quantity of units if possible.
 	void unitsLessByValue(int delta);
 
 
@@ -158,7 +158,7 @@ private:
 		/// Creates a ManufactureInfo state (adjust manufacture).
 		ManufactureInfoState(
 				Base* const base,
-				Manufacture* const manufacture);
+				Manufacture* const project);
 		/// Cleans up the ManufactureInfo state.
 		~ManufactureInfoState();
 };

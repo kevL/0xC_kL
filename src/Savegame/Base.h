@@ -253,7 +253,9 @@ private:
 		/// Gets the Base's Soldiers of a specified type.
 		int getSoldierCount(const std::string& type) const;
 		/// Gets the Base's Crafts of a specified type.
-		int getCraftCount(const std::string& type) const;
+		int getCraftCount(
+				const std::string& type,
+				bool excludeTransfers = false) const;
 
 		/// Adds a Manufacture project to the Base.
 		void addManufactureProject(Manufacture* const project);

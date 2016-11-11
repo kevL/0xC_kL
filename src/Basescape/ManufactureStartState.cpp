@@ -50,9 +50,9 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the productions start screen.
+ * Initializes all the elements in the ManufactureStartState screen.
  * @param base		- pointer to the Base to get info from
- * @param mfRule	- pointer to RuleManufacture to produce
+ * @param mfRule	- pointer to RuleManufacture
  */
 ManufactureStartState::ManufactureStartState(
 		Base* const base,
@@ -116,7 +116,7 @@ ManufactureStartState::ManufactureStartState(
 	_btnCostTable->onMouseClick(static_cast<ActionHandler>(&ManufactureStartState::btnCostsClick));
 
 	_txtManHour->setText(tr("STR_ENGINEER_HOURS_TO_PRODUCE_ONE_UNIT_")
-							.arg(_mfRule->getManufactureTime()));
+							.arg(_mfRule->getManufactureHours()));
 	_txtCost->setText(tr("STR_COST_PER_UNIT_")
 							.arg(Text::formatCurrency(_mfRule->getManufactureCost())));
 	_txtWorkSpace->setText(tr("STR_WORK_SPACE_REQUIRED_")
@@ -135,15 +135,15 @@ ManufactureStartState::ManufactureStartState(
 				 && _game->getSavedGame()->getFunds() >= _mfRule->getManufactureCost(),
 		showReqs;
 
-	const std::map<std::string, int>& requiredItems (_mfRule->getPartsRequired());
-	if (requiredItems.empty() == false)
+	const std::map<std::string, int>& partsRequired (_mfRule->getPartsRequired());
+	if (partsRequired.empty() == false)
 	{
 		showReqs = true;
 		const ItemContainer* const stores (_base->getStorageItems());
 
 		for (std::map<std::string, int>::const_iterator
-				i = requiredItems.begin();
-				i != requiredItems.end();
+				i = partsRequired.begin();
+				i != partsRequired.end();
 				++i)
 		{
 			std::wostringstream
@@ -153,13 +153,15 @@ ManufactureStartState::ManufactureStartState(
 
 			if (_game->getRuleset()->getItemRule(i->first) != nullptr)
 			{
-				woststr2 << L'\x01' << stores->getItemQuantity(i->first);
-				showStart &= (stores->getItemQuantity(i->first) >= i->second);
+				const int qty (stores->getItemQuantity(i->first));
+				woststr2 << L'\x01' << qty;
+				showStart &= (qty >= i->second);
 			}
 			else if (_game->getRuleset()->getCraft(i->first) != nullptr)
 			{
-				woststr2 << L'\x01' << _base->getCraftCount(i->first);
-				showStart &= (_base->getCraftCount(i->first) >= i->second);
+				const int qty (_base->getCraftCount(i->first, true));
+				woststr2 << L'\x01' << qty;
+				showStart &= (qty >= i->second);
 			}
 			_lstRequiredItems->addRow(
 									3,
@@ -171,11 +173,11 @@ ManufactureStartState::ManufactureStartState(
 	else
 		showReqs = false;
 
-	_txtRequiredItems->setVisible(showReqs);
-	_txtItemRequired->setVisible(showReqs);
-	_txtUnitsRequired->setVisible(showReqs);
-	_txtUnitsAvailable->setVisible(showReqs);
-	_lstRequiredItems->setVisible(showReqs);
+	_txtRequiredItems	->setVisible(showReqs);
+	_txtItemRequired	->setVisible(showReqs);
+	_txtUnitsRequired	->setVisible(showReqs);
+	_txtUnitsAvailable	->setVisible(showReqs);
+	_lstRequiredItems	->setVisible(showReqs);
 
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
@@ -186,7 +188,7 @@ ManufactureStartState::ManufactureStartState(
 	_btnStart->setText(tr("STR_START_PRODUCTION"));
 	_btnStart->onMouseClick(	static_cast<ActionHandler>(&ManufactureStartState::btnStartClick));
 	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureStartState::btnStartClick),
-					Options::keyOk);
+								Options::keyOk);
 	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureStartState::btnStartClick),
 								Options::keyOkKeypad);
 	_btnStart->setVisible(showStart);
@@ -203,7 +205,7 @@ ManufactureStartState::~ManufactureStartState()
  */
 void ManufactureStartState::init()
 {
-//	State::init();
+	State::init();
 
 	if (_init == true)
 	{
@@ -214,23 +216,22 @@ void ManufactureStartState::init()
 
 		if (_mfRule->getSpaceRequired() > _base->getFreeWorkshops())
 			error = "STR_NOT_ENOUGH_WORK_SPACE";
-		else if (_mfRule->isCraft() == true && _base->getFreeHangars() == 0)
-		{
-			bool allowCraft (false);
+		else if (_mfRule->isCraftProduced() == true && _base->getFreeHangars() == 0)	// NOTE: Hardcaps are done in RuleManufacture
+		{																				// to ensure only 1 Craft is produced *total*.
+			bool allowCraftProduction (false);
 			for (std::map<std::string, int>::const_iterator
 					i = _mfRule->getPartsRequired().begin();
 					i != _mfRule->getPartsRequired().end();
 					++i)
 			{
-				if (rules->getItemRule(i->first) == nullptr
-					&& rules->getCraft(i->first) != nullptr)
+				if (rules->getItemRule(i->first) == nullptr && rules->getCraft(i->first) != nullptr)
 				{
-					allowCraft = true;
+					allowCraftProduction = true;
 					break;
 				}
 			}
 
-			if (allowCraft == false)
+			if (allowCraftProduction == false)
 				error = "STR_NO_FREE_HANGARS_FOR_CRAFT_PRODUCTION";
 		}
 

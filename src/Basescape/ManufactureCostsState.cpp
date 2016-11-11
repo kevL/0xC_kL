@@ -164,7 +164,7 @@ void ManufactureCostsState::init()
 							5,
 							woststr.str().c_str(),
 							Text::formatCurrency((*i)->getManufactureCost()).c_str(),
-							Text::intWide((*i)->getManufactureTime()).c_str(),
+							Text::intWide((*i)->getManufactureHours()).c_str(),
 							Text::intWide((*i)->getSpaceRequired()).c_str(),
 							L"");
 //							tr((*i)->getCategory ()).c_str());
@@ -196,7 +196,7 @@ void ManufactureCostsState::init()
 			}
 			_lstProduction->setRowColor(r, YELLOW);
 		}
-		// note: Productions that require items show as yellow; those that don't show as blue.
+		// NOTE: Productions that require parts show as yellow; those that don't show as blue.
 
 		profit = 0;
 
@@ -208,12 +208,11 @@ void ManufactureCostsState::init()
 			woststr.str(L"");
 			woststr << L"< " << tr(j->first);
 
-			if ((*i)->isCraft() == true)
-				costCredit = rules->getCraft(j->first)->getSellCost();
+			if ((*i)->isCraftProduced() == true)
+				costCredit = rules->getCraft(j->first)->getSellCost(); // NOTE: RuleManufacture caps each iteration of craft-production at "1".
 			else
-				costCredit = rules->getItemRule(j->first)->getSellCost();
+				costCredit = rules->getItemRule(j->first)->getSellCost() * j->second;
 
-			costCredit *= j->second;
 			profit += costCredit;
 
 			std::wostringstream qty;
@@ -230,7 +229,7 @@ void ManufactureCostsState::init()
 
 		profit -= (*i)->getManufactureCost();
 		profit -= costDebit;
-		profitAspect = static_cast<float>(profit) / static_cast<float>((*i)->getManufactureTime());
+		profitAspect = static_cast<float>(profit) / static_cast<float>((*i)->getManufactureHours());
 
 		woststr.str(L"");
 		woststr << std::fixed << std::setprecision(2) << profitAspect;
