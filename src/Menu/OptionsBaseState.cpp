@@ -222,13 +222,13 @@ void OptionsBaseState::btnOkClick(Action*)
 
 	Screen::updateScale(
 					Options::battlescapeScale,
-					Options::newBattlescapeScale,
+					Options::safeBattlescapeScale,
 					Options::baseXBattlescape,
 					Options::baseYBattlescape,
 					_origin == OPT_BATTLESCAPE);
 	Screen::updateScale(
 					Options::geoscapeScale,
-					Options::newGeoscapeScale,
+					Options::safeGeoscapeScale,
 					Options::baseXGeoscape,
 					Options::baseYGeoscape,
 					_origin != OPT_BATTLESCAPE);
@@ -252,13 +252,13 @@ void OptionsBaseState::btnOkClick(Action*)
 
 	if (Options::reload && _origin == OPT_MENU)
 		_game->setState(new StartState());
-	else if (  Options::displayWidth	!= Options::newDisplayWidth // confirm any video-option changes ->
-			|| Options::displayHeight	!= Options::newDisplayHeight
-			|| Options::useScaleFilter	!= Options::newScaleFilter
-			|| Options::useHQXFilter	!= Options::newHQXFilter
-			|| Options::useXBRZFilter	!= Options::newXBRZFilter // kL
-			|| Options::useOpenGL		!= Options::newOpenGL
-			|| Options::openGLShader	!= Options::newOpenGLShader)
+	else if (  Options::displayWidth	!= Options::safeDisplayWidth // confirm any video-option changes ->
+			|| Options::displayHeight	!= Options::safeDisplayHeight
+			|| Options::useScaleFilter	!= Options::safeScaleFilter
+			|| Options::useHQXFilter	!= Options::safeHQXFilter
+			|| Options::useXBRZFilter	!= Options::safeXBRZFilter // kL
+			|| Options::useOpenGL		!= Options::safeOpenGL
+			|| Options::openGLShader	!= Options::safeOpenGLShader)
 	{
 		_game->pushState(new OptionsConfirmState(_origin));
 	}
@@ -278,13 +278,13 @@ void OptionsBaseState::btnCancelClick(Action*)
 	SDL_WM_GrabInput(Options::captureMouse);
 
 	Screen::updateScale(
-					Options::newBattlescapeScale,
+					Options::safeBattlescapeScale,
 					Options::battlescapeScale,
 					Options::baseXBattlescape,
 					Options::baseYBattlescape,
 					_origin == OPT_BATTLESCAPE);
 	Screen::updateScale(
-					Options::newGeoscapeScale,
+					Options::safeGeoscapeScale,
 					Options::geoscapeScale,
 					Options::baseXGeoscape,
 					Options::baseYGeoscape,
@@ -369,8 +369,8 @@ void OptionsBaseState::resize(
 		int& dX,
 		int& dY)
 {
-	Options::newDisplayWidth = Options::displayWidth;
-	Options::newDisplayHeight = Options::displayHeight;
+	Options::safeDisplayWidth = Options::displayWidth;
+	Options::safeDisplayHeight = Options::displayHeight;
 
 	State::resize(dX, dY);
 }

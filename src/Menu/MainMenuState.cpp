@@ -45,7 +45,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Main Menu window.
+ * Initializes all the elements in the MainMenu window.
  */
 MainMenuState::MainMenuState()
 {

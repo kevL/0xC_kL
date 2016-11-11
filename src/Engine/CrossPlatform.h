@@ -140,7 +140,7 @@ void setWindowIcon(int winResource);
 void setWindowIcon(const std::string& unixPath);
 #endif
 
-}
+} // CrossPlatform
 
 }
 

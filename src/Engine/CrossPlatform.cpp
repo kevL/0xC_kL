@@ -156,18 +156,18 @@ std::vector<std::string> findDataFolders()
 #ifdef _WIN32
 	char path[MAX_PATH];
 
-	if (SUCCEEDED(SHGetFolderPathA( // get documents-folder
-								nullptr,
-								CSIDL_PERSONAL,
-								nullptr,
-								SHGFP_TYPE_CURRENT,
-								path)))
-	{
-		PathAppendA(
-				path,
-				"OpenXcom\\data\\");
-		pathList.push_back(path);
-	}
+//	if (SUCCEEDED(SHGetFolderPathA( // get documents-folder
+//								nullptr,
+//								CSIDL_PERSONAL,
+//								nullptr,
+//								SHGFP_TYPE_CURRENT,
+//								path)))
+//	{
+//		PathAppendA(
+//				path,
+//				"0xC_kL\\data\\");
+//		pathList.push_back(path);
+//	}
 
 	if (GetModuleFileNameA( // get binary-directory
 						nullptr,
@@ -181,15 +181,15 @@ std::vector<std::string> findDataFolders()
 		pathList.push_back(path);
 	}
 
-	if (GetCurrentDirectoryA( // get working-directory
-						MAX_PATH,
-						path) != 0)
-	{
-		PathAppendA(
-				path,
-				"data\\");
-		pathList.push_back(path);
-	}
+//	if (GetCurrentDirectoryA( // get working-directory
+//						MAX_PATH,
+//						path) != 0)
+//	{
+//		PathAppendA(
+//				path,
+//				"data\\");
+//		pathList.push_back(path);
+//	}
 #else
 	char const* home (getHome());
 #	ifdef __HAIKU__
@@ -262,18 +262,18 @@ std::vector<std::string> findUserFolders()
 #ifdef _WIN32
 	char path[MAX_PATH];
 
-	if (SUCCEEDED(SHGetFolderPathA( // get documents-folder
-								nullptr,
-								CSIDL_PERSONAL,
-								nullptr,
-								SHGFP_TYPE_CURRENT,
-								path)))
-	{
-		PathAppendA(
-				path,
-				"OpenXcom\\");
-		pathList.push_back(path);
-	}
+//	if (SUCCEEDED(SHGetFolderPathA( // get documents-folder
+//								nullptr,
+//								CSIDL_PERSONAL,
+//								nullptr,
+//								SHGFP_TYPE_CURRENT,
+//								path)))
+//	{
+//		PathAppendA(
+//				path,
+//				"OpenXcom\\");
+//		pathList.push_back(path);
+//	}
 
 	if (GetModuleFileNameA( // get binary-directory
 						nullptr,
@@ -287,15 +287,15 @@ std::vector<std::string> findUserFolders()
 		pathList.push_back(path);
 	}
 
-	if (GetCurrentDirectoryA( // get working-directory
-						MAX_PATH,
-						path) != 0)
-	{
-		PathAppendA(
-				path,
-				"user\\");
-		pathList.push_back(path);
-	}
+//	if (GetCurrentDirectoryA( // get working-directory
+//						MAX_PATH,
+//						path) != 0)
+//	{
+//		PathAppendA(
+//				path,
+//				"user\\");
+//		pathList.push_back(path);
+//	}
 #else
 #	ifdef __HAIKU__
 	pathList.push_back("/boot/apps/OpenXcom/");
@@ -465,8 +465,8 @@ std::string getDataFile(const std::string& file)
 		return path;
 
 	for (std::vector<std::string>::const_iterator // check every other path
-			i = Options::getDataList().begin();
-			i != Options::getDataList().end();
+			i = Options::getDataFolders().begin();
+			i != Options::getDataFolders().end();
 			++i)
 	{
 		path = caseInsensitive(*i, st);
@@ -504,8 +504,8 @@ std::string getDataFolder(const std::string& folder)
 		return path;
 
 	for (std::vector<std::string>::const_iterator // check every other path
-			i = Options::getDataList().begin();
-			i != Options::getDataList().end();
+			i = Options::getDataFolders().begin();
+			i != Options::getDataFolders().end();
 			++i)
 	{
 		path = caseInsensitiveFolder(*i, st);
@@ -650,8 +650,8 @@ std::vector<std::string> getDataContents(
 	}
 
 	for (std::vector<std::string>::const_iterator // check every other path
-			i = Options::getDataList().begin();
-			i != Options::getDataList().end();
+			i = Options::getDataFolders().begin();
+			i != Options::getDataFolders().end();
 			++i)
 	{
 		const std::string path (caseInsensitiveFolder(*i, folder));

@@ -392,8 +392,8 @@ void OptionsVideoState::updateDisplayResolution() // private.
 	_edtDisplayWidth ->setText(Text::intWide(width));
 	_edtDisplayHeight->setText(Text::intWide(height));
 
-	Options::newDisplayWidth  = width;
-	Options::newDisplayHeight = height;
+	Options::safeDisplayWidth  = width;
+	Options::safeDisplayHeight = height;
 }
 
 /**
@@ -406,7 +406,7 @@ void OptionsVideoState::txtDisplayWidthChange(Action*)
 	std::wstringstream wststr;
 	wststr << std::dec << _edtDisplayWidth->getText();
 	wststr >> std::dec >> width;
-	Options::newDisplayWidth = width;
+	Options::safeDisplayWidth = width;
 
 	// Update resolution mode
 	if (   _res != reinterpret_cast<SDL_Rect**>(-1)
@@ -419,8 +419,8 @@ void OptionsVideoState::txtDisplayWidthChange(Action*)
 				++i)
 		{
 			if (_resCurrent == -1
-				&& (  (_res[i]->w == Options::newDisplayWidth && _res[i]->h <= Options::newDisplayHeight)
-					|| _res[i]->w <  Options::newDisplayWidth))
+				&& (  (_res[i]->w == Options::safeDisplayWidth && _res[i]->h <= Options::safeDisplayHeight)
+					|| _res[i]->w <  Options::safeDisplayWidth))
 			{
 				_resCurrent = static_cast<int>(i);
 			}
@@ -438,7 +438,7 @@ void OptionsVideoState::txtDisplayHeightChange(Action*)
 	std::wstringstream wststr;
 	wststr << std::dec << _edtDisplayHeight->getText();
 	wststr >> std::dec >> height;
-	Options::newDisplayHeight = height;
+	Options::safeDisplayHeight = height;
 
 	// Update resolution mode
 	if (   _res != reinterpret_cast<SDL_Rect**>(-1)
@@ -451,8 +451,8 @@ void OptionsVideoState::txtDisplayHeightChange(Action*)
 				++i)
 		{
 			if (_resCurrent == -1
-				&& (  (_res[i]->w == Options::newDisplayWidth && _res[i]->h <= Options::newDisplayHeight)
-					|| _res[i]->w <  Options::newDisplayWidth))
+				&& (  (_res[i]->w == Options::safeDisplayWidth && _res[i]->h <= Options::safeDisplayHeight)
+					|| _res[i]->w <  Options::safeDisplayWidth))
 			{
 				_resCurrent = static_cast<int>(i);
 			}
@@ -478,40 +478,40 @@ void OptionsVideoState::cbxFilterChange(Action*)
 	switch (_cbxFilter->getSelected())
 	{
 		case 0u: // none
-			Options::newScaleFilter	= false;
-			Options::newHQXFilter	= false;
-			Options::newXBRZFilter	= false;
-			Options::newOpenGL		= false;
+			Options::safeScaleFilter	= false;
+			Options::safeHQXFilter		= false;
+			Options::safeXBRZFilter		= false;
+			Options::safeOpenGL			= false;
 			break;
 
 		case 1u: // scale
-			Options::newScaleFilter	= true;
-			Options::newHQXFilter	= false;
-			Options::newXBRZFilter	= false;
-			Options::newOpenGL		= false;
+			Options::safeScaleFilter	= true;
+			Options::safeHQXFilter		= false;
+			Options::safeXBRZFilter		= false;
+			Options::safeOpenGL			= false;
 			break;
 
 		case 2u: // HQx
-			Options::newScaleFilter	= false;
-			Options::newHQXFilter	= true;
-			Options::newXBRZFilter	= false;
-			Options::newOpenGL		= false;
+			Options::safeScaleFilter	= false;
+			Options::safeHQXFilter		= true;
+			Options::safeXBRZFilter		= false;
+			Options::safeOpenGL			= false;
 			break;
 
 		case 3u: // xBRZ
-			Options::newScaleFilter	= false;
-			Options::newHQXFilter	= false;
-			Options::newXBRZFilter	= true;
-			Options::newOpenGL		= false;
+			Options::safeScaleFilter	= false;
+			Options::safeHQXFilter		= false;
+			Options::safeXBRZFilter		= true;
+			Options::safeOpenGL			= false;
 			break;
 
 		default: // OpenGL
-			Options::newScaleFilter	= false;
-			Options::newHQXFilter	= false;
-			Options::newXBRZFilter	= false;
-			Options::newOpenGL		= true;
+			Options::safeScaleFilter	= false;
+			Options::safeHQXFilter		= false;
+			Options::safeXBRZFilter		= false;
+			Options::safeOpenGL			= true;
 
-			Options::newOpenGLShader = _filters[_cbxFilter->getSelected()];
+			Options::safeOpenGLShader	= _filters[_cbxFilter->getSelected()];
 	}
 }
 
@@ -573,7 +573,7 @@ void OptionsVideoState::btnLockMouseClick(Action*)
  */
 void OptionsVideoState::updateGeoscapeScale(Action*)
 {
-	Options::newGeoscapeScale = static_cast<int>(_cbxGeoScale->getSelected());
+	Options::safeGeoscapeScale = static_cast<int>(_cbxGeoScale->getSelected());
 }
 
 /**
@@ -582,7 +582,7 @@ void OptionsVideoState::updateGeoscapeScale(Action*)
  */
 void OptionsVideoState::updateBattlescapeScale(Action*)
 {
-	Options::newBattlescapeScale = static_cast<int>(_cbxBattleScale->getSelected());
+	Options::safeBattlescapeScale = static_cast<int>(_cbxBattleScale->getSelected());
 }
 
 /**

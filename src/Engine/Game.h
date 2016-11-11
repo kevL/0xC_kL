@@ -92,9 +92,9 @@ private:
 		/// Starts the Game's state-machine.
 		void run();
 
-		/// Quits the Game.
+		/// Quits.
 		void quit(bool force = false);
-		/// Returns whether the Game is shutting down.
+		/// Checks if the Game is shutting down.
 		bool isQuitting() const;
 
 		/// Sets whether the mouse-cursor is activated/responsive.
@@ -118,7 +118,7 @@ private:
 
 		/// Sets up the audio.
 		void initAudio();
-		/// Sets the Game's audio-amplitudes.
+		/// Sets the audio-amplitudes.
 		void setVolume(
 				int music,
 				int sound,
@@ -128,17 +128,17 @@ private:
 
 		/// Sets up a default Language.
 		void defaultLanguage();
-		/// Loads a Language for the Game.
+		/// Loads a Language.
 		void loadLanguage(const std::string& file);
-		/// Gets the Game's currently loaded Language.
+		/// Gets the currently loaded Language.
 		Language* getLanguage() const;
 
-		/// Gets the Game's currently loaded ResourcePack.
+		/// Gets the currently loaded ResourcePack.
 		ResourcePack* getResourcePack() const;
 		/// Sets a ResourcePack for the Game.
 		void setResourcePack(ResourcePack* const res = nullptr);
 
-		/// Loads a Ruleset for the Game.
+		/// Loads a Ruleset.
 		void loadRuleset();
 		/// Gets the currently loaded Ruleset.
 		Ruleset* getRuleset() const;
@@ -148,11 +148,11 @@ private:
 		/// Gets the currently loaded SavedGame.
 		SavedGame* getSavedGame() const;
 
-		/// Gets the Game's display-screen.
+		/// Gets the Screen.
 		Screen* getScreen() const;
-		/// Gets the Game's Cursor.
+		/// Gets the Cursor.
 		Cursor* getCursor() const;
-		/// Gets the Game's FpsCounter.
+		/// Gets the FpsCounter.
 		FpsCounter* getFpsCounter() const;
 
 		/// Gets the country-cycle for debugging country-zones.

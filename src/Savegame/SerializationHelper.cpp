@@ -19,9 +19,10 @@
 
 #include "SerializationHelper.h"
 
-#include <assert.h>
-#include <limits>
-#include <sstream>
+#include <cassert>	// assert()
+#include <cstring>	// std::memcpy()
+#include <limits>	// std::numeric_limits
+#include <sstream>	// std::ostringstream
 
 
 namespace OpenXcom
@@ -29,6 +30,9 @@ namespace OpenXcom
 
 /**
  *
+ * @param buffer	-
+ * @param sizeKey	-
+ * @return, int
  */
 int unserializeInt(
 		Uint8** buffer,
@@ -51,7 +55,7 @@ int unserializeInt(
 //			ret = *(reinterpret_cast<Sint16*>(*buffer));
 			Sint16 t;
 			std::memcpy(&t, *buffer, sizeof(t));
-			ret = t;
+			ret = static_cast<int>(t);
 			break;
 		}
 		case 3u:
@@ -62,7 +66,7 @@ int unserializeInt(
 //			ret = static_cast<int>(*(reinterpret_cast<Uint32*>(*buffer)));
 			Uint32 t;
 			std::memcpy(&t, *buffer, sizeof(t));
-			ret = t;
+			ret = static_cast<int>(t);
 			break;
 		}
 
@@ -77,6 +81,9 @@ int unserializeInt(
 
 /**
  *
+ * @param buffer	-
+ * @param sizeKey	-
+ * @param value		-
  */
 void serializeInt(
 		Uint8** buffer,
@@ -124,6 +131,8 @@ void serializeInt(
 
 /**
  *
+ * @param value -
+ * @return, string
  */
 std::string serializeDouble(double value)
 {

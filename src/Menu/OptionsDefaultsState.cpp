@@ -101,7 +101,7 @@ void OptionsDefaultsState::btnYesClick(Action* action)
 	if (_origin == OPT_MENU && Options::rulesets.size() > 1u)
 		Options::reload = true;
 
-	Options::resetDefault();
+	Options::resetDefaults();
 
 	_game->defaultLanguage();
 	_game->popState();

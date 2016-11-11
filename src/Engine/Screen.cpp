@@ -59,17 +59,17 @@ Screen::Screen()
 		_surface(nullptr),
 		_screen(nullptr)
 {
-	resetDisplay();
-	std::memset(
-			_deferredPalette,
-			0,
-			sizeof(SDL_Color) * 256u);
-
 #ifdef _DEBUG // <- this has to be changed to debug shaders
 	_shader = CrossPlatform::getDataFile("Shaders/Raw.OpenGL.shader");
 #else
 	_shader = CrossPlatform::getDataFile(Options::openGLShader); // NOTE: Don't delete your shaders ....
 #endif
+
+	resetDisplay();
+	std::memset(
+			_deferredPalette,
+			0,
+			sizeof(SDL_Color) * 256u);
 }
 
 /**
@@ -349,8 +349,7 @@ void Screen::resetDisplay(bool resetVideo)
 				_surface->getSurface(),
 				0u,0u);
 
-	if (resetVideo == true
-		|| _screen->format->BitsPerPixel != _bpp)
+	if (resetVideo == true || _screen->format->BitsPerPixel != _bpp)
 	{
 #ifdef __linux__
 		if (!(oldFlags & SDL_OPENGL) && (_flags & SDL_OPENGL)) // Workaround for segfault when switching to OpenGL.
@@ -387,7 +386,7 @@ void Screen::resetDisplay(bool resetVideo)
 				throw Exception(SDL_GetError());
 			}
 		}
-		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << _screen->format->BitsPerPixel << ".";
+		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << static_cast<int>(_screen->format->BitsPerPixel) << ".";
 	}
 	else
 		clear();

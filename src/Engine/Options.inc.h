@@ -205,16 +205,16 @@ OPT SDLKey
 OPT bool
 	mute,
 	reload,
-	newOpenGL,
-	newScaleFilter,
-	newHQXFilter,
-	newXBRZFilter;
+	safeOpenGL,
+	safeScaleFilter,
+	safeHQXFilter,
+	safeXBRZFilter;
 OPT int
-	newDisplayWidth,
-	newDisplayHeight,
-	newBattlescapeScale,
-	newGeoscapeScale;
-OPT std::string newOpenGLShader;
+	safeDisplayWidth,
+	safeDisplayHeight,
+	safeBattlescapeScale,
+	safeGeoscapeScale;
+OPT std::string safeOpenGLShader;
 OPT std::vector<std::string>
 	rulesets,
 	badRules;

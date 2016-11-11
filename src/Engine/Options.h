@@ -20,7 +20,8 @@
 #ifndef OPENXCOM_OPTIONS_H
 #define OPENXCOM_OPTIONS_H
 
-#include <string>
+#include <string>	// std::string
+//#include <vector>	// std::vector
 
 #include "OptionInfo.h"
 
@@ -120,57 +121,60 @@ namespace Options
 #include "Options.inc.h"
 #undef OPT
 
-	/// Creates the OptionsInfo.
-	void create();
-	/// Restores default-options.
-	void resetDefault();
+/// Initializes the option-settings.
+bool init(
+		int argc,
+		char* argv[]);
 
-	/// Loads arguments from the command-line.
-	void loadArgs(
-			int argc,
-			char* argv[]);
-	/// Shows help from the command-line.
-	bool showHelp(
-			int argc,
-			char* argv[]);
+/// Shows help from the command-line.
+bool showHelp(
+		int argc,
+		char* argv[]);
 
-	/// Initializes the option-settings.
-	bool init(
-			int argc,
-			char* argv[]);
+/// Loads arguments from the command-line.
+void loadArgs(
+		int argc,
+		char* argv[]);
 
-	/// Loads options from YAML.
-	void load(const std::string& file = "options");
-	/// Saves options to YAML.
-	void save(const std::string& file = "options");
+/// Sets the data-, user-, config-, and pic-folders.
+void setFolders();
 
-	/// Gets the game's data-folder.
-	std::string getDataFolder();
-	/// Sets the game's data-folder.
-	void setDataFolder(const std::string& folder);
-	/// Gets the game's data-list.
-	const std::vector<std::string>& getDataList();
-	/// Gets the game's user-folder.
-	std::string getUserFolder();
-	/// Gets the game's picture-folder where screenshots are stored.
-	std::string getPictureFolder();
-	/// Gets the game's config-folder.
-	std::string getConfigFolder();
+/// Updates Options from config-file and command-line.
+void updateOptions();
 
-	/// Gets the game's options.
-	const std::vector<OptionInfo>& getOptionInfo();
+/// Saves options to YAML.
+void save(const std::string& file = "options");
+/// Loads options from YAML.
+void load(const std::string& file = "options");
 
-	/// Sets the game's data-, user- and config-folders.
-	void setFolders();
+/// Gets a list of possible data-folders.
+const std::vector<std::string>& getDataFolders();
+/// Sets the data-folder from which resources are loaded.
+void setDataFolder(const std::string& folder);
+/// Gets the data-folder from which resources are loaded.
+std::string getDataFolder();
+/// Gets the user-folder where saves are stored.
+std::string getUserFolder();
+/// Gets the picture-folder where screenshots are stored.
+std::string getPictureFolder();
+/// Gets the config-folder where Options are stored.
+std::string getConfigFolder();
 
-	/// Updates game-options from config-file and command-line.
-	void updateOptions();
+/// Gets the list of all available OptionInfo.
+const std::vector<OptionInfo>& getOptionInfo();
 
-	/// Backups display-options.
-	void backupDisplay();
-	/// Switches display-options.
-	void switchDisplay();
-}
+/// Backups display-options.
+void backupDisplay();
+/// Switches display-options.
+void switchDisplay();
+
+/// Resets the Options back to their defaults.
+void resetDefaults();
+
+/// Creates all OptionInfo.
+void create();
+
+} // Options
 
 }
 

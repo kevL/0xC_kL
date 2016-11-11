@@ -284,17 +284,17 @@ void Game::run()
 									screenWidth  (Screen::ORIGINAL_WIDTH),
 									screenHeight (Screen::ORIGINAL_HEIGHT);
 
-								Options::newDisplayWidth =
+								Options::safeDisplayWidth =
 								Options::displayWidth	 = std::max(screenWidth,
 																	event.resize.w);
-								Options::newDisplayHeight =
+								Options::safeDisplayHeight =
 								Options::displayHeight	  = std::max(screenHeight,
 																	 event.resize.h);
 //#else
-//								Options::newDisplayWidth =
+//								Options::safeDisplayWidth =
 //								Options::displayWidth	 = std::max(Screen::ORIGINAL_WIDTH,
 //																	event.resize.w);
-//								Options::newDisplayHeight =
+//								Options::safeDisplayHeight =
 //								Options::displayHeight	  = std::max(Screen::ORIGINAL_HEIGHT,
 //																	 event.resize.h);
 //#endif
@@ -528,17 +528,17 @@ void Game::run()
 									screenWidth  (Screen::ORIGINAL_WIDTH),
 									screenHeight (Screen::ORIGINAL_HEIGHT);
 
-								Options::newDisplayWidth =
+								Options::safeDisplayWidth =
 								Options::displayWidth  = std::max(screenWidth,
 																  event.resize.w);
-								Options::newDisplayHeight =
+								Options::safeDisplayHeight =
 								Options::displayHeight = std::max(screenHeight,
 																  event.resize.h);
 //#else
-//								Options::newDisplayWidth =
+//								Options::safeDisplayWidth =
 //								Options::displayWidth  = std::max(Screen::ORIGINAL_WIDTH,
 //																  event.resize.w);
-//								Options::newDisplayHeight =
+//								Options::safeDisplayHeight =
 //								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
 //																  event.resize.h);
 //#endif
@@ -791,7 +791,7 @@ void Game::quit(bool force)
 }
 
 /**
- * Checks if the game is quitting.
+ * Checks if this Game is quitting.
  * @return, true if the game is in the process of shutting down
  */
 bool Game::isQuitting() const
@@ -1107,7 +1107,7 @@ ResourcePack* Game::getResourcePack() const
 }
 
 /**
- * Loads the rulesets specified in the options.
+ * Loads the rulesets specified in Options.
  */
 void Game::loadRuleset()
 {

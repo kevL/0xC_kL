@@ -70,13 +70,13 @@ StartState::StartState()
 		_thread(nullptr),
 		_dosStep(0u)
 {
-	_loadPhase = LOADING_STARTED;	// leave these in until I figure out of they
+	_loadPhase = LOADING_STARTED;	// leave these in until I figure out if they
 	_error = "";					// actually need to be static.
 	_ready = false;
 
-	// updateScale() uses newDisplayWidth/Height and needs to be set ahead of time
-//kL	Options::newDisplayWidth	= Options::displayWidth;
-//kL	Options::newDisplayHeight	= Options::displayHeight;
+	// updateScale() uses safeDisplayWidth/Height and needs to be set ahead of time
+//kL	Options::safeDisplayWidth	= Options::displayWidth;
+//kL	Options::safeDisplayHeight	= Options::displayHeight;
 
 //kL	Options::baseXResolution = Options::displayWidth;
 //kL	Options::baseYResolution = Options::displayHeight;

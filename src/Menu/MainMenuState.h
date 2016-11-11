@@ -32,7 +32,7 @@ class Window;
 
 
 /**
- * Main Menu window displayed when starting the Game or loading a save etc.
+ * MainMenu window displayed when starting the Game or loading a save etc.
  */
 class MainMenuState
 	:
@@ -55,9 +55,9 @@ private:
 
 
 	public:
-		/// Creates the Main Menu state.
+		/// Creates a MainMenu state.
 		MainMenuState();
-		/// Cleans up the Main Menu state.
+		/// Cleans up the MainMenu state.
 		~MainMenuState();
 
 		/// Initializes the state.
