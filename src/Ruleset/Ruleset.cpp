@@ -1066,8 +1066,8 @@ void Ruleset::loadFile(const std::string& file) // protected.
 /**
  * Loads a ruleset-element adding/removing from vectors as necessary.
  * @param node	- reference a YAML node
- * @param types	- pointer to a map associated to the rule type
- * @param index	- pointer to a vector of indices for the rule type (default nullptr)
+ * @param types	- pointer to a map associated to the rule's type
+ * @param index	- pointer to a vector of indices for the rule's type (default nullptr)
  * @param keyId	- reference to the rule's key-ID (default "type")
  * @return, pointer to new rule if one was created or nullptr if one was removed
  */

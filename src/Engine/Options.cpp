@@ -89,7 +89,6 @@ bool init(
 		create();
 
 //		resetDefaults();
-
 		backupDisplay();
 
 		rulesets.clear();
@@ -525,7 +524,7 @@ void switchDisplay()
 
 /**
  * Resets the Options back to their defaults and backs up critical display
- * settings, also re-instantiates the global ruleset.
+ * settings, also reinstates the global ruleset.
  */
 void resetDefaults()
 {

@@ -39,11 +39,7 @@ RuleManufacture::RuleManufacture(const std::string& type)
 		_cost(0),
 		_isCraft(false),
 		_listOrder(0)
-{
-	_partsProduced[_type] = 1; // produce 1 item of 'type' (at least)
-	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "RuleManufacture cTor: _partsProduced " << _type << " set 1";
-}
+{}
 
 /**
  * Loads the RuleManufacture from a YAML file.
@@ -55,44 +51,22 @@ void RuleManufacture::load(
 		int listOrder,
 		const Ruleset* const rules)
 {
-	// why ->
-	const bool isDefault (_partsProduced.size() == 1u
-					   && _partsProduced.begin()->first == _type);
-
-	_type = node["type"].as<std::string>(_type);
-	Log(LOG_INFO) << "load " << _type << " isDefault= " << isDefault;
-
-	if (isDefault == true)
-	{
-		const int qtyProduced (_partsProduced.begin()->second);
-		_partsProduced.clear();
-		_partsProduced[_type] = qtyProduced;
-	} // End_why. Perhaps to overwrite a previous entry with a subsequently loaded string-ID, perhaps.
-
+	_type			= node["type"]			.as<std::string>(_type);
 	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
 	_space			= node["space"]			.as<int>(_space);
 	_hours			= node["hours"]			.as<int>(_hours);
 	_cost			= node["cost"]			.as<int>(_cost);
 	_reqFacs		= node["reqFacs"]		.as<std::map<std::string, int>>(_reqFacs);
 	_partsRequired	= node["partsRequired"]	.as<std::map<std::string, int>>(_partsRequired);
-	_partsProduced	= node["partsProduced"]	.as<std::map<std::string, int>>(_partsProduced); // question: Does this add to the vector or overwrite it.
+	_partsProduced	= node["partsProduced"]	.as<std::map<std::string, int>>(_partsProduced);
 	_category		= node["category"]		.as<std::string>(_category);
 	_listOrder		= node["listOrder"]		.as<int>(_listOrder);
 
-	// debug:
-	for (std::map<std::string, int>::const_iterator
-			i = _partsProduced.begin();
-			i != _partsProduced.end();
-			++i)
-	{
-		Log(LOG_INFO) << ". _partsProduced " << i->first << " [" << i->second << "]";
-	}
+	if (_partsProduced.empty() == true)
+		_partsProduced[_type] = 1; // produce 1 item of '_type' (at least)
 
 	if (_listOrder == 0)
 		_listOrder = listOrder;
-
-//	if (_category == "STR_CRAFT")
-//		_isCraft = true;
 
 	_isCraft = false;
 	int qty (0);
