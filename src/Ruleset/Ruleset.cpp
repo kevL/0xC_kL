@@ -372,8 +372,8 @@ Ruleset::~Ruleset()
 void Ruleset::reloadCountryLines() const
 {
 	for (std::vector<std::string>::const_iterator
-			i = _countriesIndex.begin();
-			i != _countriesIndex.end();
+			i = _countryTypes.begin();
+			i != _countryTypes.end();
 			++i)
 	{
 		RuleCountry* const j (getCountry(*i));
@@ -543,7 +543,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["countries"].end();
 			++i)
 	{
-		RuleCountry* const rule (loadRule(*i, &_countries, &_countriesIndex));
+		RuleCountry* const rule (loadRule(*i, &_countries, &_countryTypes));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -552,7 +552,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["regions"].end();
 			++i)
 	{
-		RuleRegion* const rule (loadRule(*i, &_regions, &_regionsIndex));
+		RuleRegion* const rule (loadRule(*i, &_regions, &_regionTypes));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -561,7 +561,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["facilities"].end();
 			++i)
 	{
-		RuleBaseFacility* const rule (loadRule(*i, &_facilities, &_facilitiesIndex));
+		RuleBaseFacility* const rule (loadRule(*i, &_facilities, &_facilityTypes));
 		if (rule != nullptr)
 		{
 			_facilityListOrder += 100;
@@ -574,7 +574,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["crafts"].end();
 			++i)
 	{
-		RuleCraft* const rule (loadRule(*i, &_crafts, &_craftsIndex));
+		RuleCraft* const rule (loadRule(*i, &_crafts, &_craftTypes));
 		if (rule != nullptr)
 		{
 			_craftListOrder += 100;
@@ -587,7 +587,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["craftWeapons"].end();
 			++i)
 	{
-		RuleCraftWeapon* const rule (loadRule(*i, &_craftWeapons, &_craftWeaponsIndex));
+		RuleCraftWeapon* const rule (loadRule(*i, &_craftWeapons, &_craftWeaponTypes));
 		if (rule != nullptr) rule->load(*i, _modIndex);
 	}
 
@@ -596,7 +596,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["items"].end();
 			++i)
 	{
-		RuleItem* const rule (loadRule(*i, &_items, &_itemsIndex));
+		RuleItem* const rule (loadRule(*i, &_items, &_itemTypes));
 		if (rule != nullptr)
 		{
 			_itemListOrder += 100;
@@ -609,7 +609,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["ufos"].end();
 			++i)
 	{
-		RuleUfo* const rule (loadRule(*i, &_ufos, &_ufosIndex));
+		RuleUfo* const rule (loadRule(*i, &_ufos, &_ufoTypes));
 		if (rule != nullptr) rule->load(*i, this);
 	}
 
@@ -618,7 +618,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["inventories"].end();
 			++i)
 	{
-		RuleInventory* const rule (loadRule(*i, &_inventories, &_invsIndex));
+		RuleInventory* const rule (loadRule(*i, &_inventories, &_invTypes));
 		if (rule != nullptr)
 		{
 			_invListOrder += 10;
@@ -631,7 +631,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["terrains"].end();
 			++i)
 	{
-		RuleTerrain* const rule (loadRule(*i, &_terrains, &_terrainIndex));
+		RuleTerrain* const rule (loadRule(*i, &_terrains, &_terrainTypes));
 		if (rule != nullptr) rule->load(*i, this);
 	}
 
@@ -647,7 +647,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		_music.push_back(std::make_pair(
 									type,
 									ruleMusic));
-		_musicIndex.push_back(type);
+		_musicTypes.push_back(type);
 	}
 
 	for (YAML::const_iterator
@@ -655,7 +655,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["armors"].end();
 			++i)
 	{
-		RuleArmor* const rule (loadRule(*i, &_armors, &_armorsIndex));
+		RuleArmor* const rule (loadRule(*i, &_armors, &_armorTypes));
 		if (rule != nullptr)
 			rule->load(*i);
 	}
@@ -665,7 +665,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["soldiers"].end();
 			++i)
 	{
-		RuleSoldier* const rule (loadRule(*i, &_soldiers, &_soldiersIndex));
+		RuleSoldier* const rule (loadRule(*i, &_soldiers, &_soldierTypes));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -683,7 +683,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["alienRaces"].end();
 			++i)
 	{
-		RuleAlienRace* const rule (loadRule(*i, &_alienRaces, &_aliensIndex));
+		RuleAlienRace* const rule (loadRule(*i, &_alienRaces, &_alienTypes));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -692,7 +692,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["alienDeployments"].end();
 			++i)
 	{
-		RuleAlienDeployment* const rule (loadRule(*i, &_alienDeployments, &_deploymentsIndex));
+		RuleAlienDeployment* const rule (loadRule(*i, &_alienDeployments, &_deploymentTypes));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -701,7 +701,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["research"].end();
 			++i)
 	{
-		RuleResearch* const rule (loadRule(*i, &_research, &_researchIndex));
+		RuleResearch* const rule (loadRule(*i, &_research, &_researchTypes));
 		if (rule != nullptr)
 		{
 			_researchListOrder += 100;
@@ -717,7 +717,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["manufacture"].end();
 			++i)
 	{
-		RuleManufacture* const rule (loadRule(*i, &_manufacture, &_manufactureIndex));
+		RuleManufacture* const rule (loadRule(*i, &_manufacture, &_manufactureTypes));
 		if (rule != nullptr)
 		{
 			_manufactureListOrder += 100;
@@ -760,7 +760,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 				if (articleRule != nullptr)
 				{
 					_ufopaediaArticles[type] = articleRule;
-					_ufopaediaIndex.push_back(type);
+					_ufopaediaTypes.push_back(type);
 				}
 				else Log(LOG_INFO) << "ERROR: undefined ArticleDefinition typeId [" << static_cast<int>(typeId) << "] for " << type;
 			}
@@ -778,11 +778,11 @@ void Ruleset::loadFile(const std::string& file) // protected.
 				_ufopaediaArticles.erase(pArticle);
 
 			const std::vector<std::string>::const_iterator j (std::find(
-																	_ufopaediaIndex.begin(),
-																	_ufopaediaIndex.end(),
+																	_ufopaediaTypes.begin(),
+																	_ufopaediaTypes.end(),
 																	type));
-			if (j != _ufopaediaIndex.end())
-				_ufopaediaIndex.erase(j);
+			if (j != _ufopaediaTypes.end())
+				_ufopaediaTypes.erase(j);
 		}
 	}
 
@@ -829,7 +829,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["alienMissions"].end();
 			++i)
 	{
-		RuleAlienMission* const rule (loadRule(*i, &_alienMissions, &_alienMissionsIndex));
+		RuleAlienMission* const rule (loadRule(*i, &_alienMissions, &_alienMissionTypes));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -848,7 +848,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			MCDPatch* patch (new MCDPatch());
 			patch->load(*i);
 			_MCDPatches[type] = patch;
-			_MCDPatchesIndex.push_back(type);
+			_MCDPatchTypes.push_back(type);
 		}
 	}
 
@@ -867,7 +867,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			extraSprites->load(*i, 0);
 
 		_extraSprites.push_back(std::make_pair(type, extraSprites));
-		_extraSpritesIndex.push_back(type);
+		_extraSpriteTypes.push_back(type);
 	}
 
 	for (YAML::const_iterator
@@ -879,7 +879,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		ExtraSounds* extraSounds (new ExtraSounds());
 		extraSounds->load(*i, _modIndex);
 		_extraSounds.push_back(std::make_pair(type, extraSounds));
-		_extraSoundsIndex.push_back(type);
+		_extraSoundTypes.push_back(type);
 	}
 
 	for (YAML::const_iterator
@@ -895,7 +895,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			ExtraStrings* extraStrings (new ExtraStrings());
 			extraStrings->load(*i);
 			_extraStrings[type] = extraStrings;
-			_extraStringsIndex.push_back(type);
+			_extraStringTypes.push_back(type);
 		}
 	}
 
@@ -1036,13 +1036,13 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["missionScripts"].end();
 			++i)
 	{
-		RuleMissionScript* const rule (loadRule(*i, &_missionScripts, &_missionScriptIndex));
+		RuleMissionScript* const rule (loadRule(*i, &_missionScripts, &_missionScriptTypes));
 		if (rule != nullptr) rule->load(*i);
 	}
 
 /*	for (std::vector<std::string>::const_iterator // update _psiRequirements for psiStrengthEval
-			i = _facilitiesIndex.begin();
-			i != _facilitiesIndex.end();
+			i = _facilityTypes.begin();
+			i != _facilityTypes.end();
 			++i)
 	{
 		const RuleBaseFacility* const rule = getBaseFacility(*i);
@@ -1117,20 +1117,20 @@ T* Ruleset::loadRule( // protected.
 
 /**
  * Generates a SavedGame with starting data.
- * @param game - pointer to the current Game (used to obviate const of member-variable '_game')
+ * @param play - pointer to the current Game (used to obviate const of '_game')
  * @return, pointer to the SavedGame
  */
-SavedGame* Ruleset::createSave(Game* const game) const
+SavedGame* Ruleset::createSave(Game* const play) const
 {
 	//Log(LOG_INFO) << "Ruleset::createSave()";
 	RNG::setSeed();
 
 	SavedGame* const gameSave (new SavedGame(this));
-	game->setSavedGame(gameSave);
+	play->setSavedGame(gameSave);
 
 	for (std::vector<std::string>::const_iterator // setup ResearchGenerals.
-			i = _researchIndex.begin();
-			i != _researchIndex.end();
+			i = _researchTypes.begin();
+			i != _researchTypes.end();
 			++i)
 	{
 		gameSave->getResearchGenerals().push_back(new ResearchGeneral(getResearch(*i)));
@@ -1138,8 +1138,8 @@ SavedGame* Ruleset::createSave(Game* const game) const
 	//Log(LOG_INFO) << ". research generals DONE";
 
 	for (std::vector<std::string>::const_iterator // add Countries.
-			i = _countriesIndex.begin();
-			i != _countriesIndex.end();
+			i = _countryTypes.begin();
+			i != _countryTypes.end();
 			++i)
 	{
 		RuleCountry* const country (getCountry(*i));
@@ -1164,8 +1164,8 @@ SavedGame* Ruleset::createSave(Game* const game) const
 	//Log(LOG_INFO) << ". funding DONE";
 
 	for (std::vector<std::string>::const_iterator // add Regions.
-			i = _regionsIndex.begin();
-			i != _regionsIndex.end();
+			i = _regionTypes.begin();
+			i != _regionTypes.end();
 			++i)
 	{
 		RuleRegion* const region (getRegion(*i));
@@ -1205,7 +1205,7 @@ SavedGame* Ruleset::createSave(Game* const game) const
 //		}
 //	}
 
-	std::vector<std::string> allSoldiers (_soldiersIndex); // determine start Soldier types.
+	std::vector<std::string> allSoldiers (_soldierTypes); // determine start Soldier types.
 	for (std::vector<std::string>::const_iterator
 			i = allSoldiers.begin();
 			i != allSoldiers.end();
@@ -1315,7 +1315,7 @@ RuleCountry* Ruleset::getCountry(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getCountriesList() const
 {
-	return _countriesIndex;
+	return _countryTypes;
 }
 
 /**
@@ -1338,7 +1338,7 @@ RuleRegion* Ruleset::getRegion(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getRegionsList() const
 {
-	return _regionsIndex;
+	return _regionTypes;
 }
 
 /**
@@ -1361,7 +1361,7 @@ RuleBaseFacility* Ruleset::getBaseFacility(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getBaseFacilitiesList() const
 {
-	return _facilitiesIndex;
+	return _facilityTypes;
 }
 
 /**
@@ -1384,7 +1384,7 @@ RuleCraft* Ruleset::getCraft(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getCraftsList() const
 {
-	return _craftsIndex;
+	return _craftTypes;
 }
 
 /**
@@ -1407,7 +1407,7 @@ RuleCraftWeapon* Ruleset::getCraftWeapon(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getCraftWeaponsList() const
 {
-	return _craftWeaponsIndex;
+	return _craftWeaponTypes;
 }
 
 /**
@@ -1430,7 +1430,7 @@ RuleItem* Ruleset::getItemRule(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getItemsList() const
 {
-	return _itemsIndex;
+	return _itemTypes;
 }
 
 /**
@@ -1453,7 +1453,7 @@ RuleUfo* Ruleset::getUfo(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getUfosList() const
 {
-	return _ufosIndex;
+	return _ufoTypes;
 }
 
 /**
@@ -1477,7 +1477,7 @@ RuleTerrain* Ruleset::getTerrain(const std::string& type) const
  */
 const std::vector<std::string>& Ruleset::getTerrainList() const
 {
-	return _terrainIndex;
+	return _terrainTypes;
 }
 
 /**
@@ -1526,7 +1526,7 @@ RuleSoldier* Ruleset::getSoldier(const std::string& type) const
  */
 const std::vector<std::string>& Ruleset::getSoldiersList() const
 {
-	return _soldiersIndex;
+	return _soldierTypes;
 }
 
 /**
@@ -1563,7 +1563,7 @@ RuleAlienRace* Ruleset::getAlienRace(const std::string& type) const
  */
 const std::vector<std::string>& Ruleset::getAlienRacesList() const
 {
-	return _aliensIndex;
+	return _alienTypes;
 }
 
 /**
@@ -1586,7 +1586,7 @@ RuleAlienDeployment* Ruleset::getDeployment(const std::string& type) const
  */
 const std::vector<std::string>& Ruleset::getDeploymentsList() const
 {
-	return _deploymentsIndex;
+	return _deploymentTypes;
 }
 
 /**
@@ -1609,7 +1609,7 @@ RuleArmor* Ruleset::getArmor(const std::string& type) const
  */
 const std::vector<std::string>& Ruleset::getArmorsList() const
 {
-	return _armorsIndex;
+	return _armorTypes;
 }
 
 /**
@@ -1659,7 +1659,7 @@ ArticleDefinition* Ruleset::getUfopaediaArticle(const std::string& article_id) c
  */
 const std::vector<std::string>& Ruleset::getUfopaediaList() const
 {
-	return _ufopaediaIndex;
+	return _ufopaediaTypes;
 }
 
 /**
@@ -1738,7 +1738,7 @@ void Ruleset::convertInventories()
  *
 const std::vector<std::string>& Ruleset::getInventoryList() const
 {
-	return _invsIndex;
+	return _invTypes;
 } */
 
 /**
@@ -1783,12 +1783,12 @@ int Ruleset::getHighestDropCost() const
 
 /**
  * Gets the rules for a specified research-project.
- * @param id - reference a research-project-type
+ * @param type - reference to a research-type
  * @return, pointer to RuleResearch
  */
-const RuleResearch* Ruleset::getResearch(const std::string& id) const
+const RuleResearch* Ruleset::getResearch(const std::string& type) const
 {
-	std::map<std::string, RuleResearch*>::const_iterator i (_research.find(id));
+	std::map<std::string, RuleResearch*>::const_iterator i (_research.find(type));
 	if (i != _research.end())
 		return i->second;
 
@@ -1801,17 +1801,17 @@ const RuleResearch* Ruleset::getResearch(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getResearchList() const
 {
-	return _researchIndex;
+	return _researchTypes;
 }
 
 /**
  * Gets the rules for the specified manufacture-project.
- * @param id - reference to the manufacture-project-type
+ * @param type - reference to a manufacture-type
  * @return, pointer to RuleManufacture
  */
-RuleManufacture* Ruleset::getManufacture(const std::string& id) const
+RuleManufacture* Ruleset::getManufacture(const std::string& type) const
 {
-	std::map<std::string, RuleManufacture*>::const_iterator i (_manufacture.find(id));
+	std::map<std::string, RuleManufacture*>::const_iterator i (_manufacture.find(type));
 	if (i != _manufacture.end())
 		return i->second;
 
@@ -1824,7 +1824,7 @@ RuleManufacture* Ruleset::getManufacture(const std::string& id) const
  */
 const std::vector<std::string>& Ruleset::getManufactureList() const
 {
-	return _manufactureIndex;
+	return _manufactureTypes;
 }
 
 /**
@@ -1854,12 +1854,12 @@ std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
 
 /**
  * Gets the data for a specified ufo-trajectory.
- * @param id - reference to the UfoTrajectory ID
+ * @param type - reference to a UfoTrajectory type
  * @return, a pointer to UfoTrajectory
  */
-const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
+const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& type) const
 {
-	std::map<std::string, UfoTrajectory*>::const_iterator i (_ufoTrajectories.find(id));
+	std::map<std::string, UfoTrajectory*>::const_iterator i (_ufoTrajectories.find(type));
 
 	if (i != _ufoTrajectories.end())
 		return i->second;
@@ -1869,12 +1869,12 @@ const UfoTrajectory* Ruleset::getUfoTrajectory(const std::string& id) const
 
 /**
  * Gets the rules for a specified AlienMission.
- * @param id - AlienMission type
+ * @param type - reference to an AlienMission type
  * @return, pointer to RuleAlienMission
  */
-const RuleAlienMission* Ruleset::getAlienMission(const std::string& id) const
+const RuleAlienMission* Ruleset::getAlienMission(const std::string& type) const
 {
-	std::map<std::string, RuleAlienMission*>::const_iterator i (_alienMissions.find(id));
+	std::map<std::string, RuleAlienMission*>::const_iterator i (_alienMissions.find(type));
 	if (i != _alienMissions.end())
 		return i->second;
 
@@ -1926,7 +1926,7 @@ const RuleAlienMission* Ruleset::getMissionRand(
  */
 const std::vector<std::string>& Ruleset::getAlienMissionList() const
 {
-	return _alienMissionsIndex;
+	return _alienMissionTypes;
 }
 
 /**
@@ -2185,55 +2185,55 @@ std::map<std::string, int> CompareRule<ArticleDefinition>::_sections;
 void Ruleset::sortLists()
 {
 	std::sort(
-			_itemsIndex.begin(),
-			_itemsIndex.end(),
+			_itemTypes.begin(),
+			_itemTypes.end(),
 			CompareRule<RuleItem>(
 							this,
 							reinterpret_cast<CompareRule<RuleItem>::RuleLookup>(&Ruleset::getItemRule)));
 	std::sort(
-			_craftsIndex.begin(),
-			_craftsIndex.end(),
+			_craftTypes.begin(),
+			_craftTypes.end(),
 			CompareRule<RuleCraft>(
 							this,
 							reinterpret_cast<CompareRule<RuleCraft>::RuleLookup>(&Ruleset::getCraft)));
 	std::sort(
-			_facilitiesIndex.begin(),
-			_facilitiesIndex.end(),
+			_facilityTypes.begin(),
+			_facilityTypes.end(),
 			CompareRule<RuleBaseFacility>(
 							this,
 							reinterpret_cast<CompareRule<RuleBaseFacility>::RuleLookup>(&Ruleset::getBaseFacility)));
 	std::sort(
-			_researchIndex.begin(),
-			_researchIndex.end(),
+			_researchTypes.begin(),
+			_researchTypes.end(),
 			CompareRule<RuleResearch>(
 							this,
 							reinterpret_cast<CompareRule<RuleResearch>::RuleLookup>(&Ruleset::getResearch)));
 	std::sort(
-			_manufactureIndex.begin(),
-			_manufactureIndex.end(),
+			_manufactureTypes.begin(),
+			_manufactureTypes.end(),
 			CompareRule<RuleManufacture>(
 							this,
 							reinterpret_cast<CompareRule<RuleManufacture>::RuleLookup>(&Ruleset::getManufacture)));
 	std::sort(
-			_invsIndex.begin(),
-			_invsIndex.end(),
+			_invTypes.begin(),
+			_invTypes.end(),
 			CompareRule<RuleInventory>(
 							this,
 							reinterpret_cast<CompareRule<RuleInventory>::RuleLookup>(&Ruleset::getInventory)));
 
 	// special cases
 	std::sort(
-			_craftWeaponsIndex.begin(),
-			_craftWeaponsIndex.end(),
+			_craftWeaponTypes.begin(),
+			_craftWeaponTypes.end(),
 			CompareRule<RuleCraftWeapon>(this));
 	std::sort(
-			_armorsIndex.begin(),
-			_armorsIndex.end(),
+			_armorTypes.begin(),
+			_armorTypes.end(),
 			CompareRule<RuleArmor>(this));
 
 	std::sort( // sort by listOrder first
-			_ufopaediaIndex.begin(),
-			_ufopaediaIndex.end(),
+			_ufopaediaTypes.begin(),
+			_ufopaediaTypes.end(),
 			CompareRule<ArticleDefinition>(this, true));
 //	std::sort( // sort by sectionOrder second
 //			_ufopaediaIndex.begin(),
@@ -2261,7 +2261,7 @@ Soldier* Ruleset::genSoldier(
 		std::string type) const
 {
 	if (type.empty() == true)
-		type = _soldiersIndex.front();
+		type = _soldierTypes.front();
 
 	return new Soldier(
 					getSoldier(type),
@@ -2358,8 +2358,8 @@ int Ruleset::getMinRadarRange() const
 	{
 		minRadarRange = 0;
 		for (std::vector<std::string>::const_iterator
-				i = _facilitiesIndex.begin();
-				i != _facilitiesIndex.end();
+				i = _facilityTypes.begin();
+				i != _facilityTypes.end();
 				++i)
 		{
 			RuleBaseFacility* facRule = getBaseFacility(*i);
@@ -2390,8 +2390,8 @@ int Ruleset::getRadarRangeBest() const
 
 	const RuleBaseFacility* facRule;
 	for (std::vector<std::string>::const_iterator
-			i = _facilitiesIndex.begin();
-			i != _facilitiesIndex.end();
+			i = _facilityTypes.begin();
+			i != _facilityTypes.end();
 			++i)
 	{
 		if ((facRule = getBaseFacility(*i)) != nullptr
@@ -2477,7 +2477,7 @@ const std::map<std::string, RuleVideo*>* Ruleset::getVideos() const
  */
 const std::vector<std::string>* Ruleset::getMissionScriptList() const
 {
-	return &_missionScriptIndex;
+	return &_missionScriptTypes;
 }
 
 /**

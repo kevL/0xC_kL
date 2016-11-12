@@ -40,7 +40,7 @@ namespace OpenXcom
  *
  * @note kL: Therefore a rule that forces a RuleResearch does not have to be
  * listed as a prerequisite of the latter rule. Because the latter will be
- * immediately forced to unlock. Actually, yes it is needed or else a rule would
+ * immediately forced to unlock. Actually, yes it is needed or else a rule could
  * be unlocked by its prerequisites *without the rule that supposedly forced it*
  * open. So the point is that if all prerequisites of a rule also force that
  * rule unlocked then they are not needed as prerequisites also; alternately,
@@ -51,15 +51,15 @@ namespace OpenXcom
  * it can't be removed at present since the basic check to see if a rule has
  * been unlocked is a search through its prerequisites -- that should be changed
  * to search through its required-research instead, both at the start of play
- * and when a discovered research forces it.
+ * and when a discovered-research forces it.
  *
  * @note '_reqResearch' is the list of RuleResearch's that *absolutely must
- * already be discovered* (prior to prerequiste or forcing) for its rule to ever
- * be unlocked.
+ * already be discovered* (prior to prerequisite or forcing) for its rule to
+ * ever be unlocked.
  *
  * @note So care must be taken so that a rule that forces another rule, or that
  * is a prerequisite of another rule, remains available for research if/when
- * the latter rule does not get unlocked due to its required research.
+ * the latter rule does not get unlocked due to its required-research.
  *
  * @note Fake ResearchProjects: A RuleResearch is fake one if its cost is 0.
  * They are used to to create check points in the dependency tree. For example

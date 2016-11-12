@@ -81,10 +81,10 @@ class UfoTrajectory;
 
 
 /**
- * Set of rules and stats for a game.
+ * Set of rules and stats for play.
  * @note A ruleset holds all the constant info that never changes throughout a
- * game, like stats of all the in-game items, countries, research tree, soldier
- * names, starting base, etc.
+ * game, like stats of all the items, countries, research tree, soldier names,
+ * operation titles, the starting base, etc.
  *
  * HOWEVER, RuleUnit can have its UnitStats substruct modified.
  */
@@ -126,29 +126,29 @@ private:
 		_font;
 
 	std::vector<std::string>
-		_alienMissionsIndex,
-		_aliensIndex,
-		_armorsIndex,
-		_countriesIndex,
-		_craftsIndex,
-		_craftWeaponsIndex,
-		_deploymentsIndex,
-		_extraSoundsIndex,
-		_extraSpritesIndex,
-		_extraStringsIndex,
-		_facilitiesIndex,
-		_invsIndex,
-		_itemsIndex,
-		_manufactureIndex,
-		_MCDPatchesIndex,
-		_missionScriptIndex,
-		_musicIndex,
-		_regionsIndex,
-		_researchIndex,
-		_soldiersIndex,
-		_terrainIndex,
-		_ufopaediaIndex,
-		_ufosIndex;
+		_alienMissionTypes,
+		_alienTypes,
+		_armorTypes,
+		_countryTypes,
+		_craftTypes,
+		_craftWeaponTypes,
+		_deploymentTypes,
+		_extraSoundTypes,
+		_extraSpriteTypes,
+		_extraStringTypes,
+		_facilityTypes,
+		_invTypes,
+		_itemTypes,
+		_manufactureTypes,
+		_MCDPatchTypes,
+		_missionScriptTypes,
+		_musicTypes,
+		_regionTypes,
+		_researchTypes,
+		_soldierTypes,
+		_terrainTypes,
+		_ufopaediaTypes,
+		_ufoTypes;
 //		_psiRequirements; // it's a cache for psiStrengthEval ...
 
 	std::vector<std::vector<int>> _alienItemLevels;
@@ -323,12 +323,12 @@ private:
 		int getHighestDropCost() const;
 
 		/// Gets the rules for a specific research-project.
-		const RuleResearch* getResearch(const std::string& id) const;
+		const RuleResearch* getResearch(const std::string& type) const;
 		/// Gets the list of all research-projects.
 		const std::vector<std::string>& getResearchList() const;
 
 		/// Gets the rules for a specific manufacture-project.
-		RuleManufacture* getManufacture(const std::string& id) const;
+		RuleManufacture* getManufacture(const std::string& type) const;
 		/// Gets the list of all manufacture-projects.
 		const std::vector<std::string>& getManufactureList() const;
 
@@ -336,10 +336,10 @@ private:
 		std::vector<RuleBaseFacility*> getCustomBaseFacilities() const;
 
 		/// Gets a specific UfoTrajectory.
-		const UfoTrajectory* getUfoTrajectory(const std::string& id) const;
+		const UfoTrajectory* getUfoTrajectory(const std::string& type) const;
 
 		/// Gets the rules for a specific AlienMission.
-		const RuleAlienMission* getAlienMission(const std::string& id) const;
+		const RuleAlienMission* getAlienMission(const std::string& type) const;
 		/// Gets the rules for a random AlienMission.
 		const RuleAlienMission* getMissionRand(
 				MissionObjective objective,
