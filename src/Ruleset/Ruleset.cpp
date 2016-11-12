@@ -1205,27 +1205,15 @@ SavedGame* Ruleset::createSave(Game* const play) const
 //		}
 //	}
 
-	std::vector<std::string> allSoldiers (_soldierTypes); // determine start Soldier types.
-	for (std::vector<std::string>::const_iterator
-			i = allSoldiers.begin();
-			i != allSoldiers.end();
-			)
-	{
-		if (getSoldier(*i)->getRequiredResearch().empty() == false)
-			i = allSoldiers.erase(i);
-		else
-			++i;
-	}
-	//Log(LOG_INFO) << ". soldier-types DONE";
 
 	const YAML::Node& node (_startBase["soldiers"]);
 	if (node != nullptr)
 	{
-		std::vector<std::string> solTypes;
+		std::vector<std::string> startTypes;
 
-		if (node.IsMap() == true) // start Soldiers specified by type.
+		if (node.IsMap() == true) // start Soldiers specified by type & quantity.
 		{
-			std::map<std::string, int> soldiers (node.as<std::map<std::string, int>>(std::map<std::string, int>()));
+			const std::map<std::string, int> soldiers (node.as<std::map<std::string, int>>(std::map<std::string, int>()));
 			for (std::map<std::string, int>::const_iterator
 					i = soldiers.begin();
 					i != soldiers.end();
@@ -1236,28 +1224,38 @@ SavedGame* Ruleset::createSave(Game* const play) const
 						j != i->second;
 						++j)
 				{
-					solTypes.push_back(i->first);
+					startTypes.push_back(i->first);
 				}
 			}
 		}
-		else if (node.IsScalar() == true) // start Soldiers specified by amount.
+		else if (node.IsScalar() == true) // start Soldiers specified only by quantity.
 		{
-			const int soldiers (node.as<int>(0));
+			std::vector<std::string> soldierTypes; // list of no-required-research Soldier types.
+			for (std::vector<std::string>::const_iterator
+					i = _soldierTypes.begin();
+					i != _soldierTypes.end();
+					++i)
+			{
+				if (getSoldier(*i)->getRequiredResearch().empty() == true)
+					soldierTypes.push_back(*i);
+			}
+
+			const int soldiers (node.as<int>(0)); // NOTE: Stock is 8.
 			for (int
 					i = 0;
 					i != soldiers;
 					++i)
 			{
-				solTypes.push_back(allSoldiers[RNG::pick(allSoldiers.size())]);
+				startTypes.push_back(soldierTypes[RNG::pick(soldierTypes.size())]);
 			}
 		}
 
-		for (size_t // Generate soldiers
+		for (size_t // Generate the start Soldiers ->
 				i = 0u;
-				i != solTypes.size();
+				i != startTypes.size();
 				++i)
 		{
-			Soldier* const sol (genSoldier(gameSave, solTypes[i]));
+			Soldier* const sol (genSoldier(gameSave, startTypes[i]));
 
 //			if (transportCraft != 0 && i < transportCraft->getRules()->getSoldiers())
 //				soldier->setCraft(transportCraft);
@@ -1829,11 +1827,11 @@ const std::vector<std::string>& Ruleset::getManufactureList() const
 
 /**
  * Generates and returns a list of facilities for custom-bases.
- * @note The list contains all the facilities that are listed in the 'startBase'
- * part of the ruleset.
+ * @note The return-vector contains all the facilities that are listed in the
+ * 'startBase' part of the ruleset.
  * @return, vector of pointers to RuleBaseFacility
  */
-std::vector<RuleBaseFacility*> Ruleset::getCustomBaseFacilities() const
+std::vector<RuleBaseFacility*> Ruleset::getStartBaseFacilities() const
 {
 	std::vector<RuleBaseFacility*> placeList;
 	std::string type;

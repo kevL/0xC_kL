@@ -333,7 +333,7 @@ private:
 		const std::vector<std::string>& getManufactureList() const;
 
 		/// Gets Facilities for custom-bases.
-		std::vector<RuleBaseFacility*> getCustomBaseFacilities() const;
+		std::vector<RuleBaseFacility*> getStartBaseFacilities() const;
 
 		/// Gets a specific UfoTrajectory.
 		const UfoTrajectory* getUfoTrajectory(const std::string& type) const;

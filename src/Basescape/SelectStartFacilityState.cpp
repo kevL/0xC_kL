@@ -54,7 +54,7 @@ SelectStartFacilityState::SelectStartFacilityState(
 		BuildFacilitiesState(base, state),
 		_globe(globe)
 {
-	_facilities = _game->getRuleset()->getCustomBaseFacilities();
+	_facilities = _game->getRuleset()->getStartBaseFacilities();
 
 	_btnOk->setText(tr("STR_RESET"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SelectStartFacilityState::btnResetClick));

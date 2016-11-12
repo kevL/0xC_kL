@@ -123,7 +123,7 @@ const std::string& RuleSoldier::getType() const
 
 /**
  * Gets the list of required-research to hire this type of Soldier.
- * @return, reference to a list of research-IDs
+ * @return, reference to a list of research-types
  */
 const std::vector<std::string>& RuleSoldier::getRequiredResearch() const
 {
