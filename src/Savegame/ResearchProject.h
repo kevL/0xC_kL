@@ -62,25 +62,25 @@ private:
 		const RuleResearch* getRules() const;
 
 		/// Called daily.
-		bool stepProject();
+		bool stepResearch();
 
 		/// Sets the quantity of scientists assigned to the ResearchProject.
-		void setAssignedScientists(const int qty);
+		void setAssignedScientists(int qty);
 		/// Gets the quantity of scientists assigned to the ResearchProject.
 		int getAssignedScientists() const;
 
 		/// Sets time already spent on the ResearchProject.
-		void setSpent(const int spent);
+		void setSpent(int spent);
 		/// Gets time already spent on the ResearchProject.
 		int getSpent() const;
 
 		/// Sets time-cost of the ResearchProject.
-		void setCost(const int cost);
+		void setCost(int cost);
 		/// Gets time-cost of the ResearchProject.
 		int getCost() const;
 
 		/// Sets the ResearchProject offline.
-		void setOffline(const bool offline = true);
+		void setOffline(bool offline = true);
 		/// Gets whether the ResearchProject is offline or not.
 		bool getOffline() const;
 

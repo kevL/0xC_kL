@@ -84,10 +84,10 @@ const RuleResearch* ResearchProject::getRules() const
 }
 
 /**
- * Called every day to compute time spent on this ResearchProject.
+ * Called every day to compute days-spent on this ResearchProject.
  * @return, true if project finishes
  */
-bool ResearchProject::stepProject()
+bool ResearchProject::stepResearch()
 {
 	if ((_daysSpent += _scientists) >= _daysCost)
 		return true;
@@ -99,7 +99,7 @@ bool ResearchProject::stepProject()
  * Changes the number of scientists to this ResearchProject.
  * @param qty - quantity of scientists assigned
  */
-void ResearchProject::setAssignedScientists(const int qty)
+void ResearchProject::setAssignedScientists(int qty)
 {
 	_scientists = qty;
 }
@@ -117,7 +117,7 @@ int ResearchProject::getAssignedScientists() const
  * Changes the cost of this ResearchProject.
  * @param spent - new project cost in man-days
  */
-void ResearchProject::setSpent(const int spent)
+void ResearchProject::setSpent(int spent)
 {
 	_daysSpent = spent;
 }
@@ -135,7 +135,7 @@ int ResearchProject::getSpent() const
  * Changes the cost of this ResearchProject.
  * @param cost - new project cost in man-days
  */
-void ResearchProject::setCost(const int cost)
+void ResearchProject::setCost(int cost)
 {
 	_daysCost = cost;
 }
@@ -155,7 +155,7 @@ int ResearchProject::getCost() const
  * values.
  * @param offline - true to set project offline (default true)
  */
-void ResearchProject::setOffline(const bool offline)
+void ResearchProject::setOffline(bool offline)
 {
 	_offline = offline;
 }

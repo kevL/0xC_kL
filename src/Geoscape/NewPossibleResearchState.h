@@ -28,6 +28,7 @@ namespace OpenXcom
 
 class Base;
 class RuleResearch;
+
 class Text;
 class TextButton;
 class TextList;
@@ -35,7 +36,7 @@ class Window;
 
 
 /**
- * Window that informs the player of new possible research projects.
+ * Window that informs the player of new possible research-projects.
  * @note Also allows the player to go to ResearchState to allocate scientists.
  */
 class NewPossibleResearchState

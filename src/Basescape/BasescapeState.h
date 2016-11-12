@@ -101,7 +101,7 @@ private:
 		/// Handler for clicking the Equip Craft button.
 		void btnCraftsClick(Action* action);
 		/// Handler for clicking the Alien Containment button.
-		void btnAliens(Action* action);
+		void btnAliensClick(Action* action);
 		/// Handler for clicking the Research button.
 		void btnResearchClick(Action* action);
 		/// Handler for clicking the Manufacture button.

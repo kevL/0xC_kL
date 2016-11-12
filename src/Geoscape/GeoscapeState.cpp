@@ -2667,13 +2667,15 @@ void GeoscapeState::time1Day()
 	std::vector<NewPossibleResearchInfo> resEventsPopped;
 	std::vector<NewPossibleManufactureInfo> runtEventsPopped;
 
+	std::vector<ResearchProject*> researchDiscovered;
+
 	for (std::vector<Base*>::const_iterator
 			i = _gameSave->getBases()->begin();
 			i != _gameSave->getBases()->end();
 			++i)
 	{
 		bool dead;
-		for (std::vector<Soldier*>::const_iterator // handle Soldiers in sickbay
+		for (std::vector<Soldier*>::const_iterator // handle Soldiers in sickbay ->
 				j = (*i)->getSoldiers()->begin();
 				j != (*i)->getSoldiers()->end();
 				)
@@ -2732,7 +2734,8 @@ void GeoscapeState::time1Day()
 				++j;
 		}
 
-		if ((*i)->hasPsiLabs() == true) // handle psi-training and AutoStat.
+
+		if ((*i)->hasPsiLabs() == true) // handle psi-training and AutoStat ->
 		{
 //			bool sortSoldiers = false;
 			for (std::vector<Soldier*>::const_iterator
@@ -2752,12 +2755,12 @@ void GeoscapeState::time1Day()
 		}
 
 
-		for (std::vector<BaseFacility*>::const_iterator // handle BaseFacility construction
+		for (std::vector<BaseFacility*>::const_iterator // handle BaseFacility construction ->
 				j = (*i)->getFacilities()->begin();
 				j != (*i)->getFacilities()->end();
 				++j)
 		{
-			if ((*j)->buildFinished() == false && (*j)->buildFacility() == true) // completed.
+			if ((*j)->buildFinished() == false && (*j)->buildFacility() == true)
 			{
 				if (runtEvents.empty() == false) // set the previous event to NOT show btn.
 					runtEvents.back().gotoBaseBtn = false;
@@ -2770,177 +2773,181 @@ void GeoscapeState::time1Day()
 			}
 		}
 
-		std::vector<ResearchProject*> researchFinished; // handle science projects - Research.
+
+		researchDiscovered.clear(); // handle ResearchProjects ->
+
 		for (std::vector<ResearchProject*>::const_iterator
 				j = (*i)->getResearch().begin();
 				j != (*i)->getResearch().end();
 				++j)
 		{
-			if ((*j)->stepProject() == true)
-				researchFinished.push_back(*j);
+			if ((*j)->stepResearch() == true)
+				researchDiscovered.push_back(*j);
 		}
 
-		if (researchFinished.empty() == false)
+		if (researchDiscovered.empty() == false)
+		{
 			resetTimer();
 
-
-		for (std::vector<ResearchProject*>::const_iterator
-				j = researchFinished.begin();
-				j != researchFinished.end();
-				++j)
-		{
-			const RuleResearch* const resRule ((*j)->getRules());
-			const std::string& resType (resRule->getType());
-
-			const bool isLiveAlien (_rules->getUnitRule(resType) != nullptr);
-			(*i)->clearResearchProject(*j, isLiveAlien == true);
-
-			bool
-				crackGof,
-				crackForced;	// TODO: that <- The issue is that the 'forced' resTypes are not an independent vector, but instead
-								// are redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
-			if (isLiveAlien == true)
+			for (std::vector<ResearchProject*>::const_iterator
+					j = researchDiscovered.begin();
+					j != researchDiscovered.end();
+					++j)
 			{
-				if (resRule->needsItem() == true
-					&& resRule->destroyItem() == true
-					&& Options::grantCorpses == true)
+				const RuleResearch* const resRule ((*j)->getRules());
+				const std::string& resType (resRule->getType());
+
+				const bool isLiveAlien (_rules->getUnitRule(resType) != nullptr);
+
+				(*i)->clearResearchProject(*j, isLiveAlien == true);
+
+				bool
+					crackGof,
+					crackForced;	// TODO: that <- The issue is that the 'forced' resTypes are not an independent vector, but instead
+									// are redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
+				if (isLiveAlien == true)
 				{
-					(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
-				}
+					if (resRule->needsItem() == true
+						&& resRule->destroyItem() == true
+						&& Options::grantCorpses == true)
+					{
+						(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
+					}
 
-				getAlienCracks(
-							resType,
-							crackGof,
-							crackForced);
-			}
-			else
-			{
-				if (resRule->needsItem() == true && resRule->destroyItem() == false)
-					(*i)->getStorageItems()->addItem(resType);
-
-				crackGof =
-				crackForced = true; // <- not implemented yet. See above^
-			}
-
-			const RuleResearch* gofRule (nullptr);
-			if (crackGof == true && resRule->getGetOneFree().empty() == false)
-			{
-				std::vector<std::string> gofList;
-				for (std::vector<std::string>::const_iterator
-						k = resRule->getGetOneFree().begin();
-						k != resRule->getGetOneFree().end();
-						++k)
-				{
-					if (_gameSave->searchResearch(*k) == false)
-						gofList.push_back(*k);
-				}
-
-				if (gofList.empty() == false)
-				{
-					gofRule = _rules->getResearch(gofList.at(RNG::pick(gofList.size())));
-					_gameSave->setResearchStatus(gofRule);
-				}
-			}
-
-
-			const RuleResearch* resRulePedia;
-			if (_gameSave->isResearched(resRule->getUfopaediaEntry()) == false)
-				resRulePedia = resRule;
-			else
-				resRulePedia = nullptr;
-
-			resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
-
-			_gameSave->setResearchStatus(resRule);
-
-
-			std::vector<const RuleResearch*> popupResearch;
-			_gameSave->getPopupResearch(
-									popupResearch,
-									resRule,
-									*i);
-
-			for (std::vector<const RuleResearch*>::const_iterator
-					k = popupResearch.begin();
-					k != popupResearch.end();
-					)
-			{
-				if ((*k)->getCost() == 0
-					|| _rules->getUnitRule((*k)->getType()) != nullptr
-					|| _gameSave->searchResearch(*k, RG_LOCKED) == false)
-				{
-					k = popupResearch.erase(k); // do NOT show (1)no-cost (2)liveAliens (3)twice.
+					getAlienCracks(
+								resType,
+								crackGof,
+								crackForced);
 				}
 				else
-					++k;
-			}
-
-			std::vector<const RuleManufacture*> popupManufacture;
-			_gameSave->getPopupManufacture(
-										popupManufacture,
-										resRule);
-
-			if (resRulePedia != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
-			{
-				const RuleItem* const itRule (_rules->getItemRule(resRulePedia->getType()));
-				if (itRule != nullptr
-					&& itRule->getBattleType() == BT_FIREARM
-					&& itRule->getCompatibleAmmo()->empty() == false)
 				{
-					const RuleManufacture* const mfRule (_rules->getManufacture(itRule->getType()));
-					if (mfRule != nullptr
-						&& mfRule->getRequiredResearch().empty() == false)
+					if (resRule->needsItem() == true && resRule->destroyItem() == false)
+						(*i)->getStorageItems()->addItem(resType);
+
+					crackGof =
+					crackForced = true; // <- not implemented yet. See above^
+				}
+
+				const RuleResearch* gofRule (nullptr);
+				if (crackGof == true && resRule->getGetOneFree().empty() == false)
+				{
+					std::vector<std::string> gofList;
+					for (std::vector<std::string>::const_iterator
+							k = resRule->getGetOneFree().begin();
+							k != resRule->getGetOneFree().end();
+							++k)
 					{
-						const std::vector<std::string>& required (mfRule->getRequiredResearch());
-						const RuleItem* const aRule (_rules->getItemRule(itRule->getCompatibleAmmo()->front()));
-						if (aRule != nullptr
-							&& std::find(
-									required.begin(),
-									required.end(),
-									aRule->getType()) != required.end()
-							&& _gameSave->isResearched(mfRule->getRequiredResearch()) == false)
+						if (_gameSave->searchResearch(*k) == false)
+							gofList.push_back(*k);
+					}
+
+					if (gofList.empty() == false)
+					{
+						gofRule = _rules->getResearch(gofList.at(RNG::pick(gofList.size())));
+						_gameSave->setResearchStatus(gofRule);
+					}
+				}
+
+
+				const RuleResearch* resRulePedia;
+				if (_gameSave->isResearched(resRule->getUfopaediaEntry()) == false)
+					resRulePedia = resRule;
+				else
+					resRulePedia = nullptr;
+
+				resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
+
+				_gameSave->setResearchStatus(resRule);
+
+
+				std::vector<const RuleResearch*> popupResearch;
+				_gameSave->getPopupResearch(
+										popupResearch,
+										resRule,
+										*i);
+
+				for (std::vector<const RuleResearch*>::const_iterator
+						k = popupResearch.begin();
+						k != popupResearch.end();
+						)
+				{
+					if ((*k)->getCost() == 0
+						|| _rules->getUnitRule((*k)->getType()) != nullptr
+						|| _gameSave->searchResearch(*k, RG_LOCKED) == false)
+					{
+						k = popupResearch.erase(k); // do NOT show (1)no-cost (2)liveAliens (3)twice.
+					}
+					else
+						++k;
+				}
+
+				std::vector<const RuleManufacture*> popupManufacture;
+				_gameSave->getPopupManufacture(
+											popupManufacture,
+											resRule);
+
+				if (resRulePedia != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
+				{
+					const RuleItem* const itRule (_rules->getItemRule(resRulePedia->getType()));
+					if (itRule != nullptr
+						&& itRule->getBattleType() == BT_FIREARM
+						&& itRule->getCompatibleAmmo()->empty() == false)
+					{
+						const RuleManufacture* const mfRule (_rules->getManufacture(itRule->getType()));
+						if (mfRule != nullptr
+							&& mfRule->getRequiredResearch().empty() == false)
 						{
-							resEvents.push_back(new ResearchRequiredState(itRule));
+							const std::vector<std::string>& required (mfRule->getRequiredResearch());
+							const RuleItem* const aRule (_rules->getItemRule(itRule->getCompatibleAmmo()->front()));
+							if (aRule != nullptr
+								&& std::find(
+										required.begin(),
+										required.end(),
+										aRule->getType()) != required.end()
+								&& _gameSave->isResearched(mfRule->getRequiredResearch()) == false)
+							{
+								resEvents.push_back(new ResearchRequiredState(itRule));
+							}
 						}
 					}
 				}
-			}
 
-			if (popupResearch.empty() == false)
-			{
-				if (resEventsPopped.empty() == false) // only show the "allocate research" button for the last notification
-					resEventsPopped.back().showResearchButton = false;
-
-				resEventsPopped.push_back(NewPossibleResearchInfo(*i, popupResearch, true));
-			}
-
-			if (popupManufacture.empty() == false)
-			{
-				if (runtEventsPopped.empty() == false) // only show the "allocate production" button for the last notification
-					runtEventsPopped.back().showManufactureButton = false;
-
-				runtEventsPopped.push_back(NewPossibleManufactureInfo(*i, popupManufacture, true));
-			}
-
-			if (isLiveAlien == false)
-			{
-				for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs
-						k = _gameSave->getBases()->begin();	// unless it's an alien interrogation ...
-						k != _gameSave->getBases()->end();	// TODO: remove GoF's that might be underway at other Bases, too
-						++k)
+				if (popupResearch.empty() == false)
 				{
-					for (std::vector<ResearchProject*>::const_iterator
-							l = (*k)->getResearch().begin();
-							l != (*k)->getResearch().end();
-							++l)
-					{
-						if ((*l)->getRules() == resRule)
-						{
-							(*k)->clearResearchProject(*l);
-							if (resRule->needsItem() == true)
-								(*k)->getStorageItems()->addItem(resType);
+					if (resEventsPopped.empty() == false) // only show the "allocate research" button for the last notification
+						resEventsPopped.back().showResearchButton = false;
 
-							break;
+					resEventsPopped.push_back(NewPossibleResearchInfo(*i, popupResearch, true));
+				}
+
+				if (popupManufacture.empty() == false)
+				{
+					if (runtEventsPopped.empty() == false) // only show the "allocate production" button for the last notification
+						runtEventsPopped.back().showManufactureButton = false;
+
+					runtEventsPopped.push_back(NewPossibleManufactureInfo(*i, popupManufacture, true));
+				}
+
+				if (isLiveAlien == false)
+				{
+					for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs
+							k = _gameSave->getBases()->begin();	// unless it's an alien interrogation ...
+							k != _gameSave->getBases()->end();	// TODO: remove GoF's that might be underway at other Bases, too
+							++k)
+					{
+						for (std::vector<ResearchProject*>::const_iterator
+								l = (*k)->getResearch().begin();
+								l != (*k)->getResearch().end();
+								++l)
+						{
+							if ((*l)->getRules() == resRule)
+							{
+								(*k)->clearResearchProject(*l);
+								if (resRule->needsItem() == true)
+									(*k)->getStorageItems()->addItem(resType);
+
+								break;
+							}
 						}
 					}
 				}
@@ -3004,7 +3011,7 @@ void GeoscapeState::time1Day()
 	// done Popup Events.
 
 
-	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases
+	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases ->
 																alm_BASE,
 																static_cast<size_t>(_gameSave->getMonthsElapsed())));
 	const int aLienPts ((missionRule->getMissionScore() * (_gameSave->getDifficultyInt() + 1)) / 100);
@@ -3024,13 +3031,13 @@ void GeoscapeState::time1Day()
 	}
 
 
-	std::for_each( // handle possible generation of AlienBase support-mission
+	std::for_each( // handle possible generation of AlienBase support-mission ->
 			_gameSave->getAlienBases()->begin(),
 			_gameSave->getAlienBases()->end(),
 			GenerateSupportMission(*_rules, *_gameSave));
 
 
-	const int day (_gameSave->getTime()->getDay()); // Autosave 3 times a month.
+	const int day (_gameSave->getTime()->getDay()); // handle autosave 3 times a month ->
 	if (day == 10 || day == 20)
 	{
 		if (_gameSave->isIronman() == true)

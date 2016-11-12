@@ -70,7 +70,7 @@ SaveGameState::SaveGameState(
 		_type(SAVE_DEFAULT),
 		_firstRun(0)
 {
-	buildUi(palette);
+	build(palette);
 }
 
 /**
@@ -107,7 +107,7 @@ SaveGameState::SaveGameState(
 			_file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getLabel())) + SavedGame::SAVE_EXT;
 	}
 
-	buildUi(palette);
+	build(palette);
 }
 
 /**
@@ -124,7 +124,7 @@ SaveGameState::~SaveGameState()
  * Builds the interface.
  * @param palette - pointer to parent-state palette
  */
-void SaveGameState::buildUi(SDL_Color* const palette)
+void SaveGameState::build(SDL_Color* const palette) // private.
 {
 //#ifdef _WIN32
 //	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
@@ -137,8 +137,8 @@ void SaveGameState::buildUi(SDL_Color* const palette)
 
 	switch (_origin)
 	{
-		case OPT_GEOSCAPE:
 		case OPT_MENU:
+		case OPT_GEOSCAPE:
 			add(_txtStatus, "textLoad", "geoscape");
 			break;
 

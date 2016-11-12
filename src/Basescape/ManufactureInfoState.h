@@ -81,7 +81,7 @@ private:
 	Window* _window;
 
 	/// Builds the User Interface.
-	void buildUi();
+	void build();
 	/// Caches manufacture-value for profit calculations.
 	void initProfit();
 

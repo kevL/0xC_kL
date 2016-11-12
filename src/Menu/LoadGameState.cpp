@@ -67,7 +67,7 @@ LoadGameState::LoadGameState(
 		_parent(parent),
 		_firstRun(0)
 {
-	buildUi(palette);
+	build(palette);
 }
 
 /**
@@ -97,7 +97,7 @@ LoadGameState::LoadGameState(
 		case SAVE_AUTO_BATTLESCAPE:
 			_file = SavedGame::AUTOSAVE_BATTLESCAPE;
 	}
-	buildUi(palette);
+	build(palette);
 }
 
 /**
@@ -114,7 +114,7 @@ LoadGameState::~LoadGameState()
  * Builds the interface.
  * @param palette - pointer to parent-state palette
  */
-void LoadGameState::buildUi(SDL_Color* const palette)
+void LoadGameState::build(SDL_Color* const palette) // private.
 {
 //#ifdef _WIN32
 //	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
@@ -127,8 +127,8 @@ void LoadGameState::buildUi(SDL_Color* const palette)
 
 	switch (_origin)
 	{
-		case OPT_GEOSCAPE:
 		case OPT_MENU:
+		case OPT_GEOSCAPE:
 			add(_txtStatus, "textLoad", "geoscape");
 			break;
 

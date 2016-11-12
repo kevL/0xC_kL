@@ -47,7 +47,7 @@ RuleResearch::~RuleResearch()
 /**
  * Loads the RuleResearch from a YAML file.
  * @param node		- reference a YAML node
- * @param listOrder	- list weight
+ * @param listOrder	- list-weight
  */
 void RuleResearch::load(
 		const YAML::Node& node,

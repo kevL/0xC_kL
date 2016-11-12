@@ -129,10 +129,10 @@ ResearchState::ResearchState(
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
 	_btnAliens->setText(tr("STR_ALIENS"));
-	_btnAliens->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnAliens));
+	_btnAliens->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnAliensClick));
 
 	_btnNew->setText(tr("STR_NEW_PROJECT"));
-	_btnNew->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnNewClick));
+	_btnNew->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnResearchClick));
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ResearchState::btnOkClick));
@@ -230,25 +230,25 @@ void ResearchState::btnOkClick(Action*)
 }
 
 /**
- * Pops up the ResearchListState screen.
+ * Opens a list of unlocked Research.
  * @param action - pointer to an Action
  */
-void ResearchState::btnNewClick(Action*)
+void ResearchState::btnResearchClick(Action*)
 {
 	_game->pushState(new ResearchListState(_base));
 }
 
 /**
- * Goes to the AlienContainment screen.
+ * Opens the AlienContainment screen.
  * @param action - pointer to an Action
  */
-void ResearchState::btnAliens(Action*)
+void ResearchState::btnAliensClick(Action*)
 {
 	_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
 }
 
 /**
- * Shows current research information.
+ * Opens the Research settings for a project.
  * @param action - pointer to an Action
  */
 void ResearchState::onSelectProject(Action*)
@@ -270,9 +270,9 @@ void ResearchState::onSelectProject(Action*)
 
 		++j;
 	}
-
-	const std::vector<ResearchProject*>& currentProjects (_base->getResearch());
-	_game->pushState(new ResearchInfoState(_base, currentProjects[sel]));
+	_game->pushState(new ResearchInfoState(
+										_base,
+										_base->getResearch().at(sel)));
 }
 
 /**

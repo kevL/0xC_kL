@@ -32,6 +32,7 @@ namespace OpenXcom
 
 class Base;
 class GeoscapeState;
+
 class Text;
 class TextButton;
 class Window;

@@ -60,7 +60,7 @@ ResearchInfoState::ResearchInfoState(
 		_project(new ResearchProject(resRule))
 {
 	//Log(LOG_INFO) << "ResearchInfoState cTor w/ resRule " << resRule->getType();
-	buildUi();
+	build();
 }
 
 /**
@@ -77,7 +77,7 @@ ResearchInfoState::ResearchInfoState(
 		_project(project)
 {
 	//Log(LOG_INFO) << "ResearchInfoState cTor w/ project " << project->getRules()->getType();
-	buildUi();
+	build();
 }
 
 /**
@@ -92,7 +92,7 @@ ResearchInfoState::~ResearchInfoState()
 /**
  * Builds the UI.
  */
-void ResearchInfoState::buildUi() // private.
+void ResearchInfoState::build() // private.
 {
 	_fullScreen = false;
 
@@ -162,7 +162,7 @@ void ResearchInfoState::buildUi() // private.
 	}
 	else
 	{
-		st1 = "STR_OK"; // NOTE: This is activated by a Cancel [Esc] click [key-press]. It means "modifications are done, get rid of popup".
+		st1 = "STR_OK"; // NOTE: This is activated by a Cancel click or [Esc] [key-press]. It means "modifications are done, get rid of State".
 		st2 = "STR_CANCEL_PROJECT";
 	}
 
@@ -214,9 +214,9 @@ void ResearchInfoState::btnStartStopClick(Action*) // private.
 
 		const bool isLiveAlien (_game->getRuleset()->getUnitRule(_resRule->getType()) != nullptr);
 		_base->clearResearchProject(
-						_project,
-						false,
-						isLiveAlien == false);
+								_project,
+								false,
+								isLiveAlien == false);
 
 		if (isLiveAlien == true && _resRule->needsItem() == true)
 			_base->getStorageItems()->addItem(_resRule->getType());
@@ -295,7 +295,7 @@ void ResearchInfoState::lessRelease(Action* action) // private.
 }
 
 /**
- * Runs state functionality every cycle (used to update the timer).
+ * Runs state functionality every cycle.
  */
 void ResearchInfoState::think() // private.
 {
@@ -306,7 +306,7 @@ void ResearchInfoState::think() // private.
 }
 
 /**
- * Adds one scientist to the project if possible.
+ * Adds scientists to the project if possible.
  */
 void ResearchInfoState::onMore() // private.
 {

@@ -188,7 +188,7 @@ BasescapeState::BasescapeState(
 	_btnCrafts->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnCraftsClick));
 
 	_btnAliens->setText(tr("STR_ALIENS"));
-	_btnAliens->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnAliens));
+	_btnAliens->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnAliensClick));
 
 	_btnResearch->setText(tr("STR_RESEARCH"));
 	_btnResearch->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnResearchClick));
@@ -468,7 +468,7 @@ void BasescapeState::btnCraftsClick(Action*)
  * Goes to the Manage Alien Containment screen.
  * @param action - pointer to an Action
  */
-void BasescapeState::btnAliens(Action*)
+void BasescapeState::btnAliensClick(Action*)
 {
 	if (_edtBase->isFocused() == false)
 		_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE, this));

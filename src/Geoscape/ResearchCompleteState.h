@@ -26,11 +26,12 @@
 namespace OpenXcom
 {
 
-class Window;
-class TextButton;
-class Text;
 class Base;
 class RuleResearch;
+
+class TextButton;
+class Text;
+class Window;
 
 
 /**

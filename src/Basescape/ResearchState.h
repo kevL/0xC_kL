@@ -78,15 +78,15 @@ private:
 		/// Cleans up the Research state.
 		~ResearchState();
 
-		/// Updates the research list.
+		/// Updates the research-list.
 		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the New Research button.
-		void btnNewClick(Action* action);
+		void btnResearchClick(Action* action);
 		/// Handler for clicking the Alien Containment button.
-		void btnAliens(Action* action);
+		void btnAliensClick(Action* action);
 		/// Handler for clicking the ResearchProject list.
 		void onSelectProject(Action* action);
 

@@ -87,7 +87,7 @@ void ResearchGeneral::setStatus(ResearchStatus status)
 }
 
 /**
- * Sets the Ufopaedia entry as seen.
+ * Sets the associated Ufopaedia entry as seen.
  * @param seen - true if seen (default false)
  */
 void ResearchGeneral::setBeenSeen(const bool seen)
@@ -96,10 +96,10 @@ void ResearchGeneral::setBeenSeen(const bool seen)
 }
 
 /**
- * Gets whether the Ufopaedia entry has been accessed.
+ * Checks if the associated Ufopaedia entry has been seen.
  * @return, true if seen
  */
-bool ResearchGeneral::getBeenSeen() const
+bool ResearchGeneral::hasBeenSeen() const
 {
 	return _beenSeen;
 }

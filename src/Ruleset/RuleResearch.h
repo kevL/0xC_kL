@@ -30,18 +30,47 @@ namespace OpenXcom
 {
 
 /**
- * Represents one research project.
- * @note Dependency is the list of RuleResearch's which must be discovered before
- * a RuleResearch becomes available.
- * @note Unlocks are used to immediately unlock a RuleResearch even if not all
- * its prerequisites have been researched.
+ * Represents a research-rule / research-project.
+ *
+ * @note '_prerequisite' is the list of RuleResearch's that unlock the rule once
+ * all are discovered.
+ *
+ * @note '_forced' is the list of RuleResearch's that are immediately unlocked
+ * even if not all subsequent prerequisites of the latter have been discovered.
+ *
+ * @note kL: Therefore a rule that forces a RuleResearch does not have to be
+ * listed as a prerequisite of the latter rule. Because the latter will be
+ * immediately forced to unlock. Actually, yes it is needed or else a rule would
+ * be unlocked by its prerequisites *without the rule that supposedly forced it*
+ * open. So the point is that if all prerequisites of a rule also force that
+ * rule unlocked then they are not needed as prerequisites also; alternately,
+ * any prerequisites that are not also a forcer could safely be specified as
+ * required-research instead.
+ *
+ * @note Ergo, '_prerequisite' is utterly redundant and ought be removed. Except
+ * it can't be removed at present since the basic check to see if a rule has
+ * been unlocked is a search through its prerequisites -- that should be changed
+ * to search through its required-research instead, both at the start of play
+ * and when a discovered research forces it.
+ *
+ * @note '_reqResearch' is the list of RuleResearch's that *absolutely must
+ * already be discovered* (prior to prerequiste or forcing) for its rule to ever
+ * be unlocked.
+ *
+ * @note So care must be taken so that a rule that forces another rule, or that
+ * is a prerequisite of another rule, remains available for research if/when
+ * the latter rule does not get unlocked due to its required research.
+ *
  * @note Fake ResearchProjects: A RuleResearch is fake one if its cost is 0.
  * They are used to to create check points in the dependency tree. For example
- * if there is a Research E which needs either A & B or C & D two fake research
- * projects can be created:
+ * if there is a Research E which needs either A & B or C & D two fake research-
+ * rules can be created:
  *		- F which needs A & B
  *		- G which needs C & D
- *		- both F and G can unlock E.
+ *		- then either F or G can be used to unlock E.
+ *
+ * @note RuleResearch's that do not have any prerequisites or any required-
+ * research are flagged unlocked at the start of play.
  */
 class RuleResearch
 {
@@ -72,44 +101,44 @@ private:
 		/// dTor.
 		~RuleResearch();
 
-		/// Loads the research from YAML.
+		/// Loads the RuleResearch from YAML.
 		void load(
 				const YAML::Node& node,
 				int listOrder);
 
-		/// Gets the research type.
+		/// Gets the RuleResearch type.
 		const std::string& getType() const;
 
-		/// Gets time needed to discover this RuleResearch.
+		/// Gets time needed to discover the RuleResearch.
 		int getCost() const;
 
-		/// Gets the points earned for discovering this RuleResearch.
+		/// Gets the points earned for discovering the RuleResearch.
 		int getPoints() const;
 
-		/// Gets the prerequisites for this RuleResearch.
+		/// Gets the prerequisites for the RuleResearch.
 		const std::vector<std::string>& getPrerequisites() const;
 
-		/// Gets the absolute requirements for this RuleResearch.
+		/// Gets the absolute requirements for the RuleResearch.
 		const std::vector<std::string>& getRequiredResearch() const;
 
-		/// Gets a list of research-types unlocked by this RuleResearch.
+		/// Gets a list of research-types unlocked by the RuleResearch.
 		const std::vector<std::string>& getForcedResearch() const;
 
-		/// Gets a list of research-types granted randomly for free by this RuleResearch.
+		/// Gets a list of research-types granted randomly for free by the RuleResearch.
 		const std::vector<std::string>& getGetOneFree() const;
 
 		/// Gets an alternate look-up string for the Ufopaedia.
 		const std::string& getUfopaediaEntry() const;
 
-		/// Checks if this RuleResearch needs a corresponding item for research.
+		/// Checks if the RuleResearch needs a corresponding item for research.
 		bool needsItem() const;
-		/// Checks if this RuleResearch consumes its corresponding item when research completes.
+		/// Checks if the RuleResearch consumes a corresponding item when research completes.
 		bool destroyItem() const;
 
-		/// Gets if this RuleResearch should be flagged as seen by default.
+		/// Gets if the RuleResearch should be flagged as seen by default.
 		bool getMarkSeen() const;
 
-		/// Gets the list-priority for this RuleResearch.
+		/// Gets the list-priority for the RuleResearch.
 		int getListOrder() const;
 };
 

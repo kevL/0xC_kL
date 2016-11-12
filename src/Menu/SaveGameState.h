@@ -54,6 +54,9 @@ private:
 
 	Text* _txtStatus;
 
+	/// Creates the interface.
+	void build(SDL_Color* const palette);
+
 
 	public:
 		/// Creates a SaveGame state.
@@ -68,9 +71,6 @@ private:
 				SDL_Color* const palette);
 		/// Cleans up the SaveGame state.
 		~SaveGameState();
-
-		/// Creates the interface.
-		void buildUi(SDL_Color* const palette);
 
 		/// Saves the game.
 		void think() override;

@@ -213,7 +213,7 @@ extraStrings:
       STR_PRODUCTION_COSTS: "aspect"
       STR_SPACE_LC: ""
       STR_HOURS_PER: "hrs"
-      STR_REQUIRED_LC: "Items required"
+      STR_REQUIRED_LC: "Parts required"
       STR_EQUIP_LAYOUT_SAVED: "Layout Saved"
       STR_EQUIP_LAYOUTS_SAVED: "All Layouts Saved"
       STR_PAUSE: "pause"

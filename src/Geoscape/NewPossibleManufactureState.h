@@ -28,6 +28,7 @@ namespace OpenXcom
 
 class Base;
 class RuleManufacture;
+
 class Text;
 class TextButton;
 class TextList;

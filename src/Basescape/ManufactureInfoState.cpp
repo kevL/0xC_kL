@@ -70,7 +70,7 @@ ManufactureInfoState::ManufactureInfoState(
 	_project = new Manufacture(_mfRule);
 	_base->addManufactureProject(_project);
 
-	buildUi();
+	build();
 }
 
 /**
@@ -90,7 +90,7 @@ ManufactureInfoState::ManufactureInfoState(
 {
 	_mfRule = _project->getRules();
 
-	buildUi();
+	build();
 }
 
 /**
@@ -107,7 +107,7 @@ ManufactureInfoState::~ManufactureInfoState()
 /**
  * Builds screen User Interface.
  */
-void ManufactureInfoState::buildUi() // private.
+void ManufactureInfoState::build() // private.
 {
 	_fullScreen = false;
 

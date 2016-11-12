@@ -40,6 +40,9 @@ class RuleResearch;
 
 /**
  * A ResearchGeneral co-ordinates data of a research-type.
+ * @note This class is designed to hold information about Research independently
+ * of what separate Bases are doing with their research-projects. And unlike a
+ * RuleResearch this data is allowed to change.
  */
 class ResearchGeneral
 {
@@ -55,28 +58,28 @@ private:
 
 
 	public:
-		/// Constructor.
+		/// Constructs a ResearchGeneral.
 		ResearchGeneral(
 				const RuleResearch* const resRule,
 				bool isQuickBattle = false);
 		/// dTor.
 		~ResearchGeneral();
 
-		/// Gets the ResearchGeneral type.
+		/// Gets the research-type.
 		const std::string& getType() const;
 
-		/// Gets the ResearchGeneral research rule.
+		/// Gets the research-rule.
 		const RuleResearch* getRules() const;
 
-		/// Gets the status.
+		/// Gets the current status.
 		ResearchStatus getStatus() const;
-		/// Sets the status.
+		/// Sets the current status.
 		void setStatus(ResearchStatus status);
 
-		/// Sets the Ufopaedia entry as seen.
+		/// Sets the associated Ufopaedia entry as seen.
 		void setBeenSeen(const bool seen = false);
-		/// Gets whether the Ufopaedia entry has been accessed.
-		bool getBeenSeen() const;
+		/// Checks if the associated Ufopaedia entry has been seen.
+		bool hasBeenSeen() const;
 
 		/// Loads the ResearchGeneral from a YAML file.
 		void load(const YAML::Node& node);

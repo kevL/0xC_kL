@@ -137,7 +137,7 @@ ManufactureState::ManufactureState(
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
 	_btnNew->setText(tr("STR_NEW_PRODUCTION"));
-	_btnNew->onMouseClick(static_cast<ActionHandler>(&ManufactureState::btnNewProductionClick));
+	_btnNew->onMouseClick(static_cast<ActionHandler>(&ManufactureState::btnManufactureClick));
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ManufactureState::btnOkClick));
@@ -316,24 +316,23 @@ void ManufactureState::btnOkClick(Action*)
 }
 
 /**
- * Opens the screen with a list of available Productions.
+ * Opens a list of unlocked Manufacture.
  * @param action - pointer to an Action
  */
-void ManufactureState::btnNewProductionClick(Action*)
+void ManufactureState::btnManufactureClick(Action*)
 {
 	_game->pushState(new ManufactureListState(_base));
 }
 
 /**
- * Opens the screen displaying production settings.
+ * Opens the Manufacture settings for a project.
  * @param action - pointer to an Action
  */
 void ManufactureState::lstManufactureClick(Action*)
 {
-	const std::vector<Manufacture*> baseProds(_base->getManufacture());
 	_game->pushState(new ManufactureInfoState(
-											_base,
-											baseProds[_lstManufacture->getSelectedRow()]));
+										_base,
+										_base->getManufacture().at(_lstManufacture->getSelectedRow())));
 }
 
 /**

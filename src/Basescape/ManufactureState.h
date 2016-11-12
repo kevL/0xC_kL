@@ -89,7 +89,7 @@ private:
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 		/// Handler for the New Manufacture button.
-		void btnNewProductionClick(Action* action);
+		void btnManufactureClick(Action* action);
 
 		/// Handler for clicking the MiniBase view.
 		void miniClick(Action* action);

@@ -151,10 +151,9 @@ void ResearchListState::fillProjectList() // private.
 
 	size_t r (0u);
 
-	const std::vector<ResearchProject*>& currentProjects (_base->getResearch());
 	for (std::vector<ResearchProject*>::const_iterator
-			i = currentProjects.begin();
-			i != currentProjects.end();
+			i = _base->getResearch().begin();
+			i != _base->getResearch().end();
 			++i)
 	{
 		// If cancelled projects are not marked 'offline' they'd lose spent

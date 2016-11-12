@@ -56,6 +56,9 @@ private:
 
 	OptionsOrigin _origin;
 
+	/// Creates the interface.
+	void build(SDL_Color* const palette);
+
 
 	public:
 		/// Creates a LoadGameState.
@@ -70,9 +73,6 @@ private:
 				SDL_Color* const palette);
 		/// Cleans up the LoadGameState.
 		~LoadGameState();
-
-		/// Creates the interface.
-		void buildUi(SDL_Color* const palette);
 
 		/// Validates the save.
 		void init() override;

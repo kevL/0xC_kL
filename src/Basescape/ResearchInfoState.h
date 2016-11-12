@@ -65,7 +65,7 @@ private:
 	Window* _window;
 
 	/// Builds the UI.
-	void buildUi();
+	void build();
 	/// Updates counts of assigned/free scientists and available lab-space.
 	void updateInfo();
 
@@ -88,20 +88,20 @@ private:
 
 	/// Function called every time the _timerMore timer is triggered.
 	void onMore();
-	/// Adds a given number of scientists to the project if possible
+	/// Adds a given number of scientists to the project if possible.
 	void moreByValue(int delta);
 	/// Function called every time the _timerLess timer is triggered.
 	void onLess();
-	/// Removes a the given number of scientists from the project if possible
+	/// Removes the given number of scientists from the project if possible.
 	void lessByValue(int delta);
 
 
 	public:
-		/// Creates a ResearchInfo state.
+		/// Creates a ResearchInfo state (start project).
 		ResearchInfoState(
 				Base* const base,
 				const RuleResearch* const resRule);
-		/// Creates a ResearchInfo state.
+		/// Creates a ResearchInfo state (adjust project).
 		ResearchInfoState(
 				Base* const base,
 				ResearchProject* const project);
