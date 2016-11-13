@@ -44,18 +44,18 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the PlaceLift screen.
- * @param base		- pointer to the Base to get info from
- * @param globe		- pointer to the geoscape Globe
- * @param firstBase	- true if this is a custom start base
+ * @param base			- pointer to the Base to get info from
+ * @param globe			- pointer to the geoscape Globe
+ * @param isFirstBase	- true if this is the player's first base
  */
 PlaceLiftState::PlaceLiftState(
 		Base* const base,
 		Globe* const globe,
-		bool firstBase)
+		bool isFirstBase)
 	:
 		_base(base),
 		_globe(globe),
-		_firstBase(firstBase)
+		_isFirstBase(isFirstBase)
 {
 	_baseLayout	= new BaseView(192, 192, 0, 8);
 	_txtTitle	= new Text(320, 9);
@@ -72,10 +72,9 @@ PlaceLiftState::PlaceLiftState(
 	_baseLayout->setBase(_base);
 
 	const RuleBaseFacility* facRule;
-	const std::vector<std::string> allFacs (_game->getRuleset()->getBaseFacilitiesList());
 	for (std::vector<std::string>::const_iterator
-			i = allFacs.begin();
-			i != allFacs.end();
+			i = _game->getRuleset()->getBaseFacilitiesList().begin();
+			i != _game->getRuleset()->getBaseFacilitiesList().end();
 			++i)
 	{
 		facRule = _game->getRuleset()->getBaseFacility(*i);
@@ -116,7 +115,7 @@ void PlaceLiftState::baseLayoutClick(Action*)
 
 	_game->pushState(baseState);
 
-	if (_firstBase == true)
+	if (_isFirstBase == true)
 		_game->pushState(new SelectStartFacilityState(_base, baseState, _globe));
 }
 

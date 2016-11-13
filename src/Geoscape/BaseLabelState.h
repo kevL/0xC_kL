@@ -45,7 +45,7 @@ class BaseLabelState
 {
 
 private:
-	bool _firstBase;
+	bool _isFirstBase;
 
 	Base* _base;
 	Globe* _globe;
@@ -60,7 +60,7 @@ private:
 		BaseLabelState(
 				Base* const base,
 				Globe* const globe,
-				bool firstBase = false);
+				bool isFirstBase = false);
 		/// Cleans up the BaseName state.
 		~BaseLabelState();
 

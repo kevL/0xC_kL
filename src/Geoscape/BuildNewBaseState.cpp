@@ -53,18 +53,18 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the BuildNewBase window.
- * @param base		- pointer to the Base to place
- * @param globe		- pointer to the geoscape Globe
- * @param firstBase	- true if this the first base in the game (default false)
+ * @param base			- pointer to the Base to place
+ * @param globe			- pointer to the geoscape Globe
+ * @param isFirstBase	- true if this the player's first base (default false)
  */
 BuildNewBaseState::BuildNewBaseState(
 		Base* const base,
 		Globe* const globe,
-		bool firstBase)
+		bool isFirstBase)
 	:
 		_base(base),
 		_globe(globe),
-		_firstBase(firstBase),
+		_isFirstBase(isFirstBase),
 		_latPre(0.),
 		_lonPre(0.),
 		_mX(0),
@@ -147,7 +147,7 @@ BuildNewBaseState::BuildNewBaseState(
 	_txtTitle->setText(tr("STR_SELECT_SITE_FOR_NEW_BASE"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	if (_firstBase == true)
+	if (_isFirstBase == true)
 		_btnCancel->setVisible(false);
 	else
 	{
@@ -234,7 +234,7 @@ void BuildNewBaseState::hoverRedraw()
 	}
 
 	if (Options::globeRadarLines == true
-		&& !(AreSame(_latPre, lat) && AreSame(_lonPre, lon)))
+		&& (AreSame(_latPre, lat) == false || AreSame(_lonPre, lon) == false))
 	{
 		_latPre = lat;
 		_lonPre = lon;
@@ -273,7 +273,7 @@ void BuildNewBaseState::globeClick(Action* action)
 				(*i)->setLatitude(lat);
 			}
 
-			if (_firstBase == true)
+			if (_isFirstBase == true)
 				_game->pushState(new BaseLabelState(_base, _globe, true));
 			else
 				_game->pushState(new ConfirmNewBaseState(_base, _globe));

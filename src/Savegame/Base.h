@@ -128,7 +128,7 @@ private:
 			MAX_BASES = 8u,
 			BASE_SIZE = 6u;
 
-		/// Creates a Base.
+		/// Instantiates a Base.
 		Base(
 				const Ruleset* const rules,
 				SavedGame* const gameSave);
@@ -138,8 +138,7 @@ private:
 		/// Loads the Base from YAML.
 		void loadBase(
 				const YAML::Node& node,
-				bool isFirstBase = false,
-				bool isQuickBattle = false);
+				bool isFirstBase = false);
 		/// Saves the Base to YAML.
 		YAML::Node save() const override;
 		/// Saves the Base's unique-ID to YAML.

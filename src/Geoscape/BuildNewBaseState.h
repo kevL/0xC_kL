@@ -45,7 +45,7 @@ class BuildNewBaseState
 
 private:
 	bool
-		_firstBase,
+		_isFirstBase,
 		_showRadar;
 	int
 		_mX,
@@ -68,7 +68,7 @@ private:
 		BuildNewBaseState(
 				Base* const base,
 				Globe* const globe,
-				bool firstBase = false);
+				bool isFirstBase = false);
 		/// Cleans up the BuildNewBase state.
 		~BuildNewBaseState();
 

@@ -333,7 +333,7 @@ private:
 		const std::vector<std::string>& getManufactureList() const;
 
 		/// Gets Facilities for custom-bases.
-		std::vector<RuleBaseFacility*> getStartBaseFacilities() const;
+		std::vector<RuleBaseFacility*> getStartFacilities() const;
 
 		/// Gets a specific UfoTrajectory.
 		const UfoTrajectory* getUfoTrajectory(const std::string& type) const;
@@ -350,10 +350,10 @@ private:
 		/// Gets the AlienItemLevel table.
 		const std::vector<std::vector<int>>& getAlienItemLevels() const;
 
-		/// Gets the default start-base.
-		const YAML::Node& getStartingBase() const;
+		/// Gets the default start-base for quick-battles.
+		const YAML::Node& getStartBase() const;
 		/// Gets the default start-time.
-		const GameTime& getStartingTime() const;
+//		const GameTime& getStartTime() const;
 
 		/// Gets an MCDPatch.
 		MCDPatch* getMCDPatch(const std::string& type) const;

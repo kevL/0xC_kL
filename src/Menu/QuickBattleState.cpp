@@ -281,7 +281,7 @@ void QuickBattleState::configLoad(const std::string& file)
 				_game->setSavedGame(_gameSave);
 
 				_base = new Base(_rules, _gameSave);
-				_base->loadBase(doc["base"]); // NOTE: considered as neither a 'firstBase' nor a 'quickBattle' ...
+				_base->loadBase(doc["base"]);
 				_gameSave->getBases()->push_back(_base);
 
 				if (_base->getCrafts()->empty() == true)
@@ -384,8 +384,7 @@ void QuickBattleState::configCreate()
 
 	_base = new Base(_rules, _gameSave);
 
-	const YAML::Node& node (_rules->getStartingBase());
-	_base->loadBase(node, true, true);
+	_base->loadBase(_rules->getStartBase());
 	_gameSave->getBases()->push_back(_base);
 	_base->setLabel(L"tactical");
 

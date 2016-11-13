@@ -43,18 +43,18 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the BaseLabel window.
- * @param base		- pointer to the Base to label
- * @param globe		- pointer to the Geoscape globe
- * @param firstBase	- true if this is the first base in the game (default false)
+ * @param base			- pointer to the Base to label
+ * @param globe			- pointer to the Geoscape globe
+ * @param isFirstBase	- true if this is the player's first base (default false)
  */
 BaseLabelState::BaseLabelState(
 		Base* const base,
 		Globe* const globe,
-		bool firstBase)
+		bool isFirstBase)
 	:
 		_base(base),
 		_globe(globe),
-		_firstBase(firstBase)
+		_isFirstBase(isFirstBase)
 {
 	_globe->onMouseOver(nullptr);
 
@@ -125,17 +125,16 @@ void BaseLabelState::edtLabelChange(Action* action)
  */
 void BaseLabelState::btnOkClick(Action*)
 {
-	_game->popState();
-	_game->popState();
+	_game->popState(); // <- this
+	_game->popState(); // <- BuildNewBaseState
 
-	if (_firstBase == false)
-	{
-		_game->popState();
-		_game->pushState(new PlaceLiftState(
-										_base,
-										_globe,
-										_firstBase));
-	}
+	if (_isFirstBase == false)
+		_game->popState(); // <- ConfirmNewBaseState
+
+	_game->pushState(new PlaceLiftState(
+									_base,
+									_globe,
+									_isFirstBase));
 }
 
 }

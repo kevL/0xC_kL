@@ -63,7 +63,7 @@ namespace OpenXcom
 
 
 /**
- * Initializes a Base.
+ * Instantiates a Base.
  * @param rule - pointer to Ruleset
  */
 Base::Base(
@@ -138,12 +138,10 @@ Base::~Base()
  * Loads this Base from a YAML file.
  * @param node			- reference a YAML node
  * @param isFirstBase	- true if this is the first Base of a new game (default false)
- * @param isQuickBattle	- true if this is the Base of a quick-battle (default false)
  */
 void Base::loadBase(
 		const YAML::Node& node,
-		bool isFirstBase,
-		bool isQuickBattle)
+		bool isFirstBase)
 {
 	//Log(LOG_INFO) << "Base load()";
 	Target::load(node);
@@ -155,7 +153,7 @@ void Base::loadBase(
 	std::string type;
 
 	//Log(LOG_INFO) << ". load facilities";
-	if (isFirstBase == false || isQuickBattle == true)
+	if (isFirstBase == false)
 	{
 		_placed = true;
 		for (YAML::const_iterator

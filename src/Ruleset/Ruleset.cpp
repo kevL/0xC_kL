@@ -1811,7 +1811,7 @@ const std::vector<std::string>& Ruleset::getManufactureList() const
  * 'startBase' part of the ruleset.
  * @return, vector of pointers to RuleBaseFacility
  */
-std::vector<RuleBaseFacility*> Ruleset::getStartBaseFacilities() const
+std::vector<RuleBaseFacility*> Ruleset::getStartFacilities() const
 {
 	std::vector<RuleBaseFacility*> placeList;
 	std::string type;
@@ -1917,10 +1917,10 @@ const std::vector<std::vector<int>>& Ruleset::getAlienItemLevels() const
 }
 
 /**
- * Gets the pre-defined starting base.
+ * Gets the pre-defined starting Base for quick-battles.
  * @return, reference to a default base
  */
-const YAML::Node& Ruleset::getStartingBase() const
+const YAML::Node& Ruleset::getStartBase() const
 {
 	return _startBase;
 }
@@ -1928,15 +1928,15 @@ const YAML::Node& Ruleset::getStartingBase() const
 /**
  * Gets the pre-defined start time of a game.
  * @return, address of the time a game starts
- */
-const GameTime& Ruleset::getStartingTime() const
+ *
+const GameTime& Ruleset::getStartTime() const
 {
 	return _startTime;
-}
+} */
 
 /**
  * Gets an MCDPatch.
- * @param type - the type of the MCDPatch
+ * @param type - reference to the patch-type
  * @return, pointer to the MCDPatch or nullptr if none
  */
 MCDPatch* Ruleset::getMCDPatch(const std::string& type) const

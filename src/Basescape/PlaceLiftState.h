@@ -42,7 +42,7 @@ class PlaceLiftState
 {
 
 private:
-	bool _firstBase;
+	bool _isFirstBase;
 
 	Base* _base;
 	BaseView* _baseLayout;
@@ -56,7 +56,7 @@ private:
 		PlaceLiftState(
 				Base* const base,
 				Globe* const globe,
-				bool firstBase);
+				bool isFirstBase);
 		/// Cleans up the PlaceLift state.
 		~PlaceLiftState();
 
