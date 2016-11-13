@@ -39,7 +39,10 @@ ResearchGeneral::ResearchGeneral(
 		_beenSeen(resRule->getMarkSeen())
 {
 	if (isQuickBattle == true)
+//		|| _resRule->getRequiredResearch().empty() == true)
+	{
 		_status = RG_DISCOVERED;
+	}
 	else
 		_status = RG_LOCKED;
 }

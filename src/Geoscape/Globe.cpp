@@ -1904,14 +1904,16 @@ void Globe::drawDetail()
 
 	if (_zoom > 1u) // draw the City markers
 	{
+		RuleRegion* regionRule;
 		for (std::vector<Region*>::const_iterator
 				i = _game->getSavedGame()->getRegions()->begin();
 				i != _game->getSavedGame()->getRegions()->end();
 				++i)
 		{
+			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
 			for (std::vector<RuleCity*>::const_iterator
-					j = (*i)->getRules()->getCities()->begin();
-					j != (*i)->getRules()->getCities()->end();
+					j = regionRule->getCities().begin();
+					j != regionRule->getCities().end();
 					++j)
 			{
 				drawTarget(*j, _countries);
@@ -1960,14 +1962,16 @@ void Globe::drawDetail()
 		label->setColor(C_LBLCITY); // draw the City labels
 		int offset_y;
 
+		RuleRegion* regionRule;
 		for (std::vector<Region*>::const_iterator
 				i = _game->getSavedGame()->getRegions()->begin();
 				i != _game->getSavedGame()->getRegions()->end();
 				++i)
 		{
+			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
 			for (std::vector<RuleCity*>::const_iterator
-					j = (*i)->getRules()->getCities()->begin();
-					j != (*i)->getRules()->getCities()->end();
+					j = regionRule->getCities().begin();
+					j != regionRule->getCities().end();
 					++j)
 			{
 				lon = (*j)->getLongitude(),

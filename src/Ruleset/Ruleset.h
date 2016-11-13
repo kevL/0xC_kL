@@ -322,14 +322,14 @@ private:
 		/// Determines the highest TU-value used in Inventory rules.
 		int getHighestDropCost() const;
 
-		/// Gets the rules for a specific research-project.
+		/// Gets the rules for a specific research-type.
 		const RuleResearch* getResearch(const std::string& type) const;
-		/// Gets the list of all research-projects.
+		/// Gets the list of all research-types.
 		const std::vector<std::string>& getResearchList() const;
 
-		/// Gets the rules for a specific manufacture-project.
+		/// Gets the rules for a specific manufacture-type.
 		RuleManufacture* getManufacture(const std::string& type) const;
-		/// Gets the list of all manufacture-projects.
+		/// Gets the list of all manufacture-types.
 		const std::vector<std::string>& getManufactureList() const;
 
 		/// Gets Facilities for custom-bases.

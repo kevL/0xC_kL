@@ -101,12 +101,13 @@ void RuleRegion::load(const YAML::Node& node)
 
 	if (const YAML::Node& cities = node["cities"])
 	{
+		RuleCity* city;
 		for (YAML::const_iterator // load all Cities that are in YAML-ruleset
 				i = cities.begin();
 				i != cities.end();
 				++i)
 		{
-			RuleCity* const city (new RuleCity());
+			city = new RuleCity();
 			city->load(*i);
 			_cities.push_back(city);
 
@@ -186,9 +187,9 @@ bool RuleRegion::insideRegion(
 /**
  * Gets the list of cities contained in this RuleRegion.
  * @note Build & cache a vector of all MissionAreas that are Cities.
- * @return, pointer to a vector of pointers to Cities
+ * @return, reference to a vector of pointers to Cities
  */
-std::vector<RuleCity*>* RuleRegion::getCities()
+const std::vector<RuleCity*>& RuleRegion::getCities()
 {
 //	if (_cities.empty() == true) // kL_note: unused for now. Just return the cities, thanks anyway.
 //		for (std::vector<MissionZone>::const_iterator
@@ -204,7 +205,7 @@ std::vector<RuleCity*>* RuleRegion::getCities()
 //												j->site,
 //												j->lonMin,
 //												j->latMin));
-	return &_cities;
+	return _cities;
 }
 
 /**
@@ -302,13 +303,14 @@ MissionArea RuleRegion::getTerrorArea(
 
 /**
  * Gets the area-data for the random mission-point in this RuleRegion.
+ * @param zoneId - the zone-ID
  * @return, a MissionArea from which to extract coordinates, textures, or any other pertinent information
  *
-MissionArea RuleRegion::getRandomMissionPoint(size_t zone) const
+MissionArea RuleRegion::getRandomMissionPoint(size_t zoneId) const
 {
-	if (zone < _zones.size())
+	if (zoneId < _zones.size())
 	{
-		std::vector<MissionArea> randArea = _zones[zone].areas;
+		std::vector<MissionArea> randArea = _zones[zoneId].areas;
 		for (std::vector<MissionArea>::const_iterator
 				i = randArea.begin();
 				i != randArea.end();
@@ -326,6 +328,6 @@ MissionArea RuleRegion::getRandomMissionPoint(size_t zone) const
 
 	}
 
-//	assert(0 && "Invalid zone number");
+//	assert(0 && "Invalid zoneId");
 	return MissionArea();
 } */

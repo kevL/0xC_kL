@@ -572,7 +572,10 @@ void QuickBattleState::resetResearchGenerals() const // private.
 			i = _gameSave->getResearchGenerals().begin();
 			i != _gameSave->getResearchGenerals().end();
 			++i)
+	{
 		delete *i;
+	}
+	_gameSave->getResearchGenerals().clear();
 
 	for (std::vector<std::string>::const_iterator
 			i = _rules->getResearchList().begin();

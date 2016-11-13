@@ -42,7 +42,7 @@ private:
 		_recentActA,
 		_recentActX;
 
-	RuleRegion* _regionRule;
+	const RuleRegion* _regionRule;
 
 	std::vector<int>
 		_actA,
@@ -51,7 +51,7 @@ private:
 
 	public:
 		/// Creates a Region with the specified rule.
-		explicit Region(RuleRegion* const regionRule);
+		explicit Region(const RuleRegion* const regionRule);
 		/// Cleans up the Region.
 		~Region();
 
@@ -61,7 +61,7 @@ private:
 		YAML::Node save() const;
 
 		/// Gets the Region's rules.
-		RuleRegion* getRules() const;
+		const RuleRegion* getRules() const;
 		/// Get the Region's type.
 		std::string getType() const;
 

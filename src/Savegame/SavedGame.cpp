@@ -464,15 +464,17 @@ void SavedGame::load(
 
 
 	Log(LOG_INFO) << ". load countries";
+	const RuleCountry* countryRule;
+	Country* country;
 	for (YAML::const_iterator
 			i = doc["countries"].begin();
 			i != doc["countries"].end();
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		if (_rules->getCountry(type) != nullptr)
+		if ((countryRule = _rules->getCountry(type)) != nullptr)
 		{
-			Country* const country (new Country(_rules->getCountry(type)));
+			country = new Country(countryRule);
 			country->load(*i);
 			_countries.push_back(country);
 		}
@@ -480,15 +482,17 @@ void SavedGame::load(
 	}
 
 	Log(LOG_INFO) << ". load regions";
+	const RuleRegion* regionRule;
+	Region* region;
 	for (YAML::const_iterator
 			i = doc["regions"].begin();
 			i != doc["regions"].end();
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		if (_rules->getRegion(type) != nullptr)
+		if ((regionRule = _rules->getRegion(type)) != nullptr)
 		{
-			Region* const region (new Region(_rules->getRegion(type)));
+			region = new Region(regionRule);
 			region->load(*i);
 			_regions.push_back(region);
 		}
@@ -496,15 +500,17 @@ void SavedGame::load(
 	}
 
 	Log(LOG_INFO) << ". load alien bases"; // AlienBases must be loaded before AlienMissions.
+	const RuleAlienDeployment* ruleDeploy;
+	AlienBase* aBase;
 	for (YAML::const_iterator
 			i = doc["alienBases"].begin();
 			i != doc["alienBases"].end();
 			++i)
 	{
 		type = (*i)["deployment"].as<std::string>("STR_ALIEN_BASE_ASSAULT"); // default.
-		if (_rules->getDeployment(type) != nullptr)
+		if ((ruleDeploy = _rules->getDeployment(type)) != nullptr)
 		{
-			AlienBase* const aBase (new AlienBase(_rules->getDeployment(type)));
+			aBase = new AlienBase(ruleDeploy);
 			aBase->load(*i);
 			_alienBases.push_back(aBase);
 		}
@@ -512,17 +518,18 @@ void SavedGame::load(
 	}
 
 	Log(LOG_INFO) << ". load missions"; // AlienMissions must be loaded before Ufos.
+	const RuleAlienMission* ruleMission;
 	const YAML::Node& missions (doc["alienMissions"]);
+	AlienMission* mission;
 	for (YAML::const_iterator
 			i = missions.begin();
 			i != missions.end();
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		if (_rules->getAlienMission(type) != nullptr)
+		if ((ruleMission = _rules->getAlienMission(type)) != nullptr)
 		{
-			const RuleAlienMission& missionRule (*_rules->getAlienMission(type));
-			AlienMission* mission (new AlienMission(missionRule, *this));
+			mission = new AlienMission(*ruleMission, *this);
 			mission->load(*i);
 			_activeMissions.push_back(mission);
 		}
@@ -530,6 +537,7 @@ void SavedGame::load(
 	}
 
 	Log(LOG_INFO) << ". load ufos"; // Ufos must be loaded after AlienMissions.
+	Ufo* ufo;
 	for (YAML::const_iterator
 			i = doc["ufos"].begin();
 			i != doc["ufos"].end();
@@ -538,9 +546,7 @@ void SavedGame::load(
 		type = (*i)["type"].as<std::string>();
 		if (_rules->getUfo(type) != nullptr)
 		{
-			Ufo* const ufo (new Ufo(
-								_rules->getUfo(type),
-								this));
+			ufo = new Ufo(_rules->getUfo(type), this);
 			ufo->loadUfo(*i, *_rules);
 			_ufos.push_back(ufo);
 		}
@@ -548,47 +554,50 @@ void SavedGame::load(
 	}
 
 	Log(LOG_INFO) << ". load waypoints";
+	Waypoint* wp;
 	for (YAML::const_iterator
 			i = doc["waypoints"].begin();
 			i != doc["waypoints"].end();
 			++i)
 	{
-		Waypoint* const wp (new Waypoint());
+		wp = new Waypoint();
 		wp->load(*i);
 		_waypoints.push_back(wp);
 	}
 
 	Log(LOG_INFO) << ". load terror sites";
+	TerrorSite* site;
+	std::string deploy;
 	for (YAML::const_iterator
 			i = doc["terrorSites"].begin();
 			i != doc["terrorSites"].end();
 			++i)
 	{
-		type = (*i)["type"].as<std::string>();
-		const std::string deployment ((*i)["deployment"].as<std::string>("STR_TERROR_MISSION"));
-		if (_rules->getAlienMission(type) && _rules->getDeployment(deployment))
+		type   = (*i)["type"]      .as<std::string>();
+		deploy = (*i)["deployment"].as<std::string>("STR_TERROR_MISSION");
+		if (  (ruleMission = _rules->getAlienMission(type)) != nullptr
+			&& (ruleDeploy = _rules->getDeployment(deploy)) != nullptr)
 		{
-			TerrorSite* const site (new TerrorSite(
-											_rules->getAlienMission(type),
-											_rules->getDeployment(deployment)));
+			site = new TerrorSite(ruleMission, ruleDeploy);
 			site->load(*i);
 			_terrorSites.push_back(site);
 		}
-		else Log(LOG_ERROR) << "Failed to load terror-site: Type [" << type << "] Deployment [" << deployment << "]";
+		else Log(LOG_ERROR) << "Failed to load terror-site: Type [" << type << "] Deployment [" << deploy << "]";
 	}
 
 	Log(LOG_INFO) << ". load research generals";
-	// note: Discovered Techs should be loaded before Bases (e.g. for PSI evaluation) <-
+	// NOTE: Discovered Techs should be loaded before Bases (e.g. for PSI evaluation) <-
 	// I don't use psi-evaluation.
+	const RuleResearch* resRule;
 	for (YAML::const_iterator
 			i = doc["research"].begin();
 			i != doc["research"].end();
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		if (_rules->getResearch(type) != nullptr)
+		if ((resRule = _rules->getResearch(type)) != nullptr)
 		{
-			ResearchGeneral* const resGen (new ResearchGeneral(_rules->getResearch(type)));
+			ResearchGeneral* const resGen (new ResearchGeneral(resRule));
 			resGen->load(*i);
 			_research.push_back(resGen);
 		}
@@ -621,12 +630,13 @@ void SavedGame::load(
 	}
 
 	Log(LOG_INFO) << ". load mission statistics";
+	MissionStatistics* tacticalStats;
 	for (YAML::const_iterator
 			i = doc["missionStatistics"].begin();
 			i != doc["missionStatistics"].end();
 			++i)
 	{
-		MissionStatistics* const tacticalStats (new MissionStatistics());
+		tacticalStats = new MissionStatistics();
 		tacticalStats->load(*i);
 		_missionStatistics.push_back(tacticalStats);
 	}
@@ -635,9 +645,9 @@ void SavedGame::load(
 	{
 		Log(LOG_INFO) << "SavedGame: loading tactical";
 		_battleSave = new SavedBattleGame(
-									this,
-									nullptr,
-									_rules);
+										this,
+										nullptr,
+										_rules);
 //		Ruleset* const rules (const_cast<Ruleset*>(_rules)); // strip const.
 		_battleSave->load(battle, rules);
 		Log(LOG_INFO) << "SavedGame: loading tactical DONE";

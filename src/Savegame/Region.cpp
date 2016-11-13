@@ -31,7 +31,7 @@ namespace OpenXcom
  * Initializes a Region with the specified rule.
  * @param regionRule - pointer to RuleRegion
  */
-Region::Region(RuleRegion* const regionRule)
+Region::Region(const RuleRegion* const regionRule)
 	:
 		_regionRule(regionRule),
 		_recentActA(-1),
@@ -80,7 +80,7 @@ YAML::Node Region::save() const
  * Gets the ruleset for the region's type.
  * @return, pointer to RuleRegion
  */
-RuleRegion* Region::getRules() const
+const RuleRegion* Region::getRules() const
 {
 	return _regionRule;
 }

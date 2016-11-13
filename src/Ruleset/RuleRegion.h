@@ -132,7 +132,7 @@ private:
 				double lat) const;
 
 		/// Gets the Cities in the RuleRegion.
-		std::vector<RuleCity*>* getCities();
+		const std::vector<RuleCity*>& getCities();
 
 		/// Gets the weight of the RuleRegion for alien-mission-selection.
 		size_t getWeight() const;

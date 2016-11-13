@@ -74,7 +74,7 @@ private:
 		/// Cleans up the ConfirmLanding state.
 		~ConfirmLandingState();
 
-		/// Initializes the state and makes a sanity check.
+		/// Initializes the State and makes a sanity check.
 		void init() override;
 
 		/// Handler for clicking the Yes button.

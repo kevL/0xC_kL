@@ -1128,7 +1128,7 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	SavedGame* const gameSave (new SavedGame(this));
 	play->setSavedGame(gameSave);
 
-	for (std::vector<std::string>::const_iterator // setup ResearchGenerals.
+	for (std::vector<std::string>::const_iterator // setup ResearchGenerals ->
 			i = _researchTypes.begin();
 			i != _researchTypes.end();
 			++i)
@@ -1137,7 +1137,7 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	}
 	//Log(LOG_INFO) << ". research generals DONE";
 
-	for (std::vector<std::string>::const_iterator // add Countries.
+	for (std::vector<std::string>::const_iterator // add Countries ->
 			i = _countryTypes.begin();
 			i != _countryTypes.end();
 			++i)
@@ -1163,7 +1163,7 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	gameSave->setFunds(gameSave->getCountryFunding() * 1000);
 	//Log(LOG_INFO) << ". funding DONE";
 
-	for (std::vector<std::string>::const_iterator // add Regions.
+	for (std::vector<std::string>::const_iterator // add Regions ->
 			i = _regionTypes.begin();
 			i != _regionTypes.end();
 			++i)
@@ -1175,15 +1175,12 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	//Log(LOG_INFO) << ". regions DONE";
 
 
-	//Log(LOG_INFO) << ". create Base";
-	Base* const base (new Base(this, gameSave)); // setup start Base.
-	//Log(LOG_INFO) << ". load Base";
+	Base* const base (new Base(this, gameSave)); // setup the start Base ->
 	base->loadBase(_startBase, true);
-	//Log(LOG_INFO) << ". add Base";
 	gameSave->getBases()->push_back(base);
 	//Log(LOG_INFO) << ". base DONE";
 
-	for (std::vector<Craft*>::const_iterator // correct IDs.
+	for (std::vector<Craft*>::const_iterator // correct IDs ->
 			i = base->getCrafts()->begin();
 			i != base->getCrafts()->end();
 			++i)
@@ -1192,21 +1189,8 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	}
 	//Log(LOG_INFO) << ". craft-ids DONE";
 
-//	Craft* transportCraft (nullptr); // determine start transport Craft.
-//	for (std::vector<Craft*>::const_iterator
-//			i = base->getCrafts()->begin();
-//			i != base->getCrafts()->end();
-//			++i)
-//	{
-//		if ((*i)->getRules()->getSoldiers() != 0)
-//		{
-//			transportCraft = *i;
-//			break;
-//		}
-//	}
 
-
-	const YAML::Node& node (_startBase["soldiers"]);
+	const YAML::Node& node (_startBase["soldiers"]); // Generate the start Soldiers ->
 	if (node != nullptr)
 	{
 		std::vector<std::string> startTypes;
@@ -1250,19 +1234,15 @@ SavedGame* Ruleset::createSave(Game* const play) const
 			}
 		}
 
-		for (size_t // Generate the start Soldiers ->
+		for (size_t
 				i = 0u;
 				i != startTypes.size();
 				++i)
 		{
 			Soldier* const sol (genSoldier(gameSave, startTypes[i]));
-
-//			if (transportCraft != 0 && i < transportCraft->getRules()->getSoldiers())
-//				soldier->setCraft(transportCraft);
-
 			base->getSoldiers()->push_back(sol);
 
-			SoldierDiary* const diary (sol->getDiary()); // award each Soldier the special Original Eight award.
+			SoldierDiary* const diary (sol->getDiary()); // grant each Soldier the special Original Eight award.
 			diary->awardOriginalEight();
 		}
 	}
@@ -1271,7 +1251,7 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	gameSave->getAlienStrategy().init(this); // setup ALienStrategy.
 	gameSave->setTime(_startTime);
 
-	////Log(LOG_INFO) << "Ruleset::createSave() EXIT";
+	//Log(LOG_INFO) << "Ruleset::createSave() EXIT";
 	return gameSave;
 }
 
@@ -1780,7 +1760,7 @@ int Ruleset::getHighestDropCost() const
 	} */
 
 /**
- * Gets the rules for a specified research-project.
+ * Gets the rules for a specified research-type.
  * @param type - reference to a research-type
  * @return, pointer to RuleResearch
  */
@@ -1794,7 +1774,7 @@ const RuleResearch* Ruleset::getResearch(const std::string& type) const
 }
 
 /**
- * Gets the list of research-projects.
+ * Gets the list of research-types.
  * @return, reference to a vector of strings as the list of research-projects
  */
 const std::vector<std::string>& Ruleset::getResearchList() const
@@ -1803,7 +1783,7 @@ const std::vector<std::string>& Ruleset::getResearchList() const
 }
 
 /**
- * Gets the rules for the specified manufacture-project.
+ * Gets the rules for the specified manufacture-type.
  * @param type - reference to a manufacture-type
  * @return, pointer to RuleManufacture
  */
@@ -1817,7 +1797,7 @@ RuleManufacture* Ruleset::getManufacture(const std::string& type) const
 }
 
 /**
- * Gets the list of manufacture-projects.
+ * Gets the list of manufacture-types.
  * @return, reference to a vector of strings as the list of manufacture-projects
  */
 const std::vector<std::string>& Ruleset::getManufactureList() const

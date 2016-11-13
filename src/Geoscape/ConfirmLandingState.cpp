@@ -133,25 +133,24 @@ ConfirmLandingState::ConfirmLandingState(
 			lat (_craft->getLatitude());
 		bool city (false);
 
+		RuleRegion* regionRule;
 		for (std::vector<Region*>::const_iterator
 				i = _game->getSavedGame()->getRegions()->begin();
-				i != _game->getSavedGame()->getRegions()->end() && city == false;
-//					&& _city == nullptr;
+				i != _game->getSavedGame()->getRegions()->end() && city == false; //&& _city == nullptr;
 				++i)
 		{
-			if ((*i)->getRules()->insideRegion(lon,lat) == true)
+			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration below_
+			if (regionRule->insideRegion(lon,lat) == true)
 			{
 				for (std::vector<RuleCity*>::const_iterator
-						j = (*i)->getRules()->getCities()->begin();
-						j != (*i)->getRules()->getCities()->end() && city == false;
-//							&& _city == nullptr;
+						j = regionRule->getCities().begin();
+						j != regionRule->getCities().end() && city == false; //&& _city == nullptr;
 						++j)
 				{
 					if (   AreSame((*j)->getLongitude(), lon)
 						&& AreSame((*j)->getLatitude(),  lat))
 					{
-//						_city = *j;
-						city = true;
+						city = true; //_city = *j;
 						Log(LOG_INFO) << ". . . city found = " << (*j)->getLabel();
 					}
 				}
