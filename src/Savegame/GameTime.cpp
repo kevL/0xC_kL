@@ -43,7 +43,7 @@ const std::string GameTime::GAME_MONTHS[12u]
 
 
 /**
- * Initializes a new IG time with a certain starting point.
+ * Creates an IG-time/date with specified values.
 // * @param weekday	- starting weekday
  * @param day		- starting day
  * @param month		- starting month
@@ -53,21 +53,21 @@ const std::string GameTime::GAME_MONTHS[12u]
  * @param sec		- starting second
  */
 GameTime::GameTime(
-//		int weekday,
 		int day,
 		int month,
 		int year,
 		int hour,
 		int minute,
 		int sec)
+//		int weekday
 	:
-//		_weekday(weekday),
 		_day(day),
 		_month(month),
 		_year(year),
 		_hour(hour),
 		_minute(minute),
 		_second(sec)
+//		_weekday(weekday)
 {}
 
 /**
@@ -82,13 +82,13 @@ GameTime::~GameTime()
  */
 void GameTime::load(const YAML::Node& node)
 {
-	_second		= node["second"]	.as<int>(_second);
-	_minute		= node["minute"]	.as<int>(_minute);
-	_hour		= node["hour"]		.as<int>(_hour);
-//	_weekday	= node["weekday"]	.as<int>(_weekday);
 	_day		= node["day"]		.as<int>(_day);
 	_month		= node["month"]		.as<int>(_month);
 	_year		= node["year"]		.as<int>(_year);
+	_hour		= node["hour"]		.as<int>(_hour);
+	_minute		= node["minute"]	.as<int>(_minute);
+	_second		= node["second"]	.as<int>(_second);
+//	_weekday	= node["weekday"]	.as<int>(_weekday);
 }
 
 /**
@@ -100,16 +100,17 @@ YAML::Node GameTime::save(bool memorial) const
 {
 	YAML::Node node;
 
-	if (memorial == false)
-	{
-		node["second"]	= _second;
-		node["minute"]	= _minute;
-		node["hour"]	= _hour;
-//		node["weekday"]	= _weekday;
-	}
 	node["day"]		= _day;
 	node["month"]	= _month;
 	node["year"]	= _year;
+
+	if (memorial == false)
+	{
+		node["hour"]	= _hour;
+		node["minute"]	= _minute;
+		node["second"]	= _second;
+//		node["weekday"]	= _weekday;
+	}
 
 	return node;
 }
@@ -303,7 +304,7 @@ int GameTime::getYear() const
 
 /**
  * Gets the current position of the daylight emitted on the globe according
- * to the current IG time - so the value is 0 when the light starts at 0º
+ * to the current IG-time - so the value is 0 when the light starts at 0º
  * longitude (6h) and 1 when the light ends at 0º longitude (18h).
  * @return, daylight position (0-1)
  */

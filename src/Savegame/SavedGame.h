@@ -258,7 +258,7 @@ private:
 		const Ruleset* getRules() const;
 
 		/// Sets the SavedGame's difficulty.
-		void setDifficulty(DifficultyLevel diff);
+		void setDifficulty(const DifficultyLevel diff);
 		/// Gets the SavedGame's difficulty.
 		DifficultyLevel getDifficulty() const;
 		/// Gets the SavedGame's difficulty as an integer.
@@ -267,7 +267,7 @@ private:
 		/// Gets the SavedGame's ending-type.
 		EndType getEnding() const;
 		/// Sets the SavedGame's ending-type.
-		void setEnding(EndType end);
+		void setEnding(const EndType end);
 
 		/// Gets if the SavedGame is in ironman-mode.
 		bool isIronman() const;
@@ -319,10 +319,10 @@ private:
 		/// Gets the list of monthly expenditure-values.
 		std::vector<int64_t>& getExpenditureList();
 
-		/// Gets the current GameTime.
+		/// Gets the current time/date.
 		GameTime* getTime() const;
-		/// Sets the current GameTime.
-		void setTime(GameTime gt);
+		/// Sets the current time/date.
+		void setTime(const GameTime& gt);
 
 		/// Gets an ID to assign to a Target type.
 		int getCanonicalId(const std::string& targetType);
@@ -378,11 +378,11 @@ private:
 		void addFinishedResearch(const RuleResearch* const resRule);
 		/// Tabulates a list of ResearchProjects that can be started at a Base.
 		void tabulateOpenResearchProjects(
-				std::vector<const RuleResearch*>& availableProjects,
+				std::vector<const RuleResearch*>& projects,
 				Base* const base) const;
 		/// Tabulates a list of Manufacture that can be started at a Base.
 		void tabulateAvailableManufacture(
-				std::vector<const RuleManufacture*>& availableProjects,
+				std::vector<const RuleManufacture*>& projects,
 				const Base* const base) const;
 		/// Tabulates a list of ResearchProjects that appears when a ResearchProject is completed.
 		void getPopupResearch(

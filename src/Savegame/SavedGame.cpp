@@ -837,7 +837,7 @@ const Ruleset* SavedGame::getRules() const
  * Sets this SavedGame's difficulty-level.
  * @param difficulty - difficulty setting (SavedGame.h)
  */
-void SavedGame::setDifficulty(DifficultyLevel diff)
+void SavedGame::setDifficulty(const DifficultyLevel diff)
 {
 	_difficulty = diff;
 }
@@ -881,7 +881,7 @@ EndType SavedGame::getEnding() const
  * Sets this SavedGame's current end-type.
  * @param end - end-type (SavedGame.h)
  */
-void SavedGame::setEnding(EndType end)
+void SavedGame::setEnding(const EndType end)
 {
 	_end = end;
 }
@@ -1138,7 +1138,7 @@ std::vector<int64_t>& SavedGame::getExpenditureList()
 }
 
 /**
- * Gets the current time of this SavedGame.
+ * Gets the current time/date of this SavedGame.
  * @return, pointer to the GameTime
  */
 GameTime* SavedGame::getTime() const
@@ -1147,10 +1147,10 @@ GameTime* SavedGame::getTime() const
 }
 
 /**
- * Sets the current time of this SavedGame.
- * @param time - GameTime
+ * Sets the current time/date of this SavedGame.
+ * @param time - reference to GameTime
  */
-void SavedGame::setTime(GameTime gt)
+void SavedGame::setTime(const GameTime& gt)
 {
 	delete _time;
 	_time = new GameTime(gt);
@@ -1473,10 +1473,9 @@ void SavedGame::tabulateOpenResearchProjects(
 	const RuleResearch* resRule;
 	bool cullProject;
 
-	const std::vector<std::string> allResearch (_rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
-			i = allResearch.begin();
-			i != allResearch.end();
+			i = _rules->getResearchList().begin();
+			i != _rules->getResearchList().end();
 			++i)
 	{
 		resRule = _rules->getResearch(*i);
@@ -1683,7 +1682,7 @@ void SavedGame::tabulateForcedResearch(std::vector<const RuleResearch*>& forced)
  * @param base				- pointer to a Base
  */
 void SavedGame::tabulateAvailableManufacture(
-		std::vector<const RuleManufacture*>& availableProjects,
+		std::vector<const RuleManufacture*>& projects,
 		const Base* const base) const
 {
 	const RuleManufacture* mfRule;
@@ -1699,7 +1698,7 @@ void SavedGame::tabulateAvailableManufacture(
 						base->getManufacture().end(),
 						EqualManufacture(mfRule)) == base->getManufacture().end())
 		{
-			availableProjects.push_back(mfRule);
+			projects.push_back(mfRule);
 		}
 	}
 }

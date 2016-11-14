@@ -34,7 +34,7 @@ class RuleVideo
 {
 
 private:
-	std::string _id;
+	std::string _type;
 	std::vector<std::string> _videos;
 //	std::vector<std::string> _slides;
 

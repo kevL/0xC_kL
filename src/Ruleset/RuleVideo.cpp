@@ -25,11 +25,11 @@ namespace OpenXcom
 
 /**
  * cTor.
- * @param id - reference a video
+ * @param type - reference a video-type
  */
-RuleVideo::RuleVideo(const std::string& id)
+RuleVideo::RuleVideo(const std::string& type)
 	:
-		_id(id)
+		_type(type)
 {}
 
 /**
@@ -69,7 +69,7 @@ void RuleVideo::load(const YAML::Node& node)
 
 /**
  * Gets the list of videos.
- * @return, pointer to a vector of video-strings
+ * @return, pointer to a vector of video-types
  */
 const std::vector<std::string>* RuleVideo::getVideos() const
 {

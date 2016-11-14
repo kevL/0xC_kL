@@ -3011,33 +3011,36 @@ void BattlescapeGame::dropItem(
 		const Position& pos,
 		DropType dropType)
 {
-	if (_battleSave->getTile(pos) != nullptr
-		&& item->getRules()->isFixed() == false)
+	if (item->getRules()->isFixed() == false)
 	{
-		item->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
-		_battleSave->getTile(pos)->addItem(item);
-
-		if (item->getBodyUnit() != nullptr)
-			item->getBodyUnit()->setPosition(pos);
-
-		switch (dropType)
+		Tile* const tile (_battleSave->getTile(pos));
+		if (tile != nullptr)
 		{
-//			case DROP_STANDARD:
-//				break;
-			case DROP_CLEAROWNER: item->setOwner();
-				break;
-			case DROP_FROMINVENTORY: item->changeOwner();
-				break;
-			case DROP_CREATE: _battleSave->getItems()->push_back(item);
-		}
+			item->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
+			tile->addItem(item);
 
-		getTileEngine()->applyGravity(_battleSave->getTile(pos));
+			if (item->getBodyUnit() != nullptr)
+				item->getBodyUnit()->setPosition(pos);
 
-		if (item->getRules()->getBattleType() == BT_FLARE
-			&& item->getFuse() != -1)
-		{
-			getTileEngine()->calculateTerrainLighting();
-			getTileEngine()->calcFovUnits_all(true);
+			switch (dropType)
+			{
+//				case DROP_STANDARD:
+//					break;
+				case DROP_CLEAROWNER: item->setOwner();
+					break;
+				case DROP_FROMINVENTORY: item->changeOwner();
+					break;
+				case DROP_CREATE: _battleSave->getItems()->push_back(item);
+			}
+
+			getTileEngine()->applyGravity(tile);
+
+			if (item->getRules()->getBattleType() == BT_FLARE
+				&& item->getFuse() != -1)
+			{
+				getTileEngine()->calculateTerrainLighting();
+				getTileEngine()->calcFovUnits_all(true);
+			}
 		}
 	}
 }
@@ -3048,8 +3051,9 @@ void BattlescapeGame::dropItem(
  */
 void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 {
-	const Position pos (unit->getPosition());
-	if (_battleSave->getTile(pos) != nullptr)
+	const Position& pos (unit->getPosition());
+	Tile* const tile (_battleSave->getTile(pos));
+	if (tile != nullptr)
 	{
 		bool calcFoV (false);
 		for (std::vector<BattleItem*>::const_iterator
@@ -3061,7 +3065,7 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 			{
 				(*i)->setOwner();
 				(*i)->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
-				_battleSave->getTile(pos)->addItem(*i);
+				tile->addItem(*i);
 
 				if ((*i)->getBodyUnit() != nullptr)
 					(*i)->getBodyUnit()->setPosition(pos);
@@ -3075,7 +3079,7 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 		}
 		unit->getInventory()->clear();
 
-		getTileEngine()->applyGravity(_battleSave->getTile(pos));
+		getTileEngine()->applyGravity(tile);
 
 		if (calcFoV == true)
 		{

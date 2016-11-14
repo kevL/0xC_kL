@@ -116,7 +116,7 @@ Ruleset::Ruleset(const Game* const game)
 	//Log(LOG_INFO) << "Create Ruleset";
 	_globe = new RuleGlobe();
 
-	const std::string path (CrossPlatform::getDataFolder("SoldierName/")); // Check in which data dir the folder is stored
+	const std::string& path (CrossPlatform::getDataFolder("SoldierName/")); // Check in which data dir the folder is stored
 
 //	const std::vector<std::string> nation (CrossPlatform::getFolderContents(path, "nam")); // add Soldier names
 //	for (std::vector<std::string>::const_iterator
@@ -366,43 +366,44 @@ Ruleset::~Ruleset()
 }
 
 /**
- * Reloads the country lines from Geography rulefile.
+ * Reloads the country-lines from the Geography rules.
  * @note Used in Geoscape's debugmode.
  */
 void Ruleset::reloadCountryLines() const
 {
-	for (std::vector<std::string>::const_iterator
+	RuleCountry* countryRule;
+
+	for (std::vector<std::string>::const_iterator // clear vertices ->
 			i = _countryTypes.begin();
 			i != _countryTypes.end();
 			++i)
 	{
-		RuleCountry* const j (getCountry(*i));
-		j->getLonMin().clear();
-		j->getLonMax().clear();
-		j->getLatMin().clear();
-		j->getLatMax().clear();
+		countryRule = getCountry(*i);
+		countryRule->getLonMin().clear();
+		countryRule->getLonMax().clear();
+		countryRule->getLatMin().clear();
+		countryRule->getLatMax().clear();
 	}
 
-	const std::string geography (CrossPlatform::getDataFile("Ruleset/Geography.rul"));
+	const std::string& geography (CrossPlatform::getDataFile("Ruleset/Geography.rul")); // reload vertices ->
 	const YAML::Node doc (YAML::LoadFile(geography));
 	for (YAML::const_iterator
 			i = doc["countries"].begin();
 			i != doc["countries"].end();
 			++i)
 	{
-		const std::string type ((*i)["type"].as<std::string>());
-		RuleCountry* const j (getCountry(type));
+		countryRule = getCountry((*i)["type"].as<std::string>());
 
 		const std::vector<std::vector<double>> areas ((*i)["areas"].as<std::vector<std::vector<double>>>());
 		for (size_t
-				k = 0;
-				k != areas.size();
-				++k)
+				j = 0;
+				j != areas.size();
+				++j)
 		{
-			j->getLonMin().push_back(areas[k][0] * M_PI / 180.);
-			j->getLonMax().push_back(areas[k][1] * M_PI / 180.);
-			j->getLatMin().push_back(areas[k][2] * M_PI / 180.);
-			j->getLatMax().push_back(areas[k][3] * M_PI / 180.);
+			countryRule->getLonMin().push_back(areas[j][0u] * M_PI / 180.);
+			countryRule->getLonMax().push_back(areas[j][1u] * M_PI / 180.);
+			countryRule->getLatMin().push_back(areas[j][2u] * M_PI / 180.);
+			countryRule->getLatMax().push_back(areas[j][3u] * M_PI / 180.);
 		}
 	}
 }
@@ -478,7 +479,7 @@ void Ruleset::validateMissions() const
 			i != _regions.end();
 			++i)
 	{
-		const std::vector<std::string> types ((*i).second->getAvailableMissions().getTypes());
+		const std::vector<std::string>& types ((*i).second->getAvailableMissions().getTypes());
 		for (std::vector<std::string>::const_iterator
 				j = types.begin();
 				j != types.end();
@@ -501,7 +502,7 @@ void Ruleset::validateMissions() const
  */
 void Ruleset::load(const std::string& src)
 {
-	const std::string dir (CrossPlatform::getDataFolder("Ruleset/" + src + '/'));
+	const std::string& dir (CrossPlatform::getDataFolder("Ruleset/" + src + '/'));
 
 	if (CrossPlatform::folderExists(dir) == false)
 		loadFile(CrossPlatform::getDataFile("Ruleset/" + src + ".rul"));
@@ -517,7 +518,7 @@ void Ruleset::load(const std::string& src)
  */
 void Ruleset::loadFiles(const std::string& dir) // protected.
 {
-	std::vector<std::string> files (CrossPlatform::getFolderContents(dir, "rul"));
+	const std::vector<std::string>& files (CrossPlatform::getFolderContents(dir, "rul"));
 	for (std::vector<std::string>::const_iterator
 			i = files.begin();
 			i != files.end();
@@ -998,25 +999,24 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		ResourcePack::GRAPHS_CURSOR			= (*i)["graphsCursor"]		.as<size_t>(ResourcePack::GRAPHS_CURSOR);
 	} */
 
-	std::string terrainType; // NOTE: MapScripts are not loaded w/ loadRule(keyId=type).
-	for (YAML::const_iterator
-			i = doc["mapScripts"].begin();
+	for (YAML::const_iterator				// NOTE: MapScripts are not loaded w/ loadRule(keyId=type)
+			i = doc["mapScripts"].begin();	// MapScript has its own loading routine.
 			i != doc["mapScripts"].end();
 			++i)
 	{
-		terrainType = (*i)["terrain"].as<std::string>();
+		type = (*i)["terrain"].as<std::string>();
 		if ((*i)["delete"])
-			terrainType = (*i)["delete"].as<std::string>(terrainType);
+			type = (*i)["delete"].as<std::string>(type);
 
-		if (_mapScripts.find(terrainType) != _mapScripts.end())
+		if (_mapScripts.find(type) != _mapScripts.end())
 		{
 			for (std::vector<MapScript*>::const_iterator
-					j = _mapScripts[terrainType].begin();
-					j != _mapScripts[terrainType].end();
+					j = _mapScripts[type].begin();
+					j != _mapScripts[type].end();
 					)
 			{
 				delete *j;
-				j = _mapScripts[terrainType].erase(j);
+				j = _mapScripts[type].erase(j);
 			}
 		}
 
@@ -1025,9 +1025,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 				j != (*i)["directs"].end();
 				++j)
 		{
-			MapScript* mapScript (new MapScript());
-			mapScript->load(*j);
-			_mapScripts[terrainType].push_back(mapScript);
+			MapScript* const rule (new MapScript());
+			rule->load(*j);
+			_mapScripts[type].push_back(rule);
 		}
 	}
 
@@ -1082,7 +1082,7 @@ T* Ruleset::loadRule( // protected.
 
 	if (node[keyId])
 	{
-		const std::string type (node[keyId].as<std::string>());
+		const std::string& type (node[keyId].as<std::string>());
 		typename std::map<std::string, T*>::const_iterator i (types->find(type));
 		if (i != types->end())
 			rule = i->second;
@@ -1097,7 +1097,7 @@ T* Ruleset::loadRule( // protected.
 	}
 	else if (node["delete"])
 	{
-		const std::string type (node["delete"].as<std::string>());
+		const std::string& type (node["delete"].as<std::string>());
 		typename std::map<std::string, T*>::const_iterator i (types->find(type));
 		if (i != types->end())
 			types->erase(i);
@@ -1125,34 +1125,47 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	//Log(LOG_INFO) << "Ruleset::createSave()";
 	RNG::setSeed();
 
-	SavedGame* const gameSave (new SavedGame(this));
-	play->setSavedGame(gameSave);
+	SavedGame* const playSave (new SavedGame(this));
+	play->setSavedGame(playSave);
 
 	for (std::vector<std::string>::const_iterator // setup ResearchGenerals ->
 			i = _researchTypes.begin();
 			i != _researchTypes.end();
 			++i)
 	{
-		gameSave->getResearchGenerals().push_back(new ResearchGeneral(getResearch(*i)));
+		playSave->getResearchGenerals().push_back(new ResearchGeneral(getResearch(*i)));
 	}
 	//Log(LOG_INFO) << ". research generals DONE";
+
+
+	for (std::vector<std::string>::const_iterator // add Regions ->
+			i = _regionTypes.begin();
+			i != _regionTypes.end();
+			++i)
+	{
+		const RuleRegion* const regionRule (getRegion(*i));
+//		if (regionRule->getLonMin().empty() == false) // safety.
+		playSave->getRegions()->push_back(new Region(regionRule));
+	}
+	//Log(LOG_INFO) << ". regions DONE";
+
 
 	for (std::vector<std::string>::const_iterator // add Countries ->
 			i = _countryTypes.begin();
 			i != _countryTypes.end();
 			++i)
 	{
-		RuleCountry* const country (getCountry(*i));
+		const RuleCountry* const countryRule (getCountry(*i));
 //		if (country->getLonMin().empty() == false) // safety.
-		gameSave->getCountries()->push_back(new Country(country, true));
+		playSave->getCountries()->push_back(new Country(countryRule, true));
 	}
 	//Log(LOG_INFO) << ". countries DONE";
 
 	// Adjust funding to total $6-million.
-//	int adjust ((_initialFunding - gameSave->getCountryFunding()) / (int)gameSave->getCountries()->size());
+//	int adjust ((_initialFunding - playSave->getCountryFunding()) / (int)playSave->getCountries()->size());
 //	for (std::vector<Country*>::const_iterator
-//			i = gameSave->getCountries()->begin();
-//			i != gameSave->getCountries()->end();
+//			i = playSave->getCountries()->begin();
+//			i != playSave->getCountries()->end();
 //			++i)
 //	{
 //		int fund (std::max(0,
@@ -1160,24 +1173,13 @@ SavedGame* Ruleset::createSave(Game* const play) const
 //		(*i)->getFunding().back() = fund;
 //	}
 
-	gameSave->setFunds(gameSave->getCountryFunding() * 1000);
+	playSave->setFunds(playSave->getCountryFunding() * 1000);
 	//Log(LOG_INFO) << ". funding DONE";
 
-	for (std::vector<std::string>::const_iterator // add Regions ->
-			i = _regionTypes.begin();
-			i != _regionTypes.end();
-			++i)
-	{
-		RuleRegion* const region (getRegion(*i));
-		if (region->getLonMin().empty() == false) // safety.
-			gameSave->getRegions()->push_back(new Region(region));
-	}
-	//Log(LOG_INFO) << ". regions DONE";
 
-
-	Base* const base (new Base(this, gameSave)); // setup the start Base ->
+	Base* const base (new Base(this, playSave)); // setup the start Base ->
 	base->loadBase(_startBase, true);
-	gameSave->getBases()->push_back(base);
+	playSave->getBases()->push_back(base);
 	//Log(LOG_INFO) << ". base DONE";
 
 	for (std::vector<Craft*>::const_iterator // correct IDs ->
@@ -1185,7 +1187,7 @@ SavedGame* Ruleset::createSave(Game* const play) const
 			i != base->getCrafts()->end();
 			++i)
 	{
-		gameSave->getCanonicalId((*i)->getRules()->getType());
+		playSave->getCanonicalId((*i)->getRules()->getType());
 	}
 	//Log(LOG_INFO) << ". craft-ids DONE";
 
@@ -1239,7 +1241,7 @@ SavedGame* Ruleset::createSave(Game* const play) const
 				i != startTypes.size();
 				++i)
 		{
-			Soldier* const sol (genSoldier(gameSave, startTypes[i]));
+			Soldier* const sol (genSoldier(playSave, startTypes[i]));
 			base->getSoldiers()->push_back(sol);
 
 			SoldierDiary* const diary (sol->getDiary()); // grant each Soldier the special Original Eight award.
@@ -1248,11 +1250,11 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	}
 	//Log(LOG_INFO) << ". soldiers DONE";
 
-	gameSave->getAlienStrategy().init(this); // setup ALienStrategy.
-	gameSave->setTime(_startTime);
+	playSave->getAlienStrategy().init(this); // setup aLienStrategy.
+	playSave->setTime(_startTime);
 
 	//Log(LOG_INFO) << "Ruleset::createSave() EXIT";
-	return gameSave;
+	return playSave;
 }
 
 /**

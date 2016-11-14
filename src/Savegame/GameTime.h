@@ -55,19 +55,19 @@ class GameTime
 
 private:
 	int
-		_second,
-		_minute,
-		_hour,
-//		_weekday,
 		_day,
 		_month,
-		_year;
+		_year,
+		_hour,
+		_minute,
+		_second;
+//		_weekday,
 
 
 	public:
 		static const std::string GAME_MONTHS[12u];
 
-		/// Creates a new IG time at a certain point.
+		/// Creates an IG-time/date with specified values.
 		GameTime(
 //				int weekday,
 				int day,
@@ -76,7 +76,7 @@ private:
 				int hour,
 				int minute,
 				int sec);
-		/// Cleans up the IG time.
+		/// Cleans up the IG-time/date.
 		~GameTime();
 
 		/// Loads the time from YAML.

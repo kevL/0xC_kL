@@ -129,7 +129,6 @@ class BattleUnit
 
 	public:
 //		static bool _debug;
-
 		static const size_t PARTS_BODY = 6u;
 
 private:
@@ -198,7 +197,7 @@ private:
 //	BattleItem* _specWeapon[SPEC_WEAPON_MAX];
 	BattleItem* _fist;
 	BattlescapeGame* _battleGame;
-	BattleUnit* _charging;
+	BattleUnit* _chargeTarget;
 	SavedBattleGame* _battleSave;
 	Surface* _cache[PARTS_ARMOR];
 	Tile* _tile;
@@ -394,7 +393,7 @@ private:
 		/// Gets the BattleUnit's faction.
 		UnitFaction getFaction() const;
 		/// Converts the BattleUnit to a faction.
-		void setFaction(UnitFaction faction);
+		void setFaction(const UnitFaction faction);
 		/// Gets the BattleUnit's original faction
 		UnitFaction getOriginalFaction() const;
 
@@ -489,7 +488,7 @@ private:
 		void setAimingPhase(int phase);
 
 		/// Gets if the BattleUnit is out - either dead or unconscious.
-		bool isOut_t(OutCheck test = OUT_ALL) const;
+		bool isOut_t(const OutCheck test = OUT_ALL) const;
 
 		/// Gets the number of turn-units a certain action takes.
 		int getActionTu(
@@ -545,11 +544,11 @@ private:
 		/// Sets the BattleUnit's armor value.
 		void setArmor(
 				int armor,
-				UnitSide side);
+				const UnitSide side);
 		/// Gets the BattleUnit's Armor.
 		const RuleArmor* getArmor() const;
 		/// Gets the BattleUnit's armor value on a particular side.
-		int getArmor(UnitSide side) const;
+		int getArmor(const UnitSide side) const;
 		/// Checks if the BattleUnit is wearing a PowerSuit.
 //		bool hasPowerSuit() const;
 		/// Checks if the BattleUnit is wearing a FlightSuit.
@@ -625,7 +624,7 @@ private:
 				int y = 0) const;
 
 		/// Sets the hand the BattleUnit has active.
-		void setActiveHand(ActiveHand hand);
+		void setActiveHand(const ActiveHand hand);
 		/// Gets the BattleUnit's active-hand.
 		ActiveHand getActiveHand();
 
@@ -645,7 +644,7 @@ private:
 		bool checkReload();
 
 		/// Checks if the BattleUnit is standing on a specified tile-type.
-		bool isOnTiletype(TileType tileType) const;
+		bool isOnTiletype(const TileType tileType) const;
 
 		/// Gets the BattleUnit's height taking into account kneeling/standing.
 		int getHeight(bool floating = false) const;
@@ -687,17 +686,17 @@ private:
 		int getMiniMapSpriteIndex() const;
 
 		/// Sets the turret-type of the BattleUnit.
-		void setTurretType(TurretType turretType);
+		void setTurretType(const TurretType turretType);
 		/// Gets the turret-type of the BattleUnit.
 		TurretType getTurretType() const;
 
 		/// Gets the BattleUnit's total quantity of fatal wounds.
 		int getFatalsTotal() const;
 		/// Gets the fatals on a specified body-part.
-		int getFatals(UnitBodyPart part) const;
+		int getFatals(const UnitBodyPart part) const;
 		/// Heals fatal wounds and replenishes health/morale.
 		void heal(
-				UnitBodyPart part,
+				const UnitBodyPart part,
 				int wounds,
 				int health);
 		/// Gives pain killers to the BattleUnit.
@@ -781,7 +780,7 @@ private:
 		/// Gets the faction that killed the BattleUnit.
 		UnitFaction killerFaction() const;
 		/// Sets the faction that killed the BattleUnit.
-		void killerFaction(UnitFaction faction);
+		void killerFaction(const UnitFaction faction);
 
 		/// Sets the BattleUnits that the BattleUnit is charging towards.
 		void setChargeTarget(BattleUnit* const chargeTarget = nullptr);
@@ -910,7 +909,7 @@ private:
 		void burnTile(Tile* const tile);
 
 		/// Converts UnitStatus to a string for the Logfile.
-		static std::string debugStatus(UnitStatus status);
+		static std::string debugStatus(const UnitStatus status);
 };
 
 }

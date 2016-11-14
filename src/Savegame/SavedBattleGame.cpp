@@ -295,7 +295,7 @@ void SavedBattleGame::load(
 			i != node["mapdatasets"].end();
 			++i)
 	{
-		_mapDataSets.push_back(rules->getMapDataSet(i->as<std::string>()));
+		_mapDataSets.push_back(rules->getMapDataSet(i->as<std::string>())); // NOTE: Ruleset must be non-const to push_back().
 	}
 
 	Log(LOG_INFO) << ". init map";

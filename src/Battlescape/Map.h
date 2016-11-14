@@ -239,12 +239,12 @@ private:
 
 		/// Sets the selector-position relative to current mouse-position.
 		void refreshSelectorPosition();
-		/// Gets the currently selected position.
-		void getSelectorPosition(Position* const pos) const;
+		/// Gets the current selector-position.
+		void getSelectorPosition(Position& pos) const;
 		/// Sets the 3D selector-type.
 		void setSelectorType(
 				SelectorType type,
-				int sideSize = 1);
+				int length = 1);
 		/// Gets the 3D selector-type.
 		SelectorType getSelectorType() const;
 

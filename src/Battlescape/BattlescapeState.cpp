@@ -1176,7 +1176,7 @@ void BattlescapeState::mapOver(Action* action)
 		&& _game->getCursor()->getHidden() == false)
 	{
 		Position pos;
-		_map->getSelectorPosition(&pos);
+		_map->getSelectorPosition(pos);
 
 		Tile* const tile (_battleSave->getTile(pos));
 		updateTileInfo(tile);
@@ -1441,7 +1441,7 @@ void BattlescapeState::mapClick(Action* action)
 		&& _battleGame->isBusy() == false)
 	{
 		Position pos;
-		_map->getSelectorPosition(&pos);
+		_map->getSelectorPosition(pos);
 
 		if (_battleSave->getTile(pos) != nullptr)
 		{

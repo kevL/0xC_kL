@@ -2351,7 +2351,7 @@ void Map::animateMap(bool redraw)
 }
 
 /**
- * Sets the rectangular selector to the current mouse-position.
+ * Sets the cuboid-selector to the current mouse-position.
  */
 void Map::refreshSelectorPosition()
 {
@@ -2371,14 +2371,14 @@ void Map::refreshSelectorPosition()
 
 
 /**
- * Gets the position of the rectangular selector.
- * @param pos - pointer to a Position
+ * Gets the position of the cuboid-selector.
+ * @param pos - reference to a Position
  */
-void Map::getSelectorPosition(Position* const pos) const
+void Map::getSelectorPosition(Position& pos) const
 {
-	pos->x = _selectorX;
-	pos->y = _selectorY;
-	pos->z = _camera->getViewLevel();
+	pos.x = _selectorX;
+	pos.y = _selectorY;
+	pos.z = _camera->getViewLevel();
 }
 
 /**
@@ -2604,16 +2604,16 @@ int Map::getTerrainLevel( // private.
 /**
  * Sets the 3D selector-type.
  * @param type		- SelectorType (Map.h)
- * @param sideSize	- size of the cursor (default 1)
+ * @param length	- size of the cursor (default 1)
  */
 void Map::setSelectorType(
 		SelectorType type,
-		int sideSize)
+		int length)
 {
 	switch (_selectorType = type)
 	{
 		case CT_CUBOID:
-			_selectorSize = sideSize;
+			_selectorSize = length;
 			break;
 
 		default:

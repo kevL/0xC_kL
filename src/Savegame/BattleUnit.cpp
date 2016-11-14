@@ -112,7 +112,7 @@ BattleUnit::BattleUnit(
 		_takedowns(0),
 		_motionPoints(0),
 		_coverReserve(0),
-		_charging(nullptr),
+		_chargeTarget(nullptr),
 		_turnsExposed(-1),
 		_hidingForTurn(false),
 		_battleOrder(0),
@@ -284,7 +284,7 @@ BattleUnit::BattleUnit(
 		_takedowns(0),
 		_motionPoints(0),
 		_coverReserve(0),
-		_charging(nullptr),
+		_chargeTarget(nullptr),
 		_hidingForTurn(false),
 		_stopShot(false),
 		_dashing(false),
@@ -496,7 +496,6 @@ void BattleUnit::load(const YAML::Node& node)
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
 	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
 	_hasBeenStunned		= node["beenStunned"]			.as<bool>(_hasBeenStunned);
-	_charging			= nullptr;
 
 	_turretType = static_cast<TurretType>(node["turretType"].as<int>(_turretType));
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
@@ -1293,7 +1292,7 @@ UnitFaction BattleUnit::getFaction() const
  * @note Its original faction is still stored as such.
  * @param faction - UnitFaction
  */
-void BattleUnit::setFaction(UnitFaction faction)
+void BattleUnit::setFaction(const UnitFaction faction)
 {
 	_faction = faction;
 }
@@ -2002,7 +2001,7 @@ void BattleUnit::setAimingPhase(int phase)
  *				 OUT_HLTH_STUN	- health or stun
  * @return, true if unit is incapacitated
  */
-bool BattleUnit::isOut_t(OutCheck test) const
+bool BattleUnit::isOut_t(const OutCheck test) const
 {
 	switch (test)
 	{
@@ -2467,7 +2466,7 @@ double BattleUnit::getAccuracyModifier(const BattleItem* const item) const
  */
 void BattleUnit::setArmor(
 		int armor,
-		UnitSide side)
+		const UnitSide side)
 {
 	if ((_armorHp[side] = armor) < 0) _armorHp[side] = 0;
 }
@@ -2477,7 +2476,7 @@ void BattleUnit::setArmor(
  * @param side - the side of the armor
  * @return, amount of armor
  */
-int BattleUnit::getArmor(UnitSide side) const
+int BattleUnit::getArmor(const UnitSide side) const
 {
 	return _armorHp[side];
 }
@@ -3003,7 +3002,7 @@ BattleItem* BattleUnit::getItem(
  * choosing a weapon during faction-player RF, TileEngine::reactionShot().
  * @param hand - the ActiveHand (BattleUnit.h)
  */
-void BattleUnit::setActiveHand(ActiveHand hand)
+void BattleUnit::setActiveHand(const ActiveHand hand)
 {
 /*	bool debug;
 	if (_id == 1000013) debug = true;
@@ -3378,7 +3377,7 @@ bool BattleUnit::checkReload()
  * @param tileType - type of tile to check for (RuleItem.h)
  * @return, true if unit is currently conscious on @a tileType
  */
-bool BattleUnit::isOnTiletype(TileType tileType) const
+bool BattleUnit::isOnTiletype(const TileType tileType) const
 {
 	return _tile != nullptr
 		&& _tile->getMapData(O_FLOOR) != nullptr
@@ -3702,7 +3701,7 @@ int BattleUnit::getMiniMapSpriteIndex() const
  * Sets this BattleUnit's turret-type.
  * @param turretType - the TurretType (RuleItem.h)
  */
-void BattleUnit::setTurretType(TurretType turretType)
+void BattleUnit::setTurretType(const TurretType turretType)
 {
 	_turretType = turretType;
 }
@@ -3738,7 +3737,7 @@ int BattleUnit::getFatalsTotal() const
  * @param part - the body part in the range 0-5 (BattleUnit.h)
  * @return, fatal wounds @a part has
  */
-int BattleUnit::getFatals(UnitBodyPart part) const
+int BattleUnit::getFatals(const UnitBodyPart part) const
 {
 	return _fatalWounds[part];
 }
@@ -3750,7 +3749,7 @@ int BattleUnit::getFatals(UnitBodyPart part) const
  * @param health	- the quantity of health to add
  */
 void BattleUnit::heal(
-		UnitBodyPart part,
+		const UnitBodyPart part,
 		int wounds,
 		int health)
 {
@@ -4272,7 +4271,7 @@ UnitFaction BattleUnit::killerFaction() const
  * Sets the faction this BattleUnit was killed by.
  * @param faction - UnitFaction (BattleUnit.h)
  */
-void BattleUnit::killerFaction(UnitFaction faction)
+void BattleUnit::killerFaction(const UnitFaction faction)
 {
 	_killerFaction = faction;
 }
@@ -4283,7 +4282,7 @@ void BattleUnit::killerFaction(UnitFaction faction)
  */
 void BattleUnit::setChargeTarget(BattleUnit* const chargeTarget)
 {
-	_charging = chargeTarget;
+	_chargeTarget = chargeTarget;
 }
 
 /**
@@ -4292,7 +4291,7 @@ void BattleUnit::setChargeTarget(BattleUnit* const chargeTarget)
  */
 BattleUnit* BattleUnit::getChargeTarget() const
 {
-	return _charging;
+	return _chargeTarget;
 }
 
 /**
@@ -4888,7 +4887,7 @@ void BattleUnit::burnTile(Tile* const tile)
  * @param status - status (BattleUnit.h)
  * @return, status as a string
  */
-std::string BattleUnit::debugStatus(UnitStatus status) // static
+std::string BattleUnit::debugStatus(const UnitStatus status) // static
 {
 	switch (status)
 	{
