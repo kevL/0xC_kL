@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_MAPSCRIPT_H
-#define OPENXCOM_MAPSCRIPT_H
+#ifndef OPENXCOM_RULEMAPSCRIPT_H
+#define OPENXCOM_RULEMAPSCRIPT_H
 
 #include <map>
 //#include <string>
@@ -83,7 +83,7 @@ class RuleTerrain;
 /**
  * A class for handling battlefield designs.
  */
-class MapScript
+class RuleMapScript
 {
 
 private:
@@ -122,15 +122,15 @@ private:
 
 
 	public:
-		/// Constructs a MapScript.
-		MapScript();
-		/// Destructs the MapScript.
-		~MapScript();
+		/// Constructs a RuleMapScript.
+		RuleMapScript();
+		/// Destructs the RuleMapScript.
+		~RuleMapScript();
 
 		/// Loads information from a ruleset-file.
 		void load(const YAML::Node& node);
 
-		/// Initializes all the variables and stuff for a MapScript directive.
+		/// Initializes all the variables and stuff for a RuleMapScript directive.
 		void init();
 
 		/// Gets what type of directive this is.

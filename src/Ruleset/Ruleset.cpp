@@ -28,7 +28,6 @@
 #include "ExtraSprites.h"
 #include "ExtraStrings.h"
 #include "MapDataSet.h"
-#include "MapScript.h"
 #include "MCDPatch.h"
 #include "OperationPool.h"
 #include "RuleAlienDeployment.h"
@@ -44,6 +43,7 @@
 #include "RuleInterface.h"
 #include "RuleItem.h"
 #include "RuleManufacture.h"
+#include "RuleMapScript.h"
 #include "RuleMissionScript.h"
 #include "RuleMusic.h"
 #include "RuleRegion.h"
@@ -330,11 +330,11 @@ Ruleset::~Ruleset()
 			++i)
 		delete i->second;
 
-	for (std::map<std::string, std::vector<MapScript*>>::const_iterator
+	for (std::map<std::string, std::vector<RuleMapScript*>>::const_iterator
 			i = _mapScripts.begin();
 			i != _mapScripts.end();
 			++i)
-		for (std::vector<MapScript*>::const_iterator
+		for (std::vector<RuleMapScript*>::const_iterator
 				j = (*i).second.begin();
 				j != (*i).second.end();
 				++j)
@@ -366,7 +366,7 @@ Ruleset::~Ruleset()
 }
 
 /**
- * Reloads the country-lines from the Geography rules.
+ * Reloads the country-lines from the Geography rule.
  * @note Used in Geoscape's debugmode.
  */
 void Ruleset::reloadCountryLines() const
@@ -1000,7 +1000,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	} */
 
 	for (YAML::const_iterator				// NOTE: MapScripts are not loaded w/ loadRule(keyId=type)
-			i = doc["mapScripts"].begin();	// MapScript has its own loading routine.
+			i = doc["mapScripts"].begin();	// RuleMapScript has its own loading routine.
 			i != doc["mapScripts"].end();
 			++i)
 	{
@@ -1010,7 +1010,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 
 		if (_mapScripts.find(type) != _mapScripts.end())
 		{
-			for (std::vector<MapScript*>::const_iterator
+			for (std::vector<RuleMapScript*>::const_iterator
 					j = _mapScripts[type].begin();
 					j != _mapScripts[type].end();
 					)
@@ -1025,7 +1025,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 				j != (*i)["directs"].end();
 				++j)
 		{
-			MapScript* const rule (new MapScript());
+			RuleMapScript* const rule (new RuleMapScript());
 			rule->load(*j);
 			_mapScripts[type].push_back(rule);
 		}
@@ -2477,11 +2477,11 @@ RuleMissionScript* Ruleset::getMissionScript(const std::string& type) const
 /**
  * Gets the list of MapScripts.
  * @param type - reference to a map-script-type
- * @return, pointer to a vector of pointers to MapScript
+ * @return, pointer to a vector of pointers to RuleMapScript
  */
-const std::vector<MapScript*>* Ruleset::getMapScripts(const std::string& type) const
+const std::vector<RuleMapScript*>* Ruleset::getMapScripts(const std::string& type) const
 {
-	std::map<std::string, std::vector<MapScript*>>::const_iterator i (_mapScripts.find(type));
+	std::map<std::string, std::vector<RuleMapScript*>>::const_iterator i (_mapScripts.find(type));
 	if (i != _mapScripts.end())
 	{
 		//Log(LOG_INFO) << "rules: i->first = " << i->first;

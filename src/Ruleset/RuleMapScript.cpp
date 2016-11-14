@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MapScript.h"
+#include "RuleMapScript.h"
 
 #include "MapBlock.h"
 #include "RuleTerrain.h"
@@ -30,9 +30,9 @@ namespace OpenXcom
 {
 
 /**
- * Constructs a MapScript.
+ * Constructs a RuleMapScript.
  */
-MapScript::MapScript()
+RuleMapScript::RuleMapScript()
 	:
 		_type(MSC_UNDEFINED),
 		_sizeX(1),
@@ -49,7 +49,7 @@ MapScript::MapScript()
 /**
  * dTor.
  */
-MapScript::~MapScript()
+RuleMapScript::~RuleMapScript()
 {
 	for (std::vector<SDL_Rect*>::const_iterator
 			i = _rects.begin();
@@ -61,10 +61,10 @@ MapScript::~MapScript()
 }
 
 /**
- * Loads a MapScript directive from YAML.
+ * Loads a RuleMapScript directive from YAML.
  * @param node - reference a YAML node
  */
-void MapScript::load(const YAML::Node& node)
+void RuleMapScript::load(const YAML::Node& node)
 {
 	if (const YAML::Node& subnode = node["type"])
 	{
@@ -261,11 +261,11 @@ void MapScript::load(const YAML::Node& node)
 		switch (_type)
 		{
 			case MSC_DIGTUNNEL:
-				throw Exception("MapScript: The direction is undefined for digTunnel operation - specify [v]ertical, [h]orizontal, or [b]oth");
+				throw Exception("RuleMapScript: The direction is undefined for digTunnel operation - specify [v]ertical, [h]orizontal, or [b]oth");
 				break;
 
 			case MSC_ADDLINE:
-				throw Exception("MapScript: The direction is undefined for addLine operation - specify [v]ertical, [h]orizontal, or [b]oth");
+				throw Exception("RuleMapScript: The direction is undefined for addLine operation - specify [v]ertical, [h]orizontal, or [b]oth");
 		}
 	}
 
@@ -278,7 +278,7 @@ void MapScript::load(const YAML::Node& node)
 /**
  * Initializes all the various scratch values and such for the directive.
  */
-void MapScript::init()
+void RuleMapScript::init()
 {
 	_cumulativeFrequency = 0;
 	_blocksTemp.clear();
@@ -305,7 +305,7 @@ void MapScript::init()
  * if all the max-uses are used up it will return undefined.
  * @return, group number
  */
-int MapScript::getGroup() // private.
+int RuleMapScript::getGroup() // private.
 {
 	if (_groups.size() == 0u)
 		return 0;// MBT_DEFAULT; // NOTE: Returning a MapBlockType is ... misleading.
@@ -347,7 +347,7 @@ int MapScript::getGroup() // private.
  * @note If no blocks are defined it will use a group instead.
  * @return, block number
  */
-int MapScript::getBlock() // private.
+int RuleMapScript::getBlock() // private.
 {
 	if (_cumulativeFrequency > 0)
 	{
@@ -382,9 +382,9 @@ int MapScript::getBlock() // private.
  * Gets a random MapBlock from a specified terrain using either the groups or
  * the blocks defined.
  * @param terrainRule - pointer to the RuleTerrain from which to pick a block
- * @return, pointer to a randomly chosen MapBlock given the options available in this MapScript
+ * @return, pointer to a randomly chosen MapBlock given the options available in this RuleMapScript
  */
-MapBlock* MapScript::getNextBlock(const RuleTerrain* const terrainRule)
+MapBlock* RuleMapScript::getNextBlock(const RuleTerrain* const terrainRule)
 {
 	if (_blocks.empty() == true)
 		return terrainRule->getTerrainBlock(
@@ -405,7 +405,7 @@ MapBlock* MapScript::getNextBlock(const RuleTerrain* const terrainRule)
  * Gets the ufo-type for the ADD-UFO directive.
  * @return, ufo-type
  */
-const std::string& MapScript::getUfoType() const
+const std::string& RuleMapScript::getUfoType() const
 {
 	return _ufoType;
 }

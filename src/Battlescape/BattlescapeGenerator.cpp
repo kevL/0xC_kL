@@ -337,7 +337,7 @@ void BattlescapeGenerator::run()
 	} */
 
 
-	const std::vector<MapScript*>* directives (nullptr); // alienDeployment-script overrides terrain-script <-
+	const std::vector<RuleMapScript*>* directives (nullptr); // alienDeployment-script overrides terrain-script <-
 
 	std::string script (ruleDeploy->getScriptType());
 	//Log(LOG_INFO) << "bgen: script = " << script;
@@ -751,7 +751,7 @@ void BattlescapeGenerator::nextStage()
 	_terrainRule = _rules->getTerrain(ruleDeploy->getDeployTerrains().at(RNG::pick(ruleDeploy->getDeployTerrains().size())));
 
 
-	const std::vector<MapScript*>* directives (nullptr); // alienDeployment-script overrides terrain-script <-
+	const std::vector<RuleMapScript*>* directives (nullptr); // alienDeployment-script overrides terrain-script <-
 
 	std::string script (ruleDeploy->getScriptType());
 	//Log(LOG_INFO) << "bgen: script = " << script;
@@ -927,6 +927,8 @@ void BattlescapeGenerator::nextStage()
 			_battleSave->getTiles()[i]->setDiscovered(true, 2);
 		}
 	} */
+
+	// TODO: fuelPowerSources(), explodePowerSources(), select music-tracks. See run() above^
 
 	_battleSave->getTileEngine()->calculateSunShading();
 	_battleSave->getTileEngine()->calculateTerrainLighting();
@@ -2498,31 +2500,31 @@ int BattlescapeGenerator::loadMAP( // private.
 
 	ifstr.close();
 
-	if (_generateFuel == true) // if one of the mapBlocks has an items array defined, don't deploy fuel algorithmically
-		_generateFuel = (block->getItems()->empty() == true);
-
-	const RuleItem* itRule;
-	BattleItem* item;
-	for (std::map<std::string, std::vector<Position>>::const_iterator
-			i = block->getItems()->begin();
-			i != block->getItems()->end();
-			++i)
+	if ((_generateFuel = (block->getBlockItems().empty() == true)) == false) // don't deploy fuel algorithmically if one of the MapBlocks has an items-array defined
 	{
-		itRule = _rules->getItemRule((*i).first);
-		for (std::vector<Position>::const_iterator
-				j = (*i).second.begin();
-				j != (*i).second.end();
-				++j)
+		const RuleItem* itRule;
+		BattleItem* item;
+		for (std::map<std::string, std::vector<Position>>::const_iterator
+				i = block->getBlockItems().begin();
+				i != block->getBlockItems().end();
+				++i)
 		{
-			item = new BattleItem(
-								itRule,
-								_battleSave->getCanonicalBattleId());
-			item->setInventorySection(_rules->getInventoryRule(ST_GROUND));
-			_battleSave->getTile((*j) + Position(
-												offset_x,
-												offset_y,
-												0))->addItem(item);
-			_itemList->push_back(item);
+			itRule = _rules->getItemRule((*i).first);
+			for (std::vector<Position>::const_iterator
+					j = (*i).second.begin();
+					j != (*i).second.end();
+					++j)
+			{
+				item = new BattleItem(
+									itRule,
+									_battleSave->getCanonicalBattleId());
+				item->setInventorySection(_rules->getInventoryRule(ST_GROUND));
+				_battleSave->getTile((*j) + Position(
+													offset_x,
+													offset_y,
+													0))->addItem(item);
+				_itemList->push_back(item);
+			}
 		}
 	}
 	return size_z;
@@ -2798,9 +2800,10 @@ void BattlescapeGenerator::runFakeInventory(
 
 /**
  * Processes a set of map-modules (blocks of Tiles) to create a battlefield.
- * @param directives - the MapScript directives used to build the Map
+ * @param directives - pointer to a vector of pointers to the RuleMapScript
+ *					   directives that are used to build the Map
  */
-void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const directives) // private.
+void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const directives) // private.
 {
 	//Log(LOG_INFO) << "generateMap, terraRule = " << _terrainRule->getType() << " script = " << _terrainRule->getScriptType();
 //	_error = false;
@@ -2838,7 +2841,7 @@ void BattlescapeGenerator::generateMap(const std::vector<MapScript*>* const dire
 
 	bool success;
 
-	for (std::vector<MapScript*>::const_iterator // process script-directives
+	for (std::vector<RuleMapScript*>::const_iterator // process script-directives
 			i = directives->begin();
 			i != directives->end();
 			++i)
@@ -3730,13 +3733,13 @@ bool BattlescapeGenerator::selectPosition( // private.
  * Adds a Craft or Ufo to the battlefield and tries to add a landing-zone block
  * under it.
  * @param block		- pointer to the MapBlock for the craft in question
- * @param script	- pointer to the script command to pull info from
+ * @param script	- pointer to the script-directive to get info from
  * @param rect		- reference to the position of the craft and store it here
  * @return, true if the craft was placed
  */
 bool BattlescapeGenerator::addCraft( // private.
 		const MapBlock* const block,
-		MapScript* const script,
+		RuleMapScript* const script,
 		SDL_Rect& rect)
 {
 	rect.w = static_cast<Uint16>(block->getSizeX());
@@ -3795,7 +3798,7 @@ bool BattlescapeGenerator::addCraft( // private.
 
 /**
  * Draws a line along the Map - horizontally/vertically/both.
- * @param dir	- the direction to draw the line (MapScript.h)
+ * @param dir	- the direction to draw the line (RuleMapScript.h)
  * @param rects	- the positions to allow the line to be drawn in
  * @return, true if the blocks were added
  */
@@ -3990,7 +3993,7 @@ bool BattlescapeGenerator::addBlock( // private.
  * BEFORE the dirt is added in base defenses.
  * @param info	- pointer to the wall replacements and level to dig on
  * @param rects	- pointer to a vector of pointers defining the length/width of the tunnels themselves
- * @param dir	- the direction to drill (MapScript.h)
+ * @param dir	- the direction to drill (RuleMapScript.h)
  */
 void BattlescapeGenerator::drillModules( // private.
 		TunnelData* const info,
@@ -4227,21 +4230,20 @@ void BattlescapeGenerator::drillModules( // private.
 }
 
 /**
- * Clears all MapBlocks in a given set of rects as defined by a specified
- * directive.
- * @param directive - contains all the info needed
+ * Clears all MapBlocks in a given set of rects as defined by a specified script.
+ * @param script - contains all the info needed
  * @return, true if success
  * @feel clever & self-important(!)
  * @reality WoT..
  */
-bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // private.
+bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // private.
 {
 	MapBlock* block;
 	std::vector<std::pair<int,int>> deleted;
 
 	for (std::vector<SDL_Rect*>::const_iterator
-			i = directive->getRects()->begin();
-			i != directive->getRects()->end();
+			i = script->getRects()->begin();
+			i != script->getRects()->end();
 			++i)
 	{
 		const int
@@ -4267,11 +4269,11 @@ bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // priv
 				{
 					std::pair<int,int> pos (x,y);
 
-					if (directive->getGroups()->empty() == false)
+					if (script->getGroups()->empty() == false)
 					{
 						for (std::vector<int>::const_iterator
-								j = directive->getGroups()->begin();
-								j != directive->getGroups()->end();
+								j = script->getGroups()->begin();
+								j != script->getGroups()->end();
 								++j)
 							if (block->isInGroup(*j) == true)
 								if (std::find(					// the deleted vector should only contain unique entries
@@ -4280,11 +4282,11 @@ bool BattlescapeGenerator::clearBlocks(const MapScript* const directive) // priv
 											pos) == deleted.end())
 									deleted.push_back(pos);
 					}
-					else if (directive->getBlocks()->empty() == false)
+					else if (script->getBlocks()->empty() == false)
 					{
 						for (std::vector<int>::const_iterator
-								j = directive->getBlocks()->begin();
-								j != directive->getBlocks()->end();
+								j = script->getBlocks()->begin();
+								j != script->getBlocks()->end();
 								++j)
 							if (*j < static_cast<int>(_terrainRule->getMapBlocks()->size()))
 								if (std::find(					// the deleted vector should only contain unique entries

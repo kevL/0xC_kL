@@ -512,7 +512,7 @@ RuleTerrain* ConfirmLandingState::selectTerrain(const double lat)
 	// This should actually never happen if AlienMission zone3 globe data is correct.
 	// But do this as a safety:
 	Log(LOG_INFO) << ". WARNING: terrain NOT Valid - selecting City terrain";
-	// note that the URBAN MapScript, spec'd for all city terrains, will not add the UFO-dropship.
+	// note that the URBAN RuleMapScript, spec'd for all city terrains, will not add the UFO-dropship.
 	// ... could be cool. Postnote: yeh, was cool!!!!
 	_city = true;
 	return selectCityTerrain(lat);

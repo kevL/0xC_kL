@@ -45,7 +45,6 @@ class ExtraSprites;
 class ExtraStrings;
 class Game;
 class MapDataSet;
-class MapScript;
 class MCDPatch;
 class OperationPool;
 class ResourcePack;
@@ -63,6 +62,7 @@ class RuleInterface;
 class RuleInventory;
 class RuleItem;
 class RuleManufacture;
+class RuleMapScript;
 class RuleMissionScript;
 class RuleMusic;
 class RuleRegion;
@@ -185,7 +185,7 @@ private:
 	std::map<std::string, RuleUnit*>			_units;
 	std::map<std::string, RuleVideo*>			_videos;
 
-	std::map<std::string, std::vector<MapScript*>>	_mapScripts;
+	std::map<std::string, std::vector<RuleMapScript*>>	_mapScripts;
 
 	std::vector<std::pair<std::string, ExtraSounds*>>	_extraSounds;
 	std::vector<std::pair<std::string, ExtraSprites*>>	_extraSprites;
@@ -421,7 +421,7 @@ private:
 		RuleMissionScript* getMissionScript(const std::string& type) const;
 
 		/// Gets a list of MapScripts.
-		const std::vector<MapScript*>* getMapScripts(const std::string& type) const;
+		const std::vector<RuleMapScript*>* getMapScripts(const std::string& type) const;
 
 		/// Gets the final-research-type.
 		const std::string& getFinalResearch() const;

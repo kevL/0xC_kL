@@ -96,8 +96,8 @@ private:
 		/// Gets if the MapBlock's floor-tiles should be revealed or not.
 		bool isFloorRevealed(int reveal) const;
 
-		/// Gets the layout for any items that belong in the MapBlock.
-		std::map<std::string, std::vector<Position>>* getItems();
+		/// Gets the Positions for items that instantiate in the MapBlock.
+		const std::map<std::string, std::vector<Position>>& getBlockItems();
 };
 
 }

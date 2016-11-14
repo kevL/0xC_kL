@@ -22,7 +22,7 @@
 
 //#include <vector>
 
-#include "../Ruleset/MapScript.h"
+#include "../Ruleset/RuleMapScript.h"
 
 
 namespace OpenXcom
@@ -169,7 +169,7 @@ private:
 	void explodePowerSources();
 
 	/// Generates the tactical Map of a battlefield.
-	void generateMap(const std::vector<MapScript*>* const directives);
+	void generateMap(const std::vector<RuleMapScript*>* const directives);
 	/// Generates the tactical Map of a battlefield based on the player's Base.
 	void generateBaseMap();
 
@@ -196,7 +196,7 @@ private:
 	/// Adds a Craft (either a UFO or an XCOM Craft) somewhere on the Map.
 	bool addCraft(
 			const MapBlock* const block,
-			MapScript* const script,
+			RuleMapScript* const script,
 			SDL_Rect& rect);
 	/// Adds a line (generally a road) to the Map.
 	bool addLine(
@@ -212,8 +212,8 @@ private:
 			TunnelData* const info,
 			const std::vector<SDL_Rect*>* const rects,
 			MapDirection dir);
-	/// Clears all modules in a rect according to a specified directive.
-	bool clearBlocks(const MapScript* const directive);
+	/// Clears all modules in a rect according to a specified script.
+	bool clearBlocks(const RuleMapScript* const script);
 
 	/// Sets up the player's objectives for the upcoming battle.
 	void setupObjectives(const RuleAlienDeployment* const ruleDeploy);
