@@ -1473,12 +1473,16 @@ void SavedGame::tabulateOpenResearchProjects(
 	const RuleResearch* resRule;
 	bool cullProject;
 
-	for (std::vector<std::string>::const_iterator
-			i = _rules->getResearchList().begin();
-			i != _rules->getResearchList().end();
+//	for (std::vector<std::string>::const_iterator
+//			i = _rules->getResearchList().begin();
+//			i != _rules->getResearchList().end();
+//			++i)
+	for (std::vector<ResearchGeneral*>::const_iterator
+			i = _research.begin();
+			i != _research.end();
 			++i)
 	{
-		resRule = _rules->getResearch(*i);
+		resRule = (*i)->getRules();// _rules->getResearch(*i);
 
 		if (_debugGeo == true)
 		{
@@ -1553,6 +1557,33 @@ void SavedGame::tabulateOpenResearchProjects(
 }
 
 /**
+ * Checks if a RuleResearch has had all of its required-research discovered.
+ * @param resRule - pointer to RuleResearch
+ * @return, true if good to go
+ */
+bool SavedGame::checkRequiredResearch(const RuleResearch* const resRule) const // private.
+{
+	for (std::vector<std::string>::const_iterator
+			i = resRule->getRequiredResearch().begin();
+			i != resRule->getRequiredResearch().end();
+			++i)
+	{
+		for (std::vector<ResearchGeneral*>::const_iterator
+				j = _research.begin();
+				j != _research.end();
+				++j)
+		{
+			if ((*j)->getStatus() != RG_DISCOVERED
+				&& (*j)->getType() == *i)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+/**
  * Checks whether a RuleResearch can be started as a project.
  * @note If it's forced it is available. If it's not forced and has a getOneFree
  * it's also considered available. But if it's not forced and does not have a
@@ -1567,7 +1598,7 @@ bool SavedGame::isProjectOpen(const RuleResearch* const resRule) const // privat
 		std::vector<const RuleResearch*> forcedList;
 		tabulateForcedResearch(forcedList);
 
-		if (std::find(
+		if (std::find( // first check if the rule is in the forcedList ->
 				forcedList.begin(),
 				forcedList.end(),
 				resRule) != forcedList.end())
@@ -1575,30 +1606,30 @@ bool SavedGame::isProjectOpen(const RuleResearch* const resRule) const // privat
 			return true;
 		}
 
-		const RuleResearch* gofRule;
-		for (std::vector<std::string>::const_iterator
-				i = resRule->getGetOneFree().begin();
-				i != resRule->getGetOneFree().end();
-				++i)
+		const RuleResearch* gofRule; // does this make any sense at all. Ie, if the rule grants GoF-unlocks
+		for (std::vector<std::string>::const_iterator	// and any one of them is *NOT* in the overall forcedList
+				i = resRule->getGetOneFree().begin();	// then the original rule can be researched.
+				i != resRule->getGetOneFree().end();	// ... i guess so. That is, allow the rule to be researched
+				++i)									// in the off-chance that it will bust open a GoF.
 		{
-			gofRule = _rules->getResearch(*i);
-			if (std::find(
+			gofRule = _rules->getResearch(*i);			// But doesn't that allow rules that are not in the forcedList
+			if (std::find(								// to be researched simply because they have a locked GoF
 					forcedList.begin(),
-					forcedList.end(),
-					gofRule) == forcedList.end())
+					forcedList.end(),					// I think they call that a "code smell".
+					gofRule) == forcedList.end())		// albeit this is preceeded by a check that ensures required-research has been discovered.
 			{
 				return true;
 			}
 		}
 
-		return checkPrerequisiteResearch(resRule);
+		return checkPrerequisiteResearch(resRule); // third check if all prerequisites are discovered.
 	}
 
 	return false;
 }
 
 /**
- * Checks if a RuleResearch has had any of its prerequisites discovered.
+ * Checks if a RuleResearch has had all of its prerequisites discovered.
  * @param resRule - pointer to RuleResearch
  * @return, true if good to go
  */
@@ -1607,33 +1638,6 @@ bool SavedGame::checkPrerequisiteResearch(const RuleResearch* const resRule) con
 	for (std::vector<std::string>::const_iterator
 			i = resRule->getPrerequisites().begin();
 			i != resRule->getPrerequisites().end();
-			++i)
-	{
-		for (std::vector<ResearchGeneral*>::const_iterator
-				j = _research.begin();
-				j != _research.end();
-				++j)
-		{
-			if ((*j)->getStatus() == RG_DISCOVERED
-				&& (*j)->getType() == *i)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-/**
- * Checks if a RuleResearch has had all its required research discovered.
- * @param resRule - pointer to RuleResearch
- * @return, true if good to go
- */
-bool SavedGame::checkRequiredResearch(const RuleResearch* const resRule) const // private.
-{
-	for (std::vector<std::string>::const_iterator
-			i = resRule->getRequiredResearch().begin();
-			i != resRule->getRequiredResearch().end();
 			++i)
 	{
 		for (std::vector<ResearchGeneral*>::const_iterator

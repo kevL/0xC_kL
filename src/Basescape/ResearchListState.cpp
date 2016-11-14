@@ -81,7 +81,7 @@ ResearchListState::ResearchListState(
 	_lstResearch->setBackground(_window);
 	_lstResearch->setSelectable();
 	_lstResearch->setAlign(ALIGN_CENTER);
-	_lstResearch->onMouseClick(static_cast<ActionHandler>(&ResearchListState::onSelectProject));
+	_lstResearch->onMouseClick(static_cast<ActionHandler>(&ResearchListState::lstStartClick));
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ResearchListState::btnCancelClick));
@@ -124,14 +124,14 @@ void ResearchListState::btnCancelClick(Action*)
  * @note If an offline ResearchProject is selected the spent & cost values are preserved.
  * @param action - pointer to an Action
  */
-void ResearchListState::onSelectProject(Action*) // private.
+void ResearchListState::lstStartClick(Action*) // private.
 {
 	_scroll = _lstResearch->getScroll();
 
 	if (static_cast<int>(_lstResearch->getSelectedRow()) > _cutoff)	// new project
 		_game->pushState(new ResearchInfoState(
 											_base,
-											_resRules[static_cast<size_t>(static_cast<int>(_lstResearch->getSelectedRow()) - (_cutoff + 1))]));
+											_unlocked[static_cast<size_t>(static_cast<int>(_lstResearch->getSelectedRow()) - (_cutoff + 1))]));
 	else
 		_game->pushState(new ResearchInfoState(						// offline project reactivation.
 											_base,
@@ -146,7 +146,7 @@ void ResearchListState::fillProjectList() // private.
 {
 	_cutoff = -1;
 	_offlineProjects.clear();
-	_resRules.clear();
+	_unlocked.clear();
 	_lstResearch->clearList();
 
 	size_t r (0u);
@@ -177,10 +177,10 @@ void ResearchListState::fillProjectList() // private.
 	const Uint8 color (_lstResearch->getSecondaryColor());
 	std::string type;
 
-	_game->getSavedGame()->tabulateOpenResearchProjects(_resRules, _base); // fills '_resRules'
+	_game->getSavedGame()->tabulateOpenResearchProjects(_unlocked, _base);
 	for (std::vector<const RuleResearch*>::const_iterator
-			i = _resRules.begin();
-			i != _resRules.end();
+			i = _unlocked.begin();
+			i != _unlocked.end();
 			)
 	{
 		if ((*i)->getCost() != 0)
@@ -196,8 +196,8 @@ void ResearchListState::fillProjectList() // private.
 			++r;
 			++i;
 		}
-		else						// no-cost project.
-			i = _resRules.erase(i);	// erase it so it doesn't show up in ResearchInfoState list either.
+		else						// fake project.
+			i = _unlocked.erase(i);	// erase it so it doesn't show up in ResearchInfoState list either.
 	}
 }
 

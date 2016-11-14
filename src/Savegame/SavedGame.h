@@ -195,24 +195,24 @@ private:
 		_income,
 		_maintenance;
 
-	std::vector<AlienBase*> _alienBases;
-	std::vector<AlienMission*> _activeMissions;
-	std::vector<Base*> _bases;
-	std::vector<Country*> _countries;
-	std::vector<TerrorSite*> _terrorSites;
-	std::vector<MissionStatistics*> _missionStatistics;
-	std::vector<Region*> _regions;
-	std::vector<ResearchGeneral*> _research;
-	std::vector<SoldierDead*> _deadSoldiers;
-	std::vector<Ufo*> _ufos;
-	std::vector<Waypoint*> _waypoints;
+	std::vector<AlienBase*>			_alienBases;
+	std::vector<AlienMission*>		_activeMissions;
+	std::vector<Base*>				_bases;
+	std::vector<Country*>			_countries;
+	std::vector<TerrorSite*>		_terrorSites;
+	std::vector<MissionStatistics*>	_missionStatistics;
+	std::vector<Region*>			_regions;
+	std::vector<ResearchGeneral*>	_research;
+	std::vector<SoldierDead*>		_deadSoldiers;
+	std::vector<Ufo*>				_ufos;
+	std::vector<Waypoint*>			_waypoints;
 
+	/// Checks if a RuleResearch has had all of its required-research discovered.
+	bool checkRequiredResearch(const RuleResearch* const resRule) const;
 	/// Checks if a ResearchProject can be started.
 	bool isProjectOpen(const RuleResearch* const resRule) const;
-	/// Checks if a RuleResearch has had any of its prerequisites discovered.
+	/// Checks if a RuleResearch has had all of its prerequisites discovered.
 	bool checkPrerequisiteResearch(const RuleResearch* const resRule) const;
-	/// Checks if a RuleResearch has had all its required research discovered.
-	bool checkRequiredResearch(const RuleResearch* const resRule) const;
 	/// Tabulates a list with the forced-dependents of completed ResearchProjects.
 	void tabulateForcedResearch(std::vector<const RuleResearch*>& forced) const;
 	/// Tabulates a list with available ResearchProjects when a project is completed.

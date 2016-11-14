@@ -58,10 +58,10 @@ private:
 	Window* _window;
 
 	std::vector<ResearchProject*> _offlineProjects;
-	std::vector<const RuleResearch*> _resRules;
+	std::vector<const RuleResearch*> _unlocked;
 
 	/// Opens a window to assign scientists.
-	void onSelectProject(Action* action);
+	void lstStartClick(Action* action);
 	/// Fills the ResearchProject list with possible ResearchProjects.
 	void fillProjectList();
 

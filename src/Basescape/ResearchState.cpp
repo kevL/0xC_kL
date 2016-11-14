@@ -82,7 +82,7 @@ ResearchState::ResearchState(
 	_lstResearch	= new TextList(288, 105, 16, 64);
 
 	_btnAliens		= new TextButton(92, 16,  16, 177);
-	_btnNew			= new TextButton(92, 16, 114, 177);
+	_btnProjects	= new TextButton(92, 16, 114, 177);
 	_btnOk			= new TextButton(92, 16, 212, 177);
 
 	setInterface("researchMenu");
@@ -100,7 +100,7 @@ ResearchState::ResearchState(
 	add(_txtProgress,	"text",		"researchMenu");
 	add(_lstResearch,	"list",		"researchMenu");
 	add(_btnAliens,		"button",	"researchMenu");
-	add(_btnNew,		"button",	"researchMenu");
+	add(_btnProjects,	"button",	"researchMenu");
 	add(_btnOk,			"button",	"researchMenu");
 
 	centerSurfaces();
@@ -131,8 +131,8 @@ ResearchState::ResearchState(
 	_btnAliens->setText(tr("STR_ALIENS"));
 	_btnAliens->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnAliensClick));
 
-	_btnNew->setText(tr("STR_NEW_PROJECT"));
-	_btnNew->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnResearchClick));
+	_btnProjects->setText(tr("STR_NEW_PROJECT"));
+	_btnProjects->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnResearchClick));
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ResearchState::btnOkClick));
@@ -218,6 +218,28 @@ void ResearchState::init()
 							.arg(_base->getFreeLaboratories()));
 
 	_btnAliens->setVisible(_base->hasContainment() == true);
+
+	bool vis (false);
+	for (std::vector<ResearchProject*>::const_iterator
+			i = _base->getResearch().begin();
+			i != _base->getResearch().end();
+			++i)
+	{
+		if ((*i)->getOffline() == true)
+		{
+			vis = true;
+			break;
+		}
+	}
+
+	if (vis == false)
+	{
+		std::vector<const RuleResearch*> unlocked;
+		_game->getSavedGame()->tabulateOpenResearchProjects(unlocked, _base);
+		vis = (unlocked.empty() == false);
+	}
+
+	_btnProjects->setVisible(vis);
 }
 
 /**

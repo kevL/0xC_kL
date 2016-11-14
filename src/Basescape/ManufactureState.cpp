@@ -87,7 +87,7 @@ ManufactureState::ManufactureState(
 	_lstManufacture	= new TextList(285, 81, 16,  71);
 	_lstResources	= new TextList(285, 17, 16, 156);
 
-	_btnNew			= new TextButton(134, 16,  16, 177);
+	_btnProjects	= new TextButton(134, 16,  16, 177);
 	_btnOk			= new TextButton(134, 16, 170, 177);
 
 	setInterface("manufactureMenu");
@@ -108,7 +108,7 @@ ManufactureState::ManufactureState(
 	add(_txtDuration,		"text2",	"manufactureMenu");
 	add(_lstManufacture,	"list",		"manufactureMenu");
 	add(_lstResources,		"list",		"manufactureMenu");
-	add(_btnNew,			"button",	"manufactureMenu");
+	add(_btnProjects,		"button",	"manufactureMenu");
 	add(_btnOk,				"button",	"manufactureMenu");
 
 	centerSurfaces();
@@ -136,8 +136,8 @@ ManufactureState::ManufactureState(
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
-	_btnNew->setText(tr("STR_NEW_PRODUCTION"));
-	_btnNew->onMouseClick(static_cast<ActionHandler>(&ManufactureState::btnManufactureClick));
+	_btnProjects->setText(tr("STR_NEW_PRODUCTION"));
+	_btnProjects->onMouseClick(static_cast<ActionHandler>(&ManufactureState::btnManufactureClick));
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ManufactureState::btnOkClick));
@@ -304,6 +304,10 @@ void ManufactureState::init()
 	_lstResources->setCellText(1u,1u, Text::intWide(qtyE));
 	_lstResources->setCellText(0u,3u, Text::intWide(totalA));
 	_lstResources->setCellText(1u,3u, Text::intWide(totalE));
+
+	std::vector<const RuleManufacture*> unlocked;
+	_game->getSavedGame()->tabulateAvailableManufacture(unlocked, _base);
+	_btnProjects->setVisible(unlocked.empty() == false);
 }
 
 /**

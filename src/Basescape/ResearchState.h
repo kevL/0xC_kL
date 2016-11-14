@@ -60,7 +60,7 @@ private:
 		* _txtTitle;
 	TextButton
 		* _btnAliens,
-		* _btnNew,
+		* _btnProjects,
 		* _btnOk;
 	TextList* _lstResearch;
 	Window* _window;

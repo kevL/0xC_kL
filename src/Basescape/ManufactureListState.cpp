@@ -196,21 +196,16 @@ void ManufactureListState::lstStartClick(Action*)
 {
 	_scroll = _lstManufacture->getScroll();
 
-	const RuleManufacture* mfRule (nullptr);
-	for (std::vector<const RuleManufacture*>::iterator
-			i = _unlocked.begin();
+	std::vector<const RuleManufacture*>::const_iterator i (_unlocked.begin());
+	for (
+			;
 			i != _unlocked.end();
 			++i)
 	{
 		if ((*i)->getType() == _unlockedTypes[_lstManufacture->getSelectedRow()])
-		{
-			mfRule = *i;
 			break;
-		}
 	}
-
-	if (mfRule != nullptr) // safety.
-		_game->pushState(new ManufactureStartState(_base, mfRule));
+	_game->pushState(new ManufactureStartState(_base, *i));
 }
 
 /**

@@ -496,7 +496,7 @@ void StartState::doDosart() // private.
 		}
 		else if (_dosStep % 60 == 0)
 		{
-			if (_dosStep == 1860) // roughly.
+			if (_dosStep == 2100) // roughly.
 				addNewline();
 
 			addWait();

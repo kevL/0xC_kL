@@ -62,7 +62,7 @@ private:
 		* _txtDuration,
 		* _txtTitle;
 	TextButton
-		* _btnNew,
+		* _btnProjects,
 		* _btnOk;
 	TextList
 		* _lstManufacture,
