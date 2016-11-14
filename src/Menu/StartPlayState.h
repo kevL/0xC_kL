@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_NEWGAMESTATE_H
-#define OPENXCOM_NEWGAMESTATE_H
+#ifndef OPENXCOM_STARTPLAYSTATE_H
+#define OPENXCOM_STARTPLAYSTATE_H
 
 #include "../Engine/State.h"
 
@@ -33,9 +33,9 @@ class Window;
 
 
 /**
- * A new-game window that displays the list of possible difficulties.
+ * A StartPlay window that displays the list of possible difficulties.
  */
-class NewGameState
+class StartPlayState
 	:
 		public State
 {
@@ -58,10 +58,10 @@ private:
 
 
 	public:
-		/// Creates a NewGame state.
-		NewGameState();
-		/// Cleans up the NewGame state.
-		~NewGameState();
+		/// Creates a StartPlay state.
+		StartPlayState();
+		/// Cleans up the StartPlay state.
+		~StartPlayState();
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);

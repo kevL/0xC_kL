@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NewGameState.h"
+#include "StartPlayState.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -42,9 +42,9 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the new-game window.
+ * Initializes all the elements in the StartPlay window.
  */
-NewGameState::NewGameState()
+StartPlayState::StartPlayState()
 {
 	_window			= new Window(this, 192, 180, 64, 10, POPUP_VERTICAL);
 
@@ -108,29 +108,29 @@ NewGameState::NewGameState()
 	_txtIronman->setVerticalAlign(ALIGN_MIDDLE);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewGameState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewGameState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&StartPlayState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StartPlayState::btnOkClick),
 							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewGameState::btnOkClick),
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&StartPlayState::btnOkClick),
 							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&NewGameState::btnCancelClick));
-	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&NewGameState::btnCancelClick),
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&StartPlayState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&StartPlayState::btnCancelClick),
 								Options::keyCancel);
 }
 
 /**
  * dTor.
  */
-NewGameState::~NewGameState()
+StartPlayState::~StartPlayState()
 {}
 
 /**
  * Sets up a SavedGame and jumps to the Geoscape.
  * @param action - pointer to an Action
  */
-void NewGameState::btnOkClick(Action*)
+void StartPlayState::btnOkClick(Action*)
 {
 	DifficultyLevel diff;
 
@@ -161,7 +161,7 @@ void NewGameState::btnOkClick(Action*)
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void NewGameState::btnCancelClick(Action*)
+void StartPlayState::btnCancelClick(Action*)
 {
 	_game->setSavedGame();
 	_game->popState();

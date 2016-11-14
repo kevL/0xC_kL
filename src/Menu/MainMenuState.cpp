@@ -23,9 +23,9 @@
 
 #include "IntroState.h"
 #include "ListLoadState.h"
-#include "QuickBattleState.h"
-#include "NewGameState.h"
 #include "OptionsVideoState.h"
+#include "QuickBattleState.h"
+#include "StartPlayState.h"
 
 #include "../version.h"
 
@@ -95,13 +95,13 @@ MainMenuState::MainMenuState()
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnStart->setText(tr("STR_NEW_GAME"));
-	_btnStart->onMouseClick(	static_cast<ActionHandler>(&MainMenuState::btnNewGameClick));
-	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnNewGameClick),
+	_btnStart->onMouseClick(	static_cast<ActionHandler>(&MainMenuState::btnStartPlayClick));
+	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnStartPlayClick),
 								SDLK_n);
 
 	_btnTactical->setText(tr("STR_NEW_BATTLE"));
-	_btnTactical->onMouseClick(		static_cast<ActionHandler>(&MainMenuState::btnNewBattleClick));
-	_btnTactical->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnNewBattleClick),
+	_btnTactical->onMouseClick(		static_cast<ActionHandler>(&MainMenuState::btnQuickBattleClick));
+	_btnTactical->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnQuickBattleClick),
 									SDLK_t);
 
 	_btnLoad->setText(tr("STR_LOAD_SAVED_GAME"));
@@ -164,25 +164,25 @@ void MainMenuState::init()
 } */
 
 /**
- * Opens the New Game window.
+ * Opens the StartPlay window.
  * @param action - pointer to an Action
  */
-void MainMenuState::btnNewGameClick(Action*)
+void MainMenuState::btnStartPlayClick(Action*)
 {
-	_game->pushState(new NewGameState());
+	_game->pushState(new StartPlayState());
 }
 
 /**
- * Opens the New Battle screen.
+ * Opens the QuickBattle screen.
  * @param action - pointer to an Action
  */
-void MainMenuState::btnNewBattleClick(Action*)
+void MainMenuState::btnQuickBattleClick(Action*)
 {
 	_game->pushState(new QuickBattleState());
 }
 
 /**
- * Opens the Load Game screen.
+ * Opens the LoadGame screen.
  * @param action - pointer to an Action
  */
 void MainMenuState::btnLoadClick(Action*)

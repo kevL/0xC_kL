@@ -63,11 +63,11 @@ private:
 		/// Initializes the state.
 //		void init() override;
 
-		/// Handler for clicking the New Game button.
-		void btnNewGameClick(Action* action);
-		/// Handler for clicking the New Battle button.
-		void btnNewBattleClick(Action* action);
-		/// Handler for clicking the Load Saved Game button.
+		/// Handler for clicking the StartPlay button.
+		void btnStartPlayClick(Action* action);
+		/// Handler for clicking the QuickBattle button.
+		void btnQuickBattleClick(Action* action);
+		/// Handler for clicking the LoadSaved button.
 		void btnLoadClick(Action* action);
 		/// Handler for clicking the Options button.
 //		void btnOptionsClick(Action* action);
