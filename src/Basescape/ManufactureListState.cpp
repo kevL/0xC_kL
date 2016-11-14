@@ -118,7 +118,7 @@ ManufactureListState::ManufactureListState(
 	_categoryTypes.push_back(ALL_ITEMS); // #0
 
 	std::string cat;
-	_game->getSavedGame()->tabulateAvailableManufacture(_unlocked, _base);
+	_game->getSavedGame()->tabulateStartableManufacture(_unlocked, _base);
 	for (std::vector<const RuleManufacture*>::const_iterator
 			i = _unlocked.begin();
 			i != _unlocked.end();
@@ -228,7 +228,7 @@ void ManufactureListState::fillProjectList() // private.
 	_unlocked.clear();
 	_unlockedTypes.clear();
 
-	_game->getSavedGame()->tabulateAvailableManufacture(_unlocked, _base);
+	_game->getSavedGame()->tabulateStartableManufacture(_unlocked, _base);
 	for (std::vector<const RuleManufacture*>::const_iterator
 			i = _unlocked.begin();
 			i != _unlocked.end();

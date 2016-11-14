@@ -306,7 +306,7 @@ void ManufactureState::init()
 	_lstResources->setCellText(1u,3u, Text::intWide(totalE));
 
 	std::vector<const RuleManufacture*> unlocked;
-	_game->getSavedGame()->tabulateAvailableManufacture(unlocked, _base);
+	_game->getSavedGame()->tabulateStartableManufacture(unlocked, _base);
 	_btnProjects->setVisible(unlocked.empty() == false);
 }
 

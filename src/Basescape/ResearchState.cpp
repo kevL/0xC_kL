@@ -235,7 +235,7 @@ void ResearchState::init()
 	if (vis == false)
 	{
 		std::vector<const RuleResearch*> unlocked;
-		_game->getSavedGame()->tabulateOpenResearchProjects(unlocked, _base);
+		_game->getSavedGame()->tabulateStartableResearch(unlocked, _base);
 		vis = (unlocked.empty() == false);
 	}
 

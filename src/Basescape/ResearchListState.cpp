@@ -177,7 +177,7 @@ void ResearchListState::fillProjectList() // private.
 	const Uint8 color (_lstResearch->getSecondaryColor());
 	std::string type;
 
-	_game->getSavedGame()->tabulateOpenResearchProjects(_unlocked, _base);
+	_game->getSavedGame()->tabulateStartableResearch(_unlocked, _base);
 	for (std::vector<const RuleResearch*>::const_iterator
 			i = _unlocked.begin();
 			i != _unlocked.end();

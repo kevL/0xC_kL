@@ -2861,10 +2861,10 @@ void GeoscapeState::time1Day()
 
 
 				std::vector<const RuleResearch*> popupResearch;
-				_gameSave->getPopupResearch(
-										popupResearch,
-										resRule,
-										*i);
+				_gameSave->tabulatePopupResearch(
+											popupResearch,
+											resRule,
+											*i);
 
 				for (std::vector<const RuleResearch*>::const_iterator
 						k = popupResearch.begin();
@@ -2882,9 +2882,9 @@ void GeoscapeState::time1Day()
 				}
 
 				std::vector<const RuleManufacture*> popupManufacture;
-				_gameSave->getPopupManufacture(
-											popupManufacture,
-											resRule);
+				_gameSave->tabulatePopupManufacture(
+												popupManufacture,
+												resRule);
 
 				if (resRulePedia != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
 				{

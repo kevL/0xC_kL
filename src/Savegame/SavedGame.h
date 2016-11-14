@@ -207,17 +207,19 @@ private:
 	std::vector<Ufo*>				_ufos;
 	std::vector<Waypoint*>			_waypoints;
 
+	/// Adds a finished ResearchProject to the list of discovered-research.
+	void addDiscoveredResearch(const RuleResearch* const resRule);
 	/// Checks if a RuleResearch has had all of its required-research discovered.
 	bool checkRequiredResearch(const RuleResearch* const resRule) const;
 	/// Checks if a ResearchProject can be started.
 	bool isProjectOpen(const RuleResearch* const resRule) const;
 	/// Checks if a RuleResearch has had all of its prerequisites discovered.
 	bool checkPrerequisiteResearch(const RuleResearch* const resRule) const;
-	/// Tabulates a list with the forced-dependents of completed ResearchProjects.
+	/// Tabulates a list of the forced-dependents of all discovered Research.
 	void tabulateForcedResearch(std::vector<const RuleResearch*>& forced) const;
-	/// Tabulates a list with available ResearchProjects when a project is completed.
-	void getDependentResearchBasic(
-			std::vector<const RuleResearch*>& dependents,
+	/// Tabulates a list of Research projects that appears when research is discovered.
+	void tabulateDependentResearch(
+			std::vector<const RuleResearch*>& projects,
 			const RuleResearch* const resRule,
 			Base* const base) const;
 	///
@@ -374,28 +376,26 @@ private:
 				const RuleResearch* const resRule,
 				const ResearchStatus status = RG_DISCOVERED);
 
-		/// Adds a finished ResearchProject.
-		void addFinishedResearch(const RuleResearch* const resRule);
 		/// Tabulates a list of ResearchProjects that can be started at a Base.
-		void tabulateOpenResearchProjects(
+		void tabulateStartableResearch(
 				std::vector<const RuleResearch*>& projects,
 				Base* const base) const;
 		/// Tabulates a list of Manufacture that can be started at a Base.
-		void tabulateAvailableManufacture(
+		void tabulateStartableManufacture(
 				std::vector<const RuleManufacture*>& projects,
 				const Base* const base) const;
 		/// Tabulates a list of ResearchProjects that appears when a ResearchProject is completed.
-		void getPopupResearch(
-				std::vector<const RuleResearch*>& dependents,
+		void tabulatePopupResearch(
+				std::vector<const RuleResearch*>& projects,
 				const RuleResearch* const resRule,
 				Base* const base) const;
-		/// Tabulates a list of Manufacture that appears when a ResearchProject is completed.
-		void getPopupManufacture(
-				std::vector<const RuleManufacture*>& dependents,
+		/// Tabulates a list of Manufacture projects that appears when research is discovered.
+		void tabulatePopupManufacture(
+				std::vector<const RuleManufacture*>& projects,
 				const RuleResearch* const resRule) const;
-		/// Checks if a ResearchProject is discovered.
+		/// Checks if a research-type is discovered.
 		bool isResearched(const std::string& resType) const;
-		/// Checks if a list of ResearchProjects is all discovered.
+		/// Checks if a list of research-types have all been discovered.
 		bool isResearched(const std::vector<std::string>& resTypes) const;
 
 		/// Gets the Soldier matching an ID.
