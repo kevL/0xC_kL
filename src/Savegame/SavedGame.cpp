@@ -1635,8 +1635,8 @@ bool SavedGame::isProjectOpen(const RuleResearch* const resRule) const // privat
 bool SavedGame::checkPrerequisiteResearch(const RuleResearch* const resRule) const // private.
 {
 	for (std::vector<std::string>::const_iterator
-			i = resRule->getPrerequisites().begin();
-			i != resRule->getPrerequisites().end();
+			i = resRule->getPrerequisiteResearch().begin();
+			i != resRule->getPrerequisiteResearch().end();
 			++i)
 	{
 		for (std::vector<ResearchGeneral*>::const_iterator
@@ -1730,9 +1730,9 @@ void SavedGame::tabulatePopupResearch(
 		if ((*i)->getStatus() == RG_DISCOVERED
 			&& (*i)->getRules()->getCost() == 0
 			&& std::find(
-					(*i)->getRules()->getPrerequisites().begin(),
-					(*i)->getRules()->getPrerequisites().end(),
-					resRule->getType()) != (*i)->getRules()->getPrerequisites().end())
+					(*i)->getRules()->getPrerequisiteResearch().begin(),
+					(*i)->getRules()->getPrerequisiteResearch().end(),
+					resRule->getType()) != (*i)->getRules()->getPrerequisiteResearch().end())
 		{
 			tabulateDependentResearch(projects, (*i)->getRules(), base);
 		}
@@ -1754,25 +1754,25 @@ void SavedGame::tabulateDependentResearch( // private.
 		Base* const base) const
 {
 	std::vector<const RuleResearch*> startableProjects;
-	tabulateStartableResearch(startableProjects, base); // <---|			should be: any research that
+	tabulateStartableResearch(startableProjects, base); // <---|					should be: any research that
 
-	for (std::vector<const RuleResearch*>::const_iterator					//	(1) has any of its prerequisites discovered
-			i = startableProjects.begin();									//	(2) or has been forced,
-			i != startableProjects.end();									//	(3) and has all its requirements discovered -
-			++i)															//	(4) but has *not* been discovered itself.
+	for (std::vector<const RuleResearch*>::const_iterator							//	(1) has any of its prerequisites discovered
+			i = startableProjects.begin();											//	(2) or has been forced,
+			i != startableProjects.end();											//	(3) and has all its requirements discovered -
+			++i)																	//	(4) but has *not* been discovered itself.
 	{
 		if (std::find(
-					(*i)->getPrerequisites().begin(),
-					(*i)->getPrerequisites().end(),
-					resRule->getType()) != (*i)->getPrerequisites().end()	// if a startableProject has resRule as a prerequisite
+					(*i)->getPrerequisiteResearch().begin(),
+					(*i)->getPrerequisiteResearch().end(),
+					resRule->getType()) != (*i)->getPrerequisiteResearch().end()	// if a startableProject has resRule as a prerequisite
 			|| std::find(
 					(*i)->getForcedResearch().begin(),
 					(*i)->getForcedResearch().end(),
-					resRule->getType()) != (*i)->getForcedResearch().end())	// or a startableProject forces resRule
+					resRule->getType()) != (*i)->getForcedResearch().end())			// or a startableProject forces resRule
 		{
-			projects.push_back(*i);											// push_back the startableProject as a dependent
+			projects.push_back(*i);													// push_back the startableProject as a dependent
 
-			if ((*i)->getCost() == 0)										// and if that's a fake-research -> repeat
+			if ((*i)->getCost() == 0)												// and if that's a fake-research -> repeat
 				tabulateDependentResearch(projects, *i, base);
 		}
 	}

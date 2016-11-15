@@ -101,7 +101,7 @@ int RuleResearch::getPoints() const
  * Gets the prerequisites for this RuleResearch.
  * @return, reference to a vector of research-type strings
  */
-const std::vector<std::string>& RuleResearch::getPrerequisites() const
+const std::vector<std::string>& RuleResearch::getPrerequisiteResearch() const
 {
 	return _prerequisite;
 }

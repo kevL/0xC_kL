@@ -116,7 +116,7 @@ private:
 		int getPoints() const;
 
 		/// Gets the prerequisites for the RuleResearch.
-		const std::vector<std::string>& getPrerequisites() const;
+		const std::vector<std::string>& getPrerequisiteResearch() const;
 
 		/// Gets the absolute requirements for the RuleResearch.
 		const std::vector<std::string>& getRequiredResearch() const;
