@@ -1301,7 +1301,7 @@ std::vector<ResearchGeneral*>& SavedGame::getResearchGenerals()
 }
 
 /**
- * Searches through ResearchGenerals for specified research-type & status.
+ * Searches through the ResearchGenerals for a specified research-type & status.
  * @param type		- reference to a research-type
  * @param status	- ResearchStatus (default RG_DISCOVERED) (ResearchGeneral.h)
  * @return, true if found
@@ -1322,13 +1322,13 @@ bool SavedGame::searchResearch(
 }
 
 /**
- * Searches through ResearchGenerals for specified research-rule & status.
+ * Searches through the ResearchGenerals for a specified research-rule & status.
  * @param resRule	- pointer to a RuleResearch
  * @param status	- ResearchStatus (default RG_DISCOVERED) (ResearchGeneral.h)
  * @return, true if found
  */
 bool SavedGame::searchResearch(
-		const RuleResearch* resRule,
+		const RuleResearch* const resRule,
 		const ResearchStatus status) const
 {
 	for (std::vector<ResearchGeneral*>::const_iterator
@@ -1366,7 +1366,7 @@ bool SavedGame::setResearchStatus(
 			(*i)->setStatus(status);
 			if (status == RG_DISCOVERED)
 			{
-				const std::string uPed ((*i)->getRules()->getUfopaediaEntry());
+				const std::string& uPed ((*i)->getRules()->getUfopaediaEntry());
 				if (uPed != type)
 					setResearchStatus(_rules->getResearch(uPed));
 			}
@@ -1400,7 +1400,7 @@ bool SavedGame::setResearchStatus(
 			(*i)->setStatus(status);
 			if (status == RG_DISCOVERED)
 			{
-				const std::string uPed (resRule->getUfopaediaEntry());
+				const std::string& uPed (resRule->getUfopaediaEntry());
 				if (uPed != resRule->getType())
 					setResearchStatus(_rules->getResearch(uPed));
 			}
@@ -1411,42 +1411,40 @@ bool SavedGame::setResearchStatus(
 }
 
 /**
- * Adds a finished ResearchProject to the list of discovered-research.
- * @note Also adds fake-projects as discovered.
+ * Adds a discovered ResearchProject to the list of discovered-research.
+ * @note Also searches dependent-research for fake-projects to discover.
  * @param resRule - pointer to a newly discovered RuleResearch
  */
-void SavedGame::addDiscoveredResearch(const RuleResearch* const resRule) // private.
+void SavedGame::addDiscoveredResearch(const RuleResearch* const resRule)
 {
 	if (setResearchStatus(resRule) == true)
 	{
 		_researchScores.back() += resRule->getPoints();
 
-		std::vector<const RuleResearch*> dependentProjects;
+		std::vector<const RuleResearch*> dependents;
 		for (std::vector<Base*>::const_iterator
 				i = _bases.begin();
 				i != _bases.end();
 				++i)
 		{
-			tabulateDependentResearch(dependentProjects, resRule, *i);
+			tabulateDependentResearch(dependents, resRule, *i);
 		}
 
-		const std::vector<std::string>* reqResearch;
+		const std::vector<std::string>* required;
 		for (std::vector<const RuleResearch*>::const_iterator // add fake-research ->
-				i = dependentProjects.begin();
-				i != dependentProjects.end();
+				i = dependents.begin();
+				i != dependents.end();
 				++i)
 		{
 			if ((*i)->getCost() == 0) // fake-research
 			{
-				reqResearch = &((*i)->getRequiredResearch()); // gawd i hate c++
-				if (reqResearch->empty() == true)
-					addDiscoveredResearch(*i);
-				else
+				required = &((*i)->getRequiredResearch()); // gawd i hate c++
+				if (required->empty() == false)
 				{
 					size_t id (0u);
 					for (std::vector<std::string>::const_iterator
-							j = reqResearch->begin();
-							j != reqResearch->end();
+							j = required->begin();
+							j != required->end();
 							++j, ++id)
 					{
 //						if (*j == reqResearch->at(id))	// wtf this. would that always be true.
@@ -1456,7 +1454,48 @@ void SavedGame::addDiscoveredResearch(const RuleResearch* const resRule) // priv
 							addDiscoveredResearch(*i);
 					}
 				}
+				else
+					addDiscoveredResearch(*i);
 			}
+		}
+	}
+}
+
+/**
+ * Tabulates a list of dependent-research from a specified RuleResearch.
+ * @note This does not check for fake-research.
+ * @note Called from addDiscoveredResearch(), tabulatePopupResearch(), and itself.
+ * @param dependents	- reference to a vector of pointers to the RuleResearch's
+ *						  that are newly unlocked
+ * @param resRule		- pointer to the RuleResearch that has just been discovered
+ * @param base			- pointer to a Base
+ */
+void SavedGame::tabulateDependentResearch( // private.
+		std::vector<const RuleResearch*>& dependents,
+		const RuleResearch* const resRule,
+		Base* const base) const
+{
+	std::vector<const RuleResearch*> startableProjects;
+	tabulateStartableResearch(startableProjects, base); //				<---|	should be: any research that
+
+	for (std::vector<const RuleResearch*>::const_iterator						// (1) has all of its requisites discovered
+			i = startableProjects.begin();										// (2) or has been requested,
+			i != startableProjects.end();										// (3) and has all its required-research discovered --
+			++i)																// (4) but has *not* been discovered itself.
+	{
+		if (std::find(
+					(*i)->getRequisiteResearch().begin(),
+					(*i)->getRequisiteResearch().end(),
+					resRule->getType()) != (*i)->getRequisiteResearch().end()	// if a project has resRule as a requisite
+			|| std::find(
+					(*i)->getRequestedResearch().begin(),
+					(*i)->getRequestedResearch().end(),
+					resRule->getType()) != (*i)->getRequestedResearch().end())	// or a project requests the resRule
+		{
+			dependents.push_back(*i);											// push_back the dependent as a startableProject
+
+			if ((*i)->getCost() == 0)											// and if that's a fake-research -> repeat
+				tabulateDependentResearch(dependents, *i, base);
 		}
 	}
 }
@@ -1534,8 +1573,8 @@ void SavedGame::tabulateStartableResearch(
 			if (cullProject == true)
 			{
 				for (std::vector<std::string>::const_iterator
-						j = resRule->getForcedResearch().begin();
-						j != resRule->getForcedResearch().end();
+						j = resRule->getRequestedResearch().begin();
+						j != resRule->getRequestedResearch().end();
 						++j)
 				{
 					if (searchResearch(
@@ -1595,7 +1634,7 @@ bool SavedGame::isProjectOpen(const RuleResearch* const resRule) const // privat
 	if (resRule != nullptr)
 	{
 		std::vector<const RuleResearch*> forcedList;
-		tabulateForcedResearch(forcedList);
+		tabulateRequestedResearch(forcedList);
 
 		if (std::find( // first check if the rule is in the forcedList ->
 				forcedList.begin(),
@@ -1621,22 +1660,22 @@ bool SavedGame::isProjectOpen(const RuleResearch* const resRule) const // privat
 			}
 		}
 
-		return checkPrerequisiteResearch(resRule); // third check if all prerequisites are discovered.
+		return checkRequisiteResearch(resRule); // third check if all prerequisites are discovered.
 	}
 
 	return false;
 }
 
 /**
- * Checks if a RuleResearch has had all of its prerequisites discovered.
+ * Checks if a specified RuleResearch has had all of its requisites discovered.
  * @param resRule - pointer to RuleResearch
  * @return, true if good to go
  */
-bool SavedGame::checkPrerequisiteResearch(const RuleResearch* const resRule) const // private.
+bool SavedGame::checkRequisiteResearch(const RuleResearch* const resRule) const // private.
 {
 	for (std::vector<std::string>::const_iterator
-			i = resRule->getPrerequisiteResearch().begin();
-			i != resRule->getPrerequisiteResearch().end();
+			i = resRule->getRequisiteResearch().begin();
+			i != resRule->getRequisiteResearch().end();
 			++i)
 	{
 		for (std::vector<ResearchGeneral*>::const_iterator
@@ -1655,10 +1694,10 @@ bool SavedGame::checkPrerequisiteResearch(const RuleResearch* const resRule) con
 }
 
 /**
- * Tabulates a list of the forced-dependents of all discovered Research.
+ * Tabulates a list of the requested-dependents of all discovered-research.
  * @param forced - reference to a vector to fill with pointers to RuleResearch
  */
-void SavedGame::tabulateForcedResearch(std::vector<const RuleResearch*>& forced) const // private.
+void SavedGame::tabulateRequestedResearch(std::vector<const RuleResearch*>& forced) const // private.
 {
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i = _research.begin();
@@ -1668,11 +1707,11 @@ void SavedGame::tabulateForcedResearch(std::vector<const RuleResearch*>& forced)
 		if ((*i)->getStatus() == RG_DISCOVERED)
 		{
 			for (std::vector<std::string>::const_iterator
-					j = (*i)->getRules()->getForcedResearch().begin();
-					j != (*i)->getRules()->getForcedResearch().end();
+					j = (*i)->getRules()->getRequestedResearch().begin();
+					j != (*i)->getRules()->getRequestedResearch().end();
 					++j)
 			{
-				forced.push_back(_rules->getResearch(*j)); // load up forced-research from completed-research.
+				forced.push_back(_rules->getResearch(*j)); // load up requested-research from discovered-research.
 			}
 		}
 	}
@@ -1708,73 +1747,53 @@ void SavedGame::tabulateStartableManufacture(
 
 /**
  * Tabulates a list of Research projects that appears when research is discovered.
- * @note This checks discovered fake-research and adds any prerequisites.
+ * @note Also checks for discovered fake-research and adds their requisites.
  * @note Called from GeoscapeState::time1Day() for NewPossibleResearchInfo screen.
- * @param projects	- reference to a vector of pointers to the RuleResearch's
- *					  that are newly available
- * @param resRule	- pointer to the RuleResearch that has just been discovered
- * @param base		- pointer to a Base
+ * @param dependents	- reference to a vector of pointers to the RuleResearch's
+ *						  that are newly unlocked
+ * @param resRule		- pointer to the RuleResearch that has just been discovered
+ * @param base			- pointer to a Base
  */
 void SavedGame::tabulatePopupResearch(
-		std::vector<const RuleResearch*>& projects,
+		std::vector<const RuleResearch*>& dependents,
 		const RuleResearch* const resRule,
 		Base* const base) const
 {
-	tabulateDependentResearch(projects, resRule, base);
+	tabulateDependentResearch(dependents, resRule, base);
 
-	for (std::vector<ResearchGeneral*>::const_iterator
+	const RuleResearch* fakeRule;
+	for (std::vector<ResearchGeneral*>::const_iterator // search all discovered fake-research for requisite-research ->
 			i = _research.begin();
 			i != _research.end();
 			++i)
 	{
-		if ((*i)->getStatus() == RG_DISCOVERED
-			&& (*i)->getRules()->getCost() == 0
-			&& std::find(
-					(*i)->getRules()->getPrerequisiteResearch().begin(),
-					(*i)->getRules()->getPrerequisiteResearch().end(),
-					resRule->getType()) != (*i)->getRules()->getPrerequisiteResearch().end())
+		if ((*i)->getStatus() == RG_DISCOVERED)
 		{
-			tabulateDependentResearch(projects, (*i)->getRules(), base);
+			fakeRule = (*i)->getRules();
+			if (fakeRule->getCost() == 0
+				&& std::find(
+						fakeRule->getRequisiteResearch().begin(),
+						fakeRule->getRequisiteResearch().end(),
+						resRule->getType()) != fakeRule->getRequisiteResearch().end())
+			{
+				tabulateDependentResearch(dependents, fakeRule, base);	// include dependent-research of fake-research if resRule
+			}															// is listed in the fake-research's requisite-research
 		}
 	}
-}
 
-/**
- * Tabulates a list of Research projects that appears when research is discovered.
- * @note This does not check for fake research.
- * @note Called from addDiscoveredResearch(), tabulatePopupResearch(), and itself.
- * @param projects	- reference to a vector of pointers to the RuleResearch's
- *					  that are newly available
- * @param resRule	- pointer to the RuleResearch that has just been discovered
- * @param base		- pointer to a Base
- */
-void SavedGame::tabulateDependentResearch( // private.
-		std::vector<const RuleResearch*>& projects,
-		const RuleResearch* const resRule,
-		Base* const base) const
-{
-	std::vector<const RuleResearch*> startableProjects;
-	tabulateStartableResearch(startableProjects, base); // <---|					should be: any research that
-
-	for (std::vector<const RuleResearch*>::const_iterator							//	(1) has any of its prerequisites discovered
-			i = startableProjects.begin();											//	(2) or has been forced,
-			i != startableProjects.end();											//	(3) and has all its requirements discovered -
-			++i)																	//	(4) but has *not* been discovered itself.
+	for (std::vector<const RuleResearch*>::const_iterator
+			i = dependents.begin();
+			i != dependents.end();
+			)
 	{
-		if (std::find(
-					(*i)->getPrerequisiteResearch().begin(),
-					(*i)->getPrerequisiteResearch().end(),
-					resRule->getType()) != (*i)->getPrerequisiteResearch().end()	// if a startableProject has resRule as a prerequisite
-			|| std::find(
-					(*i)->getForcedResearch().begin(),
-					(*i)->getForcedResearch().end(),
-					resRule->getType()) != (*i)->getForcedResearch().end())			// or a startableProject forces resRule
+		if ((*i)->getCost() == 0								// fake
+			|| _rules->getUnitRule((*i)->getType()) != nullptr	// liveAlien
+			|| searchResearch(*i, RG_LOCKED) == false)			// already unlocked
 		{
-			projects.push_back(*i);													// push_back the startableProject as a dependent
-
-			if ((*i)->getCost() == 0)												// and if that's a fake-research -> repeat
-				tabulateDependentResearch(projects, *i, base);
+			i = dependents.erase(i);
 		}
+		else
+			++i;
 	}
 }
 
@@ -1782,7 +1801,7 @@ void SavedGame::tabulateDependentResearch( // private.
  * Tabulates a list of Manufacture projects that appears when research is discovered.
  * @note Even fake-research can grant new Manufacture projects.
  * @param projects	- reference to a vector of pointers to the RuleManufacture's
- *					  that are newly available
+ *					  that are newly unlocked
  * @param resRule	- pointer to the RuleResearch that has just been discovered
  */
 void SavedGame::tabulatePopupManufacture(
@@ -1874,7 +1893,7 @@ Soldier* SavedGame::getSoldier(int id) const
  * Handles the higher promotions - not the rookie-squaddie ones.
  * @param participants - reference to a list of pointers to Soldiers that were
  *						 actually present at the battle
- * @return, true if a Ceremony is to happen
+ * @return, true if a ceremony is to happen
  */
 bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 {
@@ -1994,11 +2013,14 @@ void SavedGame::processSoldier(
 }
 
 /**
- * Checks how many soldiers of a rank exist and which one has the highest score.
- * @param soldiers		- reference a vector of pointers to Soldiers for full list of live soldiers
- * @param participants	- reference a vector of pointers to Soldiers for list of participants on a mission
+ * Searches Soldiers of a specified rank and returns the one with the highest
+ * overall score.
+ * @param soldiers		- reference to a vector of pointers to Soldier
+ *						  containing a list of all live soldiers
+ * @param participants	- reference to a vector of pointers to Soldier
+ *						  containing a list of participants in tactical
  * @param soldierRank	- rank to inspect
- * @return, pointer to the highest ranked soldier
+ * @return, pointer to the highest-ranked soldier
  */
 Soldier* SavedGame::inspectSoldiers(
 		const std::vector<Soldier*>& soldiers,

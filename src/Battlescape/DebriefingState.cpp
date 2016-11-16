@@ -449,11 +449,11 @@ DebriefingState::DebriefingState()
 
 					case STATUS_DEAD:
 						//Log(LOG_INFO) << ". . . dead";
-						sol = nullptr;	// Zero out the BattleUnit from the geoscape Soldiers list
+						sol = nullptr;	// Zero out the BattleUnit from the geoscape-soldiers list
 										// in this State; it's already gone from his/her former Base.
 										// This makes them ineligible for promotion.
-										// PS, there is no "geoscape Soldiers list" really; it's
-										// just a variable stored on each xCom-agent/BattleUnit ....
+										// PS, there is no "geoscape-soldiers list" really; it's
+										// just a pointer stored on each xCom-agent/BattleUnit ....
 
 						solDead = nullptr; // avoid vc++ linker warning.
 						for (std::vector<SoldierDead*>::const_iterator

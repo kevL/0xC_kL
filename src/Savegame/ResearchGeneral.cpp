@@ -40,8 +40,8 @@ ResearchGeneral::ResearchGeneral(
 {
 	if (isQuickBattle == true)
 		_status = RG_DISCOVERED;
-	else if (_resRule->getPrerequisiteResearch().empty() == false
-		&&   _resRule->getPrerequisiteResearch().front() == "STR_UNLOCKED")
+	else if (_resRule->getRequisiteResearch().empty() == false
+		&&   _resRule->getRequisiteResearch().front() == "STR_UNLOCKED")
 	{
 		_status = RG_OPEN;
 	}

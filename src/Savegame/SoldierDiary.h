@@ -145,7 +145,7 @@ private:
 
 		/// Updates the SoldierDiary's statistics.
 		void updateDiary(
-				const BattleUnitStatistics* const diaryStats,
+				BattleUnitStatistics* const diaryStats,
 				const MissionStatistics* const tactical);
 
 		/// Gets the SoldierAwards currently in the SoldierDiary.

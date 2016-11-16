@@ -287,7 +287,7 @@ void UnitSprite::drawRoutine0() // private.
 		femaleTorso	(267),
 		legsStand	( 16),
 		legsKneel	( 24),
-		die			(264),
+		death		(264),
 		legsFloat	(275),
 
 		larmStand	(  0),
@@ -330,7 +330,7 @@ void UnitSprite::drawRoutine0() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + death);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -743,7 +743,7 @@ void UnitSprite::drawRoutine1() // private.
 	static const int // magic static numbers
 		stand (16),
 		walk  (24),
-		die   (64),
+		death (64),
 
 		rarm      ( 0),
 		larm      ( 8),
@@ -764,7 +764,7 @@ void UnitSprite::drawRoutine1() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + death);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -1079,7 +1079,7 @@ void UnitSprite::drawRoutine4() // private.
 	static const int // magic static numbers
 		stand ( 0),
 		walk  ( 8),
-		die   (72),
+		death (72),
 
 		offX[8u]	{ 8, 10,  7,  4, -9,-11, -7, -3 }, // for the weapons
 		offY[8u]	{-6, -3,  0,  2,  0, -4, -7, -9 }, // for the weapons
@@ -1092,7 +1092,7 @@ void UnitSprite::drawRoutine4() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		sprite = _unitSet->getFrame(_unit->getCollapsePhase() + die);
+		sprite = _unitSet->getFrame(_unit->getCollapsePhase() + death);
 		sprite->setX(OFFSET);
 		drawRecolored(sprite);
 		return;
@@ -1254,7 +1254,7 @@ void UnitSprite::drawRoutine6() // private.
 	static const int // magic static numbers
 		body		(24),
 		legsStand	(16),
-		die			(96),
+		death		(96),
 
 		larmStand	(  0),
 		rarmStand	(  8),
@@ -1279,7 +1279,7 @@ void UnitSprite::drawRoutine6() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + death);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -1519,7 +1519,7 @@ void UnitSprite::drawRoutine7() // private.
 	static const int // magic static numbers
 		body		( 24),
 		legsStand	( 16),
-		die			(224),
+		death		(224),
 
 		larmStand	(0),
 		rarmStand	(8),
@@ -1533,7 +1533,7 @@ void UnitSprite::drawRoutine7() // private.
 
 	if (_unit->getUnitStatus() == STATUS_COLLAPSING)
 	{
-		torso = _unitSet->getFrame(_unit->getCollapsePhase() + die);
+		torso = _unitSet->getFrame(_unit->getCollapsePhase() + death);
 		torso->setX(OFFSET);
 		drawRecolored(torso);
 		return;
@@ -1615,9 +1615,9 @@ void UnitSprite::drawRoutine8() // private.
 	_redraw = true;
 
 	static const int // magic static numbers
-		body (0),
-		aim  (5),
-		die  (6),
+		body  (0),
+		aim   (5),
+		death (6),
 
 		pulsate[8u] {0,1,2,3,4,3,2,1};
 
@@ -1626,7 +1626,7 @@ void UnitSprite::drawRoutine8() // private.
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			sprite = _unitSet->getFrame(_unit->getCollapsePhase() + die);
+			sprite = _unitSet->getFrame(_unit->getCollapsePhase() + death);
 			break;
 
 		case STATUS_AIMING:
@@ -1650,7 +1650,7 @@ void UnitSprite::drawRoutine9() // private.
 
 	static const int // magic static numbers
 		body  ( 0),
-		die   (25),
+		death (25),
 		shoot ( 8); // frames 8..23 or ..24 (24 is merely a green ball sprite)
 
 	Surface* sprite;
@@ -1658,7 +1658,7 @@ void UnitSprite::drawRoutine9() // private.
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_COLLAPSING:
-			sprite = _unitSet->getFrame(_unit->getCollapsePhase() + die);
+			sprite = _unitSet->getFrame(_unit->getCollapsePhase() + death);
 			break;
 
 		case STATUS_AIMING:

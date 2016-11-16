@@ -89,10 +89,10 @@ private:
 		_points;
 
 	std::vector<std::string>
-		_forced,
 		_getOneFree,
-		_prerequisite,
-		_reqResearch;
+		_requisite,
+		_required,
+		_requested;
 
 
 	public:
@@ -115,14 +115,14 @@ private:
 		/// Gets the points earned for discovering the RuleResearch.
 		int getPoints() const;
 
-		/// Gets the prerequisites for the RuleResearch.
-		const std::vector<std::string>& getPrerequisiteResearch() const;
+		/// Gets the requisite-research for the RuleResearch.
+		const std::vector<std::string>& getRequisiteResearch() const;
 
-		/// Gets the absolute requirements for the RuleResearch.
+		/// Gets the required-research for the RuleResearch.
 		const std::vector<std::string>& getRequiredResearch() const;
 
-		/// Gets a list of research-types unlocked by the RuleResearch.
-		const std::vector<std::string>& getForcedResearch() const;
+		/// Gets the list of research-types requested when the RuleResearch is discovered.
+		const std::vector<std::string>& getRequestedResearch() const;
 
 		/// Gets a list of research-types granted randomly for free by the RuleResearch.
 		const std::vector<std::string>& getGetOneFree() const;

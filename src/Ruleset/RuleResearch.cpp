@@ -57,10 +57,10 @@ void RuleResearch::load(
 	_uPed			= node["uPed"]			.as<std::string>(_uPed);
 	_cost			= node["cost"]			.as<int>(_cost);
 	_points			= node["points"]		.as<int>(_points);
-	_prerequisite	= node["prerequisite"]	.as<std::vector<std::string>>(_prerequisite);
-	_forced			= node["forced"]		.as<std::vector<std::string>>(_forced);
+	_requisite		= node["requisite"]		.as<std::vector<std::string>>(_requisite);
+	_requested		= node["requested"]		.as<std::vector<std::string>>(_requested);
 	_getOneFree		= node["getOneFree"]	.as<std::vector<std::string>>(_getOneFree);
-	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
+	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_needsItem		= node["needsItem"]		.as<bool>(_needsItem);
 	_destroyItem	= node["destroyItem"]	.as<bool>(_destroyItem);
 	_markSeen		= node["markSeen"]		.as<bool>(_markSeen);
@@ -72,7 +72,7 @@ void RuleResearch::load(
 
 /**
  * Gets the type of this RuleResearch.
- * @return, reference to the type string
+ * @return, reference to the type
  */
 const std::string& RuleResearch::getType() const
 {
@@ -98,35 +98,35 @@ int RuleResearch::getPoints() const
 }
 
 /**
- * Gets the prerequisites for this RuleResearch.
- * @return, reference to a vector of research-type strings
+ * Gets the requisite-research for this RuleResearch.
+ * @return, reference to a vector of research-types
  */
-const std::vector<std::string>& RuleResearch::getPrerequisiteResearch() const
+const std::vector<std::string>& RuleResearch::getRequisiteResearch() const
 {
-	return _prerequisite;
+	return _requisite;
 }
 
 /**
- * Gets the absolute requirements for this RuleResearch.
- * @return, reference to a vector of research-type strings
+ * Gets the required-research for this RuleResearch.
+ * @return, reference to a vector of research-types
  */
 const std::vector<std::string>& RuleResearch::getRequiredResearch() const
 {
-	return _reqResearch;
+	return _required;
 }
 
 /**
- * Gets the list of research-types forced by this RuleResearch.
- * @return, reference to a vector of research-type strings
+ * Gets the list of research-types requested when this RuleResearch is discovered.
+ * @return, reference to a vector of research-types
  */
-const std::vector<std::string>& RuleResearch::getForcedResearch() const
+const std::vector<std::string>& RuleResearch::getRequestedResearch() const
 {
-	return _forced;
+	return _requested;
 }
 
 /**
  * Gets the list of research-types granted at random by this RuleResearch.
- * @return, reference to a vector of research-type strings
+ * @return, reference to a vector of research-types
  */
 const std::vector<std::string>& RuleResearch::getGetOneFree() const
 {

@@ -78,9 +78,9 @@ enum UnitStatus
 enum UnitFaction
 {
 	FACTION_NONE = -1,	//-1
-	FACTION_PLAYER,		// 0
-	FACTION_HOSTILE,	// 1
-	FACTION_NEUTRAL		// 2
+	FACTION_PLAYER,		// 0 // NOTE: Don't muck with these; they're used by
+	FACTION_HOSTILE,	// 1 // BattleUnitKill::hostileTurn() determination
+	FACTION_NEUTRAL		// 2 // deliberately as ints.
 };
 
 enum UnitSide
@@ -199,7 +199,7 @@ private:
 	BattlescapeGame* _battleGame;
 	BattleUnit* _chargeTarget;
 	SavedBattleGame* _battleSave;
-	Surface* _cache[PARTS_ARMOR];
+	Surface* _spriteCache[PARTS_ARMOR];
 	Tile* _tile;
 
 	Position

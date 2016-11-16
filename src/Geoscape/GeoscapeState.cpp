@@ -2844,7 +2844,7 @@ void GeoscapeState::time1Day()
 					if (gofList.empty() == false)
 					{
 						gofRule = _rules->getResearch(gofList.at(RNG::pick(gofList.size())));
-						_gameSave->setResearchStatus(gofRule);
+						_gameSave->addDiscoveredResearch(gofRule);
 					}
 				}
 
@@ -2857,7 +2857,7 @@ void GeoscapeState::time1Day()
 
 				resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
 
-				_gameSave->setResearchStatus(resRule);
+				_gameSave->addDiscoveredResearch(resRule);
 
 
 				std::vector<const RuleResearch*> popupResearch;
@@ -2865,21 +2865,6 @@ void GeoscapeState::time1Day()
 											popupResearch,
 											resRule,
 											*i);
-
-				for (std::vector<const RuleResearch*>::const_iterator
-						k = popupResearch.begin();
-						k != popupResearch.end();
-						)
-				{
-					if ((*k)->getCost() == 0
-						|| _rules->getUnitRule((*k)->getType()) != nullptr
-						|| _gameSave->searchResearch(*k, RG_LOCKED) == false)
-					{
-						k = popupResearch.erase(k); // do NOT show (1)no-cost (2)liveAliens (3)twice.
-					}
-					else
-						++k;
-				}
 
 				std::vector<const RuleManufacture*> popupManufacture;
 				_gameSave->tabulatePopupManufacture(

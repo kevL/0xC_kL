@@ -194,7 +194,7 @@ BattleUnit::BattleUnit(
 			i != PARTS_ARMOR;
 			++i)
 	{
-		_cache[i] = nullptr;
+		_spriteCache[i] = nullptr;
 	}
 
 	for (size_t
@@ -376,7 +376,7 @@ BattleUnit::BattleUnit(
 			i != PARTS_ARMOR;
 			++i)
 	{
-		_cache[i] = nullptr;
+		_spriteCache[i] = nullptr;
 	}
 
 	for (size_t
@@ -430,17 +430,16 @@ BattleUnit::~BattleUnit()
 {
 	//Log(LOG_INFO) << "Delete BattleUnit";
 	for (size_t
-			i = 0;
+			i = 0u;
 			i != PARTS_ARMOR;
 			++i)
 	{
-//		if (_cache[i] != nullptr)
-		delete _cache[i];
+		if (_spriteCache[i] != nullptr)
+			delete _spriteCache[i];
 	}
 
-/* Soldier Diary, not needed for nonSoldiers. Or soldiers for that matter ....
-	if (getGeoscapeSoldier() == nullptr)
-	{
+	if (_geoscapeSoldier != nullptr)	// NOTE: Only BattleUnits that have geoscape-soldiers should ever get
+	{									// BattleUnitStatistics or BattleUnitKills.
 		for (std::vector<BattleUnitKill*>::const_iterator
 				i = _statistics->kills.begin();
 				i != _statistics->kills.end();
@@ -448,11 +447,11 @@ BattleUnit::~BattleUnit()
 		{
 			delete *i;
 		}
-	} */
-//	if (_geoscapeSoldier != nullptr) // ... delete it anyway:
-	delete _statistics;
+		delete _statistics;
+	}
 
-	delete _unitAIState;
+	if (_unitAIState != nullptr)
+		delete _unitAIState;
 }
 
 /**
@@ -1314,7 +1313,7 @@ UnitFaction BattleUnit::getOriginalFaction() const
  */
 Surface* BattleUnit::getCache(int quadrant) const
 {
-	return _cache[static_cast<size_t>(quadrant)];
+	return _spriteCache[static_cast<size_t>(quadrant)];
 }
 
 /**
@@ -1327,7 +1326,7 @@ void BattleUnit::setCache(
 		Surface* const cache,
 		int quadrant)
 {
-	_cache[static_cast<size_t>(quadrant)] = cache;
+	_spriteCache[static_cast<size_t>(quadrant)] = cache;
 	_cacheInvalid = false;
 }
 
@@ -4348,7 +4347,7 @@ void BattleUnit::invalidateCache()
 			i != PARTS_ARMOR;
 			++i)
 	{
-		_cache[i] = nullptr;
+		_spriteCache[i] = nullptr;
 	}
 	_cacheInvalid = true;
 }

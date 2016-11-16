@@ -36,27 +36,27 @@ namespace OpenXcom
  */
 SoldierDiary::SoldierDiary()
 	:
-		_daysWoundedTotal(0),
-		_monthsService(0),
-		_unconsciousTotal(0),
-		_shotAtCounterTotal(0),
-		_hitCounterTotal(0),
-		_loneSurvivorTotal(0),
-		_totalShotByFriendlyCounter(0),
-		_totalShotFriendlyCounter(0),
-		_ironManTotal(0),
+		_daysWoundedTotal			(0),
+		_monthsService				(0),
+		_unconsciousTotal			(0),
+		_shotAtCounterTotal			(0),
+		_hitCounterTotal			(0),
+		_loneSurvivorTotal			(0),
+		_totalShotByFriendlyCounter	(0),
+		_totalShotFriendlyCounter	(0),
+		_ironManTotal				(0),
 		_longDistanceHitCounterTotal(0),
-		_lowAccuracyHitCounterTotal(0),
-		_shotsFiredCounterTotal(0),
-		_shotsLandedCounterTotal(0),
-		_shotAtCounter10in1Mission(0),
-		_hitCounter5in1Mission(0),
-		_timesWoundedTotal(0),
-		_allAliensKilledTotal(0),
-		_mediApplicationsTotal(0),
-		_revivedUnitTotal(0),
-		_KIA(0),
-		_MIA(0)
+		_lowAccuracyHitCounterTotal	(0),
+		_shotsFiredCounterTotal		(0),
+		_shotsLandedCounterTotal	(0),
+		_shotAtCounter10in1Mission	(0),
+		_hitCounter5in1Mission		(0),
+		_timesWoundedTotal			(0),
+		_allAliensKilledTotal		(0),
+		_mediApplicationsTotal		(0),
+		_revivedUnitTotal			(0),
+		_KIA						(0),
+		_MIA						(0)
 {}
 
 /**
@@ -75,27 +75,27 @@ SoldierDiary::SoldierDiary(const YAML::Node& node)
  */
 SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 	:
-		_daysWoundedTotal(copyThat._daysWoundedTotal),
-		_totalShotByFriendlyCounter(copyThat._totalShotByFriendlyCounter),
-		_totalShotFriendlyCounter(copyThat._totalShotFriendlyCounter),
-		_loneSurvivorTotal(copyThat._loneSurvivorTotal),
-		_monthsService(copyThat._monthsService),
-		_unconsciousTotal(copyThat._unconsciousTotal),
-		_shotAtCounterTotal(copyThat._shotAtCounterTotal),
-		_hitCounterTotal(copyThat._hitCounterTotal),
-		_ironManTotal(copyThat._ironManTotal),
-		_longDistanceHitCounterTotal(copyThat._longDistanceHitCounterTotal),
-		_lowAccuracyHitCounterTotal(copyThat._lowAccuracyHitCounterTotal),
-		_shotsFiredCounterTotal(copyThat._shotsFiredCounterTotal),
-		_shotsLandedCounterTotal(copyThat._shotsLandedCounterTotal),
-		_shotAtCounter10in1Mission(copyThat._shotAtCounter10in1Mission),
-		_hitCounter5in1Mission(copyThat._hitCounter5in1Mission),
-		_timesWoundedTotal(copyThat._timesWoundedTotal),
-		_allAliensKilledTotal(copyThat._allAliensKilledTotal),
-		_mediApplicationsTotal(copyThat._mediApplicationsTotal),
-		_revivedUnitTotal(copyThat._revivedUnitTotal),
-		_KIA(copyThat._KIA),
-		_MIA(copyThat._MIA)
+		_daysWoundedTotal				(copyThat._daysWoundedTotal),
+		_totalShotByFriendlyCounter		(copyThat._totalShotByFriendlyCounter),
+		_totalShotFriendlyCounter		(copyThat._totalShotFriendlyCounter),
+		_loneSurvivorTotal				(copyThat._loneSurvivorTotal),
+		_monthsService					(copyThat._monthsService),
+		_unconsciousTotal				(copyThat._unconsciousTotal),
+		_shotAtCounterTotal				(copyThat._shotAtCounterTotal),
+		_hitCounterTotal				(copyThat._hitCounterTotal),
+		_ironManTotal					(copyThat._ironManTotal),
+		_longDistanceHitCounterTotal	(copyThat._longDistanceHitCounterTotal),
+		_lowAccuracyHitCounterTotal		(copyThat._lowAccuracyHitCounterTotal),
+		_shotsFiredCounterTotal			(copyThat._shotsFiredCounterTotal),
+		_shotsLandedCounterTotal		(copyThat._shotsLandedCounterTotal),
+		_shotAtCounter10in1Mission		(copyThat._shotAtCounter10in1Mission),
+		_hitCounter5in1Mission			(copyThat._hitCounter5in1Mission),
+		_timesWoundedTotal				(copyThat._timesWoundedTotal),
+		_allAliensKilledTotal			(copyThat._allAliensKilledTotal),
+		_mediApplicationsTotal			(copyThat._mediApplicationsTotal),
+		_revivedUnitTotal				(copyThat._revivedUnitTotal),
+		_KIA							(copyThat._KIA),
+		_MIA							(copyThat._MIA)
 {
 	for (size_t
 			i = 0u;
@@ -129,17 +129,17 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 		if (copyThat._killList.at(i) != nullptr)
 		{
 			std::string
-				unitRank (copyThat._killList.at(i)->_rank),
-				race (copyThat._killList.at(i)->_race),
-				weapon (copyThat._killList.at(i)->_weapon),
-				load (copyThat._killList.at(i)->_load);
+				unitRank		(copyThat._killList.at(i)->_rank),
+				race			(copyThat._killList.at(i)->_race),
+				weapon			(copyThat._killList.at(i)->_weapon),
+				load			(copyThat._killList.at(i)->_load);
 			int
-				mission (copyThat._killList.at(i)->_mission),
-				turn (copyThat._killList.at(i)->_turn),
-				points (copyThat._killList.at(i)->_points);
+				mission			(copyThat._killList.at(i)->_mission),
+				turn			(copyThat._killList.at(i)->_turn),
+				points			(copyThat._killList.at(i)->_points);
 
-			UnitFaction faction (copyThat._killList.at(i)->_faction);
-			UnitStatus status (copyThat._killList.at(i)->_status);
+			UnitFaction faction	(copyThat._killList.at(i)->_faction);
+			UnitStatus status	(copyThat._killList.at(i)->_status);
 
 			_killList.push_back(new BattleUnitKill(
 												unitRank,
@@ -182,27 +182,27 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 {
 	if (this != &assignThat)
 	{
-		_daysWoundedTotal = assignThat._daysWoundedTotal;
-		_totalShotByFriendlyCounter = assignThat._totalShotByFriendlyCounter;
-		_totalShotFriendlyCounter = assignThat._totalShotFriendlyCounter;
-		_loneSurvivorTotal = assignThat._loneSurvivorTotal;
-		_monthsService = assignThat._monthsService;
-		_unconsciousTotal = assignThat._unconsciousTotal;
-		_shotAtCounterTotal = assignThat._shotAtCounterTotal;
-		_hitCounterTotal = assignThat._hitCounterTotal;
-		_ironManTotal = assignThat._ironManTotal;
-		_longDistanceHitCounterTotal = assignThat._longDistanceHitCounterTotal;
-		_lowAccuracyHitCounterTotal = assignThat._lowAccuracyHitCounterTotal;
-		_shotsFiredCounterTotal = assignThat._shotsFiredCounterTotal;
-		_shotsLandedCounterTotal = assignThat._shotsLandedCounterTotal;
-		_shotAtCounter10in1Mission = assignThat._shotAtCounter10in1Mission;
-		_hitCounter5in1Mission = assignThat._hitCounter5in1Mission;
-		_timesWoundedTotal = assignThat._timesWoundedTotal;
-		_allAliensKilledTotal = assignThat._allAliensKilledTotal;
-		_mediApplicationsTotal = assignThat._mediApplicationsTotal;
-		_revivedUnitTotal = assignThat._revivedUnitTotal;
-		_KIA = assignThat._KIA;
-		_MIA = assignThat._MIA;
+		_daysWoundedTotal				= assignThat._daysWoundedTotal;
+		_totalShotByFriendlyCounter		= assignThat._totalShotByFriendlyCounter;
+		_totalShotFriendlyCounter		= assignThat._totalShotFriendlyCounter;
+		_loneSurvivorTotal				= assignThat._loneSurvivorTotal;
+		_monthsService					= assignThat._monthsService;
+		_unconsciousTotal				= assignThat._unconsciousTotal;
+		_shotAtCounterTotal				= assignThat._shotAtCounterTotal;
+		_hitCounterTotal				= assignThat._hitCounterTotal;
+		_ironManTotal					= assignThat._ironManTotal;
+		_longDistanceHitCounterTotal	= assignThat._longDistanceHitCounterTotal;
+		_lowAccuracyHitCounterTotal		= assignThat._lowAccuracyHitCounterTotal;
+		_shotsFiredCounterTotal			= assignThat._shotsFiredCounterTotal;
+		_shotsLandedCounterTotal		= assignThat._shotsLandedCounterTotal;
+		_shotAtCounter10in1Mission		= assignThat._shotAtCounter10in1Mission;
+		_hitCounter5in1Mission			= assignThat._hitCounter5in1Mission;
+		_timesWoundedTotal				= assignThat._timesWoundedTotal;
+		_allAliensKilledTotal			= assignThat._allAliensKilledTotal;
+		_mediApplicationsTotal			= assignThat._mediApplicationsTotal;
+		_revivedUnitTotal				= assignThat._revivedUnitTotal;
+		_KIA							= assignThat._KIA;
+		_MIA							= assignThat._MIA;
 
 		_missionIdList.clear();
 		for (std::vector<int>::const_iterator
@@ -252,17 +252,17 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 			if (assignThat._killList.at(i) != nullptr)
 			{
 				std::string
-					unitRank (assignThat._killList.at(i)->_rank),
-					race (assignThat._killList.at(i)->_race),
-					weapon (assignThat._killList.at(i)->_weapon),
-					load (assignThat._killList.at(i)->_load);
+					unitRank		(assignThat._killList.at(i)->_rank),
+					race			(assignThat._killList.at(i)->_race),
+					weapon			(assignThat._killList.at(i)->_weapon),
+					load			(assignThat._killList.at(i)->_load);
 				int
-					mission (assignThat._killList.at(i)->_mission),
-					turn (assignThat._killList.at(i)->_turn),
-					points (assignThat._killList.at(i)->_points);
+					mission			(assignThat._killList.at(i)->_mission),
+					turn			(assignThat._killList.at(i)->_turn),
+					points			(assignThat._killList.at(i)->_points);
 
-				UnitFaction faction (assignThat._killList.at(i)->_faction);
-				UnitStatus status (assignThat._killList.at(i)->_status);
+				UnitFaction faction	(assignThat._killList.at(i)->_faction);
+				UnitStatus status	(assignThat._killList.at(i)->_status);
 
 				_killList.push_back(new BattleUnitKill(
 													unitRank,
@@ -389,19 +389,19 @@ YAML::Node SoldierDiary::save() const
  * @param tacticals		- pointer to latest MissionStatistics
  */
 void SoldierDiary::updateDiary(
-		const BattleUnitStatistics* const diaryStats,
+		BattleUnitStatistics* const diaryStats,
 		const MissionStatistics* const tactical)
 {
 	//Log(LOG_INFO) << "SoldierDiary::updateDiary()";
-	const std::vector<BattleUnitKill*> unitKills (diaryStats->kills);
 	for (std::vector<BattleUnitKill*>::const_iterator
-			i = unitKills.begin();
-			i != unitKills.end();
+			i = diaryStats->kills.begin();
+			i != diaryStats->kills.end();
 			++i)
 	{
-		(*i)->makeTurnUnique();
-		_killList.push_back(*i);
+		(*i)->setTurn();
+		_killList.push_back(*i); // transfer ownership of BattleUnitKills.
 	}
+	diaryStats->kills.clear();
 
 	if (tactical->success == true)
 	{

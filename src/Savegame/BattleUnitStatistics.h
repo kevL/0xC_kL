@@ -36,14 +36,14 @@ namespace OpenXcom
 struct BattleUnitKill
 {
 	std::string
-		_rank,
+		_load,
 		_race,
-		_weapon,
-		_load;
+		_rank,
+		_weapon;
 	int
 		_mission,
-		_turn,
-		_points;
+		_points,
+		_turn;
 
 	UnitFaction _faction;
 	UnitStatus _status;
@@ -83,7 +83,7 @@ struct BattleUnitKill
 	{}
 
 	/// Loads a BattleUnitKill node from YAML.
-	void load(const YAML::Node &node)
+	void load(const YAML::Node& node)
 	{
 		_rank		= node["rank"]		.as<std::string>(_rank);
 		_race		= node["race"]		.as<std::string>(_race);
@@ -141,15 +141,15 @@ struct BattleUnitKill
 	}
 
 	/// Makes turn unique across all kills.
-	void makeTurnUnique()
+	void setTurn()
 	{
-		_turn += _mission * 300; // Maintains divisibility by 3 as well.
-	}
+		_turn += _mission * 300;	// maintain divisibility by 3 to determine
+	}								// the faction-turn this kill happened on.
 
-	/// Checks to see if turn was during HOSTILE side.
+	/// Checks to see if turn was during FACTION_HOSTILE side.
 	bool hostileTurn() const
 	{
-		if ((_turn - 1) % 3 == 0)
+		if (_turn % 3 == FACTION_HOSTILE) // cf. UnitFaction (BattleUnit.h)
 			return true;
 
 		return false;

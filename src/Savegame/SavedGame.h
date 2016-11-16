@@ -207,21 +207,19 @@ private:
 	std::vector<Ufo*>				_ufos;
 	std::vector<Waypoint*>			_waypoints;
 
-	/// Adds a finished ResearchProject to the list of discovered-research.
-	void addDiscoveredResearch(const RuleResearch* const resRule);
-	/// Checks if a RuleResearch has had all of its required-research discovered.
-	bool checkRequiredResearch(const RuleResearch* const resRule) const;
-	/// Checks if a ResearchProject can be started.
-	bool isProjectOpen(const RuleResearch* const resRule) const;
-	/// Checks if a RuleResearch has had all of its prerequisites discovered.
-	bool checkPrerequisiteResearch(const RuleResearch* const resRule) const;
-	/// Tabulates a list of the forced-dependents of all discovered Research.
-	void tabulateForcedResearch(std::vector<const RuleResearch*>& forced) const;
-	/// Tabulates a list of Research projects that appears when research is discovered.
+	/// Tabulates a list of dependent-research from a specified RuleResearch.
 	void tabulateDependentResearch(
 			std::vector<const RuleResearch*>& projects,
 			const RuleResearch* const resRule,
 			Base* const base) const;
+	/// Checks if a RuleResearch has had all of its required-research discovered.
+	bool checkRequiredResearch(const RuleResearch* const resRule) const;
+	/// Checks if a ResearchProject can be started.
+	bool isProjectOpen(const RuleResearch* const resRule) const;
+	/// Checks if a specified RuleResearch has had all of its requisites discovered.
+	bool checkRequisiteResearch(const RuleResearch* const resRule) const;
+	/// Tabulates a list of the requested-dependents of all discovered-research.
+	void tabulateRequestedResearch(std::vector<const RuleResearch*>& forced) const;
 	///
 	static SaveInfo getSaveInfo(
 			const std::string& file,
@@ -359,13 +357,14 @@ private:
 
 		/// Gets the ResearchGenerals.
 		std::vector<ResearchGeneral*>& getResearchGenerals();
-		/// Searches through ResearchGenerals for specified research-type & status.
+
+		/// Searches through the ResearchGenerals for a specified research-type & status.
 		bool searchResearch(
 				const std::string& type,
 				const ResearchStatus status = RG_DISCOVERED) const;
-		/// Searches through ResearchGenerals for specified research-rule & status.
+		/// Searches through the ResearchGenerals for a specified research-rule & status.
 		bool searchResearch(
-				const RuleResearch* resRule,
+				const RuleResearch* const resRule,
 				const ResearchStatus status = RG_DISCOVERED) const;
 		/// Sets the status of a ResearchGeneral by research-type.
 		bool setResearchStatus(
@@ -375,6 +374,9 @@ private:
 		bool setResearchStatus(
 				const RuleResearch* const resRule,
 				const ResearchStatus status = RG_DISCOVERED);
+
+		/// Adds a finished ResearchProject to the list of discovered-research.
+		void addDiscoveredResearch(const RuleResearch* const resRule);
 
 		/// Tabulates a list of ResearchProjects that can be started at a Base.
 		void tabulateStartableResearch(
@@ -393,6 +395,7 @@ private:
 		void tabulatePopupManufacture(
 				std::vector<const RuleManufacture*>& projects,
 				const RuleResearch* const resRule) const;
+
 		/// Checks if a research-type is discovered.
 		bool isResearched(const std::string& resType) const;
 		/// Checks if a list of research-types have all been discovered.
@@ -406,7 +409,7 @@ private:
 		void processSoldier(
 				const Soldier* const soldier,
 				PromotionInfo& promoData);
-		/// Checks how many Soldiers of a rank exist and which one has the highest score.
+		/// Searches Soldiers of a specified rank and returns the one with the highest overall score.
 		Soldier* inspectSoldiers(
 				const std::vector<Soldier*>& soldiers,
 				const std::vector<Soldier*>& participants,
