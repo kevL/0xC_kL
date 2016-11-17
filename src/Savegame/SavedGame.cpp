@@ -38,12 +38,12 @@
 #include "GameTime.h"
 #include "ItemContainer.h"
 #include "Manufacture.h"
-#include "MissionStatistics.h"
 #include "Region.h"
 #include "ResearchProject.h"
 #include "SavedBattleGame.h"
 #include "SerializationHelper.h"
 #include "SoldierDead.h"
+#include "TacticalStatistics.h"
 #include "TerrorSite.h"
 #include "Transfer.h"
 #include "Ufo.h"
@@ -218,9 +218,9 @@ SavedGame::~SavedGame()
 			++i)
 		delete *i;
 
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = _missionStatistics.begin();
-			i != _missionStatistics.end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = _tacticalStats.begin();
+			i != _tacticalStats.end();
 			++i)
 		delete *i;
 
@@ -399,7 +399,7 @@ void SavedGame::load(
 	const std::vector<YAML::Node> nodes (YAML::LoadAllFromFile(type));
 	if (nodes.empty() == true)
 	{
-		throw Exception(file + " is not a valid save file");
+		throw Exception("SavedGame::load() " + file + " is not a valid save file");
 	}
 
 	YAML::Node brief (nodes[0u]); // get data from brief-info section
@@ -438,7 +438,7 @@ void SavedGame::load(
 	if (diff < 0) // safety.
 	{
 		diff = 0;
-		Log(LOG_WARNING) << "Difficulty in the save file is negative ... loading as BEGINNER.";
+		Log(LOG_WARNING) << "SavedGame::load() Difficulty in the save file is negative ... loading as BEGINNER.";
 	}
 	_difficulty = static_cast<DifficultyLevel>(diff);
 
@@ -478,7 +478,7 @@ void SavedGame::load(
 			country->load(*i);
 			_countries.push_back(country);
 		}
-		else Log(LOG_ERROR) << "Failed to load country: Type [" << type << "]";
+		else Log(LOG_ERROR) << "SavedGame::load() Failed to load country: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load regions";
@@ -496,7 +496,7 @@ void SavedGame::load(
 			region->load(*i);
 			_regions.push_back(region);
 		}
-		else Log(LOG_ERROR) << "Failed to load region: Type [" << type << "]";
+		else Log(LOG_ERROR) << "SavedGame::load() Failed to load region: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load alien bases"; // AlienBases must be loaded before AlienMissions.
@@ -514,7 +514,7 @@ void SavedGame::load(
 			aBase->load(*i);
 			_alienBases.push_back(aBase);
 		}
-		else Log(LOG_ERROR) << "Failed to load deployment for alien base: Type [" << type << "]";
+		else Log(LOG_ERROR) << "SavedGame::load() Failed to load deployment for alien base: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load missions"; // AlienMissions must be loaded before Ufos.
@@ -533,7 +533,7 @@ void SavedGame::load(
 			mission->load(*i);
 			_activeMissions.push_back(mission);
 		}
-		else Log(LOG_ERROR) << "Failed to load mission: Type [" << type << "]";
+		else Log(LOG_ERROR) << "SavedGame::load() Failed to load mission: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load ufos"; // Ufos must be loaded after AlienMissions.
@@ -550,7 +550,7 @@ void SavedGame::load(
 			ufo->loadUfo(*i, *_rules);
 			_ufos.push_back(ufo);
 		}
-		else Log(LOG_ERROR) << "Failed to load UFO: Type [" << type << "]";
+		else Log(LOG_ERROR) << "SavedGame::load() Failed to load UFO: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load waypoints";
@@ -582,7 +582,7 @@ void SavedGame::load(
 			site->load(*i);
 			_terrorSites.push_back(site);
 		}
-		else Log(LOG_ERROR) << "Failed to load terror-site: Type [" << type << "] Deployment [" << deploy << "]";
+		else Log(LOG_ERROR) << "SavedGame::load() Failed to load terror-site: Type [" << type << "] Deployment [" << deploy << "]";
 	}
 
 	Log(LOG_INFO) << ". load research generals";
@@ -601,7 +601,7 @@ void SavedGame::load(
 			resGen->load(*i);
 			_research.push_back(resGen);
 		}
-		else Log(LOG_ERROR) << "Failed to load research: Type [" << type << "]";
+		else Log(LOG_ERROR) << "SavedGame::load() Failed to load research: Type [" << type << "]";
 	}
 
 	Log(LOG_INFO) << ". load xcom bases";
@@ -630,15 +630,15 @@ void SavedGame::load(
 	}
 
 	Log(LOG_INFO) << ". load mission statistics";
-	MissionStatistics* tacticalStats;
+	TacticalStatistics* tacticalStats;
 	for (YAML::const_iterator
 			i = doc["missionStatistics"].begin();
 			i != doc["missionStatistics"].end();
 			++i)
 	{
-		tacticalStats = new MissionStatistics();
+		tacticalStats = new TacticalStatistics();
 		tacticalStats->load(*i);
-		_missionStatistics.push_back(tacticalStats);
+		_tacticalStats.push_back(tacticalStats);
 	}
 
 	if (const YAML::Node& battle = doc["battleGame"])
@@ -664,10 +664,10 @@ void SavedGame::save(const std::string& file) const
 	std::ofstream ofstr (st.c_str());
 	if (ofstr.fail() == true)
 	{
-		throw Exception("Failed to save " + file);
+		throw Exception("SavedGame::save() Failed to save " + file);
 	}
 
-	YAML::Emitter emit;
+	YAML::Emitter out;
 
 	YAML::Node brief; // the brief-info used for the saves list
 
@@ -701,8 +701,8 @@ void SavedGame::save(const std::string& file) const
 	if (_ironman == true)
 		brief["ironman"]	= _ironman;
 
-	emit << brief;
-	emit << YAML::BeginDoc; // saves the full game-data to the save
+	out << brief;
+	out << YAML::BeginDoc; // saves the full game-data to the save
 
 	YAML::Node node;
 
@@ -792,17 +792,17 @@ void SavedGame::save(const std::string& file) const
 			++i)
 		node["deadSoldiers"].push_back((*i)->save());
 
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = _missionStatistics.begin();
-			i != _missionStatistics.end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = _tacticalStats.begin();
+			i != _tacticalStats.end();
 			++i)
 		node["missionStatistics"].push_back((*i)->save());
 
 	if (_battleSave != nullptr)
 		node["battleGame"] = _battleSave->save();
 
-	emit << node;
-	ofstr << emit.c_str();
+	out << node;
+	ofstr << out.c_str();
 	ofstr.close();
 }
 
@@ -1301,7 +1301,7 @@ std::vector<ResearchGeneral*>& SavedGame::getResearchGenerals()
 }
 
 /**
- * Searches through the ResearchGenerals for a specified research-type & status.
+ * Searches the ResearchGenerals for a specified research-type & status.
  * @param type		- reference to a research-type
  * @param status	- ResearchStatus (default RG_DISCOVERED) (ResearchGeneral.h)
  * @return, true if found
@@ -1322,7 +1322,7 @@ bool SavedGame::searchResearch(
 }
 
 /**
- * Searches through the ResearchGenerals for a specified research-rule & status.
+ * Searches the ResearchGenerals for a specified research-rule & status.
  * @param resRule	- pointer to a RuleResearch
  * @param status	- ResearchStatus (default RG_DISCOVERED) (ResearchGeneral.h)
  * @return, true if found
@@ -1411,7 +1411,7 @@ bool SavedGame::setResearchStatus(
 }
 
 /**
- * Adds a discovered ResearchProject to the list of discovered-research.
+ * Adds a RuleResearch to the list of discovered-research.
  * @note Also searches dependent-research for fake-projects to discover.
  * @param resRule - pointer to a newly discovered RuleResearch
  */
@@ -1660,14 +1660,14 @@ bool SavedGame::isProjectOpen(const RuleResearch* const resRule) const // privat
 			}
 		}
 
-		return checkRequisiteResearch(resRule); // third check if all prerequisites are discovered.
+		return checkRequisiteResearch(resRule); // third check if all requisites are discovered.
 	}
 
 	return false;
 }
 
 /**
- * Checks if a specified RuleResearch has had all of its requisites discovered.
+ * Checks if a specified RuleResearch has all of its requisites discovered.
  * @param resRule - pointer to RuleResearch
  * @return, true if good to go
  */
@@ -2431,12 +2431,12 @@ bool SavedGame::getDebugArgDone()
 }
 
 /**
- * Gets mission-statistics for use by SoldierDiary.
- * @return, pointer to a vector of pointers to MissionStatistics
+ * Gets a list of TacticalStatistics for use by SoldierDiary.
+ * @return, pointer to a vector of pointers to TacticalStatistics
  */
-std::vector<MissionStatistics*>* SavedGame::getMissionStatistics()
+std::vector<TacticalStatistics*>& SavedGame::getTacticalStatistics()
 {
-	return &_missionStatistics;
+	return _tacticalStats;
 }
 
 /**

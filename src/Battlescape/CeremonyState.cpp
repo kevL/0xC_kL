@@ -102,10 +102,10 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 		r (0u),
 		titleRow;
 
-	std::map<std::string, RuleAward*> awardsList (_game->getRuleset()->getAwardsList());
-	for (std::map<std::string, RuleAward*>::const_iterator
-			i = awardsList.begin();
-			i != awardsList.end();
+	const std::map<std::string, const RuleAward*>& allAwards (_game->getRuleset()->getAwardsList());
+	for (std::map<std::string, const RuleAward*>::const_iterator
+			i = allAwards.begin();
+			i != allAwards.end();
 			)
 	{
 		qualifiedAward = false;
@@ -126,8 +126,8 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 				++j)
 		{
 			for (std::vector<SoldierAward*>::const_iterator
-					k = (*j)->getDiary()->getSoldierAwards()->begin();
-					k != (*j)->getDiary()->getSoldierAwards()->end();
+					k = (*j)->getDiary()->getSoldierAwards().begin();
+					k != (*j)->getDiary()->getSoldierAwards().end();
 					++k)
 			{
 				if ((*k)->getType() == (*i).first
@@ -194,7 +194,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 
 			_lstSoldiers->setRowColor(titleRow, GREEN);
 
-			const std::string info ((*i).second->getDescriptionGeneral()); // look for Generic Desc first.
+			const std::string info ((*i).second->getDescriptionGeneric()); // look for Generic Desc first.
 			if (info.empty() == false)
 				_titleRows[titleRow] = info;
 			else

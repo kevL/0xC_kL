@@ -402,7 +402,7 @@ PurchaseState::PurchaseState(Base* const base)
 						if ((*k)->getRules()->getType() == type)
 							++baseQty;
 						else if ((*k)->getLoad() > 0
-							&& (*k)->getRules()->getCompatibleAmmo()->front() == type)
+							&& (*k)->getRules()->getAcceptedLoadTypes()->front() == type)
 						{
 							baseQty += (*k)->getLoad();
 						}

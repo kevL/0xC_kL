@@ -262,7 +262,7 @@ private:
 	SpecialAbility _specab;
 	TurretType _turretType;
 
-	BattleUnitStatistics* _statistics;
+	BattleUnitStatistics* _tacstats;
 	int _murdererId; // used to credit another unit with any kills that this BattleUnit got by blowing up on death
 
 

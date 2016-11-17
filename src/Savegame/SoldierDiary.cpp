@@ -22,7 +22,7 @@
 //#include <sstream> // std::ostringstream
 
 #include "BattleUnitStatistics.h"
-#include "MissionStatistics.h"
+#include "TacticalStatistics.h"
 
 #include "../Ruleset/RuleAward.h"
 #include "../Ruleset/Ruleset.h"
@@ -99,11 +99,11 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 {
 	for (size_t
 			i = 0u;
-			i != copyThat._missionIdList.size();
+			i != copyThat._tacIdList.size();
 			++i)
 	{
-//		if (copyThat._missionIdList.at(i) != nullptr) // Bzzzt.
-		_missionIdList.push_back(copyThat._missionIdList.at(i));
+//		if (copyThat._tacIdList.at(i) != nullptr) // Bzzzt.
+		_tacIdList.push_back(copyThat._tacIdList.at(i));
 	}
 
 	for (size_t
@@ -204,13 +204,13 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 		_KIA							= assignThat._KIA;
 		_MIA							= assignThat._MIA;
 
-		_missionIdList.clear();
+		_tacIdList.clear();
 		for (std::vector<int>::const_iterator
-				i = assignThat._missionIdList.begin();
-				i != assignThat._missionIdList.end();
+				i = assignThat._tacIdList.begin();
+				i != assignThat._tacIdList.end();
 				++i)
 		{
-			_missionIdList.push_back(*i);
+			_tacIdList.push_back(*i);
 		}
 
 		for (std::vector<SoldierAward*>::const_iterator
@@ -308,7 +308,7 @@ void SoldierDiary::load(const YAML::Node& node)
 		}
 	}
 
-	_missionIdList					= node["missionIdList"]					.as<std::vector<int>>(_missionIdList);
+	_tacIdList						= node["tacIdList"]						.as<std::vector<int>>(_tacIdList);
 	_daysWoundedTotal				= node["daysWoundedTotal"]				.as<int>(_daysWoundedTotal);
 	_totalShotByFriendlyCounter		= node["totalShotByFriendlyCounter"]	.as<int>(_totalShotByFriendlyCounter);
 	_totalShotFriendlyCounter		= node["totalShotFriendlyCounter"]		.as<int>(_totalShotFriendlyCounter);
@@ -357,7 +357,7 @@ YAML::Node SoldierDiary::save() const
 		node["killList"].push_back((*i)->save());
 	}
 
-	if (_missionIdList.empty() == false)	node["missionIdList"]				= _missionIdList;
+	if (_tacIdList.empty() == false)		node["tacIdList"]					= _tacIdList;
 	if (_daysWoundedTotal)					node["daysWoundedTotal"]			= _daysWoundedTotal;
 	if (_totalShotByFriendlyCounter)		node["totalShotByFriendlyCounter"]	= _totalShotByFriendlyCounter;
 	if (_totalShotFriendlyCounter)			node["totalShotFriendlyCounter"]	= _totalShotFriendlyCounter;
@@ -384,108 +384,132 @@ YAML::Node SoldierDiary::save() const
 /**
  * Updates this SoldierDiary's statistics.
  * @note BattleUnitKill is a substruct of BattleUnitStatistics.
- * @param diaryStats	- pointer to BattleUnitStatistics for info on a Soldier's
- *						  current tactical performance ala DebriefingState.
- * @param tacticals		- pointer to latest MissionStatistics
+ * @param tacstats	- pointer to BattleUnitStatistics for info on a Soldier's
+ *					  current tactical performance ala DebriefingState.
+ * @param tacticals	- pointer to latest TacticalStatistics
  */
 void SoldierDiary::updateDiary(
-		BattleUnitStatistics* const diaryStats,
-		const MissionStatistics* const tactical)
+		BattleUnitStatistics* const tacstats,
+		const TacticalStatistics* const tactical)
 {
 	//Log(LOG_INFO) << "SoldierDiary::updateDiary()";
 	for (std::vector<BattleUnitKill*>::const_iterator
-			i = diaryStats->kills.begin();
-			i != diaryStats->kills.end();
+			i = tacstats->kills.begin();
+			i != tacstats->kills.end();
 			++i)
 	{
 		(*i)->setTurn();
 		_killList.push_back(*i); // transfer ownership of BattleUnitKills.
 	}
-	diaryStats->kills.clear();
+	tacstats->kills.clear();
 
 	if (tactical->success == true)
 	{
-		if (diaryStats->loneSurvivor == true)
+		if (tacstats->loneSurvivor == true)
 			++_loneSurvivorTotal;
 
-		if (diaryStats->ironMan == true)
+		if (tacstats->ironMan == true)
 			++_ironManTotal;
 	}
 
-	if (diaryStats->daysWounded != 0)
+	if (tacstats->daysWounded != 0)
 	{
-		_daysWoundedTotal += diaryStats->daysWounded;
+		_daysWoundedTotal += tacstats->daysWounded;
 		++_timesWoundedTotal;
 	}
 
-	if (diaryStats->wasUnconscious == true)
+	if (tacstats->wasUnconscious == true)
 		++_unconsciousTotal;
 
-	_shotAtCounterTotal				+= diaryStats->shotAtCounter;
-	_shotAtCounter10in1Mission		+= diaryStats->shotAtCounter / 10;
-	_hitCounterTotal				+= diaryStats->hitCounter;
-	_hitCounter5in1Mission			+= diaryStats->hitCounter / 5;
-	_totalShotByFriendlyCounter		+= diaryStats->shotByFriendlyCounter;
-	_totalShotFriendlyCounter		+= diaryStats->shotFriendlyCounter;
-	_longDistanceHitCounterTotal	+= diaryStats->longDistanceHitCounter;
-	_lowAccuracyHitCounterTotal		+= diaryStats->lowAccuracyHitCounter;
-	_shotsFiredCounterTotal			+= diaryStats->shotsFiredCounter;
-	_shotsLandedCounterTotal		+= diaryStats->shotsLandedCounter;
-	_mediApplicationsTotal			+= diaryStats->medikitApplications;
-	_revivedUnitTotal				+= diaryStats->revivedSoldier;
+	_shotAtCounterTotal				+= tacstats->shotAtCounter;
+	_shotAtCounter10in1Mission		+= tacstats->shotAtCounter / 10;
+	_hitCounterTotal				+= tacstats->hitCounter;
+	_hitCounter5in1Mission			+= tacstats->hitCounter / 5;
+	_totalShotByFriendlyCounter		+= tacstats->shotByFriendlyCounter;
+	_totalShotFriendlyCounter		+= tacstats->shotFriendlyCounter;
+	_longDistanceHitCounterTotal	+= tacstats->longDistanceHitCounter;
+	_lowAccuracyHitCounterTotal		+= tacstats->lowAccuracyHitCounter;
+	_shotsFiredCounterTotal			+= tacstats->shotsFiredCounter;
+	_shotsLandedCounterTotal		+= tacstats->shotsLandedCounter;
+	_mediApplicationsTotal			+= tacstats->medikitApplications;
+	_revivedUnitTotal				+= tacstats->revivedSoldier;
 
-	if (diaryStats->nikeCross == true)
+	if (tacstats->nikeCross == true)
 		++_allAliensKilledTotal;
 
-	if (diaryStats->KIA == true)
+	if (tacstats->KIA == true)
 		_KIA = 1;
-	else if (diaryStats->MIA == true)
+	else if (tacstats->MIA == true)
 		_MIA = 1;
 
-	_missionIdList.push_back(tactical->id);
+	_tacIdList.push_back(tactical->id);
 	//Log(LOG_INFO) << "SoldierDiary::updateDiary() EXIT";
 }
 
 /**
  * Gets the SoldierAwards in this SoldierDiary.
- * @return, pointer to a vector of pointers to SoldierAward - a list of awards
+ * @return, reference to a vector of pointers to SoldierAward
  */
-std::vector<SoldierAward*>* SoldierDiary::getSoldierAwards()
+std::vector<SoldierAward*>& SoldierDiary::getSoldierAwards()
 {
-	return &_solAwards;
+	return _solAwards;
 }
 
 /**
- * Manages the SoldierAwards - award new ones if earned.
+ * Updates the owner's SoldierAwards.
  * @param rules		- pointer to the Ruleset
- * @param tacticals	- pointer to a vector of pointers to MissionStatistics
+ * @param tacticals	- reference to a vector of pointers to TacticalStatistics
  * @return, true if an award is awarded
  */
-bool SoldierDiary::manageAwards(
+bool SoldierDiary::updateAwards(
 		const Ruleset* const rules,
-		const std::vector<MissionStatistics*>* const tacticals)
+		const std::vector<TacticalStatistics*>& tacticals)
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "Diary: manageAwards()";
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "SoldierDiary::updateAwards()";
 	bool
 		doCeremony (false),	// this value is returned TRUE if at least one award is given.
 		grantAward;			// this value determines if an award will be given.
 
-	std::vector<std::string> qualifiedAwards;	// <types>
-	std::map<std::string, size_t> levelReq;		// <noun, qtyLevels required>
+	std::vector<std::string> qualifiers;			// types
+	std::map<std::string, size_t> requiredLevel;	// qualifier + qtyLevels-required
 
-	const std::map<std::string, RuleAward*> allAwards (rules->getAwardsList()); // loop over all possible RuleAwards.
-	for (std::map<std::string, RuleAward*>::const_iterator
+	const std::map<std::string, std::vector<int>>* criteria;
+	std::string criteriaType;
+	int val;
+
+	std::map<std::string, int> solTotal;
+	int threshold;
+
+	const std::vector<std::vector<std::pair<int, std::vector<std::string>>>>* killCriteria;
+
+	int
+		qty,
+		thisIter,
+		lastIter;
+	bool
+		skip,
+		found;
+	const RuleItem
+		* weapon,
+		* load;
+
+	bool firstOfType;
+
+
+	const std::map<std::string, const RuleAward*>& allAwards (rules->getAwardsList()); // loop over all possible RuleAwards.
+	for (std::map<std::string, const RuleAward*>::const_iterator
 			i = allAwards.begin();
 			i != allAwards.end();
 			)
 	{
-		//Log(LOG_INFO) << ". [1] iter awardList - " << (*i).first;
-		qualifiedAwards.clear();
-		levelReq.clear();
-		levelReq["noQual"] = 0;
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << ". iter awardList - " << (*i).first;
+		qualifiers.clear();
+		requiredLevel.clear();
+		requiredLevel["noQual"] = 0;
 
-		// loop over all of soldier's current Awards; map the award's qualifier w/ next-required level.
+		// loop over all of Soldier's current Awards; map the Award's qualifier to the next-required level.
 		for (std::vector<SoldierAward*>::const_iterator
 				j = _solAwards.begin();
 				j != _solAwards.end();
@@ -493,38 +517,38 @@ bool SoldierDiary::manageAwards(
 		{
 			if ((*j)->getType() == i->first)
 			{
-				//Log(LOG_INFO) << ". . set Level[" << ((*j)->getAwardLevel() + 1)  << "] req'd for Qualifier \"" << (*j)->getQualifier() << "\"";
-				levelReq[(*j)->getQualifier()] = (*j)->getAwardLevel() + 1;
+				requiredLevel[(*j)->getQualifier()] = (*j)->getAwardLevel() + 1;
+				Log(LOG_INFO) << ". . requiredLevel[" << (*j)->getQualifier() << "] " << requiredLevel[(*j)->getQualifier()];
 			}
 		}
 
-		// go through each possible criteria. Assume the award is awarded, set to FALSE if not;
-		// ie, as soon as an award criteria that *fails to be achieved* is found, then no award.
+		// Go through each possible criteria. Assume the Award is valid, set 'grantAward' to FALSE if not;
+		// that is, as soon as an Award's criteria *fails to be achieved*, then no Award.
 		grantAward = true;
 
-		const std::map<std::string, std::vector<int>>* allCriteria (i->second->getCriteria());
+		criteria = i->second->getCriteria();
 		for (std::map<std::string, std::vector<int>>::const_iterator
-				j = allCriteria->begin();
-				j != allCriteria->end();
+				j = criteria->begin();
+				j != criteria->end();
 				++j)
 		{
-			//Log(LOG_INFO) << ". . [2] iter Criteria " << (*j).first;
+			Log(LOG_INFO) << ". . iter Criteria " << (*j).first;
 			// skip a "noQual" award if its max award level has been reached
 			// or if it has a qualifier skip it if it has 0 total levels (which ain't gonna happen);
 			// you see, Rules can't be positively examined for nouns - only awards already given to soldiers can.
-			if (j->second.size() <= levelReq["noQual"])
+			if (j->second.size() <= requiredLevel["noQual"])
 			{
-				//Log(LOG_INFO) << ". . . max \"noQual\" Level reached (or, Criteria has no vector)";
+				Log(LOG_INFO) << ". . . max noQual-Level reached (or, Criteria has no vector) BREAK";
 				grantAward = false;
 				break;
 			}
 
-			const std::string criteriaType (j->first);			// vector of (ints) mapped to a (string). Eg, "totalByNoun" incl. "noQual".
-			const int val (j->second.at(levelReq["noQual"]));	// these criteria have no nouns, so only the levelReq["noQual"] will ever be compared
+			criteriaType = j->first;						// vector of (ints) mapped to a (string). Eg, "totalByNoun" incl. "noQual".
+			val = j->second.at(requiredLevel["noQual"]);	// these criteria have no qualifiers, so only the requiredLevel["noQual"] will ever be compared
 
-			if ( //levelReq.count("noQual") == 1 && // <- this is relevant only if entry "noQual" were removed from the map in the sections following this one.
+			if ( //requiredLevel.count("noQual") == 1 && // <- this is relevant only if entry "noQual" were removed from the map in the sections following this one.
 				(       criteriaType == "totalKills"				&& getKillTotal() < val)
-					|| (criteriaType == "totalMissions"				&& static_cast<int>(_missionIdList.size()) < val)
+					|| (criteriaType == "totalMissions"				&& static_cast<int>(_tacIdList.size()) < val)
 					|| (criteriaType == "totalWins"					&& getWinTotal(tacticals) < val)
 					|| (criteriaType == "totalScore"				&& getScoreTotal(tacticals) < val)
 					|| (criteriaType == "totalPoints"				&& getPointsTotal() < val)
@@ -555,50 +579,51 @@ bool SoldierDiary::manageAwards(
 					|| (criteriaType == "totalRevives"				&& _revivedUnitTotal < val)
 					|| (criteriaType == "isMIA"						&& _MIA < val))
 			{
-				//Log(LOG_INFO) << ". . . no Award w/ \"noQual\"";
+				Log(LOG_INFO) << ". . . no Award w/ noQual BREAK";
 				grantAward = false;
 				break;
 			}
-			else if (criteriaType == "totalKillsWithAWeapon"	// awards with the following criteria are unique because they need a qualifier
-				  || criteriaType == "totalMissionsInARegion"	// and they loop over a map<> (this allows for super-good-plus modability).
-				  || criteriaType == "totalKillsByRace"
-				  || criteriaType == "totalKillsByRank")
-			{
-				//Log(LOG_INFO) << ". . . try Award w/ weapon,region,race,rank";
-				std::map<std::string, int> total;
-				if		(criteriaType == "totalKillsWithAWeapon")	total = getWeaponTotal();
-				else if	(criteriaType == "totalMissionsInARegion")	total = getRegionTotal(tacticals);
-				else if	(criteriaType == "totalKillsByRace")		total = getAlienRaceTotal();
-				else if	(criteriaType == "totalKillsByRank")		total = getAlienRankTotal();
 
-				for (std::map<std::string, int>::const_iterator // loop over the 'total' map and match Qualifiers with Levels.
-						k = total.begin();
-						k != total.end();
+			if (   criteriaType == "totalKillsWithAWeapon"	// awards with the following criteria are unique because they need a qualifier
+				|| criteriaType == "totalMissionsInARegion"	// and they loop over a map<> (this allows for super-good-plus modability).
+				|| criteriaType == "totalKillsByRace"
+				|| criteriaType == "totalKillsByRank")
+			{
+				Log(LOG_INFO) << ". . . try Award w/ weapon,region,race,rank";
+				if		(criteriaType == "totalKillsWithAWeapon")	solTotal = getWeaponTotal();
+				else if	(criteriaType == "totalMissionsInARegion")	solTotal = getRegionTotal(tacticals);
+				else if	(criteriaType == "totalKillsByRace")		solTotal = getAlienRaceTotal();
+				else if	(criteriaType == "totalKillsByRank")		solTotal = getAlienRankTotal();
+
+				for (std::map<std::string, int>::const_iterator // loop over the 'solTotal' map and compare results with requiredLevels.
+						k = solTotal.begin();
+						k != solTotal.end();
 						++k)
 				{
-					//Log(LOG_INFO) << ". . . . [3] " << (*k).first << " - " << (*k).second;
-					int threshold (-1);
-					if (levelReq.count(k->first) == 0)					// if there is no matching Qualifier get the first criteria
+					Log(LOG_INFO) << ". . . . " << (*k).first << " - " << (*k).second;
+					if (requiredLevel.count(k->first) == 0)					// no matching Qualifier so get the (first) level from 'criteria'
 					{
-						//Log(LOG_INFO) << ". . . . . no relevant qualifier yet, threshold = " << (*j).second.front();
+						Log(LOG_INFO) << ". . . . . no relevant qualifier yet, threshold = " << (*j).second.front();
 						threshold = j->second.front();
 					}
-					else if (levelReq[k->first] != j->second.size())	// otherwise get the criteria per the soldier's award Level.
+					else if (requiredLevel[k->first] != j->second.size())	// otherwise get the level per the soldier's Award decoration.
 					{
-						//Log(LOG_INFO) << ". . . . . qualifier found, next level available, threshold = " << j->second.at(levelReq[k->first]);
-						threshold = j->second.at(levelReq[k->first]);
+						Log(LOG_INFO) << ". . . . . qualifier found, next level available, threshold = " << j->second.at(requiredLevel[k->first]);
+						threshold = j->second.at(requiredLevel[k->first]);
 					}
+					else
+						threshold = -1;
 
-					if (threshold != -1 && threshold <= k->second)		// if a criteria was set AND the stat's count exceeds that criteria ...
+					if (threshold != -1 && k->second >= threshold)			// if a criteria was set AND the stat's count exceeds that criteria ...
 					{
-						//Log(LOG_INFO) << ". . . . . threshold good, add to qualifiedAwards vector";
-						qualifiedAwards.push_back(k->first);
+						Log(LOG_INFO) << ". . . . . threshold good, add to qualifiers vector";
+						qualifiers.push_back(k->first);
 					}
 				}
 
-				if (qualifiedAwards.empty() == true) // if 'qualifiedAwards' is still empty soldier did not get an award.
+				if (qualifiers.empty() == true) // if 'qualifiers' is still empty soldier did not get an award.
 				{
-					//Log(LOG_INFO) << ". . . . no Award w/ weapon,region,race,rank";
+					Log(LOG_INFO) << ". . . . no Award w/ weapon,region,race,rank";
 					grantAward = false;
 					break;
 				}
@@ -607,37 +632,45 @@ bool SoldierDiary::manageAwards(
 				  || criteriaType == "killsWithCriteriaMission"
 				  || criteriaType == "killsWithCriteriaTurn")
 			{
-				//Log(LOG_INFO) << ". . . try Award w/ career,mission,turn";
-				const std::vector<std::map<int, std::vector<std::string>>>* allKillCriteria (i->second->getKillCriteria()); // fetch the killCriteria list.
-				for (std::vector<std::map<int, std::vector<std::string>>>::const_iterator // loop over the OR vectors.
-						exclusiveCriteria = allKillCriteria->begin();
-						exclusiveCriteria != allKillCriteria->end();
-						++exclusiveCriteria)
+				Log(LOG_INFO) << ". . . try Award w/ career,mission,turn";
+				killCriteria = i->second->getKillCriteria(); // fetch the killCriteria list.
+				for (std::vector<std::vector<std::pair<int, std::vector<std::string>>>>::const_iterator // loop over the OR vectors.
+						exclusive = killCriteria->begin();
+						exclusive != killCriteria->end();
+						++exclusive)
 				{
-					//Log(LOG_INFO) << ". . . . [3] iter killCriteria OR list";// << (*exclusiveCriteria)->;
-					for (std::map<int, std::vector<std::string>>::const_iterator // loop over the AND vectors.
-							additiveCriteria = exclusiveCriteria->begin();
-							additiveCriteria != exclusiveCriteria->end();
-							++additiveCriteria)
+					Log(LOG_INFO) << ". . . . iter killCriteria's OR list";// << (*exclusive)->;
+					for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the AND vectors.
+							additive = exclusive->begin();
+							additive != exclusive->end();
+							++additive)
 					{
-						//Log(LOG_INFO) << ". . . . . [4] iter killCriteria AND list";// << *additiveCriteria->second.begin();
-						int qty (0); // how many AND vectors (list of DETAILs) have been successful.
-						if (criteriaType != "killsWithCriteriaCareer")
-							++qty; // "killsWith..." Turns or Missions start at 1 because of how thisIter and lastIter work.
-						//Log(LOG_INFO) << ". . . . . start Qty = " << qty;
+						Log(LOG_INFO) << ". . . . . iter killCriteria's AND list";// << *additive->second.begin();
+						if (criteriaType == "killsWithCriteriaCareer") // how many AND vectors (list of DETAILs) have been successful.
+							qty = 0;
+						else
+							qty = 1; // "killsWith..." Turns or Missions start at 1 because of how thisIter and lastIter work.
+						Log(LOG_INFO) << ". . . . . start Qty= " << qty;
 
-						bool skip (false);
-						int
-							thisIter (-1), // being a turn or a mission
-							lastIter (-1);
-						//Log(LOG_INFO) << ". . . . . init skip= false, thisIter/lastIter= -1";
+						skip = false;
+						thisIter = // being a turn or a mission
+						lastIter = -1;
+						Log(LOG_INFO) << ". . . . . init skip= false, thisIter/lastIter= -1";
 
 						for (std::vector<BattleUnitKill*>::const_iterator // loop over the KILLS vector.
 								kill = _killList.begin();
 								kill != _killList.end();
 								++kill)
 						{
-							//Log(LOG_INFO) << ". . . . . . [5] iter KILLS";
+							Log(LOG_INFO) << "";
+							Log(LOG_INFO) << ". . . . . . iter Soldier's killList";
+							Log(LOG_INFO) << ". . . . . . race= " << (*kill)->_race;
+							Log(LOG_INFO) << ". . . . . . rank= " << (*kill)->_rank;
+							Log(LOG_INFO) << ". . . . . . faction= " << (*kill)->getUnitFactionString();
+							Log(LOG_INFO) << ". . . . . . status= " << (*kill)->getUnitStatusString();
+							Log(LOG_INFO) << ". . . . . . weapon= " << (*kill)->_weapon;
+							Log(LOG_INFO) << ". . . . . . load= " << (*kill)->_load;
+							Log(LOG_INFO) << ". . . . . . turnHostile= " << (*kill)->hostileTurn();
 							if (criteriaType == "killsWithCriteriaMission")
 							{
 								thisIter = (*kill)->_mission;
@@ -650,16 +683,16 @@ bool SoldierDiary::manageAwards(
 								if (kill != _killList.begin())
 									lastIter = (*(kill - 1))->_turn;
 							}
-							//Log(LOG_INFO) << ". . . . . . " << criteriaType;
-							//Log(LOG_INFO) << ". . . . . . skip = " << skip;
-							//Log(LOG_INFO) << ". . . . . . thisIter = " << thisIter;
-							//Log(LOG_INFO) << ". . . . . . lastIter = " << lastIter;
+							Log(LOG_INFO) << ". . . . . . " << criteriaType;
+							Log(LOG_INFO) << ". . . . . . skip = " << skip;
+							Log(LOG_INFO) << ". . . . . . thisIter = " << thisIter;
+							Log(LOG_INFO) << ". . . . . . lastIter = " << lastIter;
 
-							if (criteriaType != "killsWithCriteriaCareer"	// skip kill-groups that soldier already got an award
+							if (criteriaType != "killsWithCriteriaCareer"	// skip kill-groups that Soldier already got an award
 								&& thisIter == lastIter						// for and skip kills that are inbetween turns.
 								&& skip == true)
 							{
-								//Log(LOG_INFO) << ". . . . . . . continue [1]";
+								Log(LOG_INFO) << ". . . . . . . continue [1]";
 								continue;
 							}
 
@@ -667,18 +700,17 @@ bool SoldierDiary::manageAwards(
 							{
 								qty = 1; // reset.
 								skip = false;
-								//Log(LOG_INFO) << ". . . . . . . continue [2]";
+								Log(LOG_INFO) << ". . . . . . . continue [2]";
 								continue;
 							}
 
-							bool found (true);
-
+							found = true;
 							for (std::vector<std::string>::const_iterator // loop over the DETAILs of the AND vector.
-									detail = additiveCriteria->second.begin();
-									detail != additiveCriteria->second.end();
+									detail = additive->second.begin();
+									detail != additive->second.end();
 									++detail)
 							{
-								//Log(LOG_INFO) << ". . . . . . . [6] iter DETAIL = " << (*detail);
+								Log(LOG_INFO) << ". . . . . . . iter DETAIL - " << (*detail);
 								size_t
 									bType (0u),
 									dType (0u);
@@ -693,9 +725,9 @@ bool SoldierDiary::manageAwards(
 									},
 									dType_array[DATS]
 									{
-										"DT_NONE",	"DT_AP",		"DT_IN",	"DT_HE",
-										"DT_LASER",	"DT_PLASMA",	"DT_STUN",	"DT_MELEE",
-										"DT_ACID",	"DT_SMOKE",		"DT_END"
+										"DT_NONE",		"DT_AP",			"DT_IN",		"DT_HE",
+										"DT_LASER",		"DT_PLASMA",		"DT_STUN",		"DT_MELEE",
+										"DT_ACID",		"DT_SMOKE",			"DT_END"
 									};
 
 								for (
@@ -703,10 +735,10 @@ bool SoldierDiary::manageAwards(
 										bType != BATS;
 										++bType)
 								{
-									//Log(LOG_INFO) << ". . . . . . . . [7] iter bType";
+									//Log(LOG_INFO) << ". . . . . . . . iter bType";
 									if (*detail == bType_array[bType])
 									{
-										//Log(LOG_INFO) << ". . . . . . . . . bType = " << (*detail);
+										Log(LOG_INFO) << ". . . . . . . . . bType = " << (*detail);
 										break;
 									}
 								}
@@ -716,30 +748,27 @@ bool SoldierDiary::manageAwards(
 										dType != DATS;
 										++dType)
 								{
-									//Log(LOG_INFO) << ". . . . . . . . [7] iter dType";
+									//Log(LOG_INFO) << ". . . . . . . . iter dType";
 									if (*detail == dType_array[dType])
 									{
-										//Log(LOG_INFO) << ". . . . . . . . . dType = " << (*detail);
+										Log(LOG_INFO) << ". . . . . . . . . dType = " << (*detail);
 										break;
 									}
 								}
 
-								const RuleItem // if there are NO matches break and try the next Criteria.
-									* const weapon (rules->getItemRule((*kill)->_weapon)),
-									* const load (rules->getItemRule((*kill)->_load));
+								weapon = rules->getItemRule((*kill)->_weapon);
+								load   = rules->getItemRule((*kill)->_load);
 
-								if (   weapon == nullptr	//(*kill)->_weapon == "STR_WEAPON_UNKNOWN"
-									|| load == nullptr		//(*kill)->_load == "STR_WEAPON_UNKNOWN"
-									|| (   (*kill)->_rank != *detail
-										&& (*kill)->_race != *detail
-										&& (*kill)->_weapon != *detail
-										&& (*kill)->_load != *detail
-										&& (*kill)->getUnitStatusString() != *detail
-										&& (*kill)->getUnitFactionString() != *detail
-										&& weapon->getBattleType() != static_cast<BattleType>(bType)
-										&& load->getDamageType() != static_cast<DamageType>(dType)))
+								if (   (*kill)->_rank	!= *detail // if there are NO matches break and try the next Criteria.
+									&& (*kill)->_race	!= *detail
+									&& (*kill)->_weapon	!= *detail
+									&& (*kill)->_load	!= *detail
+									&& (*kill)->getUnitStatusString()  != *detail
+									&& (*kill)->getUnitFactionString() != *detail
+									&& (weapon == nullptr || weapon->getBattleType() != static_cast<BattleType>(bType))
+									&& (load   == nullptr || load->getDamageType()   != static_cast<DamageType>(dType)))
 								{
-									//Log(LOG_INFO) << ". . . . . . . . no more Matching - break DETAIL";
+									Log(LOG_INFO) << ". . . . . . . . no matching Detail BREAK";
 									found = false;
 									break;
 								}
@@ -747,37 +776,34 @@ bool SoldierDiary::manageAwards(
 
 							if (found == true)
 							{
-								++qty;
-								//Log(LOG_INFO) << ". . . . . . . found Qty = " << qty;
-								if (qty == additiveCriteria->first)
+								Log(LOG_INFO) << ". . . . . . . found Qty= " << (qty + 1);
+								if (++qty == additive->first)
 								{
-									//Log(LOG_INFO) << ". . . . . . . . additiveCriteria qty is GOOD";
+									Log(LOG_INFO) << ". . . . . . . . additive Qty is GOOD";
 									skip = true; // criteria met so move to next mission/turn.
 								}
 							}
 						}
 
 						// if one of the AND criteria fail stop looking.
-						//Log(LOG_INFO) << ". . . . . qty = " << qty;
-						//Log(LOG_INFO) << ". . . . . multiCriteria = " << additiveCriteria->first;
-						//Log(LOG_INFO) << ". . . . . \"noQual\" Levels required = " << j->second.at(levelReq["noQual"]);
-						if (additiveCriteria->first == 0
-							|| qty / additiveCriteria->first < j->second.at(levelReq["noQual"]))
+						Log(LOG_INFO) << ". . . . . qty= " << qty;
+						Log(LOG_INFO) << ". . . . . multiCriteria= " << additive->first;
+						Log(LOG_INFO) << ". . . . . noQual-Levels required= " << j->second.at(requiredLevel["noQual"]);
+						if (additive->first == 0
+							|| qty / additive->first < j->second.at(requiredLevel["noQual"]))
 						{
-							//Log(LOG_INFO) << ". . . . . . no Award w/ career,mission,turn - BREAK additiveCriteria";
+							Log(LOG_INFO) << ". . . . . . no Award w/ career,mission,turn - BREAK andCriteria";
 							grantAward = false;
 							break;
 						}
-						else
-						{
-							//Log(LOG_INFO) << ". . . . . . grant Award w/ career,mission,turn";
-							grantAward = true;
-						}
+
+						Log(LOG_INFO) << ". . . . . . grant Award w/ career,mission,turn";
+						grantAward = true;
 					}
 
 					if (grantAward == true) // stop looking because soldier is getting one regardless.
 					{
-						//Log(LOG_INFO) << ". . . . . grant Award w/ career,mission,turn - BREAK orCriteria";
+						Log(LOG_INFO) << ". . . . . grant Award w/ career,mission,turn - BREAK orCriteria";
 						break;
 					}
 				}
@@ -785,24 +811,25 @@ bool SoldierDiary::manageAwards(
 		}
 
 
+		Log(LOG_INFO) << "";
 		if (grantAward == true)
 		{
-			//Log(LOG_INFO) << ". do Award";
+			Log(LOG_INFO) << ". do Award";
 			doCeremony = true;
 
-			if (qualifiedAwards.empty() == true)	// if there are NO qualified awards but the soldier *is*
-			{										// being awarded an award its qualifier will be "noQual".
-				//Log(LOG_INFO) << ". . add \"noQual\" type";
-				qualifiedAwards.push_back("noQual");
+			if (qualifiers.empty() == true)	// if there are NO qualified awards but the soldier *is*
+			{								// being awarded an award its qualifier will be "noQual".
+				Log(LOG_INFO) << ". . GRANT noQual " << i->first;
+				qualifiers.push_back("noQual");
 			}
 
 			for (std::vector<std::string>::const_iterator
-					j = qualifiedAwards.begin();
-					j != qualifiedAwards.end();
+					j = qualifiers.begin();
+					j != qualifiers.end();
 					++j)
 			{
-				//Log(LOG_INFO) << ". . . iter Qualifier = \"" << (*j) << "\"";
-				bool firstOfType (true);
+				Log(LOG_INFO) << ". . . iter Qualifiers= " << (*j);
+				firstOfType = true;
 				for (std::vector<SoldierAward*>::const_iterator
 						k = _solAwards.begin();
 						k != _solAwards.end();
@@ -810,7 +837,7 @@ bool SoldierDiary::manageAwards(
 				{
 					if ((*k)->getType() == i->first && (*k)->getQualifier() == *j)
 					{
-						//Log(LOG_INFO) << ". . . . found = " << i->first;
+						Log(LOG_INFO) << ". . . . GRANT " << (*j) << " " << i->first;
 						firstOfType = false;
 						(*k)->addAwardLevel();
 						break;
@@ -818,18 +845,22 @@ bool SoldierDiary::manageAwards(
 				}
 
 				if (firstOfType == true)
+				{
+					Log(LOG_INFO) << ". . . is First of Type";
 					_solAwards.push_back(new SoldierAward(i->first, *j));
+				}
 			}
+
+			Log(LOG_INFO) << ". iterate to next Award type - check for higher level";
 		}
 		else
 		{
-			//Log(LOG_INFO) << ". do NOT Award -> iterate to top";
-			//Log(LOG_INFO) << "";
+			Log(LOG_INFO) << ". do NOT Award -> iterate to next Award type";
 			++i;
 		}
 	}
 
-	//Log(LOG_INFO) << "Diary: manageAwards() EXIT w/ Ceremony = " << doCeremony;
+	Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ Ceremony = " << doCeremony;
 	return doCeremony;
 }
 
@@ -903,20 +934,20 @@ std::map<std::string, int> SoldierDiary::getLoadTotal() const
 
 /**
  * Gets a list of quantities of tacticals done by Region-type.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, map of regions to tacticals done there
  */
-std::map<std::string, int> SoldierDiary::getRegionTotal(const std::vector<MissionStatistics*>* const tacticals) const
+std::map<std::string, int> SoldierDiary::getRegionTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	std::map<std::string, int> ret;
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id)
@@ -928,20 +959,20 @@ std::map<std::string, int> SoldierDiary::getRegionTotal(const std::vector<Missio
 
 /**
  * Gets a list of quantities of tacticals done by Country-type.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, map of countries to tacticals done there
  */
-std::map<std::string, int> SoldierDiary::getCountryTotal(const std::vector<MissionStatistics*>* const tacticals) const
+std::map<std::string, int> SoldierDiary::getCountryTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	std::map<std::string, int> ret;
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id)
@@ -953,20 +984,20 @@ std::map<std::string, int> SoldierDiary::getCountryTotal(const std::vector<Missi
 
 /**
  * Gets a list of quantities of tacticals done by Tactical-type.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, map of mission-types to qty of
  */
-std::map<std::string, int> SoldierDiary::getTypeTotal(const std::vector<MissionStatistics*>* const tacticals) const
+std::map<std::string, int> SoldierDiary::getTypeTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	std::map<std::string, int> ret;
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id)
@@ -978,20 +1009,20 @@ std::map<std::string, int> SoldierDiary::getTypeTotal(const std::vector<MissionS
 
 /**
  * Gets a list of quantities of tacticals done by UFO-type.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, map of UFO-types to qty of
  */
-std::map<std::string, int> SoldierDiary::getUfoTotal(const std::vector<MissionStatistics*>* const tacticals) const
+std::map<std::string, int> SoldierDiary::getUfoTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	std::map<std::string, int> ret;
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id)
@@ -1003,20 +1034,20 @@ std::map<std::string, int> SoldierDiary::getUfoTotal(const std::vector<MissionSt
 
 /**
  * Gets the current total-score.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, score of all tacticals engaged
  */
-int SoldierDiary::getScoreTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getScoreTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id)
@@ -1085,25 +1116,25 @@ int SoldierDiary::getStunTotal() const
  */
 size_t SoldierDiary::getMissionTotal() const
 {
-	return _missionIdList.size();
+	return _tacIdList.size();
 }
 
 /**
  * Gets the current total quantity of successful tacticals.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, qty of successful tacticals
  */
-int SoldierDiary::getWinTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getWinTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id && (*i)->success)
@@ -1124,7 +1155,7 @@ int SoldierDiary::getDaysWoundedTotal() const
 
 /**
  * Gets if the Soldier died or went missing.
- * @return, kia or mia - or an empty string if neither
+ * @return, kia/mia or "" if neither
  */
 std::string SoldierDiary::getKiaOrMia() const
 {
@@ -1175,6 +1206,8 @@ int SoldierDiary::getProficiency() const
 int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
 {
 	int ret (0);
+
+	const RuleItem* itRule;
 	for (std::vector<BattleUnitKill*>::const_iterator
 			i = _killList.begin();
 			i != _killList.end();
@@ -1182,8 +1215,7 @@ int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
 	{
 		if ((*i)->hostileTurn() == true)
 		{
-			const RuleItem* const itRule (rules->getItemRule((*i)->_weapon));
-			if (itRule == nullptr)
+			if ((itRule = rules->getItemRule((*i)->_weapon)) == nullptr)
 				++ret;
 			else
 			{
@@ -1207,6 +1239,8 @@ int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
  int SoldierDiary::getReactionFireKillTotal(const Ruleset* const rules) const
  {
 	int ret (0);
+
+	const RuleItem* itRule;
 	for (std::vector<BattleUnitKill*>::const_iterator
 			i = _killList.begin();
 			i != _killList.end();
@@ -1214,8 +1248,7 @@ int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
 	{
 		if ((*i)->hostileTurn() == true)
 		{
-			const RuleItem* const itRule (rules->getItemRule((*i)->_weapon));
-			if (itRule != nullptr)
+			if ((itRule = rules->getItemRule((*i)->_weapon)) != nullptr)
 			{
 				switch (itRule->getBattleType())
 				{
@@ -1234,20 +1267,20 @@ int SoldierDiary::getTrapKillTotal(const Ruleset* const rules) const
 
 /**
  * Gets the total of terror tacticals.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, total terror missions
  */
-int SoldierDiary::getTerrorMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getTerrorMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id
@@ -1264,24 +1297,24 @@ int SoldierDiary::getTerrorMissionTotal(const std::vector<MissionStatistics*>* c
 
 /**
  * Gets the total of night tacticals.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, total night missions
  */
-int SoldierDiary::getNightMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getNightMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id
-				&& (*i)->shade >= MissionStatistics::NIGHT_SHADE
+				&& (*i)->shade >= TacticalStatistics::NIGHT_SHADE
 				&& (*i)->isBaseDefense() == false
 				&& (*i)->isAlienBase() == false)
 			{
@@ -1294,24 +1327,24 @@ int SoldierDiary::getNightMissionTotal(const std::vector<MissionStatistics*>* co
 
 /**
  * Gets the total of night terror tacticals.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, total night terror missions
  */
-int SoldierDiary::getNightTerrorMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getNightTerrorMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id
-				&& (*i)->shade >= MissionStatistics::NIGHT_SHADE
+				&& (*i)->shade >= TacticalStatistics::NIGHT_SHADE
 				&& (*i)->isBaseDefense() == false
 				&& (*i)->isAlienBase() == false
 				&& (*i)->isUfoMission() == false)
@@ -1325,20 +1358,20 @@ int SoldierDiary::getNightTerrorMissionTotal(const std::vector<MissionStatistics
 
 /**
  * Gets the total of base defense tacticals.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, total base defense tacticals
  */
-int SoldierDiary::getBaseDefenseMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getBaseDefenseMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id
@@ -1353,20 +1386,20 @@ int SoldierDiary::getBaseDefenseMissionTotal(const std::vector<MissionStatistics
 
 /**
  * Gets the total of alien base assaults.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, total alien base assaults
  */
-int SoldierDiary::getAlienBaseAssaultTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getAlienBaseAssaultTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id
@@ -1381,20 +1414,20 @@ int SoldierDiary::getAlienBaseAssaultTotal(const std::vector<MissionStatistics*>
 
 /**
  * Gets the total of important tacticals.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, total important missions
  */
-int SoldierDiary::getImportantMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getImportantMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id
@@ -1409,20 +1442,20 @@ int SoldierDiary::getImportantMissionTotal(const std::vector<MissionStatistics*>
 
 /**
  * Gets the Valient Crux total.
- * @param tacticals - pointer to a vector of pointers to MissionStatistics
+ * @param tacticals - reference to a vector of pointers to TacticalStatistics
  * @return, total valiant crutches
  */
-int SoldierDiary::getValiantCruxTotal(const std::vector<MissionStatistics*>* const tacticals) const
+int SoldierDiary::getValiantCruxTotal(const std::vector<TacticalStatistics*>& tacticals) const
 {
 	int ret (0);
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = tacticals->begin();
-			i != tacticals->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = tacticals.begin();
+			i != tacticals.end();
 			++i)
 	{
 		for (std::vector<int>::const_iterator
-				j = _missionIdList.begin();
-				j != _missionIdList.end();
+				j = _tacIdList.begin();
+				j != _tacIdList.end();
 				++j)
 		{
 			if (*j == (*i)->id && (*i)->valiantCrux == true)
@@ -1472,12 +1505,12 @@ void SoldierDiary::awardHonoraryMedal()
 }
 
 /**
- * Gets a vector of mission-IDs.
- * @return, reference to a vector of mission-IDs
+ * Gets a vector of tactical-IDs.
+ * @return, reference to a vector of tactical-IDs
  */
-const std::vector<int>& SoldierDiary::getMissionIdList() const
+const std::vector<int>& SoldierDiary::getTacticalIdList() const
 {
-	return _missionIdList;
+	return _tacIdList;
 }
 
 /**
@@ -1507,7 +1540,7 @@ SoldierAward::SoldierAward(
 		bool recent)
 	:
 		_type(type),
-		_qual(qualifier),
+		_qualifier(qualifier),
 		_recent(recent),
 		_level(0u)
 {}
@@ -1533,9 +1566,9 @@ SoldierAward::~SoldierAward()
  */
 void SoldierAward::load(const YAML::Node& node)
 {
-	_type	= node["type"]		.as<std::string>(_type);
-	_qual	= node["qualifier"]	.as<std::string>("noQual");
-	_level	= node["level"]		.as<size_t>(_level);
+	_type		= node["type"]		.as<std::string>(_type);
+	_qualifier	= node["qualifier"]	.as<std::string>("noQual");
+	_level		= node["level"]		.as<size_t>(_level);
 
 	_recent = false;
 }
@@ -1548,30 +1581,31 @@ YAML::Node SoldierAward::save() const
 {
 	YAML::Node node;
 
-	node["type"] = _type;
-	node["level"] = static_cast<int>(_level); // WARNING: Save this even if '0'. don't know why tho
+	node["type"]	= _type;
+	node["level"]	= static_cast<int>(_level); // WARNING: Save this even if '0'. don't know why tho
 
-	if (_qual != "noQual") node["qualifier"] = _qual;
+	if (_qualifier != "noQual") node["qualifier"] = _qualifier;
 
 	return node;
 }
 
 /**
  * Gets this SoldierAward's type.
- * @return, the type
+ * @return, reference to the type
  */
-const std::string SoldierAward::getType() const
+const std::string& SoldierAward::getType() const
 {
 	return _type;
 }
 
 /**
  * Gets this SoldierAward's noun/qualifier.
- * @return, the qualifier
+ * @note "STR_SECTOPOD" or "STR_HEAVY_PLASMA" for examples.
+ * @return, reference to the qualifier
  */
-const std::string SoldierAward::getQualifier() const
+const std::string& SoldierAward::getQualifier() const
 {
-	return _qual;
+	return _qualifier;
 }
 
 /**

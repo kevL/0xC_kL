@@ -37,33 +37,33 @@ private:
 	int _sprite;
 	std::string
 		_description,
-		_descGeneral;
+		_descGeneric;
 
 	std::map<std::string, std::vector<int>> _criteria;
-	std::vector<std::map<int, std::vector<std::string>>> _killCriteria;
+	std::vector<std::vector<std::pair<int, std::vector<std::string>>>> _killCriteria;
 
 
 	public:
-		/// Creates a blank Award ruleset.
+		/// Creates a RuleAward.
 		RuleAward();
-		/// Cleans up the Award ruleset.
+		/// Cleans up the RuleAward.
 		~RuleAward();
 
-		/// Loads Award data from YAML.
+		/// Loads the RuleAward data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets the Award's description.
-		std::string getDescription() const;
-		/// Gets the Award's generic description.
-		std::string getDescriptionGeneral() const;
+		/// Gets the RuleAward's description.
+		const std::string& getDescription() const;
+		/// Gets the RuleAward's generic description.
+		const std::string& getDescriptionGeneric() const;
 
-		/// Gets the Award's sprite.
+		/// Gets the RuleAward's sprite.
 		int getSprite() const;
 
-		/// Gets the Award's criteria.
-		std::map<std::string, std::vector<int>>* getCriteria();
-		/// Gets the Award's kill-related criteria.
-		std::vector<std::map<int, std::vector<std::string>>>* getKillCriteria();
+		/// Gets the RuleAward's criteria.
+		const std::map<std::string, std::vector<int>>* getCriteria() const;
+		/// Gets the RuleAward's kill-criteria.
+		const std::vector<std::vector<std::pair<int, std::vector<std::string>>>>* getKillCriteria() const;
 };
 
 }

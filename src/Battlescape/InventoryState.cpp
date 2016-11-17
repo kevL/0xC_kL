@@ -1445,7 +1445,7 @@ void InventoryState::btnApplyTemplateClick(Action*)
 	{
 		// search for template item in ground inventory
 		std::vector<BattleItem*>::iterator groundItem;
-		const bool usesAmmo = !_game->getRuleset()->getItemRule((*templateIt)->getItemType())->getCompatibleAmmo()->empty();
+		const bool usesAmmo = !_game->getRuleset()->getItemRule((*templateIt)->getItemType())->getAcceptedLoadTypes()->empty();
 		bool
 			found = false,
 			rescan = true;

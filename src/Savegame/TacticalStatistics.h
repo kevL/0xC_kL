@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http:///www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_MISSIONSTATISTICS_H
-#define OPENXCOM_MISSIONSTATISTICS_H
+#ifndef OPENXCOM_TACTICALSTATISTICS_H
+#define OPENXCOM_TACTICALSTATISTICS_H
 
 //#include <map>
 //#include <string>
@@ -32,9 +32,9 @@ namespace OpenXcom
 {
 
 /**
- * Container for SoldierDiary's MissionStatistics.
+ * Container for SoldierDiary's TacticalStatistics.
  */
-struct MissionStatistics
+struct TacticalStatistics
 {
 	static const int NIGHT_SHADE = 9; // cf. TileEngine::MAX_SHADE_TO_SEE_UNITS
 
@@ -72,10 +72,10 @@ struct MissionStatistics
 
 
 	/**
-	 * Creates a blank MissionStatistics.
-	 * @note MissionStatistics holds data about a tactical battle.
+	 * Creates a blank TacticalStatistics.
+	 * @note TacticalStatistics holds data about a tactical battle.
 	 */
-	MissionStatistics()
+	TacticalStatistics()
 		:
 			id(0),
 			timeStat(0,0,0,0,0,0),
@@ -90,11 +90,11 @@ struct MissionStatistics
 	{}
 
 	/**
-	 * Creates MissionStatistics from a YAML node.
-	 * @note MissionStatistics holds data about a tactical battle.
+	 * Creates TacticalStatistics from a YAML node.
+	 * @note TacticalStatistics holds data about a tactical battle.
 	 * @param node - reference a YAML node
 	 */
-	explicit MissionStatistics(const YAML::Node& node)
+	explicit TacticalStatistics(const YAML::Node& node)
 		:
 			timeStat(0,0,0,0,0,0)
 	{
@@ -104,11 +104,11 @@ struct MissionStatistics
 	/**
 	 * dTor.
 	 */
-	~MissionStatistics()
+	~TacticalStatistics()
 	{}
 
 	/**
-	 * Loads a MissionStatistics node from YAML.
+	 * Loads a TacticalStatistics node from YAML.
 	 * @param node - reference a YAML node
 	 */
 	void load(const YAML::Node& node)
@@ -130,7 +130,7 @@ struct MissionStatistics
 	}
 
 	/**
-	 * Saves a MissionStatistics node to YAML.
+	 * Saves a TacticalStatistics node to YAML.
 	 * @return, a YAML node
 	 */
 	YAML::Node save() const
@@ -159,7 +159,7 @@ struct MissionStatistics
 	}
 
 	/**
-	 * Checks if these MissionStatistics are for an AlienBase tactical.
+	 * Checks if these TacticalStatistics are for an AlienBase tactical.
 	 * @return, true if data is for an AlienBase tactical
 	 */
 	bool isAlienBase() const
@@ -171,7 +171,7 @@ struct MissionStatistics
 	}
 
 	/**
-	 * Checks if these MissionStatistics are for a BaseDefense tactical.
+	 * Checks if these TacticalStatistics are for a BaseDefense tactical.
 	 * @return, true if data is for a BaseDefense tactical
 	 */
 	bool isBaseDefense() const
@@ -183,7 +183,7 @@ struct MissionStatistics
 	}
 
 	/**
-	 * Checks if these MissionStatistics are for a UFO tactical.
+	 * Checks if these TacticalStatistics are for a UFO tactical.
 	 * @return, true if data is for a UFO tactical
 	 */
 	bool isUfoMission() const

@@ -318,7 +318,7 @@ Ruleset::~Ruleset()
 			++i)
 		delete i->second;
 
-	for (std::map<std::string, RuleAward*>::const_iterator
+	for (std::map<std::string, const RuleAward*>::const_iterator
 			i = _awards.begin();
 			i != _awards.end();
 			++i)
@@ -1479,9 +1479,9 @@ MapDataSet* Ruleset::getMapDataSet(const std::string& type)
 
 /**
  * Gets the list of Awards.
- * @return, map of awards
+ * @return, reference to a map of award-types and their pointers
  */
-std::map<std::string, RuleAward*> Ruleset::getAwardsList() const
+const std::map<std::string, const RuleAward*>& Ruleset::getAwardsList() const
 {
 	return _awards;
 }

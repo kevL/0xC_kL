@@ -24,7 +24,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a blank set of Award data.
+ * Creates the RuleAward.
  */
 RuleAward::RuleAward()
 	:
@@ -32,44 +32,45 @@ RuleAward::RuleAward()
 {}
 
 /**
- * Cleans up the Award.
+ * Cleans up this RuleAward.
  */
 RuleAward::~RuleAward()
 {}
 
 /**
- * Loads the Award from YAML.
+ * Loads this RuleAward from YAML.
  * @param node - reference a YAML node
  */
 void RuleAward::load(const YAML::Node& node)
 {
 	_description	= node["description"]	.as<std::string>(_description);
-	_descGeneral	= node["descGeneral"]	.as<std::string>(_descGeneral);
+	_descGeneric	= node["descGeneric"]	.as<std::string>(_descGeneric);
 	_sprite			= node["sprite"]		.as<int>(_sprite);
 	_criteria		= node["criteria"]		.as<std::map<std::string, std::vector<int>>>(_criteria);
-	_killCriteria	= node["killCriteria"]	.as<std::vector<std::map<int, std::vector<std::string>>>>(_killCriteria);
+//	_killCriteria	= node["killCriteria"]	.as<std::vector<std::map<int, std::vector<std::string>>>>(_killCriteria);
+	_killCriteria	= node["killCriteria"]	.as<std::vector<std::vector<std::pair<int, std::vector<std::string>>>>>(_killCriteria);
 }
 
 /**
- * Gets the Award's description.
+ * Gets this RuleAward's description.
  * @return, award description
  */
-std::string RuleAward::getDescription() const
+const std::string& RuleAward::getDescription() const
 {
 	return _description;
 }
 
 /**
- * Gets the Award's non-specific description.
+ * Gets this RuleAward's non-specific description.
  * @return, generic description
  */
-std::string RuleAward::getDescriptionGeneral() const
+const std::string& RuleAward::getDescriptionGeneric() const
 {
-	return _descGeneral;
+	return _descGeneric;
 }
 
 /**
- * Gets the Award's sprite.
+ * Gets this RuleAward's sprite.
  * @return, sprite number
  */
 int RuleAward::getSprite() const
@@ -78,19 +79,19 @@ int RuleAward::getSprite() const
 }
 
 /**
- * Gets the Award's criteria.
+ * Gets this RuleAward's criteria.
  * @return, pointer to a map of (strings & vectors of ints) that denote award criteria
  */
-std::map<std::string, std::vector<int>>* RuleAward::getCriteria()
+const std::map<std::string, std::vector<int>>* RuleAward::getCriteria() const
 {
 	return &_criteria;
 }
 
 /**
- * Gets the Award's kill criteria.
- * @return, pointer to a vector of maps of (ints & vectors of strings) that denote award kill criteria
+ * Gets this RuleAward's kill-criteria.
+ * @return, pointer to a vector of pairs of (ints & vectors of strings) that denote award kill criteria
  */
-std::vector<std::map<int, std::vector<std::string>>>* RuleAward::getKillCriteria()
+const std::vector<std::vector<std::pair<int, std::vector<std::string>>>>* RuleAward::getKillCriteria() const
 {
 	return &_killCriteria;
 }

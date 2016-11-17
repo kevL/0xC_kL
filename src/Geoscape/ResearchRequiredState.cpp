@@ -68,7 +68,7 @@ ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
 							Options::keyOkKeypad);
 
 	_txtTitle->setText(tr("STR_YOU_NEED_TO_RESEARCH_ITEM_TO_PRODUCE_ITEM")
-					   .arg(tr(itRule->getCompatibleAmmo()->front()))
+					   .arg(tr(itRule->getAcceptedLoadTypes()->front()))
 					   .arg(tr(itRule->getType())));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);

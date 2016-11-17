@@ -462,7 +462,7 @@ void SoldierDiaryPerformanceState::init()
 		_txtTitle->setText(deceased->getLabel());
 	}
 
-	std::vector<MissionStatistics*>* tacticals (_game->getSavedGame()->getMissionStatistics());
+	const std::vector<TacticalStatistics*>& tacticals (_game->getSavedGame()->getTacticalStatistics());
 
 	std::wstring
 		wst1,
@@ -470,14 +470,18 @@ void SoldierDiaryPerformanceState::init()
 		wst3,
 		wst4;
 
-	if (_diary->getMissionTotal() != 0u) // Mission stats ->
-		wst1 = tr("STR_MISSIONS_").arg(_diary->getMissionTotal());
-	if (_diary->getWinTotal(tacticals) != 0)
-		wst2 = tr("STR_WINS_").arg(_diary->getWinTotal(tacticals));
-	if (_diary->getScoreTotal(tacticals) != 0)
-		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getScoreTotal(tacticals));
-	if (_diary->getDaysWoundedTotal() != 0)
-		wst4 = tr("STR_DAYS_WOUNDED_").arg(_diary->getDaysWoundedTotal()).arg(L" d");
+	int t;
+	if ((t = static_cast<int>(_diary->getMissionTotal())) != 0) // Mission stats ->
+		wst1 = tr("STR_MISSIONS_").arg(t);
+
+	if ((t = _diary->getWinTotal(tacticals)) != 0)
+		wst2 = tr("STR_WINS_").arg(t);
+
+	if ((t = _diary->getScoreTotal(tacticals)) != 0)
+		wst3 = tr("STR_SCORE_VALUE_").arg(t);
+
+	if ((t = _diary->getDaysWoundedTotal()) != 0)
+		wst4 = tr("STR_DAYS_WOUNDED_").arg(t).arg(L" d");
 
 	_lstMissionTotals->addRow(
 						4,
@@ -487,18 +491,18 @@ void SoldierDiaryPerformanceState::init()
 						wst4.c_str());
 
 
-	if (_diary->getKillTotal() != 0) // Kill stats ->
-		wst1 = tr("STR_KILLS_").arg(_diary->getKillTotal());
+	if ((t = _diary->getKillTotal()) != 0) // Kill stats ->
+		wst1 = tr("STR_KILLS_").arg(t);
 	else
 		wst1 = L"";
 
-	if (_diary->getStunTotal() != 0)
-		wst2 = tr("STR_STUNS_").arg(_diary->getStunTotal());
+	if ((t = _diary->getStunTotal()) != 0)
+		wst2 = tr("STR_STUNS_").arg(t);
 	else
 		wst2 = L"";
 
-	if (_diary->getPointsTotal() != 0)
-		wst3 = tr("STR_SCORE_VALUE_").arg(_diary->getPointsTotal());
+	if ((t = _diary->getPointsTotal()) != 0)
+		wst3 = tr("STR_SCORE_VALUE_").arg(t);
 	else
 		wst3 = L"";
 
@@ -508,9 +512,8 @@ void SoldierDiaryPerformanceState::init()
 						wst2.c_str(),
 						wst3.c_str());
 
-	if (_diary->getProficiency() != -1)
-		_txtProficiency->setText(tr("STR_PROFICIENCY_")
-								.arg(_diary->getProficiency()).c_str());
+	if ((t = _diary->getProficiency()) != -1)
+		_txtProficiency->setText(tr("STR_PROFICIENCY_").arg(t).c_str());
 	else
 		_txtProficiency->setVisible(false);
 
@@ -536,12 +539,13 @@ void SoldierDiaryPerformanceState::init()
 		_diary->getUfoTotal(tacticals)
 	};
 
+	size_t r;
 	for (size_t
 			i = 0u;
 			i != lstCols;
 			++i)
 	{
-		size_t r (0u);
+		r = 0u;
 		for (std::map<std::string, int>::const_iterator
 				j = mapArray[i].begin();
 				j != mapArray[i].end();
@@ -562,15 +566,15 @@ void SoldierDiaryPerformanceState::init()
 	}
 
 
+//	if (_game->getRuleset()->getAwardsList().empty() == true) return;
+
+	const RuleAward* awardRule;
 	for (std::vector<SoldierAward*>::const_iterator // Award stats ->
-			i = _diary->getSoldierAwards()->begin();
-			i != _diary->getSoldierAwards()->end();
+			i = _diary->getSoldierAwards().begin();
+			i != _diary->getSoldierAwards().end();
 			++i)
 	{
-		if (_game->getRuleset()->getAwardsList().empty() == true)
-			break;
-
-		const RuleAward* const awardRule (_game->getRuleset()->getAwardsList()[(*i)->getType()]);
+		awardRule = _game->getRuleset()->getAwardsList().at((*i)->getType());
 		std::wostringstream
 			woststr1,
 			woststr2;
@@ -618,19 +622,19 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 		int sprite;
 
 		size_t j (0u);
-		for (std::vector<SoldierAward*>::const_iterator // show awards that are on the Soldier's list
-				i = _diary->getSoldierAwards()->begin();
-				i != _diary->getSoldierAwards()->end();
+		for (std::vector<SoldierAward*>::const_iterator							// show awards that are on the Soldier's list
+				i = _diary->getSoldierAwards().begin();
+				i != _diary->getSoldierAwards().end();
 				++i, ++j)
 		{
-			if (j >= scroll
+			if (j >= scroll														// draw each award's sprite
 				&& j - scroll < _srfAward.size())
 			{
-				awardRule = _game->getRuleset()->getAwardsList()[(*i)->getType()]; // draw each award's sprite
+				awardRule = _game->getRuleset()->getAwardsList().at((*i)->getType());
 				sprite = awardRule->getSprite();
 				_srtAwards->getFrame(sprite)->blit(_srfAward[j - scroll]);
 
-				if ((sprite = static_cast<int>((*i)->getAwardLevel())) != 0) // draw each award's level-sprite
+				if ((sprite = static_cast<int>((*i)->getAwardLevel())) != 0)	// draw each award's level-sprite
 					_srtLevels->getFrame(sprite)->blit(_srfLevel[j - scroll]);
 			}
 		}

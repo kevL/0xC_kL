@@ -44,11 +44,11 @@
 #include "../Savegame/Base.h"
 #include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/Country.h"
-#include "../Savegame/MissionStatistics.h"
 #include "../Savegame/ResearchGeneral.h"
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDeath.h"
 #include "../Savegame/SoldierDiary.h"
+#include "../Savegame/TacticalStatistics.h"
 
 
 namespace OpenXcom
@@ -167,9 +167,9 @@ void StatisticsState::listStats()
 		alienBasesDestroyed	(0),
 		xcomBasesLost		(0);
 
-	for (std::vector<MissionStatistics*>::const_iterator
-			i = gameSave->getMissionStatistics()->begin();
-			i != gameSave->getMissionStatistics()->end();
+	for (std::vector<TacticalStatistics*>::const_iterator
+			i = gameSave->getTacticalStatistics().begin();
+			i != gameSave->getTacticalStatistics().end();
 			++i)
 	{
 		if ((*i)->success == true)
@@ -180,7 +180,7 @@ void StatisticsState::listStats()
 		bestScore  = std::max(bestScore,  (*i)->score);
 		worstScore = std::min(worstScore, (*i)->score);
 
-		if ((*i)->shade >= MissionStatistics::NIGHT_SHADE)
+		if ((*i)->shade >= TacticalStatistics::NIGHT_SHADE)
 			++nightMissions;
 
 		if ((*i)->isAlienBase() && (*i)->success)
@@ -225,12 +225,14 @@ void StatisticsState::listStats()
 		killsByWeapon,
 		weaponTotal;
 
+	const SoldierDiary* diary;
+
 	for (std::vector<Soldier*>::const_iterator
 			i = solLive.begin();
 			i != solLive.end();
 			++i)
 	{
-		SoldierDiary* const diary ((*i)->getDiary());
+		diary = (*i)->getDiary();
 
 		aliensKilled	+= diary->getKillTotal();
 		aliensCaptured	+= diary->getStunTotal();
@@ -273,7 +275,7 @@ void StatisticsState::listStats()
 			i != solDead->end();
 			++i)
 	{
-		SoldierDiary* const diary ((*i)->getDiary());
+		diary = (*i)->getDiary();
 
 		aliensKilled	+= diary->getKillTotal();
 		aliensCaptured	+= diary->getStunTotal();

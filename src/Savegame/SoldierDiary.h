@@ -46,7 +46,7 @@ private:
 	size_t _level;
 	std::string
 		_type,
-		_qual;
+		_qualifier;
 
 
 	public:
@@ -66,9 +66,9 @@ private:
 		YAML::Node save() const;
 
 		/// Gets the SoldierAward's type.
-		const std::string getType() const;
+		const std::string& getType() const;
 		/// Gets the SoldierAward's noun/qualifier.
-		const std::string getQualifier() const;
+		const std::string& getQualifier() const;
 
 		/// Gets the SoldierAward's level as an integer.
 		size_t getAwardLevel() const;
@@ -120,7 +120,7 @@ private:
 		_KIA,
 		_MIA;
 
-	std::vector<int> _missionIdList;
+	std::vector<int> _tacIdList;
 	std::vector<SoldierAward*> _solAwards;
 	std::vector<BattleUnitKill*> _killList;
 
@@ -145,16 +145,16 @@ private:
 
 		/// Updates the SoldierDiary's statistics.
 		void updateDiary(
-				BattleUnitStatistics* const diaryStats,
-				const MissionStatistics* const tactical);
+				BattleUnitStatistics* const tacstats,
+				const TacticalStatistics* const tactical);
 
 		/// Gets the SoldierAwards currently in the SoldierDiary.
-		std::vector<SoldierAward*>* getSoldierAwards();
+		std::vector<SoldierAward*>& getSoldierAwards();
 
 		/// Manages SoldierAwards and returns true if a medal is awarded.
-		bool manageAwards(
+		bool updateAwards(
 				const Ruleset* const rules,
-				const std::vector<MissionStatistics*>* const tacticals);
+				const std::vector<TacticalStatistics*>& tacticals);
 
 		/// Gets the list of kills, mapped by rank.
 		std::map<std::string, int> getAlienRankTotal() const;
@@ -166,16 +166,16 @@ private:
 //		std::map<std::string, int> getLoadTotal() const;
 
 		/// Gets the quantities of missions mapped by Region.
-		std::map<std::string, int> getRegionTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		std::map<std::string, int> getRegionTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the quantities of missions mapped by Country.
-		std::map<std::string, int> getCountryTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		std::map<std::string, int> getCountryTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the quantities of missions mapped by tactical-type.
-		std::map<std::string, int> getTypeTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		std::map<std::string, int> getTypeTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the quantities of missions mapped by UFO-type.
-		std::map<std::string, int> getUfoTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		std::map<std::string, int> getUfoTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 
 		/// Gets the total score.
-		int getScoreTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getScoreTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the total point-value of aLiens killed or stunned.
 		int getPointsTotal() const;
 		/// Gets the total quantity of kills.
@@ -185,7 +185,7 @@ private:
 		/// Gets the total quantity of missions.
 		size_t getMissionTotal() const;
 		/// Gets the total quantity of wins.
-		int getWinTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getWinTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the total quantity of days wounded.
 		int getDaysWoundedTotal() const;
 		/// Gets whether soldier died or went missing.
@@ -201,19 +201,19 @@ private:
 		/// Gets reaction kill total.
 		int getReactionFireKillTotal(const Ruleset* const rules) const;
 		/// Gets the total of terror missions.
-		int getTerrorMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getTerrorMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the total of night missions.
-		int getNightMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getNightMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the total of night terror missions.
-		int getNightTerrorMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getNightTerrorMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the total of base defense missions.
-		int getBaseDefenseMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getBaseDefenseMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the total of alien base assaults.
-		int getAlienBaseAssaultTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getAlienBaseAssaultTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the total of important missions.
-		int getImportantMissionTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getImportantMissionTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 		/// Gets the Valient Crux total.
-		int getValiantCruxTotal(const std::vector<MissionStatistics*>* const tacticals) const;
+		int getValiantCruxTotal(const std::vector<TacticalStatistics*>& tacticals) const;
 
 		/// Increments the Soldier's service-time.
 		void addMonthlyService();
@@ -226,7 +226,7 @@ private:
 		void awardHonoraryMedal();
 
 		/// Gets the mission-ID list.
-		const std::vector<int>& getMissionIdList() const;
+		const std::vector<int>& getTacticalIdList() const;
 		/// Gets the kills-list.
 		const std::vector<BattleUnitKill*>& getKills() const;
 };

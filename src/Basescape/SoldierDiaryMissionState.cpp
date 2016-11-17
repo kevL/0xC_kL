@@ -38,11 +38,11 @@
 
 #include "../Savegame/Base.h"
 #include "../Savegame/BattleUnitStatistics.h"
-#include "../Savegame/MissionStatistics.h"
 //#include "../Savegame/SavedGame.h"
 //#include "../Savegame/Soldier.h"
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDiary.h"
+#include "../Savegame/TacticalStatistics.h"
 
 
 namespace OpenXcom
@@ -159,17 +159,17 @@ void SoldierDiaryMissionState::init()
 {
 	State::init();
 
-	const MissionStatistics* tactical;
-	size_t missionId;
+	const TacticalStatistics* tactical;
+	int tacId;
 	int daysWounded;
 
-	const std::vector<MissionStatistics*>* const statList (_game->getSavedGame()->getMissionStatistics());
+	const std::vector<TacticalStatistics*>& tacticals (_game->getSavedGame()->getTacticalStatistics());
 	if (_base != nullptr)
 	{
 		const Soldier* const sol (_base->getSoldiers()->at(_solId));
 		_diary = sol->getDiary();
-		missionId = static_cast<size_t>(_diary->getMissionIdList().at(_rowOverview));
-		tactical = statList->at(missionId);
+		tacId = _diary->getTacticalIdList().at(_rowOverview);
+		tactical = tacticals.at(static_cast<size_t>(tacId));
 
 		const std::map<int,int>* injured (&tactical->injuryList);
 		if (injured->find(sol->getId()) != injured->end())
@@ -181,8 +181,8 @@ void SoldierDiaryMissionState::init()
 	{
 		const SoldierDead* const solDead (_game->getSavedGame()->getDeadSoldiers()->at(_solId));
 		_diary = solDead->getDiary();
-		missionId = static_cast<size_t>(_diary->getMissionIdList().at(_rowOverview));
-		tactical = statList->at(missionId);
+		tacId = _diary->getTacticalIdList().at(_rowOverview);
+		tactical = tacticals.at(static_cast<size_t>(tacId));
 
 		const std::map<int,int>* injured (&tactical->injuryList);
 		if (injured->find(solDead->getId()) != injured->end())
@@ -195,7 +195,7 @@ void SoldierDiaryMissionState::init()
 	_btnPrev->setVisible(vis);
 	_btnNext->setVisible(vis);
 
-	_txtTitle->setText(tr("STR_MISSION_UC_").arg(missionId));
+	_txtTitle->setText(tr("STR_MISSION_UC_").arg(tacId));
 
 	_txtScore->setText(tr("STR_SCORE_VALUE_").arg(tactical->score));
 	_txtMissionType->setText(tr("STR_MISSION_TYPE_").arg(tr(tactical->type))); // 'type' was, getMissionTypeLowerCase()
@@ -219,7 +219,7 @@ void SoldierDiaryMissionState::init()
 	if (tactical->isBaseDefense() == false && tactical->isAlienBase() == false)
 	{
 		_txtDaylight->setVisible();
-		if (tactical->shade < MissionStatistics::NIGHT_SHADE)
+		if (tactical->shade < TacticalStatistics::NIGHT_SHADE)
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_DAY")));
 		else
 			_txtDaylight->setText(tr("STR_DAYLIGHT_TYPE_").arg(tr("STR_NIGHT")));
@@ -246,14 +246,14 @@ void SoldierDiaryMissionState::init()
 	int
 		kills  (0),
 		points (0);
-	size_t r (0);
+	size_t r (0u);
 
 	for (std::vector<BattleUnitKill*>::const_iterator
 			i = _diary->getKills().begin();
 			i != _diary->getKills().end();
 			++i)
 	{
-		if ((*i)->_mission == static_cast<int>(missionId))
+		if ((*i)->_mission == tacId)
 		{
 			++kills;
 			points += (*i)->_points;

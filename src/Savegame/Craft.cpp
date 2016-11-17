@@ -1498,7 +1498,7 @@ void Craft::unloadCraft(
 
 			if (itRule->getFullClip() > 0)
 				_base->getStorageItems()->addItem(
-											itRule->getCompatibleAmmo()->front(),
+											itRule->getAcceptedLoadTypes()->front(),
 											(*i)->getLoad());
 			if (updateCraft == true)
 			{

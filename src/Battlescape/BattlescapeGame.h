@@ -224,9 +224,9 @@ private:
 		_killStatRace,
 		_killStatRank,
 		_killStatWeapon,
-		_killStatWeaponAmmo;
+		_killStatWeaponLoad;
 	int
-		_killStatMission,
+		_killStatMissionId,
 		_killStatTurn,
 		_killStatPoints;
 

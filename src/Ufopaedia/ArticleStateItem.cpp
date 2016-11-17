@@ -89,7 +89,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 		_txtTwoHand->setColor(uPed_BLUE_SLATE);
 	}
 
-	const std::vector<std::string>* const ammo_data (itRule->getCompatibleAmmo());
+	const std::vector<std::string>* const ammo_data (itRule->getAcceptedLoadTypes());
 
 	// SHOT-MODE STATS-TABLE (for firearms + melee only)
 	switch (itRule->getBattleType())

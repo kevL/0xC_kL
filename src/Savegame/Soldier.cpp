@@ -279,8 +279,8 @@ YAML::Node Soldier::save() const
 		node["layout"].push_back((*i)->save());
 	}
 
-	if (_diary->getMissionIdList().empty() == false
-		|| _diary->getSoldierAwards()->empty() == false)
+	if (   _diary->getTacticalIdList().empty() == false
+		|| _diary->getSoldierAwards().empty() == false)
 	{
 		node["diary"] = _diary->save();
 	}

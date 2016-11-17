@@ -475,7 +475,7 @@ void CraftEquipmentState::rightByValue(int delta)
 						}
 						else // tank needs Ammo.
 						{
-							const std::string type (itRule->getCompatibleAmmo()->front());
+							const std::string type (itRule->getAcceptedLoadTypes()->front());
 							const int
 								clipsRequired (itRule->getFullClip()),
 								baseClips (_base->getStorageItems()->getItemQuantity(type));
@@ -604,7 +604,7 @@ void CraftEquipmentState::leftByValue(int delta)
 				_base->getStorageItems()->addItem(_items[_row], delta);
 				if (itRule->getFullClip() > 0)
 					_base->getStorageItems()->addItem(
-													itRule->getCompatibleAmmo()->front(),
+													itRule->getAcceptedLoadTypes()->front(),
 													itRule->getFullClip() * delta); // Vehicles onboard Craft always have full clips.
 			}
 

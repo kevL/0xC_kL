@@ -325,7 +325,7 @@ void SoldierInfoState::init()
 	}
 
 	if (_solId >= _listBase->size())
-		_solId = 0;
+		_solId = 0u;
 
 	_sol = _listBase->at(_solId);
 	_edtSoldier->setText(_sol->getLabel());
@@ -563,14 +563,12 @@ void SoldierInfoState::init()
 			break;
 
 		default:
-		{
 			_txtRecovery->setText(tr("STR_WOUND_RECOVERY_").arg(tr("")));
 			_txtRecovery->setVisible();
 
 			_txtDay->setColor(_sol->getSickbayColor());
 			_txtDay->setText(tr("STR_DAY", static_cast<unsigned>(recovery)));
 			_txtDay->setVisible();
-		}
 	}
 
 	_txtRank	->setText(tr("STR_RANK_")    .arg(tr(_sol->getRankString())));
@@ -653,6 +651,11 @@ void SoldierInfoState::btnAutoStat(Action*)
 	_sol->setLabel(_edtSoldier->getText());
 	_sol->autoStat();
 
+	// TEST: for updating Soldier Awards ***
+	// note that decorationLevels need to be zero'd in the savedgame file.
+	_sol->getDiary()->updateAwards(
+								_game->getRuleset(),
+								_game->getSavedGame()->getTacticalStatistics());
 	init();
 }
 
@@ -683,7 +686,7 @@ void SoldierInfoState::btnAutoStatAll(Action*)
 	}
 
 	// TEST: for updating Soldier Awards ***
-	// note that decorationLevels need to also be zero'd in the savedgame file.
+	// note that decorationLevels need to be zero'd in the savedgame file.
 //	for (std::vector<Base*>::const_iterator
 //			i = _game->getSavedGame()->getBases()->begin();
 //			i != _game->getSavedGame()->getBases()->end();
@@ -694,7 +697,7 @@ void SoldierInfoState::btnAutoStatAll(Action*)
 //				j != (*i)->getSoldiers()->end();
 //				++j)
 //		{
-//			(*j)->getDiary()->manageAwards(_game->getRuleset());
+//			(*j)->getDiary()->updateAwards(_game->getRuleset());
 //		}
 //	}
 }

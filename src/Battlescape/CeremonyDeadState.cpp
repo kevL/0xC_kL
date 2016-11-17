@@ -162,8 +162,8 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //				++j)
 //		{
 //			for (std::vector<SoldierAward*>::const_iterator
-//					k = (*j)->getDiary()->getSoldierAwards()->begin();
-//					k != (*j)->getDiary()->getSoldierAwards()->end();
+//					k = (*j)->getDiary()->getSoldierAwards().begin();
+//					k != (*j)->getDiary()->getSoldierAwards().end();
 //					++k)
 //			{
 //				if ((*k)->getType() == (*i).first
@@ -229,7 +229,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //
 //			_lstAwards->setRowColor(titleRow, BROWN, true);
 //
-//			const std::string info ((*i).second->getDescriptionGeneral()); // look for Generic Desc first.
+//			const std::string info ((*i).second->getDescriptionGeneric()); // look for Generic Desc first.
 //			if (info.empty() == false)
 //				_titleRows[titleRow] = info;
 //			else

@@ -42,11 +42,11 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
-#include "../Savegame/MissionStatistics.h"
 //#include "../Savegame/SavedGame.h"
 //#include "../Savegame/Soldier.h"
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDiary.h"
+#include "../Savegame/TacticalStatistics.h"
 
 
 namespace OpenXcom
@@ -257,17 +257,17 @@ void SoldierDiaryOverviewState::init()
 //	if (diary == nullptr) return; // safety.
 
 
-	const std::vector<MissionStatistics*>* const stats (_game->getSavedGame()->getMissionStatistics());
-	for (std::vector<MissionStatistics*>::const_reverse_iterator
-			rit = stats->rbegin();
-			rit != stats->rend();
+	const std::vector<TacticalStatistics*>& tacticals (_game->getSavedGame()->getTacticalStatistics());
+	for (std::vector<TacticalStatistics*>::const_reverse_iterator
+			rit = tacticals.rbegin();
+			rit != tacticals.rend();
 			++rit)
 	{
 		const int missionId ((*rit)->id);
 
 		for (std::vector<int>::const_iterator
-				j = diary->getMissionIdList().begin();
-				j != diary->getMissionIdList().end();
+				j = diary->getTacticalIdList().begin();
+				j != diary->getTacticalIdList().end();
 				++j)
 		{
 			if (*j == missionId) // This mission is in the Soldier's vector of missions.

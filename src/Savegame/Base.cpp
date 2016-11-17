@@ -170,7 +170,7 @@ void Base::loadBase(
 				facility->load(*i);
 				_facilities.push_back(facility);
 			}
-			else Log(LOG_ERROR) << "Failed to load facility " << type;
+			else Log(LOG_ERROR) << "Base::loadBase() Failed to load facility " << type;
 		}
 	}
 
@@ -190,7 +190,7 @@ void Base::loadBase(
 			craft->loadCraft(*i, _rules);
 			_crafts.push_back(craft);
 		}
-		else Log(LOG_ERROR) << "Failed to load craft " << type;
+		else Log(LOG_ERROR) << "Base::loadBase() Failed to load craft " << type;
 	}
 
 	//Log(LOG_INFO) << ". load soldiers";
@@ -227,7 +227,7 @@ void Base::loadBase(
 			}
 			_soldiers.push_back(sol);
 		}
-		else Log(LOG_ERROR) << "Failed to load soldier " << type;
+		else Log(LOG_ERROR) << "Base::loadBase() Failed to load soldier " << type;
 	}
 
 	//Log(LOG_INFO) << ". load items";
@@ -238,7 +238,7 @@ void Base::loadBase(
 	{
 		if (_rules->getItemRule(i->first) == nullptr)
 		{
-			Log(LOG_ERROR) << "Failed to load item " << i->first;
+			Log(LOG_ERROR) << "Base::loadBase() Failed to load item " << i->first;
 			i = _items->getContents()->erase(i);
 		}
 		else
@@ -272,7 +272,7 @@ void Base::loadBase(
 		}
 		else
 		{
-			Log(LOG_ERROR) << "Failed to load research " << type;
+			Log(LOG_ERROR) << "Base::loadBase() Failed to load research " << type;
 			_scientists += (*i)["assigned"].as<int>(0);
 		}
 	}
@@ -292,21 +292,21 @@ void Base::loadBase(
 		}
 		else
 		{
-			Log(LOG_ERROR) << "Failed to load manufacture " << type;
+			Log(LOG_ERROR) << "Base::loadBase() Failed to load manufacture " << type;
 			_engineers += (*i)["assigned"].as<int>(0);
 		}
 	}
 
 	//Log(LOG_INFO) << ". load vars";
-	_tactical	= node["tactical"]	.as<bool>(_tactical);
-	_exposed	= node["exposed"]	.as<bool>(_exposed);
-	_scientists	= node["scientists"].as<int>(_scientists);
-	_engineers	= node["engineers"]	.as<int>(_engineers);
+	_tactical		= node["tactical"]		.as<bool>(_tactical);
+	_exposed		= node["exposed"]		.as<bool>(_exposed);
+	_scientists		= node["scientists"]	.as<int>(_scientists);
+	_engineers		= node["engineers"]		.as<int>(_engineers);
 
-	_cashIncome	= node["cashIncome"].as<int>(_cashIncome);
-	_cashSpent	= node["cashSpent"]	.as<int>(_cashSpent);
+	_cashIncome		= node["cashIncome"]	.as<int>(_cashIncome);
+	_cashSpent		= node["cashSpent"]		.as<int>(_cashSpent);
 
-	_isQuickDefense = node["isQuickDefense"].as<bool>(_isQuickDefense);
+	_isQuickDefense	= node["isQuickDefense"].as<bool>(_isQuickDefense);
 }
 
 /**
@@ -709,7 +709,7 @@ double Base::getUsedStores() const
 
 			if (itRule->getFullClip() > 0) // craft vehicle ammo
 			{
-				itRule = _rules->getItemRule(itRule->getCompatibleAmmo()->front());
+				itRule = _rules->getItemRule(itRule->getAcceptedLoadTypes()->front());
 				total += itRule->getStoreSize() * static_cast<double>((*j)->getLoad());
 			}
 		}

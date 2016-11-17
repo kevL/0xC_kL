@@ -522,9 +522,9 @@ void MonthlyReportState::awards() // private.
 
 			//Log(LOG_INFO) << "";
 			//Log(LOG_INFO) << "end MONTH report: " << Language::wstrToFs((*j)->getLabel());
-			if ((*j)->getDiary()->manageAwards(
+			if ((*j)->getDiary()->updateAwards(
 											_game->getRuleset(),
-											_gameSave->getMissionStatistics()) == true)
+											_gameSave->getTacticalStatistics()) == true)
 			{
 				_soldiersFeted.push_back(*j);
 			}

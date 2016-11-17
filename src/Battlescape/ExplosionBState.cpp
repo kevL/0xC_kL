@@ -47,10 +47,13 @@ namespace OpenXcom
  * Sets up an ExplosionBState.
  * @param parent		- pointer to the BattlescapeGame
  * @param centerVoxel	- center position in voxel-space
- * @param itRule		- pointer to the weapon's rule
- * @param unit			- pointer to unit involved in the explosion (eg unit throwing the grenade, cyberdisc, etc)
+ * @param itRule		- pointer to the weapon's rule (can be and usually is
+ *						  the weapon's load or a grenade)
+ * @param unit			- pointer to unit involved in the explosion (eg unit
+ *						  throwing the grenade, cyberdisc explosion, etc)
  * @param tile			- pointer to tile the explosion is on (default nullptr)
- * @param lowerWeapon	- true to tell the unit causing this explosion to lower their weapon (default false)
+ * @param lowerWeapon	- true to tell the unit causing this explosion to lower
+ *						  their weapon (default false)
  * @param meleeSuccess	- true if the (melee) attack was succesful (default false)
  * @param forceCamera	- forces Camera to center on the explosion (default false)
  * @param isLaunched	- true if shot by a Launcher (default false)

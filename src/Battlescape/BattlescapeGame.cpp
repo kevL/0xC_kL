@@ -149,7 +149,7 @@ BattlescapeGame::BattlescapeGame(
 		_endTurnRequested(false),
 		_executeProgress(false),
 		_shotgunProgress(false),
-		_killStatMission(0),
+		_killStatMissionId(0),
 		_killStatTurn(0),
 		_killStatPoints(0)
 //		_endTurnProcessed(false)
@@ -1638,7 +1638,9 @@ void BattlescapeGame::checkCasualties(
 		bool isPreTactical,
 		bool isTerrain)
 {
-	//Log(LOG_INFO) << "BattlescapeGame::checkCasualties()"; if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
+	//Log(LOG_INFO) << "BattlescapeGame::checkCasualties()";
+	//if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
+	//if (itRule != nullptr) Log(LOG_INFO) << ". type= " << itRule->getType();
 
 	// If the victim was killed by the attacker's death explosion fetch what
 	// killed the attacker and make THAT the attacker!
@@ -1713,10 +1715,10 @@ void BattlescapeGame::checkCasualties(
 																					_killStatRank,
 																					_killStatRace,
 																					_killStatWeapon,
-																					_killStatWeaponAmmo,
+																					_killStatWeaponLoad,
 																					(*i)->getOriginalFaction(),
 																					STATUS_DEAD,
-																					_killStatMission,
+																					_killStatMissionId,
 																					_killStatTurn,
 																					_killStatPoints));
 						}
@@ -1756,10 +1758,10 @@ void BattlescapeGame::checkCasualties(
 																					_killStatRank,
 																					_killStatRace,
 																					_killStatWeapon,
-																					_killStatWeaponAmmo,
+																					_killStatWeaponLoad,
 																					(*i)->getOriginalFaction(),
 																					STATUS_UNCONSCIOUS,
-																					_killStatMission,
+																					_killStatMissionId,
 																					_killStatTurn,
 																					_killStatPoints >> 1u)); // half pts. for stun
 						}
@@ -1851,51 +1853,60 @@ void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
  * Collects data about attacker for SoldierDiary.
  * @note Helper for checkCasualties().
  * @param attacker	- pointer to the attacker
- * @param itRule	- pointer to the weapon's rule
+ * @param itRule	- pointer to the weapon's rule (can be a load, a grenade,
+ *					  perhaps a cyberdisc or just about any other fool-thing)
  */
 void BattlescapeGame::diaryAttacker( // private.
 		const BattleUnit* const attacker,
 		const RuleItem* itRule)
 {
-	_killStatMission = static_cast<int>(_battleSave->getSavedGame()->getMissionStatistics()->size());
+	_killStatMissionId = static_cast<int>(_battleSave->getSavedGame()->getTacticalStatistics().size());
 	_killStatTurn = _battleSave->getTurn() * 3 + static_cast<int>(_battleSave->getSide());
 
 	if (itRule != nullptr)
 	{
 		_killStatWeapon =
-		_killStatWeaponAmmo = itRule->getType();
+		_killStatWeaponLoad = itRule->getType();
+
+		// need to check if weapon is a weapon-load or another fool-thing
+		// because BattleStates don't keep track of what did the shooting
+		// ... so this is *not* robust.
+
+		const BattleItem
+			* const rtItem (attacker->getItem(ST_RIGHTHAND)),
+			* const ltItem (attacker->getItem(ST_LEFTHAND));
+
+		if (rtItem != nullptr || ltItem != nullptr)
+		{
+			const Ruleset* const rules (_parentState->getGame()->getRuleset());
+
+			const std::vector<std::string>& allItems (rules->getItemsList());
+			for (std::vector<std::string>::const_iterator
+					i = allItems.begin();
+					i != allItems.end();
+					++i)
+			{
+				itRule = rules->getItemRule(*i);
+				for (std::vector<std::string>::const_iterator
+						j = itRule->getAcceptedLoadTypes()->begin();
+						j != itRule->getAcceptedLoadTypes()->end();
+						++j)
+				{
+					if (*j == _killStatWeaponLoad
+						&& (   (rtItem != nullptr && itRule == rtItem->getRules())
+							|| (ltItem != nullptr && itRule == ltItem->getRules())))
+					{
+						_killStatWeapon = itRule->getType();
+						return;
+					}
+				}
+			}
+		}
 	}
 	else
 	{
 		_killStatWeapon =
-		_killStatWeaponAmmo = "STR_WEAPON_UNKNOWN";
-	}
-
-	const BattleItem* item (attacker->getItem(ST_RIGHTHAND));
-	if (item != nullptr)
-	{
-		itRule = item->getRules();
-		for (std::vector<std::string>::const_iterator
-				i = itRule->getCompatibleAmmo()->begin();
-				i != itRule->getCompatibleAmmo()->end();
-				++i)
-		{
-			if (*i == _killStatWeaponAmmo)
-				_killStatWeapon = itRule->getType();
-		}
-	}
-
-	if ((item = attacker->getItem(ST_LEFTHAND)) != nullptr)
-	{
-		itRule = item->getRules();
-		for (std::vector<std::string>::const_iterator
-				i = itRule->getCompatibleAmmo()->begin();
-				i != itRule->getCompatibleAmmo()->end();
-				++i)
-		{
-			if (*i == _killStatWeaponAmmo)
-				_killStatWeapon = itRule->getType();
-		}
+		_killStatWeaponLoad = "STR_WEAPON_UNKNOWN";
 	}
 }
 
@@ -3367,8 +3378,8 @@ bool BattlescapeGame::worthTaking(
 //						if ((*i)->getRules()->getBattleType() == BT_AMMO)
 //						{
 //							for (std::vector<std::string>::const_iterator
-//									j = item->getRules()->getCompatibleAmmo()->begin();
-//									j != item->getRules()->getCompatibleAmmo()->end();
+//									j = item->getRules()->getAcceptedLoadTypes()->begin();
+//									j != item->getRules()->getAcceptedLoadTypes()->end();
 //									++j)
 //							{
 //								if (*j == (*i)->getRules()->getLabel())
@@ -3392,8 +3403,8 @@ bool BattlescapeGame::worthTaking(
 					{
 						//Log(LOG_INFO) << ". . has Firearm for it";
 						for (std::vector<std::string>::const_iterator
-								j = (*i)->getRules()->getCompatibleAmmo()->begin();
-								j != (*i)->getRules()->getCompatibleAmmo()->end();
+								j = (*i)->getRules()->getAcceptedLoadTypes()->begin();
+								j != (*i)->getRules()->getAcceptedLoadTypes()->end();
 								++j)
 						{
 							//Log(LOG_INFO) << ". . . try matching " << (*j);

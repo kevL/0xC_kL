@@ -204,7 +204,7 @@ private:
 	TurretType _turretType;
 
 	std::vector<std::string>
-		_compatibleAmmo,
+		_acceptedLoads,
 		_reqResearch;
 
 
@@ -297,8 +297,8 @@ private:
 		/// Gets the item's defuse TU.
 		int getDefuseTu() const;
 
-		/// Gets list of compatible ammo.
-		const std::vector<std::string>* getCompatibleAmmo() const;
+		/// Gets a list of loadable ammo that the Item accepts.
+		const std::vector<std::string>* getAcceptedLoadTypes() const;
 
 		/// Gets the item's damage-type.
 		DamageType getDamageType() const;

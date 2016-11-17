@@ -221,7 +221,7 @@ DebriefingState::DebriefingState()
 											// a possibly failed BaseDefense dangles '_base' ptr.
 
 
-	_tacstats = new MissionStatistics();
+	_tactical = new TacticalStatistics();
 	prepareDebriefing(); // <- |-- GATHER ALL DATA HERE <- < ||
 
 
@@ -240,7 +240,7 @@ DebriefingState::DebriefingState()
 	{
 		if ((*i)->qty != 0)
 		{
-			_tacstats->score += (*i)->score;
+			_tactical->score += (*i)->score;
 
 			std::wostringstream
 				woststr1,
@@ -277,7 +277,7 @@ DebriefingState::DebriefingState()
 	_lstTotal->addRow(
 					2,
 					tr("STR_TOTAL_UC").c_str(),
-					Text::intWide(_tacstats->score).c_str());
+					Text::intWide(_tactical->score).c_str());
 
 	switch (offsetY_recover)
 	{
@@ -293,18 +293,18 @@ DebriefingState::DebriefingState()
 	}
 
 
-	switch (_destroyPlayerBase)	// TODO: Amalgamate "Base is Lost" w/ _tacstats->score
+	switch (_destroyPlayerBase)	// TODO: Amalgamate "Base is Lost" w/ _tactical->score
 	{							// and display "Base is Lost" as a result in '_statsList'.
 		case -1:
 			if (_region != nullptr)
 			{
-				_region->addActivityXCom(_tacstats->score);	// NOTE: Could use SavedGame::scorePoints() for these
+				_region->addActivityXCom(_tactical->score);	// NOTE: Could use SavedGame::scorePoints() for these
 				_region->recentActivityXCom();				// but since Region and Country are already defined here
 			}												// let it go through as is.
 
 			if (_country != nullptr)
 			{
-				_country->addActivityXCom(_tacstats->score);
+				_country->addActivityXCom(_tactical->score);
 				_country->recentActivityXCom();
 			}
 			break;
@@ -326,19 +326,19 @@ DebriefingState::DebriefingState()
 			}
 	}
 
-	if (_tacstats->score < -99)	// TODO: Move TAC_RATING to someplace more general like MissionStatistics
+	if (_tactical->score < -99)	// TODO: Move TAC_RATING to someplace more general like TacticalStatistics
 	{							// and use it more globally from there w/ modable values.
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING_BAD;
-		_tacstats->rating = TAC_RATING[0u];										// terrible
+		_tactical->rating = TAC_RATING[0u];										// terrible
 	}
 	else
 	{
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING;
-		if		(_tacstats->score <  101)	_tacstats->rating = TAC_RATING[1u];	// poor
-		else if	(_tacstats->score <  351)	_tacstats->rating = TAC_RATING[2u];	// okay
-		else if	(_tacstats->score <  751)	_tacstats->rating = TAC_RATING[3u];	// good
-		else if	(_tacstats->score < 1251)	_tacstats->rating = TAC_RATING[4u];	// excellent
-		else								_tacstats->rating = TAC_RATING[5u];	// terrific
+		if		(_tactical->score <  101)	_tactical->rating = TAC_RATING[1u];	// poor
+		else if	(_tactical->score <  351)	_tactical->rating = TAC_RATING[2u];	// okay
+		else if	(_tactical->score <  751)	_tactical->rating = TAC_RATING[3u];	// good
+		else if	(_tactical->score < 1251)	_tactical->rating = TAC_RATING[4u];	// excellent
+		else								_tactical->rating = TAC_RATING[5u];	// terrific
 	}
 
 	switch (_missionCost)
@@ -351,22 +351,22 @@ DebriefingState::DebriefingState()
 			_txtCost->setAlign(ALIGN_CENTER);
 	}
 
-//	_txtRating->setText(tr("STR_RATING_").arg(tr(_tacstats->rating)));
-	_txtRating->setText(tr(_tacstats->rating));
+//	_txtRating->setText(tr("STR_RATING_").arg(tr(_tactical->rating)));
+	_txtRating->setText(tr(_tactical->rating));
 	_txtRating->setAlign(ALIGN_CENTER);
 
 
 	// Soldier Diary ->
 	if (_isQuickBattle == false) // TODO: Show some stats for quick-battles.
 	{
-		_tacstats->id			= static_cast<int>(_gameSave->getMissionStatistics()->size());
-		_tacstats->timeStat		= *_gameSave->getTime();
-		_tacstats->type			= _battleSave->getTacticalType();
-		_tacstats->shade		= _battleSave->getTacticalShade();
-		_tacstats->alienRace	= _battleSave->getAlienRace();
+		_tactical->id			= static_cast<int>(_gameSave->getTacticalStatistics().size());
+		_tactical->timeStat		= *_gameSave->getTime();
+		_tactical->type			= _battleSave->getTacticalType();
+		_tactical->shade		= _battleSave->getTacticalShade();
+		_tactical->alienRace	= _battleSave->getAlienRace();
 
 		if (civiliansSaved != 0 && civiliansDead == 0)
-			_tacstats->valiantCrux = true;
+			_tactical->valiantCrux = true;
 
 		const bool checkIron (_playerDead == 0
 						   && _aborted == false
@@ -375,8 +375,8 @@ DebriefingState::DebriefingState()
 		//Log(LOG_INFO) << "DebriefingState::cTor";
 		Soldier* sol;
 		SoldierDead* solDead;
-		std::vector<MissionStatistics*>* const tacstatList (_game->getSavedGame()->getMissionStatistics());
-		BattleUnitStatistics* diaryStats;
+		std::vector<TacticalStatistics*>& tacticals (_gameSave->getTacticalStatistics());
+		BattleUnitStatistics* tacstats;
 
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _unitList->begin();
@@ -389,7 +389,7 @@ DebriefingState::DebriefingState()
 			if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 			{
 				//Log(LOG_INFO) << ". . id = " << (*i)->getId();
-				diaryStats = (*i)->getStatistics();
+				tacstats = (*i)->getStatistics();
 
 				if (_playerLive == 1)
 				{
@@ -398,15 +398,15 @@ DebriefingState::DebriefingState()
 						case STATUS_STANDING:
 							if (checkIron == true)
 							{
-								diaryStats->ironMan = true;
+								tacstats->ironMan = true;
 								break;
 							}
 							// no break;
 						case STATUS_UNCONSCIOUS:
 							if (_playerDead != 0
-								&& diaryStats->hasFriendlyFired() == false) // Not sure I want this ....
+								&& tacstats->hasFriendlyFired() == false) // Not sure I want this ....
 							{
-								diaryStats->loneSurvivor = true;
+								tacstats->loneSurvivor = true;
 							}
 					}
 				}
@@ -415,8 +415,8 @@ DebriefingState::DebriefingState()
 				{
 					int take (0);
 					for (std::vector<BattleUnitKill*>::const_iterator
-							j = diaryStats->kills.begin();
-							j != diaryStats->kills.end();
+							j = tacstats->kills.begin();
+							j != tacstats->kills.end();
 							++j)
 					{
 						if ((*j)->_faction == FACTION_HOSTILE)
@@ -429,7 +429,7 @@ DebriefingState::DebriefingState()
 					if (take == _aliensStunned + aliensKilled
 						&& take > 3 + _diff)
 					{
-						diaryStats->nikeCross = true;
+						tacstats->nikeCross = true;
 					}
 				}
 
@@ -439,11 +439,11 @@ DebriefingState::DebriefingState()
 					case STATUS_STANDING:
 					case STATUS_UNCONSCIOUS:
 						//Log(LOG_INFO) << ". . . alive";
-						if ((diaryStats->daysWounded = sol->getSickbay()) != 0)
-							_tacstats->injuryList[sol->getId()] = diaryStats->daysWounded;
+						if ((tacstats->daysWounded = sol->getSickbay()) != 0)
+							_tactical->injuryList[sol->getId()] = tacstats->daysWounded;
 
-						sol->getDiary()->updateDiary(diaryStats, _tacstats);
-						if (sol->getDiary()->manageAwards(_rules, tacstatList) == true)
+						sol->getDiary()->updateDiary(tacstats, _tactical);
+						if (sol->getDiary()->updateAwards(_rules, tacticals) == true)
 							_soldiersFeted.push_back(sol);
 						break;
 
@@ -468,21 +468,21 @@ DebriefingState::DebriefingState()
 							}
 						}
 
-						diaryStats->daysWounded = 0;
+						tacstats->daysWounded = 0;
 
 						// NOTE: Safety on *solDead shall not be needed. see above^
-						if (diaryStats->KIA == true)
-							_tacstats->injuryList[solDead->getId()] = -1; // kia
+						if (tacstats->KIA == true)
+							_tactical->injuryList[solDead->getId()] = -1; // kia
 						else
-							_tacstats->injuryList[solDead->getId()] = -2; // mia
+							_tactical->injuryList[solDead->getId()] = -2; // mia
 
-						solDead->getDiary()->updateDiary(diaryStats, _tacstats);
-						solDead->getDiary()->manageAwards(_rules, tacstatList);
+						solDead->getDiary()->updateDiary(tacstats, _tactical);
+						solDead->getDiary()->updateAwards(_rules, tacticals);
 						_soldiersLost.push_back(solDead);
 				}
 			}
 		}
-		_gameSave->getMissionStatistics()->push_back(_tacstats);
+		tacticals.push_back(_tactical);
 		// Soldier Diary_end.
 	}
 }
@@ -876,9 +876,9 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 	//Log(LOG_INFO) << ". isHostileStanding= " << _isHostileStanding;
 	//Log(LOG_INFO) << ". allObjectivesDestroyed= " << _battleSave->allObjectivesDestroyed();
-	_tacstats->success = _isHostileStanding == false // NOTE: Can still be a playerWipe and lose Craft/recovery (but not a Base).
+	_tactical->success = _isHostileStanding == false // NOTE: Can still be a playerWipe and lose Craft/recovery (but not a Base).
 					  || _battleSave->allObjectivesDestroyed() == true;
-	//Log(LOG_INFO) << ". success= " << _tacstats->success;
+	//Log(LOG_INFO) << ". success= " << _tactical->success;
 
 
 	const TacticalType tacType (_battleSave->getTacType());
@@ -971,7 +971,7 @@ void DebriefingState::prepareDebriefing() // private.
 		if ((*i)->getRules()->insideRegion(lon, lat) == true)
 		{
 			_region = *i;
-			_tacstats->region = _region->getRules()->getType();
+			_tactical->region = _region->getRules()->getType();
 			break;
 		}
 	}
@@ -984,7 +984,7 @@ void DebriefingState::prepareDebriefing() // private.
 		if ((*i)->getRules()->insideCountry(lon, lat) == true)
 		{
 			_country = *i;
-			_tacstats->country = _country->getRules()->getType();
+			_tactical->country = _country->getRules()->getType();
 			break;
 		}
 	}
@@ -1003,9 +1003,9 @@ void DebriefingState::prepareDebriefing() // private.
 			found = true;
 
 			_txtRecovery->setText(tr("STR_UFO_RECOVERY"));
-			_tacstats->ufo = (*i)->getRules()->getType();
+			_tactical->ufo = (*i)->getRules()->getType();
 
-			if (_tacstats->success == true)
+			if (_tactical->success == true)
 			{
 				delete *i; // NOTE: dTor sends Craft targeters back to Base.
 				_gameSave->getUfos()->erase(i);
@@ -1048,7 +1048,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 			_txtRecovery->setText(tr("STR_ALIEN_BASE_RECOVERY"));
 
-			if (_tacstats->success == true)
+			if (_tactical->success == true)
 			{
 				if (objectiveText.empty() == false)
 				{
@@ -1351,7 +1351,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	std::string tacResult;
-	if (_tacstats->success == true)
+	if (_tactical->success == true)
 	{
 		//Log(LOG_INFO) << ". success TRUE";
 		switch (tacType)
@@ -1784,7 +1784,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				}
 				else
 				{
-					const std::string type (itRule->getCompatibleAmmo()->front());
+					const std::string type (itRule->getAcceptedLoadTypes()->front());
 					const int
 						clipsRequired (itRule->getFullClip()),
 						baseClips (_base->getStorageItems()->getItemQuantity(type));

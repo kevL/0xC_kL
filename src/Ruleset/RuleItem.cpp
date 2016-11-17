@@ -225,7 +225,7 @@ void RuleItem::load(
 	_strengthApplied	= node["strengthApplied"]	.as<bool>(_strengthApplied);
 	_skillApplied		= node["skillApplied"]		.as<bool>(_skillApplied);
 	_fullClip			= node["fullClip"]			.as<int>(_fullClip);
-	_compatibleAmmo		= node["compatibleAmmo"]	.as<std::vector<std::string>>(_compatibleAmmo);
+	_acceptedLoads		= node["acceptedLoads"]		.as<std::vector<std::string>>(_acceptedLoads);
 	_accuracyAuto		= node["accuracyAuto"]		.as<int>(_accuracyAuto);
 	_accuracySnap		= node["accuracySnap"]		.as<int>(_accuracySnap);
 	_accuracyAimed		= node["accuracyAimed"]		.as<int>(_accuracyAimed);
@@ -596,12 +596,12 @@ int RuleItem::getDefuseTu() const
 }
 
 /**
- * Gets a list of compatible ammo.
+ * Gets a list of loadable ammo that the Item accepts.
  * @return, pointer to a vector of compatible ammo strings
  */
-const std::vector<std::string>* RuleItem::getCompatibleAmmo() const
+const std::vector<std::string>* RuleItem::getAcceptedLoadTypes() const
 {
-	return &_compatibleAmmo;
+	return &_acceptedLoads;
 }
 
 /**

@@ -79,7 +79,7 @@ BattleItem::BattleItem(
 			break;
 
 		case BT_FIREARM: // Firearms w/out defined ammo ARE the ammo.
-			if (_itRule->getCompatibleAmmo()->empty() == false)
+			if (_itRule->getAcceptedLoadTypes()->empty() == false)
 				break; // no break;
 		case BT_MELEE: // Melee weapons do NOT require ammo.
 			_ammoItem = this;
@@ -268,8 +268,8 @@ int BattleItem::setAmmoItem(
 			return -1;
 
 		for (std::vector<std::string>::const_iterator
-				i = _itRule->getCompatibleAmmo()->begin();
-				i != _itRule->getCompatibleAmmo()->end();
+				i = _itRule->getAcceptedLoadTypes()->begin();
+				i != _itRule->getAcceptedLoadTypes()->end();
 				++i)
 		{
 			if (*i == item->getRules()->getType()) // load weapon
@@ -309,7 +309,7 @@ bool BattleItem::selfPowered() const
 bool BattleItem::selfExpended() const
 {
 	return _itRule->getBattleType() == BT_FIREARM
-		&& _itRule->getCompatibleAmmo()->empty() == true
+		&& _itRule->getAcceptedLoadTypes()->empty() == true
 		&& _itRule->getFullClip() > 0;
 }
 

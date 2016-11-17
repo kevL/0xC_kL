@@ -90,9 +90,9 @@ private:
 
 	std::vector<std::string>
 		_getOneFree,
-		_requisite,
+		_requested,
 		_required,
-		_requested;
+		_requisite;
 
 
 	public:

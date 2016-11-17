@@ -109,7 +109,6 @@
 #include "../Savegame/Craft.h"
 #include "../Savegame/GameTime.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/MissionStatistics.h"
 #include "../Savegame/Manufacture.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/ResearchProject.h"
@@ -119,6 +118,7 @@
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDeath.h"
 #include "../Savegame/SoldierDiary.h"
+#include "../Savegame/TacticalStatistics.h"
 #include "../Savegame/TerrorSite.h"
 #include "../Savegame/Transfer.h"
 #include "../Savegame/Ufo.h"
@@ -975,13 +975,13 @@ void GeoscapeState::handle(Action* action)
 									++j)
 							{
 								for (std::vector<SoldierAward*>::const_iterator
-										k = (*j)->getDiary()->getSoldierAwards()->begin();
-										k != (*j)->getDiary()->getSoldierAwards()->end();
+										k = (*j)->getDiary()->getSoldierAwards().begin();
+										k != (*j)->getDiary()->getSoldierAwards().end();
 										++k)
 								{
 									delete *k;
 								}
-								(*j)->getDiary()->getSoldierAwards()->clear();
+								(*j)->getDiary()->getSoldierAwards().clear();
 							}
 						}
 						break;
@@ -2688,8 +2688,8 @@ void GeoscapeState::time1Day()
 				{
 					//Log(LOG_INFO) << "\n";
 					//Log(LOG_INFO) << ". soldier id-" << (*j)->getId() << " pctWounds= " << pctDeath;
-					const size_t missionId (static_cast<size_t>((*j)->getDiary()->getMissionIdList().back()));
-					const std::map<int,int>* injuryList (&_gameSave->getMissionStatistics()->at(missionId)->injuryList);
+					const size_t tacId (static_cast<size_t>((*j)->getDiary()->getTacticalIdList().back()));
+					const std::map<int,int>* injuryList (&_gameSave->getTacticalStatistics().at(tacId)->injuryList);
 					if (injuryList->find((*j)->getId()) != injuryList->end())
 					{
 						const float woundsLeft (static_cast<float>(injuryList->at((*j)->getId()))
@@ -2876,14 +2876,14 @@ void GeoscapeState::time1Day()
 					const RuleItem* const itRule (_rules->getItemRule(resRulePedia->getType()));
 					if (itRule != nullptr
 						&& itRule->getBattleType() == BT_FIREARM
-						&& itRule->getCompatibleAmmo()->empty() == false)
+						&& itRule->getAcceptedLoadTypes()->empty() == false)
 					{
 						const RuleManufacture* const mfRule (_rules->getManufacture(itRule->getType()));
 						if (mfRule != nullptr
 							&& mfRule->getRequiredResearch().empty() == false)
 						{
 							const std::vector<std::string>& required (mfRule->getRequiredResearch());
-							const RuleItem* const aRule (_rules->getItemRule(itRule->getCompatibleAmmo()->front()));
+							const RuleItem* const aRule (_rules->getItemRule(itRule->getAcceptedLoadTypes()->front()));
 							if (aRule != nullptr
 								&& std::find(
 										required.begin(),

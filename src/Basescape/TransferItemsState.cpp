@@ -394,7 +394,7 @@ void TransferItemsState::init()
 						if ((*k)->getRules()->getType() == type)
 							++destQty;
 						else if ((*k)->getLoad() > 0
-							&& (*k)->getRules()->getCompatibleAmmo()->front() == type)
+							&& (*k)->getRules()->getAcceptedLoadTypes()->front() == type)
 						{
 							destQty += (*k)->getLoad();
 						}

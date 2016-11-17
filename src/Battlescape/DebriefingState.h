@@ -29,9 +29,9 @@
 #include "../Ruleset/RuleItem.h"
 
 //#include "../Savegame/BattleItem.h"
-#include "../Savegame/MissionStatistics.h"
 //#include "../Savegame/Soldier.h"
 #include "../Savegame/SoldierDead.h"
+#include "../Savegame/TacticalStatistics.h"
 
 
 namespace OpenXcom
@@ -155,7 +155,7 @@ private:
 		* _lstTotal;
 	Window* _window;
 
-	MissionStatistics* _tacstats;
+	TacticalStatistics* _tactical;
 
 	std::map<TileType, SpecialType*> _specialTypes;
 	std::map<const RuleItem*, int>

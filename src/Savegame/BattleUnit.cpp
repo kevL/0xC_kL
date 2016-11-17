@@ -217,7 +217,7 @@ BattleUnit::BattleUnit(
 			look,
 			_rankInt);
 
-	_statistics = new BattleUnitStatistics(); // Soldier Diary
+	_tacstats = new BattleUnitStatistics(); // Soldier Diary
 	//Log(LOG_INFO) << "Create BattleUnit 1, DONE";
 }
 
@@ -306,7 +306,7 @@ BattleUnit::BattleUnit(
 //		_isZombie(false),
 		_fist(nullptr),
 
-		_statistics(nullptr), // Soldier Diary
+		_tacstats(nullptr), // Soldier Diary
 
 		_type(unitRule->getType()),
 		_race(unitRule->getRace()),
@@ -441,13 +441,13 @@ BattleUnit::~BattleUnit()
 	if (_geoscapeSoldier != nullptr)	// NOTE: Only BattleUnits that have geoscape-soldiers should ever get
 	{									// BattleUnitStatistics or BattleUnitKills.
 		for (std::vector<BattleUnitKill*>::const_iterator
-				i = _statistics->kills.begin();
-				i != _statistics->kills.end();
+				i = _tacstats->kills.begin();
+				i != _tacstats->kills.end();
 				++i)
 		{
 			delete *i;
 		}
-		delete _statistics;
+		delete _tacstats;
 	}
 
 	if (_unitAIState != nullptr)
@@ -520,8 +520,8 @@ void BattleUnit::load(const YAML::Node& node)
 			}
 		}
 
-		if (node["diaryStatistics"])
-			_statistics->load(node["diaryStatistics"]);
+		if (node["tacstats"])
+			_tacstats->load(node["tacstats"]);
 
 		_battleOrder	= node["battleOrder"]	.as<size_t>(_battleOrder);
 		_kneeled		= node["kneeled"]		.as<bool>(_kneeled);
@@ -668,8 +668,8 @@ YAML::Node BattleUnit::save() const
 			node["fatalWounds"].push_back(_fatalWounds[i]);
 		}
 
-		if (_statistics->statsDefault() == false)
-			node["diaryStatistics"] = _statistics->save();
+		if (_tacstats->statsDefault() == false)
+			node["tacstats"] = _tacstats->save();
 
 		node["battleOrder"] = _battleOrder;
 
@@ -3355,8 +3355,8 @@ bool BattleUnit::checkReload()
 				++i)
 		{
 			for (std::vector<std::string>::const_iterator
-					j = weapon->getRules()->getCompatibleAmmo()->begin();
-					j != weapon->getRules()->getCompatibleAmmo()->end();
+					j = weapon->getRules()->getAcceptedLoadTypes()->begin();
+					j != weapon->getRules()->getAcceptedLoadTypes()->end();
 					++j)
 			{
 				if (*j == (*i)->getRules()->getType())
@@ -4679,7 +4679,7 @@ BattleItem* BattleUnit::getSpecialWeapon(BattleType type) const
  */
 BattleUnitStatistics* BattleUnit::getStatistics() const
 {
-	return _statistics;
+	return _tacstats;
 }
 
 /**
