@@ -8,7 +8,7 @@ items:
     floorSprite: 87
     handSprite: 200
     fireSound: 55
-    compatibleAmmo:
+    acceptedLoads:
       - STR_LMG_CLIP
     accuracySnap: 50
     accuracyAuto: 35

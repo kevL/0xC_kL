@@ -297,7 +297,7 @@ private:
 		/// Gets the item's defuse TU.
 		int getDefuseTu() const;
 
-		/// Gets a list of loadable ammo that the Item accepts.
+		/// Gets a list of loadable ammunition that the Item accepts.
 		const std::vector<std::string>* getAcceptedLoadTypes() const;
 
 		/// Gets the item's damage-type.

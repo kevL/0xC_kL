@@ -280,7 +280,7 @@ YAML::Node Soldier::save() const
 	}
 
 	if (   _diary->getTacticalIdList().empty() == false
-		|| _diary->getSoldierAwards().empty() == false)
+		|| _diary->getSoldierAwards().empty()  == false)
 	{
 		node["diary"] = _diary->save();
 	}

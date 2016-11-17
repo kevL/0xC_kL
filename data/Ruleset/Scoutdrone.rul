@@ -7,7 +7,7 @@ items:
     bigSprite: 63
     bulletSprite: 3
     fireSound: 88
-    compatibleAmmo:
+    acceptedLoads:
       - STR_HWP_SCOUT_SMOKE
     accuracySnap: 100
     tuSnap: 22

@@ -596,8 +596,8 @@ int RuleItem::getDefuseTu() const
 }
 
 /**
- * Gets a list of loadable ammo that the Item accepts.
- * @return, pointer to a vector of compatible ammo strings
+ * Gets a list of loadable ammunition that the Item accepts.
+ * @return, pointer to a vector of loadable types
  */
 const std::vector<std::string>* RuleItem::getAcceptedLoadTypes() const
 {

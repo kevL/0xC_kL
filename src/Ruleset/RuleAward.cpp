@@ -80,7 +80,7 @@ int RuleAward::getSprite() const
 
 /**
  * Gets this RuleAward's criteria.
- * @return, pointer to a map of (strings & vectors of ints) that denote award criteria
+ * @return, pointer to a map of (strings + vectors of ints) that denote criteria
  */
 const std::map<std::string, std::vector<int>>* RuleAward::getCriteria() const
 {
@@ -89,7 +89,8 @@ const std::map<std::string, std::vector<int>>* RuleAward::getCriteria() const
 
 /**
  * Gets this RuleAward's kill-criteria.
- * @return, pointer to a vector of pairs of (ints & vectors of strings) that denote award kill criteria
+ * @return, pointer to a vector of vectors of pairs of (ints + vectors of strings) that denote kill-criteria
+ * @note Think of how hard that would be to do without c++ I feel like singing ...
  */
 const std::vector<std::vector<std::pair<int, std::vector<std::string>>>>* RuleAward::getKillCriteria() const
 {

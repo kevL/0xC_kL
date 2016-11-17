@@ -9,7 +9,7 @@ items:
     floorSprite: 75
     handSprite: 136
     fireSound: 89
-    compatibleAmmo:
+    acceptedLoads:
       - STR_LAUNCHER_FRAG
       - STR_LAUNCHER_INC
       - STR_LAUNCHER_SMOKE

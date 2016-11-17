@@ -63,7 +63,7 @@ items:
     bigSprite: 43
     bulletSprite: 4
     fireSound: 2
-    compatibleAmmo:
+    acceptedLoads:
       - STR_HWP_CANNON_SHELLS
     accuracySnap: 59
     accuracyAimed: 98
@@ -95,7 +95,7 @@ items:
     bigSprite: 42
     bulletSprite: 0
     fireSound: 52
-    compatibleAmmo:
+    acceptedLoads:
       - STR_HWP_ROCKETS
     accuracySnap: 67
     accuracyAimed: 119
@@ -169,7 +169,7 @@ items:
     bigSprite: 40
     bulletSprite: 10
     fireSound: 53
-    compatibleAmmo:
+    acceptedLoads:
       - STR_HWP_FUSION_BOMB
     accuracyAimed: 120
     tuAimed: 53
@@ -206,7 +206,7 @@ items:
     handSprite: 96
     bulletSprite: 1
     fireSound: 4
-    compatibleAmmo:
+    acceptedLoads:
       - STR_PISTOL_CLIP
     accuracyAuto: 49
     accuracySnap: 58
@@ -242,7 +242,7 @@ items:
     handSprite: 0
     bulletSprite: 2
     fireSound: 4
-    compatibleAmmo:
+    acceptedLoads:
       - STR_RIFLE_CLIP
     accuracyAuto: 30
     accuracySnap: 62
@@ -278,7 +278,7 @@ items:
     handSprite: 24
     bulletSprite: 4
     fireSound: 12
-    compatibleAmmo:
+    acceptedLoads:
       - STR_HC_AP_AMMO
       - STR_HC_HE_AMMO
       - STR_HC_I_AMMO
@@ -350,7 +350,7 @@ items:
     handSprite: 32
     bulletSprite: 3
     fireSound: 2
-    compatibleAmmo:
+    acceptedLoads:
       - STR_AC_AP_AMMO
       - STR_AC_HE_AMMO
       - STR_AC_I_AMMO
@@ -424,7 +424,7 @@ items:
     handSprite: 72
     bulletSprite: 0
     fireSound: 52
-    compatibleAmmo:
+    acceptedLoads:
       - STR_SMALL_ROCKET
       - STR_LARGE_ROCKET
       - STR_INCENDIARY_ROCKET
@@ -740,7 +740,7 @@ items:
     handSprite: 40
     bulletSprite: 17 #8 stock
     fireSound: 18
-    compatibleAmmo:
+    acceptedLoads:
       - STR_HEAVY_PLASMA_CLIP
 #    accuracyAuto: 38
     accuracySnap: 78
@@ -782,7 +782,7 @@ items:
     handSprite: 48
     bulletSprite: 18 #8 stock
     fireSound: 18
-    compatibleAmmo:
+    acceptedLoads:
       - STR_PLASMA_RIFLE_CLIP
     accuracyAuto: 58
     accuracySnap: 82
@@ -825,7 +825,7 @@ items:
     handSprite: 104
     bulletSprite: 19 #8 stock
     fireSound: 18
-    compatibleAmmo:
+    acceptedLoads:
       - STR_PLASMA_PISTOL_CLIP
     accuracyAuto: 33
     accuracySnap: 54
@@ -867,7 +867,7 @@ items:
     handSprite: 56
     bulletSprite: 10
     fireSound: 53
-    compatibleAmmo:
+    acceptedLoads:
       - STR_BLASTER_BOMB
     accuracyAimed: 120
     tuAimed: 57
@@ -913,7 +913,7 @@ items:
     handSprite: 64
     bulletSprite: 9
     fireSound: 53
-    compatibleAmmo:
+    acceptedLoads:
       - STR_STUN_BOMB
     accuracySnap: 64
     accuracyAimed: 106

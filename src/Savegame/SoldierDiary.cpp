@@ -765,8 +765,8 @@ bool SoldierDiary::updateAwards(
 									&& (*kill)->_load	!= *detail
 									&& (*kill)->getUnitStatusString()  != *detail
 									&& (*kill)->getUnitFactionString() != *detail
-									&& (weapon == nullptr || weapon->getBattleType() != static_cast<BattleType>(bType))
-									&& (load   == nullptr || load->getDamageType()   != static_cast<DamageType>(dType)))
+									&& (weapon == nullptr || weapon->getBattleType() != static_cast<BattleType>(bType))		// TODO: That's not right.
+									&& (load   == nullptr || load->getDamageType()   != static_cast<DamageType>(dType)))	// neither is this.
 								{
 									Log(LOG_INFO) << ". . . . . . . . no matching Detail BREAK";
 									found = false;
@@ -860,7 +860,7 @@ bool SoldierDiary::updateAwards(
 		}
 	}
 
-	Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ Ceremony = " << doCeremony;
+	Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ Ceremony= " << doCeremony;
 	return doCeremony;
 }
 

@@ -12,7 +12,7 @@ items:
     floorSprite: 500
     handSprite: 96 #stock
     fireSound: 55 #light machine gun
-    compatibleAmmo:
+    acceptedLoads:
       - STR_MACHINE_PISTOL_CLIP
     accuracyAuto: 35
     accuracySnap: 50
@@ -57,7 +57,7 @@ items:
     floorSprite: 502
     handSprite: 504
     fireSound: 160
-    compatibleAmmo:
+    acceptedLoads:
       - STR_MAGNUM_AMMO
     accuracySnap: 45
     accuracyAimed: 90
@@ -99,7 +99,7 @@ items:
     floorSprite: 504
     handSprite: 512
     fireSound: 55 #light machine gun
-    compatibleAmmo:
+    acceptedLoads:
       - STR_SMG_CLIP
     accuracyAuto: 55
     accuracySnap: 65
@@ -147,7 +147,7 @@ items:
     floorSprite: 506
     handSprite: 520
     fireSound: 161
-    compatibleAmmo:
+    acceptedLoads:
       - STR_ASSAULT_RIFLE_CLIP
     accuracyAuto: 45
     accuracySnap: 60
@@ -193,7 +193,7 @@ items:
     floorSprite: 508
     handSprite: 528
     fireSound: 162
-    compatibleAmmo:
+    acceptedLoads:
       - STR_MARKSMANS_RIFLE_CLIP
     accuracySnap: 70
     accuracyAimed: 120
@@ -238,7 +238,7 @@ items:
     floorSprite: 510
     handSprite: 536
     fireSound: 163
-    compatibleAmmo:
+    acceptedLoads:
       - STR_SNIPER_RIFLE_AMMO
 #    accuracySnap: 50
     accuracyAimed: 147
@@ -282,7 +282,7 @@ items:
     floorSprite: 512
     handSprite: 544
     fireSound: 164
-    compatibleAmmo:
+    acceptedLoads:
       - STR_SAW_AP_AMMO
     accuracyAuto: 39
     accuracySnap: 56
@@ -330,7 +330,7 @@ items:
     floorSprite: 514
     handSprite: 552
     fireSound: 165
-    compatibleAmmo:
+    acceptedLoads:
       - STR_SHOTGUN_SHELLS
       - STR_ALLOY_SHOTGUN_SHELLS
     accuracySnap: 72
@@ -354,7 +354,7 @@ items:
     floorSprite: 515
     handSprite: 560
     fireSound: 165
-    compatibleAmmo:
+    acceptedLoads:
       - STR_SHOTGUN_SHELLS
       - STR_ALLOY_SHOTGUN_SHELLS
       - STR_ELERIUM_SHOTGUN_SHELLS
@@ -508,7 +508,7 @@ items:
 #    handSprite: 72
 #    bulletSprite: 0
 #    fireSound: 52
-    compatibleAmmo:
+    acceptedLoads:
       - STR_SMALL_ROCKET
       - STR_LARGE_ROCKET
       - STR_INCENDIARY_ROCKET
