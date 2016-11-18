@@ -468,11 +468,11 @@ bool SoldierDiary::updateAwards(
 	Log(LOG_INFO) << "";
 	Log(LOG_INFO) << "SoldierDiary::updateAwards()";
 	bool
-		doCeremony (false),	// this value is returned TRUE if at least one award is given.
-		grantAward;			// this value determines if an award will be given.
+		showAwardsPostTactical (false),	// return is TRUE if at least one Award is granted/upgraded.
+		recurseAward;					// tracks if an Award will be granted/upgraded.
 
-	std::vector<std::string> qualifiers;			// types
-	std::map<std::string, size_t> requiredLevel;	// qualifier + qtyLevels-required
+	std::vector<std::string> qualifiers;			// types of/for generic Awards
+	std::map<std::string, size_t> requiredLevel;	// qualifier + levelQty required
 
 	const std::map<std::string, std::vector<int>>* criteria;
 	std::string criteriaType;
@@ -485,341 +485,409 @@ bool SoldierDiary::updateAwards(
 
 	int
 		qty,
-		thisIter,
-		lastIter;
+		qtyCriteria (0),
+		iterCur,
+		iterPre;
 	bool
 		skip,
-		found;
+		found,
+		firstOfType;
+	size_t
+		bType,
+		dType;
+
 	const RuleItem
-		* weapon,
-		* load;
-
-	bool firstOfType;
+		* weaponRule,
+		* loadRule;
 
 
-	const std::map<std::string, const RuleAward*>& allAwards (rules->getAwardsList()); // loop over all possible RuleAwards.
+	const std::map<std::string, const RuleAward*>& allAwards (rules->getAwardsList()); // loop over all RuleAwards ->
 	for (std::map<std::string, const RuleAward*>::const_iterator
 			i = allAwards.begin();
 			i != allAwards.end();
 			)
 	{
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << ". iter awardList - " << (*i).first;
-		qualifiers.clear();
-		requiredLevel.clear();
-		requiredLevel["noQual"] = 0;
+		const std::string& awardType (i->first);
+		const RuleAward* const awardRule (i->second);
 
-		// loop over all of Soldier's current Awards; map the Award's qualifier to the next-required level.
-		for (std::vector<SoldierAward*>::const_iterator
-				j = _solAwards.begin();
-				j != _solAwards.end();
-				++j)
+
+		Log(LOG_INFO) << "";
+		Log(LOG_INFO) << ". iter awardList - " << awardType;
+
+		qualifiers.clear();
+		Log(LOG_INFO) << ". clear qualifier-strings";
+
+		requiredLevel.clear();
+		Log(LOG_INFO) << ". clear requiredLevel map";
+
+
+		requiredLevel["noQual"] = 0u;	// only if Soldier does not yet have the current Award.
+										// it's also used as a generic place-holder for qualified Awards ...
+		Log(LOG_INFO) << ". init requiredLevel[\"noQual\"] to 0";
+
+		for (std::vector<SoldierAward*>::const_iterator	// get the qualifiers for the current Award if it has already
+				solAward = _solAwards.begin();			// been granted to the Soldier possibly in the last iteration
+				solAward != _solAwards.end();
+				++solAward)
 		{
-			if ((*j)->getType() == i->first)
+			if ((*solAward)->getType() == awardType)
 			{
-				requiredLevel[(*j)->getQualifier()] = (*j)->getAwardLevel() + 1;
-				Log(LOG_INFO) << ". . requiredLevel[" << (*j)->getQualifier() << "] " << requiredLevel[(*j)->getQualifier()];
+				requiredLevel[(*solAward)->getQualifier()] = (*solAward)->getAwardLevel() + 1;
+				Log(LOG_INFO) << ". . requiredLevel[\"" << (*solAward)->getQualifier() << "\"] " << requiredLevel[(*solAward)->getQualifier()];
 			}
 		}
+		Log(LOG_INFO) << "";
 
-		// Go through each possible criteria. Assume the Award is valid, set 'grantAward' to FALSE if not;
-		// that is, as soon as an Award's criteria *fails to be achieved*, then no Award.
-		grantAward = true;
+		// for each Criteria (hint: there's only 1) assume the Award is valid
+		// set 'recurseAward' to FALSE if not. That is, as soon as an Award's
+		// criteria *fails to be achieved* then stop looping and iterate to the
+		// next Award.
+		recurseAward = true;
 
-		criteria = i->second->getCriteria();
-		for (std::map<std::string, std::vector<int>>::const_iterator
+		criteria = awardRule->getCriteria();
+		for (std::map<std::string, std::vector<int>>::const_iterator // loop over the Criteria ->
 				j = criteria->begin();
 				j != criteria->end();
 				++j)
 		{
-			Log(LOG_INFO) << ". . iter Criteria " << (*j).first;
-			// skip a "noQual" award if its max award level has been reached
-			// or if it has a qualifier skip it if it has 0 total levels (which ain't gonna happen);
-			// you see, Rules can't be positively examined for nouns - only awards already given to soldiers can.
-			if (j->second.size() <= requiredLevel["noQual"])
-			{
-				Log(LOG_INFO) << ". . . max noQual-Level reached (or, Criteria has no vector) BREAK";
-				grantAward = false;
+			criteriaType = j->first;
+			const std::vector<int>& levels (j->second);
+
+			Log(LOG_INFO) << "";
+			Log(LOG_INFO) << ". . iter Criteria " << (criteriaType);
+
+			// skip the Award if its max level has been reached
+			if (requiredLevel["noQual"] >= levels.size())	// use the "noQual" entry assigned above just to find out what the highest level is.
+			{												// ... in practice it's always "10"
+				Log(LOG_INFO) << ". . . max level reached - BREAK Criteria and go to next Award";
+				recurseAward = false;
 				break;
 			}
 
-			criteriaType = j->first;						// vector of (ints) mapped to a (string). Eg, "totalByNoun" incl. "noQual".
-			val = j->second.at(requiredLevel["noQual"]);	// these criteria have no qualifiers, so only the requiredLevel["noQual"] will ever be compared
 
-			if ( //requiredLevel.count("noQual") == 1 && // <- this is relevant only if entry "noQual" were removed from the map in the sections following this one.
-				(       criteriaType == "totalKills"				&& getKillTotal() < val)
-					|| (criteriaType == "totalMissions"				&& static_cast<int>(_tacIdList.size()) < val)
-					|| (criteriaType == "totalWins"					&& getWinTotal(tacticals) < val)
-					|| (criteriaType == "totalScore"				&& getScoreTotal(tacticals) < val)
-					|| (criteriaType == "totalPoints"				&& getPointsTotal() < val)
-					|| (criteriaType == "totalStuns"				&& getStunTotal() < val)
-					|| (criteriaType == "totalBaseDefenseMissions"	&& getBaseDefenseMissionTotal(tacticals) < val)
-					|| (criteriaType == "totalTerrorMissions"		&& getTerrorMissionTotal(tacticals) < val)
-					|| (criteriaType == "totalNightMissions"		&& getNightMissionTotal(tacticals) < val)
-					|| (criteriaType == "totalNightTerrorMissions"	&& getNightTerrorMissionTotal(tacticals) < val)
-					|| (criteriaType == "totalMonthlyService"		&& _monthsService < val)
-					|| (criteriaType == "totalFellUnconscious"		&& _unconsciousTotal < val)
-					|| (criteriaType == "totalShotAt10Times"		&& _shotAtCounter10in1Mission < val)
-					|| (criteriaType == "totalHit5Times"			&& _hitCounter5in1Mission < val)
-					|| (criteriaType == "totalFriendlyFired"		&& (_totalShotByFriendlyCounter < val || _KIA == 1 || _MIA == 1)) // didn't survive ......
-					|| (criteriaType == "totalLoneSurvivor"			&& _loneSurvivorTotal < val)
-					|| (criteriaType == "totalIronMan"				&& _ironManTotal < val)
-					|| (criteriaType == "totalImportantMissions"	&& getImportantMissionTotal(tacticals) < val)
-					|| (criteriaType == "totalLongDistanceHits"		&& _longDistanceHitCounterTotal < val)
-					|| (criteriaType == "totalLowAccuracyHits"		&& _lowAccuracyHitCounterTotal < val)
-					|| (criteriaType == "totalReactionFire"			&& getReactionFireKillTotal(rules) < val)
-					|| (criteriaType == "totalTimesWounded"			&& _timesWoundedTotal < val)
-					|| (criteriaType == "totalDaysWounded"			&& _daysWoundedTotal < val)
-					|| (criteriaType == "totalValientCrux"			&& getValiantCruxTotal(tacticals) < val)
-					|| (criteriaType == "isDead"					&& _KIA < val)
-					|| (criteriaType == "totalTrapKills"			&& getTrapKillTotal(rules) < val)
-					|| (criteriaType == "totalAlienBaseAssaults"	&& getAlienBaseAssaultTotal(tacticals) < val)
-					|| (criteriaType == "totalAllAliensKilled"		&& _allAliensKilledTotal < val)
-					|| (criteriaType == "totalMediApplications"		&& _mediApplicationsTotal < val)
-					|| (criteriaType == "totalRevives"				&& _revivedUnitTotal < val)
-					|| (criteriaType == "isMIA"						&& _MIA < val))
+			val = levels.at(requiredLevel["noQual"]); // use the "noQual" entry assigned above just to find out what the highest value is.
+
+			// the following criteria have no qualifiers so only "noQual" will ever be compared
+			if (   (criteriaType == "totalKills"				&& getKillTotal() < val)
+				|| (criteriaType == "totalMissions"				&& static_cast<int>(_tacIdList.size()) < val)
+				|| (criteriaType == "totalWins"					&& getWinTotal(tacticals) < val)
+				|| (criteriaType == "totalScore"				&& getScoreTotal(tacticals) < val)
+				|| (criteriaType == "totalPoints"				&& getPointsTotal() < val)
+				|| (criteriaType == "totalStuns"				&& getStunTotal() < val)
+				|| (criteriaType == "totalBaseDefenseMissions"	&& getBaseDefenseMissionTotal(tacticals) < val)
+				|| (criteriaType == "totalTerrorMissions"		&& getTerrorMissionTotal(tacticals) < val)
+				|| (criteriaType == "totalNightMissions"		&& getNightMissionTotal(tacticals) < val)
+				|| (criteriaType == "totalNightTerrorMissions"	&& getNightTerrorMissionTotal(tacticals) < val)
+				|| (criteriaType == "totalMonthlyService"		&& _monthsService < val)
+				|| (criteriaType == "totalFellUnconscious"		&& _unconsciousTotal < val)
+				|| (criteriaType == "totalShotAt10Times"		&& _shotAtCounter10in1Mission < val)
+				|| (criteriaType == "totalHit5Times"			&& _hitCounter5in1Mission < val)
+				|| (criteriaType == "totalFriendlyFired"		&& (_totalShotByFriendlyCounter < val || _KIA == 1 || _MIA == 1)) // didn't survive ......
+				|| (criteriaType == "totalLoneSurvivor"			&& _loneSurvivorTotal < val)
+				|| (criteriaType == "totalIronMan"				&& _ironManTotal < val)
+				|| (criteriaType == "totalImportantMissions"	&& getImportantMissionTotal(tacticals) < val)
+				|| (criteriaType == "totalLongDistanceHits"		&& _longDistanceHitCounterTotal < val)
+				|| (criteriaType == "totalLowAccuracyHits"		&& _lowAccuracyHitCounterTotal < val)
+				|| (criteriaType == "totalReactionFire"			&& getReactionFireKillTotal(rules) < val)
+				|| (criteriaType == "totalTimesWounded"			&& _timesWoundedTotal < val)
+				|| (criteriaType == "totalDaysWounded"			&& _daysWoundedTotal < val)
+				|| (criteriaType == "totalValientCrux"			&& getValiantCruxTotal(tacticals) < val)
+				|| (criteriaType == "isDead"					&& _KIA < val)
+				|| (criteriaType == "totalTrapKills"			&& getTrapKillTotal(rules) < val)
+				|| (criteriaType == "totalAlienBaseAssaults"	&& getAlienBaseAssaultTotal(tacticals) < val)
+				|| (criteriaType == "totalAllAliensKilled"		&& _allAliensKilledTotal < val)
+				|| (criteriaType == "totalMediApplications"		&& _mediApplicationsTotal < val)
+				|| (criteriaType == "totalRevives"				&& _revivedUnitTotal < val)
+				|| (criteriaType == "isMIA"						&& _MIA < val))
 			{
-				Log(LOG_INFO) << ". . . no Award w/ noQual BREAK";
-				grantAward = false;
+				Log(LOG_INFO) << ". . . no Award w/ \"noQual\" - BREAK Criteria and go to next Award";
+				recurseAward = false;
 				break;
 			}
 
-			if (   criteriaType == "totalKillsWithAWeapon"	// awards with the following criteria are unique because they need a qualifier
-				|| criteriaType == "totalMissionsInARegion"	// and they loop over a map<> (this allows for super-good-plus modability).
+			if (   criteriaType == "totalKillsWithAWeapon" // this category of Award needs a qualifier
+				|| criteriaType == "totalMissionsInARegion"
 				|| criteriaType == "totalKillsByRace"
 				|| criteriaType == "totalKillsByRank")
 			{
 				Log(LOG_INFO) << ". . . try Award w/ weapon,region,race,rank";
+
 				if		(criteriaType == "totalKillsWithAWeapon")	solTotal = getWeaponTotal();
 				else if	(criteriaType == "totalMissionsInARegion")	solTotal = getRegionTotal(tacticals);
 				else if	(criteriaType == "totalKillsByRace")		solTotal = getAlienRaceTotal();
 				else if	(criteriaType == "totalKillsByRank")		solTotal = getAlienRankTotal();
 
-				for (std::map<std::string, int>::const_iterator // loop over the 'solTotal' map and compare results with requiredLevels.
+				for (std::map<std::string, int>::const_iterator			// loop over 'solTotal' and compare results with requiredLevels.
 						k = solTotal.begin();
 						k != solTotal.end();
 						++k)
 				{
-					Log(LOG_INFO) << ". . . . " << (*k).first << " - " << (*k).second;
-					if (requiredLevel.count(k->first) == 0)					// no matching Qualifier so get the (first) level from 'criteria'
+					Log(LOG_INFO) << ". . . . " << (k->first) << " - " << (k->second);
+
+					if (requiredLevel.count(k->first) == 0)				// no matching Qualifier so get the (first) level from 'criteria'
 					{
-						Log(LOG_INFO) << ". . . . . no relevant qualifier yet, threshold = " << (*j).second.front();
-						threshold = j->second.front();
+						Log(LOG_INFO) << ". . . . . no relevant qualifier yet, threshold = " << (levels.front());
+						threshold = levels.front();
 					}
-					else if (requiredLevel[k->first] != j->second.size())	// otherwise get the level per the soldier's Award decoration.
+					else if (requiredLevel[k->first] != levels.size())	// otherwise get the level per the soldier's Award decoration.
 					{
-						Log(LOG_INFO) << ". . . . . qualifier found, next level available, threshold = " << j->second.at(requiredLevel[k->first]);
-						threshold = j->second.at(requiredLevel[k->first]);
+						Log(LOG_INFO) << ". . . . . qualifier found, next level available, threshold = " << levels.at(requiredLevel[k->first]);
+						threshold = levels.at(requiredLevel[k->first]);
 					}
 					else
 						threshold = -1;
 
-					if (threshold != -1 && k->second >= threshold)			// if a criteria was set AND the stat's count exceeds that criteria ...
+					if (threshold != -1 && k->second >= threshold)		// if a criteria was set AND the stat's count exceeds that criteria ...
 					{
 						Log(LOG_INFO) << ". . . . . threshold good, add to qualifiers vector";
 						qualifiers.push_back(k->first);
 					}
 				}
 
-				if (qualifiers.empty() == true) // if 'qualifiers' is still empty soldier did not get an award.
+				if (qualifiers.empty() == true)							// if 'qualifiers' is still empty soldier did not get an award.
 				{
 					Log(LOG_INFO) << ". . . . no Award w/ weapon,region,race,rank";
-					grantAward = false;
+					recurseAward = false;
 					break;
 				}
 			}
-			else if (criteriaType == "killsWithCriteriaCareer"
+			else if (criteriaType == "killsWithCriteriaCareer" // NOTE: The And-vector has been fixed.
 				  || criteriaType == "killsWithCriteriaMission"
 				  || criteriaType == "killsWithCriteriaTurn")
 			{
 				Log(LOG_INFO) << ". . . try Award w/ career,mission,turn";
-				killCriteria = i->second->getKillCriteria(); // fetch the killCriteria list.
-				for (std::vector<std::vector<std::pair<int, std::vector<std::string>>>>::const_iterator // loop over the OR vectors.
-						exclusive = killCriteria->begin();
-						exclusive != killCriteria->end();
-						++exclusive)
+
+				killCriteria = awardRule->getKillCriteria();
+				Log(LOG_INFO) << ". . . killCriteria size= " << killCriteria->size();
+
+				for (std::vector<std::vector<std::pair<int, std::vector<std::string>>>>::const_iterator // loop over the orCriteria ->
+						orCriteria = killCriteria->begin();
+						orCriteria != killCriteria->end();
+						++orCriteria)
 				{
-					Log(LOG_INFO) << ". . . . iter killCriteria's OR list";// << (*exclusive)->;
-					for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the AND vectors.
-							additive = exclusive->begin();
-							additive != exclusive->end();
-							++additive)
+					Log(LOG_INFO) << "";
+					Log(LOG_INFO) << ". . . . iter killCriteria's OR list - orCriteria AND-size= " << (orCriteria->size());
+					Log(LOG_INFO) << ". . . . qtyCriteria= " << qtyCriteria << " required= " << levels.at(requiredLevel["noQual"]);
+
+					for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the andCriteria ->
+							andCriteria = orCriteria->begin();
+							andCriteria != orCriteria->end();
+							++andCriteria)
 					{
-						Log(LOG_INFO) << ". . . . . iter killCriteria's AND list";// << *additive->second.begin();
-						if (criteriaType == "killsWithCriteriaCareer") // how many AND vectors (list of DETAILs) have been successful.
-							qty = 0;
+						Log(LOG_INFO) << "";
+						Log(LOG_INFO) << ". . . . . iter killCriteria's AND list - andCriteria DETAIL-size = " << (andCriteria->second.size());
+
+						if (criteriaType == "killsWithCriteriaCareer")
+							qty = 0; // counts the And-vectors that match their details against Soldier's killstats.
 						else
-							qty = 1; // "killsWith..." Turns or Missions start at 1 because of how thisIter and lastIter work.
-						Log(LOG_INFO) << ". . . . . start Qty= " << qty;
+							qty = 1; // "killsWith..." Turns or Missions start at 1 because of how iterCur and iterPre work. thanks.
+
+						Log(LOG_INFO) << ". . . . . initial qty= " << qty;
 
 						skip = false;
-						thisIter = // being a turn or a mission
-						lastIter = -1;
-						Log(LOG_INFO) << ". . . . . init skip= false, thisIter/lastIter= -1";
+						iterCur = // for a turn or a mission Award, not used for a career Award.
+						iterPre = -1;
+						Log(LOG_INFO) << ". . . . . initialize: skip= false, iterCur/iterPre= -1";
 
-						for (std::vector<BattleUnitKill*>::const_iterator // loop over the KILLS vector.
-								kill = _killList.begin();
-								kill != _killList.end();
-								++kill)
+						int success = false;
+
+						for (std::vector<BattleUnitKill*>::const_iterator // loop over the Soldier's killstats ->
+								killstat = _killList.begin();
+								killstat != _killList.end();
+								++killstat)
 						{
 							Log(LOG_INFO) << "";
 							Log(LOG_INFO) << ". . . . . . iter Soldier's killList";
-							Log(LOG_INFO) << ". . . . . . race= " << (*kill)->_race;
-							Log(LOG_INFO) << ". . . . . . rank= " << (*kill)->_rank;
-							Log(LOG_INFO) << ". . . . . . faction= " << (*kill)->getUnitFactionString();
-							Log(LOG_INFO) << ". . . . . . status= " << (*kill)->getUnitStatusString();
-							Log(LOG_INFO) << ". . . . . . weapon= " << (*kill)->_weapon;
-							Log(LOG_INFO) << ". . . . . . load= " << (*kill)->_load;
-							Log(LOG_INFO) << ". . . . . . turnHostile= " << (*kill)->hostileTurn();
+							Log(LOG_INFO) << ". . . . . . . race=\t\t\t " << (*killstat)->_race;
+							Log(LOG_INFO) << ". . . . . . . rank=\t\t\t " << (*killstat)->_rank;
+							Log(LOG_INFO) << ". . . . . . . faction=\t\t " << (*killstat)->getUnitFactionString();
+							Log(LOG_INFO) << ". . . . . . . status=\t\t " << (*killstat)->getUnitStatusString();
+							Log(LOG_INFO) << ". . . . . . . weapon=\t\t " << (*killstat)->_weapon;
+							Log(LOG_INFO) << ". . . . . . . load=\t\t\t " << (*killstat)->_load;
+							Log(LOG_INFO) << ". . . . . . . turnHostile=\t " << (*killstat)->hostileTurn();
+
 							if (criteriaType == "killsWithCriteriaMission")
 							{
-								thisIter = (*kill)->_mission;
-								if (kill != _killList.begin())
-									lastIter = (*(kill - 1))->_mission;
+								iterCur = (*killstat)->_mission;
+								if (killstat != _killList.begin())
+									iterPre = (*(killstat - 1))->_mission;
 							}
 							else if (criteriaType == "killsWithCriteriaTurn")
 							{
-								thisIter = (*kill)->_turn;
-								if (kill != _killList.begin())
-									lastIter = (*(kill - 1))->_turn;
+								iterCur = (*killstat)->_turn;
+								if (killstat != _killList.begin())
+									iterPre = (*(killstat - 1))->_turn;
 							}
+
 							Log(LOG_INFO) << ". . . . . . " << criteriaType;
 							Log(LOG_INFO) << ". . . . . . skip = " << skip;
-							Log(LOG_INFO) << ". . . . . . thisIter = " << thisIter;
-							Log(LOG_INFO) << ". . . . . . lastIter = " << lastIter;
+							Log(LOG_INFO) << ". . . . . . iterCur = " << iterCur;
+							Log(LOG_INFO) << ". . . . . . iterPre = " << iterPre;
 
-							if (criteriaType != "killsWithCriteriaCareer"	// skip kill-groups that Soldier already got an award
-								&& thisIter == lastIter						// for and skip kills that are inbetween turns.
-								&& skip == true)
-							{
-								Log(LOG_INFO) << ". . . . . . . continue [1]";
-								continue;
-							}
 
-							if (thisIter != lastIter)
-							{
-								qty = 1; // reset.
-								skip = false;
-								Log(LOG_INFO) << ". . . . . . . continue [2]";
-								continue;
+							if (criteriaType != "killsWithCriteriaCareer")	// skip killstats that Soldier just got awarded for
+							{												// skip killstats that are inbetween turns
+								if (iterCur == iterPre && skip == true)
+								{
+									Log(LOG_INFO) << ". . . . . . . continue [1]";
+									continue;
+								}
+
+								if (iterCur != iterPre)
+								{
+									qty = 1; // reset.
+									skip = false;
+									Log(LOG_INFO) << ". . . . . . . continue [2]";
+									continue;
+								}
 							}
 
 							found = true;
-							for (std::vector<std::string>::const_iterator // loop over the DETAILs of the AND vector.
-									detail = additive->second.begin();
-									detail != additive->second.end();
+							for (std::vector<std::string>::const_iterator // loop over the DETAILs of the andCriteria vector ->
+									detail = andCriteria->second.begin();
+									detail != andCriteria->second.end();
 									++detail)
 							{
 								Log(LOG_INFO) << ". . . . . . . iter DETAIL - " << (*detail);
-								size_t
-									bType (0u),
-									dType (0u);
-
 								static const std::string
-									bType_array[BATS]
+									bType_array[BATS] // these entries shall correspond to BattleType enum (RuleItem.h)
 									{
 										"BT_NONE",		"BT_FIREARM",		"BT_AMMO",		"BT_MELEE",
 										"BT_GRENADE",	"BT_PROXYGRENADE",	"BT_MEDIKIT",	"BT_SCANNER",
 										"BT_MINDPROBE",	"BT_PSIAMP",		"BT_FLARE",		"BT_CORPSE",
-										"BT_END"
+										"BT_FUEL",		"BT_END"
 									},
-									dType_array[DATS]
+									dType_array[DATS] // these entries shall correspond to DamageType enum (RuleItem.h)
 									{
 										"DT_NONE",		"DT_AP",			"DT_IN",		"DT_HE",
 										"DT_LASER",		"DT_PLASMA",		"DT_STUN",		"DT_MELEE",
 										"DT_ACID",		"DT_SMOKE",			"DT_END"
 									};
 
-								for (
-										;
-										bType != BATS;
-										++bType)
+								for (bType = 0u; bType != BATS - 1u; ++bType)
 								{
 									//Log(LOG_INFO) << ". . . . . . . . iter bType";
-									if (*detail == bType_array[bType])
+									if (bType_array[bType] == *detail)
 									{
-										Log(LOG_INFO) << ". . . . . . . . . bType = " << (*detail);
+										Log(LOG_INFO) << ". . . . . . . . bType= " << (*detail);
 										break;
 									}
 								}
+								//Log(LOG_INFO) << ". . . . . . . . bType= " << bType;
+								Log(LOG_INFO) << ". . . . . . . . bType Detail= " << bType_array[bType];
 
-								for (
-										;
-										dType != DATS;
-										++dType)
+								for (dType = 0u; dType != DATS - 1u; ++dType)
 								{
 									//Log(LOG_INFO) << ". . . . . . . . iter dType";
-									if (*detail == dType_array[dType])
+									if (dType_array[dType] == *detail)
 									{
-										Log(LOG_INFO) << ". . . . . . . . . dType = " << (*detail);
+										Log(LOG_INFO) << ". . . . . . . . dType= " << (*detail);
 										break;
 									}
 								}
+								//Log(LOG_INFO) << ". . . . . . . . dType= " << dType;
+								Log(LOG_INFO) << ". . . . . . . . dType Detail= " << dType_array[dType];
 
-								weapon = rules->getItemRule((*kill)->_weapon);
-								load   = rules->getItemRule((*kill)->_load);
+								weaponRule	= rules->getItemRule((*killstat)->_weapon);
+								loadRule	= rules->getItemRule((*killstat)->_load);
+								Log(LOG_INFO) << ". . . . . . . . weapRule Valid= " << (weaponRule != nullptr);
+								Log(LOG_INFO) << ". . . . . . . . loadRule Valid= " << (loadRule   != nullptr);
 
-								if (   (*kill)->_rank	!= *detail // if there are NO matches break and try the next Criteria.
-									&& (*kill)->_race	!= *detail
-									&& (*kill)->_weapon	!= *detail
-									&& (*kill)->_load	!= *detail
-									&& (*kill)->getUnitStatusString()  != *detail
-									&& (*kill)->getUnitFactionString() != *detail
-									&& (weapon == nullptr || weapon->getBattleType() != static_cast<BattleType>(bType))		// TODO: That's not right.
-									&& (load   == nullptr || load->getDamageType()   != static_cast<DamageType>(dType)))	// neither is this.
+								Log(LOG_INFO) << ". . . . . . . . MATCHES:";
+								Log(LOG_INFO) << ". . . . . . . . . rank= " << ((*killstat)->_rank		== *detail);
+								Log(LOG_INFO) << ". . . . . . . . . race= " << ((*killstat)->_race		== *detail);
+								Log(LOG_INFO) << ". . . . . . . . . weap= " << ((*killstat)->_weapon	== *detail);
+								Log(LOG_INFO) << ". . . . . . . . . load= " << ((*killstat)->_load		== *detail);
+								Log(LOG_INFO) << ". . . . . . . . . stat= " << ((*killstat)->getUnitStatusString()	== *detail);
+								Log(LOG_INFO) << ". . . . . . . . . fact= " << ((*killstat)->getUnitFactionString()	== *detail);
+								Log(LOG_INFO) << ". . . . . . . . . bTyp= " << !((weaponRule == nullptr
+																						&& (   bType_array[bType] != "BT_NONE"
+																							|| bType_array[bType] != "BT_END"))
+																					|| (   weaponRule != nullptr
+																						&& weaponRule->getBattleType() != static_cast<BattleType>(bType)));
+								Log(LOG_INFO) << ". . . . . . . . . dTyp= " << !((loadRule == nullptr
+																						&& (   dType_array[dType] != "DT_NONE"
+																							|| dType_array[dType] != "DT_END"))
+																					|| (   loadRule != nullptr
+																						&& loadRule->getDamageType() != static_cast<DamageType>(dType)));
+
+								if (   (*killstat)->_rank	!= *detail // if every killstat mis-matches the (single) Detail break and try the next andCriteria.
+									&& (*killstat)->_race	!= *detail
+									&& (*killstat)->_weapon	!= *detail
+									&& (*killstat)->_load	!= *detail
+									&& (*killstat)->getUnitStatusString()  != *detail
+									&& (*killstat)->getUnitFactionString() != *detail
+									&& ((weaponRule == nullptr
+											&& (   bType_array[bType] != "BT_NONE"
+												|| bType_array[bType] != "BT_END"))
+										|| (   weaponRule != nullptr
+											&& weaponRule->getBattleType() != static_cast<BattleType>(bType)))
+									&& ((loadRule == nullptr
+											&& (   dType_array[dType] != "DT_NONE"
+												|| dType_array[dType] != "DT_END"))
+										|| (   loadRule != nullptr
+											&& loadRule->getDamageType() != static_cast<DamageType>(dType))))
 								{
-									Log(LOG_INFO) << ". . . . . . . . no matching Detail BREAK";
+									Log(LOG_INFO) << ". . . . . . . . all killstats mismatch rule-Detail - BREAK detail & go to next killstat";
 									found = false;
 									break;
 								}
-							}
+							} // detail ^
 
-							if (found == true)
+							if (found == true) // all details were found in killstat -> so check current Qty vs Qty-required.
 							{
-								Log(LOG_INFO) << ". . . . . . . found Qty= " << (qty + 1);
-								if (++qty == additive->first)
+								Log(LOG_INFO) << ". . . . . . . found Qty= " << (qty + 1) << " required Qty= " << (andCriteria->first * levels.at(requiredLevel["noQual"]));
+								if (++qty == andCriteria->first * levels.at(requiredLevel["noQual"]))
 								{
-									Log(LOG_INFO) << ". . . . . . . . additive Qty is GOOD";
-									skip = true; // criteria met so move to next mission/turn.
+									Log(LOG_INFO) << ". . . . . . . . andCriteria Qty is MET - BREAK killstats & skip to next andCriteria";
+									skip = true; // skip to next andCriteria ...
+									success = true;
+									break;
 								}
+								else
+									success = false;
 							}
-						}
+						} // killstat ^
 
-						// if one of the AND criteria fail stop looking.
-						Log(LOG_INFO) << ". . . . . qty= " << qty;
-						Log(LOG_INFO) << ". . . . . multiCriteria= " << additive->first;
-						Log(LOG_INFO) << ". . . . . noQual-Levels required= " << j->second.at(requiredLevel["noQual"]);
-						if (additive->first == 0
-							|| qty / additive->first < j->second.at(requiredLevel["noQual"]))
+
+//						if (//andCriteria->first == 0 ||
+//							qty / andCriteria->first < levels.at(requiredLevel["noQual"])) // use the "noQual" entry assigned above just to find out what the highest value is.
+
+						if (success == false) // if any of the andCriteria fail stop looking.
 						{
-							Log(LOG_INFO) << ". . . . . . no Award w/ career,mission,turn - BREAK andCriteria";
-							grantAward = false;
+							Log(LOG_INFO) << ". . . . . . no Award w/ career,mission,turn - BREAK andCriteria & go to next orCriteria";
+							recurseAward = false;
 							break;
 						}
+					} // andCriteria ^
 
-						Log(LOG_INFO) << ". . . . . . grant Award w/ career,mission,turn";
-						grantAward = true;
-					}
-
-					if (grantAward == true) // stop looking because soldier is getting one regardless.
+					if (recurseAward == true)
 					{
-						Log(LOG_INFO) << ". . . . . grant Award w/ career,mission,turn - BREAK orCriteria";
-						break;
+						Log(LOG_INFO) << "";
+						Log(LOG_INFO) << ". . . . . qtyCriteria= " << (qtyCriteria + 1);
+						Log(LOG_INFO) << ". . . . . levels required= " << levels.at(requiredLevel["noQual"]);
+						if (++qtyCriteria == levels.at(requiredLevel["noQual"]))
+						{
+							Log(LOG_INFO) << ". . . . . . levels MET - BREAK orCriteria & grant Award w/ career,mission,turn (or go to next Criteria)";
+							break;
+						}
 					}
-				}
+
+					recurseAward = false;
+				} // orCriteria ^
 			}
-		}
+		} // criteria ^
 
 
 		Log(LOG_INFO) << "";
-		if (grantAward == true)
+		if (recurseAward == true) // stay on the current RuleAward and check for next level
 		{
 			Log(LOG_INFO) << ". do Award";
-			doCeremony = true;
+			showAwardsPostTactical = true;
 
-			if (qualifiers.empty() == true)	// if there are NO qualified awards but the soldier *is*
-			{								// being awarded an award its qualifier will be "noQual".
-				Log(LOG_INFO) << ". . GRANT noQual " << i->first;
+			if (qualifiers.empty() == true)	// if the Soldier is getting an Award but there are no qualifiers
+			{								// the qualifier will be "noQual"
+				Log(LOG_INFO) << ". . GRANT noQual " << awardType;
 				qualifiers.push_back("noQual");
 			}
 
@@ -835,9 +903,9 @@ bool SoldierDiary::updateAwards(
 						k != _solAwards.end();
 						++k)
 				{
-					if ((*k)->getType() == i->first && (*k)->getQualifier() == *j)
+					if ((*k)->getType() == awardType && (*k)->getQualifier() == *j)
 					{
-						Log(LOG_INFO) << ". . . . GRANT " << (*j) << " " << i->first;
+						Log(LOG_INFO) << ". . . . GRANT " << (*j) << " " << awardType;
 						firstOfType = false;
 						(*k)->addAwardLevel();
 						break;
@@ -847,21 +915,22 @@ bool SoldierDiary::updateAwards(
 				if (firstOfType == true)
 				{
 					Log(LOG_INFO) << ". . . is First of Type";
-					_solAwards.push_back(new SoldierAward(i->first, *j));
+					_solAwards.push_back(new SoldierAward(awardType, *j));
 				}
 			}
 
-			Log(LOG_INFO) << ". iterate to next Award type - check for higher level";
+			Log(LOG_INFO) << ". recurse Award type - check for higher level";
 		}
-		else
+		else // iterate to the next RuleAward
 		{
 			Log(LOG_INFO) << ". do NOT Award -> iterate to next Award type";
+			qtyCriteria = 0;
 			++i;
 		}
-	}
+	} // award ^
 
-	Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ Ceremony= " << doCeremony;
-	return doCeremony;
+	Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ post-tactical= " << showAwardsPostTactical;
+	return showAwardsPostTactical;
 }
 
 /**
@@ -1627,11 +1696,11 @@ void SoldierAward::addAwardLevel()
 }
 
 /**
- * Gets this SoldierAward's class-type.
- * @param skip -
- * @return, decoration-level as string
+ * Gets this SoldierAward's level.
+ * @param skip - a quantity that accounts for repeated levels
+ * @return, level-string
  */
-const std::string SoldierAward::getClassType(size_t skip) const
+const std::string SoldierAward::GetLevelString(size_t skip) const
 {
 	std::ostringstream oststr;
 	oststr << "STR_AWARD_" << _level - skip;
@@ -1639,21 +1708,23 @@ const std::string SoldierAward::getClassType(size_t skip) const
 }
 
 /**
- * Gets this SoldierAward's class-description.
- * @return, decoration-level description
+ * Gets this SoldierAward's grade.
+ * @note Represents the color: none,bronze,silver,gold.
+ * @return, grade-string
  */
-const std::string SoldierAward::getClassDescription() const
+const std::string SoldierAward::getGradeString() const
 {
 	std::ostringstream oststr;
-	oststr << "STR_AWARD_DECOR_" << _level;
+	oststr << "STR_AWARD_GRADE_" << _level;
 	return oststr.str();
 }
 
 /**
- * Gets this SoldierAward's class-degree - represents quantity of stars.
- * @return, decoration-level class
+ * Gets this SoldierAward's class.
+ * @note Represents the quantity of stars [0..3].
+ * @return, class-string
  */
-const std::string SoldierAward::getClassDegree() const
+const std::string SoldierAward::getClassString() const
 {
 	std::ostringstream oststr;
 	oststr << "STR_AWARD_CLASS_" << _level;

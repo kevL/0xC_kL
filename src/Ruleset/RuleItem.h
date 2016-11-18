@@ -198,7 +198,7 @@ private:
 		_type, // but the types are always unique
 		_zombieUnit;
 
-	BattleType _battleType;
+	BattleType _bType;
 	DamageType _dType;
 	TileType _specialType;
 	TurretType _turretType;

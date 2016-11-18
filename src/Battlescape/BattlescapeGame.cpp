@@ -149,7 +149,7 @@ BattlescapeGame::BattlescapeGame(
 		_endTurnRequested(false),
 		_executeProgress(false),
 		_shotgunProgress(false),
-		_killStatMissionId(0),
+		_killStatTacId(0),
 		_killStatTurn(0),
 		_killStatPoints(0)
 //		_endTurnProcessed(false)
@@ -1718,7 +1718,7 @@ void BattlescapeGame::checkCasualties(
 																					_killStatWeaponLoad,
 																					(*i)->getOriginalFaction(),
 																					STATUS_DEAD,
-																					_killStatMissionId,
+																					_killStatTacId,
 																					_killStatTurn,
 																					_killStatPoints));
 						}
@@ -1761,7 +1761,7 @@ void BattlescapeGame::checkCasualties(
 																					_killStatWeaponLoad,
 																					(*i)->getOriginalFaction(),
 																					STATUS_UNCONSCIOUS,
-																					_killStatMissionId,
+																					_killStatTacId,
 																					_killStatTurn,
 																					_killStatPoints >> 1u)); // half pts. for stun
 						}
@@ -1860,7 +1860,7 @@ void BattlescapeGame::diaryAttacker( // private.
 		const BattleUnit* const attacker,
 		const RuleItem* itRule)
 {
-	_killStatMissionId = static_cast<int>(_battleSave->getSavedGame()->getTacticalStatistics().size());
+	_killStatTacId = static_cast<int>(_battleSave->getSavedGame()->getTacticalStatistics().size());
 	_killStatTurn = _battleSave->getTurn() * 3 + static_cast<int>(_battleSave->getSide());
 
 	if (itRule != nullptr)
@@ -1906,7 +1906,7 @@ void BattlescapeGame::diaryAttacker( // private.
 	else
 	{
 		_killStatWeapon =
-		_killStatWeaponLoad = "STR_WEAPON_UNKNOWN";
+		_killStatWeaponLoad = "";
 	}
 }
 

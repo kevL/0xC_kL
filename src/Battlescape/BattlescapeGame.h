@@ -226,7 +226,7 @@ private:
 		_killStatWeapon,
 		_killStatWeaponLoad;
 	int
-		_killStatMissionId,
+		_killStatTacId,
 		_killStatTurn,
 		_killStatPoints;
 

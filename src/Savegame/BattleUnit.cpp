@@ -99,7 +99,7 @@ BattleUnit::BattleUnit(
 		_floating(false),
 		_dontReselect(false),
 		_fire(0),
-		_unitAIState(nullptr),
+		_unitAiState(nullptr),
 		_visible(false),
 		_cacheInvalid(true),
 		_expBravery(0),
@@ -271,7 +271,7 @@ BattleUnit::BattleUnit(
 		_kneeled(false),
 		_floating(false),
 		_fire(0),
-		_unitAIState(nullptr),
+		_unitAiState(nullptr),
 		_visible(false),
 		_cacheInvalid(true),
 		_expBravery(0),
@@ -450,8 +450,8 @@ BattleUnit::~BattleUnit()
 		delete _tacstats;
 	}
 
-	if (_unitAIState != nullptr)
-		delete _unitAIState;
+	if (_unitAiState != nullptr)
+		delete _unitAiState;
 }
 
 /**
@@ -637,8 +637,8 @@ YAML::Node BattleUnit::save() const
 
 	// could put (if not tank) here:
 
-	if (_unitAIState != nullptr)
-		node["AI"] = _unitAIState->save();
+	if (_unitAiState != nullptr)
+		node["AI"] = _unitAiState->save();
 
 	if (_faction == FACTION_PLAYER
 		&& (_dontReselect == true
@@ -2750,8 +2750,8 @@ void BattleUnit::thinkAi(BattleAction* const action)
 	if (checkReload() == true)
 		_cacheInvalid = true; // <- reloading a weapon could switch a unit's preferred weapon-hand.
 
-	//if (debug) Log(LOG_INFO) << ". _unitAIState->thinkOnce()";
-	_unitAIState->thinkOnce(action);
+	//if (debug) Log(LOG_INFO) << ". _unitAiState->thinkOnce()";
+	_unitAiState->thinkOnce(action);
 
 	//if (debug) {
 	//	Log(LOG_INFO) << "BattleUnit::think() EXIT";
@@ -2765,13 +2765,13 @@ void BattleUnit::thinkAi(BattleAction* const action)
  */
 void BattleUnit::setAIState(BattleAIState* const aiState)
 {
-	if (_unitAIState != nullptr)
+	if (_unitAiState != nullptr)
 	{
-//		_unitAIState->exit();
-		delete _unitAIState;
+//		_unitAiState->exit();
+		delete _unitAiState;
 	}
-	_unitAIState = aiState;
-//	_unitAIState->enter();
+	_unitAiState = aiState;
+//	_unitAiState->enter();
 }
 
 /**
@@ -2780,7 +2780,7 @@ void BattleUnit::setAIState(BattleAIState* const aiState)
  */
 BattleAIState* BattleUnit::getAIState() const
 {
-	return _unitAIState;
+	return _unitAiState;
 }
 
 /**
@@ -4186,12 +4186,12 @@ void BattleUnit::putdown(bool autokill)
 		_health = 0;
 	}
 
-	if (_unitAIState != nullptr)
+	if (_unitAiState != nullptr)
 	{
 		switch (_status)
 		{
 			case STATUS_DEAD: setAIState(); break;
-			case STATUS_UNCONSCIOUS: _unitAIState->resetAI();
+			case STATUS_UNCONSCIOUS: _unitAiState->resetAI();
 		}
 	}
 

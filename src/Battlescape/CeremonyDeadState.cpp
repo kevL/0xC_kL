@@ -210,7 +210,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //					_lstAwards->addRow(
 //									2,
 //									woststr.str().c_str(),
-//									tr((*k)->getClassType(skip)).c_str());
+//									tr((*k)->GetLevelString(skip)).c_str());
 //					break;
 //				}
 //			}

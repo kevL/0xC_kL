@@ -1,240 +1,240 @@
 # Medals & Awards by Ivan Dogovich.
 ufopaedia:
-  - id: STR_MEDAL_MERIT_STAR_NAME
+  - id: STR_MEDAL_MERIT_STAR
     type_id: 10
     section: STR_AWARDS
     image_id: MERIT_STAR
     text: STR_MEDAL_MERIT_STAR_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_MILITARY_CROSS_NAME
+  - id: STR_MEDAL_MILITARY_CROSS
     type_id: 10
     section: STR_AWARDS
     image_id: MILITARY_CROSS
     text: STR_MEDAL_MILITARY_CROSS_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_ORDER_OF_RESTRAINT_NAME
+  - id: STR_MEDAL_ORDER_OF_RESTRAINT
     type_id: 10
     section: STR_AWARDS
     image_id: ORDER_OF_RESTRAINT
     text: STR_MEDAL_ORDER_OF_RESTRAINT_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_DEFENDER_MEDAL_NAME
+  - id: STR_MEDAL_DEFENDER_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: DEFENDER
     text: STR_MEDAL_DEFENDER_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_LONGEST_NIGHT_NAME
+  - id: STR_MEDAL_LONGEST_NIGHT
     type_id: 10
     section: STR_AWARDS
     image_id: LONGEST_NIGHT
     text: STR_MEDAL_LONGEST_NIGHT_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_WEAPON_PROFICIENCY_MEDAL_NAME
+  - id: STR_MEDAL_WEAPON_PROFICIENCY_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: WEAPON_PROFICIENCY
     text: STR_MEDAL_WEAPON_PROFICIENCY_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_SERVICE_MEDAL_NAME
+  - id: STR_MEDAL_SERVICE_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: SERVICE
     text: STR_MEDAL_SERVICE_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_HONOR_CROSS_NAME
+  - id: STR_MEDAL_HONOR_CROSS
     type_id: 10
     section: STR_AWARDS
     image_id: HONOR_CROSS
     text: STR_MEDAL_HONOR_CROSS_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_CAMPAIGN_RIBBON_MEDAL_NAME
+  - id: STR_MEDAL_CAMPAIGN_RIBBON_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: CAMPAIGN_RIBBON
     text: STR_MEDAL_CAMPAIGN_RIBBON_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_XENOCIDE_MEDAL_UFOPEDIA_NAME
+  - id: STR_MEDAL_XENOCIDE_MEDAL_UFOPEDIA
     type_id: 10
     section: STR_AWARDS
     image_id: XENOCIDE
     text: STR_MEDAL_XENOCIDE_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_MEDAL_OF_HEROISM_NAME
+  - id: STR_MEDAL_MEDAL_OF_HEROISM
     type_id: 10
     section: STR_AWARDS
     image_id: MEDAL_OF_HEROISM
     text: STR_MEDAL_MEDAL_OF_HEROISM_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_HELLRAISER_MEDAL_NAME
+  - id: STR_MEDAL_HELLRAISER_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: HELLRAISER
     text: STR_MEDAL_HELLRAISER_MEDAL_UFOPEDIA
     text_width: 182
-#  - id: STR_MEDAL_DISTINGUISHED_SERVICE_NAME
-#    type_id: 10
-#    section: STR_AWARDS
-#    image_id: DISTINGUISHED_SERVICE
-#    text: STR_MEDAL_DISTINGUISHED_SERVICE_MEDAL_UFOPEDIA
-#    text_width: 182
-  - id: STR_MEDAL_BOLTS_CROSS_NAME
+  - id: STR_MEDAL_DISTINGUISHED_SERVICE
+    type_id: 10
+    section: STR_AWARDS
+    image_id: DISTINGUISHED_SERVICE
+    text: STR_MEDAL_DISTINGUISHED_SERVICE_MEDAL_UFOPEDIA
+    text_width: 182
+  - id: STR_MEDAL_BOLTS_CROSS
     type_id: 10
     section: STR_AWARDS
     image_id: BOLTS_CROSS
     text: STR_MEDAL_BOLTS_CROSS_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_GRENADIERS_MEDAL_NAME
+  - id: STR_MEDAL_GRENADIERS_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: GRENADIERS_MEDAL
     text: STR_MEDAL_GRENADIERS_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_STAR_OF_ASCLEPIUS_NAME
+  - id: STR_MEDAL_STAR_OF_ASCLEPIUS
     type_id: 10
     section: STR_AWARDS
     image_id: STAR_OF_ASCLEPIUS
     text: STR_MEDAL_STAR_OF_ASCLEPIUS_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_MAN_OF_STEEL_NAME
+  - id: STR_MEDAL_MAN_OF_STEEL
     type_id: 10
     section: STR_AWARDS
     image_id: MAN_OF_STEEL
     text: STR_MEDAL_MAN_OF_STEEL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_BLACK_CROSS_NAME
+  - id: STR_MEDAL_BLACK_CROSS
     type_id: 10
     section: STR_AWARDS
     image_id: BLACK_CROSS
     text: STR_MEDAL_BLACK_CROSS_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_STAR_OF_VALOR_NAME
+  - id: STR_MEDAL_STAR_OF_VALOR
     type_id: 10
     section: STR_AWARDS
     image_id: STAR_OF_VALOR
     text: STR_MEDAL_STAR_OF_VALOR_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_IRON_MAN_NAME
+  - id: STR_MEDAL_IRON_MAN
     type_id: 10
     section: STR_AWARDS
     image_id: IRON_MAN
     text: STR_MEDAL_IRON_MAN_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_ORDER_OF_EARTH_NAME
+  - id: STR_MEDAL_ORDER_OF_EARTH
     type_id: 10
     section: STR_AWARDS
     image_id: ORDER_OF_EARTH
     text: STR_MEDAL_ORDER_OF_EARTH_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_SNIPER_NAME
+  - id: STR_MEDAL_SNIPER
     type_id: 10
     section: STR_AWARDS
     image_id: SNIPER
     text: STR_MEDAL_SNIPER_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_LUCKYSHOT_NAME
+  - id: STR_MEDAL_LUCKYSHOT
     type_id: 10
     section: STR_AWARDS
     image_id: LUCKYSHOT
     text: STR_MEDAL_LUCKYSHOT_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_DBLKILL_NAME
+  - id: STR_MEDAL_DBLKILL
     type_id: 10
     section: STR_AWARDS
     image_id: DBLKILL
     text: STR_MEDAL_DBLKILL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_REACTIONFIRE_NAME
+  - id: STR_MEDAL_REACTIONFIRE
     type_id: 10
     section: STR_AWARDS
     image_id: REACTIONFIRE
     text: STR_MEDAL_REACTIONFIRE_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_PURPLE_HEART_NAME
+  - id: STR_MEDAL_PURPLE_HEART
     type_id: 10
     section: STR_AWARDS
     image_id: PURPLE_HEART
     text: STR_MEDAL_PURPLE_HEART_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_CRIMSON_HEART_NAME
+  - id: STR_MEDAL_CRIMSON_HEART
     type_id: 10
     section: STR_AWARDS
     image_id: CRIMSON_HEART
     text: STR_MEDAL_CRIMSON_HEART_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_ORDER_OF_GLORY_NAME
+  - id: STR_MEDAL_ORDER_OF_GLORY
     type_id: 10
     section: STR_AWARDS
     image_id: ORDER_OF_GLORY
     text: STR_MEDAL_ORDER_OF_GLORY_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_VALIANT_CRUX_NAME
+  - id: STR_MEDAL_VALIANT_CRUX
     type_id: 10
     section: STR_AWARDS
     image_id: VALIANT_CRUX
     text: STR_MEDAL_VALIANT_CRUX_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_FALLEN_NAME
+  - id: STR_MEDAL_FALLEN
     type_id: 10
     section: STR_AWARDS
     image_id: FALLEN
     text: STR_MEDAL_FALLEN_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_TRAP_NAME
+  - id: STR_MEDAL_TRAP
     type_id: 10
     section: STR_AWARDS
     image_id: TRAP
     text: STR_MEDAL_TRAP_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_ALIEN_BASE_ASSAULT_NAME
+  - id: STR_MEDAL_ALIEN_BASE_ASSAULT
     type_id: 10
     section: STR_AWARDS
     image_id: ALIEN_BASE_ASSAULT
     text: STR_MEDAL_ALIEN_BASE_ASSAULT_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_NIKE_CROSS_NAME
+  - id: STR_MEDAL_NIKE_CROSS
     type_id: 10
     section: STR_AWARDS
     image_id: NIKE_CROSS
     text: STR_MEDAL_NIKE_CROSS_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_SAPPER_NAME
+  - id: STR_MEDAL_SAPPER
     type_id: 10
     section: STR_AWARDS
     image_id: SAPPER
     text: STR_MEDAL_SAPPER_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_MELEE_KILL_MEDAL_NAME
+  - id: STR_MEDAL_MELEE_KILL_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: MELEE_KILL
     text: STR_MEDAL_MELEE_KILL_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_SECTOPOD_KILL_MEDAL_NAME
+  - id: STR_MEDAL_SECTOPOD_KILL_MEDAL
     type_id: 10
     section: STR_AWARDS
     image_id: SECTOPOD_KILL
     text: STR_MEDAL_SECTOPOD_KILL_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_HEALER_NAME
+  - id: STR_MEDAL_HEALER
     type_id: 10
     section: STR_AWARDS
     image_id: HEALER
     text: STR_MEDAL_HEALER_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_REVIVE_NAME
+  - id: STR_MEDAL_REVIVE
     type_id: 10
     section: STR_AWARDS
     image_id: REVIVE
     text: STR_MEDAL_REVIVE_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_MIA_NAME
+  - id: STR_MEDAL_MIA
     type_id: 10
     section: STR_AWARDS
     image_id: MIA
     text: STR_MEDAL_MIA_MEDAL_UFOPEDIA
     text_width: 182
-  - id: STR_MEDAL_ORIGINAL8_NAME
+  - id: STR_MEDAL_ORIGINAL8
     type_id: 10
     section: STR_AWARDS
     image_id: ORIGINAL8
@@ -508,15 +508,15 @@ extraStrings:
       STR_MEDAL_GRENADIERS_MEDAL_UFOPEDIA: "Five second fuses always burn three seconds.{NEWLINE}   - Murphy's Laws of Combat{NEWLINE}{NEWLINE}{ALT}This commendation is presented to soldiers that have made the most of their xCom grenades! Beyond a standard proficiency medal, it recognizes the ability to kill multiple enemy with one standard grenade.{NEWLINE}{NEWLINE}Awards are issued for killing three enemies at once with the standard issue hand grenade or proximity grenade."
       STR_MEDAL_BLACK_CROSS_MEDAL_UFOPEDIA: "Bullets do not discriminate. They are equal-opportunity projectiles.{NEWLINE}   - Peter Duysings{NEWLINE}{NEWLINE}{ALT}Also known as: You should have ducked, Carl! this medal is given to soldiers who have been hit by friendly fire. As Murphy says: Friendly Fire Isn't." #{NEWLINE}{NEWLINE}This commendation is available for award up to four times."
       STR_MEDAL_STAR_OF_ASCLEPIUS_MEDAL_UFOPEDIA: "War is life multiplied by some number that no one has ever heard of.{NEWLINE}   - Sebastian Junger{NEWLINE}{NEWLINE}{ALT}By drawing intense fire from the enemy, this soldier has provided heroic assistance to his comrades.{NEWLINE}{NEWLINE}This medal is awarded to soldiers who have been targeted by the enemy." # This award has three levels."
-      STR_MEDAL_CAMPAIGN_RIBBON_MEDAL_NAME: "Campaign Ribbon"
+      STR_MEDAL_CAMPAIGN_RIBBON_MEDAL: "Campaign Ribbon"
       STR_MEDAL_CAMPAIGN_RIBBON_MEDAL_UFOPEDIA: "We need to thank all of our troops, and particularly those for whom we can never express enough gratitude ... for they have given their lives so that all of us may be free.{NEWLINE}   - Virgil Goode{NEWLINE}{NEWLINE}{ALT}The countries of a given region recognize the skill and valor by which this trooper has protected their lives and property in this war against the aLien Menace." #{NEWLINE}{NEWLINE}This medal is awarded for 10, 20 and 30 missions in a given region."
-      STR_MEDAL_WEAPON_PROFICIENCY_MEDAL_NAME: "Weapon Proficiency"
+      STR_MEDAL_WEAPON_PROFICIENCY_MEDAL: "Weapon Proficiency"
       STR_MEDAL_WEAPON_PROFICIENCY_MEDAL_UFOPEDIA: "Anything worth shooting is worth shooting twice. Ammo is cheap. Life is expensive.{NEWLINE}   - US Ranger Rules for Gunfighting{NEWLINE}{NEWLINE}{ALT}This medal is awarded to recognize a soldier's extreme prociency with a given weapon. They have become a true expert in their field and a master at their craft." #{NEWLINE}{NEWLINE}This medal is awarded for 10, 20 and 30 kills with a specific weapon."
 #      STR_MEDAL_DISTINGUISHED_SERVICE_MEDAL_UFOPEDIA: "Don't fear them, my child. We are going to kill them all.{NEWLINE}   - The Kingdom{NEWLINE}{NEWLINE}{ALT}This medal recognizes the soldier who has mastered the art of killing aLiens in all forms. No aLien race is immune to their predations.{NEWLINE}{NEWLINE}This award is presented for killing a soldier of all the primary races." # Further awards are given for 5, 10, and 15 more specimens of each race."
       STR_MEDAL_HELLRAISER_MEDAL_UFOPEDIA: "Of the four classical elements, fire is by far the most primal. The most challenging. The most dangerous. The most transforming. The most visceral. The most fun. Seriously, which enemies would cower in their tracks if you appeared in front of them and proclaimed yourself to be a great water wizard?{NEWLINE}   - The Rant{NEWLINE}{NEWLINE}{ALT}This award is presented to those who have mastered the art of destroying the enemy with fire." #{NEWLINE}{NEWLINE}The award is given for every five torched aLiens, up to four times."
       STR_MEDAL_LUCKYSHOT_MEDAL_UFOPEDIA: "The best luck of all is the luck you make for yourself.{NEWLINE}   - Douglas MacArthur{NEWLINE}{NEWLINE}{ALT}When a soldier repeatedly defies the odds and lands incredible shots they become eligible for this award." #{NEWLINE}{NEWLINE}Presented for every three lucky shots, this citation has four levels."
       STR_MEDAL_IRON_MAN_MEDAL_UFOPEDIA: "If you're short of everything but the enemy, you're in a combat zone.{NEWLINE}   - Murphy's Laws of Combat{NEWLINE}{NEWLINE}{ALT}This award is presented to soldiers who take on the foe single-handedly. Only the hardcore attempt this and fewer survive." #{NEWLINE}{NEWLINE}The award has only one level."
-      STR_MEDAL_XENOCIDE_MEDAL_UFOPEDIA_NAME: "aLien Race Xenocide"
+      STR_MEDAL_XENOCIDE_MEDAL_UFOPEDIA: "aLien Race Xenocide"
       STR_MEDAL_XENOCIDE_MEDAL_UFOPEDIA: "If you find yourself in a fair fight, you didn't plan your mission properly.{NEWLINE}   - David Hackworth{NEWLINE}{NEWLINE}{ALT}Given to a soldier who has become a lethal machine in cutting down a specific aLien race. This race has suffered such depradations by this xCom hero that they have come to calling him XenoCide." #{NEWLINE}{NEWLINE}Award levels are 10, 20, and 30 Kills of a given race."
       STR_MEDAL_SNIPER_MEDAL_UFOPEDIA: "My crosshairs steady,{NEWLINE}My trigger cold,{NEWLINE}I feel the recoil{NEWLINE}and watch him fold.{NEWLINE}The mission accomplished,{NEWLINE}I grab my gear.{NEWLINE}I'll clean my rifle{NEWLINE}in the rear.{NEWLINE}   - Marine Sniper{NEWLINE}{NEWLINE}{ALT}This citation is designed to recognize expertise in dealing death from afar." #{NEWLINE}{NEWLINE}Presented for every three long range hits, this citation has four levels."
       STR_MEDAL_NIKE_CROSS_MEDAL_UFOPEDIA: "You've got to believe that you are right to be a good soldier, that's why mercenaries are no good. It's emotion that makes a good fighting man - and knowing that you are fighting for a good cause.{NEWLINE}   - Audie Murphy{NEWLINE}{NEWLINE}{ALT}This decoration recognizes unparalleled battlefield prowess. Embodying lethality, this warrior has proven their combat expertise in the most tangible means possible.{NEWLINE}{NEWLINE}This award is exclusively for soldiers who single handedly kill every aLien in a singe mission." # This award is presented up to three times."

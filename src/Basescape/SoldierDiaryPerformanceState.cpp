@@ -115,8 +115,8 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_txtProficiency		= new Text(100, 9, 16, 156);
 
 	// Award stats
-	_txtMedalName		= new Text(90, 9,  16, 36);
-	_txtMedalLevel		= new Text(52, 9, 196, 36);
+	_txtMedal		= new Text(90, 9,  16, 36);
+	_txtMedalGrade		= new Text(52, 9, 196, 36);
 	_txtMedalClass		= new Text(40, 9, 248, 36);
 	_lstAwards			= new TextList(240, 97, 48, 49); // 12 rows
 	_txtMedalInfo		= new Text(285, 25, 16, 150);
@@ -125,14 +125,15 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	// Award sprites
 	_srtAwards = _game->getResourcePack()->getSurfaceSet("Awards");
 	_srtLevels = _game->getResourcePack()->getSurfaceSet("AwardDecorations");
+	int offset_y;
 	for (size_t
 			i = 0u;
 			i != SPRITE_ROWS;
 			++i)
 	{
-		const int offset_y (SPRITES_y + (static_cast<int>(i) * 8));
-		_srfAward.push_back(new Surface(31, 7, 16, offset_y));
-		_srfLevel.push_back(new Surface(31, 7, 16, offset_y));
+		offset_y = SPRITES_y + (static_cast<int>(i) * 8);
+		_srfAward.push_back(new Surface(31, 7,  16, offset_y));
+		_srfDecor.push_back(new Surface(31, 7, 164, offset_y));
 	}
 
 	setInterface("awards", true);
@@ -169,8 +170,8 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	add(_txtProficiency,	"text",		"awards");
 
 	// Award stats
-	add(_txtMedalName,	"text",	"awards");
-	add(_txtMedalLevel,	"text",	"awards");
+	add(_txtMedal,	"text",	"awards");
+	add(_txtMedalGrade,	"text",	"awards");
 	add(_txtMedalClass,	"text",	"awards");
 	add(_lstAwards,		"list",	"awards");
 	add(_txtMedalInfo,	"info",	"awards");
@@ -182,7 +183,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 			++i)
 	{
 		add(_srfAward[i]);
-		add(_srfLevel[i]);
+		add(_srfDecor[i]);
 	}
 
 	centerSurfaces();
@@ -313,9 +314,9 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 
 
 	// Award stats ->
-	_txtMedalName->setText(tr("STR_MEDAL_NAME"));
-	_txtMedalLevel->setText(tr("STR_MEDAL_DECOR_LEVEL"));
-	_txtMedalClass->setText(tr("STR_MEDAL_DECOR_CLASS"));
+	_txtMedal->setText(tr("STR_MEDAL"));
+	_txtMedalGrade->setText(tr("STR_MEDAL_GRADE"));
+	_txtMedalClass->setText(tr("STR_MEDAL_CLASS"));
 
 	_lstAwards->setArrowColor(color);
 	_lstAwards->setColumns(3, 148,52,40);
@@ -324,7 +325,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_lstAwards->setMargin();
 	_lstAwards->onMouseOver(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::lstMouseOver));
 	_lstAwards->onMouseOut(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::lstMouseOut));
-	_lstAwards->onMousePress(							   &SoldierDiaryPerformanceState::handle); // call to base-state.
+	_lstAwards->onMousePress(							   &SoldierDiaryPerformanceState::handle); // call to parent-state.
 
 	_txtMedalInfo->setHighContrast();
 	_txtMedalInfo->setWordWrap();
@@ -361,7 +362,7 @@ void SoldierDiaryPerformanceState::init()
 			++i)
 	{
 		_srfAward[i]->clear();
-		_srfLevel[i]->clear();
+		_srfDecor[i]->clear();
 	}
 
 	_lstRank			->scrollTo(); // reset scroll-depth for lists
@@ -429,8 +430,8 @@ void SoldierDiaryPerformanceState::init()
 		vis = false;
 		_btnAwards->setColor(_colorBtnUp);
 	}
-	_txtMedalName	->setVisible(vis);
-	_txtMedalLevel	->setVisible(vis);
+	_txtMedal	->setVisible(vis);
+	_txtMedalGrade	->setVisible(vis);
 	_txtMedalClass	->setVisible(vis);
 	_lstAwards		->setVisible(vis);
 	_txtMedalInfo	->setVisible(vis);
@@ -593,8 +594,8 @@ void SoldierDiaryPerformanceState::init()
 		_lstAwards->addRow(
 						3,
 						woststr1.str().c_str(),
-						tr((*i)->getClassDescription()).c_str(),
-						tr((*i)->getClassDegree()).c_str());
+						tr((*i)->getGradeString()).c_str(),
+						tr((*i)->getClassString()).c_str());
 
 		_awardsList.push_back(woststr2.str());
 		drawMedals();
@@ -614,7 +615,7 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 				++i)
 		{
 			_srfAward[i]->clear();
-			_srfLevel[i]->clear();
+			_srfDecor[i]->clear();
 		}
 
 		const RuleAward* awardRule;
@@ -635,7 +636,7 @@ void SoldierDiaryPerformanceState::drawMedals() // private.
 				_srtAwards->getFrame(sprite)->blit(_srfAward[j - scroll]);
 
 				if ((sprite = static_cast<int>((*i)->getAwardLevel())) != 0)	// draw each award's level-sprite
-					_srtLevels->getFrame(sprite)->blit(_srfLevel[j - scroll]);
+					_srtLevels->getFrame(sprite)->blit(_srfDecor[j - scroll]);
 			}
 		}
 	}

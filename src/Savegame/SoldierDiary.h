@@ -75,12 +75,12 @@ private:
 		/// Adds a level to this SoldierAward.
 		void addAwardLevel();
 
-		/// Gets the SoldierAward's class-type.
-		const std::string getClassType(size_t skip) const;
-		/// Gets the SoldierAward's class-description.
-		const std::string getClassDescription() const;
-		/// Gets the SoldierAward's class-degree.
-		const std::string getClassDegree() const;
+		/// Gets this SoldierAward's level.
+		const std::string GetLevelString(size_t skip) const;
+		/// Gets this SoldierAward's grade.
+		const std::string getGradeString() const;
+		/// Gets this SoldierAward's class.
+		const std::string getClassString() const;
 
 		/// Gets if the SoldierAward was recently awarded.
 		bool isAwardRecent() const;
@@ -94,7 +94,7 @@ class SoldierDiary
 
 private:
 	static const size_t
-		BATS = 13u,
+		BATS = 14u,
 		DATS = 11u;
 
 	int

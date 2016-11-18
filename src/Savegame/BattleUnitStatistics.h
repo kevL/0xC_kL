@@ -202,7 +202,7 @@ struct BattleUnitStatistics
 			shotsLandedCounter(0),
 			medikitApplications(0),
 			revivedSoldier(0),
-			ironMan(false), // ->> calculated at end of Tactical, do not save ->
+			ironMan(false),		// ->> calculated at end of Tactical, do not save ->>
 			loneSurvivor(false),
 			nikeCross(false),
 			KIA(false),

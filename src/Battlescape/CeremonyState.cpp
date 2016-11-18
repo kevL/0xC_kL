@@ -130,7 +130,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 					k != (*j)->getDiary()->getSoldierAwards().end();
 					++k)
 			{
-				if ((*k)->getType() == (*i).first
+				if ((*k)->getType() == i->first
 					&& (*k)->isAwardRecent() == true
 					&& qualifier == "noQual")
 				{
@@ -148,25 +148,25 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 					woststr << (*j)->getLabel();
 
 					int
-						lastInt (-2),
-						thisInt;
+						qtyPre (-2),
+						qtyCur;
 					size_t
 						nextLevel (0u),
 						skip      (0u);
 
 					for (std::vector<int>::const_iterator
-							l = (*i).second->getCriteria()->begin()->second.begin();
-							l != (*i).second->getCriteria()->begin()->second.end();
+							l = i->second->getCriteria()->begin()->second.begin();
+							l != i->second->getCriteria()->begin()->second.end();
 							++l)
 					{
 						if (nextLevel == (*k)->getAwardLevel() + 1u)
 							break;
 
-						thisInt = *l;
-						if (l != (*i).second->getCriteria()->begin()->second.begin())
-							lastInt = *(l - 1);
+						qtyCur = *l;
+						if (l != i->second->getCriteria()->begin()->second.begin())
+							qtyPre = *(l - 1);
 
-						if (thisInt == lastInt)
+						if (qtyCur == qtyPre)
 							++skip;
 
 						++nextLevel;
@@ -175,7 +175,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 					_lstSoldiers->addRow(
 									2,
 									woststr.str().c_str(),
-									tr((*k)->getClassType(skip)).c_str());
+									tr((*k)->GetLevelString(skip)).c_str());
 					break;
 				}
 			}
@@ -194,11 +194,11 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 
 			_lstSoldiers->setRowColor(titleRow, GREEN);
 
-			const std::string info ((*i).second->getDescriptionGeneric()); // look for Generic Desc first.
+			const std::string info (i->second->getDescriptionGeneric()); // look for Generic Description first.
 			if (info.empty() == false)
 				_titleRows[titleRow] = info;
 			else
-				_titleRows[titleRow] = (*i).second->getDescription();
+				_titleRows[titleRow] = i->second->getDescription();
 
 			titleChosen = true;
 		}

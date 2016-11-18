@@ -47,7 +47,6 @@ void RuleAward::load(const YAML::Node& node)
 	_descGeneric	= node["descGeneric"]	.as<std::string>(_descGeneric);
 	_sprite			= node["sprite"]		.as<int>(_sprite);
 	_criteria		= node["criteria"]		.as<std::map<std::string, std::vector<int>>>(_criteria);
-//	_killCriteria	= node["killCriteria"]	.as<std::vector<std::map<int, std::vector<std::string>>>>(_killCriteria);
 	_killCriteria	= node["killCriteria"]	.as<std::vector<std::vector<std::pair<int, std::vector<std::string>>>>>(_killCriteria);
 }
 

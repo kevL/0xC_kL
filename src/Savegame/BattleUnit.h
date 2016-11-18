@@ -193,7 +193,7 @@ private:
 		_mcSkill;
 	size_t _battleOrder;
 
-	BattleAIState* _unitAIState;
+	BattleAIState* _unitAiState;
 //	BattleItem* _specWeapon[SPEC_WEAPON_MAX];
 	BattleItem* _fist;
 	BattlescapeGame* _battleGame;

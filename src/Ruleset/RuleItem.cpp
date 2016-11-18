@@ -73,7 +73,7 @@ RuleItem::RuleItem(const std::string& type)
 		_tuDefuse(15),
 		_fullClip(0),
 		_blastRadius(-1),
-		_battleType(BT_NONE),
+		_bType(BT_NONE),
 		_arcingShot(false),
 		_twoHanded(false),
 		_waypoint(0),
@@ -216,7 +216,7 @@ void RuleItem::load(
 	_meleeAni = node["meleeAni"].as<int>(_meleeAni);
 
 	_dType			= static_cast<DamageType>(node["damageType"].as<int>(_dType));
-	_battleType		= static_cast<BattleType>(node["battleType"].as<int>(_battleType));
+	_bType			= static_cast<BattleType>(node["battleType"].as<int>(_bType));
 	_specialType	= static_cast<TileType>(node["specialType"]	.as<int>(_specialType));
 	_turretType		= static_cast<TurretType>(node["turretType"].as<int>(_turretType));
 
@@ -619,7 +619,7 @@ DamageType RuleItem::getDamageType() const
  */
 BattleType RuleItem::getBattleType() const
 {
-	return _battleType;
+	return _bType;
 }
 
 /**
@@ -935,9 +935,13 @@ int RuleItem::getAutoKick() const
  */
 bool RuleItem::isRifle() const
 {
-	return _twoHanded == true
-			&& (   _battleType == BT_FIREARM
-				|| _battleType == BT_MELEE);
+	switch (_bType)
+	{
+		case BT_FIREARM:
+		case BT_MELEE:
+			return (_twoHanded == true);
+	}
+	return false;
 }
 
 /**
@@ -946,9 +950,13 @@ bool RuleItem::isRifle() const
  */
 bool RuleItem::isPistol() const
 {
-	return _twoHanded == false
-			&& (   _battleType == BT_FIREARM
-				|| _battleType == BT_MELEE);
+	switch (_bType)
+	{
+		case BT_FIREARM:
+		case BT_MELEE:
+			return (_twoHanded == false);
+	}
+	return false;
 }
 
 /**
@@ -957,8 +965,13 @@ bool RuleItem::isPistol() const
  */
 bool RuleItem::isGrenade() const
 {
-	return _battleType == BT_GRENADE
-		|| _battleType == BT_PROXYGRENADE;
+	switch (_bType)
+	{
+		case BT_GRENADE:
+		case BT_PROXYGRENADE:
+			return true;
+	}
+	return false;
 }
 
 /**
@@ -1091,7 +1104,7 @@ BattleActionType RuleItem::getDefaultAction(bool isPrimed) const
 {
 	if (_fixedWeapon == false)
 	{
-		switch (_battleType)
+		switch (_bType)
 		{
 //			case BT_AMMO:
 //				return BA_RELOAD;

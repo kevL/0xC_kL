@@ -79,7 +79,7 @@ private:
 	const std::vector<SoldierDead*>* _listDead;
 	std::vector<Surface*>
 		_srfAward,
-		_srfLevel;
+		_srfDecor;
 
 	SoldierDiary* _diary;
 	SoldierDiaryOverviewState* _overview;
@@ -99,8 +99,8 @@ private:
 		* _txtType,
 		* _txtUFO,
 
-		* _txtMedalName,
-		* _txtMedalLevel,
+		* _txtMedal,
+		* _txtMedalGrade,
 		* _txtMedalClass,
 		* _txtMedalInfo,
 
