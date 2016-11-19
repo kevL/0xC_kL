@@ -115,7 +115,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_txtProficiency		= new Text(100, 9, 16, 156);
 
 	// Award stats
-	_txtMedal		= new Text(90, 9,  16, 36);
+	_txtMedal			= new Text(90, 9,  16, 36);
 	_txtMedalGrade		= new Text(52, 9, 196, 36);
 	_txtMedalClass		= new Text(40, 9, 248, 36);
 	_lstAwards			= new TextList(240, 97, 48, 49); // 12 rows
@@ -170,7 +170,7 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	add(_txtProficiency,	"text",		"awards");
 
 	// Award stats
-	add(_txtMedal,	"text",	"awards");
+	add(_txtMedal,		"text",	"awards");
 	add(_txtMedalGrade,	"text",	"awards");
 	add(_txtMedalClass,	"text",	"awards");
 	add(_lstAwards,		"list",	"awards");
@@ -430,7 +430,7 @@ void SoldierDiaryPerformanceState::init()
 		vis = false;
 		_btnAwards->setColor(_colorBtnUp);
 	}
-	_txtMedal	->setVisible(vis);
+	_txtMedal		->setVisible(vis);
 	_txtMedalGrade	->setVisible(vis);
 	_txtMedalClass	->setVisible(vis);
 	_lstAwards		->setVisible(vis);

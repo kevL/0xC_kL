@@ -75,11 +75,11 @@ private:
 		/// Adds a level to this SoldierAward.
 		void addAwardLevel();
 
-		/// Gets this SoldierAward's level.
+		/// Gets the SoldierAward's level.
 		const std::string GetLevelString(size_t skip) const;
-		/// Gets this SoldierAward's grade.
+		/// Gets the SoldierAward's grade.
 		const std::string getGradeString() const;
-		/// Gets this SoldierAward's class.
+		/// Gets the SoldierAward's class.
 		const std::string getClassString() const;
 
 		/// Gets if the SoldierAward was recently awarded.
