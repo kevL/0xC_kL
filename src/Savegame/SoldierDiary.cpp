@@ -481,7 +481,7 @@ bool SoldierDiary::updateAwards(
 	const std::vector<std::vector<std::pair<int, std::vector<std::string>>>>* killCriteria;
 
 	int
-		qtySuccess_detail,
+		qty,
 		iterCur,
 		iterPre;
 	bool
@@ -496,12 +496,12 @@ bool SoldierDiary::updateAwards(
 		* weaponRule,
 		* loadRule;
 
-
+	int iter (1); // debug.
 	const std::map<std::string, const RuleAward*>& allAwards (rules->getAwardsList()); // loop over all RuleAwards ->
 	for (std::map<std::string, const RuleAward*>::const_iterator
 			i = allAwards.begin();
 			i != allAwards.end();
-			)
+			++iter) // debug.
 	{
 		const std::string& awardType (i->first);
 		const RuleAward* const awardRule (i->second);
@@ -509,7 +509,7 @@ bool SoldierDiary::updateAwards(
 
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << ". iter awardList - " << awardType;
+		Log(LOG_INFO) << ". iter awardList - " << awardType << " [try." << iter << "]";
 
 		qualifiers.clear();
 		levelRequired.clear();
@@ -545,6 +545,7 @@ bool SoldierDiary::updateAwards(
 		if (levelRequired["noQual"] == levels.size())	// use the "noQual" entry assigned above just to find out what the highest level is.
 		{												// ... in practice it's always "10"
 			Log(LOG_INFO) << ". . . max level reached - go to next Award";
+			iter = 0; // debug.
 			++i;
 			continue;
 		}
@@ -586,6 +587,7 @@ bool SoldierDiary::updateAwards(
 			|| (criteriaType == "isMIA"						&& _MIA < val))
 		{
 			Log(LOG_INFO) << ". . . no Total Award - go to next Award";
+			iter = 0; // debug.
 			++i;
 			continue;
 		}
@@ -635,6 +637,7 @@ bool SoldierDiary::updateAwards(
 			if (qualifiers.empty() == true)							// if 'qualifiers' is still empty soldier did not get an award.
 			{
 				Log(LOG_INFO) << ". . . . no Award w/ weapon,region,race,rank - go to next Award";
+				iter = 0; // debug.
 				++i;
 				continue;
 			}
@@ -651,8 +654,9 @@ bool SoldierDiary::updateAwards(
 			int
 				qtySuccess_or  (0),
 				qtySuccess_and (0);
-			Log(LOG_INFO) << ". . . . (init) qtySuccess_or  " << qtySuccess_or;
-			Log(LOG_INFO) << ". . . . (init) qtySuccess_and " << qtySuccess_and;
+			Log(LOG_INFO) << ". . . . (init) qtySuccess_or  0";
+			Log(LOG_INFO) << ". . . . (init) qtySuccess_and 0";
+
 
 			for (std::vector<std::vector<std::pair<int, std::vector<std::string>>>>::const_iterator // loop over the orCriteria ->
 					orCriteria = killCriteria->begin();
@@ -662,20 +666,25 @@ bool SoldierDiary::updateAwards(
 				Log(LOG_INFO) << "";
 				Log(LOG_INFO) << ". . . . iter orCriteria - And-vectors= " << orCriteria->size();
 
+				int qtySuccess_detail (0);
+				Log(LOG_INFO) << ". . . . (init) qtySuccess_detail 0";
+
 				for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the andCriteria ->
 						andCriteria = orCriteria->begin();
 						andCriteria != orCriteria->end();
 						++andCriteria)
 				{
 					Log(LOG_INFO) << "";
-					Log(LOG_INFO) << ". . . . . iter andCriteria - details= " << andCriteria->second.size();
+					Log(LOG_INFO) << ". . . . . iter andCriteria - details= " << andCriteria->second.size() << " [req." << andCriteria->first << "]";
 
 					if (criteriaType == "killsCriteriaCareer")
-						qtySuccess_detail = 0; // counts the And-vectors that match their details against Soldier's killstats.
+						qty = 0; // counts the And-vectors that match their details against Soldier's killstats.
 					else
-						qtySuccess_detail = 1; // "killsWith..." Turns or Missions start at 1 because of how iterCur and iterPre work. thanks.
+						qty = 1; // "killsWith..." Turns or Missions start at 1 because of how iterCur and iterPre work. thanks.
+					Log(LOG_INFO) << ". . . . . (init) qty " << qty;
 
-					Log(LOG_INFO) << ". . . . . (init) qtySuccess_detail " << qtySuccess_detail;
+					int qty0 (0);
+					Log(LOG_INFO) << ". . . . . (init) qty0 0";
 
 					skip = false;
 					iterCur = // for a turn or a mission Award, not used for a career Award.
@@ -723,9 +732,9 @@ bool SoldierDiary::updateAwards(
 
 							if (iterCur != iterPre)
 							{
-								qtySuccess_detail = 1; // reset.
+								qty = 1; // reset.
 								skip = false;
-								Log(LOG_INFO) << ". . . . . . . (iterCur!=iterPre) set qtySuccess_detail 1, skip FALSE - CONTINUE to next killstat";
+								Log(LOG_INFO) << ". . . . . . . (iterCur!=iterPre) set qty 1, skip FALSE - CONTINUE to next killstat";
 								continue;
 							}
 						}
@@ -754,51 +763,15 @@ bool SoldierDiary::updateAwards(
 								};
 
 							for (bType = 0u; bType != BATS - 1u; ++bType)
-							{
-								//Log(LOG_INFO) << ". . . . . . . . iter bType";
-								if (bType_array[bType] == *detail)
-								{
-									//Log(LOG_INFO) << ". . . . . . . . bType= " << (*detail);
-									break;
-								}
-							}
-							//Log(LOG_INFO) << ". . . . . . . . bType= " << bType;
-							//Log(LOG_INFO) << ". . . . . . . . bType Detail= " << bType_array[bType];
+								if (bType_array[bType] == *detail)	//Log(LOG_INFO) << ". . . . . . . . iter bType";
+									break;							//Log(LOG_INFO) << ". . . . . . . . bType= " << (*detail);
 
 							for (dType = 0u; dType != DATS - 1u; ++dType)
-							{
-								//Log(LOG_INFO) << ". . . . . . . . iter dType";
-								if (dType_array[dType] == *detail)
-								{
-									//Log(LOG_INFO) << ". . . . . . . . dType= " << (*detail);
-									break;
-								}
-							}
-							//Log(LOG_INFO) << ". . . . . . . . dType= " << dType;
-							//Log(LOG_INFO) << ". . . . . . . . dType Detail= " << dType_array[dType];
+								if (dType_array[dType] == *detail)	//Log(LOG_INFO) << ". . . . . . . . iter dType";
+									break;							//Log(LOG_INFO) << ". . . . . . . . dType= " << (*detail);
 
 							weaponRule	= rules->getItemRule((*killstat)->_weapon);
 							loadRule	= rules->getItemRule((*killstat)->_load);
-							//Log(LOG_INFO) << ". . . . . . . . weapRule Valid= " << (weaponRule != nullptr);
-							//Log(LOG_INFO) << ". . . . . . . . loadRule Valid= " << (loadRule   != nullptr);
-
-							//Log(LOG_INFO) << ". . . . . . . . MATCHES:";
-							//Log(LOG_INFO) << ". . . . . . . . . rank= " << ((*killstat)->_rank		== *detail);
-							//Log(LOG_INFO) << ". . . . . . . . . race= " << ((*killstat)->_race		== *detail);
-							//Log(LOG_INFO) << ". . . . . . . . . weap= " << ((*killstat)->_weapon	== *detail);
-							//Log(LOG_INFO) << ". . . . . . . . . load= " << ((*killstat)->_load		== *detail);
-							//Log(LOG_INFO) << ". . . . . . . . . stat= " << ((*killstat)->getUnitStatusString()	== *detail);
-							//Log(LOG_INFO) << ". . . . . . . . . fact= " << ((*killstat)->getUnitFactionString()	== *detail);
-							//Log(LOG_INFO) << ". . . . . . . . . bTyp= " << !((weaponRule == nullptr
-							//														&& (   bType_array[bType] != "BT_NONE"
-							//															|| bType_array[bType] != "BT_END"))
-							//													|| (   weaponRule != nullptr
-							//														&& weaponRule->getBattleType() != static_cast<BattleType>(bType)));
-							//Log(LOG_INFO) << ". . . . . . . . . dTyp= " << !((loadRule == nullptr
-							//														&& (   dType_array[dType] != "DT_NONE"
-							//															|| dType_array[dType] != "DT_END"))
-							//													|| (   loadRule != nullptr
-							//														&& loadRule->getDamageType() != static_cast<DamageType>(dType)));
 
 							if (   (*killstat)->_rank	!= *detail // if every killstat mis-matches the (single) Detail break and try the next andCriteria.
 								&& (*killstat)->_race	!= *detail
@@ -825,14 +798,16 @@ bool SoldierDiary::updateAwards(
 
 						if (found == true) // all details were found in the killstat -> so check current-qty vs the single andCriteria's required-qty ->
 						{
-							++qtySuccess_and;
 							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . . ++qtySuccess_and= " << qtySuccess_and;
+							Log(LOG_INFO) << ". . . . . . . ++qty0= " << (qty0 + 1) << " required= " << andCriteria->first * levels.at(levelRequired["noQual"]);
 
-							Log(LOG_INFO) << "";
-//							Log(LOG_INFO) << ". . . . . . . ++qtySuccess_detail= " << (qtySuccess_detail + 1) << " required= " << (andCriteria->first * levels.at(levelRequired["noQual"]));
-//							if (++qtySuccess_detail == andCriteria->first * levels.at(levelRequired["noQual"]))
-							if (qtySuccess_and == andCriteria->first * levels.at(levelRequired["noQual"]))
+							if (++qty0 % andCriteria->first == 0)
+							{
+								++qtySuccess_detail;
+								Log(LOG_INFO) << ". . . . . . . . ++qtySuccess_detail= " << qtySuccess_detail;
+							}
+
+							if (qty0 == andCriteria->first * levels.at(levelRequired["noQual"]))
 							{
 								Log(LOG_INFO) << ". . . . . . . . detail-qty is MET - BREAK killstats & go to next andCriteria";
 								skip = true; // skip to next andCriteria ...
@@ -840,32 +815,58 @@ bool SoldierDiary::updateAwards(
 							}
 						}
 					} // killstat ^
-					// NOTE: If killstats runs to end() then the And-vector has
+
+					// NOTE: If killList runs to end() then the And-vector has
 					// failed so stop looking and try the next orCriteria. The
 					// And-vector will stop looping on a detail's success as
 					// soon as the detail's required-qty is reached ...
 
-//					if (//andCriteria->first == 0 ||
-//						qtySuccess_detail / andCriteria->first < levels.at(levelRequired["noQual"])) // use the "noQual" entry assigned above just to find out what the highest value is.
+//					if (qty / andCriteria->first < levels.at(levelRequired["noQual"]))
 
 				} // andCriteria ^
 
 				Log(LOG_INFO) << "";
-				Log(LOG_INFO) << ". . . . qtySuccess_and= " << qtySuccess_and << " required= " << static_cast<int>(orCriteria->size()) * levels.at(levelRequired["noQual"]);
-				if (qtySuccess_and == static_cast<int>(orCriteria->size()) * levels.at(levelRequired["noQual"]))
+
+				qtySuccess_and += qtySuccess_detail / static_cast<int>(orCriteria->size()); // tabulates +levels if the And-vector was successful.
+
+				Log(LOG_INFO) << ". . . . qtySuccess_and= " << qtySuccess_and << " required= " << levels.at(levelRequired["noQual"]);
+				if (qtySuccess_and >= levels.at(levelRequired["noQual"]))
+				{
+					Log(LOG_INFO) << ". . . . . . levels MET - BREAK orCriteria & grant Award w/ career,mission,turn";
+					qtySuccess_or += qtySuccess_and;
+					Log(LOG_INFO) << ". . . . . . qtySuccess_or= " << qtySuccess_or;
+					break;
+				}
+/*				int tally (0);
+				for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the andCriteria (again) ->
+						andCriteria = orCriteria->begin();
+						andCriteria != orCriteria->end();
+						++andCriteria)
+				{
+					Log(LOG_INFO) << ". . . . . andCriteria->first= " << andCriteria->first;
+					Log(LOG_INFO) << ". . . . . levels.at(levelRequired[\"noQual\"])= " << levels.at(levelRequired["noQual"]);
+					tally += andCriteria->first * levels.at(levelRequired["noQual"]);
+				}
+				Log(LOG_INFO) << ". . . . tally= " << tally;
+
+//				Log(LOG_INFO) << ". . . . qtySuccess_and= " << qtySuccess_and << " required= " << static_cast<int>(orCriteria->size()) * levels.at(levelRequired["noQual"]);
+//				if (qtySuccess_and == static_cast<int>(orCriteria->size()) * levels.at(levelRequired["noQual"]))
+				Log(LOG_INFO) << ". . . . qtySuccess_and= " << qtySuccess_and << " required= " << tally;
+				if (qtySuccess_and == tally)
 				{
 					Log(LOG_INFO) << ". . . . . . levels MET - BREAK orCriteria & grant Award w/ career,mission,turn";
 					qtySuccess_or += levels.at(levelRequired["noQual"]);
 					Log(LOG_INFO) << ". . . . . . qtySuccess_or+levels= " << qtySuccess_or;
 					break;
-				}
+				} */
 			} // orCriteria ^
 
 			Log(LOG_INFO) << "";
 			Log(LOG_INFO) << ". . . qtySuccess_or= " << qtySuccess_or << " required= " << levels.at(levelRequired["noQual"]);
-			if (qtySuccess_or != levels.at(levelRequired["noQual"]))
+			if (qtySuccess_or < levels.at(levelRequired["noQual"]))
 			{
 				Log(LOG_INFO) << ". . . . orCriteria has NOT been met - go to next Award";
+				iter = 0; // debug.
 				++i;
 				continue;
 			}
@@ -916,6 +917,31 @@ bool SoldierDiary::updateAwards(
 	Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ post-tactical= " << showAwardsPostTactical;
 	return showAwardsPostTactical;
 }
+							//Log(LOG_INFO) << ". . . . . . . . bType= " << bType;
+							//Log(LOG_INFO) << ". . . . . . . . bType Detail= " << bType_array[bType];
+							//Log(LOG_INFO) << ". . . . . . . . dType= " << dType;
+							//Log(LOG_INFO) << ". . . . . . . . dType Detail= " << dType_array[dType];
+
+							//Log(LOG_INFO) << ". . . . . . . . weapRule Valid= " << (weaponRule != nullptr);
+							//Log(LOG_INFO) << ". . . . . . . . loadRule Valid= " << (loadRule   != nullptr);
+
+							//Log(LOG_INFO) << ". . . . . . . . MATCHES:";
+							//Log(LOG_INFO) << ". . . . . . . . . rank= " << ((*killstat)->_rank		== *detail);
+							//Log(LOG_INFO) << ". . . . . . . . . race= " << ((*killstat)->_race		== *detail);
+							//Log(LOG_INFO) << ". . . . . . . . . weap= " << ((*killstat)->_weapon	== *detail);
+							//Log(LOG_INFO) << ". . . . . . . . . load= " << ((*killstat)->_load		== *detail);
+							//Log(LOG_INFO) << ". . . . . . . . . stat= " << ((*killstat)->getUnitStatusString()	== *detail);
+							//Log(LOG_INFO) << ". . . . . . . . . fact= " << ((*killstat)->getUnitFactionString()	== *detail);
+							//Log(LOG_INFO) << ". . . . . . . . . bTyp= " << !((weaponRule == nullptr
+							//														&& (   bType_array[bType] != "BT_NONE"
+							//															|| bType_array[bType] != "BT_END"))
+							//													|| (   weaponRule != nullptr
+							//														&& weaponRule->getBattleType() != static_cast<BattleType>(bType)));
+							//Log(LOG_INFO) << ". . . . . . . . . dTyp= " << !((loadRule == nullptr
+							//														&& (   dType_array[dType] != "DT_NONE"
+							//															|| dType_array[dType] != "DT_END"))
+							//													|| (   loadRule != nullptr
+							//														&& loadRule->getDamageType() != static_cast<DamageType>(dType)));
 
 /**
  * Gets list of kills by rank.
