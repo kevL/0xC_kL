@@ -457,6 +457,7 @@ std::vector<SoldierAward*>& SoldierDiary::getSoldierAwards()
 
 /**
  * Updates the owner's SoldierAwards.
+ * @note May God help anyone who has to address this further!!!!
  * @param rules		- pointer to the Ruleset
  * @param tacticals	- reference to a vector of pointers to TacticalStatistics
  * @return, true if an award is awarded
@@ -677,21 +678,27 @@ bool SoldierDiary::updateAwards(
 
 					int qty0;
 					if (criteriaType == "killsCriteriaCareer")
-					{
 						qty0 = 0; // counts the And-vectors that match their details against Soldier's killstats.
-					}
 					else
-					{
 						qty0 = 1;	// "killsWith..." Turns or Missions start at 1 because of how iterCur and iterPre work. thanks.
 									// The *real* reason is that the tacId/turnId is initialized on the first killstat and so needs/gets a free increment here.
-					}
+
 					Log(LOG_INFO) << ". . . . . (init) qty0 0";
 
-					bool resync = false;
+					bool
+						resync   (false),
+						iterInit (false);
 					iterCur = // for a turn or a mission Award, not used for a career Award.
 					iterPre = -1;
 					Log(LOG_INFO) << ". . . . . (init) resync FALSE";
 					Log(LOG_INFO) << ". . . . . (init) iterCur/iterPre -1";
+
+					std::vector<int> ids;
+					int
+						id         (-1),
+						recursions (-1);
+					Log(LOG_INFO) << ". . . . . (init) id -1";
+					Log(LOG_INFO) << ". . . . . (init) recursions -1";
 
 					for (std::vector<BattleUnitKill*>::const_iterator // loop over the Soldier's killstats ->
 							killstat = _killList.begin();
@@ -712,29 +719,81 @@ bool SoldierDiary::updateAwards(
 
 						if (criteriaType == "killsCriteriaMission")
 						{
+							id = (*killstat)->_mission;
+							if (std::find(
+										ids.begin(),
+										ids.end(),
+										id) != ids.end()) // if the tacId has already been iterated skip it.
+							{
+								Log(LOG_INFO) << "";
+								Log(LOG_INFO) << ". . . . . . . id found - (set) resync TRUE";
+								resync = true;
+							}
+
 							Log(LOG_INFO) << "";
 							Log(LOG_INFO) << ". . . . . . resync  = " << resync;
 
-							iterCur = (*killstat)->_mission;
+							iterCur = id;
 							if (resync == false)
 							{
 								if (killstat != _killList.begin())
 									iterPre = (*(killstat - 1))->_mission;
 							}
-							else resync = false;
+							else
+							{
+								resync = false;
+								if (iterInit == true)
+								{
+									iterInit = false;
+									if (std::find(
+												ids.begin(),
+												ids.end(),
+												id) == ids.end()) // recursion to a previously searched tacId - bypass it.
+									{
+										Log(LOG_INFO) << ". . . . . . . . (set) iterPre=iterCur";
+										iterPre = iterCur;
+									}
+								}
+							}
 						}
 						else if (criteriaType == "killsCriteriaTurn")
 						{
+							id = (*killstat)->_turn;
+							if (std::find(
+										ids.begin(),
+										ids.end(),
+										id) != ids.end()) // if the turnId has already been searched skip it.
+							{
+								Log(LOG_INFO) << "";
+								Log(LOG_INFO) << ". . . . . . . id found - (set) resync TRUE";
+								resync = true;
+							}
+
 							Log(LOG_INFO) << "";
 							Log(LOG_INFO) << ". . . . . . resync  = " << resync;
 
-							iterCur = (*killstat)->_turn;
+							iterCur = id;
 							if (resync == false)
 							{
 								if (killstat != _killList.begin())
 									iterPre = (*(killstat - 1))->_turn;
 							}
-							else resync = false;
+							else
+							{
+								resync = false;
+								if (iterInit == true)
+								{
+									iterInit = false;
+									if (std::find(
+												ids.begin(),
+												ids.end(),
+												id) == ids.end()) // recursion to a previously searched turnId - bypass it.
+									{
+										Log(LOG_INFO) << ". . . . . . . . (set) iterPre=iterCur";
+										iterPre = iterCur;
+									}
+								}
+							}
 						}
 
 						Log(LOG_INFO) << ". . . . . . iterCur = " << iterCur;
@@ -749,7 +808,7 @@ bool SoldierDiary::updateAwards(
 							{
 								iterCur = iterPre;
 								resync = true;
-								Log(LOG_INFO) << ". . . . . . . . set resync TRUE";
+								Log(LOG_INFO) << ". . . . . . . . (set) resync TRUE";
 							}
 							Log(LOG_INFO) << ". . . . . . . . - CONTINUE to next killstat";
 							continue;
@@ -829,12 +888,39 @@ bool SoldierDiary::updateAwards(
 								break;
 							}
 						}
+
+						if (criteriaType != "killsCriteriaCareer"						// for Missions/Turns: if the killList-vector gets to the end of
+							&& killstat == _killList.end() - 1							// all the Soldier's killstats recurse the killList but start at the
+							&& _killList.begin() + (++recursions) != _killList.end())	// 2nd, 3rd, 4th, etc. entry and try each different tac/turnIds
+						{
+							Log(LOG_INFO) << "";
+							Log(LOG_INFO) << ". . . . . . . recursions= " << recursions;
+
+							qty0 = (qtySuccess_detail * andCriteria->first) + 1; // +1 for 1st killstat after recursion.
+							Log(LOG_INFO) << ". . . . . . . (set) qty0= " << qty0;
+
+							iterCur =		// these are probably redundant to a degree
+							iterPre = -1;	// but I ain't in the mood to refactor it.
+							Log(LOG_INFO) << ". . . . . . . (reset) iterCur/iterPre -1";
+
+							resync =
+							iterInit = true;
+							Log(LOG_INFO) << ". . . . . . . (set) resync TRUE";
+							Log(LOG_INFO) << ". . . . . . . (set) iterInit TRUE";
+
+							Log(LOG_INFO) << ". . . . . . . push_back id= " << id;
+							ids.push_back(id);
+
+							Log(LOG_INFO) << "";
+							Log(LOG_INFO) << ". . . . . . . ----> RECURSE killList RECURSE <----";
+							killstat = _killList.begin() + (recursions);
+						}
 					} // killstat ^
 
 					// NOTE: If killList runs to end() then the And-vector has
-					// failed so stop looking and try the next orCriteria. The
-					// And-vector will stop looping on a detail's success as
-					// soon as the detail's required-qty is reached ...
+					// failed so stop looking and try the next orCriteria; ie.
+					// the And-vector will break on a detail's success as soon
+					// as the detail's required-qty is reached ...
 
 				} // andCriteria ^
 
