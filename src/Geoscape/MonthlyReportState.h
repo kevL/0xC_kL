@@ -71,21 +71,21 @@ private:
 
 	std::vector<Soldier*> _soldiersFeted;
 
-	/// Builds a country list string.
+	/// Strings together a grammatically correct listing of Countries.
 	std::wstring countryList(
 			const std::vector<std::string>& countries,
 			const std::string& singular,
 			const std::string& plural) const;
-	/// Calculates monthly scores.
-	void calculateChanges();
-	/// Handles monthly soldier awards.
+	/// Calculates monthly stuff.
+	void calculateReport();
+	/// Deals with monthly SoldierAwards.
 	void awards();
 
 
 	public:
-		/// Creates the Monthly Report state.
+		/// Creates a MonthlyReport state.
 		MonthlyReportState();
-		/// Cleans up the Monthly Report state.
+		/// Cleans up the MonthlyReport state.
 		~MonthlyReportState();
 
 		/// Updates palettes.

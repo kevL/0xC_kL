@@ -41,7 +41,7 @@ struct BattleUnitKill
 		_rank,
 		_weapon;
 	int
-		_mission,
+		_tactical,
 		_points,
 		_turn;
 
@@ -57,7 +57,7 @@ struct BattleUnitKill
 			std::string load,
 			UnitFaction faction,
 			UnitStatus status,
-			int mission,
+			int tactical,
 			int turn,
 			int points)
 		:
@@ -67,7 +67,7 @@ struct BattleUnitKill
 			_load(load),
 			_faction(faction),
 			_status(status),
-			_mission(mission),
+			_tactical(tactical),
 			_turn(turn),
 			_points(points)
 	{}
@@ -89,7 +89,7 @@ struct BattleUnitKill
 		_race		= node["race"]		.as<std::string>(_race);
 		_weapon		= node["weapon"]	.as<std::string>(_weapon);
 		_load		= node["load"]		.as<std::string>(_load);
-		_mission	= node["mission"]	.as<int>(_mission);
+		_tactical	= node["tactical"]	.as<int>(_tactical);
 		_turn		= node["turn"]		.as<int>(_turn);
 		_points		= node["points"]	.as<int>(_points);
 
@@ -102,21 +102,21 @@ struct BattleUnitKill
 	{
 		YAML::Node node;
 
-		node["rank"]	= _rank;
-		node["race"]	= _race;
-		node["weapon"]	= _weapon;
-		node["load"]	= _load;
-		node["mission"]	= _mission;
-		node["turn"]	= _turn;
-		node["points"]	= _points;
+		node["rank"]		= _rank;
+		node["race"]		= _race;
+		node["weapon"]		= _weapon;
+		node["load"]		= _load;
+		node["tactical"]	= _tactical;
+		node["turn"]		= _turn;
+		node["points"]		= _points;
 
-		node["status"]	= static_cast<int>(_status);
-		node["faction"]	= static_cast<int>(_faction);
+		node["status"]		= static_cast<int>(_status);
+		node["faction"]		= static_cast<int>(_faction);
 
 		return node;
 	}
 
-	/// Converts victim Status to string.
+	/// Converts victim's Status to string.
 	std::string getUnitStatusString() const
 	{
 		switch (_status)
@@ -127,7 +127,7 @@ struct BattleUnitKill
 		return "status error";
 	}
 
-	/// Converts victim Faction to string.
+	/// Converts victim's Faction to string.
 	std::string getUnitFactionString() const
 	{
 		switch (_faction)
@@ -143,7 +143,7 @@ struct BattleUnitKill
 	/// Makes turn unique across all kills.
 	void setTurn()
 	{
-		_turn += _mission * 300;	// maintain divisibility by 3 to determine
+		_turn += _tactical * 300;	// maintain divisibility by 3 to determine
 	}								// the faction-turn this kill happened on.
 
 	/// Checks to see if turn was during FACTION_HOSTILE side.
@@ -165,7 +165,7 @@ struct BattleUnitStatistics
 {
 
 	bool
-		ironMan,		// Tracks if the soldier was the only soldier on the mission
+		ironMan,		// Tracks if the soldier was the only soldier on the tactical
 		KIA,			// Tracks if the soldier was killed in battle
 		loneSurvivor,	// Tracks if the soldier was the only survivor
 		MIA,			// Tracks if the soldier was left behind :(

@@ -111,7 +111,7 @@ MonthlyReportState::MonthlyReportState()
 	_txtTitle->setBig();
 
 
-	calculateChanges(); // <- sets Rating etc.
+	calculateReport(); // <- sets Rating etc.
 
 	int
 		month (_gameSave->getTime()->getMonth() - 1),
@@ -305,7 +305,7 @@ void MonthlyReportState::init()
  * pacts, adjusts their fundings, assesses their satisfaction, and finally
  * calculates overall total score, with thanks to Volutar for the formulae.
  */
-void MonthlyReportState::calculateChanges() // private.
+void MonthlyReportState::calculateReport() // private.
 {
 	const int diff (_gameSave->getDifficultyInt());
 	if (diff != 0)
@@ -504,7 +504,7 @@ std::wstring MonthlyReportState::countryList( // private.
 }
 
 /**
- * Handles monthly Soldier awards.
+ * Deals with monthly SoldierAwards.
  */
 void MonthlyReportState::awards() // private.
 {
@@ -518,10 +518,9 @@ void MonthlyReportState::awards() // private.
 				j != (*i)->getSoldiers()->end();
 				++j)
 		{
+			//Log(LOG_INFO) << "end MONTH report: " << Language::wstrToFs((*j)->getLabel());
 			(*j)->getDiary()->addMonthlyService();
 
-			//Log(LOG_INFO) << "";
-			//Log(LOG_INFO) << "end MONTH report: " << Language::wstrToFs((*j)->getLabel());
 			if ((*j)->getDiary()->updateAwards(
 											_game->getRuleset(),
 											_gameSave->getTacticalStatistics()) == true)

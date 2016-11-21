@@ -156,6 +156,7 @@ SoldiersState::SoldiersState(Base* base)
 
 
 	// DEBUG for Soldier Diary:
+	// This prints every Award's criteria to the logfile.
 	int
 		iter1 (0),
 		iter2,

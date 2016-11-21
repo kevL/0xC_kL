@@ -651,8 +651,10 @@ void SoldierInfoState::btnAutoStat(Action*)
 	_sol->setLabel(_edtSoldier->getText());
 	_sol->autoStat();
 
-	// TEST: for updating Soldier Awards ***
-	// note that decorationLevels need to be zero'd in the savedgame file.
+	// TEST: for updating SoldierAwards ***
+	// note that decorationLevels need to be zero'd in the savedgame file; in fact
+	// just delete the entire "awards" subvector of the Soldier's "diary" vector:
+	// AutoStat will re-create it.
 	_sol->getDiary()->updateAwards(
 								_game->getRuleset(),
 								_game->getSavedGame()->getTacticalStatistics());

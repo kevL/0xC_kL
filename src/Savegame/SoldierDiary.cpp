@@ -134,7 +134,7 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 				weapon			(copyThat._killList.at(i)->_weapon),
 				load			(copyThat._killList.at(i)->_load);
 			int
-				mission			(copyThat._killList.at(i)->_mission),
+				mission			(copyThat._killList.at(i)->_tactical),
 				turn			(copyThat._killList.at(i)->_turn),
 				points			(copyThat._killList.at(i)->_points);
 
@@ -257,7 +257,7 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 					weapon			(assignThat._killList.at(i)->_weapon),
 					load			(assignThat._killList.at(i)->_load);
 				int
-					mission			(assignThat._killList.at(i)->_mission),
+					mission			(assignThat._killList.at(i)->_tactical),
 					turn			(assignThat._killList.at(i)->_turn),
 					points			(assignThat._killList.at(i)->_points);
 
@@ -714,12 +714,12 @@ bool SoldierDiary::updateAwards(
 						Log(LOG_INFO) << ". . . . . . . weapon=\t\t "		<< (*killstat)->_weapon;
 						Log(LOG_INFO) << ". . . . . . . load=\t\t\t "		<< (*killstat)->_load;
 						Log(LOG_INFO) << ". . . . . . . turnHostile=\t "	<< (*killstat)->hostileTurn();
-						Log(LOG_INFO) << ". . . . . . . tacId=\t\t\t "		<< (*killstat)->_mission;
+						Log(LOG_INFO) << ". . . . . . . tacId=\t\t\t "		<< (*killstat)->_tactical;
 						Log(LOG_INFO) << ". . . . . . . turnId=\t\t\t "		<< (*killstat)->_turn;
 
 						if (criteriaType == "killsCriteriaMission")
 						{
-							id = (*killstat)->_mission;
+							id = (*killstat)->_tactical;
 							if (std::find(
 										ids.begin(),
 										ids.end(),
@@ -737,7 +737,7 @@ bool SoldierDiary::updateAwards(
 							if (resync == false)
 							{
 								if (killstat != _killList.begin())
-									iterPre = (*(killstat - 1))->_mission;
+									iterPre = (*(killstat - 1))->_tactical;
 							}
 							else
 							{

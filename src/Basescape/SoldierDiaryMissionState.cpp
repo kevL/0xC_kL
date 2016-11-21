@@ -253,7 +253,7 @@ void SoldierDiaryMissionState::init()
 			i != _diary->getKills().end();
 			++i)
 	{
-		if ((*i)->_mission == tacId)
+		if ((*i)->_tactical == tacId)
 		{
 			++kills;
 			points += (*i)->_points;
