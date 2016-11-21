@@ -654,10 +654,10 @@ void SoldierInfoState::btnAutoStat(Action*)
 	// TEST: for updating SoldierAwards ***
 	// note that decorationLevels need to be zero'd in the savedgame file; in fact
 	// just delete the entire "awards" subvector of the Soldier's "diary" vector:
-	// AutoStat will re-create it.
-	_sol->getDiary()->updateAwards(
-								_game->getRuleset(),
-								_game->getSavedGame()->getTacticalStatistics());
+	// updateAwards() will re-create it.
+//	_sol->getDiary()->updateAwards(
+//								_game->getRuleset(),
+//								_game->getSavedGame()->getTacticalStatistics());
 	init();
 }
 
@@ -688,7 +688,9 @@ void SoldierInfoState::btnAutoStatAll(Action*)
 	}
 
 	// TEST: for updating Soldier Awards ***
-	// note that decorationLevels need to be zero'd in the savedgame file.
+	// note that decorationLevels need to be zero'd in the savedgame file; in fact
+	// just delete the entire "awards" subvector of the Soldier's "diary" vector:
+	// updateAwards() will re-create it.
 //	for (std::vector<Base*>::const_iterator
 //			i = _game->getSavedGame()->getBases()->begin();
 //			i != _game->getSavedGame()->getBases()->end();

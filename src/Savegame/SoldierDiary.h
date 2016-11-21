@@ -117,8 +117,8 @@ private:
 		_allAliensKilledTotal,
 		_mediApplicationsTotal,
 		_revivedUnitTotal,
-		_KIA,
-		_MIA;
+		_kia,
+		_mia;
 
 	std::vector<int> _tacIdList;
 	std::vector<SoldierAward*> _solAwards;
@@ -144,7 +144,7 @@ private:
 		YAML::Node save() const;
 
 		/// Updates the SoldierDiary's statistics.
-		void updateDiary(
+		void postTactical(
 				BattleUnitStatistics* const tacstats,
 				const TacticalStatistics* const tactical);
 
@@ -223,7 +223,7 @@ private:
 		/// Awards a special medal to the original 8 Soldiers.
 		void awardOriginalEight();
 		/// Awards an honorary medal upon joining team-xCom.
-		void awardHonoraryMedal();
+		void awardServiceMedal();
 
 		/// Gets the mission-ID list.
 		const std::vector<int>& getTacticalIdList() const;

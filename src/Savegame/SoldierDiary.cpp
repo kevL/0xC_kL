@@ -24,6 +24,8 @@
 #include "BattleUnitStatistics.h"
 #include "TacticalStatistics.h"
 
+//#include "../Engine/Logger.h"
+
 #include "../Ruleset/RuleAward.h"
 #include "../Ruleset/Ruleset.h"
 
@@ -55,8 +57,8 @@ SoldierDiary::SoldierDiary()
 		_allAliensKilledTotal		(0),
 		_mediApplicationsTotal		(0),
 		_revivedUnitTotal			(0),
-		_KIA						(0),
-		_MIA						(0)
+		_kia						(0),
+		_mia						(0)
 {}
 
 /**
@@ -94,8 +96,8 @@ SoldierDiary::SoldierDiary(const SoldierDiary& copyThat)
 		_allAliensKilledTotal			(copyThat._allAliensKilledTotal),
 		_mediApplicationsTotal			(copyThat._mediApplicationsTotal),
 		_revivedUnitTotal				(copyThat._revivedUnitTotal),
-		_KIA							(copyThat._KIA),
-		_MIA							(copyThat._MIA)
+		_kia							(copyThat._kia),
+		_mia							(copyThat._mia)
 {
 	for (size_t
 			i = 0u;
@@ -201,8 +203,8 @@ SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
 		_allAliensKilledTotal			= assignThat._allAliensKilledTotal;
 		_mediApplicationsTotal			= assignThat._mediApplicationsTotal;
 		_revivedUnitTotal				= assignThat._revivedUnitTotal;
-		_KIA							= assignThat._KIA;
-		_MIA							= assignThat._MIA;
+		_kia							= assignThat._kia;
+		_mia							= assignThat._mia;
 
 		_tacIdList.clear();
 		for (std::vector<int>::const_iterator
@@ -329,8 +331,8 @@ void SoldierDiary::load(const YAML::Node& node)
 	_mediApplicationsTotal			= node["mediApplicationsTotal"]			.as<int>(_mediApplicationsTotal);
 	_revivedUnitTotal				= node["revivedUnitTotal"]				.as<int>(_revivedUnitTotal);
 
-	_KIA =
-	_MIA = 0;
+	_kia = node["kia"].as<int>(_kia);
+	_mia = node["mia"].as<int>(_mia);
 }
 
 /**
@@ -358,6 +360,7 @@ YAML::Node SoldierDiary::save() const
 	}
 
 	if (_tacIdList.empty() == false)		node["tacIdList"]					= _tacIdList;
+
 	if (_daysWoundedTotal)					node["daysWoundedTotal"]			= _daysWoundedTotal;
 	if (_totalShotByFriendlyCounter)		node["totalShotByFriendlyCounter"]	= _totalShotByFriendlyCounter;
 	if (_totalShotFriendlyCounter)			node["totalShotFriendlyCounter"]	= _totalShotFriendlyCounter;
@@ -378,6 +381,9 @@ YAML::Node SoldierDiary::save() const
 	if (_mediApplicationsTotal)				node["mediApplicationsTotal"]		= _mediApplicationsTotal;
 	if (_revivedUnitTotal)					node["revivedUnitTotal"]			= _revivedUnitTotal;
 
+	if (_kia) node["kia"] = _kia;
+	if (_mia) node["mia"] = _mia;
+
 	return node;
 }
 
@@ -388,11 +394,10 @@ YAML::Node SoldierDiary::save() const
  *					  current tactical performance ala DebriefingState.
  * @param tacticals	- pointer to latest TacticalStatistics
  */
-void SoldierDiary::updateDiary(
+void SoldierDiary::postTactical(
 		BattleUnitStatistics* const tacstats,
 		const TacticalStatistics* const tactical)
 {
-	//Log(LOG_INFO) << "SoldierDiary::updateDiary()";
 	for (std::vector<BattleUnitKill*>::const_iterator
 			i = tacstats->kills.begin();
 			i != tacstats->kills.end();
@@ -422,9 +427,9 @@ void SoldierDiary::updateDiary(
 		++_unconsciousTotal;
 
 	_shotAtCounterTotal				+= tacstats->shotAtCounter;
-	_shotAtCounter10in1Mission		+= tacstats->shotAtCounter / 10;
+	_shotAtCounter10in1Mission		+= tacstats->shotAtCounter / 5;		// kL_edit.
 	_hitCounterTotal				+= tacstats->hitCounter;
-	_hitCounter5in1Mission			+= tacstats->hitCounter / 5;
+	_hitCounter5in1Mission			+= tacstats->hitCounter / 2;		// kL_edit.
 	_totalShotByFriendlyCounter		+= tacstats->shotByFriendlyCounter;
 	_totalShotFriendlyCounter		+= tacstats->shotFriendlyCounter;
 	_longDistanceHitCounterTotal	+= tacstats->longDistanceHitCounter;
@@ -438,12 +443,11 @@ void SoldierDiary::updateDiary(
 		++_allAliensKilledTotal;
 
 	if (tacstats->KIA == true)
-		_KIA = 1;
+		_kia = 1;
 	else if (tacstats->MIA == true)
-		_MIA = 1;
+		_mia = 1;
 
 	_tacIdList.push_back(tactical->id);
-	//Log(LOG_INFO) << "SoldierDiary::updateDiary() EXIT";
 }
 
 /**
@@ -466,8 +470,8 @@ bool SoldierDiary::updateAwards(
 		const Ruleset* const rules,
 		const std::vector<TacticalStatistics*>& tacticals)
 {
-	Log(LOG_INFO) << "";
-	Log(LOG_INFO) << "SoldierDiary::updateAwards()";
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "SoldierDiary::updateAwards()";
 	bool showAwardsPostTactical (false); // Return shall be TRUE if 1+ Award is granted/upgraded.
 
 	std::vector<std::string> qualifiers;			// types of generic Awards
@@ -506,9 +510,9 @@ bool SoldierDiary::updateAwards(
 		const RuleAward* const awardRule (i->second);
 
 
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << ". iter awardList - " << awardType << " [try." << iter << "]";
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << ". iter awardList - " << awardType << " [try." << iter << "]";
 
 		qualifiers.clear();
 		levelRequired.clear();
@@ -518,7 +522,7 @@ bool SoldierDiary::updateAwards(
 
 		levelRequired["noQual"] = 0u;	// only if Soldier does not yet have the current Award.
 										// it's also used as a generic place-holder for qualified Awards ...
-		Log(LOG_INFO) << ". (init) levelRequired[\"noQual\"] 0";
+		//Log(LOG_INFO) << ". (init) levelRequired[\"noQual\"] 0";
 
 		for (std::vector<SoldierAward*>::const_iterator	// get the qualifiers for the current Award if it has already
 				solAward = _solAwards.begin();			// been granted to the Soldier possibly in the last iteration
@@ -528,7 +532,7 @@ bool SoldierDiary::updateAwards(
 			if ((*solAward)->getType() == awardType)
 			{
 				levelRequired[(*solAward)->getQualifier()] = (*solAward)->getAwardLevel() + 1;
-				Log(LOG_INFO) << ". . levelRequired[\"" << (*solAward)->getQualifier() << "\"] " << levelRequired[(*solAward)->getQualifier()];
+				//Log(LOG_INFO) << ". . levelRequired[\"" << (*solAward)->getQualifier() << "\"] " << levelRequired[(*solAward)->getQualifier()];
 			}
 		}
 
@@ -537,13 +541,13 @@ bool SoldierDiary::updateAwards(
 		criteriaType = j->first;
 		const std::vector<int>& levels (j->second);
 
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << ". . criteriaType [" << criteriaType << "]";
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << ". . criteriaType [" << criteriaType << "]";
 
 		// skip the Award if its max level has been reached
 		if (levelRequired["noQual"] == levels.size())	// use the "noQual" entry assigned above just to find out what the highest level is.
 		{												// ... in practice it's always "10"
-			Log(LOG_INFO) << ". . . max level reached - go to next Award";
+			//Log(LOG_INFO) << ". . . max level reached - go to next Award";
 			iter = 0; // debug.
 			++i;
 			continue;
@@ -567,7 +571,7 @@ bool SoldierDiary::updateAwards(
 			|| (criteriaType == "totalFellUnconscious"		&& _unconsciousTotal < val)
 			|| (criteriaType == "totalShotAt10Times"		&& _shotAtCounter10in1Mission < val)
 			|| (criteriaType == "totalHit5Times"			&& _hitCounter5in1Mission < val)
-			|| (criteriaType == "totalFriendlyFired"		&& (_totalShotByFriendlyCounter < val || _KIA == 1 || _MIA == 1)) // didn't survive ......
+			|| (criteriaType == "totalFriendlyFired"		&& (_totalShotByFriendlyCounter < val || _kia == 1 || _mia == 1)) // didn't survive ...... NOTE: This screws up when refreshing Awards.
 			|| (criteriaType == "totalLoneSurvivor"			&& _loneSurvivorTotal < val)
 			|| (criteriaType == "totalIronMan"				&& _ironManTotal < val)
 			|| (criteriaType == "totalImportantMissions"	&& getImportantMissionTotal(tacticals) < val)
@@ -577,15 +581,15 @@ bool SoldierDiary::updateAwards(
 			|| (criteriaType == "totalTimesWounded"			&& _timesWoundedTotal < val)
 			|| (criteriaType == "totalDaysWounded"			&& _daysWoundedTotal < val)
 			|| (criteriaType == "totalValientCrux"			&& getValiantCruxTotal(tacticals) < val)
-			|| (criteriaType == "totalIsDead"				&& _KIA < val)
 			|| (criteriaType == "totalTrapKills"			&& getTrapKillTotal(rules) < val)
 			|| (criteriaType == "totalAlienBaseAssaults"	&& getAlienBaseAssaultTotal(tacticals) < val)
 			|| (criteriaType == "totalAllAliensKilled"		&& _allAliensKilledTotal < val)
 			|| (criteriaType == "totalMediApplications"		&& _mediApplicationsTotal < val)
 			|| (criteriaType == "totalRevives"				&& _revivedUnitTotal < val)
-			|| (criteriaType == "totalIsMissing"			&& _MIA < val))
+			|| (criteriaType == "totalIsDead"				&& _kia < val)
+			|| (criteriaType == "totalIsMissing"			&& _mia < val))
 		{
-			Log(LOG_INFO) << ". . . no Total Award - go to next Award";
+			//Log(LOG_INFO) << ". . . no Total Award - go to next Award";
 			iter = 0; // debug.
 			++i;
 			continue;
@@ -599,7 +603,7 @@ bool SoldierDiary::updateAwards(
 			|| criteriaType == "totalKillsByRace"
 			|| criteriaType == "totalKillsByRank")
 		{
-			Log(LOG_INFO) << ". . . try Award w/ weapon,region,race,rank";
+			//Log(LOG_INFO) << ". . . try Award w/ weapon,region,race,rank";
 
 			if		(criteriaType == "totalKillsWeapon") solTotal = getWeaponTotal();
 			else if	(criteriaType == "totalKillsRegion") solTotal = getRegionTotal(tacticals);
@@ -611,16 +615,16 @@ bool SoldierDiary::updateAwards(
 					k != solTotal.end();
 					++k)
 			{
-				Log(LOG_INFO) << ". . . . " << (k->first) << " - " << (k->second);
+				//Log(LOG_INFO) << ". . . . " << (k->first) << " - " << (k->second);
 
 				if (levelRequired.count(k->first) == 0)				// no matching Qualifier so get the (first) level from 'criteria'
 				{
-					Log(LOG_INFO) << ". . . . . no relevant qualifier, threshold = " << (levels.front());
+					//Log(LOG_INFO) << ". . . . . no relevant qualifier, threshold = " << (levels.front());
 					threshold = levels.front();
 				}
 				else if (levelRequired[k->first] != levels.size())	// otherwise get the level per the soldier's Award decoration.
 				{
-					Log(LOG_INFO) << ". . . . . qualifier found, threshold= " << levels.at(levelRequired[k->first]);
+					//Log(LOG_INFO) << ". . . . . qualifier found, threshold= " << levels.at(levelRequired[k->first]);
 					threshold = levels.at(levelRequired[k->first]);
 				}
 				else
@@ -628,14 +632,14 @@ bool SoldierDiary::updateAwards(
 
 				if (threshold != -1 && k->second >= threshold)		// if a criteria was set AND the stat's count exceeds that criteria ...
 				{
-					Log(LOG_INFO) << ". . . . . threshold good, add to qualifiers vector";
+					//Log(LOG_INFO) << ". . . . . threshold good, add to qualifiers vector";
 					qualifiers.push_back(k->first);
 				}
 			}
 
 			if (qualifiers.empty() == true)							// if 'qualifiers' is still empty soldier did not get an award.
 			{
-				Log(LOG_INFO) << ". . . . no Award w/ weapon,region,race,rank - go to next Award";
+				//Log(LOG_INFO) << ". . . . no Award w/ weapon,region,race,rank - go to next Award";
 				iter = 0; // debug.
 				++i;
 				continue;
@@ -645,16 +649,16 @@ bool SoldierDiary::updateAwards(
 			  || criteriaType == "killsCriteriaMission"
 			  || criteriaType == "killsCriteriaTurn")
 		{
-			Log(LOG_INFO) << ". . . try Award w/ career,mission,turn";
+			//Log(LOG_INFO) << ". . . try Award w/ career,mission,turn";
 
 			killCriteria = awardRule->getKillCriteria();
-			Log(LOG_INFO) << ". . . killCriteria Or-vectors= " << killCriteria->size();
+			//Log(LOG_INFO) << ". . . killCriteria Or-vectors= " << killCriteria->size();
 
 			int
 				qtySuccess_or  (0),
 				qtySuccess_and (0);
-			Log(LOG_INFO) << ". . . . (init) qtySuccess_or  0";
-			Log(LOG_INFO) << ". . . . (init) qtySuccess_and 0";
+			//Log(LOG_INFO) << ". . . . (init) qtySuccess_or  0";
+			//Log(LOG_INFO) << ". . . . (init) qtySuccess_and 0";
 
 
 			for (std::vector<std::vector<std::pair<int, std::vector<std::string>>>>::const_iterator // loop over the orCriteria ->
@@ -662,19 +666,19 @@ bool SoldierDiary::updateAwards(
 					orCriteria != killCriteria->end();
 					++orCriteria)
 			{
-				Log(LOG_INFO) << "";
-				Log(LOG_INFO) << ". . . . iter orCriteria - And-vectors= " << orCriteria->size();
+				//Log(LOG_INFO) << "";
+				//Log(LOG_INFO) << ". . . . iter orCriteria - And-vectors= " << orCriteria->size();
 
 				int qtySuccess_detail (0);
-				Log(LOG_INFO) << ". . . . (init) qtySuccess_detail 0";
+				//Log(LOG_INFO) << ". . . . (init) qtySuccess_detail 0";
 
 				for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the andCriteria ->
 						andCriteria = orCriteria->begin();
 						andCriteria != orCriteria->end();
 						++andCriteria)
 				{
-					Log(LOG_INFO) << "";
-					Log(LOG_INFO) << ". . . . . iter andCriteria - details= " << andCriteria->second.size() << " [req." << andCriteria->first << "]";
+					//Log(LOG_INFO) << "";
+					//Log(LOG_INFO) << ". . . . . iter andCriteria - details= " << andCriteria->second.size() << " [req." << andCriteria->first << "]";
 
 					int qty0;
 					if (criteriaType == "killsCriteriaCareer")
@@ -683,39 +687,39 @@ bool SoldierDiary::updateAwards(
 						qty0 = 1;	// "killsWith..." Turns or Missions start at 1 because of how iterCur and iterPre work. thanks.
 									// The *real* reason is that the tacId/turnId is initialized on the first killstat and so needs/gets a free increment here.
 
-					Log(LOG_INFO) << ". . . . . (init) qty0 0";
+					//Log(LOG_INFO) << ". . . . . (init) qty0 0";
 
 					bool
 						resync   (false),
 						iterInit (false);
 					iterCur = // for a turn or a mission Award, not used for a career Award.
 					iterPre = -1;
-					Log(LOG_INFO) << ". . . . . (init) resync FALSE";
-					Log(LOG_INFO) << ". . . . . (init) iterCur/iterPre -1";
+					//Log(LOG_INFO) << ". . . . . (init) resync FALSE";
+					//Log(LOG_INFO) << ". . . . . (init) iterCur/iterPre -1";
 
 					std::vector<int> ids;
 					int
 						id         (-1),
 						recursions (-1);
-					Log(LOG_INFO) << ". . . . . (init) id -1";
-					Log(LOG_INFO) << ". . . . . (init) recursions -1";
+					//Log(LOG_INFO) << ". . . . . (init) id -1";
+					//Log(LOG_INFO) << ". . . . . (init) recursions -1";
 
 					for (std::vector<BattleUnitKill*>::const_iterator // loop over the Soldier's killstats ->
 							killstat = _killList.begin();
 							killstat != _killList.end();
 							++killstat)
 					{
-						Log(LOG_INFO) << "";
-						Log(LOG_INFO) << ". . . . . . iter Soldier's killList";
-						Log(LOG_INFO) << ". . . . . . . race=\t\t\t "		<< (*killstat)->_race;
-						Log(LOG_INFO) << ". . . . . . . rank=\t\t\t "		<< (*killstat)->_rank;
-						Log(LOG_INFO) << ". . . . . . . faction=\t\t "		<< (*killstat)->getUnitFactionString();
-						Log(LOG_INFO) << ". . . . . . . status=\t\t "		<< (*killstat)->getUnitStatusString();
-						Log(LOG_INFO) << ". . . . . . . weapon=\t\t "		<< (*killstat)->_weapon;
-						Log(LOG_INFO) << ". . . . . . . load=\t\t\t "		<< (*killstat)->_load;
-						Log(LOG_INFO) << ". . . . . . . turnHostile=\t "	<< (*killstat)->hostileTurn();
-						Log(LOG_INFO) << ". . . . . . . tacId=\t\t\t "		<< (*killstat)->_tactical;
-						Log(LOG_INFO) << ". . . . . . . turnId=\t\t\t "		<< (*killstat)->_turn;
+						//Log(LOG_INFO) << "";
+						//Log(LOG_INFO) << ". . . . . . iter Soldier's killList";
+						//Log(LOG_INFO) << ". . . . . . . race=\t\t\t "		<< (*killstat)->_race;
+						//Log(LOG_INFO) << ". . . . . . . rank=\t\t\t "		<< (*killstat)->_rank;
+						//Log(LOG_INFO) << ". . . . . . . faction=\t\t "		<< (*killstat)->getUnitFactionString();
+						//Log(LOG_INFO) << ". . . . . . . status=\t\t "		<< (*killstat)->getUnitStatusString();
+						//Log(LOG_INFO) << ". . . . . . . weapon=\t\t "		<< (*killstat)->_weapon;
+						//Log(LOG_INFO) << ". . . . . . . load=\t\t\t "		<< (*killstat)->_load;
+						//Log(LOG_INFO) << ". . . . . . . turnHostile=\t "	<< (*killstat)->hostileTurn();
+						//Log(LOG_INFO) << ". . . . . . . tacId=\t\t\t "		<< (*killstat)->_tactical;
+						//Log(LOG_INFO) << ". . . . . . . turnId=\t\t\t "		<< (*killstat)->_turn;
 
 						if (criteriaType == "killsCriteriaMission")
 						{
@@ -725,13 +729,13 @@ bool SoldierDiary::updateAwards(
 										ids.end(),
 										id) != ids.end()) // if the tacId has already been iterated skip it.
 							{
-								Log(LOG_INFO) << "";
-								Log(LOG_INFO) << ". . . . . . . id found - (set) resync TRUE";
+								//Log(LOG_INFO) << "";
+								//Log(LOG_INFO) << ". . . . . . . id found - (set) resync TRUE";
 								resync = true;
 							}
 
-							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . resync  = " << resync;
+							//Log(LOG_INFO) << "";
+							//Log(LOG_INFO) << ". . . . . . resync  = " << resync;
 
 							iterCur = id;
 							if (resync == false)
@@ -750,7 +754,7 @@ bool SoldierDiary::updateAwards(
 												ids.end(),
 												id) == ids.end()) // recursion to a previously searched tacId - bypass it.
 									{
-										Log(LOG_INFO) << ". . . . . . . . (set) iterPre=iterCur";
+										//Log(LOG_INFO) << ". . . . . . . . (set) iterPre=iterCur";
 										iterPre = iterCur;
 									}
 								}
@@ -764,13 +768,13 @@ bool SoldierDiary::updateAwards(
 										ids.end(),
 										id) != ids.end()) // if the turnId has already been searched skip it.
 							{
-								Log(LOG_INFO) << "";
-								Log(LOG_INFO) << ". . . . . . . id found - (set) resync TRUE";
+								//Log(LOG_INFO) << "";
+								//Log(LOG_INFO) << ". . . . . . . id found - (set) resync TRUE";
 								resync = true;
 							}
 
-							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . resync  = " << resync;
+							//Log(LOG_INFO) << "";
+							//Log(LOG_INFO) << ". . . . . . resync  = " << resync;
 
 							iterCur = id;
 							if (resync == false)
@@ -789,28 +793,28 @@ bool SoldierDiary::updateAwards(
 												ids.end(),
 												id) == ids.end()) // recursion to a previously searched turnId - bypass it.
 									{
-										Log(LOG_INFO) << ". . . . . . . . (set) iterPre=iterCur";
+										//Log(LOG_INFO) << ". . . . . . . . (set) iterPre=iterCur";
 										iterPre = iterCur;
 									}
 								}
 							}
 						}
 
-						Log(LOG_INFO) << ". . . . . . iterCur = " << iterCur;
-						Log(LOG_INFO) << ". . . . . . iterPre = " << iterPre;
+						//Log(LOG_INFO) << ". . . . . . iterCur = " << iterCur;
+						//Log(LOG_INFO) << ". . . . . . iterPre = " << iterPre;
 
 						if (iterCur != iterPre) // always false for criteriaCareer
 						{
-							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . . (iterCur!=iterPre)";
+							//Log(LOG_INFO) << "";
+							//Log(LOG_INFO) << ". . . . . . . (iterCur!=iterPre)";
 
 							if (iterPre != -1)
 							{
 								iterCur = iterPre;
 								resync = true;
-								Log(LOG_INFO) << ". . . . . . . . (set) resync TRUE";
+								//Log(LOG_INFO) << ". . . . . . . . (set) resync TRUE";
 							}
-							Log(LOG_INFO) << ". . . . . . . . - CONTINUE to next killstat";
+							//Log(LOG_INFO) << ". . . . . . . . - CONTINUE to next killstat";
 							continue;
 						}
 
@@ -820,8 +824,8 @@ bool SoldierDiary::updateAwards(
 								detail != andCriteria->second.end();
 								++detail)
 						{
-							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . . iter DETAIL - " << (*detail);
+							//Log(LOG_INFO) << "";
+							//Log(LOG_INFO) << ". . . . . . . iter DETAIL - " << (*detail);
 							static const std::string
 								bType_array[BATS] // these entries shall correspond to BattleType enum (RuleItem.h)
 								{
@@ -865,7 +869,7 @@ bool SoldierDiary::updateAwards(
 									|| (   loadRule != nullptr
 										&& loadRule->getDamageType() != static_cast<DamageType>(dType))))
 							{
-								Log(LOG_INFO) << ". . . . . . . . all killstats mismatch rule-Detail - BREAK detail & go to next killstat";
+								//Log(LOG_INFO) << ". . . . . . . . all killstats mismatch rule-Detail - BREAK detail & go to next killstat";
 								found = false;
 								break;
 							}
@@ -873,18 +877,18 @@ bool SoldierDiary::updateAwards(
 
 						if (found == true) // all details were found in the killstat -> so check current-qty vs the single andCriteria's required-qty ->
 						{
-							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . . ++qty0= " << (qty0 + 1) << " required= " << andCriteria->first * levels.at(levelRequired["noQual"]);
+							//Log(LOG_INFO) << "";
+							//Log(LOG_INFO) << ". . . . . . . ++qty0= " << (qty0 + 1) << " required= " << andCriteria->first * levels.at(levelRequired["noQual"]);
 
 							if (++qty0 % andCriteria->first == 0) // for each detail achieved.
 							{
 								++qtySuccess_detail;
-								Log(LOG_INFO) << ". . . . . . . . ++qtySuccess_detail= " << qtySuccess_detail;
+								//Log(LOG_INFO) << ". . . . . . . . ++qtySuccess_detail= " << qtySuccess_detail;
 							}
 
 							if (qty0 == andCriteria->first * levels.at(levelRequired["noQual"])) // for each detail achieved @ levels.
 							{
-								Log(LOG_INFO) << ". . . . . . . . detail-qty is MET - BREAK killstats & go to next andCriteria";
+								//Log(LOG_INFO) << ". . . . . . . . detail-qty is MET - BREAK killstats & go to next andCriteria";
 								break;
 							}
 						}
@@ -893,26 +897,26 @@ bool SoldierDiary::updateAwards(
 							&& killstat == _killList.end() - 1							// all the Soldier's killstats recurse the killList but start at the
 							&& _killList.begin() + (++recursions) != _killList.end())	// 2nd, 3rd, 4th, etc. entry and try each different tac/turnIds
 						{
-							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . . recursions= " << recursions;
+							//Log(LOG_INFO) << "";
+							//Log(LOG_INFO) << ". . . . . . . recursions= " << recursions;
 
 							qty0 = (qtySuccess_detail * andCriteria->first) + 1; // +1 for 1st killstat after recursion.
-							Log(LOG_INFO) << ". . . . . . . (set) qty0= " << qty0;
+							//Log(LOG_INFO) << ". . . . . . . (set) qty0= " << qty0;
 
 							iterCur =		// these are probably redundant to a degree
 							iterPre = -1;	// but I ain't in the mood to refactor it.
-							Log(LOG_INFO) << ". . . . . . . (reset) iterCur/iterPre -1";
+							//Log(LOG_INFO) << ". . . . . . . (reset) iterCur/iterPre -1";
 
 							resync =
 							iterInit = true;
-							Log(LOG_INFO) << ". . . . . . . (set) resync TRUE";
-							Log(LOG_INFO) << ". . . . . . . (set) iterInit TRUE";
+							//Log(LOG_INFO) << ". . . . . . . (set) resync TRUE";
+							//Log(LOG_INFO) << ". . . . . . . (set) iterInit TRUE";
 
-							Log(LOG_INFO) << ". . . . . . . push_back id= " << id;
+							//Log(LOG_INFO) << ". . . . . . . push_back id= " << id;
 							ids.push_back(id);
 
-							Log(LOG_INFO) << "";
-							Log(LOG_INFO) << ". . . . . . . ----> RECURSE killList RECURSE <----";
+							//Log(LOG_INFO) << "";
+							//Log(LOG_INFO) << ". . . . . . . ----> RECURSE killList RECURSE <----";
 							killstat = _killList.begin() + (recursions);
 						}
 					} // killstat ^
@@ -924,25 +928,25 @@ bool SoldierDiary::updateAwards(
 
 				} // andCriteria ^
 
-				Log(LOG_INFO) << "";
+				//Log(LOG_INFO) << "";
 
 				qtySuccess_and += qtySuccess_detail / static_cast<int>(orCriteria->size()); // tabulates +levels if the And-vector was successful.
 
-				Log(LOG_INFO) << ". . . . qtySuccess_and= " << qtySuccess_and << " required= " << levels.at(levelRequired["noQual"]);
+				//Log(LOG_INFO) << ". . . . qtySuccess_and= " << qtySuccess_and << " required= " << levels.at(levelRequired["noQual"]);
 				if (qtySuccess_and >= levels.at(levelRequired["noQual"]))
 				{
-					Log(LOG_INFO) << ". . . . . . levels MET - BREAK orCriteria & grant Award w/ career,mission,turn";
+					//Log(LOG_INFO) << ". . . . . . levels MET - BREAK orCriteria & grant Award w/ career,mission,turn";
 					qtySuccess_or += qtySuccess_and;
-					Log(LOG_INFO) << ". . . . . . qtySuccess_or= " << qtySuccess_or;
+					//Log(LOG_INFO) << ". . . . . . qtySuccess_or= " << qtySuccess_or;
 					break;
 				}
 			} // orCriteria ^
 
-			Log(LOG_INFO) << "";
-			Log(LOG_INFO) << ". . . qtySuccess_or= " << qtySuccess_or << " required= " << levels.at(levelRequired["noQual"]);
+			//Log(LOG_INFO) << "";
+			//Log(LOG_INFO) << ". . . qtySuccess_or= " << qtySuccess_or << " required= " << levels.at(levelRequired["noQual"]);
 			if (qtySuccess_or < levels.at(levelRequired["noQual"]))
 			{
-				Log(LOG_INFO) << ". . . . orCriteria has NOT been met - go to next Award";
+				//Log(LOG_INFO) << ". . . . orCriteria has NOT been met - go to next Award";
 				iter = 0; // debug.
 				++i;
 				continue;
@@ -950,13 +954,13 @@ bool SoldierDiary::updateAwards(
 		} // criteriaType_end.
 
 
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << ". do Award";
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << ". do Award";
 		showAwardsPostTactical = true;
 
 		if (qualifiers.empty() == true)	// if the Soldier is getting an Award but there are no qualifiers
 		{								// the qualifier will be "noQual"
-			Log(LOG_INFO) << ". . GRANT noQual " << awardType;
+			//Log(LOG_INFO) << ". . GRANT noQual " << awardType;
 			qualifiers.push_back("noQual");
 		}
 
@@ -965,7 +969,7 @@ bool SoldierDiary::updateAwards(
 				j != qualifiers.end();
 				++j)
 		{
-			Log(LOG_INFO) << ". . . iter Qualifiers= " << *j;
+			//Log(LOG_INFO) << ". . . iter Qualifiers= " << *j;
 			firstOfType = true;
 			for (std::vector<SoldierAward*>::const_iterator
 					k = _solAwards.begin();
@@ -974,7 +978,7 @@ bool SoldierDiary::updateAwards(
 			{
 				if ((*k)->getType() == awardType && (*k)->getQualifier() == *j)
 				{
-					Log(LOG_INFO) << ". . . . GRANT " << (*j) << " " << awardType;
+					//Log(LOG_INFO) << ". . . . GRANT " << (*j) << " " << awardType;
 					firstOfType = false;
 					(*k)->addAwardLevel();
 					break;
@@ -983,15 +987,15 @@ bool SoldierDiary::updateAwards(
 
 			if (firstOfType == true)
 			{
-				Log(LOG_INFO) << ". . . is First of Type";
+				//Log(LOG_INFO) << ". . . is First of Type";
 				_solAwards.push_back(new SoldierAward(awardType, *j));
 			}
 		}
 
-		Log(LOG_INFO) << ". recurse Award type -> check for higher level";
+		//Log(LOG_INFO) << ". recurse Award type -> check for higher level";
 	} // award ^
 
-	Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ post-tactical= " << showAwardsPostTactical;
+	//Log(LOG_INFO) << "Diary: updateAwards() EXIT w/ post-tactical= " << showAwardsPostTactical;
 	return showAwardsPostTactical;
 }
 							//Log(LOG_INFO) << ". . . . . . . . bType= " << bType;
@@ -1315,10 +1319,10 @@ int SoldierDiary::getDaysWoundedTotal() const
  */
 std::string SoldierDiary::getKiaOrMia() const
 {
-	if (_KIA != 0)
+	if (_kia != 0)
 		return "STR_KIA";
 
-	if (_MIA != 0)
+	if (_mia != 0)
 		return "STR_MIA";
 
 	return "";
@@ -1644,7 +1648,7 @@ int SoldierDiary::getMonthsService() const
 void SoldierDiary::awardOriginalEight()
 {
 	_solAwards.push_back(new SoldierAward(
-									"STR_MEDAL_ORIGINAL8_NAME",
+									"STR_MEDAL_ORIGINAL8",
 									"noQual",
 									false));
 }
@@ -1652,10 +1656,10 @@ void SoldierDiary::awardOriginalEight()
 /**
  * Awards an honorary medal upon joining team-xCom.
  */
-void SoldierDiary::awardHonoraryMedal()
+void SoldierDiary::awardServiceMedal()
 {
 	_solAwards.push_back(new SoldierAward(
-									"STR_MEDAL_HONOR_CROSS_NAME",
+									"STR_MEDAL_HONOR_CROSS",
 									"noQual",
 									false));
 }

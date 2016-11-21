@@ -157,46 +157,46 @@ SoldiersState::SoldiersState(Base* base)
 
 	// DEBUG for Soldier Diary:
 	// This prints every Award's criteria to the logfile.
-	int
-		iter1 (0),
-		iter2,
-		iter3;
-	const std::map<std::string, const RuleAward*>& allAwards (_game->getRuleset()->getAwardsList()); // loop over all possible RuleAwards.
-	for (std::map<std::string, const RuleAward*>::const_iterator
-			i = allAwards.begin();
-			i != allAwards.end();
-			++i)
-	{
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "[" << iter1++ << "] " << (*i).first;
-
-		iter2 = 0;
-		const std::vector<std::vector<std::pair<int, std::vector<std::string>>>>* killCriteriaList ((*i).second->getKillCriteria()); // fetch the killCriteria list.
-		for (std::vector<std::vector<std::pair<int, std::vector<std::string>>>>::const_iterator // loop over the OR vectors.
-				orCriteria = killCriteriaList->begin();
-				orCriteria != killCriteriaList->end();
-				++orCriteria)
-		{
-			Log(LOG_INFO) << ". [" << iter2++ << "] orCriteria";
-
-			iter3 = 0;
-			for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the AND vectors.
-					andCriteria = orCriteria->begin();
-					andCriteria != orCriteria->end();
-					++andCriteria)
-			{
-				Log(LOG_INFO) << ". . [" << iter3++ << "] andCriteria";
-
-				for (std::vector<std::string>::const_iterator
-						detail = andCriteria->second.begin();
-						detail != andCriteria->second.end();
-						++detail)
-				{
-					Log(LOG_INFO) << ". . . " << (*andCriteria).first << " - " << *detail;
-				}
-			}
-		}
-	}
+//	int
+//		iter1 (0),
+//		iter2,
+//		iter3;
+//	const std::map<std::string, const RuleAward*>& allAwards (_game->getRuleset()->getAwardsList()); // loop over all possible RuleAwards.
+//	for (std::map<std::string, const RuleAward*>::const_iterator
+//			i = allAwards.begin();
+//			i != allAwards.end();
+//			++i)
+//	{
+//		Log(LOG_INFO) << "";
+//		Log(LOG_INFO) << "[" << iter1++ << "] " << (*i).first;
+//
+//		iter2 = 0;
+//		const std::vector<std::vector<std::pair<int, std::vector<std::string>>>>* killCriteriaList ((*i).second->getKillCriteria()); // fetch the killCriteria list.
+//		for (std::vector<std::vector<std::pair<int, std::vector<std::string>>>>::const_iterator // loop over the OR vectors.
+//				orCriteria = killCriteriaList->begin();
+//				orCriteria != killCriteriaList->end();
+//				++orCriteria)
+//		{
+//			Log(LOG_INFO) << ". [" << iter2++ << "] orCriteria";
+//
+//			iter3 = 0;
+//			for (std::vector<std::pair<int, std::vector<std::string>>>::const_iterator // loop over the AND vectors.
+//					andCriteria = orCriteria->begin();
+//					andCriteria != orCriteria->end();
+//					++andCriteria)
+//			{
+//				Log(LOG_INFO) << ". . [" << iter3++ << "] andCriteria";
+//
+//				for (std::vector<std::string>::const_iterator
+//						detail = andCriteria->second.begin();
+//						detail != andCriteria->second.end();
+//						++detail)
+//				{
+//					Log(LOG_INFO) << ". . . " << (*andCriteria).first << " - " << *detail;
+//				}
+//			}
+//		}
+//	}
 }
 
 /**

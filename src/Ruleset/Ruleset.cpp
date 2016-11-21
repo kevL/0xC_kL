@@ -1236,16 +1236,16 @@ SavedGame* Ruleset::createSave(Game* const play) const
 			}
 		}
 
+		Soldier* sol;
 		for (size_t
 				i = 0u;
 				i != startTypes.size();
 				++i)
 		{
-			Soldier* const sol (genSoldier(playSave, startTypes[i]));
+			sol = genSoldier(playSave, startTypes[i]);
 			base->getSoldiers()->push_back(sol);
 
-			SoldierDiary* const diary (sol->getDiary()); // grant each Soldier the special Original Eight award.
-			diary->awardOriginalEight();
+			sol->getDiary()->awardOriginalEight(); // grant each Soldier the special Original Eight award.
 		}
 	}
 	//Log(LOG_INFO) << ". soldiers DONE";

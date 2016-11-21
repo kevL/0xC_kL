@@ -442,7 +442,7 @@ DebriefingState::DebriefingState()
 						if ((tacstats->daysWounded = sol->getSickbay()) != 0)
 							_tactical->injuryList[sol->getId()] = tacstats->daysWounded;
 
-						sol->getDiary()->updateDiary(tacstats, _tactical);
+						sol->getDiary()->postTactical(tacstats, _tactical);
 						if (sol->getDiary()->updateAwards(_rules, tacticals) == true)
 							_soldiersFeted.push_back(sol);
 						break;
@@ -476,7 +476,7 @@ DebriefingState::DebriefingState()
 						else
 							_tactical->injuryList[solDead->getId()] = -2; // mia
 
-						solDead->getDiary()->updateDiary(tacstats, _tactical);
+						solDead->getDiary()->postTactical(tacstats, _tactical);
 						solDead->getDiary()->updateAwards(_rules, tacticals);
 						_soldiersLost.push_back(solDead);
 				}

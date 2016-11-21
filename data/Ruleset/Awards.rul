@@ -115,7 +115,7 @@ extraStrings:
       STR_AWARD_7: "8th"
       STR_AWARD_8: "9th"
       STR_AWARD_9: "10th"
-      STR_AWARD_GRADE_0: "-"
+      STR_AWARD_GRADE_0: "" #-
       STR_AWARD_GRADE_1: "Bronze"
       STR_AWARD_GRADE_2: "Bronze"
       STR_AWARD_GRADE_3: "Bronze"
@@ -125,7 +125,7 @@ extraStrings:
       STR_AWARD_GRADE_7: "Gold"
       STR_AWARD_GRADE_8: "Gold"
       STR_AWARD_GRADE_9: "Gold"
-      STR_AWARD_CLASS_0: "basic"
+      STR_AWARD_CLASS_0: "" #basic
       STR_AWARD_CLASS_1: "1st"
       STR_AWARD_CLASS_2: "2nd"
       STR_AWARD_CLASS_3: "3rd"

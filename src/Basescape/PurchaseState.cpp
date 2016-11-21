@@ -499,7 +499,7 @@ void PurchaseState::btnOkClick(Action*)
 															_game->getSavedGame(),
 															_soldiers[sel]));
 						SoldierDiary* const diary (sol->getDiary());
-						diary->awardHonoraryMedal();
+						diary->awardServiceMedal();
 						transfer->setSoldier(sol);
 						_base->getTransfers()->push_back(transfer);
 					}

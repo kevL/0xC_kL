@@ -519,8 +519,9 @@ void SoldierDiaryPerformanceState::init()
 		_txtProficiency->setVisible(false);
 
 
-	const size_t lstCols (6u);
-	TextList* const lstArray[lstCols] // Mission & Kill stats ->
+	static const size_t LST_COLS (6u);
+
+	TextList* const arList[LST_COLS] // Mission & Kill stats ->
 	{
 		_lstRace,
 		_lstRank,
@@ -530,7 +531,7 @@ void SoldierDiaryPerformanceState::init()
 		_lstUFO
 	};
 
-	const std::map<std::string, int> mapArray[lstCols]
+	const std::map<std::string, int> arStats[LST_COLS]
 	{
 		_diary->getAlienRaceTotal(),
 		_diary->getAlienRankTotal(),
@@ -543,25 +544,25 @@ void SoldierDiaryPerformanceState::init()
 	size_t r;
 	for (size_t
 			i = 0u;
-			i != lstCols;
+			i != LST_COLS;
 			++i)
 	{
 		r = 0u;
 		for (std::map<std::string, int>::const_iterator
-				j = mapArray[i].begin();
-				j != mapArray[i].end();
+				j = arStats[i].begin();
+				j != arStats[i].end();
 				++j)
 		{
-			if ((*j).first != "NO_UFO")
+			if (j->first != "NO_UFO")
 			{
 				std::wostringstream woststr;
-				woststr << (*j).second;
+				woststr << j->second;
 
-				lstArray[i]->addRow(
+				arList[i]->addRow(
 								2,
-								tr((*j).first).c_str(),
+								tr(j->first).c_str(),
 								woststr.str().c_str());
-				lstArray[i]->setCellColor(r++, 0u, _color1stCol);
+				arList[i]->setCellColor(r++, 0u, _color1stCol);
 			}
 		}
 	}
@@ -741,6 +742,17 @@ void SoldierDiaryPerformanceState::lstMouseOut(Action*)
  */
 void SoldierDiaryPerformanceState::btnPrevClick(Action*)
 {
+	_lstRank			->scrollTo(); // reset scroll-depth for lists
+	_lstRace			->scrollTo();
+	_lstWeapon			->scrollTo();
+	_lstKillTotals		->scrollTo();
+	_lstLocation		->scrollTo();
+	_lstType			->scrollTo();
+	_lstUFO				->scrollTo();
+	_lstMissionTotals	->scrollTo();
+	_lstAwards			->scrollTo();
+	_lastScroll			= 0u;
+
 	if (_solId == 0u)
 		_solId = _rows - 1u;
 	else
@@ -755,6 +767,17 @@ void SoldierDiaryPerformanceState::btnPrevClick(Action*)
  */
 void SoldierDiaryPerformanceState::btnNextClick(Action*)
 {
+	_lstRank			->scrollTo(); // reset scroll-depth for lists
+	_lstRace			->scrollTo();
+	_lstWeapon			->scrollTo();
+	_lstKillTotals		->scrollTo();
+	_lstLocation		->scrollTo();
+	_lstType			->scrollTo();
+	_lstUFO				->scrollTo();
+	_lstMissionTotals	->scrollTo();
+	_lstAwards			->scrollTo();
+	_lastScroll			= 0u;
+
 	if (++_solId == _rows)
 		_solId = 0u;
 

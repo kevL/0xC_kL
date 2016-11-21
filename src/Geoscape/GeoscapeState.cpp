@@ -962,9 +962,9 @@ void GeoscapeState::handle(Action* action)
 						break;
 
 					case SDLK_a:												// "ctrl-a" - delete soldier awards
-						beep = true;											// NOTE: Clears awards of the living, not of the Memorial Dead.
-						_txtDebug->setText(L"SOLDIER COMMENDATIONS DELETED");
-						for (std::vector<Base*>::const_iterator
+						beep = true;
+						_txtDebug->setText(L"SOLDIER AWARDS DELETED");
+						for (std::vector<Base*>::const_iterator					// clear Awards from living Soldiers ->
 								i = _gameSave->getBases()->begin();
 								i != _gameSave->getBases()->end();
 								++i)
@@ -983,6 +983,51 @@ void GeoscapeState::handle(Action* action)
 								}
 								(*j)->getDiary()->getSoldierAwards().clear();
 							}
+						}
+
+						for (std::vector<SoldierDead*>::const_iterator			// clear Awards from dead Soldiers ->
+								i = _gameSave->getDeadSoldiers()->begin();
+								i != _gameSave->getDeadSoldiers()->end();
+								++i)
+						{
+							for (std::vector<SoldierAward*>::const_iterator
+									j = (*i)->getDiary()->getSoldierAwards().begin();
+									j != (*i)->getDiary()->getSoldierAwards().end();
+									++j)
+							{
+								delete *j;
+							}
+							(*i)->getDiary()->getSoldierAwards().clear();
+						}
+						break;
+
+					case SDLK_b:												// "ctrl-b" - update soldier awards
+						beep = true;
+						_txtDebug->setText(L"SOLDIER AWARDS UPDATED");
+						for (std::vector<Base*>::const_iterator					// update Awards for living Soldiers ->
+								i = _gameSave->getBases()->begin();
+								i != _gameSave->getBases()->end();
+								++i)
+						{
+							for (std::vector<Soldier*>::const_iterator
+									j = (*i)->getSoldiers()->begin();
+									j != (*i)->getSoldiers()->end();
+									++j)
+							{
+								(*j)->getDiary()->updateAwards(
+															_rules,
+															_gameSave->getTacticalStatistics());
+							}
+						}
+
+						for (std::vector<SoldierDead*>::const_iterator			// update Awards for dead Soldiers ->
+								i = _gameSave->getDeadSoldiers()->begin();
+								i != _gameSave->getDeadSoldiers()->end();
+								++i)
+						{
+							(*i)->getDiary()->updateAwards(
+														_rules,
+														_gameSave->getTacticalStatistics());
 						}
 						break;
 
