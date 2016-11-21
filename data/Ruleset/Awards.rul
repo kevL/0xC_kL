@@ -93,8 +93,8 @@ extraStrings:
       STR_MEDAL_NIKE_CROSS_DESCRIPTION: "Given to a soldier who single handedly killed every aLien in a mission."
       STR_MEDAL_SAPPER: "Sappus Medallia"
       STR_MEDAL_SAPPER_DESCRIPTION: "Given to a soldier who kills a metal foe with a high explosive pack."
-      STR_MEDAL_MELEE_KILL_MEDAL: "Cold Steel Medallia"
-      STR_MEDAL_MELEE_KILL_MEDAL_DESCRIPTION: "Given to soldiers for melee kills."
+      STR_MEDAL_MELEE_KILL: "Cold Steel Medallia"
+      STR_MEDAL_MELEE_KILL_DESCRIPTION: "Given to soldiers for melee kills."
       STR_MEDAL_SECTOPOD_KILL_MEDAL: "Metallia Citum"
       STR_MEDAL_SECTOPOD_KILL_MEDAL_DESCRIPTION: "Given to a soldier that kills the most fearsome enemy construct: The Sectopod!"
       STR_MEDAL_HEALER: "Hippocratic Starific"
@@ -205,12 +205,13 @@ extraStrings:
 #   totalTimesWounded
 #   totalValientCrux
 #   totalTrapKills
-#   isDead
+#   totalIsDead
+#   totalIsMissing
 # The following criteria use a hardcoded noun for the name/description.
 # They are INCOMPATIBLE with each other. If used together,
 # the commendation will be given out repeatedly.
-#   totalKillsWithAWeapon
-#   totalMissionsInARegion
+#   totalKillsWeapon
+#   totalKillsRegion
 #   totalKillsByRace
 #   totalKillsByRank
 # The following criteria allow more control over the kinds of kills that can be awarded.
@@ -238,8 +239,7 @@ awards:
     criteria:
       killsCriteriaCareer: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     killCriteria:
-      -
-        - [1, ["STATUS_DEAD", "FACTION_HOSTILE"]]
+      - [[1, ["STATUS_DEAD", "FACTION_HOSTILE"]]]
 
   - type: STR_MEDAL_MILITARY_CROSS
     description: STR_MEDAL_MILITARY_CROSS_DESCRIPTION
@@ -253,8 +253,7 @@ awards:
     criteria:
       killsCriteriaCareer: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30]
     killCriteria:
-      -
-        - [1, ["FACTION_HOSTILE", "STATUS_UNCONSCIOUS"]]
+      - [[1, ["FACTION_HOSTILE", "STATUS_UNCONSCIOUS"]]]
 
   - type: STR_MEDAL_DEFENDER_MEDAL
     description: STR_MEDAL_DEFENDER_MEDAL_DESCRIPTION
@@ -273,7 +272,7 @@ awards:
     descGeneric: STR_MEDAL_WEAPON_PROFICIENCY_DESC_GENERAL
     sprite: 5
     criteria:
-      totalKillsWithAWeapon: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+      totalKillsWeapon: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
 
   - type: STR_MEDAL_SERVICE_MEDAL
     description: STR_MEDAL_SERVICE_MEDAL_DESCRIPTION
@@ -292,7 +291,7 @@ awards:
     descGeneric: STR_MEDAL_CAMPAIGN_RIBBON_DESC_GENERAL
     sprite: 8
     criteria:
-      totalMissionsInARegion: [5, 10, 10, 10, 20, 20, 20, 30, 40, 50]
+      totalKillsRegion: [5, 10, 10, 10, 20, 20, 20, 30, 40, 50]
 
   - type: STR_MEDAL_XENOCIDE_MEDAL
     description: STR_MEDAL_XENOCIDE_MEDAL_DESCRIPTION
@@ -313,8 +312,7 @@ awards:
     criteria:
       killsCriteriaCareer: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30]
     killCriteria:
-      -
-        - [1, ["DT_IN", "FACTION_HOSTILE", "STATUS_DEAD"]]
+      - [[1, ["DT_IN", "FACTION_HOSTILE", "STATUS_DEAD"]]]
 
   - type: STR_MEDAL_DISTINGUISHED_SERVICE
     description: STR_MEDAL_DISTINGUISHED_SERVICE_DESCRIPTION
@@ -330,10 +328,8 @@ awards:
     criteria:
       killsCriteriaCareer: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria:
-      -
-        - [1, ["STR_LIVE_COMMANDER", "FACTION_HOSTILE", "STATUS_UNCONSCIOUS"]]
-      -
-        - [1, ["STR_LIVE_LEADER", "FACTION_HOSTILE", "STATUS_UNCONSCIOUS"]]
+      - [[1, ["STR_LIVE_COMMANDER", "FACTION_HOSTILE", "STATUS_UNCONSCIOUS"]]]
+      - [[1, ["STR_LIVE_LEADER", "FACTION_HOSTILE", "STATUS_UNCONSCIOUS"]]]
 
   - type: STR_MEDAL_GRENADIERS_MEDAL
     description: STR_MEDAL_GRENADIERS_MEDAL_DESCRIPTION
@@ -341,10 +337,8 @@ awards:
     criteria:
       killsCriteriaTurn: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria:
-      -
-        - [3, ["FACTION_HOSTILE", "STATUS_DEAD", "BT_GRENADE"]]
-      -
-        - [3, ["FACTION_HOSTILE", "STATUS_DEAD", "BT_PROXYGRENADE"]]
+      - [[3, ["FACTION_HOSTILE", "STATUS_DEAD", "BT_GRENADE"]]]
+      - [[3, ["FACTION_HOSTILE", "STATUS_DEAD", "BT_PROXYGRENADE"]]]
 
   - type: STR_MEDAL_STAR_OF_ASCLEPIUS # Title swapped in extraStrings w/ Man of Steel
     description: STR_MEDAL_STAR_OF_ASCLEPIUS_DESCRIPTION
@@ -400,8 +394,7 @@ awards:
     criteria:
       killsCriteriaTurn: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria:
-      -
-        - [2, ["STATUS_DEAD", "FACTION_HOSTILE"]]
+      - [[2, ["STATUS_DEAD", "FACTION_HOSTILE"]]]
 
   - type: STR_MEDAL_REACTIONFIRE
     description: STR_MEDAL_REACTIONFIRE_DESCRIPTION
@@ -427,8 +420,7 @@ awards:
     criteria:
       killsCriteriaMission: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria:
-      -
-        - [5, ["STATUS_DEAD", "FACTION_HOSTILE"]]
+      - [[5, ["STATUS_DEAD", "FACTION_HOSTILE"]]]
 
   - type: STR_MEDAL_VALIANT_CRUX
     description: STR_MEDAL_VALIANT_CRUX_DESCRIPTION
@@ -440,7 +432,7 @@ awards:
     description: STR_MEDAL_FALLEN_DESCRIPTION
     sprite: 29
     criteria:
-      isDead: [1]
+      totalIsDead: [1]
 
   - type: STR_MEDAL_TRAP
     description: STR_MEDAL_TRAP_DESCRIPTION
@@ -466,19 +458,16 @@ awards:
     criteria:
       killsCriteriaCareer: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria:
-      -
-        - [1, ["STR_SECTOPOD", "STATUS_DEAD", "BT_GRENADE"]] #"STR_LIVE_TERRORIST",
-      -
-        - [1, ["STR_CYBERDISC", "STATUS_DEAD", "BT_GRENADE"]] #"STR_LIVE_TERRORIST",
+      - [[1, ["STR_SECTOPOD", "STATUS_DEAD", "BT_GRENADE"]]] #"STR_LIVE_TERRORIST",
+      - [[1, ["STR_CYBERDISC", "STATUS_DEAD", "BT_GRENADE"]]] #"STR_LIVE_TERRORIST",
 
-  - type: STR_MEDAL_MELEE_KILL_MEDAL
-    description: STR_MEDAL_MELEE_KILL_MEDAL_DESCRIPTION
+  - type: STR_MEDAL_MELEE_KILL
+    description: STR_MEDAL_MELEE_KILL_DESCRIPTION
     sprite: 34
     criteria:
       killsCriteriaCareer: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
     killCriteria:
-      -
-        - [1, ["DT_MELEE", "FACTION_HOSTILE", "STATUS_DEAD"]]
+      - [[1, ["DT_MELEE", "FACTION_HOSTILE", "STATUS_DEAD"]]]
 
   - type: STR_MEDAL_SECTOPOD_KILL_MEDAL
     description: STR_MEDAL_SECTOPOD_KILL_MEDAL_DESCRIPTION
@@ -486,8 +475,7 @@ awards:
     criteria:
       killsCriteriaCareer: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria:
-      -
-        - [1, ["STR_SECTOPOD", "FACTION_HOSTILE", "STATUS_DEAD"]]
+      - [[1, ["STR_SECTOPOD", "FACTION_HOSTILE", "STATUS_DEAD"]]]
 
   - type: STR_MEDAL_HEALER
     description: STR_MEDAL_HEALER_DESCRIPTION
@@ -505,7 +493,7 @@ awards:
     description: STR_MEDAL_MIA_DESCRIPTION
     sprite: 38
     criteria:
-      isMIA: [1]
+      totalIsMissing: [1]
 
   - type: STR_MEDAL_ORIGINAL8
     description: STR_MEDAL_ORIGINAL8_DESCRIPTION
