@@ -201,7 +201,7 @@ class ArticleDefinitionTextImage
 
 /**
  * ArticleDefinitionBaseFacility defines articles for base facilities, e.g. Access lift.
- * They have an image (found in BASEBITS.PCK), a stats block and a description.
+ * @note They have an image (found in BASEBITS.PCK), a stats block and a description.
  */
 class ArticleDefinitionBaseFacility
 	:
@@ -221,7 +221,7 @@ class ArticleDefinitionBaseFacility
 
 /**
  * ArticleDefinitionItem defines articles for all Items, e.g. Weapons, Ammo, Equipment, etc.
- * They have an image (found in BIGOBS.PCK), an optional stats block, maybe ammo and a description.
+ * @note They have an image (found in BIGOBS.PCK), an optional stats block, maybe ammo and a description.
  */
 class ArticleDefinitionItem
 	:
@@ -241,7 +241,7 @@ class ArticleDefinitionItem
 
 /**
  * ArticleDefinitionUfo defines articles for UFOs, e.g. Small Scout, Terror Ship, etc.
- * They have an image (found in INTERWIN.DAT), a stats block and a description.
+ * @note They have an image (found in INTERWIN.DAT), a stats block and a description.
  */
 class ArticleDefinitionUfo
 	:
@@ -261,7 +261,7 @@ class ArticleDefinitionUfo
 
 /**
  * ArticleDefinitionArmor defines articles for Armor, e.g. Personal Armor, Flying Suit, etc.
- * They have an image (found in MAN_*.SPK) and a stats block.
+ * @note They have an image (found in MAN_*.SPK) and a stats block.
  */
 class ArticleDefinitionArmor
 	:
@@ -281,7 +281,7 @@ class ArticleDefinitionArmor
 
 /**
  * ArticleDefinitionVehicle defines articles for Vehicles, e.g. Tanks, etc.
- * They have a text description and a stats block.
+ * @note They have a text description and a stats block.
  */
 class ArticleDefinitionVehicle
 	:
@@ -301,8 +301,8 @@ class ArticleDefinitionVehicle
 };
 
 /**
- * ArticleDefinitionAward defines articles for Shoes' Soldier Awards.
- * They have a text description and a background.
+ * ArticleDefinitionAward defines articles for SoldierAwards.
+ * @note They have a text description and a background.
  */
 class ArticleDefinitionAward
 	:

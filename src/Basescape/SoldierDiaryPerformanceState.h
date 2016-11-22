@@ -62,6 +62,7 @@ private:
 	static const size_t SPRITE_ROWS = 12u;
 	static const int SPRITES_y = 49;
 
+	bool _init;
 	size_t
 		_lastScroll,
 		_rows,
@@ -74,6 +75,7 @@ private:
 	SoldierDiaryDisplay _display;
 
 	std::vector<std::wstring> _awardsList;
+	std::vector<std::string> _awardTypes;
 
 	const std::vector<Soldier*>* _listBase;
 	const std::vector<SoldierDead*>* _listDead;
@@ -156,10 +158,12 @@ private:
 		/// Handler for clicking the Awards button.
 		void btnMedalsToggle(Action* action);
 
-		/// Handler for moving the mouse over a medal.
+		/// Handler for mouse-in over the Awards list.
 		void lstMouseOver(Action* action);
-		/// Handler for moving the mouse outside the medals list.
+		/// Handler for mouse-out over the Awards list.
 		void lstMouseOut(Action* action);
+		/// Handler for clicking the Awards list.
+		void lstMouseClick(Action*);
 
 		/// Handler for clicking the Previous button.
 		void btnPrevClick(Action* action);

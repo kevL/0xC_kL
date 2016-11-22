@@ -1,237 +1,5 @@
-extraSprites:
-  - type: Awards
-    width: 31
-    height: 8
-    files:
-      0: Resources/Awards/
-  - type: AwardDecorations
-    width: 31
-    height: 8
-    files:
-      0: Resources/Awards/Decorations/
-extraStrings:
-  - type: en-US
-    strings:
-      STR_AWARDS_UC: "AWARDS"
-      STR_MEDALS: "MEDALS"
-      STR_MEDAL: "Medal"
-      STR_MEDAL_GRADE: "grade"
-      STR_MEDAL_CLASS: "class"
-      STR_MEDAL_DESCRIPTION: "DESCRIPTION"
-      STR_MEDAL_MERIT_STAR: "Meritus Starific"
-      STR_MEDAL_MERIT_STAR_DESCRIPTION: "Given to a soldier who has killed many aLiens."
-      STR_MEDAL_XENOCIDE_MEDAL: "{0} Genotalia Medallia"
-      STR_MEDAL_XENOCIDE_MEDAL_DESCRIPTION: "Given to a soldier who has been successful in combating the {0} menace."
-      STR_MEDAL_XENOCIDE_MEDAL_DESC_GENERAL: "Given to a soldier who has been successful in combating the aLien menace."
-      STR_MEDAL_DEFENDER_MEDAL: "Medallia Defencion"
-      STR_MEDAL_DEFENDER_MEDAL_DESCRIPTION: "Given to a soldier who has been part of a successful base defense mission."
-      STR_MEDAL_MILITARY_CROSS: "Militarus Crossadarium"
-      STR_MEDAL_MILITARY_CROSS_DESCRIPTION: "Given to a soldier who has participated in many missions."
-      STR_MEDAL_SERVICE_MEDAL: "Medallia Servicion"
-      STR_MEDAL_SERVICE_MEDAL_DESCRIPTION: "Given to a soldier who has served many months."
-      STR_MEDAL_HONOR_CROSS: "Honor Crossadarium"
-      STR_MEDAL_HONOR_CROSS_DESCRIPTION: "Given to all soldiers upon arrival as recognition for fighting the aLien threat and for being part of the force to secure humanity." #This medal has no additional decorations."
-      STR_MEDAL_CAMPAIGN_MEDAL: "Campaignus Medallia"
-      STR_MEDAL_CAMPAIGN_MEDAL_DESCRIPTION: "Given to a soldier who has succesfully defended many regions."
-      STR_MEDAL_SPECIALISTS_MEDAL: "Specialum Medallia"
-      STR_MEDAL_SPECIALISTS_MEDAL_DESCRIPTION: "Given to a soldier who has succesfully used non-lethal force to crowd-control aLiens."
-      STR_MEDAL_WEAPON_PROFICIENCY: "{0} Expertum"
-      STR_MEDAL_WEAPON_PROFICIENCY_DESCRIPTION: "Given to a soldier who has shown distinction using a {0}."
-      STR_MEDAL_WEAPON_PROFICIENCY_DESC_GENERAL: "Given to a soldier who has shown distinction using a weapon."
-      STR_MEDAL_CAMPAIGN_RIBBON: "{0} Campaignus"
-      STR_MEDAL_CAMPAIGN_RIBBON_DESCRIPTION: "Given to a soldier who has been instrumental in protecting {0}."
-      STR_MEDAL_CAMPAIGN_RIBBON_DESC_GENERAL: "Given to a soldier who has been instrumental in protecting a continent."
-      STR_MEDAL_ORDER_OF_RESTRAINT: "Ordum du Resolucion"
-      STR_MEDAL_ORDER_OF_RESTRAINT_DESCRIPTION: "Given to a soldier who has used non-lethal force to take down many aLiens."
-      STR_MEDAL_LONGEST_NIGHT: "Long Bad Trip"
-      STR_MEDAL_LONGEST_NIGHT_DESCRIPTION: "Given to a soldier who has witnessed the horrors of aLien Terror missions at night."
-      STR_MEDAL_MEDAL_OF_HEROISM: "Medallia du Heroicus"
-      STR_MEDAL_MEDAL_OF_HEROISM_DESCRIPTION: "Given to a soldier who has fought to the last ounce of strength - and survived."
-      STR_MEDAL_HELLRAISER_MEDAL: "Infernal Starific"
-      STR_MEDAL_HELLRAISER_MEDAL_DESCRIPTION: "Given to a soldier who has used incendiary weapons to kill aLiens."
-      STR_MEDAL_DISTINGUISHED_SERVICE: "Ordum du Thor"
-      STR_MEDAL_DISTINGUISHED_SERVICE_DESCRIPTION: "Given to a soldier who has killed aLiens of all races."
-      STR_MEDAL_BOLTS_CROSS: "Boltus Maximus"
-      STR_MEDAL_BOLTS_CROSS_DESCRIPTION: "Given to a soldier who has used non-lethal force to take down important targets."
-      STR_MEDAL_GRENADIERS_MEDAL: "Grenadium Medallia"
-      STR_MEDAL_GRENADIERS_MEDAL_DESCRIPTION: "Given to a soldier who has used thrown explosives to kill 3 aLiens at once."
-      STR_MEDAL_STAR_OF_ASCLEPIUS: "Ballus du Steel"
-      STR_MEDAL_STAR_OF_ASCLEPIUS_DESCRIPTION: "Given to a soldier who has been under heavy fire from the enemy threat."
-      STR_MEDAL_MAN_OF_STEEL: "Starific du Asclepius"
-      STR_MEDAL_MAN_OF_STEEL_DESCRIPTION: "Given to a soldier who has been shot several times during a single mission."
-      STR_MEDAL_BLACK_CROSS: "Black Crossadarium"
-      STR_MEDAL_BLACK_CROSS_DESCRIPTION: "Given to a soldier that survives being hit by friendly fire."
-      STR_MEDAL_STAR_OF_VALOR: "Starific du Valorian"
-      STR_MEDAL_STAR_OF_VALOR_DESCRIPTION: "Given to a soldier who was the lone survivor of a mission."
-      STR_MEDAL_IRON_MAN: "Iron Meatballs"
-      STR_MEDAL_IRON_MAN_DESCRIPTION: "Given to a soldier who is truly Iron."
-      STR_MEDAL_ORDER_OF_EARTH: "Ordum du Planetarium"
-      STR_MEDAL_ORDER_OF_EARTH_DESCRIPTION: "Given to a soldier who has been instrumental in Earth's defense."
-      STR_MEDAL_SNIPER: "Sharp Shot Citum"
-      STR_MEDAL_SNIPER_DESCRIPTION: "Given to a soldier who has landed long distance shots on intended targets."
-      STR_MEDAL_LUCKYSHOT: "Lucky Shot Citum"
-      STR_MEDAL_LUCKYSHOT_DESCRIPTION: "Given to a soldier who has defied the odds by landing an unlikely shot on an unintended target."
-      STR_MEDAL_DBLKILL: "Performance Citum"
-      STR_MEDAL_DBLKILL_DESCRIPTION: "Given to a soldier who has performed admirably on the field by killing more than one hostile threat in quick succession."
-      STR_MEDAL_REACTIONFIRE: "Swiftness Citum"
-      STR_MEDAL_REACTIONFIRE_DESCRIPTION: "Given to a soldier who has demonstrated quick reflexes by killing aLiens before they have a chance to retaliate."
-      STR_MEDAL_PURPLE_HEART: "Purple Heart"
-      STR_MEDAL_PURPLE_HEART_DESCRIPTION: "Given to a soldier who was wounded on the battlefield."
-      STR_MEDAL_CRIMSON_HEART: "Crimson Bleed"
-      STR_MEDAL_CRIMSON_HEART_DESCRIPTION: "Given to a soldier who was wounded for an extended period of time."
-      STR_MEDAL_ORDER_OF_GLORY: "Glorium Revoltus"
-      STR_MEDAL_ORDER_OF_GLORY_DESCRIPTION: "Given to a soldier who was instrumental in a mission's success."
-      STR_MEDAL_VALIANT_CRUX: "Valorius Cruxus"
-      STR_MEDAL_VALIANT_CRUX_DESCRIPTION: "Given to a soldier who protected all civilians during a Terror mission."
-      STR_MEDAL_FALLEN: "Ordum du la Leaven"
-      STR_MEDAL_FALLEN_DESCRIPTION: "Given to a soldier to honor their commitment to death while defending Planet Earth."
-      STR_MEDAL_TRAP: "Prowler Crossadarium"
-      STR_MEDAL_TRAP_DESCRIPTION: "Given to a soldier for exploiting guerrilla tactics."
-      STR_MEDAL_ALIEN_BASE_ASSAULT: "Terran Crossadarium"
-      STR_MEDAL_ALIEN_BASE_ASSAULT_DESCRIPTION: "Given to a soldier who has been part of a successful aLien Base Assault mission."
-      STR_MEDAL_NIKE_CROSS: "Nike Crossadarium"
-      STR_MEDAL_NIKE_CROSS_DESCRIPTION: "Given to a soldier who single handedly killed every aLien in a mission."
-      STR_MEDAL_SAPPER: "Sappus Medallia"
-      STR_MEDAL_SAPPER_DESCRIPTION: "Given to a soldier who kills a metal foe with a high explosive pack."
-      STR_MEDAL_MELEE_KILL: "Cold Steel Medallia"
-      STR_MEDAL_MELEE_KILL_DESCRIPTION: "Given to soldiers for melee kills."
-      STR_MEDAL_SECTOPOD_KILL_MEDAL: "Metallia Citum"
-      STR_MEDAL_SECTOPOD_KILL_MEDAL_DESCRIPTION: "Given to a soldier that kills the most fearsome enemy construct: The Sectopod!"
-      STR_MEDAL_HEALER: "Hippocratic Starific"
-      STR_MEDAL_HEALER_DESCRIPTION: "Given to a soldier who has performed medical services in the field."
-      STR_MEDAL_REVIVE: "Angelic Crossadarium"
-      STR_MEDAL_REVIVE_DESCRIPTION: "Given to a soldier who turned a fellow soldier from the brink of death."
-      STR_MEDAL_MIA: "Ordum du la Forlorn"
-      STR_MEDAL_MIA_DESCRIPTION: "Given to a soldier to honor their commitment to go missing while defending Planet Earth."
-      STR_MEDAL_ORIGINAL8: "Ordum Overtus"
-      STR_MEDAL_ORIGINAL8_DESCRIPTION: "Given to a soldier who was among the first in line to combat the aLien Menace."
-      STR_AWARD_0: "1st"
-      STR_AWARD_1: "2nd"
-      STR_AWARD_2: "3rd"
-      STR_AWARD_3: "4th"
-      STR_AWARD_4: "5th"
-      STR_AWARD_5: "6th"
-      STR_AWARD_6: "7th"
-      STR_AWARD_7: "8th"
-      STR_AWARD_8: "9th"
-      STR_AWARD_9: "10th"
-      STR_AWARD_GRADE_0: "" #-
-      STR_AWARD_GRADE_1: "Bronze"
-      STR_AWARD_GRADE_2: "Bronze"
-      STR_AWARD_GRADE_3: "Bronze"
-      STR_AWARD_GRADE_4: "Silver"
-      STR_AWARD_GRADE_5: "Silver"
-      STR_AWARD_GRADE_6: "Silver"
-      STR_AWARD_GRADE_7: "Gold"
-      STR_AWARD_GRADE_8: "Gold"
-      STR_AWARD_GRADE_9: "Gold"
-      STR_AWARD_CLASS_0: "" #basic
-      STR_AWARD_CLASS_1: "1st"
-      STR_AWARD_CLASS_2: "2nd"
-      STR_AWARD_CLASS_3: "3rd"
-      STR_AWARD_CLASS_4: "1st"
-      STR_AWARD_CLASS_5: "2nd"
-      STR_AWARD_CLASS_6: "3rd"
-      STR_AWARD_CLASS_7: "1st"
-      STR_AWARD_CLASS_8: "2nd"
-      STR_AWARD_CLASS_9: "3rd"
-      STR_DIARY: "RECORD"
-      STR_KILLED: "kill>"
-      STR_STUNNED: "stun>"
-      STR_VICTORY: "Victory"
-      STR_DEFEAT: "Defeat"
-      STR_NO_KILLS: "No kills"
-      STR_LOCATION: "LOCATION"
-      STR_HUMAN: "Human"
-      STR_MISSION_TYPE_: "type> {ALT}{0}"
-      STR_UFO_TYPE_: "ufo> {ALT}{0}"
-      STR_RACE_TYPE_: "race> {ALT}{0}"
-      STR_DAYLIGHT_TYPE_: "light> {ALT}{0}"
-      STR_DAY: "Day"
-      STR_NIGHT: "Night"
-      STR_DAYS_WOUNDED_: "injured> {ALT}{0}{1}"
-      STR_TAKEDOWNS_: "aLiens> {ALT}{0}"
-      STR_KILLS_UC: "KILLS"
-      STR_MISSIONS_UC: "MISSIONS"
-      STR_KILLS_BY_RACE: "RACE"
-      STR_KILLS_BY_RANK: "RANK"
-      STR_KILLS_BY_WEAPON: "WEAPON"
-      STR_MISSIONS_BY_LOCATION: "LOCATION"
-      STR_MISSIONS_BY_TYPE: "TYPE"
-      STR_MISSIONS_BY_UFO: "UFO"
-      STR_MISSIONS_TYPE: "MISSIONS"
-#      STR_UFO_CRASH_RECOVERY_LC: "UFO Crash Recovery"
-#      STR_UFO_GROUND_ASSAULT_LC: "UFO Ground Assault"
-#      STR_BASE_DEFENSE_LC: "Base Defense"
-#      STR_ALIEN_BASE_ASSAULT_LC: "aLien Base Assault"
-#      STR_TERROR_MISSION_LC: "Terror Mission"
-#      STR_PORT_ATTACK_LC: "Port Attack"
-      STR_VEHICLE: "Support"
-      STR_SCORE_VALUE_: "score> {ALT}{0}"
-      STR_POINTS_VALUE_: "points> {ALT}{0}"
-      STR_WINS_: "victories> {ALT}{0}"
-      STR_STUNS_: "stuns> {ALT}{0}"
-      STR_MISSION_UC_: "MISSION {0}"
-      STR_KIA: "K.I.A."
-      STR_MIA: "M.I.A."
-      STR_PROFICIENCY_: "shot effect> {ALT}{0}%"
-      STR_ID: "id"
-# Ruleset for diary and Awards mod
-# When stats reach the criteria threshold, the commendation is awarded
-# Any vector greater than 10 will require more strings and more sprites decorations.
-# Awards may have multiple criteria.
-# List of possible criteria:
-#   totalKills
-#   totalMissions
-#   totalWins
-#   totalScore
-#   totalStuns
-#   totalDaysWounded
-#   totalBaseDefenseMissions
-#   totalTerrorMissions
-#   totalNightMissions
-#   totalNightTerrorMissions
-#   totalMonthlyService
-#   totalFellUnconcious
-#   totalShotAt10Times
-#   totalHit5Times
-#   totalFriendlyFired
-#   totalLoneSurivor
-#   totalIronMan
-#   totalImportantMissions
-#   totalLongDistanceHits
-#   totalLowAccuracyHits
-#   totalReactionFire
-#   totalTimesWounded
-#   totalValientCrux
-#   totalTrapKills
-#   totalIsDead
-#   totalIsMissing
-# The following criteria use a hardcoded noun for the name/description.
-# They are INCOMPATIBLE with each other. If used together,
-# the commendation will be given out repeatedly.
-#   totalKillsWeapon
-#   totalKillsRegion
-#   totalKillsByRace
-#   totalKillsByRank
-# The following criteria allow more control over the kinds of kills that can be awarded.
-# To use, you must define a killCriteria.
-# The killCriteria can list any race, rank, weapon, ammo,
-# or one of these statuses: STATUS_DEAD and STATUS_UNCONSCIOUS,
-# or one of these factions: FACTION_HOSTILE, FACTION_NEUTRAL, FACTION_PLAYER
-# or one of these battle types: BT_FIREARM, BT_AMMO, BT_MELEE, BT_GRENADE, BT_PROXYGRENADE, BT_MEDIKIT, BT_SCANNER, BT_MINDPROBE, BT_PSIAMP, BT_FLARE, BT_CORPSE
-# or one of these damage types: DT_AP, DT_IN, DT_HE, DT_LASER, DT_PLASMA, DT_STUN, DT_MELEE, DT_ACID, DT_SMOKE
-# Use the strings from the ruleset to define them (mods can be used too).
-# For example, look at "STR_MEDAL_BOLTS_CROSS". It is awarded if a soldier
-# stuns one hostile commander or stuns one hostile leader.
-#   killsCriteriaCareer
-#   killsCriteriaMission
-#   killsCriteriaTurn
-# It is possible to reduce the amount of awards a commendation gets, but still reaching
-# the triple gold star decoration. To do this, repeat the numbers in the criteria vector.
-# For example, [5, 10, 20, 20, 20, 20, 40, 40, 40, 40] will have one award for 5, will have a
-# second award for 10 (bronze star), will have a third award for 20 (2 silver stars) and
-# will have a fourth award for 40 (3 gold stars).
+# Ruleset for SoldierDiary / SoldierAwards - by Shoes w/ Ivan Dogovich.
+# - docs below
 awards:
   - type: STR_MEDAL_MERIT_STAR
     description: STR_MEDAL_MERIT_STAR_DESCRIPTION
@@ -293,9 +61,9 @@ awards:
     criteria:
       totalKillsRegion: [5, 10, 10, 10, 20, 20, 20, 30, 40, 50]
 
-  - type: STR_MEDAL_XENOCIDE_MEDAL
-    description: STR_MEDAL_XENOCIDE_MEDAL_DESCRIPTION
-    descGeneric: STR_MEDAL_XENOCIDE_MEDAL_DESC_GENERAL
+  - type: STR_MEDAL_XENOCIDE
+    description: STR_MEDAL_XENOCIDE_DESCRIPTION
+    descGeneric: STR_MEDAL_XENOCIDE_DESC_GENERAL
     sprite: 9
     criteria:
       totalKillsByRace: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
@@ -489,8 +257,8 @@ awards:
     criteria:
       totalIsDead: [1]
 
-  - type: STR_MEDAL_MIA
-    description: STR_MEDAL_MIA_DESCRIPTION
+  - type: STR_MEDAL_MISSING
+    description: STR_MEDAL_MISSING_DESCRIPTION
     sprite: 38
     criteria:
       totalIsMissing: [1]
@@ -500,3 +268,268 @@ awards:
     sprite: 39
     criteria:
       totalLongDistanceHits: [9999] #test criterion to prevent an infinite loop
+
+extraSprites:
+  - type: Awards
+    width: 31
+    height: 8
+    files:
+      0: Resources/Awards/
+  - type: AwardDecorations
+    width: 31
+    height: 8
+    files:
+      0: Resources/Awards/Decorations/
+
+extraStrings:
+  - type: en-US
+    strings:
+      STR_AWARDS_UC: "AWARDS"
+      STR_MEDALS: "MEDALS"
+      STR_MEDAL: "Medal"
+      STR_MEDAL_GRADE: "grade"
+      STR_MEDAL_CLASS: "class"
+      STR_MEDAL_DESCRIPTION: "DESCRIPTION"
+      STR_MEDAL_MERIT_STAR: "Meritus Starific"
+      STR_MEDAL_MERIT_STAR_DESCRIPTION: "Given to a soldier who has killed many aLiens."
+      STR_MEDAL_XENOCIDE: "{0} Genotalia Medallia"
+      STR_MEDAL_XENOCIDE_DESCRIPTION: "Given to a soldier who has been successful in combating the {0} menace."
+      STR_MEDAL_XENOCIDE_DESC_GENERAL: "Given to a soldier who has been successful in combating the aLien menace."
+      STR_MEDAL_DEFENDER_MEDAL: "Medallia Defencion"
+      STR_MEDAL_DEFENDER_MEDAL_DESCRIPTION: "Given to a soldier who has been part of a successful base defense mission."
+      STR_MEDAL_MILITARY_CROSS: "Militarus Crossadarium"
+      STR_MEDAL_MILITARY_CROSS_DESCRIPTION: "Given to a soldier who has participated in many missions."
+      STR_MEDAL_SERVICE_MEDAL: "Medallia Servicion"
+      STR_MEDAL_SERVICE_MEDAL_DESCRIPTION: "Given to a soldier who has served many months."
+      STR_MEDAL_HONOR_CROSS: "Honor Crossadarium"
+      STR_MEDAL_HONOR_CROSS_DESCRIPTION: "Given to all soldiers upon arrival as recognition for fighting the aLien threat and for being part of the force to secure humanity." #This medal has no additional decorations."
+      STR_MEDAL_CAMPAIGN_MEDAL: "Campaignus Medallia"
+      STR_MEDAL_CAMPAIGN_MEDAL_DESCRIPTION: "Given to a soldier who has succesfully defended many regions."
+      STR_MEDAL_SPECIALISTS_MEDAL: "Specialum Medallia"
+      STR_MEDAL_SPECIALISTS_MEDAL_DESCRIPTION: "Given to a soldier who has succesfully used non-lethal force to crowd-control aLiens."
+      STR_MEDAL_WEAPON_PROFICIENCY: "{0} Expertum"
+      STR_MEDAL_WEAPON_PROFICIENCY_DESCRIPTION: "Given to a soldier who has shown distinction using a {0}."
+      STR_MEDAL_WEAPON_PROFICIENCY_DESC_GENERAL: "Given to a soldier who has shown distinction using a weapon."
+      STR_MEDAL_CAMPAIGN_RIBBON: "{0} Campaignus"
+      STR_MEDAL_CAMPAIGN_RIBBON_DESCRIPTION: "Given to a soldier who has been instrumental in protecting {0}."
+      STR_MEDAL_CAMPAIGN_RIBBON_DESC_GENERAL: "Given to a soldier who has been instrumental in protecting a continent."
+      STR_MEDAL_ORDER_OF_RESTRAINT: "Ordum du Resolucion"
+      STR_MEDAL_ORDER_OF_RESTRAINT_DESCRIPTION: "Given to a soldier who has used non-lethal force to take down many aLiens."
+      STR_MEDAL_LONGEST_NIGHT: "Long Bad Trip"
+      STR_MEDAL_LONGEST_NIGHT_DESCRIPTION: "Given to a soldier who has witnessed the horrors of aLien Terror missions at night."
+      STR_MEDAL_MEDAL_OF_HEROISM: "Medallia du Heroicus"
+      STR_MEDAL_MEDAL_OF_HEROISM_DESCRIPTION: "Given to a soldier who has fought to the last ounce of strength - and survived."
+      STR_MEDAL_HELLRAISER_MEDAL: "Infernal Starific"
+      STR_MEDAL_HELLRAISER_MEDAL_DESCRIPTION: "Given to a soldier who has used incendiary weapons to kill aLiens."
+      STR_MEDAL_DISTINGUISHED_SERVICE: "Ordum du Thor"
+      STR_MEDAL_DISTINGUISHED_SERVICE_DESCRIPTION: "Given to a soldier who has killed aLiens of all races."
+      STR_MEDAL_BOLTS_CROSS: "Boltus Maximus"
+      STR_MEDAL_BOLTS_CROSS_DESCRIPTION: "Given to a soldier who has used non-lethal force to take down important targets."
+      STR_MEDAL_GRENADIERS_MEDAL: "Grenadium Medallia"
+      STR_MEDAL_GRENADIERS_MEDAL_DESCRIPTION: "Given to a soldier who has used thrown explosives to kill 3 aLiens at once."
+      STR_MEDAL_STAR_OF_ASCLEPIUS: "Ballus du Steel"
+      STR_MEDAL_STAR_OF_ASCLEPIUS_DESCRIPTION: "Given to a soldier who has been under heavy fire from the enemy threat."
+      STR_MEDAL_MAN_OF_STEEL: "Starific du Asclepius"
+      STR_MEDAL_MAN_OF_STEEL_DESCRIPTION: "Given to a soldier who has been shot several times during a single mission."
+      STR_MEDAL_BLACK_CROSS: "Black Crossadarium"
+      STR_MEDAL_BLACK_CROSS_DESCRIPTION: "Given to a soldier that survives being hit by friendly fire."
+      STR_MEDAL_STAR_OF_VALOR: "Starific du Valorian"
+      STR_MEDAL_STAR_OF_VALOR_DESCRIPTION: "Given to a soldier who was the lone survivor of a mission."
+      STR_MEDAL_IRON_MAN: "Iron Meatballs"
+      STR_MEDAL_IRON_MAN_DESCRIPTION: "Given to a soldier who is truly Iron."
+      STR_MEDAL_ORDER_OF_EARTH: "Ordum du Planetarium"
+      STR_MEDAL_ORDER_OF_EARTH_DESCRIPTION: "Given to a soldier who has been instrumental in Earth's defense."
+      STR_MEDAL_SNIPER: "Sharp Shot Citum"
+      STR_MEDAL_SNIPER_DESCRIPTION: "Given to a soldier who has landed long distance shots on intended targets."
+      STR_MEDAL_LUCKYSHOT: "Lucky Shot Citum"
+      STR_MEDAL_LUCKYSHOT_DESCRIPTION: "Given to a soldier who has defied the odds by landing an unlikely shot on an unintended target."
+      STR_MEDAL_DBLKILL: "Performance Citum"
+      STR_MEDAL_DBLKILL_DESCRIPTION: "Given to a soldier who has performed admirably on the field by killing more than one hostile threat in quick succession."
+      STR_MEDAL_REACTIONFIRE: "Swiftness Citum"
+      STR_MEDAL_REACTIONFIRE_DESCRIPTION: "Given to a soldier who has demonstrated quick reflexes by killing aLiens before they have a chance to retaliate."
+      STR_MEDAL_PURPLE_HEART: "Purple Heart"
+      STR_MEDAL_PURPLE_HEART_DESCRIPTION: "Given to a soldier who was wounded on the battlefield."
+      STR_MEDAL_CRIMSON_HEART: "Crimson Bleed"
+      STR_MEDAL_CRIMSON_HEART_DESCRIPTION: "Given to a soldier who was wounded for an extended period of time."
+      STR_MEDAL_ORDER_OF_GLORY: "Glorium Revoltus"
+      STR_MEDAL_ORDER_OF_GLORY_DESCRIPTION: "Given to a soldier who was instrumental in a mission's success."
+      STR_MEDAL_VALIANT_CRUX: "Valorius Cruxus"
+      STR_MEDAL_VALIANT_CRUX_DESCRIPTION: "Given to a soldier who protected all civilians during a Terror mission."
+      STR_MEDAL_FALLEN: "Ordum du la Leaven"
+      STR_MEDAL_FALLEN_DESCRIPTION: "Given to a soldier to honor their commitment to death while defending Planet Earth."
+      STR_MEDAL_TRAP: "Prowler Crossadarium"
+      STR_MEDAL_TRAP_DESCRIPTION: "Given to a soldier for exploiting guerrilla tactics."
+      STR_MEDAL_ALIEN_BASE_ASSAULT: "Terran Crossadarium"
+      STR_MEDAL_ALIEN_BASE_ASSAULT_DESCRIPTION: "Given to a soldier who has been part of a successful aLien Base Assault mission."
+      STR_MEDAL_NIKE_CROSS: "Nike Crossadarium"
+      STR_MEDAL_NIKE_CROSS_DESCRIPTION: "Given to a soldier who single handedly killed every aLien in a mission."
+      STR_MEDAL_SAPPER: "Sappus Medallia"
+      STR_MEDAL_SAPPER_DESCRIPTION: "Given to a soldier who kills a metal foe with a high explosive pack."
+      STR_MEDAL_MELEE_KILL: "Cold Steel Medallia"
+      STR_MEDAL_MELEE_KILL_DESCRIPTION: "Given to soldiers for melee kills."
+      STR_MEDAL_SECTOPOD_KILL_MEDAL: "Metallia Citum"
+      STR_MEDAL_SECTOPOD_KILL_MEDAL_DESCRIPTION: "Given to a soldier that kills the most fearsome enemy construct: The Sectopod!"
+      STR_MEDAL_HEALER: "Hippocratic Starific"
+      STR_MEDAL_HEALER_DESCRIPTION: "Given to a soldier who has performed medical services in the field."
+      STR_MEDAL_REVIVE: "Angelic Crossadarium"
+      STR_MEDAL_REVIVE_DESCRIPTION: "Given to a soldier who turned a fellow soldier from the brink of death."
+      STR_MEDAL_MISSING: "Ordum du la Forlorn"
+      STR_MEDAL_MISSING_DESCRIPTION: "Given to a soldier to honor their commitment to go missing while defending Planet Earth."
+      STR_MEDAL_ORIGINAL8: "Ordum Overtus"
+      STR_MEDAL_ORIGINAL8_DESCRIPTION: "Given to a soldier who was among the first in line to combat the aLien Menace."
+      STR_AWARD_0: "1st"
+      STR_AWARD_1: "2nd"
+      STR_AWARD_2: "3rd"
+      STR_AWARD_3: "4th"
+      STR_AWARD_4: "5th"
+      STR_AWARD_5: "6th"
+      STR_AWARD_6: "7th"
+      STR_AWARD_7: "8th"
+      STR_AWARD_8: "9th"
+      STR_AWARD_9: "10th"
+      STR_AWARD_GRADE_0: "" #-
+      STR_AWARD_GRADE_1: "Bronze"
+      STR_AWARD_GRADE_2: "Bronze"
+      STR_AWARD_GRADE_3: "Bronze"
+      STR_AWARD_GRADE_4: "Silver"
+      STR_AWARD_GRADE_5: "Silver"
+      STR_AWARD_GRADE_6: "Silver"
+      STR_AWARD_GRADE_7: "Gold"
+      STR_AWARD_GRADE_8: "Gold"
+      STR_AWARD_GRADE_9: "Gold"
+      STR_AWARD_CLASS_0: "" #basic
+      STR_AWARD_CLASS_1: "1st"
+      STR_AWARD_CLASS_2: "2nd"
+      STR_AWARD_CLASS_3: "3rd"
+      STR_AWARD_CLASS_4: "1st"
+      STR_AWARD_CLASS_5: "2nd"
+      STR_AWARD_CLASS_6: "3rd"
+      STR_AWARD_CLASS_7: "1st"
+      STR_AWARD_CLASS_8: "2nd"
+      STR_AWARD_CLASS_9: "3rd"
+      STR_DIARY: "RECORD"
+      STR_KILLED: "kill>"
+      STR_STUNNED: "stun>"
+      STR_VICTORY: "Victory"
+      STR_DEFEAT: "Defeat"
+      STR_NO_KILLS: "No kills"
+      STR_LOCATION: "LOCATION"
+      STR_HUMAN: "Human"
+      STR_MISSION_TYPE_: "type> {ALT}{0}"
+      STR_UFO_TYPE_: "ufo> {ALT}{0}"
+      STR_RACE_TYPE_: "race> {ALT}{0}"
+      STR_DAYLIGHT_TYPE_: "light> {ALT}{0}"
+      STR_DAY: "Day"
+      STR_NIGHT: "Night"
+      STR_DAYS_WOUNDED_: "injured> {ALT}{0}{1}"
+      STR_TAKEDOWNS_: "aLiens> {ALT}{0}"
+      STR_KILLS_UC: "KILLS"
+      STR_MISSIONS_UC: "MISSIONS"
+      STR_KILLS_BY_RACE: "RACE"
+      STR_KILLS_BY_RANK: "RANK"
+      STR_KILLS_BY_WEAPON: "WEAPON"
+      STR_MISSIONS_BY_LOCATION: "LOCATION"
+      STR_MISSIONS_BY_TYPE: "TYPE"
+      STR_MISSIONS_BY_UFO: "UFO"
+      STR_MISSIONS_TYPE: "MISSIONS"
+#      STR_UFO_CRASH_RECOVERY_LC: "UFO Crash Recovery"
+#      STR_UFO_GROUND_ASSAULT_LC: "UFO Ground Assault"
+#      STR_BASE_DEFENSE_LC: "Base Defense"
+#      STR_ALIEN_BASE_ASSAULT_LC: "aLien Base Assault"
+#      STR_TERROR_MISSION_LC: "Terror Mission"
+#      STR_PORT_ATTACK_LC: "Port Attack"
+      STR_VEHICLE: "Support"
+      STR_SCORE_VALUE_: "score> {ALT}{0}"
+      STR_POINTS_VALUE_: "points> {ALT}{0}"
+      STR_WINS_: "victories> {ALT}{0}"
+      STR_STUNS_: "stuns> {ALT}{0}"
+      STR_MISSION_UC_: "MISSION {0}"
+      STR_KIA: "K.I.A."
+      STR_MIA: "M.I.A."
+      STR_PROFICIENCY_: "shot % {ALT}{0}"
+      STR_ID: "id"
+
+# doc:
+# The Award is granted when stats reach the criteria threshold.
+# Any criteria-vector greater than 10 will require more strings and more sprite-
+# decorations.
+# Awards shall *not* have multiple criteria.
+# List of possible criteria:
+#   totalKills
+#   totalMissions
+#   totalWins
+#   totalScore
+#   totalStuns
+#   totalDaysWounded
+#   totalBaseDefenseMissions
+#   totalTerrorMissions
+#   totalNightMissions
+#   totalNightTerrorMissions
+#   totalMonthlyService
+#   totalFellUnconcious
+#   totalShotAt10Times
+#   totalHit5Times
+#   totalFriendlyFired
+#   totalLoneSurivor
+#   totalIronMan
+#   totalImportantMissions
+#   totalLongDistanceHits
+#   totalLowAccuracyHits
+#   totalReactionFire
+#   totalTimesWounded
+#   totalValientCrux
+#   totalTrapKills
+#   totalIsDead
+#   totalIsMissing
+# The following criteria use a hardcoded qualifier for the label and description.
+# They are INCOMPATIBLE with each other. If used together the award would be
+# given out repeatedly.
+#   totalKillsWeapon
+#   totalKillsRegion
+#   totalKillsByRace
+#   totalKillsByRank
+# The following criteria allow more control over the kinds of kills that can be
+# awarded.
+# To use this you must define a killCriteria.
+# The killCriteria can list any race, rank, weapon, ammo
+# or one of these statuses:
+#   STATUS_DEAD
+#   STATUS_UNCONSCIOUS
+# or one of these factions:
+#   FACTION_HOSTILE
+#   FACTION_NEUTRAL
+#   FACTION_PLAYER
+# or one of these battle types:
+#   BT_FIREARM
+#   BT_AMMO
+#   BT_MELEE
+#   BT_GRENADE
+#   BT_PROXYGRENADE
+#   BT_MEDIKIT
+#   BT_SCANNER
+#   BT_MINDPROBE
+#   BT_PSIAMP
+#   BT_FLARE
+#   BT_CORPSE
+#   BT_FUEL
+# or one of these damage types:
+#   DT_AP
+#   DT_IN
+#   DT_HE
+#   DT_LASER
+#   DT_PLASMA
+#   DT_STUN
+#   DT_MELEE
+#   DT_ACID
+#   DT_SMOKE
+# Use the strings from the ruleset to define them (mods can be used too).
+# For example, look at "STR_MEDAL_BOLTS_CROSS". It is awarded if a soldier stuns
+# one hostile commander or stuns one hostile leader.
+#   killsCriteriaCareer
+#   killsCriteriaMission
+#   killsCriteriaTurn
+# It is possible to reduce the levels an award gets, but still reach the triple
+# gold star decoration. To do this, repeat the numbers in the criteria vector.
+# For example: [5, 10, 20, 20, 20, 20, 40, 40, 40, 40] will have one award for 5,
+# will have a second award for 10 (bronze star), will have a third award for 20
+# (2 silver stars), and will have a fourth award for 40 (3 gold stars).

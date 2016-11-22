@@ -45,6 +45,8 @@
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDiary.h"
 
+#include "../Ufopaedia/Ufopaedia.h"
+
 
 namespace OpenXcom
 {
@@ -67,7 +69,8 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		_overview(overview),
 		_display(display),
 		_lastScroll(0u),
-		_diary(nullptr)
+		_diary(nullptr),
+		_init(true)
 {
 	if (base != nullptr)
 	{
@@ -325,7 +328,9 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 	_lstAwards->setMargin();
 	_lstAwards->onMouseOver(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::lstMouseOver));
 	_lstAwards->onMouseOut(		static_cast<ActionHandler>(&SoldierDiaryPerformanceState::lstMouseOut));
-	_lstAwards->onMousePress(							   &SoldierDiaryPerformanceState::handle); // call to parent-state.
+	_lstAwards->onMouseClick(	static_cast<ActionHandler>(&SoldierDiaryPerformanceState::lstMouseClick),
+								SDL_BUTTON_RIGHT);
+//	_lstAwards->onMousePress(							   &SoldierDiaryPerformanceState::handle); // call to parent-state. huh
 
 	_txtMedalInfo->setHighContrast();
 	_txtMedalInfo->setWordWrap();
@@ -338,9 +343,9 @@ SoldierDiaryPerformanceState::SoldierDiaryPerformanceState(
 		case DIARY_MEDALS:		_displayGroup = _btnAwards;
 	}
 
-	_btnKills->setGroup(&_displayGroup);
+	_btnKills	->setGroup(&_displayGroup);
 	_btnMissions->setGroup(&_displayGroup);
-	_btnAwards->setGroup(&_displayGroup);
+	_btnAwards	->setGroup(&_displayGroup);
 }
 
 /**
@@ -354,252 +359,267 @@ SoldierDiaryPerformanceState::~SoldierDiaryPerformanceState()
  */
 void SoldierDiaryPerformanceState::init()
 {
-	State::init();
-
-	for (size_t // clear sprites
-			i = 0u;
-			i != SPRITE_ROWS;
-			++i)
-	{
-		_srfAward[i]->clear();
-		_srfDecor[i]->clear();
-	}
-
-	_lstRank			->scrollTo(); // reset scroll-depth for lists
-	_lstRace			->scrollTo();
-	_lstWeapon			->scrollTo();
-	_lstKillTotals		->scrollTo();
-	_lstLocation		->scrollTo();
-	_lstType			->scrollTo();
-	_lstUFO				->scrollTo();
-	_lstMissionTotals	->scrollTo();
-	_lstAwards			->scrollTo();
-	_lastScroll			= 0u;
-
-
-	bool vis;
-
-	if (_display == DIARY_KILLS) // set visibility for Kill stats
-	{
-		vis = true;
-		_btnKills->setColor(_colorBtnDown);
-	}
+	if (_init == false)
+		_init = true;
 	else
 	{
-		vis = false;
-		_btnKills->setColor(_colorBtnUp);
-	}
-	_txtRace		->setVisible(vis);
-	_txtRank		->setVisible(vis);
-	_txtWeapon		->setVisible(vis);
-	_lstRace		->setVisible(vis);
-	_lstRank		->setVisible(vis);
-	_lstWeapon		->setVisible(vis);
-	_lstKillTotals	->setVisible(vis);
-	_txtProficiency	->setVisible(vis);
+		State::init();
 
-
-	if (_display == DIARY_MISSIONS) // set visibility for Mission stats
-	{
-		vis = true;
-		_btnMissions->setColor(_colorBtnDown);
-	}
-	else
-	{
-		vis = false;
-		_btnMissions->setColor(_colorBtnUp);
-	}
-	_txtLocation		->setVisible(vis);
-	_txtType			->setVisible(vis);
-	_txtUFO				->setVisible(vis);
-	_lstLocation		->setVisible(vis);
-	_lstType			->setVisible(vis);
-	_lstUFO				->setVisible(vis);
-	_lstMissionTotals	->setVisible(vis);
-
-
-//	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false);
-
-	if (_display == DIARY_MEDALS) // set visibility for awarded Medals
-	{
-		vis = true;
-		_btnAwards->setColor(_colorBtnDown);
-	}
-	else
-	{
-		vis = false;
-		_btnAwards->setColor(_colorBtnUp);
-	}
-	_txtMedal		->setVisible(vis);
-	_txtMedalGrade	->setVisible(vis);
-	_txtMedalClass	->setVisible(vis);
-	_lstAwards		->setVisible(vis);
-	_txtMedalInfo	->setVisible(vis);
-
-
-	_lstKillTotals		->clearList();
-	_lstMissionTotals	->clearList();
-	_awardsList			.clear();
-
-	_lstRace		->clearList();
-	_lstRank		->clearList();
-	_lstWeapon		->clearList();
-	_lstLocation	->clearList();
-	_lstType		->clearList();
-	_lstUFO			->clearList();
-	_lstAwards		->clearList();
-
-
-	if (_listBase != nullptr)
-	{
-		const Soldier* const soldier (_listBase->at(_solId));
-		_diary = soldier->getDiary();
-		_txtTitle->setText(soldier->getLabel());
-	}
-	else
-	{
-		const SoldierDead* const deceased (_listDead->at(_solId));
-		_diary = deceased->getDiary();
-		_txtTitle->setText(deceased->getLabel());
-	}
-
-	const std::vector<TacticalStatistics*>& tacticals (_game->getSavedGame()->getTacticalStatistics());
-
-	std::wstring
-		wst1,
-		wst2,
-		wst3,
-		wst4;
-
-	int t;
-	if ((t = static_cast<int>(_diary->getMissionTotal())) != 0) // Mission stats ->
-		wst1 = tr("STR_MISSIONS_").arg(t);
-
-	if ((t = _diary->getWinTotal(tacticals)) != 0)
-		wst2 = tr("STR_WINS_").arg(t);
-
-	if ((t = _diary->getScoreTotal(tacticals)) != 0)
-		wst3 = tr("STR_SCORE_VALUE_").arg(t);
-
-	if ((t = _diary->getDaysWoundedTotal()) != 0)
-		wst4 = tr("STR_DAYS_WOUNDED_").arg(t).arg(L" d");
-
-	_lstMissionTotals->addRow(
-						4,
-						wst1.c_str(),
-						wst2.c_str(),
-						wst3.c_str(),
-						wst4.c_str());
-
-
-	if ((t = _diary->getKillTotal()) != 0) // Kill stats ->
-		wst1 = tr("STR_KILLS_").arg(t);
-	else
-		wst1 = L"";
-
-	if ((t = _diary->getStunTotal()) != 0)
-		wst2 = tr("STR_STUNS_").arg(t);
-	else
-		wst2 = L"";
-
-	if ((t = _diary->getPointsTotal()) != 0)
-		wst3 = tr("STR_SCORE_VALUE_").arg(t);
-	else
-		wst3 = L"";
-
-	_lstKillTotals->addRow(
-						3,
-						wst1.c_str(),
-						wst2.c_str(),
-						wst3.c_str());
-
-	if ((t = _diary->getProficiency()) != -1)
-		_txtProficiency->setText(tr("STR_PROFICIENCY_").arg(t).c_str());
-	else
-		_txtProficiency->setVisible(false);
-
-
-	static const size_t LST_COLS (6u);
-
-	TextList* const arList[LST_COLS] // Mission & Kill stats ->
-	{
-		_lstRace,
-		_lstRank,
-		_lstWeapon,
-		_lstLocation,
-		_lstType,
-		_lstUFO
-	};
-
-	const std::map<std::string, int> arStats[LST_COLS]
-	{
-		_diary->getAlienRaceTotal(),
-		_diary->getAlienRankTotal(),
-		_diary->getWeaponTotal(),
-		_diary->getRegionTotal(tacticals),
-		_diary->getTypeTotal(tacticals),
-		_diary->getUfoTotal(tacticals)
-	};
-
-	size_t r;
-	for (size_t
-			i = 0u;
-			i != LST_COLS;
-			++i)
-	{
-		r = 0u;
-		for (std::map<std::string, int>::const_iterator
-				j = arStats[i].begin();
-				j != arStats[i].end();
-				++j)
+		for (size_t // clear sprites
+				i = 0u;
+				i != SPRITE_ROWS;
+				++i)
 		{
-			if (j->first != "NO_UFO")
-			{
-				std::wostringstream woststr;
-				woststr << j->second;
-
-				arList[i]->addRow(
-								2,
-								tr(j->first).c_str(),
-								woststr.str().c_str());
-				arList[i]->setCellColor(r++, 0u, _color1stCol);
-			}
+			_srfAward[i]->clear();
+			_srfDecor[i]->clear();
 		}
-	}
+
+		_lstRank			->scrollTo(); // reset scroll-depth for lists
+		_lstRace			->scrollTo();
+		_lstWeapon			->scrollTo();
+		_lstKillTotals		->scrollTo();
+		_lstLocation		->scrollTo();
+		_lstType			->scrollTo();
+		_lstUFO				->scrollTo();
+		_lstMissionTotals	->scrollTo();
+		_lstAwards			->scrollTo();
+		_lastScroll			= 0u;
 
 
-//	if (_game->getRuleset()->getAwardsList().empty() == true) return;
+		bool vis;
 
-	const RuleAward* awardRule;
-	for (std::vector<SoldierAward*>::const_iterator // Award stats ->
-			i = _diary->getSoldierAwards().begin();
-			i != _diary->getSoldierAwards().end();
-			++i)
-	{
-		awardRule = _game->getRuleset()->getAwardsList().at((*i)->getType());
-		std::wostringstream
-			woststr1,
-			woststr2;
-
-		if ((*i)->getQualifier() == "noQual")
+		if (_display == DIARY_KILLS) // set visibility for Kill stats
 		{
-			woststr1 << tr((*i)->getType());
-			woststr2 << tr(awardRule->getDescription());
+			vis = true;
+			_btnKills->setColor(_colorBtnDown);
 		}
 		else
 		{
-			woststr1 << tr((*i)->getType()).arg(tr((*i)->getQualifier()));
-			woststr2 << tr(awardRule->getDescription()).arg(tr((*i)->getQualifier()));
+			vis = false;
+			_btnKills->setColor(_colorBtnUp);
+		}
+		_txtRace		->setVisible(vis);
+		_txtRank		->setVisible(vis);
+		_txtWeapon		->setVisible(vis);
+		_lstRace		->setVisible(vis);
+		_lstRank		->setVisible(vis);
+		_lstWeapon		->setVisible(vis);
+		_lstKillTotals	->setVisible(vis);
+		_txtProficiency	->setVisible(vis);
+
+
+		if (_display == DIARY_MISSIONS) // set visibility for Mission stats
+		{
+			vis = true;
+			_btnMissions->setColor(_colorBtnDown);
+		}
+		else
+		{
+			vis = false;
+			_btnMissions->setColor(_colorBtnUp);
+		}
+		_txtLocation		->setVisible(vis);
+		_txtType			->setVisible(vis);
+		_txtUFO				->setVisible(vis);
+		_lstLocation		->setVisible(vis);
+		_lstType			->setVisible(vis);
+		_lstUFO				->setVisible(vis);
+		_lstMissionTotals	->setVisible(vis);
+
+
+	//	_btnAwards->setVisible(_game->getRuleset()->getAwardsList().empty() == false);
+
+		if (_display == DIARY_MEDALS) // set visibility for awarded Medals
+		{
+			vis = true;
+			_btnAwards->setColor(_colorBtnDown);
+		}
+		else
+		{
+			vis = false;
+			_btnAwards->setColor(_colorBtnUp);
+		}
+		_txtMedal		->setVisible(vis);
+		_txtMedalGrade	->setVisible(vis);
+		_txtMedalClass	->setVisible(vis);
+		_lstAwards		->setVisible(vis);
+		_txtMedalInfo	->setVisible(vis);
+
+
+		_lstKillTotals		->clearList();
+		_lstMissionTotals	->clearList();
+		_awardsList			.clear();
+		_awardTypes			.clear();
+
+		_lstRace		->clearList();
+		_lstRank		->clearList();
+		_lstWeapon		->clearList();
+		_lstLocation	->clearList();
+		_lstType		->clearList();
+		_lstUFO			->clearList();
+		_lstAwards		->clearList();
+
+
+		if (_listBase != nullptr)
+		{
+			const Soldier* const soldier (_listBase->at(_solId));
+			_diary = soldier->getDiary();
+			_txtTitle->setText(soldier->getLabel());
+		}
+		else
+		{
+			const SoldierDead* const deceased (_listDead->at(_solId));
+			_diary = deceased->getDiary();
+			_txtTitle->setText(deceased->getLabel());
 		}
 
-		_lstAwards->addRow(
-						3,
-						woststr1.str().c_str(),
-						tr((*i)->getGradeString()).c_str(),
-						tr((*i)->getClassString()).c_str());
+		const std::vector<TacticalStatistics*>& tacticals (_game->getSavedGame()->getTacticalStatistics());
 
-		_awardsList.push_back(woststr2.str());
-		drawMedals();
+		std::wstring
+			wst1,
+			wst2,
+			wst3,
+			wst4;
+
+		int t;
+		if ((t = static_cast<int>(_diary->getMissionTotal())) != 0) // Mission stats ->
+			wst1 = tr("STR_MISSIONS_").arg(t);
+
+		if ((t = _diary->getWinTotal(tacticals)) != 0)
+			wst2 = tr("STR_WINS_").arg(t);
+
+		if ((t = _diary->getScoreTotal(tacticals)) != 0)
+			wst3 = tr("STR_SCORE_VALUE_").arg(t);
+
+		if ((t = _diary->getDaysWoundedTotal()) != 0)
+			wst4 = tr("STR_DAYS_WOUNDED_").arg(t).arg(L" d");
+
+		_lstMissionTotals->addRow(
+							4,
+							wst1.c_str(),
+							wst2.c_str(),
+							wst3.c_str(),
+							wst4.c_str());
+
+
+		if ((t = _diary->getKillTotal()) != 0) // Kill stats ->
+			wst1 = tr("STR_KILLS_").arg(t);
+		else
+			wst1 = L"";
+
+		if ((t = _diary->getStunTotal()) != 0)
+			wst2 = tr("STR_STUNS_").arg(t);
+		else
+			wst2 = L"";
+
+		if ((t = _diary->getPointsTotal()) != 0)
+			wst3 = tr("STR_SCORE_VALUE_").arg(t);
+		else
+			wst3 = L"";
+
+		_lstKillTotals->addRow(
+							3,
+							wst1.c_str(),
+							wst2.c_str(),
+							wst3.c_str());
+
+		if ((t = _diary->getProficiency()) != -1)
+			_txtProficiency->setText(tr("STR_PROFICIENCY_").arg(t).c_str());
+		else
+			_txtProficiency->setVisible(false);
+
+
+		static const size_t LST_COLS (6u);
+
+		TextList* const arList[LST_COLS] // Mission & Kill stats ->
+		{
+			_lstRace,
+			_lstRank,
+			_lstWeapon,
+			_lstLocation,
+			_lstType,
+			_lstUFO
+		};
+
+		const std::map<std::string, int> arStats[LST_COLS]
+		{
+			_diary->getAlienRaceTotal(),
+			_diary->getAlienRankTotal(),
+			_diary->getWeaponTotal(),
+			_diary->getRegionTotal(tacticals),
+			_diary->getTypeTotal(tacticals),
+			_diary->getUfoTotal(tacticals)
+		};
+
+		size_t r;
+		for (size_t
+				i = 0u;
+				i != LST_COLS;
+				++i)
+		{
+			r = 0u;
+			for (std::map<std::string, int>::const_iterator
+					j = arStats[i].begin();
+					j != arStats[i].end();
+					++j)
+			{
+				if (j->first != "NO_UFO")
+				{
+					std::wostringstream woststr;
+					woststr << j->second;
+
+					arList[i]->addRow(
+									2,
+									tr(j->first).c_str(),
+									woststr.str().c_str());
+					arList[i]->setCellColor(r++, 0u, _color1stCol);
+				}
+			}
+		}
+
+
+	//	if (_game->getRuleset()->getAwardsList().empty() == true) return;
+
+		const RuleAward* awardRule;
+		std::string
+			type,
+			qualifier;
+
+		for (std::vector<SoldierAward*>::const_iterator // Award stats ->
+				i = _diary->getSoldierAwards().begin();
+				i != _diary->getSoldierAwards().end();
+				++i)
+		{
+			type = (*i)->getType();
+			_awardTypes.push_back(type);
+
+			qualifier = (*i)->getQualifier();
+
+			awardRule = _game->getRuleset()->getAwardsList().at(type);
+			std::wostringstream
+				woststr1,
+				woststr2;
+
+			if (qualifier == "noQual")
+			{
+				woststr1 << tr(type);
+				woststr2 << tr(awardRule->getDescription());
+			}
+			else
+			{
+				woststr1 << tr(type).arg(tr(qualifier));
+				woststr2 << tr(awardRule->getDescription()).arg(tr(qualifier));
+			}
+
+			_lstAwards->addRow(
+							3,
+							woststr1.str().c_str(),
+							tr((*i)->getGradeString()).c_str(),
+							tr((*i)->getClassString()).c_str());
+
+			_awardsList.push_back(woststr2.str());
+			drawMedals();
+		}
 	}
 }
 
@@ -737,6 +757,20 @@ void SoldierDiaryPerformanceState::lstMouseOut(Action*)
 }
 
 /**
+ * Opens the Ufopaedia article for a clicked Award.
+ * @param action - pointer to an Action
+ */
+void SoldierDiaryPerformanceState::lstMouseClick(Action*)
+{
+	const size_t r (_lstAwards->getSelectedRow());
+	if (r != std::numeric_limits<size_t>::max())
+	{
+		_init = false; // do not scroll the list to top.
+		Ufopaedia::openArticle(_game, _awardTypes[r]);
+	}
+}
+
+/**
  * Goes to the previous Soldier.
  * @param action - pointer to an Action
  */
@@ -764,7 +798,7 @@ void SoldierDiaryPerformanceState::btnNextClick(Action*)
 
 /**
  * Runs state functionality every cycle.
- * @note Used to update award-sprites vector.
+ * @note Keeps the award-sprites in sync with the list-scroll.
  */
 void SoldierDiaryPerformanceState::think()
 {
