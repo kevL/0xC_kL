@@ -498,8 +498,7 @@ void PurchaseState::btnOkClick(Action*)
 						Soldier* const sol (rules->genSoldier(
 															_game->getSavedGame(),
 															_soldiers[sel]));
-						SoldierDiary* const diary (sol->getDiary());
-						diary->awardServiceMedal();
+						sol->getDiary()->awardHonorMedal();
 						transfer->setSoldier(sol);
 						_base->getTransfers()->push_back(transfer);
 					}
@@ -537,14 +536,11 @@ void PurchaseState::btnOkClick(Action*)
 					break;
 
 				case PST_ITEM:
-				{
-					const RuleItem* const itRule (rules->getItemRule(_items[getItemIndex(sel)]));
-					transfer = new Transfer(itRule->getTransferTime());
+					transfer = new Transfer(rules->getItemRule(_items[getItemIndex(sel)])->getTransferTime());
 					transfer->setTransferItems(
 										_items[getItemIndex(sel)],
 										_orderQty[sel]);
 					_base->getTransfers()->push_back(transfer);
-				}
 			}
 		}
 	}

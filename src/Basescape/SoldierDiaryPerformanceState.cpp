@@ -742,17 +742,6 @@ void SoldierDiaryPerformanceState::lstMouseOut(Action*)
  */
 void SoldierDiaryPerformanceState::btnPrevClick(Action*)
 {
-	_lstRank			->scrollTo(); // reset scroll-depth for lists
-	_lstRace			->scrollTo();
-	_lstWeapon			->scrollTo();
-	_lstKillTotals		->scrollTo();
-	_lstLocation		->scrollTo();
-	_lstType			->scrollTo();
-	_lstUFO				->scrollTo();
-	_lstMissionTotals	->scrollTo();
-	_lstAwards			->scrollTo();
-	_lastScroll			= 0u;
-
 	if (_solId == 0u)
 		_solId = _rows - 1u;
 	else
@@ -767,17 +756,6 @@ void SoldierDiaryPerformanceState::btnPrevClick(Action*)
  */
 void SoldierDiaryPerformanceState::btnNextClick(Action*)
 {
-	_lstRank			->scrollTo(); // reset scroll-depth for lists
-	_lstRace			->scrollTo();
-	_lstWeapon			->scrollTo();
-	_lstKillTotals		->scrollTo();
-	_lstLocation		->scrollTo();
-	_lstType			->scrollTo();
-	_lstUFO				->scrollTo();
-	_lstMissionTotals	->scrollTo();
-	_lstAwards			->scrollTo();
-	_lastScroll			= 0u;
-
 	if (++_solId == _rows)
 		_solId = 0u;
 

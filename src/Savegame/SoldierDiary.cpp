@@ -180,7 +180,7 @@ SoldierDiary::~SoldierDiary()
  * @param assignThat - reference to a SoldierDiary to assign to this diary
  * @return, reference to the fresh diary
  */
-SoldierDiary& SoldierDiary::operator= (const SoldierDiary& assignThat)
+SoldierDiary& SoldierDiary::operator =(const SoldierDiary& assignThat)
 {
 	if (this != &assignThat)
 	{
@@ -451,7 +451,7 @@ void SoldierDiary::postTactical(
 }
 
 /**
- * Gets the SoldierAwards in this SoldierDiary.
+ * Accesses the SoldierAwards in this SoldierDiary.
  * @return, reference to a vector of pointers to SoldierAward
  */
 std::vector<SoldierAward*>& SoldierDiary::getSoldierAwards()
@@ -499,12 +499,12 @@ bool SoldierDiary::updateAwards(
 		* weaponRule,
 		* loadRule;
 
-	int iter (1); // debug.
+//	int iter (1); // debug.
 	const std::map<std::string, const RuleAward*>& allAwards (rules->getAwardsList()); // loop over all RuleAwards ->
 	for (std::map<std::string, const RuleAward*>::const_iterator
 			i = allAwards.begin();
 			i != allAwards.end();
-			++iter) // debug.
+			/*++iter*/) // debug.
 	{
 		const std::string& awardType (i->first);
 		const RuleAward* const awardRule (i->second);
@@ -548,7 +548,7 @@ bool SoldierDiary::updateAwards(
 		if (levelRequired["noQual"] == levels.size())	// use the "noQual" entry assigned above just to find out what the highest level is.
 		{												// ... in practice it's always "10"
 			//Log(LOG_INFO) << ". . . max level reached - go to next Award";
-			iter = 0; // debug.
+//			iter = 0; // debug.
 			++i;
 			continue;
 		}
@@ -590,7 +590,7 @@ bool SoldierDiary::updateAwards(
 			|| (criteriaType == "totalIsMissing"			&& _mia < val))
 		{
 			//Log(LOG_INFO) << ". . . no Total Award - go to next Award";
-			iter = 0; // debug.
+//			iter = 0; // debug.
 			++i;
 			continue;
 		}
@@ -640,7 +640,7 @@ bool SoldierDiary::updateAwards(
 			if (qualifiers.empty() == true)							// if 'qualifiers' is still empty soldier did not get an award.
 			{
 				//Log(LOG_INFO) << ". . . . no Award w/ weapon,region,race,rank - go to next Award";
-				iter = 0; // debug.
+//				iter = 0; // debug.
 				++i;
 				continue;
 			}
@@ -947,7 +947,7 @@ bool SoldierDiary::updateAwards(
 			if (qtySuccess_or < levels.at(levelRequired["noQual"]))
 			{
 				//Log(LOG_INFO) << ". . . . orCriteria has NOT been met - go to next Award";
-				iter = 0; // debug.
+//				iter = 0; // debug.
 				++i;
 				continue;
 			}
@@ -1656,7 +1656,7 @@ void SoldierDiary::awardOriginalEight()
 /**
  * Awards an honorary medal upon joining team-xCom.
  */
-void SoldierDiary::awardServiceMedal()
+void SoldierDiary::awardHonorMedal()
 {
 	_solAwards.push_back(new SoldierAward(
 									"STR_MEDAL_HONOR_CROSS",

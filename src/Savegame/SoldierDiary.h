@@ -136,7 +136,7 @@ private:
 		~SoldierDiary();
 
 		/// Overloads the SoldierDiary's assignment-operator.
-		SoldierDiary& operator= (const SoldierDiary& assignThat);
+		SoldierDiary& operator =(const SoldierDiary& assignThat);
 
 		/// Loads the SoldierDiary from YAML.
 		void load(const YAML::Node& node);
@@ -148,7 +148,7 @@ private:
 				BattleUnitStatistics* const tacstats,
 				const TacticalStatistics* const tactical);
 
-		/// Gets the SoldierAwards currently in the SoldierDiary.
+		/// Accesses the SoldierAwards currently in the SoldierDiary.
 		std::vector<SoldierAward*>& getSoldierAwards();
 
 		/// Manages SoldierAwards and returns true if a medal is awarded.
@@ -223,7 +223,7 @@ private:
 		/// Awards a special medal to the original 8 Soldiers.
 		void awardOriginalEight();
 		/// Awards an honorary medal upon joining team-xCom.
-		void awardServiceMedal();
+		void awardHonorMedal();
 
 		/// Gets the mission-ID list.
 		const std::vector<int>& getTacticalIdList() const;
