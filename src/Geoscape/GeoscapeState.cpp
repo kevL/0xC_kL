@@ -2872,8 +2872,7 @@ void GeoscapeState::time1Day()
 					crackRequested = true; // <- not implemented yet. See above^
 				}
 
-				std::vector<const RuleResearch*> popupResearch;	// these RuleResearch entries will be RG_UNLOCKED by ResearchUnlockedState.
-																// Ps. not anymore - tabulatePopupResearch() now does that.
+				std::vector<const RuleResearch*> popupResearch;
 
 				const RuleResearch* gofRule (nullptr);
 				if (crackGof == true && resRule->getGetOneFree().empty() == false)
@@ -2918,7 +2917,7 @@ void GeoscapeState::time1Day()
 
 				resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
 
-				if (resRulePedia != nullptr)	// check for need to research the clip before the weapon itself is allowed to be manufactured.
+				if (resRulePedia != nullptr)	// check for need to research a clip before the weapon itself can be manufactured.
 				{								// NOTE: Appears only if research has never been discovered before.
 					const std::string& parentType (resRule->getType());
 
@@ -2934,15 +2933,11 @@ void GeoscapeState::time1Day()
 							if (_gameSave->isResearched(required) == false)
 							{
 								const std::string& dependentType (parentRule->getAcceptedLoadTypes()->front());
-
-//								const RuleItem* const dependentRule (_rules->getItemRule(dependentType));
-//								if (dependentRule != nullptr &&
 								if (std::find(
 											required.begin(),
 											required.end(),
 											dependentType) != required.end())
 								{
-//									resEvents.push_back(new ResearchRequiredState(parentRule));
 									resEvents.push_back(new ResearchRequiredState(parentType, dependentType));
 								}
 							}

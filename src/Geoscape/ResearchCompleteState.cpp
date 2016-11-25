@@ -103,14 +103,9 @@ ResearchCompleteState::ResearchCompleteState(
 								Options::keyOkKeypad);
 	}
 
-//	if (resRule != nullptr) // resRule is always valid <-
-//	{
 	_txtResearch->setText(tr(resRule->getType()));
 	_txtResearch->setAlign(ALIGN_CENTER);
 	_txtResearch->setBig();
-//	}
-//	else
-//		_txtResearch->setVisible(false);
 }
 
 /**

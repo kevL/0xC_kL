@@ -60,6 +60,10 @@ class Text
 {
 
 private:
+	static const int
+		CONTRAST_LOW  = 1,
+		CONTRAST_HIGH = 3;
+
 	bool
 		_indent,
 		_invert,

@@ -651,7 +651,7 @@ void BaseInfoState::miniMouseOver(Action*)
 		const Base* const base (_baseList->at(baseId));
 		if (base != _base)
 		{
-			_txtHoverBase->setText(base->getLabel().c_str());
+			_txtHoverBase->setText(base->getLabel());
 
 			for (std::vector<Region*>::const_iterator
 					i = _game->getSavedGame()->getRegions()->begin();

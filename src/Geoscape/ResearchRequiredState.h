@@ -48,7 +48,6 @@ private:
 
 	public:
 		/// Creates a ResearchRequired state.
-//		explicit ResearchRequiredState(const RuleItem* const itRule);
 		ResearchRequiredState(
 				const std::string& parentType,
 				const std::string& dependentType);

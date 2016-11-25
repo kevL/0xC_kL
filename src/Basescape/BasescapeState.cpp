@@ -731,16 +731,17 @@ void BasescapeState::layoutMouseOver(Action*)
 			const size_t baseId (_miniBases->getHoveredBase());
 			if (baseId < _baseList->size())
 			{
-				if (_base != _baseList->at(baseId))
+				const Base* const base (_baseList->at(baseId));
+				if (base != _base)
 				{
 					_txtFacility->setAlign(ALIGN_RIGHT);
-					woststr << _baseList->at(baseId)->getLabel().c_str();
+					woststr << base->getLabel();
 				}
 			}
-			else if (baseId == _baseList->size() && baseId < Base::MAX_BASES)
+			else if (baseId < Base::MAX_BASES && baseId == _baseList->size())
 			{
 				_txtFacility->setAlign(ALIGN_RIGHT);
-				woststr << tr("STR_BUILD_NEW_BASE");
+				woststr << tr("STR_BUILD_NEW_BASE_").arg(baseId + 1);
 			}
 		}
 		_txtFacility->setText(woststr.str());

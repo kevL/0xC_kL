@@ -54,7 +54,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Intercept window.
- * @param base		- pointer to Base to show contained crafts (default nullptr to show all crafts)
+ * @param base		- pointer to Base to show crafts (default nullptr to show all crafts)
  * @param geoState	- pointer to GeoscapeState (default nullptr)
  */
 InterceptState::InterceptState(
@@ -153,7 +153,7 @@ InterceptState::InterceptState(
 					j != (*i)->getCrafts()->end();
 					++j)
 			{
-				_bases.push_back((*i)->getLabel().c_str());
+				_bases.push_back((*i)->getLabel());
 				_crafts.push_back(*j);
 
 				std::wostringstream

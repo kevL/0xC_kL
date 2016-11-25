@@ -77,7 +77,7 @@ en-US:
   STR_GEOSCAPE_UC: "geoScape"
   STR_NAME: "NAME"
   STR_AREA: "Area"
-  STR_BUILD_NEW_BASE: "Build New Base"
+  STR_BUILD_NEW_BASE_: "Build Base {0}"
   STR_CANCEL: "Cancel"
   STR_COST_UC: "COST> "
   STR_CONSTRUCTION_TIME_UC: "CONSTRUCTION TIME> "

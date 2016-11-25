@@ -378,7 +378,7 @@ void ManufactureState::miniMouseOver(Action*)
 		const Base* const base (_baseList->at(baseId));
 		if (base != _base && base->hasProduction() == true)
 		{
-			_txtHoverBase->setText(base->getLabel().c_str());
+			_txtHoverBase->setText(base->getLabel());
 			return;
 		}
 	}

@@ -54,7 +54,7 @@ Text::Text(
 		_lang(nullptr),
 		_wrap(false),
 		_invert(false),
-		_contrast(1),
+		_contrast(CONTRAST_LOW),
 		_indent(false),
 		_align(ALIGN_LEFT),
 		_valign(ALIGN_TOP),
@@ -205,12 +205,12 @@ void Text::setText(const std::wstring& text)
 
 	processText();
 
-	if (_font == _big // if big Font won't fit the space try small Font
-		&& (getTextWidth() > getWidth() || getTextHeight() > getHeight())
-		&& _text[_text.size() - 1u] != L'.')
-	{
-		setSmall();
-	}
+//	if (_font == _big // if big Font won't fit the space try small Font
+//		&& (getTextWidth() > getWidth() || getTextHeight() > getHeight())
+//		&& _text[_text.size() - 1u] != L'.')
+//	{
+//		setSmall();
+//	} // screw font.
 }
 
 /**
@@ -260,8 +260,8 @@ void Text::setInvert(bool invert)
  */
 void Text::setHighContrast(bool contrast)
 {
-	if (contrast == true)	_contrast = 3;
-	else					_contrast = 1;
+	if (contrast == true)	_contrast = CONTRAST_HIGH;
+	else					_contrast = CONTRAST_LOW;
 
 	_redraw = true;
 }
@@ -272,7 +272,7 @@ void Text::setHighContrast(bool contrast)
  */
 bool Text::getHighContrast() const
 {
-	return (_contrast != 1);
+	return (_contrast == CONTRAST_HIGH);
 }
 
 /**
