@@ -57,7 +57,7 @@ static size_t recallRow;
  */
 StoresMatrixState::StoresMatrixState(const Base* base)
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(300, 17,  10, 8);
 	_txtBaseLabel	= new Text( 80,  9, 224, 8);

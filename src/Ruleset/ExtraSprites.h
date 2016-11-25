@@ -27,13 +27,14 @@ namespace OpenXcom
 {
 
 /**
- * For adding a set of extra sprite data to the game.
+ * For adding a set of extra-sprite data.
  */
 class ExtraSprites final
 {
 
 private:
-	bool _singleImage;
+	bool _singleImage;	// ie. is loaded as just a single Surface.
+						// is *not* a SurfaceSet or a frame thereof.
 	int
 		_width,
 		_height,
@@ -44,35 +45,35 @@ private:
 	std::map<int, std::string> _sprites;
 
 
-public:
-	/// Creates a blank external sprite set.
-	ExtraSprites();
-	/// Cleans up the external sprite set.
-	virtual ~ExtraSprites();
+	public:
+		/// Creates a blank external sprite-set.
+		ExtraSprites();
+		/// Cleans up the external sprite-set.
+		virtual ~ExtraSprites();
 
-	/// Loads the data from YAML.
-	void load(
-			const YAML::Node& node,
-			int modIndex);
+		/// Loads the data from YAML.
+		void load(
+				const YAML::Node& node,
+				int modIndex);
 
-	/// Gets the list of sprites defined by this mod.
-	std::map<int, std::string>* getSprites();
+		/// Gets the list of sprites defined in rulesets.
+		std::map<int, std::string>* getSprites();
 
-	/// Gets the width of the surfaces (used for single images and new spritesets).
-	int getWidth() const;
-	/// Gets the height of the surfaces (used for single images and new spritesets).
-	int getHeight() const;
+		/// Gets the width of the surfaces (used for single images and new sprite-sets).
+		int getWidth() const;
+		/// Gets the height of the surfaces (used for single images and new sprite-sets).
+		int getHeight() const;
 
-	/// Checks if this is a single surface or a set of surfaces.
-	bool getSingleImage() const;
+		/// Checks if this is a single Surface or part of a SurfaceSet..
+		bool isSingleImage() const;
 
-	/// Gets the mod index for this external sprite set.
-	int getModIndex() const;
+		/// Gets the mod-index for this external sprite-set.
+		int getModIndex() const;
 
-	/// Gets the x subdivision.
-	int getSubX() const;
-	/// Gets the y subdivision.
-	int getSubY() const;
+		/// Gets the x-subdivision.
+		int getSubX() const;
+		/// Gets the y-subdivision.
+		int getSubY() const;
 };
 
 }

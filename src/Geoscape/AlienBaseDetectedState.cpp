@@ -59,7 +59,7 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 		_aBase(aBase)
 //		_geoState(geoState)
 {
-	_window		= new Window(this, 320, 200);
+	_window		= new Window(this);
 	_txtTitle	= new Text(300, 180, 10, 0);
 	_btnOk		= new TextButton(100, 16, 110, 180);
 

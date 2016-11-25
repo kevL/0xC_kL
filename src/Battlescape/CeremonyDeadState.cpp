@@ -48,7 +48,7 @@ namespace OpenXcom
  */
 CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 {
-	_window				= new Window(this, 320, 200);
+	_window				= new Window(this);
 	_txtTitle			= new Text(300, 16, 10, 8);
 	_lstSoldiersLost	= new TextList(285, 145, 16, 29); // 18 rows.
 //	_lstSoldiersLost	= new TextList(285,   9, 16, 26);

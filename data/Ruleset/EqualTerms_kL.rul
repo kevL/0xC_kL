@@ -29,6 +29,7 @@ items:
 #    autoRange: 5
 #    dropoff: 5
     autoShots: 6
+
 #------------------------------------------------------------------------------
   - type: STR_MACHINE_PISTOL_CLIP
     listOrder: 2002
@@ -46,6 +47,7 @@ items:
     fullClip: 18
     battleType: 2
     armor: 12
+
 #------------------------------------------------------------------------------
   - type: STR_MAGNUM
     listOrder: 2003
@@ -71,6 +73,7 @@ items:
 #    snapRange: 15
 #    minRange: 1
 #    dropoff: 4
+
 #------------------------------------------------------------------------------
   - type: STR_MAGNUM_AMMO
     listOrder: 2004
@@ -88,6 +91,7 @@ items:
     fullClip: 5
     battleType: 2
     armor: 12
+
 #------------------------------------------------------------------------------
   - type: STR_SMG
     listOrder: 2255
@@ -117,6 +121,7 @@ items:
 #    snapRange: 17
 #    dropoff: 3
     autoShots: 5
+
 #------------------------------------------------------------------------------
   - type: STR_SMG_CLIP
     listOrder: 2256
@@ -136,6 +141,7 @@ items:
     battleType: 2
     invWidth: 1
     invHeight: 1
+
 #------------------------------------------------------------------------------
   - type: STR_ASSAULT_RIFLE
     listOrder: 2201
@@ -166,6 +172,7 @@ items:
 #    minRange: 3
 #    dropoff: 3
     autoShots: 5
+
 #------------------------------------------------------------------------------
   - type: STR_ASSAULT_RIFLE_CLIP
     listOrder: 2202
@@ -182,6 +189,7 @@ items:
     damageType: 1
     fullClip: 25
     battleType: 2
+
 #------------------------------------------------------------------------------
   - type: STR_MARKSMANS_RIFLE
     listOrder: 2205
@@ -208,6 +216,7 @@ items:
 #    snapRange: 35
 #    minRange: 4
 #    dropoff: 2
+
 #------------------------------------------------------------------------------
   - type: STR_MARKSMANS_RIFLE_CLIP
     listOrder: 2206
@@ -227,6 +236,7 @@ items:
     battleType: 2
     invWidth: 1
     invHeight: 1
+
 #------------------------------------------------------------------------------
   - type: STR_SNIPER_RIFLE
     listOrder: 2210
@@ -253,6 +263,7 @@ items:
 #    snapRange: 15
 #    minRange: 8
 #    dropoff: 2
+
 #------------------------------------------------------------------------------
   - type: STR_SNIPER_RIFLE_AMMO
     listOrder: 2211
@@ -271,6 +282,7 @@ items:
     battleType: 2
     invWidth: 1
     invHeight: 1
+
 #------------------------------------------------------------------------------
   - type: STR_SAW
     listOrder: 2250
@@ -301,6 +313,7 @@ items:
 #    minRange: 3
 #    dropoff: 2
     autoShots: 7
+
 #------------------------------------------------------------------------------
   - type: STR_SAW_AP_AMMO
     listOrder: 2251
@@ -319,6 +332,7 @@ items:
     battleType: 2
     invWidth: 2
     invHeight: 1
+
 #------------------------------------------------------------------------------
   - type: STR_SHOTGUN
     listOrder: 2270
@@ -344,6 +358,7 @@ items:
 #    aimRange: 20
 #    snapRange: 8
 #    dropoff: 5
+
 #------------------------------------------------------------------------------
   - type: STR_REINFORCED_SHOTGUN
     listOrder: 2271
@@ -371,6 +386,7 @@ items:
 #    dropoff: 5
     reqResearch:
       - STR_REINFORCED_SHOTGUN
+
 #------------------------------------------------------------------------------
   - type: STR_SHOTGUN_SHELLS
     listOrder: 2272
@@ -389,6 +405,7 @@ items:
     battleType: 2
     shotgunPellets: 8
     shotgunPattern: 8
+
 #------------------------------------------------------------------------------
   - type: STR_ALLOY_SHOTGUN_SHELLS
     listOrder: 2273
@@ -408,6 +425,7 @@ items:
     shotgunPattern: 6
     reqResearch:
       - STR_ALLOY_SHOTGUN_SHELLS
+
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
     listOrder: 2274
@@ -427,6 +445,7 @@ items:
     shotgunPattern: 4
     reqResearch:
       - STR_ELERIUM_SHOTGUN_SHELLS
+
 #------------------------------------------------------------------------------
   - type: STR_INCENDIARY_GRENADE
     listOrder: 3905
@@ -444,6 +463,7 @@ items:
     blastRadius: 2
 #    explosionSpeed:
     tuPrime: 45
+
 #------------------------------------------------------------------------------
   - type: STR_SSRL
     listOrder: 3404
@@ -477,6 +497,7 @@ items:
     damageType: 3 #HE
     blastRadius: 2
 #    explosionSpeed:
+
 #------------------------------------------------------------------------------
   - type: STR_APFSDS_ROCKET
     listOrder: 3401
@@ -495,6 +516,7 @@ items:
     twoHanded: true
     invWidth: 1
     invHeight: 3
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
   - type: STR_ROCKET_LAUNCHER
@@ -526,6 +548,7 @@ items:
 #    snapRange: 15
 #    minRange: 10
 #    dropoff: 1
+
 #------------------------------------------------------------------------------
 #  - type: STR_SMALL_ROCKET
 #    listOrder: 2302
@@ -543,16 +566,19 @@ items:
 #    battleType: 2
 #    invWidth: 1
 #    invHeight: 2
+
 #------------------------------------------------------------------------------
 #  - type: STR_LARGE_ROCKET
 #    listOrder: 2304
 #    power: 150
 #    blastRadius: 9
+
 #------------------------------------------------------------------------------
 #  - type: STR_INCENDIARY_ROCKET
 #    listOrder: 2305
 #    power: 120
 #    blastRadius: 11
+
 #------------------------------------------------------------------------------
 #  - type: STR_LASER_PISTOL
 #    power: 45 # 46
@@ -568,6 +594,7 @@ items:
 #    autoRange: 9 # 0
 #    dropoff: 1 # 0
 #    autoShots: 4 # 0
+
 #------------------------------------------------------------------------------
 #  - type: STR_LASER_RIFLE
 #    accuracyAuto: 55 # 46
@@ -583,6 +610,7 @@ items:
 #    minRange: 3
 #    dropoff: 1 # 0
 #    autoShots: 3 # 0
+
 #------------------------------------------------------------------------------
 #  - type: STR_HEAVY_LASER
 #    power: 120 # 85
@@ -595,6 +623,7 @@ items:
 #    snapRange: 13 # 0
 #    minRange: 8
 #    dropoff: 1 # 0
+
 #------------------------------------------------------------------------------
 #  - type: STR_HEAVY_PLASMA
 #    accuracyAuto: 42 # 50
@@ -609,9 +638,11 @@ items:
 #    autoRange: 25 # 0
 #    minRange: 6
 #    dropoff: 3 # 0
+
 #------------------------------------------------------------------------------
 #  - type: STR_HEAVY_PLASMA_CLIP
 #    power: 110 # 115
+
 #------------------------------------------------------------------------------
 #  - type: STR_PLASMA_RIFLE
 #    accuracyAuto: 40 # 55
@@ -626,6 +657,7 @@ items:
 #    autoRange: 20 # 0
 #    minRange: 4
 #    dropoff: 2 # 0
+
 #------------------------------------------------------------------------------
 #  - type: STR_PLASMA_PISTOL
 #    accuracyAuto: 38 # 50
@@ -639,22 +671,27 @@ items:
 #    snapRange: 8 # 0
 #    autoRange: 8 # 0
 #    dropoff: 3 # 0
+
 #------------------------------------------------------------------------------
 #  - type: STR_PLASMA_PISTOL_CLIP
 #    power: 65 # 52
+
 #------------------------------------------------------------------------------
 #  - type: STR_GRENADE
 #    weight: 2 # 3
 #    power: 75 # 50
+
 #------------------------------------------------------------------------------
 #  - type: STR_HIGH_EXPLOSIVE
 #    weight: 4 # 6
 #    power: 150 # 110
 #    blastRadius: 2 # 0
+
 #------------------------------------------------------------------------------
 #  - type: STR_ALIEN_GRENADE
 #    power: 100 #90
 #    blastRadius: 6 # 5
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #  - type: STR_STREET_ARCTIC
@@ -662,6 +699,7 @@ items:
 #    costBuy: 4000
 #    costSell: 3100
 #    listOrder: 7305
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_STREET_ARCTIC
     label: STR_CORPSE
@@ -674,12 +712,14 @@ items:
     battleType: 11
     twoHanded: true
     recover: false
+
 #------------------------------------------------------------------------------
 #  - type: STR_STREET_JUNGLE
 #    size: 0.8
 #    costBuy: 4000
 #    costSell: 3100
 #    listOrder: 7310
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_STREET_JUNGLE
     label: STR_CORPSE
@@ -692,12 +732,14 @@ items:
     battleType: 11
     twoHanded: true
     recover: false
+
 #------------------------------------------------------------------------------
 #  - type: STR_STREET_URBAN
 #    size: 0.8
 #    costBuy: 4000
 #    costSell: 3100
 #    listOrder: 7315
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_STREET_URBAN
     label: STR_CORPSE
@@ -710,6 +752,7 @@ items:
     battleType: 11
     twoHanded: true
     recover: false
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
   - type: STR_KEVLAR_ARCTIC
@@ -718,6 +761,7 @@ items:
     costSell: 3100
     listOrder: 7305
     noResearch: true
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_KEVLAR_ARCTIC
     label: STR_CORPSE
@@ -728,6 +772,7 @@ items:
     invHeight: 3
     armor: 30
     recover: false
+
 #------------------------------------------------------------------------------
   - type: STR_KEVLAR_JUNGLE
     size: 0.8
@@ -735,6 +780,7 @@ items:
     costSell: 3100
     listOrder: 7310
     noResearch: true
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_KEVLAR_JUNGLE
     label: STR_CORPSE
@@ -745,6 +791,7 @@ items:
     invHeight: 3
     armor: 30
     recover: false
+
 #------------------------------------------------------------------------------
   - type: STR_KEVLAR_URBAN
     size: 0.8
@@ -752,6 +799,7 @@ items:
     costSell: 3100
     listOrder: 7315
     noResearch: true
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_KEVLAR_URBAN
     label: STR_CORPSE
@@ -762,6 +810,7 @@ items:
     invHeight: 3
     armor: 30
     recover: false
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
   - type: STR_TACTICAL_ARCTIC
@@ -770,6 +819,7 @@ items:
     costSell: 4500
     listOrder: 7320
     noResearch: true
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_TACTICAL_ARCTIC
     label: STR_CORPSE
@@ -780,6 +830,7 @@ items:
     invHeight: 3
     armor: 30
     recover: false
+
 #------------------------------------------------------------------------------
   - type: STR_TACTICAL_JUNGLE
     size: 0.8
@@ -787,6 +838,7 @@ items:
     costSell: 4500
     listOrder: 7325
     noResearch: true
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_TACTICAL_JUNGLE
     label: STR_CORPSE
@@ -797,6 +849,7 @@ items:
     invHeight: 3
     armor: 30
     recover: false
+
 #------------------------------------------------------------------------------
   - type: STR_TACTICAL_URBAN
     size: 0.8
@@ -804,6 +857,7 @@ items:
     costSell: 4500
     listOrder: 7330
     noResearch: true
+
 #------------------------------------------------------------------------------
   - type: STR_CORPSE_TACTICAL_URBAN
     label: STR_CORPSE
@@ -814,6 +868,7 @@ items:
     invHeight: 3
     armor: 30
     recover: false
+
 #------------------------------------------------------------------------------
 # Adjustment to armor
 #------------------------------------------------------------------------------
@@ -860,6 +915,7 @@ items:
 #  - type: STR_AC_I_AMMO
 #    require: STR_ALIENS_ONLY
 #    costBuy: 0
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 armors:
@@ -893,6 +949,7 @@ armors:
       - 1.12 #smoke
     loftSet: [3]
     agility: 1
+
 #------------------------------------------------------------------------------
   - type: STR_STREET_JUNGLE_UC
 #    spriteSheet: XCOM_0j.PCK
@@ -923,6 +980,7 @@ armors:
       - 1.12 #smoke
     loftSet: [3]
     agility: 1
+
 #------------------------------------------------------------------------------
   - type: STR_STREET_URBAN_UC
 #    spriteSheet: XCOM_0u.PCK
@@ -953,6 +1011,7 @@ armors:
       - 1.12 #smoke
     loftSet: [3]
     agility: 1
+
 #------------------------------------------------------------------------------
   - type: STR_KEVLAR_ARCTIC_UC
     spriteSheet: XCOM_1a.PCK
@@ -987,6 +1046,7 @@ armors:
       - 1.0
       - 1.0
     loftSet: [3]
+
 #------------------------------------------------------------------------------
   - type: STR_KEVLAR_JUNGLE_UC
     spriteSheet: XCOM_1j.PCK
@@ -1021,6 +1081,7 @@ armors:
       - 1.0
       - 1.0
     loftSet: [3]
+
 #------------------------------------------------------------------------------
   - type: STR_KEVLAR_URBAN_UC
     spriteSheet: XCOM_1u.PCK
@@ -1055,6 +1116,7 @@ armors:
       - 1.0
       - 1.0
     loftSet: [3]
+
 #------------------------------------------------------------------------------
   - type: STR_TACTICAL_ARCTIC_UC
     spriteSheet: XCOM_1DSa.PCK
@@ -1089,6 +1151,7 @@ armors:
       - 1.0
       - 1.0
     loftSet: [3]
+
 #------------------------------------------------------------------------------
   - type: STR_TACTICAL_JUNGLE_UC
     spriteSheet: XCOM_1DSj.PCK
@@ -1123,6 +1186,7 @@ armors:
       - 1.0
       - 1.0
     loftSet: [3]
+
 #------------------------------------------------------------------------------
   - type: STR_TACTICAL_URBAN_UC
     spriteSheet: XCOM_1DSu.PCK
@@ -1157,6 +1221,7 @@ armors:
       - 1.0
       - 1.0
     loftSet: [3]
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 ufopaedia:
@@ -1182,51 +1247,61 @@ ufopaedia:
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_MACHINE_PISTOL_UFOPEDIA
+
   - id: STR_MAGNUM
     listOrder: 2008
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_MAGNUM_UFOPEDIA
+
   - id: STR_ASSAULT_RIFLE
     listOrder: 2206
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_ASSAULT_RIFLE_UFOPEDIA
+
   - id: STR_SNIPER_RIFLE
     listOrder: 2406
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_SNIPER_RIFLE_UFOPEDIA
+
   - id: STR_SAW
     listOrder: 2806
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_SAW_UFOPEDIA
+
   - id: STR_MARKSMANS_RIFLE
     listOrder: 2906
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_MARKSMANS_RIFLE_UFOPEDIA
+
   - id: STR_SMG
     listOrder: 3006
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_SMG_UFOPEDIA
+
   - id: STR_SSRL
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_SSRL_UFOPEDIA
     listOrder: 3201
+
 #  - id: STR_ROCKET_LAUNCHER
 #    type_id: 4
 #    section: STR_WEAPONS_AND_EQUIPMENT
 #    text: STR_ROCKET_LAUNCHER_UFOPEDIA
 #    listOrder: 3301
+
   - id: STR_SHOTGUN
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_SHOTGUN_UFOPEDIA
     listOrder: 2101
+
   - id: STR_REINFORCED_SHOTGUN
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
@@ -1234,48 +1309,60 @@ ufopaedia:
     listOrder: 2102
     reqResearch:
       - STR_REINFORCED_SHOTGUN
+
   - id: STR_INCENDIARY_GRENADE
     listOrder: 3911
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_INCENDIARY_GRENADE_UFOPEDIA
+
 #------------------------------------------------------------------------------
 # Do not show AMMO entries
 #------------------------------------------------------------------------------
   - id: STR_MACHINE_PISTOL_CLIP
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_MAGNUM_AMMO
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_ASSAULT_RIFLE_CLIP
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_SNIPER_RIFLE_AMMO
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_SAW_AP_AMMO
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_MARKSMANS_RIFLE_CLIP
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_SMG_CLIP
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_SHOTGUN_SHELLS
     type_id: 4
     section: STR_NOT_AVAILABLE
+
   - id: STR_ALLOY_SHOTGUN_SHELLS
     type_id: 4
     section: STR_NOT_AVAILABLE
     reqResearch:
       - STR_ALLOY_SHOTGUN_SHELLS
+
   - id: STR_ELERIUM_SHOTGUN_SHELLS
     type_id: 4
     section: STR_NOT_AVAILABLE
     reqResearch:
       - STR_ELERIUM_SHOTGUN_SHELLS
+
 #------------------------------------------------------------------------------
 # ARMORs
 #------------------------------------------------------------------------------
@@ -1284,31 +1371,37 @@ ufopaedia:
     section: STR_WEAPONS_AND_EQUIPMENT
     listOrder: 1970
     text: STR_KEVLAR_ARCTIC_UFOPEDIA
+
   - id: STR_KEVLAR_JUNGLE_UC
     type_id: 5
     section: STR_WEAPONS_AND_EQUIPMENT
     listOrder: 1971
     text: STR_KEVLAR_JUNGLE_UFOPEDIA
+
   - id: STR_KEVLAR_URBAN_UC
     type_id: 5
     section: STR_WEAPONS_AND_EQUIPMENT
     listOrder: 1972
     text: STR_KEVLAR_URBAN_UFOPEDIA
+
   - id: STR_TACTICAL_ARCTIC_UC
     type_id: 5
     section: STR_WEAPONS_AND_EQUIPMENT
     listOrder: 1960
     text: STR_TACTICAL_ARCTIC_UFOPEDIA
+
   - id: STR_TACTICAL_JUNGLE_UC
     type_id: 5
     section: STR_WEAPONS_AND_EQUIPMENT
     listOrder: 1961
     text: STR_TACTICAL_JUNGLE_UFOPEDIA
+
   - id: STR_TACTICAL_URBAN_UC
     type_id: 5
     section: STR_WEAPONS_AND_EQUIPMENT
     listOrder: 1962
     text: STR_TACTICAL_URBAN_UFOPEDIA
+
 #------------------------------------------------------------------------------
 # Disable deleted weapons
 #------------------------------------------------------------------------------
@@ -1332,29 +1425,31 @@ ufopaedia:
 #    radarChance: 15
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
+
 research:
 #------------------------------------------------------------------------------
   - type: STR_REINFORCED_SHOTGUN
     listOrder: 901
     cost: 800
     points: 10
-    prerequisite:
-      - STR_ALIEN_ALLOYS
+    requested:
+      - STR_ALLOY_SHOTGUN_SHELLS
+
 #------------------------------------------------------------------------------
   - type: STR_ALLOY_SHOTGUN_SHELLS
     listOrder: 902
     cost: 400
     points: 10
-    prerequisite:
-      - STR_REINFORCED_SHOTGUN
+
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
     listOrder: 903
     cost: 500
     points: 10
-    prerequisite:
+    requisite:
       - STR_ALLOY_SHOTGUN_SHELLS
       - STR_ELERIUM_115
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 manufacture:
@@ -1369,6 +1464,7 @@ manufacture:
     cost: 18000
     partsRequired:
       STR_ALIEN_ALLOYS: 3
+
 #------------------------------------------------------------------------------
   - type: STR_ALLOY_SHOTGUN_SHELLS
     listOrder: 1102
@@ -1380,6 +1476,7 @@ manufacture:
     cost: 2000
     partsRequired:
       STR_ALIEN_ALLOYS: 1
+
 #------------------------------------------------------------------------------
   - type: STR_ELERIUM_SHOTGUN_SHELLS
     listOrder: 1103
@@ -1391,6 +1488,7 @@ manufacture:
     cost: 4000
     partsRequired:
       STR_ELERIUM_115: 1
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 extraSprites:
@@ -1421,6 +1519,7 @@ extraSprites:
       520: Resources/EqualTerms1/SSRL/SSRL.png
       521: Resources/EqualTerms1/RocketLauncher/APFSDSRocket.png
 #      692: Resources/EqualTerms1/RocketLauncher/SmallRocket.png
+
 #------------------------------------------------------------------------------
   - type: FLOOROB.PCK
     files:
@@ -1447,6 +1546,7 @@ extraSprites:
       519: Resources/EqualTerms1/IncendiaryGrenade/IncenGren_f.png
       520: Resources/EqualTerms1/SSRL/SSRL_f.png
       521: Resources/EqualTerms1/RocketLauncher/APFSDSRocket_f.png
+
 #------------------------------------------------------------------------------
   - type: HANDOB.PCK
     width: 256
@@ -1470,40 +1570,49 @@ extraSprites:
       552: Resources/EqualTerms1/Shotgun/Shotgun_h.png
       560: Resources/EqualTerms1/Shotgun/ReinforcedShotgun_h.png
       568: Resources/EqualTerms1/SSRL/SSRL_h.png
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
   - type: MAN_0aF0.SPK #STREET ARCTIC
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0f0.png
+
   - type: MAN_0aF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0f1.png
+
   - type: MAN_0aF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0f2.png
+
   - type: MAN_0aF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0f3.png
+
   - type: MAN_0aM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0m0.png
+
   - type: MAN_0aM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0m1.png
+
   - type: MAN_0aM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0m2.png
+
   - type: MAN_0aM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_0m3.png
+
 #  - type: XCOM_0a.PCK
 #    width: 512
 #    height: 720
@@ -1511,39 +1620,48 @@ extraSprites:
 #    subY: 40
 #    files:
 #      0: Resources/EqualTerms1/Armor/Arctic/BScapeView/Street/xcom0a.png
+
 #------------------------------------------------------------------------------
   - type: MAN_0jF0.SPK #STREET JUNGLE
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0f0.png
+
   - type: MAN_0jF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0f1.png
+
   - type: MAN_0jF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0f2.png
+
   - type: MAN_0jF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0f3.png
+
   - type: MAN_0jM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0m0.png
+
   - type: MAN_0jM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0m1.png
+
   - type: MAN_0jM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0m2.png
+
   - type: MAN_0jM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_0m3.png
+
 #  - type: XCOM_0j.PCK
 #    width: 512
 #    height: 720
@@ -1551,39 +1669,48 @@ extraSprites:
 #    subY: 40
 #    files:
 #      0: Resources/EqualTerms1/Armor/Jungle/BScapeView/Street/xcom0j.png
+
 #------------------------------------------------------------------------------
   - type: MAN_0uF0.SPK #STREET URBAN
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0f0.png
+
   - type: MAN_0uF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0f1.png
+
   - type: MAN_0uF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0f2.png
+
   - type: MAN_0uF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0f3.png
+
   - type: MAN_0uM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0m0.png
+
   - type: MAN_0uM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0m1.png
+
   - type: MAN_0uM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0m2.png
+
   - type: MAN_0uM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_0m3.png
+
 #  - type: XCOM_0u.PCK
 #    width: 512
 #    height: 720
@@ -1591,39 +1718,48 @@ extraSprites:
 #    subY: 40
 #    files:
 #      0: Resources/EqualTerms1/Armor/Urban/BScapeView/Street/xcom0u.png
+
 #------------------------------------------------------------------------------
   - type: MAN_1aF0.SPK #KEVLAR ARCTIC
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1f0.gif
+
   - type: MAN_1aF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1f1.gif
+
   - type: MAN_1aF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1f2.gif
+
   - type: MAN_1aF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1f3.gif
+
   - type: MAN_1aM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1m0.gif
+
   - type: MAN_1aM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1m1.gif
+
   - type: MAN_1aM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1m2.gif
+
   - type: MAN_1aM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_1m3.gif
+
   - type: XCOM_1a.PCK
     width: 512
     height: 720
@@ -1631,39 +1767,48 @@ extraSprites:
     subY: 40
     files:
       0: Resources/EqualTerms1/Armor/Arctic/BScapeView/Kevlar/xcom1a.png
+
 #------------------------------------------------------------------------------
   - type: MAN_1jF0.SPK #KEVLAR JUNGLE
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1f0.gif
+
   - type: MAN_1jF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1f1.gif
+
   - type: MAN_1jF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1f2.gif
+
   - type: MAN_1jF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1f3.gif
+
   - type: MAN_1jM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1m0.gif
+
   - type: MAN_1jM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1m1.gif
+
   - type: MAN_1jM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1m2.gif
+
   - type: MAN_1jM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_1m3.gif
+
   - type: XCOM_1j.PCK
     width: 512
     height: 720
@@ -1671,39 +1816,48 @@ extraSprites:
     subY: 40
     files:
       0: Resources/EqualTerms1/Armor/Jungle/BScapeView/Kevlar/xcom1j.png
+
 #------------------------------------------------------------------------------
   - type: MAN_1uF0.SPK #KEVLAR URBAN
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1f0.gif
+
   - type: MAN_1uF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1f1.gif
+
   - type: MAN_1uF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1f2.gif
+
   - type: MAN_1uF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1f3.gif
+
   - type: MAN_1uM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1m0.gif
+
   - type: MAN_1uM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1m1.gif
+
   - type: MAN_1uM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1m2.gif
+
   - type: MAN_1uM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_1m3.gif
+
   - type: XCOM_1u.PCK
     width: 512
     height: 720
@@ -1711,39 +1865,48 @@ extraSprites:
     subY: 40
     files:
       0: Resources/EqualTerms1/Armor/Urban/BScapeView/Kevlar/xcom1u.png
+
 #------------------------------------------------------------------------------
   - type: MAN_1DSaF0.SPK #ARCTIC TACTICAL
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Df0.gif
+
   - type: MAN_1DSaF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Df1.gif
+
   - type: MAN_1DSaF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Df2.gif
+
   - type: MAN_1DSaF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Df3.gif
+
   - type: MAN_1DSaM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Dm0.gif
+
   - type: MAN_1DSaM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Dm1.gif
+
   - type: MAN_1DSaM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Dm2.gif
+
   - type: MAN_1DSaM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Arctic/man_Dm3.gif
+
   - type: XCOM_1DSa.PCK
     width: 512
     height: 720
@@ -1751,39 +1914,48 @@ extraSprites:
     subY: 40
     files:
       0: Resources/EqualTerms1/Armor/Arctic/BScapeView/Tactical/xcomDSa.png
+
 #------------------------------------------------------------------------------
   - type: MAN_1DSjF0.SPK #JUNGLE TACTICAL
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Df0.gif
+
   - type: MAN_1DSjF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Df1.gif
+
   - type: MAN_1DSjF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Df2.gif
+
   - type: MAN_1DSjF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Df3.gif
+
   - type: MAN_1DSjM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Dm0.gif
+
   - type: MAN_1DSjM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Dm1.gif
+
   - type: MAN_1DSjM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Dm2.gif
+
   - type: MAN_1DSjM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Jungle/man_Dm3.gif
+
   - type: XCOM_1DSj.PCK
     width: 512
     height: 720
@@ -1791,39 +1963,48 @@ extraSprites:
     subY: 40
     files:
       0: Resources/EqualTerms1/Armor/Jungle/BScapeView/Tactical/xcomDSj.png
+
 #------------------------------------------------------------------------------
   - type: MAN_1DSuF0.SPK #URBAN TACTICAL
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Df0.gif
+
   - type: MAN_1DSuF1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Df1.gif
+
   - type: MAN_1DSuF2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Df2.gif
+
   - type: MAN_1DSuF3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Df3.gif
+
   - type: MAN_1DSuM0.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Dm0.gif
+
   - type: MAN_1DSuM1.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Dm1.gif
+
   - type: MAN_1DSuM2.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Dm2.gif
+
   - type: MAN_1DSuM3.SPK
     singleImage: true
     files:
       0: Resources/EqualTerms1/Armor/Urban/man_Dm3.gif
+
   - type: XCOM_1DSu.PCK
     width: 512
     height: 720
@@ -1831,6 +2012,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/EqualTerms1/Armor/Urban/BScapeView/Tactical/xcomDSu.png
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 extraSounds:
@@ -1844,6 +2026,7 @@ extraSounds:
       165: Resources/EqualTerms1/Shotgun/Sounds/Fire.wav
 #      166: Resources/EqualTerms1/Shotgun/Sounds/Fire2.wav
       167: Resources/EqualTerms1/SSRL/Sounds/fire.wav
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 extraStrings:
@@ -1908,6 +2091,7 @@ extraStrings:
       STR_TACTICAL_URBAN: "TacTical urban"
       STR_TACTICAL_URBAN_UC: "TacTical urban"
       STR_TACTICAL_URBAN_UFOPEDIA: "Composed of 36 layers of aramids blended for strength and heat resistance and backed by heavy duty overlapping carbon fiber-reinforced silicon carbide disks, this tactical vest specially produced for X-com by Dragon Skin is the best protection current human technology can provide. However, this level of protection does tend to hinder a soldier's movements."
+
 #------------------------------------------------------------------------------
   - type: en-GB
     strings:
@@ -1965,6 +2149,7 @@ extraStrings:
       STR_TACTICAL_ARCTIC: Tactical Armor (Arctic)
       STR_TACTICAL_ARCTIC_UC: Tactical Armor (Arctic)
       STR_TACTICAL_ARCTIC_UFOPEDIA: Composed of 36 layers of aramids blended for strength and heat resistance and backed by heavy duty overlapping carbon fiber-reinforced silicon carbide disks, this tactical vest specially produced for X-com by Dragon Skin is the best protection current human technology can provide. However, this level of protection does tend to hinder a soldier's movements.
+
 #------------------------------------------------------------------------------
   - type: fr
     strings:

@@ -14,10 +14,12 @@ crafts:
     costSell: 3800000
     refuelRate: 5000
     score: 400
+
 #research:
 #  - type: STR_IMPROVED_INTERCEPTOR
 #    cost: 400
 #    points: 20
+
 manufacture:
   - type: STR_RAVEN
     category: STR_CRAFT
@@ -29,6 +31,7 @@ manufacture:
     cost: 2500000
     partsRequired:
       STR_ALIEN_ALLOYS: 95
+
 ufopaedia:
   - id: STR_RAVEN
     type_id: 1
@@ -48,13 +51,13 @@ ufopaedia:
       y: 140
       width: 310
       height: 60
+
 extraSprites:
   - type: Raven
     singleImage: true
-    width: 320
-    height: 200
     files:
       0: Resources/Raven/raven_ufopedia.png
+
   - type: BASEBITS.PCK
     files:
       56: Resources/Raven/raven_base.png
@@ -62,6 +65,7 @@ extraSprites:
     files:
       23: Resources/Raven/raven_minimised.png
       34: Resources/Raven/raven_dogfight.png
+
 extraStrings:
   - type: en-US
     strings:

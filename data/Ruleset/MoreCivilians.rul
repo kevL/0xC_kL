@@ -10,6 +10,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
   - type: MALE_CIVILIAN3_CORPSE
     label: STR_CORPSE
     weight: 32
@@ -21,6 +22,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
   - type: MALE_CIVILIAN4_CORPSE
     label: STR_CORPSE
     weight: 32
@@ -32,6 +34,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
   - type: MALE_CIVILIAN5_CORPSE
     label: STR_CORPSE
     weight: 32
@@ -43,6 +46,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
   - type: MALE_CIVILIAN6_CORPSE
     label: STR_CORPSE
     weight: 32
@@ -54,6 +58,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
   - type: MALE_CIVILIAN7_CORPSE
     label: STR_CORPSE
     weight: 32
@@ -65,6 +70,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
   - type: FEMALE_CIVILIAN2_CORPSE
     label: STR_CORPSE
     weight: 28
@@ -76,6 +82,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
   - type: FEMALE_CIVILIAN3_CORPSE
     label: STR_CORPSE
     weight: 28
@@ -87,6 +94,7 @@ items:
     twoHanded: true
     armor: 12
     recover: false
+
 armors:
   - type: MALE_CIVILIAN2_ARMOR
     spriteImage: civilianMInventoryImage
@@ -113,6 +121,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
   - type: MALE_CIVILIAN3_ARMOR
     spriteImage: civilianMInventoryImage
     spriteSheet: MALE_CIVILIAN3.PCK
@@ -138,6 +147,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
   - type: MALE_CIVILIAN4_ARMOR
     spriteImage: civilianMInventoryImage
     spriteSheet: MALE_CIVILIAN4.PCK
@@ -163,6 +173,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
   - type: MALE_CIVILIAN5_ARMOR
     spriteImage: civilianMInventoryImage
     spriteSheet: MALE_CIVILIAN5.PCK
@@ -188,6 +199,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
   - type: MALE_CIVILIAN6_ARMOR
     spriteImage: civilianMInventoryImage
     spriteSheet: MALE_CIVILIAN6.PCK
@@ -213,6 +225,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
   - type: MALE_CIVILIAN7_ARMOR
     spriteImage: civilianMInventoryImage
     spriteSheet: MALE_CIVILIAN7.PCK
@@ -238,6 +251,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
   - type: FEMALE_CIVILIAN2_ARMOR
     spriteImage: civilianFInventoryImage
     spriteSheet: FEMALE_CIVILIAN2.PCK
@@ -263,6 +277,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
   - type: FEMALE_CIVILIAN3_ARMOR
     spriteImage: civilianFInventoryImage
     spriteSheet: FEMALE_CIVILIAN3.PCK
@@ -288,6 +303,7 @@ armors:
       - 1.12
     loftSet: [3]
     agility: 1
+
 units:
   - type: MALE_CIVILIAN2
     race: STR_CIVILIAN
@@ -309,6 +325,7 @@ units:
     score: 33
     intelligence: 4
     energyRecovery: 50
+
   - type: MALE_CIVILIAN3
     race: STR_CIVILIAN
     stats:
@@ -329,6 +346,7 @@ units:
     score: 33
     intelligence: 4
     energyRecovery: 50
+
   - type: MALE_CIVILIAN4
     race: STR_CIVILIAN
     stats:
@@ -349,6 +367,7 @@ units:
     score: 33
     intelligence: 4
     energyRecovery: 50
+
   - type: MALE_CIVILIAN5
     race: STR_CIVILIAN
     stats:
@@ -369,6 +388,7 @@ units:
     score: 33
     intelligence: 4
     energyRecovery: 50
+
   - type: MALE_CIVILIAN6
     race: STR_CIVILIAN
     stats:
@@ -389,6 +409,7 @@ units:
     score: 33
     intelligence: 4
     energyRecovery: 50
+
   - type: MALE_CIVILIAN7
     race: STR_CIVILIAN
     stats:
@@ -409,6 +430,7 @@ units:
     score: 33
     intelligence: 4
     energyRecovery: 50
+
   - type: FEMALE_CIVILIAN2
     race: STR_CIVILIAN
     stats:
@@ -430,6 +452,7 @@ units:
     intelligence: 4
     energyRecovery: 50
     female: true
+
   - type: FEMALE_CIVILIAN3
     race: STR_CIVILIAN
     stats:
@@ -451,6 +474,7 @@ units:
     intelligence: 4
     energyRecovery: 50
     female: true
+
 extraSprites:
   - type: MALE_CIVILIAN2.PCK
     width: 512
@@ -459,6 +483,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/MALE_CIVILIAN2.png
+
   - type: MALE_CIVILIAN3.PCK
     width: 512
     height: 720
@@ -466,6 +491,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/MALE_CIVILIAN3.png
+
   - type: MALE_CIVILIAN4.PCK
     width: 512
     height: 720
@@ -473,6 +499,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/MALE_CIVILIAN4.png
+
   - type: MALE_CIVILIAN5.PCK
     width: 512
     height: 720
@@ -480,6 +507,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/MALE_CIVILIAN5.png
+
   - type: MALE_CIVILIAN6.PCK
     width: 512
     height: 720
@@ -487,6 +515,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/MALE_CIVILIAN6.png
+
   - type: MALE_CIVILIAN7.PCK
     width: 512
     height: 200
@@ -494,6 +523,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/MALE_CIVILIAN7.png
+
   - type: FEMALE_CIVILIAN2.PCK
     width: 512
     height: 720
@@ -501,6 +531,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/FEMALE_CIVILIAN2.png
+
   - type: FEMALE_CIVILIAN3.PCK
     width: 512
     height: 720
@@ -508,6 +539,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/MoreCivilians/FEMALE_CIVILIAN3.png
+
   - type: BIGOBS.PCK
     files:
       200: Resources/MoreCivilians/BIGOB_MALE_CIVILIAN2_CORPSE.png
@@ -518,6 +550,7 @@ extraSprites:
       205: Resources/MoreCivilians/BIGOB_FEMALE_CIVILIAN2_CORPSE.png
       206: Resources/MoreCivilians/BIGOB_FEMALE_CIVILIAN3_CORPSE.png
       207: Resources/MoreCivilians/BIGOB_MALE_CIVILIAN7_CORPSE.png
+
   - type: FLOOROB.PCK
     files:
       200: Resources/MoreCivilians/FLOOROB_MALE_CIVILIAN2_CORPSE.png
@@ -528,6 +561,7 @@ extraSprites:
       205: Resources/MoreCivilians/FLOOROB_FEMALE_CIVILIAN2_CORPSE.png
       206: Resources/MoreCivilians/FLOOROB_FEMALE_CIVILIAN3_CORPSE.png
       207: Resources/MoreCivilians/FLOOROB_MALE_CIVILIAN7_CORPSE.png
+
 extraStrings:
   - type: en-US
     strings:

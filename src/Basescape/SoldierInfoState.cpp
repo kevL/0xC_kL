@@ -70,7 +70,7 @@ SoldierInfoState::SoldierInfoState(
 {
 	_listBase = _base->getSoldiers();
 
-	_bg				= new InteractiveSurface(320, 200);
+	_bg				= new InteractiveSurface();
 
 	_rank			= new Surface(26, 23,  4, 4);
 	_gender			= new Surface( 7, 7, 240, 8);

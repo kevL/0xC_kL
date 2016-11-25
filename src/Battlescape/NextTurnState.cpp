@@ -77,7 +77,7 @@ NextTurnState::NextTurnState(
 				_game->getCursor()->setVisible(false);
 	}
 
-	_window = new Window(this, 320, 200);
+	_window = new Window(this);
 
 	if (_aliensPacified == false)
 	{
@@ -87,7 +87,7 @@ NextTurnState::NextTurnState(
 		_txtMessage	= new Text(320, 17, 0, 149);
 	}
 	else
-		_txtMessage	= new Text(320, 200);
+		_txtMessage	= new Text();
 
 	setPalette(PAL_BATTLESCAPE);
 

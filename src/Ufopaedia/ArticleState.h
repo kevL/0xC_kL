@@ -48,20 +48,20 @@ class ArticleState
 
 protected:
 	static const Uint8
-		uPed_ORANGE			=  16,
-		uPed_VIOLET			=  83,
-		uPed_PINK			= 162, // -> 192+ lt.brown for ExtraAlienInfo
-		uPed_BLUE_SLATE		= 239,
-		uPed_GREEN_SLATE	= 244,
+		uPed_ORANGE			=  16u,
+		uPed_VIOLET			=  83u,
+		uPed_PINK			= 162u, // -> 192+ lt.brown for ExtraAlienInfo
+		uPed_BLUE_SLATE		= 239u,
+		uPed_GREEN_SLATE	= 244u,
 
-		GEOSCAPE_CYAN		= 133,
+		GEOSCAPE_CYAN		= 133u,
 
-		BASESCAPE_VIOLET	=  64,
-		BASESCAPE_BLUE		= 218,
-		BASESCAPE_WHITE		= 208,
+		BASESCAPE_VIOLET	=  64u,
+		BASESCAPE_BLUE		= 218u,
+		BASESCAPE_WHITE		= 208u,
 
-		tac_RED				=  37,
-		tac_YELLOW			= 144;
+		tac_RED				=  37u,
+		tac_YELLOW			= 144u;
 
 
 	std::string _id;

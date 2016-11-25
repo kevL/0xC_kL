@@ -145,11 +145,11 @@ ArticleState* Ufopaedia::createArticleState(ArticleDefinition* const article) //
 		case UFOPAEDIA_TYPE_BASE_FACILITY:
 			return new ArticleStateBaseFacility(dynamic_cast<ArticleDefinitionBaseFacility*>(article));
 
-		case UFOPAEDIA_TYPE_TEXT:
-			return new ArticleStateText(dynamic_cast<ArticleDefinitionText*>(article));
-
 		case UFOPAEDIA_TYPE_TEXTIMAGE:
 			return new ArticleStateTextImage(dynamic_cast<ArticleDefinitionTextImage*>(article));
+
+		case UFOPAEDIA_TYPE_TEXT:
+			return new ArticleStateText(dynamic_cast<ArticleDefinitionText*>(article));
 
 		case UFOPAEDIA_TYPE_UFO:
 			return new ArticleStateUfo(dynamic_cast<ArticleDefinitionUfo*>(article));

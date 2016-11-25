@@ -17,6 +17,7 @@ interfaces:
         color: -1
         color2: -1
         border: 0
+
   - type: newBattleMenu
     elements:
       - id: backpal
@@ -37,6 +38,7 @@ interfaces:
         color: 133   # minty green
       - id: errorPalette
         color: 0     # brown
+
   - type: newGameMenu
     elements:
       - id: backpal
@@ -49,6 +51,7 @@ interfaces:
         color: 138   # yellow
       - id: button
         color: 133   # minty green
+
   - type: optionsMenu
     elements:
       - id: backpal
@@ -59,6 +62,7 @@ interfaces:
         color: 133   # minty green
       - id: button
         color: 133   # minty green
+
   - type: videoMenu
     elements:
       - id: text
@@ -67,41 +71,48 @@ interfaces:
         color: 239   # bright green
       - id: button
         color: 239   # bright green
+
   - type: audioMenu
     elements:
       - id: text
         color: 138   # yellow
       - id: button
         color: 239   # bright green
+
   - type: controlsMenu
     elements:
       - id: optionLists
         color: 138   # yellow
         color2: 239  # bright green
         border: 133  # minty green
+
   - type: geoscapeMenu
     elements:
       - id: text
         color: 138   # yellow
       - id: button
         color: 239   # bright green
+
   - type: battlescapeMenu
     elements:
       - id: text
         color: 138   # yellow
       - id: button
         color: 239   # bright green
+
   - type: advancedMenu
     elements:
       - id: optionLists
         color: 138   # yellow
         color2: 239  # bright green
         border: 133  # minty green
+
   - type: modsMenu
     elements:
       - id: optionLists
         color: 138   # yellow
         border: 133  # minty green
+
   - type: saveMenus
     elements:
       - id: backpal
@@ -122,12 +133,14 @@ interfaces:
         color: 239   # bright green
       - id: confirmDelete
         color: 138   # yellow
+
   - type: loadingText
     elements:
       - id: battlescape
         color: 15    # white
       - id: geoscape
         color: 133   # minty green
+
   - type: pauseMenu
     elements:
       - id: backpal
@@ -138,6 +151,7 @@ interfaces:
         color: 239   # minty green, was # 133 minty green
       - id: button
         color: 239   # minty green, was # 133 minty green
+
   - type: errorMessages
     elements:
       - id: geoscapePalette
@@ -148,6 +162,7 @@ interfaces:
         color: 138   # yellow
       - id: battlescapeColor
         color: 0     # white
+
   - type: geoCraftScreens
     elements:
       - id: backpal
@@ -173,6 +188,7 @@ interfaces:
         color: 239   # bright green
         color2: 138  # yellow
         border: 133  # minty green
+
   - type: targetInfo
     elements:
       - id: backpal
@@ -184,6 +200,7 @@ interfaces:
         color2: 138  # yellow
       - id: button
         color: 133   # minty green
+
   - type: confirmDestination
     elements:
       - id: backpal
@@ -197,6 +214,7 @@ interfaces:
         border: 133  # minty green
       - id: button
         color: 133   # minty green
+
   - type: confirmCydonia
     elements:
       - id: backpal
@@ -207,6 +225,7 @@ interfaces:
         color: 133   # minty green
       - id: text
         color: 138   # yellow
+
   - type: confirmLanding
     elements:
       - id: backpal
@@ -218,6 +237,7 @@ interfaces:
         color2: 138  # yellow
       - id: button
         color: 133   # minty green
+
   - type: lowFuel
     elements:
       - id: backpal
@@ -230,6 +250,7 @@ interfaces:
         color: 239   # bright green
       - id: button
         color: 133   # minty green
+
   - type: UFOInfo
     elements:
       - id: backpal
@@ -242,6 +263,7 @@ interfaces:
         color2: 138  # yellow
       - id: button
         color: 133   # minty green
+
   - type: baseDefense
     palette: PAL_BASESCAPE
     elements:
@@ -253,6 +275,7 @@ interfaces:
         color: 218   # blue
       - id: button
         color: 218   # blue
+
   - type: terrorSite
     elements:
       - id: backpal
@@ -263,6 +286,7 @@ interfaces:
         color: 133   # minty green
       - id: button
         color: 133   # minty green
+
   - type: alienBase
     elements:
       - id: backpal
@@ -273,6 +297,7 @@ interfaces:
         color: 133   # minty green
       - id: button
         color: 138   # yellow
+
   - type: itemsArriving
     elements:
       - id: backpal
@@ -286,6 +311,7 @@ interfaces:
         border: 133  # minty green
       - id: button
         color: 133   # minty green
+
   - type: geoResearch
     elements:
       - id: backpal
@@ -298,6 +324,7 @@ interfaces:
         color: 138   # yellow
       - id: button
         color: 133   # minty green
+
   - type: geoManufacture
     elements:
       - id: backpal
@@ -310,6 +337,7 @@ interfaces:
         color: 138   # yellow
       - id: button
         color: 133   # minty green
+
   - type: dogfight
     elements:
       - id: standoffButton
@@ -349,6 +377,7 @@ interfaces:
         color2: 8
       - id: disabledAmmo
         color: 25
+
   - type: baseNaming
     elements:
       - id: backpal
@@ -359,6 +388,7 @@ interfaces:
         color: 133   # minty green
       - id: button
         color: 133   # minty green
+
   - type: monthlyReport
     elements:
       - id: backpal
@@ -373,6 +403,7 @@ interfaces:
         color: 138   # yellow
       - id: button
         color: 239   # bright green
+
   - type: psiTraining
     palette: PAL_BASESCAPE
     elements:
@@ -386,6 +417,7 @@ interfaces:
         color: 246   # purple
       - id: button2
         color: 218   # light blue
+
   - type: allocatePsi
     palette: PAL_BASESCAPE
     elements:
@@ -402,6 +434,7 @@ interfaces:
         border: 218  # blue
       - id: button
         color: 218   # blue
+
   - type: fundingWindow
     elements:
       - id: backpal
@@ -417,6 +450,7 @@ interfaces:
         color2: 138  # yellow
       - id: button
         color: 239   # bright green
+
   - type: graphs
     palette: PAL_GRAPHS
     elements:
@@ -434,6 +468,7 @@ interfaces:
       - id: countryTotal
         color: 5     # gray # was 141 # magenta (inverted button offset)
         color2: 153  # was 144 # also magenta (the line itself)
+
   - type: ufopaedia
     elements:
       - id: backpal
@@ -449,6 +484,7 @@ interfaces:
         color: 133   # minty green
       - id: button2
         color: 239   # bright green
+
   - type: noContainment
     elements:
       - id: backpal
@@ -459,6 +495,7 @@ interfaces:
         color: 133   # minty green
       - id: button
         color: 133   # minty green
+
   - type: promotions
     elements:
       - id: backpal
@@ -473,6 +510,7 @@ interfaces:
         color: 138   # yellow
       - id: button
         color: 239   # bright green
+
   - type: cannotReequip
     elements:
       - id: backpal
@@ -487,6 +525,7 @@ interfaces:
         color: 138   # yellow
       - id: button
         color: 133   # minty green
+
   - type: debriefing
     elements:
       - id: backpal
@@ -508,6 +547,7 @@ interfaces:
         color: 0     # brown
       - id: errorMessage
         color: 133   # minty green
+
   - type: geoscape
     elements:
       - id: backpal
@@ -535,12 +575,14 @@ interfaces:
         color: 6     # brown
       - id: errorMessage
         color: 100   # lavender 241=pinkmaybe blueprobably whothefuckknowsorevencaresanymore-ohyeah 239=brightgreen
+
   - type: gameOver
     elements:
       - id: defeatText
         color: 249
       - id: victoryText
         color: 249
+
   - type: sellMenu
     palette: PAL_BASESCAPE
     elements:
@@ -558,6 +600,7 @@ interfaces:
         color: 246   # purple
       - id: button
         color: 218   # blue
+
   - type: buyMenu
     palette: PAL_BASESCAPE
     elements:
@@ -579,6 +622,7 @@ interfaces:
         color: 0     # brown
       - id: errorMessage
         color: 241   # pink
+
   - type: manageContainment
     palette: PAL_BASESCAPE
     elements:
@@ -599,6 +643,7 @@ interfaces:
         color: 6     # oxide
       - id: errorMessage
         color: 241   # pink
+
   - type: transferBaseSelect
     palette: PAL_BASESCAPE
     elements:
@@ -614,6 +659,7 @@ interfaces:
       - id: list
         color: 241   # pink
         color2: 213  # gold
+
   - type: transferMenu
     palette: PAL_BASESCAPE
     elements:
@@ -634,6 +680,7 @@ interfaces:
         color: 0     # brown
       - id: errorMessage
         color: 241   # pink
+
   - type: transferConfirm
     palette: PAL_BASESCAPE
     elements:
@@ -646,6 +693,7 @@ interfaces:
       - id: text
         color: 218   # blue
         color2: 241  # pink
+
   - type: transferInfo
     palette: PAL_BASESCAPE
     elements:
@@ -660,6 +708,7 @@ interfaces:
       - id: list
         color: 218   # blue
         border: 246  # purple
+
   - type: selectFacility
     palette: PAL_BASESCAPE
     elements:
@@ -673,6 +722,7 @@ interfaces:
         color: 208   # white
       - id: list
         color: 213   # gold
+
   - type: placeFacility
     palette: PAL_BASESCAPE
     elements:
@@ -690,6 +740,7 @@ interfaces:
         color: 0     # brown
       - id: errorMessage
         color: 241   # pink
+
   - type: dismantleFacility
     palette: PAL_BASESCAPE
     elements:
@@ -701,6 +752,7 @@ interfaces:
         color: 246   # purple
       - id: text
         color: 218   # blue
+
   - type: manufactureMenu
     palette: PAL_BASESCAPE
     elements:
@@ -718,6 +770,7 @@ interfaces:
         border: 246  # purple
       - id: button
         color: 218   # blue
+
   - type: selectNewManufacture
     parent: manufactureMenu
     elements:
@@ -732,6 +785,7 @@ interfaces:
         color: 218   # blue
       - id: catBox
         color: 241   # pink
+
   - type: allocateManufacture
     parent: manufactureMenu
     elements:
@@ -745,6 +799,7 @@ interfaces:
         color2: 208  # white
       - id: button
         color: 218   # blue
+
   - type: manufactureInfo
     parent: manufactureMenu
     elements:
@@ -760,6 +815,7 @@ interfaces:
         color: 241   # pink
       - id: button2
         color: 246   # purple
+
   - type: researchMenu
     palette: PAL_BASESCAPE
     elements:
@@ -775,6 +831,7 @@ interfaces:
         border: 218  # blue
       - id: button
         color: 246   # purple
+
   - type: selectNewResearch
     parent: researchMenu
     elements:
@@ -788,6 +845,7 @@ interfaces:
         border: 218  # blue
       - id: button
         color: 246   # purple
+
   - type: allocateResearch
     parent: researchMenu
     elements:
@@ -800,6 +858,7 @@ interfaces:
         color: 213   # gold
       - id: button2
         color: 218   # blue
+
   - type: baseInfo
     palette: PAL_BASESCAPE
     elements:
@@ -819,6 +878,7 @@ interfaces:
         color: 32    # sorta red
       - id: detectionBars
         color: 128   # pale blue
+
   - type: storesInfo
     palette: PAL_BASESCAPE
     elements:
@@ -832,6 +892,7 @@ interfaces:
         color: 218   # blue
       - id: button
         color: 218   # blue
+
   - type: costsInfo
     palette: PAL_BASESCAPE
     elements:
@@ -848,6 +909,7 @@ interfaces:
         color: 218   # blue
       - id: button
         color: 241   # pink
+
   - type: soldierList
     palette: PAL_BASESCAPE
     elements:
@@ -865,6 +927,7 @@ interfaces:
         border: 241  # pink
       - id: button
         color: 218   # blue
+
   - type: soldierInfo
     palette: PAL_BASESCAPE
     elements:
@@ -925,6 +988,7 @@ interfaces:
         color: 0     # brown
       - id: errorMessage
         color: 241   # pink
+
   - type: sackSoldier
     palette: PAL_BASESCAPE
     elements:
@@ -936,6 +1000,7 @@ interfaces:
         color: 218   # blue
       - id: button
         color: 246   # purple
+
   - type: soldierArmor
     palette: PAL_BASESCAPE
     elements:
@@ -950,6 +1015,7 @@ interfaces:
         border: 213  # gold
       - id: button
         color: 213   # gold
+
   - type: soldierMemorial
     palette: PAL_BASESCAPE
     elements:
@@ -965,6 +1031,7 @@ interfaces:
         border: 218  # blue
       - id: button
         color: 218   # blue
+
   - type: craftEquipment
     palette: PAL_BASESCAPE
     elements:
@@ -987,6 +1054,7 @@ interfaces:
         color: 2     # orange
       - id: errorMessage
         color: 241   # pink
+
   - type: craftArmor
     palette: PAL_BASESCAPE
     elements:
@@ -1003,6 +1071,7 @@ interfaces:
         color2: 208  # white
       - id: otherCraft
         color: 246   # purple
+
   - type: craftInfo
     palette: PAL_BASESCAPE
     elements:
@@ -1018,6 +1087,7 @@ interfaces:
         color2: 213  # gold
       - id: button
         color: 218   # blue
+
   - type: craftWeapons
     palette: PAL_BASESCAPE
     elements:
@@ -1031,6 +1101,7 @@ interfaces:
         color: 218   # blue
       - id: button
         color: 246   # purple
+
   - type: craftSoldiers
     palette: PAL_BASESCAPE
     elements:
@@ -1049,6 +1120,7 @@ interfaces:
         color: 218   # blue
       - id: otherCraft
         color: 246   # purple
+
   - type: craftSelect
     palette: PAL_BASESCAPE
     elements:
@@ -1067,6 +1139,7 @@ interfaces:
         color: 0     # brown
       - id: errorMessage
         color: 241   # pink
+
   - type: basescape
     palette: PAL_BASESCAPE
     elements:
@@ -1090,6 +1163,7 @@ interfaces:
       - id: miniBase
         color: 48    # green
         color2: 32   # red
+
   - type: battlescape
     palette: PAL_BATTLESCAPE
     elements:
@@ -1183,6 +1257,7 @@ interfaces:
         color: 144
       - id: operationTitle
         color: 0
+
   - type: briefing
     elements:
       - id: backpal
@@ -1194,6 +1269,7 @@ interfaces:
       - id: button
         color: 133
         color2: 133
+
   - type: inventory
     elements:
       - id: textName
@@ -1237,6 +1313,7 @@ interfaces:
         color: 8
       - id: numStack
         color: 67
+
   - type: stats
     elements:
       - id: textName
@@ -1284,11 +1361,13 @@ interfaces:
       - id: text
         color: 48
         color2: 144
+
   - type: minimap
     elements:
       # required
       - id: textLevel
         color: 64
+
   - type: medikit
     elements:
       - id: numPain
@@ -1304,6 +1383,7 @@ interfaces:
       - id: body
         color: 0
         color2: 3
+
   - type: awards
     palette: PAL_BASESCAPE
     elements:
@@ -1330,6 +1410,7 @@ interfaces:
         color2: 213  # yellow
       - id: info
         color: 160   # brown
+
   - type: awardsMissionInfo
     palette: PAL_BASESCAPE
     elements:
@@ -1347,6 +1428,7 @@ interfaces:
       - id: list
         color: 208   # white
         color2: 213  # yellow
+
   - type: gameStatistics
     elements:
       - id: backpal

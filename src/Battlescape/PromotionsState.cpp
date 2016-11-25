@@ -43,7 +43,7 @@ namespace OpenXcom
  */
 PromotionsState::PromotionsState()
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(300, 17, 10, 13);
 

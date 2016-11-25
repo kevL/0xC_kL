@@ -70,8 +70,8 @@ protected:
 	public:
 		/// Creates a Surface with the specified size and position.
 		Surface(
-				int width,
-				int height,
+				int width = 320,
+				int height = 200,
 				int x = 0,
 				int y = 0,
 				int bpp = 8);

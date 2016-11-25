@@ -74,7 +74,7 @@ AlienContainmentState::AlienContainmentState(
 		_usedSpace(0),
 		_baseList(_game->getSavedGame()->getBases())
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 	_mini			= new MiniBaseView(128, 16, 180, 27, MBV_CONTAINMENT);
 
 	_txtTitle		= new Text(300, 17, 10, 10);

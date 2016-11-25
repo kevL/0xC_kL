@@ -98,8 +98,8 @@ InventoryState::InventoryState(
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	_srfBg		= new Surface(320, 200);
-	_srfRagdoll	= new Surface(320, 200);
+	_srfBg		= new Surface();
+	_srfRagdoll	= new Surface();
 
 	_txtName	= new Text(200, 17, 36, 6);
 	_srfGender	= new Surface(7, 7, 28, 1);

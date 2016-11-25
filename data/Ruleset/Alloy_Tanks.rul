@@ -22,6 +22,7 @@ items:
     invHeight: 3
     turretType: 0
     listOrder: 1150
+
   - type: STR_TANK_ROCKET_LAUNCHER_ALLOY
     battleType: 1
     size: 6
@@ -45,6 +46,7 @@ items:
     invHeight: 3
     turretType: 1
     listOrder: 1350
+
   - type: STR_TANK_LASER_CANNON_ALLOY
     damageType: 4
     battleType: 1
@@ -70,6 +72,7 @@ items:
     invHeight: 3
     turretType: 2
     listOrder: 1550
+
 armors:
   - type: TANK_ARMOR_ALLOY
     spriteSheet: ALLOYTANKS.PCK
@@ -84,7 +87,7 @@ armors:
     underArmor: 85
     drawRoutine: 2
     size: 2
-    loftSet: [92,89,90,91]
+    loftSet: [92, 89, 90, 91]
     damageModifier:
       - 1.0  #none
       - 1.06 #ap
@@ -96,6 +99,7 @@ armors:
       - 0.77 #melee
       - 0.43 #acid
       - 0.0  #smoke
+
 units:
   - type: STR_TANK_CANNON_ALLOY
     race: STR_TANK_CANNON_ALLOY
@@ -120,6 +124,7 @@ units:
     moveSound: 14
     mechanical: true
     psiBlock: true
+
   - type: STR_TANK_ROCKET_LAUNCHER_ALLOY
     race: STR_TANK_ROCKET_LAUNCHER_ALLOY
     stats:
@@ -143,6 +148,7 @@ units:
     moveSound: 14
     mechanical: true
     psiBlock: true
+
   - type: STR_TANK_LASER_CANNON_ALLOY
     race: STR_TANK_LASER_CANNON_ALLOY
     stats:
@@ -166,6 +172,7 @@ units:
     moveSound: 14
     mechanical: true
     psiBlock: true
+
 manufacture:
   - type: STR_TANK_CANNON_ALLOY
     category: STR_HEAVY_WEAPONS_PLATFORM
@@ -177,6 +184,7 @@ manufacture:
     partsRequired:
       STR_ALIEN_ALLOYS: 22
     listOrder: 425
+
   - type: STR_TANK_ROCKET_LAUNCHER_ALLOY
     category: STR_HEAVY_WEAPONS_PLATFORM
     reqResearch:
@@ -187,6 +195,7 @@ manufacture:
     partsRequired:
       STR_ALIEN_ALLOYS: 22
     listOrder: 475
+
   - type: STR_TANK_LASER_CANNON_ALLOY
     category: STR_HEAVY_WEAPONS_PLATFORM
     reqResearch:
@@ -198,6 +207,7 @@ manufacture:
     partsRequired:
       STR_ALIEN_ALLOYS: 26
     listOrder: 550
+
 ufopaedia:
   - id: STR_TANK_CANNON_ALLOY
     type_id: 3
@@ -207,6 +217,7 @@ ufopaedia:
     text: STR_TANK_CANNON_ALLOY_UFOPEDIA
     weapon: STR_CANNON
     listOrder: 1425
+
   - id: STR_TANK_ROCKET_LAUNCHER_ALLOY
     type_id: 3
     section: STR_HEAVY_WEAPONS_PLATFORMS
@@ -215,6 +226,7 @@ ufopaedia:
     text: STR_TANK_ROCKET_LAUNCHER_ALLOY_UFOPEDIA
     weapon: STR_ROCKET_LAUNCHER
     listOrder: 1450
+
   - id: STR_TANK_LASER_CANNON_ALLOY
     type_id: 3
     section: STR_HEAVY_WEAPONS_PLATFORMS
@@ -224,6 +236,7 @@ ufopaedia:
     text: STR_TANK_LASER_CANNON_ALLOY_UFOPEDIA
     weapon: STR_LASER_CANNON
     listOrder: 1475
+
 extraSprites:
   - type: ALLOYTANKS.PCK
     width: 256
@@ -232,11 +245,13 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Alloy_Tanks/Alloy_Tanks.png
+
   - type: BIGOBS.PCK
     files:
       72: Resources/Alloy_Tanks/ATC_BIGOB.png
       73: Resources/Alloy_Tanks/ATRL_BIGOB.png
       74: Resources/Alloy_Tanks/ATL_BIGOB.png
+
 extraStrings:
   - type: en-US
     strings:
@@ -247,6 +262,7 @@ extraStrings:
       STR_TANK_LASER_CANNON_ALLOY_UFOPEDIA: "The pinnacle of X-COM tracked HWP technology. It employs both the powerful laser cannon designed by our scientists, and light, strong alien alloy armor."
       STR_TANK_ROCKET_LAUNCHER_ALLOY: "Alloy Tank/Rocket Launcher"
       STR_TANK_ROCKET_LAUNCHER_ALLOY_UFOPEDIA: "This is a standard Rocket Launcher HWP that has been refitted with light, strong alien alloy armor. Its performance is similar to the original, but its longevity under fire has been greatly increased, and it is somewhat quicker."
+
   - type: en-GB
     strings:
       STR_ALLOY_TANK_ARMOR: HWP Alloy Armour

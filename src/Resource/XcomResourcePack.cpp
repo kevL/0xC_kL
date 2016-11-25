@@ -222,7 +222,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					i->end(),
 					i->begin(),
 					::toupper);
-		_surfaces[*i] = new Surface(320,200);
+		_surfaces[*i] = new Surface();
 		_surfaces[*i]->loadScr(st);
 	}
 
@@ -238,7 +238,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					i->end(),
 					i->begin(),
 					::toupper);
-		_surfaces[*i] = new Surface(320,200);
+		_surfaces[*i] = new Surface();
 		_surfaces[*i]->loadSpk(st);
 	}
 
@@ -257,7 +257,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 						i->end(),
 						i->begin(),
 						::toupper);
-			_surfaces[*i] = new Surface(320,200);
+			_surfaces[*i] = new Surface();
 			_surfaces[*i]->loadImage(st);
 		}
 	}
@@ -510,11 +510,11 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	}
 
 	// define GUI sound Fx
-	TextButton::soundPress		= getSound("GEO.CAT", ResourcePack::BUTTON_PRESS);		// #0 bleep
-	kL_soundPop					= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// wahahahah <- global.
-	Window::soundPopup[0u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// #1 wahahahah	// not used - but leave it:
-	Window::soundPopup[1u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[1u]);	// #2 swish1	// The sound itself is also defined as 'kL_soundPop' above^
-	Window::soundPopup[2u]		= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[2u]);	// #3 swish2
+	TextButton::soundPress	= getSound("GEO.CAT", ResourcePack::BUTTON_PRESS);		// #0 bleep
+	kL_soundPop				= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// wahahahah <- global.
+	Window::soundPopup[0u]	= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// #1 wahahahah	// not used - but leave it:
+	Window::soundPopup[1u]	= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[1u]);	// #2 swish1	// The sound itself is also defined as 'kL_soundPop' above^
+	Window::soundPopup[2u]	= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[2u]);	// #3 swish2
 
 	/* BATTLESCAPE RESOURCES */
 	Log(LOG_INFO) << "Loading battlescape resources ...";
@@ -573,96 +573,83 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	//Log(LOG_DEBUG) << "Loading extra resources from ruleset...";
 	Log(LOG_INFO) << "Loading extra sprites ...";
 
-	std::string st2;
-	int
-		start,
-		offset;
+	ExtraSprites* sprites;
+	int offset;
 
-	const std::vector<std::pair<std::string, ExtraSprites*>> extraSprites (rules->getExtraSprites());
+	const std::vector<std::pair<std::string, ExtraSprites*>> allSprites (rules->getExtraSprites());
 	for (std::vector<std::pair<std::string, ExtraSprites*>>::const_iterator
-			i = extraSprites.begin();
-			i != extraSprites.end();
+			i = allSprites.begin();
+			i != allSprites.end();
 			++i)
 	{
-		st = i->first;
-		//Log(LOG_INFO) << ". sheetName = " << st;
+		//Log(LOG_INFO) << ". sheetName = " << i->first;
+		sprites = i->second;
 
-		ExtraSprites* const spritePack = i->second;
-		const bool subdivision = spritePack->getSubX() != 0
-							  && spritePack->getSubY() != 0;
-
-		if (spritePack->getSingleImage() == true)
+		if (sprites->isSingleImage() == true) // is a single Surface, not part of a SurfaceSet.
 		{
-			if (_surfaces.find(st) == _surfaces.end())
+			if (_surfaces.find(i->first) != _surfaces.end()) // delete existing first
 			{
-				//Log(LOG_VERBOSE) << "Creating new single image: " << st;
-				//Log(LOG_INFO) << "Creating new single image: " << st;
-				_surfaces[st] = new Surface(
-										spritePack->getWidth(),
-										spritePack->getHeight());
-			}
-			else
-			{
-				//Log(LOG_VERBOSE) << "Adding/Replacing single image: " << st;
-				//Log(LOG_INFO) << "Adding/Replacing single image: " << st;
-				delete _surfaces[st];
-				_surfaces[st] = new Surface(
-										spritePack->getWidth(),
-										spritePack->getHeight());
-			}
-
-			oststr.str("");
-			oststr << CrossPlatform::getDataFile(spritePack->getSprites()->operator[](0));
-			_surfaces[st]->loadImage(oststr.str());
-		}
-		else // not SingleImage
-		{
-			bool adding = false;
-
-			if (_sets.find(st) == _sets.end())
-			{
-				//Log(LOG_VERBOSE) << "Creating new surface set: " << st;
-				//Log(LOG_INFO) << "Creating new surface set: " << st;
-				adding = true;
-				if (subdivision == true)
-					_sets[st] = new SurfaceSet(
-											spritePack->getSubX(),
-											spritePack->getSubY());
-				else
-					_sets[st] = new SurfaceSet(
-											spritePack->getWidth(),
-											spritePack->getHeight());
+				//Log(LOG_VERBOSE) << "Creating new single image: " << i->first;
+				//Log(LOG_INFO) << "Creating new single image: " << i->first;
+				delete _surfaces[i->first];
 			}
 			//else
 			//{
-				//Log(LOG_VERBOSE) << "Adding/Replacing items in surface set: " << st;
-				//Log(LOG_INFO) << "Adding/Replacing items in surface set: " << st;
+			//	Log(LOG_VERBOSE) << "Adding/Replacing single image: " << i->first;
+			//	Log(LOG_INFO) << "Adding/Replacing single image: " << i->first;
+			//}
+			_surfaces[i->first] = new Surface(
+											sprites->getWidth(),
+											sprites->getHeight());
+			_surfaces[i->first]->loadImage(CrossPlatform::getDataFile(sprites->getSprites()->operator[](0)));
+		}
+		else // is a SurfaceSet or a part thereof.
+		{
+			bool adding = false;
+			const bool subdivision = sprites->getSubX() != 0
+								  && sprites->getSubY() != 0;
+
+			if (_sets.find(i->first) == _sets.end())
+			{
+				//Log(LOG_VERBOSE) << "Creating new surface set: " << i->first;
+				//Log(LOG_INFO) << "Creating new surface set: " << i->first;
+				adding = true;
+				if (subdivision == true)
+					_sets[i->first] = new SurfaceSet(
+												sprites->getSubX(),
+												sprites->getSubY());
+				else
+					_sets[i->first] = new SurfaceSet(
+												sprites->getWidth(),
+												sprites->getHeight());
+			}
+			//else
+			//{
+			//	Log(LOG_VERBOSE) << "Adding/Replacing items in surface set: " << i->first;
+			//	Log(LOG_INFO) << "Adding/Replacing items in surface set: " << i->first;
 			//}
 
 			//if (subdivision == true)
 			//{
-			//	const int frames = (spritePack->getWidth() / spritePack->getSubX()) * (spritePack->getHeight() / spritePack->getSubY());
-				//Log(LOG_VERBOSE) << "Subdividing into " << frames << " frames.";
-				//Log(LOG_INFO) << "Subdividing into " << frames << " frames.";
+			//	const int frames = (sprites->getWidth() / sprites->getSubX()) * (sprites->getHeight() / sprites->getSubY());
+			//	Log(LOG_VERBOSE) << "Subdividing into " << frames << " frames.";
+			//	Log(LOG_INFO) << "Subdividing into " << frames << " frames.";
 			//}
 
 			for (std::map<int, std::string>::const_iterator
-					j = spritePack->getSprites()->begin();
-					j != spritePack->getSprites()->end();
+					j = sprites->getSprites()->begin();
+					j != sprites->getSprites()->end();
 					++j)
 			{
-				start = j->first;
-
-				st2 = j->second;
-				if (st2.substr(st2.length() - 1u, 1u) == "/") // is Folder
+				if (j->second.substr(j->second.length() - 1u, 1u) == "/") // is Folder
 				{
-					//Log(LOG_VERBOSE) << "Loading surface set from folder: " << st2 << " starting at frame: " << start;
-					//Log(LOG_INFO) << "Loading surface set from folder: " << st2 << " starting at frame: " << start;
-					offset = start;
+					//Log(LOG_VERBOSE) << "Loading surface set from folder: " << j->second << " starting at frame: " << start;
+					//Log(LOG_INFO) << "Loading surface set from folder: " << j->second << " starting at frame: " << start;
+					offset = j->first;
 
 					oststr2.str("");
-					oststr2 << CrossPlatform::getDataFolder(st2);
-					const std::vector<std::string> contents = CrossPlatform::getFolderContents(oststr2.str());
+					oststr2 << CrossPlatform::getDataFolder(j->second);
+					const std::vector<std::string> contents (CrossPlatform::getFolderContents(oststr2.str()));
 					for (std::vector<std::string>::const_iterator
 							k = contents.begin();
 							k != contents.end();
@@ -677,21 +664,21 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 								oststr.str("");
 								oststr << oststr2.str() << CrossPlatform::getDataFile(*k);
 
-								if (_sets[st]->getFrame(offset) != nullptr)
+								if (_sets[i->first]->getFrame(offset) != nullptr)
 								{
 									//Log(LOG_VERBOSE) << "Replacing frame: " << offset;
 									//Log(LOG_INFO) << "Replacing frame: " << offset;
-									_sets[st]->getFrame(offset)->loadImage(oststr.str());
+									_sets[i->first]->getFrame(offset)->loadImage(oststr.str());
 								}
 								else
 								{
 									if (adding == true) // create Set.
-										_sets[st]->addFrame(offset)->loadImage(oststr.str());
+										_sets[i->first]->addFrame(offset)->loadImage(oststr.str());
 									else
 									{
-										//Log(LOG_VERBOSE) << "Adding frame: " << offset + spritePack->getModIndex();
-										//Log(LOG_INFO) << "Adding frame: " << offset + spritePack->getModIndex();
-										_sets[st]->addFrame(offset + spritePack->getModIndex())->loadImage(oststr.str());
+										//Log(LOG_VERBOSE) << "Adding frame: " << offset + sprites->getModIndex();
+										//Log(LOG_INFO) << "Adding frame: " << offset + sprites->getModIndex();
+										_sets[i->first]->addFrame(offset + sprites->getModIndex())->loadImage(oststr.str());
 									}
 								}
 
@@ -708,38 +695,38 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 				{
 					oststr.str("");
 
-					if (   spritePack->getSubX() == 0
-						&& spritePack->getSubY() == 0)
+					if (   sprites->getSubX() == 0
+						&& sprites->getSubY() == 0)
 					{
-						oststr << CrossPlatform::getDataFile(st2);
+						oststr << CrossPlatform::getDataFile(j->second);
 						//Log(LOG_INFO) << oststr.str();
 
-						if (_sets[st]->getFrame(start))
+						if (_sets[i->first]->getFrame(j->first))
 						{
-							//Log(LOG_VERBOSE) << "Replacing frame: " << start;
-							//Log(LOG_INFO) << "Replacing frame: " << start;
-							_sets[st]->getFrame(start)->loadImage(oststr.str());
+							//Log(LOG_VERBOSE) << "Replacing frame: " << j->first;
+							//Log(LOG_INFO) << "Replacing frame: " << j->first;
+							_sets[i->first]->getFrame(j->first)->loadImage(oststr.str());
 						}
 						else
 						{
-							//Log(LOG_VERBOSE) << "Adding frame: " << start << ", using index: " << start + spritePack->getModIndex();
-							//Log(LOG_INFO) << "Adding frame: " << start << ", using index: " << start + spritePack->getModIndex();
-							_sets[st]->addFrame(start + spritePack->getModIndex())->loadImage(oststr.str());
+							//Log(LOG_VERBOSE) << "Adding frame: " << j->first << ", using index: " << j->first + sprites->getModIndex();
+							//Log(LOG_INFO) << "Adding frame: " << j->first << ", using index: " << j->first + sprites->getModIndex();
+							_sets[i->first]->addFrame(j->first + sprites->getModIndex())->loadImage(oststr.str());
 						}
 					}
 					else
 					{
 						Surface* const blank (new Surface(
-														spritePack->getWidth(),
-														spritePack->getHeight()));
-						oststr << CrossPlatform::getDataFile(spritePack->getSprites()->operator[](start));
+														sprites->getWidth(),
+														sprites->getHeight()));
+						oststr << CrossPlatform::getDataFile(sprites->getSprites()->operator[](j->first));
 						//Log(LOG_INFO) << oststr.str();
 						blank->loadImage(oststr.str());
 						const int
-							xDivision (spritePack->getWidth()  / spritePack->getSubX()),
-							yDivision (spritePack->getHeight() / spritePack->getSubY());
+							xDivision (sprites->getWidth()  / sprites->getSubX()),
+							yDivision (sprites->getHeight() / sprites->getSubY());
 
-						offset = start;
+						offset = j->first;
 
 						for (int
 								y = 0;
@@ -752,16 +739,15 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 									++x)
 							{
 								// joyDivision
-								if (_sets[st]->getFrame(offset))
+								if (_sets[i->first]->getFrame(offset))
 								{
 									//Log(LOG_VERBOSE) << "Replacing frame: " << offset;
 									//Log(LOG_INFO) << "Replacing frame: " << offset;
-									_sets[st]->getFrame(offset)->clear();
-									// for some reason regular blit() doesn't work here how i want it, so use this function instead.
-									blank->blitNShade(
-												_sets[st]->getFrame(offset),
-												0 - (x * spritePack->getSubX()),
-												0 - (y * spritePack->getSubY()),
+									_sets[i->first]->getFrame(offset)->clear();
+									blank->blitNShade(								// for some reason regular blit() doesn't work here
+												_sets[i->first]->getFrame(offset),	// how i want it, so use this function instead.
+												-(x * sprites->getSubX()),
+												-(y * sprites->getSubY()),
 												0);
 								}
 								else
@@ -770,30 +756,26 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 									{
 										//Log(LOG_VERBOSE) << "Adding frame: " << offset;
 										//Log(LOG_INFO) << "Adding frame: " << offset;
-										// for some reason regular blit() doesn't work here how i want it, so use this function instead.
-										blank->blitNShade(
-													_sets[st]->addFrame(offset),
-													0 - (x * spritePack->getSubX()),
-													0 - (y * spritePack->getSubY()),
+										blank->blitNShade(								// for some reason regular blit() doesn't work here
+													_sets[i->first]->addFrame(offset),	// how i want it, so use this function instead.
+													-(x * sprites->getSubX()),
+													-(y * sprites->getSubY()),
 													0);
 									}
 									else
 									{
-										//Log(LOG_VERBOSE) << "Adding custom frame: " << offset + spritePack->getModIndex();
-										//Log(LOG_INFO) << "Adding custom frame: " << offset + spritePack->getModIndex();
-										// for some reason regular blit() doesn't work here how i want it, so use this function instead.
-										blank->blitNShade(
-													_sets[st]->addFrame(offset + spritePack->getModIndex()),
-													0 - (x * spritePack->getSubX()),
-													0 - (y * spritePack->getSubY()),
+										//Log(LOG_VERBOSE) << "Adding custom frame: " << offset + sprites->getModIndex();
+										//Log(LOG_INFO) << "Adding custom frame: " << offset + sprites->getModIndex();
+										blank->blitNShade(														// for some reason regular blit() doesn't work here
+													_sets[i->first]->addFrame(offset + sprites->getModIndex()),	// how i want it, so use this function instead.
+													-(x * sprites->getSubX()),
+													-(y * sprites->getSubY()),
 													0);
 									}
 								}
-
 								++offset;
 							}
 						}
-
 						delete blank;
 					}
 				}
@@ -818,7 +800,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 												x,y,
 												_surfaces["BACK06.SCR"]->getPixelColor(x, y + (y == 79 ? 2 : 1)));
 
-	Surface* const altBack07 = new Surface(320,200);
+	Surface* const altBack07 (new Surface());
 	altBack07->copy(_surfaces["BACK07.SCR"]);
 	for (int y = 172; y >= 152; --y)
 		for (int x = 5; x <= 314; ++x)
@@ -837,6 +819,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 									altBack07->getPixelColor(x,y));
 	_surfaces["ALTBACK07.SCR"] = altBack07; // kL_end.
 
+
 	// Copy-constructor doesn't like doing this directly so make a second
 	// HANDOB file the old fashioned way. HANDOB2 is used for left-handed
 	// sprites which might need to use different offsets during rendering.
@@ -844,55 +827,47 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 									_sets["HANDOB.PCK"]->getWidth(),
 									_sets["HANDOB.PCK"]->getHeight());
 
+	Surface* srf;
 	const std::map<int, Surface*>* const handob (_sets["HANDOB.PCK"]->getFrames());
 	for (std::map<int, Surface*>::const_iterator
 			i = handob->begin();
 			i != handob->end();
 			++i)
 	{
-		Surface
-			* const srf1 (_sets["HANDOB2.PCK"]->addFrame(i->first)),
-			* const srf2 (i->second);
-		srf1->setPalette(srf2->getPalette());
-		srf2->blit(srf1);
+		srf = _sets["HANDOB2.PCK"]->addFrame(i->first);
+		srf->setPalette(i->second->getPalette());
+		i->second->blit(srf);
 	}
 
 
 	/* EXTRA SOUNDS */
 	Log(LOG_INFO) << "Loading extra sounds ...";
 
-	ExtraSounds* soundPack;
-
-	const std::vector<std::pair<std::string, ExtraSounds*>> extraSounds (rules->getExtraSounds());
+	const std::vector<std::pair<std::string, ExtraSounds*>> allSounds (rules->getExtraSounds());
 	for (std::vector<std::pair<std::string, ExtraSounds*>>::const_iterator
-			i = extraSounds.begin();
-			i != extraSounds.end();
+			i = allSounds.begin();
+			i != allSounds.end();
 			++i)
 	{
-		st = i->first;
-		soundPack = i->second;
-
-		if (_sounds.find(st) == _sounds.end())
+		if (_sounds.find(i->first) == _sounds.end())
 		{
-			//Log(LOG_VERBOSE) << "Creating new sound set: " << st << ", this will likely have no in-game use.";
-			_sounds[st] = new SoundSet();
+			//Log(LOG_VERBOSE) << "Creating new sound set: " << i->first << ", this will likely have no in-game use.";
+			_sounds[i->first] = new SoundSet();
 		}
-		//else Log(LOG_VERBOSE) << "Adding/Replacing items in sound set: " << st;
+		//else Log(LOG_VERBOSE) << "Adding/Replacing items in sound set: " << i->first;
 
 		for (std::map<int, std::string>::const_iterator
-				j = soundPack->getSounds()->begin();
-				j != soundPack->getSounds()->end();
+				j = i->second->getSounds()->begin();
+				j != i->second->getSounds()->end();
 				++j)
 		{
-			start = j->first;
-			st2 = j->second;
-
-			if (st2.substr(st2.length() - 1u, 1u) == "/") // is Folder
+			if (j->second.substr(j->second.length() - 1u, 1u) == "/") // is Folder
 			{
-				//Log(LOG_VERBOSE) << "Loading sound set from folder: " << st2 << " starting at index: " << start;
-				offset = start;
+				//Log(LOG_VERBOSE) << "Loading sound set from folder: " << j->second << " starting at index: " << j->first;
+				offset = j->first;
+
 				oststr.str("");
-				oststr << CrossPlatform::getDataFolder(st2);
+				oststr << CrossPlatform::getDataFolder(j->second);
 				files = CrossPlatform::getFolderContents(oststr.str());
 
 				for (std::vector<std::string>::const_iterator
@@ -904,10 +879,10 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					{
 						oststr2.str("");
 						oststr2 << oststr.str() << CrossPlatform::getDataFile(*k);
-						if (_sounds[st]->getSound(static_cast<unsigned>(offset)) != nullptr)
-							_sounds[st]->getSound(static_cast<unsigned>(offset))->load(oststr2.str());
+						if (_sounds[i->first]->getSound(static_cast<unsigned>(offset)) != nullptr)
+							_sounds[i->first]->getSound(static_cast<unsigned>(offset))->load(oststr2.str());
 						else
-							_sounds[st]->addSound(static_cast<unsigned>(offset + soundPack->getModIndex()))->load(oststr2.str());
+							_sounds[i->first]->addSound(static_cast<unsigned>(offset + i->second->getModIndex()))->load(oststr2.str());
 
 						++offset;
 					}
@@ -920,16 +895,16 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			else
 			{
 				oststr2.str("");
-				oststr2 << CrossPlatform::getDataFile(st2);
-				if (_sounds[st]->getSound(static_cast<unsigned>(start)) != nullptr)
+				oststr2 << CrossPlatform::getDataFile(j->second);
+				if (_sounds[i->first]->getSound(static_cast<unsigned>(j->first)) != nullptr)
 				{
-					//Log(LOG_VERBOSE) << "Replacing index: " << start;
-					_sounds[st]->getSound(static_cast<unsigned>(start))->load(oststr2.str());
+					//Log(LOG_VERBOSE) << "Replacing index: " << j->first;
+					_sounds[i->first]->getSound(static_cast<unsigned>(j->first))->load(oststr2.str());
 				}
 				else
 				{
-					//Log(LOG_VERBOSE) << "Adding index: " << start;
-					_sounds[st]->addSound(static_cast<unsigned>(start + soundPack->getModIndex()))->load(oststr2.str());
+					//Log(LOG_VERBOSE) << "Adding index: " << j->first;
+					_sounds[i->first]->addSound(static_cast<unsigned>(j->first + i->second->getModIndex()))->load(oststr2.str());
 				}
 			}
 		}
@@ -1080,7 +1055,7 @@ void XcomResourcePack::loadBattlescapeResources()
 //		std::ostringstream oststr;
 //		oststr << "UFOGRAPH/" << scrs[i];
 //
-//		_surfaces[scrs[i]] = new Surface(320,200);
+//		_surfaces[scrs[i]] = new Surface();
 //		_surfaces[scrs[i]]->loadScr(CrossPlatform::getDataFile(oststr.str()));
 //	}
 
@@ -1104,7 +1079,7 @@ void XcomResourcePack::loadBattlescapeResources()
 		oststr << "UFOGRAPH/" << spks[i];
 		if (CrossPlatform::fileExists(CrossPlatform::getDataFile(oststr.str())) == true)
 		{
-			_surfaces[spks[i]] = new Surface(320,200);
+			_surfaces[spks[i]] = new Surface();
 			_surfaces[spks[i]]->loadSpk(CrossPlatform::getDataFile(oststr.str()));
 		}
 	}
@@ -1126,7 +1101,7 @@ void XcomResourcePack::loadBattlescapeResources()
 					i->begin(),
 					::toupper);
 
-		_surfaces[*i] = new Surface(320,200);
+		_surfaces[*i] = new Surface();
 		_surfaces[*i]->loadSpk(path);
 	}
 

@@ -1,144 +1,154 @@
 armors:
   - type: SECTOID_ARMOR0
     spriteImage: sectoidInventoryImage
+
   - type: SECTOID_ARMOR1
     spriteImage: sectoidInventoryImage
+
   - type: SECTOID_ARMOR2
     spriteImage: sectoidCdrInventoryImage
+
   - type: CYBERDISC_ARMOR
     spriteImage: cyberdiscInventoryImage
+
   - type: FLOATER_ARMOR0
     spriteImage: floaterInventoryImage
+
   - type: FLOATER_ARMOR1
     spriteImage: floaterInventoryImage
+
   - type: FLOATER_ARMOR2
     spriteImage: floaterInventoryImage
+
   - type: REAPER_ARMOR
     spriteImage: reaperInventoryImage
+
   - type: SNAKEMAN_ARMOR0
     spriteImage: snakemanInventoryImage
+
   - type: SNAKEMAN_ARMOR1
     spriteImage: snakemanInventoryImage
+
   - type: SNAKEMAN_ARMOR2
     spriteImage: snakemanInventoryImage
+
   - type: SNAKEMAN_ARMOR3
     spriteImage: snakemanInventoryImage
+
   - type: SNAKEMAN_ARMOR4
     spriteImage: snakemanInventoryImage
+
   - type: CHRYSSALID_ARMOR
     spriteImage: chryssalidInventoryImage
+
   - type: ZOMBIE_ARMOR
     spriteImage: zombieInventoryImage
+
   - type: MUTON_ARMOR0
     spriteImage: mutonInventoryImage
+
   - type: MUTON_ARMOR1
     spriteImage: mutonInventoryImage
+
   - type: MUTON_ARMOR2
     spriteImage: mutonInventoryImage
+
   - type: CELATID_ARMOR
     spriteImage: celatidInventoryImage
+
   - type: SILACOID_ARMOR
     spriteImage: silacoidInventoryImage
+
   - type: ETHEREAL_ARMOR0
     spriteImage: etherealInventoryImage
+
   - type: ETHEREAL_ARMOR1
     spriteImage: etherealInventoryImage
+
   - type: ETHEREAL_ARMOR2
     spriteImage: etherealInventoryImage
+
   - type: SECTOPOD_ARMOR
     spriteImage: sectopodInventoryImage
+
   - type: CIVM_ARMOR
     spriteImage: civilianMInventoryImage
+
   - type: CIVF_ARMOR
     spriteImage: civilianFInventoryImage
+
 extraSprites:
   - type: sectoidCdrInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/sectoidcdr.png
+
   - type: sectoidInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/sectoid.png
+
   - type: cyberdiscInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/cyberdisc.png
+
   - type: floaterInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/floater.png
+
   - type: reaperInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/reaper.png
+
   - type: snakemanInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/snakeman.png
+
   - type: chryssalidInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/chryssalid.png
+
   - type: zombieInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/zombie.png
+
   - type: mutonInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/muton.png
+
   - type: celatidInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/celatid.png
+
   - type: silacoidInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/silacoid.png
+
   - type: etherealInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/ethereal.png
+
   - type: sectopodInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/sectopod.png
+
   - type: civilianMInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/civilianm.png
+
   - type: civilianFInventoryImage
-    width: 320
-    height: 200
     singleImage: true
     files:
       0: Resources/AlienInventory/civilianf.png

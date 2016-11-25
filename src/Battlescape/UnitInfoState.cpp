@@ -83,7 +83,7 @@ UnitInfoState::UnitInfoState(
 //		_game->getScreen()->resetDisplay(false);
 //	}
 
-	_bg		= new Surface(320, 200);
+	_bg		= new Surface();
 	_exit	= new InteractiveSurface(
 //								320, 180, 0, 20);
 								Options::baseXResolution,

@@ -859,15 +859,15 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		ExtraSprites* extraSprites (new ExtraSprites());
+		ExtraSprites* sprites (new ExtraSprites());
 
 //		if (type != "TEXTURE.DAT") // doesn't support modIndex
 		if (type != "GlobeTextures")
-			extraSprites->load(*i, _modIndex);
+			sprites->load(*i, _modIndex);
 		else
-			extraSprites->load(*i, 0);
+			sprites->load(*i, 0);
 
-		_extraSprites.push_back(std::make_pair(type, extraSprites));
+		_extraSprites.push_back(std::make_pair(type, sprites));
 		_extraSpriteTypes.push_back(type);
 	}
 
@@ -877,9 +877,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			++i)
 	{
 		type = (*i)["type"].as<std::string>();
-		ExtraSounds* extraSounds (new ExtraSounds());
-		extraSounds->load(*i, _modIndex);
-		_extraSounds.push_back(std::make_pair(type, extraSounds));
+		ExtraSounds* sounds (new ExtraSounds());
+		sounds->load(*i, _modIndex);
+		_extraSounds.push_back(std::make_pair(type, sounds));
 		_extraSoundTypes.push_back(type);
 	}
 
@@ -893,9 +893,9 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			_extraStrings[type]->load(*i);
 		else
 		{
-			ExtraStrings* extraStrings (new ExtraStrings());
-			extraStrings->load(*i);
-			_extraStrings[type] = extraStrings;
+			ExtraStrings* strings (new ExtraStrings());
+			strings->load(*i);
+			_extraStrings[type] = strings;
 			_extraStringTypes.push_back(type);
 		}
 	}

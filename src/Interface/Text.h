@@ -97,8 +97,8 @@ private:
 	public:
 		/// Creates a Text with the specified size and position.
 		Text(
-				int width,
-				int height,
+				int width = 320,
+				int height = 200,
 				int x = 0,
 				int y = 0);
 		/// Cleans up the Text.

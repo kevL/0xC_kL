@@ -88,7 +88,7 @@ awards:
     criteria:
       killsCriteriaCareer: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria: #note: If anyone can figure how to string the And-vector as a list I'm all ears.
-      - [[1, ["STR_SECTOID", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_FLOATER", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_SNAKEMAN", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_MUTON", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_ETHEREAL", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_WASPITE", "FACTION_HOSTILE", "STATUS_DEAD"]]] #"STR_LIVE_SOLDIER",
+      - [[1, ["STR_SECTOID", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_FLOATER", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_SNAKEMAN", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_MUTON", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_ETHEREAL", "FACTION_HOSTILE", "STATUS_DEAD"]], [1, ["STR_WASPITE", "FACTION_HOSTILE", "STATUS_DEAD"]]] #"STR_LIVE_SOLDIER"
 
   - type: STR_MEDAL_BOLTS_CROSS
     description: STR_MEDAL_BOLTS_CROSS_DESCRIPTION
@@ -220,8 +220,8 @@ awards:
     criteria:
       killsCriteriaCareer: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     killCriteria:
-      - [[1, ["STR_SECTOPOD", "STATUS_DEAD", "BT_GRENADE"]]] #"STR_LIVE_TERRORIST",
-      - [[1, ["STR_CYBERDISC", "STATUS_DEAD", "BT_GRENADE"]]] #"STR_LIVE_TERRORIST",
+      - [[1, ["STR_SECTOPOD", "STATUS_DEAD", "BT_GRENADE"]]] #"STR_LIVE_TERRORIST"
+      - [[1, ["STR_CYBERDISC", "STATUS_DEAD", "BT_GRENADE"]]] #"STR_LIVE_TERRORIST"
 
   - type: STR_MEDAL_MELEE_KILL
     description: STR_MEDAL_MELEE_KILL_DESCRIPTION

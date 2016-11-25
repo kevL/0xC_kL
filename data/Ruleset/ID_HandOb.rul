@@ -4,54 +4,79 @@
 items:
   - type: STR_MEDI_KIT
     handSprite: 208
+
   - type: STR_HIGH_EXPLOSIVE
     handSprite: 216
+
   - type: STR_MOTION_SCANNER
     handSprite: 224
+
   - type: STR_PROXIMITY_GRENADE
     handSprite: 232
+
   - type: STR_ELECTRO_FLARE
     handSprite: 240
+
   - type: STR_MIND_PROBE
     handSprite: 248
+
   - type: STR_SMALL_ROCKET
     handSprite: 256
+
   - type: STR_LARGE_ROCKET
     handSprite: 264
+
   - type: STR_INCENDIARY_ROCKET
     handSprite: 272
+
   - type: STR_BLASTER_BOMB
     handSprite: 280
+
   - type: STR_AC_AP_AMMO
     handSprite: 288
+
   - type: STR_AC_HE_AMMO
     handSprite: 296
+
   - type: STR_AC_I_AMMO
     handSprite: 304
+
   - type: STR_HC_AP_AMMO
     handSprite: 312
+
   - type: STR_HC_HE_AMMO
     handSprite: 320
+
   - type: STR_HC_I_AMMO
     handSprite: 328
+
   - type: STR_ALIEN_GRENADE
     handSprite: 336
+
   - type: STR_SMOKE_GRENADE
     handSprite: 344
+
   - type: STR_RIFLE_CLIP
     handSprite: 352
+
   - type: STR_PISTOL_CLIP
     handSprite: 360
+
   - type: STR_PLASMA_PISTOL_CLIP
     handSprite: 368
+
   - type: STR_PLASMA_RIFLE_CLIP
     handSprite: 376
+
   - type: STR_HEAVY_PLASMA_CLIP
     handSprite: 384
+
   - type: STR_STUN_BOMB
     handSprite: 392
+
   - type: STR_ELERIUM_115
     handSprite: 400
+
 extraSprites:
   - type: HANDOB.PCK
     width: 256

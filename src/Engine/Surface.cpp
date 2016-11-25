@@ -138,8 +138,8 @@ inline void DeleteAligned(void* buffer)
  * @note Surfaces don't have to fill the whole size since their
  * background is transparent, specially subclasses with their own
  * drawing logic, so it just covers the maximum drawing area.
- * @param width		- width in pixels
- * @param height	- height in pixels
+ * @param width		- width in pixels (default 320)
+ * @param height	- height in pixels (default 200)
  * @param x			- x-position in pixels (default 0)
  * @param y			- y-position in pixels (default 0)
  * @param bpp		- bits-per-pixel depth (default 8)

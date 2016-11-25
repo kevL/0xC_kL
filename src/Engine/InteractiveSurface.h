@@ -84,8 +84,8 @@ private:
 		public:
 			/// Creates an InteractiveSurface with the specified size and position.
 			InteractiveSurface(
-					int width,
-					int height,
+					int width = 320,
+					int height = 200,
 					int x = 0,
 					int y = 0);
 			/// Cleans up the Interactivesurface.

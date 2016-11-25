@@ -741,7 +741,7 @@ void BasescapeState::layoutMouseOver(Action*)
 			else if (baseId < Base::MAX_BASES && baseId == _baseList->size())
 			{
 				_txtFacility->setAlign(ALIGN_RIGHT);
-				woststr << tr("STR_BUILD_NEW_BASE_").arg(baseId + 1);
+				woststr << tr("STR_BUILD_NEW_BASE_").arg(baseId + 1u);
 			}
 		}
 		_txtFacility->setText(woststr.str());

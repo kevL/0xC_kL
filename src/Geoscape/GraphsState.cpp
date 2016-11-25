@@ -298,10 +298,10 @@ GraphsState::GraphsState()
 		}
 
 
-		_alienRegionLines.push_back(new Surface(320,200));
+		_alienRegionLines.push_back(new Surface());
 		add(_alienRegionLines.at(btnOffset));
 
-		_xcomRegionLines.push_back(new Surface(320,200));
+		_xcomRegionLines.push_back(new Surface());
 		add(_xcomRegionLines.at(btnOffset));
 	}
 
@@ -331,10 +331,10 @@ GraphsState::GraphsState()
 
 	add(_btnRegionTotal, "button", "graphs");
 
-	_alienRegionLines.push_back(new Surface(320,200));
+	_alienRegionLines.push_back(new Surface());
 	add(_alienRegionLines.at(btnOffset));
 
-	_xcomRegionLines.push_back(new Surface(320,200));
+	_xcomRegionLines.push_back(new Surface());
 	add(_xcomRegionLines.at(btnOffset));
 
 
@@ -399,13 +399,13 @@ GraphsState::GraphsState()
 		}
 
 
-		_alienCountryLines.push_back(new Surface(320,200));
+		_alienCountryLines.push_back(new Surface());
 		add(_alienCountryLines.at(btnOffset));
 
-		_xcomCountryLines.push_back(new Surface(320,200));
+		_xcomCountryLines.push_back(new Surface());
 		add(_xcomCountryLines.at(btnOffset));
 
-		_incomeLines.push_back(new Surface(320,200));
+		_incomeLines.push_back(new Surface());
 		add(_incomeLines.at(btnOffset));
 	}
 
@@ -435,13 +435,13 @@ GraphsState::GraphsState()
 
 	add(_btnCountryTotal, "button", "graphs");
 
-	_alienCountryLines.push_back(new Surface(320,200));
+	_alienCountryLines.push_back(new Surface());
 	add(_alienCountryLines.at(btnOffset));
 
-	_xcomCountryLines.push_back(new Surface(320,200));
+	_xcomCountryLines.push_back(new Surface());
 	add(_xcomCountryLines.at(btnOffset));
 
-	_incomeLines.push_back(new Surface(320,200));
+	_incomeLines.push_back(new Surface());
 	add(_incomeLines.at(btnOffset));
 
 
@@ -471,7 +471,7 @@ GraphsState::GraphsState()
 
 		add(_btnFinances.at(i), "button", "graphs");
 
-		_financeLines.push_back(new Surface(320,200));
+		_financeLines.push_back(new Surface());
 		add(_financeLines.at(i));
 	}
 

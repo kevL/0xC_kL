@@ -25,19 +25,23 @@ items:
     invHeight: 2
     armor: 12
     listOrder: 1899
+
 ufopaedia:
   - id: STR_COMBAT_KNIFE
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_COMBAT_KNIFE_UFOPEDIA
     listOrder: 1999
+
 extraSprites:
   - type: BIGOBS.PCK
     files:
       61: Resources/CombatKnife/BigCombatKnife.png #CombatKnife_alt.png
+
   - type: FLOOROB.PCK
     files:
       76: Resources/CombatKnife/FloorCombatKnife.png
+
   - type: HANDOB.PCK
     width: 256
     height: 40
@@ -45,27 +49,33 @@ extraSprites:
     subY: 40
     files:
       144: Resources/CombatKnife/HandCombatKnife.png
+
 extraStrings:
   - type: en-US
     strings:
       STR_COMBAT_KNIFE: "Combat blade"
       STR_COMBAT_KNIFE_UFOPEDIA: "Using this hardened blade a trained professional can silently kill a lightly-armored opponent with a single slash or thrust."
+
   - type: en-GB
     strings:
       STR_COMBAT_KNIFE: Combat Knife
       STR_COMBAT_KNIFE_UFOPEDIA: Using its hardened edge and point, a trained field operative can silently kill a lightly-armored enemy with a single slash or thrust.{NEWLINE}Suitable for close encounters of any kind.
+
   - type: es
     strings:
       STR_COMBAT_KNIFE: Cuchillo de Combate
       STR_COMBAT_KNIFE_UFOPEDIA: Utilizando su borde afilado, un agente de campo entrenado puede matar en silencio a un enemigo con armadura ligera de un solo golpe.{NEWLINE}Adecuado para los encuentros cercanos de cualquier fase.
+
   - type: es-419
     strings:
       STR_COMBAT_KNIFE: Cuchillo de Combate
       STR_COMBAT_KNIFE_UFOPEDIA: Utilizando su borde afilado, un agente de campo entrenado puede matar en silencio a un enemigo con armadura ligera de un solo golpe.{NEWLINE}Adecuado para los encuentros cercanos de cualquier tipo.
+
   - type: de
     strings:
       STR_COMBAT_KNIFE: Kampfmesser
       STR_COMBAT_KNIFE_UFOPEDIA: Mit der gehärteten Klinge und Spitze kann ein gut ausgebildeter Nahkämpfer Gegner mit leichter Panzerung mit einem einzigen Hieb oder Stich geräuschlos töten.{NEWLINE}Geeignet für unheimliche Begegnungen jeder Art.
+
   - type: fr
     strings:
       STR_COMBAT_KNIFE: Poignard de combat

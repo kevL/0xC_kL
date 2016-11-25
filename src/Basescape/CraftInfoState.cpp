@@ -77,7 +77,7 @@ CraftInfoState::CraftInfoState(
 	if (_isQuickBattle == false)
 		_window		= new Window(this, 320, 200, 0, 0, POPUP_BOTH);
 	else
-		_window		= new Window(this, 320, 200);
+		_window		= new Window(this);
 
 	_edtCraft		= new TextEdit(this, 160, 16, 80, 10);
 	_txtBaseLabel	= new Text(80, 9,  16, 10);

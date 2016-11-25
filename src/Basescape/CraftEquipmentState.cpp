@@ -77,7 +77,7 @@ CraftEquipmentState::CraftEquipmentState(
 		_recall(0u),
 		_isQuickBattle(_game->getSavedGame()->getMonthsElapsed() == -1)
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(300, 17,  16, 8);
 	_txtBaseLabel	= new Text( 80,  9, 224, 8);

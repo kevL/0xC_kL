@@ -43,8 +43,8 @@ Sound* Window::soundPopup[3u] = {nullptr, nullptr, nullptr}; // static.
 /**
  * Creates a blank Window with the specified size and position.
  * @param state		- pointer to State the window belongs to
- * @param width		- width in pixels
- * @param height	- height in pixels
+ * @param width		- width in pixels (default 320)
+ * @param height	- height in pixels (default 200)
  * @param x			- x-position in pixels (default 0)
  * @param y			- y-position in pixels (default 0)
  * @param popType	- popup animation type (default POPUP_NONE)
@@ -60,9 +60,9 @@ Window::Window(
 		bool toggle)
 	:
 		Surface(
-			width,
-			height,
-			x,y),
+				width,
+				height,
+				x,y),
 		_state(state),
 		_popType(popType),
 		_popStep(0.f),

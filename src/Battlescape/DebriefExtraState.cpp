@@ -74,7 +74,7 @@ DebriefExtraState::DebriefExtraState(
 		_costTotal(0),
 		_storeSize(0.)
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(288, 16,  16, 8);
 	_txtBaseLabel	= new Text( 80,  9,  16, 8);

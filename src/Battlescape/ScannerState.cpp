@@ -49,8 +49,8 @@ ScannerState::ScannerState(const BattleUnit* const selUnit)
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	_bg			= new InteractiveSurface(320, 200);
-	_scan		= new InteractiveSurface(320, 200);
+	_bg			= new InteractiveSurface();
+	_scan		= new InteractiveSurface();
 	_scanView	= new ScannerView(
 								152,152,
 								56,24,

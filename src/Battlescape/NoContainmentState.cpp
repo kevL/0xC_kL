@@ -40,7 +40,7 @@ namespace OpenXcom
  */
 NoContainmentState::NoContainmentState()
 {
-	_window		= new Window(this, 320, 200);
+	_window		= new Window(this);
 	_txtTitle	= new Text(300, 160, 10, 8);
 	_btnOk		= new TextButton(120, 16, 100, 177);
 

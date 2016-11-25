@@ -10,6 +10,7 @@ countries:
       - [353, 9.5, -31.3, -21.8]
       - [358.4, 8.3, -37.2, -31.3]
       - [359.8, 9, -21.8, -19]
+
   - type: STR_ANGOLA
     region: STR_SOUTHERN_AFRICA
     fundingBase: 100
@@ -18,6 +19,7 @@ countries:
     labelLat: 12.8
     areas:
       - [11.8, 22.5, 6.9, 18]
+
   - type: STR_ARGENTINA
     region: STR_SOUTH_AMERICA
     fundingBase: 100
@@ -32,6 +34,7 @@ countries:
       - [299, 302, 30, 34]
       - [302, 304.4, 27, 30]
       - [299, 302.7, 50.8, 52.6]
+
   - type: STR_AUSTRALIA
     region: STR_AUSTRALASIA
     fundingBase: 205
@@ -41,6 +44,7 @@ countries:
     areas:
       - [110, 156, 10, 40]
       - [144, 149, 40, 44.3]
+
   - type: STR_AUSTRIA
     region: STR_EUROPE
     fundingBase: 130
@@ -50,6 +54,7 @@ countries:
     areas:
       - [10.7, 17.2, -47.5, -46.5]
       - [13.3, 17.2, -48.9, -47.5]
+
   - type: STR_BELARUS
     region: STR_EUROPE
     fundingBase: 130
@@ -58,6 +63,7 @@ countries:
     labelLat: -52.9
     areas:
       - [24, 31.4, -55, -51.5]
+
   - type: STR_BELGIUM
     region: STR_EUROPE
     fundingBase: 180
@@ -66,6 +72,7 @@ countries:
     labelLat: -51.0
     areas:
       - [2, 6, -51.9, -50]
+
   - type: STR_BRAZIL
     region: STR_SOUTH_AMERICA
     fundingBase: 165
@@ -85,6 +92,7 @@ countries:
       - [304.4, 310.1, 26, 31.2]
       - [305.3, 309.3, 31.2, 33]
       - [330.3, 330.7, 20.3, 20.7]
+
   - type: STR_BULGARIA
     region: STR_EUROPE
     fundingBase: 85
@@ -93,6 +101,7 @@ countries:
     labelLat: -43.2
     areas:
       - [22.6, 29, -44, -41.5]
+
   - type: STR_CANADA
     region: STR_NORTH_AMERICA
     fundingBase: 225
@@ -110,6 +119,7 @@ countries:
       - [277.5, 280.4, -44.5, -42.8]
       - [293.5, 298, -45, -43.2]
       - [305, 307.9, -49.4, -46.7]
+
   - type: STR_CHILE
     region: STR_SOUTH_AMERICA
     fundingBase: 75
@@ -121,6 +131,7 @@ countries:
       - [285, 290, 30, 37]
       - [283, 288, 37, 55]
       - [288, 295, 52.2, 55.5]
+
   - type: STR_CHINA
     region: STR_SOUTH_EAST_ASIA
     fundingBase: 335
@@ -134,6 +145,7 @@ countries:
       - [119.5, 124, -50.5, -25.3]
       - [124, 133, -50.5, -40]
       - [108, 113, -22, -17.9]
+
   - type: STR_COLOMBIA
     region: STR_SOUTH_AMERICA
     fundingBase: 155
@@ -145,6 +157,7 @@ countries:
       - [288.7, 292.4, -6.8, -1.8]
       - [286.3, 290.2, -0.5, 2.4]
       - [288.7, 290.2, -1.8, -0.5]
+
   - type: STR_CONGO
     region: STR_SOUTHERN_AFRICA
     fundingBase: 100
@@ -155,6 +168,7 @@ countries:
       - [18.4, 29.8, -4.7, 6.9]
       - [22.5, 29, 6.9, 12.3]
       - [12.7, 18.4, 2, 6]
+
   - type: STR_CUBA
     region: STR_NORTH_AMERICA
     fundingBase: 75
@@ -164,6 +178,7 @@ countries:
     areas:
       - [275, 283.4, -23.5, -21]
       - [281.8, 285.8, -21, -19.6]
+
   - type: STR_CZECH
     region: STR_EUROPE
     fundingBase: 125
@@ -172,6 +187,7 @@ countries:
     labelLat: -50.9
     areas:
       - [12.2, 18.5, -50.9, -48.9]
+
   - type: STR_DENMARK
     region: STR_EUROPE
     fundingBase: 185
@@ -180,6 +196,7 @@ countries:
     labelLat: -56.2
     areas:
       - [7.3, 11.5, -58, -54.8]
+
   - type: STR_EGYPT
     region: STR_NORTH_AFRICA
     fundingBase: 125
@@ -189,6 +206,7 @@ countries:
     areas:
       - [25, 34, -31.9, -22]
       - [34, 35.2, -26.61, -22.296]
+
   - type: STR_ETHIOPIA
     region: STR_NORTH_AFRICA
     fundingBase: 100
@@ -198,6 +216,7 @@ countries:
     areas:
       - [33.7, 43.1, -14, -4]
       - [43.1, 47.5, -9.5, -5]
+
   - type: STR_FINLAND
     region: STR_EUROPE
     fundingBase: 190
@@ -208,6 +227,7 @@ countries:
       - [22.7, 29.7, -69.2, -59.6]
       - [20.6, 22.7, -64, -59.6]
       - [29.7, 31.4, -69.4, -62.3]
+
   - type: STR_FRANCE
     region: STR_EUROPE
     fundingBase: 255
@@ -221,6 +241,7 @@ countries:
       - [8.2, 9.88, -43, -41.3]
       - [163.6, 167.2, 19.9, 22.7]
       - [304, 308, -6.8, -2.6]
+
   - type: STR_GERMANY
     region: STR_EUROPE
     fundingBase: 205
@@ -231,6 +252,7 @@ countries:
       - [6, 15, -54.8, -50.9]
       - [6, 12.2, -50.9, -47.5]
       - [12.2, 13.3, -48.9, -47.5]
+
   - type: STR_GREECE
     region: STR_EUROPE
     fundingBase: 205
@@ -240,6 +262,7 @@ countries:
     areas:
       - [19.1, 25.7, -41.5, -36.3]
       - [23, 26.7, -36, -34.7]
+
   - type: STR_HUNGARY
     region: STR_EUROPE
     fundingBase: 105
@@ -248,6 +271,7 @@ countries:
     labelLat: -47.887
     areas:
       - [17.2, 21.8, -48, -45.9]
+
   - type: STR_INDIA
     region: STR_CENTRAL_ASIA
     fundingBase: 115
@@ -259,6 +283,7 @@ countries:
       - [74, 79, -35, -30]
       - [85, 89, -27, -18]
       - [68, 70, -23.7, -21.2]
+
   - type: STR_INDONESIA
     region: STR_AUSTRALASIA
     fundingBase: 125
@@ -272,6 +297,7 @@ countries:
       - [100, 101, -3.54, -0.57]
       - [101, 102, -2.17, -0.57]
       - [102, 103, -1.54, -0.57]
+
   - type: STR_IRAN
     region: STR_CENTRAL_ASIA
     fundingBase: 160
@@ -282,6 +308,7 @@ countries:
       - [47, 61, -38.3, -29]
       - [50, 61, -29, -26.3]
       - [57.5, 61, -26.3, -24.7]
+
   - type: STR_IRAQ
     region: STR_CENTRAL_ASIA
     fundingBase: 275
@@ -290,6 +317,7 @@ countries:
     labelLat: -34.7
     areas:
       - [40.6, 47, -36, -29]
+
   - type: STR_IRELAND
     region: STR_EUROPE
     fundingBase: 180
@@ -299,6 +327,7 @@ countries:
     areas:
       - [348.4, 353.9, -53.9, -51.1]
       - [348.8, 352, -55.4, -53.9]
+
   - type: STR_ISRAEL
     region: STR_NORTH_AFRICA
     fundingBase: 175
@@ -307,6 +336,7 @@ countries:
     labelLat: -30.0
     areas:
       - [34, 36.1, -34.8, -29.4]
+
   - type: STR_ITALY
     region: STR_EUROPE
     fundingBase: 145
@@ -318,6 +348,7 @@ countries:
       - [10.3, 16.5, -43, -41.4]
       - [12, 18.6, -41.4, -36.5]
       - [7.7, 10.3, -41.3, -38.4]
+
   - type: STR_IVORY
     region: STR_NORTH_AFRICA
     fundingBase: 100
@@ -326,6 +357,7 @@ countries:
     labelLat: -8.5
     areas:
       - [351.4, 357.4, -10.5, -4.4]
+
   - type: STR_JAPAN
     region: STR_SOUTH_EAST_ASIA
     fundingBase: 385
@@ -336,6 +368,7 @@ countries:
       - [130, 143, -40, -30]
       - [137.8, 147, -45.6, -40]
       - [129, 130, -33.8, -31.95]
+
   - type: STR_KENYA
     region: STR_NORTH_AFRICA
     fundingBase: 100
@@ -344,6 +377,7 @@ countries:
     labelLat: -0.9
     areas:
       - [34, 41.5, -4, 4.3]
+
   - type: STR_KOREA
     region: STR_SOUTH_EAST_ASIA
     fundingBase: 150
@@ -352,6 +386,7 @@ countries:
     labelLat: -35.288
     areas:
       - [124, 130, -40, -33.8]
+
   - type: STR_LIBYA
     region: STR_NORTH_AFRICA
     fundingBase: 110
@@ -361,6 +396,7 @@ countries:
     areas:
       - [9.5, 25, -33.7, -23.5]
       - [17, 25, -23.5, -20]
+
   - type: STR_MEXICO
     region: STR_NORTH_AMERICA
     fundingBase: 150
@@ -375,6 +411,7 @@ countries:
       - [253, 265, -22, -15.4]
       - [265, 272.5, -19, -16]
       - [268.9, 273.6, -22, -19]
+
   - type: STR_MOZAMBIQUE
     region: STR_SOUTHERN_AFRICA
     fundingBase: 100
@@ -384,6 +421,7 @@ countries:
     areas:
       - [31.8, 35.6, 14, 26.6]
       - [35.6, 40.7, 9.9, 20]
+
   - type: STR_NETHERLANDS
     region: STR_EUROPE
     fundingBase: 185
@@ -392,6 +430,7 @@ countries:
     labelLat: -52.9
     areas:
       - [2, 6, -53.8, -51.9]
+
   - type: STR_NEWZEALAND
     region: STR_AUSTRALASIA
     fundingBase: 100
@@ -401,6 +440,7 @@ countries:
     areas:
       - [164, 177.2, 40, 47]
       - [172, 179, 33.5, 40]
+
   - type: STR_NIGERIA
     region: STR_NORTH_AFRICA
     fundingBase: 165
@@ -409,6 +449,7 @@ countries:
     labelLat: -10.0
     areas:
       - [2.5, 15, -14.2, -4]
+
   - type: STR_NORWAY
     region: STR_EUROPE
     fundingBase: 225
@@ -421,6 +462,7 @@ countries:
       - [12.4, 15.5, -70, -64]
       - [15.5, 29.5, -71.6, -69.2]
       - [15.5, 19, -69.2, -67.3]
+
   - type: STR_PAKISTAN
     region: STR_CENTRAL_ASIA
     fundingBase: 135
@@ -430,6 +472,7 @@ countries:
     areas:
       - [61, 70, -31.6, -23.7]
       - [70, 74, -35, -30]
+
   - type: STR_PERU
     region: STR_SOUTH_AMERICA
     fundingBase: 70
@@ -441,6 +484,7 @@ countries:
       - [286.3, 290.2, 2.4, 4.6]
       - [282, 290.1, 11.5, 17.7]
       - [286.3, 288.9, 9.3, 11.5]
+
   - type: STR_PHILIPPINES
     region: STR_SOUTH_EAST_ASIA
     fundingBase: 105
@@ -450,6 +494,7 @@ countries:
     areas:
       - [117, 126, -19.5, -11.6]
       - [121, 128, -11.6, -5]
+
   - type: STR_POLAND
     region: STR_EUROPE
     fundingBase: 150
@@ -459,6 +504,7 @@ countries:
     areas:
       - [15, 24, -54.5, -50.9]
       - [18.5, 24, -50.9, -49.5]
+
   - type: STR_PORTUGAL
     region: STR_EUROPE
     fundingBase: 85
@@ -468,6 +514,7 @@ countries:
     areas:
       - [350, 353.8, -41.6, -39.5]
       - [350, 352.8, -39.5, -36.7]
+
   - type: STR_QATAR
     region: STR_CENTRAL_ASIA
     fundingBase: 160
@@ -476,6 +523,7 @@ countries:
     labelLat: -26.4
     areas:
       - [50, 53.2, -26.3, -23]
+
   - type: STR_ROMANIA
     region: STR_EUROPE
     fundingBase: 175
@@ -484,6 +532,7 @@ countries:
     labelLat: -46.1
     areas:
       - [21.8, 30.2, -47.5, -44]
+
   - type: STR_RUSSIA
     region: STR_SIBERIA
     fundingBase: 535
@@ -499,6 +548,7 @@ countries:
       - [133, 137.8, -45.6, -42.3]
       - [19, 22.8, -55.5, -54.5]
       - [115.5, 117.8, 74.9, 75.6]
+
   - type: STR_SAUDI
     region: STR_CENTRAL_ASIA
     fundingBase: 255
@@ -511,6 +561,7 @@ countries:
       - [50, 55, -23, -18.6]
       - [35.2, 37.8, -29, -24.1]
       - [37, 40.6, -32, -29]
+
   - type: STR_SOUTH_AFRICA
     region: STR_SOUTHERN_AFRICA
     fundingBase: 305
@@ -520,6 +571,7 @@ countries:
     areas:
       - [15, 25, 26, 35]
       - [25, 31.8, 22, 35]
+
   - type: STR_SPAIN
     region: STR_EUROPE
     fundingBase: 95
@@ -533,6 +585,7 @@ countries:
       - [353.8, 4.7, -41.6, -37.2]
       - [352.8, 358.4, -37.2, -36.1]
       - [352.8, 353.8, -39.5, -37.2]
+
   - type: STR_SWEDEN
     region: STR_EUROPE
     fundingBase: 205
@@ -544,6 +597,7 @@ countries:
       - [12.4, 20.6, -64, -62.7]
       - [15.5, 22.7, -67.3, -64]
       - [19, 22.7, -69.2, -67.3]
+
   - type: STR_SYRIA
     region: STR_EUROPE # move to Central Asia (not so easy, it's split right in half between Europe and North Africa, bordering on Central Asia)
     fundingBase: 125
@@ -552,6 +606,7 @@ countries:
     labelLat: -35.6
     areas:
       - [36.1, 40.6, -36, -32.6]
+
   - type: STR_TAIWAN
     region: STR_SOUTH_EAST_ASIA
     fundingBase: 120
@@ -560,6 +615,7 @@ countries:
     labelLat: -22.51
     areas:
       - [119.5, 122.8, -25.3, -21.5]
+
   - type: STR_THAILAND
     region: STR_SOUTH_EAST_ASIA
     fundingBase: 195
@@ -570,6 +626,7 @@ countries:
       - [97.2, 103.3, -22, -6.6]
       - [103.3, 105.8, -17.5, -10.5]
       - [105.8, 107.4, -16.2, -12.4]
+
   - type: STR_TURKEY
     region: STR_EUROPE
     fundingBase: 155
@@ -579,6 +636,7 @@ countries:
     areas:
       - [29, 46, -42, -36]
       - [25.7, 29, -41.5, -36]
+
   - type: STR_UAE
     region: STR_CENTRAL_ASIA
     fundingBase: 140
@@ -587,6 +645,7 @@ countries:
     labelLat: -23.5
     areas:
       - [53.2, 57.5, -26.3, -23]
+
   - type: STR_UK
     region: STR_EUROPE
     fundingBase: 235
@@ -598,6 +657,7 @@ countries:
       - [353.9, 2, -53.9, -50]
       - [345.388, 346.048, 7.8, 8.3]
       - [321.4, 324.9, 53.5, 54.9]
+
   - type: STR_UKRAINE
     region: STR_EUROPE
     fundingBase: 195
@@ -608,6 +668,7 @@ countries:
       - [24, 34.1, -51.5, -47.5]
       - [34.1, 38.3, -50.3, -44.2]
       - [30.2, 34.1, -47.5, -44.2]
+
   - type: STR_USA
     region: STR_NORTH_AMERICA
     fundingBase: 675
@@ -630,6 +691,7 @@ countries:
       - [170, 172.4, 78.9, 79.2]
       - [0, 360, 89.7, 90]
       - [181.7, 182.3, -28.2, -27.7]
+
   - type: STR_VENEZULA
     region: STR_SOUTH_AMERICA
     fundingBase: 190
@@ -640,6 +702,7 @@ countries:
       - [288.7, 300, -12.7, -6.8]
       - [292.4, 296, -6.8, -1.8]
       - [296, 299.581, -6.8, -4.8]
+
   - type: STR_VIETNAM
     region: STR_SOUTH_EAST_ASIA
     fundingBase: 125
@@ -652,6 +715,7 @@ countries:
       - [107.4, 109.5, -17.5, -10.2]
       - [104.1, 107.4, -10.5, -8]
       - [105.8, 107.404, -12.4, -10.5]
+
 regions:
   - type: STR_ANTARCTICA
     buildCost: 1350000
@@ -710,6 +774,7 @@ regions:
         - [4.75, 27.625, -52, -44.375]
         - [75, 89, -39, -34.375]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_ARCTIC
     buildCost: 1350000
     areas:
@@ -778,6 +843,7 @@ regions:
         - [4.75, 27.625, -52, -44.375]
         - [75, 89, -39, -34.375]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_AUSTRALASIA
     buildCost: 800000
     areas:
@@ -876,7 +942,7 @@ regions:
         - [168.5, 170.375, 44.25, 45.25]
         - [141.375, 150.125, 32.875, 36.375]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [122.25, 135.375, 21, 27.5]
         - [147.5, 148.8, 9, 9.66]
@@ -893,6 +959,7 @@ regions:
         - [7.5, 38.625, 4.125, 18.625]
         - [91.875, 124.25, -30.75, -17.5]
         - [62.125, 101.375, -66.625, -57.125]
+
   - type: STR_CENTRAL_ASIA
     buildCost: 530000
     areas:
@@ -1023,7 +1090,7 @@ regions:
         - [66.75, 81.5, -46.125, -43.5]
         - [77.875, 89.375, -27, -23.375]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [42.375, 52.125, -23.5, -18.375]
         - [77.75, 84.875, -36, -32.75]
@@ -1040,6 +1107,7 @@ regions:
         - [7.5, 38.625, 4.125, 18.625]
         - [137.125, 169.5, -54, -40.75]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_EUROPE
     buildCost: 1200000
     areas:
@@ -1319,7 +1387,7 @@ regions:
         - [17.125, 27.875, -45.75, -43.125]
         - [352.625, 358.875, -39.375, -37.75]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [355.875, 357.25, -57.625, -57]
         - [17.5, 29, -69.375, -67.625]
@@ -1337,6 +1405,7 @@ regions:
         - [64.5, 125.5, -55.5, -44]
         - [72.875, 105.25, -25, -11.75]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_INDIAN_OCEAN
     buildCost: 450000
     areas:
@@ -1384,7 +1453,7 @@ regions:
         - [102.9, 105.4, 1.71, 4.21]
         - [71.05, 71.43, -23.82, -22.07]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [43.76, 46.13, -16.95, -13.82]
         - [116.44, 118.82, 31.71, 33.73]
@@ -1399,6 +1468,7 @@ regions:
         - [124.25, 125.875, -24, -21.625]
         - [79.5, 81.5, -16, -13.625]
         - [330, 336, 33, 35.25]
+
   - type: STR_NORTH_AFRICA
     buildCost: 670000
     areas:
@@ -1541,7 +1611,7 @@ regions:
         - [348, 357.125, -10.75, -7.5]
         - [2.25, 8.5, -35.875, -34.625]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [5.625, 9, -6.125, -5]
         - [15.75, 31.75, -26.125, -18.75]
@@ -1558,6 +1628,7 @@ regions:
         - [64.5, 125.5, -55.5, -44]
         - [72.875, 105.25, -25, -11.75]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_NORTH_AMERICA
     buildCost: 900000
     areas:
@@ -1789,7 +1860,7 @@ regions:
         - [274.5, 276.25, -44.375, -43.375]
         - [200.625, 216.75, -64.75, -62.25]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [250, 270, -66, -64]
         - [280, 292.5, -51, -46]
@@ -1812,6 +1883,7 @@ regions:
         - [4.75, 27.625, -52, -44.375]
         - [75, 89, -39, -34.375]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_NORTH_ATLANTIC
     buildCost: 630000
     areas:
@@ -1869,7 +1941,7 @@ regions:
         - [280.89, 283.64, -72.49, -70.86]
         - [351.34, 352.84, -53.53, -52.78]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [278.18, 279.05, -28.81, -26.94]
         - [287.38, 290.61, -69.21, -63.81]
@@ -1889,6 +1961,7 @@ regions:
         - [70, 71.125, -70, -68.125]
         - [4, 5.5, -38, -35.5]
         - [273, 274.5, -23, -21.25]
+
   - type: STR_PACIFIC
     buildCost: 600000
     areas:
@@ -1971,6 +2044,7 @@ regions:
         - [7.5, 38.625, 4.125, 18.625]
         - [91.875, 124.25, -30.75, -17.5]
         - [62.125, 101.375, -66.625, -57.125]
+
   - type: STR_SIBERIA
     buildCost: 860000
     areas:
@@ -2026,7 +2100,7 @@ regions:
         - [125.875, 141.5, -64.25, -59.5]
         - [91.375, 108.875, -61.375, -57.375]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [63.125, 78.375, -66.5, -62]
         - [157.75, 162.5, -57.25, -55.625]
@@ -2043,6 +2117,7 @@ regions:
         - [7.5, 38.625, 4.125, 18.625]
         - [91.875, 124.25, -30.75, -17.5]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_SOUTH_AMERICA
     buildCost: 590000
     areas:
@@ -2159,7 +2234,7 @@ regions:
         - [287.875, 292.25, 47.25, 49.25]
         - [299.5, 301.125, 51.375, 51.875]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [290.125, 305.5, 1.5, 7.625]
         - [285.875, 289.5, 13.625, 15.625]
@@ -2176,6 +2251,7 @@ regions:
         - [4.75, 27.625, -52, -44.375]
         - [75, 89, -39, -34.375]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_SOUTH_ATLANTIC
     buildCost: 540000
     areas:
@@ -2230,7 +2306,7 @@ regions:
         - [345.16, 346.41, -12.39, -11.14]
         - [305.53, 308.03, -3.62, -1.12]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [344.52, 346.64, -13.87, -11.74]
         - [18.54, 22.54, 27.84, 33.71]
@@ -2250,6 +2326,7 @@ regions:
         - [70, 71.125, -70, -68.125]
         - [70, 73.125, 60, 61.75]
         - [0, 6.875, 60, 65.25]
+
   - type: STR_SOUTH_EAST_ASIA
     buildCost: 780000
     areas:
@@ -2393,7 +2470,7 @@ regions:
         - [127, 137, -48.5, -45]
         - [101.25, 111.875, -43.875, -37.875]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [100.625, 103.125, -0.375, 0.75]
         - [96.125, 104.75, -42.625, -39]
@@ -2410,6 +2487,7 @@ regions:
         - [7.5, 38.625, 4.125, 18.625]
         - [50.5, 82.875, -64.5, -51.25]
         - [115, 132.5, 21, 25.5]
+
   - type: STR_SOUTHERN_AFRICA
     buildCost: 630000
     areas:
@@ -2496,7 +2574,7 @@ regions:
         - [17.75, 29.75, 26.25, 29.875]
         - [45, 48.75, 16.25, 18.75]
       -
-        - [0,0,0,0]
+        - [0, 0, 0, 0]
       -
         - [17.125, 23.25, 22.75, 27.125]
         - [12, 26.875, -2.625, 4]
@@ -2513,6 +2591,7 @@ regions:
         - [64.5, 125.5, -55.5, -44]
         - [72.875, 105.25, -25, -11.75]
         - [115, 132.5, 21, 25.5]
+
 extraStrings:
   - type: en-US
     strings:
@@ -2906,11 +2985,12 @@ extraStrings:
       STR_YELLOWKNIFE: Yellowknife
       STR_YEREVAN: Yerevan
       STR_ZAGREB: Zagreb
+
 globe:
   data: GEODATA/WORLD.DAT
-  baseColor: 100    # 133
-  cityColor: 167    # 138
-  countryColor: 227 # 239
+  baseColor: 100    #133
+  cityColor: 167    #138
+  countryColor: 227 #239
   lineColor: 162
 #  radarColor1:
   radarColor2: 150
@@ -2998,99 +3078,115 @@ globe:
     - [290.4632, 17.4758, 292.2870, 22.9030, 292.9681, 22.9470, 292.7264, 24.3532, 291.4959, 24.8146, 291.4520, 27.2096, 290.3534, 28.8576, 289.6502, 31.6262, 290.2215, 33.8234, 288.8153, 37.2072, 289.2547, 38.4816, 288.4198, 40.0197, 288.1561, 42.9640, 288.2440, 47.2267, 286.6620, 49.9953, 287.9364, 51.9289, 290.8807, 52.3683]
     - [292.5946, 22.9689, 294.0887, 21.8703, 297.2528, 22.3537, 302.2626, 25.2541, 301.4276, 27.1877, 304.4598, 27.4513]
     - [301.5594, 34.3068, 302.5702, 30.1760]
+
   textures:
     - id: 0 #forest
       details:
         - type: FOREST
         - type: FORESTPOLAR
         - type: STEPPEFOREST #south
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
         - type: TAIGAFOREST #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
+
     - id: 1 #savannah/steppe/plains
       details:
         - type: CULTA
         - type: CULTAFARMA
         - type: CULTAFARMB
         - type: SAVANNADESERT #south
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
         - type: SAVANNAFOREST #south
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
         - type: STEPPEDESERT #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
+
     - id: 2 #farmland/cultivated/suburban
       details:
         - type: CULTA
         - type: CULTAFARMA
         - type: CULTAFARMB
         - type: GRASSLANDDESERT #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
         - type: GRASSLANDFOREST
         - type: MADURBANUFO #city <---
         - type: NATIVEUFO #south #city <---
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
+
     - id: 3 #forested mountains
       details:
         - type: FOREST
         - type: FORESTMOUNT
         - type: GRASSLANDFORESTMOUNT
         - type: SAVANNAFORESTMOUNT #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
         - type: STEPPEFORESTMOUNT #south
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
         - type: TAIGAFORESTMOUNT #south
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
+
     - id: 4 #tundra/taiga
       details:
         - type: TAIGADESERT #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
         - type: TUNDRADESERT #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
+
     - id: 5 #barren mountains
       details:
         - type: FORESTMOUNT
         - type: MOUNT
         - type: TUNDRAMOUNT #south
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
         - type: TUNDRADESERTMOUNT #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
+
     - id: 6 #jungle
       details:
         - type: JUNGLE
         - type: JUNGLEPOLAR
         - type: JUNGLETEMPLE
+
     - id: 7 #desert
       details:
         - type: DESERT
         - type: DESERTTEMPLE
+
     - id: 8 #desert mountains
       details:
         - type: DESERTMOUNT
         - type: DESERTTEMPLE
+
     - id: 9 #polar
       details:
         - type: POLAR
         - type: POLARDESERT #north
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
+
     - id: 10 #urban
       details:
         - type: INDUSTRIALUFO #north #city <---
-          area: [0,360,-90,0]
+          area: [0, 360, -90, 0]
         - type: MADURBANUFO #city <---
         - type: NATIVEUFO #south #city <---
-          area: [0,360,0,90]
+          area: [0, 360, 0, 90]
+
     - id: 11 #polar mountains
       details:
         - type: POLARMOUNT
+
     - id: 12 #icepack
       details:
         - type: POLAR
+
     - id: -1 #inland
       deployTypes:
         STR_TERROR_MISSION: 100
+
     - id: -2 #coastal
       deployTypes:
         STR_PORT_ATTACK: 100
+
 ###--- Original Textures ---###
 #  textures:
 #    - id: 0

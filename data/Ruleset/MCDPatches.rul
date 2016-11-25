@@ -20,6 +20,7 @@ MCDPatches:
         bigWall: 3
       - MCDIndex: 19
         bigWall: 2
+
   - type: AVENGER
     data:
       - MCDIndex: 12
@@ -48,6 +49,7 @@ MCDPatches:
         bigWall: 6
       - MCDIndex: 48
         bigWall: 2
+
   - type: LIGHTNIN
     data:
       - MCDIndex: 0
@@ -78,6 +80,7 @@ MCDPatches:
         bigWall: 2
       - MCDIndex: 13
         bigWall: 7
+
   - type: PLANE
     data:
       - MCDIndex: 13
@@ -86,6 +89,7 @@ MCDPatches:
         bigWall: 6
       - MCDIndex: 59
         bigWall: 6
+
   - type: U_EXT02
     data:
       - MCDIndex: 2
@@ -108,12 +112,14 @@ MCDPatches:
         bigWall: 2
       - MCDIndex: 15
         bigWall: 2
+
   - type: UFOL83
     data:
       - MCDIndex: 23
         bigWall: 2
       - MCDIndex: 25
         bigWall: 3
+
 # --- kL ScanG additions (subtract 35 from the SCANG.DAT id) ----------------- #
   - type: JUNGLEPOLAR
     data:
@@ -153,6 +159,7 @@ MCDPatches:
 #        scanG:
 #      - MCDIndex: 80
 #        scanG:
+
   - type: FORESTPOLAR
     data:
       - MCDIndex: 63
@@ -191,6 +198,7 @@ MCDPatches:
 #        scanG:
 #      - MCDIndex: 80
 #        scanG:
+
 # --- kL Psycho additions ---------------------------------------------------- #
   - type: U_PODS
     data:
@@ -204,10 +212,11 @@ MCDPatches:
         psycho: 1
       - MCDIndex: 4 #  "     "      "    westWall
         psycho: 1
-      - MCDIndex: 7 # disco walls, blue northWall
+      - MCDIndex: 7 #disco walls, blue northWall
         psycho: 1
-      - MCDIndex: 8 #   "     "     "   westWall
+      - MCDIndex: 8 #  "     "     "   westWall
         psycho: 1
+
   - type: U_WALL02
     data:
       - MCDIndex: 31 #scanner wall north, interior UFO

@@ -84,7 +84,7 @@ SoldierDiaryOverviewState::SoldierDiaryOverviewState(
 		_rows = _listDead->size();
 	}
 
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(310, 16, 5, 8);
 	_txtBaseLabel	= new Text(310,  9, 5, 25);

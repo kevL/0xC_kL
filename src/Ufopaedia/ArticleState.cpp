@@ -41,7 +41,7 @@ ArticleState::ArticleState(const std::string& article_id) // protected.
 	:
 		_id(article_id)
 {
-	_bg			= new InteractiveSurface(320, 200);
+	_bg			= new InteractiveSurface();
 	_btnOk		= new TextButton(30, 14,  5, 5);
 	_btnPrev	= new TextButton(30, 14, 40, 5);
 	_btnNext	= new TextButton(30, 14, 75, 5);

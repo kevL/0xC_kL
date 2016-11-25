@@ -21,6 +21,7 @@ items:
     armor: 30
     autoShots: 5
     listOrder: 2260
+
   - type: STR_LMG_CLIP
     size: 0.1
     costBuy: 350
@@ -40,27 +41,33 @@ items:
     invHeight: 1
     autoShots: 5
     listOrder: 2261
+
 ufopaedia:
   - id: STR_LMG
     type_id: 4
     section: STR_WEAPONS_AND_EQUIPMENT
     text: STR_LMG_UFOPEDIA
     listOrder: 2202
+
   - id: STR_LMG_CLIP
     type_id: 4
     section: STR_NOT_AVAILABLE
+
 extraSprites:
   - type: BIGOBS.PCK
     files:
       107: Resources/LightMachinegun/LMG.png
       108: Resources/LightMachinegun/Clip.png
+
   - type: FLOOROB.PCK
     files:
       87: Resources/LightMachinegun/floorob_LMG.png
       88: Resources/LightMachinegun/floorob_Ammo.png
+
   - type: HANDOB.PCK
     files:
       200: Resources/LightMachinegun/HandOb_LMG/
+
 #  - type: Projectiles
 #    height: 3
 #    width: 65
@@ -68,10 +75,12 @@ extraSprites:
 #    subY: 3
 #    files:
 #      490: Resources/LightMachinegun/BulletSprite.png
+
 extraSounds:
   - type: BATTLE.CAT
     files:
       55: Resources/LightMachinegun/Sounds/fire.wav
+
 extraStrings:
   - type: en-US
     strings:

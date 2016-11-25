@@ -17,6 +17,7 @@ ufos:
         - type: UFO1A
           width: 10
           length: 10
+
   - type: STR_MEDIUM_SCOUT
     size: STR_SMALL
     sprite: 1
@@ -61,6 +62,7 @@ ufos:
         - type: ox_ufo1g
           width: 10
           length: 10
+
   - type: STR_LARGE_SCOUT
     size: STR_SMALL
     sprite: 2
@@ -120,6 +122,7 @@ ufos:
         - type: ox_ufo2l
           width: 20
           length: 20
+
   - type: STR_HARVESTER
     size: STR_MEDIUM_UC
     sprite: 3
@@ -177,6 +180,7 @@ ufos:
         - type: ox_ufo3k
           width: 20
           length: 20
+
   - type: STR_ABDUCTOR
     size: STR_MEDIUM_UC
     sprite: 4
@@ -231,6 +235,7 @@ ufos:
         - type: ox_ufo4j
           width: 20
           length: 20
+
   - type: STR_TERROR_SHIP
     size: STR_LARGE
     sprite: 5
@@ -276,6 +281,7 @@ ufos:
         - type: ox_ufo5h
           width: 20
           length: 30
+
   - type: STR_BATTLESHIP
     size: STR_VERY_LARGE
     sprite: 6
@@ -314,6 +320,7 @@ ufos:
         - type: UFO_BS5
           width: 30
           length: 30
+
   - type: STR_SUPPLY_SHIP
     size: STR_LARGE
     sprite: 7

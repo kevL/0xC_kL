@@ -33,8 +33,8 @@ namespace OpenXcom
 {
 /**
  * Sets up the blank Text with a specified size and position.
- * @param width		- width in pixels
- * @param height	- height in pixels
+ * @param width		- width in pixels (default 320)
+ * @param height	- height in pixels (default 200)
  * @param x			- x-position in pixels (default 0)
  * @param y			- y-position in pixels (default 0)
  */
@@ -45,9 +45,9 @@ Text::Text(
 		int y)
 	:
 		Surface(
-			width,
-			height,
-			x,y),
+				width,
+				height,
+				x,y),
 		_big(nullptr),
 		_small(nullptr),
 		_font(nullptr),

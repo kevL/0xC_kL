@@ -7,6 +7,7 @@ extraSprites:
     subY: 48
     files:
       0: Resources/Sprites/Units/bigobs/bigobs.png
+
 # ---- FloorOb ---- #
   - type: FLOOROB.PCK
     width: 256
@@ -15,9 +16,11 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/floorob/floorob.png
+
   - type: FLOOROB.PCK
     files:
       90: Resources/Sprites/Units/floorob/floorob_90_stunbomb.png
+
 # ---- HandOb ---- #
   - type: HANDOB.PCK
     width: 512
@@ -26,6 +29,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/handob/handob.png
+
 # ------------------------ #
 # ---- Mobile Objects ---- #
   - type: CELATID.PCK
@@ -35,6 +39,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/celatid/celatid.png
+
   - type: CYBER.PCK
     width: 256
     height: 320
@@ -42,6 +47,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/cybam/cybam.png
+
   - type: FLOATER.PCK
     width: 512
     height: 280
@@ -49,16 +55,18 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/purplefloater/purplefloater.png
+
   - type: SECTOID.PCK
     width: 512
-#    width: 256
     height: 680
+#    width: 256
 #    height: 1360
     subX: 32
     subY: 40
     files:
       0: Resources/Sprites/Units/sectoid/sectoid.png
 #      0: Resources/Sprites/Units/sectoid/sectoid_engineer.png #Mono-sunglasses
+
   - type: SectoidCdr
     width: 512
     height: 680
@@ -66,6 +74,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/sectoid/sectoid_cdr.png
+
   - type: SILACOID.PCK
     width: 288
     height: 40
@@ -73,6 +82,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/silacoid/silacoid.png
+
   - type: SNAKEMAN.PCK
     width: 256
     height: 680
@@ -80,6 +90,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/snakeman/snakeman.png
+
   - type: TANKS.PCK
     width: 512
     height: 320
@@ -87,6 +98,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/tanks/tanks.png
+
   - type: X_REAP.PCK
     width: 256
     height: 800
@@ -94,6 +106,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/x_reap/x_reap.png
+
   - type: X_ROB.PCK
     width: 512
     height: 400
@@ -101,6 +114,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/x_rob/x_rob.png
+
   - type: XCOM_0.PCK
     width: 512
     height: 720
@@ -108,6 +122,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/xcom_0/xcom_0.png
+
   - type: XCOM_1.PCK
     width: 512
     height: 720
@@ -115,6 +130,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/xcom_1/xcom_1.png
+
   - type: XCOM_2.PCK
     width: 512
     height: 720
@@ -122,6 +138,7 @@ extraSprites:
     subY: 40
     files:
       0: Resources/Sprites/Units/xcom_2/xcom_2.png
+
   - type: ZOMBIE.PCK
     width: 256
     height: 480

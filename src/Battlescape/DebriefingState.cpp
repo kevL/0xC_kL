@@ -145,7 +145,7 @@ DebriefingState::DebriefingState()
 	// BattlescapeGame is really dTor'd and not reLoaded ...... uh, i guess.
 	_battleSave->getBattleGame()->cleanBattleStates();
 
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(280, 16,  16, 8);
 	_txtBaseLabel	= new Text( 80,  9, 216, 8);

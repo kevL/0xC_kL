@@ -64,7 +64,7 @@ ArticleStateArmor::ArticleStateArmor(const ArticleDefinitionArmor* const defs)
 	_txtTitle->setColor(uPed_BLUE_SLATE);
 	_txtTitle->setBig();
 
-	_image = new Surface(320, 200);
+	_image = new Surface();
 	add(_image);
 
 	const RuleArmor* const arRule (_game->getRuleset()->getArmor(defs->id));

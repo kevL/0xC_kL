@@ -27,6 +27,7 @@ alienDeployments:
     length: 40
     height: 9
     cheatTurn: 5
+
   - type: STR_MEDIUM_SCOUT
     data:
       - alienRank: 4 #navigator
@@ -66,6 +67,7 @@ alienDeployments:
     length: 40
     height: 9
     cheatTurn: 5
+
   - type: STR_LARGE_SCOUT
     data:
       - alienRank: 6 #terrorist1
@@ -74,24 +76,18 @@ alienDeployments:
         dQty: 1
         pctOutsideUfo: 100
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 0
         highQty: 0
         dQty: 1
         pctOutsideUfo: 100
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 2 #engineer
         lowQty: 1
         highQty: 2
@@ -144,6 +140,7 @@ alienDeployments:
     length: 50
     height: 9
     cheatTurn: 10
+
   - type: STR_HARVESTER
     data:
       - alienRank: 1 #leader
@@ -237,6 +234,7 @@ alienDeployments:
     length: 50
     height: 9
     cheatTurn: 15
+
   - type: STR_ABDUCTOR
     data:
       - alienRank: 1 #leader
@@ -330,6 +328,7 @@ alienDeployments:
     length: 50
     height: 9
     cheatTurn: 15
+
   - type: STR_TERROR_SHIP
     data:
       - alienRank: 6 #terrorist1
@@ -338,24 +337,18 @@ alienDeployments:
         dQty: 2
         pctOutsideUfo: 60
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 1
         highQty: 3
         dQty: 2
         pctOutsideUfo: 60
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 1 #leader
         lowQty: 1
         highQty: 1
@@ -447,6 +440,7 @@ alienDeployments:
     length: 50
     height: 9
     cheatTurn: 20
+
   - type: STR_BATTLESHIP
     data:
       - alienRank: 6 #terrorist1
@@ -455,24 +449,18 @@ alienDeployments:
         dQty: 1
         pctOutsideUfo: 55
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 0
         highQty: 2
         dQty: 1
         pctOutsideUfo: 55
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 0 #commander
         lowQty: 1
         highQty: 1
@@ -607,6 +595,7 @@ alienDeployments:
     length: 60
     height: 9
     cheatTurn: 30
+
   - type: STR_SUPPLY_SHIP
     data:
       - alienRank: 6 #terrorist1
@@ -615,24 +604,18 @@ alienDeployments:
         dQty: 1
         pctOutsideUfo: 100
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 0
         highQty: 1
         dQty: 1
         pctOutsideUfo: 100
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 1 #leader
         lowQty: 1
         highQty: 1
@@ -724,6 +707,7 @@ alienDeployments:
     length: 50
     height: 9
     cheatTurn: 25
+
   - type: STR_TERROR_MISSION
     data:
       - alienRank: 6 #terrorist1
@@ -732,24 +716,18 @@ alienDeployments:
         dQty: 2
         pctOutsideUfo: 50
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 1
         highQty: 3
         dQty: 2
         pctOutsideUfo: 50
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 1 #leader
         lowQty: 1
         highQty: 2
@@ -877,8 +855,9 @@ alienDeployments:
     briefing:
       palette: 2
       music: GEO_BRIEF_TERRORSITE
-    duration: [4,10]
+    duration: [4, 10]
     despawnPenalty: 1000
+
   - type: STR_PORT_ATTACK
     data:
       - alienRank: 6 #terrorist1
@@ -887,24 +866,18 @@ alienDeployments:
         dQty: 2
         pctOutsideUfo: 50
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 1
         highQty: 3
         dQty: 2
         pctOutsideUfo: 50
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 1 #leader
         lowQty: 1
         highQty: 2
@@ -1030,8 +1003,9 @@ alienDeployments:
     briefing:
       palette: 2
       music: GEO_BRIEF_TERRORSITE
-    duration: [4,10]
+    duration: [4, 10]
     despawnPenalty: 1000
+
   - type: STR_ALIEN_BASE_ASSAULT
     script: ALIENBASE
     data:
@@ -1163,24 +1137,18 @@ alienDeployments:
         dQty: 3
         pctOutsideUfo: 0
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 1
         highQty: 2
         dQty: 2
         pctOutsideUfo: 0
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
     width: 60
     length: 60
     height: 2
@@ -1197,6 +1165,7 @@ alienDeployments:
     generatedMissionPct: 4 #pct per day
     generatedMission:
       STR_ALIEN_SUPPLY: 100
+
   - type: STR_BASE_DEFENSE
     data:
       - alienRank: 6 #terrorist1
@@ -1205,24 +1174,18 @@ alienDeployments:
         dQty: 2
         pctOutsideUfo: 50
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 7 #terrorist2
         lowQty: 0
         highQty: 2
         dQty: 2
         pctOutsideUfo: 50
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 0 #commander
         lowQty: 1
         highQty: 1
@@ -1365,6 +1328,7 @@ alienDeployments:
       music: GEO_BRIEF_BASEDEFENSE
 #      showTargetText: false
 #      textOffset: -16
+
   - type: STR_MARS_CYDONIA_LANDING
     data:
       - alienRank: 6 #terrorist1
@@ -1373,12 +1337,9 @@ alienDeployments:
         dQty: 2
         pctOutsideUfo: 100
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 0 #commander
         lowQty: 4
         highQty: 6
@@ -1455,6 +1416,7 @@ alienDeployments:
       music: GEO_BRIEF_MARS1
       showTargetText: false
 #      textOffset: -16
+
   - type: STR_MARS_THE_FINAL_ASSAULT
     script: BOSSBATTLE
     data:
@@ -1464,12 +1426,9 @@ alienDeployments:
         dQty: 3
         pctOutsideUfo: 0
         itemSets:
-          -
-            []
-          -
-            []
-          -
-            []
+          - []
+          - []
+          - []
       - alienRank: 0 #commander
         lowQty: 2
         highQty: 5
@@ -1632,6 +1591,7 @@ alienDeployments:
 #      textOffset: -16
     objectiveTile: 14 #TileType:MUST_DESTROY
     objectivesRequired: 4
+
 #Alien Tech Level, http://openxcom.org/forum/index.php?topic=1356.0
 #kaiser_bill,
 #this links into the alien equipment loadouts specified under the UFO crew loadout section
@@ -1662,6 +1622,7 @@ alienItemLevels:
   - [0, 1, 1, 2, 2, 2, 2, 2, 2, 2] #mar
   - [0, 1, 1, 2, 2, 2, 2, 2, 2, 2] #apr
   - [0, 1, 2, 2, 2, 2, 2, 2, 2, 2] #may
+
 alienMissions:
   - type: STR_ALIEN_RESEARCH
     score: 10
@@ -1704,6 +1665,7 @@ alienMissions:
         count: 2
         trajectory: P4
         timer: 9000
+
   - type: STR_ALIEN_HARVEST
     score: 30
     weightsRace:
@@ -1760,6 +1722,7 @@ alienMissions:
         count: 1
         trajectory: P2
         timer: 1500
+
   - type: STR_ALIEN_ABDUCTION
     score: 50
     weightsRace:
@@ -1799,6 +1762,7 @@ alienMissions:
         count: 2
         trajectory: P4
         timer: 60
+
   - type: STR_ALIEN_INFILTRATION
     score: 100
     objectiveType: 1
@@ -1866,6 +1830,7 @@ alienMissions:
         count: 2
         trajectory: P7
         timer: 60
+
   - type: STR_ALIEN_BASE
     score: 300
     objectiveType: 2
@@ -1921,6 +1886,7 @@ alienMissions:
         count: 1
         trajectory: P6
         timer: 60
+
   - type: STR_ALIEN_TERROR
     score: 200
     objectiveType: 3
@@ -1971,6 +1937,7 @@ alienMissions:
         trajectory: P7
         timer: 9000
         isObjective: true
+
   - type: STR_ALIEN_RETALIATION
     score: 0
     objectiveType: 4
@@ -2000,6 +1967,7 @@ alienMissions:
         count: 2
         trajectory: P8
         timer: 3000
+
   - type: STR_ALIEN_SUPPLY
     score: 25
     objectiveType: 5
@@ -2011,6 +1979,7 @@ alienMissions:
         trajectory: P9
         timer: 6000
         isObjective: true
+
 alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
   - type: STR_SECTOID
     members:
@@ -2022,6 +1991,7 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_SECTOID_SOLDIER
       - STR_REAPER_TERRORIST
       - STR_REAPER_TERRORIST
+
   - type: STR_FLOATER
     members:
       - STR_FLOATER_COMMANDER
@@ -2032,6 +2002,7 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_FLOATER_SOLDIER
       - STR_CYBERDISC_TERRORIST
       - STR_CYBERDISC_TERRORIST
+
   - type: STR_SNAKEMAN
     members:
       - STR_SNAKEMAN_COMMANDER
@@ -2042,6 +2013,7 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_SNAKEMAN_SOLDIER
       - STR_CHRYSSALID_TERRORIST
       - STR_CHRYSSALID_TERRORIST
+
   - type: STR_MUTON
     members:
       - STR_MUTON_SOLDIER
@@ -2052,6 +2024,7 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_MUTON_SOLDIER
       - STR_SILACOID_TERRORIST
       - STR_CELATID_TERRORIST
+
   - type: STR_ETHEREAL
     members:
       - STR_ETHEREAL_COMMANDER
@@ -2062,6 +2035,7 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_ETHEREAL_SOLDIER
       - STR_SECTOPOD_TERRORIST
       - STR_SECTOPOD_TERRORIST
+
   - type: STR_MIXED
     retaliation: false
     members:
@@ -2073,6 +2047,7 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_CELATID_TERRORIST
       - STR_SECTOPOD_TERRORIST
       - STR_SECTOPOD_TERRORIST
+
   - type: STR_WASPITE
     members:
       - STR_WASPITE_COMMANDER
@@ -2083,8 +2058,9 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_WASPITE_SOLDIER
       - STR_CYBERMITE_TERRORIST
       - STR_CYBERMITE_TERRORIST
+
 armors:
-  - type: SECTOID_ARMOR0 #soldier, navigator, medic, engineer
+  - type: SECTOID_ARMOR0 #soldier,navigator,medic,engineer
     spriteSheet: SECTOID.PCK
     corpseBattle:
       - STR_SECTOID_CORPSE
@@ -2104,6 +2080,7 @@ armors:
       - 1.5 #acid
       - 0.0 #smoke
     loftSet: [2]
+
   - type: SECTOID_ARMOR1 #leader
     spriteSheet: SECTOID.PCK
     corpseBattle:
@@ -2124,6 +2101,7 @@ armors:
       - 1.5 #acid
       - 0.0 #smoke
     loftSet: [2]
+
   - type: SECTOID_ARMOR2 #commander
     spriteSheet: SectoidCdr #SECTOID.PCK
     corpseBattle:
@@ -2144,6 +2122,7 @@ armors:
       - 1.5 #acid
       - 0.0 #smoke
     loftSet: [2]
+
   - type: FLOATER_ARMOR0 #soldier, navigator, medic, engineer
     spriteSheet: FLOATER.PCK
     corpseBattle:
@@ -2166,6 +2145,7 @@ armors:
       - 1.3
       - 0.0
     loftSet: [2]
+
   - type: FLOATER_ARMOR1 #leader
     spriteSheet: FLOATER.PCK
     corpseBattle:
@@ -2188,6 +2168,7 @@ armors:
       - 1.3
       - 0.0
     loftSet: [2]
+
   - type: FLOATER_ARMOR2 #commander
     spriteSheet: FLOATER.PCK
     corpseBattle:
@@ -2210,6 +2191,7 @@ armors:
       - 1.3
       - 0.0
     loftSet: [2]
+
   - type: CYBERDISC_ARMOR
     spriteSheet: CYBER.PCK
     accessInventory: false
@@ -2238,7 +2220,8 @@ armors:
       - 0.7 #melee
       - 1.0 #acid
       - 0.0 #smoke
-    loftSet: [92,89,90,91]
+    loftSet: [92, 89, 90, 91]
+
   - type: REAPER_ARMOR
     spriteSheet: X_REAP.PCK
     accessInventory: false
@@ -2265,7 +2248,8 @@ armors:
       - 0.9
       - 1.1
       - 1.0
-    loftSet: [92,89,90,91]
+    loftSet: [92, 89, 90, 91]
+
   - type: SECTOPOD_ARMOR
     spriteSheet: X_ROB.PCK
     accessInventory: false
@@ -2292,7 +2276,8 @@ armors:
       - 0.7 #melee
       - 1.0 #acid
       - 0.0 #smoke
-    loftSet: [92,89,90,91]
+    loftSet: [92, 89, 90, 91]
+
   - type: SNAKEMAN_ARMOR0 #soldier
     spriteSheet: SNAKEMAN.PCK
     corpseBattle:
@@ -2315,6 +2300,7 @@ armors:
       - 0.7 #acid
       - 0.5 #smoke
     loftSet: [3]
+
   - type: SNAKEMAN_ARMOR1 #navigator
     spriteSheet: SNAKEMAN.PCK
     corpseBattle:
@@ -2337,6 +2323,7 @@ armors:
       - 0.7 #acid
       - 0.5 #smoke
     loftSet: [3]
+
   - type: SNAKEMAN_ARMOR2 #engineer
     spriteSheet: SNAKEMAN.PCK
     corpseBattle:
@@ -2359,6 +2346,7 @@ armors:
       - 0.7 #acid
       - 0.5 #smoke
     loftSet: [3]
+
   - type: SNAKEMAN_ARMOR3 #leader
     spriteSheet: SNAKEMAN.PCK
     corpseBattle:
@@ -2381,6 +2369,7 @@ armors:
       - 0.7 #acid
       - 0.5 #smoke
     loftSet: [3]
+
   - type: SNAKEMAN_ARMOR4 #commander
     spriteSheet: SNAKEMAN.PCK
     corpseBattle:
@@ -2403,6 +2392,7 @@ armors:
       - 0.7 #acid
       - 0.5 #smoke
     loftSet: [3]
+
   - type: MUTON_ARMOR0 #soldier
     spriteSheet: MUTON.PCK
     corpseBattle:
@@ -2424,6 +2414,7 @@ armors:
       - 0.6 #acid
       - 0.3 #smoke
     loftSet: [4]
+
   - type: MUTON_ARMOR1 #navigator
     spriteSheet: MUTON.PCK
     corpseBattle:
@@ -2445,6 +2436,7 @@ armors:
       - 0.6 #acid
       - 0.3 #smoke
     loftSet: [4]
+
   - type: MUTON_ARMOR2 #engineer
     spriteSheet: MUTON.PCK
     corpseBattle:
@@ -2466,6 +2458,7 @@ armors:
       - 0.6 #acid
       - 0.3 #smoke
     loftSet: [4]
+
   - type: ETHEREAL_ARMOR0 #soldier
     spriteSheet: ETHEREAL.PCK
     corpseBattle:
@@ -2488,6 +2481,7 @@ armors:
       - 1.0 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: ETHEREAL_ARMOR1 #leader
     spriteSheet: ETHEREAL.PCK
     corpseBattle:
@@ -2510,6 +2504,7 @@ armors:
       - 1.0 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: ETHEREAL_ARMOR2 #commander
     spriteSheet: ETHEREAL.PCK
     corpseBattle:
@@ -2532,6 +2527,7 @@ armors:
       - 1.0 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: CHRYSSALID_ARMOR
     spriteSheet: CHRYS.PCK
     accessInventory: false
@@ -2554,6 +2550,7 @@ armors:
       - 0.7 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: ZOMBIE_ARMOR
     spriteSheet: ZOMBIE.PCK
     accessInventory: false
@@ -2577,6 +2574,7 @@ armors:
       - 0.9 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: SILACOID_ARMOR
     spriteSheet: SILACOID.PCK
     accessInventory: false
@@ -2601,6 +2599,7 @@ armors:
       - 1.0 #acid
       - 0.0 #smoke
     loftSet: [5]
+
   - type: CELATID_ARMOR
     spriteSheet: CELATID.PCK
     accessInventory: false
@@ -2627,15 +2626,17 @@ armors:
       - 0.7 #acid
       - 0.0 #smoke
     loftSet: [3]
+
 ufoTrajectories:
   - id: P0
     groundTimer: 3000
     waypoints:
-      - [5, 4, 100] # zoneId, stAltitude, speedPct
+      - [5, 4, 100] #zoneId,stAltitude,speedPct
       - [0, 3, 74]
       - [0, 1, 28]
       - [1, 1, 47]
       - [5, 2, 100]
+
   - id: P1
     groundTimer: 4000
     waypoints:
@@ -2647,6 +2648,7 @@ ufoTrajectories:
       - [0, 2, 32]
       - [2, 1, 65]
       - [5, 0, 100]
+
   - id: P2
     groundTimer: 5000
     waypoints:
@@ -2655,6 +2657,7 @@ ufoTrajectories:
       - [0, 2, 26]
       - [1, 1, 50]
       - [5, 0, 100]
+
   - id: P3
     groundTimer: 6000
     waypoints:
@@ -2663,6 +2666,7 @@ ufoTrajectories:
       - [0, 2, 25]
       - [2, 1, 20]
       - [5, 0, 100]
+
   - id: P4
     groundTimer: 7000
     waypoints:
@@ -2674,6 +2678,7 @@ ufoTrajectories:
       - [0, 2, 20]
       - [2, 1, 30]
       - [5, 0, 100]
+
   - id: P5
     groundTimer: 4000
     waypoints:
@@ -2685,6 +2690,7 @@ ufoTrajectories:
       - [0, 2, 29]
       - [4, 1, 42]
       - [5, 0, 90]
+
   - id: P6
     groundTimer: 5000
     waypoints:
@@ -2693,6 +2699,7 @@ ufoTrajectories:
       - [0, 2, 25]
       - [4, 1, 16]
       - [5, 0, 100]
+
   - id: P7
     groundTimer: 9000
     waypoints:
@@ -2701,6 +2708,7 @@ ufoTrajectories:
       - [0, 2, 30]
       - [3, 1, 20]
       - [5, 0, 100]
+
   - id: P8
     groundTimer: 6000
     waypoints:
@@ -2712,11 +2720,13 @@ ufoTrajectories:
       - [0, 1, 42]
       - [2, 1, 56]
       - [5, 4, 100]
+
   - id: P9 #alien base supply mission
     groundTimer: 2000
     waypoints:
       - [5, 4, 80]
       - [5, 0, 100]
+
   - id: __RETALIATION_ASSAULT_RUN
     groundTimer: 1000
     waypoints:

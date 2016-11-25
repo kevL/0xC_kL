@@ -21,6 +21,7 @@ items:
     invWidth: 2
     invHeight: 3
     listOrder: 1073
+
   - type: STR_DOG_CORPSE
     weight: 20
     bigSprite: 211
@@ -31,6 +32,7 @@ items:
     twoHanded: true
     recover: false
     armor: 35
+
 units:
   - type: STR_DOG
     race: STR_DOG
@@ -55,6 +57,7 @@ units:
     energyRecovery: 65
     hasHands: false
     dog: true
+
 armors:
   - type: DOG_ARMOR
     spriteSheet: DOG.PCK
@@ -78,6 +81,7 @@ armors:
       - 1.12 #smoke
     loftSet: [2]
     agility: 2
+
 ufopaedia:
   - id: STR_DOG
     listOrder: 1650
@@ -85,6 +89,7 @@ ufopaedia:
     section: STR_HEAVY_WEAPONS_PLATFORMS
     text: STR_DOG_UFOPEDIA
     weapon: STR_DOG_BITE
+
 extraSprites:
   - type: DOG.PCK
     subX: 32
@@ -93,19 +98,23 @@ extraSprites:
     height: 200
     files:
       0: Resources/MoreCivilians/DOG.png
+
   - type: BIGOBS.PCK
     files:
       210: Resources/MoreCivilians/DOG_Jaws.png
       211: Resources/MoreCivilians/DOG_bigob.png
+
   - type: FLOOROB.PCK
     files:
       210: Resources/MoreCivilians/DOG_floorob.png
+
 extraSounds:
   - type: BATTLE.CAT
     files:
       210: Resources/MoreCivilians/dog_bark.ogg
       211: Resources/MoreCivilians/dog_pain_short.ogg
       212: Resources/MoreCivilians/dog_growl.ogg
+
 extraStrings:
   - type: en-US
     strings:
@@ -113,4 +122,4 @@ extraStrings:
       STR_DOG_CORPSE: "Dead dog"
       STR_DOG_BITE: "Bite"
       STR_DOG_BARK: "Bark"
-      STR_DOG_UFOPEDIA: "These highly trained dogs are fully able in battlefield conditions. They can spot aliens but won't attack unless ordered to do so. To avoid compromising their positions xCom agents communicate with these dogs via supersonic whistles."
+      STR_DOG_UFOPEDIA: "These highly trained dogs are fully able in battlefield conditions. They can spot aliens but won't attack unless ordered to do so. To avoid compromising their positions xCom agents communicate with these dogs via ultrasonic whistles."

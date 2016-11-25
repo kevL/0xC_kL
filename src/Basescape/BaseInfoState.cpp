@@ -68,7 +68,7 @@ BaseInfoState::BaseInfoState(
 		_baseList(_game->getSavedGame()->getBases()),
 		_psiResearched(_game->getSavedGame()->isResearched("STR_PSI_LAB"))
 {
-	_bg					= new Surface(320, 200);
+	_bg					= new Surface();
 
 	_mini				= new MiniBaseView(128, 16, 182, 8, MBV_INFO);
 

@@ -13,6 +13,7 @@ items:
     twoHanded: true
     armor: 26
     listOrder: 7901
+
   - type: STR_CYBERMITE_CORPSE
     size: 0.4
     costSell: 20000
@@ -28,6 +29,7 @@ items:
     armor: 26
     blastRadius: 3
     listOrder: 7902
+
   - type: CYBERMITE_WEAPON
     weight: 3
 #    bigSprite: -3
@@ -45,41 +47,49 @@ items:
 #    invHeight: 3
     recover: false
 #    listOrder: 11510
+
   - type: STR_WASPITE_SOLDIER
     size: 0.0
     liveAlien: true
     costSell: 40000
     listOrder: 14401
+
   - type: STR_WASPITE_MEDIC
     size: 0.0
     liveAlien: true
     costSell: 60000
     listOrder: 14402
+
   - type: STR_WASPITE_NAVIGATOR
     size: 0.0
     liveAlien: true
     costSell: 60000
     listOrder: 14403
+
   - type: STR_WASPITE_ENGINEER
     size: 0.0
     liveAlien: true
     costSell: 60000
     listOrder: 14404
+
   - type: STR_WASPITE_LEADER
     size: 0.0
     liveAlien: true
     costSell: 60000
     listOrder: 14405
+
   - type: STR_WASPITE_COMMANDER
     size: 0.0
     liveAlien: true
     costSell: 60000
     listOrder: 14406
+
   - type: STR_CYBERMITE_TERRORIST
     size: 0.0
     liveAlien: true
     costSell: 60000
     listOrder: 14407
+
 armors:
   - type: WASPITE_ARMOR0
     spriteSheet: WASPITE.PCK
@@ -104,6 +114,7 @@ armors:
       - 1.5 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: WASPITE_ARMOR1
     spriteSheet: WASPITE.PCK
     spriteImage: inventory_WASPITE
@@ -127,6 +138,7 @@ armors:
       - 1.5 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: WASPITE_ARMOR2
     spriteSheet: WASPITE.PCK
     spriteImage: inventory_WASPITE
@@ -150,6 +162,7 @@ armors:
       - 1.5 #acid
       - 0.0 #smoke
     loftSet: [3]
+
   - type: CYBERMITE_ARMOR
     spriteSheet: CYBERMITE.PCK
     accessInventory: false
@@ -172,6 +185,7 @@ armors:
       - 1.0 #acid
       - 0.0 #smoke
     loftSet: [2]
+
 units:
   - type: STR_WASPITE_SOLDIER
     race: STR_WASPITE
@@ -197,6 +211,7 @@ units:
     moveSound: 15
     intelligence: 5
     aggression: 2
+
   - type: STR_WASPITE_NAVIGATOR
     race: STR_WASPITE
     rank: STR_LIVE_NAVIGATOR
@@ -221,6 +236,7 @@ units:
     moveSound: 15
     intelligence: 5
     aggression: 2
+
   - type: STR_WASPITE_MEDIC
     race: STR_WASPITE
     rank: STR_LIVE_MEDIC
@@ -245,6 +261,7 @@ units:
     moveSound: 15
     intelligence: 6
     aggression: 1
+
   - type: STR_WASPITE_ENGINEER
     race: STR_WASPITE
     rank: STR_LIVE_ENGINEER
@@ -269,6 +286,7 @@ units:
     moveSound: 15
     intelligence: 7
     aggression: 2
+
   - type: STR_WASPITE_LEADER
     race: STR_WASPITE
     rank: STR_LIVE_LEADER
@@ -293,6 +311,7 @@ units:
     moveSound: 15
     intelligence: 6
     aggression: 0
+
   - type: STR_WASPITE_COMMANDER
     race: STR_WASPITE
     rank: STR_LIVE_COMMANDER
@@ -317,6 +336,7 @@ units:
     moveSound: 15
     intelligence: 8
     aggression: 0
+
   - type: STR_CYBERMITE_TERRORIST
     race: STR_CYBERMITE
     rank: STR_LIVE_TERRORIST
@@ -344,6 +364,7 @@ units:
     mechanical: true
     psiBlock: true
     hasHands: false
+
 ufopaedia:
   - id: STR_WASPITE
     type_id: 7
@@ -354,6 +375,7 @@ ufopaedia:
     text: STR_WASPITE_UFOPAEDIA
     text_width: 158
     listOrder: 8750
+
   - id: STR_WASPITE_AUTOPSY
     type_id: 7
     section: STR_ALIEN_LIFE_FORMS
@@ -363,6 +385,7 @@ ufopaedia:
     text: STR_WASPITE_AUTOPSY_UFOPAEDIA
     text_width: 158
     listOrder: 8751
+
   - id: STR_CYBERMITE
     type_id: 7
     section: STR_ALIEN_LIFE_FORMS
@@ -372,6 +395,7 @@ ufopaedia:
     text: STR_CYBERMITE_UFOPAEDIA
     text_width: 158 
     listOrder: 9350
+
   - id: STR_CYBERMITE_AUTOPSY
     type_id: 7
     section: STR_ALIEN_LIFE_FORMS
@@ -381,6 +405,7 @@ ufopaedia:
     text: STR_CYBERMITE_AUTOPSY_UFOPAEDIA
     text_width: 158
     listOrder: 9351
+
 extraSprites:
   - type: WASPITE.PCK
     width: 512
@@ -389,10 +414,12 @@ extraSprites:
     subY: 40
     files:
       0: Resources/cover_alien/WASPITE.png
+
   - type: inventory_WASPITE
     singleImage: true
     files:
       0: Resources/cover_alien/inventory_WASPITE.png
+
   - type: CYBERMITE.PCK
     width: 512
     height: 240
@@ -400,38 +427,37 @@ extraSprites:
     subY: 40
     files:
       0: Resources/cover_alien/CYBERMITE.png
+
   - type: BIGOBS.PCK
     files:
       105: Resources/cover_alien/bigobs_WASPITE_CORPSE.png
       106: Resources/cover_alien/bigobs_CYBERMITE_CORPSE.png
+
   - type: FLOOROB.PCK
     files:
       105: Resources/cover_alien/floorob_WASPITE_CORPSE.png
       106: Resources/cover_alien/floorob_CYBERMITE_CORPSE.png
+
   - type: UFOPAEDIA_IMG_WASPITE_AUTOPSY
     singleImage: true
-    width: 320
-    height: 200
     files: 
       0: Resources/cover_alien/ufopaedia_WASPITE_AUTOPSY.png
+
   - type: UFOPAEDIA_IMG_WASPITE
     singleImage: true
-    width: 320
-    height: 200
     files:
       0: Resources/cover_alien/ufopaedia_WASPITE.png
+
   - type: UFOPAEDIA_IMG_CYBERMITE_AUTOPSY
     singleImage: true
-    width: 320
-    height: 200
     files:
       0: Resources/cover_alien/ufopaedia_CYBERMITE_AUTOPSY.png
+
   - type: UFOPAEDIA_IMG_CYBERMITE
     singleImage: true
-    width: 320
-    height: 200
     files:
       0: Resources/cover_alien/ufopaedia_CYBERMITE.png
+
 extraStrings:
   - type: en-US
     strings:

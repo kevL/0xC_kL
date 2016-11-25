@@ -89,7 +89,7 @@ TransferItemsState::TransferItemsState(
 
 		_resetAll(true)
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(300, 16,  10, 9);
 	_txtBaseSource	= new Text( 80,  9,  16, 9);

@@ -74,7 +74,7 @@ SellState::SellState(Base* const base)
 		_hasEng(0u),
 		_storeSize(0.)
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_txtTitle		= new Text(310, 17,  5, 9);
 	_txtBaseLabel	= new Text( 80, 9,  16, 9);

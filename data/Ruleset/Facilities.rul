@@ -9,6 +9,7 @@ facilities:
     radarRange: 600 # just to give a 600 radii
     radarChance: 5 # ditto, plus a bit for visual sightings
     blockType: XBASE_00
+
   - type: STR_LIVING_QUARTERS
     spriteShape: 1
     spriteFacility: 18
@@ -17,6 +18,7 @@ facilities:
     monthlyCost: 17500
     personnel: 50
     blockType: XBASE_01
+
   - type: STR_LABORATORY
     spriteShape: 1
     spriteFacility: 19
@@ -25,6 +27,7 @@ facilities:
     monthlyCost: 40000
     labs: 50
     blockType: XBASE_02
+
   - type: STR_WORKSHOP
     spriteShape: 1
     spriteFacility: 20
@@ -33,6 +36,7 @@ facilities:
     monthlyCost: 50000
     workshops: 50
     blockType: XBASE_03
+
   - type: STR_SMALL_RADAR_SYSTEM
     spriteShape: 2
     spriteFacility: 21
@@ -42,6 +46,7 @@ facilities:
     radarRange: 1500 #1695
     radarChance: 10
     blockType: XBASE_04
+
   - type: STR_LARGE_RADAR_SYSTEM
     spriteShape: 1
     spriteFacility: 22
@@ -51,6 +56,7 @@ facilities:
     radarRange: 2250 #2577
     radarChance: 20
     blockType: XBASE_05
+
   - type: STR_MISSILE_DEFENSES
     spriteShape: 2
     spriteFacility: 23
@@ -62,6 +68,7 @@ facilities:
     fireSound: 5
     hitSound: 10
     blockType: XBASE_06
+
   - type: STR_GENERAL_STORES
     spriteShape: 1
     spriteFacility: 24
@@ -70,6 +77,7 @@ facilities:
     monthlyCost: 7500
     storage: 75
     blockType: XBASE_07
+
   - type: STR_ALIEN_CONTAINMENT
     reqResearch:
       - STR_ALIEN_CONTAINMENT
@@ -80,6 +88,7 @@ facilities:
     monthlyCost: 18750
     aliens: 10
     blockType: XBASE_08
+
   - type: STR_LASER_DEFENSES
     reqResearch:
       - STR_LASER_DEFENSE
@@ -93,6 +102,7 @@ facilities:
     fireSound: 8
     hitSound: 10
     blockType: XBASE_09
+
   - type: STR_PLASMA_DEFENSES
     reqResearch:
       - STR_PLASMA_DEFENSE
@@ -106,6 +116,7 @@ facilities:
     fireSound: 9
     hitSound: 10
     blockType: XBASE_10
+
   - type: STR_FUSION_BALL_DEFENSES
     reqResearch:
       - STR_FUSION_DEFENSE
@@ -119,6 +130,7 @@ facilities:
     fireSound: 7
     hitSound: 10
     blockType: XBASE_11
+
   - type: STR_GRAV_SHIELD
     reqResearch:
       - STR_GRAV_SHIELD
@@ -129,6 +141,7 @@ facilities:
     buildTime: 38
     monthlyCost: 67500
     blockType: XBASE_12
+
   - type: STR_MIND_SHIELD
     reqResearch:
       - STR_MIND_SHIELD
@@ -139,6 +152,7 @@ facilities:
     buildTime: 33
     monthlyCost: 67500
     blockType: XBASE_13
+
   - type: STR_PSIONIC_LABORATORY
     reqResearch:
       - STR_PSI_LAB
@@ -149,6 +163,7 @@ facilities:
     monthlyCost: 33750
     psiLabs: 10
     blockType: XBASE_14
+
   - type: STR_HYPER_WAVE_DECODER
     reqResearch:
       - STR_HYPER_WAVE_DECODER
@@ -161,6 +176,7 @@ facilities:
     radarRange: 2400 #2759
     radarChance: 50
     blockType: XBASE_15
+
   - type: STR_HANGAR
     spriteShape: 9
     spriteFacility: 9

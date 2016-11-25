@@ -237,19 +237,18 @@ SavedGame::~SavedGame()
  * Gets all the info of the saves found in the user folder.
  * @param lang		- pointer to the loaded Language
  * @param autoquick	- true to include autosaves and quicksaves
- * @return, vector of SaveInfo structs (SavedGame.h)
+ * @return, a vector of SaveInfo structs (SavedGame.h)
  */
 std::vector<SaveInfo> SavedGame::getList( // static.
 		const Language* const lang,
 		bool autoquick)
 {
+	std::vector<std::string> saves;
 	std::vector<SaveInfo> info;
 
 	if (autoquick == true)
 	{
-		const std::vector<std::string> saves (CrossPlatform::getFolderContents(
-																			Options::getUserFolder(),
-																			"asav"));
+		saves = CrossPlatform::getFolderContents(Options::getUserFolder(), "asav");
 		for (std::vector<std::string>::const_iterator
 				i = saves.begin();
 				i != saves.end();
@@ -272,9 +271,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 		}
 	}
 
-	const std::vector<std::string> saves (CrossPlatform::getFolderContents(
-																		Options::getUserFolder(),
-																		"sav"));
+	saves = CrossPlatform::getFolderContents(Options::getUserFolder(), "sav");
 	for (std::vector<std::string>::const_iterator
 			i = saves.begin();
 			i != saves.end();
@@ -300,7 +297,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 }
 
 /**
- * Gets the info of a specific save file.
+ * Gets the info of a specifiied save-file.
  * @param file - reference a save by filename
  * @param lang - pointer to the loaded Language
  * @return, the SaveInfo (SavedGame.h)
@@ -702,9 +699,9 @@ void SavedGame::save(const std::string& file) const
 		brief["ironman"]	= _ironman;
 
 	out << brief;
-	out << YAML::BeginDoc; // saves the full game-data to the save
+	out << YAML::BeginDoc;
 
-	YAML::Node node;
+	YAML::Node node; // saves the full game-data to the save
 
 	node["rng"]			= RNG::getSeed();
 	node["difficulty"]	= static_cast<int>(_difficulty);

@@ -103,6 +103,7 @@ extraSounds:
       151: Resources/Sounds/Tactical/sFx_voice/hit/m/vs_nwizarm1_hit2.wav
       255: Resources/Sounds/extra/255_silence.wav
       260: Resources/Sounds/Tactical/hit_plasma_big.ogg
+
   - type: GEO.CAT
     files:
       0: Resources/Sounds/Geo/00_btn1.WAV
@@ -119,6 +120,7 @@ extraSounds:
       11: Resources/Sounds/Geo/11_ufocrash.WAV
       12: Resources/Sounds/Geo/12_crafthit.WAV
       13: Resources/Sounds/Geo/13_craftcrash.WAV
+
 #Extra Sounds:
 # type should correspond to one of the following:
 #   - BATTLE.CAT     - battlescape noises, original cat file has 55 entries (0-54)

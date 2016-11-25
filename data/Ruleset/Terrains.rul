@@ -457,6 +457,7 @@ terrains:
       - type: AREA51BASE107
         width: 10
         length: 10
+
   - type: COMRCURBAN
     script: URBAN #was COMRCURBAN
     mapDataSets:
@@ -478,11 +479,11 @@ terrains:
       - type: COMRCURBAN00
         width: 10
         length: 10
-        groups: [0,1,2] #was 2
+        groups: [0, 1, 2] #was 2
       - type: COMRCURBAN01
         width: 10
         length: 10
-        groups: [0,1,3] #was 3
+        groups: [0, 1, 3] #was 3
       - type: COMRCURBAN02
         width: 10
         length: 10
@@ -551,6 +552,7 @@ terrains:
         width: 10
         length: 10
         groups: 4
+
   - type: CULTA
     script: FARM
     mapDataSets:
@@ -618,6 +620,7 @@ terrains:
       - type: CULTA18
         width: 10
         length: 10
+
   - type: CULTAFARMA
     script: FARM #was DEFAULT
     mapDataSets:
@@ -754,6 +757,7 @@ terrains:
       - type: CULTAFARM22
         width: 20
         length: 20
+
   - type: CULTAFARMB
     script: FARM #was DEFAULT
     mapDataSets:
@@ -842,6 +846,7 @@ terrains:
       - type: CULTAFARM22
         width: 20
         length: 20
+
   - type: DAWNURBANA
     script: URBAN #was DAWNURBANA
     mapDataSets:
@@ -967,11 +972,11 @@ terrains:
       - type: DAWNURBAN28
         width: 10
         length: 10
-        groups: [0,1] #was 1
+        groups: [0, 1] #was 1
       - type: DAWNURBAN29
         width: 10
         length: 10
-        groups: [0,1] #was 1
+        groups: [0, 1] #was 1
       - type: DAWNURBAN30
         width: 10
         length: 10
@@ -1002,6 +1007,7 @@ terrains:
       - type: DAWNURBAN39
         width: 10
         length: 10
+
   - type: DAWNURBANB
     script: URBAN #was DAWNURBANB
     mapDataSets:
@@ -1117,6 +1123,7 @@ terrains:
       - type: DAWNURBAN67
         width: 20
         length: 20
+
   - type: DESERT
     script: DESERT
     mapDataSets:
@@ -1126,15 +1133,15 @@ terrains:
       - type: DESERT00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT03
         width: 10
         length: 10
@@ -1162,6 +1169,7 @@ terrains:
       - type: DESERT11
         width: 20
         length: 20
+
   - type: DESERTMOUNT
     script: DEFAULT #was DESERT
     mapDataSets:
@@ -1226,7 +1234,8 @@ terrains:
       - type: DESERTMOUNT17
         width: 10
         length: 10
-  - type: DESERTTEMPLE # NEW ## replaces ATLANTDESERT
+
+  - type: DESERTTEMPLE
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -1275,6 +1284,7 @@ terrains:
       - type: ATLANTDESERT12
         width: 20
         length: 20
+
   - type: FOREST
     script: DEFAULT
     mapDataSets:
@@ -1319,6 +1329,7 @@ terrains:
       - type: FOREST11
         width: 20
         length: 20
+
   - type: FORESTMOUNT
     script: DEFAULT #was DESERT
     mapDataSets:
@@ -1410,7 +1421,8 @@ terrains:
       - type: FORESTMOUNT26
         width: 20
         length: 20
-  - type: FORESTPOLAR # NEW ##
+
+  - type: FORESTPOLAR
     script: POLAR
     mapDataSets:
       - BLANKS
@@ -1420,15 +1432,15 @@ terrains:
       - type: FORESTPOLAR00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: FORESTPOLAR01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: FORESTPOLAR02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: FORESTPOLAR03
         width: 10
         length: 10
@@ -1462,7 +1474,8 @@ terrains:
       - type: FORESTPOLAR13
         width: 20
         length: 20
-  - type: GRASSLANDDESERT # NEW ##
+
+  - type: GRASSLANDDESERT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -1472,15 +1485,15 @@ terrains:
       - type: DESERT00
         width: 10
         length: 10
-#        groups: [0,1]
+#        groups: [0, 1]
       - type: DESERT01
         width: 10
         length: 10
-#        groups: [0,1]
+#        groups: [0, 1]
       - type: DESERT02
         width: 10
         length: 10
-#        groups: [0,1]
+#        groups: [0, 1]
       - type: DESERT03
         width: 10
         length: 10
@@ -1512,7 +1525,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: GRASSLANDDESERTMOUNT # NEW NEW ##
+
+  - type: GRASSLANDDESERTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -1581,7 +1595,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: GRASSLANDFOREST # NEW ##
+
+  - type: GRASSLANDFOREST
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -1630,7 +1645,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: GRASSLANDFORESTMOUNT # NEW ##
+
+  - type: GRASSLANDFORESTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -1725,7 +1741,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: INDUSTRIALUFO # NEW ##
+
+  - type: INDUSTRIALUFO
     script: URBANUFO #was INDUSTRIALUFO
     mapDataSets:
       - BLANKS
@@ -1790,6 +1807,7 @@ terrains:
         width: 10
         length: 10
         groups: 1
+
   - type: INDUSTRIALURBAN
     script: URBAN #was INDUSTRIALURBAN
     mapDataSets:
@@ -1868,11 +1886,12 @@ terrains:
       - type: INDUSTRIALURBAN16
         width: 10
         length: 10
-        groups: [0,1] #was 1
+        groups: [0, 1] #was 1
       - type: INDUSTRIALURBAN17
         width: 10
         length: 10
-        groups: [0,1] #was 1
+        groups: [0, 1] #was 1
+
   - type: JUNGLE
     script: JUNGLE
     mapDataSets:
@@ -1918,7 +1937,8 @@ terrains:
       - type: JUNGLE11
         width: 10
         length: 10
-  - type: JUNGLEMOUNT # NEW ##
+
+  - type: JUNGLEMOUNT
     script: JUNGLE #was DESERT
     mapDataSets:
       - BLANKS
@@ -1967,7 +1987,8 @@ terrains:
       - type: JUNGLEMOUNT12
         width: 20
         length: 20
-  - type: JUNGLEPOLAR # NEW ##
+
+  - type: JUNGLEPOLAR
     script: POLAR
     mapDataSets:
       - BLANKS
@@ -1977,15 +1998,15 @@ terrains:
       - type: JUNGLEPOLAR00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: JUNGLEPOLAR01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: JUNGLEPOLAR02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: JUNGLEPOLAR03
         width: 10
         length: 10
@@ -2019,7 +2040,8 @@ terrains:
       - type: JUNGLEPOLAR13
         width: 20
         length: 20
-  - type: JUNGLETEMPLE # NEW ## replaces MUJUNGLE
+
+  - type: JUNGLETEMPLE
     script: JUNGLE #was DESERT
     mapDataSets:
       - BLANKS
@@ -2074,6 +2096,7 @@ terrains:
       - type: MUJUNGLE14
         width: 20
         length: 20
+
   - type: MADURBAN
     script: URBAN #was MADURBAN
     mapDataSets:
@@ -2211,7 +2234,8 @@ terrains:
       - type: MADURBAN38
         width: 10
         length: 10
-  - type: MADURBANUFO # NEW ##
+
+  - type: MADURBANUFO
     script: URBANUFO #was MADURBANUFO
     mapDataSets:
       - BLANKS
@@ -2343,6 +2367,7 @@ terrains:
       - type: MADURBAN38
         width: 10
         length: 10
+
   - type: MARS
     script: MARS
     mapDataSets:
@@ -2353,7 +2378,7 @@ terrains:
       - type: MARS00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: MARS01
         width: 10
         length: 10
@@ -2385,6 +2410,7 @@ terrains:
         width: 10
         length: 10
         groups: 2
+
   - type: MOUNT
     script: DEFAULT
     mapDataSets:
@@ -2433,6 +2459,7 @@ terrains:
       - type: MOUNT12
         width: 20
         length: 20
+
   - type: NATIVEUFO
     script: NATIVEUFO
     mapDataSets:
@@ -2584,7 +2611,8 @@ terrains:
       - type: NATIVEURBAN46
         width: 10
         length: 10
-        groups: [0,1,2,3]
+        groups: [0, 1, 2, 3]
+
   - type: NATIVEURBAN
     script: URBAN #was NATIVEURBAN
     mapDataSets:
@@ -2605,87 +2633,87 @@ terrains:
       - type: NATIVEURBAN00
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN01
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN02
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN03
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN04
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN05
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN06
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN07
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN08
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN09
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN10
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN11
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN12
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN13
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN14
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN15
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN16
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN17
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN18
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN19
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN20
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN21
         width: 20
         length: 20
@@ -2722,23 +2750,23 @@ terrains:
       - type: NATIVEURBAN32
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN33
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN34
         width: 10
         length: 10
-        groups: [0,4] #was nogroups
+        groups: [0, 4] #was nogroups
       - type: NATIVEURBAN35
         width: 10
         length: 10
-        groups: [0,2] #was nogroups
+        groups: [0, 2] #was nogroups
       - type: NATIVEURBAN36
         width: 10
         length: 10
-        groups: [0,3] #was nogroups
+        groups: [0, 3] #was nogroups
       - type: NATIVEURBAN37
         width: 20
         length: 20
@@ -2769,7 +2797,8 @@ terrains:
       - type: NATIVEURBAN46
         width: 10
         length: 10
-        groups: [0,1] #was 1
+        groups: [0, 1] #was 1
+
   - type: POLAR
     script: POLAR
     mapDataSets:
@@ -2779,15 +2808,15 @@ terrains:
       - type: POLAR00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: POLAR01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: POLAR02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: POLAR03
         width: 10
         length: 10
@@ -2821,7 +2850,8 @@ terrains:
       - type: POLAR13
         width: 20
         length: 20
-  - type: POLARDESERT # NEW ##
+
+  - type: POLARDESERT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -2830,15 +2860,15 @@ terrains:
       - type: DESERT00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT03
         width: 10
         length: 10
@@ -2866,7 +2896,8 @@ terrains:
       - type: DESERT11
         width: 20
         length: 20
-  - type: POLARDESERTMOUNT # NEW NEW ##
+
+  - type: POLARDESERTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -2930,6 +2961,7 @@ terrains:
       - type: DESERTMOUNT17
         width: 10
         length: 10
+
   - type: POLARMOUNT
     script: DEFAULT #was DESERT
     mapDataSets:
@@ -2980,7 +3012,8 @@ terrains:
       - type: POLARMOUNT12
         width: 20
         length: 20
-  - type: PORTTFTD # NEW ##
+
+  - type: PORTTFTD
     script: PORTTFTD
     mapDataSets:
       - BLANKS
@@ -3071,6 +3104,7 @@ terrains:
         width: 20
         length: 20
 #        groups: 5
+
   - type: PORTURBAN
     script: URBAN #was PORTURBAN
     mapDataSets:
@@ -3166,6 +3200,7 @@ terrains:
         width: 10
         length: 10
         groups: 3
+
   - type: RAILYARDURBAN
     script: URBAN #was RAILYARDURBAN
     mapDataSets:
@@ -3185,7 +3220,7 @@ terrains:
       - type: RAILYARDURBAN00
         width: 10
         length: 10
-        groups: [1,3] #was 1
+        groups: [1, 3] #was 1
       - type: RAILYARDURBAN01
         width: 10
         length: 10
@@ -3273,7 +3308,8 @@ terrains:
       - type: RAILYARDURBAN27
         width: 10
         length: 10
-  - type: SAVANNADESERT # NEW ##
+
+  - type: SAVANNADESERT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3283,15 +3319,15 @@ terrains:
       - type: DESERT00
         width: 10
         length: 10
-#        groups: [0,1]
+#        groups: [0, 1]
       - type: DESERT01
         width: 10
         length: 10
-#        groups: [0,1]
+#        groups: [0, 1]
       - type: DESERT02
         width: 10
         length: 10
-#        groups: [0,1]
+#        groups: [0, 1]
       - type: DESERT03
         width: 10
         length: 10
@@ -3323,7 +3359,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: SAVANNADESERTMOUNT # NEW NEW ##
+
+  - type: SAVANNADESERTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3392,7 +3429,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: SAVANNAFOREST # NEW ##
+
+  - type: SAVANNAFOREST
     script: DEFAULT
     mapDataSets:
       - BLANKS
@@ -3441,7 +3479,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: SAVANNAFORESTMOUNT # NEW ##
+
+  - type: SAVANNAFORESTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3536,7 +3575,8 @@ terrains:
         width: 10
         length: 10
         groups: [1]
-  - type: STEPPEDESERT # NEW ##
+
+  - type: STEPPEDESERT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3545,15 +3585,15 @@ terrains:
       - type: DESERT00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT03
         width: 10
         length: 10
@@ -3581,7 +3621,8 @@ terrains:
       - type: DESERT11
         width: 20
         length: 20
-  - type: STEPPEDESERTMOUNT # NEW NEW ##
+
+  - type: STEPPEDESERTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3645,7 +3686,8 @@ terrains:
       - type: DESERTMOUNT17
         width: 10
         length: 10
-  - type: STEPPEFOREST # NEW ##
+
+  - type: STEPPEFOREST
     script: DEFAULT
     mapDataSets:
       - BLANKS
@@ -3689,7 +3731,8 @@ terrains:
       - type: FOREST11
         width: 20
         length: 20
-  - type: STEPPEFORESTMOUNT # NEW ##
+
+  - type: STEPPEFORESTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3780,7 +3823,8 @@ terrains:
       - type: FORESTMOUNT26
         width: 20
         length: 20
-  - type: TAIGADESERT # NEW ##
+
+  - type: TAIGADESERT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3789,15 +3833,15 @@ terrains:
       - type: DESERT00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT03
         width: 10
         length: 10
@@ -3825,7 +3869,8 @@ terrains:
       - type: DESERT11
         width: 20
         length: 20
-  - type: TAIGADESERTMOUNT # NEW NEW ##
+
+  - type: TAIGADESERTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -3889,7 +3934,8 @@ terrains:
       - type: DESERTMOUNT17
         width: 10
         length: 10
-  - type: TAIGAFOREST # NEW ##
+
+  - type: TAIGAFOREST
     script: DEFAULT
     mapDataSets:
       - BLANKS
@@ -3933,7 +3979,8 @@ terrains:
       - type: FOREST11
         width: 20
         length: 20
-  - type: TAIGAFORESTMOUNT # NEW ##
+
+  - type: TAIGAFORESTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -4024,7 +4071,8 @@ terrains:
       - type: FORESTMOUNT26
         width: 20
         length: 20
-  - type: TUNDRADESERT # NEW ##
+
+  - type: TUNDRADESERT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -4033,15 +4081,15 @@ terrains:
       - type: DESERT00
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT01
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT02
         width: 10
         length: 10
-        groups: [0,1]
+        groups: [0, 1]
       - type: DESERT03
         width: 10
         length: 10
@@ -4069,7 +4117,8 @@ terrains:
       - type: DESERT11
         width: 20
         length: 20
-  - type: TUNDRADESERTMOUNT # NEW ##
+
+  - type: TUNDRADESERTMOUNT
     script: DESERT
     mapDataSets:
       - BLANKS
@@ -4133,7 +4182,8 @@ terrains:
       - type: DESERTMOUNT17
         width: 10
         length: 10
-  - type: TUNDRAMOUNT # NEW ##
+
+  - type: TUNDRAMOUNT
     script: DEFAULT
     mapDataSets:
       - BLANKS
@@ -4181,6 +4231,7 @@ terrains:
       - type: MOUNT12
         width: 20
         length: 20
+
   - type: UBASE
 #    script: ALIENBASE
 # Done in alienDeployment,
@@ -4195,54 +4246,54 @@ terrains:
       - U_BASE2
 #    largeBlockLimit: 3
     mapBlocks:
-      - type: UBASE_00 # Control center EW
+      - type: UBASE_00 #Control center EW
         width: 20
         length: 20
-        groups: 6 # control
-      - type: UBASE_01 # Large garden
+        groups: 6 #control
+      - type: UBASE_01 #Large garden
         width: 20
         length: 20
-      - type: UBASE_02 # Large emporium
+      - type: UBASE_02 #Large emporium
         width: 20
         length: 20
-      - type: UBASE_03 # Large storage loft
+      - type: UBASE_03 #Large storage loft
         width: 20
         length: 20
         items:
           STR_ELERIUM_115:
-            - [ 2, 14, 1]
-            - [ 2, 16, 1]
-      - type: UBASE_04 # Start w/ ferns
+            - [2, 14, 1]
+            - [2, 16, 1]
+      - type: UBASE_04 #Start w/ ferns
         width: 10
         length: 10
-        groups: 5 # start
+        groups: 5 #start
         revealedFloors: 1
-      - type: UBASE_05 # Small emporium S
+      - type: UBASE_05 #Small emporium S
         width: 10
         length: 10
-      - type: UBASE_06 # switcheroo
+      - type: UBASE_06 #switcheroo
         width: 10
         length: 10
-      - type: UBASE_07 # Small crossing aisles
+      - type: UBASE_07 #Small crossing aisles
         width: 10
         length: 10
-        groups: 4 # crossroad
-      - type: UBASE_08 # Mini emporium E
+        groups: 4 #crossroad
+      - type: UBASE_08 #Mini emporium E
         width: 10
         length: 10
-      - type: UBASE_09 # Small garden
+      - type: UBASE_09 #Small garden
         width: 10
         length: 10
-      - type: UBASE_10 # Power room crossing aisles
+      - type: UBASE_10 #Power room crossing aisles
         width: 10
         length: 10
-      - type: UBASE_11 # Disco floor
+      - type: UBASE_11 #Disco floor
         width: 10
         length: 10
 #       UBASE_12 is impassable, 13 and 14 are apparently unused.
 #       In the interest of preserving an original experience they have been
 #       disabled by being added to group 99, which is unused in the scripts.
-      - type: UBASE_12 # Power room enclosed
+      - type: UBASE_12 #Power room enclosed
         width: 10
         length: 10
         items:
@@ -4250,106 +4301,107 @@ terrains:
             - [4, 4, 0]
 #        groups: 99
 #        maxCount: 1
-      - type: UBASE_13 # Power room w/ museum
+      - type: UBASE_13 #Power room w/ museum
         width: 10
         length: 10
 #        groups: 99
-      - type: UBASE_14 # Small garden more plants
+      - type: UBASE_14 #Small garden more plants
         width: 10
         length: 10
 #        groups: 99
-      - type: UBASE_15 # Brain center - END of ORIGINAL MAPS
+      - type: UBASE_15 #Brain center - END of ORIGINAL MAPS
         width: 20
         length: 20
-        groups: 7 # brain
-      - type: UBASE_19 # Control center NS
+        groups: 7 #brain
+      - type: UBASE_19 #Control center NS
         width: 20
         length: 20
-        groups: 6 # control
-      - type: UBASE_20 # Alt control center
+        groups: 6 #control
+      - type: UBASE_20 #Alt control center
         width: 20
         length: 20
-        groups: 6 # control
-      - type: UBASE_21 # Large garden
+        groups: 6 #control
+      - type: UBASE_21 #Large garden
         width: 20
         length: 20
-      - type: UBASE_22 # Large food upper floor, large power lower
+      - type: UBASE_22 #Large food upper floor, large power lower
         width: 20
         length: 20
-      - type: UBASE_23 # Large power + food upper, NS room lower
+      - type: UBASE_23 #Large power + food upper, NS room lower
         width: 20
         length: 20
-      - type: UBASE_24 # Start area w/ food
+      - type: UBASE_24 #Start area w/ food
         width: 10
         length: 10
-        groups: 5 # start
+        groups: 5 #start
         revealedFloors: 1
-      - type: UBASE_25 # Alt small emporium EW
+      - type: UBASE_25 #Alt small emporium EW
         width: 10
         length: 10
-      - type: UBASE_26 # Full switcheroo
+      - type: UBASE_26 #Full switcheroo
         width: 10
         length: 10
-      - type: UBASE_27 # Crossing aisles
+      - type: UBASE_27 #Crossing aisles
         width: 10
         length: 10
-        groups: 4 # crossroad
-      - type: UBASE_28 # Small lookout tower
+        groups: 4 #crossroad
+      - type: UBASE_28 #Small lookout tower
         width: 10
         length: 10
-      - type: UBASE_29 # Small garden tall
+      - type: UBASE_29 #Small garden tall
         width: 10
         length: 10
-      - type: UBASE_30 # Small garden upper floor, power lower
+      - type: UBASE_30 #Small garden upper floor, power lower
         width: 10
         length: 10
-      - type: UBASE_31 # Disco room
+      - type: UBASE_31 #Disco room
         width: 10
         length: 10
-      - type: UBASE_32 # Power room enclosed
+      - type: UBASE_32 #Power room enclosed
         width: 10
         length: 10
         items:
           STR_ELERIUM_115:
             - [4, 4, 0]
 #        maxCount: 1
-      - type: UBASE_33 # Disco floor w/ disco balls
+      - type: UBASE_33 #Disco floor w/ disco balls
         width: 10
         length: 10
-      - type: UBASE_34 # Large emporium w/ catwalk
+      - type: UBASE_34 #Large emporium w/ catwalk
         width: 20
         length: 20
-      - type: UBASE_35 # Large garden upper floor, crossing aisles lower
+      - type: UBASE_35 #Large garden upper floor, crossing aisles lower
         width: 20
         length: 20
-      - type: UBASE_36 # Small emporium N
+      - type: UBASE_36 #Small emporium N
         width: 10
         length: 10
-      - type: UBASE_37 # Alt switcheroo
+      - type: UBASE_37 #Alt switcheroo
         width: 10
         length: 10
-      - type: UBASE_38 # Mini emporium W
+      - type: UBASE_38 #Mini emporium W
         width: 10
         length: 10
-      - type: UBASE_39 # Power room w/ yellow vats upper floor, NS room lower
+      - type: UBASE_39 #Power room w/ yellow vats upper floor, NS room lower
         width: 10
         length: 10
-      - type: UBASE_40 # Large UFO construction
+      - type: UBASE_40 #Large UFO construction
         width: 20
         length: 20
         items:
           STR_ELERIUM_115:
-            - [ 1, 9, 1]
-            - [ 9, 1, 1]
-            - [ 9,17, 1]
+            - [1, 9, 1]
+            - [9, 1, 1]
+            - [9, 17, 1]
             - [17, 9, 1]
-      - type: UBASE_41 # Large hospital room w/ power & yellow vats upper floor, EW room lower
+      - type: UBASE_41 #Large hospital room w/ power & yellow vats upper floor, EW room lower
         width: 20
         length: 20
         items:
           STR_ELERIUM_115:
-            - [ 3, 9, 1]
+            - [3, 9, 1]
             - [15, 9, 1]
+
   - type: URBAN
     script: URBAN
     mapDataSets:
@@ -4417,6 +4469,7 @@ terrains:
       - type: URBAN18
         width: 10
         length: 10
+
   - type: URBAN2
     script: URBAN
     mapDataSets:
@@ -4573,6 +4626,7 @@ terrains:
         length: 10
         groups: 2
 #        type: 2
+
   - type: XBASE
     script: XBASE
     mapDataSets:
@@ -4583,87 +4637,88 @@ terrains:
       - type: XBASE_00
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_01
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_02
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_03
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_04
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_05
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_06
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_07
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_08
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_09
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_10
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_11
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_12
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_13
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_14
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_15
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_16
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_17
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_18
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_19
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
       - type: XBASE_20
         width: 10
         length: 10
-        revealedFloors: [0,1]
+        revealedFloors: [0, 1]
+
 extraStrings:
   - type: en-US
     strings:

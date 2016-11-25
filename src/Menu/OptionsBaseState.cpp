@@ -65,7 +65,7 @@ OptionsBaseState::OptionsBaseState(OptionsOrigin origin)
 	:
 		_origin(origin)
 {
-	_window			= new Window(this, 320, 200);
+	_window			= new Window(this);
 
 	_btnVideo		= new TextButton(80, 16, 8,   8);
 	_btnAudio		= new TextButton(80, 16, 8,  28);
