@@ -32,33 +32,35 @@ namespace OpenXcom
 /**
  * Represents a research-rule / research-project.
  *
- * @note '_prerequisite' is the list of RuleResearch's that unlock the rule once
+ * @note '_requisite' is the list of RuleResearch's that unlock the rule once
  * all are discovered.
  *
- * @note '_forced' is the list of RuleResearch's that are immediately unlocked
- * even if not all subsequent prerequisites of the latter have been discovered.
+ * @note '_requested' is the list of RuleResearch's that are immediately unlocked
+ * *even if not all requisites of the latter have been discovered*.
  *
- * @note kL: Therefore a rule that forces a RuleResearch does not have to be
- * listed as a prerequisite of the latter rule. Because the latter will be
- * immediately forced to unlock. Actually, yes it is needed or else a rule could
- * be unlocked by its prerequisites *without the rule that supposedly forced it*
- * open. So the point is that if all prerequisites of a rule also force that
- * rule unlocked then they are not needed as prerequisites also; alternately,
- * any prerequisites that are not also a forcer could safely be specified as
+ * @note '_required' prevents a request from succeeding if any are not discovered.
+ * That is, '_required' is the list of RuleResearch's that *absolutely must
+ * already be discovered* (prior to requisite or requesting) for its rule to
+ * ever be unlocked. Hint: required-research shall never be used to actively
+ * unlock a rule.
+ *
+ * @note kL: Therefore a rule that requests a RuleResearch does not have to be
+ * listed as a requisite of the latter rule. Because the latter will be
+ * immediately requested to unlock. Actually, yes it is needed or else a rule could
+ * be unlocked by its requisites *without the rule that supposedly requested it*
+ * to open. So the point is that if *all* requisites of a rule also request that
+ * rule to unlock then they are not needed as requisites also; alternately,
+ * any requisites that are not also a requester could safely be specified as
  * required-research instead.
  *
- * @note Ergo, '_prerequisite' is utterly redundant and ought be removed. Except
+ * @note Ergo, '_requisite' is utterly redundant and ought be removed. Except
  * it can't be removed at present since the basic check to see if a rule has
- * been unlocked is a search through its prerequisites -- that should be changed
+ * been unlocked is a search through its requisites -- that should be changed
  * to search through its required-research instead, both at the start of play
  * and when a discovered-research forces it.
  *
- * @note '_reqResearch' is the list of RuleResearch's that *absolutely must
- * already be discovered* (prior to prerequisite or forcing) for its rule to
- * ever be unlocked.
- *
- * @note So care must be taken so that a rule that forces another rule, or that
- * is a prerequisite of another rule, remains available for research if/when
+ * @note So care must be taken so that a rule that requests another rule, or that
+ * is a requisite of another rule, remains available for research if/when
  * the latter rule does not get unlocked due to its required-research.
  *
  * @note Fake ResearchProjects: A RuleResearch is fake one if its cost is 0.
@@ -69,8 +71,12 @@ namespace OpenXcom
  *		- G which needs C & D
  *		- then either F or G can be used to unlock E.
  *
- * @note RuleResearch's that do not have any prerequisites or any required-
- * research are flagged unlocked at the start of play.
+ * @note RuleResearch's that do not have any requisites or any required-
+ * research are flagged unlocked at the start of play. Correction: put
+ * "STR_UNLOCKED" as a requisite of the rule and it will be unlocked at the
+ * start of play. Reason: Rules that do not have any requisites or
+ * required-research can stay locked until another rule explicitly requests it
+ * to unlock.
  */
 class RuleResearch
 {

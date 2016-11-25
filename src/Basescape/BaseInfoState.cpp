@@ -645,15 +645,12 @@ void BaseInfoState::miniMouseClick(Action*)
  */
 void BaseInfoState::miniMouseOver(Action*)
 {
-	bool clearText (true);
-
 	const size_t baseId (_mini->getHoveredBase());
 	if (baseId < _baseList->size())
 	{
 		const Base* const base (_baseList->at(baseId));
 		if (base != _base)
 		{
-			clearText = false;
 			_txtHoverBase->setText(base->getLabel().c_str());
 
 			for (std::vector<Region*>::const_iterator
@@ -666,17 +663,16 @@ void BaseInfoState::miniMouseOver(Action*)
 												base->getLatitude()) == true)
 				{
 					_txtHoverRegion->setText(tr((*i)->getRules()->getType()));
-					break;
+					return;
 				}
 			}
+			_txtHoverRegion->setText(L"");
+			return;
 		}
 	}
 
-	if (clearText == true)
-	{
-		_txtHoverBase->setText(L"");
-		_txtHoverRegion->setText(L"");
-	}
+	_txtHoverBase->setText(L"");
+	_txtHoverRegion->setText(L"");
 }
 
 /**

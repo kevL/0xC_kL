@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Manufacture.h"
+#include "ManufactureProject.h"
 
 //#include <algorithm>
 //#include <limits>
@@ -43,7 +43,7 @@ namespace OpenXcom
  * Tracks a Manufacture project.
  * @param mfRule - pointer to RuleManufacture
  */
-Manufacture::Manufacture(const RuleManufacture* const mfRule)
+ManufactureProject::ManufactureProject(const RuleManufacture* const mfRule)
 	:
 		_mfRule(mfRule),
 		_qtyTotal(1),
@@ -56,14 +56,14 @@ Manufacture::Manufacture(const RuleManufacture* const mfRule)
 /**
  * dTor.
  */
-Manufacture::~Manufacture()
+ManufactureProject::~ManufactureProject()
 {}
 
 /**
  * Loads from YAML.
  * @param node - reference a YAML node
  */
-void Manufacture::load(const YAML::Node& node)
+void ManufactureProject::load(const YAML::Node& node)
 {
 	_engineers	= node["engineers"]	.as<int>(_engineers);
 	_hoursSpent	= node["hoursSpent"].as<int>(_hoursSpent);
@@ -76,7 +76,7 @@ void Manufacture::load(const YAML::Node& node)
  * Saves to YAML.
  * @return, a YAML node
  */
-YAML::Node Manufacture::save() const
+YAML::Node ManufactureProject::save() const
 {
 	YAML::Node node;
 
@@ -95,7 +95,7 @@ YAML::Node Manufacture::save() const
  * Gets the rules for this Manufacture.
  * @return, pointer to RuleManufacture
  */
-const RuleManufacture* Manufacture::getRules() const
+const RuleManufacture* ManufactureProject::getRules() const
 {
 	return _mfRule;
 }
@@ -104,7 +104,7 @@ const RuleManufacture* Manufacture::getRules() const
  * Sets the total quantity to produce.
  * @param qty - total quantity
  */
-void Manufacture::setManufactureTotal(int qty)
+void ManufactureProject::setManufactureTotal(int qty)
 {
 	_qtyTotal = qty;
 }
@@ -113,7 +113,7 @@ void Manufacture::setManufactureTotal(int qty)
  * Gets the total quantity to produce.
  * @return, total quantity
  */
-int Manufacture::getManufactureTotal() const
+int ManufactureProject::getManufactureTotal() const
 {
 	return _qtyTotal;
 }
@@ -122,7 +122,7 @@ int Manufacture::getManufactureTotal() const
  * Sets if this Manufacture is to produce an infinite quantity.
  * @param infinite - true if infinite (default true)
  */
-void Manufacture::setInfinite(bool infinite)
+void ManufactureProject::setInfinite(bool infinite)
 {
 	_infinite = infinite;
 }
@@ -131,7 +131,7 @@ void Manufacture::setInfinite(bool infinite)
  * Gets if this Manufacture is to produce an infinite quantity.
  * @return, true if infinite
  */
-bool Manufacture::getInfinite() const
+bool ManufactureProject::getInfinite() const
 {
 	return _infinite;
 }
@@ -140,7 +140,7 @@ bool Manufacture::getInfinite() const
  * Sets the quantity of assigned engineers to this Manufacture.
  * @param engineers - quantity of engineers
  */
-void Manufacture::setAssignedEngineers(int engineers)
+void ManufactureProject::setAssignedEngineers(int engineers)
 {
 	_engineers = engineers;
 }
@@ -149,7 +149,7 @@ void Manufacture::setAssignedEngineers(int engineers)
  * Gets the quantity of assigned engineers to this Manufacture.
  * @return, quantity of engineers
  */
-int Manufacture::getAssignedEngineers() const
+int ManufactureProject::getAssignedEngineers() const
 {
 	return _engineers;
 }
@@ -158,7 +158,7 @@ int Manufacture::getAssignedEngineers() const
  * Sets if the produced parts are to be sold immediately.
  * @param sell - true if sell
  */
-void Manufacture::setAutoSales(bool sell)
+void ManufactureProject::setAutoSales(bool sell)
 {
 	_sell = sell;
 }
@@ -167,7 +167,7 @@ void Manufacture::setAutoSales(bool sell)
  * Gets if the produced parts are to be sold immediately.
  * @return, true if sell
  */
-bool Manufacture::getAutoSales() const
+bool ManufactureProject::getAutoSales() const
 {
 	return _sell;
 }
@@ -176,7 +176,7 @@ bool Manufacture::getAutoSales() const
  * Checks if there is enough funds to start/continue the project.
  * @return, true if funds are available
  */
-bool Manufacture::hasEnoughMoney(const SavedGame* const gameSave) const // private.
+bool ManufactureProject::hasEnoughMoney(const SavedGame* const gameSave) const // private.
 {
 	return (gameSave->getFunds() >= _mfRule->getManufactureCost());
 }
@@ -185,7 +185,7 @@ bool Manufacture::hasEnoughMoney(const SavedGame* const gameSave) const // priva
  * Checks if there is enough material to start/continue the project.
  * @return, true if materials are available
  */
-bool Manufacture::hasEnoughMaterials( // private.
+bool ManufactureProject::hasEnoughMaterials( // private.
 		Base* const base,
 		const Ruleset* const rules) const
 {
@@ -209,7 +209,7 @@ bool Manufacture::hasEnoughMaterials( // private.
  * Gets the quantity of iterations completed so far.
  * @return, iterations completed
  */
-int Manufacture::getQuantityManufactured() const
+int ManufactureProject::getQuantityManufactured() const
 {
 	return _hoursSpent / _mfRule->getManufactureHours();
 }
@@ -220,7 +220,7 @@ int Manufacture::getQuantityManufactured() const
  * @param base		- pointer to a Base
  * @param gameSave	- pointer to the SavedGame
  */
-void Manufacture::startManufacture(
+void ManufactureProject::startManufacture(
 		Base* const base,
 		SavedGame* const gameSave) const
 {
@@ -262,7 +262,7 @@ void Manufacture::startManufacture(
  * @param base		- pointer to a Base
  * @param gameSave	- pointer to the SavedGame
  */
-ManufactureProgress Manufacture::stepManufacture(
+ManufactureProgress ManufactureProject::stepManufacture(
 		Base* const base,
 		SavedGame* const gameSave)
 {
@@ -357,7 +357,7 @@ ManufactureProgress Manufacture::stepManufacture(
  * param hours	- reference in which to store hours remaining
  * @return, true if work is progressing
  */
-bool Manufacture::tillFinish(
+bool ManufactureProject::tillFinish(
 		int& days,
 		int& hours) const
 {
@@ -384,7 +384,7 @@ bool Manufacture::tillFinish(
  * Sets the hours spent on this Manufacture so far.
  * @param spent - hours spent
  *
-void Manufacture::setTimeSpent(int spent)
+void ManufactureProject::setTimeSpent(int spent)
 {
 	_hoursSpent = spent;
 } */
@@ -392,7 +392,7 @@ void Manufacture::setTimeSpent(int spent)
  * Gets the hours spent on this Manufacture so far.
  * @return, hours spent
  *
-int Manufacture::getTimeSpent() const
+int ManufactureProject::getTimeSpent() const
 {
 	return _hoursSpent;
 } */

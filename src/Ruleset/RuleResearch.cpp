@@ -57,10 +57,10 @@ void RuleResearch::load(
 	_uPed			= node["uPed"]			.as<std::string>(_uPed);
 	_cost			= node["cost"]			.as<int>(_cost);
 	_points			= node["points"]		.as<int>(_points);
+	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_requisite		= node["requisite"]		.as<std::vector<std::string>>(_requisite);
 	_requested		= node["requested"]		.as<std::vector<std::string>>(_requested);
 	_getOneFree		= node["getOneFree"]	.as<std::vector<std::string>>(_getOneFree);
-	_required		= node["required"]		.as<std::vector<std::string>>(_required);
 	_needsItem		= node["needsItem"]		.as<bool>(_needsItem);
 	_destroyItem	= node["destroyItem"]	.as<bool>(_destroyItem);
 	_markSeen		= node["markSeen"]		.as<bool>(_markSeen);

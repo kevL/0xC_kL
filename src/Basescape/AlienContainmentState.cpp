@@ -538,16 +538,16 @@ void AlienContainmentState::miniClick(Action*)
 void AlienContainmentState::miniMouseOver(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
-	const Base* const base (_baseList->at(baseId));
-
-	if (baseId < _baseList->size()
-		&& base != _base
-		&& base->hasContainment() == true)
+	if (baseId < _baseList->size())
 	{
-		_txtHoverBase->setText(base->getLabel().c_str());
+		const Base* const base (_baseList->at(baseId));
+		if (base != _base && base->hasContainment() == true)
+		{
+			_txtHoverBase->setText(base->getLabel().c_str());
+			return;
+		}
 	}
-	else
-		_txtHoverBase->setText(L"");
+	_txtHoverBase->setText(L"");
 }
 
 /**

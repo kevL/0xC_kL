@@ -53,7 +53,7 @@ class BaseFacility;
 class Craft;
 class ItemContainer;
 class Language;
-class Manufacture;
+class ManufactureProject;
 class ResearchProject;
 class Ruleset;
 class SavedGame;
@@ -98,7 +98,7 @@ private:
 		_defenses,
 		_facilities;
 	std::vector<Craft*> _crafts;
-	std::vector<Manufacture*> _projectsManufacture;
+	std::vector<ManufactureProject*> _projectsManufacture;
 	std::vector<ResearchProject*> _projectsResearch;
 	std::vector<Soldier*> _soldiers;
 	std::vector<Transfer*> _transfers;
@@ -257,11 +257,11 @@ private:
 				bool exclTransfers = false) const;
 
 		/// Adds a Manufacture project to the Base.
-		void addManufactureProject(Manufacture* const project);
+		void addManufactureProject(ManufactureProject* const project);
 		/// Clears a Manufacture project from the Base.
-		void clearManufactureProject(const Manufacture* const project);
+		void clearManufactureProject(const ManufactureProject* const project);
 		/// Gets the list of the Base's Manufacture projects.
-		const std::vector<Manufacture*>& getManufacture() const;
+		const std::vector<ManufactureProject*>& getManufacture() const;
 
 		/// Gets the list of the Base's ResearchProjects.
 		const std::vector<ResearchProject*>& getResearch() const;

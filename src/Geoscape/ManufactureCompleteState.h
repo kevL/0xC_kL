@@ -24,7 +24,7 @@
 
 #include "../Engine/State.h"
 
-#include "../Savegame/Manufacture.h"
+#include "../Savegame/ManufactureProject.h"
 
 
 namespace OpenXcom
@@ -65,7 +65,7 @@ private:
 				const std::wstring& item,
 				GeoscapeState* const geoState,
 				bool allocate,
-				ManufactureProgress endType);
+				ManufactureProgress doneType);
 		/// Cleans up the ManufactureComplete state.
 		~ManufactureCompleteState();
 

@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NewPossibleManufactureState.h"
+#include "ManufactureUnlockedState.h"
 
 #include "../Basescape/ManufactureState.h"
 
@@ -41,12 +41,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the NewPossibleManufacture screen.
+ * Initializes all the elements in the ManufactureUnlocked screen.
  * @param base		- pointer to the Base to get info from
  * @param projects	- reference to a vector of pointers to RuleManufacture for projects
- * @param allocate	- true to show manufacture button
+ * @param allocate	- true to show the allocate manufacture button
  */
-NewPossibleManufactureState::NewPossibleManufactureState(
+ManufactureUnlockedState::ManufactureUnlockedState(
 		Base* const base,
 		const std::vector<const RuleManufacture*>& projects,
 		bool allocate)
@@ -77,15 +77,15 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK17.SCR"));
 
 	_btnOk->setText(tr((allocate == true) ? "STR_OK" : "STR_MORE"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewPossibleManufactureState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ManufactureUnlockedState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ManufactureUnlockedState::btnOkClick),
 							Options::keyCancel);
 
 	_btnManufacture->setText(tr("STR_ALLOCATE_MANUFACTURE"));
-	_btnManufacture->onMouseClick(		static_cast<ActionHandler>(&NewPossibleManufactureState::btnManufactureClick));
-	_btnManufacture->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnManufactureClick),
+	_btnManufacture->onMouseClick(		static_cast<ActionHandler>(&ManufactureUnlockedState::btnManufactureClick));
+	_btnManufacture->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureUnlockedState::btnManufactureClick),
 										Options::keyOk);
-	_btnManufacture->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleManufactureState::btnManufactureClick),
+	_btnManufacture->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureUnlockedState::btnManufactureClick),
 										Options::keyOkKeypad);
 	_btnManufacture->setVisible(allocate == true
 							&& (base->hasProduction() == true));
@@ -110,14 +110,14 @@ NewPossibleManufactureState::NewPossibleManufactureState(
 /**
  * dTor.
  */
-NewPossibleManufactureState::~NewPossibleManufactureState()
+ManufactureUnlockedState::~ManufactureUnlockedState()
 {}
 
 /**
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void NewPossibleManufactureState::btnOkClick(Action*)
+void ManufactureUnlockedState::btnOkClick(Action*)
 {
 	_game->popState();
 }
@@ -126,7 +126,7 @@ void NewPossibleManufactureState::btnOkClick(Action*)
  * Opens the ManufactureState so the player can dispatch available engineers.
  * @param action - pointer to an Action
  */
-void NewPossibleManufactureState::btnManufactureClick(Action*)
+void ManufactureUnlockedState::btnManufactureClick(Action*)
 {
 	_game->popState();
 	_game->pushState(new ManufactureState(_base));

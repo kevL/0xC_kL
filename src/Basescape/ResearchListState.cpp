@@ -175,7 +175,7 @@ void ResearchListState::fillProjectList() // private.
 	}
 
 	const Uint8 color (_lstResearch->getSecondaryColor());
-	std::string type;
+	std::string resType;
 
 	_game->getSavedGame()->tabulateStartableResearch(_unlocked, _base);
 	for (std::vector<const RuleResearch*>::const_iterator
@@ -185,11 +185,11 @@ void ResearchListState::fillProjectList() // private.
 	{
 		if ((*i)->getCost() != 0)
 		{
-			type = (*i)->getType();
-			_lstResearch->addRow(1, tr(type).c_str());
+			resType = (*i)->getType();
+			_lstResearch->addRow(1, tr(resType).c_str());
 
-			if (_game->getRuleset()->getUnitRule(type) != nullptr // mark researched aliens yellow.
-				&& _game->getSavedGame()->isResearched(type) == true)
+			if (_game->getRuleset()->getUnitRule(resType) != nullptr // mark researchable aLiens yellow ->
+				&& _game->getSavedGame()->isResearched(resType) == false)
 			{
 				_lstResearch->setRowColor(r, color, true);
 			}

@@ -46,7 +46,7 @@
 #include "../Ruleset/Ruleset.h"
 
 #include "../Savegame/Base.h"
-#include "../Savegame/Manufacture.h"
+#include "../Savegame/ManufactureProject.h"
 
 
 namespace OpenXcom
@@ -67,7 +67,7 @@ ManufactureInfoState::ManufactureInfoState(
 		_valueProduct(0),
 		_start(true)
 {
-	_project = new Manufacture(_mfRule);
+	_project = new ManufactureProject(_mfRule);
 	_base->addManufactureProject(_project);
 
 	build();
@@ -80,7 +80,7 @@ ManufactureInfoState::ManufactureInfoState(
  */
 ManufactureInfoState::ManufactureInfoState(
 		Base* const base,
-		Manufacture* const project)
+		ManufactureProject* const project)
 	:
 		_base(base),
 		_mfRule(nullptr),

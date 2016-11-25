@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_NEWPOSSIBLERESEARCHSTATE
-#define OPENXCOM_NEWPOSSIBLERESEARCHSTATE
+#ifndef OPENXCOM_MANUFACTUREUNLOCKEDSTATE
+#define OPENXCOM_MANUFACTUREUNLOCKEDSTATE
 
 #include "../Engine/State.h"
 
@@ -27,7 +27,7 @@ namespace OpenXcom
 {
 
 class Base;
-class RuleResearch;
+class RuleManufacture;
 
 class Text;
 class TextButton;
@@ -36,10 +36,11 @@ class Window;
 
 
 /**
- * Window that informs the player of new possible research-projects.
- * @note Also allows the player to go to ResearchState to allocate scientists.
+ * Window that informs the player of Manufacture projects that are recently
+ * available.
+ * @note Also lets the player to go to ManufactureState to allocate engineers.
  */
-class NewPossibleResearchState
+class ManufactureUnlockedState
 	:
 		public State
 {
@@ -47,26 +48,26 @@ class NewPossibleResearchState
 private:
 	Base* _base;
 	Text* _txtTitle;
-	TextList* _lstPossibilities;
 	TextButton
-		* _btnResearch,
+		* _btnManufacture,
 		* _btnOk;
+	TextList* _lstPossibilities;
 	Window* _window;
 
 
 	public:
-		/// Creates a NewPossibleResearch state.
-		NewPossibleResearchState(
+		/// Creates a ManufactureUnlocked state.
+		ManufactureUnlockedState(
 				Base* const base,
-				const std::vector<const RuleResearch*>& resRules,
+				const std::vector<const RuleManufacture*>& projects,
 				bool allocate);
-		// Deconstructs the NewPossibleResearchState.
-		~NewPossibleResearchState();
+		// Deconstructs the ManufactureUnlocked state.
+		~ManufactureUnlockedState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the Allocate Research button.
-		void btnResearchClick(Action* action);
+		/// Handler for clicking the Allocate Manufacture button.
+		void btnManufactureClick(Action* action);
 };
 
 }

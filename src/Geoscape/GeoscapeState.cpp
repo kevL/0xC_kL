@@ -42,13 +42,13 @@
 #include "InterceptState.h"
 #include "ItemsArrivingState.h"
 #include "LowFuelState.h"
+#include "ManufactureUnlockedState.h"
 #include "MonthlyReportState.h"
 #include "MultipleTargetsState.h"
-#include "NewPossibleManufactureState.h"
-#include "NewPossibleResearchState.h"
 #include "ManufactureCompleteState.h"
 #include "ResearchCompleteState.h"
 #include "ResearchRequiredState.h"
+#include "ResearchUnlockedState.h"
 #include "SoldierDiedState.h"
 #include "TerrorDetectedState.h"
 #include "UfoDetectedState.h"
@@ -109,7 +109,7 @@
 #include "../Savegame/Craft.h"
 #include "../Savegame/GameTime.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/Manufacture.h"
+#include "../Savegame/ManufactureProject.h"
 #include "../Savegame/Region.h"
 #include "../Savegame/ResearchProject.h"
 #include "../Savegame/SavedBattleGame.h"
@@ -270,72 +270,72 @@ const int GeoscapeState::_ufoBlobs[8u][BLOBSIZE][BLOBSIZE]
 /* struct definitions used when enqueuing notification events */
 
 /**
- *
+ * Info about a Manufacture project that just finished.
  */
 struct ManufactureCompleteInfo
 {
-	bool gotoBaseBtn;
+	bool allocate;
 	std::wstring item;
 
 	Base* base;
 
-	ManufactureProgress endType;
+	ManufactureProgress doneType;
 
 	/// cTor.
 	ManufactureCompleteInfo(
-			Base* const a_base,
-			const std::wstring& a_item,
-			bool a_gotoBaseBtn,
-			ManufactureProgress a_endType)
+			Base* const base_,
+			const std::wstring& item_,
+			bool allocate_,
+			ManufactureProgress doneType_)
 		:
-			base(a_base),
-			item(a_item),
-			gotoBaseBtn(a_gotoBaseBtn),
-			endType(a_endType)
+			base(base_),
+			item(item_),
+			allocate(allocate_),
+			doneType(doneType_)
 	{}
 };
 
 /**
- *
+ * Info about a Research project that can now be started.
  */
-struct NewPossibleResearchInfo
+struct ResearchUnlockedInfo
 {
-	bool showResearchButton;
-	std::vector<const RuleResearch*> newPossibleResearch;
+	bool allocate;
+	std::vector<const RuleResearch*> unlockedProjects;
 
 	Base* base;
 
 	/// cTor.
-	NewPossibleResearchInfo(
-			Base* const a_base,
-			const std::vector<const RuleResearch*>& a_newPossibleResearch,
-			bool a_showResearchButton)
+	ResearchUnlockedInfo(
+			Base* const base_,
+			const std::vector<const RuleResearch*>& unlockedProjects_,
+			bool allocate_)
 		:
-			base(a_base),
-			newPossibleResearch(a_newPossibleResearch),
-			showResearchButton(a_showResearchButton)
+			base(base_),
+			unlockedProjects(unlockedProjects_),
+			allocate(allocate_)
 	{}
 };
 
 /**
- *
+ * Info about a Manufacture project that can now be started.
  */
-struct NewPossibleManufactureInfo
+struct ManufactureUnlockedInfo
 {
-	bool showManufactureButton;
-	std::vector<const RuleManufacture*> newPossibleManufacture;
+	bool allocate;
+	std::vector<const RuleManufacture*> unlockedProjects;
 
 	Base* base;
 
 	/// cTor.
-	NewPossibleManufactureInfo(
-			Base* const a_base,
-			const std::vector<const RuleManufacture*>& a_newPossibleManufacture,
-			bool a_showManufactureButton)
+	ManufactureUnlockedInfo(
+			Base* const base_,
+			const std::vector<const RuleManufacture*>& unlockedProjects_,
+			bool allocate_)
 		:
-			base(a_base),
-			newPossibleManufacture(a_newPossibleManufacture),
-			showManufactureButton(a_showManufactureButton)
+			base(base_),
+			unlockedProjects(unlockedProjects_),
+			allocate(allocate_)
 	{}
 };
 
@@ -1900,7 +1900,7 @@ private:
 		 * Attempts detection of a Base.
 		 * @param ufo - pointer to the UFO trying to detect
 		 */
-		bool operator() (const Ufo* const ufo) const;
+		bool operator ()(const Ufo* const ufo) const;
 };
 
 /**
@@ -1908,7 +1908,7 @@ private:
  * @param ufo - pointer to the UFO attempting detection
  * @return, true if base detected
  */
-bool DetectXCOMBase::operator() (const Ufo* const ufo) const
+bool DetectXCOMBase::operator ()(const Ufo* const ufo) const
 {
 	if (ufo->isCrashed() == false
 //		&& ufo->getTrajectoryPoint() > 1u
@@ -1952,9 +1952,9 @@ struct SetRetaliationStatus
 {
 	/**
 	 * Mark a Base as a valid/exposed retaliation target.
-	 * @param i -
+	 * @param i - reference to an iterator
 	 */
-	void operator() (const argument_type& i) const
+	void operator ()(const argument_type& i) const
 	{
 		i.second->setBaseExposed();
 	}
@@ -2244,7 +2244,7 @@ private:
 		 * Call AlienMission::think() with cached parameters.
 		 * @param mission - pointer to an AlienMission
 		 */
-		void operator() (AlienMission* const mission) const
+		void operator ()(AlienMission* const mission) const
 		{
 			mission->think(_game, _globe);
 		}
@@ -2261,7 +2261,7 @@ struct ExpireCrashedUfo: public std::unary_function<Ufo*, void>
 	 * Decreases UFO expiration timer.
 	 * @param ufo - pointer to a crashed UFO
 	 */
-	void operator() (Ufo* const ufo) const
+	void operator ()(Ufo* const ufo) const
 	{
 		if (ufo->getUfoStatus() == Ufo::CRASHED)
 		{
@@ -2546,9 +2546,9 @@ void GeoscapeState::time1Hour()
 			i != _gameSave->getBases()->end();
 			++i)
 	{
-		std::map<Manufacture*, ManufactureProgress> progress;
+		std::map<ManufactureProject*, ManufactureProgress> progress;
 
-		for (std::vector<Manufacture*>::const_iterator
+		for (std::vector<ManufactureProject*>::const_iterator
 				j = (*i)->getManufacture().begin();
 				j != (*i)->getManufacture().end();
 				++j)
@@ -2556,7 +2556,7 @@ void GeoscapeState::time1Hour()
 			progress[*j] = (*j)->stepManufacture(*i, _gameSave);
 		}
 
-		for (std::map<Manufacture*, ManufactureProgress>::const_iterator
+		for (std::map<ManufactureProject*, ManufactureProgress>::const_iterator
 				j = progress.begin();
 				j != progress.end();
 				++j)
@@ -2567,7 +2567,7 @@ void GeoscapeState::time1Hour()
 				case PROG_NOT_ENOUGH_MONEY:
 				case PROG_NOT_ENOUGH_MATERIALS:
 					if (runtEvents.empty() == false) // set the previous event to NOT show btn.
-						runtEvents.back().gotoBaseBtn = false;
+						runtEvents.back().allocate = false;
 
 					runtEvents.push_back(ManufactureCompleteInfo(
 															*i,
@@ -2600,8 +2600,8 @@ void GeoscapeState::time1Hour()
 										j->base,
 										j->item,
 										this,
-										j->gotoBaseBtn,
-										j->endType)); // ie. Manufacture endType.
+										j->allocate,
+										j->doneType)); // ie. Manufacture doneType.
 	}
 
 	if (arrivals == true)
@@ -2656,7 +2656,7 @@ private:
 		 * Checks for and creates an AlienBase's support-mission.
 		 * @param aBase - pointer to an AlienBase
 		 */
-		void operator() (const AlienBase* const aBase) const;
+		void operator ()(const AlienBase* const aBase) const;
 };
 
 /**
@@ -2665,7 +2665,7 @@ private:
  * @note There is a 4% chance per day of a mission getting created.
  * @param aBase - pointer to an AlienBase
  */
-void GenerateSupportMission::operator() (const AlienBase* const aBase) const
+void GenerateSupportMission::operator ()(const AlienBase* const aBase) const
 {
 	const RuleAlienDeployment* const ruleDeploy (aBase->getAlienBaseDeployed());
 	const std::string type (ruleDeploy->getBaseGeneratedType());
@@ -2709,10 +2709,10 @@ void GeoscapeState::time1Day()
 
 	std::vector<ManufactureCompleteInfo> runtEvents;
 
-	std::vector<NewPossibleResearchInfo> resEventsPopped;
-	std::vector<NewPossibleManufactureInfo> runtEventsPopped;
+	std::vector<ResearchUnlockedInfo> resEventsPopped;
+	std::vector<ManufactureUnlockedInfo> runtEventsPopped;
 
-	std::vector<ResearchProject*> researchDiscovered;
+	std::vector<ResearchProject*> discovered;
 
 	for (std::vector<Base*>::const_iterator
 			i = _gameSave->getBases()->begin();
@@ -2808,7 +2808,7 @@ void GeoscapeState::time1Day()
 			if ((*j)->buildFinished() == false && (*j)->buildFacility() == true)
 			{
 				if (runtEvents.empty() == false) // set the previous event to NOT show btn.
-					runtEvents.back().gotoBaseBtn = false;
+					runtEvents.back().allocate = false;
 
 				runtEvents.push_back(ManufactureCompleteInfo(
 														*i,
@@ -2819,7 +2819,7 @@ void GeoscapeState::time1Day()
 		}
 
 
-		researchDiscovered.clear(); // handle ResearchProjects ->
+		discovered.clear(); // handle ResearchProjects ->
 
 		for (std::vector<ResearchProject*>::const_iterator
 				j = (*i)->getResearch().begin();
@@ -2827,16 +2827,16 @@ void GeoscapeState::time1Day()
 				++j)
 		{
 			if ((*j)->stepResearch() == true)
-				researchDiscovered.push_back(*j);
+				discovered.push_back(*j);
 		}
 
-		if (researchDiscovered.empty() == false)
+		if (discovered.empty() == false)
 		{
 			resetTimer();
 
 			for (std::vector<ResearchProject*>::const_iterator
-					j = researchDiscovered.begin();
-					j != researchDiscovered.end();
+					j = discovered.begin();
+					j != discovered.end();
 					++j)
 			{
 				const RuleResearch* const resRule ((*j)->getRules());
@@ -2848,21 +2848,20 @@ void GeoscapeState::time1Day()
 
 				bool
 					crackGof,
-					crackForced;	// TODO: that <- The issue is that the 'forced' resTypes are not an independent vector, but instead
-									// are redetermined on-the-fly from the player's 'discovered' vector every time they're examined.
+					crackRequested; // TODO: that <-
+
 				if (isLiveAlien == true)
 				{
-					if (resRule->needsItem() == true
-						&& resRule->destroyItem() == true
+					if (resRule->needsItem() == true && resRule->destroyItem() == true
 						&& Options::grantCorpses == true)
 					{
 						(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
 					}
 
-					getAlienCracks(
+					doesAlienCrack(
 								resType,
 								crackGof,
-								crackForced);
+								crackRequested);
 				}
 				else
 				{
@@ -2870,8 +2869,11 @@ void GeoscapeState::time1Day()
 						(*i)->getStorageItems()->addItem(resType);
 
 					crackGof =
-					crackForced = true; // <- not implemented yet. See above^
+					crackRequested = true; // <- not implemented yet. See above^
 				}
+
+				std::vector<const RuleResearch*> popupResearch;	// these RuleResearch entries will be RG_UNLOCKED by ResearchUnlockedState.
+																// Ps. not anymore - tabulatePopupResearch() now does that.
 
 				const RuleResearch* gofRule (nullptr);
 				if (crackGof == true && resRule->getGetOneFree().empty() == false)
@@ -2889,54 +2891,60 @@ void GeoscapeState::time1Day()
 					if (gofList.empty() == false)
 					{
 						gofRule = _rules->getResearch(gofList.at(RNG::pick(gofList.size())));
-						_gameSave->addDiscoveredResearch(gofRule);
+						_gameSave->discoverResearch(gofRule);
+						_gameSave->tabulatePopupResearch(popupResearch, gofRule);
 					}
 				}
 
 
-				const RuleResearch* resRulePedia;
-				if (_gameSave->isResearched(resRule->getUfopaediaEntry()) == false)
-					resRulePedia = resRule;
-				else
-					resRulePedia = nullptr;
-
-				resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
-
-				_gameSave->addDiscoveredResearch(resRule);
-
-
-				std::vector<const RuleResearch*> popupResearch;
+				_gameSave->discoverResearch(resRule);
 				_gameSave->tabulatePopupResearch(
 											popupResearch,
-											resRule,
-											*i);
+											resRule);
+				// TODO: Cull popupResearch vector of possible duplicates;
+				// respective dependents of gofRule & resRule, if that's even applicable.
 
 				std::vector<const RuleManufacture*> popupManufacture;
 				_gameSave->tabulatePopupManufacture(
 												popupManufacture,
 												resRule);
 
-				if (resRulePedia != nullptr) // check for need to research the clip before the weapon itself is allowed to be manufactured.
-				{
-					const RuleItem* const itRule (_rules->getItemRule(resRulePedia->getType()));
-					if (itRule != nullptr
-						&& itRule->getBattleType() == BT_FIREARM
-						&& itRule->getAcceptedLoadTypes()->empty() == false)
+
+				const RuleResearch* resRulePedia; // NOTE: Ufopaedia article will be 'type' if there is no (explicit) 'lookup'.
+				if (_gameSave->isResearched(resRule->getUfopaediaEntry()) == false)
+					resRulePedia = resRule; // 'resRulePedia' is not defined as the Ufopaedia lookup here but as the discovered research itself.
+				else
+					resRulePedia = nullptr; // resRule has already been discovered before.
+
+				resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
+
+				if (resRulePedia != nullptr)	// check for need to research the clip before the weapon itself is allowed to be manufactured.
+				{								// NOTE: Appears only if research has never been discovered before.
+					const std::string& parentType (resRule->getType());
+
+					const RuleItem* const parentRule (_rules->getItemRule(parentType));
+					if (   parentRule != nullptr
+						&& parentRule->getBattleType() == BT_FIREARM
+						&& parentRule->getAcceptedLoadTypes()->empty() == false)
 					{
-						const RuleManufacture* const mfRule (_rules->getManufacture(itRule->getType()));
-						if (mfRule != nullptr
-							&& mfRule->getRequiredResearch().empty() == false)
+						const RuleManufacture* const mfRule (_rules->getManufacture(parentType));
+						if (mfRule != nullptr)
 						{
 							const std::vector<std::string>& required (mfRule->getRequiredResearch());
-							const RuleItem* const aRule (_rules->getItemRule(itRule->getAcceptedLoadTypes()->front()));
-							if (aRule != nullptr
-								&& std::find(
-										required.begin(),
-										required.end(),
-										aRule->getType()) != required.end()
-								&& _gameSave->isResearched(mfRule->getRequiredResearch()) == false)
+							if (_gameSave->isResearched(required) == false)
 							{
-								resEvents.push_back(new ResearchRequiredState(itRule));
+								const std::string& dependentType (parentRule->getAcceptedLoadTypes()->front());
+
+//								const RuleItem* const dependentRule (_rules->getItemRule(dependentType));
+//								if (dependentRule != nullptr &&
+								if (std::find(
+											required.begin(),
+											required.end(),
+											dependentType) != required.end())
+								{
+//									resEvents.push_back(new ResearchRequiredState(parentRule));
+									resEvents.push_back(new ResearchRequiredState(parentType, dependentType));
+								}
 							}
 						}
 					}
@@ -2945,24 +2953,24 @@ void GeoscapeState::time1Day()
 				if (popupResearch.empty() == false)
 				{
 					if (resEventsPopped.empty() == false) // only show the "allocate research" button for the last notification
-						resEventsPopped.back().showResearchButton = false;
+						resEventsPopped.back().allocate = false;
 
-					resEventsPopped.push_back(NewPossibleResearchInfo(*i, popupResearch, true));
+					resEventsPopped.push_back(ResearchUnlockedInfo(*i, popupResearch, true));
 				}
 
 				if (popupManufacture.empty() == false)
 				{
 					if (runtEventsPopped.empty() == false) // only show the "allocate production" button for the last notification
-						runtEventsPopped.back().showManufactureButton = false;
+						runtEventsPopped.back().allocate = false;
 
-					runtEventsPopped.push_back(NewPossibleManufactureInfo(*i, popupManufacture, true));
+					runtEventsPopped.push_back(ManufactureUnlockedInfo(*i, popupManufacture, true));
 				}
 
 				if (isLiveAlien == false)
 				{
 					for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs
 							k = _gameSave->getBases()->begin();	// unless it's an alien interrogation ...
-							k != _gameSave->getBases()->end();	// TODO: remove GoF's that might be underway at other Bases, too
+							k != _gameSave->getBases()->end();	// TODO: remove Gof's that might be underway at other Bases, too
 							++k)
 					{
 						for (std::vector<ResearchProject*>::const_iterator
@@ -2973,6 +2981,7 @@ void GeoscapeState::time1Day()
 							if ((*l)->getRules() == resRule)
 							{
 								(*k)->clearResearchProject(*l);
+
 								if (resRule->needsItem() == true)
 									(*k)->getStorageItems()->addItem(resType);
 
@@ -2986,13 +2995,13 @@ void GeoscapeState::time1Day()
 	}
 
 	// if research has been discovered but no new research events are triggered
-	// show an empty NewPossibleResearchState so players have a chance to
+	// show an empty ResearchUnlockedState so players have a chance to
 	// allocate the now-free scientists.
 	// kL_note: already taken care of. Just reset time-compression to 5sec and
 	// let ResearchCompleteState poke the player.
 
 //	if (resEvents.empty() == false && resEventsPopped.empty() == true)
-//		resEventsPopped.push_back(NewPossibleResearchInfo(std::vector<const RuleResearch*>(), true));
+//		resEventsPopped.push_back(ResearchUnlockedInfo(std::vector<const RuleResearch*>(), true));
 
 
 	// show Popup Events:
@@ -3005,8 +3014,8 @@ void GeoscapeState::time1Day()
 											i->base,
 											i->item,
 											this,
-											i->gotoBaseBtn,
-											i->endType)); // ie. PROG_CONSTRUCTION
+											i->allocate,
+											i->doneType)); // ie. PROG_CONSTRUCTION
 	}
 
 	for (std::vector<State*>::const_iterator
@@ -3017,26 +3026,26 @@ void GeoscapeState::time1Day()
 		popupGeo(*i);
 	}
 
-	for (std::vector<NewPossibleResearchInfo>::const_iterator
+	for (std::vector<ResearchUnlockedInfo>::const_iterator
 			i = resEventsPopped.begin();
 			i != resEventsPopped.end();
 			++i)
 	{
-		popupGeo(new NewPossibleResearchState(
-											i->base,
-											i->newPossibleResearch,
-											i->showResearchButton));
+		popupGeo(new ResearchUnlockedState(
+										i->base,
+										i->unlockedProjects,
+										i->allocate));
 	}
 
-	for (std::vector<NewPossibleManufactureInfo>::const_iterator
+	for (std::vector<ManufactureUnlockedInfo>::const_iterator
 			i = runtEventsPopped.begin();
 			i != runtEventsPopped.end();
 			++i)
 	{
-		popupGeo(new NewPossibleManufactureState(
-											i->base,
-											i->newPossibleManufacture,
-											i->showManufactureButton));
+		popupGeo(new ManufactureUnlockedState(
+										i->base,
+										i->unlockedProjects,
+										i->allocate));
 	}
 	// done Popup Events.
 
@@ -3086,57 +3095,62 @@ void GeoscapeState::time1Day()
 
 /**
  * Assigns whether an aLien cracked under pressure.
- * @param alienType	-
- * @param gof		-
- * @param forces	-
+ * @param alienType	- reference to the aLien-type
+ * @param gof		- reference to hold if the gof-info is cracked
+ * @param requested	- reference to hold if the request-info is cracked
  */
-void GeoscapeState::getAlienCracks( // private.
+void GeoscapeState::doesAlienCrack( // private.
 			const std::string& alienType,
 			bool& gof,
-			bool& forces) const
+			bool& requested) const
 {
 	int
-		gofPct (100),
-		forcesPct (100); // defaults.
+		pctGof,
+		pctRequest; // TODO: Make these ruleset vars in unit-rules.
 
 	if (alienType.find("_TERRORIST") != std::string::npos)
 	{
-		gofPct = 10;
-		forcesPct = 50;
+		pctGof     = 10;
+		pctRequest = 50;
 	}
 	else if (alienType.find("_FLOATER") != std::string::npos)
 	{
-		gofPct = 80;
-		forcesPct = 30;
+		pctGof     = 80;
+		pctRequest = 30;
 	}
 	else if (alienType.find("_SECTOID") != std::string::npos)
 	{
-		gofPct = 70;
-		forcesPct = 40;
+		pctGof     = 70;
+		pctRequest = 40;
 	}
 	else if (alienType.find("_SNAKEMAN") != std::string::npos)
 	{
-		gofPct = 60;
-		forcesPct = 50;
+		pctGof     = 60;
+		pctRequest = 50;
 	}
 	else if (alienType.find("_MUTON") != std::string::npos)
 	{
-		gofPct = 50;
-		forcesPct = 60;
+		pctGof     = 50;
+		pctRequest = 60;
 	}
 	else if (alienType.find("_ETHEREAL") != std::string::npos)
 	{
-		gofPct = 40;
-		forcesPct = 70;
+		pctGof     = 40;
+		pctRequest = 70;
 	}
 	else if (alienType.find("_WASPITE") != std::string::npos)
 	{
-		gofPct = 30;
-		forcesPct = 80;
+		pctGof     = 30;
+		pctRequest = 80;
+	}
+	else // defaults
+	{
+		pctGof     = 100;
+		pctRequest = 100;
 	}
 
-	gof = RNG::percent(gofPct);
-	forces = RNG::percent(forcesPct);
+	gof       = RNG::percent(pctGof);
+	requested = RNG::percent(pctRequest);
 }
 
 /**

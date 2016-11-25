@@ -175,10 +175,10 @@ private:
 	bool processTerrorSite(TerrorSite* const terrorSite) const;
 
 	/// Assigns whether an aLien cracked under pressure.
-	void getAlienCracks(
+	void doesAlienCrack(
 				const std::string& alienType,
 				bool& gof,
-				bool& forces) const;
+				bool& requested) const;
 	/// Starts a new dogfight.
 	void startDogfight();
 

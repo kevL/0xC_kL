@@ -331,16 +331,16 @@ void ResearchState::miniClick(Action*)
 void ResearchState::miniMouseOver(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
-	const Base* const base (_baseList->at(baseId));
-
-	if (baseId < _baseList->size()
-		&& base != _base
-		&& base->hasResearch() == true)
+	if (baseId < _baseList->size())
 	{
-		_txtHoverBase->setText(base->getLabel().c_str());
+		const Base* const base (_baseList->at(baseId));
+		if (base != _base && base->hasResearch() == true)
+		{
+			_txtHoverBase->setText(base->getLabel().c_str());
+			return;
+		}
 	}
-	else
-		_txtHoverBase->setText(L"");
+	_txtHoverBase->setText(L"");
 }
 
 /**

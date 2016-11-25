@@ -207,23 +207,17 @@ private:
 	std::vector<Ufo*>					_ufos;
 	std::vector<Waypoint*>				_waypoints;
 
-	/// Tabulates a list of dependent-research from a specified RuleResearch.
-	void tabulateDependentResearch(
-			std::vector<const RuleResearch*>& projects,
-			const RuleResearch* const resRule,
-			Base* const base) const;
+
+	/// Finds the ResearchGeneral corresponding to a specified research-rule.
+	ResearchGeneral* findResearchGeneral(const RuleResearch* const resRule) const;
 	/// Checks if a RuleResearch has had all of its required-research discovered.
 	bool checkRequiredResearch(const RuleResearch* const resRule) const;
-	/// Checks if a ResearchProject can be started.
-	bool isProjectOpen(const RuleResearch* const resRule) const;
-	/// Checks if a specified RuleResearch has all of its requisites discovered.
-	bool checkRequisiteResearch(const RuleResearch* const resRule) const;
-	/// Tabulates a list of the requested-dependents of all discovered-research.
-	void tabulateRequestedResearch(std::vector<const RuleResearch*>& forced) const;
+
 	///
 	static SaveInfo getSaveInfo(
 			const std::string& file,
 			const Language* const lang);
+
 
 	public:
 		static const std::string
@@ -360,7 +354,7 @@ private:
 
 		/// Searches the ResearchGenerals for a specified research-type & status.
 		bool searchResearch(
-				const std::string& type,
+				const std::string& resType,
 				const ResearchStatus status = RG_DISCOVERED) const;
 		/// Searches the ResearchGenerals for a specified research-rule & status.
 		bool searchResearch(
@@ -368,15 +362,24 @@ private:
 				const ResearchStatus status = RG_DISCOVERED) const;
 		/// Sets the status of a ResearchGeneral by research-type.
 		bool setResearchStatus(
-				const std::string& type,
-				const ResearchStatus status = RG_DISCOVERED);
+				const std::string& resType,
+				const ResearchStatus status = RG_DISCOVERED) const;
 		/// Sets the status of a ResearchGeneral by research-rule.
 		bool setResearchStatus(
 				const RuleResearch* const resRule,
-				const ResearchStatus status = RG_DISCOVERED);
+				const ResearchStatus status = RG_DISCOVERED) const;
 
 		/// Adds a RuleResearch to the list of discovered-research.
-		void addDiscoveredResearch(const RuleResearch* const resRule);
+		void discoverResearch(const RuleResearch* const resRule);
+
+		/// Tabulates a list of ResearchProjects that appears when a ResearchProject is completed.
+		void tabulatePopupResearch(
+				std::vector<const RuleResearch*>& projects,
+				const RuleResearch* const resRule);
+		/// Tabulates a list of Manufacture projects that appears when research is discovered.
+		void tabulatePopupManufacture(
+				std::vector<const RuleManufacture*>& projects,
+				const RuleResearch* const resRule) const;
 
 		/// Tabulates a list of ResearchProjects that can be started at a Base.
 		void tabulateStartableResearch(
@@ -386,15 +389,6 @@ private:
 		void tabulateStartableManufacture(
 				std::vector<const RuleManufacture*>& projects,
 				const Base* const base) const;
-		/// Tabulates a list of ResearchProjects that appears when a ResearchProject is completed.
-		void tabulatePopupResearch(
-				std::vector<const RuleResearch*>& projects,
-				const RuleResearch* const resRule,
-				Base* const base) const;
-		/// Tabulates a list of Manufacture projects that appears when research is discovered.
-		void tabulatePopupManufacture(
-				std::vector<const RuleManufacture*>& projects,
-				const RuleResearch* const resRule) const;
 
 		/// Checks if a research-type is discovered.
 		bool isResearched(const std::string& resType) const;

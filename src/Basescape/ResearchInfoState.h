@@ -37,7 +37,8 @@ class Window;
 
 
 /**
- * Window that allows changing of the quantity of assigned scientists to a project.
+ * Window that allows changing of the quantity of scientists that are assigned
+ * to a project.
  */
 class ResearchInfoState
 	:

@@ -28,7 +28,7 @@
 #include "Craft.h"
 #include "CraftWeapon.h"
 #include "ItemContainer.h"
-#include "Manufacture.h"
+#include "ManufactureProject.h"
 #include "ResearchProject.h"
 #include "Soldier.h"
 #include "Target.h"
@@ -119,7 +119,7 @@ Base::~Base()
 			++i)
 		delete *i;
 
-	for (std::vector<Manufacture*>::const_iterator
+	for (std::vector<ManufactureProject*>::const_iterator
 			i = _projectsManufacture.begin();
 			i != _projectsManufacture.end();
 			++i)
@@ -286,7 +286,7 @@ void Base::loadBase(
 		type = (*i)["item"].as<std::string>();
 		if (_rules->getManufacture(type) != nullptr)
 		{
-			Manufacture* const production (new Manufacture(_rules->getManufacture(type)));
+			ManufactureProject* const production (new ManufactureProject(_rules->getManufacture(type)));
 			production->load(*i);
 			_projectsManufacture.push_back(production);
 		}
@@ -351,7 +351,7 @@ YAML::Node Base::save() const
 			++i)
 		node["research"].push_back((*i)->save());
 
-	for (std::vector<Manufacture*>::const_iterator
+	for (std::vector<ManufactureProject*>::const_iterator
 			i = _projectsManufacture.begin();
 			i != _projectsManufacture.end();
 			++i)
@@ -617,7 +617,7 @@ int Base::getTotalEngineers() const
 			total += (*i)->getQuantity();
 	}
 
-	for (std::vector<Manufacture*>::const_iterator
+	for (std::vector<ManufactureProject*>::const_iterator
 			i = _projectsManufacture.begin();
 			i != _projectsManufacture.end();
 			++i)
@@ -635,7 +635,7 @@ int Base::getTotalEngineers() const
 int Base::getAllocatedEngineers() const
 {
 	int total (0);
-	for (std::vector<Manufacture*>::const_iterator
+	for (std::vector<ManufactureProject*>::const_iterator
 			i = _projectsManufacture.begin();
 			i != _projectsManufacture.end();
 			++i)
@@ -843,7 +843,7 @@ bool Base::hasResearch() const
 int Base::getUsedWorkshops() const
 {
 	int total (0);
-	for (std::vector<Manufacture*>::const_iterator
+	for (std::vector<ManufactureProject*>::const_iterator
 			i = _projectsManufacture.begin();
 			i != _projectsManufacture.end();
 			++i)
@@ -1077,7 +1077,7 @@ int Base::getUsedHangars() const
 		subTotal;
 
 	const RuleManufacture* mfRule;
-	for (std::vector<Manufacture*>::const_iterator	// Craft production requires 1 hangar + 1 hanger for
+	for (std::vector<ManufactureProject*>::const_iterator	// Craft production requires 1 hangar + 1 hanger for
 			i = _projectsManufacture.begin();		// every input-craft over (1 if there's an output-craft).
 			i != _projectsManufacture.end();
 			++i)
@@ -1218,7 +1218,7 @@ int Base::getCraftCount(
  * Adds a specified Manufacture project to this Base.
  * @param project - pointer to a project
  */
-void Base::addManufactureProject(Manufacture* const project)
+void Base::addManufactureProject(ManufactureProject* const project)
 {
 	_projectsManufacture.push_back(project);
 }
@@ -1227,11 +1227,11 @@ void Base::addManufactureProject(Manufacture* const project)
  * Clears a specified Manufacture project from this Base.
  * @param project - pointer to the project
  */
-void Base::clearManufactureProject(const Manufacture* const project)
+void Base::clearManufactureProject(const ManufactureProject* const project)
 {
 	_engineers += project->getAssignedEngineers();
 
-	for (std::vector<Manufacture*>::const_iterator
+	for (std::vector<ManufactureProject*>::const_iterator
 			i = _projectsManufacture.begin();
 			i != _projectsManufacture.end();
 			++i)
@@ -1249,7 +1249,7 @@ void Base::clearManufactureProject(const Manufacture* const project)
  * Gets the list of this Base's Manufacture projects.
  * @return, reference to the list of projects
  */
-const std::vector<Manufacture*>& Base::getManufacture() const
+const std::vector<ManufactureProject*>& Base::getManufacture() const
 {
 	return _projectsManufacture;
 }
@@ -2390,7 +2390,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		{
 			bool checkTransfers (true);
 
-			for (std::vector<Manufacture*>::const_reverse_iterator // check Manufacture
+			for (std::vector<ManufactureProject*>::const_reverse_iterator // check ManufactureProject
 					rit = _projectsManufacture.rbegin();
 					rit != _projectsManufacture.rend();
 					++rit)
@@ -2490,7 +2490,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 	{
 		if (getTotalWorkshops() - destroyed == 0)
 		{
-			for (std::vector<Manufacture*>::const_iterator
+			for (std::vector<ManufactureProject*>::const_iterator
 					i = _projectsManufacture.begin();
 					i != _projectsManufacture.end();
 					++i)
@@ -2503,7 +2503,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 		else
 		{
 			del = destroyed - getFreeWorkshops();
-			for (std::vector<Manufacture*>::const_iterator // TODO: Reverse iteration.
+			for (std::vector<ManufactureProject*>::const_iterator // TODO: Reverse iteration.
 					i = _projectsManufacture.begin();
 					i != _projectsManufacture.end() && del > 0;
 					++i)
@@ -2952,7 +2952,7 @@ int Base::calcLostScore() const
 
 /**
  * Checks if any Craft at this Base needs to and can be refurbished.
- * @note Called by DebriefingState, ItemsArrivingState, Manufacture.
+ * @note Called by DebriefingState, ItemsArrivingState, ManufactureProject.
  * @param itType - reference to an item-type
  */
 void Base::refurbishCraft(const std::string& itType)

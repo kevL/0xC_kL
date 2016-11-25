@@ -49,14 +49,14 @@ namespace OpenXcom
  * @param item		- reference to the item that completed
  * @param geoState	- pointer to GeoscapeState
  * @param allocate	- true to show the goToBase button
- * @param endType	- what ended the production (Manufacture.h)
+ * @param doneType	- what ended the production (Manufacture.h)
  */
 ManufactureCompleteState::ManufactureCompleteState(
 		Base* const base,
 		const std::wstring& item,
 		GeoscapeState* const geoState,
 		bool allocate,
-		ManufactureProgress endType)
+		ManufactureProgress doneType)
 	:
 		_base(base),
 		_geoState(geoState)
@@ -103,7 +103,7 @@ ManufactureCompleteState::ManufactureCompleteState(
 									Options::keyOkKeypad);
 
 	std::wstring wst;
-	switch (endType)
+	switch (doneType)
 	{
 		case PROG_CONSTRUCTION:
 			wst = tr("STR_CONSTRUCTION_OF_FACILITY_AT_BASE_IS_COMPLETE")

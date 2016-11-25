@@ -47,8 +47,11 @@ private:
 
 
 	public:
-		/// Creates the ResearchRequired state.
-		explicit ResearchRequiredState(const RuleItem* const itRule);
+		/// Creates a ResearchRequired state.
+//		explicit ResearchRequiredState(const RuleItem* const itRule);
+		ResearchRequiredState(
+				const std::string& parentType,
+				const std::string& dependentType);
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

@@ -39,10 +39,10 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the ResearchComplete screen.
- * @param resRulePedia	- pointer to the completed RuleResearch
- *						  or nullptr if the ufopedia-article shouldn't popup again
- * @param gofRule		- pointer to bonus completed RuleResearch
- * @param resRule		- pointer to the originating RuleResearch
+ * @param resRulePedia	- pointer to the discovered RuleResearch (will be converted to Ufopaedia article)
+ *						  or nullptr if the Ufopaedia article shouldn't popup
+ * @param gofRule		- pointer to bonus discovered RuleResearch
+ * @param resRule		- pointer to the discovered RuleResearch
  */
 ResearchCompleteState::ResearchCompleteState(
 		const RuleResearch* const resRulePedia,
@@ -103,14 +103,14 @@ ResearchCompleteState::ResearchCompleteState(
 								Options::keyOkKeypad);
 	}
 
-	if (resRule != nullptr)
-	{
-		_txtResearch->setText(tr(resRule->getType()));
-		_txtResearch->setAlign(ALIGN_CENTER);
-		_txtResearch->setBig();
-	}
-	else
-		_txtResearch->setVisible(false);
+//	if (resRule != nullptr) // resRule is always valid <-
+//	{
+	_txtResearch->setText(tr(resRule->getType()));
+	_txtResearch->setAlign(ALIGN_CENTER);
+	_txtResearch->setBig();
+//	}
+//	else
+//		_txtResearch->setVisible(false);
 }
 
 /**

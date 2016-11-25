@@ -17,9 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NewPossibleResearchState.h"
-
-//#include <algorithm>
+#include "ResearchUnlockedState.h"
 
 #include "../Basescape/ResearchState.h"
 
@@ -44,14 +42,14 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the NewPossibleResearchState screen.
+ * Initializes all the elements in the ResearchUnlocked screen.
  * @param base		- pointer to the Base to get info from
- * @param resRules	- reference to a vector of pointers to RuleResearch projects
- * @param allocate	- true to show new research button
+ * @param projects	- reference to a vector of pointers to RuleResearch projects
+ * @param allocate	- true to show the allocate research button
  */
-NewPossibleResearchState::NewPossibleResearchState(
+ResearchUnlockedState::ResearchUnlockedState(
 		Base* const base,
-		const std::vector<const RuleResearch*>& resRules,
+		const std::vector<const RuleResearch*>& projects,
 		bool allocate)
 	:
 		_base(base)
@@ -80,18 +78,19 @@ NewPossibleResearchState::NewPossibleResearchState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 
 	_btnOk->setText(tr((allocate == true) ? "STR_OK" : "STR_MORE"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NewPossibleResearchState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NewPossibleResearchState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ResearchUnlockedState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ResearchUnlockedState::btnOkClick),
 							Options::keyCancel);
 
 	_btnResearch->setText(tr("STR_ALLOCATE_RESEARCH"));
-	_btnResearch->onMouseClick(		static_cast<ActionHandler>(&NewPossibleResearchState::btnResearchClick));
-	_btnResearch->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleResearchState::btnResearchClick),
+	_btnResearch->onMouseClick(		static_cast<ActionHandler>(&ResearchUnlockedState::btnResearchClick));
+	_btnResearch->onKeyboardPress(	static_cast<ActionHandler>(&ResearchUnlockedState::btnResearchClick),
 									Options::keyOk);
-	_btnResearch->onKeyboardPress(	static_cast<ActionHandler>(&NewPossibleResearchState::btnResearchClick),
+	_btnResearch->onKeyboardPress(	static_cast<ActionHandler>(&ResearchUnlockedState::btnResearchClick),
 									Options::keyOkKeypad);
 	_btnResearch->setVisible(allocate == true);
 
+	_txtTitle->setText(tr("STR_WE_CAN_NOW_RESEARCH"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
@@ -100,28 +99,25 @@ NewPossibleResearchState::NewPossibleResearchState(
 	_lstPossibilities->setBig();
 
 	for (std::vector<const RuleResearch*>::const_iterator
-			i = resRules.begin();
-			i != resRules.end();
+			i = projects.begin();
+			i != projects.end();
 			++i)
 	{
-		_game->getSavedGame()->setResearchStatus(*i, RG_OPEN);
-		_lstPossibilities->addRow(1, tr((*i)->getType ()).c_str());
+		_lstPossibilities->addRow(1, tr((*i)->getType()).c_str());
 	}
-
-	_txtTitle->setText(tr("STR_WE_CAN_NOW_RESEARCH"));
 }
 
 /**
  * dTor.
  */
-NewPossibleResearchState::~NewPossibleResearchState()
+ResearchUnlockedState::~ResearchUnlockedState()
 {}
 
 /**
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void NewPossibleResearchState::btnOkClick(Action*)
+void ResearchUnlockedState::btnOkClick(Action*)
 {
 	_game->popState();
 }
@@ -130,7 +126,7 @@ void NewPossibleResearchState::btnOkClick(Action*)
  * Opens the ResearchState so the player can dispatch available scientists.
  * @param action - pointer to an Action
  */
-void NewPossibleResearchState::btnResearchClick(Action*)
+void ResearchUnlockedState::btnResearchClick(Action*)
 {
 	_game->popState();
 	_game->pushState(new ResearchState(_base));

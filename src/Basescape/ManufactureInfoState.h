@@ -28,7 +28,7 @@ namespace OpenXcom
 
 class ArrowButton;
 class Base;
-class Manufacture;
+class ManufactureProject;
 class RuleManufacture;
 class Text;
 class TextButton;
@@ -56,7 +56,7 @@ private:
 		* _btnUnitLess,
 		* _btnUnitMore;
 	Base* _base;
-	Manufacture* _project;
+	ManufactureProject* _project;
 	const RuleManufacture* _mfRule;
 	Text
 		* _txtFreeEngineer,
@@ -158,7 +158,7 @@ private:
 		/// Creates a ManufactureInfo state (adjust manufacture).
 		ManufactureInfoState(
 				Base* const base,
-				Manufacture* const project);
+				ManufactureProject* const project);
 		/// Cleans up the ManufactureInfo state.
 		~ManufactureInfoState();
 };

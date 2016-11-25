@@ -40,10 +40,12 @@ ResearchGeneral::ResearchGeneral(
 {
 	if (isQuickBattle == true)
 		_status = RG_DISCOVERED;
-	else if (_resRule->getRequisiteResearch().empty() == false
-		&&   _resRule->getRequisiteResearch().front() == "STR_UNLOCKED")
+	else if (std::find(
+					_resRule->getRequisiteResearch().begin(),
+					_resRule->getRequisiteResearch().end(),
+					"STR_UNLOCKED") != _resRule->getRequisiteResearch().end())
 	{
-		_status = RG_OPEN;
+		_status = RG_UNLOCKED;
 	}
 	else
 		_status = RG_LOCKED;

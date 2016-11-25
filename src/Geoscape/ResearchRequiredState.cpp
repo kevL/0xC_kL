@@ -36,10 +36,13 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Research Required screen.
+ * Initializes all the elements in the ResearchRequired screen.
  * @param itRule - pointer to a researched weapon
  */
-ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
+//ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
+ResearchRequiredState::ResearchRequiredState(
+		const std::string& parentType,
+		const std::string& dependentType)
 {
 	_fullScreen = false;
 
@@ -68,8 +71,10 @@ ResearchRequiredState::ResearchRequiredState(const RuleItem* const itRule)
 							Options::keyOkKeypad);
 
 	_txtTitle->setText(tr("STR_YOU_NEED_TO_RESEARCH_ITEM_TO_PRODUCE_ITEM")
-					   .arg(tr(itRule->getAcceptedLoadTypes()->front()))
-					   .arg(tr(itRule->getType())));
+						.arg(tr(dependentType))
+						.arg(tr(parentType)));
+//						.arg(tr(itRule->getAcceptedLoadTypes()->front()))
+//						.arg(tr(itRule->getType())));
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);

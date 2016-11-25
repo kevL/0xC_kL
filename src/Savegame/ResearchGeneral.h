@@ -29,10 +29,8 @@ namespace OpenXcom
 enum ResearchStatus
 {
 	RG_LOCKED,		// 0
-	RG_OPEN,		// 1
+	RG_UNLOCKED,	// 1
 	RG_DISCOVERED	// 2
-//	RS_PROJECT,		// 3
-//	RS_OFFLINE,		// 4
 };
 
 class RuleResearch;

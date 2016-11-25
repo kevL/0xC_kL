@@ -43,7 +43,7 @@
 
 #include "../Savegame/Base.h"
 #include "../Savegame/ItemContainer.h"
-#include "../Savegame/Manufacture.h"
+#include "../Savegame/ManufactureProject.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Transfer.h"
 
@@ -210,7 +210,7 @@ void ManufactureState::init()
 
 	_lstManufacture->clearList();
 
-	for (std::vector<Manufacture*>::const_iterator
+	for (std::vector<ManufactureProject*>::const_iterator
 			i = _base->getManufacture().begin();
 			i != _base->getManufacture().end();
 			++i)
@@ -373,16 +373,16 @@ void ManufactureState::miniClick(Action*)
 void ManufactureState::miniMouseOver(Action*)
 {
 	const size_t baseId (_mini->getHoveredBase());
-	const Base* const base (_baseList->at(baseId));
-
-	if (baseId < _baseList->size()
-		&& base != _base
-		&& base->hasProduction() == true)
+	if (baseId < _baseList->size())
 	{
-		_txtHoverBase->setText(base->getLabel().c_str());
+		const Base* const base (_baseList->at(baseId));
+		if (base != _base && base->hasProduction() == true)
+		{
+			_txtHoverBase->setText(base->getLabel().c_str());
+			return;
+		}
 	}
-	else
-		_txtHoverBase->setText(L"");
+	_txtHoverBase->setText(L"");
 }
 
 /**

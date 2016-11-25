@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_MANUFACTURE_H
-#define OPENXCOM_MANUFACTURE_H
+#ifndef OPENXCOM_MANUFACTUREPROJECT_H
+#define OPENXCOM_MANUFACTUREPROJECT_H
 
 #include <yaml-cpp/yaml.h>
 
@@ -43,7 +43,7 @@ enum ManufactureProgress
 };
 
 
-class Manufacture
+class ManufactureProject
 {
 
 private:
@@ -67,9 +67,9 @@ private:
 
 	public:
 		/// Tracks a Manufacture project.
-		explicit Manufacture(const RuleManufacture* const mfRule);
+		explicit ManufactureProject(const RuleManufacture* const mfRule);
 		/// Cleans the Manufacture project.
-		~Manufacture();
+		~ManufactureProject();
 
 		/// Loads from YAML.
 		void load(const YAML::Node& node);
