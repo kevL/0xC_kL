@@ -2864,7 +2864,7 @@ int Map::getSoundAngle(const Position& pos) const
 
 	// cap the position to the screen edges relative to the center,
 	// negative values indicating a left-shift, and positive values shifting to the right.
-	screenPos.x = Clamp(screenPos.x + _camera->getMapOffset().x - midPoint, -midPoint, midPoint);
+	screenPos.x = Vicegrip(screenPos.x + _camera->getMapOffset().x - midPoint, -midPoint, midPoint);
 
 	// Convert the relative distance left or right to a relative angle off-center.
 	// Since Mix_SetPosition() uses modulo 360 can't feed it a negative number so add 360.

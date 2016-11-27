@@ -1173,8 +1173,8 @@ void AlienBAIState::evaluateAiMode() // private.
 				break;
 
 			default:
-				combatOdds *= Clamp(1.2f + (static_cast<float>(_aggression) / 10.f), 0.1f, 2.f);
-				escapeOdds *= Clamp(0.9f - (static_cast<float>(_aggression) / 10.f), 0.1f, 2.f);
+				combatOdds *= Vicegrip(1.2f + (static_cast<float>(_aggression) / 10.f), 0.1f, 2.f);
+				escapeOdds *= Vicegrip(0.9f - (static_cast<float>(_aggression) / 10.f), 0.1f, 2.f);
 		}
 
 		if (_AIMode == AI_COMBAT)

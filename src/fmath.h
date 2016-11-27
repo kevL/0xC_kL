@@ -102,7 +102,7 @@ inline _Tx Sign(const _Tx& val)
  * @return, value within inclusive limits
  */
 template <class _Tx>
-inline _Tx Clamp(
+inline _Tx Vicegrip(
 		const _Tx& val,
 		const _Tx& valMin,
 		const _Tx& valMax)

@@ -228,7 +228,7 @@ void BattlescapeGenerator::setTerrain(RuleTerrain* const terrain)
  */
 void BattlescapeGenerator::setShade(int shade)
 {
-	_shade = Clamp(shade, 0,15);
+	_shade = Vicegrip(shade, 0,15);
 }
 
 /**

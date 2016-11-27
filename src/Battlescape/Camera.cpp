@@ -540,7 +540,7 @@ int Camera::getViewLevel() const
 void Camera::setViewLevel(int level)	// The call from Map::drawTerrain() causes a stack overflow loop when projectile in FoV.
 {										// Solution: remove draw() call below_
 										// - might have to pass in a 'redraw' bool to compensate for other calls ...
-	_offsetField.z = Clamp(level, 0, _mapsize_z - 1);
+	_offsetField.z = Vicegrip(level, 0, _mapsize_z - 1);
 
 	_map->getBattleSave()->getBattleState()->setLayerValue(_offsetField.z);
 //	_map->draw();
@@ -566,8 +566,8 @@ void Camera::centerPosition(
 		const Position& posField,
 		bool draw)
 {
-	_centerField.x = Clamp(posField.x, -1, _mapsize_x);
-	_centerField.y = Clamp(posField.y, -1, _mapsize_y);
+	_centerField.x = Vicegrip(posField.x, -1, _mapsize_x);
+	_centerField.y = Vicegrip(posField.y, -1, _mapsize_y);
 
 	_centerField.z =
 	_offsetField.z = posField.z;
@@ -641,8 +641,8 @@ void Camera::convertScreenToMap(
 	*mapX /= width_4;
 	*mapY /= _spriteWidth;
 
-	*mapX = Clamp(*mapX, -1, _mapsize_x);
-	*mapY = Clamp(*mapY, -1, _mapsize_y);
+	*mapX = Vicegrip(*mapX, -1, _mapsize_x);
+	*mapY = Vicegrip(*mapY, -1, _mapsize_y);
 }
 
 /**
