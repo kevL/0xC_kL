@@ -58,7 +58,10 @@ private:
 		_edit,
 		_editCache;
 
-	ActionHandler _change;
+	ActionHandler
+		_change,
+		_enter;
+
 	State* _state;
 	Text
 		* _caret,
@@ -155,6 +158,8 @@ private:
 		void keyboardPress(Action* action, State* state) override;
 		/// Hooks an ActionHandler to the edit-field.
 		void onTextChange(ActionHandler handler);
+		/// Hooks an ActionHandler to the ENTER-key.
+		void onEnter(ActionHandler handler);
 };
 
 }

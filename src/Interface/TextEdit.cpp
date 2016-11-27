@@ -44,15 +44,16 @@ TextEdit::TextEdit(
 		int y)
 	:
 		InteractiveSurface(
-			width,
-			height,
-			x,y),
+				width,
+				height,
+				x,y),
 		_blink(true),
 		_lock(true),
 		_ascii(L'A'),
 		_caretPlace(0u),
 		_inputConstraint(TEC_NONE),
 		_change(nullptr),
+		_enter(nullptr),
 		_state(state)
 {
 	_isFocused = false;
@@ -367,6 +368,17 @@ void TextEdit::draw()
 	}
 
 	clear();
+
+	if (_enter)
+	{
+		SDL_Rect rect;
+		rect.x =
+		rect.y = 0;
+		rect.w = static_cast<Uint16>(getWidth());
+		rect.h = static_cast<Uint16>(getHeight());
+		drawRect(&rect, _text->getColor());
+	}
+
 	_text->blit(this);
 
 	if (Options::keyboardMode == KEYBOARD_ON)
@@ -524,6 +536,8 @@ void TextEdit::mousePress(Action* action, State* state)
  */
 void TextEdit::keyboardPress(Action* action, State* state)
 {
+	bool enterPress (false);
+
 	switch (Options::keyboardMode)
 	{
 		case KEYBOARD_OFF:
@@ -577,8 +591,11 @@ void TextEdit::keyboardPress(Action* action, State* state)
 					break;
 				case SDLK_RETURN:
 				case SDLK_KP_ENTER:
-					if (_edit.empty() == false)
+					if (_edit.empty() == false || _enter != nullptr)
+					{
+						enterPress = true;
 						setFocusEdit(false);
+					}
 					break;
 
 				default:
@@ -598,6 +615,9 @@ void TextEdit::keyboardPress(Action* action, State* state)
 	if (_change != nullptr)
 		(state->*_change)(action);
 
+	if (_enter != nullptr && enterPress == true)
+		(state->*_enter)(action);
+
 	InteractiveSurface::keyboardPress(action, state);
 }
 
@@ -608,6 +628,15 @@ void TextEdit::keyboardPress(Action* action, State* state)
 void TextEdit::onTextChange(ActionHandler handler)
 {
 	_change = handler;
+}
+
+/**
+ * Sets a function to be called every time ENTER is pressed.
+ * @param handler - ActionHandler
+ */
+void TextEdit::onEnter(ActionHandler handler)
+{
+	_enter = handler;
 }
 
 }

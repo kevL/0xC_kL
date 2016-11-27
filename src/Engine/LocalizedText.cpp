@@ -35,7 +35,8 @@ LocalizedText LocalizedText::arg(const std::wstring& val) const
 	std::wostringstream woststr;
 	woststr << '{' << _nextArg << '}';
 	std::wstring marker (woststr.str());
-	size_t pos = _text.find(marker);
+
+	size_t pos (_text.find(marker));
 	if (std::wstring::npos == pos)
 		return *this;
 
@@ -66,7 +67,8 @@ LocalizedText& LocalizedText::arg(const std::wstring& val)
 	std::wostringstream woststr;
 	woststr << '{' << _nextArg << '}';
 	std::wstring marker (woststr.str());
-	size_t pos = _text.find(marker);
+
+	size_t pos (_text.find(marker));
 	if (std::wstring::npos != pos)
 	{
 		for (

@@ -65,11 +65,11 @@ private:
 		/// Creates the empty string.
 		LocalizedText()
 			:
-				_nextArg(1)
+				_nextArg(1u)
 		{}
 
 		/// Returns constant wide string.
-		operator std::wstring const & () const OX_REQUIRED_RESULT;
+		operator const std::wstring&() const OX_REQUIRED_RESULT;
 
 		/// Returns the UTF-8 representation of this string.
 		std::string asUTF8() const OX_REQUIRED_RESULT;
@@ -99,7 +99,7 @@ private:
 inline LocalizedText::LocalizedText(const std::wstring& text)
 	:
 		_text(text),
-		_nextArg(0)
+		_nextArg(0u)
 {}
 
 /**
@@ -110,14 +110,14 @@ inline LocalizedText::LocalizedText(
 		unsigned replaced)
 	:
 		_text(text),
-		_nextArg(replaced + 1)
+		_nextArg(replaced + 1u)
 {}
 
 /**
  * Typecast to constant std::wstring reference.
  * @note This is used to avoid copying when the string will not change.
  */
-inline LocalizedText::operator std::wstring const & () const
+inline LocalizedText::operator const std::wstring&() const
 { return _text; }
 
 
@@ -134,7 +134,7 @@ LocalizedText LocalizedText::arg(T val) const
 	woststr << '{' << _nextArg << '}';
 	std::wstring marker (woststr.str());
 
-	size_t pos = _text.find(marker);
+	size_t pos (_text.find(marker));
 	if (std::string::npos == pos)
 		return *this;
 
@@ -173,7 +173,7 @@ LocalizedText& LocalizedText::arg(T val)
 	woststr << '{' << _nextArg << '}';
 	std::wstring marker (woststr.str());
 
-	size_t pos = _text.find(marker);
+	size_t pos (_text.find(marker));
 	if (std::string::npos != pos)
 	{
 		woststr.str(L"");
@@ -192,7 +192,6 @@ LocalizedText& LocalizedText::arg(T val)
 						marker.length(),
 						tval);
 		}
-
 		++_nextArg;
 	}
 
@@ -200,11 +199,15 @@ LocalizedText& LocalizedText::arg(T val)
 }
 
 
-/// Allow streaming of LocalizedText objects.
-inline std::wostream& operator<< (std::wostream& wostr, const LocalizedText& txt)
+/**
+ * Allow streaming of LocalizedText objects.
+ * @param wostr - reference to a wide-stream
+ * @param wst	- reference to a wide-string
+ * @return, reference to the wide-stream
+ */
+inline std::wostream& operator <<(std::wostream& wostr, const LocalizedText& wst)
 {
-	wostr << static_cast<const std::wstring&>(txt);
-	return wostr;
+	return (wostr << static_cast<const std::wstring&>(wst));
 }
 
 }

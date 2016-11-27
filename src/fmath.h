@@ -26,6 +26,9 @@
 
 /**
  * Returns true if two floating-point values are within epsilon.
+ * @param l -
+ * @param r -
+ * @return, true if within epsilon
  */
 template<class _Tx>
 inline bool AreSame(
@@ -38,7 +41,8 @@ inline bool AreSame(
 
 /**
  * Rounds a floating-point value up or down to its nearest whole value.
- * @note The standard library functions ceil() and floor() expect doubles.
+ * @param x -
+ * @return, rounded value
  */
 template<class _Tx>
 inline _Tx Round(const _Tx& x)
@@ -49,6 +53,8 @@ inline _Tx Round(const _Tx& x)
 
 /**
  * Returns the square of a value.
+ * @param x -
+ * @return, squared value
  */
 template<class _Tx>
 inline _Tx Sqr(const _Tx& x)
@@ -58,6 +64,10 @@ inline _Tx Sqr(const _Tx& x)
 
 /**
  * Returns true if x or y (lon,lat) is NaN or Inf.
+ * @note Checks validity of Globe coordinates.
+ * @param x -
+ * @param y -
+ * @return, true if either x or y is NaN or Inf
  */
 template<class _Tx>
 inline bool isNaNorInf(
@@ -73,13 +83,30 @@ inline bool isNaNorInf(
 }
 
 /**
- *
+ * Superceded by C++11
  *
 template<class _Tx>
 inline _Tx Sign(const _Tx& x)
 {
 	return (_Tx(0) < x) - (x < _Tx(0));
 } */
+
+/**
+ * Clamps a value between min and max inclusively.
+ * @param x		- value
+ * @param min	- the minimum limit
+ * @param max	- the maximum limit
+ * @return, value within inclusive limits
+ */
+template <class _Tx>
+inline _Tx Clamp(
+		const _Tx& x,
+		const _Tx& min,
+		const _Tx& max)
+{
+	return std::min(std::max(x, min), max);
+}
+
 
 //#ifndef M_PI
 //static const long double M_PI = 3.1415926535897932384626433832795029L;

@@ -7,8 +7,10 @@
  * under the MIT license.  For all details and documentation, see
  * https://github.com/tronkko/dirent
  */
+
 #ifndef DIRENT_H
 #define DIRENT_H
+
 
 #if defined(_MSC_VER)
 

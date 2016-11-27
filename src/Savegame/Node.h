@@ -131,11 +131,11 @@ private:
 		// wonder if that matters here. So: REVERTED.
 		// correction: REMOVED. Just use getPatrol() directly. Tks, anyway
 		/// Compares the 'flags' variables of the nodes for the purpose of patrol decisions.
-//		bool operator< (Node& b)
-//		{	return _patrol < b.getPatrol(); };
+//		bool operator <(Node& b)
+//		{ return _patrol < b.getPatrol(); }
 		/// Compares the 'flags' variables of the nodes for the purpose of patrol decisions.
-//		bool operator> (Node& b)
-//		{	return _patrol > b.getPatrol(); };
+//		bool operator >(Node& b)
+//		{ return _patrol > b.getPatrol(); }
 
 
 		/// Checks if the Node is allocated.

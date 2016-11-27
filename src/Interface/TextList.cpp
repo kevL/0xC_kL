@@ -371,9 +371,9 @@ void TextList::addRow(
 	va_list args; // typedef char*
 	va_start(args, cols); // avoid g++ compiler warnings.
 
-	int ncols;
-	if (cols != 0)	ncols = cols;
-	else			ncols = 1;
+	size_t ncols;
+	if (cols != 0)	ncols = static_cast<size_t>(cols);
+	else			ncols = 1u;
 
 	std::vector<Text*> txtRow;
 	int
@@ -391,7 +391,7 @@ void TextList::addRow(
 
 	for (size_t
 			i = 0u;
-			i != static_cast<size_t>(ncols);
+			i != ncols;
 			++i)
 	{
 		Text* const txt (new Text(
