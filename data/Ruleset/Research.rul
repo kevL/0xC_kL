@@ -1,13 +1,5 @@
 # 'Research.rul'
 #
-# - prerequisite: discovering all of these will unlock the topic
-# - forces: this will unlock the next topic regardless of 'prerequisite' but
-#           only if all of the latter's 'reqResearch' is already discovered
-# - reqResearch: these need to be discovered before the topic can be unlocked
-# - gof: each time the topic is discovered (ie. researched) one of these is
-#        granted randomly as discovered (not sure if the granted topic needs to
-#        have its 'reqResearch' discovered also)
-# ----
 # - required:  all must be discovered before the topic can be unlocked.
 # - requisite: all must be researched to unlock the topic (will prompt player in
 #              in Geoscape after research completes - see note on needsItem).
@@ -26,16 +18,16 @@
 #              item is found, would require the prompt to happen after tactical.
 research:
   - type: STR_MEDI_KIT
-    requisite:
-      - STR_UNLOCKED
     cost: 2100
     points: 20
-
-  - type: STR_MOTION_SCANNER
     requisite:
       - STR_UNLOCKED
+
+  - type: STR_MOTION_SCANNER
     cost: 9000
     points: 20
+    requisite:
+      - STR_UNLOCKED
 
   - type: STR_PSI_AMP
     cost: 50000
@@ -99,6 +91,8 @@ research:
     cost: 40000
     points: 30
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
     requested:
       - STR_PERSONAL_ARMOR 
       - STR_ALLOY_TANK_ARMOR
@@ -109,6 +103,8 @@ research:
     cost: 45000
     points: 60
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
 
 #---- Plasma Weapons ----------------------------------------------------------#
   - type: STR_PLASMA_PISTOL
@@ -351,31 +347,43 @@ research:
     cost: 15000
     points: 30
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
 
   - type: STR_ALIEN_FOOD
     cost: 1500
     points: 30
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
 
   - type: STR_ALIEN_REPRODUCTION
     cost: 1500
     points: 30
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
 
   - type: STR_ALIEN_SURGERY
     cost: 1500
     points: 30
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
 
   - type: STR_EXAMINATION_ROOM
     cost: 1500
     points: 30
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
 
   - type: STR_ALIEN_HABITAT
     cost: 1500
     points: 30
     needsItem: true
+    requisite:
+      - STR_UNLOCKED
 
 #---- aLien Autopsies ---------------------------------------------------------#
   - type: STR_FLOATER_CORPSE
@@ -784,42 +792,42 @@ research:
       - STR_ALIEN_RETALIATION
       - STR_ALIEN_SUPPLY
 
-  - type: STR_SNAKEMAN_MEDIC #These don't exist in stock.
-    cost: 192
-    points: 50
-    uPed: STR_SNAKEMAN
-    needsItem: true
-    required:
-      - STR_EXAMINATION_ROOM
-      - STR_ALIEN_REPRODUCTION
-    requested:
-      - STR_ALIEN_ORIGINS
-    getOneFree:
-      - STR_SECTOID
-      - STR_MUTON
-      - STR_ETHEREAL
-      - STR_FLOATER
-      - STR_CHRYSSALID
-      - STR_SECTOPOD
-      - STR_CYBERDISC
-      - STR_SILACOID
-      - STR_CELATID
-      - STR_REAPER
-      - STR_WASPITE
-      - STR_CYBERMITE
-      - STR_SECTOID_AUTOPSY
-      - STR_SNAKEMAN_AUTOPSY
-      - STR_MUTON_AUTOPSY
-      - STR_ETHEREAL_AUTOPSY
-      - STR_FLOATER_AUTOPSY
-      - STR_CHRYSSALID_AUTOPSY
-      - STR_SECTOPOD_AUTOPSY
-      - STR_CYBERDISC_AUTOPSY
-      - STR_SILACOID_AUTOPSY
-      - STR_CELATID_AUTOPSY
-      - STR_REAPER_AUTOPSY
-      - STR_WASPITE_AUTOPSY
-      - STR_CYBERMITE_AUTOPSY
+#  - type: STR_SNAKEMAN_MEDIC #These don't exist in stock.
+#    cost: 192
+#    points: 50
+#    uPed: STR_SNAKEMAN
+#    needsItem: true
+#    required:
+#      - STR_EXAMINATION_ROOM
+#      - STR_ALIEN_REPRODUCTION
+#    requested:
+#      - STR_ALIEN_ORIGINS
+#    getOneFree:
+#      - STR_SECTOID
+#      - STR_MUTON
+#      - STR_ETHEREAL
+#      - STR_FLOATER
+#      - STR_CHRYSSALID
+#      - STR_SECTOPOD
+#      - STR_CYBERDISC
+#      - STR_SILACOID
+#      - STR_CELATID
+#      - STR_REAPER
+#      - STR_WASPITE
+#      - STR_CYBERMITE
+#      - STR_SECTOID_AUTOPSY
+#      - STR_SNAKEMAN_AUTOPSY
+#      - STR_MUTON_AUTOPSY
+#      - STR_ETHEREAL_AUTOPSY
+#      - STR_FLOATER_AUTOPSY
+#      - STR_CHRYSSALID_AUTOPSY
+#      - STR_SECTOPOD_AUTOPSY
+#      - STR_CYBERDISC_AUTOPSY
+#      - STR_SILACOID_AUTOPSY
+#      - STR_CELATID_AUTOPSY
+#      - STR_REAPER_AUTOPSY
+#      - STR_WASPITE_AUTOPSY
+#      - STR_CYBERMITE_AUTOPSY
 
   - type: STR_SNAKEMAN_ENGINEER
     cost: 192
