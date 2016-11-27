@@ -111,7 +111,7 @@ private:
 		/// Sets the selected topic.
 		void setSelectedTopic(
 				const std::string& selTopic,
-				bool isManufacturingTopic);
+				bool isManufacture);
 		/// Checks if a specified topic is discovered.
 		bool isDiscovered(const std::string& topic) const;
 };

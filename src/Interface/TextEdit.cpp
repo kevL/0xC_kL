@@ -602,8 +602,6 @@ void TextEdit::keyboardPress(Action* action, State* state)
 				default:
 					if (_bypassChar == false)
 					{
-						_bypassChar = false;
-
 						const Uint16 keycode (action->getDetails()->key.keysym.unicode);
 						if (isValidChar(keycode) && exceedsMaxWidth(static_cast<wchar_t>(keycode)) == false)
 						{

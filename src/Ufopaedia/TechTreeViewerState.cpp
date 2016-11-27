@@ -767,15 +767,16 @@ void TechTreeViewerState::lstRightTopicClick(Action*)
 
 /**
  * Changes the selected topic.
- * @param selectedTopic			- reference to a selected research-topic
- * @param isManufacturingTopic	- true if topic is Manufacture
+ * @param selectedTopic - reference to a selected research-topic
+ * @param isManufacture - true if topic is Manufacture
  */
 void TechTreeViewerState::setSelectedTopic(
 		const std::string& selTopic,
-		bool isManufacturingTopic)
+		bool isManufacture)
 {
 	_selTopic = selTopic;
-	_selFlag  = isManufacturingTopic ? TECH_MANUFACTURE : TECH_RESEARCH;
+	_selFlag  = isManufacture ? TECH_MANUFACTURE
+							  : TECH_RESEARCH;
 }
 
 /**
