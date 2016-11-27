@@ -1033,7 +1033,7 @@ void GeoscapeState::handle(Action* action)
 						break;
 
 					case SDLK_t:
-						_game->pushState(new TechTreeViewerState());			// "ctrl-" - open TechTree viewer
+						_game->pushState(new TechTreeViewerState());			// "ctrl-t" - open TechTree viewer
 						break;
 
 					default:

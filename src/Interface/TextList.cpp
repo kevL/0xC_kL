@@ -55,8 +55,8 @@ TextList::TextList(
 		int y)
 	:
 		InteractiveSurface(
-			width, height,
-			x,y),
+				width, height,
+				x,y),
 		_big(nullptr),
 		_small(nullptr),
 		_font(nullptr),
@@ -108,7 +108,7 @@ TextList::TextList(
 	_scrollbar = new ScrollBar(
 							_up->getWidth(),
 							h,
-							_x + getWidth(),// + _scroller_x,
+							_x + getWidth() - _up->getWidth(),// + _scroller_x,
 							_up->getY() + _up->getHeight());
 	_scrollbar->setVisible(false);
 	_scrollbar->setTextList(this);
@@ -368,8 +368,8 @@ void TextList::addRow(
 		int cols,
 		...)
 {
-	va_list args; // typedef char*
-	va_start(args, cols); // avoid g++ compiler warnings.
+	va_list args;			// typedef char*
+	va_start(args, cols);	// avoid g++ compiler warnings.
 
 	size_t ncols;
 	if (cols != 0)	ncols = static_cast<size_t>(cols);
@@ -984,6 +984,8 @@ void TextList::onRightArrowClick(ActionHandler handler)
  */
 void TextList::clearList()
 {
+	scrollUp(true);
+
 	for (std::vector<std::vector<Text*>>::iterator
 			i = _texts.begin();
 			i != _texts.end();
@@ -998,11 +1000,10 @@ void TextList::clearList()
 		i->clear();
 	}
 
-	scrollUp(true);
-
 	_texts.clear();
 	_rows.clear();
 
+	updateArrows();
 	_redraw = true;
 }
 

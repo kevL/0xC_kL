@@ -59,7 +59,7 @@ Game* State::_game = nullptr; // static.
 State::State()
 	:
 		_fullScreen(true),
-		_modal(nullptr),
+		_isfModal(nullptr),
 		_uiRule(nullptr),
 		_uiRuleParent(nullptr)
 {
@@ -322,7 +322,7 @@ void State::blit() // virtual.
  */
 void State::handle(Action* action) // virtual.
 {
-	if (_modal == nullptr)
+	if (_isfModal == nullptr)
 	{
 		InteractiveSurface* srf;
 		for (std::vector<Surface*>::const_reverse_iterator
@@ -335,7 +335,7 @@ void State::handle(Action* action) // virtual.
 		}
 	}
 	else
-		_modal->handle(action, this);
+		_isfModal->handle(action, this);
 }
 
 /**
@@ -491,14 +491,16 @@ void State::redrawText()
 }
 
 /**
- * Changes the currently responsive Surface.
- * @note If a Surface is modal then only that Surface can receive events. This
- * is used when an element needs to take priority over everything else, eg. focus.
- * @param srf - pointer to modal Surface; nullptr for no modal in this State
+ * Sets the currently responsive InteractiveSurface for this State.
+ * @note If an InteractiveSurface is modal then only that Surface can receive
+ * events. This is used when an element needs to take priority over everything
+ * else, eg focus. In fact modal might be redundant with focus -- although it's
+ * not currently implemented that way.
+ * @param isf - pointer to modal Surface; nullptr for no modal in this State (default nullptr)
  */
-void State::setModal(InteractiveSurface* const srf)
+void State::setModal(InteractiveSurface* const isf)
 {
-	_modal = srf;
+	_isfModal = isf;
 }
 
 /**

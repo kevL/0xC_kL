@@ -50,6 +50,7 @@ class TextEdit final
 private:
 	bool
 		_blink,
+		_bypassChar,
 		_lock;
 	size_t _caretPlace;
 	wchar_t _ascii;
@@ -111,7 +112,7 @@ private:
 		/// Gets the text's string.
 		std::wstring getText() const;
 		/// Stores the original string.
-		void storeText(const std::wstring& text);
+		void setStoredText(const std::wstring& text);
 		/// Gets the original string.
 		std::wstring getStoredText() const;
 
@@ -160,6 +161,9 @@ private:
 		void onTextChange(ActionHandler handler);
 		/// Hooks an ActionHandler to the ENTER-key.
 		void onEnter(ActionHandler handler);
+
+		/// I wish i didn't have to do this ....
+		void setBypass();
 };
 
 }

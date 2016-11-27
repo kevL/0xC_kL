@@ -53,13 +53,13 @@ TechTreeSelectState::TechTreeSelectState(TechTreeViewerState* const viewer)
 {
 	_fullScreen = false;
 
-	_window = new Window(this, 230, 140, 45, 32);
+	_window = new Window(this, 230, 140, 45, 30);
 
-	_txtTitle = new Text(182, 9, 53, 42);
+	_txtTitle = new Text(80, 9, 120, 42);
+	_edtQuickSearch = new TextEdit(this, 50, 9, 215, 42);
+	_srfSearchField = new Surface(52, 11, 214, 41);
 
-	_edtQuickSearch = new TextEdit(this, 48, 9, 219, 42);
-
-	_lstTopics = new TextList(198, 88, 53, 54);
+	_lstTopics = new TextList(192, 89, 64, 54);
 
 	_btnOk = new TextButton(206, 16, 57, 145);
 
@@ -68,6 +68,7 @@ TechTreeSelectState::TechTreeSelectState(TechTreeViewerState* const viewer)
 	add(_window,			"window",	"allocateResearch");
 	add(_txtTitle,			"text",		"allocateResearch");
 	add(_edtQuickSearch,	"button2",	"allocateResearch");
+	add(_srfSearchField);
 	add(_lstTopics,			"list",		"researchMenu");
 	add(_btnOk,				"button2",	"allocateResearch");
 
@@ -79,16 +80,19 @@ TechTreeSelectState::TechTreeSelectState(TechTreeViewerState* const viewer)
 	_txtTitle->setText(tr("STR_AVAILABLE_TOPICS"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(		static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick));
-	_btnOk->onKeyboardPress(	static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick),
-								Options::keyCancel);
-	_btnOk->onKeyboardRelease(	static_cast<ActionHandler>(&TechTreeSelectState::keyQuickSearchToggle),
-								Options::keyOk);		//Options::keyToggleQuickSearch
-	_btnOk->onKeyboardRelease(	static_cast<ActionHandler>(&TechTreeSelectState::keyQuickSearchToggle),
-								Options::keyOkKeypad);	//Options::keyToggleQuickSearch
+	_btnOk->setText(tr("STR_CANCEL"));
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick),
+							Options::keyCancel);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick),
+							Options::keyOk);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick),
+							Options::keyOkKeypad);
 
-	_lstTopics->setColumns(1, 182);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeSelectState::keyQuickSearchToggle),
+							SDLK_q);
+
+	_lstTopics->setColumns(1, 192);
 	_lstTopics->setBackground(_window);
 	_lstTopics->setSelectable();
 	_lstTopics->setMargin();
@@ -96,8 +100,25 @@ TechTreeSelectState::TechTreeSelectState(TechTreeViewerState* const viewer)
 	_lstTopics->onMouseClick(static_cast<ActionHandler>(&TechTreeSelectState::lstTopicClick));
 
 	_edtQuickSearch->setText(L"");
-	_edtQuickSearch->setFocus();
-	_edtQuickSearch->onEnter(static_cast<ActionHandler>(&TechTreeSelectState::keyQuickSearchApply));
+	_edtQuickSearch->setVisible(false);
+	_edtQuickSearch->onEnter(			static_cast<ActionHandler>(&TechTreeSelectState::keyQuickSearchApply));
+	_edtQuickSearch->onKeyboardPress(	static_cast<ActionHandler>(&TechTreeSelectState::keyQuickSearchToggle),
+										Options::keyCancel);
+
+	SDL_Rect rect;
+	rect.x =
+	rect.y = 0;
+	rect.w = static_cast<Uint16>(_srfSearchField->getWidth());
+	rect.h = static_cast<Uint16>(_srfSearchField->getHeight());
+	_srfSearchField->drawRect(&rect, 5u);
+
+	++rect.x;
+	++rect.y;
+	rect.w = static_cast<Uint16>(rect.w - 2u);
+	rect.h = static_cast<Uint16>(rect.h - 2u);
+	_srfSearchField->drawRect(&rect, 0u);
+
+	_srfSearchField->setVisible(false);
 }
 
 /**
@@ -128,19 +149,30 @@ void TechTreeSelectState::btnOkClick(Action*)
  * QuickSearch toggle.
  * @param action - pointer to an Action
  */
-void TechTreeSelectState::keyQuickSearchToggle(Action*)
+void TechTreeSelectState::keyQuickSearchToggle(Action* action)
 {
-	if (_edtQuickSearch->getVisible())
+	if (_edtQuickSearch->getVisible() == true)	// clear text or turn off.
 	{
-		_edtQuickSearch->setText(L"");
-		_edtQuickSearch->setVisible(false);
-		keyQuickSearchApply(nullptr);
+		if (_edtQuickSearch->getText().empty() == true
+			|| action == nullptr
+			|| action->getDetails()->key.keysym.sym != Options::keyCancel)
+		{
+			_edtQuickSearch->setFocusEdit(false);
+			_edtQuickSearch->setVisible(false);
+
+			_srfSearchField->setVisible(false);
+		}
 	}
-	else
+	else										// turn on.
 	{
-		_edtQuickSearch->setVisible(true);
-		_edtQuickSearch->setFocus(true);
+		_srfSearchField->setVisible();
+
+		_edtQuickSearch->setBypass();
+		_edtQuickSearch->setVisible();
+		_edtQuickSearch->setFocusEdit(true, true);
 	}
+
+	_edtQuickSearch->setText(L"");
 }
 
 /**
@@ -150,6 +182,7 @@ void TechTreeSelectState::keyQuickSearchToggle(Action*)
 void TechTreeSelectState::keyQuickSearchApply(Action*)
 {
 	fillTechTreeLists();
+	keyQuickSearchToggle(nullptr);
 }
 
 /**
@@ -167,12 +200,12 @@ void TechTreeSelectState::fillTechTreeLists()
 	_topics.clear();
 	_lstTopics->clearList();
 
-	if (search.length() < 3u)
-	{
-		_lstTopics->addRow(1, tr("STR_QS_THREE_LETTERS_A").c_str());
-		_lstTopics->addRow(1, tr("STR_QS_THREE_LETTERS_B").c_str());
-		return;
-	}
+//	if (search.length() < 3u)
+//	{
+//		_lstTopics->addRow(1, tr("STR_QS_THREE_LETTERS_A").c_str());
+//		_lstTopics->addRow(1, tr("STR_QS_THREE_LETTERS_B").c_str());
+//		return;
+//	}
 
 	size_t r (0u);
 	const std::vector<std::string>& allResearch (_game->getRuleset()->getResearchList());
@@ -188,8 +221,9 @@ void TechTreeSelectState::fillTechTreeLists()
 					project.begin(),
 					std::towupper);
 
-		if (project.find(search) != std::string::npos
-			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
+		if (search.empty() == true
+			|| project.find(search) != std::string::npos)
+//			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
 		{
 			_topics.push_back(*i);
 
@@ -212,8 +246,9 @@ void TechTreeSelectState::fillTechTreeLists()
 					project.begin(),
 					std::towupper);
 
-		if (project.find(search) != std::string::npos
-			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
+		if (search.empty() == true
+			|| project.find(search) != std::string::npos)
+//			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
 		{
 			_topics.push_back(*i);
 
@@ -236,8 +271,8 @@ void TechTreeSelectState::lstTopicClick(Action*)
 	if (r < _topics.size())
 	{
 		_viewer->setSelectedTopic(
-							_topics[r],
-							r >= _firstManufactureId);
+								_topics[r],
+								r >= _firstManufactureId);
 		_game->popState();
 	}
 }

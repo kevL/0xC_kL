@@ -57,7 +57,7 @@ protected:
 	bool _fullScreen;
 	Uint8 _cursorColor;
 
-	InteractiveSurface* _modal;
+	InteractiveSurface* _isfModal;
 	RuleInterface
 		* _uiRule,
 		* _uiRuleParent;
@@ -135,8 +135,8 @@ protected:
 		/// Gets the Game-object pointer.
 		static Game* getGamePtr();
 
-		/// Sets a modal Surface.
-		void setModal(InteractiveSurface* const srf);
+		/// Sets a specified InteractiveSurface as modal for the State.
+		void setModal(InteractiveSurface* const isf = nullptr);
 
 		/// Changes a set of colors on the State's 8-bpp Palette.
 		void setPalette(

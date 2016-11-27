@@ -47,6 +47,7 @@ TextEdit::TextEdit(
 				width,
 				height,
 				x,y),
+		_state(state),
 		_blink(true),
 		_lock(true),
 		_ascii(L'A'),
@@ -54,7 +55,7 @@ TextEdit::TextEdit(
 		_inputConstraint(TEC_NONE),
 		_change(nullptr),
 		_enter(nullptr),
-		_state(state)
+		_bypassChar(false)
 {
 	_isFocused = false;
 
@@ -179,7 +180,7 @@ void TextEdit::initText(
 
 /**
  * Sets the string displayed on screen.
- * @param text - reference to the text-string
+ * @param text - reference to a wide-string
  */
 void TextEdit::setText(const std::wstring& text)
 {
@@ -200,9 +201,9 @@ std::wstring TextEdit::getText() const
 /**
  * Stores the previous string-value (before editing) so that it can be retrieved
  * if the editing operation is cancelled.
- * @param text - reference to the text-string
+ * @param text - reference to a wide-string
  */
-void TextEdit::storeText(const std::wstring& text)
+void TextEdit::setStoredText(const std::wstring& text)
 {
 	_editCache = text;
 }
@@ -210,7 +211,7 @@ void TextEdit::storeText(const std::wstring& text)
 /**
  * Gets the previous string-value so that it can be reinstated if the editing
  * operation is cancelled.
- * @return, text-string
+ * @return, wide-string
  */
 std::wstring TextEdit::getStoredText() const
 {
@@ -599,15 +600,22 @@ void TextEdit::keyboardPress(Action* action, State* state)
 					break;
 
 				default:
-					const Uint16 keycode (action->getDetails()->key.keysym.unicode);
-					if (isValidChar(keycode) && exceedsMaxWidth(static_cast<wchar_t>(keycode)) == false)
+					if (_bypassChar == false)
 					{
-						_edit.insert(
-									_caretPlace,
-									1u,
-									static_cast<wchar_t>(keycode));
-						++_caretPlace;
+						_bypassChar = false;
+
+						const Uint16 keycode (action->getDetails()->key.keysym.unicode);
+						if (isValidChar(keycode) && exceedsMaxWidth(static_cast<wchar_t>(keycode)) == false)
+						{
+							_edit.insert(
+										_caretPlace,
+										1u,
+										static_cast<wchar_t>(keycode));
+							++_caretPlace;
+						}
 					}
+					else
+						_bypassChar = false;
 			}
 	}
 	_redraw = true;
@@ -637,6 +645,18 @@ void TextEdit::onTextChange(ActionHandler handler)
 void TextEdit::onEnter(ActionHandler handler)
 {
 	_enter = handler;
+}
+
+/**
+ * I wish i didn't have to do this ....
+ * @note Can be used to ignore a key that might be used to activate this
+ * TextEdit. CTRL+key won't work 'cause CTRL is already bypassed in
+ * InteractiveSurface::keyboardPress() and without it the letter is going to
+ * appear in the field.
+ */
+void TextEdit::setBypass()
+{
+	_bypassChar = true;
 }
 
 }

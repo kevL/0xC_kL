@@ -137,7 +137,7 @@ void ListSaveState::lstSavesPress(Action* action)
 				_label = _lstSaves->getCellText(_lstSaves->getSelectedRow(), 0u);
 				_lstSaves->setCellText(_lstSaves->getSelectedRow(), 0u, L"");
 
-				_edtSave->storeText(_label);
+				_edtSave->setStoredText(_label);
 
 				if (_lstSaves->getSelectedRow() == 0u)
 					_label = L"";

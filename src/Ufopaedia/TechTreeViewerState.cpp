@@ -19,9 +19,6 @@
 
 #include "TechTreeViewerState.h"
 
-//#include <algorithm>
-//#include <unordered_set>
-
 #include "TechTreeSelectState.h"
 
 #include "../Engine/Action.h"
@@ -48,48 +45,49 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements on the UI.
- * @param selectedTopicResearch		- (default nullptr)
- * @param selectedTopicManufacture	- (default nullptr)
+ * @param selTopicResearch		- (default nullptr)
+ * @param selTopicManufacture	- (default nullptr)
  */
 TechTreeViewerState::TechTreeViewerState(
-		const RuleResearch* const selectedTopicResearch,
-		const RuleManufacture* const selectedTopicManufacture)
+		const RuleResearch* const selTopicResearch,
+		const RuleManufacture* const selTopicManufacture)
 {
-	if (selectedTopicResearch != nullptr)
+	if (selTopicResearch != nullptr)
 	{
-		_selTopic = selectedTopicResearch->getType();
-		_selFlag = 1;
+		_selTopic = selTopicResearch->getType();
+		_selFlag  = TECH_RESEARCH;
 	}
-	else if (selectedTopicManufacture != nullptr)
+	else if (selTopicManufacture != nullptr)
 	{
-		_selTopic = selectedTopicManufacture->getType();
-		_selFlag = 2;
+		_selTopic = selTopicManufacture->getType();
+		_selFlag  = TECH_MANUFACTURE;
 	}
+	else
+		_selFlag = TECH_NONE;
 
 	_window = new Window(this);
 
-	_txtTitle = new Text(304, 17, 8, 7);
+	_txtTitle = new Text(300, 16, 10, 7);
 
-	_txtSelectedTopic = new Text(204, 9, 8, 24);
+	_txtSelTopic = new Text(180, 9,  16, 24);
+	_txtProgress = new Text(100, 9, 204, 24);
 
-	_txtProgress = new Text(100, 9, 212, 24);
-
-	_lstLeft	= new TextList(132, 128,   8, 40);
-	_lstRight	= new TextList(132, 128, 164, 40);
+	_lstLeft	= new TextList(132, 128,  16, 40);
+	_lstRight	= new TextList(132, 128, 169, 40);
 
 	_btnSelect	= new TextButton(148, 16,   8, 176);
 	_btnOk		= new TextButton(148, 16, 164, 176);
 
 	setInterface("researchMenu");
 
-	add(_window,			"window",	"researchMenu");
-	add(_txtTitle,			"text",		"researchMenu");
-	add(_txtSelectedTopic,	"text",		"researchMenu");
-	add(_txtProgress,		"text",		"researchMenu");
-	add(_lstLeft,			"list",		"researchMenu");
-	add(_lstRight,			"list",		"researchMenu");
-	add(_btnSelect,			"button",	"researchMenu");
-	add(_btnOk,				"button",	"researchMenu");
+	add(_window,		"window",	"researchMenu");
+	add(_txtTitle,		"text",		"researchMenu");
+	add(_txtSelTopic,	"text",		"researchMenu");
+	add(_txtProgress,	"text",		"researchMenu");
+	add(_lstLeft,		"list",		"researchMenu");
+	add(_lstRight,		"list",		"researchMenu");
+	add(_btnSelect,		"button",	"researchMenu");
+	add(_btnOk,			"button",	"researchMenu");
 
 	centerSurfaces();
 
@@ -100,28 +98,32 @@ TechTreeViewerState::TechTreeViewerState(
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 
-	_txtSelectedTopic->setText(tr("STR_TOPIC").arg(L""));
+	_txtSelTopic->setText(tr("STR_TOPIC_").arg(L""));
 
 	_lstLeft->setColumns(1, 132);
 	_lstLeft->setBackground(_window);
 	_lstLeft->setSelectable();
+	_lstLeft->setMargin();
 	_lstLeft->setWordWrap();
 	_lstLeft->onMouseClick(static_cast<ActionHandler>(&TechTreeViewerState::lstLeftTopicClick));
 
 	_lstRight->setColumns(1, 132);
 	_lstRight->setBackground(_window);
 	_lstRight->setSelectable();
+	_lstRight->setMargin();
 	_lstRight->setWordWrap();
 	_lstRight->onMouseClick(static_cast<ActionHandler>(&TechTreeViewerState::lstRightTopicClick));
 
 	_btnSelect->setText(tr("STR_SELECT_TOPIC"));
 	_btnSelect->onMouseClick(	static_cast<ActionHandler>(&TechTreeViewerState::btnSelectClick));
 	_btnSelect->onKeyboardPress(static_cast<ActionHandler>(&TechTreeViewerState::btnSelectClick),
-								Options::keyOk);		//Options::keyToggleQuickSearch);
+								Options::keyOk);
 	_btnSelect->onKeyboardPress(static_cast<ActionHandler>(&TechTreeViewerState::btnSelectClick),
-								Options::keyOkKeypad);	//Options::keyToggleQuickSearch);
+								Options::keyOkKeypad);
+	_btnSelect->onKeyboardPress(static_cast<ActionHandler>(&TechTreeViewerState::btnSelectClick),
+								SDLK_t);
 
-	_btnOk->setText(tr("STR_OK"));
+	_btnOk->setText(tr("STR_CANCEL"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&TechTreeViewerState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeViewerState::btnOkClick),
 							Options::keyCancel);
@@ -169,7 +171,8 @@ TechTreeViewerState::TechTreeViewerState(
 			_discovered.insert(mfRule->getType());
 	}
 
-	_txtProgress->setText(tr("STR_RESEARCH_PROGRESS").arg(costDiscovered * 100 / costTotal)); // TODO: Format percent.
+	_txtProgress->setText(tr("STR_RESEARCH_PROGRESS_")
+							.arg(Text::formatPercent(costDiscovered * 100 / costTotal)));
 	_txtProgress->setAlign(ALIGN_RIGHT);
 }
 
@@ -213,10 +216,10 @@ void TechTreeViewerState::fillTechTreeLists()
 {
 	std::wostringstream woststr;
 	woststr << tr(_selTopic);
-	if (_selFlag == 2)
+	if (_selFlag == TECH_MANUFACTURE)
 		woststr << tr("STR_M_FLAG");
 
-	_txtSelectedTopic->setText(tr("STR_TOPIC").arg(woststr.str()));
+	_txtSelTopic->setText(tr("STR_TOPIC_").arg(woststr.str()));
 
 	_topicsLeft	.clear();
 	_topicsRight.clear();
@@ -228,18 +231,19 @@ void TechTreeViewerState::fillTechTreeLists()
 
 	switch (_selFlag)
 	{
-		case 1:
+		case TECH_RESEARCH:
 		{
 			size_t r (0u);
 
 			const RuleResearch* const resRule (_game->getRuleset()->getResearch(_selTopic));
 			if (resRule != nullptr)
 			{
-				std::vector<std::string> unlockedBy;
-				std::vector<std::string> getForFreeFrom;
-				std::vector<std::string> requiredByResearch;
-				std::vector<std::string> requiredByManufacture;
-				std::vector<std::string> leadsTo;
+				std::vector<std::string>
+					requiredByManufacture,
+					requiredByResearch,
+					requisiteTo,
+					requestedBy,
+					gofFrom;
 
 				const std::vector<std::string>& allManufacture (_game->getRuleset()->getManufactureList());
 				for (std::vector<std::string>::const_iterator
@@ -285,7 +289,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							++j)
 					{
 						if (*j == resRule->getType())
-							leadsTo.push_back(*i);
+							requisiteTo.push_back(*i);
 					}
 					const std::vector<std::string>& requested (otherRule->getRequestedResearch());
 					for (std::vector<std::string>::const_iterator
@@ -294,7 +298,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							++j)
 					{
 						if (*j == resRule->getType())
-							unlockedBy.push_back(*i);
+							requestedBy.push_back(*i);
 					}
 
 					const std::vector<std::string>& gof (otherRule->getGetOneFree());
@@ -304,7 +308,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							++j)
 					{
 						if (*j == resRule->getType())
-							getForFreeFrom.push_back(*i);
+							gofFrom.push_back(*i);
 					}
 
 				}
@@ -314,7 +318,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstLeft->addRow(1, tr("STR_ITEM_REQUIRED").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
@@ -326,7 +330,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						_lstLeft->setRowColor(r, PINK);
 
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 				}
@@ -337,7 +341,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstLeft->addRow(1, tr("STR_REQUIRES").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
@@ -354,7 +358,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							_lstLeft->setRowColor(r, PINK);
 
 						_topicsLeft.push_back(*i);
-						_flagsLeft.push_back(1);
+						_flagsLeft.push_back(TECH_RESEARCH);
 
 						++r;
 					}
@@ -366,7 +370,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstLeft->addRow(1, tr("STR_DEPENDS_ON").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
@@ -376,9 +380,9 @@ void TechTreeViewerState::fillTechTreeLists()
 							++i)
 					{
 						if (std::find( // if the same item is also in the "Unlocked by" section, skip it
-									unlockedBy.begin(),
-									unlockedBy.end(),
-									*i) == unlockedBy.end())
+									requestedBy.begin(),
+									requestedBy.end(),
+									*i) == requestedBy.end())
 						{
 							std::wstring wst (tr(*i));
 							wst.insert(0, L"  ");
@@ -388,25 +392,25 @@ void TechTreeViewerState::fillTechTreeLists()
 								_lstLeft->setRowColor(r, PINK);
 
 							_topicsLeft.push_back(*i);
-							_flagsLeft.push_back(1);
+							_flagsLeft.push_back(TECH_RESEARCH);
 
 							++r;
 						}
 					}
 				}
 
-				if (unlockedBy.empty() == false) // 4. unlocked by
+				if (requestedBy.empty() == false) // 4. unlocked by
 				{
 					_lstLeft->addRow(1, tr("STR_UNLOCKED_BY").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::vector<std::string>::const_iterator
-							i = unlockedBy.begin();
-							i != unlockedBy.end();
+							i = requestedBy.begin();
+							i != requestedBy.end();
 							++i)
 					{
 						std::wstring wst (tr(*i));
@@ -417,24 +421,24 @@ void TechTreeViewerState::fillTechTreeLists()
 							_lstLeft->setRowColor(r, PINK);
 
 						_topicsLeft.push_back(*i);
-						_flagsLeft.push_back(1);
+						_flagsLeft.push_back(TECH_RESEARCH);
 
 						++r;
 					}
 				}
 
-				if (getForFreeFrom.empty() == false) // 5. get for free from
+				if (gofFrom.empty() == false) // 5. get for free from
 				{
 					_lstLeft->addRow(1, tr("STR_GET_FOR_FREE_FROM").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::vector<std::string>::const_iterator
-							i = getForFreeFrom.begin();
-							i != getForFreeFrom.end();
+							i = gofFrom.begin();
+							i != gofFrom.end();
 							++i)
 					{
 						std::wstring wst (tr(*i));
@@ -445,7 +449,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							_lstLeft->setRowColor(r, PINK);
 
 						_topicsLeft.push_back(*i);
-						_flagsLeft.push_back(1);
+						_flagsLeft.push_back(TECH_RESEARCH);
 
 						++r;
 					}
@@ -458,7 +462,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstRight->addRow(1, tr("STR_REQUIRED_BY").c_str());
 					_lstRight->setRowColor(r, BLUE);
 					_topicsRight.push_back("-");
-					_flagsRight.push_back(0);
+					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
@@ -477,7 +481,7 @@ void TechTreeViewerState::fillTechTreeLists()
 								_lstRight->setRowColor(r, PINK);
 
 							_topicsRight.push_back(*i);
-							_flagsRight.push_back(1);
+							_flagsRight.push_back(TECH_RESEARCH);
 
 							++r;
 						}
@@ -499,7 +503,7 @@ void TechTreeViewerState::fillTechTreeLists()
 								_lstRight->setRowColor(r, PINK);
 
 							_topicsRight.push_back(*i);
-							_flagsRight.push_back(2);
+							_flagsRight.push_back(TECH_MANUFACTURE);
 
 							++r;
 						}
@@ -507,18 +511,18 @@ void TechTreeViewerState::fillTechTreeLists()
 				}
 
 				const std::vector<std::string>& requested (resRule->getRequestedResearch());
-				if (leadsTo.empty() == false) // 7. leads to
+				if (requisiteTo.empty() == false) // 7. leads to
 				{
 					_lstRight->addRow(1, tr("STR_LEADS_TO").c_str());
 					_lstRight->setRowColor(r, BLUE);
 					_topicsRight.push_back("-");
-					_flagsRight.push_back(0);
+					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::vector<std::string>::const_iterator
-							i = leadsTo.begin();
-							i != leadsTo.end();
+							i = requisiteTo.begin();
+							i != requisiteTo.end();
 							++i)
 					{
 						if (std::find( // if the same topic is also in the 'requested' section skip it
@@ -534,7 +538,7 @@ void TechTreeViewerState::fillTechTreeLists()
 								_lstRight->setRowColor(r, PINK);
 
 							_topicsRight.push_back(*i);
-							_flagsRight.push_back(1);
+							_flagsRight.push_back(TECH_RESEARCH);
 
 							++r;
 						}
@@ -546,7 +550,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstRight->addRow(1, tr("STR_UNLOCKS").c_str());
 					_lstRight->setRowColor(r, BLUE);
 					_topicsRight.push_back("-");
-					_flagsRight.push_back(0);
+					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
@@ -563,7 +567,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							_lstRight->setRowColor(r, PINK);
 
 						_topicsRight.push_back(*i);
-						_flagsRight.push_back(1);
+						_flagsRight.push_back(TECH_RESEARCH);
 
 						++r;
 					}
@@ -575,7 +579,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstRight->addRow(1, tr("STR_GIVES_ONE_FOR_FREE").c_str());
 					_lstRight->setRowColor(r, BLUE);
 					_topicsRight.push_back("-");
-					_flagsRight.push_back(0);
+					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
@@ -592,7 +596,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							_lstRight->setRowColor(r, PINK);
 
 						_topicsRight.push_back(*i);
-						_flagsRight.push_back(1);
+						_flagsRight.push_back(TECH_RESEARCH);
 
 						++r;
 					}
@@ -601,7 +605,7 @@ void TechTreeViewerState::fillTechTreeLists()
 			break;
 		}
 
-		case 2:
+		case TECH_MANUFACTURE:
 		{
 			size_t r (0u);
 			const RuleManufacture* const mfRule (_game->getRuleset()->getManufacture(_selTopic));
@@ -613,7 +617,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstLeft->addRow(1, tr("STR_RESEARCH_REQUIRED").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
@@ -630,7 +634,7 @@ void TechTreeViewerState::fillTechTreeLists()
 							_lstLeft->setRowColor(r, PINK);
 
 						_topicsLeft.push_back(*i);
-						_flagsLeft.push_back(1);
+						_flagsLeft.push_back(TECH_RESEARCH);
 
 						++r;
 					}
@@ -642,7 +646,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstLeft->addRow(1, tr("STR_FACILITIES_REQUIRED").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
@@ -659,7 +663,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						_lstLeft->addRow(1, woststr.str().c_str());
 						_lstLeft->setRowColor(r, GOLD);
 						_topicsLeft.push_back("-");
-						_flagsLeft.push_back(0);
+						_flagsLeft.push_back(TECH_NONE);
 
 						++r;
 					}
@@ -671,7 +675,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstLeft->addRow(1, tr("STR_MATERIALS_REQUIRED").c_str());
 					_lstLeft->setRowColor(r, BLUE);
 					_topicsLeft.push_back("-");
-					_flagsLeft.push_back(0);
+					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
@@ -688,7 +692,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						_lstLeft->addRow(1, woststr.str().c_str());
 						_lstLeft->setRowColor(r, WHITE);
 						_topicsLeft.push_back("-");
-						_flagsLeft.push_back(0);
+						_flagsLeft.push_back(TECH_NONE);
 
 						++r;
 					}
@@ -702,7 +706,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					_lstRight->addRow(1, tr("STR_ITEMS_PRODUCED").c_str());
 					_lstRight->setRowColor(r, BLUE);
 					_topicsRight.push_back("-");
-					_flagsRight.push_back(0);
+					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
@@ -719,7 +723,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						_lstRight->addRow(1, woststr.str().c_str());
 						_lstRight->setRowColor(r, WHITE);
 						_topicsRight.push_back("-");
-						_flagsRight.push_back(0);
+						_flagsRight.push_back(TECH_NONE);
 
 						++r;
 					}
@@ -736,7 +740,7 @@ void TechTreeViewerState::fillTechTreeLists()
 void TechTreeViewerState::lstLeftTopicClick(Action*)
 {
 	const size_t r (_lstLeft->getSelectedRow());
-	if (_flagsLeft[r] > 0)
+	if (_flagsLeft[r] != TECH_NONE)
 	{
 		_selTopic = _topicsLeft[r];
 		_selFlag  = _flagsLeft[r];
@@ -752,7 +756,7 @@ void TechTreeViewerState::lstLeftTopicClick(Action*)
 void TechTreeViewerState::lstRightTopicClick(Action*)
 {
 	const size_t r (_lstRight->getSelectedRow());
-	if (_flagsRight[r] > 0)
+	if (_flagsRight[r] != TECH_NONE)
 	{
 		_selTopic = _topicsRight[r];
 		_selFlag  = _flagsRight[r];
@@ -767,11 +771,11 @@ void TechTreeViewerState::lstRightTopicClick(Action*)
  * @param isManufacturingTopic	- true if topic is Manufacture
  */
 void TechTreeViewerState::setSelectedTopic(
-		const std::string& selectedTopic,
+		const std::string& selTopic,
 		bool isManufacturingTopic)
 {
-	_selTopic = selectedTopic;
-	_selFlag  = isManufacturingTopic ? 2 : 1;
+	_selTopic = selTopic;
+	_selFlag  = isManufacturingTopic ? TECH_MANUFACTURE : TECH_RESEARCH;
 }
 
 /**

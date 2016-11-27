@@ -36,7 +36,7 @@ class Window;
 
 
 /**
- * Window that allows selecting a topic for the Tech Tree Viewer.
+ * Window that allows selecting a topic for the TechTreeViewer.
  */
 class TechTreeSelectState
 	:
@@ -50,6 +50,7 @@ private:
 
 	TechTreeViewerState* _viewer;
 
+	Surface* _srfSearchField;
 	Text* _txtTitle;
 	TextButton* _btnOk;
 	TextEdit* _edtQuickSearch;

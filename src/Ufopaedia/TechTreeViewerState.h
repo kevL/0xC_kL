@@ -28,6 +28,13 @@
 namespace OpenXcom
 {
 
+enum TechTreeType
+{
+	TECH_NONE,			// 0
+	TECH_RESEARCH,		// 1
+	TECH_MANUFACTURE	// 2
+};
+
 class RuleManufacture;
 class RuleResearch;
 
@@ -40,7 +47,9 @@ class Window;
 /**
  * TechTreeViewer screen where you can browse the Tech Tree.
  */
-class TechTreeViewerState : public State
+class TechTreeViewerState
+	:
+		public State
 {
 
 private:
@@ -50,22 +59,22 @@ private:
 		BLUE	= 218u,
 		PINK	= 241u;
 
-	int _selFlag;
+	TechTreeType _selFlag;
 
 	std::string _selTopic;
 
 	std::vector<std::string>
 		_topicsLeft,
 		_topicsRight;
-	std::vector<int>
+	std::vector<TechTreeType>
 		_flagsLeft,
-		_flagsRight; // 0=none, 1=research, 2=manufacturing
+		_flagsRight;
 
 	std::unordered_set<std::string> _discovered;
 
 	Text
 		* _txtTitle,
-		* _txtSelectedTopic,
+		* _txtSelTopic,
 		* _txtProgress;
 	TextButton
 		* _btnOk,
@@ -86,8 +95,8 @@ private:
 	public:
 		/// Creates a TechTreeViewer state.
 		TechTreeViewerState(
-				const RuleResearch* const selectedTopicResearch = nullptr,
-				const RuleManufacture* const selectedTopicManufacture = nullptr);
+				const RuleResearch* const selTopicResearch = nullptr,
+				const RuleManufacture* const selTopicManufacture = nullptr);
 		/// Cleans up the TechTreeViewer state.
 		~TechTreeViewerState();
 
@@ -101,7 +110,7 @@ private:
 
 		/// Sets the selected topic.
 		void setSelectedTopic(
-				const std::string& selectedTopic,
+				const std::string& selTopic,
 				bool isManufacturingTopic);
 		/// Checks if a specified topic is discovered.
 		bool isDiscovered(const std::string& topic) const;

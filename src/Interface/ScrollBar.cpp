@@ -47,8 +47,8 @@ ScrollBar::ScrollBar(
 		int y)
 	:
 		InteractiveSurface(
-			width, height,
-			x,y),
+				width, height,
+				x,y),
 		_list(nullptr),
 		_color(0u),
 		_contrast(false),
