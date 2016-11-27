@@ -36,7 +36,7 @@ inline bool AreSame(
 		const _Tx& val1,
 		const _Tx& val2)
 {
-	return std::fabs(val2 - val2) <= std::numeric_limits<_Tx>::epsilon();
+	return std::fabs(val1 - val2) <= std::numeric_limits<_Tx>::epsilon();
 }
 
 
@@ -48,7 +48,8 @@ inline bool AreSame(
 template<class _Tx>
 inline _Tx Round(const _Tx& val)
 {
-	return (val < static_cast<_Tx>(0.)) ? std::ceil(val - static_cast<_Tx>(0.5)) : std::floor(val + static_cast<_Tx>(0.5));
+	return (val < static_cast<_Tx>(0.)) ? std::ceil( val - static_cast<_Tx>(0.5))
+										: std::floor(val + static_cast<_Tx>(0.5));
 }
 
 

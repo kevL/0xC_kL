@@ -22,10 +22,7 @@
 
 #include "../Engine/State.h"
 
-//#include <map>
-//#include <string>
 #include <unordered_set> // std::unordered_set
-//#include <vector>
 
 
 namespace OpenXcom
@@ -53,16 +50,16 @@ private:
 		BLUE	= 218u,
 		PINK	= 241u;
 
-	int _selectedFlag;
+	int _selFlag;
 
 	std::string _selTopic;
 
 	std::vector<std::string>
-		_leftTopics,
-		_rightTopics;
+		_topicsLeft,
+		_topicsRight;
 	std::vector<int>
-		_leftFlags,
-		_rightFlags; // 0=none, 1=research, 2=manufacturing
+		_flagsLeft,
+		_flagsRight; // 0=none, 1=research, 2=manufacturing
 
 	std::unordered_set<std::string> _discovered;
 
@@ -80,21 +77,21 @@ private:
 
 	/// Populates the topics.
 	void fillTechTreeLists();
-	///
+	/// Selects a topic on the left.
 	void lstLeftTopicClick(Action* action);
-	///
+	/// Selects a topic on the right.
 	void lstRightTopicClick(Action* action);
 
 
 	public:
-		/// Creates the Tech Tree Viewer state.
+		/// Creates a TechTreeViewer state.
 		TechTreeViewerState(
 				const RuleResearch* const selectedTopicResearch = nullptr,
 				const RuleManufacture* const selectedTopicManufacture = nullptr);
-		/// Cleans up the Tech Tree Viewer state.
+		/// Cleans up the TechTreeViewer state.
 		~TechTreeViewerState();
 
-		/// Initializes the state.
+		/// Initializes the State.
 		void init() override;
 
 		/// Handler for clicking the OK button.

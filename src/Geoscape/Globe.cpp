@@ -775,6 +775,9 @@ void Globe::setZoom(size_t level) // private.
 		rotateStop();
 
 //	_zoom = level;
+//	_zoom = std::min(level,
+//					_radii.size() - 1u);
+
 //	_texOffset = (2u - (_zoom >> 1u)) * (_texture->getTotalFrames() / 3u);
 
 	switch (_zoom = level)

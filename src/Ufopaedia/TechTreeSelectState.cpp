@@ -164,7 +164,7 @@ void TechTreeSelectState::fillTechTreeLists()
 				search.begin(),
 				std::towupper);
 
-	_availableTopics.clear();
+	_topics.clear();
 	_lstTopics->clearList();
 
 	if (search.length() < 3u)
@@ -191,7 +191,7 @@ void TechTreeSelectState::fillTechTreeLists()
 		if (project.find(search) != std::string::npos
 			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
 		{
-			_availableTopics.push_back(*i);
+			_topics.push_back(*i);
 
 			_lstTopics->addRow(1, tr(*i).c_str());
 			++r;
@@ -215,7 +215,7 @@ void TechTreeSelectState::fillTechTreeLists()
 		if (project.find(search) != std::string::npos
 			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
 		{
-			_availableTopics.push_back(*i);
+			_topics.push_back(*i);
 
 			std::wostringstream woststr;
 			woststr << tr(*i);
@@ -233,10 +233,10 @@ void TechTreeSelectState::fillTechTreeLists()
 void TechTreeSelectState::lstTopicClick(Action*)
 {
 	const size_t r (_lstTopics->getSelectedRow());
-	if (r < _availableTopics.size())
+	if (r < _topics.size())
 	{
 		_viewer->setSelectedTopic(
-							_availableTopics[r],
+							_topics[r],
 							r >= _firstManufactureId);
 		_game->popState();
 	}

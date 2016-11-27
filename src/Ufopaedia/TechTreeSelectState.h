@@ -46,7 +46,7 @@ class TechTreeSelectState
 private:
 	size_t _firstManufactureId;
 
-	std::vector<std::string> _availableTopics;
+	std::vector<std::string> _topics;
 
 	TechTreeViewerState* _viewer;
 
@@ -58,25 +58,25 @@ private:
 
 	/// Populates the topics.
 	void fillTechTreeLists();
-	///
+	/// Selects a topic.
 	void lstTopicClick(Action* action);
 
 
 	public:
-		/// Creates the TechTreeSelect state.
+		/// Creates a TechTreeSelect state.
 		explicit TechTreeSelectState(TechTreeViewerState* const viewer);
 		/// Cleans up the TechTreeSelect state.
 		~TechTreeSelectState();
 
-		/// Initializes the state.
+		/// Initializes the State.
 		void init() override;
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
 
-		/// Handler for QuickSearch.
+		/// Handler for QuickSearch toggle.
 		void keyQuickSearchToggle(Action* action);
-		/// Handler for QuickSearch.
+		/// Handler for QuickSearch apply.
 		void keyQuickSearchApply(Action* action);
 };
 

@@ -124,6 +124,7 @@
 #include "../Savegame/Ufo.h"
 #include "../Savegame/Waypoint.h"
 
+#include "../Ufopaedia/TechTreeViewerState.h"
 #include "../Ufopaedia/Ufopaedia.h"
 
 
@@ -1029,6 +1030,10 @@ void GeoscapeState::handle(Action* action)
 														_rules,
 														_gameSave->getTacticalStatistics());
 						}
+						break;
+
+					case SDLK_t:
+						_game->pushState(new TechTreeViewerState());			// "ctrl-" - open TechTree viewer
 						break;
 
 					default:
