@@ -23,6 +23,8 @@
 //#include <sstream>
 //#include <assert.h>
 
+#include "../fmath.h"
+
 #include "AlienBAIState.h"
 #include "BattlescapeState.h"
 #include "CivilianBAIState.h"
@@ -226,7 +228,7 @@ void BattlescapeGenerator::setTerrain(RuleTerrain* const terrain)
  */
 void BattlescapeGenerator::setShade(int shade)
 {
-	_shade = std::max(0, std::min(15, shade));
+	_shade = Clamp(shade, 0,15);
 }
 
 /**

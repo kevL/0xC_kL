@@ -70,12 +70,6 @@ private:
 		* _scrollKeyTimer,
 		* _scrollMouseTimer;
 
-	/// Sets the value to min if it is below min and to max if it is above max.
-	static void intMinMax(
-			int* value,
-			int minValue,
-			int maxValue);
-
 	/// Checks if x/y coordinates are inside a central bounding-box.
 	bool isInFocus(const Position& posField) const;
 

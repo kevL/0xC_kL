@@ -22,6 +22,8 @@
 //#include <cmath>
 //#include <fstream>
 
+#include "../fmath.h"
+
 #include "BattlescapeState.h"
 #include "Map.h"
 
@@ -94,21 +96,6 @@ void Camera::setScrollTimers(
 {
 	_scrollMouseTimer = mouseTimer;
 	_scrollKeyTimer = keyboardTimer;
-}
-
-/**
- * Sets the value to min if it is below min and to max if it is above max.
- * @param value		- pointer to the value
- * @param minValue	- the minimum value
- * @param maxValue	- the maximum value
- */
-void Camera::intMinMax( // private/static.
-		int* value,
-		int minValue,
-		int maxValue)
-{
-	if		(*value < minValue) *value = minValue;
-	else if	(*value > maxValue) *value = maxValue;
 }
 
 /**
@@ -552,11 +539,8 @@ int Camera::getViewLevel() const
  */
 void Camera::setViewLevel(int level)	// The call from Map::drawTerrain() causes a stack overflow loop when projectile in FoV.
 {										// Solution: remove draw() call below_
-	_offsetField.z = level;				// - might have to pass in a 'redraw' bool to compensate for other calls ...
-	intMinMax(
-			&_offsetField.z,
-			0,
-			_mapsize_z - 1);
+										// - might have to pass in a 'redraw' bool to compensate for other calls ...
+	_offsetField.z = Clamp(level, 0, _mapsize_z - 1);
 
 	_map->getBattleSave()->getBattleState()->setLayerValue(_offsetField.z);
 //	_map->draw();
@@ -582,16 +566,11 @@ void Camera::centerPosition(
 		const Position& posField,
 		bool draw)
 {
-	_centerField = posField;
+	_centerField.x = Clamp(posField.x, -1, _mapsize_x);
+	_centerField.y = Clamp(posField.y, -1, _mapsize_y);
 
-	intMinMax(
-			&_centerField.x,
-			-1,
-			_mapsize_x);
-	intMinMax(
-			&_centerField.y,
-			-1,
-			_mapsize_y);
+	_centerField.z =
+	_offsetField.z = posField.z;
 
 	Position posScreen;
 	convertMapToScreen(
@@ -600,7 +579,6 @@ void Camera::centerPosition(
 
 	_offsetField.x = -(posScreen.x - (_screenWidth    >> 1u) + 16);
 	_offsetField.y = -(posScreen.y - (_playableHeight >> 1u));
-	_offsetField.z = _centerField.z;
 
 	_map->getBattleSave()->getBattleState()->setLayerValue(_offsetField.z);
 
@@ -663,14 +641,8 @@ void Camera::convertScreenToMap(
 	*mapX /= width_4;
 	*mapY /= _spriteWidth;
 
-	intMinMax(
-			mapX,
-			-1,
-			_mapsize_x);
-	intMinMax(
-			mapY,
-			-1,
-			_mapsize_y);
+	*mapX = Clamp(*mapX, -1, _mapsize_x);
+	*mapY = Clamp(*mapY, -1, _mapsize_y);
 }
 
 /**

@@ -554,15 +554,9 @@ void Projectile::applyAccuracy( // private.
 		targetVoxel->z += static_cast<int>(Round(dz));
 		//Log(LOG_INFO) << "Proj: applyAccuracy target[2] " << *targetVoxel;
 
-		targetVoxel->x = std::max(0,
-								  std::min(((_battleSave->getMapSizeX() - 1) << 4u) + 15,
-											 targetVoxel->x));
-		targetVoxel->y = std::max(0,
-								  std::min(((_battleSave->getMapSizeY() - 1) << 4u) + 15,
-											 targetVoxel->y));
-		targetVoxel->z = std::max(0,
-								  std::min(((_battleSave->getMapSizeZ() - 1)  * 24) + 23,
-											 targetVoxel->z));
+		targetVoxel->x = Clamp(targetVoxel->x, 0, ((_battleSave->getMapSizeX() - 1) << 4u) + 15);
+		targetVoxel->y = Clamp(targetVoxel->y, 0, ((_battleSave->getMapSizeY() - 1) << 4u) + 15);
+		targetVoxel->z = Clamp(targetVoxel->z, 0, ((_battleSave->getMapSizeZ() - 1)  * 24) + 23);
 
 		if (_action.type == BA_THROW) // center end-point graphically on the tile it's headed for.
 		{
@@ -811,10 +805,7 @@ Position Projectile::getPosition(int offset) const
 {
 	if (offset == 0) return _trj.at(_trjId);
 
-	offset = std::max(0,
-					  std::min(
-							static_cast<int>(_trjId) + offset,
-							static_cast<int>(_trj.size() - 1u)));
+	offset = Clamp(static_cast<int>(_trjId) + offset, 0, static_cast<int>(_trj.size()) - 1);
 
 	return _trj.at(static_cast<size_t>(offset));
 }

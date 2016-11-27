@@ -20,62 +20,63 @@
 #ifndef OPENXCOM_FMATH_H
 #define OPENXCOM_FMATH_H
 
-#include <cmath>
-#include <limits>
+#include <algorithm>	// std::min(), std::max()
+#include <cmath>		// std::fabs(), std::ceil(), std::floor(), std::isnan(), std::isinf()
+#include <limits>		// std::numeric_limits
 
 
 /**
- * Returns true if two floating-point values are within epsilon.
- * @param l -
- * @param r -
+ * Checks if two floating-point values are within epsilon.
+ * @param val1 - first value
+ * @param val2 - second value
  * @return, true if within epsilon
  */
 template<class _Tx>
 inline bool AreSame(
-		const _Tx& l,
-		const _Tx& r)
+		const _Tx& val1,
+		const _Tx& val2)
 {
-	return std::fabs(l - r) <= std::numeric_limits<_Tx>::epsilon();
+	return std::fabs(val2 - val2) <= std::numeric_limits<_Tx>::epsilon();
 }
 
 
 /**
  * Rounds a floating-point value up or down to its nearest whole value.
- * @param x -
+ * @param val - value
  * @return, rounded value
  */
 template<class _Tx>
-inline _Tx Round(const _Tx& x)
+inline _Tx Round(const _Tx& val)
 {
-	return (x < static_cast<_Tx>(0.)) ? std::ceil(x - static_cast<_Tx>(0.5)) : std::floor(x + static_cast<_Tx>(0.5));
+	return (val < static_cast<_Tx>(0.)) ? std::ceil(val - static_cast<_Tx>(0.5)) : std::floor(val + static_cast<_Tx>(0.5));
 }
 
 
 /**
- * Returns the square of a value.
- * @param x -
+ * Squares a value.
+ * @param val - value
  * @return, squared value
  */
 template<class _Tx>
-inline _Tx Sqr(const _Tx& x)
+inline _Tx Sqr(const _Tx& val)
 {
-	return x * x;
+	return val * val;
 }
 
 /**
- * Returns true if x or y (lon,lat) is NaN or Inf.
+ * Checks if val1 or val2 (lon,lat) is NaN or Inf.
  * @note Checks validity of Globe coordinates.
- * @param x -
- * @param y -
- * @return, true if either x or y is NaN or Inf
+ * @param val1 - x-coordinate
+ * @param val2 - y-coordinate
+ * @return, true if either val1 or val2 is NaN or Inf
  */
 template<class _Tx>
 inline bool isNaNorInf(
-		const _Tx& x,
-		const _Tx& y)
+		const _Tx& val1,
+		const _Tx& val2)
 {
-	if (   std::isnan(x) || std::isnan(y)
-		|| std::isinf(x) || std::isinf(y))
+	if (   std::isnan(val1) || std::isnan(val2)
+		|| std::isinf(val1) || std::isinf(val2))
 	{
 		return true;
 	}
@@ -84,27 +85,29 @@ inline bool isNaNorInf(
 
 /**
  * Superceded by C++11
+ * @param val - value
+ * @return, inverse sign
  *
 template<class _Tx>
-inline _Tx Sign(const _Tx& x)
+inline _Tx Sign(const _Tx& val)
 {
-	return (_Tx(0) < x) - (x < _Tx(0));
+	return (_Tx(0) < val) - (val < _Tx(0));
 } */
 
 /**
  * Clamps a value between min and max inclusively.
- * @param x		- value
- * @param min	- the minimum limit
- * @param max	- the maximum limit
+ * @param val		- value
+ * @param valMin	- the minimum limit
+ * @param valMax	- the maximum limit
  * @return, value within inclusive limits
  */
 template <class _Tx>
 inline _Tx Clamp(
-		const _Tx& x,
-		const _Tx& min,
-		const _Tx& max)
+		const _Tx& val,
+		const _Tx& valMin,
+		const _Tx& valMax)
 {
-	return std::min(std::max(x, min), max);
+	return std::min(std::max(val, valMin), valMax);
 }
 
 

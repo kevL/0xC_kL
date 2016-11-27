@@ -629,8 +629,8 @@ void TextList::setHeight(int height)
 
 	setY(_y);
 
-	const int h = std::max(1, _down->getY() - _up->getY() - _up->getHeight());
-	_scrollbar->setHeight(h);
+	height = std::max(1, _down->getY() - _up->getY() - _up->getHeight());
+	_scrollbar->setHeight(height);
 
 	updateVisible();
 }

@@ -234,10 +234,8 @@ void Slider::handle(Action* action, State* state)
 			{
 				const int cursorX (static_cast<int>(action->getAbsoluteMouseX()));
 				const double
-					buttonX (static_cast<double>(std::min(_maxX,
-														  std::max(_minX,
-																   cursorX + _offsetX)))),
-					pos ((buttonX - static_cast<double>(_minX)) / static_cast<double>(_maxX - _minX));
+					buttonX	(Clamp(cursorX + _offsetX, _minX, _maxX)),
+					pos		((buttonX - static_cast<double>(_minX)) / static_cast<double>(_maxX - _minX));
 
 				setValue(_min + static_cast<int>(Round(static_cast<double>(_max - _min) * pos)));
 
@@ -281,9 +279,9 @@ void Slider::setRange(
 void Slider::setValue(int value)
 {
 	if (_min < _max)
-		_value = std::min(std::max(_min, value), _max);
+		_value = Clamp(value, _min, _max);
 	else
-		_value = std::min(std::max(_max, value), _min);
+		_value = Clamp(value, _max, _min);
 
 	setSliderPosition(static_cast<double>(_value - _min) / static_cast<double>(_max - _min));
 }

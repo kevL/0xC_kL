@@ -774,11 +774,10 @@ void Globe::setZoom(size_t level) // private.
 	if (_dragScroll == true)
 		rotateStop();
 
-	_zoom = std::min(level,
-					_radii.size() - 1u);
-
+//	_zoom = level;
 //	_texOffset = (2u - (_zoom >> 1u)) * (_texture->getTotalFrames() / 3u);
-	switch (_zoom)
+
+	switch (_zoom = level)
 	{
 		default:
 		case 0:								// far out
