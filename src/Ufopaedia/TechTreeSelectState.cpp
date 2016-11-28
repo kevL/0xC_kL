@@ -151,7 +151,7 @@ void TechTreeSelectState::btnOkClick(Action*)
  */
 void TechTreeSelectState::keyQuickSearchToggle(Action* action)
 {
-	if (_edtQuickSearch->getVisible() == true)	// clear text or turn off.
+	if (_edtQuickSearch->getVisible() == true) // clear search-field or turn off.
 	{
 		if (_edtQuickSearch->getText().empty() == true
 			|| action == nullptr
@@ -163,7 +163,7 @@ void TechTreeSelectState::keyQuickSearchToggle(Action* action)
 			_srfSearchField->setVisible(false);
 		}
 	}
-	else										// turn on.
+	else // turn on.
 	{
 		_srfSearchField->setVisible();
 
@@ -176,7 +176,7 @@ void TechTreeSelectState::keyQuickSearchToggle(Action* action)
 }
 
 /**
- * Applies QuickSearch field.
+ * Applies the QuickSearch field.
  * @param action - pointer to an Action
  */
 void TechTreeSelectState::keyQuickSearchApply(Action*)
@@ -190,6 +190,10 @@ void TechTreeSelectState::keyQuickSearchApply(Action*)
  */
 void TechTreeSelectState::fillTechTreeLists()
 {
+	_topics.clear();
+	_lstTopics->clearList();
+
+
 	std::wstring search (_edtQuickSearch->getText());
 	std::transform(
 				search.begin(),
@@ -197,24 +201,32 @@ void TechTreeSelectState::fillTechTreeLists()
 				search.begin(),
 				std::towupper);
 
-	_topics.clear();
-	_lstTopics->clearList();
-
-//	if (search.length() < 3u)
-//	{
-//		_lstTopics->addRow(1, tr("STR_QS_THREE_LETTERS_A").c_str());
-//		_lstTopics->addRow(1, tr("STR_QS_THREE_LETTERS_B").c_str());
-//		return;
-//	}
+	std::wstring project (tr("STR_UNLOCKED"));
+	std::transform(
+				project.begin(),
+				project.end(),
+				project.begin(),
+				std::towupper);
 
 	size_t r (0u);
-	const std::vector<std::string>& allResearch (_game->getRuleset()->getResearchList());
+	if (search.empty() == true
+		|| project.find(search) != std::string::npos)
+	{
+		_topics.push_back("STR_UNLOCKED");
+
+		_lstTopics->addRow(1, tr("STR_UNLOCKED").c_str());
+		++r;
+	}
+
+	const Ruleset* const rules (_game->getRuleset());
+
+	const std::vector<std::string>& allResearch (rules->getResearchList());
 	for (std::vector<std::string>::const_iterator
 			i = allResearch.begin();
 			i != allResearch.end();
 			++i)
 	{
-		std::wstring project (tr(*i));
+		project = tr(*i);
 		std::transform(
 					project.begin(),
 					project.end(),
@@ -223,7 +235,6 @@ void TechTreeSelectState::fillTechTreeLists()
 
 		if (search.empty() == true
 			|| project.find(search) != std::string::npos)
-//			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
 		{
 			_topics.push_back(*i);
 
@@ -233,13 +244,13 @@ void TechTreeSelectState::fillTechTreeLists()
 	}
 
 	_firstManufactureId = r;
-	const std::vector<std::string>& allManufacture (_game->getRuleset()->getManufactureList());
+	const std::vector<std::string>& allManufacture (rules->getManufactureList());
 	for (std::vector<std::string>::const_iterator
 			i = allManufacture.begin();
 			i != allManufacture.end();
 			++i)
 	{
-		std::wstring project (tr(*i));
+		project = tr(*i);
 		std::transform(
 					project.begin(),
 					project.end(),
@@ -248,13 +259,11 @@ void TechTreeSelectState::fillTechTreeLists()
 
 		if (search.empty() == true
 			|| project.find(search) != std::string::npos)
-//			|| (search == L"HOCUSPOCUS" && _viewer->isDiscovered(*i) == false))
 		{
 			_topics.push_back(*i);
 
 			std::wostringstream woststr;
-			woststr << tr(*i);
-			woststr << tr("STR_M_FLAG");
+			woststr << tr(*i) << tr("STR_M_FLAG");
 
 			_lstTopics->addRow(1, woststr.str().c_str());
 		}
@@ -272,7 +281,7 @@ void TechTreeSelectState::lstTopicClick(Action*)
 	{
 		_viewer->setSelectedTopic(
 								_topics[r],
-								r >= _firstManufactureId);
+								r < _firstManufactureId);
 		_game->popState();
 	}
 }

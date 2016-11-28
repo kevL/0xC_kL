@@ -37,6 +37,7 @@ enum TechTreeType
 
 class RuleManufacture;
 class RuleResearch;
+class Ruleset;
 
 class Text;
 class TextButton;
@@ -72,6 +73,8 @@ private:
 
 	std::unordered_set<std::string> _discovered;
 
+	const Ruleset* _rules;
+
 	Text
 		* _txtTitle,
 		* _txtSelTopic,
@@ -105,13 +108,13 @@ private:
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the New button.
+		/// Handler for clicking the Select Topic button.
 		void btnSelectClick(Action* action);
 
 		/// Sets the selected topic.
 		void setSelectedTopic(
 				const std::string& selTopic,
-				bool isManufacture);
+				bool isResearch);
 		/// Checks if a specified topic is discovered.
 		bool isDiscovered(const std::string& topic) const;
 };
