@@ -124,9 +124,9 @@ ManufactureStartState::ManufactureStartState(
 
 	_txtRequiredItems->setText(tr("STR_SPECIAL_MATERIALS_REQUIRED"));
 
-	_txtItemRequired->setText(tr("STR_ITEM_REQUIRED"));
-	_txtUnitsRequired->setText(tr("STR_UNITS_REQUIRED"));
-	_txtUnitsAvailable->setText(tr("STR_UNITS_AVAILABLE"));
+	_txtItemRequired->setText(tr("STR_PART_UC"));
+	_txtUnitsRequired->setText(tr("STR_UNITS_UC"));
+	_txtUnitsAvailable->setText(tr("STR_STOCK_UC"));
 
 	_lstRequiredItems->setColumns(3, 140,60,40);
 

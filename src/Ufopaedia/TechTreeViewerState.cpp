@@ -235,52 +235,52 @@ void TechTreeViewerState::fillTechTreeLists()
 	{
 		case TECH_RESEARCH:
 		{
-			size_t r (0u);
-
 			if (_selTopic == "STR_UNLOCKED")
 			{
 				std::vector<std::string>
-					requiredByManufacture,
+					requiredBy_mf,
 					requisiteTo;
 
 				const std::vector<std::string>& allManufacture (_rules->getManufactureList());
 				for (std::vector<std::string>::const_iterator
-						i = allManufacture.begin();
+						i  = allManufacture.begin();
 						i != allManufacture.end();
-						++i)
+					  ++i)
 				{
 					const RuleManufacture* const mfRule (_rules->getManufacture(*i));
 					if (mfRule->getRequiredResearch().empty() == true)
-						requiredByManufacture.push_back(*i);
+						requiredBy_mf.push_back(*i);
 				}
 
 				const std::vector<std::string>& allResearch (_rules->getResearchList());
 				for (std::vector<std::string>::const_iterator
-						i = allResearch.begin();
+						i  = allResearch.begin();
 						i != allResearch.end();
-						++i)
+					  ++i)
 				{
 					const RuleResearch* const otherRule (_rules->getResearch(*i));
-					if (otherRule->getRequisiteResearch().empty() == false
+					if (   otherRule->getRequisiteResearch().empty() == false
 						&& otherRule->getRequisiteResearch().front() == "STR_UNLOCKED")
 					{
 						requisiteTo.push_back(*i);
 					}
 				}
 
-				if (requiredByManufacture.empty() == false)
+				size_t r (0u);
+				if (requiredBy_mf.empty() == false)
 				{
 					_lstRight->addRow(1, tr("STR_REQUIRED_BY").c_str());
 					_lstRight->setRowColor(r, BLUE);
+
 					_topicsRight.push_back("-");
 					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::vector<std::string>::const_iterator
-							i = requiredByManufacture.begin();
-							i != requiredByManufacture.end();
-							++i)
+							i  = requiredBy_mf.begin();
+							i != requiredBy_mf.end();
+						  ++i)
 					{
 						std::wstring wst (tr(*i));
 						wst.insert(0, L"  ");
@@ -299,17 +299,18 @@ void TechTreeViewerState::fillTechTreeLists()
 
 				if (requisiteTo.empty() == false)
 				{
-					_lstRight->addRow(1, tr("STR_LEADS_TO").c_str());
+					_lstRight->addRow(1, tr("STR_REQUISITE_TO").c_str());
 					_lstRight->setRowColor(r, BLUE);
+
 					_topicsRight.push_back("-");
 					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::vector<std::string>::const_iterator
-							i = requisiteTo.begin();
+							i  = requisiteTo.begin();
 							i != requisiteTo.end();
-							++i)
+						  ++i)
 					{
 						std::wstring wst (tr(*i));
 						wst.insert(0, L"  ");
@@ -331,54 +332,54 @@ void TechTreeViewerState::fillTechTreeLists()
 				if (resRule != nullptr)
 				{
 					std::vector<std::string>
-						requiredByManufacture,
-						requiredByResearch,
+						requiredBy_mf,
+						requiredBy,
 						requisiteTo,
 						requestedBy,
-						gofFrom;
+						gofBy;
 
 					const std::vector<std::string>& allManufacture (_rules->getManufactureList());
 					for (std::vector<std::string>::const_iterator
-							i = allManufacture.begin();
+							i  = allManufacture.begin();
 							i != allManufacture.end();
-							++i)
+						  ++i)
 					{
 						const RuleManufacture* const mfRule (_rules->getManufacture(*i));
 
 						const std::vector<std::string>& reqResearch (mfRule->getRequiredResearch());
 						for (std::vector<std::string>::const_iterator
-								j = reqResearch.begin();
+								j  = reqResearch.begin();
 								j != reqResearch.end();
-								++j)
+							  ++j)
 						{
 							if (*j == resRule->getType())
-								requiredByManufacture.push_back(*i);
+								requiredBy_mf.push_back(*i);
 						}
 					}
 
 					const std::vector<std::string>& allResearch (_rules->getResearchList());
 					for (std::vector<std::string>::const_iterator
-							i = allResearch.begin();
+							i  = allResearch.begin();
 							i != allResearch.end();
-							++i)
+						  ++i)
 					{
 						const RuleResearch* const otherRule (_rules->getResearch(*i));
 
 						const std::vector<std::string>& required (otherRule->getRequiredResearch());
 						for (std::vector<std::string>::const_iterator
-								j = required.begin();
+								j  = required.begin();
 								j != required.end();
-								++j)
+							  ++j)
 						{
 							if (*j == resRule->getType())
-								requiredByResearch.push_back(*i);
+								requiredBy.push_back(*i);
 						}
 
 						const std::vector<std::string>& requisite (otherRule->getRequisiteResearch());
 						for (std::vector<std::string>::const_iterator
-								j = requisite.begin();
+								j  = requisite.begin();
 								j != requisite.end();
-								++j)
+							  ++j)
 						{
 							if (*j == resRule->getType())
 								requisiteTo.push_back(*i);
@@ -386,9 +387,9 @@ void TechTreeViewerState::fillTechTreeLists()
 
 						const std::vector<std::string>& requested (otherRule->getRequestedResearch());
 						for (std::vector<std::string>::const_iterator
-								j = requested.begin();
+								j  = requested.begin();
 								j != requested.end();
-								++j)
+							  ++j)
 						{
 							if (*j == resRule->getType())
 								requestedBy.push_back(*i);
@@ -396,20 +397,23 @@ void TechTreeViewerState::fillTechTreeLists()
 
 						const std::vector<std::string>& gof (otherRule->getGetOneFree());
 						for (std::vector<std::string>::const_iterator
-								j = gof.begin();
+								j  = gof.begin();
 								j != gof.end();
-								++j)
+							  ++j)
 						{
 							if (*j == resRule->getType())
-								gofFrom.push_back(*i);
+								gofBy.push_back(*i);
 						}
 
 					}
 
-					if (resRule->needsItem() == true) // 1. item required
+// LEFT LIST TOPIC ->
+					size_t r (0u);
+					if (resRule->needsItem() == true)
 					{
-						_lstLeft->addRow(1, tr("STR_ITEM_REQUIRED").c_str());
+						_lstLeft->addRow(1, tr("STR_PART_REQUIRED").c_str());
 						_lstLeft->setRowColor(r, BLUE);
+
 						_topicsLeft.push_back("-");
 						_flagsLeft.push_back(TECH_NONE);
 
@@ -429,19 +433,20 @@ void TechTreeViewerState::fillTechTreeLists()
 					}
 
 					const std::vector<std::string>& required (resRule->getRequiredResearch());
-					if (required.empty() == false) // 2. requires
+					if (required.empty() == false)
 					{
-						_lstLeft->addRow(1, tr("STR_REQUIRES").c_str());
+						_lstLeft->addRow(1, tr("STR_REQUIRED").c_str());
 						_lstLeft->setRowColor(r, BLUE);
+
 						_topicsLeft.push_back("-");
 						_flagsLeft.push_back(TECH_NONE);
 
 						++r;
 
 						for (std::vector<std::string>::const_iterator
-								i = required.begin();
+								i  = required.begin();
 								i != required.end();
-								++i)
+							  ++i)
 						{
 							std::wstring wst (tr(*i));
 							wst.insert(0, L"  ");
@@ -458,53 +463,49 @@ void TechTreeViewerState::fillTechTreeLists()
 					}
 
 					const std::vector<std::string>& requisite (resRule->getRequisiteResearch());
-					if (requisite.empty() == false) // 3. depends on
+					if (requisite.empty() == false)
 					{
-						_lstLeft->addRow(1, tr("STR_DEPENDS_ON").c_str());
+						_lstLeft->addRow(1, tr("STR_REQUISITE").c_str());
 						_lstLeft->setRowColor(r, BLUE);
+
 						_topicsLeft.push_back("-");
 						_flagsLeft.push_back(TECH_NONE);
 
 						++r;
 
 						for (std::vector<std::string>::const_iterator
-								i = requisite.begin();
+								i  = requisite.begin();
 								i != requisite.end();
-								++i)
+							  ++i)
 						{
-							if (std::find( // if the same item is also in the "Unlocked by" section, skip it
-										requestedBy.begin(),
-										requestedBy.end(),
-										*i) == requestedBy.end())
-							{
-								std::wstring wst (tr(*i));
-								wst.insert(0, L"  ");
-								_lstLeft->addRow(1, wst.c_str());
+							std::wstring wst (tr(*i));
+							wst.insert(0, L"  ");
+							_lstLeft->addRow(1, wst.c_str());
 
-								if (isDiscovered(*i) == false)
-									_lstLeft->setRowColor(r, PINK);
+							if (isDiscovered(*i) == false)
+								_lstLeft->setRowColor(r, PINK);
 
-								_topicsLeft.push_back(*i);
-								_flagsLeft.push_back(TECH_RESEARCH);
+							_topicsLeft.push_back(*i);
+							_flagsLeft.push_back(TECH_RESEARCH);
 
-								++r;
-							}
+							++r;
 						}
 					}
 
-					if (requestedBy.empty() == false) // 4. unlocked by
+					if (requestedBy.empty() == false)
 					{
-						_lstLeft->addRow(1, tr("STR_UNLOCKED_BY").c_str());
+						_lstLeft->addRow(1, tr("STR_REQUESTED_BY").c_str());
 						_lstLeft->setRowColor(r, BLUE);
+
 						_topicsLeft.push_back("-");
 						_flagsLeft.push_back(TECH_NONE);
 
 						++r;
 
 						for (std::vector<std::string>::const_iterator
-								i = requestedBy.begin();
+								i  = requestedBy.begin();
 								i != requestedBy.end();
-								++i)
+							  ++i)
 						{
 							std::wstring wst (tr(*i));
 							wst.insert(0, L"  ");
@@ -520,19 +521,20 @@ void TechTreeViewerState::fillTechTreeLists()
 						}
 					}
 
-					if (gofFrom.empty() == false) // 5. get for free from
+					if (gofBy.empty() == false)
 					{
-						_lstLeft->addRow(1, tr("STR_GET_FOR_FREE_FROM").c_str());
+						_lstLeft->addRow(1, tr("STR_FREE_BY").c_str());
 						_lstLeft->setRowColor(r, BLUE);
+
 						_topicsLeft.push_back("-");
 						_flagsLeft.push_back(TECH_NONE);
 
 						++r;
 
 						for (std::vector<std::string>::const_iterator
-								i = gofFrom.begin();
-								i != gofFrom.end();
-								++i)
+								i  = gofBy.begin();
+								i != gofBy.end();
+							  ++i)
 						{
 							std::wstring wst (tr(*i));
 							wst.insert(0, L"  ");
@@ -548,23 +550,24 @@ void TechTreeViewerState::fillTechTreeLists()
 						}
 					}
 
+// RIGHT LIST TOPIC ->
 					r = 0u;
-
-					if (requiredByResearch.empty() == false || requiredByManufacture.empty() == false) // 6. required by
+					if (requiredBy.empty() == false || requiredBy_mf.empty() == false)
 					{
 						_lstRight->addRow(1, tr("STR_REQUIRED_BY").c_str());
 						_lstRight->setRowColor(r, BLUE);
+
 						_topicsRight.push_back("-");
 						_flagsRight.push_back(TECH_NONE);
 
 						++r;
 
-						if (requiredByResearch.empty() == false) // 6a. required by research
+						if (requiredBy.empty() == false)
 						{
 							for (std::vector<std::string>::const_iterator
-									i = requiredByResearch.begin();
-									i != requiredByResearch.end();
-									++i)
+									i  = requiredBy.begin();
+									i != requiredBy.end();
+								  ++i)
 							{
 								std::wstring wst (tr(*i));
 								wst.insert(0, L"  ");
@@ -580,12 +583,12 @@ void TechTreeViewerState::fillTechTreeLists()
 							}
 						}
 
-						if (requiredByManufacture.empty() == false) // 6b. required by manufacture
+						if (requiredBy_mf.empty() == false)
 						{
 							for (std::vector<std::string>::const_iterator
-									i = requiredByManufacture.begin();
-									i != requiredByManufacture.end();
-									++i)
+									i  = requiredBy_mf.begin();
+									i != requiredBy_mf.end();
+								  ++i)
 							{
 								std::wstring wst (tr(*i));
 								wst.insert(0, L"  ");
@@ -603,54 +606,50 @@ void TechTreeViewerState::fillTechTreeLists()
 						}
 					}
 
-					const std::vector<std::string>& requested (resRule->getRequestedResearch());
-					if (requisiteTo.empty() == false) // 7. leads to
+					if (requisiteTo.empty() == false)
 					{
-						_lstRight->addRow(1, tr("STR_LEADS_TO").c_str());
+						_lstRight->addRow(1, tr("STR_REQUISITE_TO").c_str());
 						_lstRight->setRowColor(r, BLUE);
+
 						_topicsRight.push_back("-");
 						_flagsRight.push_back(TECH_NONE);
 
 						++r;
 
 						for (std::vector<std::string>::const_iterator
-								i = requisiteTo.begin();
+								i  = requisiteTo.begin();
 								i != requisiteTo.end();
-								++i)
+							  ++i)
 						{
-							if (std::find( // if the same topic is also in the 'requested' section skip it
-										requested.begin(),
-										requested.end(),
-										*i) == requested.end())
-							{
-								std::wstring wst (tr(*i));
-								wst.insert(0, L"  ");
-								_lstRight->addRow(1, wst.c_str());
+							std::wstring wst (tr(*i));
+							wst.insert(0, L"  ");
+							_lstRight->addRow(1, wst.c_str());
 
-								if (isDiscovered(*i) == false)
-									_lstRight->setRowColor(r, PINK);
+							if (isDiscovered(*i) == false)
+								_lstRight->setRowColor(r, PINK);
 
-								_topicsRight.push_back(*i);
-								_flagsRight.push_back(TECH_RESEARCH);
+							_topicsRight.push_back(*i);
+							_flagsRight.push_back(TECH_RESEARCH);
 
-								++r;
-							}
+							++r;
 						}
 					}
 
-					if (requested.empty() == false) // 8. requested
+					const std::vector<std::string>& requested (resRule->getRequestedResearch());
+					if (requested.empty() == false)
 					{
-						_lstRight->addRow(1, tr("STR_UNLOCKS").c_str());
+						_lstRight->addRow(1, tr("STR_REQUESTED").c_str());
 						_lstRight->setRowColor(r, BLUE);
+
 						_topicsRight.push_back("-");
 						_flagsRight.push_back(TECH_NONE);
 
 						++r;
 
 						for (std::vector<std::string>::const_iterator
-								i = requested.begin();
+								i  = requested.begin();
 								i != requested.end();
-								++i)
+							  ++i)
 						{
 							std::wstring wst (tr(*i));
 							wst.insert(0, L"  ");
@@ -667,19 +666,20 @@ void TechTreeViewerState::fillTechTreeLists()
 					}
 
 					const std::vector<std::string>& gof (resRule->getGetOneFree());
-					if (gof.empty() == false) // 9. gives one for free
+					if (gof.empty() == false)
 					{
-						_lstRight->addRow(1, tr("STR_GIVES_ONE_FOR_FREE").c_str());
+						_lstRight->addRow(1, tr("STR_FREE").c_str());
 						_lstRight->setRowColor(r, BLUE);
+
 						_topicsRight.push_back("-");
 						_flagsRight.push_back(TECH_NONE);
 
 						++r;
 
 						for (std::vector<std::string>::const_iterator
-								i = gof.begin();
+								i  = gof.begin();
 								i != gof.end();
-								++i)
+							  ++i)
 						{
 							std::wstring wst (tr(*i));
 							wst.insert(0, L"  ");
@@ -701,24 +701,26 @@ void TechTreeViewerState::fillTechTreeLists()
 
 		case TECH_MANUFACTURE:
 		{
-			size_t r (0u);
 			const RuleManufacture* const mfRule (_rules->getManufacture(_selTopic));
 			if (mfRule != nullptr)
 			{
-				const std::vector<std::string>& reqResearch (mfRule->getRequiredResearch()); // 1. requires
-				if (reqResearch.empty() == false)
+// LEFT LIST TOPIC ->
+				size_t r (0u);
+				const std::vector<std::string>& resRequired (mfRule->getRequiredResearch());
+				if (resRequired.empty() == false)
 				{
 					_lstLeft->addRow(1, tr("STR_RESEARCH_REQUIRED").c_str());
 					_lstLeft->setRowColor(r, BLUE);
+
 					_topicsLeft.push_back("-");
 					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::vector<std::string>::const_iterator
-							i = reqResearch.begin();
-							i != reqResearch.end();
-							++i)
+							i  = resRequired.begin();
+							i != resRequired.end();
+						  ++i)
 					{
 						std::wstring wst (tr(*i));
 						wst.insert(0, L"  ");
@@ -734,20 +736,21 @@ void TechTreeViewerState::fillTechTreeLists()
 					}
 				}
 
-				const std::map<std::string, int>& reqFacilities (mfRule->getRequiredFacilities()); // 2. requires buildings
-				if (reqFacilities.empty() == false)
+				const std::map<std::string, int>& facRequired (mfRule->getRequiredFacilities());
+				if (facRequired.empty() == false)
 				{
 					_lstLeft->addRow(1, tr("STR_FACILITIES_REQUIRED").c_str());
 					_lstLeft->setRowColor(r, BLUE);
+
 					_topicsLeft.push_back("-");
 					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::map<std::string, int>::const_iterator
-							i = reqFacilities.begin();
-							i != reqFacilities.end();
-							++i)
+							i  = facRequired.begin();
+							i != facRequired.end();
+						  ++i)
 					{
 						std::wostringstream woststr;
 						woststr << L"  ";
@@ -756,6 +759,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						woststr << (*i).second;
 						_lstLeft->addRow(1, woststr.str().c_str());
 						_lstLeft->setRowColor(r, GOLD);
+
 						_topicsLeft.push_back("-");
 						_flagsLeft.push_back(TECH_NONE);
 
@@ -763,20 +767,21 @@ void TechTreeViewerState::fillTechTreeLists()
 					}
 				}
 
-				const std::map<std::string, int>& reqParts (mfRule->getPartsRequired()); // 3. inputs
-				if (reqParts.empty() == false)
+				const std::map<std::string, int>& partsRequired (mfRule->getPartsRequired());
+				if (partsRequired.empty() == false)
 				{
-					_lstLeft->addRow(1, tr("STR_MATERIALS_REQUIRED").c_str());
+					_lstLeft->addRow(1, tr("STR_PARTS_REQUIRED").c_str());
 					_lstLeft->setRowColor(r, BLUE);
+
 					_topicsLeft.push_back("-");
 					_flagsLeft.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::map<std::string, int>::const_iterator
-							i = reqParts.begin();
-							i != reqParts.end();
-							++i)
+							i  = partsRequired.begin();
+							i != partsRequired.end();
+						  ++i)
 					{
 						std::wostringstream woststr;
 						woststr << L"  ";
@@ -785,6 +790,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						woststr << (*i).second;
 						_lstLeft->addRow(1, woststr.str().c_str());
 						_lstLeft->setRowColor(r, WHITE);
+
 						_topicsLeft.push_back("-");
 						_flagsLeft.push_back(TECH_NONE);
 
@@ -792,22 +798,23 @@ void TechTreeViewerState::fillTechTreeLists()
 					}
 				}
 
+// RIGHT LIST TOPIC ->
 				r = 0u;
-
-				const std::map<std::string, int>& partsProduced (mfRule->getPartsProduced()); // 4. outputs
+				const std::map<std::string, int>& partsProduced (mfRule->getPartsProduced());
 				if (partsProduced.empty() == false)
 				{
-					_lstRight->addRow(1, tr("STR_ITEMS_PRODUCED").c_str());
+					_lstRight->addRow(1, tr("STR_PARTS_PRODUCED").c_str());
 					_lstRight->setRowColor(r, BLUE);
+
 					_topicsRight.push_back("-");
 					_flagsRight.push_back(TECH_NONE);
 
 					++r;
 
 					for (std::map<std::string, int>::const_iterator
-							i = partsProduced.begin();
+							i  = partsProduced.begin();
 							i != partsProduced.end();
-							++i)
+						  ++i)
 					{
 						std::wostringstream woststr;
 						woststr << L"  ";
@@ -816,6 +823,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						woststr << (*i).second;
 						_lstRight->addRow(1, woststr.str().c_str());
 						_lstRight->setRowColor(r, WHITE);
+
 						_topicsRight.push_back("-");
 						_flagsRight.push_back(TECH_NONE);
 
