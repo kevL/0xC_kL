@@ -124,7 +124,7 @@ void showFatalError(const std::string& error)
 
 /**
  * Gets the user's home-folder according to the operating-system.
- * @return, absolute path to home-folder
+ * @return, char-array for absolute path to home-folder
  */
 #ifndef _WIN32
 static char* const getHome()
@@ -227,10 +227,7 @@ std::vector<std::string> findDataFolders()
 	pathList.push_back(path);
 #	else
 	pathList.push_back("/usr/local/share/openxcom/data/");
-
-#		ifndef __FreeBSD__
 	pathList.push_back("/usr/share/openxcom/data/");
-#		endif
 
 #		ifdef DATADIR
 	snprintf(path, MAXPATHLEN, "%s/data/", DATADIR);
@@ -360,11 +357,11 @@ std::string findConfigFolder()
 
 /**
  * Takes a path and tries to find it based on the system's case-sensitivity.
- * @param base - base unaltered path
- * @param path - full path to check for casing
- * @return, correct filename or "" if it doesn't exist
  * @note There's no actual method for figuring out the correct
  * filename on case-sensitive systems; this is just a workaround.
+ * @param base - reference to base unaltered path
+ * @param path - reference to full path to check for casing
+ * @return, correct filename or "" if it doesn't exist
  */
 std::string caseInsensitive(
 		const std::string& base,
@@ -401,11 +398,11 @@ std::string caseInsensitive(
 
 /**
  * Takes a path and tries to find it based on the system's case-sensitivity.
- * @param base - base unaltered path
- * @param path - full path to check for casing
- * @return, correct foldername or "" if it doesn't exist
  * @note There's no actual method for figuring out the correct
  * foldername on case-sensitive systems; this is just a workaround.
+ * @param base - reference to base unaltered path
+ * @param path - reference to full path to check for casing
+ * @return, correct foldername or "" if it doesn't exist
  */
 std::string caseInsensitiveFolder(
 		const std::string& base,
@@ -443,7 +440,7 @@ std::string caseInsensitiveFolder(
 /**
  * Takes a filename and tries to find it in the game's data-folders
  * accounting for the system's case-sensitivity and path-style.
- * @param file - original filename
+ * @param file - reference to original filename
  * @return, correct filename or "" if it doesn't exist
  */
 std::string getDataFile(const std::string& file)
@@ -482,7 +479,7 @@ std::string getDataFile(const std::string& file)
 /**
  * Takes a foldername and tries to find it in the game's data-folders
  * accounting for the system's case-sensitivity and path-style.
- * @param folder - original foldername
+ * @param folder - reference to original foldername
  * @return, correct foldername or "" if it doesn't exist
  */
 std::string getDataFolder(const std::string& folder)
@@ -521,19 +518,16 @@ std::string getDataFolder(const std::string& folder)
 /**
  * Creates a folder at the specified path.
  * @note Only creates the last folder on the path.
- * @param path - full path
+ * @param path - reference to full path
  * @return, true if folder was created
  */
 bool createFolder(const std::string& path)
 {
 #ifdef _WIN32
-	const int result = CreateDirectoryA(
-									path.c_str(),
-									nullptr);
-	if (result == 0)
-		return false;
+	if (CreateDirectoryA(path.c_str(), nullptr) != 0)
+		return true;
 
-	return true;
+	return false;
 #else
 	mode_t process_mask (umask(0));
 	const int result (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH));
@@ -545,7 +539,7 @@ bool createFolder(const std::string& path)
 
 /**
  * Adds an ending slash to a path if necessary.
- * @param path - folder path
+ * @param path - reference to folder path
  * @return, terminated path
  */
 std::string endPath(const std::string& path)
@@ -560,8 +554,8 @@ std::string endPath(const std::string& path)
 
 /**
  * Gets the name of all the files contained in a certain folder.
- * @param path	- full path to folder
- * @param ext	- extension of files ("" if it doesn't matter)
+ * @param path	- reference to full path to folder
+ * @param ext	- reference to extension of files ("" if it doesn't matter)
  * @return, ordered list of all the files
  */
 std::vector<std::string> getFolderContents(
@@ -624,8 +618,8 @@ std::vector<std::string> getFolderContents(
 /**
  * Gets the name of all the files contained in a data-subfolder.
  * @note Repeated files are ignored.
- * @param folder	- path to the data-folder
- * @param ext		- extension of files ("" if it doesn't matter)
+ * @param folder	- reference to path to the data-folder
+ * @param ext		- reference to extension of files ("" if it doesn't matter)
  * @return, ordered list of all the files
  */
 std::vector<std::string> getDataContents(
@@ -673,7 +667,7 @@ std::vector<std::string> getDataContents(
 
 /**
  * Checks if a certain path exists and is a folder.
- * @param path - full path to folder
+ * @param path - reference to full path to folder
  * @return, true if it exists
  */
 bool folderExists(const std::string& path)
@@ -696,7 +690,7 @@ bool folderExists(const std::string& path)
 
 /**
  * Checks if a certain path exists and is a file.
- * @param path - full path to file
+ * @param path - reference to full path to file
  * @return, true if it exists
  */
 bool fileExists(const std::string& path)
@@ -734,7 +728,7 @@ bool deleteFile(const std::string& path)
 /**
  * Gets the base-filename of a path.
  * @param path		- reference to the full path of file
- * @param transform	- optional function to transform the filename (default nullptr)
+ * @param transform	- pointer to optional function to transform the filename (default nullptr)
  * @return, base filename
  */
 std::string baseFilename(
@@ -862,7 +856,7 @@ std::string getLocale()
 
 /**
  * Checks if the system's default-quit-shortcut was pressed.
- * @param ev - SDL event
+ * @param ev - reference to SDL event
  * @return, true to quit
  */
 bool isQuitShortcut(const SDL_Event& ev)
@@ -882,7 +876,7 @@ bool isQuitShortcut(const SDL_Event& ev)
 
 /**
  * Gets the last modified date of a file.
- * @param path - full path to file
+ * @param path - reference to full path to file
  * @return, the timestamp in integral format
  */
 std::time_t getDateModified(const std::string& path)
@@ -1180,7 +1174,7 @@ void setWindowIcon(int winResource)
 #else
 /**
  * Sets the window-icon if not _WIN32 build.
- * @param unixPath - path to PNG-icon for Unix
+ * @param unixPath - reference to path to PNG-icon for Unix
  */
 void setWindowIcon(const std::string& unixPath)
 {

@@ -407,7 +407,7 @@ void TechTreeViewerState::fillTechTreeLists()
 
 					}
 
-// LEFT LIST TOPIC ->
+// LEFT LIST TOPICS ->
 					size_t r (0u);
 					if (resRule->needsItem() == true)
 					{
@@ -550,7 +550,7 @@ void TechTreeViewerState::fillTechTreeLists()
 						}
 					}
 
-// RIGHT LIST TOPIC ->
+// RIGHT LIST TOPICS ->
 					r = 0u;
 					if (requiredBy.empty() == false || requiredBy_mf.empty() == false)
 					{
@@ -704,7 +704,7 @@ void TechTreeViewerState::fillTechTreeLists()
 			const RuleManufacture* const mfRule (_rules->getManufacture(_selTopic));
 			if (mfRule != nullptr)
 			{
-// LEFT LIST TOPIC ->
+// LEFT LIST TOPICS ->
 				size_t r (0u);
 				const std::vector<std::string>& resRequired (mfRule->getRequiredResearch());
 				if (resRequired.empty() == false)
@@ -798,7 +798,7 @@ void TechTreeViewerState::fillTechTreeLists()
 					}
 				}
 
-// RIGHT LIST TOPIC ->
+// RIGHT LIST TOPICS ->
 				r = 0u;
 				const std::map<std::string, int>& partsProduced (mfRule->getPartsProduced());
 				if (partsProduced.empty() == false)
