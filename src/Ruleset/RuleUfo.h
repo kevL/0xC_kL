@@ -75,7 +75,7 @@ private:
 
 
 	public:
-		static const char* stSize[5u];
+		static const char* const stSize[5u];
 
 		/// Creates a blank UFO ruleset.
 		explicit RuleUfo(const std::string& type);

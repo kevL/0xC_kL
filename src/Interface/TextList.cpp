@@ -845,7 +845,7 @@ size_t TextList::getSelectedRow() const
  * Sets the surface used to draw the background of the selector.
  * @param bg - new background
  */
-void TextList::setBackground(Surface* bg)
+void TextList::setBackground(Surface* const bg)
 {
 	_scrollbar->setBackground(_bg = bg);
 }
@@ -1002,6 +1002,7 @@ void TextList::clearList()
 
 	_texts.clear();
 	_rows.clear();
+	_selector->setVisible(false);
 
 	updateArrows();
 	_redraw = true;

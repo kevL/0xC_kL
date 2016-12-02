@@ -616,7 +616,7 @@ items:
     costBuy: 150
     costSell: 30
     weight: 5
-    bigSprite: 519 #org 20
+    bigSprite: 519   #org 20
     floorSprite: 519 #org 20
     fireSoundHit: 12
     fireHitAni: 24

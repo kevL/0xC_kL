@@ -51,7 +51,7 @@ items:
   - type: STR_WASPITE_SOLDIER
     size: 0.0
     liveAlien: true
-    costSell: 40000
+    costSell: 60000
     listOrder: 14401
 
   - type: STR_WASPITE_MEDIC

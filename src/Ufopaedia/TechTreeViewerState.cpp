@@ -43,6 +43,9 @@
 namespace OpenXcom
 {
 
+const std::string TechTreeViewerState::START_PLAY = "STR_UNLOCKED"; // static.
+
+
 /**
  * Initializes all the elements on the UI.
  * @param selTopicResearch		- (default nullptr)
@@ -101,6 +104,8 @@ TechTreeViewerState::TechTreeViewerState(
 	_txtTitle->setAlign(ALIGN_CENTER);
 
 	_txtSelTopic->setText(tr("STR_TOPIC_").arg(L""));
+	_txtSelTopic->setColor(TOPIC_BLUE);
+	_txtSelTopic->setHighContrast();
 
 	_lstLeft->setColumns(1, 132);
 	_lstLeft->setBackground(_window);
@@ -134,6 +139,8 @@ TechTreeViewerState::TechTreeViewerState(
 	int
 		costDiscovered	(0),
 		costTotal		(0);
+
+	_discovered.insert(START_PLAY);
 
 	const std::vector<ResearchGeneral*>& discovered (_game->getSavedGame()->getResearchGenerals());
 	for (std::vector<ResearchGeneral*>::const_iterator
@@ -222,6 +229,12 @@ void TechTreeViewerState::fillTechTreeLists()
 		woststr << tr("STR_M_FLAG");
 
 	_txtSelTopic->setText(tr("STR_TOPIC_").arg(woststr.str()));
+	Uint8 color;
+	if (isDiscovered(_selTopic) == true)
+		color = TOPIC_GREEN;
+	else
+		color = TOPIC_YELLOW;
+	_txtSelTopic->setSecondaryColor(color);
 
 	_topicsLeft	.clear();
 	_topicsRight.clear();
@@ -235,7 +248,7 @@ void TechTreeViewerState::fillTechTreeLists()
 	{
 		case TECH_RESEARCH:
 		{
-			if (_selTopic == "STR_UNLOCKED")
+			if (_selTopic == START_PLAY)
 			{
 				std::vector<std::string>
 					requiredBy_mf,
@@ -260,7 +273,7 @@ void TechTreeViewerState::fillTechTreeLists()
 				{
 					const RuleResearch* const otherRule (_rules->getResearch(*i));
 					if (   otherRule->getRequisiteResearch().empty() == false
-						&& otherRule->getRequisiteResearch().front() == "STR_UNLOCKED")
+						&& otherRule->getRequisiteResearch().front() == START_PLAY)
 					{
 						requisiteTo.push_back(*i);
 					}

@@ -32,7 +32,7 @@
 namespace OpenXcom
 {
 
-const char* MovingTarget::stAltitude[5u] // static.
+const char* const MovingTarget::stAltitude[5u] // static.
 {
 	"STR_GROUND",	// 0
 	"STR_VERY_LOW",	// 1

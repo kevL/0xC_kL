@@ -6,8 +6,8 @@ facilities:
     buildCost: 250000
     buildTime: 1
     monthlyCost: 12500 # 5% of buildCost
-    radarRange: 600 # just to give a 600 radii
-    radarChance: 5 # ditto, plus a bit for visual sightings
+    radarRange: 600    # just to give a 600 radii
+    radarChance: 5     # ditto, plus a bit for visual sightings
     blockType: XBASE_00
 
   - type: STR_LIVING_QUARTERS

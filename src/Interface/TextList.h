@@ -237,7 +237,7 @@ private:
 		void setCondensed(bool condensed);
 
 		/// Sets the background for the selector.
-		void setBackground(Surface* bg);
+		void setBackground(Surface* const bg);
 
 		/// Gets the selected row in the TextList.
 		size_t getSelectedRow() const;

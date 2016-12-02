@@ -72,7 +72,7 @@ private:
 
 
 		public:
-			static const char* stAltitude[5u];
+			static const char* const stAltitude[5u];
 
 			/// Cleans up the MovingTarget.
 			virtual ~MovingTarget();

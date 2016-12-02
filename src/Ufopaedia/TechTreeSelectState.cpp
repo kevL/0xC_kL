@@ -88,6 +88,8 @@ TechTreeSelectState::TechTreeSelectState(TechTreeViewerState* const viewer)
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick),
 							Options::keyOkKeypad);
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeSelectState::btnOkClick),
+							SDLK_t);
 
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TechTreeSelectState::keyQuickSearchToggle),
 							SDLK_q);

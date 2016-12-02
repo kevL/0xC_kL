@@ -245,7 +245,7 @@ extraStrings:
       STR_TECH_TREE_VIEWER: "Tech Tree"
       STR_AVAILABLE_TOPICS: "Topics"
       STR_SELECT_TOPIC: "Topics"
-      STR_TOPIC_: "topic> {0}"
+      STR_TOPIC_: "topic> {ALT}{0}"
       STR_M_FLAG: " M"
       STR_RESEARCH_PROGRESS_: "Progress> {0}"
       STR_REQUIRED: "required>"

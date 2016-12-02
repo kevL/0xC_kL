@@ -55,10 +55,15 @@ class TechTreeViewerState
 
 private:
 	static const Uint8
-		WHITE	= 208u,
-		GOLD	= 213u,
-		BLUE	= 218u,
-		PINK	= 241u;
+		TOPIC_GREEN		=  48u,
+		TOPIC_BLUE		= 128u,
+		TOPIC_YELLOW	= 144u,
+		WHITE			= 208u,
+		GOLD			= 213u,
+		BLUE			= 218u,
+		PINK			= 241u;
+
+	static const std::string START_PLAY;
 
 	TechTreeType _selFlag;
 

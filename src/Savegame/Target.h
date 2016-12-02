@@ -52,7 +52,7 @@ protected:
 
 
 	public:
-		static const char* stTarget[8u];
+		static const char* const stTarget[8u];
 
 		/// Cleans up the Target.
 		virtual ~Target();

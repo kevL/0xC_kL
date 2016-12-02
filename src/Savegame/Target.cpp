@@ -28,7 +28,7 @@
 namespace OpenXcom
 {
 
-const char* Target::stTarget[8u] // static.
+const char* const Target::stTarget[8u] // static.
 {
 	"STR_UFO",			// 0
 	"STR_BASE",			// 1

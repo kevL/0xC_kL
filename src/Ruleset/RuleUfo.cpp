@@ -27,7 +27,7 @@
 namespace OpenXcom
 {
 
-const char* RuleUfo::stSize[5u] // static.
+const char* const RuleUfo::stSize[5u] // static.
 {
 	"STR_VERY_SMALL",	// 0
 	"STR_SMALL",		// 1
