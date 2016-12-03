@@ -17,11 +17,11 @@ extraSprites:
 extraStrings:
   - type: en-US
     strings:
-      STR_115_REACTOR: "E-115 Extraction Reactor"
-      STR_115_REACTOR_UFOPEDIA: "This reinforced and shielded facility is required to extract Elerium-115 from alien munitions. It is constructed to withstand the stresses of repeated implosions and can be locked down in the event of a runaway chain reaction. The procedure is highly unstable and extreme caution should be exercised near the chamber, weapons fire in particular being strongly discouraged."
       STR_ELERIUM_EXTRACTION: "Elerium Extraction"
       STR_ELERIUM_EXTRACTION_UFOPEDIA: "Because all alien munitions contain small but pure samples of Elerium, our scientists have discovered a process that seems to involve taking an alien power source sub-critical for several nano-seconds. The resulting implosion should superheat and compress the Elerium-115, producing a refined sample of the element but thoroughly destroying the power source. This process is highly unstable and requires a specialized facility to accomodate the necessary equipment and containment."
-      STR_EE_PISTOLCLIP: "115 Extraction Clip-pistol"
-      STR_EE_RIFLECLIP: "115 Extraction Clip-rifle"
-      STR_EE_HEAVYCLIP: "115 Extraction Clip-heavy"
-      STR_EE_BLASTERBOMB: "115 Extraction Blaster-shell"
+      STR_115_REACTOR: "E-115 Extraction Reactor"
+      STR_115_REACTOR_UFOPEDIA: "This reinforced and shielded facility is required to extract Elerium-115 from alien munitions. It is constructed to withstand the stresses of repeated implosions and can be locked down in the event of a runaway chain reaction. The procedure is highly unstable and extreme caution should be exercised near the chamber, weapons fire in particular being strongly discouraged."
+      STR_EE_PISTOLCLIP: "115 Extract Clip-pistol"
+      STR_EE_RIFLECLIP: "115 Extract Clip-rifle"
+      STR_EE_HEAVYCLIP: "115 Extract Clip-heavy"
+      STR_EE_BLASTERBOMB: "115 Extract Blaster-shell"
