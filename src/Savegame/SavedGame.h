@@ -208,8 +208,8 @@ private:
 	std::vector<Waypoint*>				_waypoints;
 
 
-	/// Finds the ResearchGeneral corresponding to a specified research-rule.
-	ResearchGeneral* findResearchGeneral(const RuleResearch* const resRule) const;
+	/// Gets the ResearchGeneral corresponding to a specified research-rule.
+//	ResearchGeneral* getResearchGeneral(const RuleResearch* const resRule) const;
 	/// Checks if a RuleResearch has had all of its required-research discovered.
 	bool checkRequiredResearch(const RuleResearch* const resRule) const;
 

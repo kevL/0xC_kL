@@ -1300,11 +1300,11 @@ std::vector<ResearchGeneral*>& SavedGame::getResearchGenerals()
 }
 
 /**
- * Finds the ResearchGeneral corresponding to a specified research-rule.
+ * Gets the ResearchGeneral corresponding to a specified research-rule.
  * @param resRule - reference to a RuleResearch to find the General for
  * @return, pointer to the ResearchGeneral or nullptr if not found
- */
-ResearchGeneral* SavedGame::findResearchGeneral(const RuleResearch* const resRule) const // private.
+ *
+ResearchGeneral* SavedGame::getResearchGeneral(const RuleResearch* const resRule) const // private.
 {
 	for (std::vector<ResearchGeneral*>::const_iterator
 			i  = _research.begin();
@@ -1315,7 +1315,7 @@ ResearchGeneral* SavedGame::findResearchGeneral(const RuleResearch* const resRul
 			return *i;
 	}
 	return nullptr;
-}
+} */
 
 /**
  * Searches the ResearchGenerals for a specified research-type & status.
@@ -1477,8 +1477,8 @@ void SavedGame::tabulatePopupResearch(
 				i != resRule->getRequestedResearch().end();
 			  ++i)
 		{
-			requested = _rules->getResearch(*i);							// NOTE: There is no safety on finding the ResearchGeneral; they shall correspond to RuleResearch's 1:1.
-			if (findResearchGeneral(requested)->getStatus() == RG_LOCKED	// <- safety to ensure discovered-research does not revert to unlocked.
+			requested = _rules->getResearch(*i);
+			if (searchResearch(requested, RG_LOCKED) == true // safety to ensure discovered-research does not revert to unlocked.
 				&& checkRequiredResearch(requested) == true)
 			{
 				if (requested->getCost() != 0)
