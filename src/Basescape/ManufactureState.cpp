@@ -332,7 +332,7 @@ void ManufactureState::btnManufactureClick(Action*)
  * Opens the Manufacture settings for a project.
  * @param action - pointer to an Action
  */
-void ManufactureState::lstManufactureClick(Action*)
+void ManufactureState::lstManufactureClick(Action*) // private.
 {
 	_game->pushState(new ManufactureInfoState(
 										_base,

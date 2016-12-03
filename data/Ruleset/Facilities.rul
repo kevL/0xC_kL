@@ -195,4 +195,5 @@ facilities:
     buildCost: 1500000
     buildTime: 30
     monthlyCost: 75000
+    workshops: 5
     blockType: XBASE_23

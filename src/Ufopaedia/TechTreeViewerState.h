@@ -103,8 +103,8 @@ private:
 	public:
 		/// Creates a TechTreeViewer state.
 		TechTreeViewerState(
-				const RuleResearch* const selTopicResearch = nullptr,
-				const RuleManufacture* const selTopicManufacture = nullptr);
+				const RuleResearch* const topicResearch = nullptr,
+				const RuleManufacture* const topicManufacture = nullptr);
 		/// Cleans up the TechTreeViewer state.
 		~TechTreeViewerState();
 

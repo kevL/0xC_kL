@@ -46,6 +46,8 @@
 #include "../Savegame/ResearchProject.h"
 #include "../Savegame/SavedGame.h"
 
+#include "../Ufopaedia/TechTreeViewerState.h"
+
 
 namespace OpenXcom
 {
@@ -156,7 +158,8 @@ ResearchState::ResearchState(
 	_lstResearch->setColumns(4, 137,58,48,34);
 	_lstResearch->setBackground(_window);
 	_lstResearch->setSelectable();
-	_lstResearch->onMouseClick(static_cast<ActionHandler>(&ResearchState::onSelectProject));
+	_lstResearch->onMouseClick(	static_cast<ActionHandler>(&ResearchState::lstResearchClick),
+								0u);
 }
 
 /**
@@ -273,28 +276,37 @@ void ResearchState::btnAliensClick(Action*)
  * Opens the Research settings for a project.
  * @param action - pointer to an Action
  */
-void ResearchState::onSelectProject(Action*)
+void ResearchState::lstResearchClick(Action* action) // private.
 {
-	size_t
-		sel (_lstResearch->getSelectedRow()),
-		j (0u);
+	size_t sel (_lstResearch->getSelectedRow());
 
-	for (std::vector<bool>::const_iterator
-			i = _online.begin();
-			i != _online.end();
-			++i)
+	switch (action->getDetails()->button.button)
 	{
-		if (*i == true && sel == j)
+		case SDL_BUTTON_LEFT:
+		{
+			size_t j (0u);
+			for (std::vector<bool>::const_iterator
+					i = _online.begin();
+					i != _online.end();
+					++i)
+			{
+				if (*i == true && sel == j)
+					break;
+
+				if (*i == false)
+					++sel; // advance the 'selected row' to account for offline projects.
+
+				++j;
+			}
+			_game->pushState(new ResearchInfoState(
+												_base,
+												_base->getResearch().at(sel)));
 			break;
+		}
 
-		if (*i == false)
-			++sel; // advance the 'selected row' to account for offline projects.
-
-		++j;
+		case SDL_BUTTON_RIGHT:
+			_game->pushState(new TechTreeViewerState(_base->getResearch().at(sel)->getRules()));
 	}
-	_game->pushState(new ResearchInfoState(
-										_base,
-										_base->getResearch().at(sel)));
 }
 
 /**

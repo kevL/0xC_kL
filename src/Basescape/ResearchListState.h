@@ -60,14 +60,15 @@ private:
 	std::vector<ResearchProject*> _offlineProjects;
 	std::vector<const RuleResearch*> _unlocked;
 
-	/// Opens a window to assign scientists.
+	/// Handler for clicking on the ResearchProject list.
 	void lstStartClick(Action* action);
-	/// Fills the ResearchProject list with possible ResearchProjects.
+
+	/// Fills the list with available projects.
 	void fillProjectList();
 
 
 	public:
-		/// Creates the NewResearchList state.
+		/// Creates a ResearchList state.
 		explicit ResearchListState(Base* const base);
 		/// dTor.
 		~ResearchListState();

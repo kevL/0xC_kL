@@ -48,23 +48,23 @@ const std::string TechTreeViewerState::START_PLAY = "STR_UNLOCKED"; // static.
 
 /**
  * Initializes all the elements on the UI.
- * @param selTopicResearch		- (default nullptr)
- * @param selTopicManufacture	- (default nullptr)
+ * @param topicResearch		- pointer to a RuleResearch to show (default nullptr)
+ * @param topicManufacture	- pointer to a RuleManufacture to show (default nullptr)
  */
 TechTreeViewerState::TechTreeViewerState(
-		const RuleResearch* const selTopicResearch,
-		const RuleManufacture* const selTopicManufacture)
+		const RuleResearch* const topicResearch,
+		const RuleManufacture* const topicManufacture)
 	:
 		_rules(_game->getRuleset())
 {
-	if (selTopicResearch != nullptr)
+	if (topicResearch != nullptr)
 	{
-		_selTopic = selTopicResearch->getType();
+		_selTopic = topicResearch->getType();
 		_selFlag  = TECH_RESEARCH;
 	}
-	else if (selTopicManufacture != nullptr)
+	else if (topicManufacture != nullptr)
 	{
-		_selTopic = selTopicManufacture->getType();
+		_selTopic = topicManufacture->getType();
 		_selFlag  = TECH_MANUFACTURE;
 	}
 	else

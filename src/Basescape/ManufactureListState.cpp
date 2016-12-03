@@ -189,10 +189,10 @@ void ManufactureListState::btnCancelClick(Action*)
 }
 
 /**
- * Opens the ManufactureStart screen.
+ * Opens the ManufactureStart screen for assigning engineers.
  * @param action - pointer to an Action
  */
-void ManufactureListState::lstStartClick(Action*)
+void ManufactureListState::lstStartClick(Action*) // private.
 {
 	_scroll = _lstManufacture->getScroll();
 
@@ -209,15 +209,15 @@ void ManufactureListState::lstStartClick(Action*)
 }
 
 /**
- * Updates the production-list to match the category-filter.
+ * Updates the project-list to match the category-filter.
  */
-void ManufactureListState::cbxCategoryChange(Action*)
+void ManufactureListState::cbxCategoryChange(Action*) // private.
 {
 	fillProjectList();
 }
 
 /**
- * Fills the list with unlocked Manufacture.
+ * Fills the list with available Manufacture.
  */
 void ManufactureListState::fillProjectList() // private.
 {

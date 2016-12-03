@@ -39,7 +39,7 @@ class Window;
 
 
 /**
- * Screen that lists possible productions.
+ * Screen that lists available Manufacture projects.
  */
 class ManufactureListState
 	:
@@ -71,7 +71,12 @@ private:
 		_categoryTypes,
 		_unlockedTypes;
 
-	/// Fills the list with unlocked Manufacture.
+	/// Handler for clicking on the ManufactureProject list.
+	void lstStartClick(Action* action);
+	/// Handler for changing the manufacture-category filter.
+	void cbxCategoryChange(Action* action);
+
+	/// Fills the list with available Manufacture.
 	void fillProjectList();
 
 
@@ -88,10 +93,6 @@ private:
 		void btnCostsClick(Action* action);
 		/// Handler for clicking the OK button.
 		void btnCancelClick(Action* action);
-		/// Handler for clicking on the list.
-		void lstStartClick(Action* action);
-		/// Handler for changing the category filter.
-		void cbxCategoryChange(Action* action);
 };
 
 }

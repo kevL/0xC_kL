@@ -39,6 +39,8 @@
 #include "../Savegame/ResearchProject.h"
 #include "../Savegame/SavedGame.h"
 
+#include "../Ufopaedia/TechTreeViewerState.h"
+
 
 namespace OpenXcom
 {
@@ -81,7 +83,8 @@ ResearchListState::ResearchListState(
 	_lstResearch->setBackground(_window);
 	_lstResearch->setSelectable();
 	_lstResearch->setAlign(ALIGN_CENTER);
-	_lstResearch->onMouseClick(static_cast<ActionHandler>(&ResearchListState::lstStartClick));
+	_lstResearch->onMouseClick(	static_cast<ActionHandler>(&ResearchListState::lstStartClick),
+								0u);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ResearchListState::btnCancelClick));
@@ -120,23 +123,34 @@ void ResearchListState::btnCancelClick(Action*)
 }
 
 /**
- * Selects the RuleResearch to work on.
+ * Selects the research to work on and assigns scientists.
  * @note If an offline ResearchProject is selected the spent & cost values are preserved.
  * @param action - pointer to an Action
  */
-void ResearchListState::lstStartClick(Action*) // private.
+void ResearchListState::lstStartClick(Action* action) // private.
 {
 	_scroll = _lstResearch->getScroll();
 
-	if (static_cast<int>(_lstResearch->getSelectedRow()) > _cutoff)	// new project
-		_game->pushState(new ResearchInfoState(
-											_base,
-											_unlocked[static_cast<size_t>(static_cast<int>(_lstResearch->getSelectedRow()) - (_cutoff + 1))]));
-	else
-		_game->pushState(new ResearchInfoState(						// offline project reactivation.
-											_base,
-											_offlineProjects[_lstResearch->getSelectedRow()]));
-//	_game->popState();
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			if (static_cast<int>(_lstResearch->getSelectedRow()) > _cutoff)
+				_game->pushState(new ResearchInfoState(						// new project by RuleResearch
+													_base,
+													_unlocked[static_cast<size_t>(static_cast<int>(_lstResearch->getSelectedRow()) - (_cutoff + 1))]));
+			else
+				_game->pushState(new ResearchInfoState(						// offline project reactivation by ResearchProject
+													_base,
+													_offlineProjects[_lstResearch->getSelectedRow()]));
+//			_game->popState();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			if (static_cast<int>(_lstResearch->getSelectedRow()) > _cutoff)
+				_game->pushState(new TechTreeViewerState(_unlocked[static_cast<size_t>(static_cast<int>(_lstResearch->getSelectedRow()) - (_cutoff + 1))]));
+			else
+				_game->pushState(new TechTreeViewerState(_offlineProjects[_lstResearch->getSelectedRow()]->getRules()));
+	}
 }
 
 /**

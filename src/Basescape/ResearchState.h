@@ -69,6 +69,9 @@ private:
 
 	std::vector<Base*>* _baseList;
 
+	/// Handler for clicking the ResearchProject list.
+	void lstResearchClick(Action* action);
+
 
 	public:
 		/// Creates a Research state.
@@ -87,8 +90,6 @@ private:
 		void btnResearchClick(Action* action);
 		/// Handler for clicking the Alien Containment button.
 		void btnAliensClick(Action* action);
-		/// Handler for clicking the ResearchProject list.
-		void onSelectProject(Action* action);
 
 		/// Handler for clicking the MiniBase view.
 		void miniClick(Action* action);

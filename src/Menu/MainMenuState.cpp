@@ -94,12 +94,12 @@ MainMenuState::MainMenuState()
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
-	_btnStart->setText(tr("STR_NEW_GAME"));
+	_btnStart->setText(tr("STR_START_GAME"));
 	_btnStart->onMouseClick(	static_cast<ActionHandler>(&MainMenuState::btnStartPlayClick));
 	_btnStart->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnStartPlayClick),
-								SDLK_n);
+								SDLK_s);
 
-	_btnTactical->setText(tr("STR_NEW_BATTLE"));
+	_btnTactical->setText(tr("STR_TACTICAL_BATTLE"));
 	_btnTactical->onMouseClick(		static_cast<ActionHandler>(&MainMenuState::btnQuickBattleClick));
 	_btnTactical->onKeyboardPress(	static_cast<ActionHandler>(&MainMenuState::btnQuickBattleClick),
 									SDLK_t);

@@ -71,7 +71,7 @@ private:
 
 	std::vector<Base*>* _baseList;
 
-	///
+	/// Handler for clicking the ManufactureProject list.
 	void lstManufactureClick(Action* action);
 
 
