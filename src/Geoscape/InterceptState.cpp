@@ -54,15 +54,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Intercept window.
- * @param base		- pointer to Base to show crafts (default nullptr to show all crafts)
- * @param geoState	- pointer to GeoscapeState (default nullptr)
+ * @param geoState	- pointer to GeoscapeState
+ * @param base		- pointer to Base to show crafts (default nullptr to show all Craft)
  */
 InterceptState::InterceptState(
-		Base* const base,
-		GeoscapeState* const geoState)
+		GeoscapeState* const geoState,
+		Base* const base)
 	:
-		_base(base),
-		_geoState(geoState)
+		_geoState(geoState),
+		_base(base)
 {
 	_fullScreen = false;
 
@@ -85,7 +85,7 @@ InterceptState::InterceptState(
 
 	_lstCrafts	= new TextList(285, 113, 16 + dX, 50);
 
-	_btnGoto	= new TextButton(142, 16,  16 + dX, 167);
+	_btnBase	= new TextButton(142, 16,  16 + dX, 167);
 	_btnCancel	= new TextButton(142, 16, 162 + dX, 167);
 
 	setInterface("geoCraftScreens");
@@ -96,7 +96,7 @@ InterceptState::InterceptState(
 	add(_txtStatus,		"text2",	"geoCraftScreens");
 	add(_txtWeapons,	"text2",	"geoCraftScreens");
 	add(_lstCrafts,		"list",		"geoCraftScreens");
-	add(_btnGoto,		"button",	"geoCraftScreens");
+	add(_btnBase,		"button",	"geoCraftScreens");
 	add(_btnCancel,		"button",	"geoCraftScreens");
 
 	centerSurfaces();
@@ -104,9 +104,13 @@ InterceptState::InterceptState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"), dX);
 
-	_btnGoto->setText(tr("STR_GO_TO_BASE"));
-	_btnGoto->onMouseClick(static_cast<ActionHandler>(&InterceptState::btnGotoBaseClick));
-	_btnGoto->setVisible(_base != nullptr);
+	if (_base != nullptr)
+	{
+		_btnBase->setText(_base->getLabel()); // "STR_GO_TO_BASE"
+		_btnBase->onMouseClick(static_cast<ActionHandler>(&InterceptState::btnGotoBaseClick));
+	}
+	else
+		_btnBase->setVisible(false);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&InterceptState::btnCancelClick));
@@ -131,8 +135,8 @@ InterceptState::InterceptState(
 	_lstCrafts->setColumns(5, 91,126,25,15,15);
 	_lstCrafts->setBackground(_window);
 	_lstCrafts->setSelectable();
-	_lstCrafts->onMouseClick(	static_cast<ActionHandler>(&InterceptState::lstCraftsLeftClick));
-	_lstCrafts->onMouseClick(	static_cast<ActionHandler>(&InterceptState::lstCraftsRightClick),
+	_lstCrafts->onMouseClick(	static_cast<ActionHandler>(&InterceptState::lstCraftsClickLeft));
+	_lstCrafts->onMouseClick(	static_cast<ActionHandler>(&InterceptState::lstCraftsClickRight),
 								SDL_BUTTON_RIGHT);
 	_lstCrafts->onMouseOver(	static_cast<ActionHandler>(&InterceptState::lstCraftsMouseOver));
 	_lstCrafts->onMouseOut(		static_cast<ActionHandler>(&InterceptState::lstCraftsMouseOut));
@@ -299,7 +303,7 @@ void InterceptState::btnGotoBaseClick(Action*)
  * Opens a craft-info window.
  * @param action - pointer to an Action
  */
-void InterceptState::lstCraftsLeftClick(Action*)
+void InterceptState::lstCraftsClickLeft(Action*)
 {
 	Craft* const craft (_crafts[_lstCrafts->getSelectedRow()]);
 	_game->pushState(new GeoscapeCraftState(craft, _geoState, nullptr, true));
@@ -309,7 +313,7 @@ void InterceptState::lstCraftsLeftClick(Action*)
  * Centers on the selected Craft.
  * @param action - pointer to an Action
  */
-void InterceptState::lstCraftsRightClick(Action*)
+void InterceptState::lstCraftsClickRight(Action*)
 {
 	_game->popState();
 

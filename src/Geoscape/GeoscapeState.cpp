@@ -44,11 +44,11 @@
 #include "LowFuelState.h"
 #include "ManufactureUnlockedState.h"
 #include "MonthlyReportState.h"
-#include "MultipleTargetsState.h"
 #include "ManufactureCompleteState.h"
 #include "ResearchCompleteState.h"
 #include "ResearchRequiredState.h"
 #include "ResearchUnlockedState.h"
+#include "SelectTargetState.h"
 #include "SoldierDiedState.h"
 #include "TerrorDetectedState.h"
 #include "UfoDetectedState.h"
@@ -3192,9 +3192,9 @@ void GeoscapeState::resetTimer()
 {
 	_globe->rotateStop();
 
-	Action* a (_game->getSynthMouseDown());
-	_btn5Secs->mousePress(a, this);
-	delete a;
+	Action* action (_game->getSynthMouseDown());
+	_btn5Secs->mousePress(action, this);
+	delete action;
 }
 
 /**
@@ -3240,7 +3240,7 @@ void GeoscapeState::globeClick(Action* action)
 	{
 		const std::vector<Target*> targets (_globe->getTargets(mX,mY, false));
 		if (targets.empty() == false)
-			_game->pushState(new MultipleTargetsState(targets, nullptr, this));
+			_game->pushState(new SelectTargetState(targets, nullptr, this));
 	}
 
 	if (_gameSave->getDebugGeo() == true)
@@ -3285,7 +3285,7 @@ void GeoscapeState::globeClick(Action* action)
  */
 void GeoscapeState::btnInterceptClick(Action*)
 {
-	_game->pushState(new InterceptState(nullptr, this));
+	_game->pushState(new InterceptState(this));
 }
 
 /**
@@ -3294,27 +3294,18 @@ void GeoscapeState::btnInterceptClick(Action*)
  */
 void GeoscapeState::btnBasesClick(Action*)
 {
+	resetTimer();
 	kL_soundPop->play(Mix_GroupAvailable(0));
 	_game->getScreen()->fadeScreen();
 
-	resetTimer();
-
-	if (_gameSave->getBases()->empty() == false)
-	{
-		if (kL_curBase == 0u
-			|| kL_curBase >= _gameSave->getBases()->size())
-		{
-			_game->pushState(new BasescapeState(
-											_gameSave->getBases()->front(),
-											_globe));
-		}
-		else
-			_game->pushState(new BasescapeState(
-											_gameSave->getBases()->at(kL_curBase),
-											_globe));
-	}
+	if (kL_curBase < _gameSave->getBases()->size())
+		_game->pushState(new BasescapeState(
+										_gameSave->getBases()->at(kL_curBase),
+										_globe));
 	else
-		_game->pushState(new BasescapeState(nullptr, _globe));
+		_game->pushState(new BasescapeState(
+										_gameSave->getBases()->front(),
+										_globe));
 }
 
 /**
@@ -3323,10 +3314,10 @@ void GeoscapeState::btnBasesClick(Action*)
  */
 void GeoscapeState::btnGraphsClick(Action*)
 {
+	resetTimer();
 	kL_soundPop->play(Mix_GroupAvailable(0));
 	_game->getScreen()->fadeScreen();
 
-	resetTimer();
 	_game->pushState(new GraphsState());
 }
 
@@ -3336,11 +3327,10 @@ void GeoscapeState::btnGraphsClick(Action*)
  */
 void GeoscapeState::btnUfopaediaClick(Action*)
 {
+	resetTimer();
 	_game->getResourcePack()->fadeMusic(_game, 276);
 
-	resetTimer();
 	Ufopaedia::open(_game);
-
 	_game->getResourcePack()->playMusic(
 									OpenXcom::res_MUSIC_UFOPAEDIA,
 									"", 1);
@@ -3729,7 +3719,6 @@ void GeoscapeState::startDogfight() // private.
 	else
 	{
 		resetTimer();
-
 		_timerDfStart->stop();
 		_timerDfZoomIn->stop();
 

@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_MULTIPLETARGETSSTATE_H
-#define OPENXCOM_MULTIPLETARGETSSTATE_H
+#ifndef OPENXCOM_SELECTTARGETSTATE_H
+#define OPENXCOM_SELECTTARGETSTATE_H
 
 //#include <vector>
 
@@ -38,7 +38,7 @@ class Window;
 /**
  * Displays a list of possible targets.
  */
-class MultipleTargetsState
+class SelectTargetState
 	:
 		public State
 {
@@ -60,13 +60,13 @@ private:
 
 
 	public:
-		/// Creates a MultipleTargets state.
-		MultipleTargetsState(
+		/// Creates a SelectTarget state.
+		SelectTargetState(
 				std::vector<Target*> targets,
 				Craft* const craft,
-				GeoscapeState* const geoState);
-		/// Cleans up the MultipleTargets state.
-		~MultipleTargetsState();
+				GeoscapeState* const geoState = nullptr);
+		/// Cleans up the SelectTarget state.
+		~SelectTargetState();
 
 		/// Updates the window.
 		void init() override;

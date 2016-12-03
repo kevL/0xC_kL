@@ -39,7 +39,7 @@ class Window;
 
 
 /**
- * Interception window that lets player launch crafts on the Geoscape.
+ * Interception window that lets player launch Crafts on the Geoscape.
  */
 class InterceptState
 	:
@@ -48,11 +48,11 @@ class InterceptState
 
 private:
 	static const Uint8
-		OLIVE	=  48u, // Palette::blockOffset(3)
-		GREEN	= 112u, // Palette::blockOffset(7)
-		BROWN	= 144u, // Palette::blockOffset(9)
-		SLATE	= 160u, // Palette::blockOffset(10)
-		PURPLE	= 176u; // Palette::blockOffset(11) // 192, blue
+		OLIVE	=  48u,
+		GREEN	= 112u,
+		BROWN	= 144u,
+		SLATE	= 160u,
+		PURPLE	= 176u;
 
 	Uint8 _cellColor;
 
@@ -65,7 +65,7 @@ private:
 		* _txtWeapons;
 	TextButton
 		* _btnCancel,
-		* _btnGoto;
+		* _btnBase;
 	TextList* _lstCrafts;
 	Window* _window;
 
@@ -78,10 +78,10 @@ private:
 
 
 	public:
-		/// Creates the Intercept state.
+		/// Creates an Intercept state.
 		InterceptState(
-				Base* const base = nullptr,
-				GeoscapeState* const geoState = nullptr);
+				GeoscapeState* const geoState,
+				Base* const base = nullptr);
 		/// Cleans up the Intercept state.
 		~InterceptState();
 
@@ -91,9 +91,9 @@ private:
 		/// Handler for clicking the Go To Base button.
 		void btnGotoBaseClick(Action* action);
 		/// Handler for clicking the Crafts list.
-		void lstCraftsLeftClick(Action* action);
+		void lstCraftsClickLeft(Action* action);
 		/// Handler for right clicking the Crafts list.
-		void lstCraftsRightClick(Action* action);
+		void lstCraftsClickRight(Action* action);
 
 		/// Handler for moving the mouse over a list item.
 		void lstCraftsMouseOver(Action* action);

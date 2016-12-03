@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MultipleTargetsState.h"
+#include "SelectTargetState.h"
 
 #include "ConfirmDestinationState.h"
 #include "GeoscapeCraftState.h"
@@ -46,12 +46,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the MultipleTargets window.
+ * Initializes all the elements in the SelectTarget window.
  * @param targets	- vector of pointers to Target for display
- * @param craft		- pointer to Craft to retarget (nullptr if none)
- * @param geoState	- pointer to the GeoscapeState
+ * @param craft		- pointer to Craft to re-target (nullptr if none)
+ * @param geoState	- pointer to the GeoscapeState (default nullptr if re-directing a Craft)
  */
-MultipleTargetsState::MultipleTargetsState(
+SelectTargetState::SelectTargetState(
 		std::vector<Target*> targets,
 		Craft* const craft,
 		GeoscapeState* const geoState)
@@ -64,12 +64,12 @@ MultipleTargetsState::MultipleTargetsState(
 
 	if (_targets.size() > 1)
 	{
-		int
+		const int
 			height ((BUTTON_HEIGHT * (static_cast<int>(_targets.size()) + 1)) // incl/ Cancel btn.
 				  + (SPACING       *  static_cast<int>(_targets.size()))
 				  + (MARGIN << 1u)),
-			window_y ((200 - height) >> 1u),
-			btn_y (window_y + MARGIN);
+			window_y ((200 - height) >> 1u);
+		int btn_y (window_y + MARGIN);
 
 		_window = new Window(
 							this,
@@ -94,7 +94,7 @@ MultipleTargetsState::MultipleTargetsState(
 										btn_y));
 			add(btn, "button", "UFOInfo");
 			btn->setText(_targets[i]->getLabel(_game->getLanguage()));
-			btn->onMouseClick(static_cast<ActionHandler>(&MultipleTargetsState::btnTargetClick));
+			btn->onMouseClick(static_cast<ActionHandler>(&SelectTargetState::btnTargetClick));
 
 			_btnTargets.push_back(btn);
 
@@ -108,12 +108,12 @@ MultipleTargetsState::MultipleTargetsState(
 								btn_y);
 		add(_btnCancel, "button", "UFOInfo");
 		_btnCancel->setText(tr("STR_CANCEL"));
-		_btnCancel->onMouseClick(	static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick));
-		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick),
+		_btnCancel->onMouseClick(	static_cast<ActionHandler>(&SelectTargetState::btnCancelClick));
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SelectTargetState::btnCancelClick),
 									Options::keyCancel);
-		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick),
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SelectTargetState::btnCancelClick),
 									Options::keyOk);
-		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&MultipleTargetsState::btnCancelClick),
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SelectTargetState::btnCancelClick),
 									Options::keyOkKeypad);
 
 		centerSurfaces();
@@ -123,13 +123,13 @@ MultipleTargetsState::MultipleTargetsState(
 /**
  * dTor.
  */
-MultipleTargetsState::~MultipleTargetsState()
+SelectTargetState::~SelectTargetState()
 {}
 
 /**
  * Resets the palette and ignores the window if there's only one target.
  */
-void MultipleTargetsState::init()
+void SelectTargetState::init()
 {
 	if (_targets.size() == 1u)
 		popupTarget(*_targets.begin());
@@ -138,10 +138,10 @@ void MultipleTargetsState::init()
 }
 
 /**
- * Displays the right popup for a specific target.
- * @param target - pointer to a Target
+ * Displays the right popup for a specified Target.
+ * @param target - pointer to a target
  */
-void MultipleTargetsState::popupTarget(Target* const target)
+void SelectTargetState::popupTarget(Target* const target)
 {
 	_game->popState();
 
@@ -152,7 +152,7 @@ void MultipleTargetsState::popupTarget(Target* const target)
 		Ufo* const ufo (dynamic_cast<Ufo*>(target));
 
 		if (base != nullptr)
-			_game->pushState(new InterceptState(base, _geoState));
+			_game->pushState(new InterceptState(_geoState, base));
 		else if (craft != nullptr)
 			_game->pushState(new GeoscapeCraftState(craft, _geoState));
 		else if (ufo != nullptr)
@@ -172,7 +172,7 @@ void MultipleTargetsState::popupTarget(Target* const target)
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void MultipleTargetsState::btnCancelClick(Action*)
+void SelectTargetState::btnCancelClick(Action*)
 {
 	_game->popState();
 }
@@ -181,7 +181,7 @@ void MultipleTargetsState::btnCancelClick(Action*)
  * Pick a target to display.
  * @param action - pointer to an Action
  */
-void MultipleTargetsState::btnTargetClick(Action* action)
+void SelectTargetState::btnTargetClick(Action* action)
 {
 	for (size_t
 			i = 0u;

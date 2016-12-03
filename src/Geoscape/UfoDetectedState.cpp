@@ -56,7 +56,7 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the Ufo Detected window.
  * @param ufo			- pointer to a UFO to get info from
- * @param state			- pointer to GeoscapeState
+ * @param geoState		- pointer to GeoscapeState
  * @param firstDetect	- true if the UFO has just been detected
  * @param hyperDetected	- true if the UFO has been hyperdetected
  * @param contact		- true if radar contact is established (false if hyperDetected only) (default true)
@@ -64,18 +64,18 @@ namespace OpenXcom
  */
 UfoDetectedState::UfoDetectedState(
 		Ufo* const ufo,
-		GeoscapeState* const state,
+		GeoscapeState* const geoState,
 		bool firstDetect,
 		bool hyperDetected,
 		bool contact,
 		std::vector<Base*>* hyperBases)
 	:
 		_ufo(ufo),
-		_geo(state),
+		_geoState(geoState),
 		_hyperDetected(hyperDetected),
 		_delayPop(true)
 {
-	_geo->getGlobe()->rotateStop();
+	_geoState->getGlobe()->rotateStop();
 
 	if (_ufo->getId() == 0) // generate UFO-ID
 		_ufo->setId(_game->getSavedGame()->getCanonicalId(Target::stTarget[0u]));
@@ -279,16 +279,17 @@ UfoDetectedState::UfoDetectedState(
 		case Ufo::LANDED:
 		case Ufo::CRASHED:
 		{
-			// IMPORTANT: This does not return the actual battleField terrain; that is done
-			// in ConfirmLandingState. This is merely an indicator .... cf. DogfightState
+			// IMPORTANT: This does not return the actual battleField terrain;
+			// that is done in ConfirmLandingState. This is merely an indicator
+			// .... cf. DogfightState
 			int
 				texture,
 				shade;
-			_geo->getGlobe()->getPolygonTextureAndShade(
-												_ufo->getLongitude(),
-												_ufo->getLatitude(),
-												&texture,
-												&shade);
+			_geoState->getGlobe()->getPolygonTextureAndShade(
+														_ufo->getLongitude(),
+														_ufo->getLatitude(),
+														&texture,
+														&shade);
 			std::string terrain;
 			switch (texture)
 			{
@@ -471,7 +472,7 @@ UfoDetectedState::~UfoDetectedState()
 void UfoDetectedState::init()
 {
 	State::init();
-	_btn5Sec->setVisible(_geo->is5Sec() == false);
+	_btn5Sec->setVisible(_geoState->is5Sec() == false);
 }
 
 /**
@@ -480,11 +481,11 @@ void UfoDetectedState::init()
  */
 void UfoDetectedState::btnInterceptClick(Action*)
 {
-	_geo->assessUfoPopups();
-	_geo->resetTimer();
+	_geoState->assessUfoPopups();
+	_geoState->resetTimer();
 	_game->popState();
 
-	_game->pushState(new InterceptState(nullptr, _geo));
+	_game->pushState(new InterceptState(_geoState));
 }
 
 /**
@@ -493,9 +494,9 @@ void UfoDetectedState::btnInterceptClick(Action*)
  */
 void UfoDetectedState::btnCenterClick(Action*)
 {
-	_geo->getGlobe()->center(
-						_ufo->getLongitude(),
-						_ufo->getLatitude());
+	_geoState->getGlobe()->center(
+							_ufo->getLongitude(),
+							_ufo->getLatitude());
 
 	if (_delayPop == true)
 	{
@@ -504,9 +505,9 @@ void UfoDetectedState::btnCenterClick(Action*)
 		return;
 	}
 
-	_geo->assessUfoPopups();
-	_geo->setPaused();
-	_geo->resetTimer();
+	_geoState->assessUfoPopups();
+	_geoState->setPaused();
+	_geoState->resetTimer();
 	_game->popState();
 }
 
@@ -516,8 +517,8 @@ void UfoDetectedState::btnCenterClick(Action*)
  */
 void UfoDetectedState::btn5SecClick(Action*)
 {
-	_geo->assessUfoPopups();
-	_geo->resetTimer();
+	_geoState->assessUfoPopups();
+	_geoState->resetTimer();
 	_game->popState();
 }
 
@@ -527,7 +528,7 @@ void UfoDetectedState::btn5SecClick(Action*)
  */
 void UfoDetectedState::btnCancelClick(Action*)
 {
-	_geo->assessUfoPopups();
+	_geoState->assessUfoPopups();
 	_game->popState();
 }
 
@@ -541,7 +542,7 @@ void UfoDetectedState::transposeWindow() // private.
 	_txtDetected->setVisible(false);
 	_lstInfo->setVisible(false);
 
-	if (_geo->getPaused() == false)
+	if (_geoState->getPaused() == false)
 		_btnCenter->setText(tr("STR_PAUSE").c_str());
 	else
 		_btnCenter->setVisible(false);

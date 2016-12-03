@@ -49,7 +49,7 @@ private:
 		_delayPop,
 		_hyperDetected;
 
-	GeoscapeState* _geo;
+	GeoscapeState* _geoState;
 	Surface* _srfTarget;
 	Text
 		* _txtBases,
@@ -80,7 +80,7 @@ private:
 		/// Creates a UfoDetected state.
 		UfoDetectedState(
 				Ufo* const ufo,
-				GeoscapeState* const state,
+				GeoscapeState* const geoState,
 				bool firstDetect,
 				bool hyperDetected,
 				bool contact = true,

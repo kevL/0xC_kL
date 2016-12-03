@@ -25,7 +25,7 @@
 #include "CraftErrorState.h"
 #include "GeoscapeState.h"
 #include "Globe.h"
-#include "MultipleTargetsState.h"
+#include "SelectTargetState.h"
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
@@ -298,10 +298,7 @@ void SelectDestinationState::globeClick(Action* action)
 			else
 				targets.push_back(wp);
 
-			_game->pushState(new MultipleTargetsState(
-													targets,
-													_craft,
-													nullptr));
+			_game->pushState(new SelectTargetState(targets, _craft));
 		}
 	}
 }

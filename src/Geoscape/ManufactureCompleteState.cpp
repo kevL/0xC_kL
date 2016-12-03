@@ -175,9 +175,7 @@ void ManufactureCompleteState::btnGotoBaseClick(Action*)
 	_geoState->resetTimer();
 
 	_game->popState();
-	_game->pushState(new BasescapeState(
-									_base,
-									_geoState->getGlobe()));
+	_game->pushState(new BasescapeState(_base, _geoState->getGlobe()));
 }
 
 }

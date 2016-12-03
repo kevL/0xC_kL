@@ -166,7 +166,7 @@ void TargetInfoState::btnInterceptClick(Action*)
 	_geoState->resetTimer();
 
 	_game->popState();
-	_game->pushState(new InterceptState(nullptr, _geoState));
+	_game->pushState(new InterceptState(_geoState));
 }
 
 /**

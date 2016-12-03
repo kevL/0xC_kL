@@ -124,7 +124,7 @@ TerrorDetectedState::~TerrorDetectedState()
 void TerrorDetectedState::btnInterceptClick(Action*)
 {
 	_game->popState();
-	_game->pushState(new InterceptState(nullptr, _geoState));
+	_game->pushState(new InterceptState(_geoState));
 }
 
 /**
