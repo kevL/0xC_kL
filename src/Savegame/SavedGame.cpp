@@ -1706,7 +1706,7 @@ void SavedGame::tabulateStartableManufacture(
 			bypass = false;
 
 			for (std::map<std::string, int>::const_iterator
-					j = mfRule->getRequiredFacilities().begin();
+					j = mfRule->getRequiredFacilities().begin(); // WARNING: Do not explicitly spec. a RuleManufacture w/ required-facilities < 1.
 					j != mfRule->getRequiredFacilities().end() && bypass == false;
 					++j)
 			{

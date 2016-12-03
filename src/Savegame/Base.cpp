@@ -2144,7 +2144,7 @@ void Base::destroyDisconnectedFacilities()
 
 /**
  * Gets a sorted list of the facilities(=iterators) NOT connected to the Access Lift.
- * @param ignoreFac - BaseFacility to ignore in case of intentional dismantling (default nullptr)
+ * @param ignoreFac - a BaseFacility to ignore in case of intentional dismantling (default nullptr)
  * @return, a sorted list of iterators pointing to elements in '_facilities'
  */
 std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacilities(const BaseFacility* const ignoreFac)
@@ -2347,8 +2347,9 @@ std::list<std::vector<BaseFacility*>::const_iterator> Base::getDisconnectedFacil
  */
 std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<BaseFacility*>::const_iterator pFac)
 {
-	if ((*pFac)->getRules()->getCrafts() != 0) // TODO: Handle hangars that can hold more than one Craft.
-	{
+	// TODO: Stop Manufacture projects that rely on a quantity of BaseFacilities (eg, Elerium Extraction).
+	if ((*pFac)->getRules()->getCrafts() != 0)	// TODO: Handle hangars that can hold more than one Craft. Or
+	{											// decree that a hangar can hold only one Craft in RuleBaseFacility.
 		// Destroy Craft or production of Craft since there will no longer be a hangar for it.
 		if ((*pFac)->getCraft() != nullptr)
 		{

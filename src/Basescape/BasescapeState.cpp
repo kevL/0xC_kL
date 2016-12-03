@@ -149,20 +149,20 @@ BasescapeState::BasescapeState(
 
 	_baseLayout->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_baseLayout->setDog(_game->getResourcePack()->getSurface("BASEDOG"));
-	_baseLayout->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::layoutLeftClick),
+	_baseLayout->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::layoutClickLeft),
 								SDL_BUTTON_LEFT);
-	_baseLayout->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::layoutRightClick),
+	_baseLayout->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::layoutClickRight),
 								SDL_BUTTON_RIGHT);
 	_baseLayout->onMouseOver(	static_cast<ActionHandler>(&BasescapeState::layoutMouseOver));
 	_baseLayout->onMouseOut(	static_cast<ActionHandler>(&BasescapeState::layoutMouseOut));
 
 	_miniBases->setTexture(_game->getResourcePack()->getSurfaceSet("BASEBITS.PCK"));
 	_miniBases->setBases(_baseList);
-	_miniBases->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::basesLeftClick),
+	_miniBases->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::basesClickLeft),
 								SDL_BUTTON_LEFT);
-	_miniBases->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::basesRightClick),
+	_miniBases->onMouseClick(	static_cast<ActionHandler>(&BasescapeState::basesClickRight),
 								SDL_BUTTON_RIGHT);
-	_miniBases->onKeyboardPress(static_cast<ActionHandler>(&BasescapeState::handleKeyPress));
+	_miniBases->onKeyboardPress(static_cast<ActionHandler>(&BasescapeState::basesKeyPress));
 	_miniBases->onMouseOver(	static_cast<ActionHandler>(&BasescapeState::layoutMouseOver));
 	_miniBases->onMouseOut(		static_cast<ActionHandler>(&BasescapeState::layoutMouseOut));
 
@@ -574,7 +574,7 @@ void BasescapeState::btnGeoscapeClick(Action*)
  * Processes left clicking on facilities.
  * @param action - pointer to an Action
  */
-void BasescapeState::layoutLeftClick(Action*)
+void BasescapeState::layoutClickLeft(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
@@ -669,10 +669,10 @@ void BasescapeState::layoutLeftClick(Action*)
 }
 
 /**
- * Processes right clicking on facilities.
+ * Processes right-clicking on facilities.
  * @param action - pointer to an Action
  */
-void BasescapeState::layoutRightClick(Action*)
+void BasescapeState::layoutClickRight(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
@@ -761,7 +761,7 @@ void BasescapeState::layoutMouseOut(Action*)
  * Selects a different Base to display. Also builds a Base on the Globe.
  * @param action - pointer to an Action
  */
-void BasescapeState::basesLeftClick(Action*)
+void BasescapeState::basesClickLeft(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
@@ -795,7 +795,7 @@ void BasescapeState::basesLeftClick(Action*)
  * Pops to globe with selected Base centered.
  * @param action - pointer to an Action
  */
-void BasescapeState::basesRightClick(Action*)
+void BasescapeState::basesClickRight(Action*)
 {
 	if (_edtBase->isFocused() == false)
 	{
@@ -822,7 +822,7 @@ void BasescapeState::basesRightClick(Action*)
  * Selects a different Base to display.
  * @param action - pointer to an Action
  */
-void BasescapeState::handleKeyPress(Action* action)
+void BasescapeState::basesKeyPress(Action* action)
 {
 	if (_edtBase->isFocused() == false
 		&& action->getDetails()->type == SDL_KEYDOWN)

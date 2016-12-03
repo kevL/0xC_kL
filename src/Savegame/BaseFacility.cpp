@@ -178,15 +178,15 @@ bool BaseFacility::inUse() const
 {
 	if (_buildTime == 0)
 	{
-		const std::vector<ManufactureProject*>& baseProjects (_base->getManufacture());
 		for (std::vector<ManufactureProject*>::const_iterator
-				i = baseProjects.begin();
-				i != baseProjects.end();
+				i = _base->getManufacture().begin();
+				i != _base->getManufacture().end();
 				++i)
 		{
 			if ((*i)->getRules()->getRequiredFacilities().count(_facRule->getType()) != 0)
+//				&& (*i)->getRules()->getRequiredFacilities().at(_facRule->getType()) != 0 // safety. In case of a RuleManufacture that spec's 0 qty of a facility. hint: Don't do that.
 			{
-				const int facsRequired ((*i)->getRules()->getRequiredFacilities().at(_facRule->getType())); // did i mention how much I despise c++ yet. Good.
+				const int facsRequired ((*i)->getRules()->getRequiredFacilities().at(_facRule->getType())); // Did i mention that I deplore c++ yet. Good.
 				int facsFound (0);
 
 				for (std::vector<BaseFacility*>::const_iterator
@@ -198,9 +198,9 @@ bool BaseFacility::inUse() const
 						++facsFound;
 				}
 
-				if (facsRequired >= facsFound)	// TODO: Should run a check after BaseDefense tactical to see
-					return true;				// if a BaseFacility that's in use by Manufacture got demolished.
-			}									// But that's ... elsewhere.
+				if (facsFound <= facsRequired)	// NOTE: In practice 'facsFound' should never be less-than (only equal or greater-than) 'facsRequired'.
+					return true;				// TODO: Because a project should be cancelled immediately if facilities get destroyed in a BaseDefense tactical.
+			}
 		}
 
 		return (_facRule->getPersonnel() != 0

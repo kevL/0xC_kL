@@ -124,19 +124,19 @@ private:
 //		void btnNewBaseClick(Action* action);
 
 		/// Handler for left-clicking the BaseView.
-		void layoutLeftClick(Action* action);
+		void layoutClickLeft(Action* action);
 		/// Handler for right-clicking the BaseView.
-		void layoutRightClick(Action* action);
+		void layoutClickRight(Action* action);
 		/// Handler for hovering the BaseView & MiniBaseView.
 		void layoutMouseOver(Action* action);
 		/// Handler for hovering out of the BaseView & MiniBaseView.
 		void layoutMouseOut(Action* action);
 		/// Handler for left-clicking the MiniBaseView.
-		void basesLeftClick(Action* action);
+		void basesClickLeft(Action* action);
 		/// Handler for right-clicking the MiniBaseView.
-		void basesRightClick(Action* action);
+		void basesClickRight(Action* action);
 		/// Handler for pressing a Base selection hotkey.
-		void handleKeyPress(Action* action);
+		void basesKeyPress(Action* action);
 		/// Gets the baseId for a keypress.
 		size_t getKeyedBaseId(SDLKey keyId) const;
 
