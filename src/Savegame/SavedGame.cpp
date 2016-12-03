@@ -1456,36 +1456,41 @@ void SavedGame::discoverResearch(const RuleResearch* const resRule)
  * @note Ignores whether or not the unlocked research 'needsItem'.
  * @note Fake-research is never status RG_UNLOCKED; they go straight from
  *		 RG_LOCKED to RG_DISCOVERED.
- * @param projects	- reference to a vector of pointers to the RuleResearch's
- *					  that are newly unlocked
- * @param resRule	- pointer to the RuleResearch that has just been discovered
+ * @param projects			- reference to a vector of pointers to the RuleResearch's
+ *							  that are newly unlocked
+ * @param resRule			- pointer to the RuleResearch that has just been discovered
+ * @param crackRequested	- true if live-aLien cracked under interrogation (default true)
  */
 void SavedGame::tabulatePopupResearch(
 		std::vector<const RuleResearch*>& projects,
-		const RuleResearch* const resRule)
+		const RuleResearch* const resRule,
+		bool crackRequested)
 {
 	std::vector<const RuleResearch*> fakes;
 
-	const RuleResearch* requested;
-
-	for (std::vector<std::string>::const_iterator // unlock requested-research rules ->
-			i  = resRule->getRequestedResearch().begin();
-			i != resRule->getRequestedResearch().end();
-		  ++i)
+	if (crackRequested == true)
 	{
-		requested = _rules->getResearch(*i);							// NOTE: There is no safety on finding the ResearchGeneral; they shall correspond to RuleResearch's 1:1.
-		if (findResearchGeneral(requested)->getStatus() == RG_LOCKED	// <- safety to ensure discovered-research does not revert to unlocked.
-			&& checkRequiredResearch(requested) == true)
+		const RuleResearch* requested;
+
+		for (std::vector<std::string>::const_iterator // unlock requested-research rules ->
+				i  = resRule->getRequestedResearch().begin();
+				i != resRule->getRequestedResearch().end();
+			  ++i)
 		{
-			if (requested->getCost() != 0)
+			requested = _rules->getResearch(*i);							// NOTE: There is no safety on finding the ResearchGeneral; they shall correspond to RuleResearch's 1:1.
+			if (findResearchGeneral(requested)->getStatus() == RG_LOCKED	// <- safety to ensure discovered-research does not revert to unlocked.
+				&& checkRequiredResearch(requested) == true)
 			{
-				setResearchStatus(requested, RG_UNLOCKED);
-				projects.push_back(requested);
-			}
-			else
-			{
-				discoverResearch(requested); // fake: discover it and add points
-				fakes.push_back(requested);
+				if (requested->getCost() != 0)
+				{
+					setResearchStatus(requested, RG_UNLOCKED);
+					projects.push_back(requested);
+				}
+				else
+				{
+					discoverResearch(requested); // fake: discover it and add points
+					fakes.push_back(requested);
+				}
 			}
 		}
 	}
@@ -1529,7 +1534,7 @@ void SavedGame::tabulatePopupResearch(
 				}
 				else
 				{
-					discoverResearch(requested); // fake: discover it and add points
+					discoverResearch(rgRule); // fake: discover it and add points
 					fakes.push_back(rgRule);
 				}
 			}

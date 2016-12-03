@@ -2853,7 +2853,7 @@ void GeoscapeState::time1Day()
 
 				bool
 					crackGof,
-					crackRequested; // TODO: that <-
+					crackRequested;
 
 				if (isLiveAlien == true)
 				{
@@ -2874,15 +2874,16 @@ void GeoscapeState::time1Day()
 						(*i)->getStorageItems()->addItem(resType);
 
 					crackGof =
-					crackRequested = true; // <- not implemented yet. See above^
+					crackRequested = true;
 				}
 
 				std::vector<const RuleResearch*> popupResearch;
 
 				const RuleResearch* gofRule (nullptr);
-				if (crackGof == true && resRule->getGetOneFree().empty() == false)
+				if (crackGof == true)
 				{
 					std::vector<std::string> gofList;
+
 					for (std::vector<std::string>::const_iterator
 							k = resRule->getGetOneFree().begin();
 							k != resRule->getGetOneFree().end();
@@ -2902,16 +2903,12 @@ void GeoscapeState::time1Day()
 
 
 				_gameSave->discoverResearch(resRule);
-				_gameSave->tabulatePopupResearch(
-											popupResearch,
-											resRule);
+				_gameSave->tabulatePopupResearch(popupResearch, resRule, crackRequested);
 				// TODO: Cull popupResearch vector of possible duplicates;
 				// respective dependents of gofRule & resRule, if that's even applicable.
 
 				std::vector<const RuleManufacture*> popupManufacture;
-				_gameSave->tabulatePopupManufacture(
-												popupManufacture,
-												resRule);
+				_gameSave->tabulatePopupManufacture(popupManufacture, resRule);
 
 
 				const RuleResearch* resRulePedia; // NOTE: Ufopaedia article will be 'type' if there is no (explicit) 'lookup'.
@@ -2921,6 +2918,7 @@ void GeoscapeState::time1Day()
 					resRulePedia = nullptr; // resRule has already been discovered before.
 
 				resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
+
 
 				if (resRulePedia != nullptr)	// check for need to research a clip before the weapon itself can be manufactured.
 				{								// NOTE: Appears only if research has never been discovered before.
@@ -2950,6 +2948,7 @@ void GeoscapeState::time1Day()
 					}
 				}
 
+
 				if (popupResearch.empty() == false)
 				{
 					if (resEventsPopped.empty() == false) // only show the "allocate research" button for the last notification
@@ -2965,6 +2964,7 @@ void GeoscapeState::time1Day()
 
 					runtEventsPopped.push_back(ManufactureUnlockedInfo(*i, popupManufacture, true));
 				}
+
 
 				if (isLiveAlien == false)
 				{

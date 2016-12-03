@@ -375,7 +375,8 @@ private:
 		/// Tabulates a list of ResearchProjects that appears when a ResearchProject is completed.
 		void tabulatePopupResearch(
 				std::vector<const RuleResearch*>& projects,
-				const RuleResearch* const resRule);
+				const RuleResearch* const resRule,
+				bool crackRequested = true);
 		/// Tabulates a list of Manufacture projects that appears when research is discovered.
 		void tabulatePopupManufacture(
 				std::vector<const RuleManufacture*>& projects,
