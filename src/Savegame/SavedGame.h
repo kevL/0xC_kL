@@ -388,7 +388,7 @@ private:
 		/// Tabulates a list of Manufacture that can be started at a Base.
 		void tabulateStartableManufacture(
 				std::vector<const RuleManufacture*>& projects,
-				const Base* const base) const;
+				Base* const base) const;
 
 		/// Checks if a research-type is discovered.
 		bool isResearched(const std::string& resType) const;

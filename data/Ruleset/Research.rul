@@ -119,8 +119,10 @@ research:
     points: 5
     needsItem: true
     required:
-      - STR_ELERIUM_115
       - STR_PLASMA_PISTOL
+      - STR_ELERIUM_115
+    requested:
+      - STR_ELERIUM_EXTRACTION
 
   - type: STR_PLASMA_RIFLE
     cost: 70000
@@ -176,6 +178,8 @@ research:
     needsItem: true
     required:
       - STR_ELERIUM_115
+    requested:
+      - STR_ELERIUM_EXTRACTION
 
   - type: STR_FUSION_MISSILE
     cost: 88000
@@ -216,7 +220,9 @@ research:
   - type: STR_MIND_PROBE
     cost: 60000
     points: 25
-    needsItem: true #add requisite: Medikit
+    needsItem: true
+    required:
+      - STR_MEDI_KIT
 
 #---- XCom Armors -------------------------------------------------------------#
   - type: STR_PERSONAL_ARMOR
@@ -296,6 +302,8 @@ research:
     needsItem: true
     required:
       - STR_ALIEN_ALLOYS
+    requested:
+      - STR_UNMANNED_AIRCRAFT
 
   - type: STR_UFO_POWER_SOURCE
     cost: 45000
@@ -308,12 +316,11 @@ research:
   - type: STR_UFO_CONSTRUCTION
     cost: 45000
     points: 30
-    requested:
-      - STR_UNMANNED_AIRCRAFT #note: UFO_CONSTRUCTION is a bit steep for this. Perhaps just UFO_NAVIGATION ...
-      - STR_NEW_FIGHTER_CRAFT
     requisite:
       - STR_UFO_NAVIGATION
       - STR_UFO_POWER_SOURCE
+    requested:
+      - STR_NEW_FIGHTER_CRAFT
 
 #---- XCom Craft --------------------------------------------------------------#
   - type: STR_IMPROVED_INTERCEPTOR
@@ -446,15 +453,15 @@ research:
     requested:
       - STR_ALIEN_CONTAINMENT
 
-  - type: STR_ZOMBIE_CORPSE #note Can't get one of these
-    cost: 1800
-    points: 50
-    uPed: STR_ZOMBIE_AUTOPSY
-    needsItem: true
-    required:
-      - STR_ALIEN_SURGERY
-    requested:
-      - STR_ALIEN_CONTAINMENT
+#  - type: STR_ZOMBIE_CORPSE #note Can't get one of these
+#    cost: 1800
+#    points: 50
+#    uPed: STR_ZOMBIE_AUTOPSY
+#    needsItem: true
+#    required:
+#      - STR_ALIEN_SURGERY
+#    requested:
+#      - STR_ALIEN_CONTAINMENT
 
 #-------- Terrorist autopsies -------------------------------------------------#
   - type: STR_REAPER_CORPSE
@@ -604,6 +611,7 @@ research:
     requested:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
+      - STR_115_REACTOR
     getOneFree:
       - STR_SMALL_SCOUT
       - STR_MEDIUM_SCOUT
@@ -721,6 +729,7 @@ research:
     requested:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
+      - STR_115_REACTOR
     getOneFree:
       - STR_SMALL_SCOUT
       - STR_MEDIUM_SCOUT
@@ -840,6 +849,7 @@ research:
     requested:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
+      - STR_115_REACTOR
     getOneFree:
       - STR_SMALL_SCOUT
       - STR_MEDIUM_SCOUT
@@ -920,6 +930,7 @@ research:
     requested:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
+      - STR_115_REACTOR
     getOneFree:
       - STR_SMALL_SCOUT
       - STR_MEDIUM_SCOUT
@@ -1052,6 +1063,7 @@ research:
     requested:
       - STR_ALIEN_ORIGINS
       - STR_UFO_POWER_SOURCE
+      - STR_115_REACTOR
     getOneFree:
       - STR_SMALL_SCOUT
       - STR_MEDIUM_SCOUT
@@ -1291,3 +1303,14 @@ research:
 
   - type: STR_SUPPLY_SHIP
     points: 50
+
+#---- Elerium Extraction ------------------------------------------------------#
+  - type: STR_ELERIUM_EXTRACTION #research a PlasmaPistolClip or BlasterBomb
+    cost: 45000
+    points: 50
+
+  - type: STR_115_REACTOR #interrogate an Engineer
+    cost: 45000
+    point: 50
+    required:
+      - STR_ELERIUM_EXTRACTION

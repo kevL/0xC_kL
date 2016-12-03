@@ -58,8 +58,7 @@ static const std::string
 
 
 /**
- * This pure static class encapsulates all functions related to Ufopaedia
- * for the game.
+ * This pure static class encapsulates all functions related to Ufopaedia.
  * @note It manages the relationship between the UfopaediaSaved instance in
  * SavedGame and the UfopaediaFactory in Ruleset. Main purpose is to open
  * Ufopaedia from Geoscape, navigate between articles, and release new articles
@@ -73,29 +72,29 @@ protected:
 	/// Current selected article index (for prev/next navigation).
 	static int _current_index;
 
-	/// Gets index of the given article id in the visible list.
+	/// Gets the index of a specified article-id in the visible list.
 	static int getArticleIndex(
 			const SavedGame* const gameSave,
 			const Ruleset* const rules,
 			std::string& article_id);
-	/// Gets list of researched articles
+	/// Gets a list of researched articles.
 	static ArticleDefinitionList getAvailableArticles(
 			const SavedGame* const gameSave,
 			const Ruleset* const rules);
-	/// Creates a new state object from article definition.
+	/// Creates a new state-object from a specified ArticleDefinition.
 	static ArticleState* createArticleState(ArticleDefinition* const article);
 
 
 	public:
-		/// Checks if a specific article is currently available.
+		/// Checks if a specified article is currently available.
 		static bool isArticleAvailable(
 				const SavedGame* const gameSave,
 				const ArticleDefinition* const article);
-		/// Opens Ufopaedia on a certain entry.
+		/// Opens Ufopaedia for a specified article-id.
 		static void openArticle(
 				Game* const game,
 				std::string& article_id);
-		/// Opens Ufopaedia article from a given article definition.
+		/// Opens Ufopaedia for a specified ArticleDefinition.
 		static void openArticle(
 				Game* const game,
 				ArticleDefinition* article);

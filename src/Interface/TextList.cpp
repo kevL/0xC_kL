@@ -1002,7 +1002,7 @@ void TextList::clearList()
 
 	_texts.clear();
 	_rows.clear();
-	_selector->setVisible(false);
+	_selector->setVisible(false); // TODO: Refresh the selector if it's still over a valid row.
 
 	updateArrows();
 	_redraw = true;

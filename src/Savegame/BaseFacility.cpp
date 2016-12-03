@@ -20,15 +20,17 @@
 #include "BaseFacility.h"
 
 #include "Base.h"
+#include "ManufactureProject.h"
 
 #include "../Ruleset/RuleBaseFacility.h"
+#include "../Ruleset/RuleManufacture.h"
 
 
 namespace OpenXcom
 {
 
 /**
- * Initializes a base facility of the specified type.
+ * Initializes the BaseFacility of the specified type.
  * @param facRule	- pointer to RuleBaseFacility
  * @param base		- pointer to the Base of this facility
  */
@@ -51,7 +53,7 @@ BaseFacility::~BaseFacility()
 {}
 
 /**
- * Loads the base facility from a YAML file.
+ * Loads this BaseFacility from a YAML file.
  * @param node - reference a YAML node
  */
 void BaseFacility::load(const YAML::Node& node)
@@ -63,7 +65,7 @@ void BaseFacility::load(const YAML::Node& node)
 }
 
 /**
- * Saves the base facility to a YAML file.
+ * Saves this BaseFacility to a YAML file.
  * @return, YAML node
  */
 YAML::Node BaseFacility::save() const
@@ -90,7 +92,7 @@ const RuleBaseFacility* BaseFacility::getRules() const
 }
 
 /**
- * Returns this BaseFacility's x-position on the base-grid.
+ * Gets this BaseFacility's x-position on the base-grid.
  * @return, x-position in grid-squares
  */
 int BaseFacility::getX() const
@@ -99,7 +101,7 @@ int BaseFacility::getX() const
 }
 
 /**
- * Changes this BaseFacility's x-position on the base-grid.
+ * Sets this BaseFacility's x-position on the base-grid.
  * @param x - x-position in grid-squares
  */
 void BaseFacility::setX(int x)
@@ -108,7 +110,7 @@ void BaseFacility::setX(int x)
 }
 
 /**
- * Returns this BaseFacility's y-position on the base-grid.
+ * Gets this BaseFacility's y-position on the base-grid.
  * @return, y-position in grid-squares
  */
 int BaseFacility::getY() const
@@ -117,7 +119,7 @@ int BaseFacility::getY() const
 }
 
 /**
- * Changes this BaseFacility's y-position on the base-grid.
+ * Sets this BaseFacility's y-position on the base-grid.
  * @param y - y-position in grid-squares
  */
 void BaseFacility::setY(int y)
@@ -126,7 +128,7 @@ void BaseFacility::setY(int y)
 }
 
 /**
- * Returns this BaseFacility's remaining time until it's finished building.
+ * Gets this BaseFacility's remaining time until it's finished building.
  * @return, time left in days (0 = complete)
  */
 int BaseFacility::getBuildTime() const
@@ -135,7 +137,7 @@ int BaseFacility::getBuildTime() const
 }
 
 /**
- * Changes this BaseFacility's remaining time until it's finished building.
+ * Sets this BaseFacility's remaining time until it's finished building.
  * @param buildTime - time left in days (0 = complete)
  */
 void BaseFacility::setBuildTime(int buildTime)
@@ -144,7 +146,7 @@ void BaseFacility::setBuildTime(int buildTime)
 }
 
 /**
- * Handles the facility building each day.
+ * Builds this BaseFacility day by day.
  * @return, true if finished
  */
 bool BaseFacility::buildFacility()
@@ -156,7 +158,6 @@ bool BaseFacility::buildFacility()
 
 		return true;
 	}
-
 	return false;
 }
 
@@ -170,13 +171,38 @@ bool BaseFacility::buildFinished() const
 }
 
 /**
- * Returns if this BaseFacility is currently being used by its base.
+ * Checks if this BaseFacility is currently being used by its Base.
  * @return, true if in use
  */
 bool BaseFacility::inUse() const
 {
 	if (_buildTime == 0)
 	{
+		const std::vector<ManufactureProject*>& baseProjects (_base->getManufacture());
+		for (std::vector<ManufactureProject*>::const_iterator
+				i = baseProjects.begin();
+				i != baseProjects.end();
+				++i)
+		{
+			if ((*i)->getRules()->getRequiredFacilities().count(_facRule->getType()) != 0)
+			{
+				const int facsRequired ((*i)->getRules()->getRequiredFacilities().at(_facRule->getType())); // did i mention how much I despise c++ yet. Good.
+				int facsFound (0);
+
+				for (std::vector<BaseFacility*>::const_iterator
+						j = _base->getFacilities()->begin();
+						j != _base->getFacilities()->end();
+						++j)
+				{
+					if ((*j)->getRules() == _facRule)
+						++facsFound;
+				}
+
+				if (facsRequired >= facsFound)	// TODO: Should run a check after BaseDefense tactical to see
+					return true;				// if a BaseFacility that's in use by Manufacture got demolished.
+			}									// But that's ... elsewhere.
+		}
+
 		return (_facRule->getPersonnel() != 0
 				&& _base->getTotalQuarters() - _facRule->getPersonnel() < _base->getUsedQuarters())
 			|| (_facRule->getStorage() != 0
@@ -197,7 +223,7 @@ bool BaseFacility::inUse() const
 }
 
 /**
- * Gets craft used for drawing in facility.
+ * Gets the Craft used for drawing this BaseFacility if any.
  * @return, pointer to the Craft
  */
 const Craft* BaseFacility::getCraft() const
@@ -206,7 +232,7 @@ const Craft* BaseFacility::getCraft() const
 }
 
 /**
- * Sets craft used for drawing facility.
+ * Sets a Craft used for drawing this BaseFacility.
  * @param craft - pointer to the craft (default nullptr)
  */
 void BaseFacility::setCraft(const Craft* const craft)

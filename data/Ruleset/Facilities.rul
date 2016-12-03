@@ -186,3 +186,13 @@ facilities:
     monthlyCost: 13500
     crafts: 1
     blockType: XBASE_16
+
+  - type: STR_115_REACTOR
+    reqResearch:
+      - STR_115_REACTOR
+    spriteShape: 1
+    spriteFacility: 65
+    buildCost: 1500000
+    buildTime: 30
+    monthlyCost: 75000
+    blockType: XBASE_23

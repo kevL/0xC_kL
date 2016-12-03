@@ -52,46 +52,46 @@ private:
 
 
 	public:
-		/// Creates a base facility of the specified type.
+		/// Creates a BaseFacility of the specified type.
 		BaseFacility(
 				const RuleBaseFacility* const facRule,
 				Base* const base);
-		/// Cleans up the base facility.
+		/// Cleans up the BaseFacility.
 		~BaseFacility();
 
-		/// Loads the base facility from YAML.
+		/// Loads the BaseFacility from YAML.
 		void load(const YAML::Node& node);
-		/// Saves the base facility to YAML.
+		/// Saves the BaseFacility to YAML.
 		YAML::Node save() const;
 
-		/// Gets the facility's ruleset.
+		/// Gets the BaseFacility's ruleset.
 		const RuleBaseFacility* getRules() const;
 
-		/// Gets the facility's x-position.
+		/// Gets the the BaseFacility's x-position.
 		int getX() const;
-		/// Sets the facility's x-position.
+		/// Sets the the BaseFacility's x-position.
 		void setX(int x);
-		/// Gets the facility's y-position.
+		/// Gets the the BaseFacility's y-position.
 		int getY() const;
-		/// Sets the facility's y-position.
+		/// Sets the BaseFacility's y-position.
 		void setY(int y);
 
-		/// Gets the facility's construction time.
+		/// Gets the BaseFacility's construction time.
 		int getBuildTime() const;
-		/// Sets the facility's construction time.
+		/// Sets the BaseFacility's construction time.
 		void setBuildTime(int buildTime);
 
-		/// Builds up the facility.
+		/// Builds up the BaseFacility.
 		bool buildFacility();
-		/// Gets if this Facility has finished building.
+		/// Gets if the BaseFacility has finished building.
 		bool buildFinished() const;
 
-		/// Checks if the facility is currently in use.
+		/// Checks if the BaseFacility is currently in use.
 		bool inUse() const;
 
-		/// Gets craft, used for drawing facility.
+		/// Gets the Craft used for drawing the BaseFacility if any.
 		const Craft* getCraft() const;
-		/// Sets craft, used for drawing facility.
+		/// Sets a Craft used for drawing the BaseFacility.
 		void setCraft(const Craft* const craft = nullptr);
 };
 

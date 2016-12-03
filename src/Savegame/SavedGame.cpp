@@ -33,6 +33,7 @@
 #include "AlienMission.h"
 #include "AlienStrategy.h"
 #include "Base.h"
+#include "BaseFacility.h"
 #include "Country.h"
 #include "Craft.h"
 #include "GameTime.h"
@@ -56,6 +57,7 @@
 #include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 
+#include "../Ruleset/RuleBaseFacility.h"
 #include "../Ruleset/RuleCountry.h"
 #include "../Ruleset/RuleManufacture.h"
 #include "../Ruleset/RuleRegion.h"
@@ -1683,8 +1685,11 @@ void SavedGame::tabulateStartableResearch(
  */
 void SavedGame::tabulateStartableManufacture(
 		std::vector<const RuleManufacture*>& projects,
-		const Base* const base) const
+		Base* const base) const
 {
+	const std::vector<BaseFacility*>* const baseFacs (base->getFacilities());
+	bool bypass;
+
 	const RuleManufacture* mfRule;
 	for (std::vector<std::string>::const_iterator
 			i = _rules->getManufactureList().begin();
@@ -1698,7 +1703,28 @@ void SavedGame::tabulateStartableManufacture(
 						base->getManufacture().end(),
 						IsManufactureRule(mfRule)) == base->getManufacture().end())
 		{
-			projects.push_back(mfRule);
+			bypass = false;
+
+			for (std::map<std::string, int>::const_iterator
+					j = mfRule->getRequiredFacilities().begin();
+					j != mfRule->getRequiredFacilities().end() && bypass == false;
+					++j)
+			{
+				int facsFound (0);
+				for (std::vector<BaseFacility*>::const_iterator
+						k = baseFacs->begin();
+						k != baseFacs->end();
+						++k)
+				{
+					if ((*k)->getRules()->getType() == j->first)
+						++facsFound;
+				}
+				if (facsFound < j->second)
+					bypass = true;
+			}
+
+			if (bypass == false)
+				projects.push_back(mfRule);
 		}
 	}
 }

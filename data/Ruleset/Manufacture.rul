@@ -3,20 +3,27 @@ manufacture:
     category: STR_CRAFT_WEAPON
     reqResearch:
       - STR_FUSION_MISSILE
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 8
     hours: 420
     cost: 42000 # 100 x hours (was, 250 x hours)
     partsRequired:
       STR_ALIEN_ALLOYS: 15
 
+  - type: STR_FUSION_BALL
+    category: STR_CRAFT_AMMUNITION
+    reqResearch:
+      - STR_FUSION_MISSILE
+    space: 8
+    hours: 760
+    cost: 76000
+    partsRequired:
+      STR_ALIEN_ALLOYS: 12
+      STR_ELERIUM_115: 7
+
   - type: STR_LASER_CANNON
     category: STR_CRAFT_WEAPON
     reqResearch:
       - STR_LASER_CANNON
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 9
     hours: 560
     cost: 56000
@@ -28,8 +35,6 @@ manufacture:
     category: STR_CRAFT_WEAPON
     reqResearch:
       - STR_PLASMA_CANNON
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 10
     hours: 670
     cost: 67000
@@ -37,25 +42,10 @@ manufacture:
       STR_ALIEN_ALLOYS: 18
       STR_ELERIUM_115: 16
 
-  - type: STR_FUSION_BALL
-    category: STR_CRAFT_AMMUNITION
-    reqResearch:
-      - STR_FUSION_MISSILE
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
-    space: 8
-    hours: 760
-    cost: 76000
-    partsRequired:
-      STR_ALIEN_ALLOYS: 12
-      STR_ELERIUM_115: 7
-
   - type: STR_TANK_LASER_CANNON
     category: STR_HEAVY_WEAPONS_PLATFORM
     reqResearch:
       - STR_LASER_CANNON
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 23
     hours: 2030
     cost: 203000
@@ -68,8 +58,6 @@ manufacture:
     reqResearch:
       - STR_PLASMA_CANNON
       - STR_NEW_FIGHTER_CRAFT
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 22
     hours: 1950
     cost: 195000
@@ -82,8 +70,6 @@ manufacture:
     reqResearch:
       - STR_FUSION_MISSILE
       - STR_NEW_FIGHTER_CRAFT
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 19
     hours: 2300
     cost: 230000
@@ -96,8 +82,6 @@ manufacture:
     reqResearch:
       - STR_FUSION_MISSILE
       - STR_NEW_FIGHTER_CRAFT
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 13
     hours: 780
     cost: 78000
@@ -169,7 +153,6 @@ manufacture:
     reqResearch:
       - STR_HEAVY_PLASMA
       - STR_HEAVY_PLASMA_CLIP
-      - STR_ALIEN_ALLOYS
     space: 8
     hours: 1000
     cost: 100000
@@ -179,21 +162,18 @@ manufacture:
   - type: STR_HEAVY_PLASMA_CLIP
     category: STR_AMMUNITION
     reqResearch:
-      - STR_HEAVY_PLASMA
       - STR_HEAVY_PLASMA_CLIP
-      - STR_ELERIUM_115
     space: 5
     hours: 100
     cost: 10000
     partsRequired:
-      STR_ELERIUM_115: 1
+      STR_ELERIUM_115: 3
 
   - type: STR_PLASMA_RIFLE
     category: STR_WEAPON
     reqResearch:
       - STR_PLASMA_RIFLE
       - STR_PLASMA_RIFLE_CLIP
-      - STR_ALIEN_ALLOYS
     space: 7
     hours: 800
     cost: 80000
@@ -203,21 +183,18 @@ manufacture:
   - type: STR_PLASMA_RIFLE_CLIP
     category: STR_AMMUNITION
     reqResearch:
-      - STR_PLASMA_RIFLE
       - STR_PLASMA_RIFLE_CLIP
-      - STR_ELERIUM_115
     space: 4
     hours: 80
     cost: 8000
     partsRequired:
-      STR_ELERIUM_115: 1
+      STR_ELERIUM_115: 2
 
   - type: STR_PLASMA_PISTOL
     category: STR_WEAPON
     reqResearch:
       - STR_PLASMA_PISTOL
       - STR_PLASMA_PISTOL_CLIP
-      - STR_ALIEN_ALLOYS
     space: 5
     hours: 600
     cost: 60000
@@ -227,9 +204,7 @@ manufacture:
   - type: STR_PLASMA_PISTOL_CLIP
     category: STR_AMMUNITION
     reqResearch:
-      - STR_PLASMA_PISTOL
       - STR_PLASMA_PISTOL_CLIP
-      - STR_ELERIUM_115
     space: 3
     hours: 60
     cost: 6000
@@ -241,7 +216,6 @@ manufacture:
     reqResearch:
       - STR_BLASTER_LAUNCHER
       - STR_BLASTER_BOMB
-      - STR_ALIEN_ALLOYS
     space: 6
     hours: 330
     cost: 33000
@@ -253,19 +227,17 @@ manufacture:
     reqResearch:
       - STR_BLASTER_LAUNCHER
       - STR_BLASTER_BOMB
-      - STR_ELERIUM_115
     space: 5
     hours: 460
     cost: 46000
     partsRequired:
-      STR_ELERIUM_115: 4
+      STR_ELERIUM_115: 5
 
   - type: STR_SMALL_LAUNCHER
     category: STR_WEAPON
     reqResearch:
       - STR_SMALL_LAUNCHER
       - STR_STUN_BOMB
-      - STR_ALIEN_ALLOYS
     space: 4
     hours: 250
     cost: 25000
@@ -277,7 +249,6 @@ manufacture:
     reqResearch:
       - STR_SMALL_LAUNCHER
       - STR_STUN_BOMB
-      - STR_ELERIUM_115
     space: 2
     hours: 320
     cost: 32000
@@ -288,8 +259,6 @@ manufacture:
     category: STR_WEAPON
     reqResearch:
       - STR_ALIEN_GRENADE
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 2
     hours: 200
     cost: 20000
@@ -312,7 +281,6 @@ manufacture:
     category: STR_PERSONAL_ARMOR_BA
     reqResearch:
       - STR_PERSONAL_ARMOR
-      - STR_ALIEN_ALLOYS
     space: 10
     hours: 800
     cost: 80000
@@ -323,8 +291,6 @@ manufacture:
     category: STR_PERSONAL_ARMOR_BA
     reqResearch:
       - STR_POWER_SUIT
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 14
     hours: 1200
     cost: 120000
@@ -336,8 +302,6 @@ manufacture:
     category: STR_PERSONAL_ARMOR_BA
     reqResearch:
       - STR_FLYING_SUIT
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 17
     hours: 1600
     cost: 160000
@@ -357,8 +321,6 @@ manufacture:
     category: STR_UFO_COMPONENT
     reqResearch:
       - STR_UFO_POWER_SOURCE
-      - STR_ALIEN_ALLOYS
-      - STR_ELERIUM_115
     space: 20
     hours: 5100
     cost: 510000
@@ -370,7 +332,6 @@ manufacture:
     category: STR_UFO_COMPONENT
     reqResearch:
       - STR_UFO_NAVIGATION
-      - STR_ALIEN_ALLOYS
     space: 16
     hours: 2200
     cost: 220000
@@ -412,3 +373,72 @@ manufacture:
       STR_ALIEN_ALLOYS: 240
       STR_UFO_POWER_SOURCE: 2
       STR_UFO_NAVIGATION: 5
+
+# ---- Elerium Extraction -----------------------------------------------------#
+  - type: STR_EE_PISTOLCLIP
+    category: STR_ELERIUM_EXTRACTION
+    reqResearch:
+      - STR_115_REACTOR
+#      - STR_PLASMA_PISTOL_CLIP #this is a pre-req for the Reactor
+    reqFacilities:
+      STR_115_REACTOR: 1
+    space: 5
+    time: 425
+    cost: 38000
+    partsRequired:
+      STR_PLASMA_PISTOL_CLIP: 30
+      STR_UFO_POWER_SOURCE: 1
+    partsProduced:
+      STR_ELERIUM_115: 30
+    listOrder: 3600
+
+  - type: STR_EE_RIFLECLIP
+    category: STR_ELERIUM_EXTRACTION
+    reqResearch:
+      - STR_115_REACTOR
+      - STR_PLASMA_RIFLE_CLIP
+    reqFacilities:
+      STR_115_REACTOR: 1
+    space: 5
+    time: 425
+    cost: 38000
+    partsRequired:
+      STR_PLASMA_RIFLE_CLIP: 20
+      STR_UFO_POWER_SOURCE: 1
+    partsProduced:
+      STR_ELERIUM_115: 30
+    listOrder: 3601
+
+  - type: STR_EE_HEAVYCLIP
+    category: STR_ELERIUM_EXTRACTION
+    reqResearch:
+      - STR_115_REACTOR
+      - STR_HEAVY_PLASMA_CLIP
+    reqFacilities:
+      STR_115_REACTOR: 1
+    space: 5
+    time: 425
+    cost: 38000
+    partsRequired:
+      STR_HEAVY_PLASMA_CLIP: 10
+      STR_UFO_POWER_SOURCE: 1
+    partsProduced:
+      STR_ELERIUM_115: 30
+    listOrder: 3602
+
+  - type: STR_EE_BLASTERBOMB
+    category: STR_ELERIUM_EXTRACTION
+    reqResearch:
+      - STR_115_REACTOR
+      - STR_BLASTER_BOMB
+    reqFacilities:
+      STR_115_REACTOR: 1
+    space: 5
+    time: 425
+    cost: 38000
+    partsRequired:
+      STR_BLASTER_BOMB: 6
+      STR_UFO_POWER_SOURCE: 1
+    partsProduced:
+      STR_ELERIUM_115: 30
+    listOrder: 3603

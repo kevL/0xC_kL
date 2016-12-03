@@ -55,7 +55,7 @@ private:
 	std::map<std::string, int>
 		_partsProduced,
 		_partsRequired,
-		_reqFacs;
+		_reqFacilities;
 
 
 	public:

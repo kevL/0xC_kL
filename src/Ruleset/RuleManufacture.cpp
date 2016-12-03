@@ -56,7 +56,7 @@ void RuleManufacture::load(
 	_space			= node["space"]			.as<int>(_space);
 	_hours			= node["hours"]			.as<int>(_hours);
 	_cost			= node["cost"]			.as<int>(_cost);
-	_reqFacs		= node["reqFacs"]		.as<std::map<std::string, int>>(_reqFacs);
+	_reqFacilities	= node["reqFacilities"]	.as<std::map<std::string, int>>(_reqFacilities);
 	_partsRequired	= node["partsRequired"]	.as<std::map<std::string, int>>(_partsRequired);
 	_partsProduced	= node["partsProduced"]	.as<std::map<std::string, int>>(_partsProduced);
 	_category		= node["category"]		.as<std::string>(_category);
@@ -172,7 +172,7 @@ const std::vector<std::string>& RuleManufacture::getRequiredResearch() const
  */
 const std::map<std::string, int>& RuleManufacture::getRequiredFacilities() const
 {
-	return _reqFacs;
+	return _reqFacilities;
 }
 
 /**

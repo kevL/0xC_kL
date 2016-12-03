@@ -4620,6 +4620,7 @@ terrains:
       - BLANKS
       - XBASE1
       - XBASE2
+      - XBASE4
     mapBlocks:
       - type: XBASE_00
         width: 10
@@ -4702,6 +4703,10 @@ terrains:
         length: 10
         revealedFloors: [0, 1]
       - type: XBASE_20
+        width: 10
+        length: 10
+        revealedFloors: [0, 1]
+      - type: XBASE_23
         width: 10
         length: 10
         revealedFloors: [0, 1]
