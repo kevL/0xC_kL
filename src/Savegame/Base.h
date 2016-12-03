@@ -103,6 +103,8 @@ private:
 	std::vector<Soldier*> _soldiers;
 	std::vector<Transfer*> _transfers;
 
+	/// Research Help ala XcomUtil.
+	void researchHelp(const std::string& aLien);
 	/// Gets soldier-factor for Research Help.
 	static double getSoldierHelp(const std::string& rp);
 	/// Gets navigator-factor for Research Help.
@@ -272,8 +274,6 @@ private:
 				ResearchProject* const project,
 				bool grantHelp = false,
 				bool goOffline = false);
-		/// Research Help ala XcomUtil.
-		void researchHelp(const std::string& aLien);
 
 		/// Sets the Base's battlescape status.
 		void setTactical(bool tactical = true);

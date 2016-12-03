@@ -1313,7 +1313,7 @@ void Base::clearResearchProject(
  * Research Help ala XcomUtil.
  * @param aLien - reference to the name of an aLien that got prodded
  */
-void Base::researchHelp(const std::string& aLien)
+void Base::researchHelp(const std::string& aLien) // private.
 {
 	std::string resType;
 	double coef;
@@ -1450,6 +1450,12 @@ double Base::getNavigatorHelp(const std::string& resType) // private/static.
 		return 0.15;
 	}
 
+	if (   resType.compare("STR_ELERIUM_EXTRACTION") == 0
+		|| resType.compare("STR_115_REACTOR") == 0)
+	{
+		return 0.1;
+	}
+
 	return 0.;
 }
 
@@ -1502,7 +1508,9 @@ double Base::getMedicHelp(const std::string& resType) // private/static.
 double Base::getEngineerHelp(const std::string& resType) // private/static.
 {
 	if (   resType.compare("STR_BLASTER_LAUNCHER") == 0
-		|| resType.compare("STR_BLASTER_BOMB") == 0)
+		|| resType.compare("STR_BLASTER_BOMB") == 0
+		|| resType.compare("STR_ELERIUM_EXTRACTION") == 0
+		|| resType.compare("STR_115_REACTOR") == 0)
 	{
 		return 0.7;
 	}
@@ -1588,7 +1596,9 @@ double Base::getLeaderHelp(const std::string& resType) // private/static.
 		|| resType.compare("STR_CYDONIA_OR_BUST") == 0
 		|| resType.compare("STR_PERSONAL_ARMOR") == 0
 		|| resType.compare("STR_POWER_SUIT") == 0
-		|| resType.compare("STR_FLYING_SUIT") == 0)
+		|| resType.compare("STR_FLYING_SUIT") == 0
+		|| resType.compare("STR_ELERIUM_EXTRACTION") == 0
+		|| resType.compare("STR_115_REACTOR") == 0)
 	{
 		return 0.2;
 	}
@@ -1625,6 +1635,12 @@ double Base::getCommanderHelp(const std::string& resType) // private/static.
 		|| resType.compare("STR_CYDONIA_OR_BUST") == 0)
 	{
 		return 0.5;
+	}
+
+	if (   resType.compare("STR_ELERIUM_EXTRACTION") == 0
+		|| resType.compare("STR_115_REACTOR") == 0)
+	{
+		return 0.3;
 	}
 
 	if (   resType.compare("STR_BLASTER_BOMB") == 0
