@@ -153,8 +153,8 @@ ResearchState::ResearchState(
 
 	_txtProgress->setText(tr("STR_PROGRESS"));
 
-	_lstResearch->setBackground(_window);
 	_lstResearch->setColumns(4, 137,58,48,34);
+	_lstResearch->setBackground(_window);
 	_lstResearch->setSelectable();
 	_lstResearch->onMouseClick(static_cast<ActionHandler>(&ResearchState::onSelectProject));
 }
@@ -199,7 +199,7 @@ void ResearchState::init()
 				daysLeft = Text::intWide(days);
 			}
 			else
-				daysLeft = L"-";
+				daysLeft = Text::intWide((*i)->getCost() - (*i)->getSpent()); //L"-"
 
 			_lstResearch->addRow(
 							4,
