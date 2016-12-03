@@ -113,7 +113,7 @@ private:
 //		State* getState() const;
 		/// Gets the quantity of currently running states.
 		size_t getQtyStates() const;
-		/// Returns whether a state is the current state.
+		/// Checks whether a state is the current state.
 		bool isState(const State* const state) const;
 
 		/// Sets up the audio.
@@ -121,8 +121,9 @@ private:
 		/// Sets the audio-amplitudes.
 		void setVolume(
 				int music,
-				int sound,
-				int ui = -1);
+				int fx,
+				int ui = -1,
+				bool force = false);
 		/// Adjusts a linear volume-level to an exponential one.
 		static double volExp(int vol);
 

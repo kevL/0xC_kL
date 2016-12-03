@@ -534,7 +534,7 @@ void FlcPlayer::playAudioFrame(Uint16 sampleRate)
 		loadingBuff->sampleBufSize = newSize;
 	}
 
-	const float vol (static_cast<float>(Game::volExp(Options::musicVolume)));
+	const float vol (static_cast<float>(Game::volExp(Options::volMusic)));
 	for (Uint32
 		i = 0u;
 		i != _audioFrameSize;

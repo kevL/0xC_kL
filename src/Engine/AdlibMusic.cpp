@@ -171,7 +171,7 @@ void AdlibMusic::player(
 		int len)
 {
 #ifndef __NO_MUSIC
-	if (Options::musicVolume == 0)
+	if (Options::volMusic == 0)
 		return;
 
 	if (Options::musicAlwaysLoop
@@ -191,7 +191,7 @@ void AdlibMusic::player(
 		int i = std::min(delay, len);
 		if (i)
 		{
-			float volume = static_cast<float>(Game::volExp(Options::musicVolume));
+			float volume (static_cast<float>(Game::volExp(Options::volMusic)));
 			YM3812UpdateOne(
 						opl[0],
 						(INT16*)stream,

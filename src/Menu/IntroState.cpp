@@ -55,14 +55,14 @@ IntroState::IntroState(const bool wasLetterBoxed)
 		_wasLetterBoxed(wasLetterBoxed),
 		_flcPlayer(nullptr)
 {
-//	_oldMusic = Options::musicVolume;
-//	_oldSound = Options::soundVolume;
+//	_oldMusic = Options::volMusic;
+//	_oldSound = Options::volFx;
 	// music volume is the main, and sound volume as a fallback
-//	Options::musicVolume = Options::soundVolume = std::max(_oldMusic, _oldSound/8);
+//	Options::volMusic = Options::volFx = std::max(_oldMusic, _oldSound/8);
 
 	_game->setVolume(
-				Options::musicVolume + 19, // my music files need a bit of a boost for these intro segs.
-				Options::soundVolume + 9);
+				Options::volMusic + 19, // my music files need a bit of a boost for these intro segs.
+				Options::volFx + 9);
 
 	const std::map<std::string, RuleVideo*>* const videoRulesets (_game->getRuleset()->getVideos());
 	const std::map<std::string, RuleVideo*>::const_iterator pRule (videoRulesets->find("intro"));
@@ -436,7 +436,7 @@ void operator()()
 					pSound->play(-1); // kL
 //					int channel = trackPosition %4; // use at most four channels to play sound effects
 //					pSound->play(channel);
-//					double ratio = static_cast<double>(Options::soundVolume) / static_cast<double>(MIX_MAX_VOLUME);
+//					double ratio = static_cast<double>(Options::volFx) / static_cast<double>(MIX_MAX_VOLUME);
 //					Mix_Volume(channel, static_cast<int>(static_cast<double>(sf->volume) * ratio));
 
 					break;
@@ -662,13 +662,13 @@ void IntroState::endVideo()
 	_game->getScreen()->clear();
 	_game->getScreen()->flip();
 
-//	Options::musicVolume = _oldMusic;
-//	Options::soundVolume = _oldSound;
+//	Options::volMusic = _oldMusic;
+//	Options::volFx = _oldSound;
 	//Log(LOG_INFO) << ". set Game Volume";
 	_game->setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
+				Options::volMusic,
+				Options::volFx,
+				Options::volUi);
 
 /*	//Log(LOG_INFO) << ". stop Sound";
 	Sound::stop();

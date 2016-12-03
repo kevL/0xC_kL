@@ -378,6 +378,16 @@ void Game::run()
 									_states.back()->redrawText();
 									break;
 
+								case SDLK_m: // "ctrl-m" mute
+									if (Options::mute = !Options::mute)
+										setVolume(0,0,-1, true);
+									else
+										setVolume(
+												Options::volMusic,
+												Options::volFx,
+												Options::volUi);
+									break;
+
 								default:
 									if (Options::debug == true
 										&& _gameSave != nullptr
@@ -639,6 +649,16 @@ void Game::run()
 									_states.back()->redrawText();
 									break;
 
+								case SDLK_m: // "ctrl-m" mute
+									if (Options::mute = !Options::mute)
+										setVolume(0,0,-1, true);
+									else
+										setVolume(
+												Options::volMusic,
+												Options::volFx,
+												Options::volUi);
+									break;
+
 								default:
 									if (Options::debug == true)
 									{
@@ -879,7 +899,7 @@ size_t Game::getQtyStates() const
 }
 
 /**
- * Returns whether a state is the curent state.
+ * Checks whether a state is the curent state.
  * @param state - pointer to a State to test against the stack-state
  * @return, true if current
  */
@@ -930,9 +950,9 @@ void Game::initAudio()
 						0);	// channel-group for UI
 
 		setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
+				Options::volMusic,
+				Options::volFx,
+				Options::volUi);
 		Log(LOG_INFO) << "SDL_mixer initialized.";
 	}
 }
@@ -941,15 +961,17 @@ void Game::initAudio()
  * Changes the audio-volume of the music and sound-effects channels.
  * @note Range is from 0 to MIX_MAX_VOLUME.
  * @param music	- music-volume
- * @param sound	- sound-volume
+ * @param fx	- fx-volume
  * @param ui	- ui-volume (default -1)
+ * @param force	- true to affect volume even w/ Options::mute=TRUE (default false)
  */
 void Game::setVolume(
 		int music,
-		int sound,
-		int ui)
+		int fx,
+		int ui,
+		bool force)
 {
-	if (Options::mute == false)
+	if (Options::mute == false || force == true)
 	{
 		if (music != -1)
 		{
@@ -958,10 +980,10 @@ void Game::setVolume(
 //			func_set_music_volume(music);
 		}
 
-		if (sound != -1)
+		if (fx != -1)
 		{
-			sound = static_cast<int>(volExp(sound) * static_cast<double>(SDL_MIX_MAXVOLUME));
-			Mix_Volume(-1, sound); // sets volume on *all channels*
+			fx = static_cast<int>(volExp(fx) * static_cast<double>(SDL_MIX_MAXVOLUME));
+			Mix_Volume(-1, fx); // sets volume on *all channels*
 		}
 
 		if (ui != -1)

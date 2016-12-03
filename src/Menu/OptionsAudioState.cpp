@@ -120,7 +120,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 	_txtMusicVolume->setText(tr("STR_MUSIC_VOLUME"));
 
 	_slrMusicVolume->setRange(0, SDL_MIX_MAXVOLUME);
-	_slrMusicVolume->setValue(Options::musicVolume);
+	_slrMusicVolume->setValue(Options::volMusic);
 	_slrMusicVolume->onSliderChange(static_cast<ActionHandler>(&OptionsAudioState::slrMusicVolumeChange));
 //	_slrMusicVolume->onMouseIn(		static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
 //	_slrMusicVolume->onMouseOut(	static_cast<ActionHandler>(&OptionsAudioState::txtTooltipOut));
@@ -129,7 +129,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 	_txtSoundVolume->setText(tr("STR_SFX_VOLUME"));
 
 	_slrSoundVolume->setRange(0, SDL_MIX_MAXVOLUME);
-	_slrSoundVolume->setValue(Options::soundVolume);
+	_slrSoundVolume->setValue(Options::volFx);
 	_slrSoundVolume->onSliderChange(static_cast<ActionHandler>(&OptionsAudioState::slrSoundVolumeChange));
 	_slrSoundVolume->onMouseRelease(static_cast<ActionHandler>(&OptionsAudioState::slrSoundVolumeRelease));
 //	_slrSoundVolume->onMouseIn(		static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
@@ -139,7 +139,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 	_txtUiVolume->setText(tr("STR_UI_VOLUME"));
 
 	_slrUiVolume->setRange(0, SDL_MIX_MAXVOLUME);
-	_slrUiVolume->setValue(Options::uiVolume);
+	_slrUiVolume->setValue(Options::volUi);
 	_slrUiVolume->onSliderChange(	static_cast<ActionHandler>(&OptionsAudioState::slrUiVolumeChange));
 	_slrUiVolume->onMouseRelease(	static_cast<ActionHandler>(&OptionsAudioState::slrUiVolumeRelease));
 //	_slrUiVolume->onMouseIn(		static_cast<ActionHandler>(&OptionsAudioState::txtTooltipIn));
@@ -248,11 +248,11 @@ OptionsAudioState::~OptionsAudioState()
  */
 void OptionsAudioState::slrMusicVolumeChange(Action*)
 {
-	Options::musicVolume = _slrMusicVolume->getValue();
+	Options::volMusic = _slrMusicVolume->getValue();
 	_game->setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
+				Options::volMusic,
+				Options::volFx,
+				Options::volUi);
 }
 
 /**
@@ -261,11 +261,11 @@ void OptionsAudioState::slrMusicVolumeChange(Action*)
  */
 void OptionsAudioState::slrSoundVolumeChange(Action*)
 {
-	Options::soundVolume = _slrSoundVolume->getValue();
+	Options::volFx = _slrSoundVolume->getValue();
 	_game->setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
+				Options::volMusic,
+				Options::volFx,
+				Options::volUi);
 }
 
 /**
@@ -283,11 +283,11 @@ void OptionsAudioState::slrSoundVolumeRelease(Action*)
  */
 void OptionsAudioState::slrUiVolumeChange(Action*)
 {
-	Options::uiVolume = _slrUiVolume->getValue();
+	Options::volUi = _slrUiVolume->getValue();
 	_game->setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
+				Options::volMusic,
+				Options::volFx,
+				Options::volUi);
 }
 
 /**

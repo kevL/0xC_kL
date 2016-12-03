@@ -246,9 +246,9 @@ void OptionsBaseState::btnOkClick(Action*)
 
 	_game->getScreen()->resetDisplay();
 	_game->setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
+				Options::volMusic,
+				Options::volFx,
+				Options::volUi);
 
 	if (Options::reload && _origin == OPT_MENU)
 		_game->setState(new StartState());
@@ -291,9 +291,9 @@ void OptionsBaseState::btnCancelClick(Action*)
 					_origin != OPT_BATTLESCAPE);
 
 	_game->setVolume(
-				Options::musicVolume,
-				Options::soundVolume,
-				Options::uiVolume);
+				Options::volMusic,
+				Options::volFx,
+				Options::volUi);
 
 	_game->popState();
 }

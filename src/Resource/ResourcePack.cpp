@@ -183,7 +183,7 @@ void ResourcePack::playMusic(
 		int loops)
 {
 	//Log(LOG_INFO) << "rp: playMusic current = " << _playingMusic;
-	if (_playingMusic != trackType && Options::mute == false)
+	if (Options::mute == false && _playingMusic != trackType)
 	{
 		//Log(LOG_INFO) << ". new trak = " << trackType;
 		const Music* const music (getMusicRand(trackType, terrainType));
@@ -339,12 +339,11 @@ Sound* ResourcePack::getSound(
 {
 	if (Options::mute == true)
 		return _muteSound;
-	else
-	{
-		const std::map<std::string, SoundSet*>::const_iterator i (_sounds.find(soundSet));
-		if (i != _sounds.end())
-			return i->second->getSound(soundId);
-	}
+
+	const std::map<std::string, SoundSet*>::const_iterator i (_sounds.find(soundSet));
+	if (i != _sounds.end())
+		return i->second->getSound(soundId);
+
 	return nullptr;
 }
 

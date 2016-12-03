@@ -585,9 +585,9 @@ void createOptions()
 	_info.push_back(OptionInfo("openGLShader",							&openGLShader, "Shaders/Raw.OpenGL.shader"));
 	_info.push_back(OptionInfo("debug",									&debug,   false));
 	_info.push_back(OptionInfo("debugUi",								&debugUi, false));
-	_info.push_back(OptionInfo("soundVolume",							&soundVolume, 2 * (MIX_MAX_VOLUME / 3)));
-	_info.push_back(OptionInfo("musicVolume",							&musicVolume, 2 * (MIX_MAX_VOLUME / 3)));
-	_info.push_back(OptionInfo("uiVolume",								&uiVolume,         MIX_MAX_VOLUME / 3));
+	_info.push_back(OptionInfo("volMusic",								&volMusic, 2 * (MIX_MAX_VOLUME / 3)));
+	_info.push_back(OptionInfo("volFx",									&volFx,    2 * (MIX_MAX_VOLUME / 3)));
+	_info.push_back(OptionInfo("volUi",									&volUi,         MIX_MAX_VOLUME / 3));
 	_info.push_back(OptionInfo("language",								&language, ""));
 	_info.push_back(OptionInfo("battleScrollSpeed",						&battleScrollSpeed, 8));
 	_info.push_back(OptionInfo("battleEdgeScroll",						reinterpret_cast<int*>(&battleEdgeScroll), MAP_SCROLL_AUTO));
