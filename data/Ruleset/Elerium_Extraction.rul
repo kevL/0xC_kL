@@ -1,0 +1,27 @@
+# Elerium_Extraction by NowTwoDragons
+# note: Terrain for XBASE, block:XBASE_23 (mcd:XBASE4) moved to Terrains.rul
+# note: Facility STR_115_REACTOR moved to Facilities.rul
+# note: Research STR_ELERIUM_EXTRACTION and STR_115_REACTOR moved to Research.rul
+# note: Manufacture types moved to Manufacture.rul
+# note: Ufopaedia articles moved to Ufopaedia.rul: STR_ELERIUM_EXTRACTION and STR_115_REACTOR
+#
+extraSprites:
+  - type: UfopaediaReactorResearch
+    singleImage: true
+    files:
+      0: Resources/EleriumExtraction/Extraction.png
+  - type: BASEBITS.PCK
+    files:
+      65: Resources/EleriumExtraction/Facility_Reactor.png
+
+extraStrings:
+  - type: en-US
+    strings:
+      STR_115_REACTOR: "E-115 Extraction Reactor"
+      STR_115_REACTOR_UFOPEDIA: "This reinforced and shielded facility is required to extract Elerium-115 from alien munitions. It is constructed to withstand the stresses of repeated implosions and can be locked down in the event of a runaway chain reaction. The procedure is highly unstable and extreme caution should be exercised near the chamber, weapons fire in particular being strongly discouraged."
+      STR_ELERIUM_EXTRACTION: "Elerium Extraction"
+      STR_ELERIUM_EXTRACTION_UFOPEDIA: "Because all alien munitions contain small but pure samples of Elerium, our scientists have discovered a process that seems to involve taking an alien power source sub-critical for several nano-seconds. The resulting implosion should superheat and compress the Elerium-115, producing a refined sample of the element but thoroughly destroying the power source. This process is highly unstable and requires a specialized facility to accomodate the necessary equipment and containment."
+      STR_EE_PISTOLCLIP: "115 Extraction Clip-pistol"
+      STR_EE_RIFLECLIP: "115 Extraction Clip-rifle"
+      STR_EE_HEAVYCLIP: "115 Extraction Clip-heavy"
+      STR_EE_BLASTERBOMB: "115 Extraction Blaster-shell"

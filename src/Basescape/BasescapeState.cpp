@@ -571,7 +571,7 @@ void BasescapeState::btnGeoscapeClick(Action*)
 }
 
 /**
- * Processes left clicking on facilities.
+ * Processes left-clicking on facilities.
  * @param action - pointer to an Action
  */
 void BasescapeState::layoutClickLeft(Action*)
@@ -706,8 +706,8 @@ void BasescapeState::layoutClickRight(Action*)
 }
 
 /**
- * Displays either the label of the Facility the mouse is over or the label of the
- * Base the mouse is over.
+ * Displays either the label of the Facility the mouse is over or the label of
+ * the Base the mouse is over.
  * @param action - pointer to an Action
  */
 void BasescapeState::layoutMouseOver(Action*)
