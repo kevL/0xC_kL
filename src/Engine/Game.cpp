@@ -899,7 +899,7 @@ size_t Game::getQtyStates() const
 }
 
 /**
- * Checks whether a state is the curent state.
+ * Checks whether a state is the current state.
  * @param state - pointer to a State to test against the stack-state
  * @return, true if current
  */
