@@ -158,7 +158,7 @@ private:
 		_debugGeo,
 		_debugArgDone,
 		_ironman,
-		_warned;
+		_warnedFunds;
 	int _monthsElapsed;
 	size_t
 		_dfZoom,
@@ -207,16 +207,18 @@ private:
 	std::vector<Ufo*>					_ufos;
 	std::vector<Waypoint*>				_waypoints;
 
+	///
+	static SaveInfo getSaveInfo(
+			const std::string& file,
+			const Language* const lang);
 
 	/// Gets the ResearchGeneral corresponding to a specified research-rule.
 //	ResearchGeneral* getResearchGeneral(const RuleResearch* const resRule) const;
 	/// Checks if a RuleResearch has had all of its required-research discovered.
 	bool checkRequiredResearch(const RuleResearch* const resRule) const;
 
-	///
-	static SaveInfo getSaveInfo(
-			const std::string& file,
-			const Language* const lang);
+	/// Evaluate the score of a Soldier based on all of his stats, missions and kills.
+	int getSoldierScore(Soldier* const soldier);
 
 
 	public:
@@ -421,10 +423,10 @@ private:
 		/// Gets the list of research-scores.
 		std::vector<int>& getResearchScores();
 
-		/// Gets whether or not the player has been warned.
-		bool getWarned() const;
-		/// Sets whether or not the player has been warned.
-		void setWarned(bool warned = true);
+		/// Flags player as warned of low funds.
+		void flagLowFunds(bool warned = true);
+		/// Checks if player has been warned of low funds.
+		bool hasLowFunds() const;
 
 		/// Full access to the AlienStrategy data.
 		AlienStrategy& getAlienStrategy()
@@ -485,9 +487,6 @@ private:
 //		Base* getRecallBase();
 		/// Set the last selected player-base.
 //		void setRecallBase(size_t base);
-
-		/// Evaluate the score of a Soldier based on all of his stats, missions and kills.
-		int getSoldierScore(Soldier* const soldier);
 
 		/// Sets the last selected armor
 //		void setRecallArmor(const std::string& value);

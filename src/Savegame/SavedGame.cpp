@@ -137,7 +137,7 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_dfZoom(0u),
 		_battleSave(nullptr),
 		_debugGeo(false),
-		_warned(false),
+		_warnedFunds(false),
 		_monthsElapsed(-1),
 		_debugArgDone(false)
 //		_detail(true),
@@ -444,7 +444,7 @@ void SavedGame::load(
 	_end = static_cast<EndType>(doc["end"].as<int>(_end));
 
 	_monthsElapsed			= doc["monthsElapsed"]		.as<int>(_monthsElapsed);
-	_warned					= doc["warned"]				.as<bool>(_warned);
+	_warnedFunds			= doc["warnedFunds"]		.as<bool>(_warnedFunds);
 	_graphRegionToggles		= doc["graphRegionToggles"]	.as<std::string>(_graphRegionToggles);
 	_graphCountryToggles	= doc["graphCountryToggles"].as<std::string>(_graphCountryToggles);
 	_graphFinanceToggles	= doc["graphFinanceToggles"].as<std::string>(_graphFinanceToggles);
@@ -710,7 +710,7 @@ void SavedGame::save(const std::string& file) const
 
 	if (_end != END_NONE)		node["end"]				= static_cast<int>(_end);
 	if (_monthsElapsed != -1)	node["monthsElapsed"]	= _monthsElapsed;
-	if (_warned == true)		node["warned"]			= _warned;
+	if (_warnedFunds == true)	node["warnedFunds"]		= _warnedFunds;
 
 	node["graphRegionToggles"]	= _graphRegionToggles;
 	node["graphCountryToggles"]	= _graphCountryToggles;
@@ -1969,24 +1969,20 @@ Soldier* SavedGame::inspectSoldiers(
  * @param soldier - pointer to the soldier to get a score for
  * @return, the score
  */
-int SavedGame::getSoldierScore(Soldier* const soldier)
+int SavedGame::getSoldierScore(Soldier* const soldier) // private.
 {
 	const UnitStats* const stats (soldier->getCurrentStats());
-	const int score (  stats->health * 2
-					+  stats->stamina * 2
-					+  stats->reactions * 4
-					+  stats->bravery * 4
-					+ (stats->tu + stats->firing * 2) * 3
-					+  stats->melee
-					+  stats->throwing
-					+  stats->strength
-					+  stats->psiStrength * 4	// include psi even if not revealed.
-					+  stats->psiSkill * 2);	// include psi even if not revealed.
-
-//	if (stats->psiSkill > 0)
-//		score += stats->psiStrength + stats->psiSkill * 2;
-
-	return ((score + (soldier->getMissions() + soldier->getKills())) << 3u);
+	return ( (stats->health << 1u)
+		   + (stats->stamina << 1u)
+		   + (stats->reactions << 2u)
+		   + (stats->bravery << 2u)
+		   + (stats->tu + (stats->firing << 1u)) * 3
+		   +  stats->melee
+		   +  stats->throwing
+		   +  stats->strength
+		   + (stats->psiStrength << 2u)	// include psi even if not revealed.
+		   + (stats->psiSkill << 1u)	// include psi even if not revealed.
+		   + ((soldier->getMissions() + soldier->getKills()) << 3u));
 }
 
 /**
@@ -2018,7 +2014,7 @@ bool SavedGame::getDebugGeo() const
 
 
 /**
- * *** FUNCTOR ***
+ ** FUNCTOR ***
  * @brief Match a mission based on Region and objective-type.
  * This function object will match AlienMissions based on Region and objective-type.
  */
@@ -2041,7 +2037,7 @@ private:
 		{}
 
 		/// Match against stored values.
-		bool operator() (const AlienMission* const mission) const
+		bool operator ()(const AlienMission* const mission) const
 		{
 			return mission->getRegion() == _region
 				&& mission->getRules().getObjectiveType() == _objective;
@@ -2049,7 +2045,7 @@ private:
 };
 
 /**
- * Find a mission type in the active alien missions.
+ * Find a mission-type in the active aLien-missions.
  * @param region	- the region's string ID
  * @param objective	- the active mission's objective
  * @return, pointer to the AlienMission or nullptr
@@ -2078,26 +2074,26 @@ std::vector<int>& SavedGame::getResearchScores()
 }
 
 /**
- * Gets if the player has been warned about poor performance.
- * @return, true if warned
- */
-bool SavedGame::getWarned() const
-{
-	return _warned;
-}
-
-/**
- * Sets the player's warned status.
+ * Flags player as warned of low funds.
  * @param warned - true if warned (default true)
  */
-void SavedGame::setWarned(bool warned)
+void SavedGame::flagLowFunds(bool warned)
 {
-	_warned = warned;
+	_warnedFunds = warned;
 }
 
 /**
- * *** FUNCTOR ***
- * Checks if a point is contained in a region.
+ * Checks if player has been warned of low funds.
+ * @return, true if warned
+ */
+bool SavedGame::hasLowFunds() const
+{
+	return _warnedFunds;
+}
+
+/**
+ ** FUNCTOR ***
+ * Checks if a point is contained in a Region.
  * @note This function object checks if a point is contained inside a region.
  */
 class ContainsPoint
@@ -2119,7 +2115,7 @@ private:
 		{}
 
 		/// Check if the region contains the stored point.
-		bool operator() (const Region* const region) const
+		bool operator ()(const Region* const region) const
 		{
 			return region->getRules()->insideRegion(_lon,_lat);
 		}

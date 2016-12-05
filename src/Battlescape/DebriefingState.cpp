@@ -319,7 +319,7 @@ DebriefingState::DebriefingState()
 	if (_tactical->score < -99)
 	{
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING_BAD;
-		_tactical->rating = TAC_RATING[0u];										// terrible
+		_tactical->rating = TAC_RATING[0u]; // terrible
 	}
 	else
 	{

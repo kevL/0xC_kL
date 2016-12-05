@@ -112,7 +112,7 @@ MonthlyReportState::MonthlyReportState()
 	_txtTitle->setBig();
 
 
-	calculateReport(); // <- sets Rating etc.
+	calculateReport(); // <- sets Rating etc -->
 
 	int
 		month (_gameSave->getTime()->getMonth() - 1),
@@ -142,114 +142,105 @@ MonthlyReportState::MonthlyReportState()
 	}
 	_txtMonth->setText(tr("STR_MONTH").arg(tr(st)).arg(year));
 
-	const int
-		diff (_gameSave->getDifficultyInt()),
-		defeatThreshold (_game->getRuleset()->getDefeatScore() + diff * 250);
-
-	std::string track;
-	if (_ratingTotal < defeatThreshold)
-	{
-		st = TAC_RATING[0u]; // terrible
-		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
-	}
-	else
-	{
-		if (_ratingTotal > defeatThreshold + 10000)
-			st = TAC_RATING[5u]; // terrific
-		else if (_ratingTotal > defeatThreshold + 5000)
-			st = TAC_RATING[4u]; // excellent
-		else if (_ratingTotal > defeatThreshold + 2500)
-			st = TAC_RATING[3u]; // good
-		else if (_ratingTotal > defeatThreshold + 1000)
-			st = TAC_RATING[2u]; // okay
-		else
-			st = TAC_RATING[1u]; // poor
-
-		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT;
-	}
-	_txtRating->setText(tr("STR_MONTHLY_RATING__").arg(_ratingTotal).arg(tr(st)));
-
-/*	std::wostringstream ss; // ADD:
-	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_gameSave->getCountryFunding() * 1000);
-	ss << L" (";
-	if (_deltaFunds > 0)
-		ss << '+';
-	ss << Text::formatCurrency(_deltaFunds) << L")";
-	_txtIncome->setText(ss.str());
-
-	std::wostringstream ss2;
-	ss2 << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getBaseMaintenances());
-	_txtMaintenance->setText(ss2.str());
-
-	std::wostringstream ss3;
-	ss3 << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getFunds());
-	_txtBalance->setText(ss3.str());
-// end ADD. */
 
 	std::wostringstream woststr;
 	if (_deltaFunds > 0) woststr << '+';
 	woststr << Text::formatCurrency(_deltaFunds * 1000);
 	_txtChange->setText(tr("STR_FUNDING_CHANGE_").arg(woststr.str()));
 
-
-	if (   _ratingPrior < defeatThreshold // calculate satisfaction
-		&& _ratingTotal < defeatThreshold)
-	{
-		_gameOver = true; // you lose.
-		st = "STR_YOU_HAVE_NOT_SUCCEEDED";
-
-		_happyList.clear();
-		_sadList.clear();
-		_pactList.clear();
-	}
-	else if (_ratingTotal > 1000 + 2000 * diff)
-		st = "STR_COUNCIL_IS_VERY_PLEASED";
-	else if (_ratingTotal > -1)
-		st = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
-	else
-		st = "STR_COUNCIL_IS_DISSATISFIED";
-
 	woststr.str(L"");
-	woststr << tr(st);
+
+//	std::wostringstream ss;
+//	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_gameSave->getCountryFunding() * 1000);
+//	ss << L" (";
+//	if (_deltaFunds > 0) ss << '+';
+//	ss << Text::formatCurrency(_deltaFunds) << L")";
+//	_txtIncome->setText(ss.str());
+//
+//	std::wostringstream ss2;
+//	ss2 << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getBaseMaintenances());
+//	_txtMaintenance->setText(ss2.str());
+//
+//	std::wostringstream ss3;
+//	ss3 << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getFunds());
+//	_txtBalance->setText(ss3.str());
+
+
+	const int
+		diff (_gameSave->getDifficultyInt()),
+		defeatThreshold (_game->getRuleset()->getDefeatScore() + (diff * 250));
+
+	std::string
+		track,
+		satisfaction;
+
+	if (_ratingTotal < defeatThreshold)
+	{
+		st = TAC_RATING[0u]; // terrible
+		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
+
+		if (_ratingPrior < defeatThreshold) // check defeat by rating
+		{
+			_gameOver = true; // you lose.
+			satisfaction = "STR_YOU_HAVE_NOT_SUCCEEDED";
+		}
+	}
+	else
+	{
+		if		(_ratingTotal > defeatThreshold + 10000)	st = TAC_RATING[5u]; // terrific
+		else if	(_ratingTotal > defeatThreshold + 5000)		st = TAC_RATING[4u]; // excellent
+		else if	(_ratingTotal > defeatThreshold + 2500)		st = TAC_RATING[3u]; // good
+		else if	(_ratingTotal > defeatThreshold + 1000)		st = TAC_RATING[2u]; // okay
+		else												st = TAC_RATING[1u]; // poor
+
+		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT;
+	}
+	_txtRating->setText(tr("STR_MONTHLY_RATING__").arg(_ratingTotal).arg(tr(st)));
 
 	if (_gameOver == false)
 	{
-		if (_gameSave->getFunds() < _game->getRuleset()->getDefeatFunds())
+		if		(_ratingTotal > 1000 + (diff * 2000))	satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
+		else if	(_ratingTotal > -1)						satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
+		else											satisfaction = "STR_COUNCIL_IS_DISSATISFIED";
+	}
+	woststr << tr(satisfaction);
+
+	if (_gameOver == false)
+	{
+		if (_gameSave->getFunds() < _game->getRuleset()->getDefeatFunds()) // check defeat by funds ->
 		{
-			if (_gameSave->getWarned() == true)
+			if (_gameSave->hasLowFunds() == true)
 			{
 				_gameOver = true; // you lose.
 				woststr.str(L"");
 				woststr << tr("STR_YOU_HAVE_NOT_SUCCEEDED");
-
-				_happyList.clear();
-				_sadList.clear();
-				_pactList.clear();
 			}
 			else
 			{
-				_gameSave->setWarned();
+				_gameSave->flagLowFunds();
 				woststr << "\n\n" << tr("STR_COUNCIL_REDUCE_DEBTS");
 				track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 			}
 		}
 		else
-			_gameSave->setWarned(false);
+			_gameSave->flagLowFunds(false);
 	}
 
-	woststr << countryList(
-					_happyList,
-					"STR_COUNTRY_IS_PARTICULARLY_PLEASED",
-					"STR_COUNTRIES_ARE_PARTICULARLY_HAPPY");
-	woststr << countryList(
-					_sadList,
-					"STR_COUNTRY_IS_UNHAPPY_WITH_YOUR_ABILITY",
-					"STR_COUNTRIES_ARE_UNHAPPY_WITH_YOUR_ABILITY");
-	woststr << countryList(
-					_pactList,
-					"STR_COUNTRY_HAS_SIGNED_A_SECRET_PACT",
-					"STR_COUNTRIES_HAVE_SIGNED_A_SECRET_PACT");
-
+	if (_gameOver == false)
+	{
+		woststr << countryList(
+						_listHappy,
+						"STR_COUNTRY_IS_PARTICULARLY_PLEASED",
+						"STR_COUNTRIES_ARE_PARTICULARLY_HAPPY");
+		woststr << countryList(
+						_listSad,
+						"STR_COUNTRY_IS_UNHAPPY_WITH_YOUR_ABILITY",
+						"STR_COUNTRIES_ARE_UNHAPPY_WITH_YOUR_ABILITY");
+		woststr << countryList(
+						_listPacts,
+						"STR_COUNTRY_HAS_SIGNED_A_SECRET_PACT",
+						"STR_COUNTRIES_HAVE_SIGNED_A_SECRET_PACT");
+	}
 	_txtDesc->setText(woststr.str());
 	_txtDesc->setWordWrap();
 
@@ -376,7 +367,7 @@ void MonthlyReportState::calculateReport() // private.
 			++i)
 	{
 		if ((*i)->getRecentPact() == true)
-			_pactList.push_back((*i)->getRules()->getType());
+			_listPacts.push_back((*i)->getRules()->getType());
 
 		(*i)->newMonth( // calculates satisfaction & funding & updates pact-vars.
 					scorePlayer,
@@ -388,10 +379,10 @@ void MonthlyReportState::calculateReport() // private.
 		switch ((*i)->getSatisfaction())
 		{
 			case SAT_SAD:
-				_sadList.push_back((*i)->getRules()->getType());
+				_listSad.push_back((*i)->getRules()->getType());
 				break;
 			case SAT_HAPPY:
-				_happyList.push_back((*i)->getRules()->getType());
+				_listHappy.push_back((*i)->getRules()->getType());
 		}
 	}
 

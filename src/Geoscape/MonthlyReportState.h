@@ -65,9 +65,9 @@ private:
 	Window* _window;
 
 	std::vector<std::string>
-		_happyList,
-		_pactList,
-		_sadList;
+		_listHappy,
+		_listSad,
+		_listPacts;
 
 	std::vector<Soldier*> _soldiersFeted;
 
