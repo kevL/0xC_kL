@@ -328,8 +328,8 @@ void Window::setHighContrast(bool contrast)
 /**
  * Sets the Surface used to draw the background of this Window.
  * @param bg - pointer to a surface
- * @param dX - x offset (default 0)
- * @param dY - y offset (default 0)
+ * @param dX - x-offset (default 0)
+ * @param dY - y-offset (default 0)
  */
 void Window::setBackground(
 		Surface* const bg,

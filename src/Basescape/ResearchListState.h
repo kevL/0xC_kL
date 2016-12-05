@@ -49,7 +49,7 @@ private:
 	static const Uint8 GRAY = 5u;
 
 	int _cutoff;
-	size_t _scroll;
+	size_t _recall;
 
 	Base* _base;
 	Text* _txtTitle;

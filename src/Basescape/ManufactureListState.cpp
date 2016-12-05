@@ -39,6 +39,8 @@
 #include "../Savegame/Base.h"
 #include "../Savegame/SavedGame.h"
 
+#include "../Ufopaedia/TechTreeViewerState.h"
+
 
 namespace OpenXcom
 {
@@ -56,7 +58,7 @@ ManufactureListState::ManufactureListState(
 		Base* const base)
 	:
 		_base(base),
-		_scroll(0u)
+		_recall(0u)
 {
 	_fullScreen = false;
 
@@ -100,7 +102,8 @@ ManufactureListState::ManufactureListState(
 	_lstManufacture->setColumns(2, 132,145);
 	_lstManufacture->setBackground(_window);
 	_lstManufacture->setSelectable();
-	_lstManufacture->onMouseClick(static_cast<ActionHandler>(&ManufactureListState::lstStartClick));
+	_lstManufacture->onMouseClick(	static_cast<ActionHandler>(&ManufactureListState::lstStartClick),
+									0u);
 
 	_btnCostTable->setText(tr("STR_PRODUCTION_COSTS"));
 	_btnCostTable->onMouseClick(static_cast<ActionHandler>(&ManufactureListState::btnCostsClick));
@@ -167,7 +170,7 @@ void ManufactureListState::init()
 	State::init();
 
 	fillProjectList();
-	_lstManufacture->scrollTo(_scroll);
+	_lstManufacture->scrollTo(_recall);
 }
 
 /**
@@ -189,12 +192,12 @@ void ManufactureListState::btnCancelClick(Action*)
 }
 
 /**
- * Opens the ManufactureStart screen for assigning engineers.
+ * Selects a project to work on and assigns engineers.
  * @param action - pointer to an Action
  */
-void ManufactureListState::lstStartClick(Action*) // private.
+void ManufactureListState::lstStartClick(Action* action) // private.
 {
-	_scroll = _lstManufacture->getScroll();
+	_recall = _lstManufacture->getScroll();
 
 	std::vector<const RuleManufacture*>::const_iterator i (_unlocked.begin());
 	for (
@@ -205,7 +208,16 @@ void ManufactureListState::lstStartClick(Action*) // private.
 		if ((*i)->getType() == _unlockedTypes[_lstManufacture->getSelectedRow()])
 			break;
 	}
-	_game->pushState(new ManufactureStartState(_base, *i));
+
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			_game->pushState(new ManufactureStartState(_base, *i));
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			_game->pushState(new TechTreeViewerState(*i));
+	}
 }
 
 /**
@@ -217,7 +229,7 @@ void ManufactureListState::cbxCategoryChange(Action*) // private.
 }
 
 /**
- * Fills the list with available Manufacture.
+ * Fills the list with available ManufactureProjects.
  */
 void ManufactureListState::fillProjectList() // private.
 {

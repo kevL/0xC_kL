@@ -43,34 +43,62 @@
 namespace OpenXcom
 {
 
-const std::string TechTreeViewerState::START_PLAY = "STR_UNLOCKED"; // static.
+const std::string TechTreeViewerState::START_PLAY ("STR_UNLOCKED"); // static.
 
 
 /**
- * Initializes all the elements on the UI.
- * @param topicResearch		- pointer to a RuleResearch to show (default nullptr)
- * @param topicManufacture	- pointer to a RuleManufacture to show (default nullptr)
+ * Creates a TechTreeViewer state.
  */
-TechTreeViewerState::TechTreeViewerState(
-		const RuleResearch* const topicResearch,
-		const RuleManufacture* const topicManufacture)
+TechTreeViewerState::TechTreeViewerState()
 	:
-		_rules(_game->getRuleset())
+		_rules(_game->getRuleset()),
+		_selTopic(START_PLAY),
+		_selFlag(TECH_RESEARCH)
 {
-	if (topicResearch != nullptr)
-	{
-		_selTopic = topicResearch->getType();
-		_selFlag  = TECH_RESEARCH;
-	}
-	else if (topicManufacture != nullptr)
-	{
-		_selTopic = topicManufacture->getType();
-		_selFlag  = TECH_MANUFACTURE;
-	}
-	else
-		_selFlag = TECH_NONE;
+	build();
+}
 
-	_window = new Window(this);
+/**
+ * Creates a TechTreeViewer state with a specified topic of Research.
+ * @param topicResearch - pointer to a RuleResearch to show
+ */
+TechTreeViewerState::TechTreeViewerState(const RuleResearch* const topicResearch)
+	:
+		_rules(_game->getRuleset()),
+		_selTopic(topicResearch->getType()),
+		_selFlag(TECH_RESEARCH)
+{
+	build();
+}
+
+/**
+ * Creates a TechTreeViewer state with a specified topic of Manufacture.
+ * @param topicManufacture - pointer to a RuleManufacture to show
+ */
+TechTreeViewerState::TechTreeViewerState(const RuleManufacture* const topicManufacture)
+	:
+		_rules(_game->getRuleset()),
+		_selTopic(topicManufacture->getType()),
+		_selFlag(TECH_MANUFACTURE)
+{
+	build();
+}
+
+/**
+ * dTor.
+ */
+TechTreeViewerState::~TechTreeViewerState()
+{}
+
+/**
+ * Builds all the elements of the UI.
+ */
+void TechTreeViewerState::build()
+{
+	_window = new Window(
+					this,
+					320,200,
+					0,0, POPUP_VERTICAL);
 
 	_txtTitle = new Text(300, 16, 10, 7);
 
@@ -184,12 +212,6 @@ TechTreeViewerState::TechTreeViewerState(
 							.arg(Text::formatPercent(costDiscovered * 100 / costTotal)));
 	_txtProgress->setAlign(ALIGN_RIGHT);
 }
-
-/**
- * dTor.
- */
-TechTreeViewerState::~TechTreeViewerState()
-{}
 
 /**
  * Initializes the Lists.
@@ -417,7 +439,6 @@ void TechTreeViewerState::fillTechTreeLists()
 							if (*j == resRule->getType())
 								gofBy.push_back(*i);
 						}
-
 					}
 
 // LEFT LIST TOPICS ->

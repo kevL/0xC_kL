@@ -52,7 +52,7 @@ private:
 	static const std::string ALL_ITEMS;
 	static std::string _recallCategory;
 
-	size_t _scroll;
+	size_t _recall;
 
 	Base* _base;
 	ComboBox* _cbxCategory;

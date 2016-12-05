@@ -47,6 +47,8 @@
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Transfer.h"
 
+#include "../Ufopaedia/TechTreeViewerState.h"
+
 
 namespace OpenXcom
 {
@@ -164,7 +166,8 @@ ManufactureState::ManufactureState(
 	_lstManufacture->setColumns(5, 121,29,41,56,30);
 	_lstManufacture->setSelectable();
 	_lstManufacture->setBackground(_window);
-	_lstManufacture->onMouseClick(static_cast<ActionHandler>(&ManufactureState::lstManufactureClick));
+	_lstManufacture->onMouseClick(	static_cast<ActionHandler>(&ManufactureState::lstManufactureClick),
+									0u);
 
 	_lstResources->setColumns(4, 151,50,40,40);
 	_lstResources->setMargin(4);
@@ -332,11 +335,21 @@ void ManufactureState::btnManufactureClick(Action*)
  * Opens the Manufacture settings for a project.
  * @param action - pointer to an Action
  */
-void ManufactureState::lstManufactureClick(Action*) // private.
+void ManufactureState::lstManufactureClick(Action* action) // private.
 {
-	_game->pushState(new ManufactureInfoState(
-										_base,
-										_base->getManufacture().at(_lstManufacture->getSelectedRow())));
+	const size_t sel (_lstManufacture->getSelectedRow());
+
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+			_game->pushState(new ManufactureInfoState(
+												_base,
+												_base->getManufacture().at(sel)));
+			break;
+
+		case SDL_BUTTON_RIGHT:
+			_game->pushState(new TechTreeViewerState(_base->getManufacture().at(sel)->getRules()));
+	}
 }
 
 /**

@@ -55,7 +55,7 @@ ResearchListState::ResearchListState(
 	:
 		_base(base),
 		_cutoff(-1),
-		_scroll(0u)
+		_recall(0u)
 {
 	_fullScreen = false;
 
@@ -110,7 +110,7 @@ void ResearchListState::init()
 	State::init();
 
 	fillProjectList();
-	_lstResearch->scrollTo(_scroll);
+	_lstResearch->scrollTo(_recall);
 }
 
 /**
@@ -123,13 +123,13 @@ void ResearchListState::btnCancelClick(Action*)
 }
 
 /**
- * Selects the research to work on and assigns scientists.
+ * Selects a project to work on and assigns scientists.
  * @note If an offline ResearchProject is selected the spent & cost values are preserved.
  * @param action - pointer to an Action
  */
 void ResearchListState::lstStartClick(Action* action) // private.
 {
-	_scroll = _lstResearch->getScroll();
+	_recall = _lstResearch->getScroll();
 
 	switch (action->getDetails()->button.button)
 	{
@@ -154,7 +154,7 @@ void ResearchListState::lstStartClick(Action* action) // private.
 }
 
 /**
- * Fills the list with ResearchProjects.
+ * Fills the list with available ResearchProjects.
  */
 void ResearchListState::fillProjectList() // private.
 {

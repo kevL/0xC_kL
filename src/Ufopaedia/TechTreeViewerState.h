@@ -102,11 +102,16 @@ private:
 
 	public:
 		/// Creates a TechTreeViewer state.
-		TechTreeViewerState(
-				const RuleResearch* const topicResearch = nullptr,
-				const RuleManufacture* const topicManufacture = nullptr);
+		TechTreeViewerState();
+		/// Creates a TechTreeViewer state with a specified topic of Research.
+		TechTreeViewerState(const RuleResearch* const topicResearch);
+		/// Creates a TechTreeViewer state with a specified topic of Manufacture.
+		TechTreeViewerState(const RuleManufacture* const topicManufacture);
 		/// Cleans up the TechTreeViewer state.
 		~TechTreeViewerState();
+
+		/// Builds the State.
+		void build();
 
 		/// Initializes the State.
 		void init() override;
