@@ -280,7 +280,7 @@ void CraftInfoState::init()
 		woststr1, // fuel
 		woststr2; // hull
 
-	woststr1 << tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct()));
+	woststr1 << tr("STR_FUEL_").arg(Text::formatPercent(_craft->getFuelPct()));
 	if (crRule->getFuelCapacity() - _craft->getFuel() > 0)
 	{
 		hrs = static_cast<int>(std::ceil(

@@ -182,7 +182,7 @@ BriefingState::BriefingState(
 	}
 	else if (base != nullptr)
 	{
-		label = tr("STR_BASE_UC_").arg(base->getLabel());
+		label = tr("STR_BASE_LC_").arg(base->getLabel());
 		_txtTarget->setVisible(false);
 	}
 

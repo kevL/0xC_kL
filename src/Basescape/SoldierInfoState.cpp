@@ -548,7 +548,7 @@ void SoldierInfoState::init()
 		craft = _sol->getCraft()->getLabel(
 										_game->getLanguage(),
 										_isQuickBattle == false);
-	_txtCraft->setText(tr("STR_CRAFT_").arg(craft));
+	_txtCraft->setText(tr("STR_CRAFT_LC_").arg(craft));
 
 
 	const int recovery (_sol->getSickbay());

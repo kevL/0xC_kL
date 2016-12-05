@@ -91,7 +91,7 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 	_window->setColor(PURPLE);
 
-	_txtTitle->setText(tr("STR_BASEDETECTION"));
+	_txtTitle->setText(tr("STR_BASE_DETECTION"));
 	_txtTitle->setColor(PURPLE);
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();

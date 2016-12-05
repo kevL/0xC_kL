@@ -25,6 +25,7 @@
 #include "DefeatState.h"
 
 #include "../Battlescape/CeremonyState.h"
+#include "../Battlescape/DebriefingState.h" // access TAC_RATING strings.
 
 #include "../Engine/Game.h"
 //#include "../Engine/Language.h" // TEST, for soldier label.
@@ -143,26 +144,26 @@ MonthlyReportState::MonthlyReportState()
 
 	const int
 		diff (_gameSave->getDifficultyInt()),
-		ratingThreshold (_game->getRuleset()->getDefeatScore() + diff * 250);
+		defeatThreshold (_game->getRuleset()->getDefeatScore() + diff * 250);
 
 	std::string track;
-	if (_ratingTotal < ratingThreshold)
+	if (_ratingTotal < defeatThreshold)
 	{
-		st = "STR_RATING_TERRIBLE";
+		st = TAC_RATING[0u]; // terrible
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 	}
 	else
 	{
-		if (_ratingTotal > ratingThreshold + 10000)
-			st = "STR_RATING_STUPENDOUS";
-		else if (_ratingTotal > ratingThreshold + 5000)
-			st = "STR_RATING_EXCELLENT";
-		else if (_ratingTotal > ratingThreshold + 2500)
-			st = "STR_RATING_GOOD";
-		else if (_ratingTotal > ratingThreshold + 1000)
-			st = "STR_RATING_OK";
+		if (_ratingTotal > defeatThreshold + 10000)
+			st = TAC_RATING[5u]; // terrific
+		else if (_ratingTotal > defeatThreshold + 5000)
+			st = TAC_RATING[4u]; // excellent
+		else if (_ratingTotal > defeatThreshold + 2500)
+			st = TAC_RATING[3u]; // good
+		else if (_ratingTotal > defeatThreshold + 1000)
+			st = TAC_RATING[2u]; // okay
 		else
-			st = "STR_RATING_POOR";
+			st = TAC_RATING[1u]; // poor
 
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT;
 	}
@@ -191,8 +192,8 @@ MonthlyReportState::MonthlyReportState()
 	_txtChange->setText(tr("STR_FUNDING_CHANGE_").arg(woststr.str()));
 
 
-	if (   _ratingPrior < ratingThreshold // calculate satisfaction
-		&& _ratingTotal < ratingThreshold)
+	if (   _ratingPrior < defeatThreshold // calculate satisfaction
+		&& _ratingTotal < defeatThreshold)
 	{
 		_gameOver = true; // you lose.
 		st = "STR_YOU_HAVE_NOT_SUCCEEDED";

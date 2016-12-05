@@ -64,10 +64,10 @@ private:
 		* _txtSpeed,
 		* _txtStatus,
 		* _txtTitle,
-		* _txtW1Ammo,
-		* _txtW1Name,
-		* _txtW2Ammo,
-		* _txtW2Name,
+		* _txtLoad1,
+		* _txtWeapon1,
+		* _txtLoad2,
+		* _txtWeapon2,
 		* _txtKills;
 	TextButton
 		* _btnRebase,

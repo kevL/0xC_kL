@@ -104,7 +104,7 @@ BaseDefenseState::BaseDefenseState(
 							Options::keyCancel);
 	_btnOk->setVisible(false);
 
-	_txtTitle->setText(tr("STR_BASE_UNDER_ATTACK").arg(_base->getLabel()));
+	_txtTitle->setText(tr("STR_BASE_UNDER_ATTACK_").arg(_base->getLabel()));
 	_txtTitle->setBig();
 
 	_txtInit->setAlign(ALIGN_CENTER);

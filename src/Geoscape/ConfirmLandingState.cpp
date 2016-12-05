@@ -287,7 +287,7 @@ ConfirmLandingState::ConfirmLandingState(
 		_txtShade->setVisible(false);
 	}
 
-	_txtMessage->setText(tr("STR_CRAFT_READY_TO_LAND_AT")
+	_txtMessage->setText(tr("STR_CRAFT_READY_TO_LAND_AT_")
 						 .arg(_craft->getLabel(_game->getLanguage())));
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setBig();
@@ -301,7 +301,7 @@ ConfirmLandingState::ConfirmLandingState(
 		if (ufo->getHyperDetected() == true) // only ufoType shows if not hyperdetected.
 			woststr << L" : " << tr(ufo->getAlienRace());
 	}
-	_txtMessage2->setText(tr("STR_CRAFT_DESTINATION")
+	_txtMessage2->setText(tr("STR_CRAFT_DESTINATION_")
 						 .arg(_craft->getTarget()->getLabel(_game->getLanguage()))
 						 .arg(woststr.str()));
 	_txtMessage2->setBig();

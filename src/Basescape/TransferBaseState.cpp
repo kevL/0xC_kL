@@ -105,7 +105,7 @@ TransferBaseState::TransferBaseState(Base* base)
 	_txtFunds->setText(tr("STR_CURRENT_FUNDS_")
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 
-	_txtName->setText(tr("STR_BASE_KL"));
+	_txtName->setText(tr("STR_BASE_UC"));
 	_txtName->setBig();
 
 	_txtArea->setText(tr("STR_AREA"));

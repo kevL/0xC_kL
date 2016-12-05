@@ -37,6 +37,17 @@
 namespace OpenXcom
 {
 
+/// Rating strings are used by MonthlyReportState also.
+static const char* const TAC_RATING[6u]
+{
+	"STR_RATING_TERRIBLE",	// 0
+	"STR_RATING_POOR",		// 1
+	"STR_RATING_OK",		// 2
+	"STR_RATING_GOOD",		// 3
+	"STR_RATING_EXCELLENT",	// 4
+	"STR_RATING_TERRIFIC"	// 5
+};
+
 /**
  * Container for tracking results incl/ loot after tactical.
  */
@@ -111,9 +122,7 @@ class DebriefingState
 
 private:
 
-	static const char
-		* const TAC_RESULT[12u],
-		* const TAC_RATING[ 6u];
+	static const char* const TAC_RESULT[12u];
 
 	bool
 		_aborted,

@@ -96,10 +96,10 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_txtFuel		= new Text(120,  9,  32, 82);
 	_txtDamage		= new Text( 80,  9, 160, 82);
 
-	_txtW1Name		= new Text(120,  9,  32,  91);
-	_txtW1Ammo		= new Text( 80,  9, 160,  91);
-	_txtW2Name		= new Text(120,  9,  32, 100);
-	_txtW2Ammo		= new Text( 80,  9, 160, 100);
+	_txtWeapon1		= new Text(120,  9,  32,  91);
+	_txtLoad1		= new Text( 80,  9, 160,  91);
+	_txtWeapon2		= new Text(120,  9,  32, 100);
+	_txtLoad2		= new Text( 80,  9, 160, 100);
 
 	_btnTarget		= new TextButton( 90, 16,  32, 114);
 	_btnPatrol		= new TextButton( 90, 16, 134, 114);
@@ -125,10 +125,10 @@ GeoscapeCraftState::GeoscapeCraftState(
 	add(_txtHWP,		"text3",	"geoCraftScreens");
 	add(_txtFuel,		"text3",	"geoCraftScreens");
 	add(_txtDamage,		"text3",	"geoCraftScreens");
-	add(_txtW1Name,		"text3",	"geoCraftScreens");
-	add(_txtW1Ammo,		"text3",	"geoCraftScreens");
-	add(_txtW2Name,		"text3",	"geoCraftScreens");
-	add(_txtW2Ammo,		"text3",	"geoCraftScreens");
+	add(_txtWeapon1,	"text3",	"geoCraftScreens");
+	add(_txtLoad1,		"text3",	"geoCraftScreens");
+	add(_txtWeapon2,	"text3",	"geoCraftScreens");
+	add(_txtLoad2,		"text3",	"geoCraftScreens");
 
 	add(_btnTarget,		"button",	"geoCraftScreens");
 	add(_btnPatrol,		"button",	"geoCraftScreens");
@@ -240,10 +240,10 @@ GeoscapeCraftState::GeoscapeCraftState(
 	}
 	_txtStatus->setText(tr("STR_STATUS_").arg(status));
 
-	_txtBase->setText(tr("STR_BASE_UC").arg(_craft->getBase()->getLabel()));
+	_txtBase->setText(tr("STR_BASE_UC_").arg(_craft->getBase()->getLabel()));
 
 	_txtSpeed->setText(tr("STR_SPEED_").arg(speed));
-	_txtMaxSpeed->setText(tr("STR_MAXIMUM_SPEED_UC")
+	_txtMaxSpeed->setText(tr("STR_MAXIMUM_SPEED_")
 							.arg(_craft->getRules()->getTopSpeed()));
 
 	std::string alt;
@@ -259,7 +259,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	_txtAltitude->setText(tr("STR_ALTITUDE_").arg(tr(alt)));
 
-	_txtFuel->setText(tr("STR_FUEL").arg(Text::formatPercent(_craft->getFuelPct())));
+	_txtFuel->setText(tr("STR_FUEL_").arg(Text::formatPercent(_craft->getFuelPct())));
 	_txtDamage->setText(tr("STR_HULL_").arg(Text::formatPercent(_craft->getCraftHullPct())));
 
 	std::wostringstream woststr;
@@ -300,18 +300,18 @@ GeoscapeCraftState::GeoscapeCraftState(
 		{
 			default:
 			case 0u:
-				cwLabel	= _txtW1Name;
-				cwLoad	= _txtW1Ammo;
+				cwLabel	= _txtWeapon1;
+				cwLoad	= _txtLoad1;
 				break;
 			case 1u:
-				cwLabel	= _txtW2Name;
-				cwLoad	= _txtW2Ammo;
+				cwLabel	= _txtWeapon2;
+				cwLoad	= _txtLoad2;
 		}
 
 		if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
 		{
 			cwRule = cw->getRules();
-			cwLabel->setText(tr("STR_WEAPON_ONE").arg(tr(cwRule->getType())));
+			cwLabel->setText(tr("STR_WEAPON_POD_").arg(tr(cwRule->getType())));
 
 			woststr.str(L"");
 			woststr << tr("STR_ROUNDS_").arg(cw->getCwLoad())
@@ -498,10 +498,10 @@ void GeoscapeCraftState::transposeWindow() // private.
 	_txtHWP->		setVisible(false);
 	_txtFuel->		setVisible(false);
 	_txtDamage->	setVisible(false);
-	_txtW1Name->	setVisible(false);
-	_txtW1Ammo->	setVisible(false);
-	_txtW2Name->	setVisible(false);
-	_txtW2Ammo->	setVisible(false);
+	_txtWeapon1->	setVisible(false);
+	_txtLoad1->		setVisible(false);
+	_txtWeapon2->	setVisible(false);
+	_txtLoad2->		setVisible(false);
 
 	int dy (26);
 	_btnTarget->setY(_btnTarget->getY() + dy);

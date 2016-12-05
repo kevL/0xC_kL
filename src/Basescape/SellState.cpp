@@ -138,9 +138,9 @@ SellState::SellState(Base* const base)
 	_txtTitle->setBig();
 
 	_txtBaseLabel->setText(_base->getLabel());
-	_txtSales->setText(tr("STR_VALUE_OF_SALES")
+	_txtSales->setText(tr("STR_VALUE_OF_SALES_")
 						.arg(Text::formatCurrency(_costTotal)));
-	_txtFunds->setText(tr("STR_FUNDS")
+	_txtFunds->setText(tr("STR_FUNDS_")
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 	_txtItem->setText(tr("STR_ITEM"));
 
@@ -617,7 +617,7 @@ void SellState::updateListrow() // private.
 	_lstItems->setCellText(_sel, 1u, Text::intWide(getBaseQuantity() - _sellQty[_sel]));
 	_lstItems->setCellText(_sel, 2u, Text::intWide(_sellQty[_sel]));
 
-	_txtSales->setText(tr("STR_VALUE_OF_SALES").arg(Text::formatCurrency(_costTotal)));
+	_txtSales->setText(tr("STR_VALUE_OF_SALES_").arg(Text::formatCurrency(_costTotal)));
 
 	Uint8 color;
 

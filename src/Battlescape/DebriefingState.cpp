@@ -96,16 +96,6 @@ const char* const DebriefingState::TAC_RESULT[12u] // static.
 //	"STR_XCOM_AGENTS_RETIRED_THROUGH_INJURY"
 };
 
-const char* const DebriefingState::TAC_RATING[6u] // static.
-{
-	"STR_RATING_TERRIBLE",	// 0
-	"STR_RATING_POOR",		// 1
-	"STR_RATING_OK",		// 2
-	"STR_RATING_GOOD",		// 3
-	"STR_RATING_EXCELLENT",	// 4
-	"STR_RATING_STUPENDOUS"	// 5
-};
-
 
 /**
  * Initializes all the elements in the Debriefing screen.
@@ -326,8 +316,8 @@ DebriefingState::DebriefingState()
 			}
 	}
 
-	if (_tactical->score < -99)	// TODO: Move TAC_RATING to someplace more general like TacticalStatistics
-	{							// and use it more globally from there w/ modable values.
+	if (_tactical->score < -99)
+	{
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING_BAD;
 		_tactical->rating = TAC_RATING[0u];										// terrible
 	}

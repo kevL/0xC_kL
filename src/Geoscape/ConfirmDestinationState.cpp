@@ -83,7 +83,7 @@ ConfirmDestinationState::ConfirmDestinationState(
 	if (_waypoint != nullptr)
 		_txtTarget->setText(tr("STR_TARGET_WAY_POINT"));
 	else
-		_txtTarget->setText(tr("STR_TARGET").arg(_target->getLabel(_game->getLanguage())));
+		_txtTarget->setText(tr("STR_TARGET_").arg(_target->getLabel(_game->getLanguage())));
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ConfirmDestinationState::btnOkClick));

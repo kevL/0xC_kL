@@ -269,7 +269,7 @@ void BasescapeState::init()
 		}
 	}
 
-	_txtFunds->setText(tr("STR_FUNDS")
+	_txtFunds->setText(tr("STR_FUNDS_")
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 
 //	_btnNewBase->setVisible(_baseList->size() < Base::MAX_BASES);
@@ -723,7 +723,7 @@ void BasescapeState::layoutMouseOver(Action*)
 			woststr << tr(fac->getRules()->getType());
 
 			if (fac->getCraft() != nullptr)
-				woststr << L" " << tr("STR_CRAFT_")
+				woststr << L" " << tr("STR_CRAFT_LC_")
 									.arg(fac->getCraft()->getLabel(_game->getLanguage()));
 		}
 		else

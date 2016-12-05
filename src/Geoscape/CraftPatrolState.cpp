@@ -99,7 +99,7 @@ CraftPatrolState::CraftPatrolState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
-	_txtDestination->setText(tr("STR_CRAFT_HAS_REACHED_DESTINATION")
+	_txtDestination->setText(tr("STR_CRAFT_HAS_REACHED_DESTINATION_")
 								 .arg(_craft->getLabel(_game->getLanguage()))
 								 .arg(_craft->getTarget()->getLabel(_game->getLanguage())));
 	_txtDestination->setAlign(ALIGN_CENTER);

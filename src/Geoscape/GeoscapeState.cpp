@@ -2346,7 +2346,7 @@ void GeoscapeState::time30Minutes()
 						{
 							(*j)->setWarned();
 							(*j)->setWarning(CW_CANTREFUEL);
-							const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE")
+							const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REFUEL_CRAFT_AT_BASE_")
 														.arg(tr(refuelItem))
 														.arg((*j)->getLabel(_game->getLanguage()))
 														.arg((*i)->getLabel()));
@@ -2363,7 +2363,7 @@ void GeoscapeState::time30Minutes()
 						&& (*j)->getWarned() == false)
 					{
 						(*j)->setWarned();
-						const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE")
+						const std::wstring wst (tr("STR_NOT_ENOUGH_ITEM_TO_REARM_CRAFT_AT_BASE_")
 													.arg(tr(rearmClip))
 													.arg((*j)->getLabel(_game->getLanguage()))
 													.arg((*i)->getLabel()));
@@ -2378,7 +2378,7 @@ void GeoscapeState::time30Minutes()
 			if ((*j)->showReady() == true)
 				popupGeo(new CraftReadyState(
 										this, *j,
-										tr("STR_CRAFT_READY")
+										tr("STR_CRAFT_READY_")
 											.arg((*i)->getLabel())
 											.arg((*j)->getLabel(_game->getLanguage()))));
 		}
