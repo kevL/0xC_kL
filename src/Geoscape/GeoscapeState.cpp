@@ -3190,7 +3190,7 @@ void GeoscapeState::resetTimer()
 {
 	_globe->rotateStop();
 
-	Action* action (_game->getSynthMouseDown());
+	Action* const action (_game->getSynthMouseDown());
 	_btn5Secs->mousePress(action, this);
 	delete action;
 }

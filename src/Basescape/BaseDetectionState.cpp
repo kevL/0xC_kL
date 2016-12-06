@@ -52,10 +52,10 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 {
 	_fullScreen = false;
 
-	_window			= new Window(this, 200, 100, 60, 50, POPUP_BOTH);
-	_txtTitle		= new Text(200, 17, 60, 60);
+	_window		= new Window(this, 200, 100, 60, 50, POPUP_BOTH);
+	_txtTitle	= new Text(200, 17, 60, 60);
 
-	_txtFacilities		= new Text(60, 9,  76, 83);
+	_txtActivity		= new Text(60, 9,  76, 83);
 	_txtFacilitiesVal	= new Text(15, 9, 136, 83);
 	_txtShields			= new Text(60, 9,  76, 93);
 	_txtShieldsVal		= new Text(15, 9, 136, 93);
@@ -67,13 +67,13 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 	_txtExposureVal	= new Text(102, 16, 152,  90);
 //	_txtTimePeriod	= new Text(102,  9, 152, 107);
 
-	_btnOk			= new TextButton(168, 16, 76, 125);
+	_btnOk = new TextButton(168, 16, 76, 125);
 
 	setPalette(PAL_BASESCAPE, BACKPAL_ORANGE);
 
 	add(_window);
 	add(_txtTitle);
-	add(_txtFacilities);
+	add(_txtActivity);
 	add(_txtShields);
 //	add(_txtDifficulty);
 	add(_txtFacilitiesVal);
@@ -106,8 +106,8 @@ BaseDetectionState::BaseDetectionState(const Base* const base)
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BaseDetectionState::btnOkClick),
 							Options::keyOkKeypad);
 
-	_txtFacilities->setText(tr("STR_FACILITIES"));
-	_txtFacilities->setColor(PURPLE);
+	_txtActivity->setText(tr("STR_ACTIVITY"));
+	_txtActivity->setColor(PURPLE);
 
 	_txtShields->setText(tr("STR_MINDSHIELDS"));
 	_txtShields->setColor(PURPLE);

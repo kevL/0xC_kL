@@ -53,7 +53,7 @@ private:
 //		* _txtDifficultyVal,
 		* _txtExposure,
 		* _txtExposureVal,
-		* _txtFacilities,
+		* _txtActivity,
 		* _txtFacilitiesVal,
 		* _txtShields,
 		* _txtShieldsVal,

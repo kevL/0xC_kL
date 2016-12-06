@@ -1983,7 +1983,7 @@ bool isCompleted::operator()(const BaseFacility* facility) const
  * @note Big bases without mindshields are easier to detect.
  * @param diff		- the game's difficulty setting
  * @param facQty	- pointer to the quantity of facilities (default nullptr)
- * @param shields	- pointer to the quantity of shield facilities (default nullptr)
+ * @param shields	- pointer to the quantity of mind-shield facilities (default nullptr)
  * @return, detection chance
  */
 int Base::getExposedChance(
@@ -1991,6 +1991,8 @@ int Base::getExposedChance(
 		int* facQty,
 		int* shields) const
 {
+	int facSize;
+
 	if (facQty != nullptr)
 	{
 		*facQty  =
@@ -2000,14 +2002,15 @@ int Base::getExposedChance(
 				i != _facilities.end();
 				++i)
 		{
-			if ((*i)->buildFinished() == true)
-			{
-				++(*facQty);
-				if ((*i)->getRules()->isMindShield() == true)
-					++(*shields);
-			}
-			else
-				*facQty += 2; // unfinished facilities count double
+			facSize = static_cast<int>((*i)->getRules()->getSize());
+			facSize *= facSize;
+
+			if ((*i)->buildFinished() == false)
+				facSize *= 2;
+			else if ((*i)->getRules()->isMindShield() == true)
+				++(*shields);
+
+			*facQty += facSize;
 		}
 		return exposedChance(diff, *facQty, *shields);
 	}
@@ -2020,14 +2023,15 @@ int Base::getExposedChance(
 			i != _facilities.end();
 			++i)
 	{
-		if ((*i)->buildFinished() == true)
-		{
-			++facQty0;
-			if ((*i)->getRules()->isMindShield() == true)
-				++shields0;
-		}
-		else
-			facQty0 += 2; // unfinished facilities count double
+		facSize = static_cast<int>((*i)->getRules()->getSize());
+		facSize *= facSize;
+
+		if ((*i)->buildFinished() == false)
+			facSize *= 2;
+		else if ((*i)->getRules()->isMindShield() == true)
+			++shields0;
+
+		facQty0 += facSize;
 	}
 	return exposedChance(diff, facQty0, shields0);
 }
