@@ -259,7 +259,7 @@ void BuildBaseState::globeClick(Action* action)
 						static_cast<Sint16>(mY),
 						&lon, &lat);
 
-		if (_globe->insideLand(lon, lat) == true)
+		if (_globe->insideLand(lon,lat) == true)
 		{
 			_base->setLongitude(lon);
 			_base->setLatitude(lat);

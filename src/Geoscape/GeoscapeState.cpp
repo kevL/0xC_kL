@@ -1141,8 +1141,6 @@ void GeoscapeState::init()
 		}
 	}
 
-	_globe->setBuildBaseRadars(false); // TODO: Move this someplace absolute.
-
 	if (_gameSave->getMonthsElapsed() == -1							// run once
 		&& _gameSave->getBases()->empty() == false					// as long as there's a base
 		&& _gameSave->getBases()->front()->isBasePlaced() == true)	// THIS prevents missions running prior to the first base being placed.

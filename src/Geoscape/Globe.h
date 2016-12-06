@@ -395,12 +395,12 @@ private:
 				double lat,
 				int* shade) const;
 
+		/// Sets the state of build-base hover.
+		void setBuildBaseRadars(bool hover = true);
 		/// Sets the build-base hover coordinates.
 		void setBuildBaseHoverPos(
 				double lon,
 				double lat);
-		/// Sets the state of build-base hover.
-		void setBuildBaseRadars(bool hover = true);
 
 		/// Updates the resolution settings due to resizing the window.
 		void resize();
