@@ -37,7 +37,7 @@ class Window;
 /**
  * Window used to input a label for a Base.
  * @note Player's first Base uses this screen; additional bases use
- * ConfirmNewBaseState.
+ * ConfirmBuildBaseState.
  */
 class BaseLabelState
 	:
@@ -56,17 +56,17 @@ private:
 
 
 	public:
-		/// Creates a BaseName state.
+		/// Creates a BaseLabel state.
 		BaseLabelState(
 				Base* const base,
 				Globe* const globe,
 				bool isFirstBase = false);
-		/// Cleans up the BaseName state.
+		/// Cleans up the BaseLabel state.
 		~BaseLabelState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);
-		/// Handler for changing text on the Name edit.
+		/// Handler for changing text on the label-edit.
 		void edtLabelChange(Action* action);
 };
 

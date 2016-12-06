@@ -169,6 +169,9 @@ private:
 	/// Creates the prefix for a debugging message.
 	void fabricateDebugPretext();
 
+	/// Converts the date to a month string.
+	std::wstring convertDateToMonth(int date);
+
 	/// Scores points for UFOs that are Flying/Landed or Crashed.
 	void scoreUfos(bool hour) const;
 	/// Processes a TerrorSite.
@@ -221,8 +224,6 @@ private:
 
 		/// Displays the game time/date. (+Funds)
 		void updateTimeDisplay();
-		/// Converts the date to a month string.
-		std::wstring convertDateToMonth(int date);
 		/// Advances the game-timer.
 		void timeAdvance();
 		/// Triggers whenever 5 seconds pass.

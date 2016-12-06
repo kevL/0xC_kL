@@ -1125,23 +1125,23 @@ void GeoscapeState::init()
 
 	if (kL_geoMusicPlaying == true)
 	{
-		std::string trackType;
+		std::string track;
 		if (_dogfights.empty() == true
 			&& _timerDfStart->isRunning() == false)
 		{
-			trackType = OpenXcom::res_MUSIC_GEO_GLOBE;
+			track = OpenXcom::res_MUSIC_GEO_GLOBE;
 		}
 		else
-			trackType = OpenXcom::res_MUSIC_GEO_INTERCEPT;
+			track = OpenXcom::res_MUSIC_GEO_INTERCEPT;
 
-		if (_game->getResourcePack()->isMusicPlaying(trackType) == false)
+		if (_game->getResourcePack()->isMusicPlaying(track) == false)
 		{
 			_game->getResourcePack()->fadeMusic(_game, 425);
-			_game->getResourcePack()->playMusic(trackType);
+			_game->getResourcePack()->playMusic(track);
 		}
 	}
 
-	_globe->unsetNewBaseHover();
+	_globe->setBuildBaseRadars(false); // TODO: Move this someplace absolute.
 
 	if (_gameSave->getMonthsElapsed() == -1							// run once
 		&& _gameSave->getBases()->empty() == false					// as long as there's a base
@@ -1365,8 +1365,9 @@ void GeoscapeState::updateTimeDisplay()
 /**
  * Converts the date to a month string.
  * @param date - the date
+ * @return, the month as a wide-string
  */
-std::wstring GeoscapeState::convertDateToMonth(int date)
+std::wstring GeoscapeState::convertDateToMonth(int date) // private.
 {
 	switch (date)
 	{
@@ -1383,16 +1384,15 @@ std::wstring GeoscapeState::convertDateToMonth(int date)
 		case 11: return L"nov";
 		case 12: return L"dec";
 	}
-
 	return L"error";
 }
 
 /**
  * Advances the game timer according to the set timer-speed and calls
  * respective triggers.
- * @note The game always advances in 5sec cycles regardless of the speed
+ * @note The game always advances in 5-sec cycles regardless of the speed
  * otherwise this will skip important steps. Instead it just keeps advancing the
- * timer until the next compression step - eg. the next day on 1 Day speed - or
+ * timer until the next compression step - eg. the next day on 1-day speed -- or
  * until an event occurs.
  */
 void GeoscapeState::timeAdvance()

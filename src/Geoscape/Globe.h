@@ -74,12 +74,12 @@ private:
 		ROTATE_LATITUDE;
 
 	bool
-		_drawCrosshair,
-		_hover,
+		_blink,
 		_dragScroll,
 		_dragScrollStepDone,
 		_dragScrollPastThreshold,
-		_blink;
+		_drawCrosshair,
+		_forceRadars;
 	int
 		_blinkVal,
 		_radarDetail,
@@ -378,33 +378,29 @@ private:
 		/// Special handling for key presses.
 		void keyboardPress(Action* action, State* state) override;
 
-		/// Gets the polygons texture and shade at the given point.
+		/// Gets the texture and shade of a Polygon at specified coordinates.
 		void getPolygonTextureAndShade(
 				double lon,
 				double lat,
 				int* texture,
 				int* shade) const;
-		/// Gets the polygon's texture at a given point.
+		/// Gets the texture of a Polygon at specified coordinates.
 		void getPolygonTexture(
 				double lon,
 				double lat,
 				int* texture) const;
-		/// Gets the polygon's shade at the given point.
+		/// Gets the shade of a Polygon at specified coordinates.
 		void getPolygonShade(
 				double lon,
 				double lat,
 				int* shade) const;
 
-		/// Sets hover base position.
-		void setNewBaseHoverPos(
+		/// Sets the build-base hover coordinates.
+		void setBuildBaseHoverPos(
 				double lon,
 				double lat);
-		/// Turns on new base hover mode.
-		void setNewBaseHover();
-		/// Turns off new base hover mode.
-		void unsetNewBaseHover();
-		/// Gets state of base hover mode
-		bool getNewBaseHover() const;
+		/// Sets the state of build-base hover.
+		void setBuildBaseRadars(bool hover = true);
 
 		/// Updates the resolution settings due to resizing the window.
 		void resize();

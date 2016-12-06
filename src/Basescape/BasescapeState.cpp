@@ -48,7 +48,7 @@
 #include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
 
-#include "../Geoscape/BuildNewBaseState.h"
+#include "../Geoscape/BuildBaseState.h"
 #include "../Geoscape/GeoscapeState.h"	// kL_geoMusicPlaying
 #include "../Geoscape/Globe.h"			// kL_reCenter
 
@@ -224,7 +224,7 @@ BasescapeState::BasescapeState(
 									Options::keyCancel);
 
 //	_btnNewBase->setText(tr("STR_BUILD_NEW_BASE_UC"));
-//	_btnNewBase->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnNewBaseClick));
+//	_btnNewBase->onMouseClick(static_cast<ActionHandler>(&BasescapeState::btnBuildBaseClick));
 }
 
 /**
@@ -404,11 +404,11 @@ void BasescapeState::setBase(Base* const base)
  * Goes to the BuildNewBase screen.
  * @param action - pointer to an Action
  *
-void BasescapeState::btnNewBaseClick(Action*)
+void BasescapeState::btnBuildBaseClick(Action*)
 {
 	Base* base = new Base(_game->getRuleset());
 	_game->popState();
-	_game->pushState(new BuildNewBaseState(base, _globe));
+	_game->pushState(new BuildBaseState(base, _globe));
 } */
 
 /**
@@ -786,7 +786,7 @@ void BasescapeState::basesClickLeft(Action*)
 									_game->getSavedGame()));
 
 			_game->popState();
-			_game->pushState(new BuildNewBaseState(base, _globe));
+			_game->pushState(new BuildBaseState(base, _globe));
 		}
 	}
 }

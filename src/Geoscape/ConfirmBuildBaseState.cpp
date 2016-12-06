@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ConfirmNewBaseState.h"
+#include "ConfirmBuildBaseState.h"
 
 #include "BaseLabelState.h"
 #include "Globe.h"
@@ -47,11 +47,11 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the ConfirmNewBase window.
+ * Initializes all the elements in the ConfirmBuildBase window.
  * @param base	- pointer to the Base to place
  * @param globe	- pointer to the Geoscape globe
  */
-ConfirmNewBaseState::ConfirmNewBaseState(
+ConfirmBuildBaseState::ConfirmBuildBaseState(
 		Base* const base,
 		Globe* const globe)
 	:
@@ -97,29 +97,29 @@ ConfirmNewBaseState::ConfirmNewBaseState(
 	}
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ConfirmNewBaseState::btnCancelClick));
-	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ConfirmNewBaseState::btnCancelClick),
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ConfirmBuildBaseState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ConfirmBuildBaseState::btnCancelClick),
 								Options::keyCancel);
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ConfirmNewBaseState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmNewBaseState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&ConfirmBuildBaseState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmBuildBaseState::btnOkClick),
 							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmNewBaseState::btnOkClick),
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ConfirmBuildBaseState::btnOkClick),
 							Options::keyOkKeypad);
 }
 
 /**
  * dTor.
  */
-ConfirmNewBaseState::~ConfirmNewBaseState()
+ConfirmBuildBaseState::~ConfirmBuildBaseState()
 {}
 
 /**
- * Go to the BaseLabelState screen.
+ * Opens the BaseLabelState screen.
  * @param action - pointer to an Action
  */
-void ConfirmNewBaseState::btnOkClick(Action*)
+void ConfirmBuildBaseState::btnOkClick(Action*)
 {
 	if (_game->getSavedGame()->getFunds() >= _cost)
 	{
@@ -145,7 +145,7 @@ void ConfirmNewBaseState::btnOkClick(Action*)
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void ConfirmNewBaseState::btnCancelClick(Action*)
+void ConfirmBuildBaseState::btnCancelClick(Action*)
 {
 	_globe->onMouseOver(nullptr);
 	_game->popState();

@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http:///www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_CONFIRMNEWBASESTATE_H
-#define OPENXCOM_CONFIRMNEWBASESTATE_H
+#ifndef OPENXCOM_CONFIRMBUILDBASESTATE_H
+#define OPENXCOM_CONFIRMBUILDBASESTATE_H
 
 #include "../Engine/State.h"
 
@@ -37,7 +37,7 @@ class Window;
  * Screen that allows the player to confirm placing a Sase on the Globe.
  * @note This is different from the starting base screen, BaseLabelState
  */
-class ConfirmNewBaseState
+class ConfirmBuildBaseState
 	:
 		public State
 {
@@ -57,12 +57,12 @@ private:
 
 
 	public:
-		/// Creates a ConfirmNewBase state.
-		ConfirmNewBaseState(
+		/// Creates a ConfirmBuildBase state.
+		ConfirmBuildBaseState(
 				Base* const base,
 				Globe* const globe);
-		/// Cleans up the ConfirmNewBase state.
-		~ConfirmNewBaseState();
+		/// Cleans up the ConfirmBuildBase state.
+		~ConfirmBuildBaseState();
 
 		/// Handler for clicking the OK button.
 		void btnOkClick(Action* action);

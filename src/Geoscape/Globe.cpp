@@ -332,7 +332,7 @@ Globe::Globe(
 		_cenY(static_cast<Sint16>(cenY)),
 		_game(game),
 		_rules(game->getRuleset()->getGlobe()),
-		_hover(false),
+		_forceRadars(false),
 		_dragScroll(false),
 		_dragScrollStepDone(false),
 		_dragScrollPastThreshold(false),
@@ -1571,7 +1571,7 @@ void Globe::drawRadars()
 	_radars->clear();
 
 	_radars->lock();
-	if (_hover == true // placing Base.
+	if (_forceRadars == true // placing a Base.
 		&& Options::globeAllRadarsOnBaseBuild == true)
 	{
 		double range;
@@ -1736,35 +1736,20 @@ void Globe::drawGlobeCircle( // private.
 }
 
 /**
- *
+ * Sets the state of build-base hover.
+ * @param hover - true if hover (default true)
  */
-void Globe::setNewBaseHover()
+void Globe::setBuildBaseRadars(bool hover)
 {
-	_hover = true;
+	_forceRadars = hover;
 }
 
 /**
- *
+ * Sets the build-base hover coordinates.
+ * @param lon - the longitude
+ * @param lat - the latitude
  */
-void Globe::unsetNewBaseHover()
-{
-	_hover = false;
-}
-
-/**
- *
- */
-bool Globe::getNewBaseHover() const
-{
-	return _hover;
-}
-
-/**
- *
- * @param lon -
- * @param lat -
- */
-void Globe::setNewBaseHoverPos(
+void Globe::setBuildBaseHoverPos(
 		double lon,
 		double lat)
 {
@@ -2717,7 +2702,7 @@ void Globe::keyboardPress(Action* action, State* state)
 }
 
 /**
- * Gets a Polygon's texture & shade at a given coordinate.
+ * Gets the texture and shade of a Polygon at specified coordinates.
  * @param lon		- longitude of the point
  * @param lat 		- latitude of the point
  * @param texture	- pointer to texture ID (returns -1 if polygon not found)
@@ -2752,7 +2737,7 @@ void Globe::getPolygonTextureAndShade(
 }
 
 /**
- * Gets a Polygon's texture at a given coordinate.
+ * Gets the texture of a Polygon at specified coordinates.
  * @param lon		- longitude of the point
  * @param lat 		- latitude of the point
  * @param texture	- pointer to texture ID (returns -1 if polygon not found)
@@ -2770,7 +2755,7 @@ void Globe::getPolygonTexture(
 }
 
 /**
- * Gets a Polygon's shade at a given coordinate.
+ * Gets the shade of a Polygon at specified coordinates.
  * @param lon	- longitude of the point
  * @param lat 	- latitude of the point
  * @param shade	- pointer to shade-level

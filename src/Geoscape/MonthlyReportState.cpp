@@ -82,9 +82,9 @@ MonthlyReportState::MonthlyReportState()
 	_txtDefeat	= new Text(288, 160, 16, 10);
 	_btnDefeat	= new TextButton(120, 18, 100, 175);
 
-//	_txtIncome = new Text(300, 9, 16, 32);
-//	_txtMaintenance = new Text(130, 9, 16, 40);
-//	_txtBalance = new Text(160, 9, 146, 40);
+//	_txtIncome		= new Text(300, 9,  16, 32);
+//	_txtMaintenance	= new Text(130, 9,  16, 40);
+//	_txtBalance		= new Text(160, 9, 146, 40);
 
 	setInterface("monthlyReport");
 
@@ -148,23 +148,22 @@ MonthlyReportState::MonthlyReportState()
 	woststr << Text::formatCurrency(_deltaFunds * 1000);
 	_txtChange->setText(tr("STR_FUNDING_CHANGE_").arg(woststr.str()));
 
+//	woststr.str(L"");
+//	woststr << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_gameSave->getCountryFunding() * 1000);
+//	woststr << L" (";
+//	if (_deltaFunds > 0) woststr << '+';
+//	woststr << Text::formatCurrency(_deltaFunds) << L")";
+//	_txtIncome->setText(woststr.str());
+//
+//	woststr.str(L"");
+//	woststr << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getBaseMaintenances());
+//	_txtMaintenance->setText(woststr.str());
+//
+//	woststr.str(L"");
+//	woststr << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getFunds());
+//	_txtBalance->setText(woststr.str());
+
 	woststr.str(L"");
-
-//	std::wostringstream ss;
-//	ss << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_gameSave->getCountryFunding() * 1000);
-//	ss << L" (";
-//	if (_deltaFunds > 0) ss << '+';
-//	ss << Text::formatCurrency(_deltaFunds) << L")";
-//	_txtIncome->setText(ss.str());
-//
-//	std::wostringstream ss2;
-//	ss2 << tr("STR_MAINTENANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getBaseMaintenances());
-//	_txtMaintenance->setText(ss2.str());
-//
-//	std::wostringstream ss3;
-//	ss3 << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getFunds());
-//	_txtBalance->setText(ss3.str());
-
 
 	const int
 		diff (_gameSave->getDifficultyInt()),

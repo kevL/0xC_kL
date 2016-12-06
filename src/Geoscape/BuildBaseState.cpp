@@ -17,12 +17,12 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BuildNewBaseState.h"
+#include "BuildBaseState.h"
 
 //#include "../fmath.h"
 
 #include "BaseLabelState.h"
-#include "ConfirmNewBaseState.h"
+#include "ConfirmBuildBaseState.h"
 #include "Globe.h"
 
 #include "../Engine/Action.h"
@@ -52,12 +52,12 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the BuildNewBase window.
+ * Initializes all the elements in the BuildBase window.
  * @param base			- pointer to the Base to place
  * @param globe			- pointer to the geoscape Globe
  * @param isFirstBase	- true if this the player's first base (default false)
  */
-BuildNewBaseState::BuildNewBaseState(
+BuildBaseState::BuildBaseState(
 		Base* const base,
 		Globe* const globe,
 		bool isFirstBase)
@@ -90,7 +90,7 @@ BuildNewBaseState::BuildNewBaseState(
 	_btnCancel	= new TextButton(54, 14, 194 + dx, 8);
 
 	_hoverTimer	= new Timer(60u);
-	_hoverTimer->onTimer(static_cast<StateHandler>(&BuildNewBaseState::hoverRedraw));
+	_hoverTimer->onTimer(static_cast<StateHandler>(&BuildBaseState::hoverRedraw));
 	_hoverTimer->start();
 
 	setInterface("geoscape");
@@ -106,35 +106,35 @@ BuildNewBaseState::BuildNewBaseState(
 	add(_txtTitle,	"genericText",		"geoscape");
 	add(_btnCancel,	"genericButton2",	"geoscape");
 
-	_globe->onMouseClick(static_cast<ActionHandler>(&BuildNewBaseState::globeClick));
+	_globe->onMouseClick(static_cast<ActionHandler>(&BuildBaseState::globeClick));
 
-/*	_btnRotateLeft->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftPress));
-	_btnRotateLeft->onMouseRelease(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftRelease));
-	_btnRotateLeft->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftPress),   Options::keyGeoLeft);
-	_btnRotateLeft->onKeyboardRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateLeftRelease), Options::keyGeoLeft);
+/*	_btnRotateLeft->onMousePress(		static_cast<ActionHandler>(&BuildBaseState::btnRotateLeftPress));
+	_btnRotateLeft->onMouseRelease(		static_cast<ActionHandler>(&BuildBaseState::btnRotateLeftRelease));
+	_btnRotateLeft->onKeyboardPress(	static_cast<ActionHandler>(&BuildBaseState::btnRotateLeftPress),   Options::keyGeoLeft);
+	_btnRotateLeft->onKeyboardRelease(	static_cast<ActionHandler>(&BuildBaseState::btnRotateLeftRelease), Options::keyGeoLeft);
 
-	_btnRotateRight->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightPress));
-	_btnRotateRight->onMouseRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightRelease));
-	_btnRotateRight->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightPress),   Options::keyGeoRight);
-	_btnRotateRight->onKeyboardRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateRightRelease), Options::keyGeoRight);
+	_btnRotateRight->onMousePress(		static_cast<ActionHandler>(&BuildBaseState::btnRotateRightPress));
+	_btnRotateRight->onMouseRelease(	static_cast<ActionHandler>(&BuildBaseState::btnRotateRightRelease));
+	_btnRotateRight->onKeyboardPress(	static_cast<ActionHandler>(&BuildBaseState::btnRotateRightPress),   Options::keyGeoRight);
+	_btnRotateRight->onKeyboardRelease(	static_cast<ActionHandler>(&BuildBaseState::btnRotateRightRelease), Options::keyGeoRight);
 
-	_btnRotateUp->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpPress));
-	_btnRotateUp->onMouseRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpRelease));
-	_btnRotateUp->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpPress),   Options::keyGeoUp);
-	_btnRotateUp->onKeyboardRelease(static_cast<ActionHandler>(&BuildNewBaseState::btnRotateUpRelease), Options::keyGeoUp);
+	_btnRotateUp->onMousePress(		static_cast<ActionHandler>(&BuildBaseState::btnRotateUpPress));
+	_btnRotateUp->onMouseRelease(	static_cast<ActionHandler>(&BuildBaseState::btnRotateUpRelease));
+	_btnRotateUp->onKeyboardPress(	static_cast<ActionHandler>(&BuildBaseState::btnRotateUpPress),   Options::keyGeoUp);
+	_btnRotateUp->onKeyboardRelease(static_cast<ActionHandler>(&BuildBaseState::btnRotateUpRelease), Options::keyGeoUp);
 
-	_btnRotateDown->onMousePress(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownPress));
-	_btnRotateDown->onMouseRelease(		static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownRelease));
-	_btnRotateDown->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownPress),   Options::keyGeoDown);
-	_btnRotateDown->onKeyboardRelease(	static_cast<ActionHandler>(&BuildNewBaseState::btnRotateDownRelease), Options::keyGeoDown);
+	_btnRotateDown->onMousePress(		static_cast<ActionHandler>(&BuildBaseState::btnRotateDownPress));
+	_btnRotateDown->onMouseRelease(		static_cast<ActionHandler>(&BuildBaseState::btnRotateDownRelease));
+	_btnRotateDown->onKeyboardPress(	static_cast<ActionHandler>(&BuildBaseState::btnRotateDownPress),   Options::keyGeoDown);
+	_btnRotateDown->onKeyboardRelease(	static_cast<ActionHandler>(&BuildBaseState::btnRotateDownRelease), Options::keyGeoDown);
 
-	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&BuildNewBaseState::btnZoomInLeftClick),  SDL_BUTTON_LEFT);
-	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&BuildNewBaseState::btnZoomInRightClick), SDL_BUTTON_RIGHT);
-	_btnZoomIn->onKeyboardPress(static_cast<ActionHandler>(&BuildNewBaseState::btnZoomInLeftClick),  Options::keyGeoZoomIn);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&BuildBaseState::btnZoomInLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomIn->onMouseClick(	static_cast<ActionHandler>(&BuildBaseState::btnZoomInRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomIn->onKeyboardPress(static_cast<ActionHandler>(&BuildBaseState::btnZoomInLeftClick),  Options::keyGeoZoomIn);
 
-	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&BuildNewBaseState::btnZoomOutLeftClick),  SDL_BUTTON_LEFT);
-	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&BuildNewBaseState::btnZoomOutRightClick), SDL_BUTTON_RIGHT);
-	_btnZoomOut->onKeyboardPress(	static_cast<ActionHandler>(&BuildNewBaseState::btnZoomOutLeftClick),  Options::keyGeoZoomOut);
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&BuildBaseState::btnZoomOutLeftClick),  SDL_BUTTON_LEFT);
+	_btnZoomOut->onMouseClick(		static_cast<ActionHandler>(&BuildBaseState::btnZoomOutRightClick), SDL_BUTTON_RIGHT);
+	_btnZoomOut->onKeyboardPress(	static_cast<ActionHandler>(&BuildBaseState::btnZoomOutLeftClick),  Options::keyGeoZoomOut);
 
 	// dirty hacks to get the rotate buttons to work in "classic" style
 	_btnRotateLeft->	setListButton();
@@ -152,8 +152,8 @@ BuildNewBaseState::BuildNewBaseState(
 	else
 	{
 		_btnCancel->setText(tr("STR_CANCEL_UC"));
-		_btnCancel->onMouseClick(	static_cast<ActionHandler>(&BuildNewBaseState::btnCancelClick));
-		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&BuildNewBaseState::btnCancelClick),
+		_btnCancel->onMouseClick(	static_cast<ActionHandler>(&BuildBaseState::btnCancelClick));
+		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&BuildBaseState::btnCancelClick),
 									Options::keyCancel);
 	}
 
@@ -164,7 +164,7 @@ BuildNewBaseState::BuildNewBaseState(
 /**
  * dTor.
  */
-BuildNewBaseState::~BuildNewBaseState()
+BuildBaseState::~BuildBaseState()
 {
 	if (Options::globeRadarLines != _showRadar)
 		Options::globeRadarLines = false;
@@ -173,19 +173,19 @@ BuildNewBaseState::~BuildNewBaseState()
 }
 
 /**
- * Stops the Globe and adds radar hover effect.
+ * Stops the Globe and adds radar-hover effect.
  */
-void BuildNewBaseState::init()
+void BuildBaseState::init()
 {
 	State::init();
-	_globe->onMouseOver(static_cast<ActionHandler>(&BuildNewBaseState::globeHover));
-	_globe->setNewBaseHover();
+	_globe->onMouseOver(static_cast<ActionHandler>(&BuildBaseState::globeHover));
+	_globe->setBuildBaseRadars();
 }
 
 /**
  * Runs the Globe rotation timer.
  */
-void BuildNewBaseState::think()
+void BuildBaseState::think()
 {
 	State::think();
 	_globe->think();
@@ -196,7 +196,7 @@ void BuildNewBaseState::think()
  * Handles the Globe.
  * @param action - pointer to an Action
  */
-void BuildNewBaseState::handle(Action* action)
+void BuildBaseState::handle(Action* action)
 {
 	State::handle(action);
 	_globe->handle(action, this);
@@ -206,7 +206,7 @@ void BuildNewBaseState::handle(Action* action)
  * Processes mouse-hover event for Base placement.
  * @param action - pointer to an Action
  */
-void BuildNewBaseState::globeHover(Action* action)
+void BuildBaseState::globeHover(Action* action)
 {
 	_mX = static_cast<int>(std::floor(action->getAbsoluteMouseX()));
 	_mY = static_cast<int>(std::floor(action->getAbsoluteMouseY()));
@@ -218,7 +218,7 @@ void BuildNewBaseState::globeHover(Action* action)
 /**
  * Redraws stuff as the cursor is moved over the Globe.
  */
-void BuildNewBaseState::hoverRedraw()
+void BuildBaseState::hoverRedraw()
 {
 	double
 		lon,lat;
@@ -229,8 +229,8 @@ void BuildNewBaseState::hoverRedraw()
 
 	if (isNaNorInf(lon,lat) == false)
 	{
-		_globe->setNewBaseHoverPos(lon,lat);
-		_globe->setNewBaseHover();
+		_globe->setBuildBaseHoverPos(lon,lat);
+		_globe->setBuildBaseRadars();
 	}
 
 	if (Options::globeRadarLines == true
@@ -246,7 +246,7 @@ void BuildNewBaseState::hoverRedraw()
  * Processes any left-clicks for Base placement.
  * @param action - pointer to an Action
  */
-void BuildNewBaseState::globeClick(Action* action)
+void BuildBaseState::globeClick(Action* action)
 {
 	const int mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
 	if (mY > _window->getY() + _window->getHeight())
@@ -276,7 +276,7 @@ void BuildNewBaseState::globeClick(Action* action)
 			if (_isFirstBase == true)
 				_game->pushState(new BaseLabelState(_base, _globe, true));
 			else
-				_game->pushState(new ConfirmNewBaseState(_base, _globe));
+				_game->pushState(new ConfirmBuildBaseState(_base, _globe));
 		}
 		else
 		{
@@ -295,7 +295,7 @@ void BuildNewBaseState::globeClick(Action* action)
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void BuildNewBaseState::btnCancelClick(Action*)
+void BuildBaseState::btnCancelClick(Action*)
 {
 	delete _base;
 	_game->popState();
@@ -305,7 +305,7 @@ void BuildNewBaseState::btnCancelClick(Action*)
  * Starts rotating the globe to the left.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateLeftPress(Action*)
+void BuildBaseState::btnRotateLeftPress(Action*)
 {
 	_globe->rotateLeft();
 } */
@@ -313,7 +313,7 @@ void BuildNewBaseState::btnRotateLeftPress(Action*)
  * Stops rotating the globe to the left.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateLeftRelease(Action*)
+void BuildBaseState::btnRotateLeftRelease(Action*)
 {
 	_globe->rotateStopLon();
 } */
@@ -321,7 +321,7 @@ void BuildNewBaseState::btnRotateLeftRelease(Action*)
  * Starts rotating the globe to the right.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateRightPress(Action*)
+void BuildBaseState::btnRotateRightPress(Action*)
 {
 	_globe->rotateRight();
 } */
@@ -329,7 +329,7 @@ void BuildNewBaseState::btnRotateRightPress(Action*)
  * Stops rotating the globe to the right.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateRightRelease(Action*)
+void BuildBaseState::btnRotateRightRelease(Action*)
 {
 	_globe->rotateStopLon();
 } */
@@ -337,7 +337,7 @@ void BuildNewBaseState::btnRotateRightRelease(Action*)
  * Starts rotating the globe upwards.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateUpPress(Action*)
+void BuildBaseState::btnRotateUpPress(Action*)
 {
 	_globe->rotateUp();
 } */
@@ -345,7 +345,7 @@ void BuildNewBaseState::btnRotateUpPress(Action*)
  * Stops rotating the globe upwards.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateUpRelease(Action*)
+void BuildBaseState::btnRotateUpRelease(Action*)
 {
 	_globe->rotateStopLat();
 } */
@@ -353,7 +353,7 @@ void BuildNewBaseState::btnRotateUpRelease(Action*)
  * Starts rotating the globe downwards.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateDownPress(Action*)
+void BuildBaseState::btnRotateDownPress(Action*)
 {
 	_globe->rotateDown();
 } */
@@ -361,7 +361,7 @@ void BuildNewBaseState::btnRotateDownPress(Action*)
  * Stops rotating the globe downwards.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnRotateDownRelease(Action*)
+void BuildBaseState::btnRotateDownRelease(Action*)
 {
 	_globe->rotateStopLat();
 } */
@@ -369,7 +369,7 @@ void BuildNewBaseState::btnRotateDownRelease(Action*)
  * Zooms into the globe.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnZoomInLeftClick(Action*)
+void BuildBaseState::btnZoomInLeftClick(Action*)
 {
 	_globe->zoomIn();
 } */
@@ -377,7 +377,7 @@ void BuildNewBaseState::btnZoomInLeftClick(Action*)
  * Zooms the globe maximum.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnZoomInRightClick(Action*)
+void BuildBaseState::btnZoomInRightClick(Action*)
 {
 	_globe->zoomMax();
 } */
@@ -385,7 +385,7 @@ void BuildNewBaseState::btnZoomInRightClick(Action*)
  * Zooms out of the globe.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnZoomOutLeftClick(Action*)
+void BuildBaseState::btnZoomOutLeftClick(Action*)
 {
 	_globe->zoomOut();
 } */
@@ -393,7 +393,7 @@ void BuildNewBaseState::btnZoomOutLeftClick(Action*)
  * Zooms the globe minimum.
  * @param action - pointer to an Action
  *
-void BuildNewBaseState::btnZoomOutRightClick(Action*)
+void BuildBaseState::btnZoomOutRightClick(Action*)
 {
 	_globe->zoomMin();
 } */
@@ -403,7 +403,7 @@ void BuildNewBaseState::btnZoomOutRightClick(Action*)
  * @param dX - x-delta
  * @param dY - y-delta
  */
-void BuildNewBaseState::resize(
+void BuildBaseState::resize(
 		int& dX,
 		int& dY)
 {

@@ -28,7 +28,7 @@
 #include "../Interface/ToggleTextButton.h"
 #include "../Interface/Window.h"
 
-#include "../Geoscape/BuildNewBaseState.h"
+#include "../Geoscape/BuildBaseState.h"
 #include "../Geoscape/GeoscapeState.h"
 
 #include "../Resource/XcomResourcePack.h"
@@ -151,10 +151,10 @@ void StartPlayState::btnOkClick(Action*)
 	_game->getResourcePack()->fadeMusic(_game, 1306);
 	_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 
-	_game->pushState(new BuildNewBaseState(
-										_game->getSavedGame()->getBases()->back(),
-										geo->getGlobe(),
-										true));
+	_game->pushState(new BuildBaseState(
+									_game->getSavedGame()->getBases()->back(),
+									geo->getGlobe(),
+									true));
 }
 
 /**

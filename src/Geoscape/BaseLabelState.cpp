@@ -101,7 +101,7 @@ BaseLabelState::~BaseLabelState()
 {}
 
 /**
- * Updates the base label and disables the OK button if no label is entered.
+ * Updates the base-label and disables the OK button if no label is entered.
  * @param action - pointer to an Action
  */
 void BaseLabelState::edtLabelChange(Action* action)
@@ -120,16 +120,16 @@ void BaseLabelState::edtLabelChange(Action* action)
 }
 
 /**
- * Goes to the PlaceLift screen.
+ * Exits base-build States and opens the PlaceLift screen.
  * @param action - pointer to an Action
  */
 void BaseLabelState::btnOkClick(Action*)
 {
 	_game->popState(); // <- this
-	_game->popState(); // <- BuildNewBaseState
+	_game->popState(); // <- BuildBaseState
 
 	if (_isFirstBase == false)
-		_game->popState(); // <- ConfirmNewBaseState
+		_game->popState(); // <- ConfirmBuildBaseState
 
 	_game->pushState(new PlaceLiftState(
 									_base,

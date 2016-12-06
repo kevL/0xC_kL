@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http:///www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_BUILDNEWBASESTATE_H
-#define OPENXCOM_BUILDNEWBASESTATE_H
+#ifndef OPENXCOM_BUILDBASESTATE_H
+#define OPENXCOM_BUILDBASESTATE_H
 
 #include "../Engine/State.h"
 
@@ -38,7 +38,7 @@ class Window;
 /**
  * Screen that allows the player to place a Base on the Globe.
  */
-class BuildNewBaseState
+class BuildBaseState
 	:
 		public State
 {
@@ -64,13 +64,13 @@ private:
 
 
 	public:
-		/// Creates a BuildNewBase state.
-		BuildNewBaseState(
+		/// Creates a BuildBase state.
+		BuildBaseState(
 				Base* const base,
 				Globe* const globe,
 				bool isFirstBase = false);
-		/// Cleans up the BuildNewBase state.
-		~BuildNewBaseState();
+		/// Cleans up the BuildBase state.
+		~BuildBaseState();
 
 		/// Resets Globe.
 		void init() override;

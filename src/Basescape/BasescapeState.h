@@ -121,7 +121,7 @@ private:
 		/// Handler for clicking the Geoscape button.
 		void btnGeoscapeClick(Action* action);
 		/// Handler for clicking the Build New Base button.
-//		void btnNewBaseClick(Action* action);
+//		void btnBuildBaseClick(Action* action);
 
 		/// Handler for left-clicking the BaseView.
 		void layoutClickLeft(Action* action);
