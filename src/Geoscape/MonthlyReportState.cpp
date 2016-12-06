@@ -62,7 +62,7 @@ namespace OpenXcom
  */
 MonthlyReportState::MonthlyReportState()
 	:
-		_gameOver(false),
+		_defeated(false),
 		_ratingPrior(0),
 		_ratingTotal(0),
 		_deltaFunds(0),
@@ -75,12 +75,12 @@ MonthlyReportState::MonthlyReportState()
 	_txtRating	= new Text(178, 9, 126, 24);
 
 	_txtChange	= new Text(288,   9, 16, 32);
-	_txtDesc	= new Text(288, 140, 16, 40);
+	_txtCouncil	= new Text(288, 140, 16, 40);
 
 	_btnOk		= new TextButton(288, 16, 16, 177);
 
-	_txtFailure	= new Text(288, 160, 16, 10);
-	_btnOkLoser	= new TextButton(120, 18, 100, 175);
+	_txtDefeat	= new Text(288, 160, 16, 10);
+	_btnDefeat	= new TextButton(120, 18, 100, 175);
 
 //	_txtIncome = new Text(300, 9, 16, 32);
 //	_txtMaintenance = new Text(130, 9, 16, 40);
@@ -93,10 +93,10 @@ MonthlyReportState::MonthlyReportState()
 	add(_txtMonth,		"text1",	"monthlyReport");
 	add(_txtRating,		"text1",	"monthlyReport");
 	add(_txtChange,		"text1",	"monthlyReport");
-	add(_txtDesc,		"text2",	"monthlyReport");
+	add(_txtCouncil,	"text2",	"monthlyReport");
 	add(_btnOk,			"button",	"monthlyReport");
-	add(_txtFailure,	"text2",	"monthlyReport");
-	add(_btnOkLoser,	"button",	"monthlyReport");
+	add(_txtDefeat,		"text2",	"monthlyReport");
+	add(_btnDefeat,		"button",	"monthlyReport");
 
 //	add(_txtIncome,			"text1", "monthlyReport");
 //	add(_txtMaintenance,	"text1", "monthlyReport");
@@ -179,11 +179,8 @@ MonthlyReportState::MonthlyReportState()
 		st = TAC_RATING[0u]; // terrible
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 
-		if (_ratingPrior < defeatThreshold) // check defeat by rating
-		{
-			_gameOver = true; // you lose.
-			satisfaction = "STR_YOU_HAVE_NOT_SUCCEEDED";
-		}
+		if (_ratingPrior < defeatThreshold)	// check defeat by rating
+			_defeated = true;				// you lose.
 	}
 	else
 	{
@@ -197,36 +194,30 @@ MonthlyReportState::MonthlyReportState()
 	}
 	_txtRating->setText(tr("STR_MONTHLY_RATING__").arg(_ratingTotal).arg(tr(st)));
 
-	if (_gameOver == false)
+
+	if (_defeated == false)
 	{
 		if		(_ratingTotal > 1000 + (diff * 2000))	satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
 		else if	(_ratingTotal > -1)						satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
 		else											satisfaction = "STR_COUNCIL_IS_DISSATISFIED";
-	}
-	woststr << tr(satisfaction);
+		woststr << tr(satisfaction);
 
-	if (_gameOver == false)
-	{
-		if (_gameSave->getFunds() < _game->getRuleset()->getDefeatFunds()) // check defeat by funds ->
+		if (_gameSave->getFunds() < _game->getRuleset()->getDefeatFunds()) // check defeat by funds
 		{
-			if (_gameSave->hasLowFunds() == true)
-			{
-				_gameOver = true; // you lose.
-				woststr.str(L"");
-				woststr << tr("STR_YOU_HAVE_NOT_SUCCEEDED");
-			}
-			else
+			if (_gameSave->hasLowFunds() == false)
 			{
 				_gameSave->flagLowFunds();
 				woststr << "\n\n" << tr("STR_COUNCIL_REDUCE_DEBTS");
 				track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 			}
+			else
+				_defeated = true; // you lose.
 		}
 		else
 			_gameSave->flagLowFunds(false);
 	}
 
-	if (_gameOver == false)
+	if (_defeated == false)
 	{
 		woststr << countryList(
 						_listHappy,
@@ -241,9 +232,31 @@ MonthlyReportState::MonthlyReportState()
 						"STR_COUNTRY_HAS_SIGNED_A_SECRET_PACT",
 						"STR_COUNTRIES_HAVE_SIGNED_A_SECRET_PACT");
 	}
-	_txtDesc->setText(woststr.str());
-	_txtDesc->setWordWrap();
+	else // defeated ->
+	{
+		woststr.str(L"");
+		woststr << tr("STR_YOU_HAVE_NOT_SUCCEEDED");
 
+		_txtDefeat->setText(tr("STR_YOU_HAVE_FAILED"));
+		_txtDefeat->setBig();
+		_txtDefeat->setAlign(ALIGN_CENTER);
+		_txtDefeat->setVerticalAlign(ALIGN_MIDDLE);
+		_txtDefeat->setWordWrap();
+
+		_btnDefeat->setText(tr("STR_OK"));
+		_btnDefeat->onMouseClick(		static_cast<ActionHandler>(&MonthlyReportState::btnOkClick));
+		_btnDefeat->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+										Options::keyOk);
+		_btnDefeat->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+										Options::keyOkKeypad);
+		_btnDefeat->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+										Options::keyCancel);
+	}
+	_txtCouncil->setText(woststr.str());
+	_txtCouncil->setWordWrap();
+
+	_txtDefeat->setVisible(false);
+	_btnDefeat->setVisible(false);
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick));
@@ -253,25 +266,6 @@ MonthlyReportState::MonthlyReportState()
 							Options::keyOkKeypad);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
 							Options::keyCancel);
-
-
-	_txtFailure->setText(tr("STR_YOU_HAVE_FAILED"));
-	_txtFailure->setBig();
-	_txtFailure->setAlign(ALIGN_CENTER);
-	_txtFailure->setVerticalAlign(ALIGN_MIDDLE);
-	_txtFailure->setWordWrap();
-	_txtFailure->setVisible(false);
-
-	_btnOkLoser->setText(tr("STR_OK"));
-	_btnOkLoser->onMouseClick(		static_cast<ActionHandler>(&MonthlyReportState::btnOkClick));
-	_btnOkLoser->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
-									Options::keyOk);
-	_btnOkLoser->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
-									Options::keyOkKeypad);
-	_btnOkLoser->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
-									Options::keyCancel);
-	_btnOkLoser->setVisible(false);
-
 
 	_game->getResourcePack()->playMusic(track, "", 1);
 
@@ -401,7 +395,7 @@ void MonthlyReportState::calculateReport() // private.
  */
 void MonthlyReportState::btnOkClick(Action*)
 {
-	if (_gameOver == false)
+	if (_defeated == false)
 	{
 		_game->popState();
 
@@ -419,7 +413,7 @@ void MonthlyReportState::btnOkClick(Action*)
 											SAVE_AUTO_GEOSCAPE,
 											_palette));
 	}
-	else if (_txtFailure->getVisible() == false)
+	else if (_txtDefeat->getVisible() == false)
 	{
 		_window->setColor(static_cast<Uint8>(_game->getRuleset()->getInterface("monthlyReport")->getElement("window")->color2));
 
@@ -430,11 +424,11 @@ void MonthlyReportState::btnOkClick(Action*)
 //		_txtIncome->setVisible(false);
 //		_txtMaintenance->setVisible(false);
 //		_txtBalance->setVisible(false);
-		_txtDesc->setVisible(false);
+		_txtCouncil->setVisible(false);
 		_btnOk->setVisible(false);
 
-		_txtFailure->setVisible();
-		_btnOkLoser->setVisible();
+		_txtDefeat->setVisible();
+		_btnDefeat->setVisible();
 
 		_game->getResourcePack()->fadeMusic(_game, 1157);
 		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_LOSE);

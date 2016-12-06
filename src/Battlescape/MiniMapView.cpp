@@ -158,15 +158,14 @@ void MiniMapView::draw()
 						colorGroup  = 1; // greyscale
 						colorOffset = 5;
 					}
-					else if (tile->isRevealed() == true)
-					{
-						colorGroup  = 0;
-						colorOffset = tile->getShade();
-					}
 					else
 					{
 						colorGroup  = 0;
-						colorOffset = 15; // paint it ... black !
+
+						if (tile->isRevealed() == true)
+							colorOffset = tile->getShade();
+						else
+							colorOffset = 15; // paint it ... black !
 					}
 
 					if (colorGroup == 1								// is along the edge
@@ -272,7 +271,7 @@ void MiniMapView::draw()
 						else
 							color = 0;
 
-						srf = _srtScanG->getFrame(_anicycle + 9);			// white cross
+						srf = _srtScanG->getFrame(_anicycle + 9);		// white cross
 						srf->blitNShade(this, x,y, 0, false, color);
 					}
 
@@ -284,7 +283,7 @@ void MiniMapView::draw()
 								_battleSave->scannerDots().end(),
 								dotTest) != _battleSave->scannerDots().end())
 						{
-							srf = _srtScanG->getFrame(_anicycle + 9);		// white cross
+							srf = _srtScanG->getFrame(_anicycle + 9);	// white cross
 							srf->blitNShade(this, x,y, 0, false, RED);
 						}
 					}

@@ -45,7 +45,7 @@ class MonthlyReportState
 {
 
 private:
-	bool _gameOver;
+	bool _defeated;
 	int
 		_deltaFunds,
 		_ratingPrior,
@@ -54,14 +54,14 @@ private:
 	SavedGame* _gameSave;
 	Text
 		* _txtChange,
-		* _txtDesc,
-		* _txtFailure,
+		* _txtCouncil,
+		* _txtDefeat,
 		* _txtMonth,
 		* _txtRating,
 		* _txtTitle;
 	TextButton
 		* _btnOk,
-		* _btnOkLoser;
+		* _btnDefeat;
 	Window* _window;
 
 	std::vector<std::string>
