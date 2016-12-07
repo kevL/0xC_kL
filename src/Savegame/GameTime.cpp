@@ -120,65 +120,59 @@ YAML::Node GameTime::save(bool memorial) const
  * @note This automatically increments the larger time-components when necessary
  * and sends out an appropriate trigger if any of those specific time-markers
  * get reached - for time-dependent events on the Geoscape.
- * @return, time span trigger
+ * @return, time-span trigger
  */
 TimeTrigger GameTime::advance()
 {
-	int monthDays[12u] {31,28,31,30,31,30,31,31,30,31,30,31};
-	if (_year % 4 == 0 // leap year
-		&& !(_year % 100 == 0 && _year % 400 != 0))
+	if (++_second % 5 != 0) // Volutar smooth_globe.
+		return TIME_1SEC;
+
+	if (_second != 60)
+		return TIME_5SEC;
+
+	_second = 0;
+	++_minute;
+
+	if (_minute % 10 != 0)
+		return TIME_5SEC;
+
+	if (_minute % 30 != 0)
+		return TIME_10MIN;
+
+	if (_minute != 60)
+		return TIME_30MIN;
+
+	_minute = 0;
+	++_hour;
+
+	if (_hour != 24)
+		return TIME_1HOUR;
+
+	_hour = 0;
+	++_day;
+
+//	if (++_weekday == 8) _weekday = 1;
+
+	static int daysPerMonth[12u] { 32,29,32,31,32,31,32,32,31,32,31,32 }; // add one ea.
+	if (_month == 2
+		&&  _year %   4 == 0 // leap year
+		&& (_year % 100 != 0 || _year % 400 == 0))
 	{
-		++monthDays[1];
+		++daysPerMonth[1u];
 	}
+	if (_day != daysPerMonth[static_cast<size_t>(_month - 1)])
+		return TIME_1DAY;
 
+	_day = 1;
+	++_month;
 
-	TimeTrigger trigger (TIME_1SEC);				// Volutar smooth_globe
-	if (++_second % 5 == 0) trigger = TIME_5SEC;	// Volutar.
-
-	if (_second > 59)
-	{
-		_second = 0;
-		++_minute;
-
-		if (_minute % 10 == 0)
-			trigger = TIME_10MIN;
-
-		if (_minute % 30 == 0)
-			trigger = TIME_30MIN;
-	}
-
-	if (_minute > 59)
-	{
-		_minute = 0;
-		++_hour;
-		trigger = TIME_1HOUR;
-	}
-
-	if (_hour > 23)
-	{
-		_hour = 0;
-//		++_weekday;
-		++_day;
-		trigger = TIME_1DAY;
-	}
-
-//	if (_weekday > 7)
-//		_weekday = 1;
-
-	if (_day > monthDays[_month - 1])
-	{
-		_day = 1;
-		++_month;
-		trigger = TIME_1MONTH;
-	}
-
-	if (_month > 12)
+	if (_month == 13)
 	{
 		_month = 1;
 		++_year;
 	}
 
-	return trigger;
+	return TIME_1MONTH;
 }
 
 /**

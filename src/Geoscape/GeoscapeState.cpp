@@ -1429,7 +1429,7 @@ void GeoscapeState::timeAdvance()
 					update = true;
 					switch (trigger)
 					{
-						case TIME_1MONTH:	time1Month();
+						case TIME_1MONTH:	time1Month(); // no breaks ->
 						case TIME_1DAY:		time1Day();
 						case TIME_1HOUR:	time1Hour();
 						case TIME_30MIN:	time30Minutes();
