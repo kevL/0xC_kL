@@ -26,11 +26,11 @@
 namespace OpenXcom
 {
 
-enum GraphsUserFactor
+enum GraphsExpansionFactor
 {
-	GUF_DEFAULT,	// 0
-	GUF_HALF,		// 1
-	GUF_QUARTER		// 2
+	GF_DEFAULT,	// 0
+	GF_HALF,	// 1
+	GF_QUARTER	// 2
 };
 
 class InteractiveSurface;
@@ -150,10 +150,10 @@ private:
 	void initToggleAll();
 	/// Toggles all region/country buttons.
 	void btnTogglePress(Action* action);
-	/// Sets the graphs to a user expansion by mouse-click.
+	/// Sets the graphs to an expansion by mouse-click.
 	void btnFactorPress(Action* action);
-	/// Sets the graph-lines to a user expansion by hot-key.
-	void keyFactor(Action* action);
+	/// Sets the graphs to an expansion by hot-key.
+	void keyFactorPress(Action* action);
 
 	/// Resets all the elements on screen.
 	void resetScreen();

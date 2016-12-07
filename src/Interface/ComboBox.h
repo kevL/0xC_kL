@@ -137,7 +137,7 @@ private:
 		void handle(Action* action, State* state) override;
 
 		/// Toggles the ComboBox dropdown.
-		void toggle(bool init = false);
+		void toggleCbx(bool init = false);
 
 		/// Hook to an action-handler when the content changes.
 		void onComboChange(ActionHandler handler);

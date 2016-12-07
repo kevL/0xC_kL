@@ -55,8 +55,15 @@
 namespace OpenXcom
 {
 
-const double Game::VOLUME_GRADIENT = 10.; // static.
+const double Game::VOLUME_GRADIENT (10.); // static.
 
+SDL_Event
+	Game::eventDown,	// static.
+	Game::eventUp;		// static.
+
+Action
+	Game::synthDown	(Action(&eventDown, 0.,0., 0,0, 0u)),	// static.
+	Game::synthUp	(Action(&eventUp,   0.,0., 0,0, 0u));	// static.
 
 /**
  * Starts up SDL with all the subsystems and SDL_mixer for audio-processing,
@@ -65,9 +72,6 @@ const double Game::VOLUME_GRADIENT = 10.; // static.
  */
 Game::Game(const std::string& title)
 	:
-		_screen(nullptr),
-		_cursor(nullptr),
-		_lang(nullptr),
 		_res(nullptr),
 		_gameSave(nullptr),
 		_rules(nullptr),
@@ -152,6 +156,18 @@ Game::Game(const std::string& title)
 
 	// Create blank Language.
 	_lang = new Language();
+
+
+	// Create the synthetic mouse-events.
+	eventDown.type = SDL_MOUSEBUTTONDOWN;
+	eventDown.button.button = SDL_BUTTON_LEFT;// static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
+
+	synthDown = Action(&eventDown, 0.,0., 0,0, 0u);
+
+	eventUp.type = SDL_MOUSEBUTTONUP;
+	eventUp.button.button = SDL_BUTTON_LEFT;// static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
+
+	synthUp = Action(&eventUp, 0.,0., 0,0, 0u);
 }
 
 /**
@@ -326,16 +342,26 @@ void Game::run()
 
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
+						//Log(LOG_INFO) << "game:MOUSEBUTTON down/up event.button.button= " << static_cast<int>(event.button.button);
 						if (   static_cast<Uint32>(event.button.button) != 0u
 							&& static_cast<Uint32>(event.button.button) < 32u)
 						{
+							//Log(LOG_INFO) << ". is between 1..31";
 							switch (event.button.state)
 							{
 								case SDL_PRESSED:
-									_rodentState |=  (1u << (static_cast<Uint32>(event.button.button) - 1u));
+									_rodentState |= SDL_BUTTON(event.button.button);
+									//Log(LOG_INFO) << ". . PRESSED _rodentState= " << _rodentState;
+
+//									_rodentState |=  (1 << (event.button.button - 1));
+//									_rodentState |=  (1u << (static_cast<Uint32>(event.button.button) - 1u));
 									break;
 								case SDL_RELEASED:
-									_rodentState &= !(1u << (static_cast<Uint32>(event.button.button) - 1u));
+									_rodentState &= !SDL_BUTTON(event.button.button);
+									//Log(LOG_INFO) << ". . RELEASED _rodentState= " << _rodentState;
+
+//									_rodentState &= !(1 << (event.button.button - 1));
+//									_rodentState &= !(1u << (static_cast<Uint32>(event.button.button) - 1u));
 							}
 						}
 						// no break;
@@ -1270,11 +1296,18 @@ void Game::setDebugCycle(int cycle)
 
 /**
  * Gets a synthetic mouse-down Action.
- * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
+// * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
  * @return, pointer to an Action
  */
-Action* Game::getSynthMouseDown(int btnId) const
+Action* Game::getSynthMouseDown(/*int btnId*/) // static.
 {
+	return &synthDown;
+
+/*	Log(LOG_INFO) << "getSynthMouseDown() btnId= " << btnId;
+	Log(LOG_INFO) << ". rodentState= " << _rodentState;
+	Log(LOG_INFO) << ". btn up  = " << (_rodentState & ~(1 << (btnId - 1)));
+	Log(LOG_INFO) << ". btn down= " << (_rodentState | (1 << (btnId - 1)));
+
 	SDL_Event event;
 	event.type = SDL_MOUSEBUTTONDOWN;
 	event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
@@ -1285,17 +1318,21 @@ Action* Game::getSynthMouseDown(int btnId) const
 					_screen->getScaleY(),
 					_screen->getBorderTop(),
 					_screen->getBorderLeft(),
-					_rodentState & ~(1u << (static_cast<Uint32>(btnId) - 1u))));
+					_rodentState | (1 << (btnId - 1)))); */
+//					_rodentState & ~(1 << (btnId - 1))));
+//					_rodentState & ~(1u << (static_cast<Uint32>(btnId) - 1u))));
 }
 
 /**
  * Gets a synthetic mouse-up Action.
- * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
+// * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
  * @return, pointer to an Action
  */
-Action* Game::getSynthMouseUp(int btnId) const
+Action* Game::getSynthMouseUp(/*int btnId*/) // static.
 {
-	SDL_Event event;
+	return &synthUp;
+
+/*	SDL_Event event;
 	event.type = SDL_MOUSEBUTTONUP;
 	event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
 
@@ -1305,7 +1342,9 @@ Action* Game::getSynthMouseUp(int btnId) const
 					_screen->getScaleY(),
 					_screen->getBorderTop(),
 					_screen->getBorderLeft(),
-					_rodentState | (1u << (static_cast<Uint32>(btnId) - 1u))));
+					_rodentState & ~(1 << (btnId - 1)))); */
+//					_rodentState | (1 << (btnId - 1))));
+//					_rodentState | (1u << (static_cast<Uint32>(btnId) - 1u))));
 }
 
 /**

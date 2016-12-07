@@ -83,7 +83,7 @@ private:
 	BaseDefenseActionType _action;
 
 	Base* _base;
-	GeoscapeState* _geo;
+	GeoscapeState* _geoState;
 	Text
 		* _txtDestroyed,
 		* _txtInit,
@@ -103,7 +103,7 @@ private:
 		BaseDefenseState(
 				Base* const base,
 				Ufo* const ufo,
-				GeoscapeState* const geo);
+				GeoscapeState* const geoState);
 		/// Cleans up the BaseDefense state.
 		~BaseDefenseState();
 

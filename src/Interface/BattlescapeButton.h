@@ -60,8 +60,8 @@ protected:
 		BattlescapeButton(
 				int width,
 				int height,
-				int x = 0,
-				int y = 0);
+				int x,
+				int y);
 		/// Cleans up the BattlescapeButton.
 		virtual ~BattlescapeButton();
 
@@ -69,20 +69,6 @@ protected:
 		void setColor(Uint8 color) override;
 		/// Gets the BattlescapeButton's color.
 		Uint8 getColor() const;
-
-		/// Sets the BattlescapeButton's group.
-		void setGroup(BattlescapeButton** group);
-		/// Special handling for mouse-presses.
-		void mousePress(Action* action, State* state) override;
-		/// Special handling for mouse-releases.
-		void mouseRelease(Action* action, State* state) override;
-
-		/// Invert a button explicitly either ON or OFF.
-		void toggle(bool invert);
-		/// Allows this BattlescapeButton to be toggled on/off with a click.
-		void allowToggleInversion();
-		/// Allows this BattlescapeButton to be toggled on when clicked and off when released.
-		void allowClickInversion();
 
 		/// Sets up the "pressed" surface.
 		void altSurface();
@@ -93,6 +79,20 @@ protected:
 		void setX(int x) override;
 		/// Alters both versions of the button's y-pos.
 		void setY(int y) override;
+
+		/// Sets the BattlescapeButton's group.
+//		void setGroup(BattlescapeButton** group);
+		/// Special handling for mouse-presses.
+//		void mousePress(Action* action, State* state) override;
+		/// Special handling for mouse-releases.
+//		void mouseRelease(Action* action, State* state) override;
+
+		/// Invert a button explicitly either ON or OFF.
+//		void toggleBb(bool invert);
+		/// Allows this BattlescapeButton to be toggled on/off with a click.
+//		void allowToggleInversion();
+		/// Allows this BattlescapeButton to be toggled on when clicked and off when released.
+//		void allowClickInversion();
 };
 
 }

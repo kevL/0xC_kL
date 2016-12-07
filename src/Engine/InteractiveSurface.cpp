@@ -21,6 +21,7 @@
 
 #include "Action.h"
 #include "Game.h"
+//#include "Logger.h"
 
 
 namespace OpenXcom
@@ -62,10 +63,25 @@ InteractiveSurface::~InteractiveSurface() // virtual.
 {}
 
 /**
- * Checks if a button has been pressed.
- * @param btnId - an SDL-button identifier (default 0)
+ * Sets a specified mouse-button as pressed or unpressed.
+ * @param btnId		- an SDL-button identifier
+ * @param pressed	- true if pressed
  */
-bool InteractiveSurface::isButtonPressed(Uint8 btnId) const
+void InteractiveSurface::setButtonPressed( // protected.
+		Uint8 btnId,
+		bool pressed)
+{
+	if (pressed == true)
+		_rodentState |=  SDL_BUTTON(btnId);
+	else
+		_rodentState &= !SDL_BUTTON(btnId);
+}
+
+/**
+ * Checks if a specified mouse-button has been pressed.
+ * @param btnId - an SDL-button identifier (default 0 any)
+ */
+bool InteractiveSurface::isButtonPressed(Uint8 btnId) const // protected.
 {
 	switch (btnId)
 	{
@@ -78,36 +94,21 @@ bool InteractiveSurface::isButtonPressed(Uint8 btnId) const
 }
 
 /**
- * Checks if a button has been handled.
- * @param btnId - an SDL-button identifier (default 0)
+ * Checks if a specified mouse-button's event has been handled.
+ * @param btnId - an SDL-button identifier (default 0 any)
  */
-bool InteractiveSurface::isButtonHandled(Uint8 btnId) // virtual.
+bool InteractiveSurface::isButtonHandled(Uint8 btnId) // protected/virtual.
 {
-	bool handled = (_click.find(0u) != _click.end()
-				|| _press.find(0u) != _press.end()
-				|| _release.find(0u) != _release.end());
+	bool handled = _click  .find(0u) != _click.end()
+				|| _press  .find(0u) != _press.end()
+				|| _release.find(0u) != _release.end();
 
 	if (handled == false && btnId != 0u)
-		handled = (_click.find(btnId) != _click.end()
-				|| _press.find(btnId) != _press.end()
-				|| _release.find(btnId) != _release.end());
+		handled = _click  .find(btnId) != _click.end()
+			   || _press  .find(btnId) != _press.end()
+			   || _release.find(btnId) != _release.end();
 
 	return handled;
-}
-
-/**
- * Sets a button as pressed.
- * @param btnId		- an SDL-button identifier
- * @param pressed	- true if pressed
- */
-void InteractiveSurface::setButtonPressed(
-		Uint8 btnId,
-		bool pressed)
-{
-	if (pressed == true)
-		_rodentState = _rodentState |   SDL_BUTTON(btnId);
-	else
-		_rodentState = _rodentState & (!SDL_BUTTON(btnId));
 }
 
 /**
@@ -132,6 +133,7 @@ void InteractiveSurface::handle( // virtual.
 		Action* action,
 		State* state)
 {
+	//Log(LOG_INFO) << "isf:handle()";
 	if (_visible == true && _hidden == false)
 	{
 		action->setSender(this);
@@ -140,6 +142,7 @@ void InteractiveSurface::handle( // virtual.
 		{
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
+				//Log(LOG_INFO) << ". isf:MOUSEBUTTON up/down call action->setMouseAction()";
 				action->setMouseAction(
 									action->getDetails()->button.x,
 									action->getDetails()->button.y,
@@ -157,6 +160,7 @@ void InteractiveSurface::handle( // virtual.
 
 		if (action->isMouseAction() == true)
 		{
+			//Log(LOG_INFO) << ". is Mouse Action";
 			if (   action->getAbsoluteMouseX() >= getX()
 				&& action->getAbsoluteMouseX() <  getX() + getWidth()
 				&& action->getAbsoluteMouseY() >= getY()
@@ -172,13 +176,17 @@ void InteractiveSurface::handle( // virtual.
 					&& action->getDetails()->type == SDL_MOUSEMOTION)
 				{
 					_rodentState = action->getMouseState();
+					//Log(LOG_INFO) << ". _rodentState= " << _rodentState;
+
 					for (Uint8
 							i = 1u;
-							i <= MOUSEBUTTONS;
+							i != MOUSEBUTTONS;
 							++i)
 					{
+						//Log(LOG_INFO) << ". . check btn= " << i;
 						if (isButtonPressed(i) == true)
 						{
+							//Log(LOG_INFO) << ". . . btn is Pressed - set button, call mousePress()";
 							action->getDetails()->button.button = i;
 							mousePress(action, state);
 						}
@@ -199,7 +207,7 @@ void InteractiveSurface::handle( // virtual.
 					{
 						for (Uint8
 								i = 1u;
-								i <= MOUSEBUTTONS;
+								i != MOUSEBUTTONS;
 								++i)
 						{
 							if (isButtonPressed(i) == true)
@@ -219,6 +227,7 @@ void InteractiveSurface::handle( // virtual.
 				if (_isHovered == true
 					&& isButtonPressed(action->getDetails()->button.button) == false)
 				{
+					//Log(LOG_INFO) << ". isf:call setButtonPressed(true) and mousePress()";
 					setButtonPressed(action->getDetails()->button.button, true);
 					mousePress(action, state);
 				}
@@ -227,8 +236,10 @@ void InteractiveSurface::handle( // virtual.
 			case SDL_MOUSEBUTTONUP:
 				if (isButtonPressed(action->getDetails()->button.button) == true)
 				{
+					//Log(LOG_INFO) << ". isf:call setButtonPressed(false) and mouseRelease()";
 					setButtonPressed(action->getDetails()->button.button, false);
 					mouseRelease(action, state);
+
 					if (_isHovered == true)
 						mouseClick(action, state);
 				}
@@ -239,10 +250,12 @@ void InteractiveSurface::handle( // virtual.
 			switch (action->getDetails()->type)
 			{
 				case SDL_KEYDOWN:
+					//Log(LOG_INFO) << ". isf:call keyboardPress()";
 					keyboardPress(action, state);
 					break;
 
 				case SDL_KEYUP:
+					//Log(LOG_INFO) << ". isf:call keyboardRelease()";
 					keyboardRelease(action, state);
 			}
 		}
@@ -276,13 +289,14 @@ bool InteractiveSurface::isFocused() const
  */
 void InteractiveSurface::unpress(State* const state) // virtual.
 {
-	if (isButtonPressed() == true)
+	if (_rodentState != 0u)
 	{
 		_rodentState = 0u;
+		mouseRelease(State::getGamePtr()->getSynthMouseUp(), state);
 
-		Action* a (State::getGamePtr()->getSynthMouseUp());
-		mouseRelease(a, state);
-		delete a;
+//		Action* const synth (State::getGamePtr()->getSynthMouseUp());
+//		mouseRelease(synth, state);
+//		delete synth;
 	}
 }
 
@@ -295,9 +309,12 @@ void InteractiveSurface::unpress(State* const state) // virtual.
  */
 void InteractiveSurface::mousePress(Action* action, State* state) // virtual.
 {
+	//Log(LOG_INFO) << "isf:mousePress()";
+
 	std::map<Uint8, ActionHandler>::const_iterator allHandler (_press.find(0u));
 	if (allHandler != _press.end())
 	{
+		//Log(LOG_INFO) << ". is allHandler";
 		ActionHandler handler (allHandler->second);
 		(state->*handler)(action);
 	}
@@ -305,6 +322,7 @@ void InteractiveSurface::mousePress(Action* action, State* state) // virtual.
 	std::map<Uint8, ActionHandler>::const_iterator oneHandler (_press.find(action->getDetails()->button.button));
 	if (oneHandler != _press.end())
 	{
+		//Log(LOG_INFO) << ". is oneHandler";
 		ActionHandler handler (oneHandler->second);
 		(state->*handler)(action);
 	}

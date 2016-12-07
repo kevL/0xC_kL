@@ -65,6 +65,7 @@ private:
 
 
 protected:
+	/// Checks if a specified mouse-button is handled.
 	bool isButtonHandled(Uint8 btn = 0u) override final;
 
 

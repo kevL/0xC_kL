@@ -60,7 +60,8 @@ private:
 		_dot,
 		_scrollable,
 		_selectable,
-		_wrap;
+		_wrap,
+		_wrapIndent;
 	int
 		_arrow_x,
 		_arrowsLeftEdge,
@@ -100,7 +101,7 @@ private:
 	std::map<int, TextHAlign> _align;
 
 	std::vector<size_t>
-		_columns,
+		_cols,
 		_rows;
 	std::vector<std::vector<Text*>> _texts;
 	std::vector<ArrowButton*>
@@ -139,7 +140,7 @@ private:
 		/// Sets the text-color of a certain cell.
 		void setCellColor(
 				size_t row,
-				size_t column,
+				size_t col,
 				Uint8 color,
 				bool contrast = false);
 		/// Sets the text-color of a certain row.
@@ -151,15 +152,15 @@ private:
 		/// Gets the text-string of a certain cell.
 		std::wstring getCellText(
 				size_t row,
-				size_t column) const;
+				size_t col) const;
 		/// Sets the text-string of a certain cell.
 		void setCellText(
 				size_t row,
-				size_t column,
+				size_t col,
 				const std::wstring& text);
 
 		/// Gets the x-position of a certain column.
-		int getColumnX(size_t column) const;
+		int getColumnX(size_t col) const;
 		/// Gets the y-position of a certain row.
 		int getRowY(size_t row) const;
 
@@ -216,6 +217,8 @@ private:
 		void setHighContrast(bool contrast = true) override;
 		/// Sets the TextList's wordwrap setting.
 		void setWordWrap(bool wrap = true);
+		/// Flags wrapping to indent 2nd and following lines.
+		void wrapIndent(bool indent = true);
 
 		/// Sets the horizontal alignment of the TextList.
 		void setAlign(
@@ -289,9 +292,9 @@ private:
 		void scrollTo(size_t scroll = 0u);
 
 
-		/// Draws the text onto the TextList.
+		/// Draws the Text into the TextList.
 		void draw() override;
-		/// Blits the TextList onto another Surface.
+		/// Blits the TextList into another Surface.
 		void blit(const Surface* const srf) override;
 		/// Thinks the arrow-buttons.
 		void think() override;

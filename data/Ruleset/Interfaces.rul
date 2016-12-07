@@ -403,6 +403,9 @@ interfaces:
         color: 138   # yellow
       - id: button
         color: 239   # bright green
+      - id: list
+        color: 246   # blue
+        border: 239  # bright green
 
   - type: psiTraining
     palette: PAL_BASESCAPE

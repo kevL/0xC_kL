@@ -29,8 +29,8 @@ namespace OpenXcom
  * Sets up the ImageButton with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- x-position in pixels (default 0)
- * @param y			- y-position in pixels (default 0)
+ * @param x			- x-position in pixels
+ * @param y			- y-position in pixels
  */
 ImageButton::ImageButton(
 		int width,
@@ -39,9 +39,9 @@ ImageButton::ImageButton(
 		int y)
 	:
 		InteractiveSurface(
-			width,
-			height,
-			x,y),
+				width,
+				height,
+				x,y),
 		_color(0u),
 		_group(nullptr),
 		_inverted(false)
@@ -134,7 +134,7 @@ void ImageButton::mouseRelease(Action* action, State* state)
  * state using internal variables.
  * @param press - true to set this button as pressed
  */
-void ImageButton::toggle(bool press)
+void ImageButton::toggleIb(bool press)
 {
 	if (_inverted != press)
 	{

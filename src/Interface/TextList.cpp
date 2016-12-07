@@ -70,6 +70,7 @@ TextList::TextList(
 		_condensed(false),
 		_contrast(false),
 		_wrap(false),
+		_wrapIndent(true),
 		_bg(nullptr),
 		_selector(nullptr),
 		_margin(8),
@@ -124,8 +125,8 @@ TextList::~TextList()
 			i != _texts.end();
 			++i)
 		for (std::vector<Text*>::const_iterator
-				j = (*i).begin();
-				j != (*i).end();
+				j = i->begin();
+				j != i->end();
 				++j)
 			delete *j;
 
@@ -199,7 +200,7 @@ int TextList::getArrowsRightEdge()
 
 /**
  * Unpresses all the arrow-buttons.
- * @param state - pointer to running state
+ * @param state - pointer to parent State
  */
 void TextList::unpress(State* const state)
 {
@@ -221,20 +222,20 @@ void TextList::unpress(State* const state)
 /**
  * Sets the color of a specific Text object in this TextList.
  * @param row		- row number
- * @param column	- column number
+ * @param col		- column number
  * @param color		- text color
  * @param contrast	- true for high-contrast (default false)
  */
 void TextList::setCellColor(
 		size_t row,
-		size_t column,
+		size_t col,
 		Uint8 color,
 		bool contrast)
 {
-	_texts[row][column]->setColor(color);
+	_texts[row][col]->setColor(color);
 
-	if (_texts[row][column]->getHighContrast() != contrast)
-		_texts[row][column]->setHighContrast(contrast);
+	if (_texts[row][col]->getHighContrast() != contrast)
+		_texts[row][col]->setHighContrast(contrast);
 
 	_redraw = true;
 }
@@ -265,40 +266,40 @@ void TextList::setRowColor(
 
 /**
  * Gets the text of a specific Text object in this TextList.
- * @param row		- row number
- * @param column	- column number
+ * @param row - row number
+ * @param col - column number
  * @return, text string
  */
 std::wstring TextList::getCellText(
 		size_t row,
-		size_t column) const
+		size_t col) const
 {
-	return _texts[row][column]->getText();
+	return _texts[row][col]->getText();
 }
 
 /**
  * Sets the text of a specific Text object in this TextList.
- * @param row		- row number
- * @param column	- column number
- * @param text		- text string
+ * @param row	- row number
+ * @param col	- column number
+ * @param text	- text string
  */
 void TextList::setCellText(
 		size_t row,
-		size_t column,
+		size_t col,
 		const std::wstring& text)
 {
-	_texts[row][column]->setText(text);
+	_texts[row][col]->setText(text);
 	_redraw = true;
 }
 
 /**
  * Gets the x-position of a specific text column in this TextList.
- * @param column - column number
+ * @param col - column number
  * @return, x-position in pixels
  */
-int TextList::getColumnX(size_t column) const
+int TextList::getColumnX(size_t col) const
 {
-	return _x + _texts[0][column]->getX();
+	return _x + _texts[0u][col]->getX();
 }
 
 /**
@@ -328,7 +329,7 @@ int TextList::getTextHeight(size_t row) const // myk002
  *
 int TextList::getNumTextLines(size_t row) const // myk002
 {
-	return _texts[row].front()->getNumLines();
+	return _texts[row].front()->getQtyLines();
 } */
 
 /**
@@ -395,7 +396,7 @@ void TextList::addRow(
 			++i)
 	{
 		Text* const txt (new Text(
-								static_cast<int>(_columns[i]),
+								static_cast<int>(_cols[i]),
 								_font->getHeight(),
 								rowOffset_x + _margin,
 								rowOffset_y));
@@ -428,9 +429,9 @@ void TextList::addRow(
 		if (_wrap == true && txt->getTextWidth() > txt->getWidth())
 		{
 //			txt->setHeight(_font->getHeight() * 2 + _font->getSpacing());
-			txt->setWordWrap(true, true);
+			txt->setWordWrap(true, _wrapIndent);
 			qtyRows = std::max(qtyRows,
-							   txt->getNumLines());
+							   txt->getQtyLines());
 		}
 
 		rowHeight = std::max(rowHeight,
@@ -442,7 +443,7 @@ void TextList::addRow(
 			std::wstring buf (txt->getText());
 
 			size_t width (static_cast<size_t>(txt->getTextWidth()));
-			while (width < _columns[i])
+			while (width < _cols[i])
 			{
 				width += static_cast<size_t>(static_cast<int>(_font->getChar('.')->getCrop()->w) + _font->getSpacing());
 				buf += '.';
@@ -455,7 +456,7 @@ void TextList::addRow(
 		if (_condensed == true)
 			rowOffset_x += txt->getTextWidth();
 		else
-			rowOffset_x += static_cast<int>(_columns[i]);
+			rowOffset_x += static_cast<int>(_cols[i]);
 	}
 
 	for (size_t // ensure all elements in this row are the same height
@@ -542,7 +543,7 @@ void TextList::setColumns(
 			i = 0;
 			i != cols;
 			++i)
-		_columns.push_back(static_cast<size_t>(va_arg(args, int)));
+		_cols.push_back(static_cast<size_t>(va_arg(args, int)));
 
 	va_end(args);
 }
@@ -740,6 +741,15 @@ void TextList::setWordWrap(bool wrap)
 }
 
 /**
+ * Flags wrapping to indent 2nd and following lines.
+ * @param indent - true to indent word-wrapped text (default true)
+ */
+void TextList::wrapIndent(bool indent)
+{
+	_wrapIndent = indent;
+}
+
+/**
  * Sets the horizontal alignment of the text in this TextList.
  * @note This doesn't change the alignment of existing text just the alignment
  * of text added from then on.
@@ -755,7 +765,7 @@ void TextList::setAlign(
 		case -1:
 			for (int
 					i = 0;
-					i != static_cast<int>(_columns.size());
+					i != static_cast<int>(_cols.size());
 					++i)
 				_align[i] = align;
 			break;
@@ -776,8 +786,8 @@ void TextList::setDot(bool dot)
 }
 
 /**
- * If enabled this TextList will respond to player input highlighting selected rows
- * and receiving clicks.
+ * If enabled this TextList will respond to player input highlighting selected
+ * rows and receiving clicks.
  * @param selectable - selectable setting (default true)
  */
 void TextList::setSelectable(bool selectable)
@@ -1135,7 +1145,7 @@ void TextList::updateVisible() // private.
 }
 
 /**
- * Draws the TextList and all the text contained within.
+ * Draws the TextList and all the Text contained within.
  */
 void TextList::draw()
 {
@@ -1146,12 +1156,10 @@ void TextList::draw()
 
 	if (_rows.empty() == false)
 	{
-		// for wrapped items offset the draw height above the visible surface
-		// so that the correct row appears at the top
-		for (size_t
-				row = _scroll;
-				row != 0u && _rows[row] == _rows[row - 1u];
-				--row)
+		for (size_t				// for wrapped items offset the draw-height above the visible surface
+				r = _scroll;	// so that the correct row appears at the top
+				r != 0u && _rows[r] == _rows[r - 1u];
+				--r)
 		{
 			y -= _font->getHeight() + _font->getSpacing();
 		}
@@ -1169,6 +1177,7 @@ void TextList::draw()
 					j != _texts[i].end();
 					++j)
 			{
+				//Log(LOG_INFO) << "tl:draw() _texts@" << i << " - " << Language::wstrToFs((*j)->getText());
 				if (addPixel == true)
 					(*j)->addTextHeight();
 
@@ -1365,7 +1374,7 @@ void TextList::mouseClick(Action* action, State* state)
 				&& action->getDetails()->button.button == SDL_BUTTON_LEFT)
 			{
 				_comboBox->setSelected(_selRow);
-				_comboBox->toggle();
+				_comboBox->toggleCbx();
 			}
 		}
 	}

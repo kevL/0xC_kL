@@ -29,8 +29,8 @@ namespace OpenXcom
  * Sets up the BattlescapeButton with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- x-position in pixels (default 0)
- * @param y			- y-position in pixels (default 0)
+ * @param x			- x-position in pixels
+ * @param y			- y-position in pixels
  */
 BattlescapeButton::BattlescapeButton(
 		int width,
@@ -39,10 +39,10 @@ BattlescapeButton::BattlescapeButton(
 		int y)
 	:
 		InteractiveSurface(
-			width,
-			height,
-			x,y),
-		_color(0),
+				width,
+				height,
+				x,y),
+		_color(0u),
 		_group(nullptr),
 		_inverted(false),
 		_toggleMode(INVERT_NONE),
@@ -73,93 +73,6 @@ void BattlescapeButton::setColor(Uint8 color)
 Uint8 BattlescapeButton::getColor() const
 {
 	return _color;
-}
-
-/**
- * Changes the button-group that this BattlescapeButton belongs to.
- * @param group - pointer to the pressed button pointer in the group,
- *				  nullptr makes it a regular button
- */
-void BattlescapeButton::setGroup(BattlescapeButton** group)
-{
-	_group = group;
-
-	if (_group != nullptr
-		&& *_group == this)
-	{
-		_inverted = true;
-	}
-}
-
-/**
- * Sets this BattlescapeButton as the pressed button if it's part of a group and
- * inverts the colors when pressed.
- * @param action	- pointer to an Action
- * @param state		- State that the ActionHandlers belong to
- */
-void BattlescapeButton::mousePress(Action* action, State* state)
-{
-	if (_group != nullptr)
-	{
-		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
-		{
-			(*_group)->toggle(false);
-			*_group = this;
-			_inverted = true;
-		}
-	}
-	else if (_toggleMode == INVERT_CLICK
-		&& _inverted == false
-		&& isButtonPressed() == true
-		&& isButtonHandled(action->getDetails()->button.button) == true)
-	{
-		_inverted = true;
-	}
-
-	InteractiveSurface::mousePress(action, state);
-}
-
-/**
- * Sets this BattlescapeButton as the released button if it's part of a group.
- * @param action	- pointer to an Action
- * @param state		- State that the ActionHandlers belong to
- */
-void BattlescapeButton::mouseRelease(Action* action, State* state)
-{
-	if (_inverted == true
-		&& isButtonHandled(action->getDetails()->button.button) == true)
-	{
-		_inverted = false;
-	}
-
-	InteractiveSurface::mouseRelease(action, state);
-}
-
-/**
- * Inverts this BattlescapeButton explicitly either ON or OFF and keeps track of
- * state using internal variables.
- * @param press - true to set this button as pressed
- */
-void BattlescapeButton::toggle(bool press)
-{
-	if (_toggleMode == INVERT_TOGGLE || _inverted == true)
-		_inverted = press;
-}
-
-/**
- * Toggle inversion mode: click to press, click to unpress.
- */
-void BattlescapeButton::allowToggleInversion()
-{
-	_toggleMode = INVERT_TOGGLE;
-}
-
-/**
- * Click inversion mode: click to press, release to unpress.
- */
-void BattlescapeButton::allowClickInversion()
-{
-	_toggleMode = INVERT_CLICK;
 }
 
 /**
@@ -233,5 +146,89 @@ void BattlescapeButton::setY(int y)
 	if (_altSurface != nullptr)
 		_altSurface->setY(y);
 }
+
+/**
+ * Changes the button-group that this BattlescapeButton belongs to.
+ * @param group - pointer to the pressed button pointer in the group,
+ *				  nullptr makes it a regular button
+ *
+void BattlescapeButton::setGroup(BattlescapeButton** group)
+{
+	_group = group;
+
+	if (_group != nullptr
+		&& *_group == this)
+	{
+		_inverted = true;
+	}
+} */
+
+/**
+ * Sets this BattlescapeButton as the pressed button if it's part of a group and
+ * inverts the colors when pressed.
+ * @param action	- pointer to an Action
+ * @param state		- State that the ActionHandlers belong to
+ *
+void BattlescapeButton::mousePress(Action* action, State* state)
+{
+	if (_group != nullptr)
+	{
+		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		{
+			(*_group)->toggleBb(false);
+			*_group = this;
+			_inverted = true;
+		}
+	}
+	else if (_toggleMode == INVERT_CLICK
+		&& _inverted == false
+		&& isButtonPressed() == true
+		&& isButtonHandled(action->getDetails()->button.button) == true)
+	{
+		_inverted = true;
+	}
+
+	InteractiveSurface::mousePress(action, state);
+} */
+/**
+ * Sets this BattlescapeButton as the released button if it's part of a group.
+ * @param action	- pointer to an Action
+ * @param state		- State that the ActionHandlers belong to
+ *
+void BattlescapeButton::mouseRelease(Action* action, State* state)
+{
+	if (_inverted == true
+		&& isButtonHandled(action->getDetails()->button.button) == true)
+	{
+		_inverted = false;
+	}
+
+	InteractiveSurface::mouseRelease(action, state);
+} */
+
+/**
+ * Inverts this BattlescapeButton explicitly either ON or OFF and keeps track of
+ * state using internal variables.
+ * @param press - true to set this button as pressed
+ *
+void BattlescapeButton::toggleBb(bool press)
+{
+	if (_toggleMode == INVERT_TOGGLE || _inverted == true)
+		_inverted = press;
+} */
+/**
+ * Toggle inversion mode: click to press, click to unpress.
+ *
+void BattlescapeButton::allowToggleInversion()
+{
+	_toggleMode = INVERT_TOGGLE;
+} */
+/**
+ * Click inversion mode: click to press, release to unpress.
+ *
+void BattlescapeButton::allowClickInversion()
+{
+	_toggleMode = INVERT_CLICK;
+} */
 
 }

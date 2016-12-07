@@ -22,8 +22,6 @@
 
 #include "TextButton.h"
 
-//#include "../Engine/State.h"
-
 
 namespace OpenXcom
 {
@@ -36,8 +34,8 @@ class ToggleTextButton final
 private:
 	bool _isPressed;
 	Uint8
-		_invertedColor,
-		_originalColor;
+		_color,
+		_colorInvert;
 
 	TextButton* _fakeGroup;
 
@@ -58,12 +56,12 @@ private:
 		///
 		void setColor(Uint8 color) override;
 		///
-		void setInvertColor(Uint8 color);
+		void setColorInvert(Uint8 color);
 
 		///
 		void mousePress(Action* action, State* state) override;
 		///
-		void setPressed(bool pressed);
+		void setPressed(bool press);
 		///
 		bool getPressed() const
 		{ return _isPressed; }

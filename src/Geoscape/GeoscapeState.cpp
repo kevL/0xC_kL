@@ -662,7 +662,7 @@ GeoscapeState::GeoscapeState()
 									Options::keyGeoUfopedia);
 
 	_btnOptions->copy(geobord);
-	_btnOptions->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick));	// why the f are these buttons calling resetTimeCacheClick() AND EVEN GETTING
+	_btnOptions->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick));	// why the f are these buttons calling btnTimeCompression() AND EVEN GETTING
 	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick),	// THE SENDER RIGHT when a true click on a time-compression btn does not.
 									Options::keyGeoOptions); // Escape key.							// Note that happens only if the 'resetTimeCache' is on a Press, not a Click!
 																									// holy diana
@@ -687,37 +687,37 @@ GeoscapeState::GeoscapeState()
 	_btn5Secs->setGroup(&_btnGroup);
 	_btn5Secs->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
 								Options::keyGeoSpeed1);
-	_btn5Secs->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
+	_btn5Secs->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn1Min->copy(geobord);
 	_btn1Min->setGroup(&_btnGroup);
 	_btn1Min->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
 								Options::keyGeoSpeed2);
-	_btn1Min->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
+	_btn1Min->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn5Mins->copy(geobord);
 	_btn5Mins->setGroup(&_btnGroup);
 	_btn5Mins->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
 								Options::keyGeoSpeed3);
-	_btn5Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
+	_btn5Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn30Mins->copy(geobord);
 	_btn30Mins->setGroup(&_btnGroup);
 	_btn30Mins->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
 								Options::keyGeoSpeed4);
-	_btn30Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
+	_btn30Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn1Hour->copy(geobord);
 	_btn1Hour->setGroup(&_btnGroup);
 	_btn1Hour->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
 								Options::keyGeoSpeed5);
-	_btn1Hour->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
+	_btn1Hour->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn1Day->copy(geobord);
 	_btn1Day->setGroup(&_btnGroup);
 	_btn1Day->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
 								Options::keyGeoSpeed6);
-	_btn1Day->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::resetTimeCacheClick));
+	_btn1Day->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 
 	_btnDetail->copy(geobord);
@@ -3158,6 +3158,7 @@ void GeoscapeState::time1Month()
 {
 	//Log(LOG_INFO) << "GeoscapeState::time1Month()";
 	resetTimer();
+	_game->getResourcePack()->fadeMusic(_game, 1232);
 
 	popupGeo(new MonthlyReportState());
 
@@ -3179,8 +3180,6 @@ void GeoscapeState::time1Month()
 
 	_gameSave->elapseMonth();
 	deterAlienMissions(); // determine aLien-mission-possibilities for the new month.
-
-	_game->getResourcePack()->fadeMusic(_game, 1232);
 }
 
 /**
@@ -3189,10 +3188,11 @@ void GeoscapeState::time1Month()
 void GeoscapeState::resetTimer()
 {
 	_globe->rotateStop();
+	_btn5Secs->mousePress(_game->getSynthMouseDown(), this);
 
-	Action* const action (_game->getSynthMouseDown());
-	_btn5Secs->mousePress(action, this);
-	delete action;
+//	Action* const synth (_game->getSynthMouseDown());
+//	_btn5Secs->mousePress(synth, this);
+//	delete synth;
 }
 
 /**
@@ -4361,13 +4361,15 @@ void GeoscapeState::setupLandMission() // private.
  */
 void GeoscapeState::keyTimeCompression(Action* action) // private.
 {
-	if (action->getSender() != _btnGroup)
+	ImageButton* const sender (dynamic_cast<ImageButton*>(action->getSender()));
+	if (sender != _btnGroup)
 	{
 		_timeCache = 0;
+		sender->mousePress(_game->getSynthMouseDown(), this);
 
-		Action* a (_game->getSynthMouseDown()); // so let's fake a mouse-click
-		action->getSender()->mousePress(a, this);
-		delete a;
+//		Action* const synth (_game->getSynthMouseDown()); // so let's fake a mouse-click
+//		action->getSender()->mousePress(synth, this);
+//		delete synth;
 	}
 }
 
@@ -4375,7 +4377,7 @@ void GeoscapeState::keyTimeCompression(Action* action) // private.
  * Handler for clicking a time-compression button.
  * @param action - pointer to an Action
  */
-void GeoscapeState::resetTimeCacheClick(Action*) // private.
+void GeoscapeState::btnTimeCompression(Action*) // private.
 {
 	_timeCache = 0;
 }

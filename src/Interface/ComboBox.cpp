@@ -91,7 +91,7 @@ ComboBox::ComboBox(
 	_list->setSelectable();
 	_list->setMargin(0);
 
-	toggle(true);
+	toggleCbx(true);
 }
 
 /**
@@ -409,7 +409,7 @@ void ComboBox::handle(Action* action, State* state)
 			|| action->getAbsoluteMouseY() <  getY()
 			|| action->getAbsoluteMouseY() >= getY() + getHeight() + _window->getHeight()))
 	{
-		toggle();
+		toggleCbx();
 	}
 
 	if (_toggled == true)
@@ -425,7 +425,7 @@ void ComboBox::handle(Action* action, State* state)
  * Opens/closes this ComboBox's TextList.
  * @param init - true if it is the initialization toggle (default false)
  */
-void ComboBox::toggle(bool init)
+void ComboBox::toggleCbx(bool init)
 {
 	_list->setVisible(!_list->getVisible());
 	_window->setVisible(!_window->getVisible());

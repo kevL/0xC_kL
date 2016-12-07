@@ -47,7 +47,7 @@ SDL_Color Font::_terminal[2u]
 };
 
 /**
- * Initializes this Font with a blank surface.
+ * Initializes this Font with a blank Surface.
  */
 Font::Font()
 	:
@@ -59,7 +59,7 @@ Font::Font()
 {}
 
 /**
- * Deletes this Font's surface.
+ * Deletes this Font's Surface.
  */
 Font::~Font()
 {
@@ -67,9 +67,9 @@ Font::~Font()
 }
 
 /**
- * Loads the characters contained in each font from a UTF-8 string to use as the
+ * Loads the characters contained in each Font from a UTF-8 string to use as the
  * index.
- * @param index - reference a string of characters
+ * @param index - reference to a string of characters
  */
 void Font::setIndex(const std::wstring& index) // static.
 {
@@ -87,10 +87,10 @@ void Font::load(const YAML::Node& node)
 	_spacing	= node["spacing"]	.as<int>(_spacing);
 	_monospace	= node["monospace"]	.as<bool>(_monospace);
 
-	const std::string image ("Language/" + node["image"].as<std::string>());
+	const std::string glyphs ("Language/" + node["glyphs"].as<std::string>());
 
 	Surface* const font (new Surface(_width, _height));
-	font->loadImage(CrossPlatform::getDataFile(image));
+	font->loadImage(CrossPlatform::getDataFile(glyphs));
 
 	_surface = new Surface(
 						font->getWidth(),
@@ -137,7 +137,7 @@ void Font::loadTerminal()
 }
 
 /**
- * Calculates the real size and position of each character in the surface
+ * Calculates the real size and position of each character in the Surface
  * and stores them in SDL_Rect's for future use by other classes.
  */
 void Font::init()
@@ -262,7 +262,7 @@ int Font::getHeight() const
  * Gets the spacing for any character in this Font.
  * @return, spacing in pixels
  * @note This does not refer to character spacing within the surface
- * but to the spacing used between multiple characters in a line.
+ * but to the spacing used between multiple characters on a line.
  */
 int Font::getSpacing() const
 {

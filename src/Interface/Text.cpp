@@ -357,10 +357,10 @@ Uint8 Text::getSecondaryColor() const
 }
 
 /**
- * Gets the number of lines in this Text including wrapping.
- * @return, number of lines
+ * Gets the quantity of lines in this Text including wrapping.
+ * @return, quantity of lines
  */
-int Text::getNumLines() const
+int Text::getQtyLines() const
 {
 	if (_wrap == true)
 		return static_cast<int>(_lineHeight.size());
@@ -398,7 +398,7 @@ int Text::getTextWidth(int line) const
 
 /**
  * Gets this Text's rendered height.
- * @note Used to check if wordwrap applies.
+ * @note Used to check if word-wrap applies.
  * @param line - line to get the height of or -1 to get whole text height (default -1)
  * @return, height in pixels
  */
@@ -436,7 +436,7 @@ void Text::addTextHeight(int pad)
 
 /**
  * Takes care of any text post-processing like calculating line metrics for
- * alignment and wordwrapping if necessary.
+ * alignment and word-wrapping if necessary.
  */
 void Text::processText() // private.
 {
@@ -474,7 +474,7 @@ void Text::processText() // private.
 			{
 				// add line measurements for alignment later
 				_lineWidth.push_back(width);
-				_lineHeight.push_back(font->getCharSize(L'\n').h);
+				_lineHeight.push_back(static_cast<int>(font->getCharSize(L'\n').h));
 
 				width =
 				word = 0;
@@ -492,7 +492,7 @@ void Text::processText() // private.
 					++textIndentation;
 
 				space = i;
-				width += font->getCharSize((*wst)[i]).w;
+				width += static_cast<int>(font->getCharSize((*wst)[i]).w);
 				word = 0;
 				start = false;
 			}
@@ -501,7 +501,7 @@ void Text::processText() // private.
 				if (font->getChar((*wst)[i]) == nullptr)
 					(*wst)[i] = L'.';
 
-				const int charWidth (font->getCharSize((*wst)[i]).w); // keep track of the width of the last line and word
+				const int charWidth (static_cast<int>(font->getCharSize((*wst)[i]).w)); // keep track of the width of the last line and word
 				width += charWidth;
 				word += charWidth;
 
@@ -519,7 +519,7 @@ void Text::processText() // private.
 						indentLocation = space;
 						if (Font::isSpace((*wst)[space]) == true)
 						{
-							width -= font->getCharSize((*wst)[space]).w;
+							width -= static_cast<int>(font->getCharSize((*wst)[space]).w);
 							(*wst)[space] = L'\n';
 						}
 						else
@@ -543,11 +543,11 @@ void Text::processText() // private.
 					if (_indent == true) // indent due to word wrap
 					{
 						wst->insert(indentLocation + 1u, L" \xA0");
-						width += font->getCharSize(L' ').w + font->getCharSize(L'\xA0').w;
+						width += static_cast<int>(font->getCharSize(L' ').w) + static_cast<int>(font->getCharSize(L'\xA0').w);
 					}
 
 					_lineWidth.push_back(width);
-					_lineHeight.push_back(font->getCharSize(L'\n').h);
+					_lineHeight.push_back(static_cast<int>(font->getCharSize(L'\n').h));
 
 					switch (_lang->getTextWrapping())
 					{
@@ -690,7 +690,7 @@ void Text::draw()
 			y = 0;
 			break;
 		case ALIGN_MIDDLE:
-			y = static_cast<int>(std::ceil((getHeight() - height) / 2.));
+			y = static_cast<int>(std::ceil(static_cast<double>(getHeight() - height) / 2.));
 			break;
 		case ALIGN_BOTTOM:
 			y = getHeight() - height;
@@ -711,12 +711,12 @@ void Text::draw()
 			++i)
 	{
 		if (Font::isSpace(*i) == true)
-			x += dir * font->getCharSize(*i).w;
+			x += dir * static_cast<int>(font->getCharSize(*i).w);
 		else if (Font::isLinebreak(*i) == true)
 		{
 			++line;
 
-			y += font->getCharSize(*i).h;
+			y += static_cast<int>(font->getCharSize(*i).h);
 			x = getLineX(line);
 
 			if (*i == L'\x02') // switch to small-font
@@ -731,7 +731,7 @@ void Text::draw()
 		else
 		{
 			if (dir < 0)
-				x += dir * font->getCharSize(*i).w;
+				x += dir * static_cast<int>(font->getCharSize(*i).w);
 
 			Surface* const srfChar (font->getChar(*i));
 			srfChar->setX(x);
@@ -744,7 +744,7 @@ void Text::draw()
 								ShaderScalar(mid));
 
 			if (dir > 0)
-				x += dir * font->getCharSize(*i).w;
+				x += dir * static_cast<int>(font->getCharSize(*i).w);
 		}
 	}
 }

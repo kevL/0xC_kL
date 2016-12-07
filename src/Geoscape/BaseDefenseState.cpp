@@ -50,18 +50,18 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the BaseDefense screen.
- * @param base	- pointer to the Base being attacked
- * @param ufo	- pointer to the attacking Ufo
- * @param geo	- pointer to GeoscapeState
+ * @param base		- pointer to the Base being attacked
+ * @param ufo		- pointer to the attacking Ufo
+ * @param geoState	- pointer to GeoscapeState
  */
 BaseDefenseState::BaseDefenseState(
 		Base* const base,
 		Ufo* const ufo,
-		GeoscapeState* const geo)
+		GeoscapeState* const geoState)
 	:
 		_base(base),
 		_ufo(ufo),
-		_geo(geo),
+		_geoState(geoState),
 		_action(BD_NONE),
 		_thinkCycles(0),
 		_row(0u),
@@ -332,7 +332,7 @@ void BaseDefenseState::btnOkClick(Action*)
 		case Ufo::LANDED:
 		case Ufo::CRASHED:
 			_base->setDefenseReduction(100 - _ufo->getUfoHullPct());
-			_geo->baseDefenseTactical(_base, _ufo);
+			_geoState->baseDefenseTactical(_base, _ufo);
 			break;
 
 		case Ufo::DESTROYED:

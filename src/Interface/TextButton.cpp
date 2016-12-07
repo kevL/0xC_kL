@@ -32,7 +32,7 @@
 namespace OpenXcom
 {
 
-const Sound* TextButton::soundPress = nullptr; // static.
+const Sound* TextButton::soundPress (nullptr); // static.
 
 
 /**
@@ -56,9 +56,9 @@ TextButton::TextButton(
 		_color(0u),
 		_group(nullptr),
 		_contrast(1u),
-//		_geoscapeButton(false),
 		_silent(false),
 		_comboBox(nullptr)
+//		_geoscapeButton(false)
 {
 	_text = new Text(
 					width,
@@ -79,15 +79,15 @@ TextButton::~TextButton()
 }
 
 /**
- *
+ * Checks if a specified mouse-button is handled.
  * @param btn - (default 0)
  */
-bool TextButton::isButtonHandled(Uint8 btn)
+bool TextButton::isButtonHandled(Uint8 btn) // protected.
 {
 	if (_comboBox != nullptr)
 		return (btn == SDL_BUTTON_LEFT);
-	else
-		return InteractiveSurface::isButtonHandled(btn);
+
+	return InteractiveSurface::isButtonHandled(btn);
 }
 
 /**
@@ -382,7 +382,7 @@ void TextButton::mouseRelease(Action* action, State* state)
 	if (isButtonHandled(action->getDetails()->button.button) == true)
 	{
 		if (_comboBox != nullptr && _comboBox->getVisible() == true)
-			_comboBox->toggle();
+			_comboBox->toggleCbx();
 
 		draw();
 	}

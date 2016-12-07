@@ -161,6 +161,8 @@ void VictoryState::screenPress(Action*)
 	}
 	else // to StatisticsState -> MainMenuState.
 	{
+		_game->getResourcePack()->fadeMusic(_game, 1157);
+
 		_game->popState();
 /*		Screen::updateScale(
 						Options::geoscapeScale,

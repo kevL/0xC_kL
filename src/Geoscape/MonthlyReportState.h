@@ -33,6 +33,7 @@ class SavedGame;
 class Soldier;
 class Text;
 class TextButton;
+class TextList;
 class Window;
 
 
@@ -54,7 +55,6 @@ private:
 	SavedGame* _gameSave;
 	Text
 		* _txtChange,
-		* _txtCouncil,
 		* _txtDefeat,
 		* _txtMonth,
 		* _txtRating,
@@ -62,6 +62,7 @@ private:
 	TextButton
 		* _btnOk,
 		* _btnDefeat;
+	TextList* _lstCouncil;
 	Window* _window;
 
 	std::vector<std::string>

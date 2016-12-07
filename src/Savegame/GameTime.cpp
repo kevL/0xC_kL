@@ -124,7 +124,7 @@ YAML::Node GameTime::save(bool memorial) const
  */
 TimeTrigger GameTime::advance()
 {
-	if (++_second % 5 != 0) // Volutar smooth_globe.
+	if (++_second % 5 != 0) // Volutar smooth globe terminator.
 		return TIME_1SEC;
 
 	if (_second != 60)

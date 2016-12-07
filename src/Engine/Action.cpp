@@ -100,7 +100,7 @@ void Action::setMouseAction(
 }
 
 /**
- * Gets if this Action is a valid mouse-thing.
+ * Checks if this Action is a valid mouse-thing.
  * @return, true if valid
  */
 bool Action::isMouseAction() const
@@ -109,13 +109,13 @@ bool Action::isMouseAction() const
 }
 
 /**
- * Gets if a specified mouse-button invoked this Action.
+ * Checks if a specified mouse-button invoked this Action.
  * @param btnId - btn-ID
  * @return, true if so
  */
-bool Action::getMouseButtonState(int btnId) const
+bool Action::isMouseButton(int btnId) const
 {
-	return _rodentState & (1u << (static_cast<Uint32>(btnId) - 1u));
+	return _rodentState & SDL_BUTTON(btnId);
 }
 
 /**

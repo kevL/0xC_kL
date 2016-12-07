@@ -166,7 +166,7 @@ private:
 		Uint8 getSecondaryColor() const;
 
 		/// Gets the number of lines in the wrapped Text if wrapping is enabled.
-		int getNumLines() const;
+		int getQtyLines() const;
 
 		/// Gets the rendered Text's width.
 		int getTextWidth(int line = -1) const;

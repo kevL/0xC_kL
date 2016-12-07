@@ -196,7 +196,7 @@ private:
 	/// Handler for hot-keying time-compression.
 	void keyTimeCompression(Action* action);
 	/// Handler for clicking a time-compression button.
-	void resetTimeCacheClick(Action* action);
+	void btnTimeCompression(Action* action);
 	/// Handler for clicking pause.
 	void btnPauseClick(Action* action);
 	/// Handler for clicking a visible UFO button.

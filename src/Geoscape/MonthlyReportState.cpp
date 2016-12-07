@@ -37,6 +37,7 @@
 
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
+#include "../Interface/TextList.h"
 #include "../Interface/Window.h"
 
 #include "../Resource/XcomResourcePack.h"
@@ -58,7 +59,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Monthly Report screen.
+ * Initializes all the elements in the MonthlyReport screen.
  */
 MonthlyReportState::MonthlyReportState()
 	:
@@ -69,13 +70,14 @@ MonthlyReportState::MonthlyReportState()
 		_gameSave(_game->getSavedGame())
 {
 	_window		= new Window(this);
-	_txtTitle	= new Text(300, 17, 10, 8);
+	_txtTitle	= new Text(300, 16, 10, 7);
 
-	_txtMonth	= new Text(110, 9,  16, 24);
-	_txtRating	= new Text(178, 9, 126, 24);
+	_txtMonth	= new Text(110, 9,  16, 25);
+	_txtRating	= new Text(178, 9, 126, 25);
 
-	_txtChange	= new Text(288,   9, 16, 32);
-	_txtCouncil	= new Text(288, 140, 16, 40);
+	_txtChange	= new Text(288, 9, 16, 35);
+
+	_lstCouncil	= new TextList(285, 129, 16, 46);
 
 	_btnOk		= new TextButton(288, 16, 16, 177);
 
@@ -93,7 +95,7 @@ MonthlyReportState::MonthlyReportState()
 	add(_txtMonth,		"text1",	"monthlyReport");
 	add(_txtRating,		"text1",	"monthlyReport");
 	add(_txtChange,		"text1",	"monthlyReport");
-	add(_txtCouncil,	"text2",	"monthlyReport");
+	add(_lstCouncil,	"list",		"monthlyReport");
 	add(_btnOk,			"button",	"monthlyReport");
 	add(_txtDefeat,		"text2",	"monthlyReport");
 	add(_btnDefeat,		"button",	"monthlyReport");
@@ -163,31 +165,61 @@ MonthlyReportState::MonthlyReportState()
 //	woststr << tr("STR_BALANCE") << L"> \x01" << Text::formatCurrency(_gameSave->getFunds());
 //	_txtBalance->setText(woststr.str());
 
-	woststr.str(L"");
+	_lstCouncil->setColumns(1, 285);
+	_lstCouncil->setBackground(_window);
+	_lstCouncil->setWordWrap();
+	_lstCouncil->setMargin(0);
+	_lstCouncil->wrapIndent(false);
 
-	const int
-		diff (_gameSave->getDifficultyInt()),
-		defeatThreshold (_game->getRuleset()->getDefeatScore() + (diff * 250));
+	const int defeatThreshold (_game->getRuleset()->getDefeatScore() + (_gameSave->getDifficultyInt() * 250));
 
-	std::string
-		track,
-		satisfaction;
+	std::string track;
 
 	if (_ratingTotal < defeatThreshold)
 	{
 		st = TAC_RATING[0u]; // terrible
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 
-		if (_ratingPrior < defeatThreshold)	// check defeat by rating
-			_defeated = true;				// you lose.
+		_lstCouncil->addRow(1, tr("STR_COUNCIL_IS_DISSATISFIED_1").c_str());
+
+		if (_ratingPrior >= defeatThreshold) // check defeat by rating
+		{
+			_lstCouncil->addRow(1, L"");
+			_lstCouncil->addRow(1, tr("STR_COUNCIL_IS_DISSATISFIED_2").c_str());
+		}
+		else
+			_defeated = true; // you lose.
 	}
 	else
 	{
-		if		(_ratingTotal > defeatThreshold + 10000)	st = TAC_RATING[5u]; // terrific
-		else if	(_ratingTotal > defeatThreshold + 5000)		st = TAC_RATING[4u]; // excellent
-		else if	(_ratingTotal > defeatThreshold + 2500)		st = TAC_RATING[3u]; // good
-		else if	(_ratingTotal > defeatThreshold + 1000)		st = TAC_RATING[2u]; // okay
-		else												st = TAC_RATING[1u]; // poor
+		std::string satisfaction;
+		if (_ratingTotal > defeatThreshold + 10000)
+		{
+			st = TAC_RATING[5u]; // terrific
+			satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
+		}
+		else if (_ratingTotal > defeatThreshold + 5000)
+		{
+			st = TAC_RATING[4u]; // excellent
+			satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
+		}
+		else if (_ratingTotal > defeatThreshold + 2500)
+		{
+			st = TAC_RATING[3u]; // good
+			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
+		}
+		else if (_ratingTotal > defeatThreshold + 1000)
+		{
+			st = TAC_RATING[2u]; // okay
+			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
+		}
+		else
+		{
+			st = TAC_RATING[1u]; // poor
+			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
+		}
+
+		_lstCouncil->addRow(1, tr(satisfaction).c_str());
 
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT;
 	}
@@ -196,17 +228,15 @@ MonthlyReportState::MonthlyReportState()
 
 	if (_defeated == false)
 	{
-		if		(_ratingTotal > 1000 + (diff * 2000))	satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
-		else if	(_ratingTotal > -1)						satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
-		else											satisfaction = "STR_COUNCIL_IS_DISSATISFIED";
-		woststr << tr(satisfaction);
-
-		if (_gameSave->getFunds() < _game->getRuleset()->getDefeatFunds()) // check defeat by funds
+		if (_gameSave->getFunds() < _game->getRuleset()->getDefeatFunds())
 		{
-			if (_gameSave->hasLowFunds() == false)
+			if (_gameSave->hasLowFunds() == false) // check defeat by funds
 			{
 				_gameSave->flagLowFunds();
-				woststr << "\n\n" << tr("STR_COUNCIL_REDUCE_DEBTS");
+
+				_lstCouncil->addRow(1, L"");
+				_lstCouncil->addRow(1, tr("STR_COUNCIL_REDUCE_DEBTS").c_str());
+
 				track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 			}
 			else
@@ -218,23 +248,41 @@ MonthlyReportState::MonthlyReportState()
 
 	if (_defeated == false)
 	{
-		woststr << countryList(
-						_listHappy,
-						"STR_COUNTRY_IS_PARTICULARLY_PLEASED",
-						"STR_COUNTRIES_ARE_PARTICULARLY_HAPPY");
-		woststr << countryList(
-						_listSad,
-						"STR_COUNTRY_IS_UNHAPPY_WITH_YOUR_ABILITY",
-						"STR_COUNTRIES_ARE_UNHAPPY_WITH_YOUR_ABILITY");
-		woststr << countryList(
-						_listPacts,
-						"STR_COUNTRY_HAS_SIGNED_A_SECRET_PACT",
-						"STR_COUNTRIES_HAVE_SIGNED_A_SECRET_PACT");
+		if (_listHappy.empty() == false)
+		{
+			_lstCouncil->addRow(1, L"");
+			_lstCouncil->addRow(1, countryList(
+											_listHappy,
+											"STR_COUNTRY_IS_PARTICULARLY_PLEASED",
+											"STR_COUNTRIES_ARE_PARTICULARLY_HAPPY").c_str());
+		}
+
+		if (_listSad.empty() == false)
+		{
+			_lstCouncil->addRow(1, L"");
+			_lstCouncil->addRow(1, countryList(
+											_listSad,
+											"STR_COUNTRY_IS_UNHAPPY_WITH_YOUR_ABILITY",
+											"STR_COUNTRIES_ARE_UNHAPPY_WITH_YOUR_ABILITY").c_str());
+		}
+
+		if (_listPacts.empty() == false)
+		{
+			_lstCouncil->addRow(1, L"");
+			_lstCouncil->addRow(1, countryList(
+											_listPacts,
+											"STR_COUNTRY_HAS_SIGNED_A_SECRET_PACT",
+											"STR_COUNTRIES_HAVE_SIGNED_A_SECRET_PACT").c_str());
+		}
 	}
 	else // defeated ->
 	{
-		woststr.str(L"");
-		woststr << tr("STR_YOU_HAVE_NOT_SUCCEEDED");
+		_lstCouncil->addRow(1, L"");
+		_lstCouncil->addRow(1, tr("STR_YOU_HAVE_NOT_SUCCEEDED_1").c_str());
+		_lstCouncil->addRow(1, L"");
+		_lstCouncil->addRow(1, tr("STR_YOU_HAVE_NOT_SUCCEEDED_2").c_str());
+		_lstCouncil->addRow(1, L"");
+		_lstCouncil->addRow(1, tr("STR_YOU_HAVE_NOT_SUCCEEDED_3").c_str());
 
 		_txtDefeat->setText(tr("STR_YOU_HAVE_FAILED"));
 		_txtDefeat->setBig();
@@ -243,16 +291,14 @@ MonthlyReportState::MonthlyReportState()
 		_txtDefeat->setWordWrap();
 
 		_btnDefeat->setText(tr("STR_OK"));
-		_btnDefeat->onMouseClick(		static_cast<ActionHandler>(&MonthlyReportState::btnOkClick));
-		_btnDefeat->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
-										Options::keyOk);
-		_btnDefeat->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
-										Options::keyOkKeypad);
-		_btnDefeat->onKeyboardPress(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
-										Options::keyCancel);
+		_btnDefeat->onMouseClick(	static_cast<ActionHandler>(&MonthlyReportState::btnOkClick));
+		_btnDefeat->onKeyboardPress(static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+									Options::keyOk);
+		_btnDefeat->onKeyboardPress(static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+									Options::keyOkKeypad);
+		_btnDefeat->onKeyboardPress(static_cast<ActionHandler>(&MonthlyReportState::btnOkClick),
+									Options::keyCancel);
 	}
-	_txtCouncil->setText(woststr.str());
-	_txtCouncil->setWordWrap();
 
 	_txtDefeat->setVisible(false);
 	_btnDefeat->setVisible(false);
@@ -423,7 +469,7 @@ void MonthlyReportState::btnOkClick(Action*)
 //		_txtIncome->setVisible(false);
 //		_txtMaintenance->setVisible(false);
 //		_txtBalance->setVisible(false);
-		_txtCouncil->setVisible(false);
+		_lstCouncil->setVisible(false);
 		_btnOk->setVisible(false);
 
 		_txtDefeat->setVisible();
@@ -450,9 +496,9 @@ void MonthlyReportState::btnOkClick(Action*)
 /**
  * Builds a sentence from a list of countries adding the appropriate
  * separators and pluralization.
- * @param countries	- reference a vector of strings that is the list of countries
- * @param singular	- reference a string to append if the returned string is singular
- * @param plural	- reference a string to append if the returned string is plural
+ * @param countries	- reference to a vector of strings that is the list of countries
+ * @param singular	- reference to a string to append if the returned string is singular
+ * @param plural	- reference to a string to append if the returned string is plural
  */
 std::wstring MonthlyReportState::countryList( // private.
 		const std::vector<std::string>& countries,
@@ -462,7 +508,6 @@ std::wstring MonthlyReportState::countryList( // private.
 	std::wostringstream woststr;
 	if (countries.empty() == false)
 	{
-		woststr << "\n\n";
 		switch (countries.size())
 		{
 			case 1u:

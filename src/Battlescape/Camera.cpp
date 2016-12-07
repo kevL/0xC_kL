@@ -167,75 +167,72 @@ void Camera::mouseOver(Action* action)
 			posY (action->getMouseY()),
 			scrollSpeed (Options::battleScrollSpeed);
 
-		if (posX < SCROLL_BORDER * action->getScaleX()) // left scroll
+		if (posX < SCROLL_BORDER * action->getScaleX())										// left scroll
 		{
 			_scrollMouseX = scrollSpeed;
 
 			// if close to top or bottom, also scroll diagonally
-			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY()) // down left
+			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY())							// down left
 				_scrollMouseY = (scrollSpeed >> 1u);
-			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY()) // up left
+			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY())	// up left
 				_scrollMouseY = -(scrollSpeed >> 1u);
 			else
-				_scrollMouseY = 0;
+				_scrollMouseY = 0;															// stop vert scroll.
 		}
-		else if (posX > (_screenWidth - SCROLL_BORDER) * action->getScaleX()) // right scroll
+		else if (posX > (_screenWidth - SCROLL_BORDER) * action->getScaleX())				// right scroll
 		{
 			_scrollMouseX = -scrollSpeed;
 
 			// if close to top or bottom, also scroll diagonally
-			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY()) // down right
+			if (posY < SCROLL_DIAGONAL_EDGE * action->getScaleY())							// down right
 				_scrollMouseY = (scrollSpeed >> 1u);
-			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY()) // up right
+			else if (posY > (_screenHeight - SCROLL_DIAGONAL_EDGE) * action->getScaleY())	// up right
 				_scrollMouseY = -(scrollSpeed >> 1u);
 			else
-				_scrollMouseY = 0;
+				_scrollMouseY = 0;															// stop vert scroll.
 		}
-		else if (posX != 0)
+		else if (posX != 0)																	// stop hori scroll.
 			_scrollMouseX = 0;
 
-		if (posY < SCROLL_BORDER * action->getScaleY()) // up scroll
+		if (posY < SCROLL_BORDER * action->getScaleY())										// up scroll
 		{
 			_scrollMouseY = scrollSpeed;
 
 			// if close to left or right edge, also scroll diagonally
-			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX()) // up left
+			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX())							// up left
 			{
 				_scrollMouseX = scrollSpeed;
 				_scrollMouseY >>= 1u;
 			}
-			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX()) // up right
+			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX())	// up right
 			{
 				_scrollMouseX = -scrollSpeed;
 				_scrollMouseY >>= 1u;
 			}
 		}
-		else if (posY > (_screenHeight - SCROLL_BORDER) * action->getScaleY()) // down scroll
+		else if (posY > (_screenHeight - SCROLL_BORDER) * action->getScaleY())				// down scroll
 		{
 			_scrollMouseY = -scrollSpeed;
 
 			// if close to left or right edge, also scroll diagonally
-			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX()) // down left
+			if (posX < SCROLL_DIAGONAL_EDGE * action->getScaleX())							// down left
 			{
 				_scrollMouseX = scrollSpeed;
 				_scrollMouseY >>= 1u;
 			}
-			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX()) // down right
+			else if (posX > (_screenWidth - SCROLL_DIAGONAL_EDGE) * action->getScaleX())	// down right
 			{
 				_scrollMouseX = -scrollSpeed;
 				_scrollMouseY >>= 1u;
 			}
 		}
-		else if (posY != 0
-			&& _scrollMouseX == 0)
-		{
+		else if (posY != 0 && _scrollMouseX == 0)											// stop vert scroll.
 			_scrollMouseY = 0;
-		}
 
 		if ((_scrollMouseX != 0 || _scrollMouseY != 0)
 			&& _scrollMouseTimer->isRunning() == false
 			&& _scrollKeyTimer->isRunning() == false
-			&& action->getMouseButtonState(Options::battleDragScrollButton) == false)
+			&& action->isMouseButton(Options::battleDragScrollButton) == false)
 		{
 			_scrollMouseTimer->start();
 		}
@@ -302,7 +299,7 @@ void Camera::keyboardPress(Action* action)
 		if ((_scrollKeyX != 0 || _scrollKeyY != 0)
 			&& _scrollKeyTimer->isRunning() == false
 			&& _scrollMouseTimer->isRunning() == false
-			&& action->getMouseButtonState(Options::battleDragScrollButton) == false)
+			&& action->isMouseButton(Options::battleDragScrollButton) == false)
 		{
 			_scrollKeyTimer->start();
 		}
@@ -348,7 +345,7 @@ void Camera::keyboardRelease(Action* action)
 		if ((_scrollKeyX != 0 || _scrollKeyY != 0)
 			&& _scrollKeyTimer->isRunning() == false
 			&& _scrollMouseTimer->isRunning() == false
-			&& action->getMouseButtonState(Options::battleDragScrollButton) == false)
+			&& action->isMouseButton(Options::battleDragScrollButton) == false)
 		{
 			_scrollKeyTimer->start();
 		}

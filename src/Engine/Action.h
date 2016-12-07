@@ -78,11 +78,11 @@ private:
 				int mY,
 				int surfaceX,
 				int surfaceY);
-		/// Gets if the Action is a mouse-action.
+		/// Checks if the Action is a mouse-action.
 		bool isMouseAction() const;
 
-		/// Gets a specified mouse-button's state.
-		bool getMouseButtonState(int btnId) const;
+		/// Checks a specified mouse-button's state.
+		bool isMouseButton(int btnId) const;
 		/// Gets the overall mouse-buttons' state.
 		Uint32 getMouseState() const;
 

@@ -182,10 +182,11 @@ void ResourcePack::playMusic(
 		const std::string& terrainType,
 		int loops)
 {
-	//Log(LOG_INFO) << "rp: playMusic current = " << _playingMusic;
+	//Log(LOG_INFO) << "rp:playMusic() current= " << _playingMusic;
+	//Log(LOG_INFO) << ". request track= " << trackType;
 	if (Options::mute == false && _playingMusic != trackType)
 	{
-		//Log(LOG_INFO) << ". new trak = " << trackType;
+		//Log(LOG_INFO) << ". . play track= " << trackType;
 		const Music* const music (getMusicRand(trackType, terrainType));
 		if (music != _muteMusic) // note: '_muteMusic'= nullptr
 		{

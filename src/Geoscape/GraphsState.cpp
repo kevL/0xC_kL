@@ -25,7 +25,6 @@
 #include "../Engine/Game.h"
 #include "../Engine/InteractiveSurface.h"
 #include "../Engine/LocalizedText.h"
-//#include "../Engine/Logger.h"
 #include "../Engine/Options.h"
 #include "../Engine/Palette.h"
 #include "../Engine/Screen.h"
@@ -57,7 +56,7 @@ namespace OpenXcom
 
 static int recallPage (-1);
 static size_t recallCountry (0u);
-static GraphsUserFactor recallFactor (GUF_DEFAULT);
+static GraphsExpansionFactor recallExpansion (GF_DEFAULT);
 
 static int
 	SCREEN_OFFSET_y,
@@ -176,12 +175,12 @@ GraphsState::GraphsState()
 	_btnFactor2		= new TextButton(16, 16, 288, 26);
 	_btnFactor4		= new TextButton(16, 16, 304, 26);
 
-	switch (recallFactor)
+	switch (recallExpansion)
 	{
 		default:
-		case GUF_DEFAULT:	_userFactor = _btnFactor1; break;
-		case GUF_HALF:		_userFactor = _btnFactor2; break;
-		case GUF_QUARTER:	_userFactor = _btnFactor4;
+		case GF_DEFAULT:	_userFactor = _btnFactor1; break;
+		case GF_HALF:		_userFactor = _btnFactor2; break;
+		case GF_QUARTER:	_userFactor = _btnFactor4;
 	}
 
 	_txtTitle	= new Text(220, 16, 100, 28);
@@ -272,13 +271,13 @@ GraphsState::GraphsState()
 													0,
 													static_cast<int>(btnOffset) * HEIGHT_btn));
 			_btnRegions.at(btnOffset)->setText(tr((*i)->getRules()->getType())); // name of Region
-			_btnRegions.at(btnOffset)->setInvertColor(static_cast<Uint8>(color + C_OFFSET_btn));
+			_btnRegions.at(btnOffset)->setColorInvert(static_cast<Uint8>(color + C_OFFSET_btn));
 			_btnRegions.at(btnOffset)->onMousePress(static_cast<ActionHandler>(&GraphsState::btnRegionListPress),
 													SDL_BUTTON_LEFT);
 			add(_btnRegions.at(btnOffset), "button", "graphs");
 
 			_txtRegionActA.push_back(new Text(
-											24,9,
+											27,9,
 											66,
 											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
 			_txtRegionActA.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
@@ -286,7 +285,7 @@ GraphsState::GraphsState()
 			add(_txtRegionActA.at(btnOffset));
 
 			_txtRegionActX.push_back(new Text(
-											24,9,
+											27,9,
 											66,
 											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
 			_txtRegionActX.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
@@ -324,7 +323,7 @@ GraphsState::GraphsState()
 											color,
 											0,0,0,
 											false,false));
-	_btnRegionTotal->setInvertColor(color);
+	_btnRegionTotal->setColorInvert(color);
 	_btnRegionTotal->setText(tr("STR_TOTAL_UC"));
 	_btnRegionTotal->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnRegionListPress),
 									SDL_BUTTON_LEFT);
@@ -373,13 +372,13 @@ GraphsState::GraphsState()
 													0,
 													static_cast<int>(btnOffset) * HEIGHT_btn));
 			_btnCountries.at(btnOffset)->setText(tr((*i)->getRules()->getType())); // name of Country
-			_btnCountries.at(btnOffset)->setInvertColor(static_cast<Uint8>(color + C_OFFSET_btn));
+			_btnCountries.at(btnOffset)->setColorInvert(static_cast<Uint8>(color + C_OFFSET_btn));
 			_btnCountries.at(btnOffset)->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnCountryListPress),
 														SDL_BUTTON_LEFT);
 			add(_btnCountries.at(btnOffset), "button", "graphs");
 
 			_txtCountryActA.push_back(new Text(
-											24,9,
+											27,9,
 											66,
 											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
 			_txtCountryActA.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
@@ -387,7 +386,7 @@ GraphsState::GraphsState()
 			add(_txtCountryActA.at(btnOffset));
 
 			_txtCountryActX.push_back(new Text(
-											24,9,
+											27,9,
 											66,
 											(static_cast<int>(btnOffset) * HEIGHT_btn) + 1));
 			_txtCountryActX.at(btnOffset)->setColor(static_cast<Uint8>(color + C_OFFSET_txt));
@@ -428,7 +427,7 @@ GraphsState::GraphsState()
 											0,0,0,
 											false,false));
 
-	_btnCountryTotal->setInvertColor(color);
+	_btnCountryTotal->setColorInvert(color);
 	_btnCountryTotal->setText(tr("STR_TOTAL_UC"));
 	_btnCountryTotal->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnCountryListPress),
 									SDL_BUTTON_LEFT);
@@ -466,7 +465,7 @@ GraphsState::GraphsState()
 				hueFactor = i;
 		}
 
-		_btnFinances.at(i)->setInvertColor(static_cast<Uint8>((hueFactor << 3u) + C_OFFSET_btn));
+		_btnFinances.at(i)->setColorInvert(static_cast<Uint8>((hueFactor << 3u) + C_OFFSET_btn));
 		_btnFinances.at(i)->onMousePress(static_cast<ActionHandler>(&GraphsState::btnFinanceListPress));
 
 		add(_btnFinances.at(i), "button", "graphs");
@@ -550,7 +549,7 @@ GraphsState::GraphsState()
 	_btnFactor1->setSilent();
 	_btnFactor1->onMousePress(		static_cast<ActionHandler>(&GraphsState::btnFactorPress),
 									SDL_BUTTON_LEFT);
-	_btnFactor1->onKeyboardPress(	static_cast<ActionHandler>(&GraphsState::keyFactor),
+	_btnFactor1->onKeyboardPress(	static_cast<ActionHandler>(&GraphsState::keyFactorPress),
 									SDLK_1);
 
 	_btnFactor2->setText(L"2");
@@ -558,7 +557,7 @@ GraphsState::GraphsState()
 	_btnFactor2->setSilent();
 	_btnFactor2->onMousePress(		static_cast<ActionHandler>(&GraphsState::btnFactorPress),
 									SDL_BUTTON_LEFT);
-	_btnFactor1->onKeyboardPress(	static_cast<ActionHandler>(&GraphsState::keyFactor),
+	_btnFactor2->onKeyboardPress(	static_cast<ActionHandler>(&GraphsState::keyFactorPress),
 									SDLK_2);
 
 	_btnFactor4->setText(L"3");
@@ -566,7 +565,7 @@ GraphsState::GraphsState()
 	_btnFactor4->setSilent();
 	_btnFactor4->onMousePress(		static_cast<ActionHandler>(&GraphsState::btnFactorPress),
 									SDL_BUTTON_LEFT);
-	_btnFactor1->onKeyboardPress(	static_cast<ActionHandler>(&GraphsState::keyFactor),
+	_btnFactor4->onKeyboardPress(	static_cast<ActionHandler>(&GraphsState::keyFactorPress),
 									SDLK_3);
 
 	Surface* const icons (_game->getResourcePack()->getSurface("GRAPHS.SPK"));
@@ -770,17 +769,18 @@ void GraphsState::initButtons() // private.
 			return;
 		}
 	}
-/*	for (std::vector<GraphBtnInfo*>::const_iterator	// not needed because Country-areas are all subsumed within Regions;
-			i = _countryToggles.begin();			// that is, if a country is blinking its region will already be blinking.
-			i != _countryToggles.end();				// So just start the gosh-darned Timer.
-			++i)
-	{
-		if ((*i)->_blinkA == true || (*i)->_blinkX == true)
-		{
-			_timerBlink->start();
-			return;
-		}
-	} */
+
+//	for (std::vector<GraphBtnInfo*>::const_iterator	// not needed because Country-areas are all subsumed within Regions;
+//			i = _countryToggles.begin();			// that is, if a country is blinking its region will already be blinking.
+//			i != _countryToggles.end();				// So just start the gosh-darned Timer.
+//			++i)
+//	{
+//		if ((*i)->_blinkA == true || (*i)->_blinkX == true)
+//		{
+//			_timerBlink->start();
+//			return;
+//		}
+//	}
 }
 
 /**
@@ -1133,7 +1133,7 @@ void GraphsState::btnFinanceClick(Action*)
  */
 void GraphsState::btnRegionListPress(Action* action)
 {
-	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
+	ToggleTextButton* const btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
 
 	if (btn == _btnRegionTotal)
@@ -1160,7 +1160,7 @@ void GraphsState::btnRegionListPress(Action* action)
  */
 void GraphsState::btnCountryListPress(Action* action)
 {
-	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
+	ToggleTextButton* const btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
 
 	if (btn == _btnCountryTotal)
@@ -1190,7 +1190,7 @@ void GraphsState::btnCountryListPress(Action* action)
  */
 void GraphsState::btnFinanceListPress(Action* action)
 {
-	ToggleTextButton* btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
+	ToggleTextButton* const btn (dynamic_cast<ToggleTextButton*>(action->getSender()));
 	size_t btnId;
 
 	for (
@@ -1311,60 +1311,74 @@ void GraphsState::btnTogglePress(Action*) // private.
 }
 
 /**
- * Sets the graphs to a user expansion.
+ * Sets the graph-lines to an expansion-factor by mouse-click.
  * @param action - pointer to an Action
  */
 void GraphsState::btnFactorPress(Action* action) // private.
 {
-	if (action->getSender() != _userFactor)
+	TextButton* const sender (dynamic_cast<TextButton*>(action->getSender()));
+	if (sender != nullptr) // check that this isn't a fake-call by keyFactorPress()
 	{
-		if		(action->getSender() == _btnFactor1) recallFactor = GUF_DEFAULT;
-		else if	(action->getSender() == _btnFactor2) recallFactor = GUF_HALF;
-		else if	(action->getSender() == _btnFactor4) recallFactor = GUF_QUARTER;
-
+		if		(sender == _btnFactor1) recallExpansion = GF_DEFAULT;	// NOTE: The 'sender' can't be checked against the '_userFactor' group first
+		else if	(sender == _btnFactor2) recallExpansion = GF_HALF;		// because the ActionHandler has already switched '_userFactor' to 'sender'.
+		else if	(sender == _btnFactor4) recallExpansion = GF_QUARTER;	// So trying to pre-determine if a click was made on an already-active TextButton
+																		// won't work unless changes are made to ActionHandler.
 		drawLines(false);
 	}
 }
 
 /**
- * Sets the graph-lines to a user expansion by hot-key.
+ * Sets the graph-lines to an expansion-factor by hot-key.
  * @param action - pointer to an Action
  */
-void GraphsState::keyFactor(Action* action)
+void GraphsState::keyFactorPress(Action* action) // private.
 {
-	Action* a (_game->getSynthMouseDown()); // need to fake a mouse-click for the group to toggle
+//	Action* const synth (_game->getSynthMouseDown()); // need to fake a mouse-click for the TextButton group to toggle
+
+//	SDL_Event event;
+//	event.type = SDL_MOUSEBUTTONDOWN;
+//	event.button.button = SDL_BUTTON_LEFT;
+//	Action a (Action(&event, 0.,0., 0,0, 0u));
+
+	TextButton* const sender (dynamic_cast<TextButton*>(action->getSender()));
 	switch (action->getDetails()->key.keysym.sym)
 	{
 		case SDLK_1:
-			if (_userFactor != _btnFactor1)
+			if (sender != _userFactor)
 			{
-				_btnFactor1->mousePress(a, this);
-				recallFactor = GUF_DEFAULT;
+//				sender->mousePress(synth, this);
+//				sender->mousePress(&a, this);
+				sender->mousePress(_game->getSynthMouseDown(), this);
+				recallExpansion = GF_DEFAULT;
 			}
 			break;
 
 		case SDLK_2:
-			if (_userFactor != _btnFactor2)
+			if (sender != _userFactor)
 			{
-				_btnFactor2->mousePress(a, this);
-				recallFactor = GUF_HALF;
+//				sender->mousePress(synth, this);
+//				sender->mousePress(&a, this);
+				sender->mousePress(_game->getSynthMouseDown(), this);
+				recallExpansion = GF_HALF;
 			}
 			break;
 
 		case SDLK_3:
-			if (_userFactor != _btnFactor4)
+			if (sender != _userFactor)
 			{
-				_btnFactor4->mousePress(a, this);
-				recallFactor = GUF_QUARTER;
+//				sender->mousePress(synth, this);
+//				sender->mousePress(&a, this);
+				sender->mousePress(_game->getSynthMouseDown(), this);
+				recallExpansion = GF_QUARTER;
 			}
 	}
-	delete a;
+//	delete synth;
 
 	drawLines(false);
 }
 
 /**
- * Remove all elements from view.
+ * Removes all elements from view.
  */
 void GraphsState::resetScreen() // private.
 {
@@ -1572,10 +1586,10 @@ void GraphsState::drawRegionLines() // private.
 	const int low (scaleLow); // adjust the scale to fit the upward maximum
 	int delta (scaleHigh - scaleLow);
 
-	switch (recallFactor)
+	switch (recallExpansion)
 	{
-		case GUF_QUARTER: delta >>= 1u; // no break.
-		case GUF_HALF:	  delta >>= 1u;
+		case GF_QUARTER:	delta >>= 1u; // no break.
+		case GF_HALF:		delta >>= 1u;
 	}
 
 	int test (10);
@@ -1587,7 +1601,7 @@ void GraphsState::drawRegionLines() // private.
 
 	while (low < scaleLow)
 	{
-		scaleLow -= test;
+		scaleLow  -= test;
 		scaleHigh -= test;
 	}
 
@@ -1654,10 +1668,10 @@ void GraphsState::drawRegionLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_regionToggles.at(i)->_colorPushed + 4u));
-//					switch (recallFactor)
+//					switch (recallExpansion)
 //					{
-//						case GUF_HALF:
-//						case GUF_QUARTER:
+//						case GF_HALF:
+//						case GF_QUARTER:
 					boxLines(_alienRegionLines.at(i));
 //					}
 				}
@@ -1668,10 +1682,10 @@ void GraphsState::drawRegionLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_regionToggles.at(i)->_colorPushed + 4u));
-//					switch (recallFactor)
+//					switch (recallExpansion)
 //					{
-//						case GUF_HALF:
-//						case GUF_QUARTER:
+//						case GF_HALF:
+//						case GF_QUARTER:
 					boxLines(_xcomRegionLines.at(i));
 //					}
 				}
@@ -1717,10 +1731,10 @@ void GraphsState::drawRegionLines() // private.
 												lineVector.at(lineVector.size() - 2u),
 												color);
 
-//				switch (recallFactor)
+//				switch (recallExpansion)
 //				{
-//					case GUF_HALF:
-//					case GUF_QUARTER:
+//					case GF_HALF:
+//					case GF_QUARTER:
 				boxLines(_alienRegionLines.back());
 //				}
 			}
@@ -1732,10 +1746,10 @@ void GraphsState::drawRegionLines() // private.
 												lineVector.at(lineVector.size() - 2u),
 												color);
 
-//				switch (recallFactor)
+//				switch (recallExpansion)
 //				{
-//					case GUF_HALF:
-//					case GUF_QUARTER:
+//					case GF_HALF:
+//					case GF_QUARTER:
 				boxLines(_xcomRegionLines.back());
 //				}
 			}
@@ -1811,10 +1825,10 @@ void GraphsState::drawCountryLines() // private.
 	const int low (scaleLow); // adjust the scale to fit the upward maximum
 	int delta (scaleHigh - scaleLow);
 
-	switch (recallFactor)
+	switch (recallExpansion)
 	{
-		case GUF_QUARTER: delta >>= 1u; // no break.
-		case GUF_HALF:	  delta >>= 1u;
+		case GF_QUARTER:	delta >>= 1u; // no break.
+		case GF_HALF:		delta >>= 1u;
 	}
 
 	int test (10);
@@ -1826,7 +1840,7 @@ void GraphsState::drawCountryLines() // private.
 
 	while (low < scaleLow)
 	{
-		scaleLow -= test;
+		scaleLow  -= test;
 		scaleHigh -= test;
 	}
 
@@ -1903,10 +1917,10 @@ void GraphsState::drawCountryLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
-//					switch (recallFactor)
+//					switch (recallExpansion)
 //					{
-//						case GUF_HALF:
-//						case GUF_QUARTER:
+//						case GF_HALF:
+//						case GF_QUARTER:
 					boxLines(_alienCountryLines.at(i));
 //					}
 				}
@@ -1917,10 +1931,10 @@ void GraphsState::drawCountryLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
-//					switch (recallFactor)
+//					switch (recallExpansion)
 //					{
-//						case GUF_HALF:
-//						case GUF_QUARTER:
+//						case GF_HALF:
+//						case GF_QUARTER:
 					boxLines(_incomeLines.at(i));
 //					}
 				}
@@ -1931,10 +1945,10 @@ void GraphsState::drawCountryLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
-//					switch (recallFactor)
+//					switch (recallExpansion)
 //					{
-//						case GUF_HALF:
-//						case GUF_QUARTER:
+//						case GF_HALF:
+//						case GF_QUARTER:
 					boxLines(_xcomCountryLines.at(i));
 //					}
 				}
@@ -1983,10 +1997,10 @@ void GraphsState::drawCountryLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
-//				switch (recallFactor)
+//				switch (recallExpansion)
 //				{
-//					case GUF_HALF:
-//					case GUF_QUARTER:
+//					case GF_HALF:
+//					case GF_QUARTER:
 				boxLines(_alienCountryLines.back());
 //				}
 			}
@@ -1997,10 +2011,10 @@ void GraphsState::drawCountryLines() // private.
 											static_cast<Sint16>(x + 17),
 											lineVector.at(lineVector.size() - 2u),
 											color);
-//				switch (recallFactor)
+//				switch (recallExpansion)
 //				{
-//					case GUF_HALF:
-//					case GUF_QUARTER:
+//					case GF_HALF:
+//					case GF_QUARTER:
 				boxLines(_incomeLines.back());
 //				}
 			}
@@ -2011,10 +2025,10 @@ void GraphsState::drawCountryLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
-//				switch (recallFactor)
+//				switch (recallExpansion)
 //				{
-//					case GUF_HALF:
-//					case GUF_QUARTER:
+//					case GF_HALF:
+//					case GF_QUARTER:
 				boxLines(_xcomCountryLines.back());
 //				}
 			}
@@ -2157,10 +2171,10 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 	const int low (scaleLow); // adjust the scale to fit the upward maximum
 	int delta (scaleHigh - scaleLow);
 
-	switch (recallFactor)
+	switch (recallExpansion)
 	{
-		case GUF_QUARTER: delta >>= 1; // no break.
-		case GUF_HALF:	  delta >>= 1;
+		case GF_QUARTER:	delta >>= 1; // no break.
+		case GF_HALF:		delta >>= 1;
 	}
 
 	int test (100);
@@ -2172,7 +2186,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 	while (low < scaleLow)
 	{
-		scaleLow -= test;
+		scaleLow  -= test;
 		scaleHigh -= test;
 	}
 
@@ -2249,10 +2263,10 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 											lineVector.at(lineVector.size() - 2u),
 											color);
 
-//				switch (recallFactor)
+//				switch (recallExpansion)
 //				{
-//					case GUF_HALF:
-//					case GUF_QUARTER:
+//					case GF_HALF:
+//					case GF_QUARTER:
 				boxLines(_financeLines.at(i));
 //				}
 			}
@@ -2349,20 +2363,20 @@ void GraphsState::shiftButtons(Action* action) // private.
 					scrollButtons(dirVal);
 			}
 		}
-/*		else // _region -> not needed unless quantity of Regions increases over GRAPH_BUTTONS. Ain't likely to happen.
-		{
-			if (_regionToggles.size() > GRAPH_BUTTONS)
-			{
-				int dirVal = 0;
-				if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
-					dirVal = -1;
-				else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
-					dirVal = 1;
-
-				if (dirVal != 0)
-					scrollButtons(dirVal);
-			}
-		} */
+//		else // _region -> not needed unless quantity of Regions increases over GRAPH_BUTTONS. Ain't likely to happen.
+//		{
+//			if (_regionToggles.size() > GRAPH_BUTTONS)
+//			{
+//				int dirVal = 0;
+//				if (action->getDetails()->button.button == SDL_BUTTON_WHEELUP)
+//					dirVal = -1;
+//				else if (action->getDetails()->button.button == SDL_BUTTON_WHEELDOWN)
+//					dirVal = 1;
+//
+//				if (dirVal != 0)
+//					scrollButtons(dirVal);
+//			}
+//		}
 	}
 }
 
@@ -2434,7 +2448,7 @@ void GraphsState::updateButton( // private.
 		Text* const xCom)
 {
 	btn->setText(info->_label);
-	btn->setInvertColor(info->_colorPushed);
+	btn->setColorInvert(info->_colorPushed);
 	btn->setPressed(info->_pushed);
 
 	aLiens->setText(Text::intWide(info->_actA));

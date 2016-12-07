@@ -51,6 +51,15 @@ class Game
 {
 
 private:
+	static SDL_Event
+		eventDown,
+		eventUp;
+
+	static Action
+		synthDown,
+		synthUp;
+
+
 	static const double VOLUME_GRADIENT;
 
 	bool
@@ -109,7 +118,7 @@ private:
 		void pushState(State* const state);
 		/// Pops the last state from the state-stack.
 		void popState();
-		/// kL. Gets the current (top) state.
+		/// Gets the current (top) state.
 //		State* getState() const;
 		/// Gets the quantity of currently running states.
 		size_t getQtyStates() const;
@@ -162,9 +171,9 @@ private:
 		void setDebugCycle(int cycle);
 
 		/// Gets a synthetic mouse-down Action.
-		Action* getSynthMouseDown(int btnId = SDL_BUTTON_LEFT) const;
+		static Action* getSynthMouseDown(/*int btnId = SDL_BUTTON_LEFT*/);
 		/// Gets a synthetic mouse-up Action.
-		Action* getSynthMouseUp(int btnId = SDL_BUTTON_LEFT) const;
+		static Action* getSynthMouseUp(/*int btnId = SDL_BUTTON_LEFT*/);
 		/// Warps the mouse-cursor and deals with the fallout.
 //		void warpMouse(
 //				Uint16 x,

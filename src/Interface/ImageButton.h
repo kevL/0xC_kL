@@ -50,8 +50,8 @@ protected:
 		ImageButton(
 				int width,
 				int height,
-				int x = 0,
-				int y = 0);
+				int x,
+				int y);
 		/// Cleans up the ImageButton.
 		virtual ~ImageButton();
 
@@ -62,13 +62,14 @@ protected:
 
 		/// Sets the ImageButton's group.
 		void setGroup(ImageButton** group);
+
 		/// Special handling for mouse-presses.
 		void mousePress(Action* action, State* state) override;
 		/// Special handling for mouse-releases.
 		void mouseRelease(Action* action, State* state) override;
 
 		/// Invert a button explicitly either ON or OFF.
-		void toggle(bool invert);
+		void toggleIb(bool invert);
 		/// Forces a group of buttons to automatically switch to this ImageButton.
 		void releaseButtonGroup();
 };

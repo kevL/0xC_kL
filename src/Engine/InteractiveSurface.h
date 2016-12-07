@@ -46,7 +46,7 @@ class InteractiveSurface
 {
 
 private:
-	static const Uint8 MOUSEBUTTONS = 7u;
+	static const Uint8 MOUSEBUTTONS = 8u;
 	static const SDLKey SDLK_ANY;
 
 	Uint32 _rodentState;
@@ -71,14 +71,14 @@ private:
 			_press,
 			_release;
 
-		/// Checks if mouse-button is pressed.
-		bool isButtonPressed(Uint8 btnId = 0u) const;
-		/// Checks if mouse-button event handled.
-		virtual bool isButtonHandled(Uint8 btnId = 0u);
-		/// Set a mouse-button's internal state.
+		/// Set a specified mouse-button's state.
 		void setButtonPressed(
 				Uint8 btnId,
 				bool pressed);
+		/// Checks if a specified mouse-button is pressed.
+		bool isButtonPressed(Uint8 btnId = 0u) const;
+		/// Checks if a specified mouse-button's event has been handled.
+		virtual bool isButtonHandled(Uint8 btnId = 0u);
 
 
 		public:
