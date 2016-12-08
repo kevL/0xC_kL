@@ -45,6 +45,11 @@ class ManufactureState final
 {
 
 private:
+	bool
+		_hasResearchAlloys,
+		_hasResearchElerium;
+	size_t _r;
+
 	Base* _base;
 	BasescapeState* _baseState;
 	MiniBaseView* _mini;

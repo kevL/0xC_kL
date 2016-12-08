@@ -65,7 +65,8 @@ ManufactureState::ManufactureState(
 	:
 		_base(base),
 		_baseState(baseState),
-		_baseList(_game->getSavedGame()->getBases())
+		_baseList(_game->getSavedGame()->getBases()),
+		_r(0u)
 {
 	_window			= new Window(this);
 
@@ -170,34 +171,45 @@ ManufactureState::ManufactureState(
 	_lstManufacture->onMouseClick(	static_cast<ActionHandler>(&ManufactureState::lstManufactureClick),
 									0u);
 
+
 	_lstResources->setColumns(4, 151,50,40,40);
 	_lstResources->setMargin(4);
 	_lstResources->setDot();
+
+	_hasResearchAlloys = _game->getSavedGame()->isResearched("STR_ALIEN_ALLOYS") == true;
+	_hasResearchElerium = _game->getSavedGame()->isResearched("STR_ELERIUM_115") == true;
+
+	if (_hasResearchAlloys  == true) ++_r;
+	if (_hasResearchElerium == true) ++_r;
 
 	const Uint8 color (static_cast<Uint8>(_game->getRuleset()->getInterface("manufactureMenu")->getElement("text1")->color2));
 	std::string st;
 	for (size_t
 			i = 0u;
-			i != 2u;
+			i != _r;
 			++i)
 	{
 		switch (i)
 		{
-			case 0u: st = "STR_ALIEN_ALLOYS"; break;
-			default: st = "STR_ELERIUM_115";
+			case 0u:
+				if (_hasResearchAlloys == true)
+					st = "STR_ALIEN_ALLOYS";
+				else if (_hasResearchElerium == true)
+					st = "STR_ELERIUM_115";
+				break;
+
+			case 1u:
+			default:
+				st = "STR_ELERIUM_115";
 		}
 
-		if (   (i == 0u && _game->getSavedGame()->isResearched("STR_ALIEN_ALLOYS") == true)
-			|| (i == 1u && _game->getSavedGame()->isResearched("STR_ELERIUM_115")  == true))
-		{
-			_lstResources->addRow(4,
-								tr(st).c_str(),
-								L"",
-								tr("STR_TOTAL").c_str(),
-								L"");
-			_lstResources->setCellColor(i, 1u, color);
-			_lstResources->setCellColor(i, 3u, color);
-		}
+		_lstResources->addRow(4,
+							tr(st).c_str(),
+							L"",
+							tr("STR_TOTAL").c_str(),
+							L"");
+		_lstResources->setCellColor(i, 1u, color);
+		_lstResources->setCellColor(i, 3u, color);
 	}
 }
 
@@ -265,61 +277,83 @@ void ManufactureState::init()
 	_txtAllocated->setText(tr("STR_ENGINEERS_ALLOCATED_") .arg(_base->getAllocatedEngineers()));
 	_txtSpace->setText(tr("STR_WORKSHOP_SPACE_AVAILABLE_").arg(_base->getFreeWorkshops()));
 
-	int
-		qtyA (0),
-		qtyE (0),
-		totalA (0),
-		totalE (0),
-		ally,
-		eler;
-	for (std::vector<Base*>::const_iterator
-			i = _baseList->begin();
-			i != _baseList->end();
-			++i)
+
+	if (_r != 0u)
 	{
-		ally = (*i)->getStorageItems()->getItemQuantity("STR_ALIEN_ALLOYS");
-		eler = (*i)->getStorageItems()->getItemQuantity("STR_ELERIUM_115");
-
-		totalA += ally;
-		totalE += eler;
-
-		if (*i == _base)
+		int
+			qtyA (0),
+			qtyE (0),
+			totalA (0),
+			totalE (0),
+			ally,
+			eler;
+		for (std::vector<Base*>::const_iterator
+				i = _baseList->begin();
+				i != _baseList->end();
+				++i)
 		{
-			qtyA += ally;
-			qtyE += eler;
+			ally = (*i)->getStorageItems()->getItemQuantity("STR_ALIEN_ALLOYS");
+			eler = (*i)->getStorageItems()->getItemQuantity("STR_ELERIUM_115");
+
+			totalA += ally;
+			totalE += eler;
+
+			if (*i == _base)
+			{
+				qtyA += ally;
+				qtyE += eler;
+			}
+
+			for (std::vector<Transfer*>::const_iterator
+					j = (*i)->getTransfers()->begin();
+					j != (*i)->getTransfers()->end();
+					++j)
+			{
+				if ((*j)->getTransferItems() == "STR_ALIEN_ALLOYS")
+				{
+					ally = (*j)->getQuantity();
+					totalA += ally;
+					if (*i == _base) qtyA += ally;
+				}
+				else if ((*j)->getTransferItems() == "STR_ELERIUM_115")
+				{
+					eler = (*j)->getQuantity();
+					totalA += eler;
+					if (*i == _base) qtyE += eler;
+				}
+			}
 		}
 
-		for (std::vector<Transfer*>::const_iterator
-				j = (*i)->getTransfers()->begin();
-				j != (*i)->getTransfers()->end();
-				++j)
+		switch (_r)
 		{
-			if ((*j)->getTransferItems() == "STR_ALIEN_ALLOYS")
+			case 2u:
+				_lstResources->setCellText(0u,1u, Text::intWide(qtyA));
+				_lstResources->setCellText(0u,3u, Text::intWide(totalA));
+				_lstResources->setCellText(1u,1u, Text::intWide(qtyE));
+				_lstResources->setCellText(1u,3u, Text::intWide(totalE));
+				break;
+
+			case 1u:
 			{
-				ally = (*j)->getQuantity();
-				totalA += ally;
-				if (*i == _base) qtyA += ally;
-			}
-			else if ((*j)->getTransferItems() == "STR_ELERIUM_115")
-			{
-				eler = (*j)->getQuantity();
-				totalA += eler;
-				if (*i == _base) qtyE += eler;
+				int
+					qty,
+					total;
+				if (_hasResearchAlloys == true)
+				{
+					qty = qtyA;
+					total = totalA;
+				}
+				else
+				{
+					qty = qtyE;
+					total = totalE;
+				}
+				_lstResources->setCellText(0u,1u, Text::intWide(qty));
+				_lstResources->setCellText(0u,3u, Text::intWide(total));
 			}
 		}
 	}
 
-	if (_game->getSavedGame()->isResearched("STR_ALIEN_ALLOYS") == true)
-	{
-		_lstResources->setCellText(0u,1u, Text::intWide(qtyA));
-		_lstResources->setCellText(0u,3u, Text::intWide(totalA));
-	}
-
-	if (_game->getSavedGame()->isResearched("STR_ELERIUM_115") == true)
-	{
-		_lstResources->setCellText(1u,1u, Text::intWide(qtyE));
-		_lstResources->setCellText(1u,3u, Text::intWide(totalE));
-	}
 
 	std::vector<const RuleManufacture*> unlocked;
 	_game->getSavedGame()->tabulateStartableManufacture(unlocked, _base);
