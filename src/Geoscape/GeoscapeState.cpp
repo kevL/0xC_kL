@@ -3189,10 +3189,6 @@ void GeoscapeState::resetTimer()
 {
 	_globe->rotateStop();
 	_btn5Secs->mousePress(_game->getSynthMouseDown(), this);
-
-//	Action* const synth (_game->getSynthMouseDown());
-//	_btn5Secs->mousePress(synth, this);
-//	delete synth;
 }
 
 /**
@@ -4366,10 +4362,6 @@ void GeoscapeState::keyTimeCompression(Action* action) // private.
 	{
 		_timeCache = 0;
 		sender->mousePress(_game->getSynthMouseDown(), this);
-
-//		Action* const synth (_game->getSynthMouseDown()); // so let's fake a mouse-click
-//		action->getSender()->mousePress(synth, this);
-//		delete synth;
 	}
 }
 

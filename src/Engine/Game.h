@@ -52,12 +52,12 @@ class Game
 
 private:
 	static SDL_Event
-		eventDown,
-		eventUp;
+		eventD,
+		eventU;
 
 	static Action
-		synthDown,
-		synthUp;
+		syntheticD,
+		syntheticU;
 
 
 	static const double VOLUME_GRADIENT;
@@ -65,9 +65,7 @@ private:
 	bool
 		_init,
 		_inputActive,
-//		_blitDelay,
 		_quit;
-//		_warp;
 	int
 		_debugCycle,	// for debugging country-zones.
 		_debugCycle_b,	// for debugging country-zones.
@@ -75,17 +73,14 @@ private:
 	Uint32
 		_rodentState,
 		_tickOfLastSlice;
-//	Uint16
-//		_warpX,
-//		_warpY;
 
-	Cursor* _cursor;
-	FpsCounter* _fpsCounter;
-	Language* _lang;
-	ResourcePack* _res;
-	Ruleset* _rules;
-	SavedGame* _gameSave;
-	Screen* _screen;
+	Cursor*			_cursor;
+	FpsCounter*		_fpsCounter;
+	Language*		_lang;
+	ResourcePack*	_res;
+	Ruleset*		_rules;
+	SavedGame*		_gameSave;
+	Screen*			_screen;
 
 	std::list<State*>
 		_deleted,
@@ -108,9 +103,6 @@ private:
 
 		/// Sets whether the mouse-cursor is activated/responsive.
 		void setInputActive(bool active);
-
-		/// Causes the engine to delay blitting the top state.
-//		void delayBlit();
 
 		/// Resets a state-stack to a new state.
 		void setState(State* const state);
@@ -171,13 +163,9 @@ private:
 		void setDebugCycle(int cycle);
 
 		/// Gets a synthetic mouse-down Action.
-		static Action* getSynthMouseDown(/*int btnId = SDL_BUTTON_LEFT*/);
+		static Action* getSynthMouseDown();
 		/// Gets a synthetic mouse-up Action.
-		static Action* getSynthMouseUp(/*int btnId = SDL_BUTTON_LEFT*/);
-		/// Warps the mouse-cursor and deals with the fallout.
-//		void warpMouse(
-//				Uint16 x,
-//				Uint16 y);
+		static Action* getSynthMouseUp();
 };
 
 }

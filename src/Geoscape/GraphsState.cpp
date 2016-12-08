@@ -1333,21 +1333,12 @@ void GraphsState::btnFactorPress(Action* action) // private.
  */
 void GraphsState::keyFactorPress(Action* action) // private.
 {
-//	Action* const synth (_game->getSynthMouseDown()); // need to fake a mouse-click for the TextButton group to toggle
-
-//	SDL_Event event;
-//	event.type = SDL_MOUSEBUTTONDOWN;
-//	event.button.button = SDL_BUTTON_LEFT;
-//	Action a (Action(&event, 0.,0., 0,0, 0u));
-
 	TextButton* const sender (dynamic_cast<TextButton*>(action->getSender()));
 	switch (action->getDetails()->key.keysym.sym)
 	{
 		case SDLK_1:
 			if (sender != _userFactor)
 			{
-//				sender->mousePress(synth, this);
-//				sender->mousePress(&a, this);
 				sender->mousePress(_game->getSynthMouseDown(), this);
 				recallExpansion = GF_DEFAULT;
 			}
@@ -1356,8 +1347,6 @@ void GraphsState::keyFactorPress(Action* action) // private.
 		case SDLK_2:
 			if (sender != _userFactor)
 			{
-//				sender->mousePress(synth, this);
-//				sender->mousePress(&a, this);
 				sender->mousePress(_game->getSynthMouseDown(), this);
 				recallExpansion = GF_HALF;
 			}
@@ -1366,14 +1355,10 @@ void GraphsState::keyFactorPress(Action* action) // private.
 		case SDLK_3:
 			if (sender != _userFactor)
 			{
-//				sender->mousePress(synth, this);
-//				sender->mousePress(&a, this);
 				sender->mousePress(_game->getSynthMouseDown(), this);
 				recallExpansion = GF_QUARTER;
 			}
 	}
-//	delete synth;
-
 	drawLines(false);
 }
 

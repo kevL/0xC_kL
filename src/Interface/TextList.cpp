@@ -31,7 +31,6 @@
 
 #include "../Engine/Action.h"
 #include "../Engine/Font.h"
-//#include "../Engine/Language.h" // TEST
 #include "../Engine/Options.h"
 #include "../Engine/Palette.h"
 
@@ -1177,7 +1176,6 @@ void TextList::draw()
 					j != _texts[i].end();
 					++j)
 			{
-				//Log(LOG_INFO) << "tl:draw() _texts@" << i << " - " << Language::wstrToFs((*j)->getText());
 				if (addPixel == true)
 					(*j)->addTextHeight();
 

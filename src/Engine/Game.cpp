@@ -58,12 +58,12 @@ namespace OpenXcom
 const double Game::VOLUME_GRADIENT (10.); // static.
 
 SDL_Event
-	Game::eventDown,	// static.
-	Game::eventUp;		// static.
+	Game::eventD, // static.
+	Game::eventU; // static.
 
 Action
-	Game::synthDown	(Action(&eventDown, 0.,0., 0,0, 0u)),	// static.
-	Game::synthUp	(Action(&eventUp,   0.,0., 0,0, 0u));	// static.
+	Game::syntheticD (Action(&eventD, 0.,0., 0,0)), // static.
+	Game::syntheticU (Action(&eventU, 0.,0., 0,0)); // static.
 
 /**
  * Starts up SDL with all the subsystems and SDL_mixer for audio-processing,
@@ -83,10 +83,6 @@ Game::Game(const std::string& title)
 		_debugCycle(-1),
 		_debugCycle_b(-1),
 		_rodentState(0u)
-//		_warp(false),
-//		_warpX(0u),
-//		_warpY(0u)
-//		_blitDelay(false)
 {
 	Options::reload = false;
 #ifdef _DEBUG
@@ -144,8 +140,7 @@ Game::Game(const std::string& title)
 	_cursor = new Cursor(9,13);
 	// Create invisible hardware-cursor to workaround a bug with absolute
 	// positioning pointing devices.
-//	SDL_ShowCursor(SDL_ENABLE);
-	SDL_ShowCursor(SDL_DISABLE); // kL
+	SDL_ShowCursor(SDL_DISABLE);
 	Uint8 cursor (0u);
 	SDL_SetCursor(SDL_CreateCursor(
 								&cursor, &cursor,
@@ -159,15 +154,13 @@ Game::Game(const std::string& title)
 
 
 	// Create the synthetic mouse-events.
-	eventDown.type = SDL_MOUSEBUTTONDOWN;
-	eventDown.button.button = SDL_BUTTON_LEFT;// static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
+	eventD.type = SDL_MOUSEBUTTONDOWN;
+	eventD.button.button = SDL_BUTTON_LEFT;
+	syntheticD = Action(&eventD, 0.,0., 0,0);
 
-	synthDown = Action(&eventDown, 0.,0., 0,0, 0u);
-
-	eventUp.type = SDL_MOUSEBUTTONUP;
-	eventUp.button.button = SDL_BUTTON_LEFT;// static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
-
-	synthUp = Action(&eventUp, 0.,0., 0,0, 0u);
+	eventU.type = SDL_MOUSEBUTTONUP;
+	eventU.button.button = SDL_BUTTON_LEFT;
+	syntheticU = Action(&eventU, 0.,0., 0,0);
 }
 
 /**
@@ -204,8 +197,8 @@ Game::~Game()
 
 /**
  * The state-machine takes care of passing all the events from SDL to the
- * active state, running any code within and blitting all the states and
- * cursor to the screen. This is run indefinitely until the game quits.
+ * active State, running any code within and blitting all the States and
+ * Cursor to the screen. This is run indefinitely until the game quits. VrooooM ->
  */
 void Game::run()
 {
@@ -266,8 +259,8 @@ void Game::run()
 									_screen->getScaleX(),
 									_screen->getScaleY(),
 									_screen->getBorderTop(),
-									_screen->getBorderLeft(),
-									_rodentState));
+									_screen->getBorderLeft()));
+//									_rodentState));
 				_states.back()->handle(&action);
 			}
 
@@ -300,19 +293,19 @@ void Game::run()
 									screenWidth  (Screen::ORIGINAL_WIDTH),
 									screenHeight (Screen::ORIGINAL_HEIGHT);
 
-								Options::safeDisplayWidth =
-								Options::displayWidth	 = std::max(screenWidth,
-																	event.resize.w);
-								Options::safeDisplayHeight =
-								Options::displayHeight	  = std::max(screenHeight,
-																	 event.resize.h);
+								Options::safeDisplayWidth	=
+								Options::displayWidth		= std::max(screenWidth,
+																	   event.resize.w);
+								Options::safeDisplayHeight	=
+								Options::displayHeight		= std::max(screenHeight,
+																	   event.resize.h);
 //#else
-//								Options::safeDisplayWidth =
-//								Options::displayWidth	 = std::max(Screen::ORIGINAL_WIDTH,
-//																	event.resize.w);
-//								Options::safeDisplayHeight =
-//								Options::displayHeight	  = std::max(Screen::ORIGINAL_HEIGHT,
-//																	 event.resize.h);
+//								Options::safeDisplayWidth	=
+//								Options::displayWidth		= std::max(Screen::ORIGINAL_WIDTH,
+//																	   event.resize.w);
+//								Options::safeDisplayHeight	=
+//								Options::displayHeight		= std::max(Screen::ORIGINAL_HEIGHT,
+//																	   event.resize.h);
 //#endif
 								Screen::updateScale(
 												Options::battlescapeScale,
@@ -340,50 +333,31 @@ void Game::run()
 						}
 						break;
 
-					case SDL_MOUSEBUTTONDOWN:
-					case SDL_MOUSEBUTTONUP:
-						//Log(LOG_INFO) << "game:MOUSEBUTTON down/up event.button.button= " << static_cast<int>(event.button.button);
-						if (   static_cast<Uint32>(event.button.button) != 0u
-							&& static_cast<Uint32>(event.button.button) < 32u)
-						{
-							//Log(LOG_INFO) << ". is between 1..31";
-							switch (event.button.state)
-							{
-								case SDL_PRESSED:
-									_rodentState |= SDL_BUTTON(event.button.button);
-									//Log(LOG_INFO) << ". . PRESSED _rodentState= " << _rodentState;
-
-//									_rodentState |=  (1 << (event.button.button - 1));
-//									_rodentState |=  (1u << (static_cast<Uint32>(event.button.button) - 1u));
-									break;
-								case SDL_RELEASED:
-									_rodentState &= !SDL_BUTTON(event.button.button);
-									//Log(LOG_INFO) << ". . RELEASED _rodentState= " << _rodentState;
-
-//									_rodentState &= !(1 << (event.button.button - 1));
-//									_rodentState &= !(1u << (static_cast<Uint32>(event.button.button) - 1u));
-							}
-						}
-						// no break;
-
-//					case SDL_MOUSEMOTION:
-//						if (_warp == true
-//							&& event.motion.x == _warpX
-//							&& event.motion.y == _warpY)
+//					case SDL_MOUSEBUTTONDOWN:
+//					case SDL_MOUSEBUTTONUP:
+//						if (   static_cast<Uint32>(event.button.button) != 0u
+//							&& static_cast<Uint32>(event.button.button) < 32u) // uhhhh i don't have a 32-button mouse.
 //						{
-//							_warp = false;
-//							continue;
+//							switch (event.button.state)
+//							{
+//								case SDL_PRESSED:
+//									_rodentState |= SDL_BUTTON(event.button.button);
+//									break;
+//								case SDL_RELEASED:
+//									_rodentState &= !SDL_BUTTON(event.button.button);
+//							}
 //						}
 						// no break;
 
+//					case SDL_MOUSEMOTION:
 					default:
 						Action action (Action(
 											&event,
 											_screen->getScaleX(),
 											_screen->getScaleY(),
 											_screen->getBorderTop(),
-											_screen->getBorderLeft(),
-											_rodentState));
+											_screen->getBorderLeft()));
+//											_rodentState));
 						_screen->handle(&action);
 						_cursor->handle(&action);
 						_fpsCounter->handle(&action);
@@ -471,12 +445,6 @@ void Game::run()
 
 				_screen->clear();
 
-//				if (_blitDelay == true)
-//				{
-//					_blitDelay = false;
-//					SDL_Delay(Screen::SCREEN_PAUSE);	// prevents NextTurn screen from concealing the last non-player Actor's action.
-//				}
-
 				std::list<State*>::const_iterator i (_states.end());
 				do
 				{
@@ -495,7 +463,6 @@ void Game::run()
 				_fpsCounter->blit(_screen->getSurface());
 				_cursor->blit(_screen->getSurface());
 
-				//Log(LOG_INFO) << "F";
 				_screen->flip();
 			}
 
@@ -530,8 +497,8 @@ void Game::run()
 									_screen->getScaleX(),
 									_screen->getScaleY(),
 									_screen->getBorderTop(),
-									_screen->getBorderLeft(),
-									_rodentState));
+									_screen->getBorderLeft()));
+//									_rodentState));
 				_states.back()->handle(&action);
 			}
 
@@ -564,19 +531,19 @@ void Game::run()
 									screenWidth  (Screen::ORIGINAL_WIDTH),
 									screenHeight (Screen::ORIGINAL_HEIGHT);
 
-								Options::safeDisplayWidth =
-								Options::displayWidth  = std::max(screenWidth,
-																  event.resize.w);
-								Options::safeDisplayHeight =
-								Options::displayHeight = std::max(screenHeight,
-																  event.resize.h);
+								Options::safeDisplayWidth	=
+								Options::displayWidth		= std::max(screenWidth,
+																	   event.resize.w);
+								Options::safeDisplayHeight	=
+								Options::displayHeight		= std::max(screenHeight,
+																	   event.resize.h);
 //#else
-//								Options::safeDisplayWidth =
-//								Options::displayWidth  = std::max(Screen::ORIGINAL_WIDTH,
-//																  event.resize.w);
-//								Options::safeDisplayHeight =
-//								Options::displayHeight = std::max(Screen::ORIGINAL_HEIGHT,
-//																  event.resize.h);
+//								Options::safeDisplayWidth	=
+//								Options::displayWidth		= std::max(Screen::ORIGINAL_WIDTH,
+//																	   event.resize.w);
+//								Options::safeDisplayHeight	=
+//								Options::displayHeight		= std::max(Screen::ORIGINAL_HEIGHT,
+//																	   event.resize.h);
 //#endif
 								Screen::updateScale(
 												Options::battlescapeScale,
@@ -622,28 +589,21 @@ void Game::run()
 
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						if (   static_cast<Uint32>(event.button.button) != 0u
-							&& static_cast<Uint32>(event.button.button) < 32u)
-						{
-							switch (event.button.state)
-							{
-								case SDL_PRESSED:
-									_rodentState |=  (1u << (static_cast<Uint32>(event.button.button) - 1u));
-									break;
-								case SDL_RELEASED:
-									_rodentState &= !(1u << (static_cast<Uint32>(event.button.button) - 1u));
-							}
-						}
+//						if (   static_cast<Uint32>(event.button.button) != 0u
+//							&& static_cast<Uint32>(event.button.button) < 32u) // uhhhh i don't have a 32-button mouse.
+//						{
+//							switch (event.button.state)
+//							{
+//								case SDL_PRESSED:
+//									_rodentState |=  (1u << (static_cast<Uint32>(event.button.button) - 1u));
+//									break;
+//								case SDL_RELEASED:
+//									_rodentState &= !(1u << (static_cast<Uint32>(event.button.button) - 1u));
+//							}
+//						}
 						// no break;
 
-//					case SDL_MOUSEMOTION:
-//						if (_warp == true
-//							&& event.motion.x == _warpX
-//							&& event.motion.y == _warpY)
-//						{
-//							_warp = false;
-//							continue;
-//						}
+					case SDL_MOUSEMOTION:
 						runState = STANDARD;		// re-gain focus on mouse-over or mouse-press.
 						// no break;				// feed the event to others ->>>
 
@@ -653,8 +613,8 @@ void Game::run()
 											_screen->getScaleX(),
 											_screen->getScaleY(),
 											_screen->getBorderTop(),
-											_screen->getBorderLeft(),
-											_rodentState));
+											_screen->getBorderLeft()));
+//											_rodentState));
 						_screen->handle(&action);
 						_cursor->handle(&action);
 						_fpsCounter->handle(&action);
@@ -736,7 +696,6 @@ void Game::run()
 				} // end event-type switch.
 			} // end polling loop.
 
-//			if (_inputActive == false)
 			_inputActive = true;
 
 
@@ -771,12 +730,6 @@ void Game::run()
 						_fpsCounter->addFrame();
 
 						_screen->clear();
-
-//						if (_blitDelay == true)
-//						{
-//							_blitDelay = false;
-//							SDL_Delay(Screen::SCREEN_PAUSE);		// prevents NextTurn screen from concealing the last non-player Actor's action.
-//						}
 
 						std::list<State*>::const_iterator i (_states.end());
 						do
@@ -855,14 +808,6 @@ void Game::setInputActive(bool active)
 {
 	_inputActive = active;
 }
-
-/**
- * Causes the engine to delay blitting the top state.
- *
-void Game::delayBlit()
-{
-	_blitDelay = true;
-} */
 
 /**
  * Pops all the states currently in the state-stack and pushes in a new state.
@@ -1078,7 +1023,7 @@ void Game::defaultLanguage()
 	}
 	else
 	{
-		try // Use options' language
+		try // Use Options' language
 		{
 			loadLanguage(Options::language);
 		}
@@ -1193,15 +1138,15 @@ void Game::loadRulesets()
 	}
 
 	// Prints listOrder to LOG.
-/*	Log(LOG_INFO) << "\n";
-	std::vector<std::string> pedList = _rules->getUfopaediaList();
-	for (std::vector<std::string>::const_iterator
-			i = pedList.begin();
-			i != pedList.end();
-			++i)
-	{
-		Log(LOG_INFO) << *i;
-	} */
+//	Log(LOG_INFO) << "\n";
+//	std::vector<std::string> pedList = _rules->getUfopaediaList();
+//	for (std::vector<std::string>::const_iterator
+//			i = pedList.begin();
+//			i != pedList.end();
+//			++i)
+//	{
+//		Log(LOG_INFO) << *i;
+//	}
 
 	_rules->validateMissions();
 	_rules->sortLists();
@@ -1209,16 +1154,16 @@ void Game::loadRulesets()
 	_rules->convertInventories();
 
 	// Prints listOrder to LOG.
-/*	Log(LOG_INFO) << "\n";
-	std::vector<std::string> pedList = _rules->getUfopaediaList();
-	for (std::vector<std::string>::const_iterator
-			i = pedList.begin();
-			i != pedList.end();
-			++i)
-	{
-		Log(LOG_INFO) << *i;
-	}
-	Log(LOG_INFO) << "\n"; */
+//	Log(LOG_INFO) << "\n";
+//	std::vector<std::string> pedList = _rules->getUfopaediaList();
+//	for (std::vector<std::string>::const_iterator
+//			i = pedList.begin();
+//			i != pedList.end();
+//			++i)
+//	{
+//		Log(LOG_INFO) << *i;
+//	}
+//	Log(LOG_INFO) << "\n";
 }
 
 /**
@@ -1296,70 +1241,40 @@ void Game::setDebugCycle(int cycle)
 
 /**
  * Gets a synthetic mouse-down Action.
-// * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
+ * @note If you ever get your hands on a 32-button mouse you might be able to
+ * rig it up by passing the btnId's into Action via '_rodentState'.
  * @return, pointer to an Action
  */
-Action* Game::getSynthMouseDown(/*int btnId*/) // static.
+Action* Game::getSynthMouseDown() // static.
 {
-	return &synthDown;
+	return &syntheticD;
 
-/*	Log(LOG_INFO) << "getSynthMouseDown() btnId= " << btnId;
-	Log(LOG_INFO) << ". rodentState= " << _rodentState;
-	Log(LOG_INFO) << ". btn up  = " << (_rodentState & ~(1 << (btnId - 1)));
-	Log(LOG_INFO) << ". btn down= " << (_rodentState | (1 << (btnId - 1)));
-
-	SDL_Event event;
-	event.type = SDL_MOUSEBUTTONDOWN;
-	event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
-
-	return (new Action(
-					&event,
-					_screen->getScaleX(),
-					_screen->getScaleY(),
-					_screen->getBorderTop(),
-					_screen->getBorderLeft(),
-					_rodentState | (1 << (btnId - 1)))); */
-//					_rodentState & ~(1 << (btnId - 1))));
-//					_rodentState & ~(1u << (static_cast<Uint32>(btnId) - 1u))));
+//	Action(
+//			&event,
+//			_screen->getScaleX(),
+//			_screen->getScaleY(),
+//			_screen->getBorderTop(),
+//			_screen->getBorderLeft(),
+//			_rodentState | (1 << (btnId - 1)));
 }
 
 /**
  * Gets a synthetic mouse-up Action.
-// * @param btnId - btn-ID (default SDL_BUTTON_LEFT)
+ * @note If you ever get your hands on a 32-button mouse you might be able to
+ * rig it up by passing the btnId's into Action via '_rodentState'.
  * @return, pointer to an Action
  */
-Action* Game::getSynthMouseUp(/*int btnId*/) // static.
+Action* Game::getSynthMouseUp() // static.
 {
-	return &synthUp;
+	return &syntheticU;
 
-/*	SDL_Event event;
-	event.type = SDL_MOUSEBUTTONUP;
-	event.button.button = static_cast<Uint8>(btnId); // NOTE: This is a restrictive cast.
-
-	return (new Action(
-					&event,
-					_screen->getScaleX(),
-					_screen->getScaleY(),
-					_screen->getBorderTop(),
-					_screen->getBorderLeft(),
-					_rodentState & ~(1 << (btnId - 1)))); */
-//					_rodentState | (1 << (btnId - 1))));
-//					_rodentState | (1u << (static_cast<Uint32>(btnId) - 1u))));
+//	Action(
+//			&event,
+//			_screen->getScaleX(),
+//			_screen->getScaleY(),
+//			_screen->getBorderTop(),
+//			_screen->getBorderLeft(),
+//			_rodentState & ~(1 << (btnId - 1)));
 }
-
-/**
- * Warps the mouse and records its event-parameters for later ignoring it.
- * @param x -
- * @param y -
- *
-void Game::warpMouse(
-		Uint16 x,
-		Uint16 y)
-{
-	_warp = true;
-	_warpX = x;
-	_warpY = y;
-	SDL_WarpMouse(x,y);
-} */
 
 }

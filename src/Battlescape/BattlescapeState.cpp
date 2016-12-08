@@ -2575,7 +2575,7 @@ void BattlescapeState::btnPsiClick(Action* action)
  * @note Requires CTRL-key down and BattleStates inactive.
  * @param action - pointer to an Action
  */
-void BattlescapeState::btnZeroTuClick(Action* /*action*/)
+void BattlescapeState::btnZeroTuClick(Action*)
 {
 	if ((SDL_GetModState() & KMOD_CTRL) != 0
 		&& playableUnitSelected() == true)
@@ -2583,10 +2583,6 @@ void BattlescapeState::btnZeroTuClick(Action* /*action*/)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (_battleGame->noActionsPending(unit) == true)
 		{
-//			Action* const synth (_game->getSynthMouseDown());
-//			action->getSender()->mousePress(synth, this);
-//			delete synth;
-
 			unit->setTu();
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
@@ -4921,9 +4917,7 @@ void BattlescapeState::btnReserveClick(Action* action)
 {
 	if (allowButtons())
 	{
-		Action* const synth (_game->getSynthMouseDown());
-		action->getSender()->mousePress(synth, this);
-		delete synth;
+		action->getSender()->mousePress(_game->getSynthMouseDown(), this);
 
 		if		(_reserve == _btnReserveNone)	_battleGame->setReservedAction(BA_NONE);
 		else if (_reserve == _btnReserveSnap)	_battleGame->setReservedAction(BA_SNAPSHOT);
@@ -4946,9 +4940,7 @@ void BattlescapeState::btnReserveKneelClick(Action* action)
 {
 	if (allowButtons())
 	{
-		Action* const synth (_game->getSynthMouseDown());
-		action->getSender()->mousePress(synth, this);
-		delete synth;
+		action->getSender()->mousePress(_game->getSynthMouseDown(), this);
 
 		_battleGame->setKneelReserved(!_battleGame->getKneelReserved());
 //		_btnReserveKneel->invert(_btnReserveKneel->getColor() + 3);

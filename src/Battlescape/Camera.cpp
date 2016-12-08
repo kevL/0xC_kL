@@ -229,6 +229,7 @@ void Camera::mouseOver(Action* action)
 		else if (posY != 0 && _scrollMouseX == 0)											// stop vert scroll.
 			_scrollMouseY = 0;
 
+
 		if ((_scrollMouseX != 0 || _scrollMouseY != 0)
 			&& _scrollMouseTimer->isRunning() == false
 			&& _scrollKeyTimer->isRunning() == false

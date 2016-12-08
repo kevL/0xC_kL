@@ -26,6 +26,9 @@
 namespace OpenXcom
 {
 
+/**
+ * A child-class of TextButton that stays depressed.
+ */
 class ToggleTextButton final
 	:
 		public TextButton
@@ -41,28 +44,29 @@ private:
 
 
 	public:
-		///
+		/// Constructs a ToggleTextButton.
 		ToggleTextButton(
 				int width,
 				int height,
 				int x,
 				int y);
-		///
+		/// Destructs the ToggleTextButton.
 		~ToggleTextButton(void);
 
-		///
+		/// Draws the ToggleTextButton.
 		void draw() override;
 
-		///
+		/// Sets the color of the ToggleTextButton.
 		void setColor(Uint8 color) override;
-		///
+		/// Sets the depressed color of the ToggleTextButton.
 		void setColorInvert(Uint8 color);
 
-		///
+		/// Handles mouse-presses.
 		void mousePress(Action* action, State* state) override;
-		///
+
+		/// Sets the ToggleTextButton as depressed.
 		void setPressed(bool press);
-		///
+		/// Checks if the ToggleTextButton is depressed.
 		bool getPressed() const
 		{ return _isPressed; }
 };

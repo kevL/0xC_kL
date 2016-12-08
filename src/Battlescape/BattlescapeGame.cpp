@@ -1612,7 +1612,6 @@ void BattlescapeGame::endTurn() // private.
 					// no break;
 				case FACTION_HOSTILE:
 				case FACTION_PLAYER:
-//					_parentState->getGame()->delayBlit(); // DONE: Move this to NextTurnState::ctor and out of the core-engine cycle.
 					_parentState->getGame()->pushState(new NextTurnState(
 																	_battleSave,
 																	_parentState,

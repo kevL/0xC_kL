@@ -61,7 +61,7 @@ ToggleTextButton::~ToggleTextButton(void)
 {}
 
 /**
- * Handles mouse clicks by toggling the button state.
+ * Handles mouse-presses by toggling the button state.
  * @note Use '_fakeGroup' to trick TextButton into drawing the right thing.
  * @param action	- pointer to an Action
  * @param state		- pointer to a State

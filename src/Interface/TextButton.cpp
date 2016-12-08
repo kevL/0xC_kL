@@ -67,7 +67,6 @@ TextButton::TextButton(
 	_text->setSmall();
 	_text->setAlign(ALIGN_CENTER);
 	_text->setVerticalAlign(ALIGN_MIDDLE);
-//	_text->setWordWrap();
 }
 
 /**

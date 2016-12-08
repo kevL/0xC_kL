@@ -30,15 +30,15 @@ namespace OpenXcom
  * @param scaleY		- the Screen's y-scaling factor
  * @param topBlackBand	- the Screen's top black band height
  * @param leftBlackBand	- the Screen's left black band width
- * @param rodentState	- state of the rodent
+// * @param rodentState	- state of the rodent
  */
 Action::Action(
 		SDL_Event* const event,
 		double scaleX,
 		double scaleY,
 		int topBlackBand,
-		int leftBlackBand,
-		const Uint32 rodentState)
+		int leftBlackBand)
+//		const Uint32 rodentState)
 	:
 		_event(event),
 		_scaleX(scaleX),
@@ -49,8 +49,8 @@ Action::Action(
 		_mouseY(-1),
 		_surfaceX(-1),
 		_surfaceY(-1),
-		_sender(nullptr),
-		_rodentState(rodentState)
+		_sender(nullptr)
+//		_rodentState(rodentState)
 {}
 
 /**
@@ -115,18 +115,18 @@ bool Action::isMouseAction() const
  */
 bool Action::isMouseButton(int btnId) const
 {
-	return _rodentState & SDL_BUTTON(btnId);
+	return (SDL_GetMouseState(nullptr,nullptr) & SDL_BUTTON(btnId));
+//	return _rodentState & SDL_BUTTON(btnId);
 }
 
 /**
  * Gets the overall mouse-buttons' state.
  * @return, non-SDL-proprietary mouse-button Id
- */
+ *
 Uint32 Action::getMouseState() const
 {
-//	SDL_GetMouseState(x,y); (nullptr,nullptr) does nothing.
 	return _rodentState;
-}
+} */
 
 /**
  * Gets the height in pixels of the top black band if any.
