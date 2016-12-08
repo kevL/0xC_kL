@@ -56,15 +56,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Manufacture screen.
- * @param base	- pointer to the Base to get info from
- * @param state	- pointer to the BasescapeState (default nullptr when geoscape-invoked)
+ * @param base		- pointer to the Base to get info from
+ * @param baseState	- pointer to the BasescapeState (default nullptr when geoscape-invoked)
  */
 ManufactureState::ManufactureState(
 		Base* const base,
-		BasescapeState* const state)
+		BasescapeState* const baseState)
 	:
 		_base(base),
-		_state(state),
+		_baseState(baseState),
 		_baseList(_game->getSavedGame()->getBases())
 {
 	_window			= new Window(this);
@@ -187,13 +187,17 @@ ManufactureState::ManufactureState(
 			default: st = "STR_ELERIUM_115";
 		}
 
-		_lstResources->addRow(4,
-							tr(st).c_str(),
-							L"",
-							tr("STR_TOTAL").c_str(),
-							L"");
-		_lstResources->setCellColor(i, 1u, color);
-		_lstResources->setCellColor(i, 3u, color);
+		if (   (i == 0u && _game->getSavedGame()->isResearched("STR_ALIEN_ALLOYS") == true)
+			|| (i == 1u && _game->getSavedGame()->isResearched("STR_ELERIUM_115")  == true))
+		{
+			_lstResources->addRow(4,
+								tr(st).c_str(),
+								L"",
+								tr("STR_TOTAL").c_str(),
+								L"");
+			_lstResources->setCellColor(i, 1u, color);
+			_lstResources->setCellColor(i, 3u, color);
+		}
 	}
 }
 
@@ -304,10 +308,18 @@ void ManufactureState::init()
 			}
 		}
 	}
-	_lstResources->setCellText(0u,1u, Text::intWide(qtyA));
-	_lstResources->setCellText(1u,1u, Text::intWide(qtyE));
-	_lstResources->setCellText(0u,3u, Text::intWide(totalA));
-	_lstResources->setCellText(1u,3u, Text::intWide(totalE));
+
+	if (_game->getSavedGame()->isResearched("STR_ALIEN_ALLOYS") == true)
+	{
+		_lstResources->setCellText(0u,1u, Text::intWide(qtyA));
+		_lstResources->setCellText(0u,3u, Text::intWide(totalA));
+	}
+
+	if (_game->getSavedGame()->isResearched("STR_ELERIUM_115") == true)
+	{
+		_lstResources->setCellText(1u,1u, Text::intWide(qtyE));
+		_lstResources->setCellText(1u,3u, Text::intWide(totalE));
+	}
 
 	std::vector<const RuleManufacture*> unlocked;
 	_game->getSavedGame()->tabulateStartableManufacture(unlocked, _base);
@@ -360,7 +372,7 @@ void ManufactureState::lstManufactureClick(Action* action) // private.
  */
 void ManufactureState::miniClick(Action*)
 {
-	if (_state != nullptr) // cannot switch bases if origin is Geoscape.
+	if (_baseState != nullptr) // cannot switch bases if origin is Geoscape.
 	{
 		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size())
@@ -371,9 +383,9 @@ void ManufactureState::miniClick(Action*)
 				_txtHoverBase->setText(L"");
 
 				_mini->setSelectedBase(baseId);
-				_state->setBase(_base = base);
+				_baseState->setBase(_base = base);
 
-				_state->resetStoresWarning();
+				_baseState->resetStoresWarning();
 				init();
 			}
 		}

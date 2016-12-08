@@ -33,7 +33,7 @@ namespace OpenXcom
  */
 enum TimeTrigger
 {
-	TIME_1SEC,	// 0 Volutar smooth_globe.
+	TIME_1SEC,	// 0 Volutar's smooth_globe_terminator.
 	TIME_5SEC,	// 1
 	TIME_10MIN,	// 2
 	TIME_30MIN,	// 3
@@ -54,6 +54,9 @@ class GameTime
 {
 
 private:
+	static constexpr int daysPerMonth[12u] { 32,29,32,31,32,31,32,32,31,32,31,32 };
+
+	bool _endIsNear;
 	int
 		_day,
 		_month,
@@ -94,11 +97,6 @@ private:
 		/// Gets the IG hour.
 		int getHour() const;
 
-		/// Gets the IG weekday.
-//		int getWeekday() const;
-		/// Gets a string version of the IG weekday.
-//		std::string getWeekdayString() const;
-
 		/// Gets the IG day.
 		int getDay() const;
 		/// Gets a string version of the IG day.
@@ -114,6 +112,18 @@ private:
 
 		/// Gets the position of the daylight according to the IG time.
 		double getDaylight() const;
+
+		/// Checks if the end of the month is 1 day away.
+		bool isEndNear() const
+		{ return _endIsNear; }
+		/// Resets the end of month notice/warning.
+		void clearEndNear()
+		{ _endIsNear = false; }
+
+		/// Gets the IG weekday.
+//		int getWeekday() const;
+		/// Gets a string version of the IG weekday.
+//		std::string getWeekdayString() const;
 };
 
 }

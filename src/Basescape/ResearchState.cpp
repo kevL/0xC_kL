@@ -55,15 +55,15 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the main Research screen.
- * @param base	- pointer to the base to get info from
- * @param state	- pointer to the BasescapeState (default nullptr when geoscape-invoked)
+ * @param base		- pointer to the base to get info from
+ * @param baseState	- pointer to the BasescapeState (default nullptr when geoscape-invoked)
  */
 ResearchState::ResearchState(
 		Base* const base,
-		BasescapeState* const state)
+		BasescapeState* const baseState)
 	:
 		_base(base),
-		_state(state),
+		_baseState(baseState),
 		_baseList(_game->getSavedGame()->getBases())
 {
 	_window			= new Window(this);
@@ -317,7 +317,7 @@ void ResearchState::lstResearchClick(Action* action) // private.
  */
 void ResearchState::miniClick(Action*)
 {
-	if (_state != nullptr) // cannot switch bases if origin is Geoscape.
+	if (_baseState != nullptr) // cannot switch bases if origin is Geoscape.
 	{
 		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size())
@@ -328,9 +328,9 @@ void ResearchState::miniClick(Action*)
 				_txtHoverBase->setText(L"");
 
 				_mini->setSelectedBase(baseId);
-				_state->setBase(_base = base);
+				_baseState->setBase(_base = base);
 
-				_state->resetStoresWarning();
+				_baseState->resetStoresWarning();
 				init();
 			}
 		}

@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_LOWFUELSTATE_H
-#define OPENXCOM_LOWFUELSTATE_H
+#ifndef OPENXCOM_MONTHNEARENDSTATE_H
+#define OPENXCOM_MONTHNEARENDSTATE_H
 
 #include "../Engine/State.h"
 
@@ -26,56 +26,35 @@
 namespace OpenXcom
 {
 
-class Craft;
-class GeoscapeState;
 class Text;
 class TextButton;
-class Timer;
 class Window;
 
 
 /**
- * Window displayed when a craft starts running out of fuel
- * (only has exactly enough to make it back to base).
+ * Window displayed to warn player that the end of the month is approaching.
  */
-class LowFuelState
+class MonthNearEndState
 	:
 		public State
 {
 
 private:
-	Craft* _craft;
-	GeoscapeState* _state;
-
 	Text
-		* _txtMessage,
-		* _txtTitle;
-	TextButton
-		* _btnOk,
-		* _btnOk5Secs;
-	Timer* _timerBlink;
+		* _txtTitle,
+		* _txtMessage;
+	TextButton* _btnOk;
 	Window* _window;
 
 
 	public:
-		/// Creates the LowFuel state.
-		LowFuelState(
-				Craft* craft,
-				GeoscapeState* state);
-		/// Cleans up the LowFuel state.
-		~LowFuelState();
-
-		/// Initializes the state.
-//		void init();
-		/// Runs the blink timer.
-		void think() override;
-		/// Blinks the message text.
-		void blink();
+		/// Constructs a MonthNearEnd state.
+		MonthNearEndState();
+		/// Destructs the MonthNearEnd state.
+		~MonthNearEndState();
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the Ok - 5 Secs button.
-		void btnOk5SecsClick(Action* action);
 };
 
 }

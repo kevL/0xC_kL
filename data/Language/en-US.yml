@@ -1421,3 +1421,5 @@ en-US:
   STR_DEFENSE_VALUE: "Defense value"
   STR_HIT_RATIO: "Hit ratio"
   STR_ERROR_MUST_HAVE_SOLDIER: "There must be at least one soldier onboard the craft."
+  STR_MONTH_NEAR_END: "Accounts"
+  STR_MONTH_NEAR_END_NOTICE: "The end of the month is approaching."

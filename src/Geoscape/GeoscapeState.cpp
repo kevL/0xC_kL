@@ -44,6 +44,7 @@
 #include "LowFuelState.h"
 #include "ManufactureUnlockedState.h"
 #include "MonthlyReportState.h"
+#include "MonthNearEndState.h"
 #include "ManufactureCompleteState.h"
 #include "ResearchCompleteState.h"
 #include "ResearchRequiredState.h"
@@ -3088,6 +3089,13 @@ void GeoscapeState::time1Day()
 								SAVE_AUTO_GEOSCAPE,
 								_palette));
 	}
+
+	if (_gameSave->getTime()->isEndNear() == true) // TODO: Option to enable/disable end-of-month warning.
+	{
+		resetTimer();
+		_gameSave->getTime()->clearEndNear();
+		popupGeo(new MonthNearEndState());
+	}
 	//Log(LOG_INFO) << "GeoscapeState::time1Day() EXIT";
 }
 
@@ -4391,7 +4399,7 @@ void GeoscapeState::btnPauseClick(Action* action) // private.
 
 /**
  * LMB Opens info.
- * RMB Centers on the UFO corresponding to a button.
+ * RMB Centers on the UFO corresponding to a blob.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnUfoBlobPress(Action* action) // private.

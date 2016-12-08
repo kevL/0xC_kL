@@ -41,7 +41,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Low Fuel window.
+ * Initializes all the elements in the LowFuel window.
  * @param craft - pointer to the Craft to display
  * @param state - pointer to GeoscapeState
  */
@@ -58,6 +58,7 @@ LowFuelState::LowFuelState(
 
 	_txtTitle	= new Text(214, 17, 21, 51);
 	_txtMessage	= new Text(214, 50, 21, 68);
+
 	_btnOk5Secs	= new TextButton(90, 18,  30, 134);
 	_btnOk		= new TextButton(90, 18, 136, 134);
 
@@ -78,9 +79,9 @@ LowFuelState::LowFuelState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
+	_txtTitle->setText(_craft->getLabel(_game->getLanguage()));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
-	_txtTitle->setText(_craft->getLabel(_game->getLanguage()));
 
 	_txtMessage->setText(tr("STR_IS_LOW_ON_FUEL_RETURNING_TO_BASE"));
 	_txtMessage->setAlign(ALIGN_CENTER);
@@ -123,8 +124,8 @@ LowFuelState::~LowFuelState()
 
 /**
  * Initializes the state.
- */
-/* void LowFuelState::init()
+ *
+void LowFuelState::init()
 {
 	State::init();
 	_btnOk5Secs->setVisible(_state->is5Sec() == false);

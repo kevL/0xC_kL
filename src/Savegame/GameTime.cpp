@@ -25,7 +25,9 @@
 namespace OpenXcom
 {
 
-const std::string GameTime::GAME_MONTHS[12u]
+constexpr int GameTime::daysPerMonth[12u]; // static.
+
+const std::string GameTime::GAME_MONTHS[12u] // static.
 {
 	"STR_JAN",
 	"STR_FEB",
@@ -66,7 +68,8 @@ GameTime::GameTime(
 		_year(year),
 		_hour(hour),
 		_minute(minute),
-		_second(sec)
+		_second(sec),
+		_endIsNear(false)
 //		_weekday(weekday)
 {}
 
@@ -131,9 +134,8 @@ TimeTrigger GameTime::advance()
 		return TIME_5SEC;
 
 	_second = 0;
-	++_minute;
 
-	if (_minute % 10 != 0)
+	if (++_minute % 10 != 0)
 		return TIME_5SEC;
 
 	if (_minute % 30 != 0)
@@ -143,30 +145,45 @@ TimeTrigger GameTime::advance()
 		return TIME_30MIN;
 
 	_minute = 0;
-	++_hour;
 
-	if (_hour != 24)
+	if (++_hour != 24)
 		return TIME_1HOUR;
 
 	_hour = 0;
-	++_day;
 
 //	if (++_weekday == 8) _weekday = 1;
 
-	static int daysPerMonth[12u] { 32,29,32,31,32,31,32,32,31,32,31,32 }; // add one ea.
-	if (_month == 2
-		&&  _year %   4 == 0 // leap year
-		&& (_year % 100 != 0 || _year % 400 == 0))
+	++_day;
+
+	if (_month == 2)
 	{
-		++daysPerMonth[1u];
+		int daysFebruary (daysPerMonth[1u]);
+
+		if (    _year %   4 == 0 // leap year
+			&& (_year % 100 != 0 || _year % 400 == 0))
+		{
+			++daysFebruary;
+		}
+
+		if (_day != daysFebruary)
+		{
+			if (_day == daysFebruary - 1) _endIsNear = true;
+			return TIME_1DAY;
+		}
 	}
-	if (_day != daysPerMonth[static_cast<size_t>(_month - 1)])
-		return TIME_1DAY;
+	else
+	{
+		const int days (daysPerMonth[static_cast<size_t>(_month - 1)]);
+		if (_day != days)
+		{
+			if (_day == days - 1) _endIsNear = true;
+			return TIME_1DAY;
+		}
+	}
 
 	_day = 1;
-	++_month;
 
-	if (_month == 13)
+	if (++_month == 13)
 	{
 		_month = 1;
 		++_year;
@@ -201,33 +218,6 @@ int GameTime::getHour() const
 {
 	return _hour;
 }
-
-/**
- * Gets the current IG weekday.
- * @return, weekday (1-7) starts on Sunday
- *
-int GameTime::getWeekday() const
-{
-	return _weekday;
-} */
-/**
- * Returns a localizable-string representation of the current IG weekday.
- * @return, weekday string ID
- *
-std::string GameTime::getWeekdayString() const
-{
-	static const std::string weekdays[7] =
-	{
-		"STR_SUNDAY",
-		"STR_MONDAY",
-		"STR_TUESDAY",
-		"STR_WEDNESDAY",
-		"STR_THURSDAY",
-		"STR_FRIDAY",
-		"STR_SATURDAY"
-	};
-	return weekdays[static_cast<size_t>(_weekday) - 1];
-} */
 
 /**
  * Gets the current IG day.
@@ -308,5 +298,32 @@ double GameTime::getDaylight() const
 					(((((_hour + 18) % 24) * 60) + _minute) * 60) + _second)
 						/ (60. * 60. * 24.); // kL: Take Two!!!
 }
+
+/**
+ * Gets the current IG weekday.
+ * @return, weekday (1-7) starts on Sunday
+ *
+int GameTime::getWeekday() const
+{
+	return _weekday;
+} */
+/**
+ * Returns a localizable-string representation of the current IG weekday.
+ * @return, weekday string ID
+ *
+std::string GameTime::getWeekdayString() const
+{
+	static const std::string weekdays[7] =
+	{
+		"STR_SUNDAY",
+		"STR_MONDAY",
+		"STR_TUESDAY",
+		"STR_WEDNESDAY",
+		"STR_THURSDAY",
+		"STR_FRIDAY",
+		"STR_SATURDAY"
+	};
+	return weekdays[static_cast<size_t>(_weekday) - 1];
+} */
 
 }

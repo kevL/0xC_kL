@@ -46,7 +46,7 @@ class ManufactureState final
 
 private:
 	Base* _base;
-	BasescapeState* _state;
+	BasescapeState* _baseState;
 	MiniBaseView* _mini;
 	Text
 		* _txtAvailable,
@@ -79,7 +79,7 @@ private:
 		/// Creates the Manufacture state.
 		ManufactureState(
 				Base* const base,
-				BasescapeState* const state = nullptr);
+				BasescapeState* const baseState = nullptr);
 		/// Cleans up the Manufacture state.
 		~ManufactureState();
 
