@@ -867,8 +867,6 @@ GeoscapeState::GeoscapeState()
 	_timerDfStart	->onTimer(static_cast<StateHandler>(&GeoscapeState::startDogfight));
 	_timerDf		->onTimer(static_cast<StateHandler>(&GeoscapeState::thinkDogfights));
 
-//	updateTimeDisplay();
-
 	kL_geoMusicPlaying =
 	kL_geoMusicReturnState = false;
 }
@@ -1287,10 +1285,72 @@ void GeoscapeState::drawUfoBlobs()
 }
 
 /**
+ * Advances the game timer according to the set timer-speed and calls
+ * respective triggers.
+ * @note The game always advances in 5-sec cycles regardless of the speed
+ * otherwise this will skip important steps. Instead it just keeps advancing the
+ * timer until the next compression step - eg. the next day on 1-day speed -- or
+ * until an event occurs.
+ */
+void GeoscapeState::timeAdvance() // private.
+{
+	if (_pauseHard == false)
+	{
+		int
+			timeLapse,
+			timeLap_t;
+
+		if		(_btnGroup == _btn5Secs)	timeLapse = 1;
+		else if (_btnGroup == _btn1Min)		timeLapse = 12;
+		else if (_btnGroup == _btn5Mins)	timeLapse = 12 * 5;
+		else if (_btnGroup == _btn30Mins)	timeLapse = 12 * 5 * 6;
+		else if (_btnGroup == _btn1Hour)	timeLapse = 12 * 5 * 6 * 2;
+		else if (_btnGroup == _btn1Day)		timeLapse = 12 * 5 * 6 * 2 * 24;
+		else
+			timeLapse = 0; // what'ver.
+
+		timeLapse *= 5; // true one-second intervals. based on Volutar's smoothGlobe.
+
+		timeLap_t  = ((_timeCache + timeLapse) << 2) / Options::geoClockSpeed;
+		_timeCache = ((_timeCache + timeLapse) << 2) % Options::geoClockSpeed;
+
+		if (timeLap_t != 0)
+		{
+			bool update (false);
+			for (int
+					i = 0;
+					i != timeLap_t && _pause == false;
+					++i)
+			{
+				const TimeTrigger trigger (_gameSave->getTime()->advance());
+				if (trigger != TIME_1SEC)
+				{
+					update = true;
+					switch (trigger)
+					{
+						case TIME_1MONTH:	time1Month(); // no breaks ->
+						case TIME_1DAY:		time1Day();
+						case TIME_1HOUR:	time1Hour();
+						case TIME_30MIN:	time30Minutes();
+						case TIME_10MIN:	time10Minutes();
+						case TIME_5SEC:		time5Seconds();
+					}
+				}
+			}
+
+			if (update == true) updateTimeDisplay();
+
+			_pause = (_dogfightsToStart.empty() == false);
+			_globe->draw();
+		}
+	}
+}
+
+/**
  * Updates the Geoscape clock.
  * @note Also updates the player's current score.
  */
-void GeoscapeState::updateTimeDisplay()
+void GeoscapeState::updateTimeDisplay() // private.
 {
 	_txtFunds->setText(Text::formatCurrency(_gameSave->getFunds()));
 
@@ -1384,68 +1444,6 @@ std::wstring GeoscapeState::convertDateToMonth(int date) // private.
 		case 12: return L"dec";
 	}
 	return L"error";
-}
-
-/**
- * Advances the game timer according to the set timer-speed and calls
- * respective triggers.
- * @note The game always advances in 5-sec cycles regardless of the speed
- * otherwise this will skip important steps. Instead it just keeps advancing the
- * timer until the next compression step - eg. the next day on 1-day speed -- or
- * until an event occurs.
- */
-void GeoscapeState::timeAdvance()
-{
-	if (_pauseHard == false)
-	{
-		int
-			timeLapse,
-			timeLap_t;
-
-		if		(_btnGroup == _btn5Secs)	timeLapse = 1;
-		else if (_btnGroup == _btn1Min)		timeLapse = 12;
-		else if (_btnGroup == _btn5Mins)	timeLapse = 12 * 5;
-		else if (_btnGroup == _btn30Mins)	timeLapse = 12 * 5 * 6;
-		else if (_btnGroup == _btn1Hour)	timeLapse = 12 * 5 * 6 * 2;
-		else if (_btnGroup == _btn1Day)		timeLapse = 12 * 5 * 6 * 2 * 24;
-		else
-			timeLapse = 0; // what'ver.
-
-		timeLapse *= 5; // true one-second intervals. based on Volutar's smoothGlobe.
-
-		timeLap_t  = ((_timeCache + timeLapse) << 2) / Options::geoClockSpeed;
-		_timeCache = ((_timeCache + timeLapse) << 2) % Options::geoClockSpeed;
-
-		if (timeLap_t != 0)
-		{
-			bool update (false);
-			for (int
-					i = 0;
-					i != timeLap_t && _pause == false;
-					++i)
-			{
-				const TimeTrigger trigger (_gameSave->getTime()->advance());
-				if (trigger != TIME_1SEC)
-				{
-					update = true;
-					switch (trigger)
-					{
-						case TIME_1MONTH:	time1Month(); // no breaks ->
-						case TIME_1DAY:		time1Day();
-						case TIME_1HOUR:	time1Hour();
-						case TIME_30MIN:	time30Minutes();
-						case TIME_10MIN:	time10Minutes();
-						case TIME_5SEC:		time5Seconds();
-					}
-				}
-			}
-
-			if (update == true) updateTimeDisplay();
-
-			_pause = (_dogfightsToStart.empty() == false);
-			_globe->draw();
-		}
-	}
 }
 
 /**
@@ -1986,9 +1984,9 @@ void GeoscapeState::time10Minutes()
 			if ((*j)->getCraftStatus() == CS_OUT
 				&& (*j)->hasLeftGround() == true)
 			{
-				(*j)->consumeFuel();
+				(*j)->useFuel();
 
-				if ((*j)->getLowFuel() == false
+				if ((*j)->isLowFuel() == false
 					&& (*j)->getFuel() <= (*j)->getFuelLimit())
 				{
 					(*j)->setLowFuel();
@@ -3191,17 +3189,17 @@ void GeoscapeState::time1Month()
 }
 
 /**
- * Slows down the timer down to minimum time-compression.
+ * Slows the Geoscape timer down to the minimum 5-sec time-compression.
  */
 void GeoscapeState::resetTimer()
 {
 	_globe->rotateStop();
-	_btn5Secs->mousePress(_game->getSynthMouseDown(), this);
+	_btn5Secs->mousePress(_game->getFakeMouseActionD(), this);
 }
 
 /**
- * Gets if time compression is set to 5 second intervals.
- * @return, true if time compression is set to 5 seconds
+ * Checks if time-compression is set to 5-sec intervals.
+ * @return, true if time-compression is set to 5-secs
  */
 bool GeoscapeState::is5Sec() const
 {
@@ -4369,7 +4367,7 @@ void GeoscapeState::keyTimeCompression(Action* action) // private.
 	if (sender != _btnGroup)
 	{
 		_timeCache = 0;
-		sender->mousePress(_game->getSynthMouseDown(), this);
+		sender->mousePress(_game->getFakeMouseActionD(), this);
 	}
 }
 
@@ -4392,8 +4390,9 @@ void GeoscapeState::btnPauseClick(Action* action) // private.
 	{
 		case SDL_BUTTON_LEFT:
 		case SDL_BUTTON_RIGHT:
-			_pauseHard = !_pauseHard;
 			_globe->toggleBlink();
+			if ((_pauseHard = !_pauseHard) == true)
+				_txtSec->setVisible(false);
 	}
 }
 
@@ -4515,19 +4514,21 @@ void GeoscapeState::assessUfoPopups()
 }
 
 /**
- * Sets pause.
+ * Sets hard-pause.
  */
 void GeoscapeState::setPaused()
 {
 	_pauseHard = true;
 	_globe->toggleBlink();
+	resetTimer();
+	_txtSec->setVisible(false);
 }
 
 /**
- * Gets pause.
+ * Checks hard-pause.
  * @return, true if state is paused
  */
-bool GeoscapeState::getPaused() const
+bool GeoscapeState::isPaused() const
 {
 	return _pauseHard;
 }

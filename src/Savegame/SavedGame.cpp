@@ -1156,19 +1156,19 @@ void SavedGame::setTime(const GameTime& gt)
 }
 
 /**
- * Gets the high-ID for a specified Target type and then increments the
- * cache to the next ID value.
- * @param objectType - reference to a Target type
- * @return, the high-ID
+ * Gets the highest-value ID for a specified Target type and then increments the
+ * cache to one higer ID-value.
+ * @param typeTarget - reference to a Target type
+ * @return, the current value for type
  */
-int SavedGame::getCanonicalId(const std::string& targetType)
+int SavedGame::getCanonicalId(const std::string& typeTarget)
 {
-	std::map<std::string, int>::iterator i (_ids.find(targetType));
+	std::map<std::string, int>::iterator i (_ids.find(typeTarget));
 	if (i != _ids.end())
 		return i->second++;
 
-	_ids[targetType] = 1;
-	return _ids[targetType]++;
+	_ids[typeTarget] = 1;
+	return _ids[typeTarget]++;
 }
 
 /**
@@ -2481,11 +2481,11 @@ std::wstring SavedGame::formatCraftDowntime(
  * @param craftId - the unique craft id to look up
  * @return, the craft with the specified id, or nullptr
  *
-Craft* SavedGame::findCraftByUniqueId(const CraftId& craftId) const
+Craft* SavedGame::getCraftByIdentificator(const CraftId& craftId) const
 {
 	for (std::vector<Base*>::const_iterator i = _bases.begin(); i != _bases.end(); ++i)
 		for (std::vector<Craft*>::const_iterator j = (*i)->getCrafts()->begin(); j != (*i)->getCrafts()->end(); ++j)
-			if ((*j)->getUniqueId() == craftId) return *j;
+			if ((*j)->getIdentificator() == craftId) return *j;
 	return nullptr;
 } */
 

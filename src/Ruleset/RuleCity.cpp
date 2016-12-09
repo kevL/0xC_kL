@@ -106,10 +106,10 @@ size_t RuleCity::getZoomLevel() const
 }
 
 /**
- * Gets if this RuleCity's label is to be positioned above or below its marker.
+ * Checks if this RuleCity's label is to be positioned above or below its marker.
  * @return, true if label goes on top
  */
-bool RuleCity::getLabelTop() const
+bool RuleCity::isLabelTop() const
 {
 	return _labelTop;
 }

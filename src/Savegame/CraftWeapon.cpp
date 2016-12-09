@@ -58,7 +58,7 @@ CraftWeapon::~CraftWeapon()
  */
 void CraftWeapon::load(const YAML::Node& node)
 {
-	_load		= node["ammo"]		.as<int>(_load);
+	_load		= node["load"]		.as<int>(_load);
 	_rearming	= node["rearming"]	.as<bool>(_rearming);
 	_cantLoad	= node["cantLoad"]	.as<bool>(_cantLoad);
 }
@@ -72,7 +72,7 @@ YAML::Node CraftWeapon::save() const
 	YAML::Node node;
 
 	node["type"] = _cwRule->getType();
-	node["ammo"] = _load;
+	node["load"] = _load;
 
 	if (_rearming != false) node["rearming"] = _rearming;
 	if (_cantLoad != false) node["cantLoad"] = _cantLoad;

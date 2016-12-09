@@ -70,8 +70,8 @@ private:
 		/// Gets the level of zoom that shows a City's label.
 		size_t getZoomLevel() const;
 
-		/// Gets if a City's label is above or below its marker.
-		bool getLabelTop() const;
+		/// Checks if a City's label is above or below its marker.
+		bool isLabelTop() const;
 
 		/// Gets the texture of a City for tactical.
 		int getTextureId() const;

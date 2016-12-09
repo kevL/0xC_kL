@@ -60,7 +60,7 @@ Ufo::Ufo(
 		_idLanded(0),
 		_hull(ufoRule->getUfoHullCap()),
 		_heading("STR_NORTH"),
-		_headingInt(8u),
+		_dir(8u),
 		_altitude(MovingTarget::stAltitude[3u]),
 		_status(FLYING),
 		_secondsLeft(0),
@@ -107,9 +107,9 @@ Ufo::~Ufo()
 
 /**
  ** FUNCTOR ***
- * Match AlienMission based on the unique-ID.
+ * Match AlienMission based on ID value.
  */
-class matchMissionID
+class MatchMissionId
 	:
 		public std::unary_function<const AlienMission*, bool>
 {
@@ -118,13 +118,13 @@ private:
 
 	public:
 		/// Store ID for later comparisons.
-		explicit matchMissionID(int id)
+		explicit MatchMissionId(int id)
 			:
 				_id(id)
 		{}
 
 		/// Match with stored ID.
-		bool operator() (const AlienMission* const am) const
+		bool operator ()(const AlienMission* const am) const
 		{
 			return am->getId() == _id;
 		}
@@ -147,8 +147,8 @@ void Ufo::loadUfo(
 	_idLanded		= node["idLanded"]		.as<int>(_idLanded);
 	_hull			= node["hull"]			.as<int>(_hull);
 	_altitude		= node["altitude"]		.as<std::string>(_altitude);
-	_heading		= node["direction"]		.as<std::string>(_heading);
-	_headingInt		= node["dirInt"]		.as<unsigned>(_headingInt);
+	_heading		= node["heading"]		.as<std::string>(_heading);
+	_dir			= node["dir"]			.as<unsigned>(_dir);
 	_detected		= node["detected"]		.as<bool>(_detected);
 	_hyperDetected	= node["hyperDetected"]	.as<bool>(_hyperDetected);
 	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
@@ -193,7 +193,7 @@ void Ufo::loadUfo(
 		std::vector<AlienMission*>::const_iterator mission (std::find_if(
 																	gameSave->getAlienMissions().begin(),
 																	gameSave->getAlienMissions().end(),
-																	matchMissionID(missionId)));
+																	MatchMissionId(missionId)));
 		if (mission == gameSave->getAlienMissions().end())
 		{
 			throw Exception("Unknown mission, save file is corrupt.");
@@ -228,8 +228,8 @@ YAML::Node Ufo::save() const
 	if (_terrain.empty() == false) node["terrain"] = _terrain;
 
 	node["altitude"]	= _altitude;
-	node["direction"]	= _heading;
-	node["dirInt"]		= _headingInt;
+	node["heading"]		= _heading;
+	node["dir"]			= _dir;
 	node["status"]		= static_cast<int>(_status);
 
 	node["hull"]		= _hull;
@@ -260,7 +260,7 @@ YAML::Node Ufo::save() const
 }
 
 /**
- * Saves this UFO's unique-ID to a YAML file.
+ * Saves this UFO's identificator to a YAML file.
  * @return, YAML node
  */
 YAML::Node Ufo::saveIdentificator() const
@@ -501,12 +501,12 @@ std::string Ufo::getHeading() const
  */
 unsigned Ufo::getHeadingInt() const
 {
-	return _headingInt;
+	return _dir;
 }
 
 /**
- * Calculates the direction for this Ufo based on the current raw speed and
- * destination.
+ * Calculates the heading/direction for this Ufo based on the current raw speed
+ * and destination.
  * @sa Craft::getHeadingInt().
  */
 void Ufo::calculateSpeed() // private.
@@ -522,19 +522,19 @@ void Ufo::calculateSpeed() // private.
 		if (AreSame(x, 0.) && AreSame(y, 0.))
 		{
 			_heading = "STR_NONE_UC";
-			_headingInt = 0u;
+			_dir = 0u;
 		}
 		else if (AreSame(x, 0.))
 		{
 			if (y > 0.)
 			{
 				_heading = "STR_NORTH";
-				_headingInt = 8u;
+				_dir = 8u;
 			}
 			else
 			{
 				_heading = "STR_SOUTH";
-				_headingInt = 4u;
+				_dir = 4u;
 			}
 		}
 		else
@@ -542,12 +542,12 @@ void Ufo::calculateSpeed() // private.
 			if (x > 0.)
 			{
 				_heading = "STR_EAST";
-				_headingInt = 2u;
+				_dir = 2u;
 			}
 			else
 			{
 				_heading = "STR_WEST";
-				_headingInt = 6u;
+				_dir = 6u;
 			}
 		}
 		return;
@@ -562,42 +562,42 @@ void Ufo::calculateSpeed() // private.
 	if (theta > 157.5 || theta < -157.5)
 	{
 		_heading = "STR_WEST";
-		_headingInt = 6u;
+		_dir = 6u;
 	}
 	else if (theta > 112.5)
 	{
 		_heading = "STR_NORTH_WEST";
-		_headingInt = 7u;
+		_dir = 7u;
 	}
 	else if (theta > 67.5)
 	{
 		_heading = "STR_NORTH";
-		_headingInt = 8u;
+		_dir = 8u;
 	}
 	else if (theta > 22.5)
 	{
 		_heading = "STR_NORTH_EAST";
-		_headingInt = 1u;
+		_dir = 1u;
 	}
 	else if (theta < -112.5)
 	{
 		_heading = "STR_SOUTH_WEST";
-		_headingInt = 5u;
+		_dir = 5u;
 	}
 	else if (theta < -67.5)
 	{
 		_heading = "STR_SOUTH";
-		_headingInt = 4u;
+		_dir = 4u;
 	}
 	else if (theta < -22.5)
 	{
 		_heading = "STR_SOUTH_EAST";
-		_headingInt = 3u;
+		_dir = 3u;
 	}
 	else
 	{
 		_heading = "STR_EAST";
-		_headingInt = 2u;
+		_dir = 2u;
 	}
 }
 

@@ -82,7 +82,7 @@ YAML::Node AlienBase::save() const
 }
 
 /**
- * Saves this AlienBase's unique-ID to a YAML file.
+ * Saves this AlienBase's identificator to a YAML file.
  * @return, YAML node
  */
 YAML::Node AlienBase::saveIdentificator() const

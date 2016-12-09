@@ -59,13 +59,13 @@ namespace OpenXcom
  * @param crRule	- pointer to RuleCraft
  * @param base		- pointer to the Base of origin
  * @param gameSave	- pointer to the SavedGame
- * @param id		- ID to assign to the Craft; 0 for no ID (default 0)
+ * @param hasId		- true if craft already has an ID assigned (default false)
  */
 Craft::Craft(
 		RuleCraft* const crRule,
 		Base* const base,
 		SavedGame* const gameSave,
-		int id)
+		bool hasId)
 	:
 		MovingTarget(gameSave),
 		_crRule(crRule),
@@ -84,7 +84,10 @@ Craft::Craft(
 		_showReady(false),
 		_interceptLanded(false)
 {
-	_id = id;
+	if (hasId == true)
+		_id = 0; // will load from save
+	else
+		_id = gameSave->getCanonicalId(_crRule->getType());
 
 	_items = new ItemContainer();
 
@@ -166,19 +169,22 @@ void Craft::loadCraft(
 		}
 	}
 
-	_items->load(node["items"]);
-	for (std::map<std::string, int>::const_iterator
-			i = _items->getContents()->begin();
-			i != _items->getContents()->end();
-			)
+	if (_crRule->getItemCapacity() != 0)
 	{
-		if (rules->getItemRule(i->first) == nullptr)
+		_items->load(node["items"]);
+		for (std::map<std::string, int>::const_iterator
+				i = _items->getContents()->begin();
+				i != _items->getContents()->end();
+				)
 		{
-			Log(LOG_ERROR) << "Failed to load item " << i->first;
-			i = _items->getContents()->erase(i);
+			if (rules->getItemRule(i->first) == nullptr)
+			{
+				Log(LOG_ERROR) << "Failed to load item " << i->first;
+				i = _items->getContents()->erase(i);
+			}
+			else
+				++i;
 		}
-		else
-			++i;
 	}
 
 	for (YAML::const_iterator
@@ -213,11 +219,11 @@ void Craft::loadCraft(
 	{
 		int id (target["id"].as<int>());
 
-//		"STR_UFO",			// 0.
-//		"STR_BASE",			// 1.
-//		"STR_ALIEN_BASE",	// 2.
-//		"STR_TERROR_SITE",	// 3.
-//		"STR_WAYPOINT",		// 4.
+//		"STR_UFO",			// 0
+//		"STR_BASE",			// 1
+//		"STR_ALIEN_BASE",	// 2
+//		"STR_TERROR_SITE",	// 3
+//		"STR_WAYPOINT",		// 4
 //		"STR_LANDING_SITE",	// 5
 //		"STR_CRASH_SITE"	// 6
 
@@ -343,15 +349,16 @@ YAML::Node Craft::save() const
 			i != _weapons.end();
 			++i)
 	{
-		YAML::Node subnode;
+		YAML::Node weapons;
 		if (*i != nullptr)
-			subnode = (*i)->save();
+			weapons = (*i)->save();
 		else
-			subnode["type"] = "0";
-		node["weapons"].push_back(subnode);
+			weapons["type"] = "0";
+		node["weapons"].push_back(weapons);
 	}
 
-	node["items"] = _items->save();
+	if (_crRule->getItemCapacity() != 0)
+		node["items"] = _items->save();
 
 	for (std::vector<Vehicle*>::const_iterator
 			i = _vehicles.begin();
@@ -377,11 +384,11 @@ YAML::Node Craft::save() const
 }
 
 /**
- * Loads this Craft's unique identifier from a YAML file.
+ * Loads this Craft's identificator from a YAML file.
  * @param node - reference a YAML node
  * @return, unique craft id
  */
-CraftId Craft::loadId(const YAML::Node& node) // static.
+CraftId Craft::loadIdentificator(const YAML::Node& node) // static.
 {
 	return std::make_pair(
 						node["type"].as<std::string>(),
@@ -389,7 +396,7 @@ CraftId Craft::loadId(const YAML::Node& node) // static.
 }
 
 /**
- * Saves this Craft's unique-ID to a YAML file.
+ * Saves this Craft's identificator to a YAML file.
  * @return, YAML node
  */
 YAML::Node Craft::saveIdentificator() const
@@ -403,10 +410,10 @@ YAML::Node Craft::saveIdentificator() const
 }
 
 /**
- * Gets this Craft's unique-ID.
+ * Gets this Craft's identificator.
  * @return, tuple of the craft-type and per-type-id
  */
-CraftId Craft::getUniqueId() const
+CraftId Craft::getIdentificator() const
 {
 	return std::make_pair(
 					_crRule->getType(),
@@ -787,6 +794,14 @@ std::vector<Vehicle*>* Craft::getVehicles()
 }
 
 /**
+ * Sets this Craft to full hull.
+ */
+void Craft::setCraftHullFull()
+{
+	_hull = _crRule->getCraftHullCap();
+}
+
+/**
  * Sets this Craft's hull after inflicted hurt.
  * @param inflict - inflicted hurt
  */
@@ -828,15 +843,6 @@ bool Craft::isDestroyed() const
 }
 
 /**
- * Gets the quantity of fuel currently contained in this Craft.
- * @return, quantity of fuel
- */
-int Craft::getFuel() const
-{
-	return _fuel;
-}
-
-/**
  * Sets the quantity of fuel currently contained in this Craft.
  * @param fuel - quantity of fuel
  */
@@ -851,6 +857,15 @@ void Craft::setFuel(int fuel)
 }
 
 /**
+ * Gets the quantity of fuel currently contained in this Craft.
+ * @return, quantity of fuel
+ */
+int Craft::getFuel() const
+{
+	return _fuel;
+}
+
+/**
  * Gets the ratio between the quantity of fuel currently contained in this Craft
  * and the total that it can carry.
  * @return, fuel as a percentage
@@ -862,18 +877,8 @@ int Craft::getFuelPct() const
 }
 
 /**
- * Gets whether this Craft is currently low on fuel - only has enough to get
- * back to base.
- * @return, true if fuel is low
- */
-bool Craft::getLowFuel() const
-{
-	return _lowFuel;
-}
-
-/**
- * Sets whether this Craft is currently low on fuel - only has enough to get
- * back to its Base.
+ * Sets that this Craft is currently low on fuel - only has enough to get back
+ * to its Base.
  * @param low - true if fuel is low (default true)
  */
 void Craft::setLowFuel(bool low)
@@ -882,18 +887,28 @@ void Craft::setLowFuel(bool low)
 }
 
 /**
- * Consumes this Craft's fuel every 10 minutes while it's in the air.
+ * Checks if this Craft is currently low on fuel - only has enough to get back
+ * to its Base.
+ * @return, true if fuel is low
  */
-void Craft::consumeFuel()
+bool Craft::isLowFuel() const
 {
-	setFuel(_fuel - getFuelConsumption());
+	return _lowFuel;
 }
 
 /**
- * Gets the quantity of fuel this Craft uses while it's airborne.
+ * Uses this Craft's fuel every 10 minutes while airborne.
+ */
+void Craft::useFuel()
+{
+	setFuel(_fuel - getFuelUsage());
+}
+
+/**
+ * Gets the quantity of fuel this Craft uses while airborne.
  * @return, fuel quantity
  */
-int Craft::getFuelConsumption() const
+int Craft::getFuelUsage() const
 {
 	if (_crRule->getRefuelItem().empty() == false) // Firestorm, Lightning, Avenger, etc.
 		return 1;
@@ -904,7 +919,7 @@ int Craft::getFuelConsumption() const
 /**
  * Gets the minimum required fuel for this Craft to get back to Base.
  * @note This now assumes that Craft cannot be transfered during mid-flight.
- * @return, fuel amount
+ * @return, fuel quantity
  */
 int Craft::getFuelLimit() const
 {
@@ -918,7 +933,7 @@ int Craft::getFuelLimit() const
 	const double speed (static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.);
 
 	return static_cast<int>(std::ceil(
-		   static_cast<double>(getFuelConsumption()) * dist / speed));
+		   static_cast<double>(getFuelUsage()) * dist / speed));
 }
 
 /**
@@ -950,7 +965,7 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
 	const double speed = static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.;
 
 	return static_cast<int>(std::ceil(
-		   static_cast<double>(getFuelConsumption()) * dist * patrol_factor / speed));
+		   static_cast<double>(getFuelUsage()) * dist * patrol_factor / speed));
 } */
 
 /**
@@ -962,16 +977,6 @@ void Craft::returnToBase()
 }
 
 /**
- * Gets whether this Craft has just done a ground mission and is forced to
- * return to its Base.
- * @return, true if this Craft needs to return to base
- */
-bool Craft::getTacticalReturn() const
-{
-	return _tacticalReturn;
-}
-
-/**
  * Sets that this Craft has just done a ground mission and is forced to return
  * to its Base.
  */
@@ -980,6 +985,16 @@ void Craft::setTacticalReturn()
 	setTarget(_base);
 	_tacticalReturn = true;
 	_tactical = false;
+}
+
+/**
+ * Checks if this Craft has just done a ground mission and is forced to return
+ * to its Base.
+ * @return, true if this Craft needs to return to base
+ */
+bool Craft::isTacticalReturn() const
+{
+	return _tacticalReturn;
 }
 
 /**

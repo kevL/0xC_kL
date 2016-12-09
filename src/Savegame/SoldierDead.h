@@ -104,7 +104,7 @@ private:
 		/// Gets the SoldierDead's look.
 		SoldierLook getLook() const;
 
-		/// Gets the SoldierDead's unique-ID.
+		/// Gets the SoldierDead's ID.
 		int getId() const;
 
 		/// Gets the SoldierDead's initial stats.

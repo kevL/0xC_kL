@@ -73,7 +73,7 @@ private:
 	size_t
 		_shootingAt,
 		_trajectoryWp;
-	unsigned _headingInt;
+	unsigned _dir;
 
 	AlienMission* _mission;
 	const RuleUfo* _ufoRule;
@@ -88,7 +88,7 @@ private:
 
 	UfoStatus _status;
 
-	/// Calculates a new speed vector to the destination.
+	/// Calculates a speed vector to the destination.
 	void calculateSpeed() override;
 
 
@@ -106,7 +106,7 @@ private:
 				const Ruleset& rules);
 		/// Saves the Ufo to YAML.
 		YAML::Node save() const override;
-		/// Saves the Ufo's unique-ID to YAML.
+		/// Saves the Ufo's identificator to YAML.
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the Ufo's ruleset.

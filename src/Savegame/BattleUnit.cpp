@@ -225,7 +225,7 @@ BattleUnit::BattleUnit(
  * Creates the BattleUnit from a (non-Soldier) Unit-rule object.
  * @param unitRule		- pointer to RuleUnit
  * @param faction		- faction the unit belongs to
- * @param id			- the unit's unique-ID
+ * @param id			- the unit's ID
  * @param arRule		- pointer to RuleArmor
  * @param battleSave	- pointer to the SavedBattleGame
  * @param battleGame	- pointer to the BattlescapeGame (default nullptr)
@@ -755,8 +755,8 @@ void BattleUnit::setRecolor(
 }
 
 /**
- * Gets this BattleUnit's unique-ID.
- * @return, the unique-ID
+ * Gets this BattleUnit's ID.
+ * @return, the ID
  */
 int BattleUnit::getId() const
 {
@@ -764,7 +764,7 @@ int BattleUnit::getId() const
 }
 
 /**
- * Gets this BattleUnit's type-ID.
+ * Gets this BattleUnit's type.
  * @return, unit type
  */
 std::string BattleUnit::getType() const

@@ -1182,12 +1182,14 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	playSave->getBases()->push_back(base);
 	//Log(LOG_INFO) << ". base DONE";
 
-	for (std::vector<Craft*>::const_iterator // correct IDs ->
+	for (std::vector<Craft*>::const_iterator // set Crafts' IDs etc. ->
 			i = base->getCrafts()->begin();
 			i != base->getCrafts()->end();
 			++i)
 	{
-		playSave->getCanonicalId((*i)->getRules()->getType());
+		(*i)->setId(playSave->getCanonicalId((*i)->getRules()->getType()));
+		(*i)->setCraftHullFull();
+		(*i)->checkup();
 	}
 	//Log(LOG_INFO) << ". craft-ids DONE";
 

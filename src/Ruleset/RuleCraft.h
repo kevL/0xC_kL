@@ -101,7 +101,7 @@ private:
 				int nextCraftIndex);
 
 		/// Gets a Craft's type.
-		std::string getType() const;
+		const std::string& getType() const;
 
 		/// Gets a Craft's requirements.
 		const std::vector<std::string>& getRequiredResearch() const;

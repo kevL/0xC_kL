@@ -1969,7 +1969,7 @@ void Globe::drawDetail()
 								lon,lat,
 								&x,&y);
 
-						if ((*j)->getLabelTop() == true)
+						if ((*j)->isLabelTop() == true)
 							offset_y = -10;
 						else
 							offset_y = 2;

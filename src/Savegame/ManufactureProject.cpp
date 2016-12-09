@@ -306,10 +306,9 @@ ManufactureProgress ManufactureProject::stepManufacture(
 						Craft* const craft (new Craft(
 													rules->getCraft(i->first),
 													base,
-													gameSave,
-													gameSave->getCanonicalId(i->first)));
-						craft->setCraftStatus(CS_REFUELLING);
+													gameSave));
 						base->getCrafts()->push_back(craft);
+						craft->checkup();
 						break; // <- Craft Manufacture produces 1 craft period.
 					}
 					else

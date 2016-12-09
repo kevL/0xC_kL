@@ -54,7 +54,7 @@ private:
 
 	Base* _base;
 	Craft* _craft;
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 
 	const Ruleset* _rules;
 

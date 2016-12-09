@@ -4917,7 +4917,7 @@ void BattlescapeState::btnReserveClick(Action* action)
 {
 	if (allowButtons())
 	{
-		action->getSender()->mousePress(_game->getSynthMouseDown(), this);
+		action->getSender()->mousePress(_game->getFakeMouseActionD(), this);
 
 		if		(_reserve == _btnReserveNone)	_battleGame->setReservedAction(BA_NONE);
 		else if (_reserve == _btnReserveSnap)	_battleGame->setReservedAction(BA_SNAPSHOT);
@@ -4940,7 +4940,7 @@ void BattlescapeState::btnReserveKneelClick(Action* action)
 {
 	if (allowButtons())
 	{
-		action->getSender()->mousePress(_game->getSynthMouseDown(), this);
+		action->getSender()->mousePress(_game->getFakeMouseActionD(), this);
 
 		_battleGame->setKneelReserved(!_battleGame->getKneelReserved());
 //		_btnReserveKneel->invert(_btnReserveKneel->getColor() + 3);

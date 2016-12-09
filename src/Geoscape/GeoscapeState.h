@@ -169,6 +169,10 @@ private:
 	/// Creates the prefix for a debugging message.
 	void fabricateDebugPretext();
 
+	/// Advances the Geoscape timer.
+	void timeAdvance();
+	/// Displays current time/date/funds.
+	void updateTimeDisplay();
 	/// Converts the date to a month string.
 	std::wstring convertDateToMonth(int date);
 
@@ -222,26 +226,22 @@ private:
 		/// Draws the UFO indicators for known UFOs.
 		void drawUfoBlobs();
 
-		/// Displays the game time/date. (+Funds)
-		void updateTimeDisplay();
-		/// Advances the game-timer.
-		void timeAdvance();
-		/// Triggers whenever 5 seconds pass.
+		/// Triggers if 5 seconds pass.
 		void time5Seconds();
-		/// Triggers whenever 10 minutes pass.
+		/// Triggers if 10 minutes pass.
 		void time10Minutes();
-		/// Triggers whenever 30 minutes pass.
+		/// Triggers if 30 minutes pass.
 		void time30Minutes();
-		/// Triggers whenever 1 hour passes.
+		/// Triggers if 1 hour passes.
 		void time1Hour();
-		/// Triggers whenever 1 day passes.
+		/// Triggers if 1 day passes.
 		void time1Day();
-		/// Triggers whenever 1 month passes.
+		/// Triggers if 1 month passes.
 		void time1Month();
 
-		/// Sets the time-compression to minimum 5-sec intervals.
+		/// Sets the time-compression to 5-sec intervals.
 		void resetTimer();
-		/// Gets if time-compression is set to 5 second intervals.
+		/// Checks if time-compression is set to 5-sec intervals.
 		bool is5Sec() const;
 
 		/// Displays a popup window.
@@ -346,10 +346,10 @@ private:
 		/// Examines the quantity of remaining UFO-detected popups.
 		void assessUfoPopups();
 
-		/// Sets pause.
+		/// Sets hard-pause.
 		void setPaused();
-		/// Gets pause.
-		bool getPaused() const;
+		/// Checks hard-pause.
+		bool isPaused() const;
 };
 
 }

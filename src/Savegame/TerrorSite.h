@@ -34,7 +34,7 @@ class RuleAlienMission;
 
 
 /**
- * Represents an alien TerrorSite in the world.
+ * Represents an aLien TerrorSite in the world.
  */
 class TerrorSite final
 	:
@@ -69,7 +69,7 @@ private:
 		void load(const YAML::Node& node) override;
 		/// Saves the TerrorSite to YAML.
 		YAML::Node save() const override;
-		/// Saves the TerrorSite's unique-ID to YAML.
+		/// Saves the TerrorSite's identificator to YAML.
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the TerrorSite's ruleset.

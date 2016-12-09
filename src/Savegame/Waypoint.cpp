@@ -66,7 +66,7 @@ YAML::Node Waypoint::save() const
 }
 
 /**
- * Saves this Waypoint's unique-ID to a YAML file.
+ * Saves this Waypoint's identificator to a YAML file.
  * @return, YAML node
  */
 YAML::Node Waypoint::saveIdentificator() const

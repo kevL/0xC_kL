@@ -1245,7 +1245,7 @@ void Game::setDebugCycle(int cycle)
  * rig it up by passing the btnId's into Action via '_rodentState'.
  * @return, pointer to an Action
  */
-Action* Game::getSynthMouseDown() // static.
+Action* Game::getFakeMouseActionD() // static.
 {
 	return &syntheticD;
 
@@ -1264,7 +1264,7 @@ Action* Game::getSynthMouseDown() // static.
  * rig it up by passing the btnId's into Action via '_rodentState'.
  * @return, pointer to an Action
  */
-Action* Game::getSynthMouseUp() // static.
+Action* Game::getFakeMouseActionU() // static.
 {
 	return &syntheticU;
 

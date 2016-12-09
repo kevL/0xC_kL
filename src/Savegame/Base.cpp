@@ -184,9 +184,10 @@ void Base::loadBase(
 		if (_rules->getCraft(type) != nullptr)
 		{
 			Craft* const craft (new Craft(
-									_rules->getCraft(type),
-									this,
-									_gameSave));
+										_rules->getCraft(type),
+										this,
+										_gameSave,
+										true));
 			craft->loadCraft(*i, _rules);
 			_crafts.push_back(craft);
 		}
@@ -211,14 +212,14 @@ void Base::loadBase(
 			//Log(LOG_INFO) << ". . . set Craft";
 			if (const YAML::Node& craft = (*i)["craft"])
 			{
-				const CraftId craftId (Craft::loadId(craft));
+				const CraftId craftId (Craft::loadIdentificator(craft));
 				//Log(LOG_INFO) << ". . . . Craft-ID = " << craftId.first << "-" << craftId.second;
 				for (std::vector<Craft*>::const_iterator
 						j = _crafts.begin();
 						j != _crafts.end();
 						++j)
 				{
-					if ((*j)->getUniqueId() == craftId)
+					if ((*j)->getIdentificator() == craftId)
 					{
 						sol->setCraft(*j);
 						break;
@@ -371,7 +372,7 @@ YAML::Node Base::save() const
 }
 
 /**
- * Saves this Base's unique-ID to a YAML file.
+ * Saves this Base's identificator to a YAML file.
  * @return, YAML node
  */
 YAML::Node Base::saveIdentificator() const

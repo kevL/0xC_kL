@@ -5948,7 +5948,7 @@ VoxelType TileEngine::voxelCheck(
 			targetUnit = tileBelow->getTileUnit();
 		}
 
-		if (targetUnit != nullptr && targetUnit != excludeUnit
+		if (targetUnit != nullptr && targetUnit != excludeUnit //&& targetUnit->isOut_t() == false <- that might be needed if ... for large units i suppose.
 			&& (excludeAllBut == nullptr || targetUnit == excludeAllBut)
 			&& (onlyVisible == false || targetUnit->getUnitVisible() == true))
 		{

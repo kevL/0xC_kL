@@ -50,7 +50,7 @@ namespace OpenXcom
  * Creates a brand new Soldier from scratch.
  * @param solRule	- pointer to RuleSoldier
  * @param arRule	- pointer to RuleArmor
- * @param id		- unique-ID from soldier-generation
+ * @param id		- ID from soldier-generation
 // * @param names	- pointer to a vector of pointers to SoldierNamePool (default nullptr)
  */
 Soldier::Soldier(
@@ -316,9 +316,9 @@ UnitStats* Soldier::getCurrentStats()
 }
 
 /**
- * Gets this Soldier's unique-ID.
+ * Gets this Soldier's ID.
  * @note Each soldier is uniquely identified by its ID.
- * @return, unique-ID
+ * @return, the ID
  */
 int Soldier::getId() const
 {

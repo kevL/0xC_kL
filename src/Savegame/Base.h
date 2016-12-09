@@ -143,7 +143,7 @@ private:
 				bool isFirstBase = false);
 		/// Saves the Base to YAML.
 		YAML::Node save() const override;
-		/// Saves the Base's unique-ID to YAML.
+		/// Saves the Base's identificator to YAML.
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the Base's label.

@@ -134,7 +134,7 @@ private:
 		/// Gets a pointer to current stats.
 		UnitStats* getCurrentStats();
 
-		/// Gets the Soldier's unique-ID.
+		/// Gets the Soldier's ID.
 		int getId() const;
 
 		/// Sets the Soldier's label.

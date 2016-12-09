@@ -93,7 +93,7 @@ YAML::Node TerrorSite::save() const
 }
 
 /**
- * Saves this TerrorSite's unique-ID to a YAML file.
+ * Saves this TerrorSite's identificator to a YAML file.
  * @return, YAML node
  */
 YAML::Node TerrorSite::saveIdentificator() const

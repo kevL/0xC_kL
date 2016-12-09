@@ -1339,7 +1339,7 @@ void GraphsState::keyFactorPress(Action* action) // private.
 		case SDLK_1:
 			if (sender != _userFactor)
 			{
-				sender->mousePress(_game->getSynthMouseDown(), this);
+				sender->mousePress(_game->getFakeMouseActionD(), this);
 				recallExpansion = GF_DEFAULT;
 			}
 			break;
@@ -1347,7 +1347,7 @@ void GraphsState::keyFactorPress(Action* action) // private.
 		case SDLK_2:
 			if (sender != _userFactor)
 			{
-				sender->mousePress(_game->getSynthMouseDown(), this);
+				sender->mousePress(_game->getFakeMouseActionD(), this);
 				recallExpansion = GF_HALF;
 			}
 			break;
@@ -1355,7 +1355,7 @@ void GraphsState::keyFactorPress(Action* action) // private.
 		case SDLK_3:
 			if (sender != _userFactor)
 			{
-				sender->mousePress(_game->getSynthMouseDown(), this);
+				sender->mousePress(_game->getFakeMouseActionD(), this);
 				recallExpansion = GF_QUARTER;
 			}
 	}

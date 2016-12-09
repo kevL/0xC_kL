@@ -99,7 +99,7 @@ private:
 				RuleCraft* const crRule,
 				Base* const base,
 				SavedGame* const gameSave,
-				int id = 0);
+				bool hasId = false);
 		/// Cleans up the Craft.
 		~Craft() final;
 
@@ -109,13 +109,13 @@ private:
 				const Ruleset* const rules);
 		/// Saves the Craft to YAML.
 		YAML::Node save() const override;
-		/// Saves the Craft's ID to YAML.
+		/// Saves the Craft's identificator to YAML.
 		YAML::Node saveIdentificator() const override;
-		/// Loads the Craft's ID from YAML.
-		static CraftId loadId(const YAML::Node& node);
+		/// Loads the Craft's identificator from YAML.
+		static CraftId loadIdentificator(const YAML::Node& node);
 
-		/// Gets the Craft's unique-ID.
-		CraftId getUniqueId() const;
+		/// Gets the Craft's ID.
+		CraftId getIdentificator() const;
 
 		/// Gets the Craft's ruleset.
 		RuleCraft* getRules() const;
@@ -173,6 +173,8 @@ private:
 		/// Gets the Craft's vehicles.
 		std::vector<Vehicle*>* getVehicles();
 
+		/// Sets this Craft to full hull.
+		void setCraftHullFull();
 		/// Sets the Craft's hull after inflicted hurt.
 		void setCraftHull(int inflict);
 		/// Gets the Craft's hull.
@@ -183,29 +185,29 @@ private:
 		/// Checks if the Craft is destroyed during dogfights.
 		bool isDestroyed() const;
 
-		/// Gets the Craft's amount of fuel.
-		int getFuel() const;
 		/// Sets the Craft's amount of fuel.
 		void setFuel(int fuel);
+		/// Gets the Craft's amount of fuel.
+		int getFuel() const;
 		/// Gets the Craft's percentage of fuel.
 		int getFuelPct() const;
-		/// Gets whether the Craft is running out of fuel.
-		bool getLowFuel() const;
-		/// Sets whether the Craft is running out of fuel.
+		/// Sets if the Craft is running out of fuel.
 		void setLowFuel(bool low = true);
-		/// Consumes the Craft's fuel.
-		void consumeFuel();
-		/// Gets the Craft's fuel consumption.
-		int getFuelConsumption() const;
-		/// Gets the Craft's minimum fuel limit.
+		/// Checks if the Craft is running out of fuel.
+		bool isLowFuel() const;
+		/// Uses the Craft's fuel.
+		void useFuel();
+		/// Gets the Craft's fuel usage.
+		int getFuelUsage() const;
+		/// Gets the Craft's low fuel limit.
 		int getFuelLimit() const;
 
 		/// Sends the Craft to its Base.
 		void returnToBase();
-		/// Gets whether the Craft has just finished a mission.
-		bool getTacticalReturn() const;
 		/// Sets that the Craft has just finished a mission.
 		void setTacticalReturn();
+		/// Checks if the Craft has just finished a mission.
+		bool isTacticalReturn() const;
 
 		/// Handles Craft logic.
 		void think();

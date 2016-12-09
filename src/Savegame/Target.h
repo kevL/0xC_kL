@@ -61,7 +61,7 @@ protected:
 		virtual void load(const YAML::Node& node);
 		/// Saves the Target to YAML.
 		virtual YAML::Node save() const;
-		/// Saves the Target's unique-ID to YAML.
+		/// Saves the Target's identificator to YAML.
 		virtual YAML::Node saveIdentificator() const = 0;
 
 		/// Sets the Target's ID.

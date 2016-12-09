@@ -469,9 +469,11 @@ void PurchaseState::btnOkClick(Action*)
 {
 	_base->setRecallRow(RCL_PURCHASE, _lstItems->getScroll());
 
+	SavedGame* const playSave (_game->getSavedGame());
+
 	if (_costTotal != 0)
 	{
-		_game->getSavedGame()->setFunds(_game->getSavedGame()->getFunds() - _costTotal);
+		playSave->setFunds(playSave->getFunds() - static_cast<int64_t>(_costTotal));
 		_base->addCashSpent(_costTotal);
 	}
 
@@ -496,7 +498,7 @@ void PurchaseState::btnOkClick(Action*)
 					{
 						transfer = new Transfer(rules->getPersonnelTime());
 						Soldier* const sol (rules->genSoldier(
-															_game->getSavedGame(),
+															playSave,
 															_soldiers[sel]));
 						sol->getDiary()->awardHonorMedal();
 						transfer->setSoldier(sol);
@@ -522,14 +524,12 @@ void PurchaseState::btnOkClick(Action*)
 							i != _orderQty[sel];
 							++i)
 					{
-						RuleCraft* const crftRule (rules->getCraft(_crafts[getCraftIndex(sel)]));
-						transfer = new Transfer(crftRule->getTransferTime());
+						RuleCraft* const crRule (rules->getCraft(_crafts[getCraftIndex(sel)]));
+						transfer = new Transfer(crRule->getTransferTime());
 						Craft* const craft (new Craft(
-													crftRule,
+													crRule,
 													_base,
-													_game->getSavedGame(),
-													_game->getSavedGame()->getCanonicalId(_crafts[getCraftIndex(sel)])));
-						craft->setCraftStatus(CS_REFUELLING);
+													playSave));
 						transfer->setCraft(craft);
 						_base->getTransfers()->push_back(transfer);
 					}

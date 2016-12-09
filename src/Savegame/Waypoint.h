@@ -47,7 +47,7 @@ class Waypoint final
 		void load(const YAML::Node& node) override;
 		/// Saves the Waypoint to YAML.
 		YAML::Node save() const override;
-		/// Saves the Waypoint's unique-ID to YAML.
+		/// Saves the Waypoint's identificator to YAML.
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the Waypoint's label.

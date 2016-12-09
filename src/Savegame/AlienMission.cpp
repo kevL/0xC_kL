@@ -167,7 +167,7 @@ YAML::Node AlienMission::save() const
 }
 
 /**
- * Assigns a unique-ID to this AlienMission.
+ * Sets an ID for this AlienMission.
  * @note It is an error to assign two IDs to the same mission.
  * @param id - the ID to assign
  */
@@ -178,8 +178,8 @@ void AlienMission::setId(int id)
 }
 
 /**
- * Gets the unique-ID of this AlienMission.
- * @return, the unique-ID assigned to this mission
+ * Gets the ID of this AlienMission.
+ * @return, the ID assigned to this mission
  */
 int AlienMission::getId() const
 {

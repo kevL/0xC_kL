@@ -717,7 +717,7 @@ void DogfightState::advanceDogfight()
 
 	if (_stopDogfight == false										// This runs for Craft that *do not* get the KILL. uhhh
 		&& (_ufo != dynamic_cast<Ufo*>(_craft->getTarget())	// check if Craft's destination has changed
-			|| _craft->getLowFuel() == true							// check if Craft is low on fuel
+			|| _craft->isLowFuel() == true							// check if Craft is low on fuel
 			|| (_timeout == 0 && _ufo->isCrashed() == true)			// check if UFO has been shot down
 			|| _craft->inDogfight() == false))
 	{
@@ -886,7 +886,7 @@ void DogfightState::advanceDogfight()
 
 								if (_ufo->isCrashed() == true)
 								{
-									_ufo->setShotDownByCraftId(_craft->getUniqueId());
+									_ufo->setShotDownByCraftId(_craft->getIdentificator());
 									_ufo->setSpeed();
 									_craft->addKill();
 
@@ -1259,7 +1259,7 @@ void DogfightState::advanceDogfight()
 			{
 				_destroyUfo = true;
 
-				if (_ufo->getShotDownByCraftId() == _craft->getUniqueId())
+				if (_ufo->getShotDownByCraftId() == _craft->getIdentificator())
 				{
 					updateStatus("STR_UFO_DESTROYED");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE);
@@ -1267,7 +1267,7 @@ void DogfightState::advanceDogfight()
 					pts = _ufo->getRules()->getScore() << 1u;
 				}
 			}
-			else if (_ufo->getShotDownByCraftId() == _craft->getUniqueId()) // crashed.
+			else if (_ufo->getShotDownByCraftId() == _craft->getIdentificator()) // crashed.
 			{
 				updateStatus("STR_UFO_CRASH_LANDS");
 				_game->getResourcePack()->playSoundFx(ResourcePack::UFO_CRASH);
@@ -1294,7 +1294,7 @@ void DogfightState::advanceDogfight()
 			if (pts != 0)
 				_gameSave->scorePoints(lon,lat, pts, false);
 
-			if (_ufo->getShotDownByCraftId() != _craft->getUniqueId())
+			if (_ufo->getShotDownByCraftId() != _craft->getIdentificator())
 				_ufo->setHitFrame(3);
 			else
 			{

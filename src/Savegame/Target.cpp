@@ -97,7 +97,7 @@ YAML::Node Target::save() const // virtual.
 }
 
 /**
- * Sets this Target's unique-ID.
+ * Sets this Target's ID.
  * @param id - id
  */
 void Target::setId(int id)
@@ -106,7 +106,7 @@ void Target::setId(int id)
 }
 
 /**
- * Returns this Target's unique-ID.
+ * Gets this Target's ID.
  * @return, id
  */
 int Target::getId() const
@@ -124,7 +124,7 @@ double Target::getLongitude() const
 }
 
 /**
- * Changes the longitude coordinate of this Target.
+ * Sets the longitude coordinate of this Target.
  * @param lon - longitude in radians
  */
 void Target::setLongitude(double lon)
@@ -148,7 +148,7 @@ double Target::getLatitude() const
 }
 
 /**
- * Changes the latitude coordinate of this Target.
+ * Sets the latitude coordinate of this Target.
  * @param lat - latitude in radians
  */
 void Target::setLatitude(double lat)

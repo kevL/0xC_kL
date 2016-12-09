@@ -203,8 +203,8 @@ GeoscapeCraftState::GeoscapeCraftState(
 	const CraftStatus stat (_craft->getCraftStatus());
 	std::wstring status;
 	const bool
-		lowFuel (_craft->getLowFuel()),
-		missionComplete (_craft->getTacticalReturn());
+		lowFuel (_craft->isLowFuel()),
+		tacticalReturn (_craft->isTacticalReturn());
 	int speed (_craft->getSpeed());
 
 	// NOTE: Could add "DAMAGED - Return to Base" around here.
@@ -212,7 +212,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 		status = tr("STR_BASED");
 	else if (lowFuel == true)
 		status = tr("STR_LOW_FUEL_RETURNING_TO_BASE");
-	else if (missionComplete == true)
+	else if (tacticalReturn == true)
 		status = tr("STR_MISSION_COMPLETE_RETURNING_TO_BASE");
 	else if (_craft->getTarget() == dynamic_cast<Target*>(_craft->getBase()))
 		status = tr("STR_RETURNING_TO_BASE");
@@ -328,7 +328,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	// NOTE: These could be set above^ where status was set.
 	const bool occupied (lowFuel == true
-					  || missionComplete == true
+					  || tacticalReturn == true
 					  || _craft->hasLeftGround() == false);
 
 	if (stat != CS_OUT || occupied == true)
@@ -404,7 +404,6 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 
 	_craft->setTarget();
 	_geoState->setPaused();
-	_geoState->resetTimer();
 	_geoState->getGlobe()->clearCrosshair();
 	_game->popState();
 
@@ -510,7 +509,7 @@ void GeoscapeCraftState::transposeWindow() // private.
 	_btnRebase->setY(_btnRebase->getY() + dy);
 	_btnCancel->setY(_btnCancel->getY() + dy);
 
-	if (_geoState->getPaused() == false)
+	if (_geoState->isPaused() == false)
 		_btnCenter->setText(tr("STR_PAUSE"));
 	else
 	{

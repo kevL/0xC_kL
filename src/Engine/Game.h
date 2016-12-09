@@ -163,9 +163,9 @@ private:
 		void setDebugCycle(int cycle);
 
 		/// Gets a synthetic mouse-down Action.
-		static Action* getSynthMouseDown();
+		static Action* getFakeMouseActionD();
 		/// Gets a synthetic mouse-up Action.
-		static Action* getSynthMouseUp();
+		static Action* getFakeMouseActionU();
 };
 
 }

@@ -72,7 +72,16 @@ bool Transfer::load(
 		Base* const base,
 		const Ruleset* const rules)
 {
-	_hours = node["hours"].as<int>(_hours);
+	if (const YAML::Node& item = node["itemId"])
+	{
+		_itemId = item.as<std::string>(_itemId);
+		if (rules->getItemRule(_itemId) == nullptr)
+		{
+			Log(LOG_ERROR) << "Failed to load item " << _itemId;
+			delete this;
+			return false;
+		}
+	}
 
 	std::string type;
 
@@ -100,7 +109,8 @@ bool Transfer::load(
 			_craft = new Craft(
 							rules->getCraft(craft["type"].as<std::string>()),
 							base,
-							rules->getGame()->getSavedGame());
+							rules->getGame()->getSavedGame(),
+							true);
 			_craft->loadCraft(craft, rules);
 		}
 		else
@@ -111,17 +121,7 @@ bool Transfer::load(
 		}
 	}
 
-	if (const YAML::Node& item = node["itemId"])
-	{
-		_itemId = item.as<std::string>(_itemId);
-		if (rules->getItemRule(_itemId) == nullptr)
-		{
-			Log(LOG_ERROR) << "Failed to load item " << _itemId;
-			delete this;
-			return false;
-		}
-	}
-
+	_hours		= node["hours"]		.as<int>(_hours);
 	_itemQty	= node["itemQty"]	.as<int>(_itemQty);
 	_scientists	= node["scientists"].as<int>(_scientists);
 	_engineers	= node["engineers"]	.as<int>(_engineers);

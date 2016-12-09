@@ -213,7 +213,6 @@ void CraftPatrolState::btnCenterClick(Action*)
 	}
 
 	_geoState->setPaused();
-	_geoState->resetTimer();
 	_game->popState();
 }
 

@@ -321,7 +321,7 @@ private:
 		void setTime(const GameTime& gt);
 
 		/// Gets an ID to assign to a Target type.
-		int getCanonicalId(const std::string& targetType);
+		int getCanonicalId(const std::string& typeTarget);
 	 	/// Gets a list of all canonical-IDs.
 		const std::map<std::string, int>& getTargetIds() const;
 		/// Resets the list of object-IDs.
@@ -522,8 +522,8 @@ private:
 				bool isDelayed,
 				const Language* const lang) const;
 
-		/// Gets the Craft corresponding to a specified unique-ID.
-//		Craft* findCraftByUniqueId(const CraftId& craftId) const;
+		/// Gets the Craft corresponding to a specified identificator.
+//		Craft* getCraftByIdentificator(const CraftId& craftId) const;
 };
 
 }

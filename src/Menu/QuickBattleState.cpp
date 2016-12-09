@@ -81,7 +81,7 @@ QuickBattleState::QuickBattleState()
 	:
 		_craft(nullptr),
 		_base(nullptr),
-		_gameSave(nullptr),
+		_playSave(nullptr),
 		_rules(_game->getRuleset()),
 		_missionTypes(_game->getRuleset()->getDeploymentsList())
 {
@@ -260,7 +260,7 @@ void QuickBattleState::init()
  */
 void QuickBattleState::configLoad(const std::string& file)
 {
-	const std::string config (Options::getConfigFolder() + file + ".cfg");
+	const std::string& config (Options::getConfigFolder() + file + ".cfg");
 
 	if (CrossPlatform::fileExists(config) == false)
 		configCreate();
@@ -277,24 +277,23 @@ void QuickBattleState::configLoad(const std::string& file)
 
 			if (doc["base"])
 			{
-				_gameSave = new SavedGame(_rules);
-				_game->setSavedGame(_gameSave);
+				_playSave = new SavedGame(_rules);
+				_game->setSavedGame(_playSave);
 
-				_base = new Base(_rules, _gameSave);
+				_base = new Base(_rules, _playSave);
 				_base->loadBase(doc["base"]);
-				_gameSave->getBases()->push_back(_base);
+				_playSave->getBases()->push_back(_base);
 
-				if (_base->getCrafts()->empty() == true)
+				if (_base->getCrafts()->empty() == true) // NOTE: This had better just basically never happen.
 				{
-					const std::string craftType (_crafts[_cbxCraft->getSelected()]);
+					const std::string& craftType (_crafts[_cbxCraft->getSelected()]);
 					_craft = new Craft(
 									_rules->getCraft(craftType),
 									_base,
-									_gameSave,
-									_gameSave->getCanonicalId(craftType));
+									_playSave);
 					_base->getCrafts()->push_back(_craft);
 				}
-				else // fix potentially invalid contents
+				else // fix potentially invalid contents. Or this.
 				{
 					_craft = _base->getCrafts()->front();
 					for (std::map<std::string, int>::iterator
@@ -345,7 +344,7 @@ void QuickBattleState::configLoad(const std::string& file)
  */
 void QuickBattleState::configSave(const std::string& file)
 {
-	const std::string config (Options::getConfigFolder() + file + ".cfg");
+	const std::string& config (Options::getConfigFolder() + file + ".cfg");
 
 	std::ofstream ofstr (config.c_str());
 	if (ofstr.fail() == true)
@@ -379,17 +378,17 @@ void QuickBattleState::configCreate()
 {
 	RNG::setSeed();
 
-	_gameSave = new SavedGame(_rules);
-	_game->setSavedGame(_gameSave);
+	_playSave = new SavedGame(_rules);
+	_game->setSavedGame(_playSave);
 
-	_base = new Base(_rules, _gameSave);
+	_base = new Base(_rules, _playSave);
 
 	_base->loadBase(_rules->getStartBase());
-	_gameSave->getBases()->push_back(_base);
+	_playSave->getBases()->push_back(_base);
 	_base->setLabel(L"tactical");
 
-	for (std::vector<Craft*>::const_iterator // Clear and generate Craft.
-			i = _base->getCrafts()->begin();
+	for (std::vector<Craft*>::const_iterator	// Clear and generate Craft.
+			i = _base->getCrafts()->begin();	// NOTE: There's actually only ever 1 Craft at the quick-base.
 			i != _base->getCrafts()->end();
 			++i)
 	{
@@ -400,8 +399,7 @@ void QuickBattleState::configCreate()
 	_craft = new Craft(
 					_rules->getCraft(_crafts[_cbxCraft->getSelected()]),
 					_base,
-					_gameSave,
-					1);
+					_playSave);
 	_base->getCrafts()->push_back(_craft);
 
 	_base->setEngineers(0);
@@ -440,7 +438,7 @@ void QuickBattleState::resetSoldiers()
 			++i)
 	{
 		Soldier* const sol (_rules->genSoldier(
-											_gameSave,
+											_playSave,
 											_rules->getSoldiersList().at(RNG::pick(_rules->getSoldiersList().size()))));
 		_base->getSoldiers()->push_back(sol);
 
@@ -568,19 +566,19 @@ void QuickBattleState::resetBaseStores() const // private.
 void QuickBattleState::resetResearchGenerals() const // private.
 {
 	for (std::vector<ResearchGeneral*>::const_iterator
-			i = _gameSave->getResearchGenerals().begin();
-			i != _gameSave->getResearchGenerals().end();
+			i = _playSave->getResearchGenerals().begin();
+			i != _playSave->getResearchGenerals().end();
 			++i)
 	{
 		delete *i;
 	}
-	_gameSave->getResearchGenerals().clear();
+	_playSave->getResearchGenerals().clear();
 
 	for (std::vector<std::string>::const_iterator
 			i = _rules->getResearchList().begin();
 			i != _rules->getResearchList().end();
 			++i)
-		_gameSave->getResearchGenerals().push_back(new ResearchGeneral(
+		_playSave->getResearchGenerals().push_back(new ResearchGeneral(
 																	_rules->getResearch(*i),
 																	true));
 }
@@ -608,10 +606,10 @@ void QuickBattleState::btnOkClick(Action*)
 	else
 	{
 		SavedBattleGame* const battleSave (new SavedBattleGame(
-															_gameSave,
+															_playSave,
 															nullptr, // &_rules->getOperations(),
 															_rules));
-		_gameSave->setBattleSave(battleSave);
+		_playSave->setBattleSave(battleSave);
 		battleSave->setTacticalType(_missionTypes[_cbxMission->getSelected()]);
 
 		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
@@ -636,7 +634,7 @@ void QuickBattleState::btnOkClick(Action*)
 			_craft->setTarget(aBase);
 			bGen.setAlienBase(aBase);
 
-			_gameSave->getAlienBases()->push_back(aBase);
+			_playSave->getAlienBases()->push_back(aBase);
 		}
 		else if (_rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr)								// UFO CRASHED or LANDED
 		{
@@ -647,7 +645,7 @@ void QuickBattleState::btnOkClick(Action*)
 
 			Ufo* const ufo (new Ufo(
 								_rules->getUfo(_missionTypes[_cbxMission->getSelected()]),
-								_gameSave));
+								_playSave));
 			ufo->setQuickBattle();
 			ufo->setId(1);
 			_craft->setTarget(ufo);
@@ -664,7 +662,7 @@ void QuickBattleState::btnOkClick(Action*)
 				ufo->setUfoStatus(Ufo::CRASHED);
 			}
 
-			_gameSave->getUfos()->push_back(ufo);
+			_playSave->getUfos()->push_back(ufo);
 		}
 		else																										// TERROR SITE
 		{
@@ -684,10 +682,10 @@ void QuickBattleState::btnOkClick(Action*)
 			_craft->setTarget(terrorSite);
 
 			bGen.setTerrorSite(terrorSite);
-			_gameSave->getTerrorSites()->push_back(terrorSite);
+			_playSave->getTerrorSites()->push_back(terrorSite);
 		}
 
-		_gameSave->setDifficulty(static_cast<DifficultyLevel>(_cbxDifficulty->getSelected()));
+		_playSave->setDifficulty(static_cast<DifficultyLevel>(_cbxDifficulty->getSelected()));
 
 		bGen.setShade(_slrDarkness->getValue());
 		bGen.setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);

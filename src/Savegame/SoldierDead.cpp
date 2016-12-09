@@ -244,9 +244,9 @@ SoldierLook SoldierDead::getLook() const
 }
 
 /**
- * Gets this SoldierDead's unique-ID.
+ * Gets this SoldierDead's ID.
  * @note Each dead soldier can be identified by its ID (not it's label).
- * @return, unique-ID
+ * @return, the ID
  */
 int SoldierDead::getId() const
 {

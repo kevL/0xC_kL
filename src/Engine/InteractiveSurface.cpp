@@ -282,7 +282,7 @@ void InteractiveSurface::unpress(State* const state) // virtual.
 	if (_rodentState != 0u)
 	{
 		_rodentState = 0u;
-		mouseRelease(State::getGamePtr()->getSynthMouseUp(), state);
+		mouseRelease(State::getGamePtr()->getFakeMouseActionU(), state);
 	}
 }
 

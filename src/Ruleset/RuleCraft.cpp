@@ -123,9 +123,9 @@ void RuleCraft::load(
 
 /**
  * Gets the type-string of the Craft.
- * @return, the craft's type
+ * @return, reference to the craft's type
  */
-std::string RuleCraft::getType() const
+const std::string& RuleCraft::getType() const
 {
 	return _type;
 }

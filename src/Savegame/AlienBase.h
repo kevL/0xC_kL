@@ -62,7 +62,7 @@ private:
 		void load(const YAML::Node& node) override;
 		/// Saves the AlienBase to YAML.
 		YAML::Node save() const override;
-		/// Saves the AlienBase's unique-ID to YAML.
+		/// Saves the AlienBase's identificator to YAML.
 		YAML::Node saveIdentificator() const override;
 
 		/// Gets the AlienBase's label.
