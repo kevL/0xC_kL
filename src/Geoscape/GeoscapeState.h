@@ -186,7 +186,8 @@ private:
 				const std::string& alienType,
 				bool& gof,
 				bool& requested) const;
-	/// Starts a new dogfight.
+
+	/// Starts a new Dogfight.
 	void startDogfight();
 
 	/// Handle AlienMission generation.
@@ -214,6 +215,9 @@ private:
 		GeoscapeState();
 		/// Cleans up the Geoscape state.
 		~GeoscapeState();
+
+		/// Blit method - renders the state and dogfights.
+		void blit() override;
 
 		/// Handles keyboard-shortcuts.
 		void handle(Action* action) override;
@@ -302,9 +306,6 @@ private:
 		/// Handler for right-clicking the Zoom Out icon.
 //		void btnZoomOutRightClick(Action* action);
 
-		/// Blit method - renders the state and dogfights.
-		void blit() override; // OoO
-
 		/// Gets the Timer for dogfight zoom-ins.
 		Timer* getDfZoomInTimer() const;
 		/// Gets the Timer for dogfight zoom-outs.
@@ -319,9 +320,9 @@ private:
 		void setDfCCC(
 				double lon,
 				double lat);
-		/// Gets whether Dogfight zoom-out should ignore stored DF coordinates.
+		/// Checks if the Dogfight zoom-out should ignore stored DF-coordinates.
 		bool getDfCCC() const;
-		/// Gets the number of minimized dogfights.
+		/// Gets the quantity of minimized dogfights.
 		size_t getMinimizedDfCount() const;
 		/// Multi-dogfights logic handling.
 		void thinkDogfights();

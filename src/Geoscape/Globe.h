@@ -64,6 +64,15 @@ class Globe final
 {
 
 private:
+	/// This is shade conversion from 0..31 levels of geoscape to levels 0..15 of battlescape.
+	static constexpr int GLOBESHADE[32u]
+	{
+		0,  1,  1,  1,  2,  2,  2,  3,
+		3,  3,  4,  4,  4,  5,  5,  5,
+		6,  6,  6,  7,  7,  7,  8,  8,
+		9,  9, 10, 11, 12, 13, 14, 15
+	}; // terminator @ id-25
+
 	static const int NEAR_RADIUS = 25;
 
 	static const Uint8
@@ -113,13 +122,13 @@ private:
 	RuleGlobe* _globeRule;
 	SavedGame* _playSave;
 	Surface
-		* _countries,
-		* _crosshair,
-		* _markers,
-		* _radars;
+		* _srfLayerCountry,
+		* _srfLayerCrosshair,
+		* _srfLayerMarkers,
+		* _srfLayerRadars;
 	SurfaceSet
-		* _markerSet,
-		* _texture;
+		* _srtMarkers,
+		* _srtTextures;
 	Timer
 		* _timerBlink,
 		* _timerRot;
@@ -346,26 +355,26 @@ private:
 		void drawOcean();
 		/// Draws the land of the Globe.
 		void drawLand();
-		/// Draws the 3d bevel around the continents.
+		/// Draws the 3d-bevel around the continents.
 		void drawBevel();
-		/// Draws the shadow-terminator.
-		void drawShadow();
 		/// Draws the radar-ranges of the Globe.
 		void drawRadars();
 		/// Draws the flight-paths of the Globe.
-		void drawFlightPaths();
-		/// Draws the country-details of the Globe.
-		void drawDetail();
-		/// Gets the current debugType for Geoscape.
-		DebugTypeGlobe getDebugType() const;
+		void drawFlights();
+		/// Draws the shadow-terminator.
+		void drawTerminus();
 		/// Draws all the markers over the Globe.
 		void drawMarkers();
+		/// Draws the country-details of the Globe.
+		void drawDetail();
+
 		/// Sets the co-ordinates to draw a crosshair at.
 		void setCrosshair(
 				const double lon,
 				const double lat);
 		/// Hides the crosshair.
 		void clearCrosshair();
+
 		/// Blits the Globe onto another Surface.
 		void blit(const Surface* const srf) override;
 
@@ -379,6 +388,9 @@ private:
 		void mouseClick(Action* action, State* state) override;
 		/// Special handling for key presses.
 		void keyboardPress(Action* action, State* state) override;
+
+		/// Checks if drag-scroll is happening.
+		bool isDragScroll() const;
 
 		/// Gets the texture and shade of a Polygon at specified coordinates.
 		void getPolygonTextureAndShade(
@@ -403,6 +415,9 @@ private:
 		void setBuildBaseHoverPos(
 				double lon,
 				double lat);
+
+		/// Gets the current debugType for Geoscape.
+		DebugTypeGlobe getDebugType() const;
 
 		/// Updates the resolution settings due to resizing the window.
 		void resize();

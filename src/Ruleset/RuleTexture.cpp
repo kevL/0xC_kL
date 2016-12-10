@@ -73,19 +73,19 @@ const std::map<std::string, int>& RuleTexture::getTextureDeployments() const
 }
 
 /**
- * Calculates a random deployment type for a mission target based on this
- * RuleTexture's available deployment types.
+ * Calculates a random deployment-type for a mission-target based on this
+ * RuleTexture's available deployment-types.
  * @return, deployment type
  */
 std::string RuleTexture::getTextureDeployment() const
 {
-	Log(LOG_INFO) << "RuleTexture::getTextureDeployment()";
+	//Log(LOG_INFO) << "RuleTexture::getTextureDeployment()";
 	if (_deployTypes.empty() == false)
 	{
 		std::map<std::string, int>::const_iterator i (_deployTypes.begin());
 		if (_deployTypes.size() == 1u)
 		{
-			Log(LOG_INFO) << ". ret " << i->first;
+			//Log(LOG_INFO) << ". ret " << i->first;
 			return i->first;
 		}
 
@@ -97,7 +97,7 @@ std::string RuleTexture::getTextureDeployment() const
 		{
 			totalWeight += i->second;
 		}
-		Log(LOG_INFO) << ". total wt= " << totalWeight;
+		//Log(LOG_INFO) << ". total wt= " << totalWeight;
 
 		if (totalWeight != 0)
 		{
@@ -107,11 +107,11 @@ std::string RuleTexture::getTextureDeployment() const
 					i != _deployTypes.end();
 					++i)
 			{
-				Log(LOG_INFO) << ". deploy= " << i->first << " wt= " << i->second;
-				Log(LOG_INFO) << ". pick= " << pick;
+				//Log(LOG_INFO) << ". deploy= " << i->first << " wt= " << i->second;
+				//Log(LOG_INFO) << ". pick= " << pick;
 				if (pick < i->second)
 				{
-					Log(LOG_INFO) << ". . ret " << i->first;
+					//Log(LOG_INFO) << ". . ret " << i->first;
 					return i->first;
 				}
 				else
@@ -119,7 +119,7 @@ std::string RuleTexture::getTextureDeployment() const
 			}
 		}
 	}
-	Log(LOG_INFO) << ". ret EMPTY";
+	//Log(LOG_INFO) << ". ret EMPTY";
 	return "";
 }
 
@@ -131,7 +131,7 @@ std::string RuleTexture::getTextureDeployment() const
  */
 std::string RuleTexture::getTextureTerrain(const Target* const target) const
 {
-	Log(LOG_INFO) << "RuleTexture::getTextureTerrain(TARGET)";
+	//Log(LOG_INFO) << "RuleTexture::getTextureTerrain()";
 	double
 		lon,lat;
 	std::map<std::string, int> terrains;
@@ -142,7 +142,7 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 			i != _details.end();
 			++i)
 	{
-		Log(LOG_INFO) << ". terrainType " << i->type << " wt= " << i->weight;
+		//Log(LOG_INFO) << ". terrainType " << i->type << " wt= " << i->weight;
 		if (i->weight != 0)
 		{
 			bool insideArea (false);
@@ -162,14 +162,14 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 
 			if (insideArea == true || target == nullptr)
 			{
-				Log(LOG_INFO) << ". . eligible";
+				//Log(LOG_INFO) << ". . eligible";
 				terrains[i->type] = i->weight;
 				totalWeight += i->weight;
 			}
-			else Log(LOG_INFO) << ". . target outside assigned geographical area";
+			//else Log(LOG_INFO) << ". . target outside assigned geographical area";
 		}
 	}
-	Log(LOG_INFO) << ". total wt= " << totalWeight;
+	//Log(LOG_INFO) << ". total wt= " << totalWeight;
 
 	if (totalWeight != 0)
 	{
@@ -179,18 +179,18 @@ std::string RuleTexture::getTextureTerrain(const Target* const target) const
 				i != terrains.end();
 				++i)
 		{
-			Log(LOG_INFO) << ". terrain= " << i->first << " wt= " << i->second;
-			Log(LOG_INFO) << ". pick= " << pick;
+			//Log(LOG_INFO) << ". terrain= " << i->first << " wt= " << i->second;
+			//Log(LOG_INFO) << ". pick= " << pick;
 			if (pick < i->second)
 			{
-				Log(LOG_INFO) << ". . ret " << i->first;
+				//Log(LOG_INFO) << ". . ret " << i->first;
 				return i->first;
 			}
 			else
 				pick -= i->second;
 		}
 	}
-	Log(LOG_INFO) << ". ret EMPTY";
+	//Log(LOG_INFO) << ". ret EMPTY";
 	return "";
 }
 

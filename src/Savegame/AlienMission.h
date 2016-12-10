@@ -59,9 +59,9 @@ private:
 	bool _success;	// Prevents infiltration missions taking multiple success points
 					// and creating multiple bases on the final 2xBattleship wave.
 	int
+		_countdown,
 		_id,
 		_liveUfos,
-		_spawnTime,
 		_ufoCount;
 	size_t
 		_waveCount,
@@ -71,10 +71,12 @@ private:
 		_raceType,
 		_regionType;
 
-	const AlienBase* _aBase;
+	const AlienBase* _alienBase;
 	const RuleAlienMission& _missionRule;
 	SavedGame& _playSave;
 
+	/// Gets a standard wait.
+	int getStandardDelay() const;
 	/// Calculates time remaining until the next wave generates.
 	void initiateCountdown(size_t waveId);
 
@@ -154,11 +156,11 @@ private:
 		void setRace(const std::string& race)
 		{ _raceType = race; }
 
-		/// Gets the minutes until next wave spawns.
+		/// Gets the minutes until the next wave spawns.
 //		size_t getWaveCountdown() const
-//		{ return _spawnTime; }
-		/// Sets the minutes until next wave spawns.
-		void setCountdown(int minutes);
+//		{ return _countdown; }
+		/// Sets the minutes until the next wave spawns.
+		void resetCountdown();
 
 		/// Gets the wave of a UFO in the agenda of the AlienMission.
 		size_t getWaveCount()
@@ -190,7 +192,7 @@ private:
 		/// Gets the AlienBase for the AlienMission.
 		const AlienBase* getAlienBase() const;
 		/// Sets the AlienBase for the AlienMission.
-		void setAlienBase(const AlienBase* const aBase = nullptr);
+		void setAlienBase(const AlienBase* const alienBase = nullptr);
 
 		/// Handles a UFO lifting from the ground.
 		void ufoLifting(

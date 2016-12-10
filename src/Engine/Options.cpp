@@ -774,8 +774,11 @@ void createOptions()
 // GeoscapeState::GeoscapeState()
 //	- SDLK_SPACE, geoscape hard-pause
 //	- SDLK_d, enable debug mode
-//	- SDLK_c, cycle country lines
-//	- SDLK_a, delete living soldier-awards
+//	- SDLK_l, show country-lines
+//	- SDLK_c, cycle country-lines
+//	- SDLK_r, reload country-lines
+//	- SDLK_a, delete soldier-awards
+//	- SDLK_b, create soldier-awards
 
 #ifdef __MORPHOS__
 	_info.push_back(OptionInfo("FPS",			&FPS,			15, "STR_FPS_LIMIT",			"STR_GENERAL"));

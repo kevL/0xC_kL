@@ -63,6 +63,8 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 	_txtTitle	= new Text(300, 180, 10, 0);
 	_btnOk		= new TextButton(100, 16, 110, 180);
 
+	// TODO: Add a 'center'/'5-sec' button.
+
 	setInterface("alienBase");
 
 	add(_window,	"window",	"alienBase");

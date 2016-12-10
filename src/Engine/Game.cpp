@@ -73,7 +73,7 @@ Action
 Game::Game(const std::string& title)
 	:
 		_res(nullptr),
-		_gameSave(nullptr),
+		_playSave(nullptr),
 		_rules(nullptr),
 		_quit(false),
 		_init(true),
@@ -183,7 +183,7 @@ Game::~Game()
 	delete _cursor;
 	delete _lang;
 	delete _res;
-	delete _gameSave;
+	delete _playSave;
 	delete _rules;
 	delete _screen;
 	delete _fpsCounter;
@@ -389,36 +389,42 @@ void Game::run()
 									break;
 
 								default:
-									if (Options::debug == true
-										&& _gameSave != nullptr
-										&& _gameSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
-										&& _gameSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
+									if (   _playSave != nullptr
+										&& _playSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
+										&& _playSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
 									{
 										switch (key)
 										{
-											case SDLK_c: // <-- also handled in GeoscapeState::handle() where decisions are made about what info to show.
-												// "ctrl-c"			- increment to show next area's boundaries
-												// "ctrl-shift-c"	- decrement to show previous area's boundaries
-												// "ctrl-alt-c"		- toggles between show all areas' boundaries & show current area's boundaries (roughly)
-												if ((SDL_GetModState() & KMOD_ALT) != 0)
-													std::swap(_debugCycle, _debugCycle_b);
-												else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
-												{
-													switch (_debugCycle)
-													{
-														case -1:
-															_debugCycle_b = -1; // semi-convenient reset for Cycle_b .... hey, at least there *is* one.
-															break;
-														default:
-															--_debugCycle;
-													}
-												}
-												else
-													++_debugCycle;
+											case SDLK_l: // "ctrl-l" toggle country-lines
+												_playSave->toggleCountryLines();
 												break;
 
-											case SDLK_l: // "ctrl-l" reload country lines
-												if (_rules != nullptr)
+											case SDLK_c: // <-- also handled in GeoscapeState::handle() where decisions are made about what info to show.
+												if (_playSave->debugCountryLines() == true)
+												{
+													// "ctrl-c"			- increment to show next area's boundaries
+													// "ctrl-shift-c"	- decrement to show previous area's boundaries
+													// "ctrl-alt-c"		- toggles between show all areas' boundaries & show current area's boundaries (roughly)
+													if ((SDL_GetModState() & KMOD_ALT) != 0)
+														std::swap(_debugCycle, _debugCycle_b);
+													else if ((SDL_GetModState() & KMOD_SHIFT) != 0)
+													{
+														switch (_debugCycle)
+														{
+															case -1:
+																_debugCycle_b = -1; // semi-convenient reset for Cycle_b .... hey, at least there *is* one.
+																break;
+															default:
+																--_debugCycle;
+														}
+													}
+													else
+														++_debugCycle;
+												}
+												break;
+
+											case SDLK_r: // "ctrl-r" reload country lines
+												if (_playSave->debugCountryLines() == true && _rules != nullptr)
 													_rules->reloadCountryLines();
 										}
 									}
@@ -655,9 +661,9 @@ void Game::run()
 //												break;
 
 											default:
-												if (_gameSave != nullptr
-													&& _gameSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
-													&& _gameSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
+												if (   _playSave != nullptr
+													&& _playSave->getBattleSave() == nullptr	// TODO: Merge w/ GeoscapeState::handle() in Geoscape.
+													&& _playSave->getDebugGeo() == true)		// kL-> note: 'c' doubles as CreateInventoryTemplate (remarked @ InventoryState).
 												{
 													switch (key)
 													{
@@ -779,12 +785,12 @@ void Game::run()
 void Game::quit(bool force)
 {
 	if (force == false
-		&& _gameSave != nullptr // always save ironman
-		&& _gameSave->isIronman() == true
-		&& _gameSave->getLabel().empty() == false)
+		&& _playSave != nullptr // always save ironman
+		&& _playSave->isIronman() == true
+		&& _playSave->getLabel().empty() == false)
 	{
-		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_gameSave->getLabel())));
-		_gameSave->save(file + SavedGame::SAVE_EXT);
+		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_playSave->getLabel())));
+		_playSave->save(file + SavedGame::SAVE_EXT);
 	}
 	_quit = true;
 }
@@ -1177,12 +1183,12 @@ Ruleset* Game::getRuleset() const
 
 /**
  * Sets a SavedGame for this Game to use.
- * @param gameSave - pointer to the SavedGame (default nullptr)
+ * @param playSave - pointer to the SavedGame (default nullptr)
  */
-void Game::setSavedGame(SavedGame* const gameSave)
+void Game::setSavedGame(SavedGame* const playSave)
 {
-	delete _gameSave;
-	_gameSave = gameSave;
+	delete _playSave;
+	_playSave = playSave;
 }
 
 /**
@@ -1191,7 +1197,7 @@ void Game::setSavedGame(SavedGame* const gameSave)
  */
 SavedGame* Game::getSavedGame() const
 {
-	return _gameSave;
+	return _playSave;
 }
 
 /**

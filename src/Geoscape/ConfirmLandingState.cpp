@@ -79,7 +79,7 @@ ConfirmLandingState::ConfirmLandingState(
 		_terrainRule(nullptr)
 //		_city(nullptr)
 {
-	Log(LOG_INFO) << "Create ConfirmLandingState()";
+	//Log(LOG_INFO) << "Create ConfirmLandingState()";
 	// TODO: show Country & Region
 	// TODO: should do buttons: Patrol (isCancel already) or GeoscapeCraftState or Return to base.
 	_fullScreen = false;
@@ -151,7 +151,7 @@ ConfirmLandingState::ConfirmLandingState(
 						&& AreSame((*j)->getLatitude(),  lat))
 					{
 						city = true; //_city = *j;
-						Log(LOG_INFO) << ". . . city found = " << (*j)->getLabel();
+						//Log(LOG_INFO) << ". . . city found = " << (*j)->getLabel();
 					}
 				}
 			}
@@ -167,10 +167,10 @@ ConfirmLandingState::ConfirmLandingState(
 
 		if (terrainType.empty() == true) // Determine terrainType/RuleTerrain and store it.
 		{
-			Log(LOG_INFO) << ". determine Terrain";
+			//Log(LOG_INFO) << ". determine Terrain";
 			if (site != nullptr) // terrorSite
 			{
-				Log(LOG_INFO) << ". . terrorSite";
+				//Log(LOG_INFO) << ". . terrorSite";
 //				if (_city != nullptr) // terrorSite is at a City.
 				{
 					std::vector<std::string> terrainList;
@@ -202,14 +202,14 @@ ConfirmLandingState::ConfirmLandingState(
 					} */
 
 					// get a Terrain from RuleAlienDeployment first
-					Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleAlienDeployment";
+					//Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleAlienDeployment";
 					const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployed());
 					terrainList = ruleDeploy->getDeployTerrains();
 
 					// second, check for Terrains in Globe-Texture(INT) ...
 					if (terrainList.empty() == true)
 					{
-						Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleGlobe";
+						//Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleGlobe";
 						const RuleGlobe* const globeRule (_game->getRuleset()->getGlobe());
 //						const RuleTexture* const texRule = globeRule->getTextureRule(_city->getTextureId());
 						terrainList = globeRule->getGlobeTerrains(); //texRule->getTextureDeployments() -> now uses a weighted system ....
@@ -218,15 +218,15 @@ ConfirmLandingState::ConfirmLandingState(
 					if (terrainList.empty() == false) // SAFETY.
 					{
 						const size_t pick (RNG::pick(terrainList.size()));
-						Log(LOG_INFO) << ". . . . size = " << terrainList.size() << " pick = " << pick;
-						Log(LOG_INFO) << ". . . . terrain = " << terrainList.at(pick) << " - Not Weighted";
+						//Log(LOG_INFO) << ". . . . size = " << terrainList.size() << " pick = " << pick;
+						//Log(LOG_INFO) << ". . . . terrain = " << terrainList.at(pick) << " - Not Weighted";
 						_terrainRule = _game->getRuleset()->getTerrain(terrainList.at(pick));
 					}
 //					else fuck off. Thanks!
-					else Log(LOG_INFO) << ". . . . eligibleTerrain NOT Found. Must be Cydonia, Base assault/defense ...";
+					//else Log(LOG_INFO) << ". . . . eligibleTerrain NOT Found. Must be Cydonia, Base assault/defense ...";
 
 					terrainType = _terrainRule->getType();
-					Log(LOG_INFO) << ". . . using terrainType: " << terrainType;
+					//Log(LOG_INFO) << ". . . using terrainType: " << terrainType;
 				}
 //				else	// SAFETY: for terrorSite that's not at a City.
 						// This should be the same as for NOT City!!!
@@ -241,7 +241,7 @@ ConfirmLandingState::ConfirmLandingState(
 //				if (_city != nullptr) // UFO at a City (eg. Battleship on Infiltration trajectory)
 				if (city == true)
 				{
-					Log(LOG_INFO) << ". . UFO at City";
+					//Log(LOG_INFO) << ". . UFO at City";
 					// choose from texture(INT) #10, Urban w/ UFO types
 					// note that differences between tex -1 & tex -2 have not been implemented yet,
 					// so treat them both the same -> texture(INT) #10
@@ -263,7 +263,7 @@ ConfirmLandingState::ConfirmLandingState(
 				}
 				else // UFO not at City
 				{
-					Log(LOG_INFO) << ". . UFO not at City";
+					//Log(LOG_INFO) << ". . UFO not at City";
 //					terrainType = _texRule->getTextureTerrain(_craft->getTarget());
 					terrainType = texRule->getTextureTerrain(_craft->getTarget());
 //->				_terrainRule = selectTerrain(lat);
@@ -272,7 +272,7 @@ ConfirmLandingState::ConfirmLandingState(
 				ufo->setUfoTerrainType(terrainType);
 			}
 		}
-		Log(LOG_INFO) << ". chosen terrainType = " << terrainType;
+		//Log(LOG_INFO) << ". chosen terrainType = " << terrainType;
 
 		if (_terrainRule == nullptr) // '_terrainRule' can be set above^ if terrorSite <-
 			_terrainRule = _game->getRuleset()->getTerrain(terrainType);
@@ -282,7 +282,7 @@ ConfirmLandingState::ConfirmLandingState(
 	}
 	else // aLienBase assault (NOT defense nor Cydonia)
 	{
-		Log(LOG_INFO) << ". ufo/terrorsite NOT valid";
+		//Log(LOG_INFO) << ". ufo/terrorsite NOT valid";
 		_txtTexture->setVisible(false);
 		_txtShade->setVisible(false);
 	}

@@ -42,11 +42,11 @@ struct MissionWave
 {
 	std::string ufoType;	// The type of the spawned UFOs.
 	int ufoTotal;			// The number of UFOs that will be generated.
-							// The UFOs are generated sequentially, one every spawnTimer minutes.
+							// The UFOs are generated sequentially, one every waveTimer minutes.
 	std::string trajectory;	// The trajectory ID for this wave's UFOs.
 							// Trajectories control the way UFOs fly around the Geoscape.
-	int spawnTimer;			// Number of minutes between UFOs in the wave. Or seconds.
-							// The actual value used is (spawnTimer*1/4) or (spawnTimer*3/4.)
+	int waveTimer;			// Number of minutes between UFOs in the wave. Or seconds.
+							// The actual value used is (waveTimer*1/4) or (waveTimer*3/4.)
 	bool isObjective;		// This wave performs the mission-objective.
 							// The UFO executes a special action based on its MissionObjective.
 };
@@ -74,7 +74,7 @@ class RuleAlienMission
 private:
 	int
 		_score,				// The mission's points.
-		_retalCoef;			// Modifier for chance of retaliation.
+		_retalCoef;			// The modifier for chance of retaliation.
 	size_t _objectiveZone;	// The mission zone to use for spawning.
 	std::string
 		_terrorType,		// The type of mission-site to generate.
@@ -85,7 +85,7 @@ private:
 	std::vector<std::pair<size_t, WeightedOptions*>> _raceDistribution;	// The race distribution over game-time.
 	std::map<size_t, int> _weights;										// The mission's weights.
 
-	MissionObjective _objectiveType; // The mission's objective type.
+	MissionObjective _objectiveType; // The mission's objective-type.
 
 
 	public:
@@ -107,14 +107,15 @@ private:
 		const std::string& getType() const
 		{ return _type; }
 
+		/// Gets the MissionWaves.
+//		const std::vector<MissionWave>& getWaves() const
+//		{ return _waves; }
 		/// Gets the number of waves.
 		size_t getWaveTotal() const
 		{ return _waves.size(); }
 		/// Gets the full wave information.
 		const MissionWave& getWaveData(size_t id) const
 		{ return _waves[id]; }
-//		const std::vector<MissionWave>& getWaves() const // TEST
-//		{ return _waves; }
 
 		/// Gets the score of the AlienMission rule.
 		int getMissionScore() const

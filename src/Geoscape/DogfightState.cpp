@@ -1247,7 +1247,7 @@ void DogfightState::advanceDogfight()
 										*_game->getRuleset());
 						mission->setRace(_ufo->getAlienRace());
 
-						int countdown (mission->getRules().getWaveData(0u).spawnTimer / 30); // delay for first wave/scout
+						int countdown (mission->getRules().getWaveData(0u).waveTimer / 30); // delay for first wave/scout
 						countdown = (RNG::generate(0, countdown) + (countdown >> 1u)) * 30;
 						mission->start(countdown);
 

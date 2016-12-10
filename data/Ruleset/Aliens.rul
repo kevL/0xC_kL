@@ -1656,15 +1656,15 @@ alienMissions:
       - ufoType: STR_SMALL_SCOUT
         ufoTotal: 1
         trajectory: P0
-        spawnTimer: 9000
+        waveTimer: 9000
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 1
         trajectory: P2
-        spawnTimer: 7800
+        waveTimer: 7800
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 2
         trajectory: P4
-        spawnTimer: 9000
+        waveTimer: 9000
 
   - type: STR_ALIEN_HARVEST
     score: 30
@@ -1693,35 +1693,35 @@ alienMissions:
       - ufoType: STR_SMALL_SCOUT
         ufoTotal: 1
         trajectory: P0
-        spawnTimer: 7800
+        waveTimer: 7800
       - ufoType: STR_SMALL_SCOUT
         ufoTotal: 1
         trajectory: P2
-        spawnTimer: 7800
+        waveTimer: 7800
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 1
         trajectory: P2
-        spawnTimer: 6000
+        waveTimer: 6000
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 1
         trajectory: P0
-        spawnTimer: 7800
+        waveTimer: 7800
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 1
         trajectory: P3
-        spawnTimer: 9000
+        waveTimer: 9000
       - ufoType: STR_HARVESTER
         ufoTotal: 1
         trajectory: P4
-        spawnTimer: 3000
+        waveTimer: 3000
       - ufoType: STR_HARVESTER
         ufoTotal: 1
         trajectory: P4
-        spawnTimer: 750
+        waveTimer: 750
       - ufoType: STR_BATTLESHIP
         ufoTotal: 1
         trajectory: P2
-        spawnTimer: 1500
+        waveTimer: 1500
 
   - type: STR_ALIEN_ABDUCTION
     score: 50
@@ -1745,23 +1745,23 @@ alienMissions:
       - ufoType: STR_SMALL_SCOUT
         ufoTotal: 1
         trajectory: P0
-        spawnTimer: 15000
+        waveTimer: 15000
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 1
         trajectory: P1
-        spawnTimer: 18000
+        waveTimer: 18000
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 1
         trajectory: P3
-        spawnTimer: 9000
+        waveTimer: 9000
       - ufoType: STR_ABDUCTOR
         ufoTotal: 1
         trajectory: P3
-        spawnTimer: 9000
+        waveTimer: 9000
       - ufoType: STR_ABDUCTOR
         ufoTotal: 2
         trajectory: P4
-        spawnTimer: 60
+        waveTimer: 60
 
   - type: STR_ALIEN_INFILTRATION
     score: 100
@@ -1801,35 +1801,35 @@ alienMissions:
       - ufoType: STR_SMALL_SCOUT
         ufoTotal: 1
         trajectory: P0
-        spawnTimer: 16500
+        waveTimer: 16500
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 1
         trajectory: P1
-        spawnTimer: 15000
+        waveTimer: 15000
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 1
         trajectory: P6
-        spawnTimer: 13800
+        waveTimer: 13800
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 1
         trajectory: P7
-        spawnTimer: 9000
+        waveTimer: 9000
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 1
         trajectory: P7
-        spawnTimer: 60
+        waveTimer: 60
       - ufoType: STR_TERROR_SHIP
         ufoTotal: 1
         trajectory: P7
-        spawnTimer: 60
+        waveTimer: 60
       - ufoType: STR_SUPPLY_SHIP
         ufoTotal: 1
         trajectory: P7
-        spawnTimer: 60
+        waveTimer: 60
       - ufoType: STR_BATTLESHIP
         ufoTotal: 2
         trajectory: P7
-        spawnTimer: 60
+        waveTimer: 60
 
   - type: STR_ALIEN_BASE
     score: 300
@@ -1869,23 +1869,23 @@ alienMissions:
       - ufoType: STR_SMALL_SCOUT
         ufoTotal: 1
         trajectory: P1
-        spawnTimer: 13500
+        waveTimer: 13500
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 1
         trajectory: P5
-        spawnTimer: 15000
+        waveTimer: 15000
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 1
         trajectory: P5
-        spawnTimer: 60
+        waveTimer: 60
       - ufoType: STR_SUPPLY_SHIP
         ufoTotal: 2
         trajectory: P5
-        spawnTimer: 60
+        waveTimer: 60
       - ufoType: STR_BATTLESHIP
         ufoTotal: 1
         trajectory: P6
-        spawnTimer: 60
+        waveTimer: 60
 
   - type: STR_ALIEN_TERROR
     score: 200
@@ -1923,19 +1923,19 @@ alienMissions:
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 1
         trajectory: P1
-        spawnTimer: 15000
+        waveTimer: 15000
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 1
         trajectory: P1
-        spawnTimer: 9600
+        waveTimer: 9600
       - ufoType: STR_TERROR_SHIP
         ufoTotal: 1
         trajectory: P0
-        spawnTimer: 12000
+        waveTimer: 12000
       - ufoType: STR_TERROR_SHIP
         ufoTotal: 1
         trajectory: P7
-        spawnTimer: 9000
+        waveTimer: 9000
         isObjective: true
 
   - type: STR_ALIEN_RETALIATION
@@ -1954,19 +1954,19 @@ alienMissions:
       - ufoType: STR_SMALL_SCOUT
         ufoTotal: 1
         trajectory: P8
-        spawnTimer: 3000
+        waveTimer: 3000
       - ufoType: STR_MEDIUM_SCOUT
         ufoTotal: 2
         trajectory: P8
-        spawnTimer: 3000
+        waveTimer: 3000
       - ufoType: STR_LARGE_SCOUT
         ufoTotal: 3
         trajectory: P8
-        spawnTimer: 3000
+        waveTimer: 3000
       - ufoType: STR_BATTLESHIP
         ufoTotal: 2
         trajectory: P8
-        spawnTimer: 3000
+        waveTimer: 3000
 
   - type: STR_ALIEN_SUPPLY
     score: 25
@@ -1977,7 +1977,7 @@ alienMissions:
       - ufoType: STR_SUPPLY_SHIP
         ufoTotal: 1
         trajectory: P9
-        spawnTimer: 6000
+        waveTimer: 6000
         isObjective: true
 
 alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater

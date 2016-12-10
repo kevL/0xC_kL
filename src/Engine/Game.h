@@ -79,7 +79,7 @@ private:
 	Language*		_lang;
 	ResourcePack*	_res;
 	Ruleset*		_rules;
-	SavedGame*		_gameSave;
+	SavedGame*		_playSave;
 	Screen*			_screen;
 
 	std::list<State*>
@@ -146,7 +146,7 @@ private:
 		Ruleset* getRuleset() const;
 
 		/// Sets the SavedGame.
-		void setSavedGame(SavedGame* const gameSave = nullptr);
+		void setSavedGame(SavedGame* const playSave = nullptr);
 		/// Gets the currently loaded SavedGame.
 		SavedGame* getSavedGame() const;
 

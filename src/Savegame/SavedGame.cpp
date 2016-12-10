@@ -136,10 +136,11 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_dfLat(0.),
 		_dfZoom(0u),
 		_battleSave(nullptr),
-		_debugGeo(false),
 		_warnedFunds(false),
 		_monthsElapsed(-1),
-		_debugArgDone(false)
+		_debugGeo(false),
+		_debugArgDone(false),
+		_debugCountryLines(false)
 //		_detail(true),
 //		_radarLines(false),
 //		_selectedBase(0),
@@ -2334,6 +2335,23 @@ bool SavedGame::getDebugArgDone()
 		_debugArgDone = false;
 
 	return ret;
+}
+
+/**
+ * Toggles showing the country-lines in debugGeo.
+ */
+void SavedGame::toggleCountryLines()
+{
+	_debugCountryLines = !_debugCountryLines;
+}
+
+/**
+ * Checks if the country-lines should be drawn in debugGeo.
+ * @return, true to draw country-lines
+ */
+bool SavedGame::debugCountryLines()
+{
+	return _debugCountryLines;
 }
 
 /**

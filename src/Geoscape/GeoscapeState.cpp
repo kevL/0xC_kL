@@ -1100,6 +1100,8 @@ void GeoscapeState::fabricateDebugPretext() // private.
  */
 void GeoscapeState::init()
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "GeoscapeState::init()";
 	State::init();
 
 	_timeCache = 0;
@@ -1195,7 +1197,8 @@ void GeoscapeState::think()
 
 		if (_popups.empty() == false) // Handle popups
 		{
-//			_globe->rotateStop();
+			_globe->rotateStop();
+
 			_game->pushState(_popups.front());
 			_popups.erase(_popups.begin());
 		}
@@ -1493,7 +1496,7 @@ void GeoscapeState::time5Seconds()
 						const bool detected ((*i)->getDetected());
 
 						AlienMission* const mission ((*i)->getAlienMission());
-						mission->ufoReachedWaypoint(**i, *_rules, *_globe); // recomputes 'qtySites' & 'detected'; also sets UFO's disposition
+						mission->ufoReachedWaypoint(**i, *_rules, *_globe); // recalcs 'qtySites' & 'detected'; also sets UFO's disposition
 
 						if ((*i)->getAltitude() == MovingTarget::stAltitude[0u])
 						{
@@ -1538,7 +1541,7 @@ void GeoscapeState::time5Seconds()
 						{
 							resetTimer();
 
-							mission->setCountdown((RNG::generate(0,400) + 48) * 30);
+							mission->resetCountdown();
 							(*i)->setTarget();
 
 							if (base->setupBaseDefense() == true)
@@ -3187,6 +3190,7 @@ void GeoscapeState::doesAlienCrack( // private.
  */
 void GeoscapeState::time1Month()
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "GeoscapeState::time1Month()";
 	resetTimer();
 	_game->getResourcePack()->fadeMusic(_game, 1232);
@@ -3634,8 +3638,8 @@ void GeoscapeState::setDfCCC(
 }
 
 /**
- * Gets whether the zoom-out timer should ignore stored pre-Dogfight coordinates
- * and use current coordinates of the Dogfight instead.
+ * Checks if the zoom-out timer should ignore stored pre-Dogfight coordinates
+ * and use the current coordinates of the Dogfight instead.
  * @return, true if UFO is set to break off from its dogfight
  */
 bool GeoscapeState::getDfCCC() const
@@ -3644,8 +3648,8 @@ bool GeoscapeState::getDfCCC() const
 }
 
 /**
- * Gets the number of minimized dogfights.
- * @return, number of minimized dogfights
+ * Gets the quantity of minimized dogfights.
+ * @return, quantity of minimized dogfights
  */
 size_t GeoscapeState::getMinimizedDfCount() const
 {
@@ -3729,7 +3733,7 @@ void GeoscapeState::thinkDogfights()
 }
 
 /**
- * Starts a new dogfight.
+ * Starts a new Dogfight.
  */
 void GeoscapeState::startDogfight() // private.
 {
@@ -3763,8 +3767,8 @@ void GeoscapeState::startDogfight() // private.
 }
 
 /**
- * Updates total current interceptions quantity in all Dogfights and repositions
- * their view windows accordingly.
+ * Updates total current interceptions quantity for all Dogfights and
+ * repositions their view-ports accordingly.
  */
 void GeoscapeState::resetInterceptPorts()
 {
@@ -3855,7 +3859,10 @@ void GeoscapeState::baseDefenseTactical(
  */
 void GeoscapeState::deterAlienMissions() // private.
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "GeoscapeState::deterAlienMissions()";
 	const int elapsed (_gameSave->getMonthsElapsed());
+	//Log(LOG_INFO) << ". elapsed= " << elapsed;
 
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
 	std::vector<RuleMissionScript*> availableMissions;
@@ -3869,12 +3876,12 @@ void GeoscapeState::deterAlienMissions() // private.
 	{
 		directive = _rules->getMissionScript(*i);
 
-		if (directive->getFirstMonth() <= elapsed
-			&& (directive->getLastMonth() >= elapsed
-				|| directive->getLastMonth() == -1)
+		if (directive->getMinDifficulty() <= _gameSave->getDifficulty()
+			&&  directive->getFirstMonth() <= elapsed
+			&& (directive->getLastMonth() == -1
+				|| directive->getLastMonth() >= elapsed)
 			&& (directive->getMaxRuns() == -1
-				|| directive->getMaxRuns() > strategy.getMissionsRun(directive->getVarType()))
-			&& directive->getMinDifficulty() <= _gameSave->getDifficulty())
+				|| directive->getMaxRuns() > strategy.getMissionsRun(directive->getVarType())))
 		{
 			bool go (true);
 			for (std::map<std::string, bool>::const_iterator
@@ -3922,13 +3929,10 @@ void GeoscapeState::deterAlienMissions() // private.
 					j != availableMissions.end();
 					++j)
 			{
-				if (*j != *i
-					&& (*j)->getLabel() == (*i)->getLabel())
-				{
+				if (*j != *i && (*j)->getLabel() == (*i)->getLabel())
 					err << "["
 						<< (*j)->getType()
 						<< "]";
-				}
 			}
 			err << " are sharing the same label: ["
 				<< (*i)->getLabel()
@@ -3937,7 +3941,7 @@ void GeoscapeState::deterAlienMissions() // private.
 		}
 
 		if (process == true && RNG::percent((*i)->getExecutionOdds()) == true)
-			success = processDirective((*i));
+			success = processDirective(*i);
 
 		if ((*i)->getLabel() > 0)
 		{
@@ -3958,7 +3962,10 @@ void GeoscapeState::deterAlienMissions() // private.
  */
 bool GeoscapeState::processDirective(RuleMissionScript* const directive) // private.
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "GeoscapeState::processDirective()";
 	const size_t elapsed (static_cast<size_t>(_gameSave->getMonthsElapsed()));
+	//Log(LOG_INFO) << ". elapsed= " << elapsed;
 
 	AlienStrategy& strategy (_gameSave->getAlienStrategy());
 	const RuleAlienMission* missionRule;
@@ -4214,8 +4221,8 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	{
 		throw Exception("Error proccessing mission script named: "
 						+ directive->getType()
-						+ ", mission type: " + typeMission +
-						" is not defined");
+						+ ", mission-type " + typeMission
+						+ " is not defined");
 	}
 
 	if (directive->hasRaceWeights() == false)
@@ -4227,11 +4234,12 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	{
 		throw Exception("Error proccessing mission script named: "
 						+ directive->getType()
-						+ ", race: " + typeRace
+						+ ", race " + typeRace
 						+ " is not defined");
 	}
 
 
+	//Log(LOG_INFO) << ". create AlienMission type= " << missionRule->getType();
 	AlienMission* const mission (new AlienMission(
 												*missionRule,
 												*_gameSave));

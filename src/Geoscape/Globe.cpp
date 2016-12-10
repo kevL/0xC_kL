@@ -72,6 +72,8 @@ namespace OpenXcom
 
 bool kL_reCenter = false;
 
+constexpr int Globe::GLOBESHADE[32u];
+
 const double
 	Globe::ROTATE_LONGITUDE	= 0.176,
 	Globe::ROTATE_LATITUDE	= 0.176;
@@ -91,7 +93,7 @@ Uint8 // these are only fallbacks for Geography.rul->globe
 namespace
 {
 
-/// A helper struct for drawing the terminator and its shadow-fluxions (noise).
+/// A helper struct for drawing the terminator and its shadow-fluxions (surf/noise).
 struct Terminator
 {
 	/// array of shading gradient
@@ -321,9 +323,9 @@ Globe::Globe(
 		int y)
 	:
 		InteractiveSurface(
-			width,
-			height,
-			x,y),
+				width,
+				height,
+				x,y),
 		_game(game),
 		_playSave(game->getSavedGame()),
 		_globeRule(game->getRuleset()->getGlobe()),
@@ -352,17 +354,17 @@ Globe::Globe(
 		_crosshairLon(0.),
 		_crosshairLat(0.)
 {
-	_texture	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeTextures")); //"TEXTURE.DAT"
-	_markerSet	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
+	_srtTextures	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeTextures")); //"TEXTURE.DAT"
+	_srtMarkers		= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
 
-	_countries	= new Surface(width, height, x,y);
-	_crosshair	= new Surface(width, height, x,y);
-	_markers	= new Surface(width, height, x,y);
-	_radars		= new Surface(width, height, x,y);
+	_srfLayerCountry	= new Surface(width, height, x,y);
+	_srfLayerCrosshair	= new Surface(width, height, x,y);
+	_srfLayerMarkers	= new Surface(width, height, x,y);
+	_srfLayerRadars		= new Surface(width, height, x,y);
 
-	_clipper	= new FastLineClip(
-								x, x + width,
-								y, y + height);
+	_clipper = new FastLineClip(
+							x, x + width,
+							y, y + height);
 
 	_timerBlink = new Timer(200u);
 	_timerBlink->onTimer(static_cast<SurfaceHandler>(&Globe::blink));
@@ -397,14 +399,14 @@ Globe::Globe(
  */
 Globe::~Globe()
 {
-	delete _texture;
-	delete _markerSet;
+	delete _srtTextures;
+	delete _srtMarkers;
 	delete _timerBlink;
 	delete _timerRot;
-	delete _countries;
-	delete _crosshair;
-	delete _markers;
-	delete _radars;
+	delete _srfLayerCountry;
+	delete _srfLayerCrosshair;
+	delete _srfLayerMarkers;
+	delete _srfLayerRadars;
 	delete _clipper;
 
 	for (std::list<Polygon*>::const_iterator
@@ -685,19 +687,21 @@ void Globe::rotateDown()
 }
 
 /**
- * Resets the rotation speed and timer.
+ * Stops this Globe's rotation-speed and Timer.
+ * @note If a message-window displays while drag-scrolling '_dragScroll' needs
+ * to be cleared explicitly here.
  */
 void Globe::rotateStop()
 {
-	_rotLon =
-	_rotLat = 0.;
 	_timerRot->stop();
 
-	_dragScroll = false;	// NOTE: If a message-window displays while drag-scrolling
-}							// '_dragScroll' needs to be cleared manually here.
+	_rotLon =
+	_rotLat = 0.;
+	_dragScroll = false; // TODO: Perhaps an ActionHandler needs to be reset and/or the rodentState-buttons cleared.
+}
 
 /**
- * Resets longitude rotation speed and timer.
+ * Stops this Globe's longitudinal rotation-speed and Timer.
  */
 void Globe::rotateStopLon()
 {
@@ -707,7 +711,7 @@ void Globe::rotateStopLon()
 }
 
 /**
- * Resets latitude rotation speed and timer.
+ * Stops this Globe's latitudinal rotation-speed and Timer.
  */
 void Globe::rotateStopLat()
 {
@@ -772,11 +776,10 @@ void Globe::setupRadii( // private.
  */
 void Globe::setZoom(size_t level) // private.
 {
-	if (_dragScroll == true)
-		rotateStop();
+	rotateStop();
 
 //	_zoom = level;
-//	_texOffset = (2u - (_zoom >> 1u)) * (_texture->getTotalFrames() / 3u);
+//	_texOffset = (2u - (_zoom >> 1u)) * (_srtTextures->getTotalFrames() / 3u);
 
 	switch (_zoom = level)
 	{
@@ -1154,15 +1157,15 @@ void Globe::setPalette(
 {
 	Surface::setPalette(colors, firstcolor, ncolors);
 
-	_texture->setPalette(colors, firstcolor, ncolors);
-	_markerSet->setPalette(colors, firstcolor, ncolors);
-
-	_countries->setPalette(colors, firstcolor, ncolors);
-	_crosshair->setPalette(colors, firstcolor, ncolors);
-	_markers->setPalette(colors, firstcolor, ncolors);
-	_radars->setPalette(colors, firstcolor, ncolors);
-
 	_flightData->setPalette(getPalette());
+
+	_srtTextures	->setPalette(colors, firstcolor, ncolors);
+	_srtMarkers		->setPalette(colors, firstcolor, ncolors);
+
+	_srfLayerCountry	->setPalette(colors, firstcolor, ncolors);
+	_srfLayerCrosshair	->setPalette(colors, firstcolor, ncolors);
+	_srfLayerMarkers	->setPalette(colors, firstcolor, ncolors);
+	_srfLayerRadars		->setPalette(colors, firstcolor, ncolors);
 }
 
 /**
@@ -1192,8 +1195,8 @@ void Globe::blink()
 		_blinkVal = -_blinkVal; // can't use static because, reload.
 
 		for (std::map<int, Surface*>::const_iterator
-				i  = _markerSet->getFrames()->begin();
-				i != _markerSet->getFrames()->end();
+				i  = _srtMarkers->getFrames()->begin();
+				i != _srtMarkers->getFrames()->end();
 				++i)
 		{
 //			GLM_BASE		= 0
@@ -1249,8 +1252,8 @@ void Globe::draw()
 	drawLand();
 	drawBevel();
 	drawRadars();
-	drawFlightPaths();
-	drawShadow();
+	drawFlights();
+	drawTerminus();
 	drawMarkers();
 	drawDetail();
 
@@ -1296,7 +1299,7 @@ void Globe::drawLand()
 		drawTexturedPolygon( // Apply textures according to zoom-level.
 						x,y,
 						(*i)->getPoints(),
-						_texture->getFrame(static_cast<int>((*i)->getPolyTexture() + _texOffset)),
+						_srtTextures->getFrame(static_cast<int>((*i)->getPolyTexture() + _texOffset)),
 						0,0);
 	}
 }
@@ -1402,31 +1405,300 @@ Cord Globe::getSunDirection( // private.
 }
 
 /**
- * Shadows the earth and adds terminator-fluxions (noise) according to the
- * sun's direction.
+ * Draws the radar-circles of player's Bases and Craft on this Globe.
  */
-void Globe::drawShadow()
+void Globe::drawRadars()
 {
-	ShaderMove<Cord> earth (ShaderMove<Cord>(
-										_earthData[_zoom],
-										getWidth(),
-										getHeight()));
-	ShaderRepeat<Sint16> noise (ShaderRepeat<Sint16>(
-												_terminatorFluxions,
-												static_data.random_surf_size,
-												static_data.random_surf_size));
+	_srfLayerRadars->clear();
 
-	earth.setMove(
-			_cenX - (getWidth()  >> 1u),
-			_cenY - (getHeight() >> 1u));
+	_srfLayerRadars->lock();
+	if (_forceRadars == true // placing a Base.
+		&& Options::globeAllRadarsOnBaseBuild == true)
+	{
+		double range;
 
-	lock();
-	ShaderDraw<CreateTerminator>(
-							ShaderSurface(this),
-							earth,
-							ShaderScalar(getSunDirection(_cenLon, _cenLat)),
-							noise);
-	unlock();
+		const Ruleset* const rules (_game->getRuleset());
+
+		const std::vector<std::string>& allFacilities (rules->getBaseFacilitiesList());
+		for (std::vector<std::string>::const_iterator
+				i = allFacilities.begin();
+				i != allFacilities.end();
+				++i)
+		{
+			if ((range = static_cast<double>(rules->getBaseFacility(*i)->getRadarRange())) > 0.)
+			{
+				range *= unitToRads;
+				drawGlobeCircle(
+							_hoverLat,
+							_hoverLon,
+							range,
+							48);
+//							C_RADAR1);
+			}
+		}
+	}
+
+	if (_radarDetail > 0
+		&& Options::globeRadarLines == true)
+	{
+		double
+			lon,lat,
+			range,
+			rangeBest;
+
+		for (std::vector<Base*>::const_iterator
+				i = _playSave->getBases()->begin();
+				i != _playSave->getBases()->end();
+				++i)
+		{
+			if ((*i)->isBasePlaced() == true)
+			{
+				if (_radarDetail > 1)
+				{
+					rangeBest = 0.;
+					lat = (*i)->getLatitude();
+					lon = (*i)->getLongitude();
+
+					for (std::vector<BaseFacility*>::const_iterator
+							j = (*i)->getFacilities()->begin();
+							j != (*i)->getFacilities()->end();
+							++j)
+					{
+						if ((*j)->buildFinished() == true)
+						{
+							range = static_cast<double>((*j)->getRules()->getRadarRange());
+							if (_radarDetail > 2)
+							{
+								if (range > 0.)
+								{
+									range *= unitToRads;
+									drawGlobeCircle( // Base radars.
+												lat,lon,
+												range,
+												64);
+//												C_RADAR1);
+								}
+							}
+							else if (range > rangeBest)
+								rangeBest = range;
+						}
+					}
+
+					if (rangeBest > 0.)
+					{
+						rangeBest *= unitToRads;
+						drawGlobeCircle( // largest Base radar.
+									lat,lon,
+									rangeBest,
+									64);
+//									C_RADAR1)
+					}
+				}
+
+				for (std::vector<Craft*>::const_iterator
+						j = (*i)->getCrafts()->begin();
+						j != (*i)->getCrafts()->end();
+						++j)
+				{
+					if ((*j)->getCraftStatus() == CS_OUT
+						&& (*j)->hasLeftGround() == true)
+					{
+						if ((range = static_cast<double>((*j)->getRules()->getRangeRadar())) > 0.)
+						{
+							range *= unitToRads;
+							drawGlobeCircle( // Craft radars.
+										(*j)->getLatitude(),
+										(*j)->getLongitude(),
+										range,
+										48,
+										C_RADAR2);
+						}
+					}
+				}
+			}
+		}
+	}
+	_srfLayerRadars->unlock();
+}
+
+/**
+ * Draws a range circle.
+ * @param lat		-
+ * @param lon		-
+ * @param radius	-
+ * @param segments	-
+ * @param color		- (default 0)
+ */
+void Globe::drawGlobeCircle( // private.
+		double lat,
+		double lon,
+		double radius,
+		int segments,
+		Uint8 color)
+{
+	double
+		x,y,
+		x2 (0.),
+		y2 (0.),
+		lat1,
+		lon1;
+
+	for (double // 48 segments in circle
+			az = 0.;
+			az <= M_PI * 2. + 0.01;
+			az += M_PI * 2. / static_cast<double>(segments))
+	{
+		// calculating sphere-projected circle
+		lat1 = asin(std::sin(lat) * std::cos(radius) + std::cos(lat) * std::sin(radius) * std::cos(az));
+		lon1 = lon + std::atan2(
+						std::sin(az) * std::sin(radius) * std::cos(lat),
+						std::cos(radius) - std::sin(lat) * std::sin(lat1));
+		polarToCart(
+				lon1,lat1,
+				&x,&y);
+
+		if (AreSame(az, 0.)) // first vertex is for initialization only
+		{
+			x2 = x;
+			y2 = y;
+			continue;
+		}
+
+		if (pointBack(lon1,lat1) == false)
+			XuLine(
+				_srfLayerRadars,
+				this,
+				x,y,
+				x2,y2,
+				6,
+				color);
+
+		x2 = x;
+		y2 = y;
+	}
+}
+
+/**
+ * Draws the flight-paths of player's Craft flying around this Globe.
+ */
+void Globe::drawFlights()
+{
+	if (Options::globeFlightPaths == true)
+	{
+		_srfLayerRadars->lock();
+		for (std::vector<Base*>::const_iterator
+				i = _playSave->getBases()->begin();
+				i != _playSave->getBases()->end();
+				++i)
+		{
+			for (std::vector<Craft*>::const_iterator
+					j = (*i)->getCrafts()->begin();
+					j != (*i)->getCrafts()->end();
+					++j)
+			{
+				if ((*j)->getCraftStatus() == CS_OUT
+					&& (*j)->getTarget() != nullptr)
+				{
+					static const double MIN_Diff (0.005); // radians
+					const double
+						lon1 ((*j)->getLongitude()),
+						lat1 ((*j)->getLatitude()),
+						lon2 ((*j)->getTarget()->getLongitude()),
+						lat2 ((*j)->getTarget()->getLatitude()),
+						lon3 ((*j)->getMeetLongitude()),
+						lat3 ((*j)->getMeetLatitude());
+					drawPath(
+							_srfLayerRadars,
+							lon1,lat1,
+							lon2,lat2);
+
+					if (   std::fabs(lon3 - lon2) > MIN_Diff
+						|| std::fabs(lat3 - lat2) > MIN_Diff)
+					{
+						drawPath(
+								_srfLayerRadars,
+								lon1,lat1,
+								lon3,lat3);
+						drawInterceptMarker(lon3,lat3);
+					}
+				}
+			}
+		}
+		_srfLayerRadars->unlock();
+	}
+}
+
+/**
+ * Draws flight paths.
+ * @param surface	- pointer to a Surface
+ * @param lon1		-
+ * @param lat1		-
+ * @param lon2		-
+ * @param lat2		-
+ */
+void Globe::drawPath( // private.
+		Surface* surface,
+		double lon1,
+		double lat1,
+		double lon2,
+		double lat2)
+{
+	double
+		dist,
+		x1,y1,
+		x2,y2;
+	Sint16 qty;
+	CordPolar
+		p1,p2;
+	Cord
+		a (CordPolar(lon1, lat1)),
+		b (CordPolar(lon2, lat2));
+
+	if (-b == a)
+		return;
+
+	b -= a;
+
+	// longer paths have more parts
+	dist = b.norm();
+	dist *= dist * 15;
+
+	qty = static_cast<Sint16>(static_cast<int>(dist) + 1);
+	b /= qty;
+
+	p1 = CordPolar(a);
+	polarToCart(
+			p1.lon,
+			p1.lat,
+			&x1,&y1);
+	for (Sint16
+			i = 0;
+			i != qty;
+			++i)
+	{
+		a += b;
+		p2 = CordPolar(a);
+		polarToCart(
+				p2.lon,
+				p2.lat,
+				&x2,&y2);
+
+		if (   pointBack(p1.lon, p1.lat) == false
+			&& pointBack(p2.lon, p2.lat) == false)
+		{
+			XuLine(
+				surface,
+				this,
+				x1,y1,
+				x2,y2,
+				8,
+				C_FLIGHT);
+		}
+
+		p1 = p2;
+		x1 = x2;
+		y1 = y2;
+	}
 }
 
 /**
@@ -1542,199 +1814,546 @@ void Globe::XuLine( // private.
 }
 
 /**
- * Draws the radar-circles of player's Bases and Craft on this Globe.
+ * Places a marker at the end-point of player's Craft on an intercept-trajectory.
+ * @param lon - longitude to draw the marker at
+ * @param lat - latitude to draw the marker at
  */
-void Globe::drawRadars()
+void Globe::drawInterceptMarker( // private.
+		const double lon,
+		const double lat)
 {
-	_radars->clear();
-
-	_radars->lock();
-	if (_forceRadars == true // placing a Base.
-		&& Options::globeAllRadarsOnBaseBuild == true)
+	if (pointBack(lon,lat) == false)
 	{
-		double range;
+		Sint16
+			x,y;
+		polarToCart(
+				lon,lat,
+				&x,&y);
 
-		const Ruleset* const rules (_game->getRuleset());
+		Surface* const marker (_srtMarkers->getFrame(GLM_WAYPOINT));
+		marker->setX(x - 1);
+		marker->setY(y - 1);
+		marker->blit(_srfLayerMarkers);
+	}
+}
 
-		const std::vector<std::string>& allFacilities (rules->getBaseFacilitiesList());
-		for (std::vector<std::string>::const_iterator
-				i = allFacilities.begin();
-				i != allFacilities.end();
+/**
+ * Shadows the earth and adds terminator-fluxions (surf/noise) according to the
+ * sun's direction.
+ */
+void Globe::drawTerminus()
+{
+	ShaderMove<Cord> earth (ShaderMove<Cord>(
+										_earthData[_zoom],
+										getWidth(),
+										getHeight()));
+	ShaderRepeat<Sint16> noise (ShaderRepeat<Sint16>(
+												_terminatorFluxions,
+												static_data.random_surf_size,
+												static_data.random_surf_size));
+
+	earth.setMove(
+			_cenX - (getWidth()  >> 1u),
+			_cenY - (getHeight() >> 1u));
+
+	lock();
+	ShaderDraw<CreateTerminator>(
+							ShaderSurface(this),
+							earth,
+							ShaderScalar(getSunDirection(_cenLon, _cenLat)),
+							noise);
+	unlock();
+}
+
+/**
+ * Draws the markers of all the various things going on around the world except
+ * Cities - for which see drawDetail() above.
+ */
+void Globe::drawMarkers()
+{
+	_srfLayerMarkers->clear();
+
+	for (std::vector<Base*>::const_iterator			// Draw the Base markers
+			i = _playSave->getBases()->begin();
+			i != _playSave->getBases()->end();
+			++i)
+		drawTarget(*i, _srfLayerMarkers);
+
+	for (std::vector<Waypoint*>::const_iterator		// Draw the Waypoint markers
+			i = _playSave->getWaypoints()->begin();
+			i != _playSave->getWaypoints()->end();
+			++i)
+		drawTarget(*i, _srfLayerMarkers);
+
+	for (std::vector<TerrorSite*>::const_iterator	// Draw the TerrorSite markers
+			i = _playSave->getTerrorSites()->begin();
+			i != _playSave->getTerrorSites()->end();
+			++i)
+		drawTarget(*i, _srfLayerMarkers);
+
+	for (std::vector<AlienBase*>::const_iterator	// Draw the AlienBase markers
+			i = _playSave->getAlienBases()->begin();
+			i != _playSave->getAlienBases()->end();
+			++i)
+		drawTarget(*i, _srfLayerMarkers);
+
+	for (std::vector<Ufo*>::const_iterator			// Draw the Ufo markers
+			i = _playSave->getUfos()->begin();
+			i != _playSave->getUfos()->end();
+			++i)
+		drawTarget(*i, _srfLayerMarkers);
+
+	for (std::vector<Base*>::const_iterator			// Draw the Craft markers
+			i = _playSave->getBases()->begin();
+			i != _playSave->getBases()->end();
+			++i)
+		for (std::vector<Craft*>::const_iterator
+				j = (*i)->getCrafts()->begin();
+				j != (*i)->getCrafts()->end();
+				++j)
+			drawTarget(*j, _srfLayerMarkers);
+}
+
+/**
+ * Draws the marker for a specified Target on this Globe.
+ * @param target	- pointer to the target
+ * @param srfGlobe	- pointer to the globe's Surface
+ */
+void Globe::drawTarget( // private.
+		const Target* const target,
+		Surface* const srfGlobe)
+{
+	const int id (target->getMarker());
+	if (id != -1)
+	{
+		const double
+			lon (target->getLongitude()),
+			lat (target->getLatitude());
+
+		if (pointBack(lon,lat) == false)
+		{
+			Sint16
+				x,y;
+			polarToCart(
+					lon,lat,
+					&x,&y);
+
+			Surface* const marker (_srtMarkers->getFrame(id));
+			marker->setX(x - 1);
+			marker->setY(y - 1);
+			marker->blit(srfGlobe);
+
+			switch (id)
+			{
+				case Globe::GLM_CRAFT:
+				case Globe::GLM_UFO_FLYING:
+				{
+					unsigned data; // "headingInt[1 digit] - altitudeInt[1 digit] - 0 - speed[4 digits]"
+
+					const Craft* const craft (dynamic_cast<const Craft*>(target));
+					if (craft != nullptr)
+					{
+						_flightData->setY(y - 7);
+						_flightData->setColor(C_GREEN);
+
+						data  = craft->getHeadingInt()  * 1000000u;
+						data += craft->getAltitudeInt() * 100000u;
+						data += static_cast<unsigned>(craft->getSpeed());
+					}
+					else //if (ufo != nullptr)
+					{
+						const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
+
+						_flightData->setY(y + 4);
+						_flightData->setColor(C_RED);
+
+						data  = ufo->getHeadingInt()  * 1000000u;
+						data += ufo->getAltitudeInt() * 100000u;
+						data += static_cast<unsigned>(ufo->getSpeed());
+					}
+
+					_flightData->setX(x);
+					_flightData->setValue(data);
+					_flightData->draw();
+					_flightData->blit(srfGlobe);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Draws the details of the countries on this Globe based on the current
+ * zoom-level.
+ */
+void Globe::drawDetail()
+{
+	_srfLayerCountry->clear();
+
+	double
+		lon,lat;
+
+	if (Options::globeDetail == true // draw the Country borders
+		&& _zoom > 0u)
+	{
+		double
+			lon1,lat1;
+		Sint16
+			x[2u],y[2u];
+
+		_srfLayerCountry->lock();
+		for (std::list<Polyline*>::const_iterator
+				i = _globeRule->getPolylines()->begin();
+				i != _globeRule->getPolylines()->end();
 				++i)
 		{
-			if ((range = static_cast<double>(rules->getBaseFacility(*i)->getRadarRange())) > 0.)
+			for (size_t
+					j = 0u;
+					j != (*i)->getPoints() - 1u;
+					++j)
 			{
-				range *= unitToRads;
-				drawGlobeCircle(
-							_hoverLat,
-							_hoverLon,
-							range,
-							48);
-//							C_RADAR1);
+				lon = (*i)->getLongitude(j),
+				lat = (*i)->getLatitude(j);
+				lon1 = (*i)->getLongitude(j + 1u),
+				lat1 = (*i)->getLatitude(j + 1u);
+
+				if (pointBack(lon,lat) == false
+					&& pointBack(lon1,lat1) == false)
+				{
+					polarToCart(
+							lon,lat,
+							&x[0u],&y[0u]);
+					polarToCart(
+							lon1,lat1,
+							&x[1u],&y[1u]);
+
+					_srfLayerCountry->drawLine(
+											x[0u],y[0u],
+											x[1u],y[1u],
+											C_LINE);
+				}
+			}
+		}
+		_srfLayerCountry->unlock();
+	}
+
+	Sint16
+		x,y;
+
+	if (_zoom > 1u) // draw the City markers
+	{
+		RuleRegion* regionRule;
+		for (std::vector<Region*>::const_iterator
+				i = _playSave->getRegions()->begin();
+				i != _playSave->getRegions()->end();
+				++i)
+		{
+			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
+			for (std::vector<RuleCity*>::const_iterator
+					j = regionRule->getCities().begin();
+					j != regionRule->getCities().end();
+					++j)
+			{
+				drawTarget(*j, _srfLayerCountry);
 			}
 		}
 	}
 
-	if (_radarDetail > 0
-		&& Options::globeRadarLines == true)
+	if (Options::globeDetail == true)
 	{
-		double
-			lon,lat,
-			range,
-			rangeBest;
+		Text* const label (new Text(100,9));
+
+		label->setPalette(getPalette());
+		label->initText(
+					_game->getResourcePack()->getFont("FONT_BIG"),
+					_game->getResourcePack()->getFont("FONT_SMALL"),
+					_game->getLanguage());
+		label->setAlign(ALIGN_CENTER);
+
+		if (_zoom > 2u)
+		{
+			label->setColor(C_LBLCOUNTRY); // draw the Country labels
+
+			for (std::vector<Country*>::const_iterator
+					i = _playSave->getCountries()->begin();
+					i != _playSave->getCountries()->end();
+					++i)
+			{
+				lon = (*i)->getRules()->getLabelLongitude(),
+				lat = (*i)->getRules()->getLabelLatitude();
+
+				if (pointBack(lon,lat) == false)
+				{
+					polarToCart(
+							lon,lat,
+							&x,&y);
+
+					label->setX(x - 50);
+					label->setY(y);
+					label->setText(_game->getLanguage()->getString((*i)->getRules()->getType()));
+
+					label->blit(_srfLayerCountry);
+				}
+			}
+		}
+
+		label->setColor(C_LBLCITY); // draw the City labels
+		int offset_y;
+
+		RuleRegion* regionRule;
+		for (std::vector<Region*>::const_iterator
+				i = _playSave->getRegions()->begin();
+				i != _playSave->getRegions()->end();
+				++i)
+		{
+			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
+			for (std::vector<RuleCity*>::const_iterator
+					j = regionRule->getCities().begin();
+					j != regionRule->getCities().end();
+					++j)
+			{
+				lon = (*j)->getLongitude(),
+				lat = (*j)->getLatitude();
+
+				if (pointBack(lon,lat) == false)
+				{
+					if (_zoom >= (*j)->getZoomLevel())
+					{
+						polarToCart(
+								lon,lat,
+								&x,&y);
+
+						if ((*j)->isLabelTop() == true)
+							offset_y = -10;
+						else
+							offset_y = 2;
+
+						label->setX(x - 50);
+						label->setY(y + offset_y);
+						label->setText((*j)->getLabel(_game->getLanguage()));
+
+						label->blit(_srfLayerCountry);
+					}
+				}
+			}
+		}
+
+		label->setColor(C_LBLBASE); // draw xCom Base labels
+		label->setAlign(ALIGN_LEFT);
 
 		for (std::vector<Base*>::const_iterator
 				i = _playSave->getBases()->begin();
 				i != _playSave->getBases()->end();
 				++i)
 		{
-			if ((*i)->isBasePlaced() == true)
+			if ((*i)->getMarker() != -1) // base is placed.
 			{
-				if (_radarDetail > 1)
+				lon = (*i)->getLongitude(),
+				lat = (*i)->getLatitude();
+
+				if (pointBack(lon,lat) == false)
 				{
-					rangeBest = 0.;
-					lat = (*i)->getLatitude();
-					lon = (*i)->getLongitude();
+					polarToCart(
+							lon,lat,
+							&x,&y);
 
-					for (std::vector<BaseFacility*>::const_iterator
-							j = (*i)->getFacilities()->begin();
-							j != (*i)->getFacilities()->end();
-							++j)
-					{
-						if ((*j)->buildFinished() == true)
-						{
-							range = static_cast<double>((*j)->getRules()->getRadarRange());
-							if (_radarDetail > 2)
-							{
-								if (range > 0.)
-								{
-									range *= unitToRads;
-									drawGlobeCircle( // Base radars.
-												lat,lon,
-												range,
-												64);
-//												C_RADAR1);
-								}
-							}
-							else if (range > rangeBest)
-								rangeBest = range;
-						}
-					}
+					label->setX(x - 3);
+					label->setY(y - 10);
+					label->setText((*i)->getLabel());
 
-					if (rangeBest > 0.)
-					{
-						rangeBest *= unitToRads;
-						drawGlobeCircle( // largest Base radar.
-									lat,lon,
-									rangeBest,
-									64);
-//									C_RADAR1)
-					}
-				}
-
-				for (std::vector<Craft*>::const_iterator
-						j = (*i)->getCrafts()->begin();
-						j != (*i)->getCrafts()->end();
-						++j)
-				{
-					if ((*j)->getCraftStatus() == CS_OUT
-						&& (*j)->hasLeftGround() == true)
-					{
-						if ((range = static_cast<double>((*j)->getRules()->getRangeRadar())) > 0.)
-						{
-							range *= unitToRads;
-							drawGlobeCircle( // Craft radars.
-										(*j)->getLatitude(),
-										(*j)->getLongitude(),
-										range,
-										48,
-										C_RADAR2);
-						}
-					}
+					label->blit(_srfLayerCountry);
 				}
 			}
 		}
+		delete label;
 	}
-	_radars->unlock();
-}
 
-/**
- * Draws a range circle.
- * @param lat		-
- * @param lon		-
- * @param radius	-
- * @param segments	-
- * @param color		- (default 0)
- */
-void Globe::drawGlobeCircle( // private.
-		double lat,
-		double lon,
-		double radius,
-		int segments,
-		Uint8 color)
-{
-	double
-		x,y,
-		x2 (0.),
-		y2 (0.),
-		lat1,
-		lon1;
 
-	for (double // 48 segments in circle
-			az = 0.;
-			az <= M_PI * 2. + 0.01;
-			az += M_PI * 2. / static_cast<double>(segments))
+	// Debug stuff follows ...
+	static bool readyLinetypeSwitch (false);
+
+	if (_playSave->debugCountryLines() == true)
 	{
-		// calculating sphere-projected circle
-		lat1 = asin(std::sin(lat) * std::cos(radius) + std::cos(lat) * std::sin(radius) * std::cos(az));
-		lon1 = lon + std::atan2(
-						std::sin(az) * std::sin(radius) * std::cos(lat),
-						std::cos(radius) - std::sin(lat) * std::sin(lat1));
-		polarToCart(
-				lon1,lat1,
-				&x,&y);
+		readyLinetypeSwitch = true;
+		int
+			cycle (_game->getDebugCycle()),
+			area  (0),
+			color (0);
 
-		if (AreSame(az, 0.)) // first vertex is for initialization only
+		switch (_debugType)
 		{
-			x2 = x;
-			y2 = y;
-			continue;
+			case DTG_COUNTRY:
+			{
+				if (cycle >= static_cast<int>(_playSave->getCountries()->size()))
+					_game->setDebugCycle(cycle = -1);
+
+				for (std::vector<Country*>::const_iterator
+						i = _playSave->getCountries()->begin();
+						i != _playSave->getCountries()->end();
+						++i, ++area)
+				{
+					if (cycle == area || cycle == -1)
+					{
+						color += 10;
+						for (size_t
+								j = 0u;
+								j != (*i)->getRules()->getLonMin().size();
+								++j)
+						{
+							const RuleCountry* const countryRule ((*i)->getRules());
+							const double
+								lon1 (countryRule->getLonMin().at(j)),
+								lon2 (countryRule->getLonMax().at(j)),
+								lat1 (countryRule->getLatMin().at(j)),
+								lat2 (countryRule->getLatMax().at(j));
+
+							drawVHLine(_srfLayerCountry, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerCountry, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerCountry, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerCountry, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+						}
+					}
+
+					if (area == cycle)
+					{
+						if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							_playSave->setDebugArg((*i)->getType());
+						break;
+					}
+					else
+						_playSave->setDebugArg("");
+				}
+				break;
+			}
+
+			case DTG_REGION:
+			{
+				if (cycle >= static_cast<int>(_playSave->getRegions()->size()))
+					_game->setDebugCycle(cycle = -1);
+
+				for (std::vector<Region*>::const_iterator
+						i = _playSave->getRegions()->begin();
+						i != _playSave->getRegions()->end();
+						++i, ++area)
+				{
+					if (cycle == area || cycle == -1)
+					{
+						color += 10;
+						for (size_t
+								j = 0u;
+								j != (*i)->getRules()->getLatMax().size();
+								++j)
+						{
+							const RuleRegion* const regionRule ((*i)->getRules());
+							const double
+								lon1 (regionRule->getLonMin().at(j)),
+								lon2 (regionRule->getLonMax().at(j)),
+								lat1 (regionRule->getLatMin().at(j)),
+								lat2 (regionRule->getLatMax().at(j));
+
+							drawVHLine(_srfLayerCountry, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerCountry, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerCountry, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerCountry, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+						}
+					}
+
+					if (area == cycle)
+					{
+						if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							_playSave->setDebugArg((*i)->getType());
+						break;
+					}
+					else
+						_playSave->setDebugArg("");
+				}
+				break;
+			}
+
+			case DTG_ZONE:
+			{
+				int limit (0);
+				for (std::vector<Region*>::const_iterator
+						i = _playSave->getRegions()->begin();
+						i != _playSave->getRegions()->end();
+						++i)
+				{
+					for (std::vector<MissionZone>::const_iterator
+							j = (*i)->getRules()->getMissionZones().begin();
+							j != (*i)->getRules()->getMissionZones().end();
+							++j)
+					{
+						++limit;
+					}
+				}
+
+				if (cycle >= limit)
+					_game->setDebugCycle(cycle = -1);
+
+				for (std::vector<Region*>::const_iterator
+						i = _playSave->getRegions()->begin();
+						i != _playSave->getRegions()->end();
+						++i)
+				{
+					color = -1;
+					int zoneType (0);
+					for (std::vector<MissionZone>::const_iterator
+							j = (*i)->getRules()->getMissionZones().begin();
+							j != (*i)->getRules()->getMissionZones().end();
+							++j, ++area, ++zoneType)
+					{
+						if (cycle == area || cycle == -1)
+						{
+							color += 2;
+							for (std::vector<MissionArea>::const_iterator
+									k = j->areas.begin();
+									k != j->areas.end();
+									++k)
+							{
+								const double
+									lon1 (k->lonMin), // * M_PI / 180.,
+									lon2 (k->lonMax), // * M_PI / 180.,
+									lat1 (k->latMin), // * M_PI / 180.,
+									lat2 (k->latMax); // * M_PI / 180.;
+
+								drawVHLine(_srfLayerCountry, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+								drawVHLine(_srfLayerCountry, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+								drawVHLine(_srfLayerCountry, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+								drawVHLine(_srfLayerCountry, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+							}
+						}
+
+						if (area == cycle)
+						{
+							if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							{
+								std::ostringstream oststr;
+								oststr << (*i)->getType() << " [" << zoneType << "]";
+								_playSave->setDebugArg(oststr.str());
+							}
+							break;
+						}
+						else
+							_playSave->setDebugArg("");
+					}
+
+					if (area == cycle)
+						break;
+				}
+			}
 		}
-
-		if (pointBack(lon1,lat1) == false)
-			XuLine(
-				_radars,
-				this,
-				x,y,
-				x2,y2,
-				6,
-				color);
-
-		x2 = x;
-		y2 = y;
+		// TODO: blit & flip so the Globe doesn't have to be jiggled to show the lines.
 	}
-}
-
-/**
- * Sets the state of build-base hover.
- * @param hover - true if hover (default true)
- */
-void Globe::setBuildBaseRadars(bool hover)
-{
-	_forceRadars = hover;
-}
-
-/**
- * Sets the build-base hover coordinates.
- * @param lon - the longitude
- * @param lat - the latitude
- */
-void Globe::setBuildBaseHoverPos(
-		double lon,
-		double lat)
-{
-	_hoverLon = lon;
-	_hoverLat = lat;
+	else if (readyLinetypeSwitch == true) // effectively toggles debugMode.
+	{
+		readyLinetypeSwitch = false;
+		switch (_debugType)
+		{
+			case DTG_COUNTRY:	_debugType = DTG_REGION;	break;
+			case DTG_REGION:	_debugType = DTG_ZONE;		break;
+			case DTG_ZONE:		_debugType = DTG_COUNTRY;
+		}
+	}
 }
 
 /**
@@ -1809,656 +2428,12 @@ void Globe::drawVHLine( // private.
 }
 
 /**
- * Draws the details of the countries on this Globe based on the current
- * zoom-level.
- */
-void Globe::drawDetail()
-{
-	_countries->clear();
-
-	double
-		lon,lat;
-
-	if (Options::globeDetail == true // draw the Country borders
-		&& _zoom > 0u)
-	{
-		double
-			lon1,lat1;
-		Sint16
-			x[2u],y[2u];
-
-		_countries->lock();
-		for (std::list<Polyline*>::const_iterator
-				i = _globeRule->getPolylines()->begin();
-				i != _globeRule->getPolylines()->end();
-				++i)
-		{
-			for (size_t
-					j = 0u;
-					j != (*i)->getPoints() - 1u;
-					++j)
-			{
-				lon = (*i)->getLongitude(j),
-				lat = (*i)->getLatitude(j);
-				lon1 = (*i)->getLongitude(j + 1u),
-				lat1 = (*i)->getLatitude(j + 1u);
-
-				if (pointBack(lon,lat) == false
-					&& pointBack(lon1,lat1) == false)
-				{
-					polarToCart(
-							lon,lat,
-							&x[0u],&y[0u]);
-					polarToCart(
-							lon1,lat1,
-							&x[1u],&y[1u]);
-
-					_countries->drawLine(
-									x[0u],y[0u],
-									x[1u],y[1u],
-									C_LINE);
-				}
-			}
-		}
-		_countries->unlock();
-	}
-
-	Sint16
-		x,y;
-
-	if (_zoom > 1u) // draw the City markers
-	{
-		RuleRegion* regionRule;
-		for (std::vector<Region*>::const_iterator
-				i = _playSave->getRegions()->begin();
-				i != _playSave->getRegions()->end();
-				++i)
-		{
-			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
-			for (std::vector<RuleCity*>::const_iterator
-					j = regionRule->getCities().begin();
-					j != regionRule->getCities().end();
-					++j)
-			{
-				drawTarget(*j, _countries);
-			}
-		}
-	}
-
-	if (Options::globeDetail == true)
-	{
-		Text* const label (new Text(100,9));
-
-		label->setPalette(getPalette());
-		label->initText(
-					_game->getResourcePack()->getFont("FONT_BIG"),
-					_game->getResourcePack()->getFont("FONT_SMALL"),
-					_game->getLanguage());
-		label->setAlign(ALIGN_CENTER);
-
-		if (_zoom > 2u)
-		{
-			label->setColor(C_LBLCOUNTRY); // draw the Country labels
-
-			for (std::vector<Country*>::const_iterator
-					i = _playSave->getCountries()->begin();
-					i != _playSave->getCountries()->end();
-					++i)
-			{
-				lon = (*i)->getRules()->getLabelLongitude(),
-				lat = (*i)->getRules()->getLabelLatitude();
-
-				if (pointBack(lon,lat) == false)
-				{
-					polarToCart(
-							lon,lat,
-							&x,&y);
-
-					label->setX(x - 50);
-					label->setY(y);
-					label->setText(_game->getLanguage()->getString((*i)->getRules()->getType()));
-
-					label->blit(_countries);
-				}
-			}
-		}
-
-		label->setColor(C_LBLCITY); // draw the City labels
-		int offset_y;
-
-		RuleRegion* regionRule;
-		for (std::vector<Region*>::const_iterator
-				i = _playSave->getRegions()->begin();
-				i != _playSave->getRegions()->end();
-				++i)
-		{
-			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
-			for (std::vector<RuleCity*>::const_iterator
-					j = regionRule->getCities().begin();
-					j != regionRule->getCities().end();
-					++j)
-			{
-				lon = (*j)->getLongitude(),
-				lat = (*j)->getLatitude();
-
-				if (pointBack(lon,lat) == false)
-				{
-					if (_zoom >= (*j)->getZoomLevel())
-					{
-						polarToCart(
-								lon,lat,
-								&x,&y);
-
-						if ((*j)->isLabelTop() == true)
-							offset_y = -10;
-						else
-							offset_y = 2;
-
-						label->setX(x - 50);
-						label->setY(y + offset_y);
-						label->setText((*j)->getLabel(_game->getLanguage()));
-
-						label->blit(_countries);
-					}
-				}
-			}
-		}
-
-		label->setColor(C_LBLBASE); // draw xCom Base labels
-		label->setAlign(ALIGN_LEFT);
-
-		for (std::vector<Base*>::const_iterator
-				i = _playSave->getBases()->begin();
-				i != _playSave->getBases()->end();
-				++i)
-		{
-			if ((*i)->getMarker() != -1) // base is placed.
-			{
-				lon = (*i)->getLongitude(),
-				lat = (*i)->getLatitude();
-
-				if (pointBack(lon,lat) == false)
-				{
-					polarToCart(
-							lon,lat,
-							&x,&y);
-
-					label->setX(x - 3);
-					label->setY(y - 10);
-					label->setText((*i)->getLabel());
-
-					label->blit(_countries);
-				}
-			}
-		}
-		delete label;
-	}
-
-
-	// Debug stuff follows ...
-	static bool switchDebugType;
-
-	if (_playSave->getDebugGeo() == true)
-	{
-		switchDebugType = true;
-		int
-			cycle (_game->getDebugCycle()),
-			area  (0),
-			color (0);
-
-		switch (_debugType)
-		{
-			case DTG_COUNTRY:
-			{
-				if (cycle >= static_cast<int>(_playSave->getCountries()->size()))
-					_game->setDebugCycle(cycle = -1);
-
-				for (std::vector<Country*>::const_iterator
-						i = _playSave->getCountries()->begin();
-						i != _playSave->getCountries()->end();
-						++i, ++area)
-				{
-					if (cycle == area || cycle == -1)
-					{
-						color += 10;
-						for (size_t
-								j = 0u;
-								j != (*i)->getRules()->getLonMin().size();
-								++j)
-						{
-							const double
-								lon1 ((*i)->getRules()->getLonMin().at(j)),
-								lon2 ((*i)->getRules()->getLonMax().at(j)),
-								lat1 ((*i)->getRules()->getLatMin().at(j)),
-								lat2 ((*i)->getRules()->getLatMax().at(j));
-
-							drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-							drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-							drawVHLine(_countries, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-							drawVHLine(_countries, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
-						}
-					}
-
-					if (area == cycle)
-					{
-						if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-							_playSave->setDebugArg((*i)->getType());
-						break;
-					}
-					else
-						_playSave->setDebugArg("");
-				}
-				break;
-			}
-
-			case DTG_REGION:
-			{
-				if (cycle >= static_cast<int>(_playSave->getRegions()->size()))
-					_game->setDebugCycle(cycle = -1);
-
-				for (std::vector<Region*>::const_iterator
-						i = _playSave->getRegions()->begin();
-						i != _playSave->getRegions()->end();
-						++i, ++area)
-				{
-					if (cycle == area || cycle == -1)
-					{
-						color += 10;
-						for (size_t
-								j = 0u;
-								j != (*i)->getRules()->getLatMax().size();
-								++j)
-						{
-							const double
-								lon1 ((*i)->getRules()->getLonMin().at(j)),
-								lon2 ((*i)->getRules()->getLonMax().at(j)),
-								lat1 ((*i)->getRules()->getLatMin().at(j)),
-								lat2 ((*i)->getRules()->getLatMax().at(j));
-
-							drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-							drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-							drawVHLine(_countries, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-							drawVHLine(_countries, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
-						}
-					}
-
-					if (area == cycle)
-					{
-						if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-							_playSave->setDebugArg((*i)->getType());
-						break;
-					}
-					else
-						_playSave->setDebugArg("");
-				}
-				break;
-			}
-
-			case DTG_ZONE:
-			{
-				int limit (0);
-				for (std::vector<Region*>::const_iterator
-						i = _playSave->getRegions()->begin();
-						i != _playSave->getRegions()->end();
-						++i)
-				{
-					for (std::vector<MissionZone>::const_iterator
-							j = (*i)->getRules()->getMissionZones().begin();
-							j != (*i)->getRules()->getMissionZones().end();
-							++j)
-					{
-						++limit;
-					}
-				}
-
-				if (cycle >= limit)
-					_game->setDebugCycle(cycle = -1);
-
-				for (std::vector<Region*>::const_iterator
-						i = _playSave->getRegions()->begin();
-						i != _playSave->getRegions()->end();
-						++i)
-				{
-					color = -1;
-					int zoneType (0);
-					for (std::vector<MissionZone>::const_iterator
-							j = (*i)->getRules()->getMissionZones().begin();
-							j != (*i)->getRules()->getMissionZones().end();
-							++j, ++area, ++zoneType)
-					{
-						if (cycle == area || cycle == -1)
-						{
-							color += 2;
-							for (std::vector<MissionArea>::const_iterator
-									k = (*j).areas.begin();
-									k != (*j).areas.end();
-									++k)
-							{
-								const double
-									lon1 ((*k).lonMin), // * M_PI / 180.,
-									lon2 ((*k).lonMax), // * M_PI / 180.,
-									lat1 ((*k).latMin), // * M_PI / 180.,
-									lat2 ((*k).latMax); // * M_PI / 180.;
-
-								drawVHLine(_countries, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-								drawVHLine(_countries, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-								drawVHLine(_countries, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-								drawVHLine(_countries, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
-							}
-						}
-
-						if (area == cycle)
-						{
-							if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-							{
-								std::ostringstream oststr;
-								oststr << (*i)->getType() << " [" << zoneType << "]";
-								_playSave->setDebugArg(oststr.str());
-							}
-							break;
-						}
-						else
-							_playSave->setDebugArg("");
-					}
-
-					if (area == cycle)
-						break;
-				}
-			}
-		}
-	}
-	else if (switchDebugType == true) // effectively toggles debugMode.
-	{
-		switchDebugType = false;
-		switch (_debugType)
-		{
-			case DTG_COUNTRY:	_debugType = DTG_REGION;	break;
-			case DTG_REGION:	_debugType = DTG_ZONE;		break;
-			case DTG_ZONE:		_debugType = DTG_COUNTRY;
-		}
-	}
-}
-
-/**
- * Gets the current debugType for Geoscape.
- * @return, DebugTypeGlobe (Globe.h)
- */
-DebugTypeGlobe Globe::getDebugType() const
-{
-	return _debugType;
-}
-
-/**
- * Draws flight paths.
- * @param surface	- pointer to a Surface
- * @param lon1		-
- * @param lat1		-
- * @param lon2		-
- * @param lat2		-
- */
-void Globe::drawPath( // private.
-		Surface* surface,
-		double lon1,
-		double lat1,
-		double lon2,
-		double lat2)
-{
-	double
-		dist,
-		x1,y1,
-		x2,y2;
-	Sint16 qty;
-	CordPolar
-		p1,p2;
-	Cord
-		a (CordPolar(lon1, lat1)),
-		b (CordPolar(lon2, lat2));
-
-	if (-b == a)
-		return;
-
-	b -= a;
-
-	// longer paths have more parts
-	dist = b.norm();
-	dist *= dist * 15;
-
-	qty = static_cast<Sint16>(static_cast<int>(dist) + 1);
-	b /= qty;
-
-	p1 = CordPolar(a);
-	polarToCart(
-				p1.lon,
-				p1.lat,
-				&x1,&y1);
-	for (Sint16
-			i = 0;
-			i != qty;
-			++i)
-	{
-		a += b;
-		p2 = CordPolar(a);
-		polarToCart(
-					p2.lon,
-					p2.lat,
-					&x2,&y2);
-
-		if (   pointBack(p1.lon, p1.lat) == false
-			&& pointBack(p2.lon, p2.lat) == false)
-		{
-			XuLine(
-				surface,
-				this,
-				x1,y1,
-				x2,y2,
-				8,
-				C_FLIGHT);
-		}
-
-		p1 = p2;
-		x1 = x2;
-		y1 = y2;
-	}
-}
-
-/**
- * Draws the flight-paths of player's Craft flying around this Globe.
- */
-void Globe::drawFlightPaths()
-{
-	if (Options::globeFlightPaths == true)
-	{
-		_radars->lock();
-		for (std::vector<Base*>::const_iterator
-				i = _playSave->getBases()->begin();
-				i != _playSave->getBases()->end();
-				++i)
-		{
-			for (std::vector<Craft*>::const_iterator
-					j = (*i)->getCrafts()->begin();
-					j != (*i)->getCrafts()->end();
-					++j)
-			{
-				if ((*j)->getCraftStatus() == CS_OUT
-					&& (*j)->getTarget() != nullptr)
-				{
-					static const double MIN_Diff (0.005); // radians
-					const double
-						lon1 ((*j)->getLongitude()),
-						lat1 ((*j)->getLatitude()),
-						lon2 ((*j)->getTarget()->getLongitude()),
-						lat2 ((*j)->getTarget()->getLatitude()),
-						lon3 ((*j)->getMeetLongitude()),
-						lat3 ((*j)->getMeetLatitude());
-					drawPath(
-							_radars,
-							lon1,lat1,
-							lon2,lat2);
-
-					if (   std::fabs(lon3 - lon2) > MIN_Diff
-						|| std::fabs(lat3 - lat2) > MIN_Diff)
-					{
-						drawPath(
-								_radars,
-								lon1,lat1,
-								lon3,lat3);
-						drawInterceptMarker(lon3,lat3);
-					}
-				}
-			}
-		}
-		_radars->unlock();
-	}
-}
-
-/**
- * Places a marker at the end-point of player's Craft on an intercept-trajectory.
- * @param lon - longitude to draw the marker at
- * @param lat - latitude to draw the marker at
- */
-void Globe::drawInterceptMarker( // private.
-		const double lon,
-		const double lat)
-{
-	if (pointBack(lon,lat) == false)
-	{
-		Sint16
-			x,y;
-		polarToCart(
-				lon,lat,
-				&x,&y);
-
-		Surface* const marker (_markerSet->getFrame(GLM_WAYPOINT));
-		marker->setX(x - 1);
-		marker->setY(y - 1);
-		marker->blit(_markers);
-	}
-}
-
-/**
- * Draws the marker for a specified Target on this Globe.
- * @param target	- pointer to the target
- * @param srfGlobe	- pointer to the globe's Surface
- */
-void Globe::drawTarget( // private.
-		const Target* const target,
-		Surface* const srfGlobe)
-{
-	const int id (target->getMarker());
-	if (id != -1)
-	{
-		const double
-			lon (target->getLongitude()),
-			lat (target->getLatitude());
-
-		if (pointBack(lon,lat) == false)
-		{
-			Sint16
-				x,y;
-			polarToCart(
-					lon,lat,
-					&x,&y);
-
-			Surface* const marker (_markerSet->getFrame(id));
-			marker->setX(x - 1);
-			marker->setY(y - 1);
-			marker->blit(srfGlobe);
-
-			switch (id)
-			{
-				case Globe::GLM_CRAFT:
-				case Globe::GLM_UFO_FLYING:
-				{
-					unsigned data; // "headingInt[1 digit] - altitudeInt[1 digit] - 0 - speed[4 digits]"
-
-					const Craft* const craft (dynamic_cast<const Craft*>(target));
-					if (craft != nullptr)
-					{
-						_flightData->setY(y - 7);
-						_flightData->setColor(C_GREEN);
-
-						data  = craft->getHeadingInt()  * 1000000u;
-						data += craft->getAltitudeInt() * 100000u;
-						data += static_cast<unsigned>(craft->getSpeed());
-					}
-					else //if (ufo != nullptr)
-					{
-						const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
-
-						_flightData->setY(y + 4);
-						_flightData->setColor(C_RED);
-
-						data  = ufo->getHeadingInt()  * 1000000u;
-						data += ufo->getAltitudeInt() * 100000u;
-						data += static_cast<unsigned>(ufo->getSpeed());
-					}
-
-					_flightData->setX(x);
-					_flightData->setValue(data);
-					_flightData->draw();
-					_flightData->blit(srfGlobe);
-				}
-			}
-		}
-	}
-}
-
-/**
- * Draws the markers of all the various things going on around the world except
- * Cities - for which see drawDetail() above.
- */
-void Globe::drawMarkers()
-{
-	_markers->clear();
-
-	for (std::vector<Base*>::const_iterator			// Draw the Base markers
-			i = _playSave->getBases()->begin();
-			i != _playSave->getBases()->end();
-			++i)
-		drawTarget(*i, _markers);
-
-	for (std::vector<Waypoint*>::const_iterator		// Draw the Waypoint markers
-			i = _playSave->getWaypoints()->begin();
-			i != _playSave->getWaypoints()->end();
-			++i)
-		drawTarget(*i, _markers);
-
-	for (std::vector<TerrorSite*>::const_iterator	// Draw the TerrorSite markers
-			i = _playSave->getTerrorSites()->begin();
-			i != _playSave->getTerrorSites()->end();
-			++i)
-		drawTarget(*i, _markers);
-
-	for (std::vector<AlienBase*>::const_iterator	// Draw the AlienBase markers
-			i = _playSave->getAlienBases()->begin();
-			i != _playSave->getAlienBases()->end();
-			++i)
-		drawTarget(*i, _markers);
-
-	for (std::vector<Ufo*>::const_iterator			// Draw the Ufo markers
-			i = _playSave->getUfos()->begin();
-			i != _playSave->getUfos()->end();
-			++i)
-		drawTarget(*i, _markers);
-
-	for (std::vector<Base*>::const_iterator			// Draw the Craft markers
-			i = _playSave->getBases()->begin();
-			i != _playSave->getBases()->end();
-			++i)
-		for (std::vector<Craft*>::const_iterator
-				j = (*i)->getCrafts()->begin();
-				j != (*i)->getCrafts()->end();
-				++j)
-			drawTarget(*j, _markers);
-}
-
-/**
  * Draws a big yellow/red crosshair-targeter.
  * @note Used over last-known-UFO position.
  */
 void Globe::drawCrosshair() // private.
 {
-	if ((AreSame(_crosshairLon, 0.) == false
+	if (      (AreSame(_crosshairLon, 0.) == false
 			|| AreSame(_crosshairLat, 0.) == false)
 		&& pointBack(_crosshairLon, _crosshairLat) == false)
 	{
@@ -2472,7 +2447,7 @@ void Globe::drawCrosshair() // private.
 		Surface* const crosshair (_game->getResourcePack()->getSurface("Crosshairs"));
 		crosshair->setX(x - 14);
 		crosshair->setY(y - 14);
-		crosshair->blit(_crosshair);
+		crosshair->blit(_srfLayerCrosshair);
 	}
 }
 
@@ -2496,7 +2471,7 @@ void Globe::setCrosshair(
 void Globe::clearCrosshair()
 {
 	_drawCrosshair = false;
-	_crosshair->clear();
+	_srfLayerCrosshair->clear();
 }
 
 /**
@@ -2507,10 +2482,10 @@ void Globe::blit(const Surface* const srf)
 {
 	Surface::blit(srf);
 
-	_radars->blit(srf);
-	_countries->blit(srf);
-	_markers->blit(srf);
-	_crosshair->blit(srf);
+	_srfLayerRadars		->blit(srf);
+	_srfLayerCountry	->blit(srf);
+	_srfLayerMarkers	->blit(srf);
+	_srfLayerCrosshair	->blit(srf);
 }
 
 /**
@@ -2684,6 +2659,15 @@ void Globe::keyboardPress(Action* action, State* state)
 }
 
 /**
+ * Checks if drag-scroll is happening.
+ * @return, true if mouse is drag-scrolling
+ */
+bool Globe::isDragScroll() const
+{
+	return _dragScroll;
+}
+
+/**
  * Gets the texture and shade of a Polygon at specified coordinates.
  * @param lon		- longitude of the point
  * @param lat 		- latitude of the point
@@ -2696,20 +2680,11 @@ void Globe::getPolygonTextureAndShade(
 		int* texture,
 		int* shade) const
 {
-	// this is shade conversion from 0..31 levels of geoscape to battlescape levels 0..15
-	const int worldshades[32u]
-	{
-		0, 1, 1, 1, 2, 2, 2, 3,
-		3, 3, 4, 4, 4, 5, 5, 5,
-		6, 6, 6, 7, 7, 7, 8, 8,
-		9, 9,10,11,12,13,14,15
-	}; // terminator @ 25
-
-	*shade = worldshades[CreateTerminator::getTerminatorShade(
-															0,
-															Cord(0.,0.,1.),
-															getSunDirection(lon,lat),
-															0)];
+	*shade = GLOBESHADE[CreateTerminator::getTerminatorShade(
+														0,
+														Cord(0.,0.,1.),
+														getSunDirection(lon,lat),
+														0)];
 
 	const Polygon* const poly (getPolygonAtCoord(lon,lat));
 	if (poly != nullptr)
@@ -2747,20 +2722,42 @@ void Globe::getPolygonShade(
 		double lat,
 		int* shade) const
 {
-	// this is shade conversion from 0..31 levels of geoscape to battlescape levels 0..15
-	const int worldshades[32u]
-	{
-		0, 1, 1, 1, 2, 2, 2, 3,
-		3, 3, 4, 4, 4, 5, 5, 5,
-		6, 6, 6, 7, 7, 7, 8, 8,
-		9, 9,10,11,12,13,14,15
-	}; // terminator @ 25
+	*shade = GLOBESHADE[CreateTerminator::getTerminatorShade(
+														0,
+														Cord(0.,0.,1.),
+														getSunDirection(lon,lat),
+														0)];
+}
 
-	*shade = worldshades[CreateTerminator::getTerminatorShade(
-															0,
-															Cord(0.,0.,1.),
-															getSunDirection(lon,lat),
-															0)];
+/**
+ * Sets the state of build-base hover.
+ * @param hover - true if hover (default true)
+ */
+void Globe::setBuildBaseRadars(bool hover)
+{
+	_forceRadars = hover;
+}
+
+/**
+ * Sets the build-base hover coordinates.
+ * @param lon - the longitude
+ * @param lat - the latitude
+ */
+void Globe::setBuildBaseHoverPos(
+		double lon,
+		double lat)
+{
+	_hoverLon = lon;
+	_hoverLat = lat;
+}
+
+/**
+ * Gets the current debugType for Geoscape.
+ * @return, DebugTypeGlobe (Globe.h)
+ */
+DebugTypeGlobe Globe::getDebugType() const
+{
+	return _debugType;
 }
 
 /**
@@ -2772,9 +2769,9 @@ void Globe::resize()
 	Surface* const surfaces[SRF]
 	{
 		this,
-		_markers,
-		_countries,
-		_radars
+		_srfLayerMarkers,
+		_srfLayerCountry,
+		_srfLayerRadars
 	};
 
 	const int

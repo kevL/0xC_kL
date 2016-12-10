@@ -68,10 +68,10 @@ AlienMission::AlienMission(
 		_playSave(playSave),
 		_waveCount(0u),
 		_ufoCount(0),
-		_spawnTime(0),
+		_countdown(0),
 		_liveUfos(0),
 		_id(0),
-		_aBase(nullptr),
+		_alienBase(nullptr),
 		_success(false),
 		_terrorZone(std::numeric_limits<size_t>::max())
 {}
@@ -118,7 +118,7 @@ void AlienMission::load(const YAML::Node& node)
 	_raceType	= node["race"]		.as<std::string>(_raceType);
 	_waveCount	= node["waveCount"]	.as<size_t>(_waveCount);
 	_ufoCount	= node["ufoCount"]	.as<int>(_ufoCount);
-	_spawnTime	= node["spawnTime"]	.as<int>(_spawnTime);
+	_countdown	= node["countdown"]	.as<int>(_countdown);
 	_liveUfos	= node["liveUfos"]	.as<int>(_liveUfos);
 	_terrorZone	= node["terrorZone"].as<size_t>(_terrorZone);
 	_success	= node["success"]	.as<bool>(_success);
@@ -134,7 +134,7 @@ void AlienMission::load(const YAML::Node& node)
 		{
 			throw Exception("Corrupted save: Invalid aLien Base for AlienMission.");
 		}
-		_aBase = *i;
+		_alienBase = *i;
 	}
 }
 
@@ -152,7 +152,7 @@ YAML::Node AlienMission::save() const
 	node["race"]		= _raceType;
 	node["waveCount"]	= _waveCount;
 	node["ufoCount"]	= _ufoCount;
-	node["spawnTime"]	= _spawnTime;
+	node["countdown"]	= _countdown;
 	node["liveUfos"]	= _liveUfos;
 
 	if (_terrorZone != std::numeric_limits<size_t>::max())
@@ -161,8 +161,8 @@ YAML::Node AlienMission::save() const
 	if (_success == true)
 		node["success"] = _success;
 
-	if (_aBase != nullptr)
-		node["alienBase"] = _aBase->getId();
+	if (_alienBase != nullptr)
+		node["alienBase"] = _alienBase->getId();
 
 	return node;
 }
@@ -207,16 +207,24 @@ void AlienMission::setRegion(
 }
 
 /**
- * Sets the minutes until next wave spawns.
+ * Sets the minutes until the next wave of UFOs will spawn.
  * @note The new time must be a multiple of 30 minutes and > 0. Calling this
  * on a finished mission has no effect.
- * @param minutes - the minutes until the next UFO wave will spawn
  */
-void AlienMission::setCountdown(int minutes)
+void AlienMission::resetCountdown()
 {
 //	assert(minutes != 0 && minutes % 30 == 0);
 	if (isOver() == false)
-		_spawnTime = minutes;
+		_countdown = getStandardDelay();
+}
+
+/**
+ * Gets a standard wait.
+ * @return, the delay in minutes
+ */
+int AlienMission::getStandardDelay() const // private.
+{
+	return (RNG::generate(0,400) + 48) * 30;
 }
 
 /**
@@ -243,6 +251,8 @@ bool AlienMission::isOver() const
  */
 void AlienMission::start(int countdown)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "AlienMission::start() countdown= " << countdown;
 	_waveCount = 0u;
 	_ufoCount =
 	_liveUfos = 0;
@@ -253,7 +263,7 @@ void AlienMission::start(int countdown)
 			initiateCountdown(0u);
 			break;
 		default:
-			_spawnTime = countdown;
+			_countdown = countdown;
 	}
 }
 
@@ -269,45 +279,45 @@ void AlienMission::think(
 {
 //	Log(LOG_INFO) << "";
 //	Log(LOG_INFO) << "AlienMission::think()";
-//	Log(LOG_INFO) << ". rule= " << _missionRule.getType();
-//	Log(LOG_INFO) << ". waves= " << _missionRule.getWaveTotal();
 //
-//	Log(LOG_INFO) << ". race= " << _raceType;
-//	Log(LOG_INFO) << ". region= " << _regionType;
+//	Log(LOG_INFO) << ". rule= "			<< _missionRule.getType();
+//	Log(LOG_INFO) << ". waves= "		<< _missionRule.getWaveTotal();
 //
-//	Log(LOG_INFO) << ". id= " << _id;
-//	Log(LOG_INFO) << ". liveUfos= " << _liveUfos;
-//	Log(LOG_INFO) << ". spawnTime= " << _spawnTime;
-//	Log(LOG_INFO) << ". ufoCount= " << _ufoCount;
+//	Log(LOG_INFO) << ". race= "			<< _raceType;
+//	Log(LOG_INFO) << ". region= "		<< _regionType;
+//
+//	Log(LOG_INFO) << ". id= "			<< _id;
+//	Log(LOG_INFO) << ". liveUfos= "		<< _liveUfos;
+//	Log(LOG_INFO) << ". countdown= "	<< _countdown;
+//	Log(LOG_INFO) << ". ufoCount= "		<< _ufoCount;
+//	Log(LOG_INFO) << ". waveCount= "	<< _waveCount;
 //
 //	if (_terrorZone != std::numeric_limits<size_t>::max())
 //		Log(LOG_INFO) << ". terrorZone= " << _terrorZone;
 //	else
 //		Log(LOG_INFO) << ". terrorZone NOTSET";
 //
-//	if (_aBase != nullptr)
-//		Log(LOG_INFO) << ". aBase= " << Language::wstrToFs(_aBase->getLabel(game.getLanguage()));
+//	if (_alienBase != nullptr)
+//		Log(LOG_INFO) << ". alienBase= " << Language::wstrToFs(_alienBase->getLabel(game.getLanguage()));
 //	else
-//		Log(LOG_INFO) << ". aBase NULL";
+//		Log(LOG_INFO) << ". alienBase NULL";
 //
-//	Log(LOG_INFO) << ". waveCount= " << _waveCount;
 //	if (_missionRule.getWaves().empty() == false)
 //	{
-//		Log(LOG_INFO) << ". . waves size= " << _missionRule.getWaves().size();
+//		Log(LOG_INFO) << ". . waves size= "	<< _missionRule.getWaves().size();
 //
-//		Log(LOG_INFO) << ". . ufoType= " << _missionRule.getWaveData(_waveCount).ufoType;
-//		Log(LOG_INFO) << ". . ufoTotal= " << _missionRule.getWaveData(_waveCount).ufoTotal;
-//		Log(LOG_INFO) << ". . traj= " << _missionRule.getWaveData(_waveCount).trajectory;
-//		Log(LOG_INFO) << ". . timer= " << _missionRule.getWaveData(_waveCount).spawnTimer;
+//		Log(LOG_INFO) << ". . ufoType= "	<< _missionRule.getWaveData(_waveCount).ufoType;
+//		Log(LOG_INFO) << ". . ufoTotal= "	<< _missionRule.getWaveData(_waveCount).ufoTotal;
+//		Log(LOG_INFO) << ". . traj= "		<< _missionRule.getWaveData(_waveCount).trajectory;
+//		Log(LOG_INFO) << ". . timer= "		<< _missionRule.getWaveData(_waveCount).waveTimer;
 //	}
 //	else Log(LOG_INFO) << ". . waves EMPTY";
 
 
-
 	if (_waveCount < _missionRule.getWaveTotal())
 	{
-		if (_spawnTime > 30)
-			_spawnTime -= 30;
+		if (_countdown > 30)
+			_countdown -= 30;
 		else
 		{
 			const Ruleset& rules		(*game.getRuleset());
@@ -378,13 +388,16 @@ void AlienMission::think(
 
 /**
  * Calculates time remaining until the next wave of this AlienMission spawns.
- * @note The '_spawnTime' must be maintained as an exact multiple of 30 minutes. <- maybe!.
+ * @note The '_countdown' must be maintained as an exact multiple of 30 minutes. <- maybe!.
  * @param waveId - the wave to check
  */
 void AlienMission::initiateCountdown(size_t waveId) // private.
 {
-	_spawnTime = _missionRule.getWaveData(waveId).spawnTimer / 30;
-	_spawnTime = (RNG::generate(0, _spawnTime) + (_spawnTime >> 1u)) * 30;
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "AlienMission::initiateCountdown()";
+	_countdown = _missionRule.getWaveData(waveId).waveTimer / 30;
+	_countdown = (RNG::generate(0, _countdown) + (_countdown >> 1u)) * 30;
+	//Log(LOG_INFO) << ". _countdown= " << _countdown;
 }
 
 /**
@@ -471,7 +484,7 @@ Ufo* AlienMission::createUfo( // private.
 
 		case alm_SUPPLY: // check for an AlienBase to supply.
 			if (ufoRule != nullptr
-				&& (_aBase != nullptr || wave.isObjective == false))
+				&& (_alienBase != nullptr || wave.isObjective == false))
 			{
 				ufo = new Ufo(
 							ufoRule,
@@ -497,8 +510,8 @@ Ufo* AlienMission::createUfo( // private.
 				{
 					if (wave.isObjective == true) // supply-ufo on a supply-mission lands at an AlienBase: ignore trajectory zone.
 					{
-						coord.first = _aBase->getLongitude();
-						coord.second = _aBase->getLatitude();
+						coord.first = _alienBase->getLongitude();
+						coord.second = _alienBase->getLatitude();
 					}
 					else
 						coord = coordsLand( // other UFOs can land where they want. huh, "other" this is Supply.
@@ -628,9 +641,9 @@ void AlienMission::ufoReachedWaypoint(
 		pointId		(ufo.getMissionPoint()),
 		pointId_pst	(ufo.setMissionPoint());
 
-	//Log(LOG_INFO) << ". pointId= " << pointId;
-	//Log(LOG_INFO) << ". pointId_pst= " << pointId_pst;
-	//Log(LOG_INFO) << ". pointsTotal= " << trj.getMissionPointTotal();
+	//Log(LOG_INFO) << ". pointId= "		<< pointId;
+	//Log(LOG_INFO) << ". pointId_pst= "	<< pointId_pst;
+	//Log(LOG_INFO) << ". pointsTotal= "	<< trj.getMissionPointTotal();
 
 	if (pointId_pst != trj.getMissionPointTotal())
 	{
@@ -831,12 +844,12 @@ void AlienMission::createAlienBase( // private.
 													regionRule,
 													area));
 
-		AlienBase* const aBase (new AlienBase(ruleDeploy));
-		aBase->setAlienRace(_raceType);
-//		aBase->setId(game.getId(deployment->getMarkerName())); // done in AlienBaseDetectedState.
-		aBase->setLongitude(pos.first);
-		aBase->setLatitude(pos.second);
-		_playSave.getAlienBases()->push_back(aBase);
+		AlienBase* const alienBase (new AlienBase(ruleDeploy));
+		alienBase->setAlienRace(_raceType);
+//		alienBase->setId(game.getId(deployment->getMarkerName())); // done in AlienBaseDetectedState.
+		alienBase->setLongitude(pos.first);
+		alienBase->setLatitude(pos.second);
+		_playSave.getAlienBases()->push_back(alienBase);
 
 		addScore( // alm_BASE, alm_INFILT
 				pos.first,
@@ -847,11 +860,11 @@ void AlienMission::createAlienBase( // private.
 /**
  * Sets the AlienBase associated with this AlienMission.
  * @note Only aLien supply-missions care about this.
- * @param base - pointer to an AlienBase (default nullptr)
+ * @param alienBase - pointer to an AlienBase (default nullptr)
  */
-void AlienMission::setAlienBase(const AlienBase* const aBase)
+void AlienMission::setAlienBase(const AlienBase* const alienBase)
 {
-	_aBase = aBase;
+	_alienBase = alienBase;
 }
 
 /**
@@ -861,7 +874,7 @@ void AlienMission::setAlienBase(const AlienBase* const aBase)
  */
 const AlienBase* AlienMission::getAlienBase() const
 {
-	return _aBase;
+	return _alienBase;
 }
 
 /**
@@ -1009,7 +1022,7 @@ void AlienMission::ufoShotDown(const Ufo& ufo)
 		case Ufo::CRASHED:
 		case Ufo::DESTROYED:
 			if (_waveCount != _missionRule.getWaveTotal())
-				_spawnTime += (RNG::generate(0,400) + 48) * 30; // delay the next wave
+				_countdown += getStandardDelay(); // delay the next wave
 	}
 }
 
@@ -1163,8 +1176,8 @@ void AlienMission::addScore( // private.
 
 			case alm_INFILT:
 			case alm_BASE:
-				aLienPts += _playSave.getDifficultyInt() * (static_cast<int>(ufoSize) + 1) * 4
-						 + (_playSave.getMonthsElapsed() << 1u);
+				aLienPts += ((_playSave.getDifficultyInt() * (static_cast<int>(ufoSize) + 1)) << 2u)
+						 +   (_playSave.getMonthsElapsed() << 1u);
 				break;
 
 			case alm_SUPPLY:

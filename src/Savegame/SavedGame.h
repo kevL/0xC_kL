@@ -155,8 +155,9 @@ class SavedGame
 
 private:
 	bool
-		_debugGeo,
 		_debugArgDone,
+		_debugCountryLines,
+		_debugGeo,
 		_ironman,
 		_warnedFunds;
 	int _monthsElapsed;
@@ -499,11 +500,15 @@ private:
 		std::string getDebugArg() const;
 		/// Gets if a debug-arg has been set.
 		bool getDebugArgDone();
+		/// Toggles showing the country-lines in debugGeo.
+		void toggleCountryLines();
+		/// Checks if the country-lines should be drawn in debugGeo.
+		bool debugCountryLines();
 
 		/// Gets the list of TacticalStatistics.
 		std::vector<TacticalStatistics*>& getTacticalStatistics();
 
-		/// Scores points for xCom or aLiens at coordinates.
+		/// Scores points for xCom or aLiens at specified coordinates.
 		void scorePoints(
 				double lon,
 				double lat,
