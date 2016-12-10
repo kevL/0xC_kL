@@ -36,7 +36,7 @@ typedef std::map<std::string, WeightedOptions*> MissionsByRegion;
 
 /**
  * Creates an AlienStrategy with no values.
- * @note Running a game like this will most likely crash.
+ * @note Running a game like that will most likely crash.
  */
 AlienStrategy::AlienStrategy()
 {}
@@ -193,11 +193,11 @@ bool AlienStrategy::clearRegion(
 	MissionsByRegion::const_iterator weightedRegions (_regionMissions.find(regionType));
 	if (weightedRegions != _regionMissions.end())
 	{
-		weightedRegions->second->setWeight(missionType, 0);
+		weightedRegions->second->setWeight(missionType, 0u);
 		if (weightedRegions->second->hasNoWeight() == true)
 		{
 			_regionMissions.erase(weightedRegions);
-			_regionChances.setWeight(regionType, 0);
+			_regionChances.setWeight(regionType, 0u);
 		}
 	}
 
@@ -247,7 +247,7 @@ void AlienStrategy::addMissionLocation(
 		size_t zone,
 		size_t track)
 {
-	if (track != 0)
+	if (track != 0u)
 	{
 		_missionLocations[missionType].push_back(std::make_pair(regionType, zone));
 		if (_missionLocations[missionType].size() > track)

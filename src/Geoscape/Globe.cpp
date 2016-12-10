@@ -324,14 +324,15 @@ Globe::Globe(
 			width,
 			height,
 			x,y),
+		_game(game),
+		_playSave(game->getSavedGame()),
+		_globeRule(game->getRuleset()->getGlobe()),
 		_rotLon(0.),
 		_rotLat(0.),
 		_hoverLon(0.),
 		_hoverLat(0.),
 		_cenX(static_cast<Sint16>(cenX)),
 		_cenY(static_cast<Sint16>(cenY)),
-		_game(game),
-		_rules(game->getRuleset()->getGlobe()),
 		_forceRadars(false),
 		_dragScroll(false),
 		_dragScrollStepDone(false),
@@ -370,10 +371,10 @@ Globe::Globe(
 	_timerRot = new Timer(static_cast<Uint32>(Options::geoScrollSpeed));
 	_timerRot->onTimer(static_cast<SurfaceHandler>(&Globe::rotate));
 
-	_cenLon = _game->getSavedGame()->getGlobeLongitude();
-	_cenLat = _game->getSavedGame()->getGlobeLatitude();
+	_cenLon = _playSave->getGlobeLongitude();
+	_cenLat = _playSave->getGlobeLatitude();
 
-	_zoom = _game->getSavedGame()->getGlobeZoom();
+	_zoom = _playSave->getGlobeZoom();
 	setupRadii(width, height);
 	setZoom(_zoom);
 
@@ -538,8 +539,8 @@ Polygon* Globe::getPolygonAtCoord( // private.
 		cLat,cLon;
 
 	for (std::list<Polygon*>::const_iterator
-			i = _rules->getPolygons()->begin();
-			i != _rules->getPolygons()->end();
+			i = _globeRule->getPolygons()->begin();
+			i != _globeRule->getPolygons()->end();
 			++i)
 	{
 		bool pass (false);
@@ -793,7 +794,7 @@ void Globe::setZoom(size_t level) // private.
 	// hard-coded to see things that way.
 
 	_radius = _radii[_zoom];
-	_game->getSavedGame()->setGlobeZoom(_zoom);
+	_playSave->setGlobeZoom(_zoom);
 
 	_redraw = true;
 }
@@ -883,7 +884,7 @@ bool Globe::zoomDogfightIn()
  */
 bool Globe::zoomDogfightOut()
 {
-	const size_t preDfZoom (_game->getSavedGame()->getDfZoom());
+	const size_t preDfZoom (_playSave->getDfZoom());
 
 	if (_zoom > preDfZoom)
 	{
@@ -913,8 +914,8 @@ void Globe::center(
 		double lon,
 		double lat)
 {
-	_game->getSavedGame()->setGlobeLongitude(_cenLon = lon);
-	_game->getSavedGame()->setGlobeLatitude(_cenLat = lat);
+	_playSave->setGlobeLongitude(_cenLon = lon);
+	_playSave->setGlobeLatitude(_cenLat = lat);
 
 	_redraw = true;
 }
@@ -1026,12 +1027,10 @@ std::vector<Target*> Globe::getTargets(
 	std::vector<Target*> targets;
 
 	if (flightTargets == false)
-	{
 		for (std::vector<Base*>::const_iterator
-				i = _game->getSavedGame()->getBases()->begin();
-				i != _game->getSavedGame()->getBases()->end();
+				i = _playSave->getBases()->begin();
+				i != _playSave->getBases()->end();
 				++i)
-		{
 			if ((*i)->isBasePlaced() == true)
 			{
 				if (targetNear(*i, x,y))
@@ -1041,59 +1040,37 @@ std::vector<Target*> Globe::getTargets(
 						j = (*i)->getCrafts()->begin();
 						j != (*i)->getCrafts()->end();
 						++j)
-				{
-					if ((*j)->getCraftStatus() == CS_OUT
-						&& targetNear(*j, x,y))
-					{
+					if ((*j)->getCraftStatus() == CS_OUT && targetNear(*j, x,y))
 						targets.push_back(*j);
-					}
-				}
 			}
-		}
-	}
 
 	for (std::vector<Ufo*>::const_iterator
-			i = _game->getSavedGame()->getUfos()->begin();
-			i != _game->getSavedGame()->getUfos()->end();
+			i = _playSave->getUfos()->begin();
+			i != _playSave->getUfos()->end();
 			++i)
-	{
-		if ((*i)->getDetected() == true
-			&& (*i)->getUfoStatus() != Ufo::DESTROYED // ah, here's the workaround.
-			&& targetNear(*i, x,y) == true)
-		{
+		if ((*i)->getDetected() == true && targetNear(*i, x,y) == true)
 			targets.push_back(*i);
-		}
-	}
 
 	for (std::vector<Waypoint*>::const_iterator
-			i = _game->getSavedGame()->getWaypoints()->begin();
-			i != _game->getSavedGame()->getWaypoints()->end();
+			i = _playSave->getWaypoints()->begin();
+			i != _playSave->getWaypoints()->end();
 			++i)
-	{
 		if (targetNear(*i, x,y) == true)
 			targets.push_back(*i);
-	}
 
 	for (std::vector<TerrorSite*>::const_iterator
-			i = _game->getSavedGame()->getTerrorSites()->begin();
-			i != _game->getSavedGame()->getTerrorSites()->end();
+			i = _playSave->getTerrorSites()->begin();
+			i != _playSave->getTerrorSites()->end();
 			++i)
-	{
 		if (targetNear(*i, x,y) == true)
 			targets.push_back(*i);
-	}
 
 	for (std::vector<AlienBase*>::const_iterator
-			i = _game->getSavedGame()->getAlienBases()->begin();
-			i != _game->getSavedGame()->getAlienBases()->end();
+			i = _playSave->getAlienBases()->begin();
+			i != _playSave->getAlienBases()->end();
 			++i)
-	{
-		if ((*i)->isDetected() == true
-			&& targetNear(*i, x,y) == true)
-		{
+		if ((*i)->isDetected() == true && targetNear(*i, x,y) == true)
 			targets.push_back(*i);
-		}
-	}
 
 	return targets;
 }
@@ -1115,7 +1092,7 @@ void Globe::cachePolygons() // private.
 	}
 	_cacheLand.clear();
 
-	std::list<Polygon*>* const allPolygons (_rules->getPolygons());
+	std::list<Polygon*>* const allPolygons (_globeRule->getPolygons());
 	for (std::list<Polygon*>::const_iterator
 			i = allPolygons->begin();
 			i != allPolygons->end();
@@ -1197,8 +1174,8 @@ void Globe::think()
 	{
 		kL_reCenter = false;
 		center(
-			_game->getSavedGame()->getGlobeLongitude(),
-			_game->getSavedGame()->getGlobeLatitude());
+			_playSave->getGlobeLongitude(),
+			_playSave->getGlobeLatitude());
 	}
 
 	_timerBlink->think(nullptr, this);
@@ -1253,8 +1230,8 @@ void Globe::rotate()
 	_cenLon += _rotLon * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1u);
 	_cenLat += _rotLat * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1u);
 
-	_game->getSavedGame()->setGlobeLongitude(_cenLon);
-	_game->getSavedGame()->setGlobeLatitude(_cenLat);
+	_playSave->setGlobeLongitude(_cenLon);
+	_playSave->setGlobeLatitude(_cenLat);
 
 	_redraw = true;
 }
@@ -1366,27 +1343,28 @@ Cord Globe::getSunDirection( // private.
 {
 	double sun;
 
+	const GameTime* const gt (_playSave->getTime());
+
 	if (Options::globeSeasons == true)
 	{
 		const int
-			monthDays1[] {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
-			monthDays2[] {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366},
+			monthDays1[] { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 },
+			monthDays2[] { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 },
 
-			year	(_game->getSavedGame()->getTime()->getYear()),
-			month	(_game->getSavedGame()->getTime()->getMonth() - 1),
-			day		(_game->getSavedGame()->getTime()->getDay() - 1);
+			year	(gt->getYear()),
+			month	(gt->getMonth() - 1),
+			day		(gt->getDay() - 1);
 
 		const double
 			tm (static_cast<double>( // day fraction is also taken into account
-						(((   _game->getSavedGame()->getTime()->getHour() * 60)
-							+ _game->getSavedGame()->getTime()->getMinute()) * 60)
-							+ _game->getSavedGame()->getTime()->getSecond())
+						(((   gt->getHour()    * 60)
+							+ gt->getMinute()) * 60)
+							+ gt->getSecond())
 						/ 86400.);
 
 		double today;
-		if (year % 4 == 0 // spring equinox (start of astronomic year)
-			&& !
-				(year % 100 == 0 && year % 400 != 0))
+		if (    year %   4 == 0 // spring equinox (start of astronomic year)
+			&& (year % 100 != 0 || year % 400 == 0))
 		{
 			today = (static_cast<double>(monthDays2[month] + day) + tm) / 366. - 0.219;
 		}
@@ -1401,7 +1379,7 @@ Cord Globe::getSunDirection( // private.
 	else
 		sun = 0.;
 
-	const double rot (_game->getSavedGame()->getTime()->getDaylight() * M_PI * 2.);
+	const double rot (gt->getDaylight() * M_PI * 2.);
 	Cord sun_direction (std::cos(rot + lon),
 						std::sin(rot + lon) * -std::sin(lat),
 						std::sin(rot + lon) *  std::cos(lat));
@@ -1576,13 +1554,15 @@ void Globe::drawRadars()
 	{
 		double range;
 
-		const std::vector<std::string>& allFacilities (_game->getRuleset()->getBaseFacilitiesList());
+		const Ruleset* const rules (_game->getRuleset());
+
+		const std::vector<std::string>& allFacilities (rules->getBaseFacilitiesList());
 		for (std::vector<std::string>::const_iterator
 				i = allFacilities.begin();
 				i != allFacilities.end();
 				++i)
 		{
-			if ((range = static_cast<double>(_game->getRuleset()->getBaseFacility(*i)->getRadarRange())) > 0.)
+			if ((range = static_cast<double>(rules->getBaseFacility(*i)->getRadarRange())) > 0.)
 			{
 				range *= unitToRads;
 				drawGlobeCircle(
@@ -1604,8 +1584,8 @@ void Globe::drawRadars()
 			rangeBest;
 
 		for (std::vector<Base*>::const_iterator
-				i = _game->getSavedGame()->getBases()->begin();
-				i != _game->getSavedGame()->getBases()->end();
+				i = _playSave->getBases()->begin();
+				i != _playSave->getBases()->end();
 				++i)
 		{
 			if ((*i)->isBasePlaced() == true)
@@ -1849,8 +1829,8 @@ void Globe::drawDetail()
 
 		_countries->lock();
 		for (std::list<Polyline*>::const_iterator
-				i = _rules->getPolylines()->begin();
-				i != _rules->getPolylines()->end();
+				i = _globeRule->getPolylines()->begin();
+				i != _globeRule->getPolylines()->end();
 				++i)
 		{
 			for (size_t
@@ -1890,8 +1870,8 @@ void Globe::drawDetail()
 	{
 		RuleRegion* regionRule;
 		for (std::vector<Region*>::const_iterator
-				i = _game->getSavedGame()->getRegions()->begin();
-				i != _game->getSavedGame()->getRegions()->end();
+				i = _playSave->getRegions()->begin();
+				i != _playSave->getRegions()->end();
 				++i)
 		{
 			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
@@ -1921,8 +1901,8 @@ void Globe::drawDetail()
 			label->setColor(C_LBLCOUNTRY); // draw the Country labels
 
 			for (std::vector<Country*>::const_iterator
-					i = _game->getSavedGame()->getCountries()->begin();
-					i != _game->getSavedGame()->getCountries()->end();
+					i = _playSave->getCountries()->begin();
+					i != _playSave->getCountries()->end();
 					++i)
 			{
 				lon = (*i)->getRules()->getLabelLongitude(),
@@ -1948,8 +1928,8 @@ void Globe::drawDetail()
 
 		RuleRegion* regionRule;
 		for (std::vector<Region*>::const_iterator
-				i = _game->getSavedGame()->getRegions()->begin();
-				i != _game->getSavedGame()->getRegions()->end();
+				i = _playSave->getRegions()->begin();
+				i != _playSave->getRegions()->end();
 				++i)
 		{
 			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
@@ -1988,8 +1968,8 @@ void Globe::drawDetail()
 		label->setAlign(ALIGN_LEFT);
 
 		for (std::vector<Base*>::const_iterator
-				i = _game->getSavedGame()->getBases()->begin();
-				i != _game->getSavedGame()->getBases()->end();
+				i = _playSave->getBases()->begin();
+				i != _playSave->getBases()->end();
 				++i)
 		{
 			if ((*i)->getMarker() != -1) // base is placed.
@@ -2018,7 +1998,7 @@ void Globe::drawDetail()
 	// Debug stuff follows ...
 	static bool switchDebugType;
 
-	if (_game->getSavedGame()->getDebugGeo() == true)
+	if (_playSave->getDebugGeo() == true)
 	{
 		switchDebugType = true;
 		int
@@ -2030,12 +2010,12 @@ void Globe::drawDetail()
 		{
 			case DTG_COUNTRY:
 			{
-				if (cycle >= static_cast<int>(_game->getSavedGame()->getCountries()->size()))
+				if (cycle >= static_cast<int>(_playSave->getCountries()->size()))
 					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Country*>::const_iterator
-						i = _game->getSavedGame()->getCountries()->begin();
-						i != _game->getSavedGame()->getCountries()->end();
+						i = _playSave->getCountries()->begin();
+						i != _playSave->getCountries()->end();
 						++i, ++area)
 				{
 					if (cycle == area || cycle == -1)
@@ -2061,24 +2041,24 @@ void Globe::drawDetail()
 
 					if (area == cycle)
 					{
-						if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-							_game->getSavedGame()->setDebugArg((*i)->getType());
+						if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							_playSave->setDebugArg((*i)->getType());
 						break;
 					}
 					else
-						_game->getSavedGame()->setDebugArg("");
+						_playSave->setDebugArg("");
 				}
 				break;
 			}
 
 			case DTG_REGION:
 			{
-				if (cycle >= static_cast<int>(_game->getSavedGame()->getRegions()->size()))
+				if (cycle >= static_cast<int>(_playSave->getRegions()->size()))
 					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Region*>::const_iterator
-						i = _game->getSavedGame()->getRegions()->begin();
-						i != _game->getSavedGame()->getRegions()->end();
+						i = _playSave->getRegions()->begin();
+						i != _playSave->getRegions()->end();
 						++i, ++area)
 				{
 					if (cycle == area || cycle == -1)
@@ -2104,12 +2084,12 @@ void Globe::drawDetail()
 
 					if (area == cycle)
 					{
-						if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
-							_game->getSavedGame()->setDebugArg((*i)->getType());
+						if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							_playSave->setDebugArg((*i)->getType());
 						break;
 					}
 					else
-						_game->getSavedGame()->setDebugArg("");
+						_playSave->setDebugArg("");
 				}
 				break;
 			}
@@ -2118,8 +2098,8 @@ void Globe::drawDetail()
 			{
 				int limit (0);
 				for (std::vector<Region*>::const_iterator
-						i = _game->getSavedGame()->getRegions()->begin();
-						i != _game->getSavedGame()->getRegions()->end();
+						i = _playSave->getRegions()->begin();
+						i != _playSave->getRegions()->end();
 						++i)
 				{
 					for (std::vector<MissionZone>::const_iterator
@@ -2135,8 +2115,8 @@ void Globe::drawDetail()
 					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Region*>::const_iterator
-						i = _game->getSavedGame()->getRegions()->begin();
-						i != _game->getSavedGame()->getRegions()->end();
+						i = _playSave->getRegions()->begin();
+						i != _playSave->getRegions()->end();
 						++i)
 				{
 					color = -1;
@@ -2169,16 +2149,16 @@ void Globe::drawDetail()
 
 						if (area == cycle)
 						{
-							if (_game->getSavedGame()->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
+							if (_playSave->getDebugArg().compare("COORD") != 0) // ie. don't display area-info if co-ordinates are currently displayed.
 							{
 								std::ostringstream oststr;
 								oststr << (*i)->getType() << " [" << zoneType << "]";
-								_game->getSavedGame()->setDebugArg(oststr.str());
+								_playSave->setDebugArg(oststr.str());
 							}
 							break;
 						}
 						else
-							_game->getSavedGame()->setDebugArg("");
+							_playSave->setDebugArg("");
 					}
 
 					if (area == cycle)
@@ -2290,8 +2270,8 @@ void Globe::drawFlightPaths()
 	{
 		_radars->lock();
 		for (std::vector<Base*>::const_iterator
-				i = _game->getSavedGame()->getBases()->begin();
-				i != _game->getSavedGame()->getBases()->end();
+				i = _playSave->getBases()->begin();
+				i != _playSave->getBases()->end();
 				++i)
 		{
 			for (std::vector<Craft*>::const_iterator
@@ -2388,8 +2368,7 @@ void Globe::drawTarget( // private.
 			{
 				case Globe::GLM_CRAFT:
 				case Globe::GLM_UFO_FLYING:
-					_flightData->setX(x);
-
+				{
 					unsigned data; // "headingInt[1 digit] - altitudeInt[1 digit] - 0 - speed[4 digits]"
 
 					const Craft* const craft (dynamic_cast<const Craft*>(target));
@@ -2404,18 +2383,21 @@ void Globe::drawTarget( // private.
 					}
 					else //if (ufo != nullptr)
 					{
+						const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
+
 						_flightData->setY(y + 4);
 						_flightData->setColor(C_RED);
 
-						const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
 						data  = ufo->getHeadingInt()  * 1000000u;
 						data += ufo->getAltitudeInt() * 100000u;
 						data += static_cast<unsigned>(ufo->getSpeed());
 					}
-					_flightData->setValue(data);
 
+					_flightData->setX(x);
+					_flightData->setValue(data);
 					_flightData->draw();
 					_flightData->blit(srfGlobe);
+				}
 			}
 		}
 	}
@@ -2430,38 +2412,38 @@ void Globe::drawMarkers()
 	_markers->clear();
 
 	for (std::vector<Base*>::const_iterator			// Draw the Base markers
-			i = _game->getSavedGame()->getBases()->begin();
-			i != _game->getSavedGame()->getBases()->end();
+			i = _playSave->getBases()->begin();
+			i != _playSave->getBases()->end();
 			++i)
 		drawTarget(*i, _markers);
 
 	for (std::vector<Waypoint*>::const_iterator		// Draw the Waypoint markers
-			i = _game->getSavedGame()->getWaypoints()->begin();
-			i != _game->getSavedGame()->getWaypoints()->end();
+			i = _playSave->getWaypoints()->begin();
+			i != _playSave->getWaypoints()->end();
 			++i)
 		drawTarget(*i, _markers);
 
 	for (std::vector<TerrorSite*>::const_iterator	// Draw the TerrorSite markers
-			i = _game->getSavedGame()->getTerrorSites()->begin();
-			i != _game->getSavedGame()->getTerrorSites()->end();
+			i = _playSave->getTerrorSites()->begin();
+			i != _playSave->getTerrorSites()->end();
 			++i)
 		drawTarget(*i, _markers);
 
 	for (std::vector<AlienBase*>::const_iterator	// Draw the AlienBase markers
-			i = _game->getSavedGame()->getAlienBases()->begin();
-			i != _game->getSavedGame()->getAlienBases()->end();
+			i = _playSave->getAlienBases()->begin();
+			i != _playSave->getAlienBases()->end();
 			++i)
 		drawTarget(*i, _markers);
 
 	for (std::vector<Ufo*>::const_iterator			// Draw the Ufo markers
-			i = _game->getSavedGame()->getUfos()->begin();
-			i != _game->getSavedGame()->getUfos()->end();
+			i = _playSave->getUfos()->begin();
+			i != _playSave->getUfos()->end();
 			++i)
 		drawTarget(*i, _markers);
 
 	for (std::vector<Base*>::const_iterator			// Draw the Craft markers
-			i = _game->getSavedGame()->getBases()->begin();
-			i != _game->getSavedGame()->getBases()->end();
+			i = _playSave->getBases()->begin();
+			i != _playSave->getBases()->end();
 			++i)
 		for (std::vector<Craft*>::const_iterator
 				j = (*i)->getCrafts()->begin();

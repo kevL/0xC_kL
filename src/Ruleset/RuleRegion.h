@@ -34,7 +34,10 @@ namespace OpenXcom
 {
 
 /**
- * A rectangle in polar coordinates that defines an area of a MissionZone.
+ * A rectangle in polar coordinates that defines a distinct subset of a larger
+ * MissionZone.
+ * @note MissionZones are abstract; their MissionAreas can be located anywhere
+ * on the Globe and they usually don't even intersect/overlap.
  */
 struct MissionArea
 {
@@ -47,7 +50,7 @@ struct MissionArea
 	std::string site;
 
 	///
-	bool operator== (const MissionArea& area) const
+	bool operator ==(const MissionArea& area) const
 	{
 		return AreSame(lonMax, area.lonMax)
 			&& AreSame(lonMin, area.lonMin)
@@ -65,7 +68,7 @@ struct MissionArea
 
 
 /**
- * A zone (a vector of MissionAreas) on the Globe.
+ * A zone (a superset of MissionAreas) on the Globe.
  */
 struct MissionZone
 {

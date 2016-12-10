@@ -1451,6 +1451,7 @@ std::wstring GeoscapeState::convertDateToMonth(int date) // private.
  */
 void GeoscapeState::time5Seconds()
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "GeoscapeState::time5Seconds()";
 	if (_gameSave->getBases()->empty() == true) // Game Over if there are no more bases.
 	{
@@ -1471,21 +1472,28 @@ void GeoscapeState::time5Seconds()
 			i != _gameSave->getUfos()->end();
 			++i)
 	{
+		//Log(LOG_INFO) << ". ufo= " << Language::wstrToFs((*i)->getLabel(_game->getLanguage()));
+		//Log(LOG_INFO) << ". PAUSE HARD";
+//		setPaused(); // TEST.
+
 		switch ((*i)->getUfoStatus())
 		{
 			case Ufo::FLYING:
-				if (_timerDfZoomIn->isRunning() == false
+				//Log(LOG_INFO) << ". . status FLYING";
+				if (   _timerDfZoomIn ->isRunning() == false
 					&& _timerDfZoomOut->isRunning() == false)
 				{
+					//Log(LOG_INFO) << ". . . df timers NOT running -> ufo think";
 					(*i)->think();
 
 					if ((*i)->reachedDestination() == true)
 					{
+						//Log(LOG_INFO) << ". . . . ufo reached destination -> handle it.";
 						const size_t qtySites (_gameSave->getTerrorSites()->size());
 						const bool detected ((*i)->getDetected());
 
 						AlienMission* const mission ((*i)->getAlienMission());
-						mission->ufoReachedWaypoint(**i, *_rules, *_globe); // recomputes 'qtySites' & 'detected'; also sets ufo Status
+						mission->ufoReachedWaypoint(**i, *_rules, *_globe); // recomputes 'qtySites' & 'detected'; also sets UFO's disposition
 
 						if ((*i)->getAltitude() == MovingTarget::stAltitude[0u])
 						{
@@ -1506,7 +1514,7 @@ void GeoscapeState::time5Seconds()
 						if (detected != (*i)->getDetected()
 							&& (*i)->getTargeters()->empty() == false
 							&& !
-								((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
+								((*i)->getTrajectory().getType() == UfoTrajectory::XCOM_BASE_ASSAULT
 									&& (*i)->getUfoStatus() == Ufo::LANDED))
 						{
 							resetTimer();
@@ -1518,6 +1526,7 @@ void GeoscapeState::time5Seconds()
 							TerrorSite* const site (_gameSave->getTerrorSites()->back());
 							site->setDetected();
 
+							resetTimer();
 							popupGeo(new TerrorDetectedState(site, this));
 						}
 
@@ -1546,10 +1555,12 @@ void GeoscapeState::time5Seconds()
 				break;
 
 			case Ufo::LANDED:
+				//Log(LOG_INFO) << ". . status LANDED";
 				(*i)->think();
 
 				if ((*i)->getSecondsLeft() == 0)
 				{
+					//Log(LOG_INFO) << ". 0 seconds left -> mission UFOLIFTING";
 					AlienMission* const mission ((*i)->getAlienMission());
 					const bool detected ((*i)->getDetected());
 					mission->ufoLifting(**i, *_rules, *_globe);
@@ -1561,17 +1572,22 @@ void GeoscapeState::time5Seconds()
 						popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
 					}
 				}
+				//else Log(LOG_INFO) << ". has seconds remaining";
 				break;
 
 			case Ufo::CRASHED:
+				//Log(LOG_INFO) << ". . status CRASHED";
 				(*i)->think();
 
 				if ((*i)->getSecondsLeft() == 0)
 				{
 					ufoExpired = *i; // shot down while trying to outrun interceptor
-					(*i)->setDetected(false);
 					(*i)->setUfoStatus(Ufo::DESTROYED);
 				}
+				//break;
+
+			//case Ufo::DESTROYED:
+				//Log(LOG_INFO) << ". . status DESTROYED";
 		}
 	}
 
@@ -1588,226 +1604,231 @@ void GeoscapeState::time5Seconds()
 				j != (*i)->getCrafts()->end();
 				)
 		{
-			if ((*j)->isDestroyed() == true)
+			if ((*j)->getCraftStatus() != CS_OUT)
+				++j;
+			else // Craft is airborne -> handle it
 			{
-				_gameSave->scorePoints(
-								(*j)->getLongitude(),
-								(*j)->getLatitude(),
-								(*j)->getRules()->getScore(),
-								true);
-
-				if ((*j)->getRules()->getSoldierCapacity() != 0) // if a transport craft has been shot down all soldiers aboard are dead.
+				if ((*j)->isDestroyed() == true)
 				{
-					for (std::vector<Soldier*>::const_iterator
-							k = (*i)->getSoldiers()->begin();
-							k != (*i)->getSoldiers()->end();
-							)
+					_gameSave->scorePoints(
+									(*j)->getLongitude(),
+									(*j)->getLatitude(),
+									(*j)->getRules()->getScore(),
+									true);
+
+					if ((*j)->getRules()->getSoldierCapacity() != 0) // if a transport craft has been shot down all soldiers aboard are dead.
 					{
-						if ((*k)->getCraft() == *j)
+						for (std::vector<Soldier*>::const_iterator
+								k = (*i)->getSoldiers()->begin();
+								k != (*i)->getSoldiers()->end();
+								)
 						{
-							(*k)->die(_gameSave);
-							delete *k;
-							k = (*i)->getSoldiers()->erase(k);
+							if ((*k)->getCraft() == *j)
+							{
+								(*k)->die(_gameSave);
+								delete *k;
+								k = (*i)->getSoldiers()->erase(k);
+							}
+							else
+								++k;
+						}
+					}
+					delete *j;
+					j = (*i)->getCrafts()->erase(j);
+				}
+				else // craft okay.
+				{
+					if ((*j)->getTarget() != nullptr)
+					{
+						const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
+						if (ufo != nullptr)
+						{
+							if (ufo->getUfoStatus() != Ufo::FLYING)
+								(*j)->inDogfight(false);
+
+							if (ufo->getDetected() == false	// lost radar contact
+								&& ufo != ufoExpired)		// <- ie. not recently shot down while trying to outrun interceptor but it crashed into the sea instead Lol
+							{
+								switch (ufo->getUfoStatus())
+								{
+									case Ufo::LANDED: // base defense
+									case Ufo::DESTROYED:
+										if (ufo->getTrajectory().getType() == UfoTrajectory::XCOM_BASE_ASSAULT)
+										{
+											(*j)->returnToBase(); // NOTE: ufo dTor would handle that.
+											break;
+										}
+										// no break;
+									default:
+									{
+										Waypoint* const wp (new Waypoint());
+										wp->setLongitude((*j)->getMeetLongitude());
+										wp->setLatitude((*j)->getMeetLatitude());
+										wp->setId(ufo->getId());
+
+										// NOTE: The Waypoint is the reconnaissance destination-target;
+										// it also flags GeoscapeCraftState as a special instance.
+										// NOTE: Do not null the Craft's destination; its dest-coords
+										// will be used to position the targeter in GeoscapeCraftState.
+
+										resetTimer();
+										popupGeo(new GeoscapeCraftState(*j, this, wp));
+									}
+								}
+							}
+							else if (ufo->getUfoStatus() == Ufo::DESTROYED)
+								(*j)->returnToBase();
+//							{
+//								switch (ufo->getUfoStatus())
+//								{
+//									case Ufo::CRASHED:
+//										if ((*j)->getQtySoldiers() != 0) break;
+//										if ((*j)->getQtyVehicles() != 0) break;
+//										// no break;
+//									case Ufo::DESTROYED:
+//										(*j)->returnToBase();
+//								}
+//							}
 						}
 						else
-							++k;
+							(*j)->inDogfight(false); // safety.
 					}
-				}
-				delete *j;
-				j = (*i)->getCrafts()->erase(j);
-			}
-			else // craft okay.
-			{
-				if ((*j)->getTarget() != nullptr)
-				{
-					const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
-					if (ufo != nullptr)
-					{
-						if (ufo->getUfoStatus() != Ufo::FLYING)
-							(*j)->inDogfight(false);
 
-						if (ufo->getDetected() == false	// lost radar contact
-							&& ufo != ufoExpired)		// <- ie. not recently shot down while trying to outrun interceptor but it crashed into the sea instead Lol
+					if (_timerDfZoomIn->isRunning() == false
+						&& _timerDfZoomOut->isRunning() == false)
+					{
+						(*j)->think();
+					}
+
+					if ((*j)->reachedDestination() == true)
+					{
+						Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
+						const Waypoint* const wp (dynamic_cast<Waypoint*>((*j)->getTarget()));
+						const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getTarget()));
+//						const AlienBase* const aBase (dynamic_cast<AlienBase*>((*j)->getTarget()));
+
+						if (ufo != nullptr)
 						{
 							switch (ufo->getUfoStatus())
 							{
-								case Ufo::LANDED: // base defense
-								case Ufo::DESTROYED:
-									if (ufo->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN)
+								case Ufo::FLYING:
+									(*j)->interceptLanded(false);
+
+									if (_dogfights.size() + _dogfightsToStart.size() < 4u) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
 									{
-										(*j)->returnToBase(); // NOTE: ufo dTor would handle that.
-										break;
-									}
-									// no break;
-								default:
-								{
-									Waypoint* const wp (new Waypoint());
-									wp->setLongitude((*j)->getMeetLongitude());
-									wp->setLatitude((*j)->getMeetLatitude());
-									wp->setId(ufo->getId());
-
-									// NOTE: The Waypoint is the reconnaissance destination-target;
-									// it also flags GeoscapeCraftState as a special instance.
-									// NOTE: Do not null the Craft's destination; its dest-coords
-									// will be used to position the targeter in GeoscapeCraftState.
-
-									resetTimer();
-									popupGeo(new GeoscapeCraftState(*j, this, wp));
-								}
-							}
-						}
-						else if (ufo->getUfoStatus() == Ufo::DESTROYED)
-							(*j)->returnToBase();
-//						{
-//							switch (ufo->getUfoStatus())
-//							{
-//								case Ufo::CRASHED:
-//									if ((*j)->getQtySoldiers() != 0) break;
-//									if ((*j)->getQtyVehicles() != 0) break;
-//									// no break;
-//								case Ufo::DESTROYED:
-//									(*j)->returnToBase();
-//							}
-//						}
-					}
-					else
-						(*j)->inDogfight(false); // safety.
-				}
-
-				if (_timerDfZoomIn->isRunning() == false
-					&& _timerDfZoomOut->isRunning() == false)
-				{
-					(*j)->think();
-				}
-
-				if ((*j)->reachedDestination() == true)
-				{
-					Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
-					const Waypoint* const wp (dynamic_cast<Waypoint*>((*j)->getTarget()));
-					const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getTarget()));
-//					const AlienBase* const aBase (dynamic_cast<AlienBase*>((*j)->getTarget()));
-
-					if (ufo != nullptr)
-					{
-						switch (ufo->getUfoStatus())
-						{
-							case Ufo::FLYING:
-								(*j)->interceptLanded(false);
-
-								if (_dogfights.size() + _dogfightsToStart.size() < 4u) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
-								{
-									if ((*j)->inDogfight() == false
-										&& AreSame((*j)->getDistance(ufo), 0.)) // Craft ran into a UFO.
-									{
-										_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
-										if (_timerDfStart->isRunning() == false)
+										if ((*j)->inDogfight() == false
+											&& AreSame((*j)->getDistance(ufo), 0.)) // Craft ran into a UFO.
 										{
-											_pause = true;
-											resetTimer();
-											storePreDfCoords();	// store current Globe coords & zoom;
-											_globe->center(		// Globe will reset to these after dogfight ends
-														(*j)->getLongitude(),
-														(*j)->getLatitude());
-
-											if (_dogfights.empty() == true // first dogfight, start music
-												&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_GEO_INTERCEPT) == false) // unless reloading to another dogfight ...
+											_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
+											if (_timerDfStart->isRunning() == false)
 											{
-												_game->getResourcePack()->fadeMusic(_game, 425);
+												_pause = true;
+												resetTimer();
+												storePreDfCoords();	// store current Globe coords & zoom;
+												_globe->center(		// Globe will reset to these after dogfight ends
+															(*j)->getLongitude(),
+															(*j)->getLatitude());
+
+												if (_dogfights.empty() == true // first dogfight, start music
+													&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_GEO_INTERCEPT) == false) // unless reloading to another dogfight ...
+												{
+													_game->getResourcePack()->fadeMusic(_game, 425);
+												}
+
+												startDogfight();
+												_timerDfStart->start();
 											}
 
-											startDogfight();
-											_timerDfStart->start();
+											initDfMusic = true;
+											_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_INTERCEPT);
 										}
-
-										initDfMusic = true;
-										_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_INTERCEPT);
 									}
-								}
-								break;
+									break;
 
-							case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
-							case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
-								if ((*j)->inDogfight() == false // NOTE: Allows non-transport Craft to case the joint.
-									&& (*j)->interceptLanded() == false)
-								{
-									resetTimer();
+								case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
+								case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
+									if ((*j)->inDogfight() == false // NOTE: Allows non-transport Craft to case the joint.
+										&& (*j)->interceptLanded() == false)
+									{
+										resetTimer();
 
-									int // look up polygon's texId + shade
-										texId,
-										shade;
-									_globe->getPolygonTextureAndShade(
-																	ufo->getLongitude(),
-																	ufo->getLatitude(),
-																	&texId, &shade);
-									popupGeo(new ConfirmLandingState(
-															*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
-															_rules->getGlobe()->getTextureRule(texId),
-															shade,
-															(*j)->getQtySoldiers() != 0));
-								}
-								break;
+										int // look up polygon's texId + shade
+											texId,
+											shade;
+										_globe->getPolygonTextureAndShade(
+																		ufo->getLongitude(),
+																		ufo->getLatitude(),
+																		&texId, &shade);
+										popupGeo(new ConfirmLandingState(
+																*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
+																_rules->getGlobe()->getTextureRule(texId),
+																shade,
+																(*j)->getQtySoldiers() != 0));
+									}
+									break;
 
-							case Ufo::DESTROYED: // just before expiration
+								case Ufo::DESTROYED: // just before expiration
 									popupGeo(new CraftPatrolState(*j, this));
 									(*j)->setTarget();
 
-//								if ((*j)->getQtySoldiers() != 0)
-//								{
-//									if ((*j)->inDogfight() == false)
+//									if ((*j)->getQtySoldiers() != 0)
 //									{
-//										resetTimer();
-//										int // look up polygon's texId + shade
-//											texId,
-//											shade;
-//										_globe->getPolygonTextureAndShade(
-//																		ufo->getLongitude(),
-//																		ufo->getLatitude(),
-//																		&texId, &shade);
-//										popup(new ConfirmLandingState(
-//																*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
-//																_rules->getGlobe()->getTextureRule(texId),
-//																shade));
+//										if ((*j)->inDogfight() == false)
+//										{
+//											resetTimer();
+//											int // look up polygon's texId + shade
+//												texId,
+//												shade;
+//											_globe->getPolygonTextureAndShade(
+//																			ufo->getLongitude(),
+//																			ufo->getLatitude(),
+//																			&texId, &shade);
+//											popup(new ConfirmLandingState(
+//																	*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
+//																	_rules->getGlobe()->getTextureRule(texId),
+//																	shade));
+//										}
 //									}
-//								}
-//								else if (ufo->getUfoStatus() != Ufo::LANDED)
-//								{
-//									popup(new CraftPatrolState(*j, this));
-//									(*j)->setTarget();
-//								}
+//									else if (ufo->getUfoStatus() != Ufo::LANDED)
+//									{
+//										popup(new CraftPatrolState(*j, this));
+//										(*j)->setTarget();
+//									}
+							}
 						}
-					}
-					else if (wp == nullptr) //&& (*j)->getQtySoldiers() != 0) // site OR aLienBase
-					{
-						resetTimer();
-
-						if (site != nullptr)
+						else if (wp == nullptr) //&& (*j)->getQtySoldiers() != 0) // site OR aLienBase
 						{
-							const int texId (site->getSiteTextureId());
-							int shade;
-							_globe->getPolygonShade(
-												site->getLongitude(),
-												site->getLatitude(),
-												&shade);
-							popupGeo(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
-													*j,
-													_rules->getGlobe()->getTextureRule(texId),
-													shade,
-													(*j)->getQtySoldiers() != 0));
+							resetTimer();
+
+							if (site != nullptr)
+							{
+								const int texId (site->getSiteTextureId());
+								int shade;
+								_globe->getPolygonShade(
+													site->getLongitude(),
+													site->getLatitude(),
+													&shade);
+								popupGeo(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
+														*j,
+														_rules->getGlobe()->getTextureRule(texId),
+														shade,
+														(*j)->getQtySoldiers() != 0));
+							}
+							else // aLien Base.
+								popupGeo(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
+														*j,
+														nullptr,
+														-1,
+														(*j)->getQtySoldiers() != 0));
 						}
-						else // aLien Base.
-							popupGeo(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
-													*j,
-													nullptr,
-													-1,
-													(*j)->getQtySoldiers() != 0));
+						else // do Patrol at waypoint. NOTE: This will also handle target-UFOs that just vanished.
+						{
+							popupGeo(new CraftPatrolState(*j, this));
+							(*j)->setTarget();
+						}
 					}
-					else // do Patrol at waypoint. NOTE: This will also handle target-UFOs that just vanished.
-					{
-						popupGeo(new CraftPatrolState(*j, this));
-						(*j)->setTarget();
-					}
+					++j;
 				}
-				++j;
 			}
 		}
 	}
@@ -1913,9 +1934,10 @@ private:
 bool DetectXCOMBase::operator ()(const Ufo* const ufo) const
 {
 	if (ufo->isCrashed() == false
-//		&& ufo->getTrajectoryPoint() > 1u
-		&& ufo->getTrajectory().getZone(ufo->getTrajectoryPoint()) != 5u
-		&& ufo->getTrajectory().getId() != UfoTrajectory::RETALIATION_ASSAULT_RUN
+//		&& ufo->getMissionPoint() > 1u
+		&& ufo->getMissionPoint() != 0u
+		&& ufo->getTrajectory().getZoneId(ufo->getMissionPoint()) != 5u
+		&& ufo->getTrajectory().getType() != UfoTrajectory::XCOM_BASE_ASSAULT
 		&& (ufo->getAlienMission()->getRules().getObjectiveType() == alm_RETAL
 			|| Options::aggressiveRetaliation == true))
 	{
@@ -2076,131 +2098,134 @@ void GeoscapeState::time10Minutes()
 			i != _gameSave->getUfos()->end();
 			++i)
 	{
-		if ((*i)->getUfoStatus() == Ufo::FLYING
-			|| (*i)->getUfoStatus() == Ufo::LANDED)
+		switch ((*i)->getUfoStatus())
 		{
-			std::vector<Base*> hyperBases; // = std::vector<Base*>();
-
-			if ((*i)->getDetected() == false)
+			case Ufo::FLYING:
+			case Ufo::LANDED:
 			{
-				const bool hyperDet_pre ((*i)->getHyperDetected());
-				bool
-					hyperDet (false),
-					contact (false);
+				std::vector<Base*> hyperBases; // = std::vector<Base*>();
 
-				for (std::vector<Base*>::const_iterator
-						j = _gameSave->getBases()->begin();
-						j != _gameSave->getBases()->end();
-						++j)
+				if ((*i)->getDetected() == false)
 				{
-					switch ((*j)->detect(*i))
+					const bool hyperDet_pre ((*i)->getHyperDetected());
+					bool
+						hyperDet (false),
+						contact  (false);
+
+					for (std::vector<Base*>::const_iterator
+							j = _gameSave->getBases()->begin();
+							j != _gameSave->getBases()->end();
+							++j)
 					{
-						case 3:
-							contact = true; // no break;
-						case 1:
-							hyperDet = true;
-
-							if (hyperDet_pre == false)
-								hyperBases.push_back(*j);
-							break;
-
-						case 2:
-							contact = true;
-					}
-
-					for (std::vector<Craft*>::const_iterator
-							k = (*j)->getCrafts()->begin();
-							k != (*j)->getCrafts()->end();
-							++k)
-					{
-						if ((*k)->getCraftStatus() == CS_OUT
-							&& (*k)->hasLeftGround() == true
-							&& (*k)->detect(*i) == true)
+						switch ((*j)->detect(*i))
 						{
-							contact = true;
-							break;
+							case 3:
+								contact = true; // no break;
+							case 1:
+								hyperDet = true;
+
+								if (hyperDet_pre == false)
+									hyperBases.push_back(*j);
+								break;
+
+							case 2:
+								contact = true;
+						}
+
+						for (std::vector<Craft*>::const_iterator
+								k = (*j)->getCrafts()->begin();
+								k != (*j)->getCrafts()->end();
+								++k)
+						{
+							if ((*k)->getCraftStatus() == CS_OUT
+								&& (*k)->hasLeftGround() == true
+								&& (*k)->detect(*i) == true)
+							{
+								contact = true;
+								break;
+							}
 						}
 					}
-				}
 
-				(*i)->setDetected(contact);
-				(*i)->setHyperDetected(hyperDet);
+					(*i)->setDetected(contact);
+					(*i)->setHyperDetected(hyperDet);
 
-				if (contact == true
-					|| (hyperDet == true && hyperDet_pre == false))
-				{
-					++_windowPops;
-					popupGeo(new UfoDetectedState(
-											*i,
-											this,
-											true,
-											hyperDet,
-											contact,
-											&hyperBases));
-				}
-			}
-			else // ufo is already detected
-			{
-				const bool hyperDet_pre ((*i)->getHyperDetected());
-				bool
-					hyperDet (false),
-					contact (false);
-
-				for (std::vector<Base*>::const_iterator
-						j = _gameSave->getBases()->begin();
-						j != _gameSave->getBases()->end();
-						++j)
-				{
-					switch ((*j)->detect(*i)) // base attempts redetection; this lets a UFO blip off the radar scope
+					if (contact == true
+						|| (hyperDet == true && hyperDet_pre == false))
 					{
-						case 3:
-							contact = true; // no break;
-						case 1:
-							hyperDet = true;
-
-							if (hyperDet_pre == false)
-								hyperBases.push_back(*j);
-							break;
-
-						case 2:
-							contact = true;
+						++_windowPops;
+						popupGeo(new UfoDetectedState(
+												*i,
+												this,
+												true,
+												hyperDet,
+												contact,
+												&hyperBases));
 					}
+				}
+				else // ufo is already detected
+				{
+					const bool hyperDet_pre ((*i)->getHyperDetected());
+					bool
+						hyperDet (false),
+						contact  (false);
 
-					for (std::vector<Craft*>::const_iterator
-							k = (*j)->getCrafts()->begin();
-							k != (*j)->getCrafts()->end();
-							++k)
+					for (std::vector<Base*>::const_iterator
+							j = _gameSave->getBases()->begin();
+							j != _gameSave->getBases()->end();
+							++j)
 					{
-						if ((*k)->getCraftStatus() == CS_OUT
-							&& (*k)->hasLeftGround() == true
-							&& (*k)->detect(*i) == true)
+						switch ((*j)->detect(*i)) // base attempts redetection; this lets a UFO blip off the radar scope
 						{
-							contact = true;
-							break;
+							case 3:
+								contact = true; // no break;
+							case 1:
+								hyperDet = true;
+
+								if (hyperDet_pre == false)
+									hyperBases.push_back(*j);
+								break;
+
+							case 2:
+								contact = true;
+						}
+
+						for (std::vector<Craft*>::const_iterator
+								k = (*j)->getCrafts()->begin();
+								k != (*j)->getCrafts()->end();
+								++k)
+						{
+							if ((*k)->getCraftStatus() == CS_OUT
+								&& (*k)->hasLeftGround() == true
+								&& (*k)->detect(*i) == true)
+							{
+								contact = true;
+								break;
+							}
 						}
 					}
-				}
 
-				(*i)->setDetected(contact);
-				(*i)->setHyperDetected(hyperDet);
+					(*i)->setDetected(contact);
+					(*i)->setHyperDetected(hyperDet);
 
-				if (hyperDet == true && hyperDet_pre == false)
-				{
-					++_windowPops;
-					popupGeo(new UfoDetectedState(
-											*i,
-											this,
-											false,
-											hyperDet,
-											contact,
-											&hyperBases));
-				}
+					if (hyperDet == true && hyperDet_pre == false)
+					{
+						++_windowPops;
+						popupGeo(new UfoDetectedState(
+												*i,
+												this,
+												false,
+												hyperDet,
+												contact,
+												&hyperBases));
+					}
 
-				if (contact == false
-					&& (*i)->getTargeters()->empty() == false)
-				{
-					resetTimer();
-					popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
+					if (contact == false
+						&& (*i)->getTargeters()->empty() == false)
+					{
+						resetTimer();
+						popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
+					}
 				}
 			}
 		}
@@ -2269,11 +2294,9 @@ struct ExpireCrashedUfo: public std::unary_function<Ufo*, void>
 		{
 			const int sec (ufo->getSecondsLeft());
 			if (sec >= 30 * 60)
-			{
 				ufo->setSecondsLeft(sec - 30 * 60);
-				return;
-			}
-			ufo->setUfoStatus(Ufo::DESTROYED); // mark expired UFO for removal.
+			else
+				ufo->setUfoStatus(Ufo::DESTROYED); // mark expired UFO for removal.
 		}
 	}
 };
@@ -2610,7 +2633,7 @@ void GeoscapeState::time1Hour()
 		popupGeo(new ItemsArrivingState(this));
 
 
-	// TFTD stuff: 'detected' see TerrorSite class
+	// TFTD stuff: 'detected' see TerrorSite
 	for (std::vector<TerrorSite*>::const_iterator
 			i = _gameSave->getTerrorSites()->begin();
 			i != _gameSave->getTerrorSites()->end();
@@ -2619,6 +2642,8 @@ void GeoscapeState::time1Hour()
 		if ((*i)->getDetected() == false)
 		{
 			(*i)->setDetected();
+
+			resetTimer();
 			popupGeo(new TerrorDetectedState(*i, this));
 			break;
 		}
@@ -3047,7 +3072,7 @@ void GeoscapeState::time1Day()
 	// done Popup Events.
 
 
-	const RuleAlienMission* const missionRule (_rules->getMissionRand( // handle regional and country points for aLien-bases ->
+	const RuleAlienMission* const missionRule (_rules->rollMission( // handle regional and country points for aLien-bases ->
 																alm_BASE,
 																static_cast<size_t>(_gameSave->getMonthsElapsed())));
 	const int aLienPts ((missionRule->getMissionScore() * (_gameSave->getDifficultyInt() + 1)) / 100);
@@ -4215,7 +4240,10 @@ bool GeoscapeState::processDirective(RuleMissionScript* const directive) // priv
 	mission->setRegion(typeRegion, *_rules);
 	mission->setTerrorZone(terrorZoneId);
 	strategy.addMissionRun(directive->getVarType());
-	mission->start(directive->getDelay());
+
+	int countdown (directive->getDelay() / 30);
+	countdown = (RNG::generate(0, countdown) + (countdown >> 1u)) * 30;
+	mission->start(countdown);
 
 	_gameSave->getAlienMissions().push_back(mission);
 
@@ -4303,7 +4331,7 @@ void GeoscapeState::deterAlienMissions(bool atGameStart) // private.
  *
 void GeoscapeState::setupLandMission() // private.
 {
-	const RuleAlienMission& missionRule = *_rules->getMissionRand(
+	const RuleAlienMission& missionRule = *_rules->rollMission(
 															alm_TERROR,
 															_gameSave->getMonthsElapsed());
 

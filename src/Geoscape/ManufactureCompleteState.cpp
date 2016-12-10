@@ -63,19 +63,19 @@ ManufactureCompleteState::ManufactureCompleteState(
 {
 	_fullScreen = false;
 
-	_window			= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
+	_window		= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
 
-	_txtMessage		= new Text(200, 115, 60, 35);
+	_txtMessage	= new Text(200, 115, 60, 35);
 
-	_btnGotoBase	= new TextButton(72, 16,  48, 154);
-	_btnOk5Secs		= new TextButton(72, 16, 124, 154);
-	_btnOk			= new TextButton(72, 16, 200, 154);
+	_btnBase	= new TextButton(72, 16,  48, 154);
+	_btnOk5Secs	= new TextButton(72, 16, 124, 154);
+	_btnOk		= new TextButton(72, 16, 200, 154);
 
 	setInterface("geoManufacture");
 
 	add(_window,		"window",	"geoManufacture");
 	add(_txtMessage,	"text1",	"geoManufacture");
-	add(_btnGotoBase,	"button",	"geoManufacture");
+	add(_btnBase,		"button",	"geoManufacture");
 	add(_btnOk5Secs,	"button",	"geoManufacture");
 	add(_btnOk,			"button",	"geoManufacture");
 
@@ -94,13 +94,13 @@ ManufactureCompleteState::ManufactureCompleteState(
 	_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnOk5SecsClick),
 									Options::keyGeoSpeed1);
 
-	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
-	_btnGotoBase->setVisible(allocate == true);
-	_btnGotoBase->onMouseClick(		static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick));
-	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick),
-									Options::keyOk);
-	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick),
-									Options::keyOkKeypad);
+	_btnBase->setText(_base->getLabel()); //tr("STR_GO_TO_BASE")
+	_btnBase->setVisible(allocate == true);
+	_btnBase->onMouseClick(		static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick));
+	_btnBase->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick),
+								Options::keyOk);
+	_btnBase->onKeyboardPress(	static_cast<ActionHandler>(&ManufactureCompleteState::btnGotoBaseClick),
+								Options::keyOkKeypad);
 
 	std::wstring wst;
 	switch (doneType)

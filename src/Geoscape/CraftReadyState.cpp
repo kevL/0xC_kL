@@ -60,7 +60,7 @@ CraftReadyState::CraftReadyState(
 
 	_window			= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
 	_txtMessage		= new Text(226, 100, 47, 30);
-	_btnGoToBase	= new TextButton(100, 16,  48, 132);
+	_btnBase		= new TextButton(100, 16,  48, 132);
 	_btnCraftInfo	= new TextButton(100, 16, 172, 132);
 	_btnOk5Secs		= new TextButton(100, 16,  48, 150);
 	_btnOk			= new TextButton(100, 16, 172, 150);
@@ -69,7 +69,7 @@ CraftReadyState::CraftReadyState(
 
 	add(_window,		"window",	"geoCraftScreens");
 	add(_txtMessage,	"text1",	"geoCraftScreens");
-	add(_btnGoToBase,	"button",	"geoCraftScreens");
+	add(_btnBase,		"button",	"geoCraftScreens");
 	add(_btnCraftInfo,	"button",	"geoCraftScreens");
 	add(_btnOk5Secs,	"button",	"geoCraftScreens");
 	add(_btnOk,			"button",	"geoCraftScreens");
@@ -102,8 +102,8 @@ CraftReadyState::CraftReadyState(
 										Options::keyOkKeypad);
 	}
 
-	_btnGoToBase->setText(tr("STR_GO_TO_BASE"));
-	_btnGoToBase->onMouseClick(static_cast<ActionHandler>(&CraftReadyState::btnGoToBaseClick));
+	_btnBase->setText(_craft->getBase()->getLabel()); //tr("STR_GO_TO_BASE")
+	_btnBase->onMouseClick(static_cast<ActionHandler>(&CraftReadyState::btnGoToBaseClick));
 
 	_btnCraftInfo->setText(tr("STR_CRAFT_INFO"));
 	_btnCraftInfo->onMouseClick(static_cast<ActionHandler>(&CraftReadyState::btnCraftInfoClick));

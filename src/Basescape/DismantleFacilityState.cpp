@@ -191,7 +191,7 @@ void DismantleFacilityState::calcRefund() // private.
 			i != ufoList->end();
 			++i)
 	{
-		if ((*i)->getTrajectory().getId() == UfoTrajectory::RETALIATION_ASSAULT_RUN
+		if ((*i)->getTrajectory().getType() == UfoTrajectory::XCOM_BASE_ASSAULT
 			&& AreSame((*i)->getTarget()->getLongitude(), _base->getLongitude())
 			&& AreSame((*i)->getTarget()->getLatitude(),  _base->getLatitude()))
 		{

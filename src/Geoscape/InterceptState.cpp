@@ -106,7 +106,7 @@ InterceptState::InterceptState(
 
 	if (_base != nullptr)
 	{
-		_btnBase->setText(_base->getLabel()); // "STR_GO_TO_BASE"
+		_btnBase->setText(_base->getLabel()); //tr("STR_GO_TO_BASE")
 		_btnBase->onMouseClick(static_cast<ActionHandler>(&InterceptState::btnGotoBaseClick));
 	}
 	else

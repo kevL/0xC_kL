@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Window that allows the player to confirm a craft's new destination.
+ * Window that allows the player to confirm a Craft's destination.
  */
 class ConfirmDestinationState
 	:

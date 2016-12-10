@@ -99,16 +99,11 @@ TerrorDetectedState::TerrorDetectedState(
 	_txtTitle->setWordWrap();
 
 	_txtCity->setText(tr(_terrorSite->getCity()));
-	_txtCity->setBig();
 	_txtCity->setAlign(ALIGN_CENTER);
-
-	_geoState->resetTimer();
+	_txtCity->setBig();
 
 	_game->getResourcePack()->fadeMusic(_game, 325);
 	_game->getResourcePack()->playMusic(res_MUSIC_GEO_TERROR_SPLASH);
-
-//	kL_geoMusicPlaying = false;
-//	kL_geoMusicReturnState = true;
 }
 
 /**
@@ -134,8 +129,8 @@ void TerrorDetectedState::btnInterceptClick(Action*)
 void TerrorDetectedState::btnCenterClick(Action*)
 {
 	_geoState->getGlobe()->center(
-							_terrorSite->getLongitude(),
-							_terrorSite->getLatitude());
+								_terrorSite->getLongitude(),
+								_terrorSite->getLatitude());
 	_game->popState();
 }
 

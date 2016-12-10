@@ -498,7 +498,7 @@ void SavedGame::load(
 		else Log(LOG_ERROR) << "SavedGame::load() Failed to load region: Type [" << type << "]";
 	}
 
-	Log(LOG_INFO) << ". load alien bases"; // AlienBases must be loaded before AlienMissions.
+	Log(LOG_INFO) << ". load alien bases"; // AlienBases must be loaded before AlienMissions (for AlienBase ids).
 	const RuleAlienDeployment* ruleDeploy;
 	AlienBase* aBase;
 	for (YAML::const_iterator
@@ -516,7 +516,7 @@ void SavedGame::load(
 		else Log(LOG_ERROR) << "SavedGame::load() Failed to load deployment for alien base: Type [" << type << "]";
 	}
 
-	Log(LOG_INFO) << ". load missions"; // AlienMissions must be loaded before Ufos.
+	Log(LOG_INFO) << ". load missions"; // AlienMissions must be loaded before Ufos (for AlienMission ids).
 	const RuleAlienMission* ruleMission;
 	const YAML::Node& missions (doc["alienMissions"]);
 	AlienMission* mission;
@@ -535,7 +535,7 @@ void SavedGame::load(
 		else Log(LOG_ERROR) << "SavedGame::load() Failed to load mission: Type [" << type << "]";
 	}
 
-	Log(LOG_INFO) << ". load ufos"; // Ufos must be loaded after AlienMissions.
+	Log(LOG_INFO) << ". load ufos";
 	Ufo* ufo;
 	for (YAML::const_iterator
 			i = doc["ufos"].begin();
@@ -552,7 +552,7 @@ void SavedGame::load(
 		else Log(LOG_ERROR) << "SavedGame::load() Failed to load UFO: Type [" << type << "]";
 	}
 
-	Log(LOG_INFO) << ". load waypoints";
+	Log(LOG_INFO) << ". load waypoints"; // Waypoints must be loaded before Bases (for Craft destinations).
 	Waypoint* wp;
 	for (YAML::const_iterator
 			i = doc["waypoints"].begin();
@@ -765,13 +765,13 @@ void SavedGame::save(const std::string& file) const
 			++i)
 		node["alienBases"].push_back((*i)->save());
 
-	for (std::vector<AlienMission*>::const_iterator // AlienMissions must be saved before Ufos but after AlienBases.
+	for (std::vector<AlienMission*>::const_iterator // AlienMissions must be saved before Ufos.
 			i = _activeMissions.begin();
 			i != _activeMissions.end();
 			++i)
 		node["alienMissions"].push_back((*i)->save());
 
-	for (std::vector<Ufo*>::const_iterator // Ufos must be saved after AlienMissions.
+	for (std::vector<Ufo*>::const_iterator
 			i = _ufos.begin();
 			i != _ufos.end();
 			++i)
@@ -1252,7 +1252,9 @@ std::vector<Ufo*>* SavedGame::getUfos()
 }
 
 /**
- * Gets the list of current Craft waypoints.
+ * Gets the list of current Craft Waypoints.
+ * @note UFO waypoints are separate, individual entities that are handled
+ * differently -- see AlienMission and Ufo::save/load().
  * @return, pointer to a vector of pointers to all Waypoints
  */
 std::vector<Waypoint*>* SavedGame::getWaypoints()

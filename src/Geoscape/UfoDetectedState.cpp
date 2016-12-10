@@ -54,7 +54,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Ufo Detected window.
+ * Initializes all the elements in the UfoDetected window.
  * @param ufo			- pointer to a UFO to get info from
  * @param geoState		- pointer to GeoscapeState
  * @param firstDetect	- true if the UFO has just been detected
@@ -101,7 +101,7 @@ UfoDetectedState::UfoDetectedState(
 
 	_txtUfo			= new Text(102, 16, 20, 56);
 	_txtDetected	= new Text( 80,  9, 32, 73);
-//	_txtTimeLeft	= new Text( 60,  9, 20, 83);
+	_txtTimeLeft	= new Text( 60,  9, 20, 83);
 
 	_lstInfo		= new TextList(192, 33, 32, 85);
 
@@ -121,7 +121,7 @@ UfoDetectedState::UfoDetectedState(
 	{
 		_txtUfo->setY(19);
 		_txtDetected->setY(36);
-//		_txtTimeLeft->setY(46);
+		_txtTimeLeft->setY(46);
 		_lstInfo->setY(60);
 		_btnCenter->setY(135);
 		_btnIntercept->setY(155);
@@ -145,7 +145,7 @@ UfoDetectedState::UfoDetectedState(
 	add(_window,		"window",	"UFOInfo");
 	add(_txtUfo,		"text",		"UFOInfo");
 	add(_txtDetected,	"text",		"UFOInfo");
-//	add(_txtTimeLeft,	"text",		"UFOInfo");
+	add(_txtTimeLeft,	"text",		"UFOInfo");
 	add(_lstInfo,		"text",		"UFOInfo");
 	add(_btnCenter,		"button",	"UFOInfo");
 	add(_btnIntercept,	"button",	"UFOInfo");
@@ -317,18 +317,18 @@ UfoDetectedState::UfoDetectedState(
 			_txtTexture->setAlign(ALIGN_RIGHT);
 			_txtTexture->setText(woststr.str());
 
-//			woststr.str(L"");
-//			woststr << L"t> ";
-//			std::wstring wst (Text::formatInt(_ufo->getSecondsLeft()));
-//			woststr << wst;
-//			_txtTimeLeft->setText(woststr.str()); // debug-thing.
+			woststr.str(L"");
+			woststr << L"t> ";
+			std::wstring wst (Text::formatInt(_ufo->getSecondsLeft()));
+			woststr << wst;
+			_txtTimeLeft->setText(woststr.str()); // debug-thing.
 			break;
 		}
 
 		case Ufo::FLYING:
 //		case Ufo::DESTROYED:
 			_txtTexture->setVisible(false);
-//			_txtTimeLeft->setVisible(false);
+			_txtTimeLeft->setVisible(false);
 	}
 
 	if (_hyperDetected == true)

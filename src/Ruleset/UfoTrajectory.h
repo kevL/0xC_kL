@@ -30,89 +30,88 @@ namespace OpenXcom
 {
 
 /**
- * Information for points of a UFO trajectory.
+ * Information for points of a UFO mission-trajectory.
  */
-struct TrajectoryWaypoint
+struct MissionPoint
 {
 	size_t
-		zone,		// The mission zone.
-		altitude,	// The altitude to reach.
-		speed;		// The speed percentage [0..100]
+		zone,		// the zoneId
+		altitude,	// the altitude
+		speed;		// the speed percentage
 };
 
+YAML::Emitter& operator <<(
+		YAML::Emitter& out,
+		const MissionPoint& point);
 
-YAML::Emitter& operator<< (
-		YAML::Emitter& emitter,
-		const TrajectoryWaypoint& wp);
-
-bool operator>> (
+bool operator >>(
 		const YAML::Node& node,
-		TrajectoryWaypoint& wp);
+		MissionPoint& point);
 
 
 /**
  * Holds information about a specific trajectory.
- * @note Ufo trajectories are a sequence of mission zones, altitudes, and speed
+ * @note Ufo trajectories are a sequence of zoneIds, altitudes, and speed
  * percentages.
  */
 class UfoTrajectory
 {
 
 private:
-	int _groundTimer;
-	std::string _id;
+	int _ground;
+	std::string _type;
 
-	std::vector<TrajectoryWaypoint> _waypoints;
+	std::vector<MissionPoint> _points;
 
 
 	public:
-		static const std::string RETALIATION_ASSAULT_RUN;
+		static const std::string XCOM_BASE_ASSAULT;
 
 		/// cTor.
-		explicit UfoTrajectory(const std::string& id);
+		explicit UfoTrajectory(const std::string& type);
 
-		/// Loads trajectory-data from YAML.
-		void load(const YAML::Node &node);
+		/// Loads UfoTrajectory data from YAML.
+		void load(const YAML::Node& node);
 
 		/**
-		 * Gets the trajectory's ID.
-		 * @return, the type-ID
+		 * Gets the UfoTrajectory's type.
+		 * @return, the trajectory's type
 		 */
-		const std::string& getId() const
-		{ return _id; }
+		const std::string& getType() const
+		{ return _type; }
 
 		/**
-		 * Gets the number of waypoints in the rule's trajectory.
-		 * @return, the number of waypoints
+		 * Gets the quantity of mission-points in the UfoTrajectory.
+		 * @return, the quantity of points
 		 */
-		size_t getWaypointTotal() const
-		{ return _waypoints.size(); }
+		size_t getMissionPointTotal() const
+		{ return _points.size(); }
 
 		/**
-		 * Gets the zone-ID at a waypoint.
-		 * @param wpId - the waypoint-ID
+		 * Gets the zone-ID at a specified mission-point.
+		 * @param pointId - the point-ID
 		 * @return, the zone-ID
 		 */
-		size_t getZone(size_t wpId) const
-		{ return _waypoints[wpId].zone; }
+		size_t getZoneId(size_t pointId) const
+		{ return _points[pointId].zone; }
 
-		/// Gets the altitude at a waypoint.
-		const std::string getAltitude(size_t wpId) const; // does not like return &ref
+		/// Gets the altitude at a specified mission-point.
+		const std::string getAltitude(size_t pointId) const; // does not like return &ref
 
 		/**
-		 * Gets the speed-percentage at a waypoint.
-		 * @param wpId - the waypoint-ID
+		 * Gets the speed-percentage at a specified mission-point.
+		 * @param pointId - the point-ID
 		 * @return, the speed percent
 		 */
-		float getSpeedPct(size_t wpId) const
-		{ return static_cast<float>(_waypoints[wpId].speed) / 100.f; }
+		double getSpeedPct(size_t pointId) const
+		{ return static_cast<double>(_points[pointId].speed) / 100.; }
 
 		/**
-		 * Gets the number of seconds that a UFO should spend on the ground.
+		 * Gets the seconds that a UFO should spend on the ground.
 		 * @return, seconds
 		 */
-		int groundTimer() const
-		{ return _groundTimer; }
+		int getGroundDuration() const
+		{ return _ground * 5; } // INVESTIGATE: *5
 };
 
 }

@@ -97,8 +97,11 @@ private:
 		/// Loads AlienMission data from YAML.
 		void load(const YAML::Node& node);
 
-		/// Gets an aLien race-type based on the game-time and the racial distribution.
-		std::string generateRace(size_t monthsPassed) const;
+		/// Gets an aLien race-type based on GT and the racial distribution.
+		std::string generateRace(size_t elapsed) const;
+
+		/// Gets the chance of the AlienMission based on GT.
+		int getWeight(size_t elapsed) const;
 
 		/// Gets the mission's type-ID.
 		const std::string& getType() const
@@ -108,8 +111,10 @@ private:
 		size_t getWaveTotal() const
 		{ return _waves.size(); }
 		/// Gets the full wave information.
-		const MissionWave& getWave(size_t index) const
-		{ return _waves[index]; }
+		const MissionWave& getWaveData(size_t id) const
+		{ return _waves[id]; }
+//		const std::vector<MissionWave>& getWaves() const // TEST
+//		{ return _waves; }
 
 		/// Gets the score of the AlienMission rule.
 		int getMissionScore() const
@@ -125,9 +130,6 @@ private:
 		/// Gets the zone for creating a TerrorSite or AlienBase.
 		size_t getObjectiveZone() const
 		{ return _objectiveZone; }
-
-		/// Gets the chance of the AlienMission based on GT.
-		int getWeight(size_t elapsed) const;
 
 		/// Gets the basic odds of XCOM resistance creating a retaliation-mission.
 		int getRetaliation() const

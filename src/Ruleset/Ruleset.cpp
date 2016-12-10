@@ -440,8 +440,8 @@ void Ruleset::validateMissions() const
 			std::set<std::string>::const_iterator j (missionTypes.begin());
 			if (getAlienMission(*j) == nullptr)
 			{
-				throw Exception("ERROR with MissionScript: " + (*i).first
-					+ ": alien mission type: " + *j + "not defined, "
+				throw Exception("ERROR with MissionScript: " + i->first
+					+ ": alien-mission-type " + *j + " not defined, "
 					+ "so sayeth the wise Alfonso.");
 			}
 
@@ -456,7 +456,7 @@ void Ruleset::validateMissions() const
 				if (getAlienMission(*j) != nullptr
 					&& (getAlienMission(*j)->getObjectiveType() == alm_TERROR) != isTerror)
 				{
-					throw Exception("ERROR with MissionScript: " + (*i).first
+					throw Exception("ERROR with MissionScript: " + i->first
 						+ ": cannot mix Terror/non-Terror missions in one directive, "
 						+ "so sayeth the wise Alfonso.");
 				}
@@ -487,7 +487,7 @@ void Ruleset::validateMissions() const
 		{
 			if (getAlienMission(*j)->getObjectiveType() == alm_TERROR)
 			{
-				throw Exception("ERROR with MissionWeights: Region: " + (*i).first
+				throw Exception("ERROR with MissionWeights: Region: " + i->first
 					+ ": has " + *j + " listed. "
 					+ "Terror mission can only be invoked via missionScript, "
 					+ "so sayeth the wise Alfonso.");
@@ -821,7 +821,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 			i != doc["ufoTrajectories"].end();
 			++i)
 	{
-		UfoTrajectory* const rule (loadRule(*i, &_ufoTrajectories, nullptr, "id"));
+		UfoTrajectory* const rule (loadRule(*i, &_ufoTrajectories));
 		if (rule != nullptr) rule->load(*i);
 	}
 
@@ -1864,14 +1864,14 @@ const RuleAlienMission* Ruleset::getAlienMission(const std::string& type) const
 }
 
 /**
- * Gets the rules for a random AlienMission based on a specified objective.
- * @param objective		- AlienMission objective (RuleAlienMission.h)
- * @param monthsPassed	- the number of months since game start
+ * Gets the rules for a random AlienMission based on a specified objective-type.
+ * @param objective	- AlienMission objective (RuleAlienMission.h)
+ * @param elapsed	- the number of months since game start
  * @return, pointer to RuleAlienMission
  */
-const RuleAlienMission* Ruleset::getMissionRand(
+const RuleAlienMission* Ruleset::rollMission(
 		MissionObjective objective,
-		size_t monthsPassed) const
+		size_t elapsed) const
 {
 	int totalWeight (0);
 
@@ -1882,9 +1882,9 @@ const RuleAlienMission* Ruleset::getMissionRand(
 			++i)
 	{
 		if (i->second->getObjectiveType() == objective
-			&& i->second->getWeight(monthsPassed) > 0)
+			&& i->second->getWeight(elapsed) > 0)
 		{
-			totalWeight += i->second->getWeight(monthsPassed);
+			totalWeight += i->second->getWeight(elapsed);
 			eligibleMissions[totalWeight] = i->second;
 		}
 	}

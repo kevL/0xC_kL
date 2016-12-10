@@ -32,7 +32,7 @@
 #include "../Engine/Game.h"
 #include "../Engine/Exception.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h" // DEBUG
 
 #include "../Geoscape/Globe.h" // Globe::GLM_UFO_*
 
@@ -48,13 +48,13 @@ namespace OpenXcom
 /**
  * Creates the Ufo from a specified RuleUfo.
  * @param ufoRule	- pointer to RuleUfo
- * @param gameSave	- pointer to the SavedGame
+ * @param playSave	- pointer to the SavedGame
  */
 Ufo::Ufo(
 		const RuleUfo* const ufoRule,
-		SavedGame* const gameSave)
+		SavedGame* const playSave)
 	:
-		MovingTarget(gameSave),
+		MovingTarget(playSave),
 		_ufoRule(ufoRule),
 		_idCrashed(0),
 		_idLanded(0),
@@ -68,10 +68,10 @@ Ufo::Ufo(
 		_isQuickBattle(false), // TODO: Might be able to use id=-1 for this.
 		_mission(nullptr),
 		_trajectory(nullptr),
-		_trajectoryWp(0u),
+		_missionPoint(0u),
 		_detected(false),
 		_hyperDetected(false),
-		_shootingAt(0),
+		_shootingAt(0u),
 		_hitFrame(0),
 		_processedIntercept(false),
 		_fireCountdown(0),
@@ -101,7 +101,7 @@ Ufo::~Ufo()
 	}
 
 	if (_mission != nullptr)
-		_mission->decreaseLiveUfos();
+		_mission->decrLiveUfos();
 }
 
 
@@ -124,9 +124,9 @@ private:
 		{}
 
 		/// Match with stored ID.
-		bool operator ()(const AlienMission* const am) const
+		bool operator ()(const AlienMission* const mission) const
 		{
-			return am->getId() == _id;
+			return mission->getId() == _id;
 		}
 };
 
@@ -185,24 +185,21 @@ void Ufo::loadUfo(
 	else
 		_status = FLYING;									// <- already done in cTor init.
 
-
-	const SavedGame* const gameSave (rules.getGame()->getSavedGame());
-	if (gameSave->getMonthsElapsed() != -1)
+	if (_isQuickBattle == false)
 	{
 		const int missionId (node["mission"].as<int>());
 		std::vector<AlienMission*>::const_iterator mission (std::find_if(
-																	gameSave->getAlienMissions().begin(),
-																	gameSave->getAlienMissions().end(),
+																	_playSave->getAlienMissions().begin(),
+																	_playSave->getAlienMissions().end(),
 																	MatchMissionId(missionId)));
-		if (mission == gameSave->getAlienMissions().end())
+		if (mission == _playSave->getAlienMissions().end())
 		{
 			throw Exception("Unknown mission, save file is corrupt.");
 		}
 		_mission = *mission;
 
-		const std::string trjType (node["trajectory"].as<std::string>());
-		_trajectory = rules.getUfoTrajectory(trjType);
-		_trajectoryWp = node["trajectoryWp"].as<size_t>(_trajectoryWp);
+		_trajectory = rules.getUfoTrajectory(node["trajectory"].as<std::string>());
+		_missionPoint = node["trjPoint"].as<size_t>(_missionPoint);
 	}
 
 	_fireCountdown		= node["fireCountdown"]		.as<int>(_fireCountdown);
@@ -241,9 +238,9 @@ YAML::Node Ufo::save() const
 
 	if (_isQuickBattle == false) // TODO: Do not save trajectory-info if UFO was shot down.
 	{
-		node["mission"]			= _mission->getId();
-		node["trajectory"]		= _trajectory->getId();
-		node["trajectoryWp"]	= _trajectoryWp;
+		node["mission"]		= _mission->getId();
+		node["trajectory"]	= _trajectory->getType();
+		node["trjPoint"]	= _missionPoint;
 	}
 	else
 		node["isQuickBattle"]	= _isQuickBattle;
@@ -332,7 +329,7 @@ std::wstring Ufo::getLabel(
  */
 int Ufo::getMarker() const
 {
-	if (_detected == true)
+	if (_detected == true || _playSave->getDebugGeo() == true)
 	{
 		const int id (_ufoRule->getMarker());
 		if (id != -1) return id; // NOTE: This does not differentiate between Flying/Crashed/Landed.
@@ -496,7 +493,7 @@ std::string Ufo::getHeading() const
 }
 
 /**
- * Gets the current heading of this UFO as an integer-value.
+ * Gets the current heading of this UFO as an integer.
  * @return, heading as an integer
  */
 unsigned Ufo::getHeadingInt() const
@@ -606,6 +603,30 @@ void Ufo::calculateSpeed() // private.
  */
 void Ufo::think()
 {
+//	Log(LOG_INFO) << "";
+//	Log(LOG_INFO) << "Ufo::think()";
+//	Log(LOG_INFO) << ". type= " << _ufoRule->getType();
+//	Log(LOG_INFO) << ". id= " << _id;
+//	Log(LOG_INFO) << ". idLanded= " << _idLanded;
+//	Log(LOG_INFO) << ". idCrashed= " << _idCrashed;
+//	Log(LOG_INFO) << ". status= " << _status;
+//	Log(LOG_INFO) << ". altitude= " << _altitude;
+//	Log(LOG_INFO) << ". detected= " << _detected;
+//	Log(LOG_INFO) << ". point= " << _missionPoint;
+//	Log(LOG_INFO) << ". missionId= " << _mission->getId();
+//	if (_trajectory != nullptr)
+//		Log(LOG_INFO) << ". traj= " << _trajectory->getType();
+//	else
+//		Log(LOG_INFO) << ". traj NULL";
+//	Log(LOG_INFO) << ". secondsLeft= " << _secondsLeft;
+//
+//	if (_target != nullptr)
+//		Log(LOG_INFO) << ". target VALID";
+//	else
+//		Log(LOG_INFO) << ". target NOT Valid";
+//
+//	Log(LOG_INFO) << ". speed= " << _speed;
+
 	switch (_status)
 	{
 		case FLYING:
@@ -615,14 +636,13 @@ void Ufo::think()
 			break;
 
 		case LANDED:
-//			assert(_secondsLeft >= 5 && "Wrong time management.");
 			_secondsLeft -= 5;
 			break;
 
 		case CRASHED:
-//			if (_detected == false)
 			_detected = true;
 	}
+//	Log(LOG_INFO) << ". speed= " << _speed;
 }
 
 /**
@@ -779,10 +799,10 @@ void Ufo::setUfoMissionInfo(
 //	assert(!_mission && mission && trajectory);
 
 	_mission = mission;
-	_mission->increaseLiveUfos();
+	_mission->incrLiveUfos();
 
 	_trajectory = trajectory;
-	_trajectoryWp = 0u;
+	_missionPoint = 0u;
 }
 
 /**

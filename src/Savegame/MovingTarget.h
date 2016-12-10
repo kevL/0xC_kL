@@ -47,8 +47,6 @@ private:
 		_latPoint,
 		_speedRads;
 
-	SavedGame* _gameSave;
-
 	/// Checks the MovingTarget's current destination for safe deletion.
 	void checkTargets();
 
@@ -62,13 +60,14 @@ private:
 			_speedLat,
 			_speedLon;
 
+		SavedGame* _playSave;
 		Target* _target;
 
 		/// Calculates a new speed-vector to a destination.
 		virtual void calculateSpeed();
 
 		/// Creates a MovingTarget.
-		explicit MovingTarget(SavedGame* const gameSave);
+		explicit MovingTarget(SavedGame* const playSave);
 
 
 		public:

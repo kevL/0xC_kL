@@ -45,7 +45,6 @@ class CraftWeapon;
 class ItemContainer;
 class RuleCraft;
 class Ruleset;
-class SavedGame;
 class Soldier;
 class Vehicle;
 
@@ -61,6 +60,8 @@ class Craft final
 {
 
 private:
+	static const int TAKEOFF_DELAY = 75;
+
 	bool
 		_tactical,
 		_inDogfight,
@@ -98,7 +99,7 @@ private:
 		Craft(
 				RuleCraft* const crRule,
 				Base* const base,
-				SavedGame* const gameSave,
+				SavedGame* const playSave,
 				bool hasId = false);
 		/// Cleans up the Craft.
 		~Craft() final;

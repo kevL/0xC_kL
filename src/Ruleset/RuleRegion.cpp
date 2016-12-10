@@ -238,16 +238,7 @@ std::pair<double, double> RuleRegion::getZonePoint(size_t zoneId) const
 	if (zoneId < _zones.size()) // safety.
 	{
 		const MissionZone& zone (_zones[zoneId]);
-		const size_t pick (RNG::pick(zone.areas.size()));
-		const double
-			lon (RNG::generate(
-							zone.areas[pick].lonMin,
-							zone.areas[pick].lonMax)),
-			lat (RNG::generate(
-							zone.areas[pick].latMin,
-							zone.areas[pick].latMax));
-
-		return std::make_pair(lon,lat);
+		return getAreaPoint(zone.areas[RNG::pick(zone.areas.size())]);
 	}
 	return std::make_pair(0.,0.);
 }
@@ -271,17 +262,17 @@ std::pair<double, double> RuleRegion::getAreaPoint(const MissionArea& area) cons
 }
 
 /**
- * Gets the MissionArea for a terror-point in a specified zone-ID and at Target's
- * coordinates.
- * @param zoneId	- the zone-ID
- * @param target	- pointer to the Target for coordinates
+ * Gets the MissionArea (a City) for a terror-point in a specified zone-ID and
+ * at the specified Target coordinates.
+ * @param zoneId - the zone-ID
+ * @param target - pointer to a Target for coordinate match
  * @return, a MissionArea
  */
 MissionArea RuleRegion::getTerrorArea(
 		size_t zoneId,
 		const Target* const target) const
 {
-	if (zoneId < _zones.size())
+	if (zoneId < _zones.size()) // safety.
 	{
 		for (std::vector<MissionArea>::const_iterator
 				i = _zones[zoneId].areas.begin();

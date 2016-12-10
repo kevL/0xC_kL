@@ -53,7 +53,7 @@ private:
 		* _txtQuantity,
 		* _txtTitle;
 	TextButton
-//		* _btnGotoBase,
+//		* _btnBase,
 		* _btnOk,
 		* _btnOk5Secs;
 	TextList* _lstTransfers;

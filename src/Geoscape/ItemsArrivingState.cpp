@@ -75,11 +75,11 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 
 	_lstTransfers	= new TextList(285, 121, 16, 45);
 
-//	_btnGotoBase	= new TextButton(90, 16,  16, 169);
-//	_btnOk5Secs		= new TextButton(90, 16, 118, 169);
-//	_btnOk			= new TextButton(90, 16, 220, 169);
-	_btnOk5Secs		= new TextButton(139, 16,  16, 169);
-	_btnOk			= new TextButton(139, 16, 165, 169);
+//	_btnBase	= new TextButton(90, 16,  16, 169);
+//	_btnOk5Secs	= new TextButton(90, 16, 118, 169);
+//	_btnOk		= new TextButton(90, 16, 220, 169);
+	_btnOk5Secs	= new TextButton(139, 16,  16, 169);
+	_btnOk		= new TextButton(139, 16, 165, 169);
 
 	setInterface("itemsArriving");
 
@@ -89,7 +89,7 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 	add(_txtQuantity,		"text1",	"itemsArriving");
 	add(_txtDestination,	"text1",	"itemsArriving");
 	add(_lstTransfers,		"text2",	"itemsArriving");
-//	add(_btnGotoBase,		"button",	"itemsArriving");
+//	add(_btnBase,			"button",	"itemsArriving");
 	add(_btnOk5Secs,		"button",	"itemsArriving");
 	add(_btnOk,				"button",	"itemsArriving");
 
@@ -98,10 +98,10 @@ ItemsArrivingState::ItemsArrivingState(GeoscapeState* const geoState)
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
-//	_btnGotoBase->setText(tr("STR_GO_TO_BASE"));
-//	_btnGotoBase->onMouseClick(		static_cast<ActionHandler>(&ItemsArrivingState::btnGotoBaseClick));
-//	_btnGotoBase->onKeyboardPress(	static_cast<ActionHandler>(&ItemsArrivingState::btnGotoBaseClick),
-//									Options::keyOk);
+//	_btnBase->setText(); //tr("STR_GO_TO_BASE")
+//	_btnBase->onMouseClick(		static_cast<ActionHandler>(&ItemsArrivingState::btnGotoBaseClick));
+//	_btnBase->onKeyboardPress(	static_cast<ActionHandler>(&ItemsArrivingState::btnGotoBaseClick),
+//								Options::keyOk);
 
 	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
 	_btnOk5Secs->onMouseClick(		static_cast<ActionHandler>(&ItemsArrivingState::btnOk5SecsClick));

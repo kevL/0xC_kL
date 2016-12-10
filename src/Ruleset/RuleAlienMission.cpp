@@ -33,10 +33,10 @@ struct convert<OpenXcom::MissionWave>
 	{
 		Node node;
 
-		node["ufo"]			= rhs.ufoType;
-		node["count"]		= rhs.ufoTotal;
+		node["ufoType"]		= rhs.ufoType;
+		node["ufoTotal"]	= rhs.ufoTotal;
 		node["trajectory"]	= rhs.trajectory;
-		node["timer"]		= rhs.spawnTimer;
+		node["spawnTimer"]	= rhs.spawnTimer;
 		node["isObjective"]	= rhs.isObjective;
 
 		return node;
@@ -50,10 +50,10 @@ struct convert<OpenXcom::MissionWave>
 		if (node.IsMap() == false)
 			return false;
 
-		rhs.ufoType		= node["ufo"]			.as<std::string>();
-		rhs.ufoTotal	= node["count"]			.as<int>();
+		rhs.ufoType		= node["ufoType"]		.as<std::string>();
+		rhs.ufoTotal	= node["ufoTotal"]		.as<int>();
 		rhs.trajectory	= node["trajectory"]	.as<std::string>();
-		rhs.spawnTimer	= node["timer"]			.as<int>();
+		rhs.spawnTimer	= node["spawnTimer"]	.as<int>();
 		rhs.isObjective	= node["isObjective"]	.as<bool>(false);
 
 		return true;

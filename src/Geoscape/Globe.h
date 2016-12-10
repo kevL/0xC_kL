@@ -46,6 +46,7 @@ class Game;
 class NumberText;
 class Polygon;
 class RuleGlobe;
+class SavedGame;
 class SurfaceSet;
 class Target;
 class Timer;
@@ -109,7 +110,8 @@ private:
 	FastLineClip* _clipper;
 	Game* _game;
 	NumberText* _flightData;
-	RuleGlobe* _rules;
+	RuleGlobe* _globeRule;
+	SavedGame* _playSave;
 	Surface
 		* _countries,
 		* _crosshair,
@@ -206,7 +208,7 @@ private:
 	void drawInterceptMarker(
 		const double lon,
 		const double lat);
-	/// Draws a target marker.
+	/// Draws a Target marker.
 	void drawTarget(
 			const Target* const target,
 			Surface* const surface);

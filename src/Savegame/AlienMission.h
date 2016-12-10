@@ -73,7 +73,7 @@ private:
 
 	const AlienBase* _aBase;
 	const RuleAlienMission& _missionRule;
-	SavedGame& _gameSave;
+	SavedGame& _playSave;
 
 	/// Calculates time remaining until the next wave generates.
 	void initiateCountdown(size_t waveId);
@@ -83,7 +83,7 @@ private:
 			const Ruleset& rules,
 			const Globe& globe,
 			const MissionWave& wave,
-			const UfoTrajectory& trajectory);
+			const UfoTrajectory& trj);
 	/// Spawns a TerrorSite at a specific location.
 	TerrorSite* createTerror(
 			const RuleAlienDeployment* const ruleDeploy,
@@ -95,8 +95,8 @@ private:
 
 	/// Generates destination-coordinates for a Waypoint.
 	std::pair<double, double> coordsWaypoint(
-			const UfoTrajectory& trajectory,
-			const size_t wpId,
+			const UfoTrajectory& trj,
+			const size_t pointId,
 			const Globe& globe,
 			const RuleRegion& region) const;
 	/// Generates destination-coordinates inside a specified Region and MissionZone.
@@ -121,7 +121,7 @@ private:
 		/// Creates an AlienMission of the specified type.
 		AlienMission(
 				const RuleAlienMission& missionRule,
-				SavedGame& gameSave);
+				SavedGame& playSave);
 		/// Cleans up the AlienMission.
 		~AlienMission();
 
@@ -165,10 +165,10 @@ private:
 		{ return _waveCount; }
 
 		/// Increases the quantity of live UFOs.
-		void increaseLiveUfos()
+		void incrLiveUfos()
 		{ ++_liveUfos; }
 		/// Decreases the quantity of live UFOs.
-		void decreaseLiveUfos()
+		void decrLiveUfos()
 		{ --_liveUfos; }
 
 		/// Gets if the AlienMission over.

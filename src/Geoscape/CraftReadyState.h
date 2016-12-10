@@ -51,7 +51,7 @@ private:
 	Text* _txtMessage;
 	TextButton
 		* _btnCraftInfo,
-		* _btnGoToBase,
+		* _btnBase,
 		* _btnOk,
 		* _btnOk5Secs;
 	Window* _window;

@@ -26,6 +26,8 @@
 #include "Ufo.h"
 #include "Waypoint.h"
 
+//#include "../Engine/Logger.h" // DEBUG
+
 #include "../Geoscape/GeoscapeState.h" // unitToRads
 
 
@@ -46,10 +48,10 @@ const char* const MovingTarget::stAltitude[5u] // static.
  * Initializes the MovingTarget with blank coordinates.
  * @param gameSave - pointer to the SavedGame
  */
-MovingTarget::MovingTarget(SavedGame* const gameSave)
+MovingTarget::MovingTarget(SavedGame* const playSave)
 	:
 		Target(),
-		_gameSave(gameSave),
+		_playSave(playSave),
 		_target(nullptr),
 		_speedLon(0.),
 		_speedLat(0.),
@@ -114,12 +116,18 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
  */
 void MovingTarget::setTarget(Target* const target) // virtual.
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "MovingTarget::setTarget()";// speed= " << _speed;
+
 	checkTargets();
 
 	if ((_target = target) != nullptr)
+	{
 		_target->getTargeters()->push_back(this);
-
-	calculateSpeed();
+		calculateSpeed();
+	}
+	else
+		setSpeed();
 }
 
 /**
@@ -137,9 +145,22 @@ Target* MovingTarget::getTarget() const
  */
 bool MovingTarget::reachedDestination() const
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "MovingTarget::reachedDestination()";
 	if (_target != nullptr)
-		return AreSame(_lon, _target->getLongitude())
-			&& AreSame(_lat, _target->getLatitude());
+	{
+		//Log(LOG_INFO) << ". target VALID";
+		//Log(LOG_INFO) << ". . lon= " << _lon << " target= " << _target->getLongitude();
+		//Log(LOG_INFO) << ". . lat= " << _lat << " target= " << _target->getLatitude();
+		const bool ret = AreSame(_lon, _target->getLongitude())
+					  && AreSame(_lat, _target->getLatitude());
+		//Log(LOG_INFO) << ". . . ret= " << ret;
+		return ret;
+
+//		return AreSame(_lon, _target->getLongitude())
+//			&& AreSame(_lat, _target->getLatitude());
+	}
+	//else Log(LOG_INFO) << ". target NOT Valid ret false";
 
 	return false;
 }
@@ -174,15 +195,14 @@ void MovingTarget::checkTargets() // private.
 			if (wp != nullptr)
 			{
 				delete wp;
-
 				for (std::vector<Waypoint*>::const_iterator
-						i = _gameSave->getWaypoints()->begin();
-						i != _gameSave->getWaypoints()->end();
+						i = _playSave->getWaypoints()->begin();
+						i != _playSave->getWaypoints()->end();
 						++i)
 				{
 					if (*i == wp)
 					{
-						_gameSave->getWaypoints()->erase(i);
+						_playSave->getWaypoints()->erase(i);
 						break;
 					}
 				}
@@ -198,13 +218,20 @@ void MovingTarget::checkTargets() // private.
  */
 void MovingTarget::setSpeed(int speed)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "MovingTarget::setSpeed() speed= " << speed;
 	if ((_speed = speed) == 0)
-		_speedRads = 0.;
+	{
+		_speedRads =
+		_speedLon =
+		_speedLat = 0.;
+	}
 	else
-		// Each nautical mile is 1/60th of a degree; each hour contains 720 5-second periods.
-		_speedRads = static_cast<double>(_speed) * unitToRads / 720.;
-
-	calculateSpeed();
+	{
+		_speedRads = static_cast<double>(_speed) * unitToRads / 720.;	// Each nautical mile is 1/60th of a degree;
+		calculateSpeed();												// each hour contains 720 5-second periods.
+	}
+	//Log(LOG_INFO) << ". speedRads= " << _speedRads;
 }
 
 /**
@@ -221,21 +248,30 @@ int MovingTarget::getSpeed() const
  */
 void MovingTarget::stepTarget()
 {
-	calculateSpeed();
-
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "MovingTarget::stepTarget() -> calculateSpeed";
+	//Log(LOG_INFO) << ". speedRads= " << _speedRads;
 	if (_target != nullptr)
 	{
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << ". stepTarget - target VALID step Lon/Lat";
+		calculateSpeed();
+
 		if (getDistance(_target) > _speedRads)
 		{
+			//Log(LOG_INFO) << ". . move closer to target";
 			setLongitude(_lon + _speedLon);
 			setLatitude( _lat + _speedLat);
 		}
 		else
 		{
+			//Log(LOG_INFO) << ". . reached target";
 			setLongitude(_target->getLongitude());
 			setLatitude( _target->getLatitude());
 		}
 	}
+	else
+		setSpeed();
 }
 
 /**
@@ -244,9 +280,18 @@ void MovingTarget::stepTarget()
  */
 void MovingTarget::calculateSpeed() // protected/virtual.
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "MovingTarget::calculateSpeed()";
 	if (_target != nullptr)
 	{
+		//Log(LOG_INFO) << ". target VALID -> calculateMeetPoint";
 		calculateMeetPoint();
+
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << ". lon= " << _lon;
+		//Log(LOG_INFO) << ". lat= " << _lat;
+		//Log(LOG_INFO) << ". lonPoint= " << _lonPoint;
+		//Log(LOG_INFO) << ". latPoint= " << _latPoint;
 
 		const double
 			dLon (std::sin(_lonPoint - _lon)
@@ -257,20 +302,34 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 				* std::cos(_lonPoint - _lon)),
 			dist (std::sqrt((dLon * dLon) + (dLat * dLat)));
 
+		//Log(LOG_INFO) << "";
+		//Log(LOG_INFO) << ". dLon= " << dLon;
+		//Log(LOG_INFO) << ". dLat= " << dLat;
+		//Log(LOG_INFO) << ". dist= " << dist;
+
 		_speedLat = dLat / dist * _speedRads;
 		_speedLon = dLon / dist * _speedRads / std::cos(_lat + _speedLat);
+
+		//Log(LOG_INFO) << ". calculateSpeed speedLon= " << _speedLon;
+		//Log(LOG_INFO) << ". calculateSpeed speedLat= " << _speedLat;
 
 		// Check for invalid speeds when a division-by-zero occurs due to near-lightspeed values.
 		if (isNaNorInf(_speedLon, _speedLat) == true)
 		{
-			_speedLon =
-			_speedLat = 0.;
+			//Log(LOG_INFO) << ". . isNaNorInf 0,0";
+			setSpeed();
+//			_speedRads =
+//			_speedLon =
+//			_speedLat = 0.;
 		}
 	}
 	else
 	{
-		_speedLon =
-		_speedLat = 0.;
+		//Log(LOG_INFO) << ". target NOT Valid 0,0";
+		setSpeed();
+//		_speedRads =
+//		_speedLon =
+//		_speedLat = 0.;
 	}
 }
 
@@ -279,12 +338,15 @@ void MovingTarget::calculateSpeed() // protected/virtual.
  */
 void MovingTarget::calculateMeetPoint() // private.
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "MovingTarget::calculateMeetPoint()";
 	_lonPoint = _target->getLongitude();
 	_latPoint = _target->getLatitude();
+	//Log(LOG_INFO) << ". lonPoint= " << _lonPoint;
+	//Log(LOG_INFO) << ". latPoint= " << _latPoint;
 
 	MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_target));
-	if (ufo != nullptr
-		&& ufo->getTarget() != nullptr
+	if (ufo != nullptr && ufo->getTarget() != nullptr // uh, UFO should * always * have a Target.
 		&& AreSame(ufo->_speedRads, 0.) == false)
 	{
 		const double
@@ -370,6 +432,10 @@ void MovingTarget::calculateMeetPoint() // private.
 			_latPoint  = std::copysign(M_PI * 2. - std::fabs(_latPoint), _latPoint);
 		}
 	}
+
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << ". lonPoint= " << _lonPoint;
+	//Log(LOG_INFO) << ". latPoint= " << _latPoint;
 }
 
 /**

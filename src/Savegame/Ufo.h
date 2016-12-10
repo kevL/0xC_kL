@@ -32,7 +32,6 @@ namespace OpenXcom
 class AlienMission;
 class Ruleset;
 class RuleUfo;
-class SavedGame;
 class UfoTrajectory;
 
 
@@ -72,7 +71,7 @@ private:
 		_secondsLeft;
 	size_t
 		_shootingAt,
-		_trajectoryWp;
+		_missionPoint;
 	unsigned _dir;
 
 	AlienMission* _mission;
@@ -96,7 +95,7 @@ private:
 		/// Creates a Ufo of the specified type.
 		Ufo(
 				const RuleUfo* const ufoRule,
-				SavedGame* const gameSave);
+				SavedGame* const playSave);
 		/// Cleans up the Ufo.
 		~Ufo();
 
@@ -163,9 +162,10 @@ private:
 		/// Gets the Ufo status.
 		UfoStatus getUfoStatus() const
 		{ return _status; }
-		/// Set the Ufo's status.
+		/// Sets the Ufo's status.
 		void setUfoStatus(UfoStatus status)
-		{ _status = status; }
+		{	if ((_status = status) == Ufo::DESTROYED)
+				_detected = false; }
 
 		/// Sets the Ufo's battlescape status.
 		void setTactical(bool tactical = true);
@@ -201,13 +201,13 @@ private:
 		AlienMission* getAlienMission() const
 		{ return _mission; }
 
-		/// Gets the Ufo's progress on its trajectory.
-		size_t getTrajectoryPoint() const
-		{ return _trajectoryWp; }
-		/// Sets the Ufo's progress on its trajectory.
-		void setTrajectoryPoint(size_t wpId)
-		{ _trajectoryWp = wpId; }
-		/// Gets the Ufo's trajectory.
+		/// Sets the Ufo's progress on its Mission.
+		size_t setMissionPoint()
+		{ return ++_missionPoint; }
+		/// Gets the Ufo's progress on its Mission.
+		size_t getMissionPoint() const
+		{ return _missionPoint; }
+		/// Gets the Ufo's trajectory-rule.
 		const UfoTrajectory& getTrajectory() const
 		{ return *_trajectory; }
 

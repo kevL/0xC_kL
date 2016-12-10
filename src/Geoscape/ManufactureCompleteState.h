@@ -52,7 +52,7 @@ private:
 
 	Text* _txtMessage;
 	TextButton
-		* _btnGotoBase,
+		* _btnBase,
 		* _btnOk,
 		* _btnOk5Secs;
 	Window* _window;

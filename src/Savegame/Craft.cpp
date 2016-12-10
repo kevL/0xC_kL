@@ -58,16 +58,16 @@ namespace OpenXcom
  * available.
  * @param crRule	- pointer to RuleCraft
  * @param base		- pointer to the Base of origin
- * @param gameSave	- pointer to the SavedGame
+ * @param playSave	- pointer to the SavedGame
  * @param hasId		- true if craft already has an ID assigned (default false)
  */
 Craft::Craft(
 		RuleCraft* const crRule,
 		Base* const base,
-		SavedGame* const gameSave,
+		SavedGame* const playSave,
 		bool hasId)
 	:
-		MovingTarget(gameSave),
+		MovingTarget(playSave),
 		_crRule(crRule),
 		_base(base),
 		_fuel(0),
@@ -87,7 +87,7 @@ Craft::Craft(
 	if (hasId == true)
 		_id = 0; // will load from save
 	else
-		_id = gameSave->getCanonicalId(_crRule->getType());
+		_id = _playSave->getCanonicalId(_crRule->getType());
 
 	_items = new ItemContainer();
 
@@ -231,7 +231,7 @@ void Craft::loadCraft(
 			returnToBase();
 		else if (type == Target::stTarget[0u]) // "STR_UFO" // is this *always* "STR_UFO" .........
 		{
-			const std::vector<Ufo*>* const ufoList (rules->getGame()->getSavedGame()->getUfos());
+			const std::vector<Ufo*>* const ufoList (_playSave->getUfos());
 			for (std::vector<Ufo*>::const_iterator
 					i = ufoList->begin();
 					i != ufoList->end();
@@ -246,7 +246,7 @@ void Craft::loadCraft(
 		}
 		else if (type == Target::stTarget[4u]) // "STR_WAYPOINT"
 		{
-			const std::vector<Waypoint*>* const wpList (rules->getGame()->getSavedGame()->getWaypoints());
+			const std::vector<Waypoint*>* const wpList (_playSave->getWaypoints());
 			for (std::vector<Waypoint*>::const_iterator
 					i = wpList->begin();
 					i != wpList->end();
@@ -261,7 +261,7 @@ void Craft::loadCraft(
 		}
 /*		else if (type == Target::stTarget[2u]) // "STR_ALIEN_BASE"
 		{
-			const std::vector<AlienBase*>* const abList (rules->getGame()->getSavedGame()->getAlienBases());
+			const std::vector<AlienBase*>* const abList (_playSave->getAlienBases());
 			for (std::vector<AlienBase*>::const_iterator
 					i = abList->begin();
 					i != abList->end();
@@ -276,7 +276,7 @@ void Craft::loadCraft(
 		}
 		else if (type == Target::stTarget[3u]) // "STR_TERROR_SITE"
 		{
-			const std::vector<TerrorSite*>* const terrorList (rules->getGame()->getSavedGame()->getTerrorSites());
+			const std::vector<TerrorSite*>* const terrorList (_playSave->getTerrorSites());
 			for (std::vector<TerrorSite*>::const_iterator
 					i = terrorList->begin();
 					i != terrorList->end();
@@ -293,7 +293,7 @@ void Craft::loadCraft(
 		{
 			bool found (false);
 
-			const std::vector<AlienBase*>* const abList (rules->getGame()->getSavedGame()->getAlienBases());
+			const std::vector<AlienBase*>* const abList (_playSave->getAlienBases());
 			for (std::vector<AlienBase*>::const_iterator
 					i = abList->begin();
 					i != abList->end();
@@ -310,10 +310,10 @@ void Craft::loadCraft(
 
 			if (found == false)
 			{
-				const std::vector<TerrorSite*>* const terrorList (rules->getGame()->getSavedGame()->getTerrorSites());
+				const std::vector<TerrorSite*>* const tsList (_playSave->getTerrorSites());
 				for (std::vector<TerrorSite*>::const_iterator //(type == Target::stTarget[3u])
-						i = terrorList->begin();
-						i != terrorList->end();
+						i = tsList->begin();
+						i != tsList->end();
 						++i)
 				{
 					if ((*i)->getId() == id
@@ -671,17 +671,17 @@ void Craft::setTarget(Target* const target)
 {
 	_interceptLanded = false;
 
+	MovingTarget::setTarget(target);
+
 	if (_status != CS_OUT)
 	{
-		_takeOffDelay = 75;
-		setSpeed(_crRule->getTopSpeed() / 10);
+		_takeOffDelay = TAKEOFF_DELAY;
+//		setSpeed(_crRule->getTopSpeed() / 10);
 	}
 	else if (target == nullptr)
 		setSpeed(_crRule->getTopSpeed() >> 1u);
 	else
 		setSpeed(_crRule->getTopSpeed());
-
-	MovingTarget::setTarget(target);
 }
 
 /**
@@ -1002,29 +1002,38 @@ bool Craft::isTacticalReturn() const
  */
 void Craft::think()
 {
-	switch (_takeOffDelay)
+	if (_status == CS_OUT)
 	{
-		case 0:
-			stepTarget();
+		switch (_takeOffDelay)
+		{
+			case 0:
+				stepTarget();
 
-			if (reachedDestination() == true
-				&& _target == dynamic_cast<Target*>(_base))
-			{
-				setTarget();
-				setSpeed();
+				if (reachedDestination() == true
+					&& _target == dynamic_cast<Target*>(_base))
+				{
+					setTarget();
+					setSpeed();
 
-				_lowFuel =
-				_tacticalReturn = false;
-				_warning = CW_NONE;
-				_takeOffDelay = 0;
+					_lowFuel =
+					_tacticalReturn = false;
+					_warning = CW_NONE;
+					_takeOffDelay = 0;
 
-				checkup();
-			}
-			break;
+					checkup();
+				}
+				break;
 
-		default:
-			if (--_takeOffDelay == 0)
-				setSpeed(_crRule->getTopSpeed());
+			default:
+				if (--_takeOffDelay == 0)
+					setSpeed(_crRule->getTopSpeed());
+				else
+				{
+					int speed (std::ceil(static_cast<double>(_crRule->getTopSpeed())
+									  * (static_cast<double>(TAKEOFF_DELAY - _takeOffDelay) / static_cast<double>(TAKEOFF_DELAY))));
+					setSpeed(speed);
+				}
+		}
 	}
 }
 
@@ -1067,10 +1076,11 @@ void Craft::checkup()
 	else if (_fuel < _crRule->getFuelCapacity())
 		_status = CS_REFUELLING;	// 3rd stage
 	else
+	{
 		_status = CS_READY;			// 4th Ready.
 
-	if (showReady == true && _status == CS_READY)
-		_showReady = true;
+		if (showReady == true) _showReady = true;
+	}
 }
 
 /**

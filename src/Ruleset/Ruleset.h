@@ -341,9 +341,9 @@ private:
 		/// Gets the rules for a specific AlienMission.
 		const RuleAlienMission* getAlienMission(const std::string& type) const;
 		/// Gets the rules for a random AlienMission.
-		const RuleAlienMission* getMissionRand(
+		const RuleAlienMission* rollMission(
 				MissionObjective objective,
-				size_t monthsPassed) const;
+				size_t elapsed) const;
 		/// Gets a list of all AlienMissions.
 		const std::vector<std::string>& getAlienMissionList() const;
 

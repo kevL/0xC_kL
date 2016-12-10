@@ -84,7 +84,7 @@ void RuleUfo::load(
 	_sprite		= node["sprite"]	.as<int>(_sprite);
 	_marker		= node["marker"]	.as<int>(_marker);
 	_hull		= node["hull"]		.as<int>(_hull);
-	_speed		= node["speedMax"]	.as<int>(_speed);
+	_speed		= node["speed"]		.as<int>(_speed);
 	_accel		= node["accel"]		.as<int>(_accel);
 	_power		= node["power"]		.as<int>(_power);
 	_range		= node["range"]		.as<int>(_range);

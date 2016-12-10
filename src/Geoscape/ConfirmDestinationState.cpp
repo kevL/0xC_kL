@@ -40,7 +40,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Confirm Destination window.
+ * Initializes all the elements in the ConfirmDestination window.
  * @param craft		- pointer to the Craft to retarget
  * @param target	- pointer to the selected Target (nullptr if it's just a point on the globe)
  */
@@ -105,7 +105,7 @@ ConfirmDestinationState::~ConfirmDestinationState()
 {}
 
 /**
- * Confirms the selected target for the craft.
+ * Confirms the selected Target for the Craft.
  * @param action - pointer to an Action
  */
 void ConfirmDestinationState::btnOkClick(Action*)

@@ -26,10 +26,10 @@ namespace YAML
 {
 
 template<>
-struct convert<OpenXcom::TrajectoryWaypoint>
+struct convert<OpenXcom::MissionPoint>
 {
 	///
-	static Node encode(const OpenXcom::TrajectoryWaypoint& rhs)
+	static Node encode(const OpenXcom::MissionPoint& rhs)
 	{
 		Node node;
 
@@ -43,7 +43,7 @@ struct convert<OpenXcom::TrajectoryWaypoint>
 	///
 	static bool decode(
 			const Node& node,
-			OpenXcom::TrajectoryWaypoint& rhs)
+			OpenXcom::MissionPoint& rhs)
 	{
 		if (node.IsSequence() == false || node.size() != 3u)
 			return false;
@@ -62,39 +62,39 @@ struct convert<OpenXcom::TrajectoryWaypoint>
 namespace OpenXcom
 {
 
-const std::string UfoTrajectory::RETALIATION_ASSAULT_RUN = "__RETALIATION_ASSAULT_RUN"; // static.
+const std::string UfoTrajectory::XCOM_BASE_ASSAULT = "XCOM_BASE_ASSAULT"; // static.
 
 
 /**
  * Creates rules for a UfoTrajectory.
- * @param id - reference to the ID string (eg. 'P0')
+ * @param type - reference to the ID string (eg. "P0")
  */
-UfoTrajectory::UfoTrajectory(const std::string& id)
+UfoTrajectory::UfoTrajectory(const std::string& type)
 	:
-		_id(id),
-		_groundTimer(5)
+		_type(type),
+		_ground(5)
 {}
 
 /**
- * Overwrites the rule's trajectory-data with data stored in @a node.
+ * Overwrites the UfoTrajectory's data with data stored in @a node.
  * @note Only the fields contained in the node will be overwritten.
  * @param node - reference a YAML node
  */
 void UfoTrajectory::load(const YAML::Node& node)
 {
-	_id				= node["id"]			.as<std::string>(_id);
-	_groundTimer	= node["groundTimer"]	.as<int>(_groundTimer);
-	_waypoints		= node["waypoints"]		.as<std::vector<TrajectoryWaypoint>>(_waypoints);
+	_type	= node["type"]	.as<std::string>(_type);
+	_ground	= node["ground"].as<int>(_ground);
+	_points	= node["points"].as<std::vector<MissionPoint>>(_points);
 }
 
 /**
- * Gets the rule's altitude at a specific waypoint.
- * @param wpId - the waypoint-ID
- * @return, altitude
+ * Gets the UfoTrajectory's altitude at a specific point.
+ * @param pointId - the point-ID
+ * @return, altitude as a string
  */
-const std::string UfoTrajectory::getAltitude(size_t wpId) const // does not like return &ref
+const std::string UfoTrajectory::getAltitude(size_t pointId) const // does not like return &ref
 {
-	return MovingTarget::stAltitude[_waypoints[wpId].altitude];
+	return MovingTarget::stAltitude[_points[pointId].altitude];
 }
 
 }

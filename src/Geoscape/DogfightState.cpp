@@ -1217,7 +1217,7 @@ void DogfightState::advanceDogfight()
 				lon (_ufo->getLongitude()),
 				lat (_ufo->getLatitude());
 
-			if (_ufo->getTrajectory().getId() != UfoTrajectory::RETALIATION_ASSAULT_RUN) // shooting down an assault-battleship does *not* generate a Retal-Mission.
+			if (_ufo->getTrajectory().getType() != UfoTrajectory::XCOM_BASE_ASSAULT) // shooting down an assault-battleship does *not* generate a Retal-Mission.
 			{
 				int retalCoef (_ufo->getAlienMission()->getRules().getRetaliation());
 				if (retalCoef == -1)
@@ -1237,7 +1237,7 @@ void DogfightState::advanceDogfight()
 					// Difference from original: No retaliation until final UFO lands (Original: Is spawned).
 					if (_game->getSavedGame()->findAlienMission(targetRegion, alm_RETAL) == nullptr)
 					{
-						const RuleAlienMission& missionRule (*_game->getRuleset()->getMissionRand(
+						const RuleAlienMission& missionRule (*_game->getRuleset()->rollMission(
 																							alm_RETAL,
 																							static_cast<size_t>(_game->getSavedGame()->getMonthsElapsed())));
 						AlienMission* const mission (new AlienMission(missionRule, *_gameSave));
@@ -1246,7 +1246,10 @@ void DogfightState::advanceDogfight()
 										targetRegion,
 										*_game->getRuleset());
 						mission->setRace(_ufo->getAlienRace());
-						mission->start(mission->getRules().getWave(0u).spawnTimer); // delay for first wave/scout
+
+						int countdown (mission->getRules().getWaveData(0u).spawnTimer / 30); // delay for first wave/scout
+						countdown = (RNG::generate(0, countdown) + (countdown >> 1u)) * 30;
+						mission->start(countdown);
 
 						_gameSave->getAlienMissions().push_back(mission);
 					}
