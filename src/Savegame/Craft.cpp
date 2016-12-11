@@ -538,7 +538,7 @@ CraftStatus Craft::getCraftStatus() const
 }
 
 /**
- * Gets the Craft's status as a string.
+ * Gets this Craft's status as a string.
  * @return, status-string
  */
 std::string Craft::getCraftStatusString() const
@@ -561,9 +561,9 @@ std::string Craft::getCraftStatusString() const
  */
 std::string Craft::getAltitude() const
 {
-	if		(_takeOffDelay > 50) return MovingTarget::stAltitude[0u];
-	else if	(_takeOffDelay > 25) return MovingTarget::stAltitude[1u];
-	else if (_takeOffDelay != 0) return MovingTarget::stAltitude[2u];
+	if (_takeOffDelay > 50) return MovingTarget::stAltitude[0u];
+	if (_takeOffDelay > 25) return MovingTarget::stAltitude[1u];
+	if (_takeOffDelay != 0) return MovingTarget::stAltitude[2u];
 
 	if (_target == nullptr)
 		return MovingTarget::stAltitude[2u];
@@ -593,9 +593,9 @@ std::string Craft::getAltitude() const
  */
 unsigned Craft::getAltitudeInt() const
 {
-	if		(_takeOffDelay > 50) return 0u;
-	else if	(_takeOffDelay > 25) return 1u;
-	else if (_takeOffDelay != 0) return 2u;
+	if (_takeOffDelay > 50) return 0u;
+	if (_takeOffDelay > 25) return 1u;
+	if (_takeOffDelay != 0) return 2u;
 
 	if (_target == nullptr)
 		return 2u;
@@ -674,10 +674,7 @@ void Craft::setTarget(Target* const target)
 	MovingTarget::setTarget(target);
 
 	if (_status != CS_OUT)
-	{
 		_takeOffDelay = TAKEOFF_DELAY;
-//		setSpeed(_crRule->getTopSpeed() / 10);
-	}
 	else if (target == nullptr)
 		setSpeed(_crRule->getTopSpeed() >> 1u);
 	else
@@ -849,11 +846,11 @@ bool Craft::isDestroyed() const
 void Craft::setFuel(int fuel)
 {
 	if (fuel > _crRule->getFuelCapacity())
-		fuel = _crRule->getFuelCapacity();
+		_fuel = _crRule->getFuelCapacity();
 	else if (fuel < 0)
-		fuel = 0;
-
-	_fuel = fuel;
+		_fuel = 0;
+	else
+		_fuel = fuel;
 }
 
 /**
@@ -872,6 +869,8 @@ int Craft::getFuel() const
  */
 int Craft::getFuelPct() const
 {
+	if (_fuel == 0) return 0;
+
 	return static_cast<int>(std::ceil(
 		   static_cast<float>(_fuel) / static_cast<float>(_crRule->getFuelCapacity()) * 100.f));
 }
@@ -962,7 +961,7 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
 			patrol_factor = 2.;
 	}
 
-	const double speed = static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.;
+	const double speed (static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.);
 
 	return static_cast<int>(std::ceil(
 		   static_cast<double>(getFuelUsage()) * dist * patrol_factor / speed));
@@ -1029,12 +1028,21 @@ void Craft::think()
 					setSpeed(_crRule->getTopSpeed());
 				else
 				{
-					int speed (std::ceil(static_cast<double>(_crRule->getTopSpeed())
-									  * (static_cast<double>(TAKEOFF_DELAY - _takeOffDelay) / static_cast<double>(TAKEOFF_DELAY))));
+					const int speed (std::ceil(static_cast<double>(_crRule->getTopSpeed())
+											* (static_cast<double>(TAKEOFF_DELAY - _takeOffDelay) / static_cast<double>(TAKEOFF_DELAY))));
 					setSpeed(speed);
 				}
 		}
 	}
+}
+
+/**
+ * Gets if this Craft has left the ground.
+ * @return, true if airborne
+ */
+bool Craft::hasLeftGround() const
+{
+	return (_takeOffDelay == 0);
 }
 
 /**
@@ -1098,7 +1106,7 @@ bool Craft::showReady()
 }
 
 /**
- * Repairs this Craft's damage every half-hour while it's docked at a Base.
+ * Repairs this Craft's damage every half-hour while it's docked at its Base.
  */
 void Craft::repair()
 {
@@ -1116,7 +1124,7 @@ void Craft::repair()
 
 /**
  * Rearms this Craft's weapons by adding ammo every half-hour while it's docked
- * at a Base.
+ * at its Base.
  * @param rules - pointer to the Ruleset
  * @return, blank string if ArmOk else an ammo-type-needed string for cantLoad
  */
@@ -1133,8 +1141,7 @@ std::string Craft::rearm(const Ruleset* const rules)
 			i != _weapons.end();
 			++i)
 	{
-		if (*i != nullptr
-			&& (*i)->getRearming() == true)
+		if (*i != nullptr && (*i)->getRearming() == true)
 		{
 			warn.clear();
 
@@ -1380,8 +1387,7 @@ int Craft::getDowntime(bool& isDelayed)
 			i != _weapons.end();
 			++i)
 	{
-		if (*i != nullptr
-			&& (*i)->getRearming() == true)
+		if (*i != nullptr && (*i)->getRearming() == true)
 		{
 			const int reqQty ((*i)->getRules()->getLoadCapacity() - (*i)->getCwLoad());
 
@@ -1391,7 +1397,7 @@ int Craft::getDowntime(bool& isDelayed)
 
 			if (isDelayed == false)
 			{
-				const std::string clip ((*i)->getRules()->getClipType());
+				const std::string& clip ((*i)->getRules()->getClipType());
 				if (clip.empty() == false)
 				{
 					int baseQty (_base->getStorageItems()->getItemQuantity(clip));
@@ -1413,8 +1419,7 @@ int Craft::getDowntime(bool& isDelayed)
 						}
 					}
 
-					if (baseQty < reqQty)
-						isDelayed = true;
+					if (baseQty < reqQty) isDelayed = true;
 				}
 			}
 		}
@@ -1430,7 +1435,7 @@ int Craft::getDowntime(bool& isDelayed)
 
 		if (isDelayed == false)
 		{
-			const std::string fuel (_crRule->getRefuelItem());
+			const std::string& fuel (_crRule->getRefuelItem());
 			if (fuel.empty() == false)
 			{
 				int baseQty (_base->getStorageItems()->getItemQuantity(fuel));
@@ -1452,8 +1457,7 @@ int Craft::getDowntime(bool& isDelayed)
 					}
 				}
 
-				if (baseQty < reqQty)
-					isDelayed = true;
+				if (baseQty < reqQty) isDelayed = true;
 			}
 		}
 	}
@@ -1476,15 +1480,6 @@ void Craft::addKill() // <- cap this or do a log or an inverted exponential incr
 int Craft::getKills() const
 {
 	return _kills;
-}
-
-/**
- * Gets if this Craft has left the ground.
- * @return, true if airborne
- */
-bool Craft::hasLeftGround() const
-{
-	return (_takeOffDelay == 0);
 }
 
 /**

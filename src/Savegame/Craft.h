@@ -213,6 +213,9 @@ private:
 		/// Handles Craft logic.
 		void think();
 
+		/// Gets if the Craft has left the ground.
+		bool hasLeftGround() const;
+
 		/// Does a full Craft checkup.
 		void checkup();
 		/// Flag to notify player that the Craft is ready.
@@ -266,9 +269,6 @@ private:
 		void addKill();
 		/// Gets this Craft's dogfight kills.
 		int getKills() const;
-
-		/// Gets if the Craft has left the ground.
-		bool hasLeftGround() const;
 
 		/// Transfers soldiers, tanks, items, and weapons to its Base.
 		void unloadCraft(
