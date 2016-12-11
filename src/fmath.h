@@ -39,6 +39,25 @@ inline bool AreSame(
 	return std::fabs(val1 - val2) <= std::numeric_limits<_Tx>::epsilon();
 }
 
+/**
+ * Checks if two pairs of floating-point values are both within epsilon.
+ * @param val1a - first value of first pair
+ * @param val1b - second value of first pair
+ * @param val2a - first value of second pair
+ * @param val2b - second value of second pair
+ * @return, true if both second values are within epsilon of their first values
+ */
+template<class _Tx>
+inline bool AreSameTwo(
+		const _Tx& val1a,
+		const _Tx& val1b,
+		const _Tx& val2a,
+		const _Tx& val2b)
+{
+	return std::fabs(val1a - val1b) <= std::numeric_limits<_Tx>::epsilon()
+		&& std::fabs(val2a - val2b) <= std::numeric_limits<_Tx>::epsilon();
+}
+
 
 /**
  * Rounds a floating-point value up or down to its nearest whole value.

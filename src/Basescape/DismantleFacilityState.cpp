@@ -192,8 +192,9 @@ void DismantleFacilityState::calcRefund() // private.
 			++i)
 	{
 		if ((*i)->getTrajectory().getType() == UfoTrajectory::XCOM_BASE_ASSAULT
-			&& AreSame((*i)->getTarget()->getLongitude(), _base->getLongitude())
-			&& AreSame((*i)->getTarget()->getLatitude(),  _base->getLatitude()))
+			&& AreSameTwo(
+						(*i)->getTarget()->getLongitude(), _base->getLongitude(),
+						(*i)->getTarget()->getLatitude(),  _base->getLatitude()) == true)
 		{
 			_refund = 0;
 			return;

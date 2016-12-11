@@ -389,9 +389,6 @@ private:
 		/// Special handling for key presses.
 		void keyboardPress(Action* action, State* state) override;
 
-		/// Checks if drag-scroll is happening.
-		bool isDragScroll() const;
-
 		/// Gets the texture and shade of a Polygon at specified coordinates.
 		void getPolygonTextureAndShade(
 				double lon,

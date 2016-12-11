@@ -52,17 +52,20 @@ struct MissionArea
 	///
 	bool operator ==(const MissionArea& area) const
 	{
-		return AreSame(lonMax, area.lonMax)
-			&& AreSame(lonMin, area.lonMin)
-			&& AreSame(latMax, area.latMax)
-			&& AreSame(latMin, area.latMin);
+		return AreSameTwo(
+						lonMax, area.lonMax,
+						lonMin, area.lonMin) == true
+			&& AreSameTwo(
+						latMax, area.latMax,
+						latMin, area.latMin) == true;
 	}
 
 	///
 	bool isPoint() const
 	{
-		return AreSame(lonMin, lonMax)
-			&& AreSame(latMin, latMax);
+		return AreSameTwo(
+						lonMin, lonMax,
+						latMin, latMax) == true;
 	}
 };
 

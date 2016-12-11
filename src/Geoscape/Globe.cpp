@@ -473,7 +473,7 @@ void Globe::cartToPolar( // Orthographic Projection
 		rho (std::sqrt(static_cast<double>(x * x + y * y))),
 		c (std::asin(rho / static_cast<double>(_radius)));
 
-	if (AreSame(rho, 0.))
+	if (AreSame(rho, 0.) == true)
 	{
 		*lat = _cenLat;
 		*lon = _cenLon;
@@ -706,7 +706,7 @@ void Globe::rotateStop()
 void Globe::rotateStopLon()
 {
 	_rotLon = 0.;
-	if (AreSame(_rotLat, 0.))
+	if (AreSame(_rotLat, 0.) == true)
 		_timerRot->stop();
 }
 
@@ -716,7 +716,7 @@ void Globe::rotateStopLon()
 void Globe::rotateStopLat()
 {
 	_rotLat = 0.;
-	if (AreSame(_rotLon, 0.))
+	if (AreSame(_rotLon, 0.) == true)
 		_timerRot->stop();
 }
 
@@ -1557,7 +1557,7 @@ void Globe::drawGlobeCircle( // private.
 				lon1,lat1,
 				&x,&y);
 
-		if (AreSame(az, 0.)) // first vertex is for initialization only
+		if (AreSame(az, 0.) == true) // first vertex is for initialization only
 		{
 			x2 = x;
 			y2 = y;
@@ -1748,14 +1748,14 @@ void Globe::XuLine( // private.
 
 		if (y2 < y1)
 			SY = -1;
-		else if (AreSame(delta_y, 0.))
+		else if (AreSame(delta_y, 0.) == true)
 			SY = 0;
 		else
 			SY = 1;
 
 		if (x2 < x1)
 			SX = -1;
-		else if (AreSame(delta_x, 0.))
+		else if (AreSame(delta_x, 0.) == true)
 			SX = 0;
 		else
 			SX = 1;
@@ -2433,8 +2433,9 @@ void Globe::drawVHLine( // private.
  */
 void Globe::drawCrosshair() // private.
 {
-	if (      (AreSame(_crosshairLon, 0.) == false
-			|| AreSame(_crosshairLat, 0.) == false)
+	if (AreSameTwo(
+				_crosshairLon, 0.,
+				_crosshairLat, 0.) == false
 		&& pointBack(_crosshairLon, _crosshairLat) == false)
 	{
 		Sint16
@@ -2656,15 +2657,6 @@ void Globe::keyboardPress(Action* action, State* state)
 		toggleDetail();
 	else if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleRadar)
 		toggleRadarLines();
-}
-
-/**
- * Checks if drag-scroll is happening.
- * @return, true if mouse is drag-scrolling
- */
-bool Globe::isDragScroll() const
-{
-	return _dragScroll;
 }
 
 /**

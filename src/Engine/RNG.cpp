@@ -148,11 +148,11 @@ double generate(
 		double valMax)
 {
 	double delta (valMax - valMin);
-	if (AreSame(delta, 0.))
+	if (AreSame(delta, 0.) == true)
 		return valMin;
 
 	delta = (static_cast<double>(std::numeric_limits<uint64_t>::max()) / delta);
-	if (AreSame(delta, 0.))
+	if (AreSame(delta, 0.) == true)
 		return valMin;
 
 	return (static_cast<double>(next_x()) / delta) + valMin;
@@ -170,11 +170,11 @@ float generate(
 		float valMax)
 {
 	float delta (valMax - valMin);
-	if (AreSame(delta, 0.f))
+	if (AreSame(delta, 0.f) == true)
 		return valMin;
 
 	delta = (static_cast<float>(std::numeric_limits<uint64_t>::max()) / delta);
-	if (AreSame(delta, 0.f))
+	if (AreSame(delta, 0.f) == true)
 		return valMin;
 
 	return (static_cast<float>(next_x()) / delta) + valMin;

@@ -514,14 +514,14 @@ void Ufo::calculateSpeed() // private.
 		x ( _speedLon),
 		y (-_speedLat);
 
-	if (AreSame(x, 0.) || AreSame(y, 0.)) // This section guards vs. divide-by-zero.
+	if (AreSame(x, 0.) == true || AreSame(y, 0.) == true) // This section guards vs. divide-by-zero.
 	{
-		if (AreSame(x, 0.) && AreSame(y, 0.))
+		if (AreSameTwo(x, 0., y, 0.) == true)
 		{
 			_heading = "STR_NONE_UC";
 			_dir = 0u;
 		}
-		else if (AreSame(x, 0.))
+		else if (AreSame(x, 0.) == true)
 		{
 			if (y > 0.)
 			{
@@ -605,27 +605,28 @@ void Ufo::think()
 {
 //	Log(LOG_INFO) << "";
 //	Log(LOG_INFO) << "Ufo::think()";
-//	Log(LOG_INFO) << ". type= " << _ufoRule->getType();
-//	Log(LOG_INFO) << ". id= " << _id;
-//	Log(LOG_INFO) << ". idLanded= " << _idLanded;
-//	Log(LOG_INFO) << ". idCrashed= " << _idCrashed;
-//	Log(LOG_INFO) << ". status= " << _status;
-//	Log(LOG_INFO) << ". altitude= " << _altitude;
-//	Log(LOG_INFO) << ". detected= " << _detected;
-//	Log(LOG_INFO) << ". point= " << _missionPoint;
-//	Log(LOG_INFO) << ". missionId= " << _mission->getId();
+//
+//	Log(LOG_INFO) << ". type= "			<< _ufoRule->getType();
+//	Log(LOG_INFO) << ". id= "			<< _id;
+//	Log(LOG_INFO) << ". idLanded= "		<< _idLanded;
+//	Log(LOG_INFO) << ". idCrashed= "	<< _idCrashed;
+//	Log(LOG_INFO) << ". status= "		<< _status;
+//	Log(LOG_INFO) << ". altitude= "		<< _altitude;
+//	Log(LOG_INFO) << ". detected= "		<< _detected;
+//	Log(LOG_INFO) << ". point= "		<< _missionPoint;
+//	Log(LOG_INFO) << ". missionId= "	<< _mission->getId();
+//	Log(LOG_INFO) << ". secondsLeft= "	<< _secondsLeft;
+//	Log(LOG_INFO) << ". speed1= "		<< _speed;
+//
 //	if (_trajectory != nullptr)
 //		Log(LOG_INFO) << ". traj= " << _trajectory->getType();
 //	else
 //		Log(LOG_INFO) << ". traj NULL";
-//	Log(LOG_INFO) << ". secondsLeft= " << _secondsLeft;
 //
 //	if (_target != nullptr)
 //		Log(LOG_INFO) << ". target VALID";
 //	else
 //		Log(LOG_INFO) << ". target NOT Valid";
-//
-//	Log(LOG_INFO) << ". speed= " << _speed;
 
 	switch (_status)
 	{
@@ -642,7 +643,7 @@ void Ufo::think()
 		case CRASHED:
 			_detected = true;
 	}
-//	Log(LOG_INFO) << ". speed= " << _speed;
+//	Log(LOG_INFO) << ". speed2= " << _speed;
 }
 
 /**

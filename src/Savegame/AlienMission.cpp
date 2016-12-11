@@ -613,8 +613,9 @@ private:
 		///
 		bool operator ()(const Base* const base) const
 		{
-			return AreSame(base->getLongitude(), _lon)
-				&& AreSame(base->getLatitude(),  _lat);
+			return AreSameTwo(
+							base->getLongitude(), _lon,
+							base->getLatitude(),  _lat) == true;
 		}
 };
 

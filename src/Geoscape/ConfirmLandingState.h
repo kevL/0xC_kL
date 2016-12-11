@@ -46,10 +46,8 @@ class ConfirmLandingState
 private:
 	int _shade;
 
-//	RuleCity* _city;
 	Craft* _craft;
 	RuleTerrain* _terrainRule;
-//	RuleTexture* _texRule;
 	Text
 		* _txtBegin,
 		* _txtMessage,

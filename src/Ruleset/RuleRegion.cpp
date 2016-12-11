@@ -280,8 +280,9 @@ MissionArea RuleRegion::getTerrorArea(
 				++i)
 		{
 			if (i->isPoint() == true
-				&& AreSame(target->getLongitude(), i->lonMin)
-				&& AreSame(target->getLatitude(),  i->latMin))
+				&& AreSameTwo(
+							target->getLongitude(), i->lonMin,
+							target->getLatitude(),  i->latMin) == true)
 			{
 				return *i;
 			}

@@ -102,19 +102,19 @@ struct Cord
 
 
 	///
-	inline Cord operator+ ()
+	inline Cord operator +()
 	{
 		return *this;
 	}
 
 	///
-	inline Cord operator- ()
+	inline Cord operator -()
 	{
 		return Cord(-x,-y,-z);
 	}
 
 	///
-	inline Cord& operator*= (double d)
+	inline Cord& operator *=(double d)
 	{
 		x *= d;
 		y *= d;
@@ -123,7 +123,7 @@ struct Cord
 	}
 
 	///
-	inline Cord& operator/= (double d)
+	inline Cord& operator /=(double d)
 	{
 		const double re (1. / d);
 		x *= re;
@@ -133,7 +133,7 @@ struct Cord
 	}
 
 	///
-	inline Cord& operator+= (const Cord& c)
+	inline Cord& operator +=(const Cord& c)
 	{
 		x += c.x;
 		y += c.y;
@@ -142,7 +142,7 @@ struct Cord
 	}
 
 	///
-	inline Cord& operator-= (const Cord& c)
+	inline Cord& operator -=(const Cord& c)
 	{
 		x -= c.x;
 		y -= c.y;
@@ -151,11 +151,11 @@ struct Cord
 	}
 
 	///
-	inline bool operator== (const Cord& c)
+	inline bool operator ==(const Cord& c)
 	{
-		return AreSame(x, c.x)
-			&& AreSame(y, c.y)
-			&& AreSame(z, c.z);
+		return AreSame(x, c.x) == true
+			&& AreSame(y, c.y) == true
+			&& AreSame(z, c.z) == true;
 	}
 
 

@@ -629,12 +629,12 @@ unsigned Craft::getHeadingInt() const
 		x ( _speedLon),
 		y (-_speedLat);
 
-	if (AreSame(x, 0.) || AreSame(y, 0.)) // This section guards vs. divide-by-zero.
+	if (AreSame(x, 0.) == true || AreSame(y, 0.) == true) // This section guards vs. divide-by-zero.
 	{
-		if (AreSame(x, 0.) && AreSame(y, 0.))
+		if (AreSameTwo(x, 0., y, 0.) == true)
 			return 0u;
 
-		if (AreSame(x, 0.))
+		if (AreSame(x, 0.) == true)
 		{
 			if (y > 0.) return 8u;
 			return 4u;

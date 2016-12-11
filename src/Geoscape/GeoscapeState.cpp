@@ -1720,7 +1720,7 @@ void GeoscapeState::time5Seconds()
 									if (_dogfights.size() + _dogfightsToStart.size() < 4u) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
 									{
 										if ((*j)->inDogfight() == false
-											&& AreSame((*j)->getDistance(ufo), 0.)) // Craft ran into a UFO.
+											&& AreSame((*j)->getDistance(ufo), 0.) == true) // Craft ran into a UFO.
 										{
 											_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
 											if (_timerDfStart->isRunning() == false)

@@ -5118,7 +5118,7 @@ VoxelType TileEngine::plotParabola(
 				  + (targetVoxel.y - originVoxel.y) * (targetVoxel.y - originVoxel.y)
 				  + (targetVoxel.z - originVoxel.z) * (targetVoxel.z - originVoxel.z))));
 
-	if (AreSame(ro, 0.)) // jic.
+	if (AreSame(ro, 0.) == true) // jic.
 		return VOXEL_EMPTY;
 
 	double

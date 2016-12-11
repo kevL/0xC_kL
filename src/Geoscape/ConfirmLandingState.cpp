@@ -69,19 +69,17 @@ namespace OpenXcom
  */
 ConfirmLandingState::ConfirmLandingState(
 		Craft* const craft,
-		const RuleTexture* const texRule, // passes in the vector of eligible Globe Terrains for the land-poly's textureInt.
+		const RuleTexture* const texRule,
 		const int shade,
 		const bool allowTactical)
 	:
 		_craft(craft),
-//		_texRule(texRule),
 		_shade(shade),
 		_terrainRule(nullptr)
-//		_city(nullptr)
 {
 	//Log(LOG_INFO) << "Create ConfirmLandingState()";
 	// TODO: show Country & Region
-	// TODO: should do buttons: Patrol (isCancel already) or GeoscapeCraftState or Return to base.
+	// TODO: should do buttons: Patrol (isCancel already) or GeoscapeCraftState or Return to Base.
 	_fullScreen = false;
 
 	_window			= new Window(this, 230, 160, 13, 20, POPUP_BOTH);
@@ -128,145 +126,104 @@ ConfirmLandingState::ConfirmLandingState(
 
 	if (ufo != nullptr || site != nullptr) // ... else it's an aLienBase assault (NOT defense nor Cydonia).
 	{
-		double // Determine if Craft is landing at a City.
-			lon (_craft->getLongitude()),
-			lat (_craft->getLatitude());
-		bool city (false);
-
-		RuleRegion* regionRule;
-		for (std::vector<Region*>::const_iterator
-				i = _game->getSavedGame()->getRegions()->begin();
-				i != _game->getSavedGame()->getRegions()->end() && city == false; //&& _city == nullptr;
-				++i)
-		{
-			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration below_
-			if (regionRule->insideRegion(lon,lat) == true)
-			{
-				for (std::vector<RuleCity*>::const_iterator
-						j = regionRule->getCities().begin();
-						j != regionRule->getCities().end() && city == false; //&& _city == nullptr;
-						++j)
-				{
-					if (   AreSame((*j)->getLongitude(), lon)
-						&& AreSame((*j)->getLatitude(),  lat))
-					{
-						city = true; //_city = *j;
-						//Log(LOG_INFO) << ". . . city found = " << (*j)->getLabel();
-					}
-				}
-			}
-		}
-
 		std::string terrainType;
-
 		if (ufo != nullptr) // UFO crashed/landed
-			terrainType = ufo->getUfoTerrainType();		// Ufo-object stores the terrainType value.
-		else // terrorSite
-			terrainType = site->getSiteTerrainType();	// terrorSite-object stores the terrainType value.
+			terrainType = ufo->getUfoTerrainType();		// the Ufo stores the terrainType value.
+		else
+			terrainType = site->getSiteTerrainType();	// the TerrorSite stores the terrainType value.
 
-
-		if (terrainType.empty() == true) // Determine terrainType/RuleTerrain and store it.
+		if (terrainType.empty() == true) // determine terrainType/RuleTerrain and store it ->
 		{
 			//Log(LOG_INFO) << ". determine Terrain";
 			if (site != nullptr) // terrorSite
 			{
 				//Log(LOG_INFO) << ". . terrorSite";
-//				if (_city != nullptr) // terrorSite is at a City.
+				std::vector<std::string> terrainList;
+				// terrains for tacticals can be/are defined in both RuleAlienDeployment AND through RuleGlobe (Textures)
+				// Options:
+				// 1. choose from both aspects
+				// 2. choose Deployment preferentially
+				// 3. choose Globe-texture preferentially
+				// ...
+				// PROFIT!!
+				// conclusion: choose among RuleGlobe-Texture's def'd. deployments first;
+				// if none found choose among RuleAlienDeployment def'd. terrains ....
+				// Note: cf. QuickBattleState::cbxMissionChange()
+
+				// BZZZT. Do it the opposite way; check RuleAlienDeployment first, then RuleGlobe's texture-terrains.
+
+				// TODO: tie all this into WeightedOptions
+
+				// get a Terrain from RuleAlienDeployment first ->
+				//Log(LOG_INFO) << ". . . finding eligible terrain-types in RuleAlienDeployment";
+				terrainList = site->getTerrorDeployed()->getDeployTerrains();
+
+				// second check for Terrains in RuleGlobe's textures ->
+				if (terrainList.empty() == true)
 				{
-					std::vector<std::string> terrainList;
-					// terrains for Missions can be/are defined in both RuleAlienDeployment AND through RuleGlobe(Textures)
-					// Options:
-					// 1. choose from both aspects
-					// 2. choose Deployment preferentially
-					// 3. choose Globe-texture preferentially
-					// ...
-					// PROFIT!!
-					// conclusion: choose among Globe-Texture's def'd deployments first;
-					// if none found, choose among Deployment def'd terrains ....
-					// Note: cf. QuickBattleState::cbxMissionChange()
-
-					// BZZZT. Do it the opposite way; check deployTerrains first, then textureTerrains.
-
-					// TODO: tie all this into WeightedOptions
-					// check for Terrains in Globe-Texture(INT) first
-/*					const RuleGlobe* const globeRule (_game->getRuleset()->getGlobe());
-					const RuleTexture* const texRule (globeRule->getTextureRule(_city->getTextureId()));
-					terrainList = globeRule->getGlobeTerrains(texRule->getTextureDeployment());
-
-					// second, check for Terrains in RuleAlienDeployment ...
-					if (terrainList.empty() == true)
-					{
-						// get a Terrain from RuleAlienDeployment
-						const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployed());
-						terrainList = ruleDeploy->getDeployTerrains();
-					} */
-
-					// get a Terrain from RuleAlienDeployment first
-					//Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleAlienDeployment";
-					const RuleAlienDeployment* const ruleDeploy (site->getTerrorDeployed());
-					terrainList = ruleDeploy->getDeployTerrains();
-
-					// second, check for Terrains in Globe-Texture(INT) ...
-					if (terrainList.empty() == true)
-					{
-						//Log(LOG_INFO) << ". . . finding eligibleTerrain for RuleGlobe";
-						const RuleGlobe* const globeRule (_game->getRuleset()->getGlobe());
-//						const RuleTexture* const texRule = globeRule->getTextureRule(_city->getTextureId());
-						terrainList = globeRule->getGlobeTerrains(); //texRule->getTextureDeployments() -> now uses a weighted system ....
-					}
-
-					if (terrainList.empty() == false) // SAFETY.
-					{
-						const size_t pick (RNG::pick(terrainList.size()));
-						//Log(LOG_INFO) << ". . . . size = " << terrainList.size() << " pick = " << pick;
-						//Log(LOG_INFO) << ". . . . terrain = " << terrainList.at(pick) << " - Not Weighted";
-						_terrainRule = _game->getRuleset()->getTerrain(terrainList.at(pick));
-					}
-//					else fuck off. Thanks!
-					//else Log(LOG_INFO) << ". . . . eligibleTerrain NOT Found. Must be Cydonia, Base assault/defense ...";
-
-					terrainType = _terrainRule->getType();
-					//Log(LOG_INFO) << ". . . using terrainType: " << terrainType;
+					//Log(LOG_INFO) << ". . . finding eligible terrain-types in RuleGlobe";
+					terrainList = _game->getRuleset()->getGlobe()->getGlobeTerrains();
 				}
-//				else	// SAFETY: for terrorSite that's not at a City.
-						// This should be the same as for NOT City!!!
-//					terrainType = _texRule->getTextureTerrain(_craft->getTarget());
-					// note: that should crash if on Water tex
 
+				if (terrainList.empty() == false) // safety.
+				{
+					const size_t pick (RNG::pick(terrainList.size()));
+					//Log(LOG_INFO) << ". . . . size = " << terrainList.size() << " pick = " << pick;
+					//Log(LOG_INFO) << ". . . . terrain = " << terrainList.at(pick) << " - Not Weighted";
+					_terrainRule = _game->getRuleset()->getTerrain(terrainList.at(pick));
+				}
+//				else fuck off. Thanks!
+				//else Log(LOG_INFO) << ". . . . eligibleTerrain NOT Found. Must be Cydonia, Base assault/defense.";
+
+				terrainType = _terrainRule->getType();
 				site->setSiteTerrainType(terrainType);
-//->			_terrainRule = selectCityTerrain(lat);
+				//Log(LOG_INFO) << ". . . using terrainType: " << terrainType;
 			}
 			else // is UFO
 			{
-//				if (_city != nullptr) // UFO at a City (eg. Battleship on Infiltration trajectory)
+				double // determine if Craft is landing at a City ->
+					lon (_craft->getLongitude()),
+					lat (_craft->getLatitude());
+				RuleRegion* regionRule;
+
+				bool city (false);
+				for (std::vector<Region*>::const_iterator
+						i = _game->getSavedGame()->getRegions()->begin();
+						i != _game->getSavedGame()->getRegions()->end() && city == false;
+						++i)
+				{
+					regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration below_
+					if (regionRule->insideRegion(lon,lat) == true)
+					{
+						for (std::vector<RuleCity*>::const_iterator
+								j = regionRule->getCities().begin();
+								j != regionRule->getCities().end();
+								++j)
+						{
+							if (AreSameTwo(
+										(*j)->getLongitude(), lon,
+										(*j)->getLatitude(),  lat) == true)
+							{
+								//Log(LOG_INFO) << ". . . city found: " << (*j)->getLabel();
+								city = true;
+								break;
+							}
+						}
+					}
+				}
+
 				if (city == true)
 				{
 					//Log(LOG_INFO) << ". . UFO at City";
-					// choose from texture(INT) #10, Urban w/ UFO types
-					// note that differences between tex -1 & tex -2 have not been implemented yet,
-					// so treat them both the same -> texture(INT) #10
-					// INDUSTRIALUFO, MADURBANUFO, NATIVEUFO
 					const RuleGlobe* const globeRule (_game->getRuleset()->getGlobe());
 					const RuleTexture* const cityTextureRule (globeRule->getTextureRule(OpenXcom::TT_URBAN));
 
 					terrainType = cityTextureRule->getTextureTerrain(ufo);
-					// NOTE that inputting coordinates can screw getTextureTerrain() if & when 'target'
-					// is not contained within any of the Texture's Terrain's TextureDetail coordinates.
-					// I don't believe the function has a viable fallback mechanism
-					// ... instead it would merely return an empty string.
-
-//					if (_city->getTextureId() == -1) // Texture ID -1
-//					{}
-//					else if (_city->getTextureId() == -2) // Texture ID -2
-//					{}
-//					else SAFETY!
 				}
 				else // UFO not at City
 				{
 					//Log(LOG_INFO) << ". . UFO not at City";
-//					terrainType = _texRule->getTextureTerrain(_craft->getTarget());
 					terrainType = texRule->getTextureTerrain(_craft->getTarget());
-//->				_terrainRule = selectTerrain(lat);
 				}
 
 				ufo->setUfoTerrainType(terrainType);
@@ -295,7 +252,6 @@ ConfirmLandingState::ConfirmLandingState(
 	std::wostringstream woststr;
 	if (ufo != nullptr)
 	{
-//		const RuleUfo* const ufoRule (ufo->getRules()); if (ufoRule != nullptr)
 		woststr << tr(ufo->getRules()->getType());
 
 		if (ufo->getHyperDetected() == true) // only ufoType shows if not hyperdetected.
@@ -392,20 +348,15 @@ void ConfirmLandingState::btnYesClick(Action*)
 		std::string type;
 		switch (ufo->getUfoStatus())
 		{
-			case Ufo::CRASHED:
-				type = "STR_UFO_CRASH_RECOVERY";
-				break;
-			case Ufo::LANDED:
-				type = "STR_UFO_GROUND_ASSAULT";
+			case Ufo::CRASHED:	type = "STR_UFO_CRASH_RECOVERY"; break;
+			case Ufo::LANDED:	type = "STR_UFO_GROUND_ASSAULT";
 		}
 		battleSave->setTacticalType(type);
 
 		bGen.setUfo(ufo);
 		bGen.setAlienRace(ufo->getAlienRace());
-		bGen.setTerrain(_terrainRule); // kL
+		bGen.setTerrain(_terrainRule);
 		bGen.setShade(_shade);
-//		bGen.setTacTexture(_texRule); // was an INT <- !!!
-//		bGen.setIsCity(_city != nullptr); // kL
 	}
 	else if (terrorSite != nullptr)
 	{
@@ -413,9 +364,8 @@ void ConfirmLandingState::btnYesClick(Action*)
 
 		bGen.setTerrorSite(terrorSite);
 		bGen.setAlienRace(terrorSite->getAlienRace());
-		bGen.setTerrain(_terrainRule); // kL
+		bGen.setTerrain(_terrainRule);
 		bGen.setShade(_shade);
-//		bGen.setTacTexture(_texRule); // was an INT <- !!!
 	}
 	else if (alienBase != nullptr)
 	{
@@ -423,14 +373,13 @@ void ConfirmLandingState::btnYesClick(Action*)
 
 		bGen.setAlienBase(alienBase);
 		bGen.setAlienRace(alienBase->getAlienRace());
-//		bGen.setTacTexture(nullptr); // was an INT <- !!! bGen default nullptr
 	}
 	else
 	{
-		throw Exception("No mission available!");
+		throw Exception("ConfirmLandingState::btnYesClick() No mission available!");
 	}
 
-	bGen.run(); // <- DETERMINE ALL TACTICAL DATA. |<--
+	bGen.run(); // <- DETERMINE ALL TACTICAL DATA. |<--|||
 
 	_game->pushState(new BriefingState(_craft));
 }
