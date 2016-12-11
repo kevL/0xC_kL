@@ -19,8 +19,8 @@
 
 #include "AlienBaseDetectedState.h"
 
-//#include "GeoscapeState.h"
-//#include "Globe.h"
+#include "GeoscapeState.h"
+#include "Globe.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -47,28 +47,30 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the AlienBaseDetected window.
- * @param aBase		- pointer to the AlienBase to get info from
-// * @param geoState	- pointer to the GeoscapeState
- * @param recon		- true if detected by Craft reconnaissance
+ * @param alienBase	- pointer to the AlienBase to get info from
+ * @param geoState	- pointer to the GeoscapeState
+ * @param agents	- true if detected by end-of-month secret operatives (default false)
  */
 AlienBaseDetectedState::AlienBaseDetectedState(
-		AlienBase* const aBase,
-//		GeoscapeState* const geoState,
-		bool recon)
+		AlienBase* const alienBase,
+		GeoscapeState* const geoState,
+		bool agents)
 	:
-		_aBase(aBase)
-//		_geoState(geoState)
+		_alienBase(alienBase),
+		_geoState(geoState)
 {
 	_window		= new Window(this);
-	_txtTitle	= new Text(300, 180, 10, 0);
-	_btnOk		= new TextButton(100, 16, 110, 180);
 
-	// TODO: Add a 'center'/'5-sec' button.
+	_txtTitle	= new Text(288, 180, 16, 0);
+
+	_btnCenter	= new TextButton(100, 16,  50, 180);
+	_btnOk		= new TextButton(100, 16, 170, 180);
 
 	setInterface("alienBase");
 
 	add(_window,	"window",	"alienBase");
 	add(_txtTitle,	"text",		"alienBase");
+	add(_btnCenter,	"button",	"alienBase");
 	add(_btnOk,		"button",	"alienBase");
 
 	centerSurfaces();
@@ -76,30 +78,32 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
-	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick),
-							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick),
-							Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick),
-							Options::keyCancel);
-
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
 	_txtTitle->setBig();
 	_txtTitle->setWordWrap();
 
+	_btnCenter->setText(tr("STR_CENTER_ON_SITE_TIME_5_SECONDS"));
+	_btnCenter->onMouseClick(	static_cast<ActionHandler>(&AlienBaseDetectedState::btnCenterClick));
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnCenterClick),
+								Options::keyOk);
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnCenterClick),
+								Options::keyOkKeypad);
 
-	_aBase->setId(_game->getSavedGame()->getCanonicalId(_aBase->getAlienBaseDeployed()->getMarkerType())); //Target::stTarget[2u]
-	_aBase->setDetected();
+	_btnOk->setText(tr("STR_OK"));
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienBaseDetectedState::btnOkClick),
+							Options::keyCancel);
 
+
+	_alienBase->setId(_game->getSavedGame()->getCanonicalId(_alienBase->getAlienBaseDeployed()->getMarkerType())); //Target::stTarget[2u]
+	_alienBase->setDetected();
 
 	const double
-		lon (_aBase->getLongitude()),
-		lat (_aBase->getLatitude());
+		lon (_alienBase->getLongitude()),
+		lat (_alienBase->getLatitude());
 
-	std::wstring loc; // NOTE: Regions implicitly cover all areas of the Globe. Don't eff it up Lol.
+	std::wstring wst; // NOTE: Regions implicitly cover all areas of the Globe. Don't eff it up Lol.
 	for (std::vector<Region*>::const_iterator
 			i = _game->getSavedGame()->getRegions()->begin();
 			i != _game->getSavedGame()->getRegions()->end();
@@ -107,10 +111,11 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 	{
 		if ((*i)->getRules()->insideRegion(lon,lat))
 		{
-			loc = tr((*i)->getRules()->getType());
+			wst = tr((*i)->getRules()->getType());
 			break;
 		}
 	}
+
 	for (std::vector<Country*>::const_iterator
 			i = _game->getSavedGame()->getCountries()->begin();
 			i != _game->getSavedGame()->getCountries()->end();
@@ -118,20 +123,21 @@ AlienBaseDetectedState::AlienBaseDetectedState(
 	{
 		if ((*i)->getRules()->insideCountry(lon,lat))
 		{
-			loc += L"> ";
-			loc += tr((*i)->getRules()->getType());
+			wst += L"> ";
+			wst += tr((*i)->getRules()->getType());
 			break;
 		}
 	}
-	if (loc.empty() == true)
-		loc = tr("STR_UNKNOWN");
+
+	if (wst.empty() == true)
+		wst = tr("STR_UNKNOWN");
 
 	std::string st;
-	if (recon == true)
-		st = "STR_ALIEN_BASE_DETECT_BY_CRAFT";
-	else
+	if (agents == true)
 		st = "STR_ALIEN_BASE_DETECT_BY_SECRET_AGENTS";
-	_txtTitle->setText(tr(st).arg(loc)); // TODO: Add canonical-ID.
+	else
+		st = "STR_ALIEN_BASE_DETECT_BY_CRAFT";
+	_txtTitle->setText(tr(st).arg(wst)); // TODO: Add canonical-ID.
 }
 
 /**
@@ -146,10 +152,18 @@ AlienBaseDetectedState::~AlienBaseDetectedState()
  */
 void AlienBaseDetectedState::btnOkClick(Action*)
 {
-//	_geoState->resetTimer();
-//	_geoState->getGlobe()->center(
-//								_aBase->getLongitude(),
-//								_aBase->getLatitude());
+	_game->popState();
+}
+
+/**
+ * Exits to the Globe with the AlienBase centered.
+ * @param action - pointer to an Action
+ */
+void AlienBaseDetectedState::btnCenterClick(Action*)
+{
+	_geoState->getGlobe()->center(
+								_alienBase->getLongitude(),
+								_alienBase->getLatitude());
 	_game->popState();
 }
 

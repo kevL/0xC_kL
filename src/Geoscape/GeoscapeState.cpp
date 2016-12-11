@@ -2044,7 +2044,7 @@ void GeoscapeState::time10Minutes()
 							{
 								//Log(LOG_INFO) << ". . . . aLienBase discovered";
 								resetTimer();
-								popupGeo(new AlienBaseDetectedState(*k, true));
+								popupGeo(new AlienBaseDetectedState(*k, this));
 							}
 						}
 					}
@@ -3192,12 +3192,14 @@ void GeoscapeState::time1Month()
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "GeoscapeState::time1Month()";
+
 	resetTimer();
+
 	_game->getResourcePack()->fadeMusic(_game, 1232);
 
 	popupGeo(new MonthlyReportState());
 
-	if (_gameSave->getAlienBases()->empty() == false) // handle xCom Secret Agents discovering bases
+	if (_gameSave->getAlienBases()->empty() == false) // handle 007 Secret Agents discovering alien bases
 	{
 		const int pct (20 - (_gameSave->getDifficultyInt() * 5));
 		if (RNG::percent(50 + pct) == true)
@@ -3207,14 +3209,18 @@ void GeoscapeState::time1Month()
 					i != _gameSave->getAlienBases()->end();
 					++i)
 			{
-				if ((*i)->isDetected() == false && RNG::percent(5 + pct) == true)
-					popupGeo(new AlienBaseDetectedState(*i, false));
+				if ((*i)->isDetected() == false)
+				{
+					popupGeo(new AlienBaseDetectedState(*i, this, true));
+					break;
+				}
 			}
 		}
 	}
 
 	_gameSave->elapseMonth();
-	deterAlienMissions(); // determine aLien-mission-possibilities for the new month.
+
+	deterAlienMissions();
 }
 
 /**
