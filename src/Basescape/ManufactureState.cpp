@@ -94,8 +94,6 @@ ManufactureState::ManufactureState(
 	_btnProjects	= new TextButton(134, 16,  16, 177);
 	_btnOk			= new TextButton(134, 16, 170, 177);
 
-	// TODO: Add a TechTreeViewer button.
-
 	setInterface("manufactureMenu");
 
 	add(_window,			"window",	"manufactureMenu");

@@ -84,9 +84,10 @@ ResearchState::ResearchState(
 
 	_lstResearch	= new TextList(288, 105, 16, 64);
 
-	_btnAliens		= new TextButton(92, 16,  16, 177);
-	_btnProjects	= new TextButton(92, 16, 114, 177);
-	_btnOk			= new TextButton(92, 16, 212, 177);
+	_btnTechViewer	= new TextButton(72, 16,   8, 177);
+	_btnAliens		= new TextButton(72, 16,  85, 177);
+	_btnProjects	= new TextButton(72, 16, 163, 177);
+	_btnOk			= new TextButton(72, 16, 240, 177);
 
 	setInterface("researchMenu");
 
@@ -102,6 +103,7 @@ ResearchState::ResearchState(
 	add(_txtScientists,	"text",		"researchMenu");
 	add(_txtProgress,	"text",		"researchMenu");
 	add(_lstResearch,	"list",		"researchMenu");
+	add(_btnTechViewer,	"button",	"researchMenu");
 	add(_btnAliens,		"button",	"researchMenu");
 	add(_btnProjects,	"button",	"researchMenu");
 	add(_btnOk,			"button",	"researchMenu");
@@ -130,6 +132,9 @@ ResearchState::ResearchState(
 	// TODO: onKeyboardPress(). See BaseInfoState.
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
+
+	_btnTechViewer->setText(tr("STR_TECH_TREE_VIEWER"));
+	_btnTechViewer->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnTechViewerClick));
 
 	_btnAliens->setText(tr("STR_ALIENS"));
 	_btnAliens->onMouseClick(static_cast<ActionHandler>(&ResearchState::btnAliensClick));
@@ -271,6 +276,15 @@ void ResearchState::btnResearchClick(Action*)
 void ResearchState::btnAliensClick(Action*)
 {
 	_game->pushState(new AlienContainmentState(_base, OPT_GEOSCAPE));
+}
+
+/**
+ * Opens the TechTreeViewer.
+ * @param action - pointer to an Action
+ */
+void ResearchState::btnTechViewerClick(Action*)
+{
+	_game->pushState(new TechTreeViewerState());
 }
 
 /**

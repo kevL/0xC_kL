@@ -61,6 +61,7 @@ private:
 	TextButton
 		* _btnAliens,
 		* _btnProjects,
+		* _btnTechViewer,
 		* _btnOk;
 	TextList* _lstResearch;
 	Window* _window;
@@ -86,10 +87,12 @@ private:
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
-		/// Handler for clicking the New Research button.
+		/// Handler for clicking the Projects button.
 		void btnResearchClick(Action* action);
-		/// Handler for clicking the Alien Containment button.
+		/// Handler for clicking the AlienContainment button.
 		void btnAliensClick(Action* action);
+		/// Handler for clicking the TechTreeViewer button.
+		void btnTechViewerClick(Action* action);
 
 		/// Handler for clicking the MiniBase view.
 		void miniClick(Action* action);

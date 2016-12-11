@@ -54,9 +54,9 @@ DeleteSaveState::DeleteSaveState(
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 256, 100, 32, 50, POPUP_HORIZONTAL);
+	_window		= new Window(this, 320, 100, 0, 50, POPUP_HORIZONTAL);
 
-	_txtMessage	= new Text(246, 50, 37, 70);
+	_txtMessage	= new Text(320, 50, 0, 70);
 
 	_btnNo		= new TextButton(80, 18,  60, 122);
 	_btnYes		= new TextButton(80, 18, 180, 122);
