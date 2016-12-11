@@ -57,12 +57,12 @@ private:
 
 	public:
 		/// Creates an Action with specified event-data.
-		Action(
+		explicit Action(
 				SDL_Event* const event,
-				double scaleX,
-				double scaleY,
-				int topBlackBand,
-				int leftBlackBand);
+				double scaleX = 0.,
+				double scaleY = 0.,
+				int topBlackBand  = 0,
+				int leftBlackBand = 0);
 //				Uint32 rodentState);
 		/// Cleans up the Action.
 		~Action();

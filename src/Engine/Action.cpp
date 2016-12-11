@@ -26,10 +26,10 @@ namespace OpenXcom
 /**
  * Creates an Action as in hardware-event.
  * @param event			- pointer to an SDL_Event
- * @param scaleX		- the Screen's x-scaling factor
- * @param scaleY		- the Screen's y-scaling factor
- * @param topBlackBand	- the Screen's top black band height
- * @param leftBlackBand	- the Screen's left black band width
+ * @param scaleX		- the Screen's x-scaling factor (default 0.0)
+ * @param scaleY		- the Screen's y-scaling factor (default 0.0)
+ * @param topBlackBand	- the Screen's top black band height (default 0)
+ * @param leftBlackBand	- the Screen's left black band width (default 0)
 // * @param rodentState	- state of the rodent
  */
 Action::Action(

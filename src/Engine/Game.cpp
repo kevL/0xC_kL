@@ -55,19 +55,20 @@
 namespace OpenXcom
 {
 
-const double Game::VOLUME_GRADIENT (10.); // static.
-
 SDL_Event
 	Game::eventD, // static.
 	Game::eventU; // static.
 
 Action
-	Game::syntheticD (Action(&eventD, 0.,0., 0,0)), // static.
-	Game::syntheticU (Action(&eventU, 0.,0., 0,0)); // static.
+	Game::syntheticD = Action(&eventD), // static. gawd i hate c--
+	Game::syntheticU = Action(&eventU); // static.
+
+const double Game::VOLUME_GRADIENT (10.); // static.
+
 
 /**
- * Starts up SDL with all the subsystems and SDL_mixer for audio-processing,
- * creates the display-screen and sets up the cursor.
+ * Starts up SDL with all the subsystems and SDL_Mixer for audio-processing,
+ * creates the display Screen and sets up the Cursor.
  * @param title - reference to the title of the app-window
  */
 Game::Game(const std::string& title)
@@ -153,14 +154,14 @@ Game::Game(const std::string& title)
 	_lang = new Language();
 
 
-	// Create the synthetic mouse-events.
+	// Create the synthetic mouse down/up-events.
 	eventD.type = SDL_MOUSEBUTTONDOWN;
 	eventD.button.button = SDL_BUTTON_LEFT;
-	syntheticD = Action(&eventD, 0.,0., 0,0);
+	syntheticD = Action(&eventD);
 
 	eventU.type = SDL_MOUSEBUTTONUP;
 	eventU.button.button = SDL_BUTTON_LEFT;
-	syntheticU = Action(&eventU, 0.,0., 0,0);
+	syntheticU = Action(&eventU);
 }
 
 /**
