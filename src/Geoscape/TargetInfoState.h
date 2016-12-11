@@ -70,7 +70,7 @@ private:
 
 		/// Handler for clicking the Intercept button.
 		void btnInterceptClick(Action* action);
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

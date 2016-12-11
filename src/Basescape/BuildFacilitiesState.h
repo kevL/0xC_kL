@@ -71,7 +71,7 @@ protected:
 		/// Updates the base-stats.
 		void init() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 //		virtual void btnOkClick(Action* action);
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Facilities list.

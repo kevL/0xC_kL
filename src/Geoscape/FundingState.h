@@ -63,7 +63,7 @@ private:
 		/// Cleans up the Funding state.
 		~FundingState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

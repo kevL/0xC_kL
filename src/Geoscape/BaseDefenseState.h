@@ -110,7 +110,7 @@ private:
 		/// Handles the Timer.
 		void think() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

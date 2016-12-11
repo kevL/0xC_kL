@@ -74,7 +74,7 @@ private:
 		/// Updates the soldier names.
 		void init() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Inventory button.
 		void btnEquipClick(Action* action);

@@ -146,7 +146,7 @@ private:
 		/// Handler for changing text on the Name edit.
 		void edtSoldierChange(Action* action);
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Previous button.
 		void btnPrevClick(Action* action);

@@ -138,7 +138,7 @@ private:
 		/// Runs the timer.
 //		void think();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action = nullptr);
 
 		/// Handler for clicking the Next button.

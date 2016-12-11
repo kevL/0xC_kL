@@ -64,7 +64,7 @@ private:
 
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

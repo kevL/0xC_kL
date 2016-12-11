@@ -64,7 +64,7 @@ private:
 		// Deconstructs the ResearchUnlocked state.
 		~ResearchUnlockedState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Allocate Research button.
 		void btnResearchClick(Action* action);

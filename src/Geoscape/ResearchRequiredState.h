@@ -52,7 +52,7 @@ private:
 				const std::string& parentType,
 				const std::string& dependentType);
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

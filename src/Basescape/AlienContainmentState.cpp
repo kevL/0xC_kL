@@ -478,7 +478,7 @@ int AlienContainmentState::getBaseQuantity() // private.
 
 /**
  * Updates the currently selected-row's quantity & color.
- * @note Also determines if the OK button should be in/visible.
+ * @note Also determines if the Ok button should be in/visible.
  */
 void AlienContainmentState::updateListrow() // private.
 {

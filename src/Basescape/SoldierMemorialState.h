@@ -61,7 +61,7 @@ private:
 		/// Cleans up the SoldierMemorial state.
 		~SoldierMemorialState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Statistics button.
 		void btnStatsClick(Action* action);

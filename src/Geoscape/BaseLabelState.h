@@ -64,7 +64,7 @@ private:
 		/// Cleans up the BaseLabel state.
 		~BaseLabelState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for changing text on the label-edit.
 		void edtLabelChange(Action* action);

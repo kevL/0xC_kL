@@ -84,7 +84,7 @@ protected:
 	/// Screen-layout helpers.
 	void initLayout(bool contrast = true);
 
-	/// Callback for OK button.
+	/// Callback for Ok button.
 	void btnOkClick(Action* action);
 	/// Callback for PREV button.
 	void btnPrevClick(Action* action);

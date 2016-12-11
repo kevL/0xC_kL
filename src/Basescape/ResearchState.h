@@ -84,7 +84,7 @@ private:
 		/// Updates the research-list.
 		void init() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the New Research button.
 		void btnResearchClick(Action* action);

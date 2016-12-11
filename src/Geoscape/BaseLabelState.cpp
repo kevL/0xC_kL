@@ -101,7 +101,7 @@ BaseLabelState::~BaseLabelState()
 {}
 
 /**
- * Updates the base-label and disables the OK button if no label is entered.
+ * Updates the base-label and disables the Ok button if no label is entered.
  * @param action - pointer to an Action
  */
 void BaseLabelState::edtLabelChange(Action* action)

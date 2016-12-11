@@ -70,7 +70,7 @@ private:
 	/// Updates counts of assigned/free scientists and available lab-space.
 	void updateInfo();
 
-	/// Handler for clicking the OK button.
+	/// Handler for clicking the Ok button.
 	void btnStartStopClick(Action* action);
 	/// Handler for clicking the Cancel button.
 	void btnCancelClick(Action* action);

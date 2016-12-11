@@ -66,7 +66,7 @@ private:
 		/// Cleans up the MonthlyCosts state.
 		~MonthlyCostsState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

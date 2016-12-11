@@ -68,7 +68,7 @@ private:
 		/// Cleans up the CeremonyDead state.
 		~CeremonyDeadState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 
 		/// Handler for moving the mouse over an Award title.

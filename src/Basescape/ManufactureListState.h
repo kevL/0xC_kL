@@ -91,7 +91,7 @@ private:
 
 		/// Handler for the Costs button.
 		void btnCostsClick(Action* action);
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnCancelClick(Action* action);
 };
 

@@ -104,7 +104,7 @@ private:
 		/// Blinks the status text.
 		void blinkStatus();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the weapon-1 button.
 		void btnW1Click(Action* action);

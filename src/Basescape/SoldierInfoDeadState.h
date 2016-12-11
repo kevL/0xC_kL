@@ -116,7 +116,7 @@ private:
 		/// Sets the soldier-ID.
 		void setSoldierId(size_t solId);
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Previous button.
 		void btnPrevClick(Action* action);

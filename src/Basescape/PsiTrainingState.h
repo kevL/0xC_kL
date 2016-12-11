@@ -68,7 +68,7 @@ private:
 		/// Refreshes the soldier-list.
 		void init() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Soldiers list.
 		void lstSoldiersPress(Action* action);

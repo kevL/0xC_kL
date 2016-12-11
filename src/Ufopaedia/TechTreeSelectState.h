@@ -72,7 +72,7 @@ private:
 		/// Initializes the State.
 		void init() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 
 		/// Handler for QuickSearch toggle.

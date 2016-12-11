@@ -87,7 +87,7 @@ private:
 
 	/// Handler for the Stop button.
 	void btnStopClick(Action* action);
-	/// Handler for the OK button.
+	/// Handler for the Ok button.
 	void btnOkClick(Action* action);
 	/// Helper to exit the State.
 	void exitState();

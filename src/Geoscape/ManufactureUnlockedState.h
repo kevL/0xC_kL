@@ -64,7 +64,7 @@ private:
 		// Deconstructs the ManufactureUnlocked state.
 		~ManufactureUnlockedState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Allocate Manufacture button.
 		void btnManufactureClick(Action* action);

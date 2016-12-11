@@ -76,7 +76,7 @@ private:
 		/// Cleans up the ErrorMessage state.
 		~ErrorMessageState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

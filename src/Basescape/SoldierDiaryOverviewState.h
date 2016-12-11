@@ -94,7 +94,7 @@ private:
 		/// Sets the current Soldier by his/her ID.
 		void setSoldierId(size_t solId);
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Kills button.
 		void btnKillsClick(Action* action);

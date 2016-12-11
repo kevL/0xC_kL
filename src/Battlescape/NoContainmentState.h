@@ -52,7 +52,7 @@ private:
 		/// Cleans up the No Containment state.
 		~NoContainmentState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

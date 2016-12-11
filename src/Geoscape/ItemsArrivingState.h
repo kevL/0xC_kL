@@ -71,7 +71,7 @@ private:
 		/// Initializes the state.
 		void init() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnCancelClick(Action* action);
 		/// Handler for clicking the Ok 5sec button.
 		void btnOk5SecsClick(Action* action);

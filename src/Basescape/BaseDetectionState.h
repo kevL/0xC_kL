@@ -76,7 +76,7 @@ private:
 		/// Blinks the message text.
 		void blink();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 };
 

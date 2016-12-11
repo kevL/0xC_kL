@@ -99,7 +99,7 @@ private:
 	void btnUnloadCraftClick(Action* action);
 	/// Handler for clicking the Inventory button.
 	void btnInventoryClick(Action* action);
-	/// Handler for clicking the OK button.
+	/// Handler for clicking the Ok button.
 	void btnOkClick(Action* action);
 
 

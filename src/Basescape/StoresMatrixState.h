@@ -73,7 +73,7 @@ private:
 		/// Cleans up the Stores Matrix state.
 		~StoresMatrixState();
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action*);
 };
 

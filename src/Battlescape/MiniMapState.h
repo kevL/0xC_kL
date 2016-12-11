@@ -65,7 +65,7 @@ private:
 		/// Cleans up the MiniMapState.
 		~MiniMapState();
 
-		/// Handler for the OK button.
+		/// Handler for the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for the one level up button.
 		void btnLevelUpClick(Action* action);

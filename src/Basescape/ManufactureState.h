@@ -91,7 +91,7 @@ private:
 		/// Updates the Manufacture list.
 		void init() override;
 
-		/// Handler for clicking the OK button.
+		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);
 		/// Handler for the New Manufacture button.
 		void btnManufactureClick(Action* action);
