@@ -1909,7 +1909,7 @@ int Base::detect(Target* const target) const
 double Base::insideRadarRange(const Target* const target) const
 {
 	double ret (0.); // lets hope UFO is not *right on top of Base* Lol
-	const double dist (getDistance(target) * earthRadius);
+	const double dist (getDistance(target) * radius_earth);
 	if (dist <= static_cast<double>(_rules->getRadarRangeBest()) * greatCircleConversionFactor)
 	{
 		bool hyperDet (false);

@@ -228,7 +228,7 @@ void Craft::loadCraft(
 //		"STR_CRASH_SITE"	// 6
 
 		if ((type = target["type"].as<std::string>()) == Target::stTarget[1u]) // "STR_BASE"
-			returnToBase();
+			setTarget(_base);
 		else if (type == Target::stTarget[0u]) // "STR_UFO" // is this *always* "STR_UFO" .........
 		{
 			const std::vector<Ufo*>* const ufoList (_playSave->getUfos());
@@ -573,10 +573,10 @@ std::string Craft::getAltitude() const
 	{
 		if (ufo->getAltitude() == MovingTarget::stAltitude[0u])
 		{
-			if (getDistance(ufo) * earthRadius < 150.)
+			if (getDistance(ufo) * radius_earth < 150.)
 				return MovingTarget::stAltitude[1u];
 
-			if (getDistance(ufo) * earthRadius < 750.)
+			if (getDistance(ufo) * radius_earth < 750.)
 				return MovingTarget::stAltitude[2u];
 
 			return MovingTarget::stAltitude[3u];
@@ -605,10 +605,10 @@ unsigned Craft::getAltitudeInt() const
 	{
 		if (ufo->getAltitude() == MovingTarget::stAltitude[0u])
 		{
-			if (getDistance(ufo) * earthRadius < 150.)
+			if (getDistance(ufo) * radius_earth < 150.)
 				return 1u;
 
-			if (getDistance(ufo) * earthRadius < 750.)
+			if (getDistance(ufo) * radius_earth < 750.)
 				return 2u;
 
 			return 3u;
@@ -876,63 +876,47 @@ int Craft::getFuelPct() const
 }
 
 /**
- * Sets that this Craft is currently low on fuel - only has enough to get back
- * to its Base.
- * @param low - true if fuel is low (default true)
+ * Uses this Craft's fuel every 10 minutes while airborne.
+ * @return, true if low on fuel
  */
-void Craft::setLowFuel(bool low)
+bool Craft::useFuel()
 {
-	_lowFuel = low;
+	int fuelUsage;
+	if (_crRule->getRefuelItem().empty() == false)	// Firestorm, Lightning, Avenger, etc.
+		fuelUsage = 1;
+	else											// Skyranger, Interceptor, etc.
+		fuelUsage = _speed;
+
+	setFuel(_fuel - fuelUsage);
+
+	if (_lowFuel == false)
+	{
+		double dist;
+		if (_target == nullptr)
+			dist = getDistance(_base);
+		else
+			dist = getDistance(_target) + _base->getDistance(_target);
+
+		const double speed (static_cast<double>(_crRule->getTopSpeed()) * arcToRads / 6.);
+
+		if (_fuel <= static_cast<int>(std::ceil(dist * static_cast<double>(fuelUsage) / speed)))
+		{
+			_lowFuel = true;
+			setTarget(_base);
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
- * Checks if this Craft is currently low on fuel - only has enough to get back
+ * Checks if this Craft is currently low on fuel - has only enough to get back
  * to its Base.
  * @return, true if fuel is low
  */
 bool Craft::isLowFuel() const
 {
 	return _lowFuel;
-}
-
-/**
- * Uses this Craft's fuel every 10 minutes while airborne.
- */
-void Craft::useFuel()
-{
-	setFuel(_fuel - getFuelUsage());
-}
-
-/**
- * Gets the quantity of fuel this Craft uses while airborne.
- * @return, fuel quantity
- */
-int Craft::getFuelUsage() const
-{
-	if (_crRule->getRefuelItem().empty() == false) // Firestorm, Lightning, Avenger, etc.
-		return 1;
-
-	return _speed; // Skyranger, Interceptor, etc.
-}
-
-/**
- * Gets the minimum required fuel for this Craft to get back to Base.
- * @note This now assumes that Craft cannot be transfered during mid-flight.
- * @return, fuel quantity
- */
-int Craft::getFuelLimit() const
-{
-//	return calcFuelLimit(_base);
-	double dist;
-	if (_target == nullptr)
-		dist = getDistance(_base);
-	else
-		dist = getDistance(_target) + _base->getDistance(_target);
-
-	const double speed (static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.);
-
-	return static_cast<int>(std::ceil(
-		   static_cast<double>(getFuelUsage()) * dist / speed));
 }
 
 /**
@@ -961,7 +945,7 @@ int Craft::calcFuelLimit(const Base* const base) const // private.
 			patrol_factor = 2.;
 	}
 
-	const double speed (static_cast<double>(_crRule->getTopSpeed()) * unitToRads / 6.);
+	const double speed (static_cast<double>(_crRule->getTopSpeed()) * arcToRads / 6.);
 
 	return static_cast<int>(std::ceil(
 		   static_cast<double>(getFuelUsage()) * dist * patrol_factor / speed));
@@ -1219,7 +1203,7 @@ bool Craft::detect(const Target* const target) const
 	{
 		const double
 			range (static_cast<double>(radarRange) * greatCircleConversionFactor),
-			dist (getDistance(target) * earthRadius);
+			dist (getDistance(target) * radius_earth);
 
 		if (range >= dist)
 			return true;

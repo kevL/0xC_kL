@@ -1249,7 +1249,7 @@ void Game::setDebugCycle(int cycle)
 /**
  * Gets a synthetic mouse-down Action.
  * @note If you ever get your hands on a 32-button mouse you might be able to
- * rig it up by passing the btnId's into Action via '_rodentState'.
+ * rig it up by passing the btnIds into Action via '_rodentState'.
  * @return, pointer to an Action
  */
 Action* Game::getFakeMouseActionD() // static.
@@ -1268,7 +1268,7 @@ Action* Game::getFakeMouseActionD() // static.
 /**
  * Gets a synthetic mouse-up Action.
  * @note If you ever get your hands on a 32-button mouse you might be able to
- * rig it up by passing the btnId's into Action via '_rodentState'.
+ * rig it up by passing the btnIds into Action via '_rodentState'.
  * @return, pointer to an Action
  */
 Action* Game::getFakeMouseActionU() // static.

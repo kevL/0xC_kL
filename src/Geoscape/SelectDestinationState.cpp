@@ -276,7 +276,7 @@ void SelectDestinationState::globeClick(Action* action)
 		range /= 6; // six doses per hour on Geoscape.
 
 		if (range < static_cast<int>(std::floor(
-				  (_craft->getDistance(wp) + _craft->getBase()->getDistance(wp)) * earthRadius)))
+				  (_craft->getDistance(wp) + _craft->getBase()->getDistance(wp)) * radius_earth)))
 		{
 			_txtError->setVisible();
 			delete wp;

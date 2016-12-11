@@ -168,8 +168,8 @@ void Target::setLatitude(double lat)
 }
 
 /**
- * Gets the list of Craft currently targeting this Target.
- * @return, pointer to a vector of pointers to Crafts
+ * Gets the list of MovingTargets currently targeting this Target.
+ * @return, pointer to a vector of pointers to MovingTargets
  */
 std::vector<Target*>* Target::getTargeters()
 {
@@ -177,7 +177,7 @@ std::vector<Target*>* Target::getTargeters()
 }
 
 /**
- * Gets the great circle distance to another Target on the Globe.
+ * Gets the radian-angle to another Target on the Globe.
  * @param target - pointer to other target
  * @return, distance in radians
  */

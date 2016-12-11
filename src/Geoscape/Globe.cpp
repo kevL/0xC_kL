@@ -23,7 +23,7 @@
 
 //#include "../fmath.h"
 
-#include "GeoscapeState.h" // unitToRads
+#include "GeoscapeState.h" // arcToRads
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
@@ -1427,7 +1427,7 @@ void Globe::drawRadars()
 		{
 			if ((range = static_cast<double>(rules->getBaseFacility(*i)->getRadarRange())) > 0.)
 			{
-				range *= unitToRads;
+				range *= arcToRads;
 				drawGlobeCircle(
 							_hoverLat,
 							_hoverLon,
@@ -1471,7 +1471,7 @@ void Globe::drawRadars()
 							{
 								if (range > 0.)
 								{
-									range *= unitToRads;
+									range *= arcToRads;
 									drawGlobeCircle( // Base radars.
 												lat,lon,
 												range,
@@ -1486,7 +1486,7 @@ void Globe::drawRadars()
 
 					if (rangeBest > 0.)
 					{
-						rangeBest *= unitToRads;
+						rangeBest *= arcToRads;
 						drawGlobeCircle( // largest Base radar.
 									lat,lon,
 									rangeBest,
@@ -1505,7 +1505,7 @@ void Globe::drawRadars()
 					{
 						if ((range = static_cast<double>((*j)->getRules()->getRangeRadar())) > 0.)
 						{
-							range *= unitToRads;
+							range *= arcToRads;
 							drawGlobeCircle( // Craft radars.
 										(*j)->getLatitude(),
 										(*j)->getLongitude(),

@@ -192,16 +192,10 @@ private:
 		int getFuel() const;
 		/// Gets the Craft's percentage of fuel.
 		int getFuelPct() const;
-		/// Sets if the Craft is running out of fuel.
-		void setLowFuel(bool low = true);
+		/// Uses the Craft's fuel.
+		bool useFuel();
 		/// Checks if the Craft is running out of fuel.
 		bool isLowFuel() const;
-		/// Uses the Craft's fuel.
-		void useFuel();
-		/// Gets the Craft's fuel usage.
-		int getFuelUsage() const;
-		/// Gets the Craft's low fuel limit.
-		int getFuelLimit() const;
 
 		/// Sends the Craft to its Base.
 		void returnToBase();

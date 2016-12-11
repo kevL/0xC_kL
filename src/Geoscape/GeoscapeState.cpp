@@ -138,12 +138,12 @@ bool
 	kL_geoMusicReturnState	= false;
 
 const double
-	earthRadius					= 3440., //.0647948164,			// nautical miles.
-	unitToRads					= (1. / 60.) * (M_PI / 180.),	// converts a minute of arc to rads
-	greatCircleConversionFactor	= earthRadius * unitToRads;		// converts 'flat' distance to greatCircle distance.
+	radius_earth	= 3440., //.0647948164,					// nautical miles
+	arcToRads		= (1. / 60.) * (M_PI / 180.),			// converts a minute of arc to radians
+	greatCircleConversionFactor	= radius_earth * arcToRads;	// converts euclidean distance to great-circle distance
 
 
-// UFO blobs graphics ...
+// UFO-blobs graphics ...
 const int GeoscapeState::_ufoBlobs[8u][BLOBSIZE][BLOBSIZE]
 {
 	{
@@ -1946,7 +1946,7 @@ bool DetectXCOMBase::operator ()(const Ufo* const ufo) const
 	{
 		const double
 			range (static_cast<double>(ufo->getRules()->getRangeRecon()) * greatCircleConversionFactor),
-			dist (_base.getDistance(ufo) * earthRadius);
+			dist (_base.getDistance(ufo) * radius_earth);
 
 		if (dist <= range)
 		{
@@ -2009,16 +2009,8 @@ void GeoscapeState::time10Minutes()
 			if ((*j)->getCraftStatus() == CS_OUT
 				&& (*j)->hasLeftGround() == true)
 			{
-				(*j)->useFuel();
-
-				if ((*j)->isLowFuel() == false
-					&& (*j)->getFuel() <= (*j)->getFuelLimit())
-				{
-					(*j)->setLowFuel();
-					(*j)->returnToBase();
-
+				if ((*j)->useFuel() == true)
 					popupGeo(new LowFuelState(*j, this));
-				}
 
 //				if ((*j)->getTarget() == nullptr) // Remove that: patrolling for aBases/10min was getting too bothersome.
 //				{
@@ -2032,7 +2024,7 @@ void GeoscapeState::time10Minutes()
 					{
 						const double
 							range (static_cast<double>((*j)->getRules()->getRangeRecon()) * greatCircleConversionFactor),
-							dist ((*j)->getDistance(*k) * earthRadius);
+							dist ((*j)->getDistance(*k) * radius_earth);
 						//Log(LOG_INFO) << ". . range = " << (int)range;
 						//Log(LOG_INFO) << ". . dist = " << (int)dist;
 

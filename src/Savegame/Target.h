@@ -89,7 +89,7 @@ protected:
 		/// Gets the Target's targeters.
 		std::vector<Target*>* getTargeters();
 
-		/// Gets the distance to another Target.
+		/// Gets a radian-angle to another Target.
 		double getDistance(const Target* const target) const;
 };
 

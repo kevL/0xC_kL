@@ -34,8 +34,8 @@ extern bool
 	kL_geoMusicReturnState;
 
 extern const double
-	earthRadius,
-	unitToRads,
+	radius_earth,
+	arcToRads,
 	greatCircleConversionFactor;
 
 class Base;

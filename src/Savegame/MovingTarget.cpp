@@ -28,7 +28,7 @@
 
 //#include "../Engine/Logger.h" // DEBUG
 
-#include "../Geoscape/GeoscapeState.h" // unitToRads
+#include "../Geoscape/GeoscapeState.h" // arcToRads
 
 
 namespace OpenXcom
@@ -220,7 +220,7 @@ void MovingTarget::setSpeed(int speed)
 	}
 	else
 	{
-		_speedRads = static_cast<double>(_speed) * unitToRads / 720.;	// Each nautical mile is 1/60th of a degree;
+		_speedRads = static_cast<double>(_speed) * arcToRads / 720.;	// Each nautical mile is 1/60th of a degree;
 		calculateSpeed();												// each hour contains 720 5-second periods.
 	}
 	//Log(LOG_INFO) << ". speedRads= " << _speedRads;
