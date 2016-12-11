@@ -176,14 +176,14 @@ void LoadGameState::think()
 		_game->popState();
 		_game->getCursor()->setVisible();
 
-		SavedGame* const gameSave (new SavedGame(_game->getRuleset()));
+		SavedGame* const playSave (new SavedGame(_game->getRuleset()));
 		try
 		{
 			Log(LOG_INFO) << "LoadGameState: loading";
-			_game->setSavedGame(gameSave);
-			gameSave->load(_file, _game->getRuleset());
+			_game->setSavedGame(playSave);
+			playSave->load(_file, _game->getRuleset());
 
-			switch (gameSave->getEnding())
+			switch (playSave->getEnding())
 			{
 				case END_WIN:
 				case END_LOSE:
@@ -201,7 +201,7 @@ void LoadGameState::think()
 
 					_game->setState(new GeoscapeState());
 
-					SavedBattleGame* const battleSave (gameSave->getBattleSave());
+					SavedBattleGame* const battleSave (playSave->getBattleSave());
 					if (battleSave != nullptr)
 					{
 						Log(LOG_INFO) << "LoadGameState: loading battlescape map";
@@ -242,10 +242,10 @@ void LoadGameState::think()
 													"Diehard",
 													uiRule->getElement("battlescapePalette")->color));
 
-			if (_game->getSavedGame() == gameSave)
+			if (_game->getSavedGame() == playSave)
 				_game->setSavedGame();
 			else
-				delete gameSave;
+				delete playSave;
 		}
 		catch (YAML::Exception& e)
 		{
@@ -272,10 +272,10 @@ void LoadGameState::think()
 													"Diehard",
 													uiRule->getElement("battlescapePalette")->color));
 
-			if (_game->getSavedGame() == gameSave)
+			if (_game->getSavedGame() == playSave)
 				_game->setSavedGame();
 			else
-				delete gameSave;
+				delete playSave;
 		}
 
 		CrossPlatform::flashWindow();

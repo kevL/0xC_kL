@@ -740,12 +740,12 @@ void Soldier::setQuickBattle()
 
 /**
  * Kills this Soldier in Debriefing or the Geoscape.
- * @param gameSave - pointer to the SavedGame
+ * @param playSave - pointer to the SavedGame
  */
-void Soldier::die(SavedGame* const gameSave)
+void Soldier::die(SavedGame* const playSave)
 {
 	SoldierDeath* const death (new SoldierDeath());
-	death->setTime(*gameSave->getTime());
+	death->setTime(*playSave->getTime());
 
 	SoldierDead* const deadSoldier (new SoldierDead(
 												_label,
@@ -759,7 +759,7 @@ void Soldier::die(SavedGame* const gameSave)
 												_initialStats,
 												_currentStats,
 												*_diary)); // base if I want to ... TODO: Use "&&" operator.
-	gameSave->getDeadSoldiers()->push_back(deadSoldier);
+	playSave->getDeadSoldiers()->push_back(deadSoldier);
 }
 
 /**

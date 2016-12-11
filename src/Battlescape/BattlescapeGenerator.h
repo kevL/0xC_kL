@@ -96,7 +96,7 @@ private:
 	Ruleset*			_rules;
 	RuleTerrain*		_terrainRule;
 	SavedBattleGame*	_battleSave;
-	SavedGame*			_gameSave;
+	SavedGame*			_playSave;
 	Tile*				_tileEquipt;
 	Ufo*				_ufo;
 

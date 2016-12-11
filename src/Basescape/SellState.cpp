@@ -232,7 +232,7 @@ SellState::SellState(Base* const base)
 	}
 
 
-	const SavedGame* const gameSave (_game->getSavedGame());
+	const SavedGame* const playSave (_game->getSavedGame());
 	const Ruleset* const rules (_game->getRuleset());
 	const RuleItem
 		* itRule,
@@ -316,8 +316,8 @@ SellState::SellState(Base* const base)
                 }
 			}
 
-			if (gameSave->isResearched(itRule->getType()) == false					// not researched or research exempt
-				&& (gameSave->isResearched(itRule->getRequiredResearch()) == false	// and has requirements to use but not been researched
+			if (playSave->isResearched(itRule->getType()) == false					// not researched or research exempt
+				&& (playSave->isResearched(itRule->getRequiredResearch()) == false	// and has requirements to use but not been researched
 					|| rules->getItemRule(*i)->isLiveAlien() == true					// or is an alien
 					|| itRule->getBattleType() == BT_CORPSE								// or is a corpse
 					|| itRule->getBattleType() == BT_NONE)								// or is not a battlefield item
@@ -646,9 +646,9 @@ void SellState::updateListrow() // private.
 			}
 		}
 
-		const SavedGame* const gameSave (_game->getSavedGame());
-		if (gameSave->isResearched(itRule->getType()) == false					// not researched or is research exempt
-			&& (gameSave->isResearched(itRule->getRequiredResearch()) == false	// and has requirements to use but not been researched
+		const SavedGame* const playSave (_game->getSavedGame());
+		if (playSave->isResearched(itRule->getType()) == false					// not researched or is research exempt
+			&& (playSave->isResearched(itRule->getRequiredResearch()) == false	// and has requirements to use but not been researched
 				|| itRule->isLiveAlien() == true									// or is an alien
 				|| itRule->getBattleType() == BT_CORPSE								// or is a corpse
 				|| itRule->getBattleType() == BT_NONE)								// or is not a battlefield item

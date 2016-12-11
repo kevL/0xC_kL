@@ -112,7 +112,7 @@ namespace OpenXcom
  */
 BattlescapeState::BattlescapeState()
 	:
-		_gameSave(_game->getSavedGame()),
+		_playSave(_game->getSavedGame()),
 		_battleSave(_game->getSavedGame()->getBattleSave()),
 		_rules(_game->getRuleset()),
 //		_reserve(0),
@@ -524,8 +524,8 @@ BattlescapeState::BattlescapeState()
 		missionLabel;
 
 	for (std::vector<Base*>::const_iterator
-			i = _gameSave->getBases()->begin();
-			i != _gameSave->getBases()->end() && baseLabel.empty() == true;
+			i = _playSave->getBases()->begin();
+			i != _playSave->getBases()->end() && baseLabel.empty() == true;
 			++i)
 	{
 		if ((*i)->getTactical() == true)
@@ -558,8 +558,8 @@ BattlescapeState::BattlescapeState()
 		std::wostringstream woststr;
 
 		for (std::vector<Ufo*>::const_iterator
-				i = _gameSave->getUfos()->begin();
-				i != _gameSave->getUfos()->end() && woststr.str().empty() == true;
+				i = _playSave->getUfos()->begin();
+				i != _playSave->getUfos()->end() && woststr.str().empty() == true;
 				++i)
 		{
 			if ((*i)->getTactical() == true)
@@ -576,8 +576,8 @@ BattlescapeState::BattlescapeState()
 		}
 
 		for (std::vector<TerrorSite*>::const_iterator
-				i = _gameSave->getTerrorSites()->begin();
-				i != _gameSave->getTerrorSites()->end() && woststr.str().empty() == true;
+				i = _playSave->getTerrorSites()->begin();
+				i != _playSave->getTerrorSites()->end() && woststr.str().empty() == true;
 				++i)
 		{
 			if ((*i)->getTactical() == true)
@@ -588,8 +588,8 @@ BattlescapeState::BattlescapeState()
 		}
 
 		for (std::vector<AlienBase*>::const_iterator
-				i = _gameSave->getAlienBases()->begin();
-				i != _gameSave->getAlienBases()->end() && woststr.str().empty() == true;
+				i = _playSave->getAlienBases()->begin();
+				i != _playSave->getAlienBases()->end() && woststr.str().empty() == true;
 				++i)
 		{
 			if ((*i)->getTactical() == true)
@@ -618,8 +618,8 @@ BattlescapeState::BattlescapeState()
 			lat (target->getLatitude());
 
 		for (std::vector<Region*>::const_iterator
-				i = _gameSave->getRegions()->begin();
-				i != _gameSave->getRegions()->end();
+				i = _playSave->getRegions()->begin();
+				i != _playSave->getRegions()->end();
 				++i)
 		{
 			if ((*i)->getRules()->insideRegion(lon,lat) == true)
@@ -630,8 +630,8 @@ BattlescapeState::BattlescapeState()
 		}
 
 		for (std::vector<Country*>::const_iterator
-				i = _gameSave->getCountries()->begin();
-				i != _gameSave->getCountries()->end();
+				i = _playSave->getCountries()->begin();
+				i != _playSave->getCountries()->end();
 				++i)
 		{
 			if ((*i)->getRules()->insideCountry(lon,lat) == true)
@@ -1062,7 +1062,7 @@ void BattlescapeState::init()
 	if (_autosave == true) // flagged by NextTurnState::nextTurn()
 	{
 		_autosave = false;
-		if (_gameSave->isIronman() == true)
+		if (_playSave->isIronman() == true)
 			_game->pushState(new SaveGameState(
 											OPT_BATTLESCAPE,
 											SAVE_IRONMAN,
@@ -1255,7 +1255,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 						}
 					}
 				}
-				else if (_gameSave->isResearched(itRule->getRequiredResearch()) == true)
+				else if (_playSave->isResearched(itRule->getRequiredResearch()) == true)
 				{
 					wst1 += tr(itRule->getType());
 
@@ -1623,7 +1623,7 @@ inline void BattlescapeState::handle(Action* action)
 					beep = true;
 					saveVoxelMap();
 				}
-				else if (_gameSave->isIronman() == false)
+				else if (_playSave->isIronman() == false)
 				{
 					if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave.
 					{
@@ -3606,7 +3606,7 @@ Game* BattlescapeState::getGame() const
  */
 SavedGame* BattlescapeState::getSavedGame() const
 {
-	return _gameSave;
+	return _playSave;
 }
 
 /**
@@ -3710,7 +3710,7 @@ void BattlescapeState::finishBattle(
 
 
 		bool debrief;
-		if (_gameSave->getMonthsElapsed() != -1)
+		if (_playSave->getMonthsElapsed() != -1)
 		{
 			if (ruleDeploy != nullptr)
 			{
@@ -3720,12 +3720,12 @@ void BattlescapeState::finishBattle(
 					if (aborted == true
 						|| _battleSave->allObjectivesDestroyed() == false) //&& playerUnits < 1
 					{
-						_gameSave->setEnding(END_LOSE);
+						_playSave->setEnding(END_LOSE);
 						_game->pushState(new DefeatState());
 					}
 					else //if (_battleSave->allObjectivesDestroyed() == true)
 					{
-						_gameSave->setEnding(END_WIN);
+						_playSave->setEnding(END_WIN);
 						_game->pushState(new VictoryState());
 					}
 				}
@@ -3734,7 +3734,7 @@ void BattlescapeState::finishBattle(
 					if (aborted == true || playerUnits < 1)
 					{
 						debrief = false;
-						_gameSave->setEnding(END_LOSE);
+						_playSave->setEnding(END_LOSE);
 						_game->pushState(new DefeatState());
 					}
 					else
@@ -3756,11 +3756,11 @@ void BattlescapeState::finishBattle(
 			ironsave = false;
 		}
 		else
-			ironsave = (_gameSave->isIronman() == true);
+			ironsave = (_playSave->isIronman() == true);
 
 		if (ironsave == true)
 		{
-			_gameSave->setBattleSave();
+			_playSave->setBattleSave();
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,
@@ -3774,10 +3774,10 @@ void BattlescapeState::finishBattle(
 		{												// This concludes to defeat when in a 'noRetreat' or 'final' mission, like Mars landing or Mars aLien base.
 			if (ruleDeploy != nullptr
 				&& ruleDeploy->isNoRetreat() == true
-				&& _gameSave->getMonthsElapsed() != -1)
+				&& _playSave->getMonthsElapsed() != -1)
 			{
-				_gameSave->setEnding(END_LOSE);
-				ironsave = _gameSave->isIronman() == true;
+				_playSave->setEnding(END_LOSE);
+				ironsave = _playSave->isIronman() == true;
 				_game->pushState(new DefeatState());
 			}
 			else
@@ -3790,10 +3790,10 @@ void BattlescapeState::finishBattle(
 		{												// This concludes to victory when in a 'final' mission, like Mars aLien base.
 			if (ruleDeploy != nullptr
 				&& ruleDeploy->isFinalMission() == true	// <- do *not* win if all units dead both Player and Hostile
-				&& _gameSave->getMonthsElapsed() != -1)
+				&& _playSave->getMonthsElapsed() != -1)
 			{
-				_gameSave->setEnding(END_WIN);
-				ironsave = _gameSave->isIronman() == true;
+				_playSave->setEnding(END_WIN);
+				ironsave = _playSave->isIronman() == true;
 				_game->pushState(new VictoryState());
 			}
 			else
@@ -3807,16 +3807,16 @@ void BattlescapeState::finishBattle(
 /*
 		std::string nextStageRace (ruleDeploy->getNextStageRace());
 		for (std::vector<TerrorSite*>::const_iterator
-				ts = _gameSave->getTerrorSites()->begin();
-				ts != _gameSave->getTerrorSites()->end() && nextStageRace.empty() == true;
+				ts = _playSave->getTerrorSites()->begin();
+				ts != _playSave->getTerrorSites()->end() && nextStageRace.empty() == true;
 				++ts)
 		{
 			if ((*ts)->getTactical() == true)
 				nextStageRace = (*ts)->getAlienRace();
 		}
 		for (std::vector<AlienBase*>::const_iterator
-				ab = _gameSave->getAlienBases()->begin();
-				ab != _gameSave->getAlienBases()->end() && nextStageRace.empty() == true;
+				ab = _playSave->getAlienBases()->begin();
+				ab != _playSave->getAlienBases()->end() && nextStageRace.empty() == true;
 				++ab)
 		{
 			if ((*ab)->getTactical() == true)

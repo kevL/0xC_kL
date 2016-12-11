@@ -126,7 +126,7 @@ DogfightState::DogfightState(
 		_craft(craft),
 		_ufo(ufo),
 		_geoState(geoState),
-		_gameSave(_game->getSavedGame()),
+		_playSave(_game->getSavedGame()),
 		_diff(_game->getSavedGame()->getDifficultyInt()),
 		_timeout(MSG_TIMEOUT),
 		_dist(DST_ENGAGE),
@@ -1227,12 +1227,12 @@ void DogfightState::advanceDogfight()
 				{
 					std::string targetRegion;
 					if (RNG::percent(_diff * 10 + 10) == true)
-						targetRegion = _gameSave->locateRegion(*_craft->getBase())->getRules()->getType();	// Try to find the originating base.
+						targetRegion = _playSave->locateRegion(*_craft->getBase())->getRules()->getType();	// Try to find the originating base.
 						// TODO: If the base is removed, the mission is cancelled. nah.
 					else if (RNG::generate(0,1) == 0)
 						targetRegion = _ufo->getAlienMission()->getRegion();								// Retaliation vs UFO's mission region.
 					else
-						targetRegion = _gameSave->locateRegion(lon,lat)->getRules()->getType();				// Retaliation vs UFO's shootdown region.
+						targetRegion = _playSave->locateRegion(lon,lat)->getRules()->getType();				// Retaliation vs UFO's shootdown region.
 
 					// Difference from original: No retaliation until final UFO lands (Original: Is spawned).
 					if (_game->getSavedGame()->findAlienMission(targetRegion, alm_RETAL) == nullptr)
@@ -1240,8 +1240,8 @@ void DogfightState::advanceDogfight()
 						const RuleAlienMission& missionRule (*_game->getRuleset()->rollMission(
 																							alm_RETAL,
 																							static_cast<size_t>(_game->getSavedGame()->getMonthsElapsed())));
-						AlienMission* const mission (new AlienMission(missionRule, *_gameSave));
-						mission->setId(_gameSave->getCanonicalId(Target::stTarget[7u]));
+						AlienMission* const mission (new AlienMission(missionRule, *_playSave));
+						mission->setId(_playSave->getCanonicalId(Target::stTarget[7u]));
 						mission->setRegion(
 										targetRegion,
 										*_game->getRuleset());
@@ -1251,7 +1251,7 @@ void DogfightState::advanceDogfight()
 						countdown = (RNG::generate(0, countdown) + (countdown >> 1u)) * 30;
 						mission->start(countdown);
 
-						_gameSave->getAlienMissions().push_back(mission);
+						_playSave->getAlienMissions().push_back(mission);
 					}
 				}
 			}
@@ -1287,7 +1287,7 @@ void DogfightState::advanceDogfight()
 				else if (_ufo->getCrashId() == 0) // Set up Crash site.
 				{
 					_ufo->setTarget();
-					_ufo->setCrashId(_gameSave->getCanonicalId(Target::stTarget[6u]));
+					_ufo->setCrashId(_playSave->getCanonicalId(Target::stTarget[6u]));
 
 					_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.
 					_ufo->setAltitude(MovingTarget::stAltitude[0u]);
@@ -1295,7 +1295,7 @@ void DogfightState::advanceDogfight()
 			}
 
 			if (pts != 0)
-				_gameSave->scorePoints(lon,lat, pts, false);
+				_playSave->scorePoints(lon,lat, pts, false);
 
 			if (_ufo->getShotDownByCraftId() != _craft->getIdentificator())
 				_ufo->setHitFrame(3);
@@ -1724,7 +1724,7 @@ void DogfightState::previewClick(Action* action)
 		case SDL_BUTTON_LEFT:
 		{
 			std::string article (_ufo->getRules()->getType()); // strip const. yay,
-			if (_gameSave->isResearched(article) == true)
+			if (_playSave->isResearched(article) == true)
 				Ufopaedia::openArticle(_game, article);
 			break;
 		}

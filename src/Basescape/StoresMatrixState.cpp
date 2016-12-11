@@ -133,7 +133,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 	_lstMatrix->setMargin();
 
 
-	const SavedGame* const gameSave (_game->getSavedGame());
+	const SavedGame* const playSave (_game->getSavedGame());
 	std::wstring wst;
 	int
 		qty[MTX_BASES]			{0,0,0,0,0,0,0,0},
@@ -143,10 +143,10 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 
 	for (size_t
 		i = 0u;
-		i != gameSave->getBases()->size();
+		i != playSave->getBases()->size();
 		++i)
 	{
-		if ((base = gameSave->getBases()->at(i)) != nullptr) // safety.
+		if ((base = playSave->getBases()->at(i)) != nullptr) // safety.
 		{
 			qty[i]			= base->getTotalSoldiers();
 			qtyScientist[i]	= base->getTotalScientists();
@@ -343,8 +343,8 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 
 		baseId = 0u;
 		for (std::vector<Base*>::const_iterator
-				j = gameSave->getBases()->begin();
-				j != gameSave->getBases()->end();
+				j = playSave->getBases()->begin();
+				j != playSave->getBases()->end();
 				++j, ++baseId)
 		{
 			qty[baseId] = (*j)->getStorageItems()->getItemQuantity(*i);
@@ -438,8 +438,8 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 				color = PURPLE;
 			}
 
-			if (gameSave->isResearched(itRule->getType()) == false					// not researched or is research exempt
-				&& (gameSave->isResearched(itRule->getRequiredResearch()) == false	// and has requirements to use but not been researched
+			if (playSave->isResearched(itRule->getType()) == false					// not researched or is research exempt
+				&& (playSave->isResearched(itRule->getRequiredResearch()) == false	// and has requirements to use but not been researched
 					|| rules->getItemRule(*i)->isLiveAlien() == true					// or is an alien
 					|| itRule->getBattleType() == BT_CORPSE								// or is a corpse
 					|| itRule->getBattleType() == BT_NONE)								// or is not a battlefield item

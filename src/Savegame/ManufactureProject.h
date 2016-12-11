@@ -58,7 +58,7 @@ private:
 		_hoursSpent;
 
 	/// Checks if there is enough funds to start/continue the project.
-	bool hasEnoughMoney(const SavedGame* const gameSave) const;
+	bool hasEnoughMoney(const SavedGame* const playSave) const;
 	/// Checks if there is enough material to start/continue the project.
 	bool hasEnoughMaterials(
 			Base* const base,
@@ -105,12 +105,12 @@ private:
 		/// Starts the Manufacture.
 		void startManufacture(
 				Base* const base,
-				SavedGame* const gameSave) const;
+				SavedGame* const playSave) const;
 
 		/// Advances the Manufacture.
 		ManufactureProgress stepManufacture(
 				Base* const base,
-				SavedGame* const gameSave);
+				SavedGame* const playSave);
 
 		/// Calculates the duration till the Manufacture is completed.
 		bool tillFinish(

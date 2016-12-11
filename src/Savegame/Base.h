@@ -90,7 +90,7 @@ private:
 
 	ItemContainer* _items;
 	const Ruleset* const _rules;
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 
 	std::wstring _label;
 
@@ -133,7 +133,7 @@ private:
 		/// Instantiates a Base.
 		Base(
 				const Ruleset* const rules,
-				SavedGame* const gameSave);
+				SavedGame* const playSave);
 		/// Cleans up the Base.
 		~Base();
 

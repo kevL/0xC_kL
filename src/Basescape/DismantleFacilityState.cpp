@@ -127,11 +127,11 @@ DismantleFacilityState::~DismantleFacilityState()
  */
 void DismantleFacilityState::btnOkClick(Action*)
 {
-	SavedGame* const gameSave (_game->getSavedGame());
+	SavedGame* const playSave (_game->getSavedGame());
 
 	if (_fac->getRules()->isLift() == false)
 	{
-		gameSave->setFunds(gameSave->getFunds() + _refund);
+		playSave->setFunds(playSave->getFunds() + _refund);
 		_base->addCashIncome(static_cast<int>(_refund));
 
 		for (std::vector<BaseFacility*>::const_iterator
@@ -155,13 +155,13 @@ void DismantleFacilityState::btnOkClick(Action*)
 	else // Remove whole base if it's the access lift. TODO: And there's not another 'connected' access lift.
 	{
 		for (std::vector<Base*>::const_iterator
-				i = gameSave->getBases()->begin();
-				i != gameSave->getBases()->end();
+				i = playSave->getBases()->begin();
+				i != playSave->getBases()->end();
 				++i)
 		{
 			if (*i == _base)
 			{
-				gameSave->getBases()->erase(i);
+				playSave->getBases()->erase(i);
 				delete _base;
 				break;
 			}

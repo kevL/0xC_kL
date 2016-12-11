@@ -108,7 +108,7 @@ private:
 		* _selectedUnit,
 		* _recallUnit;
 	Pathfinding* _pf;
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 	Tile
 		* _equiptTile,
 		** _tiles;
@@ -164,7 +164,7 @@ private:
 
 		/// Creates a SavedBattleGame based on the current SavedGame.
 		SavedBattleGame(
-				SavedGame* const gameSave,
+				SavedGame* const playSave,
 				const std::vector<OperationPool*>* const titles = nullptr,
 				const Ruleset* const rules = nullptr);
 		/// Cleans up the SavedBattleGame.

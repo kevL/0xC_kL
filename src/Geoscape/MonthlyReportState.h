@@ -52,7 +52,7 @@ private:
 		_ratingPrior,
 		_ratingTotal;
 
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 	Text
 		* _txtChange,
 		* _txtDefeat,

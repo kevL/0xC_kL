@@ -68,11 +68,11 @@ namespace OpenXcom
  */
 Base::Base(
 		const Ruleset* const rules,
-		SavedGame* const gameSave)
+		SavedGame* const playSave)
 	:
 		Target(),
 		_rules(rules),
-		_gameSave(gameSave),
+		_playSave(playSave),
 		_scientists(0),
 		_engineers(0),
 		_tactical(false),
@@ -186,7 +186,7 @@ void Base::loadBase(
 			Craft* const craft (new Craft(
 										_rules->getCraft(type),
 										this,
-										_gameSave,
+										_playSave,
 										true));
 			craft->loadCraft(*i, _rules);
 			_crafts.push_back(craft);
@@ -2698,7 +2698,7 @@ int Base::getFacilityMaintenance() const
 			total += (*i)->getRules()->getMonthlyCost();
 	}
 
-	const float factor (static_cast<float>(_gameSave->getDifficultyInt()) * 0.1f); // +10% per diff.
+	const float factor (static_cast<float>(_playSave->getDifficultyInt()) * 0.1f); // +10% per diff.
 	return static_cast<int>(static_cast<float>(total) * factor);
 }
 
@@ -2965,7 +2965,7 @@ int Base::calcLostScore() const
 			++ret;
 	}
 	ret *= _rules->getBaseLostScore()
-		* (_gameSave->getDifficultyInt() + 1);
+		* (_playSave->getDifficultyInt() + 1);
 
 	if (ret < 0) ret = 0; // safety for DebriefingState.
 

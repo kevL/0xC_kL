@@ -146,7 +146,7 @@ private:
 	Region* _region;
 	Ruleset* _rules;
 	SavedBattleGame* _battleSave;
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 
 	Text
 		* _txtBaseLabel,

@@ -178,7 +178,7 @@ private:
 		* _numLayers;
 	Ruleset* _rules;
 	SavedBattleGame* _battleSave;
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 	Surface
 		* _srfAlienIcon,
 		* _srfBtnBorder,

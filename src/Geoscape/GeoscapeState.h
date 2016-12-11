@@ -129,7 +129,7 @@ private:
 		* _isfTime;
 	NumberText* _numUfoBlobs[UFO_HOTBLOBS];
 	Ruleset* _rules;
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 	Surface
 		* _srfSideBlack,
 		* _srfSpace;

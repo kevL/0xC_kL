@@ -78,7 +78,7 @@ ResearchState::ResearchState(
 
 	_txtSpace		= new Text(100, 9, 80, 26);
 
-	_txtProject		= new Text(110, 9, 16, 49);
+	_txtProject		= new Text(110, 9,  16, 49);
 	_txtScientists	= new Text( 55, 9, 161, 49);
 	_txtProgress	= new Text( 55, 9, 219, 49);
 

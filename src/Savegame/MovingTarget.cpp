@@ -46,7 +46,7 @@ const char* const MovingTarget::stAltitude[5u] // static.
 
 /**
  * Initializes the MovingTarget with blank coordinates.
- * @param gameSave - pointer to the SavedGame
+ * @param playSave - pointer to the SavedGame
  */
 MovingTarget::MovingTarget(SavedGame* const playSave)
 	:

@@ -2234,12 +2234,12 @@ std::vector<std::string> Ruleset::getPsiRequirements() const
 
 /**
  * Creates a randomly-generated Soldier.
- * @param gameSave	- pointer to SavedGame
+ * @param playSave	- pointer to SavedGame
  * @param type		- the soldier-type to generate (default "")
  * @return, pointer to the newly generated Soldier
  */
 Soldier* Ruleset::genSoldier(
-		SavedGame* const gameSave,
+		SavedGame* const playSave,
 		std::string type) const
 {
 	if (type.empty() == true)
@@ -2249,7 +2249,7 @@ Soldier* Ruleset::genSoldier(
 					getSoldier(type),
 					getArmor(getSoldier(type)->getArmor()),
 //					&_names,
-					gameSave->getCanonicalId("STR_SOLDIER"));
+					playSave->getCanonicalId("STR_SOLDIER"));
 }
 /*	Soldier* soldier = nullptr;
 	int newId = save->getId("STR_SOLDIER");

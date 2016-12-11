@@ -103,7 +103,7 @@ const char* const DebriefingState::TAC_RESULT[12u] // static.
 DebriefingState::DebriefingState()
 	:
 		_rules(_game->getRuleset()),
-		_gameSave(_game->getSavedGame()),
+		_playSave(_game->getSavedGame()),
 		_battleSave(_game->getSavedGame()->getBattleSave()),
 		_unitList(_game->getSavedGame()->getBattleSave()->getUnits()),
 		_aborted(_game->getSavedGame()->getBattleSave()->isAborted()),
@@ -349,8 +349,8 @@ DebriefingState::DebriefingState()
 	// Soldier Diary ->
 	if (_isQuickBattle == false) // TODO: Show some stats for quick-battles.
 	{
-		_tactical->id			= static_cast<int>(_gameSave->getTacticalStatistics().size());
-		_tactical->timeStat		= *_gameSave->getTime();
+		_tactical->id			= static_cast<int>(_playSave->getTacticalStatistics().size());
+		_tactical->timeStat		= *_playSave->getTime();
 		_tactical->type			= _battleSave->getTacticalType();
 		_tactical->shade		= _battleSave->getTacticalShade();
 		_tactical->alienRace	= _battleSave->getAlienRace();
@@ -365,7 +365,7 @@ DebriefingState::DebriefingState()
 		//Log(LOG_INFO) << "DebriefingState::cTor";
 		Soldier* sol;
 		SoldierDead* solDead;
-		std::vector<TacticalStatistics*>& tacticals (_gameSave->getTacticalStatistics());
+		std::vector<TacticalStatistics*>& tacticals (_playSave->getTacticalStatistics());
 		BattleUnitStatistics* tacstats;
 
 		for (std::vector<BattleUnit*>::const_iterator
@@ -447,8 +447,8 @@ DebriefingState::DebriefingState()
 
 						solDead = nullptr; // avoid vc++ linker warning.
 						for (std::vector<SoldierDead*>::const_iterator
-								j = _gameSave->getDeadSoldiers()->begin();
-								j != _gameSave->getDeadSoldiers()->end();
+								j = _playSave->getDeadSoldiers()->begin();
+								j != _playSave->getDeadSoldiers()->end();
 								++j)
 						{
 							if ((*j)->getId() == (*i)->getId())
@@ -483,7 +483,7 @@ DebriefingState::DebriefingState()
 DebriefingState::~DebriefingState()
 {
 	if (_game->isQuitting() == true)
-		_gameSave->setBattleSave();
+		_playSave->setBattleSave();
 
 	for (std::vector<DebriefStat*>::const_iterator
 			i = _statList.begin();
@@ -551,7 +551,7 @@ void DebriefingState::btnOkClick(Action*)
 					participants.push_back((*i)->getGeoscapeSoldier());
 			}
 
-			if (_gameSave->handlePromotions(participants) == true)
+			if (_playSave->handlePromotions(participants) == true)
 			{
 				playAwardMusic = true;
 				_game->pushState(new PromotionsState());
@@ -602,7 +602,7 @@ void DebriefingState::btnOkClick(Action*)
 		}
 
 
-		if (_gameSave->isIronman() == true) // save after mission
+		if (_playSave->isIronman() == true) // save after mission
 			_game->pushState(new SaveGameState(
 											OPT_GEOSCAPE,
 											SAVE_IRONMAN,
@@ -613,7 +613,7 @@ void DebriefingState::btnOkClick(Action*)
 											SAVE_AUTO_GEOSCAPE,
 											_palette));
 	}
-	_gameSave->setBattleSave();	// delete SavedBattleGame.
+	_playSave->setBattleSave();	// delete SavedBattleGame.
 }								// NOTE: BattlescapeState and BattlescapeGame are still VALID here. Okay ......
 								// State will be deleted by the engine and the battle will be deleted by the state.
 /**
@@ -883,8 +883,8 @@ void DebriefingState::prepareDebriefing() // private.
 
 	bool found (false);
 	for (std::vector<Base*>::const_iterator
-			i =  _gameSave->getBases()->begin();
-			i != _gameSave->getBases()->end() && found == false;
+			i =  _playSave->getBases()->begin();
+			i != _playSave->getBases()->end() && found == false;
 			++i)
 	{
 		if ((*i)->getTactical() == true) // in case this DON'T have a Craft, ie. BaseDefense
@@ -954,8 +954,8 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	for (std::vector<Region*>::const_iterator
-			i = _gameSave->getRegions()->begin();
-			i != _gameSave->getRegions()->end();
+			i = _playSave->getRegions()->begin();
+			i != _playSave->getRegions()->end();
 			++i)
 	{
 		if ((*i)->getRules()->insideRegion(lon, lat) == true)
@@ -967,8 +967,8 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	for (std::vector<Country*>::const_iterator
-			i = _gameSave->getCountries()->begin();
-			i != _gameSave->getCountries()->end();
+			i = _playSave->getCountries()->begin();
+			i != _playSave->getCountries()->end();
 			++i)
 	{
 		if ((*i)->getRules()->insideCountry(lon, lat) == true)
@@ -983,8 +983,8 @@ void DebriefingState::prepareDebriefing() // private.
 	// Determine aLien tactical mission.
 	found = false;
 	for (std::vector<Ufo*>::const_iterator // First - search for UFO.
-			i = _gameSave->getUfos()->begin();
-			i != _gameSave->getUfos()->end() && found == false;
+			i = _playSave->getUfos()->begin();
+			i != _playSave->getUfos()->end() && found == false;
 			++i)
 	{
 		if ((*i)->getTactical() == true)
@@ -998,7 +998,7 @@ void DebriefingState::prepareDebriefing() // private.
 			if (_tactical->success == true)
 			{
 				delete *i; // NOTE: dTor sends Craft targeters back to Base.
-				_gameSave->getUfos()->erase(i);
+				_playSave->getUfos()->erase(i);
 			}
 			else
 			{
@@ -1011,8 +1011,8 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	for (std::vector<TerrorSite*>::const_iterator // Second - search for TerrorSite.
-			i = _gameSave->getTerrorSites()->begin();
-			i != _gameSave->getTerrorSites()->end() && found == false;
+			i = _playSave->getTerrorSites()->begin();
+			i != _playSave->getTerrorSites()->end() && found == false;
 			++i)
 	{
 		if ((*i)->getTactical() == true)
@@ -1021,14 +1021,14 @@ void DebriefingState::prepareDebriefing() // private.
 			found = true;
 
 			delete *i; // NOTE: dTor sends Craft targeters back to Base.
-			_gameSave->getTerrorSites()->erase(i);
+			_playSave->getTerrorSites()->erase(i);
 		}
 		// else TerrorSite vanishes.
 	}
 
 	for (std::vector<AlienBase*>::const_iterator // Third - search for aLienBase.
-			i = _gameSave->getAlienBases()->begin();
-			i != _gameSave->getAlienBases()->end() && found == false;
+			i = _playSave->getAlienBases()->begin();
+			i != _playSave->getAlienBases()->end() && found == false;
 			++i)
 	{
 		if ((*i)->getTactical() == true)
@@ -1050,12 +1050,12 @@ void DebriefingState::prepareDebriefing() // private.
 				}
 
 				std::for_each(
-						_gameSave->getAlienMissions().begin(),
-						_gameSave->getAlienMissions().end(),
+						_playSave->getAlienMissions().begin(),
+						_playSave->getAlienMissions().end(),
 						ClearAlienBase(*i));
 
 				delete *i; // NOTE: dTor sends Craft targeters back to Base.
-				_gameSave->getAlienBases()->erase(i);
+				_playSave->getAlienBases()->erase(i);
 			}
 			else
 				(*i)->setTactical(false);
@@ -1096,7 +1096,7 @@ void DebriefingState::prepareDebriefing() // private.
 							{
 								if (*j == sol) // NOTE: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 								{
-									(*j)->die(_gameSave);
+									(*j)->die(_playSave);
 									delete *j;
 									_base->getSoldiers()->erase(j);
 									break;
@@ -1147,7 +1147,7 @@ void DebriefingState::prepareDebriefing() // private.
 //								sol->calcStatString(
 //												_rules->getStatStrings(),
 //												Options::psiStrengthEval
-//													&& _gameSave->isResearched(_rules->getPsiRequirements()));
+//													&& _playSave->isResearched(_rules->getPsiRequirements()));
 							}
 							else // support unit.
 							{
@@ -1201,7 +1201,7 @@ void DebriefingState::prepareDebriefing() // private.
 								{
 									if (*j == sol) // NOTE: Could return any armor the Soldier was wearing to Stores. CHEATER!!!!!
 									{
-										(*j)->die(_gameSave);
+										(*j)->die(_playSave);
 										delete *j;
 										_base->getSoldiers()->erase(j);
 										break;
@@ -1616,14 +1616,14 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				//Log(LOG_INFO) << ". BaseDefense - delete base";
 				for (std::vector<Base*>::const_iterator
-						i = _gameSave->getBases()->begin();
-						i != _gameSave->getBases()->end();
+						i = _playSave->getBases()->begin();
+						i != _playSave->getBases()->end();
 						++i)
 				{
 					if (*i == _base) // IMPORTANT: player's Base is destroyed here! (but not if QuickBattle)
 					{
 						delete *i;
-						_gameSave->getBases()->erase(i);
+						_playSave->getBases()->erase(i);
 						break;
 					}
 				}
@@ -1632,32 +1632,32 @@ void DebriefingState::prepareDebriefing() // private.
 			if (_region != nullptr && _isQuickBattle == false)
 			{
 				//Log(LOG_INFO) << ". BaseDefense - delete retal Ufos & AlienMission";
-				const AlienMission* const retalMission (_gameSave->findAlienMission(
+				const AlienMission* const retalMission (_playSave->findAlienMission(
 																				_region->getRules()->getType(),
 																				alm_RETAL));
 				for (std::vector<Ufo*>::const_iterator
-						i = _gameSave->getUfos()->begin();
-						i != _gameSave->getUfos()->end();
+						i = _playSave->getUfos()->begin();
+						i != _playSave->getUfos()->end();
 						)
 				{
 					if ((*i)->getAlienMission() == retalMission)
 					{
 						delete *i; // NOTE: dTor sends Craft targeters back to Base.
-						i = _gameSave->getUfos()->erase(i);
+						i = _playSave->getUfos()->erase(i);
 					}
 					else
 						++i;
 				}
 
 				for (std::vector<AlienMission*>::const_iterator
-						i = _gameSave->getAlienMissions().begin();
-						i != _gameSave->getAlienMissions().end();
+						i = _playSave->getAlienMissions().begin();
+						i != _playSave->getAlienMissions().end();
 						++i)
 				{
 					if (*i == retalMission)
 					{
 						delete *i;
-						_gameSave->getAlienMissions().erase(i);
+						_playSave->getAlienMissions().erase(i);
 						break;
 					}
 				}
@@ -1851,7 +1851,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 					break;
 
 				default:
-					if (bType != BT_CORPSE && _gameSave->isResearched(type) == false)
+					if (bType != BT_CORPSE && _playSave->isResearched(type) == false)
 						addResultStat(
 									TAC_RESULT[3u], // aLien artefacts recovered
 									itRule->getRecoveryScore());
@@ -1929,7 +1929,7 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 
 		int value;
 		if (_rules->getResearch(type) != nullptr
-			&& _gameSave->isResearched(type) == false)
+			&& _playSave->isResearched(type) == false)
 		{
 			value = unit->getValue() << 1u;
 		}

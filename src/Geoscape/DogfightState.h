@@ -141,7 +141,7 @@ private:
 		* _isfCw1,
 		* _isfCw2;
 	InteractiveSurface* _btnMinimizedIcon;
-	SavedGame* _gameSave;
+	SavedGame* _playSave;
 	Surface
 		* _battleScope,
 		* _damage,

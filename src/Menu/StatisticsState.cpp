@@ -127,7 +127,7 @@ _Tx StatisticsState::total(const std::vector<_Tx>& vect) const
  */
 void StatisticsState::listStats()
 {
-	SavedGame* const gameSave (_game->getSavedGame());
+	SavedGame* const playSave (_game->getSavedGame());
 
 	std::wostringstream woststr;
 	switch (_endType)
@@ -143,7 +143,7 @@ void StatisticsState::listStats()
 		case END_NONE:
 			woststr << tr("STR_STATISTICS");
 	}
-	const GameTime* const gt (gameSave->getTime());
+	const GameTime* const gt (playSave->getTime());
 	woststr << L" "// L'\x02'
 			<< gt->getDayString(_game->getLanguage())
 			<< L" "
@@ -152,11 +152,11 @@ void StatisticsState::listStats()
 			<< gt->getYear();
 	_txtTitle->setText(woststr.str());
 
-	const int monthlyScore (total(gameSave->getResearchScores()) // huh. Is this total. no.
-						  / static_cast<int>(gameSave->getResearchScores().size()));
+	const int monthlyScore (total(playSave->getResearchScores()) // huh. Is this total. no.
+						  / static_cast<int>(playSave->getResearchScores().size()));
 	const int64_t
-		totalIncome   (total(gameSave->getIncomeList())),		// Check these also.
-		totalExpenses (total(gameSave->getExpenditureList()));	// They are inaccurate after 12+ months (because only the latest 12 months are maintained).
+		totalIncome   (total(playSave->getIncomeList())),		// Check these also.
+		totalExpenses (total(playSave->getExpenditureList()));	// They are inaccurate after 12+ months (because only the latest 12 months are maintained).
 
 	int
 		missionsWin			(0),
@@ -168,8 +168,8 @@ void StatisticsState::listStats()
 		xcomBasesLost		(0);
 
 	for (std::vector<TacticalStatistics*>::const_iterator
-			i = gameSave->getTacticalStatistics().begin();
-			i != gameSave->getTacticalStatistics().end();
+			i = playSave->getTacticalStatistics().begin();
+			i != playSave->getTacticalStatistics().end();
 			++i)
 	{
 		if ((*i)->success == true)
@@ -194,8 +194,8 @@ void StatisticsState::listStats()
 
 	std::vector<Soldier*> solLive;
 	for (std::vector<Base*>::const_iterator
-			i = gameSave->getBases()->begin();
-			i != gameSave->getBases()->end();
+			i = playSave->getBases()->begin();
+			i != playSave->getBases()->end();
 			++i)
 	{
 		solLive.insert(
@@ -204,7 +204,7 @@ void StatisticsState::listStats()
 					(*i)->getSoldiers()->end());
 	}
 
-	const std::vector<SoldierDead*>* const solDead (gameSave->getDeadSoldiers());
+	const std::vector<SoldierDead*>* const solDead (playSave->getDeadSoldiers());
 
 	const int
 		soldiersLost (static_cast<int>(solDead->size())),
@@ -354,15 +354,15 @@ void StatisticsState::listStats()
 
 	int alienBases (0);
 	for (std::vector<AlienBase*>::const_iterator
-			i = gameSave->getAlienBases()->begin();
-			i != gameSave->getAlienBases()->end();
+			i = playSave->getAlienBases()->begin();
+			i != playSave->getAlienBases()->end();
 			++i)
 	{
 		if ((*i)->isDetected() == true)
 			++alienBases;
 	}
 
-	std::map<std::string, int> ids (gameSave->getTargetIds());
+	std::map<std::string, int> ids (playSave->getTargetIds());
 	const int
 //		alienBases   (std::max(0, ids[Target::stTarget[2u]] - 1)), // detected only.
 		terrorSites  (std::max(0, ids[Target::stTarget[3u]] - 1)),
@@ -378,14 +378,14 @@ void StatisticsState::listStats()
 			totalCrafts += ids[*i] - 1; // TODO: Show quantity of Craft lost ... or sold.
 	}
 
-	const int xcomBases (static_cast<int>(gameSave->getBases()->size()));
+	const int xcomBases (static_cast<int>(playSave->getBases()->size()));
 
 	int
 		currentScientists (0),
 		currentEngineers  (0);
 	for (std::vector<Base*>::const_iterator
-			i = gameSave->getBases()->begin();
-			i != gameSave->getBases()->end();
+			i = playSave->getBases()->begin();
+			i != playSave->getBases()->end();
 			++i)
 	{
 		currentScientists += (*i)->getTotalScientists();
@@ -394,8 +394,8 @@ void StatisticsState::listStats()
 
 	int countriesLost (0);
 	for (std::vector<Country*>::const_iterator
-			i = gameSave->getCountries()->begin();
-			i != gameSave->getCountries()->end();
+			i = playSave->getCountries()->begin();
+			i != playSave->getCountries()->end();
 			++i)
 	{
 		if ((*i)->isPacted() == true) // TODO: Countries total. Also do percent lost.
@@ -404,8 +404,8 @@ void StatisticsState::listStats()
 
 	int researchDone (0);
 	for (std::vector<ResearchGeneral*>::const_iterator
-			i = gameSave->getResearchGenerals().begin();
-			i != gameSave->getResearchGenerals().end();
+			i = playSave->getResearchGenerals().begin();
+			i != playSave->getResearchGenerals().end();
 			++i)
 	{
 		if ((*i)->getStatus() == RG_DISCOVERED)
@@ -421,7 +421,7 @@ void StatisticsState::listStats()
 		"STR_5_SUPERHUMAN"
 	};
 
-	_lstStats->addRow(2, tr("STR_DIFFICULTY").c_str(),				tr(difficulty[static_cast<size_t>(gameSave->getDifficulty())]).c_str());
+	_lstStats->addRow(2, tr("STR_DIFFICULTY").c_str(),				tr(difficulty[static_cast<size_t>(playSave->getDifficulty())]).c_str());
 	_lstStats->addRow(2, tr("STR_AVERAGE_MONTHLY_RATING").c_str(),	Text::intWide(monthlyScore).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_INCOME").c_str(),			Text::formatCurrency(totalIncome).c_str());
 	_lstStats->addRow(2, tr("STR_TOTAL_EXPENDITURE").c_str(),		Text::formatCurrency(totalExpenses).c_str());

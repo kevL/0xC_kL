@@ -140,9 +140,9 @@ void StartPlayState::btnOkClick(Action*)
 	else if	(_difficulty == _btnExperienced)	diff = DIFF_EXPERIENCED;
 	else										diff = DIFF_BEGINNER;
 
-	SavedGame* const gameSave (_game->getRuleset()->createSave(_game));
-	gameSave->setDifficulty(diff);
-	gameSave->setIronman(_btnIronman->getPressed() == true);
+	SavedGame* const playSave (_game->getRuleset()->createSave(_game));
+	playSave->setDifficulty(diff);
+	playSave->setIronman(_btnIronman->getPressed() == true);
 
 	GeoscapeState* const geo (new GeoscapeState());
 	_game->setState(geo);

@@ -207,7 +207,7 @@ private:
 		void setQuickBattle();
 
 		/// Kills the Soldier and sends him/her to the dead-soldiers' bin.
-		void die(SavedGame* const gameSave);
+		void die(SavedGame* const playSave);
 
 		/// Gets the Soldier's diary.
 		SoldierDiary* getDiary() const;

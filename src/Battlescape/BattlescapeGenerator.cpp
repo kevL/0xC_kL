@@ -86,7 +86,7 @@ namespace OpenXcom
 BattlescapeGenerator::BattlescapeGenerator(Game* const game)
 	:
 		_game(game),
-		_gameSave(game->getSavedGame()),
+		_playSave(game->getSavedGame()),
 		_battleSave(game->getSavedGame()->getBattleSave()),
 		_unitList(game->getSavedGame()->getBattleSave()->getUnits()),
 		_itemList(game->getSavedGame()->getBattleSave()->getItems()),
@@ -603,7 +603,7 @@ void BattlescapeGenerator::nextStage()
 
 					if (fullSuccess == true) // all aLiens were put down on previous stage
 					{
-						if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
+						if (_playSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 							dst = &forwardGround;
 						else
 							dst = guaranteed;
@@ -617,7 +617,7 @@ void BattlescapeGenerator::nextStage()
 								break;
 
 							case EXIT_TILE:
-								if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
+								if (_playSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 								{
 									dst = &forwardGround;
 									break;
@@ -634,7 +634,7 @@ void BattlescapeGenerator::nextStage()
 				{
 					if (fullSuccess == true) // no hostiles left standing so they shouldn't be carrying anything; neutrals might still be packing an apple or two ...
 					{
-						if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
+						if (_playSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 							dst = &forwardCarried;
 						else
 							dst = guaranteed;
@@ -650,7 +650,7 @@ void BattlescapeGenerator::nextStage()
 										break;
 
 									default:
-										if (_gameSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
+										if (_playSave->isResearched((*i)->getRules()->getRequiredResearch()) == true)
 										{
 											dst = &forwardCarried;	// Not so sure that I really want unresearched stuff getting shuttled around automagically !
 											break;
@@ -871,8 +871,8 @@ void BattlescapeGenerator::nextStage()
 	if (_alienRace.empty() == true)
 	{
 		for (std::vector<TerrorSite*>::const_iterator
-				i = _gameSave->getTerrorSites()->begin();
-				i != _gameSave->getTerrorSites()->end();
+				i = _playSave->getTerrorSites()->begin();
+				i != _playSave->getTerrorSites()->end();
 				++i)
 		{
 			if ((*i)->getTactical() == true)
@@ -885,8 +885,8 @@ void BattlescapeGenerator::nextStage()
 		if (_alienRace.empty() == true)
 		{
 			for (std::vector<AlienBase*>::const_iterator
-					i = _gameSave->getAlienBases()->begin();
-					i != _gameSave->getAlienBases()->end();
+					i = _playSave->getAlienBases()->begin();
+					i != _playSave->getAlienBases()->end();
 					++i)
 			{
 				if ((*i)->getTactical() == true)
@@ -1197,7 +1197,7 @@ void BattlescapeGenerator::deployXcom() // private.
 					case BT_FLARE:
 //						if (itRule->getBigSprite() > -1	// See also CraftEquipmentState cTor. Inventory also uses this "bigSprite" trick. NOTE: Stop using the "bigSprite" trick.
 						if (itRule->isFixed() == false	// <- supports are already handled.
-							&& _gameSave->isResearched(itRule->getRequiredResearch()) == true)
+							&& _playSave->isResearched(itRule->getRequiredResearch()) == true)
 						{
 							//Log(LOG_INFO) << ". . . . add type= " << i->first << " (" << i->second << ")";
 							for (int
@@ -1991,7 +1991,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 	int elapsed;
 	if (_isQuickBattle == false)
 	{
-		elapsed = _gameSave->getMonthsElapsed();
+		elapsed = _playSave->getMonthsElapsed();
 
 		const int levelHigh (static_cast<int>(_rules->getAlienItemLevels().size()) - 1);
 		if (elapsed > levelHigh)
@@ -2027,7 +2027,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 	{
 		aLien = raceRule->getMember((*i).alienRank);
 
-		switch (_gameSave->getDifficulty())
+		switch (_playSave->getDifficulty())
 		{
 			case DIFF_BEGINNER:
 			case DIFF_EXPERIENCED:
@@ -2216,7 +2216,7 @@ BattleUnit* BattlescapeGenerator::addAlien( // private.
 
 		const Position posCraft (_unitList->at(0u)->getPosition()); // aLiens face Craft
 		int dir;
-		if (RNG::percent((_gameSave->getDifficultyInt() + 1) * 20) == true
+		if (RNG::percent((_playSave->getDifficultyInt() + 1) * 20) == true
 			&& TileEngine::distance(
 								node->getPosition(),
 								posCraft) < 25)

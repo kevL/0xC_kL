@@ -60,16 +60,16 @@ namespace OpenXcom
 
 /**
  * Creates and initializes a SavedBattleGame.
- * @param gameSave	- pointer to the SavedGame
+ * @param playSave	- pointer to the SavedGame
  * @param titles	- pointer to a vector of pointers to OperationPool (default nullptr)
  * @param rules		- pointer to the Ruleset (default nullptr)
  */
 SavedBattleGame::SavedBattleGame(
-		SavedGame* const gameSave,
+		SavedGame* const playSave,
 		const std::vector<OperationPool*>* const titles,
 		const Ruleset* const rules)
 	:
-		_gameSave(gameSave),
+		_playSave(playSave),
 		_battleState(nullptr),
 		_mapsize_x(0),
 		_mapsize_y(0),
@@ -399,7 +399,7 @@ void SavedBattleGame::load(
 
 		if (id < BattleUnit::MAX_SOLDIER_ID)			// instance a BattleUnit from a geoscape-soldier
 			unit = new BattleUnit(
-							_gameSave->getSoldier(id),
+							_playSave->getSoldier(id),
 							this);
 		else											// instance a BattleUnit as an aLien, civie, or support-unit
 		{
@@ -1616,7 +1616,7 @@ std::vector<MapDataSet*>* SavedBattleGame::getMapDataSets()
  */
 SavedGame* SavedBattleGame::getSavedGame() const
 {
-	return _gameSave;
+	return _playSave;
 }
 
 /**

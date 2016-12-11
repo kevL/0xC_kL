@@ -176,9 +176,9 @@ bool ManufactureProject::getAutoSales() const
  * Checks if there is enough funds to start/continue the project.
  * @return, true if funds are available
  */
-bool ManufactureProject::hasEnoughMoney(const SavedGame* const gameSave) const // private.
+bool ManufactureProject::hasEnoughMoney(const SavedGame* const playSave) const // private.
 {
-	return (gameSave->getFunds() >= _mfRule->getManufactureCost());
+	return (playSave->getFunds() >= _mfRule->getManufactureCost());
 }
 
 /**
@@ -218,17 +218,17 @@ int ManufactureProject::getQuantityManufactured() const
  * Starts this Manufacture.
  * @note Necessary checks are done in ManufactureStartState.
  * @param base		- pointer to a Base
- * @param gameSave	- pointer to the SavedGame
+ * @param playSave	- pointer to the SavedGame
  */
 void ManufactureProject::startManufacture(
 		Base* const base,
-		SavedGame* const gameSave) const
+		SavedGame* const playSave) const
 {
 	const int cost (_mfRule->getManufactureCost());
-	gameSave->setFunds(gameSave->getFunds() - cost);
+	playSave->setFunds(playSave->getFunds() - cost);
 	base->addCashSpent(cost);
 
-	const Ruleset* const rules (gameSave->getRules());
+	const Ruleset* const rules (playSave->getRules());
 
 	for (std::map<std::string, int>::const_iterator
 			i = _mfRule->getPartsRequired().begin();
@@ -260,13 +260,13 @@ void ManufactureProject::startManufacture(
 /**
  * Advances this Manufacture by a step.
  * @param base		- pointer to a Base
- * @param gameSave	- pointer to the SavedGame
+ * @param playSave	- pointer to the SavedGame
  */
 ManufactureProgress ManufactureProject::stepManufacture(
 		Base* const base,
-		SavedGame* const gameSave)
+		SavedGame* const playSave)
 {
-	const Ruleset* const rules (gameSave->getRules());
+	const Ruleset* const rules (playSave->getRules());
 
 	const int qtyDone_prestep (getQuantityManufactured());
 	_hoursSpent += _engineers;
@@ -296,7 +296,7 @@ ManufactureProgress ManufactureProject::stepManufacture(
 					else
 						profit = rules->getItemRule(i->first)->getSellCost() * i->second;
 
-					gameSave->setFunds(gameSave->getFunds() + profit);
+					playSave->setFunds(playSave->getFunds() + profit);
 					base->addCashIncome(profit);
 				}
 				else
@@ -306,7 +306,7 @@ ManufactureProgress ManufactureProject::stepManufacture(
 						Craft* const craft (new Craft(
 													rules->getCraft(i->first),
 													base,
-													gameSave));
+													playSave));
 						base->getCrafts()->push_back(craft);
 						craft->checkup();
 						break; // <- Craft Manufacture produces 1 craft period.
@@ -321,13 +321,13 @@ ManufactureProgress ManufactureProject::stepManufacture(
 
 			if (--producedQty != 0) // check to ensure there's enough money/materials to produce multiple-iterations (if applicable) *in this iteration*
 			{
-				if (hasEnoughMoney(gameSave) == false)
+				if (hasEnoughMoney(playSave) == false)
 					return PROG_NOT_ENOUGH_MONEY;
 
 				if (hasEnoughMaterials(base, rules) == false)
 					return PROG_NOT_ENOUGH_MATERIALS;
 
-				startManufacture(base, gameSave); // remove resources for the next of multiple-iterations *in this iteration*
+				startManufacture(base, playSave); // remove resources for the next of multiple-iterations *in this iteration*
 			}
 		}
 		while (producedQty != 0);
@@ -338,13 +338,13 @@ ManufactureProgress ManufactureProject::stepManufacture(
 
 	if (qtyDone_prestep < qtyDone_current)
 	{
-		if (hasEnoughMoney(gameSave) == false)
+		if (hasEnoughMoney(playSave) == false)
 			return PROG_NOT_ENOUGH_MONEY;
 
 		if (hasEnoughMaterials(base, rules) == false)
 			return PROG_NOT_ENOUGH_MATERIALS;
 
-		startManufacture(base, gameSave); // start the next iteration
+		startManufacture(base, playSave); // start the next iteration
 	}
 
 	return PROG_NOT_COMPLETE;

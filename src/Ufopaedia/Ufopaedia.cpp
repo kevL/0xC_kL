@@ -48,17 +48,17 @@ int Ufopaedia::_current_index = 0; // static.
 
 /**
  * Gets the index of the selected article_id in the visible list.
- * @param gameSave		- pointer to SavedGame
+ * @param playSave		- pointer to SavedGame
  * @param rules			- pointer to Ruleset
  * @param article_id	- reference to the article ID to find
  * @return, index of the given article ID in the internal list (-1 if not found)
  */
 int Ufopaedia::getArticleIndex( // protected/static.
-		const SavedGame* const gameSave,
+		const SavedGame* const playSave,
 		const Ruleset* const rules,
 		std::string& article_id)
 {
-	const ArticleDefinitionList articles (getAvailableArticles(gameSave, rules));
+	const ArticleDefinitionList articles (getAvailableArticles(playSave, rules));
 	const std::string Id_UC (article_id + "_UC");
 
 	for (size_t
@@ -92,12 +92,12 @@ int Ufopaedia::getArticleIndex( // protected/static.
 
 /**
  * Returns an ArticleDefinitionList with all the currently visible ArticleIds.
- * @param gameSave	- pointer to SavedGame
+ * @param playSave	- pointer to SavedGame
  * @param rules		- pointer to Ruleset
  * @return, ArticleDefinitionList of visible articles
  */
 ArticleDefinitionList Ufopaedia::getAvailableArticles( // protected/static.
-		const SavedGame* const gameSave,
+		const SavedGame* const playSave,
 		const Ruleset* const rules)
 {
 	const std::vector<std::string>& allUfopaedia (rules->getUfopaediaList());
@@ -110,7 +110,7 @@ ArticleDefinitionList Ufopaedia::getAvailableArticles( // protected/static.
 	{
 		ArticleDefinition* const article (rules->getUfopaediaArticle(*i));
 		if (article->section != UFOPAEDIA_NOT_AVAILABLE
-			&& isArticleAvailable(gameSave, article) == true)
+			&& isArticleAvailable(playSave, article) == true)
 		{
 			articles.push_back(article);
 		}
@@ -162,15 +162,15 @@ ArticleState* Ufopaedia::createArticleState(ArticleDefinition* const article) //
 
 /**
  * Checks if a Ufopaedia article is accessible.
- * @param gameSave	- pointer to SavedGame
+ * @param playSave	- pointer to SavedGame
  * @param article	- pointer to an ArticleDefinition to check
  * @return, true if the article is available
  */
 bool Ufopaedia::isArticleAvailable( // static.
-		const SavedGame* const gameSave,
+		const SavedGame* const playSave,
 		const ArticleDefinition* const article)
 {
-	return gameSave->isResearched(article->reqResearch);
+	return playSave->isResearched(article->reqResearch);
 }
 
 /**
@@ -261,18 +261,18 @@ void Ufopaedia::prev(Game* const game) // static.
 /**
  * Fills an ArticleDefinitionList with the currently visible ArticleIds of a
  * specified Ufopaedia section.
- * @param gameSave	- pointer to SavedGame
+ * @param playSave	- pointer to SavedGame
  * @param rules		- pointer to Ruleset
  * @param section	- reference to the article section to find, e.g. "XCOM Crafts & Armaments", "Alien Lifeforms", etc.
  * @param data		- reference to the article definition list object to fill data in
  */
 void Ufopaedia::list( // static.
-		const SavedGame* const gameSave,
+		const SavedGame* const playSave,
 		const Ruleset* const rules,
 		const std::string& section,
 		ArticleDefinitionList& data)
 {
-	ArticleDefinitionList articles (getAvailableArticles(gameSave, rules));
+	ArticleDefinitionList articles (getAvailableArticles(playSave, rules));
 	for (ArticleDefinitionList::const_iterator
 			i = articles.begin();
 			i != articles.end();
