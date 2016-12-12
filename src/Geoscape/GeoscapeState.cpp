@@ -138,7 +138,8 @@ bool
 	kL_geoMusicReturnState	= false;
 
 const double
-	radius_earth	= 3440., //.0647948164,					// nautical miles
+	radius_earth	= 3437.7467707849392526078892888463,	// radius of Earth in nautical miles is set by definition of arcToRads.
+//	radius_earth	= 3440., //.0647948164,					// a nautical mile on the Earth's surface is equivalent to 1/60th of a degree
 	arcToRads		= (1. / 60.) * (M_PI / 180.),			// converts a minute of arc to radians
 	greatCircleConversionFactor	= radius_earth * arcToRads;	// converts euclidean distance to great-circle distance
 
@@ -2006,8 +2007,7 @@ void GeoscapeState::time10Minutes()
 				j != (*i)->getCrafts()->end();
 				++j)
 		{
-			if ((*j)->getCraftStatus() == CS_OUT
-				&& (*j)->hasLeftGround() == true)
+			if ((*j)->getCraftStatus() == CS_OUT && (*j)->hasLeftGround() == true)
 			{
 				if ((*j)->useFuel() == true)
 					popupGeo(new LowFuelState(*j, this));

@@ -90,7 +90,7 @@ SelectDestinationState::SelectDestinationState(
 	_btnCancel	= new TextButton(60, 14, 120 + dX, 8);
 	_btnCydonia	= new TextButton(60, 14, 180 + dX, 8);
 
-	_txtError	= new Text(100, 9, 12 + dX, 11);
+	_txtTooFar	= new Text(100, 9, 12 + dX, 11);
 
 	setInterface("geoscape");
 
@@ -103,13 +103,13 @@ SelectDestinationState::SelectDestinationState(
 
 	add(_window,		"genericWindow",	"geoscape");
 //	add(_txtTitle,		"genericText",		"geoscape");
-	add(_txtError,		"genericText",		"geoscape");
+	add(_txtTooFar,		"genericText",		"geoscape");
 	add(_btnCancel,		"genericButton1",	"geoscape");
 	add(_btnCydonia,	"genericButton1",	"geoscape");
 
 
-	_txtError->setText(tr("STR_OUTSIDE_CRAFT_RANGE"));
-	_txtError->setVisible(false);
+	_txtTooFar->setText(tr("STR_OUTSIDE_CRAFT_RANGE"));
+	_txtTooFar->setVisible(false);
 
 	// NOTE: Replacing onMouseClick() w/ onMousePress() causes a bizarre CTD situation.
 	_globe->onMouseClick(static_cast<ActionHandler>(&SelectDestinationState::globeClick));
@@ -238,12 +238,13 @@ void SelectDestinationState::handle(Action* action)
 }
 
 /**
- * Processes left-clicks for picking a Target and ensures that any crosshair
- * gets removed from the Globe.
+ * Processes left-clicks for picking a Target and ensures that a targeting
+ * crosshair if visible gets cleared from the Globe.
  * @param action - pointer to an Action
  */
 void SelectDestinationState::globeClick(Action* action)
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "SelectDestinationState::globeClick()";
 	const int mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
 	if (mY > _window->getY() + _window->getHeight()) // ignore window clicks
@@ -268,22 +269,17 @@ void SelectDestinationState::globeClick(Action* action)
 		wp->setLongitude(lon);
 		wp->setLatitude(lat);
 
-		int range (_craft->getFuel());
-		const RuleCraft* const crRule (_craft->getRules());
-		if (crRule->getRefuelItem().empty() == false)
-			range *= crRule->getTopSpeed();
+		//Log(LOG_INFO) << ". getDistanceLeft= " << _craft->getDistanceLeft();
+		//Log(LOG_INFO) << ". getDistanceReserved= " << _craft->getDistanceReserved(wp);
 
-		range /= 6; // six doses per hour on Geoscape.
-
-		if (range < static_cast<int>(std::floor(
-				  (_craft->getDistance(wp) + _craft->getBase()->getDistance(wp)) * radius_earth)))
+		if (_craft->getDistanceLeft(true) < _craft->getDistanceReserved(wp))
 		{
-			_txtError->setVisible();
+			_txtTooFar->setVisible();
 			delete wp;
 		}
 		else
 		{
-			_txtError->setVisible(false);
+			_txtTooFar->setVisible(false);
 
 			std::vector<Target*> targets (_globe->getTargets(mX, mY));
 			std::vector<Target*>::const_iterator i (std::find( // do not show Craft's current Target
@@ -309,7 +305,6 @@ void SelectDestinationState::globeClick(Action* action)
  */
 void SelectDestinationState::btnCancelClick(Action*)
 {
-	//Log(LOG_INFO) << "SelectDestinationState::btnCancelClick()";
 	if (_ufoLost == true)
 	{
 		_globe->clearCrosshair();
@@ -324,8 +319,7 @@ void SelectDestinationState::btnCancelClick(Action*)
  */
 void SelectDestinationState::btnCydoniaClick(Action*)
 {
-	//Log(LOG_INFO) << "SelectDestinationState::btnCydoniaClick()";
-	if (_ufoLost == true) // NOTE: This is kinda pointless ....
+	if (_ufoLost == true) // NOTE: This is kinda pointless ... you ain't comin' back to Earth, son.
 	{
 		_globe->clearCrosshair();
 		_craft->setTarget();

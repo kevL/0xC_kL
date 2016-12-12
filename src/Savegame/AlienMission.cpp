@@ -721,7 +721,7 @@ void AlienMission::ufoReachedWaypoint(
 				}
 			}
 			else if (trj.getType() == UfoTrajectory::XCOM_BASE_ASSAULT)	// remove UFO, replace with Base defense.
-			{																// Ignore what the trajectory might say, this is a base defense.
+			{															// Ignore what the trajectory might say, this is a base defense.
 				ufo.setDetected(false);
 				const std::vector<Base*>::const_iterator i (std::find_if( // Only spawn mission if the base is still there.
 																	_playSave.getBases()->begin(),

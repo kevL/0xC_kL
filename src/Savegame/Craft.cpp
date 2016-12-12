@@ -421,7 +421,7 @@ CraftId Craft::getIdentificator() const
 }
 
 /**
- * Gets the rules for this Craft's type.
+ * Gets the rule for this Craft's type.
  * @return, pointer to RuleCraft
  */
 RuleCraft* Craft::getRules() const
@@ -431,8 +431,8 @@ RuleCraft* Craft::getRules() const
 
 /**
  * Sets the rules for this Craft's type.
+ * @warning FOR QUICK-BATTLE USE ONLY!
  * @param crRule - pointer to a different RuleCraft
- * @warning ONLY FOR NEW BATTLE USE!
  */
 void Craft::changeRules(RuleCraft* const crRule)
 {
@@ -881,6 +881,9 @@ int Craft::getFuelPct() const
  */
 bool Craft::useFuel()
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Craft::useFuel()";
+
 	int fuelUsage;
 	if (_crRule->getRefuelItem().empty() == false)	// Firestorm, Lightning, Avenger, etc.
 		fuelUsage = 1;
@@ -889,24 +892,61 @@ bool Craft::useFuel()
 
 	setFuel(_fuel - fuelUsage);
 
-	if (_lowFuel == false)
+	//Log(LOG_INFO) << ". getDistanceLeft= " << getDistanceLeft();
+	//Log(LOG_INFO) << ". getDistanceReserved= " << getDistanceReserved(_target);
+
+	if (_lowFuel == false
+		&& getDistanceLeft() < getDistanceReserved(_target))
 	{
-		double dist;
-		if (_target == nullptr)
-			dist = getDistance(_base);
-		else
-			dist = getDistance(_target) + _base->getDistance(_target);
-
-		const double speed (static_cast<double>(_crRule->getTopSpeed()) * arcToRads / 6.);
-
-		if (_fuel <= static_cast<int>(std::ceil(dist * static_cast<double>(fuelUsage) / speed)))
-		{
-			_lowFuel = true;
-			setTarget(_base);
-			return true;
-		}
+		//Log(LOG_INFO) << ". . set Low Fuel";
+		_lowFuel = true;
+		setTarget(_base);
+		return true;
 	}
 	return false;
+}
+
+/**
+ * Gets the distance that this Craft needs to reserve fuel for to return to its
+ * Base.
+ * @param target - a Target other than the craft's Base
+ * @return, the required distance in radians
+ */
+double Craft::getDistanceReserved(const Target* const target) const
+{
+	if (target == nullptr)
+		return getDistance(_base);
+
+	return (getDistance(target) + _base->getDistance(target));
+}
+
+/**
+ * Gets the distance that this Craft can travel with its current fuel.
+ * @note The craft's total range effectively gets an extra dose to account for
+ * the discrepancy between fuel-usage per 10 minutes and each step's check for
+ * low fuel per 5 seconds. This however is not in effect if player is selecting
+ * a destination since it would allow selecting a destination that would
+ * almost instantly trigger the craft's low-fuel flag.
+ * @select - true if player is selecting a destination (default false)
+ * @return, the distance in radians the craft can still travel
+ */
+double Craft::getDistanceLeft(bool select) const
+{
+	double range (static_cast<double>(_fuel));
+
+	if (_crRule->getRefuelItem().empty() == false)
+	{
+		if (select == false)	// give Craft an extra dose as leeway if player is not currently selecting a destination.
+			range += 1;
+
+		range *= static_cast<double>(_crRule->getTopSpeed());
+	}
+	else if (select == false)	// give Craft an extra dose as leeway if player is not currently selecting a destination.
+		range += _crRule->getTopSpeed();
+
+	range /= 6.; // 6 doses per hour
+
+	return (range * arcToRads);
 }
 
 /**
@@ -918,38 +958,6 @@ bool Craft::isLowFuel() const
 {
 	return _lowFuel;
 }
-
-/**
- * Calculates the minimum required fuel for this Craft to get back to Base.
- * @note Speed and distance are in radians.
- * @param base - pointer to a target Base
- * @return, fuel amount
- *
-int Craft::calcFuelLimit(const Base* const base) const // private.
-{
-	double
-		dist,
-		patrol_factor;
-
-	if (_target != nullptr)
-	{
-		patrol_factor = 1.;
-		dist = getDistance(_target) + _base->getDistance(_target);
-	}
-	else
-	{
-		dist = getDistance(base);
-		if (_crRule->getRefuelItem().empty() == false)
-			patrol_factor = 1.;	// Elerium-powered Craft do not get an increase for patrolling; they use 1 fuel per 10-min regardless of patrol speed.
-		else
-			patrol_factor = 2.;
-	}
-
-	const double speed (static_cast<double>(_crRule->getTopSpeed()) * arcToRads / 6.);
-
-	return static_cast<int>(std::ceil(
-		   static_cast<double>(getFuelUsage()) * dist * patrol_factor / speed));
-} */
 
 /**
  * Sends this Craft back to its Base.

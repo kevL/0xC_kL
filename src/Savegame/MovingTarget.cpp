@@ -112,6 +112,8 @@ void MovingTarget::load(const YAML::Node& node) // virtual.
 
 /**
  * Sets the destination-target of this MovingTarget.
+ * @note UFOs always have a destination-target unless they crash, turn into a
+ * terrorsite, or leave the atmosphere.
  * @param target - pointer to Target destination (default nullptr)
  */
 void MovingTarget::setTarget(Target* const target) // virtual.
@@ -126,8 +128,6 @@ void MovingTarget::setTarget(Target* const target) // virtual.
 		_target->getTargeters()->push_back(this);
 		calculateSpeed();
 	}
-	else
-		setSpeed();
 }
 
 /**
@@ -220,8 +220,8 @@ void MovingTarget::setSpeed(int speed)
 	}
 	else
 	{
-		_speedRads = static_cast<double>(_speed) * arcToRads / 720.;	// Each nautical mile is 1/60th of a degree;
-		calculateSpeed();												// each hour contains 720 5-second periods.
+		_speedRads = static_cast<double>(_speed) * arcToRads / 720.; // each hour contains 720 x 5-second periods
+		calculateSpeed();
 	}
 	//Log(LOG_INFO) << ". speedRads= " << _speedRads;
 }
@@ -249,10 +249,9 @@ void MovingTarget::stepTarget()
 		//Log(LOG_INFO) << "";
 		//Log(LOG_INFO) << ". stepTarget - target VALID step Lon/Lat";
 
-		calculateSpeed();
-
 		if (getDistance(_target) > _speedRads)
 		{
+			calculateSpeed();
 			setLongitude(_lon + _speedLon);
 			setLatitude( _lat + _speedLat);
 		}
@@ -262,8 +261,6 @@ void MovingTarget::stepTarget()
 			setLatitude( _target->getLatitude());
 		}
 	}
-	else
-		setSpeed();
 }
 
 /**
@@ -274,6 +271,9 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "MovingTarget::calculateSpeed()";
+	//Log(LOG_INFO) << ". speed= "				<< _speed;
+	//Log(LOG_INFO) << ". speedRads per5sec= "	<< _speedRads;
+	//Log(LOG_INFO) << ". speedRads per10min= "	<< _speedRads * 120.;
 
 	if (_target != nullptr)
 	{
@@ -298,8 +298,8 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 		//Log(LOG_INFO) << ". . dLat= " << dLat;
 		//Log(LOG_INFO) << ". . dist= " << dist;
 
-		_speedLat = dLat / dist * _speedRads;
-		_speedLon = dLon / dist * _speedRads / std::cos(_lat + _speedLat);
+		_speedLat = _speedRads * dLat / (dist);
+		_speedLon = _speedRads * dLon / (dist * std::cos(_lat + _speedLat));
 
 		//Log(LOG_INFO) << ". . speedLon= " << _speedLon;
 		//Log(LOG_INFO) << ". . speedLat= " << _speedLat;
@@ -308,13 +308,15 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 		if (isNaNorInf(_speedLon, _speedLat) == true)
 		{
 			//Log(LOG_INFO) << ". . isNaNorInf 0,0";
-			setSpeed();
+			_speedLon =
+			_speedLat = 0.;
 		}
 	}
 	else
 	{
 		//Log(LOG_INFO) << ". target NOT Valid 0,0";
-		setSpeed();
+		_speedLon =
+		_speedLat = 0.;
 	}
 }
 

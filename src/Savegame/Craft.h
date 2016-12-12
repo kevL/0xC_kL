@@ -186,14 +186,18 @@ private:
 		/// Checks if the Craft is destroyed during dogfights.
 		bool isDestroyed() const;
 
-		/// Sets the Craft's amount of fuel.
+		/// Sets the Craft's quantity of fuel.
 		void setFuel(int fuel);
-		/// Gets the Craft's amount of fuel.
+		/// Gets the Craft's quantity of fuel.
 		int getFuel() const;
 		/// Gets the Craft's percentage of fuel.
 		int getFuelPct() const;
 		/// Uses the Craft's fuel.
 		bool useFuel();
+		/// Gets the distance that the Craft needs to reserve fuel for to return to its Base.
+		double getDistanceReserved(const Target* const target) const;
+		/// Gets the distance that the Craft can travel with its current fuel.
+		double getDistanceLeft(bool select = false) const;
 		/// Checks if the Craft is running out of fuel.
 		bool isLowFuel() const;
 

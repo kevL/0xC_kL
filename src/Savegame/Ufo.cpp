@@ -271,7 +271,7 @@ YAML::Node Ufo::saveIdentificator() const
 }
 
 /**
- * Gets the ruleset for this UFO's type.
+ * Gets the rule for this UFO's type.
  * @return, pointer to RuleUfo
  */
 const RuleUfo* Ufo::getRules() const
@@ -281,7 +281,7 @@ const RuleUfo* Ufo::getRules() const
 
 /**
  * Changes the rule for this UFO's type.
- * @warning ONLY FOR NEW BATTLE USE!
+ * @warning FOR QUICK-BATTLE USE ONLY!
  * @param ufoRule - pointer to RuleUfo
  */
 void Ufo::changeRules(const RuleUfo* const ufoRule)

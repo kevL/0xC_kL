@@ -628,13 +628,13 @@ void QuickBattleState::btnOkClick(Action*)
 			_craft->setSpeed();
 			bGen.setCraft(_craft);
 
-			AlienBase* const aBase (new AlienBase(_game->getRuleset()->getDeployment(battleSave->getTacticalType())));
-			aBase->setId(1);
-			aBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
-			_craft->setTarget(aBase);
-			bGen.setAlienBase(aBase);
+			AlienBase* const alienBase (new AlienBase(_game->getRuleset()->getDeployment(battleSave->getTacticalType())));
+			alienBase->setId(1);
+			alienBase->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
+			_craft->setTarget(alienBase);
+			bGen.setAlienBase(alienBase);
 
-			_playSave->getAlienBases()->push_back(aBase);
+			_playSave->getAlienBases()->push_back(alienBase);
 		}
 		else if (_rules->getUfo(_missionTypes[_cbxMission->getSelected()]) != nullptr)								// UFO CRASHED or LANDED
 		{
@@ -673,15 +673,13 @@ void QuickBattleState::btnOkClick(Action*)
 
 			const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(battleSave->getTacticalType()));
 			const RuleAlienMission* const mission (_rules->getAlienMission(_rules->getAlienMissionList().front())); // doesn't matter
-			TerrorSite* const terrorSite (new TerrorSite(
-													mission,
-													ruleDeploy));
+
+			TerrorSite* const terrorSite (new TerrorSite(mission, ruleDeploy));
 			terrorSite->setId(1);
 			terrorSite->setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
-
 			_craft->setTarget(terrorSite);
-
 			bGen.setTerrorSite(terrorSite);
+
 			_playSave->getTerrorSites()->push_back(terrorSite);
 		}
 

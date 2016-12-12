@@ -35,7 +35,7 @@ class Window;
 
 
 /**
- * Screen that allows the player to pick a target for a craft on the globe.
+ * Screen that allows the player to pick a Target for a Craft on the Globe.
  */
 class SelectDestinationState
 	:
@@ -48,12 +48,12 @@ private:
 	Craft* _craft;
 	Globe* _globe;
 //	InteractiveSurface* _btnRotateLeft, * _btnRotateRight, * _btnRotateUp, * _btnRotateDown, * _btnZoomIn, * _btnZoomOut;
-	Window* _window;
-	Text* _txtError;
+	Text* _txtTooFar;
 //		* _txtTitle;
 	TextButton
 		* _btnCancel,
 		* _btnCydonia;
+	Window* _window;
 
 
 	public:
