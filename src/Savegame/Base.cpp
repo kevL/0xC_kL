@@ -818,7 +818,7 @@ int Base::getFreeLaboratories() const
 }
 
 /**
- * Gets whether or not this Base is equipped with research facilities.
+ * Checks if this Base is equipped with research facilities.
  * @return, true if capable of research
  */
 bool Base::hasResearch() const
@@ -882,7 +882,7 @@ int Base::getFreeWorkshops() const
 }
 
 /**
- * Gets whether or not this Base is equipped with production facilities.
+ * Checks if this Base is equipped with production facilities.
  * @return, true if capable of production
  */
 bool Base::hasProduction() const
@@ -947,7 +947,7 @@ int Base::getFreePsiLabs() const
 }
 
 /**
- * Gets whether or not this Base has Psionic Laboratories.
+ * Checks if this Base has Psionic Laboratories.
  * @return, true if psiLabs exist
  */
 bool Base::hasPsiLabs() const
@@ -1025,7 +1025,7 @@ int Base::getFreeContainment() const
 }
 
 /**
- * Gets whether or not this Base has alien-containment.
+ * Checks if this Base has alien-containment.
  * @return, true if containment exists
  */
 bool Base::hasContainment() const
@@ -1684,7 +1684,7 @@ void Base::setTactical(bool tactical)
 }
 
 /**
- * Gets this Base's battlescape-status.
+ * Checks this Base's battlescape-status.
  * @return, true if Base is the battlescape
  */
 bool Base::getTactical() const
@@ -1702,7 +1702,7 @@ void Base::setBaseExposed(bool exposed)
 }
 
 /**
- * Gets if this Base is a valid alien-retaliation target.
+ * Checks if this Base is a valid alien-retaliation target.
  * @return, true if eligible for retaliation
  */
 bool Base::getBaseExposed() const
@@ -1728,8 +1728,7 @@ bool Base::isBasePlaced() const
 }
 
 /**
- * Gets whether or not this Base is equipped with hyper-wave detection
- * facilities.
+ * Checks if this Base is equipped with hyper-wave detection facilities.
  * @return, true if hyper-wave detection
  */
 bool Base::getHyperDetection() const

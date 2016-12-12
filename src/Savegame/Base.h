@@ -277,12 +277,12 @@ private:
 
 		/// Sets the Base's battlescape status.
 		void setTactical(bool tactical = true);
-		/// Gets if the Base is in the battlescape.
+		/// Checks if the Base is in the battlescape.
 		bool getTactical() const;
 
 		/// Sets the Base as eligible for alien retaliation.
 		void setBaseExposed(bool exposed = true);
-		/// Gets if the Base is eligible for alien retaliation.
+		/// Checks if the Base is eligible for alien retaliation.
 		bool getBaseExposed() const;
 
 		/// Flags the Base as placed and in operation.
@@ -301,9 +301,9 @@ private:
 		/// Gets the Base's long range detection.
 		int getLongRangeTotal() const;
 
-		/// Checks if a target is detected by the Base's radars.
+		/// Attempts to detect a target with the Base's radars.
 		int detect(const Target* const target) const;
-		/// Checks if a target is inside the Base's radar-range.
+		/// Determines if a target is inside the Base's radar-range.
 		double insideRadarRange(const Target* const target) const;
 
 		/// Gets the detection-chance for the Base.
