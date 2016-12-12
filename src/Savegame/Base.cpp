@@ -648,7 +648,7 @@ int Base::getAllocatedEngineers() const
 
 /**
  * Gets the quantity of living quarters used up by personnel in this Base.
- * @return, occupied personel space
+ * @return, occupied personnel space
  */
 int Base::getUsedQuarters() const
 {
@@ -657,7 +657,7 @@ int Base::getUsedQuarters() const
 
 /**
  * Gets the total quantity of living quarters in this Base.
- * @return, total personel space
+ * @return, total personnel space
  */
 int Base::getTotalQuarters() const
 {
@@ -674,7 +674,7 @@ int Base::getTotalQuarters() const
 }
 
 /**
- * Returns personel space not used.
+ * Gets personnel space not used.
  * @return, free space
  */
 int Base::getFreeQuarters() const
@@ -809,7 +809,7 @@ int Base::getTotalLaboratories() const
 }
 
 /**
- * Returns laboratory space not used by ResearchProjects.
+ * Gets laboratory space not used by ResearchProjects.
  * @return, free space
  */
 int Base::getFreeLaboratories() const
@@ -818,7 +818,7 @@ int Base::getFreeLaboratories() const
 }
 
 /**
- * Returns whether or not this Base is equipped with research facilities.
+ * Gets whether or not this Base is equipped with research facilities.
  * @return, true if capable of research
  */
 bool Base::hasResearch() const
@@ -873,7 +873,7 @@ int Base::getTotalWorkshops() const
 }
 
 /**
- * Returns workshop space not used by Productions.
+ * Gets workshop space not used by Productions.
  * @return, free space
  */
 int Base::getFreeWorkshops() const
@@ -882,7 +882,7 @@ int Base::getFreeWorkshops() const
 }
 
 /**
- * Returns whether or not this Base is equipped with production facilities.
+ * Gets whether or not this Base is equipped with production facilities.
  * @return, true if capable of production
  */
 bool Base::hasProduction() const
@@ -938,7 +938,7 @@ int Base::getTotalPsiLabs() const
 }
 
 /**
- * Returns psilab-space not in use.
+ * Gets psilab-space not in use.
  * @return, free space
  */
 int Base::getFreePsiLabs() const
@@ -947,7 +947,7 @@ int Base::getFreePsiLabs() const
 }
 
 /**
- * Returns whether or not this Base has Psionic Laboratories.
+ * Gets whether or not this Base has Psionic Laboratories.
  * @return, true if psiLabs exist
  */
 bool Base::hasPsiLabs() const
@@ -1016,7 +1016,7 @@ int Base::getTotalContainment() const
 }
 
 /**
- * Returns alien containment-space not in use.
+ * Gets alien containment-space not in use.
  * @return, free space
  */
 int Base::getFreeContainment() const
@@ -1025,7 +1025,7 @@ int Base::getFreeContainment() const
 }
 
 /**
- * Returns whether or not this Base has alien-containment.
+ * Gets whether or not this Base has alien-containment.
  * @return, true if containment exists
  */
 bool Base::hasContainment() const
@@ -1134,7 +1134,7 @@ int Base::getTotalHangars() const
 }
 
 /**
- * Returns hangar-space not in use.
+ * Gets hangar-space not in use.
  * @return, free space
  */
 int Base::getFreeHangars() const
@@ -1684,7 +1684,7 @@ void Base::setTactical(bool tactical)
 }
 
 /**
- * Returns this Base's battlescape-status.
+ * Gets this Base's battlescape-status.
  * @return, true if Base is the battlescape
  */
 bool Base::getTactical() const
@@ -1728,7 +1728,7 @@ bool Base::isBasePlaced() const
 }
 
 /**
- * Returns whether or not this Base is equipped with hyper-wave detection
+ * Gets whether or not this Base is equipped with hyper-wave detection
  * facilities.
  * @return, true if hyper-wave detection
  */
@@ -1855,19 +1855,18 @@ int Base::getLongRangeTotal() const
 }
 
 /**
- * Returns if a specified Target is detected inside this Base's radar-range
- * taking into account both range and probability.
+ * Gets if a specified Target is detected inside this Base's radar-range.
  * @param target - pointer to a UFO to attempt detection against
  * @return,	0 undetected
  *			1 hyperdetected only
  *			2 detected
  *			3 detected & hyperdetected
  */
-int Base::detect(Target* const target) const
+int Base::detect(const Target* const target) const
 {
 	int ret (0);
 	double dist (insideRadarRange(target));
-	if (AreSame(dist, 0.) == false)
+	if (AreSame(dist, 0.) == false) // lets hope UFO is not *right on top of Base* Lol
 	{
 		if (dist < 0.)
 		{
@@ -1882,17 +1881,17 @@ int Base::detect(Target* const target) const
 				++i)
 		{
 			if ((*i)->buildFinished() == true
-				&& dist <= (static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor))
+				&& dist <= static_cast<double>((*i)->getRules()->getRadarRange()))
 			{
 				pct += (*i)->getRules()->getRadarChance();
 			}
 		}
 
-		const Ufo* const ufo (dynamic_cast<Ufo*>(target)); // errr, what else would one be detecting apart from a UFO.
+		const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
 		if (ufo != nullptr)
 		{
 			pct += ufo->getVisibility();
-			pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10-min.
+			pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10 minutes
 			if (RNG::percent(pct) == true)
 				ret += 2;
 		}
@@ -1901,27 +1900,26 @@ int Base::detect(Target* const target) const
 }
 
 /**
- * Returns if a certain target is inside this Base's radar range taking in
- * account the global positions of both.
+ * Gets if a specified Target is inside this Base's radar-range.
  * @param target - pointer to UFO
- * @return, great circle distance to UFO (negative if hyperdetected)
+ * @return, great-circle distance to UFO (negative if hyperdetected)
  */
 double Base::insideRadarRange(const Target* const target) const
 {
 	double ret (0.); // lets hope UFO is not *right on top of Base* Lol
 	const double dist (getDistance(target) * radius_earth);
-	if (dist <= static_cast<double>(_rules->getRadarRangeBest()) * greatCircleConversionFactor)
+	if (dist <= static_cast<double>(_rules->getRadarRangeBest()))
 	{
 		bool hyperDet (false);
 		for (std::vector<BaseFacility*>::const_iterator
 				i = _facilities.begin();
-				i != _facilities.end() && hyperDet == false;
+				i != _facilities.end();
 				++i)
 		{
 			if ((*i)->buildFinished() == true
-				&& dist <= (static_cast<double>((*i)->getRules()->getRadarRange()) * greatCircleConversionFactor))
+				&& dist <= static_cast<double>((*i)->getRules()->getRadarRange()))
 			{
-				ret = dist; // identical value for every i; looking only for hyperDet after 1st successful iteration.
+				ret = dist; // identical value for every *i; looking only for hyperDet after 1st successful iteration ->
 				if ((*i)->getRules()->isHyperwave() == true)
 				{
 					hyperDet = true;
@@ -2450,7 +2448,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 
 	int
 		del,
-		personel,
+		personnel,
 		destroyed;
 
 	if ((destroyed = (*pFac)->getRules()->getPsiLaboratories()) != 0)
@@ -2491,16 +2489,16 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 					i != _projectsResearch.end() && del > 0;
 					++i)
 			{
-				personel = (*i)->getAssignedScientists();
-				if (personel < del)
+				personnel = (*i)->getAssignedScientists();
+				if (personnel < del)
 				{
-					del -= personel;
+					del -= personnel;
 					(*i)->setAssignedScientists(0);
-					_scientists += personel;
+					_scientists += personnel;
 				}
 				else
 				{
-					(*i)->setAssignedScientists(personel - del);
+					(*i)->setAssignedScientists(personnel - del);
 					_scientists += del;
 					break;
 				}
@@ -2530,16 +2528,16 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 					i != _projectsManufacture.end() && del > 0;
 					++i)
 			{
-				personel = (*i)->getAssignedEngineers();
-				if (personel < del)
+				personnel = (*i)->getAssignedEngineers();
+				if (personnel < del)
 				{
-					del -= personel;
+					del -= personnel;
 					(*i)->setAssignedEngineers(0);
-					_engineers += personel;
+					_engineers += personnel;
 				}
 				else
 				{
-					(*i)->setAssignedEngineers(personel - del);
+					(*i)->setAssignedEngineers(personnel - del);
 					_engineers += del;
 					break;
 				}
@@ -2579,7 +2577,7 @@ std::vector<BaseFacility*>::const_iterator Base::destroyFacility(std::vector<Bas
 
 	if ((destroyed = (*pFac)->getRules()->getPersonnel()) != 0)
 	{
-		// Could get cramped in here; current personel are not removed.
+		// Could get cramped in here; current personnel are not removed.
 		// TODO: Issue a stream of warnings ala storesOverfull.
 		del = destroyed - getFreeQuarters();
 		for (std::vector<Transfer*>::const_reverse_iterator
@@ -2828,7 +2826,7 @@ int Base::getOperationalExpenses(const Craft* const craft) const
 }
 
 /**
- * Returns a Soldier's bonus pay for going on a tactical mission; subtracts
+ * Gets a Soldier's bonus pay for going on a tactical mission; subtracts
  * the value from current funds.
  * @param sol	- pointer to a Soldier
  * @param dead	- true if soldier dies while on tactical (default false)
@@ -2864,7 +2862,7 @@ int Base::expenseSoldier(
 	} */
 
 /**
- * Returns the expense of sending HWPs/doggies on a tactical mission;
+ * Gets the expense of sending HWPs/doggies on a tactical mission;
  * subtracts the value from current funds.
  * @param quadrants	- size of the HWP/doggie in tiles
  * @param dead		- true if HWP got destroyed while on tactical (default false)
@@ -2884,7 +2882,7 @@ int Base::expenseSupport(
 }
 
 /**
- * Returns the expense of sending a transport craft on a tactical mission;
+ * Gets the expense of sending a transport craft on a tactical mission;
  * subtracts the value from current funds.
  * @param craft - pointer to a Craft
  * @return, the expense

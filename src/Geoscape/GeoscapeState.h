@@ -35,8 +35,7 @@ extern bool
 
 extern const double
 	radius_earth,
-	arcToRads,
-	greatCircleConversionFactor;
+	arcToRads;
 
 class Base;
 class Craft;

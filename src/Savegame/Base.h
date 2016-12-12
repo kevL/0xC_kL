@@ -301,12 +301,12 @@ private:
 		/// Gets the Base's long range detection.
 		int getLongRangeTotal() const;
 
-		/// Checks if a target is detected by the Base's radar.
-		int detect(Target* const target) const;
-		/// Checks if a target is inside the Base's radar range.
+		/// Checks if a target is detected by the Base's radars.
+		int detect(const Target* const target) const;
+		/// Checks if a target is inside the Base's radar-range.
 		double insideRadarRange(const Target* const target) const;
 
-		/// Gets the detection chance for the Base.
+		/// Gets the detection-chance for the Base.
 		int getExposedChance(
 				int diff,
 				int* facQty = nullptr,
@@ -317,9 +317,9 @@ private:
 
 		/// Gets the Base's defense-value.
 		int getDefenseTotal() const;
-		/// Sets up the Base defenses.
+		/// Sets up the Base's defenses.
 		bool setupBaseDefense();
-		/// Cleans up the Base defenses.
+		/// Cleans up the Base's defenses.
 		void clearBaseDefense();
 		/// Sets a reduction to the quantity of aLiens deployed in a base-defense tactical.
 		void setDefenseReduction(int reduction = 0);

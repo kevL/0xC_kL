@@ -138,11 +138,9 @@ bool
 	kL_geoMusicReturnState	= false;
 
 const double
-	radius_earth	= 3437.7467707849392526078892888463,	// radius of Earth in nautical miles is set by definition of arcToRads.
-//	radius_earth	= 3440., //.0647948164,					// a nautical mile on the Earth's surface is equivalent to 1/60th of a degree
 	arcToRads		= (1. / 60.) * (M_PI / 180.),			// converts a minute of arc to radians
-	greatCircleConversionFactor	= radius_earth * arcToRads;	// converts euclidean distance to great-circle distance
-
+	radius_earth	= 3437.7467707849392526078892888463;	// radius of Earth in nautical miles is set by definition of arcToRads.
+															// NOTE: A nautical mile on the Earth's surface is equivalent to 1/60th of a degree.
 
 // UFO-blobs graphics ...
 const int GeoscapeState::_ufoBlobs[8u][BLOBSIZE][BLOBSIZE]
@@ -1946,12 +1944,12 @@ bool DetectXCOMBase::operator ()(const Ufo* const ufo) const
 			|| Options::aggressiveRetaliation == true))
 	{
 		const double
-			range (static_cast<double>(ufo->getRules()->getRangeRecon()) * greatCircleConversionFactor),
+			reconRange (static_cast<double>(ufo->getRules()->getRangeRecon())),
 			dist (_base.getDistance(ufo) * radius_earth);
 
-		if (dist <= range)
+		if (dist <= reconRange)
 		{
-			const double inverseFactor (dist * 12. / range); // TODO: Use log() ....
+			const double inverseFactor (dist * 12. / reconRange); // TODO: Use log() ....
 			int pct (static_cast<int>(Round(
 					 static_cast<double>(_base.getExposedChance(_diff) + ufo->getDetectors()) / inverseFactor)));
 
@@ -2023,14 +2021,14 @@ void GeoscapeState::time10Minutes()
 					if ((*k)->isDetected() == false)
 					{
 						const double
-							range (static_cast<double>((*j)->getRules()->getRangeRecon()) * greatCircleConversionFactor),
+							reconRange (static_cast<double>((*j)->getRules()->getRangeRecon())),
 							dist ((*j)->getDistance(*k) * radius_earth);
-						//Log(LOG_INFO) << ". . range = " << (int)range;
+						//Log(LOG_INFO) << ". . reconRange = " << (int)reconRange;
 						//Log(LOG_INFO) << ". . dist = " << (int)dist;
 
-						if (dist < range)
+						if (dist < reconRange)
 						{
-							const int pct (100 - (diff * 10) - static_cast<int>(dist * 50. / range));
+							const int pct (100 - (diff * 10) - static_cast<int>(dist * 50. / reconRange));
 							//Log(LOG_INFO) << ". . . craft in Range pct= " << pct;
 							if (RNG::percent(pct) == true)
 							{

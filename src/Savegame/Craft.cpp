@@ -932,21 +932,19 @@ double Craft::getDistanceReserved(const Target* const target) const
  */
 double Craft::getDistanceLeft(bool select) const
 {
-	double range (static_cast<double>(_fuel));
+	int range (_fuel);
 
 	if (_crRule->getRefuelItem().empty() == false)
 	{
 		if (select == false)	// give Craft an extra dose as leeway if player is not currently selecting a destination.
 			range += 1;
 
-		range *= static_cast<double>(_crRule->getTopSpeed());
+		range *= _crRule->getTopSpeed();
 	}
 	else if (select == false)	// give Craft an extra dose as leeway if player is not currently selecting a destination.
 		range += _crRule->getTopSpeed();
 
-	range /= 6.; // 6 doses per hour
-
-	return (range * arcToRads);
+	return (static_cast<double>(range) * arcToRads / 6.); // 6 doses per hour
 }
 
 /**
@@ -1207,14 +1205,10 @@ void Craft::refuel()
 bool Craft::detect(const Target* const target) const
 {
 	const int radarRange (_crRule->getRangeRadar());
-	if (radarRange != 0)
+	if (radarRange != 0
+		&& static_cast<double>(radarRange) >= getDistance(target) * radius_earth)
 	{
-		const double
-			range (static_cast<double>(radarRange) * greatCircleConversionFactor),
-			dist (getDistance(target) * radius_earth);
-
-		if (range >= dist)
-			return true;
+		return true;
 	}
 	return false;
 }
