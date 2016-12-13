@@ -17,7 +17,7 @@ extraSprites:
 
   - type: ProjectileHits
     width: 320
-    height: 280
+    height: 560
     subX: 32
     subY: 40
     files:

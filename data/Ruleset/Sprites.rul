@@ -339,7 +339,7 @@ extraSprites:
 
   - type: X1.PCK
     width: 1024
-    height: 256
+    height: 576
     subX: 128
     subY: 64
     files:

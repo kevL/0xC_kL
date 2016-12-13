@@ -1622,6 +1622,16 @@ void DebriefingState::prepareDebriefing() // private.
 				{
 					if (*i == _base) // IMPORTANT: player's Base is destroyed here! (but not if QuickBattle)
 					{
+						// TODO: Try to route any Craft/Soldiers/Equipment that are out on a tactical mission
+						// to other Bases.
+						// - search other bases for hangars
+						// - search other bases for free personnel space
+						// - search other bases for available equipment stores
+						//
+						// If hangar(s) not available destroy Craft(s).
+						// If personnel space unavailable add Soldiers anyway but set up an "overfull" nag-notice like overfull-storage has.
+						// If storage for equipment not available add Items to other base-stores and let the overfull-storage nag-notice inform player.
+
 						delete *i;
 						_playSave->getBases()->erase(i);
 						break;
