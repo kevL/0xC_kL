@@ -45,6 +45,7 @@ class ResearchCompleteState
 
 private:
 	Text
+		* _txtCracked,
 		* _txtResearch,
 		* _txtTitle;
 	TextButton
@@ -62,7 +63,8 @@ private:
 		ResearchCompleteState(
 				const RuleResearch* const resRulePedia,
 				const RuleResearch* const gofRule,
-				const RuleResearch* const resRule);
+				const RuleResearch* const resRule,
+				bool aLienCracked);
 		/// dTor.
 		~ResearchCompleteState();
 

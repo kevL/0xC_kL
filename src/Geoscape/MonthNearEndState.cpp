@@ -42,8 +42,8 @@ MonthNearEndState::MonthNearEndState()
 
 	_window		= new Window(this, 224, 120, 16, 40, POPUP_BOTH);
 
-	_txtTitle	= new Text(214, 17, 21, 51);
-	_txtMessage	= new Text(214, 50, 21, 68);
+	_txtTitle	= new Text(214, 17, 21, 54);
+	_txtMessage	= new Text(214, 50, 21, 70);
 
 	_btnOk		= new TextButton(180, 18, 38, 134);
 

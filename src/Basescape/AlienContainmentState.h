@@ -89,9 +89,9 @@ private:
 
 	std::vector<Base*>* _baseList;
 
-	/// Gets quantity of the selected alien at the Base.
+	/// Gets quantity of the selected aLien at the Base.
 	int getBaseQuantity();
-	/// Updates the list-row for the selected alien.
+	/// Updates the list-row for the selected aLien.
 	void updateListrow();
 
 
@@ -100,7 +100,7 @@ private:
 		AlienContainmentState(
 				Base* const base,
 				OptionsOrigin origin,
-				BasescapeState* const state = nullptr);
+				BasescapeState* const baseState = nullptr);
 		/// Cleans up the AlienContainment state.
 		~AlienContainmentState();
 

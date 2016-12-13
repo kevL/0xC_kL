@@ -43,11 +43,13 @@ namespace OpenXcom
  *						  or nullptr if the Ufopaedia article shouldn't popup
  * @param gofRule		- pointer to bonus discovered RuleResearch
  * @param resRule		- pointer to the discovered RuleResearch
+ * @param aLienCracked	- true if a live aLien cracked under interrogation
  */
 ResearchCompleteState::ResearchCompleteState(
 		const RuleResearch* const resRulePedia,
 		const RuleResearch* const gofRule,
-		const RuleResearch* const resRule)
+		const RuleResearch* const resRule,
+		bool aLienCracked)
 	:
 		_resRulePedia(resRulePedia),
 		_gofRule(gofRule)
@@ -56,8 +58,9 @@ ResearchCompleteState::ResearchCompleteState(
 
 	_window			= new Window(this, 230, 140, 45, 30, POPUP_BOTH);
 
-	_txtTitle		= new Text(230, 17, 45, 70);
-	_txtResearch	= new Text(230, 17, 45, 96);
+	_txtTitle		= new Text(230, 16, 45,  68);
+	_txtResearch	= new Text(230, 16, 45,  93);
+	_txtCracked		= new Text(230,  9, 45, 116);
 
 	_btnReport		= new TextButton(80, 16,  64, 146);
 	_btnOk			= new TextButton(80, 16, 176, 146);
@@ -67,6 +70,7 @@ ResearchCompleteState::ResearchCompleteState(
 	add(_window,		"window",	"geoResearch");
 	add(_txtTitle,		"text1",	"geoResearch");
 	add(_txtResearch,	"text2",	"geoResearch");
+	add(_txtCracked,	"text2",	"geoResearch");
 	add(_btnReport,		"button",	"geoResearch");
 	add(_btnOk,			"button",	"geoResearch");
 
@@ -106,6 +110,14 @@ ResearchCompleteState::ResearchCompleteState(
 	_txtResearch->setText(tr(resRule->getType()));
 	_txtResearch->setAlign(ALIGN_CENTER);
 	_txtResearch->setBig();
+
+	if (aLienCracked == true)
+	{
+		_txtCracked->setText(tr("STR_CRACKED"));
+		_txtCracked->setAlign(ALIGN_CENTER);
+	}
+	else
+		_txtCracked->setVisible(false);
 }
 
 /**

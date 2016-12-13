@@ -58,7 +58,7 @@ namespace OpenXcom
  * @param base		- pointer to the Base to get info from
  * @param origin	- game section that originated this state
  * @param baseState	- pointer to the BasescapeState (default nullptr if
- *					  Battlescape-invoked or ResearchState-invoked)
+ *					  DebriefingState- or ResearchState-invoked)
  */
 AlienContainmentState::AlienContainmentState(
 		Base* const base,
@@ -347,7 +347,7 @@ void AlienContainmentState::btnCancelClick(Action*)
 }
 
 /**
- * Starts decreasing the alien count.
+ * Starts decreasing the aLien count.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::lstLeftArrowPress(Action* action)
@@ -368,7 +368,7 @@ void AlienContainmentState::lstLeftArrowPress(Action* action)
 }
 
 /**
- * Stops decreasing the alien count.
+ * Stops decreasing the aLien count.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::lstLeftArrowRelease(Action* action)
@@ -378,7 +378,7 @@ void AlienContainmentState::lstLeftArrowRelease(Action* action)
 }
 
 /**
- * Starts increasing the alien count.
+ * Starts increasing the aLien count.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::lstRightArrowPress(Action* action)
@@ -399,7 +399,7 @@ void AlienContainmentState::lstRightArrowPress(Action* action)
 }
 
 /**
- * Stops increasing the alien count.
+ * Stops increasing the aLien count.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::lstRightArrowRelease(Action* action)
@@ -420,7 +420,7 @@ void AlienContainmentState::think()
 }
 
 /**
- * Decreases the quantity of the selected alien to exterminate by Timer tick.
+ * Decreases the quantity of the selected aLien to exterminate by Timer tick.
  */
 void AlienContainmentState::onLeft()
 {
@@ -429,7 +429,7 @@ void AlienContainmentState::onLeft()
 }
 
 /**
- * Decreases the quantity of the selected alien to exterminate.
+ * Decreases the quantity of the selected aLien to exterminate.
  * @param delta - quantity to remove
  */
 void AlienContainmentState::leftByValue(int delta)
@@ -444,7 +444,7 @@ void AlienContainmentState::leftByValue(int delta)
 }
 
 /**
- * Increases the quantity of the selected alien to exterminate by Timer tick.
+ * Increases the quantity of the selected aLien to exterminate by Timer tick.
  */
 void AlienContainmentState::onRight()
 {
@@ -453,7 +453,7 @@ void AlienContainmentState::onRight()
 }
 
 /**
- * Increases the quantity of the selected alien to exterminate.
+ * Increases the quantity of the selected aLien to exterminate.
  * @param delta - quantity to add
  */
 void AlienContainmentState::rightByValue(int delta)
@@ -469,7 +469,7 @@ void AlienContainmentState::rightByValue(int delta)
 }
 
 /**
- * Gets the quantity of the currently selected alien at the Base.
+ * Gets the quantity of the currently selected aLien at the Base.
  * @return, quantity of alien-type
  */
 int AlienContainmentState::getBaseQuantity() // private.

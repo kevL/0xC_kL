@@ -2862,20 +2862,18 @@ void GeoscapeState::time1Day()
 				const RuleResearch* const resRule ((*j)->getRules());
 				const std::string& resType (resRule->getType());
 
-				const bool isLiveAlien (_rules->getUnitRule(resType) != nullptr);
-
-				(*i)->clearResearchProject(*j, isLiveAlien == true);
+				const RuleUnit* const alien (_rules->getUnitRule(resType));
 
 				bool
 					crackGof,
 					crackRequested;
 
-				if (isLiveAlien == true)
+				if (alien != nullptr)
 				{
 					if (resRule->needsItem() == true && resRule->destroyItem() == true
 						&& Options::grantCorpses == true)
 					{
-						(*i)->getStorageItems()->addItem(_rules->getArmor(_rules->getUnitRule(resType)->getArmorType())->getCorpseGeoscape());
+						(*i)->getStorageItems()->addItem(_rules->getArmor(alien->getArmorType())->getCorpseGeoscape());
 					}
 
 					doesAlienCrack(
@@ -2891,6 +2889,9 @@ void GeoscapeState::time1Day()
 					crackGof =
 					crackRequested = true;
 				}
+
+				(*i)->clearResearchProject(*j, alien != nullptr && crackRequested == true);
+
 
 				std::vector<const RuleResearch*> popupResearch;
 
@@ -2932,7 +2933,11 @@ void GeoscapeState::time1Day()
 				else
 					resRulePedia = nullptr; // resRule has already been discovered before.
 
-				resEvents.push_back(new ResearchCompleteState(resRulePedia, gofRule, resRule));
+				resEvents.push_back(new ResearchCompleteState(
+															resRulePedia,
+															gofRule,
+															resRule,
+															alien != nullptr && crackRequested == true));
 
 
 				if (resRulePedia != nullptr)	// check for need to research a clip before the weapon itself can be manufactured.
@@ -2981,7 +2986,7 @@ void GeoscapeState::time1Day()
 				}
 
 
-				if (isLiveAlien == false)
+				if (alien == nullptr)
 				{
 					for (std::vector<Base*>::const_iterator		// iterate through all the bases and remove this completed project from their labs
 							k = _playSave->getBases()->begin();	// unless it's an alien interrogation ...
