@@ -163,7 +163,7 @@ DogfightState::DogfightState(
 	_window					= new Surface(160, 96, _x, _y);
 
 	_battleScope			= new Surface(77, 74, _x +  3, _y +  3);
-	_damage					= new Surface(22, 25, _x + 93, _y + 40);
+	_srfHull				= new Surface(22, 25, _x + 93, _y + 40);
 	_srfCwRange1			= new Surface(21, 74, _x + 19, _y +  3);
 	_srfCwRange2			= new Surface(21, 74, _x + 43, _y +  3);
 	_isfCw1					= new InteractiveSurface(15, 17, _x +  4, _y + 52);
@@ -181,7 +181,7 @@ DogfightState::DogfightState(
 	_btnStandoff			= new ImageButton(36, 17, _x + 120, _y + 52);
 	_craftStance = _btnStandoff;
 
-	_texture				= new Surface(9, 9, _x + 147, _y + 72);
+	_srfTexIcon				= new Surface(9, 9, _x + 147, _y + 72);
 
 	_txtLoad1				= new Text( 16, 9, _x +   4, _y + 70);
 	_txtLoad2				= new Text( 16, 9, _x +  64, _y + 70);
@@ -202,7 +202,7 @@ DogfightState::DogfightState(
 	add(_srfCwRange1);
 	add(_isfCw2);
 	add(_srfCwRange2);
-	add(_damage);
+	add(_srfHull);
 	add(_btnMinimize);
 	add(_btnDisengage,		"disengageButton",	"dogfight", _window);
 	add(_btnUfo,			"ufoButton",		"dogfight", _window);
@@ -210,7 +210,7 @@ DogfightState::DogfightState(
 	add(_btnStandard,		"standardButton",	"dogfight", _window);
 	add(_btnCautious,		"cautiousButton",	"dogfight", _window);
 	add(_btnStandoff,		"standoffButton",	"dogfight", _window);
-	add(_texture);
+	add(_srfTexIcon);
 	add(_txtLoad1,			"numbers",			"dogfight", _window);
 	add(_txtLoad2,			"numbers",			"dogfight", _window);
 	add(_txtDistance,		"distance",			"dogfight", _window);
@@ -310,7 +310,7 @@ DogfightState::DogfightState(
 									Options::keyCancel);
 
 	if ((srf = _game->getResourcePack()->getSurface(getTextureIcon())) != nullptr)
-		srf->blit(_texture);
+		srf->blit(_srfTexIcon);
 	else Log(LOG_INFO) << "ERROR: no texture icon for dogfight";
 
 	_txtDistance->setText(Text::intWide(DST_ENGAGE));
@@ -349,6 +349,7 @@ DogfightState::DogfightState(
 	_colors[DAMAGE_MIN]			= static_cast<Uint8>(dfInterface->getElement("damageRange")->color);		//  12 (0+)yellow
 	_colors[DAMAGE_MAX]			= static_cast<Uint8>(dfInterface->getElement("damageRange")->color2);		//  14 (0+)red
 	_colors[BLOB_MIN]			= static_cast<Uint8>(dfInterface->getElement("radarDetail")->color);		// 108 (6)+12 green
+	_colors[BLOB_MAX]			= 127u;
 	_colors[RANGE_METER]		= static_cast<Uint8>(dfInterface->getElement("radarDetail")->color2);		// 111 (6)+15 green
 	_colors[DISABLED_WEAPON]	= static_cast<Uint8>(dfInterface->getElement("disabledWeapon")->color);		//  24
 	_colors[DISABLED_RANGE]		= static_cast<Uint8>(dfInterface->getElement("disabledWeapon")->color2);	//   7
@@ -469,7 +470,7 @@ DogfightState::DogfightState(
 
 	// Draw damage indicator.
 	srf = srtInticon->getFrame(_craft->getRules()->getSprite() + 11);
-	srf->blit(_damage);
+	srf->blit(_srfHull);
 
 	_craftDamageAnimTimer->onTimer(static_cast<StateHandler>(&DogfightState::aniCraftDamage));
 
@@ -491,16 +492,17 @@ DogfightState::DogfightState(
 
 	for (int
 			y = 0;
-			y != _damage->getHeight();
+			y != _srfHull->getHeight();
 			++y)
 	{
-		testColor = _damage->getPixelColor(11, y);
+		testColor = _srfHull->getPixelColor(11, y);
 		isCraftColor = testColor >= _colors[CRAFT_MIN]
 					&& testColor <  _colors[CRAFT_MAX];
 
 		if (_craftHeight != 0 && isCraftColor == false)
 			break;
-		else if (isCraftColor == true)
+
+		if (isCraftColor == true)
 			++_craftHeight;
 		else
 			++_craftHeight_pre;
@@ -611,15 +613,15 @@ void DogfightState::drawCraftDamage(bool init)
 						x != 23;
 						++x)
 				{
-					colorPre = _damage->getPixelColor(x,y);
+					colorPre = _srfHull->getPixelColor(x,y);
 
 					if (   colorPre >= _colors[CRAFT_MIN]
 						&& colorPre <  _colors[CRAFT_MAX])
 					{
-						_damage->setPixelColor(x,y, color);
+						_srfHull->setPixelColor(x,y, color);
 					}
 					else if (colorPre == _colors[DAMAGE_MIN])
-						_damage->setPixelColor(
+						_srfHull->setPixelColor(
 											x,y,
 											_colors[DAMAGE_MAX]);
 
@@ -628,7 +630,7 @@ void DogfightState::drawCraftDamage(bool init)
 //						|| (   colorPre > _colors[CRAFT_MIN] - 1
 //							&& colorPre < _colors[CRAFT_MAX]))
 //					{
-//						_damage->setPixelColor(x,y, _currentCraftDamageColor);
+//						_srfHull->setPixelColor(x,y, _currentCraftDamageColor);
 //					}
 				}
 			}
@@ -1706,7 +1708,7 @@ void DogfightState::btnUfoClick(Action* action)
 			_btnAggressive->setVisible(false);
 			_btnDisengage->setVisible(false);
 			_btnUfo->setVisible(false);
-			_texture->setVisible(false);
+			_srfTexIcon->setVisible(false);
 			_btnMinimize->setVisible(false);
 			_isfCw1->setVisible(false);
 			_isfCw2->setVisible(false);
@@ -1739,7 +1741,7 @@ void DogfightState::previewClick(Action* action)
 			_btnAggressive->setVisible();
 			_btnDisengage->setVisible();
 			_btnUfo->setVisible();
-			_texture->setVisible();
+			_srfTexIcon->setVisible();
 			_btnMinimize->setVisible();
 			_isfCw1->setVisible();
 			_isfCw2->setVisible();
@@ -1772,14 +1774,14 @@ void DogfightState::btnMinimizeDfClick(Action*)
 				_btnAggressive->setVisible(false);
 				_btnDisengage->setVisible(false);
 				_btnUfo->setVisible(false);
-				_texture->setVisible(false);
+				_srfTexIcon->setVisible(false);
 				_btnMinimize->setVisible(false);
 				_battleScope->setVisible(false);
 				_isfCw1->setVisible(false);
 				_srfCwRange1->setVisible(false);
 				_isfCw2->setVisible(false);
 				_srfCwRange2->setVisible(false);
-				_damage->setVisible(false);
+				_srfHull->setVisible(false);
 				_txtLoad1->setVisible(false);
 				_txtLoad2->setVisible(false);
 				_txtDistance->setVisible(false);
@@ -1817,13 +1819,13 @@ void DogfightState::btnMaximizeDfPress(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
-		case SDL_BUTTON_LEFT: // note that this includes keyboard press for whatever reason.
+		case SDL_BUTTON_LEFT: // note that this includes keyboard-press for whatever reason.
 		{
-			_texture->clear();
+			_srfTexIcon->clear();
 
 			Surface* const srf (_game->getResourcePack()->getSurface(getTextureIcon()));
 			if (srf != nullptr)
-				srf->blit(_texture);
+				srf->blit(_srfTexIcon);
 //			else Log(LOG_WARNING) << "Texture icon for dogfight not available.";
 
 			_minimized = false;
@@ -1835,14 +1837,14 @@ void DogfightState::btnMaximizeDfPress(Action* action)
 			_btnAggressive->setVisible();
 			_btnDisengage->setVisible();
 			_btnUfo->setVisible();
-			_texture->setVisible();
+			_srfTexIcon->setVisible();
 			_btnMinimize->setVisible();
 			_battleScope->setVisible();
 			_isfCw1->setVisible();
 			_srfCwRange1->setVisible();
 			_isfCw2->setVisible();
 			_srfCwRange2->setVisible();
-			_damage->setVisible();
+			_srfHull->setVisible();
 			_txtLoad1->setVisible();
 			_txtLoad2->setVisible();
 			_txtDistance->setVisible();
@@ -1951,14 +1953,14 @@ void DogfightState::drawUfo()
 void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 {
 	int pos_x ((_battleScope->getWidth() >> 1u) + (prj->getHorizontalPosition() << 1u));
-	Uint8
-		color,
-		colorOffset;
+	Uint8 colorOffset;
 
 	switch (prj->getGlobalType())
 	{
 		case PGT_MISSILE:
 		{
+			Uint8 color;
+
 			--pos_x;
 			const int pos_y (_battleScope->getHeight() - (prj->getCwpPosition() >> 3u));
 			for (int
@@ -1977,11 +1979,12 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 					if (colorOffset != 0u)
 					{
 						color = _window->getPixelColor(
-													pos_x + x + 3, // +3 'cause of the window frame
+													pos_x + x + 3,
 													pos_y + y + 3);
-						color = static_cast<Uint8>(color - colorOffset);
-						if (color < _colors[BLOB_MIN])
-							color = _colors[BLOB_MIN];
+						color = Vicegrip(
+									static_cast<Uint8>(color - colorOffset),
+									_colors[BLOB_MIN],
+									_colors[BLOB_MAX]);
 
 						_battleScope->setPixelColor(
 												pos_x + x,
@@ -1995,46 +1998,72 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 
 		case PGT_BEAM:
 		{
+			Uint8
+				colorSrc,
+				colorDst;
+
 			colorOffset = prj->getBeamPhase();
 			const int
 				stop  (_battleScope->getHeight() - 2),
-				start (_battleScope->getHeight() - (_dist >> 3u)),
-				intensity (_ufo->getRules()->getWeaponPower() / 50),
-				width (std::min(intensity, 3));
+				start (_battleScope->getHeight() - (_dist >> 3u));
+			int
+				intensity,
+				width;
 
 			for (int
 					y = stop;
 					y != start;
 					--y)
 			{
+				Log(LOG_INFO) << "";
 				switch (prj->getDirection())
 				{
 					case PD_CRAFT:
-						color = _window->getPixelColor(
-													pos_x + 3,
-													y + 3);
+						intensity = prj->getPower() / 50;
+						width = Vicegrip(intensity, 1,3);
+						colorSrc = _window->getPixelColor(
+														pos_x + 3,
+														y     + 3);
+						colorDst = static_cast<Uint8>(colorSrc - colorOffset - intensity);
 						for (int
 								x = 0;
 								x != width;
 								++x)
 						{
-							color = static_cast<Uint8>(color - colorOffset - intensity + (x << 1u));
-							if (color < _colors[BLOB_MIN])
-								color = _colors[BLOB_MIN];
+							colorDst = static_cast<Uint8>(colorDst + (x << 1u));
+							colorDst = Vicegrip(
+											colorDst,
+											_colors[BLOB_MIN],
+											_colors[BLOB_MAX]);
 
-							_battleScope->setPixelColor(pos_x + x, y, color);
-							_battleScope->setPixelColor(pos_x - x, y, color);
+							switch (x)
+							{
+								case 0:
+									_battleScope->setPixelColor(pos_x, y, colorDst);
+									break;
+								default:
+									_battleScope->setPixelColor(pos_x + x, y, colorDst);
+									_battleScope->setPixelColor(pos_x - x, y, colorDst);
+							}
 						}
 						break;
 
 					case PD_UFO:
+						width = Vicegrip(_ufo->getRules()->getWeaponPower() / 40, 1,3);
 						for (int
 								x = 0;
 								x != width;
 								++x)
 						{
-							_battleScope->setPixelColor(pos_x + x, y, RED);
-							_battleScope->setPixelColor(pos_x - x, y, RED);
+							switch (x)
+							{
+								case 0:
+									_battleScope->setPixelColor(pos_x, y, RED);
+									break;
+								default:
+									_battleScope->setPixelColor(pos_x + x, y, RED);
+									_battleScope->setPixelColor(pos_x - x, y, RED);
+							}
 						}
 				}
 			}
@@ -2114,7 +2143,7 @@ void DogfightState::resetInterceptPort(
 		size_t dfOpenTotal)
 {
 	if (_slot > _totalIntercepts)
-		_slot = _geoState->getOpenDfSlot(); // not sure what this is doing anymore ...
+		_slot = _geoState->getOpenDfSlot(); // keep slots filled contiguously.
 
 	_minimizedIconX = 5;
 	_minimizedIconY = static_cast<int>((_slot * 5u) + ((_slot - 1u) << 4u));

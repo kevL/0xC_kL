@@ -38,10 +38,11 @@ enum ColorDf
 	DAMAGE_MIN,			//  4
 	DAMAGE_MAX,			//  5
 	BLOB_MIN,			//  6
-	RANGE_METER,		//  7
-	DISABLED_WEAPON,	//  8
-	DISABLED_AMMO,		//  9
-	DISABLED_RANGE		// 10
+	BLOB_MAX,			//  7
+	RANGE_METER,		//  8
+	DISABLED_WEAPON,	//  9
+	DISABLED_AMMO,		// 10
+	DISABLED_RANGE		// 11
 };
 
 enum CautionLevel
@@ -117,7 +118,7 @@ private:
 	size_t
 		_slot,
 		_totalIntercepts;
-	Uint8 _colors[11u]; // see ColorDf enum above^
+	Uint8 _colors[12u]; // see ColorDf enum above^
 //		_currentCraftDamageColor;
 
 	CautionLevel _cautionLevel;
@@ -144,10 +145,10 @@ private:
 	SavedGame* _playSave;
 	Surface
 		* _battleScope,
-		* _damage,
+		* _srfHull,
 		* _srfCwRange1,
 		* _srfCwRange2,
-		* _texture,
+		* _srfTexIcon,
 		* _window;
 	Text
 		* _txtLoad1,

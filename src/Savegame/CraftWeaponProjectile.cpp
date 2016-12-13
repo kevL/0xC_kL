@@ -124,18 +124,17 @@ void CraftWeaponProjectile::stepProjectile()
 
 //			switch (_dir)	// -> at present there are no PGT_MISSILE w/ PD_UFO for UFOs, which fire PGT_BREAM exclusively;
 //			{				// in fact I don't think the Dogfight code even accounts for such a case currently.
-//				case PD_CRAFT:
-			_pos += delta; //break;
-//				case PD_UFO:
-//					_pos -= delta;
+//				case PD_CRAFT:	_pos += delta; break;
+//				case PD_UFO:	_pos -= delta;
 //			}
+			_pos += delta;
 
 			_dist += delta;
 			break;
 		}
 
 		case PGT_BEAM:
-			if ((_beamPhase = static_cast<Uint8>(_beamPhase >> 1u)) == 1u)
+			if ((_beamPhase >>= 1u) == 1u)
 				_done = true;
 	}
 }
