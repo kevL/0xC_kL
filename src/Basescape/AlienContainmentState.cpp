@@ -57,17 +57,17 @@ namespace OpenXcom
  * Initializes all the elements in the AlienContainment screen.
  * @param base		- pointer to the Base to get info from
  * @param origin	- game section that originated this state
- * @param state		- pointer to the BasescapeState (default nullptr if
+ * @param baseState	- pointer to the BasescapeState (default nullptr if
  *					  Battlescape-invoked or ResearchState-invoked)
  */
 AlienContainmentState::AlienContainmentState(
 		Base* const base,
 		OptionsOrigin origin,
-		BasescapeState* const state)
+		BasescapeState* const baseState)
 	:
 		_base(base),
 		_origin(origin),
-		_state(state),
+		_baseState(baseState),
 		_sel(0u),
 		_fishFood(0),
 		_totalSpace(0),
@@ -97,10 +97,10 @@ AlienContainmentState::AlienContainmentState(
 	setInterface("manageContainment");
 
 	add(_window,		"window",	"manageContainment");
-	add(_mini,			"miniBase",	"basescape"); // <-
+	add(_mini,			"miniBase",	"basescape");			// <-
 	add(_txtTitle,		"text",		"manageContainment");
 	add(_txtBaseLabel,	"text",		"manageContainment");
-	add(_txtHoverBase,	"numbers",	"baseInfo"); // <-
+	add(_txtHoverBase,	"numbers",	"baseInfo");			// <-
 	add(_txtSpace,		"text",		"manageContainment");
 	add(_txtResearch,	"text",		"manageContainment");
 	add(_txtItem,		"text",		"manageContainment");
@@ -308,11 +308,13 @@ void AlienContainmentState::init()
 }
 
 /**
- * Deals with the selected aliens.
+ * Exits this State after dealing with aLiens and music-tracks.
  * @param action - pointer to an Action
  */
 void AlienContainmentState::btnOkClick(Action*)
 {
+	const Ruleset* const rules (_game->getRuleset());
+
 	for (size_t
 			i = 0u;
 			i != _qtysCorpsify.size();
@@ -322,7 +324,7 @@ void AlienContainmentState::btnOkClick(Action*)
 		{
 			_base->getStorageItems()->removeItem(_aliens[i], _qtysCorpsify[i]);
 			_base->getStorageItems()->addItem(
-										_game->getRuleset()->getArmor(_game->getRuleset()->getUnitRule(_aliens[i])->getArmorType())->getCorpseGeoscape(),
+										rules->getArmor(rules->getUnitRule(_aliens[i])->getArmorType())->getCorpseGeoscape(),
 										_qtysCorpsify[i]);
 		}
 	}
@@ -331,7 +333,6 @@ void AlienContainmentState::btnOkClick(Action*)
 		&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 	{
 		_game->getResourcePack()->fadeMusic(_game, 863);
-//		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
 	_game->popState();
 }
@@ -511,7 +512,7 @@ void AlienContainmentState::updateListrow() // private.
  */
 void AlienContainmentState::miniClick(Action*)
 {
-	if (_state != nullptr) // cannot switch bases if origin is Battlescape/Debriefing OR Research state.
+	if (_baseState != nullptr) // cannot switch bases if origin is Battlescape/Debriefing OR Research state.
 	{
 		const size_t baseId (_mini->getHoveredBase());
 		if (baseId < _baseList->size())
@@ -522,9 +523,9 @@ void AlienContainmentState::miniClick(Action*)
 				_txtHoverBase->setText(L"");
 
 				_mini->setSelectedBase(baseId);
-				_state->setBase(_base = base);
+				_baseState->setBase(_base = base);
 
-				_state->resetStoresWarning();
+				_baseState->resetStoresWarning();
 				init();
 			}
 		}

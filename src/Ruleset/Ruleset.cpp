@@ -992,11 +992,11 @@ void Ruleset::loadFile(const std::string& file) // protected.
 		ResourcePack::INTERCEPTOR_HIT		= (*i)["interceptorHit"]	.as<size_t>(ResourcePack::INTERCEPTOR_HIT);
 		ResourcePack::INTERCEPTOR_EXPLODE	= (*i)["interceptorExplode"].as<size_t>(ResourcePack::INTERCEPTOR_EXPLODE);
 
-		ResourcePack::GEOSCAPE_CURSOR		= (*i)["geoscapeCursor"]	.as<size_t>(ResourcePack::GEOSCAPE_CURSOR);
-		ResourcePack::BASESCAPE_CURSOR		= (*i)["basescapeCursor"]	.as<size_t>(ResourcePack::BASESCAPE_CURSOR);
-		ResourcePack::BATTLESCAPE_CURSOR	= (*i)["battlescapeCursor"]	.as<size_t>(ResourcePack::BATTLESCAPE_CURSOR);
-		ResourcePack::UFOPAEDIA_CURSOR		= (*i)["ufopaediaCursor"]	.as<size_t>(ResourcePack::UFOPAEDIA_CURSOR);
-		ResourcePack::GRAPHS_CURSOR			= (*i)["graphsCursor"]		.as<size_t>(ResourcePack::GRAPHS_CURSOR);
+		ResourcePack::CURSOR_GEOSCAPE		= (*i)["geoscapeCursor"]	.as<size_t>(ResourcePack::CURSOR_GEOSCAPE);
+		ResourcePack::CURSOR_BASESCAPE		= (*i)["basescapeCursor"]	.as<size_t>(ResourcePack::CURSOR_BASESCAPE);
+		ResourcePack::CURSOR_BATTLESCAPE	= (*i)["battlescapeCursor"]	.as<size_t>(ResourcePack::CURSOR_BATTLESCAPE);
+		ResourcePack::CURSOR_UFOPAEDIA		= (*i)["ufopaediaCursor"]	.as<size_t>(ResourcePack::CURSOR_UFOPAEDIA);
+		ResourcePack::CURSOR_GRAPHS			= (*i)["graphsCursor"]		.as<size_t>(ResourcePack::CURSOR_GRAPHS);
 	} */
 
 	for (YAML::const_iterator				// NOTE: MapScripts are not loaded w/ loadRule(keyId=type)

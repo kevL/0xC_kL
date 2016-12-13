@@ -553,23 +553,14 @@ void State::setPalette(
 
 	switch (pal)
 	{
-		case PAL_BASESCAPE:
-			_cursorColor = static_cast<Uint8>(ResourcePack::BASESCAPE_CURSOR);
-			break;
-		case PAL_GEOSCAPE:
-			_cursorColor = static_cast<Uint8>(ResourcePack::GEOSCAPE_CURSOR);
-			break;
-		case PAL_GRAPHS:
-			_cursorColor = static_cast<Uint8>(ResourcePack::GRAPHS_CURSOR);
-			break;
-		case PAL_UFOPAEDIA:
-			_cursorColor = static_cast<Uint8>(ResourcePack::UFOPAEDIA_CURSOR);
-			break;
-
-		default:
-			_cursorColor = static_cast<Uint8>(ResourcePack::BATTLESCAPE_CURSOR);
+		case PAL_BASESCAPE:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_BASESCAPE);	break;
+		case PAL_GEOSCAPE:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_GEOSCAPE);	break;
+		case PAL_GRAPHS:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_GRAPHS);		break;
+		case PAL_UFOPAEDIA:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_UFOPAEDIA);	break;
+		case PAL_BATTLESCAPE:
+		case PAL_BATTLEPEDIA:
+		default:				_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_BATTLESCAPE);
 	}
-
 
 	if (backpal != BACKPAL_NONE)
 		setPalette(

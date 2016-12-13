@@ -111,11 +111,11 @@ private:
 				INTERCEPTOR_HIT		=  10u,
 				INTERCEPTOR_EXPLODE	=  13u,
 
-				GEOSCAPE_CURSOR		= 252u,
-				BASESCAPE_CURSOR	= 252u,
-				BATTLESCAPE_CURSOR	= 144u,
-				UFOPAEDIA_CURSOR	= 252u,
-				GRAPHS_CURSOR		= 252u;
+				CURSOR_GEOSCAPE		= 252u,
+				CURSOR_BASESCAPE	= 252u,
+				CURSOR_BATTLESCAPE	= 144u,
+				CURSOR_UFOPAEDIA	= 252u,
+				CURSOR_GRAPHS		= 252u;
 
 
 			/// Creates a ResourcePack with a folder's contents.

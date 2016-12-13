@@ -63,7 +63,7 @@ private:
 	OptionsOrigin _origin;
 
 	Base* _base;
-	BasescapeState* _state;
+	BasescapeState* _baseState;
 	MiniBaseView* _mini;
 	Text
 		* _txtBaseLabel,
