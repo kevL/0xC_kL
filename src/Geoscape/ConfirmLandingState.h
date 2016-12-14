@@ -27,7 +27,6 @@ namespace OpenXcom
 {
 
 class Craft;
-//class RuleCity;
 class RuleTerrain;
 class RuleTexture;
 class Text;

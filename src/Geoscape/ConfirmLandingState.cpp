@@ -260,15 +260,15 @@ ConfirmLandingState::ConfirmLandingState(
 	_txtMessage2->setText(tr("STR_CRAFT_DESTINATION_")
 						 .arg(_craft->getTarget()->getLabel(_game->getLanguage()))
 						 .arg(woststr.str()));
-	_txtMessage2->setBig();
 	_txtMessage2->setAlign(ALIGN_CENTER);
-
-	_txtBegin->setText(tr("STR_BEGIN_MISSION"));
-	_txtBegin->setAlign(ALIGN_CENTER);
-	_txtBegin->setBig();
+	_txtMessage2->setBig();
 
 	if (allowTactical == true)
 	{
+		_txtBegin->setText(tr("STR_BEGIN_MISSION"));
+		_txtBegin->setAlign(ALIGN_CENTER);
+		_txtBegin->setBig();
+
 		_btnYes->setText(tr("STR_YES"));
 		_btnYes->onMouseClick(		static_cast<ActionHandler>(&ConfirmLandingState::btnYesClick));
 		_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLandingState::btnYesClick),
@@ -278,6 +278,8 @@ ConfirmLandingState::ConfirmLandingState(
 	}
 	else if (ufo != nullptr)
 	{
+		_txtBegin->setVisible(false);
+
 		switch (ufo->getUfoStatus())
 		{
 			case Ufo::LANDED:
@@ -289,6 +291,7 @@ ConfirmLandingState::ConfirmLandingState(
 											Options::keyOkKeypad);
 				break;
 
+			case Ufo::CRASHED:
 			default:
 				_btnYes->setText(tr("STR_RETURN_TO_BASE"));
 				_btnYes->onMouseClick(		static_cast<ActionHandler>(&ConfirmLandingState::btnBaseClick));
@@ -299,7 +302,10 @@ ConfirmLandingState::ConfirmLandingState(
 		}
 	}
 	else
+	{
 		_btnYes->setVisible(false);
+		_txtBegin->setVisible(false);
+	}
 
 	_btnPatrol->setText(tr("STR_PATROL"));
 	_btnPatrol->onMouseClick(	static_cast<ActionHandler>(&ConfirmLandingState::btnPatrolClick));
