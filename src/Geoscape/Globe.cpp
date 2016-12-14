@@ -1597,7 +1597,8 @@ void Globe::drawFlights()
 					++j)
 			{
 				if ((*j)->getCraftStatus() == CS_OUT
-					&& (*j)->getTarget() != nullptr)
+					&& (*j)->getTarget() != nullptr
+					&& (*j)->inDogfight() == false)
 				{
 					static const double MIN_Diff (0.005); // radians
 					const double
@@ -1950,15 +1951,24 @@ void Globe::drawTarget( // private.
 				{
 					unsigned data; // "headingInt[1 digit] - altitudeInt[1 digit] - 0 - speed[4 digits]"
 
+					// TODO: Stack flight-data vertically for multiple Craft in the same Dogfight.
+
 					const Craft* const craft (dynamic_cast<const Craft*>(target));
+					bool vis (true);
+
 					if (craft != nullptr)
 					{
-						_flightData->setY(y - 7);
-						_flightData->setColor(C_GREEN);
+						if (craft->inDogfight() == false)
+						{
+							_flightData->setY(y - 7);
+							_flightData->setColor(C_GREEN);
 
-						data  = craft->getHeadingInt()  * 1000000u;
-						data += craft->getAltitudeInt() * 100000u;
-						data += static_cast<unsigned>(craft->getSpeed());
+							data  = craft->getHeadingInt()  * 1000000u;
+							data += craft->getAltitudeInt() * 100000u;
+							data += static_cast<unsigned>(craft->getSpeed());
+						}
+						else
+							vis = false;
 					}
 					else //if (ufo != nullptr)
 					{
@@ -1972,10 +1982,13 @@ void Globe::drawTarget( // private.
 						data += static_cast<unsigned>(ufo->getSpeed());
 					}
 
-					_flightData->setX(x);
-					_flightData->setValue(data);
-					_flightData->draw();
-					_flightData->blit(srfGlobe);
+					if (vis == true)
+					{
+						_flightData->setX(x);
+						_flightData->setValue(data);
+						_flightData->draw();
+						_flightData->blit(srfGlobe);
+					}
 				}
 			}
 		}

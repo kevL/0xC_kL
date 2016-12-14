@@ -21,6 +21,7 @@
 
 #include "../fmath.h"
 
+#include "Craft.h"
 #include "SavedGame.h"
 #include "SerializationHelper.h"
 #include "Ufo.h"
@@ -334,91 +335,95 @@ void MovingTarget::calculateMeetPoint() // private.
 	//Log(LOG_INFO) << ". lonPoint= " << _lonPoint;
 	//Log(LOG_INFO) << ". latPoint= " << _latPoint;
 
-	MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_target));
-	if (ufo != nullptr && ufo->getTarget() != nullptr
-		&& AreSame(ufo->_speedRads, 0.) == false)
+	const Craft* const craft (dynamic_cast<const Craft*>(this));
+	if (craft != nullptr && craft->inDogfight() == false)
 	{
-		const double
-			lonUfo				(ufo->getLongitude()),
-			sin_lonUfo			(std::sin(lonUfo)),
-			cos_lonUfo			(std::cos(lonUfo)),
+		MovingTarget* const ufo (dynamic_cast<MovingTarget*>(_target));
+		if (ufo != nullptr && ufo->getTarget() != nullptr
+			&& AreSame(ufo->_speedRads, 0.) == false)
+		{
+			const double
+				lonUfo				(ufo->getLongitude()),
+				sin_lonUfo			(std::sin(lonUfo)),
+				cos_lonUfo			(std::cos(lonUfo)),
 
-			latUfo				(ufo->getLatitude()),
-			sin_latUfo			(std::sin(latUfo)),
-			cos_latUfo			(std::cos(latUfo)),
+				latUfo				(ufo->getLatitude()),
+				sin_latUfo			(std::sin(latUfo)),
+				cos_latUfo			(std::cos(latUfo)),
 
-			lonUfoTarget		(ufo->getTarget()->getLongitude()),
-			sin_lonUfoTarget	(std::sin(lonUfoTarget)),
-			cos_lonUfoTarget	(std::cos(lonUfoTarget)),
+				lonUfoTarget		(ufo->getTarget()->getLongitude()),
+				sin_lonUfoTarget	(std::sin(lonUfoTarget)),
+				cos_lonUfoTarget	(std::cos(lonUfoTarget)),
 
-			latUfoTarget		(ufo->getTarget()->getLatitude()),
-			sin_latUfoTarget	(std::sin(latUfoTarget)),
-			cos_latUfoTarget	(std::cos(latUfoTarget)),
+				latUfoTarget		(ufo->getTarget()->getLatitude()),
+				sin_latUfoTarget	(std::sin(latUfoTarget)),
+				cos_latUfoTarget	(std::cos(latUfoTarget)),
 
-			sin_lon				(std::sin(lonUfoTarget - lonUfo));
+				sin_lon				(std::sin(lonUfoTarget - lonUfo));
 
-		double
-			nx (cos_latUfo * sin_lonUfo       * sin_latUfoTarget
-			  - sin_latUfo * cos_latUfoTarget * sin_lonUfoTarget),
+			double
+				nx (cos_latUfo * sin_lonUfo       * sin_latUfoTarget
+				  - sin_latUfo * cos_latUfoTarget * sin_lonUfoTarget),
 
-			ny (sin_latUfo * cos_latUfoTarget * cos_lonUfoTarget
-			  - cos_latUfo * cos_lonUfo       * sin_latUfoTarget),
+				ny (sin_latUfo * cos_latUfoTarget * cos_lonUfoTarget
+				  - cos_latUfo * cos_lonUfo       * sin_latUfoTarget),
 
-			nz (cos_latUfo * cos_latUfoTarget * sin_lon);
+				nz (cos_latUfo * cos_latUfoTarget * sin_lon);
 
-		const double nk (_speedRads / std::sqrt(nx * nx + ny * ny + nz * nz));
-		nx *= nk;
-		ny *= nk;
-		nz *= nk;
+			const double nk (_speedRads / std::sqrt(nx * nx + ny * ny + nz * nz));
+			nx *= nk;
+			ny *= nk;
+			nz *= nk;
 
-		double
-			path (0.),
-			dist;
-		double
-			old_path,
-			new_path (std::acos(
+			double
+				path (0.),
+				dist;
+			double
+				old_path,
+				new_path (std::acos(
+									std::cos(_lat)
+								  * std::cos(_latPoint)
+								  * std::cos(_lonPoint - _lon)
+								  + std::sin(_lat)
+								  * std::sin(_latPoint)));
+			const double speedRatio (_speedRads / ufo->_speedRads);
+
+			do
+			{
+				old_path = new_path;
+				_latPoint += nx * std::sin(_lonPoint)
+						   - ny * std::cos(_lonPoint);
+
+				if (std::fabs(_latPoint) < M_PI_2)
+					_lonPoint += nz
+								  - (nx * std::cos(_lonPoint)
+								  +  ny * std::sin(_lonPoint))
+								  * std::tan(_latPoint);
+				else
+					_lonPoint += M_PI;
+
+				path += _speedRads;
+				dist = std::acos(
 								std::cos(_lat)
 							  * std::cos(_latPoint)
 							  * std::cos(_lonPoint - _lon)
 							  + std::sin(_lat)
-							  * std::sin(_latPoint)));
-		const double speedRatio (_speedRads / ufo->_speedRads);
+							  * std::sin(_latPoint));
+				new_path = dist - path * speedRatio;
+			}
+			while (path < M_PI && new_path > 0. && old_path > new_path);
 
-		do
-		{
-			old_path = new_path;
-			_latPoint += nx * std::sin(_lonPoint)
-					   - ny * std::cos(_lonPoint);
+			while (std::fabs(_lonPoint) > M_PI)
+				_lonPoint -= std::copysign(M_PI * 2., _lonPoint);
 
-			if (std::fabs(_latPoint) < M_PI_2)
-				_lonPoint += nz
-							  - (nx * std::cos(_lonPoint)
-							  +  ny * std::sin(_lonPoint))
-							  * std::tan(_latPoint);
-			else
-				_lonPoint += M_PI;
+			while (std::fabs(_latPoint) > M_PI)
+				_latPoint -= std::copysign(M_PI * 2., _latPoint);
 
-			path += _speedRads;
-			dist = std::acos(
-							std::cos(_lat)
-						  * std::cos(_latPoint)
-						  * std::cos(_lonPoint - _lon)
-						  + std::sin(_lat)
-						  * std::sin(_latPoint));
-			new_path = dist - path * speedRatio;
-		}
-		while (path < M_PI && new_path > 0. && old_path > new_path);
-
-		while (std::fabs(_lonPoint) > M_PI)
-			_lonPoint -= std::copysign(M_PI * 2., _lonPoint);
-
-		while (std::fabs(_latPoint) > M_PI)
-			_latPoint -= std::copysign(M_PI * 2., _latPoint);
-
-		if (std::fabs(_latPoint) > M_PI_2)
-		{
-			_lonPoint -= std::copysign(M_PI, _lonPoint);
-			_latPoint  = std::copysign(M_PI * 2. - std::fabs(_latPoint), _latPoint);
+			if (std::fabs(_latPoint) > M_PI_2)
+			{
+				_lonPoint -= std::copysign(M_PI, _lonPoint);
+				_latPoint  = std::copysign(M_PI * 2. - std::fabs(_latPoint), _latPoint);
+			}
 		}
 	}
 }
