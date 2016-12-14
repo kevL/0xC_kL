@@ -263,6 +263,7 @@ extraStrings:
       STR_PARTS_PRODUCED: "parts produced>"
       STR_UNLOCKED: "start play"
       STR_CRACKED: "> cracked <"
+      STR_ALIEN_ASSISTANCE: "aLien Assistance"
 #      STR_MORE_REPORTS: "> reports >"
 #      STR_PLASMA_BEAM_H: PB
 #Extra strings:

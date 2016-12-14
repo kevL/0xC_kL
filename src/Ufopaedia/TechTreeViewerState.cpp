@@ -19,6 +19,7 @@
 
 #include "TechTreeViewerState.h"
 
+#include "TechTreeHelpState.h"
 #include "TechTreeSelectState.h"
 
 #include "../Engine/Action.h"
@@ -43,7 +44,7 @@
 namespace OpenXcom
 {
 
-const std::string TechTreeViewerState::START_PLAY ("STR_UNLOCKED"); // static.
+const std::string& TechTreeViewerState::START_PLAY = "STR_UNLOCKED"; // static.
 
 
 /**
@@ -100,21 +101,24 @@ void TechTreeViewerState::build()
 					320,200,
 					0,0, POPUP_VERTICAL);
 
-	_txtTitle = new Text(300, 16, 10, 7);
+	_txtTitle		= new Text(300, 16, 10, 7);
 
-	_txtSelTopic = new Text(180, 9,  16, 24);
-	_txtProgress = new Text(100, 9, 204, 24);
+	_btnHelp		= new TextButton(40, 14, 16, 7);
 
-	_lstLeft	= new TextList(132, 128,  16, 40);
-	_lstRight	= new TextList(132, 128, 169, 40);
+	_txtSelTopic	= new Text(180, 9,  16, 24);
+	_txtProgress	= new Text(100, 9, 204, 24);
 
-	_btnSelect	= new TextButton(148, 16,   8, 176);
-	_btnOk		= new TextButton(148, 16, 164, 176);
+	_lstLeft		= new TextList(132, 128,  16, 40);
+	_lstRight		= new TextList(132, 128, 169, 40);
+
+	_btnSelect		= new TextButton(148, 16,   8, 176);
+	_btnOk			= new TextButton(148, 16, 164, 176);
 
 	setInterface("researchMenu");
 
 	add(_window,		"window",	"researchMenu");
 	add(_txtTitle,		"text",		"researchMenu");
+	add(_btnHelp,		"button",	"researchMenu");
 	add(_txtSelTopic,	"text",		"researchMenu");
 	add(_txtProgress,	"text",		"researchMenu");
 	add(_lstLeft,		"list",		"researchMenu");
@@ -148,6 +152,11 @@ void TechTreeViewerState::build()
 	_lstRight->setMargin();
 	_lstRight->setWordWrap();
 	_lstRight->onMouseClick(static_cast<ActionHandler>(&TechTreeViewerState::lstRightTopicClick));
+
+	_btnHelp->setText(tr(""));
+	_btnHelp->onMouseClick(	static_cast<ActionHandler>(&TechTreeViewerState::btnHelpClick));
+	_btnHelp->onMouseClick(	static_cast<ActionHandler>(&TechTreeViewerState::btnHelpClick),
+							SDLK_h);
 
 	_btnSelect->setText(tr("STR_SELECT_TOPIC"));
 	_btnSelect->onMouseClick(	static_cast<ActionHandler>(&TechTreeViewerState::btnSelectClick));
@@ -241,7 +250,16 @@ void TechTreeViewerState::btnSelectClick(Action*)
 }
 
 /**
- * Populates the topics.
+ * Opens the Research Help info screen.
+ * @param action - pointer to an Action
+ */
+void TechTreeViewerState::btnHelpClick(Action*)
+{
+	_game->pushState(new TechTreeHelpState(_selTopic));
+}
+
+/**
+ * Populates the lists.
  */
 void TechTreeViewerState::fillTechTreeLists()
 {

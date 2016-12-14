@@ -1312,7 +1312,7 @@ void Base::clearResearchProject(
 
 /**
  * Research Help ala XcomUtil.
- * @param aLien - reference to the name of an aLien that got prodded
+ * @param aLien - reference to the type of an aLien that got prodded
  */
 void Base::researchHelp(const std::string& aLien) // private.
 {
@@ -1358,7 +1358,7 @@ void Base::researchHelp(const std::string& aLien) // private.
  * Gets soldier coefficient for Research Help.
  * @return, help coef
  */
-double Base::getSoldierHelp(const std::string& resType) // private/static.
+double Base::getSoldierHelp(const std::string& resType) // static.
 {
 	if (   resType.compare("STR_ALIEN_GRENADE") == 0
 		|| resType.compare("STR_ALIEN_ENTERTAINMENT") == 0
@@ -1395,7 +1395,7 @@ double Base::getSoldierHelp(const std::string& resType) // private/static.
  * Gets navigator coefficient for Research Help.
  * @return, help coef
  */
-double Base::getNavigatorHelp(const std::string& resType) // private/static.
+double Base::getNavigatorHelp(const std::string& resType) // static.
 {
 	if (   resType.compare("STR_HYPER_WAVE_DECODER") == 0
 		|| resType.compare("STR_UFO_NAVIGATION") == 0)
@@ -1464,7 +1464,7 @@ double Base::getNavigatorHelp(const std::string& resType) // private/static.
  * Gets medic coefficient for Research Help.
  * @return, help coef
  */
-double Base::getMedicHelp(const std::string& resType) // private/static.
+double Base::getMedicHelp(const std::string& resType) // static.
 {
 	if (   resType.compare("STR_ALIEN_FOOD") == 0
 		|| resType.compare("STR_ALIEN_SURGERY") == 0
@@ -1506,7 +1506,7 @@ double Base::getMedicHelp(const std::string& resType) // private/static.
  * Gets engineer coefficient for Research Help.
  * @return, help coef
  */
-double Base::getEngineerHelp(const std::string& resType) // private/static.
+double Base::getEngineerHelp(const std::string& resType) // static.
 {
 	if (   resType.compare("STR_BLASTER_LAUNCHER") == 0
 		|| resType.compare("STR_BLASTER_BOMB") == 0
@@ -1564,7 +1564,7 @@ double Base::getEngineerHelp(const std::string& resType) // private/static.
  * Gets leader coefficient for Research Help.
  * @return, help coef
  */
-double Base::getLeaderHelp(const std::string& resType) // private/static.
+double Base::getLeaderHelp(const std::string& resType) // static.
 {
 	if (resType.compare("STR_EXAMINATION_ROOM") == 0)
 		return 0.8;
@@ -1618,7 +1618,7 @@ double Base::getLeaderHelp(const std::string& resType) // private/static.
  * Gets commander coefficient for Research Help.
  * @return, help coef
  */
-double Base::getCommanderHelp(const std::string& resType) // private/static.
+double Base::getCommanderHelp(const std::string& resType) // static.
 {
 	if (   resType.compare("STR_BLASTER_LAUNCHER") == 0
 		|| resType.compare("STR_EXAMINATION_ROOM") == 0)

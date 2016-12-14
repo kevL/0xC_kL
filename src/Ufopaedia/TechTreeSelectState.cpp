@@ -53,15 +53,15 @@ TechTreeSelectState::TechTreeSelectState(TechTreeViewerState* const viewer)
 {
 	_fullScreen = false;
 
-	_window = new Window(this, 230, 140, 45, 30);
+	_window			= new Window(this, 230, 140, 45, 30);
 
-	_txtTitle = new Text(80, 9, 120, 42);
-	_edtQuickSearch = new TextEdit(this, 50, 9, 215, 42);
-	_srfSearchField = new Surface(52, 11, 214, 41);
+	_txtTitle		= new Text(80, 9, 120, 42);
+	_edtQuickSearch	= new TextEdit(this, 50, 9, 215, 42);
+	_srfSearchField	= new Surface(52, 11, 214, 41);
 
-	_lstTopics = new TextList(192, 89, 64, 54);
+	_lstTopics		= new TextList(192, 89, 64, 54);
 
-	_btnOk = new TextButton(206, 16, 57, 145);
+	_btnOk			= new TextButton(206, 16, 57, 145);
 
 	setInterface("allocateResearch");
 

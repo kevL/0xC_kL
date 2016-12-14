@@ -63,7 +63,7 @@ private:
 		BLUE			= 218u,
 		PINK			= 241u;
 
-	static const std::string START_PLAY;
+	static const std::string& START_PLAY;
 
 	TechTreeType _selFlag;
 
@@ -85,6 +85,7 @@ private:
 		* _txtSelTopic,
 		* _txtProgress;
 	TextButton
+		* _btnHelp,
 		* _btnOk,
 		* _btnSelect;
 	TextList
@@ -92,7 +93,7 @@ private:
 		* _lstRight;
 	Window* _window;
 
-	/// Populates the topics.
+	/// Populates the lists.
 	void fillTechTreeLists();
 	/// Selects a topic on the left.
 	void lstLeftTopicClick(Action* action);
@@ -104,9 +105,9 @@ private:
 		/// Creates a TechTreeViewer state.
 		TechTreeViewerState();
 		/// Creates a TechTreeViewer state with a specified topic of Research.
-		TechTreeViewerState(const RuleResearch* const topicResearch);
+		explicit TechTreeViewerState(const RuleResearch* const topicResearch);
 		/// Creates a TechTreeViewer state with a specified topic of Manufacture.
-		TechTreeViewerState(const RuleManufacture* const topicManufacture);
+		explicit TechTreeViewerState(const RuleManufacture* const topicManufacture);
 		/// Cleans up the TechTreeViewer state.
 		~TechTreeViewerState();
 
@@ -120,6 +121,8 @@ private:
 		void btnOkClick(Action* action);
 		/// Handler for clicking the Select Topic button.
 		void btnSelectClick(Action* action);
+		/// Handler for clicking the Research Help button.
+		void btnHelpClick(Action* action);
 
 		/// Sets the selected topic.
 		void setSelectedTopic(
