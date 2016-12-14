@@ -2016,7 +2016,6 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj)
 					y != start;
 					--y)
 			{
-				Log(LOG_INFO) << "";
 				switch (prj->getDirection())
 				{
 					case PD_CRAFT:

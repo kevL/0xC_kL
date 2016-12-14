@@ -1953,6 +1953,8 @@ void Globe::drawTarget( // private.
 
 					// TODO: Stack flight-data vertically for multiple Craft in the same Dogfight.
 
+					// TODO: Deal with multiple Craft patrolling over the same Crashed/Landed UFO or TerrorSite.
+
 					const Craft* const craft (dynamic_cast<const Craft*>(target));
 					bool vis (true);
 
