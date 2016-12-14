@@ -40,31 +40,31 @@ class Cursor final
 {
 
 private:
-	bool _fakeMotion;
+	bool _falsifyMotion;
 	Uint8 _color;
 
 
 	public:
-		/// Creates a new cursor with the specified size and position.
+		/// Creates a Cursor with the specified size and position.
 		Cursor(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the cursor.
+		/// Cleans up the Cursor.
 		~Cursor();
 
-		/// Handles mouse events.
+		/// Handles mouse-events.
 		void handle(Action* action);
-		/// Informs the cursor not to bother.
-		void fakeMotion();
+		/// Informs the Cursor not to bother.
+		void falsifyMotion();
 
-		/// Sets the cursor's color.
+		/// Sets the Cursor's color.
 		void setColor(Uint8 color) override;
-		/// Gets the cursor's color.
+		/// Gets the Cursor's color.
 		Uint8 getColor() const;
 
-		/// Draws the cursor.
+		/// Draws the Cursor.
 		void draw() override;
 };
 

@@ -30,7 +30,8 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a cursor with the specified size and position and hides the system cursor.
+ * Sets up the Cursor with the specified size and position and hides the
+ * operating-system cursor.
  * @note The size and position don't really matter since it's a 9x13 shape.
  * They're just for inheritance.
  * @param width		- width in pixels
@@ -45,11 +46,11 @@ Cursor::Cursor(
 		int y)
 	:
 		Surface(
-			width,
-			height,
-			x,y),
-		_color(0),
-		_fakeMotion(false)
+				width,
+				height,
+				x,y),
+		_color(0u),
+		_falsifyMotion(false)
 {}
 
 /**
@@ -59,14 +60,14 @@ Cursor::~Cursor()
 {}
 
 /**
- * Automatically updates the cursor position when the mouse moves.
+ * Automatically updates this Cursor's coordinates when the mouse moves.
  * @param action - pointer to an Action
  */
 void Cursor::handle(Action* action)
 {
 	if (action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		if (_fakeMotion == false)
+		if (_falsifyMotion == false)
 		{
 			setX(static_cast<int>(
 				 static_cast<double>(
@@ -78,23 +79,23 @@ void Cursor::handle(Action* action)
 					/ action->getScaleY()));
 		}
 		else
-			_fakeMotion = false;
+			_falsifyMotion = false;
 	}
 }
 
 /**
- * Informs the cursor not to bother.
- * @note This is needed to prevent rounding errors in handle() when the Map is
+ * Informs this Cursor not to bother.
+ * @note This is needed to cope with rounding errors in handle() when the Map is
  * scrolled or jumped by keyboard. The cursor tends to go off by a pixel on
  * every third call to BattlescapeState::refreshMousePosition() otherwise.
  */
-void Cursor::fakeMotion()
+void Cursor::falsifyMotion()
 {
-	_fakeMotion = true;
+	_falsifyMotion = true;
 }
 
 /**
- * Changes the cursor's base color.
+ * Changes this Cursor's base-color.
  * @param color - color value
  */
 void Cursor::setColor(Uint8 color)
@@ -104,7 +105,7 @@ void Cursor::setColor(Uint8 color)
 }
 
 /**
- * Gets the cursor's base color.
+ * Gets this Cursor's base-color.
  * @return, color value
  */
 Uint8 Cursor::getColor() const
@@ -113,7 +114,7 @@ Uint8 Cursor::getColor() const
 }
 
 /**
- * Draws a pointer-shaped cursor graphic.
+ * Draws a pointer-shaped cursor-graphic.
  */
 void Cursor::draw()
 {

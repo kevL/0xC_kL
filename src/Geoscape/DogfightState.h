@@ -174,7 +174,7 @@ private:
 
 
 	public:
-		/// Creates the Dogfight state.
+		/// Creates a Dogfight state.
 		DogfightState(
 					Globe* const globe,
 					Craft* const craft,
@@ -214,9 +214,9 @@ private:
 		/// Handler for clicking the Preview graphic.
 		void previewClick(Action* action);
 		/// Handler for clicking the Minimize Dogfight button.
-		void btnMinimizeDfClick(Action* action);
+		void btnMaximizedDfClick(Action* action);
 		/// Handler for clicking the Maximize Dogfight icon.
-		void btnMaximizeDfPress(Action* action);
+		void btnMinimizedDfPress(Action* action);
 
 		/// Returns true if state is minimized.
 		bool isMinimized() const;

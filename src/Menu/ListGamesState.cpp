@@ -232,7 +232,7 @@ void ListGamesState::think()
 	else if (_refresh == true)
 	{
 		_refresh = false;
-		_game->getCursor()->fakeMotion();
+		_game->getCursor()->falsifyMotion();
 
 		int
 			x,y,

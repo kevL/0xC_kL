@@ -1923,15 +1923,18 @@ void BattlescapeState::btnInventoryClick(Action*)
  */
 void BattlescapeState::refreshMousePosition() const
 {
-	_game->getCursor()->fakeMotion();
+	_game->getCursor()->falsifyMotion();
 
 	int // doesn't do shit. FIXED.
 		x,y,
 		dir;
 	SDL_GetMouseState(&x,&y);
 
-	if (x == 0)	dir = +1;
-	else		dir = -1;
+	switch (x)
+	{
+		case 0:  dir = +1; break; // don't warp Cursor's x-coord off left edge of Screen
+		default: dir = -1;
+	}
 
 	SDL_WarpMouse(
 			static_cast<Uint16>(x + dir),

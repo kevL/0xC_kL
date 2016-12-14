@@ -281,7 +281,7 @@ DogfightState::DogfightState(
 	_previewUfo->onMouseClick(	static_cast<ActionHandler>(&DogfightState::previewClick),
 								0u);
 
-	_btnMinimize->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnMinimizeDfClick));
+	_btnMinimize->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnMaximizedDfClick));
 
 	_btnUfo->copy(_window);
 	_btnUfo->onMouseClick(	static_cast<ActionHandler>(&DogfightState::btnUfoClick),
@@ -325,10 +325,10 @@ DogfightState::DogfightState(
 //	srf->setX(0);
 //	srf->setY(0);
 	srf->blit(_btnMinimizedIcon);
-	_btnMinimizedIcon->onMousePress(	static_cast<ActionHandler>(&DogfightState::btnMaximizeDfPress));
-	_btnMinimizedIcon->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::btnMaximizeDfPress),
+	_btnMinimizedIcon->onMousePress(	static_cast<ActionHandler>(&DogfightState::btnMinimizedDfPress));
+	_btnMinimizedIcon->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::btnMinimizedDfPress),
 										Options::keyOk);		// used to Maximize all minimized interceptor icons.
-	_btnMinimizedIcon->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::btnMaximizeDfPress),
+	_btnMinimizedIcon->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::btnMinimizedDfPress),
 										Options::keyOkKeypad);	// used to Maximize all minimized interceptor icons.
 	_btnMinimizedIcon->setVisible(false);
 
@@ -1528,7 +1528,7 @@ void DogfightState::keyEscape(Action*)
 		}
 
 		if (miniAll == true)
-			btnMinimizeDfClick(nullptr);
+			btnMaximizedDfClick(nullptr);
 	}
 }
 
@@ -1752,7 +1752,7 @@ void DogfightState::previewClick(Action* action)
  * Minimizes the dogfight window.
  * @param action - pointer to an Action
  */
-void DogfightState::btnMinimizeDfClick(Action*)
+void DogfightState::btnMaximizedDfClick(Action*)
 {
 	_geoState->resetTimer();
 
@@ -1815,7 +1815,7 @@ void DogfightState::btnMinimizeDfClick(Action*)
  * Maximizes the dogfight window.
  * @param action - pointer to an Action
  */
-void DogfightState::btnMaximizeDfPress(Action* action)
+void DogfightState::btnMinimizedDfPress(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -1874,6 +1874,7 @@ void DogfightState::btnMaximizeDfPress(Action* action)
 
 		case SDL_BUTTON_RIGHT:
 			_game->pushState(new GeoscapeCraftState(_craft, _geoState));
+			_globe->rotateStop(); // grrr
 	}
 }
 

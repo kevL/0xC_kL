@@ -153,7 +153,7 @@ void TechTreeViewerState::build()
 	_lstRight->setWordWrap();
 	_lstRight->onMouseClick(static_cast<ActionHandler>(&TechTreeViewerState::lstRightTopicClick));
 
-	_btnHelp->setText(tr(""));
+//	_btnHelp->setText(tr(""));
 	_btnHelp->onMouseClick(	static_cast<ActionHandler>(&TechTreeViewerState::btnHelpClick));
 	_btnHelp->onMouseClick(	static_cast<ActionHandler>(&TechTreeViewerState::btnHelpClick),
 							SDLK_h);
