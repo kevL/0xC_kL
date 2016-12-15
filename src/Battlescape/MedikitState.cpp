@@ -67,29 +67,28 @@ std::wstring toString(T val)
 
 
 /**
- * Helper class for the Medikit.
+ * Helper struct for the Medikit.
  */
-class MedikitTitle
+struct MedikitTitle
 	:
 		public Text
 {
-	public:
-		/// Creates a MedikitTitle.
-		MedikitTitle(
-				int y,
-				const std::wstring& title);
+	/// Creates a MedikitTitle.
+	MedikitTitle(
+			int y,
+			const std::wstring& title);
 };
 
 /**
  * Initializes a MedikitTitle.
- * @param y		- the title's y origin
+ * @param y		- the title's y-origin
  * @param title	- reference to the title
  */
 MedikitTitle::MedikitTitle(
 		int y,
 		const std::wstring& title)
 	:
-		Text(73, 9, 186, y)
+		Text(73,9, 186,y)
 {
 	this->setText(title);
 	this->setHighContrast();
@@ -97,50 +96,48 @@ MedikitTitle::MedikitTitle(
 }
 
 /**
- * Helper class for the Medikit.
+ * Helper struct for the Medikit.
  */
-class MedikitText
+struct MedikitText
 	:
 		public Text
 {
-	public:
-		/// Creates a MedikitText.
-		explicit MedikitText(int y);
+	/// Creates a MedikitText.
+	explicit MedikitText(int y);
 };
 
 /**
  * Initializes a MedikitText.
- * @param y - the text's y origin
+ * @param y - the text's y-origin
  */
 MedikitText::MedikitText(int y)
 	:
-		Text(33, 17, 220, y)
+		Text(33,17, 220,y)
 {
-	// Note: can't set setBig here. The needed font is only set when added to State
+	// NOTE: can't set setBig() here. The needed font is only set when added to State
 	this->setColor(16); // orange
 	this->setHighContrast();
 	this->setAlign(ALIGN_CENTER);
 }
 
 /**
- * Helper class for the Medikit.
+ * Helper struct for the Medikit.
  */
-class MedikitButton
+struct MedikitButton
 	:
 		public InteractiveSurface
 {
-	public:
-		/// Creates a MedikitButton.
-		explicit MedikitButton(int y);
+	/// Creates a MedikitButton.
+	explicit MedikitButton(int y);
 };
 
 /**
  * Initializes a MedikitButton.
- * @param y - the button's y origin
+ * @param y - the button's y-origin
  */
 MedikitButton::MedikitButton(int y)
 	:
-		InteractiveSurface(25, 21, 192, y)
+		InteractiveSurface(25,21, 192,y)
 {}
 
 
@@ -160,8 +157,8 @@ MedikitState::MedikitState(BattleAction* const action)
 	} */
 
 	_bg = new Surface(
-				Options::baseXResolution,
-				Options::baseYResolution);
+					Options::baseXResolution,
+					Options::baseYResolution);
 
 	setPalette(PAL_BATTLESCAPE);
 
@@ -236,13 +233,14 @@ MedikitState::MedikitState(BattleAction* const action)
 
 	std::wstring wst (tr("STR_PAIN_KILLER"));
 	add(new MedikitTitle( 36, wst), "textPK",	"medikit", _bg); // not in Interfaces.rul
+
 	wst = tr("STR_STIMULANT");
 	add(new MedikitTitle( 72, wst), "textStim",	"medikit", _bg); // not in Interfaces.rul
+
 	wst = tr("STR_HEAL");
 	add(new MedikitTitle(108, wst), "textHeal",	"medikit", _bg); // not in Interfaces.rul
 
 	add(_mediView,	"body",			"medikit", _bg);
-
 	add(_btnHeal,	"buttonHeal",	"medikit", _bg); // not in Interfaces.rul
 	add(_btnStim,	"buttonStim",	"medikit", _bg); // not in Interfaces.rul
 	add(_btnPain,	"buttonPK",		"medikit", _bg); // not in Interfaces.rul

@@ -221,13 +221,13 @@ void MCDPatch::load(const YAML::Node& node) // TODO: fill this out with more dat
  */
 void MCDPatch::patchData(MapDataSet* const dataSet) const
 {
-	//Log(LOG_INFO) << "MCDPatch: patchData() dataSet = " << dataSet->getType();
+	//Log(LOG_INFO) << "MCDPatch::patchData() dataSet= " << dataSet->getType();
 	for (std::vector<std::pair<size_t, int>>::const_iterator
 			i = _bigWalls.begin();
 			i != _bigWalls.end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". index = " << (i->first) << " bigWall = " << (i->second);
+		//Log(LOG_INFO) << ". id= " << (i->first) << " bigWall= " << (i->second);
 		int bigwall;
 		switch (i->second) // convert decimal-based patches to hexadecimal BigwallTypes.
 		{
@@ -245,7 +245,6 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 //			case 9:								// BIGWALL_W_N - not used in stock UFO.
 		}
 		dataSet->getRecords()->at(i->first)->setBigWall(bigwall);
-//		dataSet->getRecords()->at(i->first)->setBigWall(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator

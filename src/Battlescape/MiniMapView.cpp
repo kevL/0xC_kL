@@ -67,8 +67,8 @@ MiniMapView::MiniMapView(
 		const SavedBattleGame* const battleSave)
 	:
 		InteractiveSurface(
-			w,h,
-			x,y),
+				w,h,
+				x,y),
 		_game(game),
 		_camera(camera),
 		_battleSave(battleSave),
@@ -377,8 +377,8 @@ void MiniMapView::centerUnit()
 	if (unit != nullptr)
 	{
 		_camera->centerPosition(
-								unit->getPosition(),
-								false);
+							unit->getPosition(),
+							false);
 		_redraw = true;
 	}
 }
@@ -492,11 +492,11 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 		_dragScrollY -= static_cast<int>(action->getDetails()->motion.yrel);
 
 		_camera->centerPosition(
-								Position(
-									_dragScrollPre.x + (_dragScrollX / 11),
-									_dragScrollPre.y + (_dragScrollY / 11),
-									_camera->getViewLevel()),
-								false);
+							Position(
+								_dragScrollPre.x + (_dragScrollX / 11),
+								_dragScrollPre.y + (_dragScrollY / 11),
+								_camera->getViewLevel()),
+							false);
 		_redraw = true;
 
 		_game->getCursor()->handle(action);
