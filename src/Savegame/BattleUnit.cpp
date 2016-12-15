@@ -4324,7 +4324,7 @@ int BattleUnit::getCarriedWeight(const BattleItem* const dragItem) const
 void BattleUnit::setExposed(int turns)
 {
 	_turnsExposed = turns;
-	//Log(LOG_INFO) << "bu:setExposed() id " << _id << " -> " << _turnsExposed;
+	//Log(LOG_INFO) << "bu:setExposed() id-" << _id << " -> " << _turnsExposed;
 }
 
 /**

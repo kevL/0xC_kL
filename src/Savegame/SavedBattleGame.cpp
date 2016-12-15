@@ -1330,7 +1330,9 @@ bool SavedBattleGame::endFactionTurn()
 	//Log(LOG_INFO) << ". side= " << _side;
 
 
+
 	// ** _side HAS ADVANCED to next faction after here!!! ** //
+
 
 	int aLienIntel (0);
 	switch (_side)
@@ -1424,7 +1426,7 @@ bool SavedBattleGame::endFactionTurn()
 				// no break;
 
 			case STATUS_STANDING:
-				if (_cheatAI == true									// aLiens know where xCom is when cheating ~turn20
+				if ((_cheatAI == true && (*i)->psiBlock() == false)		// aLiens know where xCom is when cheating ~turn20
 					|| (*i)->getFaction() == FACTION_HOSTILE			// aLiens always know where their buddies are,
 					|| (*i)->getOriginalFaction() == FACTION_HOSTILE)	// Mc'd or not.
 				{
@@ -1435,7 +1437,7 @@ bool SavedBattleGame::endFactionTurn()
 					int exposure ((*i)->getExposed());
 					if (exposure != -1)
 					{
-						if (++exposure > aLienIntel)
+						if ((*i)->psiBlock() == true || ++exposure > aLienIntel)
 							(*i)->setExposed(-1);
 						else
 							(*i)->setExposed(exposure);
