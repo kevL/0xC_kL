@@ -666,12 +666,12 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 		(*i)->loadData();
 
 		if (game->getRuleset()->getMCDPatch((*i)->getType()) != nullptr)
-			game->getRuleset()->getMCDPatch((*i)->getType())->modifyData(*i);
+			game->getRuleset()->getMCDPatch((*i)->getType())->patchData(*i);
 	}
 
 	int
-		dataId,
-		dataSetId;
+		partId,
+		partSetId;
 	MapDataType partType;
 
 	Tile* tile;
@@ -689,15 +689,15 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 
 			tile = _tiles[i];
 			tile->getMapData(
-						&dataId,
-						&dataSetId,
+						&partId,
+						&partSetId,
 						partType);
 
-			if (dataId != -1 && dataSetId != -1)
+			if (partId != -1 && partSetId != -1)
 				tile->setMapData(
-							_mapDataSets[static_cast<size_t>(dataSetId)]->getRecords()->at(static_cast<size_t>(dataId)),
-							dataId,
-							dataSetId,
+							_mapDataSets[static_cast<size_t>(partSetId)]->getRecords()->at(static_cast<size_t>(partId)),
+							partId,
+							partSetId,
 							partType);
 		}
 	}
@@ -2175,8 +2175,8 @@ void SavedBattleGame::tileVolatiles()
 		{
 			if ((*i)->getMapData(O_OBJECT) != nullptr)
 			{
-				if (   (*i)->getMapData(O_OBJECT)->getFlammable() != 255
-					&& (*i)->getMapData(O_OBJECT)->getArmor()     != 255) // NOTE: Also checked in destroyTilepart().
+				if (   (*i)->getMapData(O_OBJECT)->getFlammable()	!= 255
+					&& (*i)->getMapData(O_OBJECT)->getArmorPoints()	!= 255) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_OBJECT, this);
 					(*i)->destroyTilepart(O_FLOOR, this);	// NOTE: There is no assurance that the current floor-part is actually 'flammable';
@@ -2184,8 +2184,8 @@ void SavedBattleGame::tileVolatiles()
 			}												// at least a scorched-earth floor-part gets laid down.
 			else if ((*i)->getMapData(O_FLOOR) != nullptr)
 			{
-				if (   (*i)->getMapData(O_FLOOR)->getFlammable() != 255
-					&& (*i)->getMapData(O_FLOOR)->getArmor()     != 255) // NOTE: Also checked in destroyTilepart().
+				if (   (*i)->getMapData(O_FLOOR)->getFlammable()	!= 255
+					&& (*i)->getMapData(O_FLOOR)->getArmorPoints()	!= 255) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_FLOOR, this);
 				}

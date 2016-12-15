@@ -72,7 +72,7 @@ private:
 		void load(const YAML::Node& node);
 
 		/// Applies the MCDPatch to a MapDataSet/Tileset.
-		void modifyData(MapDataSet* const dataSet) const;
+		void patchData(MapDataSet* const dataSet) const;
 };
 
 }

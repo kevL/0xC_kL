@@ -212,15 +212,15 @@ void MapDataSet::loadData()
 					static_cast<int>(mcd.TU_Slide),
 					static_cast<int>(mcd.TU_Fly));
 			part->setFlags(
-					mcd.UFO_Door != 0,
-					mcd.Stop_LOS != 0,
-					mcd.No_Floor != 0,
+					mcd.UFO_Door	!= 0,
+					mcd.Stop_LOS	!= 0,
+					mcd.No_Floor	!= 0,
 					static_cast<int>(mcd.Big_Wall),
-					mcd.Gravlift != 0,
-					mcd.Door != 0,
-					mcd.Block_Fire != 0,
-					mcd.Block_Smoke != 0,
-					mcd.Xcom_Base != 0);
+					mcd.Gravlift	!= 0,
+					mcd.Door		!= 0,
+					mcd.Block_Fire	!= 0,
+					mcd.Block_Smoke	!= 0,
+					mcd.Xcom_Base	!= 0);
 			part->setTerrainLevel(static_cast<int>(mcd.T_Level));
 			part->setFootstepSound(static_cast<int>(mcd.Footstep));
 			part->setAltMCD(static_cast<int>(mcd.Alt_MCD));
@@ -233,7 +233,7 @@ void MapDataSet::loadData()
 					static_cast<int>(mcd.Flammable),
 					static_cast<int>(mcd.HE_Block));
 			part->setLightSource(static_cast<int>(mcd.Light_Source));
-			part->setArmor(static_cast<int>(mcd.Armor));
+			part->setArmorPoints(static_cast<int>(mcd.Armor));
 			part->setFlammable(static_cast<int>(mcd.Flammable));
 			part->setFuel(static_cast<int>(mcd.Fuel));
 			part->setExplosiveType(static_cast<int>(mcd.HE_Type));
@@ -281,7 +281,7 @@ void MapDataSet::loadData()
 		{
 			if ((*i)->getPartType() == O_FLOOR && (*i)->getBlock(DT_HE) == 0)
 			{
-				const int armor ((*i)->getArmor());
+				const int armor ((*i)->getArmorPoints());
 				(*i)->setBlock(
 							1,		// light
 							1,		// LoS

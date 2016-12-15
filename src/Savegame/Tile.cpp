@@ -658,9 +658,9 @@ int Tile::destroyTilepart(
 	const MapData* const part (_parts[partType]);
 	if (part != nullptr)
 	{
-		if (part->getArmor() != 255 && part->isGravLift() == false)
+		if (part->getArmorPoints() != 255 && part->isGravLift() == false)
 		{
-			ret = part->getArmor();
+			ret = part->getArmorPoints();
 
 			if (part->getTileType() == battleSave->getObjectiveTileType())
 				battleSave->addDestroyedObjective();
@@ -742,7 +742,7 @@ void Tile::hitTile(
 	int expend;
 	while (power > 0
 		&& _parts[partType] != nullptr // early out + safety: Also handled in destroyTilepart().
-		&& _parts[partType]->getArmor() <= power)
+		&& _parts[partType]->getArmorPoints() <= power)
 	{
 		if ((expend = destroyTilepart(partType, battleSave)) != -1)
 			power -= expend;

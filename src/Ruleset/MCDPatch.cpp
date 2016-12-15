@@ -219,9 +219,9 @@ void MCDPatch::load(const YAML::Node& node) // TODO: fill this out with more dat
  * Applies an MCD patch to a MapDataSet/Tileset.
  * @param dataSet - pointer to the MapDataSet to modify
  */
-void MCDPatch::modifyData(MapDataSet* const dataSet) const
+void MCDPatch::patchData(MapDataSet* const dataSet) const
 {
-	//Log(LOG_INFO) << "MCDPatch: modifyData() dataSet = " << dataSet->getType();
+	//Log(LOG_INFO) << "MCDPatch: patchData() dataSet = " << dataSet->getType();
 	for (std::vector<std::pair<size_t, int>>::const_iterator
 			i = _bigWalls.begin();
 			i != _bigWalls.end();
@@ -301,7 +301,7 @@ void MCDPatch::modifyData(MapDataSet* const dataSet) const
 			i != _armors.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setArmor(i->second);
+		dataSet->getRecords()->at(i->first)->setArmorPoints(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator

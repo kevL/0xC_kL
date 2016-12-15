@@ -1784,7 +1784,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				}
 				else
 				{
-					const std::string type (itRule->getAcceptedLoadTypes()->front());
+					const std::string& type (itRule->getAcceptedLoadTypes()->front());
 					const int
 						clipsRequired (itRule->getFullClip()),
 						baseClips (_base->getStorageItems()->getItemQuantity(type));
@@ -1879,7 +1879,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 													TAC_RESULT[2u], // aLien corpses recovered
 													unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;
 																			// but at present all the corpse-rules spec. default values of 3 or 5 pts. Cf, below_
-										std::string corpse (unit->getArmor()->getCorpseGeoscape());
+										const std::string& corpse (unit->getArmor()->getCorpseGeoscape());
 										if (corpse.empty() == false) // safety.
 										{
 											_base->getStorageItems()->addItem(corpse);
@@ -1935,7 +1935,7 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 	if (_isQuickBattle == true || _base->hasContainment() == true)
 	{
 		//Log(LOG_INFO) << ". . . alienLive id-" << unit->getId() << " " << unit->getType();
-		const std::string type (unit->getType());
+		const std::string& type (unit->getType());
 
 		int value;
 		if (_rules->getResearch(type) != nullptr
@@ -1966,7 +1966,7 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 					TAC_RESULT[2u], // aLien corpse recovered
 					unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;
 											// but at present all the corpse-rules spec. default values of 3 or 5 pts. Cf, above^
-		std::string corpse (unit->getArmor()->getCorpseGeoscape());
+		const std::string& corpse (unit->getArmor()->getCorpseGeoscape());
 		if (corpse.empty() == false) // safety. (Or error-out if there isn't one.)
 		{
 			_base->getStorageItems()->addItem(corpse); // NOTE: This won't be a quick-battle here, okay to add to Base stores.

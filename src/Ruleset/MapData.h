@@ -264,9 +264,9 @@ private:
 		void setLightSource(int value);
 
 		/// Gets the amount of armor.
-		int getArmor() const;
+		int getArmorPoints() const;
 		/// Sets the amount of armor.
-		void setArmor(int value);
+		void setArmorPoints(int value);
 
 		/// Gets the amount of flammable.
 		int getFlammable() const;

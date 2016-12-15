@@ -2096,7 +2096,7 @@ void TileEngine::hit(
 				if (partType == O_OBJECT
 					&& _battleSave->getTacType() == TCT_BASEDEFENSE
 					&& tile->getMapData(O_OBJECT)->isBaseObject() == true
-					&& tile->getMapData(O_OBJECT)->getArmor() <= power)
+					&& tile->getMapData(O_OBJECT)->getArmorPoints() <= power)
 				{
 					_battleSave->baseDestruct()[static_cast<size_t>((targetVoxel.x >> 4u) / 10)]
 											   [static_cast<size_t>((targetVoxel.y >> 4u) / 10)].second--;
@@ -2316,7 +2316,7 @@ void TileEngine::explode(
 
 	Tile
 		* tileStart (nullptr),
-		* tileStop (nullptr);
+		* tileStop  (nullptr);
 
 	int // convert voxel-space to tile-space
 		centerX (targetVoxel.x >> 4u),
@@ -3869,7 +3869,7 @@ int TileEngine::blockage( // private.
 					}
 					else if (part->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 						&& _powerE > -1
-						&& _powerE < (part->getArmor() << 1u)) // terrain absorbs 200% damage from DT_HE!
+						&& _powerE < (part->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE!
 					{
 						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] partType = " << partType << " " << tile->getPosition();
 						return HARD_BLOCK;
@@ -3994,7 +3994,7 @@ int TileEngine::blockage( // private.
 								case BIGWALL_NWSE:
 									if (object->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 										&& _powerE > -1
-										&& _powerE < (object->getArmor() << 1u))
+										&& _powerE < (object->getArmorPoints() << 1u))
 									{
 										//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir
 										//		<< " HARD_BLOCK partType = " << partType << " " << tile->getPosition();
@@ -4208,7 +4208,7 @@ int TileEngine::blockage( // private.
 					if (visLike == true
 						|| (diagBigwallPass == false
 							&& _powerE > -1
-							&& _powerE < (object->getArmor() << 1u))) // terrain absorbs 200% damage from DT_HE.
+							&& _powerE < (object->getArmorPoints() << 1u))) // terrain absorbs 200% damage from DT_HE.
 					{
 						switch (dType)
 						{
@@ -4407,15 +4407,15 @@ void TileEngine::detonateTile(Tile* const tile) const
 				{
 					case BIGWALL_NESW: // diagonals
 					case BIGWALL_NWSE:
-						if ((part->getArmor() << 1u) > powerTest) // not enough to destroy
+						if ((part->getArmorPoints() << 1u) > powerTest) // not enough to destroy
 							diagWallDestroyed = false;
 				}
 			}
 
 			// Check tile-part's HP then iterate through and destroy its death-tiles if enough powerTest.
 			while (part != nullptr
-				&& part->getArmor() != 255
-				&& (part->getArmor() << 1u) <= powerTest)
+				&& part->getArmorPoints() != 255
+				&& (part->getArmorPoints() << 1u) <= powerTest)
 			{
 				if (powerTest == power) // only once per initial part destroyed.
 				{
@@ -4429,7 +4429,7 @@ void TileEngine::detonateTile(Tile* const tile) const
 					}
 				}
 
-				powerTest -= part->getArmor() << 1u;
+				powerTest -= part->getArmorPoints() << 1u;
 
 				if (i == 6u)
 				{

@@ -2830,7 +2830,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 		(*i)->loadData();
 
 		if (_rules->getMCDPatch((*i)->getType()) != nullptr)
-			_rules->getMCDPatch((*i)->getType())->modifyData(*i);
+			_rules->getMCDPatch((*i)->getType())->patchData(*i);
 
 		_battleSave->getMapDataSets()->push_back(*i);
 		++blockDataSetIdOffset;
@@ -3146,7 +3146,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 			(*i)->loadData();
 
 			if (_rules->getMCDPatch((*i)->getType()) != nullptr)
-				_rules->getMCDPatch((*i)->getType())->modifyData(*i);
+				_rules->getMCDPatch((*i)->getType())->patchData(*i);
 
 			_battleSave->getMapDataSets()->push_back(*i);
 			++craftDataSetIdOffset;
@@ -3195,7 +3195,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 			(*i)->loadData();
 
 			if (_rules->getMCDPatch((*i)->getType()) != nullptr)
-				_rules->getMCDPatch((*i)->getType())->modifyData(*i);
+				_rules->getMCDPatch((*i)->getType())->patchData(*i);
 
 			_battleSave->getMapDataSets()->push_back(*i);
 		}

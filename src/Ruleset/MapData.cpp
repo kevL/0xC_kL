@@ -494,26 +494,29 @@ void MapData::setLightSource(int value)
 
 /**
  * Gets the amount of armor.
- * @note Total hitpoints of the tile-part before destroyed.
+ * @note Total hitpoints of the tile-part before destroyed. "255" shall be
+ * considered indestructible.
  * @return, the amount of armor
  */
-int MapData::getArmor() const
+int MapData::getArmorPoints() const
 {
 	return _armor;
 }
 
 /**
  * Sets the amount of armor.
- * @note Total hitpoints of the tile-part before destroyed.
+ * @note Total hitpoints of the tile-part before destroyed. "255" shall be
+ * considered indestructible.
  * @param value - the amount of armor
  */
-void MapData::setArmor(int value)
+void MapData::setArmorPoints(int value)
 {
 	_armor = value;
 }
 
 /**
  * Gets the amount of flammable (how flammable this tile-part is).
+ * @note "255" shall be considered not flammable.
  * @return, the amount of flammable
  */
 int MapData::getFlammable() const
@@ -523,6 +526,7 @@ int MapData::getFlammable() const
 
 /**
  * Sets the amount of flammable (how flammable this tile-part is).
+ * @note "255" shall be considered not flammable.
  * @param value - the amount of flammable
  */
 void MapData::setFlammable(int value)

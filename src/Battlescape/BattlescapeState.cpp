@@ -4228,12 +4228,53 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 			{
 				if (tile->isFloored() == true)
 				{
-					const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
-					if (tileBelow->getMapData(O_OBJECT) != nullptr)
+//					Log(LOG_INFO) << "BattlescapeState::updateTileInfo() tile is Floored " << tile->getPosition();
+//					int partId;
+//					int partSetId;
+//					if (tile->getMapData(O_FLOOR) != nullptr)
+//					{
+//						tile->getMapData(&partId, &partSetId, O_FLOOR);
+//						Log(LOG_INFO) << ". FLOOR partId= "		<< partId;
+//						Log(LOG_INFO) << ". FLOOR partSetId= "	<< partSetId;
+//					}
+//					else Log(LOG_INFO) << ". no FLOOR";
+//
+//					if (tile->getMapData(O_WESTWALL) != nullptr)
+//					{
+//						tile->getMapData(&partId, &partSetId, O_FLOOR);
+//						Log(LOG_INFO) << ". WESTWALL partId= "		<< partId;
+//						Log(LOG_INFO) << ". WESTWALL partSetId= "	<< partSetId;
+//					}
+//					else Log(LOG_INFO) << ". no WESTWALL";
+//
+//					if (tile->getMapData(O_NORTHWALL) != nullptr)
+//					{
+//						tile->getMapData(&partId, &partSetId, O_FLOOR);
+//						Log(LOG_INFO) << ". NORTHWALL partId= "		<< partId;
+//						Log(LOG_INFO) << ". NORTHWALL partSetId= "	<< partSetId;
+//					}
+//					else Log(LOG_INFO) << ". no NORTHWALL";
+//
+//					if (tile->getMapData(O_OBJECT) != nullptr)
+//					{
+//						tile->getMapData(&partId, &partSetId, O_FLOOR);
+//						Log(LOG_INFO) << ". OBJECT partId= "	<< partId;
+//						Log(LOG_INFO) << ". OBJECT partSetId= "	<< partSetId;
+//					}
+//					else Log(LOG_INFO) << ". no OBJECT";
+
+					const Tile* const tileBelow (tile->getTileBelow(_battleSave));
+					if (tileBelow != nullptr && tileBelow->getMapData(O_OBJECT) != nullptr)
+					{
+//						Log(LOG_INFO) << ". . tileBelow VALID w/ Object";
 						tuCost = 4 + tileBelow->getTuCostTile(O_OBJECT, mType);
+					}
 					else
+					{
+//						Log(LOG_INFO) << ". . tileBelow NOT Valid or NO Object in it";
 						tuCost = 4;	// safety. If tile has no floor-object but isFloored=TRUE
-				}					// there'd better be an object w/ tLevel -24 in tileBelow!
+					}				// there'd better be an object w/ tLevel -24 in tileBelow! oops, a ground-tile showed up with *no parts*.
+				}
 				else
 				{
 					switch (mType)
