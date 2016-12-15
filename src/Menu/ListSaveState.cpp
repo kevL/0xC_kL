@@ -67,7 +67,6 @@ ListSaveState::ListSaveState(OptionsOrigin origin)
 	_edtSave->setVisible(false);
 	_edtSave->onKeyboardPress(static_cast<ActionHandler>(&ListSaveState::keySavePress));
 	// NOTE: BasescapeState, eg, uses onChange handler.
-	Log(LOG_INFO) << "edtSave color= " << (int)_edtSave->getColor();
 
 	_btnSaveGame->setText(tr("STR_OK"));
 	_btnSaveGame->onMouseClick(static_cast<ActionHandler>(&ListSaveState::btnSaveClick));
