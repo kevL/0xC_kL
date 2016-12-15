@@ -143,7 +143,7 @@ AlienContainmentState::AlienContainmentState(
 			break;
 
 		default:
-		case OPT_MENU:
+		case OPT_MAIN_START:
 		case OPT_GEOSCAPE:
 			_window->setBackground(_game->getResourcePack()->getSurface("BACK05.SCR"));
 			st = "STR_REMOVE_SELECTED";

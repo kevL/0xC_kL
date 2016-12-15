@@ -30,7 +30,7 @@ namespace OpenXcom
 
 enum OptionsOrigin
 {
-	OPT_MENU,		// 0
+	OPT_MAIN_START,	// 0
 	OPT_GEOSCAPE,	// 1
 	OPT_BATTLESCAPE	// 2
 };

@@ -104,7 +104,7 @@ struct compareSaveTimestamp
 
 /**
  * Initializes all the elements in the ListGames screen.
- * @param origin		- game section that originated this state
+ * @param origin		- game section that originated this state (OptionsBaseState.h)
  * @param firstValid	- first row containing saves
  * @param autoquick		- true to show auto/quick saved games
  */
@@ -172,8 +172,8 @@ ListGamesState::ListGamesState(
 
 	_txtDate->setText(tr("STR_DATE"));
 
-	_lstSaves->setBackground(_window);
 	_lstSaves->setColumns(3, 188,60,29);
+	_lstSaves->setBackground(_window);
 	_lstSaves->setSelectable();
 	_lstSaves->onMouseOver(	static_cast<ActionHandler>(&ListGamesState::lstSavesMouseOver));
 	_lstSaves->onMouseOut(	static_cast<ActionHandler>(&ListGamesState::lstSavesMouseOut));
@@ -212,7 +212,6 @@ void ListGamesState::init()
 		_saves = SavedGame::getList(
 								_game->getLanguage(),
 								_autoquick);
-		_lstSaves->clearList();
 		sortList(Options::saveOrder);
 	}
 	catch (Exception& e)
@@ -257,7 +256,7 @@ void ListGamesState::think()
 /**
  * Updates the sorting arrows per the current setting.
  */
-void ListGamesState::updateArrows() // protected.
+void ListGamesState::updateArrows() // private.
 {
 	_sortName->setShape(ARROW_NONE);
 	_sortDate->setShape(ARROW_NONE);
@@ -282,8 +281,10 @@ void ListGamesState::updateArrows() // protected.
  * Sorts the List.
  * @param order - order to sort the games in
  */
-void ListGamesState::sortList(SaveSort order)
+void ListGamesState::sortList(SaveSort order) // private.
 {
+	_lstSaves->clearList();
+
 	switch (order)
 	{
 		case SORT_NAME_ASC:
@@ -406,7 +407,7 @@ void ListGamesState::lstSavesPress(Action* action) // virtual.
  * Sorts the List entries by name.
  * @param action - pointer to an Action
  */
-void ListGamesState::sortNameClick(Action*)
+void ListGamesState::sortNameClick(Action*) // private.
 {
 	if (_sortable == true)
 	{
@@ -420,7 +421,6 @@ void ListGamesState::sortNameClick(Action*)
 		}
 
 		updateArrows();
-		_lstSaves->clearList();
 		sortList(Options::saveOrder);
 	}
 }
@@ -429,7 +429,7 @@ void ListGamesState::sortNameClick(Action*)
  * Sorts the List entries by date.
  * @param action - pointer to an Action
  */
-void ListGamesState::sortDateClick(Action*)
+void ListGamesState::sortDateClick(Action*) // private.
 {
 	if (_sortable == true)
 	{
@@ -443,7 +443,6 @@ void ListGamesState::sortDateClick(Action*)
 		}
 
 		updateArrows();
-		_lstSaves->clearList();
 		sortList(Options::saveOrder);
 	}
 }

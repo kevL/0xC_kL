@@ -39,7 +39,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the ListSave screen.
- * @param origin - game section that originated this state
+ * @param origin - game section that originated this state (OptionsBaseState.h)
  */
 ListSaveState::ListSaveState(OptionsOrigin origin)
 	:
@@ -61,12 +61,13 @@ ListSaveState::ListSaveState(OptionsOrigin origin)
 //	else
 //		_btnCancel->setX(180);
 
-	// Tactical: selected SaveSlot for Battlescape is grayscaled.
-	_edtSave->setColor(Palette::blockOffset(10u)); // geo:SLATE
+	// NOTE: Tactical selected SaveSlot for Battlescape is grayscaled. Except TextEdit.
+	_edtSave->setColor(COLOR_EDIT);
 	_edtSave->setHighContrast();
 	_edtSave->setVisible(false);
 	_edtSave->onKeyboardPress(static_cast<ActionHandler>(&ListSaveState::keySavePress));
-	// note: BasescapeState, eg, uses onChange handler.
+	// NOTE: BasescapeState, eg, uses onChange handler.
+	Log(LOG_INFO) << "edtSave color= " << (int)_edtSave->getColor();
 
 	_btnSaveGame->setText(tr("STR_OK"));
 	_btnSaveGame->onMouseClick(static_cast<ActionHandler>(&ListSaveState::btnSaveClick));
@@ -113,17 +114,19 @@ void ListSaveState::lstSavesPress(Action* action)
 		switch (action->getDetails()->button.button)
 		{
 			case SDL_BUTTON_LEFT:
+			{
 				_editMode = true;
 				_btnSaveGame->setVisible();
-				_lstSaves->setSelectable(false);
 				_lstSaves->setScrollable(false);
+				_lstSaves->setSelectable(false);
 
 				_selectedPre = _selected;
-				_selected = static_cast<int>(_lstSaves->getSelectedRow());
+				const size_t sel (_lstSaves->getSelectedRow());
+				_selected = static_cast<int>(sel);
 
 				switch (_selectedPre)
 				{
-					case -1: // first click on the savegame list
+					case -1: // first click on the list
 						break;
 
 					case 0:
@@ -134,23 +137,24 @@ void ListSaveState::lstSavesPress(Action* action)
 						_lstSaves->setCellText(static_cast<size_t>(_selectedPre), 0u, _label);
 				}
 
-				_label = _lstSaves->getCellText(_lstSaves->getSelectedRow(), 0u);
-				_lstSaves->setCellText(_lstSaves->getSelectedRow(), 0u, L"");
+				_label = _lstSaves->getCellText(sel, 0u);
+				_lstSaves->setCellText(sel, 0u, L"");
 
 				_edtSave->setStoredText(_label);
 
-				if (_lstSaves->getSelectedRow() == 0u)
+				if (sel == 0u)
 					_label = L"";
 
 				_edtSave->setText(_label);
 
-				_edtSave->setX(_lstSaves->getColumnX(0));
+				_edtSave->setX(_lstSaves->getColumnX(0u));
 				_edtSave->setY(_lstSaves->getRowY(static_cast<size_t>(_selected)));
 				_edtSave->setVisible();
 				_edtSave->setFocusEdit(); // NOTE: modal=false allows keypress Enter to save.
 
-				ListGamesState::disableSort();
+				disableSort();
 				break;
+			}
 
 			case SDL_BUTTON_RIGHT:
 				ListGamesState::lstSavesPress(action); // -> delete file
@@ -166,13 +170,15 @@ void ListSaveState::keySavePress(Action* action)
 {
 	if (_editMode == true)
 	{
-		if (action->getDetails()->key.keysym.sym == Options::keyOk
+		if (   action->getDetails()->key.keysym.sym == Options::keyOk
 			|| action->getDetails()->key.keysym.sym == Options::keyOkKeypad)
 		{
 			saveGame();
 		}
 		else if (action->getDetails()->key.keysym.sym == Options::keyCancel)
 		{
+			_refresh = true;
+
 			_btnSaveGame->setVisible(false);
 			_lstSaves->setSelectable();
 			_lstSaves->setScrollable();
@@ -243,17 +249,17 @@ void ListSaveState::saveGame() // private.
  */
 void ListSaveState::hideElements() // private.
 {
-	_txtTitle->setVisible(false);
-	_txtDelete->setVisible(false);
-	_txtName->setVisible(false);
-	_txtDate->setVisible(false);
-	_sortName->setVisible(false);
-	_sortDate->setVisible(false);
-	_lstSaves->setVisible(false);
-	_edtSave->setVisible(false);
-	_txtDetails->setVisible(false);
-	_btnCancel->setVisible(false);
-	_btnSaveGame->setVisible(false);
+	_txtTitle		->setVisible(false);
+	_txtDelete		->setVisible(false);
+	_txtName		->setVisible(false);
+	_txtDate		->setVisible(false);
+	_sortName		->setVisible(false);
+	_sortDate		->setVisible(false);
+	_lstSaves		->setVisible(false);
+	_edtSave		->setVisible(false);
+	_txtDetails		->setVisible(false);
+	_btnCancel		->setVisible(false);
+	_btnSaveGame	->setVisible(false);
 }
 
 }

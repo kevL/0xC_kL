@@ -50,73 +50,77 @@ class ListGamesState
 		public State
 {
 
-protected:
-	bool
-		_autoquick,
-		_editMode,
-		_refresh,
-		_sortable;
-	size_t _firstValid;
-
-	OptionsOrigin _origin;
-
-	ArrowButton
-		* _sortName,
-		* _sortDate;
-	Text
-		* _txtTitle,
-		* _txtName,
-		* _txtDate,
-		* _txtDelete,
-		* _txtDetails;
-	TextButton* _btnCancel;
-	TextList* _lstSaves;
-	Window* _window;
-
-	std::vector<SaveInfo> _saves;
-
+private:
 	/// Updates the listorder arrows.
 	void updateArrows();
-	/// Disables the sort buttons.
-	void disableSort();
+
+	/// Sorts the List.
+	void sortList(SaveSort order);
+
+	/// Handler for clicking the arrow that orders the List by name.
+	void sortNameClick(Action* action);
+	/// Handler for clicking the arrow that orders the List by date.
+	void sortDateClick(Action* action);
 
 
-	public:
-		/// Creates a ListGames state.
-		ListGamesState(
-				OptionsOrigin origin,
-				size_t firstValid,
-				bool autoquick);
-		/// Cleans up the ListGames state.
-		virtual ~ListGamesState();
+	protected:
+		bool
+			_autoquick,
+			_editMode,
+			_refresh,
+			_sortable;
+		size_t _firstValid;
 
-		/// Sets up the List.
-		void init() override;
-		/// Checks when popup is done.
-		void think() override;
+		OptionsOrigin _origin;
 
-		/// Sorts the List.
-		void sortList(SaveSort order);
+		ArrowButton
+			* _sortName,
+			* _sortDate;
+		Text
+			* _txtTitle,
+			* _txtName,
+			* _txtDate,
+			* _txtDelete,
+			* _txtDetails;
+		TextButton* _btnCancel;
+		TextList* _lstSaves;
+		Window* _window;
 
-		/// Updates the List.
-		virtual void updateList();
+		std::vector<SaveInfo> _saves;
 
-		/// Handler for clicking the Cancel button.
-		void btnCancelClick(Action* action);
-		/// Handler for pressing the Escape key.
-		void btnCancelKeypress(Action* action);
+		/// Disables the sort buttons.
+		void disableSort();
 
-		/// Handler for moving the mouse over a List item.
-		void lstSavesMouseOver(Action* action);
-		/// Handler for moving the mouse outside the List borders.
-		void lstSavesMouseOut(Action* action);
-		/// Handler for clicking the List.
-		virtual void lstSavesPress(Action* action);
 
-		/// Handler for clicking the arrow that orders the List by name.
-		void sortNameClick(Action* action);
-		/// Handler for clicking the arrow that orders the List by date.
-		void sortDateClick(Action* action);
+
+		public:
+			/// Creates a ListGames state.
+			ListGamesState(
+					OptionsOrigin origin,
+					size_t firstValid,
+					bool autoquick);
+			/// Cleans up the ListGames state.
+			virtual ~ListGamesState();
+
+			/// Sets up the List.
+			void init() override;
+			/// Checks when popup is done.
+			void think() override;
+
+			/// Updates the List.
+			virtual void updateList();
+
+			/// Handler for clicking the Cancel button.
+			void btnCancelClick(Action* action);
+			/// Handler for pressing the Escape key.
+			void btnCancelKeypress(Action* action);
+
+			/// Handler for moving the mouse over a List item.
+			void lstSavesMouseOver(Action* action);
+			/// Handler for moving the mouse outside the List borders.
+			void lstSavesMouseOut(Action* action);
+			/// Handler for clicking the List.
+			virtual void lstSavesPress(Action* action);
 };
 
 }

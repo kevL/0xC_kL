@@ -458,15 +458,18 @@ void State::applyBattlescapeColors()
 			i != _surfaces.end();
 			++i)
 	{
-		(*i)->setColor(static_cast<Uint8>(el->color));
-		(*i)->setHighContrast(true);
+		if (dynamic_cast<TextEdit*>(*i) == nullptr) // leave my texteditor alone!
+		{
+			(*i)->setColor(static_cast<Uint8>(el->color));
+			(*i)->setHighContrast(true);
 
-		if ((window = dynamic_cast<Window*>(*i)) != nullptr)
-			window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
-		else if ((textList = dynamic_cast<TextList*>(*i)) != nullptr)
-			textList->setArrowColor(static_cast<Uint8>(el->border));
-		else if ((combo = dynamic_cast<ComboBox*>(*i)) != nullptr)
-			combo->setArrowColor(static_cast<Uint8>(el->border));
+			if ((window = dynamic_cast<Window*>(*i)) != nullptr)
+				window->setBackground(_game->getResourcePack()->getSurface("Diehard"));
+			else if ((textList = dynamic_cast<TextList*>(*i)) != nullptr)
+				textList->setArrowColor(static_cast<Uint8>(el->border));
+			else if ((combo = dynamic_cast<ComboBox*>(*i)) != nullptr)
+				combo->setArrowColor(static_cast<Uint8>(el->border));
+		}
 	}
 }
 
@@ -537,8 +540,8 @@ void State::setPalette(
 }
 
 /**
- * Loads palettes from the ResourcePack into the state.
- * @param pal		- reference to the string-ID of the palette to load
+ * Loads palettes from the ResourcePack into this State.
+ * @param pal		- reference to the PaletteType to load (Palette.h)
  * @param backpal	- BACKPALS.DAT offset to use (Palette.h) (default BACKPAL_NONE)
  */
 void State::setPalette(

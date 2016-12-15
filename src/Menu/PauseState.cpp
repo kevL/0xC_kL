@@ -61,7 +61,7 @@ PauseState::PauseState(OptionsOrigin origin)
 		case OPT_GEOSCAPE: x = 20; break;
 
 		default:
-		case OPT_MENU:
+		case OPT_MAIN_START:
 		case OPT_BATTLESCAPE: x = 52;
 	}
 
@@ -176,7 +176,7 @@ void PauseState::btnLoadClick(Action*)
 void PauseState::btnSaveClick(Action*)
 {
 	if (_origin == OPT_BATTLESCAPE)
-		_game->getSavedGame()->getBattleSave()->getBattleState()->clearOptionsBtn();
+		_game->getSavedGame()->getBattleSave()->getBattleState()->clearOptionsOverlay();
 
 	_game->pushState(new ListSaveState(_origin));
 }
@@ -220,7 +220,7 @@ void PauseState::btnAbandonClick(Action*)
 void PauseState::btnCancelClick(Action*)
 {
 	if (_origin == OPT_BATTLESCAPE)
-		_game->getSavedGame()->getBattleSave()->getBattleState()->clearOptionsBtn();
+		_game->getSavedGame()->getBattleSave()->getBattleState()->clearOptionsOverlay();
 
 	_game->popState();
 }

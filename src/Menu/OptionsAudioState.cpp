@@ -225,7 +225,7 @@ OptionsAudioState::OptionsAudioState(OptionsOrigin origin)
 	_txtCurrentSound->setText(tr("STR_CURRENT_FORMAT").arg(curSound));
 
 	// These options require a restart, so don't enable them in-game
-	bool vis (_origin == OPT_MENU);
+	bool vis (_origin == OPT_MAIN_START);
 	_txtSampleRate->setVisible(vis);
 	_cbxSampleRate->setVisible(vis);
 	_txtMusicFormat->setVisible(vis);

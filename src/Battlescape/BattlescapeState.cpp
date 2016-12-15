@@ -2170,9 +2170,9 @@ void BattlescapeState::btnBattleOptionsClick(Action*)
 
 /**
  * Clears the Options btn.
- * @note To be called from PauseState::btnOkClick()
+ * @note To be called from PauseState::btnSaveClick() and ::btnCancelClick().
  */
-void BattlescapeState::clearOptionsBtn()
+void BattlescapeState::clearOptionsOverlay()
 {
 	_btnOptions->clear();
 }
@@ -4011,35 +4011,36 @@ void BattlescapeState::toggleIcons(bool vis)
 	//Log(LOG_INFO) << "bs:toggleIcons() vis= " << vis;
 	_iconsHidden = !vis;
 
-	_icons->setVisible(vis);
+	_icons			->setVisible(vis);
 
-	_numLayers->setVisible(vis);
+	_numLayers		->setVisible(vis);
 
-	_btnUnitUp->setVisible(vis);
-	_btnUnitDown->setVisible(vis);
-	_btnMapUp->setVisible(vis);
-	_btnMapDown->setVisible(vis);
-	_btnMiniMap->setVisible(vis);
-	_btnKneel->setVisible(vis);
-	_btnInventory->setVisible(vis);
-	_btnCenter->setVisible(vis);
-	_btnNextUnit->setVisible(vis);
-	_btnNextStop->setVisible(vis);
-	_btnShowLayers->setVisible(vis);
-	_btnOptions->setVisible(vis);
-	_btnEndTurn->setVisible(vis);
-	_btnAbort->setVisible(vis);
+	_btnUnitUp		->setVisible(vis);
+	_btnUnitDown	->setVisible(vis);
+	_btnMapUp		->setVisible(vis);
+	_btnMapDown		->setVisible(vis);
+	_btnMiniMap		->setVisible(vis);
+	_btnKneel		->setVisible(vis);
+	_btnInventory	->setVisible(vis);
+	_btnCenter		->setVisible(vis);
+	_btnNextUnit	->setVisible(vis);
+	_btnNextStop	->setVisible(vis);
+	_btnShowLayers	->setVisible(vis);
+	_btnOptions		->setVisible(vis);
+	_btnEndTurn		->setVisible(vis);
+	_btnAbort		->setVisible(vis);
 
-	_txtOrder->setVisible(vis);
-	_lstSoldierInfo->setVisible(vis);
-	_srfAlienIcon->setVisible(vis && allowAlienIcons());
+	_txtOrder		->setVisible(vis);
+	_lstSoldierInfo	->setVisible(vis);
+	_srfAlienIcon	->setVisible(vis && allowAlienIcons() == true);
+
 	_showSoldierData = vis;
 
 //	_txtControlDestroyed->setVisible(vis);
-	_txtMissionLabel->setVisible(vis);
-	_lstTileInfo->setVisible(vis);
+	_txtMissionLabel	->setVisible(vis);
+	_lstTileInfo		->setVisible(vis);
 
-	_srfOverweight->setVisible(vis && _isOverweight);
+	_srfOverweight->setVisible(vis && _isOverweight == true);
 
 	for (size_t
 			i = 0u;

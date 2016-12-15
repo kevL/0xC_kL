@@ -39,6 +39,8 @@ class ListSaveState
 {
 
 private:
+	static const Uint8 COLOR_EDIT = 160u; // slate in Geoscape/brown in Battlescape.
+
 	int // TODO: These should be size_t's; indepth consideration required ....
 		_selectedPre,
 		_selected;
@@ -55,7 +57,7 @@ private:
 
 
 	public:
-		/// Creates the ListSave state.
+		/// Creates a ListSave state.
 		explicit ListSaveState(OptionsOrigin origin);
 		/// Cleans up the ListSave state.
 		~ListSaveState();

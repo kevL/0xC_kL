@@ -187,7 +187,7 @@ void MainMenuState::btnQuickBattleClick(Action*)
  */
 void MainMenuState::btnLoadClick(Action*)
 {
-	_game->pushState(new ListLoadState(OPT_MENU));
+	_game->pushState(new ListLoadState(OPT_MAIN_START));
 }
 
 /**
@@ -197,7 +197,7 @@ void MainMenuState::btnLoadClick(Action*)
 void MainMenuState::btnOptionsClick(Action*)
 {
 	Options::backupDisplay();
-	_game->pushState(new OptionsVideoState(OPT_MENU));
+	_game->pushState(new OptionsVideoState(OPT_MAIN_START));
 } */
 
 /**

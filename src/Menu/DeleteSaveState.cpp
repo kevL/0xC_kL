@@ -125,7 +125,7 @@ void DeleteSaveState::btnYesClick(Action*)
 		const RuleInterface* const uiRule (_game->getRuleset()->getInterface("errorMessages"));
 		switch (_origin)
 		{
-			case OPT_MENU:
+			case OPT_MAIN_START:
 			case OPT_GEOSCAPE:
 				_game->pushState(new ErrorMessageState(
 													error,

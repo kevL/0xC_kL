@@ -366,7 +366,7 @@ private:
 		/// Handler for clicking the Options button.
 		void btnBattleOptionsClick(Action* action);
 		/// Clears the Options btn.
-		void clearOptionsBtn();
+		void clearOptionsOverlay();
 
 		/// Handler for clicking the End Turn button.
 		void btnEndTurnClick(Action* action);

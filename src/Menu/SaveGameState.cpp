@@ -137,7 +137,7 @@ void SaveGameState::build(SDL_Color* const palette) // private.
 
 	switch (_origin)
 	{
-		case OPT_MENU:
+		case OPT_MAIN_START:
 		case OPT_GEOSCAPE:
 			add(_txtStatus, "textLoad", "geoscape");
 			break;
@@ -164,7 +164,7 @@ void SaveGameState::think()
 {
 	State::think();
 
-	if (_firstRun < 10) // Make sure it gets drawn properly
+	if (_firstRun < 10) // wait a bit to Ensure this gets drawn properly
 		++_firstRun;
 	else
 	{

@@ -45,7 +45,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the ListGames screen.
- * @param origin - section that originated this state
+ * @param origin - section that originated this state (OptionsBaseState.h)
  */
 ListLoadState::ListLoadState(OptionsOrigin origin)
 	:
@@ -78,7 +78,7 @@ void ListLoadState::lstSavesPress(Action* action)
 			switch (_origin)
 			{
 				default:
-				case OPT_MENU:
+				case OPT_MAIN_START:
 					fade = true;
 					break;
 

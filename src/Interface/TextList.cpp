@@ -1112,8 +1112,8 @@ void TextList::scrollTo(size_t scroll)
  */
 void TextList::updateArrows() // private.
 {
-	_up->setVisible(_rows.size() > _visibleRows); //&& _scroll > 0);
-	_down->setVisible(_rows.size() > _visibleRows); //&& _scroll < _rows.size() - _visibleRows);
+	_up		->setVisible(_rows.size() > _visibleRows); //&& _scroll > 0);
+	_down	->setVisible(_rows.size() > _visibleRows); //&& _scroll < _rows.size() - _visibleRows);
 
 	_scrollbar->setVisible(_rows.size() > _visibleRows);
 	_scrollbar->invalidate();

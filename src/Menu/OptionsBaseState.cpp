@@ -131,7 +131,7 @@ OptionsBaseState::OptionsBaseState(OptionsOrigin origin)
 	_btnMods->setText(tr("STR_MODS"));
 	_btnMods->onMousePress(	static_cast<ActionHandler>(&OptionsBaseState::btnGroupPress),
 							SDL_BUTTON_LEFT);
-	_btnMods->setVisible(_origin == OPT_MENU); // Mods require a restart, don't enable them in-game
+	_btnMods->setVisible(_origin == OPT_MAIN_START); // Mods require a restart, don't enable them in-game
 
 	_btnOk->setText(tr("STR_OK"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&OptionsBaseState::btnOkClick));
@@ -163,7 +163,7 @@ void OptionsBaseState::restart(OptionsOrigin origin)
 {
 	switch (origin)
 	{
-		case OPT_MENU:
+		case OPT_MAIN_START:
 			_game->setState(new MainMenuState());
 			break;
 
@@ -250,7 +250,7 @@ void OptionsBaseState::btnOkClick(Action*)
 				Options::volFx,
 				Options::volUi);
 
-	if (Options::reload && _origin == OPT_MENU)
+	if (Options::reload && _origin == OPT_MAIN_START)
 		_game->setState(new StartState());
 	else if (  Options::displayWidth	!= Options::safeDisplayWidth // confirm any video-option changes ->
 			|| Options::displayHeight	!= Options::safeDisplayHeight

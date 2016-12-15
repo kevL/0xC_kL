@@ -98,7 +98,7 @@ OptionsDefaultsState::~OptionsDefaultsState()
  */
 void OptionsDefaultsState::btnYesClick(Action* action)
 {
-	if (_origin == OPT_MENU && Options::rulesets.size() > 1u)
+	if (_origin == OPT_MAIN_START && Options::rulesets.size() > 1u)
 		Options::reload = true;
 
 	Options::resetDefaults();
