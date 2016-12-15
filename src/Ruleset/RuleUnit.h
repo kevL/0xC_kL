@@ -38,7 +38,7 @@ enum SpecialAbility
 
 
 /**
- * The UnitStats struct holds some plain unit attribute data together.
+ * The UnitStats struct holds some plain unit-attribute-data together.
  */
 struct UnitStats
 {
@@ -211,8 +211,8 @@ struct UnitStats
 
 
 /**
- * Represents the static data for a unit that is generated on the battlescape.
- * @note This includes: HWPs, aliens and civilians.
+ * Represents the rule for a unit that is generated on the battlescape.
+ * @note This includes: HWPs, aLiens and civilians.
  * @sa Soldier BattleUnit
  */
 class RuleUnit
@@ -220,9 +220,9 @@ class RuleUnit
 
 private:
 	bool
-		_hasHands,
 		_dog,
 		_female,
+		_hasHands,
 		_livingWeapon,
 		_mechanical,
 		_psiBlock;
@@ -255,79 +255,76 @@ private:
 
 
 	public:
-		/// Creates a blank unit ruleset.
+		/// Creates a RuleUnit from a specified type.
 		explicit RuleUnit(const std::string& type);
-		/// Cleans up the unit ruleset.
+		/// Cleans up the rule.
 		~RuleUnit();
 
-		/// Loads the unit data from YAML.
+		/// Loads the unit-type from YAML.
 		void load(
 				const YAML::Node& node,
 				int modIndex);
 
-		/// Gets the unit's type.
+		/// Gets the unit-type.
 		std::string getType() const;
 
-		/// Gets the unit's stats.
+		/// Gets the unit-type's stats.
 		UnitStats* getStats();
 
-		/// Gets the unit's height when standing.
+		/// Gets the unit-type's height when standing.
 		int getStandHeight() const;
-		/// Gets the unit's height when kneeling.
+		/// Gets the unit-type's height when kneeling.
 		int getKneelHeight() const;
-		/// Gets the unit's float elevation.
+		/// Gets the unit-type's float elevation.
 		int getFloatHeight() const;
 
-		/// Gets the armor type.
+		/// Gets the unit-type's armor-type.
 		std::string getArmorType() const;
-		/// Gets the race type.
+		/// Gets the unit-type's race-type.
 		std::string getRace() const;
-		/// Gets the rank.
+		/// Gets the unit-type's rank.
 		std::string getRank() const;
 
-		/// Gets the value - for score calculation.
+		/// Gets the unit-type's value -- for score calculation.
 		int getValue() const;
 
-		/// Gets the death sound id.
+		/// Gets the unit-type's death-sound id.
 		int getDeathSound() const;
-		/// Gets the move sound id.
+		/// Gets the unit-type's move-sound id.
 		int getMoveSound() const;
-		/// Gets the unit's war cry.
+		/// Gets the unit-type's warcry.
 		int getAggroSound() const;
 
-		/// Gets the intelligence. This is the number of turns the AI remembers spotted xCom troop positions.
+		/// Gets the unit-type's intelligence.
 		int getIntelligence() const;
-		/// Gets the aggression. Determines an AI stance on the spectrum of taking revenge to taking cover.
+		/// Gets the unit-type's aggression.
 		int getAggression() const;
-		/// Gets the alien's special ability if any.
+		/// Gets the unit-type's special ability if any.
 		SpecialAbility getSpecialAbility() const;
-		/// Gets the unit's special ability power (fire or explode).
+		/// Gets the unit-type's special ability power (fire or explode).
 		int getSpecabPower() const;
-		/// Gets the unit's spawn unit.
+		/// Gets the the unit-type's spawn-type.
 		const std::string& getSpawnType() const;
 
-		/// Gets stamina recovery per turn as a percentage.
+		/// Gets the unit-type's stamina recovery per turn as a percentage.
 		int getEnergyRecovery() const;
 
-		/// Checks if this unit has an intrinsic weapon.
+		/// Checks if the unit-type's has an intrinsic weapon.
 		bool isLivingWeapon() const;
-		/// Gets the type of a melee-weapon built into this unit.
+		/// Gets the unit-type's built-in melee-weapon.
 		const std::string& getMeleeWeapon() const;
-		/// Gets a vector of integrated items this unit has available.
+		/// Gets a vector of integrated items the unit-type has available.
 //		const std::vector<std::string>& getBuiltInWeapons() const;
 
-		/// Gets if this RuleUnit is female.
+		/// Checks if the unit-type is female.
 		bool isFemale() const;
-
-		/// Gets if this RuleUnit is dog.
+		/// Checks if the unit-type is dog.
 		bool isDog() const;
-
-		/// Gets if this RuleUnit is a mechanical apparatus.
+		/// Checks if the unit-type is a mechanical apparatus.
 		bool isMechanical() const;
-		/// Gets if this RuleUnit is immune to psionic attacks.
+		/// Checks if the unit-type is immune to psionic attacks.
 		bool getPsiBlock() const;
-
-		/// Gets if the unit can open doors and prime grenades.
+		/// Checks if the unit-type can open doors and prime grenades.
 		bool hasHands() const;
 };
 

@@ -641,7 +641,7 @@ int Tile::getShade() const
  * because the part-type of the old and new are not necessarily the same. If
  * the destroyed part is an explosive set the tile's explosive value which will
  * trigger a chained explosion.
- * @param partType		- th tile-part for destruction (MapData.h)
+ * @param partType		- the tile-part for destruction (MapData.h)
  * @param battleSave	- pointer to the SavedBattleGame
  * @param obliterate	- true to bypass the death-part (default false)
  * @return, the power that was required to destroy the part (-1 not destroyed)
@@ -700,15 +700,10 @@ int Tile::destroyTilepart(
 
 	if (partType == O_FLOOR) // check if the floor-part on the ground-level is gone.
 	{
-		//Log(LOG_INFO) << ". part FLOOR";
-
 		if (_pos.z == 0 && _parts[O_FLOOR] == nullptr) // replace with scorched earth
-		{
-			//Log(LOG_INFO) << ". . set ScorchedEarth floor-part";
 			setMapData(
 					MapDataSet::getScorchedEarth(),
 					1,0, O_FLOOR);
-		}
 
 		if (   _parts[O_OBJECT] != nullptr // destroy object-part if the floor-part was just destroyed.
 			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)
@@ -721,7 +716,7 @@ int Tile::destroyTilepart(
 	{
 		Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
 		if (   tileAbove != nullptr
-			&& tileAbove->getMapData(O_FLOOR) == nullptr
+			&& tileAbove->getMapData(O_FLOOR)  == nullptr
 			&& tileAbove->getMapData(O_OBJECT) != nullptr
 			&& tileAbove->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NONE)
 		{

@@ -26,8 +26,8 @@ namespace OpenXcom
 {
 
 /**
- * Creates rules for a certain type of unit.
- * @param type - reference to the Unit's type
+ * Creates the rule for a specified type of unit.
+ * @param type - reference to the unit-type
  */
 RuleUnit::RuleUnit(const std::string& type)
 	:
@@ -59,7 +59,7 @@ RuleUnit::~RuleUnit()
 {}
 
 /**
- * Loads the unit from a YAML file.
+ * Loads this unit-type from a YAML file.
  * @param node		- YAML node
  * @param modIndex	- a value that offsets the sounds and sprite values to avoid conflicts
  */
@@ -122,7 +122,7 @@ void RuleUnit::load(
 }
 
 /**
- * Gets the string-ID that identifies this type of unit.
+ * Gets this unit-type's identifier.
  * @note Each unit is identified by race and if alien rank.
  * @return, the unit's name
  */
@@ -132,8 +132,8 @@ std::string RuleUnit::getType() const
 }
 
 /**
- * Gets the unit's stats-data-struct.
- * @return, pointer to the unit's stats
+ * Gets this unit-type's stats.
+ * @return, pointer to the stats
  */
 UnitStats* RuleUnit::getStats()
 {
@@ -141,8 +141,8 @@ UnitStats* RuleUnit::getStats()
 }
 
 /**
- * Gets the unit's height when standing.
- * @return, the unit's height
+ * Gets this unit-type's height when standing.
+ * @return, the standing height
  */
 int RuleUnit::getStandHeight() const
 {
@@ -150,8 +150,8 @@ int RuleUnit::getStandHeight() const
 }
 
 /**
- * Gets the unit's height when kneeling.
- * @return, the unit's kneeling height
+ * Gets this unit-type's height when kneeling.
+ * @return, the kneeling height
  */
 int RuleUnit::getKneelHeight() const
 {
@@ -159,8 +159,8 @@ int RuleUnit::getKneelHeight() const
 }
 
 /**
- * Gets the unit's floating elevation.
- * @return, the unit's floating height
+ * Gets this unit-type's floating elevation.
+ * @return, the floating elevation
  */
 int RuleUnit::getFloatHeight() const
 {
@@ -168,8 +168,8 @@ int RuleUnit::getFloatHeight() const
 }
 
 /**
- * Gets the unit's armor type.
- * @return, the unit's armor type
+ * Gets this unit-type's armor-type.
+ * @return, the armor-type
  */
 std::string RuleUnit::getArmorType() const
 {
@@ -177,8 +177,8 @@ std::string RuleUnit::getArmorType() const
 }
 
 /**
- * Gets the unit's race.
- * @return, the unit's race
+ * Gets this unit-type's race-type.
+ * @return, the race
  */
 std::string RuleUnit::getRace() const
 {
@@ -186,8 +186,8 @@ std::string RuleUnit::getRace() const
 }
 
 /**
- * Gets the unit's rank.
- * @return, the unit's rank
+ * Gets this unit-type's rank.
+ * @return, the rank
  */
 std::string RuleUnit::getRank() const
 {
@@ -195,8 +195,8 @@ std::string RuleUnit::getRank() const
 }
 
 /**
- * Gets the unit's value - for scoring.
- * @return, the unit's value
+ * Gets this unit-type's score.
+ * @return, the score
  */
 int RuleUnit::getValue() const
 {
@@ -204,8 +204,8 @@ int RuleUnit::getValue() const
 }
 
 /**
- * Gets the unit's death-sound.
- * @return, the ID of the unit's death-sound
+ * Gets this unit-type's death-sound.
+ * @return, the death-sound ID
  */
 int RuleUnit::getDeathSound() const
 {
@@ -213,8 +213,8 @@ int RuleUnit::getDeathSound() const
 }
 
 /**
- * Gets the unit's move-sound.
- * @return, the ID of the unit's move-sound
+ * Gets this unit-type's move-sound.
+ * @return, the move-sound ID
  */
 int RuleUnit::getMoveSound() const
 {
@@ -222,8 +222,8 @@ int RuleUnit::getMoveSound() const
 }
 
 /**
- * Gets the unit's war-cry.
- * @return, the ID of the unit's aggro-sound
+ * Gets the this unit-type's warcry.
+ * @return, the aggro-sound ID
  */
 int RuleUnit::getAggroSound() const
 {
@@ -231,9 +231,9 @@ int RuleUnit::getAggroSound() const
 }
 
 /**
- * Gets the intelligence.
+ * Gets this unit-type's intelligence.
  * @note This is the number of turns the AI remembers player's unit-positions.
- * @return, the unit's intelligence
+ * @return, the intelligence
  */
 int RuleUnit::getIntelligence() const
 {
@@ -241,9 +241,10 @@ int RuleUnit::getIntelligence() const
 }
 
 /**
- * Gets the aggression.
- * @note Determines the chance of revenge and taking cover.
- * @return, the unit's aggression
+ * Gets this unit-type's aggression.
+ * @note The AI uses this value to determines the chance of taking revenge or
+ * cover.
+ * @return, the aggression
  */
 int RuleUnit::getAggression() const
 {
@@ -251,8 +252,8 @@ int RuleUnit::getAggression() const
 }
 
 /**
- * Gets the unit's special ability.
- * @return, the unit's specab
+ * Gets this unit-type's special ability.
+ * @return, the specab
  */
 SpecialAbility RuleUnit::getSpecialAbility() const
 {
@@ -260,7 +261,7 @@ SpecialAbility RuleUnit::getSpecialAbility() const
 }
 
 /**
- * Gets the unit's special ability power (fire or explode).
+ * Gets this unit-type's special ability power (fire or explode).
  * @return, specab power
  */
 int RuleUnit::getSpecabPower() const
@@ -269,8 +270,8 @@ int RuleUnit::getSpecabPower() const
 }
 
 /**
- * Gets the unit that is spawned when this one dies.
- * @return, the unit's spawn-unit type
+ * Gets the unit-type that spawns when this one dies.
+ * @return, the unit's spawn-type
  */
 const std::string& RuleUnit::getSpawnType() const
 {
@@ -278,7 +279,7 @@ const std::string& RuleUnit::getSpawnType() const
 }
 
 /**
- * Gets stamina recovery per turn as a percentage.
+ * Gets this unit-type's stamina recovery per turn as a percentage.
  * @return, rate of stamina recovery
  */
 int RuleUnit::getEnergyRecovery() const
@@ -287,7 +288,7 @@ int RuleUnit::getEnergyRecovery() const
 }
 
 /**
- * Checks if this unit is a living weapon - eg: chryssalid.
+ * Checks if this unit-type is a living weapon - eg: chryssalid.
  * @note A living weapon ignores any loadout that may be available to its rank
  * and uses the one associated with its race. This is applied only to aLien
  * terroristic units in BattlescapeGenerator::deployAliens() where the string
@@ -300,7 +301,7 @@ bool RuleUnit::isLivingWeapon() const
 }
 
 /**
- * Gets this unit's built in melee weapon if any.
+ * Gets this unit-type's built-in melee weapon if any.
  * @return, the type of the weapon
  */
 const std::string& RuleUnit::getMeleeWeapon() const
@@ -309,7 +310,7 @@ const std::string& RuleUnit::getMeleeWeapon() const
 }
 
 /**
- * Gets what weapons this unit has built in.
+ * Gets what weapons this unit-type has built in.
  * @note This is a vector of strings representing any weapons that are inherent
  * to this creature. Unlike '_livingWeapon' this is used in ADDITION to any
  * loadout or living weapon item that may be defined.
@@ -321,7 +322,7 @@ const std::vector<std::string>& RuleUnit::getBuiltInWeapons() const
 } */
 
 /**
- * Gets if this Unit is female.
+ * Checks if this unit-type is female.
  * @return, true if female
  */
 bool RuleUnit::isFemale() const
@@ -330,7 +331,7 @@ bool RuleUnit::isFemale() const
 }
 
 /**
- * Gets if this RuleUnit is dog.
+ * Checks if this unit-type is dog.
  * @return, true if dog
  */
 bool RuleUnit::isDog() const
@@ -339,7 +340,7 @@ bool RuleUnit::isDog() const
 }
 
 /**
- * Gets if this Unit is a mechanical apparatus.
+ * Checks if this unit-type is a mechanical apparatus.
  * @note This var subsumes several more detailed ideas:
  * - isTrackedVehicle
  * - isPsiAttackable / isSentient <- DONE
@@ -356,8 +357,8 @@ bool RuleUnit::isMechanical() const
 }
 
 /**
- * Gets if this Unit is immune to psionic attacks.
- * @return, true if unit is immune to Psi
+ * Checks if this unit-type is immune to psionic attacks.
+ * @return, true if immune to psi
  */
 bool RuleUnit::getPsiBlock() const
 {
@@ -365,11 +366,11 @@ bool RuleUnit::getPsiBlock() const
 }
 
 /**
- * Gets if this unit can open a door w/ RMB click or prime a grenade during
+ * Checks if this unit-type can open a door w/ RMB click or prime a grenade during
  * battle.
  * @note Units can always open doors by moving through them if space permits as
  * well as prime grenades if in preBattle inventory.
- * @return, true if this unit can open doors
+ * @return, true if this unit can open doors etc
  */
 bool RuleUnit::hasHands() const
 {
