@@ -26,8 +26,8 @@ namespace OpenXcom
 {
 
 /**
- * Creates the blank ruleset for a certain type of Craft.
- * @param type - reference a string defining the type
+ * Creates the blank ruleset for a specified type of Craft.
+ * @param type - reference to a string that identifies the type
  */
 RuleCraft::RuleCraft(const std::string& type)
 	:
@@ -65,7 +65,7 @@ RuleCraft::~RuleCraft()
 }
 
 /**
- * Loads the Craft from a YAML file.
+ * Loads this craft-type from a YAML file.
  * @param node		- reference a YAML node
  * @param rules		- pointer to Ruleset
  * @param modIndex	- a value that offsets the sounds and sprite values to avoid conflicts
@@ -122,7 +122,7 @@ void RuleCraft::load(
 }
 
 /**
- * Gets the type-string of the Craft.
+ * Gets this craft-type.
  * @return, reference to the craft's type
  */
 const std::string& RuleCraft::getType() const
@@ -131,7 +131,7 @@ const std::string& RuleCraft::getType() const
 }
 
 /**
- * Gets the list of required-research to acquire the Craft.
+ * Gets the list of required-research to acquire this craft-type.
  * @return, reference to a vector of strings that lists the needed research IDs
  */
 const std::vector<std::string>& RuleCraft::getRequiredResearch() const
@@ -140,8 +140,8 @@ const std::vector<std::string>& RuleCraft::getRequiredResearch() const
 }
 
 /**
- * Gets the ID of the sprite used to draw the Craft in the
- * CraftInfoState (BASEBITS) and DogfightState (INTICON) screens.
+ * Gets the ID of the sprite used to draw this craft-type in CraftInfoState
+ * (BASEBITS) and DogfightState (INTICON).
  * @return, the sprite ID
  */
 int RuleCraft::getSprite() const
@@ -150,7 +150,7 @@ int RuleCraft::getSprite() const
 }
 
 /**
- * Gets the globe-marker for the Craft type.
+ * Gets the globe-marker for this craft-type.
  * @return, marker-ID (-1 if not defined in ruleset)
  */
 int RuleCraft::getMarker() const
@@ -159,7 +159,7 @@ int RuleCraft::getMarker() const
 }
 
 /**
- * Gets the maximum fuel the Craft can contain.
+ * Gets the maximum fuel this craft-type can contain.
  * @return, the fuel amount
  */
 int RuleCraft::getFuelCapacity() const
@@ -168,7 +168,7 @@ int RuleCraft::getFuelCapacity() const
 }
 
 /**
- * Gets the maximum damage the Craft can take before it's destroyed.
+ * Gets the maximum damage this craft-type can take before it's destroyed.
  * @return, the maximum damage
  */
 int RuleCraft::getCraftHullCap() const
@@ -177,7 +177,7 @@ int RuleCraft::getCraftHullCap() const
 }
 
 /**
- * Gets the maximum speed of the Craft flying around the Geoscape.
+ * Gets the maximum speed of this craft-type flying around the Geoscape.
  * @return, the top speed in knots
  */
 int RuleCraft::getTopSpeed() const
@@ -186,7 +186,7 @@ int RuleCraft::getTopSpeed() const
 }
 
 /**
- * Gets the acceleration of the Craft for closing/disengaging UFOs.
+ * Gets the acceleration of this craft-type for closing/disengaging UFOs.
  * @return, the acceleration
  */
 int RuleCraft::getAcceleration() const
@@ -195,7 +195,7 @@ int RuleCraft::getAcceleration() const
 }
 
 /**
- * Gets the maximum number of weapons that can be equipped onto the Craft.
+ * Gets the maximum number of weapons that can be equipped onto this craft-type.
  * @return, the weapon capacity
  */
 size_t RuleCraft::getWeaponCapacity() const
@@ -204,7 +204,7 @@ size_t RuleCraft::getWeaponCapacity() const
 }
 
 /**
- * Gets the maximum number of soldiers that the Craft can carry.
+ * Gets the maximum number of soldiers that this craft-type can carry.
  * @return, the soldier capacity
  */
 int RuleCraft::getSoldierCapacity() const
@@ -213,7 +213,7 @@ int RuleCraft::getSoldierCapacity() const
 }
 
 /**
- * Gets the maximum number of vehicles that the Craft can carry.
+ * Gets the maximum number of vehicles that this craft-type can carry.
  * @return, the vehicle capacity
  */
 int RuleCraft::getVehicleCapacity() const
@@ -222,7 +222,7 @@ int RuleCraft::getVehicleCapacity() const
 }
 
 /**
- * Gets the maximum amount of items this craft can carry/store.
+ * Gets the maximum amount of items this craft-type can carry/store.
  * @return, quantity of items
  */
 int RuleCraft::getItemCapacity() const
@@ -231,7 +231,7 @@ int RuleCraft::getItemCapacity() const
 }
 
 /**
- * Gets the cost of this craft for purchase/rent (0 if not purchasable).
+ * Gets the cost of this craft-type for purchase/rent (0 if not purchasable).
  * @return, the cost
  */
 int RuleCraft::getBuyCost() const
@@ -240,7 +240,7 @@ int RuleCraft::getBuyCost() const
 }
 
 /**
- * Gets the cost of rent for a month.
+ * Gets the cost of renting this craft-type for a month.
  * @return, the cost
  */
 int RuleCraft::getRentCost() const
@@ -249,7 +249,7 @@ int RuleCraft::getRentCost() const
 }
 
 /**
- * Gets the sell value of this craft - rented craft should use 0.
+ * Gets the sell value of this craft-type -- rented craft should use 0.
  * @return, the sell value
  */
 int RuleCraft::getSellCost() const
@@ -258,7 +258,7 @@ int RuleCraft::getSellCost() const
 }
 
 /**
- * Gets what item is required to refuel the Craft.
+ * Gets what item is required to refuel this craft-type.
  * @return, the item-type or "" if none
  */
 std::string RuleCraft::getRefuelItem() const
@@ -267,8 +267,8 @@ std::string RuleCraft::getRefuelItem() const
 }
 
 /**
- * Gets how much damage is removed from the Craft while repairing.
- * @return, the amount of damage
+ * Gets how much damage is removed from this craft-type while repairing.
+ * @return, the quantity of damage
  */
 int RuleCraft::getRepairRate() const
 {
@@ -276,8 +276,8 @@ int RuleCraft::getRepairRate() const
 }
 
 /**
- * Gets how much fuel is added to the Craft while refuelling.
- * @return, the amount of fuel
+ * Gets how much fuel is added to this craft-type while refuelling.
+ * @return, the quantity of fuel
  */
 int RuleCraft::getRefuelRate() const
 {
@@ -285,8 +285,8 @@ int RuleCraft::getRefuelRate() const
 }
 
 /**
- * Gets the Craft's radar range for detecting UFOs.
- * @return, the range in nautical miles
+ * Gets this craft-type's radar range for detecting UFOs.
+ * @return, range in nautical miles
  */
 int RuleCraft::getRangeRadar() const
 {
@@ -294,8 +294,8 @@ int RuleCraft::getRangeRadar() const
 }
 
 /**
- * Gets the Craft's sight range for detecting bases.
- * @return, the range in nautical miles
+ * Gets this craft-type's sight range for detecting bases.
+ * @return, range in nautical miles
  */
 int RuleCraft::getRangeRecon() const
 {
@@ -303,8 +303,9 @@ int RuleCraft::getRangeRecon() const
 }
 
 /**
- * Gets the amount of time a new craft takes to arrive at Base.
- * @return, the time in hours
+ * Gets the amount of time this craft-type takes to arrive at Base after
+ * purchase.
+ * @return, hours
  */
 int RuleCraft::getTransferTime() const
 {
@@ -312,8 +313,8 @@ int RuleCraft::getTransferTime() const
 }
 
 /**
- * Gets the score you lose when this craft is destroyed.
- * @return, the score in points
+ * Gets the score you lose when this craft-type is destroyed.
+ * @return, score
  */
 int RuleCraft::getScore() const
 {
@@ -321,7 +322,7 @@ int RuleCraft::getScore() const
 }
 
 /**
- * Gets the terrain-data needed to draw the Craft in the battlescape.
+ * Gets the terrain-data needed to draw this craft-type in the battlescape.
  * @return, pointer to RuleTerrain data
  */
 RuleTerrain* RuleCraft::getTacticalTerrain()
@@ -330,7 +331,7 @@ RuleTerrain* RuleCraft::getTacticalTerrain()
 }
 
 /**
- * Checks if the Craft is capable of going to Mars.
+ * Checks if this craft-type is capable of going to Mars.
  * @return, true if ship is space-worthy
  */
 bool RuleCraft::getSpacecraft() const
@@ -339,8 +340,8 @@ bool RuleCraft::getSpacecraft() const
 }
 
 /**
- * Gets the list weight for the Craft as a research item.
- * @return, the list weight
+ * Gets the list-weight for this craft-type in research-lists.
+ * @return, the list-weight
  */
 int RuleCraft::getListOrder() const
 {
@@ -348,7 +349,7 @@ int RuleCraft::getListOrder() const
 }
 
 /**
- * Gets the unit-location spawn-points for the Craft.
+ * Gets the unit-location spawn-points for this craft-type.
  * @return, reference to a vector of vectors of unit-locations
  */
 std::vector<std::vector<int>>& RuleCraft::getUnitLocations()

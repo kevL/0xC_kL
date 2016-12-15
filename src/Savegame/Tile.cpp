@@ -636,12 +636,12 @@ int Tile::getShade() const
 }
 
 /**
- * Destroys a part on this Tile.
- * @note First remove the old object then replace it with the destroyed one
- * because the object type of the old and new are not necessarily the same. If
+ * Destroys a specified part-type on this Tile.
+ * @note First remove the old part then replace it with the destroyed one
+ * because the part-type of the old and new are not necessarily the same. If
  * the destroyed part is an explosive set the tile's explosive value which will
  * trigger a chained explosion.
- * @param partType		- this Tile's part for destruction (MapData.h)
+ * @param partType		- th tile-part for destruction (MapData.h)
  * @param battleSave	- pointer to the SavedBattleGame
  * @param obliterate	- true to bypass the death-part (default false)
  * @return, the power that was required to destroy the part (-1 not destroyed)

@@ -44,8 +44,8 @@ class RuleTerrain;
 
 /**
  * Represents a specific type of Craft.
- * @note Contains constant info about a craft like costs speed capacities
- * consumptions etc.
+ * @note Contains constant info about a craft-type like costs, speed, capacities,
+ * consumptions, etc.
  * @sa Craft
  */
 class RuleCraft
@@ -88,81 +88,81 @@ private:
 
 
 	public:
-		/// Creates a Craft ruleset.
+		/// Creates a rule for a specified craft-type.
 		explicit RuleCraft(const std::string& type);
-		/// Cleans up the Craft ruleset.
+		/// Cleans up the rule.
 		~RuleCraft();
 
-		/// Loads Craft ruleset-data from YAML.
+		/// Loads the rule from YAML.
 		void load(
 				const YAML::Node& node,
 				Ruleset* const rules,
 				int modIndex,
 				int nextCraftIndex);
 
-		/// Gets a Craft's type.
+		/// Gets the rule's craft-type.
 		const std::string& getType() const;
 
-		/// Gets a Craft's requirements.
+		/// Gets the craft-type's required-research.
 		const std::vector<std::string>& getRequiredResearch() const;
 
-		/// Gets a Craft's sprite.
+		/// Gets the craft-type's sprite.
 		int getSprite() const;
-		/// Gets a Craft's globe-marker.
+		/// Gets the craft-type's globe-marker.
 		int getMarker() const;
 
-		/// Gets a Craft's maximum fuel.
+		/// Gets the craft-type's maximum fuel.
 		int getFuelCapacity() const;
-		/// Gets a Craft's maximum damage.
+		/// Gets the craft-type's maximum damage.
 		int getCraftHullCap() const;
-		/// Gets a Craft's maximum speed.
+		/// Gets the craft-type's maximum speed.
 		int getTopSpeed() const;
-		/// Gets a Craft's acceleration.
+		/// Gets the craft-type's acceleration.
 		int getAcceleration() const;
 
-		/// Gets a Craft's weapon capacity.
+		/// Gets the craft-type's weapon capacity.
 		size_t getWeaponCapacity() const;
-		/// Gets a Craft's soldier capacity.
+		/// Gets the craft-type's soldier capacity.
 		int getSoldierCapacity() const;
-		/// Gets a Craft's vehicle capacity.
+		/// Gets the craft-type's vehicle capacity.
 		int getVehicleCapacity() const;
-		/// Gets a Craft's item capacity.
+		/// Gets the craft-type's item capacity.
 		int getItemCapacity() const;
 
-		/// Gets a Craft's cost.
+		/// Gets the craft-type's cost.
 		int getBuyCost() const;
-		/// Gets a Craft's rent for a month.
+		/// Gets the craft-type's rent for a month.
 		int getRentCost() const;
-		/// Gets a Craft's value.
+		/// Gets the craft-type's value.
 		int getSellCost() const;
 
-		/// Gets a Craft's refuel item.
+		/// Gets the craft-type's refuel item.
 		std::string getRefuelItem() const;
 
-		/// Gets a Craft's repair rate.
+		/// Gets the craft-type's repair rate.
 		int getRepairRate() const;
-		/// Gets a Craft's refuel rate.
+		/// Gets the craft-type's refuel rate.
 		int getRefuelRate() const;
-		/// Gets a Craft's radar range.
+		/// Gets the craft-type's radar range.
 		int getRangeRadar() const;
-		/// Gets a Craft's sight range.
+		/// Gets the craft-type's sight range.
 		int getRangeRecon() const;
-		/// Gets a Craft's transfer time.
+		/// Gets the craft-type's transfer time.
 		int getTransferTime() const;
 
-		/// Gets a Craft's score.
+		/// Gets the craft-type's score.
 		int getScore() const;
 
-		/// Gets a Craft's terrain-data.
+		/// Gets the craft-type's terrain-data.
 		RuleTerrain* getTacticalTerrain();
 
-		/// Checks if a Craft is capable of travelling to Mars.
+		/// Checks if the craft-type is capable of travelling to Mars.
 		bool getSpacecraft() const;
 
-		/// Gets the list weight for a Craft.
+		/// Gets the list-weight for the craft-type.
 		int getListOrder() const;
 
-		/// Gets the unit-locations for a Craft.
+		/// Gets the unit-locations for the craft-type.
 		std::vector<std::vector<int>>& getUnitLocations();
 };
 
