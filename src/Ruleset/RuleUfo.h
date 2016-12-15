@@ -121,8 +121,8 @@ private:
 		/// Gets the UFO's activity score.
 		int getActivityScore() const;
 
-		/// Gets the tactical-terrain-data-rule for the type of UFO.
-		RuleTerrain* getTacticalTerrainData() const;
+		/// Gets the terrain-data for the type of UFO.
+		RuleTerrain* getTacticalTerrain() const;
 
 		/// Gets the reload time of the UFO's weapon.
 		int getWeaponReload() const;

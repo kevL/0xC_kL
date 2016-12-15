@@ -85,10 +85,11 @@ private:
 				bool force = true) const;
 		/// Gets a MapBlock given its type.
 		MapBlock* getTerrainBlock(const std::string& type) const;
-		/// Gets the MapData object.
+
+		/// Gets a MapData object.
 		MapData* getTerrainPart(
-				unsigned int* dataId,
-				int* dataSetId) const;
+				unsigned int* partId,
+				int* partSetId) const;
 
 		/// Gets the civilian types to use.
 		const std::vector<std::string>& getCivilianTypes() const;

@@ -312,7 +312,7 @@ int RuleCraft::getTransferTime() const
 }
 
 /**
- * Gets the number of points you lose when this craft is destroyed.
+ * Gets the score you lose when this craft is destroyed.
  * @return, the score in points
  */
 int RuleCraft::getScore() const
@@ -321,10 +321,10 @@ int RuleCraft::getScore() const
 }
 
 /**
- * Gets the terrain data needed to draw the Craft in the battlescape.
+ * Gets the terrain-data needed to draw the Craft in the battlescape.
  * @return, pointer to RuleTerrain data
  */
-RuleTerrain* RuleCraft::getTacticalTerrainData()
+RuleTerrain* RuleCraft::getTacticalTerrain()
 {
 	return _terrainRule;
 }

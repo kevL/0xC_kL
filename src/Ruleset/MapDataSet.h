@@ -51,7 +51,7 @@ private:
 	std::string _type;
 
 	static MapData
-		* _floorBlank, // used only to fix broken tileset entries. See RuleTerrain::getTerrainPart().
+		* _floorBlank, // not used directly. Although RuleTerrain::getTerrainPart() uses BLANKS entry #0 to 'fix' broken tile-parts.
 		* _floorScorch;
 
 	const Game* _game;

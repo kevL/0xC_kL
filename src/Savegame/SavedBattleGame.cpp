@@ -2087,7 +2087,7 @@ Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
  * Gets if a specified BattleUnit can use a specified Node.
  * @note Small units are allowed to use Large nodes and flying units are
  * allowed to use nonFlying nodes. The basic node-types are set in
- * BattlescapeGenerator::loadRMP().
+ * BattlescapeGenerator::loadRmpFile().
  * @param node - pointer to a node
  * @param unit - pointer to a unit trying to use the node
  * @return, true if unit can use node

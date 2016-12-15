@@ -258,8 +258,8 @@ void MapDataSet::loadData()
 			{
 				switch (partId)
 				{
-					case 0: MapDataSet::_floorBlank  = part; break; // not used.
-					case 1: MapDataSet::_floorScorch = part;
+					case 0: MapDataSet::_floorBlank  = part; break;	// not used directly. Although RuleTerrain::getTerrainPart()
+					case 1: MapDataSet::_floorScorch = part;		// uses BLANKS entry #0 to 'fix' broken tile-parts.
 				}
 			}
 			++partId;

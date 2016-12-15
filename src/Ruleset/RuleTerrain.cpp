@@ -199,15 +199,15 @@ MapBlock* RuleTerrain::getTerrainBlock(const std::string& type) const
 
 /**
  * Gets a MapData object.
- * @param dataId	- pointer to the ID of the part
- * @param dataSetId	- pointer to the ID of the tileset
+ * @param partId	- pointer to the ID of the part
+ * @param partSetId	- pointer to the ID of the tileset
  * @return, pointer to MapData object
  */
 MapData* RuleTerrain::getTerrainPart(
-		unsigned int* dataId,
-		int* dataSetId) const
+		unsigned int* partId,
+		int* partSetId) const
 {
-	MapDataSet* dataSet;
+	MapDataSet* partSet;
 
 	std::vector<MapDataSet*>::const_iterator pDataSet (_dataSets.begin());
 	for (
@@ -215,23 +215,23 @@ MapData* RuleTerrain::getTerrainPart(
 			pDataSet != _dataSets.end();
 			++pDataSet)
 	{
-		dataSet = *pDataSet;
+		partSet = *pDataSet;
 
-		if (*dataId < dataSet->getRecordsQty()) // found.
+		if (*partId < partSet->getRecordsQty()) // found.
 			break;
 
-		*dataId -= dataSet->getRecordsQty();
-		++(*dataSetId);
+		*partId -= partSet->getRecordsQty();
+		++(*partSetId);
 	}
 
 	if (pDataSet == _dataSets.end()) // Set this broken part-reference to "BLANKS" id-0.
 	{
-		dataSet = _dataSets.front();
-		*dataId = 0u;
-		*dataSetId = 0;
+		partSet = _dataSets.front();
+		*partId = 0u;
+		*partSetId = 0;
 	}
 
-	return dataSet->getRecords()->at(*dataId);
+	return partSet->getRecords()->at(*partId);
 }
 
 /**

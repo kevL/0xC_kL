@@ -651,6 +651,9 @@ int Tile::destroyTilepart(
 		SavedBattleGame* const battleSave,
 		bool obliterate)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Tile::destroyTilepart() " << _pos;
+
 	int
 		ret,
 		tLevel (0);
@@ -697,10 +700,15 @@ int Tile::destroyTilepart(
 
 	if (partType == O_FLOOR) // check if the floor-part on the ground-level is gone.
 	{
+		//Log(LOG_INFO) << ". part FLOOR";
+
 		if (_pos.z == 0 && _parts[O_FLOOR] == nullptr) // replace with scorched earth
+		{
+			//Log(LOG_INFO) << ". . set ScorchedEarth floor-part";
 			setMapData(
 					MapDataSet::getScorchedEarth(),
 					1,0, O_FLOOR);
+		}
 
 		if (   _parts[O_OBJECT] != nullptr // destroy object-part if the floor-part was just destroyed.
 			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)

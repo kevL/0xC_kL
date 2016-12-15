@@ -2331,23 +2331,23 @@ bool BattlescapeGenerator::placeUnitBesideAlly(BattleUnit* const unit) // privat
 
 /**
  * Loads a MAP file into the tiles of the BattleGame.
- * @param block				- pointer to MapBlock
- * @param offset_x			- Mapblock offset in x-direction
- * @param offset_y			- Mapblock offset in y-direction
- * @param terraRule			- pointer to RuleTerrain
- * @param dataSetIdOffset	- (default 0)
- * @param revealed			- true if this MapBlock is revealed (eg. landingsite of the Skyranger) (default false)
- * @param craft				- true if xCom Craft has landed on the MAP (default false)
+ * @param block			- pointer to MapBlock
+ * @param offset_x		- Mapblock offset in x-direction
+ * @param offset_y		- Mapblock offset in y-direction
+ * @param terrainRule	- pointer to RuleTerrain
+ * @param partSetId		- the offset of the MCD in the rule's list of terrain-types (default 0)
+ * @param revealed		- true if this MapBlock is revealed (eg. landingsite of the Skyranger) (default false)
+ * @param craft			- true if xCom Craft has landed on the MAP (default false)
  * @return, height of the loaded Mapblock (needed for spawn-point calculation)
  * @sa http://www.ufopaedia.org/index.php?title=MAPS
  * @note Y-axis is in reverse order.
  */
-int BattlescapeGenerator::loadMAP( // private.
+int BattlescapeGenerator::loadMapFile( // private.
 		MapBlock* const block,
 		int offset_x,
 		int offset_y,
-		const RuleTerrain* const terraRule,
-		int dataSetIdOffset,
+		const RuleTerrain* const terrainRule,
+		int partSetId,
 		bool revealed,
 		bool craft)
 {
@@ -2359,7 +2359,7 @@ int BattlescapeGenerator::loadMAP( // private.
 					std::ios::in | std::ios::binary);
 	if (ifstr.fail() == true)
 	{
-		throw Exception("bGen:loadMAP() " + file.str() + " not found.");
+		throw Exception("bGen:loadMapFile() " + file.str() + " not found.");
 	}
 
 	char xyz[3u];
@@ -2374,14 +2374,14 @@ int BattlescapeGenerator::loadMAP( // private.
 	std::ostringstream oststr;
 	if (size_z > _battleSave->getMapSizeZ())
 	{
-		oststr << "bGen:loadMAP() Height of " + file.str() + " is too big for the battlescape. Block is "
+		oststr << "bGen:loadMapFile() Height of " + file.str() + " is too big for the battlescape. Block is "
 			   << size_z << ". Expected: " << _battleSave->getMapSizeZ();
 		throw Exception(oststr.str());
 	}
 
 	if (size_x != block->getSizeX() || size_y != block->getSizeY())
 	{
-		oststr << "bGen:loadMAP() MapBlock is not of the size specified in its ruleset. " + file.str() + " is "
+		oststr << "bGen:loadMapFile() MapBlock is not of the size specified in its ruleset. " + file.str() + " is "
 			   << size_x << "x" << size_y << ". Expected: " << block->getSizeX() << "x" << block->getSizeY();
 		throw Exception(oststr.str());
 	}
@@ -2412,7 +2412,7 @@ int BattlescapeGenerator::loadMAP( // private.
 
 	if (z > _battleSave->getMapSizeZ() - 1)
 	{
-		throw Exception("bGen:loadMAP() Craft/UFO is too tall.");
+		throw Exception("bGen:loadMapFile() Craft/UFO is too tall.");
 	}
 
 	unsigned char parts[Tile::PARTS_TILE];
@@ -2445,10 +2445,10 @@ int BattlescapeGenerator::loadMAP( // private.
 			if (partId > 0u)
 			{
 				unsigned dataId (partId);
-				int dataSetId (dataSetIdOffset);
+				int dataSetId (partSetId);
 
-				MapData* const data (terraRule->getTerrainPart(&dataId, &dataSetId));
-//				if (dataSetIdOffset > 0) // ie: ufo or craft.
+				MapData* const data (terrainRule->getTerrainPart(&dataId, &dataSetId));
+//				if (partSetId > 0) // ie: ufo or craft.
 //					_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1,3); // erase content-object
 
 				_battleSave->getTile(Position(x,y,z))->setMapData(
@@ -2497,7 +2497,7 @@ int BattlescapeGenerator::loadMAP( // private.
 
 	if (ifstr.eof() == false)
 	{
-		throw Exception("bGen:loadMAP() Invalid MAP file: " + file.str());
+		throw Exception("bGen:loadMapFile() Invalid MAP file: " + file.str());
 	}
 
 	ifstr.close();
@@ -2540,7 +2540,7 @@ int BattlescapeGenerator::loadMAP( // private.
  * @param segment	- Mapblock segment
  * @sa http://www.ufopaedia.org/index.php?title=ROUTES
  */
-void BattlescapeGenerator::loadRMP( // private.
+void BattlescapeGenerator::loadRmpFile( // private.
 		MapBlock* const block,
 		int offset_x,
 		int offset_y,
@@ -2554,7 +2554,7 @@ void BattlescapeGenerator::loadRMP( // private.
 					std::ios::in | std::ios::binary);
 	if (ifstr.fail() == true)
 	{
-		throw Exception("bGen:loadRMP() " + file.str() + " not found");
+		throw Exception("bGen:loadRmpFile() " + file.str() + " not found");
 	}
 
 	int
@@ -2652,7 +2652,7 @@ void BattlescapeGenerator::loadRMP( // private.
 		else
 		{
 //			_error = true;
-			Log(LOG_WARNING) << "bGen:loadRMP() Error in RMP file: " << file.str()
+			Log(LOG_WARNING) << "bGen:loadRmpFile() Error in RMP file: " << file.str()
 							 << " node #" << nodeVal << " is outside map boundaries at"
 							 << " (" << pos_x << "," << pos_y << "," << pos_z << ")";
 		}
@@ -2661,7 +2661,7 @@ void BattlescapeGenerator::loadRMP( // private.
 
 	if (ifstr.eof() == false)
 	{
-		throw Exception("bGen:loadRMP() Invalid RMP file: " + file.str());
+		throw Exception("bGen:loadRmpFile() Invalid RMP file: " + file.str());
 	}
 	ifstr.close();
 }
@@ -2817,8 +2817,8 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 	std::vector<MapBlock*> ufoBlocks;
 
 	int
-		blockDataSetIdOffset (0),
-		craftDataSetIdOffset (0);
+		dataSetIds     (0),
+		dataSetIds_ufo (0);
 
 	std::map<int, bool> conditions; // create an array to track command success/failure
 
@@ -2833,7 +2833,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 			_rules->getMCDPatch((*i)->getType())->patchData(*i);
 
 		_battleSave->getMapDataSets()->push_back(*i);
-		++blockDataSetIdOffset;
+		++dataSetIds;
 	}
 
 	RuleTerrain* ufoTerrain (nullptr); // generate the map now and store it inside the tile objects
@@ -2919,10 +2919,10 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 					case MSC_ADDCRAFT:
 						if (_craft != nullptr)
 						{
-							craftBlock = _craft->getRules()->getTacticalTerrainData()->getTerrainBlock(
-																									999,999,
-																									MBT_DEFAULT,
-																									false);
+							craftBlock = _craft->getRules()->getTacticalTerrain()->getTerrainBlock(
+																								999,999,
+																								MBT_DEFAULT,
+																								false);
 							if (addCraft(craftBlock, *i, _craftPos) == true)
 							{
 								// By default addCraft adds blocks from group 1.
@@ -2943,7 +2943,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 										if (_blocks[static_cast<size_t>(x)]
 												   [static_cast<size_t>(y)] != nullptr)
 										{
-											loadMAP(
+											loadMapFile(
 													_blocks[static_cast<size_t>(x)]
 														   [static_cast<size_t>(y)],
 													x * 10, y * 10,
@@ -2976,9 +2976,9 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 						//
 						// - Warboy opus (c.2015)
 						if (_rules->getUfo((*i)->getUfoType()) != nullptr)
-							ufoTerrain = _rules->getUfo((*i)->getUfoType())->getTacticalTerrainData();
+							ufoTerrain = _rules->getUfo((*i)->getUfoType())->getTacticalTerrain();
 						else if (_ufo != nullptr)
-							ufoTerrain = _ufo->getRules()->getTacticalTerrainData();
+							ufoTerrain = _ufo->getRules()->getTacticalTerrain();
 
 						if (ufoTerrain != nullptr)
 						{
@@ -3008,7 +3008,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 													   [static_cast<size_t>(y)];
 
 										if (block != nullptr)
-											loadMAP(
+											loadMapFile(
 													block,
 													x * 10, y * 10,
 													_terrainRule);
@@ -3149,7 +3149,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 				_rules->getMCDPatch((*i)->getType())->patchData(*i);
 
 			_battleSave->getMapDataSets()->push_back(*i);
-			++craftDataSetIdOffset;
+			++dataSetIds_ufo;
 		}
 
 		for (size_t
@@ -3157,12 +3157,12 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 				i != ufoBlocks.size();
 				++i)
 		{
-			loadMAP(
+			loadMapFile(
 					ufoBlocks[i],
 					static_cast<int>(_ufoPos[i].x) * 10, static_cast<int>(_ufoPos[i].y) * 10,
 					ufoTerrain,
-					blockDataSetIdOffset);
-			loadRMP(
+					dataSetIds);
+			loadRmpFile(
 					ufoBlocks[i],
 					static_cast<int>(_ufoPos[i].x) * 10, static_cast<int>(_ufoPos[i].y) * 10,
 					Node::SEG_UFO);
@@ -3188,8 +3188,8 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 	if (_craftDeployed == true) // There'd better be a craftBlock if _craftDeployed=TRUE.
 	{
 		for (std::vector<MapDataSet*>::const_iterator
-				i = _craft->getRules()->getTacticalTerrainData()->getMapDataSets()->begin();
-				i != _craft->getRules()->getTacticalTerrainData()->getMapDataSets()->end();
+				i = _craft->getRules()->getTacticalTerrain()->getMapDataSets()->begin();
+				i != _craft->getRules()->getTacticalTerrain()->getMapDataSets()->end();
 				++i)
 		{
 			(*i)->loadData();
@@ -3200,15 +3200,15 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 			_battleSave->getMapDataSets()->push_back(*i);
 		}
 
-		loadMAP(
+		loadMapFile(
 				craftBlock,
 				static_cast<int>(_craftPos.x) * 10,
 				static_cast<int>(_craftPos.y) * 10,
-				_craft->getRules()->getTacticalTerrainData(),
-				blockDataSetIdOffset + craftDataSetIdOffset,
+				_craft->getRules()->getTacticalTerrain(),
+				dataSetIds + dataSetIds_ufo,
 				false, // was true
 				true);
-		loadRMP(
+		loadRmpFile(
 				craftBlock,
 				static_cast<int>(_craftPos.x) * 10,
 				static_cast<int>(_craftPos.y) * 10,
@@ -3522,7 +3522,7 @@ void BattlescapeGenerator::loadNodes() // private.
 				if (_blocks[x][y]->isInGroup(MBT_LANDPAD) == false
 					|| _landingzone[x][y] == false) // TODO: look closer at this.
 				{
-					loadRMP(
+					loadRmpFile(
 							_blocks[x][y],
 							static_cast<int>(x) * 10,
 							static_cast<int>(y) * 10,
@@ -3892,7 +3892,7 @@ bool BattlescapeGenerator::addLine( // private.
 					x * 10,
 					y * 10,
 					10,10);
-			loadMAP(
+			loadMapFile(
 					block,
 					x * 10,
 					y * 10,
@@ -3978,7 +3978,7 @@ bool BattlescapeGenerator::addBlock( // private.
 			 [yt + ySize] = MD_BOTH;	// this also marks 1x1 modules
 	_blocks[xt][yt] = block;
 
-	loadMAP(
+	loadMapFile(
 			_blocks[xt][yt],
 			x * 10,
 			y * 10,

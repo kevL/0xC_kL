@@ -51,9 +51,9 @@ AlienBAIState::AlienBAIState(
 		Node* const startNode)
 	:
 		BattleAIState(
-			battleSave,
-			unit,
-			startNode),
+				battleSave,
+				unit,
+				startNode),
 		_targetsExposed(0),
 		_targetsVisible(0),
 		_tuAmbush(-1),

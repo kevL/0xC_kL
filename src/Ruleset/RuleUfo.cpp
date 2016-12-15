@@ -248,10 +248,10 @@ int RuleUfo::getActivityScore() const
 }
 
 /**
- * Gets the RuleTerrain to draw this type of UFO on the battlefield.
+ * Gets the terrain-data to draw this type of UFO on the battlefield.
  * @return, pointer to RuleTerrain
  */
-RuleTerrain* RuleUfo::getTacticalTerrainData() const
+RuleTerrain* RuleUfo::getTacticalTerrain() const
 {
 	return _terrainRule;
 }

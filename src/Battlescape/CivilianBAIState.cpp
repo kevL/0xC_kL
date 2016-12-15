@@ -35,9 +35,9 @@ CivilianBAIState::CivilianBAIState(
 		Node* const startNode)
 	:
 		BattleAIState(
-			battleSave,
-			unit,
-			startNode),
+				battleSave,
+				unit,
+				startNode),
 		_targetsHostile(0)
 {
 	_escapeAction = new BattleAction();
