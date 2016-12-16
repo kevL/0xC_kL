@@ -358,11 +358,11 @@ void BattlescapeGame::popBattleState()
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeGame::popBattleState() qtyStates= " << _battleStates.size();
 
-	//for (std::list<BattleState*>::const_iterator
-	//		i = _battleStates.begin();
-	//		i != _battleStates.end();
-	//		++i)
-	//	Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
+//	for (std::list<BattleState*>::const_iterator
+//			i = _battleStates.begin();
+//			i != _battleStates.end();
+//			++i)
+//		Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
 
 //	if (Options::traceAI)
 //		Log(LOG_INFO) << "BattlescapeGame::popBattleState() "
@@ -433,7 +433,6 @@ void BattlescapeGame::popBattleState()
 					case BA_USE:
 						if (action.weapon->getRules()->getBattleType() == BT_MINDPROBE)
 							cancelTacticalAction(true);
-						break;
 				}
 			}
 		}
@@ -503,7 +502,7 @@ void BattlescapeGame::popBattleState()
 										break;
 
 									case BA_LAUNCH:
-										_playerAction.waypoints.clear();
+//										_playerAction.waypoints.clear(); // NOTE: Done in ProjectileFlyBState::think() to account for a unit dying in its own blast.
 										// no break;
 									case BA_THROW:
 										cancelTacticalAction(true);
@@ -627,7 +626,7 @@ void BattlescapeGame::popBattleState()
 	if (_battleStates.empty() == true) // NOTE: This could probly go upstairs but for now it's working okay.
 	{
 		//Log(LOG_INFO) << "";
-		//Log(LOG_INFO) << "popState: STATES are Empty";
+		//Log(LOG_INFO) << ". STATES are Empty";
 		if (getTileEngine()->isReaction() == true)
 		{
 			//Log(LOG_INFO) << "PopState: rfShooter VALID - clear!";
@@ -644,6 +643,7 @@ void BattlescapeGame::popBattleState()
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
+			//Log(LOG_INFO) << ". . side Player -> setupSelector";
 			_parentState->getGame()->getCursor()->setHidden(false);
 			_parentState->refreshMousePosition(); // update tile-data on the HUD
 			setupSelector();
@@ -1227,6 +1227,8 @@ void BattlescapeGame::liquidateUnit() // private.
  */
 void BattlescapeGame::setupSelector() // NOTE: This might not be needed when called right after cancelTacticalAction(false).
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeGame::setupSelector()";
 	getMap()->refreshSelectorPosition();
 
 	SelectorType type;
@@ -1234,9 +1236,11 @@ void BattlescapeGame::setupSelector() // NOTE: This might not be needed when cal
 
 	if (_playerAction.targeting == true)
 	{
+		//Log(LOG_INFO) << ". is targeting";
 		switch (_playerAction.type)
 		{
 			case BA_THROW:
+				//Log(LOG_INFO) << ". . throw CT_TOSS";
 				type = CT_TOSS;
 				break;
 
@@ -1245,19 +1249,23 @@ void BattlescapeGame::setupSelector() // NOTE: This might not be needed when cal
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
 			case BA_USE:
+				//Log(LOG_INFO) << ". . psi or use CT_PSI";
 				type = CT_PSI;
 				break;
 
 			case BA_LAUNCH:
+				//Log(LOG_INFO) << ". . launch CT_LAUNCH";
 				type = CT_LAUNCH;
 				break;
 
 			default:
+				//Log(LOG_INFO) << ". . default CT_TARGET";
 				type = CT_TARGET;
 		}
 	}
 	else
 	{
+		//Log(LOG_INFO) << ". is NOT targeting: CUBOID";
 		type = CT_CUBOID;
 
 		if ((_playerAction.actor = _battleSave->getSelectedUnit()) != nullptr)
@@ -2551,6 +2559,9 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
  */
 bool BattlescapeGame::cancelTacticalAction(bool force)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeGame::cancelTacticalAction() force= " << force;
+
 	if (Options::battlePreviewPath == PATH_NONE
 		|| _battleSave->getPathfinding()->clearPreview() == false)
 	{
@@ -2558,25 +2569,40 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 		{
 			if (_playerAction.targeting == true)
 			{
+				//Log(LOG_INFO) << ". is Targeting";
+
 				if (_playerAction.type == BA_LAUNCH
 					&& _playerAction.waypoints.empty() == false)
 				{
+					//Log(LOG_INFO) << ". . launch & action-waypoints valid Pop";
+
 					_playerAction.waypoints.pop_back();
 
 					if (getMap()->getWaypoints()->empty() == false)
+					{
+						//Log(LOG_INFO) << ". . . map-waypoints valid Pop";
 						getMap()->getWaypoints()->pop_back();
+					}
 
 					if (_playerAction.waypoints.empty() == true)
+					{
+						//Log(LOG_INFO) << ". . . hide launch btn";
 						_parentState->showLaunchButton(false);
+					}
 				}
 				else
 				{
+					//Log(LOG_INFO) << ". . set Targeting FALSE";
+					//Log(LOG_INFO) << ". . . launch= " << (_playerAction.type == BA_LAUNCH);
+					//Log(LOG_INFO) << ". . . action-wayponts valid= " << (_playerAction.waypoints.empty() == false);
+
 					_playerAction.targeting = false;
 					_playerAction.type = BA_NONE;
 
 					if (force == false
 						&& (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true))
 					{
+						//Log(LOG_INFO) << ". . . . force & Player true - setup Selector";
 						setupSelector();
 						_parentState->getGame()->getCursor()->setHidden(false);
 					}

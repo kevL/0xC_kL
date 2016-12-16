@@ -951,7 +951,8 @@ void ProjectileFlyBState::think()
 				{
 					case BA_LAUNCH:
 						_prjImpact = VOXEL_OBJECT; // Launch explodes at final waypoint auto.
-						break;
+						_battleSave->getBattleGame()->getTacticalAction()->waypoints.clear();	// NOTE: Do this here instead of BattlescapeGame::popBattleState()
+						break;																	// because if the unit dies in its own blast the selector doesn't reset.
 
 					case BA_SNAPSHOT:
 					case BA_AUTOSHOT:
