@@ -88,8 +88,7 @@ private:
 	int
 //		_missileDirection,
 		_dirRay,
-		_powerE, // effective power that actually explodes on a tile that's hit by HE etc.
-		_powerT; // test power that checks if _powerE even makes it to the next tile.
+		_powerE;
 
 	SavedBattleGame* _battleSave;
 	Tile* _trueTile;
@@ -223,7 +222,7 @@ private:
 		/// Accesses a boolean that flags reaction-fire for Camera repositioning.
 		bool& isReaction();
 
-		/// Handles bullet/weapon hits.
+		/// Deals with bullet/weapon hits.
 		void hit(
 				const Position& targetVoxel,
 				int power,
@@ -232,7 +231,7 @@ private:
 				bool melee = false,
 				bool shotgun = false,
 				const std::string& infection = "");
-		/// Handles explosions.
+		/// Deals with explosion propagations.
 		void explode(
 				const Position& targetVoxel,
 				int power,

@@ -383,6 +383,18 @@ Tile* Tile::getTileBelow(const SavedBattleGame* const battleSave) const
 }
 
 /**
+ * Gets the Tile above this Tile.
+ * @param battleSave - pointer to the SavedBattleGame
+ * @return, pointer to tile-above (can be nullptr)
+ */
+Tile* Tile::getTileAbove(const SavedBattleGame* const battleSave) const
+{
+	static const Position& posAbove (Position(0,0,+1));
+
+	return battleSave->getTile(_pos + posAbove);
+}
+
+/**
  * Gets whether this Tile has a bigwall.
  * @return, true if the content-object in this Tile is a bigwall (BigwallType in Pathfinding.h)
  *

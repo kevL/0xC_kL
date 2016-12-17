@@ -83,7 +83,6 @@ TileEngine::TileEngine(
 		_voxelData(voxelData),
 		_unitLighting(true),
 		_powerE(-1),
-		_powerT(-1),
 		_spotSound(true),
 		_trueTile(nullptr),
 		_dirRay(-1),
@@ -2261,7 +2260,7 @@ void TileEngine::hit(
  * See http://www.ufopaedia.org/index.php?title=Explosions for more info.
  * @param targetVoxel	- reference to the center of explosion in voxelspace
  * @param power			- power of explosion
- * @param dType			- damage type of explosion (RuleItem.h)
+ * @param dType			- damage-type of explosion (RuleItem.h)
  * @param radius		- maximum radius of explosion
  * @param attacker		- pointer to a unit that caused explosion (default nullptr)
  * @param grenade		- true if explosion is caused by a grenade for throwing XP (default false)
@@ -2286,11 +2285,12 @@ void TileEngine::explode(
 //	}
 //	Log(LOG_INFO) << "RNG:TEST = " << iFalse;
 
-	//Log(LOG_INFO) << "TileEngine::explode() power = " << power << ", dType = " << (int)dType << ", radius = " << radius;
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "TileEngine::explode() power= " << power << " dType= " << (int)dType << " radius= " << radius;
 	if (dType == DT_IN)
 	{
 		power >>= 1u;
-		//Log(LOG_INFO) << ". DT_IN power = " << power;
+		//Log(LOG_INFO) << ". DT_IN power= " << power;
 	}
 
 	if (power < 1) // quick out.
@@ -2299,8 +2299,13 @@ void TileEngine::explode(
 	BattleUnit* targetUnit (nullptr);
 
 	std::set<Tile*> tilesAffected;
-//	std::set<Tile*>& tilesToDetonate (_battleSave->detonationTiles());
 	std::pair<std::set<Tile*>::const_iterator, bool> tilePair;
+
+	int xy_Dec;
+	if (radius > 0)
+		xy_Dec = (power + radius - 1) / radius; // round up & safety: will be at least "1".
+	else
+		xy_Dec = 0;
 
 	int z_Dec;
 	switch (Options::battleExplosionHeight)
@@ -2325,15 +2330,13 @@ void TileEngine::explode(
 
 		tileX,
 		tileY,
-		tileZ;
+		tileZ,
+
+		powerT;
 
 	double
 		r,
 		r_Max (static_cast<double>(radius)),
-
-		vect_x,
-		vect_y,
-		vect_z,
 
 		sin_te,
 		cos_te,
@@ -2342,8 +2345,10 @@ void TileEngine::explode(
 
 	bool takenXp (false);
 
-//	int testIter (0); // TEST.
-	//Log(LOG_INFO) << ". r_Max = " << r_Max;
+	//Log(LOG_INFO) << ". r_Max= "	<< r_Max;
+	//Log(LOG_INFO) << ". xy_Dec= "	<< xy_Dec;
+	//Log(LOG_INFO) << ". z_Dec= "	<< z_Dec;
+
 
 //	for (int fi = 0; fi == 0; ++fi)		// kL_note: Looks like a TEST ray. ( 0 == horizontal )
 //	for (int fi = 90; fi == 90; ++fi)	// vertical: UP
@@ -2351,54 +2356,47 @@ void TileEngine::explode(
 	for (int
 			fi = -90;
 			fi <  91;
-			fi +=  5) // ray-tracing every 5 degrees makes sure all tiles are covered within a sphere.
+			fi +=  5) // ray-tracing every 5 degrees is enough to ensure that all tiles are covered within a sphere.
 	{
-//		for (int te = 0; te == 0; ++te)			// kL_note: Looks like a TEST ray. ( 0 == south, 180 == north, goes CounterClock-wise )
-//		for (int te = 180; te == 180; ++te)		// N
-//		for (int te = 90; te < 360; te += 180)	// E & W
-//		for (int te = 45; te < 360; te += 180)	// SE & NW
-//		for (int te = 225; te < 420; te += 180)	// NW & SE
-//		for (int te = 135; te == 135; ++te)		// NE
-//		for (int te = 315; te == 315; ++te)		// SW
-//		for (int te = 135; te < 360; te += 180)	// NE & SW
+		sin_fi = std::sin(static_cast<double>(fi) * M_PI / 180.);
+		cos_fi = std::cos(static_cast<double>(fi) * M_PI / 180.);
+
+//		for (int te =   0; te ==   0; ++te)			// kL_note: Looks like a TEST ray. ( 0 == south, 180 == north, goes CounterClock-wise )
+//		for (int te = 180; te == 180; ++te)			// N
+//		for (int te =  90; te  < 360; te += 180)	// E & W
+//		for (int te =  45; te  < 360; te += 180)	// SE & NW
+//		for (int te = 225; te  < 420; te += 180)	// NW & SE
+//		for (int te = 135; te == 135; ++te)			// NE
+//		for (int te = 315; te == 315; ++te)			// SW
+//		for (int te = 135; te  < 360; te += 180)	// NE & SW
 		for (int
 				te =   0;
 				te < 360;
-				te +=  3) // ray-tracing every 3 degrees makes sure all tiles are covered within a circle.
+				te +=  3) // ray-tracing every 3 degrees is enough to ensure that all tiles are covered within a circle.
 		{
+			//Log(LOG_INFO) << "";
+			//Log(LOG_INFO) << "fi= " << fi << " te= " << te;
 			_dirRay = te;
 
-			//Log(LOG_INFO) << "te = " << te << " fi = " << fi;
 			sin_te = std::sin(static_cast<double>(te) * M_PI / 180.);
 			cos_te = std::cos(static_cast<double>(te) * M_PI / 180.);
-			sin_fi = std::sin(static_cast<double>(fi) * M_PI / 180.);
-			cos_fi = std::cos(static_cast<double>(fi) * M_PI / 180.);
 
 			tileStart = _battleSave->getTile(Position(
 													centerX,
 													centerY,
 													centerZ));
 
-			_powerE =
-			_powerT = power;	// initialize _powerE & _powerT for each ray.
-			r = 0.;				// initialize radial length, also.
+			_powerE = power;	// initialize _powerE for each ray.
+			r = 0.;				// zero the current distance travelled for each ray.
 
-			while (_powerE > 0
-				&& r - 0.5 < r_Max) // kL_note: Allows explosions of 0 radius(!), single tile only hypothetically.
-									// the idea is to show an explosion animation but affect only that one tile.
-			{
+			while (_powerE > 0 && r - 0.5 < r_Max)	// NOTE: Allows explosions of 0 radius(!), single tile only hypothetically.
+			{										// The idea is to show an explosion animation but affect only the one Tile.
 				//Log(LOG_INFO) << "";
-				//++testIter;
-				//Log(LOG_INFO) << ". i = " << testIter;
-				//Log(LOG_INFO) << ". r = " << r << " _powerE = " << _powerE;
+				//Log(LOG_INFO) << ". r= " << r << " _powerE= " << _powerE;
 
-				vect_x = static_cast<double>(centerX) + (r * sin_te * cos_fi);
-				vect_y = static_cast<double>(centerY) + (r * cos_te * cos_fi);
-				vect_z = static_cast<double>(centerZ) + (r * sin_fi);
-
-				tileX = static_cast<int>(std::floor(vect_x));
-				tileY = static_cast<int>(std::floor(vect_y));
-				tileZ = static_cast<int>(std::floor(vect_z));
+				tileX = centerX + static_cast<int>(r * sin_te * cos_fi); // cast just so to keep +/- directions consistent.
+				tileY = centerY + static_cast<int>(r * cos_te * cos_fi);
+				tileZ = centerZ + static_cast<int>(r * sin_fi);
 
 				tileStop = _battleSave->getTile(Position(
 														tileX,
@@ -2406,107 +2404,101 @@ void TileEngine::explode(
 														tileZ));
 				if (tileStop == nullptr) // out of map!
 				{
-					//Log(LOG_INFO) << ". test : tileStart " << tileStart->getPosition() << ". tileStop NOT Valid " << Position(tileX, tileY, tileZ);
+					//Log(LOG_INFO) << ". tileStart " << tileStart->getPosition() << ". tileStop NOT Valid " << Position(tileX, tileY, tileZ);
 					break;
 				}
-				//else Log(LOG_INFO) << ". test : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition();
+				//else Log(LOG_INFO) << ". tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition();
 
 
-				if (r > 0.5						// don't block epicentrum.
-					&& tileStart != tileStop)	// don't double blockage from the same tiles (when diagonal that happens).
-				{
-					int dir;
-					Pathfinding::vectorToDirection(
-												tileStop->getPosition() - tileStart->getPosition(),
-												dir);
-					if (dir != -1 && (dir & 1) == 1)
-					{
-//						_powerE = static_cast<int>(static_cast<float>(_powerE) * 0.70710678f);
-//						_powerE = static_cast<int>(static_cast<double>(_powerE) * RNG::generate(0.895,0.935));
-						_powerE = static_cast<int>(static_cast<double>(_powerE) * RNG::generate(0.69,0.87));
-					}
+				if (r > 0.5 && tileStart != tileStop)	// don't block epicentrum.
+				{										// don't double-block in the tile (when non-orthogonal that can happen).
+					_powerE -= xy_Dec;
+					//Log(LOG_INFO) << ". . pE= " << _powerE;
 
-					if (radius > 0)
-					{
-						_powerE -= ((power + radius - 1) / radius); // round up.
-						//Log(LOG_INFO) << "radius > 0, " << power << "/" << radius << "=" << _powerE;
-					}
-					//else Log(LOG_INFO) << "radius <= 0";
+//					int teTest (te * 2);
+//					_powerE = static_cast<int>(static_cast<double>(_powerE) * (1. - (0.3 * std::sin(static_cast<double>(teTest)))));
+//					Log(LOG_INFO) << ". . non-orthogonal power reduction pE= " << _powerE;
+
+//					int dir;
+//					Pathfinding::vectorToDirection(
+//												tileStop->getPosition() - tileStart->getPosition(),
+//												dir);
+//					Log(LOG_INFO) << ". dir= " << dir;
+//
+//					if (dir != -1 && (dir & 1) == 1)
+//					{
+//						_powerE = static_cast<int>(static_cast<double>(_powerE) * 0.7);
+//						Log(LOG_INFO) << ". . non-orthogonal power reduction pE= " << _powerE;
+//						// NOTE: lower values shorten the non-orthogonal rays.
+//						// 1.0 creates a square explosion.
+//						// 0.7 creates a diamond explosion (sqrt(2)/2).
+//					}
 
 
 					if (_powerE < 1)
 					{
-						//Log(LOG_INFO) << ". _powerE < 1 BREAK[hori] " << Position(tileX, tileY, tileZ) << "\n";
+						//Log(LOG_INFO) << ". . _powerE < 1 BREAK[hori] " << Position(tileX, tileY, tileZ) << "\n";
 						break;
 					}
 
 					if (tileStart->getPosition().z != tileZ // up/down explosion decrease
 						&& (z_Dec == 0 || (_powerE -= z_Dec) < 1))
 					{
-						//Log(LOG_INFO) << ". _powerE < 1 BREAK[vert] " << Position(tileX, tileY, tileZ) << "\n";
+						//Log(LOG_INFO) << ". . _powerE < 1 BREAK[vert] " << Position(tileX, tileY, tileZ) << "\n";
 						break;
 					}
-
-					_powerT = _powerE;
 
 					const int horiBlock (horizontalBlockage(
 														tileStart,
 														tileStop,
 														dType));
-					//if (horiBlock != 0) Log(LOG_INFO) << ". horiBlock = " << horiBlock;
+					//if (horiBlock != 0) Log(LOG_INFO) << ". . horiBlock = " << horiBlock;
 
 					const int vertBlock (verticalBlockage(
 														tileStart,
 														tileStop,
 														dType));
-					//if (vertBlock != 0) Log(LOG_INFO) << ". vertBlock = " << vertBlock;
+					//if (vertBlock != 0) Log(LOG_INFO) << ". . vertBlock = " << vertBlock;
 
-					if (horiBlock < 0 && vertBlock < 0) // only visLike will return < 0 for this break here.
-					{
-						break; // WAIT A SECOND ... oh, Stun &tc.
+					powerT = _powerE;
+
+					if (horiBlock < 0 && vertBlock < 0)	// only visLike will return < 0 for this break here.
+					{									// WAIT A SECOND ... oh, Stun &tc.
+						//Log(LOG_INFO) << ". . horiBlock and vertBlock < 0 BREAK " << Position(tileX, tileY, tileZ) << "\n";
+						break;
 					}
-					else
-					{
-						if (horiBlock > 0) // only !visLike will return > 0 for these breaks here.
-						{
-							if ((_powerT -= horiBlock) < 1) // terrain takes 200% power to destruct. <- But this isn't for destruction.
-							{
-								//Log(LOG_INFO) << ". horiBlock BREAK " << Position(tileX, tileY, tileZ) << "\n";
-								break;
-							}
-						}
 
-						if (vertBlock > 0) // only !visLike will return > 0 for these breaks here.
-						{
-							if ((_powerT -= vertBlock) < 1) // terrain takes 200% power to destruct. <- But this isn't for destruction.
-							{
-								//Log(LOG_INFO) << ". vertBlock BREAK " << Position(tileX, tileY, tileZ) << "\n";
-								break;
-							}
-						}
+					if (horiBlock > 0 && (powerT -= horiBlock) < 1)	// only !visLike will return > 0 for these breaks here.
+					{												// terrain takes 200% power to destruct. <- But this isn't for destruction.
+						//Log(LOG_INFO) << ". . horiBlock BREAK " << Position(tileX, tileY, tileZ) << "\n";
+						break;
+					}
+
+					if (vertBlock > 0 && (powerT -= vertBlock) < 1)	// only !visLike will return > 0 for these breaks here.
+					{												// terrain takes 200% power to destruct. <- But this isn't for destruction.
+						//Log(LOG_INFO) << ". . vertBlock BREAK " << Position(tileX, tileY, tileZ) << "\n";
+						break;
 					}
 				}
+				else
+					powerT = _powerE;
 
-				// set this to the power-value *before* BLOCK reduces it, and *after* distance is accounted for!
-				// ..... not necessarily.
-				if (dType == DT_HE) // explosions do 50% damage to terrain and 50% to 150% damage to units
+
+				if (dType == DT_HE) // set this to the power-value *before* BLOCK reduced it and *after* distance is accounted for!
 				{
-					//Log(LOG_INFO) << ". setExplosive() _powerE = " << _powerE;
-					tileStop->setExplosive(_powerE, DT_HE);	// try powerT to prevent smoke/fire appearing behind intact walls etc.
-															// although that might gimp true damage vs parts calculations .... NOPE.
-//					tilesToDetonate.insert(tileStop);
+					//Log(LOG_INFO) << ". setExplosive() _powerE= " << _powerE;
+					tileStop->setExplosive(_powerE, DT_HE);
 				}
 
-				_powerE = _powerT; // note: These two are becoming increasingly redundant !!!
 
+				_powerE = powerT;
 
 				// ** DAMAGE begins w/ _powerE ***
 
-				tilePair = tilesAffected.insert(tileStop);	// check if this tile was hit already
-				if (tilePair.second == true)				// true if a new tile was inserted.
+				tilePair = tilesAffected.emplace(tileStop);	// check if the current tile was hit already
+				if (tilePair.second == true)				// true if the current tile gets inserted.
 				{
-					//Log(LOG_INFO) << ". > tile TRUE : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE = " << _powerE << " r = " << r;
-					//Log(LOG_INFO) << ". > _powerE = " << _powerE;
+					//Log(LOG_INFO) << ". > add Tile : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE= " << _powerE << " r= " << r;
 
 					if ((targetUnit = tileStop->getTileUnit()) != nullptr
 						&& targetUnit->getTakenExpl() == true) // hit large units only once ... stop experience exploitation near the end of this loop, also. Lulz
@@ -2533,7 +2525,7 @@ void TileEngine::explode(
 								power_OnUnit = RNG::generate(1, _powerE << 1u) // bell curve
 											 + RNG::generate(1, _powerE << 1u);
 								power_OnUnit >>= 1u;
-								//Log(LOG_INFO) << ". . . power_OnUnit = " << power_OnUnit << " DT_STUN";
+								//Log(LOG_INFO) << ". . . power_OnUnit= " << power_OnUnit << " DT_STUN";
 								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_STUN, true);
 							}
 
@@ -2551,7 +2543,7 @@ void TileEngine::explode(
 									power_OnUnit = RNG::generate(1, _powerE << 1u) // bell curve
 												 + RNG::generate(1, _powerE << 1u);
 									power_OnUnit >>= 1u;
-									//Log(LOG_INFO) << ". . . . power_OnUnit (corpse) = " << power_OnUnit << " DT_STUN";
+									//Log(LOG_INFO) << ". . . . power_OnUnit (corpse)= " << power_OnUnit << " DT_STUN";
 									bu->takeDamage(Position(0,0,0), power_OnUnit, DT_STUN, true);
 								}
 							}
@@ -2563,7 +2555,7 @@ void TileEngine::explode(
 							//Log(LOG_INFO) << ". . dType == DT_HE";
 							if (targetUnit != nullptr)
 							{
-								//Log(LOG_INFO) << ". . powerE = " << _powerE << " vs. " << targetUnit->getId();
+								//Log(LOG_INFO) << ". . powerE= " << _powerE << " vs. " << targetUnit->getId();
 								const double
 									power0 (static_cast<double>(_powerE)),
 									power1 (power0 * 0.5),
@@ -2572,7 +2564,7 @@ void TileEngine::explode(
 								power_OnUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
 											 + static_cast<int>(RNG::generate(power1, power2));
 								power_OnUnit >>= 1u;
-								//Log(LOG_INFO) << ". . DT_HE = " << power_OnUnit; // << ", vs ID " << targetUnit->getId();
+								//Log(LOG_INFO) << ". . DT_HE= " << power_OnUnit; // << " vs ID " << targetUnit->getId();
 
 								if (power_OnUnit > 0)
 								{
@@ -2584,17 +2576,17 @@ void TileEngine::explode(
 														centerY,
 														centerZ)) < 2)
 									{
-										//Log(LOG_INFO) << ". . . power_OnUnit = " << power_OnUnit << " DT_HE, GZ";
+										//Log(LOG_INFO) << ". . . power_OnUnit= " << power_OnUnit << " DT_HE GZ";
 										relVoxel = Position(0,0,0); // Ground zero effect is in effect
 										if (targetUnit->isKneeled() == true)
 										{
 											power_OnUnit = power_OnUnit * 17 / 20; // 85% damage
-											//Log(LOG_INFO) << ". . . power_OnUnit(kneeled) = " << power_OnUnit << " DT_HE, GZ";
+											//Log(LOG_INFO) << ". . . power_OnUnit(kneeled)= " << power_OnUnit << " DT_HE GZ";
 										}
 									}
 									else
 									{
-										//Log(LOG_INFO) << ". . . power_OnUnit = " << power_OnUnit << " DT_HE, not GZ";
+										//Log(LOG_INFO) << ". . . power_OnUnit= " << power_OnUnit << " DT_HE, not GZ";
 										relVoxel = Position( // Directional damage relative to explosion position.
 														(centerX << 4u) - (tileStop->getPosition().x << 4u),
 														(centerY << 4u) - (tileStop->getPosition().y << 4u),
@@ -2602,14 +2594,14 @@ void TileEngine::explode(
 										if (targetUnit->isKneeled() == true)
 										{
 											power_OnUnit = power_OnUnit * 7 / 10; // 70% damage
-											//Log(LOG_INFO) << ". . . power_OnUnit(kneeled) = " << power_OnUnit << " DT_HE, not GZ";
+											//Log(LOG_INFO) << ". . . power_OnUnit(kneeled)= " << power_OnUnit << " DT_HE not GZ";
 										}
 									}
 
 									if (power_OnUnit > 0)
 									{
 										targetUnit->takeDamage(relVoxel, power_OnUnit, DT_HE);
-										//Log(LOG_INFO) << ". . . realDamage = " << damage << " DT_HE";
+										//Log(LOG_INFO) << ". . . realDamage= " << damage << " DT_HE";
 									}
 								}
 							}
@@ -2626,7 +2618,7 @@ void TileEngine::explode(
 										)
 								{
 									//Log(LOG_INFO) << "pos " << tileStop->getPosition();
-									//Log(LOG_INFO) << ". . INVENTORY: Item = " << (*i)->getRules()->getType();
+									//Log(LOG_INFO) << ". . INVENTORY: Item " << (*i)->getRules()->getType();
 									if ((bu = (*i)->getBodyUnit()) != nullptr			// NOTE: This will send the unit through checkCasualties()
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS	// to log the kill in attacker's Diary and do morale but will
 										&& bu->getTakenExpl() == false)					// bypass UnitDieBState and its death-notice (no convert).
@@ -2642,9 +2634,9 @@ void TileEngine::explode(
 										power_OnUnit = static_cast<int>(RNG::generate(power1, power2)) // bell curve
 													 + static_cast<int>(RNG::generate(power1, power2));
 										power_OnUnit >>= 1u;
-										//Log(LOG_INFO) << ". . . INVENTORY: power = " << power_OnUnit;
+										//Log(LOG_INFO) << ". . . INVENTORY: power= " << power_OnUnit;
 										bu->takeDamage(Position(0,0,0), power_OnUnit, DT_HE);
-										//Log(LOG_INFO) << ". . . INVENTORY: damage = " << dam;
+										//Log(LOG_INFO) << ". . . INVENTORY: damage= " << dam;
 
 										if (bu->getHealth() == 0)
 										{
@@ -2652,7 +2644,7 @@ void TileEngine::explode(
 											if (attacker != nullptr)
 											{
 												bu->killerFaction(attacker->getFaction());
-												//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedByFaction = " << (int)attacker->getFaction();
+												//Log(LOG_INFO) << "TE::explode() id-" << bu->getId() << " killedByFaction " << (int)attacker->getFaction();
 											}
 
 											if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
@@ -2681,7 +2673,7 @@ void TileEngine::explode(
 																										(*i)->getRules(),
 																										attacker));
 										}
-										//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
+										//Log(LOG_INFO) << ". . . . INVENTORY: removeItem " << (*i)->getRules()->getType();
 										_battleSave->toDeleteItem(*i);
 										break;
 //										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
@@ -2697,12 +2689,12 @@ void TileEngine::explode(
 //										}
 //										else if ((*i)->getFuse() != -2)
 //										{
-//											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem = " << (*i)->getRules()->getType();
+//											//Log(LOG_INFO) << ". . . . INVENTORY: removeItem " << (*i)->getRules()->getType();
 //											_battleSave->toDeleteItem(*i);
 //											break;
 //										}
 									}
-									//else Log(LOG_INFO) << ". . . INVENTORY: bypass item = " << (*i)->getRules()->getType();
+									//else Log(LOG_INFO) << ". . . INVENTORY: bypass item " << (*i)->getRules()->getType();
 									done = (++i == tileStop->getInventory()->end());
 								}
 							}
@@ -2724,7 +2716,7 @@ void TileEngine::explode(
 														_powerE / 10,
 														_powerE / 5);
 								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_SMOKE, true);
-								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
+								//Log(LOG_INFO) << ". . DT_IN id-" << targetUnit->getId() << " firePower= " << firePower;
 							}
 
 							BattleUnit* bu;
@@ -2756,7 +2748,7 @@ void TileEngine::explode(
 														(_powerE	  >> 2u),
 														(_powerE * 3) >> 2u);
 								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
-								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
+								//Log(LOG_INFO) << ". . DT_IN id-" << targetUnit->getId() << " firePower= " << firePower;
 
 								const float vulnr (targetUnit->getArmor()->getDamageModifier(DT_IN));
 								if (vulnr > 0.f)
@@ -2808,7 +2800,7 @@ void TileEngine::explode(
 														(_powerE	  >> 2u),
 														(_powerE * 3) >> 2u);
 								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
-								//Log(LOG_INFO) << ". . DT_IN : " << targetUnit->getId() << " takes " << firePower << " firePower";
+								//Log(LOG_INFO) << ". . DT_IN id-" << targetUnit->getId() << " firePower= " << firePower;
 
 								const float vulnr (targetUnit->getArmor()->getDamageModifier(DT_IN));
 								if (vulnr > 0.f)
@@ -2846,7 +2838,7 @@ void TileEngine::explode(
 											if (attacker != nullptr)
 											{
 												bu->killerFaction(attacker->getFaction());
-												//Log(LOG_INFO) << "TE::explode() " << bu->getId() << " killedByFaction = " << (int)attacker->getFaction();
+												//Log(LOG_INFO) << "TE::explode() id-" << bu->getId() << " killedByFaction " << (int)attacker->getFaction();
 											}
 
 											if (bu->getGeoscapeSoldier() != nullptr // send Death notice.
@@ -2900,7 +2892,7 @@ void TileEngine::explode(
 
 					if (targetUnit != nullptr)
 					{
-						//Log(LOG_INFO) << ". . targetUnit ID " << targetUnit->getId() << ", setTaken TRUE";
+						//Log(LOG_INFO) << ". . targetUnit id-" << targetUnit->getId() << " setTaken TRUE";
 						targetUnit->setTakenExpl();
 						// if it's going to bleed to death and it's not a player give credit for the kill.
 						// kL_note: See Above^
@@ -2910,7 +2902,7 @@ void TileEngine::explode(
 								|| antecedentWounds < targetUnit->getFatalsTotal())
 							{
 								targetUnit->killerFaction(attacker->getFaction()); // kL .. just do this here and bDone with it. Normally done in BattlescapeGame::checkCasualties()
-								//Log(LOG_INFO) << "TE::explode() " << targetUnit->getId() << " killedByFaction = " << (int)attacker->getFaction();
+								//Log(LOG_INFO) << "TE::explode() id-" << targetUnit->getId() << " killedByFaction " << (int)attacker->getFaction();
 							}
 
 							if (takenXp == false
@@ -2932,13 +2924,11 @@ void TileEngine::explode(
 
 				tileStart = tileStop;
 				r += 1.;
-				//Log(LOG_INFO) << "";
 			}
 		}
 	}
 
 	_powerE =
-	_powerT =
 	_dirRay = -1;
 
 	for (std::vector<BattleUnit*>::const_iterator
@@ -2946,20 +2936,20 @@ void TileEngine::explode(
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". . unitTaken ID " << (*i)->getId() << ", reset Taken";
+		//Log(LOG_INFO) << ". . unitTaken id-" << (*i)->getId() << " reset Taken";
 		(*i)->setTakenExpl(false);
 	}
 
 
-	if (dType == DT_HE) // detonate tiles affected with HE
+	if (dType == DT_HE)								// detonate tiles affected with HE
 	{
-		if (_trueTile != nullptr)		// special case for when a diagonal bigwall is directly targetted.
-		{								// The explosion is moved out a tile so give a full-power hit to the true target-tile.
+		if (_trueTile != nullptr)					// special case for when a diagonal bigwall is directly targetted.
+		{											// The explosion is moved out a tile so give a full-power hit to the true target-tile.
 			_trueTile->setExplosive(power, DT_HE);
-			detonateTile(_trueTile);	// I doubt this needs any *further* consideration ...
-		}								// although it would be nice to have the explosion 'kick in' a bit.
+			detonateTile(_trueTile);				// I doubt this needs any *further* consideration ...
+		}											// although it would be nice to have the explosion 'kick in' a bit.
 
-		//Log(LOG_INFO) << ". explode Tiles, size = " << tilesAffected.size();
+		//Log(LOG_INFO) << ". tilesAffected size= " << tilesAffected.size();
 		for (std::set<Tile*>::const_iterator
 				i = tilesAffected.begin();
 				i != tilesAffected.end();
@@ -2969,7 +2959,7 @@ void TileEngine::explode(
 			{
 				detonateTile(*i);
 				applyGravity(*i);
-				Tile* const tileAbove (_battleSave->getTile((*i)->getPosition() + Position(0,0,1)));
+				Tile* const tileAbove ((*i)->getTileAbove(_battleSave));
 				if (tileAbove != nullptr)
 					applyGravity(tileAbove); // ... are you sure.
 			}
@@ -2977,16 +2967,6 @@ void TileEngine::explode(
 		//Log(LOG_INFO) << ". explode Tiles DONE";
 	}
 	_trueTile = nullptr;
-
-//	if (_trueTile != nullptr)
-//	{
-//		if (dType == DT_HE)	// special case for when a diagonal bigwall is directly targetted.
-//		{					// The explosion is moved out a tile so give a full-power hit to the true target-tile.
-//			_trueTile->setExplosive(power, DT_HE);
-//			tilesToDetonate.insert(_trueTile);
-//		}
-//		_trueTile = nullptr;
-//	}
 
 
 	if (defusePulse == true)

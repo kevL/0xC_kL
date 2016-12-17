@@ -2570,17 +2570,15 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 			if (_playerAction.targeting == true)
 			{
 				//Log(LOG_INFO) << ". is Targeting";
-
 				if (_playerAction.type == BA_LAUNCH
 					&& _playerAction.waypoints.empty() == false)
 				{
-					//Log(LOG_INFO) << ". . launch & action-waypoints valid Pop";
-
+					//Log(LOG_INFO) << ". . launch & action-waypoints valid - Pop 1 wp";
 					_playerAction.waypoints.pop_back();
 
 					if (getMap()->getWaypoints()->empty() == false)
 					{
-						//Log(LOG_INFO) << ". . . map-waypoints valid Pop";
+						//Log(LOG_INFO) << ". . . map-waypoints valid - Pop 1 wp";
 						getMap()->getWaypoints()->pop_back();
 					}
 
@@ -2593,16 +2591,13 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 				else
 				{
 					//Log(LOG_INFO) << ". . set Targeting FALSE";
-					//Log(LOG_INFO) << ". . . launch= " << (_playerAction.type == BA_LAUNCH);
-					//Log(LOG_INFO) << ". . . action-wayponts valid= " << (_playerAction.waypoints.empty() == false);
-
 					_playerAction.targeting = false;
 					_playerAction.type = BA_NONE;
 
 					if (force == false
 						&& (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true))
 					{
-						//Log(LOG_INFO) << ". . . . force & Player true - setup Selector";
+						//Log(LOG_INFO) << ". . . force & Player TRUE - setup Selector";
 						setupSelector();
 						_parentState->getGame()->getCursor()->setHidden(false);
 					}

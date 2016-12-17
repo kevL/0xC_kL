@@ -178,6 +178,8 @@ private:
 
 		/// Gets the Tile below this Tile.
 		Tile* getTileBelow(const SavedBattleGame* const battleSave) const;
+		/// Gets the Tile above this Tile.
+		Tile* getTileAbove(const SavedBattleGame* const battleSave) const;
 
 		/// Checks if the Tile is a big wall.
 //		bool isBigWall() const;
