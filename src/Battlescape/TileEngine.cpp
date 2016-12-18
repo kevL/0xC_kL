@@ -246,28 +246,44 @@ void TileEngine::calculateUnitLighting() const
 		_battleSave->getTiles()[i]->resetLight(LIGHT_LAYER_DYNAMIC);
 	}
 
-	int light;
+	int
+		light,
+		unitSize;
+	Position pos;
 	for (std::vector<BattleUnit*>::const_iterator
 			i = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
 		light = 0;
-		if (_unitLighting == true		// add lighting of player-units
+		if (_unitLighting == true // add lighting of unit
 			&& (*i)->getFaction() == FACTION_PLAYER
 			&& (*i)->isOut_t(OUT_STAT) == false)
 		{
 			light = LIGHT_UNIT;
 		}
 
-		if ((*i)->getUnitFire() != 0)	// add lighting of any units on fire
-			light = std::max(light,
-							 static_cast<int>(LIGHT_FIRE)); // kludgy STL::nerf
+		if ((*i)->getUnitFire() != 0) // add lighting of personal fire
+			light = std::max(light, LIGHT_FIRE);
 
-		addLight(
-				(*i)->getPosition(),
-				light,
-				LIGHT_LAYER_DYNAMIC);
+		pos = (*i)->getPosition();
+		unitSize = (*i)->getArmor()->getSize();
+		for (int
+				x = 0;
+				x != unitSize;
+				++x)
+		{
+			for (int
+					y = 0;
+					y != unitSize;
+					++y)
+			{
+				addLight(
+						pos + Position(x,y,0),
+						light,
+						LIGHT_LAYER_DYNAMIC);
+			}
+		}
 	}
 }
 
