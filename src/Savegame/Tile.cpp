@@ -855,7 +855,7 @@ int Tile::convertBurnToPct(int burn) // private/static.
 	if (burn > 254)
 		return 0;
 
-	return Vicegrip(255 - static_cast<int>(std::ceil(static_cast<float>(burn) / 255.f * 100.f)), 1,100);
+	return Vicegrip(100 - static_cast<int>(std::ceil(static_cast<float>(burn) / 255.f * 100.f)), 1,100);
 }
 
 /**
