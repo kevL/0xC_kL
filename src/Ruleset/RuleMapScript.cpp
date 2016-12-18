@@ -34,7 +34,7 @@ namespace OpenXcom
  */
 RuleMapScript::RuleMapScript()
 	:
-		_type(MSC_UNDEFINED),
+		_type(MSD_UNDEFINED),
 		_sizeX(1),
 		_sizeY(1),
 		_sizeZ(0),
@@ -71,30 +71,30 @@ void RuleMapScript::load(const YAML::Node& node)
 		const std::string type (subnode.as<std::string>());
 
 		if (type == "addBlock")
-			_type = MSC_ADDBLOCK;
+			_type = MSD_ADDBLOCK;
 		else if (type == "addLine")
-			_type = MSC_ADDLINE;
+			_type = MSD_ADDLINE;
 		else if (type == "addCraft")
 		{
-			_type = MSC_ADDCRAFT;
+			_type = MSD_ADDCRAFT;
 			_groups.push_back(1); // this is a default and can be overridden
 		}
 		else if (type == "addUFO")
 		{
-			_type = MSC_ADDUFO;
+			_type = MSD_ADDUFO;
 			_groups.push_back(1); // this is a default and can be overridden
 		}
 		else if (type == "digTunnel")
-			_type = MSC_DIGTUNNEL;
+			_type = MSD_DIGTUNNEL;
 		else if (type == "fillArea")
-			_type = MSC_FILLAREA;
+			_type = MSD_FILLAREA;
 		else if (type == "checkBlock")
-			_type = MSC_CHECKBLOCK;
+			_type = MSD_CHECKBLOCK;
 		else if (type == "removeBlock")
-			_type = MSC_REMOVE;
+			_type = MSD_REMOVE;
 		else if (type == "resize")
 		{
-			_type = MSC_RESIZE;
+			_type = MSD_RESIZE;
 			_sizeX =
 			_sizeY = 0; // defaults: don't resize anything unless specified.
 		}
@@ -260,11 +260,11 @@ void RuleMapScript::load(const YAML::Node& node)
 	{
 		switch (_type)
 		{
-			case MSC_DIGTUNNEL:
+			case MSD_DIGTUNNEL:
 				throw Exception("RuleMapScript: The direction is undefined for digTunnel operation - specify [v]ertical, [h]orizontal, or [b]oth");
 				break;
 
-			case MSC_ADDLINE:
+			case MSD_ADDLINE:
 				throw Exception("RuleMapScript: The direction is undefined for addLine operation - specify [v]ertical, [h]orizontal, or [b]oth");
 		}
 	}

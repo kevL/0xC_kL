@@ -226,7 +226,7 @@ void TextButton::setGroup(TextButton** const group)
 }
 
 /**
- * Replaces a certain amount of colors in the surface's palette.
+ * Replaces a specified quantity of colors in this Surface's palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)

@@ -2216,7 +2216,7 @@ bool Map::checkNorth( // private.
 }
 
 /**
- * Replaces a certain amount of colors in the surface's palette.
+ * Replaces a specified quantity of colors in this Surface's palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace
  * @param ncolors		- amount of colors to replace
@@ -2229,8 +2229,8 @@ void Map::setPalette(
 	Surface::setPalette(colors, firstcolor, ncolors);
 
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _battleSave->getMapDataSets()->begin();
-			i != _battleSave->getMapDataSets()->end();
+			i = _battleSave->getBattleDataSets()->begin();
+			i != _battleSave->getBattleDataSets()->end();
 			++i)
 	{
 		(*i)->getSurfaceset()->setPalette(colors, firstcolor, ncolors);

@@ -134,7 +134,7 @@ void ComboBox::setY(int y)
 }
 
 /**
- * Replaces a certain amount of colors in the palette of all the text contained in the list.
+ * Replaces a specified quantity of colors in the palette of all the text contained in the list.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)

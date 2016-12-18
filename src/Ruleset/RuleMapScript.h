@@ -56,16 +56,16 @@ struct TunnelData
 
 enum MapScriptDirective
 {
-	MSC_UNDEFINED = -1,	// -1
-	MSC_ADDBLOCK,		//  0
-	MSC_ADDLINE,		//  1
-	MSC_ADDCRAFT,		//  2
-	MSC_ADDUFO,			//  3
-	MSC_DIGTUNNEL,		//  4
-	MSC_FILLAREA,		//  5
-	MSC_CHECKBLOCK,		//  6
-	MSC_REMOVE,			//  7
-	MSC_RESIZE			//  8
+	MSD_UNDEFINED = -1,	// -1
+	MSD_ADDBLOCK,		//  0
+	MSD_ADDLINE,		//  1
+	MSD_ADDCRAFT,		//  2
+	MSD_ADDUFO,			//  3
+	MSD_DIGTUNNEL,		//  4
+	MSD_FILLAREA,		//  5
+	MSD_CHECKBLOCK,		//  6
+	MSD_REMOVE,			//  7
+	MSD_RESIZE			//  8
 };
 
 enum MapDirection

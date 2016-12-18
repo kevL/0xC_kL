@@ -349,7 +349,7 @@ void UnitDieBState::drop() // private.
 					{
 						if (tileExpl->addFire(tileExpl->getFuel() + RNG::generate(1,2)) == false)
 							tileExpl->addSmoke(std::max(tileExpl->getFuel() + 1,
-													  ((tileExpl->getFlammability() + 9) / 10) + 1));
+													  ((tileExpl->getBurnable() + 9) / 10) + 1));
 
 						if (playSound == true)
 						{

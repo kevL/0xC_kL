@@ -204,34 +204,34 @@ MapBlock* RuleTerrain::getTerrainBlock(const std::string& type) const
  * @return, pointer to MapData object
  */
 MapData* RuleTerrain::getTerrainPart(
-		unsigned int* partId,
+		size_t* partId,
 		int* partSetId) const
 {
-	MapDataSet* partSet;
+	MapDataSet* dataSet;
 
-	std::vector<MapDataSet*>::const_iterator pDataSet (_dataSets.begin());
+	std::vector<MapDataSet*>::const_iterator i (_dataSets.begin());
 	for (
 			;
-			pDataSet != _dataSets.end();
-			++pDataSet)
+			i != _dataSets.end();
+			++i)
 	{
-		partSet = *pDataSet;
+		dataSet = *i;
 
-		if (*partId < partSet->getRecordsQty()) // found.
+		if (*partId < dataSet->getRecordsQty()) // found.
 			break;
 
-		*partId -= partSet->getRecordsQty();
+		*partId -= dataSet->getRecordsQty();
 		++(*partSetId);
 	}
 
-	if (pDataSet == _dataSets.end()) // Set this broken part-reference to "BLANKS" id-0.
+	if (i == _dataSets.end()) // Set this broken part-reference to "BLANKS" id-0.
 	{
-		partSet = _dataSets.front();
-		*partId = 0u;
+		dataSet = _dataSets.front(); // "BLANKS"
 		*partSetId = 0;
+		*partId = 0u;
 	}
 
-	return partSet->getRecords()->at(*partId);
+	return dataSet->getRecords()->at(*partId);
 }
 
 /**

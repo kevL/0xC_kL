@@ -1145,7 +1145,7 @@ void Globe::cachePolygons() // private.
 }
 
 /**
- * Replaces a certain amount of colors in the palette of this Globe.
+ * Replaces a specified quantity of colors in the palette of this Globe.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace
  * @param ncolors		- amount of colors to replace

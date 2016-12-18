@@ -2301,22 +2301,22 @@ void TileEngine::explode(
 	std::set<Tile*> tilesAffected;
 	std::pair<std::set<Tile*>::const_iterator, bool> tilePair;
 
-	int xy_Dec;
+	int xy_Reduct;
 	if (radius > 0)
-		xy_Dec = (power + radius - 1) / radius; // round up & safety: will be at least "1".
+		xy_Reduct = (power + radius - 1) / radius; // round up & safety: will be at least "1".
 	else
-		xy_Dec = 0;
+		xy_Reduct = 0;
 
-	int z_Dec;
+	int z_Reduct;
 	switch (Options::battleExplosionHeight)
 	{
-		case 3: z_Dec = 10; break; // makes things easy for AlienBAIState::explosiveEfficacy()
-		case 2: z_Dec = 20; break;
-		case 1: z_Dec = 30; break;
+		case 3: z_Reduct = 10; break; // keeps things easy for AlienBAIState::explosiveEfficacy()
+		case 2: z_Reduct = 20; break;
+		case 1: z_Reduct = 30; break;
 
 		default:
 		case 0:
-			z_Dec = 0; // default flat explosion
+			z_Reduct = 0; // default flat explosion
 	}
 
 	Tile
@@ -2326,7 +2326,7 @@ void TileEngine::explode(
 	int // convert voxel-space to tile-space
 		centerX (targetVoxel.x >> 4u),
 		centerY (targetVoxel.y >> 4u),
-		centerZ (targetVoxel.z / 24),
+		centerZ (targetVoxel.z /  24),
 
 		tileX,
 		tileY,
@@ -2345,9 +2345,9 @@ void TileEngine::explode(
 
 	bool takenXp (false);
 
-	//Log(LOG_INFO) << ". r_Max= "	<< r_Max;
-	//Log(LOG_INFO) << ". xy_Dec= "	<< xy_Dec;
-	//Log(LOG_INFO) << ". z_Dec= "	<< z_Dec;
+	//Log(LOG_INFO) << ". r_Max= "		<< r_Max;
+	//Log(LOG_INFO) << ". xy_Reduct= "	<< xy_Reduct;
+	//Log(LOG_INFO) << ". z_Reduct= "	<< z_Reduct;
 
 
 //	for (int fi = 0; fi == 0; ++fi)		// kL_note: Looks like a TEST ray. ( 0 == horizontal )
@@ -2356,7 +2356,7 @@ void TileEngine::explode(
 	for (int
 			fi = -90;
 			fi <  91;
-			fi +=  5) // ray-tracing every 5 degrees is enough to ensure that all tiles are covered within a sphere.
+			fi +=  5) // ray-tracing every 5° is enough to ensure that all tiles are covered within a sphere.
 	{
 		sin_fi = std::sin(static_cast<double>(fi) * M_PI / 180.);
 		cos_fi = std::cos(static_cast<double>(fi) * M_PI / 180.);
@@ -2372,7 +2372,7 @@ void TileEngine::explode(
 		for (int
 				te =   0;
 				te < 360;
-				te +=  3) // ray-tracing every 3 degrees is enough to ensure that all tiles are covered within a circle.
+				te +=  3) // ray-tracing every 3° is enough to ensure that all tiles are covered within a circle.
 		{
 			//Log(LOG_INFO) << "";
 			//Log(LOG_INFO) << "fi= " << fi << " te= " << te;
@@ -2412,7 +2412,7 @@ void TileEngine::explode(
 
 				if (r > 0.5 && tileStart != tileStop)	// don't block epicentrum.
 				{										// don't double-block in the tile (when non-orthogonal that can happen).
-					_powerE -= xy_Dec;
+//					_powerE -= xy_Reduct;
 					//Log(LOG_INFO) << ". . pE= " << _powerE;
 
 //					int teTest (te * 2);
@@ -2435,14 +2435,14 @@ void TileEngine::explode(
 //					}
 
 
-					if (_powerE < 1)
+					if ((_powerE -= xy_Reduct) < 1)
 					{
 						//Log(LOG_INFO) << ". . _powerE < 1 BREAK[hori] " << Position(tileX, tileY, tileZ) << "\n";
 						break;
 					}
 
-					if (tileStart->getPosition().z != tileZ // up/down explosion decrease
-						&& (z_Dec == 0 || (_powerE -= z_Dec) < 1))
+					if (tileStart->getPosition().z != tileZ					// up-down explosion reduction
+						&& (z_Reduct == 0 || (_powerE -= z_Reduct) < 1))	// NOTE: The reduction by 'z_Reduct' is *additional* w/ 'xy_Reduct'.
 					{
 						//Log(LOG_INFO) << ". . _powerE < 1 BREAK[vert] " << Position(tileX, tileY, tileZ) << "\n";
 						break;
@@ -2762,7 +2762,7 @@ void TileEngine::explode(
 
 							Tile // NOTE: Should check if tileBelow's have already had napalm drop on them from this explosion ....
 								* tileFire (tileStop),
-								* tileBelow (_battleSave->getTile(tileFire->getPosition() + Position(0,0,-1)));
+								* tileBelow (tileFire->getTileBelow(_battleSave));
 
 							while (tileFire != nullptr				// safety.
 								&& tileFire->getPosition().z > 0	// safety.
@@ -2771,25 +2771,25 @@ void TileEngine::explode(
 								&& tileFire->isFloored(tileBelow) == false)
 							{
 								tileFire = tileBelow;
-								tileBelow = _battleSave->getTile(tileFire->getPosition() + Position(0,0,-1));
+								tileBelow = tileFire->getTileBelow(_battleSave);
 							}
 
 //							if (tileFire->isVoid() == false)
 //							{
-								// kL_note: So, this just sets a tile on fire/smoking regardless of its content.
+								// NOTE: So, this just sets a tile on fire/smoked regardless of its content.
 								// cf. Tile::igniteTile() -> well, not regardless, but automatically. That is,
-								// igniteTile() checks for Flammability first: if (getFlammability() == 255) don't do it.
-								// So this is, like, napalm from an incendiary round, while igniteTile() is for parts
-								// of the tile itself self-igniting.
+								// igniteTile() checks getBurnable() first: if [getFlammable() == 255] don't do it.
+								// So this is like napalm from an incendiary round, while igniteTile() is for
+								// parts of the tile itself igniting.
 
 							if (tileFire != nullptr) // safety.
 							{
 								const int fire (std::max(1,
 														 static_cast<int>(std::ceil(
-														(static_cast<float>(_powerE) / static_cast<float>(power)) * 10.))));
-								if (tileFire->addFire(fire + tileFire->getFuel() + 2 / 3) == false)
+														 static_cast<float>(_powerE) / static_cast<float>(power) * 10.f))));
+								if (tileFire->addFire((tileFire->getFuel() + fire + 2) / 3) == false)
 									tileFire->addSmoke(std::max(tileFire->getFuel() + fire,
-															  ((tileFire->getFlammability() + 9) / 10) + fire));
+															  ((tileFire->getBurnable() + 9) / 10) + fire));
 							}
 //							}
 

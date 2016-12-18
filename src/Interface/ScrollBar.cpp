@@ -169,7 +169,7 @@ void ScrollBar::setBackground(Surface* const bg)
 }
 
 /**
- * Replaces a certain amount of colors in this ScrollBar's Palette.
+ * Replaces a specified quantity of colors in this ScrollBar's Palette.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace
  * @param ncolors		- amount of colors to replace

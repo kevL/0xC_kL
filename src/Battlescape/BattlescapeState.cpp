@@ -51,7 +51,7 @@
 #include "../Engine/Game.h"
 #include "../Engine/InteractiveSurface.h"
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 //#include "../Engine/Palette.h"
 #include "../Engine/RNG.h"
@@ -77,6 +77,7 @@
 
 #include "../Resource/XcomResourcePack.h"
 
+#include "../Ruleset/MapDataSet.h" // debug: mapClick()
 #include "../Ruleset/RuleAlienDeployment.h"
 #include "../Ruleset/RuleArmor.h"
 #include "../Ruleset/RuleCountry.h"
@@ -1456,11 +1457,8 @@ void BattlescapeState::mapClick(Action* action)
 						_battleGame->secondaryAction(pos);
 			}
 
-//			if (_battleSave->getDebugTac() == true)
-//			{
+
 			std::wostringstream woststr; // onScreen debug ->
-//			if (_battleSave->getTile(pos)->getMapData(O_OBJECT) != nullptr)
-//				woststr << (int)(_battleSave->getTile(pos)->getMapData(O_OBJECT)->getBigwall()) << L" ";
 
 			const BattleUnit* const unit (_battleSave->getTile(pos)->getTileUnit());
 			if (unit != nullptr && unit->getUnitVisible() == true)
@@ -1470,7 +1468,61 @@ void BattlescapeState::mapClick(Action* action)
 
 			woststr << L"pos " << pos;
 			printDebug(woststr.str());
-//			}
+
+			if (_battleSave->getDebugTac() == true) // print tile-info to Log ->
+			{
+				Log(LOG_INFO) << "";
+				Log(LOG_INFO) << "data sets";
+				size_t id (0u);
+				for (std::vector<MapDataSet*>::const_iterator
+						i = _battleSave->getBattleDataSets()->begin();
+						i != _battleSave->getBattleDataSets()->end();
+						++i, ++id)
+				{
+					Log(LOG_INFO) << ". " << id << " - " << (*i)->getType();
+				}
+
+
+				Log(LOG_INFO) << "";
+				Log(LOG_INFO) << "tile info " << pos;
+
+				int
+					partSetId,
+					partId;
+
+				const Tile* const tile (_battleSave->getTile(pos));
+				if (tile->getMapData(O_FLOOR) != nullptr)
+				{
+					tile->getMapData(&partId, &partSetId, O_FLOOR);
+					Log(LOG_INFO) << ". FLOOR partSetId= "	<< partSetId << " - " << tile->getMapData(O_FLOOR)->getDataset()->getType();
+					Log(LOG_INFO) << ". FLOOR partId= "		<< partId;
+				}
+				else Log(LOG_INFO) << ". no FLOOR";
+
+				if (tile->getMapData(O_WESTWALL) != nullptr)
+				{
+					tile->getMapData(&partId, &partSetId, O_WESTWALL);
+					Log(LOG_INFO) << ". WESTWALL partSetId= "	<< partSetId << " - " << tile->getMapData(O_WESTWALL)->getDataset()->getType();
+					Log(LOG_INFO) << ". WESTWALL partId= "		<< partId;
+				}
+				else Log(LOG_INFO) << ". no WESTWALL";
+
+				if (tile->getMapData(O_NORTHWALL) != nullptr)
+				{
+					tile->getMapData(&partId, &partSetId, O_NORTHWALL);
+					Log(LOG_INFO) << ". NORTHWALL partSetId= "	<< partSetId << " - " << tile->getMapData(O_NORTHWALL)->getDataset()->getType();
+					Log(LOG_INFO) << ". NORTHWALL partId= "		<< partId;
+				}
+				else Log(LOG_INFO) << ". no NORTHWALL";
+
+				if (tile->getMapData(O_OBJECT) != nullptr)
+				{
+					tile->getMapData(&partId, &partSetId, O_OBJECT);
+					Log(LOG_INFO) << ". OBJECT partSetId= "	<< partSetId << " - " << tile->getMapData(O_OBJECT)->getDataset()->getType();
+					Log(LOG_INFO) << ". OBJECT partId= "	<< partId;
+				}
+				else Log(LOG_INFO) << ". no OBJECT";
+			}
 		}
 	}
 }

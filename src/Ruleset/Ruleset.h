@@ -161,7 +161,7 @@ private:
 	std::map<std::string, RuleAlienMission*>	_alienMissions;
 	std::map<std::string, RuleAlienRace*>		_alienRaces;
 	std::map<std::string, RuleArmor*>			_armors;
-	std::map<std::string, const RuleAward*>			_awards; // TODO: More const!
+	std::map<std::string, const RuleAward*>		_awards; // TODO: More const!
 	std::map<std::string, ExtraStrings*>		_extraStrings;
 	std::map<std::string, RuleBaseFacility*>	_facilities;
 	std::map<std::string, RuleCountry*>			_countries;

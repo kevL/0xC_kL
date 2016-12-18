@@ -1234,18 +1234,6 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	{
 		// Put burnedBySilacoid() here! etc
 		_unit->burnTile(_battleSave->getTile(_action.posTarget));
-
-//		Tile* const tileTarget (_battleSave->getTile(_action.posTarget));
-//		const int power (_unit->getUnitRules()->getSpecabPower());
-//		tileTarget->igniteTile(power / 10);
-//		const Position targetVoxel (Position::toVoxelSpaceCentered(
-//																_action.posTarget,
-//																-tileTarget->getTerrainLevel()));
-//		_battleSave->getTileEngine()->hit(
-//										targetVoxel,
-//										power,
-//										DT_IN,
-//										_unit);
 	}
 
 	_parent->getMap()->setSelectorType(CT_NONE); // might be already done in primaryAction()

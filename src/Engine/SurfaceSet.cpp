@@ -296,7 +296,7 @@ size_t SurfaceSet::getTotalFrames() const
 } */
 
 /**
- * Replaces a certain amount of colors in all of the frames.
+ * Replaces a specified quantity of colors in all of the frames.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)

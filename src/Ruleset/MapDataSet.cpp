@@ -120,12 +120,12 @@ SurfaceSet* MapDataSet::getSurfaceset() const
  */
 void MapDataSet::loadData()
 {
-	if (_loaded == false) // prevents loading twice
+	if (_loaded == false) // prevent loading twice
 	{
 		_loaded = true;
 
 #pragma pack(push, 1)	// align the incoming MCD-values with 1-byte boundaries
-		struct MCD		// This struct helps to read the .MCD file format.
+		struct MCD		// This struct helps read the .MCD file-format.
 		{
 			unsigned char	Frame[8u];
 			unsigned char	LOFT[12u];

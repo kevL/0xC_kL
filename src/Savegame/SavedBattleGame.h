@@ -133,7 +133,7 @@ private:
 	std::vector<BattleUnit*>
 		_units,
 		_shuffleUnits;
-	std::vector<MapDataSet*> _mapDataSets;
+	std::vector<MapDataSet*> _battleDataSets;
 	std::vector<Node*> _nodes;
 	std::vector<Position>
 		_storageSpace,
@@ -302,8 +302,8 @@ private:
 		/// Gets a pointer to the tileengine.
 		TileEngine* getTileEngine() const;
 
-		/// Gets the game's mapdatafiles.
-		std::vector<MapDataSet*>* getMapDataSets();
+		/// Gets the battle's MCD sets.
+		std::vector<MapDataSet*>* getBattleDataSets();
 
 		/// Gets a pointer to the SavedGame.
 		SavedGame* getSavedGame() const;

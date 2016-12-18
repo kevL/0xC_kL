@@ -148,7 +148,7 @@ private:
 	bool placeUnitBesideAlly(BattleUnit* const unit);
 
 	/// Loads a MAP file.
-	int loadMapFile(
+	int loadBlockFile(
 			MapBlock* const block,
 			int offset_x,
 			int offset_y,
@@ -157,7 +157,7 @@ private:
 			bool revealed = false,
 			bool craft = false);
 	/// Loads an RMP file.
-	void loadRmpFile(
+	void loadRouteFile(
 			MapBlock* const block,
 			int offset_x,
 			int offset_y,

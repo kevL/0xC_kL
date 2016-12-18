@@ -110,7 +110,7 @@ private:
 	bool allowFire() const;
 
 	/// Converts obscure inverse MCD notation to understandable percentages.
-	int convertBurnToPct(int burn) const;
+	static int convertBurnToPct(int burn);
 
 
 	public:
@@ -257,30 +257,28 @@ private:
 		/// Gets explosive type of the Tile.
 		DamageType getExplosiveType() const;
 
-		/// Gets flammability.
-		int getFlammability() const;
-		/// Gets flammability of part.
-		int getFlammability(MapDataType partType) const;
+		/// Gets the burnability of the Tile or of a specified part.
+		int getBurnable(MapDataType partType = O_NULPART) const;
 
-		/// Gets turns to burn of part.
+		/// Gets the turns to burn of a specified part.
 		int getFuel(MapDataType partType = O_NULPART) const;
 
 		/// Tries to start fire on the Tile.
 		bool igniteTile(int power);
 		/// Adds fire to the Tile.
 		bool addFire(int turns);
-		/// Reduces the number of turns the Tile will burn.
+		/// Reduces the quantity of turns the Tile will burn.
 		int decreaseFire();
-		/// Gets fire.
+		/// Gets current fire-value.
 		int getFire() const;	// kL_note: Made this inline, but may result in UB if say BattleUnit->getFire() conflicts.
 //		{ return _fire; }		// So ... don't. ie: change function names, THANKS c++
 								// ps. I changed the BattleUnit class function identifier to "getUnitFire" .....
 
 		/// Adds smoke to the Tile.
 		void addSmoke(int turns);
-		/// Reduces the number of turns the Tile will smoke.
+		/// Reduces the quantity of turns the Tile will smoke.
 		int decreaseSmoke();
-		/// Gets smoke.
+		/// Gets current smoke-value.
 		int getSmoke() const; // kL_note: Made this inline, but may result in UB if say BattleUnit->getFire() conflicts. So ... don't.
 //		{ return _smoke; }
 
@@ -289,10 +287,10 @@ private:
 
 		/// Animates the tile-parts.
 		void animateTile();
-		/// Gets fire and smoke animation-offset.
+		/// Gets fire/smoke animation-offset.
 		int getAnimationOffset() const;
 
-		/// Gets sprites.
+		/// Gets the sprite for a specified part.
 		Surface* getSprite(MapDataType partType) const;
 
 		/// Sets a specified BattleUnit on the Tile.
@@ -316,7 +314,7 @@ private:
 		/// Gets if the Tile has an unconscious unit in its inventory.
 		int hasUnconsciousUnit(bool playerOnly = true) const;
 
-		/// Checks this Tile for a primed grenade.
+		/// Checks the Tile for a primed grenade.
 		bool hasPrimedGrenade() const;
 
 		/// Gets inventory on the Tile.

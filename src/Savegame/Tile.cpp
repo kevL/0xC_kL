@@ -751,9 +751,9 @@ void Tile::hitTile(
 		int power,
 		SavedBattleGame* const battleSave)
 {
-	//Log(LOG_INFO) << "Tile::hitTile() partType= " << partType
-	//			  << " hp= " << _parts[partType]->getArmor()
-	//			  << " power= " << power;
+	//Log(LOG_INFO) << "Tile::hitTile() partType= "	<< partType
+	//			  << " hp= "						<< _parts[partType]->getArmor()
+	//			  << " power= "						<< power;
 	int expend;
 	while (power > 0
 		&& _parts[partType] != nullptr // early out + safety: Also handled in destroyTilepart().
@@ -819,33 +819,28 @@ DamageType Tile::getExplosiveType() const
 
 /**
  * Flammability of a tile is the flammability of its most flammable tile-part.
- * @return, the lower the value the higher the chance the tile catches fire - BSZAAST!!!
- */
-int Tile::getFlammability() const
-{
-	int burn (255); // not burnable. <- lower is better :)
-	for (size_t
-			i = 0u;
-			i != PARTS_TILE;
-			++i)
-	{
-		if (_parts[i] != nullptr
-			&& _parts[i]->getFlammable() < burn)
-		{
-			burn = _parts[i]->getFlammable();
-		}
-	}
-	return convertBurnToPct(burn);
-}
-
-/**
- * Gets the flammability of a tile-part.
  * @note I now decree that this returns the inverse of 0..255 as a percentage!
- * @param partType - the part to check (MapData.h)
+ * @param partType - the part to check or O_NULPART to test all parts (default O_NULPART) (MapData.h)
  * @return, the lower the value the higher the chance the tile-part catches fire - BSZAAST!!!
  */
-int Tile::getFlammability(MapDataType partType) const
+int Tile::getBurnable(MapDataType partType) const
 {
+	if (partType == O_NULPART)
+	{
+		int burn (255); // not burnable. <- lower is better :)
+		for (size_t
+				i = 0u;
+				i != PARTS_TILE;
+				++i)
+		{
+			if (   _parts[i] != nullptr
+				&& _parts[i]->getFlammable() < burn)
+			{
+				burn = _parts[i]->getFlammable();
+			}
+		}
+		return convertBurnToPct(burn);
+	}
 	return convertBurnToPct(_parts[partType]->getFlammable());
 }
 
@@ -855,19 +850,19 @@ int Tile::getFlammability(MapDataType partType) const
  * @param burn - flammability from an MCD file (see MapData)
  * @return, basic percent chance that this stuff burns
  */
-int Tile::convertBurnToPct(int burn) const // private.
+int Tile::convertBurnToPct(int burn) // private/static.
 {
 	if (burn > 254)
 		return 0;
 
-	return (255 - Vicegrip(static_cast<int>(std::ceil(static_cast<float>(burn) / 255.f * 100.f)), 1,100));
+	return Vicegrip(255 - static_cast<int>(std::ceil(static_cast<float>(burn) / 255.f * 100.f)), 1,100);
 }
 
 /**
  * Gets the fuel of a tile-part.
  * @note Fuel of a tile is the highest fuel of its parts/objects. This is NOT
  * the sum of the fuel of the objects!
- * @param partType - the part to check or O_NULPART to check all parts (default O_NULPART) (MapData.h)
+ * @param partType - the part to check or O_NULPART to test all parts (default O_NULPART) (MapData.h)
  * @return, turns to burn
  */
 int Tile::getFuel(MapDataType partType) const
@@ -880,7 +875,7 @@ int Tile::getFuel(MapDataType partType) const
 				i != PARTS_TILE;
 				++i)
 		{
-			if (_parts[i] != nullptr
+			if (   _parts[i] != nullptr
 				&& _parts[i]->getFuel() > fuel)
 			{
 				fuel = _parts[i]->getFuel();
@@ -896,29 +891,34 @@ int Tile::getFuel(MapDataType partType) const
  * @note If true it will add its fuel as turns-to-burn if tile is burning at a
  * lesser intensity. Called by floor-burning Silacoids and fire spreading @
  * turnovers and by TileEngine::detonateTile() after HE explosions. The tile
- * needs to both be flammable and have internal
- * fuel or else it won't even attempt to catch fire.
+ * needs to both be flammable and have internal fuel or else it won't even
+ * attempt to catch fire.
  * @param power - rough chance to get things going
- * @return, true if tile catches fire or even gets smoke
+ * @return, true if tile catches fire or even gets smoked
  */
 bool Tile::igniteTile(int power)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Tile::igniteTile() " << _pos;
 	if (power != 0 && allowSmoke() == true)
 	{
-		const int burn (getFlammability());
+		const int burn (getBurnable());
+		//Log(LOG_INFO) << ". burn= " << burn;
 		if (burn != 0)
 		{
 			const int fuel (getFuel());
+			//Log(LOG_INFO) << ". . fuel= " << fuel;
 			if (fuel != 0)
 			{
-				power = ((power + 4) / 5) + ((burn + 7) / 8) + (((fuel << 1u) + 6) / 7);
-				if (RNG::percent(power) == true) // unfortunately the state-machine may cause an unpredictable quantity of calls to this ... via ExplosionBState::think().
-				{
-					addSmoke((burn + 15) >> 4u);
+				power = ((power + 4) / 5) + ((burn + 7) >> 3u) + (((fuel << 1u) + 6) / 7);
+				//Log(LOG_INFO) << ". . . power= " << power;
+				if (RNG::percent(power) == true)	// unfortunately the state-machine may cause an unpredictable quantity of calls to this
+				{									// ... via ExplosionBState::think().
+					//Log(LOG_INFO) << ". . . . turns= " << ((burn + 15) >> 4u);
+					addSmoke((burn + 15) >> 4u);	// TODO: Add smoke to tileAbove also.
 
-					// TODO: pass in tileBelow and check its terrainLevel for -24; drop fire through to any tileBelow ...
-					if (allowFire() == true && _fire < fuel + 1)
-						addFire(fuel + 1);
+					if (allowFire() == true && _fire < fuel + 1)	// TODO: pass in tileBelow and check its terrainLevel for -24;
+						addFire(fuel + 1);							// drop fire through to any tileBelow ...
 
 					return true;
 				}
@@ -961,8 +961,7 @@ int Tile::decreaseFire()
 	if (--_fire < 1)
 	{
 		_fire = 0;
-		if (_smoke == 0)
-			_aniOffset = 0;
+		if (_smoke == 0) _aniOffset = 0;
 	}
 	return _fire;
 }
@@ -1006,8 +1005,7 @@ int Tile::decreaseSmoke()
 	if (_smoke < 1)
 	{
 		_smoke = 0;
-		if (_fire == 0)
-			_aniOffset = 0;
+		if (_fire == 0) _aniOffset = 0;
 	}
 	return _smoke;
 }
@@ -1053,7 +1051,7 @@ bool Tile::allowFire() const // private.
 	if (_parts[O_FLOOR] == nullptr && _parts[O_OBJECT] == nullptr)
 		return false;
 
-	if (_parts[O_FLOOR] != nullptr
+	if (   _parts[O_FLOOR] != nullptr
 		&& _parts[O_FLOOR]->blockFire() == true)
 	{
 		return false;

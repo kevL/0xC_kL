@@ -224,8 +224,8 @@ SavedBattleGame::~SavedBattleGame()
 	delete[] _tiles;
 
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _mapDataSets.begin();
-			i != _mapDataSets.end();
+			i = _battleDataSets.begin();
+			i != _battleDataSets.end();
 			++i)
 		(*i)->unloadData();
 
@@ -289,13 +289,13 @@ void SavedBattleGame::load(
 
 	setTacType(_tacticalType);
 
-	Log(LOG_INFO) << ". load mapdatasets";
+	Log(LOG_INFO) << ". load battle data sets";
 	for (YAML::const_iterator
-			i = node["mapdatasets"].begin();
-			i != node["mapdatasets"].end();
+			i = node["battleDataSets"].begin();
+			i != node["battleDataSets"].end();
 			++i)
 	{
-		_mapDataSets.push_back(rules->getMapDataSet(i->as<std::string>())); // NOTE: Ruleset must be non-const to push_back().
+		_battleDataSets.push_back(rules->getMapDataSet(i->as<std::string>())); // NOTE: Ruleset must be non-const to push_back().
 	}
 
 	Log(LOG_INFO) << ". init map";
@@ -659,8 +659,8 @@ void SavedBattleGame::load(
 void SavedBattleGame::loadMapResources(const Game* const game)
 {
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _mapDataSets.begin();
-			i != _mapDataSets.end();
+			i = _battleDataSets.begin();
+			i != _battleDataSets.end();
 			++i)
 	{
 		(*i)->loadData();
@@ -695,7 +695,7 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 
 			if (partId != -1 && partSetId != -1)
 				tile->setMapData(
-							_mapDataSets[static_cast<size_t>(partSetId)]->getRecords()->at(static_cast<size_t>(partId)),
+							_battleDataSets[static_cast<size_t>(partSetId)]->getRecords()->at(static_cast<size_t>(partId)),
 							partId,
 							partSetId,
 							partType);
@@ -734,11 +734,11 @@ YAML::Node SavedBattleGame::save() const
 	node["selectedUnit"]	= (_selectedUnit != nullptr) ? _selectedUnit->getId() : -1;
 
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _mapDataSets.begin();
-			i != _mapDataSets.end();
+			i = _battleDataSets.begin();
+			i != _battleDataSets.end();
 			++i)
 	{
-		node["mapdatasets"].push_back((*i)->getType());
+		node["battleDataSets"].push_back((*i)->getType());
 	}
 
 #if 0 // <- change to '1' to save Tiles in a human-readable non-binary format.
@@ -918,7 +918,7 @@ void SavedBattleGame::initMap(
 		}
 
 		_nodes.clear();
-		_mapDataSets.clear();
+		_battleDataSets.clear();
 	}
 
 	_mapsize_x = mapsize_x; // Create Tile objects.
@@ -1604,12 +1604,12 @@ TileEngine* SavedBattleGame::getTileEngine() const
 }
 
 /**
- * Gets the array of MCDs.
+ * Gets the list of MCDs for the battlefield.
  * @return, pointer to a vector of pointers to MapDataSets
  */
-std::vector<MapDataSet*>* SavedBattleGame::getMapDataSets()
+std::vector<MapDataSet*>* SavedBattleGame::getBattleDataSets()
 {
-	return &_mapDataSets;
+	return &_battleDataSets;
 }
 
 /**
@@ -2089,7 +2089,7 @@ Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
  * Gets if a specified BattleUnit can use a specified Node.
  * @note Small units are allowed to use Large nodes and flying units are
  * allowed to use nonFlying nodes. The basic node-types are set in
- * BattlescapeGenerator::loadRmpFile().
+ * BattlescapeGenerator::loadRouteFile().
  * @param node - pointer to a node
  * @param unit - pointer to a unit trying to use the node
  * @return, true if unit can use node

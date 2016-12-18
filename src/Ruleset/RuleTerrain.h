@@ -88,7 +88,7 @@ private:
 
 		/// Gets a MapData object.
 		MapData* getTerrainPart(
-				unsigned int* partId,
+				size_t* partId,
 				int* partSetId) const;
 
 		/// Gets the civilian types to use.
