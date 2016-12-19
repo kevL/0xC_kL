@@ -2960,7 +2960,7 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 		* const ltItem (selUnit->getItem(ST_LEFTHAND));
 	const RuleItem* itRule;
 
-	ActiveHand ah (selUnit->getActiveHand());
+	ActiveHand ah (selUnit->deterActiveHand());
 	if (ah != AH_NONE)
 	{
 		int

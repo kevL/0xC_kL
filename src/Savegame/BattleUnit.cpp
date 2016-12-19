@@ -3016,15 +3016,15 @@ void BattleUnit::setActiveHand(const ActiveHand hand)
 }
 
 /**
- * Gets this BattleUnit's active-hand.
+ * Determines this BattleUnit's active-hand.
  * @note Must have an item in that hand else switch to other hand or use
  * righthand by default. Ergo this effectively sets Active-hand.
  * @return, the ActiveHand (BattleUnit.h)
  */
-ActiveHand BattleUnit::getActiveHand()
+ActiveHand BattleUnit::deterActiveHand()
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "BattleUnit::getActiveHand()";
+	//Log(LOG_INFO) << "BattleUnit::deterActiveHand()";
 
 	switch (_activeHand)
 	{

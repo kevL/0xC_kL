@@ -1695,7 +1695,7 @@ void UnitSprite::sortHandObjects() // private.
 {
 	if (_itRT != nullptr && _itLT != nullptr) // this is the draw active-hand code ->
 	{
-		switch (_unit->getActiveHand())
+		switch (_unit->deterActiveHand())
 		{
 			default:
 			case AH_RIGHT:
@@ -1716,7 +1716,7 @@ void UnitSprite::sortHandObjects() // private.
 //	{
 //		if (_itLT && _itLT->getRules()->isTwoHanded() == true)
 //		{
-//			if (_unit->getActiveHand() == AH_LEFT)
+//			if (_unit->deterActiveHand() == AH_LEFT)
 //				_itRT = _itLT;
 //
 //			_itLT = nullptr;

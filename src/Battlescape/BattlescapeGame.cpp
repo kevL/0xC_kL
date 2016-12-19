@@ -1109,9 +1109,7 @@ void BattlescapeGame::handleNonTargetAction()
 					const Position& pos (_playerAction.actor->getPosition());
 					dropItem(_playerAction.weapon, pos, DROP_FROMINVENTORY);
 
-					_playerAction.actor->setActiveHand(_playerAction.actor->getActiveHand());
-
-					_playerAction.actor->setCacheInvalid();
+					_playerAction.actor->setActiveHand(_playerAction.actor->deterActiveHand());
 					getMap()->cacheUnitSprite(_playerAction.actor);
 
 					getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
@@ -2206,7 +2204,7 @@ bool BattlescapeGame::checkReservedTu(
 	batReserved = BA_NONE;	// <- default for player's units
 							// <- for use when called by Pathfinding::previewPath() only.
 	const BattleItem* weapon;
-	switch (unit->getActiveHand())
+	switch (unit->deterActiveHand())
 	{
 		case AH_RIGHT:
 			weapon = unit->getItem(ST_RIGHTHAND);

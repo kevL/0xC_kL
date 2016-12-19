@@ -1810,7 +1810,7 @@ bool TileEngine::reactionShot(
 	if (unit->getFaction() == FACTION_PLAYER
 		&& unit->isMindControlled() == false)
 	{
-		switch (unit->getActiveHand())
+		switch (unit->deterActiveHand())
 		{
 			case AH_RIGHT:
 				_rfAction->weapon = unit->getItem(ST_RIGHTHAND);
