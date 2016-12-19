@@ -1106,10 +1106,14 @@ void BattlescapeGame::handleNonTargetAction()
 					showWarning = WARN;
 				else
 				{
-					_playerAction.actor->setCacheInvalid();
-
-					const Position pos (_playerAction.actor->getPosition());
+					const Position& pos (_playerAction.actor->getPosition());
 					dropItem(_playerAction.weapon, pos, DROP_FROMINVENTORY);
+
+					_playerAction.actor->setActiveHand(_playerAction.actor->getActiveHand());
+
+					_playerAction.actor->setCacheInvalid();
+					getMap()->cacheUnitSprite(_playerAction.actor);
+
 					getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
 										->play(-1, getMap()->getSoundAngle(pos));
 				}
@@ -1156,8 +1160,6 @@ void BattlescapeGame::handleNonTargetAction()
 void BattlescapeGame::liquidateUnit() // private.
 {
 	_playerAction.actor->toggleShoot();
-//	_playerAction.actor->setShoot();
-//	getMap()->cacheUnitSprite(_playerAction.actor);
 
 	const RuleItem* const itRule (_playerAction.weapon->getRules());
 	BattleItem* const load (_playerAction.weapon->getAmmoItem());

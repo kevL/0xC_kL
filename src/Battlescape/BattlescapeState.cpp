@@ -3560,11 +3560,7 @@ void BattlescapeState::liquidationExplosion() // private.
 	if (explList->empty() == true)
 	{
 		_battleGame->endLiquidate();
-
 		_battleSave->getSelectedUnit()->toggleShoot();
-//		BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-//		selUnit->setShoot(false);
-//		_map->cacheUnitSprite(selUnit);
 	}
 }
 

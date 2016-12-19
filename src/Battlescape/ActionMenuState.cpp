@@ -423,9 +423,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 				break;
 
 			case BA_DROP:
-				if (_action->actor->expendTu(_action->TU) == true)
-					_action->actor->setActiveHand(_action->actor->getActiveHand());
-				else
+				if (_action->actor->expendTu(_action->TU) == false)
 					_action->result = BattlescapeGame::PLAYER_ERROR[0u];
 
 				_game->popState();

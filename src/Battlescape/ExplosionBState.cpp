@@ -614,7 +614,7 @@ void ExplosionBState::explode() // private.
 //	_parent->getMap()->cacheUnitSprites();	// why do all sprites need re-caching: the only one that changes
 	_parent->popBattleState();				// is the shooter-weapon. and that's now done in toggleShoot(). Besides,
 	//Log(LOG_INFO) << ". . pop";			// only units flagged as needing re-caching get re-cached.
-											// Animations like death will get cached by their own States.
+											// Animations like death will get re-cached by their own States.
 
 	Tile* const tile (te->checkForTerrainExplosives()); // check for more exploding tiles
 	if (tile != nullptr)

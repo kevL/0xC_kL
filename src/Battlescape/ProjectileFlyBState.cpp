@@ -682,11 +682,8 @@ bool ProjectileFlyBState::createProjectile() // private.
 				soundId = _action.weapon->getRules()->getFireSound();
 
 			if (_originVoxel.z == -1) // not a BL-waypoint
-			{
 				_unit->toggleShoot();
-//				_unit->setShoot();
-//				_parent->getMap()->cacheUnitSprite(_unit);
-			}
+
 			//Log(LOG_INFO) << "FlyB: . okay to shoot";
 		}
 		else // VOXEL_EMPTY, no line of fire; Note that BattleUnit accuracy^ should *not* be considered before this. Unless this is some sort of failsafe/exploit for the AI ...
@@ -1124,11 +1121,7 @@ void ProjectileFlyBState::think()
 					_parent->getMap()->setReveal(false);
 
 					if (_prjImpact == VOXEL_OUTOFBOUNDS) // else ExplosionBState will lower weapon above^
-					{
 						_unit->toggleShoot();
-//						_unit->setShoot(false);
-//						_parent->getMap()->cacheUnitSprite(_unit);
-					}
 				}
 
 
@@ -1208,8 +1201,6 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "fB:performMeleeAttack() id-" << _unit->getId();
 	_unit->toggleShoot();
-//	_unit->setShoot();
-//	_parent->getMap()->cacheUnitSprite(_unit);
 
 	_action.posTarget = _battleSave->getTileEngine()->getMeleePosition(_unit);
 	//Log(LOG_INFO) << ". target " << _action.target;

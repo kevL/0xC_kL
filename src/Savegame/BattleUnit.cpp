@@ -3003,17 +3003,15 @@ BattleItem* BattleUnit::getItem(
  */
 void BattleUnit::setActiveHand(const ActiveHand hand)
 {
-/*	bool debug;
-	if (_id == 1000013) debug = true;
-	else debug = false;
-	if (debug)
-		Log(LOG_INFO) << "setActiveHand current= " << (int)_activeHand; */
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattleUnit::setActiveHand() hand= " << (int)hand;
+	//Log(LOG_INFO) << ". current= " << (int)_activeHand;
 
 	if (_activeHand != hand)
 	{
 		_activeHand = hand;
 		_cacheInvalid = true;
-		//if (debug) Log(LOG_INFO) << ". switch= " << (int)_activeHand;
+		//Log(LOG_INFO) << ". . switch= " << (int)_activeHand;
 	}
 }
 
@@ -3025,18 +3023,15 @@ void BattleUnit::setActiveHand(const ActiveHand hand)
  */
 ActiveHand BattleUnit::getActiveHand()
 {
-/*	bool debug;
-	if (_id == 1000013) debug = true;
-	else debug = false;
-	if (debug)
-		Log(LOG_INFO) << "getActiveHand current= " << (int)_activeHand; */
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattleUnit::getActiveHand()";
 
 	switch (_activeHand)
 	{
 		case AH_RIGHT:
 			if (getItem(ST_RIGHTHAND) != nullptr)
 			{
-				//if (debug) Log(LOG_INFO) << ". ret= " << (int)_activeHand;
+				//Log(LOG_INFO) << ". ret= " << (int)_activeHand;
 				return AH_RIGHT;
 			}
 			break;
@@ -3044,25 +3039,26 @@ ActiveHand BattleUnit::getActiveHand()
 		case AH_LEFT:
 			if (getItem(ST_LEFTHAND) != nullptr)
 			{
-				//if (debug) Log(LOG_INFO) << ". ret= " << (int)_activeHand;
+				//Log(LOG_INFO) << ". ret= " << (int)_activeHand;
 				return AH_LEFT;
 			}
 	}
 
 	if (getItem(ST_RIGHTHAND) != nullptr)
 	{
-		//if (debug) Log(LOG_INFO) << ". set= " << (int)AH_RIGHT;
+		//Log(LOG_INFO) << ". set&ret= " << (int)AH_RIGHT;
 		_cacheInvalid = true;
 		return (_activeHand = AH_RIGHT);
 	}
 
 	if (getItem(ST_LEFTHAND) != nullptr)
 	{
-		//if (debug) Log(LOG_INFO) << ". set= " << (int)AH_LEFT;
+		//Log(LOG_INFO) << ". set&ret= " << (int)AH_LEFT;
 		_cacheInvalid = true;
 		return (_activeHand = AH_LEFT);
 	}
 
+	//Log(LOG_INFO) << ". ret= " << (int)AH_NONE;
 	return AH_NONE;
 }
 
