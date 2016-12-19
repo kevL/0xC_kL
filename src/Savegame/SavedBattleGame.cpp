@@ -372,9 +372,9 @@ void SavedBattleGame::load(
 			i != node["nodes"].end();
 			++i)
 	{
-		Node* const pfNode (new Node());
-		pfNode->load(*i);
-		_nodes.push_back(pfNode);
+		Node* const routeNode (new Node());
+		routeNode->load(*i);
+		_nodes.push_back(routeNode);
 	}
 
 
@@ -896,7 +896,20 @@ void SavedBattleGame::initMap(
 		const int mapsize_y,
 		const int mapsize_z)
 {
-	if (_nodes.empty() == false) // Delete old stuff,
+	if (_nodes.empty() == false) // delete old stuff ->
+	{
+		for (std::vector<Node*>::const_iterator
+				i = _nodes.begin();
+				i != _nodes.end();
+				++i)
+		{
+			delete *i;
+		}
+		_nodes.clear();
+		_battleDataSets.clear();
+	}
+
+	if (_tiles != nullptr) // delete old stuff ->
 	{
 		_qtyTilesTotal = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
 		for (size_t
@@ -906,25 +919,14 @@ void SavedBattleGame::initMap(
 		{
 			delete _tiles[i];
 		}
-
 		delete[] _tiles;
-
-		for (std::vector<Node*>::const_iterator
-				i = _nodes.begin();
-				i != _nodes.end();
-				++i)
-		{
-			delete *i;
-		}
-
-		_nodes.clear();
-		_battleDataSets.clear();
 	}
 
-	_mapsize_x = mapsize_x; // Create Tile objects.
+
+	_mapsize_x = mapsize_x; // create new Tiles ->
 	_mapsize_y = mapsize_y;
 	_mapsize_z = mapsize_z;
-	_qtyTilesTotal = static_cast<size_t>(mapsize_z * mapsize_y * mapsize_x);
+	_qtyTilesTotal = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
 
 	_tiles = new Tile*[_qtyTilesTotal];
 

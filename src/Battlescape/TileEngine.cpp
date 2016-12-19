@@ -264,8 +264,8 @@ void TileEngine::calculateUnitLighting() const
 		}
 
 		if ((*i)->getUnitFire() != 0) // add lighting of personal fire
-			light = std::max(light, LIGHT_FIRE);
-
+			light = std::max(light, static_cast<int>(LIGHT_FIRE));	// kludgy STL::nerf
+																	// g++ vagaries, I'll assume, in debug-cfg.
 		pos = (*i)->getPosition();
 		unitSize = (*i)->getArmor()->getSize();
 		for (int

@@ -335,8 +335,7 @@ void MapDataSet::unloadData()
 			i = _records.erase(i);
 		}
 
-		// But don't delete the extraSprites for terrain!!!
-		if (_game->getResourcePack()->getSurfaceSet(_type + ".PCK") == nullptr)
+		if (_game->getResourcePack()->getSurfaceSet(_type + ".PCK") == nullptr) // don't delete the extraSprites for terrains!!!
 			delete _surfaceSet;
 	}
 }

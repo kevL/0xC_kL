@@ -123,7 +123,8 @@ BattlescapeGenerator::~BattlescapeGenerator()
 {}
 
 /**
- * Sets up the various arrays and whatnot according to the size of the battlefield.
+ * Sets up the various arrays and whatnot according to the size of the
+ * battlefield.
  */
 void BattlescapeGenerator::init() // private.
 {
@@ -2848,7 +2849,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 			i != directives->end();
 			++i)
 	{
-		//Log(LOG_INFO) << "do script Command type = " << (int)(*i)->getType();
+		//Log(LOG_INFO) << "do script Directive type= " << (int)(*i)->getType();
 		if ((*i)->getLabel() != 0
 			&& conditions.find((*i)->getLabel()) != conditions.end())
 		{
@@ -3119,7 +3120,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 						if ((d = (*i)->getSizeZ()) > 0 && d != _mapsize_z)
 							_mapsize_z = d;
 
-						init(); // redo setup. TODO: Could result in a memory leak.
+						init(); // redo setup.
 				}
 			}
 		}
@@ -4375,7 +4376,7 @@ void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const rule
 				partType = static_cast<MapDataType>(j);
 
 				tile = _battleSave->getTiles()[i];
-				if (tile->getMapData(partType) != nullptr
+				if (   tile->getMapData(partType) != nullptr
 					&& tile->getMapData(partType)->getTileType() == objectType)
 				{
 					++inSitu;
