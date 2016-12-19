@@ -132,7 +132,7 @@ class BattleUnit
 		static const size_t PARTS_BODY = 6u;
 
 private:
-	static const size_t PARTS_ARMOR = 5u; // doubles as both armorValues and sprites' cache
+	static const size_t PARTS_ARMOR = 5u;
 	static const int DOSE_LETHAL = 3;
 //	static const int SPEC_WEAPON_MAX = 3;
 
@@ -199,7 +199,7 @@ private:
 	BattlescapeGame* _battleGame;
 	BattleUnit* _chargeTarget;
 	SavedBattleGame* _battleSave;
-	Surface* _spriteCache[PARTS_ARMOR];
+	Surface* _spriteCache[4u]; // holds quadrants
 	Tile* _tile;
 
 	Position
@@ -397,16 +397,16 @@ private:
 		/// Gets the BattleUnit's original faction
 		UnitFaction getOriginalFaction() const;
 
-		/// Gets the BattleUnit's cache for the battlescape.
-		Surface* getCache(int quadrant = 0) const;
-		/// Sets the BattleUnit's cache and cached flag.
+		/// Sets this BattleUnit's cache and sprite-cached flag.
 		void setCache(
 				Surface* const cache,
-				int quadrant = 0);
+				size_t quadrant);
+		/// Gets the BattleUnit's sprite-cache for the battlescape.
+		Surface* getCache(size_t quadrant) const;
 		/// Clears the BattleUnit's sprite-cache flag.
 		void setCacheInvalid();
-		/// Gets if the BattleUnit's sprite-cache is invalid.
-		bool getCacheInvalid() const;
+		/// Checks if the BattleUnit's sprite-cache is invalid.
+		bool isCacheInvalid() const;
 
 		/// Gets unit-sprite recolor values.
 		const std::vector<std::pair<Uint8, Uint8>>& getRecolor() const;
@@ -794,9 +794,6 @@ private:
 		void setExposed(int turns = 0);
 		/// Sets how many turns the BattleUnit will be exposed for.
 		int getExposed() const;
-
-		/// This call this after the default copy constructor deletes the BattleUnit's sprite-cache.
-		void invalidateCache();
 
 		/// Gets the BattleUnit's rules if non-Soldier else nullptr.
 		const RuleUnit* getUnitRules() const

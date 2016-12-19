@@ -191,7 +191,7 @@ BattleUnit::BattleUnit(
 
 	for (size_t
 			i = 0u;
-			i != PARTS_ARMOR;
+			i != 4u; // quadrants.
 			++i)
 	{
 		_spriteCache[i] = nullptr;
@@ -373,7 +373,7 @@ BattleUnit::BattleUnit(
 
 	for (size_t
 			i = 0u;
-			i != PARTS_ARMOR;
+			i != 4u; // quadrants.
 			++i)
 	{
 		_spriteCache[i] = nullptr;
@@ -431,7 +431,7 @@ BattleUnit::~BattleUnit()
 	//Log(LOG_INFO) << "Delete BattleUnit";
 	for (size_t
 			i = 0u;
-			i != PARTS_ARMOR;
+			i != 4u; // quadrants.
 			++i)
 	{
 		if (_spriteCache[i] != nullptr)
@@ -1306,28 +1306,28 @@ UnitFaction BattleUnit::getOriginalFaction() const
 }
 
 /**
- * Gets this BattleUnit's sprite-cache.
- * @note When the unit animates it needs to be re-cached.
- * @param quadrant - quadrant to check (default 0)
- * @return, pointer to the Surface
- */
-Surface* BattleUnit::getCache(int quadrant) const
-{
-	return _spriteCache[static_cast<size_t>(quadrant)];
-}
-
-/**
- * Sets this BattleUnit's sprite-cached flag.
+ * Sets this BattleUnit's cache and sprite-cached flag.
  * @note Set to true when the unit needs to be redrawn.
  * @param cache		- pointer to a Surface
- * @param quadrant	- unit quadrant to update (default 0)
+ * @param quadrant	- unit quadrant to update
  */
 void BattleUnit::setCache(
 		Surface* const cache,
-		int quadrant)
+		size_t quadrant)
 {
-	_spriteCache[static_cast<size_t>(quadrant)] = cache;
+	_spriteCache[quadrant] = cache;
 	_cacheInvalid = false;
+}
+
+/**
+ * Gets this BattleUnit's sprite-cache for a specified quadrant.
+ * @note When the unit animates it needs to be re-cached.
+ * @param quadrant - quadrant to check
+ * @return, pointer to the Surface
+ */
+Surface* BattleUnit::getCache(size_t quadrant) const
+{
+	return _spriteCache[quadrant];
 }
 
 /**
@@ -1339,10 +1339,10 @@ void BattleUnit::setCacheInvalid()
 }
 
 /**
- * Gets if this BattleUnit's sprite-cache is invalid.
+ * Checks if this BattleUnit's sprite-cache is invalid.
  * @return, true if invalid
  */
-bool BattleUnit::getCacheInvalid() const
+bool BattleUnit::isCacheInvalid() const
 {
 	return _cacheInvalid;
 }
@@ -3143,7 +3143,7 @@ BattleItem* BattleUnit::getMainHandWeapon(
 			if ((ltTU = itRule->getAimedTu()) == 0)
 				if ((ltTU = itRule->getLaunchTu()) == 0)
 					ltTU = itRule->getMeleeTu();
-	// note: Should probly account for 'noReaction' weapons ... before reaction-algorhithm fizzles.
+	// note: Should probly account for 'noReaction' weapons ... before reaction-algorithm fizzles.
 
 	//Log(LOG_INFO) << ". . rtTU = " << rtTU;
 	//Log(LOG_INFO) << ". . ltTU = " << ltTU;
@@ -4334,22 +4334,6 @@ void BattleUnit::setExposed(int turns)
 int BattleUnit::getExposed() const
 {
 	return _turnsExposed;
-}
-
-/**
- * Invalidates this BattleUnit's sprite-cache.
- * @note Call after copying object :(
- */
-void BattleUnit::invalidateCache()
-{
-	for (size_t
-			i = 0u;
-			i != PARTS_ARMOR;
-			++i)
-	{
-		_spriteCache[i] = nullptr;
-	}
-	_cacheInvalid = true;
 }
 
 /**

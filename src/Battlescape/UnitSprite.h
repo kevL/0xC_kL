@@ -32,8 +32,8 @@ class SurfaceSet;
 
 
 /**
- * A class that renders a specific unit given its render rules combining the
- * right frames from its SurfaceSet.
+ * A class that renders an individual BattleUnit given its render rules
+ * combining the right frames from its SurfaceSet.
  */
 class UnitSprite final
 	:
@@ -90,12 +90,10 @@ private:
 
 
 	public:
-		/// Creates a UnitSprite with the specified position and size.
+		/// Creates a UnitSprite of the specified size.
 		UnitSprite(
 				int width,
-				int height,
-				int x = 0,
-				int y = 0);
+				int height);
 		/// Cleans up the UnitSprite.
 		~UnitSprite();
 
@@ -107,7 +105,7 @@ private:
 		/// Sets the BattleUnit to be rendered.
 		void setBattleUnit(
 				BattleUnit* const unit,
-				int quad = 0);
+				size_t quadrant);
 		/// Sets the right-hand BattleItem to be rendered.
 		void setBattleItRH(const BattleItem* const item = nullptr);
 		/// Sets the left-hand BattleItem to be rendered.

@@ -396,7 +396,7 @@ InventoryState::~InventoryState()
 		{
 			if (   (*i)->getFaction() == FACTION_PLAYER
 				&& (*i)->getUnitStatus() == STATUS_STANDING
-				&& (*i)->getCacheInvalid() == true)
+				&& (*i)->isCacheInvalid() == true)
 			{
 				te->applyGravity((*i)->getUnitTile());
 				_parent->getMap()->cacheUnitSprite(*i); // can disable cache-invalid check.

@@ -174,12 +174,12 @@ private:
 			const BattleUnit* unit = nullptr,
 			bool* const halfLeft = nullptr) const;
 
-	/// Gets if a Tile is a/the true location of unit.
+	/// Gets if a Tile is a/the true location of a specified unit.
 	bool isTrueLoc(
 			const BattleUnit* const unit,
 			const Tile* const tile) const;
-	/// Gets the unit's quadrant for drawing.
-	int getQuadrant(
+	/// Gets a specified unit's quadrant for drawing.
+	size_t getQuadrant(
 			const BattleUnit* const unit,
 			const Tile* const tile,
 			bool trueLoc) const;

@@ -661,9 +661,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 		spriteId,
 		tileShade,
 		shade,
-		aniOffset,
-		quadrant;	// The quadrant is 0 for small units; large units have quadrants 1,2 & 3 also; describes		0|1
-					// the relative x/y Position of the unit's primary quadrant vs. the current tile's Position.	2|3
+		aniOffset;
+
+	size_t quadrant;	// The quadrant is 0 for small units; large units have quadrants 1,2 & 3 also; describes		0|1
+						// the relative x/y Position of the unit's primary quadrant vs. the current tile's Position.	2|3
 	bool
 		hasUnit, // these denote characteristics of 'tile' as in the current Tile of the loop.
 		hasFloor,
@@ -1283,7 +1284,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 										// Draw Exposed mark
 										if (_battleSave->getSide() == FACTION_PLAYER
-											&& (_unit->getArmor()->getSize() == 1 || quadrant == 1)
+											&& (_unit->getArmor()->getSize() == 1 || quadrant == 1u)
 //											&& _projectileInFOV == false && _explosionInFOV == false)
 //											&& _battleSave->getBattleState()->allowButtons() == true
 											&& _battleGame->getTacticalAction()->type == BA_NONE)
@@ -2382,7 +2383,7 @@ void Map::getSelectorPosition(Position& pos) const
 }
 
 /**
- * Gets if a Tile is a/the true location of current unit.
+ * Gets if a Tile is a/the true location of a specified unit.
  * @param unit - pointer to a unit
  * @param tile - pointer to a tile
  * @return, true if true location
@@ -2403,13 +2404,13 @@ bool Map::isTrueLoc(
 }
 
 /**
- * Gets the unit's quadrant for drawing.
+ * Gets a specified unit's quadrant for drawing.
  * @param unit		- pointer to a unit
  * @param tile		- pointer to a tile
  * @param trueLoc	- true if real location; false if transient
  * @return, quadrant
  */
-int Map::getQuadrant( // private.
+size_t Map::getQuadrant( // private.
 		const BattleUnit* const unit,
 		const Tile* const tile,
 		bool trueLoc) const
@@ -2417,8 +2418,8 @@ int Map::getQuadrant( // private.
 	if (trueLoc == true //unit->getUnitStatus() == STATUS_STANDING ||
 		|| unit->getVerticalDirection() != 0)
 	{
-		return tile->getPosition().x - unit->getPosition().x
-			+ (tile->getPosition().y - unit->getPosition().y) * 2;
+		return static_cast<size_t>(tile->getPosition().x - unit->getPosition().x
+							   + ((tile->getPosition().y - unit->getPosition().y) << 1u));
 	}
 
 	int dir (unit->getUnitDirection());
@@ -2431,8 +2432,8 @@ int Map::getQuadrant( // private.
 	Pathfinding::directionToVector(dir, &posVect);
 	posUnit = unit->getPosition() + posVect;
 
-	return tile->getPosition().x - posUnit.x
-		+ (tile->getPosition().y - posUnit.y) * 2;
+	return static_cast<size_t>(tile->getPosition().x - posUnit.x
+						   + ((tile->getPosition().y - posUnit.y) << 1u));
 }
 
 /**
@@ -2655,16 +2656,16 @@ void Map::cacheUnitSprites()
  */
 void Map::cacheUnitSprite(BattleUnit* const unit)
 {
-	if (unit->getCacheInvalid() == true)
+	if (unit->isCacheInvalid() == true)
 	{
 		UnitSprite* const sprite (new UnitSprite(
 											_spriteWidth << 1u,
 											_spriteHeight));
 		sprite->setPalette(this->getPalette());
 
-		const int quadrants (unit->getArmor()->getSize() * unit->getArmor()->getSize());
-		for (int
-				i = 0;
+		const size_t quadrants (static_cast<size_t>(unit->getArmor()->getSize() * unit->getArmor()->getSize()));
+		for (size_t
+				i = 0u;
 				i != quadrants;
 				++i)
 		{
@@ -2679,7 +2680,7 @@ void Map::cacheUnitSprite(BattleUnit* const unit)
 
 			sprite->setBattleUnit(unit, i);
 
-			if (i == 0)
+			if (i == 0u)
 			{
 				const BattleItem
 					* const rtItem (unit->getItem(ST_RIGHTHAND)),

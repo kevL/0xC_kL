@@ -37,22 +37,17 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a UnitSprite with the specified size and position.
+ * Sets up a UnitSprite of the specified size.
  * @param width		- width in pixels
  * @param height	- height in pixels
- * @param x			- x-position in pixels (default 0)
- * @param y			- y-position in pixels (default 0)
  */
 UnitSprite::UnitSprite(
 		int width,
-		int height,
-		int x,
-		int y)
+		int height)
 	:
 		Surface(
-			width,
-			height,
-			x,y),
+				width,
+				height),
 		_unit(nullptr),
 		_itRT(nullptr),
 		_itLT(nullptr),
@@ -92,17 +87,17 @@ void UnitSprite::setSurfaces(
 
 /**
  * Links this sprite to a BattleUnit from which to get data for rendering.
- * @param unit - pointer to a BattleUnit
- * @param quad - quadrant for large units (default 0)
+ * @param unit		- pointer to a BattleUnit
+ * @param quadrant	- quadrant
  */
 void UnitSprite::setBattleUnit(
 		BattleUnit* const unit,
-		int quad)
+		size_t quadrant)
 {
 	_drawRoutine = unit->getArmor()->getDrawRoutine();
 
 	_unit = unit;
-	_quad = quad;
+	_quad = static_cast<int>(quadrant);
 
 	_redraw = true;
 
