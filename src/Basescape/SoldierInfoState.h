@@ -53,7 +53,7 @@ private:
 		PURPLE			= 246u;
 
 	bool
-		_allowExit,
+		_canPopState, // allows RMB to close State.
 		_isQuickBattle;
 	size_t _solId;
 
@@ -125,6 +125,10 @@ private:
 	void btnAutoStat(Action* action);
 	/// Handles autoStatAll click.
 	void btnAutoStatAll(Action* action);
+	/// Handler for left-clicking the Sack button.
+	void btnSackClick(Action* action);
+	// Handler for right-clicking the Sack button.
+	void btnDerankClick(Action* action);
 
 	/// Handles RMB on lower part of screen.
 	void exitClick(Action* action);
@@ -155,8 +159,6 @@ private:
 
 		/// Handler for clicking the Armor button.
 		void btnArmorClick(Action* action);
-		/// Handler for clicking the Sack button.
-		void btnSackClick(Action* action);
 		/// Handler for clicking the Diary button.
 		void btnDiaryClick(Action* action);
 };

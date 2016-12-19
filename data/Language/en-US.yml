@@ -73,6 +73,8 @@ en-US:
   STR_TRANSFER_UC: "LoGisTiCs"
   STR_PURCHASE_RECRUIT: "buy OR hire"
   STR_SACK: "gtfo"
+  STR_DERANK: "bust rank"
+  STR_CANNOT_DERANK: "Rank cannot be degraded."
   STR_SELL_SACK_UC: "sell OR sack"
   STR_GEOSCAPE_UC: "geoScape"
   STR_NAME: "NAME"

@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_SACKSOLDIERSTATE_H
-#define OPENXCOM_SACKSOLDIERSTATE_H
+#ifndef OPENXCOM_DERANKSOLDIERSTATE_H
+#define OPENXCOM_DERANKSOLDIERSTATE_H
 
 #include "../Engine/State.h"
 
@@ -32,9 +32,9 @@ class TextButton;
 class Window;
 
 /**
- * Window shown when the player wants to sack a Soldier.
+ * Window shown when the player wants to demote a Soldier.
  */
-class SackSoldierState
+class DerankSoldierState
 	:
 		public State
 {
@@ -54,12 +54,13 @@ private:
 
 
 	public:
-		/// Creates a SackSoldier state.
-		SackSoldierState(
+		/// Creates a DerankSoldier state.
+		DerankSoldierState(
 				Base* const base,
-				size_t solId);
-		/// Cleans up the SackSoldier state.
-		~SackSoldierState();
+				size_t solId,
+				bool isPlayerError);
+		/// Cleans up the DerankSoldier state.
+		~DerankSoldierState();
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);

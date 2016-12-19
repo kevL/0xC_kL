@@ -159,8 +159,10 @@ private:
 		int getRankSprite() const;
 		/// Gets the Soldier's rank.
 		SoldierRank getRank() const;
-		/// Increase the Soldier's military rank.
+		/// Increases the Soldier's military rank.
 		void promoteRank();
+		/// Decreases the Soldier's military rank.
+		void demoteRank();
 
 		/// Adds kills and a mission to this Soldier's stats.
 		void postTactical(int kills);

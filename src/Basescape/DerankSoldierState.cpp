@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SackSoldierState.h"
+#include "DerankSoldierState.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -29,10 +29,7 @@
 
 #include "../Resource/ResourcePack.h"
 
-#include "../Ruleset/RuleArmor.h"
-
 #include "../Savegame/Base.h"
-#include "../Savegame/ItemContainer.h"
 #include "../Savegame/Soldier.h"
 
 
@@ -40,13 +37,15 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in a SackSoldier window.
- * @param base	- pointer to the Base to get info from
- * @param solId	- the soldier-ID to sack
+ * Initializes all the elements in the DerankSoldier window.
+ * @param base			- pointer to the Base to get info from
+ * @param solId			- the soldier-ID to derank
+ * @param isPlayerError	- true if the Soldier's rank is too low for a demotion
  */
-SackSoldierState::SackSoldierState(
+DerankSoldierState::DerankSoldierState(
 		Base* const base,
-		size_t solId)
+		size_t solId,
+		bool isPlayerError)
 	:
 		_base(base),
 		_solId(solId)
@@ -73,44 +72,44 @@ SackSoldierState::SackSoldierState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK13.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&SackSoldierState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SackSoldierState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&DerankSoldierState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DerankSoldierState::btnOkClick),
 							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&SackSoldierState::btnOkClick),
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DerankSoldierState::btnOkClick),
 							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&SackSoldierState::btnCancelClick));
-	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&SackSoldierState::btnCancelClick),
+	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&DerankSoldierState::btnCancelClick));
+	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&DerankSoldierState::btnCancelClick),
 								Options::keyCancel);
 
-	_txtTitle->setText(tr("STR_SACK"));
+	_txtTitle->setText(tr("STR_DERANK"));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtSoldier->setText(_base->getSoldiers()->at(_solId)->getLabel());
+	if (isPlayerError == false)
+		_txtSoldier->setText(_base->getSoldiers()->at(_solId)->getLabel());
+	else
+	{
+		_txtSoldier->setText(tr("STR_CANNOT_DERANK"));
+		_btnOk->setVisible(false);
+	}
 	_txtSoldier->setAlign(ALIGN_CENTER);
 }
 
 /**
  * dTor.
  */
-SackSoldierState::~SackSoldierState()
+DerankSoldierState::~DerankSoldierState()
 {}
 
 /**
  * Sacks the soldier and returns to the previous screen.
  * @param action - pointer to an Action
  */
-void SackSoldierState::btnOkClick(Action*)
+void DerankSoldierState::btnOkClick(Action*)
 {
-	const Soldier* const sol (_base->getSoldiers()->at(_solId));
-	if (sol->getArmor()->isBasic() == false)
-		_base->getStorageItems()->addItem(sol->getArmor()->getStoreItem());
-
-	delete sol;
-	_base->getSoldiers()->erase(_base->getSoldiers()->begin() + static_cast<std::ptrdiff_t>(_solId));
-
+	_base->getSoldiers()->at(_solId)->demoteRank();
 	_game->popState();
 }
 
@@ -118,7 +117,7 @@ void SackSoldierState::btnOkClick(Action*)
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void SackSoldierState::btnCancelClick(Action*)
+void DerankSoldierState::btnCancelClick(Action*)
 {
 	_game->popState();
 }

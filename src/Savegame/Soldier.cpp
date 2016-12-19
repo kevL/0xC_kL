@@ -513,6 +513,25 @@ void Soldier::promoteRank()
 }
 
 /**
+ * Decreases this Soldier's military rank.
+ */
+void Soldier::demoteRank()
+{
+	switch (_rank)
+	{
+		case RANK_ROOKIE: // rookies and squaddies can't be demoted.
+		case RANK_SQUADDIE:
+			break;
+
+		case RANK_SERGEANT:
+		case RANK_CAPTAIN:
+		case RANK_COLONEL:
+		case RANK_COMMANDER:
+			_rank = static_cast<SoldierRank>(static_cast<int>(_rank) - 1);
+	}
+}
+
+/**
  * Adds kills and a mission to this Soldier's stats.
  * @param kills - qty of kills
  */

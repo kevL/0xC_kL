@@ -22,9 +22,10 @@
 //#include <algorithm>
 //#include <sstream>
 
-#include "SoldierDiaryOverviewState.h"
+#include "DerankSoldierState.h"
 #include "SackSoldierState.h"
 #include "SoldierArmorState.h"
+#include "SoldierDiaryOverviewState.h"
 
 #include "../Engine/Action.h"
 #include "../Engine/Game.h"
@@ -65,7 +66,7 @@ SoldierInfoState::SoldierInfoState(
 		_base(base),
 		_solId(solId),
 		_sol(nullptr),
-		_allowExit(true),
+		_canPopState(true),
 		_isQuickBattle(_game->getSavedGame()->getMonthsElapsed() == -1)
 {
 	_listBase = _base->getSoldiers();
@@ -262,7 +263,9 @@ SoldierInfoState::SoldierInfoState(
 	_edtSoldier->onTextChange(static_cast<ActionHandler>(&SoldierInfoState::edtSoldierChange));
 
 	_btnSack->setText(tr("STR_SACK"));
-	_btnSack->onMouseClick(static_cast<ActionHandler>(&SoldierInfoState::btnSackClick));
+	_btnSack->onMouseClick(	static_cast<ActionHandler>(&SoldierInfoState::btnSackClick)); // default LMB.
+	_btnSack->onMouseClick(	static_cast<ActionHandler>(&SoldierInfoState::btnDerankClick),
+							SDL_BUTTON_RIGHT);
 
 	_btnDiary->setText(tr("STR_DIARY"));
 	_btnDiary->onMouseClick(static_cast<ActionHandler>(&SoldierInfoState::btnDiaryClick));
@@ -533,7 +536,7 @@ void SoldierInfoState::init()
 
 
 	_btnArmor->setText(tr(_sol->getArmor()->getType()));
-	if (_sol->getCraft() == nullptr
+	if (   _sol->getCraft() == nullptr
 		|| _sol->getCraft()->getCraftStatus() != CS_OUT)
 	{
 		_btnArmor->setColor(PURPLE);
@@ -646,7 +649,7 @@ void SoldierInfoState::init()
  * @note Left-click on the Auto-stat button.
  * @param action - pointer to an Action
  */
-void SoldierInfoState::btnAutoStat(Action*)
+void SoldierInfoState::btnAutoStat(Action*) // private.
 {
 	_sol->setLabel(_edtSoldier->getText());
 	_sol->autoStat();
@@ -666,9 +669,9 @@ void SoldierInfoState::btnAutoStat(Action*)
  * @note Right-click on the Auto-stat button.
  * @param action - pointer to an Action
  */
-void SoldierInfoState::btnAutoStatAll(Action*)
+void SoldierInfoState::btnAutoStatAll(Action*) // private.
 {
-	_allowExit = false;
+	_canPopState = false;
 
 	Soldier* sol;
 	for (size_t
@@ -729,13 +732,13 @@ void SoldierInfoState::edtSoldierChange(Action*)
  */
 void SoldierInfoState::exitClick(Action*)
 {
-	if (_allowExit == true) // prevents RMB on btnAutoStatAll() from exiting state.
+	if (_canPopState == true) // allows RMB to close State.
 	{
 		kL_soundPop->play(Mix_GroupAvailable(0));
 		_game->popState();
 	}
 	else
-		_allowExit = true;
+		_canPopState = true;
 }
 
 /**
@@ -779,7 +782,7 @@ void SoldierInfoState::btnNextClick(Action*)
  */
 void SoldierInfoState::btnArmorClick(Action*)
 {
-	if (_sol->getCraft() == nullptr
+	if (   _sol->getCraft() == nullptr
 		|| _sol->getCraft()->getCraftStatus() != CS_OUT)
 	{
 		_game->pushState(new SoldierArmorState(_base, _solId));
@@ -787,12 +790,38 @@ void SoldierInfoState::btnArmorClick(Action*)
 }
 
 /**
- * Shows the Sack Soldier window.
+ * Shows the SackSoldier window on LMB-click.
  * @param action - pointer to an Action
  */
-void SoldierInfoState::btnSackClick(Action*)
+void SoldierInfoState::btnSackClick(Action*) // private.
 {
 	_game->pushState(new SackSoldierState(_base, _solId));
+}
+
+/**
+ * De-ranks the Soldier by one rank per RMB-click.
+ * @param action - pointer to an Action
+ */
+void SoldierInfoState::btnDerankClick(Action*) // private.
+{
+	_canPopState = false;
+
+	bool isPlayerError;
+	switch (_sol->getRank())
+	{
+		case RANK_ROOKIE: // rookies and squaddies can't be demoted.
+		case RANK_SQUADDIE:
+			isPlayerError = true;
+			break;
+
+		case RANK_SERGEANT:
+		case RANK_CAPTAIN:
+		case RANK_COLONEL:
+		case RANK_COMMANDER:
+		default:
+			isPlayerError = false;
+	}
+	_game->pushState(new DerankSoldierState(_base, _solId, isPlayerError));
 }
 
 /**
