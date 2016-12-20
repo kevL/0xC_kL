@@ -1389,7 +1389,7 @@ void BattleUnit::setFloating(bool isAirborne)
 }
 
 /**
- * Gets if this BattleUnit is floating.
+ * Checks if this BattleUnit is floating.
  * @note A unit is floating if there is no ground underneath.
  * @return, true if floating
  */
@@ -2483,18 +2483,32 @@ int BattleUnit::getArmor(const UnitSide side) const
 /**
  * Little formula that calculates initiative/reaction score.
  * @note Reactions Stat * Current Time Units / Max TUs
- * @param tuSpent - (default 0)
+ * @param actionTu - subtracts the TU that the trigger-unit will use to perform
+ *					 the current battle-action but that won't actually get spent
+ *					 until later when popBattleState() runs (default 0 for spotters)
  * @return, reaction score aka INITIATIVE
  */
-int BattleUnit::getInitiative(const int tuSpent) const
+int BattleUnit::getInitiative(const int actionTu) const
 {
-	double ret (static_cast<double>(
-				_stats.reactions * (getTu() - tuSpent))
-				/ static_cast<double>(_stats.tu));
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattleUnit::getInitiative() actionTu= " << actionTu;
 
-	ret *= getAccuracyModifier();
+	//Log(LOG_INFO) << ". _stats.reactions= " << _stats.reactions;
+	//Log(LOG_INFO) << ". _stats.tu= " << _stats.tu;
+	//Log(LOG_INFO) << ". _tu= " << _tu;
 
-	return static_cast<int>(std::ceil(ret));
+	int tu (_tu - actionTu);
+
+	if (tu < 1) return 0;
+
+	double init (static_cast<double>(_stats.reactions * tu)
+			   / static_cast<double>(_stats.tu));
+
+	//Log(LOG_INFO) << ". acu= " << getAccuracyModifier();
+	init *= getAccuracyModifier();
+
+	//Log(LOG_INFO) << ". init= " << static_cast<int>(std::ceil(init));
+	return static_cast<int>(std::ceil(init));
 }
 
 /**

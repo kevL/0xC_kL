@@ -916,7 +916,7 @@ bool UnitWalkBState::statusStand_end() // private.
 	if (_fall == false) // check for reaction fire
 	{
 		//Log(LOG_INFO) << ". . walkB:NOT falling, checkReactionFire()";
-		if (_te->checkReactionFire(_unit) == true) // unit got fired upon - stop walking
+		if (_te->checkReactionFire(_unit) == true) // got fired at -> stop.
 		{
 			//Log(LOG_INFO) << ". . . RF triggered - cacheUnitSprite/pop state";
 			_battleSave->rfTriggerOffset(_walkCamera->getMapOffset());

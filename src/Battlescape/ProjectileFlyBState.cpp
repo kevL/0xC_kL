@@ -830,6 +830,27 @@ void ProjectileFlyBState::think()
 					}
 			}
 
+//	BA_NONE,		//  0
+//	BA_TURN,		//  1
+//	BA_MOVE,		//  2
+//	BA_PRIME,		//  3
+//	BA_THROW,		//  4
+//	BA_AUTOSHOT,	//  5
+//	BA_SNAPSHOT,	//  6
+//	BA_AIMEDSHOT,	//  7
+//	BA_MELEE,		//  8
+//	BA_USE,			//  9
+//	BA_LAUNCH,		// 10
+//	BA_PSICONTROL,	// 11
+//	BA_PSIPANIC,	// 12
+//	BA_THINK,		// 13
+//	BA_DEFUSE,		// 14
+//	BA_DROP,		// 15
+//	BA_PSICONFUSE,	// 16
+//	BA_PSICOURAGE,	// 17
+//	BA_LIQUIDATE	// 18
+
+			int actionTu;
 			switch (_action.type)
 			{
 				case BA_PSIPANIC:
@@ -848,7 +869,9 @@ void ProjectileFlyBState::think()
 									*_battleSave,
 									*_action.weapon);
 					// no break;
-				default: // NOTE: Probably only BA_THROW left here.
+				case BA_THROW:
+				case BA_MELEE:
+				default:
 					if (_unit->getFaction() == _battleSave->getSide()
 						&& _battleSave->unitsFalling() == false)
 					{
@@ -856,16 +879,23 @@ void ProjectileFlyBState::think()
 						//			    << " id-" << _unit->getId()
 						//			    << " action.type= " << BattleAction::debugBat(_action.type)
 						//			    << " action.TU= " << _action.TU;
-						_parent->getTileEngine()->checkReactionFire(		// note: I don't believe that smoke obscuration gets accounted
+						if (_action.type != BA_MELEE)	// NOTE: Melee-tu will already be subtracted before RF initiative determination.
+							actionTu = _action.TU;		// Shooting and throwing needs to pass the tu-value along for accurate RF initiative.
+						else							// because the actionTu won't actually get subtracted from the actor's current TUs
+							actionTu = 0;				// until popBattleState() runs ....
+
+						_parent->getTileEngine()->checkReactionFire(		// NOTE: I don't believe that smoke obscuration gets accounted
 																_unit,		// for by this call if the current projectile caused cloud.
-																_action.TU,	// But that's kinda ok.
+																actionTu,	// But that's kinda ok.
 																_action.type != BA_MELEE);
 					}
 			}
 
-			if (_unit->isOut_t() == false && _action.type != BA_MELEE)
+			if (_unit->getHealth() != 0 && _unit->isStunned() == false
+				&& _action.type != BA_MELEE)
+			{
 				_unit->setUnitStatus(STATUS_STANDING);
-
+			}
 			_parent->popBattleState();
 		}
 	}

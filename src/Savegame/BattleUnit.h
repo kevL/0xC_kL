@@ -418,7 +418,7 @@ private:
 
 		/// Sets the BattleUnit floating.
 		void setFloating(bool isAirborne = true);
-		/// Gets if the BattleUnit is floating.
+		/// Checks if the BattleUnit is floating.
 		bool isFloating() const;
 
 		/// Aims or lowers the BattleUnit's weapon.
@@ -555,7 +555,7 @@ private:
 //		bool hasFlightSuit() const;
 
 		/// Gets the BattleUnit's current reaction score.
-		int getInitiative(const int tuSpent = 0) const;
+		int getInitiative(const int actionTu = 0) const;
 
 		/// Prepares the BattleUnit for a new turn.
 		void prepareUnit(bool preBattle = false);

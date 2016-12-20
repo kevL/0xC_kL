@@ -1589,22 +1589,25 @@ int TileEngine::checkVoxelExposure(
  * @note The unit with the highest reaction score will be compared with the
  * triggering unit's reaction score. If it's higher a shot is fired when enough
  * time units plus a weapon and ammo are available.
- * @note The tuSpent parameter is needed because popState() doesn't subtract TU
- * until after the Initiative has been calculated or called from
- * ProjectileFlyBState.
+ * @note The actionTu parameter is needed because popBattleState() doesn't
+ * subtract TU from the triggerUnit for shooting or throwing until after
+ * initiative has been calculated. For melee-attacks and kneeling, however, the
+ * tu-cost has already been subtracted.
  * @param triggerUnit	- pointer to a unit to check RF against
- * @param tuSpent		- the unit's triggering expenditure of TU if firing or throwing (default 0)
- * @param autoSpot		- true if RF was not triggered by a melee atk (default true)
+ * @param actionTu		- the unit's triggering expenditure of TU if firing or
+ *						  throwing (default 0)
+ * @param quickSpot		- true if RF was not triggered by a melee-attack or
+ *						  kneeling/standing (default true)
  * @return, true if reaction fire took place
  */
 bool TileEngine::checkReactionFire(
 		BattleUnit* const triggerUnit,
-		int tuSpent,
-		bool autoSpot)
+		int actionTu,
+		bool quickSpot)
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "TileEngine::checkReactionFire() vs id-" << triggerUnit->getId();
-	//Log(LOG_INFO) << ". tuSpent = " << tuSpent;
+	//Log(LOG_INFO) << ". actionTu = " << actionTu;
 	bool ret (false);
 
 	if (_battleSave->getSide() != FACTION_NEUTRAL						// no reaction on civilian turn.
@@ -1628,8 +1631,8 @@ bool TileEngine::checkReactionFire(
 		BattleUnit* reactorUnit (getReactor( // get the first actor up to bat.
 										spotters,
 										triggerUnit,
-										tuSpent,
-										autoSpot));
+										actionTu,
+										quickSpot));
 		// start iterating through the possible reactors until
 		// the current unit is the one with the highest score.
 		while (reactorUnit != triggerUnit)
@@ -1638,7 +1641,7 @@ bool TileEngine::checkReactionFire(
 			if (reactionShot(reactorUnit, triggerUnit) == false)
 			{
 				//Log(LOG_INFO) << ". . no Snap by id-" << reactorUnit->getId();
-				// can't make a reaction shot for whatever reason then boot this guy from the vector.
+				// can't make a reaction shot for whatever reason then boot this rookie from the vector.
 				for (std::vector<BattleUnit*>::const_iterator
 						i = spotters.begin();
 						i != spotters.end();
@@ -1667,8 +1670,8 @@ bool TileEngine::checkReactionFire(
 			reactorUnit = getReactor( // nice shot, Buckwheat.
 								spotters,
 								triggerUnit,
-								tuSpent,
-								autoSpot);
+								actionTu,
+								quickSpot);
 			//Log(LOG_INFO) << ". . NEXT AT BAT id-" << reactorUnit->getId();
 		}
 //		spotters.clear();
@@ -1725,11 +1728,13 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
  * @param spotters	- vector of the pointers to spotting BattleUnits
  * @param defender	- pointer to the defending BattleUnit to check reaction
  *					  scores against
- * @param tuSpent	- defending BattleUnit's expenditure of TU that had caused
+ * @param actionTu	- defending BattleUnit's expenditure of TU that had caused
  *					  reaction checks. This is needed because popState() doesn't
- *					  subtract TU until after the initiative has been calculated
- *					  and shots have been done by ProjectileFlyBState.
- * @param autoSpot	- true if RF was triggered by a projectile-shot, ie. NOT a
+ *					  subtract TU from the trigger-unit until after initiative
+ *					  has been calculated and shots or throws have been done by
+ *					  ProjectileFlyBState. Melee-attacks and kneeling have
+ *					  already had their tu-cost subtracted however.
+ * @param quickSpot	- true if RF was triggered by a projectile-shot, ie. NOT a
  *					  melee-atk. This is so that if an aLien in the spotters-
  *					  vector gets put down by the trigger-shot it won't tell its
  *					  buds. (default true)
@@ -1738,11 +1743,13 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 BattleUnit* TileEngine::getReactor(
 		std::vector<BattleUnit*> spotters,
 		BattleUnit* const defender,
-		const int tuSpent,
-		bool autoSpot) const
+		const int actionTu,
+		bool quickSpot) const
 {
-	//Log(LOG_INFO) << "TileEngine::getReactor() vs id-" << defender->getId();
-	//Log(LOG_INFO) << ". tuSpent = " << tuSpent;
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "TileEngine::getReactor() defender id-" << defender->getId();
+	//Log(LOG_INFO) << ". actionTu = " << actionTu;
+
 	BattleUnit* nextReactor (nullptr);
 	int
 		init (-1),
@@ -1753,8 +1760,8 @@ BattleUnit* TileEngine::getReactor(
 			i != spotters.end();
 			++i)
 	{
-		//Log(LOG_INFO) << ". . test spotter id-" << (*i)->getId() << " initi= " << (*i)->getInitiative();
-		if ((*i)->isOut_t() == false
+		//Log(LOG_INFO) << ". . test spotter id-" << (*i)->getId() << " init= " << (*i)->getInitiative();
+		if ((*i)->getHealth() != 0 && (*i)->isStunned() == false
 			&& (initTest = (*i)->getInitiative()) > init)
 		{
 			init = initTest;
@@ -1762,14 +1769,14 @@ BattleUnit* TileEngine::getReactor(
 		}
 	}
 
-	//Log(LOG_INFO) << ". trigger id-" << defender->getId() << " initi= " << defender->getInitiative(tuSpent);
+	//Log(LOG_INFO) << ". defender id-" << defender->getId() << " init= " << defender->getInitiative(actionTu);
 
 	// nextReactor has to *best* defender.Init to get initiative
 	// Analysis: It appears that defender's tu for firing/throwing
-	// are not subtracted before getInitiative() is called.
+	// are not subtracted before getInitiative() is called. ps-> handled.
 
 	if (nextReactor == nullptr
-		|| init <= defender->getInitiative(tuSpent))
+		|| init <= defender->getInitiative(actionTu))
 	{
 		nextReactor = defender;
 	}
@@ -1777,20 +1784,20 @@ BattleUnit* TileEngine::getReactor(
 	if (nextReactor != defender
 		&& nextReactor->getFaction() == FACTION_HOSTILE)
 	{
-		//Log(LOG_INFO) << "getReactor() id-" << nextReactor->getId() << " spots id-" << defender->getId();
-		if (autoSpot == true)
+		//Log(LOG_INFO) << ". reactor id-" << nextReactor->getId() << " exposes defender id-" << defender->getId();
+		if (quickSpot == true)
 		{
-			//Log(LOG_INFO) << ". after a trajectory-shot";
+			//Log(LOG_INFO) << ". . after a trajectory-shot";
 			defender->setExposed();								// defender has been spotted on Player turn.
 		}
 		else
 		{
-			//Log(LOG_INFO) << ". after a melee-attack, wait for checkCasualties";
+			//Log(LOG_INFO) << ". . after a melee-attack, wait for checkCasualties() to confirm";
 			defender->getRfSpotters()->push_back(nextReactor);	// let BG::checkCasualties() figure it out
 		}
 	}
 
-	//Log(LOG_INFO) << ". init = " << init;
+	//Log(LOG_INFO) << ". init= " << init;
 	return nextReactor;
 }
 
@@ -6279,9 +6286,9 @@ void TileEngine::applyGravity(Tile* const tile) const
 {
 	if (tile == nullptr) return; // safety.
 
-	const Position pos (tile->getPosition());
+	const Position& pos (tile->getPosition());
 	if (pos.z == 0
-		|| tile->isFloored(_battleSave->getTile(pos + Position(0,0,-1))) == true)
+		|| tile->isFloored(tile->getTileBelow(_battleSave)) == true)
 	{
 		return; // early out.
 	}
@@ -6293,9 +6300,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 
 	if (hasItems == true || unit != nullptr)
 	{
-		Tile
-			* tileDest,
-			* tileDestBelow;
+		Tile* tileDest;
 		Position posDest;
 
 		if (hasItems == true)
@@ -6304,11 +6309,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 			while (posDest.z != 0)
 			{
 				tileDest = _battleSave->getTile(posDest);
-				tileDestBelow = _battleSave->getTile(Position(
-															posDest.x,
-															posDest.y,
-															posDest.z - 1));
-				if (tileDest->isFloored(tileDestBelow) == false)
+				if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == false)
 					--posDest.z;
 				else
 					break;
@@ -6355,12 +6356,8 @@ void TileEngine::applyGravity(Tile* const tile) const
 																posDest.x + x,
 																posDest.y + y,
 																posDest.z));
-						tileDestBelow = _battleSave->getTile(Position(
-																posDest.x + x,
-																posDest.y + y,
-																posDest.z - 1));
-						if (tileDest->isFloored(tileDestBelow) == true)	// NOTE: Water has no floor so units that die on them ... try to sink.
-							canFall = false;							// ... before I changed the loop condition to > 0, that is
+						if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == true)	// NOTE: Water has no floor so units that die on them ... try to sink.
+							canFall = false;													// ... before I changed the loop condition to > 0, that is
 					}
 				}
 				if (canFall == true) --posDest.z;
@@ -6373,6 +6370,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 				{
 					case MT_WALK:
 					case MT_SLIDE:
+					{
 //						tileDest = _battleSave->getTile(Position(
 //															unit->getPosition().x,
 //															unit->getPosition().y,
@@ -6383,17 +6381,19 @@ void TileEngine::applyGravity(Tile* const tile) const
 						// This should probably merely setup and run UnitWalkBState; that would
 						// instantiate fallingUnits from there if needed. Then fallingUnits could
 						// likely be handled one at a time instead of enmasse as they are at present.
+
+						const Position& posBelow (unit->getPosition() + Position(0,0,-1));
 						unit->startWalking(
 										Pathfinding::DIR_DOWN,
-										unit->getPosition() + Position(0,0,-1),
-										_battleSave->getTile(unit->getPosition() + Position(0,0,-1)));
+										posBelow,
+										_battleSave->getTile(posBelow));
 						_battleSave->addFallingUnit(unit);
 						break;
+					}
 
 					case MT_FLY:
 						tileDest = unit->getUnitTile();
-						tileDestBelow = _battleSave->getTile(tileDest->getPosition() + Position(0,0,-1));
-						if (tileDest->isFloored(tileDestBelow) == true)
+						if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == true)
 							unit->setFloating(false);
 						else
 							unit->setFloating();

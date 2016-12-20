@@ -453,14 +453,16 @@ void BattlescapeGame::popBattleState()
 			{
 				case FACTION_PLAYER:
 					//Log(LOG_INFO) << ". actor -> Faction_Player";
-					// spend TUs of "target triggered actions" (shooting, throwing) only;
-					// the other actions' TUs (healing, scanning, etc) are already take care of.
-					// kL_note: But let's do this **before** checkReactionFire(), so aLiens
+					// spend TUs of "target triggered actions" (shooting, throwing)
+					// only; the other actions' TUs (walking, healing, scanning,
+					// kneeling/standing, melee-attack, etc) are already take care of.
+					//
+					// kL_rant: But let's do this **before** checkReactionFire(), so aLiens
 					// get a chance .....! Odd thing is, though, that throwing triggers
 					// RF properly while shooting doesn't .... So, I'm going to move this
 					// to primaryAction() anyways. see what happens and what don't
 					//
-					// Note: psi-attack, mind-probe uses this also, I think.
+					// psi-attack, mind-probe uses this also, I think.
 					// BUT, in primaryAction() below, mind-probe expends TU there, while
 					// psi-attack merely checks for TU there, and shooting/throwing
 					// didn't even Care about TU there until I put it in there, and took
@@ -477,7 +479,7 @@ void BattlescapeGame::popBattleState()
 							// no. not for shooting, but for throwing it does; actually no it doesn't.
 							//
 							// wtf, now RF works fine. NO IT DOES NOT.
-							//Log(LOG_INFO) << ". . ID " << action.actor->getId() << " currentTU = " << action.actor->getTu() << " spent TU = " << action.TU;
+							//Log(LOG_INFO) << ". . id-" << action.actor->getId() << " currentTu= " << action.actor->getTu() << " actionTu= " << action.TU;
 
 							if (_battleSave->getSide() == FACTION_PLAYER) // is NOT reaction-fire
 							{
@@ -1837,23 +1839,22 @@ void BattlescapeGame::checkCasualties(
  */
 void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
 {
-	//Log(LOG_INFO) << ". Casualties: check for spotters Qty = " << (int)unit->getRfSpotters()->size();
-	if (unit->getRfSpotters()->empty() == false)
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeGame::checkExposedByMelee() spotters qty= " << unit->getRfSpotters()->size();
+
+	for (std::list<BattleUnit*>::const_iterator // -> not sure what happens if RF-trigger kills Cyberdisc that kills aLien .....
+			i = unit->getRfSpotters()->begin();
+			i != unit->getRfSpotters()->end();
+			++i)
 	{
-		for (std::list<BattleUnit*>::const_iterator // -> not sure what happens if RF-trigger kills Cyberdisc that kills aLien .....
-				i = unit->getRfSpotters()->begin();
-				i != unit->getRfSpotters()->end();
-				++i)
+		if ((*i)->getHealth() != 0 && (*i)->isStunned() == false)
 		{
-			if ((*i)->isOut_t(OUT_HLTH_STUN) == false)
-			{
-				//Log(LOG_INFO) << ". . melee attacker spotted id-" << unit->getId();
-				unit->setExposed(); // defender has been spotted on Player turn.
-				break;
-			}
+			//Log(LOG_INFO) << ". spotter id-" << (*i)->getId() << " exposes melee-attacker id-" << unit->getId();
+			unit->setExposed(); // defender has been spotted on Player turn.
+			break;
 		}
-		unit->getRfSpotters()->clear();
 	}
+	unit->getRfSpotters()->clear();
 }
 
 /**

@@ -203,16 +203,16 @@ private:
 		/// Checks reaction-fire.
 		bool checkReactionFire(
 				BattleUnit* const triggerUnit,
-				int tuSpent = 0,
-				bool autoSpot = true);
+				int actionTu = 0,
+				bool quickSpot = true);
 		/// Creates a vector of units that can spot this unit.
 		std::vector<BattleUnit*> getSpottingUnits(const BattleUnit* const unit);
 		/// Given a vector of spotters, and a unit, picks the spotter with the highest reaction-score.
 		BattleUnit* getReactor(
 				std::vector<BattleUnit*> spotters,
 				BattleUnit* const defender,
-				const int tuSpent = 0,
-				bool autoSpot = true) const;
+				const int actionTu = 0,
+				bool quickSpot = true) const;
 		/// Fires a reaction-shot if possible.
 		bool reactionShot(
 				BattleUnit* const unit,
