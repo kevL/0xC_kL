@@ -51,8 +51,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the MiniMapState screen.
- * @param camera		- pointer to the battlescape Camera
- * @param battleSave	- pointer to the SavedBattleGame
+ * @param camera - pointer to the battlescape Camera
  */
 MiniMapState::MiniMapState(Camera* const camera)
 {

@@ -1392,12 +1392,12 @@ void InventoryState::btnCreateTemplateClick(Action*)
 			ammo = "NONE";
 
 		_curInventoryTemplate.push_back(new SoldierLayout(
-															(*j)->getRules()->getType(),
-															(*j)->getInventorySection()->getId(),
-															(*j)->getSlotX(),
-															(*j)->getSlotY(),
-															ammo,
-															(*j)->getFuse()));
+														(*j)->getRules()->getType(),
+														(*j)->getInventorySection()->getId(),
+														(*j)->getSlotX(),
+														(*j)->getSlotY(),
+														ammo,
+														(*j)->getFuse()));
 	}
 
 	_game->getResourcePack()->getSoundByDepth(
@@ -1539,7 +1539,6 @@ void InventoryState::btnApplyTemplateClick(Action*)
 
 	if (itemMissing)
 		_inventoryPanel->showWarning(tr("STR_NOT_ENOUGH_ITEMS_FOR_TEMPLATE"));
-
 
 	_inventoryPanel->arrangeGround(); // update ui
 	updateStats();

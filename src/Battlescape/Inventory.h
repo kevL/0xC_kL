@@ -71,7 +71,7 @@ private:
 		* _srfItems,
 		* _srfGrab;
 	SurfaceSet* _srtBigobs;
-	Timer* _animTimer;
+	Timer* _aniTimer;
 	WarningMessage* _warning;
 
 	std::map<int, std::map<int,int>> _stackLevel;

@@ -102,7 +102,7 @@ Inventory::Inventory(
 							((Options::baseXResolution - 320) >> 1u) + 48,
 							((Options::baseYResolution - 200) >> 1u) + 177);
 	_numStack	= new NumberText(15,15);
-	_animTimer	= new Timer(80u);
+	_aniTimer	= new Timer(80u);
 
 	_srtBigobs = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
 
@@ -116,8 +116,8 @@ Inventory::Inventory(
 
 	_numStack->setBordered();
 
-	_animTimer->onTimer(static_cast<SurfaceHandler>(&Inventory::drawPrimers));
-	_animTimer->start();
+	_aniTimer->onTimer(static_cast<SurfaceHandler>(&Inventory::drawPrimers));
+	_aniTimer->start();
 }
 
 /**
@@ -130,7 +130,7 @@ Inventory::~Inventory()
 	delete _srfGrab;
 	delete _warning;
 	delete _numStack;
-	delete _animTimer;
+	delete _aniTimer;
 }
 
 /**
@@ -304,7 +304,9 @@ void Inventory::drawItems()
 				sprite->blit(_srfItems);
 
 				if ((*i)->getFuse() > -1) // grenade-primed indicators
-					_fusePairs.push_back(std::make_pair(sprite->getX(), sprite->getY()));
+					_fusePairs.push_back(std::make_pair(
+													sprite->getX(),
+													sprite->getY()));
 			}
 //			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 		}
@@ -396,7 +398,7 @@ void Inventory::think()
 		_primed = -1;
 	}
 	_warning->think();
-	_animTimer->think(nullptr, this);
+	_aniTimer->think(nullptr, this);
 }
 
 /**
@@ -419,8 +421,8 @@ void Inventory::drawPrimers() // private.
 	{
 		srf->blitNShade(
 					_srfItems,
-					(*i).first,
-					(*i).second,
+					i->first  + _xOff,
+					i->second + _yOff,
 					pulse[_fusePulse],
 					false, CB_RED);
 	}
