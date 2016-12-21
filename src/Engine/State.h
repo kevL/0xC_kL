@@ -71,7 +71,7 @@ protected:
 
 
 	public:
-		/// Creates State linked to a game.
+		/// Creates a State linked to the Game.
 		State();
 		/// Cleans up the State.
 		virtual ~State();
@@ -123,10 +123,12 @@ protected:
 
 		/// Redraws all the text-type Surfaces.
 		void redrawText();
-		/// Centers all Surfaces relative to the screen.
+
+		/// Centers all Surfaces relative to the Screen's height and width.
 		void centerSurfaces();
-		/// Lowers all Surfaces by half the screen-height.
-		void lowerAllSurfaces();
+		/// Lowers all Surfaces by half the Screen's height.
+		void lowerSurfaces();
+
 		/// Switches colors to use the Battlescape Palette.
 		void applyBattlescapeColors();
 

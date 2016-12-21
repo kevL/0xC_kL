@@ -278,22 +278,22 @@ protected:
 		SDL_Surface* getSurface() const
 		{ return _surface; }
 
+		/// Sets the width of the Surface.
+		virtual void setWidth(int width); // should be Unit16
 		/**
 		 * Gets the width of the Surface.
 		 * @return, width in pixels
 		 */
 		int getWidth() const
 		{ return _surface->w; }
-		/// Sets the width of the Surface.
-		virtual void setWidth(int width); // should be Unit16
+		/// Sets the height of the Surface.
+		virtual void setHeight(int height); // should be Unit16
 		/**
 		 * Gets the height of the Surface.
 		 * @return, height in pixels
 		 */
 		int getHeight() const
 		{ return _surface->h; }
-		/// Sets the height of the Surface.
-		virtual void setHeight(int height); // should be Unit16
 
 		/// Sets the Surface's special 'hidden' flag.
 		void setHidden(bool hidden = true); // note: is not virtual.

@@ -431,7 +431,7 @@ void State::centerSurfaces()
 /**
  * Drops all the Surfaces by half the screen-height.
  */
-void State::lowerAllSurfaces()
+void State::lowerSurfaces()
 {
 	for (std::vector<Surface*>::const_iterator
 			i = _surfaces.begin();

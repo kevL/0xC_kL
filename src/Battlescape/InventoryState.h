@@ -65,7 +65,7 @@ private:
 /*		* _btnCreateTemplate,
 		* _btnApplyTemplate,
 		* _btnClearInventory; */
-	BattlescapeState* _parent;
+	BattlescapeState* _battleState;
 	BattleUnit* _unit;
 	Inventory* _inventoryPanel;
 	NumberText
@@ -129,7 +129,7 @@ private:
 		/// Creates an Inventory state.
 		InventoryState(
 				bool tuMode = false,
-				BattlescapeState* const parent = nullptr);
+				BattlescapeState* const battleState = nullptr);
 		/// Cleans up the Inventory state.
 		~InventoryState();
 

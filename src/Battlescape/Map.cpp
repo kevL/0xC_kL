@@ -206,7 +206,7 @@ Map::~Map()
 void Map::init()
 {
 	_numAccuracy->setPalette(getPalette());
-	_numExposed->setPalette(getPalette());
+	_numExposed ->setPalette(getPalette());
 	_numWaypoint->setPalette(getPalette());
 
 	static const Uint8

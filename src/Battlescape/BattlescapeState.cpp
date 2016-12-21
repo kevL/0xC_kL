@@ -1869,9 +1869,7 @@ void BattlescapeState::btnMinimapClick(Action*)
 	if (allowButtons() == true)
 	{
 //		_srtIconsOverlay->getFrame(2)->blit(_btnMiniMap); // -> hidden by MiniMap itself atm.
-		_game->pushState(new MiniMapState(
-										_map->getCamera(),
-										_battleSave));
+		_game->pushState(new MiniMapState(_map->getCamera()));
 		_game->getScreen()->fadeScreen();
 	}
 }

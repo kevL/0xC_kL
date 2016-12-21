@@ -54,8 +54,10 @@ private:
 		_tuMode;
 	int
 		_grdOffset,
-		_prime,
-		_tuCost;
+		_primed,
+		_tuCost,
+		_xOff,
+		_yOff;
 	size_t _fusePulse;
 
 	BattleItem
@@ -101,13 +103,9 @@ private:
 
 
 	public:
-		/// Creates an inventory-view with the specified position and size.
+		/// Creates an Inventory.
 		Inventory(
 				Game* const game,
-//				int width,
-//				int height,
-				int x = 0,
-				int y = 0,
 				bool atBase = false);
 		/// Cleans up the Inventory.
 		~Inventory();
@@ -118,8 +116,6 @@ private:
 				int firstcolor = 0,
 				int ncolors = 256) override;
 
-		/// Draws the Inventory.
-//		void draw() override;
 		/// Draws the Inventory's grids.
 		void drawGrids();
 		/// Draws the Inventory's items.

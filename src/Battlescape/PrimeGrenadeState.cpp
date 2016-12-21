@@ -170,7 +170,7 @@ PrimeGrenadeState::PrimeGrenadeState(
 	}
 
 	centerSurfaces();
-	lowerAllSurfaces();
+	lowerSurfaces();
 }
 
 /**

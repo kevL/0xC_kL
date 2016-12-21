@@ -71,20 +71,20 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Inventory screen.
- * @param tuMode - true if in battle when inventory usage costs TU (default false)
- * @param parent - pointer to parent BattlescapeState (default nullptr)
+ * @param tuMode		- true if in battle when inventory usage costs TU (default false)
+ * @param battleState	- pointer to BattlescapeState (default nullptr)
  */
 InventoryState::InventoryState(
 		bool tuMode,
-		BattlescapeState* const parent)
+		BattlescapeState* const battleState)
 	:
 		_tuMode(tuMode),
-		_parent(parent),
+		_battleState(battleState),
 		_battleSave(_game->getSavedGame()->getBattleSave()),
 		_unit(nullptr)
 {
-	if (_parent != nullptr)
-		_parent->getMap()->setNoDraw();
+	if (_battleState != nullptr)
+		_battleState->getMap()->setNoDraw();
 
 /*	if (Options::maximizeInfoScreens)
 	{
@@ -152,9 +152,7 @@ InventoryState::InventoryState(
 
 	_inventoryPanel	= new Inventory(
 								_game,
-//								320,200,
-								0,0,
-								_parent == nullptr);
+								_battleState == nullptr);
 
 	setPalette(PAL_BATTLESCAPE);
 
@@ -386,7 +384,7 @@ InventoryState::~InventoryState()
 //	_clearInventoryTemplate(_curInventoryTemplate);
 //	delete _timer;
 
-	if (_parent != nullptr)
+	if (_battleState != nullptr)
 	{
 		TileEngine* const te (_battleSave->getTileEngine());
 		for (std::vector<BattleUnit*>::const_iterator
@@ -399,14 +397,14 @@ InventoryState::~InventoryState()
 				&& (*i)->isCacheInvalid() == true)
 			{
 				te->applyGravity((*i)->getUnitTile());
-				_parent->getMap()->cacheUnitSprite(*i); // can disable cache-invalid check.
+				_battleState->getMap()->cacheUnitSprite(*i); // can disable cache-invalid check.
 			}
 		}
 		te->calculateTerrainLighting();
 		te->calcFovUnits_all(true);
 
-		_parent->updateSoldierInfo(false);
-		_parent->getMap()->setNoDraw(false);
+		_battleState->updateSoldierInfo(false);
+		_battleState->getMap()->setNoDraw(false);
 	}
 	_game->getScreen()->fadeScreen();
 }
@@ -463,7 +461,7 @@ void InventoryState::keyRepeat() // private.
 
 /**
  * Updates displayed stats when the current-unit changes.
- * @note parent BattlescapeState is invalid @ BaseEquip screen
+ * @note BattlescapeState is invalid @ BaseEquip screen.
  */
 void InventoryState::init()
 {
@@ -472,8 +470,8 @@ void InventoryState::init()
 	_unit = _battleSave->getSelectedUnit();
 	if (_unit == nullptr || _unit->canInventory() == false) // skip to a BattleUnit with an accessible Inventory
 	{
-		if (_parent != nullptr)
-			_unit = _parent->selectNextPlayerUnit(false, false, true);
+		if (_battleState != nullptr)
+			_unit = _battleState->selectNextPlayerUnit(false, false, true);
 		else
 			_unit = _battleSave->selectNextUnit(false, false, true);
 
@@ -607,7 +605,7 @@ void InventoryState::updateStats() // private.
 					_txtPsiTU->setText(tr("STR_PSI_")
 								.arg(_unit->getActionTu(
 													BA_PSIPANIC,
-													_parent->getBattleGame()->getAlienPsi())));
+													_battleState->getBattleGame()->getAlienPsi())));
 				}
 		}
 	}
@@ -694,7 +692,7 @@ void InventoryState::btnOkClick(Action*)
 	{
 		_game->popState();
 
-		if (_tuMode == false && _parent != nullptr)	// pre-battle equip -> going into tactical!
+		if (_tuMode == false && _battleState != nullptr) // pre-battle equip -> going into tactical!
 		{
 			_battleSave->positionUnits();
 			_battleSave->distributeEquipt(_battleSave->getBattleInventory());
@@ -719,8 +717,8 @@ void InventoryState::btnNextClick(Action*)
 {
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
-		if (_parent != nullptr)
-			_unit = _parent->selectNextPlayerUnit(false, false, true);
+		if (_battleState != nullptr)
+			_unit = _battleState->selectNextPlayerUnit(false, false, true);
 		else
 			_unit = _battleSave->selectNextUnit(false, false, true);
 
@@ -736,8 +734,8 @@ void InventoryState::btnPrevClick(Action*)
 {
 	if (_inventoryPanel->getSelectedItem() == nullptr)
 	{
-		if (_parent != nullptr)
-			_unit = _parent->selectPreviousPlayerUnit(false, false, true);
+		if (_battleState != nullptr)
+			_unit = _battleState->selectPreviousPlayerUnit(false, false, true);
 		else
 			_unit = _battleSave->selectPrevUnit(false, false, true);
 
@@ -888,7 +886,7 @@ void InventoryState::btnGroundClick(Action* action)
 void InventoryState::btnClearUnitClick(Action*)
 {
 	if (_tuMode == false									// don't accept clicks in battlescape because this doesn't cost TU.
-		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse is holding an item
+		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse-grab has an item
 	{
 		std::vector<BattleItem*>* const equiptList (_unit->getInventory());
 		if (equiptList->empty() == false)
@@ -925,7 +923,7 @@ void InventoryState::btnClearUnitClick(Action*)
  */
 void InventoryState::btnClearGroundClick(Action*)
 {
-	if (_parent == nullptr									// don't accept clicks during tactical or pre-tactical
+	if (_battleState == nullptr								// don't accept clicks during tactical or pre-tactical
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse-grab has an item
 	{
 		Craft* craft (nullptr);	// find a Craft and later its Base_
@@ -1004,7 +1002,7 @@ void InventoryState::btnRankClick(Action*)
 	{
 		_game->pushState(new UnitInfoState(
 										_unit,
-										_parent,
+										_battleState,
 										true, false,
 										_tuMode == false));
 		_game->getScreen()->fadeScreen();

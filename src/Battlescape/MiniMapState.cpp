@@ -54,9 +54,7 @@ namespace OpenXcom
  * @param camera		- pointer to the battlescape Camera
  * @param battleSave	- pointer to the SavedBattleGame
  */
-MiniMapState::MiniMapState(
-		Camera* const camera,
-		const SavedBattleGame* const battleSave)
+MiniMapState::MiniMapState(Camera* const camera)
 {
 /*	if (Options::maximizeInfoScreens)
 	{
@@ -65,50 +63,37 @@ MiniMapState::MiniMapState(
 		_game->getScreen()->resetDisplay(false);
 	} */
 	static const int
-//		scanbordOffsetX =  3, // these center the original Scanbord better in relation to the crosshairs.
-//		scanbordOffsetY = 12;
-		bgOffsetX = -((Options::baseXResolution - Screen::ORIGINAL_WIDTH)  >> 1u),
-		bgOffsetY = -((Options::baseYResolution - Screen::ORIGINAL_HEIGHT) >> 1u);
+		xOff ((Options::baseXResolution - 640) >> 1u),
+		yOff ((Options::baseYResolution - 360) >> 1u);
 
-	_bg			= new InteractiveSurface(
-									Options::baseXResolution,
-									Options::baseYResolution,
-									bgOffsetX, bgOffsetY);
-//									scanbordOffsetX, scanbordOffsetY);
+	_bgScanbord	= new InteractiveSurface(
+								Options::baseXResolution, // create the Surface the entire size of Screen so RMB-exit works anywhere.
+								Options::baseYResolution,
+								xOff, yOff);
 	_miniView	= new MiniMapView(
-//								223,150, 47,15,
 								Options::baseXResolution,
 								Options::baseYResolution,
-								bgOffsetX, bgOffsetY,
+								0,0,
 								_game,
-								camera,
-								battleSave);
+								camera);
 
-//	_btnLvlUp	= new BattlescapeButton(18, 20,  24 + scanbordOffsetX,  62 + scanbordOffsetY);
-//	_btnLvlDown	= new BattlescapeButton(18, 20,  24 + scanbordOffsetX,  88 + scanbordOffsetY);
-//	_btnOk		= new BattlescapeButton(32, 32, 275 + scanbordOffsetX, 145 + scanbordOffsetY);
-//	_txtLevel	= new Text(28, 16, 281 + scanbordOffsetX, 73 + scanbordOffsetY);
+	_btnLvlUp	= new BattlescapeButton(36, 39,  15 + xOff, 121 + yOff);
+	_btnLvlDown	= new BattlescapeButton(36, 39,  15 + xOff, 171 + yOff);
+	_btnOk		= new BattlescapeButton(55, 55, 551 + xOff, 287 + yOff);
+
+	_txtLevel	= new Text(25, 16, 556 + xOff, 148 + yOff);
 
 	setPalette(PAL_BATTLESCAPE);
 
-	add(_miniView); // put miniView *under* the background.
-	add(_bg);
+	add(_miniView);
+	add(_bgScanbord); // put Scanbord over the MiniMap.
+	add(_btnLvlUp,		"buttonUp",		"minimap", _bgScanbord);
+	add(_btnLvlDown,	"buttonDown",	"minimap", _bgScanbord);
+	add(_btnOk,			"buttonOK",		"minimap", _bgScanbord);
+	add(_txtLevel,		"textLevel",	"minimap", _bgScanbord);
 
-	Surface* const srf (_game->getResourcePack()->getSurface("Scanbord_640")); // "Scanbord" original 320px
-	srf->blit(_bg);
-
-	centerSurfaces();
-
-	_btnLvlUp	= new BattlescapeButton(36, 39,  15, 121); // do not 'center' these ->
-	_btnLvlDown	= new BattlescapeButton(36, 39,  15, 171);
-	_btnOk		= new BattlescapeButton(55, 55, 551, 287);
-	_txtLevel	= new Text(25, 16, 556, 148);
-
-	add(_btnLvlUp,		"buttonUp",		"minimap", _bg);
-	add(_btnLvlDown,	"buttonDown",	"minimap", _bg);
-	add(_btnOk,			"buttonOK",		"minimap", _bg);
-	add(_txtLevel,		"textLevel",	"minimap", _bg);
-
+	Surface* const srf (_game->getResourcePack()->getSurface("Scanbord_640"));
+	srf->blit(_bgScanbord);
 
 	_btnLvlUp->onMouseClick(	static_cast<ActionHandler>(&MiniMapState::btnLevelUpClick));
 	_btnLvlDown->onMouseClick(	static_cast<ActionHandler>(&MiniMapState::btnLevelDownClick));
@@ -191,8 +176,7 @@ void MiniMapState::btnOkClick(Action* action)
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	BattlescapeState* const battleState (_game->getSavedGame()->getBattleSave()->getBattleState());
-	battleState->getMap()->setNoDraw(false);
+	_game->getSavedGame()->getBattleSave()->getBattleState()->getMap()->setNoDraw(false);
 //	battleState->clearMinimapBtn();
 
 	_game->getScreen()->fadeScreen();

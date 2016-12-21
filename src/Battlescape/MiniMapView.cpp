@@ -49,29 +49,27 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the MiniMapView.
- * @param w				- the width
- * @param h				- the height
+ * @param width			- the width
+ * @param height		- the height
  * @param x				- the x-origin
  * @param y				- the y-origin
  * @param game			- pointer to the core Game
  * @param camera		- pointer to the battlescape Camera
- * @param battleSave	- pointer to the SavedBattleGame
  */
 MiniMapView::MiniMapView(
-		int w,
-		int h,
+		int width,
+		int height,
 		int x,
 		int y,
 		const Game* const game,
-		Camera* const camera,
-		const SavedBattleGame* const battleSave)
+		Camera* const camera)
 	:
 		InteractiveSurface(
-				w,h,
+				width,height,
 				x,y),
 		_game(game),
 		_camera(camera),
-		_battleSave(battleSave),
+		_battleSave(game->getSavedGame()->getBattleSave()),
 		_anicycle(0),
 		_dragScroll(false),
 		_dragScrollStepDone(false),
@@ -462,7 +460,7 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 		}
 
 		case SDL_BUTTON_RIGHT:
-			dynamic_cast<MiniMapState*>(state)->btnOkClick(action); // close the parent state.
+			dynamic_cast<MiniMapState*>(state)->btnOkClick(action); // close the State that the ActionHandlers belong to.
 	}
 }
 

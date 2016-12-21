@@ -103,13 +103,12 @@ private:
 	public:
 		/// Creates a MiniMapView.
 		MiniMapView(
-				int w,
-				int h,
+				int width,
+				int height,
 				int x,
 				int y,
 				const Game* const game,
-				Camera* const camera,
-				const SavedBattleGame* const battleSave);
+				Camera* const camera);
 		/// dTor.
 		~MiniMapView();
 

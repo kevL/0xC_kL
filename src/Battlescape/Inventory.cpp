@@ -60,46 +60,40 @@ namespace OpenXcom
 {
 
 /**
- * Sets up an inventory with the specified size and position.
+ * Sets up the Inventory.
  * @param game		- pointer to core Game
-// * @param width	- width in pixels
-// * @param height	- height in pixels
- * @param x			- x-position in pixels (default 0)
- * @param y			- y-position in pixels (default 0)
  * @param atBase	- true if inventory is accessed from Basescape (default false)
  */
 Inventory::Inventory(
 		Game* const game,
-//		int width,
-//		int height,
-		int x,
-		int y,
 		bool atBase)
 	:
 		InteractiveSurface(
-			Options::baseXResolution,
-			Options::baseYResolution,
-			x - ((Options::baseXResolution - 320) >> 1u),
-			y - ((Options::baseYResolution - 200) >> 1u)),
+				Options::baseXResolution, // create this Surface the entire size of Screen so RMB-exit works anywhere.
+				Options::baseYResolution,
+				(320 - Options::baseXResolution) >> 1u,
+				(200 - Options::baseYResolution) >> 1u),
 		_game(game),
+		_atBase(atBase),
 		_selUnit(nullptr),
 		_selItem(nullptr),
 		_overItem(nullptr),
 		_tuMode(true),
-		_atBase(atBase),
 		_grdOffset(0),
 		_fusePulse(0u),
-		_prime(-1),
-		_tuCost(-1)
+		_primed(-1),
+		_tuCost(-1),
+		_xOff((Options::baseXResolution - 640) >> 1u), // go fucking figure.
+		_yOff((Options::baseYResolution - 360) >> 1u)
 {
 	_srfGrid	= new Surface(
 							Options::baseXResolution,
 							Options::baseYResolution,
-							x,y);
+							_xOff, _yOff); // why I don't know trial and error only.
 	_srfItems	= new Surface(
 							Options::baseXResolution,
 							Options::baseYResolution,
-							x,y);
+							_xOff, _yOff);
 	_srfGrab	= new Surface(
 							RuleInventory::HAND_W * RuleInventory::SLOT_W,
 							RuleInventory::HAND_H * RuleInventory::SLOT_H);
@@ -161,21 +155,10 @@ void Inventory::setPalette(
 }
 
 /**
- * Draws the inventory elements.
- *
-void Inventory::draw()
-{
-	drawGrids();
-	drawItems();
-} */
-
-/**
  * Draws the inventory grids for item placement.
  */
 void Inventory::drawGrids()
 {
-//	_srfGrid->clear();
-
 	Text text (Text(16,9));
 	text.setPalette(_srfGrid->getPalette());
 	text.setHighContrast();
@@ -400,17 +383,17 @@ void Inventory::drawItems()
  */
 void Inventory::think()
 {
-	if (_prime != -1)
+	if (_primed != -1)
 	{
 		std::wstring activated (_game->getLanguage()->getString("STR_GRENADE_ACTIVATED"));
-		if (_prime > 0)
+		if (_primed > 0)
 		{
-			const std::wstring prime (Text::intWide(_prime));
-			activated.insert(0u, prime + L" ");
-			activated += L" " + prime;
+			const std::wstring wst (Text::intWide(_primed));
+			activated.insert(0u, wst + L" ");
+			activated += L" " + wst;
 		}
 		_warning->showMessage(activated);
-		_prime = -1;
+		_primed = -1;
 	}
 	_warning->think();
 	_animTimer->think(nullptr, this);
@@ -470,8 +453,8 @@ void Inventory::mouseOver(Action* action, State* state)
 	if (_selUnit == nullptr) return;
 
 	int
-		x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
-		y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
+		x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX() - _xOff),
+		y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY() - _yOff);
 
 	RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 	if (inRule != nullptr)
@@ -525,8 +508,8 @@ void Inventory::mouseClick(Action* action, State* state)
 			if (_selItem == nullptr) // Pickup or Move item.
 			{
 				int
-					x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
-					y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
+					x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX() - _xOff),
+					y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY() - _yOff);
 
 				const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 				if (inRule != nullptr)
@@ -620,11 +603,11 @@ void Inventory::mouseClick(Action* action, State* state)
 			else // item on cursor, Drop item or Load weapon with it.
 			{
 				int
-					x (_srfGrab->getX()
+					x (_srfGrab->getX() - _xOff
 							+ (RuleInventory::HAND_W - _selItem->getRules()->getInventoryWidth())
 								* RuleInventory::SLOT_W_2
 							+ RuleInventory::SLOT_W_2),
-					y (_srfGrab->getY()
+					y (_srfGrab->getY() - _yOff
 							+ (RuleInventory::HAND_H - _selItem->getRules()->getInventoryHeight())
 								* RuleInventory::SLOT_H_2
 							+ RuleInventory::SLOT_H_2);
@@ -780,8 +763,8 @@ void Inventory::mouseClick(Action* action, State* state)
 				else
 				{
 					// try again using the position of the mouse cursor not the item (slightly more intuitive for stacking)
-					x = static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX();
-					y = static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY();
+					x = static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX() - _xOff;
+					y = static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY() - _yOff;
 
 					if ((inRule = getSlotAtCursor(&x,&y)) != nullptr
 						&& inRule->getCategory() == IC_GROUND)
@@ -828,8 +811,8 @@ void Inventory::mouseClick(Action* action, State* state)
 						if (_tuMode == false)
 						{
 							int
-								x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
-								y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
+								x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX() - _xOff),
+								y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY() - _yOff);
 
 							const RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 							if (inRule != nullptr)
@@ -895,8 +878,8 @@ void Inventory::mouseClick(Action* action, State* state)
 				else // Open Ufopaedia article.
 				{
 					int
-						x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX()),
-						y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY());
+						x (static_cast<int>(std::floor(action->getAbsoluteMouseX())) - getX() - _xOff),
+						y (static_cast<int>(std::floor(action->getAbsoluteMouseY())) - getY() - _yOff);
 
 					RuleInventory* const inRule (getSlotAtCursor(&x,&y));
 					if (inRule != nullptr)
@@ -916,8 +899,14 @@ void Inventory::mouseClick(Action* action, State* state)
 			}
 			else // RMB w/ item on cursor
 			{
-				setSelectedItem(); // Return item to original position.
+				bool doGround;
 				if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
+					doGround = true;
+				else
+					doGround = false;
+
+				setSelectedItem(); // Return item to original position.
+				if (doGround == true)
 				{
 //					_stackLevel[static_cast<size_t>(_selItem->getSlotX())]
 //							   [static_cast<size_t>(_selItem->getSlotY())] += 1;
@@ -1404,7 +1393,7 @@ bool Inventory::unload()
  */
 void Inventory::setPrimeGrenade(int turn)
 {
-	_prime = turn;
+	_primed = turn;
 }
 
 /**

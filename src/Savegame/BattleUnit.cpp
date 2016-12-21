@@ -2519,8 +2519,8 @@ int BattleUnit::getInitiative(const int actionTu) const
  */
 void BattleUnit::prepareUnit(bool preBattle)
 {
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattleUnit::prepareUnit() id-" << _id;
-//	bool debug = _id == 257;
 
 	_dontReselect = false;
 
@@ -2536,7 +2536,7 @@ void BattleUnit::prepareUnit(bool preBattle)
 	}
 	else
 		reverted = false;
-	//Log(LOG_INFO) << ". reverted= " << (int)reverted;
+	//Log(LOG_INFO) << ". reverted= " << reverted;
 
 	bool isPanicked (false);
 	if (preBattle == false) // Don't do damage or panic at start of tactical.
@@ -2555,9 +2555,9 @@ void BattleUnit::prepareUnit(bool preBattle)
 
 		if (_status != STATUS_UNCONSCIOUS)
 		{
-			const int panicPct (100 - (getMorale() << 1u));
-			//Log(LOG_INFO) << ". panicPct= " << panicPct;
-			if (RNG::percent(panicPct) == true)
+			const int pctPanic (100 - (_morale << 1u));
+			//Log(LOG_INFO) << ". pctPanic= " << pctPanic;
+			if (RNG::percent(pctPanic) == true)
 			{
 				//Log(LOG_INFO) << ". . has Panicked";
 				isPanicked = true;
@@ -2576,7 +2576,7 @@ void BattleUnit::prepareUnit(bool preBattle)
 				}
 				//else Log(LOG_INFO) << ". . . but has reverted so won't panic";
 			}
-			else if (panicPct > 0 && _geoscapeSoldier != nullptr) // successfully avoided Panic
+			else if (pctPanic > 0 && _geoscapeSoldier != nullptr) // successfully avoided Panic
 				++_expBravery;
 		}
 	}
