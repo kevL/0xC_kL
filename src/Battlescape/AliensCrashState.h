@@ -32,7 +32,7 @@ class Window;
 
 
 /**
- * Screen shown when all aliens died at a crash site.
+ * Screen shown when all aLiens died at a crash-site.
  */
 class AliensCrashState
 	:

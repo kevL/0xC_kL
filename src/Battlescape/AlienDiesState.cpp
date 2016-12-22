@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NoContainmentState.h"
+#include "AlienDiesState.h"
 
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
@@ -34,11 +34,11 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the No Containment screen.
+ * Initializes all the elements in the AlienDies screen.
  * @note This can be replaced by invoking ErrorMessageState instead; cf.
  * pop-repo, DebriefingState::init() & ::btnOkClick().
  */
-NoContainmentState::NoContainmentState()
+AlienDiesState::AlienDiesState()
 {
 	_window		= new Window(this);
 	_txtTitle	= new Text(300, 160, 10, 8);
@@ -56,12 +56,12 @@ NoContainmentState::NoContainmentState()
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&NoContainmentState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NoContainmentState::btnOkClick),
+	_btnOk->onMouseClick(	static_cast<ActionHandler>(&AlienDiesState::btnOkClick));
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienDiesState::btnOkClick),
 							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NoContainmentState::btnOkClick),
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienDiesState::btnOkClick),
 							Options::keyOkKeypad);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&NoContainmentState::btnOkClick),
+	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienDiesState::btnOkClick),
 							Options::keyCancel);
 
 	_txtTitle->setText(tr("STR_ALIEN_DIES_NO_ALIEN_CONTAINMENT_FACILITY"));
@@ -74,20 +74,19 @@ NoContainmentState::NoContainmentState()
 /**
  * dTor.
  */
-NoContainmentState::~NoContainmentState()
+AlienDiesState::~AlienDiesState()
 {}
 
 /**
  * Exits to the previous screen.
  * @param action - pointer to an Action
  */
-void NoContainmentState::btnOkClick(Action*)
+void AlienDiesState::btnOkClick(Action*)
 {
 	if (_game->getQtyStates() == 2u // ie: (1) this, (2) Geoscape
 		&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 	{
 		_game->getResourcePack()->fadeMusic(_game, 863);
-//		_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 	}
 	_game->popState();
 }

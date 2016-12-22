@@ -17,8 +17,8 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENXCOM_NOCONTAINMENTSTATE_H
-#define OPENXCOM_NOCONTAINMENTSTATE_H
+#ifndef OPENXCOM_ALIENDIESSTATE_H
+#define OPENXCOM_ALIENDIESSTATE_H
 
 #include "../Engine/State.h"
 
@@ -32,10 +32,10 @@ class Window;
 
 
 /**
- * Screen shown when there's not enough containment to capture a live alien
- * after a mission.
+ * Screen shown when there's not enough containment to capture a live aLien
+ * post-tactical.
  */
-class NoContainmentState
+class AlienDiesState
 	:
 		public State
 {
@@ -47,10 +47,10 @@ private:
 
 
 	public:
-		/// Creates the No Containment state.
-		NoContainmentState();
-		/// Cleans up the No Containment state.
-		~NoContainmentState();
+		/// Creates an AlienDies state.
+		AlienDiesState();
+		/// Cleans up the AlienDies state.
+		~AlienDiesState();
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action);

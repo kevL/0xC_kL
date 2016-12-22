@@ -72,8 +72,6 @@ AliensCrashState::AliensCrashState()
 	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
 	_txtTitle->setBig();
 	_txtTitle->setWordWrap();
-
-//	_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_TAC_DEBRIEFING);
 }
 
 /**
@@ -88,8 +86,6 @@ AliensCrashState::~AliensCrashState()
  */
 void AliensCrashState::btnOkClick(Action*)
 {
-//	_game->getResourcePack()->fadeMusic(_game, 863);
-
 	_game->popState();
 	_game->pushState(new DebriefingState());
 }

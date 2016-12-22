@@ -22,11 +22,11 @@
 //#include <algorithm>
 //#include <sstream>
 
+#include "AlienDiesState.h"
 #include "CannotReequipState.h"
 #include "CeremonyDeadState.h"
 #include "CeremonyState.h"
 #include "DebriefExtraState.h"
-#include "NoContainmentState.h"
 #include "PromotionsState.h"
 
 #include "../Basescape/AlienContainmentState.h"
@@ -113,8 +113,7 @@ DebriefingState::DebriefingState()
 		_country(nullptr),
 		_base(nullptr),
 		_craft(nullptr),
-		_alienDies(false),
-		_manageContainment(false),
+		_capture(ACR_NONE),
 		_destroyPlayerBase(-1),
 		_missionCost(0),
 		_aliensStunned(0),
@@ -133,7 +132,7 @@ DebriefingState::DebriefingState()
 	// ~BattlescapeGame but that causes CTD under reLoad situation. Now done
 	// here and in NextTurnState; not ideal: should find a safe place when
 	// BattlescapeGame is really dTor'd and not reLoaded ...... uh, i guess.
-	_battleSave->getBattleGame()->cleanBattleStates();
+	_battleSave->getBattleGame()->clearBattleStates();
 
 	_window			= new Window(this);
 
@@ -145,10 +144,10 @@ DebriefingState::DebriefingState()
 	_txtScore		= new Text( 36, 9, 260, 24);
 	_lstStats		= new TextList(288, 81, 16, 32);
 
-	_txtRecovery	= new Text(180, 9, 16, 0);		// set y below
-	_lstRecovery	= new TextList(288, 81, 16, 0);	// set y below
+	_txtRecovery	= new Text(180, 9, 16, 0);		// set y below_
+	_lstRecovery	= new TextList(288, 81, 16, 0);	// set y below_
 
-	_lstTotal		= new TextList(288, 9, 16, 0);	// set y below
+	_lstTotal		= new TextList(288, 9, 16, 0);	// set y below_
 
 	_txtCost		= new Text(76, 9, 16, 181);
 	_txtRating		= new Text(76, 9, 228, 181);
@@ -542,13 +541,14 @@ void DebriefingState::btnOkClick(Action*)
 			}
 
 			std::vector<Soldier*> participants;
+			Soldier* sol;
 			for (std::vector<BattleUnit*>::const_iterator
 					i = _unitList->begin();
 					i != _unitList->end();
 					++i)
 			{
-				if ((*i)->getGeoscapeSoldier() != nullptr)
-					participants.push_back((*i)->getGeoscapeSoldier());
+				if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
+					participants.push_back(sol);
 			}
 
 			if (_playSave->handlePromotions(participants) == true)
@@ -557,17 +557,20 @@ void DebriefingState::btnOkClick(Action*)
 				_game->pushState(new PromotionsState());
 			}
 
-			if (_alienDies == true)
-				_game->pushState(new NoContainmentState());
-			else if (_manageContainment == true)
+			switch (_capture)
 			{
-				_game->pushState(new AlienContainmentState(_base, OPT_BATTLESCAPE));
-				_game->pushState(new ErrorMessageState(
-												tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getLabel()),
-												_palette,
-												_rules->getInterface("debriefing")->getElement("errorMessage")->color,
-												"BACK04.SCR",
-												_rules->getInterface("debriefing")->getElement("errorPalette")->color));
+				case ACR_DIES:
+					_game->pushState(new AlienDiesState());
+					break;
+
+				case ACR_SHOW:
+					_game->pushState(new AlienContainmentState(_base, OPT_BATTLESCAPE));
+					_game->pushState(new ErrorMessageState(
+													tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getLabel()),
+													_palette,
+													_rules->getInterface("debriefing")->getElement("errorMessage")->color,
+													"BACK04.SCR",
+													_rules->getInterface("debriefing")->getElement("errorPalette")->color));
 			}
 
 			if (   _surplusItems.empty() == false
@@ -1950,18 +1953,19 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 					TAC_RESULT[1u], // aLien captured
 					value);
 
-//		if (_isQuickBattle == false)
-//		{
 		_base->getStorageItems()->addItem(type);
-		_manageContainment = _base->getFreeContainment() < 0;
-//		}
-
 		++_surplusItems[_rules->getItemRule(type)];
+
+		if (_base->getFreeContainment() < 0)
+			_capture = ACR_SHOW;
+		else
+			_capture = ACR_NONE;
 	}
 	else
 	{
 		//Log(LOG_INFO) << ". . . alienDead id-" << unit->getId() << " " << unit->getType();
-		_alienDies = true;
+		_capture = ACR_DIES;
+
 		addResultStat(
 					TAC_RESULT[2u], // aLien corpse recovered
 					unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;

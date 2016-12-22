@@ -335,7 +335,6 @@ void DebriefExtraState::increaseByValue(int delta) // private.
 		}
 
 		case DES_LOOT_LOST:
-		{
 			if (_error.empty() == false)
 				_error.clear();
 			else
@@ -387,7 +386,6 @@ void DebriefExtraState::increaseByValue(int delta) // private.
 					}
 				}
 			}
-		}
 	}
 }
 
@@ -409,7 +407,6 @@ void DebriefExtraState::decreaseByValue(int delta) // private.
 	switch (_curScreen)
 	{
 		case DES_LOOT_GAINED:
-		{
 			if (_qtysSell[_sel] > 0)
 			{
 				const RuleItem* const itRule (getRule(_itemsGained));
@@ -424,10 +421,8 @@ void DebriefExtraState::decreaseByValue(int delta) // private.
 				}
 			}
 			break;
-		}
 
 		case DES_LOOT_LOST:
-		{
 			if (_qtysBuy[_sel] > 0)
 			{
 				const RuleItem* const itRule (getRule(_itemsLost));
@@ -443,7 +438,6 @@ void DebriefExtraState::decreaseByValue(int delta) // private.
 					updateListrow();
 				}
 			}
-		}
 	}
 }
 

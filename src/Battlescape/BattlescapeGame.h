@@ -432,7 +432,7 @@ private:
 		bool checkProxyGrenades(BattleUnit* const unit);
 
 		/// Cleans up all the deleted BattleStates.
-		void cleanBattleStates();
+		void clearBattleStates();
 
 		/// Gets the BattlescapeState.
 		BattlescapeState* getBattlescapeState() const;

@@ -3747,7 +3747,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 /**
  * Deletes all BattleStates that are waiting for deletion.
  */
-void BattlescapeGame::cleanBattleStates()
+void BattlescapeGame::clearBattleStates()
 {
 	for (std::list<BattleState*>::const_iterator
 			i = _deletedStates.begin();

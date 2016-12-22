@@ -179,7 +179,7 @@ void NextTurnState::nextTurn() // private.
 	static bool switchMusic (true);
 
 	// Done here and in DebriefingState but removed from ~BattlescapeGame.
-	_battleSave->getBattleGame()->cleanBattleStates();
+	_battleSave->getBattleGame()->clearBattleStates();
 	_game->popState();
 
 	int

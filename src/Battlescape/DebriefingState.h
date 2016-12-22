@@ -121,13 +121,17 @@ class DebriefingState
 {
 
 private:
-
 	static const char* const TAC_RESULT[12u];
+
+	enum AlienCaptureResult
+	{
+		ACR_NONE,	// 0
+		ACR_DIES,	// 1
+		ACR_SHOW	// 2
+	} _capture;
 
 	bool
 		_aborted,
-		_alienDies,
-		_manageContainment,
 		_isHostileStanding,
 		_isQuickBattle;
 	int
@@ -204,7 +208,7 @@ private:
 		/// Cleans up the Debriefing state.
 		~DebriefingState();
 
-		/// Initializes the state.
+		/// Initializes the State.
 		void init() override;
 
 		/// Handler for clicking the Ok button.
