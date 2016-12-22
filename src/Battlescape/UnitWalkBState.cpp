@@ -82,7 +82,7 @@ UnitWalkBState::UnitWalkBState(
 {
 //	Log(LOG_INFO) << "";
 //	Log(LOG_INFO) << "walkB:cTor id-" << _unit->getId();
-//	if (_unit->getId() == 1000028)	_debug = true;
+//	if (_unit->getId() == 1000000)	_debug = true;
 //	else							_debug = false;
 }
 
@@ -139,9 +139,10 @@ void UnitWalkBState::think()
 {
 //	if (_debug) {
 //		Log(LOG_INFO) << "";
-//		Log(LOG_INFO) << "***** UnitWalkBState::think()\t\t\t\tid-" << _unit->getId()
+//		Log(LOG_INFO) << "***** UnitWalkBState::think()\t\t\tid-" << _unit->getId()
 //					  << " " << _unit->getPosition() << " to " << _unit->getStopPosition()
 //					  << " vis= " << _unit->getUnitVisible();
+//		Log(LOG_INFO) << ". _door= " << _door;
 //	}
 
 	_isVisible = _unit->getUnitVisible() == true
@@ -297,7 +298,7 @@ void UnitWalkBState::think()
 }
 
 /**
- * Aborts unit walking.
+ * Cancels walking.
  */
 void UnitWalkBState::cancel()
 {
@@ -326,6 +327,7 @@ bool UnitWalkBState::statusStand() // private.
 //	if (_debug) Log(LOG_INFO) << "***** UnitWalkBState::statusStand()\t\tid-" << _unit->getId()
 //							  << " " << posStart
 //							  << " vis= " << _unit->getUnitVisible();
+//	if (_debug) Log(LOG_INFO) << ". _door= " << _door;
 
 	bool gravLift (false);
 
@@ -343,83 +345,93 @@ bool UnitWalkBState::statusStand() // private.
 		postPathProcedures();
 		return false;
 	}
-	else // about to start.
+
+
+	if (_door == true) // in case a door opened AND state is about to get aborted.
 	{
-		if (visForUnits() == true)
+		//if (_debug) Log(LOG_INFO) << ". _door TRUE calcFovTiles_pos()";
+		_door = false;
+
+		_te->calculateUnitLighting();
+		_te->calcFovTiles_pos(_unit->getPosition());
+	}
+
+
+	if (visForUnits() == true) // about to start.
+	{
+		//if (_debug) Log(LOG_INFO) << ". visForUnits() TRUE postPathProcedures()";
+		//if (_unit->getFaction() == FACTION_PLAYER) Log(LOG_INFO) << ". . _newVis = TRUE, postPathProcedures";
+		//else Log(LOG_INFO) << ". . _newUnitSpotted = TRUE, postPathProcedures";
+
+//		if (_unit->getFaction() != FACTION_PLAYER)
+		_unit->setHiding(false);
+
+		_unit->setCacheInvalid();
+		_parent->getMap()->cacheUnitSprite(_unit);
+
+		postPathProcedures();
+		return false;
+	}
+
+	const Tile* const tile (_battleSave->getTile(posStart));
+	gravLift = dir >= Pathfinding::DIR_UP						// Assumes tops & bottoms of gravLifts always have floors/ceilings.
+			&& tile->getMapData(O_FLOOR) != nullptr				// that is, gravLifts on roofs of UFOs can screw this up.
+			&& tile->getMapData(O_FLOOR)->isGravLift() == true;	// Unless a further check is made for a gravLift-floor on the stopTile.
+
+	if (_kneelCheck == true) // check if unit is kneeled
+	{
+		//Log(LOG_INFO) << ". do kneelCheck";
+		_kneelCheck = false;
+
+		if (_unit->isKneeled() == true			// unit is kneeled
+			&& gravLift == false				// not on a gravLift
+			&& _pf->getPath().empty() == false)	// not the final tile of path; that is, the unit is actually going to move. Might be unnecessary after refactor above^
 		{
-			//if (_unit->getFaction() == FACTION_PLAYER) Log(LOG_INFO) << ". . _newVis = TRUE, postPathProcedures";
-			//else Log(LOG_INFO) << ". . _newUnitSpotted = TRUE, postPathProcedures";
-
-//			if (_unit->getFaction() != FACTION_PLAYER)
-			_unit->setHiding(false);
-
-			_unit->setCacheInvalid();
-			_parent->getMap()->cacheUnitSprite(_unit);
-
-			postPathProcedures();	// NOTE: This is the only call for which _door==TRUE might be needed.
-			return false;			// Update: '_door' is also used for calcFovTiles_pos() in statusStand_end().
-		}
-
-		const Tile* const tile (_battleSave->getTile(posStart));
-		gravLift = dir >= Pathfinding::DIR_UP						// Assumes tops & bottoms of gravLifts always have floors/ceilings.
-				&& tile->getMapData(O_FLOOR) != nullptr				// that is, gravLifts on roofs of UFOs can screw this up.
-				&& tile->getMapData(O_FLOOR)->isGravLift() == true;	// Unless a further check is made for a gravLift-floor on the stopTile.
-
-		if (_kneelCheck == true) // check if unit is kneeled
-		{
-			//Log(LOG_INFO) << ". do kneelCheck";
-			_kneelCheck = false;
-
-			if (_unit->isKneeled() == true			// unit is kneeled
-				&& gravLift == false				// not on a gravLift
-				&& _pf->getPath().empty() == false)	// not the final tile of path; that is, the unit is actually going to move. Might be unnecessary after refactor above^
+			//Log(LOG_INFO) << ". . kneeled and path Valid";
+			if (_parent->kneelToggle(_unit) == true)
 			{
-				//Log(LOG_INFO) << ". . kneeled and path Valid";
-				if (_parent->kneelToggle(_unit) == true)
+				//Log(LOG_INFO) << ". . . Stand up";
+				if (_te->checkReactionFire(_unit) == true) // got fired at -> stop.
 				{
-					//Log(LOG_INFO) << ". . . Stand up";
-					if (_te->checkReactionFire(_unit) == true) // got fired at -> stop.
-					{
-						//Log(LOG_INFO) << ". . . RF triggered";
-						_battleSave->rfTriggerOffset(_walkCamera->getMapOffset());
+					//Log(LOG_INFO) << ". . . RF triggered";
+					_battleSave->rfTriggerOffset(_walkCamera->getMapOffset());
 
-						abortState(false);
-						return false;
-					}
-				}
-				else
-				{
-					//Log(LOG_INFO) << ". . don't stand: not enough TU";
-					_action.result = BattlescapeGame::PLAYER_ERROR[0u];	// NOTE: redundant w/ bg:kneelToggle() error messages ...
-																		// But '_action.result' might need to be set for bg:popBattleState() to deal with stuff.
 					abortState(false);
 					return false;
 				}
 			}
-		}
-
-		if (_action.strafe == true)
-		{
-			if (_unit->isMechanical() == false)
+			else
 			{
-				_unit->setFaceDirection(_unit->getUnitDirection());
-				const int delta (std::min(
-										std::abs(8 + _dirStart - _unit->getUnitDirection()),
-										std::min(
-											std::abs(_unit->getUnitDirection() - _dirStart),
-											std::abs(8 + _unit->getUnitDirection() - _dirStart))));
-				if (delta > 2) _unit->flagStrafeBackwards();
+				//Log(LOG_INFO) << ". . don't stand: not enough TU";
+				_action.result = BattlescapeGame::PLAYER_ERROR[0u];	// NOTE: redundant w/ bg:kneelToggle() error messages ...
+																	// But '_action.result' might need to be set for bg:popBattleState() to deal with stuff.
+				abortState(false);
+				return false;
 			}
-			else // turret-swivel.
-			{
-				const int dirStrafe ((_dirStart + 4) % 8);
-				_unit->setFaceDirection(dirStrafe);
+		}
+	}
 
-				if (_unit->getTurretType() != TRT_NONE)
-				{
-					const int dirTurret (_unit->getTurretDirection() - _unit->getUnitDirection());
-					_unit->setTurretDirection((dirTurret + dirStrafe) % 8);
-				}
+	if (_action.strafe == true)
+	{
+		if (_unit->isMechanical() == false)
+		{
+			_unit->setFaceDirection(_unit->getUnitDirection());
+			const int delta (std::min(
+									std::abs(8 + _dirStart - _unit->getUnitDirection()),
+									std::min(
+										std::abs(_unit->getUnitDirection() - _dirStart),
+										std::abs(8 + _unit->getUnitDirection() - _dirStart))));
+			if (delta > 2) _unit->flagStrafeBackwards();
+		}
+		else // turret-swivel.
+		{
+			const int dirStrafe ((_dirStart + 4) % 8);
+			_unit->setFaceDirection(dirStrafe);
+
+			if (_unit->getTurretType() != TRT_NONE)
+			{
+				const int dirTurret (_unit->getTurretDirection() - _unit->getUnitDirection());
+				_unit->setTurretDirection((dirTurret + dirStrafe) % 8);
 			}
 		}
 	}
@@ -539,11 +551,13 @@ bool UnitWalkBState::statusStand() // private.
 		{
 			case DR_WOOD_OPEN:
 				soundId = static_cast<int>(ResourcePack::DOOR_OPEN);
+				//if (_debug) Log(LOG_INFO) << ". set _door (wood) TRUE";
 				_door = true;
 				break;
 
 			case DR_UFO_OPEN:
 				soundId = static_cast<int>(ResourcePack::SLIDING_DOOR_OPEN);
+				//if (_debug) Log(LOG_INFO) << ". set _door (ufo) TRUE";
 				_door = true;
 				wait = true;
 				break;
@@ -558,8 +572,13 @@ bool UnitWalkBState::statusStand() // private.
 			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 										->play(-1, _parent->getMap()->getSoundAngle(posStart));
 
-		if (wait == true) return false; // wait for the ufo door to open
+		if (wait == true)
+		{
+			//if (_debug) Log(LOG_INFO) << ". . wait for UFO-door";
+			return false; // wait for the ufo-door to open
+		}
 	}
+
 
 	// TODO: Put checkForSilacoid() around here!
 
@@ -796,6 +815,7 @@ bool UnitWalkBState::statusStand_end() // private.
 //	if (_debug) Log(LOG_INFO) << "***** UnitWalkBState::statusStand_end()\tid-" << _unit->getId()
 //							  << " " << _unit->getPosition()
 //							  << " vis= " << _unit->getUnitVisible();
+//	if (_debug) Log(LOG_INFO) << ". _door= " << _door;
 
 	if (_unit->getFaction() == FACTION_PLAYER
 		|| _battleSave->getDebugTac() == true)
@@ -840,31 +860,25 @@ bool UnitWalkBState::statusStand_end() // private.
 
 	_te->calculateUnitLighting();
 
-	const Position pos (_unit->getPosition());
-
-	if (_door == true)
-		_te->calcFovTiles_pos(pos);
-	else if (_unit->getFaction() == FACTION_PLAYER)
+//	const Position& pos (_unit->getPosition());
+//	if (_door == true)
+//	{
+//		if (_debug) Log(LOG_INFO) << ". _door TRUE calcFovTiles_pos()";
+//		_door = false;
+//		_te->calculateUnitLighting();
+//		_te->calcFovTiles_pos(pos);
+//	}
+//	else
+	if (_unit->getFaction() == FACTION_PLAYER)
+	{
+		//if (_debug) Log(LOG_INFO) << ". _door FALSE calcFovTiles()";
 		_te->calcFovTiles(_unit);
+	}
 
 	// This needs to be done *before* calcFovUnits_pos() below_ or else any
 	// units spotted would be flagged-visible before a call to visForUnits()
 	// has had a chance to catch a newly spotted unit (that was not-visible).
 	const bool spot (visForUnits());
-
-/*	// debug -->
-	BattleUnit* hostile;
-	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
-			i != _battleSave->getUnits()->end();
-			++i)
-	{
-		if ((*i)->getId() == 1000007)
-		{
-			Log(LOG_INFO) << ". dist = " << TileEngine::distance(pos, (*i)->getPosition());
-			break;
-		}
-	} // debug_end. */
 
 	if (_unit->getFaction() != FACTION_PLAYER)	// set aLien/Civie non-visible
 		_unit->setUnitVisible(false);			// then re-calc
@@ -877,7 +891,8 @@ bool UnitWalkBState::statusStand_end() // private.
 		case FACTION_NEUTRAL: faction = FACTION_HOSTILE; break;
 		case FACTION_HOSTILE: faction = FACTION_PLAYER;
 	}
-	_te->calcFovUnits_pos(pos, false, faction);
+//	_te->calcFovUnits_pos(pos, false, faction);
+	_te->calcFovUnits_pos(_unit->getPosition(), false, faction);
 
 	switch (_unit->getFaction())
 	{
@@ -907,6 +922,8 @@ bool UnitWalkBState::statusStand_end() // private.
 
 	if (spot == true)
 	{
+		//if (_debug) Log(LOG_INFO) << ". spot TRUE abortState()";
+
 		//if (_unit->getFaction() == FACTION_PLAYER) Log(LOG_INFO) << ". . _newVis TRUE, Abort path";
 		//else if (_unit->getFaction() != FACTION_PLAYER) Log(LOG_INFO) << ". . _newUnitSpotted TRUE, Abort path";
 		abortState();
@@ -927,7 +944,6 @@ bool UnitWalkBState::statusStand_end() // private.
 		//else Log(LOG_INFO) << ". . walkB:checkReactionFire() FALSE - no caching";
 	}
 
-	_door = false;
 	return true;
 }
 
@@ -941,14 +957,17 @@ void UnitWalkBState::statusTurn() // private.
 //							  << " " << _unit->getPosition()
 //							  << " vis= " << _unit->getUnitVisible();
 
-	if (_preStepTurn == true) // turning during walking costs no tu unless aborted.
+	if (_preStepTurn == true) // turning during walking costs no TU unless aborted.
 		++_preStepCost;
 
 	_unit->turn();
 	_parent->getMap()->cacheUnitSprite(_unit);
 
 	if (_unit->getFaction() == FACTION_PLAYER)
+	{
+		//if (_debug) Log(LOG_INFO) << ". calcFovTiles()";
 		_te->calcFovTiles(_unit);
+	}
 
 	// calcFov() is unreliable for setting the _newUnitSpotted bool as it
 	// can be called from various other places in the code, ie: doors opening
@@ -988,6 +1007,7 @@ void UnitWalkBState::statusTurn() // private.
  */
 void UnitWalkBState::abortState(bool recache) // private.
 {
+	//if (_debug) Log(LOG_INFO) << "abortState()";
 	if (recache == true)
 	{
 		_unit->setCacheInvalid();
@@ -1005,6 +1025,7 @@ void UnitWalkBState::abortState(bool recache) // private.
  */
 void UnitWalkBState::postPathProcedures() // private.
 {
+	//if (_debug) Log(LOG_INFO) << "postPathProcedures()";
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "UnitWalkBState::postPathProcedures() id-" << _unit->getId();
 	_action.TU = 0;
@@ -1075,11 +1096,12 @@ void UnitWalkBState::postPathProcedures() // private.
 		}
 	}
 
-	if (_door == true) // in case a door opened AND state was aborted.
-	{
-		_te->calculateUnitLighting();
-		_te->calcFovUnits_pos(_unit->getPosition(), true);
-	}
+//	if (_door == true) // in case a door opened AND state was aborted.
+//	{
+//		if (_debug) Log(LOG_INFO) << "postPathProcedures() _door TRUE calcFovUnits_pos()";
+//		_te->calculateUnitLighting();
+//		_te->calcFovUnits_pos(_unit->getPosition(), true);
+//	}
 
 	_unit->setCacheInvalid();
 	_parent->getMap()->cacheUnitSprite(_unit);
@@ -1170,28 +1192,23 @@ int UnitWalkBState::getFinalDirection() const // private.
  */
 bool UnitWalkBState::visForUnits() const // private.
 {
-	if (_fall == true) return false;
-
-	bool spot;
-	switch (_unit->getFaction())
+	if (_fall == false)
 	{
-		case FACTION_PLAYER:
-			spot = _parent->playerPanicHandled() == true // short-circuit of calcFovUnits() is intentional.
-				&& _te->calcFovUnits(_unit);
-			break;
+		switch (_unit->getFaction())
+		{
+			case FACTION_PLAYER:
+				return _parent->playerPanicHandled() == true // short-circuit of calcFovUnits() is intentional.
+					&& _te->calcFovUnits(_unit);
 
-		case FACTION_HOSTILE:
-			spot = _te->calcFovUnits(_unit)
-				&& _action.desperate == false
-				&& _unit->getChargeTarget() == nullptr;
-			break;
+			case FACTION_HOSTILE:
+				return _te->calcFovUnits(_unit)
+					&& _action.desperate == false
+					&& _unit->getChargeTarget() == nullptr;
 
-		case FACTION_NEUTRAL:
-		default:
-			spot = false;
-			break;
+//			case FACTION_NEUTRAL: // Civies are blind.
+		}
 	}
-	return spot;
+	return false;
 }
 
 /**
@@ -1246,20 +1263,13 @@ void UnitWalkBState::playMoveSound() // private.
 					case 3:
 					case 7:
 					{
-						const Tile
-							* const tile (_unit->getUnitTile()),
-							* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
-						const int stepSound (tile->getFootstepSound(tileBelow));
-						if (stepSound != 0)
+						const Tile* const tile (_unit->getUnitTile());
+						const int tileSound (tile->getFootstepSound(tile->getTileBelow(_battleSave)));
+						if (tileSound != 0)
 						{
-							switch (walkPhase)
-							{
-								case 3:
-									soundId = (stepSound << 1u) + static_cast<int>(ResourcePack::WALK_OFFSET) + 1;
-									break;
-								case 7:
-									soundId = (stepSound << 1u) + static_cast<int>(ResourcePack::WALK_OFFSET);
-							}
+							soundId = (tileSound << 1u) + static_cast<int>(ResourcePack::WALK_OFFSET);
+							if (walkPhase == 3)
+								++soundId;
 						}
 					}
 				}

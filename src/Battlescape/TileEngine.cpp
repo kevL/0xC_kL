@@ -362,6 +362,8 @@ void TileEngine::addLight( // private.
  */
 bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 {
+	//if (unit->getId() == 1000000) Log(LOG_INFO) << "CALC_FOV_UNITS id-" << unit->getId();
+
 	unit->clearHostileUnits();
 
 	bool
@@ -484,7 +486,6 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
 						}
 					}
 				}
-				break;
 		}
 	}
 
@@ -507,6 +508,9 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
  */
 void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 {
+	//if (unit->getId() == 1000000) Log(LOG_INFO) << "CALC_FOV_TILES id-" << unit->getId();
+
+
 //	unit->clearVisibleTiles();
 //	unit->getTile()->setTileVisible();
 //	unit->getTile()->setDiscovered(true, 2);
@@ -962,7 +966,7 @@ const BattleUnit* TileEngine::getTargetUnit(const Tile* const tile) const	// now
 
 		if (tile->getPosition().z > 0 && tile->isFloored() == false)
 		{
-			const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
+			const Tile* const tileBelow (tile->getTileBelow(_battleSave));
 			if (tileBelow->getTileUnit() != nullptr)
 				return tileBelow->getTileUnit();
 		}
@@ -983,17 +987,17 @@ Position TileEngine::getSightOriginVoxel(
 	if (pos == nullptr)
 		pos = &unit->getPosition();
 
+	const Tile* const tile (_battleSave->getTile(*pos));
 	Position originVoxel (Position::toVoxelSpaceCentered(	// TODO: Large units get an origin in the very northwest corner of quadrant #4.
 													*pos,	// It will not be accurate.
-													unit->getHeight(true) + EYE_OFFSET
-														- _battleSave->getTile(*pos)->getTerrainLevel(),
+													unit->getHeight(true) + EYE_OFFSET - tile->getTerrainLevel(),
 													unit->getArmor()->getSize()));
-	const int ceilingZ ((*pos).z * 24 + 23);
-	if (ceilingZ < originVoxel.z)
+	const int ceilZ (pos->z * 24 + 23);
+	if (ceilZ < originVoxel.z)
 	{
-		const Tile* const tileAbove (_battleSave->getTile(*pos + Position(0,0,1)));
+		const Tile* const tileAbove (tile->getTileAbove(_battleSave));
 		if (tileAbove == nullptr || tileAbove->isFloored() == true)
-			originVoxel.z = ceilingZ; // careful with that ceiling, Eugene.
+			originVoxel.z = ceilZ; // careful with that ceiling, Eugene.
 	}
 
 	return originVoxel;

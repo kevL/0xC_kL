@@ -59,7 +59,7 @@ std::string BattleState::getBattleStateLabel() const // virtual.
 }
 
 /**
- * Start the current BattleState.
+ * Starts the current BattleState.
  */
 void BattleState::init() // virtual.
 {}
@@ -71,7 +71,8 @@ void BattleState::cancel() // virtual.
 {}
 
 /**
- * Runs any code the BattleState needs to keep updated every game cycle.
+ * Runs any code the current BattleState needs to keep updating every
+ * engine-cycle.
  */
 void BattleState::think() // virtual.
 {}

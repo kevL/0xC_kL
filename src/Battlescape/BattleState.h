@@ -27,8 +27,15 @@ namespace OpenXcom
 {
 
 /**
- * This class sets the battlescape in a certain sub-state.
- * @note These states can be triggered by the player or the AI.
+ * This is the base-class for all BattleAction states.
+ * @note These states can be triggered by the player or the AI:
+ * - ExplosionBState
+ * - ProjectileFlyBState
+ * - UnitDieBState
+ * - UnitFallBState
+ * - UnitPanicBState
+ * - UnitTurnBState
+ * - UnitWalkBState
  */
 class BattleState
 {
@@ -39,7 +46,7 @@ protected:
 
 
 	public:
-		/// Creates a new BattleState linked to the BattlescapeGame.
+		/// Creates a BattleState linked to the BattlescapeGame.
 		BattleState(
 				BattlescapeGame* const parent,
 				BattleAction action = {});
