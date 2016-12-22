@@ -74,13 +74,13 @@ private:
 		* _barRightArmor,
 		* _barRearArmor,
 		* _barUnderArmor;
-	BattlescapeState* _parent;
+	BattlescapeState* _battleState;
 	const BattleUnit* _unit;
 	InteractiveSurface* _exit;
 	NumberText* _battleOrder;
 	SavedBattleGame* _battleSave;
 	Surface
-		* _bg,
+		* _bgUnibord,
 		* _gender;
 	Text
 		* _txtName,
@@ -141,7 +141,7 @@ private:
 		/// Creates a UnitInfo state.
 		UnitInfoState(
 				const BattleUnit* const unit,
-				BattlescapeState* const parent,
+				BattlescapeState* const battleState,
 				const bool fromInventory = false,
 				const bool mindProbe = false,
 				const bool preBattle = false);

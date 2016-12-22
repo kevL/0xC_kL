@@ -48,8 +48,9 @@ class InventoryState final
 
 private:
 	static const Uint8
-		WHITE =  1u,
-		RED   = 38u;
+		WHITE	=   1u,
+		RED		=  38u,
+		YELLOW	= 145u;
 
 /*	std::string _currentTooltip; */
 	const bool _tuMode;
@@ -70,6 +71,7 @@ private:
 	Inventory* _inventoryPanel;
 	NumberText
 		* _battleOrder,
+		* _exposed,
 		* _tuCost,
 		* _numHead,
 		* _numTorso,
@@ -99,7 +101,7 @@ private:
 		* _txtUseTU,
 		* _txtThrowTU,
 		* _txtPsiTU;
-//	Timer* _timer;
+	Timer* _timer;
 
 /*	std::vector<SoldierLayout*> _curInventoryTemplate; */
 
@@ -119,8 +121,12 @@ private:
 /*	/// Clears current unit's inventory. (was static)
 	void clearInventory(Game* game, std::vector<BattleItem*>* unitInv, Tile* groundTile); */
 
+	/// Blinks the 'exposed' text OnTimer.
+	void blinkExposed();
+
 	/// Sets the extra-info fields on mouseover and mouseclicks.
 	void setExtraInfo(const BattleItem* const selOver);
+
 	/// Update the visibility and icons for the template buttons.
 /*	void _updateTemplateButtons(bool isVisible); */
 
@@ -136,7 +142,7 @@ private:
 		/// Updates all unit-info.
 		void init() override;
 		/// Runs the timer.
-//		void think();
+		void think() override;
 
 		/// Handler for clicking the Ok button.
 		void btnOkClick(Action* action = nullptr);

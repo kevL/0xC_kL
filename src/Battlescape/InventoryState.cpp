@@ -117,8 +117,8 @@ InventoryState::InventoryState(
 	_txtThrowTU	= new Text(40, 9, 245, 132);
 	_txtPsiTU	= new Text(40, 9, 245, 141);
 
-	_battleOrder	= new NumberText(7, 5, 228,  4);
-
+	_battleOrder	= new NumberText(7, 5,   2, 25);
+	_exposed		= new NumberText(7, 5, 228,  4);
 	_tuCost			= new NumberText(7, 5, 310, 60);
 
 	_numHead		= new NumberText(7, 5,  79,  31);
@@ -173,6 +173,7 @@ InventoryState::InventoryState(
 	add(_txtPSkill,		"textPsiSkill",		"inventory", _srfBg);
 
 	add(_battleOrder);
+	add(_exposed);
 	add(_tuCost);
 
 	add(_txtItem,		"textItem",			"inventory", _srfBg);
@@ -224,6 +225,9 @@ InventoryState::InventoryState(
 
 	_battleOrder->setColor(WHITE);
 	_battleOrder->setVisible(false);
+
+	_exposed->setColor(YELLOW);
+	_exposed->setVisible(false);
 
 	_tuCost->setColor(WHITE);
 	_tuCost->setVisible(false);
@@ -362,8 +366,9 @@ InventoryState::InventoryState(
 	_txtPStr->setVisible(vis);
 	_txtPSkill->setVisible(vis);
 
-//	_timer = new Timer(300u);
-//	_timer->onTimer((StateHandler)& InventoryState::keyRepeat);
+	_timer = new Timer(333u);
+	_timer->onTimer((StateHandler)&InventoryState::blinkExposed);
+//	_timer->onTimer((StateHandler)&InventoryState::keyRepeat);
 //	_timer->start();
 }
 
@@ -382,7 +387,7 @@ static void _clearInventoryTemplate(std::vector<SoldierLayout*>& inventoryTempla
 InventoryState::~InventoryState()
 {
 //	_clearInventoryTemplate(_curInventoryTemplate);
-//	delete _timer;
+	delete _timer;
 
 	if (_battleState != nullptr)
 	{
@@ -434,12 +439,12 @@ InventoryState::~InventoryState()
 
 /**
  * Hits the think Timer.
- *
+ */
 void InventoryState::think()
 {
-	State::think();
+//	State::think();
 	_timer->think(this, nullptr);
-} */
+}
 
 /**
  * Advances to the next/previous Unit when right/left key is depressed.
@@ -563,6 +568,22 @@ void InventoryState::updateStats() // private.
 	}
 	else
 		_battleOrder->setVisible(false);
+
+	const int exposed (_unit->getExposed());
+	if (exposed != -1
+		&& _unit->getOriginalFaction() != FACTION_HOSTILE)
+	{
+		_exposed->setValue(static_cast<unsigned>(exposed));
+		_exposed->setVisible();
+
+		if (_timer->isRunning() == false)
+			_timer->start();
+	}
+	else
+	{
+		_timer->stop();
+		_exposed->setVisible(false);
+	}
 
 	if (_tuMode == true)
 		_txtTUs->setText(tr("STR_TIME_UNITS_SHORT").arg(_unit->getTu()));
@@ -1206,6 +1227,14 @@ void InventoryState::handle(Action* action)
 	}
 #endif
 */
+}
+
+/**
+ * Blinks the 'exposed' text OnTimer.
+ */
+void InventoryState::blinkExposed() // private.
+{
+	_exposed->setVisible(!_exposed->getVisible());
 }
 
 /**

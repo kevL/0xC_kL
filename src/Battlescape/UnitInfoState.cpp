@@ -57,20 +57,20 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the UnitInfo screen.
  * @param unit			- pointer to the selected BattleUnit
- * @param parent		- pointer to parent Battlescape
- * @param fromInventory	- true if player is here from the inventory (default false)
- * @param mindProbe		- true if player is using a Mind Probe (default false)
+ * @param battleState	- pointer to Battlescape
+ * @param fromInventory	- true if called Inventory (default false)
+ * @param mindProbe		- true if using a Mind Probe (default false)
  * @param preBattle		- true if preEquip state; ie tuMode not tactical (default false)
  */
 UnitInfoState::UnitInfoState(
 		const BattleUnit* const unit,
-		BattlescapeState* const parent,
+		BattlescapeState* const battleState,
 		const bool fromInventory,
 		const bool mindProbe,
 		const bool preBattle)
 	:
 		_unit(unit),
-		_parent(parent),
+		_battleState(battleState),
 		_fromInventory(fromInventory),
 		_mindProbe(mindProbe),
 		_preBattle(preBattle),
@@ -83,13 +83,12 @@ UnitInfoState::UnitInfoState(
 //		_game->getScreen()->resetDisplay(false);
 //	}
 
-	_bg		= new Surface();
-	_exit	= new InteractiveSurface(
-//								320, 180, 0, 20);
-								Options::baseXResolution,
-								Options::baseYResolution,
-								-((Options::baseXResolution - 320) >> 1u),
-								-((Options::baseYResolution - 200) >> 1u));
+	_bgUnibord	= new Surface();
+	_exit		= new InteractiveSurface(
+									Options::baseXResolution, // create the Surface the entire size of Screen so RMB-exit works anywhere.
+									Options::baseYResolution,
+									(320 - Options::baseXResolution) >> 1u,
+									(200 - Options::baseYResolution) >> 1u);
 
 	_txtName		= new Text(288, 17, 16, 4);
 	_gender			= new Surface(7, 7, 22, 4);
@@ -196,7 +195,7 @@ UnitInfoState::UnitInfoState(
 
 	setPalette(PAL_BATTLESCAPE);
 
-	add(_bg);
+	add(_bgUnibord);
 	add(_exit);
 	add(_txtName,			"textName",			"stats");
 
@@ -285,7 +284,7 @@ UnitInfoState::UnitInfoState(
 	centerSurfaces();
 
 
-	_game->getResourcePack()->getSurface("UNIBORD.PCK")->blit(_bg);
+	_game->getResourcePack()->getSurface("UNIBORD.PCK")->blit(_bgUnibord);
 
 	_exit->onMouseClick(	static_cast<ActionHandler>(&UnitInfoState::exitClick),
 							SDL_BUTTON_RIGHT);
@@ -756,9 +755,9 @@ void UnitInfoState::handle(Action* action)
  */
 void UnitInfoState::btnNextClick(Action*)
 {
-	if (_parent != nullptr)				// this is from a Battlescape Game
-		_unit = _parent->selectNextPlayerUnit();
-	else								// this is from the Craft Equipment screen
+	if (_battleState != nullptr)						// this is from a Battlescape Game
+		_unit = _battleState->selectNextPlayerUnit();
+	else												// this is from the Craft Equipment screen
 		_unit = _battleSave->selectNextUnit(false, false, true); // no tanks.
 
 	if (_unit != nullptr)
@@ -773,9 +772,9 @@ void UnitInfoState::btnNextClick(Action*)
  */
 void UnitInfoState::btnPrevClick(Action*)
 {
-	if (_parent != nullptr)					// so you are here from a Battlescape Game -> no, I'm here from Picadilly.
-		_unit = _parent->selectPreviousPlayerUnit();
-	else									// so you are here from the Craft Equipment screen
+	if (_battleState != nullptr)							// so you are here from a Battlescape Game -> no, I'm here from Picadilly.
+		_unit = _battleState->selectPreviousPlayerUnit();
+	else													// so you are here from the Craft Equipment screen
 		_unit = _battleSave->selectPrevUnit(false, false, true); // no tanks.
 
 	if (_unit != nullptr)
