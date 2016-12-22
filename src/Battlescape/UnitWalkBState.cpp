@@ -55,24 +55,24 @@ namespace OpenXcom
 
 /**
  * Sets up the UnitWalkBState.
- * @param parent - pointer to the BattlescapeGame
- * @param action - the BattleAction struct (BattlescapeGame.h)
+ * @param battleGame	- pointer to the BattlescapeGame
+ * @param action		- the BattleAction struct (BattlescapeGame.h)
  */
 UnitWalkBState::UnitWalkBState(
-		BattlescapeGame* const parent,
+		BattlescapeGame* const battleGame,
 		BattleAction action) // these BattleActions had better be assignments/copies ... not references.
 	:
-		BattleState(parent, action),
+		BattleState(battleGame, action),
 		_unit(action.actor),
-		_pf(parent->getPathfinding()),
-		_te(parent->getTileEngine()),
-		_battleSave(parent->getBattleSave()),
+		_pf(battleGame->getPathfinding()),
+		_te(battleGame->getTileEngine()),
+		_battleSave(battleGame->getBattleSave()),
+		_walkCamera(battleGame->getMap()->getCamera()),
 		_fall(false),
 		_preStepTurn(false),
 		_preStepCost(0),
 		_tileSwitchDone(false),
 		_isVisible(false),
-		_walkCamera(parent->getMap()->getCamera()),
 		_dirStart(-1),
 		_kneelCheck(true),
 		_playFly(false),
@@ -217,10 +217,10 @@ void UnitWalkBState::think()
 
 				if (_unit->getFaction() == FACTION_PLAYER)
 				{
-					_parent->getBattlescapeState()->clearHostileIcons();
+					_battleGame->getBattlescapeState()->clearHostileIcons();
 
-					if (_parent->playerPanicHandled() == true)
-						_parent->getBattlescapeState()->updateHostileIcons();
+					if (_battleGame->playerPanicHandled() == true)
+						_battleGame->getBattlescapeState()->updateHostileIcons();
 				}
 			}
 			else if (_isVisible == true) // keep walking ... make sure the unit sprites are up to date
@@ -237,14 +237,14 @@ void UnitWalkBState::think()
 										false);
 
 //					_unit->setCacheInvalid(); // might play around with Strafe anim's ......
-					_parent->getMap()->cacheUnitSprite(_unit);
+					_battleGame->getMap()->cacheUnitSprite(_unit);
 					_unit->setUnitDirection(dirStrafe, false);
 				}
 				else
 				{
 					//Log(LOG_INFO) << ". WALKING no strafe, cacheUnitSprite()";
 					_unit->setCacheInvalid(); // might play around with non-Strafe anim's ......
-					_parent->getMap()->cacheUnitSprite(_unit);
+					_battleGame->getMap()->cacheUnitSprite(_unit);
 				}
 			}
 	}
@@ -303,7 +303,7 @@ void UnitWalkBState::think()
 void UnitWalkBState::cancel()
 {
 	if (_battleSave->getSide() == FACTION_PLAYER
-		&& _parent->playerPanicHandled() == true)
+		&& _battleGame->playerPanicHandled() == true)
 	{
 		if (_preStepTurn == true)
 		{
@@ -367,7 +367,7 @@ bool UnitWalkBState::statusStand() // private.
 		_unit->setHiding(false);
 
 		_unit->setCacheInvalid();
-		_parent->getMap()->cacheUnitSprite(_unit);
+		_battleGame->getMap()->cacheUnitSprite(_unit);
 
 		postPathProcedures();
 		return false;
@@ -388,7 +388,7 @@ bool UnitWalkBState::statusStand() // private.
 			&& _pf->getPath().empty() == false)	// not the final tile of path; that is, the unit is actually going to move. Might be unnecessary after refactor above^
 		{
 			//Log(LOG_INFO) << ". . kneeled and path Valid";
-			if (_parent->kneelToggle(_unit) == true)
+			if (_battleGame->kneelToggle(_unit) == true)
 			{
 				//Log(LOG_INFO) << ". . . Stand up";
 				if (_te->checkReactionFire(_unit) == true) // got fired at -> stop.
@@ -499,7 +499,7 @@ bool UnitWalkBState::statusStand() // private.
 		{
 			//Log(LOG_INFO) << ". . tuCost > _unit->TU()";
 			if (_unit->getFaction() == FACTION_PLAYER
-				&& _parent->playerPanicHandled() == true
+				&& _battleGame->playerPanicHandled() == true
 				&& tuTest < FAIL)
 			{
 				//Log(LOG_INFO) << ". send warning: not enough TU";
@@ -513,7 +513,7 @@ bool UnitWalkBState::statusStand() // private.
 		{
 			//Log(LOG_INFO) << ". . enCost > _unit->getEnergy()";
 			if (_unit->getFaction() == FACTION_PLAYER
-				&& _parent->playerPanicHandled() == true)
+				&& _battleGame->playerPanicHandled() == true)
 			{
 				_action.result = BattlescapeGame::PLAYER_ERROR[1u];
 			}
@@ -524,11 +524,11 @@ bool UnitWalkBState::statusStand() // private.
 
 	if (//_parent->playerPanicHandled() == true &&							// NOTE: this operates differently for player-units and non-player units;
 		_unit->getFaction() != FACTION_PLAYER								// <- no Reserve tolerance.
-		&& _parent->checkReservedTu(_unit, tuCost) == false)				// Only player's units will *bypass* abortPath() due to panicking ....
+		&& _battleGame->checkReservedTu(_unit, tuCost) == false)			// Only player's units will *bypass* abortPath() due to panicking ....
 	{																		// Tbh, other code should have rendered the playerPanicHandled() redundant.
 		//Log(LOG_INFO) << ". . checkReservedTu(_unit, tuCost) == false";	// That is to say this should kick in *only* when player has actively
 		_unit->setCacheInvalid();											// clicked to move but tries to go further than TUs allow; because
-		_parent->getMap()->cacheUnitSprite(_unit);							// either the AI or the panic-code should not try to
+		_battleGame->getMap()->cacheUnitSprite(_unit);						// either the AI or the panic-code should not try to
 		_pf->abortPath();													// move a unit farther than its [reserved] TUs would allow
 		return false;														// WOULD THAT RESULT IN AN ENDLESS LOOP.
 	} // TODO: Conform all the ambiguous returns.
@@ -541,7 +541,7 @@ bool UnitWalkBState::statusStand() // private.
 			_unit->setDirectionTo(dir);
 
 			_unit->setCacheInvalid();
-			_parent->getMap()->cacheUnitSprite(_unit);
+			_battleGame->getMap()->cacheUnitSprite(_unit);
 			return false;
 		}
 
@@ -569,8 +569,8 @@ bool UnitWalkBState::statusStand() // private.
 				soundId = -1;
 		}
 		if (soundId != -1)
-			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-										->play(-1, _parent->getMap()->getSoundAngle(posStart));
+			_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+											->play(-1, _battleGame->getMap()->getSoundAngle(posStart));
 
 		if (wait == true)
 		{
@@ -582,7 +582,7 @@ bool UnitWalkBState::statusStand() // private.
 
 	// TODO: Put checkForSilacoid() around here!
 
-	if (_parent->checkProxyGrenades(_unit) == true) // proxy blows up in face after door opens - copied statusStand_end()
+	if (_battleGame->checkProxyGrenades(_unit) == true) // proxy blows up in face after door opens - copied statusStand_end()
 	{
 		abortState();
 		return false;
@@ -794,7 +794,7 @@ bool UnitWalkBState::statusWalk() // private.
 						_battleSave->addFallingUnit(_unit); // if '_unit' is about to fall onto another unit use UnitFallBState.
 
 						//Log(LOG_INFO) << "UnitWalkBState::think() addFallingUnit() id-" << _unit->getId();
-						_parent->stateBPushFront(new UnitFallBState(_parent));
+						_battleGame->stateBPushFront(new UnitFallBState(_battleGame));
 						return false;
 					}
 					//else Log(LOG_INFO) << ". . . . . otherTileBelow Does NOT contain other unit";
@@ -914,7 +914,7 @@ bool UnitWalkBState::statusStand_end() // private.
 			}
 	}
 
-	if (_parent->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
+	if (_battleGame->checkProxyGrenades(_unit) == true) // Put checkForSilacoid() here!
 	{
 		abortState();
 		return false;
@@ -961,7 +961,7 @@ void UnitWalkBState::statusTurn() // private.
 		++_preStepCost;
 
 	_unit->turn();
-	_parent->getMap()->cacheUnitSprite(_unit);
+	_battleGame->getMap()->cacheUnitSprite(_unit);
 
 	if (_unit->getFaction() == FACTION_PLAYER)
 	{
@@ -994,10 +994,10 @@ void UnitWalkBState::statusTurn() // private.
 	}
 	else if (_unit->getFaction() == FACTION_PLAYER)
 	{
-		_parent->getBattlescapeState()->clearHostileIcons();
+		_battleGame->getBattlescapeState()->clearHostileIcons();
 
-		if (_parent->playerPanicHandled() == true)
-			_parent->getBattlescapeState()->updateHostileIcons();
+		if (_battleGame->playerPanicHandled() == true)
+			_battleGame->getBattlescapeState()->updateHostileIcons();
 	}
 }
 
@@ -1011,10 +1011,10 @@ void UnitWalkBState::abortState(bool recache) // private.
 	if (recache == true)
 	{
 		_unit->setCacheInvalid();
-		_parent->getMap()->cacheUnitSprite(_unit);
+		_battleGame->getMap()->cacheUnitSprite(_unit);
 	}
 	_pf->abortPath();
-	_parent->popBattleState();
+	_battleGame->popBattleState();
 }
 
 /**
@@ -1066,7 +1066,7 @@ void UnitWalkBState::postPathProcedures() // private.
 					action.type			= BA_MELEE;
 					action.TU			= _unit->getActionTu(action.type, action.weapon);
 
-					_parent->stateBPushBack(new ProjectileFlyBState(_parent, action));
+					_battleGame->stateBPushBack(new ProjectileFlyBState(_battleGame, action));
 					//Log(LOG_INFO) << ". . . . FlyB melee vs " << posTarget;
 				}
 			}
@@ -1104,10 +1104,10 @@ void UnitWalkBState::postPathProcedures() // private.
 //	}
 
 	_unit->setCacheInvalid();
-	_parent->getMap()->cacheUnitSprite(_unit);
+	_battleGame->getMap()->cacheUnitSprite(_unit);
 
 	if (_fall == false)
-		_parent->popBattleState();
+		_battleGame->popBattleState();
 }
 
 /**
@@ -1156,7 +1156,7 @@ int UnitWalkBState::getFinalDirection() const // private.
 
 	if (unitFaced == nullptr)
 	{
-		const int diff (_parent->getBattlescapeState()->getSavedGame()->getDifficultyInt());
+		const int diff (_battleGame->getBattlescapeState()->getSavedGame()->getDifficultyInt());
 		if (RNG::percent((diff + 1) * 20 - _unit->getRankInt() * 5) == true)
 		{
 			dist = 100000;
@@ -1197,7 +1197,7 @@ bool UnitWalkBState::visForUnits() const // private.
 		switch (_unit->getFaction())
 		{
 			case FACTION_PLAYER:
-				return _parent->playerPanicHandled() == true // short-circuit of calcFovUnits() is intentional.
+				return _battleGame->playerPanicHandled() == true // short-circuit of calcFovUnits() is intentional.
 					&& _te->calcFovUnits(_unit);
 
 			case FACTION_HOSTILE:
@@ -1225,23 +1225,23 @@ void UnitWalkBState::setWalkSpeed(bool gravLift) const // private.
 				|| (_unit->getUnitRules() != nullptr
 					&& _unit->getUnitRules()->isDog() == true))
 			{
-				interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOMDASH;
+				interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_XCOMDASH;
 			}
 			else
-				interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
+				interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_XCOM;
 			break;
 
 		case FACTION_HOSTILE:
 		case FACTION_NEUTRAL:
 		default:
-			interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+			interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 	}
 
 	if (gravLift == true)
 		interval <<= 1u;
 
 	//Log(LOG_INFO) << "unitWalkB: setWalkSpeed() set interval = " << interval;
-	_parent->setStateInterval(interval);
+	_battleGame->setStateInterval(interval);
 }
 
 /**
@@ -1315,8 +1315,8 @@ void UnitWalkBState::playMoveSound() // private.
 
 	//Log(LOG_INFO) << ". phase= " << walkPhase << " id= " << soundId;
 	if (soundId != -1)
-		_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-									->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+		_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+										->play(-1, _battleGame->getMap()->getSoundAngle(_unit->getPosition()));
 }
 
 /**

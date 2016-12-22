@@ -57,18 +57,18 @@ namespace OpenXcom
 
 /**
  * Sets up the ProjectileFlyBState.
- * @param parent	- pointer to the BattlescapeGame
- * @param action	- the current BattleAction (BattlescapeGame.h)
- * @param posOrigin	- origin in tile-space (default Position(0,0,-1))
+ * @param battleGame	- pointer to the BattlescapeGame
+ * @param action		- the current BattleAction (BattlescapeGame.h)
+ * @param posOrigin		- origin in tile-space (default Position(0,0,-1))
  */
 ProjectileFlyBState::ProjectileFlyBState(
-		BattlescapeGame* const parent,
+		BattlescapeGame* const battleGame,
 		BattleAction action,
 		Position posOrigin)
 	:
-		BattleState(parent, action),
+		BattleState(battleGame, action),
 		_posOrigin(posOrigin),
-		_battleSave(parent->getBattleSave()),
+		_battleSave(battleGame->getBattleSave()),
 		_originVoxel( 0, 0,-1),
 		_targetVoxel(-1,-1,-1),
 		_forced(false),
@@ -121,7 +121,7 @@ void ProjectileFlyBState::init()
 		_init = false;
 
 		_unit = _action.actor;
-		_parent->getTacticalAction()->takenXp = false;
+		_battleGame->getTacticalAction()->takenXp = false;
 
 		bool popThis (false);
 		if (_unit->isOut_t() == true
@@ -132,7 +132,7 @@ void ProjectileFlyBState::init()
 		}
 		else if (_unit->getTu() >= _action.TU // go ->
 			|| _action.type == BA_MELEE
-			|| _parent->playerPanicHandled() == false
+			|| _battleGame->playerPanicHandled() == false
 			|| _unit->getFaction() != FACTION_PLAYER)
 		{
 			_load = _action.weapon->getAmmoItem();
@@ -164,7 +164,7 @@ void ProjectileFlyBState::init()
 		if (popThis == true)
 		{
 			_unit->setStopShot(false);
-			_parent->popBattleState();
+			_battleGame->popBattleState();
 			return;
 		}
 
@@ -228,7 +228,7 @@ void ProjectileFlyBState::init()
 				const Tile* const tileTarget (_battleSave->getTile(_action.posTarget)); // always Valid.
 				if (TileEngine::validThrowRange(
 											&_action,
-											_parent->getTileEngine()->getOriginVoxel(_action),
+											_battleGame->getTileEngine()->getOriginVoxel(_action),
 											tileTarget) == true)
 				{
 					_prjItem = _action.weapon;
@@ -257,11 +257,11 @@ void ProjectileFlyBState::init()
 			case BA_PSICONFUSE:
 			case BA_PSICOURAGE:
 				//Log(LOG_INFO) << ". . BA_PSIPANIC/CONTROL/CONFUSE/COURAGE, new ExplosionBState - EXIT flyBState::init()";
-				_parent->stateBPushFront(new ExplosionBState(
-														_parent,
-														Position::toVoxelSpaceCentered(_action.posTarget, 10),
-														_action.weapon->getRules(),
-														_unit));
+				_battleGame->stateBPushFront(new ExplosionBState(
+															_battleGame,
+															Position::toVoxelSpaceCentered(_action.posTarget, 10),
+															_action.weapon->getRules(),
+															_unit));
 				return;
 
 			default:
@@ -271,7 +271,7 @@ void ProjectileFlyBState::init()
 
 		if (popThis == true)
 		{
-			_parent->popBattleState();
+			_battleGame->popBattleState();
 			return;
 		}
 
@@ -299,14 +299,14 @@ void ProjectileFlyBState::init()
 		else if ((_unit->getFaction() == FACTION_PLAYER		// force fire at center of Tile by pressing [CTRL] but *not* SHIFT
 				&& (SDL_GetModState() & KMOD_CTRL)  != 0	// force fire at Floor w/ [CTRL+ALT]
 				&& (SDL_GetModState() & KMOD_SHIFT) == 0)
-			|| _parent->playerPanicHandled() == false) // note that nonPlayer berserk bypasses this and targets according to targetUnit OR tileParts below_
+			|| _battleGame->playerPanicHandled() == false)	// NOTE: nonPlayer berserk bypasses this and targets according to targetUnit OR tileParts below_
 		{
 			//Log(LOG_INFO) << "projFlyB init() Player panic OR Ctrl [!Shift]";
 			_targetVoxel.x += 8; // force fire at floor w/ Alt
 			_targetVoxel.y += 8;
 
 			if ((SDL_GetModState() & KMOD_ALT) == 0
-				|| _parent->playerPanicHandled() == false)
+				|| _battleGame->playerPanicHandled() == false)
 			{
 				_targetVoxel.z += 10;
 			}
@@ -330,9 +330,9 @@ void ProjectileFlyBState::init()
 			// CTRL+ALT		- floor
 			// SHIFT		- northwall
 			// SHIFT+CTRL	- westwall
-			const Position originVoxel (_parent->getTileEngine()->getOriginVoxel(
-																			_action,
-																			_battleSave->getTile(_posOrigin)));
+			const Position originVoxel (_battleGame->getTileEngine()->getOriginVoxel(
+																				_action,
+																				_battleSave->getTile(_posOrigin)));
 			if (tileTarget->getTileUnit() != nullptr
 				&& (_unit->getFaction() != FACTION_PLAYER
 					|| (   (SDL_GetModState() & KMOD_SHIFT) == 0
@@ -353,13 +353,13 @@ void ProjectileFlyBState::init()
 //				{
 //					_targetVoxel = Position(-16,-16,-24); // out of bounds, even after voxel to tile calculation. // lo..
 //				}
-				else if (_parent->getTileEngine()->doTargetUnit( // <- this is a normal shot by xCom or aLiens.
-															&originVoxel,
-															tileTarget,
-															&_targetVoxel,
-															_unit,
-															nullptr,
-															&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
+				else if (_battleGame->getTileEngine()->doTargetUnit( // <- this is a normal shot by xCom or aLiens.
+																&originVoxel,
+																tileTarget,
+																&_targetVoxel,
+																_unit,
+																nullptr,
+																&_forced) == false) // <- karadoc fix -> NOT SURE I WANT THIS !!! <---
 				{
 //					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 //					_targetVoxel.x += 8;
@@ -407,12 +407,12 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has content-object";
 				if (tileTarget->isRevealed() == false
-					|| _parent->getTileEngine()->doTargetTilepart(
-															&originVoxel,
-															tileTarget,
-															O_OBJECT,
-															&_targetVoxel,
-															_unit) == false)
+					|| _battleGame->getTileEngine()->doTargetTilepart(
+																&originVoxel,
+																tileTarget,
+																O_OBJECT,
+																&_targetVoxel,
+																_unit) == false)
 				{
 					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 					_targetVoxel.x += 8;
@@ -426,12 +426,12 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has northwall";
 				if (tileTarget->isRevealed(ST_NORTH) == false
-					|| _parent->getTileEngine()->doTargetTilepart(
-															&originVoxel,
-															tileTarget,
-															O_NORTHWALL,
-															&_targetVoxel,
-															_unit) == false)
+					|| _battleGame->getTileEngine()->doTargetTilepart(
+																&originVoxel,
+																tileTarget,
+																O_NORTHWALL,
+																&_targetVoxel,
+																_unit) == false)
 				{
 					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 					_targetVoxel.x += 8;
@@ -443,12 +443,12 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has westwall";
 				if (tileTarget->isRevealed(ST_WEST) == false
-					|| _parent->getTileEngine()->doTargetTilepart(
-															&originVoxel,
-															tileTarget,
-															O_WESTWALL,
-															&_targetVoxel,
-															_unit) == false)
+					|| _battleGame->getTileEngine()->doTargetTilepart(
+																&originVoxel,
+																tileTarget,
+																O_WESTWALL,
+																&_targetVoxel,
+																_unit) == false)
 				{
 					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 					_targetVoxel.x += 2;
@@ -460,12 +460,12 @@ void ProjectileFlyBState::init()
 			{
 				//Log(LOG_INFO) << ". tileTarget has floor";
 				if (tileTarget->isRevealed() == false
-					|| _parent->getTileEngine()->doTargetTilepart(
-															&originVoxel,
-															tileTarget,
-															O_FLOOR,
-															&_targetVoxel,
-															_unit) == false)
+					|| _battleGame->getTileEngine()->doTargetTilepart(
+																&originVoxel,
+																tileTarget,
+																O_FLOOR,
+																&_targetVoxel,
+																_unit) == false)
 				{
 					_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 					_targetVoxel.x += 8;
@@ -489,8 +489,8 @@ void ProjectileFlyBState::init()
 
 		if (createProjectile() == true)
 		{
-			_parent->getMap()->setSelectorType(CT_NONE);		// might be already done in primaryAction(). Nope:
-			_parent->getMap()->getCamera()->stopMouseScroll();	// the cursor is hidden there, the selector is hidden here.
+			_battleGame->getMap()->setSelectorType(CT_NONE);		// might be already done in primaryAction(). Nope:
+			_battleGame->getMap()->getCamera()->stopMouseScroll();	// the cursor is hidden there, the selector is hidden here.
 		}
 	}
 	//Log(LOG_INFO) << "ProjectileFlyBState::init() EXIT";
@@ -515,15 +515,15 @@ bool ProjectileFlyBState::createProjectile() // private.
 	++_action.autoShotCount;
 
 	_prj = new Projectile(
-						_parent->getResourcePack(),
-						_battleSave,
-						_action,
-						_posOrigin,
-						_targetVoxel);
+					_battleGame->getResourcePack(),
+					_battleSave,
+					_action,
+					_posOrigin,
+					_targetVoxel);
 
 
 	//Log(LOG_INFO) << "projFlyB: createProjectile() set interval = " << BattlescapeState::STATE_INTERVAL_FAST;
-	_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_FAST); // set the speed of the state think cycle to 16 ms (roughly one think-cycle per frame)
+	_battleGame->setStateInterval(BattlescapeState::STATE_INTERVAL_FAST); // set the speed of the state think cycle to 16 ms (roughly one think-cycle per frame)
 	int soundId (-1);
 
 	_prjImpact = VOXEL_EMPTY; // let it calculate a trajectory
@@ -550,13 +550,13 @@ bool ProjectileFlyBState::createProjectile() // private.
 
 				_prjItem->changeOwner();
 				_unit->setCacheInvalid();
-				_parent->getMap()->cacheUnitSprite(_unit);
+				_battleGame->getMap()->cacheUnitSprite(_unit);
 
 				soundId = static_cast<int>(ResourcePack::ITEM_THROW);
 
 				if (_unit->getGeoscapeSoldier() != nullptr
 					&& _unit->isMindControlled() == false
-					&& _parent->playerPanicHandled() == true)
+					&& _battleGame->playerPanicHandled() == true)
 				{
 					_unit->addThrowingExp();
 				}
@@ -574,7 +574,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				_action.TU = 0;
 				_unit->setUnitStatus(STATUS_STANDING);
 
-				_parent->popBattleState();
+				_battleGame->popBattleState();
 				return false;
 		}
 	}
@@ -610,7 +610,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				soundId = _action.weapon->getRules()->getFireSound();
 
 			_unit->startAiming();
-			_parent->getMap()->cacheUnitSprite(_unit);
+			_battleGame->getMap()->cacheUnitSprite(_unit);
 		}
 		else // no line of fire; Note that BattleUnit accuracy^ should *not* be considered before this. Unless this is some sort of failsafe/exploit for the AI ...
 		{
@@ -621,7 +621,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			_action.TU = 0;
 			_unit->setUnitStatus(STATUS_STANDING);
 
-			_parent->popBattleState();
+			_battleGame->popBattleState();
 			return false;
 		}
 	}
@@ -674,7 +674,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 			{
 				case BA_AUTOSHOT:
 				case BA_LAUNCH:
-					_parent->getMap()->setReveal();	// Reveal the Map until action completes.
+					_battleGame->getMap()->setReveal();	// Reveal the Map until action completes.
 			}
 
 			// lift-off
@@ -695,18 +695,18 @@ bool ProjectileFlyBState::createProjectile() // private.
 			_action.TU = 0;
 			_unit->setUnitStatus(STATUS_STANDING);
 
-			_parent->popBattleState();
+			_battleGame->popBattleState();
 			//Log(LOG_INFO) << "FlyB: . no LoS ret FALSE";
 			return false;
 		}
 	}
 
 	if (soundId != -1)
-		_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-					->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+		_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+						->play(-1, _battleGame->getMap()->getSoundAngle(_unit->getPosition()));
 
 	if (_unit->getArmor()->getShootFrames() != 0) // postpone showing the Celatid spit-blob till later
-		_parent->getMap()->showProjectile(false);
+		_battleGame->getMap()->showProjectile(false);
 
 	if (_action.autoShotCount == 1 && _unit->getGeoscapeSoldier() != nullptr)
 	{
@@ -720,7 +720,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 	}
 
 	//Log(LOG_INFO) << ". createProjectile() ret TRUE";
-	_parent->getMap()->setProjectile(_prj); // add projectile to Map.
+	_battleGame->getMap()->setProjectile(_prj); // add projectile to Map.
 
 	return true;
 }
@@ -748,7 +748,7 @@ void ProjectileFlyBState::think()
 	if (_prjStart == 1)
 	{
 		_prjStart = 2;
-		_parent->getMap()->showProjectile();
+		_battleGame->getMap()->showProjectile();
 	}
 
 	_battleSave->getBattleState()->clearDragScroll();
@@ -783,10 +783,10 @@ void ProjectileFlyBState::think()
 				case BA_AIMEDSHOT:
 					//if (debug) Log(LOG_INFO) << "FlyB: . stored posCamera " << _action.posCamera;
 					if (_action.posCamera.z != -1
-						|| _parent->getTileEngine()->isReaction() == true)
+						|| _battleGame->getTileEngine()->isReaction() == true)
 					{
 						//if (debug) Log(LOG_INFO) << "FlyB: . . setting Camera to shooter pos";
-						Camera* const shotCamera (_parent->getMap()->getCamera());
+						Camera* const shotCamera (_battleGame->getMap()->getCamera());
 						if (shotCamera->getPauseAfterShot() == true)	// TODO: Move 'pauseAfterShot' to the BattleAction struct. done -> but it didn't work; i'm a numby.
 //						if (_action.pauseAfterShot == true)				// NOTE: That trying to store the camera position in the BattleAction didn't work either ... double numby.
 						{
@@ -809,7 +809,7 @@ void ProjectileFlyBState::think()
 							}
 						}
 
-						if (_parent->getTileEngine()->isReaction() == true)
+						if (_battleGame->getTileEngine()->isReaction() == true)
 						{
 							//if (debug) Log(LOG_INFO) << ". . is Reaction - set Camera to center on reactor";
 							shotCamera->focusPosition(_unit->getPosition());
@@ -818,14 +818,14 @@ void ProjectileFlyBState::think()
 						{
 							//if (debug) Log(LOG_INFO) << ". . is NOT Reaction - set Camera to cached position";
 							shotCamera->setMapOffset(_action.posCamera);
-							_parent->getMap()->draw(); // NOTE: Might not be needed. Ie, the camera-offset seems to take hold okay without.
+							_battleGame->getMap()->draw(); // NOTE: Might not be needed. Ie, the camera-offset seems to take hold okay without.
 						}
 //						_action.posCamera = Position(0,0,-1);
 //						_parent->getMap()->invalidate();
 
 						//if (debug) Log(LOG_INFO) << "FlyB: . . . Screw you, State Machine.";
-						_parent->getBattlescapeState()->blit();
-						_parent->getBattlescapeState()->getGame()->getScreen()->flip();
+						_battleGame->getBattlescapeState()->blit();
+						_battleGame->getBattlescapeState()->getGame()->getScreen()->flip();
 						SDL_Delay(Screen::SCREEN_PAUSE);
 					}
 			}
@@ -884,7 +884,7 @@ void ProjectileFlyBState::think()
 						else							// because the actionTu won't actually get subtracted from the actor's current TUs
 							actionTu = 0;				// until popBattleState() runs ....
 
-						_parent->getTileEngine()->checkReactionFire(		// NOTE: I don't believe that smoke obscuration gets accounted
+						_battleGame->getTileEngine()->checkReactionFire(	// NOTE: I don't believe that smoke obscuration gets accounted
 																_unit,		// for by this call if the current projectile caused cloud.
 																actionTu,	// But that's kinda ok.
 																_action.type != BA_MELEE);
@@ -896,7 +896,7 @@ void ProjectileFlyBState::think()
 			{
 				_unit->setUnitStatus(STATUS_STANDING);
 			}
-			_parent->popBattleState();
+			_battleGame->popBattleState();
 		}
 	}
 	else // projectile VALID in motion -> ! impact !
@@ -929,29 +929,29 @@ void ProjectileFlyBState::think()
 				if (throwItem->getRules()->getBattleType() == BT_GRENADE
 					&& throwItem->getFuse() == 0) //&& Options::battleInstantGrenade == true // -> moved to PrimeGrenadeState (0 cannot be set w/out InstantGrenades)
 				{
-					_parent->stateBPushFront(new ExplosionBState( // it's a hot potato set to explode on contact
-															_parent,
-															throwVoxel,
-															throwItem->getRules(),
-															_unit));
+					_battleGame->stateBPushFront(new ExplosionBState( // it's a hot potato set to explode on contact
+																_battleGame,
+																throwVoxel,
+																throwItem->getRules(),
+																_unit));
 					_battleSave->toDeleteItem(throwItem);
 				}
 				else
 				{
-					_parent->dropItem(throwItem, pos);
+					_battleGame->dropItem(throwItem, pos);
 
 					if (_unit->getFaction() == FACTION_HOSTILE
 						&& _prjItem->getRules()->getBattleType() == BT_GRENADE)
 					{
-						_parent->getTileEngine()->setDangerZone(
-															pos,
-															throwItem->getRules()->getExplosionRadius(),
-															_unit);
+						_battleGame->getTileEngine()->setDangerZone(
+																pos,
+																throwItem->getRules()->getExplosionRadius(),
+																_unit);
 					}
 				}
 
-				_parent->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
-											->play(-1, _parent->getMap()->getSoundAngle(pos));
+				_battleGame->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)
+												->play(-1, _battleGame->getMap()->getSoundAngle(pos));
 			}
 			else if (_action.type == BA_LAUNCH
 				&& _prjImpact == VOXEL_EMPTY
@@ -962,14 +962,14 @@ void ProjectileFlyBState::think()
 				_action.posTarget = _action.waypoints.front();
 
 				ProjectileFlyBState* const blasterFlyB (new ProjectileFlyBState( // launch the next projectile in the waypoint cascade
-																			_parent,
+																			_battleGame,
 																			_action,
 																			_posOrigin)); // -> tilePos for BL.
 				blasterFlyB->_originVoxel = _prj->getPosition(); // was (offset= -1) -> tada, fixed.
 				if (_action.posTarget == _posOrigin) blasterFlyB->_targetFloor = true;
 
-				_parent->getMap()->getCamera()->centerPosition(_posOrigin, false); // this follows BL as it hits through waypoints
-				_parent->stateBPushNext(blasterFlyB);
+				_battleGame->getMap()->getCamera()->centerPosition(_posOrigin, false); // this follows BL as it hits through waypoints
+				_battleGame->stateBPushNext(blasterFlyB);
 			}
 			else // shoot -> impact.
 			{
@@ -1017,26 +1017,26 @@ void ProjectileFlyBState::think()
 
 					if (_prjVector.z != -1) // <- strikeVector by radial explosion vs. diagBigWall
 					{
-						Tile* const tileTrue (_parent->getBattlescapeState()->getSavedBattleGame()->getTile(pos));
-						_parent->getTileEngine()->setTrueTile(tileTrue);
+						Tile* const tileTrue (_battleGame->getBattlescapeState()->getSavedBattleGame()->getTile(pos));
+						_battleGame->getTileEngine()->setTrueTile(tileTrue);
 
 						explVoxel.x -= _prjVector.x << 4u; // note there is no safety on these for OoB.
 						explVoxel.y -= _prjVector.y << 4u;
 					}
 					else
-						_parent->getTileEngine()->setTrueTile();
+						_battleGame->getTileEngine()->setTrueTile();
 
-					_parent->stateBPushFront(new ExplosionBState(
-															_parent,
-															explVoxel,
-															_load->getRules(),
-															_unit,
-															nullptr,
-															_action.type != BA_AUTOSHOT // final projectile -> stop Aiming.
-																|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots()
-																|| _action.weapon->getAmmoItem() == nullptr,
-															false, false,
-															_action.type == BA_LAUNCH));
+					_battleGame->stateBPushFront(new ExplosionBState(
+																_battleGame,
+																explVoxel,
+																_load->getRules(),
+																_unit,
+																nullptr,
+																_action.type != BA_AUTOSHOT // final projectile -> stop Aiming.
+																	|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots()
+																	|| _action.weapon->getAmmoItem() == nullptr,
+																false, false,
+																_action.type == BA_LAUNCH));
 
 					if (_prjImpact == VOXEL_UNIT)	// note that Diary Statistics require direct hit by an explosive
 					{								// projectile for it to be considered as a 'been hit' shot.
@@ -1087,7 +1087,7 @@ void ProjectileFlyBState::think()
 					while (pelletsLeft > 0)
 					{
 						Projectile* const prj (new Projectile(
-															_parent->getResourcePack(),
+															_battleGame->getResourcePack(),
 															_battleSave,
 															_action,
 															_posOrigin,
@@ -1121,14 +1121,14 @@ void ProjectileFlyBState::think()
 																		ET_BULLET,
 																		shotVoxel,
 																		aniStart));
-								_parent->getMap()->getExplosions()->push_back(explosion);
-								_parent->setShotgun();
+								_battleGame->getMap()->getExplosions()->push_back(explosion);
+								_battleGame->setShotgun();
 
 								Uint32 interval (static_cast<Uint32>(
 												 std::max(1,
 														  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION)
 																- _load->getRules()->getExplosionSpeed())));
-								_parent->setStateInterval(interval);
+								_battleGame->setStateInterval(interval);
 							}
 							_battleSave->getTileEngine()->hit(
 															shotVoxel,
@@ -1148,7 +1148,7 @@ void ProjectileFlyBState::think()
 					|| _action.type != BA_AUTOSHOT
 					|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots())
 				{
-					_parent->getMap()->setReveal(false);
+					_battleGame->getMap()->setReveal(false);
 
 					if (_prjImpact == VOXEL_OUTOFBOUNDS) // else ExplosionBState will lower weapon above^
 						_unit->toggleShoot();
@@ -1205,7 +1205,7 @@ void ProjectileFlyBState::think()
 			}
 
 			delete _prj;
-			_parent->getMap()->setProjectile(_prj = nullptr);
+			_battleGame->getMap()->setProjectile(_prj = nullptr);
 		}
 	}
 	//Log(LOG_INFO) << "ProjectileFlyBState::think() EXIT";
@@ -1219,7 +1219,7 @@ void ProjectileFlyBState::cancel()
 	if (_prj != nullptr)
 	{
 		_prj->skipTrajectory();
-		_parent->getMap()->getCamera()->focusPosition(Position::toTileSpace(_prj->getPosition())); // NOTE: Wouldn't surprise me if this is entirely unnecessary.
+		_battleGame->getMap()->getCamera()->focusPosition(Position::toTileSpace(_prj->getPosition())); // NOTE: Wouldn't surprise me if this is entirely unnecessary.
 	}
 }
 
@@ -1247,8 +1247,8 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 	{
 		const int soundId (_action.weapon->getRules()->getMeleeSound());
 		if (soundId != -1)
-			_parent->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-										->play(-1, _parent->getMap()->getSoundAngle(_action.posTarget));
+			_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+										->play(-1, _battleGame->getMap()->getSoundAngle(_action.posTarget));
 	}
 
 	if (_unit->getSpecialAbility() == SPECAB_BURN)
@@ -1257,7 +1257,7 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 		_unit->burnTile(_battleSave->getTile(_action.posTarget));
 	}
 
-	_parent->getMap()->setSelectorType(CT_NONE); // might be already done in primaryAction()
+	_battleGame->getMap()->setSelectorType(CT_NONE); // might be already done in primaryAction()
 
 
 	const BattleUnit* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit());
@@ -1271,14 +1271,14 @@ void ProjectileFlyBState::performMeleeAttack() // private.
 								&hitVoxel);
 	hitVoxel = Position::toVoxelSpaceCentered(_action.posTarget, height) - (hitVoxel * 2);
 
-	_parent->stateBPushNext(new ExplosionBState(
-											_parent,
-											hitVoxel,
-											_action.weapon->getRules(),
-											_unit,
-											nullptr,
-											true,
-											success));
+	_battleGame->stateBPushNext(new ExplosionBState(
+												_battleGame,
+												hitVoxel,
+												_action.weapon->getRules(),
+												_unit,
+												nullptr,
+												true,
+												success));
 }
 
 }

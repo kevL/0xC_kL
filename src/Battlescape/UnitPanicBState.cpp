@@ -32,14 +32,14 @@ namespace OpenXcom
 /**
  * Sets up the UnitPanicBState.
  * @note It's rather silly that this is a full BattleState.
- * @param parent	- pointer to the BattlescapeGame
- * @param unit		- pointer to a panicking BattleUnit
+ * @param battleGame	- pointer to the BattlescapeGame
+ * @param unit			- pointer to a panicking BattleUnit
  */
 UnitPanicBState::UnitPanicBState(
-		BattlescapeGame* const parent,
+		BattlescapeGame* const battleGame,
 		BattleUnit* const unit)
 	:
-		BattleState(parent),
+		BattleState(battleGame),
 		_unit(unit)
 {}
 
@@ -81,12 +81,12 @@ void UnitPanicBState::think()
 	_unit->setEnergy();
 	_unit->setDashing(false);
 
-	if (_parent->getBattleSave()->getSide() == FACTION_PLAYER
-		|| _parent->getBattleSave()->getDebugTac() == true)
+	if (_battleGame->getBattleSave()->getSide() == FACTION_PLAYER
+		|| _battleGame->getBattleSave()->getDebugTac() == true)
 	{
-		_parent->setupSelector();
+		_battleGame->setupSelector();
 	}
-	_parent->popBattleState();
+	_battleGame->popBattleState();
 }
 
 /**

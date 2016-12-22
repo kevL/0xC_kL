@@ -107,8 +107,8 @@ private:
 	public:
 		/// Creates a UnitWalkBState.
 		UnitWalkBState(
-				BattlescapeGame* const parent,
-				BattleAction _action);
+				BattlescapeGame* const battleGame,
+				BattleAction action);
 		/// Cleans up the UnitWalkBState.
 		~UnitWalkBState();
 

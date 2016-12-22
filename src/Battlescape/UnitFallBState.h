@@ -56,7 +56,7 @@ private:
 
 	public:
 		/// Creates a UnitFallBState.
-		explicit UnitFallBState(BattlescapeGame* const parent);
+		explicit UnitFallBState(BattlescapeGame* const battleGame);
 		/// Cleans up the UnitFallBState.
 		~UnitFallBState();
 

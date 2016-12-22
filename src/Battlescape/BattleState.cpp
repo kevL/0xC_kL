@@ -27,14 +27,14 @@ namespace OpenXcom
 
 /**
  * Sets up the BattleState.
- * @param parent - pointer to parent BattlescapeGame
- * @param action - struct containing info about the current BattleAction
+ * @param battleGame	- pointer to BattlescapeGame
+ * @param action		- struct containing info about the current BattleAction
  */
 BattleState::BattleState(
-		BattlescapeGame* const parent,
+		BattlescapeGame* const battleGame,
 		BattleAction action)
 	:
-		_parent(parent),
+		_battleGame(battleGame),
 		_action(action)
 {}
 
@@ -46,12 +46,12 @@ BattleState::~BattleState() // virtual.
 
 /**
  * Gets the label of this BattleState.
- * @return, label of the substate if any else "parent BattleState"
+ * @return, label of the substate if any else "BattleState"
  */
 std::string BattleState::getBattleStateLabel() const // virtual.
 {
 	std::ostringstream oststr;
-	oststr << "parent BattleState";
+	oststr << "BattleState";
 	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
 	else oststr << " - Actor INVALID";
 

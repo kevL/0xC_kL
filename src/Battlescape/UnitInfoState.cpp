@@ -58,7 +58,7 @@ namespace OpenXcom
  * Initializes all the elements in the UnitInfo screen.
  * @param unit			- pointer to the selected BattleUnit
  * @param battleState	- pointer to Battlescape
- * @param fromInventory	- true if called Inventory (default false)
+ * @param fromInventory	- true if called from Inventory (default false)
  * @param mindProbe		- true if using a Mind Probe (default false)
  * @param preBattle		- true if preEquip state; ie tuMode not tactical (default false)
  */

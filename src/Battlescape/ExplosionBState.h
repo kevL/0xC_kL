@@ -70,7 +70,7 @@ private:
 	public:
 		/// Creates an ExplosionBState object.
 		ExplosionBState(
-				BattlescapeGame* const parent,
+				BattlescapeGame* const battleGame,
 				const Position centerVoxel,
 				const RuleItem* const itRule,
 				BattleUnit* const unit,

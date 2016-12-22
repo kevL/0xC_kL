@@ -43,7 +43,7 @@ private:
 	public:
 		/// Creates a UnitPanicBState BattleState.
 		UnitPanicBState(
-				BattlescapeGame* const parent,
+				BattlescapeGame* const battleGame,
 				BattleUnit* const unit);
 		/// Cleans up the UnitPanicBState.
 		~UnitPanicBState();

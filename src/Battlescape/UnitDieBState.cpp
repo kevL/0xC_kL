@@ -51,7 +51,7 @@ namespace OpenXcom
  * Creates a UnitDieBState.
  * @note If a unit is already unconscious when it dies then it should never get
  * sent through this state; handle it more simply with BattleUnit::putdown().
- * @param parent		- pointer to BattlescapeGame
+ * @param battleGame	- pointer to the BattlescapeGame
  * @param unit			- pointer to the hurt BattleUnit
  * @param isPreTactical	- true to speed things along through pre-battle powersource
  *						  explosions; implicitly isSilent=TRUE and (unused) isInjury=FALSE
@@ -60,18 +60,18 @@ namespace OpenXcom
  * @param isInjury		- true if invoked by dType=DT_NONE (default false)
  */
 UnitDieBState::UnitDieBState(
-		BattlescapeGame* const parent,
+		BattlescapeGame* const battleGame,
 		BattleUnit* const unit,
 		const bool isPreTactical,
 		const bool isSilent,
 		const bool isInjury)
 	:
-		BattleState(parent),
+		BattleState(battleGame),
 		_unit(unit),
 		_isPreTactical(isPreTactical),
 		_isSilent(isSilent),
 		_isInjury(isInjury),
-		_battleSave(parent->getBattleSave()),
+		_battleSave(battleGame->getBattleSave()),
 		_post(0),
 		_isInfected(unit->getSpawnType().empty() == false)
 {
@@ -112,7 +112,7 @@ UnitDieBState::UnitDieBState(
 				break;							// NOTE: player-units are always visible.
 
 			case FACTION_PLAYER:
-				_parent->getMap()->setUnitDying(); // reveal Map for the duration ....
+				_battleGame->getMap()->setUnitDying(); // reveal Map for the duration ....
 		}
 
 		if (_isInfected == true)
@@ -160,8 +160,8 @@ void UnitDieBState::think()
 	{
 		_isSilent = true; // done.
 
-		_parent->getMap()->getCamera()->focusPosition(_unit->getPosition());	// NOTE: Can't be done in cTor or init() because
-																				// ... BattleState machine gets confused.
+		_battleGame->getMap()->getCamera()->focusPosition(_unit->getPosition());	// NOTE: Can't be done in cTor or init() because
+																					// ... BattleState machine gets confused.
 		if (   _unit->getHealth() == 0
 			&& _unit->hasCried() == false
 			&& _unit->getOverDose() == false)
@@ -189,7 +189,7 @@ void UnitDieBState::think()
 			if (_isInfected == false)
 			{
 				//Log(LOG_INFO) << "unitDieB: think() set interval " << BattlescapeState::STATE_INTERVAL_DEATHSPIN;
-				_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_DEATHSPIN);
+				_battleGame->setStateInterval(BattlescapeState::STATE_INTERVAL_DEATHSPIN);
 				_unit->keepSpinning();
 			}
 			else // face Player.
@@ -200,7 +200,7 @@ void UnitDieBState::think()
 			if (_isInfected == false || _unit->isZombie() == true)
 			{
 				//Log(LOG_INFO) << "unitDieB: think() set interval " << BattlescapeState::STATE_INTERVAL_STANDARD;
-				_parent->setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
+				_battleGame->setStateInterval(BattlescapeState::STATE_INTERVAL_STANDARD);
 				_unit->startCollapsing();
 			}
 			else // NOTE: UnitSprite might try to bork on this. Set cache-invalid might do it <- need a test-case.
@@ -220,7 +220,7 @@ void UnitDieBState::think()
 			{
 				case 0:
 					if (_isInfected == true)
-						_parent->convertUnit(_unit);
+						_battleGame->convertUnit(_unit);
 
 					drop();
 					_unit->putdown(_isInfected == true
@@ -228,7 +228,7 @@ void UnitDieBState::think()
 								|| _unit->getSpecialAbility() == SPECAB_EXPLODE);
 
 					if (_isPreTactical == true)
-						_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
+						_battleGame->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
 					else
 						++_post;
 					return; // don't bother w/ sprite-cache.
@@ -248,9 +248,9 @@ void UnitDieBState::think()
 						}
 					}
 					if (persistReveal == false)
-						_parent->getMap()->setUnitDying(false);
+						_battleGame->getMap()->setUnitDying(false);
 
-					_parent->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
+					_battleGame->popBattleState(); // NOTE: If unit was selected it will be de-selected in popBattleState().
 
 					_battleSave->getBattleState()->updateSoldierInfo();	// update visUnit-indicators in case other units
 																		// were hiding behind the one who just fell, etc.
@@ -286,7 +286,7 @@ void UnitDieBState::think()
 	}
 
 	if (_isPreTactical == false)
-		_parent->getMap()->cacheUnitSprite(_unit);
+		_battleGame->getMap()->cacheUnitSprite(_unit);
 }
 
 /**
@@ -304,7 +304,7 @@ void UnitDieBState::drop() // private.
 			|| _unit->getOriginalFaction() != FACTION_HOSTILE
 			|| _unit->getUnitStatus() == STATUS_UNCONSCIOUS))
 	{
-		_parent->dropUnitInventory(_unit);
+		_battleGame->dropUnitInventory(_unit);
 	}
 
 	Tile
@@ -354,8 +354,8 @@ void UnitDieBState::drop() // private.
 						if (playSound == true)
 						{
 							playSound = false;
-							_parent->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SMALL_EXPLOSION)
-														->play(-1, _parent->getMap()->getSoundAngle(_unit->getPosition()));
+							_battleGame->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SMALL_EXPLOSION)
+															->play(-1, _battleGame->getMap()->getSoundAngle(_unit->getPosition()));
 						}
 					}
 				}
@@ -363,21 +363,21 @@ void UnitDieBState::drop() // private.
 			}
 
 			BattleItem* const body (new BattleItem(
-											_parent->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrant]),
-											_battleSave->getCanonicalBattleId()));
+												_battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrant]),
+												_battleSave->getCanonicalBattleId()));
 			if (quadrant == 0) body->setItemUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
-			_parent->dropItem(
-							body,
-							pos + Position(x,y,0),
-							DROP_CREATE);
+			_battleGame->dropItem(
+								body,
+								pos + Position(x,y,0),
+								DROP_CREATE);
 		}
 	}
 
-	_parent->getTileEngine()->calculateTerrainLighting();
-	_parent->getTileEngine()->calculateUnitLighting();
+	_battleGame->getTileEngine()->calculateTerrainLighting();
+	_battleGame->getTileEngine()->calculateUnitLighting();
 
-	_parent->getTileEngine()->calcFovUnits_pos(pos, true);	// expose any units that were hiding behind dead unit
-}															// and account for possible obscuring effects too.
+	_battleGame->getTileEngine()->calcFovUnits_pos(pos, true);	// expose any units that were hiding behind dead unit
+}																// and account for possible obscuring effects too.
 
 /**
  * Dying cannot be cancelled.

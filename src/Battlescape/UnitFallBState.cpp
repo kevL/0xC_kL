@@ -46,13 +46,13 @@ namespace OpenXcom
 
 /**
  * Sets up the UnitFallBState.
- * @param parent - pointer to the BattlescapeGame
+ * @param battleGame - pointer to the BattlescapeGame
  */
-UnitFallBState::UnitFallBState(BattlescapeGame* const parent)
+UnitFallBState::UnitFallBState(BattlescapeGame* const battleGame)
 	:
-		BattleState(parent),
-		_te(parent->getTileEngine()),
-		_battleSave(parent->getBattleSave())
+		BattleState(battleGame),
+		_te(battleGame->getTileEngine()),
+		_battleSave(battleGame->getBattleSave())
 {
 	//Log(LOG_INFO) << "UnitFallBState:cTor";
 }
@@ -87,16 +87,16 @@ void UnitFallBState::init()
 	{
 		default:
 		case FACTION_PLAYER:
-			interval = _parent->getBattlescapeState()->STATE_INTERVAL_XCOM;
+			interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_XCOM;
 			break;
 
 		case FACTION_HOSTILE:
 		case FACTION_NEUTRAL:
-			interval = _parent->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+			interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 	}
 
 	//Log(LOG_INFO) << "unitFallB: init() set interval= " << interval;
-	_parent->setStateInterval(interval);
+	_battleGame->setStateInterval(interval);
 }
 
 /**
@@ -135,7 +135,7 @@ void UnitFallBState::think()
 				case STATUS_FLYING:
 					//Log(LOG_INFO) << ". . call keepWalking()";
 					(*i)->keepWalking(_battleSave->getTile(pos + posBelow), true);
-					_parent->getMap()->cacheUnitSprite(*i);
+					_battleGame->getMap()->cacheUnitSprite(*i);
 
 					++i;
 					continue;
@@ -351,7 +351,7 @@ void UnitFallBState::think()
 					}
 
 					//Log(LOG_INFO) << ". . checkCasualties()";
-					_parent->checkCasualties(nullptr, *i);
+					_battleGame->checkCasualties(nullptr, *i);
 				}
 			}
 
@@ -370,7 +370,7 @@ void UnitFallBState::think()
 										_battleSave->getTile(posStop));
 
 						(*i)->setCacheInvalid();
-						_parent->getMap()->cacheUnitSprite(*i);
+						_battleGame->getMap()->cacheUnitSprite(*i);
 
 						++i; // <- are you sure. why not let unit continue falling
 					}
@@ -383,29 +383,29 @@ void UnitFallBState::think()
 							(*i)->burnTile((*i)->getUnitTile());
 
 							if ((*i)->getUnitStatus() != STATUS_STANDING)	// ie. burned a hole in the floor and fell through it
-								_parent->getPathfinding()->abortPath();		// TODO: trace this.
+								_battleGame->getPathfinding()->abortPath();	// TODO: trace this.
 						}
 
 						_te->calculateUnitLighting();
 
 						(*i)->setCacheInvalid();
-						_parent->getMap()->cacheUnitSprite(*i);
+						_battleGame->getMap()->cacheUnitSprite(*i);
 
 						if ((*i)->getFaction() == FACTION_PLAYER)
 							_te->calcFovTiles(*i);
 						_te->calcFovUnits_pos(pos, true);
 
-						_parent->checkProxyGrenades(*i);
+						_battleGame->checkProxyGrenades(*i);
 						// kL_add: Put checkForSilacoid() here!
 
 						if ((*i)->getUnitStatus() == STATUS_STANDING)
 						{
-							if (_parent->getTileEngine()->checkReactionFire(*i) == true)	// TODO: Not so sure I want RF on these guys ....
+							if (_battleGame->getTileEngine()->checkReactionFire(*i) == true)	// TODO: Not so sure I want RF on these guys ....
 							{
-								if ((*i)->getFaction() == _battleSave->getSide())			// Eg. this would need a vector to be accurate.
-									_battleSave->rfTriggerOffset(_parent->getMap()->getCamera()->getMapOffset());
+								if ((*i)->getFaction() == _battleSave->getSide())				// Eg. this would need a vector to be accurate.
+									_battleSave->rfTriggerOffset(_battleGame->getMap()->getCamera()->getMapOffset());
 
-								_parent->getPathfinding()->abortPath();						// In fact this whole state should be bypassed.
+								_battleGame->getPathfinding()->abortPath();						// In fact this whole state should be bypassed.
 							}
 							i = _battleSave->getFallingUnits()->erase(i);
 						}
@@ -433,7 +433,7 @@ void UnitFallBState::think()
 //		_tilesToFallInto.clear();
 //		_unitsToMove.clear();
 
-		_parent->popBattleState();
+		_battleGame->popBattleState();
 //		return;
 	}
 	//Log(LOG_INFO) << "UnitFallBState::think() EXIT";
