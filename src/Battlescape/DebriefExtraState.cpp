@@ -449,11 +449,15 @@ void DebriefExtraState::updateListrow() // private.
 	switch (_curScreen)
 	{
 		case DES_LOOT_GAINED:
+		{
 			_lstGained->setCellText(_sel, 2u, Text::intWide(_qtysSell[_sel]));
+			_lstGained->setCellText(_sel, 3u, Text::intWide(_qtysSellBase[_sel] - _qtysSell[_sel]));
 			break;
+		}
 
 		case DES_LOOT_LOST:
 			_lstLost->setCellText(_sel, 2u, Text::intWide(_qtysBuy[_sel]));
+			_lstLost->setCellText(_sel, 3u, Text::intWide(_qtysBuyBase[_sel] + _qtysBuy[_sel]));
 	}
 
 	if (_costTotal != 0)
@@ -762,6 +766,11 @@ void DebriefExtraState::styleList( // private.
 				}
 			}
 		}
+
+		if (list == _lstGained)
+			_qtysSellBase.push_back(baseQty);
+		else
+			_qtysBuyBase.push_back(baseQty);
 
 
 		list->addRow(

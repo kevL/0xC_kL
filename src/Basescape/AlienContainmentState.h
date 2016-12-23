@@ -56,7 +56,7 @@ private:
 
 	int
 		_fishFood,
-		_refresh,
+		_jogRodent,
 		_totalSpace,
 		_usedSpace;
 	size_t _sel;
@@ -102,7 +102,7 @@ private:
 				Base* const base,
 				OptionsOrigin origin,
 				BasescapeState* const baseState = nullptr,
-				int refresh = -1);
+				int jogRodent = -1);
 		/// Cleans up the AlienContainment state.
 		~AlienContainmentState();
 

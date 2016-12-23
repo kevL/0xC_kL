@@ -70,7 +70,9 @@ private:
 
 	std::vector<int>
 		_qtysBuy,
-		_qtysSell;
+		_qtysBuyBase,
+		_qtysSell,
+		_qtysSellBase;
 
 	std::vector<std::string>
 		_typesBuy,

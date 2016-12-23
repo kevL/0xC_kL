@@ -176,7 +176,7 @@ void ListSaveState::keySavePress(Action* action)
 		}
 		else if (action->getDetails()->key.keysym.sym == Options::keyCancel)
 		{
-			_refresh = true;
+			_jogRodent = true;
 
 			_btnSaveGame->setVisible(false);
 			_lstSaves->setSelectable();

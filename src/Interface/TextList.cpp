@@ -359,8 +359,8 @@ size_t TextList::getVisibleRows() const
 }
 
 /**
- * Adds a row of text to this TextList automatically creating the required
- * Text-objects lined up where they need to be.
+ * Adds a row of Text to this TextList automatically creating the required
+ * objects lined up where they need to be.
  * @param cols	- quantity of columns
  * @param ...	- text for each cell in the new row
  */
@@ -548,8 +548,8 @@ void TextList::setColumns(
 }
 
 /**
- * Replaces a certain quantity of colors in the palette of all the text contained
- * in this TextList.
+ * Replaces a certain quantity of colors in the palette of all the Text
+ * contained in this TextList.
  * @param colors		- pointer to the set of colors
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- quantity of colors to replace (default 256)
@@ -592,7 +592,7 @@ void TextList::setPalette(
 }
 
 /**
- * Changes the resources for the text in this TextList, re-creates the selector,
+ * Changes the resources for the Text in this TextList, re-creates the selector,
  * and calculates the quantity of visible rows.
  * @param big	- pointer to large-size font
  * @param small	- pointer to small-size font
@@ -615,7 +615,7 @@ void TextList::initText(
 }
 
 /**
- * Sets the height of the TextList.
+ * Sets the height of this TextList.
  * @param height - new height in pixels
  */
 void TextList::setHeight(int height)
@@ -627,7 +627,7 @@ void TextList::setHeight(int height)
 	height = std::max(1, _down->getY() - _up->getY() - _up->getHeight());
 	_scrollbar->setHeight(height);
 
-	deterVisibleRows();
+	deterVisibleRows(); // TODO: Should probably call resizeSelector().
 }
 
 /**
@@ -770,8 +770,8 @@ void TextList::setAlign(
 }
 
 /**
- * If enabled the text in different columns will be separated by dots.
- * @note Otherwise it will only be separated by blank space.
+ * If enabled the Text in different columns will be separated by dots,
+ * otherwise it will be separated by blank space.
  * @param dot - true for dots (default true)
  */
 void TextList::setDot(bool dot)
@@ -781,7 +781,7 @@ void TextList::setDot(bool dot)
 
 /**
  * If enabled this TextList will respond to player input highlighting selected
- * rows and receiving clicks.
+ * rows and receiving mouse-events.
  * @param selectable - selectable setting (default true)
  */
 void TextList::setSelectable(bool selectable)
@@ -815,6 +815,7 @@ void TextList::setSmall()
 
 /**
  * Deletes and re-creates the selector.
+ * @note Resizing doesn't work but re-creating does. Make it so!
  * @param width		- the width
  * @param height	- the height
  * @param x			- x-position
@@ -828,7 +829,7 @@ void TextList::resizeSelector( // private.
 		int y,
 		bool vis)
 {
-	delete _selector; // resizing doesn't work but re-creating does. Make it so!
+	delete _selector;
 	_selector = new Surface(
 						width,height,
 						x,y);
@@ -1170,7 +1171,7 @@ void TextList::draw()
 
 	if (_rows.empty() == false)
 	{
-		for (size_t				// for wrapped items offset the draw-height above the visible surface
+		for (size_t				// for wrapped items offset the draw-height above the visible Surface
 				r = _scroll;	// so that the correct row appears at the top
 				r != 0u && _rows[r] == _rows[r - 1u];
 				--r)
@@ -1222,9 +1223,9 @@ void TextList::blit(const Surface* const srf)
 		{
 			int y (_y);
 			for (size_t
-					row = _scroll;
-					row != 0u && _rows[row] == _rows[row - 1u];
-					--row)
+					r = _scroll;
+					r != 0u && _rows[r] == _rows[r - 1u];
+					--r)
 			{
 				y -= _font->getHeight() + _font->getSpacing();
 			}
@@ -1238,7 +1239,7 @@ void TextList::blit(const Surface* const srf)
 				_arrowLeft[i]->setY(y);
 				_arrowRight[i]->setY(y);
 
-				if (y >= _y) // only blit arrows that belong to texts that have their first row on-screen
+				if (y >= _y) // only blit arrows that belong to Texts that have their first row on-screen
 				{
 					_arrowLeft[i]->blit(srf);
 					_arrowRight[i]->blit(srf);
@@ -1274,27 +1275,27 @@ void TextList::handle(Action* action, State* state)
 
 		if (_arrow_x != -1 && _rows.empty() == false)
 		{
-			size_t startId (_rows[_scroll]);
+			size_t r_begin (_rows[_scroll]);
 			if (_scroll > 0u && _rows[_scroll] == _rows[_scroll - 1u])
-				++startId; // arrows for first partly-visible line of text are offscreen - so don't process them
-
+				++r_begin;	// arrows for first partly-visible line of Text are offscreen
+							// so don't process them
 			size_t
-				endId (_rows[_scroll] + 1u),
-				endRow (std::min(_rows.size(),
+				r_end  (_rows[_scroll] + 1u),
+				r_size (std::min(_rows.size(),
 								 _scroll + _visibleRows));
 
 			for (size_t
 					i = _scroll + 1u;
-					i != endRow;
+					i != r_size;
 					++i)
 			{
 				if (_rows[i] != _rows[i - 1u])
-					++endId;
+					++r_end;
 			}
 
 			for (size_t
-					i = startId;
-					i != endId;
+					i = r_begin;
+					i != r_end;
 					++i)
 			{
 				_arrowLeft[i]->handle(action, state);
@@ -1331,7 +1332,7 @@ void TextList::think()
 /**
  * Ignores any mouse-clicks that aren't on a decent row.
  * @param action	- pointer to an Action
- * @param state		- state that the ActionHandlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextList::mousePress(Action* action, State* state)
 {
@@ -1357,7 +1358,7 @@ void TextList::mousePress(Action* action, State* state)
 /**
  * Ignores any mouse-clicks that aren't on a row.
  * @param action	- pointer to an Action
- * @param state		- state that the ActionHandlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextList::mouseRelease(Action* action, State* state)
 {
@@ -1373,7 +1374,7 @@ void TextList::mouseRelease(Action* action, State* state)
 /**
  * Ignores any mouse-clicks that aren't on a row.
  * @param action	- pointer to an Action
- * @param state		- state that the ActionHandlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextList::mouseClick(Action* action, State* state)
 {
@@ -1398,7 +1399,7 @@ void TextList::mouseClick(Action* action, State* state)
 /**
  * Selects the row the mouse is over.
  * @param action	- pointer to an Action
- * @param state		- state that the ActionHandlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextList::mouseOver(Action* action, State* state)
 {
@@ -1408,6 +1409,7 @@ void TextList::mouseOver(Action* action, State* state)
 		_selRow = std::max(0u,
 						   _scroll + static_cast<size_t>(std::floor(action->getRelativeMouseY() / (height * action->getScaleY()))));
 
+		// wait ... are you telling me all this crap runs on every mouse-slice
 		if (   _selRow < _texts.size()
 			&& _selRow < _scroll + _visibleRows
 			&& _texts[_selRow][0u]->getText().empty() == false)	// kL_add. Don't highlight rows w/out text in first column.
@@ -1418,7 +1420,7 @@ void TextList::mouseOver(Action* action, State* state)
 			//Log(LOG_INFO) << ". text at [" << _selRow << "] = " << Language::wstrToFs(_texts[_selRow][0]->getText());
 			const Text* const selText (_texts[_rows[_selRow]].front());
 			int y (_y + selText->getY());
-			height = selText->getHeight() + _font->getSpacing(); // current line height
+			height = selText->getHeight() + _font->getSpacing(); // actual current line height
 
 			if (y < _y || y + height > _y + getHeight())
 				height >>= 1u;
@@ -1454,7 +1456,7 @@ void TextList::mouseOver(Action* action, State* state)
 /**
  * Deselects the row.
  * @param action	- pointer to an Action
- * @param state		- state that the ActionHandlers belong to
+ * @param state		- State that the ActionHandlers belong to
  */
 void TextList::mouseOut(Action* action, State* state)
 {

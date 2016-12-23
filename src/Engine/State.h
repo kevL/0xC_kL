@@ -146,7 +146,7 @@ protected:
 				int firstcolor = 0,
 				int ncolors = 256,
 				bool apply = true);
-		/// Changes the State's 8-bpp Palette with certain resources.
+		/// Changes the State's 8-bpp Palette with specified resources.
 		void setPalette(
 				const PaletteType palType,
 				BackPals backpal = BACKPAL_NONE);

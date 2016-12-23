@@ -67,7 +67,7 @@ private:
 		bool
 			_autoquick,
 			_editMode,
-			_refresh,
+			_jogRodent,
 			_sortable;
 		size_t _firstValid;
 

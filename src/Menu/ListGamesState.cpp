@@ -118,7 +118,7 @@ ListGamesState::ListGamesState(
 		_autoquick(autoquick),
 		_sortable(true),
 		_editMode(false),
-		_refresh(true)
+		_jogRodent(true)
 {
 	_fullScreen = false;
 
@@ -222,19 +222,18 @@ void ListGamesState::init()
 
 /**
  * Checks when popup is done and gives the cursor a jog if so.
- * @sa BattlescapeState::refreshMousePosition()
  */
 void ListGamesState::think()
 {
 	if (_window->isPopupDone() == false)
 		_window->think();
-	else if (_refresh == true)
+	else if (_jogRodent == true)
 	{
-		_refresh = false;
+		_jogRodent = false;
 		refreshMousePosition();
 	}
 	else
-		State::think(); // TextEdit needs to think() to blink() caret in ListSaveState.
+		State::think(); // NOTE: TextEdit needs to think() to blink() the caret in ListSaveState.
 }
 
 /**
