@@ -27,7 +27,6 @@ namespace OpenXcom
 {
 
 class BattlescapeButton;
-class Camera;
 class MiniMapView;
 class Text;
 class Timer;
@@ -57,9 +56,9 @@ private:
 
 
 	public:
-		/// Creates the MiniMapState.
-		explicit MiniMapState(Camera* const camera);
-		/// Cleans up the MiniMapState.
+		/// Creates a MiniMap state.
+		MiniMapState();
+		/// Cleans up the MiniMap state.
 		~MiniMapState();
 
 		/// Handler for the Ok button.

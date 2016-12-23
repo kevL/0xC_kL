@@ -1869,7 +1869,7 @@ void BattlescapeState::btnMinimapClick(Action*)
 	if (allowButtons() == true)
 	{
 //		_srtIconsOverlay->getFrame(2)->blit(_btnMiniMap); // -> hidden by MiniMap itself atm.
-		_game->pushState(new MiniMapState(_map->getCamera()));
+		_game->pushState(new MiniMapState());
 		_game->getScreen()->fadeScreen();
 	}
 }
@@ -1962,37 +1962,6 @@ void BattlescapeState::btnInventoryClick(Action*)
 			_game->getScreen()->fadeScreen();
 		}
 	}
-}
-
-/**
- * Forces a transparent SDL mouse-motion event.
- * @note This is required to create an arbitrary mouseOver event for when the
- * Map is repositioned under the cursor but the cursor itself doesn't
- * necessarily move on the screen.
- * @sa ListGamesState::think()
- */
-void BattlescapeState::refreshMousePosition() const
-{
-	_game->getCursor()->falsifyMotion();
-
-	int // doesn't do shit. FIXED.
-		x,y,
-		dir;
-	SDL_GetMouseState(&x,&y);
-
-	switch (x)
-	{
-		case 0:  dir = +1; break; // don't warp Cursor's x-coord off left edge of Screen
-		default: dir = -1;
-	}
-
-	SDL_WarpMouse(
-			static_cast<Uint16>(x + dir),
-			static_cast<Uint16>(y));
-	SDL_GetMouseState(&x,&y);
-	SDL_WarpMouse(
-			static_cast<Uint16>(x - dir),
-			static_cast<Uint16>(y));
 }
 
 /**

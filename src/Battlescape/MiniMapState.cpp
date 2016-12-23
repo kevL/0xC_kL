@@ -51,9 +51,8 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the MiniMapState screen.
- * @param camera - pointer to the battlescape Camera
  */
-MiniMapState::MiniMapState(Camera* const camera)
+MiniMapState::MiniMapState()
 {
 /*	if (Options::maximizeInfoScreens)
 	{
@@ -73,8 +72,7 @@ MiniMapState::MiniMapState(Camera* const camera)
 								Options::baseXResolution,
 								Options::baseYResolution,
 								0,0,
-								_game,
-								camera);
+								_game);
 
 	_btnLvlUp	= new BattlescapeButton(36, 39,  15 + xOff, 121 + yOff);
 	_btnLvlDown	= new BattlescapeButton(36, 39,  15 + xOff, 171 + yOff);
@@ -99,6 +97,7 @@ MiniMapState::MiniMapState(Camera* const camera)
 
 	_btnOk->onMouseClick(static_cast<ActionHandler>(&MiniMapState::btnOkClick));
 
+	Camera* const camera (_game->getSavedGame()->getBattleSave()->getBattleGame()->getMap()->getCamera());
 	_txtLevel->setText(Text::intWide((camera->getViewLevel() + 1))); // %10
 	_txtLevel->setAlign(ALIGN_CENTER);
 	_txtLevel->setHighContrast();

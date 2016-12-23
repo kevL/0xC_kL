@@ -76,6 +76,11 @@ protected:
 		/// Cleans up the State.
 		virtual ~State();
 
+		/// Sets the Game-object pointer.
+		static void setGamePtr(Game* const ptrG);
+		/// Gets the Game-object pointer.
+		static Game* getGamePtr();
+
 		/// Gets the label of the State.
 //		virtual std::string getStateLabel() const;
 
@@ -132,23 +137,18 @@ protected:
 		/// Switches colors to use the Battlescape Palette.
 		void applyBattlescapeColors();
 
-		/// Sets the Game-object pointer.
-		static void setGamePtr(Game* const game);
-		/// Gets the Game-object pointer.
-		static Game* getGamePtr();
-
 		/// Sets a specified InteractiveSurface as modal for the State.
 		void setModal(InteractiveSurface* const isf = nullptr);
 
 		/// Changes a set of colors on the State's 8-bpp Palette.
 		void setPalette(
-				SDL_Color* const colors,
+				SDL_Color* const colors = nullptr,
 				int firstcolor = 0,
 				int ncolors = 256,
 				bool apply = true);
 		/// Changes the State's 8-bpp Palette with certain resources.
 		void setPalette(
-				const PaletteType pal,
+				const PaletteType palType,
 				BackPals backpal = BACKPAL_NONE);
 		/// Gets the State's 8-bpp Palette.
 		SDL_Color* getPalette();
@@ -161,6 +161,9 @@ protected:
 		virtual void recenter(
 				int dX,
 				int dY);
+
+		/// Forces a transparent SDL mouse-motion event.
+		void refreshMousePosition() const;
 };
 
 }

@@ -592,8 +592,8 @@ void TextList::setPalette(
 }
 
 /**
- * Changes the resources for the text in this TextList and calculates the selector
- * and visible quantity of rows.
+ * Changes the resources for the text in this TextList, re-creates the selector,
+ * and calculates the quantity of visible rows.
  * @param big	- pointer to large-size font
  * @param small	- pointer to small-size font
  * @param lang	- pointer to current language
@@ -603,20 +603,16 @@ void TextList::initText(
 		Font* const small,
 		const Language* const lang)
 {
-	_font =
-	_small = small;
-	_big = big;
-	_lang = lang;
+	_font	=
+	_small	= small;
+	_big	= big;
+	_lang	= lang;
 
-	delete _selector;
-	_selector = new Surface(
-						getWidth(),
-						_font->getHeight() + _font->getSpacing(),
-						_x,
-						_y);
-	_selector->setPalette(getPalette());
-	_selector->setVisible(false);
-	updateVisible();
+	resizeSelector(
+				getWidth(),
+				_font->getHeight() + _font->getSpacing(),
+				_x, _y);
+	deterVisibleRows();
 }
 
 /**
@@ -632,7 +628,7 @@ void TextList::setHeight(int height)
 	height = std::max(1, _down->getY() - _up->getY() - _up->getHeight());
 	_scrollbar->setHeight(height);
 
-	updateVisible();
+	deterVisibleRows();
 }
 
 /**
@@ -800,15 +796,12 @@ void TextList::setSelectable(bool selectable)
 void TextList::setBig()
 {
 	_font = _big;
-	delete _selector;
-	_selector = new Surface(
-						getWidth(),
-						_font->getHeight() + _font->getSpacing(),
-						_x,
-						_y);
-	_selector->setPalette(getPalette());
-	_selector->setVisible(false);
-	updateVisible();
+	resizeSelector(
+				getWidth(),
+				_font->getHeight() + _font->getSpacing(),
+				_x,
+				_y);
+	deterVisibleRows();
 }
 
 /**
@@ -817,15 +810,35 @@ void TextList::setBig()
 void TextList::setSmall()
 {
 	_font = _small;
-	delete _selector;
+	resizeSelector(
+				getWidth(),
+				_font->getHeight() + _font->getSpacing(),
+				_x,
+				_y);
+	deterVisibleRows();
+}
+
+/**
+ * Deletes and re-creates the selector.
+ * @param width		- the width
+ * @param height	- the height
+ * @param x			- x-position
+ * @param y			- y-position
+ * @param vis		- true to set selector visible (default false)
+ */
+void TextList::resizeSelector( // private.
+		int width,
+		int height,
+		int x,
+		int y,
+		bool vis)
+{
+	delete _selector; // resizing doesn't work but re-creating does. Make it so!
 	_selector = new Surface(
-						getWidth(),
-						_font->getHeight() + _font->getSpacing(),
-						_x,
-						_y);
+						width,height,
+						x,y);
 	_selector->setPalette(getPalette());
-	_selector->setVisible(false);
-	updateVisible();
+	_selector->setVisible(vis);
 }
 
 /**
@@ -1012,6 +1025,11 @@ void TextList::clearList()
 	_texts.clear();
 	_rows.clear();
 	_selector->setVisible(false); // TODO: Refresh the selector if it's still over a valid row.
+//	resizeSelector(
+//				_selector->getWidth(),
+//				_selector->getHeight(),
+//				_selector->getX(),
+//				_selector->getY());
 
 	updateArrows();
 	_redraw = true;
@@ -1107,24 +1125,10 @@ void TextList::scrollTo(size_t scroll)
 }
 
 /**
- * Updates the visibility of the arrow-buttons according to the current
- * scroll-position.
- */
-void TextList::updateArrows() // private.
-{
-	_up		->setVisible(_rows.size() > _visibleRows); //&& _scroll > 0);
-	_down	->setVisible(_rows.size() > _visibleRows); //&& _scroll < _rows.size() - _visibleRows);
-
-	_scrollbar->setVisible(_rows.size() > _visibleRows);
-	_scrollbar->invalidate();
-	_scrollbar->blit(this);
-}
-
-/**
  * Updates the quantity of visible rows according to the current list and
  * font-size.
  */
-void TextList::updateVisible() // private.
+void TextList::deterVisibleRows() // private.
 {
 	_visibleRows = 0u;
 
@@ -1141,6 +1145,22 @@ void TextList::updateVisible() // private.
 		--_visibleRows;
 
 	updateArrows();
+}
+
+/**
+ * Updates the arrow-buttons and scrollbar in accord with the quantity of
+ * visible rows.
+ */
+void TextList::updateArrows() // private.
+{
+	const bool vis (_rows.size() > _visibleRows);
+
+	_up  ->setVisible(vis); //&& _scroll > 0);
+	_down->setVisible(vis); //&& _scroll < _rows.size() - _visibleRows);
+
+	_scrollbar->setVisible(vis);
+	_scrollbar->invalidate();
+	_scrollbar->blit(this);
 }
 
 /**
@@ -1411,25 +1431,30 @@ void TextList::mouseOver(Action* action, State* state)
 			if (y < _y) y = _y;
 
 			if (_selector->getHeight() != height)
-			{
-				delete _selector; // resizing doesn't work, but recreating does. Make it so!
-				_selector = new Surface(
-									getWidth(),
-									height,
-									_x,
-									y);
-				_selector->setPalette(getPalette());
-			}
+				resizeSelector(
+							getWidth(),
+							height,
+							_x, y,
+							true);
 
 			_selector->setY(y);
 			_selector->copy(_bg);
 
 			if (_contrast == true)
+			{
+				//Log(LOG_INFO) << ". mouseOver: offsetBlock(-5)";
 				_selector->offsetBlock(-5);
+			}
 			else if (_comboBox != nullptr)
+			{
+				//Log(LOG_INFO) << ". mouseOver: offset(1, Palette::PAL_bgID)";
 				_selector->offset(1, Palette::PAL_bgID);
+			}
 			else
+			{
+				//Log(LOG_INFO) << ". mouseOver: offsetBlock(-10)";
 				_selector->offsetBlock(-10);
+			}
 
 			_selector->setVisible();
 		}

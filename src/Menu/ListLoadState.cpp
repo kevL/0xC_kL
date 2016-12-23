@@ -145,7 +145,7 @@ void ListLoadState::lstSavesPress(Action* action)
 }
 
 /**
- * Hides textual elements of this state.
+ * Hides textual elements of this State.
  * @note Called from LoadGameState, possibly through ConfirmLoadState.
  * @param hide - true to hide elements (default true)
  */
@@ -153,15 +153,15 @@ void ListLoadState::hideElements(bool hide)
 {
 	const bool vis (!hide);
 
-	_txtTitle->setVisible(vis);
-	_txtDelete->setVisible(vis);
-	_txtName->setVisible(vis);
-	_txtDate->setVisible(vis);
-	_sortName->setVisible(vis);
-	_sortDate->setVisible(vis);
-	_lstSaves->setVisible(vis);
-	_txtDetails->setVisible(vis);
-	_btnCancel->setVisible(vis);
+	_txtTitle	->setVisible(vis);
+	_txtDelete	->setVisible(vis);
+	_txtName	->setVisible(vis);
+	_txtDate	->setVisible(vis);
+	_sortName	->setVisible(vis);
+	_sortDate	->setVisible(vis);
+	_lstSaves	->setVisible(vis);
+	_txtDetails	->setVisible(vis);
+	_btnCancel	->setVisible(vis);
 }
 
 }

@@ -89,13 +89,13 @@ protected:
 
 		/// Clears the Surface's contents with a specified color.
 		void clear(Uint32 color = 0u);
-		/// Offsets the Surface's colors by a set amount.
+		/// Offsets the Surface's colors by a specified value.
 		void offset(
 				int shift,
 				int colorLow = -1,
 				int colorHigh = -1,
 				int multer = 1);
-		/// Offsets the Surface's colors within a specified color-block.
+		/// Offsets the Surface's colors by a specified value within a color-block.
 		void offsetBlock(
 				int shift,
 				int blocksize = 16,
@@ -225,7 +225,6 @@ protected:
 						+ x * static_cast<int>(_surface->format->BytesPerPixel)] = color;
 			}
 		}
-
 
 		/**
 		 * Sets the color of a pixel in the Surface and returns the next

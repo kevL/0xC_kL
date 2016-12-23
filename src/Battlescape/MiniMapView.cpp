@@ -24,6 +24,7 @@
 //#include "../fmath.h"
 
 #include "Camera.h"
+#include "Map.h"
 #include "MiniMapState.h"
 
 #include "../Engine/Action.h"
@@ -54,21 +55,19 @@ namespace OpenXcom
  * @param x				- the x-origin
  * @param y				- the y-origin
  * @param game			- pointer to the core Game
- * @param camera		- pointer to the battlescape Camera
  */
 MiniMapView::MiniMapView(
 		int width,
 		int height,
 		int x,
 		int y,
-		const Game* const game,
-		Camera* const camera)
+		const Game* const game)
 	:
 		InteractiveSurface(
 				width,height,
 				x,y),
 		_game(game),
-		_camera(camera),
+		_camera(game->getSavedGame()->getBattleSave()->getBattleGame()->getMap()->getCamera()),
 		_battleSave(game->getSavedGame()->getBattleSave()),
 		_anicycle(0),
 		_dragScroll(false),

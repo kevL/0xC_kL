@@ -511,7 +511,7 @@ const RuleItem* DebriefExtraState::getRule(const std::string& type) const // pri
  */
 void DebriefExtraState::think() // private.
 {
-	State::think();
+//	State::think();
 
 	_timerInc->think(this, nullptr);
 	_timerDec->think(this, nullptr);

@@ -323,9 +323,6 @@ private:
 		/// Handler for clicking the Soldier button.
 		void btnInventoryClick(Action* action);
 
-		/// Forces a transparent SDL mouse-motion event.
-		void refreshMousePosition() const;
-
 		/// Handler for pressing the Center button.
 		void btnCenterPress(Action* action);
 		/// Handler for releasing the Center button.

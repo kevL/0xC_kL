@@ -491,7 +491,7 @@ void Surface::clear(Uint32 color)
 }
 
 /**
- * Shifts all the colors in this Surface by a specified amount.
+ * Shifts all the colors in this Surface by a specified value.
  * @note This is a common method in 8-bpp games to simulate color-effects for
  * cheap.
  * @param shift		- shift
@@ -508,12 +508,16 @@ void Surface::offset(
 	if (shift != 0)
 	{
 		lock();
+
+		int
+			colorPre,
+			colorPost;
 		for (int
 				x = 0, y = 0;
 				x < _surface->w && y < _surface->h;
 				)
 		{
-			const int colorPre (static_cast<int>(getPixelColor(x,y)));
+			colorPre = static_cast<int>(getPixelColor(x,y));
 			switch (colorPre)
 			{
 				case 0:
@@ -521,16 +525,13 @@ void Surface::offset(
 					break;
 
 				default:
-					int colorPost;
 					if (shift > 0)
 						colorPost = (colorPre * multer) + shift;
 					else
 						colorPost = (colorPre + shift) / multer;
 
-					if (colorLow != -1 && colorPost < colorLow)
-						colorPost = colorLow;
-					else if (colorHigh != -1 && colorPost > colorHigh)
-						colorPost = colorHigh;
+					if		(colorLow  != -1 && colorPost < colorLow)	colorPost = colorLow;
+					else if	(colorHigh != -1 && colorPost > colorHigh)	colorPost = colorHigh;
 
 					setPixelIterative(&x,&y, static_cast<Uint8>(colorPost));
 			}
@@ -540,8 +541,8 @@ void Surface::offset(
 }
 
 /**
- * Shifts all the colors in this Surface by a specified amount while keeping
- * them inside a fixed-size color-block.
+ * Shifts all the colors in this Surface by a specified value while keeping
+ * the colors within a fixed-size color-block.
  * @param shift		- shift
  * @param blocksize	- color-block-size (default 16)
  * @param multer	- shift-multiplier (default 1)
@@ -554,12 +555,18 @@ void Surface::offsetBlock(
 	if (shift != 0)
 	{
 		lock();
+
+		int
+			colorPre,
+			colorLow,
+			colorHigh,
+			colorPost;
 		for (int
 				x = 0, y = 0;
 				x < _surface->w && y < _surface->h;
 				)
 		{
-			const int colorPre (static_cast<int>(getPixelColor(x,y)));
+			colorPre = static_cast<int>(getPixelColor(x,y));
 			switch (colorPre)
 			{
 				case 0:
@@ -567,20 +574,16 @@ void Surface::offsetBlock(
 					break;
 
 				default:
-					const int
-						colorLow (colorPre / blocksize * blocksize),
-						colorHigh (colorLow + blocksize);
+					colorLow  = colorPre / blocksize * blocksize,
+					colorHigh = colorLow + blocksize;
 
-					int colorPost;
 					if (shift > 0)
 						colorPost = (colorPre * multer) + shift;
 					else
 						colorPost = (colorPre + shift) / multer;
 
-					if (colorLow != -1 && colorPost < colorLow)
-						colorPost = colorLow;
-					else if (colorHigh != -1 && colorPost > colorHigh)
-						colorPost = colorHigh;
+					if		(colorLow  != -1 && colorPost < colorLow)	colorPost = colorLow;
+					else if	(colorHigh != -1 && colorPost > colorHigh)	colorPost = colorHigh;
 
 					setPixelIterative(&x,&y, static_cast<Uint8>(colorPost));
 			}

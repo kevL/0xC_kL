@@ -36,81 +36,17 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the ErrorMessage window.
- * @param st		- reference to the string-ID to be displayed
- * @param palette	- pointer to the parent state palette
- * @param color		- color of the UI controls
- * @param bg		- reference to the background image-string
- * @param bgColor	- background color (-1 for Battlescape)
- * @param quit		- true to quit on close (default false)
- */
-ErrorMessageState::ErrorMessageState(
-		const std::string& st,
-		SDL_Color* palette,
-		int color,
-		const std::string& bg,
-		int bgColor,
-		bool quit)
-	:
-		_quit(quit)
-{
-	create(
-		st,
-		L"",
-		palette,
-		static_cast<Uint8>(color),
-		bg,
-		bgColor);
-}
-
-/**
- * Initializes all the elements in the ErrorMessage window.
  * @param wst		- reference to the LocalizedText (wide-string) to be displayed
  * @param palette	- pointer to the parent-state palette
  * @param color		- color of the UI-controls
- * @param bg		- reference to the background image-string
+ * @param bgType	- reference to the background image-string
  * @param bgColor	- background color (-1 for Battlescape)
- * @param quit		- true to quit on close (default false)
  */
 ErrorMessageState::ErrorMessageState(
 		const std::wstring& wst,
-		SDL_Color* palette,
+		SDL_Color* const palette,
 		int color,
-		const std::string& bg,
-		int bgColor,
-		bool quit)
-	:
-		_quit(quit)
-{
-	create(
-		"",
-		wst,
-		palette,
-		static_cast<Uint8>(color),
-		bg,
-		bgColor);
-}
-
-/**
- * dTor.
- */
-ErrorMessageState::~ErrorMessageState()
-{}
-
-/**
- * Creates the elements in this ErrorMessage window.
- * @param st		- reference to the language-ID for the message to display
- * @param wst		- reference to the text-string for the message to display
- * @param palette	- pointer to the parent-state palette
- * @param color		- color of the UI-controls
- * @param bg		- background image
- * @param bgColor	- background color (-1 for Battlescape)
- */
-void ErrorMessageState::create(
-		const std::string& st,
-		const std::wstring& wst,
-		SDL_Color* palette,
-		Uint8 color,
-		const std::string& bg,
+		const std::string& bgType,
 		int bgColor)
 {
 	_fullScreen = false;
@@ -123,7 +59,7 @@ void ErrorMessageState::create(
 	if (bgColor != -1)
 		setPalette(
 				_game->getResourcePack()->getPalette(PAL_BACKPALS)
-					->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(bgColor)))),
+						->getColors(static_cast<int>(Palette::blockOffset(static_cast<Uint8>(bgColor)))),
 				Palette::PAL_bgID,
 				16);
 
@@ -135,7 +71,7 @@ void ErrorMessageState::create(
 
 
 	_window->setColor(color);
-	_window->setBackground(_game->getResourcePack()->getSurface(bg));
+	_window->setBackground(_game->getResourcePack()->getSurface(bgType));
 
 	_btnOk->setColor(color);
 	_btnOk->setText(tr("STR_OK"));
@@ -147,11 +83,7 @@ void ErrorMessageState::create(
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&ErrorMessageState::btnOkClick),
 							Options::keyCancel);
 
-	if (st.empty() == false)
-		_txtMessage->setText(tr(st));
-	else
-		_txtMessage->setText(wst);
-
+	_txtMessage->setText(wst);
 	_txtMessage->setColor(color);
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setVerticalAlign(ALIGN_MIDDLE);
@@ -160,11 +92,17 @@ void ErrorMessageState::create(
 
 	if (bgColor == -1)
 	{
-		_window->setHighContrast();
-		_btnOk->setHighContrast();
-		_txtMessage->setHighContrast();
+		_window		->setHighContrast();
+		_btnOk		->setHighContrast();
+		_txtMessage	->setHighContrast();
 	}
 }
+
+/**
+ * dTor.
+ */
+ErrorMessageState::~ErrorMessageState()
+{}
 
 /**
  * Closes the window.
@@ -173,9 +111,6 @@ void ErrorMessageState::create(
 void ErrorMessageState::btnOkClick(Action*)
 {
 	_game->popState();
-
-	if (_quit == true)
-		_game->quit(true);
 }
 
 }

@@ -93,9 +93,9 @@ Map::Map(
 		int playableHeight)
 	:
 		InteractiveSurface(
-			width,
-			height,
-			x,y),
+				width,
+				height,
+				x,y),
 		_game(game),
 		_playableHeight(playableHeight),
 		_arrow(nullptr),

@@ -244,21 +244,21 @@ void ListSaveState::saveGame() // private.
 }
 
 /**
- * Hides textual elements of this state.
+ * Hides textual elements of this State.
  */
 void ListSaveState::hideElements() // private.
 {
-	_txtTitle		->setVisible(false);
-	_txtDelete		->setVisible(false);
-	_txtName		->setVisible(false);
-	_txtDate		->setVisible(false);
-	_sortName		->setVisible(false);
-	_sortDate		->setVisible(false);
-	_lstSaves		->setVisible(false);
-	_edtSave		->setVisible(false);
-	_txtDetails		->setVisible(false);
-	_btnCancel		->setVisible(false);
-	_btnSaveGame	->setVisible(false);
+	_txtTitle	->setVisible(false);
+	_txtDelete	->setVisible(false);
+	_txtName	->setVisible(false);
+	_txtDate	->setVisible(false);
+	_sortName	->setVisible(false);
+	_sortDate	->setVisible(false);
+	_lstSaves	->setVisible(false);
+	_edtSave	->setVisible(false);
+	_txtDetails	->setVisible(false);
+	_btnCancel	->setVisible(false);
+	_btnSaveGame->setVisible(false);
 }
 
 }

@@ -63,7 +63,7 @@ State::State()
 		_uiRule(nullptr),
 		_uiRuleParent(nullptr)
 {
-	std::memset( // initialize palette to all-black
+	std::memset( // initialize palette to all-transparent
 			_palette,
 			0,
 			sizeof(_palette));
@@ -84,12 +84,31 @@ State::~State()
 }
 
 /**
+ * Sets a pointer to the Game-object.
+ * @note This pointer can be used universally by all child-states.
+ * @param ptrG - THE pointer to Game
+ */
+void State::setGamePtr(Game* const ptrG) // static.
+{
+	_game = ptrG;
+}
+
+/**
+ * Gets the pointer to the Game-object.
+ * @return, THE pointer to Game
+ */
+Game* State::getGamePtr() // static.
+{
+    return _game;
+}
+
+/**
  * Gets the label of this State.
- * @return, label of the substate if any else "parent State"
+ * @return, label of the substate if any else "State"
  *
 std::string State::getStateLabel() const // virtual.
 {
-	return "parent State";
+	return "State";
 } */
 
 /**
@@ -281,7 +300,10 @@ void State::init() // virtual.
 			++i)
 	{
 		if ((window = dynamic_cast<Window*>(*i)) != nullptr)
+		{
 			window->invalidate();
+			break; // NOTE: There shouldn't be more than one Window per State, right.
+		}
 	}
 }
 
@@ -508,7 +530,7 @@ void State::setModal(InteractiveSurface* const isf)
 
 /**
  * Replaces a specified quantity of colors in this State's palette.
- * @param colors		- pointer to the set of colors
+ * @param colors		- pointer to the set of colors (default nullptr)
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
  * @param apply			- true to apply changes immediately, false to wait in
@@ -541,20 +563,20 @@ void State::setPalette(
 
 /**
  * Loads palettes from the ResourcePack into this State.
- * @param pal		- reference to the PaletteType to load (Palette.h)
- * @param backpal	- BACKPALS.DAT offset to use (Palette.h) (default BACKPAL_NONE)
+ * @param palType - reference to the PaletteType to load (Palette.h)
+ * @param backpal - BACKPALS.DAT offset to use (Palette.h) (default BACKPAL_NONE)
  */
 void State::setPalette(
-		const PaletteType pal,
+		const PaletteType palType,
 		BackPals backpal)
 {
 	setPalette(
-			_game->getResourcePack()->getPalette(pal)->getColors(),
+			_game->getResourcePack()->getPalette(palType)->getColors(),
 			0,
 			256,
 			false);
 
-	switch (pal)
+	switch (palType)
 	{
 		case PAL_BASESCAPE:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_BASESCAPE);	break;
 		case PAL_GEOSCAPE:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_GEOSCAPE);	break;
@@ -573,7 +595,7 @@ void State::setPalette(
 				16,
 				false);
 
-	setPalette(nullptr); // delay actual update to the end
+	setPalette(); // delay actual update to the end
 }
 
 /**
@@ -618,22 +640,34 @@ void State::recenter(
 }
 
 /**
- * Sets a pointer to the Game-object.
- * @note This pointer can be used universally by all child-states.
- * @param game - THE pointer to Game
+ * Forces a transparent SDL mouse-motion event.
+ * @note This is required to create an arbitrary mouseOver event for when the
+ * Map is repositioned under the cursor but the cursor itself doesn't
+ * necessarily move on the screen.
+ * @sa ListGamesState::think()
  */
-void State::setGamePtr(Game* const game) // static.
+void State::refreshMousePosition() const
 {
-	_game = game;
-}
+	_game->getCursor()->falsifyMotion();
 
-/**
- * Gets the pointer to the Game-object.
- * @return, THE pointer to Game
- */
-Game* State::getGamePtr() // static.
-{
-    return _game;
+	int // doesn't do shit. FIXED.
+		x,y,
+		dir;
+	SDL_GetMouseState(&x,&y);
+
+	switch (x)
+	{
+		case 0:  dir = +1; break; // don't warp Cursor's x-coord off left edge of Screen
+		default: dir = -1;
+	}
+
+	SDL_WarpMouse(
+			static_cast<Uint16>(x + dir),
+			static_cast<Uint16>(y));
+	SDL_GetMouseState(&x,&y);
+	SDL_WarpMouse(
+			static_cast<Uint16>(x - dir),
+			static_cast<Uint16>(y));
 }
 
 /**

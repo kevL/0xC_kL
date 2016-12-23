@@ -42,37 +42,19 @@ class ErrorMessageState
 {
 
 private:
-	bool _quit;
-
 	TextButton* _btnOk;
 	Window* _window;
 	Text* _txtMessage;
 
-	void create(
-			const std::string& st,
-			const std::wstring& wst,
-			SDL_Color* palette,
-			Uint8 color,
-			const std::string& bg,
-			int bgColor);
 
 	public:
-		/// Creates an ErrorMessage state w/ string.
-		ErrorMessageState(
-				const std::string& st,
-				SDL_Color* palette,
-				int color,
-				const std::string& bg,
-				int bgColor,
-				bool quit = false);
-		/// Creates an ErrorMessage state w/ wide-string.
+		/// Creates an ErrorMessage state.
 		ErrorMessageState(
 				const std::wstring& wst,
-				SDL_Color* palette,
+				SDL_Color* const palette,
 				int color,
 				const std::string& bg,
-				int bgColor,
-				bool quit = false);
+				int bgColor);
 		/// Cleans up the ErrorMessage state.
 		~ErrorMessageState();
 

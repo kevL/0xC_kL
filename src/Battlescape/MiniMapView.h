@@ -107,8 +107,7 @@ private:
 				int height,
 				int x,
 				int y,
-				const Game* const game,
-				Camera* const camera);
+				const Game* const game);
 		/// dTor.
 		~MiniMapView();
 

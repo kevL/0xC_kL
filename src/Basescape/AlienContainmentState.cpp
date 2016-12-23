@@ -59,11 +59,13 @@ namespace OpenXcom
  * @param origin	- game section that originated this state
  * @param baseState	- pointer to the BasescapeState (default nullptr if
  *					  DebriefingState- or ResearchState-invoked)
+ * @param refresh	- set to 0 when called during DebriefingState (default -1)
  */
 AlienContainmentState::AlienContainmentState(
 		Base* const base,
 		OptionsOrigin origin,
-		BasescapeState* const baseState)
+		BasescapeState* const baseState,
+		int refresh)
 	:
 		_base(base),
 		_origin(origin),
@@ -72,7 +74,8 @@ AlienContainmentState::AlienContainmentState(
 		_fishFood(0),
 		_totalSpace(0),
 		_usedSpace(0),
-		_baseList(_game->getSavedGame()->getBases())
+		_baseList(_game->getSavedGame()->getBases()),
+		_refresh(refresh)
 {
 	_window			= new Window(this);
 	_mini			= new MiniBaseView(128, 16, 180, 27, MBV_CONTAINMENT);
@@ -172,7 +175,8 @@ AlienContainmentState::AlienContainmentState(
 	_lstAliens->setColumns(4, 130,50,50,47);
 	_lstAliens->setArrow(158, ARROW_HORIZONTAL);
 	_lstAliens->setBackground(_window);
-	_lstAliens->setSelectable();
+	if (_refresh == -1)
+		_lstAliens->setSelectable();
 
 	_lstAliens->onLeftArrowPress(	static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowPress));
 	_lstAliens->onLeftArrowRelease(	static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowRelease));
@@ -198,7 +202,8 @@ AlienContainmentState::~AlienContainmentState()
 }
 
 /**
- * Updates the list of Live aLiens after clicking the MiniBase view.
+ * Updates the list of live aLiens after construction or clicking the MiniBase
+ * view.
  */
 void AlienContainmentState::init()
 {
@@ -414,6 +419,13 @@ void AlienContainmentState::lstRightArrowRelease(Action* action)
 void AlienContainmentState::think()
 {
 	State::think();
+
+	if (_refresh != -1 && ++_refresh == 2)
+	{
+		_refresh = -1;					// stop selector from appearing bright white after post-tactical ErrorMessage;
+		_lstAliens->setSelectable();	// then jiggle a fake-mouse motion to actually highlight any current row.
+		refreshMousePosition();			// Don't want to fuck with State::init()'s palette or TextList's selector-coloring itself
+	}									// ... REASONS.
 
 	_timerRight->think(this, nullptr);
 	_timerLeft->think(this, nullptr);

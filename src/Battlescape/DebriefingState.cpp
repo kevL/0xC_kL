@@ -564,7 +564,11 @@ void DebriefingState::btnOkClick(Action*)
 					break;
 
 				case ACR_SHOW:
-					_game->pushState(new AlienContainmentState(_base, OPT_BATTLESCAPE));
+					_game->pushState(new AlienContainmentState(
+															_base,
+															OPT_BATTLESCAPE,
+															nullptr,
+															0));
 					_game->pushState(new ErrorMessageState(
 													tr("STR_CONTAINMENT_EXCEEDED").arg(_base->getLabel()),
 													_palette,

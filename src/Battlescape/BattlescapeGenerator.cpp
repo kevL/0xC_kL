@@ -83,7 +83,7 @@ namespace OpenXcom
  * Sets up a BattlescapeGenerator.
  * @param game - pointer to Game
  */
-BattlescapeGenerator::BattlescapeGenerator(Game* const game)
+BattlescapeGenerator::BattlescapeGenerator(const Game* const game)
 	:
 		_game(game),
 		_playSave(game->getSavedGame()),
@@ -286,7 +286,7 @@ void BattlescapeGenerator::run()
 		if (_terrainRule == nullptr)
 		{
 			// trouble: no texture and no deployment terrain, most likely scenario is a UFO landing on water: use the first available terrain.
-			_terrainRule = _game->getRuleset()->getTerrain(_game->getRuleset()->getTerrainList().front());
+			_terrainRule = _rules->getTerrain(_rules->getTerrainList().front());
 			Log(LOG_WARNING) << "bGen::run() Could not find a terrain rule. Use first terrainType: "
 							 << _terrainRule->getType();
 		}
@@ -846,7 +846,7 @@ void BattlescapeGenerator::nextStage()
 //		_battleSave->selectNextUnit(); // NOTE: This runs only if the only player-unit still conscious is a support-unit.
 //	}
 
-	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
+	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 	for (std::vector<BattleItem*>::const_iterator
 		i = forwardGround.begin();
 		i != forwardGround.end();
@@ -2004,7 +2004,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 	else
 		elapsed = _alienItemLevel;
 
-	const RuleAlienRace* const raceRule (_game->getRuleset()->getAlienRace(_alienRace));
+	const RuleAlienRace* const raceRule (_rules->getAlienRace(_alienRace));
 	if (raceRule == nullptr)
 	{
 		throw Exception("bGen:deployAliens() No rule for " + _alienRace);

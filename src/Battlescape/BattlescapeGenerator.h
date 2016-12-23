@@ -89,7 +89,7 @@ private:
 	AlienBase*			_alienBase;
 	Base*				_base;
 	Craft*				_craft;
-	Game*				_game;
+	const Game*			_game;
 	MapBlock*			_testBlock;
 	TerrorSite*			_terrorSite;
 	ResourcePack*		_res;
@@ -221,7 +221,7 @@ private:
 
 	public:
 		/// Creates a BattlescapeGenerator.
-		explicit BattlescapeGenerator(Game* const game);
+		explicit BattlescapeGenerator(const Game* const game);
 		/// Cleans up the BattlescapeGenerator.
 		~BattlescapeGenerator();
 

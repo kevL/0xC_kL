@@ -46,8 +46,7 @@ Cursor::Cursor(
 		int y)
 	:
 		Surface(
-				width,
-				height,
+				width,height,
 				x,y),
 		_color(0u),
 		_falsifyMotion(false)
@@ -152,9 +151,9 @@ void Cursor::draw()
 		++color;
 	}
 
-	this->setPixelColor(
-					4,8,
-					--color);
+	setPixelColor(
+				4,8,
+				--color);
 	unlock();
 }
 

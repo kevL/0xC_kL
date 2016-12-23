@@ -56,6 +56,7 @@ private:
 
 	int
 		_fishFood,
+		_refresh,
 		_totalSpace,
 		_usedSpace;
 	size_t _sel;
@@ -100,11 +101,12 @@ private:
 		AlienContainmentState(
 				Base* const base,
 				OptionsOrigin origin,
-				BasescapeState* const baseState = nullptr);
+				BasescapeState* const baseState = nullptr,
+				int refresh = -1);
 		/// Cleans up the AlienContainment state.
 		~AlienContainmentState();
 
-		/// Updates the list of Live aLiens.
+		/// Updates the list of live aLiens.
 		void init() override;
 
 		/// Handler for clicking the Ok button.

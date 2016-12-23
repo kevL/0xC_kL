@@ -108,10 +108,18 @@ private:
 		_arrowLeft,
 		_arrowRight;
 
-	/// Updates the arrow-buttons.
+	/// Resizes the selector.
+	void resizeSelector(
+			int width,
+			int height,
+			int x,
+			int y,
+			bool vis = false);
+
+	/// Updates the quantity of visible rows.
+	void deterVisibleRows();
+	/// Updates the arrow-buttons based on the visible rows.
 	void updateArrows();
-	/// Updates the visible rows.
-	void updateVisible();
 
 
 	public:
