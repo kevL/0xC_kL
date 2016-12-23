@@ -612,7 +612,6 @@ void TextList::initText(
 				getWidth(),
 				_font->getHeight() + _font->getSpacing(),
 				_x, _y);
-	deterVisibleRows();
 }
 
 /**
@@ -799,9 +798,7 @@ void TextList::setBig()
 	resizeSelector(
 				getWidth(),
 				_font->getHeight() + _font->getSpacing(),
-				_x,
-				_y);
-	deterVisibleRows();
+				_x, _y);
 }
 
 /**
@@ -813,9 +810,7 @@ void TextList::setSmall()
 	resizeSelector(
 				getWidth(),
 				_font->getHeight() + _font->getSpacing(),
-				_x,
-				_y);
-	deterVisibleRows();
+				_x, _y);
 }
 
 /**
@@ -838,7 +833,12 @@ void TextList::resizeSelector( // private.
 						width,height,
 						x,y);
 	_selector->setPalette(getPalette());
-	_selector->setVisible(vis);
+
+	if (vis == false)
+	{
+		_selector->setVisible(false);
+		deterVisibleRows();
+	}
 }
 
 /**
@@ -1024,13 +1024,8 @@ void TextList::clearList()
 
 	_texts.clear();
 	_rows.clear();
-	_selector->setVisible(false); // TODO: Refresh the selector if it's still over a valid row.
-//	resizeSelector(
-//				_selector->getWidth(),
-//				_selector->getHeight(),
-//				_selector->getX(),
-//				_selector->getY());
-
+	_selector->setVisible(false);	// TODO: Refresh the selector if the list gets redrawn
+									// while the Cursor is still over a valid row.
 	updateArrows();
 	_redraw = true;
 }
@@ -1441,20 +1436,11 @@ void TextList::mouseOver(Action* action, State* state)
 			_selector->copy(_bg);
 
 			if (_contrast == true)
-			{
-				//Log(LOG_INFO) << ". mouseOver: offsetBlock(-5)";
 				_selector->offsetBlock(-5);
-			}
 			else if (_comboBox != nullptr)
-			{
-				//Log(LOG_INFO) << ". mouseOver: offset(1, Palette::PAL_bgID)";
 				_selector->offset(1, Palette::PAL_bgID);
-			}
 			else
-			{
-				//Log(LOG_INFO) << ". mouseOver: offsetBlock(-10)";
 				_selector->offsetBlock(-10);
-			}
 
 			_selector->setVisible();
 		}

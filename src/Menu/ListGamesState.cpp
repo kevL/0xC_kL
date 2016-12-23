@@ -232,23 +232,6 @@ void ListGamesState::think()
 	{
 		_refresh = false;
 		refreshMousePosition();
-//		_game->getCursor()->falsifyMotion();
-//
-//		int
-//			x,y,
-//			dir;
-//		SDL_GetMouseState(&x,&y);
-//
-//		if (x == 0)	dir = +1;
-//		else		dir = -1;
-//
-//		SDL_WarpMouse(
-//				static_cast<Uint16>(x + dir),
-//				static_cast<Uint16>(y));
-//		SDL_GetMouseState(&x,&y);
-//		SDL_WarpMouse(
-//				static_cast<Uint16>(x - dir),
-//				static_cast<Uint16>(y));
 	}
 	else
 		State::think(); // TextEdit needs to think() to blink() caret in ListSaveState.
