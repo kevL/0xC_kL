@@ -26,18 +26,24 @@
 namespace OpenXcom
 {
 
-Uint32 Timer::coreInterval = 1u;
-
+Uint32 Timer::coreInterval = 1u; // static.
 
 namespace
 {
 
-const Uint32 ACCURATE = 4u;
-
-Uint32 slowTick()
+/**
+ * Slows down the CPU.
+ * @note This is not the engine; cf, Game::run(). This is for accessories like
+ * scrolling-speed, animation-speed, etc. which are of course based off the
+ * engine but need to be slowed down.
+ * @return, current tick
+ */
+static Uint32 slowTick()
 {
+	static const Uint32 ACCURATE (4u);
+
 	static Uint32
-		tickOld (SDL_GetTicks()),
+		tickOld   (SDL_GetTicks()),
 		tickFalse (tickOld << ACCURATE);
 
 	Uint32 tickNew (SDL_GetTicks() << ACCURATE);
@@ -57,8 +63,8 @@ Uint32 slowTick()
  */
 Timer::Timer(Uint32 interval)
 	:
-		_startTick(0u),
 		_interval(interval),
+		_startTick(0u),
 		_running(false),
 		_state(nullptr),
 		_surface(nullptr),

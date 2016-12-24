@@ -47,10 +47,14 @@ class ScrollBar final
 {
 
 private:
+	static const int WAIT_TICKS = 2;
+
 	bool
 		_contrast,
 		_useScalePad;
-	int _offset;
+	int
+		_offset,
+		_wait;
 	Uint8 _color;
 
 	SDL_Rect _rect;

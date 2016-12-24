@@ -39,8 +39,7 @@ ImageButton::ImageButton(
 		int y)
 	:
 		InteractiveSurface(
-				width,
-				height,
+				width,height,
 				x,y),
 		_color(0u),
 		_group(nullptr),

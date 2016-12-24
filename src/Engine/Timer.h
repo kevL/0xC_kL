@@ -55,8 +55,13 @@ private:
 	public:
 		static Uint32 coreInterval;
 		static const Uint32
+			INTERVAL_SCROLLARROW =  77u,
+			INTERVAL_SCROLLBAR   = 122u,
+
 			SCROLL_SLOW = 250u,
 			SCROLL_FAST =  80u;
+
+
 
 		/// Creates a stopped Timer.
 		Timer(Uint32 interval);

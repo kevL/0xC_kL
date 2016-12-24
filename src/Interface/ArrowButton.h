@@ -53,40 +53,44 @@ class ArrowButton final
 {
 
 private:
+	static const int WAIT_TICKS = 2;
+
+	int _wait;
+
 	ArrowShape _shape;
 	TextList* _list;
 	Timer* _timer;
 
 
 protected:
-	/// Checks if the specified button has been handled.
+	/// Checks if the specified mouse-button has been handled.
 	bool isButtonHandled(Uint8 btn = 0u) override;
 
 
 	public:
-		/// Creates a new arrow button with the specified size and position.
+		/// Creates an ArrowButton with a specified size and position.
 		ArrowButton(
 				ArrowShape shape,
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the arrow button.
+		/// Cleans up the ArrowButton.
 		~ArrowButton();
 
-		/// Sets the arrow button's color.
+		/// Sets the ArrowButton's color.
 		void setColor(Uint8 color) override;
-		/// Sets the arrow button's shape.
+		/// Sets the ArrowButton's shape.
 		void setShape(ArrowShape shape);
 
-		/// Sets the arrow button's list.
+		/// Sets the ArrowButton's list.
 		void setTextList(TextList* const textList);
 
 		/// Handles the timers.
 		void think() override;
 		/// Scrolls the list.
 		void scroll();
-		/// Draws the arrow button.
+		/// Draws the ArrowButton.
 		void draw() override;
 
 		/// Special handling for mouse-presses.

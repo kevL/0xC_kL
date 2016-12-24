@@ -44,13 +44,13 @@ ArrowButton::ArrowButton(
 		int y)
 	:
 		ImageButton(
-			width,
-			height,
-			x,y),
+				width,height,
+				x,y),
 		_shape(shape),
-		_list(nullptr)
+		_list(nullptr),
+		_wait(0)
 {
-	_timer = new Timer(77u);
+	_timer = new Timer(Timer::INTERVAL_SCROLLARROW);
 	_timer->onTimer(static_cast<SurfaceHandler>(&ArrowButton::scroll));
 }
 
@@ -85,7 +85,7 @@ bool ArrowButton::isButtonHandled(Uint8 btn)
 }
 
 /**
- * Changes the color for this ImageButton.
+ * Changes the color for this ArrowButton.
  * @param color - color value
  */
 void ArrowButton::setColor(Uint8 color)
@@ -145,16 +145,16 @@ void ArrowButton::draw()
 	drawRect(&rect, color);
 
 	setPixelColor(
-			0,0,
-			static_cast<Uint8>(_color + 1u));
+				0,0,
+				static_cast<Uint8>(_color + 1u));
 	setPixelColor(
-			0,
-			getHeight() - 1,
-			static_cast<Uint8>(_color + 4u));
+				0,
+				getHeight() - 1,
+				static_cast<Uint8>(_color + 4u));
 	setPixelColor(
-			getWidth() - 1,
-			0,
-			static_cast<Uint8>(_color + 4u));
+				getWidth() - 1,
+				0,
+				static_cast<Uint8>(_color + 4u));
 
 	color = static_cast<Uint8>(_color + 1u);
 
@@ -367,13 +367,16 @@ void ArrowButton::think()
  */
 void ArrowButton::scroll()
 {
-	switch (_shape)
+	if (_wait == 0 || --_wait == 0)
 	{
-		case ARROW_BIG_UP:
-			_list->scrollUp();
-			break;
-		case ARROW_BIG_DOWN:
-			_list->scrollDown();
+		switch (_shape)
+		{
+			case ARROW_BIG_UP:
+				_list->scrollUp();
+				break;
+			case ARROW_BIG_DOWN:
+				_list->scrollDown();
+		}
 	}
 }
 
@@ -398,6 +401,15 @@ void ArrowButton::mousePress(Action* action, State* state)
 				break;
 
 			case SDL_BUTTON_LEFT:
+				switch (_shape)
+				{
+					case ARROW_BIG_UP:
+						_list->scrollUp();
+						break;
+					case ARROW_BIG_DOWN:
+						_list->scrollDown();
+				}
+				_wait = WAIT_TICKS;
 				_timer->start();
 		}
 	}

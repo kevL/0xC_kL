@@ -55,7 +55,8 @@ ScrollBar::ScrollBar(
 		_offset(-1),
 		_bg(nullptr),
 		_scrollDir(MSCROLL_NONE),
-		_useScalePad(false)
+		_useScalePad(false),
+		_wait(0)
 {
 	_track	= new Surface(width - 2, height, x,y);
 	_btn	= new Surface(width,     height, x,y);
@@ -65,10 +66,10 @@ ScrollBar::ScrollBar(
 	_rect.w =
 	_rect.h = 0u;
 
-	_timerScrollMouse = new Timer(122u);
+	_timerScrollMouse = new Timer(Timer::INTERVAL_SCROLLBAR);
 	_timerScrollMouse->onTimer(static_cast<SurfaceHandler>(&ScrollBar::mouseScroll));
 
-	_timerScrollKey = new Timer(122u);
+	_timerScrollKey = new Timer(Timer::INTERVAL_SCROLLBAR);
 	_timerScrollKey->onTimer(static_cast<SurfaceHandler>(&ScrollBar::keyScroll));
 }
 
@@ -250,12 +251,14 @@ void ScrollBar::mousePress(Action* action, State* state)
 			{
 				_scrollDir = MSCROLL_UP;
 				_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
+				_wait = WAIT_TICKS;
 				_timerScrollMouse->start();
 			}
 			else if (cursor_y >= static_cast<int>(_rect.y) + static_cast<int>(_rect.h))
 			{
 				_scrollDir = MSCROLL_DOWN;
 				_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
+				_wait = WAIT_TICKS;
 				_timerScrollMouse->start();
 			}
 			else
@@ -381,14 +384,17 @@ void ScrollBar::think()
  */
 void ScrollBar::mouseScroll() // private.
 {
-	switch (_scrollDir)
+	if (_wait == 0 || --_wait == 0)
 	{
-		case MSCROLL_UP:
-			_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
-			break;
+		switch (_scrollDir)
+		{
+			case MSCROLL_UP:
+				_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
+				break;
 
-		case MSCROLL_DOWN:
-			_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
+			case MSCROLL_DOWN:
+				_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
+		}
 	}
 }
 
