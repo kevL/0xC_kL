@@ -333,24 +333,28 @@ void ScrollBar::keyboardPress(Action* action, State* state)
 			case SDLK_UP:		// 1 line up
 			case SDLK_KP8:
 				_list->scrollUp();
+				_wait = WAIT_TICKS;
 				_timerScrollKey->start();
 				break;
 
 			case SDLK_DOWN:		// 1 line down
 			case SDLK_KP2:
 				_list->scrollDown();
+				_wait = WAIT_TICKS;
 				_timerScrollKey->start();
 				break;
 
 			case SDLK_PAGEUP:	// 1 page up
 			case SDLK_KP9:
 				_list->scrollTo(_list->getScroll() - _list->getVisibleRows());
+				_wait = WAIT_TICKS;
 				_timerScrollKey->start();
 				break;
 
 			case SDLK_PAGEDOWN:	// 1 page down
 			case SDLK_KP3:
 				_list->scrollTo(_list->getScroll() + _list->getVisibleRows());
+				_wait = WAIT_TICKS;
 				_timerScrollKey->start();
 		}
 	}
@@ -403,16 +407,23 @@ void ScrollBar::mouseScroll() // private.
  */
 void ScrollBar::keyScroll() // private.
 {
-	const Uint8* const keystate (SDL_GetKeyState(nullptr));
+	if (_wait == 0 || --_wait == 0)
+	{
+		const Uint8* const keystate (SDL_GetKeyState(nullptr));
 
-	if (keystate[SDLK_UP] == 1u || keystate[SDLK_KP8] == 1u)
-		_list->scrollUp();												// 1 line up
-	else if (keystate[SDLK_DOWN] == 1u || keystate[SDLK_KP2] == 1u)
-		_list->scrollDown();											// 1 line down
-	else if (keystate[SDLK_PAGEUP] == 1u || keystate[SDLK_KP9] == 1u)
-		_list->scrollTo(_list->getScroll() - _list->getVisibleRows());	// 1 page up
-	else if (keystate[SDLK_PAGEDOWN] == 1u || keystate[SDLK_KP3] == 1u)
-		_list->scrollTo(_list->getScroll() + _list->getVisibleRows());	// 1 page down
+		if		(keystate[SDLK_UP]       == 1u
+			||   keystate[SDLK_KP8]      == 1u) _list->scrollUp();							// 1 line up
+
+		else if	(keystate[SDLK_DOWN]     == 1u
+			||   keystate[SDLK_KP2]      == 1u) _list->scrollDown();						// 1 line down
+
+		else if	(keystate[SDLK_PAGEUP]   == 1u
+			||   keystate[SDLK_KP9]      == 1u) _list->scrollTo(_list->getScroll()			// 1 page up
+															  - _list->getVisibleRows());
+		else if	(keystate[SDLK_PAGEDOWN] == 1u
+			||   keystate[SDLK_KP3]      == 1u) _list->scrollTo(_list->getScroll()			// 1 page down
+															  + _list->getVisibleRows());
+	}
 }
 
 /**
