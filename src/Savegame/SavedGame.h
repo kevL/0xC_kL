@@ -158,9 +158,12 @@ private:
 		_debugArgDone,
 		_debugCountryLines,
 		_debugGeo,
+		_detailGlobe,
 		_ironman,
 		_warnedFunds;
-	int _monthsElapsed;
+	int
+		_detailRadar,
+		_monthsElapsed;
 	size_t
 		_dfZoom,
 		_globeZoom;
@@ -471,6 +474,15 @@ private:
 		void setGraphCountryToggles(const std::string& value);
 		/// Sets the GraphFinanceToggles.
 		void setGraphFinanceToggles(const std::string& value);
+
+		/// Toggles globe-detail.
+		bool toggleGlobeDetail();
+		/// Checks globe-detail.
+		bool isGlobeDetail() const;
+		/// Sets the radar-detail.
+		void setRadarDetail(int detail);
+		/// Gets the radar-detail.
+		int getRadarDetail() const;
 
 /*		/// Toggles the current state of the radar-line drawing.
 		void toggleRadarLines();

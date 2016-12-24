@@ -347,7 +347,8 @@ Globe::Globe(
 		_radius(0.),
 		_radiusStep(0.),
 		_debugType(DTG_COUNTRY),
-		_radarDetail(2),
+		_globeDetail(game->getSavedGame()->isGlobeDetail()),
+		_radarDetail(game->getSavedGame()->getRadarDetail()),
 		_blink(true),
 		_blinkVal(-1),
 		_drawCrosshair(false),
@@ -943,13 +944,15 @@ bool Globe::insideLand(
  */
 bool Globe::toggleDetail()
 {
-	Options::globeDetail = !Options::globeDetail;
+//	Options::globeDetail = !Options::globeDetail; // TODO: Remove this from Options.
+	_globeDetail = _playSave->toggleGlobeDetail();
 	drawDetail();
 
-	if (Options::globeDetail == true)
-		return true;
+	return _globeDetail;
 
-	return false;
+//	if (Options::globeDetail == true)
+//		return true;
+//	return false;
 }
 
 /**
@@ -961,21 +964,21 @@ int Globe::toggleRadarLines()
 	switch (_radarDetail)
 	{
 		case 0:
-			_radarDetail = 1;
-			Options::globeRadarLines = true;
+			_playSave->setRadarDetail(_radarDetail = 1);
+//			Options::globeRadarLines = true; // TODO: Remove this from Options.
 			break;
 
 		case 1:
-			_radarDetail = 2;
+			_playSave->setRadarDetail(_radarDetail = 2);
 			break;
 
 		case 2:
-			_radarDetail = 3;
+			_playSave->setRadarDetail(_radarDetail = 3);
 			break;
 
 		case 3:
-			_radarDetail = 0;
-			Options::globeRadarLines = false;
+			_playSave->setRadarDetail(_radarDetail = 0);
+//			Options::globeRadarLines = false;
 	}
 	drawRadars();
 
@@ -2008,8 +2011,8 @@ void Globe::drawDetail()
 	double
 		lon,lat;
 
-	if (Options::globeDetail == true // draw the Country borders
-		&& _zoom > 0u)
+//	if (Options::globeDetail == true
+	if (_globeDetail == true && _zoom > 0u) // draw the Country borders
 	{
 		double
 			lon1,lat1;
@@ -2074,7 +2077,8 @@ void Globe::drawDetail()
 		}
 	}
 
-	if (Options::globeDetail == true)
+//	if (Options::globeDetail == true)
+	if (_globeDetail == true)
 	{
 		Text* const label (new Text(100,9));
 

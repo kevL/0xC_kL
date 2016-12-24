@@ -854,8 +854,21 @@ GeoscapeState::GeoscapeState()
 
 	_txtYear->setColor(GREEN_SEA);
 
-	_txtRadars->setText(tr("STR_RADARS_").arg(tr("STR_RADARS_BASE_UC")));
-	_txtLabels->setText(tr("STR_LABELS_").arg(tr("STR_ON_UC")));
+	std::string st;
+	if (_playSave->isGlobeDetail() == true)
+		st = "STR_ON_UC";
+	else
+		st = "STR_OFF_UC";
+	_txtLabels->setText(tr("STR_LABELS_").arg(tr(st)));
+
+	switch (_playSave->getRadarDetail())
+	{
+		case 0: st = "STR_RADARS_NONE_UC";	break;
+		case 1: st = "STR_RADARS_CRAFT_UC";	break;
+		case 2: st = "STR_RADARS_BASE_UC";	break;
+		case 3: st = "STR_RADARS_ALL_UC";
+	}
+	_txtRadars->setText(tr("STR_RADARS_").arg(tr(st)));
 
 
 	_timerGeo->onTimer(static_cast<StateHandler>(&GeoscapeState::timeAdvance));

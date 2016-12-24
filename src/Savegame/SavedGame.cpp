@@ -140,9 +140,9 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_monthsElapsed(-1),
 		_debugGeo(false),
 		_debugArgDone(false),
-		_debugCountryLines(false)
-//		_detail(true),
-//		_radarLines(false),
+		_debugCountryLines(false),
+		_detailGlobe(true),
+		_detailRadar(2)
 //		_selectedBase(0),
 //		_lastselectedArmor("STR_ARMOR_NONE_UC")
 {
@@ -455,8 +455,8 @@ void SavedGame::load(
 	_income					= doc["income"]				.as<std::vector<int64_t>>(_income);
 	_expenditure			= doc["expenditure"]		.as<std::vector<int64_t>>(_expenditure);
 	_ids					= doc["ids"]				.as<std::map<std::string, int>>(_ids);
-//	_radarLines				= doc["radarLines"]			.as<bool>(_radarLines);
-//	_detail					= doc["detail"]				.as<bool>(_detail);
+	_detailGlobe			= doc["detailGlobe"]		.as<bool>(_detailGlobe);
+	_detailRadar			= doc["detailRadar"]		.as<int>(_detailRadar);
 
 	_globeLon	= doc["globeLon"].as<double>(_globeLon);
 	_globeLat	= doc["globeLat"].as<double>(_globeLat);
@@ -722,8 +722,8 @@ void SavedGame::save(const std::string& file) const
 	node["income"]				= _income;
 	node["expenditure"]			= _expenditure;
 	node["ids"]					= _ids;
-//	node["radarLines"]			= _radarLines;
-//	node["detail"]				= _detail;
+	node["detailGlobe"]			= _detailGlobe;
+	node["detailRadar"]			= _detailRadar;
 
 	node["globeLon"]	= serializeDouble(_globeLon);
 	node["globeLat"]	= serializeDouble(_globeLat);
@@ -2228,35 +2228,40 @@ void SavedGame::setGraphFinanceToggles(const std::string& value)
 }
 
 /**
- * Toggles the state of the radar-line drawing.
- *
-void SavedGame::toggleRadarLines()
+ * Toggles globe-detail.
+ * @return, true if detail toggles on
+ */
+bool SavedGame::toggleGlobeDetail()
 {
-	_radarLines = !_radarLines;
-} */
+	return (_detailGlobe = !_detailGlobe);
+}
+
 /**
- * Gets the state of the radar-line drawing.
- * @return, the state of the radar-line drawing.
- *
-bool SavedGame::getRadarLines()
+ * Checks globe-detail.
+ * @return, true if detail is on
+ */
+bool SavedGame::isGlobeDetail() const
 {
-	return _radarLines;
-} */
+	return _detailGlobe;
+}
+
 /**
- * Toggles the state of the detail drawing.
- *
-void SavedGame::toggleDetail()
+ * Sets the radar-detail.
+ * @param detail - value for radar-detail
+ */
+void SavedGame::setRadarDetail(int detail)
 {
-	_detail = !_detail;
-} */
+	_detailRadar = detail;
+}
+
 /**
- * Gets the state of the detail drawing.
- * @return, the state of the detail drawing.
- *
-bool SavedGame::getDetail()
+ * Gets the radar-detail.
+ * @return, value of radar-detail
+ */
+int SavedGame::getRadarDetail() const
 {
-	return _detail;
-} */
+	return _detailRadar;
+}
 
 /**
  * Gets the list of dead Soldiers.

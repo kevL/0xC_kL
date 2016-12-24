@@ -89,7 +89,8 @@ private:
 		_dragScrollStepDone,
 		_dragScrollPastThreshold,
 		_drawCrosshair,
-		_forceRadars;
+		_forceRadars,
+		_globeDetail;
 	int
 		_blinkVal,
 		_radarDetail,
