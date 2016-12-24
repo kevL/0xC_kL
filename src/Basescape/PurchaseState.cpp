@@ -807,16 +807,7 @@ void PurchaseState::updateListrow() // private.
 		}
 	}
 
-	std::wostringstream woststr;
-	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
-	if (std::abs(_storeSize) > 0.05)
-	{
-		woststr << L" ";
-		if (_storeSize > 0.) woststr << L"+";
-		woststr << std::fixed << std::setprecision(1) << _storeSize;
-	}
-	_txtStorage->setText(woststr.str());
-
+	_txtStorage->setText(_base->storesDeltaFormat(_storeSize));
 	_btnOk->setVisible(_costTotal != 0);
 }
 

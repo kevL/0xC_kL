@@ -128,7 +128,7 @@ private:
 		/// Cleans up the Transfer Items state.
 		~TransferItemsState();
 
-		/// Initializes the Transfer menu, when cancelling TransferConfirmState.
+		/// Initializes the Transfer menu when cancelling TransferConfirmState.
 		void init() override;
 
 		/// Handler for clicking the Ok button.

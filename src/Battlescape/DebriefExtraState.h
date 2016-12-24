@@ -90,6 +90,7 @@ private:
 		* _txtQtyAtBase,
 		* _txtQtyItems,
 		* _txtScreen,
+		* _txtStorage,
 		* _txtTitle;
 	TextButton* _btnOk;
 	TextList

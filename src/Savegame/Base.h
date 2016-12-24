@@ -193,6 +193,8 @@ private:
 		int getTotalStores() const;
 		/// Checks if the Base's stores are overfull.
 		bool storesOverfull(double offset = 0.) const;
+		/// Formats the storage-space field for the various buy/sell States.
+		std::wstring storesDeltaFormat(double delta = 0.) const;
 
 		/// Gets the Base's used laboratory space.
 		int getUsedLaboratories() const;

@@ -2404,13 +2404,13 @@ void Globe::drawVHLine( // private.
 
 	if (std::fabs(sx) < 0.01)
 	{
-		seg = static_cast<int>(std::abs(sy / (M_PI * 2.) * 48.));
+		seg = static_cast<int>(std::fabs(sy / (M_PI * 2.) * 48.));
 		if (seg == 0)
 			++seg;
 	}
 	else
 	{
-		seg = static_cast<int>(std::abs(sx / (M_PI * 2.) * 96.));
+		seg = static_cast<int>(std::fabs(sx / (M_PI * 2.) * 96.));
 		if (seg == 0)
 			++seg;
 	}

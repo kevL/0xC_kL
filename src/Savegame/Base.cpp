@@ -773,6 +773,24 @@ bool Base::storesOverfull(double offset) const
 }
 
 /**
+ * Formats the storage-space field for the various buy/sell States.
+ * @param delta - the change in store-space (default 0.)
+ * @return, the field as a wide-string
+ */
+std::wstring Base::storesDeltaFormat(double delta) const
+{
+	std::wostringstream woststr;
+	woststr << getTotalStores() << L":" << std::fixed << std::setprecision(1) << getUsedStores();
+	if (std::fabs(delta) > 0.05)
+	{
+		woststr << L" ";
+		if (delta > 0.) woststr << L"+";
+		woststr << std::fixed << std::setprecision(1) << delta;
+	}
+	return woststr.str();
+}
+
+/**
  * Gets the quantity of laboratories used up by research projects in this Base.
  * @return, used laboratory space
  */

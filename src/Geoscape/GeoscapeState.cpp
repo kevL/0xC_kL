@@ -3915,7 +3915,7 @@ void GeoscapeState::deterAlienMissions() // private.
 		{
 			std::map<int, bool>::const_iterator found (conditions.find(std::abs(*j)));
 			process = (found == conditions.end()
-				   || (found->second == true && *j > 0)
+				   || (found->second == true  && *j > 0)
 				   || (found->second == false && *j < 0));
 		}
 
