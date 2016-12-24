@@ -189,7 +189,7 @@ private:
 			double lat,
 			double lon,
 			double radius,
-			int segments,
+			int segs,
 			Uint8 color = 0u);
 	/// Special "transparent" line.
 	void XuLine(

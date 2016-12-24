@@ -1414,36 +1414,32 @@ void Globe::drawRadars()
 	if (_forceRadars == true // placing a Base.
 		&& Options::globeAllRadarsOnBaseBuild == true)
 	{
-		double range;
+		int range;
 
 		const Ruleset* const rules (_game->getRuleset());
-
 		const std::vector<std::string>& allFacilities (rules->getBaseFacilitiesList());
 		for (std::vector<std::string>::const_iterator
 				i = allFacilities.begin();
 				i != allFacilities.end();
 				++i)
 		{
-			if ((range = static_cast<double>(rules->getBaseFacility(*i)->getRadarRange())) > 0.)
-			{
-				range *= arcToRads;
+			if ((range = rules->getBaseFacility(*i)->getRadarRange()) != 0)
 				drawGlobeCircle(
 							_hoverLat,
 							_hoverLon,
-							range,
+							static_cast<double>(range) * arcToRads,
 							48);
 //							C_RADAR1);
-			}
 		}
 	}
 
-	if (_radarDetail != GRD_NONE)
-//		&& Options::globeRadarLines == true)
+	if (_radarDetail != GRD_NONE) //&& Options::globeRadarLines == true
 	{
-		double
-			lon,lat,
+		int
 			range,
 			rangeFarthest;
+		double
+			lon,lat;
 
 		for (std::vector<Base*>::const_iterator
 				i = _playSave->getBases()->begin();
@@ -1456,7 +1452,7 @@ void Globe::drawRadars()
 				{
 					case GRD_ALL:
 					case GRD_BASE: // NOTE: Show Base-radars also shows Craft-radars.
-						rangeFarthest = 0.;
+						rangeFarthest = 0;
 						lat = (*i)->getLatitude();
 						lon = (*i)->getLongitude();
 
@@ -1467,33 +1463,27 @@ void Globe::drawRadars()
 						{
 							if ((*j)->buildFinished() == true)
 							{
-								range = static_cast<double>((*j)->getRules()->getRadarRange());
+								range = (*j)->getRules()->getRadarRange();
 								if (_radarDetail == GRD_ALL)
 								{
-									if (range > 0.)
-									{
-										range *= arcToRads;
+									if (range != 0)
 										drawGlobeCircle( // Base radars.
 													lat,lon,
-													range,
+													static_cast<double>(range) * arcToRads,
 													64);
 //													C_RADAR1);
-									}
 								}
 								else if (range > rangeFarthest)
 									rangeFarthest = range;
 							}
 						}
 
-						if (rangeFarthest > 0.)
-						{
-							rangeFarthest *= arcToRads;
+						if (rangeFarthest != 0)
 							drawGlobeCircle( // largest Base radar.
 										lat,lon,
-										rangeFarthest,
+										static_cast<double>(rangeFarthest) * arcToRads,
 										64);
 //										C_RADAR1);
-						}
 						// no break;
 
 					case GRD_CRAFT:
@@ -1504,13 +1494,12 @@ void Globe::drawRadars()
 						{
 							if ((*j)->getCraftStatus() == CS_OUT
 								&& (*j)->hasLeftGround() == true
-								&& (range = static_cast<double>((*j)->getRules()->getRangeRadar())) > 0.)
+								&& (range = (*j)->getRules()->getRangeRadar()) != 0)
 							{
-								range *= arcToRads;
 								drawGlobeCircle( // Craft radars.
 											(*j)->getLatitude(),
 											(*j)->getLongitude(),
-											range,
+											static_cast<double>(range) * arcToRads,
 											48,
 											C_RADAR2);
 							}
@@ -1527,14 +1516,14 @@ void Globe::drawRadars()
  * @param lat		-
  * @param lon		-
  * @param radius	-
- * @param segments	-
+ * @param segs		-
  * @param color		- (default 0)
  */
 void Globe::drawGlobeCircle( // private.
 		double lat,
 		double lon,
 		double radius,
-		int segments,
+		int segs,
 		Uint8 color)
 {
 	double
@@ -1547,7 +1536,7 @@ void Globe::drawGlobeCircle( // private.
 	for (double // 48 segments in circle
 			az = 0.;
 			az <= M_PI * 2. + 0.01;
-			az += M_PI * 2. / static_cast<double>(segments))
+			az += M_PI * 2. / static_cast<double>(segs))
 	{
 		// calculating sphere-projected circle
 		lat1 = asin(std::sin(lat) * std::cos(radius) + std::cos(lat) * std::sin(radius) * std::cos(az));
