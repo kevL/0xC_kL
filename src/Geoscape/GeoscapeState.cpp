@@ -863,10 +863,10 @@ GeoscapeState::GeoscapeState()
 
 	switch (_playSave->getRadarDetail())
 	{
-		case 0: st = "STR_RADARS_NONE_UC";	break;
-		case 1: st = "STR_RADARS_CRAFT_UC";	break;
-		case 2: st = "STR_RADARS_BASE_UC";	break;
-		case 3: st = "STR_RADARS_ALL_UC";
+		case GRD_NONE:	st = "STR_RADARS_NONE_UC";	break;
+		case GRD_CRAFT:	st = "STR_RADARS_CRAFT_UC";	break;
+		case GRD_BASE:	st = "STR_RADARS_BASE_UC";	break;
+		case GRD_ALL:	st = "STR_RADARS_ALL_UC";
 	}
 	_txtRadars->setText(tr("STR_RADARS_").arg(tr(st)));
 
@@ -3421,12 +3421,12 @@ void GeoscapeState::btnDetailPress(Action* action)
 			break;
 
 		case SDL_BUTTON_RIGHT:
-			switch (_globe->toggleRadarLines())
+			switch (_globe->changeRadars())
 			{
-				case 0: st = "STR_RADARS_NONE_UC";	break;
-				case 1: st = "STR_RADARS_CRAFT_UC";	break;
-				case 2: st = "STR_RADARS_BASE_UC";	break;
-				case 3: st = "STR_RADARS_ALL_UC";
+				case GRD_NONE:	st = "STR_RADARS_NONE_UC";	break;
+				case GRD_CRAFT:	st = "STR_RADARS_CRAFT_UC";	break;
+				case GRD_BASE:	st = "STR_RADARS_BASE_UC";	break;
+				case GRD_ALL:	st = "STR_RADARS_ALL_UC";
 			}
 			_txtRadars->setText(tr("STR_RADARS_").arg(tr(st)));
 	}

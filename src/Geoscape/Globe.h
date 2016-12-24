@@ -28,6 +28,8 @@
 #include "../Engine/FastLineClip.h"
 #include "../Engine/InteractiveSurface.h"
 
+#include "../Savegame/SavedGame.h"
+
 
 namespace OpenXcom
 {
@@ -93,7 +95,6 @@ private:
 		_globeDetail;
 	int
 		_blinkVal,
-		_radarDetail,
 		_dragScrollTotalX,
 		_dragScrollTotalY;
 	double
@@ -144,6 +145,7 @@ private:
 	std::vector<double> _radii;
 
 	DebugTypeGlobe _debugType;
+	GlobeRadarDetail _radarDetail;
 
 
 	/// Sets up the viewport of earth and stuff.
@@ -324,10 +326,10 @@ private:
 				double lon,
 				double lat) const;
 
-		/// Turns on/off the Globe detail.
+		/// Toggles on/off drawing detail on the Globe.
 		bool toggleDetail();
-		/// Switches the radar-details shown on this Globe.
-		int toggleRadarLines();
+		/// Changes the level of radar-details shown on the Globe.
+		GlobeRadarDetail changeRadars();
 
 		/// Gets all the Targets near a point on the Globe.
 		std::vector<Target*> getTargets(

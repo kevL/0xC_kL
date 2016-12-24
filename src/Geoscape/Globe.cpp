@@ -60,7 +60,6 @@
 #include "../Savegame/Craft.h"
 #include "../Savegame/GameTime.h"
 #include "../Savegame/Region.h"
-#include "../Savegame/SavedGame.h"
 #include "../Savegame/Target.h"
 #include "../Savegame/TerrorSite.h"
 #include "../Savegame/Ufo.h"
@@ -938,9 +937,9 @@ bool Globe::insideLand(
 }
 
 /**
- * Turns on/off the detail shown on this Globe.
+ * Toggles on/off drawing detail on the Globe.
  * @note Country and city details are shown only when zoomed in.
- * @return, true if turned on
+ * @return, true if toggled on
  */
 bool Globe::toggleDetail()
 {
@@ -949,35 +948,32 @@ bool Globe::toggleDetail()
 	drawDetail();
 
 	return _globeDetail;
-
-//	if (Options::globeDetail == true)
-//		return true;
-//	return false;
+//	return Options::globeDetail;
 }
 
 /**
- * Switches the radar-details shown on this Globe.
- * @return, value of the radar-detail var
+ * Changes the level of radar-details shown on the Globe.
+ * @return, value of the radar-detail
  */
-int Globe::toggleRadarLines()
+GlobeRadarDetail Globe::changeRadars()
 {
 	switch (_radarDetail)
 	{
-		case 0:
-			_playSave->setRadarDetail(_radarDetail = 1);
+		case GRD_NONE:
+			_playSave->setRadarDetail(_radarDetail = GRD_CRAFT);
 //			Options::globeRadarLines = true; // TODO: Remove this from Options.
 			break;
 
-		case 1:
-			_playSave->setRadarDetail(_radarDetail = 2);
+		case GRD_CRAFT:
+			_playSave->setRadarDetail(_radarDetail = GRD_BASE);
 			break;
 
-		case 2:
-			_playSave->setRadarDetail(_radarDetail = 3);
+		case GRD_BASE:
+			_playSave->setRadarDetail(_radarDetail = GRD_ALL);
 			break;
 
-		case 3:
-			_playSave->setRadarDetail(_radarDetail = 0);
+		case GRD_ALL:
+			_playSave->setRadarDetail(_radarDetail = GRD_NONE);
 //			Options::globeRadarLines = false;
 	}
 	drawRadars();
@@ -1441,13 +1437,13 @@ void Globe::drawRadars()
 		}
 	}
 
-	if (_radarDetail > 0
-		&& Options::globeRadarLines == true)
+	if (_radarDetail != GRD_NONE)
+//		&& Options::globeRadarLines == true)
 	{
 		double
 			lon,lat,
 			range,
-			rangeBest;
+			rangeFarthest;
 
 		for (std::vector<Base*>::const_iterator
 				i = _playSave->getBases()->begin();
@@ -1456,67 +1452,69 @@ void Globe::drawRadars()
 		{
 			if ((*i)->isBasePlaced() == true)
 			{
-				if (_radarDetail > 1)
+				switch (_radarDetail)
 				{
-					rangeBest = 0.;
-					lat = (*i)->getLatitude();
-					lon = (*i)->getLongitude();
+					case GRD_ALL:
+					case GRD_BASE: // NOTE: Show Base-radars also shows Craft-radars.
+						rangeFarthest = 0.;
+						lat = (*i)->getLatitude();
+						lon = (*i)->getLongitude();
 
-					for (std::vector<BaseFacility*>::const_iterator
-							j = (*i)->getFacilities()->begin();
-							j != (*i)->getFacilities()->end();
-							++j)
-					{
-						if ((*j)->buildFinished() == true)
+						for (std::vector<BaseFacility*>::const_iterator
+								j = (*i)->getFacilities()->begin();
+								j != (*i)->getFacilities()->end();
+								++j)
 						{
-							range = static_cast<double>((*j)->getRules()->getRadarRange());
-							if (_radarDetail > 2)
+							if ((*j)->buildFinished() == true)
 							{
-								if (range > 0.)
+								range = static_cast<double>((*j)->getRules()->getRadarRange());
+								if (_radarDetail == GRD_ALL)
 								{
-									range *= arcToRads;
-									drawGlobeCircle( // Base radars.
-												lat,lon,
-												range,
-												64);
-//												C_RADAR1);
+									if (range > 0.)
+									{
+										range *= arcToRads;
+										drawGlobeCircle( // Base radars.
+													lat,lon,
+													range,
+													64);
+//													C_RADAR1);
+									}
 								}
+								else if (range > rangeFarthest)
+									rangeFarthest = range;
 							}
-							else if (range > rangeBest)
-								rangeBest = range;
 						}
-					}
 
-					if (rangeBest > 0.)
-					{
-						rangeBest *= arcToRads;
-						drawGlobeCircle( // largest Base radar.
-									lat,lon,
-									rangeBest,
-									64);
-//									C_RADAR1)
-					}
-				}
-
-				for (std::vector<Craft*>::const_iterator
-						j = (*i)->getCrafts()->begin();
-						j != (*i)->getCrafts()->end();
-						++j)
-				{
-					if ((*j)->getCraftStatus() == CS_OUT
-						&& (*j)->hasLeftGround() == true)
-					{
-						if ((range = static_cast<double>((*j)->getRules()->getRangeRadar())) > 0.)
+						if (rangeFarthest > 0.)
 						{
-							range *= arcToRads;
-							drawGlobeCircle( // Craft radars.
-										(*j)->getLatitude(),
-										(*j)->getLongitude(),
-										range,
-										48,
-										C_RADAR2);
+							rangeFarthest *= arcToRads;
+							drawGlobeCircle( // largest Base radar.
+										lat,lon,
+										rangeFarthest,
+										64);
+//										C_RADAR1);
 						}
-					}
+						// no break;
+
+					case GRD_CRAFT:
+						for (std::vector<Craft*>::const_iterator
+								j = (*i)->getCrafts()->begin();
+								j != (*i)->getCrafts()->end();
+								++j)
+						{
+							if ((*j)->getCraftStatus() == CS_OUT
+								&& (*j)->hasLeftGround() == true
+								&& (range = static_cast<double>((*j)->getRules()->getRangeRadar())) > 0.)
+							{
+								range *= arcToRads;
+								drawGlobeCircle( // Craft radars.
+											(*j)->getLatitude(),
+											(*j)->getLongitude(),
+											range,
+											48,
+											C_RADAR2);
+							}
+						}
 				}
 			}
 		}
@@ -2675,7 +2673,7 @@ void Globe::keyboardPress(Action* action, State* state)
 	if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleDetail)
 		toggleDetail();
 	else if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleRadar)
-		toggleRadarLines();
+		changeRadars();
 }
 
 /**

@@ -235,11 +235,11 @@ void BuildBaseState::hoverRedraw()
 
 	if (Options::globeRadarLines == true
 		&& AreSameTwo(
-					_latPre, lat,
-					_lonPre, lon) == false)
+					_lonPre, lon,
+					_latPre, lat) == false)
 	{
-		_latPre = lat;
 		_lonPre = lon;
+		_latPre = lat;
 		_globe->invalidate();
 	}
 }

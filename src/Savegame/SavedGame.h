@@ -97,7 +97,18 @@ enum EndType
 };
 
 /**
- * Enumerator for the current save-mode.
+ * Enumerator for the radar-detail shown on the Globe.
+ */
+enum GlobeRadarDetail
+{
+	GRD_NONE,	// 0
+	GRD_CRAFT,	// 1
+	GRD_BASE,	// 2
+	GRD_ALL		// 3
+};
+
+/**
+ * Enumerator for the save-mode.
  */
 enum SaveMode
 {
@@ -161,9 +172,7 @@ private:
 		_detailGlobe,
 		_ironman,
 		_warnedFunds;
-	int
-		_detailRadar,
-		_monthsElapsed;
+	int _monthsElapsed;
 	size_t
 		_dfZoom,
 		_globeZoom;
@@ -176,6 +185,7 @@ private:
 
 	DifficultyLevel _difficulty;
 	EndType _end;
+	GlobeRadarDetail _detailRadar;
 
 	AlienStrategy* _alienStrategy;
 	GameTime* _time;
@@ -479,19 +489,10 @@ private:
 		bool toggleGlobeDetail();
 		/// Checks globe-detail.
 		bool isGlobeDetail() const;
-		/// Sets the radar-detail.
-		void setRadarDetail(int detail);
-		/// Gets the radar-detail.
-		int getRadarDetail() const;
-
-/*		/// Toggles the current state of the radar-line drawing.
-		void toggleRadarLines();
-		/// Gets the current state of the radar-line drawing.
-		bool getRadarLines();
-		/// Toggles the current state of the detail drawing.
-		void toggleDetail();
-		/// Gets the current state of the detail drawing.
-		bool getDetail(); */
+		/// Sets the level of radar-detail.
+		void setRadarDetail(GlobeRadarDetail detail);
+		/// Gets the level of radar-detail.
+		GlobeRadarDetail getRadarDetail() const;
 
 		/// Gets the list of dead-soldiers.
 		std::vector<SoldierDead*>* getDeadSoldiers();

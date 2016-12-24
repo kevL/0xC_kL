@@ -142,7 +142,7 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_debugArgDone(false),
 		_debugCountryLines(false),
 		_detailGlobe(true),
-		_detailRadar(2)
+		_detailRadar(GRD_BASE)
 //		_selectedBase(0),
 //		_lastselectedArmor("STR_ARMOR_NONE_UC")
 {
@@ -434,7 +434,7 @@ void SavedGame::load(
 		//Log(LOG_INFO) << ". reSeed x= " << RNG::getSeed();
 	}
 
-	int diff (doc["difficulty"].as<int>(_difficulty));
+	int diff (doc["difficulty"].as<int>(static_cast<int>(_difficulty)));
 	if (diff < 0) // safety.
 	{
 		diff = 0;
@@ -442,7 +442,7 @@ void SavedGame::load(
 	}
 	_difficulty = static_cast<DifficultyLevel>(diff);
 
-	_end = static_cast<EndType>(doc["end"].as<int>(_end));
+	_end = static_cast<EndType>(doc["end"].as<int>(static_cast<int>(_end)));
 
 	_monthsElapsed			= doc["monthsElapsed"]		.as<int>(_monthsElapsed);
 	_warnedFunds			= doc["warnedFunds"]		.as<bool>(_warnedFunds);
@@ -456,11 +456,12 @@ void SavedGame::load(
 	_expenditure			= doc["expenditure"]		.as<std::vector<int64_t>>(_expenditure);
 	_ids					= doc["ids"]				.as<std::map<std::string, int>>(_ids);
 	_detailGlobe			= doc["detailGlobe"]		.as<bool>(_detailGlobe);
-	_detailRadar			= doc["detailRadar"]		.as<int>(_detailRadar);
+
+	_detailRadar = static_cast<GlobeRadarDetail>(doc["detailRadar"].as<int>(static_cast<int>(_detailRadar)));
 
 	_globeLon	= doc["globeLon"].as<double>(_globeLon);
 	_globeLat	= doc["globeLat"].as<double>(_globeLat);
-	_globeZoom	= static_cast<size_t>(doc["globeZoom"].as<int>(_globeZoom));
+	_globeZoom	= static_cast<size_t>(doc["globeZoom"].as<int>(static_cast<int>(_globeZoom)));
 
 
 	Log(LOG_INFO) << ". load countries";
@@ -723,7 +724,7 @@ void SavedGame::save(const std::string& file) const
 	node["expenditure"]			= _expenditure;
 	node["ids"]					= _ids;
 	node["detailGlobe"]			= _detailGlobe;
-	node["detailRadar"]			= _detailRadar;
+	node["detailRadar"]			= static_cast<int>(_detailRadar);
 
 	node["globeLon"]	= serializeDouble(_globeLon);
 	node["globeLat"]	= serializeDouble(_globeLat);
@@ -2246,19 +2247,19 @@ bool SavedGame::isGlobeDetail() const
 }
 
 /**
- * Sets the radar-detail.
- * @param detail - value for radar-detail
+ * Sets the level of radar-detail.
+ * @param detail - value for radar-detail (SavedGame.h)
  */
-void SavedGame::setRadarDetail(int detail)
+void SavedGame::setRadarDetail(GlobeRadarDetail detail)
 {
 	_detailRadar = detail;
 }
 
 /**
- * Gets the radar-detail.
- * @return, value of radar-detail
+ * Gets the level of radar-detail.
+ * @return, value of radar-detail (SavedGame.h)
  */
-int SavedGame::getRadarDetail() const
+GlobeRadarDetail SavedGame::getRadarDetail() const
 {
 	return _detailRadar;
 }
