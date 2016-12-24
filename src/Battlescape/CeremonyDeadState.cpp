@@ -43,7 +43,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements for Lost in the Medals screen post-mission.
+ * Initializes all the elements for Lost in the Medals screen post-tactical.
  * @param soldiersLost - vector of pointers to SoldierDead objects
  */
 CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
@@ -86,7 +86,7 @@ CeremonyDeadState::CeremonyDeadState(std::vector<SoldierDead*> soldiersLost)
 //	_lstSoldiersLost->setBackground(_window);
 //	_lstSoldiersLost->setSelectable();
 
-//	_lstAwards->setColor(GREEN); // note, is Olive in CeremonyState
+//	_lstAwards->setColor(GREEN); // NOTE: Olive in CeremonyState.
 //	_lstAwards->setColumns(2, 200,77);
 //	_lstAwards->setBackground(_window);
 //	_lstAwards->setSelectable();
@@ -266,6 +266,7 @@ void CeremonyDeadState::btnOkClick(Action*)
 
 /**
  * Shows the Medal description.
+ * @param action - pointer to an Action
  *
 void CeremonyDeadState::lstInfoMouseOver(Action*)
 {
@@ -277,6 +278,7 @@ void CeremonyDeadState::lstInfoMouseOver(Action*)
 } */
 /**
  * Clears the Medal description.
+ * @param action - pointer to an Action
  *
 void CeremonyDeadState::lstInfoMouseOut(Action*)
 {

@@ -42,7 +42,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Ceremony screen post-mission.
+ * Initializes all the elements in the Ceremony screen post-tactical.
  * @param soldiersMedalled - vector of pointers to Soldier objects
  */
 CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
@@ -72,7 +72,7 @@ CeremonyState::CeremonyState(std::vector<Soldier*> soldiersMedalled)
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_lstSoldiers->setColor(OLIVE); // note is Green in CeremonyDeadState
+	_lstSoldiers->setColor(OLIVE); // NOTE: Green in CeremonyDeadState.
 	_lstSoldiers->setColumns(2, 200,77);
 	_lstSoldiers->setBackground(_window);
 	_lstSoldiers->setSelectable();
@@ -231,6 +231,7 @@ void CeremonyState::btnOkClick(Action*)
 
 /**
  * Shows the Award description.
+ * @param action - pointer to an Action
  */
 void CeremonyState::lstInfoMouseOver(Action*)
 {
@@ -243,6 +244,7 @@ void CeremonyState::lstInfoMouseOver(Action*)
 
 /**
  * Clears the Award description.
+ * @param action - pointer to an Action
  */
 void CeremonyState::lstInfoMouseOut(Action*)
 {

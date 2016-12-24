@@ -584,7 +584,7 @@ void DebriefingState::btnOkClick(Action*)
 				_game->pushState(new DebriefExtraState(
 													_base,
 													_battleSave->getOperation(),
-													_surplusItems,
+													_surplusItems, // NOTE: Does not include special tile-types.
 													_lostProperty,
 													_solStatIncr));
 			}
