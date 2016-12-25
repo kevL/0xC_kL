@@ -231,15 +231,12 @@ void NextTurnState::nextTurn() // private.
 
 				Tile* const tile (_battleSave->getTileEngine()->checkForTerrainExplosives());
 				if (tile != nullptr)
-				{
-					const Position pos (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
 					_battleSave->getBattleGame()->stateBPushBack(new ExplosionBState(
 																				_battleSave->getBattleGame(),
-																				pos,
+																				Position::toVoxelSpaceCentered(tile->getPosition(), 10),
 																				nullptr, nullptr,
 																				tile,
 																				false, false, true));
-				}
 				break;
 			}
 

@@ -446,13 +446,13 @@ private:
 		/// Gets if an aLienBase control has been destroyed.
 		bool getControlDestroyed() const;
 
-		/// Get the name of the music-track to play.
+		/// Gets the music-track to play.
 //		std::string& getMusic();
-		/// Set the name of the music-track to play.
+		/// Sets the music-track to play.
 		void setMusic(std::string& track);
 		/// Sets variables for what music-track to play in a specified terrain.
 		void calibrateMusic(
-				std::string& music,
+				std::string& track,
 				std::string& terrain) const;
 
 		/// Sets the aLiens as having been pacified.
