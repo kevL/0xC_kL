@@ -20,7 +20,6 @@
 #include "TransferItemsState.h"
 
 //#include <algorithm>
-#include <iomanip>
 //#include <limits>
 //#include <map>
 //#include <sstream>

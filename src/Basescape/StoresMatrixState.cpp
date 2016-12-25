@@ -19,8 +19,6 @@
 
 #include "StoresMatrixState.h"
 
-//#include <sstream>
-
 #include "../Engine/Game.h"
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
@@ -139,7 +137,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 		qty[MTX_BASES]			{0,0,0,0,0,0,0,0},
 		qtyScientist[MTX_BASES]	{0,0,0,0,0,0,0,0},
 		qtyEngineer[MTX_BASES]	{0,0,0,0,0,0,0,0},
-		freeSpace;
+		freeStorage;
 
 	for (size_t
 		i = 0u;
@@ -153,26 +151,23 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 			qtyEngineer[i]	= base->getTotalEngineers();
 
 			wst = base->getLabel().substr(0,4);
-			freeSpace = static_cast<int>(static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.5);
+			freeStorage = static_cast<int>(static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.5);
 
 			std::wostringstream woststr;
 			woststr	<< wst
 					<< L"\n"
-					<< freeSpace;
-//					<< std::fixed
-//					<< std::setprecision(1)
-//					<< static_cast<double>(base->getTotalStores()) - base->getUsedStores() + 0.05;
+					<< freeStorage;
 
 			switch (i)
 			{
-				case 0: _txtBase_0->setText(woststr.str().c_str()); break;
-				case 1: _txtBase_1->setText(woststr.str().c_str()); break;
-				case 2: _txtBase_2->setText(woststr.str().c_str()); break;
-				case 3: _txtBase_3->setText(woststr.str().c_str()); break;
-				case 4: _txtBase_4->setText(woststr.str().c_str()); break;
-				case 5: _txtBase_5->setText(woststr.str().c_str()); break;
-				case 6: _txtBase_6->setText(woststr.str().c_str()); break;
-				case 7: _txtBase_7->setText(woststr.str().c_str());
+				case 0u: _txtBase_0->setText(woststr.str()); break;
+				case 1u: _txtBase_1->setText(woststr.str()); break;
+				case 2u: _txtBase_2->setText(woststr.str()); break;
+				case 3u: _txtBase_3->setText(woststr.str()); break;
+				case 4u: _txtBase_4->setText(woststr.str()); break;
+				case 5u: _txtBase_5->setText(woststr.str()); break;
+				case 6u: _txtBase_6->setText(woststr.str()); break;
+				case 7u: _txtBase_7->setText(woststr.str());
 			}
 		}
 	}

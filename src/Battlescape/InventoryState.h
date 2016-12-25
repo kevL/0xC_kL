@@ -36,6 +36,7 @@ class RuleItem;
 class SavedBattleGame;
 class Surface;
 class Text;
+class Timer;
 
 
 /**

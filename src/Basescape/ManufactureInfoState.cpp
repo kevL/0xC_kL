@@ -21,7 +21,6 @@
 
 //#include <algorithm>
 //#include <limits>
-#include <iomanip>
 
 #include "../Interface/ArrowButton.h"
 #include "../Interface/Text.h"

@@ -20,7 +20,6 @@
 #include "PurchaseState.h"
 
 //#include <algorithm>
-#include <iomanip>
 //#include <limits>
 //#include <map>
 //#include <sstream>
@@ -144,9 +143,7 @@ PurchaseState::PurchaseState(Base* const base)
 
 	_txtItem->setText(tr("STR_ITEM"));
 
-	std::wostringstream woststr;
-	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
-	_txtStorage->setText(woststr.str());
+	_txtStorage->setText(_base->storesDeltaFormat());
 	_txtStorage->setAlign(ALIGN_RIGHT);
 	_txtStorage->setColor(WHITE);
 

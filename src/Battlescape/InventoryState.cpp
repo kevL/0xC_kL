@@ -37,6 +37,7 @@
 #include "../Engine/Screen.h"
 #include "../Engine/Sound.h"
 #include "../Engine/SurfaceSet.h"
+#include "../Engine/Timer.h"
 
 #include "../Interface/BattlescapeButton.h"
 #include "../Interface/NumberText.h"

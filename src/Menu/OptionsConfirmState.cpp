@@ -117,9 +117,9 @@ void OptionsConfirmState::countdown()
 {
 	--_countdown;
 
-	std::wostringstream ststr;
-	ststr << std::setfill(L'0') << std::setw(2) << _countdown;
-	_txtTimer->setText(tr("STR_DISPLAY_OPTIONS_REVERT").arg(ststr.str()));
+	std::wostringstream woststr;
+	woststr << std::setfill(L'0') << std::setw(2) << _countdown;
+	_txtTimer->setText(tr("STR_DISPLAY_OPTIONS_REVERT").arg(woststr.str()));
 
 	if (_countdown == 0)
 		btnNoClick(nullptr);

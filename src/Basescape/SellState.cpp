@@ -22,7 +22,6 @@
 //#include <algorithm>
 //#include <climits>
 //#include <cmath>
-#include <iomanip>
 //#include <sstream>
 
 #include "../Engine/Action.h"
@@ -144,9 +143,7 @@ SellState::SellState(Base* const base)
 						.arg(Text::formatCurrency(_game->getSavedGame()->getFunds())));
 	_txtItem->setText(tr("STR_ITEM"));
 
-	std::wostringstream woststr;
-	woststr << _base->getTotalStores() << L":" << std::fixed << std::setprecision(1) << _base->getUsedStores();
-	_txtStorage->setText(woststr.str());
+	_txtStorage->setText(_base->storesDeltaFormat());
 	_txtStorage->setAlign(ALIGN_RIGHT);
 	_txtStorage->setColor(WHITE);
 

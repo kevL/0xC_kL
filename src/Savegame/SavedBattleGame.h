@@ -182,7 +182,7 @@ private:
 		/// Gets a pointer to the tiles.
 		Tile** getTiles() const;
 
-		/// Sets the dimensions of the map and initializes it.
+		/// Sets the dimensions of the map and initializes Tiles.
 		void initMap(
 				const int mapsize_x,
 				const int mapsize_y,

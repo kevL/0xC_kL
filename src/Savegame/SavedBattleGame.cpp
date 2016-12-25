@@ -215,13 +215,16 @@ SavedBattleGame::~SavedBattleGame()
 {
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "Delete SavedBattleGame";
-	for (size_t
-			i = 0u;
-			i != _qtyTilesTotal;
-			++i)
-		delete _tiles[i];
+	if (_tiles != nullptr)
+	{
+		for (size_t
+				i = 0u;
+				i != _qtyTilesTotal;
+				++i)
+			delete _tiles[i];
 
-	delete[] _tiles;
+		delete[] _tiles;
+	}
 
 	for (std::vector<MapDataSet*>::const_iterator
 			i = _battleDataSets.begin();
@@ -279,15 +282,19 @@ void SavedBattleGame::load(
 		Ruleset* const rules)
 {
 	//Log(LOG_INFO) << "SavedBattleGame::load()";
-	_mapsize_x		= node["width"]		.as<int>(_mapsize_x);
-	_mapsize_y		= node["length"]	.as<int>(_mapsize_y);
-	_mapsize_z		= node["height"]	.as<int>(_mapsize_z);
-	_tacticalType	= node["type"]		.as<std::string>(_tacticalType);
-	_tacticalShade	= node["shade"]		.as<int>(_tacticalShade);
-	_turn			= node["turn"]		.as<int>(_turn);
 	_terrain		= node["terrain"]	.as<std::string>(_terrain);
+	_turn			= node["turn"]		.as<int>(_turn);
+	_tacticalShade	= node["shade"]		.as<int>(_tacticalShade);
 
-	setTacType(_tacticalType);
+	setTacType(_tacticalType = node["type"].as<std::string>(_tacticalType));
+
+
+	Log(LOG_INFO) << ". init map";
+	initMap(									// NOTE: This clears '_battleDataSets' (as well as '_nodes' and '_tiles')
+		node["width"]	.as<int>(_mapsize_x),	// therefore it should run *before* loading '_battleDataSets' etc.
+		node["length"]	.as<int>(_mapsize_y),	// It runs regularly when creating (or resizing) a tactical during BattlescapeGenerator::generateMap()
+		node["height"]	.as<int>(_mapsize_z));	// -- but also runs for 2nd-stage and fake-inventories.
+												// NOTE: The vars '_mapsize_x' '_mapsize_y' '_mapsize_z' are set in initMap().
 
 	Log(LOG_INFO) << ". load battle data sets";
 	for (YAML::const_iterator
@@ -298,11 +305,6 @@ void SavedBattleGame::load(
 		_battleDataSets.push_back(rules->getMapDataSet(i->as<std::string>())); // NOTE: Ruleset must be non-const to push_back().
 	}
 
-	Log(LOG_INFO) << ". init map";
-	initMap(
-		_mapsize_x,
-		_mapsize_y,
-		_mapsize_z);
 
 	if (!node["tileTotalBytesPer"]) // binary tile data not found, load old-style text tiles :(
 	{
@@ -358,6 +360,7 @@ void SavedBattleGame::load(
 			readBuffer += serKey.totalBytes - serKey.index;	// readBuffer is now incremented strictly by totalBytes in case there are obsolete fields present in the data
 		}
 	}
+
 
 	if (_tacType == TCT_BASEDEFENSE)
 	{
@@ -886,47 +889,43 @@ Tile** SavedBattleGame::getTiles() const
 }
 
 /**
- * Deletes the old and initializes a new array of Tiles.
- * @param mapsize_x -
- * @param mapsize_y -
- * @param mapsize_z -
+ * Deletes the old and initializes a new array of Tiles after clearing MCD types
+ * and deleting any/all old Nodes.
+ * @param mapsize_x - width on x-axis
+ * @param mapsize_y - length on y-axis
+ * @param mapsize_z - height on z-axis
  */
 void SavedBattleGame::initMap(
 		const int mapsize_x,
 		const int mapsize_y,
 		const int mapsize_z)
 {
-	if (_nodes.empty() == false) // delete old stuff ->
-	{
-		for (std::vector<Node*>::const_iterator
-				i = _nodes.begin();
-				i != _nodes.end();
-				++i)
-		{
-			delete *i;
-		}
-		_nodes.clear();
-		_battleDataSets.clear();
-	}
+	_battleDataSets.clear(); // clear MCD types.
 
-	if (_tiles != nullptr) // delete old stuff ->
+	for (std::vector<Node*>::const_iterator // delete Nodes ->
+			i = _nodes.begin();
+			i != _nodes.end();
+			++i)
 	{
-		_qtyTilesTotal = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
+		delete *i;
+	}
+	_nodes.clear();
+
+	if (_tiles != nullptr) // delete Tiles ->
+	{
 		for (size_t
 				i = 0u;
 				i != _qtyTilesTotal;
 				++i)
-		{
 			delete _tiles[i];
-		}
+
 		delete[] _tiles;
 	}
 
-
-	_mapsize_x = mapsize_x; // create new Tiles ->
-	_mapsize_y = mapsize_y;
-	_mapsize_z = mapsize_z;
-	_qtyTilesTotal = static_cast<size_t>(_mapsize_x * _mapsize_y * _mapsize_z);
+	_qtyTilesTotal = static_cast<size_t>( // create Tiles ->
+					  (_mapsize_x = mapsize_x)
+					* (_mapsize_y = mapsize_y)
+					* (_mapsize_z = mapsize_z));
 
 	_tiles = new Tile*[_qtyTilesTotal];
 
