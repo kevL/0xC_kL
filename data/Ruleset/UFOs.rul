@@ -30,7 +30,8 @@ ufos:
     escape: 230
     tacticalTerrain:
       rule: UFO_110
-      dataSets:        - U_EXT02
+      dataSets:
+        - U_EXT02
         - U_WALL02
         - U_BITS
         - UFOL83
@@ -73,7 +74,8 @@ ufos:
     escape: 270
     tacticalTerrain:
       rule: UFO_120
-      dataSets:        - U_EXT02
+      dataSets:
+        - U_EXT02
         - U_WALL02
         - U_BITS
         - UFOL83
@@ -131,7 +133,8 @@ ufos:
     escape: 330
     tacticalTerrain:
       rule: UFO_130
-      dataSets:        - U_EXT02
+      dataSets:
+        - U_EXT02
         - U_WALL02
         - U_DISEC3
         - U_BITS
@@ -187,7 +190,8 @@ ufos:
     escape: 360
     tacticalTerrain:
       rule: UFO_140
-      dataSets:        - U_EXT02
+      dataSets:
+        - U_EXT02
         - U_WALL02
         - U_OPER2
         - U_BITS
@@ -240,7 +244,8 @@ ufos:
     escape: 1600
     tacticalTerrain:
       rule: UFO_150
-      dataSets:        - U_EXT02
+      dataSets:
+        - U_EXT02
         - U_WALL02
         - U_PODS
         - U_BITS
@@ -284,7 +289,8 @@ ufos:
     escape: 2400
     tacticalTerrain:
       rule: UFO_160
-      dataSets:        - U_EXT02
+      dataSets:
+        - U_EXT02
         - U_WALL02
         - U_PODS
         - U_BITS
@@ -321,7 +327,8 @@ ufos:
     escape: 1200
     tacticalTerrain:
       rule: UFO_170
-      dataSets:        - U_EXT02
+      dataSets:
+        - U_EXT02
         - U_WALL02
         - U_DISEC2
         - U_BITS
