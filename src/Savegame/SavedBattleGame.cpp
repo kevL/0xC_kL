@@ -294,7 +294,7 @@ void SavedBattleGame::load(
 		node["width"]	.as<int>(_mapsize_x),	// therefore it should run *before* loading '_battleDataSets' etc.
 		node["length"]	.as<int>(_mapsize_y),	// It runs regularly when creating (or resizing) a tactical during BattlescapeGenerator::generateMap()
 		node["height"]	.as<int>(_mapsize_z));	// -- but also runs for 2nd-stage and fake-inventories.
-												// NOTE: The vars '_mapsize_x' '_mapsize_y' '_mapsize_z' are set in initMap().
+												// NOTE: The vars '_mapsize_x' '_mapsize_y' '_mapsize_z' and '_qtyTilesTotal' are set in initMap().
 
 	Log(LOG_INFO) << ". load battle data sets";
 	for (YAML::const_iterator

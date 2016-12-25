@@ -600,10 +600,10 @@ void createOptions()
 	_info.push_back(OptionInfo("battleAlienSpeed",						&battleAlienSpeed, 30));
 	_info.push_back(OptionInfo("battlePreviewPath",						reinterpret_cast<int*>(&battlePreviewPath), PATH_NONE)); // requires double-click to confirm moves
 	_info.push_back(OptionInfo("fpsCounter",							&fpsCounter,       false));
-	_info.push_back(OptionInfo("globeDetail",							&globeDetail,      true));
-	_info.push_back(OptionInfo("globeRadarLines",						&globeRadarLines,  true));
+//	_info.push_back(OptionInfo("globeDetail",							&globeDetail,      true));
+//	_info.push_back(OptionInfo("globeRadarLines",						&globeRadarLines,  true));
 	_info.push_back(OptionInfo("globeFlightPaths",						&globeFlightPaths, true));
-	_info.push_back(OptionInfo("globeAllRadarsOnBaseBuild",				&globeAllRadarsOnBaseBuild, true));
+//	_info.push_back(OptionInfo("globeAllRadarsOnBaseBuild",				&globeAllRadarsOnBaseBuild, true));
 	_info.push_back(OptionInfo("pauseMode",								&pauseMode, 0));
 	_info.push_back(OptionInfo("battleNotifyDeath",						&battleNotifyDeath, false));
 	_info.push_back(OptionInfo("showFundsOnGeoscape",					&showFundsOnGeoscape, false));

@@ -412,7 +412,7 @@ private:
 		/// Sets the state of build-base hover.
 		void setBuildBaseRadars(bool hover = true);
 		/// Sets the build-base hover coordinates.
-		void setBuildBaseHoverPos(
+		void setBuildBaseHoverCoords(
 				double lon,
 				double lat);
 

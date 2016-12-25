@@ -156,9 +156,6 @@ BuildBaseState::BuildBaseState(
 		_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&BuildBaseState::btnCancelClick),
 									Options::keyCancel);
 	}
-
-	_showRadar = Options::globeRadarLines;
-	Options::globeRadarLines = true;
 }
 
 /**
@@ -166,9 +163,6 @@ BuildBaseState::BuildBaseState(
  */
 BuildBaseState::~BuildBaseState()
 {
-	if (Options::globeRadarLines != _showRadar)
-		Options::globeRadarLines = false;
-
 	delete _hoverTimer;
 }
 
@@ -178,8 +172,9 @@ BuildBaseState::~BuildBaseState()
 void BuildBaseState::init()
 {
 	State::init();
-	_globe->onMouseOver(static_cast<ActionHandler>(&BuildBaseState::globeHover));
+
 	_globe->setBuildBaseRadars();
+	_globe->onMouseOver(static_cast<ActionHandler>(&BuildBaseState::globeHover));
 }
 
 /**
@@ -218,7 +213,7 @@ void BuildBaseState::globeHover(Action* action)
 /**
  * Redraws stuff as the cursor is moved over the Globe.
  */
-void BuildBaseState::hoverRedraw()
+void BuildBaseState::hoverRedraw() // private.
 {
 	double
 		lon,lat;
@@ -229,18 +224,16 @@ void BuildBaseState::hoverRedraw()
 
 	if (isNaNorInf(lon,lat) == false)
 	{
-		_globe->setBuildBaseHoverPos(lon,lat);
-		_globe->setBuildBaseRadars();
-	}
+		_globe->setBuildBaseHoverCoords(lon,lat);
 
-	if (Options::globeRadarLines == true
-		&& AreSameTwo(
+		if (AreSameTwo(
 					_lonPre, lon,
 					_latPre, lat) == false)
-	{
-		_lonPre = lon;
-		_latPre = lat;
-		_globe->invalidate();
+		{
+			_lonPre = lon;
+			_latPre = lat;
+			_globe->invalidate();
+		}
 	}
 }
 
@@ -299,6 +292,8 @@ void BuildBaseState::globeClick(Action* action)
  */
 void BuildBaseState::btnCancelClick(Action*)
 {
+	_globe->setBuildBaseRadars(false);
+
 	delete _base;
 	_game->popState();
 }

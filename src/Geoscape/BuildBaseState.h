@@ -44,9 +44,7 @@ class BuildBaseState
 {
 
 private:
-	bool
-		_isFirstBase,
-		_showRadar;
+	bool _isFirstBase;
 	int
 		_mX,
 		_mY;
@@ -61,6 +59,9 @@ private:
 	Timer* _hoverTimer;
 	Window* _window;
 //	InteractiveSurface* _btnRotateLeft, * _btnRotateRight, * _btnRotateUp, * _btnRotateDown, * _btnZoomIn, * _btnZoomOut;
+
+	/// Handler for redrawing hover (delayed).
+	void hoverRedraw();
 
 
 	public:
@@ -83,8 +84,6 @@ private:
 		void globeClick(Action* action);
 		/// Handler for mouse hovering the Globe.
 		void globeHover(Action* action);
-		/// Handler for redrawing hover (delayed).
-		void hoverRedraw();
 
 		/// Handler for clicking the cancel-button.
 		void btnCancelClick(Action* action);

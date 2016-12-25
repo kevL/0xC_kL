@@ -943,12 +943,10 @@ bool Globe::insideLand(
  */
 bool Globe::toggleDetail()
 {
-//	Options::globeDetail = !Options::globeDetail; // TODO: Remove this from Options.
 	_globeDetail = _playSave->toggleGlobeDetail();
 	drawDetail();
 
 	return _globeDetail;
-//	return Options::globeDetail;
 }
 
 /**
@@ -961,7 +959,6 @@ GlobeRadarDetail Globe::changeRadars()
 	{
 		case GRD_NONE:
 			_playSave->setRadarDetail(_radarDetail = GRD_CRAFT);
-//			Options::globeRadarLines = true; // TODO: Remove this from Options.
 			break;
 
 		case GRD_CRAFT:
@@ -974,7 +971,6 @@ GlobeRadarDetail Globe::changeRadars()
 
 		case GRD_ALL:
 			_playSave->setRadarDetail(_radarDetail = GRD_NONE);
-//			Options::globeRadarLines = false;
 	}
 	drawRadars();
 
@@ -1411,8 +1407,7 @@ void Globe::drawRadars()
 	_srfLayerRadars->clear();
 
 	_srfLayerRadars->lock();
-	if (_forceRadars == true // placing a Base.
-		&& Options::globeAllRadarsOnBaseBuild == true)
+	if (_forceRadars == true) //&& Options::globeAllRadarsOnBaseBuild == true // placing a Base.
 	{
 		int range;
 
@@ -1433,7 +1428,7 @@ void Globe::drawRadars()
 		}
 	}
 
-	if (_radarDetail != GRD_NONE) //&& Options::globeRadarLines == true
+	if (_radarDetail != GRD_NONE)
 	{
 		int
 			range,
@@ -1998,7 +1993,6 @@ void Globe::drawDetail()
 	double
 		lon,lat;
 
-//	if (Options::globeDetail == true
 	if (_globeDetail == true && _zoom > 0u) // draw the Country borders
 	{
 		double
@@ -2064,7 +2058,6 @@ void Globe::drawDetail()
 		}
 	}
 
-//	if (Options::globeDetail == true)
 	if (_globeDetail == true)
 	{
 		Text* const label (new Text(100,9));
@@ -2741,7 +2734,7 @@ void Globe::setBuildBaseRadars(bool hover)
  * @param lon - the longitude
  * @param lat - the latitude
  */
-void Globe::setBuildBaseHoverPos(
+void Globe::setBuildBaseHoverCoords(
 		double lon,
 		double lat)
 {

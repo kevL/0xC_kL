@@ -56,8 +56,8 @@ private:
 		* _txtGlobeDetails,
 		* _txtOptions;
 	ToggleTextButton
-		* _btnGlobeCountries,
-		* _btnGlobeRadars,
+//		* _btnGlobeCountries,
+//		* _btnGlobeRadars,
 		* _btnGlobePaths;
 	ToggleTextButton* _btnShowFunds;
 
@@ -77,9 +77,9 @@ private:
 		/// Handler for changing the clock speed slider.
 		void slrClockSpeedChange(Action* action);
 		/// Handler for clicking the Country Borders button.
-		void btnGlobeCountriesClick(Action* action);
+//		void btnGlobeCountriesClick(Action* action);
 		/// Handler for clicking the Radar Ranges button.
-		void btnGlobeRadarsClick(Action* action);
+//		void btnGlobeRadarsClick(Action* action);
 		/// Handler for clicking the Flight Paths button.
 		void btnGlobePathsClick(Action* action);
 		/// Handler for clicking the Show Funds button.

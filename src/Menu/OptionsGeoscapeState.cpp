@@ -55,8 +55,8 @@ OptionsGeoscapeState::OptionsGeoscapeState(OptionsOrigin origin)
 	_slrClockSpeed		= new Slider(104, 16, 94, 50);
 
 	_txtGlobeDetails	= new Text(114, 9, 94, 82);
-	_btnGlobeCountries	= new ToggleTextButton(104, 16, 94, 92);
-	_btnGlobeRadars		= new ToggleTextButton(104, 16, 94, 110);
+//	_btnGlobeCountries	= new ToggleTextButton(104, 16, 94, 92);
+//	_btnGlobeRadars		= new ToggleTextButton(104, 16, 94, 110);
 	_btnGlobePaths		= new ToggleTextButton(104, 16, 94, 128);
 
 	_txtOptions			= new Text(114, 9, 206, 82);
@@ -72,8 +72,8 @@ OptionsGeoscapeState::OptionsGeoscapeState(OptionsOrigin origin)
 	add(_slrClockSpeed, "button", "geoscapeMenu");
 
 	add(_txtGlobeDetails, "text", "geoscapeMenu");
-	add(_btnGlobeCountries, "button", "geoscapeMenu");
-	add(_btnGlobeRadars, "button", "geoscapeMenu");
+//	add(_btnGlobeCountries, "button", "geoscapeMenu");
+//	add(_btnGlobeRadars, "button", "geoscapeMenu");
 	add(_btnGlobePaths, "button", "geoscapeMenu");
 
 	add(_txtOptions, "text", "geoscapeMenu");
@@ -129,16 +129,16 @@ OptionsGeoscapeState::OptionsGeoscapeState(OptionsOrigin origin)
 
 	_txtGlobeDetails->setText(tr("STR_GLOBE_DETAILS"));
 
-	_btnGlobeCountries->setText(tr("STR_GLOBE_COUNTRIES"));
-	_btnGlobeCountries->setPressed(Options::globeDetail);
-	_btnGlobeCountries->onMouseClick(	static_cast<ActionHandler>(&OptionsGeoscapeState::btnGlobeCountriesClick));
+//	_btnGlobeCountries->setText(tr("STR_GLOBE_COUNTRIES"));
+//	_btnGlobeCountries->setPressed(Options::globeDetail);
+//	_btnGlobeCountries->onMouseClick(	static_cast<ActionHandler>(&OptionsGeoscapeState::btnGlobeCountriesClick));
 //	_btnGlobeCountries->onMouseIn(		static_cast<ActionHandler>(&OptionsGeoscapeState::txtTooltipIn));
 //	_btnGlobeCountries->onMouseOut(		static_cast<ActionHandler>(&OptionsGeoscapeState::txtTooltipOut));
 //	_btnGlobeCountries->setTooltip("STR_GLOBE_COUNTRIES_DESC");
 
-	_btnGlobeRadars->setText(tr("STR_GLOBE_RADARS"));
-	_btnGlobeRadars->setPressed(Options::globeRadarLines);
-	_btnGlobeRadars->onMouseClick(	static_cast<ActionHandler>(&OptionsGeoscapeState::btnGlobeRadarsClick));
+//	_btnGlobeRadars->setText(tr("STR_GLOBE_RADARS"));
+//	_btnGlobeRadars->setPressed(Options::globeRadarLines);
+//	_btnGlobeRadars->onMouseClick(	static_cast<ActionHandler>(&OptionsGeoscapeState::btnGlobeRadarsClick));
 //	_btnGlobeRadars->onMouseIn(		static_cast<ActionHandler>(&OptionsGeoscapeState::txtTooltipIn));
 //	_btnGlobeRadars->onMouseOut(	static_cast<ActionHandler>(&OptionsGeoscapeState::txtTooltipOut));
 //	_btnGlobeRadars->setTooltip("STR_GLOBE_RADARS_DESC");
@@ -205,20 +205,19 @@ void OptionsGeoscapeState::slrClockSpeedChange(Action*)
 /**
  * Changes the Globe Country Borders option.
  * @param action - pointer to an Action
- */
+ *
 void OptionsGeoscapeState::btnGlobeCountriesClick(Action*)
 {
 	Options::globeDetail = _btnGlobeCountries->getPressed();
-}
-
+} */
 /**
  * Changes the Globe Radar Ranges option.
  * @param action - pointer to an Action
- */
+ *
 void OptionsGeoscapeState::btnGlobeRadarsClick(Action*)
 {
 	Options::globeRadarLines = _btnGlobeRadars->getPressed();
-}
+} */
 
 /**
  * Changes the Globe Flight Paths option.
