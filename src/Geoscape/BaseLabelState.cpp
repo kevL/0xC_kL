@@ -131,7 +131,7 @@ void BaseLabelState::btnOkClick(Action*)
 	if (_isFirstBase == false)
 		_game->popState(); // <- ConfirmBuildBaseState
 
-	_globe->setBuildBaseRadars(false);
+	_globe->showBaseBuildRadars(false);
 	_game->pushState(new PlaceLiftState(
 									_base,
 									_globe,

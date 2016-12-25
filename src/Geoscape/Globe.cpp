@@ -2721,10 +2721,10 @@ void Globe::getPolygonShade(
 }
 
 /**
- * Sets the state of build-base hover.
+ * Shows or hides the build-base hover radars.
  * @param hover - true if hover (default true)
  */
-void Globe::setBuildBaseRadars(bool hover)
+void Globe::showBaseBuildRadars(bool hover)
 {
 	_forceRadars = hover;
 }
@@ -2734,7 +2734,7 @@ void Globe::setBuildBaseRadars(bool hover)
  * @param lon - the longitude
  * @param lat - the latitude
  */
-void Globe::setBuildBaseHoverCoords(
+void Globe::setBaseBuildHoverCoords(
 		double lon,
 		double lat)
 {

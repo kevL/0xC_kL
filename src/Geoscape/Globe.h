@@ -409,10 +409,10 @@ private:
 				double lat,
 				int* shade) const;
 
-		/// Sets the state of build-base hover.
-		void setBuildBaseRadars(bool hover = true);
+		/// Shows or hides the build-base hover radars.
+		void showBaseBuildRadars(bool hover = true);
 		/// Sets the build-base hover coordinates.
-		void setBuildBaseHoverCoords(
+		void setBaseBuildHoverCoords(
 				double lon,
 				double lat);
 

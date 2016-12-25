@@ -173,7 +173,7 @@ void BuildBaseState::init()
 {
 	State::init();
 
-	_globe->setBuildBaseRadars();
+	_globe->showBaseBuildRadars();
 	_globe->onMouseOver(static_cast<ActionHandler>(&BuildBaseState::globeHover));
 }
 
@@ -224,7 +224,7 @@ void BuildBaseState::hoverRedraw() // private.
 
 	if (isNaNorInf(lon,lat) == false)
 	{
-		_globe->setBuildBaseHoverCoords(lon,lat);
+		_globe->setBaseBuildHoverCoords(lon,lat);
 
 		if (AreSameTwo(
 					_lonPre, lon,
@@ -292,7 +292,7 @@ void BuildBaseState::globeClick(Action* action)
  */
 void BuildBaseState::btnCancelClick(Action*)
 {
-	_globe->setBuildBaseRadars(false);
+	_globe->showBaseBuildRadars(false);
 
 	delete _base;
 	_game->popState();
