@@ -47,11 +47,11 @@ class RuleTerrain
 private:
 	std::string
 		_basicArmor,
-		_type,
-		_script;
+		_script,
+		_type;
 
 	std::vector<std::string>
-		_civilianTypes,
+		_civTypes,
 		_musics;
 
 	std::vector<MapBlock*> _blocks;
@@ -64,43 +64,43 @@ private:
 		/// Destructs the RuleTerrain object.
 		~RuleTerrain();
 
-		/// Loads the terrain from YAML.
+		/// Loads the terrain-type from YAML.
 		void load(
 				const YAML::Node& node,
 				Ruleset* const rules);
 
-		/// Gets the RuleTerrain's type (used for MAP generation).
+		/// Gets the terrain's type.
 		const std::string& getType() const;
 
-		/// Gets the RuleTerrain's mapblocks.
+		/// Gets the terrain-type's list of MapBlocks.
 		const std::vector<MapBlock*>* getMapBlocks() const;
-		/// Gets the RuleTerrain's mapdatafiles.
+		/// Gets the terrain-type's list of MapDataSets (MCDs).
 		const std::vector<MapDataSet*>* getMapDataSets() const;
 
-		/// Gets a random MapBlock.
+		/// Gets a MapBlock in the terrain-type.
 		MapBlock* getTerrainBlock(
 				int sizeX,
 				int sizeY,
 				int group,
 				bool force = true) const;
-		/// Gets a MapBlock given its type.
+		/// Gets a MapBlock of a specified type in the terrain-type.
 		MapBlock* getTerrainBlock(const std::string& type) const;
 
-		/// Gets a MapData object.
+		/// Gets a MapData object (MCD tile-part) in the terrain-type.
 		MapData* getTerrainPart(
 				size_t* partId,
 				int* partSetId) const;
 
-		/// Gets the civilian types to use.
+		/// Gets the civilian-types that can appear in the terrain-type.
 		const std::vector<std::string>& getCivilianTypes() const;
 
-		/// Gets the generation script.
+		/// Gets the generation script for the terrain-type.
 		const std::string& getScriptType() const;
 
-		/// Gets the list of music to pick from.
+		/// Gets the list of music that can play in the terrain-type.
 		const std::vector<std::string>& getTerrainMusics() const;
 
-		/// Gets the pyjama type.
+		/// Gets the basic-armor-type of the terrain-type.
 		const std::string& getBasicArmorType() const;
 };
 

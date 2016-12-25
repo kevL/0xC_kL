@@ -7,13 +7,12 @@
 terrains:
   - type: AREA51URBAN
     script: AREA51URBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - AREA51W
       - AREA51X
       - AREA51Y
       - AREA51Z
-    mapBlocks:
+    blocks:
       - type: AREA51BASE00
         width: 10
         length: 10
@@ -460,14 +459,13 @@ terrains:
 
   - type: COMRCURBAN
     script: URBAN #was COMRCURBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - COMROADS
       - COMBITS
       - COMMERCE
       - COMFRN
       - COMDECOR
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN2
       - MALE_CIVILIAN3
@@ -475,7 +473,7 @@ terrains:
       - FEMALE_CIVILIAN
       - FEMALE_CIVILIAN2
       - FEMALE_CIVILIAN3
-    mapBlocks:
+    blocks:
       - type: COMRCURBAN00
         width: 10
         length: 10
@@ -555,11 +553,10 @@ terrains:
 
   - type: CULTA
     script: FARM
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - CULTIVAT
       - BARN
-    mapBlocks:
+    blocks:
       - type: CULTA00
         width: 10
         length: 10
@@ -623,11 +620,10 @@ terrains:
 
   - type: CULTAFARMA
     script: FARM #was DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - CULTIVAT
       - BARN
-    mapBlocks:
+    blocks:
       - type: CULTA00
         width: 10
         length: 10
@@ -760,11 +756,10 @@ terrains:
 
   - type: CULTAFARMB
     script: FARM #was DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - CULTIVAT
       - BARN
-    mapBlocks:
+    blocks:
       - type: CULTA00
         width: 10
         length: 10
@@ -849,14 +844,13 @@ terrains:
 
   - type: DAWNURBANA
     script: URBAN #was DAWNURBANA
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - DAWNROADS
       - DAWNURBITS
       - DAWNURBAN
       - DAWNFRNITURE
       - DAWNDECOR
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN3
       - MALE_CIVILIAN4
@@ -864,7 +858,7 @@ terrains:
       - FEMALE_CIVILIAN
       - FEMALE_CIVILIAN2
       - FEMALE_CIVILIAN3
-    mapBlocks:
+    blocks:
       - type: DAWNURBAN00
         width: 10
         length: 10
@@ -1010,14 +1004,13 @@ terrains:
 
   - type: DAWNURBANB
     script: URBAN #was DAWNURBANB
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - DAWNROADS
       - DAWNURBITS
       - DAWNURBAN
       - DAWNFRNITURE
       - DAWNDECOR
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN2
       - MALE_CIVILIAN3
@@ -1025,7 +1018,7 @@ terrains:
       - FEMALE_CIVILIAN
       - FEMALE_CIVILIAN2
       - FEMALE_CIVILIAN3
-    mapBlocks:
+    blocks:
       - type: DAWNURBAN40
         width: 10
         length: 10
@@ -1126,10 +1119,9 @@ terrains:
 
   - type: DESERT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - DESERT
-    mapBlocks:
+    blocks:
       - type: DESERT00
         width: 10
         length: 10
@@ -1172,11 +1164,10 @@ terrains:
 
   - type: DESERTMOUNT
     script: DEFAULT #was DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - DESERTMOUNT
       - DESERT
-    mapBlocks:
+    blocks:
       - type: DESERTMOUNT00
         width: 10
         length: 10
@@ -1237,12 +1228,11 @@ terrains:
 
   - type: DESERTTEMPLE
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - SANDS
       - ATLANTDESERT
       - DESERT
-    mapBlocks:
+    blocks:
       - type: ATLANTDESERT00
         width: 10
         length: 10
@@ -1287,10 +1277,9 @@ terrains:
 
   - type: FOREST
     script: DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - FOREST
-    mapBlocks:
+    blocks:
       - type: FOREST00
         width: 10
         length: 10
@@ -1332,12 +1321,11 @@ terrains:
 
   - type: FORESTMOUNT
     script: DEFAULT #was DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - FORESTMOUNT
       - FOREST
       - FORESTMOUNTBITS
-    mapBlocks:
+    blocks:
       - type: FORESTMOUNT00
         width: 10
         length: 10
@@ -1424,11 +1412,10 @@ terrains:
 
   - type: FORESTPOLAR
     script: POLAR
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - FORESTPOLAR
       - FOREST
-    mapBlocks:
+    blocks:
       - type: FORESTPOLAR00
         width: 10
         length: 10
@@ -1477,11 +1464,10 @@ terrains:
 
   - type: GRASSLANDDESERT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - GRASSLANDDESERT
       - GRASSLANDBITS
-    mapBlocks:
+    blocks:
       - type: DESERT00
         width: 10
         length: 10
@@ -1528,12 +1514,11 @@ terrains:
 
   - type: GRASSLANDDESERTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - GRASSLANDMOUNT
       - GRASSLANDDESERT
       - GRASSLANDBITS
-    mapBlocks:
+    blocks:
       - type: DESERTMOUNT00
         width: 10
         length: 10
@@ -1598,11 +1583,10 @@ terrains:
 
   - type: GRASSLANDFOREST
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - GRASSLANDFOREST
       - GRASSLANDBITS
-    mapBlocks:
+    blocks:
       - type: FOREST00
         width: 10
         length: 10
@@ -1648,12 +1632,11 @@ terrains:
 
   - type: GRASSLANDFORESTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - GRASSLANDMOUNT
       - GRASSLANDFOREST
       - GRASSLANDBITS
-    mapBlocks:
+    blocks:
       - type: FORESTMOUNT00
         width: 10
         length: 10
@@ -1744,13 +1727,12 @@ terrains:
 
   - type: INDUSTRIALUFO
     script: URBANUFO #was INDUSTRIALUFO
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - PORTROADS
       - PORTURBITS
       - ROADS
       - URBITS
-    mapBlocks:
+    blocks:
       - type: INDUSTRIALURBAN00
         width: 20
         length: 20
@@ -1810,18 +1792,17 @@ terrains:
 
   - type: INDUSTRIALURBAN
     script: URBAN #was INDUSTRIALURBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - PORTROADS
       - PORTURBITS
       - ROADS
       - URBITS
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN2
       - MALE_CIVILIAN4
       - FEMALE_CIVILIAN
-    mapBlocks:
+    blocks:
       - type: INDUSTRIALURBAN00
         width: 20
         length: 20
@@ -1894,10 +1875,9 @@ terrains:
 
   - type: JUNGLE
     script: JUNGLE
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - JUNGLE
-    mapBlocks:
+    blocks:
       - type: JUNGLE00
         width: 10
         length: 10
@@ -1940,11 +1920,10 @@ terrains:
 
   - type: JUNGLEMOUNT
     script: JUNGLE #was DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - JUNGLEMOUNT
       - JUNGLEBITS
-    mapBlocks:
+    blocks:
       - type: JUNGLEMOUNT00
         width: 10
         length: 10
@@ -1990,11 +1969,10 @@ terrains:
 
   - type: JUNGLEPOLAR
     script: POLAR
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - JUNGLEPOLAR
       - JUNGLEBITS
-    mapBlocks:
+    blocks:
       - type: JUNGLEPOLAR00
         width: 10
         length: 10
@@ -2043,12 +2021,11 @@ terrains:
 
   - type: JUNGLETEMPLE
     script: JUNGLE #was DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - SANDS
       - MUJUNGLE
       - JUNGLEBITS
-    mapBlocks:
+    blocks:
       - type: MUJUNGLE00
         width: 10
         length: 10
@@ -2099,14 +2076,13 @@ terrains:
 
   - type: MADURBAN
     script: URBAN #was MADURBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - ROADS
       - URBITS
       - URBAN
       - FRNITURE
       - MADDECOR
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN3
       - MALE_CIVILIAN4
@@ -2114,7 +2090,7 @@ terrains:
       - FEMALE_CIVILIAN
       - FEMALE_CIVILIAN2
       - FEMALE_CIVILIAN3
-    mapBlocks:
+    blocks:
       - type: URBAN00
         width: 10
         length: 10
@@ -2237,14 +2213,13 @@ terrains:
 
   - type: MADURBANUFO
     script: URBANUFO #was MADURBANUFO
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - ROADS
       - URBITS
       - URBAN
       - FRNITURE
       - MADDECOR
-    mapBlocks:
+    blocks:
       - type: URBAN00
         width: 10
         length: 10
@@ -2370,11 +2345,10 @@ terrains:
 
   - type: MARS
     script: MARS
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - MARS
       - U_WALL02
-    mapBlocks:
+    blocks:
       - type: MARS00
         width: 10
         length: 10
@@ -2413,10 +2387,9 @@ terrains:
 
   - type: MOUNT
     script: DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - MOUNT
-    mapBlocks:
+    blocks:
       - type: MOUNT00
         width: 10
         length: 10
@@ -2462,14 +2435,13 @@ terrains:
 
   - type: NATIVEUFO
     script: NATIVEUFO
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - JUNGLE
       - BARN
       - FRNITURE
       - URBITS
       - CULTIVAT
-    mapBlocks:
+    blocks:
       - type: NATIVEURBAN00
         width: 10
         length: 10
@@ -2615,21 +2587,20 @@ terrains:
 
   - type: NATIVEURBAN
     script: URBAN #was NATIVEURBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - JUNGLE
       - BARN
       - FRNITURE
       - URBITS
       - CULTIVAT
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN2
       - MALE_CIVILIAN3
       - MALE_CIVILIAN4
       - FEMALE_CIVILIAN
       - FEMALE_CIVILIAN3
-    mapBlocks:
+    blocks:
       - type: NATIVEURBAN00
         width: 10
         length: 10
@@ -2801,10 +2772,9 @@ terrains:
 
   - type: POLAR
     script: POLAR
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - POLAR
-    mapBlocks:
+    blocks:
       - type: POLAR00
         width: 10
         length: 10
@@ -2853,10 +2823,9 @@ terrains:
 
   - type: POLARDESERT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - POLARDESERT
-    mapBlocks:
+    blocks:
       - type: DESERT00
         width: 10
         length: 10
@@ -2899,11 +2868,10 @@ terrains:
 
   - type: POLARDESERTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - POLARMOUNT
       - POLARDESERT
-    mapBlocks:
+    blocks:
       - type: DESERTMOUNT00
         width: 10
         length: 10
@@ -2964,12 +2932,11 @@ terrains:
 
   - type: POLARMOUNT
     script: DEFAULT #was DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - POLARMOUNT
       - POLAR
       - POLARMOUNTBITS
-    mapBlocks:
+    blocks:
       - type: POLARMOUNT00
         width: 10
         length: 10
@@ -3015,13 +2982,12 @@ terrains:
 
   - type: PORTTFTD
     script: PORTTFTD
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - SEAURBAN
       - PORTROADS
       - PORTURBITS
       - SEABITS
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN3
       - MALE_CIVILIAN4
@@ -3029,7 +2995,7 @@ terrains:
       - FEMALE_CIVILIAN
       - FEMALE_CIVILIAN2
       - FEMALE_CIVILIAN3
-    mapBlocks:
+    blocks:
       - type: PORTUFO00
         width: 10
         length: 10
@@ -3107,17 +3073,16 @@ terrains:
 
   - type: PORTURBAN
     script: URBAN #was PORTURBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - PORTROADS
       - PORTURBITS
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN2
       - MALE_CIVILIAN5
       - FEMALE_CIVILIAN
       - MALE_CIVILIAN7
-    mapBlocks:
+    blocks:
       - type: PORTURBAN00
         width: 10
         length: 10
@@ -3203,20 +3168,19 @@ terrains:
 
   - type: RAILYARDURBAN
     script: URBAN #was RAILYARDURBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - PORTROADS
       - PORTURBITS
       - ROADS
       - URBITS
       - FRNITURE
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN2
       - MALE_CIVILIAN4
       - FEMALE_CIVILIAN
       - MALE_CIVILIAN7
-    mapBlocks:
+    blocks:
       - type: RAILYARDURBAN00
         width: 10
         length: 10
@@ -3311,11 +3275,10 @@ terrains:
 
   - type: SAVANNADESERT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - SAVANNADESERT
       - SAVANNABITS
-    mapBlocks:
+    blocks:
       - type: DESERT00
         width: 10
         length: 10
@@ -3362,12 +3325,11 @@ terrains:
 
   - type: SAVANNADESERTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - SAVANNAMOUNT
       - SAVANNADESERT
       - SAVANNABITS
-    mapBlocks:
+    blocks:
       - type: DESERTMOUNT00
         width: 10
         length: 10
@@ -3432,11 +3394,10 @@ terrains:
 
   - type: SAVANNAFOREST
     script: DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - SAVANNAFOREST
       - SAVANNABITS
-    mapBlocks:
+    blocks:
       - type: FOREST00
         width: 10
         length: 10
@@ -3482,12 +3443,11 @@ terrains:
 
   - type: SAVANNAFORESTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - SAVANNAMOUNT
       - SAVANNAFOREST
       - SAVANNABITS
-    mapBlocks:
+    blocks:
       - type: FORESTMOUNT00
         width: 10
         length: 10
@@ -3578,10 +3538,9 @@ terrains:
 
   - type: STEPPEDESERT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - STEPPEDESERT
-    mapBlocks:
+    blocks:
       - type: DESERT00
         width: 10
         length: 10
@@ -3624,11 +3583,10 @@ terrains:
 
   - type: STEPPEDESERTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - STEPPEMOUNT
       - STEPPEDESERT
-    mapBlocks:
+    blocks:
       - type: DESERTMOUNT00
         width: 10
         length: 10
@@ -3689,10 +3647,9 @@ terrains:
 
   - type: STEPPEFOREST
     script: DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - STEPPEFOREST
-    mapBlocks:
+    blocks:
       - type: FOREST00
         width: 10
         length: 10
@@ -3734,12 +3691,11 @@ terrains:
 
   - type: STEPPEFORESTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - STEPPEMOUNT
       - STEPPEFOREST
       - STEPPEMOUNTBITS
-    mapBlocks:
+    blocks:
       - type: FORESTMOUNT00
         width: 10
         length: 10
@@ -3826,10 +3782,9 @@ terrains:
 
   - type: TAIGADESERT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - TAIGADESERT
-    mapBlocks:
+    blocks:
       - type: DESERT00
         width: 10
         length: 10
@@ -3872,11 +3827,10 @@ terrains:
 
   - type: TAIGADESERTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - TAIGAMOUNT
       - TAIGADESERT
-    mapBlocks:
+    blocks:
       - type: DESERTMOUNT00
         width: 10
         length: 10
@@ -3937,10 +3891,9 @@ terrains:
 
   - type: TAIGAFOREST
     script: DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - TAIGAFOREST
-    mapBlocks:
+    blocks:
       - type: FOREST00
         width: 10
         length: 10
@@ -3982,12 +3935,11 @@ terrains:
 
   - type: TAIGAFORESTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - TAIGAMOUNT
       - TAIGAFOREST
       - TAIGAMOUNTBITS
-    mapBlocks:
+    blocks:
       - type: FORESTMOUNT00
         width: 10
         length: 10
@@ -4074,10 +4026,9 @@ terrains:
 
   - type: TUNDRADESERT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - TUNDRADESERT
-    mapBlocks:
+    blocks:
       - type: DESERT00
         width: 10
         length: 10
@@ -4120,11 +4071,10 @@ terrains:
 
   - type: TUNDRADESERTMOUNT
     script: DESERT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - TUNDRAMOUNT
       - TUNDRADESERT
-    mapBlocks:
+    blocks:
       - type: DESERTMOUNT00
         width: 10
         length: 10
@@ -4185,10 +4135,9 @@ terrains:
 
   - type: TUNDRAMOUNT
     script: DEFAULT
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - TUNDRAMOUNT
-    mapBlocks:
+    blocks:
       - type: MOUNT00
         width: 10
         length: 10
@@ -4237,15 +4186,14 @@ terrains:
 # Done in alienDeployment,
 # type: STR_ALIEN_BASE_ASSAULT (script: ALIENBASE)
 # type: STR_MARS_THE_FINAL_ASSAULT (script: BOSSBATTLE)
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - U_BASE
       - U_WALL02
       - U_PODS
       - BRAIN
       - U_BASE2
 #    largeBlockLimit: 3
-    mapBlocks:
+    blocks:
       - type: UBASE_00 #Control center EW
         width: 20
         length: 20
@@ -4404,13 +4352,12 @@ terrains:
 
   - type: URBAN
     script: URBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - ROADS
       - URBITS
       - URBAN
       - FRNITURE
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN3
       - MALE_CIVILIAN4
@@ -4418,7 +4365,7 @@ terrains:
       - FEMALE_CIVILIAN
       - FEMALE_CIVILIAN2
       - FEMALE_CIVILIAN3
-    mapBlocks:
+    blocks:
       - type: URBAN00
         width: 10
         length: 10
@@ -4472,14 +4419,13 @@ terrains:
 
   - type: URBAN2
     script: URBAN
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - ROADS
       - URBITS
       - URBAN
       - FRNL83
 #    largeBlockLimit: 4 #was 5
-    civilianTypes:
+    civTypes:
       - MALE_CIVILIAN
       - MALE_CIVILIAN3
       - MALE_CIVILIAN4
@@ -4488,7 +4434,7 @@ terrains:
       - FEMALE_CIVILIAN2
       - FEMALE_CIVILIAN3
 #    roadTypeOdds: [50, 25]
-    mapBlocks:
+    blocks:
       - type: CF00
         width: 10
         length: 10
@@ -4616,12 +4562,11 @@ terrains:
 
   - type: XBASE
     script: XBASE
-    mapDataSets:
-      - BLANKS
+    dataSets:
       - XBASE1
       - XBASE2
       - XBASE4
-    mapBlocks:
+    blocks:
       - type: XBASE_00
         width: 10
         length: 10

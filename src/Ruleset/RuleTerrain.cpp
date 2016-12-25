@@ -54,7 +54,7 @@ RuleTerrain::~RuleTerrain()
 }
 
 /**
- * Loads the RuleTerrain from a YAML file.
+ * Loads this terrain-type from YAML.
  * @param node	- reference a YAML node
  * @param rules	- pointer to Ruleset
  */
@@ -65,38 +65,41 @@ void RuleTerrain::load(
 	_type	= node["type"]	.as<std::string>(_type);
 	_script	= node["script"].as<std::string>(_script);
 
-	if (const YAML::Node& mapDataSets = node["mapDataSets"])
+	if (const YAML::Node& dataSets = node["dataSets"])
 	{
 		_dataSets.clear();
+
+		_dataSets.push_back(rules->getMapDataSet("BLANKS")); // NOTE: The rule for every terrain-type gets "BLANKS".
+
 		for (YAML::const_iterator
-				i = mapDataSets.begin();
-				i != mapDataSets.end();
+				i = dataSets.begin();
+				i != dataSets.end();
 				++i)
 		{
 			_dataSets.push_back(rules->getMapDataSet(i->as<std::string>()));
 		}
 	}
 
-	if (const YAML::Node& mapBlocks = node["mapBlocks"])
+	if (const YAML::Node& blocks = node["blocks"])
 	{
 		_blocks.clear();
 		for (YAML::const_iterator
-				i = mapBlocks.begin();
-				i != mapBlocks.end();
+				i = blocks.begin();
+				i != blocks.end();
 				++i)
 		{
-			MapBlock* const mapBlock (new MapBlock((*i)["type"].as<std::string>()));
-			mapBlock->load(*i);
-			_blocks.push_back(mapBlock);
+			MapBlock* const block (new MapBlock((*i)["type"].as<std::string>()));
+			block->load(*i);
+			_blocks.push_back(block);
 		}
 	}
 
-	if (const YAML::Node& civs = node["civilianTypes"])
-		_civilianTypes = civs.as<std::vector<std::string>>(_civilianTypes);
+	if (const YAML::Node& civTypes = node["civTypes"])
+		_civTypes = civTypes.as<std::vector<std::string>>(_civTypes);
 	else
 	{
-		_civilianTypes.push_back("MALE_CIVILIAN");
-		_civilianTypes.push_back("FEMALE_CIVILIAN");
+		_civTypes.push_back("MALE_CIVILIAN");
+		_civTypes.push_back("FEMALE_CIVILIAN");
 	}
 
 	for (YAML::const_iterator
@@ -111,7 +114,7 @@ void RuleTerrain::load(
 }
 
 /**
- * Gets the array of MapBlocks.
+ * Gets this terrain-type's list of MapBlocks.
  * @return, pointer to a vector of pointers as an array of MapBlocks
  */
 const std::vector<MapBlock*>* RuleTerrain::getMapBlocks() const
@@ -120,7 +123,7 @@ const std::vector<MapBlock*>* RuleTerrain::getMapBlocks() const
 }
 
 /**
- * Gets the array of MapDataSets (MCDs).
+ * Gets this terrain-type's list of MapDataSets (MCDs).
  * @return, pointer to a vector of pointers as an array of MapDataSets
  */
 const std::vector<MapDataSet*>* RuleTerrain::getMapDataSets() const
@@ -129,8 +132,8 @@ const std::vector<MapDataSet*>* RuleTerrain::getMapDataSets() const
 }
 
 /**
- * Gets the terrain-type.
- * @return, the terrain-type
+ * Gets the terrain's type.
+ * @return, this terrain-type
  */
 const std::string& RuleTerrain::getType() const
 {
@@ -138,7 +141,7 @@ const std::string& RuleTerrain::getType() const
 }
 
 /**
- * Gets a random MapBlock within the given constraints.
+ * Gets a MapBlock in this terrain-type within specified constraints.
  * @param sizeX - the maximum x-size of the mapblock
  * @param sizeY - the maximum y-size of the mapblock
  * @param group - the group-type
@@ -152,7 +155,7 @@ MapBlock* RuleTerrain::getTerrainBlock(
 		bool force) const
 {
 	//Log(LOG_INFO) << "getTerrainBlock()";
-	//Log(LOG_INFO) << "sizeX = " << sizeX << " sizeY = " << sizeY << " group = " << group << " force = " << force;
+	//Log(LOG_INFO) << "sizeX= " << sizeX << " sizeY= " << sizeY << " group= " << group << " force= " << force;
 	std::vector<MapBlock*> blocks;
 
 	for (std::vector<MapBlock*>::const_iterator
@@ -180,7 +183,7 @@ MapBlock* RuleTerrain::getTerrainBlock(
 }
 
 /**
- * Gets a MapBlock of a specified type.
+ * Gets a MapBlock of a specified type in this terrain-type.
  * @param type - reference to the type of a MapBlock
  * @return, pointer to a MapBlock or nullptr if not found
  */
@@ -198,7 +201,7 @@ MapBlock* RuleTerrain::getTerrainBlock(const std::string& type) const
 }
 
 /**
- * Gets a MapData object.
+ * Gets a MapData object (MCD tile-part) in this terrain-type.
  * @param partId	- pointer to the ID of the part
  * @param partSetId	- pointer to the ID of the tileset
  * @return, pointer to MapData object
@@ -235,16 +238,16 @@ MapData* RuleTerrain::getTerrainPart(
 }
 
 /**
- * Gets the list of civilian-types to use on this RuleTerrain.
+ * Gets the civilian-types that can appear in this terrain-type.
  * @return, list of civilian-types (default MALE_CIVILIAN and FEMALE_CIVILIAN)
  */
 const std::vector<std::string>& RuleTerrain::getCivilianTypes() const
 {
-	return _civilianTypes;
+	return _civTypes;
 }
 
 /**
- * Gets the generation-script.
+ * Gets the generation script for this terrain-type.
  * @return, the script to use
  */
 const std::string& RuleTerrain::getScriptType() const
@@ -253,7 +256,7 @@ const std::string& RuleTerrain::getScriptType() const
 }
 
 /**
- * Gets the list of music-tracks this RuleTerrain can choose from.
+ * Gets the list of music that can play in this terrain-type.
  * @return, list of music-tracks
  */
 const std::vector<std::string>& RuleTerrain::getTerrainMusics() const
@@ -262,10 +265,10 @@ const std::vector<std::string>& RuleTerrain::getTerrainMusics() const
 }
 
 /**
- * Gets the pyjama-type.
+ * Gets the basic-armor-type of this terrain-type.
  * @note Used in BattlescapeGenerator::setTacticalSprites() to outfit soldiers
  * in basic camoflage that's suitable for this RuleTerrain.
- * @return, the pyjama-type
+ * @return, the basic-armor-type
  */
 const std::string& RuleTerrain::getBasicArmorType() const
 {

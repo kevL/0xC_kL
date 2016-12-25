@@ -2503,13 +2503,13 @@ int BattlescapeGenerator::loadBlockFile( // private.
 
 	ifstr.close();
 
-	if ((_generateFuel = (block->getBlockItems().empty() == true)) == false) // don't deploy fuel algorithmically if one of the MapBlocks has an items-array defined
+	if ((_generateFuel = (block->getPlacedItems().empty() == true)) == false) // don't deploy fuel algorithmically if one of the MapBlocks has an items-array defined
 	{
 		const RuleItem* itRule;
 		BattleItem* item;
 		for (std::map<std::string, std::vector<Position>>::const_iterator
-				i = block->getBlockItems().begin();
-				i != block->getBlockItems().end();
+				i = block->getPlacedItems().begin();
+				i != block->getPlacedItems().end();
 				++i)
 		{
 			itRule = _rules->getItemRule((*i).first);
@@ -2821,7 +2821,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 		dataSetIds     (0),
 		dataSetIds_ufo (0);
 
-	std::map<int, bool> conditions; // create an array to track command success/failure
+	std::map<int, bool> conditions; // an array to track each directive's success/failure
 
 	for (std::vector<MapDataSet*>::const_iterator
 			i = _terrainRule->getMapDataSets()->begin();
@@ -3189,9 +3189,10 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 //	if (craftBlock != nullptr)
 	if (_craftDeployed == true) // There'd better be a craftBlock if _craftDeployed=TRUE.
 	{
+		const RuleTerrain* const craftTerrain (_craft->getRules()->getTacticalTerrain());
 		for (std::vector<MapDataSet*>::const_iterator
-				i = _craft->getRules()->getTacticalTerrain()->getMapDataSets()->begin();
-				i != _craft->getRules()->getTacticalTerrain()->getMapDataSets()->end();
+				i = craftTerrain->getMapDataSets()->begin();
+				i != craftTerrain->getMapDataSets()->end();
 				++i)
 		{
 			(*i)->loadData();
@@ -3206,7 +3207,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 				craftBlock,
 				static_cast<int>(_craftPos.x) * 10,
 				static_cast<int>(_craftPos.y) * 10,
-				_craft->getRules()->getTacticalTerrain(),
+				craftTerrain,
 				dataSetIds + dataSetIds_ufo,
 				false, // was true
 				true);

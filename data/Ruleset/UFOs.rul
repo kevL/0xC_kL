@@ -10,10 +10,9 @@ ufos:
     escape: 180
     tacticalTerrain:
       rule: UFO1A
-      mapDataSets:
-        - BLANKS
+      dataSets:
         - UFO1
-      mapBlocks:
+      blocks:
         - type: UFO1A
           width: 10
           length: 10
@@ -31,13 +30,11 @@ ufos:
     escape: 230
     tacticalTerrain:
       rule: UFO_110
-      mapDataSets:
-        - BLANKS
-        - U_EXT02
+      dataSets:        - U_EXT02
         - U_WALL02
         - U_BITS
         - UFOL83
-      mapBlocks:
+      blocks:
         - type: UFO_110
           width: 10
           length: 10
@@ -76,13 +73,11 @@ ufos:
     escape: 270
     tacticalTerrain:
       rule: UFO_120
-      mapDataSets:
-        - BLANKS
-        - U_EXT02
+      dataSets:        - U_EXT02
         - U_WALL02
         - U_BITS
         - UFOL83
-      mapBlocks:
+      blocks:
         - type: UFO_120
           width: 20
           length: 20
@@ -136,14 +131,12 @@ ufos:
     escape: 330
     tacticalTerrain:
       rule: UFO_130
-      mapDataSets:
-        - BLANKS
-        - U_EXT02
+      dataSets:        - U_EXT02
         - U_WALL02
         - U_DISEC3
         - U_BITS
         - UFOL83
-      mapBlocks:
+      blocks:
         - type: UFO_130
           width: 20
           length: 20
@@ -194,14 +187,12 @@ ufos:
     escape: 360
     tacticalTerrain:
       rule: UFO_140
-      mapDataSets:
-        - BLANKS
-        - U_EXT02
+      dataSets:        - U_EXT02
         - U_WALL02
         - U_OPER2
         - U_BITS
         - UFOL83
-      mapBlocks:
+      blocks:
         - type: UFO_140
           width: 20
           length: 20
@@ -249,14 +240,12 @@ ufos:
     escape: 1600
     tacticalTerrain:
       rule: UFO_150
-      mapDataSets:
-        - BLANKS
-        - U_EXT02
+      dataSets:        - U_EXT02
         - U_WALL02
         - U_PODS
         - U_BITS
         - UFOL83
-      mapBlocks:
+      blocks:
         - type: ox_ufo5a
           width: 30
           length: 20
@@ -295,13 +284,11 @@ ufos:
     escape: 2400
     tacticalTerrain:
       rule: UFO_160
-      mapDataSets:
-        - BLANKS
-        - U_EXT02
+      dataSets:        - U_EXT02
         - U_WALL02
         - U_PODS
         - U_BITS
-      mapBlocks:
+      blocks:
         - type: UFO_160
           width: 30
           length: 30
@@ -334,14 +321,12 @@ ufos:
     escape: 1200
     tacticalTerrain:
       rule: UFO_170
-      mapDataSets:
-        - BLANKS
-        - U_EXT02
+      dataSets:        - U_EXT02
         - U_WALL02
         - U_DISEC2
         - U_BITS
         - UFOL83
-      mapBlocks:
+      blocks:
         - type: ox_ufo7a
           width: 30
           length: 20

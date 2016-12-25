@@ -17,10 +17,8 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     score: 250
     tacticalTerrain:
       rule: PLANE
-      mapDataSets:
-        - BLANKS
-        - PLANE
-      mapBlocks:
+      dataSets:        - PLANE
+      blocks:
         - type: PLANE
           width: 10
           length: 20
@@ -79,10 +77,8 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     score: 375
     tacticalTerrain:
       rule: LIGHTNIN
-      mapDataSets:
-        - BLANKS
-        - LIGHTNIN
-      mapBlocks:
+      dataSets:        - LIGHTNIN
+      blocks:
         - type: LIGHTNIN
           width: 20
           length: 10
@@ -123,10 +119,9 @@ crafts: #new order: skyranger,lightning,avenger,interceptor,firestorm
     spacecraft: true
     tacticalTerrain:
       rule: AVENGER
-      mapDataSets:
-        - BLANKS
+      dataSets:
         - AVENGER
-      mapBlocks:
+      blocks:
         - type: AVENGER
           width: 10
           length: 20

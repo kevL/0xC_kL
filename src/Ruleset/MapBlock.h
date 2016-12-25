@@ -97,7 +97,7 @@ private:
 		bool isFloorRevealed(int reveal) const;
 
 		/// Gets the Positions for items that instantiate in the MapBlock.
-		const std::map<std::string, std::vector<Position>>& getBlockItems();
+		const std::map<std::string, std::vector<Position>>& getPlacedItems();
 };
 
 }

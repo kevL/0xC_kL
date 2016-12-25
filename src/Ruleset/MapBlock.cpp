@@ -162,9 +162,9 @@ bool MapBlock::isFloorRevealed(int reveal) const
 
 /**
  * Gets any items associated with this MapBlock and their Positions.
- * @return, reference to a list of items and their positions
+ * @return, reference to a map of item-types and their positions
  */
-const std::map<std::string, std::vector<Position>>& MapBlock::getBlockItems()
+const std::map<std::string, std::vector<Position>>& MapBlock::getPlacedItems()
 {
 	return _items;
 }
