@@ -443,7 +443,7 @@ InventoryState::~InventoryState()
  */
 void InventoryState::think()
 {
-//	State::think();
+	State::think(); // NOTE: Hits Timer for Inventory.
 	_timer->think(this, nullptr);
 }
 
