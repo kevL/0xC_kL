@@ -161,7 +161,7 @@ private:
 			MapBlock* const block,
 			int offset_x,
 			int offset_y,
-			int segment);
+			int seg);
 
 	/// Fills power-sources with aLien-fuel objects.
 	void fuelPowerSources();

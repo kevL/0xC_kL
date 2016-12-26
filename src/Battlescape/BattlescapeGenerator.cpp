@@ -2538,14 +2538,14 @@ int BattlescapeGenerator::loadBlockFile( // private.
  * @param block		- pointer to MapBlock
  * @param offset_x	- Mapblock offset in x-direction
  * @param offset_y	- Mapblock offset in y-direction
- * @param segment	- Mapblock segment
+ * @param seg		- Mapblock segment
  * @sa http://www.ufopaedia.org/index.php?title=ROUTES
  */
 void BattlescapeGenerator::loadRouteFile( // private.
 		MapBlock* const block,
 		int offset_x,
 		int offset_y,
-		int segment)
+		int seg)
 {
 	std::ostringstream file;
 	file << "ROUTES/" << block->getType() << ".RMP";
@@ -2570,7 +2570,7 @@ void BattlescapeGenerator::loadRouteFile( // private.
 		spPriority,
 
 		linkId,
-		nodeVal (0);
+		nodeId (0); // debug. 0-based
 
 	const int nodeOffset (static_cast<int>(_battleSave->getNodes()->size()));
 	Node* node;
@@ -2581,8 +2581,8 @@ void BattlescapeGenerator::loadRouteFile( // private.
 					reinterpret_cast<char*>(&dataArray),
 					sizeof(dataArray)))
 	{
-		pos_x = static_cast<int>(dataArray[1u]); // note: Here is where x-y values get reversed
-		pos_y = static_cast<int>(dataArray[0u]); // vis-a-vis values in .RMP files vs. loaded values.
+		pos_x = static_cast<int>(dataArray[1u]); // NOTE: Here is where x-y values get reversed
+		pos_y = static_cast<int>(dataArray[0u]); // vis-a-vis x/y values in the .RMP files vs. IG loaded values.
 		pos_z = static_cast<int>(dataArray[2u]);
 
 		if (   pos_x > -1 && pos_x < block->getSizeX()
@@ -2592,7 +2592,7 @@ void BattlescapeGenerator::loadRouteFile( // private.
 			pos = Position(
 						offset_x + pos_x,
 						offset_y + pos_y,
-						block->getSizeZ() - pos_z - 1);
+						block->getSizeZ() - pos_z - 1); // NOTE: Invert the z-level.
 
 			unitType		= static_cast<int>(dataArray[19u]); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
 			nodeRank		= static_cast<int>(dataArray[20u]);
@@ -2614,7 +2614,7 @@ void BattlescapeGenerator::loadRouteFile( // private.
 			node = new Node(
 						_battleSave->getNodes()->size(),
 						pos,
-						segment,
+						seg,
 						unitType,
 						nodeRank,
 						ptrlPriority,
@@ -2654,10 +2654,10 @@ void BattlescapeGenerator::loadRouteFile( // private.
 		{
 //			_error = true;
 			Log(LOG_WARNING) << "bGen:loadRouteFile() Error in RMP file: " << file.str()
-							 << " node #" << nodeVal << " is outside map boundaries at"
+							 << " node #" << nodeId << " is outside map boundaries at"
 							 << " (" << pos_x << "," << pos_y << "," << pos_z << ")";
 		}
-		++nodeVal;
+		++nodeId;
 	}
 
 	if (ifstr.eof() == false)
@@ -2668,7 +2668,7 @@ void BattlescapeGenerator::loadRouteFile( // private.
 }
 
 /**
- * Fill power sources with an alien fuel object.
+ * Fills power-sources with aLien-fuel objects.
  */
 void BattlescapeGenerator::fuelPowerSources() // private.
 {
