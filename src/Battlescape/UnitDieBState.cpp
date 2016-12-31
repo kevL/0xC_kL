@@ -335,13 +335,13 @@ void UnitDieBState::drop() // private.
 				if (RNG::percent(6) == true)
 				{
 					tileExpl = tile;
-					tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
+					tileExplBelow = tileExpl->getTileBelow(_battleSave);
 
 					while (tileExpl != nullptr // safety.
 						&& tileExpl->isFloored(tileExplBelow) == false)
 					{
 						tileExpl = tileExplBelow;
-						tileExplBelow = _battleSave->getTile(tileExpl->getPosition() + Position(0,0,-1));
+						tileExplBelow = tileExpl->getTileBelow(_battleSave);
 					}
 
 					if (   tileExpl != nullptr // safety.
