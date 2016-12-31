@@ -4034,7 +4034,7 @@ int BattleUnit::getAggroSound() const
 
 /**
  * Gets whether this BattleUnit can be affected by fatal wounds.
- * @note Normally only soldiers are affected by fatal wounds.
+ * @note Normally only Soldiers are affected by fatal wounds.
  * @return, true if unit can be affected by fatal wounds
  */
 bool BattleUnit::isWoundable() const
