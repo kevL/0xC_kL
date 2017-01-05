@@ -45,7 +45,7 @@ Country::Country(
 		_recentActX(-1)
 {
 	if (genFunds == true)
-		_funding.push_back(_countryRule->generateFunding());
+		_funding.push_back(_countryRule->generateFunding()); // 50% - 200% or 0.
 
 	_actA.push_back(0);
 	_actX.push_back(0);

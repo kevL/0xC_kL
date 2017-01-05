@@ -95,9 +95,8 @@ Ruleset::Ruleset(const Game* const game)
 		_costEngineer(0),
 		_costScientist(0),
 		_timePersonnel(0),
-//		_initialFunding(0), // 6'000(000)
-//		_startTime(6,1,1,1999,12,0,0),
-		_startTime(1,1,1999,12,0,0),
+		_startFunds(0),					// 6'000(000)
+		_startTime(1,1,1999,12,0,0),	// 6,1,1,1999,12,0,0
 		_modIndex(0),
 		_facilityListOrder(0),
 		_craftListOrder(0),
@@ -806,7 +805,7 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	_costEngineer	= doc["costEngineer"]	.as<int>(_costEngineer);
 	_costScientist	= doc["costScientist"]	.as<int>(_costScientist);
 	_timePersonnel	= doc["timePersonnel"]	.as<int>(_timePersonnel);
-//	_initialFunding	= doc["initialFunding"]	.as<int>(_initialFunding);
+	_startFunds		= doc["startFunds"]		.as<int>(_startFunds);
 	_alienFuel		= doc["alienFuel"]		.as<std::pair<std::string, int>>(_alienFuel);
 	_font			= doc["font"]			.as<std::string>(_font);
 	_radarCutoff	= doc["radarCutoff"]	.as<int>(_radarCutoff);
@@ -1161,18 +1160,19 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	}
 	//Log(LOG_INFO) << ". countries DONE";
 
-	// Adjust funding to total $6-million.
-//	int adjust ((_initialFunding - playSave->getCountryFunding()) / (int)playSave->getCountries()->size());
-//	for (std::vector<Country*>::const_iterator
-//			i = playSave->getCountries()->begin();
-//			i != playSave->getCountries()->end();
-//			++i)
-//	{
-//		int fund (std::max(0,
-//						  (*i)->getFunding().back() + adjust));
-//		(*i)->getFunding().back() = fund;
-//	}
-
+	// Adjust funding to total (stock: $6-million) '_startFunds'.
+	// NOTE: It is possible, but barely, for player to start w/ 0 funds
+	// or for all start-funds being granted by only 1 country, etc.
+	const float adj (static_cast<float>(_startFunds) / static_cast<float>(playSave->getCountryFunding()));
+	int funds;
+	for (std::vector<Country*>::const_iterator
+			i = playSave->getCountries()->begin();
+			i != playSave->getCountries()->end();
+			++i)
+	{
+		if ((funds = (*i)->getFunding().back()) != 0)
+			(*i)->getFunding().back() = static_cast<int>(static_cast<float>(funds) * adj);
+	}
 	playSave->setFunds(playSave->getCountryFunding() * 1000);
 	//Log(LOG_INFO) << ". funding DONE";
 

@@ -94,13 +94,20 @@ const std::string& RuleCountry::getType() const
 
 /**
  * Generates the random starting funding for the represented Country.
- * @return, the monthly funding in $thousands
+ * @note Countries do not automatically fund the Xcom Project; each has only a
+ * chance based on its rule's base-funding value.
+ * @return, the monthly funding in $thousands or 0.
  */
 int RuleCountry::generateFunding() const
 {
-	return RNG::generate(
-					_fundingBase >> 1u,
-					_fundingBase << 1u);
+	const int funds (RNG::generate( // 50% - 200%
+								_fundingBase >> 1u,
+								_fundingBase << 1u));
+	const int pct (static_cast<int>(static_cast<float>(funds) / 10.f));
+	if (RNG::percent(pct) == true)
+		return funds;
+
+	return 0;
 }
 
 /**

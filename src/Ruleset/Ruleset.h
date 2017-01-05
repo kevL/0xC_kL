@@ -93,7 +93,7 @@ class Ruleset
 
 private:
 	int
-//		_initialFunding,
+		_startFunds,
 		_defeatFunds,
 		_defeatScore,
 		_firstGrenade,
