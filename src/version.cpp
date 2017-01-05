@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 OpenXcom Developers.
+ * Copyright 2010-2017 OpenXcom Developers.
  *
  * This file is part of OpenXcom.
  *
@@ -45,9 +45,9 @@ namespace Version
 
 /**
  * Gets a date/time in a human-readable string using the ISO 8601 standard.
- * @note This uses current runtime and is therefore apropos only as a timestamp
- * for a saved file eg.
- * @return, string of local time useful for saved files
+ * @note This uses current runtime and is therefore apropos only as a time-stamp
+ * for a saved-file eg.
+ * @return, string of local-time useful for saved-files
  */
 std::string timeStamp()
 {
@@ -78,7 +78,7 @@ std::string timeStamp()
  * Gets version as a time-string.
  * @note This is the (local) compile-time date & time.
  * @param built - true to add "built" preface (default true)
- * @return, current build date of executable
+ * @return, current build-date of executable
  */
 std::string getBuildDate(bool built)
 {

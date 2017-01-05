@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 OpenXcom Developers.
+ * Copyright 2010-2017 OpenXcom Developers.
  *
  * This file is part of OpenXcom.
  *
@@ -38,9 +38,9 @@ namespace OpenXcom
 namespace Version
 {
 
-/// Local Time for saved file stamp.
+/// Local Time for saved file-stamp.
 std::string timeStamp();
-/// Gets version as a time string.
+/// Gets version as a time-string.
 std::string getBuildDate(bool built = true);
 
 }
