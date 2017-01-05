@@ -1063,22 +1063,22 @@ startTime:
   second: 0
   minute: 0
   hour: 12
-#  weekday: 6
   day: 1
   month: 1
   year: 1999
+#  weekday: 6
 
 costEngineer: 40000
 costScientist: 50000
 timePersonnel: 72
-#initialFunding: 6000 # not used
+startFunds: 6000
 alienFuel: [STR_ELERIUM_115, 50]
 radarCutoffRange: 1500
 firstGrenade: 0
 retalCoef: 3
 defeatScore: -1000
 defeatFunds: -1000000
-scoreBaseLost: 10 #per facility per diff
+scoreBaseLost: 10 #per facility per diff-level
 font: Font.dat
 
 cutscenes:

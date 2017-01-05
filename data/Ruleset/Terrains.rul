@@ -2022,7 +2022,7 @@ terrains:
   - type: JUNGLETEMPLE
     script: JUNGLE #was DESERT
     dataSets:
-      - SANDS
+      - SANDS #This appears to be only for padding the MCD records - bleh
       - MUJUNGLE
       - JUNGLEBITS
     blocks:

@@ -129,8 +129,6 @@ std::vector<int>& Country::getFunding()
  */
 SatisfactionType Country::getSatisfaction() const
 {
-//	if (_pact == true || _newPact == true)
-//		return SAT_NEUTRAL;
 	return _satisfaction;
 }
 
@@ -186,33 +184,19 @@ void Country::newMonth(
 	int funds;
 	if (_pact == false && _newPact == false)
 	{
-		const int
-			scorePlayer (totalX / 10 + _actX.back()),
-			scoreAlien  (totalA / 20 + _actA.back()),
-
-			fundsPre (_funding.back());
-
-		funds = static_cast<int>(static_cast<float>(fundsPre) * RNG::generate(0.05f,0.2f)); // increase OR decrease 5..20%
-
-		if (scorePlayer > scoreAlien + ((diff + 1) * 20))
+		const int fundsBefore (_funding.back());
+		if (fundsBefore != 0)
 		{
-			funds = std::min(funds,
-							_countryRule->getFundingCap() - fundsPre);
-			switch (funds)
-			{
-				case 0: // Country's funding is already capped.
-					_satisfaction = SAT_NEUTRAL;
-					break;
-				default:
-					_satisfaction = SAT_HAPPY;
-			}
-		}
-		else if (scorePlayer - (diff * 20) > scoreAlien)
-		{
-			if (RNG::generate(0, scorePlayer) > scoreAlien)
+			const int
+				scorePlayer (totalX / 10 + _actX.back()),
+				scoreAlien  (totalA / 20 + _actA.back());
+
+			funds = static_cast<int>(static_cast<float>(fundsBefore) * RNG::generate(0.05f,0.2f)); // 5% - 20% increase OR decrease
+
+			if (scorePlayer > scoreAlien + ((diff + 1) * 20))
 			{
 				funds = std::min(funds,
-								_countryRule->getFundingCap() - fundsPre);
+								_countryRule->getFundingCap() - fundsBefore);
 				switch (funds)
 				{
 					case 0: // Country's funding is already capped.
@@ -222,7 +206,39 @@ void Country::newMonth(
 						_satisfaction = SAT_HAPPY;
 				}
 			}
-			else if (RNG::generate(0, scoreAlien) > scorePlayer)
+			else if (scorePlayer - (diff * 20) > scoreAlien)
+			{
+				if (RNG::generate(0, scorePlayer) > scoreAlien)
+				{
+					funds = std::min(funds,
+									_countryRule->getFundingCap() - fundsBefore);
+					switch (funds)
+					{
+						case 0: // Country's funding is already capped.
+							_satisfaction = SAT_NEUTRAL;
+							break;
+						default:
+							_satisfaction = SAT_HAPPY;
+					}
+				}
+				else if (RNG::generate(0, scoreAlien) > scorePlayer)
+				{
+					switch (funds)
+					{
+						case 0: // Country's funding is already zero'd.
+							_satisfaction = SAT_NEUTRAL;
+							break;
+						default:
+							_satisfaction = SAT_SAD;
+					}
+				}
+				else
+				{
+					funds = 0;
+					_satisfaction = SAT_NEUTRAL;
+				}
+			}
+			else
 			{
 				switch (funds)
 				{
@@ -233,38 +249,27 @@ void Country::newMonth(
 						_satisfaction = SAT_SAD;
 				}
 			}
-			else
+
+			switch (_satisfaction)
 			{
-				funds = 0;
-				_satisfaction = SAT_NEUTRAL;
+				case SAT_HAPPY:
+					funds += fundsBefore;
+					break;
+
+				case SAT_SAD:
+					funds = fundsBefore - funds;
 			}
 		}
 		else
 		{
-			switch (funds)
-			{
-				case 0: // Country's funding is already zero'd.
-					_satisfaction = SAT_NEUTRAL;
-					break;
-				default:
-					_satisfaction = SAT_SAD;
-			}
-		}
-
-		switch (_satisfaction)
-		{
-			case SAT_HAPPY:
-				funds += fundsPre;
-				break;
-
-			case SAT_SAD:
-				funds = fundsPre - funds;
+			_satisfaction = SAT_NEUTRAL;
+			funds = _countryRule->generateFunding(); // grant a chance for zero-funding unpacted Countries to join the Project.
 		}
 	}
 	else // pacted or about to pact.
 	{
+		_satisfaction = SAT_NEUTRAL;
 		funds = 0;
-		_satisfaction = SAT_NEUTRAL; // safety.
 	}
 
 	_funding.push_back(funds);
@@ -278,7 +283,7 @@ void Country::newMonth(
 	_actA.push_back(0);
 	_actX.push_back(0);
 
-	if (_actA.size() > 12)
+	if (_actA.size() > 12u)
 	{
 		_actA.erase(_actA.begin());
 		_actX.erase(_actX.begin());
