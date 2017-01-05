@@ -1480,6 +1480,11 @@ int BattleUnit::takeDamage(
 		DamageType dType,
 		const bool ignoreArmor)
 {
+	static const int
+		HEAD_LEVEL_OFFSET	= 4,
+		WAIST_LEVEL_CUTOFF	= 5;
+
+
 	//Log(LOG_INFO) << "bu:takeDamage() id-" << _id << " power[0]= " << power;
 	power = static_cast<int>(Round(
 			static_cast<float>(power) * _arRule->getDamageModifier(dType)));
@@ -1505,17 +1510,15 @@ int BattleUnit::takeDamage(
 			side = SIDE_UNDER;
 		else
 		{
-			side = SIDE_FRONT;
-
 			int dirRel;
 			const int
 				abs_x (std::abs(relVoxel.x)),
 				abs_y (std::abs(relVoxel.y));
 
-			if (abs_y > abs_x * 2)
-				dirRel = 8 + 4 * static_cast<int>(relVoxel.y > 0);	// hit from South (y-pos) or North (y-neg)
-			else if (abs_x > abs_y * 2)
-				dirRel = 10 + 4 * static_cast<int>(relVoxel.x < 0);	// hit from East (x-pos) or West (x-neg)
+			if		(abs_y > abs_x * 2)
+				dirRel =  8 + 4 * static_cast<int>(relVoxel.y > 0); // hit from South (y-pos) or North (y-neg)
+			else if	(abs_x > abs_y * 2)
+				dirRel = 10 + 4 * static_cast<int>(relVoxel.x < 0); // hit from East (x-pos) or West (x-neg)
 			else
 			{
 				if (relVoxel.x < 0)	// hit from West (x-neg)
@@ -1536,6 +1539,7 @@ int BattleUnit::takeDamage(
 
 			switch ((dirRel - _dir) % 8)
 			{
+				default:
 				case 0:	side = SIDE_FRONT;						break;
 				case 1:	side = RNG::percent(50)	? SIDE_FRONT
 												: SIDE_RIGHT;	break;
@@ -1544,7 +1548,7 @@ int BattleUnit::takeDamage(
 												: SIDE_RIGHT;	break;
 				case 4:	side = SIDE_REAR;						break;
 				case 5:	side = RNG::percent(50)	? SIDE_REAR
-												: SIDE_LEFT; 	break;
+												: SIDE_LEFT;	break;
 				case 6:	side = SIDE_LEFT;						break;
 				case 7:	side = RNG::percent(50)	? SIDE_FRONT
 												: SIDE_LEFT;
@@ -1553,15 +1557,17 @@ int BattleUnit::takeDamage(
 
 			if (woundable == true)
 			{
-				if (relVoxel.z > getHeight() - 4)
+				if (relVoxel.z > getHeight() - HEAD_LEVEL_OFFSET)
 					bodyPart = BODYPART_HEAD;
-				else if (relVoxel.z > 5)
+				else if (relVoxel.z > WAIST_LEVEL_CUTOFF)
 				{
 					switch (side)
 					{
 						case SIDE_LEFT:		bodyPart = BODYPART_LEFTARM;	break;
 						case SIDE_RIGHT:	bodyPart = BODYPART_RIGHTARM;	break;
-						default:			bodyPart = BODYPART_TORSO;
+						default:
+						case SIDE_FRONT:
+						case SIDE_REAR:		bodyPart = BODYPART_TORSO;
 					}
 				}
 				else
@@ -1571,9 +1577,10 @@ int BattleUnit::takeDamage(
 						case SIDE_LEFT: 	bodyPart = BODYPART_LEFTLEG; 	break;
 						case SIDE_RIGHT:	bodyPart = BODYPART_RIGHTLEG; 	break;
 						default:
-							bodyPart = static_cast<UnitBodyPart>(RNG::generate(
-																			BODYPART_RIGHTLEG,
-																			BODYPART_LEFTLEG));
+						case SIDE_FRONT:
+						case SIDE_REAR:		bodyPart = static_cast<UnitBodyPart>(RNG::generate(
+																							static_cast<int>(BODYPART_RIGHTLEG),
+																							static_cast<int>(BODYPART_LEFTLEG)));
 					}
 				}
 			}
