@@ -1043,7 +1043,7 @@ void Game::defaultLanguage()
 
 /**
  * Changes the Language currently in use by this Game.
- * @param file - reference to the name of the language-file
+ * @param file - reference to the name of a Language rule
  */
 void Game::loadLanguage(const std::string& file)
 {
@@ -1065,7 +1065,7 @@ void Game::loadLanguage(const std::string& file)
 			extras = extraStrings.begin()->second;
 	}
 
-	const std::string path (CrossPlatform::getDataFile(oststr.str()));
+	const std::string& path (CrossPlatform::getDataFile(oststr.str()));
 	try
 	{
 		_lang->load(path, extras);

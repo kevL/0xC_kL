@@ -739,11 +739,15 @@ std::string baseFilename(
 	const size_t sep (path.find_last_of(PATH_SEPARATOR));
 	if (sep == std::string::npos)
 		file = path;
+	else if (sep != path.size() - 1u)
+		file = path.substr(sep + 1u);
+//	else // recurse to get directory. NOTE: This will drill down to "c:" eg.
+//		return baseFilename(path.substr(0u, path.size() - 1u));
 	else
-		file = path.substr(0u, sep + 1u);
+		return "";
 
 	if (transform != nullptr)
-		std::transform(
+		std::transform( // NOTE: 'std::transform' is not necessarily '(*transform)'.
 					file.begin(),
 					file.end(),
 					file.begin(),

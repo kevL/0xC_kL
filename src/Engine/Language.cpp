@@ -499,7 +499,7 @@ void Language::getList( // static.
  * @note Not that this has anything to do with Ruby but since it's a
  * widely-supported format and we already have YAML it was convenient.
  * @param file		- reference a YAML file
- * @param extras	- pointer to extra-strings from that ruleset
+ * @param extras	- pointer to extra-strings from that rule
  */
 void Language::load(
 		const std::string& file,
@@ -507,9 +507,19 @@ void Language::load(
 {
 	_strings.clear();
 
-	YAML::Node doc (YAML::LoadFile(file));
-	_id = doc.begin()->first.as<std::string>();
-	YAML::Node lang (doc.begin()->second);
+	YAML::Node doc = YAML::LoadFile(file);
+	YAML::Node lang;
+
+	if (doc.begin()->second.IsMap()) // well-formed language rule
+	{
+		_id = doc.begin()->first.as<std::string>();
+		lang = doc.begin()->second;
+	}
+	else // fallback when file is missing its language specifier
+	{
+		_id = CrossPlatform::noExt(CrossPlatform::baseFilename(file));
+		lang = doc;
+	}
 
 	for (YAML::const_iterator
 			i = lang.begin();
