@@ -1974,9 +1974,9 @@ void BattlescapeGame::attackerMorale( // private.
 
 			if (attacker->getGeoscapeSoldier() != nullptr
 				&& attacker->isMindControlled() == false
-				&& defender->getFaction() == FACTION_HOSTILE) // include neutralizing MC'd units
+				&& defender->getOriginalFaction() == FACTION_HOSTILE)
 			{
-				attacker->addTakedown();
+				attacker->addTakedown(); // this will add to a Soldier's total-kills stat
 			}
 			break;
 

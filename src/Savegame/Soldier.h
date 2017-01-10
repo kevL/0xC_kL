@@ -164,8 +164,8 @@ private:
 		/// Decreases the Soldier's military rank.
 		void demoteRank();
 
-		/// Adds kills and a mission to this Soldier's stats.
-		void postTactical(int kills);
+		/// Adds kills/stuns and a mission-count to this Soldier's stats.
+		void postTactical(int takedowns);
 		/// Gets the Soldier's missions.
 		int getMissions() const;
 		/// Gets the Soldier's kills.

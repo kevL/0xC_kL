@@ -532,13 +532,13 @@ void Soldier::demoteRank()
 }
 
 /**
- * Adds kills and a mission to this Soldier's stats.
- * @param kills - qty of kills
+ * Adds kills/stuns and a mission-count to this Soldier's stats.
+ * @param kills - qty of kills or stuns
  */
-void Soldier::postTactical(int kills)
+void Soldier::postTactical(int takedowns)
 {
 	++_missions;
-	_kills += kills;
+	_kills += takedowns;
 }
 
 /**
