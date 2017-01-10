@@ -12,6 +12,7 @@ https://github.com/SupSuper/OpenXcom
 
 Their website and forum:
 http://openxcom.org/
+
 http://openxcom.org/forum/
 
 The XCOM wiki:
@@ -30,7 +31,7 @@ If you have the Steam version you can find the XCOM game folder in
 Or search your system for "tactical.exe" and that should get to the general
 vicinity.
 
-Note that modified versions of orginal XCOM's resources may cause bugs and
+Note that modified versions of original XCOM's resources may cause bugs and
 crashes. Mods for OpenXcom may also cause bugs and crashes. Pretty much anything
 may cause bugs and crashes.
 
@@ -47,6 +48,7 @@ Copy the original XCOM subfolders
 - UFOGRAPH
 - UFOINTRO
 - UNITS
+
 to 0xC_kL's Data folder:
 
 	<0xC_kL>\data\
@@ -83,7 +85,9 @@ calls but these are blocked inside _WIN32 defines.
 These are the GCC 6.2 compiler-arguments that I use regularly:
 
 - release config
+
 -m32 -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -O3 -Wall -s -DNDEBUG -DUNICODE -D_UNICODE -I/C/msys32/mingw32/include -include src/pch.h -std=c++11
 
 - debug config
+
 -m32 -fno-omit-frame-pointer -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -g -Wall -DUNICODE -D_DEBUG -D_UNICODE -D__NO_MUSIC -I/C/msys32/mingw32/include -std=c++11
