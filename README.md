@@ -35,8 +35,8 @@ Note that modified versions of original XCOM's resources may cause bugs and
 crashes. Mods for OpenXcom may also cause bugs and crashes. Pretty much anything
 may cause bugs and crashes.
 
-0xC_kL DISCLAIMS ALL RESPONSIBILITY for what you do with the information and
-material available in this repository.
+0xC_kL DISCLAIMS ANY AND ALL RESPONSIBILITY for what you do with a computer
+along the information and material available in this repository.
 
 Copy the original XCOM subfolders
 GEODATA
