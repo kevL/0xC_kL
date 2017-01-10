@@ -8,15 +8,15 @@ licensed under the GPL and written in C++. It requires SDL 1.2, YAML-cpp 0.5.3,
 OpenGL and various 3rd party libraries.
 
 SupSuper's originating repository:
-https://github.com/SupSuper/OpenXcom
+- https://github.com/SupSuper/OpenXcom
 
 Their website and forum:
-http://openxcom.org/
+- http://openxcom.org/
 
-http://openxcom.org/forum/
+- http://openxcom.org/forum/
 
 The XCOM wiki:
-http://www.ufopaedia.org/index.php/Main_Page
+- http://www.ufopaedia.org/index.php/Main_Page
 
 
 1. Installation
@@ -39,16 +39,15 @@ may cause bugs and crashes.
 material available in this repository.
 
 Copy the original XCOM subfolders
-- GEODATA
-- GEOGRAPH
-- MAPS
-- ROUTES
-- SOUND
-- TERRAIN
-- UFOGRAPH
-- UFOINTRO
-- UNITS
-
+GEODATA
+GEOGRAPH
+MAPS
+ROUTES
+SOUND
+TERRAIN
+UFOGRAPH
+UFOINTRO
+UNITS
 to 0xC_kL's Data folder:
 
 	<0xC_kL>\data\
@@ -66,16 +65,11 @@ The source may or may not support these operating systems:
 
 OpenXcom requires the following developer libraries:
 
-- SDL (libsdl1.2):
-http://www.libsdl.org
-- SDL_mixer (libsdl-mixer1.2):
-http://www.libsdl.org/projects/SDL_mixer/
-- SDL_gfx (libsdl-gfx1.2), version 2.0.22 or later:
-http://www.ferzkopp.net/joomla/content/view/19/14/
-- SDL_image (libsdl-image1.2):
-http://www.libsdl.org/projects/SDL_image/
-- yaml-cpp, version 0.5.3 or later:
-http://code.google.com/p/yaml-cpp/
+SDL 1.2
+SDL_mixer 1.2
+SDL_gfx 1.2
+SDL_image 1.2
+yaml-cpp 0.5.3
 
 This repository contains no tools for building. It's source-code only that I
 compile on a Win32 XP Sp3 machine. While it still has defines for other systems
@@ -84,10 +78,10 @@ calls but these are blocked inside _WIN32 defines.
 
 These are the GCC 6.2 compiler-arguments that I use regularly:
 
-- release config
+release config
 
 -m32 -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -O3 -Wall -s -DNDEBUG -DUNICODE -D_UNICODE -I/C/msys32/mingw32/include -include src/pch.h -std=c++11
 
-- debug config
+debug config
 
 -m32 -fno-omit-frame-pointer -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -g -Wall -DUNICODE -D_DEBUG -D_UNICODE -D__NO_MUSIC -I/C/msys32/mingw32/include -std=c++11
