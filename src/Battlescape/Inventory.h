@@ -96,7 +96,7 @@ private:
 			const RuleInventory* const inRule,
 			BattleItem* const item,
 			bool test = false);
-	/// Checks if two items can be stacked on one another.
+	/// Checks if two items can be stacked with one another.
 	bool canStack(
 			const BattleItem* const itemA,
 			const BattleItem* const itemB);

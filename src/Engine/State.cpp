@@ -34,10 +34,10 @@
 #include "../Interface/ComboBox.h"
 #include "../Interface/Cursor.h"
 #include "../Interface/FpsCounter.h"
+#include "../Interface/Slider.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/TextEdit.h"
 #include "../Interface/TextList.h"
-#include "../Interface/Slider.h"
 #include "../Interface/Window.h"
 
 #include "../Resource/ResourcePack.h"
@@ -112,7 +112,7 @@ std::string State::getStateLabel() const // virtual.
 } */
 
 /**
- * Sets the User Interface data from a ruleset.
+ * Sets the User Interface data from a rule.
  * @note Also sets the Palette for the State.
  * @param category		- reference to the category of the interface from an Interfaces ruleset
  * @param altBackpal	- true to swap out the backpal-colors (default false)
@@ -338,7 +338,7 @@ void State::blit() // virtual.
 }
 
 /**
- * Takes care of any events from the core game-engine and passes them on to any
+ * Takes care of any events from the core engine and passes them on to any
  * InteractiveSurface child-elements.
  * @param action - pointer to an Action
  */

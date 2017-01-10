@@ -40,11 +40,10 @@ class Surface;
 
 
 /**
- * A game-state that receives user input and reacts accordingly.
- * @note Game-states typically represent a whole window or screen that the user
- * interacts with, making the game ... well, interactive. They automatically
- * handle child elements used to transmit information from/to the user and are
- * linked to the core game-engine which manages them.
+ * A State is a class that can receive user-input and react accordingly.
+ * @note States typically represent a "window" that the user interacts with to
+ * make the play ... well, interactive. They automatically handle any elements
+ * that are used to transfer information between the core engine and the user.
  */
 class State
 {
@@ -84,7 +83,7 @@ protected:
 		/// Gets the label of the State.
 //		virtual std::string getStateLabel() const;
 
-		/// Sets the Interface rule.
+		/// Sets the Interface rule for the State.
 		void setInterface(
 				const std::string& category,
 				bool altBackpal = false,

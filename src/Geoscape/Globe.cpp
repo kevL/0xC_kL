@@ -1194,16 +1194,6 @@ void Globe::blink()
 				i != _srtMarkers->getFrames()->end();
 				++i)
 		{
-//			GLM_BASE		= 0
-//			GLM_CRAFT		= 1
-//			GLM_UFO_FLYING	= 2
-//			GLM_UFO_LANDED	= 3
-//			GLM_UFO_CRASHED	= 4
-//			GLM_TERRORSITE	= 5
-//			GLM_WAYPOINT	= 6
-//			GLM_ALIENBASE	= 7
-//			GLM_CITY		= 8
-
 			if (i->first != GLM_CITY)
 				i->second->offset(_blinkVal);
 		}

@@ -2747,7 +2747,7 @@ void BattleUnit::hitUnitFire()
 
 /**
  * Gets the pointer to the vector of inventory items.
- * @return, pointer to a vector of pointers to this BattleUnit's battle items
+ * @return, pointer to a vector of pointers to this BattleUnit's battle-items
  */
 std::vector<BattleItem*>* BattleUnit::getInventory()
 {

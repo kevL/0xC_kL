@@ -57,7 +57,6 @@ AlienBAIState::AlienBAIState(
 		_targetsExposed(0),
 		_targetsVisible(0),
 		_tuAmbush(-1),
-//		_reserveTUs(0),
 		_hasRifle(false), // TODO: enum AIWeaponType ...
 		_hasMelee(false),
 		_hasBlaster(false),

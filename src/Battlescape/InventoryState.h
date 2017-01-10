@@ -50,6 +50,7 @@ class InventoryState final
 private:
 	static const Uint8
 		WHITE	=   1u,
+		ORANGE	=  17u,
 		RED		=  38u,
 		YELLOW	= 145u;
 
@@ -172,12 +173,12 @@ private:
 
 		/// Handler for clicking on inventory items.
 		void inClick(Action* action);
-		/// Handler for showing item info.
+		/// Handler for showing item-info.
 		void inMouseOver(Action* action);
-		/// Handler for hiding item info.
+		/// Handler for hiding item-info.
 		void inMouseOut(Action* action);
 
-		/// Handles keypresses.
+		/// Handles key-presses.
 		void handle(Action* action) override;
 
 /*		/// Handler for showing tooltip.

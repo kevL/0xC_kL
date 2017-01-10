@@ -245,7 +245,7 @@ InventoryState::InventoryState(
 	_numRightLeg	->setVisible(false);
 	_numLeftLeg		->setColor(RED);
 	_numLeftLeg		->setVisible(false);
-	_numFire		->setColor(RED);
+	_numFire		->setColor(ORANGE);
 	_numFire		->setVisible(false);
 
 	_txtItem->setHighContrast();
@@ -880,11 +880,13 @@ void InventoryState::btnGroundPress(Action* action)
 	{
 		case SDL_BUTTON_WHEELDOWN:
 			_inventoryPanel->arrangeGround(+1);
+			_inventoryPanel->drawItems();
 			break;
+
 		case SDL_BUTTON_WHEELUP:
 			_inventoryPanel->arrangeGround(-1);
+			_inventoryPanel->drawItems();
 	}
-	_inventoryPanel->drawItems();
 }
 
 /**
@@ -1211,7 +1213,7 @@ void InventoryState::inMouseOut(Action*)
 }
 
 /**
- * Takes care of any events from the core game engine.
+ * Takes care of any events from the core engine.
  * @param action - pointer to an Action
  */
 void InventoryState::handle(Action* action)

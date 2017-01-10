@@ -58,7 +58,6 @@ private:
 		_targetsExposed,
 		_targetsVisible,
 		_tuAmbush;
-//		_reserveTUs;
 
 	std::vector<size_t> _reachableAttack;
 //		_wasHitBy;

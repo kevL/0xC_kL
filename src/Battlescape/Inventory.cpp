@@ -263,121 +263,124 @@ void Inventory::drawGrids()
 }
 
 /**
- * Draws the items contained in the currently selected unit's inventory and
- * ground-tile.
+ * Draws the items contained in the currently selected unit's inventory and on
+ * its ground-tile.
  */
 void Inventory::drawItems()
 {
-	_srfItems->clear();
-	_fusePairs.clear();
-
-	Surface* sprite;
-
-	const RuleInventory* inRule;
-
-	std::vector<BattleItem*>* list (_selUnit->getInventory());
-	for (std::vector<BattleItem*>::const_iterator // draw Unit sections.
-			i = list->begin();
-			i != list->end();
-			++i)
+	if (_selUnit != nullptr)
 	{
-		if (*i != _selItem)
+		_srfItems->clear();
+		_fusePairs.clear();
+
+		Surface* sprite;
+
+		const RuleInventory* inRule;
+
+		std::vector<BattleItem*>* list (_selUnit->getInventory());
+		for (std::vector<BattleItem*>::const_iterator // draw items in Unit sections.
+				i = list->begin();
+				i != list->end();
+				++i)
 		{
-			if ((sprite = _srtBigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
+			if (*i != _selItem)
 			{
-				inRule = (*i)->getInventorySection();
-				switch (inRule->getCategory())
+				if ((sprite = _srtBigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
 				{
-					case IC_SLOT:
-						sprite->setX(inRule->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
-						sprite->setY(inRule->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
-						break;
+					inRule = (*i)->getInventorySection();
+					switch (inRule->getCategory())
+					{
+						case IC_SLOT:
+							sprite->setX(inRule->getX() + (*i)->getSlotX() * RuleInventory::SLOT_W);
+							sprite->setY(inRule->getY() + (*i)->getSlotY() * RuleInventory::SLOT_H);
+							break;
 
-					case IC_HAND:
-						sprite->setX(inRule->getX()
-								+ (RuleInventory::HAND_W - (*i)->getRules()->getInventoryWidth())
-									* RuleInventory::SLOT_W_2);
-						sprite->setY(inRule->getY()
-								+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
-									* RuleInventory::SLOT_H_2);
+						case IC_HAND:
+							sprite->setX(inRule->getX()
+									+ (RuleInventory::HAND_W - (*i)->getRules()->getInventoryWidth())
+										* RuleInventory::SLOT_W_2);
+							sprite->setY(inRule->getY()
+									+ (RuleInventory::HAND_H - (*i)->getRules()->getInventoryHeight())
+										* RuleInventory::SLOT_H_2);
+					}
+					sprite->blit(_srfItems);
+
+					if ((*i)->getFuse() > -1) // grenade-primed indicators
+						_fusePairs.push_back(std::make_pair(
+														sprite->getX(),
+														sprite->getY()));
 				}
-				sprite->blit(_srfItems);
-
-				if ((*i)->getFuse() > -1) // grenade-primed indicators
-					_fusePairs.push_back(std::make_pair(
-													sprite->getX(),
-													sprite->getY()));
+//				else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 			}
-//			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[1] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 		}
-	}
 
 
-	Surface* const stackLayer (new Surface(getWidth(), getHeight()));
-	stackLayer->setPalette(getPalette());
+		Surface* const stackLayer (new Surface(getWidth(), getHeight()));
+		stackLayer->setPalette(getPalette());
 
-	static const Uint8
-		color (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
-		RED (37u);
+		static const Uint8
+			color (static_cast<Uint8>(_game->getRuleset()->getInterface("inventory")->getElement("numStack")->color)),
+			RED (37u);
 
-	inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
-	list = _selUnit->getUnitTile()->getInventory();
-	for (std::vector<BattleItem*>::const_iterator // draw Ground section.
-			i = list->begin();
-			i != list->end();
-			++i)
-	{
-		if (*i != _selItem									// Items can be made invisible by setting their width to 0;
-			&& (*i)->getRules()->getInventoryWidth() != 0)	// eg, used for large-unit corpses.
-//			&& (*i)->getRules()->getInventoryHeight() != 0
-//			&& (*i)->getSlotX() >= _grdOffset				// && < _grdOffset + RuleInventory::GROUND_W ... or so.
+		inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
+		list = _selUnit->getUnitTile()->getInventory();
+		for (std::vector<BattleItem*>::const_iterator // draw items in Ground section.
+				i = list->begin();
+				i != list->end();
+				++i)
 		{
-			if ((sprite = _srtBigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
+			if (*i != _selItem									// Items can be made invisible by setting their width to 0;
+				&& (*i)->getRules()->getInventoryWidth() != 0)	// eg, used for large-unit corpses.
+//				&& (*i)->getRules()->getInventoryHeight() != 0
+//				&& (*i)->getSlotX() >= _grdOffset				// && < _grdOffset + RuleInventory::GROUND_W ... or so.
 			{
-				sprite->setX(inRule->getX()
-						  + ((*i)->getSlotX() - _grdOffset) * RuleInventory::SLOT_W);
-				sprite->setY(inRule->getY()
-						  + ((*i)->getSlotY() * RuleInventory::SLOT_H));
+				if ((sprite = _srtBigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
+				{
+					sprite->setX(inRule->getX()
+							  + ((*i)->getSlotX() - _grdOffset) * RuleInventory::SLOT_W);
+					sprite->setY(inRule->getY()
+							  + ((*i)->getSlotY() * RuleInventory::SLOT_H));
 
-				sprite->blit(_srfItems);
+					sprite->blit(_srfItems);
 
-				if ((*i)->getFuse() > -1) // grenade primer indicators
-					_fusePairs.push_back(std::make_pair(
-													sprite->getX(),
-													sprite->getY()));
-			}
-//			else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
+					if ((*i)->getFuse() > -1) // grenade primer indicators
+						_fusePairs.push_back(std::make_pair(
+														sprite->getX(),
+														sprite->getY()));
+				}
+//				else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
 
-			const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
-									  [(*i)->getSlotY()]);
-			int fatals;
-			if ((*i)->getBodyUnit() != nullptr)
-				fatals = (*i)->getBodyUnit()->getFatalsTotal();
-			else
-				fatals = 0;
+				const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
+										  [(*i)->getSlotY()]);
+				int fatals;
+				if ((*i)->getBodyUnit() != nullptr)
+					fatals = (*i)->getBodyUnit()->getFatalsTotal();
+				else
+					fatals = 0;
 
-			if (qty > 1 || fatals != 0)
-			{
-				_numStack->setX((inRule->getX()
-									+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _grdOffset)
-										* RuleInventory::SLOT_W) - 4);
+				if (qty > 1 || fatals != 0)
+				{
+					_numStack->setX((inRule->getX()
+										+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _grdOffset)
+											* RuleInventory::SLOT_W) - 4);
 
-				if (qty > 9 || fatals > 9)
-					_numStack->setX(_numStack->getX() - 4);
+					if (qty > 9 || fatals > 9)
+						_numStack->setX(_numStack->getX() - 4);
 
-				_numStack->setY((inRule->getY()
-									+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
-										* RuleInventory::SLOT_H) - 6);
-				_numStack->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
-				_numStack->draw();
-				_numStack->setColor(fatals ? RED : color);
-				_numStack->blit(stackLayer);
+					_numStack->setY((inRule->getY()
+										+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
+											* RuleInventory::SLOT_H) - 6);
+					_numStack->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
+					_numStack->draw();
+					_numStack->setColor(fatals ? RED : color);
+					_numStack->blit(stackLayer);
+				}
 			}
 		}
-	}
 
-	stackLayer->blit(_srfItems);
-	delete stackLayer;
+		stackLayer->blit(_srfItems);
+		delete stackLayer;
+	}
 }
 
 /**
@@ -1058,7 +1061,7 @@ bool Inventory::fitItem( // private.
 }
 
 /**
- * Checks if two items can be stacked on one another.
+ * Checks if two items can be stacked with one another.
  * @param itemA - first item
  * @param itemB - second item
  * @return, true if the items can be stacked on one another
