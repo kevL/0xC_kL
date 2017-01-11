@@ -74,7 +74,7 @@ The source may or may not support these operating systems:
 		SDL_image 1.2
 		yaml-cpp 0.5.3
 
-This repository contains no tools for building. It's source-code only that I compile on a Win32 XP Sp3 machine. While it still has defines for other systems they have not been updated and so are likely buggy, but can likely be resolved by investigating the vanilla OpenXcom repository. Also there are Windows API calls but these are blocked inside _WIN32 defines -- there's a call to IrfanView for viewing battlefield LoFTs IG, and if it causes problems I trust that you can find it and deal with it your own way.
+This repository contains no tools for building. It's source-code that I compile on a Win32 XP Sp3 machine. While it still has defines for other systems they have not been updated and so are likely buggy, but can likely be resolved by investigating the vanilla OpenXcom repository. Also there are Windows API calls but these are blocked inside _WIN32 defines -- there's a call to IrfanView for viewing battlefield LoFTs IG, and if it causes problems I trust that you can find it and deal with it your own way.
 
 These are the GCC 6.2 compiler-arguments that I use regularly:
 
