@@ -41,16 +41,16 @@ struct OpenSetEntry
  */
 struct EntryCompare
 {
-		/**
-		 * Compares entries @a *a and @a *b.
-		 * @param a - pointer to first entry
-		 * @param b - pointer to second entry
-		 * @return, true if entry @a *b must come before @a *a
-		 */
-		bool operator() (const OpenSetEntry* const a, const OpenSetEntry* const b) const
-		{
-			return b->_cost < a->_cost;
-		}
+	/**
+	 * Compares entries @a *a and @a *b.
+	 * @param a - pointer to first entry
+	 * @param b - pointer to second entry
+	 * @return, true if entry @a *b must come before @a *a
+	 */
+	bool operator ()(const OpenSetEntry* const a, const OpenSetEntry* const b) const
+	{
+		return b->_cost < a->_cost;
+	}
 };
 
 

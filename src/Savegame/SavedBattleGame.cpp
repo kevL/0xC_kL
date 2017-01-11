@@ -2128,7 +2128,7 @@ bool SavedBattleGame::isNodeType(
  * Carries out full-turn preparations such as fire and smoke spreading.
  * @note Also explodes any explosive Tiles that get destroyed by fire.
  */
-void SavedBattleGame::tileVolatiles()
+void SavedBattleGame::tileVolatiles() // private.
 {
 	std::vector<Tile*>
 		tilesFired,
@@ -2156,9 +2156,9 @@ void SavedBattleGame::tileVolatiles()
 			i != tilesFired.end();
 			++i)
 	{
-		if ((*i)->decreaseFire() != 0)
+		if ((var = (*i)->decreaseFire()) != 0)
 		{
-			var = (*i)->getFire() << 4u;
+			var <<= 4u;
 			for (int
 					dir = 0;
 					dir != 8;
@@ -2202,10 +2202,10 @@ void SavedBattleGame::tileVolatiles()
 			i != tilesSmoked.end();
 			++i)
 	{
-		if ((*i)->decreaseSmoke() > 1)
+		if ((var = (*i)->decreaseSmoke()) > 1)
 		{
-			if ((var = (*i)->getSmoke() >> 1u) > 2
-				&& (tile = getTile((*i)->getPosition() + Position(0,0,1))) != nullptr
+			if ((var >> 1u) > 2
+				&& (tile = (*i)->getTileAbove(this)) != nullptr
 				&& tile->isFloored(*i) == false) // TODO: Use verticalBlockage() instead.
 			{
 				tile->addSmoke(var / 3);

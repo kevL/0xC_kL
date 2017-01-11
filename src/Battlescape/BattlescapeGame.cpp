@@ -1548,8 +1548,7 @@ void BattlescapeGame::endTurn() // private.
 
 	checkCasualties();
 
-
-	int // if all units from either faction are killed - the mission is over.
+	int // if all units from either faction are killed - the battle is over.
 		liveHostile,
 		livePlayer;
 	const bool pacified (tallyUnits(
@@ -3580,7 +3579,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
  *						  including MC'd aLiens and MC'd xCom units
  * @param livePlayer	- reference in which to store the live xCom tally
  *						  excluding MC'd xCom units and MC'd aLiens
- * @return, true if all the aLiens are dead or MC'd (aka. pacified)
+ * @return, true if all the aLiens are dead/stunned or MC'd (aka. pacified)
  */
 bool BattlescapeGame::tallyUnits(
 		int& liveHostile,
@@ -3596,22 +3595,38 @@ bool BattlescapeGame::tallyUnits(
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
-		if ((*i)->getUnitStatus() == STATUS_STANDING)
+		switch ((*i)->getOriginalFaction())
 		{
-			switch ((*i)->getOriginalFaction())
-			{
-				case FACTION_PLAYER:
-					if ((*i)->isMindControlled() == false)
-						++livePlayer;
-					else
-						++liveHostile;
-					break;
+			case FACTION_PLAYER:
+				switch ((*i)->getUnitStatus())
+				{
+					case STATUS_STANDING:
+						if ((*i)->isMindControlled() == false)
+							++livePlayer;
+						else
+							++liveHostile;
+						break;
 
-				case FACTION_HOSTILE:
-					++liveHostile;
-					if ((*i)->isMindControlled() == false)
+					case STATUS_PANICKING:
+					case STATUS_BERSERK:
+						++livePlayer;
+				}
+				break;
+
+			case FACTION_HOSTILE:
+				switch ((*i)->getUnitStatus())
+				{
+					case STATUS_STANDING:
+						++liveHostile;
+						if ((*i)->isMindControlled() == false)
+							ret = false;
+						break;
+
+					case STATUS_PANICKING:
+					case STATUS_BERSERK:
+						++liveHostile;
 						ret = false;
-			}
+				}
 		}
 	}
 

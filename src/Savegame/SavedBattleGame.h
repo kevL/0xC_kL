@@ -158,6 +158,9 @@ private:
 	/// Sets the TacticalType based on a specified mission-type.
 	void setTacType(const std::string& type);
 
+	/// Carries out full-turn preparations for Tiles.
+	void tileVolatiles();
+
 
 	public:
 		static const size_t SEARCH_SIZE = (SEARCH_DIST * SEARCH_DIST);
@@ -364,9 +367,6 @@ private:
 		bool isNodeType(
 				const Node* const node,
 				const BattleUnit* const unit) const;
-
-		/// Carries out full-turn preparations for Tiles.
-		void tileVolatiles();
 
 		/// Revives unconscious units of @a faction.
 //		void reviveUnits(const UnitFaction faction);
