@@ -25,6 +25,8 @@ Plenty of credit needs to go to many persons both acknowledged and unacknowledge
 
 [7]: http://www.ufopaedia.org/index.php/Main_Page
 
+Obligatory DISCLAIMER for ANY AND ALL RESPONSIBILITY for what you do with a computer and the material available in this repository.
+
 
 1. Installation
 ================
@@ -36,8 +38,6 @@ If you have the Steam version you can find the XCOM game folder in
 		Steam\steamapps\common\xcom ufo defense\XCOM
 
 Note that modified versions of original XCOM's resources may cause bugs and crashes. Mods for OpenXcom may also cause bugs and crashes. Pretty much anything may cause bugs and crashes.
-
-DISCLAIMER for ANY AND ALL RESPONSIBILITY for what you do with a computer and the material available in this repository.
 
 Copy the original XCOM subfolders
 
@@ -74,7 +74,7 @@ OpenXcom requires the following developer libraries:
 		SDL_image 1.2
 		yaml-cpp 0.5.3
 
-This repository contains no tools for building. It's source-code only that I compile on a Win32 XP Sp3 machine. While it still has defines for other systems they have not been updated and so are likely buggy. Also there are Windows API calls but these are blocked inside _WIN32 defines.
+This repository contains no tools for building. It's source-code only that I compile on a Win32 XP Sp3 machine. While it still has defines for other systems they have not been updated and so are likely buggy, but can likely be resolved by investigating the vanilla OpenXcom repository. Also there are Windows API calls but these are blocked inside _WIN32 defines -- there's a call to IrfanView for viewing battlefield LoFTs IG, and if it causes problems I trust that you can find it and deal with it your own way.
 
 These are the GCC 6.2 compiler-arguments that I use regularly:
 
