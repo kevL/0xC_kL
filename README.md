@@ -4,11 +4,11 @@ a liberal adaptation of [XCOM:Ufo Defense / UFO:Enemy Unknown][1]
 
 [1]: https://en.wikipedia.org/wiki/UFO:_Enemy_Unknown
 
-[0xC_kL][1] is an independent fork of [OpenXcom][2], which is an open-source clone of the popular 1994 [Microprose][3] videogame. It is licensed under the GPL and written in C++. It requires SDL 1.2, YAML-cpp 0.5.3, OpenGL and various 3rd party libraries.
+[0xC_kL][2] is an independent fork of [OpenXcom][3], which is an open-source clone of the popular 1994 [Microprose][4] videogame. It is licensed under the GPL and written in C++. It requires SDL 1.2, YAML-cpp 0.5.3, OpenGL and various 3rd party libraries.
 
-[1]: https://github.com/kevL/0xC_kL
-[2]: https://github.com/SupSuper/OpenXcom
-[3]: https://en.wikipedia.org/wiki/MicroProse
+[2]: https://github.com/kevL/0xC_kL
+[3]: https://github.com/SupSuper/OpenXcom
+[4]: https://en.wikipedia.org/wiki/MicroProse
 
 Nothing here has any guaranteed compatibility in any way shape or form with OpenXcom or any of its modifications -- regard this as a simple personal library and a way for me to fool around with GitHub.
 
@@ -16,14 +16,14 @@ The sourcecode is substantially different than SupSuper's repository, which is l
 
 General rules are yours to discover. Tanks have a reverse gear, for example.
 
-Plenty of credit needs to go to many persons both acknowledged and unacknowledged for [code][1] and [modified resources][2].
+Plenty of credit needs to go to many persons both acknowledged and unacknowledged for [code][5] and [modified resources][6].
 
-[1]: http://openxcom.org/
-[2]: http://openxcom.org/forum/
+[5]: http://openxcom.org/
+[6]: http://openxcom.org/forum/
 
-[The X-COM wiki][1]
+[The X-COM wiki][7]
 
-[1]: http://www.ufopaedia.org/index.php/Main_Page
+[7]: http://www.ufopaedia.org/index.php/Main_Page
 
 
 1. Installation
@@ -80,8 +80,8 @@ These are the GCC 6.2 compiler-arguments that I use regularly:
 
 release config
 
--m32 -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -O3 -Wall -s -DNDEBUG -DUNICODE -D_UNICODE -I/C/msys32/mingw32/include -include src/pch.h -std=c++11
+		-m32 -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -O3 -Wall -s -DNDEBUG -DUNICODE -D_UNICODE -I/C/msys32/mingw32/include -include src/pch.h -std=c++11
 
 debug config
 
--m32 -fno-omit-frame-pointer -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -g -Wall -DUNICODE -D_DEBUG -D_UNICODE -D__NO_MUSIC -I/C/msys32/mingw32/include -std=c++11
+		-m32 -fno-omit-frame-pointer -Wno-deprecated-declarations -Wno-reorder -Wno-switch -Wno-parentheses -mwindows -g -Wall -DUNICODE -D_DEBUG -D_UNICODE -D__NO_MUSIC -I/C/msys32/mingw32/include -std=c++11
