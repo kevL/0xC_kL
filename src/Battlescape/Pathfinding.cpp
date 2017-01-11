@@ -364,12 +364,14 @@ void Pathfinding::calculatePath(
 					|| (_alt  == true && isMech == true))
 			   && (std::abs(
 						findTerrainLevel(_battleSave->getTile(posStop), posStart.z)
-					  - findTerrainLevel(_battleSave->getTile(posStart), posStop.z) < 9))
+					  - findTerrainLevel(_battleSave->getTile(posStart), posStop.z)) < 9)
 			   && std::abs(posStop.x - posStart.x) < 2
 			   && std::abs(posStop.y - posStart.y) < 2;
 		//Log(LOG_INFO) << "strafe= " << _strafe;
 		//Log(LOG_INFO) << "tLevel stop= " << findTerrainLevel(_battleSave->getTile(posStop), posStart.z);
 		//Log(LOG_INFO) << "tLevel start= " << findTerrainLevel(_battleSave->getTile(posStart), posStop.z);
+		//Log(LOG_INFO) << "tLevel diff= " << std::abs(findTerrainLevel(_battleSave->getTile(posStop), posStart.z)
+		//										   - findTerrainLevel(_battleSave->getTile(posStart), posStop.z));
 
 //		const bool sneak (Options::sneakyAI == true
 //					   && _unit->getFaction() == FACTION_HOSTILE);
@@ -391,7 +393,7 @@ void Pathfinding::calculatePath(
 								posStop_cache,
 								tuCap,
 								nullptr,
-								true); // <- sets '_strafe' FALSE so loop never gets back in here.
+								true); // <- sets '_strafe' FALSE so recursion never gets back in here.
 				}
 				else if (Options::battleStrafe == true
 					&& _ctrl == true
@@ -602,7 +604,7 @@ std::vector<size_t> Pathfinding::findReachable(
 	PathfindingOpenSet nodes;
 	nodes.addNode(nodeStart);
 
-	std::vector<PathfindingNode*> nodeList;	// NOTE: These are not route-nodes perse,
+	std::vector<PathfindingNode*> nodeList;	// NOTE: These are not route-nodes per se,
 											// *every Tile* is a PathfindingNode.
 	Position posStop;
 	int
