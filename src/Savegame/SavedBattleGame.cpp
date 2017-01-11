@@ -2158,7 +2158,7 @@ void SavedBattleGame::tileVolatiles() // private.
 	{
 		if ((var = (*i)->decreaseFire()) != 0)
 		{
-			var <<= 4u;
+			var <<= 3u;
 			for (int
 					dir = 0;
 					dir != 8;

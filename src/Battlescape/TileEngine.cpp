@@ -4475,7 +4475,7 @@ void TileEngine::detonateTile(Tile* const tile) const
 
 		if (tile->getSmoke() != 0) // add smoke to tiles above
 		{
-			Tile* const tileAbove (_battleSave->getTile(tile->getPosition() + Position(0,0,1)));
+			Tile* const tileAbove (tile->getTileAbove(_battleSave));
 			if (tileAbove != nullptr
 				&& tileAbove->isFloored(tile) == false				// <- TODO: use verticalBlockage() instead
 				&& RNG::percent(tile->getSmoke() << 3u) == true)	// <- unfortunately the state-machine may cause an unpredictable

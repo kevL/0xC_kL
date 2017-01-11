@@ -4872,8 +4872,8 @@ void BattleUnit::burnTile(Tile* const tile)
 		tile->igniteTile(power / 10);
 
 		const Position targetVoxel (Position::toVoxelSpaceCentered(
-																 tile->getPosition(),
-																-tile->getTerrainLevel()));
+															 tile->getPosition(),
+															-tile->getTerrainLevel()));
 		_battleSave->getTileEngine()->hit(
 										targetVoxel,
 										power,

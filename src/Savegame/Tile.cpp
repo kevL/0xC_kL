@@ -899,7 +899,7 @@ int Tile::getFuel(MapDataType partType) const
 bool Tile::igniteTile(int power)
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "Tile::igniteTile() " << _pos;
+	//Log(LOG_INFO) << "Tile::igniteTile() " << _pos << " power= " << power;
 	if (power != 0 && allowSmoke() == true)
 	{
 		const int burn (getBurnable());
