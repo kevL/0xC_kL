@@ -66,7 +66,7 @@ The source may or may not support these operating systems:
 2. Development
 ===============
 
-OpenXcom requires the following developer libraries:
+0xC_kL requires the following developer libraries:
 
 		SDL 1.2
 		SDL_mixer 1.2
