@@ -134,14 +134,14 @@ const char* const BattlescapeGame::PLAYER_ERROR[16u] // static.
 /**
  * Initializes the core elements of tactical combat.
  * @param battleSave	- pointer to the SavedBattleGame
- * @param parentState	- pointer to the parent BattlescapeState
+ * @param battleState	- pointer to the BattlescapeState
  */
 BattlescapeGame::BattlescapeGame(
 		SavedBattleGame* const battleSave,
-		BattlescapeState* const parentState)
+		BattlescapeState* const battleState)
 	:
 		_battleSave(battleSave),
-		_parentState(parentState),
+		_battleState(battleState),
 		_playerPanicHandled(true),
 		_AIActionCounter(0),
 		_AISecondMove(false),
@@ -183,7 +183,7 @@ BattlescapeGame::BattlescapeGame(
 			(*i)->getAIState()->init();
 	}
 
-	_parentState->getMap()->setBattleGame(this);
+	_battleState->getMap()->setBattleGame(this);
 
 	// sequence of instantiations:
 	// - SavedBattleGame		- dTor: DebriefingState::btnOkClick()
@@ -234,7 +234,7 @@ void BattlescapeGame::think()
 				else
 				{
 					//Log(LOG_INFO) << ". panic Handled is TRUE";
-					_parentState->updateExperienceInfo();
+					_battleState->updateExperienceInfo();
 				}
 				break;
 
@@ -246,7 +246,7 @@ void BattlescapeGame::think()
 					if (selUnit != nullptr)
 					{
 						//Log(LOG_INFO) << "bg:think() selUnit VALID id-" << selUnit->getId();
-						_parentState->printDebug(Text::intWide(selUnit->getId()));
+						_battleState->printDebug(Text::intWide(selUnit->getId()));
 						if (handlePanickingUnit(selUnit) == false)
 						{
 							//Log(LOG_INFO) << "bg:think() . handleUnitAI()";
@@ -407,7 +407,7 @@ void BattlescapeGame::popBattleState()
 		{
 			//Log(LOG_INFO) << ". . actionFail";
 			actionFail = true;
-			_parentState->warning(action.result);
+			_battleState->warning(action.result);
 
 			// remove action.Cursor if error.Message (eg, not enough TUs)
 			if (   action.result.compare(BattlescapeGame::PLAYER_ERROR[0u]) == 0	// no TU
@@ -565,7 +565,7 @@ void BattlescapeGame::popBattleState()
 								getMap()->getCamera()->centerPosition(aiUnit->getPosition());
 								if (_battleSave->getDebugTac() == true)
 								{
-									_parentState->refreshMousePosition();
+									_battleState->refreshMousePosition();
 									setupSelector();
 								}
 							}
@@ -574,7 +574,7 @@ void BattlescapeGame::popBattleState()
 					else if (_debugPlay == true)
 					{
 						setupSelector();
-						_parentState->getGame()->getCursor()->setHidden(false);
+						_battleState->getGame()->getCursor()->setHidden(false);
 					}
 			}
 		}
@@ -621,7 +621,7 @@ void BattlescapeGame::popBattleState()
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". updateSoldierInfo()";
-			_parentState->updateSoldierInfo(false);	// try no calcFoV()
+			_battleState->updateSoldierInfo(false);	// try no calcFoV()
 		}
 	}
 
@@ -646,8 +646,8 @@ void BattlescapeGame::popBattleState()
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
 		{
 			//Log(LOG_INFO) << ". . side Player -> setupSelector";
-			_parentState->getGame()->getCursor()->setHidden(false);
-			_parentState->refreshMousePosition(); // update tile-data on the HUD
+			_battleState->getGame()->getCursor()->setHidden(false);
+			_battleState->refreshMousePosition(); // update tile-data on the HUD
 			setupSelector();
 		}
 	}
@@ -681,7 +681,7 @@ bool BattlescapeGame::noActionsPending(const BattleUnit* const unit) const
  */
 void BattlescapeGame::setStateInterval(Uint32 interval)
 {
-	_parentState->setStateInterval(interval);
+	_battleState->setStateInterval(interval);
 }
 
 /**
@@ -790,7 +790,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 			if (debug) Log(LOG_INFO) << ". pickup Weapon ... do think";
 			doThink = true;
 			if (_battleSave->getDebugTac() == true) // <- order matters.
-				_parentState->updateSoldierInfo(false);
+				_battleState->updateSoldierInfo(false);
 		}
 		else
 		{
@@ -845,7 +845,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 	}
 
 	std::wstring wst (Language::fsToWstr(BattleAIState::debugAiMode(unit->getAIState()->getAIMode())));
-	_parentState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
+	_battleState->printDebug(wst + L"> " + Text::intWide(unit->getId()));
 	if (debug) Log(LOG_INFO) << BattleAction::debugBAction(aiAction);
 
 	switch (aiAction.type)
@@ -919,7 +919,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 					if (getTileEngine()->psiAttack(&aiAction) == true)
 					{
 						const BattleUnit* const psiVictim (_battleSave->getTile(aiAction.posTarget)->getTileUnit());
-						Language* const lang (_parentState->getGame()->getLanguage());
+						Language* const lang (_battleState->getGame()->getLanguage());
 						switch (aiAction.type)
 						{
 							default:
@@ -932,7 +932,7 @@ void BattlescapeGame::handleUnitAI(BattleUnit* const unit) // private.
 														.arg(psiVictim->getLabel(lang))
 														.arg(aiAction.value);
 						}
-						_parentState->getGame()->pushState(new InfoboxState(wst));
+						_battleState->getGame()->pushState(new InfoboxState(wst));
 					}
 			}
 			break;
@@ -970,11 +970,11 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 		_AIActionCounter = 0;
 
 		getMap()->getCamera()->centerPosition(nextUnit->getPosition(), false);
-		_parentState->updateSoldierInfo(false); // try no calcFov() ... calcFoV(pos) is going to happen in handleUnitAI() before AI-battlestate-think.
+		_battleState->updateSoldierInfo(false); // try no calcFov() ... calcFoV(pos) is going to happen in handleUnitAI() before AI-battlestate-think.
 
 		if (_battleSave->getDebugTac() == true)
 		{
-			_parentState->refreshMousePosition();
+			_battleState->refreshMousePosition();
 			setupSelector();
 		}
 
@@ -1008,6 +1008,8 @@ void BattlescapeGame::selectNextAiUnit(const BattleUnit* const unit) // private.
 void BattlescapeGame::endAiTurn()
 {
 	//Log(LOG_INFO) << "bg:endAiTurn()";
+	_battleState->printDebug(L"");
+
 	if (_battleSave->getDebugTac() == false)
 	{
 		_endTurnRequested = true;
@@ -1137,19 +1139,19 @@ void BattlescapeGame::handleNonTargetAction()
 		switch (showWarning)
 		{
 			case WARN:
-				_parentState->warning(_playerAction.result);
+				_battleState->warning(_playerAction.result);
 				_playerAction.result.clear();
 				break;
 
 			case WARN_ARG:
-				_parentState->warning(
+				_battleState->warning(
 									_playerAction.result,
 									_playerAction.value);
 				_playerAction.result.clear();
 		}
 
 		_playerAction.type = BA_NONE;
-		_parentState->updateSoldierInfo(false); // try no calcFov()
+		_battleState->updateSoldierInfo(false); // try no calcFov()
 	}
 	setupSelector();
 }
@@ -1334,20 +1336,20 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 
 						getMap()->cacheUnitSprite(unit);
 
-						_parentState->toggleKneelButton(unit);
+						_battleState->toggleKneelButton(unit);
 						return true;
 					}
 					else
-						_parentState->warning(BattlescapeGame::PLAYER_ERROR[1u]); // no Energy
+						_battleState->warning(BattlescapeGame::PLAYER_ERROR[1u]); // no Energy
 				}
 				else
-					_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
+					_battleState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
 //				}
 //				else // NOTE: checkReservedTu() sends its own warnings.
-//					_parentState->warning("STR_TIME_UNITS_RESERVED");
+//					_battleState->warning("STR_TIME_UNITS_RESERVED");
 			}
 			else
-				_parentState->warning(BattlescapeGame::PLAYER_ERROR[3u]); // not allowed: Float
+				_battleState->warning(BattlescapeGame::PLAYER_ERROR[3u]); // not allowed: Float
 		}
 		else // MC'd xCom agent trying to stand & walk by AI.
 		{
@@ -1371,7 +1373,7 @@ bool BattlescapeGame::kneelToggle(BattleUnit* const unit)
 		}
 	}
 	else
-		_parentState->warning(BattlescapeGame::PLAYER_ERROR[4u]); // not allowed: Alien -- TODO: change to "not a Soldier, can't kneel".
+		_battleState->warning(BattlescapeGame::PLAYER_ERROR[4u]); // not allowed: Alien -- TODO: change to "not a Soldier, can't kneel".
 
 	return false;
 }
@@ -1385,7 +1387,7 @@ void BattlescapeGame::endTurn() // private.
 	//Log(LOG_INFO) << "bg::endTurn()";
 	_debugPlay =
 	_AISecondMove = false;
-	_parentState->showLaunchButton(false);
+	_battleState->showLaunchButton(false);
 
 	_playerAction.targeting = false;
 	_playerAction.type = BA_NONE;
@@ -1449,7 +1451,7 @@ void BattlescapeGame::endTurn() // private.
 
 		stateBPushBack();	// this will repeatedly call another endTurn() so there's
 		return;				// no need to continue this one till all explosions are done.
-							// The problem arises because _battleSave->endFactionTurn() below
+							// The problem arises because _battleSave->factionEndTurn() below
 							// causes *more* destruction of explosive objects, that won't explode
 							// until some later instantiation of ExplosionBState .....
 							//
@@ -1493,7 +1495,7 @@ void BattlescapeGame::endTurn() // private.
 	}
 
 
-	if (_battleSave->endFactionTurn() == true) // <- This rolls over Faction-turns. TRUE means FullTurn has ended.
+	if (_battleSave->factionEndTurn() == true) // <- This rolls over Faction-turns. TRUE means FullTurn has ended.
 	{
 		for (size_t
 				i = 0u;
@@ -1558,7 +1560,7 @@ void BattlescapeGame::endTurn() // private.
 	if (_battleSave->getObjectiveTileType() == OBJECT_TILE // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
-		_parentState->finishBattle(false, livePlayer);
+		_battleState->finishBattle(false, livePlayer);
 	}
 	else if (_battleSave->getTurnLimit() != 0
 		&&   _battleSave->getTurnLimit() < _battleSave->getTurn())
@@ -1566,17 +1568,17 @@ void BattlescapeGame::endTurn() // private.
 		switch (_battleSave->getChronoResult())
 		{
 			case FORCE_WIN:
-				_parentState->finishBattle(false, livePlayer);
+				_battleState->finishBattle(false, livePlayer);
 				break;
 
 			case FORCE_LOSE:
 				_battleSave->isAborted(true);
-				_parentState->finishBattle(true, 0);
+				_battleState->finishBattle(true, 0);
 				break;
 
 			case FORCE_ABORT:
 				_battleSave->isAborted(true);
-				_parentState->finishBattle(true, tallyPlayerExit());
+				_battleState->finishBattle(true, tallyPlayerExit());
 		}
 	}
 	else
@@ -1587,7 +1589,7 @@ void BattlescapeGame::endTurn() // private.
 		if (battleComplete == false)
 		{
 			showInfoBoxQueue();
-			_parentState->updateSoldierInfo(false); // try no calcFov()
+			_battleState->updateSoldierInfo(false); // try no calcFov()
 
 			if (_battleSave->getSide() == FACTION_PLAYER
 				|| _battleSave->getDebugTac() == true)
@@ -1621,9 +1623,9 @@ void BattlescapeGame::endTurn() // private.
 					// no break;
 				case FACTION_HOSTILE:
 				case FACTION_PLAYER:
-					_parentState->getGame()->pushState(new NextTurnState(
+					_battleState->getGame()->pushState(new NextTurnState(
 																	_battleSave,
-																	_parentState,
+																	_battleState,
 																	pacified));
 			}
 		}
@@ -1792,14 +1794,14 @@ void BattlescapeGame::checkCasualties(
 	} // end BattleUnits loop.
 
 
-	_parentState->updateMedicIcons();
+	_battleState->updateMedicIcons();
 
 	if (isPreTactical == false)
 	{
 		if (_battleSave->getSide() == FACTION_PLAYER)
 		{
 			const BattleUnit* const unit (_battleSave->getSelectedUnit());
-			_parentState->showPsiButton(unit != nullptr
+			_battleState->showPsiButton(unit != nullptr
 									 && unit->getOriginalFaction() != FACTION_PLAYER
 									 && unit->getBattleStats()->psiSkill != 0
 									 && unit->getHealth() != 0
@@ -1825,7 +1827,7 @@ void BattlescapeGame::checkCasualties(
 //			if (controlDestroyed == true)
 //			{
 //				_battleSave->setControlDestroyed();
-//				Game* const game = _parentState->getGame();
+//				Game* const game = _battleState->getGame();
 //				game->pushState(new InfoboxDialogState(game->getLanguage()->getString("STR_ALIEN_BASE_CONTROL_DESTROYED")));
 //			}
 //		}
@@ -1885,7 +1887,7 @@ void BattlescapeGame::diaryAttacker( // private.
 
 		if (rtItem != nullptr || ltItem != nullptr)
 		{
-			const Ruleset* const rules (_parentState->getGame()->getRuleset());
+			const Ruleset* const rules (_battleState->getGame()->getRuleset());
 
 			const std::vector<std::string>& allItems (rules->getItemsList());
 			for (std::vector<std::string>::const_iterator
@@ -2141,7 +2143,7 @@ void BattlescapeGame::showInfoBoxQueue() // private.
 			i != _infoboxQueue.end();
 			++i)
 	{
-		_parentState->getGame()->pushState(*i);
+		_battleState->getGame()->pushState(*i);
 	}
 	_infoboxQueue.clear();
 }
@@ -2294,20 +2296,20 @@ bool BattlescapeGame::checkReservedTu(
 			{
 				switch (batReserved)
 				{
-					case BA_NONE: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_KNEELING");
+					case BA_NONE: _battleState->warning("STR_TIME_UNITS_RESERVED_FOR_KNEELING");
 					break;
-					default: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_KNEELING_AND_FIRING");
+					default: _battleState->warning("STR_TIME_UNITS_RESERVED_FOR_KNEELING_AND_FIRING");
 				}
 			}
 			else
 			{
 				switch (_battleSave->getBatReserved())
 				{
-					case BA_SNAPSHOT: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_SNAP_SHOT");
+					case BA_SNAPSHOT: _battleState->warning("STR_TIME_UNITS_RESERVED_FOR_SNAP_SHOT");
 					break;
-					case BA_AUTOSHOT: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_AUTO_SHOT");
+					case BA_AUTOSHOT: _battleState->warning("STR_TIME_UNITS_RESERVED_FOR_AUTO_SHOT");
 					break;
-					case BA_AIMEDSHOT: _parentState->warning("STR_TIME_UNITS_RESERVED_FOR_AIMED_SHOT");
+					case BA_AIMEDSHOT: _battleState->warning("STR_TIME_UNITS_RESERVED_FOR_AIMED_SHOT");
 				}
 			}
 		}
@@ -2352,7 +2354,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 	{
 		case STATUS_PANICKING:
 		case STATUS_BERSERK:
-			_parentState->getMap()->setSelectorType(CT_NONE);
+			_battleState->getMap()->setSelectorType(CT_NONE);
 			_battleSave->setSelectedUnit(unit);
 
 			if (Options::battleAlienPanicMessages == true
@@ -2363,7 +2365,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 												unit->getPosition(),
 												(unit->getUnitVisible() == true)); // NOTE: Should not have to redraw Map.
 
-				Game* const game (_parentState->getGame());
+				Game* const game (_battleState->getGame());
 				std::string st;
 				switch (status)
 				{
@@ -2585,7 +2587,7 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 					if (_playerAction.waypoints.empty() == true)
 					{
 						//Log(LOG_INFO) << ". . . hide launch btn";
-						_parentState->showLaunchButton(false);
+						_battleState->showLaunchButton(false);
 					}
 				}
 				else
@@ -2599,7 +2601,7 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 					{
 						//Log(LOG_INFO) << ". . . force & Player TRUE - setup Selector";
 						setupSelector();
-						_parentState->getGame()->getCursor()->setHidden(false);
+						_battleState->getGame()->getCursor()->setHidden(false);
 					}
 				}
 			}
@@ -2651,7 +2653,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			case BA_LAUNCH:
 				if (static_cast<int>(_playerAction.waypoints.size()) < _playerAction.weapon->getRules()->isWaypoints())
 				{
-					_parentState->showLaunchButton();
+					_battleState->showLaunchButton();
 					_playerAction.waypoints.push_back(pos);
 					getMap()->getWaypoints()->push_back(pos);
 				}
@@ -2681,22 +2683,22 @@ void BattlescapeGame::primaryAction(const Position& pos)
 											getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 																->play(-1, getMap()->getSoundAngle(pos));
 
-										_parentState->getGame()->pushState(new UnitInfoState(
+										_battleState->getGame()->pushState(new UnitInfoState(
 																						targetUnit,
-																						_parentState,
+																						_battleState,
 																						false, true));
-										_parentState->getGame()->getScreen()->fadeScreen();
+										_battleState->getGame()->getScreen()->fadeScreen();
 								}
 								else
-									_parentState->warning(BattlescapeGame::PLAYER_ERROR[5u]); // out of range
+									_battleState->warning(BattlescapeGame::PLAYER_ERROR[5u]); // out of range
 							}
 							else
-								_parentState->warning(BattlescapeGame::PLAYER_ERROR[6u]); // no LoF
+								_battleState->warning(BattlescapeGame::PLAYER_ERROR[6u]); // no LoF
 						}
 						else
 						{
 							cancelTacticalAction();
-							_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
+							_battleState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
 						}
 					}
 				}
@@ -2748,22 +2750,22 @@ void BattlescapeGame::primaryAction(const Position& pos)
 											case BA_PSICONFUSE:	st = "STR_PSI_CONFUSE_SUCCESS";	break;
 											case BA_PSICOURAGE:	st = "STR_PSI_COURAGE_SUCCESS";
 										}
-										Game* const game (_parentState->getGame());
+										Game* const game (_battleState->getGame());
 										game->pushState(new InfoboxState(game->getLanguage()->getString(st).arg(_playerAction.value)));
 
-										_parentState->updateSoldierInfo(false);
+										_battleState->updateSoldierInfo(false);
 									}
 							}
 							else
-								_parentState->warning(BattlescapeGame::PLAYER_ERROR[5u]); // out of range
+								_battleState->warning(BattlescapeGame::PLAYER_ERROR[5u]); // out of range
 						}
 						else
-							_parentState->warning(BattlescapeGame::PLAYER_ERROR[6u]); // no LoF
+							_battleState->warning(BattlescapeGame::PLAYER_ERROR[6u]); // no LoF
 					}
 					else
 					{
 						cancelTacticalAction();
-						_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
+						_battleState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
 					}
 
 
@@ -2777,7 +2779,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			case BA_AIMEDSHOT:
 			case BA_THROW:
 				getMap()->setSelectorType(CT_NONE);
-				_parentState->getGame()->getCursor()->setHidden();
+				_battleState->getGame()->getCursor()->setHidden();
 
 				_playerAction.posTarget = pos;
 				if (_playerAction.type == BA_THROW
@@ -2801,7 +2803,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		if (targetUnit->getFaction() == _battleSave->getSide())
 		{
 			_battleSave->setSelectedUnit(targetUnit);
-			_parentState->updateSoldierInfo(false); // try no calcFov()
+			_battleState->updateSoldierInfo(false); // try no calcFov()
 
 			cancelTacticalAction();
 			_playerAction.actor = targetUnit;
@@ -2857,7 +2859,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				if (allowPreview == false)
 				{
 					getMap()->setSelectorType(CT_NONE);
-					_parentState->getGame()->getCursor()->setHidden();
+					_battleState->getGame()->getCursor()->setHidden();
 
 					stateBPushBack(new UnitWalkBState(this, _playerAction));
 				}
@@ -2897,16 +2899,16 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					{
 						_playerAction.actor->setFloating(false);
 						_playerAction.actor->setCacheInvalid();
-						_parentState->getMap()->cacheUnitSprite(_playerAction.actor);
+						_battleState->getMap()->cacheUnitSprite(_playerAction.actor);
 
 						double stat (static_cast<double>(_playerAction.actor->getBattleStats()->tu));
 						const int tu (_playerAction.actor->getTu());
-						_parentState->getTuField()->setValue(static_cast<unsigned>(tu));
-						_parentState->getTuBar()->setValue(std::ceil(
+						_battleState->getTuField()->setValue(static_cast<unsigned>(tu));
+						_battleState->getTuBar()->setValue(std::ceil(
 														   static_cast<double>(tu) / stat * 100.));
 					}
 					else
-						_parentState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
+						_battleState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
 				}
 				else // BattlescapeState::btnUnitDownPress()
 				{
@@ -2942,7 +2944,7 @@ void BattlescapeGame::secondaryAction(const Position& pos)
 		stateBPushBack(new UnitTurnBState(this, _playerAction)); // turn, rotate turret, or open door
 	}
 	else
-		_parentState->btnKneelClick(nullptr); // could put just about anything here Orelly.
+		_battleState->btnKneelClick(nullptr); // could put just about anything here Orelly.
 }
 
 /**
@@ -2950,13 +2952,13 @@ void BattlescapeGame::secondaryAction(const Position& pos)
  */
 void BattlescapeGame::launchAction()
 {
-	_parentState->showLaunchButton(false);
+	_battleState->showLaunchButton(false);
 
 	getMap()->getWaypoints()->clear();
 	_playerAction.posTarget = _playerAction.waypoints.front();
 
 	getMap()->setSelectorType(CT_NONE);
-	_parentState->getGame()->getCursor()->setHidden();
+	_battleState->getGame()->getCursor()->setHidden();
 
 //	_playerAction.posCamera = getMap()->getCamera()->getMapOffset();
 	_playerAction.value = -1;
@@ -2999,7 +3001,7 @@ void BattlescapeGame::moveUpDown(
 	}
 
 	getMap()->setSelectorType(CT_NONE);
-	_parentState->getGame()->getCursor()->setHidden();
+	_battleState->getGame()->getCursor()->setHidden();
 
 	Pathfinding* const pf (_battleSave->getPathfinding());
 	pf->calculatePath(
@@ -3180,7 +3182,7 @@ void BattlescapeGame::convertUnit(BattleUnit* potato)
  */
 Map* BattlescapeGame::getMap() const
 {
-	return _parentState->getMap();
+	return _battleState->getMap();
 }
 
 /**
@@ -3216,7 +3218,7 @@ Pathfinding* BattlescapeGame::getPathfinding() const
  */
 ResourcePack* BattlescapeGame::getResourcePack() const
 {
-	return _parentState->getGame()->getResourcePack();
+	return _battleState->getGame()->getResourcePack();
 }
 
 /**
@@ -3225,7 +3227,7 @@ ResourcePack* BattlescapeGame::getResourcePack() const
  */
 const Ruleset* BattlescapeGame::getRuleset() const
 {
-	return _parentState->getGame()->getRuleset();
+	return _battleState->getGame()->getRuleset();
 }
 
 /**
@@ -3585,6 +3587,8 @@ bool BattlescapeGame::tallyUnits(
 		int& liveHostile,
 		int& livePlayer) const
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "bg:tallyUnits()";
 	bool ret (true);
 
 	liveHostile =
@@ -3595,6 +3599,9 @@ bool BattlescapeGame::tallyUnits(
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
+		//Log(LOG_INFO) << ". . id-" << (*i)->getId();
+		//Log(LOG_INFO) << ". . . status= " << BattleUnit::debugStatus((*i)->getUnitStatus());
+
 		switch ((*i)->getOriginalFaction())
 		{
 			case FACTION_PLAYER:
@@ -3604,7 +3611,10 @@ bool BattlescapeGame::tallyUnits(
 						if ((*i)->isMindControlled() == false)
 							++livePlayer;
 						else
+						{
+							//Log(LOG_INFO) << ". . . is MC'd";
 							++liveHostile;
+						}
 						break;
 
 					case STATUS_PANICKING:
@@ -3620,6 +3630,7 @@ bool BattlescapeGame::tallyUnits(
 						++liveHostile;
 						if ((*i)->isMindControlled() == false)
 							ret = false;
+						//else Log(LOG_INFO) << ". . . is MC'd";
 						break;
 
 					case STATUS_PANICKING:
@@ -3633,7 +3644,7 @@ bool BattlescapeGame::tallyUnits(
 	if (livePlayer == 0 && liveHostile == 0) // adjudicate: Player Victory.
 		livePlayer = -1;
 
-	//Log(LOG_INFO) << "bg:tallyUnits() ret= " << ret << " soldiers= " << livePlayer << " aLiens= " << liveHostile;
+	//Log(LOG_INFO) << ". ret= " << ret << " soldiers= " << livePlayer << " aLiens= " << liveHostile;
 	return ret;
 }
 
@@ -3781,7 +3792,7 @@ void BattlescapeGame::clearBattleStates()
  */
 BattlescapeState* BattlescapeGame::getBattlescapeState() const
 {
-	return _parentState;
+	return _battleState;
 }
 
 /**
@@ -3807,7 +3818,7 @@ BattleItem* BattlescapeGame::getAlienPsi() const
  */
 void BattlescapeGame::objectiveSuccess()
 {
-	const Game* const game (_parentState->getGame());
+	const Game* const game (_battleState->getGame());
 	const RuleAlienDeployment* const ruleDeploy (game->getRuleset()->getDeployment(_battleSave->getTacticalType()));
 	if (ruleDeploy != nullptr)
 	{

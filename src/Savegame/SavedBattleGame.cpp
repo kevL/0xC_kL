@@ -1123,7 +1123,7 @@ void SavedBattleGame::setSelectedUnit(BattleUnit* const unit)
 /**
  * Selects the next BattleUnit.
  * @note Also used for/by the AI in BattlescapeGame::think(), popState(),
- * handleUnitAI(), and in SavedBattleGame::endFactionTurn().
+ * handleUnitAI(), and in SavedBattleGame::factionEndTurn().
  * @param dontReselect		- true to set the current unit's reselectable flag FALSE (default false)
  * @param checkReselect		- true to check the next unit's reselectable flag (default false)
  * @param checkInventory	- true to check if the next unit has no inventory (default false)
@@ -1280,12 +1280,12 @@ int SavedBattleGame::getTurn() const
 
 /**
  * Ends the current faction's turn and progresses to the next.
- * @note Called from BattlescapeGame::endTurn().
+ * @note Called by BattlescapeGame::endTurn().
  * @return, true if the turn rolls-over to Faction_Player
  */
-bool SavedBattleGame::endFactionTurn()
+bool SavedBattleGame::factionEndTurn()
 {
-	//Log(LOG_INFO) << "sbg:endFactionTurn() side= " << _side;
+	//Log(LOG_INFO) << "sbg:factionEndTurn() side= " << _side;
 	for (std::vector<BattleUnit*>::const_iterator	// set *all* units non-selectable
 			i = _units.begin();						// Units of the upcoming turn's faction are
 			i != _units.end();						// set selectable at the end.
@@ -1387,9 +1387,9 @@ bool SavedBattleGame::endFactionTurn()
 						{
 							case STATUS_STANDING:
 							case STATUS_UNCONSCIOUS:
-								const int r (RNG::generate(0,5));
-								if (_turn > _cheatTurn - 3 + r
-									|| _battleState->getBattleGame()->tallyHostiles() < r - 1)
+								const int d (RNG::generate(0,5));
+								if (_turn > _cheatTurn - 3 + d
+									|| _battleState->getBattleGame()->tallyHostiles() < d - 1)
 								{
 									_cheatAI = true;
 								}

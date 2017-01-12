@@ -236,7 +236,7 @@ private:
 	BattleItem
 		* _alienPsi,
 		* _universalFist;
-	BattlescapeState* _parentState;
+	BattlescapeState* _battleState;
 	SavedBattleGame* _battleSave;
 
 	std::list<BattleState*>
@@ -296,7 +296,7 @@ private:
 		/// Creates a BattlescapeGame.
 		BattlescapeGame(
 				SavedBattleGame* const battleSave,
-				BattlescapeState* const parentState);
+				BattlescapeState* const battleState);
 		/// Cleans up the BattlescapeGame.
 		~BattlescapeGame();
 

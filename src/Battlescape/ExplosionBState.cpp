@@ -456,9 +456,9 @@ void ExplosionBState::think()
  * @note After the animation is done the real explosion/hit takes place here!
  * @note This function passes to TileEngine::explode() or TileEngine::hit()
  * depending on if it came from a bullet/psi/melee/spit or an actual explosion;
- * that is "explode" here means "attack has happened". Typically called from
- * either ProjectileFlyBState::think() or
- * BattlescapeGame::endTurn()/checkProxyGrenades()
+ * that is "explode" here means "attack has happened". Typically called by
+ * - ProjectileFlyBState::think()
+ * - BattlescapeGame::endTurn()/checkProxyGrenades()
  */
 void ExplosionBState::explode() // private.
 {

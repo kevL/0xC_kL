@@ -281,8 +281,8 @@ private:
 		UnitFaction getSide() const;
 		/// Gets the turn.
 		int getTurn() const;
-		/// Ends the turn.
-		bool endFactionTurn();
+		/// Advances play to the next faction.
+		bool factionEndTurn();
 		/// Selects the first BattleUnit of faction.
 		BattleUnit* firstFactionUnit(UnitFaction faction);
 
