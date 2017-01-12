@@ -508,7 +508,9 @@ bool TileEngine::calcFovUnits(BattleUnit* const unit) const
  */
 void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 {
-	//if (unit->getId() == 1000000) Log(LOG_INFO) << "CALC_FOV_TILES id-" << unit->getId();
+//	if (unit->getId() == 418) _debug = true;
+//	else _debug = false;
+//	if (_debug) Log(LOG_INFO) << "CALC_FOV_TILES id-" << unit->getId();
 
 
 //	unit->clearVisibleTiles();
@@ -604,6 +606,12 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 					posTest.x = posUnit.x + (sign_x[dir] * (swapXY ? y : x)); // NOTE: posUnit is a large unit's primary quadrant.
 					posTest.y = posUnit.y + (sign_y[dir] * (swapXY ? x : y));
 
+					//bool debug = false;
+					//if (_debug && posTest == Position(21,27,1)) {
+					//	debug = true;
+					//	Log(LOG_INFO) << ". " << posTest;
+					//}
+
 					if (_battleSave->getTile(posTest) != nullptr)
 					{
 						// this sets tiles to discovered if they are in FoV ->
@@ -628,6 +636,8 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 													false);
 								trjLength = trj.size();
 
+								//if (debug) Log(LOG_INFO) << ". . trjLength= " << trjLength;
+
 								if (blockType == TRJ_DECREASE) // NOTE: Not a voxel-type here, just a return-value.
 									--trjLength;
 
@@ -638,10 +648,14 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 								{
 									posTrj = trj.at(i);
 
+									//if (debug) Log(LOG_INFO) << ". . . " << posTrj;
+
 									// mark every tile of line as visible ->
 									tile = _battleSave->getTile(posTrj);
 									if (tile->isRevealed() == false) // NOTE: Keep an eye on this.
 									{
+										//if (debug) Log(LOG_INFO) << ". . . . reveal Pos";
+
 										tile->setRevealed();	// sprite caching for floor+content, ergo + west & north walls.
 //										tile->setTileVisible();	// Used only by sneakyAI.
 
@@ -737,6 +751,7 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 											}
 										}
 									}
+									//else if (debug) Log(LOG_INFO) << ". . . . already Revealed";
 								}
 							}
 						}
@@ -2733,8 +2748,8 @@ void TileEngine::explode(
 							if (tileStop->getTerrainLevel() > -24)
 							{
 								const int powerSmoke (static_cast<int>(std::ceil(
-													 (static_cast<double>(_powerE) / static_cast<double>(power)) * 10.)));
-								tileStop->addSmoke(powerSmoke + RNG::generate(0,7));
+													  static_cast<double>(_powerE) / static_cast<double>(power) * 10.)));
+								tileStop->addSmoke(powerSmoke + RNG::generate(0,6));
 							}
 
 							if (targetUnit != nullptr)

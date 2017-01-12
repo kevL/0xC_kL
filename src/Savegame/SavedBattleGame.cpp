@@ -2202,13 +2202,12 @@ void SavedBattleGame::tileVolatiles() // private.
 			i != tilesSmoked.end();
 			++i)
 	{
-		if ((var = (*i)->decreaseSmoke()) > 1)
+		if ((var = (*i)->decreaseSmoke() / 3) > 1)
 		{
-			if ((var >> 1u) > 2
-				&& (tile = (*i)->getTileAbove(this)) != nullptr
+			if ((tile = (*i)->getTileAbove(this)) != nullptr
 				&& tile->isFloored(*i) == false) // TODO: Use verticalBlockage() instead.
 			{
-				tile->addSmoke(var / 3);
+				tile->addSmoke(var);
 			}
 
 			for (int
@@ -2224,7 +2223,7 @@ void SavedBattleGame::tileVolatiles() // private.
 					if ((tile = getTile((*i)->getPosition() + pos)) != nullptr
 						&& _te->horizontalBlockage(*i, tile, DT_SMOKE) == 0)
 					{
-						tile->addSmoke(var >> 1u);
+						tile->addSmoke(var);
 					}
 				}
 			}
