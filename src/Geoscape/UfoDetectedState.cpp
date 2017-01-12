@@ -467,7 +467,7 @@ UfoDetectedState::~UfoDetectedState()
 {}
 
 /**
- * Initializes the state.
+ * Initializes this State.
  */
 void UfoDetectedState::init()
 {
@@ -502,12 +502,13 @@ void UfoDetectedState::btnCenterClick(Action*)
 	{
 		_delayPop = false;
 		transposeWindow();
-		return;
 	}
-
-	_geoState->assessUfoPopups();
-	_geoState->setPaused();
-	_game->popState();
+	else
+	{
+		_geoState->assessUfoPopups();
+		_geoState->setPaused();
+		_game->popState();
+	}
 }
 
 /**

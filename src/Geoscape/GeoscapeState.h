@@ -250,10 +250,10 @@ private:
 		/// Displays a popup window.
 		void popupGeo(State* const state);
 
-		/// Gets the Geoscape globe.
+		/// Gets the geoscape Globe.
 		Globe* getGlobe() const;
 
-		/// Handler for clicking the globe.
+		/// Handler for clicking the Globe.
 		void globeClick(Action* action);
 		/// Handler for clicking the Intercept button.
 		void btnInterceptClick(Action* action);

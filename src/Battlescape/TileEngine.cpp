@@ -1042,8 +1042,8 @@ Position TileEngine::getOriginVoxel(
 
 	return getSightOriginVoxel(action.actor);
 }
-/*	const int dirYshift[8] = {1, 1, 8,15,15,15, 8, 1};
-	const int dirXshift[8] = {8,14,15,15, 8, 1, 1, 1};
+/*	const int dirYshift[8] = {1, 1, 8,15,15,15, 8, 1}; // suggested: const int dirYshift8 = {2, 2, 8, 13,13,13,8, 2};
+	const int dirXshift[8] = {8,14,15,15, 8, 1, 1, 1}; // suggested: const int dirXshift8 = {8, 13,13,13,8, 2, 2, 2};
 	int dir = getDirectionTo(pos, action.target);
 	originVoxel.x += dirXshift[dir] * action.actor->getArmor()->getSize();
 	originVoxel.y += dirYshift[dir] * action.actor->getArmor()->getSize(); */

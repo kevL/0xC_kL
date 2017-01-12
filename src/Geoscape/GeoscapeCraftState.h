@@ -80,19 +80,19 @@ private:
 
 	/// Hides various screen-elements to reveal the globe & Craft.
 	void transposeWindow();
-	/// Applies the targeter-graphic to the last-known UFO coordinates.
+	/// Applies the Globe's targeter-graphic to the last-known UFO coordinates.
 	void targeter();
 
 
 	public:
-		/// Creates the Geoscape Craft state.
+		/// Creates a GeoscapeCraft state.
 		GeoscapeCraftState(
 				Craft* const craft,
 				GeoscapeState* const geoState,
 				Waypoint* const waypoint = nullptr,
 				bool doublePop = false,
 				bool transpose = false);
-		/// Cleans up the Geoscape Craft state.
+		/// Cleans up the GeoscapeCraft state.
 		~GeoscapeCraftState();
 
 		/// Handler for clicking the Center button.

@@ -358,8 +358,8 @@ Globe::Globe(
 	_srtMarkers		= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
 
 	_srfLayerCountry	= new Surface(width, height, x,y);
-	_srfLayerCrosshair	= new Surface(width, height, x,y);
-	_srfLayerMarkers	= new Surface(width, height, x,y);
+	_srfLayerCrosshair	= new Surface(width, height, x,y); // TODO: Persist the crosshair if visible until play is unpaused or Globe is rotated.
+	_srfLayerMarkers	= new Surface(width, height, x,y); // Perhaps if Globe is rotated the crosshair should re-locate to next coordinates.
 	_srfLayerRadars		= new Surface(width, height, x,y);
 
 	_clipper = new FastLineClip(
@@ -2453,6 +2453,8 @@ void Globe::setCrosshair(
 	_drawCrosshair = true;
 	_crosshairLon = lon;
 	_crosshairLat = lat;
+
+	drawCrosshair();
 }
 
 /**

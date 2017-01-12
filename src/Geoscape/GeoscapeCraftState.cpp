@@ -372,7 +372,7 @@ GeoscapeCraftState::~GeoscapeCraftState()
 {}
 
 /**
- * Centers the Craft on the Globe.
+ * Centers the Globe on the current Craft.
  * @param action - pointer to an Action
  */
 void GeoscapeCraftState::btnCenterClick(Action*)
@@ -391,24 +391,24 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 											nullptr,
 											false,
 											true));
-		return;
 	}
-
-	if (_delayPop == true)
+	else if (_delayPop == true)
 	{
 		_delayPop = false;
 		targeter();
 		transposeWindow();
-		return;
 	}
+	else
+	{
+		_craft->setTarget();
+		_geoState->setPaused();
+		_geoState->getGlobe()->clearCrosshair();
 
-	_craft->setTarget();
-	_geoState->setPaused();
-	_geoState->getGlobe()->clearCrosshair();
-	_game->popState();
+		_game->popState();
 
-	if (_waypoint != nullptr)
-		delete _waypoint;
+		if (_waypoint != nullptr)
+			delete _waypoint;
+	}
 }
 
 /**
@@ -421,6 +421,7 @@ void GeoscapeCraftState::btnBaseClick(Action*)
 		_game->popState();
 
 	_game->popState();
+
 	_craft->returnToBase();
 	_geoState->getGlobe()->clearCrosshair();
 
@@ -438,6 +439,7 @@ void GeoscapeCraftState::btnTargetClick(Action*)
 		_game->popState();
 
 	targeter();
+
 	_game->popState();
 	_game->pushState(new SelectDestinationState(
 											_craft,
@@ -449,7 +451,7 @@ void GeoscapeCraftState::btnTargetClick(Action*)
 }
 
 /**
- * Sets the Craft to patrol the current location.
+ * Sets the Craft to patrol its current location.
  * @param action - pointer to an Action
  */
 void GeoscapeCraftState::btnPatrolClick(Action*)
@@ -466,7 +468,7 @@ void GeoscapeCraftState::btnPatrolClick(Action*)
 }
 
 /**
- * Closes the Window.
+ * Closes this State.
  * @note The button doubles as the redirect-craft btn.
  * @param action - pointer to an Action
  */
@@ -527,17 +529,14 @@ void GeoscapeCraftState::transposeWindow() // private.
 }
 
 /**
- * Applies the targeter-graphic to the last-known UFO coordinates.
+ * Applies the Globe's targeter-graphic to the last-known UFO coordinates.
  */
 void GeoscapeCraftState::targeter() // private.
 {
 	if (_waypoint != nullptr)
-	{
 		_geoState->getGlobe()->setCrosshair(
 										_craft->getTarget()->getLongitude(),
 										_craft->getTarget()->getLatitude());
-		_geoState->getGlobe()->draw();
-	}
 }
 
 }

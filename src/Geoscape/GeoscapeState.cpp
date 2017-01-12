@@ -3261,8 +3261,8 @@ void GeoscapeState::popupGeo(State* const state)
 }
 
 /**
- * Returns a pointer to the Geoscape globe for access by other substates.
- * @return, pointer to Globe
+ * Gets a pointer to the geoscape Globe.
+ * @return, pointer to the globe
  */
 Globe* GeoscapeState::getGlobe() const
 {
@@ -3270,7 +3270,7 @@ Globe* GeoscapeState::getGlobe() const
 }
 
 /**
- * Processes any left-clicks on globe markers or right-clicks to scroll the globe.
+ * Processes any left-clicks on globe-markers or right-clicks to scroll the Globe.
  * @param action - pointer to an Action
  */
 void GeoscapeState::globeClick(Action* action)
