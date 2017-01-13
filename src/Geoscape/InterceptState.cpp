@@ -318,9 +318,11 @@ void InterceptState::lstCraftsClickRight(Action*)
 	_game->popState();
 
 	const Craft* const craft (_crafts[_lstCrafts->getSelectedRow()]);
-	_geoState->getGlobe()->center(
-								craft->getLongitude(),
-								craft->getLatitude());
+	const double
+		lon (craft->getLongitude()),
+		lat (craft->getLatitude());
+	_geoState->getGlobe()->center(lon,lat);
+	_geoState->getGlobe()->setCrosshair(lon,lat);
 }
 
 /**

@@ -948,7 +948,7 @@ double Craft::getDistanceLeft(bool select) const
 }
 
 /**
- * Checks if this Craft is currently low on fuel - has only enough to get back
+ * Checks if this Craft is currently low on fuel and has been forced to return
  * to its Base.
  * @return, true if fuel is low
  */

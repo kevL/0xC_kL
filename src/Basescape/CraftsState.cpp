@@ -54,7 +54,7 @@ namespace OpenXcom
  * Initializes all the elements in the Crafts screen.
  * @param base - pointer to the Base to get info from
  */
-CraftsState::CraftsState(Base* base)
+CraftsState::CraftsState(Base* const base)
 	:
 		_base(base)
 {
@@ -295,6 +295,8 @@ void CraftsState::lstCraftsPress(Action* action)
 			const Craft* const craft (_base->getCrafts()->at(_lstCrafts->getSelectedRow()));
 			_game->getSavedGame()->setGlobeLongitude(craft->getLongitude());
 			_game->getSavedGame()->setGlobeLatitude(craft->getLatitude());
+
+			// TODO: Get access to Globe itself and draw a targeter.
 
 			kL_reCenter = true;
 

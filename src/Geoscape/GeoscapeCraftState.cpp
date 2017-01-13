@@ -469,7 +469,8 @@ void GeoscapeCraftState::btnPatrolClick(Action*)
 
 /**
  * Closes this State.
- * @note The button doubles as the redirect-craft btn.
+ * @note The button doubles as the redirect-craft btn. This can allow
+ * redirection toward a waypoint that is outside the Craft's range.
  * @param action - pointer to an Action
  */
 void GeoscapeCraftState::btnCancelOrRedirectClick(Action*)

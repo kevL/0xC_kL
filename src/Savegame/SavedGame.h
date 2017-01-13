@@ -189,7 +189,7 @@ private:
 
 	AlienStrategy* _alienStrategy;
 	GameTime* _time;
-	const Ruleset* const _rules;
+	const Ruleset* _rules;
 	SavedBattleGame* _battleSave;
 
 	std::wstring _label;

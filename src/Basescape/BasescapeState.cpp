@@ -255,14 +255,16 @@ void BasescapeState::init()
 	_miniBases->draw();
 	_edtBase->setText(_base->getLabel());
 
+	const double
+		lon (_base->getLongitude()),
+		lat (_base->getLatitude());
+	const std::vector<Region*>* const regions (_game->getSavedGame()->getRegions());
 	for (std::vector<Region*>::const_iterator
-			i = _game->getSavedGame()->getRegions()->begin();
-			i != _game->getSavedGame()->getRegions()->end();
+			i = regions->begin();
+			i != regions->end();
 			++i)
 	{
-		if ((*i)->getRules()->insideRegion(
-										_base->getLongitude(),
-										_base->getLatitude()) == true)
+		if ((*i)->getRules()->insideRegion(lon,lat) == true)
 		{
 			_txtRegion->setText(tr((*i)->getRules()->getType()));
 			break;
@@ -811,6 +813,8 @@ void BasescapeState::basesClickRight(Action*)
 			const Base* const base (_baseList->at(baseId));
 			_game->getSavedGame()->setGlobeLongitude(base->getLongitude());
 			_game->getSavedGame()->setGlobeLatitude(base->getLatitude());
+
+			// TODO: Get access to Globe itself and draw a targeter.
 
 			_game->popState();
 			kL_soundPop->play(Mix_GroupAvailable(0));
