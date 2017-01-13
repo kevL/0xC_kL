@@ -272,7 +272,8 @@ void SelectDestinationState::globeClick(Action* action)
 		//Log(LOG_INFO) << ". getDistanceLeft= " << _craft->getDistanceLeft();
 		//Log(LOG_INFO) << ". getDistanceReserved= " << _craft->getDistanceReserved(wp);
 
-		if (_craft->getDistanceLeft(true) < _craft->getDistanceReserved(wp))
+//		if (_craft->getDistanceLeft(true) < _craft->getDistanceReserved(wp))
+		if (_craft->getDistanceLeft() < _craft->getDistanceReserved(wp))
 		{
 			_txtTooFar->setVisible();
 			delete wp;

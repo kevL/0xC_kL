@@ -197,15 +197,16 @@ private:
 		/// Gets the distance that the Craft needs to reserve fuel for to return to its Base.
 		double getDistanceReserved(const Target* const target) const;
 		/// Gets the distance that the Craft can travel with its current fuel.
-		double getDistanceLeft(bool select = false) const;
+		double getDistanceLeft() const;
+//		double getDistanceLeft(bool select = false) const;
 		/// Checks if the Craft is running out of fuel.
 		bool isLowFuel() const;
 
 		/// Sends the Craft to its Base.
 		void returnToBase();
-		/// Sets that the Craft has just finished a mission.
+		/// Sets that the Craft has just finished a tactical.
 		void setTacticalReturn();
-		/// Checks if the Craft has just finished a mission.
+		/// Checks if the Craft has just finished a tactical.
 		bool isTacticalReturn() const;
 
 		/// Handles Craft logic.

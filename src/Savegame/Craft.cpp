@@ -896,7 +896,8 @@ bool Craft::useFuel()
 	//Log(LOG_INFO) << ". getDistanceReserved= " << getDistanceReserved(_target);
 
 	if (_lowFuel == false
-		&& getDistanceLeft() < getDistanceReserved(_target))
+		&& getDistanceLeft() < getDistance(_base))
+//		&& getDistanceLeft() < getDistanceReserved(_target))
 	{
 		//Log(LOG_INFO) << ". . set Low Fuel";
 		_lowFuel = true;
@@ -914,22 +915,33 @@ bool Craft::useFuel()
  */
 double Craft::getDistanceReserved(const Target* const target) const
 {
-	if (target == nullptr)
-		return getDistance(_base);
+//	if (target == nullptr)
+//		return getDistance(_base);
 
 	return (getDistance(target) + _base->getDistance(target));
 }
 
 /**
  * Gets the distance that this Craft can travel with its current fuel.
- * @note The craft's total range effectively gets an extra dose to account for
- * the discrepancy between fuel-usage per 10 minutes and each step's check for
- * low fuel per 5 seconds. This however is not in effect if player is selecting
- * a destination since it would allow selecting a destination that would
- * almost instantly trigger the craft's low-fuel flag.
- * @select - true if player is selecting a destination (default false)
  * @return, the distance in radians the craft can still travel
  */
+double Craft::getDistanceLeft() const
+{
+	int range (_fuel);
+
+	if (_crRule->getRefuelItem().empty() == false)
+		range *= _crRule->getTopSpeed();
+
+	return (static_cast<double>(range) * arcToRads / 6.); // 6 doses per hour
+}
+/* @note The craft's total range effectively gets an extra dose to account for
+ * the discrepancy between fuel-usage per 10 minutes and each step's check for
+ * low fuel per 5 seconds. This bonus however is not in effect if player is
+ * selecting a destination since it would allow selecting a destination that
+ * would almost instantly trigger the craft's low-fuel flag.
+ * UPDATE: This is no longer strictly needed since the condition for low fuel
+ * no longer checks full distance but only the distance left to get back to Base.
+ * @select - true if player is selecting a destination (default false)
 double Craft::getDistanceLeft(bool select) const
 {
 	int range (_fuel);
@@ -945,7 +957,7 @@ double Craft::getDistanceLeft(bool select) const
 		range += _crRule->getTopSpeed();
 
 	return (static_cast<double>(range) * arcToRads / 6.); // 6 doses per hour
-}
+} */
 
 /**
  * Checks if this Craft is currently low on fuel and has been forced to return
@@ -966,7 +978,7 @@ void Craft::returnToBase()
 }
 
 /**
- * Sets that this Craft has just done a ground mission and is forced to return
+ * Sets that this Craft has just done a tactical battle and is forced to return
  * to its Base.
  */
 void Craft::setTacticalReturn()
@@ -977,7 +989,7 @@ void Craft::setTacticalReturn()
 }
 
 /**
- * Checks if this Craft has just done a ground mission and is forced to return
+ * Checks if this Craft has just done a tactical battle and is forced to return
  * to its Base.
  * @return, true if this Craft needs to return to base
  */
