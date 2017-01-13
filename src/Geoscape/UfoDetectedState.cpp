@@ -27,7 +27,6 @@
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
 
-//#include "../Interface/NumberText.h"
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/TextList.h"
@@ -115,23 +114,19 @@ UfoDetectedState::UfoDetectedState(
 	_txtRegion		= new Text(114, 9, 122, 56);
 	_txtTexture		= new Text(114, 9, 122, 66);
 
-	_srfTarget		= new Surface(29, 29, 114, 86);
-
 	if (_hyperDetected == true)
 	{
-		_txtUfo->setY(19);
-		_txtDetected->setY(36);
-		_txtTimeLeft->setY(46);
-		_lstInfo->setY(60);
-		_btnCenter->setY(135);
-		_btnIntercept->setY(155);
-		_btn5Sec->setY(155);
-		_btnCancel->setY(175);
+		_txtUfo			->setY(19);
+		_txtDetected	->setY(36);
+		_txtTimeLeft	->setY(46);
+		_lstInfo		->setY(60);
+		_btnCenter		->setY(135);
+		_btnIntercept	->setY(155);
+		_btn5Sec		->setY(155);
+		_btnCancel		->setY(175);
 
-		_txtRegion->setY(19);
-		_txtTexture->setY(29);
-
-		_srfTarget->setY(86);
+		_txtRegion		->setY(19);
+		_txtTexture		->setY(29);
 
 		if (contact == false)
 		{
@@ -154,8 +149,6 @@ UfoDetectedState::UfoDetectedState(
 
 	add(_txtRegion,		"text",		"UFOInfo");
 	add(_txtTexture,	"text",		"UFOInfo");
-
-	add(_srfTarget);
 
 	if (_hyperDetected == true)
 	{
@@ -274,7 +267,7 @@ UfoDetectedState::UfoDetectedState(
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&UfoDetectedState::btnCancelClick),
 								Options::keyCancel);
 
-	switch (ufo->getUfoStatus())
+	switch (_ufo->getUfoStatus())
 	{
 		case Ufo::LANDED:
 		case Ufo::CRASHED:
@@ -286,8 +279,7 @@ UfoDetectedState::UfoDetectedState(
 				texture,
 				shade;
 			_geoState->getGlobe()->getPolygonTextureAndShade(
-														_ufo->getLongitude(),
-														_ufo->getLatitude(),
+														lon,lat,
 														&texture,
 														&shade);
 			std::string terrain;
@@ -476,7 +468,7 @@ void UfoDetectedState::init()
 }
 
 /**
- * Pick a craft to intercept the UFO.
+ * Picks a craft to intercept the UFO.
  * @param action - pointer to an Action
  */
 void UfoDetectedState::btnInterceptClick(Action*)
@@ -560,15 +552,14 @@ void UfoDetectedState::transposeWindow() // private.
 	else
 		dy = 20;
 
-	_btnCenter->setY(_btnCenter->getY() + dy);
-	_btnIntercept->setY(_btnIntercept->getY() + dy);
-	_btn5Sec->setY(_btn5Sec->getY() + dy);
-	_btnCancel->setY(_btnCancel->getY() + dy);
+	_btnCenter		->setY(_btnCenter		->getY() + dy);
+	_btnIntercept	->setY(_btnIntercept	->getY() + dy);
+	_btn5Sec		->setY(_btn5Sec			->getY() + dy);
+	_btnCancel		->setY(_btnCancel		->getY() + dy);
 
-	Surface* const srf (_game->getResourcePack()->getSurface("Crosshairs"));
-	srf->setX(0);
-	srf->setY(0);
-	srf->blit(_srfTarget);
+	_geoState->getGlobe()->setCrosshair(
+									_ufo->getLongitude(),
+									_ufo->getLatitude());
 }
 
 }

@@ -28,11 +28,11 @@ namespace OpenXcom
 
 class Base;
 class GeoscapeState;
-class Surface;
+class Ufo;
+
 class Text;
 class TextButton;
 class TextList;
-class Ufo;
 class Window;
 
 
@@ -50,7 +50,6 @@ private:
 		_hyperDetected;
 
 	GeoscapeState* _geoState;
-	Surface* _srfTarget;
 	Text
 		* _txtBases,
 		* _txtDetected,
