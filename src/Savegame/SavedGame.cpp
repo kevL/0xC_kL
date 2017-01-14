@@ -2203,29 +2203,29 @@ const std::string& SavedGame::getGraphFinanceToggles() const
 
 /**
  * Sets the GraphRegionToggles.
- * @param value - reference to the new value for GraphRegionToggles
+ * @param toggles - reference to the new value for GraphRegionToggles
  */
-void SavedGame::setGraphRegionToggles(const std::string& value)
+void SavedGame::setGraphRegionToggles(const std::string& toggles)
 {
-	_graphRegionToggles = value;
+	_graphRegionToggles = toggles;
 }
 
 /**
  * Sets the GraphCountryToggles.
- * @param value - reference to the new value for GraphCountryToggles
+ * @param toggles - reference to the new value for GraphCountryToggles
  */
-void SavedGame::setGraphCountryToggles(const std::string& value)
+void SavedGame::setGraphCountryToggles(const std::string& toggles)
 {
-	_graphCountryToggles = value;
+	_graphCountryToggles = toggles;
 }
 
 /**
  * Sets the GraphFinanceToggles.
- * @param value - reference to the new value for GraphFinanceToggles
+ * @param toggles - reference to the new value for GraphFinanceToggles
  */
-void SavedGame::setGraphFinanceToggles(const std::string& value)
+void SavedGame::setGraphFinanceToggles(const std::string& toggles)
 {
-	_graphFinanceToggles = value;
+	_graphFinanceToggles = toggles;
 }
 
 /**

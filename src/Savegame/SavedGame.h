@@ -479,11 +479,11 @@ private:
 		/// Gets the GraphFinanceToggles.
 		const std::string& getGraphFinanceToggles() const;
 		/// Sets the GraphRegionToggles.
-		void setGraphRegionToggles(const std::string& value);
+		void setGraphRegionToggles(const std::string& toggles);
 		/// Sets the GraphCountryToggles.
-		void setGraphCountryToggles(const std::string& value);
+		void setGraphCountryToggles(const std::string& toggles);
 		/// Sets the GraphFinanceToggles.
-		void setGraphFinanceToggles(const std::string& value);
+		void setGraphFinanceToggles(const std::string& toggles);
 
 		/// Toggles globe-detail.
 		bool toggleGlobeDetail();

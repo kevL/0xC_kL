@@ -60,7 +60,7 @@ static GraphsExpansionFactor recallExpansion (GF_DEFAULT);
 
 static int
 	SCREEN_OFFSET_y,
-	TOGGLEALL_yCnt,
+	TOGGLEALL_yCou,
 	TOGGLEALL_yReg;
 
 const float GraphsState::PIXELS_y (126.f);
@@ -178,8 +178,8 @@ GraphsState::GraphsState()
 	_isfFinance		= new InteractiveSurface(31, 24, 257);
 	_isfGeoscape	= new InteractiveSurface(31, 24, 289);
 
+	_btnLockScale	= new ToggleTextButton(24, 14, 124, 28);
 	_btnReset		= new TextButton(40, 16, 96, 26);
-	_btnLockScale	= new ToggleTextButton(24, 16, 124, 28);
 	_btnToggleAll	= new ToggleTextButton(24, HEIGHT_btn, 66, 0); // y is set according to page.
 
 	_btnFactor1		= new TextButton(16, 16, 272, 26);
@@ -189,9 +189,9 @@ GraphsState::GraphsState()
 	switch (recallExpansion)
 	{
 		default:
-		case GF_DEFAULT:	_userFactor = _btnFactor1; break;
-		case GF_HALF:		_userFactor = _btnFactor2; break;
-		case GF_QUARTER:	_userFactor = _btnFactor4;
+		case GF_DEFAULT: _userFactor = _btnFactor1; break;
+		case GF_HALF:    _userFactor = _btnFactor2; break;
+		case GF_QUARTER: _userFactor = _btnFactor4;
 	}
 
 	_txtTitle	= new Text(220, 16, 100, 28);
@@ -716,7 +716,7 @@ GraphsState::GraphsState()
 	initButtons();
 
 	TOGGLEALL_yReg = static_cast<int>(_btnRegions.size())   * HEIGHT_btn;
-	TOGGLEALL_yCnt = static_cast<int>(_btnCountries.size()) * HEIGHT_btn;
+	TOGGLEALL_yCou = static_cast<int>(_btnCountries.size()) * HEIGHT_btn;
 
 	switch (recallPage)
 	{
@@ -805,11 +805,15 @@ void GraphsState::initButtons() // private.
 }
 
 /**
- * Handles state thinking.
+ * Handles State thinking.
  */
 void GraphsState::think()
 {
-	_timerBlink->think(this, nullptr);
+	switch (recallPage)
+	{
+		case 0: case 1: case 2: case 3:
+			_timerBlink->think(this, nullptr);
+	}
 }
 
 /**
@@ -820,7 +824,10 @@ void GraphsState::blink() // private.
 	static bool vis (true);
 
 	if (_reset == true)
+	{
+		_timerBlink->stop();
 		vis = true;
+	}
 	else if (_forceVis == true)
 	{
 		_forceVis = false;
@@ -829,75 +836,53 @@ void GraphsState::blink() // private.
 	else
 		vis = !vis;
 
-	size_t offset (0u);
+	size_t id (0u);
 
-	if (_alien == true
-		&& _income == false
-		&& _country == false
-		&& _finance == false)
+	switch (recallPage)
 	{
-		for (std::vector<bool>::const_iterator
-				i = _blinkRegionAlien.begin();
-				i != _blinkRegionAlien.end();
-				++i, ++offset)
-		{
-			if (*i == true)
-				_txtRegionActA.at(offset)->setVisible(vis);
-			else
-				_txtRegionActA.at(offset)->setVisible();
-		}
-	}
-	else if (_alien == true
-		&& _income == false
-		&& _country == true
-		&& _finance == false)
-	{
-		for (std::vector<bool>::const_iterator
-				i = _blinkCountryAlien.begin();
-				i != _blinkCountryAlien.end();
-				++i, ++offset)
-		{
-			if (*i == true)
-				_txtCountryActA.at(offset)->setVisible(vis);
-			else
-				_txtCountryActA.at(offset)->setVisible();
-		}
-	}
-	else if (_alien == false
-		&& _income == false
-		&& _country == false
-		&& _finance == false)
-	{
-		for (std::vector<bool>::const_iterator
-				i = _blinkRegionXCom.begin();
-				i != _blinkRegionXCom.end();
-				++i, ++offset)
-		{
-			if (*i == true)
-				_txtRegionActX.at(offset)->setVisible(vis);
-			else
-				_txtRegionActX.at(offset)->setVisible();
-		}
-	}
-	else if (_alien == false
-		&& _income == false
-		&& _country == true
-		&& _finance == false)
-	{
-		for (std::vector<bool>::const_iterator
-				i = _blinkCountryXCom.begin();
-				i != _blinkCountryXCom.end();
-				++i, ++offset)
-		{
-			if (*i == true)
-				_txtCountryActX.at(offset)->setVisible(vis);
-			else
-				_txtCountryActX.at(offset)->setVisible();
-		}
-	}
+		case 0: // region UFO
+			for (std::vector<bool>::const_iterator
+					i = _blinkRegionAlien.begin();
+					i != _blinkRegionAlien.end();
+					++i, ++id)
+			{
+				if (*i == true)
+					_txtRegionActA.at(id)->setVisible(vis);
+			}
+			break;
 
-	if (_reset == true)
-		_timerBlink->stop();
+		case 1: // region XCOM
+			for (std::vector<bool>::const_iterator
+					i = _blinkRegionXCom.begin();
+					i != _blinkRegionXCom.end();
+					++i, ++id)
+			{
+				if (*i == true)
+					_txtRegionActX.at(id)->setVisible(vis);
+			}
+			break;
+
+		case 2: // country UFO
+			for (std::vector<bool>::const_iterator
+					i = _blinkCountryAlien.begin();
+					i != _blinkCountryAlien.end();
+					++i, ++id)
+			{
+				if (*i == true)
+					_txtCountryActA.at(id)->setVisible(vis);
+			}
+			break;
+
+		case 3: // country XCOM
+			for (std::vector<bool>::const_iterator
+					i = _blinkCountryXCom.begin();
+					i != _blinkCountryXCom.end();
+					++i, ++id)
+			{
+				if (*i == true)
+					_txtCountryActX.at(id)->setVisible(vis);
+			}
+	}
 }
 
 /**
@@ -1016,7 +1001,7 @@ void GraphsState::btnUfoCountryClick(Action*)
 		_income =
 		_finance = false;
 
-		_btnToggleAll->setY(TOGGLEALL_yCnt + SCREEN_OFFSET_y);
+		_btnToggleAll->setY(TOGGLEALL_yCou + SCREEN_OFFSET_y);
 		_btnToggleAll->setVisible();
 		initToggleAll();
 
@@ -1058,7 +1043,7 @@ void GraphsState::btnXcomCountryClick(Action*)
 		_income =
 		_finance = false;
 
-		_btnToggleAll->setY(TOGGLEALL_yCnt + SCREEN_OFFSET_y);
+		_btnToggleAll->setY(TOGGLEALL_yCou + SCREEN_OFFSET_y);
 		_btnToggleAll->setVisible();
 		initToggleAll();
 
@@ -1302,11 +1287,7 @@ void GraphsState::initToggleAll() // private.
  */
 void GraphsState::btnTogglePress(Action*) // private.
 {
-	bool vis;
-	if (_btnToggleAll->getPressed() == true)
-		vis = true;
-	else
-		vis = false;
+	const bool vis (_btnToggleAll->getPressed() == true);
 
 	if (_country == true)
 	{

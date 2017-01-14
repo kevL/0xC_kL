@@ -462,7 +462,7 @@ interfaces:
       - id: scale
         color: 103   # minty green
       - id: graph
-        color: 160   # green
+        color: 160   # dark green
       - id: button
         color: 151   # grey
       - id: regionTotal
