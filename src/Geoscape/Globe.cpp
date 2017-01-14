@@ -523,72 +523,80 @@ double Globe::lastVisibleLat(double lon) const
 
 /**
  * Gets the Polygon at specified coordinates.
- * @param lon	- longitude of a point
- * @param lat	- latitude of a point
+ * @param lon - longitude
+ * @param lat - latitude
  * @return, pointer to the Polygon
  */
 Polygon* Globe::getPolygonAtCoord( // private.
 		double lon,
 		double lat) const
 {
-	const double discard (0.75f);
     double
 		cosLat (cos(lat)),
-		sinLat (sin(lat));
-	double
+		sinLat (sin(lat)),
+
 		x,y,
 		x2,y2,
 		cLat,cLon;
+
+	const double discard (0.75);
+	bool
+		bypass,
+		isOdd;
+	size_t verts;
 
 	for (std::list<Polygon*>::const_iterator
 			i = _globeRule->getPolygons()->begin();
 			i != _globeRule->getPolygons()->end();
 			++i)
 	{
-		bool pass (false);
+		bypass = false;
+
+		verts = (*i)->getPoints();
 		for (size_t
 				j = 0u;
-				j != (*i)->getPoints();
+				j != verts;
 				++j)
 		{
-			if (cosLat * cos((*i)->getLatitude(j)) * cos((*i)->getLongitude(j) - lon) + sinLat * sin((*i)->getLatitude(j)) < discard)
+			if (cosLat * cos((*i)->getLatitude(j)) * cos((*i)->getLongitude(j) - lon)
+			  + sinLat * sin((*i)->getLatitude(j)) < discard)
 			{
-				pass = true; // discarded
+				bypass = true; // discarded
 				break;
 			}
 		}
-		if (pass == true) continue;
 
-
-		bool odd (false);
-
-		cLat = (*i)->getLatitude(0u); // initial point
-		cLon = (*i)->getLongitude(0u);
-
-		x = cos(cLat) * sin(cLon - lon);
-		y = cosLat * sin(cLat) - sinLat * cos(cLat) * cos(cLon - lon);
-
-		for (size_t
-				j = 0u;
-				j != (*i)->getPoints();
-				++j)
+		if (bypass == false)
 		{
-			const size_t id ((j + 1u) % (*i)->getPoints()); // index of next point in poly
-			cLat = (*i)->getLatitude(id);
-			cLon = (*i)->getLongitude(id);
+			isOdd = false;
 
-			x2 = cos(cLat) * sin(cLon - lon);
-			y2 = cosLat * sin(cLat) - sinLat * cos(cLat) * cos(cLon - lon);
+			cLat = (*i)->getLatitude(0u); // initial point
+			cLon = (*i)->getLongitude(0u);
 
-			if (((y > 0.) != (y2 > 0.)) && (0. < (x2 - x) * (0. - y) / (y2 - y) + x))
-				odd = !odd;
+			x = cos(cLat) * sin(cLon - lon);
+			y = cosLat * sin(cLat) - sinLat * cos(cLat) * cos(cLon - lon);
 
-			x = x2;
-			y = y2;
+			for (size_t
+					j = 0u;
+					j != (*i)->getPoints();
+					++j)
+			{
+				const size_t id ((j + 1u) % (*i)->getPoints()); // index of next point in poly
+				cLat = (*i)->getLatitude(id);
+				cLon = (*i)->getLongitude(id);
+
+				x2 = cos(cLat) * sin(cLon - lon);
+				y2 = cosLat * sin(cLat) - sinLat * cos(cLat) * cos(cLon - lon);
+
+				if (((y > 0.) != (y2 > 0.)) && (0. < (x2 - x) * (0. - y) / (y2 - y) + x))
+					isOdd = !isOdd;
+
+				x = x2;
+				y = y2;
+			}
+
+			if (isOdd == true) return *i;
 		}
-
-		if (odd == true)
-			return *i;
 	}
 	return nullptr;
 }
@@ -651,6 +659,9 @@ bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
  */
 void Globe::rotateLeft()
 {
+	if (_drawCrosshair == true)
+		clearCrosshair();
+
 	_rotLon = -ROTATE_LONGITUDE;
 	if (_timerRot->isRunning() == false)
 		_timerRot->start();
@@ -661,6 +672,9 @@ void Globe::rotateLeft()
  */
 void Globe::rotateRight()
 {
+	if (_drawCrosshair == true)
+		clearCrosshair();
+
 	_rotLon = ROTATE_LONGITUDE;
 	if (_timerRot->isRunning() == false)
 		_timerRot->start();
@@ -671,6 +685,9 @@ void Globe::rotateRight()
  */
 void Globe::rotateUp()
 {
+	if (_drawCrosshair == true)
+		clearCrosshair();
+
 	_rotLat = -ROTATE_LATITUDE;
 	if (_timerRot->isRunning() == false)
 		_timerRot->start();
@@ -681,6 +698,9 @@ void Globe::rotateUp()
  */
 void Globe::rotateDown()
 {
+	if (_drawCrosshair == true)
+		clearCrosshair();
+
 	_rotLat = ROTATE_LATITUDE;
 	if (_timerRot->isRunning() == false)
 		_timerRot->start();
@@ -1210,8 +1230,7 @@ void Globe::toggleBlink()
 }
 
 /**
- * Rotates this Globe by a set amount.
- * @note Necessary since the Globe keeps rotating while a button is held down.
+ * Rotates this Globe by timer-ticks.
  */
 void Globe::rotate()
 {
@@ -1254,7 +1273,7 @@ void Globe::drawOcean()
 	drawCircle(
 			static_cast<Sint16>(_cenX + 1),
 			_cenY,
-			static_cast<Sint16>(_radius + 20),
+			static_cast<Sint16>(_radius + 20.),
 			C_OCEAN);
 	unlock();
 }
@@ -2418,7 +2437,7 @@ void Globe::drawVHLine( // private.
 
 /**
  * Draws a big yellow/red crosshair-targeter.
- * @note Used over last-known-UFO position.
+ * @note Used over last-known-UFO position, etc.
  */
 void Globe::drawCrosshair() // private.
 {
@@ -2442,7 +2461,7 @@ void Globe::drawCrosshair() // private.
 }
 
 /**
- * Sets the co-ordinates to draw a crosshair at.
+ * Sets the coordinates to draw a targeter at.
  * @param lon - longitude to draw the crosshair at
  * @param lat - latitude to draw the crosshair at
  */
@@ -2458,7 +2477,7 @@ void Globe::setCrosshair(
 }
 
 /**
- * Hides the crosshair.
+ * Hides the targeter.
  */
 void Globe::clearCrosshair()
 {
@@ -2538,7 +2557,16 @@ void Globe::mouseOver(Action* action, State* state)
  */
 void Globe::mousePress(Action* action, State* state)
 {
-	clearCrosshair();
+	const Uint8 btnId (action->getDetails()->button.button);
+	switch (btnId)
+	{
+		case SDL_BUTTON_WHEELUP:
+		case SDL_BUTTON_WHEELDOWN: return; // i think these can return;
+
+		default:
+			if (_drawCrosshair == true)
+				clearCrosshair();
+	}
 
 	double
 		lon,lat;
@@ -2547,7 +2575,7 @@ void Globe::mousePress(Action* action, State* state)
 			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
-	if (action->getDetails()->button.button == Options::geoDragScrollButton)
+	if (btnId == Options::geoDragScrollButton)
 	{
 		_dragScroll = true;
 		_dragScrollStepDone = false;
@@ -2595,8 +2623,8 @@ void Globe::mouseClick(Action* action, State* state)
 	const Uint8 btnId (action->getDetails()->button.button);
 	switch (btnId)
 	{
-		case SDL_BUTTON_WHEELUP:	zoomIn();	return; // i think these can return;
-		case SDL_BUTTON_WHEELDOWN:	zoomOut();	return;
+		case SDL_BUTTON_WHEELUP:	zoomIn();	return;
+		case SDL_BUTTON_WHEELDOWN:	zoomOut();	return; // i think these can return;
 	}
 
 	double
@@ -2644,17 +2672,17 @@ void Globe::keyboardPress(Action* action, State* state)
 {
 	InteractiveSurface::keyboardPress(action, state);
 
-	if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleDetail)
-		toggleDetail();
-	else if (action->getDetails()->key.keysym.sym == Options::keyGeoToggleRadar)
-		changeRadars();
+	const SDLKey key (action->getDetails()->key.keysym.sym);
+
+	if		(key == Options::keyGeoToggleDetail) toggleDetail();
+	else if	(key == Options::keyGeoToggleRadar)  changeRadars();
 }
 
 /**
  * Gets the texture and shade of a Polygon at specified coordinates.
  * @param lon		- longitude of the point
  * @param lat 		- latitude of the point
- * @param texture	- pointer to texture ID (returns -1 if polygon not found)
+ * @param texture	- pointer to texture ID (-1 if polygon not found)
  * @param shade		- pointer to shade-level
  */
 void Globe::getPolygonTextureAndShade(
@@ -2680,7 +2708,7 @@ void Globe::getPolygonTextureAndShade(
  * Gets the texture of a Polygon at specified coordinates.
  * @param lon		- longitude of the point
  * @param lat 		- latitude of the point
- * @param texture	- pointer to texture ID (returns -1 if polygon not found)
+ * @param texture	- pointer to texture ID (-1 if polygon not found)
  */
 void Globe::getPolygonTexture(
 		double lon,

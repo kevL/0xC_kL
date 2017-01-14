@@ -371,11 +371,11 @@ private:
 		/// Draws the country-details of the Globe.
 		void drawDetail();
 
-		/// Sets the co-ordinates to draw a crosshair at.
+		/// Sets the co-ordinates to draw a targeter at.
 		void setCrosshair(
 				const double lon,
 				const double lat);
-		/// Hides the crosshair.
+		/// Hides the targeter.
 		void clearCrosshair();
 
 		/// Blits the Globe onto another Surface.

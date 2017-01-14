@@ -49,7 +49,7 @@ private:
 
 
 	public:
-		/// Creates a Polygon with a quantity of points.
+		/// Creates a Polygon with a quantity of vertices.
 		explicit Polygon(size_t points);
 		/// Creates a Polygon from an existing one (copy-constructor).
 		Polygon(const Polygon& other);

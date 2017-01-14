@@ -233,7 +233,7 @@ void Polygon::setPolyTexture(size_t tex)
 }
 
 /**
- * Gets the quantity of points (vertexes) that make up this Polygon.
+ * Gets the quantity of points (vertices) that make up this Polygon.
  * @return, quantity of points
  */
 size_t Polygon::getPoints() const

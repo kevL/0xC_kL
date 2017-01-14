@@ -1199,7 +1199,7 @@ void GeoscapeState::think()
 		if (_dogfights.empty() == false
 			|| _dfMinimized != 0u)
 		{
-			if (_dogfights.size() == _dfMinimized) // if all dogfights are minimized rotate the globe, etc.
+			if (_dogfights.size() == _dfMinimized) // if all dogfights are minimized rotate the Globe, etc.
 			{
 				_pause = false;
 				_timerGeo->think(this, nullptr);
@@ -3317,8 +3317,7 @@ void GeoscapeState::globeClick(Action* action)
 		if (texture != -1)
 			woststr << L" shade " << shade;
 
-		_txtDebug->setText(woststr.str());
-		// TODO: If paused redraw HUD.
+		_txtDebug->setText(woststr.str()); // TODO: If paused redraw HUD.
 	}
 }
 
@@ -3433,7 +3432,7 @@ void GeoscapeState::btnDetailPress(Action* action)
 }
 
 /**
- * Starts rotating the globe to the left.
+ * Starts rotating the Globe to the left.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateLeftPress(Action*)
@@ -3442,7 +3441,7 @@ void GeoscapeState::btnRotateLeftPress(Action*)
 }
 
 /**
- * Starts rotating the globe to the right.
+ * Starts rotating the Globe to the right.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateRightPress(Action*)
@@ -3451,7 +3450,7 @@ void GeoscapeState::btnRotateRightPress(Action*)
 }
 
 /**
- * Stops rotating the globe horizontally.
+ * Stops rotating the Globe horizontally.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateLonStop(Action*)
@@ -3460,7 +3459,7 @@ void GeoscapeState::btnRotateLonStop(Action*)
 }
 
 /**
- * Starts rotating the globe upwards.
+ * Starts rotating the Globe upwards.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateUpPress(Action*)
@@ -3469,7 +3468,7 @@ void GeoscapeState::btnRotateUpPress(Action*)
 }
 
 /**
- * Starts rotating the globe downwards.
+ * Starts rotating the Globe downwards.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateDownPress(Action*)
@@ -3478,7 +3477,7 @@ void GeoscapeState::btnRotateDownPress(Action*)
 }
 
 /**
- * Stops rotating the globe vertically.
+ * Stops rotating the Globe vertically.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateLatStop(Action*)
@@ -3487,7 +3486,7 @@ void GeoscapeState::btnRotateLatStop(Action*)
 }
 
 /**
- * Starts rotating the globe to the left up.
+ * Starts rotating the Globe to the left up.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateLeftUpPress(Action*)
@@ -3497,7 +3496,7 @@ void GeoscapeState::btnRotateLeftUpPress(Action*)
 }
 
 /**
- * Starts rotating the globe to the left down.
+ * Starts rotating the Globe to the left down.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateLeftDownPress(Action*)
@@ -3507,7 +3506,7 @@ void GeoscapeState::btnRotateLeftDownPress(Action*)
 }
 
 /**
- * Starts rotating the globe to the right up.
+ * Starts rotating the Globe to the right up.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateRightUpPress(Action*)
@@ -3517,7 +3516,7 @@ void GeoscapeState::btnRotateRightUpPress(Action*)
 }
 
 /**
- * Starts rotating the globe to the right down.
+ * Starts rotating the Globe to the right down.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateRightDownPress(Action*)
@@ -3527,7 +3526,7 @@ void GeoscapeState::btnRotateRightDownPress(Action*)
 }
 
 /**
- * Stops rotating the globe.
+ * Stops rotating the Globe.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnRotateStop(Action*)
@@ -3536,7 +3535,7 @@ void GeoscapeState::btnRotateStop(Action*)
 }
 
 /**
- * Zooms into the globe.
+ * Zooms into the Globe.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnZoomInLeftClick(Action*)
@@ -3545,7 +3544,7 @@ void GeoscapeState::btnZoomInLeftClick(Action*)
 }
 
 /**
- * Zooms out of the globe.
+ * Zooms out of the Globe.
  * @param action - pointer to an Action
  */
 void GeoscapeState::btnZoomOutLeftClick(Action*)
@@ -3554,7 +3553,7 @@ void GeoscapeState::btnZoomOutLeftClick(Action*)
 }
 
 /**
- * Zooms the globe maximum.
+ * Zooms the Globe maximum.
  * @param action - pointer to an Action
  *
 void GeoscapeState::btnZoomInRightClick(Action*)
@@ -3562,7 +3561,7 @@ void GeoscapeState::btnZoomInRightClick(Action*)
 	_globe->zoomMax();
 } */
 /**
- * Zooms the globe minimum.
+ * Zooms the Globe minimum.
  * @param action - pointer to an Action
  *
 void GeoscapeState::btnZoomOutRightClick(Action*)
@@ -4463,17 +4462,25 @@ void GeoscapeState::btnUfoBlobPress(Action* action) // private.
 			switch (action->getDetails()->button.button)
 			{
 				case SDL_BUTTON_LEFT:
+				{
+					Ufo* const ufo (_hostileUfos[i]);
 					_game->pushState(new UfoDetectedState(
-													_hostileUfos[i],
-													this,
-													false,
-													_hostileUfos[i]->getHyperDetected()));
+														ufo,
+														this,
+														false,
+														ufo->getHyperDetected() == true));
 					break;
+				}
 
 				case SDL_BUTTON_RIGHT:
-					_globe->center(
-								_hostileUfos[i]->getLongitude(),
-								_hostileUfos[i]->getLatitude());
+				{
+					const Ufo* const ufo (_hostileUfos[i]);
+					const double
+						lon (ufo->getLongitude()),
+						lat (ufo->getLatitude());
+					_globe->center(lon,lat);
+					_globe->setCrosshair(lon,lat);
+				}
 			}
 			break;
 		}
