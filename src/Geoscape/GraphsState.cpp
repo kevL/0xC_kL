@@ -186,7 +186,7 @@ GraphsState::GraphsState()
 	_txtTitle	= new Text(220, 16, 100, 28);
 	_txtFactor	= new Text( 35,  9,  96, 28);
 
-	_lstMonths	= new TextList(215, 9, 117, 182); // note These go beyond 320px.
+	_lstMonths	= new TextList(215, 9, 117, 182); // NOTE: These go beyond 320px.
 	_lstYears	= new TextList(215, 9, 117, 191);
 
 	_txtScore	= new Text(36, 9, 46, 82);
@@ -596,10 +596,14 @@ GraphsState::GraphsState()
 					x < static_cast<Sint16>(offsetX + 298 + i);
 					x = static_cast<Sint16>(x + 17))
 			{
-				if (i == 4)
-					color = 0u;
-				else
-					color = static_cast<Uint8>(colorGrid + 1 + i);
+				switch (i)
+				{
+					case 4:
+						color = 0u;
+						break;
+					default:
+						color = static_cast<Uint8>(colorGrid + 1 + i);
+				}
 
 				_bg->drawRect(
 							x,y,
@@ -1653,12 +1657,8 @@ void GraphsState::drawRegionLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_regionToggles.at(i)->_colorPushed + 4u));
-//					switch (recallExpansion)
-//					{
-//						case GF_HALF:
-//						case GF_QUARTER:
-					boxLines(_alienRegionLines.at(i));
-//					}
+					if (recallExpansion != GF_DEFAULT)
+						boxLines(_alienRegionLines.at(i));
 				}
 				else
 				{
@@ -1667,12 +1667,8 @@ void GraphsState::drawRegionLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_regionToggles.at(i)->_colorPushed + 4u));
-//					switch (recallExpansion)
-//					{
-//						case GF_HALF:
-//						case GF_QUARTER:
-					boxLines(_xcomRegionLines.at(i));
-//					}
+					if (recallExpansion != GF_DEFAULT)
+						boxLines(_xcomRegionLines.at(i));
 				}
 			}
 		}
@@ -1715,13 +1711,8 @@ void GraphsState::drawRegionLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
-
-//				switch (recallExpansion)
-//				{
-//					case GF_HALF:
-//					case GF_QUARTER:
-				boxLines(_alienRegionLines.back());
-//				}
+				if (recallExpansion != GF_DEFAULT)
+					boxLines(_alienRegionLines.back());
 			}
 			else
 			{
@@ -1730,13 +1721,8 @@ void GraphsState::drawRegionLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
-
-//				switch (recallExpansion)
-//				{
-//					case GF_HALF:
-//					case GF_QUARTER:
-				boxLines(_xcomRegionLines.back());
-//				}
+				if (recallExpansion != GF_DEFAULT)
+					boxLines(_xcomRegionLines.back());
 			}
 		}
 	}
@@ -1791,7 +1777,7 @@ void GraphsState::drawCountryLines() // private.
 				scaleHigh = act;
 			}
 
-			if (_alien == false && _income == false // aLien & Income never go into negative values.
+			if (_alien == false && _income == false // NOTE: aLien & Income never go into negative values.
 				&& act < scaleLow
 				&& _countryToggles.at(j)->_pushed == true)
 			{
@@ -1902,12 +1888,8 @@ void GraphsState::drawCountryLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
-//					switch (recallExpansion)
-//					{
-//						case GF_HALF:
-//						case GF_QUARTER:
-					boxLines(_alienCountryLines.at(i));
-//					}
+					if (recallExpansion != GF_DEFAULT)
+						boxLines(_alienCountryLines.at(i));
 				}
 				else if (_income == true)
 				{
@@ -1916,12 +1898,8 @@ void GraphsState::drawCountryLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
-//					switch (recallExpansion)
-//					{
-//						case GF_HALF:
-//						case GF_QUARTER:
-					boxLines(_incomeLines.at(i));
-//					}
+					if (recallExpansion != GF_DEFAULT)
+						boxLines(_incomeLines.at(i));
 				}
 				else
 				{
@@ -1930,12 +1908,8 @@ void GraphsState::drawCountryLines() // private.
 													static_cast<Sint16>(x + 17),
 													lineVector.at(lineVector.size() - 2u),
 													static_cast<Uint8>(_countryToggles.at(i)->_colorPushed + 4u));
-//					switch (recallExpansion)
-//					{
-//						case GF_HALF:
-//						case GF_QUARTER:
-					boxLines(_xcomCountryLines.at(i));
-//					}
+					if (recallExpansion != GF_DEFAULT)
+						boxLines(_xcomCountryLines.at(i));
 				}
 			}
 		}
@@ -1982,12 +1956,8 @@ void GraphsState::drawCountryLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
-//				switch (recallExpansion)
-//				{
-//					case GF_HALF:
-//					case GF_QUARTER:
-				boxLines(_alienCountryLines.back());
-//				}
+				if (recallExpansion != GF_DEFAULT)
+					boxLines(_alienCountryLines.back());
 			}
 			else if (_income == true)
 			{
@@ -1996,12 +1966,8 @@ void GraphsState::drawCountryLines() // private.
 											static_cast<Sint16>(x + 17),
 											lineVector.at(lineVector.size() - 2u),
 											color);
-//				switch (recallExpansion)
-//				{
-//					case GF_HALF:
-//					case GF_QUARTER:
-				boxLines(_incomeLines.back());
-//				}
+				if (recallExpansion != GF_DEFAULT)
+					boxLines(_incomeLines.back());
 			}
 			else
 			{
@@ -2010,12 +1976,8 @@ void GraphsState::drawCountryLines() // private.
 												static_cast<Sint16>(x + 17),
 												lineVector.at(lineVector.size() - 2u),
 												color);
-//				switch (recallExpansion)
-//				{
-//					case GF_HALF:
-//					case GF_QUARTER:
-				boxLines(_xcomCountryLines.back());
-//				}
+				if (recallExpansion != GF_DEFAULT)
+					boxLines(_xcomCountryLines.back());
 			}
 		}
 	}
@@ -2247,13 +2209,8 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 											static_cast<Sint16>(x + 17),
 											lineVector.at(lineVector.size() - 2u),
 											color);
-
-//				switch (recallExpansion)
-//				{
-//					case GF_HALF:
-//					case GF_QUARTER:
-				boxLines(_financeLines.at(i));
-//				}
+				if (recallExpansion != GF_DEFAULT)
+					boxLines(_financeLines.at(i));
 			}
 		}
 	}
@@ -2286,9 +2243,7 @@ void GraphsState::shiftButtons(Action* action) // private.
 					case SDL_BUTTON_WHEELDOWN:
 						dirVal = 1;
 						if (static_cast<int>(_btnCountryOffset + GRAPH_BUTTONS) + dirVal >= static_cast<int>(_countryToggles.size()))
-						{
 							return;
-						}
 						break;
 
 					default:
