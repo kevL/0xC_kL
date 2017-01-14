@@ -195,7 +195,7 @@ GraphsState::GraphsState()
 	}
 
 	_txtTitle	= new Text(220, 16, 100, 28);
-	_txtFactor	= new Text( 35,  9,  96, 28);
+	_txtThous	= new Text( 35,  9,  96, 28);
 
 	_lstMonths	= new TextList(215, 9, 117, 182); // NOTE: These go beyond 320px.
 	_lstYears	= new TextList(215, 9, 117, 191);
@@ -222,7 +222,7 @@ GraphsState::GraphsState()
 	add(_lstMonths,		"scale",	"graphs");
 	add(_lstYears,		"scale",	"graphs");
 	add(_txtTitle,		"text",		"graphs");
-	add(_txtFactor,		"text",		"graphs");
+	add(_txtThous,		"text",		"graphs");
 	add(_txtScore);
 
 	for (size_t
@@ -679,7 +679,7 @@ GraphsState::GraphsState()
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_txtFactor->setText(tr("STR_FINANCE_THOUSANDS"));
+	_txtThous->setText(tr("STR_FINANCE_THOUSANDS"));
 
 
 	_isfUfoRegion->onMousePress(	static_cast<ActionHandler>(&GraphsState::btnUfoRegionClick),
@@ -907,31 +907,15 @@ void GraphsState::btnUfoRegionClick(Action*)
 {
 	if (recallPage != 0 || _init == true)
 	{
-		_init = false;
-		recallPage = 0;
-
-		_forceVis =
-
-		_alien = true;
-		_income =
-		_country =
-		_finance = false;
-
-		_btnToggleAll->setY(TOGGLEALL_yReg + SCREEN_OFFSET_y);
-		_btnToggleAll->setVisible();
-		initToggleAll();
-
-		_btnReset->setVisible(_timerBlink->isRunning() == true);
-		drawLines();
-
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_AREAS"));
-		_btnRegionTotal->setVisible();
 
-		for (std::vector<ToggleTextButton*>::const_iterator
-				i = _btnRegions.begin();
-				i != _btnRegions.end();
-				++i)
-			(*i)->setVisible();
+		_alien		= true;
+		_country	= false;
+		_income		= false;
+		_finance	= false;
+
+		recallPage = 0;
+		changePage();
 
 		for (std::vector<Text*>::const_iterator
 				i = _txtRegionActA.begin();
@@ -949,31 +933,15 @@ void GraphsState::btnXcomRegionClick(Action*)
 {
 	if (recallPage != 1 || _init == true)
 	{
-		_init = false;
-		recallPage = 1;
-
-		_forceVis = true;
-
-		_alien =
-		_income =
-		_country =
-		_finance = false;
-
-		_btnToggleAll->setY(TOGGLEALL_yReg + SCREEN_OFFSET_y);
-		_btnToggleAll->setVisible();
-		initToggleAll();
-
-		_btnReset->setVisible(_timerBlink->isRunning() == true);
-		drawLines();
-
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_AREAS"));
-		_btnRegionTotal->setVisible();
 
-		for (std::vector<ToggleTextButton*>::const_iterator
-				i = _btnRegions.begin();
-				i != _btnRegions.end();
-				++i)
-			(*i)->setVisible();
+		_alien		= false;
+		_country	= false;
+		_income		= false;
+		_finance	= false;
+
+		recallPage = 1;
+		changePage();
 
 		for (std::vector<Text*>::const_iterator
 				i = _txtRegionActX.begin();
@@ -991,31 +959,15 @@ void GraphsState::btnUfoCountryClick(Action*)
 {
 	if (recallPage != 2 || _init == true)
 	{
-		_init = false;
-		recallPage = 2;
-
-		_forceVis =
-
-		_alien =
-		_country = true;
-		_income =
-		_finance = false;
-
-		_btnToggleAll->setY(TOGGLEALL_yCou + SCREEN_OFFSET_y);
-		_btnToggleAll->setVisible();
-		initToggleAll();
-
-		_btnReset->setVisible(_timerBlink->isRunning() == true);
-		drawLines();
-
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_COUNTRIES"));
-		_btnCountryTotal->setVisible();
 
-		for (std::vector<ToggleTextButton*>::const_iterator
-				i = _btnCountries.begin();
-				i != _btnCountries.end();
-				++i)
-			(*i)->setVisible();
+		_alien		= true;
+		_country	= true;
+		_income		= false;
+		_finance	= false;
+
+		recallPage = 2;
+		changePage();
 
 		for (std::vector<Text*>::const_iterator
 				i = _txtCountryActA.begin();
@@ -1033,31 +985,15 @@ void GraphsState::btnXcomCountryClick(Action*)
 {
 	if (recallPage != 3 || _init == true)
 	{
-		_init = false;
-		recallPage = 3;
-
-		_forceVis =
-
-		_country = true;
-		_alien =
-		_income =
-		_finance = false;
-
-		_btnToggleAll->setY(TOGGLEALL_yCou + SCREEN_OFFSET_y);
-		_btnToggleAll->setVisible();
-		initToggleAll();
-
-		_btnReset->setVisible(_timerBlink->isRunning() == true);
-		drawLines();
-
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_COUNTRIES"));
-		_btnCountryTotal->setVisible();
 
-		for (std::vector<ToggleTextButton*>::const_iterator
-				i = _btnCountries.begin();
-				i != _btnCountries.end();
-				++i)
-			(*i)->setVisible();
+		_alien		= false;
+		_country	= true;
+		_income		= false;
+		_finance	= false;
+
+		recallPage = 3;
+		changePage();
 
 		for (std::vector<Text*>::const_iterator
 				i = _txtCountryActX.begin();
@@ -1075,24 +1011,17 @@ void GraphsState::btnIncomeClick(Action*)
 {
 	if (recallPage != 4 || _init == true)
 	{
-		_init = false;
-		recallPage = 4;
-
-		_income =
-		_country = true;
-		_alien =
-		_finance = false;
-
-		_btnToggleAll->setVisible(false);
-
-		_btnReset->setVisible(false);
-		drawLines();
-
-		_txtFactor->setVisible();
-
 		_txtTitle->setText(tr("STR_INCOME"));
-		_btnCountryTotal->setVisible();
 
+		_alien		= false;
+		_country	= true;
+		_income		= true;
+		_finance	= false;
+
+		recallPage = 4;
+		changePage();
+
+		_btnCountryTotal->setVisible();
 		for (std::vector<ToggleTextButton*>::const_iterator
 				i = _btnCountries.begin();
 				i != _btnCountries.end();
@@ -1109,27 +1038,75 @@ void GraphsState::btnFinanceClick(Action*)
 {
 	if (recallPage != 5 || _init == true)
 	{
-		_init = false;
-		recallPage = 5;
-
-		_finance = true;
-		_alien =
-		_income =
-		_country = false;
-
-		_btnToggleAll->setVisible(false);
-
-		_btnReset->setVisible(false);
-		drawLines();
-
 		_txtTitle->setText(tr("STR_FINANCE"));
-		_txtScore->setVisible();
 
+		_alien		= false;
+		_country	= false;
+		_income		= false;
+		_finance	= true;
+
+		recallPage = 5;
+		changePage();
+
+		_txtScore->setVisible();
 		for (std::vector<ToggleTextButton*>::const_iterator
 				i = _btnFinances.begin();
 				i != _btnFinances.end();
 				++i)
 			(*i)->setVisible();
+	}
+}
+
+/**
+ * Changes the current page.
+ */
+void GraphsState::changePage() // private.
+{
+	_init = false;
+	drawLines();
+
+	int toggleAll_y (0); // suppress g++ compiler warning.
+
+	switch (recallPage)
+	{
+		case 0:
+		case 1:
+			toggleAll_y = TOGGLEALL_yReg;
+
+			_btnRegionTotal->setVisible();
+			for (std::vector<ToggleTextButton*>::const_iterator
+					i = _btnRegions.begin();
+					i != _btnRegions.end();
+					++i)
+				(*i)->setVisible();
+			break;
+
+		case 2:
+		case 3:
+			toggleAll_y = TOGGLEALL_yCou;
+
+			_btnCountryTotal->setVisible();
+			for (std::vector<ToggleTextButton*>::const_iterator
+					i = _btnCountries.begin();
+					i != _btnCountries.end();
+					++i)
+				(*i)->setVisible();
+	}
+
+	switch (recallPage)
+	{
+		case 0: case 1: case 2: case 3:
+			_forceVis = true;
+
+			_btnReset->setVisible(_timerBlink->isRunning() == true);
+
+			_btnToggleAll->setY(toggleAll_y + SCREEN_OFFSET_y);
+			_btnToggleAll->setVisible();
+			initToggleAll();
+			break;
+
+		case 4: case 5:
+			_txtThous->setVisible();
 	}
 }
 
@@ -1462,8 +1439,11 @@ void GraphsState::resetScreen() // private.
 
 	_btnRegionTotal->setVisible(false);
 	_btnCountryTotal->setVisible(false);
-	_txtFactor->setVisible(false);
+	_txtThous->setVisible(false);
 	_txtScore->setVisible(false);
+
+	_btnReset->setVisible(false);
+	_btnToggleAll->setVisible(false);
 }
 
 /**
@@ -1746,7 +1726,6 @@ void GraphsState::drawRegionLines() // private.
 		_xcomRegionLines.back()->setVisible(_regionToggles.back()->_pushed);
 
 	updateScale(scaleLow, scaleHigh);
-	_txtFactor->setVisible(false);
 }
 
 /**
@@ -2003,7 +1982,6 @@ void GraphsState::drawCountryLines() // private.
 		_xcomCountryLines.back()->setVisible(_countryToggles.back()->_pushed);
 
 	updateScale(scaleLow, scaleHigh);
-	_txtFactor->setVisible(_income == true);
 }
 
 /**
@@ -2239,7 +2217,6 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 	}
 
 	updateScale(scaleLow, scaleHigh);
-	_txtFactor->setVisible();
 }
 
 /**

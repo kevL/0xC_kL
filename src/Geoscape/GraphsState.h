@@ -106,7 +106,7 @@ private:
 	SavedGame* _playSave;
 	Text
 		* _txtScore,
-		* _txtFactor,
+		* _txtThous,
 		* _txtTitle;
 	TextButton
 		* _btnReset,
@@ -158,6 +158,9 @@ private:
 
 	/// Blinks recent activity-values.
 	void blink();
+
+	/// Changes the current page.
+	void changePage();
 
 	/// Locks the vertical scale to current values.
 	void btnLockPress(Action*);
