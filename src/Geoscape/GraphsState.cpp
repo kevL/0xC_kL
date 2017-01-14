@@ -178,7 +178,7 @@ GraphsState::GraphsState()
 	_isfFinance		= new InteractiveSurface(31, 24, 257);
 	_isfGeoscape	= new InteractiveSurface(31, 24, 289);
 
-	_btnLockScale	= new ToggleTextButton(24, 14, 124, 28);
+	_btnLockScale	= new ToggleTextButton(24, 14, 136, 28);
 	_btnReset		= new TextButton(40, 16, 96, 26);
 	_btnToggleAll	= new ToggleTextButton(24, HEIGHT_btn, 66, 0); // y is set according to page.
 
@@ -1218,7 +1218,8 @@ void GraphsState::btnFinanceListPress(Action* action)
  */
 void GraphsState::btnLockPress(Action*) // private.
 {
-	_lock = (_btnLockScale->getPressed() == true);
+	if (!(_lock = _btnLockScale->getPressed()))
+		drawLines(false);
 }
 
 /**
@@ -1517,10 +1518,13 @@ void GraphsState::drawLines(bool reset) // private.
 	if (reset == true)
 		resetScreen();
 
-	if (_country == false && _finance == false)
-		drawRegionLines();
-	else if (_finance == false)
-		drawCountryLines();
+	if (_finance == false)
+	{
+		if (_country == false)
+			drawRegionLines();
+		else
+			drawCountryLines();
+	}
 	else
 		drawFinanceLines();
 }
