@@ -33,9 +33,10 @@ enum GraphsExpansionFactor
 	GF_QUARTER	// 2
 };
 
+class Country;
 class InteractiveSurface;
 class Region;
-class Sound;
+class SavedGame;
 class Surface;
 class Text;
 class TextButton;
@@ -62,8 +63,8 @@ private:
 		MONTHS_u		= 12u;
 	static const int
 		MONTHS			= 12,
-		YEARS			= 6,
-		GRIDCELLS_y		= 9,
+		YEARS			=  6,
+		GRIDCELLS_y		=  9,
 		HEIGHT_btn		= 10;
 
 	static const float PIXELS_y;
@@ -75,10 +76,22 @@ private:
 		_income,
 		_init,
 		_forceVis,	// true to ensure values are displayed when scrolling buttons
-		_reset;		// true to stop buttons blinking & reset activity
+		_reset,		// true to stop buttons blinking & reset activity
+		_lock;		// true to lock the scale
+
+	int
+	_lockRegionsHigh,
+	_lockRegionsLow,
+	_lockCountriesHigh,
+	_lockCountriesLow,
+	_lockFinanceHigh,
+	_lockFinanceLow;
 
 	size_t _btnCountryOffset;
 //		_btnRegionOffset;
+
+	std::vector<Country*>* _countries;
+	std::vector<Region*>* _regions;
 
 	InteractiveSurface
 		* _bg,
@@ -89,7 +102,8 @@ private:
 		* _isfUfoRegion,
 		* _isfXcomCountry,
 		* _isfXcomRegion;
-	RuleInterface* _uiGraphs;
+	const RuleInterface* _uiGraphs;
+	SavedGame* _playSave;
 	Text
 		* _txtScore,
 		* _txtFactor,
@@ -106,7 +120,8 @@ private:
 	ToggleTextButton
 		* _btnCountryTotal,
 		* _btnRegionTotal,
-		* _btnToggleAll;
+		* _btnToggleAll,
+		* _btnLockScale;
 
 	Timer* _timerBlink;
 
@@ -144,6 +159,8 @@ private:
 	/// Blinks recent activity-values.
 	void blink();
 
+	/// Locks the vertical scale to current values.
+	void btnLockPress(Action*);
 	/// Resets aLien/xCom activity and the blink indicators.
 	void btnResetPress(Action* action);
 	/// Initializes the toggle-all stuff.
