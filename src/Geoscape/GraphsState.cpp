@@ -1550,17 +1550,12 @@ void GraphsState::drawRegionLines() // private.
 
 			total += act;
 
-			if (act > scaleHigh
-				&& _regionToggles.at(j)->_pushed == true)
+			if (_regionToggles.at(j)->_pushed == true)
 			{
-				scaleHigh = act;
-			}
-
-			if (_alien == false // aLiens never get into negative scores.
-				&& act < scaleLow
-				&& _regionToggles.at(j)->_pushed == true)
-			{
-				scaleLow = act;
+				if (act > scaleHigh)
+					scaleHigh = act;
+				else if (act < scaleLow && _alien == false) // aLiens never get into negative scores.
+					scaleLow = act;
 			}
 		}
 
@@ -1771,17 +1766,12 @@ void GraphsState::drawCountryLines() // private.
 
 			total += act;
 
-			if (act > scaleHigh
-				&& _countryToggles.at(j)->_pushed == true)
+			if (_countryToggles.at(j)->_pushed == true)
 			{
-				scaleHigh = act;
-			}
-
-			if (_alien == false && _income == false // NOTE: aLien & Income never go into negative values.
-				&& act < scaleLow
-				&& _countryToggles.at(j)->_pushed == true)
-			{
-				scaleLow = act;
+				if (act > scaleHigh)
+					scaleHigh = act;
+				else if (act < scaleLow && _alien == false && _income == false) // NOTE: aLien & Income never go into negative values.
+					scaleLow = act;
 			}
 		}
 
@@ -2012,7 +2002,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		baseExpenses (0);
 
 	// start filling those arrays with score values;
-	// determine which is the highest one being displayed, so we can adjust the scale
+	// determine which is the highest one being displayed, so the scale can be adjusted
 	size_t rit;
 	for (size_t
 			i = 0u;
