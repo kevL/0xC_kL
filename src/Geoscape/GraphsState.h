@@ -167,9 +167,9 @@ private:
 	/// Resets aLien/xCom activity and the blink indicators.
 	void btnResetPress(Action* action);
 	/// Initializes the toggle-all stuff.
-	void initToggleAll();
+	void prepToggleAll();
 	/// Toggles all region/country buttons.
-	void btnTogglePress(Action* action);
+	void btnToggleAllPress(Action* action);
 	/// Sets the graphs to an expansion by mouse-click.
 	void btnFactorPress(Action* action);
 	/// Sets the graphs to an expansion by hot-key.

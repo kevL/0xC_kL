@@ -178,13 +178,13 @@ GraphsState::GraphsState()
 	_isfFinance		= new InteractiveSurface(31, 24, 257);
 	_isfGeoscape	= new InteractiveSurface(31, 24, 289);
 
-	_btnLockScale	= new ToggleTextButton(24, 14, 136, 28);
-	_btnReset		= new TextButton(40, 16, 96, 26);
-	_btnToggleAll	= new ToggleTextButton(24, HEIGHT_btn, 66, 0); // y is set according to page.
+	_btnReset		= new TextButton(40, 16, 96, 28);
+	_btnLockScale	= new ToggleTextButton(14, 14, 136, 29);
+	_btnToggleAll	= new ToggleTextButton(20, HEIGHT_btn, 66, 0); // y is set according to page.
 
-	_btnFactor1		= new TextButton(16, 16, 272, 26);
-	_btnFactor2		= new TextButton(16, 16, 288, 26);
-	_btnFactor4		= new TextButton(16, 16, 304, 26);
+	_btnFactor1		= new TextButton(14, 14, 278, 29);
+	_btnFactor2		= new TextButton(14, 14, 292, 29);
+	_btnFactor4		= new TextButton(14, 14, 306, 29);
 
 	switch (recallExpansion)
 	{
@@ -194,13 +194,12 @@ GraphsState::GraphsState()
 		case GF_QUARTER: _userFactor = _btnFactor4;
 	}
 
-	_txtTitle	= new Text(220, 16, 100, 28);
-	_txtThous	= new Text( 35,  9,  96, 28);
+	_txtTitle	= new Text(217, 16, 103, 28);
+	_txtThous	= new Text( 35,  9,  96, 31);
+	_txtScore	= new Text( 36,  9,  46, 82);
 
-	_lstMonths	= new TextList(215, 9, 117, 182); // NOTE: These go beyond 320px.
-	_lstYears	= new TextList(215, 9, 117, 191);
-
-	_txtScore	= new Text(36, 9, 46, 82);
+	_lstMonths	= new TextList(215, 9, 117 - 28, 182);
+	_lstYears	= new TextList(215, 9, 117 - 28, 191);
 
 
 	setInterface("graphs");
@@ -213,8 +212,8 @@ GraphsState::GraphsState()
 	add(_isfIncome);
 	add(_isfFinance);
 	add(_isfGeoscape);
-	add(_btnLockScale,	"button",	"graphs");
 	add(_btnReset,		"button",	"graphs");
+	add(_btnLockScale,	"button",	"graphs");
 	add(_btnToggleAll,	"button",	"graphs");
 	add(_btnFactor1,	"button",	"graphs");
 	add(_btnFactor2,	"button",	"graphs");
@@ -232,7 +231,7 @@ GraphsState::GraphsState()
 	{
 		_txtScale.push_back(new Text(
 									32,9,
-									91,
+									288, //91
 									171 - (static_cast<int>(i) * 14)));
 		add(_txtScale.at(i), "scale", "graphs");
 	}
@@ -471,8 +470,8 @@ GraphsState::GraphsState()
 
 		switch (i) // switch colors for Income (was yellow) and Maintenance (was green)
 		{
-			case 0: hueFactor = 2u; break;
-			case 2: hueFactor = 0u; break;
+			case 0u: hueFactor = 2u; break;
+			case 2u: hueFactor = 0u; break;
 			default:
 				hueFactor = i;
 		}
@@ -549,16 +548,16 @@ GraphsState::GraphsState()
 	}
 
 
-//	_btnLockScale->setText(L"lock"); // TODO: use tr("STR_GRAPHS_LOCK_SCALE")
-	_btnLockScale->onMousePress(static_cast<ActionHandler>(&GraphsState::btnLockPress),
-								SDL_BUTTON_LEFT);
-
 	_btnReset->setText(tr("STR_RESET_UC"));
 	_btnReset->onMousePress(static_cast<ActionHandler>(&GraphsState::btnResetPress),
 							SDL_BUTTON_LEFT);
 
+//	_btnLockScale->setText(L"lock"); // TODO: use tr("STR_GRAPHS_LOCK_SCALE")
+	_btnLockScale->onMousePress(static_cast<ActionHandler>(&GraphsState::btnLockPress),
+								SDL_BUTTON_LEFT);
+
 //	_btnToggleAll->setText(L"all"); // TODO: use tr("STR_GRAPHS_TOGGLE_ALL")
-	_btnToggleAll->onMousePress(static_cast<ActionHandler>(&GraphsState::btnTogglePress),
+	_btnToggleAll->onMousePress(static_cast<ActionHandler>(&GraphsState::btnToggleAllPress),
 								SDL_BUTTON_LEFT);
 
 	_btnFactor1->setText(L"1");
@@ -592,8 +591,8 @@ GraphsState::GraphsState()
 
 	const Uint8 colorGrid (static_cast<Uint8>(_uiGraphs->getElement("graph")->color));
 
-	_bg->drawRect( // set up the grid
-				static_cast<Sint16>(offsetX + 125),
+	_bg->drawRect( // set up the grid ->
+				static_cast<Sint16>(offsetX + 125 - 28),
 				static_cast<Sint16>(SCREEN_OFFSET_y + 49),
 				188,127,
 				colorGrid);
@@ -609,8 +608,8 @@ GraphsState::GraphsState()
 				y = static_cast<Sint16>(y + 14))
 		{
 			for (Sint16
-					x = static_cast<Sint16>(offsetX + 126 + i);
-					x < static_cast<Sint16>(offsetX + 298 + i);
+					x = static_cast<Sint16>(offsetX + 126 - 28 + i);
+					x < static_cast<Sint16>(offsetX + 298 - 28 + i);
 					x = static_cast<Sint16>(x + 17))
 			{
 				switch (i)
@@ -667,13 +666,13 @@ GraphsState::GraphsState()
 		_lstMonths->setCellText(0u, i, tr(GameTime::GAME_MONTHS[th]));
 	}
 
-	for (std::vector<Text*>::const_iterator // set up the vertical measurement units
-			i = _txtScale.begin();
-			i != _txtScale.end();
-			++i)
-	{
-		(*i)->setAlign(ALIGN_RIGHT);
-	}
+//	for (std::vector<Text*>::const_iterator // set up the vertical measurement units
+//			i = _txtScale.begin();
+//			i != _txtScale.end();
+//			++i)
+//	{
+//		(*i)->setAlign(ALIGN_RIGHT);
+//	}
 
 
 	_txtTitle->setAlign(ALIGN_CENTER);
@@ -1091,6 +1090,11 @@ void GraphsState::changePage() // private.
 					i != _btnCountries.end();
 					++i)
 				(*i)->setVisible();
+			break;
+
+		case 4:
+		case 5:
+			_txtThous->setVisible();
 	}
 
 	switch (recallPage)
@@ -1102,11 +1106,7 @@ void GraphsState::changePage() // private.
 
 			_btnToggleAll->setY(toggleAll_y + SCREEN_OFFSET_y);
 			_btnToggleAll->setVisible();
-			initToggleAll();
-			break;
-
-		case 4: case 5:
-			_txtThous->setVisible();
+			prepToggleAll();
 	}
 }
 
@@ -1133,7 +1133,7 @@ void GraphsState::btnRegionListPress(Action* action)
 		}
 	}
 	_regionToggles.at(btnId)->_pushed = btn->getPressed();
-	initToggleAll();
+	prepToggleAll();
 	drawLines(false);
 }
 
@@ -1163,7 +1163,7 @@ void GraphsState::btnCountryListPress(Action* action)
 		}
 	}
 	_countryToggles.at(btnId)->_pushed = btn->getPressed();
-	initToggleAll();
+	prepToggleAll();
 	drawLines(false);
 }
 
@@ -1191,6 +1191,7 @@ void GraphsState::btnFinanceListPress(Action* action)
 
 /**
  * Locks the vertical scale to current values.
+ * @note Refreshes the lines when untoggled.
  * @param action - pointer to an Action
  */
 void GraphsState::btnLockPress(Action*) // private.
@@ -1224,7 +1225,7 @@ void GraphsState::btnResetPress(Action*) // private.
 /**
  * Initializes the toggle-all stuff.
  */
-void GraphsState::initToggleAll() // private.
+void GraphsState::prepToggleAll() // private.
 {
 	bool allPressed (true);
 	if (_country == true)
@@ -1263,7 +1264,7 @@ void GraphsState::initToggleAll() // private.
  * Toggles all region/country buttons.
  * @param action - pointer to an Action
  */
-void GraphsState::btnTogglePress(Action*) // private.
+void GraphsState::btnToggleAllPress(Action*) // private.
 {
 	const bool vis (_btnToggleAll->getPressed() == true);
 
@@ -1458,8 +1459,8 @@ void GraphsState::boxLines(Surface* const srf) // private.
 			++y)
 	{
 		for (int
-				x = 125;	// grid left edge
-				x != 313;	// grid right edge
+				x = 125 - 28;	// grid left edge
+				x != 313 - 28;	// grid right edge
 				++x)
 		{
 			srf->setPixelColor(x,y, 0u);
@@ -1520,7 +1521,7 @@ void GraphsState::drawRegionLines() // private.
 		total,
 		act,
 
-		totals[MONTHS_u] {0,0,0,0,0,0,0,0,0,0,0,0};
+		totals[MONTHS_u] { 0,0,0,0,0,0,0,0,0,0,0,0 };
 
 	for (size_t
 			i = 0u;
@@ -1645,7 +1646,7 @@ void GraphsState::drawRegionLines() // private.
 
 			if (lineVector.size() > 1u)
 			{
-				x = static_cast<Sint16>(312 - static_cast<int>(j) * 17);
+				x = static_cast<Sint16>(312 - 28 - static_cast<int>(j) * 17);
 
 				if (_alien == true)
 				{
@@ -1697,7 +1698,7 @@ void GraphsState::drawRegionLines() // private.
 
 		if (lineVector.size() > 1u)
 		{
-			x = static_cast<Sint16>(312 - static_cast<int>(i) * 17);
+			x = static_cast<Sint16>(312 - 28 - static_cast<int>(i) * 17);
 
 			if (_alien == true)
 			{
@@ -1740,7 +1741,7 @@ void GraphsState::drawCountryLines() // private.
 		total,
 		act,
 
-		totals[MONTHS_u] {0,0,0,0,0,0,0,0,0,0,0,0};
+		totals[MONTHS_u] { 0,0,0,0,0,0,0,0,0,0,0,0 };
 
 	for (size_t
 			i = 0u;
@@ -1877,7 +1878,7 @@ void GraphsState::drawCountryLines() // private.
 
 			if (lineVector.size() > 1u)
 			{
-				x = static_cast<Sint16>(312 - static_cast<int>(j) * 17);
+				x = static_cast<Sint16>(312 - 28 - static_cast<int>(j) * 17);
 
 				if (_alien == true)
 				{
@@ -1942,7 +1943,7 @@ void GraphsState::drawCountryLines() // private.
 
 		if (lineVector.size() > 1u)
 		{
-			x = static_cast<Sint16>(312 - static_cast<int>(i) * 17);
+			x = static_cast<Sint16>(312 - 28 - static_cast<int>(i) * 17);
 
 			if (_alien == true)
 			{
@@ -1993,11 +1994,11 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		scaleHigh (0),
 		scaleLow  (0),
 
-		income[MONTHS_u]		{0,0,0,0,0,0,0,0,0,0,0,0},
-		expenditure[MONTHS_u]	{0,0,0,0,0,0,0,0,0,0,0,0},
-		maintenance[MONTHS_u]	{0,0,0,0,0,0,0,0,0,0,0,0},
-		balance[MONTHS_u]		{0,0,0,0,0,0,0,0,0,0,0,0},
-		score[MONTHS_u]			{0,0,0,0,0,0,0,0,0,0,0,0},
+		income[MONTHS_u]		{ 0,0,0,0,0,0,0,0,0,0,0,0 },
+		expenditure[MONTHS_u]	{ 0,0,0,0,0,0,0,0,0,0,0,0 },
+		maintenance[MONTHS_u]	{ 0,0,0,0,0,0,0,0,0,0,0,0 },
+		balance[MONTHS_u]		{ 0,0,0,0,0,0,0,0,0,0,0,0 },
+		score[MONTHS_u]			{ 0,0,0,0,0,0,0,0,0,0,0,0 },
 
 		baseIncomes  (0),
 		baseExpenses (0);
@@ -2035,7 +2036,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		}
 
 		balance[i] = static_cast<int>(_playSave->getFundsList().at(rit) / 1000);
-		score[i] = _playSave->getResearchScores().at(rit);
+		score[i]   = _playSave->getResearchScores().at(rit);
 
 
 		for (std::vector<Region*>::const_iterator
@@ -2096,13 +2097,13 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 		}
 	}
 
-	for (size_t // toggle screens
+	for (size_t // toggle lines ->
 			i = 0u;
 			i != 5u;
 			++i)
 	{
 		_financeLines.at(i)->setVisible(_financeToggles.at(i));
-		_financeLines.at(i)->clear();
+		_financeLines.at(i)->clear(); // <- will be redrawn below_
 	}
 
 
@@ -2205,7 +2206,7 @@ void GraphsState::drawFinanceLines() // private. // Council Analytics
 
 				color = static_cast<Uint8>(Palette::blockOffset(static_cast<Uint8>((hueFactor >> 1u) + 1u)) + color);
 
-				x = static_cast<Sint16>(312 - static_cast<int>(j) * 17);
+				x = static_cast<Sint16>(312 - 28 - static_cast<int>(j) * 17);
 				_financeLines.at(i)->drawLine(
 											x,y,
 											static_cast<Sint16>(x + 17),
