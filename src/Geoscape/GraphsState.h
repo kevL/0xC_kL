@@ -104,6 +104,7 @@ private:
 		* _isfXcomRegion;
 	const RuleInterface* _uiGraphs;
 	SavedGame* _playSave;
+	Surface* _srfPageLine;
 	Text
 		* _txtScore,
 		* _txtThous,

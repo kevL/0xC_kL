@@ -59,6 +59,7 @@ static size_t recallCountry (0u);
 static GraphsExpansionFactor recallExpansion (GF_DEFAULT);
 
 static int
+	SCREEN_OFFSET_x,
 	SCREEN_OFFSET_y,
 	TOGGLEALL_yCou,
 	TOGGLEALL_yReg;
@@ -127,13 +128,13 @@ GraphsState::GraphsState()
 		_regions(_game->getSavedGame()->getRegions()),
 		_countries(_game->getSavedGame()->getCountries())
 {
-	const int offsetX ((Options::baseXResolution - 320) >> 1u);
-	SCREEN_OFFSET_y  = (Options::baseYResolution - 200) >> 1u;
+	SCREEN_OFFSET_x = (Options::baseXResolution - 320) >> 1u;
+	SCREEN_OFFSET_y = (Options::baseYResolution - 200) >> 1u;
 
 	_bg = new InteractiveSurface(
 							Options::baseXResolution,
 							Options::baseYResolution,
-							-offsetX,
+							-SCREEN_OFFSET_x,
 							-SCREEN_OFFSET_y);
 	_bg->onMousePress(		static_cast<ActionHandler>(&GraphsState::shiftButtons),
 							SDL_BUTTON_WHEELUP);
@@ -178,6 +179,8 @@ GraphsState::GraphsState()
 	_isfFinance		= new InteractiveSurface(31, 24, 257);
 	_isfGeoscape	= new InteractiveSurface(31, 24, 289);
 
+	_srfPageLine	= new Surface(31, 1, 0, 26); // x is set according to page.
+
 	_btnReset		= new TextButton(40, 16, 96, 28);
 	_btnLockScale	= new ToggleTextButton(14, 14, 136, 29);
 	_btnToggleAll	= new ToggleTextButton(20, HEIGHT_btn, 66, 0); // y is set according to page.
@@ -212,6 +215,7 @@ GraphsState::GraphsState()
 	add(_isfIncome);
 	add(_isfFinance);
 	add(_isfGeoscape);
+	add(_srfPageLine);
 	add(_btnReset,		"button",	"graphs");
 	add(_btnLockScale,	"button",	"graphs");
 	add(_btnToggleAll,	"button",	"graphs");
@@ -223,6 +227,11 @@ GraphsState::GraphsState()
 	add(_txtTitle,		"text",		"graphs");
 	add(_txtThous,		"text",		"graphs");
 	add(_txtScore);
+
+	_srfPageLine->drawLine(
+						0,0,
+						31,0,
+						1u);
 
 	for (size_t
 			i = 0u;
@@ -585,14 +594,14 @@ GraphsState::GraphsState()
 									SDLK_3);
 
 	Surface* const icons (_game->getResourcePack()->getSurface("GRAPHS.SPK"));
-	icons->setX(offsetX);
+	icons->setX(SCREEN_OFFSET_x);
 	icons->setY(SCREEN_OFFSET_y);
 	icons->blit(_bg);
 
 	const Uint8 colorGrid (static_cast<Uint8>(_uiGraphs->getElement("graph")->color));
 
 	_bg->drawRect( // set up the grid ->
-				static_cast<Sint16>(offsetX + 125 - 28),
+				static_cast<Sint16>(SCREEN_OFFSET_x + 125 - 28),
 				static_cast<Sint16>(SCREEN_OFFSET_y + 49),
 				188,127,
 				colorGrid);
@@ -608,8 +617,8 @@ GraphsState::GraphsState()
 				y = static_cast<Sint16>(y + 14))
 		{
 			for (Sint16
-					x = static_cast<Sint16>(offsetX + 126 - 28 + i);
-					x < static_cast<Sint16>(offsetX + 298 - 28 + i);
+					x = static_cast<Sint16>(SCREEN_OFFSET_x + 126 - 28 + i);
+					x < static_cast<Sint16>(SCREEN_OFFSET_x + 298 - 28 + i);
 					x = static_cast<Sint16>(x + 17))
 			{
 				switch (i)
@@ -907,6 +916,7 @@ void GraphsState::btnUfoRegionClick(Action*)
 	if (recallPage != 0 || _init == true)
 	{
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_AREAS"));
+		_srfPageLine->setX(SCREEN_OFFSET_x + 97);
 
 		_alien		= true;
 		_country	= false;
@@ -933,6 +943,7 @@ void GraphsState::btnXcomRegionClick(Action*)
 	if (recallPage != 1 || _init == true)
 	{
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_AREAS"));
+		_srfPageLine->setX(SCREEN_OFFSET_x + 129);
 
 		_alien		= false;
 		_country	= false;
@@ -959,6 +970,7 @@ void GraphsState::btnUfoCountryClick(Action*)
 	if (recallPage != 2 || _init == true)
 	{
 		_txtTitle->setText(tr("STR_UFO_ACTIVITY_IN_COUNTRIES"));
+		_srfPageLine->setX(SCREEN_OFFSET_x + 161);
 
 		_alien		= true;
 		_country	= true;
@@ -985,6 +997,7 @@ void GraphsState::btnXcomCountryClick(Action*)
 	if (recallPage != 3 || _init == true)
 	{
 		_txtTitle->setText(tr("STR_XCOM_ACTIVITY_IN_COUNTRIES"));
+		_srfPageLine->setX(SCREEN_OFFSET_x + 193);
 
 		_alien		= false;
 		_country	= true;
@@ -1011,6 +1024,7 @@ void GraphsState::btnIncomeClick(Action*)
 	if (recallPage != 4 || _init == true)
 	{
 		_txtTitle->setText(tr("STR_INCOME"));
+		_srfPageLine->setX(SCREEN_OFFSET_x + 225);
 
 		_alien		= false;
 		_country	= true;
@@ -1038,6 +1052,7 @@ void GraphsState::btnFinanceClick(Action*)
 	if (recallPage != 5 || _init == true)
 	{
 		_txtTitle->setText(tr("STR_FINANCE"));
+		_srfPageLine->setX(SCREEN_OFFSET_x + 257);
 
 		_alien		= false;
 		_country	= false;
