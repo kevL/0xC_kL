@@ -507,7 +507,7 @@ void Text::processText() // private.
 
 				if (_wrap == true // word-wrap if the last word doesn't fit the line
 					&& width >= getWidth()
-					&& start == false)
+					&& (start == false || _lang->getTextWrapping() == WRAP_LETTERS))
 				{
 					size_t indentLocation (i);
 
