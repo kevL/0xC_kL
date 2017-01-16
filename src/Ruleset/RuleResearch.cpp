@@ -164,10 +164,10 @@ bool RuleResearch::destroyItem() const
 }
 
 /**
- * Gets if this RuleResearch should be flagged as seen by default.
+ * Checks if this RuleResearch should be flagged as seen by default.
  * @return, true if flagged seen
  */
-bool RuleResearch::getMarkSeen() const
+bool RuleResearch::isMarkSeen() const
 {
 	return _markSeen;
 }

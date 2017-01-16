@@ -1714,22 +1714,33 @@ void SavedGame::tabulateStartableManufacture(
 		{
 			bypass = false;
 
-			for (std::map<std::string, int>::const_iterator
-					j = mfRule->getRequiredFacilities().begin(); // WARNING: Do not explicitly spec. a RuleManufacture w/ required-facilities < 1.
-					j != mfRule->getRequiredFacilities().end() && bypass == false;
+			for (std::map<std::string, int>::const_iterator // qty of each facility-type required
+					j = mfRule->getRequiredFacilities().begin();
+					j != mfRule->getRequiredFacilities().end();
 					++j)
 			{
 				int facsFound (0);
-				for (std::vector<BaseFacility*>::const_iterator
-						k = baseFacs->begin();
-						k != baseFacs->end();
-						++k)
+				if (j->second != 0) // safety. RuleManufacture should NOT spec. required-facilities < 1.
 				{
-					if ((*k)->getRules()->getType() == j->first)
-						++facsFound;
+					for (std::vector<BaseFacility*>::const_iterator
+							k = baseFacs->begin();
+							k != baseFacs->end();
+							++k)
+					{
+						if ((*k)->buildFinished() == true
+							&& (*k)->getRules()->getType() == j->first)
+						{
+							if (++facsFound == j->second)
+								break;
+						}
+					}
 				}
-				if (facsFound < j->second)
+
+				if (facsFound != j->second)
+				{
 					bypass = true;
+					break;
+				}
 			}
 
 			if (bypass == false)

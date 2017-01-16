@@ -132,8 +132,8 @@ private:
 		/// Checks if the RuleResearch consumes a corresponding item when research completes.
 		bool destroyItem() const;
 
-		/// Gets if the RuleResearch should be flagged as seen by default.
-		bool getMarkSeen() const;
+		/// Checks if the RuleResearch should be flagged as seen by default.
+		bool isMarkSeen() const;
 
 		/// Gets the list-priority for the RuleResearch.
 		int getListOrder() const;

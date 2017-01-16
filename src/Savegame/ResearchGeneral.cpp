@@ -36,7 +36,7 @@ ResearchGeneral::ResearchGeneral(
 	:
 		_resRule(resRule),
 		_type(resRule->getType()),
-		_beenSeen(resRule->getMarkSeen())
+		_beenSeen(resRule->isMarkSeen())
 {
 	if (isQuickBattle == true)
 		_status = RG_DISCOVERED;
