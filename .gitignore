@@ -1,5 +1,4 @@
 /build/
-/cbproject/
 /data/_config/MapView3/
 /data/_config/MCDedit/
 /data/GEODATA/
@@ -13,9 +12,6 @@
 /data/UNITS/
 /deps/
 /nbproject/
-/res/
-/source_SDL/
-/source_YAML/
 
 Makefile
 .dep.inc
