@@ -198,6 +198,8 @@ interfaces:
       - id: text
         color: 239   # bright green
         color2: 138  # yellow
+      - id: list
+        color: 239   # bright green
       - id: button
         color: 133   # minty green
 

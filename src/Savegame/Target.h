@@ -33,7 +33,7 @@ class Language;
 
 
 /**
- * Parent class for targets on the globe with a set of radian coordinates.
+ * Parent class for Targets on the globe with a set of radian coordinates.
  */
 class Target
 {

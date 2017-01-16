@@ -27,16 +27,18 @@ namespace OpenXcom
 {
 
 class AlienBase;
+class Craft;
 class GeoscapeState;
 class Target;
 class Text;
 class TextButton;
 class TextEdit;
+class TextList;
 class Window;
 
 
 /**
- * Generic window used to display all the Craft targeting a point on the Globe.
+ * A State that displays all the Craft targeting a Target on the Globe.
  */
 class TargetInfoState
 	:
@@ -44,26 +46,31 @@ class TargetInfoState
 {
 
 private:
-	AlienBase* _aBase;
+	AlienBase* _aLienBase;
 	GeoscapeState* _geoState;
 	Text
 		* _txtTitle,
-		* _txtTargeted,
-		* _txtTargeters;
+		* _txtTargeted;
 	TextButton
 		* _btnIntercept,
 		* _btnOk;
 	TextEdit* _edtTarget;
+	TextList* _lstTargeters;
 	Window* _window;
+
+	std::vector<Craft*> _crafts;
 
 
 	public:
-		/// Creates the TargetInfo state.
+		/// Creates a TargetInfo state.
 		TargetInfoState(
 				Target* const target,
 				GeoscapeState* const geoState);
 		/// Cleans up the TargetInfo state.
 		~TargetInfoState();
+
+		/// Handler for pressing the Targeters list.
+		void lstTargetersPress(Action* action);
 
 		/// Edits an aLienBase's label.
 		void edtTargetChange(Action* action);

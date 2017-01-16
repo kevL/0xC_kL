@@ -19,7 +19,9 @@
 
 #include "TargetInfoState.h"
 
+#include "GeoscapeCraftState.h"
 #include "GeoscapeState.h"
+#include "Globe.h"
 #include "InterceptState.h"
 
 #include "../Engine/Action.h"
@@ -30,11 +32,13 @@
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/TextEdit.h"
+#include "../Interface/TextList.h"
 #include "../Interface/Window.h"
 
 #include "../Resource/ResourcePack.h"
 
 #include "../Savegame/AlienBase.h"
+#include "../Savegame/Craft.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/Target.h"
 
@@ -52,7 +56,7 @@ TargetInfoState::TargetInfoState(
 		GeoscapeState* const geoState)
 	:
 		_geoState(geoState),
-		_aBase(nullptr)
+		_aLienBase(nullptr)
 {
 	_fullScreen = false;
 
@@ -61,8 +65,8 @@ TargetInfoState::TargetInfoState(
 
 	_edtTarget		= new TextEdit(this, 50, 9, 38, 46);
 
-	_txtTargeted	= new Text(182,  9, 37, 71);
-	_txtTargeters	= new Text(182, 40, 37, 82);
+	_txtTargeted	= new Text(182, 9, 37, 71);
+	_lstTargeters	= new TextList(168, 33, 37, 82);
 
 	_btnIntercept	= new TextButton(160, 16, 48, 119);
 	_btnOk			= new TextButton(160, 16, 48, 137);
@@ -73,7 +77,7 @@ TargetInfoState::TargetInfoState(
 	add(_txtTitle,		"text",		"targetInfo");
 	add(_edtTarget,		"text",		"targetInfo");
 	add(_txtTargeted,	"text",		"targetInfo");
-	add(_txtTargeters,	"text",		"targetInfo");
+	add(_lstTargeters,	"list",		"targetInfo");
 	add(_btnIntercept,	"button",	"targetInfo");
 	add(_btnOk,			"button",	"targetInfo");
 
@@ -83,62 +87,71 @@ TargetInfoState::TargetInfoState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnIntercept->setText(tr("STR_INTERCEPT"));
-	_btnIntercept->onMouseClick(static_cast<ActionHandler>(&TargetInfoState::btnInterceptClick));
+	_btnIntercept->onMouseClick(	static_cast<ActionHandler>(&TargetInfoState::btnInterceptClick));
+	_btnIntercept->onKeyboardPress(	static_cast<ActionHandler>(&TargetInfoState::btnInterceptClick),
+									Options::keyOk);
+	_btnIntercept->onKeyboardPress(	static_cast<ActionHandler>(&TargetInfoState::btnInterceptClick),
+									Options::keyOkKeypad);
 
 	_btnOk->setText(tr("STR_CANCEL"));
 	_btnOk->onMouseClick(	static_cast<ActionHandler>(&TargetInfoState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TargetInfoState::btnOkClick),
 							Options::keyCancel);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TargetInfoState::btnOkClick),
-							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&TargetInfoState::btnOkClick),
-							Options::keyOkKeypad);
 
 	_txtTitle->setBig();
 	_txtTitle->setAlign(ALIGN_CENTER);
 	std::wostringstream woststr;
-	woststr << L'\x01' << target->getLabel(_game->getLanguage());
+	woststr << L'\x01' << target->getLabel(_game->getLanguage()); // <- color2
 	_txtTitle->setText(woststr.str());
 
 	for (std::vector<AlienBase*>::const_iterator
-			i = _game->getSavedGame()->getAlienBases()->begin();
+			i  = _game->getSavedGame()->getAlienBases()->begin();
 			i != _game->getSavedGame()->getAlienBases()->end();
-			++i)
+		  ++i)
 	{
 		if (target == dynamic_cast<Target*>(*i))
 		{
-			_aBase = *i;
+			_aLienBase = *i;
 			const std::wstring edit (Language::utf8ToWstr((*i)->getUserLabel()));
 			_edtTarget->setText(edit);
 			_edtTarget->onTextChange(static_cast<ActionHandler>(&TargetInfoState::edtTargetChange));
 			break;
 		}
 	}
-	if (_aBase == nullptr)
+	if (_aLienBase == nullptr)
 		_edtTarget->setVisible(false);
 
-	bool targeted (false);
 
-	_txtTargeters->setAlign(ALIGN_CENTER);
-	woststr.str(L"");
-	for (std::vector<Target*>::const_iterator
-			i = target->getTargeters()->begin();
-			i != target->getTargeters()->end();
-			++i)
+	if (target->getTargeters()->empty() == false)
 	{
-		woststr << (*i)->getLabel(_game->getLanguage()) << L'\n';
+		_txtTargeted->setText(tr("STR_TARGETTED_BY"));
+		_txtTargeted->setAlign(ALIGN_CENTER);
 
-		if (targeted == false)
+		_lstTargeters->setColumns(1, 182);
+		_lstTargeters->setMargin();
+		_lstTargeters->setBackground(_window);
+		_lstTargeters->setSelectable();
+		_lstTargeters->setAlign(ALIGN_CENTER);
+		_lstTargeters->onMousePress(static_cast<ActionHandler>(&TargetInfoState::lstTargetersPress));
+
+		Craft* craft;
+		for (std::vector<Target*>::const_iterator
+				i  = target->getTargeters()->begin();
+				i != target->getTargeters()->end();
+			  ++i)
 		{
-			targeted = true;
-			_txtTargeted->setText(tr("STR_TARGETTED_BY"));
-			_txtTargeted->setAlign(ALIGN_CENTER);
+			if ((craft = dynamic_cast<Craft*>(*i)) != nullptr) // safety. These shall be Craft only.
+			{
+				_crafts.push_back(craft);
+				_lstTargeters->addRow(1, (*i)->getLabel(_game->getLanguage()).c_str());
+			}
 		}
 	}
-	_txtTargeters->setText(woststr.str());
-
-	if (targeted == false)
+	else
+	{
 		_txtTargeted->setVisible(false);
+		_lstTargeters->setVisible(false);
+	}
 }
 
 /**
@@ -148,17 +161,46 @@ TargetInfoState::~TargetInfoState()
 {}
 
 /**
+ * LMB shows Craft info; RMB exits State and centers Craft.
+ * @param action - pointer to an Action
+ */
+void TargetInfoState::lstTargetersPress(Action* action)
+{
+	switch (action->getDetails()->button.button)
+	{
+		case SDL_BUTTON_LEFT:
+		{
+			Craft* const craft (_crafts[_lstTargeters->getSelectedRow()]);
+			_game->pushState(new GeoscapeCraftState(craft, _geoState, nullptr, true));
+			break;
+		}
+
+		case SDL_BUTTON_RIGHT:
+		{
+			_game->popState();
+
+			const Craft* const craft (_crafts[_lstTargeters->getSelectedRow()]);
+			const double
+				lon (craft->getLongitude()),
+				lat (craft->getLatitude());
+			_geoState->getGlobe()->center(lon,lat);
+			_geoState->getGlobe()->setCrosshair(lon,lat);
+		}
+	}
+}
+
+/**
  * Edits an aLienBase's label.
  * @note For player to type in suspected race.
  * @param action - pointer to an Action
  */
 void TargetInfoState::edtTargetChange(Action*)
 {
-	_aBase->setUserLabel(Language::wstrToUtf8(_edtTarget->getText()));
+	_aLienBase->setUserLabel(Language::wstrToUtf8(_edtTarget->getText()));
 }
 
 /**
- * Picks a craft to intercept the UFO.
+ * Opens another State for player to pick a Craft to intercept the Target.
  * @param action - pointer to an Action
  */
 void TargetInfoState::btnInterceptClick(Action*)
