@@ -398,7 +398,7 @@ void StatisticsState::listStats()
 			i != playSave->getCountries()->end();
 			++i)
 	{
-		if ((*i)->isPacted() == true) // TODO: Countries total. Also do percent lost.
+		if ((*i)->getPactStatus() != PACT_NONE) // TODO: Countries total. Also do percent lost.
 			++countriesLost;
 	}
 

@@ -722,6 +722,8 @@ en-US:
   STR_COUNTRIES_ARE_UNHAPPY_WITH_YOUR_ABILITY: "{0} are displeased with your ability to deal with aLien activity in their territory and have decided to reduce their funding."
   STR_COUNTRY_HAS_SIGNED_A_SECRET_PACT: "{0} has signed a secret pact with unknown aLien Forces and has withdrawn from the Project."
   STR_COUNTRIES_HAVE_SIGNED_A_SECRET_PACT: "{0} have signed a secret pact with unknown aLien Forces and have withdrawn from the Project."
+  STR_COUNTRY_HAS_JOINED_THE_PROJECT: "{0} has joined the Council of Funding Nations."
+  STR_COUNTRIES_HAVE_JOINED_THE_PROJECT: "{0} have joined the Council of Funding Nations."
   STR_YOU_HAVE_NOT_SUCCEEDED_1: "You have not succeeded in dealing with the aLien invasion and The Council of Funding Nations has regrettably decided to terminate the xCom Project."
   STR_YOU_HAVE_NOT_SUCCEEDED_2: "Each nation will now have to deal with the situation as appropriate."
   STR_YOU_HAVE_NOT_SUCCEEDED_3: "Let us hope that we can accommodate our formerly hostile visitors, and that the general population may live peacefully with our hyper-intelligent aLien guests."

@@ -67,8 +67,9 @@ private:
 
 	std::vector<std::string>
 		_listHappy,
+		_listPacts,
 		_listSad,
-		_listPacts;
+		_listProject;
 
 	std::vector<Soldier*> _soldiersFeted;
 

@@ -118,7 +118,7 @@ MonthlyReportState::MonthlyReportState()
 
 	int
 		month (_playSave->getTime()->getMonth() - 1),
-		year (_playSave->getTime()->getYear());
+		year  (_playSave->getTime()->getYear());
 
 	if (month == 0)
 	{
@@ -168,7 +168,7 @@ MonthlyReportState::MonthlyReportState()
 	_lstCouncil->setColumns(1, 285);
 	_lstCouncil->setBackground(_window);
 	_lstCouncil->setWordWrap();
-	_lstCouncil->setMargin(0);
+	_lstCouncil->setMargin();
 	_lstCouncil->wrapIndent(false);
 
 	const int defeatThreshold (_game->getRuleset()->getDefeatScore() + (_playSave->getDifficultyInt() * 250));
@@ -203,20 +203,16 @@ MonthlyReportState::MonthlyReportState()
 			st = TAC_RATING[4u]; // excellent
 			satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
 		}
-		else if (_ratingTotal > defeatThreshold + 2500)
-		{
-			st = TAC_RATING[3u]; // good
-			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
-		}
-		else if (_ratingTotal > defeatThreshold + 1000)
-		{
-			st = TAC_RATING[2u]; // okay
-			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
-		}
 		else
 		{
-			st = TAC_RATING[1u]; // poor
 			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
+
+			if (_ratingTotal > defeatThreshold + 2500)
+				st = TAC_RATING[3u]; // good
+			else if (_ratingTotal > defeatThreshold + 1000)
+				st = TAC_RATING[2u]; // okay
+			else
+				st = TAC_RATING[1u]; // poor
 		}
 
 		_lstCouncil->addRow(1, tr(satisfaction).c_str());
@@ -273,6 +269,15 @@ MonthlyReportState::MonthlyReportState()
 											_listPacts,
 											"STR_COUNTRY_HAS_SIGNED_A_SECRET_PACT",
 											"STR_COUNTRIES_HAVE_SIGNED_A_SECRET_PACT").c_str());
+		}
+
+		if (_listProject.empty() == false)
+		{
+			_lstCouncil->addRow(1, L"");
+			_lstCouncil->addRow(1, countryList(
+											_listProject,
+											"STR_COUNTRY_HAS_JOINED_THE_PROJECT",
+											"STR_COUNTRIES_HAVE_JOINED_THE_PROJECT").c_str());
 		}
 	}
 	else // defeated ->
@@ -341,20 +346,22 @@ void MonthlyReportState::calculateReport() // private.
 	const int diff (_playSave->getDifficultyInt());
 	if (diff != 0)
 	{
+		PactStatus pactStatus;
 		int pactScore;
+
 		for (std::vector<Country*>::const_iterator // add scores for pacted or about-to-pact Countries.
-				i = _playSave->getCountries()->begin();
+				i  = _playSave->getCountries()->begin();
 				i != _playSave->getCountries()->end();
-				++i)
+			  ++i)
 		{
-			if ((pactScore = (*i)->getRules()->getPactScore() * diff) != 0
-				&& (*i)->isPacted() == true)
+			if ((pactStatus = (*i)->getPactStatus()) != PACT_NONE
+				&& (pactScore = (*i)->getRules()->getPactScore() * diff) != 0)
 			{
 				Region* region (nullptr);
 				for (std::vector<Region*>::const_iterator
-						j = _playSave->getRegions()->begin();
+						j  = _playSave->getRegions()->begin();
 						j != _playSave->getRegions()->end();
-						++j)
+					  ++j)
 				{
 					if ((*j)->getRules()->getType() == (*i)->getRules()->getCountryRegion())
 					{
@@ -363,7 +370,7 @@ void MonthlyReportState::calculateReport() // private.
 					}
 				}
 
-				if ((*i)->getPact() == true) // rand 50..100% if already pacted, full pts for about-to-pact Countries.
+				if (pactStatus == PACT_PACTED) // rand 50..100% if already pacted, full pts for about-to-pact Countries.
 					pactScore = RNG::generate(pactScore >> 1u,
 											  pactScore);
 
@@ -382,53 +389,64 @@ void MonthlyReportState::calculateReport() // private.
 		scorePlayer (0),
 		scoreAlien  (0);
 
-	const size_t assizeId (_playSave->getFundsList().size() - 1u); // <- index of the month assessed
+	const size_t assizedId (_playSave->getFundsList().size() - 1u); // <- index of the month assessed
 
 	for (std::vector<Region*>::const_iterator		// NOTE: Only Region scores are evaluated;
-			i = _playSave->getRegions()->begin();	// Country scores are NOT added.
+			i  = _playSave->getRegions()->begin();	// Country scores are NOT added.
 			i != _playSave->getRegions()->end();
-			++i)
+		  ++i)
 	{
 		(*i)->newMonth();
 
-		if (assizeId != 0u)
-			_ratingPrior += (*i)->getActivityXCom() .at(assizeId - 1u)
-						  - (*i)->getActivityAlien().at(assizeId - 1u);
+		if (assizedId != 0u)
+			_ratingPrior += (*i)->getActivityXCom() .at(assizedId - 1u)
+						  - (*i)->getActivityAlien().at(assizedId - 1u);
 
-		scorePlayer += (*i)->getActivityXCom() .at(assizeId);
-		scoreAlien  += (*i)->getActivityAlien().at(assizeId);
+		scorePlayer += (*i)->getActivityXCom() .at(assizedId);
+		scoreAlien  += (*i)->getActivityAlien().at(assizedId);
 	}
 
 
 	for (std::vector<Country*>::const_iterator
-			i = _playSave->getCountries()->begin();
+			i  = _playSave->getCountries()->begin();
 			i != _playSave->getCountries()->end();
-			++i)
+		  ++i)
 	{
-		if ((*i)->getRecentPact() == true)
-			_listPacts.push_back((*i)->getRules()->getType());
-
 		(*i)->newMonth( // calculates satisfaction & funding & updates pact-vars.
 					scorePlayer,
 					scoreAlien,
 					diff);
 		_deltaFunds += (*i)->getFunding().back()
-					 - (*i)->getFunding().at(assizeId);
+					 - (*i)->getFunding().at(assizedId);
 
-		switch ((*i)->getSatisfaction())
+		switch ((*i)->getPactStatus())
 		{
-			case SAT_SAD:
-				_listSad.push_back((*i)->getRules()->getType());
+			case PACT_NONE:
+				switch ((*i)->getSatisfaction()) // NOTE: Pacted Countries have been set 'SAT_NEUTRAL' by Country::newMonth().
+				{
+					case SAT_SAD:
+						_listSad.push_back((*i)->getRules()->getType());
+						break;
+
+					case SAT_HAPPY:
+						_listHappy.push_back((*i)->getRules()->getType());
+						break;
+
+					case SAT_PROJECT:
+						_listProject.push_back((*i)->getRules()->getType());
+				}
 				break;
-			case SAT_HAPPY:
-				_listHappy.push_back((*i)->getRules()->getType());
+
+			case PACT_RECENT:
+				_listPacts.push_back((*i)->getRules()->getType());
+				(*i)->setPactStatus(PACT_PACTED);
 		}
 	}
 
-	if (assizeId != 0u)
-		_ratingPrior += _playSave->getResearchScores().at(assizeId - 1u); // add research-scores.
+	if (assizedId != 0u)
+		_ratingPrior += _playSave->getResearchScores().at(assizedId - 1u); // add research-scores.
 
-	scorePlayer += _playSave->getResearchScores().at(assizeId); // add research-scores.
+	scorePlayer += _playSave->getResearchScores().at(assizedId); // add research-scores.
 	_ratingTotal = scorePlayer - scoreAlien;
 
 	_playSave->balanceBudget(); // handle cash-accounts.
@@ -519,9 +537,9 @@ std::wstring MonthlyReportState::countryList( // private.
 				LocalizedText countryList (tr(countries.front()));
 				std::vector<std::string>::const_iterator i;
 				for (
-						i = countries.begin() + 1;
-						i != countries.end() - 1;
-						++i)
+						i  = countries.begin() + 1;
+						i != countries.end()   - 1;
+					  ++i)
 				{
 					countryList = tr("STR_COUNTRIES_COMMA").arg(countryList).arg(tr(*i));
 				}
@@ -539,14 +557,14 @@ std::wstring MonthlyReportState::countryList( // private.
 void MonthlyReportState::awards() // private.
 {
 	for (std::vector<Base*>::const_iterator // Award medals for service time.
-			i = _playSave->getBases()->begin();
+			i  = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end();
-			++i)
+		  ++i)
 	{
 		for (std::vector<Soldier*>::const_iterator
-				j = (*i)->getSoldiers()->begin();
+				j  = (*i)->getSoldiers()->begin();
 				j != (*i)->getSoldiers()->end();
-				++j)
+			  ++j)
 		{
 			//Log(LOG_INFO) << "end MONTH report: " << Language::wstrToFs((*j)->getLabel());
 			(*j)->getDiary()->addMonthlyService();

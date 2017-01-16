@@ -37,9 +37,8 @@ Country::Country(
 		bool genFunds)
 	:
 		_countryRule(countryRule),
-		_pact(false),
-		_newPact(false),
 		_funding(0),
+		_pactStatus(PACT_NONE),
 		_satisfaction(SAT_NEUTRAL),
 		_recentActA(-1),
 		_recentActX(-1)
@@ -68,8 +67,8 @@ void Country::load(const YAML::Node& node)
 	_actX		= node["actX"]		.as<std::vector<int>>(_actX);
 	_recentActA	= node["recentActA"].as<int>(_recentActA);
 	_recentActX	= node["recentActX"].as<int>(_recentActX);
-	_pact		= node["pact"]		.as<bool>(_pact);
-	_newPact	= node["newPact"]	.as<bool>(_newPact);
+
+	_pactStatus = static_cast<PactStatus>(node["pactStatus"].as<int>(_pactStatus));
 }
 
 /**
@@ -87,14 +86,13 @@ YAML::Node Country::save() const
 	node["recentActA"]	= _recentActA;
 	node["recentActX"]	= _recentActX;
 
-	if		(_pact == true)		node["pact"]	= _pact;
-	else if	(_newPact == true)	node["newPact"]	= _newPact;
+	if (_pactStatus != PACT_NONE) node["pactStatus"] = static_cast<int>(_pactStatus);
 
 	return node;
 }
 
 /**
- * Gets the ruleset for this Country's type.
+ * Gets the rule for this Country's type.
  * @return, pointer to RuleCountry
  */
 const RuleCountry* Country::getRules() const
@@ -112,7 +110,7 @@ const std::string& Country::getType() const
 }
 
 /**
- * Returns this Country's current monthly funding.
+ * Gets this Country's current monthly funding.
  * @return, reference to a vector of monthly funds
  */
 std::vector<int>& Country::getFunding()
@@ -182,7 +180,7 @@ void Country::newMonth(
 {
 	//Log(LOG_INFO) << "Country::newMonth()";
 	int funds;
-	if (_pact == false && _newPact == false)
+	if (_pactStatus == PACT_NONE)
 	{
 		const int fundsBefore (_funding.back());
 		if (fundsBefore != 0)
@@ -262,23 +260,23 @@ void Country::newMonth(
 		}
 		else
 		{
-			_satisfaction = SAT_NEUTRAL;
-			funds = _countryRule->generateFunding(); // grant a chance for zero-funding unpacted Countries to join the Project.
+			switch (funds = _countryRule->generateFunding()) // grant a chance for zero-funding unpacted Countries to join the Project.
+			{
+				case 0:
+					_satisfaction = SAT_NEUTRAL;
+					break;
+				default:
+					_satisfaction = SAT_PROJECT;
+			}
 		}
 	}
 	else // pacted or about to pact.
 	{
-		_satisfaction = SAT_NEUTRAL;
 		funds = 0;
+		_satisfaction = SAT_NEUTRAL;
 	}
 
 	_funding.push_back(funds);
-
-	if (_newPact == true) // now in cahoots
-	{
-		_newPact = false;
-		_pact = true;
-	}
 
 	_actA.push_back(0);
 	_actX.push_back(0);
@@ -292,40 +290,21 @@ void Country::newMonth(
 }
 
 /**
- * Signs a pact with aLiens at month's end.
+ * Sets this Country's pact-status.
+ * @param pact - the status
  */
-void Country::setRecentPact()
+void Country::setPactStatus(const PactStatus pact)
 {
-	 _newPact = true;
+	_pactStatus = pact;
 }
 
 /**
- * Gets if this Country has signed a recent pact with aLiens.
- * @return, true if so
+ * Gets this Country's pact-status.
+ * @return, the status
  */
-bool Country::getRecentPact() const
+PactStatus Country::getPactStatus() const
 {
-	return _newPact;
-}
-
-/**
- * Gets if this Country already has a pact with aLiens.
- * @note There is no setter for this one since it gets set automatically at the
- * end of the month if @a _newPact is true.
- * @return, true if country has a pact with aLiens
- */
-bool Country::getPact() const
-{
-	return _pact;
-}
-
-/**
- * Checks if this Country either has a pact or is about to pact w/ aLiens.
- * @return, true if pacted
- */
-bool Country::isPacted() const
-{
-	return _pact || _newPact;
+	return _pactStatus;
 }
 
 /**

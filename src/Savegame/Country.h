@@ -28,14 +28,23 @@
 namespace OpenXcom
 {
 
+enum PactStatus
+{
+	PACT_NONE,		// 0
+	PACT_RECENT,	// 1
+	PACT_PACTED		// 2
+};
+
 enum SatisfactionType
 {
 	SAT_SAD,		// 0
 	SAT_NEUTRAL,	// 1
-	SAT_HAPPY		// 2
+	SAT_HAPPY,		// 2
+	SAT_PROJECT		// 3
 };
 
 class RuleCountry;
+
 
 /**
  * Represents a Country that funds the player.
@@ -46,13 +55,11 @@ class Country
 {
 
 private:
-	bool
-		_newPact,
-		_pact;
 	int
 		_recentActA,
 		_recentActX;
 
+	PactStatus _pactStatus;
 	SatisfactionType _satisfaction;
 
 	const RuleCountry* _countryRule;
@@ -76,7 +83,7 @@ private:
 		/// Saves the Country to YAML.
 		YAML::Node save() const;
 
-		/// Gets the Country's ruleset.
+		/// Gets the Country's rule.
 		const RuleCountry* getRules() const;
 		/// Gets the Country's type.
 		const std::string& getType() const;
@@ -102,14 +109,10 @@ private:
 				const int totalA,
 				const int diff);
 
-		/// Signs a pact w/ aLiens at the end of the current month.
-		void setRecentPact();
-		/// Gets if they're signing a pact w/ aLiens.
-		bool getRecentPact() const;
-		/// Gets if they already signed a pact w/ aLiens.
-		bool getPact() const;
-		/// Checks if the Country either has a pact or is about to pact w/ aLiens.
-		bool isPacted() const;
+		/// Sets the Country's pact-status.
+		void setPactStatus(const PactStatus pact);
+		/// Gets the Country's pact-status.
+		PactStatus getPactStatus() const;
 
 		/// Handles recent aLien-activity in the Country for GraphsState blink.
 		bool recentActivityAlien(

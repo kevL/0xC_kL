@@ -923,11 +923,8 @@ void AlienMission::ufoLifting(
 									i != _playSave.getCountries()->end();
 									++i)
 							{
-								if ((*i)->isPacted() == false
+								if ((*i)->getPactStatus() == PACT_NONE
 									&& (*i)->getRules()->getCountryRegion() == _regionType)
-//									&& rules.getRegion(_regionType)->insideRegion(
-//																		(*i)->getRules()->getLabelLongitude(),			// WARNING: The *label* of a Country must be inside the
-//																		(*i)->getRules()->getLabelLatitude()) == true)	// AlienMission's Region for aLiens to infiltrate!
 								{
 									suspects.push_back(*i);
 								}
@@ -937,8 +934,8 @@ void AlienMission::ufoLifting(
 							{
 								Country* const infiltrated (suspects.at(RNG::pick(suspects.size())));
 								//Log(LOG_INFO) << "AlienMission::ufoLifting(), GAAH! new Pact & aLien base: " << infiltrated->getType();
-								if (infiltrated->getType() != "STR_RUSSIA")	// heh. ironically, this likely allows multiple alien
-									infiltrated->setRecentPact();			// bases in Russia due solely to infiltrations ...!!
+								if (infiltrated->getType() != "STR_RUSSIA")		// heh. ironically, this likely allows multiple alien
+									infiltrated->setPactStatus(PACT_RECENT);	// bases in Russia due solely to infiltrations ...!!
 							}
 						}
 						else
