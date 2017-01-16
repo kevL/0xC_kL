@@ -215,8 +215,8 @@ static introSoundEffect introSoundTrack[]
 {
 	{    0,   0x200}, // inserting this to keep the code simple
 	{  149,    0x11}, // searchlight *whoosh*
-	{  150,    0x11}, // kL, doubling
-	{  151,    0x11}, // kL, tripling
+	{  150,    0x11}, // searchlight doubling
+	{  151,    0x11}, // searchlight tripling
 	{  173,    0x0C},
 	{  183,    0x0E},
 	{  205,    0x15},
@@ -268,9 +268,8 @@ static introSoundEffect introSoundTrack[]
 	{  501,    0x16},
 //	{  512,     0xd}, // feet -- not in original
 //	{  514,     0xd}, // feet -- not in original
-//	{  522,    0x0B}, // rifle grab
-//	{  523,    0x0B}, // kL
-	{  527,    0x0B}, // kL
+//	{  523,    0x0B}, // rifle grab
+	{  527,    0x0B}, // rifle grab, delayed (lock & load)
 //	{  523,     0xd}, // feet -- not in original
 //	{  525,     0xd}, // feet -- not in original
 	{  534,    0x18},
@@ -333,9 +332,7 @@ static introSoundEffect introSoundTrack[]
 	{  783,     0x0},
 	{  786,     0x0},
 	{  789,    0x15}, // big growl
-//	{  790,    0x15}, // big growl
-//	{  790,    0x15}, // 2x loud growl
-	{  790,    0x15}, // 2x loud growl, kL:chorus
+	{  790,    0x15}, // 2x loud growl, chorus
 	{  807,     0x2},
 	{  810,     0x2},
 	{  812,     0x2},
@@ -346,7 +343,7 @@ static introSoundEffect introSoundTrack[]
 	{  824,   0x40A},
 //	{  824,     0x5}, // out of place alien yell, gaaach
 //	{  827,     0x6}, // out of place alien yell
-	{  835,    0x0F}, // beam up alien
+	{  835,    0x0F}, // beam up aliens
 	{  841,    0x0F},
 	{  845,    0x0F},
 	{  850,    0x0F},
