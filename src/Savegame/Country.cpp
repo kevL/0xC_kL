@@ -68,7 +68,7 @@ void Country::load(const YAML::Node& node)
 	_recentActA	= node["recentActA"].as<int>(_recentActA);
 	_recentActX	= node["recentActX"].as<int>(_recentActX);
 
-	_pactStatus = static_cast<PactStatus>(node["pactStatus"].as<int>(_pactStatus));
+	_pactStatus = static_cast<PactStatus>(node["pactStatus"].as<int>(static_cast<int>(_pactStatus)));
 }
 
 /**
