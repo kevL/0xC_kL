@@ -47,8 +47,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Intro video.
- * @param wasLetterBoxed - true if the game was letterboxed
+ * Initializes all the elements for the Intro video.
+ * @param wasLetterBoxed - true if the Screen was letterboxed
  */
 IntroState::IntroState(const bool wasLetterBoxed)
 	:
@@ -161,7 +161,7 @@ static soundInFile sample3CatOnlySounds[]
 
 
 // an attempt at a mix of (subjectively) the best sounds from the two versions
-// difficult because we can't find a definitive map from old sequence numbers to SAMPLE3.CAT indexes
+// difficult because we can't find a definitive map from old sequence numbers to SAMPLE3.CAT indices
 // probably only the Steam version of the game comes with both INTRO.CAT and SAMPLE3.CAT
 static soundInFile hybridIntroSounds[]
 {
@@ -269,7 +269,8 @@ static introSoundEffect introSoundTrack[]
 //	{  512,     0xd}, // feet -- not in original
 //	{  514,     0xd}, // feet -- not in original
 //	{  522,    0x0B}, // rifle grab
-	{  523,    0x0B}, // kL
+//	{  523,    0x0B}, // kL
+	{  527,    0x0B}, // kL
 //	{  523,     0xd}, // feet -- not in original
 //	{  525,     0xd}, // feet -- not in original
 	{  534,    0x18},
@@ -345,9 +346,10 @@ static introSoundEffect introSoundTrack[]
 	{  824,   0x40A},
 //	{  824,     0x5}, // out of place alien yell, gaaach
 //	{  827,     0x6}, // out of place alien yell
-	{  835,    0x0F},
+	{  835,    0x0F}, // beam up alien
 	{  841,    0x0F},
 	{  845,    0x0F},
+	{  850,    0x0F},
 	{  855,   0x407},
 	{  879,    0x0C},
 	{65535,  0xFFFF}
@@ -385,7 +387,7 @@ AudioSequence(
 /**
  * Overloads operator().
  */
-void operator()()
+void operator ()()
 {
 	while (_flcPlayer->getFrameCount() >= introSoundTrack[trackPosition].frameNumber)
 	{
@@ -477,7 +479,7 @@ void IntroState::init()
 			dy ((Options::baseYResolution - Screen::ORIGINAL_HEIGHT) >> 1u);
 
 		if (videoFilesQty == 1u // Original introduction video.
-			&& (CrossPlatform::fileExists(_introSoundFileDOS) == true
+			&& (   CrossPlatform::fileExists(_introSoundFileDOS) == true
 				|| CrossPlatform::fileExists(_introSoundFileWin) == true))
 		{
 			//Log(LOG_INFO) << "ORIGINAL INTRO";
