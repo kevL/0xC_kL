@@ -149,8 +149,8 @@ DogfightState::DogfightState(
 		_totalIntercepts(0u),
 		_x(0),
 		_y(0),
-		_minimizedIconX(0),
-		_minimizedIconY(0),
+		_minimizedIconX(5), // x-offset won't change
+		_minimizedIconY(0), // y-offset will change
 		_w1FireCountdown(0),
 		_w2FireCountdown(0),
 		_w1FireInterval(0),
@@ -189,8 +189,8 @@ DogfightState::DogfightState(
 	_txtStatus				= new Text(150, 9, _x +   4, _y + 85);
 	_txtTitle				= new Text(160, 9, _x,       _y -  9);
 
-	_btnMinimizedIcon		= new InteractiveSurface(32, 20, _minimizedIconX, _minimizedIconY);
-	_txtInterception		= new Text(150, 9, _minimizedIconX + 15, _minimizedIconY + 6);
+	_btnMinimizedIcon		= new InteractiveSurface(32, 20, _minimizedIconX, 0);	// NOTE: y-offset is set in resetInterceptPorts().
+	_txtMinimizedIcon		= new Text(150, 9, _minimizedIconX + 18, 0);			// ditto.
 
 	_craftDamageAnimTimer	= new Timer(500u);
 
@@ -219,7 +219,7 @@ DogfightState::DogfightState(
 	add(_txtTitle,			"ufoButton",		"dogfight", _window);
 
 	add(_btnMinimizedIcon);
-	add(_txtInterception,	"minimizedNumber",	"dogfight");
+	add(_txtMinimizedIcon,	"iconText",			"dogfight");
 
 	_btnStandoff->invalidate(false);
 	_btnCautious->invalidate(false);
@@ -336,8 +336,8 @@ DogfightState::DogfightState(
 	woststr << _craft->getLabel(_game->getLanguage()) << L" >" << _craft->getBase()->getLabel();
 	_txtTitle->setText(woststr.str());
 
-	_txtInterception->setText(woststr.str());
-	_txtInterception->setVisible(false);
+	_txtMinimizedIcon->setText(woststr.str());
+	_txtMinimizedIcon->setVisible(false);
 
 	// Define the colors to be used. Note these have been further tweaked in Interfaces.rul
 	const RuleInterface* const dfInterface (_game->getRuleset()->getInterface("dogfight"));
@@ -1699,19 +1699,18 @@ void DogfightState::btnUfoClick(Action* action)
 	{
 		case SDL_BUTTON_LEFT:
 		case SDL_BUTTON_RIGHT:
-			_previewUfo->setVisible();
+			_previewUfo		->setVisible();
 
-			// Disable all other buttons to prevent misclicks
-			_btnStandoff->setVisible(false);
-			_btnCautious->setVisible(false);
-			_btnStandard->setVisible(false);
-			_btnAggressive->setVisible(false);
-			_btnDisengage->setVisible(false);
-			_btnUfo->setVisible(false);
-			_srfTexIcon->setVisible(false);
-			_btnMinimize->setVisible(false);
-			_isfCw1->setVisible(false);
-			_isfCw2->setVisible(false);
+			_btnStandoff	->setVisible(false); // Disable all other buttons to prevent misclicks ->
+			_btnCautious	->setVisible(false);
+			_btnStandard	->setVisible(false);
+			_btnAggressive	->setVisible(false);
+			_btnDisengage	->setVisible(false);
+			_btnUfo			->setVisible(false);
+			_srfTexIcon		->setVisible(false);
+			_btnMinimize	->setVisible(false);
+			_isfCw1			->setVisible(false);
+			_isfCw2			->setVisible(false);
 	}
 }
 
@@ -1732,19 +1731,18 @@ void DogfightState::previewClick(Action* action)
 		}
 
 		case SDL_BUTTON_RIGHT:
-			_previewUfo->setVisible(false);
+			_previewUfo		->setVisible(false);
 
-			// Reenable all other buttons to prevent misclicks Lol
-			_btnStandoff->setVisible();
-			_btnCautious->setVisible();
-			_btnStandard->setVisible();
-			_btnAggressive->setVisible();
-			_btnDisengage->setVisible();
-			_btnUfo->setVisible();
-			_srfTexIcon->setVisible();
-			_btnMinimize->setVisible();
-			_isfCw1->setVisible();
-			_isfCw2->setVisible();
+			_btnStandoff	->setVisible(); // Reenable all other buttons to prevent misclicks Lol ->
+			_btnCautious	->setVisible();
+			_btnStandard	->setVisible();
+			_btnAggressive	->setVisible();
+			_btnDisengage	->setVisible();
+			_btnUfo			->setVisible();
+			_srfTexIcon		->setVisible();
+			_btnMinimize	->setVisible();
+			_isfCw1			->setVisible();
+			_isfCw2			->setVisible();
 	}
 }
 
@@ -1766,31 +1764,30 @@ void DogfightState::btnMaximizedDfClick(Action*)
 			{
 				_minimized = true;
 
-				_window->setVisible(false);
-				_previewUfo->setVisible(false);
-				_btnStandoff->setVisible(false);
-				_btnCautious->setVisible(false);
-				_btnStandard->setVisible(false);
-				_btnAggressive->setVisible(false);
-				_btnDisengage->setVisible(false);
-				_btnUfo->setVisible(false);
-				_srfTexIcon->setVisible(false);
-				_btnMinimize->setVisible(false);
-				_battleScope->setVisible(false);
-				_isfCw1->setVisible(false);
-				_srfCwRange1->setVisible(false);
-				_isfCw2->setVisible(false);
-				_srfCwRange2->setVisible(false);
-				_srfHull->setVisible(false);
-				_txtLoad1->setVisible(false);
-				_txtLoad2->setVisible(false);
-				_txtDistance->setVisible(false);
-				_previewUfo->setVisible(false);
-				_txtStatus->setVisible(false);
-				_txtTitle->setVisible(false);
+				_window			->setVisible(false);
+				_btnStandoff	->setVisible(false);
+				_btnCautious	->setVisible(false);
+				_btnStandard	->setVisible(false);
+				_btnAggressive	->setVisible(false);
+				_btnDisengage	->setVisible(false);
+				_btnUfo			->setVisible(false);
+				_srfTexIcon		->setVisible(false);
+				_btnMinimize	->setVisible(false);
+				_battleScope	->setVisible(false);
+				_isfCw1			->setVisible(false);
+				_srfCwRange1	->setVisible(false);
+				_isfCw2			->setVisible(false);
+				_srfCwRange2	->setVisible(false);
+				_srfHull		->setVisible(false);
+				_txtLoad1		->setVisible(false);
+				_txtLoad2		->setVisible(false);
+				_txtDistance	->setVisible(false);
+				_txtStatus		->setVisible(false);
+				_txtTitle		->setVisible(false);
+				_previewUfo		->setVisible(false);
 
 				_btnMinimizedIcon->setVisible();
-				_txtInterception->setVisible();
+				_txtMinimizedIcon->setVisible();
 
 				if (_geoState->getMinimizedDfCount() == _totalIntercepts)
 				{
@@ -1830,30 +1827,29 @@ void DogfightState::btnMinimizedDfPress(Action* action)
 
 			_minimized = false;
 
-			_window->setVisible();
-			_btnStandoff->setVisible();
-			_btnCautious->setVisible();
-			_btnStandard->setVisible();
-			_btnAggressive->setVisible();
-			_btnDisengage->setVisible();
-			_btnUfo->setVisible();
-			_srfTexIcon->setVisible();
-			_btnMinimize->setVisible();
-			_battleScope->setVisible();
-			_isfCw1->setVisible();
-			_srfCwRange1->setVisible();
-			_isfCw2->setVisible();
-			_srfCwRange2->setVisible();
-			_srfHull->setVisible();
-			_txtLoad1->setVisible();
-			_txtLoad2->setVisible();
-			_txtDistance->setVisible();
-			_txtStatus->setVisible();
-			_txtTitle->setVisible();
+			_window			->setVisible();
+			_btnStandoff	->setVisible();
+			_btnCautious	->setVisible();
+			_btnStandard	->setVisible();
+			_btnAggressive	->setVisible();
+			_btnDisengage	->setVisible();
+			_btnUfo			->setVisible();
+			_srfTexIcon		->setVisible();
+			_btnMinimize	->setVisible();
+			_battleScope	->setVisible();
+			_isfCw1			->setVisible();
+			_srfCwRange1	->setVisible();
+			_isfCw2			->setVisible();
+			_srfCwRange2	->setVisible();
+			_srfHull		->setVisible();
+			_txtLoad1		->setVisible();
+			_txtLoad2		->setVisible();
+			_txtDistance	->setVisible();
+			_txtStatus		->setVisible();
+			_txtTitle		->setVisible();
 
 			_btnMinimizedIcon->setVisible(false);
-			_txtInterception->setVisible(false);
-			_previewUfo->setVisible(false);
+			_txtMinimizedIcon->setVisible(false);
 
 			_geoState->resetInterceptPorts();
 
@@ -2145,7 +2141,6 @@ void DogfightState::resetInterceptPort(
 	if (_slot > _totalIntercepts)
 		_slot = _geoState->getOpenDfSlot(); // keep slots filled contiguously.
 
-	_minimizedIconX = 5;
 	_minimizedIconY = static_cast<int>((_slot * 5u) + ((_slot - 1u) << 4u));
 
 	if (_minimized == false)
@@ -2239,11 +2234,8 @@ void DogfightState::placePort() // private.
 		(*i)->setY((*i)->getY() - y);
 	}
 
-	_btnMinimizedIcon->setX(_minimizedIconX);
 	_btnMinimizedIcon->setY(_minimizedIconY);
-
-	_txtInterception->setX(_minimizedIconX + 18);
-	_txtInterception->setY(_minimizedIconY +  6);
+	_txtMinimizedIcon->setY(_minimizedIconY + 6);
 }
 
 /**

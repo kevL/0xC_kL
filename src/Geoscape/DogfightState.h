@@ -154,7 +154,7 @@ private:
 		* _txtLoad1,
 		* _txtLoad2,
 		* _txtDistance,
-		* _txtInterception,
+		* _txtMinimizedIcon,
 		* _txtStatus,
 		* _txtTitle;
 	Timer* _craftDamageAnimTimer;

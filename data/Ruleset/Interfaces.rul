@@ -360,7 +360,7 @@ interfaces:
         color: 89
       - id: distance
         color: 89
-      - id: minimizedNumber
+      - id: iconText
         color: 80
       - id: radarDetail
         color: 107   # green
