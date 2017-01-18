@@ -1217,9 +1217,9 @@ void Globe::blink()
 			if (i->first != GLM_CITY)
 				i->second->offset(_blinkVal);
 		}
-		drawMarkers();
-	}
-}
+		drawMarkers();	// NOTE: There's no need to clear '_srfLayerMarkers' for blink().
+	}					// Doing so would erase any intercept-markers anyway because
+}						// they aren't handled by drawMarkers() but by drawFlights().
 
 /**
  * Toggles the blinking.
@@ -1252,14 +1252,19 @@ void Globe::draw()
 
 	Surface::draw();
 
+	_srfLayerRadars		->clear();
+	_srfLayerMarkers	->clear();
+	_srfLayerCountry	->clear();
+	_srfLayerCrosshair	->clear();
+
 	drawOcean();
 	drawLand();
 	drawBevel();
-	drawRadars();
-	drawFlights();
+	drawRadars();	// '_srfLayerRadars'
+	drawFlights();	// '_srfLayerRadars' [also draws intercept-markers]
 	drawTerminus();
-	drawMarkers();
-	drawDetail();
+	drawMarkers();	// '_srfLayerMarkers'
+	drawDetail();	// '_srfLayerCountry'
 
 	if (_drawCrosshair == true) drawCrosshair();
 }
@@ -1354,29 +1359,30 @@ Cord Globe::getSunDirection( // private.
 
 	if (Options::globeSeasons == true)
 	{
-		const int
-			monthDays1[] { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 },
-			monthDays2[] { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 },
+		static const int
+			days1[13u] { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 },
+			days2[13u] { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 };
 
+		const int
 			year	(gt->getYear()),
 			month	(gt->getMonth() - 1),
 			day		(gt->getDay() - 1);
 
 		const double
-			tm (static_cast<double>( // day fraction is also taken into account
-						(((   gt->getHour()    * 60)
-							+ gt->getMinute()) * 60)
-							+ gt->getSecond())
-						/ 86400.);
+			sec (static_cast<double>( // day-fraction is also taken into account
+								  gt->getHour() * 3600
+								+ gt->getMinute() * 60
+								+ gt->getSecond())
+							/ 86400.); // secs per day.
 
 		double today;
-		if (    year %   4 == 0 // spring equinox (start of astronomic year)
+		if (    year %   4 == 0 // spring equinox (start of astronomical year)
 			&& (year % 100 != 0 || year % 400 == 0))
 		{
-			today = (static_cast<double>(monthDays2[month] + day) + tm) / 366. - 0.219;
+			today = (static_cast<double>(days2[month] + day) + sec) / 366. - 0.219;
 		}
 		else
-			today = (static_cast<double>(monthDays1[month] + day) + tm) / 365. - 0.219;
+			today = (static_cast<double>(days1[month] + day) + sec) / 365. - 0.219;
 
 		if (today < 0.)
 			today += 1.;
@@ -1413,8 +1419,6 @@ Cord Globe::getSunDirection( // private.
  */
 void Globe::drawRadars()
 {
-	_srfLayerRadars->clear();
-
 	_srfLayerRadars->lock();
 	if (_forceRadars == true) //&& Options::globeAllRadarsOnBaseBuild == true // placing a Base.
 	{
@@ -1535,12 +1539,13 @@ void Globe::drawGlobeCircle( // private.
 		x2 (0.),
 		y2 (0.),
 		lat1,
-		lon1;
+		lon1,
+		segs_d (static_cast<double>(segs));
 
 	for (double // 48 segments in circle
 			az = 0.;
 			az <= M_PI * 2. + 0.01;
-			az += M_PI * 2. / static_cast<double>(segs))
+			az += M_PI * 2. / segs_d)
 	{
 		// calculating sphere-projected circle
 		lat1 = asin(std::sin(lat) * std::cos(radius) + std::cos(lat) * std::sin(radius) * std::cos(az));
@@ -1551,14 +1556,9 @@ void Globe::drawGlobeCircle( // private.
 				lon1,lat1,
 				&x,&y);
 
-		if (AreSame(az, 0.) == true) // first vertex is for initialization only
+		if (AreSame(az, 0.) == false // first vertex is for initialization only
+			&& pointBack(lon1,lat1) == false)
 		{
-			x2 = x;
-			y2 = y;
-			continue;
-		}
-
-		if (pointBack(lon1,lat1) == false)
 			XuLine(
 				_srfLayerRadars,
 				this,
@@ -1566,6 +1566,7 @@ void Globe::drawGlobeCircle( // private.
 				x2,y2,
 				6,
 				color);
+		}
 
 		x2 = x;
 		y2 = y;
@@ -1594,27 +1595,31 @@ void Globe::drawFlights()
 					&& (*j)->getTarget() != nullptr
 					&& (*j)->inDogfight() == false)
 				{
-					static const double MIN_Diff (0.005); // radians
 					const double
 						lon1 ((*j)->getLongitude()),
 						lat1 ((*j)->getLatitude()),
 						lon2 ((*j)->getTarget()->getLongitude()),
-						lat2 ((*j)->getTarget()->getLatitude()),
-						lon3 ((*j)->getMeetLongitude()),
-						lat3 ((*j)->getMeetLatitude());
+						lat2 ((*j)->getTarget()->getLatitude());
 					drawPath(
 							_srfLayerRadars,
 							lon1,lat1,
 							lon2,lat2);
 
-					if (   std::fabs(lon3 - lon2) > MIN_Diff
-						|| std::fabs(lat3 - lat2) > MIN_Diff)
+					if (dynamic_cast<const Ufo*>((*j)->getTarget()) != nullptr)
 					{
-						drawPath(
-								_srfLayerRadars,
-								lon1,lat1,
-								lon3,lat3);
-						drawInterceptMarker(lon3,lat3);
+						const double
+							lon3 ((*j)->getMeetLongitude()),
+							lat3 ((*j)->getMeetLatitude());
+
+						if (   std::fabs(lon3 - lon2) > 0.005	// radians
+							|| std::fabs(lat3 - lat2) > 0.005)	// question: What about the Greenwich meridian ....
+						{
+							drawPath(
+									_srfLayerRadars,
+									lon1,lat1,
+									lon3,lat3);
+							drawInterceptMarker(lon3,lat3);
+						}
 					}
 				}
 			}
@@ -1828,7 +1833,7 @@ void Globe::drawInterceptMarker( // private.
 		Surface* const marker (_srtMarkers->getFrame(GLM_WAYPOINT));
 		marker->setX(x - 1);
 		marker->setY(y - 1);
-		marker->blit(_srfLayerMarkers);
+		marker->blit(_srfLayerMarkers); // NOTE: These will blink.
 	}
 }
 
@@ -1866,8 +1871,6 @@ void Globe::drawTerminus()
  */
 void Globe::drawMarkers()
 {
-	_srfLayerMarkers->clear();
-
 	for (std::vector<Base*>::const_iterator			// Draw the Base markers
 			i = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end();
@@ -1997,8 +2000,6 @@ void Globe::drawTarget( // private.
  */
 void Globe::drawDetail()
 {
-	_srfLayerCountry->clear();
-
 	double
 		lon,lat;
 
@@ -2482,7 +2483,6 @@ void Globe::setCrosshair(
 void Globe::clearCrosshair()
 {
 	_drawCrosshair = false;
-	_srfLayerCrosshair->clear();
 }
 
 /**
