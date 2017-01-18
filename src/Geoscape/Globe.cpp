@@ -357,7 +357,7 @@ Globe::Globe(
 	_srtTextures	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeTextures")); //"TEXTURE.DAT"
 	_srtMarkers		= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
 
-	_srfLayerCountry	= new Surface(width, height, x,y);
+	_srfLayerDetail		= new Surface(width, height, x,y);
 	_srfLayerCrosshair	= new Surface(width, height, x,y); // TODO: Persist the crosshair if visible until play is unpaused or Globe is rotated.
 	_srfLayerMarkers	= new Surface(width, height, x,y); // Perhaps if Globe is rotated the crosshair should re-locate to next coordinates.
 	_srfLayerRadars		= new Surface(width, height, x,y);
@@ -403,7 +403,7 @@ Globe::~Globe()
 	delete _srtMarkers;
 	delete _timerBlink;
 	delete _timerRot;
-	delete _srfLayerCountry;
+	delete _srfLayerDetail;
 	delete _srfLayerCrosshair;
 	delete _srfLayerMarkers;
 	delete _srfLayerRadars;
@@ -963,8 +963,10 @@ bool Globe::insideLand(
  */
 bool Globe::toggleDetail()
 {
-	_globeDetail = _playSave->toggleGlobeDetail();
-	drawDetail();
+	if ((_globeDetail = _playSave->toggleGlobeDetail()) == true)
+		drawDetail();
+	else
+		_srfLayerDetail->clear();
 
 	return _globeDetail;
 }
@@ -979,20 +981,23 @@ GlobeRadarDetail Globe::changeRadars()
 	{
 		case GRD_NONE:
 			_playSave->setRadarDetail(_radarDetail = GRD_CRAFT);
+			drawRadars();
 			break;
 
 		case GRD_CRAFT:
 			_playSave->setRadarDetail(_radarDetail = GRD_BASE);
+			drawRadars();
 			break;
 
 		case GRD_BASE:
 			_playSave->setRadarDetail(_radarDetail = GRD_ALL);
+			drawRadars();
 			break;
 
 		case GRD_ALL:
 			_playSave->setRadarDetail(_radarDetail = GRD_NONE);
+			_srfLayerRadars->clear();
 	}
-	drawRadars();
 
 	return _radarDetail;
 }
@@ -1177,7 +1182,7 @@ void Globe::setPalette(
 	_srtTextures	->setPalette(colors, firstcolor, ncolors);
 	_srtMarkers		->setPalette(colors, firstcolor, ncolors);
 
-	_srfLayerCountry	->setPalette(colors, firstcolor, ncolors);
+	_srfLayerDetail		->setPalette(colors, firstcolor, ncolors);
 	_srfLayerCrosshair	->setPalette(colors, firstcolor, ncolors);
 	_srfLayerMarkers	->setPalette(colors, firstcolor, ncolors);
 	_srfLayerRadars		->setPalette(colors, firstcolor, ncolors);
@@ -1212,7 +1217,7 @@ void Globe::blink()
 		for (std::map<int, Surface*>::const_iterator
 				i  = _srtMarkers->getFrames()->begin();
 				i != _srtMarkers->getFrames()->end();
-				++i)
+			  ++i)
 		{
 			if (i->first != GLM_CITY)
 				i->second->offset(_blinkVal);
@@ -1254,7 +1259,7 @@ void Globe::draw()
 
 	_srfLayerRadars		->clear();
 	_srfLayerMarkers	->clear();
-	_srfLayerCountry	->clear();
+	_srfLayerDetail		->clear();
 	_srfLayerCrosshair	->clear();
 
 	drawOcean();
@@ -1264,7 +1269,7 @@ void Globe::draw()
 	drawFlights();	// '_srfLayerRadars' [also draws intercept-markers]
 	drawTerminus();
 	drawMarkers();	// '_srfLayerMarkers'
-	drawDetail();	// '_srfLayerCountry'
+	drawDetail();	// '_srfLayerDetail'
 
 	if (_drawCrosshair == true) drawCrosshair();
 }
@@ -2010,7 +2015,7 @@ void Globe::drawDetail()
 		Sint16
 			x[2u],y[2u];
 
-		_srfLayerCountry->lock();
+		_srfLayerDetail->lock();
 		for (std::list<Polyline*>::const_iterator
 				i = _globeRule->getPolylines()->begin();
 				i != _globeRule->getPolylines()->end();
@@ -2036,14 +2041,14 @@ void Globe::drawDetail()
 							lon1,lat1,
 							&x[1u],&y[1u]);
 
-					_srfLayerCountry->drawLine(
+					_srfLayerDetail->drawLine(
 											x[0u],y[0u],
 											x[1u],y[1u],
 											C_LINE);
 				}
 			}
 		}
-		_srfLayerCountry->unlock();
+		_srfLayerDetail->unlock();
 	}
 
 	Sint16
@@ -2063,7 +2068,7 @@ void Globe::drawDetail()
 					j != regionRule->getCities().end();
 					++j)
 			{
-				drawTarget(*j, _srfLayerCountry);
+				drawTarget(*j, _srfLayerDetail);
 			}
 		}
 	}
@@ -2101,7 +2106,7 @@ void Globe::drawDetail()
 					label->setY(y);
 					label->setText(_game->getLanguage()->getString((*i)->getRules()->getType()));
 
-					label->blit(_srfLayerCountry);
+					label->blit(_srfLayerDetail);
 				}
 			}
 		}
@@ -2141,7 +2146,7 @@ void Globe::drawDetail()
 						label->setY(y + offset_y);
 						label->setText((*j)->getLabel(_game->getLanguage()));
 
-						label->blit(_srfLayerCountry);
+						label->blit(_srfLayerDetail);
 					}
 				}
 			}
@@ -2170,7 +2175,7 @@ void Globe::drawDetail()
 					label->setY(y - 10);
 					label->setText((*i)->getLabel());
 
-					label->blit(_srfLayerCountry);
+					label->blit(_srfLayerDetail);
 				}
 			}
 		}
@@ -2216,10 +2221,10 @@ void Globe::drawDetail()
 								lat1 (countryRule->getLatMin().at(j)),
 								lat2 (countryRule->getLatMax().at(j));
 
-							drawVHLine(_srfLayerCountry, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-							drawVHLine(_srfLayerCountry, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-							drawVHLine(_srfLayerCountry, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-							drawVHLine(_srfLayerCountry, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
 						}
 					}
 
@@ -2260,10 +2265,10 @@ void Globe::drawDetail()
 								lat1 (regionRule->getLatMin().at(j)),
 								lat2 (regionRule->getLatMax().at(j));
 
-							drawVHLine(_srfLayerCountry, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-							drawVHLine(_srfLayerCountry, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-							drawVHLine(_srfLayerCountry, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-							drawVHLine(_srfLayerCountry, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+							drawVHLine(_srfLayerDetail, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
 						}
 					}
 
@@ -2325,10 +2330,10 @@ void Globe::drawDetail()
 									lat1 (k->latMin), // * M_PI / 180.,
 									lat2 (k->latMax); // * M_PI / 180.;
 
-								drawVHLine(_srfLayerCountry, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
-								drawVHLine(_srfLayerCountry, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
-								drawVHLine(_srfLayerCountry, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
-								drawVHLine(_srfLayerCountry, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
+								drawVHLine(_srfLayerDetail, lon1, lat1, lon2, lat1, static_cast<Uint8>(color));
+								drawVHLine(_srfLayerDetail, lon1, lat2, lon2, lat2, static_cast<Uint8>(color));
+								drawVHLine(_srfLayerDetail, lon1, lat1, lon1, lat2, static_cast<Uint8>(color));
+								drawVHLine(_srfLayerDetail, lon2, lat1, lon2, lat2, static_cast<Uint8>(color));
 							}
 						}
 
@@ -2494,7 +2499,7 @@ void Globe::blit(const Surface* const srf)
 	Surface::blit(srf);
 
 	_srfLayerRadars		->blit(srf);
-	_srfLayerCountry	->blit(srf);
+	_srfLayerDetail		->blit(srf);
 	_srfLayerMarkers	->blit(srf);
 	_srfLayerCrosshair	->blit(srf);
 }
@@ -2781,7 +2786,7 @@ void Globe::resize()
 	{
 		this,
 		_srfLayerMarkers,
-		_srfLayerCountry,
+		_srfLayerDetail,
 		_srfLayerRadars
 	};
 

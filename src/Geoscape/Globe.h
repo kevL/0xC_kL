@@ -124,7 +124,7 @@ private:
 	RuleGlobe* _globeRule;
 	SavedGame* _playSave;
 	Surface
-		* _srfLayerCountry,
+		* _srfLayerDetail,
 		* _srfLayerCrosshair,
 		* _srfLayerMarkers,
 		* _srfLayerRadars;
