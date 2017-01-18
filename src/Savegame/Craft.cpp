@@ -1019,14 +1019,19 @@ void Craft::think()
 					_lowFuel =
 					_tacticalReturn = false;
 					_warning = CW_NONE;
-					_takeOffDelay = 0;
 
 					checkup();
 				}
 				break;
 
 			default:
-				if (--_takeOffDelay == 0)
+				if (_target == dynamic_cast<Target*>(_base)) // craft is allowed to rebase if contact is lost vs. UFO before take-off completes -- handle it.
+				{
+					setFuel(_fuel - 1);	// top up and ...
+					_takeOffDelay = 0;	// -> recurse.
+					think();
+				}
+				else if (--_takeOffDelay == 0)
 					setSpeed(_crRule->getTopSpeed());
 				else
 				{

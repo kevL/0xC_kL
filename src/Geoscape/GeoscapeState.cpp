@@ -1709,7 +1709,7 @@ void GeoscapeState::time5Seconds()
 							(*j)->inDogfight(false); // safety.
 					}
 
-					if (_timerDfZoomIn->isRunning() == false
+					if (   _timerDfZoomIn ->isRunning() == false
 						&& _timerDfZoomOut->isRunning() == false)
 					{
 						(*j)->think();
@@ -1719,8 +1719,6 @@ void GeoscapeState::time5Seconds()
 					{
 						Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
 						const Waypoint* const wp (dynamic_cast<Waypoint*>((*j)->getTarget()));
-						const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getTarget()));
-//						const AlienBase* const aBase (dynamic_cast<AlienBase*>((*j)->getTarget()));
 
 						if (ufo != nullptr)
 						{
@@ -1815,6 +1813,9 @@ void GeoscapeState::time5Seconds()
 						{
 							resetTimer();
 
+							const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getTarget()));
+//							const AlienBase* const aLienBase (dynamic_cast<AlienBase*>((*j)->getTarget()));
+
 							if (site != nullptr)
 							{
 								const int texId (site->getSiteTextureId());
@@ -1824,17 +1825,17 @@ void GeoscapeState::time5Seconds()
 													site->getLatitude(),
 													&shade);
 								popupGeo(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
-														*j,
-														_rules->getGlobe()->getTextureRule(texId),
-														shade,
-														(*j)->getQtySoldiers() != 0));
+															*j,
+															_rules->getGlobe()->getTextureRule(texId),
+															shade,
+															(*j)->getQtySoldiers() != 0));
 							}
-							else // aLien Base.
+							else // aLienBase
 								popupGeo(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
-														*j,
-														nullptr,
-														-1,
-														(*j)->getQtySoldiers() != 0));
+															*j,
+															nullptr,
+															-1,
+															(*j)->getQtySoldiers() != 0));
 						}
 						else // do Patrol at waypoint. NOTE: This will also handle target-UFOs that just vanished.
 						{
@@ -1848,7 +1849,7 @@ void GeoscapeState::time5Seconds()
 		}
 	}
 
-	for (std::vector<Ufo*>::const_iterator // Clean up dead UFOs and end dogfights that were minimized.
+	for (std::vector<Ufo*>::const_iterator // Clean up dead UFOs and end Dogfights that were minimized.
 			i = _playSave->getUfos()->begin();
 			i != _playSave->getUfos()->end();
 			)
@@ -1858,7 +1859,7 @@ void GeoscapeState::time5Seconds()
 			case Ufo::DESTROYED:
 				if ((*i)->getTargeters()->empty() == false)
 				{
-					for (std::list<DogfightState*>::const_iterator // Remove all dogfights with this UFO.
+					for (std::list<DogfightState*>::const_iterator // Remove all Dogfights with this UFO.
 							j = _dogfights.begin();
 							j != _dogfights.end();
 							)
@@ -1889,7 +1890,7 @@ void GeoscapeState::time5Seconds()
 
 
 	// This is ONLY for allowing _dogfights to fill (or not) before deciding whether
-	// to startMusic in init() -- and ONLY for Loading with a dogfight in progress:
+	// to startMusic in init() -- and ONLY for Loading with a Dogfight in progress:
 	// But now it's also used for resuming Geoscape music on returning from another state ....
 	if (kL_geoMusicPlaying == false)
 	{
@@ -1897,8 +1898,8 @@ void GeoscapeState::time5Seconds()
 			|| initDfMusic == true		// and if it doesn't fill by that time I want some music playing.
 			|| kL_geoMusicReturnState == true)
 		{
-			kL_geoMusicPlaying = true;	// if there's a dogfight then dogfight music
-										// will play when a SavedGame is loaded
+			kL_geoMusicPlaying = true;	// if there's a Dogfight then dogfight-track will play when a save is loaded
+
 			if (_dogfights.empty() == true
 				&& _timerDfStart->isRunning() == false)
 			{
