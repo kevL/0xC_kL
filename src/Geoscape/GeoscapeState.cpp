@@ -1717,130 +1717,127 @@ void GeoscapeState::time5Seconds()
 
 					if ((*j)->reachedDestination() == true)
 					{
-						Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
-						const Waypoint* const wp (dynamic_cast<Waypoint*>((*j)->getTarget()));
-
-						if (ufo != nullptr)
+						if (dynamic_cast<Waypoint*>((*j)->getTarget()) != nullptr)	// do Patrol at waypoint.
+						{															// NOTE: This will also handle target-UFOs that just vanished.
+							popupGeo(new CraftPatrolState(*j, this));
+							(*j)->setTarget();
+						}
+						else
 						{
-							switch (ufo->getUfoStatus())
+							Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
+							if (ufo != nullptr)
 							{
-								case Ufo::FLYING:
-									(*j)->interceptLanded(false);
+								switch (ufo->getUfoStatus())
+								{
+									case Ufo::FLYING:
+										(*j)->interceptLanded(false);
 
-									if (_dogfights.size() + _dogfightsToStart.size() < 4u) // Not more than 4 interceptions at a time. _note: I thought orig could do up to 6.
-									{
-										if ((*j)->inDogfight() == false
-											&& AreSame((*j)->getDistance(ufo), 0.) == true) // Craft ran into a UFO.
+										if (_dogfights.size() + _dogfightsToStart.size() < 4u) // no more than 4 interception-windows at once.
 										{
-											_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
-											if (_timerDfStart->isRunning() == false)
+											if ((*j)->inDogfight() == false
+												&& AreSame((*j)->getDistance(ufo), 0.) == true) // Craft ran into a UFO.
 											{
-												_pause = true;
-												resetTimer();
-												storePreDfCoords();	// store current Globe coords & zoom;
-												_globe->center(		// Globe will reset to these after dogfight ends
-															(*j)->getLongitude(),
-															(*j)->getLatitude());
-
-												if (_dogfights.empty() == true // first dogfight, start music
-													&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_GEO_INTERCEPT) == false) // unless reloading to another dogfight ...
+												_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
+												if (_timerDfStart->isRunning() == false)
 												{
-													_game->getResourcePack()->fadeMusic(_game, 425);
+													_pause = true;
+													resetTimer();
+													storePreDfCoords();	// store current Globe coords & zoom;
+													_globe->center(		// Globe will reset to these after dogfight ends
+																(*j)->getLongitude(),
+																(*j)->getLatitude());
+
+													if (_dogfights.empty() == true // first dogfight, start music unless reloading to another dogfight
+														&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_GEO_INTERCEPT) == false)
+													{
+														_game->getResourcePack()->fadeMusic(_game, 425);
+													}
+
+													startDogfight();
+													_timerDfStart->start();
 												}
 
-												startDogfight();
-												_timerDfStart->start();
+												initDfMusic = true;
+												_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_INTERCEPT);
 											}
-
-											initDfMusic = true;
-											_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_INTERCEPT);
 										}
-									}
-									break;
+										break;
 
-								case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
-								case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
-									if ((*j)->inDogfight() == false // NOTE: Allows non-transport Craft to case the joint.
-										&& (*j)->interceptLanded() == false)
-									{
-										resetTimer();
+									case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
+									case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
+										if ((*j)->inDogfight() == false // NOTE: Allows non-transport Craft to case the joint.
+											&& (*j)->interceptLanded() == false)
+										{
+											resetTimer();
 
-										int // look up polygon's texId + shade
-											texId,
-											shade;
-										_globe->getPolygonTextureAndShade(
-																		ufo->getLongitude(),
-																		ufo->getLatitude(),
-																		&texId, &shade);
-										popupGeo(new ConfirmLandingState(
-																*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
+											int // look up polygon's texId + shade
+												texId,
+												shade;
+											_globe->getPolygonTextureAndShade(
+																			ufo->getLongitude(),
+																			ufo->getLatitude(),
+																			&texId, &shade);
+											popupGeo(new ConfirmLandingState(
+																	*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
+																	_rules->getGlobe()->getTextureRule(texId),
+																	shade,
+																	(*j)->getQtySoldiers() != 0));
+										}
+										break;
+
+									case Ufo::DESTROYED: // just before expiration
+										popupGeo(new CraftPatrolState(*j, this));
+										(*j)->setTarget();
+
+//										if ((*j)->getQtySoldiers() != 0)
+//										{
+//												if ((*j)->inDogfight() == false)
+//											{
+//												resetTimer();
+//												int // look up polygon's texId + shade
+//													texId,
+//													shade;
+//												_globe->getPolygonTextureAndShade(
+//																				ufo->getLongitude(),
+//																				ufo->getLatitude(),
+//																				&texId, &shade);
+//												popup(new ConfirmLandingState(
+//																		*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
+//																		_rules->getGlobe()->getTextureRule(texId),
+//																		shade));
+//											}
+//										}
+//										else if (ufo->getUfoStatus() != Ufo::LANDED)
+//										{
+//											popup(new CraftPatrolState(*j, this));
+//											(*j)->setTarget();
+//										}
+								}
+							}
+							else
+							{
+								const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getTarget()));
+								if (site != nullptr)
+								{
+									const int texId (site->getSiteTextureId());
+									int shade;
+									_globe->getPolygonShade(
+														site->getLongitude(),
+														site->getLatitude(),
+														&shade);
+									popupGeo(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
+																*j,
 																_rules->getGlobe()->getTextureRule(texId),
 																shade,
 																(*j)->getQtySoldiers() != 0));
-									}
-									break;
-
-								case Ufo::DESTROYED: // just before expiration
-									popupGeo(new CraftPatrolState(*j, this));
-									(*j)->setTarget();
-
-//									if ((*j)->getQtySoldiers() != 0)
-//									{
-//										if ((*j)->inDogfight() == false)
-//										{
-//											resetTimer();
-//											int // look up polygon's texId + shade
-//												texId,
-//												shade;
-//											_globe->getPolygonTextureAndShade(
-//																			ufo->getLongitude(),
-//																			ufo->getLatitude(),
-//																			&texId, &shade);
-//											popup(new ConfirmLandingState(
-//																	*j, // countryside Texture; choice of Terrain made in ConfirmLandingState
-//																	_rules->getGlobe()->getTextureRule(texId),
-//																	shade));
-//										}
-//									}
-//									else if (ufo->getUfoStatus() != Ufo::LANDED)
-//									{
-//										popup(new CraftPatrolState(*j, this));
-//										(*j)->setTarget();
-//									}
+								}
+								else // aLienBase
+									popupGeo(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
+																*j,
+																nullptr,
+																-1,
+																(*j)->getQtySoldiers() != 0));
 							}
-						}
-						else if (wp == nullptr) //&& (*j)->getQtySoldiers() != 0) // site OR aLienBase
-						{
-							resetTimer();
-
-							const TerrorSite* const site (dynamic_cast<TerrorSite*>((*j)->getTarget()));
-//							const AlienBase* const aLienBase (dynamic_cast<AlienBase*>((*j)->getTarget()));
-
-							if (site != nullptr)
-							{
-								const int texId (site->getSiteTextureId());
-								int shade;
-								_globe->getPolygonShade(
-													site->getLongitude(),
-													site->getLatitude(),
-													&shade);
-								popupGeo(new ConfirmLandingState( // preset terrorSite Texture; choice of Terrain made via texture-deployment in ConfirmLandingState
-															*j,
-															_rules->getGlobe()->getTextureRule(texId),
-															shade,
-															(*j)->getQtySoldiers() != 0));
-							}
-							else // aLienBase
-								popupGeo(new ConfirmLandingState( // choice of Terrain made in BattlescapeGenerator.
-															*j,
-															nullptr,
-															-1,
-															(*j)->getQtySoldiers() != 0));
-						}
-						else // do Patrol at waypoint. NOTE: This will also handle target-UFOs that just vanished.
-						{
-							popupGeo(new CraftPatrolState(*j, this));
-							(*j)->setTarget();
 						}
 					}
 					++j;
