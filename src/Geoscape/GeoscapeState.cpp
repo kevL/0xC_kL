@@ -433,7 +433,7 @@ GeoscapeState::GeoscapeState()
 							screenWidth - 64,
 							halfHeight + (Screen::ORIGINAL_HEIGHT >> 1u) + 12);
 
-	_ufoDetected = new Text(17, 17, _sideBottom->getX() + 6, _sideBottom->getY() + 4);
+	_ufoDetected = new Text(17, 16, _sideBottom->getX() + 6, _sideBottom->getY() + 4);
 
 	std::fill_n(
 			_hostileUfos,

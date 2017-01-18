@@ -146,13 +146,10 @@ Target* MovingTarget::getTarget() const
  */
 bool MovingTarget::reachedDestination() const
 {
-	if (_target != nullptr)
-	{
-		return AreSameTwo(
-					_lon, _target->getLongitude(),
-					_lat, _target->getLatitude()) == true;
-	}
-	return false;
+	return _target != nullptr
+		&& AreSameTwo(
+				_lon, _target->getLongitude(),
+				_lat, _target->getLatitude()) == true;
 }
 
 /**
