@@ -1612,12 +1612,13 @@ void Globe::drawFlights()
 
 					if (dynamic_cast<const Ufo*>((*j)->getTarget()) != nullptr)
 					{
-						const double
-							lon3 ((*j)->getMeetLongitude()),
-							lat3 ((*j)->getMeetLatitude());
+						double lon3 ((*j)->getMeetLongitude());
+						if (lon3 < 0.) lon3 += M_PI * 2.;
+
+						const double lat3 ((*j)->getMeetLatitude());
 
 						if (   std::fabs(lon3 - lon2) > 0.005	// radians
-							|| std::fabs(lat3 - lat2) > 0.005)	// question: What about the Greenwich meridian ....
+							|| std::fabs(lat3 - lat2) > 0.005)	// question: What about the Greenwich meridian ... and equator.
 						{
 							drawPath(
 									_srfLayerRadars,
