@@ -331,7 +331,8 @@ GeoscapeCraftState::GeoscapeCraftState(
 					  || tacticalReturn == true
 					  || _craft->hasLeftGround() == false);
 
-	if (stat != CS_OUT || occupied == true)
+	if ((stat != CS_OUT || occupied == true)
+		&& _waypoint == nullptr) // <- toss player a bone if UFO-contact is lost while Craft is still firing up for flight.
 	{
 		_btnRebase->setVisible(false);
 		_btnPatrol->setVisible(false);
