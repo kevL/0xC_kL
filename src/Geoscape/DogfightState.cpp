@@ -189,8 +189,8 @@ DogfightState::DogfightState(
 	_txtStatus				= new Text(150, 9, _x +   4, _y + 85);
 	_txtTitle				= new Text(160, 9, _x,       _y -  9);
 
-	_btnMinimizedIcon		= new InteractiveSurface(32, 20, _minimizedIconX, 0);	// NOTE: y-offset is set in resetInterceptPorts().
-	_txtMinimizedIcon		= new Text(150, 9, _minimizedIconX + 18, 0);			// ditto.
+	_btnMinimizedIcon		= new InteractiveSurface(32, 20);	// NOTE: x & y offset are set in placePort().
+	_txtMinimizedIcon		= new Text(150, 9);					// ditto.
 
 	_craftDamageAnimTimer	= new Timer(500u);
 
@@ -2234,8 +2234,10 @@ void DogfightState::placePort() // private.
 		(*i)->setY((*i)->getY() - y);
 	}
 
+	_btnMinimizedIcon->setX(_minimizedIconX);
 	_btnMinimizedIcon->setY(_minimizedIconY);
-	_txtMinimizedIcon->setY(_minimizedIconY + 6);
+	_txtMinimizedIcon->setX(_minimizedIconX + 18);
+	_txtMinimizedIcon->setY(_minimizedIconY +  6);
 }
 
 /**

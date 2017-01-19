@@ -138,10 +138,10 @@ private:
 		* _craftStance;
 	InteractiveSurface
 		* _btnMinimize,
+		* _btnMinimizedIcon,
 		* _previewUfo,
 		* _isfCw1,
 		* _isfCw2;
-	InteractiveSurface* _btnMinimizedIcon;
 	SavedGame* _playSave;
 	Surface
 		* _battleScope,
