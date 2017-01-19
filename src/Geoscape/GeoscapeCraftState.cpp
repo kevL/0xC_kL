@@ -144,8 +144,8 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_btnCenter->setText(tr("STR_CENTER"));
-	_btnCenter->onMouseClick(	static_cast<ActionHandler>(&GeoscapeCraftState::btnCenterClick));
-	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCenterClick),
+	_btnCenter->onMouseClick(	static_cast<ActionHandler>(&GeoscapeCraftState::btnCenterPauseClick));
+	_btnCenter->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCenterPauseClick),
 								SDLK_c);
 
 	_btnRebase->setText(tr("STR_RETURN_TO_BASE"));
@@ -376,7 +376,7 @@ GeoscapeCraftState::~GeoscapeCraftState()
  * Centers the Globe on the current Craft.
  * @param action - pointer to an Action
  */
-void GeoscapeCraftState::btnCenterClick(Action*)
+void GeoscapeCraftState::btnCenterPauseClick(Action*)
 {
 	_geoState->getGlobe()->center(
 								_craft->getLongitude(),
@@ -399,11 +399,12 @@ void GeoscapeCraftState::btnCenterClick(Action*)
 		targeter();
 		transposeWindow();
 	}
-	else
+	else // pauseHard.
 	{
-		_craft->setTarget();
 		_geoState->setPaused();
-		_geoState->getGlobe()->clearCrosshair();
+
+//		_craft->setTarget();
+//		_geoState->getGlobe()->clearCrosshair();
 
 		_game->popState();
 

@@ -96,7 +96,7 @@ private:
 		~GeoscapeCraftState();
 
 		/// Handler for clicking the Center button.
-		void btnCenterClick(Action* action);
+		void btnCenterPauseClick(Action* action);
 		/// Handler for clicking the Return To Base button.
 		void btnBaseClick(Action* action);
 		/// Handler for clicking the Select New Target button.
