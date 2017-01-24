@@ -287,7 +287,7 @@ ArticleStateItem::ArticleStateItem(const ArticleDefinitionItem* const defs)
 				ammo_types = 1u;
 			else
 				ammo_types = std::min(ammo_data->size(),
-									  3u); // yeh right.
+									  static_cast<size_t>(3u)); // yeh righter.
 			break;
 
 		case BT_MELEE:

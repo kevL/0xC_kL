@@ -320,7 +320,7 @@ DogfightState::DogfightState(
 
 	SurfaceSet* const srtInticon (_game->getResourcePack()->getSurfaceSet("INTICON.PCK"));
 
-	// Create the minimized dogfight icon.
+	// Create the minimized Dogfight icon.
 	srf = srtInticon->getFrame(_craft->getRules()->getSprite());
 //	srf->setX(0);
 //	srf->setY(0);

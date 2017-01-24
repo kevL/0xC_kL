@@ -1406,8 +1406,8 @@ void TextList::mouseOver(Action* action, State* state)
 	if (_selectable == true)
 	{
 		int height (_font->getHeight() + _font->getSpacing()); // theoretical line height
-		_selRow = std::max(0u,
-						   _scroll + static_cast<size_t>(std::floor(action->getRelativeMouseY() / (height * action->getScaleY()))));
+		_selRow = std::max(static_cast<size_t>(0u),
+						  _scroll + static_cast<size_t>(std::floor(action->getRelativeMouseY() / (height * action->getScaleY()))));
 
 		// wait ... are you telling me all this crap runs on every mouse-slice
 		if (   _selRow < _texts.size()

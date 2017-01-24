@@ -38,9 +38,9 @@
 namespace OpenXcom
 {
 
-constexpr size_t
-	ResourcePack::MALE_SCREAM[3u],		// Good Lord, c++
-	ResourcePack::FEMALE_SCREAM[3u];	// I won't even ask why/how WINDOW_POPUP[] doesn't require this jiggery.
+const int
+	ResourcePack::MALE_SCREAM[3u]	= {41,42,43},	// static. Good Lord, c++
+	ResourcePack::FEMALE_SCREAM[3u]	= {44,45,46};	// static. I won't even ask why/how WINDOW_POPUP[] doesn't require this jiggery.
 
 
 /**

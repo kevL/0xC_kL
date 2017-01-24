@@ -81,6 +81,10 @@ private:
 
 
 		public:
+			static const int
+				MALE_SCREAM[3u],
+				FEMALE_SCREAM[3u];
+
 			static constexpr unsigned // TODO: relabel these identifiers w/ appropriate prefixes, eg. sfx_GRAVLIFT, gfx_SMOKE, etc.
 				BUTTON_PRESS		=   0u,
 				WINDOW_POPUP[3u]	=  {1u,2u,3u},
@@ -101,8 +105,6 @@ private:
 				WALK_OFFSET			=  22u,
 				ITEM_DROP			=  38u,
 				ITEM_THROW			=  39u,
-				MALE_SCREAM[3u]		= {41u,42u,43u},
-				FEMALE_SCREAM[3u]	= {44u,45u,46u},
 
 				UFO_FIRE			=   9u,
 				UFO_HIT				=  12u,
