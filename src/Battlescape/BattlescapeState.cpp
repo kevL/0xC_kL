@@ -4818,49 +4818,57 @@ void BattlescapeState::saveVoxelView()
 		oststr << Options::getUserFolder() << "fpslook" << std::setfill('0') << std::setw(3) << i << ".png";
 		++i;
 	}
-	while (CrossPlatform::fileExists(oststr.str()) == true && i < 999);
+	while (i < 1000 && CrossPlatform::fileExists(oststr.str()) == true);
 
-
-	unsigned error (lodepng::encode(
-								oststr.str(),
-								pic,
-								512u,512u,
-								LCT_RGB));
-	if (error != 0u)
-		Log(LOG_ERROR) << "bs::saveVoxelView() Saving to PNG failed: " << lodepng_error_text(error);
-#ifdef _WIN32
-	else
+	if (i != 1000)
 	{
-		std::wstring wst (Language::fsToWstr("\"C:\\Program Files\\IrfanView\\i_view32.exe\" \"" + oststr.str() + "\""));
-
-		STARTUPINFO si;
-		ZeroMemory(&si, sizeof(si));
-		si.cb = sizeof(si);
-
-		PROCESS_INFORMATION pi;
-		ZeroMemory(&pi, sizeof(pi));
-
-		if (CreateProcess(									//BOOL WINAPI CreateProcess
-						nullptr,							//  _In_opt_     LPCTSTR lpApplicationName,
-						const_cast<LPWSTR>(wst.c_str()),	//  _Inout_opt_  LPTSTR lpCommandLine,
-						nullptr,							//  _In_opt_     LPSECURITY_ATTRIBUTES lpProcessAttributes,
-						nullptr,							//  _In_opt_     LPSECURITY_ATTRIBUTES lpThreadAttributes,
-						FALSE,								//  _In_         BOOL bInheritHandles,
-						0,									//  _In_         DWORD dwCreationFlags,
-						nullptr,							//  _In_opt_     LPVOID lpEnvironment,
-						nullptr,							//  _In_opt_     LPCTSTR lpCurrentDirectory,
-						&si,								//  _In_         LPSTARTUPINFO lpStartupInfo,
-						&pi) == false)						//  _Out_        LPPROCESS_INFORMATION lpProcessInformation
-		{
-			Log(LOG_ERROR) << "bs::saveVoxelView() CreateProcess() failed";
-		}
+		unsigned error (lodepng::encode(
+									oststr.str(),
+									pic,
+									512u,512u,
+									LCT_RGB));
+		if (error != 0u)
+			Log(LOG_WARNING) << "bs::saveVoxelView() Saving to PNG failed: " << lodepng_error_text(error);
+#ifdef _WIN32
 		else
 		{
-			CloseHandle(pi.hProcess);
-			CloseHandle(pi.hThread);
+			const std::string& st ("\"C:\\Program Files (x86)\\IrfanView\\i_view32.exe\"");
+			if (CrossPlatform::fileExists(st))
+			{
+				std::wstring wst (Language::fsToWstr(st + " " + oststr.str()));
+
+				STARTUPINFO si;
+				ZeroMemory(&si, sizeof(si));
+				si.cb = sizeof(si);
+
+				PROCESS_INFORMATION pi;
+				ZeroMemory(&pi, sizeof(pi));
+
+				if (CreateProcess(									//BOOL WINAPI CreateProcess
+								nullptr,							//  _In_opt_     LPCTSTR lpApplicationName,
+								const_cast<LPWSTR>(wst.c_str()),	//  _Inout_opt_  LPTSTR lpCommandLine,
+								nullptr,							//  _In_opt_     LPSECURITY_ATTRIBUTES lpProcessAttributes,
+								nullptr,							//  _In_opt_     LPSECURITY_ATTRIBUTES lpThreadAttributes,
+								FALSE,								//  _In_         BOOL bInheritHandles,
+								0,									//  _In_         DWORD dwCreationFlags,
+								nullptr,							//  _In_opt_     LPVOID lpEnvironment,
+								nullptr,							//  _In_opt_     LPCTSTR lpCurrentDirectory,
+								&si,								//  _In_         LPSTARTUPINFO lpStartupInfo,
+								&pi) == false)						//  _Out_        LPPROCESS_INFORMATION lpProcessInformation
+				{
+					Log(LOG_ERROR) << "bs::saveVoxelView() CreateProcess() failed";
+				}
+				else
+				{
+					CloseHandle(pi.hProcess);
+					CloseHandle(pi.hThread);
+				}
+			}
 		}
-	}
 #endif
+	}
+	else
+		Log(LOG_WARNING) << "bs::saveVoxelView() Limit of 1000 fpslook screenshots exceeded. File not saved.";
 }
 
 /**
