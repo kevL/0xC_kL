@@ -1,5 +1,4 @@
 # 0xC_kL
----
 
 a liberal adaptation of [XCOM:Ufo Defense / UFO:Enemy Unknown][1]
 
@@ -30,7 +29,6 @@ Obligatory DISCLAIMER for ANY AND ALL RESPONSIBILITY for what you do with a comp
 
 
 ## Installation
----
 
 0xC_kL requires a vanilla copy of the original XCOM resources.
 
@@ -61,7 +59,6 @@ The code may or may not support these operating systems:
 
 
 ## Development
----
 
 0xC_kL requires the following developer libraries:
 
