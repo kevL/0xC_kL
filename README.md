@@ -21,15 +21,14 @@ Plenty of credit needs to go to many persons both acknowledged and unacknowledge
 [5]: http://openxcom.org/
 [6]: http://openxcom.org/forum/
 
-[The X-COM wiki][7]
+[The X-COM wiki][7] -- details have changed but the essence is still here.
 
 [7]: http://www.ufopaedia.org/index.php/Main_Page
 
 Obligatory DISCLAIMER for ANY AND ALL RESPONSIBILITY for what you do with a computer and the material available in this repository.
 
 
-1. Installation
-================
+### Installation
 
 0xC_kL requires a vanilla copy of the original XCOM resources.
 
@@ -52,15 +51,14 @@ to 0xC_kL's Data folder:
 		<0xC_kL>\data\
 
 
-The source supports these operating systems:
+The code supports these operating systems:
 - Windows
 
-The source may or may not support these operating systems:
+The code may or may not support these operating systems:
 - !Windows
 
 
-2. Development
-===============
+### Development
 
 0xC_kL requires the following developer libraries:
 
@@ -70,7 +68,11 @@ The source may or may not support these operating systems:
 		SDL_image 1.2
 		yaml-cpp 0.5.3
 
-This repository contains no tools for building. It's source-code that I compile on a Windows 7 Sp1 machine. While it still has defines for other systems they have not been updated and so are likely buggy, but could be resolved by investigating the vanilla OpenXcom repository. Also there are Windows API calls but these are blocked inside _WIN32 defines -- there's a call to IrfanView for viewing battlefield LoFTs IG, and if you want that I trust that you can find it and deal with it your own way.
+This repository contains no tools for building. It's source-code that I compile on a Windows 7 Sp1 64-bit machine using [MinGW-w64][8] + [MSYS2][9]. While it still has defines for other systems they have not been updated and so are likely buggy, but could be resolved by investigating the vanilla [OpenXcom][10] repository. Also there are Windows API calls but these are blocked inside _WIN32 defines -- there's a call to IrfanView for viewing battlefield LoFTs IG, and if you want that I trust that you can find it and deal with it your own way.
+
+[8]: https://sourceforge.net/projects/mingw-w64/
+[9]: https://msys2.github.io/
+[10]: https://github.com/SupSuper/OpenXcom
 
 These are the GCC 6.3 compiler-arguments that I use regularly:
 
