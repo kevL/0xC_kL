@@ -2037,7 +2037,6 @@ alienRaces: #new order: sectoid,snakemen,ethereal,muton,floater
       - STR_SECTOPOD_TERRORIST
 
   - type: STR_MIXED
-    retaliation: false
     members:
       - STR_ETHEREAL_COMMANDER
       - STR_ETHEREAL_LEADER

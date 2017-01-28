@@ -52,8 +52,6 @@ class RuleAlienRace
 {
 
 private:
-	bool _retaliation;
-
 	std::string _type;
 	std::vector<std::string> _members;
 
@@ -71,9 +69,6 @@ private:
 //		std::string getAlienType() const;
 		/// Gets a certain member of the RuleAlienRace family.
 		std::string getMember(int rankId) const;
-
-		/// Gets if the RuleAlienRace can retaliate.
-		bool canRetaliate() const;
 };
 
 }

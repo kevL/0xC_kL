@@ -29,8 +29,7 @@ namespace OpenXcom
  */
 RuleAlienRace::RuleAlienRace(const std::string& type)
 	:
-		_type(type),
-		_retaliation(true)
+		_type(type)
 {}
 
 /**
@@ -47,7 +46,6 @@ void RuleAlienRace::load(const YAML::Node& node)
 {
 	_type			= node["type"]			.as<std::string>(_type);
 	_members		= node["members"]		.as<std::vector<std::string>>(_members);
-	_retaliation	= node["retaliation"]	.as<bool>(_retaliation);
 }
 
 /**
@@ -67,15 +65,6 @@ std::string RuleAlienRace::getAlienType() const
 std::string RuleAlienRace::getMember(int rankId) const
 {
 	return _members[static_cast<size_t>(rankId)];
-}
-
-/**
- * Returns if this RuleAlienRace can participate in retaliation missions.
- * @return, true if race can retaliate
- */
-bool RuleAlienRace::canRetaliate() const
-{
-	return _retaliation;
 }
 
 }
