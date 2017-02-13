@@ -823,9 +823,10 @@ int Craft::getCraftHull() const
 int Craft::getCraftHullPct() const
 {
 	if (_hull == 0) return 0;
+	if (_hull == _crRule->getCraftHullCap()) return 100;
 
-	return static_cast<int>(std::ceil(
-		   static_cast<float>(_hull) / static_cast<float>(_crRule->getCraftHullCap()) * 100.f));
+	return Vicegrip(static_cast<int>(Round(
+		   static_cast<float>(_hull) / static_cast<float>(_crRule->getCraftHullCap()) * 100.f)), 1, 99);
 }
 
 /**
@@ -870,9 +871,10 @@ int Craft::getFuel() const
 int Craft::getFuelPct() const
 {
 	if (_fuel == 0) return 0;
+	if (_fuel == _crRule->getFuelCapacity()) return 100;
 
-	return static_cast<int>(std::ceil(
-		   static_cast<float>(_fuel) / static_cast<float>(_crRule->getFuelCapacity()) * 100.f));
+	return Vicegrip(static_cast<int>(Round(
+		   static_cast<float>(_fuel) / static_cast<float>(_crRule->getFuelCapacity()) * 100.f)), 1, 99);
 }
 
 /**

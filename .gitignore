@@ -12,6 +12,7 @@
 /data/UNITS/
 /deps/
 /nbproject/
+/nbproject~82/
 
 Makefile
 .dep.inc
