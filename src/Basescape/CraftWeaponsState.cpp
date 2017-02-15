@@ -63,15 +63,15 @@ CraftWeaponsState::CraftWeaponsState(
 {
 	_fullScreen = false;
 
-	_window			= new Window(this, 220, 160, 50, 20, POPUP_BOTH);
+	_window			= new Window(this, 220, 156, 50, 24, POPUP_BOTH);
 
-	_txtTitle		= new Text(200, 17, 60, 32);
+	_txtTitle		= new Text(200, 16, 60, 32);
 
 	_txtArmament	= new Text(98, 9,  66, 53);
-	_txtQuantity	= new Text(30, 9, 164, 53);
-	_txtAmmunition	= new Text(50, 9, 194, 53);
+	_txtQuantity	= new Text(30, 9, 168, 53);
+	_txtAmmunition	= new Text(50, 9, 198, 53);
 
-	_lstWeapons		= new TextList(204, 89, 58, 68);
+	_lstWeapons		= new TextList(200, 81, 62, 66);
 
 	_btnCancel		= new TextButton(140, 16, 90, 156);
 
@@ -109,10 +109,15 @@ CraftWeaponsState::CraftWeaponsState(
 
 	_txtAmmunition->setText(tr("STR_AMMUNITION_AVAILABLE"));
 
-	_lstWeapons->setColumns(3, 98,30,50);
+	_lstWeapons->setColumns(3, 90,30,50);
+	_lstWeapons->setMargin(16);
 	_lstWeapons->setBackground(_window);
 	_lstWeapons->setSelectable();
-	_lstWeapons->addRow(1, tr("STR_NONE_UC").c_str());
+	_lstWeapons->addRow(
+					3,
+					tr("STR_NONE_UC").c_str(),
+					L"-",
+					L"-");
 
 	_cwRules.push_back(nullptr); // no weapon/disarm.
 

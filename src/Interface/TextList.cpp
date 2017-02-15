@@ -843,9 +843,9 @@ void TextList::resizeSelector( // private.
 }
 
 /**
- * If enabled, the columns will match the text width.
+ * If enabled, the columns will match the text-width.
  * Otherwise, they will have a fixed width.
- * @param condensed - true for condensed layout, false for table layout
+ * @param condensed - true for condensed layout, false for table-like layout
  */
 void TextList::setCondensed(bool condensed)
 {
@@ -1471,7 +1471,7 @@ void TextList::mouseOut(Action* action, State* state)
  * selection when it's pressed.
  * @param box - pointer to a ComboBox
  */
-void TextList::setComboBox(ComboBox* box)
+void TextList::setComboBox(ComboBox* const box)
 {
 	_comboBox = box;
 }

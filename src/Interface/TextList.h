@@ -244,7 +244,7 @@ private:
 		/// Sets the font-size to small.
 		void setSmall();
 
-		/// Sets whether to condense columns instead of a table like layout.
+		/// Sets whether to condense columns instead of a table-like layout.
 		void setCondensed(bool condensed);
 
 		/// Sets the background for the selector.
@@ -321,7 +321,7 @@ private:
 		void mouseOut(Action* action, State* state) override;
 
 		/// Attaches a button to a ComboBox.
-		void setComboBox(ComboBox* box);
+		void setComboBox(ComboBox* const box);
 		/// Checks for a ComboBox.
 		ComboBox* getComboBox() const;
 };
