@@ -194,7 +194,7 @@ void Screen::handle(Action* action)
 					case  3u:	Timer::coreInterval =  6u; break;
 					case  6u:	Timer::coreInterval = 12u; break;
 					case 12u:	Timer::coreInterval = 24u; break;
-					default:	Timer::coreInterval = 1u;
+					default:	Timer::coreInterval =  1u;
 				}
 				break;
 
@@ -387,6 +387,9 @@ void Screen::resetDisplay(bool resetVideo)
 			}
 		}
 		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << static_cast<int>(_screen->format->BitsPerPixel) << ".";
+
+		// kL_add: brighten display
+		SDL_SetGamma(0.5f,0.5f,0.5f); // TODO: Put in Options.
 	}
 	else
 		clear();
