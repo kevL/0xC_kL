@@ -416,9 +416,11 @@ void CraftEquipmentState::rightByValue(int delta)
 		_error.clear();
 	else
 	{
+		const std::string& itType (_items[_row]);
+
 		int baseQty;
 		if (_isQuickBattle == false)
-			baseQty = _base->getStorageItems()->getItemQuantity(_items[_row]);
+			baseQty = _base->getStorageItems()->getItemQuantity(itType);
 		else
 		{
 			if (delta == std::numeric_limits<int>::max())
@@ -432,13 +434,13 @@ void CraftEquipmentState::rightByValue(int delta)
 			bool overLoad (false);
 			delta = std::min(delta, baseQty);
 
-			const RuleItem* const itRule (_rules->getItemRule(_items[_row]));
+			const RuleItem* const itRule (_rules->getItemRule(itType));
 			if (itRule->isFixed() == true) // load vehicle, convert item to a vehicle
 			{
 				const int vhclCap (_craft->getRules()->getVehicleCapacity());
 				if (vhclCap != 0 || _base->isQuickDefense() == true)
 				{
-					int quadrants (_rules->getArmor(_rules->getUnitRule(_items[_row])->getArmorType())->getSize());
+					int quadrants (_rules->getArmor(_rules->getUnitRule(itType)->getArmorType())->getSize());
 					quadrants *= quadrants;
 
 					int spaceAvailable;
@@ -471,14 +473,14 @@ void CraftEquipmentState::rightByValue(int delta)
 							}
 
 							if (_isQuickBattle == false)
-								_base->getStorageItems()->removeItem(_items[_row], delta);
+								_base->getStorageItems()->removeItem(itType, delta);
 						}
 						else // tank needs Ammo.
 						{
-							const std::string type (itRule->getAcceptedLoadTypes()->front());
+							const std::string& loadType (itRule->getAcceptedLoadTypes()->front());
 							const int
 								clipsRequired (itRule->getFullClip()),
-								baseClips (_base->getStorageItems()->getItemQuantity(type));
+								baseClips (_base->getStorageItems()->getItemQuantity(loadType));
 
 							if (_isQuickBattle == false)
 								delta = std::min(delta,
@@ -499,9 +501,11 @@ void CraftEquipmentState::rightByValue(int delta)
 
 								if (_isQuickBattle == false)
 								{
-									_base->getStorageItems()->removeItem(_items[_row], delta);
-									_base->getStorageItems()->removeItem(type, clipsRequired * delta);
+									_base->getStorageItems()->removeItem(itType, delta);
+									_base->getStorageItems()->removeItem(loadType, clipsRequired * delta);
 								}
+
+								updateHwpLoad(loadType);
 							}
 							else // not enough Ammo
 							{
@@ -509,7 +513,7 @@ void CraftEquipmentState::rightByValue(int delta)
 
 								_error = tr("STR_NOT_ENOUGH_AMMO_TO_ARM_HWP")
 																.arg(clipsRequired)
-																.arg(tr(type))
+																.arg(tr(loadType))
 																.arg(tr(itRule->getType()));
 								_game->pushState(new ErrorMessageState(
 																	_error,
@@ -534,7 +538,8 @@ void CraftEquipmentState::rightByValue(int delta)
 														COLOR_ERROR_BG));
 				}
 			}
-			else if (_craft->getRules()->getItemCapacity() != 0) // load items
+			else if (_craft->getRules()->getItemCapacity() != 0 // load items
+				&& itRule->getBigSprite() != BIGSPRITE_NONE)
 			{
 				const int loadCur (_craft->calcLoadCurrent());
 				if (loadCur + delta > _craft->getLoadCapacity())
@@ -545,10 +550,10 @@ void CraftEquipmentState::rightByValue(int delta)
 
 				if (delta > 0)
 				{
-					_craft->getCraftItems()->addItem(_items[_row], delta);
+					_craft->getCraftItems()->addItem(itType, delta);
 
 					if (_isQuickBattle == false)
-						_base->getStorageItems()->removeItem(_items[_row], delta);
+						_base->getStorageItems()->removeItem(itType, delta);
 				}
 			}
 
@@ -585,13 +590,14 @@ void CraftEquipmentState::onLeft()
  */
 void CraftEquipmentState::leftByValue(int delta)
 {
-	const RuleItem* const itRule (_rules->getItemRule(_items[_row]));
+	const std::string& itType (_items[_row]);
+	const RuleItem* const itRule (_rules->getItemRule(itType));
 
 	int craftQty;
 	if (itRule->isFixed() == true)
-		craftQty = _craft->getVehicleCount(_items[_row]);
+		craftQty = _craft->getVehicleCount(itType);
 	else
-		craftQty = _craft->getCraftItems()->getItemQuantity(_items[_row]);
+		craftQty = _craft->getCraftItems()->getItemQuantity(itType);
 
 	if (craftQty != 0)
 	{
@@ -599,12 +605,14 @@ void CraftEquipmentState::leftByValue(int delta)
 
 		if (itRule->isFixed() == true) // convert Vehicles to storage-items
 		{
+			const std::string& loadType (itRule->getAcceptedLoadTypes()->front());
+
 			if (_isQuickBattle == false)
 			{
-				_base->getStorageItems()->addItem(_items[_row], delta);
+				_base->getStorageItems()->addItem(itType, delta);
 				if (itRule->getFullClip() > 0)
 					_base->getStorageItems()->addItem(
-													itRule->getAcceptedLoadTypes()->front(),
+													loadType,
 													itRule->getFullClip() * delta); // Vehicles onboard Craft always have full clips.
 			}
 
@@ -622,13 +630,16 @@ void CraftEquipmentState::leftByValue(int delta)
 				else
 					++i;
 			}
+
+			if (itRule->getFullClip() > 0)
+				updateHwpLoad(loadType);
 		}
 		else
 		{
-			_craft->getCraftItems()->removeItem(_items[_row], delta);
+			_craft->getCraftItems()->removeItem(itType, delta);
 
 			if (_isQuickBattle == false)
-				_base->getStorageItems()->addItem(_items[_row], delta);
+				_base->getStorageItems()->addItem(itType, delta);
 		}
 
 		updateListrow();
@@ -640,17 +651,18 @@ void CraftEquipmentState::leftByValue(int delta)
  */
 void CraftEquipmentState::updateListrow() const // private.
 {
-	const RuleItem* const itRule (_rules->getItemRule(_items[_row]));
+	const std::string& itType (_items[_row]);
+	const RuleItem* const itRule (_rules->getItemRule(itType));
 
 	int craftQty;
 	if (itRule->isFixed() == true)
-		craftQty = _craft->getVehicleCount(_items[_row]);
+		craftQty = _craft->getVehicleCount(itType);
 	else
-		craftQty = _craft->getCraftItems()->getItemQuantity(_items[_row]);
+		craftQty = _craft->getCraftItems()->getItemQuantity(itType);
 
 	std::wostringstream woststr;
 	if (_isQuickBattle == false)
-		woststr << _base->getStorageItems()->getItemQuantity(_items[_row]);
+		woststr << _base->getStorageItems()->getItemQuantity(itType);
 	else
 		woststr << L"-";
 
@@ -674,6 +686,44 @@ void CraftEquipmentState::updateListrow() const // private.
 						.arg(_craft->getLoadCapacity())
 						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
 	extra();
+}
+
+/**
+ * Updates list-values for HWP load.
+ * @param loadType - reference to the load-type
+ */
+void CraftEquipmentState::updateHwpLoad(const std::string& loadType) const // private.
+{
+	size_t r = 0u;
+
+	for (std::vector<std::string>::const_iterator
+			i = _items.begin();
+			i != _items.end();
+			++i, ++r)
+	{
+		if (*i == loadType)
+		{
+			const int craftQty (_craft->getCraftItems()->getItemQuantity(loadType));
+
+			std::wostringstream woststr;
+			if (_isQuickBattle == false)
+				woststr << _base->getStorageItems()->getItemQuantity(loadType);
+			else
+				woststr << L"-";
+
+			Uint8 color;
+			if (craftQty != 0)
+				color = _lstEquipment->getSecondaryColor();
+			else
+				color = _loadColor;
+
+			_lstEquipment->setRowColor(r, color);
+			_lstEquipment->setCellText(r, 1u, woststr.str());
+			_lstEquipment->setCellText(r, 2u, Text::intWide(craftQty));
+
+			break;
+		}
+	}
 }
 
 /**

@@ -94,6 +94,8 @@ private:
 
 	/// Updates list-values for the selected item.
 	void updateListrow() const;
+	/// Updates list-values for HWP load.
+	void updateHwpLoad(const std::string& loadType) const;
 
 	/// Handler for clicking the unload-craft button.
 	void btnUnloadCraftClick(Action* action);

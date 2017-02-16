@@ -31,8 +31,8 @@
 namespace OpenXcom
 {
 
-const int BIGSPRITE_NONE = -99;
-
+const int BIGSPRITE_NONE = -99;	// NOTE: This is set low since several terror-unit weapons
+								// use values just below 0 for their bigsprites.
 enum DamageType
 {
 	DT_NONE,	// 0
