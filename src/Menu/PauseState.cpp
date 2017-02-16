@@ -71,10 +71,10 @@ PauseState::PauseState(OptionsOrigin origin)
 
 	_btnLoad	= new TextButton(180, 18, x + 18, 51);
 	_btnSave	= new TextButton(180, 18, x + 18, 73);
-//	_btnAbandon	= new TextButton(180, 24, x + 18, 97);
 	_btnAbandon	= new TextButton(180, 48, x + 18, 97);
+//	_btnAbandon	= new TextButton(180, 24, x + 18, 97);
 
-//	_btnOptions	= new TextButton(180, 20, x + 18, 125);
+//	_btnOptions	= new TextButton(180, 18, x + 18, 125);
 	_btnCancel	= new TextButton(180, 18, x + 18, 151);
 
 	setInterface(
@@ -119,7 +119,6 @@ PauseState::PauseState(OptionsOrigin origin)
 
 //	_btnOptions->setText(tr("STR_GAME_OPTIONS"));
 //	_btnOptions->onMouseClick(static_cast<ActionHandler>(&PauseState::btnOptionsClick));
-//	_btnOptions->setVisible(false);
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
 	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&PauseState::btnCancelClick));
@@ -130,7 +129,7 @@ PauseState::PauseState(OptionsOrigin origin)
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
 								Options::keyOkKeypad);
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
-								SDLK_c);
+								SDLK_c); // cancel
 
 	switch (_origin)
 	{
@@ -143,6 +142,9 @@ PauseState::PauseState(OptionsOrigin origin)
 			_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&PauseState::btnCancelClick),
 										Options::keyBattleOptions);
 			applyBattlescapeColors();
+
+//			if (_game->getSavedGame()->getBattleSave()->getBattleGame()->isBusy() == true)
+//				_btnOptions->setVisible(false); // NOTE: Don't allow Options-changes while BattleStates are stacked/active.
 	}
 
 	if (_game->getSavedGame()->isIronman() == true)

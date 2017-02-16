@@ -79,7 +79,7 @@ CraftEquipmentState::CraftEquipmentState(
 {
 	_window			= new Window(this);
 
-	_txtTitle		= new Text(300, 17,  16, 8);
+	_txtTitle		= new Text(300, 16,  16, 8);
 	_txtBaseLabel	= new Text( 80,  9, 224, 8);
 
 	_txtSpace		= new Text(110, 9,  16, 26);
@@ -273,7 +273,7 @@ void CraftEquipmentState::updateList() // private.
 							woststr << "-";
 
 						wst = tr(*i);
-						if (bType == BT_AMMO) // weapon clips
+						if (bType == BT_AMMO) // weapon clips/HWP clips
 						{
 							wst.insert(0u, L"  ");
 							if ((clip = itRule->getFullClip()) > 1)

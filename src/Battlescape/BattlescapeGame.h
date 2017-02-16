@@ -400,7 +400,8 @@ private:
 		bool playerPanicHandled() const
 		{ return _playerPanicHandled; }
 		/// Sets var to start handling panic for Player's units.
-		void setPlayerPanic() { _playerPanicHandled = false; }
+		void setPlayerPanic()
+		{ _playerPanicHandled = false; }
 
 		/// Tries to find an item and pick it up if possible.
 		bool pickupItem(BattleAction* const aiAction) const;

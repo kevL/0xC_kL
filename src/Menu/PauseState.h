@@ -56,7 +56,7 @@ private:
 
 
 	public:
-		/// Creates the Pause state.
+		/// Creates a Pause state.
 		explicit PauseState(OptionsOrigin origin);
 		/// Cleans up the Pause state.
 		~PauseState();

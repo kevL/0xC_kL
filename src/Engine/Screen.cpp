@@ -389,7 +389,7 @@ void Screen::resetDisplay(bool resetVideo)
 		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << static_cast<int>(_screen->format->BitsPerPixel) << ".";
 
 		// kL_add: brighten display
-		SDL_SetGamma(0.5f,0.5f,0.5f); // TODO: Put in Options.
+		SDL_SetGamma(0.43f,0.43f,0.43f); // TODO: Put in Options.
 	}
 	else
 		clear();
