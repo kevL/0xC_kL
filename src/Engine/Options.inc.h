@@ -18,6 +18,7 @@ OPT int
 	baseYBattlescape,
 	windowedModePositionX,
 	windowedModePositionY,
+	displayGamma,
 	volMusic,
 	volFx,
 	volUi,
