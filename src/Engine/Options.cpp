@@ -560,7 +560,7 @@ void createOptions()
 	_info.push_back(OptionInfo("keyboardMode",							reinterpret_cast<int*>(&keyboardMode), KEYBOARD_ON));
 #endif
 
-	_info.push_back(OptionInfo("displayGamma",							&displayGamma, 100)); // NOTE: will be divided by 100.f
+	_info.push_back(OptionInfo("displayGamma",							&displayGamma, 50)); // NOTE: will be divided by 100.f
 
 	_info.push_back(OptionInfo("engineLooper",							&engineLooper, "wilecoyote"));
 	_info.push_back(OptionInfo("traceAI",								&traceAI, 0));
