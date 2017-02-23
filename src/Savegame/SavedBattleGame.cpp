@@ -292,8 +292,8 @@ void SavedBattleGame::load(
 	Log(LOG_INFO) << ". init map";
 	initMap(									// NOTE: This clears '_battleDataSets' (as well as '_nodes' and '_tiles')
 		node["width"]	.as<int>(_mapsize_x),	// therefore it should run *before* loading '_battleDataSets' etc.
-		node["length"]	.as<int>(_mapsize_y),	// It runs regularly when creating (or resizing) a tactical during BattlescapeGenerator::generateMap()
-		node["height"]	.as<int>(_mapsize_z));	// -- but also runs for 2nd-stage and fake-inventories.
+		node["length"]	.as<int>(_mapsize_y),	// It runs when creating (or resizing) a tactical (1st & 2nd stages) in
+		node["height"]	.as<int>(_mapsize_z));	// BattlescapeGenerator::generateMap() -- also runs for fake-inventories.
 												// NOTE: The vars '_mapsize_x' '_mapsize_y' '_mapsize_z' and '_qtyTilesTotal' are set in initMap().
 
 	Log(LOG_INFO) << ". load battle data sets";
@@ -894,6 +894,13 @@ Tile** SavedBattleGame::getTiles() const
  * @param mapsize_x - width on x-axis
  * @param mapsize_y - length on y-axis
  * @param mapsize_z - height on z-axis
+ * @note If borks occur for the MapScript RESIZE directive, see
+ *		 "fix save/load on resized maps"
+ *		 https://github.com/SupSuper/OpenXcom/commit/2c88d4e5f5eacaffeae8042c5b941f1f12ca42aa
+ *		 "remove debugging code that i should not have committed."
+ *		 https://github.com/SupSuper/OpenXcom/commit/7ea43162665bd2de9ae5fd14142bf1de2194c4da
+ *		 "fix multi stage saves"
+ *		 https://github.com/SupSuper/OpenXcom/commit/068fc539a3928763c98120e60cd0660559457bdc
  */
 void SavedBattleGame::initMap(
 		const int mapsize_x,

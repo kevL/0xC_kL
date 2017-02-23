@@ -1481,8 +1481,8 @@ int BattleUnit::takeDamage(
 		const bool ignoreArmor)
 {
 	static const int
-		HEAD_LEVEL_OFFSET	= 4,
-		WAIST_LEVEL_CUTOFF	= 5;
+		HEAD_LEVEL_OFFSET	= 5,
+		WAIST_LEVEL_CUTOFF	= 6;
 
 
 	//Log(LOG_INFO) << "bu:takeDamage() id-" << _id << " power[0]= " << power;
