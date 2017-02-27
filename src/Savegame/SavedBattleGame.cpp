@@ -1797,7 +1797,7 @@ std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleIte
 	{
 		if (*i == item)
 		{
-			if ((*i)->getProperty() == true)
+			if ((*i)->isProperty() == true)
 				_deletedProperty.push_back(item);
 			else
 				delete *i;

@@ -1904,7 +1904,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 						case BT_AMMO:
 							_clips[itRule] += (*i)->getAmmoQuantity();
-							if ((*i)->getProperty() == true)
+							if ((*i)->isProperty() == true)
 								_clipsProperty[itRule] += (*i)->getAmmoQuantity();
 							break;
 
@@ -1915,7 +1915,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 								if (clip != nullptr) //&& clip->getRules()->getFullClip() != 0) // <- nobody be stupid and make a clip with 0 ammo-capacity.
 								{
 									_clips[clip->getRules()] += clip->getAmmoQuantity();
-									if ((*i)->getProperty() == true)
+									if ((*i)->isProperty() == true)
 										_clipsProperty[clip->getRules()] += clip->getAmmoQuantity();
 								}
 							}
@@ -1923,7 +1923,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 
 						default:
 							_base->getStorageItems()->addItem(type);
-							if ((*i)->getProperty() == false)
+							if ((*i)->isProperty() == false)
 								++_surplusItems[itRule];
 					}
 			}

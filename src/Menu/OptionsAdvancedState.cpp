@@ -145,7 +145,7 @@ void OptionsAdvancedState::init()
  * Adds a bunch of settings to the list.
  * @param settings List of settings.
  */
-void OptionsAdvancedState::addSettings(const std::vector<OptionInfo>& settings)
+void OptionsAdvancedState::addSettings(const std::vector<OptionInfo>& settings) // private.
 {
 	for (std::vector<OptionInfo>::const_iterator
 			i = settings.begin();
@@ -175,12 +175,12 @@ void OptionsAdvancedState::addSettings(const std::vector<OptionInfo>& settings)
  * @param sel Selected row.
  * @return, Pointer to option, nullptr if none selected.
  */
-OptionInfo* OptionsAdvancedState::getSetting(size_t sel)
+OptionInfo* OptionsAdvancedState::getSetting(size_t sel) // private.
 {
 	if (sel > 0u
 		&& sel <= _settingsGeneral.size())
 	{
-		return &_settingsGeneral[sel - 1];
+		return &_settingsGeneral[sel - 1u];
 	}
 
 	if (sel > _settingsGeneral.size() + 2u
@@ -292,6 +292,7 @@ void OptionsAdvancedState::lstOptionsClick(Action* action)
 
 /**
  *
+ * @param action - pointer to an Action
  */
 void OptionsAdvancedState::lstOptionsMouseOver(Action*)
 {
@@ -305,6 +306,7 @@ void OptionsAdvancedState::lstOptionsMouseOver(Action*)
 
 /**
  *
+ * @param action - pointer to an Action
  */
 void OptionsAdvancedState::lstOptionsMouseOut(Action*)
 {

@@ -173,7 +173,7 @@ private:
 		/// Sets the BattleItem as belonging to xCom.
 		void setProperty();
 		/// Gets if the BattleItem belongs to xCom.
-		bool getProperty() const;
+		bool isProperty() const;
 };
 
 }

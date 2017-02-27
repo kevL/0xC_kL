@@ -610,7 +610,7 @@ void BattleItem::setProperty()
  * Gets if this BattleItem belongs to xCom.
  * @return, true if xcom property
  */
-bool BattleItem::getProperty() const
+bool BattleItem::isProperty() const
 {
 	return _xcomProperty;
 }
