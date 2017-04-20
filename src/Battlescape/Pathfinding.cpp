@@ -145,7 +145,7 @@ void Pathfinding::setInputModifiers()
 		|| _battleSave->getBattleGame()->playerPanicHandled() == false)
 	{
 		_ctrl =
-		_alt = false;
+		_alt  = false;
 //		_zPath = false;
 	}
 	else
@@ -262,12 +262,26 @@ void Pathfinding::calculatePath(
 	static Position posStop_cache; // for keeping things straight if strafeRejected happens.
 	posStop_cache = posStop;
 
+
 	tileStop = _battleSave->getTile(posStop);
 	while (tileStop->getTerrainLevel() == -24 && posStop.z != _battleSave->getMapSizeZ())
 	{
 		++posStop.z;
-		tileStop = _battleSave->getTile(posStop);
 		//Log(LOG_INFO) << ". raise tileStop " << posStop;
+
+		// ensure that 'posStop.z' wasn't adjusted outside the map.
+		// This occurs in rare circumstances where an object has terrainLevel
+		// -24 on the top floor and is considered passable terrain for whatever
+		// reason (usually bigwall type objects)
+		//
+		// Example pls. cite MCD chapter & verse.
+		if (posStop.z == _battleSave->getMapSizeZ())
+		{
+			//Log(LOG_INFO) << ". . icarus FAIL " << posStop;
+			return; // Icarus is a bad role model for XCom soldiers.
+		}
+
+		tileStop = _battleSave->getTile(posStop);
 	}
 
 	if (_mType != MT_FLY)

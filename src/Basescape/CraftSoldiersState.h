@@ -76,7 +76,7 @@ private:
 		/// Cleans up the CraftSoldiers state.
 		~CraftSoldiersState();
 
-		/// Updates the Soldiers list.
+		/// Updates the Soldiers TextList.
 		void init() override;
 
 		/// Handler for clicking the Ok button.

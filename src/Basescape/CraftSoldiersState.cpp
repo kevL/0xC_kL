@@ -161,7 +161,7 @@ CraftSoldiersState::~CraftSoldiersState()
 {}
 
 /**
- * Shows the Soldiers in a list.
+ * Shows the Soldiers in a TextList.
  */
 void CraftSoldiersState::init()
 {
@@ -171,8 +171,8 @@ void CraftSoldiersState::init()
 	const SavedBattleGame* const battleSave (_game->getSavedGame()->getBattleSave());
 	if (battleSave != nullptr)
 	{
-//		unfortunately this would rely on the list of battleSoldiers *not* changing when entering/cancelling InventoryState
-//		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();
+//		_selUnitId = battleSave->getSelectedUnit()->getBattleOrder();	// unfortunately this would depend on the list of battleSoldiers
+																		// *not* changing when entering or cancelling InventoryState
 		_game->getSavedGame()->setBattleSave();
 		_craft->setTactical(false);
 	}
@@ -207,12 +207,12 @@ void CraftSoldiersState::init()
 	}
 
 	_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
-					.arg(_craft->getQtySoldiers())
-					.arg(_craft->getQtyVehicles())
-					.arg(_craft->getSpaceAvailable()));
+						.arg(_craft->getQtySoldiers())
+						.arg(_craft->getQtyVehicles())
+						.arg(_craft->getSpaceAvailable()));
 	_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
-					.arg(_craft->getLoadCapacity())
-					.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
+						.arg(_craft->getLoadCapacity())
+						.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
 
 	extra();
 
@@ -247,7 +247,7 @@ void CraftSoldiersState::btnOkClick(Action*)
 }
 
 /**
- * Unloads all Soldiers from current transport craft.
+ * Unloads all Soldiers from the current transport Craft.
  * @param action - pointer to an Action
  */
 void CraftSoldiersState::btnUnloadClick(Action*)
@@ -331,12 +331,12 @@ void CraftSoldiersState::lstSoldiersPress(Action* action)
 				_lstSoldiers->setRowColor(r, color);
 
 				_txtSpace->setText(tr("STR_SPACE_CREW_HWP_FREE_")
-								.arg(_craft->getQtySoldiers())
-								.arg(_craft->getQtyVehicles())
-								.arg(_craft->getSpaceAvailable()));
+									.arg(_craft->getQtySoldiers())
+									.arg(_craft->getQtyVehicles())
+									.arg(_craft->getSpaceAvailable()));
 				_txtLoad->setText(tr("STR_LOAD_CAPACITY_FREE_")
-								.arg(_craft->getLoadCapacity())
-								.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
+									.arg(_craft->getLoadCapacity())
+									.arg(_craft->getLoadCapacity() - _craft->calcLoadCurrent()));
 
 				extra();
 			}
