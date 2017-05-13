@@ -316,7 +316,7 @@ void AlienMission::think(
 
 	if (_waveCount < _missionRule.getWaveTotal())
 	{
-		if (_countdown > 30)
+		if (_countdown  > 30)
 			_countdown -= 30;
 		else
 		{
@@ -457,10 +457,10 @@ Ufo* AlienMission::createUfo( // private.
 									&trjAssault);
 
 				if (trjAssault.getAltitude(0u) == MovingTarget::stAltitude[0u]) // assault-ufo spawns instantly landed
-					coord = coordsLand(
-									globe,
-									regionRule,
-									trjAssault.getZoneId(0u));
+					coord = coordsLandZone(
+										globe,
+										regionRule,
+										trjAssault.getZoneId(0u));
 				else
 					coord = regionRule.getZonePoint(trjAssault.getZoneId(0u)); // assault-ufo spawns airborne
 
@@ -495,10 +495,10 @@ Ufo* AlienMission::createUfo( // private.
 				const RuleRegion& regionRule (*rules.getRegion(_regionType));
 
 				if (trj.getAltitude(0u) == MovingTarget::stAltitude[0u]) // supply-ufo spawns instantly landed
-					coord = coordsLand(
-									globe,
-									regionRule,
-									trj.getZoneId(0u));
+					coord = coordsLandZone(
+										globe,
+										regionRule,
+										trj.getZoneId(0u));
 				else
 					coord = regionRule.getZonePoint(trj.getZoneId(0u)); // supply-ufo spawns airborne
 
@@ -514,10 +514,10 @@ Ufo* AlienMission::createUfo( // private.
 						coord.second = _alienBase->getLatitude();
 					}
 					else
-						coord = coordsLand( // other UFOs can land where they want. huh, "other" this is Supply.
-										globe,
-										regionRule,
-										trj.getZoneId(1u));
+						coord = coordsLandZone( // other UFOs can land where they want. huh, "other" this is Supply.
+											globe,
+											regionRule,
+											trj.getZoneId(1u));
 				}
 				else
 					coord = regionRule.getZonePoint(trj.getZoneId(1u));
@@ -679,7 +679,7 @@ void AlienMission::ufoReachedWaypoint(
 
 			if (_missionRule.getWaveData(wave).isObjective == true				// destroy UFO & replace with TerrorSite.
 				&& trj.getZoneId(pointId) == _missionRule.getObjectiveZone())	// NOTE: Supply-missions bypasses this although it has (objective=true)
-			{																// because it does not have an 'objectiveZone' set in its rule.
+			{																	// because it does not have an 'objectiveZone' set in its rule.
 				addScore( // alm_TERROR
 						ufo.getLongitude(),
 						ufo.getLatitude());
@@ -840,10 +840,10 @@ void AlienMission::createAlienBase( // private.
 		}
 
 		const RuleRegion& regionRule (*rules.getRegion(_regionType));
-		const std::pair<double, double> pos (coordsLand(
-													globe,
-													regionRule,
-													area));
+		const std::pair<double, double> pos (coordsLandArea(
+														globe,
+														regionRule,
+														area));
 
 		AlienBase* const alienBase (new AlienBase(ruleDeploy));
 		alienBase->setAlienRace(_raceType);
@@ -1058,22 +1058,22 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
 		if (_missionRule.getWaveData(wave).isObjective == true)
 		{
 			const MissionArea* const area (&region.getMissionZones()
-												.at(_missionRule.getObjectiveType()).areas
-												.at(_terrorZone));
+													.at(_missionRule.getObjectiveType()).areas
+													.at(_terrorZone));
 			return std::make_pair(
 								area->lonMin,
 								area->latMin);
 		}
 	}
 
-	const size_t pointId_pst (pointId + 1u);								// if the point after the current point is ground,
-	if (   trj.getMissionPointTotal() > pointId_pst							// return land-coords for the current point.
-		&& trj.getAltitude(pointId_pst) == MovingTarget::stAltitude[0u])	// ... huh.
+	const size_t pointId_post (pointId + 1u);								// if the point after the current point is ground,
+	if (   trj.getMissionPointTotal() > pointId_post						// return land-coords for the current point.
+		&& trj.getAltitude(pointId_post) == MovingTarget::stAltitude[0u])	// ... huh.
  	{
- 		return coordsLand(
-						globe,
-						region,
-						zoneId);
+ 		return coordsLandZone(
+							globe,
+							region,
+							zoneId);
  	}
 
 	return region.getZonePoint(zoneId);
@@ -1087,7 +1087,7 @@ std::pair<double, double> AlienMission::coordsWaypoint( // private.
  * @param zoneId	- ID of a MissionZone in the Region
  * @return, a pair of doubles (lon & lat)
  */
-std::pair<double, double> AlienMission::coordsLand( // private.
+std::pair<double, double> AlienMission::coordsLandZone( // private.
 		const Globe& globe,
 		const RuleRegion& region,
 		const size_t zoneId) const
@@ -1097,18 +1097,17 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 	int t (0);
 	do
 	{
-		++t;
 		coord = region.getZonePoint(zoneId);
 	}
-	while (t < 1000
-		&& (globe.insideLand(
+	while ((globe.insideLand(
 						coord.first,
 						coord.second) == false
 			|| region.insideRegion(
 						coord.first,
-						coord.second) == false));
+						coord.second) == false)
+		&& ++t < MAX_TRIES);
 
-	if (t == 1000)
+	if (t == MAX_TRIES)
 		Log(LOG_INFO) << "Region: " << region.getType()
 					  << " lon " << coord.first
 					  << " lat " << coord.second
@@ -1124,7 +1123,7 @@ std::pair<double, double> AlienMission::coordsLand( // private.
  * @param area		- a MissionArea in a MissionZone in the Region
  * @return, a pair of doubles (lon & lat)
  */
-std::pair<double, double> AlienMission::coordsLand( // private.
+std::pair<double, double> AlienMission::coordsLandArea( // private.
 		const Globe& globe,
 		const RuleRegion& region,
 		const MissionArea& area) const
@@ -1134,18 +1133,17 @@ std::pair<double, double> AlienMission::coordsLand( // private.
 	int t (0);
 	do
 	{
-		++t;
 		coord = region.getAreaPoint(area);
 	}
-	while (t < 1000
-		&& (globe.insideLand(
+	while ((globe.insideLand(
 						coord.first,
 						coord.second) == false
 			|| region.insideRegion(
 						coord.first,
-						coord.second) == false));
+						coord.second) == false)
+		&& ++t < MAX_TRIES);
 
-	if (t == 1000)
+	if (t == MAX_TRIES)
 		Log(LOG_INFO) << "Region: " << region.getType()
 					  << " lon " << coord.first
 					  << " lat " << coord.second

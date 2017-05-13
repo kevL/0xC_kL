@@ -2563,11 +2563,11 @@ void BattlescapeGenerator::loadRouteFile( // private.
 		pos_y,
 		pos_z,
 
-		unitType,
-		nodeRank,
-		ptrlPriority,
-		aLienTarget,
-		spPriority,
+		patrolType,
+		spawnRank,
+		patrolPriority,
+		attackBase,
+		spawnWeight,
 
 		linkId,
 		nodeId (0); // debug. 0-based
@@ -2585,6 +2585,8 @@ void BattlescapeGenerator::loadRouteFile( // private.
 		pos_y = static_cast<int>(dataArray[0u]); // vis-a-vis x/y values in the .RMP files vs. IG loaded values.
 		pos_z = static_cast<int>(dataArray[2u]);
 
+		// NOTE: 'dataArray[3u]' is not used.
+
 		if (   pos_x > -1 && pos_x < block->getSizeX()
 			&& pos_y > -1 && pos_y < block->getSizeY()
 			&& pos_z > -1 && pos_z < block->getSizeZ())
@@ -2594,32 +2596,32 @@ void BattlescapeGenerator::loadRouteFile( // private.
 						offset_y + pos_y,
 						block->getSizeZ() - pos_z - 1); // NOTE: Invert the z-level.
 
-			unitType		= static_cast<int>(dataArray[19u]); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
-			nodeRank		= static_cast<int>(dataArray[20u]);
-			ptrlPriority	= static_cast<int>(dataArray[21u]);
-			aLienTarget		= static_cast<int>(dataArray[22u]);
-			spPriority		= static_cast<int>(dataArray[23u]);
+			patrolType		= static_cast<int>(dataArray[19u]); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
+			spawnRank		= static_cast<int>(dataArray[20u]);
+			patrolPriority	= static_cast<int>(dataArray[21u]);
+			attackBase		= static_cast<int>(dataArray[22u]);
+			spawnWeight		= static_cast<int>(dataArray[23u]);
 
 			// TYPE_FLYING		= 0x01 -> ref Savegame/Node.h
 			// TYPE_SMALL		= 0x02
 			// TYPE_LARGEFLYING	= 0x04
 			// TYPE_LARGE		= 0x08
 			// TYPE_DANGEROUS	= 0x10 <- not in RMP file.
-			if		(unitType == 3) unitType = 4; // for bit-wise
-			else if (unitType == 4) unitType = 8;
+			if		(patrolType == 3) patrolType = 4; // for bit-wise
+			else if (patrolType == 4) patrolType = 8;
 
 			if (_battleSave->getTacType() != TCT_BASEDEFENSE)
-				aLienTarget = 0; // ensure these get zero'd for nonBaseDefense battles; cf. Node::isAlienTarget()
+				attackBase = 0; // ensure these get zero'd for nonBaseDefense battles; cf. Node::isAlienTarget()
 
 			node = new Node(
 						_battleSave->getNodes()->size(),
 						pos,
 						seg,
-						unitType,
-						nodeRank,
-						ptrlPriority,
-						aLienTarget,
-						spPriority);
+						patrolType,
+						spawnRank,
+						patrolPriority,
+						attackBase,
+						spawnWeight);
 
 			for (size_t // create nodeLinks ->
 					j = 0u;

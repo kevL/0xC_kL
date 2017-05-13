@@ -56,6 +56,8 @@ class AlienMission
 {
 
 private:
+	const int MAX_TRIES = 1000;
+
 	bool _success;	// Prevents infiltration missions taking multiple success points
 					// and creating multiple bases on the final 2xBattleship wave.
 	int
@@ -102,12 +104,12 @@ private:
 			const Globe& globe,
 			const RuleRegion& region) const;
 	/// Generates destination-coordinates inside a specified Region and MissionZone.
-	std::pair<double, double> coordsLand(
+	std::pair<double, double> coordsLandZone(
 			const Globe& globe,
 			const RuleRegion& region,
 			const size_t zoneId) const;
 	/// Generates destination-coordinates inside a specified Region and MissionArea.
-	std::pair<double, double> coordsLand(
+	std::pair<double, double> coordsLandArea(
 			const Globe& globe,
 			const RuleRegion& region,
 			const MissionArea& area) const;
