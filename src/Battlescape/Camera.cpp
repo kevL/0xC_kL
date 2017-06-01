@@ -635,7 +635,7 @@ void Camera::convertScreenToMap(
 	*mapY = -screenX + _offsetField.x + (screenY << 1u) - (_offsetField.y << 1u);
 	*mapX =  screenY - _offsetField.y - (*mapY >> 2u) - width_4;
 
-	// to get the row&col itself divide by the size of a tile
+	// to get the col&row itself divide by the size of a tile
 	*mapX /= width_4;
 	*mapY /= _spriteWidth;
 

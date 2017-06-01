@@ -3690,26 +3690,30 @@ int BattleUnit::getMiniMapSpriteIndex() const
 	// 9-11  - Item
 	// 12-23 - Xcom HWP
 	// 24-35 - Alien big terror unit (cyberdisk, etc)
+
 	if (_status != STATUS_STANDING)
-		return 9;
+		return 9;							// gray cross
 
 	switch (_faction)
 	{
-		case FACTION_HOSTILE:
-			if (_arRule->getSize() == 1)
-				return 3;
-			else
-				return 24;
-
-		case FACTION_NEUTRAL:
-			return 6;
-
 		default:
 		case FACTION_PLAYER:
 			if (_arRule->getSize() == 1)
-				return 0;
-			else
-				return 12;
+				return 0;					// brown square
+
+			return 12;						// brown semi-circle quadrants
+
+		case FACTION_HOSTILE:
+			if (_arRule->getSize() == 1)
+				return 3;					// blue square
+
+			return 24;						// blue semi-circle quadrants
+
+		case FACTION_NEUTRAL:
+			if (_arRule->getSize() == 1)
+				return 6;					// red square
+
+			return 12;						// NOTE: conflicts w/ player-faction large units, recolored by MiniMapView::draw()
 	}
 }
 

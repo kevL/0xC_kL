@@ -1639,6 +1639,26 @@ inline void BattlescapeState::handle(Action* action)
 //											(*i)->takeDamage(Position(0,0,0), 1000, DT_STUN, true);
 										}
 									}
+									break;
+
+								// TODO: vet this ->
+//								case SDLK_w:										// "ctrl-w" - warp unit.
+//									beep = true; //MB_ICONWARNING
+//									printDebug(L"beam me up Scotty");
+//									BattleUnit* unit (_battleSave->getSelectedUnit());
+//									if (unit != nullptr)
+//									{
+//										Position pos;
+//										_map->getSelectorPosition(&pos);
+//										if (pos.x > -1) // TODO: a better check ... getTileValid eg.
+//										{
+//											unit->getTile()->setUnit(nullptr);
+//											unit->setPosition(pos);
+//											_battleSave->getTile(pos)->setUnit(unit);
+//											_battleSave->getTileEngine()->calculateUnitLighting();
+//											_battleSave->getBattleGame()->handleBattleState();
+//										}
+//									}
 							}
 
 							if (casualties == true)

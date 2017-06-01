@@ -152,12 +152,12 @@ void MiniMapView::draw()
 						|| py == 0
 						|| py == _battleSave->getMapSizeY() - 1)
 					{
-						colorGroup  = 1; // greyscale
+						colorGroup  = 1; // grayscale
 						colorOffset = 5;
 					}
 					else
 					{
-						colorGroup  = 0;
+						colorGroup = 0;
 
 						if (tile->isRevealed() == true)
 							colorOffset = tile->getShade();
@@ -220,12 +220,14 @@ void MiniMapView::draw()
 					if ((unit = tile->getTileUnit()) != nullptr
 						&& unit->getUnitVisible() == true) // alive visible units
 					{
+						const int unitSize (unit->getArmor()->getSize());
+
 						if (unit == _battleSave->getSelectedUnit())		// selected unit
 						{
 							colorGroup  = 4;							// pale green palette-block
 							colorOffset = 0;
 						}
-						else if (unit->getFaction() == FACTION_PLAYER	// Mc'd aLien or civie
+						else if (unit->getFaction() == FACTION_PLAYER	// Mc'd aLien or Mc'd civie
 							&& unit->isMindControlled() == true)
 						{
 							colorGroup  = 11;							// brown palette-block
@@ -237,15 +239,22 @@ void MiniMapView::draw()
 							colorGroup  = 8;							// steel blue palette-block
 							colorOffset = 0;
 						}
-						else											// else aLien.
+						else											// else aLien, civie, or xCom.
 						{
-							colorGroup  =
-							colorOffset = 0;
+							if (unit->getFaction() == FACTION_NEUTRAL	// special case: large civie.
+								&& unitSize == 2)
+							{
+								colorGroup  = 2;						// red palette-block
+								colorOffset = 1;
+							}
+							else
+							{
+								colorGroup  =
+								colorOffset = 0;						// transparent, use scanG color itself.
+							}
 						}
 
-						const int
-							unitSize (unit->getArmor()->getSize()),
-							spriteId (unit->getMiniMapSpriteIndex()
+						const int spriteId (unit->getMiniMapSpriteIndex()
 									+  tile->getPosition().x - unit->getPosition().x
 									+ (tile->getPosition().y - unit->getPosition().y) * unitSize
 									+ _anicycle * unitSize * unitSize); // holy mother-of-pearl spriteId batman.
