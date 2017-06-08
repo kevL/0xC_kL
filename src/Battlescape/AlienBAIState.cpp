@@ -2090,102 +2090,104 @@ bool AlienBAIState::explosiveEfficacy(
 	//Log(LOG_INFO) << "explosiveEfficacy() rad = " << radius;
 	int pct (0);
 
-	const int firstGrenade (_battleSave->getBattleState()->getGame()->getRuleset()->getFirstGrenade());
-	if (firstGrenade == -1
-		|| (firstGrenade == 0
-			&& _battleSave->getTurn() > 4 - diff)
-		|| (firstGrenade > 0
-			&& _battleSave->getTurn() > firstGrenade - 1))
+	const Tile* const tile (_battleSave->getTile(pos));
+	if (tile->isFloored(tile->getTileBelow(_battleSave)) == true)
 	{
-		pct = (100 - attacker->getMorale()) / 3;
-		pct += 2 * (10 - static_cast<int>(
+		const int firstGrenade (_battleSave->getBattleState()->getGame()->getRuleset()->getFirstGrenade());
+		if (firstGrenade == -1
+			|| (firstGrenade == 0 && _battleSave->getTurn() > 4 - diff)
+			|| (firstGrenade  > 0 && _battleSave->getTurn() > firstGrenade - 1))
+		{
+			pct = (100 - attacker->getMorale()) / 3;
+			pct += (10 - static_cast<int>(
 						 static_cast<float>(attacker->getHealth()) / static_cast<float>(attacker->getBattleStats()->health)
-						 * 10.f));
-		pct += attacker->getAggression() * 10;
+						 * 10.f)) << 1u;
+			pct += attacker->getAggression() * 10;
 
-		const int dist (TileEngine::distance(
-										attacker->getPosition(),
-										pos));
-		if (dist <= radius)
-		{
-			pct -= (radius - dist + 1) * 5;
-			if (std::abs(attacker->getPosition().z - pos.z) < Options::battleExplosionHeight + 1)
-				pct -= 15;
-		}
-
-		switch (_battleSave->getTacType())
-		{
-			case TCT_BASEASSAULT:
-				pct -= 23;
-				break;
-			case TCT_BASEDEFENSE:
-			case TCT_TERRORSITE:
-				pct += 56;
-		}
-
-		pct += diff << 1u;
-
-		const BattleUnit* const targetUnit (_battleSave->getTile(pos)->getTileUnit());
-
-		VoxelType voxelTest;
-
-		//Log(LOG_INFO) << "attacker = " << attacker->getId();
-		//Log(LOG_INFO) << "pos = " << pos;
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
-				++i)
-		{
-			//Log(LOG_INFO) << "\n";
-			//Log(LOG_INFO) << ". id = " << (*i)->getId();
-			//Log(LOG_INFO) << ". isNOTOut = " << ((*i)->isOut(true) == false);
-			//Log(LOG_INFO) << ". isNOTAttacker = " << (*i != attacker);
-			//Log(LOG_INFO) << ". isNOTtargetUnit = " << (*i != targetUnit);
-			//Log(LOG_INFO) << ". vertCheck = " << (std::abs((*i)->getPosition().z - pos.z) < Options::battleExplosionHeight + 1);
-			//Log(LOG_INFO) << ". inDist = " << (_battleSave->getTileEngine()->distance(pos, (*i)->getPosition()) < radius + 1);
-			if ((*i)->isOut_t(OUT_HEALTH) == false
-				&& *i != attacker
-				&& *i != targetUnit
-				&& std::abs((*i)->getPosition().z - pos.z) < Options::battleExplosionHeight + 1
-				&& TileEngine::distance(
-									pos,
-									(*i)->getPosition()) < radius + 1)
+			const int dist (TileEngine::distance(
+											attacker->getPosition(),
+											pos));
+			if (dist <= radius)
 			{
-				//Log(LOG_INFO) << ". . dangerousFALSE = " << ((*i)->getTile() != nullptr && (*i)->getTile()->getDangerous() == false);
-				//Log(LOG_INFO) << ". . exposed = " << ((*i)->getFaction() == FACTION_HOSTILE || (*i)->getExposed() < _unit->getIntelligence() + 1);
-				if ((*i)->getUnitTile() != nullptr
-					&& (*i)->getUnitTile()->getDangerous() == false
-					&& ((*i)->getFaction() == FACTION_HOSTILE
-						|| ((*i)->getExposed() != -1
-							&& (*i)->getExposed() <= _unit->getIntelligence())))
+				pct -= (radius - dist + 1) * 5;
+				if (std::abs(attacker->getPosition().z - pos.z) < Options::battleExplosionHeight + 1)
+					pct -= 15;
+			}
+
+			switch (_battleSave->getTacType())
+			{
+				case TCT_BASEASSAULT:
+					pct -= 23;
+					break;
+				case TCT_BASEDEFENSE:
+				case TCT_TERRORSITE:
+					pct += 57;
+			}
+
+			pct += diff << 1u;
+
+			const BattleUnit* const targetUnit (tile->getTileUnit());
+
+			VoxelType voxelTest;
+
+			//Log(LOG_INFO) << "attacker = " << attacker->getId();
+			//Log(LOG_INFO) << "pos = " << pos;
+			for (std::vector<BattleUnit*>::const_iterator
+					i = _battleSave->getUnits()->begin();
+					i != _battleSave->getUnits()->end();
+					++i)
+			{
+				//Log(LOG_INFO) << "\n";
+				//Log(LOG_INFO) << ". id = " << (*i)->getId();
+				//Log(LOG_INFO) << ". isNOTOut = " << ((*i)->isOut(true) == false);
+				//Log(LOG_INFO) << ". isNOTAttacker = " << (*i != attacker);
+				//Log(LOG_INFO) << ". isNOTtargetUnit = " << (*i != targetUnit);
+				//Log(LOG_INFO) << ". vertCheck = " << (std::abs((*i)->getPosition().z - pos.z) < Options::battleExplosionHeight + 1);
+				//Log(LOG_INFO) << ". inDist = " << (_battleSave->getTileEngine()->distance(pos, (*i)->getPosition()) < radius + 1);
+				if ((*i)->isOut_t(OUT_HEALTH) == false
+					&& *i != attacker
+					&& *i != targetUnit
+					&& std::abs((*i)->getPosition().z - pos.z) < Options::battleExplosionHeight + 1
+					&& TileEngine::distance(
+										pos,
+										(*i)->getPosition()) < radius + 1)
 				{
-					const Position
-						voxelPosA (Position::toVoxelSpaceCentered(pos, 12)),
-						voxelPosB (Position::toVoxelSpaceCentered((*i)->getPosition(), 12));
-
-					std::vector<Position> trj;
-					voxelTest = _battleSave->getTileEngine()->plotLine(
-																	voxelPosA,
-																	voxelPosB,
-																	false,
-																	&trj,
-																	targetUnit,
-																	true,
-																	false,
-																	*i);
-					//Log(LOG_INFO) << "trajSize = " << (int)trj.size() << "; impact = " << impact;
-					if (voxelTest == VOXEL_UNIT
-						&& (*i)->getPosition() == Position::toTileSpace(trj.front()))
+					//Log(LOG_INFO) << ". . dangerousFALSE = " << ((*i)->getTile() != nullptr && (*i)->getTile()->getDangerous() == false);
+					//Log(LOG_INFO) << ". . exposed = " << ((*i)->getFaction() == FACTION_HOSTILE || (*i)->getExposed() < _unit->getIntelligence() + 1);
+					if (   (*i)->getUnitTile() != nullptr
+						&& (*i)->getUnitTile()->getDangerous() == false
+						&& ((*i)->getFaction() == FACTION_HOSTILE
+							|| (   (*i)->getExposed() != -1
+								&& (*i)->getExposed() <= _unit->getIntelligence())))
 					{
-						//Log(LOG_INFO) << "trajFront " << (trajectory.front() / Position(16,16,24));
-						if ((*i)->getFaction() != FACTION_HOSTILE)
-							pct += 12;
+						const Position
+							voxelPosA (Position::toVoxelSpaceCentered(pos, 12)),
+							voxelPosB (Position::toVoxelSpaceCentered((*i)->getPosition(), 12));
 
-						if ((*i)->getOriginalFaction() == FACTION_HOSTILE)
+						std::vector<Position> trj;
+						voxelTest = _battleSave->getTileEngine()->plotLine(
+																		voxelPosA,
+																		voxelPosB,
+																		false,
+																		&trj,
+																		targetUnit,
+																		true,
+																		false,
+																		*i);
+						//Log(LOG_INFO) << "trajSize = " << (int)trj.size() << "; impact = " << impact;
+						if (voxelTest == VOXEL_UNIT
+							&& (*i)->getPosition() == Position::toTileSpace(trj.front()))
 						{
-							pct -= 6;
-							if ((*i)->getFaction() == FACTION_HOSTILE)
-								pct -= 12;
+							//Log(LOG_INFO) << "trajFront " << (trajectory.front() / Position(16,16,24));
+							if ((*i)->getFaction() != FACTION_HOSTILE)
+								pct += 12;
+
+							if ((*i)->getOriginalFaction() == FACTION_HOSTILE)
+							{
+								pct -= 6;
+								if ((*i)->getFaction() == FACTION_HOSTILE)
+									pct -= 12;
+							}
 						}
 					}
 				}
