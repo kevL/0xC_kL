@@ -1058,7 +1058,7 @@ void SavedGame::balanceBudget()
 
 	_funds.back() += getCountryFunding() * 1000 - maintenance; // BALANCE
 	_funds.push_back(_funds.back());
-	if (_funds.size() > 12)
+	if (_funds.size() > 12u)
 		_funds.erase(_funds.begin());
 
 
@@ -1159,7 +1159,7 @@ void SavedGame::setTime(const GameTime& gt)
 
 /**
  * Gets the highest-value ID for a specified Target type and then increments the
- * cache to one higer ID-value.
+ * cache to one higher ID-value.
  * @param typeTarget - reference to a Target type
  * @return, the current value for type
  */
@@ -1485,12 +1485,12 @@ void SavedGame::tabulatePopupResearch(
 			if (searchResearch(requested, RG_LOCKED) == true // safety to ensure discovered-research does not revert to unlocked.
 				&& checkRequiredResearch(requested) == true)
 			{
-				if (requested->getCost() != 0)
+				if (requested->getCost() != 0) // is *not* fake topic ->
 				{
 					setResearchStatus(requested, RG_UNLOCKED);
 					projects.push_back(requested);
 				}
-				else
+				else // is fake topic ->
 				{
 					discoverResearch(requested); // fake: discover it and add points
 					fakes.push_back(requested);
@@ -1531,12 +1531,12 @@ void SavedGame::tabulatePopupResearch(
 				&& (*i)->getStatus() == RG_LOCKED // safety to ensure discovered-research does not revert to unlocked.
 				&& checkRequiredResearch(rgRule) == true)
 			{
-				if (rgRule->getCost() != 0)
+				if (rgRule->getCost() != 0) // is *not* fake topic ->
 				{
 					setResearchStatus(rgRule, RG_UNLOCKED);
 					projects.push_back(rgRule);
 				}
-				else
+				else // is fake topic ->
 				{
 					discoverResearch(rgRule); // fake: discover it and add points
 					fakes.push_back(rgRule);
@@ -1621,7 +1621,7 @@ void SavedGame::tabulateStartableResearch(
 		  ++i)
 	{
 		resRule = (*i)->getRules();
-		if (resRule->getCost() != 0
+		if (resRule->getCost() != 0 // -> is *not* fake topic.
 			&& std::find_if(
 						base->getResearch().begin(),
 						base->getResearch().end(),
