@@ -238,25 +238,28 @@ void ListGamesState::think()
 
 /**
  * Updates the sorting arrows per the current setting.
+ * NOTE: The arrow directions are reversed. Sort-ascending is a down arrow and
+ * sort-descending is an up arrow.
  */
 void ListGamesState::updateArrows() // private.
 {
-	_sortName->setShape(ARROW_NONE);
-	_sortDate->setShape(ARROW_NONE);
-
 	switch (Options::saveOrder)
 	{
 		case SORT_NAME_ASC:
-			_sortName->setShape(ARROW_SMALL_UP);
+			_sortName->setShape(ARROW_SMALL_DOWN);
+			_sortDate->setShape(ARROW_NONE);
 			break;
 		case SORT_NAME_DESC:
-			_sortName->setShape(ARROW_SMALL_DOWN);
+			_sortName->setShape(ARROW_SMALL_UP);
+			_sortDate->setShape(ARROW_NONE);
 			break;
 		case SORT_DATE_ASC:
-			_sortDate->setShape(ARROW_SMALL_UP);
+			_sortName->setShape(ARROW_NONE);
+			_sortDate->setShape(ARROW_SMALL_DOWN);
 			break;
 		case SORT_DATE_DESC:
-			_sortDate->setShape(ARROW_SMALL_DOWN);
+			_sortName->setShape(ARROW_NONE);
+			_sortDate->setShape(ARROW_SMALL_UP);
 	}
 }
 

@@ -141,6 +141,12 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 						CrossPlatform::getDataFile("GEODATA/PALETTES.DAT"),
 						256,
 						Palette::palOffset(4));
+//	for (int i = 0; i != 256; ++i)
+//	{
+//		Log(LOG_INFO)	<< (int)_palettes[st]->getColors(i)->r << ","
+//						<< (int)_palettes[st]->getColors(i)->g << ","
+//						<< (int)_palettes[st]->getColors(i)->b;
+//	}
 
 	const SDL_Color gradient[] // last 16 colors are a steel-grayish gradient
 	{
