@@ -45,6 +45,7 @@ enum DebugTypeGlobe
 
 
 class Game;
+class GeoscapeState;
 class NumberText;
 class Polygon;
 class RuleGlobe;
@@ -120,6 +121,7 @@ private:
 
 	FastLineClip* _clipper;
 	Game* _game;
+	GeoscapeState* _geoState;
 	NumberText* _flightData;
 	RuleGlobe* _globeRule;
 	SavedGame* _playSave;
@@ -254,6 +256,7 @@ private:
 		/// Creates a Globe with the specified position and size.
 		Globe(
 				Game* const game,
+				GeoscapeState* const geoState,
 				int cenX,
 				int cenY,
 				int width,

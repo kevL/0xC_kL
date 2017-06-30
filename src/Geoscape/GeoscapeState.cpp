@@ -370,8 +370,13 @@ GeoscapeState::GeoscapeState()
 		screenHeight	(Options::baseYGeoscape),
 		halfHeight		(screenHeight >> 1u);
 
+	_txtRadars	= new Text(65, 9, 3, screenHeight - 32); // lower-left corner
+	_txtLabels	= new Text(65, 9, 3, screenHeight - 22);
+	_txtZoom	= new Text(65, 9, 3, screenHeight - 12); // <- must instantiate before '_globe' (reasons.)
+
 	_globe			= new Globe(
 							_game,
+							this, // <- (reason is here. Instantiating the Globe will set the zoom which updates the zoom-text)
 							(screenWidth - 64) >> 1u,
 							halfHeight,
 							screenWidth - 64,
@@ -483,9 +488,6 @@ GeoscapeState::GeoscapeState()
 
 	_txtDebug = new Text(320, 27);
 
-	_txtLabels	= new Text(65, 9, 3, screenHeight - 12); // lower-left corner
-	_txtRadars	= new Text(65, 9, 3, screenHeight - 22);
-
 
 	setInterface("geoscape");
 
@@ -549,6 +551,7 @@ GeoscapeState::GeoscapeState()
 	add(_txtYear);
 	add(_txtRadars,	"text",	"geoscape");
 	add(_txtLabels,	"text",	"geoscape");
+	add(_txtZoom,	"text",	"geoscape");
 
 	_game->getResourcePack()->getSurface("Cygnus_BG")->blit(_srfSpace);
 
@@ -854,13 +857,8 @@ GeoscapeState::GeoscapeState()
 
 	_txtYear->setColor(GREEN_SEA);
 
-	std::string st;
-	if (_playSave->isGlobeDetail() == true)
-		st = "STR_ON_UC";
-	else
-		st = "STR_OFF_UC";
-	_txtLabels->setText(tr("STR_LABELS_").arg(tr(st)));
 
+	std::string st;
 	switch (_playSave->getRadarDetail())
 	{
 		case GRD_NONE:	st = "STR_RADARS_NONE_UC";	break;
@@ -869,6 +867,14 @@ GeoscapeState::GeoscapeState()
 		case GRD_ALL:	st = "STR_RADARS_ALL_UC";
 	}
 	_txtRadars->setText(tr("STR_RADARS_").arg(tr(st)));
+
+	if (_playSave->isGlobeDetail() == true)
+		st = "STR_ON_UC";
+	else
+		st = "STR_OFF_UC";
+	_txtLabels->setText(tr("STR_LABELS_").arg(tr(st)));
+
+	_txtZoom->setText(tr("STR_ZOOM_").arg(Text::intWide(static_cast<int>(_playSave->getGlobeZoom()))));
 
 
 	_timerGeo->onTimer(static_cast<StateHandler>(&GeoscapeState::timeAdvance));
@@ -3538,7 +3544,9 @@ void GeoscapeState::btnRotateStop(Action*)
  */
 void GeoscapeState::btnZoomInLeftClick(Action*)
 {
+	Log(LOG_INFO) << "GeoscapeState::btnZoomInLeftClick()";
 	_globe->zoomIn();
+	updateZoomText();
 }
 
 /**
@@ -3547,7 +3555,17 @@ void GeoscapeState::btnZoomInLeftClick(Action*)
  */
 void GeoscapeState::btnZoomOutLeftClick(Action*)
 {
+	Log(LOG_INFO) << "GeoscapeState::btnZoomOutLeftClick()";
 	_globe->zoomOut();
+	updateZoomText();
+}
+
+/**
+ * Updates the zoom-text in the lower left corner of the screen.
+ */
+void GeoscapeState::updateZoomText()
+{
+	_txtZoom->setText(tr("STR_ZOOM_").arg(Text::intWide(static_cast<int>(_playSave->getGlobeZoom()))));
 }
 
 /**

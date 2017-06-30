@@ -305,6 +305,7 @@ struct CreateTerminator
 /**
  * Sets up the Globe with a specified size and position.
  * @param game		- pointer to the core Game
+ * @param geoState	- pointer to the GeoscapeState
  * @param cenX		- x-position of the center of the globe
  * @param cenY		- y-position of the center of the globe
  * @param width		- width in pixels
@@ -314,6 +315,7 @@ struct CreateTerminator
  */
 Globe::Globe(
 		Game* const game,
+		GeoscapeState* const geoState,
 		int cenX,
 		int cenY,
 		int width,
@@ -326,6 +328,7 @@ Globe::Globe(
 				height,
 				x,y),
 		_game(game),
+		_geoState(geoState),
 		_playSave(game->getSavedGame()),
 		_globeRule(game->getRuleset()->getGlobe()),
 		_rotLon(0.),
@@ -346,8 +349,8 @@ Globe::Globe(
 		_radius(0.),
 		_radiusStep(0.),
 		_debugType(DTG_COUNTRY),
-		_globeDetail(game->getSavedGame()->isGlobeDetail()),
 		_radarDetail(game->getSavedGame()->getRadarDetail()),
+		_globeDetail(game->getSavedGame()->isGlobeDetail()),
 		_blink(true),
 		_blinkVal(-1),
 		_drawCrosshair(false),
@@ -817,7 +820,9 @@ void Globe::setZoom(size_t level) // private.
 	// hard-coded to see things that way.
 
 	_radius = _radii[_zoom];
+
 	_playSave->setGlobeZoom(_zoom);
+	_geoState->updateZoomText();
 
 	_redraw = true;
 }
@@ -2632,42 +2637,45 @@ void Globe::mouseClick(Action* action, State* state)
 	switch (btnId)
 	{
 		case SDL_BUTTON_WHEELUP:	zoomIn();	return;
-		case SDL_BUTTON_WHEELDOWN:	zoomOut();	return; // i think these can return;
-	}
+		case SDL_BUTTON_WHEELDOWN:	zoomOut();	return;
 
-	double
-		lon,lat;
-	cartToPolar(
-			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
-			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
-			&lon,&lat);
-
-	// NOTE: mousePress() inititates drag-scrolling and this mouseClick() acts as a *release*
-	if (_dragScroll == true) // dragScroll-button release: release mouse-scroll-mode
-	{
-		if (btnId != Options::geoDragScrollButton) return; // other buttons are ineffective while scrolling
-
-		_dragScroll = false;
-
-		// Check if the scrolling should be revoked because it was too short in time/distance and hence was a click.
-		if (_dragScrollPastThreshold == false
-			&& SDL_GetTicks() - _dragScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+		default:
 		{
-			_dragScrollStepDone = false;
-			center(
-				_dragScrollLon,
-				_dragScrollLat);
+			double
+				lon,lat;
+			cartToPolar(
+					static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+					static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
+					&lon,&lat);
+
+			// NOTE: mousePress() inititates drag-scrolling and this mouseClick() acts as a *release*
+			if (_dragScroll == true) // dragScroll-button release: release mouse-scroll-mode
+			{
+				if (btnId != Options::geoDragScrollButton) return; // other buttons are ineffective while scrolling
+
+				_dragScroll = false;
+
+				// Check if the scrolling should be revoked because it was too short in time/distance and hence was a click.
+				if (_dragScrollPastThreshold == false
+					&& SDL_GetTicks() - _dragScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+				{
+					_dragScrollStepDone = false;
+					center(
+						_dragScrollLon,
+						_dragScrollLat);
+				}
+
+				if (_dragScrollStepDone == true) return;
+			}
+
+			if (isNaNorInf(lon,lat) == false)
+			{
+				InteractiveSurface::mouseClick(action, state);
+
+				if (btnId == SDL_BUTTON_RIGHT)
+					center(lon,lat);
+			}
 		}
-
-		if (_dragScrollStepDone == true) return;
-	}
-
-	if (isNaNorInf(lon,lat) == false)
-	{
-		InteractiveSurface::mouseClick(action, state);
-
-		if (btnId == SDL_BUTTON_RIGHT)
-			center(lon,lat);
 	}
 }
 

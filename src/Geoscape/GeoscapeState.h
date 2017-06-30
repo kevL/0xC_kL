@@ -145,6 +145,7 @@ private:
 		* _txtMonth,
 		* _txtYear,
 
+		* _txtZoom,
 		* _txtRadars,
 		* _txtLabels,
 
@@ -300,6 +301,10 @@ private:
 		void btnZoomInLeftClick(Action* action);
 		/// Handler for left-clicking the Zoom Out icon.
 		void btnZoomOutLeftClick(Action* action);
+
+		/// Updates the zoom-text in the lower left corner of the screen.
+		void updateZoomText();
+
 		/// Handler for right-clicking the Zoom In icon.
 //		void btnZoomInRightClick(Action* action);
 		/// Handler for right-clicking the Zoom Out icon.

@@ -653,6 +653,7 @@ void SavedGame::load(
 		_battleSave->load(battle, rules);
 		Log(LOG_INFO) << "SavedGame: loading tactical DONE";
 	}
+	Log(LOG_INFO) << "SavedGame loaded!";
 }
 
 /**
