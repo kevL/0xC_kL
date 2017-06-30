@@ -874,8 +874,6 @@ GeoscapeState::GeoscapeState()
 		st = "STR_OFF_UC";
 	_txtLabels->setText(tr("STR_LABELS_").arg(tr(st)));
 
-	_txtZoom->setText(tr("STR_ZOOM_").arg(Text::intWide(static_cast<int>(_playSave->getGlobeZoom()))));
-
 
 	_timerGeo->onTimer(static_cast<StateHandler>(&GeoscapeState::timeAdvance));
 	_timerGeo->start();
@@ -3544,7 +3542,6 @@ void GeoscapeState::btnRotateStop(Action*)
  */
 void GeoscapeState::btnZoomInLeftClick(Action*)
 {
-	Log(LOG_INFO) << "GeoscapeState::btnZoomInLeftClick()";
 	_globe->zoomIn();
 	updateZoomText();
 }
@@ -3555,7 +3552,6 @@ void GeoscapeState::btnZoomInLeftClick(Action*)
  */
 void GeoscapeState::btnZoomOutLeftClick(Action*)
 {
-	Log(LOG_INFO) << "GeoscapeState::btnZoomOutLeftClick()";
 	_globe->zoomOut();
 	updateZoomText();
 }
