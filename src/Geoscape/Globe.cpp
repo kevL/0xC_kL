@@ -2636,8 +2636,8 @@ void Globe::mouseClick(Action* action, State* state)
 	const Uint8 btnId (action->getDetails()->button.button);
 	switch (btnId)
 	{
-		case SDL_BUTTON_WHEELUP:	zoomIn();	return;
-		case SDL_BUTTON_WHEELDOWN:	zoomOut();	return;
+		case SDL_BUTTON_WHEELUP:	zoomIn();	break;
+		case SDL_BUTTON_WHEELDOWN:	zoomOut();	break;
 
 		default:
 		{

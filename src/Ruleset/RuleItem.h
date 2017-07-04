@@ -162,8 +162,6 @@ private:
 		_fullClip,
 		_waypoint,
 
-		_acuCrouch,
-
 		_accuracyAimed,
 		_accuracyAuto,
 		_accuracyMelee,
@@ -191,7 +189,10 @@ private:
 		_handSprite,
 		_bulletSprite;
 
-	double _size;
+	double
+		_size,
+		_acuCrouch;
+
 
 	std::string
 		_label, // two types of objects can have the same label

@@ -25,6 +25,8 @@
 #include "BattlescapeGame.h"
 #include "Position.h"
 
+#include "../Engine/Surface.h"
+
 #include "../Ruleset/MapData.h"
 
 

@@ -92,7 +92,7 @@ Projectile::Projectile(
 		{
 			case BA_THROW:
 				_throwSprite = res->getSurfaceSet("FLOOROB.PCK")->getFrame(_action.weapon->getRules()->getFloorSprite());
-				_speed = Options::battleThrowSpeed; // this is the distance in pixels that the sprite will move between frames
+				_speed = Options::battleThrowSpeed; // this is the distance in pixels that the sprite will move between slices
 				break;
 
 //			default: // ba_SHOOT!! or hit, or spit
@@ -186,7 +186,7 @@ VoxelType Projectile::calculateShot(
 {
 	//Log(LOG_INFO) << "Projectile::calculateShot() accuracy = " << accuracy;
 	// test for LoF
-	if (_action.actor->getFaction() == FACTION_PLAYER // aLiens don't even get in here!
+	if (_action.actor->getFaction() == FACTION_PLAYER // aLiens don't get in here!
 		&& _action.autoShotCount == 1
 		&& _action.type != BA_LAUNCH
 		&& _battleSave->getBattleGame()->playerPanicHandled() == true
