@@ -1355,7 +1355,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 					// end unconscious soldier icon.
 
 // re-Draw unitBelow if it is on raised ground (on tileBelow) & there is no Floor.
-					if (itZ > 0 && _tile->isFloored(tileBelow) == false)
+					if (itZ > 0 && _tile->isFloored(tileBelow) == false
+						&& _camera->getShowLayers() == false) // tentative. Can't remember why a unit should be redrawn here.
 					{
 						const int tLevel (tileBelow->getTerrainLevel());
 						if (tLevel < 0) // probly more like -4 or -8

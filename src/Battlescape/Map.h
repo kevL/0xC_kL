@@ -161,6 +161,7 @@ private:
 			int offset_x,
 			int offset_y,
 			bool tLevel = true);
+
 	/// Checks if a southwesterly wall should suppress unit-sprite drawing.
 	bool checkWest(
 			const Tile* const tile6,
@@ -258,7 +259,7 @@ private:
 		/// Gets the projectile.
 		Projectile* getProjectile() const;
 
-		/// Gets any explosion set.
+		/// Gets the Explosion queue.
 		std::list<Explosion*>* getExplosions();
 
 		/// Gets a pointer to the Camera.

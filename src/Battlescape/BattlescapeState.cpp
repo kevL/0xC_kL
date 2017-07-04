@@ -3431,9 +3431,9 @@ void BattlescapeState::cycleHostileIcons(BattleUnit* const selUnit) // private.
 {
 	static int
 		delta		  (1),
-		colorRed	 (34), // currently selected unit sees other unit
-		colorBlue	(114), // another unit can see other unit
-		color_border (15); // very.dark.gray
+		colorRed	 (36), // currently selected unit sees other unit
+		colorBlue	(116), // another unit can see other unit
+		color_border (13); // very.dark.gray
 
 	Uint8 color;
 	bool isSpotted;
@@ -3499,7 +3499,7 @@ void BattlescapeState::cycleHostileIcons(BattleUnit* const selUnit) // private.
 
 	switch (colorRed)
 	{
-		case 34: delta = +1; break;
+		case 36: delta = +1; break;
 		case 45: delta = -1;
 	}
 
