@@ -2690,8 +2690,14 @@ void Globe::keyboardPress(Action* action, State* state)
 
 	const SDLKey key (action->getDetails()->key.keysym.sym);
 
-	if		(key == Options::keyGeoToggleDetail) toggleDetail();
-	else if	(key == Options::keyGeoToggleRadar)  changeRadars();
+	if (key == Options::keyGeoToggleDetail)
+	{
+		_geoState->printDetailInfo(toggleDetail());
+	}
+	else if (key == Options::keyGeoToggleRadar)
+	{
+		_geoState->printRadarInfo(changeRadars());
+	}
 }
 
 /**

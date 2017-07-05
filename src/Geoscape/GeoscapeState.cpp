@@ -3410,27 +3410,46 @@ void GeoscapeState::btnFundingClick(Action*)
  */
 void GeoscapeState::btnDetailPress(Action* action)
 {
-	std::string st;
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
-			if (_globe->toggleDetail() == true)
-				st = "STR_ON_UC";
-			else
-				st = "STR_OFF_UC";
-			_txtLabels->setText(tr("STR_LABELS_").arg(tr(st)));
+			printDetailInfo(_globe->toggleDetail());
 			break;
 
 		case SDL_BUTTON_RIGHT:
-			switch (_globe->changeRadars())
-			{
-				case GRD_NONE:	st = "STR_RADARS_NONE_UC";	break;
-				case GRD_CRAFT:	st = "STR_RADARS_CRAFT_UC";	break;
-				case GRD_BASE:	st = "STR_RADARS_BASE_UC";	break;
-				case GRD_ALL:	st = "STR_RADARS_ALL_UC";
-			}
-			_txtRadars->setText(tr("STR_RADARS_").arg(tr(st)));
+			printRadarInfo(_globe->changeRadars());
 	}
+}
+
+/**
+ * Updates the detail-info.
+ */
+void GeoscapeState::printDetailInfo(bool detail)
+{
+	std::string st;
+	if (detail == true)
+		st = "STR_ON_UC";
+	else
+		st = "STR_OFF_UC";
+
+	_txtLabels->setText(tr("STR_LABELS_").arg(tr(st)));
+}
+
+/**
+ * Updates the radar-info.
+ */
+void GeoscapeState::printRadarInfo(GlobeRadarDetail radars)
+{
+	std::string st;
+	switch (radars)
+	{
+		case GRD_NONE:	st = "STR_RADARS_NONE_UC";	break;
+		case GRD_CRAFT:	st = "STR_RADARS_CRAFT_UC";	break;
+		case GRD_BASE:	st = "STR_RADARS_BASE_UC";	break;
+		case GRD_ALL:	st = "STR_RADARS_ALL_UC";
+	}
+
+	_txtRadars->setText(tr("STR_RADARS_").arg(tr(st)));
 }
 
 /**

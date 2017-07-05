@@ -1693,7 +1693,7 @@ inline void BattlescapeState::handle(Action* action)
 				else if (action->getDetails()->key.keysym.sym == SDLK_F10)					// f10 - voxel-map dump. - from above^ TODO: Put in Options.
 				{
 					beep = true;
-					saveVoxelMap();
+					saveVoxelMaps();
 				}
 				else if (_playSave->isIronman() == false)
 				{
@@ -4415,212 +4415,9 @@ void BattlescapeState::requestAutosave()
 }
 
 /**
- * Saves a map as used by the AI.
- */
-void BattlescapeState::saveAIMap()
-{
-	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
-	if (selUnit == nullptr)
-		return;
-
-	int
-		w (_battleSave->getMapSizeX()),
-		h (_battleSave->getMapSizeY());
-
-	SDL_Surface* const img (SDL_AllocSurface(
-										0u,
-										w << 3u, h << 3u, 24,
-										0xffu,
-										0xff00u,
-										0xff0000u,
-										0u));
-	std::memset(
-			img->pixels,
-			0,
-			static_cast<size_t>(img->pitch * static_cast<Uint16>(img->h)));
-
-	Position posTile (selUnit->getPosition());
-
-	SDL_Rect rect;
-	rect.h =
-	rect.w = 8u;
-
-	const Tile* tile;
-	const BattleUnit* unit;
-	for (int
-			y = 0;
-			y != h;
-			++y)
-	{
-		posTile.y = y;
-		for (int
-				x = 0;
-				x != w;
-				++x)
-		{
-			posTile.x = x;
-			tile = _battleSave->getTile(posTile);
-
-			if (tile == nullptr || tile->isRevealed() == false)
-				continue;
-
-			rect.x = static_cast<Sint16>(x * static_cast<int>(rect.w));
-			rect.y = static_cast<Sint16>(y * static_cast<int>(rect.h));
-
-			if (tile->getTuCostTile(O_FLOOR, MT_FLY) != 255
-				&& tile->getTuCostTile(O_OBJECT, MT_FLY) != 255)
-			{
-				SDL_FillRect(
-						img,
-						&rect,
-						SDL_MapRGB(
-								img->format,
-								255u,
-								0u,
-								0x20u));
-				characterRGBA(
-						img,
-						rect.x, rect.y,
-						'*',
-						0x7fu,
-						0x7fu,
-						0x7fu,
-						0x7fu);
-			}
-			else
-			{
-				if (tile->getTileUnit() == nullptr)
-					SDL_FillRect(
-							img,
-							&rect,
-							SDL_MapRGB(
-									img->format,
-									0x50u,
-									0x50u,
-									0x50u)); // gray for blocked tile
-			}
-
-			for (int
-					z = posTile.z;
-					z >= 0;
-					--z)
-			{
-				Position pos(
-							posTile.x,
-							posTile.y,
-							z);
-
-				tile = _battleSave->getTile(pos);
-				unit = tile->getTileUnit();
-				if (unit != nullptr)
-				{
-					switch (unit->getFaction())
-					{
-						case FACTION_HOSTILE:
-							characterRGBA(
-										img,
-										rect.x, rect.y,
-										(posTile.z - z) ? 'a' : 'A',
-										0x40u, // #4080C0 is Volutar Blue. CONGRATULATIONz!!!
-										0x80u,
-										0xC0u,
-										0xffu);
-							break;
-						case FACTION_PLAYER:
-							characterRGBA(
-										img,
-										rect.x, rect.y,
-										(posTile.z - z) ? 'x' : 'X',
-										255u,
-										255u,
-										127u,
-										0xffu);
-							break;
-						case FACTION_NEUTRAL:
-							characterRGBA(
-										img,
-										rect.x, rect.y,
-										(posTile.z - z) ? 'c' : 'C',
-										255u,
-										127u,
-										127u,
-										0xffu);
-					}
-					break;
-				}
-
-				--pos.z;
-				if (z > 0 && tile->isFloored(_battleSave->getTile(pos)) == true)
-					break; // no seeing through floors
-			}
-
-			if (   tile->getMapData(O_NORTHWALL) != nullptr
-				&& tile->getMapData(O_NORTHWALL)->getTuCostPart(MT_FLY) == 255)
-			{
-				lineRGBA(
-						img,
-						rect.x, rect.y,
-						static_cast<Sint16>(rect.x + rect.w),
-						rect.y,
-						0x50u,
-						0x50u,
-						0x50u,
-						255u);
-			}
-
-			if (   tile->getMapData(O_WESTWALL) != nullptr
-				&& tile->getMapData(O_WESTWALL)->getTuCostPart(MT_FLY) == 255)
-			{
-				lineRGBA(
-						img,
-						rect.x, rect.y,
-						rect.x,
-						static_cast<Sint16>(rect.y + rect.h),
-						0x50u,
-						0x50u,
-						0x50u,
-						255u);
-			}
-		}
-	}
-
-	std::ostringstream oststr;
-
-	oststr.str("");
-	oststr << "z = " << posTile.z;
-	stringRGBA(
-			img,
-			12,12,
-			oststr.str().c_str(),
-			0u,0u,0u,
-			0x7fu);
-
-	int i (0);
-	do
-	{
-		oststr.str("");
-		oststr << Options::getUserFolder() << "AIExposure" << std::setfill('0') << std::setw(3) << i << ".png";
-		++i;
-	}
-	while (CrossPlatform::fileExists(oststr.str()));
-
-
-	unsigned error (lodepng::encode(
-								oststr.str(),
-								static_cast<const unsigned char*>(img->pixels),
-								static_cast<unsigned>(img->w),
-								static_cast<unsigned>(img->h),
-								LCT_RGB));
-	if (error != 0u)
-		Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
-
-	SDL_FreeSurface(img);
-}
-
-/**
  * Saves a first-person voxel-view of the battlefield.
  */
-void BattlescapeState::saveVoxelView()
+void BattlescapeState::saveVoxelView() // private.
 {
 	static const unsigned char pal[30u]
 	{
@@ -4886,7 +4683,7 @@ void BattlescapeState::saveVoxelView()
 /**
  * Saves each layer of voxels on the battlefield as a png.
  */
-void BattlescapeState::saveVoxelMap()
+void BattlescapeState::saveVoxelMaps() // private.
 {
 	std::ostringstream oststr;
 	std::vector<unsigned char> image;
@@ -4987,6 +4784,209 @@ void BattlescapeState::saveVoxelMap()
 		if (error != 0u)
 			Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
 	}
+
+}
+
+/**
+ * Saves a map as used by the AI.
+ */
+void BattlescapeState::saveAIMap() // private.
+{
+	const BattleUnit* const selUnit (_battleSave->getSelectedUnit());
+	if (selUnit == nullptr)
+		return;
+
+	int
+		w (_battleSave->getMapSizeX()),
+		h (_battleSave->getMapSizeY());
+
+	SDL_Surface* const img (SDL_AllocSurface(
+										0u,
+										w << 3u, h << 3u, 24,
+										0x0000ffu,
+										0x00ff00u,
+										0xff0000u,
+										0u));
+	std::memset(
+			img->pixels,
+			0,
+			static_cast<size_t>(img->pitch * static_cast<Uint16>(img->h)));
+
+	Position posTile (selUnit->getPosition());
+
+	SDL_Rect rect;
+	rect.h =
+	rect.w = 8u;
+
+	const Tile* tile;
+	const BattleUnit* unit;
+	for (int
+			y = 0;
+			y != h;
+			++y)
+	{
+		posTile.y = y;
+		for (int
+				x = 0;
+				x != w;
+				++x)
+		{
+			posTile.x = x;
+
+			if ((tile = _battleSave->getTile(posTile)) != nullptr && tile->isRevealed() == true)
+			{
+				rect.x = static_cast<Sint16>(x * static_cast<int>(rect.w));
+				rect.y = static_cast<Sint16>(y * static_cast<int>(rect.h));
+
+				if (tile->getTuCostTile(O_FLOOR, MT_FLY) != 255
+					&& tile->getTuCostTile(O_OBJECT, MT_FLY) != 255)
+				{
+					SDL_FillRect(
+							img,
+							&rect,
+							SDL_MapRGB(
+									img->format,
+									255u,
+									0u,
+									0x20u));
+					characterRGBA(
+							img,
+							rect.x, rect.y,
+							'*',
+							0x7fu,
+							0x7fu,
+							0x7fu,
+							0x7fu);
+				}
+				else
+				{
+					if (tile->getTileUnit() == nullptr)
+						SDL_FillRect(
+								img,
+								&rect,
+								SDL_MapRGB(
+										img->format,
+										0x50u,
+										0x50u,
+										0x50u)); // gray for blocked tile
+				}
+
+				for (int
+						z = posTile.z;
+						z >= 0;
+						--z)
+				{
+					Position pos(
+								posTile.x,
+								posTile.y,
+								z);
+
+					tile = _battleSave->getTile(pos);
+					unit = tile->getTileUnit();
+					if (unit != nullptr)
+					{
+						switch (unit->getFaction())
+						{
+							case FACTION_HOSTILE:
+								characterRGBA(
+											img,
+											rect.x, rect.y,
+											(posTile.z - z) ? 'a' : 'A',
+											0x40u, // #4080C0 is Volutar Blue. CONGRATULATIONz!!!
+											0x80u,
+											0xC0u,
+											0xffu);
+								break;
+							case FACTION_PLAYER:
+								characterRGBA(
+											img,
+											rect.x, rect.y,
+											(posTile.z - z) ? 'x' : 'X',
+											255u,
+											255u,
+											127u,
+											0xffu);
+								break;
+							case FACTION_NEUTRAL:
+								characterRGBA(
+											img,
+											rect.x, rect.y,
+											(posTile.z - z) ? 'c' : 'C',
+											255u,
+											127u,
+											127u,
+											0xffu);
+						}
+						break;
+					}
+
+					--pos.z;
+					if (z > 0 && tile->isFloored(_battleSave->getTile(pos)) == true)
+						break; // no seeing through floors
+				}
+
+				if (   tile->getMapData(O_NORTHWALL) != nullptr
+					&& tile->getMapData(O_NORTHWALL)->getTuCostPart(MT_FLY) == 255)
+				{
+					lineRGBA(
+							img,
+							rect.x, rect.y,
+							static_cast<Sint16>(rect.x + rect.w),
+							rect.y,
+							0x50u,
+							0x50u,
+							0x50u,
+							255u);
+				}
+
+				if (   tile->getMapData(O_WESTWALL) != nullptr
+					&& tile->getMapData(O_WESTWALL)->getTuCostPart(MT_FLY) == 255)
+				{
+					lineRGBA(
+							img,
+							rect.x, rect.y,
+							rect.x,
+							static_cast<Sint16>(rect.y + rect.h),
+							0x50u,
+							0x50u,
+							0x50u,
+							255u);
+				}
+			}
+		}
+	}
+
+	std::ostringstream oststr;
+
+	oststr.str("");
+	oststr << "z = " << posTile.z;
+	stringRGBA(
+			img,
+			12,12,
+			oststr.str().c_str(),
+			0u,0u,0u,
+			0x7fu);
+
+	int i (0);
+	do
+	{
+		oststr.str("");
+		oststr << Options::getUserFolder() << "AIExposure" << std::setfill('0') << std::setw(3) << i << ".png";
+		++i;
+	}
+	while (CrossPlatform::fileExists(oststr.str()));
+
+
+	unsigned error (lodepng::encode(
+								oststr.str(),
+								static_cast<const unsigned char*>(img->pixels),
+								static_cast<unsigned>(img->w),
+								static_cast<unsigned>(img->h),
+								LCT_RGB));
+	if (error != 0u)
+		Log(LOG_ERROR) << "Saving to PNG failed: " << lodepng_error_text(error);
+
+	SDL_FreeSurface(img);
 }
 
 /**

@@ -24,6 +24,7 @@
 
 #include "../Engine/State.h"
 
+#include "../Savegame/SavedGame.h"
 
 namespace OpenXcom
 {
@@ -271,6 +272,10 @@ private:
 
 		/// Handler for clicking the Detail area.
 		void btnDetailPress(Action* action);
+		/// Updates the detail-info.
+		void printDetailInfo(bool detail);
+		/// Updates the radar-info.
+		void printRadarInfo(GlobeRadarDetail radars);
 
 		/// Handler for pressing the Rotate Left arrow.
 		void btnRotateLeftPress(Action* action);

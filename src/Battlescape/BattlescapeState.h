@@ -252,6 +252,13 @@ private:
 	/// Updates tile-info for mouse-overs.
 	void updateTileInfo(const Tile* const tile);
 
+	/// Saves a first-person voxel view of the battlescape.
+	void saveVoxelView();
+	/// Saves each layer of voxels on the battlescape as a png.
+	void saveVoxelMaps();
+	/// Saves a map as used by the AI.
+	void saveAIMap();
+
 
 	public:
 		static const Uint32
@@ -501,13 +508,6 @@ private:
 
 		/// Autosave next turn.
 		void requestAutosave();
-
-		/// Saves a map as used by the AI.
-		void saveAIMap();
-		/// Saves each layer of voxels on the bettlescape as a png.
-		void saveVoxelMap();
-		/// Saves a first-person voxel view of the battlescape.
-		void saveVoxelView();
 
 		/// Handler for clicking a reserved button.
 //		void btnReserveClick(Action* action);
