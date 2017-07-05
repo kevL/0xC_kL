@@ -2843,18 +2843,14 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 		_numTimeUnits	->setVisible(false);
 		_barTimeUnits	->setVisible(false);
-		_barTimeUnits	->setVisible(false);
 
 		_numEnergy		->setVisible(false);
-		_barEnergy		->setVisible(false);
 		_barEnergy		->setVisible(false);
 
 		_numHealth		->setVisible(false);
 		_barHealth		->setVisible(false);
-		_barHealth		->setVisible(false);
 
 		_numMorale		->setVisible(false);
-		_barMorale		->setVisible(false);
 		_barMorale		->setVisible(false);
 
 		return;
@@ -2865,18 +2861,14 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 	_numTimeUnits	->setVisible();
 	_barTimeUnits	->setVisible();
-	_barTimeUnits	->setVisible();
 
 	_numEnergy		->setVisible();
-	_barEnergy		->setVisible();
 	_barEnergy		->setVisible();
 
 	_numHealth		->setVisible();
 	_barHealth		->setVisible();
-	_barHealth		->setVisible();
 
 	_numMorale		->setVisible();
-	_barMorale		->setVisible();
 	_barMorale		->setVisible();
 
 

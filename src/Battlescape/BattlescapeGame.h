@@ -266,6 +266,9 @@ private:
 	/// Common function for handling panicking units.
 	bool handlePanickingUnit(BattleUnit* const unit);
 
+	/// Updates the Tu field and bar.
+	void updateTuInfo(const BattleUnit* const unit);
+
 	/// Collects data about attacker for SoldierDiary.
 	void diaryAttacker(
 			const BattleUnit* const attacker,

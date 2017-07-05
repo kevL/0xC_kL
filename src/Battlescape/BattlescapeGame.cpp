@@ -432,7 +432,10 @@ void BattlescapeGame::popBattleState()
 
 					case BA_USE:
 						if (action.weapon->getRules()->getBattleType() == BT_MINDPROBE)
+						{
+							//Log(LOG_INFO) << ". . . BA_USE Mindprobe - call cancelTacticalAction()";
 							cancelTacticalAction(true);
+						}
 				}
 			}
 		}
@@ -473,6 +476,7 @@ void BattlescapeGame::popBattleState()
 						if (action.targeting == true
 							&& _battleSave->getSelectedUnit() != nullptr)
 						{
+							//Log(LOG_INFO) << ". . is Targeting -> expend TU= " << action.TU;
 							//Log(LOG_INFO) << ". . id-" << action.actor->getId() << " tu= " << action.actor->getTu();
 							action.actor->expendTu(action.TU);
 							// kL_query: Does this happen **before** ReactionFire/getReactor()?
@@ -483,7 +487,7 @@ void BattlescapeGame::popBattleState()
 
 							if (_battleSave->getSide() == FACTION_PLAYER) // is NOT reaction-fire
 							{
-								//Log(LOG_INFO) << ". side -> Faction_Player";
+								//Log(LOG_INFO) << ". . . side -> Faction_Player";
 								// After throwing the cursor returns to default cursor;
 								// after shooting it stays in targeting mode and the player
 								// can shoot again in the same mode (autoshot/snap/aimed)
@@ -499,6 +503,7 @@ void BattlescapeGame::popBattleState()
 																							action.type,
 																							action.weapon))
 										{
+											//Log(LOG_INFO) << ". . . . PSI or MindProbe: not enough TU for another action of the same type - call cancelTacticalAction()";
 											cancelTacticalAction(true); // NOTE: Not sure if these needs to be 'forced' ->
 										}
 										break;
@@ -507,6 +512,7 @@ void BattlescapeGame::popBattleState()
 //										_playerAction.waypoints.clear(); // NOTE: Done in ProjectileFlyBState::think() to account for a unit dying in its own blast.
 										// no break;
 									case BA_THROW:
+										//Log(LOG_INFO) << ". . . . THROW: not enough TU for another action of the same type - call cancelTacticalAction()";
 										cancelTacticalAction(true);
 										break;
 
@@ -518,6 +524,7 @@ void BattlescapeGame::popBattleState()
 																								action.type,
 																								action.weapon))
 										{
+											//Log(LOG_INFO) << ". . . . SHOT: not enough TU for another action of the same type - call cancelTacticalAction()";
 											cancelTacticalAction(true);
 										}
 								}
@@ -2641,6 +2648,9 @@ bool BattlescapeGame::isBusy() const
  */
 void BattlescapeGame::primaryAction(const Position& pos)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeGame::primaryAction()";
+
 	BattleUnit* const targetUnit (_battleSave->getTile(pos)->getTileUnit());
 
 	_playerAction.actor = _battleSave->getSelectedUnit();
@@ -2660,47 +2670,51 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				break;
 
 			case BA_USE:
-				if (_playerAction.weapon->getRules()->getBattleType() == BT_MINDPROBE)
+				//Log(LOG_INFO) << ". BA_USE";
+				if (_playerAction.weapon->getRules()->getBattleType() == BT_MINDPROBE
+					&& targetUnit != nullptr
+					&& targetUnit->getFaction() != _playerAction.actor->getFaction()
+					&& targetUnit->getUnitVisible() == true)
 				{
-					if (targetUnit != nullptr
-						&& targetUnit->getFaction() != _playerAction.actor->getFaction()
-						&& targetUnit->getUnitVisible() == true)
+					//Log(LOG_INFO) << ". . is MindProbe";
+					if (TileEngine::distance(
+										_playerAction.actor->getPosition(),
+										_playerAction.posTarget) <= _playerAction.weapon->getRules()->getMaxRange())
 					{
-						if (_playerAction.actor->expendTu(_playerAction.TU) == true)
+						if (_playerAction.weapon->getRules()->isLosRequired() == false
+							|| std::find(
+									_playerAction.actor->getHostileUnits().begin(),
+									_playerAction.actor->getHostileUnits().end(),
+									targetUnit) != _playerAction.actor->getHostileUnits().end())
 						{
-							if (_playerAction.weapon->getRules()->isLosRequired() == false
-								|| std::find(
-										_playerAction.actor->getHostileUnits().begin(),
-										_playerAction.actor->getHostileUnits().end(),
-										targetUnit) != _playerAction.actor->getHostileUnits().end())
+							if (_playerAction.actor->expendTu(_playerAction.TU) == true)
 							{
-								if (TileEngine::distance(
-													_playerAction.actor->getPosition(),
-													_playerAction.posTarget) <= _playerAction.weapon->getRules()->getMaxRange())
-								{
-										const int soundId (_playerAction.weapon->getRules()->getFireHitSound());
-										if (soundId != -1)
-											getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-																->play(-1, getMap()->getSoundAngle(pos));
+								//Log(LOG_INFO) << ". . . expend TU= " << _playerAction.TU;
+								const int soundId (_playerAction.weapon->getRules()->getFireHitSound());
+								if (soundId != -1)
+									getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+														->play(-1, getMap()->getSoundAngle(pos));
 
-										_battleState->getGame()->pushState(new UnitInfoState(
-																						targetUnit,
-																						_battleState,
-																						false, true));
-										_battleState->getGame()->getScreen()->fadeScreen();
-								}
-								else
-									_battleState->warning(BattlescapeGame::PLAYER_ERROR[5u]); // out of range
+								_battleState->getGame()->pushState(new UnitInfoState(
+																				targetUnit,
+																				_battleState,
+																				false, true));
+								_battleState->getGame()->getScreen()->fadeScreen();
+
+								updateTuInfo(_playerAction.actor);
 							}
 							else
-								_battleState->warning(BattlescapeGame::PLAYER_ERROR[6u]); // no LoF
+							{
+								//Log(LOG_INFO) << ". . . not enough TU= " << _playerAction.TU << " - call cancelTacticalAction";
+								cancelTacticalAction();
+								_battleState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
+							}
 						}
 						else
-						{
-							cancelTacticalAction();
-							_battleState->warning(BattlescapeGame::PLAYER_ERROR[0u]); // no TU
-						}
+							_battleState->warning(BattlescapeGame::PLAYER_ERROR[6u]); // no LoF
 					}
+					else
+						_battleState->warning(BattlescapeGame::PLAYER_ERROR[5u]); // out of range
 				}
 				break;
 
@@ -2735,26 +2749,26 @@ void BattlescapeGame::primaryAction(const Position& pos)
 												_playerAction.actor->getPosition(),
 												_playerAction.posTarget) <= _playerAction.weapon->getRules()->getMaxRange())
 							{
-									_playerAction.posCamera = Position(0,0,-1);
+								_playerAction.posCamera = Position(0,0,-1);
 
-									stateBPushBack(new ProjectileFlyBState(this, _playerAction)); // TODO: Clear out the redundancy that occurs in ProjFlyB::init().
+								stateBPushBack(new ProjectileFlyBState(this, _playerAction)); // TODO: Clear out the redundancy that occurs in ProjFlyB::init().
 
-									if (getTileEngine()->psiAttack(&_playerAction) == true)
+								if (getTileEngine()->psiAttack(&_playerAction) == true)
+								{
+									std::string st;
+									switch (_playerAction.type)
 									{
-										std::string st;
-										switch (_playerAction.type)
-										{
-											default:
-											case BA_PSIPANIC:	st = "STR_PSI_PANIC_SUCCESS";	break;
-											case BA_PSICONTROL:	st = "STR_PSI_CONTROL_SUCCESS";	break;
-											case BA_PSICONFUSE:	st = "STR_PSI_CONFUSE_SUCCESS";	break;
-											case BA_PSICOURAGE:	st = "STR_PSI_COURAGE_SUCCESS";
-										}
-										Game* const game (_battleState->getGame());
-										game->pushState(new InfoboxState(game->getLanguage()->getString(st).arg(_playerAction.value)));
-
-										_battleState->updateSoldierInfo(false);
+										default:
+										case BA_PSIPANIC:	st = "STR_PSI_PANIC_SUCCESS";	break;
+										case BA_PSICONTROL:	st = "STR_PSI_CONTROL_SUCCESS";	break;
+										case BA_PSICONFUSE:	st = "STR_PSI_CONFUSE_SUCCESS";	break;
+										case BA_PSICOURAGE:	st = "STR_PSI_COURAGE_SUCCESS";
 									}
+									Game* const game (_battleState->getGame());
+									game->pushState(new InfoboxState(game->getLanguage()->getString(st).arg(_playerAction.value)));
+
+									updateTuInfo(_playerAction.actor);
+								}
 							}
 							else
 								_battleState->warning(BattlescapeGame::PLAYER_ERROR[5u]); // out of range
@@ -2901,11 +2915,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 						_playerAction.actor->setCacheInvalid();
 						_battleState->getMap()->cacheUnitSprite(_playerAction.actor);
 
-						double stat (static_cast<double>(_playerAction.actor->getBattleStats()->tu));
-						const int tu (_playerAction.actor->getTu());
-						_battleState->getTuField()->setValue(static_cast<unsigned>(tu));
-						_battleState->getTuBar()->setValue(std::ceil(
-														   static_cast<double>(tu) / stat * 100.));
+						updateTuInfo(_playerAction.actor);
 					}
 					else
 						_battleState->warning(BattlescapeGame::PLAYER_ERROR[0u]);
@@ -2924,6 +2934,19 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			}
 		}
 	}
+}
+
+/**
+ * Updates the Tu field and bar for the currently selected unit.
+ * @param unit - pointer to a BattleUnit
+ */
+void BattlescapeGame::updateTuInfo(const BattleUnit* const unit) // private.
+{
+	const double stat (static_cast<double>(unit->getBattleStats()->tu));
+	const int tu (unit->getTu());
+	_battleState->getTuField()->setValue(static_cast<unsigned>(tu));
+	_battleState->getTuBar()->setValue(std::ceil(
+									   static_cast<double>(tu) / stat * 100.));
 }
 
 /**
