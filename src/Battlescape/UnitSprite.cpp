@@ -252,7 +252,8 @@ void UnitSprite::draw()
 		&UnitSprite::drawRoutine7,
 		&UnitSprite::drawRoutine8,
 		&UnitSprite::drawRoutine9,
-		&UnitSprite::drawRoutine0 // 10
+		&UnitSprite::drawRoutine0,	// 10 - mutons		(variation of routine #0)
+		&UnitSprite::drawRoutine3	// 11 - helicopters	(variation of routine #3)
 	};
 
 	switch (_unit->getUnitStatus())
@@ -1041,7 +1042,7 @@ void UnitSprite::drawRoutine2() // private.
 }
 
 /**
- * Drawing routine for cyberdiscs.
+ * Drawing routine for cyberdiscs (#3) and helicopters (#11).
  */
 void UnitSprite::drawRoutine3() // private.
 {
@@ -1051,7 +1052,7 @@ void UnitSprite::drawRoutine3() // private.
 
 	Surface* quad;
 
-	if (_quad != 0)
+	if (_quad != 0 && _drawRoutine == 3) // draw propulsion ani below the unit-part
 	{
 		quad = _unitSet->getFrame(((_quad - 1) << 3u) + _aniCycle + walk);
 		quad->setX(OFFSET);
@@ -1061,6 +1062,13 @@ void UnitSprite::drawRoutine3() // private.
 	quad = _unitSet->getFrame((_quad << 3u) + _unit->getUnitDirection());
 	quad->setX(OFFSET);
 	drawRecolored(quad);
+
+	if (_quad != 0 && _drawRoutine == 11) // draw propulsion ani above the unit-part
+	{
+		quad = _unitSet->getFrame(((_quad - 1) << 3u) + _aniCycle + walk);
+		quad->setX(OFFSET);
+		drawRecolored(quad);
+	}
 }
 
 /**
