@@ -453,7 +453,7 @@ bool UnitFallBState::canFall(const BattleUnit* const unit)
 		return false;
 
 
-	const Tile* tileBelow;
+	const Tile* tile;
 	const int unitSize (unit->getArmor()->getSize() - 1);
 	for (int
 			x = unitSize;
@@ -465,8 +465,8 @@ bool UnitFallBState::canFall(const BattleUnit* const unit)
 				y != -1;
 				--y)
 		{
-			tileBelow = _battleSave->getTile(pos + Position(x,y,-1));
-			if (_battleSave->getTile(pos + Position(x,y,0))->isFloored(tileBelow) == true)
+			tile = _battleSave->getTile(pos + Position(x,y,0));
+			if (tile->isFloored(tile->getTileBelow(_battleSave)) == true)
 				return false;
 		}
 	}

@@ -114,7 +114,6 @@
 #include "../Savegame/Region.h"
 #include "../Savegame/ResearchProject.h"
 #include "../Savegame/SavedBattleGame.h"
-//#include "../Savegame/SavedGame.h"
 //#include "../Savegame/Soldier.h"
 #include "../Savegame/SoldierDead.h"
 #include "../Savegame/SoldierDeath.h"

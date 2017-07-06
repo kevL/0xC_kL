@@ -196,13 +196,13 @@ void TileEngine::calculateTerrainLighting() const
 		light = 0;
 		tile = _battleSave->getTiles()[i];
 
-		if (tile->getMapData(O_FLOOR) != nullptr					// add lighting of Floor-part
+		if (   tile->getMapData(O_FLOOR) != nullptr					// add lighting of Floor-part
 			&& tile->getMapData(O_FLOOR)->getLightSource() != 0)
 		{
 			light = tile->getMapData(O_FLOOR)->getLightSource();
 		}
 
-		if (tile->getMapData(O_OBJECT) != nullptr					// add lighting of Object-part
+		if (   tile->getMapData(O_OBJECT) != nullptr				// add lighting of Object-part
 			&& tile->getMapData(O_OBJECT)->getLightSource() != 0)
 		{
 			light = std::max(light,
@@ -222,7 +222,7 @@ void TileEngine::calculateTerrainLighting() const
 				&& (*j)->getFuse() != -1)
 			{
 				light = std::max(light,
-								 (*j)->getRules()->getPower());
+								(*j)->getRules()->getPower());
 			}
 		}
 
@@ -3841,7 +3841,7 @@ int TileEngine::blockage( // private.
 			{
 				case DT_NONE:
 				case DT_SMOKE:
-				case DT_STUN:
+//				case DT_STUN:
 				case DT_IN:
 					visLike = true;
 					break;
@@ -3886,14 +3886,14 @@ int TileEngine::blockage( // private.
 							case O_FLOOR:			// Might want to check isNoFloor() flags:
 								return HARD_BLOCK;	// all floors that block LoS should have their stopLOS flag set true if not a gravLift-floor.
 
-							//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[0] partType = " << partType << " " << tile->getPosition();
+							//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret HARD_BLOCK[0] partType = " << partType << " " << tile->getPosition();
 						}
 					}
 					else if (part->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 						&& _powerE > -1
 						&& _powerE < (part->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE!
 					{
-						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[1] partType = " << partType << " " << tile->getPosition();
+						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret HARD_BLOCK[1] partType = " << partType << " " << tile->getPosition();
 						return HARD_BLOCK;
 					}
 					break;
@@ -4054,7 +4054,7 @@ int TileEngine::blockage( // private.
 									return HARD_BLOCK;
 								}
 
-							//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret 1000[3] partType = " << partType << " " << tile->getPosition();
+							//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret HARD_BLOCK[3] partType = " << partType << " " << tile->getPosition();
 						}
 					}
 
@@ -4258,7 +4258,7 @@ int TileEngine::blockage( // private.
 								}
 
 							//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " isTrueDir = " << isTrueDir
-							//		<< " Ret 1000[4] partType = " << partType << " " << tile->getPosition();
+							//		<< " Ret HARD_BLOCK[4] partType = " << partType << " " << tile->getPosition();
 						}
 					}
 				}
@@ -6664,27 +6664,20 @@ int TileEngine::getDirectionTo( // static.
 		d (0.),							// a bias toward cardinal directions. (~0.1)
 		pie[4u]
 		{
-			M_PI - pi_8 - d,			// 2.7488935718910690836548129603696	-> 157.5 deg
-			M_PI * 3. / 4. - pi_8 + d,	// 1.9634954084936207740391521145497	-> 112.5 deg
-			M_PI_2 - pi_8 - d,			// 1.1780972450961724644234912687298	->  67.5 deg
-			pi_8 + d					// .39269908169872415480783042290994	->  22.5 deg
+			M_PI - pi_8 - d,			// 2.7488935718910690836548129603696 -> 157.5 deg
+			M_PI * 3. / 4. - pi_8 + d,	// 1.9634954084936207740391521145497 -> 112.5 deg
+			M_PI_2 - pi_8 - d,			// 1.1780972450961724644234912687298 ->  67.5 deg
+			pi_8 + d					// .39269908169872415480783042290994 ->  22.5 deg
 		};
 
-	if (theta > pie[0u] || theta < -pie[0u])
-		return 6;
-	if (theta > pie[1u])
-		return 7;
-	if (theta > pie[2u])
-		return 0;
-	if (theta > pie[3u])
-		return 1;
-	if (theta < -pie[1u])
-		return 5;
-	if (theta < -pie[2u])
-		return 4;
-	if (theta < -pie[3u])
-		return 3;
-	return 2;
+	if (theta >  pie[0u] || theta < -pie[0u])	return 6;
+	if (theta >  pie[1u])						return 7;
+	if (theta >  pie[2u])						return 0;
+	if (theta >  pie[3u])						return 1;
+	if (theta < -pie[1u])						return 5;
+	if (theta < -pie[2u])						return 4;
+	if (theta < -pie[3u])						return 3;
+												return 2;
 }
 
 /**

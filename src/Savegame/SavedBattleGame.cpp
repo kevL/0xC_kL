@@ -2360,7 +2360,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
  * @note Also handles large units that are placed on multiple tiles unlike
  * BattleUnit::setPosition().
  * @param unit	- pointer to a unit to be placed
- * @param pos	- reference to the position to place the unit
+ * @param pos	- reference to the position to try to place the unit
  * @param test	- true only checks if unit can be placed at @a pos (default false)
  * @return, true if unit was placed successfully
  */
@@ -2401,7 +2401,7 @@ bool SavedBattleGame::setUnitPosition(
 										O_OBJECT,
 										unit->getMoveTypeUnit()) == 255
 					|| (unit->getMoveTypeUnit() != MT_FLY // <- so just use the unit's moveType.
-						&& tile->isFloored(getTile(pos0 + Position(x,y,-1))) == false))
+						&& tile->isFloored(tile->getTileBelow(this)) == false))
 				{
 					return false;
 				}
@@ -2417,7 +2417,7 @@ bool SavedBattleGame::setUnitPosition(
 					}
 				}
 
-				const Tile* const tileAbove (getTile(pos0 + Position(x,y,1))); // TODO: check for ceiling also.
+				const Tile* const tileAbove (tile->getTileAbove(this)); // TODO: check for ceiling also.
 				if (tileAbove != nullptr
 					&& tileAbove->getTileUnit() != nullptr
 					&& tileAbove->getTileUnit() != unit

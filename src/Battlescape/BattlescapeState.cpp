@@ -1140,58 +1140,9 @@ void BattlescapeState::popupTac(State* const state)
 }
 
 /**
- * Processes any mouse-motion over the Map.
- * @param action - pointer to an Action
- */
-void BattlescapeState::mapOver(Action* action)
-{
-	if (_dragScroll == true
-		&& action->getDetails()->type == SDL_MOUSEMOTION)
-	{
-		_dragScrollStepDone = true;
-
-		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
-		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
-
-		if (_dragScrollPastThreshold == false)
-			_dragScrollPastThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
-									|| std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
-
-//		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
-//		{
-//			_map->getCamera()->scroll(
-//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
-//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
-//									false);
-//			_map->setSelectorType(CT_NONE);
-//		}
-//		else
-		_map->getCamera()->scroll(
-								static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getScaleX()),
-								static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getScaleY()),
-								false);
-
-		_game->getCursor()->handle(action);
-	}
-	else if (_mouseOverIcons == false && allowButtons() == true
-		&& _game->getCursor()->getHidden() == false)
-	{
-		Position pos;
-		_map->getSelectorPosition(pos);
-
-		Tile* const tile (_battleSave->getTile(pos));
-		updateTileInfo(tile);
-
-		if (_showConsole > 0)
-			printTileInventory(tile);
-	}
-//	else if (_mouseOverIcons == true){} // might need to erase some info here.
-}
-
-/**
- * Prints contents of hovered Tile's inventory to screen.
+ * Prints contents of a hovered Tile's inventory to screen.
  * @note This should have been done w/ vectors but it works as-is.
- * @param tile - mouseOver tile
+ * @param tile - pointer to a mouse-overed tile
  */
 void BattlescapeState::printTileInventory(Tile* const tile) // private.
 {
@@ -1385,6 +1336,55 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 }
 
 /**
+ * Processes any mouse-motion over the Map.
+ * @param action - pointer to an Action
+ */
+void BattlescapeState::mapOver(Action* action)
+{
+	if (_dragScroll == true
+		&& action->getDetails()->type == SDL_MOUSEMOTION)
+	{
+		_dragScrollStepDone = true;
+
+		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
+		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
+
+		if (_dragScrollPastThreshold == false)
+			_dragScrollPastThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
+									|| std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
+
+//		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
+//		{
+//			_map->getCamera()->scroll(
+//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
+//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
+//									false);
+//			_map->setSelectorType(CT_NONE);
+//		}
+//		else
+		_map->getCamera()->scroll(
+								static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getScaleX()),
+								static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getScaleY()),
+								false);
+
+		_game->getCursor()->handle(action);
+	}
+	else if (_mouseOverIcons == false && allowButtons() == true
+		&& _game->getCursor()->getHidden() == false)
+	{
+		Position pos;
+		_map->getSelectorPosition(pos);
+
+		Tile* const tile (_battleSave->getTile(pos));
+		updateTileInfo(tile);
+
+		if (_showConsole > 0)
+			printTileInventory(tile);
+	}
+//	else if (_mouseOverIcons == true){} // might need to erase some info here.
+}
+
+/**
  * Processes any presses on the Map.
  * @param action - pointer to an Action
  */
@@ -1491,6 +1491,9 @@ void BattlescapeState::mapClick(Action* action)
 					partId;
 
 				const Tile* const tile (_battleSave->getTile(pos));
+
+				Log(LOG_INFO) << ". is Floored= " << tile->isFloored(tile->getTileBelow(_battleSave));
+
 				if (tile->getMapData(O_FLOOR) != nullptr)
 				{
 					tile->getMapData(&partId, &partSetId, O_FLOOR);
@@ -4231,6 +4234,8 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 	if (tile != nullptr && tile->isRevealed() == true)
 	{
+		static const int BLOCKED = 255;
+
 		size_t rows (3u);
 
 		int tuCost;
@@ -4250,59 +4255,16 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 			if (tile->getMapData(O_OBJECT) != nullptr)
 				tuCost = 4 + tile->getTuCostTile(O_OBJECT, mType);
-			else if (tile->getMapData(O_FLOOR) != nullptr)
+			else if (tile->isFloored()					// <- do *not* check for a tileBelow yet
+				&& tile->getMapData(O_FLOOR) != nullptr)
+			{
 				tuCost = tile->getTuCostTile(O_FLOOR, mType);
+			}
 			else
 			{
-				if (tile->isFloored() == true)
-				{
-//					Log(LOG_INFO) << "BattlescapeState::updateTileInfo() tile is Floored " << tile->getPosition();
-//					int partId;
-//					int partSetId;
-//					if (tile->getMapData(O_FLOOR) != nullptr)
-//					{
-//						tile->getMapData(&partId, &partSetId, O_FLOOR);
-//						Log(LOG_INFO) << ". FLOOR partId= "		<< partId;
-//						Log(LOG_INFO) << ". FLOOR partSetId= "	<< partSetId;
-//					}
-//					else Log(LOG_INFO) << ". no FLOOR";
-//
-//					if (tile->getMapData(O_WESTWALL) != nullptr)
-//					{
-//						tile->getMapData(&partId, &partSetId, O_FLOOR);
-//						Log(LOG_INFO) << ". WESTWALL partId= "		<< partId;
-//						Log(LOG_INFO) << ". WESTWALL partSetId= "	<< partSetId;
-//					}
-//					else Log(LOG_INFO) << ". no WESTWALL";
-//
-//					if (tile->getMapData(O_NORTHWALL) != nullptr)
-//					{
-//						tile->getMapData(&partId, &partSetId, O_FLOOR);
-//						Log(LOG_INFO) << ". NORTHWALL partId= "		<< partId;
-//						Log(LOG_INFO) << ". NORTHWALL partSetId= "	<< partSetId;
-//					}
-//					else Log(LOG_INFO) << ". no NORTHWALL";
-//
-//					if (tile->getMapData(O_OBJECT) != nullptr)
-//					{
-//						tile->getMapData(&partId, &partSetId, O_FLOOR);
-//						Log(LOG_INFO) << ". OBJECT partId= "	<< partId;
-//						Log(LOG_INFO) << ". OBJECT partSetId= "	<< partSetId;
-//					}
-//					else Log(LOG_INFO) << ". no OBJECT";
-
-					const Tile* const tileBelow (tile->getTileBelow(_battleSave));
-					if (tileBelow != nullptr && tileBelow->getMapData(O_OBJECT) != nullptr)
-					{
-//						Log(LOG_INFO) << ". . tileBelow VALID w/ Object";
-						tuCost = 4 + tileBelow->getTuCostTile(O_OBJECT, mType);
-					}
-					else
-					{
-//						Log(LOG_INFO) << ". . tileBelow NOT Valid or NO Object in it";
-						tuCost = 4;	// safety. If tile has no floor-object but isFloored=TRUE
-					}				// there'd better be an object w/ tLevel -24 in tileBelow! oops, a ground-tile showed up with *no parts*.
-				}
+				const Tile* const tileBelow (tile->getTileBelow(_battleSave));
+				if (tileBelow != nullptr && tileBelow->getTerrainLevel() == -24)
+					tuCost = 4;
 				else
 				{
 					switch (mType)
@@ -4313,7 +4275,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 						default: // avoid g++ warning.
 						case MT_WALK:
-						case MT_SLIDE: tuCost = 255;
+						case MT_SLIDE: tuCost = BLOCKED;
 					}
 				}
 			}
@@ -4324,7 +4286,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 		const int info[]
 		{
-			static_cast<int>(tile->isFloored(_battleSave->getTile(tile->getPosition() + Position(0,0,-1)))),
+			static_cast<int>(tile->isFloored(tile->getTileBelow(_battleSave))),
 			tile->getSmoke(),
 			tile->getFire(),
 			tuCost
@@ -4389,8 +4351,8 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 				color = BLUE;
 
 				std::wstring cost;
-				if (info[i] < 255)	cost = Text::intWide(info[i]);
-				else				cost = L"-";
+				if (info[i] < BLOCKED)	cost = Text::intWide(info[i]);
+				else					cost = L"-";
 
 				_lstTileInfo->addRow(
 								2,
