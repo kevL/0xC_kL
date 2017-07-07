@@ -27,17 +27,17 @@ namespace OpenXcom
 
 /**
  * Sets up a PathfindingNode.
- * @param pos - Position on the battlefield
+ * @param pos - reference to a Position on the battlefield
  */
 PathfindingNode::PathfindingNode(const Position& pos)
 	:
 		_pos(pos),
-		_checked(false),
-		_tuCost(0),
-		_tuGuess(0.f),
-		_prevNode(nullptr),
-		_prevDir(0),
-		_openSetEntry(nullptr)
+		_visited(false),
+		_tuTill(0.f),
+		_tuLeft(0.f),
+		_nodePrior(nullptr),
+		_dirPrior(0),
+		_openSetNode(nullptr)
 {}
 
 /**
@@ -60,93 +60,66 @@ const Position& PathfindingNode::getPosition() const
  */
 void PathfindingNode::resetNode()
 {
-	_checked = false;
-	_openSetEntry = nullptr;
+	_visited = false;
+	_openSetNode = nullptr;
 }
 
 /**
- * Gets the checked status of this Node.
- * @return, true if node has been checked
- */
-bool PathfindingNode::getChecked() const
-{
-	return _checked;
-}
-
-/**
- * Gets this Node's TU cost.
+ * Gets this Node's TU-cost.
  * @param missile - true if this is a missile (default false)
  * @return, TU cost
  */
-int PathfindingNode::getTuCostNode(bool missile) const
+int PathfindingNode::getTuCostTill(bool missile) const
 {
-	if (missile == false)
-		return _tuCost;
+	if (missile == true)
+		return 0;
 
-	return 0;
-}
-
-/**
- * Gets this Node's previous Node.
- * @return, pointer to the previous node
- */
-PathfindingNode* PathfindingNode::getPrevNode() const
-{
-	return _prevNode;
-}
-
-/**
- * Gets the previous walking direction for how a unit got to this Node.
- * @return, previous dir
- */
-int PathfindingNode::getPrevDir() const
-{
-	return _prevDir;
+	return static_cast<int>(_tuTill);
 }
 
 /**
  * Connects this Node.
  * @note This will connect the Node to the previous Node along the path to its
- * @a target and update Pathfinding information.
- * @param tuCost	- the total cost of the path so far
- * @param prevNode	- pointer to the previous node along the path
- * @param prevDir	- the direction to this node FROM the previous node
- * @param target	- reference to the target-position (used to update the '_tuGuess' cost)
+ * @a posTarget and update Pathfinding information.
+ * @param tuTill	- the TU-cost of the path so far
+ * @param nodePrior	- pointer to the previous node along the path
+ * @param dirPrior	- the direction to this node FROM the previous node
+ * @param posTarget	- reference to the target-position to set the '_tuDestination' cost
  */
 void PathfindingNode::linkNode(
-		int tuCost,
-		PathfindingNode* const prevNode,
-		int prevDir,
-		const Position& target)
+		int tuTill,
+		PathfindingNode* const nodePrior,
+		int dirPrior,
+		const Position& posTarget)
 {
-	_tuCost = tuCost;
-	_prevNode = prevNode;
-	_prevDir = prevDir;
+	_tuTill = static_cast<float>(tuTill);
+	_nodePrior = nodePrior;
+	_dirPrior = dirPrior;
 
-	if (_openSetEntry == nullptr) // otherwise this has been done already
+	if (_openSetNode == nullptr) // otherwise this has been done already
 	{
-		Position pos (target - _pos);
+		Position pos (posTarget - _pos);
 		pos *= pos;
-		_tuGuess = std::sqrt(static_cast<float>(pos.x + pos.y + pos.z)) * 4.f;
+		_tuLeft = std::sqrt(static_cast<float>(pos.x + pos.y + pos.z)) * 4.f;
 	}
 }
 
 /**
  * Connects this Node.
  * @note This will connect the Node to the previous Node along the path.
- * @param tuCost	- the total cost of the path so far
- * @param prevNode	- pointer to the previous node along the path
- * @param prevDir	- the direction to this node FROM the previous node
+ * @param tuReached	- the TU-cost of the path so far
+ * @param nodePrior	- pointer to the previous node along the path
+ * @param dirPrior	- the direction to this node FROM the previous node
  */
 void PathfindingNode::linkNode(
-		int tuCost,
-		PathfindingNode* const prevNode,
-		int prevDir)
+		int tuTill,
+		PathfindingNode* const nodePrior,
+		int dirPrior)
 {
-	_tuCost = tuCost;
-	_prevNode = prevNode;
-	_prevDir = prevDir;
-	_tuGuess = 0.f;
+	_tuTill = static_cast<float>(tuTill);
+	_nodePrior = nodePrior;
+	_dirPrior = dirPrior;
+	_tuLeft = 0.f;
 }
 
 }

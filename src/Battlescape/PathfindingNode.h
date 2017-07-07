@@ -28,11 +28,11 @@ namespace OpenXcom
 
 class PathfindingOpenSet;
 
-struct OpenSetEntry;
+struct OpenSetNode;
 
 
 /**
- * A class that holds pathfinding-info for a Position on the battlefield.
+ * Pathfinding-info for a tile on the battlefield.
  */
 class PathfindingNode
 {
@@ -40,14 +40,14 @@ class PathfindingNode
 private:
 	friend class PathfindingOpenSet;
 
-	bool _checked;
-	int
-		_prevDir,
-		_tuCost;
-	float _tuGuess; // approximate cost to reach goal position
+	bool _visited;
+	int _dirPrior;
+	float
+		_tuTill, // true TU-cost from start to node
+		_tuLeft; // estimated TU-cost to reach destination
 
-	OpenSetEntry* _openSetEntry; // invasive field needed by PathfindingOpenSet
-	PathfindingNode* _prevNode;
+	OpenSetNode* _openSetNode; // used by PathfindingOpenSet
+	PathfindingNode* _nodePrior;
 
 	const Position _pos;
 
@@ -64,26 +64,29 @@ private:
 		/// Resets the Node.
 		void resetNode();
 
-		/// Gets if the Node has been checked.
-		bool getChecked() const;
-		/// Marks the Node as checked.
-		void setChecked()
-		{ _checked = true; }
+		/// Checks if the Node has been visited.
+		bool getVisited() const
+		{ return _visited; }
+		/// Marks the Node as visited.
+		void setVisited()
+		{ _visited = true; }
 
-		/// Gets the Node's TU cost.
-		int getTuCostNode(bool missile = false) const;
-		/// Gets the approximate cost to reach the target-position.
-		int getTuGuess() const
-		{ return static_cast<int>(_tuGuess); }
+		/// Gets the TU-cost to reach the Node.
+		int getTuCostTill(bool missile = false) const;
+		/// Gets the estimated TU-cost to reach the destination.
+		int getTuCostLeft() const
+		{ return static_cast<int>(_tuLeft); }
 
 		/// Gets the Node's previous Node.
-		PathfindingNode* getPrevNode() const;
+		PathfindingNode* getPriorNode() const
+		{ return _nodePrior; }
 		/// Gets the previous walking direction.
-		int getPrevDir() const;
+		int getPriorDir() const
+		{ return _dirPrior; }
 
 		/// Gets if the Node is already in a PathfindingOpenSet.
 		bool inOpenSet() const
-		{ return (_openSetEntry != nullptr); }
+		{ return (_openSetNode != nullptr); }
 
 //#ifdef __MORPHOS__
 //	#undef connect
@@ -91,32 +94,33 @@ private:
 
 		/// Connects to previous Node along the path.
 		void linkNode(
-				int tuCost,
-				PathfindingNode* const prevNode,
-				int prevDir,
-				const Position& target);
+				int tuTill,
+				PathfindingNode* const nodePrior,
+				int dirPrior,
+				const Position& posTarget);
 		/// Connects to previous Node along a visit.
 		void linkNode(
-				int tuCost,
-				PathfindingNode* const prevNode,
-				int prevDir);
+				int tuTill,
+				PathfindingNode* const nodePrior,
+				int dirPrior);
 };
 
 
 /**
- * Helper struct to compare PathfindingNodes based on TU-cost.
+ * Helper struct to compare two PathfindingNodes' TU-cost.
+ * @note Used only by Pathfinding::findReachable().
  */
-struct MinNodeCosts
+struct IsCheaperPF
 {
 	/**
-	 * Compares nodes @a *a and @a *b.
-	 * @param a - pointer to first node
-	 * @param b - pointer to second node
-	 * @return, true if node @a *a must come before @a *b
+	 * Compares nodes @a node1 and @a node2.
+	 * @param node1 - pointer to first PathfindingNode
+	 * @param node2 - pointer to second PathfindingNode
+	 * @return, true if node @a node1 must come before @a node2
 	 */
-	bool operator() (const PathfindingNode* const a, const PathfindingNode* const b) const
+	bool operator ()(const PathfindingNode* const node1, const PathfindingNode* const node2) const
 	{
-		return (a->getTuCostNode() < b->getTuCostNode());
+		return (node1->getTuCostTill() < node2->getTuCostTill());
 	}
 };
 

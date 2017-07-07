@@ -29,56 +29,52 @@ namespace OpenXcom
 class PathfindingNode;
 
 
-struct OpenSetEntry
+struct OpenSetNode
 {
-	int _cost;
 	PathfindingNode* _node;
+	float _tuTotal;
 };
 
 
 /**
- * Helper struct to compare OpenSetEntrys based on tuCost.
+ * Helper struct to compare two OpenSetNodes' TU-cost.
  */
-struct EntryCompare
+struct IsCheaperOS
 {
 	/**
-	 * Compares entries @a *a and @a *b.
-	 * @param a - pointer to first entry
-	 * @param b - pointer to second entry
-	 * @return, true if entry @a *b must come before @a *a
+	 * Compares entries @a node1 and @a node2.
+	 * @param node1 - pointer to first OpenSetNode
+	 * @param node2 - pointer to second OpenSetNode
+	 * @return, true if entry @a node2 should go before @a node1 (false if equal)
 	 */
-	bool operator ()(const OpenSetEntry* const a, const OpenSetEntry* const b) const
+	bool operator ()(const OpenSetNode* const node1, const OpenSetNode* const node2) const
 	{
-		return b->_cost < a->_cost;
+		return node2->_tuTotal < node1->_tuTotal;
 	}
 };
 
 
 /**
- * A class that holds references to the nodes to be examined in Pathfinding.
+ * The openset nodes that need to be examined by A* pathfinding.
  */
 class PathfindingOpenSet
 {
 
 private:
-	std::priority_queue<OpenSetEntry*, std::vector<OpenSetEntry*>, EntryCompare> _queue;
-
-	/// Discards entries.
-	void discard();
-
+	std::priority_queue<OpenSetNode*, std::vector<OpenSetNode*>, IsCheaperOS> _frontier;
 
 	public:
-		/// Cleans up the set and frees allocated memory.
+		/// Cleans up the PathfindingOpenSet.
 		~PathfindingOpenSet();
 
-		/// Adds a node to the set.
+		/// Adds a node to the frontier.
 		void addNode(PathfindingNode* const node);
 		/// Gets the next node to check.
-		PathfindingNode* getNode();
+		PathfindingNode* processNodeTop();
 
-		/// Gets if the set is empty.
-		bool isNodeSetEmpty() const
-		{ return (_queue.empty() == true); }
+		/// Gets if the frontier is empty.
+		bool isOpenSetEmpty() const
+		{ return (_frontier.empty() == true); }
 };
 
 }

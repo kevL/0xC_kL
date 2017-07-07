@@ -58,12 +58,12 @@ private:
 		_alt,
 		_ctrl,
 		_previewed,
-		_strafe;
-//		_zPath;
+		_strafe,
+		_zPath;
 	int
 		_doorCost, // to get an accurate preview when dashing through doors etc.
+		_tuCostTally;
 //		_tuFirst,
-		_tuCostTotal;
 
 	BattleUnit* _unit;
 	const SavedBattleGame* _battleSave;
@@ -93,7 +93,7 @@ private:
 //			bool sneak);
 
 	/// Gets the PathfindingNode at a specified Position.
-	PathfindingNode* getNode(const Position& pos);
+	PathfindingNode* getPfNode(const Position& pos);
 
 	/// Gets the TU-cost for crossing over walls.
 	int getWallTuCost(
@@ -172,7 +172,7 @@ private:
 				const BattleUnit* const launchTarget = nullptr);
 		/// Gets _tuCostTotal; finds out whether we can hike somewhere in this turn or not.
 		int getTuCostTotalPf() const
-		{ return _tuCostTotal; }
+		{ return _tuCostTally; }
 
 		/// Determines whether or not movement between startTile and endTile is possible in the direction.
 		bool isBlockedDir(
@@ -198,7 +198,7 @@ private:
 		/// Gets the ALT-modifier setting.
 		bool isModAlt() const;
 		/// Gets the zPath-modifier setting.
-//		bool isZPath() const;
+		bool isZPath() const;
 
 		/// Gets the current MoveType.
 		MoveType getMoveTypePf() const;

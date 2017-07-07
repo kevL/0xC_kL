@@ -32,68 +32,55 @@ namespace OpenXcom
  */
 PathfindingOpenSet::~PathfindingOpenSet()
 {
-	while (_queue.empty() == false)
+	while (_frontier.empty() == false)
 	{
-		const OpenSetEntry* const entry (_queue.top());
-		_queue.pop();
-
-		delete entry;
+		const OpenSetNode* const node (_frontier.top());
+		_frontier.pop();
+		delete node;
 	}
 }
 
 /**
- * Discards entries that have come to the top of the queue.
+ * Gets the PathfindingNode with the cheapest TU-cost.
+ * @note After this call the node is no longer in the openset.
+ * @note It is an error to call this when the openset is empty.
+ * @return, pointer to the PathfindingNode which had the least cost
  */
-void PathfindingOpenSet::discard() // private.
+PathfindingNode* PathfindingOpenSet::processNodeTop()
 {
-	while (_queue.empty() == false && _queue.top()->_node == nullptr)
+	assert(isOpenSetEmpty() == false);
+
+	const OpenSetNode* nodeOs (_frontier.top());
+	PathfindingNode* const nodePf (nodeOs->_node);
+	_frontier.pop();
+	delete nodeOs;
+	nodePf->_openSetNode = nullptr;
+
+	// non-eligible entries might be visible so clear them from the top of the queue.
+	while (_frontier.empty() == false && _frontier.top()->_node == nullptr)
 	{
-		const OpenSetEntry* const entry (_queue.top());
-		_queue.pop();
-
-		delete entry;
+		nodeOs = _frontier.top();
+		_frontier.pop();
+		delete nodeOs;
 	}
+
+	return nodePf;
 }
 
 /**
- * Gets the PathfindingNode with the least cost.
- * @note After this call the node is no longer in the set. It is an error to
- * call this when the set is empty.
- * @return, pointer to the node which had the least cost
- */
-PathfindingNode* PathfindingOpenSet::getNode()
-{
-	assert(isNodeSetEmpty() == false);
-
-	const OpenSetEntry* const entry (_queue.top());
-	PathfindingNode* const node (entry->_node);
-	_queue.pop();
-
-	delete entry;
-	node->_openSetEntry = nullptr;
-
-	discard(); // non-eligible entries might be visible.
-
-	return node;
-}
-
-/**
- * Places a specified PathfindingNode in this OpenSet.
+ * Adds a specified PathfindingNode to the openset.
  * @note If the node was already in the set the previous entry is discarded. It
  * is the caller's responsibility to never re-add a node with a higher cost.
- * @param node - pointer to the node to add
+ * @param nodePf - pointer to the PathfindingNode to add
  */
-void PathfindingOpenSet::addNode(PathfindingNode* const node)
+void PathfindingOpenSet::addNode(PathfindingNode* const nodePf)
 {
-	OpenSetEntry* const entry (new OpenSetEntry);
-	entry->_node = node;
-	entry->_cost = node->getTuCostNode() + node->getTuGuess();
+	OpenSetNode* const nodeOs (new OpenSetNode);
+	nodeOs->_node = nodePf;
+	nodeOs->_tuTotal = nodePf->_tuTill + nodePf->_tuLeft;
 
-	if (node->_openSetEntry != nullptr)
-		node->_openSetEntry->_node = nullptr;
-
-	node->_openSetEntry = entry;
-	_queue.push(entry);
+	nodePf->_openSetNode = nodeOs;
+	_frontier.push(nodeOs);
 }
 
 }

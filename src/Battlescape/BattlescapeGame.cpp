@@ -2840,18 +2840,18 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			|| (targetUnit == _playerAction.actor
 				&& _playerAction.actor->getPosition() != pos))
 		{
-//			bool zPath;
-//			const Uint8* const keystate (SDL_GetKeyState(nullptr));
-//			if (keystate[SDLK_z] != 0)
-//				zPath = true;
-//			else
-//				zPath = false;
+			bool zPath;
+			const Uint8* const keystate (SDL_GetKeyState(nullptr));
+			if (keystate[SDLK_z] != 0)
+				zPath = true;
+			else
+				zPath = false;
 
 			if (allowPreview == true
 				&& (_playerAction.posTarget != pos
 					|| pf->isModCtrl() != ctrl
-					|| pf->isModAlt()  != alt))
-//					|| pf->isZPath()   != zPath))
+					|| pf->isModAlt()  != alt
+					|| pf->isZPath()   != zPath))
 			{
 				pf->clearPreview();
 			}

@@ -61,19 +61,19 @@ Pathfinding::Pathfinding(SavedBattleGame* const battleSave)
 		_pathAction(nullptr),
 		_previewed(false),
 		_strafe(false),
-		_tuCostTotal(0),
-//		_tuFirst(-1),
+		_tuCostTally(0),
 		_ctrl(false),
 		_alt(false),
-//		_zPath(false), // currently not implemented; open for ideas!
+		_zPath(false),
 		_mType(MT_WALK),
 		_doorCost(0)
+//		_tuFirst(-1)
 {
 	//Log(LOG_INFO) << "Create Pathfinding";
-	_nodes.reserve(_battleSave->getMapSizeXYZ()); // reserve one node per tactical tile.
+	_nodes.reserve(_battleSave->getMapSizeXYZ()); // reserve one PathfindingNode per tactical tile.
 
 	Position pos;
-	for (size_t // initialize one node per tile.
+	for (size_t // create one PathfindingNode per tile across the entire battlefield.
 			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
 			++i)
@@ -146,18 +146,18 @@ void Pathfinding::setInputModifiers()
 	{
 		_ctrl =
 		_alt  = false;
-//		_zPath = false;
+		_zPath = false;
 	}
 	else
 	{
 		_ctrl = (SDL_GetModState() & KMOD_CTRL) != 0;
 		_alt  = (SDL_GetModState() & KMOD_ALT)  != 0;
 
-//		const Uint8* const keystate (SDL_GetKeyState(nullptr));
-//		if (keystate[SDLK_z] != 0)
-//			_zPath = true;
-//		else
-//			_zPath = false;
+		const Uint8* const keystate (SDL_GetKeyState(nullptr));
+		if (keystate[SDLK_z] != 0)
+			_zPath = true;
+		else
+			_zPath = false;
 	}
 }
 
@@ -169,7 +169,7 @@ void Pathfinding::abortPath()
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "pf:abortPath() id-" << _unit->getId();
 	_path.clear();
-	_tuCostTotal = 0;
+	_tuCostTally = 0;
 
 	setInputModifiers();
 }
@@ -470,7 +470,7 @@ int Pathfinding::findTerrainLevel( // private.
  * @param posOrigin		- reference to the position to start from
  * @param posTarget		- reference to the position to end at
  * @param launchTarget	- pointer to targeted BattleUnit
- * @param tuCap			- maximum time units this path can cost
+ * @param tuCap			- maximum turn units this path can cost
 // * @param sneak		- true if the unit is sneaking
  * @return, true if a path is found
  */
@@ -492,34 +492,35 @@ bool Pathfinding::aStarPath( // private.
 	}
 
 	PathfindingNode
-		* nodeStart (getNode(posOrigin)),
-		* nodeStop;
+		* nodeCurrent (getPfNode(posOrigin)),
+		* nodeStep;
 
-	nodeStart->linkNode(0, nullptr, 0, posTarget);
+	nodeCurrent->linkNode(0, nullptr, 0, posTarget);
 
-	PathfindingOpenSet nodes;
-	nodes.addNode(nodeStart);
+	PathfindingOpenSet openset;
+	openset.addNode(nodeCurrent);
 
-	Position posStop;
+	Position posStep;
 	int tuCost;
 //	_tuFirst = -1; // ... could go in abortPath()
 
-	while (nodes.isNodeSetEmpty() == false)
+	while (openset.isOpenSetEmpty() == false)
 	{
-		nodeStart = nodes.getNode();
-		const Position& posStart (nodeStart->getPosition());
-		//Log(LOG_INFO) << ". posStart " << (nodeStart->getPosition());
-		nodeStart->setChecked();
+		nodeCurrent = openset.processNodeTop();
+		nodeCurrent->setVisited();
 
-		if (posStart == posTarget)
+		const Position& posCurrent (nodeCurrent->getPosition());
+		//Log(LOG_INFO) << ". posCurrent " << (nodeCurrent->getPosition());
+
+		if (posCurrent == posTarget) // finished.
 		{
 			_path.clear();
 
-			while (nodeStart->getPrevNode() != nullptr)
+			while (nodeCurrent->getPriorNode() != nullptr)
 			{
-				_path.push_back(nodeStart->getPrevDir());
-				//Log(LOG_INFO) << ". . " << nodeStart->getPrevDir();
-				nodeStart = nodeStart->getPrevNode();
+				_path.push_back(nodeCurrent->getPriorDir());
+				//Log(LOG_INFO) << ". . " << nodeCurrent->getPriorDir();
+				nodeCurrent = nodeCurrent->getPriorNode();
 			}
 
 			if (_strafe == true && _unit->isMechanical() == true) // is Tracked vehicle actually.
@@ -537,38 +538,41 @@ bool Pathfinding::aStarPath( // private.
 			return true;
 		}
 
+
 		for (int
 				dir = 0;
 				dir != 10;
 				++dir)
 		{
-			tuCost = getTuCostPf(
-							posStart,
-							dir,
-							&posStop,
-							launchTarget);
 			//Log(LOG_INFO) << ". dir= " << dir << " tuCost=" << tuCost;
-			if (tuCost < PF_FAIL_TU)
+			if ((tuCost = getTuCostPf(
+								posCurrent,
+								dir,
+								&posStep,
+								launchTarget)) < PF_FAIL_TU)
 			{
-//				if (sneak == true && _battleSave->getTile(posStop)->getTileVisible() == true)
+//				if (sneak == true && _battleSave->getTile(posCurrent)->getTileVisible() == true)
 //					tuCost *= 2;
 
-				nodeStop = getNode(posStop);
-				if (nodeStop->getChecked() == false)
+				nodeStep = getPfNode(posStep);
+				if (nodeStep->getVisited() == false)
 				{
-					_tuCostTotal = nodeStart->getTuCostNode(launchTarget != nullptr) + tuCost;
+					if (_zPath == true && dir % 2 == 0)
+						tuCost += 1;
+
+					_tuCostTally = nodeCurrent->getTuCostTill(launchTarget != nullptr) + tuCost;
 					//Log(LOG_INFO) << ". tuCostTotal= " << _tuCostTotal;
 
-					if ((nodeStop->inOpenSet() == false
-							|| nodeStop->getTuCostNode(launchTarget != nullptr) > _tuCostTotal) // eg. costTotal is still 0.
-						&& _tuCostTotal <= tuCap)
+					if (_tuCostTally <= tuCap
+						&& (nodeStep->inOpenSet() == false
+							|| nodeStep->getTuCostTill(launchTarget != nullptr) > _tuCostTally)) // eg. costTotal is still 0.
 					{
-						nodeStop->linkNode(
-										_tuCostTotal,
-										nodeStart,
+						nodeStep->linkNode(
+										_tuCostTally,
+										nodeCurrent,
 										dir,
 										posTarget);
-						nodes.addNode(nodeStop);
+						openset.addNode(nodeStep);
 
 //						if (_tuFirst == -1) _tuFirst = tuCost;
 					}
@@ -593,7 +597,7 @@ int Pathfinding::getTuFirst() const
  * @note Uses Dijkstra's algorithm.
  * @sa aStarPath().
  * @param unit	- pointer to a BattleUnit
- * @param tuCap	- the maximum cost of the path to each tile
+ * @param tuCap	- maximum turn units the path can cost
  * @return, vector of reachable tile-indices sorted in ascending order of cost;
  *			the first tile is the start-location itself
  */
@@ -610,25 +614,25 @@ std::vector<size_t> Pathfinding::findReachable(
 	}
 
 	PathfindingNode
-		* nodeStart (getNode(unit->getPosition())),
-		* nodeStop;
+		* nodeCurrent (getPfNode(unit->getPosition())),
+		* nodeStep;
 
-	nodeStart->linkNode(0, nullptr, 0);
+	nodeCurrent->linkNode(0, nullptr, 0);
 
-	PathfindingOpenSet nodes;
-	nodes.addNode(nodeStart);
+	PathfindingOpenSet openset;
+	openset.addNode(nodeCurrent);
 
-	std::vector<PathfindingNode*> nodeList;	// NOTE: These are not route-nodes per se,
+	std::vector<PathfindingNode*> nodes;	// NOTE: These are not route-nodes,
 											// *every Tile* is a PathfindingNode.
-	Position posStop;
+	Position posStep;
 	int
 		tuCost,
 		tuCostTotal;
 
-	while (nodes.isNodeSetEmpty() == false)
+	while (openset.isOpenSetEmpty() == false)
 	{
-		nodeStart = nodes.getNode();
-		const Position& posStart (nodeStart->getPosition());
+		nodeCurrent = openset.processNodeTop();
+		const Position& posCurrent (nodeCurrent->getPosition());
 
 		for (int
 				dir = 0;
@@ -636,52 +640,52 @@ std::vector<size_t> Pathfinding::findReachable(
 				++dir)
 		{
 			tuCost = getTuCostPf(
-							posStart,
+							posCurrent,
 							dir,
-							&posStop);
+							&posStep);
 
 			if (tuCost < PF_FAIL_TU)
 			{
-				tuCostTotal = nodeStart->getTuCostNode() + tuCost;
+				tuCostTotal = nodeCurrent->getTuCostTill() + tuCost;
 				if (   tuCostTotal <= tuCap
 					&& tuCostTotal <= unit->getEnergy())	// NOTE: This does not account for less energy-expenditure
 				{											// on gravLifts or for opening doors.
-					nodeStop = getNode(posStop);
-					if (nodeStop->getChecked() == false)
+					nodeStep = getPfNode(posStep);
+					if (nodeStep->getVisited() == false)
 					{
-						if (nodeStop->inOpenSet() == false
-							|| nodeStop->getTuCostNode() > tuCostTotal)
+						if (nodeStep->inOpenSet() == false
+							|| nodeStep->getTuCostTill() > tuCostTotal)
 						{
-							nodeStop->linkNode(
+							nodeStep->linkNode(
 											tuCostTotal,
-											nodeStart,
+											nodeCurrent,
 											dir);
-							nodes.addNode(nodeStop);
+							openset.addNode(nodeStep);
 						}
 					}
 				}
 			}
 		}
-		nodeStart->setChecked();
-		nodeList.push_back(nodeStart);
+		nodeCurrent->setVisited();
+		nodes.push_back(nodeCurrent);
 	}
 
 	std::sort(
-			nodeList.begin(),
-			nodeList.end(),
-			MinNodeCosts());
+			nodes.begin(),
+			nodes.end(),
+			IsCheaperPF());
 
-	std::vector<size_t> nodeIdList;
-	nodeIdList.reserve(nodeList.size());
+	std::vector<size_t> nodeList;
+	nodeList.reserve(nodes.size());
 	for (std::vector<PathfindingNode*>::const_iterator
-			i = nodeList.begin();
-			i != nodeList.end();
+			i = nodes.begin();
+			i != nodes.end();
 			++i)
 	{
 		//Log(LOG_INFO) << "pf: " << _battleSave->getTileIndex((*i)->getPosition());
-		nodeIdList.push_back(_battleSave->getTileIndex((*i)->getPosition()));
+		nodeList.push_back(_battleSave->getTileIndex((*i)->getPosition()));
 	}
-	return nodeIdList;
+	return nodeList;
 }
 
 /**
@@ -689,7 +693,7 @@ std::vector<size_t> Pathfinding::findReachable(
  * @param pos - reference to a Position
  * @return, pointer to the PathfindingNode
  */
-PathfindingNode* Pathfinding::getNode(const Position& pos) // private.
+PathfindingNode* Pathfinding::getPfNode(const Position& pos) // private.
 {
 	return &_nodes[_battleSave->getTileIndex(pos)];
 }
@@ -2130,11 +2134,11 @@ bool Pathfinding::isModAlt() const
 /**
  * Gets the zPath-modifier setting.
  * @return, true if key-Z was used
- *
+ */
 bool Pathfinding::isZPath() const
 {
 	return _zPath;
-} */
+}
 
 /**
  * Gets the current movement-type.
