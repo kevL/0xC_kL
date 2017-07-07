@@ -143,7 +143,7 @@ private:
 		/// Sets unit in order to exploit low-level pathing functions.
 		void setPathingUnit(BattleUnit* const unit);
 		/// Sets keyboard input modifiers.
-		void setInputModifiers();
+		void setInputModifiers(bool missile = false);
 
 		/// Aborts the current path.
 		void abortPath();

@@ -138,14 +138,16 @@ void Pathfinding::setMoveType() // private.
 
 /**
  * Sets keyboard input modifiers.
+ * @param missile - true if a launch-target is valid (default false)
  */
-void Pathfinding::setInputModifiers()
+void Pathfinding::setInputModifiers(bool missile)
 {
 	if (_battleSave->getSide() != FACTION_PLAYER
-		|| _battleSave->getBattleGame()->playerPanicHandled() == false)
+		|| _battleSave->getBattleGame()->playerPanicHandled() == false
+		|| missile == true)
 	{
-		_ctrl =
-		_alt  = false;
+		_ctrl  =
+		_alt   =
 		_zPath = false;
 	}
 	else
@@ -218,7 +220,7 @@ void Pathfinding::calculatePath(
 	if (launchTarget != nullptr)
 	{
 		_mType = MT_FLY;
-		strafeRejected = true;
+		setInputModifiers(strafeRejected = true);
 	}
 	else
 		setMoveType(); // redundant in some cases ...
