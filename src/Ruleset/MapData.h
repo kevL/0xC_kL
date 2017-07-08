@@ -231,9 +231,9 @@ private:
 		/// Sets a TileType for the part.
 		void setTileType(TileType type);
 
-		/// Gets the TU cost to move over the part.
+		/// Gets the TU-cost to move over the part.
 		int getTuCostPart(MoveType type) const;
-		/// Sets the TU cost to move over the part.
+		/// Sets the TU-cost to move over the part.
 		void setTuCosts(
 				int walk,
 				int slide,

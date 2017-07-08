@@ -443,7 +443,7 @@ bool UnitWalkBState::statusStand() // private.
 	//Log(LOG_INFO) << ". getTuCostPf() & posStop";
 	Position posStop;
 	int
-		tuCost (_pf->getTuCostPf(posStart, dir, &posStop)), // gets tu cost but also sets the destination position.
+		tuCost (_pf->getTuCostPf(posStart, dir, &posStop)), // gets TU-cost but also sets the destination position.
 		tuTest,
 		enCost;
 	//Log(LOG_INFO) << ". tuCost = " << tuCost;
@@ -466,7 +466,7 @@ bool UnitWalkBState::statusStand() // private.
 			//Log(LOG_INFO) << ". . subtract tu inflation for a fireTile";
 			// The TU-cost was artificially inflated by 32 points in _pf::getTuCostPf()
 			// so it has to be deflated again here under the same conditions.
-			// See: Pathfinding::getTuCostPf() where TU cost was inflated.
+			// See: Pathfinding::getTuCostPf() where TU-cost was inflated.
 			tuCost -= Pathfinding::TU_FIRE_AVOID;
 		}
 
@@ -1112,7 +1112,7 @@ void UnitWalkBState::postPathProcedures() // private.
 
 /**
  * Gets a suitable final facing direction for aLiens.
- * @note This does not require any TU cost.
+ * @note This does not require any TU-cost.
  * @return, direction to face
  */
 int UnitWalkBState::getFinalDirection() const // private.

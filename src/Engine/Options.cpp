@@ -772,7 +772,7 @@ void createOptions()
 //	- SDLK_k, kill all aliens [doubles w/ kneel, above]
 //	- SDLK_KP_PERIOD, zero-Tu
 // Screen::handle()
-//	- SDLK_F8, animation speed switch (4 position flag)
+//	- SDLK_F8, animation speed switch (5-position switch)
 // GeoscapeState::GeoscapeState()
 //	- SDLK_SPACE, geoscape hard-pause
 //	- SDLK_d, enable debug mode

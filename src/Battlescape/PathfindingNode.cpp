@@ -67,7 +67,7 @@ void PathfindingNode::resetNode()
 /**
  * Gets this Node's TU-cost.
  * @param missile - true if this is a missile (default false)
- * @return, TU cost
+ * @return, TU-cost
  */
 int PathfindingNode::getTuCostTill(bool missile) const
 {

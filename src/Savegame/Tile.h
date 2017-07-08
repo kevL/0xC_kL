@@ -168,7 +168,7 @@ private:
 				const bool testInventory = true,
 				const bool testVolatiles = true) const;
 
-		/// Gets the TU cost to walk over a certain part of the Tile.
+		/// Gets the TU-cost to walk over a certain part of the Tile.
 		int getTuCostTile(
 				MapDataType partType,
 				MoveType type) const;

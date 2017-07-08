@@ -277,15 +277,15 @@ private:
 		/// Gets the item's melee accuracy.
 		int getAccuracyMelee() const;
 
-		/// Gets the item's snapshot TU cost.
+		/// Gets the item's snapshot TU-cost.
 		int getSnapTu() const;
-		/// Gets the item's autoshot TU cost.
+		/// Gets the item's autoshot TU-cost.
 		int getAutoTu() const;
-		/// Gets the item's aimed shot TU cost.
+		/// Gets the item's aimed shot TU-cost.
 		int getAimedTu() const;
-		/// Gets the item's launch shot TU cost.
+		/// Gets the item's launch shot TU-cost.
 		int getLaunchTu() const;
-		/// Gets the item's melee TU cost.
+		/// Gets the item's melee TU-cost.
 		int getMeleeTu() const;
 		/// Gets the item's use TU.
 		int getUseTu() const;

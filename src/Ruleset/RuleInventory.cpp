@@ -361,7 +361,7 @@ bool RuleInventory::fitItemInSlot(
 /**
  * Gets the time unit cost to move an item from this Inventory section to another.
  * @param slot - pointer to the section to move the item to
- * @return, TU cost
+ * @return, TU-cost
  */
 int RuleInventory::getCost(const RuleInventory* const inRule) const
 {

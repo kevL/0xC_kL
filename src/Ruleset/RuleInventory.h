@@ -139,7 +139,7 @@ private:
 				int x,
 				int y) const;
 
-		/// Gets the TU cost to move an item in the Inventory.
+		/// Gets the TU-cost to move an item in the Inventory.
 		int getCost(const RuleInventory* const inRule) const;
 
 		/// Gets the list order.

@@ -113,8 +113,8 @@ void Pathfinding::setPathingUnit(BattleUnit* const unit)
 
 	if (unit != nullptr)
 		setMoveType();
-	else // I really don't think this ever happens. TODO: set to MT_FLY if ai-BlasterLaunch.
-		_mType = MT_WALK;
+	else
+		_mType = MT_WALK; // I really don't think this ever happens.
 }
 
 /**
@@ -595,7 +595,7 @@ int Pathfinding::getTuFirst() const
 } */
 
 /**
- * Locates all tiles reachable to @a unit with a TU cost no more than @a tuCap.
+ * Locates all tiles reachable to @a unit with a TU-cost no more than @a tuCap.
  * @note Uses Dijkstra's algorithm.
  * @sa aStarPath().
  * @param unit	- pointer to a BattleUnit
@@ -701,14 +701,14 @@ PathfindingNode* Pathfinding::getPfNode(const Position& pos) // private.
 }
 
 /**
- * Gets the TU cost to move from 1 tile to another - ONE STEP ONLY!
+ * Gets the TU-cost to move from 1 tile to another - ONE STEP ONLY!
  * @note But also updates the destination Position because it is possible that
  * the unit uses stairs or falls while moving.
  * @param posStart		- reference to the start-position
  * @param dir			- direction of movement
  * @param posStop		- pointer to destination-position that will be set
  * @param launchTarget	- pointer to targeted BattleUnit (default nullptr)
- * @return, TU cost or 255 if movement is impossible
+ * @return, TU-cost or 255 if movement is impossible
  */
 int Pathfinding::getTuCostPf(
 		const Position& posStart,
@@ -781,7 +781,7 @@ int Pathfinding::getTuCostPf(
 				y != unitSize;
 				++y)
 		{
-// first, CHECK FOR BLOCKAGE ->> then calc TU cost after.
+// first, CHECK FOR BLOCKAGE ->> then calc TU-cost after.
 			//if (_debug) Log(LOG_INFO) << ". . (" << x << "," << y << ")";
 			cost = 0;
 
@@ -1040,7 +1040,7 @@ int Pathfinding::getTuCostPf(
 					cost += TU_FIRE_AVOID;			// cf. UnitWalkBState::statusStand() - this gets subtracted.
 			}
 
-			// Propose: if flying then no extra TU cost
+			// Propose: if flying then no extra TU-cost
 			//Log(LOG_INFO) << ". pathSize = " << (int)_path.size();
 			if (_strafe == true && _unit->getUnitDirection() != dir) // if not dashing straight ahead 1 tile.
 			{

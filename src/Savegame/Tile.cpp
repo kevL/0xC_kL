@@ -318,10 +318,10 @@ bool Tile::isVoid(
 }
 
 /**
- * Gets the TU cost to move over a partType of this Tile.
+ * Gets the TU-cost to move over a partType of this Tile.
  * @param partType	- the MapDataType (MapData.h)
  * @param type		- the MoveType (MapData.h)
- * @return, TU cost
+ * @return, TU-cost
  */
 int Tile::getTuCostTile(
 		MapDataType partType,

@@ -1415,7 +1415,7 @@ void Inventory::showWarning(const std::wstring& wst)
 }
 
 /**
- * Gets the TU cost for moving items around.
+ * Gets the TU-cost for moving items around.
  * @return, time unit cost
  */
 int Inventory::getTuCostInventory() const

@@ -164,7 +164,7 @@ private:
 				const BattleUnit* const unit,
 				int tuCap);
 
-		/// Gets the TU cost to move from 1 tile to the other.
+		/// Gets the TU-cost to move from 1 tile to the other.
 		int getTuCostPf(
 				const Position& posStart,
 				int dir,

@@ -506,7 +506,7 @@ int RuleItem::getAccuracyMelee() const
 }
 
 /**
- * Gets the Item's TU cost for snapshots.
+ * Gets the Item's TU-cost for snapshots.
  * @return, the snapshot TU percentage
  */
 int RuleItem::getSnapTu() const
@@ -515,7 +515,7 @@ int RuleItem::getSnapTu() const
 }
 
 /**
- * Gets the Item's TU cost for autoshots.
+ * Gets the Item's TU-cost for autoshots.
  * @return, the autoshot TU percentage
  */
 int RuleItem::getAutoTu() const
@@ -524,7 +524,7 @@ int RuleItem::getAutoTu() const
 }
 
 /**
- * Gets the Item's TU cost for aimed shots.
+ * Gets the Item's TU-cost for aimed shots.
  * @return, the aimed shot TU percentage
  */
 int RuleItem::getAimedTu() const
@@ -533,7 +533,7 @@ int RuleItem::getAimedTu() const
 }
 
 /**
- * Gets the Item's TU cost for launched shots.
+ * Gets the Item's TU-cost for launched shots.
  * @return, the launch shot TU percentage
  */
 int RuleItem::getLaunchTu() const
@@ -542,7 +542,7 @@ int RuleItem::getLaunchTu() const
 }
 
 /**
- * Gets the Item's TU cost for melee attacks.
+ * Gets the Item's TU-cost for melee attacks.
  * @return, the melee TU percentage
  */
 int RuleItem::getMeleeTu() const
@@ -1096,7 +1096,7 @@ TileType RuleItem::getTileType() const
 
 /**
  * Gets the Item's default BattleAction.
- * @note Used to show a TU cost in InventoryState. Lifted from ActionMenuState cTor.
+ * @note Used to show a TU-cost in InventoryState. Lifted from ActionMenuState cTor.
  * @param isPrimed - true if checking a grenade and it's primed (default false)
  * @return, BattleActionType (BattlescapeGame.h)
  */
