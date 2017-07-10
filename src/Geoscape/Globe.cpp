@@ -338,9 +338,9 @@ Globe::Globe(
 		_cenX(static_cast<Sint16>(cenX)),
 		_cenY(static_cast<Sint16>(cenY)),
 		_forceRadars(false),
-		_dragScroll(false),
-		_dragScrollStepDone(false),
-		_dragScrollPastThreshold(false),
+		_dragScrollActivated(false),
+		_dragScrollStepped(false),
+		_dragScrollPastPixelThreshold(false),
 		_dragScrollStartTick(0u),
 		_dragScrollTotalX(0),
 		_dragScrollTotalY(0),
@@ -711,7 +711,7 @@ void Globe::rotateDown()
 
 /**
  * Stops this Globe's rotation-speed and Timer.
- * @note If a message-window displays while drag-scrolling '_dragScroll' needs
+ * @note If a message-window displays while drag-scrolling '_dragScrollActivated' needs
  * to be cleared explicitly here.
  */
 void Globe::rotateStop()
@@ -720,7 +720,7 @@ void Globe::rotateStop()
 
 	_rotLon =
 	_rotLat = 0.;
-	_dragScroll = false; // TODO: Perhaps an ActionHandler needs to be reset and/or the rodentState-buttons cleared.
+	_dragScrollActivated = false; // TODO: Perhaps an ActionHandler needs to be reset and/or the rodentState-buttons cleared.
 }
 
 /**
@@ -2526,16 +2526,16 @@ void Globe::mouseOver(Action* action, State* state)
 			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
 			&lon,&lat);
 
-	if (_dragScroll == true
+	if (_dragScrollActivated == true
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		_dragScrollStepDone = true;
+		_dragScrollStepped = true;
 
 		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
 		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_dragScrollPastThreshold == false)
-			_dragScrollPastThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
+		if (_dragScrollPastPixelThreshold == false)
+			_dragScrollPastPixelThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
 									|| std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
 
 //		if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
@@ -2590,8 +2590,8 @@ void Globe::mousePress(Action* action, State* state)
 
 	if (btnId == Options::geoDragScrollButton)
 	{
-		_dragScroll = true;
-		_dragScrollStepDone = false;
+		_dragScrollActivated = true;
+		_dragScrollStepped = false;
 
 		_dragScrollLon = _cenLon;
 		_dragScrollLat = _cenLat;
@@ -2599,7 +2599,7 @@ void Globe::mousePress(Action* action, State* state)
 		_dragScrollTotalX =
 		_dragScrollTotalY = 0;
 
-		_dragScrollPastThreshold = false;
+		_dragScrollPastPixelThreshold = false;
 		_dragScrollStartTick = SDL_GetTicks();
 	}
 
@@ -2649,23 +2649,23 @@ void Globe::mouseClick(Action* action, State* state)
 					&lon,&lat);
 
 			// NOTE: mousePress() inititates drag-scrolling and this mouseClick() acts as a *release*
-			if (_dragScroll == true) // dragScroll-button release: release mouse-scroll-mode
+			if (_dragScrollActivated == true) // dragScroll-button release: release mouse-scroll-mode
 			{
 				if (btnId != Options::geoDragScrollButton) return; // other buttons are ineffective while scrolling
 
-				_dragScroll = false;
+				_dragScrollActivated = false;
 
 				// Check if the scrolling should be revoked because it was too short in time/distance and hence was a click.
-				if (_dragScrollPastThreshold == false
+				if (_dragScrollPastPixelThreshold == false
 					&& SDL_GetTicks() - _dragScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
 				{
-					_dragScrollStepDone = false;
+					_dragScrollStepped = false;
 					center(
 						_dragScrollLon,
 						_dragScrollLat);
 				}
 
-				if (_dragScrollStepDone == true) return;
+				if (_dragScrollStepped == true) return;
 			}
 
 			if (isNaNorInf(lon,lat) == false)

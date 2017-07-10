@@ -189,7 +189,8 @@ void MiniMapState::btnOkClick(Action* action)
  */
 void MiniMapState::btnLevelUpClick(Action* action)
 {
-	_txtLevel->setText(Text::intWide((_miniView->up() + 1))); // %10
+	if (_miniView->isScrollActive() == false)
+		_txtLevel->setText(Text::intWide((_miniView->up() + 1))); // %10
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
@@ -200,7 +201,8 @@ void MiniMapState::btnLevelUpClick(Action* action)
  */
 void MiniMapState::btnLevelDownClick(Action* action)
 {
-	_txtLevel->setText(Text::intWide((_miniView->down() + 1))); // %10
+	if (_miniView->isScrollActive() == false)
+		_txtLevel->setText(Text::intWide((_miniView->down() + 1))); // %10
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
 }
@@ -211,7 +213,8 @@ void MiniMapState::btnLevelDownClick(Action* action)
  */
 void MiniMapState::keyCenterUnitPress(Action*)
 {
-	_miniView->centerUnit();
+	if (_miniView->isScrollActive() == false)
+		_miniView->centerUnit();
 }
 
 /**

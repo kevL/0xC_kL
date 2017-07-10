@@ -88,9 +88,9 @@ private:
 
 	bool
 		_blink,
-		_dragScroll,
-		_dragScrollStepDone,
-		_dragScrollPastThreshold,
+		_dragScrollActivated,
+		_dragScrollStepped,
+		_dragScrollPastPixelThreshold,
 		_drawCrosshair,
 		_forceRadars,
 		_globeDetail;

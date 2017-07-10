@@ -56,22 +56,34 @@ private:
 	static const Uint32 SCROLL_INTERVAL	= 63u;
 
 	bool
-		_dragScroll,
-		_dragScrollStepDone,
-		_dragScrollPastThreshold;
+		_dragScrollActivated,
+		_dragScrollPastPixelThreshold;
 
 	int
 		_anicycle,
 		_dragScrollX,
 		_dragScrollY,
-		_scrollKeyX,
-		_scrollKeyY,
 		_dragScrollTotalX,
-		_dragScrollTotalY;
+		_dragScrollTotalY,
+
+		_keyScrollX,
+		_keyScrollY,
+		_keyScrollBits;
+
+	static const int
+		OFF       = 0x00,
+		UP        = 0x01,
+		UPRIGHT   = 0x02,
+		RIGHT     = 0x04,
+		DOWNRIGHT = 0x08,
+		DOWN      = 0x10,
+		DOWNLEFT  = 0x20,
+		LEFT      = 0x40,
+		UPLEFT    = 0x80;
 
 	Uint32 _dragScrollStartTick;
 
-	Position _dragScrollPre;
+	Position _dragScrollStartPos;
 
 	Camera* _camera;
 	const Game* _game;
@@ -87,7 +99,7 @@ private:
 	/// Handles mouse-overs on the MiniMap.
 	void mouseOver(Action* action, State* state) override;
 	/// Handles mouse-ins on the MiniMap.
-	void mouseIn(Action* action, State* state) override;
+//	void mouseIn(Action* action, State* state) override;
 
 	/// Scrolls the MiniMap by keyboard.
 	void keyScroll();
@@ -123,6 +135,9 @@ private:
 
 		/// Centers on the currently selected BattleUnit if any.
 		void centerUnit();
+
+		/// Checks if drag- or key-scroll is active.
+		bool isScrollActive();
 
 		/// Animates the MiniMap.
 		void animate();

@@ -1366,7 +1366,7 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 } */
 
 /**
- * Processes any mouse-motion over the Map.
+ * Handles drag-scrolling and printing mouse-overed tile-info.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapOver(Action* action)
@@ -1476,8 +1476,8 @@ void BattlescapeState::mapClick(Action* action)
 
 	_dragScrollActivated = false;
 
-	if (SDL_GetTicks() - _dragScrollStartTick < static_cast<Uint32>(Options::dragScrollTimeTolerance)
-		&& _dragScrollPastPixelThreshold == false)
+	if (_dragScrollPastPixelThreshold == false
+		&& SDL_GetTicks() - _dragScrollStartTick < static_cast<Uint32>(Options::dragScrollTimeTolerance))
 	{
 //		if (_dragScrollActivated == true)
 //			_map->getCamera()->setMapOffset(_dragScrollStartPos);
