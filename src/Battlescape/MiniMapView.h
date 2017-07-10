@@ -61,10 +61,9 @@ private:
 
 	int
 		_anicycle,
+
 		_dragScrollX,
 		_dragScrollY,
-		_dragScrollTotalX,
-		_dragScrollTotalY,
 
 		_keyScrollX,
 		_keyScrollY,

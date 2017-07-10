@@ -75,8 +75,6 @@ MiniMapView::MiniMapView(
 		_dragScrollPastPixelThreshold(false),
 		_dragScrollX(0),
 		_dragScrollY(0),
-		_dragScrollTotalX(0),
-		_dragScrollTotalY(0),
 		_keyScrollX(0),
 		_keyScrollY(0),
 		_keyScrollBits(0),
@@ -444,18 +442,14 @@ void MiniMapView::mousePress(Action* action, State* state) // private.
 
 		_dragScrollStartTick = SDL_GetTicks();
 
-		_dragScrollTotalX =
-		_dragScrollTotalY = 0;
-
+		_dragScrollX =
+		_dragScrollY = 0;
 		_dragScrollPastPixelThreshold = false;
 
 		if (action->getDetails()->button.button == Options::battleDragScrollButton)
 		{
 			_dragScrollActivated = true;
 			_dragScrollStartPos = _camera->getCenterPosition();
-
-			_dragScrollX =
-			_dragScrollY = 0;
 		}
 	}
 }
@@ -475,6 +469,8 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 	//if (action != nullptr) logDetails(action);
 
 	InteractiveSurface::mouseClick(action, state);
+
+	_dragScrollActivated = false;
 
 	if (_dragScrollPastPixelThreshold == false
 		&& SDL_GetTicks() - _dragScrollStartTick < static_cast<Uint32>(Options::dragScrollTimeTolerance))
@@ -503,7 +499,6 @@ void MiniMapView::mouseClick(Action* action, State* state) // private.
 				dynamic_cast<MiniMapState*>(state)->btnOkClick(action); // close the State that the ActionHandlers belong to.
 		}
 	}
-	_dragScrollActivated = false;
 }
 
 /**
@@ -518,22 +513,19 @@ void MiniMapView::mouseOver(Action* action, State* state) // private.
 
 	if (action != nullptr && action->getDetails()->type == SDL_MOUSEMOTION)
 	{
-		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
-		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
+		_dragScrollX += static_cast<int>(action->getDetails()->motion.xrel);
+		_dragScrollY += static_cast<int>(action->getDetails()->motion.yrel);
 
 		if (_dragScrollPastPixelThreshold == false)
-			_dragScrollPastPixelThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
-										 || std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
+			_dragScrollPastPixelThreshold = std::abs(_dragScrollX) > Options::dragScrollPixelTolerance
+										 || std::abs(_dragScrollY) > Options::dragScrollPixelTolerance;
 
 		if (_dragScrollActivated == true && _dragScrollPastPixelThreshold == true)
 		{
-			_dragScrollX -= static_cast<int>(action->getDetails()->motion.xrel);
-			_dragScrollY -= static_cast<int>(action->getDetails()->motion.yrel);
-
 			_camera->centerPosition(
 								Position(
-									_dragScrollStartPos.x + (_dragScrollX / 10),
-									_dragScrollStartPos.y + (_dragScrollY / 10),
+									_dragScrollStartPos.x - (_dragScrollX / 10),
+									_dragScrollStartPos.y - (_dragScrollY / 10),
 									_camera->getViewLevel()),
 								false);
 			_redraw = true;
@@ -562,27 +554,27 @@ void MiniMapView::mouseIn(Action* action, State* state) // private.
  */
 void MiniMapView::keyScroll() // private.
 {
-	static const int scrollSpeed (1);
+	static const int step (1);
 
 	_keyScrollX =
 	_keyScrollY = 0;
 
-	if ((_keyScrollBits & 0xE0) != OFF)	// left+upleft+downleft
-		_keyScrollX += scrollSpeed;		// left
+	if ((_keyScrollBits & (LEFT | UPLEFT | DOWNLEFT)) != OFF)
+		_keyScrollX -= step;
 
-	if ((_keyScrollBits & 0x0E) != OFF)	// right+upright+downright
-		_keyScrollX -= scrollSpeed;		// right
+	if ((_keyScrollBits & (RIGHT | UPRIGHT | DOWNRIGHT)) != OFF)
+		_keyScrollX += step;
 
-	if ((_keyScrollBits & 0x83) != OFF)	// up+upleft+upright
-		_keyScrollY += scrollSpeed;		// up
+	if ((_keyScrollBits & (UP | UPLEFT | UPRIGHT)) != OFF)
+		_keyScrollY -= step;
 
-	if ((_keyScrollBits & 0x38) != OFF)	// down+downleft+downright
-		_keyScrollY -= scrollSpeed;		// down
+	if ((_keyScrollBits & (DOWN | DOWNLEFT | DOWNRIGHT)) != OFF)
+		_keyScrollY += step;
 
 	_camera->centerPosition(
 						Position(
-							_camera->getCenterPosition().x - _keyScrollX,
-							_camera->getCenterPosition().y - _keyScrollY,
+							_camera->getCenterPosition().x + _keyScrollX,
+							_camera->getCenterPosition().y + _keyScrollY,
 							_camera->getViewLevel()),
 						false);
 	_redraw = true;
