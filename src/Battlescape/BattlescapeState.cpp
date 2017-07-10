@@ -117,9 +117,9 @@ BattlescapeState::BattlescapeState()
 		_battleSave(_game->getSavedGame()->getBattleSave()),
 		_rules(_game->getRuleset()),
 //		_reserve(0),
-		_dragScroll(false),
-		_dragScrollStepDone(false),
-		_dragScrollPastThreshold(false),
+		_dragScrollActivated(false),
+//		_dragScrollStepped(false),
+		_dragScrollPastPixelThreshold(false),
 		_dragScrollStartTick(0u),
 		_dragScrollTotalX(0),
 		_dragScrollTotalY(0),
@@ -1335,199 +1335,252 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 	_showSoldierData = showInfo;
 }
 
+/* void logDetails(Action* action)
+{
+	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN || action->getDetails()->type == SDL_MOUSEBUTTONUP)
+	{
+		Log(LOG_INFO) << "button= " << (int)action->getDetails()->button.button;
+		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+			Log(LOG_INFO) << "BUTTON_LEFT";
+		else if (action->getDetails()->button.button == SDL_BUTTON_RIGHT)
+			Log(LOG_INFO) << "BUTTON_RIGHT";
+		else if (action->getDetails()->button.button == SDL_BUTTON_MIDDLE)
+			Log(LOG_INFO) << "BUTTON_MIDDLE";
+		else
+			Log(LOG_INFO) << "button other";
+	}
+
+	Log(LOG_INFO) << "type= " << (int)action->getDetails()->type;
+	if (action->getDetails()->type == SDL_MOUSEBUTTONDOWN)
+		Log(LOG_INFO) << "MOUSEDOWN";
+	else if (action->getDetails()->type == SDL_MOUSEBUTTONUP)
+		Log(LOG_INFO) << "MOUSEUP";
+	else if (action->getDetails()->type == SDL_MOUSEMOTION)
+		Log(LOG_INFO) << "MOUSEMOTION";
+	else if (action->getDetails()->type == SDL_KEYDOWN)
+		Log(LOG_INFO) << "KEYDOWN";
+	else if (action->getDetails()->type == SDL_KEYUP)
+		Log(LOG_INFO) << "KEYUP";
+	else
+		Log(LOG_INFO) << "type other";
+} */
+
 /**
  * Processes any mouse-motion over the Map.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapOver(Action* action)
 {
-	if (_dragScroll == true
-		&& action->getDetails()->type == SDL_MOUSEMOTION)
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeState::mapOver()";
+
+	if (action != nullptr									// god only knows why action would be null but it can be.
+		&& action->getDetails()->type == SDL_MOUSEMOTION)	// god only knows why anything but mouse-motion would get in there but it does.
 	{
-		_dragScrollStepDone = true;
+		//logDetails(action);
 
 		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
 		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
 
-		if (_dragScrollPastThreshold == false)
-			_dragScrollPastThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
-									|| std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
+		if (_dragScrollPastPixelThreshold == false)
+			_dragScrollPastPixelThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
+										 || std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
 
-//		if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
-//		{
-//			_map->getCamera()->scroll(
-//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
-//									static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
-//									false);
-//			_map->setSelectorType(CT_NONE);
-//		}
-//		else
-		_map->getCamera()->scroll(
-								static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.62 / action->getScaleX()),
-								static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.62 / action->getScaleY()),
-								false);
+		if (_dragScrollActivated == true && _dragScrollPastPixelThreshold == true)
+		{
+//			if (Options::battleDragScrollInvert == true) // scroll. I don't use inverted scrolling.
+//				_map->getCamera()->scroll(
+//										static_cast<int>(static_cast<double>(-action->getDetails()->motion.xrel) / action->getScaleX()),
+//										static_cast<int>(static_cast<double>(-action->getDetails()->motion.yrel) / action->getScaleY()),
+//										false);
+//			else
+			_map->getCamera()->scroll(
+									static_cast<int>(static_cast<double>(action->getDetails()->motion.xrel) * 3.5 / action->getScaleX()),
+									static_cast<int>(static_cast<double>(action->getDetails()->motion.yrel) * 3.5 / action->getScaleY()),
+									false);
 
-		_game->getCursor()->handle(action);
+			_game->getCursor()->handle(action);
+		}
+		else if (_mouseOverIcons == false && allowButtons() == true
+			&& _game->getCursor()->getHidden() == false)
+		{
+			Position pos;
+			_map->getSelectorPosition(pos);
+
+			Tile* const tile (_battleSave->getTile(pos));
+			updateTileInfo(tile);
+
+			if (_showConsole > 0)
+				printTileInventory(tile);
+		}
+//		else if (_mouseOverIcons == true){} // might need to erase some info here.
 	}
-	else if (_mouseOverIcons == false && allowButtons() == true
-		&& _game->getCursor()->getHidden() == false)
-	{
-		Position pos;
-		_map->getSelectorPosition(pos);
-
-		Tile* const tile (_battleSave->getTile(pos));
-		updateTileInfo(tile);
-
-		if (_showConsole > 0)
-			printTileInventory(tile);
-	}
-//	else if (_mouseOverIcons == true){} // might need to erase some info here.
 }
 
 /**
- * Processes any presses on the Map.
+ * Initiates drag-scrolling.
+ * @note Apparently, for whatever reason, this handler fires only as the result
+ * of a mouse-down event.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapPress(Action* action)
 {
-	if (_mouseOverIcons == false
-		&& action->getDetails()->button.button == Options::battleDragScrollButton)
-	{
-		_dragScroll = true;
-		_dragScrollStepDone = false;
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeState::mapPress()";
+	//if (action != nullptr) logDetails(action);
 
-		_dragScrollPre = _map->getCamera()->getMapOffset();
+	if (_mouseOverIcons == false)
+	{
+		_dragScrollStartTick = SDL_GetTicks();
+		// NOTE: This is how ticks will be used.
+		//
+		// If the mouse-button is released under the threshold, any drag-scroll
+		// is cancelled. The mouse-button event will register as a primary or
+		// secondary action (and then only if the pixel-threshold is not
+		// exceeded).
+		//
+		// If the mouse-button is released over the threshold, any primary or
+		// secondary action will be cancelled. The mouse-button event will
+		// register only as a drag-scroll (and then only if the pixel-threshold
+		// is exceeded).
 
 		_dragScrollTotalX =
 		_dragScrollTotalY = 0;
-		_dragScrollPastThreshold = false;
-		_dragScrollStartTick = SDL_GetTicks();
+		_dragScrollPastPixelThreshold = false;
+
+		if (action->getDetails()->button.button == Options::battleDragScrollButton)
+		{
+			_dragScrollActivated = true;
+//			_dragScrollStartPos = _map->getCamera()->getMapOffset();
+		}
 	}
 }
 
 /**
- * Processes any mouse-clicks on the Map.
+ * Invokes a primary or secondary tactical-action, also finalizes drag-scrolling.
+ * @note Apparently, for whatever reason, this handler fires only as the result
+ * of a mouse-up event.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapClick(Action* action)
 {
-	// NOTE: mapPress() inititates drag-scrolling and this mapClick() acts as a *release*
-	if (_dragScroll == true) // dragScroll-button release: release mouse-scroll-mode
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattlescapeState::mapClick()";
+	//if (action != nullptr) logDetails(action);
+
+//	if (_dragScrollActivated == true
+//		&& action->getDetails()->button.button != Options::battleDragScrollButton)
+//	{
+//		return; // other buttons are ineffective while scrolling
+//	}
+
+	_dragScrollActivated = false;
+
+	if (SDL_GetTicks() - _dragScrollStartTick < static_cast<Uint32>(Options::dragScrollTimeTolerance)
+		&& _dragScrollPastPixelThreshold == false)
 	{
-		if (action->getDetails()->button.button != Options::battleDragScrollButton) // other buttons are ineffective while scrolling
-			return;
+//		if (_dragScrollActivated == true)
+//			_map->getCamera()->setMapOffset(_dragScrollStartPos);
 
-		_dragScroll = false;
-
-		// Check if the scrolling should be revoked because it was too short in time/distance and hence was a click.
-		if (_dragScrollPastThreshold == false
-			&& SDL_GetTicks() - _dragScrollStartTick <= static_cast<Uint32>(Options::dragScrollTimeTolerance))
+		if ((action->getDetails()->button.button != SDL_BUTTON_RIGHT	// right-click removes pathPreview or aborts walking state
+				|| _battleGame->cancelTacticalAction() == false)		// or skips projectile trajectory, etc.
+			&& (_mouseOverIcons == false
+				&& _map->getSelectorType() != CT_NONE
+				&& _battleGame->isBusy() == false))
 		{
-			_dragScrollStepDone = false;
-			_map->getCamera()->setMapOffset(_dragScrollPre);
-		}
+			Position pos;
+			_map->getSelectorPosition(pos);
 
-		if (_dragScrollStepDone == true) return;
-	}
-
-
-	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT	// right-click removes pathPreview or aborts walking state
-		&& _battleGame->cancelTacticalAction() == true)			// or skips projectile trajectory, etc.
-	{
-		return;
-	}
-
-	if (_mouseOverIcons == false
-		&& _map->getSelectorType() != CT_NONE
-		&& _battleGame->isBusy() == false)
-	{
-		Position pos;
-		_map->getSelectorPosition(pos);
-
-		if (_battleSave->getTile(pos) != nullptr)
-		{
-			switch (action->getDetails()->button.button)
+			if (_battleSave->getTile(pos) != nullptr)
 			{
-				case SDL_BUTTON_LEFT:
-					_battleGame->primaryAction(pos);
-					break;
-
-				case SDL_BUTTON_RIGHT:
-					if (playableUnitSelected() == true)
-						_battleGame->secondaryAction(pos);
-			}
-
-
-			std::wostringstream woststr; // onScreen debug ->
-
-			const BattleUnit* const unit (_battleSave->getTile(pos)->getTileUnit());
-			if (unit != nullptr && unit->getUnitVisible() == true)
-				woststr	<< L"unit "
-						<< unit->getId()
-						<< L" ";
-
-			woststr << L"pos " << pos;
-			printDebug(woststr.str());
-
-			if (_battleSave->getDebugTac() == true) // print tile-info to Log ->
-			{
-				Log(LOG_INFO) << "";
-				Log(LOG_INFO) << "data sets";
-				size_t id (0u);
-				for (std::vector<MapDataSet*>::const_iterator
-						i = _battleSave->getBattleDataSets()->begin();
-						i != _battleSave->getBattleDataSets()->end();
-						++i, ++id)
+				switch (action->getDetails()->button.button)
 				{
-					Log(LOG_INFO) << ". " << id << " - " << (*i)->getType();
+					case SDL_BUTTON_LEFT:
+						_battleGame->primaryAction(pos);
+						break;
+
+					case SDL_BUTTON_RIGHT:
+						if (playableUnitSelected() == true)
+							_battleGame->secondaryAction(pos);
 				}
 
 
-				Log(LOG_INFO) << "";
-				Log(LOG_INFO) << "tile info " << pos;
+				std::wostringstream woststr; // onScreen debug ->
 
-				int
-					partSetId,
-					partId;
+				const BattleUnit* const unit (_battleSave->getTile(pos)->getTileUnit());
+				if (unit != nullptr && unit->getUnitVisible() == true)
+					woststr	<< L"unit "
+							<< unit->getId()
+							<< L" ";
 
-				const Tile* const tile (_battleSave->getTile(pos));
+				woststr << L"pos " << pos;
+				printDebug(woststr.str());
 
-				Log(LOG_INFO) << ". is Floored= " << tile->isFloored(tile->getTileBelow(_battleSave));
-
-				if (tile->getMapData(O_FLOOR) != nullptr)
+				if (_battleSave->getDebugTac() == true) // print tile-info to Log ->
 				{
-					tile->getMapData(&partId, &partSetId, O_FLOOR);
-					Log(LOG_INFO) << ". FLOOR partSetId= "	<< partSetId << " - " << tile->getMapData(O_FLOOR)->getDataset()->getType();
-					Log(LOG_INFO) << ". FLOOR partId= "		<< partId;
-				}
-				else Log(LOG_INFO) << ". no FLOOR";
+					Log(LOG_INFO) << "";
+					Log(LOG_INFO) << "data sets";
+					size_t id (0u);
+					for (std::vector<MapDataSet*>::const_iterator
+							i = _battleSave->getBattleDataSets()->begin();
+							i != _battleSave->getBattleDataSets()->end();
+							++i, ++id)
+					{
+						Log(LOG_INFO) << ". " << id << " - " << (*i)->getType();
+					}
 
-				if (tile->getMapData(O_WESTWALL) != nullptr)
-				{
-					tile->getMapData(&partId, &partSetId, O_WESTWALL);
-					Log(LOG_INFO) << ". WESTWALL partSetId= "	<< partSetId << " - " << tile->getMapData(O_WESTWALL)->getDataset()->getType();
-					Log(LOG_INFO) << ". WESTWALL partId= "		<< partId;
-				}
-				else Log(LOG_INFO) << ". no WESTWALL";
 
-				if (tile->getMapData(O_NORTHWALL) != nullptr)
-				{
-					tile->getMapData(&partId, &partSetId, O_NORTHWALL);
-					Log(LOG_INFO) << ". NORTHWALL partSetId= "	<< partSetId << " - " << tile->getMapData(O_NORTHWALL)->getDataset()->getType();
-					Log(LOG_INFO) << ". NORTHWALL partId= "		<< partId;
-				}
-				else Log(LOG_INFO) << ". no NORTHWALL";
+					Log(LOG_INFO) << "";
+					Log(LOG_INFO) << "tile info " << pos;
 
-				if (tile->getMapData(O_OBJECT) != nullptr)
-				{
-					tile->getMapData(&partId, &partSetId, O_OBJECT);
-					Log(LOG_INFO) << ". OBJECT partSetId= "	<< partSetId << " - " << tile->getMapData(O_OBJECT)->getDataset()->getType();
-					Log(LOG_INFO) << ". OBJECT partId= "	<< partId;
+					int
+						partSetId,
+						partId;
+
+					const Tile* const tile (_battleSave->getTile(pos));
+
+					Log(LOG_INFO) << ". is Floored= " << tile->isFloored(tile->getTileBelow(_battleSave));
+
+					if (tile->getMapData(O_FLOOR) != nullptr)
+					{
+						tile->getMapData(&partId, &partSetId, O_FLOOR);
+						Log(LOG_INFO) << ". FLOOR partSetId= "	<< partSetId << " - " << tile->getMapData(O_FLOOR)->getDataset()->getType();
+						Log(LOG_INFO) << ". FLOOR partId= "		<< partId;
+					}
+					else Log(LOG_INFO) << ". no FLOOR";
+
+					if (tile->getMapData(O_WESTWALL) != nullptr)
+					{
+						tile->getMapData(&partId, &partSetId, O_WESTWALL);
+						Log(LOG_INFO) << ". WESTWALL partSetId= "	<< partSetId << " - " << tile->getMapData(O_WESTWALL)->getDataset()->getType();
+						Log(LOG_INFO) << ". WESTWALL partId= "		<< partId;
+					}
+					else Log(LOG_INFO) << ". no WESTWALL";
+
+					if (tile->getMapData(O_NORTHWALL) != nullptr)
+					{
+						tile->getMapData(&partId, &partSetId, O_NORTHWALL);
+						Log(LOG_INFO) << ". NORTHWALL partSetId= "	<< partSetId << " - " << tile->getMapData(O_NORTHWALL)->getDataset()->getType();
+						Log(LOG_INFO) << ". NORTHWALL partId= "		<< partId;
+					}
+					else Log(LOG_INFO) << ". no NORTHWALL";
+
+					if (tile->getMapData(O_OBJECT) != nullptr)
+					{
+						tile->getMapData(&partId, &partSetId, O_OBJECT);
+						Log(LOG_INFO) << ". OBJECT partSetId= "	<< partSetId << " - " << tile->getMapData(O_OBJECT)->getDataset()->getType();
+						Log(LOG_INFO) << ". OBJECT partId= "	<< partId;
+					}
+					else Log(LOG_INFO) << ". no OBJECT";
 				}
-				else Log(LOG_INFO) << ". no OBJECT";
 			}
 		}
 	}
+//	else if (_dragScrollActivated == true
+//		&& _dragScrollPastPixelThreshold == false)
+//	{
+//		_map->getCamera()->setMapOffset(_dragScrollStartPos);
+//	}
 }
 
 /**
@@ -1536,7 +1589,7 @@ void BattlescapeState::mapClick(Action* action)
  */
 void BattlescapeState::mapIn(Action*)
 {
-	_dragScroll = false;
+	_dragScrollActivated = false;
 	_map->setButtonsPressed(static_cast<Uint8>(Options::battleDragScrollButton), false);
 }
 
@@ -3888,7 +3941,7 @@ void BattlescapeState::showPsiButton(bool show)
  */
 void BattlescapeState::clearDragScroll()
 {
-	_dragScroll = false;
+	_dragScrollActivated = false;
 }
 
 /**

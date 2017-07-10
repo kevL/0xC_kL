@@ -709,7 +709,7 @@ int Camera::getMapSizeY() const
 
 /**
  * Gets the map-offset.
- * @return, the map-position offset
+ * @return, the battlefield-position offset
  */
 Position Camera::getMapOffset() const
 {
@@ -718,7 +718,7 @@ Position Camera::getMapOffset() const
 
 /**
  * Sets the map-offset.
- * @param posOffset - the map-position offset
+ * @param posOffset - reference to the battlefield-position offset
  */
 void Camera::setMapOffset(const Position& posOffset)
 {

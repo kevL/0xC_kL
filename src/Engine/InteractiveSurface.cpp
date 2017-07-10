@@ -138,8 +138,8 @@ void InteractiveSurface::handle( // virtual.
 
 		switch (action->getDetails()->type)
 		{
-			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
 				action->setMouseAction(
 									action->getDetails()->button.x,
 									action->getDetails()->button.y,

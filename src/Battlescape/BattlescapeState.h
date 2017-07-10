@@ -88,9 +88,9 @@ private:
 		_autosave,
 		_iconsHidden,
 		_init,
-		_dragScroll,
-		_dragScrollStepDone,
-		_dragScrollPastThreshold,
+		_dragScrollActivated,
+//		_dragScrollStepped,
+		_dragScrollPastPixelThreshold,
 		_isOverweight,
 		_mouseOverIcons,
 		_showSoldierData;
@@ -217,7 +217,7 @@ private:
 
 	std::vector<State*> _popups;
 
-	Position _dragScrollPre;
+	Position _dragScrollStartPos;
 //		_cursorPosition,
 
 

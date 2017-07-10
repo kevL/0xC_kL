@@ -2563,8 +2563,10 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
  * pathPreview was cancelled or walking was aborted and by
  * BattlescapeState::btnBattleOptionsClick() to let the Esc-key remove
  * pathPreview or cancel walking/targeting.
- * @param force - force the action to be cancelled (default false)
- * @return, true if anything was cancelled
+ * @param force - force action to be cancelled but does not affect path-preview;
+ *				  note that @a force bypasses the selector-refresh (default false)
+ * @return, true if any 'tactical actions' are cleared
+ *			false if nothing changed
  */
 bool BattlescapeGame::cancelTacticalAction(bool force)
 {
@@ -2576,10 +2578,10 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 	{
 		if (_battleStates.empty() == true || force == true)
 		{
-			if (_playerAction.targeting == true)
+			if (_playerAction.targeting == true)					// cancel targeting-action
 			{
 				//Log(LOG_INFO) << ". is Targeting";
-				if (_playerAction.type == BA_LAUNCH
+				if (_playerAction.type == BA_LAUNCH					// pop BlasterLaunch waypoint
 					&& _playerAction.waypoints.empty() == false)
 				{
 					//Log(LOG_INFO) << ". . launch & action-waypoints valid - Pop 1 wp";
@@ -2597,8 +2599,8 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 						_battleState->showLaunchButton(false);
 					}
 				}
-				else
-				{
+				else												// cancel other targeting-action and reset cuboid if not forced,
+				{													// ie. reset the cuboid only if a battle-state is *not* running.
 					//Log(LOG_INFO) << ". . set Targeting FALSE";
 					_playerAction.targeting = false;
 					_playerAction.type = BA_NONE;
@@ -2611,16 +2613,19 @@ bool BattlescapeGame::cancelTacticalAction(bool force)
 						_battleState->getGame()->getCursor()->setHidden(false);
 					}
 				}
+				return true;
 			}
-			else
-				return false;
-		}
-		else if (_battleStates.empty() == false && _battleStates.front() != nullptr)
-			_battleStates.front()->cancel();
-		else
 			return false;
+		}
+
+		if (_battleStates.empty() == false && _battleStates.front() != nullptr)
+		{
+			_battleStates.front()->cancel();
+			return true;
+		}
+		return false;
 	}
-	return true;
+	return true; // path-preview was cleared here.
 }
 
 /**
@@ -2827,7 +2832,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 	}
 	else if (playableUnitSelected() == true)
 	{
-		bool allowPreview (Options::battlePreviewPath != PATH_NONE);
+		bool canPreview (Options::battlePreviewPath != PATH_NONE);
 
 		Pathfinding* const pf (_battleSave->getPathfinding());
 		pf->setPathingUnit(_playerAction.actor);
@@ -2847,7 +2852,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 			else
 				zPath = false;
 
-			if (allowPreview == true
+			if (canPreview == true
 				&& (_playerAction.posTarget != pos
 					|| pf->isModCtrl() != ctrl
 					|| pf->isModAlt()  != alt
@@ -2863,14 +2868,14 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 			if (pf->getStartDirection() != -1)
 			{
-				if (allowPreview == true
+				if (canPreview == true
 					&& pf->previewPath() == false)
 				{
 					pf->clearPreview();
-					allowPreview = false;
+					canPreview = false;
 				}
 
-				if (allowPreview == false)
+				if (canPreview == false)
 				{
 					getMap()->setSelectorType(CT_NONE);
 					_battleState->getGame()->getCursor()->setHidden();
@@ -2881,7 +2886,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 		}
 		else if (targetUnit == _playerAction.actor)
 		{
-			if (allowPreview == true)
+			if (canPreview == true)
 				pf->clearPreview();
 
 			if (ctrl == true && _playerAction.actor->getArmor()->getSize() == 1)

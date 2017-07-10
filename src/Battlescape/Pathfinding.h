@@ -187,7 +187,7 @@ private:
 //				const bool launch = false);
 
 		/// Previews the path.
-		bool previewPath(bool discard = false);
+		bool previewPath(bool clear = false);
 		/// Clears the path-preview.
 		bool clearPreview();
 		/// Gets the path-preview setting.
