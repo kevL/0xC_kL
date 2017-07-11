@@ -554,22 +554,22 @@ void MiniMapView::mouseIn(Action* action, State* state) // private.
  */
 void MiniMapView::keyScroll() // private.
 {
-	static const int step (1);
+	static const int STEP (1);
 
 	_keyScrollX =
 	_keyScrollY = 0;
 
 	if ((_keyScrollBits & (LEFT | UPLEFT | DOWNLEFT)) != OFF)
-		_keyScrollX -= step;
+		_keyScrollX -= STEP;
 
 	if ((_keyScrollBits & (RIGHT | UPRIGHT | DOWNRIGHT)) != OFF)
-		_keyScrollX += step;
+		_keyScrollX += STEP;
 
 	if ((_keyScrollBits & (UP | UPLEFT | UPRIGHT)) != OFF)
-		_keyScrollY -= step;
+		_keyScrollY -= STEP;
 
 	if ((_keyScrollBits & (DOWN | DOWNLEFT | DOWNRIGHT)) != OFF)
-		_keyScrollY += step;
+		_keyScrollY += STEP;
 
 	_camera->centerPosition(
 						Position(

@@ -96,8 +96,8 @@ private:
 		_showSoldierData;
 	int
 		_showConsole,
-		_dragScrollTotalX,
-		_dragScrollTotalY;
+		_dragScrollX,
+		_dragScrollY;
 	size_t
 		_cycleFuse,
 		_cycleTargeter;
@@ -297,7 +297,7 @@ private:
 		/// Handler for clicking the Map.
 		void mapClick(Action* action);
 		/// Handler for the mouse entering the Map surface.
-		void mapIn(Action* action);
+//		void mapIn(Action* action);
 
 		/// Handles keypresses.
 		void handle(Action* action) override;

@@ -121,8 +121,8 @@ BattlescapeState::BattlescapeState()
 //		_dragScrollStepped(false),
 		_dragScrollPastPixelThreshold(false),
 		_dragScrollStartTick(0u),
-		_dragScrollTotalX(0),
-		_dragScrollTotalY(0),
+		_dragScrollX(0),
+		_dragScrollY(0),
 		_init(true),
 		_mouseOverIcons(false),
 		_cycleFuse(0u),
@@ -344,7 +344,7 @@ BattlescapeState::BattlescapeState()
 	_map->onMousePress(	static_cast<ActionHandler>(&BattlescapeState::mapPress));
 	_map->onMouseClick(	static_cast<ActionHandler>(&BattlescapeState::mapClick),
 						0u);
-	_map->onMouseIn(	static_cast<ActionHandler>(&BattlescapeState::mapIn));
+//	_map->onMouseIn(	static_cast<ActionHandler>(&BattlescapeState::mapIn));
 
 
 	const ResourcePack* const res (_game->getResourcePack());
@@ -1379,12 +1379,12 @@ void BattlescapeState::mapOver(Action* action)
 	{
 		//logDetails(action);
 
-		_dragScrollTotalX += static_cast<int>(action->getDetails()->motion.xrel);
-		_dragScrollTotalY += static_cast<int>(action->getDetails()->motion.yrel);
+		_dragScrollX += static_cast<int>(action->getDetails()->motion.xrel);
+		_dragScrollY += static_cast<int>(action->getDetails()->motion.yrel);
 
 		if (_dragScrollPastPixelThreshold == false)
-			_dragScrollPastPixelThreshold = std::abs(_dragScrollTotalX) > Options::dragScrollPixelTolerance
-										 || std::abs(_dragScrollTotalY) > Options::dragScrollPixelTolerance;
+			_dragScrollPastPixelThreshold = std::abs(_dragScrollX) > Options::dragScrollPixelTolerance
+										 || std::abs(_dragScrollY) > Options::dragScrollPixelTolerance;
 
 		if (_dragScrollActivated == true && _dragScrollPastPixelThreshold == true)
 		{
@@ -1444,8 +1444,8 @@ void BattlescapeState::mapPress(Action* action)
 		// register only as a drag-scroll (and then only if the pixel-threshold
 		// is exceeded).
 
-		_dragScrollTotalX =
-		_dragScrollTotalY = 0;
+		_dragScrollX =
+		_dragScrollY = 0;
 		_dragScrollPastPixelThreshold = false;
 
 		if (action->getDetails()->button.button == Options::battleDragScrollButton)
@@ -1586,12 +1586,12 @@ void BattlescapeState::mapClick(Action* action)
 /**
  * Handles mouse entering the Map surface.
  * @param action - pointer to an Action
- */
+ *
 void BattlescapeState::mapIn(Action*)
 {
 	_dragScrollActivated = false;
 	_map->setButtonsPressed(static_cast<Uint8>(Options::battleDragScrollButton), false);
-}
+} */
 
 /**
  * Takes care of any events from the core-engine.

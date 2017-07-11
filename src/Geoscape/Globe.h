@@ -89,15 +89,14 @@ private:
 	bool
 		_blink,
 		_dragScrollActivated,
-		_dragScrollStepped,
 		_dragScrollPastPixelThreshold,
 		_drawCrosshair,
 		_forceRadars,
 		_globeDetail;
 	int
 		_blinkVal,
-		_dragScrollTotalX,
-		_dragScrollTotalY;
+		_dragScrollX,
+		_dragScrollY;
 	double
 		_cenLat,
 		_cenLon,
