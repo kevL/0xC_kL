@@ -60,11 +60,11 @@
 #include "../Ruleset/RuleItem.h"
 #include "../Ruleset/Ruleset.h"
 
-/*
-Map origin is top corner (NW corner).
+
+/* Map origin is top point (NW corner).
 - x-axis goes downright (width of the Map) eastward
-- y-axis goes downleft (length of the Map) southward
-- Z axis goes up (height of the Map) upward
+- y-axis goes downleft (height of the Map) southward
+- Z axis goes up (depth of the Map) upward
 
     0,0
     /\
@@ -82,7 +82,7 @@ namespace OpenXcom
  * @param height			- height in pixels
  * @param x					- x-position in pixels
  * @param y					- y-position in pixels
- * @param playableHeight	- current visible Map height
+ * @param playableHeight	- Map height above HUD-icons (generally clickable)
  */
 Map::Map(
 		const Game* const game,
@@ -327,6 +327,7 @@ void Map::draw()
 	// but don't clear the background with color 0, which is transparent
 	// (aka black) -- use color 15 because that actually corresponds to the
 	// color you DO want in all variations of the xcom palettes.
+	// If you say so ... oh wait.
 //	Surface::draw();
 
 		if (_flashScreen == true)
@@ -450,6 +451,18 @@ void Map::draw()
  */
 void Map::drawTerrain(Surface* const surface) // private.
 {
+	static const Position posBelow          (Position( 0, 0,-1));
+	static const Position posAbove          (Position( 0, 0, 1));
+	static const Position posNorth          (Position( 0,-1, 0));
+//	static const Position posEast           (Position( 1, 0, 0));
+	static const Position posWest           (Position(-1, 0, 0));
+	static const Position posSouthWest      (Position(-1, 1, 0));
+	static const Position posNorthEast      (Position( 1,-1, 0));
+	static const Position posSouthSouthWest (Position(-1, 2, 0));
+//	static const Position posNorthNorthEast (Position( 1,-2, 0));
+//	static const Position posEastBelow      (Position( 1, 0,-1));
+	static const Position posNorthBelow     (Position( 0,-1,-1));
+
 	//Log(LOG_INFO) << "Map::drawTerrain() " << _camera->getMapOffset();
 	Position bullet; // x-y position of bullet on screen.
 	int
@@ -715,7 +728,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						continue;
 
 					if (itZ != 0)
-						tileBelow = _battleSave->getTile(posField + Position(0,0,-1));
+						tileBelow = _battleSave->getTile(posField + posBelow);
 					else
 						tileBelow = nullptr;
 
@@ -750,13 +763,13 @@ void Map::drawTerrain(Surface* const surface) // private.
 						// bleh. stupid Map ... FIXED.
 /*						if (itZ > 0 && itX < endX)
 						{
-							const Tile* const tileEast (_battleSave->getTile(posField + Position(1,0,0)));
+							const Tile* const tileEast (_battleSave->getTile(posField + posEast));
 							if (tileEast != nullptr // why.
 								&& tileEast->getSprite(O_FLOOR) == nullptr
 								&& (tileEast->getMapData(O_OBJECT) == nullptr // special case ->
 									|| tileEast->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NWSE))
 							{
-								const Tile* const tileEastBelow (_battleSave->getTile(posField + Position(1,0,-1)));
+								const Tile* const tileEastBelow (_battleSave->getTile(posField + posEastBelow));
 								const BattleUnit* const unitEastBelow (tileEastBelow->getTileUnit());
 
 								if (unitEastBelow != nullptr
@@ -775,7 +788,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Redraw unitNorth moving NE/SW to stop current-Floor from clipping feet.
 						if (itX != 0 && itY != 0)
 						{
-							const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
+							const Tile* const tileWest (_battleSave->getTile(posField + posWest));
 							const BattleUnit* const unitWest (tileWest->getTileUnit());
 							if (unitWest != nullptr
 								&& unitWest->getUnitVisible() == true) // don't bother checking DebugMode.
@@ -790,12 +803,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 											case 1:
 											case 5:
 											{
-												const Tile* tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
+												const Tile* tileNorth (_battleSave->getTile(posField + posNorth));
 												const BattleUnit* unitNorth (tileNorth->getTileUnit());
 												int offsetZ_y;
 												if (unitNorth == nullptr && itZ != 0)
 												{
-													tileNorth = _battleSave->getTile(posField + Position(0,-1,-1));
+													tileNorth = _battleSave->getTile(posField + posNorthBelow);
 													unitNorth = tileNorth->getTileUnit();
 													offsetZ_y = 24;
 												}
@@ -804,10 +817,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 												if (unitNorth == unitWest)
 												{
-													const Tile* const tileSouthWest (_battleSave->getTile(posField + Position(-1,1,0)));
+													const Tile* const tileSouthWest (_battleSave->getTile(posField + posSouthWest));
 													if (checkWest(tileWest, tileSouthWest, unitNorth) == true)
 													{
-//														const Tile* const tileNorthEast (_battleSave->getTile(posField + Position(1,-1,0)));
+//														const Tile* const tileNorthEast (_battleSave->getTile(posField + posNorthEast));
 														if (checkNorth(tileNorth, /*tileNorthEast,*/ unitNorth) == true)
 														{
 															trueLoc = isTrueLoc(unitNorth, tileNorth);
@@ -907,7 +920,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Draw Tile Background
 					if (_tile->isVoid(true, false) == false)
 					{
-// Draw west wall
+// Draw West Wall
 						if ((sprite = _tile->getSprite(O_WESTWALL)) != nullptr)
 						{
 							if (_tile->isRevealed(ST_WEST) == true)
@@ -1166,8 +1179,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 												case 4:
 													redrawEastwall =
 													draw = checkNorth(
-																	_battleSave->getTile(posField + Position(0,-1,0)),	// tileNorth
-//																	_battleSave->getTile(posField + Position(1,-1,0)),	// tileNorthEast
+																	_battleSave->getTile(posField + posNorth),
+//																	_battleSave->getTile(posField + posNorthEast),
 																	nullptr,
 																	&halfLeft);
 													break;
@@ -1176,8 +1189,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 												case 6:
 													redrawSouthwall =
 													draw = checkWest(
-																	_battleSave->getTile(posField + Position(-1,0,0)),	// tileWest
-																	_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
+																	_battleSave->getTile(posField + posWest),
+																	_battleSave->getTile(posField + posSouthWest),
 																	nullptr,
 																	&halfRight);
 													//Log(LOG_INFO) << ". drawUnit/redrawWall= " << draw << " hRight= " << halfRight;
@@ -1186,11 +1199,11 @@ void Map::drawTerrain(Surface* const surface) // private.
 												case 1:
 												case 5:
 													draw = checkWest(
-																	_battleSave->getTile(posField + Position(-1,1,0)),	// tileSouthWest
-																	_battleSave->getTile(posField + Position(-1,2,0)));	// tileSouthSouthWest
+																	_battleSave->getTile(posField + posSouthWest),
+																	_battleSave->getTile(posField + posSouthSouthWest));
 													draw &= checkNorth(
-																	_battleSave->getTile(posField + Position(1,-1,0)));	// tileNorthEast
-//																	_battleSave->getTile(posField + Position(1,-2,0)));	// tileNorthNorthEast
+																	_battleSave->getTile(posField + posNorthEast));
+//																	_battleSave->getTile(posField + posNorthNorthEast));
 											}
 //									}
 							}
@@ -1232,7 +1245,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									&& (   _tile->getMapData(O_OBJECT) == nullptr
 										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST))
 								{
-									const Tile* const tileNorth (_battleSave->getTile(posField + Position(0,-1,0)));
+									const Tile* const tileNorth (_battleSave->getTile(posField + posNorth));
 									if (   tileNorth != nullptr // safety. perhaps
 										&& tileNorth->getMapData(O_OBJECT) != nullptr
 										&& tileNorth->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST)
@@ -1249,7 +1262,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									&& (   _tile->getMapData(O_OBJECT) == nullptr
 										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH))
 								{
-									const Tile* const tileWest (_battleSave->getTile(posField + Position(-1,0,0)));
+									const Tile* const tileWest (_battleSave->getTile(posField + posWest));
 									if (   tileWest != nullptr
 										&& tileWest->getMapData(O_OBJECT) != nullptr
 										&& tileWest->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH)
@@ -1267,7 +1280,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								if (_unit->getFaction() == FACTION_PLAYER
 									&& _unit->isMindControlled() == false)
 								{
-									const Tile* const tileAbove (_battleSave->getTile(posField + Position(0,0,1)));
+									const Tile* const tileAbove (_battleSave->getTile(posField + posAbove));
 									if ((viewLevel == itZ
 											&& (_camera->getShowLayers() == false || itZ == endZ))
 										|| (tileAbove != nullptr && tileAbove->getSprite(O_FLOOR) == nullptr))
@@ -1873,7 +1886,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (_previewSetting & PATH_ARROWS) // arrows semi-transparent
 							{
-								tileBelow = _battleSave->getTile(posField + Position(0,0,-1));
+								tileBelow = _battleSave->getTile(posField + posBelow);
 								if (itZ > 0 && _tile->isFloored(tileBelow) == false)
 								{
 									sprite = _res->getSurfaceSet("Pathfinding")->getFrame(23);
@@ -2393,13 +2406,23 @@ bool Map::isTrueLoc(
 		const BattleUnit* const unit,
 		const Tile* const tile) const // private.
 {
-	if (unit->getUnitTile() == tile
-		|| (unit->getArmor()->getSize() == 2
-			&& (   tile->getPosition() + Position(-1, 0,0) == unit->getPosition()
-				|| tile->getPosition() + Position( 0,-1,0) == unit->getPosition()
-				|| tile->getPosition() + Position(-1,-1,0) == unit->getPosition())))
-	{
+	if (unit->getUnitTile() == tile)
 		return true;
+
+	if (unit->getArmor()->getSize() == 2)
+	{
+		static const Position posWest      (Position(-1, 0,0));
+		static const Position posNorth     (Position( 0,-1,0));
+		static const Position posNorthWest (Position(-1,-1,0));
+
+		const Position& posUnit (unit->getPosition());
+		const Position& posTile (tile->getPosition());
+		if (   posTile + posWest      == posUnit
+			|| posTile + posNorth     == posUnit
+			|| posTile + posNorthWest == posUnit)
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -2489,7 +2512,7 @@ void Map::calcWalkOffset( // private.
 			// if unit is between tiles interpolate its terrain level (y-adjustment).
 			const int
 				posStartZ (unit->getStartPosition().z),
-				posStopZ (unit->getStopPosition().z);
+				posStopZ  (unit->getStopPosition().z);
 			int
 				levelStart,
 				levelStop;
