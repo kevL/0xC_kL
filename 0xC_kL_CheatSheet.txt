@@ -1,0 +1,193 @@
+0xC_kL CheatSheet
+-----------------
+
+Quit - Alt+F4 (windows)
+
+Escape Sequence:
+Options       - Esc
+Quit n Rage   - q
+Abandon       - q
+MainMenu Quit - q
+
+note: Esc closes various screens.
+
+
+Function keys:
+F1  - don't reserve TU (disabled)
+F2  - reserve TU for snapshot (disabled)
+F3  - reserve TU for aimedshot (disabled)
+F4  - reserve TU for autoshot (disabled)
+
+F5  - quick load
+F6  - quick save
+
+F7  - toggle FPS counter
+F8  - animation speed for debugging animations (5-position switch)
+
+F9  - save AIExposure-map to png file (debug ON)
+F10 - save Voxel-maps to png files
+
+F11 - save Voxel-view to png file and show in IrfanView (windows).
+F12 - save screenshot to png file
+
+
+Ctrl+g - toggle grab mouse in window
+Ctrl+u - toggle debug-UI
+Ctrl+m - toggle mute
+
+
+GEOSCAPE:
+globe rotate - arrows keys or keypad arrow keys or RMB-click or RMB-drag
+globe zoom   - -/= or keypad -/+ or mousewheel
+
+time-compression - 1,2,3,4,5,6
+
+intercept - i
+bases     - b
+graphs    - g
+ufopaedia - u
+options   - Esc
+funding   - f
+
+labels toggle - Tab or LMB-click on graphic below time-compression area
+radars switch - r or RMB-click on graphic below time-compression area
+
+
+BASESCAPE:
+select base - 1,2,3,4,5,6,7,8
+
+research, with TechTreeViewer open, quick search - q
+
+LMB-click on a base facility to show info
+RMB-click on a base facility to dismantle the facility
+
+
+BATTLESCAPE:
+scroll map   - arrows or keypad arrows or RMB-drag or edge-scroll
+level change - PageUp, PageDown, mousewheel
+
+center selected unit  - Home
+select next unit      - Tab or arrow-right or keypad arrow-right
+select previous unit  - Shift (left) or arrow-left or keypad arrow-left or RMB-click on select next unit icon
+deselect current unit and select next unit - \ or LMB-click on deselect next unit icon
+deselect current unit and select previous unit - RMB-click on deselect next unit icon
+
+use lefthand  - q
+use righthand - e
+
+open inventory of selected unit - i
+
+open mini-map - m
+
+open options - Esc
+
+end turn - Backspace
+
+abort mission - a
+
+show selected unit's stats - s or LMB-click the rank icon in its inventory
+
+kneel or stand selected unit - k or RMB-click on the unit
+reserve kneel TU             - j (disabled)
+
+reload weapon - r (disabled)
+
+toggle personal lighting - l
+
+clear remaining TU of selected unit - Ctrl+Delete or Ctrl+[keypad]Del or Ctrl+LMB-click the 0xC logo
+
+open Ufopaedia - u or RMB-click the 0xC logo
+
+turn selected unit     - RMB-click in the direction to face
+turn selected unit CW  - .
+turn selected unit CCW - ,
+swivel turret          - Ctrl+RMB-click in the direction to face
+swivel turret CW       - Ctrl+.
+swivel turret CCW      - Ctrl+,
+swivel 180 CW          - Ctrl+LMB-click on the left side of the unit's sprite
+swivel 180 CCW         - Ctrl+LMB-click on the right side of the unit's sprite
+
+center hostile unit - (disabled)
+
+show mouse-overed tile-inventory - o (3-position switch: off, 1 page, 2 pages)
+
+clear inventory of selected unit during pre-battle - x
+
+strafe - Ctrl+LMB-click 1 tile away from the selected unit (except in the straight ahead direction)
+
+dash - Ctrl+LMB-click 2 or more tiles away from the selected unit (or 1 tile straight ahead) (note: dashing can be done 1 or more tiles vertically also)
+
+tank reverse - Alt+LMB-click 1 tile directly behind or diagonal behind
+
+force flying unit to walk - Alt+LMB-click
+force flying unit to drop to the ground - Alt+LMB-click on the unit or the move-down icon (note: uses 0 TU)
+
+force stop movement - RMB-click
+
+try alternate pathfinding route - z
+
+BlasterLaunch icon:
+LMB-click - launch
+RMB-click - clear all waypoints
+note: RMB-click not on the icon will clear the last waypoint
+
+Wounded icon:
+LMB- or RMB-click - center wounded unit
+LMB-click         - also select wounded unit
+
+Hostile Unit icons:
+red   - is seen by the currently selected unit
+blue  - is not seen by the currently selected unit but is seen by another unit
+green - is not seen by any units
+
+LMB-click - centers on the hostile unit
+RMB-click - cycles to the next unit that can see the hostile
+
+target center of tile - Ctrl
+target floor          - Ctrl+Alt
+target northwall      - Shift
+target westwall       - Ctrl+Shift
+
+
+Mini-map:
+change level - LMB-click on the up/down arrows or mousewheel
+scroll       - LMB-click or RMB-drag or arrows or keypard arrows
+close        - LMB-click on the Ok icon or RMB-click
+
+Inventory:
+close - RMB-click
+scroll ground left/right - LMB-click on the ground-arrows
+
+Pre-battle Inventory:
+save layout of selected unit - LMB-click on the reload icon
+save layouts of all units    - RMB-click on the reload icon
+
+clear all unassigned inventory from a craft at base - RMB-click on the left ground-arrow
+clear the selected unit's inventory - RMB-click on the right ground-arrow
+
+note: cycle through units with the regular unit-selection keys and clicks (Tab, Shift (left), or LMB-click the arrow icons)
+
+
+Battlescape debug:
+Ctrl+d - toggles debugmode if debug is already TRUE in config
+
+w/ Debug ON:
+Ctrl+v - turns all tiles to not seen (black)
+Ctrl+k - kills all hostile units
+Ctrl+j - stuns all hostile units
+
+
+Geoscape debug:
+Ctrl+d - toggles debugmode if debug is already TRUE in config
+
+Ctrl+a - clears all soldier awards
+Ctrl+b - updates all soldier awards
+
+Ctrl+t - opens the TechTreeViewer
+
+Ctrl+l - shows country/region-lines if debug is already TRUE in config
+w/ debug on:
+Ctrl+c       - cycles to show next area
+Ctrl+Shift+c - cycles to show previous area
+Ctrl+Alt+c   - toggles between showing all areas and only the current area
+Ctrl+r       - reloads lines after they've been changed in the ruleset

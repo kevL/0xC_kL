@@ -3271,7 +3271,7 @@ Globe* GeoscapeState::getGlobe() const
 }
 
 /**
- * Processes any left-clicks on globe-markers or right-clicks to scroll the Globe.
+ * Processes any left-clicks on globe-markers. See the Globe for drag-scroll.
  * @param action - pointer to an Action
  */
 void GeoscapeState::globeClick(Action* action)
