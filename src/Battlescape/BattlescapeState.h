@@ -223,6 +223,8 @@ private:
 
 	/// Prints contents of hovered Tile's inventory to screen.
 	void printTileInventory(Tile* const tile);
+	/// Updates mouse-overed tile-data and inventory-info.
+	void handleTileInfo();
 
 	/// Checks if the player is allowed to press buttons.
 	bool allowButtons(bool allowSave = false) const;

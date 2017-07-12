@@ -1367,6 +1367,8 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 
 /**
  * Handles drag-scrolling and printing mouse-overed tile-info.
+ * @note Also called by handle() [Alt keys] and btnCenterRelease() for updating
+ * tile-info.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapOver(Action* action)
@@ -1374,8 +1376,8 @@ void BattlescapeState::mapOver(Action* action)
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "BattlescapeState::mapOver()";
 
-	if (action != nullptr									// god only knows why action would be null but it can be.
-		&& action->getDetails()->type == SDL_MOUSEMOTION)	// god only knows why anything but mouse-motion would get in there but it does.
+	if (action != nullptr
+		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
 		//logDetails(action);
 
@@ -1401,20 +1403,29 @@ void BattlescapeState::mapOver(Action* action)
 
 			_game->getCursor()->handle(action);
 		}
-		else if (_mouseOverIcons == false && allowButtons() == true
-			&& _game->getCursor()->getHidden() == false)
-		{
-			Position pos;
-			_map->getSelectorPosition(pos);
-
-			Tile* const tile (_battleSave->getTile(pos));
-			updateTileInfo(tile);
-
-			if (_showConsole > 0)
-				printTileInventory(tile);
-		}
-//		else if (_mouseOverIcons == true){} // might need to erase some info here.
+		else
+			handleTileInfo();
 	}
+}
+
+/**
+ * Updates mouse-overed tile-data and inventory-info.
+ */
+void BattlescapeState::handleTileInfo() // private.
+{
+	if (_mouseOverIcons == false && allowButtons() == true
+		&& _game->getCursor()->getHidden() == false)
+	{
+		Position pos;
+		_map->getSelectorPosition(pos);
+
+		Tile* const tile (_battleSave->getTile(pos));
+		updateTileInfo(tile);
+
+		if (_showConsole > 0)
+			printTileInventory(tile);
+	}
+//	else if (_mouseOverIcons == true){} // might need to erase some info here.
 }
 
 /**
@@ -1782,11 +1793,11 @@ inline void BattlescapeState::handle(Action* action)
 			}
 
 			case SDL_KEYUP:
-				switch (action->getDetails()->key.keysym.sym)								// Alt - updateTileInfo.
+				switch (action->getDetails()->key.keysym.sym)								// Alt - handleTileInfo.
 				{
 					case SDLK_LALT:
 					case SDLK_RALT:
-						mapOver(nullptr);
+						handleTileInfo();
 				}
 //				break;
 //
@@ -2058,12 +2069,16 @@ void BattlescapeState::btnCenterPress(Action* action)
 
 /**
  * Releases the Center btn.
+ * @ note For most of these buttons, refreshMousePosition() is enough; but for
+ * Center, it also wants to update tile-info since if the hot-key is used to
+ * center the selected unit, the tile that the selector is over will likely
+ * change.
  * @param action - pointer to an Action
  */
 void BattlescapeState::btnCenterRelease(Action*)
 {
-	_btnCenter->clear();	// For most of these buttons, refreshMousePosition() is enough; but
-	mapOver(nullptr);		// for Center, it also wants mapOver() - here - to update Tile info.
+	_btnCenter->clear();
+	handleTileInfo();
 }
 
 /**
@@ -4422,7 +4437,7 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 
 /**
  * Autosave the game the next time the Battlescape is init'd.
- * note Called from NextTurnState::nextTurn().
+ * @note Called from NextTurnState::nextTurn().
  */
 void BattlescapeState::requestAutosave()
 {

@@ -1489,7 +1489,7 @@ int Craft::getKills() const
 
 /**
  * Transfers all soldiers, tanks, items, and weapons to its Base.
- * NOTE: Do weapons & rounds use space at the Base ......
+ * @note Do weapons & rounds use space at the Base ......
  * @param rules			- pointer to the Ruleset
  * @param updateCraft	- true to keep the Craft and update its contents and
  *						  keep weapon hard-points intact (default true)

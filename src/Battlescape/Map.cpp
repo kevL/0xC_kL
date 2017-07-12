@@ -772,7 +772,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								const Tile* const tileEastBelow (_battleSave->getTile(posField + posEastBelow));
 								const BattleUnit* const unitEastBelow (tileEastBelow->getTileUnit());
 
-								if (unitEastBelow != nullptr
+								if (   unitEastBelow != nullptr
 									&& unitEastBelow != _battleSave->getSelectedUnit()
 									&& unitEastBelow->getGeoscapeSoldier() != nullptr
 									&& unitEastBelow->getFaction() == FACTION_PLAYER)
@@ -1751,9 +1751,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 					// end waypoints.
 
 // Draw battlefield border-marks only on ground-level tiles
-					if ((itZ == _battleSave->getGroundLevel()
-							|| (itZ == 0 && _battleSave->getGroundLevel() == -1))
-						&& _tile->getTileUnit() == nullptr)
+					if (_tile->getTileUnit() == nullptr
+						&& (itZ == _battleSave->getGroundLevel()
+							|| (itZ == 0 && _battleSave->getGroundLevel() == -1)))
 					{
 						if (   itX == 0
 							|| itX == _battleSave->getMapSizeX() - 1

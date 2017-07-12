@@ -238,7 +238,7 @@ void ListGamesState::think()
 
 /**
  * Updates the sorting arrows per the current setting.
- * NOTE: The arrow directions are reversed. Sort-ascending is a down arrow and
+ * @note The arrow directions are reversed. Sort-ascending is a down arrow and
  * sort-descending is an up arrow.
  */
 void ListGamesState::updateArrows() // private.
