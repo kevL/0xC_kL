@@ -89,7 +89,6 @@
 #include "../Savegame/AlienBase.h"
 #include "../Savegame/Base.h"
 #include "../Savegame/BattleItem.h"
-#include "../Savegame/BattleUnit.h"
 #include "../Savegame/BattleUnitStatistics.h"
 #include "../Savegame/Country.h"
 #include "../Savegame/Craft.h"
@@ -2382,14 +2381,9 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelTacticalAction();
-
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		unit->setActiveHand(AH_LEFT);
 
-		_map->cacheUnitSprite(unit);
-		_map->draw();
-
+		activateHand(unit, AH_LEFT);
 		showActionMenu(
 					unit->getItem(ST_LEFTHAND),
 					unit->getFatals(BODYPART_LEFTARM) != 0);
@@ -2403,16 +2397,9 @@ void BattlescapeState::btnLeftHandLeftClick(Action*)
 void BattlescapeState::btnLeftHandRightClick(Action*)
 {
 	if (playableUnitSelected() == true)
-	{
-		_battleGame->cancelTacticalAction();
-
-		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		unit->setActiveHand(AH_LEFT);
-		updateSoldierInfo(false);
-
-		_map->cacheUnitSprite(unit);
-		_map->draw();
-	}
+		activateHand(
+				_battleSave->getSelectedUnit(),
+				AH_LEFT);
 }
 
 /**
@@ -2424,14 +2411,9 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 {
 	if (playableUnitSelected() == true)
 	{
-		_battleGame->cancelTacticalAction();
-
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		unit->setActiveHand(AH_RIGHT);
 
-		_map->cacheUnitSprite(unit);
-		_map->draw();
-
+		activateHand(unit, AH_RIGHT);
 		showActionMenu(
 					unit->getItem(ST_RIGHTHAND),
 					unit->getFatals(BODYPART_RIGHTARM) != 0);
@@ -2445,16 +2427,27 @@ void BattlescapeState::btnRightHandLeftClick(Action*)
 void BattlescapeState::btnRightHandRightClick(Action*)
 {
 	if (playableUnitSelected() == true)
-	{
-		_battleGame->cancelTacticalAction();
+		activateHand(
+				_battleSave->getSelectedUnit(),
+				AH_RIGHT);
+}
 
-		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		unit->setActiveHand(AH_RIGHT);
-		updateSoldierInfo(false);
+/**
+ * Activates the left or right hand on a hand-click.
+ * @param unit - pointer to a BattleUnit
+ * @param hand - the hand to activate
+ */
+void BattlescapeState::activateHand( // private.
+		BattleUnit* const unit,
+		ActiveHand hand)
+{
+	_battleGame->cancelTacticalAction();
 
-		_map->cacheUnitSprite(unit);
-		_map->draw();
-	}
+	unit->setActiveHand(hand);
+	updateSoldierInfo(false);
+
+	_map->cacheUnitSprite(unit);
+	_map->draw();
 }
 
 /**

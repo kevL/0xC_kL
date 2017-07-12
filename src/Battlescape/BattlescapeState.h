@@ -27,6 +27,8 @@
 
 #include "../Engine/State.h"
 
+#include "../Savegame/BattleUnit.h"
+
 
 namespace OpenXcom
 {
@@ -225,6 +227,11 @@ private:
 	void printTileInventory(Tile* const tile);
 	/// Updates mouse-overed tile-data and inventory-info.
 	void handleTileInfo();
+
+	/// Activates the left or right hand on a hand-click.
+	void activateHand(
+			BattleUnit* const unit,
+			ActiveHand hand);
 
 	/// Checks if the player is allowed to press buttons.
 	bool allowButtons(bool allowSave = false) const;
