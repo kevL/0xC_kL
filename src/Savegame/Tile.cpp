@@ -80,9 +80,9 @@ Tile::Tile(const Position& pos)
 			++i)
 	{
 		_parts[i]		=  nullptr;
-		_partId[i]		= -1;
-		_partSetId[i]	= -1;
-		_curFrame[i]	=  0;
+		_partIds[i]		= -1;
+		_partSetIds[i]	= -1;
+		_aniCycle[i]	=  0;
 	}
 
 	for (
@@ -98,7 +98,7 @@ Tile::Tile(const Position& pos)
 			i != LIGHTLAYERS;
 			++i)
 	{
-		_light[i] = 0;
+		_lightLayers[i] = 0;
 	}
 }
 
@@ -121,8 +121,8 @@ void Tile::load(const YAML::Node& node)
 			i != PARTS_TILE;
 			++i)
 	{
-		_partId[i]		= node["mapDataID"][i]		.as<int>(_partId[i]);
-		_partSetId[i]	= node["mapDataSetID"][i]	.as<int>(_partSetId[i]);
+		_partIds[i]		= node["mapDataID"][i]		.as<int>(_partIds[i]);
+		_partSetIds[i]	= node["mapDataSetID"][i]	.as<int>(_partSetIds[i]);
 	}
 
 	_fire		= node["fire"]		.as<int>(_fire);
@@ -141,10 +141,10 @@ void Tile::load(const YAML::Node& node)
 	}
 
 	if (node["openDoorWest"])
-		_curFrame[1u] = 7;
+		_aniCycle[1u] = 7;
 
 	if (node["openDoorNorth"])
-		_curFrame[2u] = 7;
+		_aniCycle[2u] = 7;
 }
 
 /**
@@ -156,15 +156,15 @@ void Tile::loadBinary(
 		Uint8* buffer,
 		Tile::SerializationKey& serKey)
 {
-	_partId[O_FLOOR]		= unserializeInt(&buffer, serKey._partId);
-	_partId[O_WESTWALL]		= unserializeInt(&buffer, serKey._partId);
-	_partId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partId);
-	_partId[O_OBJECT]		= unserializeInt(&buffer, serKey._partId);
+	_partIds[O_FLOOR]		= unserializeInt(&buffer, serKey._partId);
+	_partIds[O_WESTWALL]		= unserializeInt(&buffer, serKey._partId);
+	_partIds[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partId);
+	_partIds[O_OBJECT]		= unserializeInt(&buffer, serKey._partId);
 
-	_partSetId[O_FLOOR]		= unserializeInt(&buffer, serKey._partSetId);
-	_partSetId[O_WESTWALL]	= unserializeInt(&buffer, serKey._partSetId);
-	_partSetId[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partSetId);
-	_partSetId[O_OBJECT]	= unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_FLOOR]		= unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_WESTWALL]	= unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_OBJECT]	= unserializeInt(&buffer, serKey._partSetId);
 
 	_smoke		= unserializeInt(&buffer, serKey._smoke);
 	_fire		= unserializeInt(&buffer, serKey._fire);
@@ -178,8 +178,8 @@ void Tile::loadBinary(
 	_revealed[ST_NORTH]		= (boolFields & 0x02) ? true : false;
 	_revealed[ST_CONTENT]	= (boolFields & 0x04) ? true : false;
 
-	_curFrame[O_WESTWALL]	= (boolFields & 0x08) ? 7 : 0;
-	_curFrame[O_NORTHWALL]	= (boolFields & 0x10) ? 7 : 0;
+	_aniCycle[O_WESTWALL]	= (boolFields & 0x08) ? 7 : 0;
+	_aniCycle[O_NORTHWALL]	= (boolFields & 0x10) ? 7 : 0;
 
 //	if (_fire || _smoke) _animationOffset = std::rand() % 4;
 }
@@ -199,8 +199,8 @@ YAML::Node Tile::save() const
 			i != PARTS_TILE;
 			++i)
 	{
-		node["mapDataID"].push_back(_partId[i]);
-		node["mapDataSetID"].push_back(_partSetId[i]);
+		node["mapDataID"].push_back(_partIds[i]);
+		node["mapDataSetID"].push_back(_partSetIds[i]);
 	}
 
 	if (_smoke != 0)		node["smoke"]		= _smoke;
@@ -234,15 +234,15 @@ YAML::Node Tile::save() const
  */
 void Tile::saveBinary(Uint8** buffer) const
 {
-	serializeInt(buffer, serializationKey._partId, _partId[O_FLOOR]);
-	serializeInt(buffer, serializationKey._partId, _partId[O_WESTWALL]);
-	serializeInt(buffer, serializationKey._partId, _partId[O_NORTHWALL]);
-	serializeInt(buffer, serializationKey._partId, _partId[O_OBJECT]);
+	serializeInt(buffer, serializationKey._partId, _partIds[O_FLOOR]);
+	serializeInt(buffer, serializationKey._partId, _partIds[O_WESTWALL]);
+	serializeInt(buffer, serializationKey._partId, _partIds[O_NORTHWALL]);
+	serializeInt(buffer, serializationKey._partId, _partIds[O_OBJECT]);
 
-	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_FLOOR]);
-	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_WESTWALL]);
-	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_NORTHWALL]);
-	serializeInt(buffer, serializationKey._partSetId, _partSetId[O_OBJECT]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_FLOOR]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_WESTWALL]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_NORTHWALL]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_OBJECT]);
 
 	serializeInt(buffer, serializationKey._smoke,		_smoke);
 	serializeInt(buffer, serializationKey._fire,		_fire);
@@ -272,9 +272,15 @@ void Tile::setMapData(
 		const int partSetId,
 		const MapDataType partType)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Tile::setMapData()";
+	//Log(LOG_INFO) << ". partType= " << (int)partType;
+	//Log(LOG_INFO) << ". partId= " << partId;
+	//Log(LOG_INFO) << ". partSetId= " << partSetId;
+
 	_parts[partType]		= part;
-	_partId[partType]		= partId;
-	_partSetId[partType]	= partSetId;
+	_partIds[partType]		= partId;
+	_partSetIds[partType]	= partSetId;
 }
 
 /**
@@ -288,8 +294,8 @@ void Tile::getMapData(
 		int* partSetId,
 		MapDataType partType) const
 {
-	*partId		= _partId[partType];
-	*partSetId	= _partSetId[partType];
+	*partId		= _partIds[partType];
+	*partSetId	= _partSetIds[partType];
 }
 
 /**
@@ -328,7 +334,7 @@ int Tile::getTuCostTile(
 		MoveType type) const
 {
 	if (    _parts[partType] != nullptr
-		&& (_parts[partType]->isSlideDoor() == false || _curFrame[partType] < 2))
+		&& (_parts[partType]->isSlideDoor() == false || _aniCycle[partType] < 2))
 	{
 		switch (partType)
 		{
@@ -484,47 +490,48 @@ DoorResult Tile::openDoor(
 	{
 		if (_parts[partType]->isHingeDoor() == true)
 		{
-			if (_unit != nullptr
-				&& _unit != unit
-				&& _unit->getPosition() != getPosition())
+			if (_unit != nullptr)
 			{
-				return DR_NONE;
+				if (_unit != unit && _unit->getPosition() != getPosition())
+					return DR_NONE;
+
+				if (unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit())) //+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
+					return DR_ERR_TU;
 			}
 
-			if (unit != nullptr
-				&& unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
-//									+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
-			{
-				return DR_ERR_TU;
-			}
+			const size_t altId (static_cast<size_t>(_parts[partType]->getAltMCD()));
+			MapData* const altPart (_parts[partType]->getDataset()->getRecords()->at(altId));
+			const MapDataType altPartType (altPart->getPartType());
 
 			setMapData(
-					_parts[partType]->getDataset()->getRecords()->at(static_cast<size_t>(_parts[partType]->getAltMCD())),
-					_parts[partType]->getAltMCD(),
-					_partSetId[partType],
-					_parts[partType]->getDataset()->getRecords()->at(static_cast<size_t>(_parts[partType]->getAltMCD()))->getPartType());
-			setMapData(nullptr,-1,-1, partType);
+					altPart,
+					static_cast<int>(altId),
+					_partSetIds[partType],
+					altPartType);
+
+			if (partType != altPartType) // don't erase the data if the partTypes are the same.
+				setMapData(nullptr,-1,-1, partType);
 
 			return DR_WOOD_OPEN;
 		}
 
 		if (_parts[partType]->isSlideDoor() == true)
 		{
-			if (_curFrame[partType] == 0) // ufo door part 0 - door is closed
+			switch (_aniCycle[partType])
 			{
-				if (unit != nullptr
-					&& unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit()))
-//										+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
-				{
-					return DR_ERR_TU;
-				}
+				case 0: // ufo door frame 0 - door is closed
+					if (unit != nullptr && unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit())) //+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
+						return DR_ERR_TU;
 
-				_curFrame[partType] = 1; // start opening door
-				return DR_UFO_OPEN;
+					_aniCycle[partType] = 1; // start sliding door animation
+					return DR_UFO_OPEN;
+
+				default: // frames 1..6 -> the slide-open animation is in progress
+					return DR_UFO_WAIT;
+
+				case 7: // ufo door is open.
+					break;
 			}
-
-			if (_curFrame[partType] != 7) // ufo door != part 7 -> door is still opening
-				return DR_UFO_WAIT;
 		}
 	}
 	return DR_NONE;
@@ -536,7 +543,7 @@ DoorResult Tile::openDoor(
  */
 void Tile::openAdjacentDoor(const MapDataType partType)
 {
-	_curFrame[partType] = 1;
+	_aniCycle[partType] = 1;
 }
 
 /**
@@ -553,7 +560,7 @@ bool Tile::closeSlideDoor()
 	{
 		if (isSlideDoorOpen(static_cast<MapDataType>(i)) == true)
 		{
-			_curFrame[i] = 0;
+			_aniCycle[i] = 0;
 			ret = true;
 		}
 	}
@@ -609,7 +616,7 @@ bool Tile::isRevealed(SectionType section) const
  */
 void Tile::resetLight(size_t layer)
 {
-	_light[layer] = 0;
+	_lightLayers[layer] = 0;
 }
 
 /**
@@ -622,8 +629,8 @@ void Tile::addLight(
 		int light,
 		size_t layer)
 {
-	if (light > _light[layer])
-		_light[layer] = (light > LIGHT_FULL) ? LIGHT_FULL : light;
+	if (light > _lightLayers[layer])
+		_lightLayers[layer] = (light > LIGHT_FULL) ? LIGHT_FULL : light;
 }
 
 /**
@@ -641,8 +648,8 @@ int Tile::getShade() const
 			i != LIGHTLAYERS;
 			++i)
 	{
-		if (_light[i] > light)
-			light = _light[i];
+		if (_lightLayers[i] > light)
+			light = _lightLayers[i];
 	}
 	return LIGHT_FULL - light;
 }
@@ -683,7 +690,8 @@ int Tile::destroyTilepart(
 			if (partType == O_OBJECT)
 				tLevel = _parts[O_OBJECT]->getTerrainLevel();
 
-			setMapData(nullptr,-1,-1, partType); // destroy current part.
+			const int partSetId (_partSetIds[partType]);	// cache the partSetId for a possible death-tile below_
+			setMapData(nullptr,-1,-1, partType);		// destroy current part.
 
 			if (obliterate == false)
 			{
@@ -694,7 +702,8 @@ int Tile::destroyTilepart(
 					setMapData(
 							partDead,
 							deadId,
-							_partSetId[partType],
+							partSetId,
+//							_partSetId[partType], // <- this was just set to "-1" so it's meaningless here.
 							partDead->getPartType());
 				}
 
@@ -1222,10 +1231,10 @@ void Tile::animateTile()
 				default:
 				case 0:
 					if (_parts[i]->isSlideDoor() == false
-						|| (_curFrame[i] != 0
-							&& _curFrame[i] != 7)) // ufo-door is currently static
+						|| (_aniCycle[i] != 0
+							&& _aniCycle[i] != 7)) // ufo-door is currently static
 					{
-						nextFrame = _curFrame[i] + 1;
+						nextFrame = _aniCycle[i] + 1;
 
 						if (_parts[i]->isSlideDoor() == true // special handling for Avenger & Lightning doors
 							&& _parts[i]->getTileType() == START_TILE
@@ -1237,18 +1246,18 @@ void Tile::animateTile()
 						if (nextFrame == 8)
 							nextFrame = 0;
 
-						_curFrame[i] = nextFrame;
+						_aniCycle[i] = nextFrame;
 					}
 					break;
 
 				case 1:
 					if (RNG::seedless(0,2) != 0) // 66%
-						_curFrame[i] = RNG::seedless(0,7);
+						_aniCycle[i] = RNG::seedless(0,7);
 					break;
 
 				case 2:
 					if (RNG::seedless(0,2) == 0) // 33%
-						_curFrame[i] = RNG::seedless(0,7);
+						_aniCycle[i] = RNG::seedless(0,7);
 			}
 		}
 	}
@@ -1274,7 +1283,7 @@ Surface* Tile::getSprite(MapDataType partType) const
 {
 	const MapData* const data (_parts[partType]);
 	if (data != nullptr)
-		return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_curFrame[partType]));
+		return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_aniCycle[partType]));
 
 	return nullptr;
 }

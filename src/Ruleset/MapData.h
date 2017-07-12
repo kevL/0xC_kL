@@ -327,12 +327,12 @@ private:
 			switch (type)
 			{
 				case VOXEL_EMPTY:		return "-1 VOXEL_EMPTY";
-				case VOXEL_FLOOR:		return "0 VOXEL_FLOOR";
-				case VOXEL_WESTWALL:	return "1 VOXEL_WESTWALL";
-				case VOXEL_NORTHWALL:	return "2 VOXEL_NORTHWALL";
-				case VOXEL_OBJECT:		return "3 VOXEL_OBJECT";
-				case VOXEL_UNIT:		return "4 VOXEL_UNIT";
-				case VOXEL_OUTOFBOUNDS:	return "5 VOXEL_OUTOFBOUNDS";
+				case VOXEL_FLOOR:		return  "0 VOXEL_FLOOR";
+				case VOXEL_WESTWALL:	return  "1 VOXEL_WESTWALL";
+				case VOXEL_NORTHWALL:	return  "2 VOXEL_NORTHWALL";
+				case VOXEL_OBJECT:		return  "3 VOXEL_OBJECT";
+				case VOXEL_UNIT:		return  "4 VOXEL_UNIT";
+				case VOXEL_OUTOFBOUNDS:	return  "5 VOXEL_OUTOFBOUNDS";
 			}
 			return "ERROR: no VoxelType";
 		}

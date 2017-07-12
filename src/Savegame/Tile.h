@@ -84,12 +84,12 @@ private:
 		_visible;
 	int
 		_aniOffset,
-		_curFrame[PARTS_TILE],
+		_aniCycle[PARTS_TILE],
 		_explosive,
 		_fire,
-		_light[LIGHTLAYERS],
-		_partId[PARTS_TILE],
-		_partSetId[PARTS_TILE],
+		_lightLayers[LIGHTLAYERS],
+		_partIds[PARTS_TILE],
+		_partSetIds[PARTS_TILE],
 		_previewDir,
 		_previewTu,
 		_smoke;
@@ -215,7 +215,7 @@ private:
 		bool isSlideDoorOpen(MapDataType partType) const
 		{	return _parts[partType] != nullptr
 				&& _parts[partType]->isSlideDoor() == true
-				&& _curFrame[partType] != 0; }
+				&& _aniCycle[partType] != 0; }
 		/// Closes a ufo-door.
 		bool closeSlideDoor();
 
