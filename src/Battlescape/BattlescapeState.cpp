@@ -1367,8 +1367,6 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 
 /**
  * Handles drag-scrolling and printing mouse-overed tile-info.
- * @note Also called by handle() [Alt keys] and btnCenterRelease() for updating
- * tile-info.
  * @param action - pointer to an Action
  */
 void BattlescapeState::mapOver(Action* action)
@@ -1587,6 +1585,9 @@ void BattlescapeState::mapClick(Action* action)
 			}
 		}
 	}
+	else
+		handleTileInfo();
+
 //	else if (_dragScrollActivated == true
 //		&& _dragScrollPastPixelThreshold == false)
 //	{
