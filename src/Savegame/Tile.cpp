@@ -486,18 +486,28 @@ DoorResult Tile::openDoor(
 		const BattleUnit* const unit)
 //		const BattleActionType reserved)
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "Tile::openDoor()";
+
 	if (_parts[partType] != nullptr)
 	{
+		//Log(LOG_INFO) << ". part VALID";
 		if (_parts[partType]->isHingeDoor() == true)
 		{
-			if (_unit != nullptr)
+			//Log(LOG_INFO) << ". . is HingeDoor";
+			if (_unit != nullptr && _unit != unit && _unit->getPosition() != _pos)
 			{
-				if (_unit != unit && _unit->getPosition() != getPosition())
-					return DR_NONE;
-
-				if (unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit())) //+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
-					return DR_ERR_TU;
+				//Log(LOG_INFO) << ". . . . ret DR_NONE";
+				return DR_NONE;
 			}
+
+			if (//unit != nullptr && // note: 'unit' shall always be valid.
+				unit->getTu() < _parts[partType]->getTuCostPart(unit->getMoveTypeUnit())) //+ unit->getActionTu(reserved, unit->getMainHandWeapon()))
+			{
+				//Log(LOG_INFO) << ". . . . ret DR_ERR_TU";
+				return DR_ERR_TU;
+			}
+			//Log(LOG_INFO) << ". . okay, open HingeDoor";
 
 			const size_t altId (static_cast<size_t>(_parts[partType]->getAltMCD()));
 			MapData* const altPart (_parts[partType]->getDataset()->getRecords()->at(altId));
@@ -691,7 +701,7 @@ int Tile::destroyTilepart(
 				tLevel = _parts[O_OBJECT]->getTerrainLevel();
 
 			const int partSetId (_partSetIds[partType]);	// cache the partSetId for a possible death-tile below_
-			setMapData(nullptr,-1,-1, partType);		// destroy current part.
+			setMapData(nullptr,-1,-1, partType);			// destroy current part.
 
 			if (obliterate == false)
 			{
@@ -703,7 +713,6 @@ int Tile::destroyTilepart(
 							partDead,
 							deadId,
 							partSetId,
-//							_partSetId[partType], // <- this was just set to "-1" so it's meaningless here.
 							partDead->getPartType());
 				}
 

@@ -4547,7 +4547,7 @@ DoorResult TileEngine::unitOpensDoor(
 		dir = unit->getUnitDirection();
 
 	if (rtClick == true // RMB works only for cardinal directions, and not for dogs.
-		&& (dir % 2 == 1
+		&& ((dir & 1) == 1
 			|| (unit->getUnitRules() != nullptr
 				&& unit->getUnitRules()->hasHands() == false)))
 	{
@@ -4658,6 +4658,7 @@ DoorResult TileEngine::unitOpensDoor(
 							case DR_WOOD_OPEN:
 								if (rtClick == true)
 									calcTu = true;
+
 								switch (partType)
 								{
 									default:
