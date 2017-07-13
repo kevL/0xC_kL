@@ -1027,19 +1027,22 @@ void BattlescapeState::init()
 		_battleGame->getTileEngine()->calcFovTiles_all();
 		_battleGame->getTileEngine()->calcFovUnits_all();
 
+//		if (playableUnitSelected() == false)
+//			selectNextPlayerUnit();
+
 		_battleGame->setupSelector();
 		updateSoldierInfo(false);
-
-		std::string
-			track,
-			terrain;
-		_battleSave->calibrateMusic(track, terrain);
-		_game->getResourcePack()->playMusic(track, terrain);
 
 		if (playableUnitSelected() == true)
 			_map->getCamera()->centerPosition(_battleSave->getSelectedUnit()->getPosition(), false);
 
 		_numLayers->setValue(static_cast<unsigned>(_map->getCamera()->getViewLevel()) + 1);
+
+		std::string // start music ->
+			track,
+			terrain;
+		_battleSave->calibrateMusic(track, terrain);
+		_game->getResourcePack()->playMusic(track, terrain);
 
 //		switch (_battleSave->getBatReserved())
 //		{
@@ -1054,10 +1057,8 @@ void BattlescapeState::init()
 //		_btnReserveAuto->setGroup(&_reserve);
 	}
 
-	if (_battleSave->getControlDestroyed() == true && _iconsHidden == false)
-		_txtControlDestroyed->setVisible();
-	else
-		_txtControlDestroyed->setVisible(false);
+	_txtControlDestroyed->setVisible(_battleSave->getControlDestroyed() == true
+								  && _iconsHidden == false);
 
 	if (_autosave == true) // flagged by NextTurnState::nextTurn()
 	{
@@ -1724,7 +1725,7 @@ inline void BattlescapeState::handle(Action* action)
 //											unit->setPosition(pos);
 //											_battleSave->getTile(pos)->setUnit(unit);
 //											_battleSave->getTileEngine()->calculateUnitLighting();
-//											_battleSave->getBattleGame()->handleBattleState();
+//											_battleSave->getBattleGame()->handleBattleState(); // why. Let the regular call by the tactical-timer handle it.
 //										}
 //									}
 							}

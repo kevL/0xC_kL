@@ -772,7 +772,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								const Tile* const tileEastBelow (_battleSave->getTile(posField + posEastBelow));
 								const BattleUnit* const unitEastBelow (tileEastBelow->getTileUnit());
 
-								if (   unitEastBelow != nullptr
+								if (unitEastBelow != nullptr
 									&& unitEastBelow != _battleSave->getSelectedUnit()
 									&& unitEastBelow->getGeoscapeSoldier() != nullptr
 									&& unitEastBelow->getFaction() == FACTION_PLAYER)
@@ -1246,7 +1246,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST))
 								{
 									const Tile* const tileNorth (_battleSave->getTile(posField + posNorth));
-									if (   tileNorth != nullptr // safety. perhaps
+									if (tileNorth != nullptr // safety. perhaps
 										&& tileNorth->getMapData(O_OBJECT) != nullptr
 										&& tileNorth->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST)
 									{
@@ -1263,7 +1263,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH))
 								{
 									const Tile* const tileWest (_battleSave->getTile(posField + posWest));
-									if (   tileWest != nullptr
+									if (tileWest != nullptr
 										&& tileWest->getMapData(O_OBJECT) != nullptr
 										&& tileWest->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH)
 									{
