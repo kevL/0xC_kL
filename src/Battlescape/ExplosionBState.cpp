@@ -462,174 +462,178 @@ void ExplosionBState::think()
  */
 void ExplosionBState::explode() // private.
 {
-	//Log(LOG_INFO) << ". explode()";
-	if (_itRule != nullptr && _itRule->getBattleType() == BT_PSIAMP)
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "ExplosionBState::explode()";
+
+	if (_itRule == nullptr || _itRule->getBattleType() != BT_PSIAMP)
 	{
-		_battleGame->popBattleState();
-		return;
-	}
+		TileEngine* const te (_battleSave->getTileEngine());
+		bool isTerrain;
 
-
-	TileEngine* const te (_battleSave->getTileEngine());
-	bool isTerrain;
-
-	if (_itRule != nullptr)
-	{
-		isTerrain = false;
-
-		if (_areaOfEffect == true)
+		if (_itRule != nullptr)
 		{
-			//Log(LOG_INFO) << "ExplosionBState::explode() AoE te::explode";
-//			te->setProjectileDirection(-1);
-			te->explode(
-					_centerVoxel,
-					_power,
-					_itRule->getDamageType(),
-					_itRule->getExplosionRadius(),
-					_unit,
-					_itRule->isGrenade() == true,
-					_itRule->defusePulse() == true,
-					_isLaunched);
-		}
-		else
-		{
-			//Log(LOG_INFO) << "ExplosionBState::explode() point te::hit";
-			// NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
-			if (_melee == true)
+			isTerrain = false;
+
+			if (_areaOfEffect == true)
 			{
-				_battleGame->getTacticalAction()->type = BA_NONE;
+				//Log(LOG_INFO) << ". AoE - call te::explode";
 
-				if (_unit != nullptr)
+//				te->setProjectileDirection(-1);
+				te->explode(
+						_centerVoxel,
+						_power,
+						_itRule->getDamageType(),
+						_itRule->getExplosionRadius(),
+						_unit,
+						_itRule->isGrenade() == true,
+						_itRule->defusePulse() == true,
+						_isLaunched);
+			}
+			else
+			{
+				//Log(LOG_INFO) << ". point - call te::hit";
+
+				if (_melee == true) // NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
 				{
-//					if (_unit->getHealth() != 0 //_unit->isOut_t() == false
-//						&& _unit->getHealth() > _unit->getStun())
-//					if (_unit->getUnitStatus() == STATUS_AIMING)
-//						_unit->setShoot(false);
+					_battleGame->getTacticalAction()->type = BA_NONE;
 
-					if (_unit->getGeoscapeSoldier() != nullptr
-						&& _unit->isMindControlled() == false)
+					if (_unit != nullptr)
 					{
-						const BattleUnit* const targetUnit (_battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit());
-						if (targetUnit != nullptr) // safety.
-						{
-							switch (targetUnit->getFaction())
-							{
-								case FACTION_HOSTILE:
-									if (_meleeSuccess == true)
-										_unit->addMeleeExp(2);
-									else
-										_unit->addMeleeExp(1);
-									break;
+//						if (_unit->getHealth() != 0 //_unit->isOut_t() == false
+//							&& _unit->getHealth() > _unit->getStun())
+//						if (_unit->getUnitStatus() == STATUS_AIMING)
+//							_unit->setShoot(false);
 
-								case FACTION_PLAYER:
-								case FACTION_NEUTRAL:
-									if (_meleeSuccess == true)
-										_unit->addMeleeExp(1);
+						if (_unit->getGeoscapeSoldier() != nullptr
+							&& _unit->isMindControlled() == false)
+						{
+							const BattleUnit* const targetUnit (_battleSave->getTile(Position::toTileSpace(_centerVoxel))->getTileUnit());
+							if (targetUnit != nullptr) // safety.
+							{
+								switch (targetUnit->getFaction())
+								{
+									case FACTION_HOSTILE:
+										if (_meleeSuccess == true)
+											_unit->addMeleeExp(2);
+										else
+											_unit->addMeleeExp(1);
+										break;
+
+									case FACTION_PLAYER:
+									case FACTION_NEUTRAL:
+										if (_meleeSuccess == true)
+											_unit->addMeleeExp(1);
+								}
 							}
 						}
 					}
+
+					if (_meleeSuccess == false) // MISS.
+					{
+						_battleGame->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
+
+						if (_unit != nullptr) // safety.
+							_unit->toggleShoot();
+
+						_battleGame->popBattleState();
+						return;
+					}
 				}
 
-				if (_meleeSuccess == false) // MISS.
-				{
-					_battleGame->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
+				DamageType dType;
+				if (_buttHurt == true)
+					dType = DT_STUN;
+				else
+					dType = _itRule->getDamageType();
 
-					if (_unit != nullptr) // safety.
-						_unit->toggleShoot();
-
-					_battleGame->popBattleState();
-					return;
-				}
+				te->hit(
+						_centerVoxel,
+						_power,
+						dType,
+						_unit,
+						_melee,
+						_itRule->getShotgunPellets() != 0,
+						_itRule->getZombieUnit());
 			}
+		}
+		else if (_tile != nullptr)
+		{
+			isTerrain = true;
+			const DamageType dType (_tile->getExplosiveType());
+			if (dType != DT_HE)
+				_tile->clearExplosive();
 
-			DamageType dType;
-			if (_buttHurt == true)
-				dType = DT_STUN;
-			else
-				dType = _itRule->getDamageType();
-
-			te->hit(
+			te->explode(
 					_centerVoxel,
 					_power,
 					dType,
-					_unit,
-					_melee,
-					_itRule->getShotgunPellets() != 0,
-					_itRule->getZombieUnit());
+					_power / 10);
 		}
-	}
-	else if (_tile != nullptr)
-	{
-		isTerrain = true;
-		const DamageType dType (_tile->getExplosiveType());
-		if (dType != DT_HE)
-			_tile->clearExplosive();
-
-		te->explode(
-				_centerVoxel,
-				_power,
-				dType,
-				_power / 10);
-	}
-	else // explosion not caused by terrain or an item - must be a cyberdisc or burning zombie.
-	{
-		isTerrain = true;
-		int radius;
-		if (_unit != nullptr && _unit->getSpecialAbility() == SPECAB_EXPLODE)
-			radius = _battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getExplosionRadius();
-		else
-			radius = 6;
-
-		te->explode(
-				_centerVoxel,
-				_power,
-				DT_HE,
-				radius);
-	}
-
-	//Log(LOG_INFO) << "ExplosionBState::explode() CALL bg::checkCasualties()";
-	_battleGame->checkCasualties(
-							_itRule,
-							_unit,
-							false,
-							isTerrain);
-
-	if (_itRule != nullptr && _itRule->getShotgunPellets() != 0)
-	{
-		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
-				i != _battleSave->getUnits()->end();
-				++i)
+		else // explosion not caused by terrain or an item - must be a cyberdisc or burning zombie.
 		{
-			(*i)->hasCried(false);
+			isTerrain = true;
+			int radius;
+			if (_unit != nullptr && _unit->getSpecialAbility() == SPECAB_EXPLODE)
+				radius = _battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getExplosionRadius();
+			else
+				radius = 6;
+
+			te->explode(
+					_centerVoxel,
+					_power,
+					DT_HE,
+					radius);
+		}
+
+
+		_battleGame->checkCasualties(
+								_itRule,
+								_unit,
+								false,
+								isTerrain);
+
+		if (_itRule != nullptr && _itRule->getShotgunPellets() != 0)
+		{
+			for (std::vector<BattleUnit*>::const_iterator
+					i = _battleSave->getUnits()->begin();
+					i != _battleSave->getUnits()->end();
+					++i)
+			{
+				(*i)->hasCried(false);
+			}
+		}
+
+		if (_unit != nullptr			// if this hit/explosion was caused by a unit put the weapon down
+			&& _lowerWeapon == true)	// NOTE: This is a stupid place to toggle the unit-sprite: try popBattleState().
+		{
+			if (_isLaunched == true)					// apparently the turn-to-face routine for launches will set
+				_unit->setUnitStatus(STATUS_AIMING);	// the unit to STATUS_STANDING, hence it got stuck with its
+														// gun sticking out ... so reset it here to STATUS_AIMING.
+			_unit->toggleShoot();
+		}
+
+//		_parent->getMap()->cacheUnitSprites();	// why do all sprites need re-caching: the only one that changes
+		_battleGame->popBattleState();			// is the shooter-weapon. and that's now done in toggleShoot().
+												// Besides, only units flagged as needing re-caching get re-cached.
+												// Animations like death will get re-cached by their own States.
+
+		Tile* const tile (te->checkForTerrainExplosives()); // check for more exploding tiles
+		if (tile != nullptr)
+		{
+			const Position& explVoxel (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
+			_battleGame->stateBPushFront(new ExplosionBState(
+														_battleGame,
+														explVoxel,
+														nullptr,
+														_unit,
+														tile,
+														false,
+														false,
+														_forceCamera));
 		}
 	}
-
-	if (_lowerWeapon == true	// if this hit/explosion was caused by a unit put the weapon down
-		&& _unit != nullptr)	// NOTE: This is a stupid place to toggle the unit-sprite: try popBattleState().
-	{
-		_unit->toggleShoot();
-	}
-
-//	_parent->getMap()->cacheUnitSprites();	// why do all sprites need re-caching: the only one that changes
-	_battleGame->popBattleState();				// is the shooter-weapon. and that's now done in toggleShoot(). Besides,
-	//Log(LOG_INFO) << ". . pop";			// only units flagged as needing re-caching get re-cached.
-											// Animations like death will get re-cached by their own States.
-
-	Tile* const tile (te->checkForTerrainExplosives()); // check for more exploding tiles
-	if (tile != nullptr)
-	{
-		const Position explVoxel (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
-		_battleGame->stateBPushFront(new ExplosionBState(
-													_battleGame,
-													explVoxel,
-													nullptr,
-													_unit,
-													tile,
-													false,
-													false,
-													_forceCamera));
-	}
+	else
+		_battleGame->popBattleState();
 }
 
 }

@@ -1403,15 +1403,20 @@ bool BattleUnit::isFloating() const
  */
 void BattleUnit::toggleShoot()
 {
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "BattleUnit::toggleShoot()";
+
 	switch (_status)
 	{
 		case STATUS_STANDING:
+			//Log(LOG_INFO) << ". standing -> aiming";
 			_status = STATUS_AIMING;
 			_cacheInvalid = true;
 			_battleGame->getMap()->cacheUnitSprite(this);
 			break;
 
 		case STATUS_AIMING:
+			//Log(LOG_INFO) << ". aiming -> standing";
 			_status = STATUS_STANDING;
 			_cacheInvalid = true;
 			_battleGame->getMap()->cacheUnitSprite(this);

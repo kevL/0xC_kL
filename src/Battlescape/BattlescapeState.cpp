@@ -1374,6 +1374,7 @@ void BattlescapeState::mapOver(Action* action)
 	//Log(LOG_INFO) << "BattlescapeState::mapOver()";
 
 	if (action != nullptr
+		&& action->getDetails() != nullptr
 		&& action->getDetails()->type == SDL_MOUSEMOTION)
 	{
 		//logDetails(action);
