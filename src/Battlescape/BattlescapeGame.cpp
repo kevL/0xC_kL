@@ -505,6 +505,9 @@ void BattlescapeGame::popBattleState()
 										{
 											//Log(LOG_INFO) << ". . . . PSI or MindProbe: not enough TU for another action of the same type - call cancelTacticalAction()";
 											cancelTacticalAction(true); // NOTE: Not sure if these needs to be 'forced' ->
+
+											if (action.type != BA_USE) // switch active-hand back to main weapon if applicable ->
+												changeActiveHand(action.actor);
 										}
 										break;
 
@@ -659,6 +662,37 @@ void BattlescapeGame::popBattleState()
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::popBattleState() EXIT";
+}
+
+/**
+ * Changes the active-hand of a BattleUnit if there's a loaded weapon there.
+ * @note Is called only after a player-unit finishes a psi-action without error
+ * and does not have enough TU to do another. Ie, helper for popBattleState().
+ * @param unit - pointer to a unit
+ */
+void BattlescapeGame::changeActiveHand(BattleUnit* const unit) // private.
+{
+	const BattleItem* weapon;
+
+	switch (unit->getActiveHand())
+	{
+		case AH_RIGHT:
+			if ((weapon = unit->getItem(ST_LEFTHAND)) != nullptr
+				&& weapon->getAmmoItem() != nullptr)
+			{
+				unit->setActiveHand(AH_LEFT);
+				getMap()->cacheUnitSprite(unit);
+			}
+			break;
+
+		case AH_LEFT:
+			if ((weapon = unit->getItem(ST_RIGHTHAND)) != nullptr
+				&& weapon->getAmmoItem() != nullptr)
+			{
+				unit->setActiveHand(AH_RIGHT);
+				getMap()->cacheUnitSprite(unit);
+			}
+	}
 }
 
 /**

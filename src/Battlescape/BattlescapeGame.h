@@ -245,6 +245,9 @@ private:
 	std::vector<InfoboxDialogState*> _infoboxQueue;
 
 
+	/// Changes the active-hand of a BattleUnit.
+	void changeActiveHand(BattleUnit* const unit);
+
 	/// Clears the trace-AI markers on all battlefield Tiles.
 	void resetTraceTiles();
 

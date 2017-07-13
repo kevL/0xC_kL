@@ -234,7 +234,7 @@ void UnitSprite::setSpriteCycle(int cycle)
  * STATUS_BERSERK,		//  9
  * STATUS_LATENT,		// 10
  * STATUS_LATENT_START	// 11
-*/
+ */
 void UnitSprite::draw()
 {
 	//Log(LOG_INFO) << "UnitSprite::draw() routine " << _drawRoutine;

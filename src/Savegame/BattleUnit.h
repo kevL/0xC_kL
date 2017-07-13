@@ -625,6 +625,8 @@ private:
 
 		/// Sets the hand the BattleUnit has active.
 		void setActiveHand(const ActiveHand hand);
+		/// Gets the hand the BattleUnit has active.
+		ActiveHand getActiveHand();
 		/// Determines the BattleUnit's active-hand.
 		ActiveHand deterActiveHand();
 
