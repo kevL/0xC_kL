@@ -480,7 +480,7 @@ private:
 		void showPsiButton(bool show);
 
 		/// Clears drag-scrolling.
-		void clearDragScroll();
+		void clearDragScroll(bool doInfo = false);
 
 		/// Returns a pointer to the battlegame, in case we need its functions.
 		BattlescapeGame* getBattleGame();

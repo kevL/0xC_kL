@@ -3949,10 +3949,13 @@ void BattlescapeState::showPsiButton(bool show)
 
 /**
  * Clears drag-scrolling.
+ * @param doInfo - true to update tile-info under selector (default false)
  */
-void BattlescapeState::clearDragScroll()
+void BattlescapeState::clearDragScroll(bool doInfo)
 {
 	_dragScrollActivated = false;
+
+	if (doInfo == true) handleTileInfo();
 }
 
 /**
