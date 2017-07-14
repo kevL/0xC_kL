@@ -61,8 +61,6 @@ AlienBAIState::AlienBAIState(
 		_hasMelee(false),
 		_hasBlaster(false),
 		_doGrenade(false),
-		_doPsi(false),
-		_hasPsiBeenSet(false),
 		_distClosest(CAP_DIST),
 		_reserve(BA_NONE)
 {
@@ -130,7 +128,7 @@ YAML::Node AlienBAIState::save() const
  * Runs any code the state needs to keep updating every AI-cycle.
  * @param aiAction - pointer to a BattleAction to fill w/ data (BattlescapeGame.h)
  */
-void AlienBAIState::thinkOnce(BattleAction* const aiAction)
+void AlienBAIState::thinkAi(BattleAction* const aiAction)
 {
 	if (_traceAI) {
 		Log(LOG_INFO) << "";
@@ -147,14 +145,16 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 //	_wasHitBy.clear();
 
 	_hasBlaster =
-	_hasRifle =
-	_doGrenade =
-	_doPsi = false;
+	_hasRifle   =
+	_doGrenade  = false;
+
+	_psiAction->type = BA_NONE;
+
 	_hasMelee = (_unit->getMeleeWeapon() != nullptr);
 
-	aiAction->weapon = _unit->getMainHandWeapon(); // will get Rifle OR Melee
+	aiAction->weapon = _unit->getMainHandWeapon();	// will get Rifle OR Melee
 //	if (aiAction->weapon == nullptr)
-//		aiAction->weapon = _unit->getMeleeWeapon(); // will get Melee OR Fist
+//		aiAction->weapon = _unit->getMeleeWeapon();	// will get Melee OR Fist
 
 	_attackAction->weapon = aiAction->weapon;
 	_attackAction->diff = _battleSave->getSavedGame()->getDifficultyInt(); // for grenade-efficacy and blaster-waypoints.
@@ -238,12 +238,31 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 
 
 	// NOTE: These setups could have an order: Escape, Ambush, Attack, Patrol.
-	if (_traceAI) Log(LOG_INFO) << ". setupPatrol()";
-	setupPatrol();
-	if (_traceAI) Log(LOG_INFO) << "";
 
 	if (_traceAI) Log(LOG_INFO) << ". setupAttack()";
 	setupAttack();
+	if (_traceAI) Log(LOG_INFO) << "";
+
+	switch (_psiAction->type) // if a psi-action was determined by setupAttack() just do it ->
+	{
+		case BA_PSIPANIC:
+		case BA_PSICONTROL:
+			_unit->psiTried(_unit->psiTried() + 1);
+
+			_battleSave->getBattleGame()->decAiActionCount();
+
+			aiAction->type      = _psiAction->type;
+			aiAction->posTarget = _psiAction->posTarget;
+
+			if (_traceAI) Log(LOG_INFO) << "AlienBAIState::think() EXIT, Psi";
+			return;
+
+//		case BA_NONE: break;
+	}
+
+
+	if (_traceAI) Log(LOG_INFO) << ". setupPatrol()";
+	setupPatrol();
 	if (_traceAI) Log(LOG_INFO) << "";
 
 	if (_targetsExposed != 0 && _tuAmbush == -1 && _hasMelee == false)
@@ -260,54 +279,31 @@ void AlienBAIState::thinkOnce(BattleAction* const aiAction)
 		if (_traceAI) Log(LOG_INFO) << "";
 	}
 
-	if (_psiAction->type != BA_NONE && _hasPsiBeenSet == false)
-	{
-		_hasPsiBeenSet = true;
-		_battleSave->getBattleGame()->decAiActionCount();
-
-		aiAction->type = _psiAction->type;
-		aiAction->posTarget = _psiAction->posTarget;
-
-		if (_traceAI) Log(LOG_INFO) << "AlienBAIState::think() EXIT, Psi";
-		return;
-	}
-	_hasPsiBeenSet = false;
 
 	if (_traceAI) Log(LOG_INFO) << ". evaluate [1] " << BattleAIState::debugAiMode(_AIMode);
-	bool evaluate (false);
+	bool evaluate;
 	switch (_AIMode)
 	{
-		default:
 		case AI_PATROL:
-			if (   _spottersOrigin != 0
-				|| _targetsVisible != 0
-				|| _targetsExposed != 0
-				|| RNG::percent(10) == true)
-			{
-				evaluate = true;
-			}
+			evaluate = _spottersOrigin != 0
+					|| _targetsVisible != 0
+					|| _targetsExposed != 0
+					|| RNG::percent(10);
 			break;
 
 		case AI_COMBAT:
-			if (_attackAction->type == BA_THINK)
-				evaluate = true;
+			evaluate = _attackAction->type == BA_THINK;
 			break;
 
 		case AI_AMBUSH:
-			if (   _hasRifle == false
-				|| _tuAmbush == -1
-				|| _targetsVisible != 0)
-			{
-				evaluate = true;
-			}
+			evaluate = _hasRifle == false
+					|| _tuAmbush == -1
+					|| _targetsVisible != 0;
 			break;
 
 		case AI_ESCAPE:
-			if (   _spottersOrigin == 0
-				|| _targetsExposed == 0)
-			{
-				evaluate = true;
-			}
+			evaluate = _spottersOrigin == 0
+					|| _targetsExposed == 0;
 	}
 
 	if (_traceAI) Log(LOG_INFO) << ". do Evaluate = " << evaluate;
@@ -589,7 +585,8 @@ void AlienBAIState::setupPatrol() // private.
 }
 
 /**
- * Sets up a BattleAction for AI_COMBAT Mode.
+ * Sets up a BattleAction for AI_COMBAT Mode. Checks psi or waypoint actions
+ * first, then checks grenade, shoot, or melee actions.
  * @note This will be a weapon, grenade, psionic, or waypoint attack -- or
  * perhaps moving to get a line of sight to a target. Fills out the
  * '_attackAction' with useful data.
@@ -598,18 +595,17 @@ void AlienBAIState::setupAttack() // private.
 {
 	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::setupAttack() id-" << _unit->getId();
 	_attackAction->type = BA_THINK;
-	_psiAction->type = BA_NONE;
 
 	if (_traceAI) Log(LOG_INFO) << ". _targetsExposed = " << _targetsExposed;
 	if (_targetsExposed != 0 && RNG::percent(PSI_OR_BLASTER_PCT) == true)
 	{
 		if (_traceAI) Log(LOG_INFO) << ". . Run psiAction() OR wayPointAction()";
-		if ((_doPsi = psiAction()) == true
+		if ((_unit->psiTried() < PSI_TRIED_LIMIT && psiAction() == true)
 			|| (_hasBlaster == true && wayPointAction() == true))
 		{
 			if (_traceAI)
 			{
-				if (_doPsi) Log(LOG_INFO) << ". . . psi action";
+				if (_psiAction->type != BA_NONE) Log(LOG_INFO) << ". . . psi action";
 				else Log(LOG_INFO) << ". . . blaster action";
 			}
 			return;
@@ -1206,11 +1202,10 @@ void AlienBAIState::evaluateAiMode() // private.
 			ambushOdds *= 0.5f;
 		}
 
-		if (   _hasMelee == false
-			&& _hasRifle == false
+		if (   _hasMelee   == false
+			&& _hasRifle   == false
 			&& _hasBlaster == false
-			&& _doGrenade == false
-			&& _doPsi == false)
+			&& _doGrenade  == false)
 		{
 			combatOdds =
 			ambushOdds = 0.f;
@@ -2210,10 +2205,12 @@ bool AlienBAIState::psiAction() // private.
 		Log(LOG_INFO) << "";
 		Log(LOG_INFO) << "AlienBAIState::psiAction() id-" << _unit->getId();
 	}
-	if (_hasPsiBeenSet == false
-		&& _unit->getOriginalFaction() == FACTION_HOSTILE
+
+	if (_unit->getOriginalFaction() == FACTION_HOSTILE
 		&& _unit->getBattleStats()->psiSkill != 0)
 	{
+		//Log(LOG_INFO) << "AlienBAIState::psiAction() id-" << _unit->getId();
+
 		const RuleItem* const itRule (_battleSave->getBattleGame()->getAlienPsi()->getRules());
 
 		int tuCost (_unit->getActionTu(BA_PSIPANIC, itRule));

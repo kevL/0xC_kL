@@ -127,7 +127,7 @@ void BattleAIState::init() // virtual.
  * @note Called by BattleUnit::thinkAi().
  * @param action - pointer to a BattleAction to fill w/ data (BattlescapeGame.h)
  */
-void BattleAIState::thinkOnce(BattleAction* const) // virtual.
+void BattleAIState::thinkAi(BattleAction* const) // virtual.
 {}
 
 /**

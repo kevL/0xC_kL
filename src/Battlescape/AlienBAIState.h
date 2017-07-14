@@ -40,18 +40,17 @@ class AlienBAIState
 
 private:
 	static const int
-		PSI_LOS_WEIGHT		= 55,
-		PSI_SWITCH_TARGET	= 30,
-		PSI_CUTOFF			= 25,
-		PSI_OR_BLASTER_PCT	= 88;
+		PSI_LOS_WEIGHT     = 52, // the chance for an aLien to do a psi-attack against a target is increased by this amount if it has LoS to that target.
+		PSI_SWITCH_TARGET  = 30, // a delta (weighted roll) that can cause an aLien to switch its preferred target (ie, anti-lightning rod device).
+		PSI_CUTOFF         = 23, // roughly the minimum pct an aLien needs before it even bothers with a possible psi-attack.
+		PSI_OR_BLASTER_PCT = 87, // chance that an aLien will try a psi- or blaster attack (one roll includes both).
+		PSI_TRIED_LIMIT    =  1; // how many times each aLien gets to try a psi-attack per turn.
 
 	bool
 		_hasBlaster,
 		_hasMelee,
 		_hasRifle,
-		_doGrenade,
-		_doPsi,
-		_hasPsiBeenSet;
+		_doGrenade;
 	int
 		_aggression,
 		_distClosest,
@@ -144,7 +143,7 @@ private:
 		YAML::Node save() const override;
 
 		/// Runs state functionality every AI-cycle.
-		void thinkOnce(BattleAction* const aiAction) override;
+		void thinkAi(BattleAction* const aiAction) override;
 
 		/// Decides if it's okay to create an explosion.
 		bool explosiveEfficacy(

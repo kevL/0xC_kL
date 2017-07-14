@@ -129,7 +129,7 @@ protected:
 		/// Initializes Pathfinding and TileEngine.
 		virtual void init();
 		/// Runs state functionality every AI-cycle.
-		virtual void thinkOnce(BattleAction* const action);
+		virtual void thinkAi(BattleAction* const action);
 
 		/// Accesses the reachable-tiles vector.
 		std::vector<size_t>& reachableTiles();

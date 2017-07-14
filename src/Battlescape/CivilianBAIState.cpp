@@ -88,7 +88,7 @@ YAML::Node CivilianBAIState::save() const
  * Runs any code the state needs to keep updating every AI-cycle.
  * @param aiAction - pointer to a BattleAction to fill w/ data (BattlescapeGame.h)
  */
-void CivilianBAIState::thinkOnce(BattleAction* const aiAction)
+void CivilianBAIState::thinkAi(BattleAction* const aiAction)
 {
 	//Log(LOG_INFO) << "CivilianBAIState::think()";
 	aiAction->type = BA_THINK;

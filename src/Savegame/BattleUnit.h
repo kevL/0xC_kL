@@ -190,7 +190,8 @@ private:
 		_walkPhaseFull,
 		_collapsePhase,
 		_mcStrength,
-		_mcSkill;
+		_mcSkill,
+		_psiTriedQty;
 	size_t _battleOrder;
 
 	BattleAIState* _unitAiState;
@@ -897,6 +898,10 @@ private:
 
 		/// Checks if the BattleUnit is immune to psionic attacks.
 		bool psiBlock() const;
+		/// Sets how many times an aLien has tried to psi-attack during its turn.
+		void psiTried(int tried);
+		/// Gets how many times an aLien has tried to psi-attack during its turn.
+		int psiTried() const;
 
 		/// Checks if the BattleUnit has been stunned before.
 		bool beenStunned() const;

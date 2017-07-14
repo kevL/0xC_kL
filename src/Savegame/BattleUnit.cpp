@@ -130,6 +130,7 @@ BattleUnit::BattleUnit(
 		_hasCried(false),
 		_hasBeenStunned(false),
 		_psiBlock(false),
+		_psiTriedQty(0),
 
 		_deathSound(-1),
 		_aggroSound(-1),
@@ -293,6 +294,7 @@ BattleUnit::BattleUnit(
 		_battleOrder(0),
 		_hasCried(false),
 		_hasBeenStunned(false),
+		_psiTriedQty(0),
 
 		_morale(100),
 		_stunLevel(0),
@@ -495,6 +497,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
 	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
 	_hasBeenStunned		= node["beenStunned"]			.as<bool>(_hasBeenStunned);
+	_psiTriedQty		= node["psiTriedQty"]			.as<bool>(_psiTriedQty);
 
 	_turretType = static_cast<TurretType>(node["turretType"].as<int>(_turretType));
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
@@ -632,6 +635,7 @@ YAML::Node BattleUnit::save() const
 	if (_drugDose != 0)					node["drugDose"]		= _drugDose;
 	if (_murdererId != 0)				node["murdererId"]		= _murdererId;
 	if (_hasBeenStunned == true)		node["beenStunned"]		= _hasBeenStunned;
+	if (_psiTriedQty != 0)				node["psiTriedQty"]		= _psiTriedQty;
 
 	node["activeHand"] = static_cast<int>(_activeHand);
 
@@ -2537,7 +2541,8 @@ void BattleUnit::prepareUnit(bool preBattle)
 	_dontReselect = false;
 
 	_hostileUnitsThisTurn.clear();
-	_motionPoints = 0;
+	_motionPoints =
+	_psiTriedQty  = 0;
 
 	bool reverted;
 	if (_faction != _originalFaction) // reverting from Mind Control at start of MC-ing faction's next turn
@@ -2776,8 +2781,8 @@ void BattleUnit::thinkAi(BattleAction* const action)
 	if (checkReload() == true)
 		_cacheInvalid = true; // <- reloading a weapon could switch a unit's preferred weapon-hand.
 
-	//if (debug) Log(LOG_INFO) << ". _unitAiState->thinkOnce()";
-	_unitAiState->thinkOnce(action);
+	//if (debug) Log(LOG_INFO) << ". _unitAiState->thinkAi()";
+	_unitAiState->thinkAi(action);
 
 	//if (debug) {
 	//	Log(LOG_INFO) << "BattleUnit::think() EXIT";
@@ -4233,17 +4238,18 @@ void BattleUnit::putdown(bool autokill)
 	_faction = _originalFaction;
 	_turnsExposed = -1;	// don't risk aggro per the AI
 
-	_dontReselect	=
-	_hasBeenStunned	= true;
+	_dontReselect   =
+	_hasBeenStunned = true;
 
-	_tu		=
-	_energy	= 0;
+	_tu          =
+	_energy      =
+	_psiTriedQty = 0;
 
-	_visible			=
-	_kneeled			= // don't get hunkerdown bonus against HE detonations
-	_dashing			=
-	_aboutToCollapse	=
-	_hasCried			= false;
+	_visible         =
+	_kneeled         = // don't get hunkerdown bonus against HE detonations
+	_dashing         =
+	_aboutToCollapse =
+	_hasCried        = false;
 
 	_hostileUnits.clear();
 	_hostileUnitsThisTurn.clear();
@@ -4865,6 +4871,24 @@ bool BattleUnit::psiBlock() const
 bool BattleUnit::beenStunned() const
 {
 	return _hasBeenStunned;
+}
+
+/**
+ * Sets how many times an aLien has tried to psi-attack during its turn.
+ * @param tried - times tried psi
+ */
+void BattleUnit::psiTried(int tried)
+{
+	_psiTriedQty = tried;
+}
+
+/**
+ * Gets how many times an aLien has tried to psi-attack during its turn.
+ * @return, times tried psi
+ */
+int BattleUnit::psiTried() const
+{
+	return _psiTriedQty;
 }
 
 /**
