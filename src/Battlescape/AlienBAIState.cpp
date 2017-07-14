@@ -284,6 +284,7 @@ void AlienBAIState::thinkAi(BattleAction* const aiAction)
 	bool evaluate;
 	switch (_AIMode)
 	{
+		default: // avoid g++ compiler warning.
 		case AI_PATROL:
 			evaluate = _spottersOrigin != 0
 					|| _targetsVisible != 0
@@ -594,17 +595,21 @@ void AlienBAIState::setupPatrol() // private.
 void AlienBAIState::setupAttack() // private.
 {
 	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::setupAttack() id-" << _unit->getId();
+	//Log(LOG_INFO) << "";
+	//Log(LOG_INFO) << "AlienBAIState::setupAttack() id-" << _unit->getId();
+	//Log(LOG_INFO) << ". _targetsExposed= " << _targetsExposed;
+
 	_attackAction->type = BA_THINK;
 
 	if (_traceAI) Log(LOG_INFO) << ". _targetsExposed = " << _targetsExposed;
 	if (_targetsExposed != 0 && RNG::percent(PSI_OR_BLASTER_PCT) == true)
 	{
 		if (_traceAI) Log(LOG_INFO) << ". . Run psiAction() OR wayPointAction()";
+		//Log(LOG_INFO) << ". . psiTried= " << _unit->psiTried();
 		if ((_unit->psiTried() < PSI_TRIED_LIMIT && psiAction() == true)
 			|| (_hasBlaster == true && wayPointAction() == true))
 		{
-			if (_traceAI)
-			{
+			if (_traceAI) {
 				if (_psiAction->type != BA_NONE) Log(LOG_INFO) << ". . . psi action";
 				else Log(LOG_INFO) << ". . . blaster action";
 			}
@@ -2295,6 +2300,8 @@ bool AlienBAIState::psiAction() // private.
 //				else if (RNG::generate(35, 155) > chance)
 //					return false;
 
+				//Log(LOG_INFO) << ". . . target Valid - acceptable Prob. id-" << unitTarget->getId() << " exposed= " << unitTarget->getExposed();
+
 				_unitAggro = unitTarget;
 				_psiAction->posTarget = unitTarget->getPosition();
 
@@ -2359,6 +2366,7 @@ bool AlienBAIState::validTarget( // private.
 			|| unit->getUnitTile()->getDangerous() == false
 			|| RNG::generate(0, _aggression) != 0))			// target has not been grenaded
 	{
+		//Log(LOG_INFO) << "AlienBAIState::validTarget() targetId-" << unit->getId() << " exposed= " << unit->getExposed();
 		return true;
 	}
 	return false;

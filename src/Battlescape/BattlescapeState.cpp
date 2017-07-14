@@ -1518,10 +1518,13 @@ void BattlescapeState::mapClick(Action* action)
 				std::wostringstream woststr; // onScreen debug ->
 
 				const BattleUnit* const unit (_battleSave->getTile(pos)->getTileUnit());
-				if (unit != nullptr && unit->getUnitVisible() == true)
+				if (unit != nullptr
+					&& (unit->getUnitVisible() == true || _battleSave->getDebugTac() == true))
+				{
 					woststr	<< L"unit "
 							<< unit->getId()
 							<< L" ";
+				}
 
 				woststr << L"pos " << pos;
 				printDebug(woststr.str());
@@ -4670,10 +4673,10 @@ void BattlescapeState::saveVoxelView() // private.
 #ifdef _WIN32
 		else
 		{
-			const std::string& st ("\"C:\\Program Files (x86)\\IrfanView\\i_view32.exe\"");
-			if (CrossPlatform::fileExists(st))
+			const std::string& st ("C:\\Program Files (x86)\\IrfanView\\i_view32.exe");
+			if (CrossPlatform::fileExists(st) == true)
 			{
-				std::wstring wst (Language::fsToWstr(st + " " + oststr.str()));
+				std::wstring wst (Language::fsToWstr("\"" + st + "\"" + " \"" + oststr.str() + "\""));
 
 				STARTUPINFO si;
 				ZeroMemory(&si, sizeof(si));
