@@ -6070,11 +6070,12 @@ bool TileEngine::psiAttack(BattleAction* const action)
 
 				int
 					psiStrength,
-					psiSkill (0);
+					psiSkill;
 
 				if (victim->getFaction() == FACTION_HOSTILE
 					&& victim->isMindControlled() == true)
 				{
+					psiSkill = -1;
 					victim->hostileMcValues(psiStrength, psiSkill);
 				}
 				else

@@ -497,7 +497,7 @@ void BattleUnit::load(const YAML::Node& node)
 	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
 	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
 	_hasBeenStunned		= node["beenStunned"]			.as<bool>(_hasBeenStunned);
-	_psiTriedQty		= node["psiTriedQty"]			.as<bool>(_psiTriedQty);
+//	_psiTriedQty		= node["psiTriedQty"]			.as<bool>(_psiTriedQty);
 
 	_turretType = static_cast<TurretType>(node["turretType"].as<int>(_turretType));
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
@@ -635,7 +635,7 @@ YAML::Node BattleUnit::save() const
 	if (_drugDose != 0)					node["drugDose"]		= _drugDose;
 	if (_murdererId != 0)				node["murdererId"]		= _murdererId;
 	if (_hasBeenStunned == true)		node["beenStunned"]		= _hasBeenStunned;
-	if (_psiTriedQty != 0)				node["psiTriedQty"]		= _psiTriedQty;
+//	if (_psiTriedQty != 0)				node["psiTriedQty"]		= _psiTriedQty;
 
 	node["activeHand"] = static_cast<int>(_activeHand);
 
@@ -4799,14 +4799,14 @@ void BattleUnit::hostileMcValues(
 {
 	switch (skill)
 	{
-		case 0: // get params
+		case -1: // get params
 			strength = _mcStrength;
 			skill = _mcSkill;
 			break;
 
 		default: // set params
-			_mcStrength	= strength - ((_stats.psiStrength + 2) / 3);
-			_mcSkill	= skill    - ((_stats.psiSkill    + 2) / 3);
+			_mcStrength	= strength - ((_stats.psiStrength + 4) / 5);
+			_mcSkill	= skill    - ((_stats.psiSkill    + 4) / 5);
 
 			if (_mcStrength < 0) _mcStrength = 0;
 			if (_mcSkill    < 0) _mcSkill    = 0;
