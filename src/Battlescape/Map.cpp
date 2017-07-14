@@ -888,7 +888,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 									if (hasUnit == true
 										&& (_selectorType != CT_PSI
 											|| ((_battleGame->getTacticalAction()->type == BA_PSICOURAGE
-													&& _unit->getFaction() != FACTION_HOSTILE)
+													&& _unit->getFaction() != FACTION_HOSTILE
+													&& _unit != _battleSave->getSelectedUnit())
 												|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{
@@ -1524,7 +1525,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 									if (hasUnit == true
 										&& (_selectorType != CT_PSI
 											|| ((_battleGame->getTacticalAction()->type == BA_PSICOURAGE
-													&& _unit->getFaction() != FACTION_HOSTILE)
+													&& _unit->getFaction() != FACTION_HOSTILE
+													&& _unit != _battleSave->getSelectedUnit())
 												|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
 													&& _unit->getFaction() != FACTION_PLAYER))))
 									{

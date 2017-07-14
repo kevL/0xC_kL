@@ -2764,7 +2764,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 				if (targetUnit != nullptr
 					&& targetUnit->getUnitVisible() == true
 					&& (   (_playerAction.type != BA_PSICOURAGE && targetUnit->getFaction() != FACTION_PLAYER)
-						|| (_playerAction.type == BA_PSICOURAGE && targetUnit->getFaction() != FACTION_HOSTILE))) // NOTE: This allows a unit to encourage itself.
+						|| (_playerAction.type == BA_PSICOURAGE && targetUnit->getFaction() != FACTION_HOSTILE && _playerAction.actor != targetUnit)))
 				{
 					bool aLienPsi (_playerAction.weapon == nullptr);
 					if (aLienPsi == true)
