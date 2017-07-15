@@ -85,9 +85,12 @@ ExplosionBState::ExplosionBState(
 		_melee(false)
 //		_extend(3) // extra think-cycles before this state is allowed to Pop.
 {
-	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "cTor ExplBState id-" << (_unit ? _unit->getId() : 0);
-	//Log(LOG_INFO) << ". item type " << (itRule ? itRule->getType() : "NONe");
+//	Log(LOG_INFO) << "";
+//	Log(LOG_INFO) << "ExplosionBState::cTor";
+//	if (_unit != nullptr) Log(LOG_INFO) << ". id-" << _unit->getId();
+//	else Log(LOG_INFO) << ". id-null";
+//	if (_itRule != nullptr) Log(LOG_INFO) << ". itRule= " << _itRule->getType();
+//	else Log(LOG_INFO) << ". itRule= null";
 }
 
 /**
@@ -586,6 +589,7 @@ void ExplosionBState::explode() // private.
 		}
 
 
+		//Log(LOG_INFO) << ". call bg.checkCasualties()";
 		_battleGame->checkCasualties(
 								_itRule,
 								_unit,
@@ -599,7 +603,7 @@ void ExplosionBState::explode() // private.
 					i != _battleSave->getUnits()->end();
 					++i)
 			{
-				(*i)->hasCried(false);
+				(*i)->hasCriedShotgun(false);
 			}
 		}
 
@@ -621,7 +625,7 @@ void ExplosionBState::explode() // private.
 		if (tile != nullptr)
 		{
 			const Position& explVoxel (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
-			_battleGame->stateBPushFront(new ExplosionBState(
+			_battleGame->stateBPushNext(new ExplosionBState(
 														_battleGame,
 														explVoxel,
 														nullptr,

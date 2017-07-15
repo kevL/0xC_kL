@@ -2229,7 +2229,7 @@ void TileEngine::hit(
 											power, dType,
 											dType == DT_STUN || dType == DT_SMOKE);	// stun ignores armor ... it still gets
 																					// Vulnr.modifier, but not armorReduction.
-				if (shotgun == true) targetUnit->hasCried(true);
+				if (shotgun == true) targetUnit->hasCriedShotgun(true);
 
 				if (power != 0)
 				{

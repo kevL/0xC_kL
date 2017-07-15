@@ -817,7 +817,7 @@ en-US:
   STR_MISSIONS_: "missions> {ALT}{0}"
   STR_KILLS_: "kills> {ALT}{0}"
   STR_WOUND_RECOVERY_: "injured> {ALT}{0}"
-  STR_TIME_UNITS: "time units"
+  STR_TIME_UNITS: "turn units"
   STR_STAMINA: "stamina"
   STR_HEALTH: "health"
   STR_BRAVERY: "bravery"

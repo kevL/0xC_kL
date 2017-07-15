@@ -1689,9 +1689,10 @@ void BattlescapeGame::checkCasualties(
 		bool isPreTactical,
 		bool isTerrain)
 {
-	//Log(LOG_INFO) << "BattlescapeGame::checkCasualties()";
-	//if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
-	//if (itRule != nullptr) Log(LOG_INFO) << ". type= " << itRule->getType();
+//	Log(LOG_INFO) << "";
+//	Log(LOG_INFO) << "BattlescapeGame::checkCasualties()";
+//	if (attacker != nullptr) Log(LOG_INFO) << ". id-" << attacker->getId();
+//	if (itRule != nullptr) Log(LOG_INFO) << ". type= " << itRule->getType();
 
 	// If the victim was killed by the attacker's death explosion fetch what
 	// killed the attacker and make THAT the attacker!

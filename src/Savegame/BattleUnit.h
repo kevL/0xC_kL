@@ -444,12 +444,12 @@ private:
 				const bool ignoreArmor = false);
 
 		/// Plays the BattleUnit's death sound.
-		void playDeathSound(bool fleshWound = false) const;
+		void playDeathSound(bool fleshwound = false) const;
 
 		/// Sets the BattleUnit as having cried out from a shotgun blast to the face.
-		void hasCried(bool cried);
+		void hasCriedShotgun(bool cried);
 		/// Gets if the BattleUnit has cried already.
-		bool hasCried() const;
+		bool hasCriedShotgun() const;
 
 		/// Sets the BattleUnit's health level.
 		void setHealth(int health);

@@ -75,6 +75,7 @@ UnitDieBState::UnitDieBState(
 		_post(0),
 		_isInfected(unit->getSpawnType().empty() == false)
 {
+	//Log(LOG_INFO) << "UnitDieBState::cTor";
 //	_unit->clearVisibleTiles();
 //	_unit->clearHostileUnits();
 
@@ -163,9 +164,13 @@ void UnitDieBState::think()
 		_battleGame->getMap()->getCamera()->focusPosition(_unit->getPosition());	// NOTE: Can't be done in cTor or init() because
 																					// ... BattleState machine gets confused.
 		if (   _unit->getHealth() == 0
-			&& _unit->hasCried() == false
+			&& _unit->hasCriedShotgun() == false
 			&& _unit->getOverDose() == false)
 		{
+//			Log(LOG_INFO) << "";
+//			Log(LOG_INFO) << "UnitDieBState::think() id-" << _unit->getId();
+//			Log(LOG_INFO) << ". call playDeathSound()";
+
 			_unit->playDeathSound();
 		}
 	}

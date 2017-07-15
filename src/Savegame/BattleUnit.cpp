@@ -1494,10 +1494,13 @@ int BattleUnit::takeDamage(
 		WAIST_LEVEL_CUTOFF	= 6;
 
 
+	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "bu:takeDamage() id-" << _id << " power[0]= " << power;
+
 	power = static_cast<int>(Round(
 			static_cast<float>(power) * _arRule->getDamageModifier(dType)));
-	//Log(LOG_INFO) << ". dType = " << (int)dType << " power[1]= " << power;
+
+	//Log(LOG_INFO) << ". dType= " << (int)dType << " power[1]= " << power;
 
 //	if (power < 1) // kL_note: this early-out messes with got-hit sFx below_
 //		return 0;
@@ -1690,6 +1693,8 @@ int BattleUnit::takeDamage(
 		&& dType != DT_STUN
 		&& _isMechanical == false)
 	{
+		//Log(LOG_INFO) << "BattleUnit::takeDamage()";
+		//Log(LOG_INFO) << ". call playDeathSound(w/ fleshwound)";
 		playDeathSound(true);
 	}
 
@@ -1701,10 +1706,12 @@ int BattleUnit::takeDamage(
 
 /**
  * Plays this BattleUnit's death-scream or hit-grunt.
- * @param fleshWound - true if only hit but not death; used by Soldiers only
+ * @param fleshwound - true if only hit but not death; used by Soldiers only
  */
-void BattleUnit::playDeathSound(bool fleshWound) const
+void BattleUnit::playDeathSound(bool fleshwound) const
 {
+	//Log(LOG_INFO) << "BattleUnit::playDeathSound() id-" << _id;
+
 	if (_battleGame != nullptr) // check if hit by pre-battle hidden/power-source explosion.
 	{
 		int soundId;
@@ -1714,14 +1721,14 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 			{
 				default:
 				case GENDER_MALE:
-					if (fleshWound == true)
+					if (fleshwound == true)
 						soundId = RNG::seedless(141,151);
 					else
 						soundId = RNG::seedless(111,116);
 					break;
 
 				case GENDER_FEMALE:
-					if (fleshWound == true)
+					if (fleshwound == true)
 						soundId = RNG::seedless(121,135);
 					else
 						soundId = RNG::seedless(101,103);
@@ -1744,26 +1751,29 @@ void BattleUnit::playDeathSound(bool fleshWound) const
 			soundId = _deathSound;
 
 		if (soundId != -1)
+		{
+			//Log(LOG_INFO) << ". soundId= " << soundId;
 			_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 											->play(-1, _battleGame->getMap()->getSoundAngle(_pos));
+		}
 	}
 }
 
 /**
- * Sets this BattleUnit as having cried out from a shotgun blast to the face.
+ * Sets this BattleUnit as having cried out from a shotgun-blast to the face.
  * @note So that it doesn't scream for each pellet.
  * @param cried - true if hit
  */
-void BattleUnit::hasCried(bool cried)
+void BattleUnit::hasCriedShotgun(bool cried)
 {
 	_hasCried = cried;
 }
 
 /**
- * Gets if this BattleUnit has cried already.
+ * Gets if this BattleUnit has cried from a shotgun-blast already.
  * @return, true if cried
  */
-bool BattleUnit::hasCried() const
+bool BattleUnit::hasCriedShotgun() const
 {
 	return _hasCried;
 }
