@@ -347,34 +347,34 @@ void Inventory::drawItems()
 						_fusePairs.push_back(std::make_pair(
 														sprite->getX(),
 														sprite->getY()));
+
+					const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
+											  [(*i)->getSlotY()]);
+					int fatals;
+					if ((*i)->getBodyUnit() != nullptr)
+						fatals = (*i)->getBodyUnit()->getFatalsTotal();
+					else
+						fatals = 0;
+
+					if (qty > 1 || fatals != 0)
+					{
+						_numStack->setX((inRule->getX()
+											+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _grdOffset)
+												* RuleInventory::SLOT_W) - 4);
+
+						if (qty > 9 || fatals > 9)
+							_numStack->setX(_numStack->getX() - 4);
+
+						_numStack->setY((inRule->getY()
+											+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
+												* RuleInventory::SLOT_H) - 6);
+						_numStack->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
+						_numStack->draw();
+						_numStack->setColor(fatals ? RED : color);
+						_numStack->blit(stackLayer);
+					}
 				}
 //				else Log(LOG_WARNING) << "Inventory::drawItems() bigob not found[2] #" << (*i)->getRules()->getBigSprite(); // see also RuleItem::drawHandSprite()
-
-				const int qty (_stackLevel[(*i)->getSlotX()] // item stacking
-										  [(*i)->getSlotY()]);
-				int fatals;
-				if ((*i)->getBodyUnit() != nullptr)
-					fatals = (*i)->getBodyUnit()->getFatalsTotal();
-				else
-					fatals = 0;
-
-				if (qty > 1 || fatals != 0)
-				{
-					_numStack->setX((inRule->getX()
-										+ (((*i)->getSlotX() + (*i)->getRules()->getInventoryWidth()) - _grdOffset)
-											* RuleInventory::SLOT_W) - 4);
-
-					if (qty > 9 || fatals > 9)
-						_numStack->setX(_numStack->getX() - 4);
-
-					_numStack->setY((inRule->getY()
-										+ ((*i)->getSlotY() + (*i)->getRules()->getInventoryHeight())
-											* RuleInventory::SLOT_H) - 6);
-					_numStack->setValue(fatals ? static_cast<unsigned>(fatals) : static_cast<unsigned>(qty));
-					_numStack->draw();
-					_numStack->setColor(fatals ? RED : color);
-					_numStack->blit(stackLayer);
-				}
 			}
 		}
 
@@ -1095,10 +1095,12 @@ void Inventory::arrangeGround(int dir)
 
 	const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 
+	std::vector<BattleItem*>* list (_selUnit->getUnitTile()->getInventory());
+
 	// first move all items out of the way -> a big number in x-direction to right
 	for (std::vector<BattleItem*>::const_iterator
-			i = _selUnit->getUnitTile()->getInventory()->begin();
-			i != _selUnit->getUnitTile()->getInventory()->end();
+			i = list->begin();
+			i != list->end();
 			++i)
 	{
 		(*i)->setInventorySection(grdRule);
@@ -1110,67 +1112,71 @@ void Inventory::arrangeGround(int dir)
 	int
 		x,y,
 		width,
-		hight,
+		height,
 		tallySlotX (0);
 
 	const BattleItem* other;
 
 	// for each item find the most top-left position that is not occupied and will fit
 	for (std::vector<BattleItem*>::const_iterator
-			i = _selUnit->getUnitTile()->getInventory()->begin();
-			i != _selUnit->getUnitTile()->getInventory()->end();
+			i = list->begin();
+			i != list->end();
 			++i)
 	{
-		x =
-		y = 0;
-		width = (*i)->getRules()->getInventoryWidth();
-		hight = (*i)->getRules()->getInventoryHeight();
-
-		do
+		if ((*i)->getRules()->getBigSprite() != BIGSPRITE_NONE
+			&& (width = (*i)->getRules()->getInventoryWidth()) != 0)
 		{
-			place = true; // assume the item can be put here, if one of the following checks fails it can't
-			for (int
-					xd = 0;
-					xd < width && place == true;
-					++xd)
-			{
-				if ((x + xd) % RuleInventory::GROUND_W < x % RuleInventory::GROUND_W)
-				{
-					place = false; // don't let wider items overlap right-side ground boundary.
-					break;
-				}
+			height = (*i)->getRules()->getInventoryHeight();
 
+			x =
+			y = 0;
+
+			do
+			{
+				place = true; // assume the item can be put here, if one of the following checks fails it can't
 				for (int
-						yd = 0;
-						yd < hight && place == true;
-						++yd)
+						xd = 0;
+						xd < width && place == true;
+						++xd)
 				{
-					other = _selUnit->getItem(
-											grdRule,
-											x + xd,
-											y + yd);
-					place = other == nullptr
-						 || canStack(other, *i) == true;
+					if ((x + xd) % RuleInventory::GROUND_W < x % RuleInventory::GROUND_W)
+					{
+						place = false; // don't let wider items overlap right-side ground boundary.
+						break;
+					}
+
+					for (int
+							yd = 0;
+							yd < height && place == true;
+							++yd)
+					{
+						other = _selUnit->getItem(
+												grdRule,
+												x + xd,
+												y + yd);
+						place = other == nullptr
+							 || canStack(other, *i) == true;
+					}
+				}
+
+				if (place == true)
+				{
+					(*i)->setSlotX(x);
+					(*i)->setSlotY(y);
+
+					if (*i != _selItem)// && width != 0) // only increase the stack-level if the item is actually visible.
+						_stackLevel[x][y] += 1;
+
+					tallySlotX = std::max(x + width, tallySlotX);
+				}
+				else if (++y > RuleInventory::GROUND_H - height)
+				{
+					y = 0;
+					++x;
 				}
 			}
-
-			if (place == true)
-			{
-				(*i)->setSlotX(x);
-				(*i)->setSlotY(y);
-
-				if (*i != _selItem && width != 0) // only increase the stack-level if the item is actually visible.
-					_stackLevel[x][y] += 1;
-
-				tallySlotX = std::max(x + width, tallySlotX);
-			}
-			else if (++y > RuleInventory::GROUND_H - hight)
-			{
-				y = 0;
-				++x;
-			}
+			while (place == false);
 		}
-		while (place == false);
 	}
 
 	if (dir != 0)

@@ -958,7 +958,7 @@ void InventoryState::btnClearGroundClick(Action*)
 				i != baseList->end() && craft == nullptr;
 				++i)
 		{
-			if ((*i)->getTactical() == true) return; // if a Base is in tactical than any Craft isn't.
+			if ((*i)->getTactical() == true) return; // if a Base is in tactical then any Craft isn't.
 
 			for (std::vector<Craft*>::const_iterator
 					j = (*i)->getCrafts()->begin();
