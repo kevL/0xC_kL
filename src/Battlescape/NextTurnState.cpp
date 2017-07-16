@@ -188,7 +188,7 @@ void NextTurnState::nextTurn() // private.
 	_state->getBattleGame()->tallyUnits(
 									liveHostile,
 									livePlayer);
-	if (  (liveHostile == 0 && _battleSave->getObjectiveTileType() != OBJECT_TILE) // <- not the final mission
+	if (  (liveHostile == 0 && _battleSave->getObjectiveTileType() != OBJECTIVE_TILE) // <- not the final mission
 		|| livePlayer  <  1)	// final tactical determination done in BattlescapeGame::endTurn() -> finishBattle()
 	{							// or AbortMissionState::btnOkClick() -> finishBattle().
 		switchMusic = true;

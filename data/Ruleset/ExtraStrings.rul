@@ -108,6 +108,7 @@ extraStrings:
       MOUNT: "MOUNTAIN"
       POLAR: "POLAR"
       UBASE: "aLien BASE"
+      UBASEGOLD: "aLien BASE Gold"
       URBAN: "URBAN"
       URBAN2: "Urban 2"
 #      STR_URBAN: "URBAN"

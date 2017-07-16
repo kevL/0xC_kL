@@ -1577,7 +1577,7 @@ alienDeployments:
     length: 60
     height: 2
     terrains:
-      - UBASE
+      - UBASEGOLD
     shade: 15
     race: STR_MIXED
     noRetreat: true

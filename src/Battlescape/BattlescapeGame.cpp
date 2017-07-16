@@ -1598,7 +1598,7 @@ void BattlescapeGame::endTurn() // private.
 								liveHostile,
 								livePlayer));
 
-	if (_battleSave->getObjectiveTileType() == OBJECT_TILE // brain death, end Final Mission.
+	if (_battleSave->getObjectiveTileType() == OBJECTIVE_TILE // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
 		_battleState->finishBattle(false, livePlayer);
@@ -1624,7 +1624,7 @@ void BattlescapeGame::endTurn() // private.
 	}
 	else
 	{
-		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != OBJECT_TILE)
+		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != OBJECTIVE_TILE)
 								 || livePlayer  <  1);
 
 		if (battleComplete == false)

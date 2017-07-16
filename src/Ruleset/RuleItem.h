@@ -90,7 +90,7 @@ enum TileType // NOTE: These are actually special designations of part-types.
 	ALIEN_HABITAT,			// 11
 	RUINED_ALLOYS,			// 12
 	EXIT_TILE,				// 13
-	OBJECT_TILE				// 14
+	OBJECTIVE_TILE			// 14
 };
 
 

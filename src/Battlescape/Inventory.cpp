@@ -1108,7 +1108,7 @@ void Inventory::arrangeGround(int dir)
 		(*i)->setSlotY(0);
 	}
 
-	bool place;
+	bool placed;
 	int
 		x,y,
 		width,
@@ -1133,33 +1133,33 @@ void Inventory::arrangeGround(int dir)
 
 			do
 			{
-				place = true; // assume the item can be put here, if one of the following checks fails it can't
+				placed = true; // assume the item can be put here, if one of the following checks fails it can't
 				for (int
 						xd = 0;
-						xd < width && place == true;
+						xd < width && placed == true;
 						++xd)
 				{
 					if ((x + xd) % RuleInventory::GROUND_W < x % RuleInventory::GROUND_W)
 					{
-						place = false; // don't let wider items overlap right-side ground boundary.
+						placed = false; // don't let wider items overlap right-side ground boundary.
 						break;
 					}
 
 					for (int
 							yd = 0;
-							yd < height && place == true;
+							yd < height && placed == true;
 							++yd)
 					{
 						other = _selUnit->getItem(
 												grdRule,
 												x + xd,
 												y + yd);
-						place = other == nullptr
+						placed = other == nullptr
 							 || canStack(other, *i) == true;
 					}
 				}
 
-				if (place == true)
+				if (placed == true)
 				{
 					(*i)->setSlotX(x);
 					(*i)->setSlotY(y);
@@ -1175,7 +1175,7 @@ void Inventory::arrangeGround(int dir)
 					++x;
 				}
 			}
-			while (place == false);
+			while (placed == false);
 		}
 	}
 

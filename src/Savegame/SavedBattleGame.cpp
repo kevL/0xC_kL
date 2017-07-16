@@ -1856,7 +1856,7 @@ TileType SavedBattleGame::getObjectiveTileType() const
 /**
  * Initializes the objective-tiles needed quantity.
  * @note Used only to initialize the objective counter; cf addDestroyedObjective()
- * below. Objectives were tile-parts marked w/ OBJECT_TILE in their MCD but now
+ * below. Objectives were tile-parts marked w/ OBJECTIVE_TILE in their MCD but now
  * can be any specially marked tile. See elsewhere ha.
  * @param qty - quantity of objective-tiletype tile-parts that need to be
  *				destroyed for a/the tactical-objective to be achieved

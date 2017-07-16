@@ -713,7 +713,7 @@ void DebriefingState::prepareDebriefing() // private.
 			case ALIEN_HABITAT:			// 11
 			case RUINED_ALLOYS:			// 12 -> give half-Alloy value for ruined alloy-tiles.
 //			case EXIT_TILE:
-//			case OBJECT_TILE:
+//			case OBJECTIVE_TILE:
 			{
 				SpecialType* const specialType (new SpecialType());
 				specialType->type = *i;
@@ -1496,7 +1496,7 @@ void DebriefingState::prepareDebriefing() // private.
 						case TILE:
 						case START_TILE:
 						case EXIT_TILE:
-						case OBJECT_TILE:
+						case OBJECTIVE_TILE:
 							break;				// NOTE: These are not included in '_specialTypes' above^
 
 						case RUINED_ALLOYS:		// NOTE: This is in '_specialTypes' above^ (adds half-value to Alloys' pts)
