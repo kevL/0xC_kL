@@ -73,7 +73,7 @@ void InteractiveSurface::setButtonPressed( // protected.
 	if (pressed == true)
 		_rodentState |=  SDL_BUTTON(btnId);
 	else
-		_rodentState &= !SDL_BUTTON(btnId);
+		_rodentState &= ~SDL_BUTTON(btnId);
 }
 
 /**
