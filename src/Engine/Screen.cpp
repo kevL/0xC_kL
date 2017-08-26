@@ -711,7 +711,6 @@ void Screen::screenshot(const std::string& file) const
 	SDL_FreeSurface(screenshot);
 }
 
-
 /**
  * Checks whether a 32-bpp scaler has been selected.
  * @return, true if it is enabled with a compatible resolution
@@ -722,16 +721,22 @@ bool Screen::use32bitScaler() // static.
 	// Good fuckinGod I hate hardware.
 
 	const int
-		w (Options::displayWidth),
-		h (Options::displayHeight),
+		w     (Options::displayWidth),
+		h     (Options::displayHeight),
 		baseW (Options::baseXResolution),
 		baseH (Options::baseYResolution);
 
-	return ((Options::useHQXFilter == true || Options::useXBRZFilter == true)
-		&& ((	w == baseW * 2 && h == baseH * 2)
-			|| (w == baseW * 3 && h == baseH * 3)
-			|| (w == baseW * 4 && h == baseH * 4)
-			|| (w == baseW * 5 && h == baseH * 5 && Options::useXBRZFilter == true)));
+	int scaleMax;
+	if      (Options::useXBRZFilter) scaleMax = 6;
+	else if (Options::useHQXFilter)  scaleMax = 4;
+	else                             scaleMax = 0;
+
+	for (int i = 2; i <= scaleMax; ++i)
+	{
+		if (w == baseW * i && h == baseH * i)
+			return true;
+	}
+	return false;
 }
 
 /**

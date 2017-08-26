@@ -708,46 +708,52 @@ void Zoom::flipWithZoom( // static.
 	{
 		_zoomSurfaceY(src, dst, 0,0);
 	}
-	else if (dst->w - leftBlackBand - rightBlackBand == src->w
-		  && dst->h - topBlackBand - bottomBlackBand == src->h)
-	{
-		SDL_Rect dstRect
-		{
-			static_cast<Sint16>(leftBlackBand),
-			static_cast<Sint16>(topBlackBand),
-			static_cast<Uint16>(src->w),
-			static_cast<Uint16>(src->h)
-		};
-
-		SDL_BlitSurface(src, nullptr, dst, &dstRect);
-	}
 	else
 	{
-		SDL_Surface* srf (SDL_CreateRGBSurface(
-											dst->flags,
-											dst->w - leftBlackBand - rightBlackBand,
-											dst->h - topBlackBand - bottomBlackBand,
-											dst->format->BitsPerPixel,
-											0u,0u,0u,0u));
-		_zoomSurfaceY(src, srf, 0,0);
-		if (src->format->palette != nullptr)
-			SDL_SetPalette(
-						srf,
-						SDL_LOGPAL | SDL_PHYSPAL,
-						src->format->palette->colors,
-						0,
-						src->format->palette->ncolors);
+		int dstWidth  = dst->w - leftBlackBand - rightBlackBand;
+		int dstHeight = dst->h - topBlackBand - bottomBlackBand;
 
-		SDL_Rect dstRect
+		if (dstWidth == src->w && dstHeight == src->h)
 		{
-			static_cast<Sint16>(leftBlackBand),
-			static_cast<Sint16>(topBlackBand),
-			static_cast<Uint16>(srf->w),
-			static_cast<Uint16>(srf->h)
-		};
+			SDL_Rect dstRect
+			{
+				static_cast<Sint16>(leftBlackBand),
+				static_cast<Sint16>(topBlackBand),
+				static_cast<Uint16>(src->w),
+				static_cast<Uint16>(src->h)
+			};
 
-		SDL_BlitSurface(srf, nullptr, dst, &dstRect);
-		SDL_FreeSurface(srf);
+			SDL_BlitSurface(src, nullptr, dst, &dstRect);
+		}
+		else
+		{
+			SDL_Surface* const srf (SDL_CreateRGBSurface(
+													dst->flags,
+													dstWidth,
+													dstHeight,
+													dst->format->BitsPerPixel,
+													0u,0u,0u,0u));
+			_zoomSurfaceY(src, srf, 0,0);
+
+			if (src->format->palette != nullptr)
+				SDL_SetPalette(
+							srf,
+							SDL_LOGPAL | SDL_PHYSPAL,
+							src->format->palette->colors,
+							0,
+							src->format->palette->ncolors);
+
+			SDL_Rect dstRect
+			{
+				static_cast<Sint16>(leftBlackBand),
+				static_cast<Sint16>(topBlackBand),
+				static_cast<Uint16>(srf->w),
+				static_cast<Uint16>(srf->h)
+			};
+
+			SDL_BlitSurface(srf, nullptr, dst, &dstRect);
+			SDL_FreeSurface(srf);
+		}
 	}
 }
 
@@ -789,7 +795,7 @@ int Zoom::_zoomSurfaceY( // static.
 		{
 			for (size_t // check the resolution to see which scale is needed
 					factor = 2u;
-					factor != 6u;
+					factor != 7u;
 					++factor)
 			{
 				if (   dst->w == src->w * static_cast<int>(factor)
@@ -799,7 +805,8 @@ int Zoom::_zoomSurfaceY( // static.
 							factor,
 							static_cast<uint32_t*>(src->pixels),
 							static_cast<uint32_t*>(dst->pixels),
-							src->w, src->h);
+							src->w, src->h,
+							xbrz::RGB);
 					return 0;
 				}
 			}
