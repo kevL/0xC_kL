@@ -234,7 +234,7 @@ OptionsVideoState::OptionsVideoState(OptionsOrigin origin)
 #endif
 
 	size_t selFilter (0u);
-	if (Screen::isOpenGLEnabled() == true)
+	if (Screen::useOpenGL() == true)
 	{
 #ifndef __NO_OPENGL
 		for (size_t

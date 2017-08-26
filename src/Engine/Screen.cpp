@@ -86,7 +86,7 @@ Screen::~Screen()
  */
 void Screen::setVideoFlags() // private.
 {
-	if (isOpenGLEnabled() == true)
+	if (useOpenGL() == true)
 	{
 		_flags = SDL_OPENGL;
 
@@ -157,7 +157,7 @@ void Screen::setVideoFlags() // private.
 	if (Options::allowResize == true)
 		_flags |= SDL_RESIZABLE;
 
-	_bpp = (is32bitEnabled() == true || isOpenGLEnabled() == true) ? 32 : 8;
+	_bpp = (use32bitScaler() == true || useOpenGL() == true) ? 32 : 8;
 
 	_baseWidth  = Options::baseXResolution;
 	_baseHeight = Options::baseYResolution;
@@ -248,7 +248,7 @@ void Screen::handle(Action* action)
  */
 void Screen::flip()
 {
-	if (isOpenGLEnabled() == true
+	if (useOpenGL() == true
 		|| _screen->w != _baseWidth
 		|| _screen->h != _baseHeight)
 	{
@@ -339,7 +339,7 @@ void Screen::resetDisplay(bool resetVideo)
 							_baseWidth,
 							_baseHeight,
 							0,0,
-							Screen::is32bitEnabled() ? 32 : 8);
+							Screen::use32bitScaler() ? 32 : 8);
 
 		if (_surface->getSurface()->format->BitsPerPixel == 8u)
 			_surface->setPalette(_deferredPalette);
@@ -476,7 +476,7 @@ void Screen::resetDisplay(bool resetVideo)
 		_borderLeftCursor = 0;
 
 #ifndef __NO_OPENGL
-	if (isOpenGLEnabled() == true)
+	if (useOpenGL() == true)
 	{
 		OpenGL::checkErrors = Options::checkOpenGLErrors;
 
@@ -670,7 +670,7 @@ void Screen::screenshot(const std::string& file) const
 												0xff0000u,						// b-mask
 												0u));							// a-mask
 
-	if (isOpenGLEnabled() == true)
+	if (useOpenGL() == true)
 	{
 #ifndef __NO_OPENGL
 		GLenum screenFormat (GL_RGB);
@@ -716,7 +716,7 @@ void Screen::screenshot(const std::string& file) const
  * Checks whether a 32-bpp scaler has been selected.
  * @return, true if it is enabled with a compatible resolution
  */
-bool Screen::is32bitEnabled() // static.
+bool Screen::use32bitScaler() // static.
 {
 //	return true; // why would anyone use 8-bpp instead of 32. It's 2-thousand-fuckin-16. already.
 	// Good fuckinGod I hate hardware.
@@ -738,7 +738,7 @@ bool Screen::is32bitEnabled() // static.
  * Checks if OpenGL is enabled.
  * @return, true if enabled
  */
-bool Screen::isOpenGLEnabled() // static.
+bool Screen::useOpenGL() // static.
 {
 #ifdef __NO_OPENGL
 	return false;

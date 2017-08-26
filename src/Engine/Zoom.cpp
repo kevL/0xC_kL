@@ -676,7 +676,7 @@ void Zoom::flipWithZoom( // static.
 		int rightBlackBand,
 		OpenGL* const glOut)
 {
-	if (Screen::isOpenGLEnabled() == true)
+	if (Screen::useOpenGL() == true)
 	{
 #ifndef __NO_OPENGL
 		if (glOut->buffer_surface)
@@ -783,7 +783,7 @@ int Zoom::_zoomSurfaceY( // static.
 	Uint8
 		* sp,* dp,* csp;
 
-	if (Screen::is32bitEnabled() == true)
+	if (Screen::use32bitScaler() == true)
 	{
 		if (Options::useXBRZFilter == true)
 		{

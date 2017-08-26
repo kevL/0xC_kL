@@ -138,9 +138,9 @@ private:
 		void screenshot(const std::string& file) const;
 
 		/// Checks whether a 32-bit scaler is requested and works for the selected resolution.
-		static bool is32bitEnabled();
+		static bool use32bitScaler();
 		/// Checks whether OpenGL output is requested.
-		static bool isOpenGLEnabled();
+		static bool useOpenGL();
 
 		/// Updates the video-scale as required.
 		static void updateScale(
