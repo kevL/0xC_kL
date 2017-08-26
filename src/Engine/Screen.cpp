@@ -717,24 +717,23 @@ void Screen::screenshot(const std::string& file) const
  */
 bool Screen::use32bitScaler() // static.
 {
-//	return true; // why would anyone use 8-bpp instead of 32. It's 2-thousand-fuckin-16. already.
-	// Good fuckinGod I hate hardware.
-
-	const int
-		w     (Options::displayWidth),
-		h     (Options::displayHeight),
-		baseW (Options::baseXResolution),
-		baseH (Options::baseYResolution);
-
-	int scaleMax;
-	if      (Options::useXBRZFilter) scaleMax = 6;
-	else if (Options::useHQXFilter)  scaleMax = 4;
-	else                             scaleMax = 0;
-
-	for (int i = 2; i <= scaleMax; ++i)
+	if (Options::useXBRZFilter == true || Options::useHQXFilter == true)
 	{
-		if (w == baseW * i && h == baseH * i)
-			return true;
+		const int
+			w     (Options::displayWidth),
+			h     (Options::displayHeight),
+			baseW (Options::baseXResolution),
+			baseH (Options::baseYResolution);
+
+		int scaleMax;
+		if      (Options::useXBRZFilter) scaleMax = 6;
+		else if (Options::useHQXFilter)  scaleMax = 4;
+
+		for (int i = 2; i <= scaleMax; ++i)
+		{
+			if (w == baseW * i && h == baseH * i)
+				return true;
+		}
 	}
 	return false;
 }
