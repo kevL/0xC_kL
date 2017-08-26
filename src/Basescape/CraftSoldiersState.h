@@ -71,7 +71,7 @@ private:
 	public:
 		/// Creates a CraftSoldiers state.
 		CraftSoldiersState(
-				Base* base,
+				Base* const base,
 				size_t craftId);
 		/// Cleans up the CraftSoldiers state.
 		~CraftSoldiersState();

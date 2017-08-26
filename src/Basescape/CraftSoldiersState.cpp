@@ -62,7 +62,7 @@ namespace OpenXcom
  * @param craftId	- ID of the selected craft
  */
 CraftSoldiersState::CraftSoldiersState(
-		Base* base,
+		Base* const base,
 		size_t craftId)
 	:
 		_base(base),
