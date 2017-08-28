@@ -164,6 +164,7 @@ T square(T value) { return value * value; }
 
 
 
+/*
 inline
 double distRGB(uint32_t pix1, uint32_t pix2)
 {
@@ -173,9 +174,9 @@ double distRGB(uint32_t pix1, uint32_t pix2)
 
 	//euklidean RGB distance
 	return std::sqrt(square(r_diff) + square(g_diff) + square(b_diff));
-}
+} */
 
-
+/*
 inline
 double distYCbCr(uint32_t pix1, uint32_t pix2, double lumaWeight)
 {
@@ -200,7 +201,7 @@ double distYCbCr(uint32_t pix1, uint32_t pix2, double lumaWeight)
 
 	//we skip division by 255 to have similar range like other distance functions
 	return std::sqrt(square(lumaWeight * y) + square(c_b) + square(c_r));
-}
+} */
 
 
 struct DistYCbCrBuffer //30% perf boost compared to distYCbCr()!
