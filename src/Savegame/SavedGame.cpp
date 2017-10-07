@@ -1864,7 +1864,6 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 		{
 			fragBait->promoteRank();
 			--data.totalColonels;
-			data.hasCO = true;
 			pro = true;
 		}
 	}
