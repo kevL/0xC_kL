@@ -231,7 +231,16 @@ private:
 	/// Checks if a RuleResearch has had all of its required-research discovered.
 	bool checkRequiredResearch(const RuleResearch* const resRule) const;
 
-	/// Evaluate the score of a Soldier based on all of his stats, missions and kills.
+	/// Adds a specified Soldier's rank to the PromotionInfo struct.
+	void tallySoldier(
+			const Soldier* const soldier,
+			PromotionInfo& data);
+	/// Searches Soldiers of a specified rank and returns the one with the highest overall score.
+	Soldier* inspectSoldiers(
+			const std::vector<Soldier*>& soldiers,
+			const std::vector<Soldier*>& participants,
+			SoldierRank soldierRank);
+	/// Evaluates the score of a Soldier based on all of his stats, missions and kills.
 	int getSoldierScore(Soldier* const soldier);
 
 
@@ -414,17 +423,9 @@ private:
 
 		/// Gets the Soldier matching an ID.
 		Soldier* getSoldier(int id) const;
+
 		/// Handles promotions above Squaddie.
 		bool handlePromotions(std::vector<Soldier*>& participants);
-		/// Processes a Soldier for promotion.
-		void processSoldier(
-				const Soldier* const soldier,
-				PromotionInfo& promoData);
-		/// Searches Soldiers of a specified rank and returns the one with the highest overall score.
-		Soldier* inspectSoldiers(
-				const std::vector<Soldier*>& soldiers,
-				const std::vector<Soldier*>& participants,
-				SoldierRank soldierRank);
 
 		///  Gets the list of AlienBases.
 		std::vector<AlienBase*>* getAlienBases();

@@ -49,7 +49,7 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Soldier Diary missions-description window.
+ * Initializes all the elements in the Soldier Diary mission-description window.
  * @param base			- pointer to the Base to get info from
  * @param solId			- soldier-ID to show info for
  * @param rowOverview	- list-row to get mission info from

@@ -1835,7 +1835,7 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 				++j)
 		{
 			soldiers.push_back(*j);
-			processSoldier(*j, data);
+			tallySoldier(*j, data);
 		}
 
 		for (std::vector<Transfer*>::const_iterator
@@ -1846,7 +1846,7 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 			if ((*j)->getTransferType() == PST_SOLDIER)
 			{
 				soldiers.push_back((*j)->getSoldier());
-				processSoldier((*j)->getSoldier(), data);
+				tallySoldier((*j)->getSoldier(), data);
 			}
 		}
 	}
@@ -1909,30 +1909,20 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 }
 
 /**
- * Processes a soldier and adds their rank to the promotions data struct.
+ * Adds a specified Soldier's rank to the PromotionInfo struct.
  * @param soldier	- pointer to the Soldier to process
- * @param promoData	- reference to the PromotionInfo data struct to put the info into
+ * @param data		- reference to the PromotionInfo data struct to put the info into
  */
-void SavedGame::processSoldier(
+void SavedGame::tallySoldier( // private.
 		const Soldier* const soldier,
-		PromotionInfo& promoData)
+		PromotionInfo& data)
 {
 	switch (soldier->getRank())
 	{
-		case RANK_COMMANDER:
-			++promoData.totalCommanders;
-			break;
-
-		case RANK_COLONEL:
-			++promoData.totalColonels;
-			break;
-
-		case RANK_CAPTAIN:
-			++promoData.totalCaptains;
-			break;
-
-		case RANK_SERGEANT:
-			++promoData.totalSergeants;
+		case RANK_COMMANDER:	++data.totalCommanders;	break;
+		case RANK_COLONEL:		++data.totalColonels;	break;
+		case RANK_CAPTAIN:		++data.totalCaptains;	break;
+		case RANK_SERGEANT:		++data.totalSergeants;
 	}
 }
 
@@ -1946,7 +1936,7 @@ void SavedGame::processSoldier(
  * @param soldierRank	- rank to inspect
  * @return, pointer to the highest-ranked soldier
  */
-Soldier* SavedGame::inspectSoldiers(
+Soldier* SavedGame::inspectSoldiers( // private.
 		const std::vector<Soldier*>& soldiers,
 		const std::vector<Soldier*>& participants,
 		SoldierRank soldierRank)
@@ -1980,7 +1970,7 @@ Soldier* SavedGame::inspectSoldiers(
 }
 
 /**
- * Evaluate the score of a Soldier based on all of his/her stats, missions and
+ * Evaluates the score of a Soldier based on all of his/her stats, missions and
  * kills.
  * @param soldier - pointer to the soldier to get a score for
  * @return, the score
