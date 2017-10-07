@@ -1857,14 +1857,14 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 	Soldier* fragBait;
 	const int totalSoldiers (static_cast<int>(soldiers.size()));
 
-	if (data.totalCommanders == 0 // There can be only one.
+	if (data.hasCO == false // There can be only one.
 		&& totalSoldiers >= _rules->getSoldiersForCO())
 	{
 		if ((fragBait = inspectSoldiers(soldiers, participants, RANK_COLONEL)) != nullptr)
 		{
 			fragBait->promoteRank();
 			--data.totalColonels;
-			++data.totalCommanders;
+			data.hasCO = true;
 			pro = true;
 		}
 	}
@@ -1924,7 +1924,7 @@ void SavedGame::tallySoldier( // private.
 {
 	switch (soldier->getRank())
 	{
-		case RANK_COMMANDER:	++data.totalCommanders;	break;
+		case RANK_COMMANDER:	  data.hasCO = true;	break;
 		case RANK_COLONEL:		++data.totalColonels;	break;
 		case RANK_CAPTAIN:		++data.totalCaptains;	break;
 		case RANK_SERGEANT:		++data.totalSergeants;
@@ -1938,7 +1938,7 @@ void SavedGame::tallySoldier( // private.
  *						  containing a list of all live soldiers
  * @param participants	- reference to a vector of pointers to Soldier
  *						  containing a list of participants in tactical
- * @param soldierRank	- rank to inspect
+ * @param soldierRank	- rank to inspect (Soldier.h)
  * @return, pointer to the highest-ranked soldier
  */
 Soldier* SavedGame::inspectSoldiers( // private.

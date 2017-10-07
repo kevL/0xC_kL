@@ -139,8 +139,8 @@ struct SaveInfo
  */
 struct PromotionInfo
 {
+	bool hasCO;
 	int
-		totalCommanders,
 		totalColonels,
 		totalCaptains,
 		totalSergeants;
@@ -148,7 +148,7 @@ struct PromotionInfo
 	/// Builds this struct.
 	PromotionInfo()
 		:
-			totalCommanders	(0),
+			hasCO			(false),
 			totalColonels	(0),
 			totalCaptains	(0),
 			totalSergeants	(0)
