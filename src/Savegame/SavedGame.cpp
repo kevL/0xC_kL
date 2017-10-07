@@ -1852,60 +1852,65 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 	}
 
 
-	int pro (0);
+	bool pro (false);
 
-	Soldier* fragBait (nullptr);
+	Soldier* fragBait;
 	const int totalSoldiers (static_cast<int>(soldiers.size()));
 
 	if (data.totalCommanders == 0 // There can be only one.
-		&& totalSoldiers > 29)
+		&& totalSoldiers >= _rules->getSoldiersForCO())
 	{
-		fragBait = inspectSoldiers(soldiers, participants, RANK_COLONEL);
-		if (fragBait != nullptr)
+		if ((fragBait = inspectSoldiers(soldiers, participants, RANK_COLONEL)) != nullptr)
 		{
 			fragBait->promoteRank();
-			++pro;
-			++data.totalCommanders;
 			--data.totalColonels;
+			++data.totalCommanders;
+			pro = true;
 		}
 	}
 
-	while (data.totalColonels < totalSoldiers / 23)
+	int divisor (_rules->getSoldiersPerColonel());
+	while (data.totalColonels < totalSoldiers / divisor)
 	{
-		fragBait = inspectSoldiers(soldiers, participants, RANK_CAPTAIN);
-		if (fragBait == nullptr)
+		if ((fragBait = inspectSoldiers(soldiers, participants, RANK_CAPTAIN)) != nullptr)
+		{
+			fragBait->promoteRank();
+			--data.totalCaptains;
+			++data.totalColonels;
+			pro = true;
+		}
+		else
 			break;
-
-		fragBait->promoteRank();
-		++pro;
-		++data.totalColonels;
-		--data.totalCaptains;
 	}
 
-	while (data.totalCaptains < totalSoldiers / 11)
+	divisor = _rules->getSoldiersPerCaptain();
+	while (data.totalCaptains < totalSoldiers / divisor)
 	{
-		fragBait = inspectSoldiers(soldiers, participants, RANK_SERGEANT);
-		if (fragBait == nullptr)
+		if ((fragBait = inspectSoldiers(soldiers, participants, RANK_SERGEANT)) != nullptr)
+		{
+			fragBait->promoteRank();
+			--data.totalSergeants;
+			++data.totalCaptains;
+			pro = true;
+		}
+		else
 			break;
-
-		fragBait->promoteRank();
-		++pro;
-		++data.totalCaptains;
-		--data.totalSergeants;
 	}
 
-	while (data.totalSergeants < totalSoldiers / 5)
+	divisor = _rules->getSoldiersPerSergeant();
+	while (data.totalSergeants < totalSoldiers / divisor)
 	{
-		fragBait = inspectSoldiers(soldiers, participants, RANK_SQUADDIE);
-		if (fragBait == nullptr)
+		if ((fragBait = inspectSoldiers(soldiers, participants, RANK_SQUADDIE)) != nullptr)
+		{
+			fragBait->promoteRank();
+			++data.totalSergeants;
+			pro = true;
+		}
+		else
 			break;
-
-		fragBait->promoteRank();
-		++pro;
-		++data.totalSergeants;
 	}
 
-	return (pro != 0);
+	return pro;
 }
 
 /**

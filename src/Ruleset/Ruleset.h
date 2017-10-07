@@ -113,7 +113,12 @@ private:
 		_itemListOrder,
 		_manufactureListOrder,
 		_researchListOrder,
-		_ufopaediaListOrder;
+		_ufopaediaListOrder,
+			
+		_soldiersForCO,
+		_soldiersPerColonel,
+		_soldiersPerCaptain,
+		_soldiersPerSergeant;
 
 	GameTime _startTime;
 	YAML::Node _startBase;
@@ -435,6 +440,19 @@ private:
 
 		/// Gets the current Game-ptr.
 		const Game* getGame() const;
+
+		/// Gets quantity of soldiers required for a CO.
+		int getSoldiersForCO() const
+		{ return _soldiersForCO; }
+		/// Gets quantity of soldiers required per Colonel.
+		int getSoldiersPerColonel() const
+		{ return _soldiersPerColonel; }
+		/// Gets quantity of soldiers required per Captain.
+		int getSoldiersPerCaptain() const
+		{ return _soldiersPerCaptain; }
+		/// Gets quantity of soldiers required per Sergeant.
+		int getSoldiersPerSergeant() const
+		{ return _soldiersPerSergeant; }
 };
 
 }

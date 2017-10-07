@@ -110,7 +110,11 @@ Ruleset::Ruleset(const Game* const game)
 		_retalCoef(0),
 		_defeatFunds(0),
 		_defeatScore(0),
-		_scoreBaseLost(0)
+		_scoreBaseLost(0),
+		_soldiersForCO(30),
+		_soldiersPerColonel(23),
+		_soldiersPerCaptain(11),
+		_soldiersPerSergeant(5)
 {
 	//Log(LOG_INFO) << "Create Ruleset";
 	_globe = new RuleGlobe();
@@ -814,6 +818,11 @@ void Ruleset::loadFile(const std::string& file) // protected.
 	_defeatFunds	= doc["defeatFunds"]	.as<int>(_defeatFunds);
 	_defeatScore	= doc["defeatScore"]	.as<int>(_defeatScore);
 	_scoreBaseLost	= doc["scoreBaseLost"]	.as<int>(_scoreBaseLost);
+
+	_soldiersForCO			= doc["soldiersForCO"]		.as<int>(_soldiersForCO);
+	_soldiersPerColonel		= doc["soldiersPerColonel"]	.as<int>(_soldiersPerColonel);
+	_soldiersPerCaptain		= doc["soldiersPerCaptain"]	.as<int>(_soldiersPerCaptain);
+	_soldiersPerSergeant	= doc["soldiersPerSergeant"].as<int>(_soldiersPerSergeant);
 
 	for (YAML::const_iterator
 			i = doc["ufoTrajectories"].begin();

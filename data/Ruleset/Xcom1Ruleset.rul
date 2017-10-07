@@ -1081,6 +1081,11 @@ defeatFunds: -1000000
 scoreBaseLost: 10 #per facility per diff-level
 font: Font.dat
 
+soldiersForCO: 30
+soldiersPerColonel: 23
+soldiersPerCaptain: 11
+soldiersPerSergeant: 5
+
 cutscenes:
   - type: intro
     videos:
