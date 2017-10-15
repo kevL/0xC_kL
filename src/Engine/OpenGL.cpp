@@ -610,17 +610,12 @@ bool OpenGL::set_shader(const char* const source_yaml_filename)
 			glprogram = 0u;
 		}
 
-//		return glprogram		!= 0u
-//			&& fragmentshader	!= 0u
-//			&& vertexshader		!= 0u;
-
-		bool isSet (glprogram != 0u
-			&& (fragmentshader != 0u || vertexshader != 0u));
-		
-		if (isSet == true)
+		if (glprogram != 0u
+			&& (fragmentshader != 0u || vertexshader != 0u))
+		{
 			Log(LOG_INFO) << "Engine/OpenGL::set_shader() OpenGL shader= " << source_yaml_filename;
-
-		return isSet;
+			return true;
+		}
 	}
 	return false;
 }
