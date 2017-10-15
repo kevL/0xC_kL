@@ -1351,7 +1351,7 @@ en-US:
   STR_FIELDPROMOTIONS_DESC: "Only soldiers that were present at the mission site are eligible for promotion."
   STR_IRONMAN: "ironballs"
   STR_IRONMAN_DESC: "Suck it up Rambo"
-  STR_SAVE_AND_ABANDON_GAME: "save & Abandon"
+  STR_SAVE_AND_ABANDON_GAME: "Abandon Ironballs"
   STR_MOD_UNSUCCESSFUL: ".rul Failed to Load"
   STR_NEW_SAVED_GAME_SLOT: "< slot >"
   STR_AUTO_SAVE_GEOSCAPE_SLOT: "< a-save Geo >"

@@ -123,8 +123,8 @@ OpenGL::OpenGL()
 		buffer_surface(nullptr),
 		iwidth(0),
 		iheight(0),
-		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before...
-		ibpp(32u)								// ...nor this
+		iformat(GL_UNSIGNED_INT_8_8_8_8_REV),	// this didn't seem to be set anywhere before ...
+		ibpp(32u)								// ... nor this
 {}
 
 /**
@@ -476,7 +476,7 @@ void OpenGL::resize( // private.
 /**
  * Sets a shader!
  */
-bool OpenGL::set_shader(const char* source_yaml_filename)
+bool OpenGL::set_shader(const char* const source_yaml_filename)
 {
 	if (shader_support == true)
 	{
@@ -587,17 +587,22 @@ bool OpenGL::set_shader(const char* source_yaml_filename)
 						&infoLogLength);
 			glErrorCheck();
 
-			GLchar* const infoLog (new GLchar[infoLogLength]);
-			glGetProgramInfoLog(
-							glprogram,
-							infoLogLength,
-							NULL,
-							infoLog);
-			glErrorCheck();
+			if (infoLogLength != 0)
+			{
+				GLchar* const infoLog (new GLchar[infoLogLength]);
+				glGetProgramInfoLog(
+								glprogram,
+								infoLogLength,
+								NULL,
+								infoLog);
+				glErrorCheck();
 
-			Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed \"" << infoLog << "\"\n";
+				Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed \"" << infoLog << "\"\n";
 
-			delete[] infoLog;
+				delete[] infoLog;
+			}
+			else
+				Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed: No info returned from driver.\n";
 
 			glDeleteProgram(glprogram);
 			glErrorCheck();
@@ -605,9 +610,17 @@ bool OpenGL::set_shader(const char* source_yaml_filename)
 			glprogram = 0u;
 		}
 
-		return glprogram		!= 0u
-			&& fragmentshader	!= 0u
-			&& vertexshader		!= 0u;
+//		return glprogram		!= 0u
+//			&& fragmentshader	!= 0u
+//			&& vertexshader		!= 0u;
+
+		bool isSet (glprogram != 0u
+			&& (fragmentshader != 0u || vertexshader != 0u));
+		
+		if (isSet == true)
+			Log(LOG_INFO) << "Engine/OpenGL::set_shader() OpenGL shader= " << source_yaml_filename;
+
+		return isSet;
 	}
 	return false;
 }
@@ -650,17 +663,22 @@ static GLuint createShader( // private.
 					&infoLogLength);
 		glErrorCheck();
 
-		GLchar* infoLog (new GLchar[infoLogLength]);
-		glGetShaderInfoLog(
-						shader,
-						infoLogLength,
-						NULL,
-						infoLog);
-		glErrorCheck();
+		if (infoLogLength != 0)
+		{
+			GLchar* infoLog (new GLchar[infoLogLength]);
+			glGetShaderInfoLog(
+							shader,
+							infoLogLength,
+							NULL,
+							infoLog);
+			glErrorCheck();
 
-		Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: \"" << infoLog << "\"\n";
+			Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: \"" << infoLog << "\"\n";
 
-		delete[] infoLog;
+			delete[] infoLog;
+		}
+		else
+			Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: No info returned from driver.\n";
 
 		glDeleteShader(shader);
 		glErrorCheck();
@@ -702,7 +720,7 @@ void OpenGL::set_vertex_shader(const char* const source) // private.
  * screen tears. I don't like it.
  *
  * Later: It's not v-sync per se. The tearing is caused elsewhere, and appears
- * related to CPU and/or code-flow-looping-agorithic complications. Eg,
+ * related to CPU and/or code-flow-looping-agorithmic complications. Eg,
  * horizontal scrolling over the top-level of a battleship (with increased
  * looping-over-tiles inside the UFO, but lower frame-rates) causes more tearing;
  * while horizontal scrolling on the ground-level (less tiles to loop over) shows
@@ -723,7 +741,7 @@ void OpenGL::set_vertex_shader(const char* const source) // private.
  * Even later: I'd say definitely CPU: it gets worse when the lexer is parsing @ 80%.
  *
  * Even later later: Updated nVidia drivers to 340. Not sure if it made the
- * difference but I noticed FPS get clamped to 60 although the IG code and
+ * difference but I noticed FPS gets clamped to 60 although the IG code and
  * options leave it uncapped. Looks better but there's still tearing.
  *
  * Fiddling with the nVidia control-panel appears to change things between
@@ -738,7 +756,7 @@ void OpenGL::set_vertex_shader(const char* const source) // private.
  * Later later later: So the settings in my nVidia Control Panel work, it
  * requires a reboot to take effect though. I settled on Adaptive vSync,
  * triple-buffered, with Maximum pre-rendered frames set to 1. 0xC recognizes
- * the FPS at 60 surprisingly and it looks pretty good.
+ * the FPS at 60, surprisingly, and it looks pretty good.
  */
 void OpenGL::setVSync(bool sync)
 {

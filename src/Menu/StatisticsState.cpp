@@ -81,7 +81,7 @@ StatisticsState::StatisticsState()
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-	_lstStats->setColumns(2, 200,80);
+	_lstStats->setColumns(2, 180,100);
 	_lstStats->setDot(true);
 	_lstStats->setMargin(16);
 

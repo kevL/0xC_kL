@@ -112,7 +112,7 @@ private:
 				int rightBlackBand);
 
 		/// Sets a shader!
-		bool set_shader(const char* source_yaml_filename);
+		bool set_shader(const char* const source_yaml_filename);
 
 		/// Tries to set VSync! decidedly uncool if it doesn't work.
 		void setVSync(bool sync);
