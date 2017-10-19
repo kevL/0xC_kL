@@ -597,12 +597,12 @@ bool OpenGL::set_shader(const char* const source_yaml_filename)
 								infoLog);
 				glErrorCheck();
 
-				Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed \"" << infoLog << "\"\n";
+				Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed \"" << infoLog << "\"";
 
 				delete[] infoLog;
 			}
 			else
-				Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed: No info returned from driver.\n";
+				Log(LOG_ERROR) << "Engine/OpenGL::set_shader() OpenGL shader link failed: No info returned from driver.";
 
 			glDeleteProgram(glprogram);
 			glErrorCheck();
@@ -668,12 +668,12 @@ static GLuint createShader( // private.
 							infoLog);
 			glErrorCheck();
 
-			Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: \"" << infoLog << "\"\n";
+			Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: \"" << infoLog << "\"";
 
 			delete[] infoLog;
 		}
 		else
-			Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: No info returned from driver.\n";
+			Log(LOG_ERROR) << "Engine/OpenGL::createShader() OpenGL shader compilation failed: No info returned from driver.";
 
 		glDeleteShader(shader);
 		glErrorCheck();
