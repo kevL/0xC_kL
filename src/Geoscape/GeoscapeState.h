@@ -84,8 +84,6 @@ private:
 
 	bool
 		_dfCenterCurrentCoords,
-		_dfZoomInDone,
-		_dfZoomOutDone,
 		_dfZoomOut,
 		_pause,
 		_pauseHard;
@@ -225,7 +223,7 @@ private:
 
 		/// Updates the palette and timer.
 		void init() override;
-		/// Runs the timer.
+		/// Runs the state-timers.
 		void think() override;
 
 		/// Draws the UFO indicators for known UFOs.

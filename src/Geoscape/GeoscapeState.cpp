@@ -349,8 +349,6 @@ GeoscapeState::GeoscapeState()
 		_rules(_game->getRuleset()),
 		_pause(false),
 		_pauseHard(false),
-		_dfZoomInDone(false),
-		_dfZoomOutDone(false),
 		_dfZoomOut(true),
 		_dfCenterCurrentCoords(false),
 		_dfCCC_lon(0.),
@@ -1169,7 +1167,7 @@ void GeoscapeState::init()
 }
 
 /**
- * Runs the game timer and handles popups.
+ * Runs the state-timers and handles popups.
  */
 void GeoscapeState::think()
 {
@@ -1190,12 +1188,10 @@ void GeoscapeState::think()
 
 	if (_popups.empty() == true
 		&& _dogfights.empty() == true
-		&& (_timerDfZoomIn->isRunning() == false
-			|| _dfZoomInDone == true)
-		&& (_timerDfZoomOut->isRunning() == false
-			|| _dfZoomOutDone == true))
+		&& _timerDfZoomIn->isRunning() == false
+		&& _timerDfZoomOut->isRunning() == false)
 	{
-		_timerGeo->think(this, nullptr); // Handle timers
+		_timerGeo->think(this, nullptr); // do timeAdvance()
 	}
 	else
 	{
@@ -1205,12 +1201,12 @@ void GeoscapeState::think()
 			if (_dogfights.size() == _dfMinimized) // if all dogfights are minimized rotate the Globe, etc.
 			{
 				_pause = false;
-				_timerGeo->think(this, nullptr);
+				_timerGeo->think(this, nullptr); // do timeAdvance()
 			}
 			_timerDf->think(this, nullptr);
 		}
 
-		if (_popups.empty() == false) // Handle popups
+		if (_popups.empty() == false) // handle popups
 		{
 			_globe->rotateStop();
 
@@ -1335,30 +1331,37 @@ void GeoscapeState::timeAdvance() // private.
 		if (timeLap_t != 0)
 		{
 			bool update (false);
-			for (int
-					i = 0;
-					i != timeLap_t && _pause == false;
-					++i)
+
+			_pause = _pause || (_timerDfZoomIn->isRunning() || _timerDfZoomOut->isRunning());
+
+			if (_pause == false)
 			{
-				const TimeTrigger trigger (_playSave->getTime()->advance());
-				if (trigger != TIME_1SEC)
+				for (int
+						i = 0;
+						i != timeLap_t;
+						++i)
 				{
-					update = true;
-					switch (trigger)
+					const TimeTrigger trigger (_playSave->getTime()->advance());
+					if (trigger != TIME_1SEC)
 					{
-						case TIME_1MONTH:	time1Month(); // no breaks ->
-						case TIME_1DAY:		time1Day();
-						case TIME_1HOUR:	time1Hour();
-						case TIME_30MIN:	time30Minutes();
-						case TIME_10MIN:	time10Minutes();
-						case TIME_5SEC:		time5Seconds();
+						update = true;
+						switch (trigger)
+						{
+							case TIME_1MONTH:	time1Month(); // no breaks ->
+							case TIME_1DAY:		time1Day();
+							case TIME_1HOUR:	time1Hour();
+							case TIME_30MIN:	time30Minutes();
+							case TIME_10MIN:	time10Minutes();
+							case TIME_5SEC:		time5Seconds();
+						}
 					}
 				}
+
+				if (update == true) updateTimeDisplay();
 			}
 
-			if (update == true) updateTimeDisplay();
-
 			_pause = (_dogfightsToStart.empty() == false);
+
 			_globe->draw();
 		}
 	}
@@ -1485,88 +1488,84 @@ void GeoscapeState::time5Seconds()
 
 	const Ufo* ufoExpired (nullptr); // kL, see below_
 
-	for (std::vector<Ufo*>::const_iterator // Handle UFO logic
+	// Handle UFO logic
+	for (std::vector<Ufo*>::const_iterator
 			i = _playSave->getUfos()->begin();
 			i != _playSave->getUfos()->end();
 			++i)
 	{
 		//Log(LOG_INFO) << ". ufo= " << Language::wstrToFs((*i)->getLabel(_game->getLanguage()));
 		//Log(LOG_INFO) << ". PAUSE HARD";
-//		setPaused(); // TEST.
+		//setPaused(); // TEST.
 
 		switch ((*i)->getUfoStatus())
 		{
 			case Ufo::FLYING:
 				//Log(LOG_INFO) << ". . status FLYING";
-				if (   _timerDfZoomIn ->isRunning() == false
-					&& _timerDfZoomOut->isRunning() == false)
+				(*i)->think();
+
+				if ((*i)->reachedDestination() == true)
 				{
-					//Log(LOG_INFO) << ". . . df timers NOT running -> ufo think";
-					(*i)->think();
+					//Log(LOG_INFO) << ". . . . ufo reached destination -> handle it.";
+					const size_t qtySites (_playSave->getTerrorSites()->size());
+					const bool detected ((*i)->getDetected());
 
-					if ((*i)->reachedDestination() == true)
+					AlienMission* const mission ((*i)->getAlienMission());
+					mission->ufoReachedWaypoint(**i, *_rules, *_globe); // recalcs 'qtySites' & 'detected'; also sets UFO's disposition
+
+					if ((*i)->getAltitude() == MovingTarget::stAltitude[0u])
 					{
-						//Log(LOG_INFO) << ". . . . ufo reached destination -> handle it.";
-						const size_t qtySites (_playSave->getTerrorSites()->size());
-						const bool detected ((*i)->getDetected());
-
-						AlienMission* const mission ((*i)->getAlienMission());
-						mission->ufoReachedWaypoint(**i, *_rules, *_globe); // recalcs 'qtySites' & 'detected'; also sets UFO's disposition
-
-						if ((*i)->getAltitude() == MovingTarget::stAltitude[0u])
+						_dfZoomOut = false;
+						for (std::list<DogfightState*>::const_iterator
+								j = _dogfights.begin();
+								j != _dogfights.end();
+								++j)
 						{
-							_dfZoomOut = false;
-							for (std::list<DogfightState*>::const_iterator
-									j = _dogfights.begin();
-									j != _dogfights.end();
-									++j)
+							if ((*j)->getUfo() != *i) // huh, sometimes I wonder what the hell i code.
 							{
-								if ((*j)->getUfo() != *i) // huh, sometimes I wonder what the hell i code.
-								{
-									_dfZoomOut = true;
-									break;
-								}
+								_dfZoomOut = true;
+								break;
 							}
 						}
+					}
 
-						if (detected != (*i)->getDetected()
-							&& (*i)->getTargeters()->empty() == false
-							&& !
-								((*i)->getTrajectory().getType() == UfoTrajectory::XCOM_BASE_ASSAULT
-									&& (*i)->getUfoStatus() == Ufo::LANDED))
+					if (detected != (*i)->getDetected()
+						&& (*i)->getTargeters()->empty() == false
+						&& !
+							((*i)->getTrajectory().getType() == UfoTrajectory::XCOM_BASE_ASSAULT
+								&& (*i)->getUfoStatus() == Ufo::LANDED))
+					{
+						resetTimer();
+						popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
+					}
+
+					if (qtySites < _playSave->getTerrorSites()->size()) // new TerrorSite appeared when UFO reached waypoint, above^
+					{
+						TerrorSite* const site (_playSave->getTerrorSites()->back());
+						site->setDetected();
+
+						resetTimer();
+						popupGeo(new TerrorDetectedState(site, this));
+					}
+
+					if ((*i)->getUfoStatus() == Ufo::DESTROYED) // if UFO was destroyed don't spawn missions
+						return;
+
+					Base* const base (dynamic_cast<Base*>((*i)->getTarget()));
+					if (base != nullptr)
+					{
+						resetTimer();
+
+						mission->resetCountdown();
+						(*i)->setTarget();
+
+						if (base->setupBaseDefense() == true)
+							popupGeo(new BaseDefenseState(base, *i, this));
+							// should/could this Return;
+						else
 						{
-							resetTimer();
-							popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
-						}
-
-						if (qtySites < _playSave->getTerrorSites()->size()) // new TerrorSite appeared when UFO reached waypoint, above^
-						{
-							TerrorSite* const site (_playSave->getTerrorSites()->back());
-							site->setDetected();
-
-							resetTimer();
-							popupGeo(new TerrorDetectedState(site, this));
-						}
-
-						if ((*i)->getUfoStatus() == Ufo::DESTROYED) // if UFO was destroyed don't spawn missions
+							baseDefenseTactical(base, *i);
 							return;
-
-						Base* const base (dynamic_cast<Base*>((*i)->getTarget()));
-						if (base != nullptr)
-						{
-							resetTimer();
-
-							mission->resetCountdown();
-							(*i)->setTarget();
-
-							if (base->setupBaseDefense() == true)
-								popupGeo(new BaseDefenseState(base, *i, this));
-								// should/could this Return;
-							else
-							{
-								baseDefenseTactical(base, *i);
-								return;
-							}
 						}
 					}
 				}
@@ -1609,9 +1608,9 @@ void GeoscapeState::time5Seconds()
 		}
 	}
 
-	// Handle craft logic
 	bool initDfMusic (false);
 
+	// Handle craft logic
 	for (std::vector<Base*>::const_iterator
 			i = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end();
@@ -1712,11 +1711,7 @@ void GeoscapeState::time5Seconds()
 							(*j)->inDogfight(false); // safety.
 					}
 
-					if (   _timerDfZoomIn ->isRunning() == false
-						&& _timerDfZoomOut->isRunning() == false)
-					{
-						(*j)->think();
-					}
+					(*j)->think();
 
 					if ((*j)->reachedDestination() == true)
 					{
@@ -3623,10 +3618,7 @@ Timer* GeoscapeState::getDfZoomOutTimer() const
 void GeoscapeState::dfZoomIn()
 {
 	if (_globe->zoomDogfightIn() == true)
-	{
-		_dfZoomInDone = true;
 		_timerDfZoomIn->stop();
-	}
 }
 
 /**
@@ -3636,7 +3628,6 @@ void GeoscapeState::dfZoomOut()
 {
 	if (_globe->zoomDogfightOut() == true)
 	{
-		_dfZoomOutDone = true;
 		_timerDfZoomOut->stop();
 
 		if (_dfCenterCurrentCoords == true)
