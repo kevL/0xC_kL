@@ -292,6 +292,19 @@ void RuleItem::load(
 	_listOrder = node["listOrder"].as<int>(_listOrder);
 	if (_listOrder == 0)
 		_listOrder = listOrder;
+
+
+	switch (_bType)
+	{
+		case BT_FIREARM:
+		case BT_MELEE:
+			if (_fullClip == 0 && _acceptedLoads.empty())
+			{
+				throw Exception("RuleItem::load() " + _type
+						+ " has _fullClip=0 and no _acceptedLoads. Use 'clipSize: -1'"
+						+ " for unlimited load or assign an accepted-load type.");
+			}
+	}
 }
 
 /**

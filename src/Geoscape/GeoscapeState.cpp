@@ -1325,8 +1325,8 @@ void GeoscapeState::timeAdvance() // private.
 
 		timeLapse *= 5; // true one-second intervals. based on Volutar's smoothGlobe.
 
-		timeLap_t  = ((_timeCache + timeLapse) << 2) / Options::geoClockSpeed;
-		_timeCache = ((_timeCache + timeLapse) << 2) % Options::geoClockSpeed;
+		timeLap_t  = ((_timeCache + timeLapse) << 2u) / Options::geoClockSpeed;
+		_timeCache = ((_timeCache + timeLapse) << 2u) % Options::geoClockSpeed;
 
 		if (timeLap_t != 0)
 		{
