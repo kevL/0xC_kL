@@ -242,6 +242,9 @@ private:
 		/// Triggers if 1 month passes.
 		void time1Month();
 
+		/// Checks if user-input is not allowed.
+		bool inputDisabled();
+
 		/// Sets the time-compression to 5-sec intervals.
 		void resetTimer();
 		/// Checks if time-compression is set to 5-sec intervals.

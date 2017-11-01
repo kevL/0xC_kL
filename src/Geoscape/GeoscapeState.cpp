@@ -943,152 +943,155 @@ void GeoscapeState::blit()
  */
 void GeoscapeState::handle(Action* action)
 {
-	if (_dogfights.size() == _dfMinimized)
-		State::handle(action);
-
-	if (action->getDetails()->type == SDL_KEYDOWN)
+	if (inputDisabled() == false)
 	{
-		bool beep (false);
+		if (_dogfights.size() == _dfMinimized)
+			State::handle(action);
 
-		if (Options::debug == true
-			&& (SDL_GetModState() & KMOD_CTRL) != 0)
+		if (action->getDetails()->type == SDL_KEYDOWN)
 		{
-			if (action->getDetails()->key.keysym.sym == SDLK_d)					// "ctrl-d" - enable/disable debug mode
-			{
-				beep = true;
-				if (_playSave->toggleDebugActive() == true)
-					fabricateDebugPretext();
-				else
-				{
-					_txtDebug->setText(L"");
-					_stDebug = "";
-				}
-			}
-			else if (_playSave->getDebugGeo() == true)
-			{
-				switch (action->getDetails()->key.keysym.sym)
-				{
-					case SDLK_c:												// "ctrl-c" - cycle areas
-						beep = true;											// NOTE: Also handled in Game::run() where the 'cycle' is determined.
-						_txtDebug->setText(L"");
-						fabricateDebugPretext();
-						break;
+			bool beep (false);
 
-					case SDLK_a:												// "ctrl-a" - delete soldier awards
-						beep = true;
-						_txtDebug->setText(L"SOLDIER AWARDS DELETED");
-						for (std::vector<Base*>::const_iterator					// clear Awards from living Soldiers ->
-								i = _playSave->getBases()->begin();
-								i != _playSave->getBases()->end();
-								++i)
-						{
-							for (std::vector<Soldier*>::const_iterator
-									j = (*i)->getSoldiers()->begin();
-									j != (*i)->getSoldiers()->end();
-									++j)
+			if (Options::debug == true
+				&& (SDL_GetModState() & KMOD_CTRL) != 0)
+			{
+				if (action->getDetails()->key.keysym.sym == SDLK_d)						// "ctrl-d" - enable/disable debug mode
+				{
+					beep = true;
+					if (_playSave->toggleDebugActive() == true)
+						fabricateDebugPretext();
+					else
+					{
+						_txtDebug->setText(L"");
+						_stDebug = "";
+					}
+				}
+				else if (_playSave->getDebugGeo() == true)
+				{
+					switch (action->getDetails()->key.keysym.sym)
+					{
+						case SDLK_c:													// "ctrl-c" - cycle areas
+							beep = true;												// NOTE: Also handled in Game::run() where the 'cycle' is determined.
+							_txtDebug->setText(L"");
+							fabricateDebugPretext();
+							break;
+
+						case SDLK_a:													// "ctrl-a" - delete soldier awards
+							beep = true;
+							_txtDebug->setText(L"SOLDIER AWARDS DELETED");
+							for (std::vector<Base*>::const_iterator						// clear Awards from living Soldiers ->
+									i = _playSave->getBases()->begin();
+									i != _playSave->getBases()->end();
+									++i)
+							{
+								for (std::vector<Soldier*>::const_iterator
+										j = (*i)->getSoldiers()->begin();
+										j != (*i)->getSoldiers()->end();
+										++j)
+								{
+									for (std::vector<SoldierAward*>::const_iterator
+											k = (*j)->getDiary()->getSoldierAwards().begin();
+											k != (*j)->getDiary()->getSoldierAwards().end();
+											++k)
+									{
+										delete *k;
+									}
+									(*j)->getDiary()->getSoldierAwards().clear();
+								}
+							}
+
+							for (std::vector<SoldierDead*>::const_iterator				// clear Awards from dead Soldiers ->
+									i = _playSave->getDeadSoldiers()->begin();
+									i != _playSave->getDeadSoldiers()->end();
+									++i)
 							{
 								for (std::vector<SoldierAward*>::const_iterator
-										k = (*j)->getDiary()->getSoldierAwards().begin();
-										k != (*j)->getDiary()->getSoldierAwards().end();
-										++k)
+										j = (*i)->getDiary()->getSoldierAwards().begin();
+										j != (*i)->getDiary()->getSoldierAwards().end();
+										++j)
 								{
-									delete *k;
+									delete *j;
 								}
-								(*j)->getDiary()->getSoldierAwards().clear();
+								(*i)->getDiary()->getSoldierAwards().clear();
 							}
-						}
+							break;
 
-						for (std::vector<SoldierDead*>::const_iterator			// clear Awards from dead Soldiers ->
-								i = _playSave->getDeadSoldiers()->begin();
-								i != _playSave->getDeadSoldiers()->end();
-								++i)
-						{
-							for (std::vector<SoldierAward*>::const_iterator
-									j = (*i)->getDiary()->getSoldierAwards().begin();
-									j != (*i)->getDiary()->getSoldierAwards().end();
-									++j)
+						case SDLK_b:													// "ctrl-b" - update soldier awards
+							beep = true;
+							_txtDebug->setText(L"SOLDIER AWARDS UPDATED");
+							for (std::vector<Base*>::const_iterator						// update Awards for living Soldiers ->
+									i = _playSave->getBases()->begin();
+									i != _playSave->getBases()->end();
+									++i)
 							{
-								delete *j;
+								for (std::vector<Soldier*>::const_iterator
+										j = (*i)->getSoldiers()->begin();
+										j != (*i)->getSoldiers()->end();
+										++j)
+								{
+									(*j)->getDiary()->updateAwards(
+																_rules,
+																_playSave->getTacticalStatistics());
+								}
 							}
-							(*i)->getDiary()->getSoldierAwards().clear();
-						}
-						break;
 
-					case SDLK_b:												// "ctrl-b" - update soldier awards
-						beep = true;
-						_txtDebug->setText(L"SOLDIER AWARDS UPDATED");
-						for (std::vector<Base*>::const_iterator					// update Awards for living Soldiers ->
-								i = _playSave->getBases()->begin();
-								i != _playSave->getBases()->end();
-								++i)
-						{
-							for (std::vector<Soldier*>::const_iterator
-									j = (*i)->getSoldiers()->begin();
-									j != (*i)->getSoldiers()->end();
-									++j)
+							for (std::vector<SoldierDead*>::const_iterator				// update Awards for dead Soldiers ->
+									i = _playSave->getDeadSoldiers()->begin();
+									i != _playSave->getDeadSoldiers()->end();
+									++i)
 							{
-								(*j)->getDiary()->updateAwards(
+								(*i)->getDiary()->updateAwards(
 															_rules,
 															_playSave->getTacticalStatistics());
 							}
-						}
+							break;
 
-						for (std::vector<SoldierDead*>::const_iterator			// update Awards for dead Soldiers ->
-								i = _playSave->getDeadSoldiers()->begin();
-								i != _playSave->getDeadSoldiers()->end();
-								++i)
-						{
-							(*i)->getDiary()->updateAwards(
-														_rules,
-														_playSave->getTacticalStatistics());
-						}
-						break;
+						case SDLK_t:
+							_game->pushState(new TechTreeViewerState());				// "ctrl-t" - open TechTree viewer
+							break;
 
-					case SDLK_t:
-						_game->pushState(new TechTreeViewerState());			// "ctrl-t" - open TechTree viewer
-						break;
-
-					default:
-						_txtDebug->setText(L"");
+						default:
+							_txtDebug->setText(L"");
+					}
 				}
 			}
-		}
 
-		if (_playSave->isIronman() == false)										// quick-save and quick-load
-		{
-			if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave
+			if (_playSave->isIronman() == false)										// quick-save and quick-load
 			{
-				beep = true;
-				popupGeo(new SaveGameState(
-									OPT_GEOSCAPE,
-									SAVE_QUICK,
-									_palette));
+				if (action->getDetails()->key.keysym.sym == Options::keyQuickSave)		// f6 - quickSave
+				{
+					beep = true;
+					popupGeo(new SaveGameState(
+										OPT_GEOSCAPE,
+										SAVE_QUICK,
+										_palette));
+				}
+				else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad
+				{
+					beep = true;
+					popupGeo(new LoadGameState(
+										OPT_GEOSCAPE,
+										SAVE_QUICK,
+										_palette));
+				}
 			}
-			else if (action->getDetails()->key.keysym.sym == Options::keyQuickLoad)	// f5 - quickLoad
-			{
-				beep = true;
-				popupGeo(new LoadGameState(
-									OPT_GEOSCAPE,
-									SAVE_QUICK,
-									_palette));
-			}
-		}
 
 #ifdef _WIN32
-		if (beep == true) MessageBeep(MB_OK);
+			if (beep == true) MessageBeep(MB_OK);
 #endif
-	}
-
-	if (_dogfights.empty() == false)
-	{
-		for (std::list<DogfightState*>::const_iterator
-				i = _dogfights.begin();
-				i != _dogfights.end();
-				++i)
-		{
-			(*i)->handle(action);
 		}
-		_dfMinimized = getMinimizedDfCount();
+
+		if (_dogfights.empty() == false)
+		{
+			for (std::list<DogfightState*>::const_iterator
+					i = _dogfights.begin();
+					i != _dogfights.end();
+					++i)
+			{
+				(*i)->handle(action);
+			}
+			_dfMinimized = getMinimizedDfCount();
+		}
 	}
 }
 
@@ -3224,6 +3227,15 @@ void GeoscapeState::time1Month()
 }
 
 /**
+ * Checks if user-input is not allowed.
+ * @return, true if player is disallowed from doing anything
+ */
+bool GeoscapeState::inputDisabled()
+{
+	return _timerDfZoomIn->isRunning() || _timerDfZoomOut->isRunning();
+}
+
+/**
  * Slows the Geoscape timer down to the minimum 5-sec time-compression.
  */
 void GeoscapeState::resetTimer()
@@ -3267,49 +3279,52 @@ Globe* GeoscapeState::getGlobe() const
  */
 void GeoscapeState::globeClick(Action* action)
 {
-	const int
-		mX (static_cast<int>(std::floor(action->getAbsoluteMouseX()))),
-		mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
-
-	if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+	if (inputDisabled() == false)
 	{
-		const std::vector<Target*> targets (_globe->getTargets(mX,mY, false));
-		if (targets.empty() == false)
-			_game->pushState(new SelectTargetState(targets, nullptr, this));
-	}
+		const int
+			mX (static_cast<int>(std::floor(action->getAbsoluteMouseX()))),
+			mY (static_cast<int>(std::floor(action->getAbsoluteMouseY())));
 
-	if (_playSave->getDebugGeo() == true)
-	{
-		_playSave->setDebugArg("COORD");	// tells think() to stop writing area-info and display lon/lat instead.
-		_stDebug = "";						// ditto
+		if (action->getDetails()->button.button == SDL_BUTTON_LEFT)
+		{
+			const std::vector<Target*> targets (_globe->getTargets(mX,mY, false));
+			if (targets.empty() == false)
+				_game->pushState(new SelectTargetState(targets, nullptr, this));
+		}
 
-		double
-			lonRad,
-			latRad;
-		_globe->cartToPolar(
-						static_cast<Sint16>(mX),
-						static_cast<Sint16>(mY),
-						&lonRad, &latRad);
+		if (_playSave->getDebugGeo() == true)
+		{
+			_playSave->setDebugArg("COORD");	// tells think() to stop writing area-info and display lon/lat instead.
+			_stDebug = "";						// ditto
 
-		const double
-			lonDeg (lonRad / M_PI * 180.),
-			latDeg (latRad / M_PI * 180.);
-		int
-			texture,
-			shade;
-		_globe->getPolygonTextureAndShade(lonDeg, latDeg, &texture, &shade);
+			double
+				lonRad,
+				latRad;
+			_globe->cartToPolar(
+							static_cast<Sint16>(mX),
+							static_cast<Sint16>(mY),
+							&lonRad, &latRad);
 
-		std::wostringstream woststr;
-		woststr << std::fixed << std::setprecision(3)
-				<< L"RAD Lon " << lonRad << L"  Lat " << latRad
-				<< std::endl
-				<< L"DEG Lon " << lonDeg << L"  Lat " << latDeg
-				<< std::endl
-				<< L"texture " << texture;
-		if (texture != -1)
-			woststr << L" shade " << shade;
+			const double
+				lonDeg (lonRad / M_PI * 180.),
+				latDeg (latRad / M_PI * 180.);
+			int
+				texture,
+				shade;
+			_globe->getPolygonTextureAndShade(lonDeg, latDeg, &texture, &shade);
 
-		_txtDebug->setText(woststr.str()); // TODO: If paused redraw HUD.
+			std::wostringstream woststr;
+			woststr << std::fixed << std::setprecision(3)
+					<< L"RAD Lon " << lonRad << L"  Lat " << latRad
+					<< std::endl
+					<< L"DEG Lon " << lonDeg << L"  Lat " << latDeg
+					<< std::endl
+					<< L"texture " << texture;
+			if (texture != -1)
+				woststr << L" shade " << shade;
+
+			_txtDebug->setText(woststr.str()); // TODO: If paused redraw HUD.
+		}
 	}
 }
 
@@ -3319,7 +3334,8 @@ void GeoscapeState::globeClick(Action* action)
  */
 void GeoscapeState::btnInterceptClick(Action*)
 {
-	_game->pushState(new InterceptState(this));
+	if (inputDisabled() == false)
+		_game->pushState(new InterceptState(this));
 }
 
 /**
@@ -3328,18 +3344,21 @@ void GeoscapeState::btnInterceptClick(Action*)
  */
 void GeoscapeState::btnBasesClick(Action*)
 {
-	resetTimer();
-	kL_soundPop->play(Mix_GroupAvailable(0));
-	_game->getScreen()->fadeScreen();
+	if (inputDisabled() == false)
+	{
+		resetTimer();
+		kL_soundPop->play(Mix_GroupAvailable(0));
+		_game->getScreen()->fadeScreen();
 
-	if (kL_curBase < _playSave->getBases()->size())
-		_game->pushState(new BasescapeState(
-										_playSave->getBases()->at(kL_curBase),
-										_globe));
-	else
-		_game->pushState(new BasescapeState(
-										_playSave->getBases()->front(),
-										_globe));
+		if (kL_curBase < _playSave->getBases()->size())
+			_game->pushState(new BasescapeState(
+											_playSave->getBases()->at(kL_curBase),
+											_globe));
+		else
+			_game->pushState(new BasescapeState(
+											_playSave->getBases()->front(),
+											_globe));
+	}
 }
 
 /**
@@ -3348,11 +3367,14 @@ void GeoscapeState::btnBasesClick(Action*)
  */
 void GeoscapeState::btnGraphsClick(Action*)
 {
-	resetTimer();
-	kL_soundPop->play(Mix_GroupAvailable(0));
-	_game->getScreen()->fadeScreen();
+	if (inputDisabled() == false)
+	{
+		resetTimer();
+		kL_soundPop->play(Mix_GroupAvailable(0));
+		_game->getScreen()->fadeScreen();
 
-	_game->pushState(new GraphsState());
+		_game->pushState(new GraphsState());
+	}
 }
 
 /**
@@ -3361,13 +3383,16 @@ void GeoscapeState::btnGraphsClick(Action*)
  */
 void GeoscapeState::btnUfopaediaClick(Action*)
 {
-	resetTimer();
-	_game->getResourcePack()->fadeMusic(_game, 276);
+	if (inputDisabled() == false)
+	{
+		resetTimer();
+		_game->getResourcePack()->fadeMusic(_game, 276);
 
-	Ufopaedia::open(_game);
-	_game->getResourcePack()->playMusic(
-									OpenXcom::res_MUSIC_UFOPAEDIA,
-									"", 1);
+		Ufopaedia::open(_game);
+		_game->getResourcePack()->playMusic(
+										OpenXcom::res_MUSIC_UFOPAEDIA,
+										"", 1);
+	}
 }
 
 /**
@@ -3376,11 +3401,14 @@ void GeoscapeState::btnUfopaediaClick(Action*)
  */
 void GeoscapeState::btnOptionsClick(Action*)
 {
-	if (_timerDfZoomIn->isRunning() == false
-		&& _timerDfZoomOut->isRunning() == false)
+	if (inputDisabled() == false)
 	{
-		resetTimer();
-		_game->pushState(new PauseState(OPT_GEOSCAPE));
+		if (_timerDfZoomIn->isRunning() == false
+			&& _timerDfZoomOut->isRunning() == false)
+		{
+			resetTimer();
+			_game->pushState(new PauseState(OPT_GEOSCAPE));
+		}
 	}
 }
 
@@ -3390,8 +3418,11 @@ void GeoscapeState::btnOptionsClick(Action*)
  */
 void GeoscapeState::btnFundingClick(Action*)
 {
-	resetTimer();
-	_game->pushState(new FundingState());
+	if (inputDisabled() == false)
+	{
+		resetTimer();
+		_game->pushState(new FundingState());
+	}
 }
 
 /**
@@ -3400,14 +3431,17 @@ void GeoscapeState::btnFundingClick(Action*)
  */
 void GeoscapeState::btnDetailPress(Action* action)
 {
-	switch (action->getDetails()->button.button)
+	if (inputDisabled() == false)
 	{
-		case SDL_BUTTON_LEFT:
-			printDetailInfo(_globe->toggleDetail());
-			break;
+		switch (action->getDetails()->button.button)
+		{
+			case SDL_BUTTON_LEFT:
+				printDetailInfo(_globe->toggleDetail());
+				break;
 
-		case SDL_BUTTON_RIGHT:
-			printRadarInfo(_globe->changeRadars());
+			case SDL_BUTTON_RIGHT:
+				printRadarInfo(_globe->changeRadars());
+		}
 	}
 }
 
@@ -3448,7 +3482,8 @@ void GeoscapeState::printRadarInfo(GlobeRadarDetail radars)
  */
 void GeoscapeState::btnRotateLeftPress(Action*)
 {
-	_globe->rotateLeft();
+	if (inputDisabled() == false)
+		_globe->rotateLeft();
 }
 
 /**
@@ -3457,7 +3492,8 @@ void GeoscapeState::btnRotateLeftPress(Action*)
  */
 void GeoscapeState::btnRotateRightPress(Action*)
 {
-	_globe->rotateRight();
+	if (inputDisabled() == false)
+		_globe->rotateRight();
 }
 
 /**
@@ -3475,7 +3511,8 @@ void GeoscapeState::btnRotateLonStop(Action*)
  */
 void GeoscapeState::btnRotateUpPress(Action*)
 {
-	_globe->rotateUp();
+	if (inputDisabled() == false)
+		_globe->rotateUp();
 }
 
 /**
@@ -3484,7 +3521,8 @@ void GeoscapeState::btnRotateUpPress(Action*)
  */
 void GeoscapeState::btnRotateDownPress(Action*)
 {
-	_globe->rotateDown();
+	if (inputDisabled() == false)
+		_globe->rotateDown();
 }
 
 /**
@@ -3502,8 +3540,11 @@ void GeoscapeState::btnRotateLatStop(Action*)
  */
 void GeoscapeState::btnRotateLeftUpPress(Action*)
 {
-	_globe->rotateLeft();
-	_globe->rotateUp();
+	if (inputDisabled() == false)
+	{
+		_globe->rotateLeft();
+		_globe->rotateUp();
+	}
 }
 
 /**
@@ -3512,8 +3553,11 @@ void GeoscapeState::btnRotateLeftUpPress(Action*)
  */
 void GeoscapeState::btnRotateLeftDownPress(Action*)
 {
-	_globe->rotateLeft();
-	_globe->rotateDown();
+	if (inputDisabled() == false)
+	{
+		_globe->rotateLeft();
+		_globe->rotateDown();
+	}
 }
 
 /**
@@ -3522,8 +3566,11 @@ void GeoscapeState::btnRotateLeftDownPress(Action*)
  */
 void GeoscapeState::btnRotateRightUpPress(Action*)
 {
-	_globe->rotateRight();
-	_globe->rotateUp();
+	if (inputDisabled() == false)
+	{
+		_globe->rotateRight();
+		_globe->rotateUp();
+	}
 }
 
 /**
@@ -3532,8 +3579,11 @@ void GeoscapeState::btnRotateRightUpPress(Action*)
  */
 void GeoscapeState::btnRotateRightDownPress(Action*)
 {
-	_globe->rotateRight();
-	_globe->rotateDown();
+	if (inputDisabled() == false)
+	{
+		_globe->rotateRight();
+		_globe->rotateDown();
+	}
 }
 
 /**
@@ -3551,8 +3601,11 @@ void GeoscapeState::btnRotateStop(Action*)
  */
 void GeoscapeState::btnZoomInLeftClick(Action*)
 {
-	_globe->zoomIn();
-	updateZoomText();
+	if (inputDisabled() == false)
+	{
+		_globe->zoomIn();
+		updateZoomText();
+	}
 }
 
 /**
@@ -3561,8 +3614,11 @@ void GeoscapeState::btnZoomInLeftClick(Action*)
  */
 void GeoscapeState::btnZoomOutLeftClick(Action*)
 {
-	_globe->zoomOut();
-	updateZoomText();
+	if (inputDisabled() == false)
+	{
+		_globe->zoomOut();
+		updateZoomText();
+	}
 }
 
 /**
@@ -3579,7 +3635,8 @@ void GeoscapeState::updateZoomText()
  *
 void GeoscapeState::btnZoomInRightClick(Action*)
 {
-	_globe->zoomMax();
+	if (inputDisabled() == false)
+		_globe->zoomMax();
 } */
 /**
  * Zooms the Globe minimum.
@@ -3587,7 +3644,8 @@ void GeoscapeState::btnZoomInRightClick(Action*)
  *
 void GeoscapeState::btnZoomOutRightClick(Action*)
 {
-	_globe->zoomMin();
+	if (inputDisabled() == false)
+		_globe->zoomMin();
 } */
 
 /**
@@ -4429,11 +4487,14 @@ void GeoscapeState::setupLandMission() // private.
  */
 void GeoscapeState::keyTimeCompression(Action* action) // private.
 {
-	ImageButton* const sender (dynamic_cast<ImageButton*>(action->getSender()));
-	if (sender != _btnGroup)
+	if (inputDisabled() == false)
 	{
-		_timeSurplus = 0;
-		sender->mousePress(_game->getFakeMouseActionD(), this);
+		ImageButton* const sender (dynamic_cast<ImageButton*>(action->getSender()));
+		if (sender != _btnGroup)
+		{
+			_timeSurplus = 0;
+			sender->mousePress(_game->getFakeMouseActionD(), this);
+		}
 	}
 }
 
@@ -4443,6 +4504,8 @@ void GeoscapeState::keyTimeCompression(Action* action) // private.
  */
 void GeoscapeState::btnTimeCompression(Action*) // private.
 {
+	// NOTE: User-input cannot be disabled for the time-compression buttons
+	// w/out screwing around with ImageButton, etc.
 	_timeSurplus = 0;
 }
 
@@ -4452,13 +4515,16 @@ void GeoscapeState::btnTimeCompression(Action*) // private.
  */
 void GeoscapeState::btnPauseClick(Action* action) // private.
 {
-	switch (action->getDetails()->button.button)
+	if (inputDisabled() == false)
 	{
-		case SDL_BUTTON_LEFT:
-		case SDL_BUTTON_RIGHT:
-			_globe->toggleBlink();
-			if ((_pauseHard = !_pauseHard) == true)
-				_txtSec->setVisible(false);
+		switch (action->getDetails()->button.button)
+		{
+			case SDL_BUTTON_LEFT:
+			case SDL_BUTTON_RIGHT:
+				_globe->toggleBlink();
+				if ((_pauseHard = !_pauseHard) == true)
+					_txtSec->setVisible(false);
+		}
 	}
 }
 
@@ -4469,37 +4535,40 @@ void GeoscapeState::btnPauseClick(Action* action) // private.
  */
 void GeoscapeState::btnUfoBlobPress(Action* action) // private.
 {
-	for (size_t // find out which button was pressed
-			i = 0u;
-			i != UFO_HOTBLOBS;
-			++i)
+	if (inputDisabled() == false)
 	{
-		if (_isfUfoBlobs[i] == action->getSender())
+		for (size_t // find out which button was pressed
+				i = 0u;
+				i != UFO_HOTBLOBS;
+				++i)
 		{
-			switch (action->getDetails()->button.button)
+			if (_isfUfoBlobs[i] == action->getSender())
 			{
-				case SDL_BUTTON_LEFT:
+				switch (action->getDetails()->button.button)
 				{
-					Ufo* const ufo (_hostileUfos[i]);
-					_game->pushState(new UfoDetectedState(
-														ufo,
-														this,
-														false,
-														ufo->getHyperDetected() == true));
-					break;
-				}
+					case SDL_BUTTON_LEFT:
+					{
+						Ufo* const ufo (_hostileUfos[i]);
+						_game->pushState(new UfoDetectedState(
+															ufo,
+															this,
+															false,
+															ufo->getHyperDetected() == true));
+						break;
+					}
 
-				case SDL_BUTTON_RIGHT:
-				{
-					const Ufo* const ufo (_hostileUfos[i]);
-					const double
-						lon (ufo->getLongitude()),
-						lat (ufo->getLatitude());
-					_globe->center(lon,lat);
-					_globe->setCrosshair(lon,lat);
+					case SDL_BUTTON_RIGHT:
+					{
+						const Ufo* const ufo (_hostileUfos[i]);
+						const double
+							lon (ufo->getLongitude()),
+							lat (ufo->getLatitude());
+						_globe->center(lon,lat);
+						_globe->setCrosshair(lon,lat);
+					}
 				}
+				break;
 			}
-			break;
 		}
 	}
 	action->getDetails()->type = SDL_NOEVENT; // consume the event

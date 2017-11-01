@@ -2370,9 +2370,9 @@ void Globe::drawDetail()
 		readyLinetypeSwitch = false;
 		switch (_debugType)
 		{
-			case DTG_COUNTRY:	_debugType = DTG_REGION;	break;
-			case DTG_REGION:	_debugType = DTG_ZONE;		break;
-			case DTG_ZONE:		_debugType = DTG_COUNTRY;
+			case DTG_COUNTRY: _debugType = DTG_REGION;  break;
+			case DTG_REGION:  _debugType = DTG_ZONE;    break;
+			case DTG_ZONE:    _debugType = DTG_COUNTRY;
 		}
 	}
 }
@@ -2518,49 +2518,52 @@ void Globe::blit(const Surface* const srf)
  */
 void Globe::mouseOver(Action* action, State* state)
 {
-	if (action != nullptr && action->getDetails()->type == SDL_MOUSEMOTION)
+	if (_geoState->inputDisabled() == false)
 	{
-		_dragScrollX += static_cast<int>(action->getDetails()->motion.xrel);
-		_dragScrollY += static_cast<int>(action->getDetails()->motion.yrel);
-
-		if (_dragScrollPastPixelThreshold == false)
-			_dragScrollPastPixelThreshold = std::abs(_dragScrollX) > Options::dragScrollPixelTolerance
-										 || std::abs(_dragScrollY) > Options::dragScrollPixelTolerance;
-
-		if (_dragScrollActivated == true && _dragScrollPastPixelThreshold == true)
+		if (action != nullptr && action->getDetails()->type == SDL_MOUSEMOTION)
 		{
-//			if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
-//			{
-//				const double
-//					newLon ((static_cast<double>(_dragScrollTotalX) / action->getScaleX()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
-//					newLat ((static_cast<double>(_dragScrollTotalY) / action->getScaleY()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
-//				center(
-//					_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed),
-//					_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed));
-//			}
-//			else
-//			{
-			const double
-				newLon (static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1u) / 2.),
-				newLat (static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1u) / 2.);
-			center(
-				_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed),
-				_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed));
-//			}
+			_dragScrollX += static_cast<int>(action->getDetails()->motion.xrel);
+			_dragScrollY += static_cast<int>(action->getDetails()->motion.yrel);
 
-			_game->getCursor()->handle(action);
+			if (_dragScrollPastPixelThreshold == false)
+				_dragScrollPastPixelThreshold = std::abs(_dragScrollX) > Options::dragScrollPixelTolerance
+											 || std::abs(_dragScrollY) > Options::dragScrollPixelTolerance;
+
+			if (_dragScrollActivated == true && _dragScrollPastPixelThreshold == true)
+			{
+//				if (Options::geoDragScrollInvert == true) // scroll. I don't use inverted scrolling.
+//				{
+//					const double
+//						newLon ((static_cast<double>(_dragScrollTotalX) / action->getScaleX()) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1) / 2.),
+//						newLat ((static_cast<double>(_dragScrollTotalY) / action->getScaleY()) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1) / 2.);
+//					center(
+//						_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed),
+//						_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed));
+//				}
+//				else
+//				{
+				const double
+					newLon (static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1u) / 2.),
+					newLat (static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1u) / 2.);
+				center(
+					_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed),
+					_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed));
+//				}
+
+				_game->getCursor()->handle(action);
+			}
 		}
+
+		double // ignore mouse-overs that are outside this Globe.
+			lon,lat;
+		cartToPolar(
+				static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+				static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
+				&lon,&lat);
+
+		if (isNaNorInf(lon,lat) == false)
+			InteractiveSurface::mouseOver(action, state);
 	}
-
-	double // ignore mouse-overs that are outside this Globe.
-		lon,lat;
-	cartToPolar(
-			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
-			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
-			&lon,&lat);
-
-	if (isNaNorInf(lon,lat) == false)
-		InteractiveSurface::mouseOver(action, state);
 }
 
 /**
@@ -2570,40 +2573,43 @@ void Globe::mouseOver(Action* action, State* state)
  */
 void Globe::mousePress(Action* action, State* state)
 {
-	const Uint8 btnId (action->getDetails()->button.button);
-	switch (btnId)
+	if (_geoState->inputDisabled() == false)
 	{
-		case SDL_BUTTON_WHEELUP:
-		case SDL_BUTTON_WHEELDOWN:
-			break;
+		const Uint8 btnId (action->getDetails()->button.button);
+		switch (btnId)
+		{
+			case SDL_BUTTON_WHEELUP:
+			case SDL_BUTTON_WHEELDOWN:
+				break;
 
-		default:
-			if (_drawCrosshair == true)
-				clearCrosshair();
+			default:
+				if (_drawCrosshair == true)
+					clearCrosshair();
 
-			_dragScrollStartTick = SDL_GetTicks();
+				_dragScrollStartTick = SDL_GetTicks();
 
-			_dragScrollX =
-			_dragScrollY = 0;
-			_dragScrollPastPixelThreshold = false;
+				_dragScrollX =
+				_dragScrollY = 0;
+				_dragScrollPastPixelThreshold = false;
 
-			if (btnId == Options::geoDragScrollButton)
-			{
-				_dragScrollActivated = true;
+				if (btnId == Options::geoDragScrollButton)
+				{
+					_dragScrollActivated = true;
 
-				_dragScrollLon = _cenLon;
-				_dragScrollLat = _cenLat;
-			}
+					_dragScrollLon = _cenLon;
+					_dragScrollLat = _cenLat;
+				}
 
-			double // ignore mouse-presses that are outside this Globe.
-				lon,lat;
-			cartToPolar(
-					static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
-					static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
-					&lon,&lat);
+				double // ignore mouse-presses that are outside this Globe.
+					lon,lat;
+				cartToPolar(
+						static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+						static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
+						&lon,&lat);
 
-			if (isNaNorInf(lon,lat) == false)
-				InteractiveSurface::mousePress(action, state);
+				if (isNaNorInf(lon,lat) == false)
+					InteractiveSurface::mousePress(action, state);
+		}
 	}
 }
 
@@ -2614,15 +2620,18 @@ void Globe::mousePress(Action* action, State* state)
  */
 void Globe::mouseRelease(Action* action, State* state)
 {
-	double // ignore mouse-releases that are outside this Globe.
-		lon,lat;
-	cartToPolar(
-			static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
-			static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
-			&lon,&lat);
+	if (_geoState->inputDisabled() == false)
+	{
+		double // ignore mouse-releases that are outside this Globe.
+			lon,lat;
+		cartToPolar(
+				static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+				static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
+				&lon,&lat);
 
-	if (isNaNorInf(lon,lat) == false)
-		InteractiveSurface::mouseRelease(action, state);
+		if (isNaNorInf(lon,lat) == false)
+			InteractiveSurface::mouseRelease(action, state);
+	}
 }
 
 /**
@@ -2632,32 +2641,35 @@ void Globe::mouseRelease(Action* action, State* state)
  */
 void Globe::mouseClick(Action* action, State* state)
 {
-	const Uint8 btnId (action->getDetails()->button.button);
-	switch (btnId)
+	if (_geoState->inputDisabled() == false)
 	{
-		case SDL_BUTTON_WHEELUP:	zoomIn();	break;
-		case SDL_BUTTON_WHEELDOWN:	zoomOut();	break;
-
-		default:
+		const Uint8 btnId (action->getDetails()->button.button);
+		switch (btnId)
 		{
-			_dragScrollActivated = false;
+			case SDL_BUTTON_WHEELUP:	zoomIn();	break;
+			case SDL_BUTTON_WHEELDOWN:	zoomOut();	break;
 
-			if (_dragScrollPastPixelThreshold == false
-				&& SDL_GetTicks() - _dragScrollStartTick < static_cast<Uint32>(Options::dragScrollTimeTolerance))
+			default:
 			{
-				double // ignore mouse-clicks that are outside this Globe.
-					lon,lat;
-				cartToPolar(
-						static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
-						static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
-						&lon,&lat);
+				_dragScrollActivated = false;
 
-				if (isNaNorInf(lon,lat) == false)
+				if (_dragScrollPastPixelThreshold == false
+					&& SDL_GetTicks() - _dragScrollStartTick < static_cast<Uint32>(Options::dragScrollTimeTolerance))
 				{
-					InteractiveSurface::mouseClick(action, state);
+					double // ignore mouse-clicks that are outside this Globe.
+						lon,lat;
+					cartToPolar(
+							static_cast<Sint16>(std::floor(action->getAbsoluteMouseX())),
+							static_cast<Sint16>(std::floor(action->getAbsoluteMouseY())),
+							&lon,&lat);
 
-					if (btnId == SDL_BUTTON_RIGHT)
-						center(lon,lat);
+					if (isNaNorInf(lon,lat) == false)
+					{
+						InteractiveSurface::mouseClick(action, state);
+
+						if (btnId == SDL_BUTTON_RIGHT)
+							center(lon,lat);
+					}
 				}
 			}
 		}
@@ -2671,17 +2683,20 @@ void Globe::mouseClick(Action* action, State* state)
  */
 void Globe::keyboardPress(Action* action, State* state)
 {
-	InteractiveSurface::keyboardPress(action, state);
-
-	const SDLKey key (action->getDetails()->key.keysym.sym);
-
-	if (key == Options::keyGeoToggleDetail)
+	if (_geoState->inputDisabled() == false)
 	{
-		_geoState->printDetailInfo(toggleDetail());
-	}
-	else if (key == Options::keyGeoToggleRadar)
-	{
-		_geoState->printRadarInfo(changeRadars());
+		InteractiveSurface::keyboardPress(action, state);
+
+		const SDLKey key (action->getDetails()->key.keysym.sym);
+
+		if (key == Options::keyGeoToggleDetail)
+		{
+			_geoState->printDetailInfo(toggleDetail());
+		}
+		else if (key == Options::keyGeoToggleRadar)
+		{
+			_geoState->printRadarInfo(changeRadars());
+		}
 	}
 }
 

@@ -1004,7 +1004,7 @@ void ProjectileFlyBState::think()
 				if (_load != nullptr	// used for both the initial round and additional shotgun-pellets if any.
 					&& _load->getRules()->getExplosionRadius() != -1)
 				{
-					trjOffset = -2;		// step back a bit so 'explVoxel' isn't behind a wall.
+					trjOffset = -2;		// step back a bit so 'voxelFinal' isn't behind a wall.
 				}
 				else
 					trjOffset = 0;
