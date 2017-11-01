@@ -359,7 +359,7 @@ GeoscapeState::GeoscapeState()
 		_year(-1),
 		_windowPops(0),
 		_delayMusicDfCheck(0),
-		_timeCache(0),
+		_timeSurplus(0),
 		_score(0)
 {
 	const int
@@ -1117,7 +1117,7 @@ void GeoscapeState::init()
 	//Log(LOG_INFO) << "GeoscapeState::init()";
 	State::init();
 
-	_timeCache = 0;
+	_timeSurplus = 0;
 	updateTimeDisplay();
 
 	_globe->onMouseClick(static_cast<ActionHandler>(&GeoscapeState::globeClick));
@@ -1299,46 +1299,44 @@ void GeoscapeState::drawUfoBlobs()
 }
 
 /**
- * Advances the game timer according to the set timer-speed and calls
- * respective triggers.
- * @note The game always advances in 5-sec cycles regardless of the speed
- * otherwise this will skip important steps. Instead it just keeps advancing the
- * timer until the next compression step - eg. the next day on 1-day speed -- or
- * until an event occurs.
+ * Advances time on the Geoscape according to the set time-compression interval
+ * and calls the necessary triggers.
+ * @note The game always advances in 5-sec cycles regardless of the compression
+ * otherwise this will skip important steps. Instead it just keeps advancing
+ * time at the lowest compression until the interval is done - eg. the next day
+ * on 1-day speed - or until an event occurs.
+ * @note The following routine incorporates Volutar's smooth-globe tweak, which
+ * advances time in 1-sec cycles (but I'm not sure what difference it makes).
  */
 void GeoscapeState::timeAdvance() // private.
 {
 	if (_pauseHard == false)
 	{
-		int
-			timeLapse,
-			timeLap_t;
+		int interval;
 
-		if		(_btnGroup == _btn5Secs)	timeLapse = 1;
-		else if (_btnGroup == _btn1Min)		timeLapse = 12;
-		else if (_btnGroup == _btn5Mins)	timeLapse = 12 * 5;
-		else if (_btnGroup == _btn30Mins)	timeLapse = 12 * 5 * 6;
-		else if (_btnGroup == _btn1Hour)	timeLapse = 12 * 5 * 6 * 2;
-		else if (_btnGroup == _btn1Day)		timeLapse = 12 * 5 * 6 * 2 * 24;
-		else
-			timeLapse = 0; // what'ver.
+		if      (_btnGroup == _btn1Day)   interval = 12 * 5 * 6 * 2 * 24;
+		else if (_btnGroup == _btn1Hour)  interval = 12 * 5 * 6 * 2;
+		else if (_btnGroup == _btn30Mins) interval = 12 * 5 * 6;
+		else if (_btnGroup == _btn5Mins)  interval = 12 * 5;
+		else if (_btnGroup == _btn1Min)   interval = 12;
+		else                              interval = 1; // (_btnGroup == _btn5Secs)
 
-		timeLapse *= 5; // true one-second intervals. based on Volutar's smoothGlobe.
+		// (interval * 5) = true one-second intervals.
+		interval = (interval * 5 + _timeSurplus) << 2u;
 
-		timeLap_t  = ((_timeCache + timeLapse) << 2u) / Options::geoClockSpeed;
-		_timeCache = ((_timeCache + timeLapse) << 2u) % Options::geoClockSpeed;
+		_timeSurplus = interval % Options::geoClockSpeed;
+		interval     = interval / Options::geoClockSpeed;
 
-		if (timeLap_t != 0)
+		if (interval != 0)
 		{
-			bool update (false);
-
-			_pause = _pause || (_timerDfZoomIn->isRunning() || _timerDfZoomOut->isRunning());
-
-			if (_pause == false)
+			if ((_pause = _pause
+						|| (_timerDfZoomIn->isRunning()
+						|| _timerDfZoomOut->isRunning())) == false)
 			{
+				bool update (false);
 				for (int
 						i = 0;
-						i != timeLap_t;
+						i != interval;
 						++i)
 				{
 					const TimeTrigger trigger (_playSave->getTime()->advance());
@@ -1347,21 +1345,19 @@ void GeoscapeState::timeAdvance() // private.
 						update = true;
 						switch (trigger)
 						{
-							case TIME_1MONTH:	time1Month(); // no breaks ->
-							case TIME_1DAY:		time1Day();
-							case TIME_1HOUR:	time1Hour();
-							case TIME_30MIN:	time30Minutes();
-							case TIME_10MIN:	time10Minutes();
-							case TIME_5SEC:		time5Seconds();
+							case TIME_1MONTH: time1Month(); // no breaks ->
+							case TIME_1DAY:   time1Day();
+							case TIME_1HOUR:  time1Hour();
+							case TIME_30MIN:  time30Minutes();
+							case TIME_10MIN:  time10Minutes();
+							case TIME_5SEC:   time5Seconds();
 						}
 					}
 				}
 
 				if (update == true) updateTimeDisplay();
 			}
-
 			_pause = (_dogfightsToStart.empty() == false);
-
 			_globe->draw();
 		}
 	}
@@ -4436,7 +4432,7 @@ void GeoscapeState::keyTimeCompression(Action* action) // private.
 	ImageButton* const sender (dynamic_cast<ImageButton*>(action->getSender()));
 	if (sender != _btnGroup)
 	{
-		_timeCache = 0;
+		_timeSurplus = 0;
 		sender->mousePress(_game->getFakeMouseActionD(), this);
 	}
 }
@@ -4447,7 +4443,7 @@ void GeoscapeState::keyTimeCompression(Action* action) // private.
  */
 void GeoscapeState::btnTimeCompression(Action*) // private.
 {
-	_timeCache = 0;
+	_timeSurplus = 0;
 }
 
 /**

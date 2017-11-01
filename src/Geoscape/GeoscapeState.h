@@ -92,7 +92,7 @@ private:
 		_day,
 		_month,
 		_year,
-		_timeCache,
+		_timeSurplus,
 		_score;
 	int64_t _windowPops;
 	size_t _dfMinimized;
@@ -168,7 +168,7 @@ private:
 	/// Creates the prefix for a debugging message.
 	void fabricateDebugPretext();
 
-	/// Advances the Geoscape timer.
+	/// Advances time on the Geoscape.
 	void timeAdvance();
 	/// Displays current time/date/funds.
 	void updateTimeDisplay();
