@@ -790,10 +790,24 @@ bool Projectile::traceProjectile()
 
 /**
  * Skips to the end of this Projectile's trajectory.
+// * @param offset - offset of the final id (default 0)
  */
 void Projectile::skipTrajectory()
 {
+	// TODO: if (_trj.size()==0u) throw Ex.
+
+//	if (offset == 0)
 	_trjId = _trj.size() - 1u;
+//	else
+//	{
+//		int id (static_cast<int>(_trj.size()) - 1);
+//		id = Vicegrip(
+//					id + offset,
+//					0,
+//					id);
+//
+//		_trjId = static_cast<size_t>(id);
+//	}
 }
 
 /**
@@ -805,7 +819,10 @@ Position Projectile::getPosition(int offset) const
 {
 	if (offset == 0) return _trj.at(_trjId);
 
-	offset = Vicegrip(static_cast<int>(_trjId) + offset, 0, static_cast<int>(_trj.size()) - 1);
+	offset = Vicegrip(
+					static_cast<int>(_trjId) + offset,
+					0,
+					static_cast<int>(_trj.size()) - 1);
 
 	return _trj.at(static_cast<size_t>(offset));
 }

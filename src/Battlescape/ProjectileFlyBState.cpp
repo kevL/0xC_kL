@@ -906,7 +906,7 @@ void ProjectileFlyBState::think()
 			&& _load != nullptr
 			&& _load->getRules()->getShotgunPellets() != 0)
 		{
-			// shotgun pellets move to their terminal location instantly as fast as possible
+			// shotgun pellets move to their final position instantly.
 			_prj->skipTrajectory(); // skip trajectory of 1st pellet; the rest are not even added to Map.
 		}
 
@@ -916,14 +916,14 @@ void ProjectileFlyBState::think()
 			{
 //				_parent->getMap()->resetCameraSmoothing();
 				Position
-					throwVoxel (_prj->getPosition(-1)), // <- beware of 'offset -1'
-					pos (Position::toTileSpace(throwVoxel));
+					voxelFinal (_prj->getPosition(-1)), // <- beware of 'offset -1'
+					pos (Position::toTileSpace(voxelFinal));
 
 				if (pos.x > _battleSave->getMapSizeX()) // note: Bounds-checking is also done better in Projectile::applyAccuracy()
-					--pos.x;
+					--pos.x; // huh, that looks tenuous
 
 				if (pos.y > _battleSave->getMapSizeY())
-					--pos.y;
+					--pos.y; // huh, that looks tenuous
 
 				BattleItem* const throwItem (_prj->getThrowItem());
 				if (throwItem->getRules()->getBattleType() == BT_GRENADE
@@ -931,7 +931,7 @@ void ProjectileFlyBState::think()
 				{
 					_battleGame->stateBPushFront(new ExplosionBState( // it's a hot potato set to explode on contact
 																_battleGame,
-																throwVoxel,
+																voxelFinal,
 																throwItem->getRules(),
 																_unit));
 					_battleSave->toDeleteItem(throwItem);
@@ -999,36 +999,37 @@ void ProjectileFlyBState::think()
 
 				std::vector<Position> posContacts; // stores tile-positions of all Voxel_Unit hits.
 
+
+				int trjOffset (0);	// this will be valid only if (_prjImpact != VOXEL_OUTOFBOUNDS).
+									// it's used for both the initial round and additional shotgun-pellets if any.
+
 				if (_prjImpact != VOXEL_OUTOFBOUNDS) // *not* out of Map; caching will be taken care of in ExplosionBState
 				{
 					//Log(LOG_INFO) << "FlyB: *not* OoB";
-					int trjOffset; // explosions impact not inside the voxel but two steps back;
-					if (_load != nullptr
+					if (_load != nullptr // explosions impact not at the final trajectory-id but two steps back.
 						&& _load->getRules()->getExplosionRadius() != -1
 						&& _prjImpact != VOXEL_UNIT)
 					{
-						trjOffset = -2; // step back a bit so tileExpl isn't behind a wall.
+						trjOffset = -2; // step back a bit so 'explVoxel' isn't behind a wall.
 					}
-					else
-						trjOffset = 0;
 
-					Position explVoxel (_prj->getPosition(trjOffset));
-					const Position pos (Position::toTileSpace(explVoxel));
+					Position voxelFinal (_prj->getPosition(trjOffset));
+					const Position pos (Position::toTileSpace(voxelFinal));
 
 					if (_prjVector.z != -1) // <- strikeVector by radial explosion vs. diagBigWall
 					{
 						Tile* const tileTrue (_battleGame->getBattlescapeState()->getSavedBattleGame()->getTile(pos));
 						_battleGame->getTileEngine()->setTrueTile(tileTrue);
 
-						explVoxel.x -= _prjVector.x << 4u; // note there is no safety on these for OoB.
-						explVoxel.y -= _prjVector.y << 4u;
+						voxelFinal.x -= _prjVector.x << 4u; // note there is no safety on these for OoB.
+						voxelFinal.y -= _prjVector.y << 4u;
 					}
 					else
 						_battleGame->getTileEngine()->setTrueTile();
 
 					_battleGame->stateBPushFront(new ExplosionBState(
 																_battleGame,
-																explVoxel,
+																voxelFinal,
 																_load->getRules(),
 																_unit,
 																nullptr,
@@ -1052,7 +1053,7 @@ void ProjectileFlyBState::think()
 					// ... Let's try something
 /*					if (_prjImpact == VOXEL_UNIT)
 					{
-						BattleUnit* victim = _battleSave->getTile(Position::toTileSpace(_prj->getPosition(trjOffset))->getTileUnit();
+						BattleUnit* victim (_battleSave->getTile(Position::toTileSpace(_prj->getPosition(trjOffset))->getTileUnit());
 						if (victim
 							&& !victim->isOut(true, true)
 							&& victim->getOriginalFaction() == FACTION_PLAYER
@@ -1064,7 +1065,7 @@ void ProjectileFlyBState::think()
 							&& !victim->isOut(true, true)
 							&& victim->getFaction() == FACTION_HOSTILE)
 						{
-							AlienBAIState* aggro = dynamic_cast<AlienBAIState*>(victim->getAIState());
+							AlienBAIState* aggro (dynamic_cast<AlienBAIState*>(victim->getAIState()));
 							if (aggro != 0)
 							{
 								aggro->setWasHitBy(_unit);	// is used only for spotting on RA.
@@ -1081,7 +1082,7 @@ void ProjectileFlyBState::think()
 				// Special Shotgun Behaviour: determine *extra* projectile-paths and add bullet-hits at their termination points.
 				if (_load != nullptr)
 				{
-					Position shotVoxel;
+					Position voxelFinal;
 
 					int pelletsLeft (_load->getRules()->getShotgunPellets() - 1); // shotgun pellets after 1st^
 					while (pelletsLeft > 0)
@@ -1098,10 +1099,16 @@ void ProjectileFlyBState::think()
 											   _unit->getAccuracy(_action) - spread));
 
 						_prjImpact = prj->calculateShot(accuracy);
-						if (_prjImpact != VOXEL_EMPTY && _prjImpact != VOXEL_OUTOFBOUNDS) // insert an explosion and hit
+						if (_prjImpact != VOXEL_EMPTY && _prjImpact != VOXEL_OUTOFBOUNDS) // insert an explosion and hit/explode ->
 						{
-							prj->skipTrajectory();			// skip the pellet to the end of its path
-							shotVoxel = prj->getPosition();	// <- beware of 'offset 1'
+							int offset;
+							if (_prjImpact == VOXEL_UNIT)
+								offset = 0;
+							else
+								offset = trjOffset;
+
+							prj->skipTrajectory(); // skip the pellet to the end of its path
+							voxelFinal = prj->getPosition(offset);
 
 							if (_prjImpact == VOXEL_UNIT)
 							{
@@ -1110,7 +1117,7 @@ void ProjectileFlyBState::think()
 									case BA_SNAPSHOT:
 									case BA_AUTOSHOT:
 									case BA_AIMEDSHOT:
-										posContacts.push_back(Position::toTileSpace(shotVoxel));
+										posContacts.push_back(Position::toTileSpace(voxelFinal));
 								}
 							}
 
@@ -1119,7 +1126,7 @@ void ProjectileFlyBState::think()
 							{
 								Explosion* const explosion (new Explosion(
 																		ET_BULLET,
-																		shotVoxel,
+																		voxelFinal,
 																		aniStart));
 								_battleGame->getMap()->getExplosions()->push_back(explosion);
 								_battleGame->setShotgun();
@@ -1130,12 +1137,22 @@ void ProjectileFlyBState::think()
 																- _load->getRules()->getExplosionSpeed())));
 								_battleGame->setStateInterval(interval);
 							}
-							_battleSave->getTileEngine()->hit(
-															shotVoxel,
-															_load->getRules()->getPower(),
-															_load->getRules()->getDamageType(),
-															_unit,
-															false, true);
+
+							int radius (_load->getRules()->getExplosionRadius());
+							if (radius == -1)
+								_battleSave->getTileEngine()->hit(
+																voxelFinal,
+																_load->getRules()->getPower(),
+																_load->getRules()->getDamageType(),
+																_unit,
+																false, true);
+							else
+								_battleSave->getTileEngine()->explode(
+																voxelFinal,
+																_load->getRules()->getPower(),
+																_load->getRules()->getDamageType(),
+																radius,
+																_unit); // TODO: te->hit() has a 'shotgun' par that stops targets from crying too vociferously.
 						}
 
 						delete prj;
