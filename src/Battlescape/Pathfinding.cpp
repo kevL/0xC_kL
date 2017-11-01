@@ -746,12 +746,12 @@ int Pathfinding::getTuCostPf(
 		rise (false);
 
 	int
-		partsGoingUp	(0),
-		partsGoingDown	(0),	// TODO: 3 vars all denoting essentially the same thing ->
-		partsFalling	(0),
-		partsOnAir		(0),	// The problem is they were trying to account for a unit
-								// standing on nothing and a unit stepping onto nothing
-		cost,					// simultaneously (during the same 'step' [ call/loop ]).
+		quadsGoingUp	(0),
+		quadsGoingDown	(0),	// TODO: 3 vars all denoting essentially the same thing ->
+		quadsFalling	(0),	// The problem is they were trying to account for a unit
+		quadsOnAir		(0),	// standing on nothing and a unit stepping onto nothing
+								// simultaneously (during the same 'step'/call/loop).
+		cost,
 		costTotal (0);
 
 	_doorCost = 0;
@@ -803,11 +803,11 @@ int Pathfinding::getTuCostPf(
 					if (dir != DIR_DOWN) return PF_FAIL_TU;
 
 					fall = true;
-					++partsOnAir;
+					++quadsOnAir;
 					//if (_debug) Log(LOG_INFO) << ". . . not Fly not Floored fall TRUE partsOnAir= " << partsOnAir;
 				}
 				else if (tileStart->isFloored(tileStart->getTileBelow(_battleSave)) == false
-					&& ++partsOnAir == quadrants)
+					&& ++quadsOnAir == quadrants)
 				{
 					if (dir != DIR_DOWN) return PF_FAIL_TU;
 
@@ -850,10 +850,11 @@ int Pathfinding::getTuCostPf(
 				&& tileStopAbove->isFloored(tileStop) == true)
 			{
 				//if (_debug) Log(LOG_INFO) << ". . . going up";
-				if (++partsGoingUp == unitSize)
+				if (++quadsGoingUp == unitSize)
 				{
 					//if (_debug) Log(LOG_INFO) << ". . . . going up all quadrants";
 					rise = true;
+
 					++posStop->z;
 					++posOffsetVertical.z;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
@@ -867,10 +868,11 @@ int Pathfinding::getTuCostPf(
 				&& tileStopBelow->getTerrainLevel() < -11)
 			{
 				//if (_debug) Log(LOG_INFO) << ". . . going down";
-				if (++partsGoingDown == quadrants)
+				if (++quadsGoingDown == quadrants)
 				{
 					//if (_debug) Log(LOG_INFO) << ". . . . going down all quadrants";
 					fall = true;
+
 					--posStop->z;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
 
@@ -939,7 +941,8 @@ int Pathfinding::getTuCostPf(
 					break;
 
 				default:
-					if (posStop->z == tileStart->getPosition().z
+					if (quadsGoingUp == 0 // Warboy_add. 2017 oct 31
+						&& posStop->z == tileStart->getPosition().z
 						&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
 							|| isBlockedDir(
 										tileStart,
@@ -951,17 +954,18 @@ int Pathfinding::getTuCostPf(
 					}
 			}
 
-			if (_mType != MT_FLY
+			if (fall == false
 				&& dir != DIR_DOWN
-				&& fall == false
+				&& _mType != MT_FLY
 				&& tileStart->isFloored(tileStart->getTileBelow(_battleSave)) == false)
 			{
 				//if (_debug) Log(LOG_INFO) << ". . . falling";
-				if (++partsFalling == quadrants)
+				if (++quadsFalling == quadrants)
 				{
 					//if (_debug) Log(LOG_INFO) << ". . . . falling all quadrants";
-					dir = DIR_DOWN;
 					fall = true;
+					dir = DIR_DOWN;
+
 					*posStop = posStart + posBelow;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
 				}
@@ -970,7 +974,8 @@ int Pathfinding::getTuCostPf(
 			tileStart = _battleSave->getTile(tileStart->getPosition() + posOffsetVertical);
 			//if (_debug) Log(LOG_INFO) << ". . . tileStart " << (tileStart->getPosition() + posOffsetVertical);
 
-			if (dir < DIR_UP && partsGoingUp != 0
+			if (dir < DIR_UP
+				&& quadsGoingUp != 0
 				&& (tileStart->getTerrainLevel() - tileStop->getTerrainLevel() > 8
 					|| isBlockedDir(
 								tileStart,
