@@ -1000,20 +1000,25 @@ void ProjectileFlyBState::think()
 				std::vector<Position> posContacts; // stores tile-positions of all Voxel_Unit hits.
 
 
-				int trjOffset (0);	// this will be valid only if (_prjImpact != VOXEL_OUTOFBOUNDS).
-									// it's used for both the initial round and additional shotgun-pellets if any.
+				int trjOffset;			// explosive rounds impact not at the final trajectory-id but two steps back.
+				if (_load != nullptr	// used for both the initial round and additional shotgun-pellets if any.
+					&& _load->getRules()->getExplosionRadius() != -1)
+				{
+					trjOffset = -2;		// step back a bit so 'explVoxel' isn't behind a wall.
+				}
+				else
+					trjOffset = 0;
 
 				if (_prjImpact != VOXEL_OUTOFBOUNDS) // *not* out of Map; caching will be taken care of in ExplosionBState
 				{
 					//Log(LOG_INFO) << "FlyB: *not* OoB";
-					if (_load != nullptr // explosions impact not at the final trajectory-id but two steps back.
-						&& _load->getRules()->getExplosionRadius() != -1
-						&& _prjImpact != VOXEL_UNIT)
-					{
-						trjOffset = -2; // step back a bit so 'explVoxel' isn't behind a wall.
-					}
+					int offset;
+					if (_prjImpact == VOXEL_UNIT)
+						offset = 0;
+					else
+						offset = trjOffset;
 
-					Position voxelFinal (_prj->getPosition(trjOffset));
+					Position voxelFinal (_prj->getPosition(offset));
 					const Position pos (Position::toTileSpace(voxelFinal));
 
 					if (_prjVector.z != -1) // <- strikeVector by radial explosion vs. diagBigWall
