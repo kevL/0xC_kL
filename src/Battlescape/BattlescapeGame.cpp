@@ -1556,7 +1556,7 @@ void BattlescapeGame::endTurn() // private.
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
-			(*i)->setTakenExpl(false); // even if Status_Dead, just do it.
+			(*i)->setTakenExplosive(false); // even if Status_Dead, just do it.
 			(*i)->setTakenFire(false);
 		}
 	}

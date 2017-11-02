@@ -2542,8 +2542,22 @@ void TileEngine::explode(
 				{
 					//Log(LOG_INFO) << ". > add Tile : tileStart " << tileStart->getPosition() << " tileStop " << tileStop->getPosition() << " _powerE= " << _powerE << " r= " << r;
 
-					if ((targetUnit = tileStop->getTileUnit()) != nullptr
-						&& targetUnit->getTakenExpl() == true) // hit large units only once ... stop experience exploitation near the end of this loop, also. Lulz
+					if ((targetUnit = tileStop->getTileUnit()) == nullptr)
+					{
+						// if a unitBelow has 5+ voxels sticking up hit it.
+						const Tile* const tileBelow = tileStop->getTileBelow(_battleSave);
+						if (tileStop->isFloored(tileBelow) == false)
+						{
+							if ((targetUnit = tileBelow->getTileUnit()) != nullptr
+								&& targetUnit->getHeight(true) - tileBelow->getTerrainLevel() < 28)
+							{
+								targetUnit = nullptr;
+							}
+						}
+					}
+
+					if (targetUnit != nullptr
+						&& targetUnit->getTakenExplosive() == true) // hit large units only once ... stop experience exploitation near the end of this loop, also. Lulz
 					{
 						//Log(LOG_INFO) << ". . targetUnit id-" << targetUnit->getId() << " set Unit NULL";
 						targetUnit = nullptr;
@@ -2579,9 +2593,9 @@ void TileEngine::explode(
 							{
 								if ((bu = (*i)->getBodyUnit()) != nullptr
 									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
-									&& bu->getTakenExpl() == false)
+									&& bu->getTakenExplosive() == false)
 								{
-									bu->setTakenExpl();
+									bu->setTakenExplosive();
 									power_OnUnit = RNG::generate(1, _powerE << 1u) // bell curve
 												 + RNG::generate(1, _powerE << 1u);
 									power_OnUnit >>= 1u;
@@ -2663,10 +2677,10 @@ void TileEngine::explode(
 									//Log(LOG_INFO) << ". . INVENTORY: Item " << (*i)->getRules()->getType();
 									if ((bu = (*i)->getBodyUnit()) != nullptr			// NOTE: This will send the unit through checkCasualties()
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS	// to log the kill in attacker's Diary and do morale but will
-										&& bu->getTakenExpl() == false)					// bypass UnitDieBState and its death-notice (no convert).
+										&& bu->getTakenExplosive() == false)			// bypass UnitDieBState and its death-notice (no convert).
 									{
 										//Log(LOG_INFO) << ". . . vs Unit unconscious";
-										bu->setTakenExpl();
+										bu->setTakenExplosive();
 
 										const double
 											power0 (static_cast<double>(_powerE)),
@@ -2702,7 +2716,7 @@ void TileEngine::explode(
 									}
 									else if (_powerE > (*i)->getRules()->getArmorPoints()
 										&& (bu == nullptr
-											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExpl() == false)))
+											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExplosive() == false)))
 									{
 										//Log(LOG_INFO) << ". . . vs Item armor";
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
@@ -2769,9 +2783,9 @@ void TileEngine::explode(
 							{
 								if ((bu = (*i)->getBodyUnit()) != nullptr
 									&& bu->getUnitStatus() == STATUS_UNCONSCIOUS
-									&& bu->getTakenExpl() == false)
+									&& bu->getTakenExplosive() == false)
 								{
-									bu->setTakenExpl();
+									bu->setTakenExplosive();
 									power_OnUnit = RNG::generate( // 10% to 20%
 															_powerE / 10,
 															_powerE / 5);
@@ -2785,7 +2799,7 @@ void TileEngine::explode(
 						{
 							if (targetUnit != nullptr)
 							{
-								targetUnit->setTakenExpl();
+								targetUnit->setTakenExplosive();
 								power_OnUnit = RNG::generate( // 25% - 75%
 														(_powerE	  >> 2u),
 														(_powerE * 3) >> 2u);
@@ -2836,7 +2850,7 @@ void TileEngine::explode(
 //							}
 
 							if ((targetUnit = tileFire->getTileUnit()) != nullptr
-								&& targetUnit->getTakenExpl() == false)
+								&& targetUnit->getTakenExplosive() == false)
 							{
 								power_OnUnit = RNG::generate( // 25% - 75%
 														(_powerE	  >> 2u),
@@ -2866,9 +2880,9 @@ void TileEngine::explode(
 								{
 									if ((bu = (*i)->getBodyUnit()) != nullptr			// NOTE: This will send the unit through checkCasualties()
 										&& bu->getUnitStatus() == STATUS_UNCONSCIOUS	// to log the kill in attacker's Diary and do morale but will
-										&& bu->getTakenExpl() == false)					// bypass UnitDieBState and its death-notice (no convert).
+										&& bu->getTakenExplosive() == false)			// bypass UnitDieBState and its death-notice (no convert).
 									{
-										bu->setTakenExpl();
+										bu->setTakenExplosive();
 										power_OnUnit = RNG::generate( // 25% - 75%
 																(_powerE	  >> 2u),
 																(_powerE * 3) >> 2u);
@@ -2896,7 +2910,7 @@ void TileEngine::explode(
 									}
 									else if (_powerE > (*i)->getRules()->getArmorPoints()
 										&& (bu == nullptr
-											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExpl() == false)))
+											|| (bu->getUnitStatus() == STATUS_DEAD && bu->getTakenExplosive() == false)))
 									{
 										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 										{
@@ -2935,7 +2949,7 @@ void TileEngine::explode(
 					if (targetUnit != nullptr)
 					{
 						//Log(LOG_INFO) << ". . targetUnit id-" << targetUnit->getId() << " setTaken TRUE";
-						targetUnit->setTakenExpl();
+						targetUnit->setTakenExplosive();
 						// if it's going to bleed to death and it's not a player give credit for the kill.
 						// kL_note: See Above^
 						if (attacker != nullptr)
@@ -2979,7 +2993,7 @@ void TileEngine::explode(
 			++i)
 	{
 		//Log(LOG_INFO) << ". . unitTaken id-" << (*i)->getId() << " reset Taken";
-		(*i)->setTakenExpl(false);
+		(*i)->setTakenExplosive(false);
 	}
 
 

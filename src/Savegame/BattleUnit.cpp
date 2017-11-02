@@ -4599,7 +4599,7 @@ bool BattleUnit::getDashing() const
  * Sets this BattleUnit as having been damaged in a single explosion.
  * @param beenhit - true to not deliver any more damage from a single explosion (default true)
  */
-void BattleUnit::setTakenExpl(bool beenhit)
+void BattleUnit::setTakenExplosive(bool beenhit)
 {
 	_takenExpl = beenhit;
 }
@@ -4608,7 +4608,7 @@ void BattleUnit::setTakenExpl(bool beenhit)
  * Gets if this BattleUnit was aleady damaged in a single explosion.
  * @return, true if this unit has already taken damage
  */
-bool BattleUnit::getTakenExpl() const
+bool BattleUnit::getTakenExplosive() const
 {
 	return _takenExpl;
 }

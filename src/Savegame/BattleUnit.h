@@ -831,9 +831,9 @@ private:
 		bool getDashing() const;
 
 		/// Sets the BattleUnit as having been damaged in a single explosion.
-		void setTakenExpl(bool beenhit = true);
+		void setTakenExplosive(bool beenhit = true);
 		/// Gets if the BattleUnit has aleady been damaged in a single explosion.
-		bool getTakenExpl() const;
+		bool getTakenExplosive() const;
 
 		/// Sets the BattleUnit as having been damaged in a single fire.
 		void setTakenFire(bool beenhit = true);

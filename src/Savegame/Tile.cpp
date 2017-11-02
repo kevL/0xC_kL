@@ -1158,9 +1158,9 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 			{
 				if ((unit = (*i)->getBodyUnit()) != nullptr
 					&& unit->getUnitStatus() == STATUS_UNCONSCIOUS
-					&& unit->getTakenExpl() == false)
+					&& unit->getTakenExplosive() == false)
 				{
-					unit->setTakenExpl();
+					unit->setTakenExplosive();
 
 					if ((vulnr = unit->getArmor()->getDamageModifier(DT_SMOKE)) > 0.f)
 						unit->takeDamage(
