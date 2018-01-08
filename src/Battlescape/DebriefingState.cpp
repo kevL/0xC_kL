@@ -1898,6 +1898,9 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 									case STATUS_UNCONSCIOUS:
 										if (unit->getOriginalFaction() == FACTION_HOSTILE)
 											recoverLiveAlien(unit);
+
+									// TODO: have to handle STATUS_LATENT and/or STATUS_LATENT_START here if
+									// I ever bother to implement 2-stage missions that aren't the final battle.
 								}
 							}
 							break;

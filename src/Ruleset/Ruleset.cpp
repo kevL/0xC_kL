@@ -1558,7 +1558,7 @@ const std::vector<std::string>& Ruleset::getAlienRacesList() const
 }
 
 /**
- * Gets the info about a specific deployment.
+ * Gets the info about a specific alien-deployment.
  * @param type - reference to the RuleAlienDeployment type
  * @return, pointer to Rule for the RuleAlienDeployment
  */
@@ -1572,7 +1572,7 @@ RuleAlienDeployment* Ruleset::getDeployment(const std::string& type) const
 }
 
 /**
- * Gets the list of all alien deployments provided by the ruleset.
+ * Gets the list of all alien-deployments provided by the ruleset.
  * @return, reference to the vector of RuleAlienDeployments
  */
 const std::vector<std::string>& Ruleset::getDeploymentsList() const
