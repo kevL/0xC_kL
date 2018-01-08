@@ -40,7 +40,7 @@ BEGIN
 			VALUE "FileDescription",  RC_DESC
 			VALUE "FileVersion",      "1.0.0.kL\0" //OPENXCOM_VERSION_LONG
 			VALUE "InternalName",     RC_FILE
-			VALUE "LegalCopyright",   "(c)2010-2017\0"
+			VALUE "LegalCopyright",   "(c)2010-2018\0"
 			VALUE "OriginalFilename", RC_FILE
 			VALUE "ProductName",      RC_DESC
 			VALUE "ProductVersion",   "1.0.0.kL\0" //OPENXCOM_VERSION_LONG
