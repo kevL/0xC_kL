@@ -4027,12 +4027,12 @@ int BattleUnit::getFloatHeight() const
  * @note This is one slice only as it is repeated over the entire height of the
  * unit - each tile has only one LOFT. Also, in practice each layer is doubled
  * so that each layer is 2 voxels in height.
- * @param layer - an entry in this BattleUnit's LOFT set (default 0)
+ * @param quad - an entry in this BattleUnit's LOFT set (default 0)
  * @return, this unit's Line of Fire Template id
  */
-size_t BattleUnit::getLoft(size_t layer) const
+size_t BattleUnit::getLoft(size_t quad) const
 {
-	return _loftSet.at(layer);
+	return _loftSet.at(quad);
 }
 
 /**

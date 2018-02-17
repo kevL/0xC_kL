@@ -731,7 +731,7 @@ private:
 		int getKneelHeight() const;
 
 		/// Gets the BattleUnit's loft ID.
-		size_t getLoft(size_t layer = 0u) const;
+		size_t getLoft(size_t quad = 0u) const;
 
 		/// Gets the BattleUnit's victory point value.
 		int getValue() const;

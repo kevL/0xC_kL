@@ -190,7 +190,7 @@ private:
 				const int mapsize_x,
 				const int mapsize_y,
 				const int mapsize_z);
-		/// Initialises the Pathfinding and TileEngine.
+		/// Initializes the Pathfinding and the TileEngine.
 		void initUtilities(const ResourcePack* const res);
 
 		/// Sets the tactical-type.

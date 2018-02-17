@@ -5606,7 +5606,7 @@ bool TileEngine::validMeleeRange(
 					&& (targetUnit == nullptr
 						|| targetUnit == tileTarget->getTileUnit()))
 				{
-					voxelOrigin = Position::toVoxelSpaceCentered( // note this is not center of large unit, rather the center of each quadrant.
+					voxelOrigin = Position::toVoxelSpaceCentered( // note this is not center of large unit, rather the center of a quadrant.
 															posOrigin,
 															actor->getHeight(true) + EYE_OFFSET
 																- tileOrigin->getTerrainLevel());
@@ -5768,26 +5768,24 @@ Tile* TileEngine::getExecutionTile(const BattleUnit* const actor) const
 
 /**
  * Gets a Tile within melee range.
- * @param posOrigin - reference a position origin
- * @param posTarget - reference a position target
+ * @param posOrigin - reference to a position origin
+ * @param posTarget - reference to a position target
  * @return, pointer to a tile within melee range
  */
 Tile* TileEngine::getVerticalTile( // private.
 		const Position& posOrigin,
 		const Position& posTarget) const
 {
-	Tile
-		* tileOrigin (_battleSave->getTile(posOrigin)),
+	Tile* tileOrigin (_battleSave->getTile(posOrigin));
 
-		* tileTargetAbove (_battleSave->getTile(posTarget + Position(0,0, 1))),
-		* tileTargetBelow (_battleSave->getTile(posTarget + Position(0,0,-1)));
-
+	Tile* tileTargetAbove (_battleSave->getTile(posTarget + Position(0,0, 1)));
 	if (tileTargetAbove != nullptr
 		&& std::abs(tileTargetAbove->getTerrainLevel() - (tileOrigin->getTerrainLevel() + 24)) < 9)
 	{
 		return tileTargetAbove;
 	}
 
+	Tile* tileTargetBelow (_battleSave->getTile(posTarget + Position(0,0,-1)));
 	if (tileTargetBelow != nullptr
 		&& std::abs((tileTargetBelow->getTerrainLevel() + 24) + tileOrigin->getTerrainLevel()) < 9)
 	{
@@ -5903,24 +5901,21 @@ VoxelType TileEngine::voxelCheck(
 								// And if any voxel-checks *are* being done during pre-battle, stop it back there.
 
 	//if (_debug) Log(LOG_INFO) << "TileEngine::voxelCheck() targetVoxel " << targetVoxel;
-	const Tile
-		* const tile (_battleSave->getTile(Position::toTileSpace(targetVoxel))),
-		* tileBelow;
+	const Tile* tile (_battleSave->getTile(Position::toTileSpace(targetVoxel)));
 	//Log(LOG_INFO) << ". tile " << tile->getPosition();
+
 	// check if we are out of the map <- we. It's a voxel-check, not a 'we'.
 	if (tile == nullptr)
-//		|| targetVoxel.x < 0
-//		|| targetVoxel.y < 0
-//		|| targetVoxel.z < 0)
 	{
 		//Log(LOG_INFO) << ". vC() ret VOXEL_OUTOFBOUNDS " << Position::toTileSpace(targetVoxel) << " " << targetVoxel;
 		return VOXEL_OUTOFBOUNDS;
 	}
 
+	const Tile* const tileBelow (tile->getTileBelow(_battleSave));
+
 	if (tile->isVoid(false, false) == true
 		&& tile->getTileUnit() == nullptr // TODO: tie this into the boolean-input parameters
-		&& ((tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) == nullptr
-			|| tileBelow->getTileUnit() == nullptr))
+		&& (tileBelow == nullptr || tileBelow->getTileUnit() == nullptr))
 	{
 		//if (_debug) Log(LOG_INFO) << ". vC() ret VOXEL_EMPTY";
 		return VOXEL_EMPTY;
@@ -5933,7 +5928,7 @@ VoxelType TileEngine::voxelCheck(
 		//Log(LOG_INFO) << "voxelCheck() isGravLift";
 		//Log(LOG_INFO) << ". level = " << tile->getPosition().z;
 		if (tile->getPosition().z == 0
-			|| ((tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) != nullptr
+			|| (tileBelow != nullptr
 				&& tileBelow->getMapData(O_FLOOR) != nullptr
 				&& tileBelow->getMapData(O_FLOOR)->isGravLift() == false))
 		{
@@ -5979,35 +5974,55 @@ VoxelType TileEngine::voxelCheck(
 		const BattleUnit* targetUnit (tile->getTileUnit());
 
 		if (targetUnit == nullptr
-			&& tile->isFloored() == false
-			&& (tileBelow = _battleSave->getTile(tile->getPosition() + Position(0,0,-1))) != nullptr)
+			&& tileBelow != nullptr
+			&& tile->isFloored(tileBelow) == false)
 		{
-			targetUnit = tileBelow->getTileUnit();
+			tile = tileBelow;
+			targetUnit = tile->getTileUnit();
 		}
 
 		if (targetUnit != nullptr && targetUnit != excludeUnit //&& targetUnit->isOut_t() == false <- that might be needed if ... for large units i suppose.
 			&& (excludeAllBut == nullptr || targetUnit == excludeAllBut)
 			&& (onlyVisible == false || targetUnit->getUnitVisible() == true))
 		{
-			const Position posUnit (targetUnit->getPosition());
-			const int target_z (posUnit.z * 24 // get foot-level voxel
-							  + targetUnit->getFloatHeight()
-							  - tile->getTerrainLevel());
-
-			if (targetVoxel.z > target_z
-				&& targetVoxel.z <= target_z + targetUnit->getHeight()) // if hit is between foot- and hair-level voxel-layers (z-axis)
+			const Position& posUnit (targetUnit->getPosition());
+			const int unitSize (targetUnit->getArmor()->getSize());
+			
+			int tLevel = 0; // avoid g++ compiler warning.
+			switch (unitSize)
 			{
-				switch (targetUnit->getArmor()->getSize())
+				case 1: tLevel = tile->getTerrainLevel(); break;
+				case 2:
 				{
-					case 2: // for large units...
+					int tLevelTest;
+					for (    int x = 0; x != unitSize; ++x)
+						for (int y = 0; y != unitSize; ++y)
+						{
+							tLevelTest = _battleSave->getTile(posUnit + Position(x,y,0))->getTerrainLevel();
+							if (tLevelTest < tLevel)
+								tLevel = tLevelTest;
+						}
+					break;
+				}
+			}
+
+			const int unit_LowZ (posUnit.z * 24 // get the foot-level voxel-layer
+							  + targetUnit->getFloatHeight()
+							  - tLevel);
+
+			if (targetVoxel.z > unit_LowZ // should this be less than or equal to
+				&& targetVoxel.z <= unit_LowZ + targetUnit->getHeight()) // if hit is between foot- and hair-level voxel-layers (z-axis)
+			{
+				switch (unitSize)
+				{
+					case 1: layer = 0u; break;
+					case 2:
 					{
 						const Position posTile (tile->getPosition());
 						layer = static_cast<size_t>(posTile.x - posUnit.x + ((posTile.y - posUnit.y) << 1u));
 						//Log(LOG_INFO) << ". vC, large unit, LoFT entry = " << layer;
 						break;
 					}
-
-					case 1: layer = 0u;
 				}
 
 //				if (layer > -1)

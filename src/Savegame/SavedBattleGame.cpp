@@ -953,7 +953,7 @@ void SavedBattleGame::initMap(
 }
 
 /**
- * Initializes the map-utilities.
+ * Initializes the battlefield-utilities.
  * @param res - pointer to ResourcePack
  */
 void SavedBattleGame::initUtilities(const ResourcePack* const res)

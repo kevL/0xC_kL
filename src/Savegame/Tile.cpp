@@ -309,18 +309,12 @@ bool Tile::isVoid(
 		const bool testInventory,
 		const bool testVolatiles) const
 {
-	bool ret (_parts[O_FLOOR]		== nullptr
-		   && _parts[O_WESTWALL]	== nullptr
-		   && _parts[O_NORTHWALL]	== nullptr
-		   && _parts[O_OBJECT]		== nullptr);
-
-	if (testInventory == true)
-		ret &= (_inventory.empty() == true);
-
-	if (testVolatiles == true)
-		ret &= (_smoke == 0); // -> fireTiles always have smoke.
-
-	return ret;
+	return _parts[O_FLOOR]     == nullptr
+		&& _parts[O_WESTWALL]  == nullptr
+		&& _parts[O_NORTHWALL] == nullptr
+		&& _parts[O_OBJECT]    == nullptr
+		&& (testInventory == false || _inventory.empty() == true)
+		&& (testVolatiles == false || _smoke == 0); // -> fireTiles always have smoke.
 }
 
 /**
