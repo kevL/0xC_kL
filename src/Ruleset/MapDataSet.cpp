@@ -343,7 +343,7 @@ void MapDataSet::unloadData()
 /**
  * Loads the LOFTEMPS.DAT into the ruleset voxeldata.
  * @param file		- reference to the filename of the DAT file
- * @param voxelData	- pointer to a vector of voxelDatums
+ * @param voxelData	- pointer to a vector to fill with voxel-data
  */
 void MapDataSet::loadLoft( // static.
 		const std::string& file,

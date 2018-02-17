@@ -5937,24 +5937,24 @@ VoxelType TileEngine::voxelCheck(
 		}
 	}
 
-	// first check tile-part voxel-data
-	MapDataType partType;
-	const MapData* partData;
+	// first check for a tile-part's solid-voxel
+	MapDataType type;
+	const MapData* part;
 	size_t
-		loftId,
-		layer ((static_cast<size_t>(targetVoxel.z) % 24) >> 1u),
-		x (15u - static_cast<size_t>(targetVoxel.x) % 16);		// x-axis is reversed for tileParts, standard for battleUnit.
-	const size_t y (static_cast<size_t>(targetVoxel.y) % 16);	// y-axis is standard
+		id,															// this identifies a single row of 16-bits along the x-axis (ie, not an entire LoFT square)
+		loft   ((static_cast<size_t>(targetVoxel.z) % 24) >> 1u),	// 0..11 - this identifies the LoFT square divided by 16 rows ... or whatever.
+		x (15u - static_cast<size_t>(targetVoxel.x) % 16),			// 0..15 - x-axis is reversed for tileParts, standard for battleUnits.
+		y       (static_cast<size_t>(targetVoxel.y) % 16);			// 0..15 - y-axis is standard (const)
 
 	for (size_t
 			i = 0u; // terrain parts [0=floor, 1/2=walls, 3=content-object]
 			i != Tile::PARTS_TILE;
 			++i)
 	{
-		if (tile->isSlideDoorOpen(partType = static_cast<MapDataType>(i)) == false
-			&& (partData = tile->getMapData(partType)) != nullptr
-			&& (loftId = (partData->getLoftId(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 _below)
-			&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
+		if (tile->isSlideDoorOpen(type = static_cast<MapDataType>(i)) == false
+			&& (part = tile->getMapData(type)) != nullptr
+			&& (id = (part->getLoftId(loft) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 _below)
+			&& (_voxelData->at(id) & (1 << x))) // if the voxelData at id is "1" solid:
 		{
 //			if (_debug)
 //			{
@@ -5964,11 +5964,11 @@ VoxelType TileEngine::voxelCheck(
 //				Log(LOG_INFO) << "vC() targetVoxel.y " << targetVoxel.y % 16;
 //				Log(LOG_INFO) << "vC() targetVoxel.z " << targetVoxel.z % 24;
 //			}
-			return static_cast<VoxelType>(partType); // NOTE: MapDataType & VoxelType correspond.
+			return static_cast<VoxelType>(type); // NOTE: MapDataType & VoxelType correspond.
 		}
 	}
 
-	// second check UNIT voxel-data
+	// second check for a UNIT's solid-voxel
 	if (excludeAllUnits == false)
 	{
 		const BattleUnit* targetUnit (tile->getTileUnit());
@@ -5995,10 +5995,10 @@ VoxelType TileEngine::voxelCheck(
 				case 2:
 				{
 					int tLevelTest;
-					for (    int x = 0; x != unitSize; ++x)
-						for (int y = 0; y != unitSize; ++y)
+					for (    int i = 0; i != unitSize; ++i)
+						for (int j = 0; j != unitSize; ++j)
 						{
-							tLevelTest = _battleSave->getTile(posUnit + Position(x,y,0))->getTerrainLevel();
+							tLevelTest = _battleSave->getTile(posUnit + Position(i,j,0))->getTerrainLevel();
 							if (tLevelTest < tLevel)
 								tLevel = tLevelTest;
 						}
@@ -6010,16 +6010,16 @@ VoxelType TileEngine::voxelCheck(
 							  + targetUnit->getFloatHeight()
 							  - tLevel);
 
-			if (targetVoxel.z > unit_LowZ // should this be less than or equal to
+			if (   targetVoxel.z >  unit_LowZ // should this be less than or equal to
 				&& targetVoxel.z <= unit_LowZ + targetUnit->getHeight()) // if hit is between foot- and hair-level voxel-layers (z-axis)
 			{
 				switch (unitSize)
 				{
-					case 1: layer = 0u; break;
+					case 1: loft = 0u; break;
 					case 2:
 					{
 						const Position posTile (tile->getPosition());
-						layer = static_cast<size_t>(posTile.x - posUnit.x + ((posTile.y - posUnit.y) << 1u));
+						loft = static_cast<size_t>(posTile.x - posUnit.x + ((posTile.y - posUnit.y) << 1u));
 						//Log(LOG_INFO) << ". vC, large unit, LoFT entry = " << layer;
 						break;
 					}
@@ -6028,11 +6028,11 @@ VoxelType TileEngine::voxelCheck(
 //				if (layer > -1)
 //				{
 				x = static_cast<size_t>(targetVoxel.x % 16);
-				// That should be (8,8,10) as per BattlescapeGame::handleNonTargetAction() if (_tacAction.type == BA_MELEE)
+				// That should be voxel (8,8,10) per BattlescapeGame::handleNonTargetAction() if (_tacAction.type == BA_MELEE).
 
 				//Log(LOG_INFO) << "loftId = " << loftId << " vD-size = " << (int)_voxelData->size();
-				if ((loftId = (targetUnit->getLoft(layer) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 ^above)
-					&& (_voxelData->at(loftId) & (1 << x))) // if the voxelData at loftId is "1" solid:
+				if ((id = (targetUnit->getLoft(loft) << 4u) + y) < _voxelData->size() // davide, http://openxcom.org/forum/index.php?topic=2934.msg32146#msg32146 (x2 ^above)
+					&& (_voxelData->at(id) & (1 << x))) // if the voxelData at id is "1" solid:
 				{
 					//Log(LOG_INFO) << ". vC() ret VOXEL_UNIT";
 					return VOXEL_UNIT;
