@@ -116,18 +116,6 @@ void SoundSet::loadCat(
 				if (bytes > 0u) // omit trailing null byte
 					--bytes;
 
-				unsigned headersize (bytes + 36u);
-				std::memcpy(
-						header + 4,
-						&headersize,
-						sizeof(headersize));
-
-				unsigned soundsize (bytes);
-				std::memcpy(
-						header + 40,
-						&soundsize,
-						sizeof(soundsize));
-
 				newsound = new unsigned char[44u + bytes * 2u];
 				std::memcpy(
 						newsound,
@@ -151,6 +139,18 @@ void SoundSet::loadCat(
 					*wet = sound[5u + (offset16 >> 16u)];
 				}
 				bytes = newsize + 44u;
+
+				unsigned headersize (newsize + 36u);
+				std::memcpy(
+						newsound + 4,
+						&headersize,
+						sizeof(headersize));
+
+				unsigned soundsize (newsize);
+				std::memcpy(
+						newsound + 40,
+						&soundsize,
+						sizeof(soundsize));
 			}
 		}
 		else if (0x40 == sound[0x18]
