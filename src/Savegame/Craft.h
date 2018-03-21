@@ -63,12 +63,12 @@ private:
 	static const int TAKEOFF_DELAY = 75;
 
 	bool
-		_tactical,
 		_inDogfight,
-		_interceptLanded,
 		_lowFuel,
 		_showReady,
+		_tactical,
 		_tacticalReturn,
+		_targetGround,
 		_warned,
 		
 		_w1Disabled,
@@ -277,10 +277,10 @@ private:
 				const Ruleset* const rules,
 				bool updateCraft = true);
 
-		/// Sets the Craft as intercepting a land-site.
-		void interceptLanded(bool intercept);
-		/// Gets if the Craft is intercepting a land-site.
-		bool interceptLanded() const;
+		/// Sets the Craft as intercepting a ground-target.
+		void interceptGroundTarget(bool intercept);
+		/// Gets if the Craft is intercepting a ground-target.
+		bool interceptGroundTarget() const;
 
 		/// Gets the Craft's cost for tactical.
 		int getOperationalExpense() const;

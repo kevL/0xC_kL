@@ -402,11 +402,12 @@ void ConfirmLandingState::btnPatrolClick(Action*)
 
 /**
  * The Craft stays targeted on a UFO if there are no Soldiers onboard.
+ * @note See the 'allowTactical' par in the cTor.
  * @param action - pointer to an Action
  */
 void ConfirmLandingState::btnInterceptClick(Action*)
 {
-	_craft->interceptLanded(true);
+	_craft->interceptGroundTarget(true);
 	_game->popState();
 }
 

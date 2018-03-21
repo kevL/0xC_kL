@@ -82,7 +82,7 @@ Craft::Craft(
 		_warned(false), // do not save-to-file; ie, re-warn player if reloading
 		_kills(0),
 		_showReady(false),
-		_interceptLanded(false),
+		_targetGround(false),
 		_w1Disabled(false), // TODO: save weapon-disabled states to file.
 		_w2Disabled(false)
 {
@@ -671,7 +671,7 @@ unsigned Craft::getHeadingInt() const
  */
 void Craft::setTarget(Target* const target)
 {
-	_interceptLanded = false;
+	_targetGround = false;
 
 	MovingTarget::setTarget(target);
 
@@ -1583,21 +1583,27 @@ void Craft::unloadCraft(
 }
 
 /**
- * Sets this Craft as intercepting a land-site.
+ * Sets this Craft as intercepting a ground-target.
+ * @note This is used only by non-transport craft so that player can at least
+ * see the data of a ConfirmLanding screen but without being allowed to start
+ * tactical.
  * @param intercept - true to intercept
  */
-void Craft::interceptLanded(bool intercept)
+void Craft::interceptGroundTarget(bool intercept)
 {
-	_interceptLanded = intercept;
+	_targetGround = intercept;
 }
 
 /**
- * Gets if this Craft is intercepting a land-site.
+ * Gets if this Craft is intercepting a ground-target.
+ * @note This is used only by non-transport craft so that player can at least
+ * see the data of a ConfirmLanding screen but without being allowed to start
+ * tactical.
  * @return, true if intercept
  */
-bool Craft::interceptLanded() const
+bool Craft::interceptGroundTarget() const
 {
-	return _interceptLanded;
+	return _targetGround;
 }
 
 /**
@@ -1618,6 +1624,7 @@ void Craft::setWeaponDisabled(int hardpoint, bool disabled)
 {
 	switch (hardpoint)
 	{
+		default:
 		case 1: _w1Disabled = disabled; break;
 		case 2: _w2Disabled = disabled; break;
 	}
@@ -1632,6 +1639,7 @@ bool Craft::getWeaponDisabled(int hardpoint) const
 {
 	switch (hardpoint)
 	{
+		default:
 		case 1: return _w1Disabled;
 		case 2: return _w2Disabled;
 	}

@@ -1724,7 +1724,7 @@ void GeoscapeState::time5Seconds()
 								switch (ufo->getUfoStatus())
 								{
 									case Ufo::FLYING:
-										(*j)->interceptLanded(false);
+										(*j)->interceptGroundTarget(false);
 
 										if (_dogfights.size() + _dogfightsToStart.size() < 4u) // no more than 4 interception-windows at once.
 										{
@@ -1748,7 +1748,6 @@ void GeoscapeState::time5Seconds()
 													}
 
 													startDogfight();
-													_tmrDfStart->start();
 												}
 
 												initDfMusic = true;
@@ -1759,8 +1758,8 @@ void GeoscapeState::time5Seconds()
 
 									case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
 									case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
-										if ((*j)->inDogfight() == false // NOTE: Allows non-transport Craft to case the joint.
-											&& (*j)->interceptLanded() == false)
+										if ((*j)->inDogfight() == false					// NOTE: Allows non-transport Craft to case the joint.
+											&& (*j)->interceptGroundTarget() == false)	// prevent non-transport craft starting tactical
 										{
 											resetTimer();
 
@@ -3819,14 +3818,21 @@ void GeoscapeState::startDogfight() // private.
 {
 	if (_globe->getZoom() < _globe->getZoomLevels() - 1u)
 	{
+		if (_tmrDfStart->isRunning() == false)
+			_tmrDfStart->start();
+
 		if (_tmrDfZinn->isRunning() == false)
 			_tmrDfZinn->start();
 	}
 	else
 	{
+		if (_tmrDfStart->isRunning() == true)
+			_tmrDfStart->stop();
+
+		if (_tmrDfZinn->isRunning() == true)
+			_tmrDfZinn->stop();
+
 		resetTimer();
-		_tmrDfStart->stop();
-		_tmrDfZinn->stop();
 
 		if (_tmrDogfight->isRunning() == false)
 			_tmrDogfight->start();
