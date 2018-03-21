@@ -162,6 +162,7 @@ void MovingTarget::checkTargets() // private.
 	if (_target != nullptr)
 	{
 		bool destroy (true);
+
 		for (std::vector<Target*>::const_iterator
 				i = _target->getTargeters()->begin();
 				i != _target->getTargeters()->end();

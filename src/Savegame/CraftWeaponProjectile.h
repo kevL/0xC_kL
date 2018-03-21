@@ -61,16 +61,14 @@ class CraftWeaponProjectile
 
 private:
 	bool
-		_done,
-		_missed;
+		_finished,	// for Beam-type
+		_passed;	// for Missile-type (ie, these are redundant)
 	int
 		_accuracy,
 		_dist,		// large #
-		_pos,		// large #
-					// relative to interceptor, apparently, which is a problem
-					// when the interceptor disengages while projectile is in flight.
-
-					// kL_note: also, something screws with when a missile is launched
+		_pos,		// large # relative to interceptor
+					//
+					// kL_NOTE: something screws with when a missile is launched
 					// but UFO is downed, by other weapon, before it hits; the missile
 					// is then not removed from the craft's ordnance.
 		_posHori,
@@ -109,16 +107,16 @@ private:
 		/// Sets the CraftWeaponProjectile's y-position.
 		void setCwpPosition(int pos);
 		/// Gets the CraftWeaponProjectile's y-position.
-		int getCwpPosition() const;
+		int getCwpPosition(bool pixels = false) const;
 		/// Sets the CraftWeaponProjectile's horizontal position. This determines from which weapon it has been fired.
 		void setHorizontalPosition(int pos);
 		/// Gets the CraftWeaponProjectile's horizontal position.
 		int getHorizontalPosition() const;
 
-		/// Flags the CraftWeaponProjectile for removal.
+		/// Sets the CraftWeaponProjectile for removal.
 		void setFinished();
 		/// Checks if the CraftWeaponProjectile should be removed.
-		bool isFinished() const;
+		bool getFinished() const;
 
 		/// Gets the state of beam-type CraftWeaponProjectile.
 		Uint8 getBeamPhase() const;
@@ -133,17 +131,17 @@ private:
 		/// Gets the accuracy of the CraftWeaponProjectile.
 		int getAccuracy() const;
 
-		/// Sets the CraftWeaponProjectile as having missed its target.
-		void setMissed();
-		/// Checks if this CraftWeaponProjectile already missed its target.
-		bool isMissed() const;
+		/// Sets the CraftWeaponProjectile as having passed its target.
+		void setPassed();
+		/// Checks if the CraftWeaponProjectile passed its target.
+		bool getPassed() const;
 
 		/// Sets the maximum range of the CraftWeaponProjectile.
-		void setRange(
+		void setCwpRange(
 				int range,
 				bool convert = false);
 		/// Gets the maximum range of the CraftWeaponProjectile.
-		int getRange() const;
+		int getCwpRange() const;
 
 		/// Sets the speed of a missile-type CraftWeaponProjectile.
 		void setSpeed(const int speed);

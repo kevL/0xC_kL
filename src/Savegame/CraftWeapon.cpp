@@ -218,7 +218,7 @@ CraftWeaponProjectile* CraftWeapon::fire() const
 	prj->setSpeed(_cwRule->getProjectileSpeed());
 	prj->setAccuracy(_cwRule->getAccuracy());
 	prj->setPower(_cwRule->getPower());
-	prj->setRange(_cwRule->getRange(), true);
+	prj->setCwpRange(_cwRule->getRange(), true);
 
 	return prj;
 }

@@ -663,7 +663,8 @@ void AlienMission::ufoReachedWaypoint(
 		wp->setLatitude(coord.second);
 		ufo.setTarget(wp); // NOTE: Target must be set before speed.
 
-		if (ufo.getAltitude() == MovingTarget::stAltitude[0u]) // UFO landed.
+//		if (ufo.getAltitude() == MovingTarget::stAltitude[0u]) // UFO landed.
+		if (ufo.getUfoStatus() == Ufo::LANDED)
 		{
 			//Log(LOG_INFO) << ". . . ufo is Landed";
 			size_t wave;

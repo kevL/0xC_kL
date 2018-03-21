@@ -1951,7 +1951,7 @@ double Base::insideRadarRange(const Target* const target) const
 }
 
 /**
- ** FUNCTOR **
+ ** FUNCTOR ***
  * Functor to check for mind shield capability.
  *
 struct isMindShield
@@ -1975,7 +1975,7 @@ bool isMindShield::operator()(const BaseFacility* facility) const
 } */
 
 /**
- ** FUNCTOR **
+ ** FUNCTOR ***
  * Functor to check for completed facilities.
  *
 struct isCompleted

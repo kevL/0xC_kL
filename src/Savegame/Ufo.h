@@ -64,7 +64,7 @@ private:
 	int
 		_escapeCountdown,
 		_fireCountdown,
-		_hitFrame,
+		_hitStep,
 		_hull,
 		_idCrashed,
 		_idLanded,
@@ -211,9 +211,9 @@ private:
 		const UfoTrajectory& getTrajectory() const
 		{ return *_trajectory; }
 
-		/// Sets the interceptor engaging the Ufo.
-		void setShootingAt(size_t target);
-		/// Gets the interceptor engaging the Ufo.
+		/// Sets the interceptor engaged by the Ufo.
+		void setShootingAt(size_t slot);
+		/// Gets the interceptor engaged by the Ufo.
 		size_t getShootingAt() const;
 
 		/// Sets the Ufo's landing site ID.
@@ -225,10 +225,10 @@ private:
 		/// Gets the Ufo's crash site ID.
 		int getCrashId() const;
 
-		/// Sets the Ufo's hit frame.
-		void setHitFrame(int frame);
-		/// Gets the Ufo's hit frame.
-		int getHitFrame() const;
+		/// Sets the Ufo's hit-step.
+		void setHitStep(int step);
+		/// Gets the Ufo's hit-step.
+		int getHitStep() const;
 
 		/// Sets the time left before the Ufo can fire in a Dogfight.
 		void setFireCountdown(int ticks);

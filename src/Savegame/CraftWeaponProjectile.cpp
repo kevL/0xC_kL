@@ -38,8 +38,8 @@ CraftWeaponProjectile::CraftWeaponProjectile()
 		_accuracy(0),
 		_power(0),
 		_range(0),
-		_done(false),
-		_missed(false),
+		_finished(false),
+		_passed(false),
 		_dist(0)
 {}
 
@@ -113,7 +113,7 @@ void CraftWeaponProjectile::stepProjectile()
 		case PGT_MISSILE:
 		{
 			if (_dist > _range) // check if projectile passed its max-range on previous tick
-				_missed = true;
+				_passed = true;
 
 			int delta; // check if projectile will reach its max-range this tick
 
@@ -135,7 +135,7 @@ void CraftWeaponProjectile::stepProjectile()
 
 		case PGT_BEAM:
 			if ((_beamPhase >>= 1u) == 1u)
-				_done = true;
+				_finished = true;
 	}
 }
 
@@ -152,10 +152,14 @@ void CraftWeaponProjectile::setCwpPosition(int pos)
 /**
  * Gets the y-position of this CraftWeaponProjectile on the player's
  * dogfight-radar.
+ * @param pixels - true to convert from ruleset's value to pixels (default false)
  * @return, the y-position
  */
-int CraftWeaponProjectile::getCwpPosition() const
+int CraftWeaponProjectile::getCwpPosition(bool pixels) const
 {
+	if (pixels == true)
+		return _pos >> 3u;
+
 	return _pos;
 }
 
@@ -181,25 +185,25 @@ int CraftWeaponProjectile::getHorizontalPosition() const
 }
 
 /**
- * Flags this CraftWeaponProjectile for removal.
+ * Sets this CraftWeaponProjectile as finished and should be deleted.
  */
 void CraftWeaponProjectile::setFinished()
 {
-	_done = true;
+	_finished = true;
 }
 
 /**
- * Checks if this CraftWeaponProjectile should be removed.
- * @return, true to remove
+ * Checks if this CraftWeaponProjectile has finished and should be deleted.
+ * @return, true to delete
  */
-bool CraftWeaponProjectile::isFinished() const
+bool CraftWeaponProjectile::getFinished() const
 {
-	return _done;
+	return _finished;
 }
 
 /**
  * Gets the animation-phase of this CraftWeaponProjectile if beam-type.
- * @return, the phase
+ * @return, the current phase
  */
 Uint8 CraftWeaponProjectile::getBeamPhase() const
 {
@@ -245,22 +249,22 @@ int CraftWeaponProjectile::getAccuracy() const
 }
 
 /**
- * Flags this CraftWeaponProjectile as having missed its target.
+ * Sets this CraftWeaponProjectile as having passed its target.
  * @note Only for projectiles not beams.
  */
-void CraftWeaponProjectile::setMissed()
+void CraftWeaponProjectile::setPassed()
 {
-	_missed = true;
+	_passed = true;
 }
 
 /**
- * Checks if this CraftWeaponProjectile already missed its target.
+ * Checks if this CraftWeaponProjectile passed its target.
  * @note Only for projectiles not beams.
- * @return, true if missed
+ * @return, true if the projectile missed its target
  */
-bool CraftWeaponProjectile::isMissed() const
+bool CraftWeaponProjectile::getPassed() const
 {
-	return _missed;
+	return _passed;
 }
 
 /**
@@ -268,7 +272,7 @@ bool CraftWeaponProjectile::isMissed() const
  * @param range		- the range
  * @param convert	- true to convert from "kilometers" to Dogfight distance (default false)
  */
-void CraftWeaponProjectile::setRange(
+void CraftWeaponProjectile::setCwpRange(
 		int range,
 		bool convert)
 {
@@ -280,7 +284,7 @@ void CraftWeaponProjectile::setRange(
  * Gets the maximum range of this CraftWeaponProjectile.
  * @return, the range
  */
-int CraftWeaponProjectile::getRange() const
+int CraftWeaponProjectile::getCwpRange() const
 {
 	return _range;
 }

@@ -69,7 +69,7 @@ private:
 	static const Uint32 FAST_GEO_INTERVAL = 20u;
 	static const size_t
 		UFO_HOTBLOBS = 16u,
-		BLOBSIZE	 = 13u;
+		BLOBSIZE     = 13u;
 
 	static const Uint8
 		YELLOW_D	=  11u,
@@ -84,7 +84,7 @@ private:
 
 	bool
 		_dfCenterCurrentCoords,
-		_dfZoomOut,
+		_dfZout,
 		_pause,
 		_pauseHard;
 	int
@@ -95,7 +95,7 @@ private:
 		_timeSurplus,
 		_score;
 	int64_t _windowPops;
-	size_t _dfMinimized;
+	size_t _dfReduced;
 	double
 		_dfCCC_lon,
 		_dfCCC_lat;
@@ -153,11 +153,11 @@ private:
 		* _sideTop,
 		* _sideBottom;
 	Timer
-		* _timerGeo,
-		* _timerDf,
-		* _timerDfStart,
-		* _timerDfZoomIn,
-		* _timerDfZoomOut;
+		* _tmrGeo,
+		* _tmrDogfight,
+		* _tmrDfStart,
+		* _tmrDfZinn,
+		* _tmrDfZout;
 	Ufo* _hostileUfos[UFO_HOTBLOBS];
 
 	std::list<State*> _popups;
@@ -242,9 +242,6 @@ private:
 		/// Triggers if 1 month passes.
 		void time1Month();
 
-		/// Checks if user-input is not allowed.
-		bool inputDisabled();
-
 		/// Sets the time-compression to 5-sec intervals.
 		void resetTimer();
 		/// Checks if time-compression is set to 5-sec intervals.
@@ -255,6 +252,9 @@ private:
 
 		/// Gets the geoscape Globe.
 		Globe* getGlobe() const;
+
+		/// Checks if user-input is not allowed.
+		bool inputDisabled();
 
 		/// Handler for clicking the Globe.
 		void globeClick(Action* action);
@@ -316,30 +316,28 @@ private:
 		/// Handler for right-clicking the Zoom Out icon.
 //		void btnZoomOutRightClick(Action* action);
 
-		/// Gets the Timer for dogfight zoom-ins.
-		Timer* getDfZoomInTimer() const;
-		/// Gets the Timer for dogfight zoom-outs.
-		Timer* getDfZoomOutTimer() const;
-		/// Globe zoom in effect for dogfights.
+		/// Handles zoom-in to zoom-out or vice versa for a dogfight.
+		void toggleDogfight(bool in) const;
+		/// Globe zoom-in effect for dogfights.
 		void dfZoomIn();
-		/// Globe zoom out effect for dogfights.
+		/// Globe zoom-out effect for dogfights.
 		void dfZoomOut();
 		/// Stores current Globe coordinates and zoom before a dogfight.
-		void storePreDfCoords();
+		void storePreDogfightCoords();
 		/// Tells Dogfight zoom-out to ignore stored DF coordinates.
 		void setDfCCC(
 				double lon,
 				double lat);
 		/// Checks if the Dogfight zoom-out should ignore stored DF-coordinates.
 		bool getDfCCC() const;
-		/// Gets the quantity of minimized dogfights.
-		size_t getMinimizedDfCount() const;
+		/// Gets the quantity of iconized dogfights.
+		size_t getQtyReducedDogfights() const;
 		/// Multi-dogfights logic handling.
 		void thinkDogfights();
-		/// Updates interceptions windows for all Dogfights.
+		/// Updates intercept-data and repositions ports for all Dogfights.
 		void resetInterceptPorts();
-		/// Gets first free dogfight slot.
-		size_t getOpenDfSlot() const;
+		/// Gets the first available intercept-slot.
+		size_t getAvailableInterceptSlot() const;
 
 		/// Gets the dogfights.
 		std::list<DogfightState*>& getDogfights();

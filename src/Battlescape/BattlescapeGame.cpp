@@ -216,64 +216,67 @@ void BattlescapeGame::think()
 	//Log(LOG_INFO) << "bg:think()";
 	if (_battleStates.empty() == true) // nothing is happening -> see if they need some aLien AI or units panicking or whatever
 	{
-		switch (_battleSave->getSide())
-		{
-			case FACTION_PLAYER:
-				if (_playerPanicHandled == false) // not all panicking units have been handled
-				{
-					//Log(LOG_INFO) << ". panic Handled is FALSE";
-					_battleSave->getBattleState()->updateSoldierInfo(false);		// update HUD.
-					if ((_playerPanicHandled = handlePanickingPlayer()) == true)	// start Player turn.
-					{
-						//Log(LOG_INFO) << ". panic Handled TRUE";
-						getTileEngine()->calcFovTiles_all();
-						getTileEngine()->calcFovUnits_all();
-						_battleSave->getBattleState()->updateSoldierInfo(false);	// update HUD.
-					}
-				}
-				else
-				{
-					//Log(LOG_INFO) << ". panic Handled is TRUE";
-					_battleState->updateExperienceInfo();
-				}
-				break;
-
-			case FACTION_HOSTILE:
-			case FACTION_NEUTRAL:
-				if (_debugPlay == false)
-				{
-					BattleUnit* selUnit (_battleSave->getSelectedUnit());
-					if (selUnit != nullptr)
-					{
-						//Log(LOG_INFO) << "bg:think() selUnit VALID id-" << selUnit->getId();
-						_battleState->printDebug(Text::intWide(selUnit->getId()));
-						if (handlePanickingUnit(selUnit) == false)
-						{
-							//Log(LOG_INFO) << "bg:think() . handleUnitAI()";
-							handleUnitAI(selUnit); // will select next AI-unit when the current unit is done.
-						}
-					}
-					else if ((selUnit = _battleSave->firstFactionUnit(_battleSave->getSide())) != nullptr)
-					{
-						//Log(LOG_INFO) << "bg:think() first VALID id-" << selUnit->getId();
-						_AIActionCounter = 0;
-
-						_battleSave->setSelectedUnit(selUnit);
-						getMap()->getCamera()->centerPosition(selUnit->getPosition(), false);
-					}
-					else
-					{
-						//Log(LOG_INFO) << "bg:think() endAiTurn (think)";
-						endAiTurn();
-					}
-				}
-		}
-
 		if (_battleSave->unitsFalling() == true)
 		{
 			//Log(LOG_INFO) << ". Units are Falling() selUnit id-" << _battleSave->getSelectedUnit()->getId();
 			_battleSave->unitsFalling() = false;
 			stateBPushFront(new UnitFallBState(this));
+		}
+		else
+		{
+			switch (_battleSave->getSide())
+			{
+				case FACTION_PLAYER:
+					if (_playerPanicHandled == false) // not all panicking units have been handled
+					{
+						//Log(LOG_INFO) << ". panic Handled is FALSE";
+						_battleSave->getBattleState()->updateSoldierInfo(false);		// update HUD.
+						if ((_playerPanicHandled = handlePanickingPlayer()) == true)	// start Player turn.
+						{
+							//Log(LOG_INFO) << ". panic Handled TRUE";
+							getTileEngine()->calcFovTiles_all();
+							getTileEngine()->calcFovUnits_all();
+							_battleSave->getBattleState()->updateSoldierInfo(false);	// update HUD.
+						}
+					}
+					else
+					{
+						//Log(LOG_INFO) << ". panic Handled is TRUE";
+						_battleState->updateExperienceInfo();
+					}
+					break;
+
+				case FACTION_HOSTILE:
+				case FACTION_NEUTRAL:
+					if (_debugPlay == false)
+					{
+						BattleUnit* selUnit (_battleSave->getSelectedUnit());
+						if (selUnit != nullptr)
+						{
+							//Log(LOG_INFO) << "bg:think() selUnit VALID id-" << selUnit->getId();
+							_battleState->printDebug(Text::intWide(selUnit->getId()));
+
+							if (handlePanickingUnit(selUnit) == false)
+							{
+								//Log(LOG_INFO) << "bg:think() . handleUnitAI()";
+								handleUnitAI(selUnit); // will select next AI-unit when the current unit is done.
+							}
+						}
+						else if ((selUnit = _battleSave->firstFactionUnit(_battleSave->getSide())) != nullptr)
+						{
+							//Log(LOG_INFO) << "bg:think() first VALID id-" << selUnit->getId();
+							_AIActionCounter = 0;
+
+							_battleSave->setSelectedUnit(selUnit);
+							getMap()->getCamera()->centerPosition(selUnit->getPosition(), false);
+						}
+						else
+						{
+							//Log(LOG_INFO) << "bg:think() endAiTurn (think)";
+							endAiTurn();
+						}
+					}
+			}
 		}
 	}
 	//Log(LOG_INFO) << "BattlescapeGame::think() EXIT";

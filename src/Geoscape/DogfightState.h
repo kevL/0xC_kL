@@ -35,14 +35,15 @@ enum ColorDf
 	CRAFT_MAX,			//  1
 	RADAR_MIN,			//  2
 	RADAR_MAX,			//  3
-	DAMAGE_MIN,			//  4
-	DAMAGE_MAX,			//  5
+	DAMAGE_RED,			//  4
+	DAMAGE_YEL,			//  5
 	BLOB_MIN,			//  6
 	BLOB_MAX,			//  7
 	RANGE_METER,		//  8
 	DISABLED_WEAPON,	//  9
 	DISABLED_AMMO,		// 10
-	DISABLED_RANGE		// 11
+	DISABLED_RANGE,		// 11
+	UFO_BEAM			// 12
 };
 
 enum CautionLevel
@@ -78,38 +79,37 @@ private:
 	static const int
 		_projectileBlobs[4u][6u][3u],
 
-		DST_ENGAGE		= 635,
-		DST_STANDOFF	= 595,
-		DST_CLOSE		=  64,
-		MSG_TIMEOUT		=  25;
+		DIST_ENGAGE   = 635,
+		DIST_STANDOFF = 595,
+		DIST_CLOSE    =  60,
 
-	static const Uint8 RED = 128u;
+		STAT_PERSIST  =  25;
 
 
 	bool
-		_animatingHit,
-		_destroyUfo,
 		_destroyCraft,
-		_end,
-		_stopDogfight,
-		_minimized,
+		_destroyUfo,
+		_finish,
+		_finishRequest,
+		_reduced,
 		_ufoBreakingOff,
 		_w1Enabled,
 		_w2Enabled;
 	int
-		_diff,
-		_timeout,
-		_dist,
 		_desired,
+		_diff,
+		_dist,
+		_textPersistence,
 
 		_ufoSize,
 		_craftHeight,
 		_craftHeight_pre,
+		_refreshCraft,
 
 		_x,
 		_y,
-		_minimizedIconX,
-		_minimizedIconY,
+		_restoreIconX,
+		_restoreIconY,
 
 		_w1FireCountdown,
 		_w2FireCountdown,
@@ -117,9 +117,8 @@ private:
 		_w2FireInterval;
 	size_t
 		_slot,
-		_totalIntercepts;
-	Uint8 _colors[12u]; // see ColorDf enum above^
-//		_currentCraftDamageColor;
+		_slotsTotal;
+	Uint8 _colors[13u]; // see ColorDf enum above^
 
 	CautionLevel _cautionLevel;
 
@@ -137,8 +136,8 @@ private:
 		* _btnUfo,
 		* _craftStance;
 	InteractiveSurface
-		* _btnMinimize,
-		* _btnMinimizedIcon,
+		* _btnReduce,
+		* _btnRestoreIcon,
 		* _previewUfo,
 		* _isfCw1,
 		* _isfCw2;
@@ -154,23 +153,38 @@ private:
 		* _txtLoad1,
 		* _txtLoad2,
 		* _txtDistance,
-		* _txtMinimizedIcon,
+		* _txtRestoreIcon,
 		* _txtStatus,
 		* _txtTitle;
-	Timer* _craftDamageAnimTimer;
 	Ufo* _ufo;
 
-	/// Closes or extends interceptor distance.
+	/// Changes distance between the Craft and UFO.
 	void adjustDistance(bool hasWeapons = true);
 
 	/// Changes the status text.
 	void updateStatus(const std::string& status);
+
+	/// Draws UFO.
+	void drawUfo();
+	/// Draws projectiles.
+	void drawProjectile(const CraftWeaponProjectile* const prj);
+	/// Draws Craft.
+	void drawCraft(bool init = false);
+
 	/// Moves window to new position.
 	void placePort();
-	/// Ends the Dogfight.
-	void stopDogfight();
 	/// Gets the globe texture icon to display for the interception.
 	const std::string& getTextureIcon() const;
+
+	/// Checks if the Craft and UFO are still actively engaged.
+	bool checkTargets() const;
+
+	/// Checks for and determines a retaliation mission if applicable.
+	void checkRetaliation(double lon, double lat) const;
+
+	/// Sets this Dogfight's '_statusPersistence' value.
+	void setTextPersistence(int ticks)
+	{ _textPersistence = ticks; }
 
 
 	public:
@@ -214,42 +228,33 @@ private:
 		/// Handler for clicking the Preview graphic.
 		void previewClick(Action* action);
 		/// Handler for clicking the Minimize Dogfight button.
-		void btnMaximizedDfClick(Action* action);
-		/// Handler for clicking the Maximize Dogfight icon.
-		void btnMinimizedDfPress(Action* action);
+		void btnReduceToIconClick(Action* action);
+		/// Handler for clicking the Restore Dogfight icon.
+		void btnShowPortPress(Action* action);
 
-		/// Returns true if state is minimized.
-		bool isMinimized() const;
-		/// Returns true if Craft stance is in stand-off.
-		bool isStandingOff() const;
+		/// Checks if the state is iconized.
+		bool isReduced() const;
+		/// Checks if Craft stance is in stand-off.
+		bool checkStandoff() const;
 
-		/// Draws UFO.
-		void drawUfo();
-		/// Draws projectiles.
-		void drawProjectile(const CraftWeaponProjectile* const prj);
-		/// Animates Craft damage.
-		void aniCraftDamage();
-		/// Draws Craft damage.
-		void drawCraftDamage(bool init = false);
-
-		/// Toggles usage of weapon 1.
+		/// Toggles usage of Craft weapon 1.
 		void weapon1Click(Action* action);
-		/// Toggles usage of weapon 2.
+		/// Toggles usage of Craft weapon 2.
 		void weapon2Click(Action* action);
 
+		/// Sets interception slot.
+		void setInterceptSlot(size_t slot);
 		/// Gets interception slot.
 		size_t getInterceptSlot() const;
-		/// Sets interception slot.
-		void setInterceptSlot(const size_t intercept);
 		/// Sets total interceptions in progress.
-		void setTotalIntercepts(const size_t intercepts);
-		/// Calculates and positions this interception's view window.
+		void setTotalInterceptSlots(size_t total);
+		/// Calculates positions for the intercept-ports.
 		void resetInterceptPort(
-				size_t dfOpen,
-				size_t dfOpenTotal);
+				size_t port,
+				size_t portsTotal);
 
-		/// Checks if the Dogfight should be stopped.
-		bool isDogfightStopped() const;
+		/// Checks if the Dogfight should be stopped and deleted.
+		bool isFinished() const;
 
 		/// Gets pointer to the UFO in the Dogfight.
 		Ufo* getUfo() const;
@@ -260,12 +265,8 @@ private:
 		/// Sets pointer to the xCom Craft in the Dogfight to nullptr.
 		void clearCraft();
 
-		/// Gets the current distance between UFO and Craft.
+		/// Gets the current distance between Craft and UFO.
 		int getDistance() const;
-
-		/// Sets this Dogfight's '_timeout' value.
-		void setTimeout(int val)
-		{ _timeout = val; }
 };
 
 }

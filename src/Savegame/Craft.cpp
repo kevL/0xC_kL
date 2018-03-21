@@ -689,16 +689,16 @@ size_t Craft::getQtyWeapons() const
 {
 	if (_crRule->getWeaponCapacity() != 0u)
 	{
-		size_t ret (0u);
+		size_t qty (0u);
 		for (std::vector<CraftWeapon*>::const_iterator
 				i = _weapons.begin();
 				i != _weapons.end();
 				++i)
 		{
 			if (*i != nullptr)
-				++ret;
+				++qty;
 		}
-		return ret;
+		return qty;
 	}
 	return 0u;
 }
@@ -711,16 +711,16 @@ int Craft::getQtySoldiers() const
 {
 	if (_crRule->getSoldierCapacity() != 0)
 	{
-		int ret (0);
+		int qty (0);
 		for (std::vector<Soldier*>::const_iterator
 				i = _base->getSoldiers()->begin();
 				i != _base->getSoldiers()->end();
 				++i)
 		{
 			if ((*i)->getCraft() == this)
-				++ret;
+				++qty;
 		}
-		return ret;
+		return qty;
 	}
 	return 0;
 }
@@ -1065,7 +1065,7 @@ void Craft::checkup()
 	bool showReady (_status != CS_READY);
 
 	int
-		cw (0),
+		cw    (0),
 		armok (0);
 
 	if (_crRule->getWeaponCapacity() != 0u)

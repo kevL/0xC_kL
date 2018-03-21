@@ -72,7 +72,7 @@ Ufo::Ufo(
 		_detected(false),
 		_hyperDetected(false),
 		_shootingAt(0u),
-		_hitFrame(0),
+		_hitStep(0),
 		_processedIntercept(false),
 		_fireCountdown(0),
 		_escapeCountdown(0)
@@ -818,17 +818,17 @@ const std::string& Ufo::getUfoMissionType() const
 }
 
 /**
- * Sets the intercept-port this Ufo is shooting at during a Dogfight.
- * @param target - interception-port-ID
+ * Sets the intercept-slot this Ufo is shooting at during a Dogfight.
+ * @param slot - intercept-slot
  */
-void Ufo::setShootingAt(size_t target)
+void Ufo::setShootingAt(size_t slot)
 {
-	_shootingAt = target;
+	_shootingAt = slot;
 }
 
 /**
- * Gets the intercept-port this Ufo is shooting at during a Dogfight.
- * @return, interception-port-ID
+ * Gets the intercept-slot this Ufo is shooting at during a Dogfight.
+ * @return, intercept-slot
  */
 size_t Ufo::getShootingAt() const
 {
@@ -872,21 +872,21 @@ int Ufo::getCrashId() const
 }
 
 /**
- * Sets this Ufo's hit-frame.
- * @param frame - hit-frame
+ * Sets this Ufo's hit-step.
+ * @param step - hit-step
  */
-void Ufo::setHitFrame(int frame)
+void Ufo::setHitStep(int step)
 {
-	_hitFrame = frame;
+	_hitStep = step;
 }
 
 /**
- * Gets this Ufo's hit-frame.
- * @return, hit-frame
+ * Gets this Ufo's hit-step.
+ * @return, hit-step
  */
-int Ufo::getHitFrame() const
+int Ufo::getHitStep() const
 {
-	return _hitFrame;
+	return _hitStep;
 }
 
 /**
