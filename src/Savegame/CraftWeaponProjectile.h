@@ -61,12 +61,12 @@ class CraftWeaponProjectile
 
 private:
 	bool
-		_finished,	// for Beam-type
-		_passed;	// for Missile-type (ie, these are redundant)
+		_finished,	// for Missile-type and Beam-type
+		_passed;	// for Missile-type only
 	int
 		_accuracy,
 		_dist,		// large #
-		_pos,		// large # relative to interceptor
+		_pos,		// large # (pos is relative to interceptor)
 					//
 					// kL_NOTE: something screws with when a missile is launched
 					// but UFO is downed, by other weapon, before it hits; the missile

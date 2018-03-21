@@ -456,12 +456,25 @@ DogfightState::DogfightState(
 									_colors[RANGE_METER]);
 			}
 			cwRange->unlock();
+
+			switch (i) // disable weapons that were disabled on a prior dogfight
+			{
+				default:
+				case 0u:
+					if (_craft->getWeaponDisabled(1))
+						weapon1Click(nullptr);
+					break;
+				case 1u:
+					if (_craft->getWeaponDisabled(2))
+						weapon2Click(nullptr);
+					break;
+			}
 		}
 		else
 		{
 			cwSprite->setVisible(false);
-			cwRange->setVisible(false);
-			cwLoad->setVisible(false);
+			cwRange ->setVisible(false);
+			cwLoad  ->setVisible(false);
 		}
 	}
 
@@ -519,9 +532,6 @@ DogfightState::~DogfightState()
 
 	if (_craft != nullptr)
 		_craft->inDogfight(false);
-
-	if (_ufo != nullptr) // frees the ufo for the next engagement
-		_ufo->setTicked(false);
 }
 
 /**
@@ -545,9 +555,13 @@ void DogfightState::think()
 	// dogfights is done in btnReduceToIconClick() and btnShowPortPress().
 	// The following zoom-out handles the case of 1 interceptor disengaging
 	// from a multi-intercepted dogfight (iff the others are currently reduced).
-	if (_dist > DIST_ENGAGE)
+	if (_textPersistence == 0
+		&& _projectiles.empty() == true
+		&& (_dist > DIST_ENGAGE
+			|| _ufo->isCrashed() == true
+			|| _craft->isDestroyed() == true))
 	{
-		_finish = true;
+		_finish = true; // think() won't be called again.
 
 		if (_slotsTotal > 1u											// if (_totalIntercepts == 1u) let GeoscapeState handle it.
 			&& _geoState->getQtyReducedDogfights() == _slotsTotal - 1u)	// if this is the only dogfight with a port that's displayed
@@ -643,8 +657,8 @@ void DogfightState::advanceDogfight()
 
 		if (_ufo->isCrashed()        == false
 			&& _craft->isDestroyed() == false
-			&& _ufo->getTicked()     == false)
-		{
+			&& _ufo->getTicked()     == false)	// NOTE: a UFO ticks only once per GeoscapeState::thinkDogfights()
+		{										// (regardless of how many intercepts have engaged it).
 			_ufo->setTicked();
 
 			int escapeTicks (_ufo->getEscapeCountdown());
@@ -1936,6 +1950,8 @@ void DogfightState::weapon1Click(Action*)
 	_isfCw1     ->offset(_colors[DISABLED_WEAPON] * i);
 	_srfCwRange1->offset(_colors[DISABLED_RANGE]  * i);
 	_txtLoad1   ->offset(_colors[DISABLED_AMMO]   * i);
+
+	_craft->setWeaponDisabled(1, !_w1Enabled);
 }
 
 /**
@@ -1953,6 +1969,8 @@ void DogfightState::weapon2Click(Action*)
 	_isfCw2     ->offset(_colors[DISABLED_WEAPON] * i);
 	_srfCwRange2->offset(_colors[DISABLED_RANGE]  * i);
 	_txtLoad2   ->offset(_colors[DISABLED_AMMO]   * i);
+
+	_craft->setWeaponDisabled(2, !_w2Enabled);
 }
 
 /**

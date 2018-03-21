@@ -478,7 +478,7 @@ void Surface::loadSpk(const std::string& file)
  */
 void Surface::clear(Uint32 color)
 {
-//	if (_surface->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if 0 != 0).
+//	if (_surface->flags & SDL_SWSURFACE)	// NOTE: SDL_SWSURFACE= 0x0 ... so that means (if 0 == true).
 //		std::memset(						// ... This never runs. cf, Screen::clear()
 //				_surface->pixels,
 //				static_cast<int>(color),

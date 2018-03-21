@@ -82,7 +82,9 @@ Craft::Craft(
 		_warned(false), // do not save-to-file; ie, re-warn player if reloading
 		_kills(0),
 		_showReady(false),
-		_interceptLanded(false)
+		_interceptLanded(false),
+		_w1Disabled(false), // TODO: save weapon-disabled states to file.
+		_w2Disabled(false)
 {
 	if (hasId == true)
 		_id = 0; // will load from save
@@ -1605,6 +1607,34 @@ bool Craft::interceptLanded() const
 int Craft::getOperationalExpense() const
 {
 	return _base->getOperationalExpenses(this) + _crRule->getSoldierCapacity() * 1000;
+}
+
+/**
+ * Sets a craft-weapon disabled or enabled on this Craft.
+ * @param hardpoint	- w1 or w2
+ * @param disabled	- true to disable
+ */
+void Craft::setWeaponDisabled(int hardpoint, bool disabled)
+{
+	switch (hardpoint)
+	{
+		case 1: _w1Disabled = disabled; break;
+		case 2: _w2Disabled = disabled; break;
+	}
+}
+
+/**
+ * Gets if a craft-weapon is disabled or enabled on the Craft.
+ * @param hardpoint - w1 or w2
+ * @return, true if disabled
+ */
+bool Craft::getWeaponDisabled(int hardpoint) const
+{
+	switch (hardpoint)
+	{
+		case 1: return _w1Disabled;
+		case 2: return _w2Disabled;
+	}
 }
 
 }

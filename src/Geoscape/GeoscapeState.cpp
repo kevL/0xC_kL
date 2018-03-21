@@ -1181,47 +1181,41 @@ void GeoscapeState::think()
 	_tmrDfZout ->think(this, nullptr);
 	_tmrDfStart->think(this, nullptr);
 
+	if (_popups.empty() == false)
+	{
+		_globe->rotateStop();
+
+		_game->pushState(_popups.front());
+		_popups.erase(_popups.begin());
+	}
+	else if (_dogfights.empty() == false)
+//		|| _dfReduced != 0u) // TODO: uh how can there be a reduced DF if there are no DF ...
+	{
+		if (_dogfights.size() == _dfReduced) // if all dogfights are iconized rotate the Globe, etc.
+		{
+			_pause = false;
+			_tmrGeo->think(this, nullptr);		// call timeAdvance()
+		}
+		_tmrDogfight->think(this, nullptr);		// call thinkDogfights()
+	}
+	else if (_tmrDfZinn->isRunning() == false // TODO: what about '_tmrDfStart'
+		&&   _tmrDfZout->isRunning() == false)
+	{
+		_tmrGeo->think(this, nullptr);			// call timeAdvance()
+	}
 
 	if (Options::debug == true
-		&& _playSave->getDebugArgDone() == true // ie. do not write info until Globe actually sets it.
+		&& _playSave->getDebugArgDone() == true // do not write info until Globe actually sets it.
 		&& _stDebug.compare(0u,5u, "DEBUG") == 0)
 	{
 		const std::string stDebug (_stDebug + _playSave->getDebugArg());
 		_txtDebug->setText(Language::fsToWstr(stDebug));
 	}
-
-	if (_popups.empty() == true
-		&& _dogfights.empty() == true
-		&& _tmrDfZinn->isRunning() == false
-		&& _tmrDfZout->isRunning() == false)
-	{
-		_tmrGeo->think(this, nullptr); // do timeAdvance()
-	}
-	else
-	{
-		if (_dogfights.empty() == false
-			|| _dfReduced != 0u) // TODO: uh how can there be a reduced DF if there are no DF ...
-		{
-			if (_dogfights.size() == _dfReduced) // if all dogfights are minimized rotate the Globe, etc.
-			{
-				_pause = false;
-				_tmrGeo->think(this, nullptr); // do timeAdvance()
-			}
-			_tmrDogfight->think(this, nullptr);
-		}
-
-		if (_popups.empty() == false) // handle popups
-		{
-			_globe->rotateStop();
-
-			_game->pushState(_popups.front());
-			_popups.erase(_popups.begin());
-		}
-	}
 }
 
 /**
  * Draws the UFO indicators for known UFOs.
+ * @note This is called by time5Seconds().
  */
 void GeoscapeState::drawUfoBlobs()
 {
@@ -1361,6 +1355,11 @@ void GeoscapeState::timeAdvance() // private.
 			_globe->draw();
 		}
 	}
+	else // pause hard
+	{
+		_txtSec->setColor(RED); // NOTE: Does not look red but it will do.
+		_txtSec->setVisible();
+	}
 }
 
 /**
@@ -1407,13 +1406,13 @@ void GeoscapeState::updateTimeDisplay() // private.
 		_txtScore->setText(Text::intWide(0));
 
 
-	if (_btnGroup != _btn5Secs)
-		_txtSec->setVisible();
-	else
+	if (_btnGroup == _btn5Secs)
 	{
 		const int sec (_playSave->getTime()->getSecond());
 		_txtSec->setVisible(sec % 15 > 9);
 	}
+	else
+		_txtSec->setVisible();
 
 	std::wostringstream
 		woststr1,
@@ -1738,7 +1737,7 @@ void GeoscapeState::time5Seconds()
 													_pause = true;
 													resetTimer();
 													storePreDogfightCoords();	// store current Globe coords & zoom;
-													_globe->center(		// Globe will reset to these after dogfight ends
+													_globe->center(				// Globe will reset to these after dogfight ends
 																(*j)->getLongitude(),
 																(*j)->getLatitude());
 
@@ -3760,17 +3759,15 @@ size_t GeoscapeState::getQtyReducedDogfights() const
  */
 void GeoscapeState::thinkDogfights()
 {
-	std::list<DogfightState*>::const_iterator i (_dogfights.begin());
-	for (
-			;
-			i != _dogfights.end();
-			++i)
-	{
-		(*i)->getUfo()->setTicked(false);
-	}
-
 	_dfReduced = 0u;
 	bool resetPorts = false;
+
+	std::list<DogfightState*>::const_iterator i = _dogfights.begin();
+	while (i != _dogfights.end())
+	{
+		(*i)->getUfo()->setTicked(false);
+		++i;
+	}
 
 	i = _dogfights.begin();
 	while (i != _dogfights.end())
@@ -3778,11 +3775,6 @@ void GeoscapeState::thinkDogfights()
 		if ((*i)->isFinished() == true)
 		{
 			resetPorts = true;
-
-			//std::string st1 = (*i)->getCraft()->getRules()->getType();
-			//std::ostringstream oststr;
-			//oststr << st1 << "-" << ((*i)->getCraft()->getId());
-			//Log(LOG_INFO) << "geo thinkDf DELETE " << oststr.str().c_str();
 
 			delete *i;
 			i = _dogfights.erase(i);
@@ -4519,8 +4511,15 @@ void GeoscapeState::btnPauseClick(Action* action) // private.
 			case SDL_BUTTON_LEFT:
 			case SDL_BUTTON_RIGHT:
 				_globe->toggleBlink();
-				if ((_pauseHard = !_pauseHard) == true)
-					_txtSec->setVisible(false);
+				if ((_pauseHard = !_pauseHard) == false)
+				{
+					_txtSec->setColor(GREEN_SEA);
+				}
+//				else // done in timeAdvance()
+//				{
+//					_txtSec->setColor(RED); // NOTE: Does not look red but it will do.
+//					_txtSec->setVisible();
+//				}
 		}
 	}
 }
@@ -4569,6 +4568,40 @@ void GeoscapeState::btnUfoBlobPress(Action* action) // private.
 		}
 	}
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
+}
+
+/**
+ * Sets hard-pause.
+ */
+void GeoscapeState::setPaused()
+{
+	_pauseHard = true;
+	_globe->toggleBlink();
+	resetTimer();
+
+//	_txtSec->setColor(RED);	// NOTE: Does not look red but it will do.
+//	_txtSec->setVisible();	// TODO: This won't work until the state redraws.
+}							// so it's done in timeAdvance() instead
+
+/**
+ * Checks hard-pause.
+ * @return, true if state is paused
+ */
+bool GeoscapeState::isPaused() const
+{
+	return _pauseHard;
+}
+
+/**
+ * Examines the quantity of remaining UFO-detected popups.
+ * @note Reduces the number by one and decides whether to display the value.
+ */
+void GeoscapeState::assessUfoPopups()
+{
+	if (--_windowPops == 0)
+		_ufoDetected->setVisible(false);
+	else
+		_ufoDetected->setText(Text::intWide(static_cast<int>(_windowPops)));
 }
 
 /**
@@ -4639,38 +4672,6 @@ void GeoscapeState::resize(
 			(*i)->setY((*i)->getY() + dY / 2);
 		}
 	}
-}
-
-/**
- * Examines the quantity of remaining UFO-detected popups.
- * @note Reduces the number by one and decides whether to display the value.
- */
-void GeoscapeState::assessUfoPopups()
-{
-	if (--_windowPops == 0)
-		_ufoDetected->setVisible(false);
-	else
-		_ufoDetected->setText(Text::intWide(static_cast<int>(_windowPops)));
-}
-
-/**
- * Sets hard-pause.
- */
-void GeoscapeState::setPaused()
-{
-	_pauseHard = true;
-	_globe->toggleBlink();
-	resetTimer();
-	_txtSec->setVisible(false);
-}
-
-/**
- * Checks hard-pause.
- * @return, true if state is paused
- */
-bool GeoscapeState::isPaused() const
-{
-	return _pauseHard;
 }
 
 }

@@ -347,18 +347,18 @@ private:
 				Base* const base,
 				Ufo* const ufo);
 
-		/// Update the resolution settings - the window was resized.
-		void resize(
-				int& dX,
-				int& dY) override;
-
-		/// Examines the quantity of remaining UFO-detected popups.
-		void assessUfoPopups();
-
 		/// Sets hard-pause.
 		void setPaused();
 		/// Checks hard-pause.
 		bool isPaused() const;
+
+		/// Examines the quantity of remaining UFO-detected popups.
+		void assessUfoPopups();
+
+		/// Update the resolution settings - the window was resized.
+		void resize(
+				int& dX,
+				int& dY) override;
 };
 
 }

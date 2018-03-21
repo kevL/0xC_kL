@@ -69,7 +69,10 @@ private:
 		_lowFuel,
 		_showReady,
 		_tacticalReturn,
-		_warned;
+		_warned,
+		
+		_w1Disabled,
+		_w2Disabled;
 	int
 		_fuel,
 		_hull,
@@ -281,6 +284,11 @@ private:
 
 		/// Gets the Craft's cost for tactical.
 		int getOperationalExpense() const;
+
+		/// Sets a craft-weapon disabled or enabled on the Craft.
+		void setWeaponDisabled(int hardpoint, bool disabled);
+		/// Gets if a craft-weapon is disabled or enabled on the Craft.
+		bool getWeaponDisabled(int hardpoint) const;
 };
 
 }
