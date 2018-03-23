@@ -310,15 +310,20 @@ UfoDetectedState::UfoDetectedState(
 			_txtTexture->setText(woststr.str());
 
 			woststr.str(L"");
-			woststr << L"t> ";
-			std::wstring wst (Text::formatInt(_ufo->getSecondsLeft()));
-			woststr << wst;
+			int t = _ufo->getSecondsLeft();
+			int s = t % 60;
+			int m = t / 60 % 60;
+			int h = t / 60 / 60 % 24;
+			int d = t / 60 / 60 / 24;
+			woststr << d << "d " << h << ":" << m << ":" << s;
+//			woststr << L"t> ";
+//			std::wstring wst (Text::formatInt(_ufo->getSecondsLeft()));
+//			woststr << wst;
 			_txtTimeLeft->setText(woststr.str()); // debug-thing.
 			break;
 		}
 
 		case Ufo::FLYING:
-//		case Ufo::DESTROYED:
 			_txtTexture->setVisible(false);
 			_txtTimeLeft->setVisible(false);
 	}

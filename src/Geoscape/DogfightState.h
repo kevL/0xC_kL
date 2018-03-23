@@ -60,6 +60,7 @@ class GeoscapeState;
 class Globe;
 class ImageButton;
 class InteractiveSurface;
+class NumberText;
 class SavedGame;
 class Surface;
 class Text;
@@ -68,7 +69,7 @@ class Ufo;
 
 
 /**
- * Shows a Dogfight (interception port) between a player's Craft and a UFO.
+ * Conducts a Dogfight between a player's Craft and a UFO.
  */
 class DogfightState final
 	:
@@ -76,6 +77,10 @@ class DogfightState final
 {
 
 private:
+	bool debug;		// debug to log.
+	int debugSlow;	// slows the dogfight (substitutes this #ticks per tick)
+
+	static const Uint8 YELLOW_D	= 11u;
 	static const int
 		_projectileBlobs[4u][6u][3u],
 
@@ -87,12 +92,11 @@ private:
 
 
 	bool
-		_destroyCraft,
-		_destroyUfo,
+		_breakoff,
 		_finish,
 		_finishRequest,
+		_disengage,
 		_reduced,
-		_ufoBreakingOff,
 		_w1Enabled,
 		_w2Enabled;
 	int
@@ -141,6 +145,7 @@ private:
 		* _previewUfo,
 		* _isfCw1,
 		* _isfCw2;
+	NumberText* _numIconUfoId;
 	SavedGame* _playSave;
 	Surface
 		* _battleScope,
@@ -242,12 +247,8 @@ private:
 		/// Toggles usage of Craft weapon 2.
 		void weapon2Click(Action* action);
 
-		/// Sets interception slot.
-		void setInterceptSlot(size_t slot);
 		/// Gets interception slot.
 		size_t getInterceptSlot() const;
-		/// Sets total interceptions in progress.
-		void setTotalInterceptSlots(size_t total);
 		/// Calculates positions for the intercept-ports.
 		void resetInterceptPort(
 				size_t port,

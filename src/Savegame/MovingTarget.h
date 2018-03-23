@@ -47,7 +47,7 @@ private:
 		_latPoint,
 		_speedRads;
 
-	/// Checks the MovingTarget's current destination for safe deletion.
+	/// Checks the MovingTarget's targeters and destination.
 	void checkTargets();
 
 	/// Calculates a meet-point with a destination-target.

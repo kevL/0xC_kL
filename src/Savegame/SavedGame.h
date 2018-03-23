@@ -306,18 +306,14 @@ private:
 		/// Sets Globe zoom.
 		void setGlobeZoom(size_t zoom);
 
+		/// Sets the pre-dogfight coordinates and zoom-level.
+		void setPreDogfightCoords(size_t zoom);
 		/// Gets the preDogfight Globe longitude.
 		double getDfLongitude() const;
-		/// Sets a preDogfight Globe longitude.
-		void setDfLongitude(double lon);
 		/// Gets the preDogfight Globe latitude.
 		double getDfLatitude() const;
-		/// Sets a preDogfight Globe latitude.
-		void setDfLatitude(double lat);
 		/// Gets the preDogfight Globe zoom.
 		size_t getDfZoom() const;
-		/// Sets a preDogfight Globe zoom.
-		void setDfZoom(size_t zoom);
 
 		/// Handles player's monthly funding.
 		void balanceBudget();

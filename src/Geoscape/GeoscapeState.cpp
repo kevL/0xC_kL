@@ -458,7 +458,7 @@ GeoscapeState::GeoscapeState()
 		y = _sideTop->getY() + height - offset_y - 16;
 
 		_isfUfoBlobs[i] = new InteractiveSurface(13, 13, x, y);
-		_numUfoBlobs[i] = new NumberText(11, 5, x + 2, y + 8);
+		_numUfoBlobs[i] = new NumberText(11, 5, x + 1, y + 8);
 	}
 
 	_isfTime	= new InteractiveSurface(63, 39, screenWidth - 63, halfHeight - 28);
@@ -891,16 +891,13 @@ GeoscapeState::GeoscapeState()
 GeoscapeState::~GeoscapeState()
 {
 	delete _tmrGeo;
+	delete _tmrDogfight;
+	delete _tmrDfStart;
 	delete _tmrDfZinn;
 	delete _tmrDfZout;
-	delete _tmrDfStart;
-	delete _tmrDogfight;
 
 	std::list<DogfightState*>::const_iterator i (_dogfights.begin());
-	for (
-			;
-			i != _dogfights.end();
-			)
+	while (i != _dogfights.end())
 	{
 		(*i)->clearCraft();	// kL_note->
 		(*i)->clearUfo();	// I don't have a clue why this started to CTD.
@@ -909,10 +906,8 @@ GeoscapeState::~GeoscapeState()
 		i = _dogfights.erase(i);
 	}
 
-	for (
-			i = _dogfightsToStart.begin();
-			i != _dogfightsToStart.end();
-			)
+	i = _dogfightsToStart.begin();
+	while (i != _dogfightsToStart.end())
 	{
 		(*i)->clearCraft();	// kL_note->
 		(*i)->clearUfo();	// Not sure if these need to be here but see above^.
@@ -1091,7 +1086,7 @@ void GeoscapeState::handle(Action* action)
 			{
 				(*i)->handle(action);
 			}
-			_dfReduced = getQtyReducedDogfights();
+			_dfReduced = getReducedDogfights();
 		}
 	}
 }
@@ -1177,9 +1172,9 @@ void GeoscapeState::think()
 {
 	State::think();
 
+	_tmrDfStart->think(this, nullptr);
 	_tmrDfZinn ->think(this, nullptr);
 	_tmrDfZout ->think(this, nullptr);
-	_tmrDfStart->think(this, nullptr);
 
 	if (_popups.empty() == false)
 	{
@@ -1189,16 +1184,16 @@ void GeoscapeState::think()
 		_popups.erase(_popups.begin());
 	}
 	else if (_dogfights.empty() == false)
-//		|| _dfReduced != 0u) // TODO: uh how can there be a reduced DF if there are no DF ...
 	{
+		_tmrDogfight->think(this, nullptr);		// call thinkDogfights()
+
 		if (_dogfights.size() == _dfReduced) // if all dogfights are iconized rotate the Globe, etc.
 		{
 			_pause = false;
 			_tmrGeo->think(this, nullptr);		// call timeAdvance()
 		}
-		_tmrDogfight->think(this, nullptr);		// call thinkDogfights()
 	}
-	else if (_tmrDfZinn->isRunning() == false // TODO: what about '_tmrDfStart'
+	else if (_tmrDfZinn->isRunning() == false
 		&&   _tmrDfZout->isRunning() == false)
 	{
 		_tmrGeo->think(this, nullptr);			// call timeAdvance()
@@ -1483,8 +1478,8 @@ void GeoscapeState::time5Seconds()
 
 	const Ufo* ufoExpired (nullptr); // kL, see below_
 
-	// Handle UFO logic
-	for (std::vector<Ufo*>::const_iterator
+
+	for (std::vector<Ufo*>::const_iterator // handle UFO logic
 			i = _playSave->getUfos()->begin();
 			i != _playSave->getUfos()->end();
 			++i)
@@ -1606,8 +1601,8 @@ void GeoscapeState::time5Seconds()
 
 	bool initDfMusic (false);
 
-	// Handle craft logic
-	for (std::vector<Base*>::const_iterator
+
+	for (std::vector<Base*>::const_iterator // handle Craft logic
 			i = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end();
 			++i)
@@ -1653,58 +1648,30 @@ void GeoscapeState::time5Seconds()
 				{
 					if ((*j)->getTarget() != nullptr)
 					{
+						// NOTE: This has to deal with Landed UFOs, Crashed UFOs, UFOs spawning TerrorSites
+						// and UFOs that are on BaseAssuault runs starting BaseDefense tacticals, etc etc.
+						// See previous git-commits for details if in doubt or if a bug appears; the point
+						// is that 90% of the prior code was either redundant or resulted in unwanted behavior.
+
 						const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
-						if (ufo != nullptr)
-						{
-							if (ufo->getUfoStatus() != Ufo::FLYING)
-								(*j)->inDogfight(false);
+						if (ufo != nullptr
+							&& ufo->getDetected() == false	// lost radar contact
+							&& ufo != ufoExpired)			// <- ie. not recently shot down while trying to outrun interceptor but it crashed into the sea instead Lol
+						{									//      - perhaps not needed since Dogfight::think() has been tightened up.
+							resetTimer();
 
-							if (ufo->getDetected() == false	// lost radar contact
-								&& ufo != ufoExpired)		// <- ie. not recently shot down while trying to outrun interceptor but it crashed into the sea instead Lol
-							{
-								switch (ufo->getUfoStatus())
-								{
-									case Ufo::LANDED: // base defense
-									case Ufo::DESTROYED:
-										if (ufo->getTrajectory().getType() == UfoTrajectory::XCOM_BASE_ASSAULT)
-										{
-											(*j)->returnToBase(); // NOTE: ufo dTor would handle that.
-											break;
-										}
-										// no break;
-									default:
-									{
-										Waypoint* const wp (new Waypoint());
-										wp->setLongitude((*j)->getMeetLongitude());
-										wp->setLatitude((*j)->getMeetLatitude());
-										wp->setId(ufo->getId());
+							Waypoint* const wp (new Waypoint());
+							wp->setLongitude((*j)->getMeetLongitude());
+							wp->setLatitude((*j)->getMeetLatitude());
+							wp->setId(ufo->getId());
 
-										// NOTE: The Waypoint is the reconnaissance destination-target;
-										// it also flags GeoscapeCraftState as a special instance.
-										// NOTE: Do not null the Craft's destination; its dest-coords
-										// will be used to position the targeter in GeoscapeCraftState.
+							// NOTE: The Waypoint is the reconnaissance destination-target;
+							// it also flags GeoscapeCraftState as a special instance.
+							// NOTE: Do not null the Craft's destination; its dest-coords
+							// will be used to position the targeter in GeoscapeCraftState.
 
-										resetTimer();
-										popupGeo(new GeoscapeCraftState(*j, this, wp));
-									}
-								}
-							}
-							else if (ufo->getUfoStatus() == Ufo::DESTROYED)
-								(*j)->returnToBase();
-//							{
-//								switch (ufo->getUfoStatus())
-//								{
-//									case Ufo::CRASHED:
-//										if ((*j)->getQtySoldiers() != 0) break;
-//										if ((*j)->getQtyVehicles() != 0) break;
-//										// no break;
-//									case Ufo::DESTROYED:
-//										(*j)->returnToBase();
-//								}
-//							}
+							popupGeo(new GeoscapeCraftState(*j, this, wp));
 						}
-						else
-							(*j)->inDogfight(false); // safety.
 					}
 
 					(*j)->think();
@@ -1732,12 +1699,18 @@ void GeoscapeState::time5Seconds()
 												&& AreSame((*j)->getDistance(ufo), 0.) == true) // Craft ran into a UFO.
 											{
 												_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
-												if (_tmrDfStart->isRunning() == false)
+//												if (_tmrDfStart->isRunning() == false)	// what are the odds that 2 Craft run into UFO(s) on the same think()
+												if (_pause == false)					// <- use that instead.
 												{
+													// Actually it's not so obscure that 2+ Craft run this when a game
+													// that was saved in a multi-interception dogfight is reloaded.
 													_pause = true;
 													resetTimer();
-													storePreDogfightCoords();	// store current Globe coords & zoom;
-													_globe->center(				// Globe will reset to these after dogfight ends
+
+													// NOTE: In the obscene case that 2 UFOs get intercepted (ie. at different
+													// coords on the globe) on the same think() only the first sets the PDC.
+													_playSave->setPreDogfightCoords(_globe->getZoom());	// store current Globe coords & zoom;
+													_globe->center(										// Globe will reset to these after dogfight ends (unless CCC is set)
 																(*j)->getLongitude(),
 																(*j)->getLatitude());
 
@@ -1746,9 +1719,13 @@ void GeoscapeState::time5Seconds()
 													{
 														_game->getResourcePack()->fadeMusic(_game, 425);
 													}
-
-													startDogfight();
 												}
+
+												// NOTE: the following call has to be outside of above scope or else 2nd
+												// and following dogfights won't be added to the dogfights if the game
+												// was saved during a multiple-interception at the most-zoomed-in level.
+												// See function for details:
+												startDogfight();
 
 												initDfMusic = true;
 												_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_INTERCEPT);
@@ -1758,9 +1735,9 @@ void GeoscapeState::time5Seconds()
 
 									case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
 									case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
-										if ((*j)->inDogfight() == false					// NOTE: Allows non-transport Craft to case the joint.
-											&& (*j)->interceptGroundTarget() == false)	// prevent non-transport craft starting tactical
-										{
+										if ((*j)->inDogfight() == false
+											&& (*j)->interceptGroundTarget() == false)	// <- non-transport craft shall be set true to case the joint but can't start tactical
+										{												// TODO: just use getQtySoldiers() ....
 											resetTimer();
 
 											int // look up polygon's texId + shade
@@ -3700,17 +3677,6 @@ void GeoscapeState::dfZoomOut()
 }
 
 /**
- * Stores current Globe coordinates and zoom before a dogfight.
- */
-void GeoscapeState::storePreDogfightCoords()
-{
-	_playSave->setDfLongitude(_playSave->getGlobeLongitude());
-	_playSave->setDfLatitude(_playSave->getGlobeLatitude());
-
-	_playSave->setDfZoom(_globe->getZoom());
-}
-
-/**
  * Sets the zoom-out timer to ignore stored pre-Dogfight coordinates and use
  * current coordinates of the Dogfight instead.
  * @note Used only if UFO is breaking off from its last dogfight.
@@ -3738,7 +3704,7 @@ bool GeoscapeState::getDfCCC() const
  * Gets the quantity of iconized dogfights.
  * @return, quantity of iconized dogfights
  */
-size_t GeoscapeState::getQtyReducedDogfights() const
+size_t GeoscapeState::getReducedDogfights() const
 {
 	size_t ret (0u);
 	for (std::list<DogfightState*>::const_iterator
@@ -3818,7 +3784,7 @@ void GeoscapeState::startDogfight() // private.
 {
 	if (_globe->getZoom() < _globe->getZoomLevels() - 1u)
 	{
-		if (_tmrDfStart->isRunning() == false)
+		if (_tmrDfStart->isRunning() == false) // TODO: get rid of '_tmrDfStart' and '_dogfightsToStart'
 			_tmrDfStart->start();
 
 		if (_tmrDfZinn->isRunning() == false)
@@ -3841,59 +3807,27 @@ void GeoscapeState::startDogfight() // private.
 		{
 			_dogfights.push_back(_dogfightsToStart.back());
 			_dogfightsToStart.pop_back();
-
-			_dogfights.back()->setInterceptSlot(getAvailableInterceptSlot());
 		}
-
-		resetInterceptPorts(); // set window positions for all dogfights
 	}
+
+	resetInterceptPorts(); // sets intercept-slot and ergo port-positions for all dogfights
 }
 
 /**
  * Updates total current intercepts for all Dogfights and repositions their
- * ports accordingly.
+ * ports and reduced-icons accordingly.
  */
 void GeoscapeState::resetInterceptPorts()
 {
 	const size_t total (_dogfights.size());
-	for (std::list<DogfightState*>::const_iterator
-			i = _dogfights.begin();
-			i != _dogfights.end();
-			++i)
-	{
-		(*i)->setTotalInterceptSlots(total);
-	}
-
-	const size_t portsTotal (total - getQtyReducedDogfights());
 	size_t port (0u);
 	for (std::list<DogfightState*>::const_iterator
 			i = _dogfights.begin();
 			i != _dogfights.end();
 			++i)
 	{
-		if ((*i)->isReduced() == false)
-			++port;
-
-		(*i)->resetInterceptPort(port, portsTotal); // set window position for dogfight
+		(*i)->resetInterceptPort(++port, total);
 	}
-}
-
-/**
- * Gets the first available intercept-slot.
- * @return, the next slot open
- */
-size_t GeoscapeState::getAvailableInterceptSlot() const
-{
-	size_t slot (1u); // "0" is reserved for none I believe.
-	for (std::list<DogfightState*>::const_iterator
-			i = _dogfights.begin();
-			i != _dogfights.end();
-			++i)
-	{
-		if ((*i)->getInterceptSlot() == slot)
-			++slot;
-	}
-	return slot;
 }
 
 /**

@@ -58,7 +58,10 @@ NumberText::NumberText(
 		_bordered(false)
 {
 	if (init == true)
+	{
+		init = false;
 		createStaticSurfaces();
+	}
 }
 
 /**
@@ -91,8 +94,6 @@ void NumberText::deleteStaticSurfaces() // static.
  */
 void NumberText::createStaticSurfaces() // private/static.
 {
-	init = false;
-
 	_chars[0u] = new Surface(WIDTH, HEIGHT);
 	_chars[0u]->lock();
 	_chars[0u]->setPixelColor(0,0, FG);

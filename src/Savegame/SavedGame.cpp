@@ -963,21 +963,24 @@ void SavedGame::setGlobeZoom(size_t zoom)
 }
 
 /**
+ * Sets the pre-dogfight coordinates and zoom-level.
+ * @param zoom - the zoom-level
+ */
+void SavedGame::setPreDogfightCoords(size_t zoom)
+{
+	_dfLon = _globeLon;
+	_dfLat = _globeLat;
+
+	_dfZoom = zoom;
+}
+
+/**
  * Gets the preDogfight longitude of the geoscape Globe.
  * @return, longitude
  */
 double SavedGame::getDfLongitude() const
 {
 	return _dfLon;
-}
-
-/**
- * Sets the preDogfight longitude of the geoscape Globe.
- * @param lon - longitude
- */
-void SavedGame::setDfLongitude(double lon)
-{
-	_dfLon = lon;
 }
 
 /**
@@ -990,30 +993,12 @@ double SavedGame::getDfLatitude() const
 }
 
 /**
- * Sets the preDogfight latitude of the geoscape Globe.
- * @param lat - latitude
- */
-void SavedGame::setDfLatitude(double lat)
-{
-	_dfLat = lat;
-}
-
-/**
  * Gets the preDogfight zoom-level of the geoscape Globe.
  * @return, zoom level
  */
 size_t SavedGame::getDfZoom() const
 {
 	return _dfZoom;
-}
-
-/**
- * Sets the preDogfight zoom-level of the geoscape Globe.
- * @param zoom - zoom level
- */
-void SavedGame::setDfZoom(size_t zoom)
-{
-	_dfZoom = zoom;
 }
 
 /**

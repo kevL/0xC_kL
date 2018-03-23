@@ -322,8 +322,6 @@ private:
 		void dfZoomIn();
 		/// Globe zoom-out effect for dogfights.
 		void dfZoomOut();
-		/// Stores current Globe coordinates and zoom before a dogfight.
-		void storePreDogfightCoords();
 		/// Tells Dogfight zoom-out to ignore stored DF coordinates.
 		void setDfCCC(
 				double lon,
@@ -331,13 +329,11 @@ private:
 		/// Checks if the Dogfight zoom-out should ignore stored DF-coordinates.
 		bool getDfCCC() const;
 		/// Gets the quantity of iconized dogfights.
-		size_t getQtyReducedDogfights() const;
-		/// Multi-dogfights logic handling.
+		size_t getReducedDogfights() const;
+		/// Logic for all current dogfights.
 		void thinkDogfights();
 		/// Updates intercept-data and repositions ports for all Dogfights.
 		void resetInterceptPorts();
-		/// Gets the first available intercept-slot.
-		size_t getAvailableInterceptSlot() const;
 
 		/// Gets the dogfights.
 		std::list<DogfightState*>& getDogfights();
