@@ -120,6 +120,7 @@ extraSounds:
       11: Resources/Sounds/Geo/11_ufocrash.WAV
       12: Resources/Sounds/Geo/12_crafthit.WAV
       13: Resources/Sounds/Geo/13_craftcrash.WAV
+      14: Resources/Sounds/Geo/14_ufohitglance.WAV
 
 #Extra Sounds:
 # type should correspond to one of the following:

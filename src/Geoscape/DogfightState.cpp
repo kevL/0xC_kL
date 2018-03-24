@@ -180,7 +180,7 @@ DogfightState::DogfightState(
 		_w1Enabled(true),
 		_w2Enabled(true)
 {
-	debug = true; //(_ufo->getId() == 836);
+//	debug = true; //(_ufo->getId() == 836);
 //	debugSlow = 0;
 
 
@@ -202,10 +202,10 @@ DogfightState::DogfightState(
 
 	_btnDisengage	= new ImageButton(36, 15,  83,  4);
 	_btnUfo			= new ImageButton(36, 15,  83, 20);
-	_btnCautious	= new ImageButton(36, 15, 120,  4);
-	_btnStandard	= new ImageButton(36, 15, 120, 20);
-	_btnAggressive	= new ImageButton(36, 15, 120, 36);
-	_btnStandoff	= new ImageButton(36, 17, 120, 52);
+	_btnStandoff	= new ImageButton(36, 15, 120,  4);
+	_btnCautious	= new ImageButton(36, 15, 120, 20);
+	_btnStandard	= new ImageButton(36, 17, 120, 36);
+	_btnAggressive	= new ImageButton(36, 15, 120, 54);
 
 	_craftStance = _btnStandoff;
 
@@ -235,10 +235,10 @@ DogfightState::DogfightState(
 	add(_btnReduce);
 	add(_btnDisengage,		"disengageButton",	"dogfight", _window);
 	add(_btnUfo,			"ufoButton",		"dogfight", _window);
-	add(_btnAggressive,		"aggressiveButton",	"dogfight", _window);
-	add(_btnStandard,		"standardButton",	"dogfight", _window);
-	add(_btnCautious,		"cautiousButton",	"dogfight", _window);
 	add(_btnStandoff,		"standoffButton",	"dogfight", _window);
+	add(_btnCautious,		"cautiousButton",	"dogfight", _window);
+	add(_btnStandard,		"standardButton",	"dogfight", _window);
+	add(_btnAggressive,		"aggressiveButton",	"dogfight", _window);
 	add(_srfTexIcon);
 	add(_txtCwLoad1,		"numbers",			"dogfight", _window);
 	add(_txtCwLoad2,		"numbers",			"dogfight", _window);
@@ -252,12 +252,12 @@ DogfightState::DogfightState(
 	add(_txtRestoreIcon,	"iconText",			"dogfight");
 	add(_numUfoIdIcon);
 
+	_btnDisengage ->invalidate(false);
+	_btnUfo       ->invalidate(false);
 	_btnStandoff  ->invalidate(false);
 	_btnCautious  ->invalidate(false);
 	_btnStandard  ->invalidate(false);
 	_btnAggressive->invalidate(false);
-	_btnDisengage ->invalidate(false);
-	_btnUfo       ->invalidate(false);
 
 /*	Surface* graphic;
 	graphic = _game->getResourcePack()->getSurface("INTERWIN.DAT");
@@ -322,6 +322,12 @@ DogfightState::DogfightState(
 	_btnDisengage->setGroup(&_craftStance);
 	_btnDisengage->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnDisengageClick)); // TODO: Key-presses.
 
+	_btnStandoff->copy(_window);
+	_btnStandoff->setGroup(&_craftStance);
+	_btnStandoff->onMouseClick(		static_cast<ActionHandler>(&DogfightState::btnStandoffClick));
+	_btnStandoff->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::keyEscape),
+									Options::keyCancel);
+
 	_btnCautious->copy(_window);
 	_btnCautious->setGroup(&_craftStance);
 	_btnCautious->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnCautiousClick));
@@ -333,12 +339,6 @@ DogfightState::DogfightState(
 	_btnAggressive->copy(_window);
 	_btnAggressive->setGroup(&_craftStance);
 	_btnAggressive->onMouseClick(static_cast<ActionHandler>(&DogfightState::btnAggressiveClick));
-
-	_btnStandoff->copy(_window);
-	_btnStandoff->setGroup(&_craftStance);
-	_btnStandoff->onMouseClick(		static_cast<ActionHandler>(&DogfightState::btnStandoffClick));
-	_btnStandoff->onKeyboardPress(	static_cast<ActionHandler>(&DogfightState::keyEscape),
-									Options::keyCancel);
 
 	if ((srf = _game->getResourcePack()->getSurface(getTextureIcon())) != nullptr)
 		srf->blit(_srfTexIcon);
@@ -904,10 +904,17 @@ void DogfightState::waltz()
 							{
 								_ufo->setUfoHull(power);
 
+								unsigned sound;
 								if (power < (_ufo->getRules()->getUfoHullCap() + 19) / 20) // 5% rounded up.
+								{
 									status = "STR_UFO_HIT_GLANCING";
+									sound = ResourcePack::UFO_HIT_GLANCE;
+								}
 								else
+								{
 									status = "STR_UFO_HIT";
+									sound = ResourcePack::UFO_HIT;
+								}
 
 								if (_ufo->isCrashed() == true) // recheck UFO state.
 								{
@@ -919,9 +926,7 @@ void DogfightState::waltz()
 									_disengage = false;
 								}
 
-								_game->getResourcePack()->playSoundFx(
-																ResourcePack::UFO_HIT,
-																true);
+								_game->getResourcePack()->playSoundFx(sound, true);
 							}
 
 							updateStatus(status);

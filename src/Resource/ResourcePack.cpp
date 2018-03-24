@@ -111,7 +111,6 @@ ResourcePack::~ResourcePack()
 Font* ResourcePack::getFont(const std::string& type) const
 {
 	const std::map<std::string, Font*>::const_iterator i (_fonts.find(type));
-
 	if (i != _fonts.end())
 		return i->second;
 

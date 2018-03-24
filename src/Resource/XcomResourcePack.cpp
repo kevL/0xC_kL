@@ -70,7 +70,7 @@ namespace
 {
 
 /**
- * Recolor class used in UFO.
+ * Recolor struct used in UFO.
  */
 struct HairXCOM1
 {

@@ -108,6 +108,7 @@ private:
 
 				UFO_FIRE			=   9u,
 				UFO_HIT				=  12u,
+				UFO_HIT_GLANCE		=  14u,
 				UFO_CRASH			=  11u,
 				UFO_EXPLODE			=  11u,
 				INTERCEPTOR_HIT		=  10u,
