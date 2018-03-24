@@ -29,7 +29,7 @@
 namespace OpenXcom
 {
 
-enum ColorDf
+enum DogfightColors
 {
 	CRAFT_MIN,			//  0
 	CRAFT_MAX,			//  1
@@ -40,10 +40,15 @@ enum ColorDf
 	BLOB_MIN,			//  6
 	BLOB_MAX,			//  7
 	RANGE_METER,		//  8
-	DISABLED_WEAPON,	//  9
-	DISABLED_AMMO,		// 10
-	DISABLED_RANGE,		// 11
-	UFO_BEAM			// 12
+	UFO_BEAM,			//  9
+	UFO_ID				// 10
+};
+
+enum DogfightShifts
+{
+	SHIFT_WEAPON,	// 0
+	SHIFT_RANGE,	// 1
+	SHIFT_LOAD,		// 2
 };
 
 enum CautionLevel
@@ -77,22 +82,24 @@ class DogfightState final
 {
 
 private:
-//	bool debug;		// debug to log.
+	bool debug;		// debug to log.
 //	int debugSlow;	// slows the dogfight (substitutes this #ticks per tick)
 
-	static const Uint8 YELLOW_D	= 11u;
+	static const Uint8 colors[11u];	// see DogfightColors enum above^
+	static const int shift[3u];		// see DogfightShifts enum above^
+
 	static const int
 		_projectileBlobs[4u][6u][3u],
 
-		DIST_ENGAGE   = 635,
-		DIST_STANDOFF = 595,
-		DIST_CLOSE    =  60,
+		DIST_ENGAGE     = 635,
+		DIST_STANDOFF   = 595,
+		DIST_CLOSE      =  60,
 
-		STAT_PERSIST  =  23,
+		STAT_PERSIST    =  23,
 		
-		RESTORE_X_ICON  =  5,
-		RESTORE_X_TEXT  = 23,
-		RESTORE_X_UFOID =  8;
+		RESTORE_X_ICON  =   5,
+		RESTORE_X_TEXT  =  23,
+		RESTORE_X_UFOID =   8;
 
 
 	bool
@@ -125,7 +132,6 @@ private:
 	size_t
 		_slot,
 		_slotsTotal;
-	Uint8 _colors[13u]; // see ColorDf enum above^
 
 	CautionLevel _cautionLevel;
 
@@ -160,8 +166,8 @@ private:
 		* _srfTexIcon,
 		* _window;
 	Text
-		* _txtLoad1,
-		* _txtLoad2,
+		* _txtCwLoad1,
+		* _txtCwLoad2,
 		* _txtDistance,
 		* _txtRestoreIcon,
 		* _txtStatus,

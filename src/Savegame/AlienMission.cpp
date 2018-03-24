@@ -551,7 +551,7 @@ Ufo* AlienMission::createUfo( // private.
 		ufo->setLongitude(coord.first);
 		ufo->setLatitude(coord.second);
 
-		ufo->setAltitude(trj.getAltitude(0));
+		ufo->setAltitude(trj.getAltitude(0u));
 		if (trj.getAltitude(0u) == MovingTarget::stAltitude[0u])
 			ufo->setSecondsLeft(trj.getGroundDuration());
 

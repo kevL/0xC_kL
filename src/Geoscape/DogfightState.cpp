@@ -108,6 +108,34 @@ const int DogfightState::_projectileBlobs[4u][6u][3u]
 	}
 };
 
+const Uint8 DogfightState::colors[11u]
+{
+	160u, //  0 [CRAFT_MIN]		// (10)+ 0 slate gray		craftRange     c1
+	176u, //  1 [CRAFT_MAX]		// (11)+ 0 purple			craftRange     c2
+
+	112u, //  2 [RADAR_MIN]		//  (7)+ 0 green			radarRange     c1
+	128u, //  3 [RADAR_MAX]		//  (8)+ 0 pure red			radarRange     c2
+
+	 13u, //  4 [DAMAGE_RED]	//  (0)+13 brightred		damageRange    c1
+	 12u, //  5 [DAMAGE_YEL]	//  (0)+12 darkyellow		damageRange    c2
+
+	107u, //  6 [BLOB_MIN]		//  (6)+11 light green		radarDetail    c1
+	127u, //  7 [BLOB_MAX]		//  (7)+15 dark olive green
+
+	 91u, //  8 [RANGE_METER]	//  (5)+11 green			radarDetail    c2
+
+	128u, // 12 [UFO_BEAM]		//  (8)+ 0 pure red
+
+	 12u  // 13 [UFO_ID]		//  (0)+12 dark yellow
+};
+
+const int DogfightState::shift[3u]
+{
+	25, // 0 [SHIFT_WEAPON]	disabledWeapon c1
+	 2, // 1 [SHIFT_RANGE]	disabledWeapon c2
+	 1  // 2 [SHIFT_LOAD]	disabledAmmo
+};
+
 
 /**
  * Initializes all the elements in the Dogfight window.
@@ -152,7 +180,7 @@ DogfightState::DogfightState(
 		_w1Enabled(true),
 		_w2Enabled(true)
 {
-//	debug = false;// (_ufo->getId() == 836);
+	debug = true; //(_ufo->getId() == 836);
 //	debugSlow = 0;
 
 
@@ -160,36 +188,36 @@ DogfightState::DogfightState(
 
 	_craft->inDogfight(true);
 
-	_window			= new Surface(160, 96, _x, _y);
+	_window			= new Surface(160, 96);
 
-	_battleScope	= new Surface(77, 74, _x +  3, _y +  3);
-	_srfHull		= new Surface(22, 25, _x + 93, _y + 40);
-	_srfCwRange1	= new Surface(21, 74, _x + 19, _y +  3);
-	_srfCwRange2	= new Surface(21, 74, _x + 43, _y +  3);
-	_isfCw1			= new InteractiveSurface(15, 17, _x +  4, _y + 52);
-	_isfCw2			= new InteractiveSurface(15, 17, _x + 64, _y + 52);
+	_battleScope	= new Surface(77, 74,  3,  3);
+	_srfHull		= new Surface(22, 25, 93, 40);
+	_srfCwRange1	= new Surface(21, 74, 19,  3);
+	_srfCwRange2	= new Surface(21, 74, 43,  3);
+	_isfCw1			= new InteractiveSurface(15, 17,  4, 52);
+	_isfCw2			= new InteractiveSurface(15, 17, 64, 52);
 
-	_btnReduce		= new InteractiveSurface( 12, 12, _x, _y);
-	_previewUfo		= new InteractiveSurface(160, 96, _x, _y);
+	_btnReduce		= new InteractiveSurface( 12, 12);
+	_previewUfo		= new InteractiveSurface(160, 96);
 
-	_btnDisengage	= new ImageButton(36, 15, _x + 83, _y +  4);
-	_btnUfo			= new ImageButton(36, 15, _x + 83, _y + 20);
-	_btnCautious	= new ImageButton(36, 15, _x + 120, _y +  4);
-	_btnStandard	= new ImageButton(36, 15, _x + 120, _y + 20);
-	_btnAggressive	= new ImageButton(36, 15, _x + 120, _y + 36);
-	_btnStandoff	= new ImageButton(36, 17, _x + 120, _y + 52);
+	_btnDisengage	= new ImageButton(36, 15,  83,  4);
+	_btnUfo			= new ImageButton(36, 15,  83, 20);
+	_btnCautious	= new ImageButton(36, 15, 120,  4);
+	_btnStandard	= new ImageButton(36, 15, 120, 20);
+	_btnAggressive	= new ImageButton(36, 15, 120, 36);
+	_btnStandoff	= new ImageButton(36, 17, 120, 52);
 
 	_craftStance = _btnStandoff;
 
-	_srfTexIcon		= new Surface(9, 9, _x + 147, _y + 72);
+	_srfTexIcon		= new Surface(9, 9, 147, 72);
 
-	_txtLoad1		= new Text( 16, 9, _x +   4, _y + 70);
-	_txtLoad2		= new Text( 16, 9, _x +  64, _y + 70);
-	_txtDistance	= new Text( 40, 9, _x + 116, _y + 72);
-	_txtStatus		= new Text(150, 9, _x +   4, _y + 85);
-	_txtTitle		= new Text(160, 9, _x,       _y -  9);
+	_txtCwLoad1		= new Text( 16, 9,   4, 70);
+	_txtCwLoad2		= new Text( 16, 9,  64, 70);
+	_txtDistance	= new Text( 40, 9, 116, 72);
+	_txtStatus		= new Text(150, 9,   4, 85);
+	_txtTitle		= new Text(160, 9,   0, -9);
 
-	_numUfoId		= new NumberText(11, 5, _x + 146, _y - 6);
+	_numUfoId		= new NumberText(11, 5, 146, -6);
 
 	_btnRestoreIcon	= new InteractiveSurface(32, 20, RESTORE_X_ICON);	// NOTE: y-offset is set in placePort().
 	_txtRestoreIcon	= new Text(150, 9, RESTORE_X_TEXT);					// ditto.
@@ -212,8 +240,8 @@ DogfightState::DogfightState(
 	add(_btnCautious,		"cautiousButton",	"dogfight", _window);
 	add(_btnStandoff,		"standoffButton",	"dogfight", _window);
 	add(_srfTexIcon);
-	add(_txtLoad1,			"numbers",			"dogfight", _window);
-	add(_txtLoad2,			"numbers",			"dogfight", _window);
+	add(_txtCwLoad1,		"numbers",			"dogfight", _window);
+	add(_txtCwLoad2,		"numbers",			"dogfight", _window);
 	add(_txtDistance,		"distance",			"dogfight", _window);
 	add(_previewUfo);
 	add(_txtStatus,			"text",				"dogfight", _window);
@@ -340,21 +368,20 @@ DogfightState::DogfightState(
 	_txtTitle->setText(woststr.str());
 
 	unsigned ufoId (static_cast<unsigned>(_ufo->getId()) % 1000); // truncate to 3 least significant digits
-	
+
 	_numUfoId->setValue(ufoId);
-	_numUfoId->setColor(YELLOW_D);
+	_numUfoId->setColor(colors[UFO_ID]);
 
 	_txtRestoreIcon->setText(woststr.str());
 	_txtRestoreIcon->setVisible(false);
-	
+
 	_numUfoIdIcon->setValue(ufoId);
-	_numUfoIdIcon->setColor(YELLOW_D);
+	_numUfoIdIcon->setColor(colors[UFO_ID]);
 	_numUfoIdIcon->setVisible(false);
 
-	// Define the colors to be used. Note these have been further tweaked in Interfaces.rul
-	const RuleInterface* const dfInterface (_game->getRuleset()->getInterface("dogfight"));
-
-	_colors[CRAFT_MIN]       = static_cast<Uint8>(dfInterface->getElement("craftRange")->color);		// 160 (10)+ 0 slate gray
+	// Define the colors to be used. Note these have been further tweaked in Interfaces.rul too bad.
+//	const RuleInterface* const dfInterface (_game->getRuleset()->getInterface("dogfight"));
+/*	_colors[CRAFT_MIN]       = static_cast<Uint8>(dfInterface->getElement("craftRange")->color);		// 160 (10)+ 0 slate gray
 	_colors[CRAFT_MAX]       = static_cast<Uint8>(dfInterface->getElement("craftRange")->color2);		// 176 (11)+ 0 purple
 	_colors[RADAR_MIN]       = static_cast<Uint8>(dfInterface->getElement("radarRange")->color);		// 112  (7)+ 0 green
 	_colors[RADAR_MAX]       = static_cast<Uint8>(dfInterface->getElement("radarRange")->color2);		// 128  (8)+ 0 pure red
@@ -367,7 +394,7 @@ DogfightState::DogfightState(
 	_colors[DISABLED_RANGE]  = static_cast<Uint8>(dfInterface->getElement("disabledWeapon")->color2);	//   7
 	_colors[DISABLED_AMMO]   = static_cast<Uint8>(dfInterface->getElement("disabledAmmo")->color);		//  24
 	_colors[UFO_BEAM]        = 128u;																	//      (8)+ 0 pure red
-
+*/
 
 	const CraftWeapon* cw;
 	InteractiveSurface* cwSprite;
@@ -375,10 +402,10 @@ DogfightState::DogfightState(
 	Text* cwLoad;
 	int
 		x1,x2,
-		rangeY, // 1 km = 1 pixel
-		connectY (57),
-		minY,
-		maxY;
+		yPos; // 1 km = 1 pixel
+//		connectY (57),
+//		yMin,
+//		yMax;
 
 	const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 	for (size_t
@@ -391,13 +418,13 @@ DogfightState::DogfightState(
 			default:
 			case 0u:
 				cwSprite = _isfCw1;
+				cwLoad   = _txtCwLoad1;
 				cwRange  = _srfCwRange1;
-				cwLoad   = _txtLoad1;
 				break;
 			case 1u:
 				cwSprite = _isfCw2;
+				cwLoad   = _txtCwLoad2;
 				cwRange  = _srfCwRange2;
-				cwLoad   = _txtLoad2;
 		}
 
 		if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
@@ -426,50 +453,36 @@ DogfightState::DogfightState(
 			cwLoad->setText(woststr.str());
 
 			cwRange->lock();
-			rangeY = cwRange->getHeight() - cw->getRules()->getRange();
+			yPos = cwRange->getHeight() - cw->getRules()->getRange();
 
-			for (int
+			for (int // dashed horizontal line
 					x = x1;
-					x < x1 + 19;
+					x != x1 + 20;
 					x += 2)
 			{
 				cwRange->setPixelColor(
-									x, rangeY,
-									_colors[RANGE_METER]);
+									x, yPos,
+									colors[RANGE_METER]);
 			}
 
-			minY =
-			maxY = 0;
-
-			if (rangeY < connectY)
-			{
-				minY = rangeY;
-				maxY = connectY;
-			}
-			else if (rangeY > connectY)
-			{
-				minY = connectY;
-				maxY = rangeY;
-			}
-
-			for (int
-					y = minY;
-					y != maxY + 1;
+			for (int // vertical line
+					y = yPos;
+					y != 58;
 					++y)
 			{
 				cwRange->setPixelColor(
 									x1 + x2, y,
-									_colors[RANGE_METER]);
+									colors[RANGE_METER]);
 			}
 
-			for (int
+			for (int // solid horizontal line
 					x = x2;
 					x != x2 + 3;
 					++x)
 			{
 				cwRange->setPixelColor(
-									x, connectY,
-									_colors[RANGE_METER]);
+									x, 57,
+									colors[RANGE_METER]);
 			}
 			cwRange->unlock();
 
@@ -531,8 +544,8 @@ DogfightState::DogfightState(
 			++y)
 	{
 		testColor = _srfHull->getPixelColor(11, y); // examine Craft down the center of its length
-		isCraftColor = testColor >= _colors[CRAFT_MIN]
-					&& testColor <  _colors[CRAFT_MAX];
+		isCraftColor = testColor >= colors[CRAFT_MIN]
+					&& testColor <  colors[CRAFT_MAX];
 
 		if (_craftHeight != 0 && isCraftColor == false)
 			break;
@@ -571,20 +584,19 @@ DogfightState::~DogfightState()
 	if (_craft != nullptr && _craft->isDestroyed() == false)
 	{
 		//if (debug) Log(LOG_INFO) << ". craft Okay";
-
 		_craft->inDogfight(false);
 
 		if (_breakoff == true)
 		{
 			//if (debug) Log(LOG_INFO) << ". . _breakoff";
-
 			_ufo->stepTarget();	// <- required so that the dogfight doesn't instantly start again ...
 		}
-		else if (_disengage || _ufo->isDestroyed() == true)
+		else if (_disengage || _ufo->getUfoStatus() == Ufo::DESTROYED) // NOTE: '_ufo' is valid if code-execution gets here since (_craft != nullptr)
 		{
 			//if (debug) Log(LOG_INFO) << ". . disengage or UFO is Destroyed";
-
 			_craft->returnToBase();
+
+			// TODO: invoke GeoscapeCraftState so player can/has to decide what to do with Craft.
 		}
 	}
 	//else if (debug) Log(LOG_INFO) << ". nul craft OR Destroyed.";
@@ -601,7 +613,6 @@ void DogfightState::think()
 
 	//if (debug) Log(LOG_INFO) << "DogfightState::think() - " << _craft->getRules()->getType() << "-" << _craft->getId();
 
-
 	if (_reduced == true				// short-circuit
 		&& (_craft->isLowFuel() == true	// these can happen only when reduced to Icon ->
 			|| dynamic_cast<Ufo*>(_craft->getTarget()) != _ufo
@@ -616,7 +627,6 @@ void DogfightState::think()
 		waltz();
 	}
 
-
 	//if (debug)
 	//{
 	//	Log(LOG_INFO) << ". think ->";
@@ -626,7 +636,6 @@ void DogfightState::think()
 	//	Log(LOG_INFO) << ". . ufoCrashed= " << _ufo->isCrashed();
 	//	Log(LOG_INFO) << ". . craftDestroyed= " << _craft->isDestroyed();
 	//}
-
 
 	if (_textPersistence == 0
 		&& _projectiles.empty() == true
@@ -672,11 +681,11 @@ void DogfightState::cyclePort()
 				++y)
 		{
 			Uint8 color (_window->getPixelColor(x,y));
-			if (   color >= _colors[RADAR_MIN]
-				&& color <  _colors[RADAR_MAX])
+			if (   color >= colors[RADAR_MIN]
+				&& color <  colors[RADAR_MAX])
 			{
-				if (++color >= _colors[RADAR_MAX])
-					color    = _colors[RADAR_MIN];
+				if (++color >= colors[RADAR_MAX])
+					color    = colors[RADAR_MIN];
 
 				_window->setPixelColor(x,y, color);
 			}
@@ -729,12 +738,10 @@ void DogfightState::cyclePort()
  */
 void DogfightState::waltz()
 {
-	//if (debug) Log(LOG_INFO) << "advanceDogfight()";
-
+	//if (debug) Log(LOG_INFO) << "waltz()";
 	if (_reduced == false)
 	{
 		//if (debug) Log(LOG_INFO) << ". not reduced [1]";
-
 		cyclePort();
 
 		if (_refreshCraft != 0
@@ -747,7 +754,6 @@ void DogfightState::waltz()
 			&& _ufo->getTicked() == false) // the UFO ticks only once per GeoscapeState::thinkDogfights() for *all* ports
 		{
 			//if (debug) Log(LOG_INFO) << ". . tick UFO";
-
 			_ufo->setTicked();
 
 			int escapeTicks (_ufo->getEscapeCountdown());
@@ -771,7 +777,6 @@ void DogfightState::waltz()
 	if (_ufo->getSpeed() > _craft->getRules()->getTopSpeed()) // crappy Craft is chasing UFO
 	{
 		//if (debug) Log(LOG_INFO) << ". UFO breaking off";
-
 		_breakoff = true;
 		updateStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
 
@@ -799,7 +804,6 @@ void DogfightState::waltz()
 	else // UFO cannot break off because it's crappier than the crappy Craft
 	{
 		//if (debug && !_ufo->getEscapeCountdown()) Log(LOG_INFO) << ". UFO tried breaking off but Failed";
-
 		_breakoff = false;
 	}
 
@@ -807,7 +811,6 @@ void DogfightState::waltz()
 	if (_reduced == false)
 	{
 		//if (debug) Log(LOG_INFO) << ". not reduced [2]";
-
 		int delta; // Update distance.
 		const int accel ((_craft->getRules()->getAcceleration()
 						- _ufo->getRules()->getAcceleration()) >> 1u); // could be negative.
@@ -859,7 +862,6 @@ void DogfightState::waltz()
 							 12 + accel);	// If UFOs ever fire anything but beams those positions need to be adjusted here though.
 
 		//if (debug) Log(LOG_INFO) << ". delta= " << delta;
-
 		_dist += delta;
 		_txtDistance->setText(Text::intWide(_dist));
 
@@ -1155,15 +1157,13 @@ void DogfightState::waltz()
 
 
 	// TODO: Handle cases where both the Craft and UFO are crashed/destroyed.
-	
+
 	if (_finishRequest == false) // do not update status/persistence or re-evaluate score if the dogfight should end.
 	{
 		//if (debug) Log(LOG_INFO) << ". finish NOT Requested yet";
-
 		if (_craft->isDestroyed() == true) // End dogfight if craft is destroyed.
 		{
 			//if (debug) Log(LOG_INFO) << ". . Craft destroyed";
-
 			_finishRequest = true;
 
 			updateStatus("STR_INTERCEPTOR_DESTROYED");
@@ -1180,7 +1180,6 @@ void DogfightState::waltz()
 			if (_ufo->getShotDownByCraftId() == _craft->getIdentificator())
 			{
 				//if (debug) Log(LOG_INFO) << ". . UFO crashed by this Craft";
-
 				_ufo->getAlienMission()->ufoShotDown(*_ufo);
 
 				const double
@@ -1194,7 +1193,6 @@ void DogfightState::waltz()
 				if (_ufo->isDestroyed() == true)
 				{
 					//if (debug) Log(LOG_INFO) << ". . . ufo Destroyed";
-
 					updateStatus("STR_UFO_DESTROYED");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE);
 
@@ -1203,7 +1201,6 @@ void DogfightState::waltz()
 				else // crashed.
 				{
 					//if (debug) Log(LOG_INFO) << ". . . ufo Crashed";
-
 					updateStatus("STR_UFO_CRASH_LANDS");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_CRASH);
 
@@ -1212,18 +1209,14 @@ void DogfightState::waltz()
 					if (_globe->insideLand(lon,lat) == false)
 					{
 						//if (debug) Log(LOG_INFO) << ". . . . ufo over water - DESTROY";
-
 						_ufo->setUfoStatus(Ufo::DESTROYED);
-
 						pts <<= 1u;
 					}
 					else // Set up Crash site.
 					{
 						//if (debug) Log(LOG_INFO) << ". . . . ufo over land - Set up Crash site.";
-
 						_ufo->setTarget();
 						_ufo->setCrashId(_playSave->getCanonicalId(Target::stTarget[6u]));
-
 						_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.
 						_ufo->setAltitude(MovingTarget::stAltitude[0u]);
 					}
@@ -1263,7 +1256,7 @@ void DogfightState::fireWeapon1()
 
 		std::wostringstream woststr;
 		woststr << cw->getCwLoad();
-		_txtLoad1->setText(woststr.str());
+		_txtCwLoad1->setText(woststr.str());
 
 		CraftWeaponProjectile* const prj (cw->fire());
 		prj->setDirection(PD_CRAFT);
@@ -1289,7 +1282,7 @@ void DogfightState::fireWeapon2()
 
 		std::wostringstream woststr;
 		woststr << cw->getCwLoad();
-		_txtLoad2->setText(woststr.str());
+		_txtCwLoad2->setText(woststr.str());
 
 		CraftWeaponProjectile* const prj (cw->fire());
 		prj->setDirection(PD_CRAFT);
@@ -1574,11 +1567,6 @@ void DogfightState::btnDisengageClick(Action*)
 		updateStatus("STR_DISENGAGING");
 		_desired = DIST_ENGAGE + 10;
 	}
-
-/*	if (_geoState->getQtyReducedDogfights() == _totalIntercepts - 1u) // if this is the only dogfight with a port that's displayed
-	{
-		_geoState->toggleDogfight(false);
-	} */
 }
 
 /**
@@ -1600,7 +1588,7 @@ void DogfightState::btnUfoClick(Action* action)
 			_btnDisengage ->setVisible(false);
 			_btnUfo       ->setVisible(false);
 			_srfTexIcon   ->setVisible(false);
-			_btnReduce    ->setVisible(false); // NOTE: The button is integral to the graphic so it's still physically visible.
+			_btnReduce    ->setVisible(false);
 			_isfCw1       ->setVisible(false);
 			_isfCw2       ->setVisible(false);
 	}
@@ -1615,14 +1603,6 @@ void DogfightState::previewClick(Action* action)
 	switch (action->getDetails()->button.button)
 	{
 		case SDL_BUTTON_LEFT:
-		{
-			std::string article (_ufo->getRules()->getType()); // strip const. yay,
-			if (_playSave->isResearched(article) == true)
-				Ufopaedia::openArticle(_game, article);
-			break;
-		}
-
-		case SDL_BUTTON_RIGHT:
 			_previewUfo   ->setVisible(false);
 
 			_btnStandoff  ->setVisible(); // Reenable all buttons to facilitate misclicks Lol ->
@@ -1635,6 +1615,14 @@ void DogfightState::previewClick(Action* action)
 			_btnReduce    ->setVisible();
 			_isfCw1       ->setVisible();
 			_isfCw2       ->setVisible();
+			break;
+
+		case SDL_BUTTON_RIGHT:
+		{
+			std::string article (_ufo->getRules()->getType()); // strip const. yay,
+			if (_playSave->isResearched(article) == true)
+				Ufopaedia::openArticle(_game, article);
+		}
 	}
 }
 
@@ -1669,8 +1657,8 @@ void DogfightState::btnReduceToIconClick(Action*)
 				_isfCw2        ->setVisible(false);
 				_srfCwRange2   ->setVisible(false);
 				_srfHull       ->setVisible(false);
-				_txtLoad1      ->setVisible(false);
-				_txtLoad2      ->setVisible(false);
+				_txtCwLoad1    ->setVisible(false);
+				_txtCwLoad2    ->setVisible(false);
 				_txtDistance   ->setVisible(false);
 				_txtStatus     ->setVisible(false);
 				_txtTitle      ->setVisible(false);
@@ -1731,8 +1719,8 @@ void DogfightState::btnShowPortPress(Action* action)
 			_isfCw2        ->setVisible();
 			_srfCwRange2   ->setVisible();
 			_srfHull       ->setVisible();
-			_txtLoad1      ->setVisible();
-			_txtLoad2      ->setVisible();
+			_txtCwLoad1    ->setVisible();
+			_txtCwLoad2    ->setVisible();
 			_txtDistance   ->setVisible();
 			_txtStatus     ->setVisible();
 			_txtTitle      ->setVisible();
@@ -1801,11 +1789,11 @@ void DogfightState::drawCraft(bool init) // private.
 				Uint8
 					color,
 					colorPre;
-				
+
 				if (init == true)
-					color = _colors[DAMAGE_YEL];
+					color = colors[DAMAGE_YEL];
 				else
-					color = _colors[DAMAGE_RED];
+					color = colors[DAMAGE_RED];
 
 				for (int
 						y = _craftHeight_pre;
@@ -1819,16 +1807,16 @@ void DogfightState::drawCraft(bool init) // private.
 					{
 						colorPre = _srfHull->getPixelColor(x,y);
 
-						if ((  colorPre >= _colors[CRAFT_MIN] // is gray Craft pixel
-							&& colorPre <  _colors[CRAFT_MAX])
-							|| colorPre == _colors[DAMAGE_YEL])
+						if ((  colorPre >= colors[CRAFT_MIN] // is gray Craft pixel
+							&& colorPre <  colors[CRAFT_MAX])
+							|| colorPre == colors[DAMAGE_YEL])
 						{
 							_srfHull->setPixelColor(x,y, color);
 						}
-						else if (colorPre == _colors[DAMAGE_RED])
+						else if (colorPre == colors[DAMAGE_RED])
 							_srfHull->setPixelColor(
 												x,y,
-												_colors[DAMAGE_YEL]);
+												colors[DAMAGE_YEL]);
 					}
 				}
 			}
@@ -1870,8 +1858,8 @@ void DogfightState::drawUfo() // private.
 					color = static_cast<Uint8>(_window->getPixelColor(
 																ufo_x + x + 3,
 																ufo_y + y + 3) - color);
-					if (color < _colors[BLOB_MIN])
-						color = _colors[BLOB_MIN];
+					if (color < colors[BLOB_MIN])
+						color = colors[BLOB_MIN];
 
 					_battleScope->setPixelColor(
 											ufo_x + x,
@@ -1924,8 +1912,8 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj) // pr
 													pos_y + y + 3);
 						color = Vicegrip(
 									static_cast<Uint8>(color - colorOffset),
-									_colors[BLOB_MIN],
-									_colors[BLOB_MAX]);
+									colors[BLOB_MIN],
+									colors[BLOB_MAX]);
 
 						_battleScope->setPixelColor(
 												pos_x + x,
@@ -1973,8 +1961,8 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj) // pr
 							colorDst = static_cast<Uint8>(colorDst + (x << 1u));
 							colorDst = Vicegrip(
 											colorDst,
-											_colors[BLOB_MIN],
-											_colors[BLOB_MAX]);
+											colors[BLOB_MIN],
+											colors[BLOB_MAX]);
 
 							switch (x)
 							{
@@ -1998,11 +1986,11 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj) // pr
 							switch (x)
 							{
 								case 0:
-									_battleScope->setPixelColor(pos_x,     y, _colors[UFO_BEAM]);
+									_battleScope->setPixelColor(pos_x,     y, colors[UFO_BEAM]);
 									break;
 								default:
-									_battleScope->setPixelColor(pos_x + x, y, _colors[UFO_BEAM]);
-									_battleScope->setPixelColor(pos_x - x, y, _colors[UFO_BEAM]);
+									_battleScope->setPixelColor(pos_x + x, y, colors[UFO_BEAM]);
+									_battleScope->setPixelColor(pos_x - x, y, colors[UFO_BEAM]);
 							}
 						}
 				}
@@ -2018,14 +2006,14 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj) // pr
 void DogfightState::weapon1Click(Action*)
 {
 	int i;
-	if (_w1Enabled = !_w1Enabled) // NOTE: reverse these:
-		i = +1;
-	else
+	if (_w1Enabled = !_w1Enabled)
 		i = -1;
+	else
+		i = +1;
 
-	_isfCw1     ->offset(_colors[DISABLED_WEAPON] * i);
-	_srfCwRange1->offset(_colors[DISABLED_RANGE]  * i);
-	_txtLoad1   ->offset(_colors[DISABLED_AMMO]   * i);
+	_isfCw1     ->offset(shift[SHIFT_WEAPON] * i);
+	_srfCwRange1->offset(shift[SHIFT_RANGE]  * i);
+	_txtCwLoad1 ->offset(shift[SHIFT_LOAD]   * i);
 
 	_craft->setWeaponDisabled(1, !_w1Enabled);
 }
@@ -2037,14 +2025,14 @@ void DogfightState::weapon1Click(Action*)
 void DogfightState::weapon2Click(Action*)
 {
 	int i;
-	if (_w2Enabled = !_w2Enabled) // NOTE: reverse these:
-		i = +1;
-	else
+	if (_w2Enabled = !_w2Enabled)
 		i = -1;
+	else
+		i = +1;
 
-	_isfCw2     ->offset(_colors[DISABLED_WEAPON] * i);
-	_srfCwRange2->offset(_colors[DISABLED_RANGE]  * i);
-	_txtLoad2   ->offset(_colors[DISABLED_AMMO]   * i);
+	_isfCw2     ->offset(shift[SHIFT_WEAPON] * i);
+	_srfCwRange2->offset(shift[SHIFT_RANGE]  * i);
+	_txtCwLoad2 ->offset(shift[SHIFT_LOAD]   * i);
 
 	_craft->setWeaponDisabled(2, !_w2Enabled);
 }
