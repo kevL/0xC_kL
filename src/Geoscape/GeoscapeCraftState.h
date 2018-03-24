@@ -30,6 +30,7 @@ class Craft;
 class GeoscapeState;
 class Text;
 class TextButton;
+class Ufo;
 class Waypoint;
 class Window;
 
@@ -74,9 +75,24 @@ private:
 		* _btnCancel,
 		* _btnCenter,
 		* _btnPatrol,
-		* _btnTarget;
+		* _btnTarget,
+		* _btnIntercept;
+	Ufo* _ufo;
 	Waypoint* _waypoint;
 	Window* _window;
+
+	/// Handler for clicking the Center button.
+	void btnCenterPauseClick(Action* action);
+	/// Handler for clicking the Return To Base button.
+	void btnBaseClick(Action* action);
+	/// Handler for clicking the Select New Target button.
+	void btnTargetClick(Action* action);
+	/// Handler for clicking the Patrol button.
+	void btnPatrolClick(Action* action);
+	/// Handler for clicking the Cancel button.
+	void btnCancelOrRedirectClick(Action* action);
+	/// Handler for clicking the Intercept button.
+	void btnInterceptClick(Action* action);
 
 	/// Hides various screen-elements to reveal the globe & Craft.
 	void transposeWindow();
@@ -91,20 +107,10 @@ private:
 				GeoscapeState* const geoState,
 				Waypoint* const waypoint = nullptr,
 				bool doublePop = false,
-				bool transpose = false);
+				bool transpose = false,
+				Ufo* const ufo = nullptr);
 		/// Cleans up the GeoscapeCraft state.
 		~GeoscapeCraftState();
-
-		/// Handler for clicking the Center button.
-		void btnCenterPauseClick(Action* action);
-		/// Handler for clicking the Return To Base button.
-		void btnBaseClick(Action* action);
-		/// Handler for clicking the Select New Target button.
-		void btnTargetClick(Action* action);
-		/// Handler for clicking the Patrol button.
-		void btnPatrolClick(Action* action);
-		/// Handler for clicking the Cancel button.
-		void btnCancelOrRedirectClick(Action* action);
 };
 
 }

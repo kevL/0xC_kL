@@ -35,6 +35,7 @@ class Target;
 class Text;
 class TextButton;
 class TextList;
+class Ufo;
 class Window;
 
 
@@ -67,6 +68,7 @@ private:
 		* _btnCancel,
 		* _btnBase;
 	TextList* _lstCrafts;
+	Ufo* _ufo;
 	Window* _window;
 
 	std::vector<std::wstring> _bases;
@@ -81,7 +83,8 @@ private:
 		/// Creates an Intercept state.
 		InterceptState(
 				GeoscapeState* const geoState,
-				Base* const base = nullptr);
+				Base* const base = nullptr,
+				Ufo* const ufo = nullptr);
 		/// Cleans up the Intercept state.
 		~InterceptState();
 

@@ -55,14 +55,17 @@ namespace OpenXcom
 /**
  * Initializes all the elements in the Intercept window.
  * @param geoState	- pointer to GeoscapeState
- * @param base		- pointer to Base to show crafts (default nullptr to show all Craft)
+ * @param base		- pointer to Base to show crafts at a particular base (default nullptr to show all Craft)
+ * @param ufo		- pointer to Ufo to intercept a freshly detected UFO (default nullptr)
  */
 InterceptState::InterceptState(
 		GeoscapeState* const geoState,
-		Base* const base)
+		Base* const base,
+		Ufo* const ufo)
 	:
 		_geoState(geoState),
-		_base(base)
+		_base(base),
+		_ufo(ufo)
 {
 	_fullScreen = false;
 
@@ -305,8 +308,13 @@ void InterceptState::btnGotoBaseClick(Action*)
  */
 void InterceptState::lstCraftsClickLeft(Action*)
 {
-	Craft* const craft (_crafts[_lstCrafts->getSelectedRow()]);
-	_game->pushState(new GeoscapeCraftState(craft, _geoState, nullptr, true));
+	_game->pushState(new GeoscapeCraftState(
+										_crafts[_lstCrafts->getSelectedRow()],
+										_geoState,
+										nullptr,
+										true,
+										false,
+										_ufo));
 }
 
 /**

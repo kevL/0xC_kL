@@ -482,7 +482,7 @@ void UfoDetectedState::btnInterceptClick(Action*)
 	_geoState->resetTimer();
 	_game->popState();
 
-	_game->pushState(new InterceptState(_geoState));
+	_game->pushState(new InterceptState(_geoState, nullptr, _ufo));
 }
 
 /**

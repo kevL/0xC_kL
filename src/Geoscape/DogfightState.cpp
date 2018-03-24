@@ -131,12 +131,10 @@ DogfightState::DogfightState(
 		_textPersistence(STAT_PERSIST),
 		_dist(DIST_ENGAGE),
 		_desired(DIST_STANDOFF),
-		_breakoff(false),
-		_w1Enabled(true),
-		_w2Enabled(true),
 		_reduced(false),
-		_finish(false),
 		_disengage(false),
+		_finish(false),
+		_breakoff(false),
 		_cautionLevel(CAUTION_HIGH),
 		_ufoSize(static_cast<int>(ufo->getRules()->getRadius())),
 		_craftHeight(0),
@@ -146,12 +144,13 @@ DogfightState::DogfightState(
 		_slotsTotal(0u),
 		_x(0),
 		_y(0),
-		_restoreIconX(5), // x-offset won't change
-		_restoreIconY(0), // y-offset will change
+		_restoreIconY(0),
 		_w1FireCountdown(0),
 		_w2FireCountdown(0),
 		_w1FireInterval(0),
-		_w2FireInterval(0)
+		_w2FireInterval(0),
+		_w1Enabled(true),
+		_w2Enabled(true)
 {
 	debug = false;// (_ufo->getId() == 836);
 	debugSlow = 0;
@@ -161,38 +160,40 @@ DogfightState::DogfightState(
 
 	_craft->inDogfight(true);
 
-	_window					= new Surface(160, 96, _x, _y);
+	_window			= new Surface(160, 96, _x, _y);
 
-	_battleScope			= new Surface(77, 74, _x +  3, _y +  3);
-	_srfHull				= new Surface(22, 25, _x + 93, _y + 40);
-	_srfCwRange1			= new Surface(21, 74, _x + 19, _y +  3);
-	_srfCwRange2			= new Surface(21, 74, _x + 43, _y +  3);
-	_isfCw1					= new InteractiveSurface(15, 17, _x +  4, _y + 52);
-	_isfCw2					= new InteractiveSurface(15, 17, _x + 64, _y + 52);
+	_battleScope	= new Surface(77, 74, _x +  3, _y +  3);
+	_srfHull		= new Surface(22, 25, _x + 93, _y + 40);
+	_srfCwRange1	= new Surface(21, 74, _x + 19, _y +  3);
+	_srfCwRange2	= new Surface(21, 74, _x + 43, _y +  3);
+	_isfCw1			= new InteractiveSurface(15, 17, _x +  4, _y + 52);
+	_isfCw2			= new InteractiveSurface(15, 17, _x + 64, _y + 52);
 
-	_btnReduce				= new InteractiveSurface( 12, 12, _x, _y);
-	_previewUfo				= new InteractiveSurface(160, 96, _x, _y);
+	_btnReduce		= new InteractiveSurface( 12, 12, _x, _y);
+	_previewUfo		= new InteractiveSurface(160, 96, _x, _y);
 
-	_btnDisengage			= new ImageButton(36, 15, _x + 83, _y +  4);
-	_btnUfo					= new ImageButton(36, 15, _x + 83, _y + 20);
-	_btnCautious			= new ImageButton(36, 15, _x + 120, _y +  4);
-	_btnStandard			= new ImageButton(36, 15, _x + 120, _y + 20);
-	_btnAggressive			= new ImageButton(36, 15, _x + 120, _y + 36);
-	_btnStandoff			= new ImageButton(36, 17, _x + 120, _y + 52);
+	_btnDisengage	= new ImageButton(36, 15, _x + 83, _y +  4);
+	_btnUfo			= new ImageButton(36, 15, _x + 83, _y + 20);
+	_btnCautious	= new ImageButton(36, 15, _x + 120, _y +  4);
+	_btnStandard	= new ImageButton(36, 15, _x + 120, _y + 20);
+	_btnAggressive	= new ImageButton(36, 15, _x + 120, _y + 36);
+	_btnStandoff	= new ImageButton(36, 17, _x + 120, _y + 52);
 
 	_craftStance = _btnStandoff;
 
-	_srfTexIcon				= new Surface(9, 9, _x + 147, _y + 72);
+	_srfTexIcon		= new Surface(9, 9, _x + 147, _y + 72);
 
-	_txtLoad1				= new Text( 16, 9, _x +   4, _y + 70);
-	_txtLoad2				= new Text( 16, 9, _x +  64, _y + 70);
-	_txtDistance			= new Text( 40, 9, _x + 116, _y + 72);
-	_txtStatus				= new Text(150, 9, _x +   4, _y + 85);
-	_txtTitle				= new Text(160, 9, _x,       _y -  9);
+	_txtLoad1		= new Text( 16, 9, _x +   4, _y + 70);
+	_txtLoad2		= new Text( 16, 9, _x +  64, _y + 70);
+	_txtDistance	= new Text( 40, 9, _x + 116, _y + 72);
+	_txtStatus		= new Text(150, 9, _x +   4, _y + 85);
+	_txtTitle		= new Text(160, 9, _x,       _y -  9);
 
-	_btnRestoreIcon			= new InteractiveSurface(32, 20);	// NOTE: x & y offset are set in placePort().
-	_txtRestoreIcon			= new Text(150, 9);					// ditto.
-	_numIconUfoId			= new NumberText(11, 5);			// ditto.
+	_numUfoId		= new NumberText(11, 5, _x + 146, _y - 6);
+
+	_btnRestoreIcon	= new InteractiveSurface(32, 20, RESTORE_X_ICON);	// NOTE: y-offset is set in placePort().
+	_txtRestoreIcon	= new Text(150, 9, RESTORE_X_TEXT);					// ditto.
+	_numUfoIdIcon	= new NumberText(11, 5, RESTORE_X_UFOID);			// ditto.
 
 	setInterface("dogfight");
 
@@ -217,10 +218,11 @@ DogfightState::DogfightState(
 	add(_previewUfo);
 	add(_txtStatus,			"text",				"dogfight", _window);
 	add(_txtTitle,			"ufoButton",		"dogfight", _window);
+	add(_numUfoId);
 
 	add(_btnRestoreIcon);
 	add(_txtRestoreIcon,	"iconText",			"dogfight");
-	add(_numIconUfoId);
+	add(_numUfoIdIcon);
 
 	_btnStandoff  ->invalidate(false);
 	_btnCautious  ->invalidate(false);
@@ -337,12 +339,17 @@ DogfightState::DogfightState(
 	woststr << _craft->getLabel(_game->getLanguage()) << L" >" << _craft->getBase()->getLabel();
 	_txtTitle->setText(woststr.str());
 
+	unsigned ufoId (static_cast<unsigned>(_ufo->getId()) % 1000); // truncate to 3 least significant digits
+	
+	_numUfoId->setValue(ufoId);
+	_numUfoId->setColor(YELLOW_D);
+
 	_txtRestoreIcon->setText(woststr.str());
 	_txtRestoreIcon->setVisible(false);
 	
-	_numIconUfoId->setValue(static_cast<unsigned>(_ufo->getId()) % 1000); // truncate to 3 least significant digits
-	_numIconUfoId->setColor(YELLOW_D);
-	_numIconUfoId->setVisible(false);
+	_numUfoIdIcon->setValue(ufoId);
+	_numUfoIdIcon->setColor(YELLOW_D);
+	_numUfoIdIcon->setVisible(false);
 
 	// Define the colors to be used. Note these have been further tweaked in Interfaces.rul
 	const RuleInterface* const dfInterface (_game->getRuleset()->getInterface("dogfight"));
@@ -490,7 +497,20 @@ DogfightState::DogfightState(
 	srf = srtInticon->getFrame(_craft->getRules()->getSprite() + 11);
 	srf->blit(_srfHull);
 
-	if (_ufo->getEscapeCountdown() == 0) // UFO is *not* engaged already in a different dogfight.
+	bool dogfight = false; // check if UFO is already engaged by a different interceptor
+	for (std::list<DogfightState*>::const_iterator
+			i = _geoState->getDogfights().begin();
+			i != _geoState->getDogfights().end();
+			++i)
+	{
+		if ((*i)->getUfo() == _ufo)
+		{
+			dogfight = true;
+			break;
+		}
+	}
+
+	if (dogfight == false)
 	{
 		_ufo->setFireCountdown(0); // UFO is ready to Fire pronto.
 
@@ -541,9 +561,14 @@ DogfightState::~DogfightState()
 		_projectiles.pop_back();
 	}
 
-	_ufo->setShootingAt(0u); // catch-all for disengage/breakoff/landed UFO
+	// NOTE: The '_ufo' and '_craft' pointers will be valid on an ordinary
+	// call but if closing the application with active Dogfight(s) then
+	// GeoscapeState's dTor will nullptr both - so check for that.
 
-	if (_craft->isDestroyed() == false)
+	if (_ufo != nullptr)
+		_ufo->setShootingAt(0u); // catch-all for disengage/breakoff/landed UFO
+
+	if (_craft != nullptr && _craft->isDestroyed() == false)
 	{
 		if (debug) Log(LOG_INFO) << ". craft Okay";
 
@@ -562,7 +587,7 @@ DogfightState::~DogfightState()
 			_craft->returnToBase();
 		}
 	}
-	else if (debug) Log(LOG_INFO) << ". craft Destroyed.";
+	else if (debug) Log(LOG_INFO) << ". nul craft OR Destroyed.";
 }
 
 /**
@@ -592,7 +617,7 @@ void DogfightState::think()
 	else
 	{
 		if (debug) Log(LOG_INFO) << ". call advanceDogfight()";
-		advanceDogfight();
+		waltz();
 	}
 
 
@@ -634,10 +659,10 @@ void DogfightState::think()
 }
 
 /**
- * Animates the view-port via palette cycling.
+ * Animates the Surface via palette cycling.
  * @note This is called by advanceDogfight().
  */
-void DogfightState::aniPort()
+void DogfightState::cyclePort()
 {
 	for (int // Animate radar waves and other stuff.
 			x = 0;
@@ -687,7 +712,7 @@ void DogfightState::aniPort()
 		_ufo->setHitStep(--hit);
 		if (hit == 0)
 		{
-			last = true;
+			last = true; // wtf is that about <-
 		}
 	}
 
@@ -700,12 +725,12 @@ void DogfightState::aniPort()
 }
 
 /**
- * Advances this Dogfight and updates all the elements in the view-port.
+ * Advances this Dogfight and updates all the elements in the port.
  * @note Includes ufo movement, weapons fire, projectile movement, ufo escape
  * conditions, craft and ufo destruction conditions, and retaliation mission
  * generation as applicable.
  */
-void DogfightState::advanceDogfight()
+void DogfightState::waltz()
 {
 	if (debug) Log(LOG_INFO) << "advanceDogfight()";
 
@@ -713,7 +738,7 @@ void DogfightState::advanceDogfight()
 	{
 		if (debug) Log(LOG_INFO) << ". not reduced [1]";
 
-		aniPort();
+		cyclePort();
 
 		if (_refreshCraft != 0
 			&& --_refreshCraft == 0)
@@ -721,16 +746,15 @@ void DogfightState::advanceDogfight()
 			drawCraft();
 		}
 
-//		if (_ufo->isCrashed()        == false
-//			&& _craft->isDestroyed() == false
-		if (_ufo->getTicked() == false)	// NOTE: each UFO ticks only once per GeoscapeState::thinkDogfights()
+		if (_ufo->isCrashed() == false
+			&& _ufo->getTicked() == false) // the UFO ticks only once per GeoscapeState::thinkDogfights() for *all* ports
 		{
 			if (debug) Log(LOG_INFO) << ". . tick UFO";
 
 			_ufo->setTicked();
 
 			int escapeTicks (_ufo->getEscapeCountdown());
-			if (escapeTicks > 0)
+			if (escapeTicks != 0)
 			{
 				_geoState->drawUfoBlobs();
 
@@ -742,7 +766,7 @@ void DogfightState::advanceDogfight()
 			}
 
 			const int fireTicks (_ufo->getFireCountdown());
-			if (fireTicks > 0)
+			if (fireTicks != 0)
 				_ufo->setFireCountdown(fireTicks - 1);
 		}
 	}
@@ -1569,14 +1593,14 @@ void DogfightState::btnUfoClick(Action* action)
 		case SDL_BUTTON_RIGHT:
 			_previewUfo   ->setVisible();
 
-			_btnStandoff  ->setVisible(false); // Disable all other buttons to prevent misclicks ->
+			_btnStandoff  ->setVisible(false); // Disable all buttons to prevent misclicks ->
 			_btnCautious  ->setVisible(false);
 			_btnStandard  ->setVisible(false);
 			_btnAggressive->setVisible(false);
 			_btnDisengage ->setVisible(false);
 			_btnUfo       ->setVisible(false);
 			_srfTexIcon   ->setVisible(false);
-			_btnReduce    ->setVisible(false);
+			_btnReduce    ->setVisible(false); // NOTE: The button is integral to the graphic so it's still physically visible.
 			_isfCw1       ->setVisible(false);
 			_isfCw2       ->setVisible(false);
 	}
@@ -1601,7 +1625,7 @@ void DogfightState::previewClick(Action* action)
 		case SDL_BUTTON_RIGHT:
 			_previewUfo   ->setVisible(false);
 
-			_btnStandoff  ->setVisible(); // Reenable all other buttons to prevent misclicks Lol ->
+			_btnStandoff  ->setVisible(); // Reenable all buttons to facilitate misclicks Lol ->
 			_btnCautious  ->setVisible();
 			_btnStandard  ->setVisible();
 			_btnAggressive->setVisible();
@@ -1650,11 +1674,13 @@ void DogfightState::btnReduceToIconClick(Action*)
 				_txtDistance   ->setVisible(false);
 				_txtStatus     ->setVisible(false);
 				_txtTitle      ->setVisible(false);
+				_numUfoId      ->setVisible(false);
+
 				_previewUfo    ->setVisible(false);
 
 				_btnRestoreIcon->setVisible();
 				_txtRestoreIcon->setVisible();
-				_numIconUfoId  ->setVisible();
+				_numUfoIdIcon  ->setVisible();
 
 				if (_geoState->getReducedDogfights() == _slotsTotal) // if all dogfight-ports are currently reduced.
 				{
@@ -1710,10 +1736,11 @@ void DogfightState::btnShowPortPress(Action* action)
 			_txtDistance   ->setVisible();
 			_txtStatus     ->setVisible();
 			_txtTitle      ->setVisible();
+			_numUfoId      ->setVisible();
 
 			_btnRestoreIcon->setVisible(false);
 			_txtRestoreIcon->setVisible(false);
-			_numIconUfoId  ->setVisible(false);
+			_numUfoIdIcon  ->setVisible(false);
 
 			_geoState->resetInterceptPorts();
 
@@ -2134,12 +2161,12 @@ void DogfightState::placePort() // private.
 		(*i)->setY((*i)->getY() - y);
 	}
 
-	_btnRestoreIcon->setX(_restoreIconX);
+	_btnRestoreIcon->setX(RESTORE_X_ICON);
 	_btnRestoreIcon->setY(_restoreIconY);
-	_txtRestoreIcon->setX(_restoreIconX + 18);
+	_txtRestoreIcon->setX(RESTORE_X_TEXT);
 	_txtRestoreIcon->setY(_restoreIconY +  6);
-	_numIconUfoId  ->setX(_restoreIconX +  3);
-	_numIconUfoId  ->setY(_restoreIconY + 14);
+	_numUfoIdIcon  ->setX(RESTORE_X_UFOID);
+	_numUfoIdIcon  ->setY(_restoreIconY + 14);
 }
 
 /**

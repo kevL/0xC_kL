@@ -88,7 +88,11 @@ private:
 		DIST_STANDOFF = 595,
 		DIST_CLOSE    =  60,
 
-		STAT_PERSIST  =  25;
+		STAT_PERSIST  =  23,
+		
+		RESTORE_X_ICON  =  5,
+		RESTORE_X_TEXT  = 23,
+		RESTORE_X_UFOID =  8;
 
 
 	bool
@@ -112,7 +116,6 @@ private:
 
 		_x,
 		_y,
-		_restoreIconX,
 		_restoreIconY,
 
 		_w1FireCountdown,
@@ -145,7 +148,9 @@ private:
 		* _previewUfo,
 		* _isfCw1,
 		* _isfCw2;
-	NumberText* _numIconUfoId;
+	NumberText
+		* _numUfoId,
+		* _numUfoIdIcon;
 	SavedGame* _playSave;
 	Surface
 		* _battleScope,
@@ -204,10 +209,10 @@ private:
 
 		/// Runs the timers.
 		void think() override;
-		/// Animates the Dogfight view-port.
-		void aniPort();
-		/// Advances the Dogfight and updates the view-port.
-		void advanceDogfight();
+		/// Animates the Dogfight port.
+		void cyclePort();
+		/// Advances the Dogfight and updates the port.
+		void waltz();
 
 		/// Fires the first Craft weapon.
 		void fireWeapon1();

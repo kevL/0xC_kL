@@ -58,23 +58,29 @@ namespace OpenXcom
  * @param waypoint	- pointer to the last UFO position for redirecting the Craft (default nullptr)
  * @param doublePop	- true if two windows need to pop on exit (default false)
  * @param transpose	- true to start the state transposed (default false)
+ * @param ufo		- pointer to Ufo to intercept a freshly detected UFO (default nullptr)
  */
 GeoscapeCraftState::GeoscapeCraftState(
 		Craft* const craft,
 		GeoscapeState* const geoState,
 		Waypoint* const waypoint,
 		bool doublePop,
-		bool transpose)
+		bool transpose,
+		Ufo* const ufo)
 	:
 		_craft(craft),
 		_geoState(geoState),
 		_waypoint(waypoint),
 		_doublePop(doublePop),
-		_delayPop(true)
+		_delayPop(true),
+		_ufo(ufo)
 {
 	_fullScreen = false;
 
-	_window			= new Window(this, 224, 176, 16, 8, POPUP_BOTH);
+	int height (176);
+	if (_ufo != nullptr) height += 22;
+
+	_window			= new Window(this, 224, height, 16, 8, POPUP_BOTH);
 
 	_txtTitle		= new Text(192, 17, 32, 15);
 
@@ -106,6 +112,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_btnCenter		= new TextButton(192, 16,  32, 136);
 	_btnRebase		= new TextButton( 90, 16,  32, 158);
 	_btnCancel		= new TextButton( 90, 16, 134, 158);
+	_btnIntercept	= new TextButton(192, 16,  32, 180);
 
 	_srfTarget		= new Surface(29, 29, 114, 86);
 
@@ -135,6 +142,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	add(_btnCenter,		"button",	"geoCraftScreens");
 	add(_btnRebase,		"button",	"geoCraftScreens");
 	add(_btnCancel,		"button",	"geoCraftScreens");
+	add(_btnIntercept,	"button",	"geoCraftScreens");
 
 	add(_srfTarget);
 
@@ -189,6 +197,16 @@ GeoscapeCraftState::GeoscapeCraftState(
 								Options::keyOk);
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeCraftState::btnCancelOrRedirectClick),
 								Options::keyOkKeypad);
+
+	if (_ufo != nullptr)
+	{
+		_btnIntercept->setText(tr("STR_INTERCEPT"));
+		_btnIntercept->onMouseClick(	static_cast<ActionHandler>(&GeoscapeCraftState::btnInterceptClick));
+		_btnIntercept->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeCraftState::btnInterceptClick),
+										SDLK_i);
+	}
+	else
+		_btnIntercept->setVisible(false);
 
 	_txtTitle->setText(_craft->getLabel(_game->getLanguage()));
 	_txtTitle->setBig();
@@ -376,7 +394,7 @@ GeoscapeCraftState::~GeoscapeCraftState()
  * Centers the Globe on the current Craft.
  * @param action - pointer to an Action
  */
-void GeoscapeCraftState::btnCenterPauseClick(Action*)
+void GeoscapeCraftState::btnCenterPauseClick(Action*) // private.
 {
 	_geoState->getGlobe()->center(
 								_craft->getLongitude(),
@@ -391,7 +409,8 @@ void GeoscapeCraftState::btnCenterPauseClick(Action*)
 											_geoState,
 											nullptr,
 											false,
-											true));
+											true,
+											_ufo));
 	}
 	else if (_delayPop == true)
 	{
@@ -417,7 +436,7 @@ void GeoscapeCraftState::btnCenterPauseClick(Action*)
  * Sends the Craft back to its Base.
  * @param action - pointer to an Action
  */
-void GeoscapeCraftState::btnBaseClick(Action*)
+void GeoscapeCraftState::btnBaseClick(Action*) // private.
 {
 	if (_doublePop == true)
 		_game->popState();
@@ -435,7 +454,7 @@ void GeoscapeCraftState::btnBaseClick(Action*)
  * Changes the Craft's Target.
  * @param action - pointer to an Action
  */
-void GeoscapeCraftState::btnTargetClick(Action*)
+void GeoscapeCraftState::btnTargetClick(Action*) // private.
 {
 	if (_doublePop == true)
 		_game->popState();
@@ -456,7 +475,7 @@ void GeoscapeCraftState::btnTargetClick(Action*)
  * Sets the Craft to patrol its current location.
  * @param action - pointer to an Action
  */
-void GeoscapeCraftState::btnPatrolClick(Action*)
+void GeoscapeCraftState::btnPatrolClick(Action*) // private.
 {
 	if (_doublePop == true)
 		_game->popState();
@@ -475,7 +494,7 @@ void GeoscapeCraftState::btnPatrolClick(Action*)
  * redirection toward a waypoint that is outside the Craft's range.
  * @param action - pointer to an Action
  */
-void GeoscapeCraftState::btnCancelOrRedirectClick(Action*)
+void GeoscapeCraftState::btnCancelOrRedirectClick(Action*) // private.
 {
 	if (_waypoint != nullptr) // Go to the last-known UFO position
 	{
@@ -485,6 +504,19 @@ void GeoscapeCraftState::btnCancelOrRedirectClick(Action*)
 		_geoState->getGlobe()->clearCrosshair();
 	}
 	_game->popState(); // and Cancel.
+}
+
+/**
+ * Targets the Craft on a freshly detected UFO if it exists/if button is visible.
+ * @param action - pointer to an Action
+ */
+void GeoscapeCraftState::btnInterceptClick(Action*) // private.
+{
+	_game->popState(); // since this btn is shown only when this State is invoked by InterceptState
+	_game->popState(); // '_doublePop' will always be true.
+
+	_craft->setTarget(_ufo);
+	_geoState->getGlobe()->clearCrosshair();
 }
 
 /**

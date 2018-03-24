@@ -389,6 +389,9 @@ void Screen::resetDisplay(bool resetVideo)
 		Log(LOG_INFO) << "Display set to " << _screen->w << "x" << _screen->h << "x" << static_cast<int>(_screen->format->BitsPerPixel) << ".";
 
 		// kL_add: brighten display ->
+		// PROBLEM: This makes changes that are external to this software
+		// (vidcard/display related) that don't undo until settings on the
+		// vidcard software are jiggered.
 //		const float g (Vicegrip(static_cast<float>(Options::displayGamma) * 0.01f, 0.25f, 1.f)); // min-val might be "0.2271f"
 //		SDL_SetGamma(g,g,g);
 	}

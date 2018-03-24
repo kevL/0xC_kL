@@ -21,6 +21,7 @@
 
 #include "RuleInventory.h"
 
+#include "../Engine/Exception.h"
 //#include "../Engine/Logger.h"
 #include "../Engine/Surface.h"
 #include "../Engine/SurfaceSet.h"

@@ -370,7 +370,7 @@ interfaces:
         color2: 176  # purple
       - id: radarRange
         color: 112   # green
-        color2: 128  # red
+        color2: 128  # pure red
       - id: damageRange
         color: 13    # bright red
         color2: 12   # dark yellow
