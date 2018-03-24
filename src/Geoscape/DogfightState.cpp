@@ -152,8 +152,8 @@ DogfightState::DogfightState(
 		_w1Enabled(true),
 		_w2Enabled(true)
 {
-	debug = false;// (_ufo->getId() == 836);
-	debugSlow = 0;
+//	debug = false;// (_ufo->getId() == 836);
+//	debugSlow = 0;
 
 
 	_fullScreen = false;
@@ -551,7 +551,7 @@ DogfightState::DogfightState(
  */
 DogfightState::~DogfightState()
 {
-	if (debug) Log(LOG_INFO) << "dTor ~ " << _craft->getRules()->getType() << "-" << _craft->getId();
+	//if (debug) Log(LOG_INFO) << "dTor ~ " << _craft->getRules()->getType() << "-" << _craft->getId();
 
 	_geoState->resetTimer();
 
@@ -570,24 +570,24 @@ DogfightState::~DogfightState()
 
 	if (_craft != nullptr && _craft->isDestroyed() == false)
 	{
-		if (debug) Log(LOG_INFO) << ". craft Okay";
+		//if (debug) Log(LOG_INFO) << ". craft Okay";
 
 		_craft->inDogfight(false);
 
 		if (_breakoff == true)
 		{
-			if (debug) Log(LOG_INFO) << ". . _breakoff";
+			//if (debug) Log(LOG_INFO) << ". . _breakoff";
 
 			_ufo->stepTarget();	// <- required so that the dogfight doesn't instantly start again ...
 		}
 		else if (_disengage || _ufo->isDestroyed() == true)
 		{
-			if (debug) Log(LOG_INFO) << ". . disengage or UFO is Destroyed";
+			//if (debug) Log(LOG_INFO) << ". . disengage or UFO is Destroyed";
 
 			_craft->returnToBase();
 		}
 	}
-	else if (debug) Log(LOG_INFO) << ". nul craft OR Destroyed.";
+	//else if (debug) Log(LOG_INFO) << ". nul craft OR Destroyed.";
 }
 
 /**
@@ -596,14 +596,10 @@ DogfightState::~DogfightState()
  */
 void DogfightState::think()
 {
-	if (debugSlow)
-	{
-		--debugSlow;
-		return;
-	}
-//	else debugSlow = 3; // and run ->
+	//if (debugSlow) { --debugSlow; return; }
+	//else debugSlow = 3; // and run->
 
-	if (debug) Log(LOG_INFO) << "DogfightState::think() - " << _craft->getRules()->getType() << "-" << _craft->getId();
+	//if (debug) Log(LOG_INFO) << "DogfightState::think() - " << _craft->getRules()->getType() << "-" << _craft->getId();
 
 
 	if (_reduced == true				// short-circuit
@@ -611,25 +607,25 @@ void DogfightState::think()
 			|| dynamic_cast<Ufo*>(_craft->getTarget()) != _ufo
 			|| _ufo->getUfoStatus() == Ufo::LANDED))
 	{
-		if (debug) Log(LOG_INFO) << ". _finish [1]";
+		//if (debug) Log(LOG_INFO) << ". _finish [1]";
 		_finish = true; // think() won't be called again.
 	}
 	else
 	{
-		if (debug) Log(LOG_INFO) << ". call advanceDogfight()";
+		//if (debug) Log(LOG_INFO) << ". call advanceDogfight()";
 		waltz();
 	}
 
 
-	if (debug)
-	{
-		Log(LOG_INFO) << ". think ->";
-		Log(LOG_INFO) << ". . persist= " << _textPersistence;
-		Log(LOG_INFO) << ". . projectiles= " << _projectiles.size();
-		Log(LOG_INFO) << ". . dist= " << _dist;
-		Log(LOG_INFO) << ". . ufoCrashed= " << _ufo->isCrashed();
-		Log(LOG_INFO) << ". . craftDestroyed= " << _craft->isDestroyed();
-	}
+	//if (debug)
+	//{
+	//	Log(LOG_INFO) << ". think ->";
+	//	Log(LOG_INFO) << ". . persist= " << _textPersistence;
+	//	Log(LOG_INFO) << ". . projectiles= " << _projectiles.size();
+	//	Log(LOG_INFO) << ". . dist= " << _dist;
+	//	Log(LOG_INFO) << ". . ufoCrashed= " << _ufo->isCrashed();
+	//	Log(LOG_INFO) << ". . craftDestroyed= " << _craft->isDestroyed();
+	//}
 
 
 	if (_textPersistence == 0
@@ -638,21 +634,22 @@ void DogfightState::think()
 			|| _ufo->isCrashed() == true
 			|| _craft->isDestroyed() == true))
 	{
-		if (debug) Log(LOG_INFO) << ". _finish [2]";
+		//if (debug) Log(LOG_INFO) << ". _finish [2]";
 		_finish = true; // think() won't be called again.
 
 		if (_slotsTotal > 1u											// if (_totalIntercepts == 1u) let GeoscapeState handle it.
 			&& _geoState->getReducedDogfights() == _slotsTotal - 1u)	// <- if this is the only dogfight with a port that's displayed
 		{
-			if (debug) Log(LOG_INFO) << ". . call toggleDogfight()";
+			//if (debug) Log(LOG_INFO) << ". . call toggleDogfight()";
 
 			// NOTE: The final zoom-out is handled by GeoscapeState::thinkDogfights()
 			// but only if '_dogfights' is empty. Zoom-out/in for reducing/restoring
 			// dogfights is done in btnReduceToIconClick() and btnShowPortPress().
 			// The following zoom-out handles the case of 1 interceptor disengaging
-			// from a multi-intercepted dogfight or 1 interceptor disengaging but
+			// from a multi-intercepted dogfight or an interceptor disengaging while
 			// dogfights against other UFO(s) are active (iff the others are
 			// currently reduced).
+
 			_geoState->toggleDogfight(false);
 		}
 	}
@@ -732,11 +729,11 @@ void DogfightState::cyclePort()
  */
 void DogfightState::waltz()
 {
-	if (debug) Log(LOG_INFO) << "advanceDogfight()";
+	//if (debug) Log(LOG_INFO) << "advanceDogfight()";
 
 	if (_reduced == false)
 	{
-		if (debug) Log(LOG_INFO) << ". not reduced [1]";
+		//if (debug) Log(LOG_INFO) << ". not reduced [1]";
 
 		cyclePort();
 
@@ -749,7 +746,7 @@ void DogfightState::waltz()
 		if (_ufo->isCrashed() == false
 			&& _ufo->getTicked() == false) // the UFO ticks only once per GeoscapeState::thinkDogfights() for *all* ports
 		{
-			if (debug) Log(LOG_INFO) << ". . tick UFO";
+			//if (debug) Log(LOG_INFO) << ". . tick UFO";
 
 			_ufo->setTicked();
 
@@ -773,7 +770,7 @@ void DogfightState::waltz()
 
 	if (_ufo->getSpeed() > _craft->getRules()->getTopSpeed()) // crappy Craft is chasing UFO
 	{
-		if (debug) Log(LOG_INFO) << ". UFO breaking off";
+		//if (debug) Log(LOG_INFO) << ". UFO breaking off";
 
 		_breakoff = true;
 		updateStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
@@ -801,7 +798,7 @@ void DogfightState::waltz()
 	}
 	else // UFO cannot break off because it's crappier than the crappy Craft
 	{
-		if (debug && !_ufo->getEscapeCountdown()) Log(LOG_INFO) << ". UFO tried breaking off but Failed";
+		//if (debug && !_ufo->getEscapeCountdown()) Log(LOG_INFO) << ". UFO tried breaking off but Failed";
 
 		_breakoff = false;
 	}
@@ -809,7 +806,7 @@ void DogfightState::waltz()
 
 	if (_reduced == false)
 	{
-		if (debug) Log(LOG_INFO) << ". not reduced [2]";
+		//if (debug) Log(LOG_INFO) << ". not reduced [2]";
 
 		int delta; // Update distance.
 		const int accel ((_craft->getRules()->getAcceleration()
@@ -817,8 +814,11 @@ void DogfightState::waltz()
 
 		if (_breakoff == false)
 		{
-			if (debug) Log(LOG_INFO) << ". . _dist= " << _dist;
-			if (debug) Log(LOG_INFO) << ". . _desired= " << _desired;
+			//if (debug)
+			//{
+			//	Log(LOG_INFO) << ". . _dist= " << _dist;
+			//	Log(LOG_INFO) << ". . _desired= " << _desired;
+			//}
 
 			if (_dist != _desired)
 			{
@@ -858,7 +858,7 @@ void DogfightState::waltz()
 			delta = std::max(6,				// UFOs can try to outrun the missiles; don't adjust projectile positions here.
 							 12 + accel);	// If UFOs ever fire anything but beams those positions need to be adjusted here though.
 
-		if (debug) Log(LOG_INFO) << ". delta= " << delta;
+		//if (debug) Log(LOG_INFO) << ". delta= " << delta;
 
 		_dist += delta;
 		_txtDistance->setText(Text::intWide(_dist));
@@ -924,12 +924,12 @@ void DogfightState::waltz()
 
 							updateStatus(status);
 
-							if (debug)
-							{
-								Log(LOG_INFO) << ". . . hit UFO";
-								Log(LOG_INFO) << ". . . . power= " << power;
-								Log(LOG_INFO) << ". . . . UFO hull= " << _ufo->getUfoHullPct();
-							}
+							//if (debug)
+							//{
+							//	Log(LOG_INFO) << ". . . hit UFO";
+							//	Log(LOG_INFO) << ". . . . power= " << power;
+							//	Log(LOG_INFO) << ". . . . UFO hull= " << _ufo->getUfoHullPct();
+							//}
 						}
 						else // Missed.
 						{
@@ -1020,12 +1020,12 @@ void DogfightState::waltz()
 								}
 							}
 
-							if (debug)
-							{
-								Log(LOG_INFO) << ". . . hit Craft";
-								Log(LOG_INFO) << ". . . . power= " << power;
-								Log(LOG_INFO) << ". . . . Craft hull= " << _craft->getCraftHullPct();
-							}
+							//if (debug)
+							//{
+							//	Log(LOG_INFO) << ". . . hit Craft";
+							//	Log(LOG_INFO) << ". . . . power= " << power;
+							//	Log(LOG_INFO) << ". . . . Craft hull= " << _craft->getCraftHullPct();
+							//}
 						}
 					}
 			}
@@ -1158,11 +1158,11 @@ void DogfightState::waltz()
 	
 	if (_finishRequest == false) // do not update status/persistence or re-evaluate score if the dogfight should end.
 	{
-		if (debug) Log(LOG_INFO) << ". finish NOT Requested yet";
+		//if (debug) Log(LOG_INFO) << ". finish NOT Requested yet";
 
 		if (_craft->isDestroyed() == true) // End dogfight if craft is destroyed.
 		{
-			if (debug) Log(LOG_INFO) << ". . Craft destroyed";
+			//if (debug) Log(LOG_INFO) << ". . Craft destroyed";
 
 			_finishRequest = true;
 
@@ -1179,7 +1179,7 @@ void DogfightState::waltz()
 
 			if (_ufo->getShotDownByCraftId() == _craft->getIdentificator())
 			{
-				if (debug) Log(LOG_INFO) << ". . UFO crashed by this Craft";
+				//if (debug) Log(LOG_INFO) << ". . UFO crashed by this Craft";
 
 				_ufo->getAlienMission()->ufoShotDown(*_ufo);
 
@@ -1193,7 +1193,7 @@ void DogfightState::waltz()
 
 				if (_ufo->isDestroyed() == true)
 				{
-					if (debug) Log(LOG_INFO) << ". . . ufo Destroyed";
+					//if (debug) Log(LOG_INFO) << ". . . ufo Destroyed";
 
 					updateStatus("STR_UFO_DESTROYED");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE);
@@ -1202,7 +1202,7 @@ void DogfightState::waltz()
 				}
 				else // crashed.
 				{
-					if (debug) Log(LOG_INFO) << ". . . ufo Crashed";
+					//if (debug) Log(LOG_INFO) << ". . . ufo Crashed";
 
 					updateStatus("STR_UFO_CRASH_LANDS");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_CRASH);
@@ -1211,7 +1211,7 @@ void DogfightState::waltz()
 
 					if (_globe->insideLand(lon,lat) == false)
 					{
-						if (debug) Log(LOG_INFO) << ". . . . ufo over water - DESTROY";
+						//if (debug) Log(LOG_INFO) << ". . . . ufo over water - DESTROY";
 
 						_ufo->setUfoStatus(Ufo::DESTROYED);
 
@@ -1219,7 +1219,7 @@ void DogfightState::waltz()
 					}
 					else // Set up Crash site.
 					{
-						if (debug) Log(LOG_INFO) << ". . . . ufo over land - Set up Crash site.";
+						//if (debug) Log(LOG_INFO) << ". . . . ufo over land - Set up Crash site.";
 
 						_ufo->setTarget();
 						_ufo->setCrashId(_playSave->getCanonicalId(Target::stTarget[6u]));

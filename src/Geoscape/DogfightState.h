@@ -77,8 +77,8 @@ class DogfightState final
 {
 
 private:
-	bool debug;		// debug to log.
-	int debugSlow;	// slows the dogfight (substitutes this #ticks per tick)
+//	bool debug;		// debug to log.
+//	int debugSlow;	// slows the dogfight (substitutes this #ticks per tick)
 
 	static const Uint8 YELLOW_D	= 11u;
 	static const int
