@@ -221,7 +221,8 @@ private:
 	std::vector<Ufo*>					_ufos;
 	std::vector<Waypoint*>				_waypoints;
 
-	///
+
+	/// Gets the info of a specified save-file.
 	static SaveInfo getSaveInfo(
 			const std::string& file,
 			const Language* const lang);

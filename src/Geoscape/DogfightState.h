@@ -178,7 +178,7 @@ private:
 	void adjustDistance(bool hasWeapons = true);
 
 	/// Changes the status text.
-	void updateStatus(const std::string& status);
+	void printStatus(const std::string& status);
 
 	/// Draws UFO.
 	void drawUfo();

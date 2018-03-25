@@ -300,7 +300,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 }
 
 /**
- * Gets the info of a specifiied save-file.
+ * Gets the info of a specified save-file.
  * @param file - reference a save by filename
  * @param lang - pointer to the loaded Language
  * @return, the SaveInfo (SavedGame.h)

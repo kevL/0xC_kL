@@ -778,7 +778,7 @@ void DogfightState::waltz()
 	{
 		//if (debug) Log(LOG_INFO) << ". UFO breaking off";
 		_breakoff = true;
-		updateStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
+		printStatus("STR_UFO_OUTRUNNING_INTERCEPTOR");
 
 		if (_geoState->getDfCCC() == false) // should need to run this only once per.
 		{
@@ -929,7 +929,7 @@ void DogfightState::waltz()
 								_game->getResourcePack()->playSoundFx(sound, true);
 							}
 
-							updateStatus(status);
+							printStatus(status);
 
 							//if (debug)
 							//{
@@ -981,7 +981,7 @@ void DogfightState::waltz()
 								drawCraft();
 								_refreshCraft = 3; // the hull will turn red when hit and '_refreshCraft' will turn it yellow after "3" iterations.
 
-								updateStatus("STR_INTERCEPTOR_DAMAGED");
+								printStatus("STR_INTERCEPTOR_DAMAGED");
 								_game->getResourcePack()->playSoundFx(
 																ResourcePack::INTERCEPTOR_HIT,
 																true);
@@ -1019,7 +1019,7 @@ void DogfightState::waltz()
 									{
 										_btnStandoff->releaseButtonGroup();
 
-										updateStatus("STR_STANDOFF");
+										printStatus("STR_STANDOFF");
 										_desired = DIST_STANDOFF;
 
 										_disengage = false; // no longer applies here.
@@ -1171,7 +1171,7 @@ void DogfightState::waltz()
 			//if (debug) Log(LOG_INFO) << ". . Craft destroyed";
 			_finishRequest = true;
 
-			updateStatus("STR_INTERCEPTOR_DESTROYED");
+			printStatus("STR_INTERCEPTOR_DESTROYED");
 			_textPersistence <<= 1u;
 			_game->getResourcePack()->playSoundFx(ResourcePack::INTERCEPTOR_EXPLODE);
 
@@ -1198,7 +1198,7 @@ void DogfightState::waltz()
 				if (_ufo->isDestroyed() == true)
 				{
 					//if (debug) Log(LOG_INFO) << ". . . ufo Destroyed";
-					updateStatus("STR_UFO_DESTROYED");
+					printStatus("STR_UFO_DESTROYED");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE);
 
 					pts = _ufo->getRules()->getScore() << 1u;
@@ -1206,7 +1206,7 @@ void DogfightState::waltz()
 				else // crashed.
 				{
 					//if (debug) Log(LOG_INFO) << ". . . ufo Crashed";
-					updateStatus("STR_UFO_CRASH_LANDS");
+					printStatus("STR_UFO_CRASH_LANDS");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_CRASH);
 
 					pts = _ufo->getRules()->getScore();
@@ -1305,7 +1305,7 @@ void DogfightState::fireWeapon2()
  */
 void DogfightState::fireWeaponUfo()
 {
-	updateStatus("STR_UFO_RETURN_FIRE");
+	printStatus("STR_UFO_RETURN_FIRE");
 
 	CraftWeaponProjectile* const prj (new CraftWeaponProjectile());
 	prj->setType(PT_PLASMA_BEAM);
@@ -1384,7 +1384,7 @@ void DogfightState::adjustDistance(bool hasWeapons) // private.
  * Updates the status text and restarts the message-timeout counter.
  * @param status - reference to status
  */
-void DogfightState::updateStatus(const std::string& status) // private.
+void DogfightState::printStatus(const std::string& status) // private.
 {
 	_txtStatus->setText(tr(status));
 	_textPersistence = STAT_PERSIST;
@@ -1445,7 +1445,7 @@ void DogfightState::btnStandoffClick(Action*)
 	if (checkTargets() == true)
 	{
 		_disengage = false;
-		updateStatus("STR_STANDOFF");
+		printStatus("STR_STANDOFF");
 		_desired = DIST_STANDOFF;
 	}
 }
@@ -1459,7 +1459,7 @@ void DogfightState::btnCautiousClick(Action*)
 	if (checkTargets() == true)
 	{
 		_disengage = false;
-		updateStatus("STR_CAUTIOUS_ATTACK");
+		printStatus("STR_CAUTIOUS_ATTACK");
 
 		bool hasWeapons = false;
 
@@ -1497,7 +1497,7 @@ void DogfightState::btnStandardClick(Action*)
 	if (checkTargets() == true)
 	{
 		_disengage = false;
-		updateStatus("STR_STANDARD_ATTACK");
+		printStatus("STR_STANDARD_ATTACK");
 
 		bool hasWeapons = false;
 
@@ -1535,7 +1535,7 @@ void DogfightState::btnAggressiveClick(Action*)
 	if (checkTargets() == true)
 	{
 		_disengage = false;
-		updateStatus("STR_AGGRESSIVE_ATTACK");
+		printStatus("STR_AGGRESSIVE_ATTACK");
 
 		const CraftWeapon* cw;
 		int fireInterval;
@@ -1569,7 +1569,7 @@ void DogfightState::btnDisengageClick(Action*)
 	if (checkTargets() == true)
 	{
 		_disengage = true;
-		updateStatus("STR_DISENGAGING");
+		printStatus("STR_DISENGAGING");
 		_desired = DIST_ENGAGE + 10;
 	}
 }
@@ -1683,10 +1683,10 @@ void DogfightState::btnReduceToIconClick(Action*)
 					_geoState->resetInterceptPorts();
 			}
 			else
-				updateStatus("STR_PROJECTILE_IN_FLIGHT");
+				printStatus("STR_PROJECTILE_IN_FLIGHT");
 		}
 		else
-			updateStatus("STR_STANDOFF_RANGE_ONLY");
+			printStatus("STR_STANDOFF_RANGE_ONLY");
 	}
 }
 
@@ -1765,6 +1765,7 @@ bool DogfightState::isReduced() const
 
 /**
  * Checks if Craft stance is in stand-off.
+ * @note Is used to check if *other* dogfights are in standoff.
  * @return, true if standing off
  */
 bool DogfightState::checkStandoff() const
