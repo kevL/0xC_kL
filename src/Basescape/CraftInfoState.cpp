@@ -151,9 +151,9 @@ CraftInfoState::CraftInfoState(
 
 	_txtBaseLabel->setText(_base->getLabel());
 
-	if (_craft->getKills() != 0) //&& _craft->getRules()->getWeaponCapacity() != 0u
+	if (_craft->getAces() != 0) //&& _craft->getRules()->getWeaponCapacity() != 0u
 	{
-		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getKills()));
+		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getAces()));
 		_txtKills->setAlign(ALIGN_CENTER);
 	}
 

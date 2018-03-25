@@ -213,7 +213,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 
 	if (_craft->getRules()->getWeaponCapacity() != 0u)
 	{
-		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getKills()));
+		_txtKills->setText(tr("STR_KILLS_LC_").arg(_craft->getAces()));
 		_txtKills->setAlign(ALIGN_RIGHT);
 	}
 

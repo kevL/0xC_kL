@@ -268,9 +268,9 @@ private:
 		int getDowntime(bool& isDelayed);
 
 		/// Adds a dogfight kill.
-		void addKill();
+		void ace();
 		/// Gets this Craft's dogfight kills.
-		int getKills() const;
+		int getAces() const;
 
 		/// Transfers soldiers, tanks, items, and weapons to its Base.
 		void unloadCraft(

@@ -197,11 +197,11 @@ void Craft::loadCraft(
 		type = (*i)["type"].as<std::string>();
 		if (rules->getItemRule(type) != nullptr)
 		{
-			const int quadrants (rules->getArmor(rules->getUnitRule(type)->getArmorType())->getSize());
+			const int unitSize (rules->getArmor(rules->getUnitRule(type)->getArmorType())->getSize());
 			Vehicle* const vehicle (new Vehicle(
 											rules->getItemRule(type),
 											0,
-											quadrants * quadrants));
+											unitSize * unitSize));
 			vehicle->load(*i);
 			_vehicles.push_back(vehicle);
 		}
@@ -1475,16 +1475,16 @@ int Craft::getDowntime(bool& isDelayed)
 /**
  * Adds a Dogfight kill.
  */
-void Craft::addKill() // <- cap this or do a log or an inverted exponential increase or ...
+void Craft::ace()
 {
-	++_kills;
+	++_kills; // <- cap this or do a log or an inverted exponential increase or ...
 }
 
 /**
  * Gets this Craft's Dogfight kills.
  * @return, kills
  */
-int Craft::getKills() const
+int Craft::getAces() const
 {
 	return _kills;
 }

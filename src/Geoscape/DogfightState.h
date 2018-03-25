@@ -82,8 +82,8 @@ class DogfightState final
 {
 
 private:
-//	bool debug;		// debug to log.
-//	int debugSlow;	// slows the dogfight (substitutes this #ticks per tick)
+	//bool debug;		// debug to log.
+	//int debugSlow;	// slows the dogfight (substitutes this #ticks per tick)
 
 	static const Uint8 colors[11u];	// see DogfightColors enum above^
 	static const int shift[3u];		// see DogfightShifts enum above^

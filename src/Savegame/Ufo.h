@@ -231,15 +231,15 @@ private:
 		int getHitStep() const;
 
 		/// Sets the time left before the Ufo can fire in a Dogfight.
-		void setFireCountdown(int ticks);
+		void setFireTicks(int ticks);
 		/// Gets the time left before the Ufo can fire in a Dogfight.
-		int getFireCountdown() const;
+		int getFireTicks() const;
 		/// Sets the time left before the Ufo attempts to escape a Dogfight.
-		void setEscapeCountdown(int ticks);
+		void setEscapeTicks(int ticks);
 		/// Gets the time left before the Ufo attempts to escape a Dogfight.
-		int getEscapeCountdown() const;
+		int getEscapeTicks() const;
 		/// Sets whether or not the Ufo has had Dogfight info processed.
-		void setTicked(bool done = true);
+		void setTicked(bool tick = true);
 		/// Gets whether or not the Ufo has had Dogfight info processed.
 		bool getTicked() const;
 

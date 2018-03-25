@@ -1226,10 +1226,10 @@ void GeoscapeState::drawUfoBlobs()
 
 	size_t
 		j (0u),
-		ufoSize;
+		radius;
 	Uint8
 		color,
-		colorBasic;
+		shift;
 
 	for (std::vector<Ufo*>::const_iterator
 			i = _playSave->getUfos()->begin();
@@ -1244,18 +1244,18 @@ void GeoscapeState::drawUfoBlobs()
 
 			_hostileUfos[j] = *i;
 
-			ufoSize = (*i)->getRules()->getRadius();
+			radius = (*i)->getRules()->getRadius();
 
 			if ((*i)->getTicked() == true)
-				colorBasic = RED; // TODO: blink
+				color = RED; // TODO: blink
 			else
 			{
 				switch ((*i)->getUfoStatus())
 				{
 					default:
-					case Ufo::FLYING:  colorBasic = SLATE_D; break;
-					case Ufo::CRASHED: colorBasic = BROWN;   break;
-					case Ufo::LANDED:  colorBasic = GREEN;
+					case Ufo::FLYING:  color = SLATE_D; break;
+					case Ufo::CRASHED: color = BROWN;   break;
+					case Ufo::LANDED:  color = GREEN;
 				}
 			}
 
@@ -1269,12 +1269,12 @@ void GeoscapeState::drawUfoBlobs()
 						x != BLOBSIZE;
 						++x)
 				{
-					color = static_cast<Uint8>(_ufoBlobs[ufoSize][y][x]);
-					if (color != 0u)
+					shift = static_cast<Uint8>(_ufoBlobs[radius][y][x]);
+					if (shift != 0u)
 						_isfUfoBlobs[j]->setPixelColor(
 													static_cast<int>(x),
 													static_cast<int>(y),
-													static_cast<Uint8>(colorBasic - color));
+													static_cast<Uint8>(color - shift));
 					else
 						_isfUfoBlobs[j]->setPixelColor(
 													static_cast<int>(x),

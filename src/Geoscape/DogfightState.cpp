@@ -162,6 +162,7 @@ DogfightState::DogfightState(
 		_reduced(false),
 		_disengage(false),
 		_finish(false),
+		_finishRequest(false),
 		_breakoff(false),
 		_cautionLevel(CAUTION_HIGH),
 		_ufoSize(static_cast<int>(ufo->getRules()->getRadius())),
@@ -180,8 +181,8 @@ DogfightState::DogfightState(
 		_w1Enabled(true),
 		_w2Enabled(true)
 {
-//	debug = true; //(_ufo->getId() == 836);
-//	debugSlow = 0;
+	//debug = true; //(_ufo->getId() == 836);
+	//debugSlow = 0;
 
 
 	_fullScreen = false;
@@ -525,13 +526,14 @@ DogfightState::DogfightState(
 
 	if (dogfight == false)
 	{
-		_ufo->setFireCountdown(0); // UFO is ready to Fire pronto.
+		_ufo->setFireTicks(0); // UFO is ready to Fire pronto.
 
 		int escape (_ufo->getRules()->getEscape());
 		escape += RNG::generate(0, escape);
-		escape /= _diff + 1; // escape -= _diff * 30;
+		escape /= _diff + 1;
 		if (escape < 1) escape = 1;
-		_ufo->setEscapeCountdown(escape);
+
+		_ufo->setEscapeTicks(escape);
 	}
 
 
@@ -578,8 +580,11 @@ DogfightState::~DogfightState()
 	// call but if closing the application with active Dogfight(s) then
 	// GeoscapeState's dTor will nullptr both - so check for that.
 
-	if (_ufo != nullptr)
-		_ufo->setShootingAt(0u); // catch-all for disengage/breakoff/landed UFO
+	if (_ufo != nullptr && _ufo->isCrashed() == false)
+	{
+		if (_ufo->getShootingAt() == _slot)
+			_ufo->setShootingAt(0u); // catch-all for disengage/breakoff/landed UFO
+	}
 
 	if (_craft != nullptr && _craft->isDestroyed() == false)
 	{
@@ -609,9 +614,13 @@ DogfightState::~DogfightState()
 void DogfightState::think()
 {
 	//if (debugSlow) { --debugSlow; return; }
-	//else debugSlow = 3; // and run->
+	//else debugSlow = 2; // and run->
 
-	//if (debug) Log(LOG_INFO) << "DogfightState::think() - " << _craft->getRules()->getType() << "-" << _craft->getId();
+	//if (debug)
+	//{
+	//	Log(LOG_INFO) << "DogfightState::think() - " << _craft->getRules()->getType() << "-" << _craft->getId();
+	//	Log(LOG_INFO) << ". _slot= " << _slot;
+	//}
 
 	if (_reduced == true				// short-circuit
 		&& (_craft->isLowFuel() == true	// these can happen only when reduced to Icon ->
@@ -623,7 +632,7 @@ void DogfightState::think()
 	}
 	else
 	{
-		//if (debug) Log(LOG_INFO) << ". call advanceDogfight()";
+		//if (debug) Log(LOG_INFO) << ". call waltz()";
 		waltz();
 	}
 
@@ -646,7 +655,7 @@ void DogfightState::think()
 		//if (debug) Log(LOG_INFO) << ". _finish [2]";
 		_finish = true; // think() won't be called again.
 
-		if (_slotsTotal > 1u											// if (_totalIntercepts == 1u) let GeoscapeState handle it.
+		if (_slotsTotal > 1u											// if (_slotsTotal == 1u) let GeoscapeState handle it.
 			&& _geoState->getReducedDogfights() == _slotsTotal - 1u)	// <- if this is the only dogfight with a port that's displayed
 		{
 			//if (debug) Log(LOG_INFO) << ". . call toggleDogfight()";
@@ -741,7 +750,7 @@ void DogfightState::waltz()
 	//if (debug) Log(LOG_INFO) << "waltz()";
 	if (_reduced == false)
 	{
-		//if (debug) Log(LOG_INFO) << ". not reduced [1]";
+		//if (debug) Log(LOG_INFO) << ". not reduced - handle UFO Ticks";
 		cyclePort();
 
 		if (_refreshCraft != 0
@@ -755,22 +764,21 @@ void DogfightState::waltz()
 		{
 			//if (debug) Log(LOG_INFO) << ". . tick UFO";
 			_ufo->setTicked();
+			_geoState->drawUfoBlobs(); // relies on Ticked TRUE (red).
 
-			int escapeTicks (_ufo->getEscapeCountdown());
-			if (escapeTicks != 0)
+			int escape (_ufo->getEscapeTicks());
+			if (escape != 0)
 			{
-				_geoState->drawUfoBlobs();
-
 				if (_dist < DIST_STANDOFF)
-					_ufo->setEscapeCountdown(--escapeTicks);
+					_ufo->setEscapeTicks(--escape);
 
-				if (escapeTicks == 0) // UFO will attempt to break off
+				if (escape == 0) // UFO will attempt to break off
 					_ufo->setSpeed(_ufo->getRules()->getTopSpeed());
 			}
 
-			const int fireTicks (_ufo->getFireCountdown());
-			if (fireTicks != 0)
-				_ufo->setFireCountdown(fireTicks - 1);
+			const int fire (_ufo->getFireTicks());
+			if (fire != 0)
+				_ufo->setFireTicks(fire - 1);
 		}
 	}
 
@@ -797,20 +805,20 @@ void DogfightState::waltz()
 
 			if (craft == 1)								// Reset CCC if this is the last Craft engaging UFO - since
 				_geoState->setDfCCC(					// UFO might not break-off successfully from other Craft
-								_craft->getLongitude(),	// in which case the currently stored CCC is fine.
+								_craft->getLongitude(),	// in which case the currently stored PDC is fine.
 								_craft->getLatitude());
 		}
 	}
 	else // UFO cannot break off because it's crappier than the crappy Craft
 	{
-		//if (debug && !_ufo->getEscapeCountdown()) Log(LOG_INFO) << ". UFO tried breaking off but Failed";
+		//if (debug && !_ufo->getEscapeTicks()) Log(LOG_INFO) << ". UFO tried breaking off but Failed";
 		_breakoff = false;
 	}
 
 
 	if (_reduced == false)
 	{
-		//if (debug) Log(LOG_INFO) << ". not reduced [2]";
+		//if (debug) Log(LOG_INFO) << ". not reduced - MAIN DOGFIGHT";
 		int delta; // Update distance.
 		const int accel ((_craft->getRules()->getAcceleration()
 						- _ufo->getRules()->getAcceleration()) >> 1u); // could be negative.
@@ -883,11 +891,11 @@ void DogfightState::waltz()
 							|| ((*i)->getGlobalType() == PGT_BEAM && (*i)->getFinished() == true)))
 					{
 						const int hitprob = (*i)->getAccuracy() // NOTE: Could include UFO speed here ... and/or acceleration-delta.
-										  + (_craft->getKills() << 1u)
+										  + (_craft->getAces() << 1u)
 										  + _ufoSize * 3
 										  - _diff * 5;
 
-						//Log(LOG_INFO) << "df: Craft pType = " << (*i)->getType() << " hp = " << hitprob;
+						//if (debug) Log(LOG_INFO) << "df: Craft pType = " << (*i)->getType() << " hp = " << hitprob;
 						if (RNG::percent(hitprob) == true)
 						{
 							(*i)->setFinished();
@@ -896,7 +904,9 @@ void DogfightState::waltz()
 							const int power (RNG::generate(
 													((*i)->getPower() + 1) >> 1u, // Round up.
 													 (*i)->getPower()));
+
 							// TODO: Subtract UFO-armor value ala OXCE.
+
 							std::string status;
 							if (power < 1)
 								status = "STR_UFO_HIT_NO_DAMAGE"; // TODO: sFx play "ping" sound.
@@ -920,7 +930,7 @@ void DogfightState::waltz()
 								{
 									_ufo->setShotDownByCraftId(_craft->getIdentificator());
 									_ufo->setSpeed();
-									_craft->addKill();
+									_craft->ace();
 
 									_breakoff = // if the ufo got shotdown these no longer apply ->
 									_disengage = false;
@@ -940,6 +950,7 @@ void DogfightState::waltz()
 						}
 						else // Missed.
 						{
+							//if (debug) Log(LOG_INFO) << ". . . missed UFO";
 							switch ((*i)->getGlobalType())
 							{
 								case PGT_MISSILE:
@@ -954,9 +965,10 @@ void DogfightState::waltz()
 					break;
 
 				case PD_UFO: // Projectiles fired by UFO.
-					if ((*i)->getFinished() == true)
+					if (_craft->isDestroyed() == false
+						&& (*i)->getFinished() == true)
 					{
-						int hitprob ((*i)->getAccuracy() - _craft->getKills());
+						int hitprob ((*i)->getAccuracy() - _craft->getAces());
 
 						if (   _craftStance == _btnCautious
 							|| _craftStance == _btnStandoff
@@ -967,14 +979,16 @@ void DogfightState::waltz()
 						else if (_craftStance == _btnAggressive)
 							hitprob += 15;
 
-						//Log(LOG_INFO) << "df: UFO pType = " << (*i)->getType() << " hp = " << hitprob;
+						//if (debug) Log(LOG_INFO) << "df: UFO pType = " << (*i)->getType() << " hp = " << hitprob;
 						if (RNG::percent(hitprob) == true)
 						{
 							const int power (RNG::generate(
 													(_ufo->getRules()->getWeaponPower() + 9) / 10, // Round up.
 													 _ufo->getRules()->getWeaponPower()));
+
 							// TODO: Subtract Craft-armor value ala OXCE.
 							// TODO: Rig-up damage messages ala above^ under Craft projectiles.
+
 							if (power != 0)
 							{
 								_craft->setCraftHull(power);
@@ -1034,6 +1048,7 @@ void DogfightState::waltz()
 							//	Log(LOG_INFO) << ". . . . Craft hull= " << _craft->getCraftHullPct();
 							//}
 						}
+						//else if (debug) Log(LOG_INFO) << ". . . missed Craft";
 					}
 			}
 
@@ -1105,7 +1120,7 @@ void DogfightState::waltz()
 			}
 
 
-			if (_ufo->getFireCountdown() == 0) // handle UFO weapon.
+			if (_ufo->getFireTicks() == 0) // handle UFO weapon.
 			{
 				int range;
 
@@ -1162,13 +1177,16 @@ void DogfightState::waltz()
 
 
 	// TODO: Handle cases where both the Craft and UFO are crashed/destroyed.
+	// - eg. The craft could get destroyed while a missile is in the air that
+	//       crashes the UFO but that won't score since '_finishRequest' has
+	//       already been set because the craft got destroyed.
 
 	if (_finishRequest == false) // do not update status/persistence or re-evaluate score if the dogfight should end.
 	{
-		//if (debug) Log(LOG_INFO) << ". finish NOT Requested yet";
+		//if (debug) Log(LOG_INFO) << ". Finish NOT Requested yet";
 		if (_craft->isDestroyed() == true) // End dogfight if craft is destroyed.
 		{
-			//if (debug) Log(LOG_INFO) << ". . Craft destroyed";
+			//if (debug) Log(LOG_INFO) << ". . Craft destroyed - FINISH";
 			_finishRequest = true;
 
 			printStatus("STR_INTERCEPTOR_DESTROYED");
@@ -1178,13 +1196,15 @@ void DogfightState::waltz()
 			if (_ufo->getShootingAt() == _slot)
 				_ufo->setShootingAt(0u);
 		}
-		else if (_ufo->isCrashed() == true) // End dogfight if UFO is crashed or destroyed.
+
+		if (_ufo->isCrashed() == true) // End dogfight if UFO is crashed or destroyed.
 		{
+			//if (debug) Log(LOG_INFO) << ". . UFO Crashed - FINISH";
 			_finishRequest = true;
 
 			if (_ufo->getShotDownByCraftId() == _craft->getIdentificator())
 			{
-				//if (debug) Log(LOG_INFO) << ". . UFO crashed by this Craft";
+				//if (debug) Log(LOG_INFO) << ". . . UFO crashed by this Craft";
 				_ufo->getAlienMission()->ufoShotDown(*_ufo);
 
 				const double
@@ -1197,7 +1217,7 @@ void DogfightState::waltz()
 
 				if (_ufo->isDestroyed() == true)
 				{
-					//if (debug) Log(LOG_INFO) << ". . . ufo Destroyed";
+					//if (debug) Log(LOG_INFO) << ". . . . ufo Destroyed";
 					printStatus("STR_UFO_DESTROYED");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_EXPLODE);
 
@@ -1205,7 +1225,7 @@ void DogfightState::waltz()
 				}
 				else // crashed.
 				{
-					//if (debug) Log(LOG_INFO) << ". . . ufo Crashed";
+					//if (debug) Log(LOG_INFO) << ". . . . ufo Crashed";
 					printStatus("STR_UFO_CRASH_LANDS");
 					_game->getResourcePack()->playSoundFx(ResourcePack::UFO_CRASH);
 
@@ -1213,13 +1233,13 @@ void DogfightState::waltz()
 
 					if (_globe->insideLand(lon,lat) == false)
 					{
-						//if (debug) Log(LOG_INFO) << ". . . . ufo over water - DESTROY";
+						//if (debug) Log(LOG_INFO) << ". . . . . ufo over water - DESTROY";
 						_ufo->setUfoStatus(Ufo::DESTROYED);
 						pts <<= 1u;
 					}
 					else // Set up Crash site.
 					{
-						//if (debug) Log(LOG_INFO) << ". . . . ufo over land - Set up Crash site.";
+						//if (debug) Log(LOG_INFO) << ". . . . . ufo over land - Set up Crash site.";
 						_ufo->setTarget();
 						_ufo->setCrashId(_playSave->getCanonicalId(Target::stTarget[6u]));
 						_ufo->setSecondsLeft(RNG::generate(24,96) * 3600); // TODO: Put min/max in UFO-rules per UFO-type.
@@ -1246,6 +1266,7 @@ void DogfightState::waltz()
 			}
 		}
 	}
+	//else if (debug) Log(LOG_INFO) << ". Finish Request is TRUE";
 }
 
 /**
@@ -1253,6 +1274,7 @@ void DogfightState::waltz()
  */
 void DogfightState::fireWeapon1()
 {
+	//if (debug) Log(LOG_INFO) << "fireWeapon1()";
 	CraftWeapon* const cw (_craft->getCraftWeapons()->at(0u));
 	if (cw->setCwLoad(cw->getCwLoad() - 1))
 	{
@@ -1279,6 +1301,7 @@ void DogfightState::fireWeapon1()
  */
 void DogfightState::fireWeapon2()
 {
+	//if (debug) Log(LOG_INFO) << "fireWeapon2()";
 	CraftWeapon* const cw (_craft->getCraftWeapons()->at(1u));
 	if (cw->setCwLoad(cw->getCwLoad() - 1))
 	{
@@ -1305,6 +1328,7 @@ void DogfightState::fireWeapon2()
  */
 void DogfightState::fireWeaponUfo()
 {
+	//if (debug) Log(LOG_INFO) << "fireWeaponUfo() @ slot= " << _ufo->getShootingAt();
 	printStatus("STR_UFO_RETURN_FIRE");
 
 	CraftWeaponProjectile* const prj (new CraftWeaponProjectile());
@@ -1327,7 +1351,7 @@ void DogfightState::fireWeaponUfo()
 	reload -= _diff << 1u;
 	if (reload < 1) reload = 1;
 
-	_ufo->setFireCountdown(reload);
+	_ufo->setFireTicks(reload);
 }
 
 /**
@@ -1381,8 +1405,8 @@ void DogfightState::adjustDistance(bool hasWeapons) // private.
 }
 
 /**
- * Updates the status text and restarts the message-timeout counter.
- * @param status - reference to status
+ * Updates the status-text and restarts the status-persistence counter.
+ * @param status - reference to a status-string
  */
 void DogfightState::printStatus(const std::string& status) // private.
 {

@@ -894,7 +894,7 @@ int Ufo::getHitStep() const
  * its Dogfights.
  * @param ticks - ticks remaining
  */
-void Ufo::setEscapeCountdown(int ticks)
+void Ufo::setEscapeTicks(int ticks)
 {
 	_escapeCountdown = ticks;
 }
@@ -904,7 +904,7 @@ void Ufo::setEscapeCountdown(int ticks)
  * its Dogfights.
  * @return, ticks remaining
  */
-int Ufo::getEscapeCountdown() const
+int Ufo::getEscapeTicks() const
 {
 	return _escapeCountdown;
 }
@@ -913,7 +913,7 @@ int Ufo::getEscapeCountdown() const
  * Sets the remaining countdown-ticks before this Ufo fires its weapon.
  * @param ticks - ticks remaining
  */
-void Ufo::setFireCountdown(int ticks)
+void Ufo::setFireTicks(int ticks)
 {
 	_fireCountdown = ticks;
 }
@@ -922,7 +922,7 @@ void Ufo::setFireCountdown(int ticks)
  * Gets the remaining countdown-ticks before this Ufo fires its weapon.
  * @return, ticks remaining
  */
-int Ufo::getFireCountdown() const
+int Ufo::getFireTicks() const
 {
 	return _fireCountdown;
 }
@@ -933,11 +933,11 @@ int Ufo::getFireCountdown() const
  * @note Prevents multiple interceptions from decrementing or resetting an
  * already running counter. This flag is reset in advance every time Geoscape
  * processes Dogfights.
- * @param done - true if the counters have been processed (default true)
+ * @param tick - true if the counters have been processed (default true)
  */
-void Ufo::setTicked(bool done)
+void Ufo::setTicked(bool tick)
 {
-	_processedIntercept = done;
+	_processedIntercept = tick;
 }
 
 /**
