@@ -40,7 +40,7 @@ CraftWeaponProjectile::CraftWeaponProjectile()
 		_range(0),
 		_finished(false),
 		_passed(false),
-		_dist(0)
+		_dist(0) // TODO: sort out the distance-units thing.
 {}
 
 /**
