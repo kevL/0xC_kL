@@ -230,6 +230,7 @@ void UnitDieBState::think()
 					drop();
 					_unit->putdown(_isInfected == true
 								|| _unit->isMechanical() == true
+								|| _unit->isCapturable() == false
 								|| _unit->getSpecialAbility() == SPECAB_EXPLODE);
 
 					if (_isPreTactical == true)

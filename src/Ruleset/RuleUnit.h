@@ -36,6 +36,13 @@ enum SpecialAbility
 	SPECAB_BURN		// 2
 };
 
+enum Capturability
+{
+	CAP_NOT_CAPTURABLE,		// 0
+	CAP_ALWAYS_CAPTURABLE,	// 1
+	CAP_DEFAULT				// 2
+};
+
 
 /**
  * The UnitStats struct holds some plain unit-attribute-data together.
@@ -251,6 +258,7 @@ private:
 //	std::vector<std::string> _builtInWeapons;
 
 	SpecialAbility _specab;
+	Capturability _capturable;
 	UnitStats _stats;
 
 
@@ -326,6 +334,9 @@ private:
 		bool getPsiBlock() const;
 		/// Checks if the unit-type can open doors and prime grenades.
 		bool hasHands() const;
+
+		/// Gets whether the unit can be captured alive.
+		Capturability getCapturable() const;
 };
 
 }

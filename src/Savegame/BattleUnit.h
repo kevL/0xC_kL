@@ -261,6 +261,7 @@ private:
 	MoveType _mType;
 	SoldierGender _gender;
 	SpecialAbility _specab;
+	Capturability _capturable;
 	TurretType _turretType;
 
 	BattleUnitStatistics* _tacstats;
@@ -761,6 +762,9 @@ private:
 		SpecialAbility getSpecialAbility() const;
 		/// Sets the BattleUnit's SpecialAbility.
 		void setSpecialAbility(const SpecialAbility specab);
+
+		/// Gets whether the BattleUnit can be captured alive (applies to aLiens).
+		bool isCapturable() const;
 
 		/// Gets the BattleUnit's spawn unit.
 		std::string getSpawnType() const;

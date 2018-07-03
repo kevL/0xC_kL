@@ -43,6 +43,7 @@ RuleUnit::RuleUnit(const std::string& type)
 		_aggression(0),
 		_energyRecovery(30),
 		_specab(SPECAB_NONE),
+		_capturable(CAP_DEFAULT),
 		_specabPower(0),
 		_livingWeapon(false),
 		_female(false),
@@ -97,7 +98,9 @@ void RuleUnit::load(
 	_hasHands		= node["hasHands"]		.as<bool>(_hasHands);
 	_spawnType		= node["spawnType"]		.as<std::string>(_spawnType);
 	_specabPower	= node["specabPower"]	.as<int>(_specabPower);
-	_specab			= static_cast<SpecialAbility>(node["specab"].as<int>(_specab));
+
+	_specab			= static_cast<SpecialAbility>(node["specab"]    .as<int>(_specab));
+	_capturable		= static_cast<Capturability> (node["capturable"].as<int>(_capturable));
 
 	if (node["deathSound"])
 	{
@@ -375,6 +378,15 @@ bool RuleUnit::getPsiBlock() const
 bool RuleUnit::hasHands() const
 {
 	return _hasHands;
+}
+
+/**
+ * Gets whether this unit-type can be captured alive.
+ * @return, a value determining whether the alien can be captured alive.
+ */
+Capturability RuleUnit::getCapturable() const
+{
+	return _capturable;
 }
 
 }
