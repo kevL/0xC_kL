@@ -138,7 +138,7 @@ BattleUnit::BattleUnit(
 		_intelligence(0),
 		_aggression(0),
 		_specab(SPECAB_NONE),
-		_capturable(CAP_DEFAULT),
+		_capturable(CAP_ALWAYS_CAPTURABLE),
 		_morale(100),
 		_stunLevel(0),
 		_aboutToCollapse(false),

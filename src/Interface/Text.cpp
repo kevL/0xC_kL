@@ -202,7 +202,6 @@ void Text::initText(
 void Text::setText(const std::wstring& text)
 {
 	_text = text;
-
 	processText();
 
 //	if (_font == _big // if big Font won't fit the space try small Font
@@ -233,7 +232,7 @@ void Text::setWordWrap(
 		bool wrap,
 		bool indent)
 {
-	if (_wrap != wrap || indent != _indent)
+	if (wrap != _wrap || indent != _indent)
 	{
 		_wrap = wrap;
 		_indent = indent;
@@ -321,7 +320,7 @@ TextVAlign Text::getVerticalAlign() const
  */
 void Text::setColor(Uint8 color)
 {
-	_color =
+	_color  =
 	_color2 = color;
 	_redraw = true;
 }
@@ -459,10 +458,12 @@ void Text::processText() // private.
 			width (0),
 			word  (0);
 		size_t
-			space (0u),
-			textIndentation (0u);
+			posSpace     (0u),
+			lengthIndent (0u);
 
 		Font* font (_font);
+
+		bool isWrapLetters (_lang->getTextWrapping() == WRAP_LETTERS);
 
 		for (size_t // go through the text character by character
 				i = 0u;
@@ -476,27 +477,28 @@ void Text::processText() // private.
 				_lineWidth.push_back(width);
 				_lineHeight.push_back(static_cast<int>(font->getCharSize(L'\n').h));
 
-				width =
-				word = 0;
-				start = true;
-
 				if (i == wst->size())
 					break;
-				else if ((*wst)[i] == 2) // \x02 marks start of small text - [handled by draw() below_]
+
+				width =
+				word  = 0;
+				start = true;
+
+				if ((*wst)[i] == Font::TOKEN_BREAK_SMALLLINE) // \x02 marks start of small text - [handled by draw() below_]
 					font = _small;
 			}
 			else if (Font::isSpace((*wst)[i]) == true // keep track of spaces for word-wrapping
 				|| Font::isSeparator((*wst)[i]) == true)
 			{
-				if (i == textIndentation) // store existing indentation
-					++textIndentation;
+				if (i == lengthIndent) // store existing indentation
+					++lengthIndent;
 
-				space = i;
+				posSpace = i;
 				width += static_cast<int>(font->getCharSize((*wst)[i]).w);
 				word = 0;
 				start = false;
 			}
-			else if ((*wst)[i] != 1) // \x01 marks a change of color [handled by draw() below_]
+			else if ((*wst)[i] != Font::TOKEN_FLIP_COLORS) // \x01 marks a change of color [handled by draw() below_]
 			{
 				if (font->getChar((*wst)[i]) == nullptr)
 					(*wst)[i] = L'.';
@@ -507,43 +509,43 @@ void Text::processText() // private.
 
 				if (_wrap == true // word-wrap if the last word doesn't fit the line
 					&& width >= getWidth()
-					&& (start == false || _lang->getTextWrapping() == WRAP_LETTERS))
+					&& (start == false || isWrapLetters == true))
 				{
-					size_t indentLocation (i);
+					size_t posIndent (i);
 
-					if (_lang->getTextWrapping() == WRAP_WORDS
+					if (isWrapLetters == false // ie. isWrapWords
 						|| Font::isSpace((*wst)[i]) == true)
 					{
 						width -= word; // go back to the last space and put a linebreak there
 
-						indentLocation = space;
-						if (Font::isSpace((*wst)[space]) == true)
+						posIndent = posSpace;
+						if (Font::isSpace((*wst)[posSpace]) == true)
 						{
-							width -= static_cast<int>(font->getCharSize((*wst)[space]).w);
-							(*wst)[space] = L'\n';
+							width -= static_cast<int>(font->getCharSize((*wst)[posSpace]).w);
+							(*wst)[posSpace] = L'\n';
 						}
 						else
 						{
-							wst->insert(space + 1, L"\n");
-							++indentLocation;
+							wst->insert(posSpace + 1u, L"\n");
+							++posIndent;
 						}
 					}
-					else if (_lang->getTextWrapping() == WRAP_LETTERS) // go back to the last letter and put a linebreak there
+					else if (isWrapLetters == true) // go back to the last letter and put a linebreak there
 					{
 						wst->insert(i, L"\n");
 						width -= charWidth;
 					}
 
-					if (textIndentation != 0u) // keep initial indentation of text
+					if (lengthIndent != 0u) // keep initial indentation of text
 					{
-						wst->insert(indentLocation + 1u, L" \xA0", textIndentation);
-						indentLocation += textIndentation;
+						wst->insert(posIndent + 1u, L" \xA0", lengthIndent);
+						posIndent += lengthIndent;
 					}
 
 					if (_indent == true) // indent due to word wrap
 					{
-						wst->insert(indentLocation + 1u, L" \xA0");
-						width += static_cast<int>(font->getCharSize(L' ').w) + static_cast<int>(font->getCharSize(L'\xA0').w);
+						wst->insert(posIndent + 1u, L" \xA0");
+						width += static_cast<int>(font->getCharSize(L' ').w + font->getCharSize(Font::TOKEN_NBSP).w);
 					}
 
 					_lineWidth.push_back(width);
@@ -614,7 +616,7 @@ struct PaletteShift
 {
 	///
 	static inline void func(
-			Uint8& dest,
+			Uint8& dst,
 			Uint8& src,
 			int offset,
 			int mult,
@@ -628,7 +630,7 @@ struct PaletteShift
 			else
 				inverseOffset = 0;
 
-			dest = static_cast<Uint8>(offset + (static_cast<int>(src) * mult) + inverseOffset);
+			dst = static_cast<Uint8>(offset + (static_cast<int>(src) * mult) + inverseOffset);
 		}
 	}
 };
@@ -644,107 +646,107 @@ void Text::draw()
 {
 	Surface::draw();
 
-	if (_text.empty() == true || _font == nullptr)
-		return;
-
-	if (Options::debugUi == true) // show text-borders for debugUI
+	if (_text.empty() == false && _font != nullptr)
 	{
-		SDL_Rect rect;
-		rect.x =
-		rect.y = 0;
-		rect.w = static_cast<Uint16>(getWidth());
-		rect.h = static_cast<Uint16>(getHeight());
-		this->drawRect(&rect, 5u);
-
-		++rect.x;
-		++rect.y;
-		rect.w = static_cast<Uint16>(rect.w - 2u);
-		rect.h = static_cast<Uint16>(rect.h - 2u);
-		this->drawRect(&rect, 0u);
-	}
-
-	int
-		line	(0),
-		x		(getLineX(line)),
-		y		(0),
-		height	(0),
-		dir		(1),
-		mid		(0);
-	Uint8 color (_color);
-
-	const std::wstring* wst;
-	if (_wrap == true)	wst = &_wrappedText;
-	else				wst = &_text;
-
-	for (std::vector<int>::const_iterator
-			i = _lineHeight.begin();
-			i != _lineHeight.end();
-			++i)
-	{
-		height += *i;
-	}
-
-	switch (_valign)
-	{
-		case ALIGN_TOP:
-			y = 0;
-			break;
-		case ALIGN_MIDDLE:
-			y = static_cast<int>(std::ceil(static_cast<double>(getHeight() - height) / 2.));
-			break;
-		case ALIGN_BOTTOM:
-			y = getHeight() - height;
-	}
-
-	if (_lang->getTextDirection() == DIRECTION_RTL) // set up text direction
-		dir = -1;
-
-	if (_invert == true) // invert text by inverting the font-palette on index 3 (font-palettes use indices 1..5)
-		mid = 3;
-
-	Font* font (_font);
-
-
-	for (std::wstring::const_iterator // draw each letter one-by-one
-			i = wst->begin();
-			i != wst->end();
-			++i)
-	{
-		if (Font::isSpace(*i) == true)
-			x += dir * static_cast<int>(font->getCharSize(*i).w);
-		else if (Font::isLinebreak(*i) == true)
+		if (Options::debugUi == true) // show text-borders for debugUI
 		{
-			++line;
+			SDL_Rect rect;
+			rect.x =
+			rect.y = 0;
+			rect.w = static_cast<Uint16>(getWidth());
+			rect.h = static_cast<Uint16>(getHeight());
+			this->drawRect(&rect, 5u);
 
-			y += static_cast<int>(font->getCharSize(*i).h);
-			x = getLineX(line);
-
-			if (*i == L'\x02') // switch to small-font
-				font = _small;
-			// TODO: Implement a switch to large-font.
+			++rect.x;
+			++rect.y;
+			rect.w = static_cast<Uint16>(rect.w - 2u);
+			rect.h = static_cast<Uint16>(rect.h - 2u);
+			this->drawRect(&rect, 0u);
 		}
-		else if (*i == L'\x01') // switch to alternate color or back to original
+
+		int
+			line	(0),
+			x		(getLineX(line)),
+			y		(0),
+			height	(0),
+			dir		(1),
+			mid		(0);
+		Uint8 color (_color);
+
+		const std::wstring* wst;
+		if (_wrap == true)	wst = &_wrappedText;
+		else				wst = &_text;
+
+		for (std::vector<int>::const_iterator
+				i = _lineHeight.begin();
+				i != _lineHeight.end();
+				++i)
 		{
-			if (color == _color) color = _color2;
-			else				 color = _color;
+			height += *i;
 		}
-		else
+
+		switch (_valign)
 		{
-			if (dir < 0)
-				x += dir * static_cast<int>(font->getCharSize(*i).w);
+			case ALIGN_TOP:
+				y = 0;
+				break;
+			case ALIGN_MIDDLE:
+				y = static_cast<int>(std::ceil(static_cast<double>(getHeight() - height) / 2.));
+				break;
+			case ALIGN_BOTTOM:
+				y = getHeight() - height;
+		}
 
-			Surface* const srfChar (font->getChar(*i));
-			srfChar->setX(x);
-			srfChar->setY(y);
-			ShaderDraw<PaletteShift>(
-								ShaderSurface(this, 0,0),
-								ShaderCrop(srfChar),
-								ShaderScalar(static_cast<int>(color)),
-								ShaderScalar(_contrast),
-								ShaderScalar(mid));
+		if (_lang->getTextDirection() == DIRECTION_RTL) // set up text direction
+			dir = -1;
 
-			if (dir > 0)
+		if (_invert == true) // invert text by inverting the font-palette on index 3 (font-palettes use indices 1..5)
+			mid = 3;
+
+		Font* font (_font);
+
+
+		for (std::wstring::const_iterator // draw each letter one-by-one
+				i = wst->begin();
+				i != wst->end();
+				++i)
+		{
+			if (Font::isSpace(*i) == true)
 				x += dir * static_cast<int>(font->getCharSize(*i).w);
+			else if (Font::isLinebreak(*i) == true)
+			{
+				++line;
+
+				y += static_cast<int>(font->getCharSize(*i).h);
+				x = getLineX(line);
+
+				if (*i == Font::TOKEN_BREAK_SMALLLINE) // switch to small-font
+					font = _small;
+				// TODO: Implement a switch to large-font.
+			}
+			else if (*i == Font::TOKEN_FLIP_COLORS) // switch to alternate color or back to original
+			{
+				if (color == _color) color = _color2;
+				else				 color = _color;
+			}
+			else
+			{
+				if (dir < 0)
+					x += dir * static_cast<int>(font->getCharSize(*i).w);
+
+				Surface* const srfChar (font->getChar(*i));
+				srfChar->setX(x);
+				srfChar->setY(y);
+				ShaderDraw<PaletteShift>(
+									ShaderSurface(this, 0,0),
+									ShaderCrop(srfChar),
+									ShaderScalar(static_cast<int>(color)),
+									ShaderScalar(_contrast),
+									ShaderScalar(mid));
+
+				if (dir > 0)
+					x += dir * static_cast<int>(font->getCharSize(*i).w);
+			}
 		}
 	}
 }

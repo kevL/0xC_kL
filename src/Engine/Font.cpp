@@ -278,10 +278,13 @@ SDL_Rect Font::getCharSize(wchar_t fontChar)
 {
 	SDL_Rect charSize {0,0,0u,0u};
 
-	if (fontChar != 1
+	if (fontChar != TOKEN_FLIP_COLORS
 		&& isLinebreak(fontChar) == false
 		&& isSpace(fontChar) == false)
 	{
+		if (_chars.find(fontChar) == _chars.end()) 
+			fontChar = L'_';
+
 		charSize.w = static_cast<Uint16>(_chars[fontChar].w + _spacing);
 		charSize.h = static_cast<Uint16>(_chars[fontChar].h + _spacing);
 	}

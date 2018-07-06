@@ -63,6 +63,12 @@ private:
 
 
 	public:
+		// Special text tokens
+		static const wchar_t TOKEN_BREAK_SMALLLINE = 2;		// line break and change to small font
+		static const wchar_t TOKEN_FLIP_COLORS     = 1;		// flip color scheme
+		static const wchar_t TOKEN_NBSP            = 0xA0;	// non-breaking space
+
+
 		/// Creates a Font.
 		Font();
 		/// Cleans up the Font.
@@ -70,16 +76,16 @@ private:
 
 		/// Checks if a character is a linebreak.
 		static inline bool isLinebreak(wchar_t c)
-		{ return (c == L'\n' || c == L'\x02'); }
+		{ return (c == L'\n' || c == TOKEN_BREAK_SMALLLINE); }
 		/// Checks if a character is a blank space (includes non-breaking spaces).
 		static inline bool isSpace(wchar_t c)
-		{ return (c == L' ' || c == L'\xA0'); }
+		{ return (c == L' ' || c == TOKEN_NBSP); }
 		/// Checks if a character is a word separator.
 		static inline bool isSeparator(wchar_t c)
 		{ return (c == L'-' || c == '/'); }
 		/// Checks if a character is a non-breaking space.
 		static inline bool isNonBreakableSpace(wchar_t c)
-		{ return (c == L'\xA0'); }
+		{ return (c == TOKEN_NBSP); }
 
 		/// Sets the index for every character.
 		static void setIndex(const std::wstring& index);

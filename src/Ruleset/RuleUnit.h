@@ -38,10 +38,10 @@ enum SpecialAbility
 
 enum Capturability
 {
-	CAP_NOT_CAPTURABLE,		// 0
-	CAP_ALWAYS_CAPTURABLE,	// 1
-	CAP_DEFAULT				// 2
-};
+	CAP_NOT_CAPTURABLE,		// 0 - dies on collapse (disallow unconscious state)
+	CAP_ALWAYS_CAPTURABLE,	// 1 - can go unconscious and hence be captured
+	CAP_DEFAULT				// 2 - fallback on !SPECAB_EXPLODE although SPECAB_EXPLODE can't be captured anyway
+};							//	   see UnitDieBState::think()
 
 
 /**
