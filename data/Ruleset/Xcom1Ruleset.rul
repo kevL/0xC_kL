@@ -391,6 +391,7 @@ units:
     mechanical: true
     psiBlock: true
     hasHands: false
+    capturable: false
 
   - type: STR_FLOATER_SOLDIER
     race: STR_FLOATER
@@ -969,6 +970,7 @@ units:
     livingWeapon: true
     mechanical: true
     psiBlock: true
+    capturable: false
 
   - type: STR_ZOMBIE
     race: STR_ZOMBIE
@@ -998,6 +1000,7 @@ units:
     psiBlock: true
     hasHands: false
     dog: true
+    capturable: false
 
 startBase:
     facilities:

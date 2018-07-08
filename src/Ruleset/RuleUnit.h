@@ -36,14 +36,6 @@ enum SpecialAbility
 	SPECAB_BURN		// 2
 };
 
-enum Capturability
-{
-	CAP_NOT_CAPTURABLE,		// 0 - dies on collapse (disallow unconscious state)
-	CAP_ALWAYS_CAPTURABLE,	// 1 - can go unconscious and hence be captured
-	CAP_DEFAULT				// 2 - fallback on !SPECAB_EXPLODE although SPECAB_EXPLODE can't be captured anyway
-};							//	   see UnitDieBState::think()
-
-
 /**
  * The UnitStats struct holds some plain unit-attribute-data together.
  */
@@ -227,6 +219,7 @@ class RuleUnit
 
 private:
 	bool
+		_capturable,
 		_dog,
 		_female,
 		_hasHands,
@@ -258,7 +251,6 @@ private:
 //	std::vector<std::string> _builtInWeapons;
 
 	SpecialAbility _specab;
-	Capturability _capturable;
 	UnitStats _stats;
 
 
@@ -334,9 +326,8 @@ private:
 		bool getPsiBlock() const;
 		/// Checks if the unit-type can open doors and prime grenades.
 		bool hasHands() const;
-
 		/// Gets whether the unit can be captured alive.
-		Capturability getCapturable() const;
+		bool isCapturable() const;
 };
 
 }

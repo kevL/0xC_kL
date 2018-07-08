@@ -138,7 +138,7 @@ BattleUnit::BattleUnit(
 		_intelligence(0),
 		_aggression(0),
 		_specab(SPECAB_NONE),
-		_capturable(CAP_ALWAYS_CAPTURABLE),
+		_capturable(true),
 		_morale(100),
 		_stunLevel(0),
 		_aboutToCollapse(false),
@@ -326,7 +326,7 @@ BattleUnit::BattleUnit(
 		_value(unitRule->getValue()),
 		_psiBlock(unitRule->getPsiBlock()),
 		_specab(unitRule->getSpecialAbility()),
-		_capturable(unitRule->getCapturable()),
+		_capturable(unitRule->isCapturable()),
 
 		_loftSet(arRule->getLoftSet()),
 		_mType(arRule->getMoveTypeArmor()),
@@ -4166,24 +4166,12 @@ void BattleUnit::setSpecialAbility(const SpecialAbility specab)
 }
 
 /**
- * Gets whether this BattleUnit can be captured alive (applies to aLiens).
+ * Checks whether this BattleUnit can be captured alive.
  * @return, true if capturable
  */
 bool BattleUnit::isCapturable() const
 {
-	switch (_capturable)
-	{
-		case CAP_NOT_CAPTURABLE:
-			return false;
-
-		case CAP_ALWAYS_CAPTURABLE:
-			return true;
-
-		default:
-		case CAP_DEFAULT:
-			return getSpecialAbility() != SPECAB_EXPLODE;
-//				&& getSpecialAbility() != SPECAB_BURN_AND_EXPLODE;
-	}
+	return _capturable;
 }
 
 /**

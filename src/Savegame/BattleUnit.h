@@ -230,7 +230,9 @@ private:
 	// static data
 	UnitStats _stats;
 
-	bool _isZombie;
+	bool
+		_isZombie,
+		_capturable;
 
 	int
 		_aggression,
@@ -261,7 +263,6 @@ private:
 	MoveType _mType;
 	SoldierGender _gender;
 	SpecialAbility _specab;
-	Capturability _capturable;
 	TurretType _turretType;
 
 	BattleUnitStatistics* _tacstats;
@@ -763,7 +764,7 @@ private:
 		/// Sets the BattleUnit's SpecialAbility.
 		void setSpecialAbility(const SpecialAbility specab);
 
-		/// Gets whether the BattleUnit can be captured alive (applies to aLiens).
+		/// Checks whether the BattleUnit can be captured alive.
 		bool isCapturable() const;
 
 		/// Gets the BattleUnit's spawn unit.
