@@ -32,7 +32,7 @@ namespace OpenXcom
  * - ExplosionBState
  * - ProjectileFlyBState
  * - UnitDieBState
- * - UnitFallBState
+ * - UnitBonkBState
  * - UnitPanicBState
  * - UnitTurnBState
  * - UnitWalkBState

@@ -2552,7 +2552,7 @@ std::list<BattleUnit*>* SavedBattleGame::getFallingUnits()
 
 /**
  * Accesses the '_unitsFalling' bool.
- * @note The flag that says: Units Falling, start UnitFallBState.
+ * @note The flag that says: Units Falling, start UnitBonkBState.
  * @return, reference to the toggle
  */
 bool& SavedBattleGame::unitsFalling()

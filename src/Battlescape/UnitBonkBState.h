@@ -36,16 +36,17 @@ class TileEngine;
 
 
 /**
- * State for falling units.
+ * State for bonking units.
  */
-class UnitFallBState
+class UnitBonkBState
 	:
 		public BattleState
 {
 
 private:
-	std::vector<BattleUnit*> _unitsToMove;
-	std::vector<Tile*> _tilesToFallInto;
+	std::list<BattleUnit*>* _unitsBonking;
+	std::vector<BattleUnit*> _unitsBonked;
+	std::vector<Tile*> _tilesToBonkInto;
 
 	SavedBattleGame* _battleSave;
 	TileEngine* _te;
@@ -55,10 +56,10 @@ private:
 
 
 	public:
-		/// Creates a UnitFallBState.
-		explicit UnitFallBState(BattlescapeGame* const battleGame);
-		/// Cleans up the UnitFallBState.
-		~UnitFallBState();
+		/// Creates a UnitBonkBState.
+		explicit UnitBonkBState(BattlescapeGame* const battleGame);
+		/// Cleans up the UnitBonkBState.
+		~UnitBonkBState();
 
 		/// Gets the label of the BattleState.
 		std::string getBattleStateLabel() const override;

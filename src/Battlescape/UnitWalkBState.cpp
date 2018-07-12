@@ -24,8 +24,8 @@
 #include "Map.h"
 #include "Pathfinding.h"
 #include "ProjectileFlyBState.h"
-#include "UnitFallBState.h"
 #include "TileEngine.h"
+#include "UnitBonkBState.h"
 
 //#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
@@ -791,10 +791,10 @@ bool UnitWalkBState::statusWalk() // private.
 						_fall = false;
 
 						_pf->dequeuePath();
-						_battleSave->addFallingUnit(_unit); // if '_unit' is about to fall onto another unit use UnitFallBState.
+						_battleSave->addFallingUnit(_unit); // if '_unit' is about to fall onto another unit use UnitBonkBState.
 
 						//Log(LOG_INFO) << "UnitWalkBState::think() addFallingUnit() id-" << _unit->getId();
-						_battleGame->stateBPushFront(new UnitFallBState(_battleGame));
+						_battleGame->stateBPushFront(new UnitBonkBState(_battleGame));
 						return false;
 					}
 					//else Log(LOG_INFO) << ". . . . . otherTileBelow Does NOT contain other unit";

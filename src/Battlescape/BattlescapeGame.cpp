@@ -37,8 +37,8 @@
 #include "Pathfinding.h"
 #include "ProjectileFlyBState.h"
 #include "TileEngine.h"
+#include "UnitBonkBState.h"
 #include "UnitDieBState.h"
-#include "UnitFallBState.h"
 #include "UnitInfoState.h"
 #include "UnitPanicBState.h"
 #include "UnitTurnBState.h"
@@ -220,7 +220,7 @@ void BattlescapeGame::think()
 		{
 			//Log(LOG_INFO) << ". Units are Falling() selUnit id-" << _battleSave->getSelectedUnit()->getId();
 			_battleSave->unitsFalling() = false;
-			stateBPushFront(new UnitFallBState(this));
+			stateBPushFront(new UnitBonkBState(this));
 		}
 		else
 		{

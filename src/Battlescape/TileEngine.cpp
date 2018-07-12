@@ -6426,7 +6426,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 //															posDest.z));
 						//Log(LOG_INFO) << "te:applyGravity() -> addFallingUnit() id-" << unit->getId();
 
-						// TODO: Figure out how UnitFallBState really works, or should work.
+						// TODO: Figure out how UnitBonkBState really works, or should work.
 						// This should probably merely setup and run UnitWalkBState; that would
 						// instantiate fallingUnits from there if needed. Then fallingUnits could
 						// likely be handled one at a time instead of enmasse as they are at present.
