@@ -2980,8 +2980,7 @@ int Base::calcLostScore() const
 		if ((*i)->buildFinished() == true)
 			++ret;
 	}
-	ret *= _rules->getBaseLostScore()
-		* (_playSave->getDifficultyInt() + 1);
+	ret *= _rules->getBaseLostScore() * (_playSave->getDifficultyInt() + 1);
 
 	if (ret < 0) ret = 0; // safety for DebriefingState.
 

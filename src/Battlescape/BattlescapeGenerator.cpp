@@ -263,7 +263,7 @@ void BattlescapeGenerator::setAlienItemlevel(int alienItemLevel)
  */
 void BattlescapeGenerator::run()
 {
-	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape Soldier IDs should stay below this number
+	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape Soldier IDs shall stay below this number
 
 	const RuleAlienDeployment* ruleDeploy;
 	if (_ufo != nullptr)
@@ -447,8 +447,6 @@ void BattlescapeGenerator::run()
 	_battleSave->getTileEngine()->calculateSunShading();
 	_battleSave->getTileEngine()->calculateTerrainLighting();
 	_battleSave->getTileEngine()->calculateUnitLighting();
-
-//	_battleSave->getTileEngine()->calcFovAll(false, true); // NOTE: Also done in BattlescapeGame::init(). Are both needed. no.
 
 	_battleSave->getShuffleUnits()->assign(
 										_unitList->size(),

@@ -31,8 +31,8 @@ namespace OpenXcom
  * @note These states can be triggered by the player or the AI:
  * - ExplosionBState
  * - ProjectileFlyBState
- * - UnitDieBState
  * - UnitBonkBState
+ * - UnitDieBState
  * - UnitPanicBState
  * - UnitTurnBState
  * - UnitWalkBState

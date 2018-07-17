@@ -524,7 +524,7 @@ void DebriefingState::btnOkClick(Action*)
 		{
 			bool playAwardMusic (false);
 
-			// NOTE: These push to player in reverse order.
+			// NOTE: These show to player in reverse order.
 			if (_cannotReequip.empty() == false)
 				_game->pushState(new CannotReequipState(_cannotReequip));
 
@@ -1309,7 +1309,7 @@ void DebriefingState::prepareDebriefing() // private.
 										-(*i)->getValue());
 				}
 		}
-	} //End loop BattleUnits.
+	} // End loop BattleUnits.
 
 	for (std::vector<BattleUnit*>::const_iterator // only to check IronMan and LoneSurvivor awards ->
 			i = _unitList->begin();
@@ -1490,7 +1490,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				if ((part = tile->getMapData(static_cast<MapDataType>(j))) != nullptr
 					&& (tileType = part->getTileType()) != objectType)	// not sure why parts of objectType should not be recovered.
-				{														// in fact I think it's just another wotWarboybogus.
+				{														// in fact I think it's just another wotWarboy.
 					switch (tileType)
 					{
 						case TILE:
