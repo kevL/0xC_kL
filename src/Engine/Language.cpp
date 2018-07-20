@@ -476,6 +476,8 @@ void Language::getList( // static.
 	files = CrossPlatform::getFolderContents(CrossPlatform::getDataFolder("Language/"), "yml");
 	languages.clear();
 
+	std::wstring wst;
+
 	for (std::vector<std::string>::iterator
 			i = files.begin();
 			i != files.end();
@@ -484,7 +486,6 @@ void Language::getList( // static.
 		*i = CrossPlatform::noExt(*i);
 		std::map<std::string, std::wstring>::const_iterator pLang (_langList.find(*i));
 
-		std::wstring wst;
 		if (pLang != _langList.end())
 			wst = pLang->second;
 		else
@@ -521,23 +522,28 @@ void Language::load(
 		lang = doc;
 	}
 
+	std::string val;
+
 	for (YAML::const_iterator
 			i = lang.begin();
 			i != lang.end();
 			++i)
 	{
-		if (i->second.IsScalar() == true) // regular strings
-			_strings[i->first.as<std::string>()] = loadString(i->second.as<std::string>());
-		else if (i->second.IsMap() == true) // strings with plurality
+		if (i->second.IsMap() == true) // strings with plurality
 		{
 			for (YAML::const_iterator
 					j = i->second.begin();
 					j != i->second.end();
 					++j)
 			{
-				std::string st (i->first.as<std::string>() + "_" + j->first.as<std::string>());
-				_strings[st] = loadString(j->second.as<std::string>());
+				if ((val = j->second.as<std::string>()).empty() == false)
+					_strings[i->first.as<std::string>() + "_" + j->first.as<std::string>()] = loadString(val);
 			}
+		}
+		else if (i->second.IsScalar() == true // regular strings
+			&& (val = i->second.as<std::string>()).empty() == false)
+		{
+			_strings[i->first.as<std::string>()] = loadString(val);
 		}
 	}
 
@@ -619,7 +625,7 @@ std::wstring Language::getLabel() const
  */
 const LocalizedText& Language::getString(const std::string& id) const
 {
-	static LocalizedText hack (L"");
+	static LocalizedText hack (L""); // why. Because (without it) this funct returns a ref to a temporary var.
 
 	if (id.empty() == true)
 	{
