@@ -153,6 +153,14 @@ private:
 	std::list<Explosion*> _explosions;
 	std::vector<Position> _waypoints;
 
+	/// Draws a battleunit. new Yankes' funct.
+	void drawUnit(
+			Surface* const surface,
+			const Tile* const tileUnit,
+			const Tile* const tile,
+			Position posScreen,
+			int shade,
+			bool isTopLayer);
 	/// Draws the battlefield.
 	void drawTerrain(Surface* const surface);
 	/// Draws a Soldier's rank-icon above its sprite on the Map.
@@ -184,11 +192,12 @@ private:
 			const BattleUnit* const unit,
 			const Tile* const tile,
 			bool trueLoc) const;
-	/// Calculates the offset of a unit-sprite when it is moving between 2 tiles.
+	/// Calculates the screen-offset of a unit-sprite when it is moving between tiles.
 	void calcWalkOffset(
 			const BattleUnit* const unit,
 			Position* const offset,
-			bool trueLoc) const;
+			bool trueLoc,
+			int* shadeOffset = nullptr) const; // Yankes addition: shadeOffset
 	///
 	int getTerrainLevel(
 			const Position& pos,

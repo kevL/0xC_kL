@@ -28,21 +28,21 @@ namespace OpenXcom
 
 /**
  * Universal blit function.
- * @tparam ColorFunc - class that contains static function `func` that get 5 arguments;
- * 						function is used to modify these arguments
+ * @tparam ColorFunc - class that contains static function 'func' that get 5 arguments;
+ * 					   function is used to modify these arguments
  * @param dest_frame - destination surface modified by function
  * @param src0_frame - surface or scalar
  * @param src1_frame - surface or scalar
  * @param src2_frame - surface or scalar
  * @param src3_frame - surface or scalar
  */
-template<
-	typename ColorFunc,
-	typename DestType,
-	typename Src0Type,
-	typename Src1Type,
-	typename Src2Type,
-	typename Src3Type>
+template<typename ColorFunc,
+		 typename DestType,
+		 typename Src0Type,
+		 typename Src1Type,
+		 typename Src2Type,
+		 typename Src3Type>
+
 static inline void ShaderDraw(
 		const DestType& dest_frame,
 		const Src0Type& src0_frame,
@@ -50,27 +50,27 @@ static inline void ShaderDraw(
 		const Src2Type& src2_frame,
 		const Src3Type& src3_frame)
 {
-	//creating helper objects
+	// creating helper objects
 	helper::controler<DestType> dest(dest_frame);
 	helper::controler<Src0Type> src0(src0_frame);
 	helper::controler<Src1Type> src1(src1_frame);
 	helper::controler<Src2Type> src2(src2_frame);
 	helper::controler<Src3Type> src3(src3_frame);
 
-	//get basic draw range in 2d space
+	// get basic draw range in 2d space
 	GraphSubset end_temp = dest.get_range();
 
-	//intersections with src ranges
+	// intersections with src ranges
 	src0.mod_range(end_temp);
 	src1.mod_range(end_temp);
 	src2.mod_range(end_temp);
 	src3.mod_range(end_temp);
 
-	const GraphSubset end = end_temp;
+	const GraphSubset end (end_temp);
 	if (end.size_x() == 0 || end.size_y() == 0)
 		return;
 
-	//set final draw range in 2d space
+	// set final draw range in 2d space
 	dest.set_range(end);
 	src0.set_range(end);
 	src1.set_range(end);
@@ -79,10 +79,10 @@ static inline void ShaderDraw(
 
 
 	int
-		begin_y = 0,
-		end_y = end.size_y();
+		begin_y (0),
+		end_y   (end.size_y());
 
-	//determining iteration range in y-axis
+	// determining iteration range in y-axis
 	dest.mod_y(begin_y, end_y);
 	src0.mod_y(begin_y, end_y);
 	src1.mod_y(begin_y, end_y);
@@ -92,14 +92,14 @@ static inline void ShaderDraw(
 	if (begin_y >= end_y)
 		return;
 
-	//set final iteration range
+	// set final iteration range
 	dest.set_y(begin_y, end_y);
 	src0.set_y(begin_y, end_y);
 	src1.set_y(begin_y, end_y);
 	src2.set_y(begin_y, end_y);
 	src3.set_y(begin_y, end_y);
 
-	//iteration on y-axis
+	// iteration on y-axis
 	for (int
 			y = end_y - begin_y;
 			y > 0;
@@ -111,10 +111,10 @@ static inline void ShaderDraw(
 				src3.inc_y())
 	{
 		int
-			begin_x = 0,
-			end_x = end.size_x();
+			begin_x (0),
+			end_x   (end.size_x());
 
-		//determining iteration range in x-axis
+		// determining iteration range in x-axis
 		dest.mod_x(begin_x, end_x);
 		src0.mod_x(begin_x, end_x);
 		src1.mod_x(begin_x, end_x);
@@ -124,14 +124,14 @@ static inline void ShaderDraw(
 		if (begin_x >= end_x)
 			continue;
 
-		//set final iteration range
+		// set final iteration range
 		dest.set_x(begin_x, end_x);
 		src0.set_x(begin_x, end_x);
 		src1.set_x(begin_x, end_x);
 		src2.set_x(begin_x, end_x);
 		src3.set_x(begin_x, end_x);
 
-		//iteration on x-axis
+		// iteration on x-axis
 		for (int
 				x = end_x - begin_x;
 				x > 0;
@@ -153,12 +153,12 @@ static inline void ShaderDraw(
 }
 
 
-template<
-	typename ColorFunc,
-	typename DestType,
-	typename Src0Type,
-	typename Src1Type,
-	typename Src2Type>
+template<typename ColorFunc,
+		 typename DestType,
+		 typename Src0Type,
+		 typename Src1Type,
+		 typename Src2Type>
+
 static inline void ShaderDraw(
 		const DestType& dest_frame,
 		const Src0Type& src0_frame,
@@ -173,11 +173,11 @@ static inline void ShaderDraw(
 						helper::Nothing());
 }
 
-template<
-	typename ColorFunc,
-	typename DestType,
-	typename Src0Type,
-	typename Src1Type>
+template<typename ColorFunc,
+		 typename DestType,
+		 typename Src0Type,
+		 typename Src1Type>
+
 static inline void ShaderDraw(
 		const DestType& dest_frame,
 		const Src0Type& src0_frame,
@@ -191,10 +191,10 @@ static inline void ShaderDraw(
 						helper::Nothing());
 }
 
-template<
-	typename ColorFunc,
-	typename DestType,
-	typename Src0Type>
+template<typename ColorFunc,
+		 typename DestType,
+		 typename Src0Type>
+
 static inline void ShaderDraw(
 		const DestType& dest_frame,
 		const Src0Type& src0_frame)
@@ -207,11 +207,9 @@ static inline void ShaderDraw(
 						helper::Nothing());
 }
 
-template<
-	typename ColorFunc,
-	typename DestType>
-static inline void ShaderDraw(
-		const DestType& dest_frame)
+/* template<typename ColorFunc,
+			typename DestType>
+static inline void ShaderDraw(const DestType& dest_frame)
 {
 	ShaderDraw<ColorFunc>(
 						dest_frame,
@@ -219,7 +217,7 @@ static inline void ShaderDraw(
 						helper::Nothing(),
 						helper::Nothing(),
 						helper::Nothing());
-}
+} */
 
 
 template<typename T>
@@ -232,18 +230,6 @@ template<typename T>
 static inline helper::Scalar<const T> ShaderScalar(const T& t)
 {
 	return helper::Scalar<const T>(t);
-}
-
-
-namespace helper
-{
-
-const Uint8
-	ColorGroup = 15<<4,
-	ColorShade = 15,
-	ColorShadeMax = 15,
-	BLACK = 15;
-
 }
 
 }

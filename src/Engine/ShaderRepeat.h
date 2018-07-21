@@ -41,6 +41,23 @@ private:
 		typedef helper::ShaderBase<const Pixel> _base;
 		friend struct helper::controler<ShaderRepeat<Pixel>>;
 
+		// kL_change: Cut the crap out.
+		// ps. I'm sure there's a lot more around here ...
+		inline ShaderRepeat(
+				const std::vector<Pixel>& data,
+				int max_x,
+				int max_y)
+			:
+				_base(
+					data,
+					max_x,
+					max_y)
+		{
+			_off_x =
+			_off_y = 0;
+		}
+
+/*
 		/// struct [0]
 		inline ShaderRepeat(const Surface* s)
 			:
@@ -77,7 +94,7 @@ private:
 		{
 			_off_x += x;
 			_off_y += y;
-		}
+		} */
 };
 
 
@@ -108,32 +125,32 @@ struct controler<ShaderRepeat<Pixel>>
 		_ptr_curr_x,
 		_ptr_curr_y;
 
-	controler(const ShaderRepeat<Pixel>& f)
+	controler(const ShaderRepeat<Pixel>& repeat)
 		:
-			_base(f.ptr()),
-			_range_domain(f.getDomain()),
+			_base(repeat.ptr()),
+			_range_domain(repeat.getDomain()),
 			_range_image(0,0),
-			_off_x(f._off_x),
-			_off_y(f._off_y),
+			_off_x(repeat._off_x),
+			_off_y(repeat._off_y),
 			_size_x(_range_domain.size_x()),
 			_size_y(_range_domain.size_y()),
 			_curr_x(0),
 			_curr_y(0),
-			_pitch(f.pitch()),
+			_pitch(repeat.pitch()),
 			_ptr_curr_x(nullptr),
 			_ptr_curr_y(nullptr)
 	{}
 
-	//not used
-	//inline const GraphSubset& get_range()
+	// not used
+//	inline const GraphSubset& get_range()
 
 	///
 	inline void mod_range(GraphSubset&)
 	{}
 	///
-	inline void set_range(const GraphSubset& g)
+	inline void set_range(const GraphSubset& graph)
 	{
-		_range_image = g;
+		_range_image = graph;
 	}
 
 	///

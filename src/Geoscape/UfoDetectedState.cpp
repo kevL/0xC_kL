@@ -79,8 +79,8 @@ UfoDetectedState::UfoDetectedState(
 	if (_ufo->getId() == 0) // generate UFO-ID
 		_ufo->setId(_game->getSavedGame()->getCanonicalId(Target::stTarget[0u]));
 
-	if (_ufo->getAltitude() == MovingTarget::stAltitude[0u]
-		&& _ufo->getLandId() == 0)
+	if (_ufo->getLandId() == 0
+		&& _ufo->getAltitude() == MovingTarget::stAltitude[0u])
 	{
 		_ufo->setLandId(_game->getSavedGame()->getCanonicalId(Target::stTarget[5u]));
 	}

@@ -20,7 +20,9 @@
 #ifndef OPENXCOM_SURFACE_H
 #define OPENXCOM_SURFACE_H
 
-#include <string>	// std::string
+#include <string>		// std::string
+
+#include "GraphSubset.h"
 
 #include <SDL/SDL.h>	// typedefs, functions
 
@@ -70,7 +72,7 @@ protected:
 	public:
 		/// Creates a Surface with the specified size and position.
 		Surface(
-				int width = 320,
+				int width  = 320,
 				int height = 200,
 				int x = 0,
 				int y = 0,
@@ -306,13 +308,20 @@ protected:
 
 		/// Specific blit function to blit battlescape sprites.
 		void blitNShade(
-				Surface* surface,
+				Surface* const surface,
 				int x,
 				int y,
 				int colorOffset = 0,
 				bool halfRight = false,
 				int colorGroup = 0,
 				bool halfLeft = false);
+		/// Specific blit function to blit battlescape sprites.
+		void blitNShade(
+				Surface* const surface,
+				int x,
+				int y,
+				int colorOffset,
+				GraphSubset range);
 
 		/// Invalidates the Surface which forces it to be redrawn.
 		void invalidate(bool redraw = true);

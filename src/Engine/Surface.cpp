@@ -1056,7 +1056,7 @@ static inline void func(
  *						  but i am far too lazy to refactor a gajillion blitNShade calls!
  */
 void Surface::blitNShade(
-		Surface* surface,
+		Surface* const surface,
 		int x,
 		int y,
 		int colorOffset,
@@ -1093,6 +1093,29 @@ void Surface::blitNShade(
 							ShaderSurface(surface),
 							src,
 							ShaderScalar(colorOffset));
+}
+
+/**
+ * Specific blit function to blit battlescape terrain data in different shades in a fast way.
+ * @param surface		- Surface to blit to
+ * @param x				- x-position of Surface blitted to
+ * @param y				- y-position of Surface blitted to
+ * @param colorOffset	- color offset (generally 0-16) (default 0 = no offset)
+ * @param range			- area that limits draw surface
+ */
+void Surface::blitNShade( // new Yankes' funct.
+		Surface* const surface,
+		int x,
+		int y,
+		int colorOffset,
+		GraphSubset range)
+{
+	ShaderMove<Uint8> src (this, x,y);
+	ShaderMove<Uint8> dst (surface);
+
+	dst.setDomain(range);
+
+	ShaderDraw<StandartShade>(dst, src, ShaderScalar(colorOffset));
 }
 
 /**

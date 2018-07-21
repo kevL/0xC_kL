@@ -684,7 +684,7 @@ LocalizedText Language::getString(
 		{
 			notFounds.insert(id);
 			Log(LOG_WARNING) << id << " has plural format in [" << Options::language << "]. Code assumes singular format.";
-//			Hint: Change ``getstring(ID).arg(value)`` to ``getString(ID, value)`` in appropriate files.
+//			Hint: Change "getstring(ID).arg(value)" to "getString(ID, value)" in appropriate files.
 		}
 		return pSt->second;
 	}

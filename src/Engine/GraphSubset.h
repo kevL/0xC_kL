@@ -29,7 +29,7 @@ namespace OpenXcom
 
 struct GraphSubset
 {
-	int // define part of surface
+	int // defines subarea of surface
 		beg_x, end_x,
 		beg_y, end_y;
 
@@ -50,24 +50,24 @@ struct GraphSubset
 			beg_y(range_y.first), end_y(range_y.second)
 	{}
 
-	GraphSubset(const GraphSubset& r)
-		:
-			beg_x(r.beg_x),
-			end_x(r.end_x),
-			beg_y(r.beg_y),
-			end_y(r.end_y)
-	{}
+//	GraphSubset(const GraphSubset& area)
+//		:
+//			beg_x(area.beg_x),
+//			end_x(area.end_x),
+//			beg_y(area.beg_y),
+//			end_y(area.end_y)
+//	{}
 
 	inline GraphSubset offset(
 			int x,
 			int y) const
 	{
-		GraphSubset ret = *this;
-		ret.beg_x += x;
-		ret.end_x += x;
-		ret.beg_y += y;
-		ret.end_y += y;
-		return ret;
+		GraphSubset area (*this);
+		area.beg_x += x;
+		area.end_x += x;
+		area.beg_y += y;
+		area.end_y += y;
+		return area;
 	}
 
 	inline int size_x() const
@@ -88,7 +88,7 @@ struct GraphSubset
 		else
 		{
 			begin_a = std::max(begin_a, begin_b);
-			end_a = std::min(end_a, end_b);
+			end_a   = std::min(end_a,   end_b);
 		}
 	}
 
@@ -96,34 +96,34 @@ struct GraphSubset
 			const GraphSubset& a,
 			const GraphSubset& b)
 	{
-		GraphSubset ret = a;
-		intersection_range(ret.beg_x, ret.end_x, b.beg_x, b.end_x);
-		intersection_range(ret.beg_y, ret.end_y, b.beg_y, b.end_y);
-		return ret;
+		GraphSubset area (a);
+		intersection_range(area.beg_x, area.end_x, b.beg_x, b.end_x);
+		intersection_range(area.beg_y, area.end_y, b.beg_y, b.end_y);
+		return area;
 	}
 
-	static inline GraphSubset intersection(
-			const GraphSubset& a,
-			const GraphSubset& b,
-			const GraphSubset& c)
-	{
-		GraphSubset ret =  intersection(a, b);
-		intersection_range(ret.beg_x, ret.end_x, c.beg_x, c.end_x);
-		intersection_range(ret.beg_y, ret.end_y, c.beg_y, c.end_y);
-		return ret;
-	}
+//	static inline GraphSubset intersection(
+//			const GraphSubset& a,
+//			const GraphSubset& b,
+//			const GraphSubset& c)
+//	{
+//		GraphSubset area (intersection(a, b));
+//		intersection_range(area.beg_x, area.end_x, c.beg_x, c.end_x);
+//		intersection_range(area.beg_y, area.end_y, c.beg_y, c.end_y);
+//		return area;
+//	}
 
-	static inline GraphSubset intersection(
-			const GraphSubset& a,
-			const GraphSubset& b,
-			const GraphSubset& c,
-			const GraphSubset& d)
-	{
-		GraphSubset ret =  intersection(a, b, c);
-		intersection_range(ret.beg_x, ret.end_x, d.beg_x, d.end_x);
-		intersection_range(ret.beg_y, ret.end_y, d.beg_y, d.end_y);
-		return ret;
-	}
+//	static inline GraphSubset intersection(
+//			const GraphSubset& a,
+//			const GraphSubset& b,
+//			const GraphSubset& c,
+//			const GraphSubset& d)
+//	{
+//		GraphSubset area (intersection(a, b, c));
+//		intersection_range(area.beg_x, area.end_x, d.beg_x, d.end_x);
+//		intersection_range(area.beg_y, area.end_y, d.beg_y, d.end_y);
+//		return area;
+//	}
 
 };
 

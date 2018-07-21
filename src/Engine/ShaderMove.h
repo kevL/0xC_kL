@@ -41,23 +41,26 @@ private:
 		typedef helper::ShaderBase<Pixel> _base;
 		friend struct helper::controler<ShaderMove<Pixel>>;
 
-		inline ShaderMove(Surface* s)
+		/// cTor [0]
+		inline ShaderMove(Surface* const srf)
 			:
-				_base(s),
-				_move_x(s->getX()),
-				_move_y(s->getY())
+				_base(srf),
+				_move_x(srf->getX()),
+				_move_y(srf->getY())
 		{}
 
+		/// cTor [1]
 		inline ShaderMove(
-				Surface* s,
+				Surface* const srf,
 				int move_x,
 				int move_y)
 			:
-				_base(s),
+				_base(srf),
 				_move_x(move_x),
 				_move_y(move_y)
 		{}
 
+		/// cTor [2]
 		inline ShaderMove(const ShaderMove& f)
 			:
 				_base(f),
@@ -65,6 +68,7 @@ private:
 				_move_y(f._move_y)
 		{}
 
+		/// cTor [3]
 		inline ShaderMove(
 				std::vector<Pixel>& f,
 				int max_x,
@@ -78,6 +82,7 @@ private:
 				_move_y()
 		{}
 
+		/// cTor [4]
 		inline ShaderMove(
 				std::vector<Pixel>& f,
 				int max_x,
@@ -93,7 +98,7 @@ private:
 				_move_y(move_y)
 		{}
 
-		inline GraphSubset getImage() const // NOTE: Hides superclass ShaderBase::getImage().
+		inline GraphSubset getArea() const // NOTE: Hides superclass ShaderBase::getImage(). kL_Fixed.
 		{ return _base::_range_domain.offset(
 										_move_x,
 										_move_y); }
@@ -119,9 +124,8 @@ template<typename Pixel>
 struct controler<ShaderMove<Pixel>>
 	:
 		public
-			controler_base<
-						typename ShaderMove<Pixel>::PixelPtr,
-						typename ShaderMove<Pixel>::PixelRef>
+			controler_base<typename ShaderMove<Pixel>::PixelPtr,
+						   typename ShaderMove<Pixel>::PixelRef>
 {
 	typedef typename ShaderMove<Pixel>::PixelPtr PixelPtr;
 	typedef typename ShaderMove<Pixel>::PixelRef PixelRef;
@@ -130,9 +134,10 @@ struct controler<ShaderMove<Pixel>>
 
 	controler(const ShaderMove<Pixel>& f)
 		:
-			base_type(f.ptr(),
+			base_type(
+					f.ptr(),
 					f.getDomain(),
-					f.getImage(),
+					f.getArea(),
 					std::make_pair(
 								1,
 								f.pitch()))
@@ -144,73 +149,72 @@ struct controler<ShaderMove<Pixel>>
 
 /**
  * Creates warper from Surface.
- * @param s - standard 8bit OpenXcom surface
+ * @param srf - standard 8-bit OpenXcom surface
  * @return,
  */
-inline ShaderMove<Uint8> ShaderSurface(Surface* s)
+inline ShaderMove<Uint8> ShaderSurface(Surface* const srf)
 {
-	return ShaderMove<Uint8>(s);
+	return ShaderMove<Uint8>(srf);
 }
 
 /**
  * Creates warper from Surface and provided offset.
- * @param s - standard 8bit OpenXcom surface
- * @param x - offset on x
- * @param y - offset on y
+ * @param srf - standard 8-bit OpenXcom surface
+ * @param x   - offset on x
+ * @param y   - offset on y
  * @return,
  */
 inline ShaderMove<Uint8> ShaderSurface(
-		Surface* s,
+		Surface* const srf,
 		int x,
 		int y)
 {
-	return ShaderMove<Uint8>(s,x,y);
+	return ShaderMove<Uint8>(srf, x,y);
 }
 
 /**
  * Creates warper from cropped Surface and provided offset.
- * @param s - standard 8bit OpenXcom surface
- * @param x - offset on x
- * @param y - offset on y
+ * @param srf - standard 8-bit OpenXcom surface
+ * @param x   - offset on x
+ * @param y   - offset on y
  * @return,
  */
 inline ShaderMove<Uint8> ShaderCrop(
-		Surface* s,
+		Surface* const srf,
 		int x,
 		int y)
 {
-	ShaderMove<Uint8> ret (s,x,y); // init.
+	ShaderMove<Uint8> area (srf, x,y);
 
-	SDL_Rect* s_crop = s->getCrop();
+	SDL_Rect* const s_crop = srf->getCrop();
 	if (s_crop->w && s_crop->h)
 	{
-		GraphSubset crop(
-						std::make_pair(
+		GraphSubset crop (std::make_pair(
 									s_crop->x,
 									s_crop->x + s_crop->w),
-						std::make_pair(
+						  std::make_pair(
 									s_crop->y,
 									s_crop->y + s_crop->h));
-		ret.setDomain(crop);
-		ret.addMove(
+		area.setDomain(crop);
+		area.addMove(
 				-s_crop->x,
 				-s_crop->y);
 	}
 
-	return ret;
+	return area;
 }
 
 /**
  * Creates warper from cropped Surface.
- * @param s - standard 8bit OpenXcom surface
+ * @param srf - standard 8-bit OpenXcom surface
  * @return,
  */
-inline ShaderMove<Uint8> ShaderCrop(Surface* s)
+inline ShaderMove<Uint8> ShaderCrop(Surface* const srf)
 {
 	return ShaderCrop(
-					s,
-					s->getX(),
-					s->getY());
+					srf,
+					srf->getX(),
+					srf->getY());
 }
 
 }

@@ -217,6 +217,7 @@ static introSoundEffect introSoundTrack[]
 	{  149,    0x11}, // searchlight *whoosh*
 	{  150,    0x11}, // searchlight doubling
 	{  151,    0x11}, // searchlight tripling
+	{  152,    0x11}, // searchlight quadrupling
 	{  173,    0x0C},
 	{  183,    0x0E},
 	{  205,    0x15},
@@ -269,7 +270,7 @@ static introSoundEffect introSoundTrack[]
 //	{  512,     0xd}, // feet -- not in original
 //	{  514,     0xd}, // feet -- not in original
 //	{  523,    0x0B}, // rifle grab
-	{  527,    0x0B}, // rifle grab, delayed (lock & load)
+	{  528,    0x0B}, // rifle grab, delayed (lock & load)
 //	{  523,     0xd}, // feet -- not in original
 //	{  525,     0xd}, // feet -- not in original
 	{  534,    0x18},
@@ -346,7 +347,7 @@ static introSoundEffect introSoundTrack[]
 	{  835,    0x0F}, // beam up aliens
 	{  841,    0x0F},
 	{  845,    0x0F},
-	{  850,    0x0F},
+//	{  850,    0x0F},
 	{  855,   0x407},
 	{  879,    0x0C},
 	{65535,  0xFFFF}
