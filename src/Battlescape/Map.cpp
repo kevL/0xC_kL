@@ -459,9 +459,9 @@ static bool isPosition(Position& a, Position& b)
  * @param surface
  * @param tileUnit
  * @param tile
- * @param currTileScreenPosition
+ * @param posScreen
  * @param shade
- * @param topLayer
+ * @param isTopLayer
  */
 void Map::drawUnit(
 		Surface* const surface,
@@ -491,177 +491,172 @@ void Map::drawUnit(
 			}
 		}
 
-		if (unit != nullptr)
+		if (unit != nullptr
+			&& (unit->getUnitVisible() == true || _battleSave->getDebugTac() == true))
 		{
-			if (unit->getUnitVisible() == true || _battleSave->getDebugTac() == true)
+			Position offset;
+
+			offset.x = tileUnit->getPosition().x - unit->getPosition().x;
+			offset.y = tileUnit->getPosition().y - unit->getPosition().y;
+
+			Surface* srf (unit->getCache(offset.x + offset.y * 2));
+			if (srf != nullptr)
 			{
-				Position offset;
+				bool peripatetic (unit->getUnitStatus() == STATUS_WALKING
+							   || unit->getUnitStatus() == STATUS_FLYING);
 
-				offset.x = tileUnit->getPosition().x - unit->getPosition().x;
-				offset.y = tileUnit->getPosition().y - unit->getPosition().y;
+				int top (0);
+				int bot (0);
 
-				Surface* srf (unit->getCache(offset.x + offset.y * 2));
-				if (srf != nullptr)
+				// if unit is from below then draw only part that is in tile
+				if (below)
 				{
-					bool peripatetic (unit->getUnitStatus() == STATUS_WALKING
-								   || unit->getUnitStatus() == STATUS_FLYING);
-
-					int top (0);
-					int bot (0);
-
-					// if unit is from below then draw only part that is in tile
-					if (below)
+					top =  heightFloor;
+					bot = -heightFloor / 2;
+				}
+				else if (isTopLayer)
+				{
+					top = heightFloor * 2;
+				}
+				else
+				{
+					const Tile* const tileAbove (_battleSave->getTile(tileUnit->getPosition() + Position(0,0,1)));
+					if (tileAbove != nullptr && tileAbove->isFloored(tileUnit) == false)
 					{
-						top =  heightFloor;
-						bot = -heightFloor / 2;
+						top = -heightFloor / 2;
 					}
-					else if (isTopLayer)
+					else
+						top = heightFloor;
+				}
+
+				int widthExtra (peripatetic ? 0 : widthFloor);
+
+				GraphSubset range (GraphSubset(
+											widthFloor + widthExtra,
+											heightTile + top + bot).offset(
+																		posScreen.x - widthExtra / 2,
+																		posScreen.y - top));
+
+				if (peripatetic == true)
+				{
+					GraphSubset left  (range.offset(-widthFloor / 2, 0));
+					GraphSubset right (range.offset(+widthFloor / 2, 0));
+
+					Position pos      = tile->getPosition();
+					Position posStart = unit->getStartPosition() + offset;
+					Position posStop  = unit->getStopPosition()  + offset;
+
+					// adjusting mask
+					if (isPosition(posStart, posStop))
 					{
-						top = heightFloor * 2;
+						if (tile != tileUnit) // nothing to draw
+							return;
+					}
+					else if (isPosition(pos, posStop)) // unit is moving to this tile
+					{
+						switch (unit->getUnitDirection())
+						{
+							case 0:
+							case 1:
+								range = GraphSubset::intersection(range, right);
+								break;
+
+							case 2: // no change
+							case 3: // no change
+							case 4: // no change
+								break;
+
+							case 5:
+							case 6:
+								range = GraphSubset::intersection(range, left);
+								break;
+
+							case 7: // nothing to draw
+								return;
+						}
+					}
+					else if (isPosition(pos, posStart)) // unit is exiting this tile
+					{
+						switch (unit->getUnitDirection())
+						{
+							case 0: // no change
+								break;
+
+							case 1:
+							case 2:
+								range = GraphSubset::intersection(range, left);
+								break;
+
+							case 3: // nothing to draw
+								return;
+
+							case 4:
+							case 5:
+								range = GraphSubset::intersection(range, right);
+								break;
+
+							case 6: // no change
+							case 7: // no change
+								break;
+						}
 					}
 					else
 					{
-						const Tile* const tileAbove (_battleSave->getTile(tileUnit->getPosition() + Position(0,0,1)));
-						if (tileAbove != nullptr && tileAbove->isFloored(tileUnit) == false)
+						Position posLeft  (pos + Position(-1, 0, 0));
+						Position posRight (pos + Position( 0,-1, 0));
+
+						if (isTopLayer == false
+							&& (posStop.z > pos.z || posStart.z > pos.z)) // unit change layers, it will be drawn by upper layer not lower.
 						{
-							top = -heightFloor / 2;
+							return;
 						}
-						else
-							top = heightFloor;
+
+						int dir (unit->getUnitDirection());
+						if (   (dir == 1 && (posStop == posRight || posStart == posLeft))
+							|| (dir == 5 && (posStop == posLeft  || posStart == posRight)))
+						{
+							range = GraphSubset(
+											widthFloor,
+											heightTile + 2 * heightFloor).offset(
+																				posScreen.x,
+																				posScreen.y - 2 * heightFloor);
+						}
+						else // unit is not moving close to tile
+							return;
 					}
-
-					int widthExtra (peripatetic ? 0 : widthFloor);
-
-					GraphSubset range (GraphSubset(
-												widthFloor + widthExtra,
-												heightTile + top + bot).offset(
-																			posScreen.x - widthExtra / 2,
-																			posScreen.y - top));
-
-					if (peripatetic == true)
-					{
-						GraphSubset left  (range.offset(-widthFloor / 2, 0));
-						GraphSubset right (range.offset(+widthFloor / 2, 0));
-
-						Position pos      = tile->getPosition();
-						Position posStart = unit->getStartPosition() + offset;
-						Position posStop  = unit->getStopPosition()  + offset;
-
-						// adjusting mask
-						if (isPosition(posStart, posStop))
-						{
-							if (tile != tileUnit) // nothing to draw
-								return;
-						}
-						else if (isPosition(pos, posStop)) // unit is moving to this tile
-						{
-							switch (unit->getUnitDirection())
-							{
-								case 0:
-								case 1:
-									range = GraphSubset::intersection(range, right);
-									break;
-
-								case 2: // no change
-								case 3: // no change
-								case 4: // no change
-									break;
-
-								case 5:
-								case 6:
-									range = GraphSubset::intersection(range, left);
-									break;
-
-								case 7: // nothing to draw
-									return;
-							}
-						}
-						else if (isPosition(pos, posStart)) // unit is exiting this tile
-						{
-							switch (unit->getUnitDirection())
-							{
-								case 0: // no change
-									break;
-
-								case 1:
-								case 2:
-									range = GraphSubset::intersection(range, left);
-									break;
-
-								case 3: // nothing to draw
-									return;
-
-								case 4:
-								case 5:
-									range = GraphSubset::intersection(range, right);
-									break;
-
-								case 6: // no change
-								case 7: // no change
-									break;
-							}
-						}
-						else
-						{
-							Position posLeft  (pos + Position(-1, 0, 0));
-							Position posRight (pos + Position( 0,-1, 0));
-
-							if (isTopLayer == false
-								&& (posStop.z > pos.z || posStart.z > pos.z)) // unit change layers, it will be drawn by upper layer not lower.
-							{
-								return;
-							}
-
-							int dir (unit->getUnitDirection());
-							if (   (dir == 1 && (posStop == posRight || posStart == posLeft))
-								|| (dir == 5 && (posStop == posLeft  || posStart == posRight)))
-							{
-								range = GraphSubset(
-												widthFloor,
-												heightTile + 2 * heightFloor).offset(
-																					posScreen.x,
-																					posScreen.y - 2 * heightFloor);
-							}
-							else // unit is not moving close to tile
-								return;
-						}
-					}
-					else if (tile != tileUnit)
-						return;
+				}
+				else if (tile != tileUnit)
+					return;
 
 
-					Position posScreenTile;
-					_camera->convertMapToScreen(tileUnit->getPosition() + Position(0,0, (below ? -1 : 0)), &posScreenTile);
-					posScreenTile += _camera->getMapOffset();
+				Position posScreenTile;
+				_camera->convertMapToScreen(tileUnit->getPosition() + Position(0,0, (below ? -1 : 0)), &posScreenTile);
+				posScreenTile += _camera->getMapOffset();
 
-					// draw unit
-					int shadeOffset;
-					calcWalkOffset(unit, &offset, isTrueLoc(unit, tile), &shadeOffset);
+				// draw unit
+				int shadeOffset;
+				calcWalkOffset(unit, &offset, isTrueLoc(unit, tile), &shadeOffset);
 
-					int tileShade ((tile->isRevealed() == true) ? tile->getShade() : 16);
-					int unitShade ((tileShade * (16 - shadeOffset) + shade * shadeOffset) / 16);
+				int tileShade ((tile->isRevealed() == true) ? tile->getShade() : 16);
+				int unitShade ((tileShade * (16 - shadeOffset) + shade * shadeOffset) / 16);
 
+				srf->blitNShade(
+							surface,
+							posScreenTile.x + offset.x - _spriteWidth_2,
+							posScreenTile.y + offset.y,
+							unitShade,
+							range);
 
-					cacheUnitSprite(unit); // TEST!!
-
+				// draw fire
+				if (unit->getUnitFire() > 0)
+				{
+					srf = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniCycle >> 1u));
 					srf->blitNShade(
 								surface,
-								posScreenTile.x + offset.x - _spriteWidth_2,
+								posScreenTile.x + offset.x,
 								posScreenTile.y + offset.y,
-								unitShade,
+								0,
 								range);
-
-					// draw fire
-					if (unit->getUnitFire() > 0)
-					{
-						srf = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniCycle >> 1u));
-						srf->blitNShade(
-									surface,
-									posScreenTile.x + offset.x,
-									posScreenTile.y + offset.y,
-									0,
-									range);
-					}
 				}
 			}
 		}
@@ -967,7 +962,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						hasFloor =
 						hasObject = false;
 
-						bool isTopLayer = (itZ == endZ); // Yankes' code.
+//						bool isTopLayer = (itZ == endZ); // Yankes' code.
 
 // Draw Floor
 						if ((sprite = _tile->getSprite(O_FLOOR)) != nullptr)

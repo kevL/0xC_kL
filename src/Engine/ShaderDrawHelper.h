@@ -66,7 +66,7 @@ class Scalar
 /**
  * This is surface argument to 'ShaderDraw'.
  * Every pixel of this surface will have type 'Pixel'.
- * Modify pixels of this surface that will modify original data.
+ * Modifying pixels of this surface will modify original data.
  */
 template<typename Pixel>
 class ShaderBase
@@ -247,7 +247,7 @@ protected:
  * This is surface argument to 'ShaderDraw'.
  * Every pixel of this surface will have type 'Uint8'.
  * Can be constructed from 'Surface*'.
- * Modify pixels of this surface, that will modifying original data.
+ * Modifying pixels of this surface will modify original data.
  */
 template<>
 class ShaderBase<Uint8>
@@ -479,7 +479,7 @@ struct controler
 
 	/**
 	 * Function used only when 'SurfaceType' can be used as destination surface.
-	 * If that type should not be used as 'dest' don't implements this.
+	 * If that type should not be used as 'dest' don't implement this.
 	 * @return, start drawing range
 	 */
 	inline const GraphSubset& get_range();
