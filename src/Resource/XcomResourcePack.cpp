@@ -1130,12 +1130,12 @@ void XcomResourcePack::loadBattlescapeResources()
 				GraphSubset dim (head.getBaseDomain());
 
 				srf->lock();
-				dim.beg_y = 6;
-				dim.end_y = 9;
+				dim._y_beg = 6;
+				dim._y_end = 9;
 				head.setDomain(dim);
 				ShaderDraw<HairXCOM1>(head, ShaderScalar<Uint8>(HairXCOM1::Face + 5u));
-				dim.beg_y =  9;
-				dim.end_y = 10;
+				dim._y_beg =  9;
+				dim._y_end = 10;
 				head.setDomain(dim);
 				ShaderDraw<HairXCOM1>(head, ShaderScalar<Uint8>(HairXCOM1::Face + 6u));
 				srf->unlock();
@@ -1150,10 +1150,10 @@ void XcomResourcePack::loadBattlescapeResources()
 				ShaderMove<Uint8> head = ShaderMove<Uint8>(srf);
 				GraphSubset dim = head.getBaseDomain();
 
-				dim.beg_y =  0;
-				dim.end_y = 24;
-				dim.beg_x = 11;
-				dim.end_x = 20;
+				dim._y_beg =  0;
+				dim._y_end = 24;
+				dim._x_beg = 11;
+				dim._x_end = 20;
 				head.setDomain(dim);
 				srf->lock();
 				ShaderDraw<HairXCOM1>(head, ShaderScalar<Uint8>(HairXCOM1::Face + 6u));

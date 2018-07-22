@@ -51,14 +51,14 @@ static inline void ShaderDraw(
 		const Src3Type& src3_frame)
 {
 	// creating helper objects
-	helper::controler<DestType> dest(dest_frame);
-	helper::controler<Src0Type> src0(src0_frame);
-	helper::controler<Src1Type> src1(src1_frame);
-	helper::controler<Src2Type> src2(src2_frame);
-	helper::controler<Src3Type> src3(src3_frame);
+	helper::controler<DestType> dest (dest_frame);
+	helper::controler<Src0Type> src0 (src0_frame);
+	helper::controler<Src1Type> src1 (src1_frame);
+	helper::controler<Src2Type> src2 (src2_frame);
+	helper::controler<Src3Type> src3 (src3_frame);
 
 	// get basic draw range in 2d space
-	GraphSubset end_temp = dest.get_range();
+	GraphSubset end_temp (dest.get_range());
 
 	// intersections with src ranges
 	src0.mod_range(end_temp);
@@ -79,29 +79,29 @@ static inline void ShaderDraw(
 
 
 	int
-		begin_y (0),
-		end_y   (end.size_y());
+		y_beg (0),
+		y_end (end.size_y());
 
 	// determining iteration range in y-axis
-	dest.mod_y(begin_y, end_y);
-	src0.mod_y(begin_y, end_y);
-	src1.mod_y(begin_y, end_y);
-	src2.mod_y(begin_y, end_y);
-	src3.mod_y(begin_y, end_y);
+	dest.mod_y(y_beg, y_end);
+	src0.mod_y(y_beg, y_end);
+	src1.mod_y(y_beg, y_end);
+	src2.mod_y(y_beg, y_end);
+	src3.mod_y(y_beg, y_end);
 
-	if (begin_y >= end_y)
+	if (y_beg >= y_end)
 		return;
 
 	// set final iteration range
-	dest.set_y(begin_y, end_y);
-	src0.set_y(begin_y, end_y);
-	src1.set_y(begin_y, end_y);
-	src2.set_y(begin_y, end_y);
-	src3.set_y(begin_y, end_y);
+	dest.set_y(y_beg, y_end);
+	src0.set_y(y_beg, y_end);
+	src1.set_y(y_beg, y_end);
+	src2.set_y(y_beg, y_end);
+	src3.set_y(y_beg, y_end);
 
 	// iteration on y-axis
 	for (int
-			y = end_y - begin_y;
+			y = y_end - y_beg;
 			y > 0;
 			--y,
 				dest.inc_y(),
@@ -111,29 +111,29 @@ static inline void ShaderDraw(
 				src3.inc_y())
 	{
 		int
-			begin_x (0),
-			end_x   (end.size_x());
+			x_beg (0),
+			x_end (end.size_x());
 
 		// determining iteration range in x-axis
-		dest.mod_x(begin_x, end_x);
-		src0.mod_x(begin_x, end_x);
-		src1.mod_x(begin_x, end_x);
-		src2.mod_x(begin_x, end_x);
-		src3.mod_x(begin_x, end_x);
+		dest.mod_x(x_beg, x_end);
+		src0.mod_x(x_beg, x_end);
+		src1.mod_x(x_beg, x_end);
+		src2.mod_x(x_beg, x_end);
+		src3.mod_x(x_beg, x_end);
 
-		if (begin_x >= end_x)
+		if (x_beg >= x_end)
 			continue;
 
 		// set final iteration range
-		dest.set_x(begin_x, end_x);
-		src0.set_x(begin_x, end_x);
-		src1.set_x(begin_x, end_x);
-		src2.set_x(begin_x, end_x);
-		src3.set_x(begin_x, end_x);
+		dest.set_x(x_beg, x_end);
+		src0.set_x(x_beg, x_end);
+		src1.set_x(x_beg, x_end);
+		src2.set_x(x_beg, x_end);
+		src3.set_x(x_beg, x_end);
 
 		// iteration on x-axis
 		for (int
-				x = end_x - begin_x;
+				x = x_end - x_beg;
 				x > 0;
 				--x,
 					dest.inc_x(),
@@ -170,7 +170,7 @@ static inline void ShaderDraw(
 						src0_frame,
 						src1_frame,
 						src2_frame,
-						helper::Nothing());
+						helper::Bogus());
 }
 
 template<typename ColorFunc,
@@ -187,8 +187,8 @@ static inline void ShaderDraw(
 						dest_frame,
 						src0_frame,
 						src1_frame,
-						helper::Nothing(),
-						helper::Nothing());
+						helper::Bogus(),
+						helper::Bogus());
 }
 
 template<typename ColorFunc,
@@ -202,9 +202,9 @@ static inline void ShaderDraw(
 	ShaderDraw<ColorFunc>(
 						dest_frame,
 						src0_frame,
-						helper::Nothing(),
-						helper::Nothing(),
-						helper::Nothing());
+						helper::Bogus(),
+						helper::Bogus(),
+						helper::Bogus());
 }
 
 /* template<typename ColorFunc,
@@ -221,15 +221,15 @@ static inline void ShaderDraw(const DestType& dest_frame)
 
 
 template<typename T>
-static inline helper::Scalar<T> ShaderScalar(T& t)
+static inline helper::Flat<T> ShaderScalar(T& val)
 {
-	return helper::Scalar<T>(t);
+	return helper::Flat<T>(val);
 }
 
 template<typename T>
-static inline helper::Scalar<const T> ShaderScalar(const T& t)
+static inline helper::Flat<const T> ShaderScalar(const T& val)
 {
-	return helper::Scalar<const T>(t);
+	return helper::Flat<const T>(val);
 }
 
 }

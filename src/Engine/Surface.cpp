@@ -1069,13 +1069,13 @@ void Surface::blitNShade(
 	if (halfRight == true)
 	{
 		GraphSubset graph (src.getDomain());
-		graph.beg_x = graph.end_x >> 1u;
+		graph._x_beg = graph._x_end >> 1u;
 		src.setDomain(graph);
 	}
 	else if (halfLeft == true) // kL_add->
 	{
 		GraphSubset graph (src.getDomain());
-		graph.end_x = graph.end_x >> 1u;
+		graph._x_end = graph._x_end >> 1u;
 		src.setDomain(graph);
 	}
 

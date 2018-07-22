@@ -40,10 +40,10 @@ const Uint8
 
 
 /**
- * This is empty argument to 'ShaderDraw'.
+ * This is blank argument to 'ShaderDraw'.
  * When used in 'ShaderDraw' return always 0 to 'ColorFunc::func' for every pixel.
  */
-class Nothing
+class Bogus
 {};
 
 
@@ -52,13 +52,15 @@ class Nothing
  * When used in 'ShaderDraw' return value of 't' to 'ColorFunc::func' for every pixel.
  */
 template<typename T>
-class Scalar
+class Flat
 {
 	public:
-		T& ref;
-		inline explicit Scalar(T& t)
+		T& _ref;
+
+		/// cTor.
+		inline explicit Flat(T& val)
 			:
-				ref(t)
+				_ref(val)
 		{}
 };
 
@@ -101,23 +103,23 @@ protected:
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
-		 * @param max_x - x dimension of 'data'
-		 * @param max_y - y dimension of 'data'
+		 * @param x_max - x dimension of 'data'
+		 * @param y_max - y dimension of 'data'
 		 */
 		/// cTor [1]
 		inline ShaderBase(
 				std::vector<Pixel>& data,
-				int max_x,
-				int max_y)
+				int x_max,
+				int y_max)
 			:
 				_origin(&data[0u]),
 				_range_base(
-						max_x,
-						max_y),
+						x_max,
+						y_max),
 				_range_domain(
-						max_x,
-						max_y),
-				_pitch(max_x)
+						x_max,
+						y_max),
+				_pitch(x_max)
 		{}
 
 		inline PixelPtr ptr() const
@@ -128,10 +130,10 @@ protected:
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& graph)
+		inline void setDomain(const GraphSubset& area)
 		{
 			_range_domain = GraphSubset::intersection(
-													graph,
+													area,
 													_range_base);
 		}
 		inline const GraphSubset& getDomain() const
@@ -195,23 +197,23 @@ protected:
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
-		 * @param max_x - x dimension of 'f'
-		 * @param max_y - y dimension of 'f'
+		 * @param x_max - x dimension of 'f'
+		 * @param y_max - y dimension of 'f'
 		 */
 		/// cTor [2]
 		inline ShaderBase(
 				const std::vector<Pixel>& data,
-				int max_x,
-				int max_y)
+				int x_max,
+				int y_max)
 			:
 				_origin(&data[0u]),
 				_range_base(
-						max_x,
-						max_y),
+						x_max,
+						y_max),
 				_range_domain(
-						max_x,
-						max_y),
-				_pitch(max_x)
+						x_max,
+						y_max),
+				_pitch(x_max)
 		{}
 
 		inline PixelPtr ptr() const
@@ -222,10 +224,10 @@ protected:
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& graph)
+		inline void setDomain(const GraphSubset& area)
 		{
 			_range_domain = GraphSubset::intersection(
-													graph,
+													area,
 													_range_base);
 		}
 		inline const GraphSubset& getDomain() const
@@ -303,23 +305,23 @@ protected:
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
-		 * @param max_x - x dimension of 'data'
-		 * @param max_y - y dimension of 'data'
+		 * @param x_max - x dimension of 'data'
+		 * @param y_max - y dimension of 'data'
 		 */
 		/// cTor [2]
 		inline ShaderBase(
 				std::vector<Uint8>& data,
-				int max_x,
-				int max_y)
+				int x_max,
+				int y_max)
 			:
 				_origin(&data[0u]),
 				_range_base(
-						max_x,
-						max_y),
+						x_max,
+						y_max),
 				_range_domain(
-						max_x,
-						max_y),
-				_pitch(max_x)
+						x_max,
+						y_max),
+				_pitch(x_max)
 		{}
 
 		inline PixelPtr ptr() const
@@ -330,10 +332,10 @@ protected:
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& graph)
+		inline void setDomain(const GraphSubset& area)
 		{
 			_range_domain = GraphSubset::intersection(
-													graph,
+													area,
 													_range_base);
 		}
 		inline const GraphSubset& getDomain() const
@@ -420,23 +422,23 @@ protected:
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
-		 * @param max_x - x dimension of 'f'
-		 * @param max_y - y dimension of 'f'
+		 * @param x_max - x dimension of 'f'
+		 * @param y_max - y dimension of 'f'
 		 */
 		/// cTor [3]
 		inline ShaderBase(
 				const std::vector<Uint8>& data,
-				int max_x,
-				int max_y)
+				int x_max,
+				int y_max)
 			:
 				_origin(&data[0u]),
 				_range_base(
-						max_x,
-						max_y),
+						x_max,
+						y_max),
 				_range_domain(
-						max_x,
-						max_y),
-				_pitch(max_x)
+						x_max,
+						y_max),
+				_pitch(x_max)
 		{}
 
 		inline PixelPtr ptr() const
@@ -447,10 +449,10 @@ protected:
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& graph)
+		inline void setDomain(const GraphSubset& area)
 		{
 			_range_domain = GraphSubset::intersection(
-													graph,
+													area,
 													_range_base);
 		}
 		inline const GraphSubset& getDomain() const
@@ -468,7 +470,7 @@ protected:
 };
 
 
-/// A helper-class for handling implementation differences in different surfaces
+/// A helper-class for handling implementation differences in different surface
 /// types.
 /// Used in function 'ShaderDraw'.
 template<typename SurfaceType>
@@ -488,19 +490,19 @@ struct controler
 	 * Function reduce drawing range.
 	 * @param graph - modify drawing range
 	 */
-	inline void mod_range(GraphSubset& graph);
+	inline void mod_range(GraphSubset& area);
 	/**
 	 * Set final drawing range.
 	 * @param graph - drawing range
 	 */
-	inline void set_range(const GraphSubset& graph);
+	inline void set_range(const GraphSubset& area);
 
-	inline void mod_y(int& begin, int& end);
-	inline void set_y(const int& begin, const int& end);
+	inline void mod_y(int& beg, int& end);
+	inline void set_y(const int& beg, const int& end);
 	inline void inc_y();
 
-	inline void mod_x(int& begin, int& end);
-	inline void set_x(const int& begin, const int& end);
+	inline void mod_x(int& beg, int& end);
+	inline void set_x(const int& beg, const int& end);
 	inline void inc_x();
 
 	inline int& get_ref();
@@ -509,13 +511,14 @@ struct controler
 
 /// implementation for scalar types aka 'int', 'double', 'float'
 template<typename T>
-struct controler<Scalar<T>>
+struct controler<Flat<T>>
 {
-	T& ref;
+	T& _ref;
 
-	inline explicit controler(const Scalar<T>& scalar)
+	/// cTor.
+	inline explicit controler(const Flat<T>& scalar)
 		:
-			ref(scalar.ref)
+			_ref(scalar._ref)
 	{}
 
 	// can't use this function
@@ -542,7 +545,7 @@ struct controler<Scalar<T>>
 
 	inline T& get_ref()
 	{
-		return ref;
+		return _ref;
 	}
 };
 
@@ -550,12 +553,14 @@ struct controler<Scalar<T>>
 
 /// Implementation for not used arg.
 template<>
-struct controler<Nothing>
+struct controler<Bogus>
 {
-	const int i;
-	inline controler(const Nothing&)
+	const int _i;
+
+	/// cTor.
+	inline controler(const Bogus&)
 		:
-			i(0)
+			_i(0)
 	{}
 
 	// can't use this function
@@ -582,7 +587,7 @@ struct controler<Nothing>
 
 	inline const int& get_ref()
 	{
-		return i;
+		return _i;
 	}
 };
 
@@ -590,87 +595,88 @@ struct controler<Nothing>
 template<typename PixelPtr, typename PixelRef>
 struct controler_base
 {
-	const PixelPtr data;
+	const PixelPtr _data;
 	PixelPtr
-		ptr_pos_y,
-		ptr_pos_x;
-	GraphSubset range;
+		_y_pos_ptr,
+		_x_pos_ptr;
+	GraphSubset _range;
 	int
-		start_x,
-		start_y;
+		_x_start,
+		_y_start;
 
-	const std::pair<int, int> step;
+	const std::pair<int, int> _step;
 
+	/// cTor.
 	controler_base(
 			PixelPtr base,
-			const GraphSubset& d,
-			const GraphSubset& r,
-			const std::pair<int, int>& s) // pair of WHAT. Thanks
+			const GraphSubset& area,
+			const GraphSubset& range,
+			const std::pair<int,int>& step)
 		:
-			data(base + d.beg_x * s.first + d.beg_y * s.second),
-			ptr_pos_y(nullptr),
-			ptr_pos_x(nullptr),
-			range(r),
-			start_x(),
-			start_y(),
-			step(s)
+			_data(base + area._x_beg * step.first + area._y_beg * step.second),
+			_y_pos_ptr(nullptr),
+			_x_pos_ptr(nullptr),
+			_range(range),
+			_x_start(0), //_x_start()
+			_y_start(0), //_y_start()
+			_step(step)
 	{}
 
 
 	inline const GraphSubset& get_range()
 	{
-		return range;
+		return _range;
 	}
 
-	inline void mod_range(GraphSubset& r)
+	inline void mod_range(GraphSubset& range)
 	{
-		r = GraphSubset::intersection(range, r);
+		range = GraphSubset::intersection(_range, range);
 	}
 
-	inline void set_range(const GraphSubset& r)
+	inline void set_range(const GraphSubset& range)
 	{
-		start_x = r.beg_x - range.beg_x;
-		start_y = r.beg_y - range.beg_y;
-		range = r;
+		_x_start = range._x_beg - _range._x_beg;
+		_y_start = range._y_beg - _range._y_beg;
+		_range = range;
 	}
 
 	inline void mod_y(
 			int&,
 			int&)
 	{
-		ptr_pos_y = data + step.first * start_x + step.second * start_y;
+		_y_pos_ptr = _data + _step.first * _x_start + _step.second * _y_start;
 	}
 	inline void set_y(
-			const int& begin,
+			const int& beg,
 			const int&)
 	{
-		ptr_pos_y += step.second * begin;
+		_y_pos_ptr += _step.second * beg;
 	}
 	inline void inc_y()
 	{
-		ptr_pos_y += step.second;
+		_y_pos_ptr += _step.second;
 	}
 
 	inline void mod_x(
 			int&,
 			int&)
 	{
-		ptr_pos_x = ptr_pos_y;
+		_x_pos_ptr = _y_pos_ptr;
 	}
 	inline void set_x(
-			const int& begin,
+			const int& beg,
 			const int&)
 	{
-		ptr_pos_x += step.first * begin;
+		_x_pos_ptr += _step.first * beg;
 	}
 	inline void inc_x()
 	{
-		ptr_pos_x += step.first;
+		_x_pos_ptr += _step.first;
 	}
 
 	inline PixelRef get_ref()
 	{
-		return *ptr_pos_x;
+		return *_x_pos_ptr;
 	}
 };
 
@@ -685,6 +691,7 @@ struct controler<ShaderBase<Pixel>>
 
 	typedef controler_base<PixelPtr, PixelRef> base_type;
 
+	/// cTor.
 	controler(const ShaderBase<Pixel>& base)
 		:
 			base_type(

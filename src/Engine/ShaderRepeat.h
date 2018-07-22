@@ -34,8 +34,8 @@ class ShaderRepeat
 
 private:
 	int
-		_off_x,
-		_off_y;
+		_x_off,
+		_y_off;
 
 	public:
 		typedef helper::ShaderBase<const Pixel> _base;
@@ -43,18 +43,20 @@ private:
 
 		// kL_change: Cut the crap out.
 		// ps. I'm sure there's a lot more around here ...
+
+		/// cTor.
 		inline ShaderRepeat(
 				const std::vector<Pixel>& data,
-				int max_x,
-				int max_y)
+				int x_max,
+				int y_max)
 			:
 				_base(
 					data,
-					max_x,
-					max_y)
+					x_max,
+					y_max)
 		{
-			_off_x =
-			_off_y = 0;
+			_x_off =
+			_y_off = 0;
 		}
 
 /*
@@ -111,34 +113,35 @@ struct controler<ShaderRepeat<Pixel>>
 	GraphSubset _range_image;
 
 	const int
-		_off_x,
-		_off_y,
-		_size_x,
-		_size_y,
+		_x_off,
+		_y_off,
+		_x_size,
+		_y_size,
 		_pitch;
 	int
-		_curr_x,
-		_curr_y;
+		_x_curr,
+		_y_curr;
 
 	const PixelPtr _base;
 	PixelPtr
-		_ptr_curr_x,
-		_ptr_curr_y;
+		_x_curr_ptr,
+		_y_curr_ptr;
 
+	/// cTor.
 	controler(const ShaderRepeat<Pixel>& repeat)
 		:
 			_base(repeat.ptr()),
 			_range_domain(repeat.getDomain()),
 			_range_image(0,0),
-			_off_x(repeat._off_x),
-			_off_y(repeat._off_y),
-			_size_x(_range_domain.size_x()),
-			_size_y(_range_domain.size_y()),
-			_curr_x(0),
-			_curr_y(0),
+			_x_off(repeat._x_off),
+			_y_off(repeat._y_off),
+			_x_size(_range_domain.size_x()),
+			_y_size(_range_domain.size_y()),
+			_x_curr(0),
+			_y_curr(0),
 			_pitch(repeat.pitch()),
-			_ptr_curr_x(nullptr),
-			_ptr_curr_y(nullptr)
+			_x_curr_ptr(nullptr),
+			_y_curr_ptr(nullptr)
 	{}
 
 	// not used
@@ -158,28 +161,28 @@ struct controler<ShaderRepeat<Pixel>>
 			int&,
 			int&)
 	{
-		_curr_y = (_range_image.beg_y - _off_y) % _size_y;
-		if (_curr_y < 0)
-			_curr_y += _size_y;
-		_ptr_curr_y = _base;
+		_y_curr = (_range_image._y_beg - _y_off) % _y_size;
+		if (_y_curr < 0)
+			_y_curr += _y_size;
+		_y_curr_ptr = _base;
 	}
 	///
 	inline void set_y(
 			const int& start,
 			const int&)
 	{
-		_curr_y = (_curr_y + start) % _size_y;
-		_ptr_curr_y += (_range_domain.beg_y + _curr_y) * _pitch;
+		_y_curr = (_y_curr + start) % _y_size;
+		_y_curr_ptr += (_range_domain._y_beg + _y_curr) * _pitch;
 	}
 	///
 	inline void inc_y()
 	{
-		++_curr_y;
-		_ptr_curr_y += _pitch;
-		if (_curr_y == _size_y)
+		++_y_curr;
+		_y_curr_ptr += _pitch;
+		if (_y_curr == _y_size)
 		{
-			_curr_y = 0;
-			_ptr_curr_y -= _size_y * _pitch;
+			_y_curr = 0;
+			_y_curr_ptr -= _y_size * _pitch;
 		}
 	}
 
@@ -189,35 +192,35 @@ struct controler<ShaderRepeat<Pixel>>
 			int&,
 			int&)
 	{
-		_curr_x = (_range_image.beg_x - _off_x) % _size_x;
-		if (_curr_x < 0)
-			_curr_x += _size_x;
-		_ptr_curr_x = _ptr_curr_y;
+		_x_curr = (_range_image._x_beg - _x_off) % _x_size;
+		if (_x_curr < 0)
+			_x_curr += _x_size;
+		_x_curr_ptr = _y_curr_ptr;
 	}
 	///
 	inline void set_x(
 			const int& start,
 			const int&)
 	{
-		_curr_x = (_curr_x + start) % _size_x;
-		_ptr_curr_x += _range_domain.beg_x + _curr_x;
+		_x_curr = (_x_curr + start) % _x_size;
+		_x_curr_ptr += _range_domain._x_beg + _x_curr;
 	}
 	///
 	inline void inc_x()
 	{
-		++_curr_x;
-		_ptr_curr_x += 1;
-		if (_curr_x == _size_x)
+		++_x_curr;
+		_x_curr_ptr += 1;
+		if (_x_curr == _x_size)
 		{
-			_curr_x = 0;
-			_ptr_curr_x -= _size_x;
+			_x_curr = 0;
+			_x_curr_ptr -= _x_size;
 		}
 	}
 
 	///
 	inline PixelRef get_ref()
 	{
-		return *_ptr_curr_x;
+		return *_x_curr_ptr;
 	}
 };
 

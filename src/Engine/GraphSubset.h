@@ -30,26 +30,28 @@ namespace OpenXcom
 struct GraphSubset
 {
 	int // defines subarea of surface
-		beg_x, end_x,
-		beg_y, end_y;
+		_x_beg, _x_end,
+		_y_beg, _y_end;
 
+	/// cTor [0]
 	GraphSubset(
-			int max_x,
-			int max_y)
+			int x_max,
+			int y_max)
 		:
-			beg_x(0), end_x(max_x),
-			beg_y(0), end_y(max_y)
+			_x_beg(0), _x_end(x_max),
+			_y_beg(0), _y_end(y_max)
 	{}
 
-
+	/// cTor [1]
 	GraphSubset(
-			std::pair<int,int> range_x,
-			std::pair<int,int> range_y)
+			std::pair<int,int> x_range,
+			std::pair<int,int> y_range)
 		:
-			beg_x(range_x.first), end_x(range_x.second),
-			beg_y(range_y.first), end_y(range_y.second)
+			_x_beg(x_range.first), _x_end(x_range.second),
+			_y_beg(y_range.first), _y_end(y_range.second)
 	{}
 
+	/// cTor [2] - copy constructor
 //	GraphSubset(const GraphSubset& area)
 //		:
 //			beg_x(area.beg_x),
@@ -63,32 +65,32 @@ struct GraphSubset
 			int y) const
 	{
 		GraphSubset area (*this);
-		area.beg_x += x;
-		area.end_x += x;
-		area.beg_y += y;
-		area.end_y += y;
+		area._x_beg += x;
+		area._x_end += x;
+		area._y_beg += y;
+		area._y_end += y;
 		return area;
 	}
 
 	inline int size_x() const
-	{ return end_x - beg_x; }
+	{ return _x_end - _x_beg; }
 
 	inline int size_y() const
-	{ return end_y - beg_y; }
+	{ return _y_end - _y_beg; }
 
 
 	static inline void intersection_range(
-			int& begin_a,
-			int& end_a,
-			const int& begin_b,
-			const int& end_b)
+			int& a_beg,
+			int& a_end,
+			const int& b_beg,
+			const int& b_end)
 	{
-		if (begin_a >= end_b || begin_b >= end_a)
-			end_a = begin_a; // intersection is empty
+		if (a_beg >= b_end || b_beg >= a_end) // intersection is empty
+			a_end = a_beg;
 		else
 		{
-			begin_a = std::max(begin_a, begin_b);
-			end_a   = std::min(end_a,   end_b);
+			a_beg = std::max(a_beg, b_beg);
+			a_end = std::min(a_end, b_end);
 		}
 	}
 
@@ -97,8 +99,8 @@ struct GraphSubset
 			const GraphSubset& b)
 	{
 		GraphSubset area (a);
-		intersection_range(area.beg_x, area.end_x, b.beg_x, b.end_x);
-		intersection_range(area.beg_y, area.end_y, b.beg_y, b.end_y);
+		intersection_range(area._x_beg, area._x_end, b._x_beg, b._x_end);
+		intersection_range(area._y_beg, area._y_end, b._y_beg, b._y_end);
 		return area;
 	}
 
