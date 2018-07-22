@@ -151,9 +151,9 @@ struct controler<ShaderRepeat<Pixel>>
 	inline void mod_range(GraphSubset&)
 	{}
 	///
-	inline void set_range(const GraphSubset& graph)
+	inline void set_range(const GraphSubset& range)
 	{
-		_range_image = graph;
+		_range_image = range;
 	}
 
 	///

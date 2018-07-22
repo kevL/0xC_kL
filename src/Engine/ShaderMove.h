@@ -99,21 +99,27 @@ private:
 		{}
 
 		inline GraphSubset getArea() const // NOTE: Hides superclass ShaderBase::getImage(). kL_Fixed.
-		{ return _base::_range_domain.offset(
-										_x_move,
-										_y_move); }
+		{
+			return _base::_range_domain.offset(
+											_x_move,
+											_y_move);
+		}
 
 		inline void setMove(
 				int x,
 				int y)
-		{	_x_move = x;
-			_y_move = y; }
+		{
+			_x_move = x;
+			_y_move = y;
+		}
 
 		inline void addMove(
 				int x,
 				int y)
-		{	_x_move += x;
-			_y_move += y; }
+		{
+			_x_move += x;
+			_y_move += y;
+		}
 };
 
 
@@ -188,7 +194,7 @@ inline ShaderMove<Uint8> ShaderCrop(
 	ShaderMove<Uint8> area (srf, x,y);
 
 	SDL_Rect* const rect (srf->getCrop());
-	if (rect->w && rect->h)
+	if (rect->w != 0u && rect->h != 0u)
 	{
 		GraphSubset crop (std::make_pair(
 									rect->x,

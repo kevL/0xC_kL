@@ -41,7 +41,8 @@ const Uint8
 
 /**
  * This is blank argument to 'ShaderDraw'.
- * When used in 'ShaderDraw' return always 0 to 'ColorFunc::func' for every pixel.
+ * When used in 'ShaderDraw' return always 0 to 'ColorFunc::func' for every
+ * pixel.
  */
 class Bogus
 {};
@@ -49,7 +50,8 @@ class Bogus
 
 /**
  * This is scalar argument to 'ShaderDraw'.
- * When used in 'ShaderDraw' return value of 't' to 'ColorFunc::func' for every pixel.
+ * When used in 'ShaderDraw' return value of 'val' to 'ColorFunc::func' for every
+ * pixel.
  */
 template<typename T>
 class Flat
@@ -97,8 +99,8 @@ protected:
 
 		/**
 		 * Creates surface using vector 'data' as data source.
-		 * Surface will have 'max_y' x 'max_x' dimensions.
-		 * Size of 'data' should be bigger than 'max_y * max_x'.
+		 * Surface will have 'y_max * x_max' dimensions.
+		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
@@ -191,14 +193,14 @@ protected:
 
 		/**
 		 * Creates surface using vector 'data' as data source.
-		 * Surface will have 'max_y' x 'max_x' dimensions.
-		 * Size of 'data' should be bigger than 'max_y * max_x'.
+		 * Surface will have 'y_max * x_max' dimensions.
+		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
-		 * @param x_max - x dimension of 'f'
-		 * @param y_max - y dimension of 'f'
+		 * @param x_max - x dimension of 'data'
+		 * @param y_max - y dimension of 'data'
 		 */
 		/// cTor [2]
 		inline ShaderBase(
@@ -299,8 +301,8 @@ protected:
 
 		/**
 		 * Creates surface using vector 'data' as data source.
-		 * Surface will have 'max_y' x 'max_x' dimensions.
-		 * Size of 'data' should be bigger than 'max_y * max_x'.
+		 * Surface will have 'y_max * x_max' dimensions.
+		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
@@ -416,14 +418,14 @@ protected:
 
 		/**
 		 * Creates surface using vector 'data' as data source.
-		 * Surface will have 'max_y' x 'max_x' dimensions.
-		 * Size of 'data' should be bigger than 'max_y * max_x'.
+		 * Surface will have 'y_max * x_max' dimensions.
+		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
 		 * then '_origin' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
-		 * @param x_max - x dimension of 'f'
-		 * @param y_max - y dimension of 'f'
+		 * @param x_max - x dimension of 'data'
+		 * @param y_max - y dimension of 'data'
 		 */
 		/// cTor [3]
 		inline ShaderBase(
@@ -509,7 +511,7 @@ struct controler
 };
 
 
-/// implementation for scalar types aka 'int', 'double', 'float'
+/// Implementation for scalar types aka 'int', 'double', 'float'.
 template<typename T>
 struct controler<Flat<T>>
 {
@@ -549,9 +551,10 @@ struct controler<Flat<T>>
 	}
 };
 
-// kL_note: Is this just a bunch of code for the sake of having code.
+// kL_note: Is this just a bunch of code for the sake of having code. And does
+// any of this have anything to do with you know "shaders".
 
-/// Implementation for not used arg.
+/// Implementation for not-used arg.
 template<>
 struct controler<Bogus>
 {
