@@ -85,7 +85,11 @@ struct GraphSubset
 			const int& b_beg,
 			const int& b_end)
 	{
-		if (a_beg < b_end && a_end > b_beg) // intersection is empty
+//		if (a_beg < b_end && a_end > b_beg) // intersection is empty: WARNING [-Wstrict-overflow]
+		// hint to the person who came up with all this shyte: learn what a type
+		// is and how to use it.
+		if (   static_cast<unsigned>(a_beg) < static_cast<unsigned>(b_end)
+			&& static_cast<unsigned>(a_end) > static_cast<unsigned>(b_beg))
 		{
 			a_beg = std::max(a_beg, b_beg);
 			a_end = std::min(a_end, b_end);

@@ -119,13 +119,13 @@ struct controler<ShaderRepeat<Pixel>>
 		_y_size,
 		_pitch;
 	int
-		_x_curr,
-		_y_curr;
+		_x,
+		_y;
 
 	const PixelPtr _base;
 	PixelPtr
-		_x_curr_ptr,
-		_y_curr_ptr;
+		_x_ptr,
+		_y_ptr;
 
 	/// cTor.
 	controler(const ShaderRepeat<Pixel>& repeat)
@@ -137,11 +137,11 @@ struct controler<ShaderRepeat<Pixel>>
 			_y_off(repeat._y_off),
 			_x_size(_range_domain.size_x()),
 			_y_size(_range_domain.size_y()),
-			_x_curr(0),
-			_y_curr(0),
+			_x(0),
+			_y(0),
 			_pitch(repeat.pitch()),
-			_x_curr_ptr(nullptr),
-			_y_curr_ptr(nullptr)
+			_x_ptr(nullptr),
+			_y_ptr(nullptr)
 	{}
 
 	// not used
@@ -161,28 +161,28 @@ struct controler<ShaderRepeat<Pixel>>
 			int&,
 			int&)
 	{
-		_y_curr = (_range_image._y_beg - _y_off) % _y_size;
-		if (_y_curr < 0)
-			_y_curr += _y_size;
-		_y_curr_ptr = _base;
+		_y = (_range_image._y_beg - _y_off) % _y_size;
+		if (_y < 0)
+			_y += _y_size;
+		_y_ptr = _base;
 	}
 	///
 	inline void set_y(
 			const int& start,
 			const int&)
 	{
-		_y_curr = (_y_curr + start) % _y_size;
-		_y_curr_ptr += (_range_domain._y_beg + _y_curr) * _pitch;
+		_y = (_y + start) % _y_size;
+		_y_ptr += (_range_domain._y_beg + _y) * _pitch;
 	}
 	///
 	inline void inc_y()
 	{
-		++_y_curr;
-		_y_curr_ptr += _pitch;
-		if (_y_curr == _y_size)
+		++_y;
+		_y_ptr += _pitch;
+		if (_y == _y_size)
 		{
-			_y_curr = 0;
-			_y_curr_ptr -= _y_size * _pitch;
+			_y = 0;
+			_y_ptr -= _y_size * _pitch;
 		}
 	}
 
@@ -192,35 +192,35 @@ struct controler<ShaderRepeat<Pixel>>
 			int&,
 			int&)
 	{
-		_x_curr = (_range_image._x_beg - _x_off) % _x_size;
-		if (_x_curr < 0)
-			_x_curr += _x_size;
-		_x_curr_ptr = _y_curr_ptr;
+		_x = (_range_image._x_beg - _x_off) % _x_size;
+		if (_x < 0)
+			_x += _x_size;
+		_x_ptr = _y_ptr;
 	}
 	///
 	inline void set_x(
 			const int& start,
 			const int&)
 	{
-		_x_curr = (_x_curr + start) % _x_size;
-		_x_curr_ptr += _range_domain._x_beg + _x_curr;
+		_x = (_x + start) % _x_size;
+		_x_ptr += _range_domain._x_beg + _x;
 	}
 	///
 	inline void inc_x()
 	{
-		++_x_curr;
-		_x_curr_ptr += 1;
-		if (_x_curr == _x_size)
+		++_x;
+		_x_ptr += 1;
+		if (_x == _x_size)
 		{
-			_x_curr = 0;
-			_x_curr_ptr -= _x_size;
+			_x = 0;
+			_x_ptr -= _x_size;
 		}
 	}
 
 	///
 	inline PixelRef get_ref()
 	{
-		return *_x_curr_ptr;
+		return *_x_ptr;
 	}
 };
 

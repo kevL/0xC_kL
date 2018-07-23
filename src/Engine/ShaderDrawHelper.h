@@ -600,14 +600,14 @@ struct controler_base
 {
 	const PixelPtr _data;
 	PixelPtr
-		_y_pos_ptr,
-		_x_pos_ptr;
+		_x_ptr,
+		_y_ptr;
 	GraphSubset _range;
 	int
-		_x_start,
-		_y_start;
+		_x_beg,
+		_y_beg;
 
-	const std::pair<int, int> _step;
+	const std::pair<int,int> _step;
 
 	/// cTor.
 	controler_base(
@@ -617,11 +617,11 @@ struct controler_base
 			const std::pair<int,int>& step)
 		:
 			_data(base + area._x_beg * step.first + area._y_beg * step.second),
-			_y_pos_ptr(nullptr),
-			_x_pos_ptr(nullptr),
+			_y_ptr(nullptr),
+			_x_ptr(nullptr),
 			_range(range),
-			_x_start(0), //_x_start()
-			_y_start(0), //_y_start()
+			_x_beg(0), //_x_start()
+			_y_beg(0), //_y_start()
 			_step(step)
 	{}
 
@@ -638,8 +638,8 @@ struct controler_base
 
 	inline void set_range(const GraphSubset& range)
 	{
-		_x_start = range._x_beg - _range._x_beg;
-		_y_start = range._y_beg - _range._y_beg;
+		_x_beg = range._x_beg - _range._x_beg;
+		_y_beg = range._y_beg - _range._y_beg;
 		_range = range;
 	}
 
@@ -647,39 +647,39 @@ struct controler_base
 			int&,
 			int&)
 	{
-		_y_pos_ptr = _data + _step.first * _x_start + _step.second * _y_start;
+		_y_ptr = _data + _step.first * _x_beg + _step.second * _y_beg;
 	}
 	inline void set_y(
 			const int& beg,
 			const int&)
 	{
-		_y_pos_ptr += _step.second * beg;
+		_y_ptr += _step.second * beg;
 	}
 	inline void inc_y()
 	{
-		_y_pos_ptr += _step.second;
+		_y_ptr += _step.second;
 	}
 
 	inline void mod_x(
 			int&,
 			int&)
 	{
-		_x_pos_ptr = _y_pos_ptr;
+		_x_ptr = _y_ptr;
 	}
 	inline void set_x(
 			const int& beg,
 			const int&)
 	{
-		_x_pos_ptr += _step.first * beg;
+		_x_ptr += _step.first * beg;
 	}
 	inline void inc_x()
 	{
-		_x_pos_ptr += _step.first;
+		_x_ptr += _step.first;
 	}
 
 	inline PixelRef get_ref()
 	{
-		return *_x_pos_ptr;
+		return *_x_ptr;
 	}
 };
 

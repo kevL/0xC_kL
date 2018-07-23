@@ -58,15 +58,15 @@ static inline void ShaderDraw(
 	helper::controler<Src3Type> src3 (src3_frame);
 
 	// get basic draw range in 2d space
-	GraphSubset end_temp (dest.get_range());
+	GraphSubset end_t (dest.get_range());
 
 	// intersections with src ranges
-	src0.mod_range(end_temp);
-	src1.mod_range(end_temp);
-	src2.mod_range(end_temp);
-	src3.mod_range(end_temp);
+	src0.mod_range(end_t);
+	src1.mod_range(end_t);
+	src2.mod_range(end_t);
+	src3.mod_range(end_t);
 
-	const GraphSubset end (end_temp);
+	const GraphSubset end (end_t);
 	if (end.size_x() == 0 || end.size_y() == 0)
 		return;
 
