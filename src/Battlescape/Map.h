@@ -57,6 +57,19 @@ enum SelectorType
 	CT_TOSS		// 5
 };
 
+static const Position POS_BELOW          (Position( 0, 0,-1));
+static const Position POS_ABOVE          (Position( 0, 0, 1));
+
+static const Position POS_NORTH          (Position( 0,-1, 0));
+static const Position POS_NORTHEAST      (Position( 1,-1, 0));
+static const Position POS_SOUTHWEST      (Position(-1, 1, 0));
+static const Position POS_WEST           (Position(-1, 0, 0));
+static const Position POS_NORTHWEST      (Position(-1,-1, 0));
+
+static const Position POS_SOUTHSOUTHWEST (Position(-1, 2, 0));
+
+static const Position POS_NORTHBELOW     (Position( 0,-1,-1));
+
 
 /**
  * Interactive Map of the battlescape.
@@ -183,20 +196,20 @@ private:
 			const BattleUnit* unit = nullptr,
 			bool* const halfLeft = nullptr) const;
 
-	/// Gets if a Tile is a/the true location of a specified unit.
-	bool isTrueLoc(
+	/// Gets if a Tile is a/the location of a specified unit.
+	bool isUnitAtTile(
 			const BattleUnit* const unit,
 			const Tile* const tile) const;
 	/// Gets a specified unit's quadrant for drawing.
 	size_t getQuadrant(
 			const BattleUnit* const unit,
 			const Tile* const tile,
-			bool trueLoc) const;
+			bool isLocation) const;
 	/// Calculates the screen-offset of a unit-sprite when it is moving between tiles.
 	void calcWalkOffset(
 			const BattleUnit* const unit,
 			Position* const offset,
-			bool trueLoc,
+			bool isLocation,
 			int* shadeOffset = nullptr) const; // Yankes addition: shadeOffset
 	///
 	int getTerrainLevel(

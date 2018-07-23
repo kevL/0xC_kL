@@ -477,13 +477,14 @@ void Map::drawUnit(
 
 	if (tileUnit != nullptr)
 	{
-		BattleUnit* unit (tileUnit->getTileUnit());
+		const BattleUnit* unit (tileUnit->getTileUnit());
+		const Position& posTileUnit (tileUnit->getPosition());
 
 		bool below (false);
 
-		if (unit == nullptr && tileUnit->getPosition().z != 0)
+		if (unit == nullptr && posTileUnit.z != 0)
 		{
-			const Tile* const tileBelow (_battleSave->getTile(tileUnit->getPosition() + Position(0,0,-1)));
+			const Tile* const tileBelow (_battleSave->getTile(posTileUnit + POS_BELOW));
 			if (tileBelow != nullptr && tileUnit->isFloored(tileBelow) == false)
 			{
 				unit = tileBelow->getTileUnit();
@@ -494,22 +495,22 @@ void Map::drawUnit(
 		if (unit != nullptr
 			&& (unit->getUnitVisible() == true || _battleSave->getDebugTac() == true))
 		{
-			Position offset;
+			Position posOffset;
 
-			offset.x = tileUnit->getPosition().x - unit->getPosition().x;
-			offset.y = tileUnit->getPosition().y - unit->getPosition().y;
+			const Position& posUnit (unit->getPosition());
+			posOffset.x = posTileUnit.x - posUnit.x;
+			posOffset.y = posTileUnit.y - posUnit.y;
 
-			Surface* srf (unit->getCache(offset.x + offset.y * 2));
+			Surface* srf (unit->getCache(posOffset.x + posOffset.y * 2));
 			if (srf != nullptr)
 			{
 				bool peripatetic (unit->getUnitStatus() == STATUS_WALKING
 							   || unit->getUnitStatus() == STATUS_FLYING);
+				int
+					top,
+					bot;
 
-				int top (0);
-				int bot (0);
-
-				// if unit is from below then draw only part that is in tile
-				if (below)
+				if (below) // if unit is from below then draw only the area that is in tile
 				{
 					top =  heightFloor;
 					bot = -heightFloor / 2;
@@ -517,10 +518,13 @@ void Map::drawUnit(
 				else if (isTopLayer)
 				{
 					top = heightFloor * 2;
+					bot = 0;
 				}
 				else
 				{
-					const Tile* const tileAbove (_battleSave->getTile(tileUnit->getPosition() + Position(0,0,1)));
+					bot = 0;
+
+					const Tile* const tileAbove (_battleSave->getTile(posTileUnit + POS_ABOVE));
 					if (tileAbove != nullptr && tileAbove->isFloored(tileUnit) == false)
 					{
 						top = -heightFloor / 2;
@@ -529,7 +533,7 @@ void Map::drawUnit(
 						top = heightFloor;
 				}
 
-				int widthExtra (peripatetic ? 0 : widthFloor);
+				int widthExtra ((peripatetic = true) ? 0 : widthFloor);
 
 				GraphSubset range (GraphSubset(
 											widthFloor + widthExtra,
@@ -537,14 +541,16 @@ void Map::drawUnit(
 																		posScreen.x - widthExtra / 2,
 																		posScreen.y - top));
 
+				Position pos;
+
 				if (peripatetic == true)
 				{
 					GraphSubset left  (range.offset(-widthFloor / 2, 0));
 					GraphSubset right (range.offset(+widthFloor / 2, 0));
 
-					Position pos      = tile->getPosition();
-					Position posStart = unit->getStartPosition() + offset;
-					Position posStop  = unit->getStopPosition()  + offset;
+					pos = tile->getPosition();
+					Position posStart (unit->getStartPosition() + posOffset);
+					Position posStop  (unit->getStopPosition()  + posOffset);
 
 					// adjusting mask
 					if (isPosition(posStart, posStop))
@@ -552,30 +558,7 @@ void Map::drawUnit(
 						if (tile != tileUnit) // nothing to draw
 							return;
 					}
-					else if (isPosition(pos, posStop)) // unit is moving to this tile
-					{
-						switch (unit->getUnitDirection())
-						{
-							case 0:
-							case 1:
-								range = GraphSubset::intersection(range, right);
-								break;
-
-							case 2: // no change
-							case 3: // no change
-							case 4: // no change
-								break;
-
-							case 5:
-							case 6:
-								range = GraphSubset::intersection(range, left);
-								break;
-
-							case 7: // nothing to draw
-								return;
-						}
-					}
-					else if (isPosition(pos, posStart)) // unit is exiting this tile
+					else if (isPosition(pos, posStart)) // unit is exiting the current tile
 					{
 						switch (unit->getUnitDirection())
 						{
@@ -600,26 +583,49 @@ void Map::drawUnit(
 								break;
 						}
 					}
+					else if (isPosition(pos, posStop)) // unit is moving into the current tile
+					{
+						switch (unit->getUnitDirection())
+						{
+							case 0:
+							case 1:
+								range = GraphSubset::intersection(range, right);
+								break;
+
+							case 2: // no change
+							case 3: // no change
+							case 4: // no change
+								break;
+
+							case 5:
+							case 6:
+								range = GraphSubset::intersection(range, left);
+								break;
+
+							case 7: // nothing to draw
+								return;
+						}
+					}
 					else
 					{
-						Position posLeft  (pos + Position(-1, 0, 0));
-						Position posRight (pos + Position( 0,-1, 0));
+						Position posWest  (pos + POS_WEST);
+						Position posNorth (pos + POS_NORTH);
 
 						if (isTopLayer == false
-							&& (posStop.z > pos.z || posStart.z > pos.z)) // unit change layers, it will be drawn by upper layer not lower.
+							&& (posStart.z > pos.z || posStop.z > pos.z)) // unit changed level, it will be drawn by upper level not lower.
 						{
 							return;
 						}
 
 						int dir (unit->getUnitDirection());
-						if (   (dir == 1 && (posStop == posRight || posStart == posLeft))
-							|| (dir == 5 && (posStop == posLeft  || posStart == posRight)))
+						if (   (dir == 1 && (posStart == posWest  || posStop == posNorth))
+							|| (dir == 5 && (posStart == posNorth || posStop == posWest)))
 						{
 							range = GraphSubset(
 											widthFloor,
-											heightTile + 2 * heightFloor).offset(
+											heightTile + heightFloor * 2).offset(
 																				posScreen.x,
-																				posScreen.y - 2 * heightFloor);
+																				posScreen.y - heightFloor * 2);
 						}
 						else // unit is not moving close to tile
 							return;
@@ -629,32 +635,37 @@ void Map::drawUnit(
 					return;
 
 
+				if (below == true)
+					pos = POS_BELOW;
+				else
+					pos = POS_ABOVE;
+
 				Position posScreenTile;
-				_camera->convertMapToScreen(tileUnit->getPosition() + Position(0,0, (below ? -1 : 0)), &posScreenTile);
+				_camera->convertMapToScreen(posTileUnit + pos, &posScreenTile);
 				posScreenTile += _camera->getMapOffset();
 
 				// draw unit
 				int shadeOffset;
-				calcWalkOffset(unit, &offset, isTrueLoc(unit, tile), &shadeOffset);
+				calcWalkOffset(unit, &posOffset, isUnitAtTile(unit, tile), &shadeOffset);
 
-				int tileShade ((tile->isRevealed() == true) ? tile->getShade() : 16);
-				int unitShade ((tileShade * (16 - shadeOffset) + shade * shadeOffset) / 16);
+				int tileShade ((tile->isRevealed() == true) ? tile->getShade() : SHADE_BLACK);
+				int unitShade ((tileShade * (SHADE_BLACK - shadeOffset) + shade * shadeOffset) / SHADE_BLACK);
 
 				srf->blitNShade(
 							surface,
-							posScreenTile.x + offset.x - _spriteWidth_2,
-							posScreenTile.y + offset.y,
+							posScreenTile.x + posOffset.x - _spriteWidth_2,
+							posScreenTile.y + posOffset.y,
 							unitShade,
 							range);
 
 				// draw fire
-				if (unit->getUnitFire() > 0)
+				if (unit->getUnitFire() != 0)
 				{
 					srf = _res->getSurfaceSet("SMOKE.PCK")->getFrame(4 + (_aniCycle >> 1u));
 					srf->blitNShade(
 								surface,
-								posScreenTile.x + offset.x,
-								posScreenTile.y + offset.y,
+								posScreenTile.x + posOffset.x,
+								posScreenTile.y + posOffset.y,
 								0,
 								range);
 				}
@@ -671,18 +682,6 @@ void Map::drawUnit(
  */
 void Map::drawTerrain(Surface* const surface) // private.
 {
-	static const Position posBelow          (Position( 0, 0,-1));
-	static const Position posAbove          (Position( 0, 0, 1));
-	static const Position posNorth          (Position( 0,-1, 0));
-//	static const Position posEast           (Position( 1, 0, 0));
-	static const Position posWest           (Position(-1, 0, 0));
-	static const Position posSouthWest      (Position(-1, 1, 0));
-	static const Position posNorthEast      (Position( 1,-1, 0));
-	static const Position posSouthSouthWest (Position(-1, 2, 0));
-//	static const Position posNorthNorthEast (Position( 1,-2, 0));
-//	static const Position posEastBelow      (Position( 1, 0,-1));
-	static const Position posNorthBelow     (Position( 0,-1,-1));
-
 	//Log(LOG_INFO) << "Map::drawTerrain() " << _camera->getMapOffset();
 	Position bullet; // x-y position of bullet on screen.
 	int
@@ -946,7 +945,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 						&& posScreen.y <  _spriteHeight + surface->getHeight())
 					{
 						if (itZ != 0)
-							tileBelow = _battleSave->getTile(posField + posBelow);
+							tileBelow = _battleSave->getTile(posField + POS_BELOW);
 						else
 							tileBelow = nullptr;
 
@@ -1008,7 +1007,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 // Redraw unitNorth moving NE/SW to stop current-Floor from clipping feet.
 							if (itX != 0 && itY != 0)
 							{
-								const Tile* const tileWest (_battleSave->getTile(posField + posWest));
+								const Tile* const tileWest (_battleSave->getTile(posField + POS_WEST));
 								const BattleUnit* const unitWest (tileWest->getTileUnit());
 								if (unitWest != nullptr
 									&& unitWest->getUnitVisible() == true) // don't bother checking DebugMode.
@@ -1023,12 +1022,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 												case 1:
 												case 5:
 												{
-													const Tile* tileNorth (_battleSave->getTile(posField + posNorth));
+													const Tile* tileNorth (_battleSave->getTile(posField + POS_NORTH));
 													const BattleUnit* unitNorth (tileNorth->getTileUnit());
 													int offsetZ_y;
 													if (unitNorth == nullptr && itZ != 0)
 													{
-														tileNorth = _battleSave->getTile(posField + posNorthBelow);
+														tileNorth = _battleSave->getTile(posField + POS_NORTHBELOW);
 														unitNorth = tileNorth->getTileUnit();
 														offsetZ_y = 24;
 													}
@@ -1037,13 +1036,13 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 													if (unitNorth == unitWest)
 													{
-														const Tile* const tileSouthWest (_battleSave->getTile(posField + posSouthWest));
+														const Tile* const tileSouthWest (_battleSave->getTile(posField + POS_SOUTHWEST));
 														if (checkWest(tileWest, tileSouthWest, unitNorth) == true)
 														{
-//															const Tile* const tileNorthEast (_battleSave->getTile(posField + posNorthEast));
+//															const Tile* const tileNorthEast (_battleSave->getTile(posField + POS_NORTHEAST));
 															if (checkNorth(tileNorth, /*tileNorthEast,*/ unitNorth) == true)
 															{
-																trueLoc = isTrueLoc(unitNorth, tileNorth);
+																trueLoc = isUnitAtTile(unitNorth, tileNorth);
 																quadrant = getQuadrant(unitNorth, tileNorth, trueLoc);
 																sprite = unitNorth->getCache(quadrant);
 																//if (sprite != nullptr)
@@ -1455,8 +1454,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 													case 4:
 														redrawEastwall =
 														draw = checkNorth(
-																		_battleSave->getTile(posField + posNorth),
-//																		_battleSave->getTile(posField + posNorthEast),
+																		_battleSave->getTile(posField + POS_NORTH),
+//																		_battleSave->getTile(posField + POS_NORTHEAST),
 																		nullptr,
 																		&halfLeft);
 														break;
@@ -1465,8 +1464,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 													case 6:
 														redrawSouthwall =
 														draw = checkWest(
-																		_battleSave->getTile(posField + posWest),
-																		_battleSave->getTile(posField + posSouthWest),
+																		_battleSave->getTile(posField + POS_WEST),
+																		_battleSave->getTile(posField + POS_SOUTHWEST),
 																		nullptr,
 																		&halfRight);
 														//Log(LOG_INFO) << ". drawUnit/redrawWall= " << draw << " hRight= " << halfRight;
@@ -1475,10 +1474,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 													case 1:
 													case 5:
 														draw = checkWest(
-																		_battleSave->getTile(posField + posSouthWest),
-																		_battleSave->getTile(posField + posSouthSouthWest));
+																		_battleSave->getTile(posField + POS_SOUTHWEST),
+																		_battleSave->getTile(posField + POS_SOUTHSOUTHWEST));
 														draw &= checkNorth(
-																		_battleSave->getTile(posField + posNorthEast));
+																		_battleSave->getTile(posField + POS_NORTHEAST));
 //																		_battleSave->getTile(posField + posNorthNorthEast));
 												}
 //										}
@@ -1487,7 +1486,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (draw == true)
 							{
-								trueLoc = isTrueLoc(_unit, _tile);
+								trueLoc = isUnitAtTile(_unit, _tile);
 								quadrant = getQuadrant(_unit, _tile, trueLoc);
 								sprite = _unit->getCache(quadrant);
 								if (sprite != nullptr) // <- check is needed for start of Tactical.
@@ -1521,7 +1520,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										&& (   _tile->getMapData(O_OBJECT) == nullptr
 											|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST))
 									{
-										const Tile* const tileNorth (_battleSave->getTile(posField + posNorth));
+										const Tile* const tileNorth (_battleSave->getTile(posField + POS_NORTH));
 										if (tileNorth != nullptr // safety. perhaps
 											&& tileNorth->getMapData(O_OBJECT) != nullptr
 											&& tileNorth->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST)
@@ -1538,7 +1537,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										&& (   _tile->getMapData(O_OBJECT) == nullptr
 											|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH))
 									{
-										const Tile* const tileWest (_battleSave->getTile(posField + posWest));
+										const Tile* const tileWest (_battleSave->getTile(posField + POS_WEST));
 										if (tileWest != nullptr
 											&& tileWest->getMapData(O_OBJECT) != nullptr
 											&& tileWest->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH)
@@ -1556,7 +1555,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									if (_unit->getFaction() == FACTION_PLAYER
 										&& _unit->isMindControlled() == false)
 									{
-										const Tile* const tileAbove (_battleSave->getTile(posField + posAbove));
+										const Tile* const tileAbove (_battleSave->getTile(posField + POS_ABOVE));
 										if ((viewLevel == itZ
 												&& (_camera->getShowLayers() == false || itZ == endZ))
 											|| (tileAbove != nullptr && tileAbove->getSprite(O_FLOOR) == nullptr))
@@ -1649,7 +1648,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									&& unitBelow->getUnitVisible() == true // don't bother checking DebugMode
 									&& unitBelow->getHeight(true) - tLevel > Pathfinding::UNIT_HEIGHT)
 								{
-									trueLoc = isTrueLoc(unitBelow, tileBelow);
+									trueLoc = isUnitAtTile(unitBelow, tileBelow);
 									quadrant = getQuadrant(unitBelow, tileBelow, trueLoc);
 									sprite = unitBelow->getCache(quadrant);
 									//if (sprite != nullptr)
@@ -1821,7 +1820,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										// draw targetUnit overtop cursor's front if Tile is blacked-out.
 										if (hasUnit == true && _tile->isRevealed() == false)
 										{
-											trueLoc = isTrueLoc(_unit, _tile);
+											trueLoc = isUnitAtTile(_unit, _tile);
 											quadrant = getQuadrant(_unit, _tile, trueLoc);
 											sprite = _unit->getCache(quadrant);
 											//if (sprite != nullptr)
@@ -2159,7 +2158,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (_previewSetting & PATH_ARROWS) // arrows semi-transparent
 							{
-								tileBelow = _battleSave->getTile(posField + posBelow);
+								tileBelow = _battleSave->getTile(posField + POS_BELOW);
 								if (itZ > 0 && _tile->isFloored(tileBelow) == false)
 								{
 									sprite = _res->getSurfaceSet("Pathfinding")->getFrame(23);
@@ -2670,12 +2669,12 @@ void Map::getSelectorPosition(Position& pos) const
 }
 
 /**
- * Gets if a Tile is a/the true location of a specified unit.
+ * Gets if a Tile is a/the location of a specified unit.
  * @param unit - pointer to a unit
  * @param tile - pointer to a tile
  * @return, true if true location
  */
-bool Map::isTrueLoc(
+bool Map::isUnitAtTile(
 		const BattleUnit* const unit,
 		const Tile* const tile) const // private.
 {
@@ -2684,15 +2683,11 @@ bool Map::isTrueLoc(
 
 	if (unit->getArmor()->getSize() == 2)
 	{
-		static const Position posWest      (Position(-1, 0,0));
-		static const Position posNorth     (Position( 0,-1,0));
-		static const Position posNorthWest (Position(-1,-1,0));
-
 		const Position& posUnit (unit->getPosition());
 		const Position& posTile (tile->getPosition());
-		if (   posTile + posWest      == posUnit
-			|| posTile + posNorth     == posUnit
-			|| posTile + posNorthWest == posUnit)
+		if (   posTile + POS_WEST      == posUnit
+			|| posTile + POS_NORTH     == posUnit
+			|| posTile + POS_NORTHWEST == posUnit)
 		{
 			return true;
 		}
@@ -2702,48 +2697,50 @@ bool Map::isTrueLoc(
 
 /**
  * Gets a specified unit's quadrant for drawing.
- * @param unit		- pointer to a unit
- * @param tile		- pointer to a tile
- * @param trueLoc	- true if real location; false if transient
+ * @param unit       - pointer to a unit
+ * @param tile       - pointer to a tile
+ * @param isLocation - true if real location; false if transient
  * @return, quadrant
  */
 size_t Map::getQuadrant( // private.
 		const BattleUnit* const unit,
 		const Tile* const tile,
-		bool trueLoc) const
+		bool isLocation) const
 {
-	if (trueLoc == true //unit->getUnitStatus() == STATUS_STANDING ||
+	Position
+		posTile (tile->getPosition()),
+		posUnit (unit->getPosition());
+
+	if (isLocation == true //unit->getUnitStatus() == STATUS_STANDING ||
 		|| unit->getVerticalDirection() != 0)
 	{
-		return static_cast<size_t>(tile->getPosition().x - unit->getPosition().x
-							   + ((tile->getPosition().y - unit->getPosition().y) << 1u));
+		return static_cast<size_t>(posTile.x - posUnit.x
+							   + ((posTile.y - posUnit.y) << 1u));
 	}
 
 	int dir (unit->getUnitDirection());
-	if (unit->getPosition() == unit->getStopPosition())
+	if (posUnit == unit->getStopPosition())
 		dir = (dir + 4) % 8;
 
-	Position
-		posUnit,
-		posVect;
+	Position posVect;
 	Pathfinding::directionToVector(dir, &posVect);
-	posUnit = unit->getPosition() + posVect;
+	posUnit += posVect;
 
-	return static_cast<size_t>(tile->getPosition().x - posUnit.x
-						   + ((tile->getPosition().y - posUnit.y) << 1u));
+	return static_cast<size_t>(posTile.x - posUnit.x
+						   + ((posTile.y - posUnit.y) << 1u));
 }
 
 /**
  * Calculates the screen-offset of a unit-sprite when it is moving between tiles.
- * @param unit			- pointer to a BattleUnit
- * @param offset		- pointer to the Position that will be the calculation result
- * @param trueLoc		- true if real location; false if transient
- * @param shadeOffset	- point to color-offset
+ * @param unit        - pointer to a BattleUnit
+ * @param offset      - pointer to the Position that will be the calculation result
+ * @param isLocation  - true if there's a unit-tile link for the current location; false if transient
+ * @param shadeOffset - point to color-offset
  */
 void Map::calcWalkOffset( // private.
 		const BattleUnit* const unit,
 		Position* const offset,
-		bool trueLoc,
+		bool isLocation,
 		int* shadeOffset) const
 {
 	*offset = Position(0,0,0);
@@ -2781,13 +2778,13 @@ void Map::calcWalkOffset( // private.
 			{
 				if (start == true)
 				{
-					offset->x =  walkPhase * offsetX[dir] * 2 + ((trueLoc == true) ? 0 : -offsetFalseX[dir]);
-					offset->y = -walkPhase * offsetY[dir]     + ((trueLoc == true) ? 0 : -offsetFalseY[dir]);
+					offset->x =  walkPhase * offsetX[dir] * 2 + ((isLocation == true) ? 0 : -offsetFalseX[dir]);
+					offset->y = -walkPhase * offsetY[dir]     + ((isLocation == true) ? 0 : -offsetFalseY[dir]);
 				}
 				else
 				{
-					offset->x =  (walkPhase - fullPhase) * offsetX[dir] * 2 + ((trueLoc == true) ? 0 : offsetFalseX[dir]);
-					offset->y = -(walkPhase - fullPhase) * offsetY[dir]     + ((trueLoc == true) ? 0 : offsetFalseY[dir]);
+					offset->x =  (walkPhase - fullPhase) * offsetX[dir] * 2 + ((isLocation == true) ? 0 : offsetFalseX[dir]);
+					offset->y = -(walkPhase - fullPhase) * offsetY[dir]     + ((isLocation == true) ? 0 : offsetFalseY[dir]);
 				}
 			}
 
@@ -2804,10 +2801,10 @@ void Map::calcWalkOffset( // private.
 				switch (dirVert)
 				{
 					case Pathfinding::DIR_UP:
-						offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
+						offset->y += (isLocation == true) ? 0 : offsetFalseVert;
 						break;
 					case Pathfinding::DIR_DOWN:
-						offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
+						offset->y += (isLocation == true) ? 0 : -offsetFalseVert;
 				}
 
 				levelStop = getTerrainLevel(
@@ -2823,7 +2820,7 @@ void Map::calcWalkOffset( // private.
 										unit->getPosition(),
 										armorSize);
 				offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelStop * walkPhase) / fullPhase);
-				if (trueLoc == false && dirVert == 0)
+				if (isLocation == false && dirVert == 0)
 				{
 					if (posStartZ > posStopZ)
 						offset->y -= offsetFalseVert;
@@ -2836,10 +2833,10 @@ void Map::calcWalkOffset( // private.
 				switch (dirVert)
 				{
 					case Pathfinding::DIR_UP:
-						offset->y += (trueLoc == true) ? 0 : -offsetFalseVert;
+						offset->y += (isLocation == true) ? 0 : -offsetFalseVert;
 						break;
 					case Pathfinding::DIR_DOWN:
-						offset->y += (trueLoc == true) ? 0 : offsetFalseVert;
+						offset->y += (isLocation == true) ? 0 : offsetFalseVert;
 				}
 
 				levelStart = getTerrainLevel(
@@ -2856,7 +2853,7 @@ void Map::calcWalkOffset( // private.
 										armorSize);
 				offset->y += ((levelStart * (fullPhase - walkPhase)) / fullPhase) + ((levelStop * walkPhase) / fullPhase);
 
-				if (trueLoc == false && dirVert == 0)
+				if (isLocation == false && dirVert == 0)
 				{
 					if (posStartZ > posStopZ)
 						offset->y += offsetFalseVert;

@@ -154,6 +154,8 @@ struct controler<ShaderMove<Pixel>>
 }
 
 
+// WARPERS (sic) ... and to think we've been calling them "wrappers"
+
 /**
  * Creates warper from Surface.
  * @param srf - standard 8-bit OpenXcom surface
@@ -165,10 +167,10 @@ inline ShaderMove<Uint8> ShaderSurface(Surface* const srf)
 }
 
 /**
- * Creates warper from Surface and provided offset.
+ * Creates warper from Surface and given offset.
  * @param srf - standard 8-bit OpenXcom surface
- * @param x   - offset on x
- * @param y   - offset on y
+ * @param x   - x-offset
+ * @param y   - y-offset
  * @return,
  */
 inline ShaderMove<Uint8> ShaderSurface(
@@ -180,10 +182,10 @@ inline ShaderMove<Uint8> ShaderSurface(
 }
 
 /**
- * Creates warper from cropped Surface and provided offset.
+ * Creates warper from cropped Surface and given offset.
  * @param srf - standard 8-bit OpenXcom surface
- * @param x   - offset on x
- * @param y   - offset on y
+ * @param x   - x-offset
+ * @param y   - y-offset
  * @return,
  */
 inline ShaderMove<Uint8> ShaderCrop(

@@ -85,13 +85,13 @@ struct GraphSubset
 			const int& b_beg,
 			const int& b_end)
 	{
-		if (a_beg >= b_end || b_beg >= a_end) // intersection is empty
-			a_end = a_beg;
-		else
+		if (a_beg < b_end && a_end > b_beg) // intersection is empty
 		{
 			a_beg = std::max(a_beg, b_beg);
 			a_end = std::min(a_end, b_end);
 		}
+		else
+			a_end = a_beg;
 	}
 
 	static inline GraphSubset intersection(
