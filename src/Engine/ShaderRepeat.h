@@ -109,8 +109,8 @@ struct controler<ShaderRepeat<Pixel>>
 	typedef typename ShaderRepeat<Pixel>::PixelPtr PixelPtr;
 	typedef typename ShaderRepeat<Pixel>::PixelRef PixelRef;
 
-	const GraphSubset _range_domain;
-	GraphSubset _range_image;
+	const GraphSubset _range_const;
+	GraphSubset _range;
 
 	const int
 		_x_off,
@@ -128,18 +128,18 @@ struct controler<ShaderRepeat<Pixel>>
 		_y_ptr;
 
 	/// cTor.
-	controler(const ShaderRepeat<Pixel>& repeat)
+	controler(const ShaderRepeat<Pixel>& notashader)
 		:
-			_base(repeat.ptr()),
-			_range_domain(repeat.getDomain()),
-			_range_image(0,0),
-			_x_off(repeat._x_off),
-			_y_off(repeat._y_off),
-			_x_size(_range_domain.size_x()),
-			_y_size(_range_domain.size_y()),
+			_base(notashader.ptr()),
+			_range_const(notashader.getRange()),
+			_range(0,0),
+			_x_off(notashader._x_off),
+			_y_off(notashader._y_off),
+			_x_size(_range_const.size_x()),
+			_y_size(_range_const.size_y()),
 			_x(0),
 			_y(0),
-			_pitch(repeat.pitch()),
+			_pitch(notashader.pitch()),
 			_x_ptr(nullptr),
 			_y_ptr(nullptr)
 	{}
@@ -151,48 +151,17 @@ struct controler<ShaderRepeat<Pixel>>
 	inline void mod_range(GraphSubset&)
 	{}
 	///
-	inline void set_range(const GraphSubset& range)
+	inline void set_range(const GraphSubset& area)
 	{
-		_range_image = range;
+		_range = area;
 	}
-
-	///
-	inline void mod_y(
-			int&,
-			int&)
-	{
-		_y = (_range_image._y_beg - _y_off) % _y_size;
-		if (_y < 0)
-			_y += _y_size;
-		_y_ptr = _base;
-	}
-	///
-	inline void set_y(
-			const int& start,
-			const int&)
-	{
-		_y = (_y + start) % _y_size;
-		_y_ptr += (_range_domain._y_beg + _y) * _pitch;
-	}
-	///
-	inline void inc_y()
-	{
-		++_y;
-		_y_ptr += _pitch;
-		if (_y == _y_size)
-		{
-			_y = 0;
-			_y_ptr -= _y_size * _pitch;
-		}
-	}
-
 
 	///
 	inline void mod_x(
 			int&,
 			int&)
 	{
-		_x = (_range_image._x_beg - _x_off) % _x_size;
+		_x = (_range._x_beg - _x_off) % _x_size;
 		if (_x < 0)
 			_x += _x_size;
 		_x_ptr = _y_ptr;
@@ -203,7 +172,7 @@ struct controler<ShaderRepeat<Pixel>>
 			const int&)
 	{
 		_x = (_x + start) % _x_size;
-		_x_ptr += _range_domain._x_beg + _x;
+		_x_ptr += _range_const._x_beg + _x;
 	}
 	///
 	inline void inc_x()
@@ -214,6 +183,36 @@ struct controler<ShaderRepeat<Pixel>>
 		{
 			_x = 0;
 			_x_ptr -= _x_size;
+		}
+	}
+
+	///
+	inline void mod_y(
+			int&,
+			int&)
+	{
+		_y = (_range._y_beg - _y_off) % _y_size;
+		if (_y < 0)
+			_y += _y_size;
+		_y_ptr = _base;
+	}
+	///
+	inline void set_y(
+			const int& start,
+			const int&)
+	{
+		_y = (_y + start) % _y_size;
+		_y_ptr += (_range_const._y_beg + _y) * _pitch;
+	}
+	///
+	inline void inc_y()
+	{
+		++_y;
+		_y_ptr += _pitch;
+		if (_y == _y_size)
+		{
+			_y = 0;
+			_y_ptr -= _y_size * _pitch;
 		}
 	}
 

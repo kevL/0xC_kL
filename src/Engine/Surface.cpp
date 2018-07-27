@@ -983,14 +983,14 @@ struct ColorReplace
 /**
  * Sets shade and replaces color in a Surface.
  * @note Function used by ShaderDraw in Surface::blitNShade.
- * @param dest		- destination-pixel
+ * @param dst		- destination-pixel
  * @param src		- source-pixel
- * @param shade		- value of shade
- * @param newColor	- new color to set (it should be offseted by 4)
+ * @param shade		- shade
+ * @param newColor	- new color to set (it should be offset by 4)
  * @param			- notused
  */
 static inline void func(
-		Uint8& dest,
+		Uint8& dst,
 		const Uint8& src,
 		const int& shade,
 		const int& newColor,
@@ -999,10 +999,10 @@ static inline void func(
 	if (src != 0)
 	{
 		const int newShade (static_cast<int>(src & 15u) + shade);
-		if (newShade > 15) // so dark it would flip over to another color - make it black instead
-			dest = 15u;
+		if (newShade > 15) // so dark it would flip over to another color - paint it black instead
+			dst = 15u;
 		else
-			dest = static_cast<Uint8>(newColor | newShade);
+			dst = static_cast<Uint8>(newColor | newShade);
 	}
 }
 };
@@ -1016,14 +1016,14 @@ struct StandartShade
 /**
  * Sets shade.
  * Function used by ShaderDraw in Surface::blitNShade.
- * @param dest	- destination-pixel
+ * @param dst	- destination-pixel
  * @param src	- source-pixel
- * @param shade	- value of shade
+ * @param shade	- shade
  * @param		- notused
  * @param		- notused
  */
 static inline void func(
-		Uint8& dest,
+		Uint8& dst,
 		const Uint8& src,
 		const int& shade,
 		const int&,
@@ -1033,9 +1033,9 @@ static inline void func(
 	{
 		const int newShade (static_cast<int>(src & 15u) + shade);
 		if (newShade > 15) // so dark it would flip over to another color - make it black instead
-			dest = 15u;
+			dst = 15u;
 		else
-			dest = static_cast<Uint8>((static_cast<int>(src) & (15 << 4u)) | newShade);
+			dst = static_cast<Uint8>((static_cast<int>(src) & (15 << 4u)) | newShade);
 	}
 }
 };
@@ -1068,15 +1068,15 @@ void Surface::blitNShade(
 
 	if (halfRight == true)
 	{
-		GraphSubset graph (src.getDomain());
-		graph._x_beg = graph._x_end >> 1u;
-		src.setDomain(graph);
+		GraphSubset area (src.getRange());
+		area._x_beg = area._x_end >> 1u;
+		src.setRange(area);
 	}
 	else if (halfLeft == true) // kL_add->
 	{
-		GraphSubset graph (src.getDomain());
-		graph._x_end = graph._x_end >> 1u;
-		src.setDomain(graph);
+		GraphSubset area (src.getRange());
+		area._x_end = area._x_end >> 1u;
+		src.setRange(area);
 	}
 
 	if (colorGroup != 0)
@@ -1102,7 +1102,7 @@ void Surface::blitNShade(
  * @param y				- y-position of Surface blitted to
  * @param colorOffset	- color offset (generally 0-16) (default 0 = no offset)
  * @param range			- area that limits draw surface
- */
+ *
 void Surface::blitNShade( // new Yankes' funct.
 		Surface* const surface,
 		int x,
@@ -1116,7 +1116,7 @@ void Surface::blitNShade( // new Yankes' funct.
 	dst.setDomain(range);
 
 	ShaderDraw<StandartShade>(dst, src, ShaderScalar(colorOffset));
-}
+} */
 
 /**
  * Sets this Surface to be redrawn.

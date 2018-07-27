@@ -60,6 +60,8 @@ struct GraphSubset
 //			end_y(area.end_y)
 //	{}
 
+
+	///
 	inline GraphSubset offset(
 			int x,
 			int y) const
@@ -72,22 +74,26 @@ struct GraphSubset
 		return area;
 	}
 
+	///
 	inline int size_x() const
 	{ return _x_end - _x_beg; }
 
+	///
 	inline int size_y() const
 	{ return _y_end - _y_beg; }
 
 
+	///
 	static inline void intersection_range(
 			int& a_beg,
 			int& a_end,
 			const int& b_beg,
 			const int& b_end)
 	{
-//		if (a_beg < b_end && a_end > b_beg) // intersection is empty: WARNING [-Wstrict-overflow]
+//		if (a_beg < b_end && a_end > b_beg) // WARNING [-Wstrict-overflow]
 		// hint to the person who came up with all this shyte: learn what a type
 		// is and how to use it.
+
 		if (   static_cast<unsigned>(a_beg) < static_cast<unsigned>(b_end)
 			&& static_cast<unsigned>(a_end) > static_cast<unsigned>(b_beg))
 		{
@@ -98,6 +104,7 @@ struct GraphSubset
 			a_end = a_beg;
 	}
 
+	///
 	static inline GraphSubset intersection(
 			const GraphSubset& a,
 			const GraphSubset& b)

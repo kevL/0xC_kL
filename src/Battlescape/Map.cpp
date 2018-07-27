@@ -462,7 +462,7 @@ static bool isPosition(Position& a, Position& b)
  * @param posScreen
  * @param shade
  * @param isTopLayer
- */
+ *
 void Map::drawUnit(
 		Surface* const surface,
 		const Tile* const tileUnit,
@@ -672,7 +672,7 @@ void Map::drawUnit(
 			}
 		}
 	}
-}
+} */
 
 /**
  * Draws the battlefield.
@@ -901,7 +901,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 		hasUnit, // these denote characteristics of 'tile' as in the current Tile of the loop.
 		hasFloor,
 		hasObject,
-		trueLoc;
+		isLocation;
 
 	surface->lock();
 /*	for (int
@@ -1042,8 +1042,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 //															const Tile* const tileNorthEast (_battleSave->getTile(posField + POS_NORTHEAST));
 															if (checkNorth(tileNorth, /*tileNorthEast,*/ unitNorth) == true)
 															{
-																trueLoc = isUnitAtTile(unitNorth, tileNorth);
-																quadrant = getQuadrant(unitNorth, tileNorth, trueLoc);
+																isLocation = isUnitAtTile(unitNorth, tileNorth);
+																quadrant = getQuadrant(unitNorth, tileNorth, isLocation);
 																sprite = unitNorth->getCache(quadrant);
 																//if (sprite != nullptr)
 																{
@@ -1052,7 +1052,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 																	else
 																		shade = tileShade;
 
-																	calcWalkOffset(unitNorth, &walkOffset, trueLoc);
+																	calcWalkOffset(unitNorth, &walkOffset, isLocation);
 																	sprite->blitNShade(
 																			surface,
 																			posScreen.x + walkOffset.x + 16 - _spriteWidth_2,
@@ -1486,8 +1486,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 							if (draw == true)
 							{
-								trueLoc = isUnitAtTile(_unit, _tile);
-								quadrant = getQuadrant(_unit, _tile, trueLoc);
+								isLocation = isUnitAtTile(_unit, _tile);
+								quadrant = getQuadrant(_unit, _tile, isLocation);
 								sprite = _unit->getCache(quadrant);
 								if (sprite != nullptr) // <- check is needed for start of Tactical.
 								{
@@ -1496,7 +1496,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									else
 										shade = tileShade;
 
-									calcWalkOffset(_unit, &walkOffset, trueLoc);
+									calcWalkOffset(_unit, &walkOffset, isLocation);
 									sprite->blitNShade(
 											surface,
 											posScreen.x + walkOffset.x - _spriteWidth_2,
@@ -1638,7 +1638,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 // re-Draw unitBelow if it is on raised ground (on tileBelow) & there is no Floor.
 						if (itZ > 0 && _tile->isFloored(tileBelow) == false
-							&& _camera->getShowLayers() == false) // tentative. Can't remember why a unit should be redrawn here.
+							&& _camera->getShowLayers() == false)
 						{
 							const int tLevel (tileBelow->getTerrainLevel());
 							if (tLevel < 0) // probly more like -4 or -8
@@ -1648,8 +1648,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 									&& unitBelow->getUnitVisible() == true // don't bother checking DebugMode
 									&& unitBelow->getHeight(true) - tLevel > Pathfinding::UNIT_HEIGHT)
 								{
-									trueLoc = isUnitAtTile(unitBelow, tileBelow);
-									quadrant = getQuadrant(unitBelow, tileBelow, trueLoc);
+									isLocation = isUnitAtTile(unitBelow, tileBelow);
+									quadrant = getQuadrant(unitBelow, tileBelow, isLocation);
 									sprite = unitBelow->getCache(quadrant);
 									//if (sprite != nullptr)
 									{
@@ -1658,7 +1658,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										else
 											shade = SHADE_BLACK;
 
-										calcWalkOffset(unitBelow, &walkOffset, trueLoc);
+										calcWalkOffset(unitBelow, &walkOffset, isLocation);
 										sprite->blitNShade(
 												surface,
 												posScreen.x + walkOffset.x - _spriteWidth_2,
@@ -1820,12 +1820,12 @@ void Map::drawTerrain(Surface* const surface) // private.
 										// draw targetUnit overtop cursor's front if Tile is blacked-out.
 										if (hasUnit == true && _tile->isRevealed() == false)
 										{
-											trueLoc = isUnitAtTile(_unit, _tile);
-											quadrant = getQuadrant(_unit, _tile, trueLoc);
+											isLocation = isUnitAtTile(_unit, _tile);
+											quadrant = getQuadrant(_unit, _tile, isLocation);
 											sprite = _unit->getCache(quadrant);
 											//if (sprite != nullptr)
 											{
-												calcWalkOffset(_unit, &walkOffset, trueLoc);
+												calcWalkOffset(_unit, &walkOffset, isLocation);
 												sprite->blitNShade(
 														surface,
 														posScreen.x + walkOffset.x - _spriteWidth_2,
@@ -2735,13 +2735,13 @@ size_t Map::getQuadrant( // private.
  * @param unit        - pointer to a BattleUnit
  * @param offset      - pointer to the Position that will be the calculation result
  * @param isLocation  - true if there's a unit-tile link for the current location; false if transient
- * @param shadeOffset - point to color-offset
+// * @param shadeOffset - point to color-offset
  */
 void Map::calcWalkOffset( // private.
 		const BattleUnit* const unit,
 		Position* const offset,
-		bool isLocation,
-		int* shadeOffset) const
+		bool isLocation) const
+//		int* shadeOffset // Yankes addition: shadeOffset
 {
 	*offset = Position(0,0,0);
 
@@ -2766,12 +2766,12 @@ void Map::calcWalkOffset( // private.
 				halfPhase (unit->getWalkPhaseHalf()),
 				fullPhase (unit->getWalkPhaseFull());
 
-			if (shadeOffset != nullptr) // new Yankes' code.
-			{
-				*shadeOffset = walkPhase;
-				if (fullPhase != 16)
-					*shadeOffset *= 2;
-			}
+//			if (shadeOffset != nullptr) // new Yankes' code.
+//			{
+//				*shadeOffset = walkPhase;
+//				if (fullPhase != 16)
+//					*shadeOffset *= 2;
+//			}
 
 			const bool start (walkPhase < halfPhase);
 			if (dirVert == 0)

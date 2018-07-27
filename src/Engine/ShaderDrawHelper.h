@@ -33,8 +33,8 @@ namespace helper
 {
 
 const Uint8
-	ColorGroup    = 15 << 4u,
-	ColorShade    = 15;
+	ColorGroup    = 0xf0, // 15u << 4u,
+	ColorShade    = 0x0f; // 15u;
 //	ColorShadeMax = 15
 //	BLACK         = 15
 
@@ -81,9 +81,9 @@ class ShaderBase
 
 
 protected:
-	const PixelPtr _origin;
-	const GraphSubset _range_base;
-	GraphSubset _range_domain;
+	const PixelPtr _ptr;
+	const GraphSubset _range_const;
+	GraphSubset _range;
 	const int _pitch;
 
 
@@ -91,9 +91,9 @@ protected:
 		/// cTor [0] - copy constructor
 		inline ShaderBase(const ShaderBase& base)
 			:
-				_origin(base.ptr()),
-				_range_base(base._range_base),
-				_range_domain(base.getDomain()),
+				_ptr(base.ptr()),
+				_range_const(base._range_const),
+				_range(base.getRange()),
 				_pitch(base.pitch())
 		{}
 
@@ -102,7 +102,7 @@ protected:
 		 * Surface will have 'y_max * x_max' dimensions.
 		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
-		 * then '_origin' will be invalid and use of this object will cause a
+		 * then '_ptr' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
 		 * @param x_max - x dimension of 'data'
@@ -114,42 +114,46 @@ protected:
 				int x_max,
 				int y_max)
 			:
-				_origin(&data[0u]),
-				_range_base(
+				_ptr(&data[0u]),
+				_range_const(
 						x_max,
 						y_max),
-				_range_domain(
+				_range(
 						x_max,
 						y_max),
 				_pitch(x_max)
 		{}
 
+
+		///
 		inline PixelPtr ptr() const
 		{
-			return _origin;
+			return _ptr;
 		}
+
+		///
 		inline int pitch() const
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& area)
+
+		///
+		inline void setRange(const GraphSubset& area)
 		{
-			_range_domain = GraphSubset::intersection(
-													area,
-													_range_base);
+			_range = GraphSubset::intersection(area, _range_const);
 		}
-		inline const GraphSubset& getDomain() const
+
+		///
+		inline const GraphSubset& getRange() const
 		{
-			return _range_domain;
+			return _range;
 		}
-		inline const GraphSubset& getBaseDomain() const
+
+		///
+		inline const GraphSubset& getRangeConst() const
 		{
-			return _range_base;
+			return _range_const;
 		}
-//		inline const GraphSubset& getImage() const	// kL_Note: Used to be hidden by ShaderMove::getImage().
-//		{											// Use getDomain() instead THANKS.
-//			return _range_domain;
-//		}
 };
 
 /**
@@ -166,9 +170,9 @@ class ShaderBase<const Pixel>
 
 
 protected:
-	const PixelPtr _origin;
-	const GraphSubset _range_base;
-	GraphSubset _range_domain;
+	const PixelPtr _ptr;
+	const GraphSubset _range_const;
+	GraphSubset _range;
 	const int _pitch;
 
 
@@ -176,18 +180,18 @@ protected:
 		/// cTor [0] - copy constructor
 		inline ShaderBase(const ShaderBase& base)
 			:
-				_origin(base.ptr()),
-				_range_base(base.getBaseDomain()),
-				_range_domain(base.getDomain()),
+				_ptr(base.ptr()),
+				_range_const(base.getRangeConst()),
+				_range(base.getRange()),
 				_pitch(base.pitch())
 		{}
 
 		/// cTor [1] - copy constructor
 		inline ShaderBase(const ShaderBase<Pixel>& base)
 			:
-				_origin(base.ptr()),
-				_range_base(base.getBaseDomain()),
-				_range_domain(base.getDomain()),
+				_ptr(base.ptr()),
+				_range_const(base.getRangeConst()),
+				_range(base.getRange()),
 				_pitch(base.pitch())
 		{}
 
@@ -196,7 +200,7 @@ protected:
 		 * Surface will have 'y_max * x_max' dimensions.
 		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
-		 * then '_origin' will be invalid and use of this object will cause a
+		 * then '_ptr' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
 		 * @param x_max - x dimension of 'data'
@@ -208,42 +212,46 @@ protected:
 				int x_max,
 				int y_max)
 			:
-				_origin(&data[0u]),
-				_range_base(
+				_ptr(&data[0u]),
+				_range_const(
 						x_max,
 						y_max),
-				_range_domain(
+				_range(
 						x_max,
 						y_max),
 				_pitch(x_max)
 		{}
 
+
+		///
 		inline PixelPtr ptr() const
 		{
-			return _origin;
+			return _ptr;
 		}
+
+		///
 		inline int pitch() const
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& area)
+
+		///
+		inline void setRange(const GraphSubset& area)
 		{
-			_range_domain = GraphSubset::intersection(
-													area,
-													_range_base);
+			_range = GraphSubset::intersection(area, _range_const);
 		}
-		inline const GraphSubset& getDomain() const
+
+		///
+		inline const GraphSubset& getRange() const
 		{
-			return _range_domain;
+			return _range;
 		}
-		inline const GraphSubset& getBaseDomain() const
+
+		///
+		inline const GraphSubset& getRangeConst() const
 		{
-			return _range_base;
+			return _range_const;
 		}
-//		inline const GraphSubset& getImage() const // Use getDomain() instead THANKS.
-//		{
-//			return _range_domain;
-//		}
 };
 
 
@@ -262,9 +270,9 @@ class ShaderBase<Uint8>
 
 
 protected:
-	const PixelPtr _origin;
-	const GraphSubset _range_base;
-	GraphSubset _range_domain;
+	const PixelPtr _ptr;
+	const GraphSubset _range_const;
+	GraphSubset _range;
 	const int _pitch;
 
 
@@ -272,9 +280,9 @@ protected:
 		/// cTor [0] - copy constructor
 		inline ShaderBase(const ShaderBase& base)
 			:
-				_origin(base.ptr()),
-				_range_base(base.getBaseDomain()),
-				_range_domain(base.getDomain()),
+				_ptr(base.ptr()),
+				_range_const(base.getRangeConst()),
+				_range(base.getRange()),
 				_pitch(base.pitch())
 		{}
 
@@ -282,18 +290,18 @@ protected:
 		 * Creates surface using surface 'srf' as data source.
 		 * Surface will have same dimensions as 'srf'.
 		 * ATTENTION: after use of this constructor if you change size of 'srf'
-		 * then '_origin' will be invalid and use of this object will cause a
+		 * then '_ptr' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param srf - surface that is treated as the surface
 		 */
 		/// cTor [1]
 		inline ShaderBase(const Surface* const srf)
 			:
-				_origin(static_cast<Uint8*>(srf->getSurface()->pixels)),
-				_range_base(
+				_ptr(static_cast<Uint8*>(srf->getSurface()->pixels)),
+				_range_const(
 						srf->getWidth(),
 						srf->getHeight()),
-				_range_domain(
+				_range(
 						srf->getWidth(),
 						srf->getHeight()),
 				_pitch(srf->getSurface()->pitch)
@@ -304,7 +312,7 @@ protected:
 		 * Surface will have 'y_max * x_max' dimensions.
 		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
-		 * then '_origin' will be invalid and use of this object will cause a
+		 * then '_ptr' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
 		 * @param x_max - x dimension of 'data'
@@ -316,42 +324,46 @@ protected:
 				int x_max,
 				int y_max)
 			:
-				_origin(&data[0u]),
-				_range_base(
+				_ptr(&data[0u]),
+				_range_const(
 						x_max,
 						y_max),
-				_range_domain(
+				_range(
 						x_max,
 						y_max),
 				_pitch(x_max)
 		{}
 
+
+		///
 		inline PixelPtr ptr() const
 		{
-			return _origin;
+			return _ptr;
 		}
+
+		///
 		inline int pitch() const
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& area)
+
+		///
+		inline void setRange(const GraphSubset& area)
 		{
-			_range_domain = GraphSubset::intersection(
-													area,
-													_range_base);
+			_range = GraphSubset::intersection(area, _range_const);
 		}
-		inline const GraphSubset& getDomain() const
+
+		///
+		inline const GraphSubset& getRange() const
 		{
-			return _range_domain;
+			return _range;
 		}
-		inline const GraphSubset& getBaseDomain() const
+
+		///
+		inline const GraphSubset& getRangeConst() const
 		{
-			return _range_base;
+			return _range_const;
 		}
-//		inline const GraphSubset& getImage() const // Use getDomain() instead THANKS.
-//		{
-//			return _range_domain;
-//		}
 };
 
 
@@ -370,9 +382,9 @@ class ShaderBase<const Uint8>
 
 
 protected:
-	const PixelPtr _origin;
-	const GraphSubset _range_base;
-	GraphSubset _range_domain;
+	const PixelPtr _ptr;
+	const GraphSubset _range_const;
+	GraphSubset _range;
 	const int _pitch;
 
 
@@ -380,18 +392,18 @@ protected:
 		/// cTor [0] - copy constructor
 		inline ShaderBase(const ShaderBase& base)
 			:
-				_origin(base.ptr()),
-				_range_base(base.getBaseDomain()),
-				_range_domain(base.getDomain()),
+				_ptr(base.ptr()),
+				_range_const(base.getRangeConst()),
+				_range(base.getRange()),
 				_pitch(base.pitch())
 		{}
 
 		/// cTor [1] - copy constructor
 		inline ShaderBase(const ShaderBase<Uint8>& base)
 			:
-				_origin(base.ptr()),
-				_range_base(base.getBaseDomain()),
-				_range_domain(base.getDomain()),
+				_ptr(base.ptr()),
+				_range_const(base.getRangeConst()),
+				_range(base.getRange()),
 				_pitch(base.pitch())
 		{}
 
@@ -399,18 +411,18 @@ protected:
 		 * Creates surface using surface 'srf' as data source.
 		 * Surface will have same dimensions as 'srf'.
 		 * ATTENTION: after use of this constructor if you change size of 'srf'
-		 * then '_origin' will be invalid and use of this object will cause a
+		 * then '_ptr' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param srf - surface that is treated as the surface
 		 */
 		/// cTor [2]
 		inline ShaderBase(const Surface* const srf)
 			:
-				_origin(static_cast<Uint8*>(srf->getSurface()->pixels)),
-				_range_base(
+				_ptr(static_cast<Uint8*>(srf->getSurface()->pixels)),
+				_range_const(
 						srf->getWidth(),
 						srf->getHeight()),
-				_range_domain(
+				_range(
 						srf->getWidth(),
 						srf->getHeight()),
 				_pitch(srf->getSurface()->pitch)
@@ -421,7 +433,7 @@ protected:
 		 * Surface will have 'y_max * x_max' dimensions.
 		 * Size of 'data' should be bigger than 'y_max * x_max'.
 		 * ATTENTION: after use of this constructor if you change size of 'data'
-		 * then '_origin' will be invalid and use of this object will cause a
+		 * then '_ptr' will be invalid and use of this object will cause a
 		 * memory exception.
 		 * @param data  - vector that is treated as the surface
 		 * @param x_max - x dimension of 'data'
@@ -433,43 +445,48 @@ protected:
 				int x_max,
 				int y_max)
 			:
-				_origin(&data[0u]),
-				_range_base(
+				_ptr(&data[0u]),
+				_range_const(
 						x_max,
 						y_max),
-				_range_domain(
+				_range(
 						x_max,
 						y_max),
 				_pitch(x_max)
 		{}
 
+
+		///
 		inline PixelPtr ptr() const
 		{
-			return _origin;
+			return _ptr;
 		}
+
+		///
 		inline int pitch() const
 		{
 			return _pitch;
 		}
-		inline void setDomain(const GraphSubset& area)
+
+		///
+		inline void setRange(const GraphSubset& area)
 		{
-			_range_domain = GraphSubset::intersection(
-													area,
-													_range_base);
+			_range = GraphSubset::intersection(area, _range_const);
 		}
-		inline const GraphSubset& getDomain() const
+
+		///
+		inline const GraphSubset& getRange() const
 		{
-			return _range_domain;
+			return _range;
 		}
-		inline const GraphSubset& getBaseDomain() const
+
+		///
+		inline const GraphSubset& getRangeConst() const
 		{
-			return _range_base;
+			return _range_const;
 		}
-//		inline const GraphSubset& getImage() const // Use getDomain() instead THANKS.
-//		{
-//			return _range_domain;
-//		}
 };
+
 
 
 /// A helper-class for handling implementation differences in different surface
@@ -687,7 +704,8 @@ struct controler_base
 template<typename Pixel>
 struct controler<ShaderBase<Pixel>>
 	:
-		public controler_base<typename ShaderBase<Pixel>::PixelPtr, typename ShaderBase<Pixel>::PixelRef>
+		public controler_base<typename ShaderBase<Pixel>::PixelPtr,
+							  typename ShaderBase<Pixel>::PixelRef>
 {
 	typedef typename ShaderBase<Pixel>::PixelPtr PixelPtr;
 	typedef typename ShaderBase<Pixel>::PixelRef PixelRef;
@@ -699,8 +717,8 @@ struct controler<ShaderBase<Pixel>>
 		:
 			base_type(
 					base.ptr(),
-					base.getDomain(),
-					base.getDomain(), //f.getImage() aka. f.getArea()
+					base.getRange(),
+					base.getRange(),
 					std::make_pair(
 								1,
 								base.pitch()))

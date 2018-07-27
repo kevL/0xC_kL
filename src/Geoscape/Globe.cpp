@@ -221,7 +221,7 @@ struct CreateTerminator
 {
 	///
 	static inline Uint8 getTerminatorShade(
-			const Uint8& dest,
+			const Uint8& dst,
 			const Cord& earth,
 			const Cord& sun,
 			const Sint16& noise)
@@ -245,7 +245,7 @@ struct CreateTerminator
 
 		if (sqr > 0.)
 		{
-			const Uint8 d (dest & helper::ColorGroup);
+			const Uint8 d (dst & helper::ColorGroup);
 			Uint8 val;
 
 			if (sqr > 31.)
@@ -259,10 +259,10 @@ struct CreateTerminator
 				return static_cast<Uint8>(Globe::C_OCEAN + val); // this pixel is ocean
 			}
 
-			if (dest == 0u)
+			if (dst == 0u)
 				return val; // this pixel is land
 
-			const Uint8 e (static_cast<Uint8>(static_cast<unsigned>(dest) + (static_cast<unsigned>(val) / 3u))); // to be precise & explicit.
+			const Uint8 e (static_cast<Uint8>(static_cast<unsigned>(dst) + (static_cast<unsigned>(val) / 3u))); // to be precise & explicit.
 
 			if (e > (d + helper::ColorShade))
 				return static_cast<Uint8>(d + helper::ColorShade);
@@ -270,32 +270,32 @@ struct CreateTerminator
 			return static_cast<Uint8>(e);
 		}
 
-		const Uint8 d (dest & helper::ColorGroup);
+		const Uint8 d (dst & helper::ColorGroup);
 		if (   d == Globe::C_OCEAN
 			|| d == Globe::C_OCEAN + 16u)
 		{
 			return Globe::C_OCEAN; // this pixel is ocean
 		}
 
-		return dest; // this pixel is land
+		return dst; // this pixel is land
 	}
 
 	///
 	static inline void func(
-			Uint8& dest,
+			Uint8& dst,
 			const Cord& earth,
 			const Cord& sun,
 			const Sint16& noise,
 			const int&) // whots this
 	{
-		if (dest != 0u && AreSame(earth.z, 0.) == false)
-			dest = getTerminatorShade(
-									dest,
+		if (dst != 0u && AreSame(earth.z, 0.) == false)
+			dst = getTerminatorShade(
+									dst,
 									earth,
 									sun,
 									noise);
 		else
-			dest = 0u;
+			dst = 0u;
 	}
 };
 

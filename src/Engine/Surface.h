@@ -316,12 +316,12 @@ protected:
 				int colorGroup = 0,
 				bool halfLeft = false);
 		/// Specific blit function to blit battlescape sprites.
-		void blitNShade(
+/*		void blitNShade(
 				Surface* const surface,
 				int x,
 				int y,
 				int colorOffset,
-				GraphSubset range);
+				GraphSubset range); */
 
 		/// Invalidates the Surface which forces it to be redrawn.
 		void invalidate(bool redraw = true);

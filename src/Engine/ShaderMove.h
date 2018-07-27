@@ -34,8 +34,8 @@ class ShaderMove
 
 private:
 	int
-		_x_move,
-		_y_move;
+		_x,
+		_y;
 
 	public:
 		typedef helper::ShaderBase<Pixel> _base;
@@ -45,80 +45,82 @@ private:
 		inline ShaderMove(Surface* const srf)
 			:
 				_base(srf),
-				_x_move(srf->getX()),
-				_y_move(srf->getY())
+				_x(srf->getX()),
+				_y(srf->getY())
 		{}
 
 		/// cTor [1]
 		inline ShaderMove(
 				Surface* const srf,
-				int x_move,
-				int y_move)
+				int x,
+				int y)
 			:
 				_base(srf),
-				_x_move(x_move),
-				_y_move(y_move)
+				_x(x),
+				_y(y)
 		{}
 
 		/// cTor [2] - copy constructor
-		inline ShaderMove(const ShaderMove& move)
+		inline ShaderMove(const ShaderMove& notashader)
 			:
-				_base(move),
-				_x_move(move._x_move),
-				_y_move(move._y_move)
+				_base(notashader),
+				_x(notashader._x),
+				_y(notashader._y)
 		{}
 
 		/// cTor [3]
 		inline ShaderMove(
 				std::vector<Pixel>& data,
-				int max_x,
-				int max_y)
+				int x_max,
+				int y_max)
 			:
 				_base(
 					data,
-					max_x,
-					max_y),
-				_x_move(),
-				_y_move()
+					x_max,
+					y_max),
+				_x(0), // _x()
+				_y(0)  // _y()
 		{}
 
 		/// cTor [4]
 		inline ShaderMove(
 				std::vector<Pixel>& data,
-				int max_x,
-				int max_y,
-				int move_x,
-				int move_y)
+				int x_max,
+				int y_max,
+				int x,
+				int y)
 			:
 				_base(
 					data,
-					max_x,
-					max_y),
-				_x_move(move_x),
-				_y_move(move_y)
+					x_max,
+					y_max),
+				_x(x),
+				_y(y)
 		{}
 
-		inline GraphSubset getArea() const // NOTE: Hides superclass ShaderBase::getImage(). kL_Fixed.
+
+		///
+		inline GraphSubset getOffsetRange() const
 		{
-			return _base::_range_domain.offset(
-											_x_move,
-											_y_move);
+			return _base::_range.offset(_x,_y);
 		}
 
+		///
 		inline void setMove(
 				int x,
 				int y)
 		{
-			_x_move = x;
-			_y_move = y;
+			_x = x;
+			_y = y;
 		}
 
+		///
 		inline void addMove(
 				int x,
 				int y)
 		{
-			_x_move += x;
-			_y_move += y;
+			_x += x;
+			_y += y;
 		}
 };
 
@@ -139,15 +141,15 @@ struct controler<ShaderMove<Pixel>>
 	typedef controler_base<PixelPtr, PixelRef> base_type;
 
 	/// cTor.
-	controler(const ShaderMove<Pixel>& move)
+	controler(const ShaderMove<Pixel>& notashader)
 		:
 			base_type(
-					move.ptr(),
-					move.getDomain(),
-					move.getArea(),
+					notashader.ptr(),
+					notashader.getRange(),
+					notashader.getOffsetRange(),
 					std::make_pair(
 								1,
-								move.pitch()))
+								notashader.pitch()))
 	{}
 };
 
@@ -193,24 +195,24 @@ inline ShaderMove<Uint8> ShaderCrop(
 		int x,
 		int y)
 {
-	ShaderMove<Uint8> area (srf, x,y);
+	ShaderMove<Uint8> notashader (srf, x,y);
 
 	SDL_Rect* const rect (srf->getCrop());
 	if (rect->w != 0u && rect->h != 0u)
 	{
-		GraphSubset crop (std::make_pair(
+		GraphSubset area (std::make_pair(
 									rect->x,
 									rect->x + rect->w),
 						  std::make_pair(
 									rect->y,
 									rect->y + rect->h));
-		area.setDomain(crop);
-		area.addMove(
-				-rect->x,
-				-rect->y);
+		notashader.setRange(area);
+		notashader.addMove(
+						-rect->x,
+						-rect->y);
 	}
 
-	return area;
+	return notashader;
 }
 
 /**

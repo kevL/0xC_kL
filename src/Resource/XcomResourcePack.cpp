@@ -1117,7 +1117,7 @@ void XcomResourcePack::loadBattlescapeResources()
 
 		if (_sets.find(armorSheet) != _sets.end())
 		{
-			SurfaceSet* const xcom_1 (_sets[armorSheet]);
+			SurfaceSet* const sprites (_sets[armorSheet]);
 			Surface* srf;
 
 			for (int // chest frame
@@ -1125,18 +1125,18 @@ void XcomResourcePack::loadBattlescapeResources()
 					i != 8;
 					++i)
 			{
-				srf = xcom_1->getFrame((4 << 3u) + i);
+				srf = sprites->getFrame((4 << 3u) + i);
 				ShaderMove<Uint8> head = ShaderMove<Uint8>(srf);
-				GraphSubset area (head.getBaseDomain());
+				GraphSubset area (head.getRangeConst());
 
 				srf->lock();
 				area._y_beg = 6;
 				area._y_end = 9;
-				head.setDomain(area);
+				head.setRange(area);
 				ShaderDraw<HairXCOM1>(head, ShaderScalar<Uint8>(HairXCOM1::Face + 5u));
 				area._y_beg =  9;
 				area._y_end = 10;
-				head.setDomain(area);
+				head.setRange(area);
 				ShaderDraw<HairXCOM1>(head, ShaderScalar<Uint8>(HairXCOM1::Face + 6u));
 				srf->unlock();
 			}
@@ -1146,15 +1146,15 @@ void XcomResourcePack::loadBattlescapeResources()
 					i != 3;
 					++i)
 			{
-				srf = xcom_1->getFrame(264 + i);
+				srf = sprites->getFrame(264 + i);
 				ShaderMove<Uint8> head = ShaderMove<Uint8>(srf);
-				GraphSubset area (head.getBaseDomain());
+				GraphSubset area (head.getRangeConst());
 
 				area._y_beg =  0;
 				area._y_end = 24;
 				area._x_beg = 11;
 				area._x_end = 20;
-				head.setDomain(area);
+				head.setRange(area);
 				srf->lock();
 				ShaderDraw<HairXCOM1>(head, ShaderScalar<Uint8>(HairXCOM1::Face + 6u));
 				srf->unlock();

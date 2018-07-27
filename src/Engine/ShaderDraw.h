@@ -57,7 +57,7 @@ static inline void ShaderDraw(
 	helper::controler<Src2Type> src2 (src2_frame);
 	helper::controler<Src3Type> src3 (src3_frame);
 
-	// get basic draw range in 2d space
+	// get basic drawing range in 2d-space
 	GraphSubset end_t (dest.get_range());
 
 	// intersections with src ranges
@@ -70,7 +70,7 @@ static inline void ShaderDraw(
 	if (end.size_x() == 0 || end.size_y() == 0)
 		return;
 
-	// set final draw range in 2d space
+	// set final drawing range in 2d-space
 	dest.set_range(end);
 	src0.set_range(end);
 	src1.set_range(end);
@@ -92,7 +92,7 @@ static inline void ShaderDraw(
 	if (y_beg >= y_end)
 		return;
 
-	// set final iteration range
+	// set final iteration-range
 	dest.set_y(y_beg, y_end);
 	src0.set_y(y_beg, y_end);
 	src1.set_y(y_beg, y_end);
@@ -114,7 +114,7 @@ static inline void ShaderDraw(
 			x_beg (0),
 			x_end (end.size_x());
 
-		// determining iteration range in x-axis
+		// determining iteration-range in x-axis
 		dest.mod_x(x_beg, x_end);
 		src0.mod_x(x_beg, x_end);
 		src1.mod_x(x_beg, x_end);
@@ -124,7 +124,7 @@ static inline void ShaderDraw(
 		if (x_beg >= x_end)
 			continue;
 
-		// set final iteration range
+		// set final iteration-range
 		dest.set_x(x_beg, x_end);
 		src0.set_x(x_beg, x_end);
 		src1.set_x(x_beg, x_end);
@@ -142,7 +142,7 @@ static inline void ShaderDraw(
 					src2.inc_x(),
 					src3.inc_x())
 		{
-			ColorFunc::func(
+			ColorFunc::func( // see 'Surface.CPP' struct ColorReplace::func() and struct StandartShade::func()
 						dest.get_ref(),
 						src0.get_ref(),
 						src1.get_ref(),
