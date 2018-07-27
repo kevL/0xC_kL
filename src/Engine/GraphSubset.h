@@ -90,12 +90,12 @@ struct GraphSubset
 			const int& b_beg,
 			const int& b_end)
 	{
-//		if (a_beg < b_end && a_end > b_beg) // WARNING [-Wstrict-overflow]
+//		if (   static_cast<unsigned>(a_beg) < static_cast<unsigned>(b_end)
+//			&& static_cast<unsigned>(a_end) > static_cast<unsigned>(b_beg))
 		// hint to the person who came up with all this shyte: learn what a type
 		// is and how to use it.
-
-		if (   static_cast<unsigned>(a_beg) < static_cast<unsigned>(b_end)
-			&& static_cast<unsigned>(a_end) > static_cast<unsigned>(b_beg))
+		// UPDATE: Lovely. The code relies on a warning in order to work.
+		if (a_beg < b_end && a_end > b_beg) // WARNING [-Wstrict-overflow]
 		{
 			a_beg = std::max(a_beg, b_beg);
 			a_end = std::min(a_end, b_end);

@@ -447,12 +447,12 @@ void Map::draw()
  * Checks if two positions if have same x/y coords.
  * @param a - reference to position A
  * @param b - reference to position B
- */
+ *
 static bool isPosition(Position& a, Position& b)
 {
 	return a.x == b.x
 		&& a.y == b.y;
-}
+} */
 
 /**
  * Draws the part of a battleunit-sprite that overlaps the current Tile.
