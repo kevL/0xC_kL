@@ -206,7 +206,7 @@ struct Ocean
 	///
 	static inline void func(
 			Uint8& dest,
-			const int&, // whots this
+			const int&, // whots this <- unused pars
 			const int&, // whots this
 			const int&, // whots this
 			const int&) // whots this
@@ -286,7 +286,7 @@ struct CreateTerminator
 			const Cord& earth,
 			const Cord& sun,
 			const Sint16& noise,
-			const int&) // whots this
+			const int&) // whots this <- unused par
 	{
 		if (dst != 0u && AreSame(earth.z, 0.) == false)
 			dst = getTerminatorShade(
@@ -346,7 +346,7 @@ Globe::Globe(
 		_dragScrollLon(0.),
 		_dragScrollLat(0.),
 		_radius(0.),
-		_radiusStep(0.),
+		_dfZstep(0.),
 		_debugType(DTG_COUNTRY),
 		_radarDetail(game->getSavedGame()->getRadarDetail()),
 		_globeDetail(game->getSavedGame()->isGlobeDetail()),
@@ -473,7 +473,7 @@ void Globe::cartToPolar( // Orthographic Projection
 
 	const double
 		rho (std::sqrt(static_cast<double>(x * x + y * y))),
-		c (std::asin(rho / static_cast<double>(_radius)));
+		c   (std::asin(rho / static_cast<double>(_radius)));
 
 	if (AreSame(rho, 0.) == true)
 	{
@@ -489,7 +489,7 @@ void Globe::cartToPolar( // Orthographic Projection
 					+ _cenLon;
 	}
 
-	while (*lon < 0.) // keep between 0 and 2xPI
+	while (*lon < 0.) // keep between 0 and 2PI
 		*lon += M_PI * 2.;
 
 	while (*lon > M_PI * 2.)
@@ -507,6 +507,9 @@ bool Globe::pointBack( // private.
 		double lon,
 		double lat) const
 {
+	if (_playSave->getGlobeZoom() == 0u) // bypass if earthradius=0
+		return true;
+
 	return (std::cos(_cenLat) * std::cos(lat) * std::cos(lon - _cenLon)
 		  + std::sin(_cenLat) * std::sin(lat) < 0.);
 }
@@ -752,19 +755,31 @@ void Globe::setupRadii( // private.
 		int height)
 {
 	_radii.clear();
+
 	const double height_d (static_cast<double>(height));
 
 	// These are the globe-zoom magnifications stored as a <vector> of 7 (doubles).
-	_radii.push_back(0.39 * height_d); // [-1]					// kL_extra z-out
-	_radii.push_back(0.47 * height_d); // 0 - Zoomed all out	// no detail
-	_radii.push_back(0.60 * height_d); // 1						// country borders
-	_radii.push_back(0.85 * height_d); // 2						// country labels
-	_radii.push_back(1.39 * height_d); // 3						// city markers
-	_radii.push_back(2.13 * height_d); // 4						// city labels & all detail
-	_radii.push_back(3.42 * height_d); // 5 - Zoomed all in
+	_radii.push_back(0.00 * height_d); //  0
+	_radii.push_back(0.08 * height_d); //  1
+	_radii.push_back(0.16 * height_d); //  2
+	_radii.push_back(0.27 * height_d); //  3
+	_radii.push_back(0.38 * height_d); //  4
+	_radii.push_back(0.49 * height_d); //  5 <- this is max zoomout per stock code
+	_radii.push_back(0.60 * height_d); //  6
+	_radii.push_back(0.85 * height_d); //  7
+	_radii.push_back(1.39 * height_d); //  8
+	_radii.push_back(2.13 * height_d); //  9
+	_radii.push_back(3.42 * height_d); // 10
 
 	_radius = _radii[_zoom];
-	_radiusStep = (_radii[_radii.size() - 1u] - _radii[0u]) / 12.2;
+
+	_zBorders       = 2u; // these are the levels at which detail appears ->
+	_zCities        = 3u;
+	_zBaseLabels    = 4u;
+	_zCountryLabels = 6u;
+	_zCityLabels    = 8u;
+
+	_dfZstep = (_radii[_radii.size() - 1u] - _radii[0u]) / 20.; // used to be 12.2 (was faster z)
 
 	_earthData.resize(_radii.size());	// data for drawing sun-shadow.
 	for (size_t							// filling normal field for each radius
@@ -800,19 +815,22 @@ void Globe::setZoom(size_t level) // private.
 {
 	rotateStop();
 
-//	_zoom = level;
 //	_texOffset = (2u - (_zoom >> 1u)) * (_srtTextures->getTotalFrames() / 3u);
 
 	switch (_zoom = level)
 	{
 		default:
-		case 0:								// far out
-		case 1:
-		case 2: _texOffset = 26u; break;
-		case 3:								// mid
-		case 4: _texOffset = 13u; break;
-		case 5:								// close up
-		case 6: _texOffset =  0u;
+		case  0:							// far out (earthradius=0)
+		case  1:
+		case  2:
+		case  3:
+		case  4:
+		case  5:
+		case  6: _texOffset = 26u; break;
+		case  7:							// mid
+		case  8: _texOffset = 13u; break;
+		case  9:							// close up
+		case 10: _texOffset =  0u;
 	}
 	// NOTE: The above^ relies on "GlobeTextures"/"WORLD.DAT" being divided up
 	// as 13 textures with 3 zoom-levels apiece. Globe-drawing is basically
@@ -884,21 +902,21 @@ void Globe::zoomMax()
  */
 bool Globe::zoomDogfightIn()
 {
-	const size_t dfZoom (_radii.size() - 1u);
+	const size_t dfZ (_radii.size() - 1u);
 
-	if (_zoom < dfZoom)
+	if (_zoom < dfZ)
 	{
 		const double radius (_radius);
 
-		if (radius + _radiusStep >= _radii[dfZoom])
-			setZoom(dfZoom);
+		if (radius + _dfZstep >= _radii[dfZ])
+			setZoom(dfZ);
 		else
 		{
-			if (radius + _radiusStep >= _radii[_zoom + 1u])
+			if (radius + _dfZstep >= _radii[_zoom + 1u])
 				++_zoom;
 
 			setZoom(_zoom);
-			_radius = radius + _radiusStep;
+			_radius = radius + _dfZstep;
 		}
 		return false;
 	}
@@ -911,21 +929,21 @@ bool Globe::zoomDogfightIn()
  */
 bool Globe::zoomDogfightOut()
 {
-	const size_t preDfZoom (_playSave->getDfZoom());
+	const size_t dfZpre (_playSave->getDfZoom());
 
-	if (_zoom > preDfZoom)
+	if (_zoom > dfZpre)
 	{
 		const double radius (_radius);
 
-		if (radius - _radiusStep <= _radii[preDfZoom])
-			setZoom(preDfZoom);
+		if (radius - _dfZstep <= _radii[dfZpre])
+			setZoom(dfZpre);
 		else
 		{
-			if (radius - _radiusStep <= _radii[_zoom - 1u])
+			if (radius - _dfZstep <= _radii[_zoom - 1u])
 				--_zoom;
 
 			setZoom(_zoom);
-			_radius = radius - _radiusStep;
+			_radius = radius - _dfZstep;
 		}
 		return false;
 	}
@@ -1261,21 +1279,24 @@ void Globe::draw()
 
 	Surface::draw();
 
-	_srfLayerRadars		->clear();
-	_srfLayerMarkers	->clear();
-	_srfLayerDetail		->clear();
-	_srfLayerCrosshair	->clear();
+	_srfLayerRadars    ->clear();
+	_srfLayerMarkers   ->clear();
+	_srfLayerDetail    ->clear();
+	_srfLayerCrosshair ->clear();
 
-	drawOcean();
-	drawLand();
-	drawBevel();
-	drawRadars();	// '_srfLayerRadars'
-	drawFlights();	// '_srfLayerRadars' [also draws intercept-markers]
-	drawTerminus();
-	drawMarkers();	// '_srfLayerMarkers'
-	drawDetail();	// '_srfLayerDetail'
+	if (_playSave->getGlobeZoom() != 0u) // bypass if earthradius=0
+	{
+		drawOcean();
+		drawLand();
+		drawBevel();
+		drawRadars();	// '_srfLayerRadars'
+		drawFlights();	// '_srfLayerRadars' [also draws intercept-markers]
+		drawTerminus();
+		drawMarkers();	// '_srfLayerMarkers'
+		drawDetail();	// '_srfLayerDetail'
 
-	if (_drawCrosshair == true) drawCrosshair();
+		if (_drawCrosshair == true) drawCrosshair();
+	}
 }
 
 /**
@@ -1468,7 +1489,7 @@ void Globe::drawRadars()
 				switch (_radarDetail)
 				{
 					case GRD_ALL:
-					case GRD_BASE: // NOTE: Show Base-radars also shows Craft-radars.
+					case GRD_BASE: // NOTE: Show Base-radars can also show Craft-radars.
 						rangeFarthest = 0;
 						lat = (*i)->getLatitude();
 						lon = (*i)->getLongitude();
@@ -2012,76 +2033,76 @@ void Globe::drawTarget( // private.
  */
 void Globe::drawDetail()
 {
-	double
-		lon,lat;
-
-	if (_globeDetail == true && _zoom > 0u) // draw the Country borders
+	if (_globeDetail == true)
 	{
 		double
-			lon1,lat1;
-		Sint16
-			x[2u],y[2u];
+			lon,lat;
 
-		_srfLayerDetail->lock();
-		for (std::list<Polyline*>::const_iterator
-				i = _globeRule->getPolylines()->begin();
-				i != _globeRule->getPolylines()->end();
-				++i)
+		if (_zoom >= _zBorders) // draw the Country borders
 		{
-			for (size_t
-					j = 0u;
-					j != (*i)->getPoints() - 1u;
-					++j)
+			double
+				lon1,lat1;
+			Sint16
+				x[2u],y[2u];
+
+			_srfLayerDetail->lock();
+			for (std::list<Polyline*>::const_iterator
+					i = _globeRule->getPolylines()->begin();
+					i != _globeRule->getPolylines()->end();
+					++i)
 			{
-				lon = (*i)->getLongitude(j),
-				lat = (*i)->getLatitude(j);
-				lon1 = (*i)->getLongitude(j + 1u),
-				lat1 = (*i)->getLatitude(j + 1u);
-
-				if (pointBack(lon,lat) == false
-					&& pointBack(lon1,lat1) == false)
+				for (size_t
+						j = 0u;
+						j != (*i)->getPoints() - 1u;
+						++j)
 				{
-					polarToCart(
-							lon,lat,
-							&x[0u],&y[0u]);
-					polarToCart(
-							lon1,lat1,
-							&x[1u],&y[1u]);
+					lon = (*i)->getLongitude(j),
+					lat = (*i)->getLatitude(j);
+					lon1 = (*i)->getLongitude(j + 1u),
+					lat1 = (*i)->getLatitude(j + 1u);
 
-					_srfLayerDetail->drawLine(
-											x[0u],y[0u],
-											x[1u],y[1u],
-											C_LINE);
+					if (pointBack(lon,lat) == false
+						&& pointBack(lon1,lat1) == false)
+					{
+						polarToCart(
+								lon,lat,
+								&x[0u],&y[0u]);
+						polarToCart(
+								lon1,lat1,
+								&x[1u],&y[1u]);
+
+						_srfLayerDetail->drawLine(
+												x[0u],y[0u],
+												x[1u],y[1u],
+												C_LINE);
+					}
+				}
+			}
+			_srfLayerDetail->unlock();
+		}
+
+		if (_zoom >= _zCities) // draw the City markers
+		{
+			RuleRegion* regionRule;
+			for (std::vector<Region*>::const_iterator
+					i = _playSave->getRegions()->begin();
+					i != _playSave->getRegions()->end();
+					++i)
+			{
+				regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
+				for (std::vector<RuleCity*>::const_iterator
+						j = regionRule->getCities().begin();
+						j != regionRule->getCities().end();
+						++j)
+				{
+					drawTarget(*j, _srfLayerDetail);
 				}
 			}
 		}
-		_srfLayerDetail->unlock();
-	}
 
-	Sint16
-		x,y;
+		Sint16
+			x,y;
 
-	if (_zoom > 1u) // draw the City markers
-	{
-		RuleRegion* regionRule;
-		for (std::vector<Region*>::const_iterator
-				i = _playSave->getRegions()->begin();
-				i != _playSave->getRegions()->end();
-				++i)
-		{
-			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
-			for (std::vector<RuleCity*>::const_iterator
-					j = regionRule->getCities().begin();
-					j != regionRule->getCities().end();
-					++j)
-			{
-				drawTarget(*j, _srfLayerDetail);
-			}
-		}
-	}
-
-	if (_globeDetail == true)
-	{
 		Text* const label (new Text(100,9));
 
 		label->setPalette(getPalette());
@@ -2091,7 +2112,7 @@ void Globe::drawDetail()
 					_game->getLanguage());
 		label->setAlign(ALIGN_CENTER);
 
-		if (_zoom > 2u)
+		if (_zoom >= _zCountryLabels)
 		{
 			label->setColor(C_LBLCOUNTRY); // draw the Country labels
 
@@ -2118,71 +2139,77 @@ void Globe::drawDetail()
 			}
 		}
 
-		label->setColor(C_LBLCITY); // draw the City labels
-		int offset_y;
-
-		RuleRegion* regionRule;
-		for (std::vector<Region*>::const_iterator
-				i = _playSave->getRegions()->begin();
-				i != _playSave->getRegions()->end();
-				++i)
+		if (_zoom >= _zCityLabels) // draw the City labels. NOTE: Cities (their labels) also get their own level.
 		{
-			regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
-			for (std::vector<RuleCity*>::const_iterator
-					j = regionRule->getCities().begin();
-					j != regionRule->getCities().end();
-					++j)
-			{
-				lon = (*j)->getLongitude(),
-				lat = (*j)->getLatitude();
+			label->setColor(C_LBLCITY);
+			int offset_y;
 
-				if (pointBack(lon,lat) == false)
+			RuleRegion* regionRule;
+			for (std::vector<Region*>::const_iterator
+					i = _playSave->getRegions()->begin();
+					i != _playSave->getRegions()->end();
+					++i)
+			{
+				regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
+				for (std::vector<RuleCity*>::const_iterator
+						j = regionRule->getCities().begin();
+						j != regionRule->getCities().end();
+						++j)
 				{
 					if (_zoom >= (*j)->getZoomLevel())
 					{
-						polarToCart(
-								lon,lat,
-								&x,&y);
+						lon = (*j)->getLongitude(),
+						lat = (*j)->getLatitude();
 
-						if ((*j)->isLabelTop() == true)
-							offset_y = -10;
-						else
-							offset_y = 2;
+						if (pointBack(lon,lat) == false)
+						{
+							polarToCart(
+									lon,lat,
+									&x,&y);
 
-						label->setX(x - 50);
-						label->setY(y + offset_y);
-						label->setText((*j)->getLabel(_game->getLanguage()));
+							if ((*j)->isLabelTop() == true)
+								offset_y = -10;
+							else
+								offset_y = 2;
 
-						label->blit(_srfLayerDetail);
+							label->setX(x - 50);
+							label->setY(y + offset_y);
+							label->setText((*j)->getLabel(_game->getLanguage()));
+
+							label->blit(_srfLayerDetail);
+						}
 					}
 				}
 			}
 		}
 
-		label->setColor(C_LBLBASE); // draw xCom Base labels
-		label->setAlign(ALIGN_LEFT);
-
-		for (std::vector<Base*>::const_iterator
-				i = _playSave->getBases()->begin();
-				i != _playSave->getBases()->end();
-				++i)
+		if (_zoom >= _zBaseLabels) // draw xCom Base labels
 		{
-			if ((*i)->getMarker() != -1) // base is placed.
+			label->setColor(C_LBLBASE);
+			label->setAlign(ALIGN_LEFT);
+
+			for (std::vector<Base*>::const_iterator
+					i = _playSave->getBases()->begin();
+					i != _playSave->getBases()->end();
+					++i)
 			{
-				lon = (*i)->getLongitude(),
-				lat = (*i)->getLatitude();
-
-				if (pointBack(lon,lat) == false)
+				if ((*i)->getMarker() != -1) // base is placed.
 				{
-					polarToCart(
-							lon,lat,
-							&x,&y);
+					lon = (*i)->getLongitude(),
+					lat = (*i)->getLatitude();
 
-					label->setX(x - 3);
-					label->setY(y - 10);
-					label->setText((*i)->getLabel());
+					if (pointBack(lon,lat) == false)
+					{
+						polarToCart(
+								lon,lat,
+								&x,&y);
 
-					label->blit(_srfLayerDetail);
+						label->setX(x - 3);
+						label->setY(y - 10);
+						label->setText((*i)->getLabel());
+
+						label->blit(_srfLayerDetail);
+					}
 				}
 			}
 		}

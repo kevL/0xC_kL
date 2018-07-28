@@ -38,7 +38,7 @@ RuleCity::RuleCity()
 	:
 		Target(),
 		_texture(-1),
-		_zoomLevel(4u),
+		_zoomLevel(8u),
 		_labelTop(false)
 {}
 

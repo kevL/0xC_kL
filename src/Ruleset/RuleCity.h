@@ -33,7 +33,7 @@ class Language;
 
 /**
  * Represents a city of the world.
- * @note Aliens target cities for terror-missions.
+ * @note aLiens target cities for terror-missions and brothels.
  */
 class RuleCity final
 	:

@@ -102,20 +102,25 @@ private:
 		_cenLon,
 		_crosshairLat,
 		_crosshairLon,
-		_hoverLat,
-		_hoverLon,
+		_dfZstep,
 		_dragScrollLat,
 		_dragScrollLon,
-		_rotLat,
-		_rotLon,
+		_hoverLat,
+		_hoverLon,
 		_radius,
-		_radiusStep;
+		_rotLat,
+		_rotLon;
 	Sint16
 		_cenX,
 		_cenY;
 	Uint32 _dragScrollStartTick;
 	size_t
 		_zoom,
+		_zBaseLabels,
+		_zBorders,
+		_zCities,
+		_zCityLabels,
+		_zCountryLabels,
 		_texOffset;
 
 	FastLineClip* _clipper;
