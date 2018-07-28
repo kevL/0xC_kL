@@ -507,8 +507,7 @@ bool Globe::pointBack( // private.
 		double lon,
 		double lat) const
 {
-	if (_playSave->getGlobeZoom() == 0u) // bypass if earthradius=0
-		return true;
+	if (_zoom == 0u) return true; // bypass if earthradius=0
 
 	return (std::cos(_cenLat) * std::cos(lat) * std::cos(lon - _cenLon)
 		  + std::sin(_cenLat) * std::sin(lat) < 0.);
@@ -1284,7 +1283,7 @@ void Globe::draw()
 	_srfLayerDetail    ->clear();
 	_srfLayerCrosshair ->clear();
 
-	if (_playSave->getGlobeZoom() != 0u) // bypass if earthradius=0
+	if (_zoom != 0u) // bypass if earthradius=0
 	{
 		drawOcean();
 		drawLand();
