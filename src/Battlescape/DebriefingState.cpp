@@ -790,22 +790,21 @@ void DebriefingState::prepareDebriefing() // private.
 			case STATUS_LATENT:
 				//Log(LOG_INFO) << ". . is Latent";
 				(*i)->setUnitTile(tileOrigin);
-
-				if ((*i)->isStunned() == true)
-					(*i)->setUnitStatus(STATUS_UNCONSCIOUS);
-				else
-					(*i)->setUnitStatus(STATUS_STANDING);
 				break;
 
 			case STATUS_LATENT_START:
 				//Log(LOG_INFO) << ". . is Latent_Start";
 				(*i)->setUnitTile(tileEquipt);
+				break;
 
-				if ((*i)->isStunned() == true)
-					(*i)->setUnitStatus(STATUS_UNCONSCIOUS);
-				else
-					(*i)->setUnitStatus(STATUS_STANDING);
+			default:
+				continue;
 		}
+
+		if ((*i)->isStunned() == true)
+			(*i)->setUnitStatus(STATUS_UNCONSCIOUS);
+		else
+			(*i)->setUnitStatus(STATUS_STANDING);
 	}
 
 
