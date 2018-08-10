@@ -3319,7 +3319,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 						++x)
 				{
 					// lots of crazy stuff here, which is for the hangars or other large base facilities
-					// TODO: clean this mess up, make the facilityTypes a vector in the base module defs
+					// TODO: clean this mess up, make the facilityLabels a vector in the base module defs
 					// also figure out how to do the terrain sets on a per-block basis.
 					const std::string facilityLabel ((*i)->getRules()->getBlockType());
 					std::ostringstream facilityType;

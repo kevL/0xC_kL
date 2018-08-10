@@ -244,9 +244,7 @@ BattleItem* BattleItem::getAmmoItem() const
  * Sets an ammo-item for this BattleItem.
  * @param load - the ammo-item (default nullptr)
  * @param init - true if called from SavedBattleGame::load() (default false)
- * @return, true if 'item' is null (weapon will be unloaded if it is loaded) or
- *          true if 'item' gets loaded into the weapon
- *          false if weapon is already loaded or weapon is self-loaded
+ * @return, true if 'item' is valid and gets loaded into the weapon
  */
 bool BattleItem::setAmmoItem(
 		BattleItem* const load,
@@ -261,29 +259,27 @@ bool BattleItem::setAmmoItem(
 				_ammoItem->_isLoad = false;
 				_ammoItem = nullptr;
 			}
-			return true;
 		}
-
-		if (_ammoItem != nullptr) // weapon is already loaded.
-			return false;
-
-		for (std::vector<std::string>::const_iterator
-				i = _itRule->getAcceptedLoadTypes()->begin();
-				i != _itRule->getAcceptedLoadTypes()->end();
-				++i)
+		else if (_ammoItem == nullptr)
 		{
-			if (*i == load->getRules()->getType()) // load weapon ->
+			for (std::vector<std::string>::const_iterator
+					i = _itRule->getAcceptedLoadTypes()->begin();
+					i != _itRule->getAcceptedLoadTypes()->end();
+					++i)
 			{
-				_ammoItem = load;
-				_ammoItem->_isLoad = true;
-				_ammoItem->_inventoryX =
-				_ammoItem->_inventoryY = 0;
-				if (init == false)
+				if (*i == load->getRules()->getType()) // load weapon ->
 				{
-					_ammoItem->changeOwner();
-					_ammoItem->setInventorySection();
+					_ammoItem = load;
+					_ammoItem->_isLoad = true;
+					_ammoItem->_inventoryX =
+					_ammoItem->_inventoryY = 0;
+					if (init == false)
+					{
+						_ammoItem->changeOwner();
+						_ammoItem->setInventorySection();
+					}
+					return true;
 				}
-				return true;
 			}
 		}
 	}
