@@ -3552,6 +3552,8 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 		BattleUnit* const unit) const
 {
 	//Log(LOG_INFO) << "BattlescapeGame::takeItem()";
+	int placed (ItemPlacedType::FAILED);
+
 	const RuleInventory
 		* const rhRule (getRuleset()->getInventoryRule(ST_RIGHTHAND)),
 		* const lhRule (getRuleset()->getInventoryRule(ST_LEFTHAND));
@@ -3560,7 +3562,6 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 		* const lhWeapon (unit->getItem(ST_LEFTHAND));
 
 	const RuleItem* const itRule (item->getRules());
-	int placed (0);
 
 	switch (itRule->getBattleType())
 	{
@@ -3569,32 +3570,34 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 			if (rhWeapon == nullptr)
 			{
 				item->setInventorySection(rhRule);
-				placed = 1;
+				placed = ItemPlacedType::SUCCESS;
 				break;
 			}
 
 			if (lhWeapon == nullptr)
 			{
 				item->setInventorySection(lhRule);
-				placed = 1;
+				placed = ItemPlacedType::SUCCESS;
 				break;
-			} // no break;
+			}
+			// no break;
 		case BT_AMMO:
 			if (rhWeapon != nullptr
 				&& rhWeapon->getAmmoItem() == nullptr
-				&& rhWeapon->setAmmoItem(item) == 0)
+				&& rhWeapon->setAmmoItem(item) == true)
 			{
-				placed = 2;
+				placed = ItemPlacedType::SUCCESS_LOAD;
 				break;
 			}
 
 			if (lhWeapon != nullptr
 				&& lhWeapon->getAmmoItem() == nullptr
-				&& lhWeapon->setAmmoItem(item) == 0)
+				&& lhWeapon->setAmmoItem(item) == true)
 			{
-				placed = 2;
+				placed = ItemPlacedType::SUCCESS_LOAD;
 				break;
-			} // no break;
+			}
+			// no break;
 
 		default:
 		{
@@ -3604,12 +3607,12 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 
 			for (std::vector<const RuleInventory*>::const_iterator
 					i = inTypes.begin();
-					i != inTypes.end() && placed == 0;
+					i != inTypes.end() && placed == ItemPlacedType::FAILED;
 					++i)
 			{
 				for (std::vector<RuleSlot>::const_iterator
 						j = (*i)->getSlots()->begin();
-						j != (*i)->getSlots()->end() && placed == 0;
+						j != (*i)->getSlots()->end() && placed == ItemPlacedType::FAILED;
 						++j)
 				{
 					if (Inventory::isOverlap(
@@ -3620,7 +3623,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 						item->setInventorySection(*i);
 						item->setSlotX(j->x);
 						item->setSlotY(j->y);
-						placed = 1;
+						placed = ItemPlacedType::SUCCESS;
 					}
 				}
 			}
@@ -3629,10 +3632,10 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 
 	switch (placed)
 	{
-		case 1:
+		case ItemPlacedType::SUCCESS:
 			item->changeOwner(unit);
 			// no break;
-		case 2:
+		case ItemPlacedType::SUCCESS_LOAD:
 			//Log(LOG_INFO) << ". ret TRUE";
 			return true;
 	}

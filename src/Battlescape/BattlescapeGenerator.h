@@ -79,7 +79,7 @@ private:
 
 	std::vector<std::vector<bool>> _landingzone;
 	std::vector<std::vector<int>>
-		_drillMap,
+		_drill,
 		_seg;
 	std::vector<std::vector<MapBlock*>> _blocks;
 

@@ -1837,9 +1837,9 @@ void DogfightState::drawCraft(bool init) // private.
 					{
 						colorPre = _srfHull->getPixelColor(x,y);
 
-						if ((  colorPre >= colors[CRAFT_MIN] // is gray Craft pixel
-							&& colorPre <  colors[CRAFT_MAX])
-							|| colorPre == colors[DAMAGE_YEL])
+						if (colorPre == colors[DAMAGE_YEL]
+							|| (   colorPre >= colors[CRAFT_MIN] // is gray Craft pixel
+								&& colorPre <  colors[CRAFT_MAX]))
 						{
 							_srfHull->setPixelColor(x,y, color);
 						}

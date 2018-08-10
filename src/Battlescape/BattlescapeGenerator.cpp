@@ -131,7 +131,7 @@ void BattlescapeGenerator::init() // private.
 	_blocks.clear();
 	_landingzone.clear();
 	_seg.clear();
-	_drillMap.clear();
+	_drill.clear();
 
 	_blocks.resize(
 			static_cast<size_t>(_mapsize_x / 10),
@@ -147,7 +147,7 @@ void BattlescapeGenerator::init() // private.
 			std::vector<int>(
 							static_cast<size_t>(_mapsize_y / 10),
 							0));
-	_drillMap.resize(
+	_drill.resize(
 			static_cast<size_t>(_mapsize_x / 10),
 			std::vector<int>(
 							static_cast<size_t>(_mapsize_y / 10),
@@ -1710,7 +1710,7 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 			++i)
 	{
 		if ((*i)->getInventorySection() == grdRule
-			&& item->setAmmoItem(*i) == 0)
+			&& item->setAmmoItem(*i) == true)
 		{
 			//Log(LOG_INFO) << ". . . " << item->getRules()->getType() << " loaded w/ " << (*i)->getRules()->getType();
 			return;
@@ -1764,7 +1764,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 						{
 							if ((*k)->getInventorySection() == grdRule
 								&& (*k)->getRules()->getType() == loadType
-								&& item->setAmmoItem(*k) == 0)
+								&& item->setAmmoItem(*k) == true)
 							{
 								loaded = true;
 								break;
@@ -1875,7 +1875,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
 		BattleItem* const item,
 		BattleUnit* const unit) const
 {
-	int placed (0);
+	int placed (ItemPlacedType::FAILED);
 
 	const RuleInventory
 		* const rhRule (_rules->getInventoryRule(ST_RIGHTHAND)),
@@ -1888,16 +1888,16 @@ bool BattlescapeGenerator::placeGeneric( // private.
 	if (itRule->isFixed() == true)
 	{
 		item->setInventorySection(rhRule);
-		placed = 1;
+		placed = ItemPlacedType::SUCCESS;
 /*		if (rhWeapon == nullptr) // not needed at present.
 		{
 			item->setInventorySection(rhRule);
-			placed = 1;
+			placed = ItemPlacedType::SUCCESS;
 		}
 		else if (lhWeapon == nullptr)
 		{
 			item->setInventorySection(lhRule);
-			placed = 1;
+			placed = ItemPlacedType::SUCCESS;
 		} */
 	}
 	else
@@ -1909,34 +1909,36 @@ bool BattlescapeGenerator::placeGeneric( // private.
 				if (rhWeapon == nullptr)
 				{
 					item->setInventorySection(rhRule);
-					placed = 1;
+					placed = ItemPlacedType::SUCCESS;
 					break;
 				}
 
 				if (lhWeapon == nullptr)
 				{
 					item->setInventorySection(lhRule);
-					placed = 1;
+					placed = ItemPlacedType::SUCCESS;
 					break;
-				} // no break.
+				}
+				// no break.
 			case BT_AMMO:
 				if (rhWeapon != nullptr
 					&& rhWeapon->getAmmoItem() == nullptr
-					&& rhWeapon->setAmmoItem(item) == 0)
+					&& rhWeapon->setAmmoItem(item) == true)
 				{
 //					item->setInventorySection(rhRule);
-					placed = 2;
+					placed = ItemPlacedType::SUCCESS_LOAD;
 					break;
 				}
 
 				if (lhWeapon != nullptr
 					&& lhWeapon->getAmmoItem() == nullptr
-					&& lhWeapon->setAmmoItem(item) == 0)
+					&& lhWeapon->setAmmoItem(item) == true)
 				{
 //					item->setInventorySection(lhRule);
-					placed = 2;
+					placed = ItemPlacedType::SUCCESS_LOAD;
 					break;
-				} // no break.
+				}
+				// no break.
 
 			default:
 			{
@@ -1946,12 +1948,12 @@ bool BattlescapeGenerator::placeGeneric( // private.
 
 				for (std::vector<const RuleInventory*>::const_iterator
 						i = inTypes.begin();
-						i != inTypes.end() && placed == 0;
+						i != inTypes.end() && placed == ItemPlacedType::FAILED;
 						++i)
 				{
 					for (std::vector<RuleSlot>::const_iterator
 							j = (*i)->getSlots()->begin();
-							j != (*i)->getSlots()->end() && placed == 0;
+							j != (*i)->getSlots()->end() && placed == ItemPlacedType::FAILED;
 							++j)
 					{
 						if (Inventory::isOverlap(
@@ -1962,7 +1964,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
 							item->setInventorySection(*i);
 							item->setSlotX(j->x);
 							item->setSlotY(j->y);
-							placed = 1;
+							placed = ItemPlacedType::SUCCESS;
 						}
 					}
 				}
@@ -1972,9 +1974,10 @@ bool BattlescapeGenerator::placeGeneric( // private.
 
 	switch (placed)
 	{
-		case 1:
-			item->changeOwner(unit); // no break.
-		case 2:
+		case ItemPlacedType::SUCCESS:
+			item->changeOwner(unit);
+			// no break.
+		case ItemPlacedType::SUCCESS_LOAD:
 			_itemList->push_back(item);
 			return true;
 	}
@@ -2024,34 +2027,34 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 			i != ruleDeploy->getDeploymentData()->end();
 			++i)
 	{
-		aLien = raceRule->getMember((*i).alienRank);
+		aLien = raceRule->getMember(i->alienRank);
 
 		switch (_playSave->getDifficulty())
 		{
 			case DIFF_BEGINNER:
 			case DIFF_EXPERIENCED:
-				qty = (*i).lowQty
-					+ RNG::generate(0, (*i).dQty);
+				qty = i->lowQty
+					+ RNG::generate(0, i->dQty);
 				break;
 
 			case DIFF_VETERAN:
 			case DIFF_GENIUS:
-				qty = (*i).lowQty
-					+ (((*i).highQty - (*i).lowQty) >> 1u)
-					+ RNG::generate(0, (*i).dQty);
+				qty = i->lowQty
+					+ ((i->highQty - i->lowQty) >> 1u)
+					+ RNG::generate(0, i->dQty);
 				break;
 
 			default: // void g++ warning.
 			case DIFF_SUPERHUMAN:
-				qty = (*i).highQty
-					+ RNG::generate(0, (*i).dQty);
+				qty = i->highQty
+					+ RNG::generate(0, i->dQty);
 		}
 
-		qty += RNG::generate(0, (*i).extraQty);
+		qty += RNG::generate(0, i->extraQty);
 
 		if (_base != nullptr && _base->getDefenseReduction() != 0)
 			qty = std::max(qty >> 1u,
-						   qty - (qty * _base->getDefenseReduction() / 100));
+						   qty - ((qty * _base->getDefenseReduction() + 99) / 100)); // round up.
 
 		for (int
 				j = 0;
@@ -2059,19 +2062,19 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 				++j)
 		{
 			if (_ufo != nullptr)
-				outside = RNG::percent((*i).pctOutsideUfo);
+				outside = RNG::percent(i->pctOutsideUfo);
 			else
 				outside = false;
 
 			unitRule = _rules->getUnitRule(aLien);
 			unit = addAlien(
 						unitRule,
-						(*i).alienRank,
+						i->alienRank,
 						outside);
 
 			if (unit != nullptr)
 			{
-				// Built in weapons: the unit has this weapon regardless of loadout or what have you.
+				// Built in weapons: the unit has this weapon regardless of loadout or whatever.
 //				if (unitRule->getBuiltInWeapons().empty() == false)
 //				{
 //					for (std::vector<std::string>::const_iterator
@@ -2110,7 +2113,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 				}
 				else
 				{
-					if ((*i).itemSets.size() == 0)
+					if (i->itemSets.size() == 0)
 					{
 						throw Exception("bGen:deployAliens() No itemSets defined.");
 					}
@@ -2118,21 +2121,21 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 					level = static_cast<size_t>(_rules->getAlienItemLevels()
 														.at(static_cast<size_t>(elapsed))
 														.at(static_cast<size_t>(RNG::generate(0,9))));
-					if (level > (*i).itemSets.size() - 1u)
-						level = (*i).itemSets.size() - 1u;
+					if (level > i->itemSets.size() - 1u)
+						level = i->itemSets.size() - 1u;
 					// Relax item level requirements
 					// <- Yankes; https://github.com/Yankes/OpenXcom/commit/4c252470aa2e261b0f449a56aaea5d5b0cb2229c
-//					if (level > (*i).itemSets.size() - 1u)
+//					if (level > i->itemSets.size() - 1u)
 //					{
 //						std::ostringstream ststr;
 //						ststr	<< "Unit generator encountered an error: not enough item sets defined, expected: "
-//								<< (level + 1) << " found: " << (*i).itemSets.size();
+//								<< (level + 1) << " found: " << i->itemSets.size();
 //						throw Exception(ststr.str());
 //					}
 
 					for (std::vector<std::string>::const_iterator
-							type = (*i).itemSets.at(level).items.begin();
-							type != (*i).itemSets.at(level).items.end();
+							type = i->itemSets.at(level).items.begin();
+							type != i->itemSets.at(level).items.end();
 							++type)
 					{
 						if ((itRule = _rules->getItemRule(*type)) != nullptr)
@@ -2308,7 +2311,7 @@ bool BattlescapeGenerator::placeUnitBesideAlly(BattleUnit* const unit) // privat
 {
 	const BattleUnit* ally;
 	int t (100);
-	while (t--)
+	do
 	{
 		ally = _unitList->at(RNG::pick(_unitList->size()));
 		if (ally->getFaction() == unit->getFaction()
@@ -2325,6 +2328,8 @@ bool BattlescapeGenerator::placeUnitBesideAlly(BattleUnit* const unit) // privat
 			}
 		}
 	}
+	while (--t != 0);
+
 	return false;
 }
 
@@ -2510,10 +2515,10 @@ int BattlescapeGenerator::loadBlockFile( // private.
 				i != block->getPlacedItems().end();
 				++i)
 		{
-			itRule = _rules->getItemRule((*i).first);
+			itRule = _rules->getItemRule(i->first);
 			for (std::vector<Position>::const_iterator
-					j = (*i).second.begin();
-					j != (*i).second.end();
+					j = i->second.begin();
+					j != i->second.end();
 					++j)
 			{
 				item = new BattleItem(
@@ -3301,7 +3306,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 			const int
 				xEnd ((*i)->getX() + static_cast<int>((*i)->getRules()->getSize()) - 1),
 				yEnd ((*i)->getY() + static_cast<int>((*i)->getRules()->getSize()) - 1);
-			int num (0);
+			int incrementor (-1);
 
 			for (int
 					y = (*i)->getY();
@@ -3314,48 +3319,47 @@ void BattlescapeGenerator::generateBaseMap() // private.
 						++x)
 				{
 					// lots of crazy stuff here, which is for the hangars or other large base facilities
-					// TODO: clean this mess up, make the mapNames a vector in the base module defs
+					// TODO: clean this mess up, make the facilityTypes a vector in the base module defs
 					// also figure out how to do the terrain sets on a per-block basis.
-					const std::string mapname ((*i)->getRules()->getBlockType());
-					std::ostringstream newname;
-					newname << mapname.substr(
-											0u,
-											mapname.size() - 2u); // strip off last 2 digits
+					const std::string facilityLabel ((*i)->getRules()->getBlockType());
+					std::ostringstream facilityType;
+					facilityType << facilityLabel.substr( // strip off last 2 digits
+													0u,
+													facilityLabel.size() - 2u);
 
-					int mapnum (std::atoi(mapname.substr( // get number
-														mapname.size() - 2u,
-														2u).c_str()));
-					mapnum += num;
-					if (mapnum < 10)
-						newname << 0;
-					newname << mapnum;
+					int facilityId (std::atoi(facilityLabel.substr( // get id
+																facilityLabel.size() - 2u,
+																2u).c_str()));
+					facilityId += (++incrementor);
+					if (facilityId < 10)
+						facilityType << 0;
+					facilityType << facilityId;
 
 					addBlock(
 							x,y,
-							_terrainRule->getTerrainBlock(newname.str()));
+							_terrainRule->getTerrainBlock(facilityType.str()));
 
-					_drillMap[static_cast<size_t>(x)]
-							 [static_cast<size_t>(y)] = static_cast<int>(MD_NONE);
-					++num;
+					_drill[static_cast<size_t>(x)]
+						  [static_cast<size_t>(y)] = static_cast<int>(MD_NONE);
 
 					// general stores - there is where the items are put
 					if ((*i)->getRules()->getStorage() > 0) // <- hmm Raises questions about buying and transfering Craft ....
 					{
-						int grdLevel;
+						int floorLevel (_mapsize_z - 1); // '_mapsize_z' shall be >0
 						for (
-								grdLevel = _mapsize_z - 1;
-								grdLevel > -1;
-								--grdLevel)
+								;
+								floorLevel != -1;
+								--floorLevel)
 						{
 							if (_battleSave->getTile(Position(
 															x * 10,
 															y * 10,
-															grdLevel))->isFloored() == true)
+															floorLevel))->isFloored() == true)
 							{
 								break;
 							}
 						}
-						if (grdLevel < 0) grdLevel = 0; // safety.
+//						if (floorLevel < 0) floorLevel = 0; // safety.
 
 						for (int
 								k = x * 10;
@@ -3370,9 +3374,9 @@ void BattlescapeGenerator::generateBaseMap() // private.
 								if (((k + l) & 1) == 0) // use only every other tile giving a checkerboard pattern
 								{
 									const Tile
-										* const tile      (_battleSave->getTile(Position(k,     l,     grdLevel))),
-										* const tileEast  (_battleSave->getTile(Position(k + 1, l,     grdLevel))),
-										* const tileSouth (_battleSave->getTile(Position(k,     l + 1, grdLevel)));
+										* const tile      (_battleSave->getTile(Position(k,     l,     floorLevel))),
+										* const tileEast  (_battleSave->getTile(Position(k + 1, l,     floorLevel))),
+										* const tileSouth (_battleSave->getTile(Position(k,     l + 1, floorLevel)));
 
 									if (tile != nullptr
 										&& tile->getMapData(O_FLOOR) != nullptr
@@ -3382,7 +3386,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 										&& tileSouth != nullptr
 										&& tileSouth->getMapData(O_NORTHWALL) == nullptr)
 									{
-										_battleSave->storagePositions().push_back(Position(k,l, grdLevel));
+										_battleSave->storagePositions().push_back(Position(k,l, floorLevel));
 									}
 								}
 							}
@@ -3394,7 +3398,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 																	x * 10 + 5,
 																	y * 10 + 5,
 																	std::max(0,
-																			 grdLevel - 1)));
+																			 floorLevel - 1)));
 							_battleSave->setBattleInventory(_tileEquipt);
 							//Log(LOG_INFO) << "bGen:generateBaseMap() set _tileEquipt " << _tileEquipt->getPosition();
 						}
@@ -3407,19 +3411,19 @@ void BattlescapeGenerator::generateBaseMap() // private.
 					x <= xEnd;
 					++x)
 			{
-				_drillMap[static_cast<size_t>(x)]
-						 [static_cast<size_t>(yEnd)] = static_cast<int>(MD_VERTICAL);
+				_drill[static_cast<size_t>(x)]
+					  [static_cast<size_t>(yEnd)] = static_cast<int>(MD_VERTICAL);
 			}
 			for (int
 					y = (*i)->getY();
 					y <= yEnd;
 					++y)
 			{
-				_drillMap[static_cast<size_t>(xEnd)]
-						 [static_cast<size_t>(y)] = static_cast<int>(MD_HORIZONTAL);
+				_drill[static_cast<size_t>(xEnd)]
+					  [static_cast<size_t>(y)] = static_cast<int>(MD_HORIZONTAL);
 			}
-			_drillMap[static_cast<size_t>(xEnd)]
-					 [static_cast<size_t>(yEnd)] = static_cast<int>(MD_BOTH);
+			_drill[static_cast<size_t>(xEnd)]
+				  [static_cast<size_t>(yEnd)] = static_cast<int>(MD_BOTH);
 		}
 	}
 
@@ -3543,8 +3547,8 @@ void BattlescapeGenerator::loadNodes() // private.
 void BattlescapeGenerator::attachNodeLinks() // private.
 {
 	const int
-		borDirs[4u]			{-2,-3,-4,-5},
-		borDirs_invert[4u]	{-4,-5,-2,-3};
+		borDirs[4u]        {-2,-3,-4,-5},
+		borDirs_invert[4u] {-4,-5,-2,-3};
 	int borSegs[4u];
 
 	size_t
@@ -3828,7 +3832,7 @@ bool BattlescapeGenerator::addLine( // private.
 	int
 		x (0), // avoid vc++ linker warnings
 		y (0),
-		end,
+		stop,
 		* progress;
 	MapBlockType
 		typeTest,
@@ -3838,23 +3842,24 @@ bool BattlescapeGenerator::addLine( // private.
 	{
 		default:
 		case MD_HORIZONTAL:
-			end = _mapsize_x / 10;
 			progress = &x;
-			type = MBT_EWROAD;
+			stop     = _mapsize_x / 10;
+			type     = MBT_EWROAD;
 			typeTest = MBT_NSROAD;
 			break;
 
 		case MD_VERTICAL:
-			end = _mapsize_y / 10;
 			progress = &y;
-			type = MBT_NSROAD;
+			stop     = _mapsize_y / 10;
+			type     = MBT_NSROAD;
 			typeTest = MBT_EWROAD;
 	}
 
 	MapBlock* block;
+	bool placed;
 	int t (0);
-	bool placed (false);
-	while (placed == false)
+
+	do
 	{
 		placed = true;
 		selectPosition(
@@ -3863,7 +3868,7 @@ bool BattlescapeGenerator::addLine( // private.
 					10,10);
 		for (
 				*progress = 0;
-				*progress != end;
+				*progress != stop;
 				++(*progress))
 		{
 			block = _blocks[static_cast<size_t>(x)]
@@ -3875,11 +3880,12 @@ bool BattlescapeGenerator::addLine( // private.
 				break;
 			}
 		}
-		if (++t > 20) return false; // forget it ...
+		if (++t == 20) return false; // forget it ...
 	}
+	while (placed == false);
 
 	*progress = 0;
-	while (*progress != end)
+	while (*progress != stop)
 	{
 		block = _blocks[static_cast<size_t>(x)]
 					   [static_cast<size_t>(y)];
@@ -3963,8 +3969,8 @@ bool BattlescapeGenerator::addBlock( // private.
 			xd <= xSize;
 			++xd)
 	{
-		_drillMap[xt + xd]
-				 [yt + ySize] = MD_VERTICAL;
+		_drill[xt + xd]
+			  [yt + ySize] = MD_VERTICAL;
 	}
 
 	for (size_t // then the east edge
@@ -3972,13 +3978,13 @@ bool BattlescapeGenerator::addBlock( // private.
 			yd <= ySize;
 			++yd)
 	{
-		_drillMap[xt + xSize]
-				 [yt + yd] = MD_HORIZONTAL;
+		_drill[xt + xSize]
+			  [yt + yd] = MD_HORIZONTAL;
 	}
 
 
-	_drillMap[xt + xSize]				// then the far corner gets marked for both
-			 [yt + ySize] = MD_BOTH;	// this also marks 1x1 modules
+	_drill[xt + xSize]				// then the far corner gets marked for both
+		  [yt + ySize] = MD_BOTH;	// this also marks 1x1 modules
 	_blocks[xt][yt] = block;
 
 	loadBlockFile(
@@ -4006,10 +4012,10 @@ void BattlescapeGenerator::drillModules( // private.
 		MapDirection dir)
 {
 	const MCDReplacement
-		* const westMcd		(info->getMcdReplacement("west")),
-		* const northMcd	(info->getMcdReplacement("north")),
-		* const cornerMcd	(info->getMcdReplacement("corner")),
-		* const floorMcd	(info->getMcdReplacement("floor"));
+		* const west   (info->getMcdReplacement("west")),
+		* const north  (info->getMcdReplacement("north")),
+		* const corner (info->getMcdReplacement("corner")),
+		* const floor  (info->getMcdReplacement("floor"));
 
 	SDL_Rect rect;
 	rect.x =
@@ -4043,15 +4049,15 @@ void BattlescapeGenerator::drillModules( // private.
 				if (dir != MD_VERTICAL) // drill east
 				{
 					if (i < _mapsize_x / 10 - 1
-						&& (   _drillMap[static_cast<size_t>(i)]
-										[static_cast<size_t>(j)] == static_cast<int>(MD_HORIZONTAL)
-							|| _drillMap[static_cast<size_t>(i)]
-										[static_cast<size_t>(j)] == static_cast<int>(MD_BOTH))
+						&& (   _drill[static_cast<size_t>(i)]
+									 [static_cast<size_t>(j)] == static_cast<int>(MD_HORIZONTAL)
+							|| _drill[static_cast<size_t>(i)]
+									 [static_cast<size_t>(j)] == static_cast<int>(MD_BOTH))
 						&& _blocks[static_cast<size_t>(i) + 1u]
 								  [static_cast<size_t>(j)] != nullptr)
 					{
 						for (int
-								k = static_cast<int>(rect.y);
+								k  = static_cast<int>(rect.y);
 								k != static_cast<int>(rect.y) + static_cast<int>(rect.h);
 								++k)
 						{
@@ -4064,15 +4070,15 @@ void BattlescapeGenerator::drillModules( // private.
 								tile->setMapData(nullptr,-1,-1, O_WESTWALL);
 								tile->setMapData(nullptr,-1,-1, O_OBJECT);
 
-								if (floorMcd != nullptr)
+								if (floor != nullptr)
 								{
 									part = _terrainRule->getMapDataSets()
-															->at(static_cast<size_t>(floorMcd->dataSet))->getRecords()
-															->at(static_cast<size_t>(floorMcd->entry));
+															->at(static_cast<size_t>(floor->dataSet))->getRecords()
+															->at(static_cast<size_t>(floor->entry));
 									tile->setMapData(
 												part,
-												floorMcd->entry,
-												floorMcd->dataSet,
+												floor->entry,
+												floor->dataSet,
 												O_FLOOR);
 								}
 
@@ -4090,19 +4096,19 @@ void BattlescapeGenerator::drillModules( // private.
 							}
 						}
 
-						if (northMcd != nullptr)
+						if (north != nullptr)
 						{
 							part = _terrainRule->getMapDataSets()
-													->at(static_cast<size_t>(northMcd->dataSet))->getRecords()
-													->at(static_cast<size_t>(northMcd->entry));
+													->at(static_cast<size_t>(north->dataSet))->getRecords()
+													->at(static_cast<size_t>(north->entry));
 							tile = _battleSave->getTile(Position(
 															(i * 10) + 9,
 															(j * 10) + static_cast<int>(rect.y),
 															info->level));
 							tile->setMapData(
 										part,
-										northMcd->entry,
-										northMcd->dataSet,
+										north->entry,
+										north->dataSet,
 										O_NORTHWALL);
 							tile = _battleSave->getTile(Position(
 															(i * 10) + 9,
@@ -4110,16 +4116,16 @@ void BattlescapeGenerator::drillModules( // private.
 															info->level));
 							tile->setMapData(
 										part,
-										northMcd->entry,
-										northMcd->dataSet,
+										north->entry,
+										north->dataSet,
 										O_NORTHWALL);
 						}
 
-						if (cornerMcd != nullptr)
+						if (corner != nullptr)
 						{
 							part = _terrainRule->getMapDataSets()
-													->at(static_cast<size_t>(cornerMcd->dataSet))->getRecords()
-													->at(static_cast<size_t>(cornerMcd->entry));
+													->at(static_cast<size_t>(corner->dataSet))->getRecords()
+													->at(static_cast<size_t>(corner->entry));
 							tile = _battleSave->getTile(Position(
 															(i + 1) * 10,
 															(j * 10) + static_cast<int>(rect.y),
@@ -4128,8 +4134,8 @@ void BattlescapeGenerator::drillModules( // private.
 							if (tile->getMapData(O_NORTHWALL) == nullptr)
 								tile->setMapData(
 											part,
-											cornerMcd->entry,
-											cornerMcd->dataSet,
+											corner->entry,
+											corner->dataSet,
 											O_NORTHWALL);
 						}
 					}
@@ -4138,10 +4144,10 @@ void BattlescapeGenerator::drillModules( // private.
 				if (dir != MD_HORIZONTAL) // drill south
 				{
 					if (j < _mapsize_y / 10 - 1
-						&& (   _drillMap[static_cast<size_t>(i)]
-										[static_cast<size_t>(j)] == static_cast<int>(MD_VERTICAL)
-							|| _drillMap[static_cast<size_t>(i)]
-										[static_cast<size_t>(j)] == static_cast<int>(MD_BOTH))
+						&& (   _drill[static_cast<size_t>(i)]
+									 [static_cast<size_t>(j)] == static_cast<int>(MD_VERTICAL)
+							|| _drill[static_cast<size_t>(i)]
+									 [static_cast<size_t>(j)] == static_cast<int>(MD_BOTH))
 						&& _blocks[static_cast<size_t>(i)]
 								  [static_cast<size_t>(j) + 1u] != nullptr)
 					{
@@ -4159,15 +4165,15 @@ void BattlescapeGenerator::drillModules( // private.
 								tile->setMapData(nullptr,-1,-1, O_NORTHWALL);
 								tile->setMapData(nullptr,-1,-1, O_OBJECT);
 
-								if (floorMcd != nullptr)
+								if (floor != nullptr)
 								{
 									part = _terrainRule->getMapDataSets()
-															->at(static_cast<size_t>(floorMcd->dataSet))->getRecords()
-															->at(static_cast<size_t>(floorMcd->entry));
+															->at(static_cast<size_t>(floor->dataSet))->getRecords()
+															->at(static_cast<size_t>(floor->entry));
 									tile->setMapData(
 												part,
-												floorMcd->entry,
-												floorMcd->dataSet,
+												floor->entry,
+												floor->dataSet,
 												O_FLOOR);
 								}
 
@@ -4185,19 +4191,19 @@ void BattlescapeGenerator::drillModules( // private.
 							}
 						}
 
-						if (westMcd != nullptr)
+						if (west != nullptr)
 						{
 							part = _terrainRule->getMapDataSets()
-													->at(static_cast<size_t>(westMcd->dataSet))->getRecords()
-													->at(static_cast<size_t>(westMcd->entry));
+													->at(static_cast<size_t>(west->dataSet))->getRecords()
+													->at(static_cast<size_t>(west->entry));
 							tile = _battleSave->getTile(Position(
 															(i * 10) + static_cast<int>(rect.x),
 															(j * 10) + 9,
 															info->level));
 							tile->setMapData(
 										part,
-										westMcd->entry,
-										westMcd->dataSet,
+										west->entry,
+										west->dataSet,
 										O_WESTWALL);
 							tile = _battleSave->getTile(Position(
 															(i * 10) + static_cast<int>(rect.x) + static_cast<int>(rect.w),
@@ -4205,16 +4211,16 @@ void BattlescapeGenerator::drillModules( // private.
 															info->level));
 							tile->setMapData(
 										part,
-										westMcd->entry,
-										westMcd->dataSet,
+										west->entry,
+										west->dataSet,
 										O_WESTWALL);
 						}
 
-						if (cornerMcd != nullptr)
+						if (corner != nullptr)
 						{
 							part = _terrainRule->getMapDataSets()
-													->at(static_cast<size_t>(cornerMcd->dataSet))->getRecords()
-													->at(static_cast<size_t>(cornerMcd->entry));
+													->at(static_cast<size_t>(corner->dataSet))->getRecords()
+													->at(static_cast<size_t>(corner->entry));
 							tile = _battleSave->getTile(Position(
 															(i * 10) + static_cast<int>(rect.x),
 															(j + 1) * 10,
@@ -4223,8 +4229,8 @@ void BattlescapeGenerator::drillModules( // private.
 							if (tile->getMapData(O_WESTWALL) == nullptr)
 								tile->setMapData(
 											part,
-											cornerMcd->entry,
-											cornerMcd->dataSet,
+											corner->entry,
+											corner->dataSet,
 											O_WESTWALL);
 						}
 					}
@@ -4317,8 +4323,8 @@ bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // pri
 			++i)
 	{
 		const size_t
-			x (static_cast<size_t>((*i).first)),
-			y (static_cast<size_t>((*i).second));
+			x (static_cast<size_t>(i->first)),
+			y (static_cast<size_t>(i->second));
 
 		clearModule(
 				static_cast<int>(x) * 10,

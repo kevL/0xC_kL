@@ -45,6 +45,15 @@ enum TacticalType
 	TCT_MARS2			//  6
 };
 
+namespace ItemPlacedType
+{
+	enum kalafradjalistic
+	{
+		FAILED,			// 0
+		SUCCESS,		// 1
+		SUCCESS_LOAD	// 2
+	};
+}
 
 class BattleItem;
 class BattleUnit;

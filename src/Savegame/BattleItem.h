@@ -95,9 +95,9 @@ private:
 		/// Gets the BattleItem's ammo BattleItem.
 		BattleItem* getAmmoItem() const;
 		/// Sets the BattleItem's ammo BattleItem.
-		int setAmmoItem(
-				BattleItem* const item = nullptr,
-				bool loadSave = false);
+		bool setAmmoItem(
+				BattleItem* const load = nullptr,
+				bool init = false);
 		/// Checks if the BattleItem has unlimited shots.
 		bool selfPowered() const;
 		/// Checks if the BattleItem expends itself after its last shot.
