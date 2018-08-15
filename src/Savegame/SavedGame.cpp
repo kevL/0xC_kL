@@ -75,7 +75,7 @@ const std::string
 	SavedGame::SAVE_EXT				= ".sav";
 
 
-/// *** FUNCTOR ***
+/// ** FUNCTOR ***
 struct IsResearchRule
 	:
 		public std::unary_function<ResearchProject*, bool>
@@ -142,7 +142,11 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_debugArgDone(false),
 		_debugCountryLines(false),
 		_detailGlobe(true),
-		_detailRadar(GRD_BASE)
+		_detailRadar(GRD_BASE),
+		_statTallyScore(0),
+		_statTallyScoreResearch(0),
+		_statTallyFundsEarned(0),
+		_statTallyFundsSpent(0)
 //		_selectedBase(0),
 //		_lastselectedArmor("STR_ARMOR_NONE_UC")
 {
@@ -1008,47 +1012,51 @@ size_t SavedGame::getDfZoom() const
  */
 void SavedGame::balanceBudget()
 {
-	int
-		cashIn  (0),
-		cashOut (0);
+	int64_t
+		earned (0),
+		spent  (0);
 
 	for (std::vector<Base*>::const_iterator
 			i = _bases.begin();
 			i != _bases.end();
 			++i)
 	{
-		cashIn  += (*i)->getCashIncome();
-		cashOut += (*i)->getCashSpent();
+		earned += static_cast<int64_t>((*i)->getCashIncome());
+		spent  += static_cast<int64_t>((*i)->getCashSpent());
 
 		(*i)->zeroCashIncome();
 		(*i)->zeroCashSpent();
 	}
 
-	_income.back() = cashIn; // INCOME
+	_statTallyFundsEarned += earned;
+	_statTallyFundsSpent  += spent;
+
+
+	_income.back() = earned; // INCOME
 	_income.push_back(0);
 	if (_income.size() > 12u)
 		_income.erase(_income.begin());
 
-	_expenditure.back() = cashOut; // EXPENDITURE
+	_expenditure.back() = spent; // EXPENDITURE
 	_expenditure.push_back(0);
 	if (_expenditure.size() > 12u)
 		_expenditure.erase(_expenditure.begin());
 
 
-	const int maintenance (getBaseMaintenances());
+	const int64_t maintenance (static_cast<int64_t>(getBaseMaintenances()));
 
 	_maintenance.back() = maintenance; // MAINTENANCE
 	_maintenance.push_back(0);
 	if (_maintenance.size() > 12u)
 		_maintenance.erase(_maintenance.begin());
 
-	_funds.back() += getTotalCountryFunds() * 1000 - maintenance; // BALANCE
+	_funds.back() += static_cast<int64_t>(getTotalCountryFunds()) * 1000 - maintenance; // BALANCE
 	_funds.push_back(_funds.back());
 	if (_funds.size() > 12u)
 		_funds.erase(_funds.begin());
 
 
-	_researchScores.push_back(0); // SCORE (doesn't include xCom - aLien activity)
+	_researchScores.push_back(0); // RESEARCH
 	if (_researchScores.size() > 12u)
 		_researchScores.erase(_researchScores.begin());
 }
@@ -1122,6 +1130,64 @@ std::vector<int64_t>& SavedGame::getIncomeList()
 std::vector<int64_t>& SavedGame::getExpenditureList()
 {
 	return _expenditure;
+}
+
+/**
+ * Adds monthly score to a cumulative tally.
+ * @param score - score to add to the tally
+ */
+void SavedGame::tallyScore(int score)
+{
+	_statTallyScore += score;
+}
+
+/**
+ * Adds monthly research score to a cumulative tally.
+ * @param score - research score to add to the tally
+ */
+void SavedGame::tallyResearch(int score)
+{
+	_statTallyScoreResearch += score;
+}
+
+/**
+ * Gets the total tallied score.
+ * @note This does not include the current month.
+ * @return, total score
+ */
+int SavedGame::getTallyScore()
+{
+	return _statTallyScore;
+}
+
+/**
+ * Gets the total tallied research score.
+ * @note This does not include the current month.
+ * @return, total research score
+ */
+int SavedGame::getTallyResearch()
+{
+	return _statTallyScoreResearch;
+}
+
+/**
+ * Gets the total tallied funds earned.
+ * @note This does not include the current month.
+ * @return, total funds earned
+ */
+int64_t SavedGame::getTallyEarned()
+{
+	return _statTallyFundsEarned;
+}
+
+/**
+ * Gets the total tallied funds spent.
+ * @note This does not include the current month.
+ * @return, total funds spent
+ */
+int64_t SavedGame::getTallySpent()
+{
+	return _statTallyFundsSpent;
 }
 
 /**

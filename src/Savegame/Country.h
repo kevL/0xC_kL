@@ -37,10 +37,10 @@ enum PactStatus
 
 enum SatisfactionType
 {
-	SAT_SAD,		// 0
+	SAT_MIFFED,		// 0
 	SAT_NEUTRAL,	// 1
-	SAT_HAPPY,		// 2
-	SAT_PROJECT		// 3
+	SAT_SATISFIED,	// 2
+	SAT_JOINED		// 3
 };
 
 class RuleCountry;

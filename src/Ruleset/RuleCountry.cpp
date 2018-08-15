@@ -53,13 +53,13 @@ RuleCountry::~RuleCountry()
  */
 void RuleCountry::load(const YAML::Node& node)
 {
-	_type		= node["type"]			.as<std::string>(_type);
-	_fundsBasic	= node["fundsBasic"]	.as<int>(_fundsBasic);
-	_fundsLimit	= node["fundsLimit"]	.as<int>(_fundsLimit);
-	_labelLon	= node["labelLon"]		.as<double>(_labelLon) * M_PI / 180.; // converts degrees to radians
-	_labelLat	= node["labelLat"]		.as<double>(_labelLat) * M_PI / 180.;
-	_region		= node["region"]		.as<std::string>();
-	_pactScore	= node["pactScore"]		.as<int>(_pactScore);
+	_type       = node["type"]      .as<std::string>(_type);
+	_fundsBasic = node["fundsBasic"].as<int>(_fundsBasic);
+	_fundsLimit = node["fundsLimit"].as<int>(_fundsLimit);
+	_labelLon   = node["labelLon"]  .as<double>(_labelLon) * M_PI / 180.; // converts degrees to radians
+	_labelLat   = node["labelLat"]  .as<double>(_labelLat) * M_PI / 180.;
+	_region     = node["region"]    .as<std::string>();
+	_pactScore  = node["pactScore"] .as<int>(_pactScore);
 
 	std::vector<std::vector<double>> areas;
 	areas = node["areas"].as<std::vector<std::vector<double>>>(areas);

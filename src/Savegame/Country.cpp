@@ -189,44 +189,44 @@ void Country::newMonth(
 	int funds;
 	if (_pact == PACT_NONE)
 	{
-		const int fundsBefore (_funds.back());
-		if (fundsBefore != 0)
+		const int fundsPrior (_funds.back());
+		if (fundsPrior != 0)
 		{
 			const int
 				scorePlayer (totalX / 10 + _actX.back()),
-				scoreAlien  (totalA / 20 + _actA.back());
+				scoreAliens (totalA / 20 + _actA.back());
 
-			funds = static_cast<int>(static_cast<float>(fundsBefore) * RNG::generate(0.05f,0.2f)); // 5% - 20% increase OR decrease
+			funds = static_cast<int>(static_cast<float>(fundsPrior) * RNG::generate(0.05f,0.2f)); // 5% .. 20% increase OR decrease
 
-			if (scorePlayer > scoreAlien + ((diff + 1) * 20))
+			if (scorePlayer > scoreAliens + ((diff + 1) * 20))
 			{
 				funds = std::min(funds,
-								_countryRule->getFundingCap() - fundsBefore);
+								_countryRule->getFundingCap() - fundsPrior);
 				switch (funds)
 				{
 					case 0: // Country's funding is already capped.
 						_satisfaction = SAT_NEUTRAL;
 						break;
 					default:
-						_satisfaction = SAT_HAPPY;
+						_satisfaction = SAT_SATISFIED;
 				}
 			}
-			else if (scorePlayer - (diff * 20) > scoreAlien)
+			else if (scorePlayer - (diff * 20) > scoreAliens)
 			{
-				if (RNG::generate(0, scorePlayer) > scoreAlien)
+				if (RNG::generate(0, scorePlayer) > scoreAliens)
 				{
 					funds = std::min(funds,
-									_countryRule->getFundingCap() - fundsBefore);
+									_countryRule->getFundingCap() - fundsPrior);
 					switch (funds)
 					{
 						case 0: // Country's funding is already capped.
 							_satisfaction = SAT_NEUTRAL;
 							break;
 						default:
-							_satisfaction = SAT_HAPPY;
+							_satisfaction = SAT_SATISFIED;
 					}
 				}
-				else if (RNG::generate(0, scoreAlien) > scorePlayer)
+				else if (RNG::generate(0, scoreAliens) > scorePlayer)
 				{
 					switch (funds)
 					{
@@ -234,7 +234,7 @@ void Country::newMonth(
 							_satisfaction = SAT_NEUTRAL;
 							break;
 						default:
-							_satisfaction = SAT_SAD;
+							_satisfaction = SAT_MIFFED;
 					}
 				}
 				else
@@ -251,18 +251,18 @@ void Country::newMonth(
 						_satisfaction = SAT_NEUTRAL;
 						break;
 					default:
-						_satisfaction = SAT_SAD;
+						_satisfaction = SAT_MIFFED;
 				}
 			}
 
 			switch (_satisfaction)
 			{
-				case SAT_HAPPY:
-					funds += fundsBefore;
+				case SAT_SATISFIED:
+					funds += fundsPrior;
 					break;
 
-				case SAT_SAD:
-					funds = fundsBefore - funds;
+				case SAT_MIFFED:
+					funds = fundsPrior - funds;
 			}
 		}
 		else
@@ -273,7 +273,7 @@ void Country::newMonth(
 					_satisfaction = SAT_NEUTRAL;
 					break;
 				default:
-					_satisfaction = SAT_PROJECT;
+					_satisfaction = SAT_JOINED;
 			}
 		}
 	}
@@ -288,11 +288,12 @@ void Country::newMonth(
 	_actA.push_back(0);
 	_actX.push_back(0);
 
-	if (_actA.size() > 12u)
+	if (_funds.size() > 12u)
 	{
+		_funds.erase(_funds.begin());
+
 		_actA.erase(_actA.begin());
 		_actX.erase(_actX.begin());
-		_funds.erase(_funds.begin());
 	}
 }
 

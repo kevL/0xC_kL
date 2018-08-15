@@ -51,8 +51,8 @@ private:
 	Window* _window;
 
 	/// Totals a vector of integers or floating-points.
-	template <typename T>
-	T total(const std::vector<T>& vect) const;
+//	template <typename T>
+//	T total(const std::vector<T>& vect) const;
 
 
 	public:

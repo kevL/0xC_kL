@@ -390,7 +390,7 @@ void MonthlyReportState::calculateReport() // private.
 		scorePlayer (0),
 		scoreAliens (0);
 
-	const size_t assizedId (_playSave->getFundsList().size() - 1u); // <- index of the month assessed
+	const size_t last (_playSave->getFundsList().size() - 1u); // <- index of the month assessed
 
 	for (std::vector<Region*>::const_iterator		// NOTE: Only Region scores are evaluated;
 			i  = _playSave->getRegions()->begin();	// Country scores are NOT added.
@@ -399,12 +399,12 @@ void MonthlyReportState::calculateReport() // private.
 	{
 		(*i)->newMonth();
 
-		if (assizedId != 0u)
-			_scorePrior += (*i)->getActivityXCom() .at(assizedId - 1u)
-						 - (*i)->getActivityAlien().at(assizedId - 1u);
+		if (last != 0u)
+			_scorePrior += (*i)->getActivityXCom() .at(last - 1u)
+						 - (*i)->getActivityAlien().at(last - 1u);
 
-		scorePlayer += (*i)->getActivityXCom() .at(assizedId);
-		scoreAliens += (*i)->getActivityAlien().at(assizedId);
+		scorePlayer += (*i)->getActivityXCom() .at(last);
+		scoreAliens += (*i)->getActivityAlien().at(last);
 	}
 
 
@@ -418,22 +418,22 @@ void MonthlyReportState::calculateReport() // private.
 					scoreAliens,
 					diff);
 		_fundsDelta += (*i)->getCountryFunds().back()
-					 - (*i)->getCountryFunds().at(assizedId);
+					 - (*i)->getCountryFunds().at(last);
 
 		switch ((*i)->getPactStatus())
 		{
 			case PACT_NONE:
 				switch ((*i)->getSatisfaction()) // NOTE: Pacted Countries have been set 'SAT_NEUTRAL' by Country::newMonth().
 				{
-					case SAT_SAD:
+					case SAT_MIFFED:
 						_listSad.push_back((*i)->getRules()->getType());
 						break;
 
-					case SAT_HAPPY:
+					case SAT_SATISFIED:
 						_listHappy.push_back((*i)->getRules()->getType());
 						break;
 
-					case SAT_PROJECT:
+					case SAT_JOINED:
 						_listProject.push_back((*i)->getRules()->getType());
 				}
 				break;
@@ -444,11 +444,15 @@ void MonthlyReportState::calculateReport() // private.
 		}
 	}
 
-	if (assizedId != 0u)
-		_scorePrior += _playSave->getResearchScores().at(assizedId - 1u); // add research-scores.
+	if (last != 0u)
+		_scorePrior += _playSave->getResearchScores().at(last - 1u); // add research-scores.
 
-	scorePlayer += _playSave->getResearchScores().at(assizedId); // add research-scores.
-	_scoreTotal = scorePlayer - scoreAliens;
+	int scoreResearch = _playSave->getResearchScores().at(last); // add research-scores.
+	
+	_scoreTotal = scorePlayer + scoreResearch - scoreAliens;
+
+	_playSave->tallyScore(_scoreTotal);
+	_playSave->tallyResearch(scoreResearch);
 
 	_playSave->balanceBudget(); // handle cash-accounts.
 }

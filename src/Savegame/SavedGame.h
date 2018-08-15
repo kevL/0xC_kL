@@ -172,7 +172,10 @@ private:
 		_detailGlobe,
 		_ironman,
 		_warnedFunds;
-	int _monthsElapsed;
+	int
+		_monthsElapsed,
+		_statTallyScore,
+		_statTallyScoreResearch;
 	size_t
 		_dfZoom,
 		_globeZoom;
@@ -182,6 +185,10 @@ private:
 		_dfLon,
 		_globeLat,
 		_globeLon;
+
+	int64_t
+		_statTallyFundsEarned,
+		_statTallyFundsSpent;
 
 	DifficultyLevel _difficulty;
 	EndType _end;
@@ -334,6 +341,19 @@ private:
 		std::vector<int64_t>& getIncomeList();
 		/// Gets the list of monthly expenditure-values.
 		std::vector<int64_t>& getExpenditureList();
+
+		/// Adds monthly score to a cumulative tally.
+		void tallyScore(int score);
+		/// Adds monthly research score to a cumulative tally.
+		void tallyResearch(int score);
+		/// Gets the total tallied score.
+		int getTallyScore();
+		/// Gets the total tallied research score.
+		int getTallyResearch();
+		/// Gets the total tallied funds earned.
+		int64_t getTallyEarned();
+		/// Gets the total tallied funds spent.
+		int64_t getTallySpent();
 
 		/// Gets the current time/date.
 		GameTime* getTime() const;

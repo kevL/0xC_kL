@@ -846,12 +846,12 @@ void AlienMission::createAlienBase( // private.
 														regionRule,
 														area));
 
-		AlienBase* const alienBase (new AlienBase(ruleDeploy));
-		alienBase->setAlienRace(_raceType);
+		AlienBase* const base (new AlienBase(ruleDeploy));
+		base->setAlienRace(_raceType);
 //		alienBase->setId(game.getId(deployment->getMarkerName())); // done in AlienBaseDetectedState.
-		alienBase->setLongitude(pos.first);
-		alienBase->setLatitude(pos.second);
-		_playSave.getAlienBases()->push_back(alienBase);
+		base->setLongitude(pos.first);
+		base->setLatitude(pos.second);
+		_playSave.getAlienBases()->push_back(base);
 
 		addScore( // alm_BASE, alm_INFILT
 				pos.first,
