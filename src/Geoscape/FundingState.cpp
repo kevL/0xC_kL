@@ -183,7 +183,7 @@ FundingState::FundingState()
 					woststr5;
 
 				const std::vector<int>
-					funds ((*j)->getFunding()),
+					funds ((*j)->getCountryFunds()),
 					actX  ((*j)->getActivityXCom()),
 					actA  ((*j)->getActivityAlien());
 
@@ -233,7 +233,7 @@ FundingState::FundingState()
 		}
 	}
 
-	const int gross (_game->getSavedGame()->getCountryFunding() * 1000);
+	const int gross (_game->getSavedGame()->getTotalCountryFunds() * 1000);
 	int net (gross);
 
 	for (std::vector<Base*>::const_iterator

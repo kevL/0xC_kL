@@ -28,23 +28,28 @@ namespace OpenXcom
 {
 
 /**
- * Initializes the Country from a specified rule.
+ * Instantiates the Country from a specified rule.
  * @param countryRule	- pointer to RuleCountry
- * @param genFunds		- true to generate new funding (default false)
+ * @param genFunds		- true to generate funding at start (default false)
  */
 Country::Country(
 		const RuleCountry* const countryRule,
 		bool genFunds)
 	:
 		_countryRule(countryRule),
-		_funding(0),
-		_pactStatus(PACT_NONE),
+		_funds(0),
+		_pact(PACT_NONE),
 		_satisfaction(SAT_NEUTRAL),
-		_recentActA(-1),
-		_recentActX(-1)
+		_actAhrs(-1),
+		_actXhrs(-1)
 {
+	int funds;
 	if (genFunds == true)
-		_funding.push_back(_countryRule->generateFunding()); // 50% - 200% or 0.
+		funds = _countryRule->generateFunding(); // 50% .. 200% or 0.
+	else
+		funds = 0;
+
+	_funds.push_back(funds);
 
 	_actA.push_back(0);
 	_actX.push_back(0);
@@ -62,13 +67,13 @@ Country::~Country()
  */
 void Country::load(const YAML::Node& node)
 {
-	_funding	= node["funding"]	.as<std::vector<int>>(_funding);
-	_actA		= node["actA"]		.as<std::vector<int>>(_actA);
-	_actX		= node["actX"]		.as<std::vector<int>>(_actX);
-	_recentActA	= node["recentActA"].as<int>(_recentActA);
-	_recentActX	= node["recentActX"].as<int>(_recentActX);
+	_funds   = node["funds"]    .as<std::vector<int>>(_funds);
+	_actA    = node["actA"]     .as<std::vector<int>>(_actA);
+	_actX    = node["actX"]     .as<std::vector<int>>(_actX);
+	_actAhrs = node["actAhours"].as<int>(_actAhrs);
+	_actXhrs = node["actXhours"].as<int>(_actXhrs);
 
-	_pactStatus = static_cast<PactStatus>(node["pactStatus"].as<int>(static_cast<int>(_pactStatus)));
+	_pact = static_cast<PactStatus>(node["pactStatus"].as<int>(static_cast<int>(_pact)));
 }
 
 /**
@@ -79,14 +84,14 @@ YAML::Node Country::save() const
 {
 	YAML::Node node;
 
-	node["type"]		= _countryRule->getType();
-	node["funding"]		= _funding;
-	node["actA"]		= _actA;
-	node["actX"]		= _actX;
-	node["recentActA"]	= _recentActA;
-	node["recentActX"]	= _recentActX;
+	node["type"]      = _countryRule->getType();
+	node["funds"]     = _funds;
+	node["actA"]      = _actA;
+	node["actX"]      = _actX;
+	node["actAhours"] = _actAhrs;
+	node["actXhours"] = _actXhrs;
 
-	if (_pactStatus != PACT_NONE) node["pactStatus"] = static_cast<int>(_pactStatus);
+	if (_pact != PACT_NONE) node["pactStatus"] = static_cast<int>(_pact);
 
 	return node;
 }
@@ -111,11 +116,11 @@ const std::string& Country::getType() const
 
 /**
  * Gets this Country's current monthly funding.
- * @return, reference to a vector of monthly funds
+ * @return, reference to a vector of monthly funds ($thousands)
  */
-std::vector<int>& Country::getFunding()
+std::vector<int>& Country::getCountryFunds()
 {
-	return _funding;
+	return _funds;
 }
 
 /**
@@ -136,6 +141,7 @@ SatisfactionType Country::getSatisfaction() const
  */
 void Country::addActivityAlien(int activity)
 {
+	_actAhrs = 0;
 	_actA.back() += activity;
 }
 
@@ -154,6 +160,7 @@ std::vector<int>& Country::getActivityAlien()
  */
 void Country::addActivityXCom(int activity)
 {
+	_actXhrs = 0;
 	_actX.back() += activity;
 }
 
@@ -180,9 +187,9 @@ void Country::newMonth(
 {
 	//Log(LOG_INFO) << "Country::newMonth()";
 	int funds;
-	if (_pactStatus == PACT_NONE)
+	if (_pact == PACT_NONE)
 	{
-		const int fundsBefore (_funding.back());
+		const int fundsBefore (_funds.back());
 		if (fundsBefore != 0)
 		{
 			const int
@@ -276,7 +283,7 @@ void Country::newMonth(
 		_satisfaction = SAT_NEUTRAL;
 	}
 
-	_funding.push_back(funds);
+	_funds.push_back(funds);
 
 	_actA.push_back(0);
 	_actX.push_back(0);
@@ -285,7 +292,7 @@ void Country::newMonth(
 	{
 		_actA.erase(_actA.begin());
 		_actX.erase(_actX.begin());
-		_funding.erase(_funding.begin());
+		_funds.erase(_funds.begin());
 	}
 }
 
@@ -295,7 +302,7 @@ void Country::newMonth(
  */
 void Country::setPactStatus(const PactStatus pact)
 {
-	_pactStatus = pact;
+	_pact = pact;
 }
 
 /**
@@ -304,76 +311,41 @@ void Country::setPactStatus(const PactStatus pact)
  */
 PactStatus Country::getPactStatus() const
 {
-	return _pactStatus;
+	return _pact;
 }
 
 /**
- * Handles recent aLien activity in this Country for GraphsState blink.
- * @param activity	- true to reset the startcounter (default true)
- * @param graphs	- not sure lol (default false)
- * @return, true if there is activity
+ * Advances recent activity in this Country.
  */
-bool Country::recentActivityAlien(
-		bool activity,
-		bool graphs)
+void Country::stepActivity()
 {
-	if (activity == true)
-		_recentActA = 0;
-	else if (_recentActA != -1)
-	{
-		if (graphs == true)
-			return true;
+	if (_actAhrs != -1 && ++_actAhrs == 24) // aLien bases tally activity every 24 hrs so don't go lower than 24 hrs.
+		_actAhrs = -1;
 
-
-		++_recentActA;
-
-		if (_recentActA == 24) // aLien bases show activity every 24 hrs.
-			_recentActA = -1;
-	}
-
-	if (_recentActA == -1)
-		return false;
-
-	return true;
+	if (_actXhrs != -1 && ++_actXhrs == 24)
+		_actXhrs = -1;
 }
 
 /**
- * Handles recent XCOM activity in this Country for GraphsState blink.
- * @param activity	- true to reset the startcounter (default true)
- * @param graphs	- not sure lol (default false)
- * @return, true if there is activity
+ * Checks if there has been activity in this Country recently.
+ * @param aLien - true to check aLien activity, false for xCom activity
+ * @return, true if recent activity
  */
-bool Country::recentActivityXCom(
-		bool activity,
-		bool graphs)
+bool Country::checkActivity(bool aLien)
 {
-	if (activity == true)
-		_recentActX = 0;
-	else if (_recentActX != -1)
-	{
-		if (graphs == true)
-			return true;
+	if (aLien == true)
+		return (_actAhrs != -1);
 
-
-		++_recentActX;
-
-		if (_recentActX == 24) // aLien bases show activity every 24 hrs.
-			_recentActX = -1;
-	}
-
-	if (_recentActX == -1)
-		return false;
-
-	return true;
+	return (_actXhrs != -1);
 }
 
 /**
  * Resets activity.
  */
-void Country::resetActivity()
+void Country::clearActivity()
 {
-	_recentActA =
-	_recentActX = -1;
+	_actAhrs =
+	_actXhrs = -1;
 }
 
 }

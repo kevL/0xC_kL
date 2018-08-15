@@ -1042,7 +1042,7 @@ void SavedGame::balanceBudget()
 	if (_maintenance.size() > 12u)
 		_maintenance.erase(_maintenance.begin());
 
-	_funds.back() += getCountryFunding() * 1000 - maintenance; // BALANCE
+	_funds.back() += getTotalCountryFunds() * 1000 - maintenance; // BALANCE
 	_funds.push_back(_funds.back());
 	if (_funds.size() > 12u)
 		_funds.erase(_funds.begin());
@@ -1055,9 +1055,9 @@ void SavedGame::balanceBudget()
 
 /**
  * Adds up the monthly funding of all the Countries.
- * @return, total funding
+ * @return, total in $thousands
  */
-int SavedGame::getCountryFunding() const
+int SavedGame::getTotalCountryFunds() const
 {
 	int total (0);
 	for (std::vector<Country*>::const_iterator
@@ -1065,7 +1065,7 @@ int SavedGame::getCountryFunding() const
 			i != _countries.end();
 			++i)
 	{
-		total += (*i)->getFunding().back();
+		total += (*i)->getCountryFunds().back();
 	}
 	return total;
 }
@@ -2381,15 +2381,9 @@ void SavedGame::scorePoints(
 		if ((*i)->getRules()->insideRegion(lon,lat) == true)
 		{
 			if (aLien == true)
-			{
 				(*i)->addActivityAlien(pts);
-				(*i)->recentActivityAlien();
-			}
-			else // XCom
-			{
+			else
 				(*i)->addActivityXCom(pts);
-				(*i)->recentActivityXCom();
-			}
 			break;
 		}
 	}
@@ -2402,15 +2396,9 @@ void SavedGame::scorePoints(
 		if ((*i)->getRules()->insideCountry(lon,lat) == true)
 		{
 			if (aLien == true)
-			{
 				(*i)->addActivityAlien(pts);
-				(*i)->recentActivityAlien();
-			}
-			else // XCom
-			{
+			else
 				(*i)->addActivityXCom(pts);
-				(*i)->recentActivityXCom();
-			}
 			break;
 		}
 	}
@@ -2432,29 +2420,17 @@ void SavedGame::scorePoints(
 	if (region != nullptr)
 	{
 		if (aLien == true)
-		{
 			region->addActivityAlien(pts);
-			region->recentActivityAlien();
-		}
-		else // XCom
-		{
+		else
 			region->addActivityXCom(pts);
-			region->recentActivityXCom();
-		}
 	}
 
 	if (country != nullptr)
 	{
 		if (aLien == true)
-		{
 			country->addActivityAlien(pts);
-			country->recentActivityAlien();
-		}
-		else // XCom
-		{
+		else
 			country->addActivityXCom(pts);
-			country->recentActivityXCom();
-		}
 	}
 }
 

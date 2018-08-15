@@ -319,7 +319,7 @@ private:
 		/// Handles player's monthly funding.
 		void balanceBudget();
 		/// Gets the total country-funding.
-		int getCountryFunding() const;
+		int getTotalCountryFunds() const;
 
 		/// Sets new funds.
 		void setFunds(int64_t funds);

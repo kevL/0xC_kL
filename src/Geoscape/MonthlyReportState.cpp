@@ -64,9 +64,9 @@ namespace OpenXcom
 MonthlyReportState::MonthlyReportState()
 	:
 		_defeated(false),
-		_ratingPrior(0),
-		_ratingTotal(0),
-		_deltaFunds(0),
+		_scorePrior(0),
+		_scoreTotal(0),
+		_fundsDelta(0),
 		_playSave(_game->getSavedGame())
 {
 	_window		= new Window(this);
@@ -116,6 +116,7 @@ MonthlyReportState::MonthlyReportState()
 
 	calculateReport(); // <- sets Rating etc -->
 
+
 	int
 		month (_playSave->getTime()->getMonth() - 1),
 		year  (_playSave->getTime()->getYear());
@@ -146,12 +147,12 @@ MonthlyReportState::MonthlyReportState()
 
 
 	std::wostringstream woststr;
-	if (_deltaFunds > 0) woststr << '+';
-	woststr << Text::formatCurrency(_deltaFunds * 1000);
+	if (_fundsDelta > 0) woststr << '+';
+	woststr << Text::formatCurrency(_fundsDelta * 1000);
 	_txtChange->setText(tr("STR_FUNDING_CHANGE_").arg(woststr.str()));
 
 //	woststr.str(L"");
-//	woststr << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_playSave->getCountryFunding() * 1000);
+//	woststr << tr("STR_INCOME") << L"> \x01" << Text::formatCurrency(_playSave->getTotalCountryFunds() * 1000);
 //	woststr << L" (";
 //	if (_deltaFunds > 0) woststr << '+';
 //	woststr << Text::formatCurrency(_deltaFunds) << L")";
@@ -175,14 +176,14 @@ MonthlyReportState::MonthlyReportState()
 
 	std::string track;
 
-	if (_ratingTotal < defeatThreshold)
+	if (_scoreTotal < defeatThreshold)
 	{
 		st = TAC_RATING[0u]; // terrible
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 
 		_lstCouncil->addRow(1, tr("STR_COUNCIL_IS_DISSATISFIED_1").c_str());
 
-		if (_ratingPrior >= defeatThreshold) // check defeat by rating
+		if (_scorePrior >= defeatThreshold) // check defeat by rating
 		{
 			_lstCouncil->addRow(1, L"");
 			_lstCouncil->addRow(1, tr("STR_COUNCIL_IS_DISSATISFIED_2").c_str());
@@ -193,12 +194,12 @@ MonthlyReportState::MonthlyReportState()
 	else
 	{
 		std::string satisfaction;
-		if (_ratingTotal > defeatThreshold + 10000)
+		if (_scoreTotal > defeatThreshold + 10000)
 		{
 			st = TAC_RATING[5u]; // terrific
 			satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
 		}
-		else if (_ratingTotal > defeatThreshold + 5000)
+		else if (_scoreTotal > defeatThreshold + 5000)
 		{
 			st = TAC_RATING[4u]; // excellent
 			satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
@@ -207,9 +208,9 @@ MonthlyReportState::MonthlyReportState()
 		{
 			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
 
-			if (_ratingTotal > defeatThreshold + 2500)
+			if (_scoreTotal > defeatThreshold + 2500)
 				st = TAC_RATING[3u]; // good
-			else if (_ratingTotal > defeatThreshold + 1000)
+			else if (_scoreTotal > defeatThreshold + 1000)
 				st = TAC_RATING[2u]; // okay
 			else
 				st = TAC_RATING[1u]; // poor
@@ -219,7 +220,7 @@ MonthlyReportState::MonthlyReportState()
 
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT;
 	}
-	_txtRating->setText(tr("STR_MONTHLY_RATING__").arg(_ratingTotal).arg(tr(st)));
+	_txtRating->setText(tr("STR_MONTHLY_RATING__").arg(_scoreTotal).arg(tr(st)));
 
 
 	if (_defeated == false)
@@ -339,7 +340,7 @@ void MonthlyReportState::init()
 /**
  * Updates all activity counters, gathers all scores, gets countries to sign
  * pacts, adjusts their fundings, assesses their satisfaction, and finally
- * calculates overall total score, with thanks to Volutar for the formulae.
+ * calculates overall total score, with thanks to Volutar for the formula.
  */
 void MonthlyReportState::calculateReport() // private.
 {
@@ -370,7 +371,7 @@ void MonthlyReportState::calculateReport() // private.
 					}
 				}
 
-				if (pactStatus == PACT_PACTED) // rand 50..100% if already pacted, full pts for about-to-pact Countries.
+				if (pactStatus == PACT_PACTED) // rand 50% .. 100% if already pacted, full pts for about-to-pact Countries.
 					pactScore = RNG::generate(pactScore >> 1u,
 											  pactScore);
 
@@ -384,10 +385,10 @@ void MonthlyReportState::calculateReport() // private.
 		}
 	}
 
-	_ratingPrior = 0;
+	_scorePrior = 0;
 	int
 		scorePlayer (0),
-		scoreAlien  (0);
+		scoreAliens (0);
 
 	const size_t assizedId (_playSave->getFundsList().size() - 1u); // <- index of the month assessed
 
@@ -399,11 +400,11 @@ void MonthlyReportState::calculateReport() // private.
 		(*i)->newMonth();
 
 		if (assizedId != 0u)
-			_ratingPrior += (*i)->getActivityXCom() .at(assizedId - 1u)
-						  - (*i)->getActivityAlien().at(assizedId - 1u);
+			_scorePrior += (*i)->getActivityXCom() .at(assizedId - 1u)
+						 - (*i)->getActivityAlien().at(assizedId - 1u);
 
 		scorePlayer += (*i)->getActivityXCom() .at(assizedId);
-		scoreAlien  += (*i)->getActivityAlien().at(assizedId);
+		scoreAliens += (*i)->getActivityAlien().at(assizedId);
 	}
 
 
@@ -414,10 +415,10 @@ void MonthlyReportState::calculateReport() // private.
 	{
 		(*i)->newMonth( // calculates satisfaction & funding & updates pact-vars.
 					scorePlayer,
-					scoreAlien,
+					scoreAliens,
 					diff);
-		_deltaFunds += (*i)->getFunding().back()
-					 - (*i)->getFunding().at(assizedId);
+		_fundsDelta += (*i)->getCountryFunds().back()
+					 - (*i)->getCountryFunds().at(assizedId);
 
 		switch ((*i)->getPactStatus())
 		{
@@ -444,10 +445,10 @@ void MonthlyReportState::calculateReport() // private.
 	}
 
 	if (assizedId != 0u)
-		_ratingPrior += _playSave->getResearchScores().at(assizedId - 1u); // add research-scores.
+		_scorePrior += _playSave->getResearchScores().at(assizedId - 1u); // add research-scores.
 
 	scorePlayer += _playSave->getResearchScores().at(assizedId); // add research-scores.
-	_ratingTotal = scorePlayer - scoreAlien;
+	_scoreTotal = scorePlayer - scoreAliens;
 
 	_playSave->balanceBudget(); // handle cash-accounts.
 }

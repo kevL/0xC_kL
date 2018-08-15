@@ -56,18 +56,18 @@ class Country
 
 private:
 	int
-		_recentActA,
-		_recentActX;
+		_actAhrs, // aLiens
+		_actXhrs; // xCom
 
-	PactStatus _pactStatus;
+	PactStatus _pact;
 	SatisfactionType _satisfaction;
 
 	const RuleCountry* _countryRule;
 
 	std::vector<int>
-		_actA,
-		_actX,
-		_funding;
+		_actA, // aLiens
+		_actX, // xCom
+		_funds;
 
 
 	public:
@@ -89,7 +89,7 @@ private:
 		const std::string& getType() const;
 
 		/// Gets the Country's funding.
-		std::vector<int>& getFunding();
+		std::vector<int>& getCountryFunds();
 
 		/// Gets the Country's satisfaction-level.
 		SatisfactionType getSatisfaction() const;
@@ -114,16 +114,12 @@ private:
 		/// Gets the Country's pact-status.
 		PactStatus getPactStatus() const;
 
-		/// Handles recent aLien-activity in the Country for GraphsState blink.
-		bool recentActivityAlien(
-				bool activity = true,
-				bool graphs = false);
-		/// Handles recent XCOM-activity in the Country for GraphsState blink.
-		bool recentActivityXCom(
-				bool activity = true,
-				bool graphs = false);
-		/// Resets activity.
-		void resetActivity();
+		/// Advances recent activity in the Country for GraphsState blink.
+		void stepActivity();
+		/// Checks recent activity in the Country for GraphsState blink.
+		bool checkActivity(bool aLien);
+		/// Resets both aLien and xCom activity via GraphsState button.
+		void clearActivity();
 };
 
 }

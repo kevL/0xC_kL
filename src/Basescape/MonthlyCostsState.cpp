@@ -201,7 +201,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 					Text::formatCurrency(base->getMonthlyMaintenace()).c_str());
 
 	woststr.str(L"");
-	woststr << tr("STR_INCOME") << L" " << Text::formatCurrency(_game->getSavedGame()->getCountryFunding() * 1000);
+	woststr << tr("STR_INCOME") << L" " << Text::formatCurrency(_game->getSavedGame()->getTotalCountryFunds() * 1000);
 	_txtIncome->setText(woststr.str());
 
 	_lstTotal->setColumns(2, 47,56);

@@ -39,14 +39,14 @@ class Region
 
 private:
 	int
-		_recentActA,
-		_recentActX;
+		_actAhrs, // aLiens
+		_actXhrs; // xCom
 
 	const RuleRegion* _regionRule;
 
 	std::vector<int>
-		_actA,
-		_actX;
+		_actA, // aLiens
+		_actX; // xCom
 
 
 	public:
@@ -65,28 +65,24 @@ private:
 		/// Get the Region's type.
 		std::string getType() const;
 
-		/// Adds alien activity in the Region.
+		/// Adds aLien activity in the Region.
 		void addActivityAlien(int activity);
-		/// Adds xcom activity in the Region.
-		void addActivityXCom(int activity);
-		/// Gets xcom activity for the Region.
+		/// Gets aLien activity for the Region.
 		std::vector<int>& getActivityAlien();
-		/// Gets xcom activity for the Region.
+		/// Adds xCom activity in the Region.
+		void addActivityXCom(int activity);
+		/// Gets xCom activity for the Region.
 		std::vector<int>& getActivityXCom();
 
 		/// Stores last month's counters and starts new counters.
 		void newMonth();
 
-		/// Handles recent aLien-activity in the Region for GraphsState blink.
-		bool recentActivityAlien(
-				bool activity = true,
-				bool graphs = false);
-		/// Handles recent XCOM-activity in the Region for GraphsState blink.
-		bool recentActivityXCom(
-				bool activity = true,
-				bool graphs = false);
-		/// Resets activity in the Region.
-		void resetActivity();
+		/// Advances recent activity in the Region for GraphsState blink.
+		void stepActivity();
+		/// Checks recent activity in the Region for GraphsState blink.
+		bool checkActivity(bool aLien);
+		/// Resets both aLien and xCom activity via GraphsState button.
+		void clearActivity();
 };
 
 }

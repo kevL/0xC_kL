@@ -270,8 +270,8 @@ GraphsState::GraphsState()
 
 		actA = (*i)->getActivityAlien().back();
 		actX = (*i)->getActivityXCom().back();
-		blinkA = (*i)->recentActivityAlien(false, true);
-		blinkX = (*i)->recentActivityXCom(false, true);
+		blinkA = (*i)->checkActivity(true);
+		blinkX = (*i)->checkActivity(false);
 
 		// put all the regions into toggles
 		_regionToggles.push_back(new GraphBtnInfo(
@@ -371,8 +371,8 @@ GraphsState::GraphsState()
 
 		actA = (*i)->getActivityAlien().back();
 		actX = (*i)->getActivityXCom().back();
-		blinkA = (*i)->recentActivityAlien(false, true);
-		blinkX = (*i)->recentActivityXCom(false, true);
+		blinkA = (*i)->checkActivity(true);
+		blinkX = (*i)->checkActivity(false);
 
 		// put all the countries into toggles
 		_countryToggles.push_back(new GraphBtnInfo(
@@ -1228,13 +1228,13 @@ void GraphsState::btnResetPress(Action*) // private.
 			i = _regions->begin();
 			i != _regions->end();
 			++i)
-		(*i)->resetActivity();
+		(*i)->clearActivity();
 
 	for (std::vector<Country*>::const_iterator
 			i = _countries->begin();
 			i != _countries->end();
 			++i)
-		(*i)->resetActivity();
+		(*i)->clearActivity();
 }
 
 /**
@@ -1773,7 +1773,7 @@ void GraphsState::drawCountryLines() // private.
 			if (_alien == true)
 				act = _countries->at(j)->getActivityAlien().at(i);
 			else if (_income == true)
-				act = _countries->at(j)->getFunding().at(i);
+				act = _countries->at(j)->getCountryFunds().at(i);
 			else
 				act = _countries->at(j)->getActivityXCom().at(i);
 
@@ -1870,9 +1870,9 @@ void GraphsState::drawCountryLines() // private.
 			}
 			else if (_income == true)
 			{
-				if (j < country->getFunding().size())
+				if (j < country->getCountryFunds().size())
 				{
-					reduction = country->getFunding().at(country->getFunding().size() - (j + 1u));
+					reduction = country->getCountryFunds().at(country->getCountryFunds().size() - (j + 1u));
 					y = static_cast<Sint16>(y - static_cast<int>(Round(static_cast<float>(reduction) / pixelUnits)));
 					totals[j] += reduction;
 				}

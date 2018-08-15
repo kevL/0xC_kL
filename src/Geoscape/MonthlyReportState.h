@@ -48,9 +48,9 @@ class MonthlyReportState
 private:
 	bool _defeated;
 	int
-		_deltaFunds,
-		_ratingPrior,
-		_ratingTotal;
+		_fundsDelta,
+		_scorePrior,
+		_scoreTotal;
 
 	SavedGame* _playSave;
 	Text

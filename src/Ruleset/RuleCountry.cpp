@@ -34,11 +34,11 @@ namespace OpenXcom
 RuleCountry::RuleCountry(const std::string& type)
 	:
 		_type(type),
-		_fundingBase(0),
-		_fundingCap(0),
+		_fundsBasic(0),
+		_fundsLimit(0),
 		_labelLon(0.),
 		_labelLat(0.),
-		_pactScore(0)
+		_pactScore(10) // default 10pts for basic pactscore
 {}
 
 /**
@@ -53,13 +53,13 @@ RuleCountry::~RuleCountry()
  */
 void RuleCountry::load(const YAML::Node& node)
 {
-	_type			= node["type"]			.as<std::string>(_type);
-	_fundingBase	= node["fundingBase"]	.as<int>(_fundingBase);
-	_fundingCap		= node["fundingCap"]	.as<int>(_fundingCap);
-	_labelLon		= node["labelLon"]		.as<double>(_labelLon) * M_PI / 180.; // converts degrees to radians
-	_labelLat		= node["labelLat"]		.as<double>(_labelLat) * M_PI / 180.; // converts degrees to radians
-	_region			= node["region"]		.as<std::string>();
-	_pactScore		= node["pactScore"]		.as<int>(_pactScore);
+	_type		= node["type"]			.as<std::string>(_type);
+	_fundsBasic	= node["fundsBasic"]	.as<int>(_fundsBasic);
+	_fundsLimit	= node["fundsLimit"]	.as<int>(_fundsLimit);
+	_labelLon	= node["labelLon"]		.as<double>(_labelLon) * M_PI / 180.; // converts degrees to radians
+	_labelLat	= node["labelLat"]		.as<double>(_labelLat) * M_PI / 180.;
+	_region		= node["region"]		.as<std::string>();
+	_pactScore	= node["pactScore"]		.as<int>(_pactScore);
 
 	std::vector<std::vector<double>> areas;
 	areas = node["areas"].as<std::vector<std::vector<double>>>(areas);
@@ -100,13 +100,19 @@ const std::string& RuleCountry::getType() const
  */
 int RuleCountry::generateFunding() const
 {
-	const int funds (RNG::generate( // 50% - 200%
-								_fundingBase >> 1u,
-								_fundingBase << 1u));
-	const int pct (static_cast<int>(static_cast<float>(funds) / 10.f));
-	if (RNG::percent(pct) == true)
-		return funds;
+	if (_fundsBasic != 0)
+	{
+		int pct (static_cast<int>(static_cast<float>(_fundsBasic) / 10.f));
+		if (pct == 0) pct = 1;
 
+		if (RNG::percent(pct) == true)
+		{
+			const int funds (RNG::generate( // 50% .. 200%
+										_fundsBasic >> 1u,
+										_fundsBasic << 1u));
+			return funds;
+		}
+	}
 	return 0;
 }
 
@@ -117,7 +123,7 @@ int RuleCountry::generateFunding() const
  */
 int RuleCountry::getFundingCap() const
 {
-	return _fundingCap;
+	return _fundsLimit;
 }
 
 /**
@@ -163,18 +169,18 @@ bool RuleCountry::insideCountry(
 			++i)
 	{
 		bool
-			inLon,
-			inLat;
+			insideLon,
+			insideLat;
 
 		if (_lonMin[i] <= _lonMax[i])
-			inLon = (lon >= _lonMin[i] && lon < _lonMax[i]);
+			insideLon = (lon >= _lonMin[i] && lon < _lonMax[i]);
 		else
-			inLon = (lon >= _lonMin[i] && lon < M_PI * 2.)
-					|| (lon >= 0. && lon < _lonMax[i]);
+			insideLon = (lon >= _lonMin[i] && lon < M_PI * 2.)
+					 || (lon >= 0. && lon < _lonMax[i]);
 
-		inLat = (lat >= _latMin[i] && lat < _latMax[i]);
+		insideLat = (lat >= _latMin[i] && lat < _latMax[i]);
 
-		if (inLon && inLat)
+		if (insideLon && insideLat)
 			return true;
 	}
 

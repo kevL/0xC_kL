@@ -28,14 +28,14 @@ namespace OpenXcom
 {
 
 /**
- * Initializes a Region with the specified rule.
+ * Instantiates the Region with a specified rule.
  * @param regionRule - pointer to RuleRegion
  */
 Region::Region(const RuleRegion* const regionRule)
 	:
 		_regionRule(regionRule),
-		_recentActA(-1),
-		_recentActX(-1)
+		_actAhrs(-1),
+		_actXhrs(-1)
 {
 	_actA.push_back(0);
 	_actX.push_back(0);
@@ -48,36 +48,36 @@ Region::~Region()
 {}
 
 /**
- * Loads the region from a YAML file.
+ * Loads this Region from a YAML file.
  * @param node - reference a YAML node
  */
 void Region::load(const YAML::Node& node)
 {
-	_actA		= node["actA"]		.as<std::vector<int>>(_actA);
-	_actX		= node["actX"]		.as<std::vector<int>>(_actX);
-	_recentActA	= node["recentActA"].as<int>(_recentActA);
-	_recentActX	= node["recentActX"].as<int>(_recentActX);
+	_actA		= node["actA"]   .as<std::vector<int>>(_actA);
+	_actX		= node["actX"]   .as<std::vector<int>>(_actX);
+	_actAhrs	= node["actAhrs"].as<int>(_actAhrs);
+	_actXhrs	= node["actXhrs"].as<int>(_actXhrs);
 }
 
 /**
- * Saves the region to a YAML file.
+ * Saves this Region to a YAML file.
  * @return, YAML node
  */
 YAML::Node Region::save() const
 {
 	YAML::Node node;
 
-	node["type"]		= _regionRule->getType();
-	node["actA"]		= _actA;
-	node["actX"]		= _actX;
-	node["recentActA"]	= _recentActA;
-	node["recentActX"]	= _recentActX;
+	node["type"]    = _regionRule->getType();
+	node["actA"]    = _actA;
+	node["actX"]    = _actX;
+	node["actAhrs"] = _actAhrs;
+	node["actXhrs"] = _actXhrs;
 
 	return node;
 }
 
 /**
- * Gets the ruleset for the region's type.
+ * Gets the ruleset for this Region's type.
  * @return, pointer to RuleRegion
  */
 const RuleRegion* Region::getRules() const
@@ -86,7 +86,7 @@ const RuleRegion* Region::getRules() const
 }
 
 /**
- * Gets the region's type.
+ * Gets this Region's type.
  * @return, region type
  */
 std::string Region::getType() const
@@ -95,25 +95,17 @@ std::string Region::getType() const
 }
 
 /**
- * Adds to the region's alien activity level.
+ * Adds to this Region's aLien activity level.
  * @param activity - amount to add
  */
 void Region::addActivityAlien(int activity)
 {
+	_actAhrs = 0;
 	_actA.back() += activity;
 }
 
 /**
- * Adds to the region's xcom activity level.
- * @param activity - amount to add
- */
-void Region::addActivityXCom(int activity)
-{
-	_actX.back() += activity;
-}
-
-/**
- * Gets the region's alien activity level.
+ * Gets this Region's aLien activity level.
  * @return, activity level
  */
 std::vector<int>& Region::getActivityAlien()
@@ -122,7 +114,17 @@ std::vector<int>& Region::getActivityAlien()
 }
 
 /**
- * Gets the region's xcom activity level.
+ * Adds to this Region's xCom activity level.
+ * @param activity - amount to add
+ */
+void Region::addActivityXCom(int activity)
+{
+	_actXhrs = 0;
+	_actX.back() += activity;
+}
+
+/**
+ * Gets this Region's xCom activity level.
  * @return, activity level
  */
 std::vector<int>& Region::getActivityXCom()
@@ -146,74 +148,37 @@ void Region::newMonth()
 }
 
 /**
- * Handles recent aLien activity in this region for GraphsState blink.
- * @param activity	- true to reset the startcounter (default true)
- * @param graphs	- not sure lol (default false)
- * @return, true if there is activity
+ * Advances recent activity in this Region.
  */
-bool Region::recentActivityAlien(
-		bool activity,
-		bool graphs)
+void Region::stepActivity()
 {
-	if (activity == true)
-		_recentActA = 0;
-	else if (_recentActA != -1)
-	{
-		if (graphs == true)
-			return true;
-		else
-		{
-			++_recentActA;
+	if (_actAhrs != -1 && ++_actAhrs == 24) // aLien bases tally activity every 24 hrs so don't go lower than 24 hrs.
+		_actAhrs = -1;
 
-			if (_recentActA == 24) // min: aLien bases show activity every 24 hrs.
-				_recentActA = -1;
-		}
-	}
-
-	if (_recentActA == -1)
-		return false;
-
-	return true;
+	if (_actXhrs != -1 && ++_actXhrs == 24)
+		_actXhrs = -1;
 }
 
 /**
- * Handles recent XCOM activity in this region for GraphsState blink.
- * @param activity	- true to reset the startcounter (default true)
- * @param graphs	- not sure lol (default false)
- * @return, true if there is activity
+ * Checks if there has been activity in this Region recently.
+ * @param aLien - true to check aLien activity, false for xCom activity
+ * @return, true if recent activity
  */
-bool Region::recentActivityXCom(
-		bool activity,
-		bool graphs)
+bool Region::checkActivity(bool aLien)
 {
-	if (activity == true)
-		_recentActX = 0;
-	else if (_recentActX != -1)
-	{
-		if (graphs == true)
-			return true;
-		else
-		{
-			++_recentActX;
+	if (aLien == true)
+		return (_actAhrs != -1);
 
-			if (_recentActX == 24) // min: aLien bases show activity every 24 hrs. /shrug
-				_recentActX = -1;
-		}
-	}
-
-	if (_recentActX == -1)
-		return false;
-
-	return true;
+	return (_actXhrs != -1);
 }
 
 /**
  * Resets activity in this Region.
  */
-void Region::resetActivity()
+void Region::clearActivity()
 {
-	_recentActA =
-	_recentActX = -1;
+	_actAhrs =
+	_actXhrs = -1;
 }
 
 }

@@ -284,35 +284,24 @@ DebriefingState::DebriefingState()
 
 	switch (_destroyPlayerBase)	// TODO: Amalgamate "Base is Lost" w/ _tactical->score
 	{							// and display "Base is Lost" as a result in '_statsList'.
-		case -1:
+		case -1: // base okay
 			if (_region != nullptr)
-			{
-				_region->addActivityXCom(_tactical->score);	// NOTE: Could use SavedGame::scorePoints() for these
-				_region->recentActivityXCom();				// but since Region and Country are already defined here
-			}												// let it go through as is.
-
+				_region->addActivityXCom(_tactical->score);	// NOTE: Could use SavedGame::scorePoints() for these but since
+															// Region and Country are already defined here let it go through as is.
 			if (_country != nullptr)
-			{
 				_country->addActivityXCom(_tactical->score);
-				_country->recentActivityXCom();
-			}
+
 			break;
 
-		case 0:
+		case 0: // base is lost - no point delta
 			break;
 
 		default: // player Base was destroyed.
 			if (_region != nullptr)
-			{
 				_region->addActivityAlien(_destroyPlayerBase);
-				_region->recentActivityAlien();
-			}
 
 			if (_country != nullptr)
-			{
 				_country->addActivityAlien(_destroyPlayerBase);
-				_country->recentActivityAlien();
-			}
 	}
 
 	if (_tactical->score < -99)

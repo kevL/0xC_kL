@@ -2,8 +2,8 @@
 countries:
   - type: STR_ALGERIA
     region: STR_NORTH_AFRICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 2.3
     labelLat: -27.8
     areas:
@@ -13,8 +13,8 @@ countries:
 
   - type: STR_ANGOLA
     region: STR_SOUTHERN_AFRICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 16.8
     labelLat: 12.8
     areas:
@@ -22,8 +22,8 @@ countries:
 
   - type: STR_ARGENTINA
     region: STR_SOUTH_AMERICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 295.2
     labelLat: 32.3
     areas:
@@ -37,8 +37,8 @@ countries:
 
   - type: STR_AUSTRALIA
     region: STR_AUSTRALASIA
-    fundingBase: 205
-    fundingCap: 2050
+    fundsBasic: 205
+    fundsLimit: 2050
     labelLon: 132.6
     labelLat: 23.6
     areas:
@@ -47,8 +47,8 @@ countries:
 
   - type: STR_AUSTRIA
     region: STR_EUROPE
-    fundingBase: 130
-    fundingCap: 1300
+    fundsBasic: 130
+    fundsLimit: 1300
     labelLon: 13.8
     labelLat: -46.99
     areas:
@@ -57,8 +57,8 @@ countries:
 
   - type: STR_BELARUS
     region: STR_EUROPE
-    fundingBase: 130
-    fundingCap: 1300
+    fundsBasic: 130
+    fundsLimit: 1300
     labelLon: 26.0
     labelLat: -52.9
     areas:
@@ -66,8 +66,8 @@ countries:
 
   - type: STR_BELGIUM
     region: STR_EUROPE
-    fundingBase: 180
-    fundingCap: 1800
+    fundsBasic: 180
+    fundsLimit: 1800
     labelLon: 3.734
     labelLat: -51.0
     areas:
@@ -75,8 +75,8 @@ countries:
 
   - type: STR_BRAZIL
     region: STR_SOUTH_AMERICA
-    fundingBase: 165
-    fundingCap: 1650
+    fundsBasic: 165
+    fundsLimit: 1650
     labelLon: 307.9
     labelLat: 7.3
     areas:
@@ -95,8 +95,8 @@ countries:
 
   - type: STR_BULGARIA
     region: STR_EUROPE
-    fundingBase: 85
-    fundingCap: 850
+    fundsBasic: 85
+    fundsLimit: 850
     labelLon: 26.0
     labelLat: -43.2
     areas:
@@ -104,8 +104,8 @@ countries:
 
   - type: STR_CANADA
     region: STR_NORTH_AMERICA
-    fundingBase: 225
-    fundingCap: 2250
+    fundsBasic: 225
+    fundsLimit: 2250
     labelLon: 249.1
     labelLat: -58.8
     areas:
@@ -122,8 +122,8 @@ countries:
 
   - type: STR_CHILE
     region: STR_SOUTH_AMERICA
-    fundingBase: 75
-    fundingCap: 750
+    fundsBasic: 75
+    fundsLimit: 750
     labelLon: 289.093
     labelLat: 22.686
     areas:
@@ -134,8 +134,8 @@ countries:
 
   - type: STR_CHINA
     region: STR_SOUTH_EAST_ASIA
-    fundingBase: 335
-    fundingCap: 3350
+    fundsBasic: 335
+    fundsLimit: 3350
     labelLon: 100.573
     labelLat: -36.291
     areas:
@@ -148,8 +148,8 @@ countries:
 
   - type: STR_COLOMBIA
     region: STR_SOUTH_AMERICA
-    fundingBase: 155
-    fundingCap: 1550
+    fundsBasic: 155
+    fundsLimit: 1550
     labelLon: 285.5
     labelLat: -6.6
     areas:
@@ -160,8 +160,8 @@ countries:
 
   - type: STR_CONGO
     region: STR_SOUTHERN_AFRICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 23.0
     labelLat: 1.3
     areas:
@@ -171,8 +171,8 @@ countries:
 
   - type: STR_CUBA
     region: STR_NORTH_AMERICA
-    fundingBase: 75
-    fundingCap: 750
+    fundsBasic: 75
+    fundsLimit: 750
     labelLon: 282.0
     labelLat: -21.8
     areas:
@@ -181,8 +181,8 @@ countries:
 
   - type: STR_CZECH
     region: STR_EUROPE
-    fundingBase: 125
-    fundingCap: 1250
+    fundsBasic: 125
+    fundsLimit: 1250
     labelLon: 16.1
     labelLat: -50.9
     areas:
@@ -190,8 +190,8 @@ countries:
 
   - type: STR_DENMARK
     region: STR_EUROPE
-    fundingBase: 185
-    fundingCap: 1850
+    fundsBasic: 185
+    fundsLimit: 1850
     labelLon: 9.0
     labelLat: -56.2
     areas:
@@ -199,8 +199,8 @@ countries:
 
   - type: STR_EGYPT
     region: STR_NORTH_AFRICA
-    fundingBase: 125
-    fundingCap: 1250
+    fundsBasic: 125
+    fundsLimit: 1250
     labelLon: 29.73
     labelLat: -27.369
     areas:
@@ -209,8 +209,8 @@ countries:
 
   - type: STR_ETHIOPIA
     region: STR_NORTH_AFRICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 38.1
     labelLat: -11.0
     areas:
@@ -219,8 +219,8 @@ countries:
 
   - type: STR_FINLAND
     region: STR_EUROPE
-    fundingBase: 190
-    fundingCap: 1900
+    fundsBasic: 190
+    fundsLimit: 1900
     labelLon: 25.649
     labelLat: -62.582
     areas:
@@ -230,8 +230,8 @@ countries:
 
   - type: STR_FRANCE
     region: STR_EUROPE
-    fundingBase: 255
-    fundingCap: 2550
+    fundsBasic: 255
+    fundsLimit: 2550
     labelLon: 0.5
     labelLat: -46.7
     areas:
@@ -244,8 +244,8 @@ countries:
 
   - type: STR_GERMANY
     region: STR_EUROPE
-    fundingBase: 205
-    fundingCap: 2050
+    fundsBasic: 205
+    fundsLimit: 2050
     labelLon: 9.3
     labelLat: -51.9
     areas:
@@ -255,8 +255,8 @@ countries:
 
   - type: STR_GREECE
     region: STR_EUROPE
-    fundingBase: 205
-    fundingCap: 2050
+    fundsBasic: 205
+    fundsLimit: 2050
     labelLon: 22.1
     labelLat: -39.3
     areas:
@@ -265,8 +265,8 @@ countries:
 
   - type: STR_HUNGARY
     region: STR_EUROPE
-    fundingBase: 105
-    fundingCap: 1050
+    fundsBasic: 105
+    fundsLimit: 1050
     labelLon: 20.1
     labelLat: -47.887
     areas:
@@ -274,8 +274,8 @@ countries:
 
   - type: STR_INDIA
     region: STR_CENTRAL_ASIA
-    fundingBase: 115
-    fundingCap: 1150
+    fundsBasic: 115
+    fundsLimit: 1150
     labelLon: 78.957
     labelLat: -22.24
     areas:
@@ -286,8 +286,8 @@ countries:
 
   - type: STR_INDONESIA
     region: STR_AUSTRALASIA
-    fundingBase: 125
-    fundingCap: 1250
+    fundsBasic: 125
+    fundsLimit: 1250
     labelLon: 119.953
     labelLat: 4.792
     areas:
@@ -300,8 +300,8 @@ countries:
 
   - type: STR_IRAN
     region: STR_CENTRAL_ASIA
-    fundingBase: 160
-    fundingCap: 1600
+    fundsBasic: 160
+    fundsLimit: 1600
     labelLon: 54.0
     labelLat: -32.6
     areas:
@@ -311,8 +311,8 @@ countries:
 
   - type: STR_IRAQ
     region: STR_CENTRAL_ASIA
-    fundingBase: 275
-    fundingCap: 2750
+    fundsBasic: 275
+    fundsLimit: 2750
     labelLon: 43.2
     labelLat: -34.7
     areas:
@@ -320,8 +320,8 @@ countries:
 
   - type: STR_IRELAND
     region: STR_EUROPE
-    fundingBase: 180
-    fundingCap: 1800
+    fundsBasic: 180
+    fundsLimit: 1800
     labelLon: 350.868
     labelLat: -53.3
     areas:
@@ -330,8 +330,8 @@ countries:
 
   - type: STR_ISRAEL
     region: STR_NORTH_AFRICA
-    fundingBase: 175
-    fundingCap: 1750
+    fundsBasic: 175
+    fundsLimit: 1750
     labelLon: 34.95
     labelLat: -30.0
     areas:
@@ -339,8 +339,8 @@ countries:
 
   - type: STR_ITALY
     region: STR_EUROPE
-    fundingBase: 145
-    fundingCap: 1450
+    fundsBasic: 145
+    fundsLimit: 1450
     labelLon: 11.883
     labelLat: -43.345
     areas:
@@ -351,8 +351,8 @@ countries:
 
   - type: STR_IVORY
     region: STR_NORTH_AFRICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 353.9
     labelLat: -8.5
     areas:
@@ -360,8 +360,8 @@ countries:
 
   - type: STR_JAPAN
     region: STR_SOUTH_EAST_ASIA
-    fundingBase: 385
-    fundingCap: 3850
+    fundsBasic: 385
+    fundsLimit: 3850
     labelLon: 138.6
     labelLat: -38.3
     areas:
@@ -371,8 +371,8 @@ countries:
 
   - type: STR_KENYA
     region: STR_NORTH_AFRICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 37.6
     labelLat: -0.9
     areas:
@@ -380,8 +380,8 @@ countries:
 
   - type: STR_KOREA
     region: STR_SOUTH_EAST_ASIA
-    fundingBase: 150
-    fundingCap: 1500
+    fundsBasic: 150
+    fundsLimit: 1500
     labelLon: 126.888
     labelLat: -35.288
     areas:
@@ -389,8 +389,8 @@ countries:
 
   - type: STR_LIBYA
     region: STR_NORTH_AFRICA
-    fundingBase: 110
-    fundingCap: 1100
+    fundsBasic: 110
+    fundsLimit: 1100
     labelLon: 17.3
     labelLat: -28.2
     areas:
@@ -399,8 +399,8 @@ countries:
 
   - type: STR_MEXICO
     region: STR_NORTH_AMERICA
-    fundingBase: 150
-    fundingCap: 1500
+    fundsBasic: 150
+    fundsLimit: 1500
     labelLon: 257.2
     labelLat: -24.5
     areas:
@@ -414,8 +414,8 @@ countries:
 
   - type: STR_MOZAMBIQUE
     region: STR_SOUTHERN_AFRICA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 35.2
     labelLat: 17.7
     areas:
@@ -424,8 +424,8 @@ countries:
 
   - type: STR_NETHERLANDS
     region: STR_EUROPE
-    fundingBase: 185
-    fundingCap: 1850
+    fundsBasic: 185
+    fundsLimit: 1850
     labelLon: 3.0
     labelLat: -52.9
     areas:
@@ -433,8 +433,8 @@ countries:
 
   - type: STR_NEWZEALAND
     region: STR_AUSTRALASIA
-    fundingBase: 100
-    fundingCap: 1000
+    fundsBasic: 100
+    fundsLimit: 1000
     labelLon: 175.11
     labelLat: 39.234
     areas:
@@ -443,8 +443,8 @@ countries:
 
   - type: STR_NIGERIA
     region: STR_NORTH_AFRICA
-    fundingBase: 165
-    fundingCap: 1650
+    fundsBasic: 165
+    fundsLimit: 1650
     labelLon: 7.5
     labelLat: -10.0
     areas:
@@ -452,8 +452,8 @@ countries:
 
   - type: STR_NORWAY
     region: STR_EUROPE
-    fundingBase: 225
-    fundingCap: 2250
+    fundsBasic: 225
+    fundsLimit: 2250
     labelLon: 7.91
     labelLat: -60.978
     areas:
@@ -465,8 +465,8 @@ countries:
 
   - type: STR_PAKISTAN
     region: STR_CENTRAL_ASIA
-    fundingBase: 135
-    fundingCap: 1350
+    fundsBasic: 135
+    fundsLimit: 1350
     labelLon: 66.5
     labelLat: -28.7
     areas:
@@ -475,8 +475,8 @@ countries:
 
   - type: STR_PERU
     region: STR_SOUTH_AMERICA
-    fundingBase: 70
-    fundingCap: 700
+    fundsBasic: 70
+    fundsLimit: 700
     labelLon: 282.4
     labelLat: 5.3
     areas:
@@ -487,8 +487,8 @@ countries:
 
   - type: STR_PHILIPPINES
     region: STR_SOUTH_EAST_ASIA
-    fundingBase: 105
-    fundingCap: 1050
+    fundsBasic: 105
+    fundsLimit: 1050
     labelLon: 120.685
     labelLat: -16.697
     areas:
@@ -497,8 +497,8 @@ countries:
 
   - type: STR_POLAND
     region: STR_EUROPE
-    fundingBase: 150
-    fundingCap: 1500
+    fundsBasic: 150
+    fundsLimit: 1500
     labelLon: 17.382
     labelLat: -53.38
     areas:
@@ -507,8 +507,8 @@ countries:
 
   - type: STR_PORTUGAL
     region: STR_EUROPE
-    fundingBase: 85
-    fundingCap: 850
+    fundsBasic: 85
+    fundsLimit: 850
     labelLon: 350.5
     labelLat: -40.3
     areas:
@@ -517,8 +517,8 @@ countries:
 
   - type: STR_QATAR
     region: STR_CENTRAL_ASIA
-    fundingBase: 160
-    fundingCap: 1600
+    fundsBasic: 160
+    fundsLimit: 1600
     labelLon: 51.2
     labelLat: -26.4
     areas:
@@ -526,8 +526,8 @@ countries:
 
   - type: STR_ROMANIA
     region: STR_EUROPE
-    fundingBase: 175
-    fundingCap: 1750
+    fundsBasic: 175
+    fundsLimit: 1750
     labelLon: 24.6
     labelLat: -46.1
     areas:
@@ -535,8 +535,8 @@ countries:
 
   - type: STR_RUSSIA
     region: STR_SIBERIA
-    fundingBase: 535
-    fundingCap: 5350
+    fundsBasic: 535
+    fundsLimit: 5350
     labelLon: 69.0
     labelLat: -64.0
     areas:
@@ -551,8 +551,8 @@ countries:
 
   - type: STR_SAUDI
     region: STR_CENTRAL_ASIA
-    fundingBase: 255
-    fundingCap: 2550
+    fundsBasic: 255
+    fundsLimit: 2550
     labelLon: 45.9
     labelLat: -22.7
     areas:
@@ -564,8 +564,8 @@ countries:
 
   - type: STR_SOUTH_AFRICA
     region: STR_SOUTHERN_AFRICA
-    fundingBase: 305
-    fundingCap: 3050
+    fundsBasic: 305
+    fundsLimit: 3050
     labelLon: 25.0
     labelLat: 30.0
     areas:
@@ -574,8 +574,8 @@ countries:
 
   - type: STR_SPAIN
     region: STR_EUROPE
-    fundingBase: 95
-    fundingCap: 950
+    fundsBasic: 95
+    fundsLimit: 950
     labelLon: 356.3
     labelLat: -39.2
     areas:
@@ -588,8 +588,8 @@ countries:
 
   - type: STR_SWEDEN
     region: STR_EUROPE
-    fundingBase: 205
-    fundingCap: 2050
+    fundsBasic: 205
+    fundsLimit: 2050
     labelLon: 14.723
     labelLat: -59.879
     areas:
@@ -600,8 +600,8 @@ countries:
 
   - type: STR_SYRIA
     region: STR_EUROPE # move to Central Asia (not so easy, it's split right in half between Europe and North Africa, bordering on Central Asia)
-    fundingBase: 125
-    fundingCap: 1250
+    fundsBasic: 125
+    fundsLimit: 1250
     labelLon: 38.1
     labelLat: -35.6
     areas:
@@ -609,8 +609,8 @@ countries:
 
   - type: STR_TAIWAN
     region: STR_SOUTH_EAST_ASIA
-    fundingBase: 120
-    fundingCap: 1200
+    fundsBasic: 120
+    fundsLimit: 1200
     labelLon: 120.77
     labelLat: -22.51
     areas:
@@ -618,8 +618,8 @@ countries:
 
   - type: STR_THAILAND
     region: STR_SOUTH_EAST_ASIA
-    fundingBase: 195
-    fundingCap: 1950
+    fundsBasic: 195
+    fundsLimit: 1950
     labelLon: 102.0
     labelLat: -17.4
     areas:
@@ -629,8 +629,8 @@ countries:
 
   - type: STR_TURKEY
     region: STR_EUROPE
-    fundingBase: 155
-    fundingCap: 1550
+    fundsBasic: 155
+    fundsLimit: 1550
     labelLon: 35.3
     labelLat: -38.7
     areas:
@@ -639,8 +639,8 @@ countries:
 
   - type: STR_UAE
     region: STR_CENTRAL_ASIA
-    fundingBase: 140
-    fundingCap: 1400
+    fundsBasic: 140
+    fundsLimit: 1400
     labelLon: 55.3
     labelLat: -23.5
     areas:
@@ -648,8 +648,8 @@ countries:
 
   - type: STR_UK
     region: STR_EUROPE
-    fundingBase: 235
-    fundingCap: 2350
+    fundsBasic: 235
+    fundsLimit: 2350
     labelLon: 357.845
     labelLat: -54.24
     areas:
@@ -660,8 +660,8 @@ countries:
 
   - type: STR_UKRAINE
     region: STR_EUROPE
-    fundingBase: 195
-    fundingCap: 1950
+    fundsBasic: 195
+    fundsLimit: 1950
     labelLon: 31.1
     labelLat: -48.9
     areas:
@@ -671,8 +671,8 @@ countries:
 
   - type: STR_USA
     region: STR_NORTH_AMERICA
-    fundingBase: 675
-    fundingCap: 6750
+    fundsBasic: 675
+    fundsLimit: 6750
     labelLon: 260.0
     labelLat: -40.0
     areas:
@@ -694,8 +694,8 @@ countries:
 
   - type: STR_VENEZULA
     region: STR_SOUTH_AMERICA
-    fundingBase: 190
-    fundingCap: 1900
+    fundsBasic: 190
+    fundsLimit: 1900
     labelLon: 294.0
     labelLat: -8.4
     areas:
@@ -705,8 +705,8 @@ countries:
 
   - type: STR_VIETNAM
     region: STR_SOUTH_EAST_ASIA
-    fundingBase: 125
-    fundingCap: 1250
+    fundsBasic: 125
+    fundsLimit: 1250
     labelLon: 108.246
     labelLat: -14.0
     areas:

@@ -38,8 +38,8 @@ class RuleCountry
 
 private:
 	int
-		_fundingBase,
-		_fundingCap,
+		_fundsBasic,
+		_fundsLimit,
 		_pactScore;
 	double
 		_labelLon,

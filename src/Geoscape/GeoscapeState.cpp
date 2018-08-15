@@ -2495,22 +2495,20 @@ void GeoscapeState::time1Hour()
 	if (_playSave->getUfos()->empty() == false)
 		scoreUfos(true);
 
-	for (std::vector<Region*>::const_iterator // check if Graphs blink needs Region reset.
+	for (std::vector<Region*>::const_iterator // step the activity-hours for Graphs blink
 			i = _playSave->getRegions()->begin();
 			i != _playSave->getRegions()->end();
 			++i)
 	{
-		(*i)->recentActivityAlien(false);
-		(*i)->recentActivityXCom(false);
+		(*i)->stepActivity();
 	}
 
-	for (std::vector<Country*>::const_iterator // check if Graphs blink needs Country reset.
+	for (std::vector<Country*>::const_iterator // step the activity-hours for Graphs blink
 			i = _playSave->getCountries()->begin();
 			i != _playSave->getCountries()->end();
 			++i)
 	{
-		(*i)->recentActivityAlien(false);
-		(*i)->recentActivityXCom(false);
+		(*i)->stepActivity();
 	}
 
 
