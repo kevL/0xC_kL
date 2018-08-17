@@ -69,10 +69,13 @@ namespace OpenXcom
 {
 
 const std::string
-	SavedGame::AUTOSAVE_GEOSCAPE	= "_autogeo_.asav",
-	SavedGame::AUTOSAVE_BATTLESCAPE	= "_autobattle_.asav",
-	SavedGame::QUICKSAVE			= "_quick_.asav",
-	SavedGame::SAVE_EXT				= ".sav";
+	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq",
+	SavedGame::SAVE_AUTO_Tac = "_autotac_.aq",
+	SavedGame::SAVE_Quick    = "_quick_.aq",
+	SavedGame::SAVE_Ext      = "sav",
+	SavedGame::SAVE_ExtDot   = ".sav",
+	SavedGame::SAVE_Ext_AQ   = "aq",
+	SavedGame::SAVE_BakDot   = ".bak";
 
 
 /// ** FUNCTOR ***
@@ -255,7 +258,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 
 	if (autoquick == true)
 	{
-		saves = CrossPlatform::getFolderContents(Options::getUserFolder(), "asav");
+		saves = CrossPlatform::getFolderContents(Options::getUserFolder(), SAVE_Ext_AQ);
 		for (std::vector<std::string>::const_iterator
 				i = saves.begin();
 				i != saves.end();
@@ -278,7 +281,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 		}
 	}
 
-	saves = CrossPlatform::getFolderContents(Options::getUserFolder(), "sav");
+	saves = CrossPlatform::getFolderContents(Options::getUserFolder(), SAVE_Ext);
 	for (std::vector<std::string>::const_iterator
 			i = saves.begin();
 			i != saves.end();
@@ -316,38 +319,38 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 	const std::string path (Options::getUserFolder() + file);
 	const YAML::Node doc (YAML::LoadFile(path));
 
-	SaveInfo save;
-	save.file = file;
+	SaveInfo info;
+	info.file = file;
 
-	if (save.file == QUICKSAVE)
+	if (info.file == SAVE_Quick)
 	{
-		save.label = lang->getString("STR_QUICK_SAVE_SLOT");
-		save.reserved = true;
+		info.label = lang->getString("STR_QUICK_SAVE_SLOT");
+		info.reserved = true;
 	}
-	else if (save.file == AUTOSAVE_GEOSCAPE)
+	else if (info.file == SAVE_AUTO_Geo)
 	{
-		save.label = lang->getString("STR_AUTO_SAVE_GEOSCAPE_SLOT");
-		save.reserved = true;
+		info.label = lang->getString("STR_AUTO_SAVE_GEOSCAPE_SLOT");
+		info.reserved = true;
 	}
-	else if (save.file == AUTOSAVE_BATTLESCAPE)
+	else if (info.file == SAVE_AUTO_Tac)
 	{
-		save.label = lang->getString("STR_AUTO_SAVE_BATTLESCAPE_SLOT");
-		save.reserved = true;
+		info.label = lang->getString("STR_AUTO_SAVE_BATTLESCAPE_SLOT");
+		info.reserved = true;
 	}
 	else
 	{
 		if (doc["label"])
-			save.label = Language::utf8ToWstr(doc["label"].as<std::string>());
+			info.label = Language::utf8ToWstr(doc["label"].as<std::string>());
 		else
-			save.label = Language::fsToWstr(CrossPlatform::noExt(file));
+			info.label = Language::fsToWstr(CrossPlatform::noExt(file));
 
-		save.reserved = false;
+		info.reserved = false;
 	}
 
-	save.timestamp = CrossPlatform::getDateModified(path);
-	const std::pair<std::wstring, std::wstring> timePair (CrossPlatform::timeToString(save.timestamp));
-	save.isoDate = timePair.first;
-	save.isoTime = timePair.second;
+	info.timestamp = CrossPlatform::getDateModified(path);
+	const std::pair<std::wstring, std::wstring> timePair (CrossPlatform::timeToString(info.timestamp));
+	info.isoDate = timePair.first;
+	info.isoTime = timePair.second;
 
 	std::wostringstream details;
 	if (doc["base"])
@@ -378,14 +381,14 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 		details << L" "
 				<< lang->getString("STR_IRONMAN");
 
-	save.details = details.str();
+	info.details = details.str();
 
 	if (doc["rulesets"])
-		save.rulesets = doc["rulesets"].as<std::vector<std::string>>();
+		info.rulesets = doc["rulesets"].as<std::vector<std::string>>();
 
-	save.mode = static_cast<SaveMode>(doc["mode"].as<int>());
+	info.mode = static_cast<SaveMode>(doc["mode"].as<int>());
 
-	return save;
+	return info;
 }
 
 /**
@@ -448,24 +451,24 @@ void SavedGame::load(
 
 	_end = static_cast<EndType>(doc["end"].as<int>(static_cast<int>(_end)));
 
-	_monthsElapsed			= doc["monthsElapsed"]		.as<int>(_monthsElapsed);
-	_warnedFunds			= doc["warnedFunds"]		.as<bool>(_warnedFunds);
-	_graphRegionToggles		= doc["graphRegionToggles"]	.as<std::string>(_graphRegionToggles);
-	_graphCountryToggles	= doc["graphCountryToggles"].as<std::string>(_graphCountryToggles);
-	_graphFinanceToggles	= doc["graphFinanceToggles"].as<std::string>(_graphFinanceToggles);
-	_funds					= doc["funds"]				.as<std::vector<int64_t>>(_funds);
-	_maintenance			= doc["maintenance"]		.as<std::vector<int64_t>>(_maintenance);
-	_researchScores			= doc["researchScores"]		.as<std::vector<int>>(_researchScores);
-	_income					= doc["income"]				.as<std::vector<int64_t>>(_income);
-	_expenditure			= doc["expenditure"]		.as<std::vector<int64_t>>(_expenditure);
-	_ids					= doc["ids"]				.as<std::map<std::string, int>>(_ids);
-	_detailGlobe			= doc["detailGlobe"]		.as<bool>(_detailGlobe);
+	_monthsElapsed       = doc["monthsElapsed"]      .as<int>(_monthsElapsed);
+	_warnedFunds         = doc["warnedFunds"]        .as<bool>(_warnedFunds);
+	_graphRegionToggles  = doc["graphRegionToggles"] .as<std::string>(_graphRegionToggles);
+	_graphCountryToggles = doc["graphCountryToggles"].as<std::string>(_graphCountryToggles);
+	_graphFinanceToggles = doc["graphFinanceToggles"].as<std::string>(_graphFinanceToggles);
+	_funds               = doc["funds"]              .as<std::vector<int64_t>>(_funds);
+	_maintenance         = doc["maintenance"]        .as<std::vector<int64_t>>(_maintenance);
+	_researchScores      = doc["researchScores"]     .as<std::vector<int>>(_researchScores);
+	_income              = doc["income"]             .as<std::vector<int64_t>>(_income);
+	_expenditure         = doc["expenditure"]        .as<std::vector<int64_t>>(_expenditure);
+	_ids                 = doc["ids"]                .as<std::map<std::string, int>>(_ids);
+	_detailGlobe         = doc["detailGlobe"]        .as<bool>(_detailGlobe);
 
 	_detailRadar = static_cast<GlobeRadarDetail>(doc["detailRadar"].as<int>(static_cast<int>(_detailRadar)));
 
-	_globeLon	= doc["globeLon"].as<double>(_globeLon);
-	_globeLat	= doc["globeLat"].as<double>(_globeLat);
-	_globeZoom	= static_cast<size_t>(doc["globeZoom"].as<int>(static_cast<int>(_globeZoom)));
+	_globeLon  = doc["globeLon"].as<double>(_globeLon);
+	_globeLat  = doc["globeLat"].as<double>(_globeLat);
+	_globeZoom = static_cast<size_t>(doc["globeZoom"].as<int>(static_cast<int>(_globeZoom)));
 
 
 	Log(LOG_INFO) << ". load countries";
@@ -1031,34 +1034,31 @@ void SavedGame::balanceBudget()
 	_statTallyFundsEarned += earned;
 	_statTallyFundsSpent  += spent;
 
-
-	_income.back() = earned; // INCOME
+	_income.back() = earned;			// INCOME
 	_income.push_back(0);
-	if (_income.size() > 12u)
-		_income.erase(_income.begin());
 
-	_expenditure.back() = spent; // EXPENDITURE
+	_expenditure.back() = spent;		// EXPENDITURE
 	_expenditure.push_back(0);
-	if (_expenditure.size() > 12u)
-		_expenditure.erase(_expenditure.begin());
-
 
 	const int64_t maintenance (static_cast<int64_t>(getBaseMaintenances()));
 
-	_maintenance.back() = maintenance; // MAINTENANCE
+	_maintenance.back() = maintenance;	// MAINTENANCE
 	_maintenance.push_back(0);
-	if (_maintenance.size() > 12u)
-		_maintenance.erase(_maintenance.begin());
 
 	_funds.back() += static_cast<int64_t>(getTotalCountryFunds()) * 1000 - maintenance; // BALANCE
 	_funds.push_back(_funds.back());
-	if (_funds.size() > 12u)
+
+	_researchScores.push_back(0);		// RESEARCH
+
+
+	if (_funds.size() > 12u) // NOTE: All of these vectors shall be maintained at the same length.
+	{
 		_funds.erase(_funds.begin());
-
-
-	_researchScores.push_back(0); // RESEARCH
-	if (_researchScores.size() > 12u)
+		_income.erase(_income.begin());
+		_expenditure.erase(_expenditure.begin());
+		_maintenance.erase(_maintenance.begin());
 		_researchScores.erase(_researchScores.begin());
+	}
 }
 
 /**

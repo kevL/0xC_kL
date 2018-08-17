@@ -105,8 +105,8 @@ private:
 
 		/// Stores last month's counters, starts new counters, sets this month's change.
 		void newMonth(
-				const int totalX,
-				const int totalA,
+				const int actXtotal,
+				const int actAtotal,
 				const int diff);
 
 		/// Sets the Country's pact-status.

@@ -105,7 +105,7 @@ DefeatState::DefeatState()
 	if (_game->getSavedGame()->isIronman() == true) // Ironman is over, rambo
 	{
 		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getLabel())));
-		CrossPlatform::deleteFile(Options::getUserFolder() + file + SavedGame::SAVE_EXT);
+		CrossPlatform::deleteFile(Options::getUserFolder() + file + SavedGame::SAVE_ExtDot);
 	}
 }
 

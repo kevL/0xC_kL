@@ -123,7 +123,7 @@ void AbandonGameState::btnYesClick(Action*)
 	if (_game->getSavedGame()->isIronman() == true)
 		_game->pushState(new SaveGameState(
 										OPT_GEOSCAPE,
-										SAVE_IRONMAN_END,
+										SAVE_IRONMAN_QUIT,
 										_palette));
 	else
 	{

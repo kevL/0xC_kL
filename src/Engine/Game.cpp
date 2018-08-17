@@ -791,7 +791,7 @@ void Game::quit(bool force)
 		&& _playSave->getLabel().empty() == false)
 	{
 		const std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_playSave->getLabel())));
-		_playSave->save(file + SavedGame::SAVE_EXT);
+		_playSave->save(file + SavedGame::SAVE_ExtDot);
 	}
 	_quit = true;
 }

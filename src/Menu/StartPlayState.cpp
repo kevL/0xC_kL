@@ -23,13 +23,15 @@
 #include "../Engine/LocalizedText.h"
 #include "../Engine/Options.h"
 
+#include "../Menu/ListSaveState.h"
+
+#include "../Geoscape/BuildBaseState.h"
+#include "../Geoscape/GeoscapeState.h"
+
 #include "../Interface/Text.h"
 #include "../Interface/TextButton.h"
 #include "../Interface/ToggleTextButton.h"
 #include "../Interface/Window.h"
-
-#include "../Geoscape/BuildBaseState.h"
-#include "../Geoscape/GeoscapeState.h"
 
 #include "../Resource/XcomResourcePack.h"
 
@@ -134,15 +136,19 @@ void StartPlayState::btnOkClick(Action*)
 {
 	DifficultyLevel diff;
 
-	if		(_difficulty == _btnSuperhuman)		diff = DIFF_SUPERHUMAN;
-	else if	(_difficulty == _btnGenius)			diff = DIFF_GENIUS;
-	else if	(_difficulty == _btnVeteran)		diff = DIFF_VETERAN;
-	else if	(_difficulty == _btnExperienced)	diff = DIFF_EXPERIENCED;
-	else										diff = DIFF_BEGINNER;
+	if      (_difficulty == _btnSuperhuman)  diff = DIFF_SUPERHUMAN;
+	else if (_difficulty == _btnGenius)      diff = DIFF_GENIUS;
+	else if (_difficulty == _btnVeteran)     diff = DIFF_VETERAN;
+	else if (_difficulty == _btnExperienced) diff = DIFF_EXPERIENCED;
+	else                                     diff = DIFF_BEGINNER;
+
+	bool ironballs = (_btnIronman->getPressed() == true);
 
 	SavedGame* const playSave (_game->getRuleset()->createSave(_game));
 	playSave->setDifficulty(diff);
-	playSave->setIronman(_btnIronman->getPressed() == true);
+	playSave->setIronman(ironballs);
+
+	// TODO: An ironballs save should be done here.
 
 	GeoscapeState* const geo (new GeoscapeState());
 	_game->setState(geo);
@@ -152,9 +158,12 @@ void StartPlayState::btnOkClick(Action*)
 	_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_GLOBE);
 
 	_game->pushState(new BuildBaseState(
-									_game->getSavedGame()->getBases()->back(),
+									playSave->getBases()->back(),
 									geo->getGlobe(),
 									true));
+
+	if (ironballs)
+		geo->popupGeo(new ListSaveState(OPT_GEOSCAPE));
 }
 
 /**

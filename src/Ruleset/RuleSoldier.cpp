@@ -87,14 +87,14 @@ RuleSoldier::~RuleSoldier()
  */
 void RuleSoldier::load(const YAML::Node& node)
 {
-	_type			= node["type"]			.as<std::string>(_type);
-	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
-	_armor			= node["armor"]			.as<std::string>(_armor);
-	_costBuy		= node["costBuy"]		.as<int>(_costBuy);
-	_costSalary		= node["costSalary"]	.as<int>(_costSalary);
-	_standHeight	= node["standHeight"]	.as<int>(_standHeight);
-	_kneelHeight	= node["kneelHeight"]	.as<int>(_kneelHeight);
-	_floatHeight	= node["floatHeight"]	.as<int>(_floatHeight);
+	_type        = node["type"]       .as<std::string>(_type);
+	_reqResearch = node["reqResearch"].as<std::vector<std::string>>(_reqResearch);
+	_armor       = node["armor"]      .as<std::string>(_armor);
+	_costBuy     = node["costBuy"]    .as<int>(_costBuy);
+	_costSalary  = node["costSalary"] .as<int>(_costSalary);
+	_standHeight = node["standHeight"].as<int>(_standHeight);
+	_kneelHeight = node["kneelHeight"].as<int>(_kneelHeight);
+	_floatHeight = node["floatHeight"].as<int>(_floatHeight);
 
 //	if (_floatHeight + _standHeight > 24)
 	if (_standHeight > 24) // reasons. See TileEngine::doTargetUnit()
@@ -103,7 +103,7 @@ void RuleSoldier::load(const YAML::Node& node)
 		throw Exception("Error with Soldier " + _type + ": Soldier height shall not exceed 24");
 	}
 
-	_genderRatio	= node["genderRatio"]	.as<RuleGender>(_genderRatio);
+	_genderRatio = node["genderRatio"].as<RuleGender>(_genderRatio);
 
 	_minStats.mergeStats(node["minStats"].as<UnitStats>(_minStats));
 	_maxStats.mergeStats(node["maxStats"].as<UnitStats>(_maxStats));

@@ -1130,12 +1130,6 @@ void GeoscapeState::init()
 						// in resetSurfaces() .... See also BattlescapeState::init().
 	_globe->draw();
 
-	if (_playSave->isIronman() == true
-		&& _playSave->getLabel().empty() == false)
-	{
-		popupGeo(new ListSaveState(OPT_GEOSCAPE));
-	}
-
 	if (kL_geoMusicPlaying == true)
 	{
 		std::string track;

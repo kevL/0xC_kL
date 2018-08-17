@@ -87,15 +87,15 @@ LoadGameState::LoadGameState(
 	switch (type) // can't auto-load ironman games
 	{
 		case SAVE_QUICK:
-			_file = SavedGame::QUICKSAVE;
+			_file = SavedGame::SAVE_Quick;
 			break;
 
 		case SAVE_AUTO_GEOSCAPE:
-			_file = SavedGame::AUTOSAVE_GEOSCAPE;
+			_file = SavedGame::SAVE_AUTO_Geo;
 			break;
 
 		case SAVE_AUTO_BATTLESCAPE:
-			_file = SavedGame::AUTOSAVE_BATTLESCAPE;
+			_file = SavedGame::SAVE_AUTO_Tac;
 	}
 	build(palette);
 }
@@ -154,7 +154,7 @@ void LoadGameState::init()
 {
 	State::init();
 
-	if (_file == SavedGame::QUICKSAVE
+	if (_file == SavedGame::SAVE_Quick
 		&& CrossPlatform::fileExists(Options::getUserFolder() + _file) == false)
 	{
 		_game->popState();

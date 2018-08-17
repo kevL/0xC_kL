@@ -47,19 +47,16 @@ ListSaveState::ListSaveState(OptionsOrigin origin)
 		_selected(-1),
 		_selectedPre(-1)
 {
-	_edtSave		= new TextEdit(this, 168, 9);
-	_btnSaveGame	= new TextButton(134, 16, 170, 177);
-//	_btnSaveGame	= new TextButton(_game->getSavedGame()->isIronman() ? 200 : 80, 16, 60, 172);
+	_edtSave     = new TextEdit(this, 168, 9);
+	_btnSaveGame = new TextButton(134, 16, 170, 177);
 
 	add(_edtSave);
 	add(_btnSaveGame, "button", "saveMenus");
 
 	_txtTitle->setText(tr("STR_SELECT_SAVE_POSITION"));
 
-//	if (_game->getSavedGame()->isIronman())
-//		_btnCancel->setVisible(false);
-//	else
-//		_btnCancel->setX(180);
+	if (_game->getSavedGame()->isIronman() == true)
+		_btnCancel->setVisible(false);
 
 	// NOTE: Tactical selected SaveSlot for Battlescape is grayscaled. Except TextEdit.
 	_edtSave->setColor(COLOR_EDIT);
@@ -223,23 +220,23 @@ void ListSaveState::saveGame() // private.
 
 	if (_selected > 0)
 	{
-		if ((fileOld = _saves[static_cast<size_t>(_selected - 1)].file) != file + SavedGame::SAVE_EXT)
+		if ((fileOld = _saves[static_cast<size_t>(_selected - 1)].file) != file + SavedGame::SAVE_ExtDot)
 		{
-			while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_EXT) == true)
+			while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_ExtDot) == true)
 				file += "_";
 
 			CrossPlatform::moveFile(
 								Options::getUserFolder() + fileOld,
-								Options::getUserFolder() + file + SavedGame::SAVE_EXT);
+								Options::getUserFolder() + file + SavedGame::SAVE_ExtDot);
 		}
 	}
 	else
 	{
-		while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_EXT) == true)
+		while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_ExtDot) == true)
 			file += "_";
 	}
 
-	file += SavedGame::SAVE_EXT;
+	file += SavedGame::SAVE_ExtDot;
 	_game->pushState(new SaveGameState(_origin, file, _palette));
 }
 

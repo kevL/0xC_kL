@@ -553,7 +553,7 @@ std::string endPath(const std::string& path)
 }
 
 /**
- * Gets the name of all the files contained in a certain folder.
+ * Gets the name of all the files contained in a specified folder.
  * @param path	- reference to full path to folder
  * @param ext	- reference to extension of files ("" if it doesn't matter)
  * @return, ordered list of all the files
@@ -563,11 +563,11 @@ std::vector<std::string> getFolderContents(
 		const std::string& ext)
 {
 	std::vector<std::string> files;
-	std::string extl (ext);
+	std::string extlower (ext);
 	std::transform(
-				extl.begin(),
-				extl.end(),
-				extl.begin(),
+				extlower.begin(),
+				extlower.end(),
+				extlower.begin(),
 				::tolower);
 
 	DIR* const pDir (opendir(path.c_str()));
@@ -576,35 +576,36 @@ std::vector<std::string> getFolderContents(
 	#ifdef __MORPHOS__
 		return files;
 	#else
-		std::string errorMessage("Failed to open directory: " + path);
-		throw Exception(errorMessage);
+		std::string error ("Failed to open directory: " + path);
+		throw Exception(error);
 	#endif
 	}
+
+	std::string
+		file,
+		filedotext;
 
 	struct dirent* pDirent;
 	while ((pDirent = readdir(pDir)) != nullptr)
 	{
-		const std::string file (pDirent->d_name);
-		if (file == "." || file == "..")
-			continue;
-
-		if (extl.empty() == false)
+		if ((file = pDirent->d_name) != "." && file != "..")
 		{
-			if (file.length() >= extl.length() + 1u)
+			if (extlower.empty() == false)
 			{
-				std::string endFile (file.substr(file.length() - extl.length() - 1u));
+				if (file.length() < extlower.length() + 1u)
+					continue;
+
+				filedotext = file.substr(file.length() - extlower.length() - 1u);
 				std::transform(
-							endFile.begin(),
-							endFile.end(),
-							endFile.begin(),
+							filedotext.begin(),
+							filedotext.end(),
+							filedotext.begin(),
 							::tolower);
-				if (endFile != "." + extl)
+				if (filedotext != "." + extlower)
 					continue;
 			}
-			else
-				continue;
+			files.push_back(file);
 		}
-		files.push_back(file);
 	}
 
 	closedir(pDir);

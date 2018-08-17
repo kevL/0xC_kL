@@ -176,32 +176,38 @@ std::vector<int>& Country::getActivityXCom()
 /**
  * Resets the funding- and activity-counters, calculates monthly funding, and
  * sets the cash-delta-value for the month.
- * @param totalX	- the council's xCom score
- * @param totalA	- the council's aLien score
+ * @param actXtotal	- the council's xCom score
+ * @param actAtotal	- the council's aLien score
  * @param diff		- game difficulty
  */
 void Country::newMonth(
-		const int totalX,
-		const int totalA,
+		const int actXtotal,
+		const int actAtotal,
 		const int diff)
 {
-	//Log(LOG_INFO) << "Country::newMonth()";
+	Log(LOG_INFO) << "Country::newMonth() " << _countryRule->getType();
 	int funds;
 	if (_pact == PACT_NONE)
 	{
-		const int fundsPrior (_funds.back());
-		if (fundsPrior != 0)
+		const int funds0 (_funds.back());
+		Log(LOG_INFO) << ". funds0= " << funds0;
+		if (funds0 != 0)
 		{
 			const int
-				scorePlayer (totalX / 10 + _actX.back()),
-				scoreAliens (totalA / 20 + _actA.back());
+				player (actXtotal / 10 + _actX.back()), // ie. 10% of global XCOM activity  + 100% of this country's XCOM activity
+				aLiens (actAtotal / 20 + _actA.back()); // ie.  5% of global aLien activity + 100% of this country's aLien activity
 
-			funds = static_cast<int>(static_cast<float>(fundsPrior) * RNG::generate(0.05f,0.2f)); // 5% .. 20% increase OR decrease
+			Log(LOG_INFO) << ". . player= " << player;
+			Log(LOG_INFO) << ". . aLiens= " << aLiens;
 
-			if (scorePlayer > scoreAliens + ((diff + 1) * 20))
+			funds = static_cast<int>(static_cast<float>(funds0) * RNG::generate(0.05f,0.2f)); // 5% .. 20% increase OR decrease
+			Log(LOG_INFO) << ". . funds= " << funds;
+
+			if (player > aLiens + ((diff + 1) * 20))
 			{
 				funds = std::min(funds,
-								_countryRule->getFundingCap() - fundsPrior);
+								_countryRule->getFundingCap() - funds0);
+				Log(LOG_INFO) << ". . . case1 funds= " << funds;
 				switch (funds)
 				{
 					case 0: // Country's funding is already capped.
@@ -211,12 +217,13 @@ void Country::newMonth(
 						_satisfaction = SAT_SATISFIED;
 				}
 			}
-			else if (scorePlayer - (diff * 20) > scoreAliens)
+			else if (player - (diff * 20) > aLiens)
 			{
-				if (RNG::generate(0, scorePlayer) > scoreAliens)
+				if (RNG::generate(0, player) > aLiens)
 				{
 					funds = std::min(funds,
-									_countryRule->getFundingCap() - fundsPrior);
+									_countryRule->getFundingCap() - funds0);
+					Log(LOG_INFO) << ". . . case2a funds= " << funds;
 					switch (funds)
 					{
 						case 0: // Country's funding is already capped.
@@ -226,8 +233,9 @@ void Country::newMonth(
 							_satisfaction = SAT_SATISFIED;
 					}
 				}
-				else if (RNG::generate(0, scoreAliens) > scorePlayer)
+				else if (RNG::generate(0, aLiens) > player)
 				{
+					Log(LOG_INFO) << ". . . case2b funds= " << funds;
 					switch (funds)
 					{
 						case 0: // Country's funding is already zero'd.
@@ -240,11 +248,13 @@ void Country::newMonth(
 				else
 				{
 					funds = 0;
+					Log(LOG_INFO) << ". . . case2c funds= " << funds;
 					_satisfaction = SAT_NEUTRAL;
 				}
 			}
 			else
 			{
+				Log(LOG_INFO) << ". . . case3 funds= " << funds;
 				switch (funds)
 				{
 					case 0: // Country's funding is already zero'd.
@@ -255,19 +265,23 @@ void Country::newMonth(
 				}
 			}
 
-			switch (_satisfaction)
+			switch (_satisfaction) // NOTE: changes 'funds' (delta) to 'funds' (granted)
 			{
 				case SAT_SATISFIED:
-					funds += fundsPrior;
+					funds += funds0;
+					break;
+
+				case SAT_NEUTRAL:
+					funds = funds0;
 					break;
 
 				case SAT_MIFFED:
-					funds = fundsPrior - funds;
+					funds = funds0 - funds;
 			}
 		}
-		else
+		else // grant a chance for zero-funding unpacted Countries to join the Project.
 		{
-			switch (funds = _countryRule->generateFunding()) // grant a chance for zero-funding unpacted Countries to join the Project.
+			switch (funds = _countryRule->generateFunding())
 			{
 				case 0:
 					_satisfaction = SAT_NEUTRAL;
@@ -282,6 +296,10 @@ void Country::newMonth(
 		funds = 0;
 		_satisfaction = SAT_NEUTRAL;
 	}
+
+	Log(LOG_INFO) << ". funds= " << funds;
+	Log(LOG_INFO) << ". _satisfaction= " << _satisfaction;
+	Log(LOG_INFO) << " ";
 
 	_funds.push_back(funds);
 

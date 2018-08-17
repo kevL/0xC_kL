@@ -91,20 +91,20 @@ SaveGameState::SaveGameState(
 	switch (type)
 	{
 		case SAVE_QUICK:
-			_file = SavedGame::QUICKSAVE;
+			_file = SavedGame::SAVE_Quick;
 			break;
 
 		case SAVE_AUTO_GEOSCAPE:
-			_file = SavedGame::AUTOSAVE_GEOSCAPE;
+			_file = SavedGame::SAVE_AUTO_Geo;
 			break;
 
 		case SAVE_AUTO_BATTLESCAPE:
-			_file = SavedGame::AUTOSAVE_BATTLESCAPE;
+			_file = SavedGame::SAVE_AUTO_Tac;
 			break;
 
 		case SAVE_IRONMAN:
-		case SAVE_IRONMAN_END:
-			_file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getLabel())) + SavedGame::SAVE_EXT;
+		case SAVE_IRONMAN_QUIT:
+			_file = CrossPlatform::sanitizeFilename(Language::wstrToFs(_game->getSavedGame()->getLabel())) + SavedGame::SAVE_ExtDot;
 	}
 
 	build(palette);
@@ -164,7 +164,7 @@ void SaveGameState::think()
 {
 	State::think();
 
-	if (_firstRun < 10) // wait a bit to Ensure this gets drawn properly
+	if (_firstRun < WAIT_TICKS) // wait a bit to Ensure this gets drawn properly
 		++_firstRun;
 	else
 	{
@@ -173,14 +173,14 @@ void SaveGameState::think()
 
 		switch (_type)
 		{
-			case SAVE_DEFAULT: // manual save - Close the save screen.
+			case SAVE_DEFAULT: // manual save - close the Save screen.
 				_game->popState();
 
-				if (_game->getSavedGame()->isIronman() == false) // And pause screen too.
+				if (_game->getSavedGame()->isIronman() == false) // And the Pause screen too. what - why should an Ironballs game get passed in here as type SAVE_DEFAULT.
 					_game->popState();
 				break;
 
-			case SAVE_QUICK: // automatic save - Give it a default name.
+			case SAVE_QUICK: // give these a default label ->
 			case SAVE_AUTO_GEOSCAPE:
 			case SAVE_AUTO_BATTLESCAPE:
 				_game->getSavedGame()->setLabel(Language::fsToWstr(_file));
@@ -189,20 +189,17 @@ void SaveGameState::think()
 
 		try // Save the game
 		{
-			const std::string backup (_file + ".bak");
+			const std::string backup (_file + SavedGame::SAVE_BakDot);
 			_game->getSavedGame()->save(backup);
 
-			const std::string
-				fullPath (Options::getUserFolder() + _file),
-				backPath (Options::getUserFolder() + backup);
 			if (CrossPlatform::moveFile(
-									backPath,
-									fullPath) == false)
+									Options::getUserFolder() + backup,
+									Options::getUserFolder() + _file) == false)
 			{
 				throw Exception("Save backed up in " + backup);
 			}
 
-			if (_type == SAVE_IRONMAN_END)
+			if (_type == SAVE_IRONMAN_QUIT)
 			{
 				// This uses baseX/Y options for Geoscape & Basescape:
 //				Options::baseXResolution = Options::baseXGeoscape; // kL

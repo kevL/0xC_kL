@@ -1169,18 +1169,21 @@ SavedGame* Ruleset::createSave(Game* const play) const
 	}
 	//Log(LOG_INFO) << ". countries DONE";
 
-	// Adjust funding to total (stock: $6-million) '_startFunds'.
-	// NOTE: It is possible, but barely, for player to start w/ 0 funds
-	// or for all start-funds being granted by only 1 country, etc.
-	const float adj (static_cast<float>(_startFunds) / static_cast<float>(playSave->getTotalCountryFunds()));
+	// Adjust funding to total '_startFunds' (stock: $6-million).
+	// NOTE: It is possible for player to start w/ less than '_startFunds'.
+	const float coef (static_cast<float>(_startFunds) / static_cast<float>(playSave->getTotalCountryFunds()));
 	int funds;
 	for (std::vector<Country*>::const_iterator
-			i = playSave->getCountries()->begin();
+			i  = playSave->getCountries()->begin();
 			i != playSave->getCountries()->end();
-			++i)
+		  ++i)
 	{
 		if ((funds = (*i)->getCountryFunds().back()) != 0)
-			(*i)->getCountryFunds().back() = static_cast<int>(static_cast<float>(funds) * adj);
+		{
+			funds = std::min(static_cast<int>(static_cast<float>(funds) * coef),
+							(*i)->getRules()->getFundingCap());
+			(*i)->getCountryFunds().back() = funds;
+		}
 	}
 	playSave->setFunds(playSave->getTotalCountryFunds() * 1000);
 	//Log(LOG_INFO) << ". funding DONE";

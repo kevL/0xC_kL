@@ -46,6 +46,8 @@ class SaveGameState
 {
 
 private:
+	static const int WAIT_TICKS = 5;
+
 	int _firstRun;
 	std::string _file;
 

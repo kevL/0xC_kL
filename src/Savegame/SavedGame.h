@@ -83,7 +83,7 @@ enum SaveType
 	SAVE_AUTO_GEOSCAPE,		// 2
 	SAVE_AUTO_BATTLESCAPE,	// 3
 	SAVE_IRONMAN,			// 4
-	SAVE_IRONMAN_END		// 5
+	SAVE_IRONMAN_QUIT		// 5
 };
 
 /**
@@ -254,10 +254,13 @@ private:
 
 	public:
 		static const std::string
-			AUTOSAVE_GEOSCAPE,
-			AUTOSAVE_BATTLESCAPE,
-			QUICKSAVE,
-			SAVE_EXT;
+			SAVE_AUTO_Geo,
+			SAVE_AUTO_Tac,
+			SAVE_Quick,
+			SAVE_Ext,
+			SAVE_ExtDot,
+			SAVE_Ext_AQ,
+			SAVE_BakDot;
 
 		/// Creates a SavedGame.
 		explicit SavedGame(const Ruleset* const rules);

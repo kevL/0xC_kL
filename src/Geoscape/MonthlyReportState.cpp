@@ -69,6 +69,8 @@ MonthlyReportState::MonthlyReportState()
 		_fundsDelta(0),
 		_playSave(_game->getSavedGame())
 {
+	Log(LOG_INFO) << "MonthlyReportState()";
+
 	_window		= new Window(this);
 	_txtTitle	= new Text(300, 16, 10, 7);
 
@@ -113,10 +115,6 @@ MonthlyReportState::MonthlyReportState()
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
-
-	calculateReport(); // <- sets Rating etc -->
-
-
 	int
 		month (_playSave->getTime()->getMonth() - 1),
 		year  (_playSave->getTime()->getYear());
@@ -146,6 +144,10 @@ MonthlyReportState::MonthlyReportState()
 	_txtMonth->setText(tr("STR_MONTH").arg(tr(st)).arg(year));
 
 
+
+	calculateReport(); // GATHER DATA --!!|
+
+
 	std::wostringstream woststr;
 	if (_fundsDelta > 0) woststr << '+';
 	woststr << Text::formatCurrency(_fundsDelta * 1000);
@@ -172,19 +174,19 @@ MonthlyReportState::MonthlyReportState()
 	_lstCouncil->setMargin();
 	_lstCouncil->wrapIndent(false);
 
-	const int defeatThreshold (_game->getRuleset()->getDefeatScore() + (_playSave->getDifficultyInt() * 250));
+	const int councilThreshold (_game->getRuleset()->getDefeatScore() + (_playSave->getDifficultyInt() * 250));
 
 	std::string track;
 
-	if (_scoreTotal < defeatThreshold)
+	if (_scoreTotal < councilThreshold)
 	{
 		st = TAC_RATING[0u]; // terrible
 		track = OpenXcom::res_MUSIC_GEO_MONTHLYREPORT_BAD;
 
 		_lstCouncil->addRow(1, tr("STR_COUNCIL_IS_DISSATISFIED_1").c_str());
 
-		if (_scorePrior >= defeatThreshold) // check defeat by rating
-		{
+		if (_playSave->getMonthsElapsed() == 0 || _scorePrior >= councilThreshold)	// check defeat by Rating
+		{																			// NOTE: The month has not elapsed yet.
 			_lstCouncil->addRow(1, L"");
 			_lstCouncil->addRow(1, tr("STR_COUNCIL_IS_DISSATISFIED_2").c_str());
 		}
@@ -194,12 +196,12 @@ MonthlyReportState::MonthlyReportState()
 	else
 	{
 		std::string satisfaction;
-		if (_scoreTotal > defeatThreshold + 10000)
+		if (_scoreTotal > councilThreshold + 10000)
 		{
 			st = TAC_RATING[5u]; // terrific
 			satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
 		}
-		else if (_scoreTotal > defeatThreshold + 5000)
+		else if (_scoreTotal > councilThreshold + 5000)
 		{
 			st = TAC_RATING[4u]; // excellent
 			satisfaction = "STR_COUNCIL_IS_VERY_PLEASED";
@@ -208,9 +210,9 @@ MonthlyReportState::MonthlyReportState()
 		{
 			satisfaction = "STR_COUNCIL_IS_GENERALLY_SATISFIED";
 
-			if (_scoreTotal > defeatThreshold + 2500)
+			if (_scoreTotal > councilThreshold + 2500)
 				st = TAC_RATING[3u]; // good
-			else if (_scoreTotal > defeatThreshold + 1000)
+			else if (_scoreTotal > councilThreshold + 1000)
 				st = TAC_RATING[2u]; // okay
 			else
 				st = TAC_RATING[1u]; // poor
@@ -227,7 +229,7 @@ MonthlyReportState::MonthlyReportState()
 	{
 		if (_playSave->getFunds() < _game->getRuleset()->getDefeatFunds())
 		{
-			if (_playSave->hasLowFunds() == false) // check defeat by funds
+			if (_playSave->hasLowFunds() == false) // check defeat by Funds
 			{
 				_playSave->flagLowFunds();
 
@@ -344,19 +346,23 @@ void MonthlyReportState::init()
  */
 void MonthlyReportState::calculateReport() // private.
 {
+	Log(LOG_INFO) << "calculateReport()";
+
 	const int diff (_playSave->getDifficultyInt());
 	if (diff != 0)
 	{
-		PactStatus pactStatus;
-		int pactScore;
+		PactStatus pact;
+		int score;
 
 		for (std::vector<Country*>::const_iterator // add scores for pacted or about-to-pact Countries.
 				i  = _playSave->getCountries()->begin();
 				i != _playSave->getCountries()->end();
 			  ++i)
 		{
-			if ((pactStatus = (*i)->getPactStatus()) != PACT_NONE
-				&& (pactScore = (*i)->getRules()->getPactScore() * diff) != 0)
+			Log(LOG_INFO) << ". " << (*i)->getType() << " pact= " << (*i)->getPactStatus();
+
+			if ((pact = (*i)->getPactStatus()) != PACT_NONE
+				&& (score = (*i)->getRules()->getPactScore() * diff) != 0)
 			{
 				Region* region (nullptr);
 				for (std::vector<Region*>::const_iterator
@@ -371,54 +377,68 @@ void MonthlyReportState::calculateReport() // private.
 					}
 				}
 
-				if (pactStatus == PACT_PACTED) // rand 50% .. 100% if already pacted, full pts for about-to-pact Countries.
-					pactScore = RNG::generate(pactScore >> 1u,
-											  pactScore);
+				if (pact == PACT_PACTED) // rand 50% .. 100% if already pacted, full pts for about-to-pact Countries.
+					score = RNG::generate(score >> 1u,
+										  score);
 
-				if (pactScore != 0)
+				if (score != 0)
 					_playSave->scorePoints(
 										region,
 										*i,
-										pactScore,
+										score,
 										true);
 			}
 		}
 	}
 
-	_scorePrior = 0;
 	int
-		scorePlayer (0),
-		scoreAliens (0);
+		player (0),
+		aLiens (0);
 
 	const size_t last (_playSave->getFundsList().size() - 1u); // <- index of the month assessed
 
 	for (std::vector<Region*>::const_iterator		// NOTE: Only Region scores are evaluated;
-			i  = _playSave->getRegions()->begin();	// Country scores are NOT added.
-			i != _playSave->getRegions()->end();
-		  ++i)
+			i  = _playSave->getRegions()->begin();	// Country scores are NOT added to totals
+			i != _playSave->getRegions()->end();	// since countries are always inside regions
+		  ++i)										// so don't double the scores.
 	{
-		(*i)->newMonth();
-
 		if (last != 0u)
-			_scorePrior += (*i)->getActivityXCom() .at(last - 1u)
-						 - (*i)->getActivityAlien().at(last - 1u);
+			_scorePrior += (*i)->getActivityXCom() .at(last - 1u)  // '_actX'
+						 - (*i)->getActivityAlien().at(last - 1u); // '_actA'
 
-		scorePlayer += (*i)->getActivityXCom() .at(last);
-		scoreAliens += (*i)->getActivityAlien().at(last);
+		player += (*i)->getActivityXCom() .back();
+		aLiens += (*i)->getActivityAlien().back();
+
+		(*i)->newMonth(); // WARNING: adds an entry to the end of Region's '_actA' and '_actX'
 	}
 
+	Log(LOG_INFO) << " ";
+	Log(LOG_INFO) << ". _scorePrior= " << _scorePrior;
+	Log(LOG_INFO) << ". player= " << player;
+	Log(LOG_INFO) << ". aLiens= " << aLiens;
+	Log(LOG_INFO) << " ";
+
+	size_t pre;			// account for the fact that these vectors hold <= 12 entries
+	if (last == 11u)	// and the CountryFunds vector is about to add an entry ->
+		pre = 10u;		// ie. the position of back() will not change
+	else
+		pre = last;		// ie. the position of back() will be incremented
 
 	for (std::vector<Country*>::const_iterator
 			i  = _playSave->getCountries()->begin();
 			i != _playSave->getCountries()->end();
 		  ++i)
 	{
-		(*i)->newMonth( // calculates satisfaction & funding & updates pact-vars.
-					scorePlayer,
-					scoreAliens,
+		//Log(LOG_INFO) << ". " << (*i)->getType();
+
+		(*i)->newMonth(		// WARNING: adds an entry to the end of Country's '_actA' and '_actX' and '_funds'
+					player,	// calculate satisfaction & funding.
+					aLiens,
 					diff);
+
 		_fundsDelta += (*i)->getCountryFunds().back()
-					 - (*i)->getCountryFunds().at(last);
+					 - (*i)->getCountryFunds().at(pre);
+		Log(LOG_INFO) << ". _fundsDelta= " << _fundsDelta;
 
 		switch ((*i)->getPactStatus())
 		{
@@ -439,20 +459,21 @@ void MonthlyReportState::calculateReport() // private.
 				break;
 
 			case PACT_RECENT:
+				(*i)->setPactStatus(PACT_PACTED); // update recently signed pact to Status:Pacted
 				_listPacts.push_back((*i)->getRules()->getType());
-				(*i)->setPactStatus(PACT_PACTED);
 		}
 	}
 
 	if (last != 0u)
-		_scorePrior += _playSave->getResearchScores().at(last - 1u); // add research-scores.
+		_scorePrior += _playSave->getResearchScores().at(last - 1u); // add research-score to the month before last month's score.
 
-	int scoreResearch = _playSave->getResearchScores().at(last); // add research-scores.
+	const int research (_playSave->getResearchScores().back()); // add research-score to last month's score.
 	
-	_scoreTotal = scorePlayer + scoreResearch - scoreAliens;
+	_scoreTotal = player + research - aLiens;
+	Log(LOG_INFO) << ". _scoreTotal= " << _scoreTotal;
 
 	_playSave->tallyScore(_scoreTotal);
-	_playSave->tallyResearch(scoreResearch);
+	_playSave->tallyResearch(research);
 
 	_playSave->balanceBudget(); // handle cash-accounts.
 }
