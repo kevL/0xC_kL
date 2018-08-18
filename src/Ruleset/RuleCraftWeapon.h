@@ -46,7 +46,7 @@ private:
 		_type;
 	int
 		_accuracy,
-		_loadCap,
+		_loadQty,
 		_power,
 		_prjSpeed,
 		_range,

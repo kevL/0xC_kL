@@ -1156,32 +1156,32 @@ std::string Craft::rearm(const Ruleset* const rules)
 		{
 			warn.clear();
 
-			const std::string clipType ((*i)->getRules()->getClipType());
-			const int baseQty (_base->getStorageItems()->getItemQuantity(clipType));
+			const std::string clip ((*i)->getRules()->getClipType());
+			const int baseQty (_base->getStorageItems()->getItemQuantity(clip));
 
-			if (clipType.empty() == true)
+			if (clip.empty() == true)
 				(*i)->rearm();
 			else if (baseQty > 0)
 			{
 				int usedQty ((*i)->rearm(
 										baseQty,
-										rules->getItemRule(clipType)->getFullClip()));
+										rules->getItemRule(clip)->getFullClip()));
 				if (usedQty != 0)
 				{
 					if (usedQty < 0) // trick. See CraftWeapon::rearm() - not enough clips at Base
 					{
 						usedQty = -usedQty;
-						warn = clipType;
+						warn = clip;
 
 						_warning = CW_CANTREARM;
 					}
 
-					_base->getStorageItems()->removeItem(clipType, usedQty);
+					_base->getStorageItems()->removeItem(clip, usedQty);
 				}
 			}
 			else // no ammo at base
 			{
-				warn = clipType;
+				warn = clip;
 				_warning = CW_CANTREARM;
 				(*i)->setCantLoad();
 			}
@@ -1375,9 +1375,10 @@ void Craft::setWarned(bool warned)
  * Gets the quantity of time that this Craft will be repairing/rearming/refueling.
  * @note These are checked & attempted every half hour.
  * @param isDelayed - reference to set true if this Craft's Base will run out of materials
+ * @param rules     - pointer to the Ruleset
  * @return, hours before Craft can fly
  */
-int Craft::getDowntime(bool& isDelayed)
+int Craft::getDowntime(bool& isDelayed, const Ruleset* const rules)
 {
 	isDelayed = false;
 
@@ -1407,7 +1408,7 @@ int Craft::getDowntime(bool& isDelayed)
 				const std::string& clip ((*i)->getRules()->getClipType());
 				if (clip.empty() == false)
 				{
-					int baseQty (_base->getStorageItems()->getItemQuantity(clip));
+					int baseQty (_base->getStorageItems()->getItemQuantity(clip) * rules->getItemRule(clip)->getFullClip());
 					if (baseQty < reqQty)
 					{
 						for (std::vector<Transfer*>::const_iterator // check Transfers

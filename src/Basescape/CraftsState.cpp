@@ -208,7 +208,7 @@ std::wstring CraftsState::getAltStatus(Craft* const craft) // private.
 		st.push_back('_');
 
 		bool isDelayed;
-		const int hrs (craft->getDowntime(isDelayed));
+		const int hrs (craft->getDowntime(isDelayed, _game->getRuleset()));
 		return tr(st).arg(_game->getSavedGame()->formatCraftDowntime(hrs, isDelayed, _game->getLanguage()));
 	}
 

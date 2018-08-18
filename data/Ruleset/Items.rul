@@ -5,7 +5,7 @@ items:
     costSell: 5000
     transferTime: 48
 
-  - type: STR_CANNON_ROUNDS_50
+  - type: STR_CANNON_ROUNDS_25
     size: 0.3
     costBuy: 4475
     costSell: 1000

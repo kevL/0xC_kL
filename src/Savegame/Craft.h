@@ -265,7 +265,7 @@ private:
 		void setWarned(bool warned = true);
 
 		/// Gets the amount of time this Craft will be repairing/rearming/refueling.
-		int getDowntime(bool& isDelayed);
+		int getDowntime(bool& isDelayed, const Ruleset* const rules);
 
 		/// Adds a dogfight kill.
 		void ace();

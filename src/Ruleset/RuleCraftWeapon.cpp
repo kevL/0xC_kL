@@ -38,7 +38,7 @@ RuleCraftWeapon::RuleCraftWeapon(const std::string& type)
 		_reloadCautious(0),
 		_reloadStandard(0),
 		_reloadAggressive(0),
-		_loadCap(0),
+		_loadQty(0),
 		_rearmRate(1),
 		_prjSpeed(0),
 		_prjType(PT_CANNON_ROUND)
@@ -75,17 +75,17 @@ void RuleCraftWeapon::load(
 			_sound += modIndex;
 	}
 
-	_power				= node["power"]				.as<int>(_power);
-	_range				= node["range"]				.as<int>(_range);
-	_accuracy			= node["accuracy"]			.as<int>(_accuracy);
-	_reloadCautious		= node["reloadCautious"]	.as<int>(_reloadCautious);
-	_reloadStandard		= node["reloadStandard"]	.as<int>(_reloadStandard);
-	_reloadAggressive	= node["reloadAggressive"]	.as<int>(_reloadAggressive);
-	_loadCap			= node["loadCap"]			.as<int>(_loadCap);
-	_rearmRate			= node["rearmRate"]			.as<int>(_rearmRate);
-	_prjSpeed			= node["prjSpeed"]			.as<int>(_prjSpeed);
-	_launcher			= node["launcher"]			.as<std::string>(_launcher);
-	_clip				= node["clip"]				.as<std::string>(_clip);
+	_power            = node["power"]           .as<int>(_power);
+	_range            = node["range"]           .as<int>(_range);
+	_accuracy         = node["accuracy"]        .as<int>(_accuracy);
+	_reloadCautious   = node["reloadCautious"]  .as<int>(_reloadCautious);
+	_reloadStandard   = node["reloadStandard"]  .as<int>(_reloadStandard);
+	_reloadAggressive = node["reloadAggressive"].as<int>(_reloadAggressive);
+	_loadQty          = node["loadQty"]         .as<int>(_loadQty);
+	_rearmRate        = node["rearmRate"]       .as<int>(_rearmRate);
+	_prjSpeed         = node["prjSpeed"]        .as<int>(_prjSpeed);
+	_launcher         = node["launcher"]        .as<std::string>(_launcher);
+	_clip             = node["clip"]            .as<std::string>(_clip);
 
 	_prjType = static_cast<CwpType>(node["prjType"].as<int>(_prjType));
 }
@@ -178,7 +178,7 @@ int RuleCraftWeapon::getAggressiveReload() const
  */
 int RuleCraftWeapon::getLoadCapacity() const
 {
-	return _loadCap;
+	return _loadQty;
 }
 
 /**
