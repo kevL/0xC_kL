@@ -153,11 +153,11 @@ private:
 		* _sideTop,
 		* _sideBottom;
 	Timer
-		* _tmrGeo,
-		* _tmrDogfight,
-		* _tmrDfStart,
-		* _tmrDfZinn,
-		* _tmrDfZout;
+		* _trGeo,
+		* _trDf,
+		* _trDfStart,
+		* _trDfZinn,
+		* _trDfZout;
 	Ufo* _hostileUfos[UFO_HOTBLOBS];
 
 	std::list<State*> _popups;

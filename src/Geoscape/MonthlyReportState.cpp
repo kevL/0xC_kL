@@ -354,6 +354,9 @@ void MonthlyReportState::calculateReport() // private.
 		PactStatus pact;
 		int score;
 
+		Region* region;
+		std::string st;
+
 		for (std::vector<Country*>::const_iterator // add scores for pacted or about-to-pact Countries.
 				i  = _playSave->getCountries()->begin();
 				i != _playSave->getCountries()->end();
@@ -364,13 +367,15 @@ void MonthlyReportState::calculateReport() // private.
 			if ((pact = (*i)->getPactStatus()) != PACT_NONE
 				&& (score = (*i)->getRules()->getPactScore() * diff) != 0)
 			{
-				Region* region (nullptr);
+				st = (*i)->getRules()->getCountryRegion();
+
+				region = nullptr;
 				for (std::vector<Region*>::const_iterator
 						j  = _playSave->getRegions()->begin();
 						j != _playSave->getRegions()->end();
 					  ++j)
 				{
-					if ((*j)->getRules()->getType() == (*i)->getRules()->getCountryRegion())
+					if ((*j)->getRules()->getType() == st)
 					{
 						region = *j;
 						break;
@@ -538,8 +543,8 @@ void MonthlyReportState::btnOkClick(Action*)
 }
 
 /**
- * Builds a sentence from a list of countries adding the appropriate
- * separators and pluralization.
+ * Builds a sentence from a list of countries adding the appropriate separators
+ * and pluralization.
  * @param countries	- reference to a vector of strings that is the list of countries
  * @param singular	- reference to a string to append if the returned string is singular
  * @param plural	- reference to a string to append if the returned string is plural
