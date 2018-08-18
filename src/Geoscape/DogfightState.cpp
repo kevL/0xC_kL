@@ -679,6 +679,7 @@ void DogfightState::think()
  */
 void DogfightState::cyclePort()
 {
+	//if (debug) Log(LOG_INFO) << "cyclePort()";
 	for (int // Animate radar waves and other stuff.
 			x = 0;
 			x != _window->getWidth();
@@ -715,9 +716,15 @@ void DogfightState::cyclePort()
 	}
 
 	if (_textPersistence == 0) // clears status-text after a while
+	{
 		_txtStatus->setText(L"");
+		//if (debug) Log(LOG_INFO) << ". _textPersistence is 0 - clear statustext";
+	}
 	else
+	{
 		--_textPersistence;
+		//if (debug) Log(LOG_INFO) << ". _textPersistence= " << _textPersistence;
+	}
 
 
 	bool last (false);
@@ -782,7 +789,8 @@ void DogfightState::waltz()
 		}
 	}
 
-	if (_ufo->getSpeed() > _craft->getRules()->getTopSpeed()) // crappy Craft is chasing UFO
+	if (_breakoff == false
+		&& _ufo->getSpeed() > _craft->getRules()->getTopSpeed()) // crappy Craft is chasing UFO
 	{
 		//if (debug) Log(LOG_INFO) << ". UFO breaking off";
 		_breakoff = true;
@@ -809,11 +817,11 @@ void DogfightState::waltz()
 								_craft->getLatitude());
 		}
 	}
-	else // UFO cannot break off because it's crappier than the crappy Craft
-	{
+//	else // UFO cannot break off because it's crappier than the crappy Craft // fuck off thanks.
+//	{
 		//if (debug && !_ufo->getEscapeTicks()) Log(LOG_INFO) << ". UFO tried breaking off but Failed";
-		_breakoff = false;
-	}
+//		_breakoff = false;
+//	}
 
 
 	if (_reduced == false)
