@@ -87,46 +87,53 @@ UfoDetectedState::UfoDetectedState(
 
 	_fullScreen = false;
 
+	int y, h;
 	if (_hyperDetected == true)
 	{
-		_window			= new Window(this, 236, 190, 10, 10, POPUP_BOTH);
-
-		_txtHyperwave	= new Text(216, 16, 20, 45);
-		_lstInfo2		= new TextList(192, 33, 32, 98);
-		_txtBases		= new Text(100, 41, 32, 135);
+		y = 10; h = 190;
 	}
 	else
-		_window			= new Window(this, 236, 140, 10, 48, POPUP_BOTH);
+	{
+		y = 48; h = 140;
+	}
+	_window       = new Window(this, 236, h, 10, y, POPUP_BOTH);
 
-	_txtUfo			= new Text(102, 16, 20, 56);
-	_txtDetected	= new Text( 80,  9, 32, 73);
-	_txtTimeLeft	= new Text( 60,  9, 20, 83);
+	_txtUfo       = new Text(102, 16, 20, 55);
+	_txtDetected  = new Text( 80,  9, 32, 73);
+	_txtTimeLeft  = new Text( 60,  9, 20, 83);
 
-	_lstInfo		= new TextList(192, 33, 32, 85);
+	_lstInfo      = new TextList(192, 33, 32, 93);
 
-	_btnCenter		= new TextButton(192, 16, 32, 124);
+	_btnCenter    = new TextButton(192, 16, 32, 130);
 
-	_btnIntercept	= new TextButton(88, 16,  32, 144);
-	_btn5Sec		= new TextButton(88, 16, 136, 144);
+	_btnIntercept = new TextButton(88, 16,  32, 147);
+	_btn5Sec      = new TextButton(88, 16, 136, 147);
 
-	_btnCancel		= new TextButton(192, 16, 32, 164);
+	_btnCancel    = new TextButton(192, 16, 32, 164);
 
-	_txtRegion		= new Text(114, 9, 122, 56);
-	_txtTexture		= new Text(114, 9, 122, 66);
+	_txtRegion    = new Text(114, 9, 122, 56);
+	_txtTexture   = new Text(114, 9, 122, 66);
 
 	if (_hyperDetected == true)
 	{
-		_txtUfo			->setY(19);
-		_txtDetected	->setY(36);
-		_txtTimeLeft	->setY(46);
-		_lstInfo		->setY(60);
-		_btnCenter		->setY(135);
-		_btnIntercept	->setY(155);
-		_btn5Sec		->setY(155);
-		_btnCancel		->setY(175);
+		_txtUfo      ->setY(17);
+		_txtDetected ->setY(35);
+		_txtTimeLeft ->setY(45);
 
-		_txtRegion		->setY(19);
-		_txtTexture		->setY(29);
+		_txtHyperwave = new Text(216, 9, 20, 45);
+
+		_lstInfo     ->setY(55);
+		_lstInfo2 = new TextList(192, 33, 32, 92);
+
+		_txtBases = new Text(100, 41, 32, 135); // display up to 5 bases vertically.
+
+		_btnCenter   ->setY(142);
+		_btnIntercept->setY(159);
+		_btn5Sec     ->setY(159);
+		_btnCancel   ->setY(176);
+
+		_txtRegion   ->setY(18);
+		_txtTexture  ->setY(28);
 
 		if (contact == false)
 		{
@@ -137,24 +144,24 @@ UfoDetectedState::UfoDetectedState(
 
 	setInterface("UFOInfo", _hyperDetected);
 
-	add(_window,		"window",	"UFOInfo");
-	add(_txtUfo,		"text",		"UFOInfo");
-	add(_txtDetected,	"text",		"UFOInfo");
-	add(_txtTimeLeft,	"text",		"UFOInfo");
-	add(_lstInfo,		"text",		"UFOInfo");
-	add(_btnCenter,		"button",	"UFOInfo");
-	add(_btnIntercept,	"button",	"UFOInfo");
-	add(_btn5Sec,		"button",	"UFOInfo");
-	add(_btnCancel,		"button",	"UFOInfo");
+	add(_window,       "window", "UFOInfo");
+	add(_txtUfo,       "text",   "UFOInfo");
+	add(_txtDetected,  "text",   "UFOInfo");
+	add(_txtTimeLeft,  "text",   "UFOInfo");
+	add(_lstInfo,      "text",   "UFOInfo");
+	add(_btnCenter,    "button", "UFOInfo");
+	add(_btnIntercept, "button", "UFOInfo");
+	add(_btn5Sec,      "button", "UFOInfo");
+	add(_btnCancel,    "button", "UFOInfo");
 
-	add(_txtRegion,		"text",		"UFOInfo");
-	add(_txtTexture,	"text",		"UFOInfo");
+	add(_txtRegion,    "text",   "UFOInfo");
+	add(_txtTexture,   "text",   "UFOInfo");
 
 	if (_hyperDetected == true)
 	{
-		add(_txtHyperwave,	"text", "UFOInfo");
-		add(_lstInfo2,		"text", "UFOInfo");
-		add(_txtBases,		"text", "UFOInfo");
+		add(_txtHyperwave, "text", "UFOInfo");
+		add(_lstInfo2,     "text", "UFOInfo");
+		add(_txtBases,     "text", "UFOInfo");
 	}
 
 	centerSurfaces();
@@ -372,6 +379,8 @@ UfoDetectedState::UfoDetectedState(
 			}
 			_txtBases->setText(bases.str());
 		}
+		else
+			_txtBases->setVisible(false);
 	}
 }
 /*		if		(texture == 0)	terrain = "FOREST"; // these could get expanded/redef'd. in future
@@ -547,8 +556,8 @@ void UfoDetectedState::transposeWindow() // private.
 	if (_hyperDetected == true)
 	{
 		_txtHyperwave->setVisible(false);
-		_lstInfo2->setVisible(false);
-		_txtBases->setVisible(false);
+		_lstInfo2    ->setVisible(false);
+		_txtBases    ->setVisible(false);
 	}
 
 	int dy;
@@ -557,10 +566,10 @@ void UfoDetectedState::transposeWindow() // private.
 	else
 		dy = 20;
 
-	_btnCenter		->setY(_btnCenter		->getY() + dy);
-	_btnIntercept	->setY(_btnIntercept	->getY() + dy);
-	_btn5Sec		->setY(_btn5Sec			->getY() + dy);
-	_btnCancel		->setY(_btnCancel		->getY() + dy);
+	_btnCenter   ->setY(_btnCenter   ->getY() + dy);
+	_btnIntercept->setY(_btnIntercept->getY() + dy);
+	_btn5Sec     ->setY(_btn5Sec     ->getY() + dy);
+	_btnCancel   ->setY(_btnCancel   ->getY() + dy);
 
 	_geoState->getGlobe()->setCrosshair(
 									_ufo->getLongitude(),
