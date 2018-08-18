@@ -69,7 +69,7 @@ MonthlyReportState::MonthlyReportState()
 		_fundsDelta(0),
 		_playSave(_game->getSavedGame())
 {
-	Log(LOG_INFO) << "MonthlyReportState()";
+	//Log(LOG_INFO) << "MonthlyReportState()";
 
 	_window		= new Window(this);
 	_txtTitle	= new Text(300, 16, 10, 7);
@@ -346,7 +346,7 @@ void MonthlyReportState::init()
  */
 void MonthlyReportState::calculateReport() // private.
 {
-	Log(LOG_INFO) << "calculateReport()";
+	//Log(LOG_INFO) << "calculateReport()";
 
 	const int diff (_playSave->getDifficultyInt());
 	if (diff != 0)
@@ -362,7 +362,7 @@ void MonthlyReportState::calculateReport() // private.
 				i != _playSave->getCountries()->end();
 			  ++i)
 		{
-			Log(LOG_INFO) << ". " << (*i)->getType() << " pact= " << (*i)->getPactStatus();
+			//Log(LOG_INFO) << ". " << (*i)->getType() << " pact= " << (*i)->getPactStatus();
 
 			if ((pact = (*i)->getPactStatus()) != PACT_NONE
 				&& (score = (*i)->getRules()->getPactScore() * diff) != 0)
@@ -417,11 +417,11 @@ void MonthlyReportState::calculateReport() // private.
 		(*i)->newMonth(); // WARNING: adds an entry to the end of Region's '_actA' and '_actX'
 	}
 
-	Log(LOG_INFO) << " ";
-	Log(LOG_INFO) << ". _scorePrior= " << _scorePrior;
-	Log(LOG_INFO) << ". player= " << player;
-	Log(LOG_INFO) << ". aLiens= " << aLiens;
-	Log(LOG_INFO) << " ";
+	//Log(LOG_INFO) << " ";
+	//Log(LOG_INFO) << ". _scorePrior= " << _scorePrior;
+	//Log(LOG_INFO) << ". player= " << player;
+	//Log(LOG_INFO) << ". aLiens= " << aLiens;
+	//Log(LOG_INFO) << " ";
 
 	size_t pre;			// account for the fact that these vectors hold <= 12 entries
 	if (last == 11u)	// and the CountryFunds vector is about to add an entry ->
@@ -443,7 +443,7 @@ void MonthlyReportState::calculateReport() // private.
 
 		_fundsDelta += (*i)->getCountryFunds().back()
 					 - (*i)->getCountryFunds().at(pre);
-		Log(LOG_INFO) << ". _fundsDelta= " << _fundsDelta;
+		//Log(LOG_INFO) << ". _fundsDelta= " << _fundsDelta;
 
 		switch ((*i)->getPactStatus())
 		{
@@ -475,7 +475,7 @@ void MonthlyReportState::calculateReport() // private.
 	const int research (_playSave->getResearchScores().back()); // add research-score to last month's score.
 	
 	_scoreTotal = player + research - aLiens;
-	Log(LOG_INFO) << ". _scoreTotal= " << _scoreTotal;
+	//Log(LOG_INFO) << ". _scoreTotal= " << _scoreTotal;
 
 	_playSave->tallyScore(_scoreTotal);
 	_playSave->tallyResearch(research);

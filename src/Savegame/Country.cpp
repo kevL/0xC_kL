@@ -185,29 +185,29 @@ void Country::newMonth(
 		const int actAtotal,
 		const int diff)
 {
-	Log(LOG_INFO) << "Country::newMonth() " << _countryRule->getType();
+	//Log(LOG_INFO) << "Country::newMonth() " << _countryRule->getType();
 	int funds;
 	if (_pact == PACT_NONE)
 	{
 		const int funds0 (_funds.back());
-		Log(LOG_INFO) << ". funds0= " << funds0;
+		//Log(LOG_INFO) << ". funds0= " << funds0;
 		if (funds0 != 0)
 		{
 			const int
 				player (actXtotal / 10 + _actX.back()), // ie. 10% of global XCOM activity  + 100% of this country's XCOM activity
 				aLiens (actAtotal / 20 + _actA.back()); // ie.  5% of global aLien activity + 100% of this country's aLien activity
 
-			Log(LOG_INFO) << ". . player= " << player;
-			Log(LOG_INFO) << ". . aLiens= " << aLiens;
+			//Log(LOG_INFO) << ". . player= " << player;
+			//Log(LOG_INFO) << ". . aLiens= " << aLiens;
 
 			funds = static_cast<int>(static_cast<float>(funds0) * RNG::generate(0.05f,0.2f)); // 5% .. 20% increase OR decrease
-			Log(LOG_INFO) << ". . funds= " << funds;
+			//Log(LOG_INFO) << ". . funds= " << funds;
 
 			if (player > aLiens + ((diff + 1) * 20))
 			{
 				funds = std::min(funds,
 								_countryRule->getFundingCap() - funds0);
-				Log(LOG_INFO) << ". . . case1 funds= " << funds;
+				//Log(LOG_INFO) << ". . . funds[1]= " << funds;
 				switch (funds)
 				{
 					case 0: // Country's funding is already capped.
@@ -223,7 +223,7 @@ void Country::newMonth(
 				{
 					funds = std::min(funds,
 									_countryRule->getFundingCap() - funds0);
-					Log(LOG_INFO) << ". . . case2a funds= " << funds;
+					//Log(LOG_INFO) << ". . . funds[2a]= " << funds;
 					switch (funds)
 					{
 						case 0: // Country's funding is already capped.
@@ -235,7 +235,7 @@ void Country::newMonth(
 				}
 				else if (RNG::generate(0, aLiens) > player)
 				{
-					Log(LOG_INFO) << ". . . case2b funds= " << funds;
+					//Log(LOG_INFO) << ". . . funds[2b]= " << funds;
 					switch (funds)
 					{
 						case 0: // Country's funding is already zero'd.
@@ -248,13 +248,13 @@ void Country::newMonth(
 				else
 				{
 					funds = 0;
-					Log(LOG_INFO) << ". . . case2c funds= " << funds;
+					//Log(LOG_INFO) << ". . . funds[2c]= " << funds;
 					_satisfaction = SAT_NEUTRAL;
 				}
 			}
 			else
 			{
-				Log(LOG_INFO) << ". . . case3 funds= " << funds;
+				//Log(LOG_INFO) << ". . . funds[3]= " << funds;
 				switch (funds)
 				{
 					case 0: // Country's funding is already zero'd.
@@ -297,9 +297,9 @@ void Country::newMonth(
 		_satisfaction = SAT_NEUTRAL;
 	}
 
-	Log(LOG_INFO) << ". funds= " << funds;
-	Log(LOG_INFO) << ". _satisfaction= " << _satisfaction;
-	Log(LOG_INFO) << " ";
+	//Log(LOG_INFO) << ". funds= " << funds;
+	//Log(LOG_INFO) << ". _satisfaction= " << _satisfaction;
+	//Log(LOG_INFO) << " ";
 
 	_funds.push_back(funds);
 
