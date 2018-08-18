@@ -811,8 +811,8 @@ void Inventory::mouseClick(Action* action, State* state)
 				{
 					if ((SDL_GetModState() & KMOD_CTRL) == 0)
 					{
-						if (Options::includePrimeStateInSavedLayout == true
-							|| _atBase == false) // Priming is allowed only on the field or in pre-battle, or if fuse-state can save to Layouts.
+						if (_atBase == false // Priming is allowed only on the field or in pre-battle, or if fuse-state can save to Layouts.
+							|| Options::includePrimeStateInSavedLayout == true)
 						{
 							if (_tuMode == false)
 							{

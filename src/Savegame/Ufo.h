@@ -113,9 +113,6 @@ private:
 		/// Sets the Ufo's ruleset.
 		void changeRules(const RuleUfo* const ufoRule);
 
-		/// Handles Ufo logic.
-		void think();
-
 		/// Gets the Ufo's label.
 		std::wstring getLabel(
 				const Language* const lang,
@@ -147,6 +144,8 @@ private:
 		void setSecondsLeft(int sec);
 		/// Gets the Ufo's seconds left on the ground.
 		int getSecondsLeft() const;
+		/// Reduces this UFO's seconds left by 5.
+		bool reduceSecondsLeft();
 
 		/// Sets the Ufo's altitude and status.
 		void setAltitude(const std::string& altitude);

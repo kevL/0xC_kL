@@ -1486,11 +1486,13 @@ void GeoscapeState::time5Seconds()
 		{
 			case Ufo::FLYING:
 				//Log(LOG_INFO) << ". . status FLYING";
-				(*i)->think();
+				(*i)->stepTarget();
 
 				if ((*i)->reachedDestination() == true)
 				{
 					//Log(LOG_INFO) << ". . . . ufo reached destination -> handle it.";
+					(*i)->setSpeed();
+
 					const size_t terrors (_playSave->getTerrorSites()->size());
 					const bool detected ((*i)->getDetected());
 
@@ -1558,9 +1560,7 @@ void GeoscapeState::time5Seconds()
 
 			case Ufo::LANDED:
 				//Log(LOG_INFO) << ". . status LANDED";
-				(*i)->think();
-
-				if ((*i)->getSecondsLeft() == 0)
+				if ((*i)->reduceSecondsLeft() == true)
 				{
 					//Log(LOG_INFO) << ". 0 seconds left -> mission UFOLIFTING";
 					AlienMission* const mission ((*i)->getAlienMission());
@@ -1579,7 +1579,7 @@ void GeoscapeState::time5Seconds()
 
 			case Ufo::CRASHED:
 				//Log(LOG_INFO) << ". . status CRASHED";
-				(*i)->think();
+				(*i)->setDetected();
 
 				if ((*i)->getSecondsLeft() == 0)
 				{
@@ -1730,8 +1730,9 @@ void GeoscapeState::time5Seconds()
 									case Ufo::LANDED:	// TODO: setSpeed 1/2 (need to speed up to full if UFO takes off)
 									case Ufo::CRASHED:	// TODO: setSpeed 1/2 (need to speed back up when setting a new destination)
 										if ((*j)->inDogfight() == false
-											&& (*j)->interceptGroundTarget() == false)	// <- non-transport craft shall be set true to case the joint but can't start tactical
-										{												// TODO: just use getQtySoldiers() ....
+											&& (*j)->interceptGroundTarget() == false	// <- non-transport craft shall be set true to case the joint but can't start tactical
+											&& (*j)->isTacticalReturn() == false)		// TODO: just use getQtySoldiers() ....
+										{
 											resetTimer();
 
 											int // look up polygon's texId + shade
@@ -2250,7 +2251,9 @@ private:
  * Advance time for crashed UFOs.
  * @note This function object will decrease the expiration timer for crashed UFOs.
  */
-struct ExpireCrashedUfo: public std::unary_function<Ufo*, void>
+struct ExpireCrashedUfo
+	:
+		public std::unary_function<Ufo*, void>
 {
 	/**
 	 * Decreases UFO expiration timer.

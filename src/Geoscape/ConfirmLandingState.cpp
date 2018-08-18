@@ -354,8 +354,8 @@ void ConfirmLandingState::btnYesClick(Action*)
 		std::string type;
 		switch (ufo->getUfoStatus())
 		{
-			case Ufo::CRASHED:	type = "STR_UFO_CRASH_RECOVERY"; break;
-			case Ufo::LANDED:	type = "STR_UFO_GROUND_ASSAULT";
+			case Ufo::CRASHED: type = "STR_UFO_CRASH_RECOVERY"; break;
+			case Ufo::LANDED:  type = "STR_UFO_GROUND_ASSAULT";
 		}
 		battleSave->setTacticalType(type);
 

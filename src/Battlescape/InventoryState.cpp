@@ -813,7 +813,7 @@ bool InventoryState::saveAllLayouts() const // private.
 {
 	bool ret (false);
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -837,7 +837,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 		if (layoutItems->empty() == false) // clear Soldier's items
 		{
 			for (std::vector<SoldierLayout*>::const_iterator
-					i = layoutItems->begin();
+					i  = layoutItems->begin();
 					i != layoutItems->end();
 					++i)
 			{
@@ -849,7 +849,7 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 		// NOTE: When using getInventory() the loaded ammos are skipped because
 		// they're not owned by the unit; ammo is handled separately by the weapon.
 		for (std::vector<BattleItem*>::const_iterator // save Soldier's items
-				i = unit->getInventory()->begin();
+				i  = unit->getInventory()->begin();
 				i != unit->getInventory()->end();
 				++i)
 		{

@@ -447,6 +447,20 @@ int Ufo::getSecondsLeft() const
 }
 
 /**
+ * Reduces this UFO's seconds left by 5.
+ * @return, true if 0 seconds left
+ */
+bool Ufo::reduceSecondsLeft()
+{
+	if ((_secondsLeft -= 5) <= 0)
+	{
+		_secondsLeft = 0;
+		return true;
+	}
+	return false;
+}
+
+/**
  * Sets the current altitude and status of this UFO.
  * @param altitude - altitude
  */
@@ -596,54 +610,6 @@ void Ufo::calculateSpeed() // private.
 		_heading = "STR_EAST";
 		_dir = 2u;
 	}
-}
-
-/**
- * Moves this Ufo to its destination.
- */
-void Ufo::think()
-{
-//	Log(LOG_INFO) << "";
-//	Log(LOG_INFO) << "Ufo::think()";
-//
-//	Log(LOG_INFO) << ". type= "			<< _ufoRule->getType();
-//	Log(LOG_INFO) << ". id= "			<< _id;
-//	Log(LOG_INFO) << ". idLanded= "		<< _idLanded;
-//	Log(LOG_INFO) << ". idCrashed= "	<< _idCrashed;
-//	Log(LOG_INFO) << ". status= "		<< _status;
-//	Log(LOG_INFO) << ". altitude= "		<< _altitude;
-//	Log(LOG_INFO) << ". detected= "		<< _detected;
-//	Log(LOG_INFO) << ". point= "		<< _missionPoint;
-//	Log(LOG_INFO) << ". missionId= "	<< _mission->getId();
-//	Log(LOG_INFO) << ". secondsLeft= "	<< _secondsLeft;
-//	Log(LOG_INFO) << ". speed1= "		<< _speed;
-//
-//	if (_trajectory != nullptr)
-//		Log(LOG_INFO) << ". traj= " << _trajectory->getType();
-//	else
-//		Log(LOG_INFO) << ". traj NULL";
-//
-//	if (_target != nullptr)
-//		Log(LOG_INFO) << ". target VALID";
-//	else
-//		Log(LOG_INFO) << ". target NOT Valid";
-
-	switch (_status)
-	{
-		case FLYING:
-			stepTarget();
-			if (reachedDestination() == true)
-				setSpeed();
-			break;
-
-		case LANDED:
-			_secondsLeft -= 5;
-			break;
-
-		case CRASHED:
-			_detected = true;
-	}
-//	Log(LOG_INFO) << ". speed2= " << _speed;
 }
 
 /**

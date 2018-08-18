@@ -118,7 +118,7 @@ UfoDetectedState::UfoDetectedState(
 	{
 		_txtUfo      ->setY(17);
 		_txtDetected ->setY(35);
-		_txtTimeLeft ->setY(45);
+		_txtTimeLeft ->setY(45); // TODO: this overlaps a bit w/ _txtHyperwave
 
 		_txtHyperwave = new Text(216, 9, 20, 45);
 
