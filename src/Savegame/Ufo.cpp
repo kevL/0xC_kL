@@ -70,7 +70,7 @@ Ufo::Ufo(
 		_trajectory(nullptr),
 		_missionPoint(0u),
 		_detected(false),
-		_hyperDetected(false),
+		_hyperdecoded(false),
 		_shootingAt(0u),
 		_hitStep(0),
 		_processedIntercept(false),
@@ -142,19 +142,19 @@ void Ufo::loadUfo(
 {
 	MovingTarget::load(node);
 
-	_id				= node["id"]			.as<int>(_id);
-	_idCrashed		= node["idCrashed"]		.as<int>(_idCrashed);
-	_idLanded		= node["idLanded"]		.as<int>(_idLanded);
-	_hull			= node["hull"]			.as<int>(_hull);
-	_altitude		= node["altitude"]		.as<std::string>(_altitude);
-	_heading		= node["heading"]		.as<std::string>(_heading);
-	_dir			= node["dir"]			.as<unsigned>(_dir);
-	_detected		= node["detected"]		.as<bool>(_detected);
-	_hyperDetected	= node["hyperDetected"]	.as<bool>(_hyperDetected);
-	_secondsLeft	= node["secondsLeft"]	.as<int>(_secondsLeft);
-	_tactical		= node["tactical"]		.as<bool>(_tactical);
-	_terrain		= node["terrain"]		.as<std::string>(_terrain);
-	_isQuickBattle	= node["isQuickBattle"]	.as<bool>(_isQuickBattle);
+	_id            = node["id"]           .as<int>(_id);
+	_idCrashed     = node["idCrashed"]    .as<int>(_idCrashed);
+	_idLanded      = node["idLanded"]     .as<int>(_idLanded);
+	_hull          = node["hull"]         .as<int>(_hull);
+	_altitude      = node["altitude"]     .as<std::string>(_altitude);
+	_heading       = node["heading"]      .as<std::string>(_heading);
+	_dir           = node["dir"]          .as<unsigned>(_dir);
+	_detected      = node["detected"]     .as<bool>(_detected);
+	_hyperdecoded  = node["hyperDetected"].as<bool>(_hyperdecoded);
+	_secondsLeft   = node["secondsLeft"]  .as<int>(_secondsLeft);
+	_tactical      = node["tactical"]     .as<bool>(_tactical);
+	_terrain       = node["terrain"]      .as<std::string>(_terrain);
+	_isQuickBattle = node["isQuickBattle"].as<bool>(_isQuickBattle);
 
 	double
 		lonTarget,
@@ -202,8 +202,8 @@ void Ufo::loadUfo(
 		_missionPoint = node["trjPoint"].as<size_t>(_missionPoint);
 	}
 
-	_fireCountdown		= node["fireCountdown"]		.as<int>(_fireCountdown);
-	_escapeCountdown	= node["escapeCountdown"]	.as<int>(_escapeCountdown);
+	_fireCountdown   = node["fireCountdown"]  .as<int>(_fireCountdown);
+	_escapeCountdown = node["escapeCountdown"].as<int>(_escapeCountdown);
 
 	if (_tactical == true) setSpeed();
 }
@@ -219,38 +219,38 @@ YAML::Node Ufo::save() const
 	node["type"]	= _ufoRule->getType();
 	node["id"]		= _id;
 
-	if		(_idCrashed != 0) node["idCrashed"]	= _idCrashed;
-	else if	(_idLanded  != 0) node["idLanded"]	= _idLanded;
+	if      (_idCrashed != 0) node["idCrashed"] = _idCrashed;
+	else if (_idLanded  != 0) node["idLanded"]  = _idLanded;
 
 	if (_terrain.empty() == false) node["terrain"] = _terrain;
 
-	node["altitude"]	= _altitude;
-	node["heading"]		= _heading;
-	node["dir"]			= _dir;
-	node["status"]		= static_cast<int>(_status);
+	node["altitude"] = _altitude;
+	node["heading"]  = _heading;
+	node["dir"]      = _dir;
+	node["status"]   = static_cast<int>(_status);
 
 	node["hull"]		= _hull;
 
-	if (_detected != false)			node["detected"]		= _detected;
-	if (_hyperDetected != false)	node["hyperDetected"]	= _hyperDetected;
-	if (_secondsLeft != 0)			node["secondsLeft"]		= _secondsLeft;
-	if (_tactical != false)			node["tactical"]		= _tactical;
+	if (_detected != false)     node["detected"]      = _detected;
+	if (_hyperdecoded != false) node["hyperDetected"] = _hyperdecoded;
+	if (_secondsLeft != 0)      node["secondsLeft"]   = _secondsLeft;
+	if (_tactical != false)     node["tactical"]      = _tactical;
 
 	if (_isQuickBattle == false) // TODO: Do not save trajectory-info if UFO was shot down.
 	{
-		node["mission"]		= _mission->getId();
-		node["trajectory"]	= _trajectory->getType();
-		node["trjPoint"]	= _missionPoint;
+		node["mission"]    = _mission->getId();
+		node["trajectory"] = _trajectory->getType();
+		node["trjPoint"]   = _missionPoint;
 	}
 	else
-		node["isQuickBattle"]	= _isQuickBattle;
+		node["isQuickBattle"] = _isQuickBattle;
 
 	switch (_status)
 	{
 		case FLYING:
 		case LANDED:
-			if (_fireCountdown != 0)	node["fireCountdown"]	= _fireCountdown;
-			if (_escapeCountdown != 0)	node["escapeCountdown"]	= _escapeCountdown;
+			if (_fireCountdown != 0)   node["fireCountdown"]   = _fireCountdown;
+			if (_escapeCountdown != 0) node["escapeCountdown"] = _escapeCountdown;
 	}
 
 	return node;
@@ -410,18 +410,18 @@ bool Ufo::getDetected() const
  * Sets whether this Ufo has been detected by hyper-wave.
  * @param hyperdetected - true if hyperwave-detected (default true)
  */
-void Ufo::setHyperDetected(bool hyperdetected)
+void Ufo::setHyperdecoded(bool hyperdecoded)
 {
-	_hyperDetected = hyperdetected;
+	_hyperdecoded = hyperdecoded;
 }
 
 /**
  * Gets whether this Ufo has been detected by hyper-wave.
  * @return, true if hyperwave-detected
  */
-bool Ufo::getHyperDetected() const
+bool Ufo::getHyperdecoded() const
 {
-	return _hyperDetected;
+	return _hyperdecoded;
 }
 
 /**

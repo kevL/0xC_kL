@@ -57,7 +57,7 @@ class Ufo final
 private:
 	bool
 		_detected,
-		_hyperDetected,
+		_hyperdecoded,
 		_isQuickBattle,
 		_processedIntercept,
 		_tactical;
@@ -136,15 +136,15 @@ private:
 		/// Gets the Ufo's detection status.
 		bool getDetected() const;
 		/// Sets the Ufo's hyper detection status.
-		void setHyperDetected(bool hyperdetected = true);
+		void setHyperdecoded(bool hyperdecoded = true);
 		/// Gets the Ufo's hyper detection status.
-		bool getHyperDetected() const;
+		bool getHyperdecoded() const;
 
 		/// Sets the Ufo's seconds left on the ground.
 		void setSecondsLeft(int sec);
 		/// Gets the Ufo's seconds left on the ground.
 		int getSecondsLeft() const;
-		/// Reduces this UFO's seconds left by 5.
+		/// Reduces the UFO's seconds left by 5.
 		bool reduceSecondsLeft();
 
 		/// Sets the Ufo's altitude and status.

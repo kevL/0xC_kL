@@ -56,9 +56,9 @@ private:
 	Text
 		* _txtAltitude,
 		* _txtBase,
-		* _txtDamage,
 		* _txtFuel,
-		* _txtHWP,
+		* _txtHull,
+		* _txtHwp,
 		* _txtMaxSpeed,
 		* _txtRedirect,
 		* _txtSoldier,

@@ -46,21 +46,20 @@ namespace OpenXcom
  * @param state - pointer to GeoscapeState
  */
 LowFuelState::LowFuelState(
-		Craft* craft,
-		GeoscapeState* state)
+		const Craft* const craft,
+		GeoscapeState* const geoState)
 	:
-		_craft(craft),
-		_state(state)
+		_geoState(geoState)
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 224, 120, 16, 40, POPUP_BOTH);
+	_window     = new Window(this, 224, 120, 16, 40, POPUP_BOTH);
 
-	_txtTitle	= new Text(214, 17, 21, 51);
-	_txtMessage	= new Text(214, 50, 21, 68);
+	_txtTitle   = new Text(214, 17, 21, 51);
+	_txtMessage = new Text(214, 50, 21, 68);
 
-	_btnOk5Secs	= new TextButton(90, 18,  30, 134);
-	_btnOk		= new TextButton(90, 18, 136, 134);
+	_btnOk5Secs = new TextButton(90, 18,  30, 134);
+	_btnOk      = new TextButton(90, 18, 136, 134);
 
 	_timerBlink = new Timer(325u);
 	_timerBlink->onTimer(static_cast<StateHandler>(&LowFuelState::blink));
@@ -68,18 +67,18 @@ LowFuelState::LowFuelState(
 
 	setInterface("lowFuel");
 
-	add(_window,		"window",	"lowFuel");
-	add(_txtTitle,		"text",		"lowFuel");
-	add(_txtMessage,	"text2",	"lowFuel");
-	add(_btnOk5Secs,	"button",	"lowFuel");
-	add(_btnOk,			"button",	"lowFuel");
+	add(_window,     "window", "lowFuel");
+	add(_txtTitle,   "text",   "lowFuel");
+	add(_txtMessage, "text2",  "lowFuel");
+	add(_btnOk5Secs, "button", "lowFuel");
+	add(_btnOk,      "button", "lowFuel");
 
 	centerSurfaces();
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
-	_txtTitle->setText(_craft->getLabel(_game->getLanguage()));
+	_txtTitle->setText(craft->getLabel(_game->getLanguage()));
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setBig();
 
@@ -90,18 +89,34 @@ LowFuelState::LowFuelState(
 	_txtMessage->setVisible(false); // wait for blink.
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&LowFuelState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&LowFuelState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&LowFuelState::btnOkClick),
 							Options::keyCancel);
+}
 
-	if (_state->is5Sec() == false)
+/**
+ * dTor.
+ */
+LowFuelState::~LowFuelState()
+{
+	delete _timerBlink;
+}
+
+/**
+ * Initializes the state.
+ */
+void LowFuelState::init() // override
+{
+	State::init();
+
+	if (_geoState->is5Sec() == false)
 	{
 		_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-		_btnOk5Secs->onMouseClick(		static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick));
-		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick),
-										Options::keyOk);
-		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick),
-										Options::keyOkKeypad);
+		_btnOk5Secs->onMouseClick(   static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick));
+		_btnOk5Secs->onKeyboardPress(static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick),
+									 Options::keyOk);
+		_btnOk5Secs->onKeyboardPress(static_cast<ActionHandler>(&LowFuelState::btnOk5SecsClick),
+									 Options::keyOkKeypad);
 	}
 	else
 	{
@@ -115,26 +130,9 @@ LowFuelState::LowFuelState(
 }
 
 /**
- * dTor.
- */
-LowFuelState::~LowFuelState()
-{
-	delete _timerBlink;
-}
-
-/**
- * Initializes the state.
- *
-void LowFuelState::init()
-{
-	State::init();
-	_btnOk5Secs->setVisible(_state->is5Sec() == false);
-} */
-
-/**
  * Runs the blink timer.
  */
-void LowFuelState::think()
+void LowFuelState::think() // override
 {
 	if (_window->isPopupDone() == false)
 		_window->think();
@@ -165,7 +163,7 @@ void LowFuelState::btnOkClick(Action*)
  */
 void LowFuelState::btnOk5SecsClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
 }
 

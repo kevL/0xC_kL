@@ -183,12 +183,23 @@ std::vector<Target*>* Target::getTargeters()
  */
 double Target::getDistance(const Target* const target) const
 {
+	const double lonTarget (target->getLongitude());
+	const double latTarget (target->getLatitude());
+
+	if (AreSameTwo(
+				_lon, lonTarget,
+				_lat, latTarget))
+	{
+		return 0.;
+	}
+	// else the formula below returns NaN
+
 	return std::acos(
 				std::cos(_lat)
-				* std::cos(target->getLatitude())
-				* std::cos(target->getLongitude() - _lon)
+				* std::cos(latTarget)
+				* std::cos(lonTarget - _lon)
 			+ std::sin(_lat)
-				* std::sin(target->getLatitude()));
+				* std::sin(latTarget));
 }
 
 }

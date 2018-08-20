@@ -77,72 +77,69 @@ GeoscapeCraftState::GeoscapeCraftState(
 {
 	_fullScreen = false;
 
-	int height (176);
-	if (_ufo != nullptr) height += 22;
+	int h (168);
+	if (_ufo != nullptr) h += 17; // for the auto-intercept btn.
 
-	_window			= new Window(this, 224, height, 16, 8, POPUP_BOTH);
+	_window       = new Window(this, 224, h, 16, 8, POPUP_BOTH);
+	_txtTitle     = new Text(192, 16, 24, 15);
+	_sprite       = new Surface(
+							32,38,
+							_window->getX() + _window->getWidth() - 16,
+							_window->getY() - 11);
 
-	_txtTitle		= new Text(192, 17, 32, 15);
+	_txtKills     = new Text(60, 9, _sprite->getX() - 62, 15);
 
-	_sprite			= new Surface(
-								32,38,
-								_window->getX() + _window->getWidth() - 16,
-								_window->getY() - 11);
+	_txtStatus    = new Text(208, 16,  32,  33);
+	_txtBase      = new Text( 88,  9,  32,  43);
+	_txtRedirect  = new Text(120, 16, 120,  43);
+	_txtSpeed     = new Text( 88,  9,  32,  55);
+	_txtMaxSpeed  = new Text(128,  9,  32,  65);
+	_txtSoldier   = new Text( 80,  9, 160,  65);
+	_txtAltitude  = new Text(128,  9,  32,  75);
+	_txtHwp       = new Text( 80,  9, 160,  75);
+	_txtFuel      = new Text(128,  9,  32,  85);
+	_txtHull      = new Text( 80,  9, 160,  85);
+	_txtWeapon1   = new Text(128,  9,  32,  95);
+	_txtLoad1     = new Text( 80,  9, 160,  95);
+	_txtWeapon2   = new Text(128,  9,  32, 105);
+	_txtLoad2     = new Text( 80,  9, 160, 105);
 
-	_txtKills		= new Text(60, 9, _sprite->getX() - 61, 15);
+	_btnTarget    = new TextButton( 90, 16,  32, 118);
+	_btnPatrol    = new TextButton( 90, 16, 134, 118);
+	_btnCenter    = new TextButton(192, 16,  32, 135);
+	_btnRebase    = new TextButton( 90, 16,  32, 152);
+	_btnCancel    = new TextButton( 90, 16, 134, 152);
+	_btnIntercept = new TextButton(192, 16,  32, 169);
 
-	_txtStatus		= new Text(192, 17,  32, 31);
-	_txtBase		= new Text(192,  9,  32, 43);
-	_txtRedirect	= new Text(120, 17, 120, 46);
-	_txtSpeed		= new Text(192,  9,  32, 55);
-	_txtMaxSpeed	= new Text(120,  9,  32, 64);
-	_txtSoldier		= new Text( 80,  9, 160, 64);
-	_txtAltitude	= new Text(120,  9,  32, 73);
-	_txtHWP			= new Text( 80,  9, 160, 73);
-	_txtFuel		= new Text(120,  9,  32, 82);
-	_txtDamage		= new Text( 80,  9, 160, 82);
-
-	_txtWeapon1		= new Text(120,  9,  32,  91);
-	_txtLoad1		= new Text( 80,  9, 160,  91);
-	_txtWeapon2		= new Text(120,  9,  32, 100);
-	_txtLoad2		= new Text( 80,  9, 160, 100);
-
-	_btnTarget		= new TextButton( 90, 16,  32, 114);
-	_btnPatrol		= new TextButton( 90, 16, 134, 114);
-	_btnCenter		= new TextButton(192, 16,  32, 136);
-	_btnRebase		= new TextButton( 90, 16,  32, 158);
-	_btnCancel		= new TextButton( 90, 16, 134, 158);
-	_btnIntercept	= new TextButton(192, 16,  32, 180);
-
-	_srfTarget		= new Surface(29, 29, 114, 86);
+	_srfTarget    = new Surface(29, 29, 114, 86); // the surface that crosshairs will be blitted to.
 
 	setInterface("geoCraftScreens");
 
-	add(_window,		"window",	"geoCraftScreens");
-	add(_txtTitle,		"text1",	"geoCraftScreens");
-	add(_txtKills,		"text1",	"geoCraftScreens");
+	add(_window,       "window", "geoCraftScreens");
+	add(_txtTitle,     "text1",  "geoCraftScreens");
+	add(_txtKills,     "text1",  "geoCraftScreens");
 	add(_sprite);
-	add(_txtStatus,		"text1",	"geoCraftScreens");
-	add(_txtBase,		"text3",	"geoCraftScreens");
-	add(_txtRedirect,	"text3",	"geoCraftScreens");
-	add(_txtSpeed,		"text3",	"geoCraftScreens");
-	add(_txtMaxSpeed,	"text3",	"geoCraftScreens");
-	add(_txtSoldier,	"text3",	"geoCraftScreens");
-	add(_txtAltitude,	"text3",	"geoCraftScreens");
-	add(_txtHWP,		"text3",	"geoCraftScreens");
-	add(_txtFuel,		"text3",	"geoCraftScreens");
-	add(_txtDamage,		"text3",	"geoCraftScreens");
-	add(_txtWeapon1,	"text3",	"geoCraftScreens");
-	add(_txtLoad1,		"text3",	"geoCraftScreens");
-	add(_txtWeapon2,	"text3",	"geoCraftScreens");
-	add(_txtLoad2,		"text3",	"geoCraftScreens");
+	add(_txtStatus,    "text1",  "geoCraftScreens");
+	add(_txtBase,      "text3",  "geoCraftScreens");
+	add(_txtRedirect,  "text3",  "geoCraftScreens");
+	add(_txtSpeed,     "text3",  "geoCraftScreens");
+	add(_txtMaxSpeed,  "text3",  "geoCraftScreens");
+	add(_txtSoldier,   "text3",  "geoCraftScreens");
+	add(_txtAltitude,  "text3",  "geoCraftScreens");
+	add(_txtHwp,       "text3",  "geoCraftScreens");
+	add(_txtFuel,      "text3",  "geoCraftScreens");
+	add(_txtHull,      "text3",  "geoCraftScreens");
+	add(_txtWeapon1,   "text3",  "geoCraftScreens");
+	add(_txtLoad1,     "text3",  "geoCraftScreens");
+	add(_txtWeapon2,   "text3",  "geoCraftScreens");
+	add(_txtLoad2,     "text3",  "geoCraftScreens");
 
-	add(_btnTarget,		"button",	"geoCraftScreens");
-	add(_btnPatrol,		"button",	"geoCraftScreens");
-	add(_btnCenter,		"button",	"geoCraftScreens");
-	add(_btnRebase,		"button",	"geoCraftScreens");
-	add(_btnCancel,		"button",	"geoCraftScreens");
-	add(_btnIntercept,	"button",	"geoCraftScreens");
+	add(_btnTarget,    "button", "geoCraftScreens");
+	add(_btnPatrol,    "button", "geoCraftScreens");
+	add(_btnCenter,    "button", "geoCraftScreens");
+	add(_btnRebase,    "button", "geoCraftScreens");
+	add(_btnCancel,    "button", "geoCraftScreens");
+	add(_btnIntercept, "button", "geoCraftScreens");
 
 	add(_srfTarget);
 
@@ -278,7 +275,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	_txtAltitude->setText(tr("STR_ALTITUDE_").arg(tr(alt)));
 
 	_txtFuel->setText(tr("STR_FUEL_").arg(Text::formatPercent(_craft->getFuelPct())));
-	_txtDamage->setText(tr("STR_HULL_").arg(Text::formatPercent(_craft->getCraftHullPct())));
+	_txtHull->setText(tr("STR_HULL_").arg(Text::formatPercent(_craft->getCraftHullPct())));
 
 	std::wostringstream woststr;
 
@@ -296,10 +293,10 @@ GeoscapeCraftState::GeoscapeCraftState(
 		woststr.str(L"");
 		woststr << tr("STR_HWPS") << L" " << L'\x01' << _craft->getQtyVehicles()
 				<< L" (" << _craft->getRules()->getVehicleCapacity() << L")";
-		_txtHWP->setText(woststr.str());
+		_txtHwp->setText(woststr.str());
 	}
 	else
-		_txtHWP->setVisible(false);
+		_txtHwp->setVisible(false);
 
 
 	const CraftWeapon* cw;
@@ -307,6 +304,7 @@ GeoscapeCraftState::GeoscapeCraftState(
 	Text
 		* cwLabel,
 		* cwLoad;
+	std::string prefix;
 
 	const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 	for (size_t
@@ -318,18 +316,20 @@ GeoscapeCraftState::GeoscapeCraftState(
 		{
 			default:
 			case 0u:
-				cwLabel	= _txtWeapon1;
-				cwLoad	= _txtLoad1;
+				prefix  = "STR_WEAPON_POD1_";
+				cwLabel = _txtWeapon1;
+				cwLoad  = _txtLoad1;
 				break;
 			case 1u:
-				cwLabel	= _txtWeapon2;
-				cwLoad	= _txtLoad2;
+				prefix  = "STR_WEAPON_POD2_";
+				cwLabel = _txtWeapon2;
+				cwLoad  = _txtLoad2;
 		}
 
 		if ((cw = _craft->getCraftWeapons()->at(i)) != nullptr)
 		{
 			cwRule = cw->getRules();
-			cwLabel->setText(tr("STR_WEAPON_POD_").arg(tr(cwRule->getType())));
+			cwLabel->setText(tr(prefix).arg(tr(cwRule->getType())));
 
 			woststr.str(L"");
 			woststr << tr("STR_ROUNDS_").arg(cw->getCwLoad())
@@ -515,7 +515,7 @@ void GeoscapeCraftState::btnInterceptClick(Action*) // private.
 	_game->popState(); // since this btn is shown only when this State is invoked by InterceptState
 	_game->popState(); // '_doublePop' will always be true.
 
-	_craft->setTarget(_ufo);
+	_craft->setTarget(_ufo); // TODO: set interception-point
 	_geoState->getGlobe()->clearCrosshair();
 }
 
@@ -524,20 +524,19 @@ void GeoscapeCraftState::btnInterceptClick(Action*) // private.
  */
 void GeoscapeCraftState::transposeWindow() // private.
 {
-	_window->		setVisible(false);
-
-	_txtRedirect->	setVisible(false);
-	_txtSpeed->		setVisible(false);
-	_txtMaxSpeed->	setVisible(false);
-	_txtSoldier->	setVisible(false);
-	_txtAltitude->	setVisible(false);
-	_txtHWP->		setVisible(false);
-	_txtFuel->		setVisible(false);
-	_txtDamage->	setVisible(false);
-	_txtWeapon1->	setVisible(false);
-	_txtLoad1->		setVisible(false);
-	_txtWeapon2->	setVisible(false);
-	_txtLoad2->		setVisible(false);
+	_window     ->setVisible(false);
+	_txtRedirect->setVisible(false);
+	_txtSpeed   ->setVisible(false);
+	_txtMaxSpeed->setVisible(false);
+	_txtSoldier ->setVisible(false);
+	_txtAltitude->setVisible(false);
+	_txtHwp     ->setVisible(false);
+	_txtFuel    ->setVisible(false);
+	_txtHull    ->setVisible(false);
+	_txtWeapon1 ->setVisible(false);
+	_txtLoad1   ->setVisible(false);
+	_txtWeapon2 ->setVisible(false);
+	_txtLoad2   ->setVisible(false);
 
 	int dy (26);
 	_btnTarget->setY(_btnTarget->getY() + dy);

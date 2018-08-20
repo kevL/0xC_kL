@@ -27,6 +27,8 @@
 
 #include "Target.h"
 
+#include "../Geoscape/GeoscapeState.h"
+
 
 namespace OpenXcom
 {
@@ -305,7 +307,7 @@ private:
 		int getLongRangeTotal() const;
 
 		/// Attempts to detect a target with the Base's radars.
-		int detect(const Target* const target) const;
+		GeoscapeState::DetectType detect(const Ufo* const ufo) const;
 		/// Determines if a target is inside the Base's radar-range.
 		double insideRadarRange(const Target* const target) const;
 

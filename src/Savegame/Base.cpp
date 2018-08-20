@@ -1873,81 +1873,53 @@ int Base::getLongRangeTotal() const
 }
 
 /**
- * Gets if a specified Target is detected inside this Base's radar-range.
+ * Gets if a specified UFO is detected inside this Base's radar-range.
  * @param target - pointer to a UFO to attempt detection against
  * @return,	0 undetected
  *			1 hyperdetected only
  *			2 detected
  *			3 detected & hyperdetected
  */
-int Base::detect(const Target* const target) const
+GeoscapeState::DetectType Base::detect(const Ufo* const ufo) const
 {
-	int ret (0);
-	double dist (insideRadarRange(target));
-	if (AreSame(dist, 0.) == false) // lets hope UFO is not *right on top of Base* Lol
-	{
-		if (dist < 0.)
-		{
-			++ret;
-			dist = -dist;
-		}
+	GeoscapeState::DetectType detecttype (GeoscapeState::DT_UNDETECTED);
 
-		int pct (0);
-		for (std::vector<BaseFacility*>::const_iterator
-				i = _facilities.begin();
-				i != _facilities.end();
-				++i)
-		{
-			if ((*i)->buildFinished() == true
-				&& dist <= static_cast<double>((*i)->getRules()->getRadarRange()))
-			{
-				pct += (*i)->getRules()->getRadarChance();
-			}
-		}
-
-		const Ufo* const ufo (dynamic_cast<const Ufo*>(target));
-		if (ufo != nullptr)
-		{
-			pct += ufo->getVisibility();
-			pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10 minutes
-			if (RNG::percent(pct) == true)
-				ret += 2;
-		}
-	}
-	return ret;
-}
-
-/**
- * Gets if a specified Target is inside this Base's radar-range.
- * @param target - pointer to UFO
- * @return, great-circle distance to UFO (negative if hyperdetected)
- */
-double Base::insideRadarRange(const Target* const target) const
-{
-	double ret (0.); // lets hope UFO is not *right on top of Base* Lol
-	const double dist (getDistance(target) * radius_earth);
+	const double dist (getDistance(ufo) * radius_earth);
 	if (dist <= static_cast<double>(_rules->getRadarRangeBest()))
 	{
-		bool hyperDet (false);
+		int pct (0);
+
+		const RuleBaseFacility* facRule;
 		for (std::vector<BaseFacility*>::const_iterator
 				i = _facilities.begin();
 				i != _facilities.end();
 				++i)
 		{
-			if ((*i)->buildFinished() == true
-				&& dist <= static_cast<double>((*i)->getRules()->getRadarRange()))
+			if ((*i)->buildFinished() == true)
 			{
-				ret = dist; // identical value for every *i; looking only for hyperDet after 1st successful iteration ->
-				if ((*i)->getRules()->isHyperwave() == true)
+				facRule = (*i)->getRules();
+				if (dist <= static_cast<double>(facRule->getRadarRange()))
 				{
-					hyperDet = true;
-					break;
+					pct += facRule->getRadarChance();
+
+					if (facRule->isHyperwave() == true)
+						detecttype = GeoscapeState::DT_HYPERDECODED;
 				}
 			}
 		}
-		if (hyperDet == true) ret = -ret; // <- use negative value to pass (hyperdetection= true)
+
+		pct += ufo->getVisibility();
+		pct = static_cast<int>(Round(static_cast<double>(pct) / 3.)); // per 10 minutes
+		if (RNG::percent(pct) == true)
+		{
+			switch (detecttype)
+			{
+				case GeoscapeState::DT_UNDETECTED:   return GeoscapeState::DT_DETECTED;
+				case GeoscapeState::DT_HYPERDECODED: return GeoscapeState::DT_HYPERDETECTED;
+			}
+		}
 	}
-	return ret;
+	return detecttype;
 }
 
 /**

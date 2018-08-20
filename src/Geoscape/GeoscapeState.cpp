@@ -358,7 +358,7 @@ GeoscapeState::GeoscapeState()
 		_day(-1),
 		_month(-1),
 		_year(-1),
-		_windowPops(0),
+		_ufosDetected(0),
 		_delayMusicDfCheck(0),
 		_timeSurplus(0),
 		_score(0)
@@ -368,69 +368,69 @@ GeoscapeState::GeoscapeState()
 		screenHeight (Options::baseYGeoscape),
 		halfHeight   (screenHeight >> 1u);
 
-	_txtRadars	= new Text(65, 9, 3, screenHeight - 32); // lower-left corner
-	_txtLabels	= new Text(65, 9, 3, screenHeight - 22);
-	_txtZoom	= new Text(65, 9, 3, screenHeight - 12); // <- must instantiate before '_globe' (reasons.)
+	_txtRadars = new Text(65, 9, 3, screenHeight - 32); // lower-left corner
+	_txtLabels = new Text(65, 9, 3, screenHeight - 22);
+	_txtZoom   = new Text(65, 9, 3, screenHeight - 12); // <- must instantiate before '_globe' (reasons.)
 
-	_globe			= new Globe(
+	_globe        = new Globe(
 							_game,
 							this, // <- (reason is here. Instantiating the Globe will set the zoom which updates the zoom-text)
 							(screenWidth - 64) >> 1u,
 							halfHeight,
 							screenWidth - 64,
 							screenHeight);
-	_srfSpace		= new Surface(
+	_srfSpace     = new Surface(
 							screenWidth,
 							screenHeight);
-	_srfSideBlack	= new Surface(
+	_srfSideBlack = new Surface(
 							64,
 							screenHeight,
 							screenWidth - 64,
 							0);
 
 	// revert to ImageButtons. Stock build uses TextButton's
-	_btnIntercept	= new ImageButton(63, 11, screenWidth - 63, halfHeight - 100);
-	_btnBases		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  88);
-	_btnGraphs		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  76);
-	_btnUfopaedia	= new ImageButton(63, 11, screenWidth - 63, halfHeight -  64);
-	_btnOptions		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  52);
-	_btnFunding		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  40);
-//	_btnOptions		= new ImageButton(63, 11, screenWidth - 63, halfHeight - 100); // change the GeoGraphic first .... ->
-//	_btnUfopaedia	= new ImageButton(63, 11, screenWidth - 63, halfHeight -  88);
-//	_btnFunding		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  76);
-//	_btnGraphs		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  64);
-//	_btnIntercept	= new ImageButton(63, 11, screenWidth - 63, halfHeight -  52);
-//	_btnBases		= new ImageButton(63, 11, screenWidth - 63, halfHeight -  40);
+	_btnIntercept = new ImageButton(63, 11, screenWidth - 63, halfHeight - 100);
+	_btnBases     = new ImageButton(63, 11, screenWidth - 63, halfHeight -  88);
+	_btnGraphs    = new ImageButton(63, 11, screenWidth - 63, halfHeight -  76);
+	_btnUfopaedia = new ImageButton(63, 11, screenWidth - 63, halfHeight -  64);
+	_btnOptions   = new ImageButton(63, 11, screenWidth - 63, halfHeight -  52);
+	_btnFunding   = new ImageButton(63, 11, screenWidth - 63, halfHeight -  40);
+//	_btnOptions   = new ImageButton(63, 11, screenWidth - 63, halfHeight - 100); // change the GeoGraphic first .... ->
+//	_btnUfopaedia = new ImageButton(63, 11, screenWidth - 63, halfHeight -  88);
+//	_btnFunding   = new ImageButton(63, 11, screenWidth - 63, halfHeight -  76);
+//	_btnGraphs    = new ImageButton(63, 11, screenWidth - 63, halfHeight -  64);
+//	_btnIntercept = new ImageButton(63, 11, screenWidth - 63, halfHeight -  52);
+//	_btnBases     = new ImageButton(63, 11, screenWidth - 63, halfHeight -  40);
 
-	_btn5Secs		= new ImageButton(31, 13, screenWidth - 63, halfHeight + 12);
-	_btn1Min		= new ImageButton(31, 13, screenWidth - 31, halfHeight + 12);
-	_btn5Mins		= new ImageButton(31, 13, screenWidth - 63, halfHeight + 26);
-	_btn30Mins		= new ImageButton(31, 13, screenWidth - 31, halfHeight + 26);
-	_btn1Hour		= new ImageButton(31, 13, screenWidth - 63, halfHeight + 40);
-	_btn1Day		= new ImageButton(31, 13, screenWidth - 31, halfHeight + 40);
-//	_btn5Secs		= new ImageButton(31, 13, screenWidth - 63, halfHeight + 12); // change the GeoGraphic first .... ->
-//	_btn1Min		= new ImageButton(31, 13, screenWidth - 63, halfHeight + 26);
-//	_btn5Mins		= new ImageButton(31, 13, screenWidth - 63, halfHeight + 40);
-//	_btn30Mins		= new ImageButton(31, 13, screenWidth - 31, halfHeight + 12);
-//	_btn1Hour		= new ImageButton(31, 13, screenWidth - 31, halfHeight + 26);
-//	_btn1Day		= new ImageButton(31, 13, screenWidth - 31, halfHeight + 40);
+	_btn5Secs     = new ImageButton(31, 13, screenWidth - 63, halfHeight + 12);
+	_btn1Min      = new ImageButton(31, 13, screenWidth - 31, halfHeight + 12);
+	_btn5Mins     = new ImageButton(31, 13, screenWidth - 63, halfHeight + 26);
+	_btn30Mins    = new ImageButton(31, 13, screenWidth - 31, halfHeight + 26);
+	_btn1Hour     = new ImageButton(31, 13, screenWidth - 63, halfHeight + 40);
+	_btn1Day      = new ImageButton(31, 13, screenWidth - 31, halfHeight + 40);
+//	_btn5Secs     = new ImageButton(31, 13, screenWidth - 63, halfHeight + 12); // change the GeoGraphic first .... ->
+//	_btn1Min      = new ImageButton(31, 13, screenWidth - 63, halfHeight + 26);
+//	_btn5Mins     = new ImageButton(31, 13, screenWidth - 63, halfHeight + 40);
+//	_btn30Mins    = new ImageButton(31, 13, screenWidth - 31, halfHeight + 12);
+//	_btn1Hour     = new ImageButton(31, 13, screenWidth - 31, halfHeight + 26);
+//	_btn1Day      = new ImageButton(31, 13, screenWidth - 31, halfHeight + 40);
 
 	// The old Globe rotate buttons have become the Detail & Radar toggles.
-	_btnDetail		= new ImageButton(63, 46, screenWidth - 63, halfHeight + 54);
-//	_btnRotateLeft	= new InteractiveSurface(12, 10, screenWidth-61, screenHeight/2+76);
-//	_btnRotateRight	= new InteractiveSurface(12, 10, screenWidth-37, screenHeight/2+76);
-//	_btnRotateUp	= new InteractiveSurface(13, 12, screenWidth-49, screenHeight/2+62);
-//	_btnRotateDown	= new InteractiveSurface(13, 12, screenWidth-49, screenHeight/2+87);
-//	_btnZoomIn		= new InteractiveSurface(23, 23, screenWidth-25, screenHeight/2+56);
-//	_btnZoomOut		= new InteractiveSurface(13, 17, screenWidth-20, screenHeight/2+82);
+	_btnDetail      = new ImageButton(63, 46, screenWidth - 63, halfHeight + 54);
+//	_btnRotateLeft  = new InteractiveSurface(12, 10, screenWidth-61, screenHeight/2+76);
+//	_btnRotateRight = new InteractiveSurface(12, 10, screenWidth-37, screenHeight/2+76);
+//	_btnRotateUp    = new InteractiveSurface(13, 12, screenWidth-49, screenHeight/2+62);
+//	_btnRotateDown  = new InteractiveSurface(13, 12, screenWidth-49, screenHeight/2+87);
+//	_btnZoomIn      = new InteractiveSurface(23, 23, screenWidth-25, screenHeight/2+56);
+//	_btnZoomOut     = new InteractiveSurface(13, 17, screenWidth-20, screenHeight/2+82);
 
 	const int height (((screenHeight - Screen::ORIGINAL_HEIGHT) >> 1u) - 12);
-	_sideTop	= new TextButton(
+	_sideTop    = new TextButton(
 							64,
 							height,
 							screenWidth - 64,
 							halfHeight - (Screen::ORIGINAL_HEIGHT >> 1u) - (height + 12));
-	_sideBottom	= new TextButton(
+	_sideBottom = new TextButton(
 							64,
 							height,
 							screenWidth - 64,
@@ -463,26 +463,26 @@ GeoscapeState::GeoscapeState()
 
 	_isfTime	= new InteractiveSurface(63, 39, screenWidth - 63, halfHeight - 28);
 
-	_txtHour	= new Text(19, 17, screenWidth - 54, halfHeight - 22);
-	_txtColon	= new Text( 5, 17, screenWidth - 35, halfHeight - 22);
-	_txtMin		= new Text(19, 17, screenWidth - 30, halfHeight - 22);
-	_txtSec		= new Text( 6,  9, screenWidth -  8, halfHeight - 26);
+	_txtHour   = new Text(19, 17, screenWidth - 54, halfHeight - 22);
+	_txtColon  = new Text( 5, 17, screenWidth - 35, halfHeight - 22);
+	_txtMin    = new Text(19, 17, screenWidth - 30, halfHeight - 22);
+	_txtSec    = new Text( 6,  9, screenWidth -  8, halfHeight - 26);
 
-	_txtDay		= new Text(11, 9, screenWidth - 57, halfHeight - 4);
-	_txtMonth	= new Text(17, 9, screenWidth - 45, halfHeight - 4);
-	_txtYear	= new Text(21, 9, screenWidth - 27, halfHeight - 4);
+	_txtDay    = new Text(11, 9, screenWidth - 57, halfHeight - 4);
+	_txtMonth  = new Text(17, 9, screenWidth - 45, halfHeight - 4);
+	_txtYear   = new Text(21, 9, screenWidth - 27, halfHeight - 4);
 
-	_txtFunds	= new Text(63, 8, screenWidth - 64, halfHeight - 110);
-	_txtScore	= new Text(63, 8, screenWidth - 64, halfHeight + 102);
+	_txtFunds  = new Text(63, 8, screenWidth - 64, halfHeight - 110);
+	_txtScore  = new Text(63, 8, screenWidth - 64, halfHeight + 102);
 
-	_btnGroup = _btn5Secs;
+	_btnGroup  = _btn5Secs;
 
-	_trGeo		= new Timer(FAST_GEO_INTERVAL); // Volutar_smoothGlobe terminator.
+	_trGeo     = new Timer(FAST_GEO_INTERVAL); // Volutar_smoothGlobe terminator.
 
-	_trDf		= new Timer(static_cast<Uint32>(Options::dogfightSpeed));
-	_trDfStart	= new Timer(static_cast<Uint32>(Options::dogfightSpeed));
-	_trDfZinn	= new Timer(static_cast<Uint32>(Options::geoClockSpeed));
-	_trDfZout	= new Timer(static_cast<Uint32>(Options::geoClockSpeed));
+	_trDf      = new Timer(static_cast<Uint32>(Options::dogfightSpeed));
+	_trDfStart = new Timer(static_cast<Uint32>(Options::dogfightSpeed));
+	_trDfZinn  = new Timer(static_cast<Uint32>(Options::geoClockSpeed));
+	_trDfZout  = new Timer(static_cast<Uint32>(Options::geoClockSpeed));
 
 	_txtDebug = new Text(320, 27);
 
@@ -495,19 +495,19 @@ GeoscapeState::GeoscapeState()
 
 	add(_btnDetail);
 
-	add(_btnIntercept,	"button", "geoscape");
-	add(_btnBases,		"button", "geoscape");
-	add(_btnGraphs,		"button", "geoscape");
-	add(_btnUfopaedia,	"button", "geoscape");
-	add(_btnOptions,	"button", "geoscape");
-	add(_btnFunding,	"button", "geoscape");
+	add(_btnIntercept, "button", "geoscape");
+	add(_btnBases,     "button", "geoscape");
+	add(_btnGraphs,    "button", "geoscape");
+	add(_btnUfopaedia, "button", "geoscape");
+	add(_btnOptions,   "button", "geoscape");
+	add(_btnFunding,   "button", "geoscape");
 
-	add(_btn5Secs,		"button", "geoscape");
-	add(_btn1Min,		"button", "geoscape");
-	add(_btn5Mins,		"button", "geoscape");
-	add(_btn30Mins,		"button", "geoscape");
-	add(_btn1Hour,		"button", "geoscape");
-	add(_btn1Day,		"button", "geoscape");
+	add(_btn5Secs,     "button", "geoscape");
+	add(_btn1Min,      "button", "geoscape");
+	add(_btn5Mins,     "button", "geoscape");
+	add(_btn30Mins,    "button", "geoscape");
+	add(_btn1Hour,     "button", "geoscape");
+	add(_btn1Day,      "button", "geoscape");
 
 //	add(_btnRotateLeft);
 //	add(_btnRotateRight);
@@ -516,8 +516,8 @@ GeoscapeState::GeoscapeState()
 //	add(_btnZoomIn);
 //	add(_btnZoomOut);
 
-	add(_sideTop,		"button", "geoscape");
-	add(_sideBottom,	"button", "geoscape");
+	add(_sideTop,    "button", "geoscape");
+	add(_sideBottom, "button", "geoscape");
 	add(_ufoDetected);
 
 	for (size_t
@@ -527,9 +527,9 @@ GeoscapeState::GeoscapeState()
 	{
 		add(_isfUfoBlobs[i]);
 		_isfUfoBlobs[i]->setVisible(false);
-		_isfUfoBlobs[i]->onMousePress(		static_cast<ActionHandler>(&GeoscapeState::btnUfoBlobPress));
-//		_isfUfoBlobs[i]->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnUfoBlobPress),
-//											buttons[i]);
+		_isfUfoBlobs[i]->onMousePress(   static_cast<ActionHandler>(&GeoscapeState::btnUfoBlobPress));
+//		_isfUfoBlobs[i]->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnUfoBlobPress),
+//										 buttons[i]);
 
 		add(_numUfoBlobs[i]);
 		_numUfoBlobs[i]->setVisible(false);
@@ -537,9 +537,9 @@ GeoscapeState::GeoscapeState()
 	}
 
 	add(_isfTime);
-	add(_txtDebug,	"text", "geoscape");
-	add(_txtFunds,	"text", "geoscape");
-	add(_txtScore,	"text", "geoscape");
+	add(_txtDebug,  "text", "geoscape");
+	add(_txtFunds,  "text", "geoscape");
+	add(_txtScore,  "text", "geoscape");
 	add(_txtHour);
 	add(_txtColon);
 	add(_txtMin);
@@ -547,9 +547,9 @@ GeoscapeState::GeoscapeState()
 	add(_txtDay);
 	add(_txtMonth);
 	add(_txtYear);
-	add(_txtRadars,	"text",	"geoscape");
-	add(_txtLabels,	"text",	"geoscape");
-	add(_txtZoom,	"text",	"geoscape");
+	add(_txtRadars, "text", "geoscape");
+	add(_txtLabels, "text", "geoscape");
+	add(_txtZoom,   "text", "geoscape");
 
 	_game->getResourcePack()->getSurface("Cygnus_BG")->blit(_srfSpace);
 
@@ -643,143 +643,143 @@ GeoscapeState::GeoscapeState()
 	geobord->setY((screenHeight - geobord->getHeight()) >> 1u);
 
 	_btnIntercept->copy(geobord);
-	_btnIntercept->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick));
-	_btnIntercept->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick),
-									Options::keyGeoIntercept);
+	_btnIntercept->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick));
+	_btnIntercept->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnInterceptClick),
+								   Options::keyGeoIntercept);
 
 	_btnBases->copy(geobord);
-	_btnBases->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnBasesClick));
-	_btnBases->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnBasesClick),
-								Options::keyGeoBases);
+	_btnBases->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnBasesClick));
+	_btnBases->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnBasesClick),
+							   Options::keyGeoBases);
 
 	_btnGraphs->copy(geobord);
-	_btnGraphs->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnGraphsClick));
+	_btnGraphs->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnGraphsClick));
 	_btnGraphs->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnGraphsClick),
 								Options::keyGeoGraphs);
 
 	_btnUfopaedia->copy(geobord);
-	_btnUfopaedia->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick));
-	_btnUfopaedia->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick),
-									Options::keyGeoUfopedia);
+	_btnUfopaedia->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick));
+	_btnUfopaedia->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnUfopaediaClick),
+								   Options::keyGeoUfopedia);
 
 	_btnOptions->copy(geobord);
-	_btnOptions->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick));	// why the f are these buttons calling btnTimeCompression() AND EVEN GETTING
-	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick),	// THE SENDER RIGHT when a true click on a time-compression btn does not.
-									Options::keyGeoOptions); // Escape key.							// Note that happens only if the 'resetTimeCache' is on a Press, not a Click!
+	_btnOptions->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick));	// why the f are these buttons calling btnTimeCompression() AND EVEN GETTING
+	_btnOptions->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick),	// THE SENDER RIGHT when a true click on a time-compression btn does not.
+								 Options::keyGeoOptions); // Escape key.							// Note that happens only if the 'resetTimeCache' is on a Press, not a Click!
 																									// holy diana
-//	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick, // note: These would interfere w/ opening minimized Dogfights.
-//									Options::keyOk);
-//	_btnOptions->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick,
-//									Options::keyOkKeypad);
+//	_btnOptions->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick, // note: These would interfere w/ opening minimized Dogfights.
+//								 Options::keyOk);
+//	_btnOptions->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnOptionsClick,
+//								 Options::keyOkKeypad);
 
 	_btnFunding->copy(geobord);
-	_btnFunding->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnFundingClick));
-	_btnFunding->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnFundingClick),
-									Options::keyGeoFunding);
+	_btnFunding->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnFundingClick));
+	_btnFunding->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnFundingClick),
+								 Options::keyGeoFunding);
 
 
 	_isfTime->copy(geobord);
-	_isfTime->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnPauseClick),
-								0u);
-	_isfTime->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnPauseClick),
-								SDLK_SPACE);
+	_isfTime->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnPauseClick),
+							  0u);
+	_isfTime->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnPauseClick),
+							  SDLK_SPACE);
 
 	_btn5Secs->copy(geobord);
 	_btn5Secs->setGroup(&_btnGroup);
-	_btn5Secs->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
-								Options::keyGeoSpeed1);
-	_btn5Secs->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
+	_btn5Secs->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+							   Options::keyGeoSpeed1);
+	_btn5Secs->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn1Min->copy(geobord);
 	_btn1Min->setGroup(&_btnGroup);
-	_btn1Min->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
-								Options::keyGeoSpeed2);
-	_btn1Min->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
+	_btn1Min->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+							  Options::keyGeoSpeed2);
+	_btn1Min->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn5Mins->copy(geobord);
 	_btn5Mins->setGroup(&_btnGroup);
-	_btn5Mins->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
-								Options::keyGeoSpeed3);
-	_btn5Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
+	_btn5Mins->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+							   Options::keyGeoSpeed3);
+	_btn5Mins->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn30Mins->copy(geobord);
 	_btn30Mins->setGroup(&_btnGroup);
 	_btn30Mins->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
 								Options::keyGeoSpeed4);
-	_btn30Mins->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
+	_btn30Mins->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn1Hour->copy(geobord);
 	_btn1Hour->setGroup(&_btnGroup);
-	_btn1Hour->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
-								Options::keyGeoSpeed5);
-	_btn1Hour->onMouseClick(	static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
+	_btn1Hour->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+							   Options::keyGeoSpeed5);
+	_btn1Hour->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 	_btn1Day->copy(geobord);
 	_btn1Day->setGroup(&_btnGroup);
-	_btn1Day->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
-								Options::keyGeoSpeed6);
-	_btn1Day->onMouseClick(		static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
+	_btn1Day->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::keyTimeCompression),
+							  Options::keyGeoSpeed6);
+	_btn1Day->onMouseClick(   static_cast<ActionHandler>(&GeoscapeState::btnTimeCompression));
 
 
 	_btnDetail->copy(geobord);
 	_btnDetail->setColor(PURPLE_D);
 	_btnDetail->onMousePress(static_cast<ActionHandler>(&GeoscapeState::btnDetailPress));
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress),
-									Options::keyGeoLeft);
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress),
-									SDLK_KP4);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
-									Options::keyGeoLeft);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
-									SDLK_KP4);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress),
+								  Options::keyGeoLeft);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftPress),
+								  SDLK_KP4);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+								  Options::keyGeoLeft);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+								  SDLK_KP4);
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress),
-									Options::keyGeoRight);
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress),
-									SDLK_KP6);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
-									Options::keyGeoRight);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
-									SDLK_KP6);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress),
+								  Options::keyGeoRight);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateRightPress),
+								  SDLK_KP6);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+								  Options::keyGeoRight);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLonStop),
+								  SDLK_KP6);
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress),
-									Options::keyGeoUp);
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress),
-									SDLK_KP8);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
-									Options::keyGeoUp);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
-									SDLK_KP8);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress),
+								  Options::keyGeoUp);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateUpPress),
+								  SDLK_KP8);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+								  Options::keyGeoUp);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+								  SDLK_KP8);
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress),
-									Options::keyGeoDown);
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress),
-									SDLK_KP2);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
-									Options::keyGeoDown);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
-									SDLK_KP2);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress),
+								  Options::keyGeoDown);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateDownPress),
+								  SDLK_KP2);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+								  Options::keyGeoDown);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateLatStop),
+								  SDLK_KP2);
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftUpPress),
-									SDLK_KP7);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
-									SDLK_KP7);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftUpPress),
+								  SDLK_KP7);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+								  SDLK_KP7);
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftDownPress),
-									SDLK_KP1);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
-									SDLK_KP1);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateLeftDownPress),
+								  SDLK_KP1);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+								  SDLK_KP1);
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightUpPress),
-									SDLK_KP9);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
-									SDLK_KP9);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateRightUpPress),
+								  SDLK_KP9);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+								  SDLK_KP9);
 
-	_btnDetail->onKeyboardPress(	static_cast<ActionHandler>(&GeoscapeState::btnRotateRightDownPress),
-									SDLK_KP3);
-	_btnDetail->onKeyboardRelease(	static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
-									SDLK_KP3);
+	_btnDetail->onKeyboardPress(  static_cast<ActionHandler>(&GeoscapeState::btnRotateRightDownPress),
+								  SDLK_KP3);
+	_btnDetail->onKeyboardRelease(static_cast<ActionHandler>(&GeoscapeState::btnRotateStop),
+								  SDLK_KP3);
 
 	_btnDetail->onKeyboardPress(static_cast<ActionHandler>(&GeoscapeState::btnZoomInLeftClick),
 								Options::keyGeoZoomIn);
@@ -1164,6 +1164,7 @@ void GeoscapeState::init()
  */
 void GeoscapeState::think()
 {
+	//Log(LOG_INFO) << "GeoscapeState::think()";
 	State::think();
 
 	_trDfStart->think(this, nullptr);
@@ -1172,6 +1173,7 @@ void GeoscapeState::think()
 
 	if (_popups.empty() == false)
 	{
+		//Log(LOG_INFO) << ". (_popups.empty() == false)";
 		_globe->rotateStop();
 
 		_game->pushState(_popups.front());
@@ -1179,10 +1181,12 @@ void GeoscapeState::think()
 	}
 	else if (_dogfights.empty() == false)
 	{
-		_trDf->think(this, nullptr);		// call thinkDogfights()
+		//Log(LOG_INFO) << ". (_dogfights.empty() == false)";
+		_trDf->think(this, nullptr);			// call thinkDogfights()
 
-		if (_dogfights.size() == _dfReduced) // if all dogfights are iconized rotate the Globe, etc.
+		if (_dogfights.size() == _dfReduced)	// if all dogfights are iconized rotate the Globe, etc.
 		{
+			//Log(LOG_INFO) << ". . CALL _trGeo->think() ie. timeAdvance()";
 			_pause = false;
 			_trGeo->think(this, nullptr);		// call timeAdvance()
 		}
@@ -1190,6 +1194,7 @@ void GeoscapeState::think()
 	else if (_trDfZinn->isRunning() == false
 		&&   _trDfZout->isRunning() == false)
 	{
+		//Log(LOG_INFO) << ". CALL _trGeo->think() ie. timeAdvance()";
 		_trGeo->think(this, nullptr);			// call timeAdvance()
 	}
 
@@ -1293,6 +1298,7 @@ void GeoscapeState::drawUfoBlobs()
  */
 void GeoscapeState::timeAdvance() // private.
 {
+	//Log(LOG_INFO) << "GeoscapeState::timeAdvance()";
 	if (_pauseHard == false)
 	{
 		int interval;
@@ -1304,45 +1310,43 @@ void GeoscapeState::timeAdvance() // private.
 		else if (_btnGroup == _btn1Min)   interval = 12;
 		else                              interval = 1; // (_btnGroup == _btn5Secs)
 
-		// (interval * 5) = true one-second intervals.
+		// interval = true one-second intervals (interval * 5 = minimum time-compression)
 		interval = (interval * 5 + _timeSurplus) << 2u;
 
 		_timeSurplus = interval % Options::geoClockSpeed;
-		interval     = interval / Options::geoClockSpeed;
 
-		if (interval != 0)
+		if ((interval /= Options::geoClockSpeed) != 0)
 		{
-			if ((_pause = _pause
-						|| (_trDfZinn->isRunning()
-						||  _trDfZout->isRunning())) == false)
+			//Log(LOG_INFO) << ". tick";
+			bool update (false);
+			for (int
+					i = 0;
+					i != interval && _pause == false;
+					++i)
 			{
-				bool update (false);
-				for (int
-						i = 0;
-						i != interval;
-						++i)
+				const TimeTrigger trigger (_playSave->getTime()->advance());
+				if (trigger != TIME_1SEC)
 				{
-					const TimeTrigger trigger (_playSave->getTime()->advance());
-					if (trigger != TIME_1SEC)
+					update = true;
+					switch (trigger)
 					{
-						update = true;
-						switch (trigger)
-						{
-							case TIME_1MONTH: time1Month(); // no breaks ->
-							case TIME_1DAY:   time1Day();
-							case TIME_1HOUR:  time1Hour();
-							case TIME_30MIN:  time30Minutes();
-							case TIME_10MIN:  time10Minutes();
-							case TIME_5SEC:   time5Seconds();
-						}
+						case TIME_1MONTH: time1Month(); // no breaks ->
+						case TIME_1DAY:   time1Day();
+						case TIME_1HOUR:  time1Hour();
+						case TIME_30MIN:  time30Minutes();
+						case TIME_10MIN:  time10Minutes();
+						case TIME_5SEC:   time5Seconds();
 					}
 				}
-
-				if (update == true) updateTimeDisplay();
 			}
-			_pause = (_dogfightsToStart.empty() == false);
-			_globe->draw();
+
+			if (update == true) updateTimeDisplay();
 		}
+		_pause = _dogfightsToStart.empty() == false
+			  || _trDfZinn->isRunning() == true
+			  || _trDfZout->isRunning() == true;
+
+		_globe->draw();
 	}
 	else // pause hard
 	{
@@ -1606,9 +1610,8 @@ void GeoscapeState::time5Seconds()
 				j != (*i)->getCrafts()->end();
 				)
 		{
-			if ((*j)->getCraftStatus() != CS_OUT)
-				++j;
-			else // Craft is airborne -> handle it
+			//Log(LOG_INFO) << ". craft= " << Language::wstrToFs((*j)->getLabel(_game->getLanguage()));
+			if ((*j)->getCraftStatus() == CS_OUT) // Craft is airborne -> handle it
 			{
 				if ((*j)->isDestroyed() == true)
 				{
@@ -1644,8 +1647,6 @@ void GeoscapeState::time5Seconds()
 					{
 						// NOTE: This has to deal with Landed UFOs, Crashed UFOs, UFOs spawning TerrorSites
 						// and UFOs that are on BaseAssuault runs starting BaseDefense tacticals, etc etc.
-						// See previous git-commits for details if in doubt or if a bug appears; the point
-						// is that 90% of the prior code was either redundant or resulted in unwanted behavior.
 
 						const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
 						if (ufo != nullptr
@@ -1664,6 +1665,7 @@ void GeoscapeState::time5Seconds()
 							// NOTE: Do not null the Craft's destination; its dest-coords
 							// will be used to position the targeter in GeoscapeCraftState.
 
+							//Log(LOG_INFO) << ". . call GeoscapeCraftState()";
 							popupGeo(new GeoscapeCraftState(*j, this, wp));
 						}
 					}
@@ -1672,7 +1674,7 @@ void GeoscapeState::time5Seconds()
 
 					if ((*j)->reachedDestination() == true)
 					{
-						if (dynamic_cast<Waypoint*>((*j)->getTarget()) != nullptr)	// do Patrol at waypoint.
+						if (dynamic_cast<Waypoint*>((*j)->getTarget()) != nullptr)	// patrol at waypoint.
 						{															// NOTE: This will also handle target-UFOs that just vanished.
 							popupGeo(new CraftPatrolState(*j, this));
 							(*j)->setTarget();
@@ -1687,43 +1689,41 @@ void GeoscapeState::time5Seconds()
 									case Ufo::FLYING:
 										(*j)->interceptGroundTarget(false);
 
-										if (_dogfights.size() + _dogfightsToStart.size() < 4u) // no more than 4 interception-windows at once.
+										if (_dogfights.size() + _dogfightsToStart.size() < 4u // no more than 4 interception-windows at once.
+											&& (*j)->inDogfight() == false
+											&& AreSame((*j)->getDistance(ufo), 0.) == true) // Craft ran into a UFO.
 										{
-											if ((*j)->inDogfight() == false
-												&& AreSame((*j)->getDistance(ufo), 0.) == true) // Craft ran into a UFO.
+											_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
+//											if (_tmrDfStart->isRunning() == false)	// what are the odds that 2 Craft run into UFO(s) on the same think()
+											if (_pause == false)					// <- use that instead.
 											{
-												_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
-//												if (_tmrDfStart->isRunning() == false)	// what are the odds that 2 Craft run into UFO(s) on the same think()
-												if (_pause == false)					// <- use that instead.
+												// Actually it's not so obscure that 2+ Craft run this when a game
+												// that was saved in a multi-interception dogfight is reloaded.
+												_pause = true;
+												resetTimer();
+
+												// NOTE: In the obscene case that 2 UFOs get intercepted (ie. at different
+												// coords on the globe) on the same think() only the first sets the PDC.
+												_playSave->setPreDogfightCoords(_globe->getZoom());	// store current Globe coords & zoom;
+												_globe->center(										// Globe will reset to these after dogfight ends (unless CCC is set)
+															(*j)->getLongitude(),
+															(*j)->getLatitude());
+
+												if (_dogfights.empty() == true // first dogfight, start music unless reloading to another dogfight
+													&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_GEO_INTERCEPT) == false)
 												{
-													// Actually it's not so obscure that 2+ Craft run this when a game
-													// that was saved in a multi-interception dogfight is reloaded.
-													_pause = true;
-													resetTimer();
-
-													// NOTE: In the obscene case that 2 UFOs get intercepted (ie. at different
-													// coords on the globe) on the same think() only the first sets the PDC.
-													_playSave->setPreDogfightCoords(_globe->getZoom());	// store current Globe coords & zoom;
-													_globe->center(										// Globe will reset to these after dogfight ends (unless CCC is set)
-																(*j)->getLongitude(),
-																(*j)->getLatitude());
-
-													if (_dogfights.empty() == true // first dogfight, start music unless reloading to another dogfight
-														&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_GEO_INTERCEPT) == false)
-													{
-														_game->getResourcePack()->fadeMusic(_game, 425);
-													}
+													_game->getResourcePack()->fadeMusic(_game, 425);
 												}
-
-												// NOTE: the following call has to be outside of above scope or else 2nd
-												// and following dogfights won't be added to the dogfights if the game
-												// was saved during a multiple-interception at the most-zoomed-in level.
-												// See function for details:
-												startDogfight();
-
-												initDfMusic = true;
-												_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_INTERCEPT);
 											}
+
+											// NOTE: the following call has to be outside of above scope or else 2nd
+											// and following dogfights won't be added to the dogfights if the game
+											// was saved during a multiple-interception at the most-zoomed-in level.
+											// See function for details:
+											startDogfight();
+
+											initDfMusic = true;
+											_game->getResourcePack()->playMusic(OpenXcom::res_MUSIC_GEO_INTERCEPT);
 										}
 										break;
 
@@ -1756,7 +1756,7 @@ void GeoscapeState::time5Seconds()
 
 //										if ((*j)->getQtySoldiers() != 0)
 //										{
-//												if ((*j)->inDogfight() == false)
+//											if ((*j)->inDogfight() == false)
 //											{
 //												resetTimer();
 //												int // look up polygon's texId + shade
@@ -1808,6 +1808,8 @@ void GeoscapeState::time5Seconds()
 					++j;
 				}
 			}
+			else // craft is based - bypass it.
+				++j;
 		}
 	}
 
@@ -1852,7 +1854,7 @@ void GeoscapeState::time5Seconds()
 
 
 	// This is ONLY for allowing _dogfights to fill (or not) before deciding whether
-	// to startMusic in init() -- and ONLY for Loading with a Dogfight in progress:
+	// to startMusic in init() - and ONLY for Loading with a Dogfight in progress:
 	// But now it's also used for resuming Geoscape music on returning from another state ....
 	if (kL_geoMusicPlaying == false)
 	{
@@ -1920,12 +1922,12 @@ bool DetectXCOMBase::operator ()(const Ufo* const ufo) const
 			|| Options::aggressiveRetaliation == true))
 	{
 		const double
-			reconRange (static_cast<double>(ufo->getRules()->getRangeRecon())),
-			dist (_base.getDistance(ufo) * radius_earth);
+			range (static_cast<double>(ufo->getRules()->getRangeRecon())),
+			dist  (_base.getDistance(ufo) * radius_earth);
 
-		if (dist <= reconRange)
+		if (dist <= range)
 		{
-			const double inverseFactor (dist * 12. / reconRange); // TODO: Use log() ....
+			const double inverseFactor (dist * 12. / range); // TODO: Use log() ....
 			int pct (static_cast<int>(Round(
 					 static_cast<double>(_base.getExposedChance(_diff) + ufo->getDetectors()) / inverseFactor)));
 
@@ -1972,12 +1974,12 @@ void GeoscapeState::time10Minutes()
 	const int diff (_playSave->getDifficultyInt());
 
 	for (std::vector<Base*>::const_iterator
-			i = _playSave->getBases()->begin();
+			i  = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end();
 			++i)
 	{
 		for (std::vector<Craft*>::const_iterator
-				j = (*i)->getCrafts()->begin();
+				j  = (*i)->getCrafts()->begin();
 				j != (*i)->getCrafts()->end();
 				++j)
 		{
@@ -1990,21 +1992,21 @@ void GeoscapeState::time10Minutes()
 //				{
 				//Log(LOG_INFO) << ". Patrol for alienBases";
 				for (std::vector<AlienBase*>::const_iterator // patrol for aLien bases.
-						k = _playSave->getAlienBases()->begin();
+						k  = _playSave->getAlienBases()->begin();
 						k != _playSave->getAlienBases()->end();
 						++k)
 				{
 					if ((*k)->isDetected() == false)
 					{
 						const double
-							reconRange (static_cast<double>((*j)->getRules()->getRangeRecon())),
-							dist ((*j)->getDistance(*k) * radius_earth);
-						//Log(LOG_INFO) << ". . reconRange = " << (int)reconRange;
-						//Log(LOG_INFO) << ". . dist = " << (int)dist;
+							range (static_cast<double>((*j)->getRules()->getRangeRecon())),
+							dist  ((*j)->getDistance(*k) * radius_earth);
+						//Log(LOG_INFO) << ". . range = " << (int)range;
+						//Log(LOG_INFO) << ". . dist = "  << (int)dist;
 
-						if (dist < reconRange)
+						if (dist <= range)
 						{
-							const int pct (100 - (diff * 10) - static_cast<int>(dist * 50. / reconRange));
+							const int pct (100 - (diff * 10) - static_cast<int>(dist * 50. / range));
 							//Log(LOG_INFO) << ". . . craft in Range pct= " << pct;
 							if (RNG::percent(pct) == true)
 							{
@@ -2023,7 +2025,7 @@ void GeoscapeState::time10Minutes()
 	if (Options::aggressiveRetaliation == true)
 	{
 		for (std::vector<Base*>::const_iterator // detect as many Bases as possible.
-				i = _playSave->getBases()->begin();
+				i  = _playSave->getBases()->begin();
 				i != _playSave->getBases()->end();
 				++i)
 		{
@@ -2042,7 +2044,7 @@ void GeoscapeState::time10Minutes()
 	{
 		std::map<const Region*, Base*> discovered;
 		for (std::vector<Base*>::const_iterator // remember only last Base in each region.
-				i = _playSave->getBases()->begin();
+				i  = _playSave->getBases()->begin();
 				i != _playSave->getBases()->end();
 				++i)
 		{
@@ -2060,13 +2062,14 @@ void GeoscapeState::time10Minutes()
 	}
 
 
-	_windowPops = 0;
+	_ufosDetected = 0;
 
 	for (std::vector<Ufo*>::const_iterator // handle UFO detection
-			i = _playSave->getUfos()->begin();
+			i  = _playSave->getUfos()->begin();
 			i != _playSave->getUfos()->end();
 			++i)
 	{
+		//Log(LOG_INFO) << "\nufo= " << (*i)->getRules()->getType();
 		switch ((*i)->getUfoStatus())
 		{
 			case Ufo::FLYING:
@@ -2074,35 +2077,39 @@ void GeoscapeState::time10Minutes()
 			{
 				std::vector<Base*> hyperBases; // = std::vector<Base*>();
 
-				if ((*i)->getDetected() == false)
+				const bool contact0 ((*i)->getDetected());
+				const bool hyper0   ((*i)->getHyperdecoded());
+				//Log(LOG_INFO) << ". contact0= " << contact0;
+				//Log(LOG_INFO) << ". hyper0= "   << hyper0;
+				bool
+					contact (false),
+					hyper   (false);
+
+				for (std::vector<Base*>::const_iterator
+						j  = _playSave->getBases()->begin();
+						j != _playSave->getBases()->end();
+						++j)
 				{
-					const bool hyperDet_pre ((*i)->getHyperDetected());
-					bool
-						hyperDet (false),
-						contact  (false);
-
-					for (std::vector<Base*>::const_iterator
-							j = _playSave->getBases()->begin();
-							j != _playSave->getBases()->end();
-							++j)
+					switch ((*j)->detect(*i))
 					{
-						switch ((*j)->detect(*i))
-						{
-							case 3:
-								contact = true; // no break;
-							case 1:
-								hyperDet = true;
+						case DT_HYPERDETECTED: // both standard and hyper detected
+							contact = true;
+							// no break;
+						case DT_HYPERDECODED: // hyper detected only
+							hyper = true;
 
-								if (hyperDet_pre == false)
-									hyperBases.push_back(*j);
-								break;
+							if (hyper0 == false)
+								hyperBases.push_back(*j);
+							break;
 
-							case 2:
-								contact = true;
-						}
+						case DT_DETECTED: // standard detected only
+							contact = true;
+					}
 
+					if (contact == false)
+					{
 						for (std::vector<Craft*>::const_iterator
-								k = (*j)->getCrafts()->begin();
+								k  = (*j)->getCrafts()->begin();
 								k != (*j)->getCrafts()->end();
 								++k)
 						{
@@ -2115,76 +2122,38 @@ void GeoscapeState::time10Minutes()
 							}
 						}
 					}
+				}
+				//Log(LOG_INFO) << ". contact= " << contact;
+				//Log(LOG_INFO) << ". hyper= "   << hyper;
 
-					(*i)->setDetected(contact);
-					(*i)->setHyperDetected(hyperDet);
+				(*i)->setDetected(contact);
+				(*i)->setHyperdecoded(hyper);
 
+				if (contact0 == false)
+				{
 					if (contact == true
-						|| (hyperDet == true && hyperDet_pre == false))
+						|| (hyper0 == false && hyper == true))
 					{
-						++_windowPops;
+						++_ufosDetected;
 						popupGeo(new UfoDetectedState(
 												*i,
 												this,
 												true,
-												hyperDet,
+												hyper,
 												contact,
 												&hyperBases));
 					}
 				}
 				else // ufo is already detected
 				{
-					const bool hyperDet_pre ((*i)->getHyperDetected());
-					bool
-						hyperDet (false),
-						contact  (false);
-
-					for (std::vector<Base*>::const_iterator
-							j = _playSave->getBases()->begin();
-							j != _playSave->getBases()->end();
-							++j)
+					if (hyper0 == false && hyper == true)
 					{
-						switch ((*j)->detect(*i)) // base attempts redetection; this lets a UFO blip off the radar scope
-						{
-							case 3:
-								contact = true; // no break;
-							case 1:
-								hyperDet = true;
-
-								if (hyperDet_pre == false)
-									hyperBases.push_back(*j);
-								break;
-
-							case 2:
-								contact = true;
-						}
-
-						for (std::vector<Craft*>::const_iterator
-								k = (*j)->getCrafts()->begin();
-								k != (*j)->getCrafts()->end();
-								++k)
-						{
-							if ((*k)->getCraftStatus() == CS_OUT
-								&& (*k)->hasLeftGround() == true
-								&& (*k)->detect(*i) == true)
-							{
-								contact = true;
-								break;
-							}
-						}
-					}
-
-					(*i)->setDetected(contact);
-					(*i)->setHyperDetected(hyperDet);
-
-					if (hyperDet == true && hyperDet_pre == false)
-					{
-						++_windowPops;
+						++_ufosDetected;
 						popupGeo(new UfoDetectedState(
 												*i,
 												this,
 												false,
-												hyperDet,
+												hyper,
 												contact,
 												&hyperBases));
 					}
@@ -2192,6 +2161,7 @@ void GeoscapeState::time10Minutes()
 					if (contact == false
 						&& (*i)->getTargeters()->empty() == false)
 					{
+						//Log(LOG_INFO) << ". . CALL UfoLostState()";
 						resetTimer();
 						popupGeo(new UfoLostState((*i)->getLabel(_game->getLanguage())));
 					}
@@ -2201,9 +2171,9 @@ void GeoscapeState::time10Minutes()
 	}
 
 
-	if (_windowPops != 0)
+	if (_ufosDetected != 0)
 	{
-		_ufoDetected->setText(Text::intWide(static_cast<int>(_windowPops)));
+		_ufoDetected->setText(Text::intWide(static_cast<int>(_ufosDetected)));
 		_ufoDetected->setVisible();
 	}
 }
@@ -4481,7 +4451,7 @@ void GeoscapeState::btnUfoBlobPress(Action* action) // private.
 															ufo,
 															this,
 															false,
-															ufo->getHyperDetected() == true));
+															ufo->getHyperdecoded() == true));
 						break;
 					}
 
@@ -4530,10 +4500,10 @@ bool GeoscapeState::isPaused() const
  */
 void GeoscapeState::assessUfoPopups()
 {
-	if (--_windowPops == 0)
+	if (--_ufosDetected == 0)
 		_ufoDetected->setVisible(false);
 	else
-		_ufoDetected->setText(Text::intWide(static_cast<int>(_windowPops)));
+		_ufoDetected->setText(Text::intWide(static_cast<int>(_ufosDetected)));
 }
 
 /**

@@ -42,7 +42,7 @@ class CraftErrorState
 		public State
 {
 private:
-	GeoscapeState* _state;
+	GeoscapeState* const _geoState;
 	Text* _txtMessage;
 	TextButton
 		* _btnOk,
@@ -51,9 +51,9 @@ private:
 
 
 	public:
-		/// Creates the CraftError state.
+		/// Creates a CraftError state.
 		CraftErrorState(
-				GeoscapeState* state,
+				GeoscapeState* const geoState,
 				const std::wstring& wst);
 		/// Cleans up the CraftError state.
 		~CraftErrorState();

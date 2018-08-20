@@ -160,7 +160,7 @@ void SelectTargetState::popupTarget(Target* const target)
 												ufo,
 												_geoState,
 												false,
-												ufo->getHyperDetected()));
+												ufo->getHyperdecoded()));
 		else
 			_game->pushState(new TargetInfoState(target, _geoState));
 	}

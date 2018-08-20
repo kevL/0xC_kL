@@ -164,7 +164,7 @@ void MovingTarget::checkTargets() // private.
 		bool destroy (true);
 
 		for (std::vector<Target*>::const_iterator
-				i = _target->getTargeters()->begin();
+				i  = _target->getTargeters()->begin();
 				i != _target->getTargeters()->end();
 				)
 		{
@@ -184,7 +184,7 @@ void MovingTarget::checkTargets() // private.
 			{
 				delete wp;
 				for (std::vector<Waypoint*>::const_iterator
-						i = _playSave->getWaypoints()->begin();
+						i  = _playSave->getWaypoints()->begin();
 						i != _playSave->getWaypoints()->end();
 						++i)
 				{

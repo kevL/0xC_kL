@@ -69,43 +69,43 @@ InterceptState::InterceptState(
 {
 	_fullScreen = false;
 
-	int dX; // x - 32 to center on Globe
+	int dx; // x - 32 to center on Globe
 	if (Options::baseXResolution > 320 + 32)
-		dX = -32;
+		dx = -32;
 	else
-		dX = 0;
+		dx = 0;
 
-	_window		= new Window(
-							this,
-							320,176,
-							0 + dX, 14,
-							POPUP_HORIZONTAL);
-	_txtBase	= new Text(288, 16, 16 + dX, 24); // might do getRegion in here also.
+	_window     = new Window(
+						this,
+						320,176,
+						0 + dx, 14,
+						POPUP_HORIZONTAL);
+	_txtBase    = new Text(288, 16, 16 + dx, 24); // might do getRegion in here also.
 
-	_txtCraft	= new Text(86,  9,  16 + dX, 40);
-	_txtStatus	= new Text(53,  9, 115 + dX, 40);
-	_txtWeapons	= new Text(50, 27, 241 + dX, 24);
+	_txtCraft   = new Text(86,  9,  16 + dx, 40);
+	_txtStatus  = new Text(53,  9, 115 + dx, 40);
+	_txtWeapons = new Text(50, 27, 241 + dx, 24);
 
-	_lstCrafts	= new TextList(285, 113, 16 + dX, 50);
+	_lstCrafts  = new TextList(285, 113, 16 + dx, 50);
 
-	_btnBase	= new TextButton(142, 16,  16 + dX, 167);
-	_btnCancel	= new TextButton(142, 16, 162 + dX, 167);
+	_btnBase    = new TextButton(142, 16,  16 + dx, 167);
+	_btnCancel  = new TextButton(142, 16, 162 + dx, 167);
 
 	setInterface("geoCraftScreens");
 
-	add(_window,		"window",	"geoCraftScreens");
-	add(_txtBase,		"text2",	"geoCraftScreens");
-	add(_txtCraft,		"text2",	"geoCraftScreens");
-	add(_txtStatus,		"text2",	"geoCraftScreens");
-	add(_txtWeapons,	"text2",	"geoCraftScreens");
-	add(_lstCrafts,		"list",		"geoCraftScreens");
-	add(_btnBase,		"button",	"geoCraftScreens");
-	add(_btnCancel,		"button",	"geoCraftScreens");
+	add(_window,     "window", "geoCraftScreens");
+	add(_txtBase,    "text2",  "geoCraftScreens");
+	add(_txtCraft,   "text2",  "geoCraftScreens");
+	add(_txtStatus,  "text2",  "geoCraftScreens");
+	add(_txtWeapons, "text2",  "geoCraftScreens");
+	add(_lstCrafts,  "list",   "geoCraftScreens");
+	add(_btnBase,    "button", "geoCraftScreens");
+	add(_btnCancel,  "button", "geoCraftScreens");
 
 	centerSurfaces();
 
 
-	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"), dX);
+	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"), dx);
 
 	if (_base != nullptr)
 	{

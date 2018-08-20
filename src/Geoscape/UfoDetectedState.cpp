@@ -323,10 +323,7 @@ UfoDetectedState::UfoDetectedState(
 			int h = t / 60 / 60 % 24;
 			int d = t / 60 / 60 / 24;
 			woststr << d << "d " << h << ":" << m << ":" << s;
-//			woststr << L"t> ";
-//			std::wstring wst (Text::formatInt(_ufo->getSecondsLeft()));
-//			woststr << wst;
-			_txtTimeLeft->setText(woststr.str()); // debug-thing.
+			_txtTimeLeft->setText(woststr.str()); // debug-thing. Or not.
 			break;
 		}
 
@@ -491,7 +488,10 @@ void UfoDetectedState::btnInterceptClick(Action*)
 	_geoState->resetTimer();
 	_game->popState();
 
-	_game->pushState(new InterceptState(_geoState, nullptr, _ufo));
+	_game->pushState(new InterceptState(
+									_geoState,
+									nullptr,
+									_ufo));
 }
 
 /**
@@ -558,9 +558,11 @@ void UfoDetectedState::transposeWindow() // private.
 		_txtHyperwave->setVisible(false);
 		_lstInfo2    ->setVisible(false);
 		_txtBases    ->setVisible(false);
-	}
 
-	int dy;
+//		_btnIntercept->setVisible(true);	// TODO: Unfortunately the auto-intercept btn shows up once
+	}										// things get to GeoscapeCraftState. It wouldn't be so bad
+											// except ... auto-intercept fails - don't know why since
+	int dy;									// it looks like it should initiate an Intercept regardless.
 	if (_hyperDetected == true)
 		dy = 9;
 	else

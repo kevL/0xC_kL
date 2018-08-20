@@ -505,10 +505,10 @@ void State::redrawText()
 			i != _surfaces.end();
 			++i)
 	{
-		if (   dynamic_cast<Text*>(*i)			!= nullptr
-			|| dynamic_cast<TextButton*>(*i)	!= nullptr
-			|| dynamic_cast<TextList*>(*i)		!= nullptr
-			|| dynamic_cast<TextEdit*>(*i)		!= nullptr)
+		if (   dynamic_cast<Text*>(*i)       != nullptr
+			|| dynamic_cast<TextButton*>(*i) != nullptr
+			|| dynamic_cast<TextList*>(*i)   != nullptr
+			|| dynamic_cast<TextEdit*>(*i)   != nullptr)
 		{
 			(*i)->draw();
 		}
@@ -578,13 +578,13 @@ void State::setPalette(
 
 	switch (palType)
 	{
-		case PAL_BASESCAPE:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_BASESCAPE);	break;
-		case PAL_GEOSCAPE:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_GEOSCAPE);	break;
-		case PAL_GRAPHS:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_GRAPHS);		break;
-		case PAL_UFOPAEDIA:		_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_UFOPAEDIA);	break;
+		case PAL_BASESCAPE: _cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_BASESCAPE); break;
+		case PAL_GEOSCAPE:  _cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_GEOSCAPE);  break;
+		case PAL_GRAPHS:    _cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_GRAPHS);    break;
+		case PAL_UFOPAEDIA: _cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_UFOPAEDIA); break;
 		case PAL_BATTLESCAPE:
 		case PAL_BATTLEPEDIA:
-		default:				_cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_BATTLESCAPE);
+		default:            _cursorColor = static_cast<Uint8>(ResourcePack::CURSOR_BATTLESCAPE);
 	}
 
 	if (backpal != BACKPAL_NONE)

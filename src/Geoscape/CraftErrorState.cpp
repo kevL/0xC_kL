@@ -41,24 +41,24 @@ namespace OpenXcom
  * @param wst	- reference to the error message
  */
 CraftErrorState::CraftErrorState(
-		GeoscapeState* state,
+		GeoscapeState* const geoState,
 		const std::wstring& wst)
 	:
-		_state(state)
+		_geoState(geoState)
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 256, 160, 32, 20, POPUP_BOTH);
-	_txtMessage	= new Text(226, 118, 47, 30);
-	_btnOk5Secs	= new TextButton(100, 18,  48, 150);
-	_btnOk		= new TextButton(100, 18, 172, 150);
+	_window     = new Window(this, 256, 160, 32, 20, POPUP_BOTH);
+	_txtMessage = new Text(226, 118, 47, 30);
+	_btnOk5Secs = new TextButton(100, 18,  48, 150);
+	_btnOk      = new TextButton(100, 18, 172, 150);
 
 	setInterface("geoCraftScreens");
 
-	add(_window,		"window",	"geoCraftScreens");
-	add(_txtMessage,	"text1",	"geoCraftScreens");
-	add(_btnOk5Secs,	"button",	"geoCraftScreens");
-	add(_btnOk,			"button",	"geoCraftScreens");
+	add(_window,     "window", "geoCraftScreens");
+	add(_txtMessage, "text1",  "geoCraftScreens");
+	add(_btnOk5Secs, "button", "geoCraftScreens");
+	add(_btnOk,      "button", "geoCraftScreens");
 
 	centerSurfaces();
 
@@ -66,27 +66,9 @@ CraftErrorState::CraftErrorState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK12.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CraftErrorState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&CraftErrorState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
 							Options::keyCancel);
-
-	_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
-	_btnOk5Secs->onMouseClick(static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick));
-
-	if (_state->is5Sec() == true)
-	{
-		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
-								Options::keyOk);
-		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
-								Options::keyOkKeypad);
-	}
-	else
-	{
-		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick),
-										Options::keyOk);
-		_btnOk5Secs->onKeyboardPress(	static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick),
-										Options::keyOkKeypad);
-	}
 
 	_txtMessage->setAlign(ALIGN_CENTER);
 	_txtMessage->setVerticalAlign(ALIGN_MIDDLE);
@@ -104,10 +86,28 @@ CraftErrorState::~CraftErrorState()
 /**
  * Initializes the state.
  */
-void CraftErrorState::init()
+void CraftErrorState::init() // override
 {
 	State::init();
-	_btnOk5Secs->setVisible(_state->is5Sec() == false);
+
+	if (_geoState->is5Sec() == false)
+	{
+		_btnOk5Secs->setText(tr("STR_OK_5_SECONDS"));
+		_btnOk5Secs->onMouseClick(static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick));
+		_btnOk5Secs->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick),
+									 Options::keyOk);
+		_btnOk5Secs->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOk5SecsClick),
+									 Options::keyOkKeypad);
+	}
+	else
+	{
+		_btnOk5Secs->setVisible(false);
+
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
+								Options::keyOk);
+		_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CraftErrorState::btnOkClick),
+								Options::keyOkKeypad);
+	}
 }
 
 /**
@@ -125,7 +125,7 @@ void CraftErrorState::btnOkClick(Action*)
  */
 void CraftErrorState::btnOk5SecsClick(Action*)
 {
-	_state->resetTimer();
+	_geoState->resetTimer();
 	_game->popState();
 }
 

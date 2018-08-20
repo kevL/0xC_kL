@@ -254,7 +254,7 @@ ConfirmLandingState::ConfirmLandingState(
 	{
 		woststr << tr(ufo->getRules()->getType());
 
-		if (ufo->getHyperDetected() == true) // only ufoType shows if not hyperdetected.
+		if (ufo->getHyperdecoded() == true) // only ufoType shows if not hyperdetected.
 			woststr << L" : " << tr(ufo->getAlienRace());
 	}
 	_txtMessage2->setText(tr("STR_CRAFT_DESTINATION_")

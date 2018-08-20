@@ -44,8 +44,7 @@ class LowFuelState
 {
 
 private:
-	Craft* _craft;
-	GeoscapeState* _state;
+	GeoscapeState* const _geoState;
 
 	Text
 		* _txtMessage,
@@ -60,13 +59,13 @@ private:
 	public:
 		/// Creates the LowFuel state.
 		LowFuelState(
-				Craft* craft,
-				GeoscapeState* state);
+				const Craft* const craft,
+				GeoscapeState* const state);
 		/// Cleans up the LowFuel state.
 		~LowFuelState();
 
 		/// Initializes the state.
-//		void init();
+		void init();
 		/// Runs the blink timer.
 		void think() override;
 		/// Blinks the message text.

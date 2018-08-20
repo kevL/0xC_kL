@@ -94,7 +94,7 @@ private:
 		_year,
 		_timeSurplus,
 		_score;
-	int64_t _windowPops;
+	int64_t _ufosDetected;
 	size_t _dfReduced;
 	double
 		_dfCCC_lon,
@@ -209,6 +209,14 @@ private:
 
 	public:
 		static const int _ufoBlobs[8u][13u][13u]; // used also by DogfightState
+
+		enum DetectType
+		{
+			DT_UNDETECTED,		// 0
+			DT_HYPERDECODED,	// 1
+			DT_DETECTED,		// 2
+			DT_HYPERDETECTED	// 3
+		};
 
 		/// Creates a Geoscape state.
 		GeoscapeState();

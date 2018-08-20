@@ -60,26 +60,26 @@ TargetInfoState::TargetInfoState(
 {
 	_fullScreen = false;
 
-	_window			= new Window(this, 192, 120, 32, 40, POPUP_BOTH);
-	_txtTitle		= new Text(182, 17, 37, 54);
+	_window       = new Window(this, 192, 120, 32, 40, POPUP_BOTH);
+	_txtTitle     = new Text(182, 17, 37, 54);
 
-	_edtTarget		= new TextEdit(this, 50, 9, 38, 46);
+	_edtTarget    = new TextEdit(this, 50, 9, 39, 46);
 
-	_txtTargeted	= new Text(182, 9, 37, 71);
-	_lstTargeters	= new TextList(168, 33, 37, 82);
+	_txtTargeted  = new Text(182, 9, 37, 71);
+	_lstTargeters = new TextList(168, 33, 37, 82);
 
-	_btnIntercept	= new TextButton(160, 16, 48, 119);
-	_btnOk			= new TextButton(160, 16, 48, 137);
+	_btnIntercept = new TextButton(160, 16, 48, 119);
+	_btnOk        = new TextButton(160, 16, 48, 137);
 
 	setInterface("targetInfo");
 
-	add(_window,		"window",	"targetInfo");
-	add(_txtTitle,		"text",		"targetInfo");
-	add(_edtTarget,		"text",		"targetInfo");
-	add(_txtTargeted,	"text",		"targetInfo");
-	add(_lstTargeters,	"list",		"targetInfo");
-	add(_btnIntercept,	"button",	"targetInfo");
-	add(_btnOk,			"button",	"targetInfo");
+	add(_window,       "window", "targetInfo");
+	add(_txtTitle,     "text",   "targetInfo");
+	add(_edtTarget,    "text",   "targetInfo");
+	add(_txtTargeted,  "text",   "targetInfo");
+	add(_lstTargeters, "list",   "targetInfo");
+	add(_btnIntercept, "button", "targetInfo");
+	add(_btnOk,        "button", "targetInfo");
 
 	centerSurfaces();
 
@@ -171,7 +171,11 @@ void TargetInfoState::lstTargetersPress(Action* action)
 		case SDL_BUTTON_LEFT:
 		{
 			Craft* const craft (_crafts[_lstTargeters->getSelectedRow()]);
-			_game->pushState(new GeoscapeCraftState(craft, _geoState, nullptr, true));
+			_game->pushState(new GeoscapeCraftState(
+												craft,
+												_geoState,
+												nullptr,
+												true));
 			break;
 		}
 

@@ -1029,7 +1029,7 @@ void Craft::think()
 				break;
 
 			default:
-				if (_target == dynamic_cast<Target*>(_base)) // craft is allowed to rebase if contact is lost vs. UFO before take-off completes -- handle it.
+				if (_target == dynamic_cast<Target*>(_base)) // craft is allowed to rebase if contact is lost vs. UFO before take-off completes - handle it.
 				{
 					setFuel(_fuel - 1);	// top up and ...
 					_takeOffDelay = 0;	// -> recurse.
@@ -1225,13 +1225,14 @@ void Craft::refuel()
  */
 bool Craft::detect(const Target* const target) const
 {
-	const int radarRange (_crRule->getRangeRadar());
-	if (radarRange != 0
-		&& static_cast<double>(radarRange) >= getDistance(target) * radius_earth)
-	{
-		return true;
-	}
-	return false;
+	//Log(LOG_INFO) << "Craft::detect() " << _crRule->getType() << "-" << _id;
+	const int range (_crRule->getRangeRadar());
+	//Log(LOG_INFO) << ". range= " << range;
+	//Log(LOG_INFO) << ". distradian= " << getDistance(target);
+	//Log(LOG_INFO) << ". dist= "  << (getDistance(target) * radius_earth);
+
+	return range != 0
+			|| static_cast<double>(range) >= getDistance(target) * radius_earth;
 }
 
 /**

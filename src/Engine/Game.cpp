@@ -246,7 +246,7 @@ void Game::run()
 			if (_init == true)						// initialize the active State
 			{
 				_init = false;
-				_states.back()->resetSurfaces();	// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				_states.back()->resetSurfaces();	// unpress buttons - NOTE: This goes before init() if you want '_isFocused' to toggle properly.
 				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
 				int									// update mouse-position
