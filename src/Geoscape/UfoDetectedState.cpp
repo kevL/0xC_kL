@@ -57,21 +57,21 @@ namespace OpenXcom
  * @param ufo			- pointer to a UFO to get info from
  * @param geoState		- pointer to GeoscapeState
  * @param firstDetect	- true if the UFO has just been detected
- * @param hyperDetected	- true if the UFO has been hyperdetected
- * @param contact		- true if radar contact is established (false if hyperDetected only) (default true)
+ * @param hyperdecoded	- true if the UFO has been hyperdetected
+ * @param contact		- true if radar contact is established (false if hyperdecoded only) (default true)
  * @param hyperBases	- pointer to a vector of pointers to Bases that hyperdetected UFO (default nullptr)
  */
 UfoDetectedState::UfoDetectedState(
 		Ufo* const ufo,
 		GeoscapeState* const geoState,
 		bool firstDetect,
-		bool hyperDetected,
+		bool hyperdecoded,
 		bool contact,
 		std::vector<Base*>* hyperBases)
 	:
 		_ufo(ufo),
 		_geoState(geoState),
-		_hyperDetected(hyperDetected),
+		_hyperdecoded(hyperdecoded),
 		_delayPop(true)
 {
 	_geoState->getGlobe()->rotateStop();
@@ -88,7 +88,7 @@ UfoDetectedState::UfoDetectedState(
 	_fullScreen = false;
 
 	int y, h;
-	if (_hyperDetected == true)
+	if (_hyperdecoded == true)
 	{
 		y = 10; h = 190;
 	}
@@ -114,7 +114,7 @@ UfoDetectedState::UfoDetectedState(
 	_txtRegion    = new Text(114, 9, 122, 56);
 	_txtTexture   = new Text(114, 9, 122, 66);
 
-	if (_hyperDetected == true)
+	if (_hyperdecoded == true)
 	{
 		_txtUfo      ->setY(17);
 		_txtDetected ->setY(35);
@@ -142,7 +142,7 @@ UfoDetectedState::UfoDetectedState(
 		}
 	}
 
-	setInterface("UFOInfo", _hyperDetected);
+	setInterface("UFOInfo", _hyperdecoded);
 
 	add(_window,       "window", "UFOInfo");
 	add(_txtUfo,       "text",   "UFOInfo");
@@ -157,7 +157,7 @@ UfoDetectedState::UfoDetectedState(
 	add(_txtRegion,    "text",   "UFOInfo");
 	add(_txtTexture,   "text",   "UFOInfo");
 
-	if (_hyperDetected == true)
+	if (_hyperdecoded == true)
 	{
 		add(_txtHyperwave, "text", "UFOInfo");
 		add(_lstInfo2,     "text", "UFOInfo");
@@ -332,7 +332,7 @@ UfoDetectedState::UfoDetectedState(
 			_txtTimeLeft->setVisible(false);
 	}
 
-	if (_hyperDetected == true)
+	if (_hyperdecoded == true)
 	{
 		_txtHyperwave->setAlign(ALIGN_CENTER);
 		_txtHyperwave->setText(tr("STR_HYPER_WAVE_TRANSMISSIONS_ARE_DECODED"));
@@ -553,7 +553,7 @@ void UfoDetectedState::transposeWindow() // private.
 	else
 		_btnCenter->setVisible(false);
 
-	if (_hyperDetected == true)
+	if (_hyperdecoded == true)
 	{
 		_txtHyperwave->setVisible(false);
 		_lstInfo2    ->setVisible(false);
@@ -563,7 +563,7 @@ void UfoDetectedState::transposeWindow() // private.
 	}										// things get to GeoscapeCraftState. It wouldn't be so bad
 											// except ... auto-intercept fails - don't know why since
 	int dy;									// it looks like it should initiate an Intercept regardless.
-	if (_hyperDetected == true)
+	if (_hyperdecoded == true)
 		dy = 9;
 	else
 		dy = 20;

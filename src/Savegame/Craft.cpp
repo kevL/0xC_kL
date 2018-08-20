@@ -1225,14 +1225,9 @@ void Craft::refuel()
  */
 bool Craft::detect(const Target* const target) const
 {
-	//Log(LOG_INFO) << "Craft::detect() " << _crRule->getType() << "-" << _id;
 	const int range (_crRule->getRangeRadar());
-	//Log(LOG_INFO) << ". range= " << range;
-	//Log(LOG_INFO) << ". distradian= " << getDistance(target);
-	//Log(LOG_INFO) << ". dist= "  << (getDistance(target) * radius_earth);
-
 	return range != 0
-			|| static_cast<double>(range) >= getDistance(target) * radius_earth;
+		&& getDistance(target) * radius_earth <= static_cast<double>(range);
 }
 
 /**

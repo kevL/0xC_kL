@@ -515,7 +515,7 @@ void GeoscapeCraftState::btnInterceptClick(Action*) // private.
 	_game->popState(); // since this btn is shown only when this State is invoked by InterceptState
 	_game->popState(); // '_doublePop' will always be true.
 
-	_craft->setTarget(_ufo); // TODO: set interception-point
+	_craft->setTarget(_ufo);
 	_geoState->getGlobe()->clearCrosshair();
 }
 

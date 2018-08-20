@@ -150,7 +150,7 @@ void Ufo::loadUfo(
 	_heading       = node["heading"]      .as<std::string>(_heading);
 	_dir           = node["dir"]          .as<unsigned>(_dir);
 	_detected      = node["detected"]     .as<bool>(_detected);
-	_hyperdecoded  = node["hyperDetected"].as<bool>(_hyperdecoded);
+	_hyperdecoded  = node["hyperdecoded"] .as<bool>(_hyperdecoded);
 	_secondsLeft   = node["secondsLeft"]  .as<int>(_secondsLeft);
 	_tactical      = node["tactical"]     .as<bool>(_tactical);
 	_terrain       = node["terrain"]      .as<std::string>(_terrain);
@@ -231,10 +231,10 @@ YAML::Node Ufo::save() const
 
 	node["hull"]		= _hull;
 
-	if (_detected != false)     node["detected"]      = _detected;
-	if (_hyperdecoded != false) node["hyperDetected"] = _hyperdecoded;
-	if (_secondsLeft != 0)      node["secondsLeft"]   = _secondsLeft;
-	if (_tactical != false)     node["tactical"]      = _tactical;
+	if (_detected != false)     node["detected"]     = _detected;
+	if (_hyperdecoded != false) node["hyperdecoded"] = _hyperdecoded;
+	if (_secondsLeft != 0)      node["secondsLeft"]  = _secondsLeft;
+	if (_tactical != false)     node["tactical"]     = _tactical;
 
 	if (_isQuickBattle == false) // TODO: Do not save trajectory-info if UFO was shot down.
 	{
