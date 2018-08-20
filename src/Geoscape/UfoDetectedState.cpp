@@ -116,13 +116,16 @@ UfoDetectedState::UfoDetectedState(
 
 	if (_hyperdecoded == true)
 	{
-		_txtUfo      ->setY(17);
-		_txtDetected ->setY(35);
-		_txtTimeLeft ->setY(45); // TODO: this overlaps a bit w/ _txtHyperwave
+		_txtUfo     ->setY(17);
+		_txtDetected->setY(35);
+
+		_txtTimeLeft->setAlign(ALIGN_RIGHT);
+		_txtTimeLeft->setX(176);
+		_txtTimeLeft->setY(37);
 
 		_txtHyperwave = new Text(216, 9, 20, 45);
 
-		_lstInfo     ->setY(55);
+		_lstInfo->setY(55);
 		_lstInfo2 = new TextList(192, 33, 32, 92);
 
 		_txtBases = new Text(100, 41, 32, 135); // display up to 5 bases vertically.
@@ -132,8 +135,8 @@ UfoDetectedState::UfoDetectedState(
 		_btn5Sec     ->setY(159);
 		_btnCancel   ->setY(176);
 
-		_txtRegion   ->setY(18);
-		_txtTexture  ->setY(28);
+		_txtRegion ->setY(17);
+		_txtTexture->setY(27);
 
 		if (contact == false)
 		{

@@ -215,11 +215,9 @@ void ListSaveState::saveGame() // private.
 
 	std::wstring wst (_edtSave->getText());
 
-	if (_game->getSavedGame()->isIronman() == true
-		&& wst.empty() == true)
-	{
+	if (wst.empty() == true && _game->getSavedGame()->isIronman() == true)
 		wst = SavedGame::SAVE_Ironballs;
-	}
+
 	_game->getSavedGame()->setLabel(wst);
 
 	std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(wst)));

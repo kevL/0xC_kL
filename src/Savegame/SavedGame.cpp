@@ -69,13 +69,13 @@ namespace OpenXcom
 {
 
 const std::string
-	SavedGame::SAVE_AUTO_Geo  = "_autogeo_.aq",
-	SavedGame::SAVE_AUTO_Tac  = "_autotac_.aq",
-	SavedGame::SAVE_Quick     = "_quick_.aq",
-	SavedGame::SAVE_Ext       = "sav",
-	SavedGame::SAVE_ExtDot    = ".sav",
-	SavedGame::SAVE_Ext_AQ    = "aq",
-	SavedGame::SAVE_BakDot    = ".bak";
+	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq",
+	SavedGame::SAVE_AUTO_Tac = "_autotac_.aq",
+	SavedGame::SAVE_Quick    = "_quick_.aq",
+	SavedGame::SAVE_Ext      = "sav",
+	SavedGame::SAVE_ExtDot   = ".sav",
+	SavedGame::SAVE_Ext_AQ   = "aq",
+	SavedGame::SAVE_BakDot   = ".bak";
 
 const std::wstring SavedGame::SAVE_Ironballs = L"_ironballs_"; // default save-label if user doesn't supply a label
 

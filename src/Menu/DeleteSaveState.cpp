@@ -54,12 +54,12 @@ DeleteSaveState::DeleteSaveState(
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 320, 100, 0, 50, POPUP_HORIZONTAL);
+	_window     = new Window(this, 310, 100, 5, 50, POPUP_HORIZONTAL);
 
-	_txtMessage	= new Text(320, 50, 0, 70);
+	_txtMessage = new Text(320, 48, 0, 68);
 
-	_btnNo		= new TextButton(80, 18,  60, 122);
-	_btnYes		= new TextButton(80, 18, 180, 122);
+	_btnNo      = new TextButton(80, 18,  60, 122);
+	_btnYes     = new TextButton(80, 18, 180, 122);
 
 	setInterface(
 			"saveMenus",
@@ -67,10 +67,10 @@ DeleteSaveState::DeleteSaveState(
 			_origin == OPT_BATTLESCAPE);
 
 
-	add(_window,		"confirmDelete", "saveMenus");
-	add(_txtMessage,	"confirmDelete", "saveMenus");
-	add(_btnNo,			"confirmDelete", "saveMenus");
-	add(_btnYes,		"confirmDelete", "saveMenus");
+	add(_window,     "confirmDelete", "saveMenus");
+	add(_txtMessage, "confirmDelete", "saveMenus");
+	add(_btnNo,      "confirmDelete", "saveMenus");
+	add(_btnYes,     "confirmDelete", "saveMenus");
 
 	centerSurfaces();
 
@@ -78,14 +78,14 @@ DeleteSaveState::DeleteSaveState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick(		static_cast<ActionHandler>(&DeleteSaveState::btnYesClick));
-	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteSaveState::btnYesClick),
-								Options::keyOk);
-	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&DeleteSaveState::btnYesClick),
-								Options::keyOkKeypad);
+	_btnYes->onMouseClick(   static_cast<ActionHandler>(&DeleteSaveState::btnYesClick));
+	_btnYes->onKeyboardPress(static_cast<ActionHandler>(&DeleteSaveState::btnYesClick),
+							 Options::keyOk);
+	_btnYes->onKeyboardPress(static_cast<ActionHandler>(&DeleteSaveState::btnYesClick),
+							 Options::keyOkKeypad);
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick(	static_cast<ActionHandler>(&DeleteSaveState::btnNoClick));
+	_btnNo->onMouseClick(   static_cast<ActionHandler>(&DeleteSaveState::btnNoClick));
 	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&DeleteSaveState::btnNoClick),
 							Options::keyCancel);
 
