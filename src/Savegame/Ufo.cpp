@@ -175,7 +175,6 @@ void Ufo::loadUfo(
 
 	if (const YAML::Node& status = node["status"])
 		_status = static_cast<UfoStatus>(status.as<int>());
-
 	else if (_hull == 0)									// I believe these cases are pointless ->
 		_status = DESTROYED;								// ie. 'status' is always saved.
 	else if (_hull <= (_ufoRule->getUfoHullCap() >> 1u))
@@ -216,8 +215,8 @@ YAML::Node Ufo::save() const
 {
 	YAML::Node node (MovingTarget::save());
 
-	node["type"]	= _ufoRule->getType();
-	node["id"]		= _id;
+	node["type"] = _ufoRule->getType();
+	node["id"]   = _id;
 
 	if      (_idCrashed != 0) node["idCrashed"] = _idCrashed;
 	else if (_idLanded  != 0) node["idLanded"]  = _idLanded;
@@ -228,8 +227,7 @@ YAML::Node Ufo::save() const
 	node["heading"]  = _heading;
 	node["dir"]      = _dir;
 	node["status"]   = static_cast<int>(_status);
-
-	node["hull"]		= _hull;
+	node["hull"]     = _hull;
 
 	if (_detected != false)     node["detected"]     = _detected;
 	if (_hyperdecoded != false) node["hyperdecoded"] = _hyperdecoded;
@@ -336,9 +334,9 @@ int Ufo::getMarker() const
 
 		switch (_status)
 		{
-			case Ufo::FLYING:	return Globe::GLM_UFO_FLYING;
-			case Ufo::LANDED:	return Globe::GLM_UFO_LANDED;
-			case Ufo::CRASHED:	return Globe::GLM_UFO_CRASHED;
+			case Ufo::FLYING:  return Globe::GLM_UFO_FLYING;
+			case Ufo::LANDED:  return Globe::GLM_UFO_LANDED;
+			case Ufo::CRASHED: return Globe::GLM_UFO_CRASHED;
 		}
 	}
 	return -1;
@@ -350,10 +348,11 @@ int Ufo::getMarker() const
  */
 void Ufo::setUfoHull(int inflict)
 {
-	if ((_hull -= inflict) < 0) _hull = 0;
-
-	if (_hull == 0)
+	if ((_hull -= inflict) <= 0)
+	{
+		_hull = 0;
 		_status = DESTROYED;
+	}
 	else if (isCrashed() == true)
 		_status = CRASHED;
 }
@@ -676,26 +675,26 @@ int Ufo::getActivityPoints() const
 	switch (_status)
 	{
 		default:
-		case Ufo::FLYING:		ret += 2; break; // per half-hr.
-		case Ufo::LANDED:		ret += 5; break; // per half-hr.
-		case Ufo::CRASHED:		ret += 3; break; // per hr.
-		case Ufo::DESTROYED:	return 0;
+		case Ufo::FLYING:    ret += 1; break; // per half-hr.	// 2
+		case Ufo::LANDED:    ret += 3; break; // per half-hr.	// 5
+		case Ufo::CRASHED:   ret += 2; break; // per hr.		// 3
+		case Ufo::DESTROYED: return 0;
 	}
 
 	switch (_ufoRule->getSizeType())
 	{
-		case UFO_VERYSMALL:	ret += 0; break;
-		case UFO_SMALL:		ret += 1; break;
-		case UFO_MEDIUM:	ret += 2; break;
-		case UFO_LARGE:		ret += 3; break;
-		case UFO_VERYLARGE:	ret += 5;
+		case UFO_VERYSMALL: ret += 0; break;
+		case UFO_SMALL:     ret += 1; break;
+		case UFO_MEDIUM:    ret += 2; break;
+		case UFO_LARGE:     ret += 3; break;
+		case UFO_VERYLARGE: ret += 6;
 	}
 
-	if		(_altitude == MovingTarget::stAltitude[0u]) ret += 0; // Status _LANDED or _CRASHED included above.
-	else if	(_altitude == MovingTarget::stAltitude[1u]) ret += 3;
-	else if	(_altitude == MovingTarget::stAltitude[2u]) ret += 2;
-	else if	(_altitude == MovingTarget::stAltitude[3u]) ret += 1;
-	else if	(_altitude == MovingTarget::stAltitude[4u]) ret += 0;
+	if      (_altitude == MovingTarget::stAltitude[0u]) ret += 0; // Status _LANDED or _CRASHED included above.
+	else if (_altitude == MovingTarget::stAltitude[1u]) ret += 3;
+	else if (_altitude == MovingTarget::stAltitude[2u]) ret += 2;
+	else if (_altitude == MovingTarget::stAltitude[3u]) ret += 1;
+	else if (_altitude == MovingTarget::stAltitude[4u]) ret += 0;
 
 	return ret;
 }
@@ -710,18 +709,18 @@ int Ufo::getVisibility() const
 	int ret (0);
 	switch (_ufoRule->getSizeType())
 	{
-		case UFO_VERYSMALL:	ret -= 30; break;
-		case UFO_SMALL:		ret -= 15; break;
-		case UFO_MEDIUM:	ret -=  0; break;
-		case UFO_LARGE:		ret += 15; break;
-		case UFO_VERYLARGE:	ret += 30;
+		case UFO_VERYSMALL: ret -= 30; break;
+		case UFO_SMALL:     ret -= 15; break;
+		case UFO_MEDIUM:    ret -=  0; break;
+		case UFO_LARGE:     ret += 15; break;
+		case UFO_VERYLARGE: ret += 30;
 	}
 
-	if		(_altitude == MovingTarget::stAltitude[0u]) ret -= 50;
-	else if	(_altitude == MovingTarget::stAltitude[1u]) ret -= 20;
-	else if	(_altitude == MovingTarget::stAltitude[2u]) ret -= 10;
-	else if	(_altitude == MovingTarget::stAltitude[3u]) ret -=  0;
-	else if	(_altitude == MovingTarget::stAltitude[4u]) ret -= 10;
+	if      (_altitude == MovingTarget::stAltitude[0u]) ret -= 50;
+	else if (_altitude == MovingTarget::stAltitude[1u]) ret -= 20;
+	else if (_altitude == MovingTarget::stAltitude[2u]) ret -= 10;
+	else if (_altitude == MovingTarget::stAltitude[3u]) ret -=  0;
+	else if (_altitude == MovingTarget::stAltitude[4u]) ret -= 10;
 
 	return ret;
 }
@@ -735,18 +734,18 @@ int Ufo::getDetectors() const
 	int ret (0);
 	switch (_ufoRule->getSizeType())
 	{
-		case UFO_VERYSMALL:	ret -= 12; break;
-		case UFO_SMALL:		ret -=  8; break;
-		case UFO_MEDIUM:	ret -=  5; break;
-		case UFO_LARGE:		ret -=  2; break;
-		case UFO_VERYLARGE:	ret -=  0;
+		case UFO_VERYSMALL: ret -= 12; break;
+		case UFO_SMALL:     ret -=  8; break;
+		case UFO_MEDIUM:    ret -=  5; break;
+		case UFO_LARGE:     ret -=  2; break;
+		case UFO_VERYLARGE: ret -=  0;
 	}
 
-	if		(_altitude == MovingTarget::stAltitude[0u]) ret -= 32;
-	else if	(_altitude == MovingTarget::stAltitude[1u]) ret += 18;
-	else if	(_altitude == MovingTarget::stAltitude[2u]) ret +=  6;
-	else if	(_altitude == MovingTarget::stAltitude[3u]) ret -=  9;
-	else if	(_altitude == MovingTarget::stAltitude[4u]) ret -= 19;
+	if      (_altitude == MovingTarget::stAltitude[0u]) ret -= 32;
+	else if (_altitude == MovingTarget::stAltitude[1u]) ret += 18;
+	else if (_altitude == MovingTarget::stAltitude[2u]) ret +=  6;
+	else if (_altitude == MovingTarget::stAltitude[3u]) ret -=  9;
+	else if (_altitude == MovingTarget::stAltitude[4u]) ret -= 19;
 
 	return ret;
 }

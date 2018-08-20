@@ -212,21 +212,28 @@ void ListSaveState::saveGame() // private.
 //	_lstSaves->setScrollable();			// don't need this either ....
 
 	hideElements();
-	_game->getSavedGame()->setLabel(_edtSave->getText());
 
-	std::string
-		file (CrossPlatform::sanitizeFilename(Language::wstrToFs(_edtSave->getText()))),
-		fileOld;
+	std::wstring wst (_edtSave->getText());
+
+	if (_game->getSavedGame()->isIronman() == true
+		&& wst.empty() == true)
+	{
+		wst = SavedGame::SAVE_Ironballs;
+	}
+	_game->getSavedGame()->setLabel(wst);
+
+	std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(wst)));
 
 	if (_selected > 0)
 	{
-		if ((fileOld = _saves[static_cast<size_t>(_selected - 1)].file) != file + SavedGame::SAVE_ExtDot)
+		std::string filePre (_saves[static_cast<size_t>(_selected - 1)].file);
+		if (filePre != file + SavedGame::SAVE_ExtDot)
 		{
 			while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_ExtDot) == true)
 				file += "_";
 
 			CrossPlatform::moveFile(
-								Options::getUserFolder() + fileOld,
+								Options::getUserFolder() + filePre,
 								Options::getUserFolder() + file + SavedGame::SAVE_ExtDot);
 		}
 	}

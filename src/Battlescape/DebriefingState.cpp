@@ -134,45 +134,45 @@ DebriefingState::DebriefingState()
 	// BattlescapeGame is really dTor'd and not reLoaded ...... uh, i guess.
 	_battleSave->getBattleGame()->clearBattleStates();
 
-	_window			= new Window(this);
+	_window        = new Window(this);
 
-	_txtTitle		= new Text(280, 16,  16, 8);
-	_txtBaseLabel	= new Text( 80,  9, 216, 8);
+	_txtTitle      = new Text(280, 16,  16, 8);
+	_txtBaseLabel  = new Text( 80,  9, 216, 8);
 
-	_txtCasualties	= new Text(184, 9,  16, 24);
-	_txtQuantity	= new Text( 60, 9, 200, 24);
-	_txtScore		= new Text( 36, 9, 260, 24);
-	_lstStats		= new TextList(288, 81, 16, 32);
+	_txtCasualties = new Text(184, 9,  16, 24);
+	_txtQuantity   = new Text( 60, 9, 200, 24);
+	_txtScore      = new Text( 36, 9, 260, 24);
+	_lstStats      = new TextList(288, 81, 16, 32);
 
-	_txtRecovery	= new Text(180, 9, 16, 0);		// set y below_
-	_lstRecovery	= new TextList(288, 81, 16, 0);	// set y below_
+	_txtRecovery   = new Text(180, 9, 16, 0);		// set y below_
+	_lstRecovery   = new TextList(288, 81, 16, 0);	// set y below_
 
-	_lstTotal		= new TextList(288, 9, 16, 0);	// set y below_
+	_lstTotal      = new TextList(288, 9, 16, 0);	// set y below_
 
-	_txtCost		= new Text(76, 9, 16, 181);
-	_txtRating		= new Text(76, 9, 228, 181);
-	_btnOk			= new TextButton(136, 16, 92, 177);
+	_txtCost       = new Text(76, 9, 16, 181);
+	_txtRating     = new Text(76, 9, 228, 181);
+	_btnOk         = new TextButton(136, 16, 92, 177);
 
 	setInterface("debriefing");
 
-	add(_window,		"window",	"debriefing");
+	add(_window,        "window",  "debriefing");
 
-	add(_txtTitle,		"heading",	"debriefing");
-	add(_txtBaseLabel,	"text",		"debriefing");
+	add(_txtTitle,      "heading", "debriefing");
+	add(_txtBaseLabel,  "text",    "debriefing");
 
-	add(_txtCasualties,	"text",		"debriefing");
-	add(_txtQuantity,	"text",		"debriefing");
-	add(_txtScore,		"text",		"debriefing");
-	add(_lstStats,		"list",		"debriefing");
+	add(_txtCasualties, "text",    "debriefing");
+	add(_txtQuantity,   "text",    "debriefing");
+	add(_txtScore,      "text",    "debriefing");
+	add(_lstStats,      "list",    "debriefing");
 
-	add(_txtRecovery,	"text",		"debriefing");
-	add(_lstRecovery,	"list",		"debriefing");
+	add(_txtRecovery,   "text",    "debriefing");
+	add(_lstRecovery,   "list",    "debriefing");
 
-	add(_lstTotal,		"list",		"debriefing");
+	add(_lstTotal,      "list",    "debriefing");
 
-	add(_txtCost,		"text",		"debriefing");
-	add(_txtRating,		"text",		"debriefing");
-	add(_btnOk,			"button",	"debriefing");
+	add(_txtCost,       "text",    "debriefing");
+	add(_txtRating,     "text",    "debriefing");
+	add(_btnOk,         "button",  "debriefing");
 
 	centerSurfaces();
 
@@ -182,7 +182,7 @@ DebriefingState::DebriefingState()
 	std::wstring wst (_battleSave->getOperation());
 	if (wst.empty() == true) wst = tr("STR_OK");
 	_btnOk->setText(wst);
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&DebriefingState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&DebriefingState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefingState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&DebriefingState::btnOkClick),
@@ -312,11 +312,11 @@ DebriefingState::DebriefingState()
 	else
 	{
 		_music = OpenXcom::res_MUSIC_TAC_DEBRIEFING;
-		if		(_tactical->score <  101)	_tactical->rating = TAC_RATING[1u];	// poor
-		else if	(_tactical->score <  351)	_tactical->rating = TAC_RATING[2u];	// okay
-		else if	(_tactical->score <  751)	_tactical->rating = TAC_RATING[3u];	// good
-		else if	(_tactical->score < 1251)	_tactical->rating = TAC_RATING[4u];	// excellent
-		else								_tactical->rating = TAC_RATING[5u];	// terrific
+		if      (_tactical->score <  101) _tactical->rating = TAC_RATING[1u]; // poor
+		else if (_tactical->score <  351) _tactical->rating = TAC_RATING[2u]; // okay
+		else if (_tactical->score <  751) _tactical->rating = TAC_RATING[3u]; // good
+		else if (_tactical->score < 1251) _tactical->rating = TAC_RATING[4u]; // excellent
+		else                              _tactical->rating = TAC_RATING[5u]; // terrific
 	}
 
 	switch (_missionCost)
@@ -337,11 +337,11 @@ DebriefingState::DebriefingState()
 	// Soldier Diary ->
 	if (_isQuickBattle == false) // TODO: Show some stats for quick-battles.
 	{
-		_tactical->id			= static_cast<int>(_playSave->getTacticalStatistics().size());
-		_tactical->timeStat		= *_playSave->getTime();
-		_tactical->type			= _battleSave->getTacticalType();
-		_tactical->shade		= _battleSave->getTacticalShade();
-		_tactical->alienRace	= _battleSave->getAlienRace();
+		_tactical->id        = static_cast<int>(_playSave->getTacticalStatistics().size());
+		_tactical->timeStat  = *_playSave->getTime();
+		_tactical->type      = _battleSave->getTacticalType();
+		_tactical->shade     = _battleSave->getTacticalShade();
+		_tactical->alienRace = _battleSave->getAlienRace();
 
 		if (civiliansSaved != 0 && civiliansDead == 0)
 			_tactical->valiantCrux = true;
@@ -657,14 +657,14 @@ private:
 		{}
 
 		/// Clears the aLien-base if required.
-		void operator() (AlienMission* const mission) const;
+		void operator ()(AlienMission* const mission) const;
 };
 
 /**
  * Removes the link between the AlienMission and an AlienBase if one existed.
  * @param mission - pointer to the AlienMission
  */
-void ClearAlienBase::operator() (AlienMission* const mission) const
+void ClearAlienBase::operator ()(AlienMission* const mission) const
 {
 	if (mission->getAlienBase() == _aBase)
 		mission->setAlienBase();
@@ -717,8 +717,8 @@ void DebriefingState::prepareDebriefing() // private.
 		objectiveText,
 		objectiveTextFail;
 	int
-		objectiveScore		(0), // dang vc++ compiler warnings.
-		objectiveScoreFail	(0); // dang vc++ compiler warnings.
+		objectiveScore     (0), // dang vc++ compiler warnings.
+		objectiveScoreFail (0); // dang vc++ compiler warnings.
 
 	const RuleAlienDeployment* const ruleDeploy (_rules->getDeployment(_battleSave->getTacticalType()));
 	if (ruleDeploy != nullptr)
@@ -1101,9 +1101,12 @@ void DebriefingState::prepareDebriefing() // private.
 						else // support unit.
 						{
 							if (_isQuickBattle == false)
+							{
+								const int quad ((*i)->getArmor()->getSize());
 								_missionCost += _base->expenseSupport(
-																(*i)->getArmor()->getSize() * (*i)->getArmor()->getSize(),
+																quad * quad,
 																true);
+							}
 							addResultStat(
 										TAC_RESULT[10u], // support destroyed
 										-(*i)->getValue());
@@ -1521,8 +1524,8 @@ void DebriefingState::prepareDebriefing() // private.
 				int alloyDivisor; // TODO: Subtract diff*10 for gameDifficulty.
 				switch (tacType)
 				{
-					case TCT_BASEASSAULT:	alloyDivisor = 150; break;
-					default:				alloyDivisor = 15;
+					case TCT_BASEASSAULT: alloyDivisor = 150; break;
+					default:              alloyDivisor = 15;
 				}
 
 				(*i)->qty = ((*i)->qty + (qtyAlloysRuined >> 1u)) / alloyDivisor;

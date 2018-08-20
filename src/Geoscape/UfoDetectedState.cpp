@@ -56,15 +56,15 @@ namespace OpenXcom
  * Initializes all the elements in the UfoDetected window.
  * @param ufo			- pointer to a UFO to get info from
  * @param geoState		- pointer to GeoscapeState
- * @param firstDetect	- true if the UFO has just been detected
- * @param hyperdecoded	- true if the UFO has been hyperdetected
+ * @param first			- true if the UFO has just been detected/decoded
+ * @param hyperdecoded	- true if the UFO has been hyperdecoded
  * @param contact		- true if radar contact is established (false if hyperdecoded only) (default true)
- * @param hyperBases	- pointer to a vector of pointers to Bases that hyperdetected UFO (default nullptr)
+ * @param hyperBases	- pointer to a vector of pointers to Bases that hyperdecoded UFO (default nullptr)
  */
 UfoDetectedState::UfoDetectedState(
 		Ufo* const ufo,
 		GeoscapeState* const geoState,
-		bool firstDetect,
+		bool first,
 		bool hyperdecoded,
 		bool contact,
 		std::vector<Base*>* hyperBases)
@@ -174,7 +174,7 @@ UfoDetectedState::UfoDetectedState(
 	_txtUfo->setText(_ufo->getLabel(_game->getLanguage()));
 	_txtUfo->setBig();
 
-	if (firstDetect == true)
+	if (first == true)
 		_txtDetected->setText(tr("STR_DETECTED"));
 	else
 		_txtDetected->setVisible(false);

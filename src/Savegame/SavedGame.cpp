@@ -69,13 +69,15 @@ namespace OpenXcom
 {
 
 const std::string
-	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq",
-	SavedGame::SAVE_AUTO_Tac = "_autotac_.aq",
-	SavedGame::SAVE_Quick    = "_quick_.aq",
-	SavedGame::SAVE_Ext      = "sav",
-	SavedGame::SAVE_ExtDot   = ".sav",
-	SavedGame::SAVE_Ext_AQ   = "aq",
-	SavedGame::SAVE_BakDot   = ".bak";
+	SavedGame::SAVE_AUTO_Geo  = "_autogeo_.aq",
+	SavedGame::SAVE_AUTO_Tac  = "_autotac_.aq",
+	SavedGame::SAVE_Quick     = "_quick_.aq",
+	SavedGame::SAVE_Ext       = "sav",
+	SavedGame::SAVE_ExtDot    = ".sav",
+	SavedGame::SAVE_Ext_AQ    = "aq",
+	SavedGame::SAVE_BakDot    = ".bak";
+
+const std::wstring SavedGame::SAVE_Ironballs = L"_ironballs_"; // default save-label if user doesn't supply a label
 
 
 /// ** FUNCTOR ***
@@ -134,7 +136,7 @@ SavedGame::SavedGame(const Ruleset* const rules)
 		_ironman(false),
 		_globeLon(0.),
 		_globeLat(0.),
-		_globeZoom(0u),
+		_globeZ(5u), // v. Globe::setupRadii()
 		_dfLon(0.),
 		_dfLat(0.),
 		_dfZoom(0u),
@@ -466,9 +468,9 @@ void SavedGame::load(
 
 	_detailRadar = static_cast<GlobeRadarDetail>(doc["detailRadar"].as<int>(static_cast<int>(_detailRadar)));
 
-	_globeLon  = doc["globeLon"].as<double>(_globeLon);
-	_globeLat  = doc["globeLat"].as<double>(_globeLat);
-	_globeZoom = static_cast<size_t>(doc["globeZoom"].as<int>(static_cast<int>(_globeZoom)));
+	_globeLon = doc["globeLon"].as<double>(_globeLon);
+	_globeLat = doc["globeLat"].as<double>(_globeLat);
+	_globeZ   = static_cast<size_t>(doc["globeZoom"].as<int>(static_cast<int>(_globeZ)));
 
 
 	Log(LOG_INFO) << ". load countries";
@@ -680,63 +682,63 @@ void SavedGame::save(const std::string& file) const
 
 	YAML::Node brief; // the brief-info used for the saves list
 
-	brief["label"]		= Language::wstrToUtf8(_label);
-	brief["edition"]	= OPENXCOM_VERSION_GIT;
-//	brief["version"]	= OPENXCOM_VERSION_SHORT;
+	brief["label"]   = Language::wstrToUtf8(_label);
+	brief["edition"] = OPENXCOM_VERSION_GIT;
+//	brief["version"] = OPENXCOM_VERSION_SHORT;
 
 //	std::string git_sha (OPENXCOM_VERSION_GIT);
-//	if (git_sha.empty() == false && git_sha[0u] ==  '.')
+//	if (git_sha.empty() == false && git_sha[0u] == '.')
 //		git_sha.erase(0u,1u);
 //	brief["build"] = git_sha;
 
-	brief["build"]		= Version::getBuildDate(false);
-	brief["savedate"]	= Version::timeStamp();
-	brief["time"]		= _time->save();
+	brief["build"]    = Version::getBuildDate(false);
+	brief["savedate"] = Version::timeStamp();
+	brief["time"]     = _time->save();
 
 	const Base* const base (_bases.front());
 	brief["base"] = Language::wstrToUtf8(base->getLabel());
 
 	if (_battleSave != nullptr)
 	{
-		brief["mission"]	= _battleSave->getTacticalType();
-		brief["turn"]		= _battleSave->getTurn();
-		brief["mode"]		= static_cast<int>(SM_BATTLESCAPE);
+		brief["mission"] = _battleSave->getTacticalType();
+		brief["turn"]    = _battleSave->getTurn();
+		brief["mode"]    = static_cast<int>(SM_BATTLESCAPE);
 	}
 	else
-		brief["mode"]		= static_cast<int>(SM_GEOSCAPE);
+		brief["mode"]    = static_cast<int>(SM_GEOSCAPE);
 
-	brief["rulesets"]		= Options::rulesets;
+	brief["rulesets"] = Options::rulesets;
 
 	if (_ironman == true)
-		brief["ironman"]	= _ironman;
+		brief["ironman"] = _ironman;
 
 	out << brief;
 	out << YAML::BeginDoc;
 
 	YAML::Node node; // saves the full game-data to the save
 
-	node["rng"]			= RNG::getSeed();
-	node["difficulty"]	= static_cast<int>(_difficulty);
+	node["rng"]        = RNG::getSeed();
+	node["difficulty"] = static_cast<int>(_difficulty);
 
-	if (_end != END_NONE)		node["end"]				= static_cast<int>(_end);
-	if (_monthsElapsed != -1)	node["monthsElapsed"]	= _monthsElapsed;
-	if (_warnedFunds == true)	node["warnedFunds"]		= _warnedFunds;
+	if (_end != END_NONE)     node["end"]           = static_cast<int>(_end);
+	if (_monthsElapsed != -1) node["monthsElapsed"] = _monthsElapsed;
+	if (_warnedFunds == true) node["warnedFunds"]   = _warnedFunds;
 
-	node["graphRegionToggles"]	= _graphRegionToggles;
-	node["graphCountryToggles"]	= _graphCountryToggles;
-	node["graphFinanceToggles"]	= _graphFinanceToggles;
-	node["funds"]				= _funds;
-	node["maintenance"]			= _maintenance;
-	node["researchScores"]		= _researchScores;
-	node["income"]				= _income;
-	node["expenditure"]			= _expenditure;
-	node["ids"]					= _ids;
-	node["detailGlobe"]			= _detailGlobe;
-	node["detailRadar"]			= static_cast<int>(_detailRadar);
+	node["graphRegionToggles"]  = _graphRegionToggles;
+	node["graphCountryToggles"] = _graphCountryToggles;
+	node["graphFinanceToggles"] = _graphFinanceToggles;
+	node["funds"]               = _funds;
+	node["maintenance"]         = _maintenance;
+	node["researchScores"]      = _researchScores;
+	node["income"]              = _income;
+	node["expenditure"]         = _expenditure;
+	node["ids"]                 = _ids;
+	node["detailGlobe"]         = _detailGlobe;
+	node["detailRadar"]         = static_cast<int>(_detailRadar);
 
-	node["globeLon"]	= serializeDouble(_globeLon);
-	node["globeLat"]	= serializeDouble(_globeLat);
-	node["globeZoom"]	= static_cast<int>(_globeZoom);
+	node["globeLon"]  = serializeDouble(_globeLon);
+	node["globeLat"]  = serializeDouble(_globeLat);
+	node["globeZoom"] = static_cast<int>(_globeZ);
 
 
 	for (std::vector<Country*>::const_iterator
@@ -868,12 +870,12 @@ int SavedGame::getDifficultyInt() const
 {
 	switch (_difficulty)
 	{
-		case DIFF_BEGINNER:		return 0;
-		case DIFF_EXPERIENCED:	return 1;
-		case DIFF_VETERAN:		return 2;
-		case DIFF_GENIUS:		return 3;
+		case DIFF_BEGINNER:    return 0;
+		case DIFF_EXPERIENCED: return 1;
+		case DIFF_VETERAN:     return 2;
+		case DIFF_GENIUS:      return 3;
 		case DIFF_SUPERHUMAN:
-		default:				return 4;
+		default:               return 4;
 	}
 }
 
@@ -957,16 +959,16 @@ void SavedGame::setGlobeLatitude(double lat)
  */
 size_t SavedGame::getGlobeZoom() const
 {
-	return _globeZoom;
+	return _globeZ;
 }
 
 /**
  * Sets the current zoom-level of the geoscape Globe.
  * @param zoom - zoom level
  */
-void SavedGame::setGlobeZoom(size_t zoom)
+void SavedGame::setGlobeZoom(size_t gZ)
 {
-	_globeZoom = zoom;
+	_globeZ = gZ;
 }
 
 /**
@@ -1974,10 +1976,10 @@ void SavedGame::tallySoldier( // private.
 {
 	switch (soldier->getRank())
 	{
-		case RANK_COMMANDER:	  data.hasCO = true;	break;
-		case RANK_COLONEL:		++data.totalColonels;	break;
-		case RANK_CAPTAIN:		++data.totalCaptains;	break;
-		case RANK_SERGEANT:		++data.totalSergeants;
+		case RANK_COMMANDER:  data.hasCO = true;  break;
+		case RANK_COLONEL:  ++data.totalColonels; break;
+		case RANK_CAPTAIN:  ++data.totalCaptains; break;
+		case RANK_SERGEANT: ++data.totalSergeants;
 	}
 }
 
@@ -2079,7 +2081,7 @@ bool SavedGame::getDebugGeo() const
  * @brief Match a mission based on Region and objective-type.
  * This function object will match AlienMissions based on Region and objective-type.
  */
-class matchRegionAndType
+class MatchRegionAndType
 	:
 		public std::unary_function<AlienMission*, bool>
 {
@@ -2089,7 +2091,7 @@ private:
 
 	public:
 		/// Store the region and type.
-		matchRegionAndType(
+		MatchRegionAndType(
 				const std::string& region,
 				MissionObjective objective)
 			:
@@ -2118,7 +2120,7 @@ AlienMission* SavedGame::findAlienMission(
 	std::vector<AlienMission*>::const_iterator i (std::find_if(
 															_activeMissions.begin(),
 															_activeMissions.end(),
-															matchRegionAndType(region, objective)));
+															MatchRegionAndType(region, objective)));
 	if (i != _activeMissions.end())
 		return *i;
 

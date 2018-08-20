@@ -178,7 +178,7 @@ private:
 		_statTallyScoreResearch;
 	size_t
 		_dfZoom,
-		_globeZoom;
+		_globeZ;
 //		_selectedBase;
 	double
 		_dfLat,
@@ -261,6 +261,7 @@ private:
 			SAVE_ExtDot,
 			SAVE_Ext_AQ,
 			SAVE_BakDot;
+		static const std::wstring SAVE_Ironballs;
 
 		/// Creates a SavedGame.
 		explicit SavedGame(const Ruleset* const rules);
@@ -315,7 +316,7 @@ private:
 		/// Gets the current Globe zoom.
 		size_t getGlobeZoom() const;
 		/// Sets Globe zoom.
-		void setGlobeZoom(size_t zoom);
+		void setGlobeZoom(size_t gZ);
 
 		/// Sets the pre-dogfight coordinates and zoom-level.
 		void setPreDogfightCoords(size_t zoom);

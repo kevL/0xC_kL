@@ -115,7 +115,7 @@ private:
 		_cenY;
 	Uint32 _dragScrollStartTick;
 	size_t
-		_zoom,
+		_gZ,
 		_zBaseLabels,
 		_zBorders,
 		_zCities,
@@ -159,7 +159,7 @@ private:
 			int width,
 			int height);
 	/// Sets the Globe's zoom-factor.
-	void setZoom(size_t level);
+	void setGz(size_t gZ);
 
 	/// Checks if a point is behind the Globe.
 	bool pointBack(

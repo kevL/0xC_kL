@@ -378,9 +378,7 @@ Globe::Globe(
 	_cenLon = _playSave->getGlobeLongitude();
 	_cenLat = _playSave->getGlobeLatitude();
 
-	_zoom = _playSave->getGlobeZoom();
 	setupRadii(width, height);
-	setZoom(_zoom);
 
 	_terminatorFluxions.resize(static_cast<size_t>(static_data.random_surf_size * static_data.random_surf_size));
 	for (size_t
@@ -507,7 +505,7 @@ bool Globe::pointBack( // private.
 		double lon,
 		double lat) const
 {
-	if (_zoom == 0u) return true; // bypass if earthradius=0
+	if (_gZ == 0u) return true; // bypass if earthradius=0
 
 	return (std::cos(_cenLat) * std::cos(lat) * std::cos(lon - _cenLon)
 		  + std::sin(_cenLat) * std::sin(lat) < 0.);
@@ -758,19 +756,19 @@ void Globe::setupRadii( // private.
 	const double height_d (static_cast<double>(height));
 
 	// These are the globe-zoom magnifications stored as a <vector> of 7 (doubles).
-	_radii.push_back(0.00 * height_d); //  0
+	_radii.push_back(0.04 * height_d); //  0
 	_radii.push_back(0.08 * height_d); //  1
 	_radii.push_back(0.16 * height_d); //  2
-	_radii.push_back(0.27 * height_d); //  3
-	_radii.push_back(0.38 * height_d); //  4
-	_radii.push_back(0.49 * height_d); //  5 <- this is max zoomout per stock code
-	_radii.push_back(0.60 * height_d); //  6
-	_radii.push_back(0.85 * height_d); //  7
-	_radii.push_back(1.39 * height_d); //  8
-	_radii.push_back(2.13 * height_d); //  9
-	_radii.push_back(3.42 * height_d); // 10
+	_radii.push_back(0.24 * height_d); //  3
+	_radii.push_back(0.32 * height_d); //  4
+	_radii.push_back(0.48 * height_d); //  5 <- this is max zoomout per stock code
+	_radii.push_back(0.64 * height_d); //  6
+	_radii.push_back(0.96 * height_d); //  7
+	_radii.push_back(1.28 * height_d); //  8
+	_radii.push_back(2.24 * height_d); //  9
+	_radii.push_back(3.52 * height_d); // 10
 
-	_radius = _radii[_zoom];
+	setGz(_playSave->getGlobeZoom());
 
 	_zBorders       = 2u; // these are the levels at which detail appears ->
 	_zCities        = 3u;
@@ -810,13 +808,13 @@ void Globe::setupRadii( // private.
  * @note Zoomed-out is "0".
  * @param level - zoom-level
  */
-void Globe::setZoom(size_t level) // private.
+void Globe::setGz(size_t gZ) // private.
 {
 	rotateStop();
 
-//	_texOffset = (2u - (_zoom >> 1u)) * (_srtTextures->getTotalFrames() / 3u);
+//	_texOffset = (2u - (_gZ >> 1u)) * (_srtTextures->getTotalFrames() / 3u);
 
-	switch (_zoom = level)
+	switch (_gZ = gZ)
 	{
 		default:
 		case  0:							// far out (earthradius=0)
@@ -835,9 +833,9 @@ void Globe::setZoom(size_t level) // private.
 	// as 13 textures with 3 zoom-levels apiece. Globe-drawing is basically
 	// hard-coded to see things that way.
 
-	_radius = _radii[_zoom];
+	_radius = _radii[_gZ];
 
-	_playSave->setGlobeZoom(_zoom);
+	_playSave->setGlobeZoom(_gZ);
 	_geoState->updateZoomText();
 
 	_redraw = true;
@@ -849,7 +847,7 @@ void Globe::setZoom(size_t level) // private.
  */
 size_t Globe::getZoom() const
 {
-	return _zoom;
+	return _gZ;
 }
 
 /**
@@ -866,8 +864,8 @@ size_t Globe::getZoomLevels() const
  */
 void Globe::zoomIn()
 {
-	if (_zoom < _radii.size() - 1u)
-		setZoom(_zoom + 1u);
+	if (_gZ < _radii.size() - 1u)
+		setGz(_gZ + 1u);
 }
 
 /**
@@ -875,8 +873,8 @@ void Globe::zoomIn()
  */
 void Globe::zoomOut()
 {
-	if (_zoom > 0u)
-		setZoom(_zoom - 1u);
+	if (_gZ > 0u)
+		setGz(_gZ - 1u);
 }
 
 /**
@@ -903,18 +901,18 @@ bool Globe::zoomDogfightIn()
 {
 	const size_t dfZ (_radii.size() - 1u);
 
-	if (_zoom < dfZ)
+	if (_gZ < dfZ)
 	{
 		const double radius (_radius);
 
 		if (radius + _dfZstep >= _radii[dfZ])
-			setZoom(dfZ);
+			setGz(dfZ);
 		else
 		{
-			if (radius + _dfZstep >= _radii[_zoom + 1u])
-				++_zoom;
+			if (radius + _dfZstep >= _radii[_gZ + 1u])
+				++_gZ;
 
-			setZoom(_zoom);
+			setGz(_gZ);
 			_radius = radius + _dfZstep;
 		}
 		return false;
@@ -930,18 +928,18 @@ bool Globe::zoomDogfightOut()
 {
 	const size_t dfZpre (_playSave->getDfZoom());
 
-	if (_zoom > dfZpre)
+	if (_gZ > dfZpre)
 	{
 		const double radius (_radius);
 
 		if (radius - _dfZstep <= _radii[dfZpre])
-			setZoom(dfZpre);
+			setGz(dfZpre);
 		else
 		{
-			if (radius - _dfZstep <= _radii[_zoom - 1u])
-				--_zoom;
+			if (radius - _dfZstep <= _radii[_gZ - 1u])
+				--_gZ;
 
-			setZoom(_zoom);
+			setGz(_gZ);
 			_radius = radius - _dfZstep;
 		}
 		return false;
@@ -1260,8 +1258,8 @@ void Globe::toggleBlink()
  */
 void Globe::rotate()
 {
-	_cenLon += _rotLon * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1u);
-	_cenLat += _rotLat * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_zoom + 1u);
+	_cenLon += _rotLon * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_gZ + 1u);
+	_cenLat += _rotLat * (static_cast<double>(110 - Options::geoScrollSpeed) / 100.) / static_cast<double>(_gZ + 1u);
 
 	_playSave->setGlobeLongitude(_cenLon);
 	_playSave->setGlobeLatitude(_cenLat);
@@ -1283,7 +1281,7 @@ void Globe::draw()
 	_srfLayerDetail    ->clear();
 	_srfLayerCrosshair ->clear();
 
-	if (_zoom != 0u) // bypass if earthradius=0
+//	if (_gZ != 0u) // bypass if earthradius=0
 	{
 		drawOcean();
 		drawLand();
@@ -1334,7 +1332,7 @@ void Globe::drawLand()
 			y[j] = (*i)->getY(j);
 		}
 
-		drawTexturedPolygon( // Apply textures according to zoom-level.
+		drawTexturedPolygon( // apply textures according to zoom-level
 						x,y,
 						(*i)->getPoints(),
 						_srtTextures->getFrame(static_cast<int>((*i)->getPolyTexture() + _texOffset)),
@@ -1393,9 +1391,9 @@ Cord Globe::getSunDirection( // private.
 			days2[13u] { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 };
 
 		const int
-			year	(gt->getYear()),
-			month	(gt->getMonth() - 1),
-			day		(gt->getDay() - 1);
+			year  (gt->getYear()),
+			month (gt->getMonth() - 1),
+			day   (gt->getDay() - 1);
 
 		const double
 			sec (static_cast<double>( // day-fraction is also taken into account
@@ -1876,7 +1874,7 @@ void Globe::drawInterceptMarker( // private.
 void Globe::drawTerminus()
 {
 	ShaderMove<Cord> earth (ShaderMove<Cord>(
-										_earthData[_zoom],
+										_earthData[_gZ],
 										getWidth(),
 										getHeight()));
 	ShaderRepeat<Sint16> noise (ShaderRepeat<Sint16>(
@@ -2037,7 +2035,7 @@ void Globe::drawDetail()
 		double
 			lon,lat;
 
-		if (_zoom >= _zBorders) // draw the Country borders
+		if (_gZ >= _zBorders) // draw the Country borders
 		{
 			double
 				lon1,lat1;
@@ -2080,7 +2078,7 @@ void Globe::drawDetail()
 			_srfLayerDetail->unlock();
 		}
 
-		if (_zoom >= _zCities) // draw the City markers
+		if (_gZ >= _zCities) // draw the City markers
 		{
 			RuleRegion* regionRule;
 			for (std::vector<Region*>::const_iterator
@@ -2111,7 +2109,7 @@ void Globe::drawDetail()
 					_game->getLanguage());
 		label->setAlign(ALIGN_CENTER);
 
-		if (_zoom >= _zCountryLabels)
+		if (_gZ >= _zCountryLabels)
 		{
 			label->setColor(C_LBLCOUNTRY); // draw the Country labels
 
@@ -2138,7 +2136,7 @@ void Globe::drawDetail()
 			}
 		}
 
-		if (_zoom >= _zCityLabels) // draw the City labels. NOTE: Cities (their labels) also get their own level.
+		if (_gZ >= _zCityLabels) // draw the City labels. NOTE: Cities (their labels) also get their own level.
 		{
 			label->setColor(C_LBLCITY);
 			int offset_y;
@@ -2155,7 +2153,7 @@ void Globe::drawDetail()
 						j != regionRule->getCities().end();
 						++j)
 				{
-					if (_zoom >= (*j)->getZoomLevel())
+					if (_gZ >= (*j)->getZoomLevel())
 					{
 						lon = (*j)->getLongitude(),
 						lat = (*j)->getLatitude();
@@ -2182,7 +2180,7 @@ void Globe::drawDetail()
 			}
 		}
 
-		if (_zoom >= _zBaseLabels) // draw xCom Base labels
+		if (_gZ >= _zBaseLabels) // draw xCom Base labels
 		{
 			label->setColor(C_LBLBASE);
 			label->setAlign(ALIGN_LEFT);
@@ -2569,8 +2567,8 @@ void Globe::mouseOver(Action* action, State* state)
 //				else
 //				{
 				const double
-					newLon (static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_zoom + 1u) / 2.),
-					newLat (static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE  / static_cast<double>(_zoom + 1u) / 2.);
+					newLon (static_cast<double>(-action->getDetails()->motion.xrel) * ROTATE_LONGITUDE / static_cast<double>(_gZ + 1u) / 2.),
+					newLat (static_cast<double>(-action->getDetails()->motion.yrel) * ROTATE_LATITUDE  / static_cast<double>(_gZ + 1u) / 2.);
 				center(
 					_cenLon + newLon / static_cast<double>(Options::geoScrollSpeed),
 					_cenLat + newLat / static_cast<double>(Options::geoScrollSpeed));

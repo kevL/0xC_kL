@@ -2237,8 +2237,8 @@ struct ExpireCrashedUfo
 			if (sec >= 30 * 60)
 				ufo->setSecondsLeft(sec - 30 * 60);
 			else
-				ufo->setUfoStatus(Ufo::DESTROYED); // mark expired UFO for removal.
-		}
+				ufo->setUfoStatus(Ufo::DESTROYED);	// mark expired UFO for removal.
+		}											// wait that is also done in time5Seconds()
 	}
 };
 
