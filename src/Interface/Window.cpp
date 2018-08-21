@@ -35,7 +35,7 @@ namespace OpenXcom
 // Speed: for high-quality filters & shaders, like 4xHQX, use a faster value
 // like 0.135f - for quicker filters & shaders slow the popup down with a value
 // like 0.076f.
-const float Window::POPUP_SPEED = 0.135f; // larger is faster step.
+const float Window::POPUP_SPEED = 0.083f; // 0.135 // larger is faster step.
 
 Sound* Window::soundPopup[3u] = {nullptr, nullptr, nullptr}; // static.
 
@@ -79,8 +79,8 @@ Window::Window(
 		_colorFill(0u),
 		_popProgress(POP_START)
 {
-	_timer = new Timer(16u);
-	_timer->onTimer(static_cast<SurfaceHandler>(&Window::popup));
+	_tr = new Timer(16u);
+	_tr->onTimer(static_cast<SurfaceHandler>(&Window::popup));
 
 	switch (_popType)
 	{
@@ -90,13 +90,13 @@ Window::Window(
 
 		default:
 			_hidden = true;
-			_timer->start();
+			_tr->start();
 
-			if (_state != nullptr)
+			if (_state != nullptr
+				&& (_fullScreen = _state->isFullScreen()) == true
+				&& _toggle == true) // <- for opening UfoPaedia in battlescape w/ black BG.
 			{
-				_fullScreen = _state->isFullScreen();
-				if (_fullScreen == true && _toggle == true) // <- for opening UfoPaedia in battlescape w/ black BG.
-					_state->toggleScreen();
+				_state->toggleScreen();
 			}
 	}
 }
@@ -106,7 +106,7 @@ Window::Window(
  */
 Window::~Window()
 {
-	delete _timer;
+	delete _tr;
 }
 
 /**
@@ -119,7 +119,7 @@ void Window::think()
 		_state->hideAll();
 		_hidden = false;
 	}
-	_timer->think(nullptr, this);
+	_tr->think(nullptr, this);
 }
 
 /**
@@ -145,7 +145,7 @@ void Window::popup() // private.
 			_state->toggleScreen();
 
 		_state->showAll();
-		_timer->stop();
+		_tr->stop();
 	}
 
 	_redraw = true;
@@ -182,36 +182,46 @@ void Window::draw()
 			rect.h = static_cast<Uint16>(getHeight());
 			break;
 
-		case POPUP_BOTH: // I take it, then, floats get 'promoted' to ints. ->
-			rect.x = static_cast<Sint16>(static_cast<int>(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep)) >> 1u);
-			rect.w = static_cast<Uint16>(static_cast<float>(getWidth()) * _popStep);
+		case POPUP_BOTH:
+		{
+			const float w (static_cast<float>(getWidth()));
+			rect.x = static_cast<Sint16>(static_cast<int>(w - (w * _popStep)) >> 1u);
+			rect.w = static_cast<Uint16>(w * _popStep);
 
-			rect.y = static_cast<Sint16>(static_cast<int>(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep)) >> 1u);
-			rect.h = static_cast<Uint16>(static_cast<float>(getHeight()) * _popStep);
+			const float h (static_cast<float>(getHeight()));
+			rect.y = static_cast<Sint16>(static_cast<int>(h - (h * _popStep)) >> 1u);
+			rect.h = static_cast<Uint16>(h * _popStep);
 			break;
+		}
 
 		case POPUP_HORIZONTAL:
-			rect.x = static_cast<Sint16>(static_cast<int>(static_cast<float>(getWidth()) - (static_cast<float>(getWidth()) * _popStep)) >> 1u);
-			rect.w = static_cast<Uint16>(static_cast<float>(getWidth()) * _popStep);
+		{
+			const float w (static_cast<float>(getWidth()));
+			rect.x = static_cast<Sint16>(static_cast<int>(w - (w * _popStep)) >> 1u);
+			rect.w = static_cast<Uint16>(w * _popStep);
 
 			rect.y = 0;
 			rect.h = static_cast<Uint16>(getHeight());
 			break;
+		}
 
 		case POPUP_VERTICAL:
+		{
 			rect.x = 0;
 			rect.w = static_cast<Uint16>(getWidth());
 
-			rect.y = static_cast<Sint16>(static_cast<int>(static_cast<float>(getHeight()) - (static_cast<float>(getHeight()) * _popStep)) >> 1u);
-			rect.h = static_cast<Uint16>(static_cast<float>(getHeight()) * _popStep);
+			const float h (static_cast<float>(getHeight()));
+			rect.y = static_cast<Sint16>(static_cast<int>(h - (h * _popStep)) >> 1u);
+			rect.h = static_cast<Uint16>(h * _popStep);
+		}
 	}
 
 	Uint8
 		color,
 		gradient;
 
-	if (_contrast == true)	gradient = 2u;
-	else					gradient = 1u;
+	if (_contrast == true) gradient = 2u;
+	else                   gradient = 1u;
 
 	color = static_cast<Uint8>(_color + (gradient * 3u));
 
@@ -262,17 +272,17 @@ void Window::draw()
 			if (rect.w > 0u && rect.h > 0u)
 				drawRect(&rect, color);
 
-			if (i < 2)	color = static_cast<Uint8>(color - gradient);
-			else		color = static_cast<Uint8>(color + gradient);
+			if (i < 2) color = static_cast<Uint8>(color - gradient);
+			else       color = static_cast<Uint8>(color + gradient);
 
 			++rect.x;
 			++rect.y;
 
 			if (rect.w > 1u) rect.w = static_cast<Uint16>(rect.w - 2u);
-			else			 rect.w = 0u;
+			else             rect.w = 0u;
 
 			if (rect.h > 1u) rect.h = static_cast<Uint16>(rect.h - 2u);
-			else			 rect.h = 0u;
+			else             rect.h = 0u;
 		}
 	}
 

@@ -38,31 +38,31 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the Cannot Reequip screen.
- * @param missingItems - vector of ReequipStat items still missing
+ * @param its - vector of ReequipStat items that were lost and cannot be replaced from base-stores
  */
-CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
+CannotReequipState::CannotReequipState(std::vector<UnreplacedStat> its)
 {
-	_window			= new Window(this);
+	_window   = new Window(this);
 
-	_txtTitle		= new Text(300, 69, 10, 9);
+	_txtTitle = new Text(300, 69, 10, 9);
 
-	_txtItem		= new Text(162, 9,  16, 77);
-	_txtQuantity	= new Text( 46, 9, 178, 77);
-	_txtCraft		= new Text( 80, 9, 224, 77);
+	_txtItem  = new Text(162, 9,  16, 77);
+	_txtQty   = new Text( 46, 9, 178, 77);
+	_txtCraft = new Text( 80, 9, 224, 77);
 
-	_lstItems		= new TextList(285, 89, 16, 87);
+	_lstItems = new TextList(285, 89, 16, 87);
 
-	_btnOk			= new TextButton(288, 16, 16, 177);
+	_btnOk    = new TextButton(288, 16, 16, 177);
 
 	setInterface("cannotReequip");
 
-	add(_window,		"window",	"cannotReequip");
-	add(_txtTitle,		"heading",	"cannotReequip");
-	add(_txtItem,		"text",		"cannotReequip");
-	add(_txtQuantity,	"text",		"cannotReequip");
-	add(_txtCraft,		"text",		"cannotReequip");
-	add(_lstItems,		"list",		"cannotReequip");
-	add(_btnOk,			"button",	"cannotReequip");
+	add(_window,   "window",  "cannotReequip");
+	add(_txtTitle, "heading", "cannotReequip");
+	add(_txtItem,  "text",    "cannotReequip");
+	add(_txtQty,   "text",    "cannotReequip");
+	add(_txtCraft, "text",    "cannotReequip");
+	add(_lstItems, "list",    "cannotReequip");
+	add(_btnOk,    "button",  "cannotReequip");
 
 	centerSurfaces();
 
@@ -70,7 +70,7 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&CannotReequipState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&CannotReequipState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CannotReequipState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&CannotReequipState::btnOkClick),
@@ -83,15 +83,15 @@ CannotReequipState::CannotReequipState(std::vector<ReequipStat> missingItems)
 	_txtTitle->setBig();
 
 	_txtItem->setText(tr("STR_ITEM"));
-	_txtQuantity->setText(tr("STR_QUANTITY"));
+	_txtQty->setText(tr("STR_QUANTITY"));
 	_txtCraft->setText(tr("STR_CRAFT"));
 
 	_lstItems->setColumns(3, 154,46,72);
 	_lstItems->setBackground(_window);
 	_lstItems->setSelectable();
-	for (std::vector<ReequipStat>::const_iterator
-			i = missingItems.begin();
-			i != missingItems.end();
+	for (std::vector<UnreplacedStat>::const_iterator
+			i  = its.begin();
+			i != its.end();
 			++i)
 	{
 		_lstItems->addRow(

@@ -73,9 +73,9 @@ BattleItem::BattleItem(
 	switch (_itRule->getBattleType())
 	{
 		case BT_MEDIKIT:
-			_heal		= _itRule->getHealQuantity();
-			_painKiller	= _itRule->getPainKillerQuantity();
-			_stimulant	= _itRule->getStimulantQuantity();
+			_heal       = _itRule->getHealQuantity();
+			_painKiller = _itRule->getPainKillerQuantity();
+			_stimulant  = _itRule->getStimulantQuantity();
 			break;
 
 		case BT_FIREARM: // Firearms w/out defined ammo ARE the ammo.
@@ -104,14 +104,14 @@ BattleItem::~BattleItem()
  */
 void BattleItem::load(const YAML::Node& node)
 {
-	_inventoryX		= node["inventoryX"]	.as<int>(_inventoryX);
-	_inventoryY		= node["inventoryY"]	.as<int>(_inventoryY);
-	_ammoQty		= node["ammoQty"]		.as<int>(_ammoQty);
-	_painKiller		= node["painKiller"]	.as<int>(_painKiller);
-	_heal			= node["heal"]			.as<int>(_heal);
-	_stimulant		= node["stimulant"]		.as<int>(_stimulant);
-	_fuse			= node["fuse"]			.as<int>(_fuse);
-	_xcomProperty	= node["xcomProperty"]	.as<bool>(_xcomProperty);
+	_inventoryX   = node["inventoryX"]  .as<int>(_inventoryX);
+	_inventoryY   = node["inventoryY"]  .as<int>(_inventoryY);
+	_ammoQty      = node["ammoQty"]     .as<int>(_ammoQty);
+	_painKiller   = node["painKiller"]  .as<int>(_painKiller);
+	_heal         = node["heal"]        .as<int>(_heal);
+	_stimulant    = node["stimulant"]   .as<int>(_stimulant);
+	_fuse         = node["fuse"]        .as<int>(_fuse);
+	_xcomProperty = node["xcomProperty"].as<bool>(_xcomProperty);
 }
 
 /**
@@ -136,21 +136,21 @@ YAML::Node BattleItem::save() const
 	if (_inventoryX != 0) node["inventoryX"] = _inventoryX;
 	if (_inventoryY != 0) node["inventoryY"] = _inventoryY;
 
-	if (_ammoQty > 0)			node["ammoQty"]			= _ammoQty;
-	if (_painKiller != 0)		node["painKiller"]		= _painKiller;
-	if (_heal != 0)				node["heal"]			= _heal;
-	if (_stimulant != 0)		node["stimulant"]		= _stimulant;
-	if (_fuse != -1)			node["fuse"]			= _fuse;
-	if (_xcomProperty == true)	node["xcomProperty"]	= _xcomProperty;
+	if (_ammoQty > 0)          node["ammoQty"]      = _ammoQty;
+	if (_painKiller != 0)      node["painKiller"]   = _painKiller;
+	if (_heal != 0)            node["heal"]         = _heal;
+	if (_stimulant != 0)       node["stimulant"]    = _stimulant;
+	if (_fuse != -1)           node["fuse"]         = _fuse;
+	if (_xcomProperty == true) node["xcomProperty"] = _xcomProperty;
 
-	if (_owner != nullptr)		node["owner"]		= _owner->getId();
+	if (_owner != nullptr)      node["owner"]    = _owner->getId();
 	if (_ownerPre != nullptr
-		&& _ownerPre != _owner)	node["ownerPre"]	= _ownerPre->getId();
+		&& _ownerPre != _owner) node["ownerPre"] = _ownerPre->getId();
 
-	if (_unit != nullptr)		node["unit"]		= _unit->getId();
-	if (_section != nullptr)	node["section"]		= _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
-	if (_tile != nullptr)		node["position"]	= _tile->getPosition();
-	if (_ammoItem != nullptr)	node["ammoItem"]	= _ammoItem->getId();
+	if (_unit != nullptr)     node["unit"]     = _unit->getId();
+	if (_section != nullptr)  node["section"]  = _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
+	if (_tile != nullptr)     node["position"] = _tile->getPosition();
+	if (_ammoItem != nullptr) node["ammoItem"] = _ammoItem->getId();
 
 	return node;
 }
@@ -199,9 +199,9 @@ void BattleItem::setFuse(int turn)
 /**
  * Gets the '_ammoQty' of this BattleItem.
  * @return, ammo quantity
- *			0		- item is not ammo
- *			<#>		- ammo qty.
- *			INT_MAX	- item is its own ammo
+ *			0       - item is not ammo
+ *			<#>     - ammo qty.
+ *			INT_MAX - item is its own ammo
  */
 int BattleItem::getAmmoQuantity() const
 {
@@ -372,7 +372,7 @@ void BattleItem::changeOwner(BattleUnit* const unit)
 	if (_owner != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _owner->getInventory()->begin();
+				i  = _owner->getInventory()->begin();
 				i != _owner->getInventory()->end();
 				++i)
 		{

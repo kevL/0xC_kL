@@ -49,7 +49,7 @@ private:
 	Text
 		* _txtTitle,
 		* _txtItem,
-		* _txtQuantity,
+		* _txtQty,
 		* _txtCraft;
 	TextButton* _btnOk;
 	TextList* _lstItems;
@@ -58,7 +58,7 @@ private:
 
 	public:
 		/// Creates the Cannot Reequip state.
-		explicit CannotReequipState(std::vector<ReequipStat> missingItems);
+		explicit CannotReequipState(std::vector<UnreplacedStat> its);
 		/// Cleans up the Cannot Reequip state.
 		~CannotReequipState();
 

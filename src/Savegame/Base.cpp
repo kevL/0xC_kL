@@ -993,7 +993,7 @@ int Base::getUsedContainment() const
 {
 	int total (0);
 	for (std::map<std::string, int>::const_iterator
-			i = _items->getContents()->begin();
+			i  = _items->getContents()->begin();
 			i != _items->getContents()->end();
 			++i)
 	{
@@ -1002,7 +1002,7 @@ int Base::getUsedContainment() const
 	}
 
 	for (std::vector<Transfer*>::const_iterator
-			i = _transfers.begin();
+			i  = _transfers.begin();
 			i != _transfers.end();
 			++i)
 	{
@@ -1024,7 +1024,7 @@ int Base::getTotalContainment() const
 {
 	int total (0);
 	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
+			i  = _facilities.begin();
 			i != _facilities.end();
 			++i)
 	{
@@ -1035,8 +1035,8 @@ int Base::getTotalContainment() const
 }
 
 /**
- * Gets alien containment-space not in use.
- * @return, free space
+ * Gets aLien-containment unoccupied space.
+ * @return, unoccupied space
  */
 int Base::getFreeContainment() const
 {
@@ -1050,7 +1050,7 @@ int Base::getFreeContainment() const
 bool Base::hasContainment() const
 {
 	for (std::vector<BaseFacility*>::const_iterator
-			i = _facilities.begin();
+			i  = _facilities.begin();
 			i != _facilities.end();
 			++i)
 	{
@@ -1072,7 +1072,7 @@ int Base::getInterrogatedAliens() const
 	int total (0);
 	const RuleResearch* resRule;
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _projectsResearch.begin();
+			i  = _projectsResearch.begin();
 			i != _projectsResearch.end();
 			++i)
 	{
@@ -2985,7 +2985,7 @@ void Base::refurbishCraft(const std::string& itType)
 					if ((*i)->getRules()->getWeaponCapacity() != 0u) // safety. is Rearming, ergo has weaponry.
 					{
 						for (std::vector<CraftWeapon*>::const_iterator
-								j = (*i)->getCraftWeapons()->begin();
+								j  = (*i)->getCraftWeapons()->begin();
 								j != (*i)->getCraftWeapons()->end();
 								++j)
 						{

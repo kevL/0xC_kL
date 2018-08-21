@@ -46,7 +46,7 @@ private:
 		_fadeStep;
 
 	Text* _text;
-	Timer* _timer;
+	Timer* _tr;
 
 
 	public:

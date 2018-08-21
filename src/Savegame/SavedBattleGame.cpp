@@ -282,18 +282,18 @@ void SavedBattleGame::load(
 		Ruleset* const rules)
 {
 	//Log(LOG_INFO) << "SavedBattleGame::load()";
-	_terrain		= node["terrain"]	.as<std::string>(_terrain);
-	_turn			= node["turn"]		.as<int>(_turn);
-	_tacticalShade	= node["shade"]		.as<int>(_tacticalShade);
+	_terrain       = node["terrain"].as<std::string>(_terrain);
+	_turn          = node["turn"]   .as<int>(_turn);
+	_tacticalShade = node["shade"]  .as<int>(_tacticalShade);
 
 	setTacType(_tacticalType = node["type"].as<std::string>(_tacticalType));
 
 
 	Log(LOG_INFO) << ". init map";
 	initMap(									// NOTE: This clears '_battleDataSets' (as well as '_nodes' and '_tiles')
-		node["width"]	.as<int>(_mapsize_x),	// therefore it should run *before* loading '_battleDataSets' etc.
-		node["length"]	.as<int>(_mapsize_y),	// It runs when creating (or resizing) a tactical (1st & 2nd stages) in
-		node["height"]	.as<int>(_mapsize_z));	// BattlescapeGenerator::generateMap() -- also runs for fake-inventories.
+		node["width"] .as<int>(_mapsize_x),		// therefore it should run *before* loading '_battleDataSets' etc.
+		node["length"].as<int>(_mapsize_y),		// It runs when creating (or resizing) a tactical (1st & 2nd stages) in
+		node["height"].as<int>(_mapsize_z));	// BattlescapeGenerator::generateMap() -- also runs for fake-inventories.
 												// NOTE: The vars '_mapsize_x' '_mapsize_y' '_mapsize_z' and '_qtyTilesTotal' are set in initMap().
 
 	Log(LOG_INFO) << ". load battle data sets";
@@ -333,14 +333,14 @@ void SavedBattleGame::load(
 				sizeof(Tile::SerializationKey));
 
 		// WARNING: Don't trust extracting integers from YAML as anything other than 'int' ...
-		serKey.index		= node["tileIndexSize"]		.as<Uint8>(serKey.index);
-		serKey.totalBytes	= node["tileTotalBytesPer"]	.as<Uint32>(serKey.totalBytes);
-		serKey._fire		= node["tileFireSize"]		.as<Uint8>(serKey._fire);
-		serKey._smoke		= node["tileSmokeSize"]		.as<Uint8>(serKey._smoke);
-		serKey._aniOffset	= node["tileOffsetSize"]	.as<Uint8>(serKey._aniOffset);
-		serKey._partId		= node["tileIDSize"]		.as<Uint8>(serKey._partId);
-		serKey._partSetId	= node["tileSetIDSize"]		.as<Uint8>(serKey._partSetId);
-		serKey.boolFields	= node["tileBoolFieldsSize"].as<Uint8>(1u); // boolean flags used to be stored in an unmentioned byte (Uint8) :|
+		serKey.index      = node["tileIndexSize"]     .as<Uint8>(serKey.index);
+		serKey.totalBytes = node["tileTotalBytesPer"] .as<Uint32>(serKey.totalBytes);
+		serKey._fire      = node["tileFireSize"]      .as<Uint8>(serKey._fire);
+		serKey._smoke     = node["tileSmokeSize"]     .as<Uint8>(serKey._smoke);
+		serKey._aniOffset = node["tileOffsetSize"]    .as<Uint8>(serKey._aniOffset);
+		serKey._partId    = node["tileIDSize"]        .as<Uint8>(serKey._partId);
+		serKey._partSetId = node["tileSetIDSize"]     .as<Uint8>(serKey._partSetId);
+		serKey.boolFields = node["tileBoolFieldsSize"].as<Uint8>(1u); // boolean flags used to be stored in an unmentioned byte (Uint8) :|
 
 		// load binary tile data!
 		const YAML::Binary binTiles (node["binTiles"].as<YAML::Binary>());
@@ -396,9 +396,9 @@ void SavedBattleGame::load(
 			i != node["units"].end();
 			++i)
 	{
-		id			= (*i)["id"]										.as<int>();
-		faction		= static_cast<UnitFaction>((*i)["faction"]			.as<int>());
-		factionOrg	= static_cast<UnitFaction>((*i)["originalFaction"]	.as<int>(faction)); // .. technically, static_cast<int>(faction).
+		id         = (*i)["id"]                                      .as<int>();
+		faction    = static_cast<UnitFaction>((*i)["faction"]        .as<int>());
+		factionOrg = static_cast<UnitFaction>((*i)["originalFaction"].as<int>(faction)); // .. technically, static_cast<int>(faction).
 
 		if (id < BattleUnit::MAX_SOLDIER_ID)			// instance a BattleUnit from a geoscape-soldier
 			unit = new BattleUnit(
@@ -407,8 +407,8 @@ void SavedBattleGame::load(
 		else											// instance a BattleUnit as an aLien, civie, or support-unit
 		{
 			const std::string
-				type	((*i)["genUnitType"]	.as<std::string>()),
-				armor	((*i)["genUnitArmor"]	.as<std::string>());
+				type  ((*i)["genUnitType"] .as<std::string>()),
+				armor ((*i)["genUnitArmor"].as<std::string>());
 
 			if (rules->getUnitRule(type) != nullptr && rules->getArmor(armor) != nullptr) // safeties.
 				unit = new BattleUnit(
@@ -531,9 +531,9 @@ void SavedBattleGame::load(
 					item->setInventorySection(rules->getInventory(st));
 				}
 
-				owner		= (*j)["owner"]		.as<int>(-1); // cf. BattleItem::save() ->
-				ownerPre	= (*j)["ownerPre"]	.as<int>(-1);
-				unitId		= (*j)["unit"]		.as<int>(-1);
+				owner    = (*j)["owner"]   .as<int>(-1); // cf. BattleItem::save() ->
+				ownerPre = (*j)["ownerPre"].as<int>(-1);
+				unitId   = (*j)["unit"]    .as<int>(-1);
 
 				if (ownerPre == -1) ownerPre = owner;
 
@@ -626,15 +626,15 @@ void SavedBattleGame::load(
 	Log(LOG_INFO) << ". set some vars";
 
 	_objectiveTile = static_cast<TileType>(node["objectiveTile"].as<int>(_objectiveTile));
-	_objectivesRequired		= node["objectivesRequired"]	.as<int>(_objectivesRequired);
-	_objectivesDestroyed	= node["objectivesDestroyed"]	.as<int>(_objectivesDestroyed);
+	_objectivesRequired  = node["objectivesRequired"] .as<int>(_objectivesRequired);
+	_objectivesDestroyed = node["objectivesDestroyed"].as<int>(_objectivesDestroyed);
 
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 
-	_cheatAI	= node["cheatAI"]	.as<bool>(_cheatAI);
-	_cheatTurn	= node["cheatTurn"]	.as<int>(_cheatTurn);
-	_alienRace	= node["alienRace"]	.as<std::string>(_alienRace);
+	_cheatAI   = node["cheatAI"]  .as<bool>(_cheatAI);
+	_cheatTurn = node["cheatTurn"].as<int>(_cheatTurn);
+	_alienRace = node["alienRace"].as<std::string>(_alienRace);
 //	_kneelReserved = node["kneelReserved"].as<bool>(_kneelReserved);
 
 //	_batReserved = static_cast<BattleActionType>(node["batReserved"].as<int>(_batReserved));
@@ -722,19 +722,19 @@ YAML::Node SavedBattleGame::save() const
 
 	if (_objectivesRequired != 0)
 	{
-		node["objectiveTile"]		= static_cast<int>(_objectiveTile);
-		node["objectivesRequired"]	= _objectivesRequired;
-		node["objectivesDestroyed"]	= _objectivesDestroyed;
+		node["objectiveTile"]       = static_cast<int>(_objectiveTile);
+		node["objectivesRequired"]  = _objectivesRequired;
+		node["objectivesDestroyed"] = _objectivesDestroyed;
 	}
 
-	node["width"]			= _mapsize_x;
-	node["length"]			= _mapsize_y;
-	node["height"]			= _mapsize_z;
-	node["type"]			= _tacticalType;
-	node["shade"]			= _tacticalShade;
-	node["turn"]			= _turn;
-	node["terrain"]			= _terrain;
-	node["selectedUnit"]	= (_selectedUnit != nullptr) ? _selectedUnit->getId() : -1;
+	node["width"]        = _mapsize_x;
+	node["length"]       = _mapsize_y;
+	node["height"]       = _mapsize_z;
+	node["type"]         = _tacticalType;
+	node["shade"]        = _tacticalShade;
+	node["turn"]         = _turn;
+	node["terrain"]      = _terrain;
+	node["selectedUnit"] = (_selectedUnit != nullptr) ? _selectedUnit->getId() : -1;
 
 	for (std::vector<MapDataSet*>::const_iterator
 			i = _battleDataSets.begin();
@@ -755,14 +755,14 @@ YAML::Node SavedBattleGame::save() const
 	}
 #else
 	// write out the field sizes used to write the tile data
-	node["tileIndexSize"]		= Tile::serializationKey.index;
-	node["tileTotalBytesPer"]	= Tile::serializationKey.totalBytes;
-	node["tileFireSize"]		= Tile::serializationKey._fire;
-	node["tileSmokeSize"]		= Tile::serializationKey._smoke;
-	node["tileOffsetSize"]		= Tile::serializationKey._aniOffset;
-	node["tileIDSize"]			= Tile::serializationKey._partId;
-	node["tileSetIDSize"]		= Tile::serializationKey._partSetId;
-	node["tileBoolFieldsSize"]	= Tile::serializationKey.boolFields;
+	node["tileIndexSize"]      = Tile::serializationKey.index;
+	node["tileTotalBytesPer"]  = Tile::serializationKey.totalBytes;
+	node["tileFireSize"]       = Tile::serializationKey._fire;
+	node["tileSmokeSize"]      = Tile::serializationKey._smoke;
+	node["tileOffsetSize"]     = Tile::serializationKey._aniOffset;
+	node["tileIDSize"]         = Tile::serializationKey._partId;
+	node["tileSetIDSize"]      = Tile::serializationKey._partSetId;
+	node["tileBoolFieldsSize"] = Tile::serializationKey.boolFields;
 
 	size_t tilesDataSize (Tile::serializationKey.totalBytes * _qtyTilesTotal);
 	Uint8
@@ -791,8 +791,8 @@ YAML::Node SavedBattleGame::save() const
 //			tilesDataSize -= Tile::serializationKey.totalBytes;
 	}
 
-	node["totalTiles"]	= tilesDataSize / Tile::serializationKey.totalBytes; // not strictly necessary, just convenient
-	node["binTiles"]	= YAML::Binary(tilesData, tilesDataSize);
+	node["totalTiles"] = tilesDataSize / Tile::serializationKey.totalBytes; // not strictly necessary, just convenient
+	node["binTiles"]   = YAML::Binary(tilesData, tilesDataSize);
 
 	std::free(tilesData);
 #endif
@@ -848,9 +848,9 @@ YAML::Node SavedBattleGame::save() const
 		node["toDelete"].push_back((*i)->saveDeleted());
 	}
 
-//	node["batReserved"]		= static_cast<int>(_batReserved);
-//	node["kneelReserved"]	= _kneelReserved;
-	node["alienRace"]		= _alienRace;
+//	node["batReserved"]   = static_cast<int>(_batReserved);
+//	node["kneelReserved"] = _kneelReserved;
+	node["alienRace"]     = _alienRace;
 
 	if (_operationTitle.empty() == false)
 		node["operationTitle"] = Language::wstrToUtf8(_operationTitle);
@@ -930,9 +930,9 @@ void SavedBattleGame::initMap(
 	}
 
 	_qtyTilesTotal = static_cast<size_t>( // create Tiles ->
-					  (_mapsize_x = mapsize_x)
-					* (_mapsize_y = mapsize_y)
-					* (_mapsize_z = mapsize_z));
+					 (_mapsize_x = mapsize_x)
+				   * (_mapsize_y = mapsize_y)
+				   * (_mapsize_z = mapsize_z));
 
 	_tiles = new Tile*[_qtyTilesTotal];
 
@@ -974,15 +974,15 @@ void SavedBattleGame::initUtilities(const ResourcePack* const res)
  */
 void SavedBattleGame::setTacType(const std::string& type) // private.
 {
-	if		(type.compare("STR_UFO_CRASH_RECOVERY")		== 0)	_tacType = TCT_UFOCRASHED;
-	else if	(type.compare("STR_UFO_GROUND_ASSAULT")		== 0)	_tacType = TCT_UFOLANDED;
-	else if	(type.compare("STR_BASE_DEFENSE")			== 0)	_tacType = TCT_BASEDEFENSE;
-	else if	(type.compare("STR_ALIEN_BASE_ASSAULT")		== 0)	_tacType = TCT_BASEASSAULT;
-	else if	(type.compare("STR_TERROR_MISSION")			== 0
-		||	 type.compare("STR_PORT_ATTACK")			== 0)	_tacType = TCT_TERRORSITE;
-	else if	(type.compare("STR_MARS_CYDONIA_LANDING")	== 0)	_tacType = TCT_MARS1;
-	else if	(type.compare("STR_MARS_THE_FINAL_ASSAULT")	== 0)	_tacType = TCT_MARS2;
-	else														_tacType = TCT_DEFAULT;	// <- the default should probly be TCT_UFOCRASHED.
+	if      (type.compare("STR_UFO_CRASH_RECOVERY")     == 0) _tacType = TCT_UFOCRASHED;
+	else if (type.compare("STR_UFO_GROUND_ASSAULT")     == 0) _tacType = TCT_UFOLANDED;
+	else if (type.compare("STR_BASE_DEFENSE")           == 0) _tacType = TCT_BASEDEFENSE;
+	else if (type.compare("STR_ALIEN_BASE_ASSAULT")     == 0) _tacType = TCT_BASEASSAULT;
+	else if (type.compare("STR_TERROR_MISSION")         == 0
+		||   type.compare("STR_PORT_ATTACK")            == 0) _tacType = TCT_TERRORSITE;
+	else if (type.compare("STR_MARS_CYDONIA_LANDING")   == 0) _tacType = TCT_MARS1;
+	else if (type.compare("STR_MARS_THE_FINAL_ASSAULT") == 0) _tacType = TCT_MARS2;
+	else                                                      _tacType = TCT_DEFAULT;	// <- the default should probly be TCT_UFOCRASHED.
 }																						// Or even TCT_ARBITRARY/CUSTOM.
 
 /**
@@ -1751,47 +1751,53 @@ void SavedBattleGame::distributeEquipt(Tile* const tile)
  *		- tile inventory
  *		- battleunit inventory
  *		- battlescape-items container
- * Upon removal the pointer to the item is kept in the '_deletedProperty' vector which
- * is flushed and destroyed in the SavedBattleGame dTor.
+ * Upon removal the pointer to the item is kept in the '_deletedProperty' vector
+ * which is flushed and destroyed in the SavedBattleGame dTor.
  * @param item - pointer to an item to remove
  * @return, const_iterator to the next item in the BattleItems list
  */
 std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleItem* const item)
 {
+	bool found (false);
+
 	Tile* const tile (item->getItemTile());
 	if (tile != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = tile->getInventory()->begin();
+				i  = tile->getInventory()->begin();
 				i != tile->getInventory()->end();
 				++i)
 		{
 			if (*i == item)
 			{
 				tile->getInventory()->erase(i);
+				found = true;
 				break;
 			}
 		}
 	}
 
-	BattleUnit* const unit (item->getOwner());
-	if (unit != nullptr)
+	if (found == false)
 	{
-		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getInventory()->begin();
-				i != unit->getInventory()->end();
-				++i)
+		BattleUnit* const unit (item->getOwner());
+		if (unit != nullptr)
 		{
-			if (*i == item)
+			for (std::vector<BattleItem*>::const_iterator
+					i  = unit->getInventory()->begin();
+					i != unit->getInventory()->end();
+					++i)
 			{
-				unit->getInventory()->erase(i);
-				break;
+				if (*i == item)
+				{
+					unit->getInventory()->erase(i);
+					break;
+				}
 			}
 		}
 	}
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _items.begin();
+			i  = _items.begin();
 			i != _items.end();
 			++i)
 	{
@@ -2185,8 +2191,8 @@ void SavedBattleGame::tileVolatiles() // private.
 		{
 			if ((*i)->getMapData(O_OBJECT) != nullptr)
 			{
-				if (   (*i)->getMapData(O_OBJECT)->getFlammable()	!= 255
-					&& (*i)->getMapData(O_OBJECT)->getArmorPoints()	!= 255) // NOTE: Also checked in destroyTilepart().
+				if (   (*i)->getMapData(O_OBJECT)->getFlammable()   != 255
+					&& (*i)->getMapData(O_OBJECT)->getArmorPoints() != 255) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_OBJECT, this);
 					(*i)->destroyTilepart(O_FLOOR, this);	// NOTE: There is no assurance that the current floor-part is actually 'flammable';
@@ -2194,8 +2200,8 @@ void SavedBattleGame::tileVolatiles() // private.
 			}												// at least a scorched-earth floor-part gets laid down.
 			else if ((*i)->getMapData(O_FLOOR) != nullptr)
 			{
-				if (   (*i)->getMapData(O_FLOOR)->getFlammable()	!= 255
-					&& (*i)->getMapData(O_FLOOR)->getArmorPoints()	!= 255) // NOTE: Also checked in destroyTilepart().
+				if (   (*i)->getMapData(O_FLOOR)->getFlammable()   != 255
+					&& (*i)->getMapData(O_FLOOR)->getArmorPoints() != 255) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_FLOOR, this);
 				}
@@ -2338,7 +2344,7 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
  */
 void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 {
-	int quadrants (unit->getArmor()->getSize() * unit->getArmor()->getSize());
+	int quads (unit->getArmor()->getSize() * unit->getArmor()->getSize());
 	for (std::vector<BattleItem*>::const_iterator
 			i = _items.begin();
 			i != _items.end();
@@ -2347,7 +2353,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 		if ((*i)->getBodyUnit() == unit)
 		{
 			i = toDeleteItem(*i);
-			if (--quadrants == 0) return;
+			if (--quads == 0) return;
 		}
 		else
 			++i;
@@ -2649,18 +2655,18 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 				{
 					switch (unit->getRankInt()) // soldiers are rank #5, terrorists are ranks #6 and #7
 					{
-						case 0: ret += 30;	// 200 commander
-						case 1: ret += 25;	// 170 leader
-						case 2: ret += 20;	// 145 engineer
-						case 3: ret += 10;	// 125 medic
-						case 4: ret += 15;	// 115 navigator
+						case 0: ret += 30; // 200 commander
+						case 1: ret += 25; // 170 leader
+						case 2: ret += 20; // 145 engineer
+						case 3: ret += 10; // 125 medic
+						case 4: ret += 15; // 115 navigator
 					}
 
 					switch (_tacType)
 					{
-						case TCT_MARS1:	// "STR_MARS_CYDONIA_LANDING"
-						case TCT_MARS2:	// "STR_MARS_THE_FINAL_ASSAULT"
-							ret >>= 1u;	// less hit for losing a unit on Cydonia.
+						case TCT_MARS1: // "STR_MARS_CYDONIA_LANDING"
+						case TCT_MARS2: // "STR_MARS_THE_FINAL_ASSAULT"
+							ret >>= 1u; // less hit for losing a unit on Cydonia.
 					}
 				}
 				//Log(LOG_INFO) << ". . aLien lossModifi = " << ret;
@@ -2711,9 +2717,9 @@ int SavedBattleGame::getMoraleModifier( // note: Add bonus to aLiens for Cydonia
 					ret += 50;			// higher morale.
 					break;
 
-				case TCT_MARS1:	// "STR_MARS_CYDONIA_LANDING"
-				case TCT_MARS2:	// "STR_MARS_THE_FINAL_ASSAULT"
-					ret += 100;	// higher morale.
+				case TCT_MARS1: // "STR_MARS_CYDONIA_LANDING"
+				case TCT_MARS2: // "STR_MARS_THE_FINAL_ASSAULT"
+					ret += 100; // higher morale.
 			}
 			//Log(LOG_INFO) << ". . aLien leaderModifi = " << ret;
 		}
@@ -2744,8 +2750,8 @@ void SavedBattleGame::blackTiles()
 			i != _qtyTilesTotal;
 			++i)
 	{
-		_tiles[i]->setRevealed(ST_WEST, false);
-		_tiles[i]->setRevealed(ST_NORTH, false);
+		_tiles[i]->setRevealed(ST_WEST,    false);
+		_tiles[i]->setRevealed(ST_NORTH,   false);
 		_tiles[i]->setRevealed(ST_CONTENT, false);
 	}
 }

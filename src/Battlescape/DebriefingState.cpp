@@ -113,7 +113,7 @@ DebriefingState::DebriefingState()
 		_country(nullptr),
 		_base(nullptr),
 		_craft(nullptr),
-		_capture(ACR_NONE),
+		_capture(ARR_NONE),
 		_destroyPlayerBase(-1),
 		_missionCost(0),
 		_aliensStunned(0),
@@ -514,8 +514,8 @@ void DebriefingState::btnOkClick(Action*)
 			bool playAwardMusic (false);
 
 			// NOTE: These show to player in reverse order.
-			if (_cannotReequip.empty() == false)
-				_game->pushState(new CannotReequipState(_cannotReequip));
+			if (_unreplaced.empty() == false)
+				_game->pushState(new CannotReequipState(_unreplaced));
 
 			if (_soldiersLost.empty() == false)
 			{
@@ -548,11 +548,11 @@ void DebriefingState::btnOkClick(Action*)
 
 			switch (_capture)
 			{
-				case ACR_DIES:
+				case ARR_DIES:
 					_game->pushState(new AlienDiesState());
 					break;
 
-				case ACR_SHOW:
+				case ARR_CONTAINMENT:
 					_game->pushState(new AlienContainmentState(
 															_base,
 															OPT_BATTLESCAPE,
@@ -566,14 +566,14 @@ void DebriefingState::btnOkClick(Action*)
 													_rules->getInterface("debriefing")->getElement("errorPalette")->color));
 			}
 
-			if (   _surplusItems.empty() == false
+			if (_solStatIncr.empty() == false
 				|| _lostProperty.empty() == false
-				|| _solStatIncr .empty() == false)
+				|| _surplus.empty() == false)
 			{
 				_game->pushState(new DebriefExtraState(
 													_base,
 													_battleSave->getOperation(),
-													_surplusItems, // NOTE: Does not include special tile-types.
+													_surplus, // NOTE: Does not include special tile-types.
 													_lostProperty,
 													_solStatIncr));
 			}
@@ -1440,7 +1440,7 @@ void DebriefingState::prepareDebriefing() // private.
 				if (   tile->getMapData(O_FLOOR) != nullptr
 					&& tile->getMapData(O_FLOOR)->getTileType() == START_TILE)
 				{
-					recoverItems(_battleSave->getTiles()[i]->getInventory());
+					recoverItems(tile->getInventory());
 				}
 			}
 		}
@@ -1472,7 +1472,12 @@ void DebriefingState::prepareDebriefing() // private.
 				++i)
 		{
 			tile = _battleSave->getTiles()[i];
-			recoverItems(tile->getInventory());
+
+			if (   tile->getMapData(O_FLOOR) == nullptr
+				|| tile->getMapData(O_FLOOR)->getTileType() != START_TILE)
+			{
+				recoverItems(tile->getInventory());
+			}
 
 			for (int
 					j = 0;
@@ -1532,7 +1537,7 @@ void DebriefingState::prepareDebriefing() // private.
 				(*i)->score = ((*i)->score + ((qtyAlloysRuined * _specialTypes[RUINED_ALLOYS]->value) >> 1u)) / alloyDivisor;
 
 				if ((*i)->qty != 0 && (*i)->recover == true)
-					_surplusItems[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
+					_surplus[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
 			}
 
 			if ((*i)->qty != 0 && (*i)->recover == true)
@@ -1542,24 +1547,24 @@ void DebriefingState::prepareDebriefing() // private.
 
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _battleSave->deletedProperty().begin();
+			i  = _battleSave->deletedProperty().begin();
 			i != _battleSave->deletedProperty().end();
 			++i)
 	{
 		//Log(LOG_INFO) << ". handle deleted property";
-		if (_surplusItems.find(itRule = (*i)->getRules()) == _surplusItems.end())
+		if (_surplus.find(itRule = (*i)->getRules()) == _surplus.end())
 			++_lostProperty[itRule];
-		else if (--_surplusItems[itRule] == 0)	// NOTE: '_surplusItems' shall never contain clips - vid. recoverItems()
-			_surplusItems.erase(itRule);		// ... clips handled immediately below_
-	}											// TODO: Extensive testing on item-gains/losses ....
+		else if (--_surplus[itRule] == 0)	// NOTE: '_surplusItems' shall never contain clips - vid. recoverItems()
+			_surplus.erase(itRule);			// ... clips handled immediately below_
+	}										// TODO: Extensive testing on item-gains/losses ....
 
 	int
 		qtyFullClip,
 		clipsTotal;
 	for (std::map<const RuleItem*, int>::const_iterator
-			i = _clips.begin();	// '_clips' is a tally of both xcomProperty + found clips
-			i != _clips.end();	// so '_clipsProperty' needs to be subtracted to find clipsGained.
-			++i)
+			i  = _clips.begin();	// '_clips' is a tally of both xcomProperty + found clips
+			i != _clips.end();		// so '_clipsProperty' needs to be subtracted to find clipsGained.
+			++i)					// and clipsLost needs to be bypassed if NOT '_clipsProperty'.
 	{
 		//Log(LOG_INFO) << ". handle clips";
 		if ((qtyFullClip = i->first->getFullClip()) != 0) // safety.
@@ -1567,9 +1572,13 @@ void DebriefingState::prepareDebriefing() // private.
 			clipsTotal = i->second / qtyFullClip;
 			switch (clipsTotal)
 			{
-				case 0:					// all clips-of-type are lost, including those brought on the mission
-					if (i->second != 0)	// and if there's a partial clip, that needs to be added to the lost-vector too.
-						++_lostProperty[i->first];
+				case 0:					// all clips-of-type are lost including those brought on the mission
+					if (i->second != 0)	// and if there's a partial-clip that needs to be added to the lost-vector too iff it's xCom Property.
+					{
+						std::map<const RuleItem*, int>::const_iterator j (_clipsProperty.find(i->first));
+						if (j != _clipsProperty.end())
+							++_lostProperty[i->first];
+					}
 					break;
 
 				default:				// clips were found whether xcomProperty or not. Add them to Base-stores!
@@ -1577,15 +1586,15 @@ void DebriefingState::prepareDebriefing() // private.
 					_lostProperty.erase(i->first);
 
 					int roundsProperty;
-					std::map<const RuleItem*, int>::const_iterator pClipsProperty (_clipsProperty.find(i->first));
-					if (pClipsProperty != _clipsProperty.end())
-						roundsProperty = pClipsProperty->second;
+					std::map<const RuleItem*, int>::const_iterator j (_clipsProperty.find(i->first));
+					if (j != _clipsProperty.end())
+						roundsProperty = j->second;
 					else
 						roundsProperty = 0;
 
 					int clipsGained ((i->second - roundsProperty) / qtyFullClip);
 					if (clipsGained != 0)
-						_surplusItems[i->first] = clipsGained;		// these clips are over & above those brought as xcomProperty.
+						_surplus[i->first] = clipsGained;			// these clips are over & above those brought as xcomProperty.
 
 					_base->getStorageItems()->addItem(
 													i->first->getType(),
@@ -1696,12 +1705,12 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 	{
 		int
 			baseQty,
-			qtyLost;
+			qtyUnreplaced;
 
 		ItemContainer* const craftContainer (craft->getCraftItems());
 		const std::map<std::string, int> craftContents (*craftContainer->getContents()); // <- make a copy so you don't have to screw around with iteration here.
 		for (std::map<std::string, int>::const_iterator
-				i = craftContents.begin();
+				i  = craftContents.begin();
 				i != craftContents.end();
 				++i)
 		{
@@ -1709,16 +1718,16 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			{
 				_base->getStorageItems()->removeItem(i->first, baseQty);
 
-				qtyLost = i->second - baseQty;
-				craftContainer->removeItem(i->first, qtyLost);
+				qtyUnreplaced = i->second - baseQty;
+				craftContainer->removeItem(i->first, qtyUnreplaced);
 
-				const ReequipStat stat
+				const UnreplacedStat stat
 				{
 					i->first,
-					qtyLost,
+					qtyUnreplaced,
 					craft->getLabel(_game->getLanguage())
 				};
-				_cannotReequip.push_back(stat);
+				_unreplaced.push_back(stat);
 			}
 			else
 				_base->getStorageItems()->removeItem(i->first, i->second);
@@ -1731,7 +1740,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 		{
 			ItemContainer craftVehicles;
 			for (std::vector<Vehicle*>::const_iterator
-					i = craft->getVehicles()->begin();
+					i  = craft->getVehicles()->begin();
 					i != craft->getVehicles()->end();
 					++i)
 			{
@@ -1742,25 +1751,25 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 
 			int
 				qtySupport,
-				quadrants;
+				quads;
 			for (std::map<std::string, int>::const_iterator
-					i = craftVehicles.getContents()->begin();
+					i  = craftVehicles.getContents()->begin();
 					i != craftVehicles.getContents()->end();
 					++i)
 			{
 				if ((baseQty = _base->getStorageItems()->getItemQuantity(i->first)) < i->second)
 				{
-					const ReequipStat stat
+					const UnreplacedStat stat
 					{
 						i->first,
 						i->second - baseQty,
 						craft->getLabel(_game->getLanguage())
 					};
-					_cannotReequip.push_back(stat);
+					_unreplaced.push_back(stat);
 				}
 
-				quadrants = _rules->getArmor(_rules->getUnitRule(i->first)->getArmorType())->getSize();
-				quadrants *= quadrants;
+				quads = _rules->getArmor(_rules->getUnitRule(i->first)->getArmorType())->getSize();
+				quads *= quads;
 
 				qtySupport = std::min(baseQty, i->second);
 
@@ -1776,7 +1785,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 						craft->getVehicles()->push_back(new Vehicle(
 																itRule,
 																itRule->getFullClip(),
-																quadrants));
+																quads));
 					}
 					_base->getStorageItems()->removeItem(i->first, qtySupport);
 				}
@@ -1787,15 +1796,15 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 						clipsRequired (itRule->getFullClip()),
 						baseClips (_base->getStorageItems()->getItemQuantity(type));
 
-					if ((qtyLost = (clipsRequired * i->second) - baseClips) > 0)
+					if ((qtyUnreplaced = (clipsRequired * i->second) - baseClips) > 0)
 					{
-						const ReequipStat stat
+						const UnreplacedStat stat
 						{
 							type,
-							qtyLost,
+							qtyUnreplaced,
 							craft->getLabel(_game->getLanguage())
 						};
-						_cannotReequip.push_back(stat);
+						_unreplaced.push_back(stat);
 					}
 
 					qtySupport = std::min(qtySupport,
@@ -1810,7 +1819,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 							craft->getVehicles()->push_back(new Vehicle(
 																	itRule,
 																	clipsRequired,
-																	quadrants));
+																	quads));
 						}
 						_base->getStorageItems()->removeItem(i->first, qtySupport);
 						_base->getStorageItems()->removeItem(type, clipsRequired * qtySupport);
@@ -1837,7 +1846,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 	std::string type;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = battleItems->begin();
+			i  = battleItems->begin();
 			i != battleItems->end();
 			++i)
 	{
@@ -1851,7 +1860,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 			switch (bType)
 			{
 				case BT_FUEL:
-					_surplusItems[itRule] += _rules->getAlienFuelQuantity();
+					_surplus[itRule] += _rules->getAlienFuelQuantity();
 					addResultStat(
 								_rules->getAlienFuelType(),
 								itRule->getRecoveryScore(),
@@ -1881,7 +1890,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 										if (corpse.empty() == false) // safety.
 										{
 											_base->getStorageItems()->addItem(corpse);
-											++_surplusItems[_rules->getItemRule(corpse)];
+											++_surplus[_rules->getItemRule(corpse)];
 										}
 										break;
 									}
@@ -1918,7 +1927,7 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const battleItems) 
 						default:
 							_base->getStorageItems()->addItem(type);
 							if ((*i)->isProperty() == false)
-								++_surplusItems[itRule];
+								++_surplus[itRule];
 					}
 			}
 		}
@@ -1952,17 +1961,17 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 					value);
 
 		_base->getStorageItems()->addItem(type);
-		++_surplusItems[_rules->getItemRule(type)];
+		++_surplus[_rules->getItemRule(type)];
 
 		if (_base->getFreeContainment() < 0)
-			_capture = ACR_SHOW;
+			_capture = ARR_CONTAINMENT;
 		else
-			_capture = ACR_NONE;
+			_capture = ARR_NONE;
 	}
 	else
 	{
 		//Log(LOG_INFO) << ". . . alienDead id-" << unit->getId() << " " << unit->getType();
-		_capture = ACR_DIES;
+		_capture = ARR_DIES;
 
 		addResultStat(
 					TAC_RESULT[2u], // aLien corpse recovered
@@ -1972,7 +1981,7 @@ void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
 		if (corpse.empty() == false) // safety. (Or error-out if there isn't one.)
 		{
 			_base->getStorageItems()->addItem(corpse); // NOTE: This won't be a quick-battle here, okay to add to Base stores.
-			++_surplusItems[_rules->getItemRule(corpse)];
+			++_surplus[_rules->getItemRule(corpse)];
 		}
 	}
 }

@@ -59,8 +59,8 @@ WarningMessage::WarningMessage(
 	_text->setVerticalAlign(ALIGN_MIDDLE);
 	_text->setWordWrap();
 
-	_timer = new Timer(80u);
-	_timer->onTimer(static_cast<SurfaceHandler>(&WarningMessage::fade));
+	_tr = new Timer(80u);
+	_tr->onTimer(static_cast<SurfaceHandler>(&WarningMessage::fade));
 
 	_visible = false;
 }
@@ -70,7 +70,7 @@ WarningMessage::WarningMessage(
  */
 WarningMessage::~WarningMessage()
 {
-	delete _timer;
+	delete _tr;
 	delete _text;
 }
 
@@ -134,7 +134,7 @@ void WarningMessage::showMessage(const std::wstring& wst)
 	_visible =
 	_redraw = true;
 
-	_timer->start();
+	_tr->start();
 }
 
 /**
@@ -142,7 +142,7 @@ void WarningMessage::showMessage(const std::wstring& wst)
  */
 void WarningMessage::think()
 {
-	_timer->think(nullptr, this);
+	_tr->think(nullptr, this);
 }
 
 /**
@@ -153,7 +153,7 @@ void WarningMessage::fade()
 	if (++_fadeStep == 15u)
 	{
 		_visible = false;
-		_timer->stop();
+		_tr->stop();
 	}
 	else
 		_redraw = true;

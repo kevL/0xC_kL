@@ -50,16 +50,18 @@ class DebriefExtraState
 private:
 	enum DebriefExtraScreen
 	{
-		DES_LOOT_GAINED,	// 0
-		DES_LOOT_LOST,		// 1
-		DES_SOL_STATS		// 2
-	} _curScreen;
+		SCN_LOOT_GAINED,	// 0
+		SCN_LOOT_LOST,		// 1
+		SCN_SOL_STATS		// 2
+	} _screen;
 
 	static const Uint8
-		YELLOW	= 138u,
-		BROWN	= 143u,
-		GRAY	= 159u,
-		GREEN	= 239u;
+		YELLOW = 138u,
+		BROWN  = 143u,
+		GRAY   = 159u,
+		GREEN  = 239u;
+
+	static const int64_t INT_MAX_64 = static_cast<int64_t>(std::numeric_limits<int>::max());
 
 	int _costTotal;
 	size_t _sel;
@@ -116,11 +118,11 @@ private:
 	/// Increases the quantity of the selected item.
 	void onIncrease();
 	/// Increases the quantity of the selected item by a specified value.
-	void increaseByValue(int delta);
+	void increase(int delta);
 	/// Decreases the quantity of the selected item.
 	void onDecrease();
 	/// Decreases the quantity of the selected item by a specified value.
-	void decreaseByValue(int delta);
+	void decrease(int delta);
 
 	/// Updates the display.
 	void updateListrow();

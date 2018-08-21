@@ -87,7 +87,7 @@ struct SpecialType
 /**
  * Container for tracking non-replaced items on Craft after tactical.
  */
-struct ReequipStat
+struct UnreplacedStat
 {
 	std::string type;
 	int qtyLost;
@@ -123,11 +123,11 @@ class DebriefingState
 private:
 	static const char* const TAC_RESULT[12u];
 
-	enum AlienCaptureResult
+	enum AlienRecoveryResult
 	{
-		ACR_NONE,	// 0
-		ACR_DIES,	// 1
-		ACR_SHOW	// 2
+		ARR_NONE,		// 0
+		ARR_DIES,		// 1
+		ARR_CONTAINMENT	// 2
 	} _capture;
 
 	bool
@@ -174,13 +174,13 @@ private:
 	std::map<const RuleItem*, int>
 		_clips,
 		_clipsProperty,
-		_surplusItems,
+		_surplus,
 		_lostProperty;
 
 
 	std::map<std::wstring, std::vector<int>> _solStatIncr;
 
-	std::vector<ReequipStat> _cannotReequip;
+	std::vector<UnreplacedStat> _unreplaced;
 
 	std::vector<BattleUnit*>* _unitList;
 	std::vector<DebriefStat*> _statList;

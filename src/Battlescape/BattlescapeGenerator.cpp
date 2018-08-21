@@ -518,7 +518,7 @@ void BattlescapeGenerator::nextStage()
 	// get deleted; they need to be used for Scoring and possible resurrection
 	// after the second stage - when the Debriefing runs finally.
 	// OOps: bodies/corpses (non-recoverable) are deletable since BattleItems
-	// are not used for kill/stun/rescue scoring -- BattleUnits are. Any non-
+	// are not used for kill/stun/rescue scoring - BattleUnits are. Any non-
 	// recoverable BattleItem can be deleted here if you want.
 	std::vector<BattleItem*>
 		* const guaranteed  (_battleSave->recoverGuaranteed()),
@@ -1049,7 +1049,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	//Log(LOG_INFO) << "BattlescapeGenerator::deployXcom()";
 
 	// NOTE: A Vehicle is actually a BattleItem that you will never see since it
-	// gets converted to a BattleUnit -- the item itself however becomes the
+	// gets converted to a BattleUnit - the item itself however becomes the
 	// unit's (BattleItem) weapon.
 
 	std::vector<Vehicle*> supports;
@@ -1076,7 +1076,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	}
 
 	for (std::vector<Vehicle*>::const_iterator
-			i = supports.begin();
+			i  = supports.begin();
 			i != supports.end();
 			++i)
 	{
@@ -1089,7 +1089,7 @@ void BattlescapeGenerator::deployXcom() // private.
 
 
 	for (std::vector<Soldier*>::const_iterator // Add Soldiers that are in the Craft or Base.
-			i = _base->getSoldiers()->begin();
+			i  = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
 			++i)
 	{
@@ -1124,7 +1124,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	//Log(LOG_INFO) << ". addPlayerUnit(s) DONE";
 
 	for (std::vector<BattleUnit*>::const_iterator // pre-battle Equip; give all Faction_Player units access to the equipt-Tile.
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -1142,7 +1142,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		//Log(LOG_INFO) << ". . add craft items for UFO or Base Assault, or Craft-equip";
 		BattleItem* item;
 		for (std::map<std::string, int>::const_iterator // Add items that are in the Craft.
-				i = _craft->getCraftItems()->getContents()->begin();
+				i  = _craft->getCraftItems()->getContents()->begin();
 				i != _craft->getCraftItems()->getContents()->end();
 				++i)
 		{
@@ -1176,7 +1176,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			//Log(LOG_INFO) << ". . is NOT quick battle: add base items";
 			const RuleItem* itRule;
 			for (std::map<std::string, int>::const_iterator						// Add items that are in the Base's storage.
-					i = _base->getStorageItems()->getContents()->begin();
+					i  = _base->getStorageItems()->getContents()->begin();
 					i != _base->getStorageItems()->getContents()->end();
 					)
 			{
@@ -1231,7 +1231,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		//Log(LOG_INFO) << ". . addBaseBaseItems DONE, add BaseCraftItems";
 
 		for (std::vector<Craft*>::const_iterator								// Add items that are in the Crafts at the Base.
-				i = _base->getCrafts()->begin();
+				i  = _base->getCrafts()->begin();
 				i != _base->getCrafts()->end();
 				++i)
 		{
@@ -1272,7 +1272,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". placeLayout Pt I";
 	for (std::vector<BattleItem*>::const_iterator								// Equip soldiers based on equipment-layout Part I.
-			i = _tileEquipt->getInventory()->begin();
+			i  = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
@@ -1288,7 +1288,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". placeLayout Pt II";
 	for (std::vector<BattleItem*>::const_iterator								// Equip soldiers based on equipment-layout Part II.
-			i = _tileEquipt->getInventory()->begin();
+			i  = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
@@ -1305,7 +1305,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". Load Ground Weapons...";
 	for (std::vector<BattleItem*>::const_iterator								// Load ground weapons.
-			i = _tileEquipt->getInventory()->begin();
+			i  = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{
@@ -1325,7 +1325,7 @@ void BattlescapeGenerator::deployXcom() // private.
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << ". Clean up";
 	for (std::vector<BattleItem*>::const_iterator								// Clean up placed items.
-			i = _tileEquipt->getInventory()->begin();
+			i  = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			)
 	{
@@ -1705,7 +1705,7 @@ void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
 {
 	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 	for (std::vector<BattleItem*>::const_iterator
-			i = _tileEquipt->getInventory()->begin();
+			i  = _tileEquipt->getInventory()->begin();
 			i != _tileEquipt->getInventory()->end();
 			++i)
 	{

@@ -58,9 +58,9 @@ class Window final
 private:
 	static const float POPUP_SPEED;
 	static const int
-		POP_START	= 0,
-		POP_GO		= 1,
-		POP_HALT	= 2;
+		POP_START = 0,
+		POP_GO    = 1,
+		POP_HALT  = 2;
 
 	bool
 		_contrast,
@@ -79,7 +79,7 @@ private:
 
 	State* _state;
 	Surface* _bg;
-	Timer* _timer;
+	Timer* _tr;
 
 	PopupType _popType;
 
