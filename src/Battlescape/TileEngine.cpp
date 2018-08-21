@@ -2730,7 +2730,7 @@ void TileEngine::explode(
 																										attacker));
 										}
 										//Log(LOG_INFO) << ". . . . INVENTORY: removeItem " << (*i)->getRules()->getType();
-										_battleSave->toDeleteItem(*i);
+										_battleSave->sendItemToDelete(*i);
 										break;
 //										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 //										{
@@ -2921,7 +2921,7 @@ void TileEngine::explode(
 																										(*i)->getRules(),
 																										attacker));
 										}
-										_battleSave->toDeleteItem(*i);
+										_battleSave->sendItemToDelete(*i);
 										break;
 //										if ((*i)->getRules()->isGrenade() == true && (*i)->getFuse() > -1)
 //										{

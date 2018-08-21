@@ -37,8 +37,8 @@ namespace OpenXcom
 {
 
 /**
- * Initializes all the elements in the Cannot Reequip screen.
- * @param its - vector of ReequipStat items that were lost and cannot be replaced from base-stores
+ * Initializes all the elements in the CannotReequip screen.
+ * @param its - vector of UnreplacedStat items that were lost and cannot be replaced from base-stores
  */
 CannotReequipState::CannotReequipState(std::vector<UnreplacedStat> its)
 {

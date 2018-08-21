@@ -1751,16 +1751,15 @@ void SavedBattleGame::distributeEquipt(Tile* const tile)
  *		- tile inventory
  *		- battleunit inventory
  *		- battlescape-items container
- * Upon removal the pointer to the item is kept in the '_deletedProperty' vector
- * which is flushed and destroyed in the SavedBattleGame dTor.
- * @param item - pointer to an item to remove
+ * If the item is xComProperty upon removal the pointer to the item is kept in
+ * the '_deletedProperty' vector which is flushed and destroyed in the
+ * SavedBattleGame dTor.
+ * @param it - pointer to an item to remove
  * @return, const_iterator to the next item in the BattleItems list
  */
-std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleItem* const item)
+std::vector<BattleItem*>::const_iterator SavedBattleGame::sendItemToDelete(BattleItem* const it)
 {
-	bool found (false);
-
-	Tile* const tile (item->getItemTile());
+	Tile* const tile (it->getItemTile());
 	if (tile != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
@@ -1768,18 +1767,16 @@ std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleIte
 				i != tile->getInventory()->end();
 				++i)
 		{
-			if (*i == item)
+			if (*i == it)
 			{
 				tile->getInventory()->erase(i);
-				found = true;
 				break;
 			}
 		}
 	}
-
-	if (found == false)
+	else
 	{
-		BattleUnit* const unit (item->getOwner());
+		BattleUnit* const unit (it->getOwner());
 		if (unit != nullptr)
 		{
 			for (std::vector<BattleItem*>::const_iterator
@@ -1787,7 +1784,7 @@ std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleIte
 					i != unit->getInventory()->end();
 					++i)
 			{
-				if (*i == item)
+				if (*i == it)
 				{
 					unit->getInventory()->erase(i);
 					break;
@@ -1801,10 +1798,10 @@ std::vector<BattleItem*>::const_iterator SavedBattleGame::toDeleteItem(BattleIte
 			i != _items.end();
 			++i)
 	{
-		if (*i == item)
+		if (*i == it)
 		{
 			if ((*i)->isProperty() == true)
-				_deletedProperty.push_back(item);
+				_deletedProperty.push_back(it);
 			else
 				delete *i;
 
@@ -2352,7 +2349,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 	{
 		if ((*i)->getBodyUnit() == unit)
 		{
-			i = toDeleteItem(*i);
+			i = sendItemToDelete(*i);
 			if (--quads == 0) return;
 		}
 		else

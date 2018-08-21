@@ -934,7 +934,7 @@ void ProjectileFlyBState::think()
 																voxelFinal,
 																throwItem->getRules(),
 																_unit));
-					_battleSave->toDeleteItem(throwItem);
+					_battleSave->sendItemToDelete(throwItem);
 				}
 				else
 				{

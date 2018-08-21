@@ -1201,8 +1201,8 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 					else if (powerFire > (*i)->getRules()->getArmorPoints() // no modifier when destroying items, not even corpse in bodyarmor.
 						&& (unit == nullptr || unit->getUnitStatus() == STATUS_DEAD))
 					{
-						battleSave->toDeleteItem(*i);	// This should not kill *and* remove a unit's corpse on the same
-						break;							// tilePhase; but who knows, I haven't traced it comprehensively.
+						battleSave->sendItemToDelete(*i);	// This should not kill *and* remove a unit's corpse on the same
+						break;								// tilePhase; but who knows, I haven't traced it comprehensively.
 					}
 					else
 						done = (++i == _inventory.end());

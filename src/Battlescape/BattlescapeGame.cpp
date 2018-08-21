@@ -1465,7 +1465,7 @@ void BattlescapeGame::endTurn() // private.
 												pos,
 												(*j)->getRules(),
 												(*j)->getPriorOwner()));
-				_battleSave->toDeleteItem(*j);
+				_battleSave->sendItemToDelete(*j);
 
 				stateBPushBack(); // recycle endTurn() call.
 				return;
@@ -3823,7 +3823,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 																	pos,
 																	(*i)->getRules(),
 																	(*i)->getPriorOwner()));
-									_battleSave->toDeleteItem(*i);
+									_battleSave->sendItemToDelete(*i);
 
 									unit->setCacheInvalid();
 									getMap()->cacheUnitSprite(unit);

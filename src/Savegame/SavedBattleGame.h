@@ -336,7 +336,7 @@ private:
 		void distributeEquipt(Tile* const tile);
 
 		/// Removes a BattleItem from the battlefield.
-		std::vector<BattleItem*>::const_iterator toDeleteItem(BattleItem* const item);
+		std::vector<BattleItem*>::const_iterator sendItemToDelete(BattleItem* const it);
 		/// Gives read-only access to the deleted-property vector.
 		const std::vector<BattleItem*>& deletedProperty() const;
 

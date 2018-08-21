@@ -720,7 +720,7 @@ void BattlescapeGenerator::nextStage()
 		Log(LOG_INFO) << ". ItemID-" << (*i)->getId();
 		if ((*i)->getBodyUnit() != nullptr) Log(LOG_INFO) << ". UnitID-" << (*i)->getBodyUnit()->getId()
 								  << " status= " << static_cast<int>((*i)->getBodyUnit()->getUnitStatus());
-		_battleSave->toDeleteItem(*i);
+		_battleSave->sendItemToDelete(*i);
 	}
 
 	_itemList->clear();
