@@ -393,7 +393,7 @@ DebriefingState::DebriefingState()
 				{
 					int take (0);
 					for (std::vector<BattleUnitKill*>::const_iterator
-							j = tacstats->kills.begin();
+							j  = tacstats->kills.begin();
 							j != tacstats->kills.end();
 							++j)
 					{
@@ -435,7 +435,7 @@ DebriefingState::DebriefingState()
 
 						solDead = nullptr; // avoid vc++ linker warning.
 						for (std::vector<SoldierDead*>::const_iterator
-								j = _playSave->getDeadSoldiers()->begin();
+								j  = _playSave->getDeadSoldiers()->begin();
 								j != _playSave->getDeadSoldiers()->end();
 								++j)
 						{
@@ -474,13 +474,13 @@ DebriefingState::~DebriefingState()
 		_playSave->setBattleSave();
 
 	for (std::vector<DebriefStat*>::const_iterator
-			i = _statList.begin();
+			i  = _statList.begin();
 			i != _statList.end();
 			++i)
 		delete *i;
 
 	for (std::map<TileType, SpecialType*>::const_iterator
-			i = _specialTypes.begin();
+			i  = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
 		delete i->second;
@@ -532,7 +532,7 @@ void DebriefingState::btnOkClick(Action*)
 			std::vector<Soldier*> participants;
 			Soldier* sol;
 			for (std::vector<BattleUnit*>::const_iterator
-					i = _unitList->begin();
+					i  = _unitList->begin();
 					i != _unitList->end();
 					++i)
 			{
@@ -624,7 +624,7 @@ void DebriefingState::addResultStat( // private.
 		int qty)
 {
 	for (std::vector<DebriefStat*>::const_iterator
-			i = _statList.begin();
+			i  = _statList.begin();
 			i != _statList.end();
 			++i)
 	{
@@ -680,7 +680,7 @@ void DebriefingState::prepareDebriefing() // private.
 {
 	const RuleItem* itRule;
 	for (std::vector<std::string>::const_iterator
-			i = _rules->getItemsList().begin();
+			i  = _rules->getItemsList().begin();
 			i != _rules->getItemsList().end();
 			++i)
 	{
@@ -754,7 +754,7 @@ void DebriefingState::prepareDebriefing() // private.
 //	_statList.push_back(new DebriefStat("STR_XCOM_AGENTS_RETIRED_THROUGH_INJURY"));
 
 	for (std::map<TileType, SpecialType*>::const_iterator
-			i = _specialTypes.begin();
+			i  = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
 	{
@@ -769,7 +769,7 @@ void DebriefingState::prepareDebriefing() // private.
 		* const tileOrigin (_battleSave->getTile(Position(0,0,0))),
 		* const tileEquipt (_battleSave->getBattleInventory());
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -801,7 +801,7 @@ void DebriefingState::prepareDebriefing() // private.
 	Position pos;
 	const Position& posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -818,7 +818,7 @@ void DebriefingState::prepareDebriefing() // private.
 					{
 						//Log(LOG_INFO) << ". . . . is Dead or Unconscious - find body";
 						for (std::vector<BattleItem*>::const_iterator			// so look for its body or corpse ...
-								j = _battleSave->getItems()->begin();
+								j  = _battleSave->getItems()->begin();
 								j != _battleSave->getItems()->end();
 								++j)
 						{
@@ -830,10 +830,10 @@ void DebriefingState::prepareDebriefing() // private.
 									//Log(LOG_INFO) << ". . . . . is carried";
 									pos = (*j)->getOwner()->getPosition();		// Put the corpse down .. slowly.
 								}
-								else if ((*j)->getItemTile() != nullptr)		// corpse of BattleUnit is lying around somewhere <- THIS SHOULD NEVER RUN except post-2nd-stage ->
+								else if ((*j)->getTile() != nullptr)			// corpse of BattleUnit is lying around somewhere <- THIS SHOULD NEVER RUN except post-2nd-stage ->
 								{
 									//Log(LOG_INFO) << ". . . . . is fielded";
-									pos = (*j)->getItemTile()->getPosition();	// you're not vaporized yet, Get up.
+									pos = (*j)->getTile()->getPosition();		// you're not vaporized yet, Get up.
 								}
 								break;
 							}
@@ -848,7 +848,7 @@ void DebriefingState::prepareDebriefing() // private.
 															// And isOnTiletype() requires that unit have a tile set.
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -878,7 +878,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 	bool found (false);
 	for (std::vector<Base*>::const_iterator
-			i =  _playSave->getBases()->begin();
+			i  = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end() && found == false;
 			++i)
 	{
@@ -899,7 +899,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 				bool facDestroyed (false);
 				for (std::vector<BaseFacility*>::const_iterator
-						j = _base->getFacilities()->begin();
+						j  = _base->getFacilities()->begin();
 						j != _base->getFacilities()->end();
 						)
 				{
@@ -921,7 +921,7 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 
 		for (std::vector<Craft*>::const_iterator
-				j = (*i)->getCrafts()->begin();
+				j  = (*i)->getCrafts()->begin();
 				j != (*i)->getCrafts()->end() && found == false;
 				++j)
 		{
@@ -949,7 +949,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	for (std::vector<Region*>::const_iterator
-			i = _playSave->getRegions()->begin();
+			i  = _playSave->getRegions()->begin();
 			i != _playSave->getRegions()->end();
 			++i)
 	{
@@ -962,7 +962,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	for (std::vector<Country*>::const_iterator
-			i = _playSave->getCountries()->begin();
+			i  = _playSave->getCountries()->begin();
 			i != _playSave->getCountries()->end();
 			++i)
 	{
@@ -978,7 +978,7 @@ void DebriefingState::prepareDebriefing() // private.
 	// Determine aLien tactical mission.
 	found = false;
 	for (std::vector<Ufo*>::const_iterator // First - search for UFO.
-			i = _playSave->getUfos()->begin();
+			i  = _playSave->getUfos()->begin();
 			i != _playSave->getUfos()->end() && found == false;
 			++i)
 	{
@@ -1006,7 +1006,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	for (std::vector<TerrorSite*>::const_iterator // Second - search for TerrorSite.
-			i = _playSave->getTerrorSites()->begin();
+			i  = _playSave->getTerrorSites()->begin();
 			i != _playSave->getTerrorSites()->end() && found == false;
 			++i)
 	{
@@ -1022,7 +1022,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	for (std::vector<AlienBase*>::const_iterator // Third - search for aLienBase.
-			i = _playSave->getAlienBases()->begin();
+			i  = _playSave->getAlienBases()->begin();
 			i != _playSave->getAlienBases()->end() && found == false;
 			++i)
 	{
@@ -1060,7 +1060,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 	Soldier* sol;
 	for (std::vector<BattleUnit*>::const_iterator // resolve all BattleUnits ->
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -1085,7 +1085,7 @@ void DebriefingState::prepareDebriefing() // private.
 										-(*i)->getValue());
 
 							for (std::vector<Soldier*>::const_iterator
-									j = _base->getSoldiers()->begin();
+									j  = _base->getSoldiers()->begin();
 									j != _base->getSoldiers()->end();
 									++j)
 							{
@@ -1193,7 +1193,7 @@ void DebriefingState::prepareDebriefing() // private.
 											-(*i)->getValue());
 
 								for (std::vector<Soldier*>::const_iterator
-										j = _base->getSoldiers()->begin();
+										j  = _base->getSoldiers()->begin();
 										j != _base->getSoldiers()->end();
 										++j)
 								{
@@ -1274,7 +1274,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 					case STATUS_STANDING:
 						for (std::vector<BattleItem*>::const_iterator // in case Civie was MC'd and given stuff.
-								j = (*i)->getInventory()->begin();
+								j  = (*i)->getInventory()->begin();
 								j != (*i)->getInventory()->end();
 								++j)
 						{
@@ -1303,7 +1303,7 @@ void DebriefingState::prepareDebriefing() // private.
 	} // End loop BattleUnits.
 
 	for (std::vector<BattleUnit*>::const_iterator // only to check IronMan and LoneSurvivor awards ->
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -1387,7 +1387,7 @@ void DebriefingState::prepareDebriefing() // private.
 				tacResult = "STR_BASE_IS_LOST";
 
 				for (std::vector<Craft*>::const_iterator
-						i = _base->getCrafts()->begin();
+						i  = _base->getCrafts()->begin();
 						i != _base->getCrafts()->end();
 						++i)
 				{
@@ -1520,7 +1520,7 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 
 		for (std::vector<DebriefStat*>::const_iterator
-				i = _statList.begin();
+				i  = _statList.begin();
 				i != _statList.end();
 				++i)
 		{
@@ -1611,7 +1611,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				//Log(LOG_INFO) << ". BaseDefense - reequip craft";
 				for (std::vector<Craft*>::const_iterator
-						i = _base->getCrafts()->begin();
+						i  = _base->getCrafts()->begin();
 						i != _base->getCrafts()->end();
 						++i)
 				{
@@ -1623,7 +1623,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				//Log(LOG_INFO) << ". BaseDefense - delete base";
 				for (std::vector<Base*>::const_iterator
-						i = _playSave->getBases()->begin();
+						i  = _playSave->getBases()->begin();
 						i != _playSave->getBases()->end();
 						++i)
 				{
@@ -1653,7 +1653,7 @@ void DebriefingState::prepareDebriefing() // private.
 																				_region->getRules()->getType(),
 																				alm_RETAL));
 				for (std::vector<Ufo*>::const_iterator
-						i = _playSave->getUfos()->begin();
+						i  = _playSave->getUfos()->begin();
 						i != _playSave->getUfos()->end();
 						)
 				{
@@ -1667,7 +1667,7 @@ void DebriefingState::prepareDebriefing() // private.
 				}
 
 				for (std::vector<AlienMission*>::const_iterator
-						i = _playSave->getAlienMissions().begin();
+						i  = _playSave->getAlienMissions().begin();
 						i != _playSave->getAlienMissions().end();
 						++i)
 				{

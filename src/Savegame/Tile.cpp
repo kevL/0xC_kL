@@ -1307,7 +1307,7 @@ void Tile::setTileUnit(BattleUnit* const unit)
  */
 void Tile::addItem(BattleItem* const item)
 {
-	item->setItemTile(this);
+	item->setTile(this);
 	_inventory.push_back(item);
 }
 
@@ -1328,7 +1328,7 @@ void Tile::removeItem(BattleItem* const item)
 			break;
 		}
 	}
-	item->setItemTile();
+	item->setTile();
 }
 
 /**

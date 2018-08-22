@@ -3310,7 +3310,7 @@ bool BattlescapeGame::pickupItem(BattleAction* const aiAction) const
 	{
 		//Log(LOG_INFO) << ". found " << targetItem->getRules()->getType();
 //		if (targetItem->getTile()->getPosition() == aiAction->actor->getPosition())
-		if (targetItem->getItemTile() == aiAction->actor->getUnitTile())
+		if (targetItem->getTile() == aiAction->actor->getUnitTile())
 		{
 			//Log(LOG_INFO) << ". . pickup on spot";
 			if (takeItemFromGround(targetItem, aiAction->actor) == true
@@ -3326,7 +3326,7 @@ bool BattlescapeGame::pickupItem(BattleAction* const aiAction) const
 		{
 			//Log(LOG_INFO) << ". . move to spot";
 			aiAction->type = BA_MOVE;
-			aiAction->posTarget = targetItem->getItemTile()->getPosition();
+			aiAction->posTarget = targetItem->getTile()->getPosition();
 		}
 	}
 	return false;
@@ -3354,7 +3354,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 		{
 			//Log(LOG_INFO) << ". " << (*i)->getRules()->getType();
 			//Log(LOG_INFO) << ". . grd attr = " << (*i)->getRules()->getAttraction();
-			if ((tile = (*i)->getItemTile()) != nullptr
+			if ((tile = (*i)->getTile()) != nullptr
 				&& (tile->getTileUnit() == nullptr || tile->getTileUnit() == unit)
 				&& tile->getTuCostTile(O_FLOOR, MT_WALK) != 255 // TODO:: pathfind.
 				&& tile->getTuCostTile(O_OBJECT, MT_WALK) != 255
@@ -3383,7 +3383,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 			testWorth = (*i)->getRules()->getAttraction()
 					  / (TileEngine::distance(
 											posUnit,
-											(*i)->getItemTile()->getPosition()) + 1);
+											(*i)->getTile()->getPosition()) + 1);
 			if (testWorth >= worth)
 			{
 				if (testWorth > worth)
@@ -3431,7 +3431,7 @@ bool BattlescapeGame::worthTaking(
 			i != inTypes.end() && fit == false;
 			++i)
 	{
-		for (std::vector<SlotPosit>::const_iterator
+		for (std::vector<InSlot>::const_iterator
 				j = (*i)->getSlots()->begin();
 				j != (*i)->getSlots()->end() && fit == false;
 				++j)
@@ -3532,7 +3532,7 @@ bool BattlescapeGame::takeItemFromGround(
 	if (unit->getTu() >= cost && takeItem(item, unit) == true)
 	{
 		unit->expendTu(cost);
-		item->getItemTile()->removeItem(item);
+		item->getTile()->removeItem(item);
 		//Log(LOG_INFO) << ". ret TRUE";
 		return true;
 	}
@@ -3610,7 +3610,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 					i != inTypes.end() && placed == ItemPlacedType::FAILED;
 					++i)
 			{
-				for (std::vector<SlotPosit>::const_iterator
+				for (std::vector<InSlot>::const_iterator
 						j = (*i)->getSlots()->begin();
 						j != (*i)->getSlots()->end() && placed == ItemPlacedType::FAILED;
 						++j)

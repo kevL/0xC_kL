@@ -142,9 +142,9 @@ private:
 				const BattleItem* const item = nullptr) const;
 
 		/// Gets the BattleItem's tile.
-		Tile* getItemTile() const;
+		Tile* getTile() const;
 		/// Sets the BattleItem's tile.
-		void setItemTile(Tile* const tile = nullptr);
+		void setTile(Tile* const tile = nullptr);
 
 		/// Gets the BattleItem's unique id.
 		int getId() const;
@@ -152,7 +152,7 @@ private:
 		/// Gets the BattleItem's corpse-unit if any.
 		BattleUnit* getBodyUnit() const;
 		/// Sets the BattleItem's corpse-unit.
-		void setItemUnit(BattleUnit* unit);
+		void setBodyUnit(BattleUnit* unit);
 
 		/// Sets the BattleItem's medikit-heal quantity.
 		void setHealQuantity(int heal);

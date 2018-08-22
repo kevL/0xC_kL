@@ -553,7 +553,7 @@ void SavedBattleGame::load(
 						item->setPriorOwner(*k);
 
 					if (testId == unitId)
-						item->setItemUnit(*k);
+						item->setBodyUnit(*k);
 				}
 
 				if (item->getInventorySection() != nullptr						// match up items and tiles
@@ -1759,7 +1759,7 @@ void SavedBattleGame::distributeEquipt(Tile* const tile)
  */
 std::vector<BattleItem*>::const_iterator SavedBattleGame::sendItemToDelete(BattleItem* const it)
 {
-	Tile* const tile (it->getItemTile());
+	Tile* const tile (it->getTile());
 	if (tile != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator

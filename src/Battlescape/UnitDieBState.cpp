@@ -371,7 +371,7 @@ void UnitDieBState::drop() // private.
 			BattleItem* const body (new BattleItem(
 												_battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quads]),
 												_battleSave->getCanonicalBattleId()));
-			if (quads == 0) body->setItemUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
+			if (quads == 0) body->setBodyUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
 			_battleGame->dropItem(
 								body,
 								pos + Position(x,y,0),

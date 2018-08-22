@@ -30,10 +30,10 @@ namespace YAML
 {
 
 template<>
-struct convert<OpenXcom::SlotPosit>
+struct convert<OpenXcom::InSlot>
 {
 	///
-	static Node encode(const OpenXcom::SlotPosit& rhs)
+	static Node encode(const OpenXcom::InSlot& rhs)
 	{
 		Node node;
 
@@ -44,7 +44,7 @@ struct convert<OpenXcom::SlotPosit>
 	}
 
 	///
-	static bool decode(const Node& node, OpenXcom::SlotPosit& rhs)
+	static bool decode(const Node& node, OpenXcom::InSlot& rhs)
 	{
 		if (node.IsSequence() == false
 			|| node.size() != 2u)
@@ -97,7 +97,7 @@ void RuleInventory::load(
 	_type      = node["type"]     .as<std::string>(_type);
 	_x         = node["x"]        .as<int>(_x);
 	_y         = node["y"]        .as<int>(_y);
-	_slots     = node["slots"]    .as<std::vector<SlotPosit>>(_slots);
+	_slots     = node["slots"]    .as<std::vector<InSlot>>(_slots);
 	_listOrder = node["listOrder"].as<int>(listOrder);
 
 	_x += ((Options::baseXResolution - 320) >> 1u);
@@ -207,7 +207,7 @@ InventoryCategory RuleInventory::getCategory() const
  * Gets all the Slots in this Inventory section.
  * @return, pointer to a vector of RuleSlot-structs
  */
-const std::vector<SlotPosit>* RuleInventory::getSlots() const
+const std::vector<InSlot>* RuleInventory::getSlots() const
 {
 	return &_slots;
 }
@@ -268,7 +268,7 @@ bool RuleInventory::detSlotAtCursor(
 			break;
 
 		default:
-			for (std::vector<SlotPosit>::const_iterator
+			for (std::vector<InSlot>::const_iterator
 					i = _slots.begin();
 					i != _slots.end();
 					++i)
@@ -340,7 +340,7 @@ bool RuleInventory::fitItemInSlot(
 			const int slotsTotal (item->getInventoryWidth() * item->getInventoryHeight());
 			int slotsFound (0);
 
-			for (std::vector<SlotPosit>::const_iterator
+			for (std::vector<InSlot>::const_iterator
 					i = _slots.begin();
 					i != _slots.end() && slotsFound < slotsTotal;
 					++i)

@@ -549,7 +549,7 @@ void BattlescapeGenerator::nextStage()
 							if ((*i)->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS	// if player Aborted 1st-stage only non-Latent
 								&& (*i)->getBodyUnit()->isHealable() == true				// units on End_Points go forward.
 								&& (_battleSave->isAborted() == false
-									|| ((tile = (*i)->getItemTile()) != nullptr
+									|| ((tile = (*i)->getTile()) != nullptr
 										&& tile->getMapData(O_FLOOR) != nullptr
 										&& tile->getMapData(O_FLOOR)->getTileType() == EXIT_TILE)))
 							{
@@ -607,7 +607,7 @@ void BattlescapeGenerator::nextStage()
 						else
 							dst = guaranteed;
 					}
-					else if ((tile = (*i)->getItemTile()) != nullptr // definitely aborted.
+					else if ((tile = (*i)->getTile()) != nullptr // definitely aborted.
 						&& tile->getMapData(O_FLOOR) != nullptr)
 					{
 						switch (tile->getMapData(O_FLOOR)->getTileType())
@@ -684,7 +684,7 @@ void BattlescapeGenerator::nextStage()
 		else
 			dst = &deletable;
 
-		(*i)->setItemTile();
+		(*i)->setTile();
 		dst->push_back(*i); // -> put the item in its destination container
 	}
 
@@ -1334,7 +1334,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		if ((*i)->getInventorySection() != grdRule)
 		{
 			//Log(LOG_INFO) << ". . erase tileItem : " << (*i)->getRules()->getType();
-			(*i)->setItemTile();
+			(*i)->setTile();
 			i = _tileEquipt->getInventory()->erase(i);
 		}
 		else
@@ -1952,7 +1952,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
 						i != inTypes.end() && placed == ItemPlacedType::FAILED;
 						++i)
 				{
-					for (std::vector<SlotPosit>::const_iterator
+					for (std::vector<InSlot>::const_iterator
 							j  = (*i)->getSlots()->begin();
 							j != (*i)->getSlots()->end() && placed == ItemPlacedType::FAILED;
 							++j)

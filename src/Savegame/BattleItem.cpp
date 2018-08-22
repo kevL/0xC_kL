@@ -485,7 +485,7 @@ bool BattleItem::occupiesSlot(
  * Gets this BattleItem's Tile.
  * @return, pointer to the tile
  */
-Tile* BattleItem::getItemTile() const
+Tile* BattleItem::getTile() const
 {
 	return _tile;
 }
@@ -494,7 +494,7 @@ Tile* BattleItem::getItemTile() const
  * Sets this BattleItem's Tile.
  * @param tile - pointer to a tile (default nullptr)
  */
-void BattleItem::setItemTile(Tile* const tile)
+void BattleItem::setTile(Tile* const tile)
 {
 	_tile = tile;
 }
@@ -521,7 +521,7 @@ BattleUnit* BattleItem::getBodyUnit() const
  * Sets the BattleUnit that this BattleItem is a corpse of.
  * @param unit - pointer to BattleUnit
  */
-void BattleItem::setItemUnit(BattleUnit* unit)
+void BattleItem::setBodyUnit(BattleUnit* unit)
 {
 	_unit = unit;
 }
