@@ -529,7 +529,7 @@ void BattlescapeGenerator::nextStage()
 
 	const Tile* tile;
 	for (std::vector<BattleItem*>::const_iterator
-			i = _itemList->begin();
+			i  = _itemList->begin();
 			i != _itemList->end();
 			++i)
 	{
@@ -1240,7 +1240,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			{
 				//Log(LOG_INFO) << ". . . . Craft IS at base";
 				for (std::map<std::string, int>::const_iterator
-						j = (*i)->getCraftItems()->getContents()->begin();
+						j  = (*i)->getCraftItems()->getContents()->begin();
 						j != (*i)->getCraftItems()->getContents()->end();
 						++j)
 				{
@@ -1334,6 +1334,7 @@ void BattlescapeGenerator::deployXcom() // private.
 		if ((*i)->getInventorySection() != grdRule)
 		{
 			//Log(LOG_INFO) << ". . erase tileItem : " << (*i)->getRules()->getType();
+			(*i)->setItemTile();
 			i = _tileEquipt->getInventory()->erase(i);
 		}
 		else
@@ -1730,7 +1731,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 
 	bool loaded;
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -1739,7 +1740,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 			//Log(LOG_INFO) << ". on " << (*i)->getGeoscapeSoldier()->getLabel().c_str();
 			const std::vector<SoldierLayout*>* const layout ((*i)->getGeoscapeSoldier()->getLayout());
 			for (std::vector<SoldierLayout*>::const_iterator
-					j = layout->begin();
+					j  = layout->begin();
 					j != layout->end();
 					++j)
 			{
@@ -1758,7 +1759,7 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 					{
 						loaded = false;
 						for (std::vector<BattleItem*>::const_iterator
-								k = _tileEquipt->getInventory()->begin();
+								k  = _tileEquipt->getInventory()->begin();
 								k != _tileEquipt->getInventory()->end();
 								++k)
 						{
@@ -1947,12 +1948,12 @@ bool BattlescapeGenerator::placeGeneric( // private.
 				inTypes.push_back(_rules->getInventoryRule(ST_BACKPACK));
 
 				for (std::vector<const RuleInventory*>::const_iterator
-						i = inTypes.begin();
+						i  = inTypes.begin();
 						i != inTypes.end() && placed == ItemPlacedType::FAILED;
 						++i)
 				{
-					for (std::vector<RuleSlot>::const_iterator
-							j = (*i)->getSlots()->begin();
+					for (std::vector<SlotPosit>::const_iterator
+							j  = (*i)->getSlots()->begin();
 							j != (*i)->getSlots()->end() && placed == ItemPlacedType::FAILED;
 							++j)
 					{
@@ -2023,7 +2024,7 @@ void BattlescapeGenerator::deployAliens(const RuleAlienDeployment* const ruleDep
 	BattleUnit* unit;
 
 	for (std::vector<DeploymentData>::const_iterator
-			i = ruleDeploy->getDeploymentData()->begin();
+			i  = ruleDeploy->getDeploymentData()->begin();
 			i != ruleDeploy->getDeploymentData()->end();
 			++i)
 	{

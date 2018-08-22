@@ -79,10 +79,10 @@ Tile::Tile(const Position& pos)
 			i != PARTS_TILE;
 			++i)
 	{
-		_parts[i]		=  nullptr;
-		_partIds[i]		= -1;
-		_partSetIds[i]	= -1;
-		_aniCycle[i]	=  0;
+		_parts[i]      = nullptr;
+		_partIds[i]    = -1;
+		_partSetIds[i] = -1;
+		_aniCycle[i]   =  0;
 	}
 
 	for (
@@ -121,13 +121,13 @@ void Tile::load(const YAML::Node& node)
 			i != PARTS_TILE;
 			++i)
 	{
-		_partIds[i]		= node["mapDataID"][i]		.as<int>(_partIds[i]);
-		_partSetIds[i]	= node["mapDataSetID"][i]	.as<int>(_partSetIds[i]);
+		_partIds[i]    = node["mapDataID"][i]   .as<int>(_partIds[i]);
+		_partSetIds[i] = node["mapDataSetID"][i].as<int>(_partSetIds[i]);
 	}
 
-	_fire		= node["fire"]		.as<int>(_fire);
-	_smoke		= node["smoke"]		.as<int>(_smoke);
-	_aniOffset	= node["aniOffset"]	.as<int>(_aniOffset);
+	_fire      = node["fire"]     .as<int>(_fire);
+	_smoke     = node["smoke"]    .as<int>(_smoke);
+	_aniOffset = node["aniOffset"].as<int>(_aniOffset);
 
 	if (node["discovered"])
 	{
@@ -156,30 +156,30 @@ void Tile::loadBinary(
 		Uint8* buffer,
 		Tile::SerializationKey& serKey)
 {
-	_partIds[O_FLOOR]		= unserializeInt(&buffer, serKey._partId);
-	_partIds[O_WESTWALL]		= unserializeInt(&buffer, serKey._partId);
-	_partIds[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partId);
-	_partIds[O_OBJECT]		= unserializeInt(&buffer, serKey._partId);
+	_partIds[O_FLOOR]        = unserializeInt(&buffer, serKey._partId);
+	_partIds[O_WESTWALL]     = unserializeInt(&buffer, serKey._partId);
+	_partIds[O_NORTHWALL]    = unserializeInt(&buffer, serKey._partId);
+	_partIds[O_OBJECT]       = unserializeInt(&buffer, serKey._partId);
 
-	_partSetIds[O_FLOOR]		= unserializeInt(&buffer, serKey._partSetId);
-	_partSetIds[O_WESTWALL]	= unserializeInt(&buffer, serKey._partSetId);
-	_partSetIds[O_NORTHWALL]	= unserializeInt(&buffer, serKey._partSetId);
-	_partSetIds[O_OBJECT]	= unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_FLOOR]     = unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_WESTWALL]  = unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_NORTHWALL] = unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_OBJECT]    = unserializeInt(&buffer, serKey._partSetId);
 
-	_smoke		= unserializeInt(&buffer, serKey._smoke);
-	_fire		= unserializeInt(&buffer, serKey._fire);
-	_aniOffset	= unserializeInt(&buffer, serKey._aniOffset);
+	_smoke     = unserializeInt(&buffer, serKey._smoke);
+	_fire      = unserializeInt(&buffer, serKey._fire);
+	_aniOffset = unserializeInt(&buffer, serKey._aniOffset);
 
 	const int boolFields (unserializeInt(
 									&buffer,
 									serKey.boolFields));
 
-	_revealed[ST_WEST]		= (boolFields & 0x01) ? true : false;
-	_revealed[ST_NORTH]		= (boolFields & 0x02) ? true : false;
-	_revealed[ST_CONTENT]	= (boolFields & 0x04) ? true : false;
+	_revealed[ST_WEST]     = (boolFields & 0x01) ? true : false;
+	_revealed[ST_NORTH]    = (boolFields & 0x02) ? true : false;
+	_revealed[ST_CONTENT]  = (boolFields & 0x04) ? true : false;
 
-	_aniCycle[O_WESTWALL]	= (boolFields & 0x08) ? 7 : 0;
-	_aniCycle[O_NORTHWALL]	= (boolFields & 0x10) ? 7 : 0;
+	_aniCycle[O_WESTWALL]  = (boolFields & 0x08) ? 7 : 0;
+	_aniCycle[O_NORTHWALL] = (boolFields & 0x10) ? 7 : 0;
 
 //	if (_fire || _smoke) _animationOffset = std::rand() % 4;
 }
@@ -203,13 +203,13 @@ YAML::Node Tile::save() const
 		node["mapDataSetID"].push_back(_partSetIds[i]);
 	}
 
-	if (_smoke != 0)		node["smoke"]		= _smoke;
-	if (_fire != 0)			node["fire"]		= _fire;
-	if (_aniOffset != 0)	node["aniOffset"]	= _aniOffset;
+	if (_smoke != 0)     node["smoke"]     = _smoke;
+	if (_fire != 0)      node["fire"]      = _fire;
+	if (_aniOffset != 0) node["aniOffset"] = _aniOffset;
 
-	if (   _revealed[ST_WEST]		== true
-		|| _revealed[ST_NORTH]		== true
-		|| _revealed[ST_CONTENT]	== true)
+	if (   _revealed[ST_WEST]    == true
+		|| _revealed[ST_NORTH]   == true
+		|| _revealed[ST_CONTENT] == true)
 	{
 		for (size_t
 				i = 0u;
@@ -222,6 +222,7 @@ YAML::Node Tile::save() const
 
 	if (isSlideDoorOpen(O_WESTWALL) == true)
 		node["openDoorWest"] = true;
+
 	if (isSlideDoorOpen(O_NORTHWALL) == true)
 		node["openDoorNorth"] = true;
 
@@ -244,9 +245,9 @@ void Tile::saveBinary(Uint8** buffer) const
 	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_NORTHWALL]);
 	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_OBJECT]);
 
-	serializeInt(buffer, serializationKey._smoke,		_smoke);
-	serializeInt(buffer, serializationKey._fire,		_fire);
-	serializeInt(buffer, serializationKey._aniOffset,	_aniOffset);
+	serializeInt(buffer, serializationKey._smoke,     _smoke);
+	serializeInt(buffer, serializationKey._fire,      _fire);
+	serializeInt(buffer, serializationKey._aniOffset, _aniOffset);
 
 	int boolFields ((_revealed[ST_WEST] ? 0x01 : 0x0) + (_revealed[ST_NORTH] ? 0x02 : 0x0) + (_revealed[ST_CONTENT] ? 0x04 : 0x0));
 
@@ -1146,7 +1147,7 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 		if (powerSmoke != 0)
 		{
 			for (std::vector<BattleItem*>::const_iterator // handle unconscious units on this Tile vs. DT_SMOKE
-					i = _inventory.begin();
+					i  = _inventory.begin();
 					i != _inventory.end();
 					++i)
 			{
@@ -1172,7 +1173,7 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 			while (done == false && _inventory.empty() == false) // handle items including unconscious or dead units on this Tile vs. DT_IN
 			{
 				for (std::vector<BattleItem*>::const_iterator
-						i = _inventory.begin();
+						i  = _inventory.begin();
 						i != _inventory.end();
 						)
 				{
@@ -1317,7 +1318,7 @@ void Tile::addItem(BattleItem* const item)
 void Tile::removeItem(BattleItem* const item)
 {
 	for (std::vector<BattleItem*>::const_iterator
-			i = _inventory.begin();
+			i  = _inventory.begin();
 			i != _inventory.end();
 			++i)
 	{
@@ -1347,7 +1348,7 @@ int Tile::getCorpseSprite(bool* fire) const
 			weightTest;
 
 		for (std::vector<BattleItem*>::const_iterator // 1. soldier body
-				i = _inventory.begin();
+				i  = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
@@ -1368,7 +1369,7 @@ int Tile::getCorpseSprite(bool* fire) const
 		{
 			weight = -1;
 			for (std::vector<BattleItem*>::const_iterator // 2. non-soldier body
-					i = _inventory.begin();
+					i  = _inventory.begin();
 					i != _inventory.end();
 					++i)
 			{
@@ -1388,7 +1389,7 @@ int Tile::getCorpseSprite(bool* fire) const
 			{
 				weight = -1;
 				for (std::vector<BattleItem*>::const_iterator // 3. corpse
-						i = _inventory.begin();
+						i  = _inventory.begin();
 						i != _inventory.end();
 						++i)
 				{
@@ -1420,7 +1421,7 @@ int Tile::getTopSprite(bool* fuse) const
 		const BattleItem* grenade (nullptr);
 
 		for (std::vector<BattleItem*>::const_iterator
-				i = _inventory.begin();
+				i  = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
@@ -1449,7 +1450,7 @@ int Tile::getTopSprite(bool* fuse) const
 			weightTest;
 
 		for (std::vector<BattleItem*>::const_iterator
-				i = _inventory.begin();
+				i  = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
@@ -1475,7 +1476,7 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 {
 	int ret (0);
 	for (std::vector<BattleItem*>::const_iterator
-			i = _inventory.begin();
+			i  = _inventory.begin();
 			i != _inventory.end();
 			++i)
 	{
@@ -1502,7 +1503,7 @@ int Tile::hasUnconsciousUnit(bool playerOnly) const
 bool Tile::hasPrimedGrenade() const
 {
 	for (std::vector<BattleItem*>::const_iterator
-			i = _inventory.begin();
+			i  = _inventory.begin();
 			i != _inventory.end();
 			++i)
 	{

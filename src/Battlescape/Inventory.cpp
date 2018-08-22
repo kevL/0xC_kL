@@ -183,7 +183,7 @@ void Inventory::drawGrids()
 		{
 			case IC_SLOT: // draw grids for unit-sections
 				doLabel = true;
-				for (std::vector<RuleSlot>::const_iterator
+				for (std::vector<SlotPosit>::const_iterator
 						j = i->second->getSlots()->begin();
 						j != i->second->getSlots()->end();
 						++j)

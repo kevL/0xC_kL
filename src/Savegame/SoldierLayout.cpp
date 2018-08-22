@@ -69,12 +69,12 @@ SoldierLayout::~SoldierLayout()
  */
 void SoldierLayout::load(const YAML::Node& node)
 {
-	_itemType	= node["itemType"]	.as<std::string>(_itemType);
-	_section	= node["section"]	.as<std::string>(_section);
-	_slotX		= node["slotX"]		.as<int>(0);
-	_slotY		= node["slotY"]		.as<int>(0);
-	_ammoItem	= node["ammoItem"]	.as<std::string>("");
-	_fuse		= node["fuse"]		.as<int>(-1);
+	_itemType = node["itemType"].as<std::string>(_itemType);
+	_section  = node["section"] .as<std::string>(_section);
+	_slotX    = node["slotX"]   .as<int>(0);
+	_slotY    = node["slotY"]   .as<int>(0);
+	_ammoItem = node["ammoItem"].as<std::string>("");
+	_fuse     = node["fuse"]    .as<int>(-1);
 }
 
 /**
@@ -86,11 +86,11 @@ YAML::Node SoldierLayout::save() const
 	YAML::Node node;
 
 	node["itemType"] = _itemType;
-	node["section"]	 = _section;
+	node["section"]  = _section;
 
-	if (_slotX != 0) node["slotX"]	= _slotX;
-	if (_slotY != 0) node["slotY"]	= _slotY;
-	if (_fuse != -1) node["fuse"]	= _fuse;
+	if (_slotX != 0) node["slotX"] = _slotX;
+	if (_slotY != 0) node["slotY"] = _slotY;
+	if (_fuse != -1) node["fuse"]  = _fuse;
 
 	if (_ammoItem.empty() == false) node["ammoItem"] = _ammoItem;
 

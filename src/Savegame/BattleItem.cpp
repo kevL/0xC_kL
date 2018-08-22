@@ -36,7 +36,7 @@ namespace OpenXcom
 /**
  * Initializes an item of the specified type.
  * @param itRule	- pointer to RuleItem
- * @param pId		- pointer to an integer ID for this item
+ * @param pId		- pointer to an integer ID for this item (has precedence over 'id')
  * @param id		- value for ID when loading a saved game (default -1)
  */
 BattleItem::BattleItem(
@@ -61,8 +61,8 @@ BattleItem::BattleItem(
 		_isLoad(false),
 		_xcomProperty(false)
 {
-	if (pId != nullptr)	// <- this is for SavedBattleGame only to keep
-	{					// track of a brand new item on the battlefield
+	if (pId != nullptr)	// <- this is for SavedBattleGame to keep track
+	{					//    of a brand new item on the battlefield
 		_id = *pId;
 		++(*pId);
 	}
@@ -263,7 +263,7 @@ bool BattleItem::setAmmoItem(
 		else if (_ammoItem == nullptr)
 		{
 			for (std::vector<std::string>::const_iterator
-					i = _itRule->getAcceptedLoadTypes()->begin();
+					i  = _itRule->getAcceptedLoadTypes()->begin();
 					i != _itRule->getAcceptedLoadTypes()->end();
 					++i)
 			{
@@ -326,6 +326,36 @@ void BattleItem::spendBullet(
 }
 
 /**
+ * Removes this BattleItem from a previous owner if applicable and moves it to
+ * another owner if applicable.
+ * @param unit - pointer to a BattleUnit (default nullptr)
+ */
+void BattleItem::changeOwner(BattleUnit* const unit)
+{
+	if (_owner != nullptr)
+	{
+		for (std::vector<BattleItem*>::const_iterator
+				i  = _owner->getInventory()->begin();
+				i != _owner->getInventory()->end();
+				++i)
+		{
+			if (*i == this)
+			{
+				_owner->getInventory()->erase(i);
+				break;
+			}
+		}
+
+		_ownerPre = _owner;
+	}
+	else
+		_ownerPre = unit;
+
+	if ((_owner = unit) != nullptr)
+		_owner->getInventory()->push_back(this);
+}
+
+/**
  * Sets this BattleItem's owner.
  * @param owner - pointer to BattleUnit (default nullptr)
  */
@@ -360,36 +390,6 @@ void BattleItem::setPriorOwner(BattleUnit* const ownerPre)
 BattleUnit* BattleItem::getPriorOwner() const
 {
 	return _ownerPre;
-}
-
-/**
- * Removes this BattleItem from a previous owner if applicable and moves it to
- * another owner if applicable.
- * @param unit - pointer to a BattleUnit (default nullptr)
- */
-void BattleItem::changeOwner(BattleUnit* const unit)
-{
-	if (_owner != nullptr)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i  = _owner->getInventory()->begin();
-				i != _owner->getInventory()->end();
-				++i)
-		{
-			if (*i == this)
-			{
-				_owner->getInventory()->erase(i);
-				break;
-			}
-		}
-
-		_ownerPre = _owner;
-	}
-	else
-		_ownerPre = unit;
-
-	if ((_owner = unit) != nullptr)
-		_owner->getInventory()->push_back(this);
 }
 
 /**

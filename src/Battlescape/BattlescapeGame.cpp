@@ -1450,7 +1450,7 @@ void BattlescapeGame::endTurn() // private.
 	{
 		tile = _battleSave->getTiles()[i];
 		for (std::vector<BattleItem*>::const_iterator
-				j = tile->getInventory()->begin();
+				j  = tile->getInventory()->begin();
 				j != tile->getInventory()->end();
 				++j)
 		{
@@ -1508,7 +1508,7 @@ void BattlescapeGame::endTurn() // private.
 	if (_battleSave->getSide() != FACTION_NEUTRAL) // tick down grenade timers
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _battleSave->getItems()->begin();
+				i  = _battleSave->getItems()->begin();
 				i != _battleSave->getItems()->end();
 				++i)
 		{
@@ -1523,7 +1523,7 @@ void BattlescapeGame::endTurn() // private.
 
 	// THE NEXT 3 BLOCKS could get Quirky. (ie: tiles vs. units, tallyUnits, tiles vs. ground-items)
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1555,7 +1555,7 @@ void BattlescapeGame::endTurn() // private.
 		}
 
 		for (std::vector<BattleUnit*>::const_iterator // reset the takenExpl(smoke) and takenFire flags on every unit.
-				i = _battleSave->getUnits()->begin();
+				i  = _battleSave->getUnits()->begin();
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
@@ -3431,7 +3431,7 @@ bool BattlescapeGame::worthTaking(
 			i != inTypes.end() && fit == false;
 			++i)
 	{
-		for (std::vector<RuleSlot>::const_iterator
+		for (std::vector<SlotPosit>::const_iterator
 				j = (*i)->getSlots()->begin();
 				j != (*i)->getSlots()->end() && fit == false;
 				++j)
@@ -3610,7 +3610,7 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 					i != inTypes.end() && placed == ItemPlacedType::FAILED;
 					++i)
 			{
-				for (std::vector<RuleSlot>::const_iterator
+				for (std::vector<SlotPosit>::const_iterator
 						j = (*i)->getSlots()->begin();
 						j != (*i)->getSlots()->end() && placed == ItemPlacedType::FAILED;
 						++j)
@@ -3799,7 +3799,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 					if (tile != nullptr)
 					{
 						for (std::vector<BattleItem*>::const_iterator
-								i = tile->getInventory()->begin();
+								i  = tile->getInventory()->begin();
 								i != tile->getInventory()->end();
 								++i)
 						{
@@ -3845,7 +3845,7 @@ bool BattlescapeGame::checkProxyGrenades(BattleUnit* const unit)
 void BattlescapeGame::clearBattleStates()
 {
 	for (std::list<BattleState*>::const_iterator
-			i = _deletedStates.begin();
+			i  = _deletedStates.begin();
 			i != _deletedStates.end();
 			++i)
 	{

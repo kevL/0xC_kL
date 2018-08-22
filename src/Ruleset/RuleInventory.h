@@ -33,7 +33,7 @@ namespace OpenXcom
 /**
  * A struct that holds x-y slot-positions of Inventory sections.
  */
-struct RuleSlot
+struct SlotPosit
 {
 	int
 		x,y;
@@ -84,7 +84,7 @@ private:
 	InventorySection _section;
 
 	std::map<InventorySection, int> _costs;
-	std::vector<RuleSlot> _slots;
+	std::vector<SlotPosit> _slots;
 
 	/// Sets the rule's InventorySection based on the typeId.
 	static InventorySection assignSectionType(const std::string& type);
@@ -127,7 +127,7 @@ private:
 		InventoryCategory getCategory() const;
 
 		/// Gets all the Slots in the Inventory.
-		const std::vector<RuleSlot>* getSlots() const;
+		const std::vector<SlotPosit>* getSlots() const;
 
 		/// Checks for a Slot in a mouse position.
 		bool detSlotAtCursor(

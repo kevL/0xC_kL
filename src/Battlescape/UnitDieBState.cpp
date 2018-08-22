@@ -319,18 +319,18 @@ void UnitDieBState::drop() // private.
 		* tileExplBelow;
 	bool playSound (true);
 
-	int unitSize (_unit->getArmor()->getSize());
-	size_t quadrant (static_cast<size_t>(unitSize * unitSize));
-	--unitSize;
+	int quad (_unit->getArmor()->getSize());
+	size_t quads (static_cast<size_t>(quad * quad));
+	--quad;
 
-	const Position pos (_unit->getPosition());
+	const Position& pos (_unit->getPosition());
 	for (int
-			y = unitSize;
+			y = quad;
 			y != -1;
 			--y)
 	{
 		for (int
-				x = unitSize;
+				x = quad;
 				x != -1;
 				--x)
 		{
@@ -369,9 +369,9 @@ void UnitDieBState::drop() // private.
 			}
 
 			BattleItem* const body (new BattleItem(
-												_battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quadrant]),
+												_battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseBattlescape()[--quads]),
 												_battleSave->getCanonicalBattleId()));
-			if (quadrant == 0) body->setItemUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
+			if (quads == 0) body->setItemUnit(_unit); // only quadrant #0 denotes the unit's corpse/body.
 			_battleGame->dropItem(
 								body,
 								pos + Position(x,y,0),

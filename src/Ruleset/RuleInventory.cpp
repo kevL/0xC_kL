@@ -30,10 +30,10 @@ namespace YAML
 {
 
 template<>
-struct convert<OpenXcom::RuleSlot>
+struct convert<OpenXcom::SlotPosit>
 {
 	///
-	static Node encode(const OpenXcom::RuleSlot& rhs)
+	static Node encode(const OpenXcom::SlotPosit& rhs)
 	{
 		Node node;
 
@@ -44,7 +44,7 @@ struct convert<OpenXcom::RuleSlot>
 	}
 
 	///
-	static bool decode(const Node& node, OpenXcom::RuleSlot& rhs)
+	static bool decode(const Node& node, OpenXcom::SlotPosit& rhs)
 	{
 		if (node.IsSequence() == false
 			|| node.size() != 2u)
@@ -94,11 +94,11 @@ void RuleInventory::load(
 		const YAML::Node &node,
 		int listOrder)
 {
-	_type		= node["type"]		.as<std::string>(_type);
-	_x			= node["x"]			.as<int>(_x);
-	_y			= node["y"]			.as<int>(_y);
-	_slots		= node["slots"]		.as<std::vector<RuleSlot>>(_slots);
-	_listOrder	= node["listOrder"]	.as<int>(listOrder);
+	_type      = node["type"]     .as<std::string>(_type);
+	_x         = node["x"]        .as<int>(_x);
+	_y         = node["y"]        .as<int>(_y);
+	_slots     = node["slots"]    .as<std::vector<SlotPosit>>(_slots);
+	_listOrder = node["listOrder"].as<int>(listOrder);
 
 	_x += ((Options::baseXResolution - 320) >> 1u);
 	_y += ((Options::baseYResolution - 200) >> 1u) - 20; // See Inventory if you want to.
@@ -136,16 +136,16 @@ InventorySection RuleInventory::getSectionType() const
  */
 InventorySection RuleInventory::assignSectionType(const std::string& type) // private/static.
 {
-	if (type == "STR_GROUND")			return ST_GROUND;
-	if (type == "STR_RIGHT_HAND")		return ST_RIGHTHAND;
-	if (type == "STR_LEFT_HAND")		return ST_LEFTHAND;
-	if (type == "STR_BELT")				return ST_BELT;
-	if (type == "STR_RIGHT_LEG")		return ST_RIGHTLEG;
-	if (type == "STR_LEFT_LEG")			return ST_LEFTLEG;
-	if (type == "STR_RIGHT_SHOULDER")	return ST_RIGHTSHOULDER;
-	if (type == "STR_LEFT_SHOULDER")	return ST_LEFTSHOULDER;
-	if (type == "STR_BACK_PACK")		return ST_BACKPACK;
-	if (type == "STR_QUICK_DRAW")		return ST_QUICKDRAW;
+	if (type == "STR_GROUND")         return ST_GROUND;
+	if (type == "STR_RIGHT_HAND")     return ST_RIGHTHAND;
+	if (type == "STR_LEFT_HAND")      return ST_LEFTHAND;
+	if (type == "STR_BELT")           return ST_BELT;
+	if (type == "STR_RIGHT_LEG")      return ST_RIGHTLEG;
+	if (type == "STR_LEFT_LEG")       return ST_LEFTLEG;
+	if (type == "STR_RIGHT_SHOULDER") return ST_RIGHTSHOULDER;
+	if (type == "STR_LEFT_SHOULDER")  return ST_LEFTSHOULDER;
+	if (type == "STR_BACK_PACK")      return ST_BACKPACK;
+	if (type == "STR_QUICK_DRAW")     return ST_QUICKDRAW;
 
 	return ST_NONE; // better not happen.
 }
@@ -159,16 +159,16 @@ std::map<InventorySection, int> RuleInventory::assignCosts(std::map<std::string,
 {
 	std::map<InventorySection, int> ret;
 
-	if (costs["STR_GROUND"]			!= 0) ret[ST_GROUND]		= costs["STR_GROUND"];
-	if (costs["STR_RIGHT_HAND"]		!= 0) ret[ST_RIGHTHAND]		= costs["STR_RIGHT_HAND"];
-	if (costs["STR_LEFT_HAND"]		!= 0) ret[ST_LEFTHAND]		= costs["STR_LEFT_HAND"];
-	if (costs["STR_BELT"]			!= 0) ret[ST_BELT]			= costs["STR_BELT"];
-	if (costs["STR_RIGHT_LEG"]		!= 0) ret[ST_RIGHTLEG]		= costs["STR_RIGHT_LEG"];
-	if (costs["STR_LEFT_LEG"]		!= 0) ret[ST_LEFTLEG]		= costs["STR_LEFT_LEG"];
-	if (costs["STR_RIGHT_SHOULDER"]	!= 0) ret[ST_RIGHTSHOULDER]	= costs["STR_RIGHT_SHOULDER"];
-	if (costs["STR_LEFT_SHOULDER"]	!= 0) ret[ST_LEFTSHOULDER]	= costs["STR_LEFT_SHOULDER"];
-	if (costs["STR_BACK_PACK"]		!= 0) ret[ST_BACKPACK]		= costs["STR_BACK_PACK"];
-	if (costs["STR_QUICK_DRAW"]		!= 0) ret[ST_QUICKDRAW]		= costs["STR_QUICK_DRAW"];
+	if (costs["STR_GROUND"]         != 0) ret[ST_GROUND]        = costs["STR_GROUND"];
+	if (costs["STR_RIGHT_HAND"]     != 0) ret[ST_RIGHTHAND]     = costs["STR_RIGHT_HAND"];
+	if (costs["STR_LEFT_HAND"]      != 0) ret[ST_LEFTHAND]      = costs["STR_LEFT_HAND"];
+	if (costs["STR_BELT"]           != 0) ret[ST_BELT]          = costs["STR_BELT"];
+	if (costs["STR_RIGHT_LEG"]      != 0) ret[ST_RIGHTLEG]      = costs["STR_RIGHT_LEG"];
+	if (costs["STR_LEFT_LEG"]       != 0) ret[ST_LEFTLEG]       = costs["STR_LEFT_LEG"];
+	if (costs["STR_RIGHT_SHOULDER"] != 0) ret[ST_RIGHTSHOULDER] = costs["STR_RIGHT_SHOULDER"];
+	if (costs["STR_LEFT_SHOULDER"]  != 0) ret[ST_LEFTSHOULDER]  = costs["STR_LEFT_SHOULDER"];
+	if (costs["STR_BACK_PACK"]      != 0) ret[ST_BACKPACK]      = costs["STR_BACK_PACK"];
+	if (costs["STR_QUICK_DRAW"]     != 0) ret[ST_QUICKDRAW]     = costs["STR_QUICK_DRAW"];
 
 	return ret;
 }
@@ -207,7 +207,7 @@ InventoryCategory RuleInventory::getCategory() const
  * Gets all the Slots in this Inventory section.
  * @return, pointer to a vector of RuleSlot-structs
  */
-const std::vector<RuleSlot>* RuleInventory::getSlots() const
+const std::vector<SlotPosit>* RuleInventory::getSlots() const
 {
 	return &_slots;
 }
@@ -268,7 +268,7 @@ bool RuleInventory::detSlotAtCursor(
 			break;
 
 		default:
-			for (std::vector<RuleSlot>::const_iterator
+			for (std::vector<SlotPosit>::const_iterator
 					i = _slots.begin();
 					i != _slots.end();
 					++i)
@@ -340,7 +340,7 @@ bool RuleInventory::fitItemInSlot(
 			const int slotsTotal (item->getInventoryWidth() * item->getInventoryHeight());
 			int slotsFound (0);
 
-			for (std::vector<RuleSlot>::const_iterator
+			for (std::vector<SlotPosit>::const_iterator
 					i = _slots.begin();
 					i != _slots.end() && slotsFound < slotsTotal;
 					++i)

@@ -1909,7 +1909,7 @@ void SavedBattleGame::setCanonicalBattleId()
 		idTest;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _items.begin();
+			i  = _items.begin();
 			i != _items.end();
 			++i)
 	{
@@ -1921,6 +1921,7 @@ void SavedBattleGame::setCanonicalBattleId()
 
 /**
  * Gets the next available item-ID value.
+ * @note It is incremented by BattleItem() cTor.
  * @return, pointer to the highest available value
  */
 int* SavedBattleGame::getCanonicalBattleId()
@@ -2276,7 +2277,7 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 		if (pos == Position(-1,-1,-1)) // if carried
 		{
 			for (std::vector<BattleItem*>::const_iterator
-					i = _items.begin();
+					i  = _items.begin();
 					i != _items.end();
 					++i)
 			{
