@@ -813,7 +813,7 @@ void DebriefingState::prepareDebriefing() // private.
 				//Log(LOG_INFO) << ". . . cur pos " << pos;
 				switch ((*i)->getUnitStatus())
 				{
-					case STATUS_DEAD:
+					case STATUS_DEAD:											// TODO: what about STATUS_LATENT and STATUS_LATENT_START ...
 					case STATUS_UNCONSCIOUS:
 					{
 						//Log(LOG_INFO) << ". . . . is Dead or Unconscious - find body";
@@ -822,18 +822,17 @@ void DebriefingState::prepareDebriefing() // private.
 								j != _battleSave->getItems()->end();
 								++j)
 						{
-							if (   (*j)->getBodyUnit() != nullptr				// found it: corpse is a dead or unconscious BattleUnit!!
-								&& (*j)->getBodyUnit() == *i)
+							if ((*j)->getBodyUnit() == *i)						// found it: corpse is a dead or unconscious BattleUnit!!
 							{
-								if ((*j)->getOwner() != nullptr)				// corpse of BattleUnit has an Owner (ie. is being carried by another BattleUnit)
-								{
-									//Log(LOG_INFO) << ". . . . . is carried";
-									pos = (*j)->getOwner()->getPosition();		// Put the corpse down .. slowly.
-								}
-								else if ((*j)->getTile() != nullptr)			// corpse of BattleUnit is lying around somewhere <- THIS SHOULD NEVER RUN except post-2nd-stage ->
+								if ((*j)->getTile() != nullptr)					// corpse of BattleUnit is lying around somewhere <- THIS SHOULD NEVER RUN except post-2nd-stage ->
 								{
 									//Log(LOG_INFO) << ". . . . . is fielded";
 									pos = (*j)->getTile()->getPosition();		// you're not vaporized yet, Get up.
+								}
+								else											// corpse of BattleUnit has an Owner (ie. is being carried by another BattleUnit)
+								{
+									//Log(LOG_INFO) << ". . . . . is carried";
+									pos = (*j)->getOwner()->getPosition();		// Put the corpse down .. slowly.
 								}
 								break;
 							}

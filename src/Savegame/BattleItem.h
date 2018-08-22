@@ -57,7 +57,6 @@ private:
 	BattleItem* _ammoItem;
 	BattleUnit
 		* _owner,
-		* _ownerPre,
 		* _unit;
 	const RuleInventory* _section;
 	const RuleItem* _itRule;

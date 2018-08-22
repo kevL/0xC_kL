@@ -46,7 +46,6 @@ BattleItem::BattleItem(
 	:
 		_itRule(itRule),
 		_owner(nullptr),
-		_ownerPre(nullptr),
 		_unit(nullptr),
 		_tile(nullptr),
 		_section(nullptr),
@@ -142,15 +141,11 @@ YAML::Node BattleItem::save() const
 	if (_stimulant != 0)       node["stimulant"]    = _stimulant;
 	if (_fuse != -1)           node["fuse"]         = _fuse;
 	if (_xcomProperty == true) node["xcomProperty"] = _xcomProperty;
-
-	if (_owner != nullptr)      node["owner"]    = _owner->getId();
-	if (_ownerPre != nullptr
-		&& _ownerPre != _owner) node["ownerPre"] = _ownerPre->getId();
-
-	if (_unit != nullptr)     node["unit"]     = _unit->getId();
-	if (_section != nullptr)  node["section"]  = _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
-	if (_tile != nullptr)     node["position"] = _tile->getPosition();
-	if (_ammoItem != nullptr) node["ammoItem"] = _ammoItem->getId();
+	if (_owner != nullptr)     node["owner"]        = _owner->getId();
+	if (_unit != nullptr)      node["unit"]         = _unit->getId();
+	if (_section != nullptr)   node["section"]      = _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
+	if (_tile != nullptr)      node["position"]     = _tile->getPosition();
+	if (_ammoItem != nullptr)  node["ammoItem"]     = _ammoItem->getId();
 
 	return node;
 }
@@ -345,11 +340,7 @@ void BattleItem::changeOwner(BattleUnit* const unit)
 				break;
 			}
 		}
-
-		_ownerPre = _owner;
 	}
-	else
-		_ownerPre = unit;
 
 	if ((_owner = unit) != nullptr)
 		_owner->getInventory()->push_back(this);
@@ -361,7 +352,6 @@ void BattleItem::changeOwner(BattleUnit* const unit)
  */
 void BattleItem::setOwner(BattleUnit* const owner)
 {
-	_ownerPre = _owner;
 	_owner = owner;
 }
 
@@ -372,24 +362,6 @@ void BattleItem::setOwner(BattleUnit* const owner)
 BattleUnit* BattleItem::getOwner() const
 {
 	return _owner;
-}
-
-/**
- * Sets this BattleItem's prior owner.
- * @param ownerPre - pointer to a BattleUnit
- */
-void BattleItem::setPriorOwner(BattleUnit* const ownerPre)
-{
-	_ownerPre = ownerPre;
-}
-
-/**
- * Gets this BattleItem's prior owner.
- * @return, pointer to a BattleUnit
- */
-BattleUnit* BattleItem::getPriorOwner() const
-{
-	return _ownerPre;
 }
 
 /**

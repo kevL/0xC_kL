@@ -404,7 +404,7 @@ void BattlescapeGenerator::run()
 			_battleSave->getTiles()[i]->setDiscovered(true, 2);
 		_battleSave->calcBaseDestruct();
 	}
-	if (_missionType == "STR_ALIEN_BASE_ASSAULT"
+	if (   _missionType == "STR_ALIEN_BASE_ASSAULT"
 		|| _missionType == "STR_MARS_THE_FINAL_ASSAULT")
 	{
 		for (int i = 0; i < _battleSave->getMapSizeXYZ(); ++i)
@@ -469,7 +469,7 @@ void BattlescapeGenerator::nextStage()
 	// aborted, player-units will be set latent unless they're on an End_Point.
 	const Position& posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator	// set all living hostile/neutral units Latent
-			i = _unitList->begin();					// and deal with player-units not in endpoint-area if aborted
+			i  = _unitList->begin();				// and deal with player-units not in endpoint-area if aborted
 			i != _unitList->end();					// plus break all unit-tile links and unit-positions.
 			++i)
 	{
@@ -494,7 +494,7 @@ void BattlescapeGenerator::nextStage()
 		}
 
 		(*i)->setUnitTile();			// break BattleUnit->Tile link.
-		(*i)->setPosition(posBogus);	// give unit a bogus Position(-1,-1,-1)
+		(*i)->setPosition(posBogus);	// give unit a bogus Position(-1,-1,-1) NOTE: That's also the "carried" Position.
 	}
 
 	for (size_t // break all Tile->BattleUnit links. Or ... do all 1st-stage Tiles go ~pfft~
@@ -538,7 +538,7 @@ void BattlescapeGenerator::nextStage()
 		if ((*i)->getBodyUnit() != nullptr // IMPORTANT: Do not load weapons with battle-corpses.
 			&& (*i)->getBodyUnit()->getUnitStatus() != STATUS_DEAD)
 		{
-			if ((*i)->getOwner() == nullptr
+			if ((*i)->getTile() != nullptr
 				|| (*i)->getBodyUnit()->isHealable() == false)
 			{
 				switch ((*i)->getBodyUnit()->getOriginalFaction())
@@ -596,7 +596,7 @@ void BattlescapeGenerator::nextStage()
 		{
 			if ((*i)->isLoad() == false)
 			{
-				if ((*i)->getOwner() == nullptr)
+				if ((*i)->getTile() != nullptr)
 				{
 					(*i)->setFuse(-1);
 
@@ -690,7 +690,7 @@ void BattlescapeGenerator::nextStage()
 
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = guaranteed->begin();
+			i  = guaranteed->begin();
 			i != guaranteed->end();
 			++i)
 	{
@@ -701,7 +701,7 @@ void BattlescapeGenerator::nextStage()
 	}
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = conditional->begin();
+			i  = conditional->begin();
 			i != conditional->end();
 			++i)
 	{
@@ -712,7 +712,7 @@ void BattlescapeGenerator::nextStage()
 	}
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = deletable.begin();
+			i  = deletable.begin();
 			i != deletable.end();
 			++i)
 	{
@@ -725,7 +725,7 @@ void BattlescapeGenerator::nextStage()
 
 	_itemList->clear();
 	for (std::vector<BattleItem*>::const_iterator
-			i = forwardCarried.begin();
+			i  = forwardCarried.begin();
 			i != forwardCarried.end();
 			++i)
 	{
@@ -791,7 +791,7 @@ void BattlescapeGenerator::nextStage()
 
 	bool soldierFound (false);
 	for (std::vector<BattleUnit*>::const_iterator		// <--|| XCOM DEPLOYMENT. <--|||
-			i = _unitList->begin();
+			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
@@ -846,7 +846,7 @@ void BattlescapeGenerator::nextStage()
 
 	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
 	for (std::vector<BattleItem*>::const_iterator
-		i = forwardGround.begin();
+		i  = forwardGround.begin();
 		i != forwardGround.end();
 		++i)
 	{
@@ -870,7 +870,7 @@ void BattlescapeGenerator::nextStage()
 	if (_alienRace.empty() == true)
 	{
 		for (std::vector<TerrorSite*>::const_iterator
-				i = _playSave->getTerrorSites()->begin();
+				i  = _playSave->getTerrorSites()->begin();
 				i != _playSave->getTerrorSites()->end();
 				++i)
 		{
@@ -884,7 +884,7 @@ void BattlescapeGenerator::nextStage()
 		if (_alienRace.empty() == true)
 		{
 			for (std::vector<AlienBase*>::const_iterator
-					i = _playSave->getAlienBases()->begin();
+					i  = _playSave->getAlienBases()->begin();
 					i != _playSave->getAlienBases()->end();
 					++i)
 			{
@@ -958,12 +958,12 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 			{
 				bool found (false);
 				for (std::vector<BattleUnit*>::const_iterator		// find carrier
-						i = _unitList->begin();
+						i  = _unitList->begin();
 						i != _unitList->end() && found == false;
 						++i)
 				{
 					for (std::vector<BattleItem*>::const_iterator	// find body in carrier's inventory
-							j = (*i)->getInventory()->begin();
+							j  = (*i)->getInventory()->begin();
 							j != (*i)->getInventory()->end() && found == false;
 							++j)
 					{

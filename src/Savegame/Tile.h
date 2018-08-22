@@ -303,9 +303,9 @@ private:
 		{ return _unit; }
 
 		/// Adds a specified BattleItem to the Tile.
-		void addItem(BattleItem* const item);
+		void addItem(BattleItem* const it);
 		/// Removes a sepcified BattleItem from the Tile.
-		void removeItem(BattleItem* const item);
+		void removeItem(BattleItem* const it);
 
 		/// Gets corpse-sprite.
 		int getCorpseSprite(bool* fire) const;

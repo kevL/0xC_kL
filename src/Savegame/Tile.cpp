@@ -1303,32 +1303,32 @@ void Tile::setTileUnit(BattleUnit* const unit)
 
 /**
  * Adds an item on this Tile.
- * @param item - pointer to a BattleItem
+ * @param it - pointer to a BattleItem
  */
-void Tile::addItem(BattleItem* const item)
+void Tile::addItem(BattleItem* const it)
 {
-	item->setTile(this);
-	_inventory.push_back(item);
+	it->setTile(this);
+	_inventory.push_back(it);
 }
 
 /**
  * Removes an item from this Tile.
- * @param item - pointer to a BattleItem
+ * @param it - pointer to a BattleItem
  */
-void Tile::removeItem(BattleItem* const item)
+void Tile::removeItem(BattleItem* const it)
 {
 	for (std::vector<BattleItem*>::const_iterator
 			i  = _inventory.begin();
 			i != _inventory.end();
 			++i)
 	{
-		if (*i == item)
+		if (*i == it)
 		{
 			_inventory.erase(i);
 			break;
 		}
 	}
-	item->setTile();
+	it->setTile();
 }
 
 /**
