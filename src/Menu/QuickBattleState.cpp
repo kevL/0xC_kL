@@ -688,7 +688,7 @@ void QuickBattleState::btnOkClick(Action*)
 		bGen.setShade(_slrDarkness->getValue());
 		bGen.setAlienRace(_alienRaces[_cbxAlienRace->getSelected()]);
 		bGen.setAlienItemlevel(_slrAlienTech->getValue());
-		bGen.run();
+		bGen.stage();
 
 		_game->popState(); // <- this
 		_game->popState(); // <- quah

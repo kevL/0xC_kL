@@ -375,7 +375,7 @@ void UnitDieBState::drop() // private.
 			_battleGame->dropItem(
 								body,
 								pos + Position(x,y,0),
-								DROP_CREATE);
+								true);
 		}
 	}
 

@@ -3824,7 +3824,7 @@ void GeoscapeState::baseDefenseTactical(
 		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
 		bGen.setBase(base);
 		bGen.setAlienRace(ufo->getAlienRace());
-		bGen.run();
+		bGen.stage();
 
 		_pause = true;
 		popupGeo(new BriefingState(nullptr, base));

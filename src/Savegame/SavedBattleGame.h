@@ -356,9 +356,9 @@ private:
 		/// Checks if enough objective-tiles are destroyed.
 		bool allObjectivesDestroyed() const;
 
-		/// Sets the next available item-ID value.
+		/// Sets the highest available item-ID value.
 		void setCanonicalBattleId();
-		/// Gets the next available item-ID value.
+		/// Gets the highest available item-ID value.
 		int* getCanonicalBattleId();
 
 		/// Gets a spawn-node.

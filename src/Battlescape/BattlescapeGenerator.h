@@ -38,6 +38,7 @@ class TerrorSite;
 class ResourcePack;
 class RuleAlienDeployment;
 class RuleAlienRace;
+class RuleInventory;
 class RuleItem;
 class Ruleset;
 class RuleUnit;
@@ -119,17 +120,21 @@ private:
 	BattleUnit* addPlayerUnit(BattleUnit* const unit);
 	/// Runs necessary checks before setting a unit's position.
 	bool isStartTile(Tile* const tile);
-	/// Loads a weapon that's lying on the XCOM-equipment Tile.
-	void loadGroundWeapon(BattleItem* const item);
 	/// Places a BattleItem on a Soldier based on that Soldier's equipment-layout.
-	void placeLayout(BattleItem* const item);
+	void placeLayout(
+			BattleItem* const it,
+			const RuleInventory* const grdRule);
+	/// Loads a weapon that's lying on the XCOM-equipment Tile.
+	void loadGroundWeapon(
+			BattleItem* const it,
+			const RuleInventory* const grdRule);
 
 	/// Sets XCOM Soldiers' combat-clothing style - ie. spritesheets & paperdolls.
 	void setTacticalSprites() const;
 
 	/// Places a BattleItem on a BattleUnit and adds it to the battlescape.
 	bool placeGeneric(
-			BattleItem* const item,
+			BattleItem* const it,
 			BattleUnit* const unit) const;
 
 	/// Deploys the aLiens according to a specified RuleAlienDeployment.
@@ -208,7 +213,7 @@ private:
 			int y,
 			MapBlock* const block);
 	/// Drills tunnels between MapBlocks.
-	void drillModules(
+	void drill(
 			TunnelData* const info,
 			const std::vector<SDL_Rect*>* const rects,
 			MapDirection dir);
@@ -247,9 +252,9 @@ private:
 		void setAlienItemlevel(int alienItemLevel);
 
 		/// Runs the Generator.
-		void run();
+		void stage();
 		/// Sets up the next stage (for Cydonia/2-stage missions).
-		void nextStage();
+		void stage2();
 
 		/// Generates a fake battlescape for a Craft's or Base's soldier-inventory.
 		void runFakeInventory(

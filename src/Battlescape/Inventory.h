@@ -87,19 +87,19 @@ private:
 			int* y) const;
 	/// Moves an item to a specified slot.
 	void moveItem(
-			BattleItem* const item,
+			BattleItem* const it,
 			const RuleInventory* const inRule,
 			int x = 0,
 			int y = 0);
 	/// Attempts to place an item in an inventory-section.
 	bool fitItem(
 			const RuleInventory* const inRule,
-			BattleItem* const item,
+			BattleItem* const it,
 			bool test = false);
 	/// Checks if two items can be stacked with one another.
 	bool canStack(
-			const BattleItem* const itemA,
-			const BattleItem* const itemB);
+			const BattleItem* const itA,
+			const BattleItem* const itB);
 
 
 	public:
@@ -138,12 +138,12 @@ private:
 		void setSelectedUnitInventory(BattleUnit* const unit);
 
 		/// Sets the currently selected-item.
-		void setSelectedItem(BattleItem* const item = nullptr);
+		void setSelectedItem(BattleItem* const it = nullptr);
 		/// Gets the currently selected-item.
 		BattleItem* getSelectedItem() const;
 
 		/// Sets the mouse-over item.
-		void setMouseOverItem(BattleItem* const item = nullptr);
+		void setMouseOverItem(BattleItem* const it = nullptr);
 		/// Gets the mouse-over item.
 		BattleItem* getMouseOverItem() const;
 
@@ -153,7 +153,7 @@ private:
 		/// Checks for item-overlap.
 		static bool isOverlap(
 				BattleUnit* const unit,
-				const BattleItem* const item,
+				const BattleItem* const it,
 				const RuleInventory* const inRule,
 				int x = 0,
 				int y = 0);

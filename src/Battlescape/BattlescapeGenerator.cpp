@@ -261,7 +261,7 @@ void BattlescapeGenerator::setAlienItemlevel(int alienItemLevel)
  * Starts the Generator.
  * @note This fills the SavedBattleGame with data.
  */
-void BattlescapeGenerator::run()
+void BattlescapeGenerator::stage()
 {
 	_unitSequence = BattleUnit::MAX_SOLDIER_ID; // geoscape Soldier IDs shall stay below this number
 
@@ -456,7 +456,7 @@ void BattlescapeGenerator::run()
 /**
  * Re-initializes an existing SavedBattleGame for a next-stage tactical battle.
  */
-void BattlescapeGenerator::nextStage()
+void BattlescapeGenerator::stage2()
 {
 	_battleSave->resetTurnCounter();
 
@@ -594,8 +594,8 @@ void BattlescapeGenerator::nextStage()
 		}
 		else if ((*i)->getBodyUnit() != nullptr || (*i)->getRules()->isRecoverable() == true)
 		{
-			if ((*i)->isLoad() == false)
-			{
+			if ((*i)->isLoad() == false)	// NOTE: isLoad could be determined if an item's owner and tile are both null
+			{								// but it depends on how items are assigned to tiles during the stage turnover.
 				if ((*i)->getTile() != nullptr)
 				{
 					(*i)->setFuse(-1);
@@ -1135,12 +1135,12 @@ void BattlescapeGenerator::deployXcom() // private.
 
 
 	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
+	BattleItem* it;
 
 	if (_craft != nullptr) // UFO or Base Assault or Craft-equip.
 	{
 		//Log(LOG_INFO) << "";
 		//Log(LOG_INFO) << ". . add craft items for UFO or Base Assault, or Craft-equip";
-		BattleItem* item;
 		for (std::map<std::string, int>::const_iterator // Add items that are in the Craft.
 				i  = _craft->getCraftItems()->getContents()->begin();
 				i != _craft->getCraftItems()->getContents()->end();
@@ -1153,11 +1153,11 @@ void BattlescapeGenerator::deployXcom() // private.
 					++j)
 			{
 				//Log(LOG_INFO) << ". . . . addItem() to _tileEquipt iter= " << (j + 1);
-				item = new BattleItem(
-									_rules->getItemRule(i->first),
-									_battleSave->getCanonicalBattleId());
-				item->setInventorySection(grdRule);
-				_tileEquipt->addItem(item);
+				it = new BattleItem(
+								_rules->getItemRule(i->first),
+								_battleSave->getCanonicalBattleId());
+				it->setInventorySection(grdRule);
+				_tileEquipt->addItem(it);
 			}
 		}
 		//Log(LOG_INFO) << ". . addCraftItems DONE";
@@ -1166,7 +1166,6 @@ void BattlescapeGenerator::deployXcom() // private.
 	{
 		//Log(LOG_INFO) << "";
 		//Log(LOG_INFO) << ". . add items for Base Defense, or Base-equip";
-		BattleItem* item;
 
 		// Add only items in Craft that are at the Base for skirmish mode; ie.
 		// Do NOT add items from the Base itself in skirmish mode.
@@ -1205,11 +1204,11 @@ void BattlescapeGenerator::deployXcom() // private.
 									++j)
 							{
 								//Log(LOG_INFO) << ". . . . . addItem() to _tileEquipt iter= " << (j + 1);
-								item = new BattleItem(
-													itRule,
-													_battleSave->getCanonicalBattleId());
-								item->setInventorySection(grdRule);
-								_tileEquipt->addItem(item);
+								it = new BattleItem(
+												itRule,
+												_battleSave->getCanonicalBattleId());
+								it->setInventorySection(grdRule);
+								_tileEquipt->addItem(it);
 							}
 
 							if (_isFakeInventory == false)
@@ -1251,11 +1250,11 @@ void BattlescapeGenerator::deployXcom() // private.
 							++k)
 					{
 						//Log(LOG_INFO) << ". . . . . . addItem() to _tileEquipt iter= " << (k + 1);
-						item = new BattleItem(
-											_rules->getItemRule(j->first),
-											_battleSave->getCanonicalBattleId());
-						item->setInventorySection(grdRule);
-						_tileEquipt->addItem(item);
+						it = new BattleItem(
+										_rules->getItemRule(j->first),
+										_battleSave->getCanonicalBattleId());
+						it->setInventorySection(grdRule);
+						_tileEquipt->addItem(it);
 					}
 				}
 			}
@@ -1281,7 +1280,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			&& (*i)->getRules()->getBattleType() != BT_AMMO)
 		{
 			//Log(LOG_INFO) << ". . place " << (*i)->getRules()->getType();
-			placeLayout(*i);
+			placeLayout(*i, grdRule);
 		}
 	}
 
@@ -1297,7 +1296,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			&& (*i)->getRules()->getBattleType() == BT_AMMO)
 		{
 			//Log(LOG_INFO) << ". . . place " << (*i)->getRules()->getType();
-			placeLayout(*i);
+			placeLayout(*i, grdRule);
 		}
 	}
 	//Log(LOG_INFO) << ". placeLayout all DONE";
@@ -1318,7 +1317,7 @@ void BattlescapeGenerator::deployXcom() // private.
 //			&& (*i)->getRules()->getBattleType() == BT_MELEE
 		{
 			//Log(LOG_INFO) << ". . load " << (*i)->getRules()->getType();
-			loadGroundWeapon(*i);
+			loadGroundWeapon(*i, grdRule);
 		}
 	}
 
@@ -1356,7 +1355,7 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>* veh
 	//Log(LOG_INFO) << "bGen::prepareBaseDefenseVehicles()";
 
 	for (std::vector<Craft*>::const_iterator // add Vehicles that are in Crafts at the Base.
-			i = _base->getCrafts()->begin();
+			i  = _base->getCrafts()->begin();
 			i != _base->getCrafts()->end();
 			++i)
 	{
@@ -1365,7 +1364,7 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>* veh
 		{
 			//Log(LOG_INFO) << ". . is based";
 			for (std::vector<Vehicle*>::const_iterator
-					j = (*i)->getVehicles()->begin();
+					j  = (*i)->getVehicles()->begin();
 					j != (*i)->getVehicles()->end();
 					++j)
 			{
@@ -1381,7 +1380,7 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>* veh
 
 	ItemContainer* const baseStores (_base->getStorageItems());
 	for (std::map<std::string, int>::const_iterator // add Vehicles in Base's stores.
-			i = baseStores->getContents()->begin();
+			i  = baseStores->getContents()->begin();
 			i != baseStores->getContents()->end();
 			)
 	{
@@ -1587,7 +1586,7 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 		const int unitSize (unit->getArmor()->getSize());
 
 		for (std::vector<std::vector<int>>::const_iterator
-				i = _craft->getRules()->getUnitLocations().begin();
+				i  = _craft->getRules()->getUnitLocations().begin();
 				i != _craft->getRules()->getUnitLocations().end();
 				++i)
 		{
@@ -1698,38 +1697,17 @@ bool BattlescapeGenerator::isStartTile(Tile* const tile) // private.
 }
 
 /**
- * Loads a weapon on the equipment Tile.
- * @note Helper for deployXcom().
- * @param item - pointer to a BattleItem
- */
-void BattlescapeGenerator::loadGroundWeapon(BattleItem* const item) // private.
-{
-	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
-	for (std::vector<BattleItem*>::const_iterator
-			i  = _tileEquipt->getInventory()->begin();
-			i != _tileEquipt->getInventory()->end();
-			++i)
-	{
-		if ((*i)->getInventorySection() == grdRule
-			&& item->setAmmoItem(*i) == true)
-		{
-			//Log(LOG_INFO) << ". . . " << item->getRules()->getType() << " loaded w/ " << (*i)->getRules()->getType();
-			return;
-		}
-	}
-}
-
-/**
  * Places an item on an xCom Soldier based on his/her equipment-layout.
- * @param item - pointer to a BattleItem
+ * @param it - pointer to a BattleItem
  */
-void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
+void BattlescapeGenerator::placeLayout( // private.
+		BattleItem* const it,
+		const RuleInventory* const grdRule)
 {
 	//Log(LOG_INFO) << "placeLayout item " << item->getRules()->getType();
-	const RuleInventory* const grdRule (_rules->getInventoryRule(ST_GROUND));
-	std::string loadType;
+	std::string stLoad;
 
-	bool loaded;
+	bool go;
 	for (std::vector<BattleUnit*>::const_iterator
 			i  = _unitList->begin();
 			i != _unitList->end();
@@ -1745,54 +1723,77 @@ void BattlescapeGenerator::placeLayout(BattleItem* const item) // private.
 					++j)
 			{
 				//Log(LOG_INFO) << ". . iterate layout items";
-				if ((*j)->getItemType() == item->getRules()->getType()
+				if ((*j)->getItemType() == it->getRules()->getType()
 					&& (*i)->getItem(
 								(*j)->getLayoutSection(),
 								(*j)->getSlotX(),
 								(*j)->getSlotY()) == nullptr)
 				{
 					//Log(LOG_INFO) << ". . . type match!";
-					loadType = (*j)->getAmmoType();
-					if (loadType.empty() == true)
-						loaded = true;
-					else
+					stLoad = (*j)->getAmmoType();
+					if (stLoad.empty() == false)
 					{
-						loaded = false;
+						go = false;
 						for (std::vector<BattleItem*>::const_iterator
 								k  = _tileEquipt->getInventory()->begin();
 								k != _tileEquipt->getInventory()->end();
 								++k)
 						{
 							if ((*k)->getInventorySection() == grdRule
-								&& (*k)->getRules()->getType() == loadType
-								&& item->setAmmoItem(*k) == true)
+								&& (*k)->getRules()->getType() == stLoad
+								&& it->setAmmoItem(*k) == true)
 							{
-								loaded = true;
+								go = true;
 								break;
 							}
 						}
 					}
+					else
+						go = true;
 
-					if (loaded == true)
+					if (go == true)
 					{
 						//Log(LOG_INFO) << ". . . . PLACED";
-						item->changeOwner(*i);
-						item->setInventorySection(_rules->getInventory((*j)->getLayoutSection()));
-						item->setSlotX((*j)->getSlotX());
-						item->setSlotY((*j)->getSlotY());
+						it->changeOwner(*i);
+						it->setInventorySection(_rules->getInventory((*j)->getLayoutSection()));
+						it->setSlotX((*j)->getSlotX());
+						it->setSlotY((*j)->getSlotY());
 
-						switch (item->getRules()->getBattleType())
+						switch (it->getRules()->getBattleType())
 						{
 							case BT_GRENADE:
 							case BT_PROXYGRENADE:
 							case BT_FLARE:
 								if (Options::includePrimeStateInSavedLayout == true)
-									item->setFuse((*j)->getFuse());
+									it->setFuse((*j)->getFuse());
 						}
 					}
 					return;
 				}
 			}
+		}
+	}
+}
+
+/**
+ * Loads a weapon on the equipment Tile.
+ * @note Helper for deployXcom().
+ * @param it - pointer to a BattleItem
+ */
+void BattlescapeGenerator::loadGroundWeapon( // private.
+		BattleItem* const it,
+		const RuleInventory* const grdRule)
+{
+	for (std::vector<BattleItem*>::const_iterator
+			i  = _tileEquipt->getInventory()->begin();
+			i != _tileEquipt->getInventory()->end();
+			++i)
+	{
+		if ((*i)->getInventorySection() == grdRule
+			&& it->setAmmoItem(*i) == true)
+		{
+			//Log(LOG_INFO) << ". . . " << item->getRules()->getType() << " loaded w/ " << (*i)->getRules()->getType();
+			return;
 		}
 	}
 }
@@ -1868,12 +1869,12 @@ void BattlescapeGenerator::setTacticalSprites() const // private.
 /**
  * Places an item on an xCom soldier (auto-equip ONLY). kL_note: I don't use that part.
  * Or to an xCom tank, also adds items & terrorWeapons to aLiens, deployAliens()!
- * @param item - pointer to a BattleItem
- * @param unit - pointer to a BattleUnit
+ * @param it	- pointer to a BattleItem
+ * @param unit	- pointer to a BattleUnit
  * @return, true if item was placed
  */
 bool BattlescapeGenerator::placeGeneric( // private.
-		BattleItem* const item,
+		BattleItem* const it,
 		BattleUnit* const unit) const
 {
 	int placed (ItemPlacedType::FAILED);
@@ -1885,10 +1886,10 @@ bool BattlescapeGenerator::placeGeneric( // private.
 		* const rhWeapon (unit->getItem(ST_RIGHTHAND)),
 		* const lhWeapon (unit->getItem(ST_LEFTHAND));
 
-	const RuleItem* const itRule (item->getRules());
+	const RuleItem* const itRule (it->getRules());
 	if (itRule->isFixed() == true)
 	{
-		item->setInventorySection(rhRule);
+		it->setInventorySection(rhRule);
 		placed = ItemPlacedType::SUCCESS;
 /*		if (rhWeapon == nullptr) // not needed at present.
 		{
@@ -1909,14 +1910,14 @@ bool BattlescapeGenerator::placeGeneric( // private.
 			case BT_MELEE:
 				if (rhWeapon == nullptr)
 				{
-					item->setInventorySection(rhRule);
+					it->setInventorySection(rhRule);
 					placed = ItemPlacedType::SUCCESS;
 					break;
 				}
 
 				if (lhWeapon == nullptr)
 				{
-					item->setInventorySection(lhRule);
+					it->setInventorySection(lhRule);
 					placed = ItemPlacedType::SUCCESS;
 					break;
 				}
@@ -1924,7 +1925,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
 			case BT_AMMO:
 				if (rhWeapon != nullptr
 					&& rhWeapon->getAmmoItem() == nullptr
-					&& rhWeapon->setAmmoItem(item) == true)
+					&& rhWeapon->setAmmoItem(it) == true)
 				{
 //					item->setInventorySection(rhRule);
 					placed = ItemPlacedType::SUCCESS_LOAD;
@@ -1933,7 +1934,7 @@ bool BattlescapeGenerator::placeGeneric( // private.
 
 				if (lhWeapon != nullptr
 					&& lhWeapon->getAmmoItem() == nullptr
-					&& lhWeapon->setAmmoItem(item) == true)
+					&& lhWeapon->setAmmoItem(it) == true)
 				{
 //					item->setInventorySection(lhRule);
 					placed = ItemPlacedType::SUCCESS_LOAD;
@@ -1958,13 +1959,13 @@ bool BattlescapeGenerator::placeGeneric( // private.
 							++j)
 					{
 						if (Inventory::isOverlap(
-											unit, item, *i,
+											unit, it, *i,
 											j->x, j->y) == false
 							&& (*i)->fitItemInSlot(itRule, j->x, j->y) == true)
 						{
-							item->setInventorySection(*i);
-							item->setSlotX(j->x);
-							item->setSlotY(j->y);
+							it->setInventorySection(*i);
+							it->setSlotX(j->x);
+							it->setSlotY(j->y);
 							placed = ItemPlacedType::SUCCESS;
 						}
 					}
@@ -1976,10 +1977,10 @@ bool BattlescapeGenerator::placeGeneric( // private.
 	switch (placed)
 	{
 		case ItemPlacedType::SUCCESS:
-			item->changeOwner(unit);
+			it->changeOwner(unit);
 			// no break.
 		case ItemPlacedType::SUCCESS_LOAD:
-			_itemList->push_back(item);
+			_itemList->push_back(it);
 			return true;
 	}
 	return false; // If not placed the item will be deleted.
@@ -2830,7 +2831,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 	std::map<int, bool> conditions; // an array to track each directive's success/failure
 
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _terrainRule->getMapDataSets()->begin();
+			i  = _terrainRule->getMapDataSets()->begin();
 			i != _terrainRule->getMapDataSets()->end();
 			++i)
 	{
@@ -2851,7 +2852,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 	bool success;
 
 	for (std::vector<RuleMapScript*>::const_iterator // process script-directives
-			i = directives->begin();
+			i  = directives->begin();
 			i != directives->end();
 			++i)
 	{
@@ -2868,7 +2869,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 		if ((*i)->getConditions()->empty() == false) // if this command runs conditionally on the failures or successes of previous commands
 		{
 			for (std::vector<int>::const_iterator // compare the corresponding entries in the success/failure vector
-					j = (*i)->getConditions()->begin();
+					j  = (*i)->getConditions()->begin();
 					j != (*i)->getConditions()->end();
 					++j)
 			{
@@ -3027,10 +3028,10 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 						break;
 
 					case MSD_DIGTUNNEL:
-						drillModules(
-								(*i)->getTunnelData(),
-								(*i)->getRects(),
-								(*i)->getDirection());
+						drill(
+							(*i)->getTunnelData(),
+							(*i)->getRects(),
+							(*i)->getDirection());
 						success = true; // this command is fail-proof
 						break;
 
@@ -3055,24 +3056,24 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 
 					case MSD_CHECKBLOCK:
 						for (std::vector<SDL_Rect*>::const_iterator
-								k = (*i)->getRects()->begin();
+								k  = (*i)->getRects()->begin();
 								k != (*i)->getRects()->end() && success == false;
 								++k)
 						{
 							for (
-									x = (*k)->x;
+									x  = (*k)->x;
 									x != (*k)->x + (*k)->w && x != _mapsize_x / 10 && success == false;
 									++x)
 							{
 								for (
-										y = (*k)->y;
+										y  = (*k)->y;
 										y != (*k)->y + (*k)->h && y != _mapsize_y / 10 && success == false;
 										++y)
 								{
 									if ((*i)->getGroups()->empty() == false)
 									{
 										for (std::vector<int>::const_iterator
-												z = (*i)->getGroups()->begin();
+												z  = (*i)->getGroups()->begin();
 												z != (*i)->getGroups()->end() && success == false;
 												++z)
 										{
@@ -3083,7 +3084,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 									else if ((*i)->getBlocks()->empty() == false)
 									{
 										for (std::vector<int>::const_iterator
-												z = (*i)->getBlocks()->begin();
+												z  = (*i)->getBlocks()->begin();
 												z != (*i)->getBlocks()->end() && success == false;
 												++z)
 										{
@@ -3147,7 +3148,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 	if (ufoTerrain != nullptr && ufoBlocks.empty() == false)
 	{
 		for (std::vector<MapDataSet*>::const_iterator
-				i = ufoTerrain->getMapDataSets()->begin();
+				i  = ufoTerrain->getMapDataSets()->begin();
 				i != ufoTerrain->getMapDataSets()->end();
 				++i)
 		{
@@ -3197,7 +3198,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 	{
 		const RuleTerrain* const craftTerrain (_craft->getRules()->getTacticalTerrain());
 		for (std::vector<MapDataSet*>::const_iterator
-				i = craftTerrain->getMapDataSets()->begin();
+				i  = craftTerrain->getMapDataSets()->begin();
 				i != craftTerrain->getMapDataSets()->end();
 				++i)
 		{
@@ -3298,7 +3299,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 {
 	// Add modules based on the Base's constructed floorplan.
 	for (std::vector<BaseFacility*>::const_iterator
-			i = _base->getFacilities()->begin();
+			i  = _base->getFacilities()->begin();
 			i != _base->getFacilities()->end();
 			++i)
 	{
@@ -3363,13 +3364,13 @@ void BattlescapeGenerator::generateBaseMap() // private.
 //						if (floorLevel < 0) floorLevel = 0; // safety.
 
 						for (int
-								k = x * 10;
-								k != (x + 1) * 10;
+								k  = 10 *  x;
+								k != 10 * (x + 1);
 								++k)
 						{
 							for (int
-									l = y * 10;
-									l != (y + 1) * 10;
+									l  = 10 *  y;
+									l != 10 * (y + 1);
 									++l)
 							{
 								if (((k + l) & 1) == 0) // use only every other tile giving a checkerboard pattern
@@ -3480,12 +3481,12 @@ void BattlescapeGenerator::clearModule( // private.
 			++z)
 	{
 		for (int
-				dx = x;
+				dx  = x;
 				dx != x + sizeX;
 				++dx)
 		{
 			for (int
-					dy = y;
+					dy  = y;
 					dy != y + sizeY;
 					++dy)
 			{
@@ -3514,12 +3515,12 @@ void BattlescapeGenerator::loadNodes() // private.
 		blocks_y (static_cast<size_t>(_mapsize_y / 10));
 
 	for (size_t
-			y = 0u;
+			y  = 0u;
 			y != blocks_y;
 			++y)
 	{
 		for (size_t
-				x = 0u;
+				x  = 0u;
 				x != blocks_x;
 				++x)
 		{
@@ -3584,26 +3585,26 @@ void BattlescapeGenerator::attachNodeLinks() // private.
 			borSegs[3u] = _seg[x][y - 1u];
 
 		for (std::vector<int>::iterator
-				j = (*i)->getNodeLinks()->begin();
+				j  = (*i)->getNodeLinks()->begin();
 				j != (*i)->getNodeLinks()->end();
 				++j)
 		{
 			for (size_t
-					dir = 0u;
+					dir  = 0u;
 					dir != 4u;
 					++dir)
 			{
 				if (*j == borDirs[dir])
 				{
 					for (std::vector<Node*>::const_iterator
-							k = _battleSave->getNodes()->begin();
+							k  = _battleSave->getNodes()->begin();
 							k != _battleSave->getNodes()->end();
 							++k)
 					{
 						if ((*k)->getSegment() == borSegs[dir])
 						{
 							for (std::vector<int>::iterator
-									l = (*k)->getNodeLinks()->begin();
+									l  = (*k)->getNodeLinks()->begin();
 									l != (*k)->getNodeLinks()->end();
 									++l )
 							{
@@ -3695,13 +3696,13 @@ bool BattlescapeGenerator::selectPosition( // private.
 						//Log(LOG_INFO) << ". . . . Test add";
 						add = true;
 						for (int
-								xTest = x;
+								xTest  = x;
 								xTest != x + size_x;
 								++xTest)
 						{
 							//Log(LOG_INFO) << ". . . . . Test add X";
 							for (int
-									yTest = y;
+									yTest  = y;
 									yTest != y + size_y;
 									++yTest)
 							{
@@ -4007,7 +4008,7 @@ bool BattlescapeGenerator::addBlock( // private.
  * @param rects	- pointer to a vector of pointers defining the length/width of the tunnels themselves
  * @param dir	- the direction to drill (RuleMapScript.h)
  */
-void BattlescapeGenerator::drillModules( // private.
+void BattlescapeGenerator::drill( // private.
 		TunnelData* const info,
 		const std::vector<SDL_Rect*>* const rects,
 		MapDirection dir)
@@ -4254,7 +4255,7 @@ bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // pri
 	std::vector<std::pair<int,int>> deleted;
 
 	for (std::vector<SDL_Rect*>::const_iterator
-			i = script->getRects()->begin();
+			i  = script->getRects()->begin();
 			i != script->getRects()->end();
 			++i)
 	{
@@ -4284,7 +4285,7 @@ bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // pri
 					if (script->getGroups()->empty() == false)
 					{
 						for (std::vector<int>::const_iterator
-								j = script->getGroups()->begin();
+								j  = script->getGroups()->begin();
 								j != script->getGroups()->end();
 								++j)
 							if (block->isInGroup(*j) == true)
@@ -4297,7 +4298,7 @@ bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // pri
 					else if (script->getBlocks()->empty() == false)
 					{
 						for (std::vector<int>::const_iterator
-								j = script->getBlocks()->begin();
+								j  = script->getBlocks()->begin();
 								j != script->getBlocks()->end();
 								++j)
 							if (*j < static_cast<int>(_terrainRule->getMapBlocks()->size()))
@@ -4319,7 +4320,7 @@ bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // pri
 
 	bool success (false);
 	for (std::vector<std::pair<int,int>>::const_iterator
-			i = deleted.begin();
+			i  = deleted.begin();
 			i != deleted.end();
 			++i)
 	{
@@ -4338,12 +4339,12 @@ bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // pri
 			y1 (y + static_cast<size_t>(_blocks[x][y]->getSizeY() / 10));
 
 		for (size_t
-				dx = x;
+				dx  = x;
 				dx != x1;
 				++dx)
 		{
 			for (size_t
-					dy = y;
+					dy  = y;
 					dy != y1;
 					++dy)
 			{

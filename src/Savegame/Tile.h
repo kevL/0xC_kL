@@ -304,7 +304,7 @@ private:
 
 		/// Adds a specified BattleItem to the Tile.
 		void addItem(BattleItem* const it);
-		/// Removes a sepcified BattleItem from the Tile.
+		/// Removes a specified BattleItem from the Tile.
 		void removeItem(BattleItem* const it);
 
 		/// Gets corpse-sprite.

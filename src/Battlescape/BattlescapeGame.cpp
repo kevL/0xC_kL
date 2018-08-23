@@ -165,12 +165,14 @@ BattlescapeGame::BattlescapeGame(
 //	_playerAction.targeting = false;
 	_playerAction.clearAction();
 
-	_universalFist = new BattleItem(
-								getRuleset()->getItemRule("STR_FIST"),
-								battleSave->getCanonicalBattleId());
 	_alienPsi = new BattleItem(
 							getRuleset()->getItemRule("ALIEN_PSI_WEAPON"),
-							battleSave->getCanonicalBattleId());
+							nullptr,
+							-1); //battleSave->getCanonicalBattleId());
+	_universalFist = new BattleItem(
+							getRuleset()->getItemRule("STR_FIST"),
+							nullptr,
+							-1); //battleSave->getCanonicalBattleId());
 
 	for (std::vector<BattleUnit*>::const_iterator	// NOTE: This stuff needs to be done *after*
 			i = _battleSave->getUnits()->begin();	// all the tactical-related class-objects
@@ -1155,7 +1157,7 @@ void BattlescapeGame::handleNonTargetAction()
 				else
 				{
 					const Position& pos (_playerAction.actor->getPosition());
-					dropItem(_playerAction.weapon, pos, DROP_FROMINVENTORY);
+					dropItem(_playerAction.weapon, pos);
 
 					_playerAction.actor->setActiveHand(_playerAction.actor->deterActiveHand());
 					getMap()->cacheUnitSprite(_playerAction.actor);
@@ -2449,14 +2451,14 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 					{
 						item = unit->getItem(ST_RIGHTHAND);
 						if (item != nullptr)
-							dropItem(item, unit->getPosition(), DROP_FROMINVENTORY);
+							dropItem(item, unit->getPosition());
 					}
 
 					if (RNG::percent(75) == true)
 					{
 						item = unit->getItem(ST_LEFTHAND);
 						if (item != nullptr)
-							dropItem(item, unit->getPosition(), DROP_FROMINVENTORY);
+							dropItem(item, unit->getPosition());
 					}
 
 					unit->setCacheInvalid();
@@ -3098,17 +3100,13 @@ void BattlescapeGame::requestEndTurn()
  * if it's a light-source.
  * @param item		- pointer to a BattleItem
  * @param pos		- reference to a Position to place the item
- * @param dropType	- how to handle this drop (BattlescapeGame.h) (default DROP_STANDARD)
- *					  0 - do nothing special here
- *					  1 - clear the owner (not used currently)
- *					  2 - clear the owner & remove the item from dropper's inventory
- *					  3 - as a newly created item on the battlefield that needs
- *						  to be added to the battleSave's item-list
+ * @param create	- true if the item has just been created and need to be
+ *                    added to the battleitems vector (default false)
  */
 void BattlescapeGame::dropItem(
 		BattleItem* const item,
 		const Position& pos,
-		DropType dropType)
+		bool create)
 {
 	if (item->getRules()->isFixed() == false)
 	{
@@ -3121,16 +3119,8 @@ void BattlescapeGame::dropItem(
 			if (item->getBodyUnit() != nullptr)
 				item->getBodyUnit()->setPosition(pos);
 
-			switch (dropType)
-			{
-//				case DROP_STANDARD:
-//					break;
-				case DROP_CLEAROWNER: item->setOwner();
-					break;
-				case DROP_FROMINVENTORY: item->changeOwner();
-					break;
-				case DROP_CREATE: _battleSave->getItems()->push_back(item);
-			}
+			if (create == true)
+				_battleSave->getItems()->push_back(item);
 
 			getTileEngine()->applyGravity(tile);
 
@@ -3156,13 +3146,12 @@ void BattlescapeGame::dropUnitInventory(BattleUnit* const unit)
 	{
 		bool calcFoV (false);
 		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getInventory()->begin();
+				i  = unit->getInventory()->begin();
 				i != unit->getInventory()->end();
 				++i)
 		{
 			if ((*i)->getRules()->isFixed() == false)
 			{
-				(*i)->setOwner();
 				(*i)->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
 				tile->addItem(*i);
 
@@ -3606,12 +3595,12 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 			inTypes.push_back(getRuleset()->getInventoryRule(ST_BACKPACK));
 
 			for (std::vector<const RuleInventory*>::const_iterator
-					i = inTypes.begin();
+					i  = inTypes.begin();
 					i != inTypes.end() && placed == ItemPlacedType::FAILED;
 					++i)
 			{
 				for (std::vector<InSlot>::const_iterator
-						j = (*i)->getSlots()->begin();
+						j  = (*i)->getSlots()->begin();
 						j != (*i)->getSlots()->end() && placed == ItemPlacedType::FAILED;
 						++j)
 				{

@@ -79,7 +79,8 @@ BattleItem::BattleItem(
 
 		case BT_FIREARM: // Firearms w/out defined ammo ARE the ammo.
 			if (_itRule->getAcceptedLoadTypes()->empty() == false)
-				break; // no break;
+				break;
+			// no break;
 		case BT_MELEE: // Melee weapons do NOT require ammo.
 			_ammoItem = this;
 	}
@@ -289,7 +290,7 @@ bool BattleItem::setAmmoItem(
  */
 bool BattleItem::selfPowered() const
 {
-	return _ammoItem == this;
+	return (_ammoItem == this);
 }
 
 /**
@@ -321,10 +322,44 @@ void BattleItem::spendBullet(
 }
 
 /**
- * Removes this BattleItem from a previous owner if applicable and moves it to
- * another owner if applicable.
+ * Either (a) puts this BattleItem in a specified unit's inventory or (b)
+ * removes it from its current owner's inventory.
+ * IMPORTANT: The owner of an item is either carrying the item OR is its
+ * last possessor; that is ownership is not cleared when the item is thrown or
+ * dropped (to track responsibility for grenade-explosions). Ownership changes
+ * only when an item is acquired. Check the '_tile' pointer for NULL to
+ * determine if an item is actually carried (or cycle through unit-inventory
+ * searching for the item).
+ * NOTE: Loads do not have an owner or a tile.
  * @param unit - pointer to a BattleUnit (default nullptr)
  */
+void BattleItem::changeOwner(BattleUnit* const unit)
+{
+	if (unit != nullptr)
+	{
+		_owner = unit;
+		_owner->getInventory()->push_back(this);
+	}
+	else if (_owner != nullptr)
+	{
+		for (std::vector<BattleItem*>::const_iterator
+				i  = _owner->getInventory()->begin();
+				i != _owner->getInventory()->end();
+				++i)
+		{
+			if (*i == this)
+			{
+				_owner->getInventory()->erase(i);
+				break;
+			}
+		}
+	}
+}
+
+/**
+ * Clears this BattleItem from its owner and assigns it to a different unit.
+ * @param unit - pointer to a BattleUnit (default nullptr)
+ *
 void BattleItem::changeOwner(BattleUnit* const unit)
 {
 	if (_owner != nullptr)
@@ -344,7 +379,7 @@ void BattleItem::changeOwner(BattleUnit* const unit)
 
 	if ((_owner = unit) != nullptr)
 		_owner->getInventory()->push_back(this);
-}
+} */
 
 /**
  * Sets this BattleItem's owner.

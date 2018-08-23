@@ -477,8 +477,8 @@ void Inventory::mouseOver(Action* action, State* state)
 				if (inRule->getCategory() == IC_GROUND)
 					x += _grdOffset;
 
-				BattleItem* const item (_selUnit->getItem(inRule, x,y));
-				setMouseOverItem(item);
+				BattleItem* const it (_selUnit->getItem(inRule, x,y));
+				setMouseOverItem(it);
 			}
 		}
 		else
@@ -959,59 +959,61 @@ RuleInventory* Inventory::getSlotAtCursor( // private.
  * @note Any required TU-checks and/or expenditures need to be done before
  * calling this function (although this adds the TU-weight-penalty for picking
  * an item up from the ground).
- * @param item		- pointer to a BattleItem (item to move)
- * @param inRule	- pointer to RuleInventory (section to move @a item to)
+ * @param it		- pointer to a BattleItem (item to move)
+ * @param inRule	- pointer to RuleInventory (section to move @a it to)
  * @param x			- x-position (default 0)
  * @param y			- y-position (default 0)
  */
 void Inventory::moveItem( // private.
-		BattleItem* const item,
+		BattleItem* const it,
 		const RuleInventory* const inRule,
 		int x,
 		int y)
 {
-	if (item->getInventorySection() != inRule) // handle item from/to ground, or unload a weapon
+	if (it->getInventorySection() != inRule) // handle item from/to ground, or unload a weapon
 	{
 		if (inRule->getCategory() == IC_GROUND) // set down onto Ground, or unload a weapon-clip to Ground in pre-battle
 		{
-			item->changeOwner(); // NOTE: Already done in case of unload() during pre-battle equip.
-			_selUnit->getUnitTile()->addItem(item);
+			it->changeOwner(); // NOTE: Already done in case of unload() during pre-battle equip.
+			_selUnit->getUnitTile()->addItem(it);
 
-			if (item->getBodyUnit() != nullptr) //&& item->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				item->getBodyUnit()->setPosition(_selUnit->getPosition());
+			if (it->getBodyUnit() != nullptr) //&& it->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+				it->getBodyUnit()->setPosition(_selUnit->getPosition());
 		}
-		else if (item->getInventorySection() == nullptr) // unload a weapon-clip to left hand
-			item->changeOwner(_selUnit);
-		else if (item->getInventorySection()->getCategory() == IC_GROUND) // pick up an item
+		else if (it->getInventorySection() == nullptr) // unload a weapon-clip to left hand
 		{
-			item->changeOwner(_selUnit);
+			it->changeOwner(_selUnit);
+		}
+		else if (it->getInventorySection()->getCategory() == IC_GROUND) // pick up an item
+		{
+			it->changeOwner(_selUnit);
 
-			_selUnit->getUnitTile()->removeItem(item);
+			_selUnit->getUnitTile()->removeItem(it);
 
-			if (item->getBodyUnit() != nullptr) //&& item->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				item->getBodyUnit()->setPosition(Position(-1,-1,-1));
+			if (it->getBodyUnit() != nullptr) //&& it->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
+				it->getBodyUnit()->setPosition(Position(-1,-1,-1));
 
 			if (_tuMode == true) // To prevent units from picking up large objects and running around on the same turn with nearly full TU
-				_selUnit->setTu(_selUnit->getTu() - item->getRules()->getWeight()); // its weight becomes an extra tu-burden.
+				_selUnit->setTu(_selUnit->getTu() - it->getRules()->getWeight()); // its weight becomes an extra tu-burden.
 		}
 
-		item->setInventorySection(inRule); // above, or simply moving item from one section to another
+		it->setInventorySection(inRule); // above, or simply moving item from one section to another
 	}
-	item->setSlotX(x);
-	item->setSlotY(y);
+	it->setSlotX(x);
+	it->setSlotY(y);
 }
 
 /**
  * Attempts to place the item in an inventory section.
  * @param inRule	- pointer to where to place the item
- * @param item		- pointer to item to be placed
+ * @param it		- pointer to item to be placed
  * @param test		- true if only doing a test for tuCost, no move happens and
  *					  no check for overlaps is done (default false)
  * @return, true if the item can be successfully placed in the inventory
  */
 bool Inventory::fitItem( // private.
 		const RuleInventory* const inRule,
-		BattleItem* const item,
+		BattleItem* const it,
 		bool test)
 {
 	for (int
@@ -1024,24 +1026,24 @@ bool Inventory::fitItem( // private.
 				x <= inRule->getX() / RuleInventory::SLOT_W;
 				++x)
 		{
-			if (inRule->fitItemInSlot(item->getRules(), x,y))
+			if (inRule->fitItemInSlot(it->getRules(), x,y))
 			{
 				if (test == true) return true; // NOTE: Called by mouseOver() to get/set tuCost.
 
 				if (isOverlap(
 							_selUnit,
-							item,
+							it,
 							inRule,
 							x,y) == false)
 				{
 					if (_tuMode == false
-						|| _selUnit->expendTu(item->getInventorySection()->getCost(inRule)) == true)
+						|| _selUnit->expendTu(it->getInventorySection()->getCost(inRule)) == true)
 					{
 						// NOTE: Called only in mouseClick() and item will be from Ground.
-//						_stackLevel[static_cast<size_t>(item->getSlotX())]
-//								   [static_cast<size_t>(item->getSlotY())] -= 1;
+//						_stackLevel[static_cast<size_t>(it->getSlotX())]
+//								   [static_cast<size_t>(it->getSlotY())] -= 1;
 
-						moveItem(item, inRule, x,y);
+						moveItem(it, inRule, x,y);
 						arrangeGround();
 						drawItems();
 
@@ -1062,25 +1064,25 @@ bool Inventory::fitItem( // private.
 
 /**
  * Checks if two items can be stacked with one another.
- * @param itemA - first item
- * @param itemB - second item
+ * @param itA - first item
+ * @param itB - second item
  * @return, true if the items can be stacked on one another
  */
 bool Inventory::canStack( // private.
-		const BattleItem* const itemA,
-		const BattleItem* const itemB)
+		const BattleItem* const itA,
+		const BattleItem* const itB)
 {
-	return (itemA != nullptr && itemB != nullptr														// both items actually exist
-		&& itemA->getRules() == itemB->getRules()														// both items have the same ruleset
-		&& ((itemA->getAmmoItem() == nullptr && itemB->getAmmoItem() == nullptr)						// either they both have no ammo
-			|| (itemA->getAmmoItem() && itemB->getAmmoItem()												// or they both have ammo
-				&& itemA->getAmmoItem()->getRules() == itemB->getAmmoItem()->getRules()						// and the same ammo type
-				&& itemA->getAmmoItem()->getAmmoQuantity() == itemB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
-		&& itemA->getFuse() == itemB->getFuse()															// and both have the same fuse-setting
-		&& itemA->getBodyUnit() == nullptr && itemB->getBodyUnit() == nullptr							// and neither is a corpse or unconscious unit
-		&& itemA->getPainKillerQuantity() == itemB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
-		&& itemA->getHealQuantity() == itemB->getHealQuantity()
-		&& itemA->getStimulantQuantity() == itemB->getStimulantQuantity());
+	return (itA != nullptr && itB != nullptr														// both items actually exist
+		&& itA->getRules() == itB->getRules()														// both items have the same ruleset
+		&& ((itA->getAmmoItem() == nullptr && itB->getAmmoItem() == nullptr)						// either they both have no ammo
+			|| (itA->getAmmoItem() && itB->getAmmoItem()												// or they both have ammo
+				&& itA->getAmmoItem()->getRules() == itB->getAmmoItem()->getRules()						// and the same ammo type
+				&& itA->getAmmoItem()->getAmmoQuantity() == itB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
+		&& itA->getFuse() == itB->getFuse()															// and both have the same fuse-setting
+		&& itA->getBodyUnit() == nullptr && itB->getBodyUnit() == nullptr							// and neither is a corpse or unconscious unit
+		&& itA->getPainKillerQuantity() == itB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
+		&& itA->getHealQuantity() == itB->getHealQuantity()
+		&& itA->getStimulantQuantity() == itB->getStimulantQuantity());
 }
 
 /**
@@ -1200,7 +1202,7 @@ void Inventory::arrangeGround(int dir)
  * Checks if an item to be placed in a certain section-slot would overlap
  * another inventory item.
  * @param unit		- pointer to BattleUnit w/ inventory
- * @param item		- pointer to a BattleItem to be placed
+ * @param it		- pointer to a BattleItem to be placed
  * @param inRule	- pointer to a RuleInventory section
  * @param x			- x-position in section (default 0)
  * @param y			- y-position in section (default 0)
@@ -1208,7 +1210,7 @@ void Inventory::arrangeGround(int dir)
  */
 bool Inventory::isOverlap( // static.
 		BattleUnit* const unit,
-		const BattleItem* const item,
+		const BattleItem* const it,
 		const RuleInventory* const inRule,
 		int x,
 		int y)
@@ -1221,7 +1223,7 @@ bool Inventory::isOverlap( // static.
 				++i)
 		{
 			if ((*i)->getInventorySection() == inRule
-				&& (*i)->occupiesSlot(x,y, item) == true)
+				&& (*i)->occupiesSlot(x,y, it) == true)
 			{
 				return true;
 			}
@@ -1234,7 +1236,7 @@ bool Inventory::isOverlap( // static.
 				i != unit->getUnitTile()->getInventory()->end();
 				++i)
 		{
-			if ((*i)->occupiesSlot(x,y, item) == true)
+			if ((*i)->occupiesSlot(x,y, it) == true)
 				return true;
 		}
 	}
@@ -1266,13 +1268,13 @@ void Inventory::setSelectedUnitInventory(BattleUnit* const unit)
 
 /**
  * Changes the item currently grabbed by the player.
- * @param item - pointer to selected BattleItem (default nullptr)
+ * @param it - pointer to selected BattleItem (default nullptr)
  */
-void Inventory::setSelectedItem(BattleItem* const item)
+void Inventory::setSelectedItem(BattleItem* const it)
 {
-	if (item != nullptr && item->getRules()->isFixed() == false)
+	if (it != nullptr && it->getRules()->isFixed() == false)
 	{
-		_selItem = item;
+		_selItem = it;
 
 		if (_selItem->getInventorySection()->getCategory() == IC_GROUND)
 		{
@@ -1303,12 +1305,12 @@ BattleItem* Inventory::getSelectedItem() const
 
 /**
  * Changes the item currently under mouse-cursor.
- * @param item - pointer to a BattleItem (default nullptr)
+ * @param it - pointer to a BattleItem (default nullptr)
  */
-void Inventory::setMouseOverItem(BattleItem* const item)
+void Inventory::setMouseOverItem(BattleItem* const it)
 {
-	if (item != nullptr && item->getRules()->isFixed() == false)
-		_overItem = item;
+	if (it != nullptr && it->getRules()->isFixed() == false)
+		_overItem = it;
 	else
 		_overItem = nullptr;
 }
@@ -1324,7 +1326,8 @@ BattleItem* Inventory::getMouseOverItem() const
 
 /**
  * Unloads the selected weapon placing the gun on the right hand and the ammo
- * on the left hand - unless tuMode is false then drop its ammo to the ground.
+ * on the left hand. If '_tuMode' is false then the ammo may drop to the ground
+ * instead.
  * @return, true if a weapon is successfully unloaded
  */
 bool Inventory::unload()
@@ -1352,7 +1355,7 @@ bool Inventory::unload()
 	if (_tuMode == true)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _selUnit->getInventory()->begin();
+				i  = _selUnit->getInventory()->begin();
 				i != _selUnit->getInventory()->end();
 				++i)
 		{
@@ -1378,8 +1381,8 @@ bool Inventory::unload()
 	{
 		sectionLoad = ST_GROUND;
 
-		const BattleItem* const rtItem (_selUnit->getItem(ST_RIGHTHAND));
-		if (rtItem == nullptr || rtItem == _selItem)
+		const BattleItem* const itRight (_selUnit->getItem(ST_RIGHTHAND));
+		if (itRight == nullptr || itRight == _selItem)
 			sectionWeap = ST_RIGHTHAND;
 		else
 			sectionWeap = ST_GROUND;

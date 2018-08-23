@@ -111,16 +111,14 @@ private:
 		/// Sets turns until the BattleItem explodes.
 		void setFuse(int turn);
 
-		/// Clears the BattleItem from its previous owner and gives it to a different BattleUnit.
+		/// Adds or clears the BattleItem from a unit's inventory.
 		void changeOwner(BattleUnit* const unit = nullptr);
+		/// Clears the BattleItem from its owner and assigns it to a different unit.
+//		void changeOwner(BattleUnit* const unit = nullptr);
 		/// Sets the BattleItem's owner.
 		void setOwner(BattleUnit* const owner = nullptr);
 		/// Gets the BattleItem's owner.
 		BattleUnit* getOwner() const;
-		/// Sets the BattleItem's previous owner.
-		void setPriorOwner(BattleUnit* const ownerPre);
-		/// Gets the BattleItem's previous owner.
-		BattleUnit* getPriorOwner() const;
 
 		/// Gets the BattleItem's current Inventory section.
 		const RuleInventory* getInventorySection() const;

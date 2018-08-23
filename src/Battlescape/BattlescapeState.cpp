@@ -3797,7 +3797,7 @@ void BattlescapeState::finishBattle(
 		_battleSave->setTacticalType(nextStage);
 
 		BattlescapeGenerator bGen = BattlescapeGenerator(_game);
-		bGen.nextStage();
+		bGen.stage2();
 
 		_game->popState();
 		_game->pushState(new BriefingState());
@@ -3849,16 +3849,16 @@ void BattlescapeState::finishBattle(
 		else // insta-battle
 			debrief = true;
 
-		bool ironsave;
+		bool ironballs;
 		if (debrief == true)
 		{
 			_game->pushState(new DebriefingState());
-			ironsave = false;
+			ironballs = false;
 		}
 		else
-			ironsave = (_playSave->isIronman() == true);
+			ironballs = (_playSave->isIronman() == true);
 
-		if (ironsave == true)
+		if (ironballs == true)
 		{
 			_playSave->setBattleSave();
 			_game->pushState(new SaveGameState(

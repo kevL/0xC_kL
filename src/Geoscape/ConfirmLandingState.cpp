@@ -385,7 +385,7 @@ void ConfirmLandingState::btnYesClick(Action*)
 		throw Exception("ConfirmLandingState::btnYesClick() No mission available!");
 	}
 
-	bGen.run(); // <- DETERMINE ALL TACTICAL DATA. |<--|||
+	bGen.stage(); // <- DETERMINE ALL TACTICAL DATA. |<--|||
 
 	_game->pushState(new BriefingState(_craft));
 }

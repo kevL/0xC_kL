@@ -129,7 +129,7 @@ void ConfirmCydoniaState::btnYesClick(Action*)
 	}
 
 	bGen.setCraft(_craft);
-	bGen.run();
+	bGen.stage();
 
 	_game->pushState(new BriefingState(_craft));
 }

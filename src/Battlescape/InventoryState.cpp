@@ -912,16 +912,16 @@ void InventoryState::btnClearUnitClick(Action*)
 	if (_tuMode == false									// don't accept clicks in battlescape because this doesn't cost TU.
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse-grab has an item
 	{
-		std::vector<BattleItem*>* const equiptList (_unit->getInventory());
-		if (equiptList->empty() == false)
+		std::vector<BattleItem*>* const inList (_unit->getInventory());
+		if (inList->empty() == false)
 		{
 			_game->getResourcePack()->getSound("BATTLE.CAT", ResourcePack::ITEM_DROP)->play();
 
 			const RuleInventory* const grdRule (_game->getRuleset()->getInventoryRule(ST_GROUND));
 			Tile* const tile (_unit->getUnitTile());
 			for (std::vector<BattleItem*>::const_iterator
-					i = equiptList->begin();
-					i != equiptList->end();
+					i  = inList->begin();
+					i != inList->end();
 					++i)
 			{
 				(*i)->setFuse(-1);
@@ -929,7 +929,7 @@ void InventoryState::btnClearUnitClick(Action*)
 				(*i)->setInventorySection(grdRule);
 				tile->addItem(*i);
 			}
-			equiptList->clear();
+			inList->clear();
 
 			_inventoryPanel->arrangeGround();
 			_inventoryPanel->drawItems();

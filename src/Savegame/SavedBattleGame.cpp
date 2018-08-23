@@ -227,43 +227,43 @@ SavedBattleGame::~SavedBattleGame()
 	}
 
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _battleDataSets.begin();
+			i  = _battleDataSets.begin();
 			i != _battleDataSets.end();
 			++i)
 		(*i)->unloadData();
 
 	for (std::vector<Node*>::const_iterator
-			i = _nodes.begin();
+			i  = _nodes.begin();
 			i != _nodes.end();
 			++i)
 		delete *i;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _units.begin();
+			i  = _units.begin();
 			i != _units.end();
 			++i)
 		delete *i;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _items.begin();
+			i  = _items.begin();
 			i != _items.end();
 			++i)
 		delete *i;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _recoverGuaranteed.begin();
+			i  = _recoverGuaranteed.begin();
 			i != _recoverGuaranteed.end();
 			++i)
 		delete *i;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _recoverConditional.begin();
+			i  = _recoverConditional.begin();
 			i != _recoverConditional.end();
 			++i)
 		delete *i;
 
 	for (std::vector<BattleItem*>::const_iterator
-			i = _deletedProperty.begin();
+			i  = _deletedProperty.begin();
 			i != _deletedProperty.end();
 			++i)
 		delete *i;
@@ -489,13 +489,13 @@ void SavedBattleGame::load(
 	std::string st;
 
 	static const size_t LIST_TYPE (3u);
-	static const std::string itList_saved[LIST_TYPE]
+	static const std::string itLists_st[LIST_TYPE]
 	{
 		"items",
 		"recoverConditional",
 		"recoverGuaranteed"
 	};
-	std::vector<BattleItem*>* const itList_battle[LIST_TYPE]
+	std::vector<BattleItem*>* const itLists[LIST_TYPE]
 	{
 		&_items,
 		&_recoverConditional,
@@ -508,8 +508,8 @@ void SavedBattleGame::load(
 			++i)
 	{
 		for (YAML::const_iterator
-				j  = node[itList_saved[i]].begin();
-				j != node[itList_saved[i]].end();
+				j  = node[itLists_st[i]].begin();
+				j != node[itLists_st[i]].end();
 				++j)
 		{
 			st = (*j)["type"].as<std::string>();
@@ -540,10 +540,7 @@ void SavedBattleGame::load(
 				{
 					const int test ((*k)->getId());
 					if (test == owner)
-					{
-						it->setOwner(*k);
-						(*k)->getInventory()->push_back(it);
-					}
+						it->changeOwner(*k);
 					else if (test == uId)
 						it->setBodyUnit(*k);
 				}
@@ -562,7 +559,7 @@ void SavedBattleGame::load(
 						pos = Position(0,0,-1); // cf. BattleItem::save()
 				}
 
-				itList_battle[i]->push_back(it);
+				itLists[i]->push_back(it);
 			}
 			else Log(LOG_ERROR) << "Failed to load item " << st;
 		}
@@ -1890,7 +1887,7 @@ bool SavedBattleGame::allObjectivesDestroyed() const
 }
 
 /**
- * Sets the next available item-ID value.
+ * Sets the highest available item-ID.
  * @note Used only at the finish of loading a SavedBattleGame.
  * @note ItemIDs start at 0.
  */
@@ -1912,9 +1909,9 @@ void SavedBattleGame::setCanonicalBattleId()
 }
 
 /**
- * Gets the next available item-ID value.
+ * Gets the highest available item-ID value.
  * @note It is incremented by BattleItem() cTor.
- * @return, pointer to the highest available value
+ * @return, pointer to the highest available id#
  */
 int* SavedBattleGame::getCanonicalBattleId()
 {
