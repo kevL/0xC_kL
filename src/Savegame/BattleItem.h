@@ -40,9 +40,7 @@ class BattleItem
 {
 
 private:
-	bool
-		_isLoad,
-		_xcomProperty;
+	bool _xcomProperty;
 	int
 		_ammoQty,
 		_fuse,

@@ -167,12 +167,12 @@ BattlescapeGame::BattlescapeGame(
 
 	_alienPsi = new BattleItem(
 							getRuleset()->getItemRule("ALIEN_PSI_WEAPON"),
-							nullptr,
-							-1); //battleSave->getCanonicalBattleId());
+							nullptr, //battleSave->getCanonicalBattleId());
+							-1);
 	_universalFist = new BattleItem(
 							getRuleset()->getItemRule("STR_FIST"),
-							nullptr,
-							-1); //battleSave->getCanonicalBattleId());
+							nullptr, //battleSave->getCanonicalBattleId());
+							-1);
 
 	for (std::vector<BattleUnit*>::const_iterator	// NOTE: This stuff needs to be done *after*
 			i = _battleSave->getUnits()->begin();	// all the tactical-related class-objects
@@ -3100,7 +3100,7 @@ void BattlescapeGame::requestEndTurn()
  * if it's a light-source.
  * @param item		- pointer to a BattleItem
  * @param pos		- reference to a Position to place the item
- * @param create	- true if the item has just been created and need to be
+ * @param create	- true if the item has just been created and needs to be
  *                    added to the battleitems vector (default false)
  */
 void BattlescapeGame::dropItem(

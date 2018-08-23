@@ -1326,7 +1326,7 @@ BattleItem* Inventory::getMouseOverItem() const
 
 /**
  * Unloads the selected weapon placing the gun on the right hand and the ammo
- * on the left hand. If '_tuMode' is false then the ammo may drop to the ground
+ * on the left hand. If '_tuMode' is false then the load will drop to the ground
  * instead.
  * @return, true if a weapon is successfully unloaded
  */

@@ -57,7 +57,6 @@ BattleItem::BattleItem(
 		_painKiller(0),
 		_heal(0),
 		_stimulant(0),
-		_isLoad(false),
 		_xcomProperty(false)
 {
 	if (pId != nullptr)	// <- this is for SavedBattleGame to keep track
@@ -217,15 +216,6 @@ void BattleItem::setAmmoQuantity(int qty)
 }
 
 /**
- * Gets if the item is loaded in a weapon.
- * @return, true if loaded
- */
-bool BattleItem::isLoad() const
-{
-	return _isLoad;
-}
-
-/**
  * Gets this BattleItem's currently loaded ammo-item.
  * @return, pointer to BattleItem or nullptr
  *			- nullptr if this BattleItem has no ammo loaded OR is a clip on its own
@@ -249,13 +239,7 @@ bool BattleItem::setAmmoItem(
 	if (_ammoItem != this) // ie. if weapon requires a load ...
 	{
 		if (load == nullptr) // unload weapon ->
-		{
-			if (_ammoItem != nullptr)
-			{
-				_ammoItem->_isLoad = false;
-				_ammoItem = nullptr;
-			}
-		}
+			_ammoItem = nullptr;
 		else if (_ammoItem == nullptr)
 		{
 			for (std::vector<std::string>::const_iterator
@@ -266,7 +250,6 @@ bool BattleItem::setAmmoItem(
 				if (*i == load->getRules()->getType()) // load weapon ->
 				{
 					_ammoItem = load;
-					_ammoItem->_isLoad = true;
 					_ammoItem->_inventoryX =
 					_ammoItem->_inventoryY = 0;
 					if (init == false)
