@@ -268,7 +268,7 @@ bool BattleItem::setAmmoItem(
 /**
  * Checks if this BattleItem has unlimited shots.
  * @note No ammo is needed if a firearm or melee-weapon has itself assigned as
- * its own ammo -- see assignment of '_ammoItem' in cTor.
+ * its own ammo - see assignment of '_ammoItem' in cTor.
  * @return, true if self-powered
  */
 bool BattleItem::selfPowered() const

@@ -195,7 +195,7 @@ private:
 	/// One of the longest and most complicated functions in the entire codebase.
 	void prepareDebriefing();
 	/// Recovers items from tactical.
-	void recoverItems(std::vector<BattleItem*>* const battleItems);
+	void recoverItems(std::vector<BattleItem*>* const its);
 	/// Recovers an aLien from the battlefield.
 	void recoverLiveAlien(const BattleUnit* const unit);
 	/// Reequips a Craft after tactical.

@@ -2830,7 +2830,8 @@ int Base::expenseSoldier(
 	if (dead == true) cost /= 2;
 
 	_cashSpent += cost;
-	_rules->getGame()->getSavedGame()->setFunds(_rules->getGame()->getSavedGame()->getFunds() - static_cast<int64_t>(cost));
+	_rules->getGame()->getSavedGame()->setFunds(_rules->getGame()->getSavedGame()->getFunds()
+												- static_cast<int64_t>(cost));
 
 	return cost;
 }
@@ -2866,7 +2867,8 @@ int Base::expenseSupport(
 	if (dead == true) cost /= 2;
 
 	_cashSpent += cost;
-	_rules->getGame()->getSavedGame()->setFunds(_rules->getGame()->getSavedGame()->getFunds() - static_cast<int64_t>(cost));
+	_rules->getGame()->getSavedGame()->setFunds(_rules->getGame()->getSavedGame()->getFunds()
+												- static_cast<int64_t>(cost));
 
 	return cost;
 }

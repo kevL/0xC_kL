@@ -22,6 +22,7 @@
 
 #include "../Engine/State.h"
 
+#include <limits>
 #include <map>
 //#include <string>
 

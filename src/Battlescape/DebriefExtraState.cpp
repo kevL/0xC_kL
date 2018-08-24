@@ -140,9 +140,9 @@ DebriefExtraState::DebriefExtraState(
 
 	if (_itemsGained.empty() == false)
 	{
-		_txtScreen		->setText(L"SELL");
-		_txtQtyItems	->setText(L"loot");
-		_txtBuyOrSell	->setText(L"sell");
+		_txtScreen   ->setText(L"SELL");
+		_txtQtyItems ->setText(L"loot");
+		_txtBuyOrSell->setText(L"sell");
 
 		_screen = SCN_LOOT_GAINED;
 
@@ -643,7 +643,7 @@ void DebriefExtraState::buildSoldierStats() // private.
 
 	size_t r (1u);
 	for (std::map<std::wstring, std::vector<int>>::const_iterator
-			i = _solStatDeltas.begin();
+			i  = _solStatDeltas.begin();
 			i != _solStatDeltas.end();
 			++i, ++r)
 	{
@@ -683,7 +683,7 @@ void DebriefExtraState::styleList( // private.
 	size_t r (0u);
 
 	for (std::map<const RuleItem*, int>::const_iterator
-			i = input.begin();
+			i  = input.begin();
 			i != input.end();
 			++i, ++r)
 	{
@@ -731,7 +731,7 @@ void DebriefExtraState::styleList( // private.
 		int baseQty (_base->getStorageItems()->getItemQuantity(type));	// items of 'type' in base-stores
 
 		for (std::vector<Transfer*>::const_iterator						// add transfer-items
-				j = _base->getTransfers()->begin();
+				j  = _base->getTransfers()->begin();
 				j != _base->getTransfers()->end();
 				++j)
 		{
@@ -740,7 +740,7 @@ void DebriefExtraState::styleList( // private.
 		}
 
 		for (std::vector<Craft*>::const_iterator						// add craft-items & vehicles & vehicle-loads
-				j = _base->getCrafts()->begin();
+				j  = _base->getCrafts()->begin();
 				j != _base->getCrafts()->end();
 				++j)
 		{
@@ -759,7 +759,7 @@ void DebriefExtraState::styleList( // private.
 			if ((*j)->getRules()->getVehicleCapacity() != 0)			// is transport-craft capable of vehicles
 			{
 				for (std::vector<Vehicle*>::const_iterator
-						k = (*j)->getVehicles()->begin();
+						k  = (*j)->getVehicles()->begin();
 						k != (*j)->getVehicles()->end();
 						++k)
 				{
