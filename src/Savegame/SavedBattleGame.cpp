@@ -2263,7 +2263,7 @@ void SavedBattleGame::checkUnitRevival(BattleUnit* const unit)
 	{
 		Position pos (unit->getPosition());
 
-		if (pos == Position(-1,-1,-1)) // if carried
+		if (pos == Position::POS_BOGUS) // if carried
 		{
 			for (std::vector<BattleItem*>::const_iterator
 					i  = _items.begin();

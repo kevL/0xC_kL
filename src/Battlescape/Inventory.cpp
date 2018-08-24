@@ -991,7 +991,7 @@ void Inventory::moveItem( // private.
 			_selUnit->getUnitTile()->removeItem(it);
 
 			if (it->getBodyUnit() != nullptr) //&& it->getBodyUnit()->getUnitStatus() == STATUS_UNCONSCIOUS)
-				it->getBodyUnit()->setPosition(Position(-1,-1,-1));
+				it->getBodyUnit()->setPosition(Position::POS_BOGUS);
 
 			if (_tuMode == true) // To prevent units from picking up large objects and running around on the same turn with nearly full TU
 				_selUnit->setTu(_selUnit->getTu() - it->getRules()->getWeight()); // its weight becomes an extra tu-burden.

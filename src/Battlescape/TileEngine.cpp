@@ -5695,7 +5695,7 @@ Position TileEngine::getMeleePosition(const BattleUnit* const actor) const
 		}
 	}
 
-	return Position(-1,-1,-1); // this should simply never happen because the call is made after validMeleeRange()
+	return Position::POS_BOGUS; // this should simply never happen because the call is made after validMeleeRange()
 }
 
 /**

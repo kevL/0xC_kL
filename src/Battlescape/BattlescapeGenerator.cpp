@@ -468,7 +468,6 @@ void BattlescapeGenerator::stage2()
 	// All non-player units will have a Latency set, either Latent_Start (if on
 	// a start-tile) or just Latent depending on what tile they're on at the end
 	// of the 1st-stage.
-	const Position& posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator	// set all living hostile/neutral units Latent
 			i  = _unitList->begin();				// and deal with player-units not in endpoint-area if aborted
 			i != _unitList->end();					// plus break all unit-tile links and unit-positions.
@@ -494,8 +493,8 @@ void BattlescapeGenerator::stage2()
 			}
 		}
 
-		(*i)->setUnitTile();			// break BattleUnit->Tile link.
-		(*i)->setPosition(posBogus);	// give unit a bogus Position(-1,-1,-1) NOTE: That's also the "carried" Position.
+		(*i)->setUnitTile();					// break BattleUnit->Tile link.
+		(*i)->setPosition(Position::POS_BOGUS);	// give unit a bogus Position(-1,-1,-1) NOTE: That's also the "carried" Position.
 	}
 
 	for (size_t // break all Tile->BattleUnit links. Or ... do all 1st-stage Tiles go ~pfft~
@@ -955,7 +954,7 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 	switch (unit->getUnitStatus())
 	{
 		case STATUS_UNCONSCIOUS:			// has no Tile, need to get one
-			if (pos == Position(-1,-1,-1))	// is carried
+			if (pos == Position::POS_BOGUS)	// is carried
 			{
 				bool found (false);
 				for (std::vector<BattleUnit*>::const_iterator		// find carrier
@@ -2319,8 +2318,8 @@ bool BattlescapeGenerator::placeUnitBesideAlly(BattleUnit* const unit) // privat
 		ally = _unitList->at(RNG::pick(_unitList->size()));
 		if (ally->getFaction() == unit->getFaction()
 			&& ally->getUnitTile() != nullptr)
-//			&& ally->getPosition() != Position(-1,-1,-1))
-//			&& ally->getArmor()->getSize() >= unit->getArmor()->getSize()) // <- huh.
+//			&& ally->getPosition() != Position::POS_BOGUS
+//			&& ally->getArmor()->getSize() >= unit->getArmor()->getSize() // <- huh.
 		{
 			if (_battleSave->placeUnitByPosition(
 											unit,

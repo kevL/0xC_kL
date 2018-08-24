@@ -678,6 +678,8 @@ void ClearAlienBase::operator ()(AlienMission* const mission) const
  */
 void DebriefingState::prepareDebriefing() // private.
 {
+	Log(LOG_INFO) << "DebriefingState::prepareDebriefing()";
+
 	const RuleItem* itRule;
 	for (std::vector<std::string>::const_iterator
 			i  = _rules->getItemsList().begin();
@@ -799,7 +801,6 @@ void DebriefingState::prepareDebriefing() // private.
 
 	// Resolve tiles for other units that do not have a Tile.
 	Position pos;
-	const Position& posBogus (Position(-1,-1,-1));
 	for (std::vector<BattleUnit*>::const_iterator
 			i  = _unitList->begin();
 			i != _unitList->end();
@@ -808,7 +809,7 @@ void DebriefingState::prepareDebriefing() // private.
 		//Log(LOG_INFO) << ". check Tile id-" << (*i)->getId() << " " << (*i)->getPosition();
 		if ((*i)->getUnitTile() == nullptr)										// This unit is not on a tile ... give it one.
 		{
-			if ((pos = (*i)->getPosition()) == posBogus)						// in fact, this Unit is in limbo ... ie, is carried.
+			if ((pos = (*i)->getPosition()) == Position::POS_BOGUS)				// in fact, this Unit is in limbo ... ie, is carried.
 			{
 				//Log(LOG_INFO) << ". . . cur pos " << pos;
 				switch ((*i)->getUnitStatus())
@@ -859,8 +860,12 @@ void DebriefingState::prepareDebriefing() // private.
 				{
 					case STATUS_STANDING:
 						//Log(LOG_INFO) << ". . player Standing";
-						if ((*i)->getGeoscapeSoldier() != nullptr)
+						if (_aborted == false
+							|| ((*i)->getGeoscapeSoldier() != nullptr // TODO: Or dog.
+								&& (*i)->isOnTiletype(START_TILE) == true))
+						{
 							rescue = true;
+						}
 						// no break;
 
 					case STATUS_UNCONSCIOUS:
@@ -885,8 +890,8 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 	}
 
-	if (rescue == false) // there must be at least 1 Soldier standing to get the unconscious out
-	{
+	if (rescue == false)	// there must be at least 1 Soldier standing to
+	{						// get the unconscious out in case of Abort
 		_playerDead += _playerLive;
 		_playerLive = 0;
 	}

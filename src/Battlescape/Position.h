@@ -26,7 +26,7 @@
 namespace OpenXcom
 {
 
-static const int FLOOR_TLEVEL = 2;
+static const int FLOOR_TLEVEL = 2; // default floor-object is typically 2 loft-layers thick.
 
 
 /**
@@ -38,6 +38,8 @@ class Position
 public:
 	int
 		x,y,z;
+
+	static const Position POS_BOGUS;
 
 	/// Null position constructor.
 	Position()
@@ -64,9 +66,9 @@ public:
 			z(pos.z)
 	{};
 
-	Position& operator= (const Position& pos)
+	Position& operator = (const Position& pos)
 	{
-		if (this != &pos) // kL: cf. RuleUnit.h
+		if (&pos != this) // kL: cf. RuleUnit.h
 		{
 			x = pos.x;
 			y = pos.y;
@@ -75,14 +77,14 @@ public:
 		return *this;
 	}
 
-	Position operator+ (const Position& pos) const
+	Position operator + (const Position& pos) const
 	{
 		return Position(
 						x + pos.x,
 						y + pos.y,
 						z + pos.z);
 	}
-	Position& operator+= (const Position& pos)
+	Position& operator += (const Position& pos)
 	{
 		x += pos.x;
 		y += pos.y;
@@ -90,14 +92,14 @@ public:
 		return *this;
 	}
 
-	Position operator- (const Position& pos) const
+	Position operator - (const Position& pos) const
 	{
 		return Position(
 						x - pos.x,
 						y - pos.y,
 						z - pos.z);
 	}
-	Position& operator-= (const Position& pos)
+	Position& operator -= (const Position& pos)
 	{
 		x -= pos.x;
 		y -= pos.y;
@@ -105,66 +107,66 @@ public:
 		return *this;
 	}
 
-	Position operator* (const Position& pos) const
+	Position operator * (const Position& pos) const
 	{
 		return Position(
 						x * pos.x,
 						y * pos.y,
 						z * pos.z);
 	}
-	Position& operator*= (const Position& pos)
+	Position& operator *= (const Position& pos)
 	{
 		x *= pos.x;
 		y *= pos.y;
 		z *= pos.z;
 		return *this;
 	}
-	Position operator* (const int vect) const
+	Position operator * (const int val) const
 	{
 		return Position(
-						x * vect,
-						y * vect,
-						z * vect);
+						x * val,
+						y * val,
+						z * val);
 	}
-	Position& operator*= (const int vect)
+	Position& operator *=(const int val)
 	{
-		x *= vect;
-		y *= vect;
-		z *= vect;
+		x *= val;
+		y *= val;
+		z *= val;
 		return *this;
 	}
 
-	Position operator/ (const Position& pos) const
+	Position operator / (const Position& pos) const
 	{
 		return Position(
 						x / pos.x,
 						y / pos.y,
 						z / pos.z);
 	}
-	Position& operator/= (const Position& pos)
+	Position& operator /= (const Position& pos)
 	{
 		x /= pos.x;
 		y /= pos.y;
 		z /= pos.z;
 		return *this;
 	}
-	Position operator/ (const int vect) const
+	Position operator / (const int val) const
 	{
 		return Position(
-						x / vect,
-						y / vect,
-						z / vect);
+						x / val,
+						y / val,
+						z / val);
 	}
-	Position& operator/= (const int vect)	// kL_begin:
+	Position& operator /= (const int val)
 	{
-		x /= vect;
-		y /= vect;
-		z /= vect;
+		x /= val;
+		y /= val;
+		z /= val;
 		return *this;
-	}										// kL_end.
+	}
 
 	/// == operator
-	bool operator== (const Position& pos) const
+	bool operator == (const Position& pos) const
 	{
 		return
 			   x == pos.x
@@ -173,7 +175,7 @@ public:
 	}
 
 	/// != operator
-	bool operator!= (const Position& pos) const
+	bool operator != (const Position& pos) const
 	{
 		return
 			   x != pos.x
@@ -193,13 +195,13 @@ public:
 };
 
 ///
-inline std::ostream& operator<< (std::ostream& ostr, const Position& pos)
+inline std::ostream& operator << (std::ostream& ostr, const Position& pos)
 {
 	ostr << "(" << pos.x << "," << pos.y << "," << pos.z << ")";
 	return ostr;
 }
 ///
-inline std::wostream& operator<< (std::wostream& wostr, const Position& pos)
+inline std::wostream& operator << (std::wostream& wostr, const Position& pos)
 {
 	wostr << "(" << pos.x << "," << pos.y << "," << pos.z << ")";
 	return wostr;

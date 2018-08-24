@@ -88,7 +88,6 @@ Node::Node()
 		_segment(0),
 		_destruct(0),
 		_allocated(false)
-//		_pos(Position(-1,-1,-1)) // <- just let Position.h init (0,0,0)
 {}
 
 /**

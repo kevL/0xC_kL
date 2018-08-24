@@ -23,6 +23,8 @@
 namespace OpenXcom
 {
 
+const Position Position::POS_BOGUS = Position(-1,-1,-1); // static
+
 /**
  * Converts voxel-space to tile-space.
  * @param pos - reference to a position
