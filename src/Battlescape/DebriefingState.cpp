@@ -211,7 +211,7 @@ DebriefingState::DebriefingState()
 
 
 	_tactical = new TacticalStatistics();
-	prepareDebriefing(); // <- |-- GATHER ALL DATA HERE <- < ||
+	prepareDebriefing();				// <- |-- GATHER ALL DATA HERE <- < ||
 
 
 
@@ -223,7 +223,7 @@ DebriefingState::DebriefingState()
 		civiliansDead	(0);
 
 	for (std::vector<DebriefStat*>::const_iterator
-			i = _statList.begin();
+			i  = _statList.begin();
 			i != _statList.end();
 			++i)
 	{
@@ -357,7 +357,7 @@ DebriefingState::DebriefingState()
 		BattleUnitStatistics* tacstats;
 
 		for (std::vector<BattleUnit*>::const_iterator
-				i = _unitList->begin();
+				i  = _unitList->begin();
 				i != _unitList->end();
 				++i)
 		{
@@ -846,22 +846,58 @@ void DebriefingState::prepareDebriefing() // private.
 	}														// And Unconscious/latent civies need to check if they're on an Exit-tile ...
 															// And isOnTiletype() requires that unit have a tile set.
 
-	for (std::vector<BattleUnit*>::const_iterator
+	bool rescue (false);
+	for (std::vector<BattleUnit*>::const_iterator // also to check IronMan and LoneSurvivor awards ->
 			i  = _unitList->begin();
 			i != _unitList->end();
 			++i)
 	{
-		if ((*i)->getOriginalFaction() == FACTION_HOSTILE
-			&& (*i)->getUnitStatus() == STATUS_STANDING)
+		switch ((*i)->getOriginalFaction())
 		{
-			_isHostileStanding = true;
-			break;
+			case FACTION_PLAYER:
+				switch ((*i)->getUnitStatus())
+				{
+					case STATUS_STANDING:
+						//Log(LOG_INFO) << ". . player Standing";
+						if ((*i)->getGeoscapeSoldier() != nullptr)
+							rescue = true;
+						// no break;
+
+					case STATUS_UNCONSCIOUS:
+						//Log(LOG_INFO) << ". . player Unconscious";
+						if (_aborted == false
+							|| (*i)->isOnTiletype(START_TILE) == true)
+						{
+							++_playerLive;
+							break;
+						}
+						// no break;
+
+					case STATUS_DEAD:
+						//Log(LOG_INFO) << ". . player Dead";
+						++_playerDead;
+				}
+				break;
+
+			case FACTION_HOSTILE:
+				if ((*i)->getUnitStatus() == STATUS_STANDING)
+					_isHostileStanding = true;
 		}
 	}
-	//Log(LOG_INFO) << ". isHostileStanding= " << _isHostileStanding;
-	//Log(LOG_INFO) << ". allObjectivesDestroyed= " << _battleSave->allObjectivesDestroyed();
+
+	if (rescue == false) // there must be at least 1 Soldier standing to get the unconscious out
+	{
+		_playerDead += _playerLive;
+		_playerLive = 0;
+	}
+
+	bool abortAlive (_aborted == true && _playerLive != 0);
+
 	_tactical->success = _isHostileStanding == false // NOTE: Can still be a playerWipe and lose Craft/recovery (but not a Base).
 					  || _battleSave->allObjectivesDestroyed() == true;
+
+	//Log(LOG_INFO) << ". isHostileStanding= " << _isHostileStanding;
+	//Log(LOG_INFO) << ". allObjectivesDestroyed= " << _battleSave->allObjectivesDestroyed();
 	//Log(LOG_INFO) << ". success= " << _tactical->success;
 
 
@@ -939,7 +975,7 @@ void DebriefingState::prepareDebriefing() // private.
 				_base = *i;
 				_txtBaseLabel->setText(_base->getLabel());
 
-				if (_isHostileStanding == false || _aborted == true)
+				if (_playerLive != 0)
 					_craft->setTacticalReturn();
 				else
 					pCraft = j; // to delete the Craft below_
@@ -1130,9 +1166,10 @@ void DebriefingState::prepareDebriefing() // private.
 					case STATUS_UNCONSCIOUS:
 						//Log(LOG_INFO) << ". player Standing or Unconscious id-" << (*i)->getId() << " " << (*i)->getType();
 						if (_isHostileStanding == false
-							|| (_aborted == true && (*i)->isOnTiletype(START_TILE) == true))	// NOTE: And not BaseDefense if anyone is stupid
-						{																		// enough to design a base-block with Start_Tile's.
-							recoverItems((*i)->getInventory());
+							|| (abortAlive == true							// NOTE: And not BaseDefense if anyone is stupid
+								&& (*i)->isOnTiletype(START_TILE) == true))	// enough to design a base-block with Start_Tile's.
+						{
+							recoverItems((*i)->getInventory()); // NOTE: Unconscious units have dropped their inventory.
 
 							if ((sol = (*i)->getGeoscapeSoldier()) != nullptr)
 							{
@@ -1284,10 +1321,12 @@ void DebriefingState::prepareDebriefing() // private.
 							}
 						}
 						// no break;
+
 					case STATUS_UNCONSCIOUS:
 						//Log(LOG_INFO) << ". neutral Standing or Unconscious id-" << (*i)->getId() << " " << (*i)->getType();
 						if (_isHostileStanding == false
-							|| (_aborted == true && (*i)->isOnTiletype(START_TILE) == true))
+							|| (abortAlive == true
+								&& (*i)->isOnTiletype(START_TILE) == true))
 						{
 							addResultStat(
 										TAC_RESULT[7u], // civilian rescued
@@ -1301,31 +1340,8 @@ void DebriefingState::prepareDebriefing() // private.
 		}
 	} // End loop BattleUnits.
 
-	for (std::vector<BattleUnit*>::const_iterator // only to check IronMan and LoneSurvivor awards ->
-			i  = _unitList->begin();
-			i != _unitList->end();
-			++i)
-	{
-		if ((*i)->getOriginalFaction() == FACTION_PLAYER)
-		{
-			switch ((*i)->getUnitStatus())
-			{
-				case STATUS_DEAD:
-					//Log(LOG_INFO) << ". . player Dead";
-					++_playerDead;
-					break;
 
-				case STATUS_STANDING:
-				case STATUS_UNCONSCIOUS:
-					//Log(LOG_INFO) << ". . player Standing or Unconscious";
-					++_playerLive;
-			}
-		}
-	}
-
-
-	if (_craft != nullptr
-		&& (_isHostileStanding == true && _aborted == false))
+	if (_craft != nullptr && _playerLive == 0)
 	{
 		//Log(LOG_INFO) << ". craft LOST";
 		addResultStat(
@@ -1338,7 +1354,7 @@ void DebriefingState::prepareDebriefing() // private.
 	}
 
 	std::string tacResult;
-	if (_tactical->success == true)
+	if (_tactical->success == true) // no Hostiles standing OR Objective completed (even if player got wiped)
 	{
 		//Log(LOG_INFO) << ". success TRUE";
 		switch (tacType)
@@ -1364,9 +1380,14 @@ void DebriefingState::prepareDebriefing() // private.
 			default:
 			case TCT_UFOCRASHED:
 			case TCT_UFOLANDED:
-				tacResult = "STR_UFO_IS_RECOVERED";	// ... But not if player completed objectives
-		}											// and aborted while leaving a hostile standing.
-		_txtTitle->setText(tr(tacResult));			// Fortunately crashed and landed UFOs do not have objectives.
+				if (_playerLive == 0)
+					tacResult = "STR_CRAFT_IS_LOST";
+				else if (_isHostileStanding == true)
+					tacResult = "STR_UFO_IS_NOT_RECOVERED"; // TODO: deal with this in the recovery-code
+				else
+					tacResult = "STR_UFO_IS_RECOVERED";
+		}
+		_txtTitle->setText(tr(tacResult));
 
 		if (objectiveText.empty() == false)
 			addResultStat(
@@ -1402,17 +1423,17 @@ void DebriefingState::prepareDebriefing() // private.
 
 			case TCT_BASEASSAULT:
 //			case TCT_MARS1: // Note that these Mars tacticals are really Lose GAME.
-//			case TCT_MARS2: // And there is still never a debriefing for this <-
+//			case TCT_MARS2: // And there is still never a debriefing for that <-
 				tacResult = "STR_ALIEN_BASE_STILL_INTACT";
 				break;
 
 			default:
 			case TCT_UFOCRASHED:
 			case TCT_UFOLANDED:
-				if (_aborted == true)
-					tacResult = "STR_UFO_IS_NOT_RECOVERED";
-				else
+				if (_playerLive == 0)
 					tacResult = "STR_CRAFT_IS_LOST";
+				else
+					tacResult = "STR_UFO_IS_NOT_RECOVERED";
 		}
 		_txtTitle->setText(tr(tacResult));
 
@@ -1422,8 +1443,8 @@ void DebriefingState::prepareDebriefing() // private.
 						objectiveScoreFail);
 	}
 
-	if (_isHostileStanding == false || _aborted == true)	// NOTE: And not BaseDefense if anyone is stupid
-	{														// enough to design a base-block with Start_Tile's.
+	if (_isHostileStanding == false || abortAlive == true)	// NOTE: And not BaseDefense if anyone is stupid
+	{														// enough to design a base-block with Start_Tiles.
 		//Log(LOG_INFO) << ". recover Guaranteed";
 		recoverItems(_battleSave->recoverGuaranteed());
 

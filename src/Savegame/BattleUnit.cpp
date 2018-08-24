@@ -3585,8 +3585,7 @@ std::vector<int> BattleUnit::postMissionProcedures(const bool dead)
 												 recovery));
 	}
 
-	static const size_t STATS (11u);
-	std::vector<int> statIncs (STATS, 0);
+	std::vector<int> statIncs (11u, 0); // 11u = stats.size
 
 	const UnitStats caps (_geoscapeSoldier->getRules()->getStatCaps());
 
