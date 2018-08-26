@@ -689,7 +689,7 @@ void Inventory::mouseClick(Action* action, State* state)
 						else if (itOver->getRules()->getClipTypes()->empty() == false // Put item in weapon.
 							&& (_tuMode == false || itOver->getInventorySection()->getCategory() == IC_HAND))
 						{
-							if (itOver->getAmmoItem() != nullptr)
+							if (itOver->getClip() != nullptr)
 								_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[8u]));
 							else
 							{
@@ -752,7 +752,7 @@ void Inventory::mouseClick(Action* action, State* state)
 										else
 											doGround = false;
 
-										itOver->setAmmoItem(_selItem);
+										itOver->setClip(_selItem);
 
 										setSelectedItem();
 										if (doGround == true) arrangeGround();
@@ -1073,15 +1073,15 @@ bool Inventory::canStack( // private.
 		const BattleItem* const itA,
 		const BattleItem* const itB)
 {
-	return (itA != nullptr && itB != nullptr														// both items actually exist
-		&& itA->getRules() == itB->getRules()														// both items have the same ruleset
-		&& ((itA->getAmmoItem() == nullptr && itB->getAmmoItem() == nullptr)						// either they both have no ammo
-			|| (itA->getAmmoItem() && itB->getAmmoItem()												// or they both have ammo
-				&& itA->getAmmoItem()->getRules() == itB->getAmmoItem()->getRules()						// and the same ammo type
-				&& itA->getAmmoItem()->getAmmoQuantity() == itB->getAmmoItem()->getAmmoQuantity()))		// and the same ammo quantity
-		&& itA->getFuse() == itB->getFuse()															// and both have the same fuse-setting
-		&& itA->getBodyUnit() == nullptr && itB->getBodyUnit() == nullptr							// and neither is a corpse or unconscious unit
-		&& itA->getPainKillerQuantity() == itB->getPainKillerQuantity()								// and if it's a medkit, it has the same number of charges
+	return (itA != nullptr && itB != nullptr											// both items actually exist
+		&& itA->getRules() == itB->getRules()											// both items have the same ruleset
+		&& ((itA->getClip() == nullptr && itB->getClip() == nullptr)					// either they both have no ammo
+			|| (itA->getClip() != nullptr && itB->getClip() != nullptr						// or they both have ammo
+				&& itA->getClip()->getRules() == itB->getClip()->getRules()					// and the same ammo type
+				&& itA->getClip()->getClipRounds() == itB->getClip()->getClipRounds()))		// and the same ammo quantity
+		&& itA->getFuse() == itB->getFuse()												// and both have the same fuse-setting
+		&& itA->getBodyUnit() == nullptr && itB->getBodyUnit() == nullptr				// and neither is a corpse or unconscious unit
+		&& itA->getPainKillerQuantity() == itB->getPainKillerQuantity()					// and if it's a medkit, it has the same number of charges
 		&& itA->getHealQuantity() == itB->getHealQuantity()
 		&& itA->getStimulantQuantity() == itB->getStimulantQuantity());
 }
@@ -1340,7 +1340,7 @@ bool Inventory::unload()
 		return false;
 	}
 
-	BattleItem* const itLoad (_selItem->getAmmoItem());
+	BattleItem* const itLoad (_selItem->getClip());
 	if (itLoad == nullptr)
 	{
 		if (_selItem->getRules()->getClipTypes()->empty() == false)
@@ -1393,7 +1393,7 @@ bool Inventory::unload()
 	moveItem(
 			_selItem,
 			_game->getRuleset()->getInventoryRule(sectionWeap));
-	_selItem->setAmmoItem();
+	_selItem->setClip();
 
 	moveItem(
 			itLoad,

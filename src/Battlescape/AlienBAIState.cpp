@@ -478,8 +478,8 @@ void AlienBAIState::setupPatrol() // private.
 	{													// once there shoot objects thereabouts so scan the room for objects to destroy.
 		if (_startNode->isAlienTarget() == true
 			&& _attackAction->weapon != nullptr
-			&& _attackAction->weapon->getAmmoItem() != nullptr
-			&& _attackAction->weapon->getAmmoItem()->getRules()->getDamageType() != DT_HE
+			&& _attackAction->weapon->getClip() != nullptr
+			&& _attackAction->weapon->getClip()->getRules()->getDamageType() != DT_HE
 			&& (   _attackAction->weapon->getRules()->getAccuracySnap() != 0 // TODO: this ought be expanded to include melee.
 				|| _attackAction->weapon->getRules()->getAccuracyAuto() != 0
 				|| _attackAction->weapon->getRules()->getAccuracyAimed() != 0)
@@ -1783,7 +1783,7 @@ bool AlienBAIState::wayPointAction() // private.
 		_pf->setPathingUnit(_unit); // jic.
 
 		std::vector<BattleUnit*> targets;
-		const int explRadius (_attackAction->weapon->getAmmoItem()->getRules()->getExplosionRadius());
+		const int explRadius (_attackAction->weapon->getClip()->getRules()->getExplosionRadius());
 
 		for (std::vector<BattleUnit*>::const_iterator
 				i = _battleSave->getUnits()->begin();
@@ -1906,11 +1906,11 @@ void AlienBAIState::rifleAction() // private.
 {
 	_attackAction->posTarget = _unitAggro->getPosition();
 
-	if (_attackAction->weapon->getAmmoItem()->getRules()->getExplosionRadius() < 1
+	if (_attackAction->weapon->getClip()->getRules()->getExplosionRadius() < 1
 		|| explosiveEfficacy(
 						_unitAggro->getPosition(),
 						_unit,
-						_attackAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
+						_attackAction->weapon->getClip()->getRules()->getExplosionRadius(),
 						_attackAction->diff) == true)
 	{
 		chooseFireMethod();

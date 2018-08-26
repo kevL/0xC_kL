@@ -54,8 +54,8 @@ Vehicle::~Vehicle()
  */
 void Vehicle::load(const YAML::Node& node)
 {
-	_load		= node["load"].as<int>(_load);
-	_quadrants	= node["size"].as<int>(_quadrants);
+	_load      = node["load"].as<int>(_load);
+	_quadrants = node["size"].as<int>(_quadrants);
 }
 
 /**

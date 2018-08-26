@@ -194,13 +194,13 @@ void BattleItem::setFuse(int turn)
 }
 
 /**
- * Gets the '_ammoQty' of this BattleItem.
+ * Gets the rounds of this BattleItem.
  * @return, ammo quantity
  *			0       - item is not ammo
  *			<#>     - ammo qty.
  *			INT_MAX - item is its own ammo
  */
-int BattleItem::getAmmoQuantity() const
+int BattleItem::getClipRounds() const
 {
 	if (_rounds == -1)
 		return std::numeric_limits<int>::max();
@@ -209,10 +209,10 @@ int BattleItem::getAmmoQuantity() const
 }
 
 /**
- * Sets the '_ammoQty' of this BattleItem.
+ * Sets the rounds of this BattleItem.
  * @param qty - ammo quantity
  */
-void BattleItem::setAmmoQuantity(int qty)
+void BattleItem::setClipRounds(int qty)
 {
 	_rounds = qty;
 }
@@ -223,7 +223,7 @@ void BattleItem::setAmmoQuantity(int qty)
  *			- nullptr if this BattleItem has no ammo loaded OR is a clip itself
  *			- the loaded ammo-item OR the weapon itself if weapon is its own ammo
  */
-BattleItem* BattleItem::getAmmoItem() const
+BattleItem* BattleItem::getClip() const
 {
 	return _load;
 }
@@ -234,7 +234,7 @@ BattleItem* BattleItem::getAmmoItem() const
  * @param init - true if called from SavedBattleGame::load() (default false)
  * @return, true if 'item' is valid and gets loaded into the weapon
  */
-bool BattleItem::setAmmoItem(
+bool BattleItem::setClip(
 		BattleItem* const load,
 		bool init)
 {
@@ -296,14 +296,14 @@ bool BattleItem::selfExpended() const
  * @param weapon		- reference to the weapon containing this ammo
  * @param rounds		- quantity of rounds to expend (default 1)
  */
-void BattleItem::spendBullet(
+void BattleItem::expendRounds(
 		SavedBattleGame& battleSave,
 		BattleItem& weapon,
 		int rounds)
 {
 	if (_rounds != -1 && (_rounds -= rounds) == 0) // -1== infinite
 	{
-		weapon.setAmmoItem();
+		weapon.setClip();
 		battleSave.sendItemToDelete(this);
 	}
 }

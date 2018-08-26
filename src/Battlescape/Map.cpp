@@ -753,8 +753,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 					|| bullet.y >= _playableHeight)
 				{
 					if (action->type == BA_THROW
-						|| action->weapon->getAmmoItem() == nullptr // unless it's shotgun pellets.
-						|| action->weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+						|| action->weapon->getClip() == nullptr // unless it's shotgun pellets.
+						|| action->weapon->getClip()->getRules()->getShotgunPellets() == 0)
 					{
 						_camera->centerPosition(
 												Position(

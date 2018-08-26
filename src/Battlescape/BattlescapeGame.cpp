@@ -94,7 +94,7 @@ std::string BattleAction::debugBAction(const BattleAction& action) // static.
 		<< "\tstrafe= "			<< action.strafe << "\n"
 		<< "\tdash= "			<< action.dash << "\n"
 		<< "\tdiff= "			<< action.diff << "\n"
-		<< "\tautoShotCount= "	<< action.autoShotCount << "\n"
+		<< "\tautoShotCount= "	<< action.shotCount << "\n"
 		<< "\tposCamera= "		<< action.posCamera << "\n"
 		<< "\tdesperate= "		<< action.desperate << "\n"
 		<< "\tfinalFacing= "	<< action.finalFacing << "\n"
@@ -527,7 +527,7 @@ void BattlescapeGame::popBattleState()
 									case BA_SNAPSHOT:
 									case BA_AUTOSHOT:
 									case BA_AIMEDSHOT:
-										if (action.weapon->getAmmoItem() == nullptr
+										if (action.weapon->getClip() == nullptr
 											|| action.actor->getTu() < action.actor->getActionTu(
 																								action.type,
 																								action.weapon))
@@ -683,7 +683,7 @@ void BattlescapeGame::changeActiveHand(BattleUnit* const unit) // private.
 	{
 		case AH_RIGHT:
 			if ((weapon = unit->getItem(ST_LEFTHAND)) != nullptr
-				&& weapon->getAmmoItem() != nullptr)
+				&& weapon->getClip() != nullptr)
 			{
 				unit->setActiveHand(AH_LEFT);
 				getMap()->cacheUnitSprite(unit);
@@ -692,7 +692,7 @@ void BattlescapeGame::changeActiveHand(BattleUnit* const unit) // private.
 
 		case AH_LEFT:
 			if ((weapon = unit->getItem(ST_RIGHTHAND)) != nullptr
-				&& weapon->getAmmoItem() != nullptr)
+				&& weapon->getClip() != nullptr)
 			{
 				unit->setActiveHand(AH_RIGHT);
 				getMap()->cacheUnitSprite(unit);
@@ -1210,7 +1210,7 @@ void BattlescapeGame::liquidateUnit() // private.
 	_playerAction.actor->toggleShoot();
 
 	const RuleItem* const itRule (_playerAction.weapon->getRules());
-	BattleItem* const load (_playerAction.weapon->getAmmoItem());
+	BattleItem* const load (_playerAction.weapon->getClip());
 	ExplosionType explType;
 	int
 		soundId,
@@ -1241,7 +1241,7 @@ void BattlescapeGame::liquidateUnit() // private.
 		getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
 							->play(-1, getMap()->getSoundAngle(_playerAction.actor->getPosition()));
 
-	load->spendBullet(
+	load->expendRounds(
 				*_battleSave,
 				*_playerAction.weapon);
 
@@ -2522,8 +2522,8 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 									stateBPushBack(new UnitTurnBState(this, action, false));
 
 									action.type = BA_SNAPSHOT;
-									if (action.weapon->getAmmoItem() == nullptr
-										|| action.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+									if (action.weapon->getClip() == nullptr
+										|| action.weapon->getClip()->getRules()->getShotgunPellets() == 0)
 									{
 										action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
 									}
@@ -2842,8 +2842,8 @@ void BattlescapeGame::primaryAction(const Position& pos)
 
 				_playerAction.posTarget = pos;
 				if (_playerAction.type == BA_THROW
-					|| _playerAction.weapon->getAmmoItem() == nullptr
-					|| _playerAction.weapon->getAmmoItem()->getRules()->getShotgunPellets() == 0)
+					|| _playerAction.weapon->getClip() == nullptr
+					|| _playerAction.weapon->getClip()->getRules()->getShotgunPellets() == 0)
 				{
 					_playerAction.posCamera = getMap()->getCamera()->getMapOffset();
 				}
@@ -3306,7 +3306,7 @@ bool BattlescapeGame::pickupItem(BattleAction* const aiAction) const
 			//Log(LOG_INFO) << ". . pickup on spot";
 			if (takeItemFromGround(targetItem, aiAction->actor) == true
 				&& targetItem->getRules()->getBattleType() == BT_FIREARM
-				&& targetItem->getAmmoItem() == nullptr)
+				&& targetItem->getClip() == nullptr)
 			{
 				//Log(LOG_INFO) << ". . . check Ammo.";
 				aiAction->actor->checkReload();
@@ -3574,16 +3574,16 @@ bool BattlescapeGame::takeItem( // TODO: rewrite & rework into rest of pickup co
 			// no break;
 		case BT_AMMO:
 			if (rhWeapon != nullptr
-				&& rhWeapon->getAmmoItem() == nullptr
-				&& rhWeapon->setAmmoItem(item) == true)
+				&& rhWeapon->getClip() == nullptr
+				&& rhWeapon->setClip(item) == true)
 			{
 				placed = ItemPlacedType::SUCCESS_LOAD;
 				break;
 			}
 
 			if (lhWeapon != nullptr
-				&& lhWeapon->getAmmoItem() == nullptr
-				&& lhWeapon->setAmmoItem(item) == true)
+				&& lhWeapon->getClip() == nullptr
+				&& lhWeapon->setClip(item) == true)
 			{
 				placed = ItemPlacedType::SUCCESS_LOAD;
 				break;

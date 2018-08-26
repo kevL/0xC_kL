@@ -592,7 +592,7 @@ void SavedBattleGame::load(
 				{
 					if ((*j)->getId() == load)
 					{
-						(*pWeapon)->setAmmoItem(*j, true);
+						(*pWeapon)->setClip(*j, true);
 						break;
 					}
 				}

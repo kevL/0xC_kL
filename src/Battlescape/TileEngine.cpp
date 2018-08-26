@@ -1865,7 +1865,7 @@ bool TileEngine::reactionShot(
 	}
 
 	if (_rfAction->weapon == nullptr // lasers & melee are their own ammo-items and return INT_MAX for ammo-qty.
-		|| _rfAction->weapon->getAmmoItem() == nullptr
+		|| _rfAction->weapon->getClip() == nullptr
 		|| _rfAction->weapon->getRules()->canReactionFire() == false
 		|| (_rfAction->actor->getFaction() != FACTION_HOSTILE
 			&& _battleSave->getSavedGame()->isResearched(_rfAction->weapon->getRules()->getRequiredResearch()) == false))
@@ -1920,11 +1920,11 @@ bool TileEngine::reactionShot(
 			unit->setAIState(aiState);
 		}
 
-		if (_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius() > 0
+		if (_rfAction->weapon->getClip()->getRules()->getExplosionRadius() > 0
 			&& aiState->explosiveEfficacy(
 								_rfAction->posTarget,
 								unit,
-								_rfAction->weapon->getAmmoItem()->getRules()->getExplosionRadius(),
+								_rfAction->weapon->getClip()->getRules()->getExplosionRadius(),
 								_battleSave->getBattleState()->getSavedGame()->getDifficultyInt()) == false)
 		{
 			_rfAction->targeting = false;
@@ -5467,10 +5467,10 @@ bool TileEngine::validThrowRange( // static.
 		distThrow (static_cast<int>(std::sqrt(static_cast<double>((delta_x * delta_x) + (delta_y * delta_y)))));
 
 	int weight (action->weapon->getRules()->getWeight());
-	if (action->weapon->getAmmoItem() != nullptr
-		&& action->weapon->getAmmoItem() != action->weapon)
+	if (action->weapon->getClip() != nullptr
+		&& action->weapon->getClip() != action->weapon)
 	{
-		weight += action->weapon->getAmmoItem()->getRules()->getWeight();
+		weight += action->weapon->getClip()->getRules()->getWeight();
 	}
 
 	const int deltaZ (originVoxel.z // throw up is neg./ throw down is pos.

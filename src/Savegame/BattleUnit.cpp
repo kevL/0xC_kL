@@ -3144,12 +3144,12 @@ BattleItem* BattleUnit::getMainHandWeapon(
 				&& ((inclMelee == true
 						&& rtWeapon->getRules()->getBattleType() == BT_MELEE)
 					|| (rtWeapon->getRules()->getBattleType() == BT_FIREARM
-						&& rtWeapon->getAmmoItem() != nullptr))),
+						&& rtWeapon->getClip() != nullptr))),
 		hasLT (ltWeapon != nullptr
 				&& ((inclMelee == true
 						&& ltWeapon->getRules()->getBattleType() == BT_MELEE)
 					|| (ltWeapon->getRules()->getBattleType() == BT_FIREARM
-						&& ltWeapon->getAmmoItem() != nullptr)));
+						&& ltWeapon->getClip() != nullptr)));
 	//Log(LOG_INFO) << ". hasRT = " << hasRT;
 	//Log(LOG_INFO) << ". hasLT = " << hasLT;
 
@@ -3309,10 +3309,10 @@ BattleItem* BattleUnit::getRangedWeapon(bool quickest) const
 	const bool
 		hasRT (rtWeapon != nullptr
 			&& rtWeapon->getRules()->getBattleType() == BT_FIREARM
-			&& rtWeapon->getAmmoItem() != nullptr),
+			&& rtWeapon->getClip() != nullptr),
 		hasLT (ltWeapon != nullptr
 			&& ltWeapon->getRules()->getBattleType() == BT_FIREARM
-			&& ltWeapon->getAmmoItem() != nullptr);
+			&& ltWeapon->getClip() != nullptr);
 
 	if (!hasRT && !hasLT)
 	{
@@ -3382,11 +3382,11 @@ bool BattleUnit::checkReload()
 	BattleItem* weapon;
 	if ((weapon = getItem(ST_RIGHTHAND)) == nullptr
 		|| weapon->getRules()->getBattleType() != BT_FIREARM
-		|| weapon->getAmmoItem() != nullptr)
+		|| weapon->getClip() != nullptr)
 	{
 		if ((weapon = getItem(ST_LEFTHAND)) == nullptr
 			|| weapon->getRules()->getBattleType() != BT_FIREARM
-			|| weapon->getAmmoItem() != nullptr)
+			|| weapon->getClip() != nullptr)
 		{
 			return false;
 		}
@@ -3407,7 +3407,7 @@ bool BattleUnit::checkReload()
 			{
 				if (*j == (*i)->getRules()->getType())
 				{
-					weapon->setAmmoItem(*i);
+					weapon->setClip(*i);
 					_tu -= tuReload;
 					return true;
 				}
@@ -4368,8 +4368,8 @@ int BattleUnit::getCarriedWeight(const BattleItem* const dragItem) const
 		if (*i != dragItem)
 		{
 			weight += (*i)->getRules()->getWeight();
-			if ((*i)->getAmmoItem() != nullptr && (*i)->getAmmoItem() != *i)
-				weight += (*i)->getAmmoItem()->getRules()->getWeight();
+			if ((*i)->getClip() != nullptr && (*i)->getClip() != *i)
+				weight += (*i)->getClip()->getRules()->getWeight();
 		}
 	}
 	return std::max(0, weight);

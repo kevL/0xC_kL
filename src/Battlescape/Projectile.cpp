@@ -101,7 +101,7 @@ Projectile::Projectile(
 			case BA_AIMEDSHOT:
 			case BA_LAUNCH:
 			{
-				const BattleItem* const bullet (_action.weapon->getAmmoItem()); // the weapon itself if not-req'd. eg, lasers
+				const BattleItem* const bullet (_action.weapon->getClip()); // the weapon itself if not-req'd. eg, lasers
 				if (bullet != nullptr) // try to get the required info from the bullet
 				{
 					_bulletSprite = bullet->getRules()->getBulletSprite();
@@ -187,7 +187,7 @@ VoxelType Projectile::calculateShot(
 	//Log(LOG_INFO) << "Projectile::calculateShot() accuracy = " << accuracy;
 	// test for LoF
 	if (_action.actor->getFaction() == FACTION_PLAYER // aLiens don't get in here!
-		&& _action.autoShotCount == 1
+		&& _action.shotCount == 1
 		&& _action.type != BA_LAUNCH
 		&& _battleSave->getBattleGame()->playerPanicHandled() == true
 		&& (SDL_GetModState() & KMOD_CTRL)	== 0
@@ -370,7 +370,7 @@ void Projectile::applyAccuracy( // private.
 	const RuleItem* const itRule (_action.weapon->getRules()); // <- after reading up, 'const' is basically worthless & wordy waste of effort.
 	if (_action.type != BA_THROW && itRule->isArcingShot() == false)
 	{
-		if (_action.autoShotCount == 1)
+		if (_action.shotCount == 1)
 		{
 			if (_action.actor->getFaction() == FACTION_PLAYER)	// kL: only for xCom heheh ->
 //				&& Options::battleUFOExtenderAccuracy == true)	// not so sure that this should be Player only
@@ -402,7 +402,7 @@ void Projectile::applyAccuracy( // private.
 			div_HORI (6.),
 			div_VERT (div_HORI * 1.69);
 
-		if (_action.autoShotCount == 1)
+		if (_action.shotCount == 1)
 		{
 //			const int autoHit (static_cast<int>(std::ceil(accuracy * 21.))); // chance for Bulls-eye.
 //			if (RNG::percent(autoHit) == false)

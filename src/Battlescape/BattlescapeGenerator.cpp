@@ -670,7 +670,7 @@ void BattlescapeGenerator::stage2()
 
 			if ((*i)->selfPowered() == false)
 			{
-				BattleItem* const load ((*i)->getAmmoItem());
+				BattleItem* const load ((*i)->getClip());
 				if (load != nullptr)
 				{
 					if (load->getRules()->isRecoverable() == true)
@@ -1488,22 +1488,22 @@ BattleUnit* BattlescapeGenerator::addPlayerSupportUnit(Vehicle* const vehicle) /
 		if (weapon->getRules()->getFullClip() > 0)
 		{
 			type = vehicle->getRules()->getClipTypes()->front();
-			BattleItem* const load (new BattleItem(					// add load and assign the weapon as its owner.
+			BattleItem* const clip (new BattleItem(					// add load and assign the weapon as its owner.
 												_rules->getItemRule(type),
 												_battleSave->getCanonicalBattleId()));
-			if (placeGeneric(load, supportUnit) == false)
+			if (placeGeneric(clip, supportUnit) == false)
 			{
 				//Log(LOG_WARNING) << "bGen:addPlayerSupportUnit() Could not add " << type << " to " << vehicle->getRules()->getType();
 
 				--_unitSequence;
-				delete load;
+				delete clip;
 				delete weapon;
 				delete supportUnit;
 
 				return nullptr;
 			}
 
-			load->setAmmoQuantity(vehicle->getLoad());
+			clip->setClipRounds(vehicle->getLoad());
 		}
 
 /*		if (unitRule->getBuiltInWeapons().empty() == false) // add item(builtInWeapon) -- what about ammo
@@ -1741,7 +1741,7 @@ void BattlescapeGenerator::placeLayout( // private.
 						{
 							if ((*k)->getInventorySection() == grdRule
 								&& (*k)->getRules()->getType() == stLoad
-								&& it->setAmmoItem(*k) == true)
+								&& it->setClip(*k) == true)
 							{
 								go = true;
 								break;
@@ -1790,7 +1790,7 @@ void BattlescapeGenerator::loadGroundWeapon( // private.
 			++i)
 	{
 		if ((*i)->getInventorySection() == grdRule
-			&& it->setAmmoItem(*i) == true)
+			&& it->setClip(*i) == true)
 		{
 			//Log(LOG_INFO) << ". . . " << item->getRules()->getType() << " loaded w/ " << (*i)->getRules()->getType();
 			return;
@@ -1924,8 +1924,8 @@ bool BattlescapeGenerator::placeGeneric( // private.
 				// no break.
 			case BT_AMMO:
 				if (rhWeapon != nullptr
-					&& rhWeapon->getAmmoItem() == nullptr
-					&& rhWeapon->setAmmoItem(it) == true)
+					&& rhWeapon->getClip() == nullptr
+					&& rhWeapon->setClip(it) == true)
 				{
 //					item->setInventorySection(rhRule);
 					placed = ItemPlacedType::SUCCESS_LOAD;
@@ -1933,8 +1933,8 @@ bool BattlescapeGenerator::placeGeneric( // private.
 				}
 
 				if (lhWeapon != nullptr
-					&& lhWeapon->getAmmoItem() == nullptr
-					&& lhWeapon->setAmmoItem(it) == true)
+					&& lhWeapon->getClip() == nullptr
+					&& lhWeapon->setClip(it) == true)
 				{
 //					item->setInventorySection(lhRule);
 					placed = ItemPlacedType::SUCCESS_LOAD;

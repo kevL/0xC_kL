@@ -190,7 +190,7 @@ void ExecuteState::lstTargetPress(Action* action)
 			{
 				default:
 				case BT_FIREARM:
-					if ((soundId = _action->weapon->getAmmoItem()->getRules()->getFireSound()) == -1)
+					if ((soundId = _action->weapon->getClip()->getRules()->getFireSound()) == -1)
 						soundId = itRule->getFireSound();
 					break;
 

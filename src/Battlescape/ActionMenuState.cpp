@@ -232,8 +232,8 @@ ActionMenuState::ActionMenuState(
 //						}
 
 						if (itRule->isWaypoints() != 0
-							|| (_action->weapon->getAmmoItem() != nullptr
-								&& _action->weapon->getAmmoItem()->getRules()->isWaypoints() != 0))
+							|| (_action->weapon->getClip() != nullptr
+								&& _action->weapon->getClip()->getRules()->isWaypoints() != 0))
 						{
 							addItem(
 									BA_LAUNCH,
@@ -245,8 +245,8 @@ ActionMenuState::ActionMenuState(
 		}
 
 		if (injured == false
-			&& _action->weapon->getAmmoItem() != nullptr // is loaded or self-powered.
-			&& _action->weapon->getAmmoItem()->getRules()->canExecute() == true
+			&& _action->weapon->getClip() != nullptr // is loaded or self-powered.
+			&& _action->weapon->getClip()->getRules()->canExecute() == true
 			&& canExecuteTarget() == true)
 		{
 			addItem(
@@ -464,7 +464,7 @@ void ActionMenuState::btnActionMenuClick(Action* action)
 //			case BA_SNAPSHOT:	// in ProjectileFlyBState, popState(), etc etc etc.
 //			case BA_AIMEDSHOT:	// But I want to see the targeting percentages etc.
 			case BA_LAUNCH:
-				if (_action->weapon->getAmmoItem() == nullptr)
+				if (_action->weapon->getClip() == nullptr)
 					_action->result = BattlescapeGame::PLAYER_ERROR[2u];
 				else if (_action->TU > _action->actor->getTu())
 					_action->result = BattlescapeGame::PLAYER_ERROR[0u];

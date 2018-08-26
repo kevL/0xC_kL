@@ -1214,18 +1214,18 @@ void BattlescapeState::printTileInventory(Tile* const tile) // private.
 					switch (itRule->getBattleType())
 					{
 						case BT_AMMO:
-							wst1 += L" (" + Text::intWide(item->getAmmoQuantity()) + L")";
+							wst1 += L" (" + Text::intWide(item->getClipRounds()) + L")";
 							break;
 
 						case BT_FIREARM:
 //						case BT_MELEE:
 							{
-								const BattleItem* const aItem (item->getAmmoItem());
+								const BattleItem* const aItem (item->getClip());
 								if ((aItem != nullptr && item->selfPowered() == false)
 									 || item->selfExpended() == true)
 								{
 									wst = tr(aItem->getRules()->getType());
-									wst1 += L" | " + wst + L" (" + Text::intWide(aItem->getAmmoQuantity()) + L")";
+									wst1 += L" | " + wst + L" (" + Text::intWide(aItem->getClipRounds()) + L")";
 								}
 							}
 							break;
@@ -3102,10 +3102,10 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 				{
 					Uint8 color;
 
-					const BattleItem* const clip (itRight->getAmmoItem());
+					const BattleItem* const clip (itRight->getClip());
 					if (clip != nullptr)
 					{
-						const int rounds (clip->getAmmoQuantity());
+						const int rounds (clip->getClipRounds());
 						_numAmmoR->setValue(static_cast<unsigned>(rounds));
 
 						int fullclip;
@@ -3130,7 +3130,7 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 			case BT_AMMO:
 				_numAmmoR->setVisible();
-				_numAmmoR->setValue(static_cast<unsigned>(itRight->getAmmoQuantity()));
+				_numAmmoR->setValue(static_cast<unsigned>(itRight->getClipRounds()));
 				break;
 
 			case BT_GRENADE:
@@ -3170,10 +3170,10 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 				{
 					Uint8 color;
 
-					const BattleItem* const clip (itLeft->getAmmoItem());
+					const BattleItem* const clip (itLeft->getClip());
 					if (clip != nullptr)
 					{
-						const int rounds (clip->getAmmoQuantity());
+						const int rounds (clip->getClipRounds());
 						_numAmmoL->setValue(static_cast<unsigned>(rounds));
 
 						int fullclip;
@@ -3198,7 +3198,7 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 			case BT_AMMO:
 				_numAmmoL->setVisible();
-				_numAmmoL->setValue(static_cast<unsigned>(itLeft->getAmmoQuantity()));
+				_numAmmoL->setValue(static_cast<unsigned>(itLeft->getClipRounds()));
 				break;
 
 			case BT_GRENADE:

@@ -854,8 +854,8 @@ bool InventoryState::saveLayout(BattleUnit* const unit) const // private.
 				++i)
 		{
 			std::string st;
-			if ((*i)->selfPowered() == false && (*i)->getAmmoItem() != nullptr)
-				st = (*i)->getAmmoItem()->getRules()->getType();
+			if ((*i)->selfPowered() == false && (*i)->getClip() != nullptr)
+				st = (*i)->getClip()->getRules()->getType();
 
 			layoutItems->push_back(new SoldierLayout(
 												(*i)->getRules()->getType(),
@@ -990,7 +990,7 @@ void InventoryState::btnClearGroundClick(Action*)
 						++i)
 				{
 					if ((*i)->selfPowered() == false
-						&& (load = (*i)->getAmmoItem()) != nullptr)
+						&& (load = (*i)->getClip()) != nullptr)
 					{
 						type = load->getRules()->getType();
 						craft->getCraftItems()->removeItem(type);
@@ -1062,17 +1062,17 @@ void InventoryState::inClick(Action*)
 				break;
 
 			case BT_AMMO:
-				wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itSelected->getAmmoQuantity());
+				wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itSelected->getClipRounds());
 				break;
 
 			case BT_FIREARM:
 //			case BT_MELEE:
 				if (itSelected->selfPowered() == false || itSelected->selfExpended() == true)
 				{
-					const BattleItem* const itLoad (itSelected->getAmmoItem());
+					const BattleItem* const itLoad (itSelected->getClip());
 					if (itLoad != nullptr)
 					{
-						wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itLoad->getAmmoQuantity());
+						wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itLoad->getClipRounds());
 
 						SDL_Rect rect;
 						rect.x =
@@ -1147,17 +1147,17 @@ void InventoryState::inMouseOver(Action*)
 					break;
 
 				case BT_AMMO:
-					wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itOver->getAmmoQuantity());
+					wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itOver->getClipRounds());
 					break;
 
 				case BT_FIREARM:
 //				case BT_MELEE:
 					if (itOver->selfPowered() == false || itOver->selfExpended() == true)
 					{
-						const BattleItem* const itLoad (itOver->getAmmoItem());
+						const BattleItem* const itLoad (itOver->getClip());
 						if (itLoad != nullptr)
 						{
-							wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itLoad->getAmmoQuantity());
+							wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itLoad->getClipRounds());
 
 							SDL_Rect rect;
 							rect.x =
@@ -1293,8 +1293,8 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 	}
 
 	int weight (itRule->getWeight());
-	if (selOver->selfPowered() == false && selOver->getAmmoItem() != nullptr)
-		weight += selOver->getAmmoItem()->getRules()->getWeight();
+	if (selOver->selfPowered() == false && selOver->getClip() != nullptr)
+		weight += selOver->getClip()->getRules()->getWeight();
 
 	label << L" (" << weight << L")";
 	_txtItem->setText(label.str());

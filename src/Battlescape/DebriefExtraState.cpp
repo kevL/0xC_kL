@@ -78,7 +78,7 @@ DebriefExtraState::DebriefExtraState(
 
 	_txtTitle     = new Text(288, 16,  16, 8);
 	_txtBaseLabel = new Text( 80,  9,  16, 8);
-	_txtScreen    = new Text( 40,  9, 274, 8);
+	_txtScreen    = new Text( 40,  9, 268, 8);
 
 	_txtStorage   = new Text(80, 9,  16, 26);
 	_txtQtyItems  = new Text(55, 9, 186, 26);

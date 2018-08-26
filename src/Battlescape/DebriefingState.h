@@ -172,8 +172,8 @@ private:
 
 	std::map<TileType, SpecialType*> _specialTypes;
 	std::map<const RuleItem*, int>
-		_clips,
-		_clipsProperty,
+		_rounds,
+		_roundsProperty,
 		_surplus,
 		_lostProperty;
 

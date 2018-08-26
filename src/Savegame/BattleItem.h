@@ -82,17 +82,15 @@ private:
 		/// Gets the BattleItem's rules.
 		const RuleItem* getRules() const;
 
-		/// Gets the BattleItem's ammo quantity
-		int getAmmoQuantity() const;
-		/// Sets the BattleItem's ammo quantity.
-		void setAmmoQuantity(int qty);
-		/// Gets if the BattleItem is a clip in a weapon.
-		bool isLoad() const;
+		/// Gets the BattleItem's ammo-quantity.
+		int getClipRounds() const;
+		/// Sets the BattleItem's ammo-quantity.
+		void setClipRounds(int qty);
 
 		/// Gets the BattleItem's ammo BattleItem.
-		BattleItem* getAmmoItem() const;
+		BattleItem* getClip() const;
 		/// Sets the BattleItem's ammo BattleItem.
-		bool setAmmoItem(
+		bool setClip(
 				BattleItem* const load = nullptr,
 				bool init = false);
 		/// Checks if the BattleItem has unlimited shots.
@@ -100,7 +98,7 @@ private:
 		/// Checks if the BattleItem expends itself after its last shot.
 		bool selfExpended() const;
 		/// Spends a bullet from this BattleItem.
-		void spendBullet(
+		void expendRounds(
 				SavedBattleGame& battleSave,
 				BattleItem& weapon,
 				int rounds = 1);

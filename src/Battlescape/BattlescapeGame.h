@@ -83,7 +83,7 @@ struct BattleAction
 		takenXp,
 		targeting;
 	int
-		autoShotCount,
+		shotCount,
 		diff,
 		finalFacing,
 //		firstTU, // is setup but not used.
@@ -117,7 +117,7 @@ struct BattleAction
 			strafe(false),
 			dash(false),
 			diff(0),
-			autoShotCount(0),
+			shotCount(0),
 			posCamera(0,0,-1),
 			desperate(false),
 			finalFacing(-1),
@@ -145,7 +145,7 @@ struct BattleAction
 		strafe = false;
 		dash = false;
 		diff = 0;
-		autoShotCount = 0;
+		shotCount = 0;
 		posCamera = Position(0,0,-1);
 		desperate = false;
 		finalFacing = -1;

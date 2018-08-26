@@ -55,8 +55,8 @@ private:
 		_start;
 
 	BattleItem
-		* _load,
-		* _prjItem;
+		* _clip,
+		* _weapon;
 	BattleUnit* _unit;
 	Projectile* _prj;
 	SavedBattleGame* _battleSave;
