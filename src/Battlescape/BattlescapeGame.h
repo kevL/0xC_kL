@@ -371,7 +371,7 @@ private:
 
 		/// Drops an item and affects it with gravity.
 		void dropItem(
-				BattleItem* const item,
+				BattleItem* const it,
 				const Position& pos,
 				bool create = false);
 		/// Drops all items in a specific BattleUnit's inventory to the ground.

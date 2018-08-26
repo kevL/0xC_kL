@@ -340,37 +340,12 @@ void BattleItem::changeOwner(BattleUnit* const unit)
 }
 
 /**
- * Clears this BattleItem from its owner and assigns it to a different unit.
- * @param unit - pointer to a BattleUnit (default nullptr)
- *
-void BattleItem::changeOwner(BattleUnit* const unit)
-{
-	if (_owner != nullptr)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i  = _owner->getInventory()->begin();
-				i != _owner->getInventory()->end();
-				++i)
-		{
-			if (*i == this)
-			{
-				_owner->getInventory()->erase(i);
-				break;
-			}
-		}
-	}
-
-	if ((_owner = unit) != nullptr)
-		_owner->getInventory()->push_back(this);
-} */
-
-/**
  * Sets this BattleItem's owner.
- * @param owner - pointer to BattleUnit (default nullptr)
+ * @param unit - pointer to BattleUnit (default nullptr)
  */
-void BattleItem::setOwner(BattleUnit* const owner)
+void BattleItem::setOwner(BattleUnit* const unit)
 {
-	_owner = owner;
+	_owner = unit;
 }
 
 /**
@@ -437,32 +412,32 @@ void BattleItem::setSlotY(int y)
 }
 
 /**
- * Checks if an item occupies x-y inventory slot(s).
+ * Checks if an item occupies x/y inventory slot(s).
  * @param x		- slot x-position
  * @param y 	- slot y-position
- * @param item	- pointer to an item to check to place (default nullptr)
- * @return, true if item occupies x-y slot
+ * @param it	- pointer to an item to check to place (default nullptr)
+ * @return, true if item occupies x/y slot
  */
 bool BattleItem::occupiesSlot(
 		int x,
 		int y,
-		const BattleItem* const item) const
+		const BattleItem* const it) const
 {
-	if (item == this)
+	if (it == this)
 		return false;
 
 	if (_section->getCategory() == IC_HAND)
 		return true;
 
-	if (item == nullptr)
+	if (it == nullptr)
 		return (   x >= _inventoryX
 				&& x <  _inventoryX + _itRule->getInventoryWidth()
 				&& y >= _inventoryY
 				&& y <  _inventoryY + _itRule->getInventoryHeight());
 
-	return (	x + item->getRules()->getInventoryWidth() > _inventoryX
+	return (	x + it->getRules()->getInventoryWidth() > _inventoryX
 			 && x < _inventoryX + _itRule->getInventoryWidth()
-			 && y + item->getRules()->getInventoryHeight() > _inventoryY
+			 && y + it->getRules()->getInventoryHeight() > _inventoryY
 			 && y < _inventoryY + _itRule->getInventoryHeight());
 /*	return !(
 				x >= _inventoryX + _itRule->getInventoryWidth()

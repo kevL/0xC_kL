@@ -111,10 +111,8 @@ private:
 
 		/// Adds or clears the BattleItem from a unit's inventory.
 		void changeOwner(BattleUnit* const unit = nullptr);
-		/// Clears the BattleItem from its owner and assigns it to a different unit.
-//		void changeOwner(BattleUnit* const unit = nullptr);
 		/// Sets the BattleItem's owner.
-		void setOwner(BattleUnit* const owner = nullptr);
+		void setOwner(BattleUnit* const unit = nullptr);
 		/// Gets the BattleItem's owner.
 		BattleUnit* getOwner() const;
 
@@ -134,7 +132,7 @@ private:
 		bool occupiesSlot(
 				int x,
 				int y,
-				const BattleItem* const item = nullptr) const;
+				const BattleItem* const it = nullptr) const;
 
 		/// Gets the BattleItem's tile.
 		Tile* getTile() const;

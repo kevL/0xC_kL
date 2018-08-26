@@ -86,23 +86,24 @@ Inventory::Inventory(
 		_xOff((Options::baseXResolution - 640) >> 1u), // go fucking figure.
 		_yOff((Options::baseYResolution - 360) >> 1u)
 {
-	_srfGrid	= new Surface(
-							Options::baseXResolution,
-							Options::baseYResolution,
-							_xOff, _yOff); // why I don't know trial and error only.
-	_srfItems	= new Surface(
-							Options::baseXResolution,
-							Options::baseYResolution,
-							_xOff, _yOff);
-	_srfGrab	= new Surface(
-							RuleInventory::HAND_W * RuleInventory::SLOT_W,
-							RuleInventory::HAND_H * RuleInventory::SLOT_H);
-	_warning	= new WarningMessage(
-							225,24,
-							((Options::baseXResolution - 320) >> 1u) + 48,
-							((Options::baseYResolution - 200) >> 1u) + 177);
-	_numStack	= new NumberText(15,15);
-	_aniTimer	= new Timer(80u);
+	_srfGrid = new Surface(
+						Options::baseXResolution,
+						Options::baseYResolution,
+						_xOff, _yOff); // why I don't know trial and error only.
+	_srfItems = new Surface(
+						Options::baseXResolution,
+						Options::baseYResolution,
+						_xOff, _yOff);
+	_srfGrab = new Surface(
+						RuleInventory::HAND_W * RuleInventory::SLOT_W,
+						RuleInventory::HAND_H * RuleInventory::SLOT_H);
+	_warning = new WarningMessage(
+						225,24,
+						((Options::baseXResolution - 320) >> 1u) + 48,
+						((Options::baseYResolution - 200) >> 1u) + 177);
+
+	_numStack = new NumberText(15,15);
+	_aniTimer = new Timer(80u);
 
 	_srtBigobs = _game->getResourcePack()->getSurfaceSet("BIGOBS.PCK");
 
@@ -163,9 +164,9 @@ void Inventory::drawGrids()
 	text.setPalette(_srfGrid->getPalette());
 	text.setHighContrast();
 	text.initText(
-				_game->getResourcePack()->getFont("FONT_BIG"),
-				_game->getResourcePack()->getFont("FONT_SMALL"),
-				_game->getLanguage());
+			_game->getResourcePack()->getFont("FONT_BIG"),
+			_game->getResourcePack()->getFont("FONT_SMALL"),
+			_game->getLanguage());
 
 	const RuleInterface* const uiRule (_game->getRuleset()->getInterface("inventory"));
 	text.setColor(static_cast<Uint8>(uiRule->getElement("textSlots")->color));
@@ -175,7 +176,7 @@ void Inventory::drawGrids()
 	SDL_Rect rect;
 	bool doLabel;
 	for (std::map<std::string, RuleInventory*>::const_iterator
-			i = _game->getRuleset()->getInventories()->begin();
+			i  = _game->getRuleset()->getInventories()->begin();
 			i != _game->getRuleset()->getInventories()->end();
 			++i)
 	{
@@ -184,7 +185,7 @@ void Inventory::drawGrids()
 			case IC_SLOT: // draw grids for unit-sections
 				doLabel = true;
 				for (std::vector<InSlot>::const_iterator
-						j = i->second->getSlots()->begin();
+						j  = i->second->getSlots()->begin();
 						j != i->second->getSlots()->end();
 						++j)
 				{
@@ -279,7 +280,7 @@ void Inventory::drawItems()
 
 		std::vector<BattleItem*>* list (_selUnit->getInventory());
 		for (std::vector<BattleItem*>::const_iterator // draw items in Unit sections.
-				i = list->begin();
+				i  = list->begin();
 				i != list->end();
 				++i)
 		{
@@ -325,7 +326,7 @@ void Inventory::drawItems()
 		inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
 		list = _selUnit->getUnitTile()->getInventory();
 		for (std::vector<BattleItem*>::const_iterator // draw items in Ground section.
-				i = list->begin();
+				i  = list->begin();
 				i != list->end();
 				++i)
 		{
@@ -418,7 +419,7 @@ void Inventory::drawPrimers() // private.
 
 	static Surface* const srf (_game->getResourcePack()->getSurfaceSet("SCANG.DAT")->getFrame(9));
 	for (std::vector<std::pair<int,int>>::const_iterator
-			i = _fusePairs.begin();
+			i  = _fusePairs.begin();
 			i != _fusePairs.end();
 			++i)
 	{
@@ -440,10 +441,10 @@ void Inventory::blit(const Surface* const srf)
 {
 	clear();
 
-	_srfGrid->blit(this);
+	_srfGrid ->blit(this);
 	_srfItems->blit(this);
-	_srfGrab->blit(this);
-	_warning->blit(this);
+	_srfGrab ->blit(this);
+	_warning ->blit(this);
 
 	Surface::blit(srf);
 }
@@ -488,9 +489,9 @@ void Inventory::mouseOver(Action* action, State* state)
 		}
 
 		_srfGrab->setX(static_cast<int>(std::floor(
-						action->getAbsoluteMouseX())) - getX() - (_srfGrab->getWidth()  >> 1u));
+					   action->getAbsoluteMouseX())) - getX() - (_srfGrab->getWidth()  >> 1u));
 		_srfGrab->setY(static_cast<int>(std::floor(
-						action->getAbsoluteMouseY())) - getY() - (_srfGrab->getHeight() >> 1u));
+					   action->getAbsoluteMouseY())) - getY() - (_srfGrab->getHeight() >> 1u));
 
 		InteractiveSurface::mouseOver(action, state);
 	}
@@ -625,13 +626,13 @@ void Inventory::mouseClick(Action* action, State* state)
 						if (inRule->getCategory() == IC_GROUND)
 							x += _grdOffset;
 
-						BattleItem* const overItem (_selUnit->getItem(inRule, x,y));
+						BattleItem* const itOver (_selUnit->getItem(inRule, x,y));
 
 						const bool stack (inRule->getCategory() == IC_GROUND
-									   && canStack(overItem, _selItem) == true);
+									   && canStack(itOver, _selItem) == true);
 
-						if (overItem == _selItem	// put item back where it came from
-							|| overItem == nullptr	// put item in empty slot
+						if (itOver == _selItem		// put item back where it came from
+							|| itOver == nullptr	// put item in empty slot
 							|| stack == true)		// stack item
 						{
 							if (isOverlap(
@@ -671,8 +672,8 @@ void Inventory::mouseClick(Action* action, State* state)
 									moveItem(
 											_selItem,
 											inRule,
-											overItem->getSlotX(),
-											overItem->getSlotY());
+											itOver->getSlotX(),
+											itOver->getSlotY());
 //									_stackLevel[static_cast<size_t>(overItem->getSlotX())]
 //											   [static_cast<size_t>(overItem->getSlotY())] += 1;
 									setSelectedItem();
@@ -685,17 +686,17 @@ void Inventory::mouseClick(Action* action, State* state)
 									_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 							}
 						}
-						else if (overItem->getRules()->getAcceptedLoadTypes()->empty() == false // Put item in weapon.
-							&& (_tuMode == false || overItem->getInventorySection()->getCategory() == IC_HAND))
+						else if (itOver->getRules()->getAcceptedLoadTypes()->empty() == false // Put item in weapon.
+							&& (_tuMode == false || itOver->getInventorySection()->getCategory() == IC_HAND))
 						{
-							if (overItem->getAmmoItem() != nullptr)
+							if (itOver->getAmmoItem() != nullptr)
 								_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[8u]));
 							else
 							{
 								bool fail (true);
 								for (std::vector<std::string>::const_iterator
-										i = overItem->getRules()->getAcceptedLoadTypes()->begin();
-										i != overItem->getRules()->getAcceptedLoadTypes()->end();
+										i = itOver->getRules()->getAcceptedLoadTypes()->begin();
+										i != itOver->getRules()->getAcceptedLoadTypes()->end();
 										++i)
 								{
 									if (*i == _selItem->getRules()->getType())
@@ -710,8 +711,8 @@ void Inventory::mouseClick(Action* action, State* state)
 								else if (_tuMode == true
 									&& _selUnit->getItem(ST_RIGHTHAND) != nullptr
 									&& _selUnit->getItem(ST_RIGHTHAND) != _selItem
-									&& _selUnit->getItem(ST_LEFTHAND) != nullptr
-									&& _selUnit->getItem(ST_LEFTHAND) != _selItem)
+									&& _selUnit->getItem(ST_LEFTHAND)  != nullptr
+									&& _selUnit->getItem(ST_LEFTHAND)  != _selItem)
 								{
 									_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[10u])); // TODO: "one hand must be empty"
 								}
@@ -720,7 +721,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									int tuReload;
 									if (_tuMode == true)
 									{
-										tuReload = overItem->getRules()->getReloadTu();
+										tuReload = itOver->getRules()->getReloadTu();
 										if (_selItem->getInventorySection()->getCategory() != IC_HAND)
 										{
 											InventorySection toHand;
@@ -751,7 +752,7 @@ void Inventory::mouseClick(Action* action, State* state)
 										else
 											doGround = false;
 
-										overItem->setAmmoItem(_selItem);
+										itOver->setAmmoItem(_selItem);
 
 										setSelectedItem();
 										if (doGround == true) arrangeGround();
@@ -943,7 +944,7 @@ RuleInventory* Inventory::getSlotAtCursor( // private.
 		int* y) const
 {
 	for (std::map<std::string, RuleInventory*>::const_iterator
-			i = _game->getRuleset()->getInventories()->begin();
+			i  = _game->getRuleset()->getInventories()->begin();
 			i != _game->getRuleset()->getInventories()->end();
 			++i)
 	{
@@ -1101,7 +1102,7 @@ void Inventory::arrangeGround(int dir)
 
 	// first move all items out of the way -> a big number in x-direction to right
 	for (std::vector<BattleItem*>::const_iterator
-			i = list->begin();
+			i  = list->begin();
 			i != list->end();
 			++i)
 	{
@@ -1121,7 +1122,7 @@ void Inventory::arrangeGround(int dir)
 
 	// for each item find the most top-left position that is not occupied and will fit
 	for (std::vector<BattleItem*>::const_iterator
-			i = list->begin();
+			i  = list->begin();
 			i != list->end();
 			++i)
 	{
@@ -1218,7 +1219,7 @@ bool Inventory::isOverlap( // static.
 	if (inRule->getCategory() != IC_GROUND)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getInventory()->begin();
+				i  = unit->getInventory()->begin();
 				i != unit->getInventory()->end();
 				++i)
 		{
@@ -1232,7 +1233,7 @@ bool Inventory::isOverlap( // static.
 	else if (unit->getUnitTile() != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = unit->getUnitTile()->getInventory()->begin();
+				i  = unit->getUnitTile()->getInventory()->begin();
 				i != unit->getUnitTile()->getInventory()->end();
 				++i)
 		{
@@ -1339,8 +1340,8 @@ bool Inventory::unload()
 		return false;
 	}
 
-	BattleItem* const load (_selItem->getAmmoItem());
-	if (load == nullptr)
+	BattleItem* const itLoad (_selItem->getAmmoItem());
+	if (itLoad == nullptr)
 	{
 		if (_selItem->getRules()->getAcceptedLoadTypes()->empty() == false)
 			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[2u])); // weapon is not loaded
@@ -1395,7 +1396,7 @@ bool Inventory::unload()
 	_selItem->setAmmoItem();
 
 	moveItem(
-			load,
+			itLoad,
 			_game->getRuleset()->getInventoryRule(sectionLoad));
 
 	setSelectedItem();

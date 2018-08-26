@@ -99,47 +99,47 @@ InventoryState::InventoryState(
 		_game->getScreen()->resetDisplay(false);
 	} */
 
-	_srfBg		= new Surface();
-	_srfRagdoll	= new Surface();
+	_srfBg       = new Surface();
+	_srfRagdoll  = new Surface();
 
-	_txtName	= new Text(200, 17, 36, 6);
-	_srfGender	= new Surface(7, 7, 28, 1);
+	_txtName     = new Text(200, 17, 36, 6);
+	_srfGender   = new Surface(7, 7, 28, 1);
 
-	_txtWeight	= new Text(70, 9, 237, 24);
-	_txtTUs		= new Text(40, 9, 237, 32);
-	_txtFAcc	= new Text(40, 9, 237, 32);
-	_txtReact	= new Text(40, 9, 237, 40);
-	_txtThrow	= new Text(40, 9, 237, 48);
-	_txtMelee	= new Text(40, 9, 237, 56);
-	_txtPStr	= new Text(40, 9, 237, 64);
-	_txtPSkill	= new Text(40, 9, 237, 72);
+	_txtWeight   = new Text(70, 9, 237, 24);
+	_txtTUs      = new Text(40, 9, 237, 32);
+	_txtFAcc     = new Text(40, 9, 237, 32);
+	_txtReact    = new Text(40, 9, 237, 40);
+	_txtThrow    = new Text(40, 9, 237, 48);
+	_txtMelee    = new Text(40, 9, 237, 56);
+	_txtPStr     = new Text(40, 9, 237, 64);
+	_txtPSkill   = new Text(40, 9, 237, 72);
 
-	_txtUseTU	= new Text(45, 9, 245, 123);
-	_txtThrowTU	= new Text(40, 9, 245, 132);
-	_txtPsiTU	= new Text(40, 9, 245, 141);
+	_txtUseTU    = new Text(45, 9, 245, 123);
+	_txtThrowTU  = new Text(40, 9, 245, 132);
+	_txtPsiTU    = new Text(40, 9, 245, 141);
 
-	_battleOrder	= new NumberText(7, 5,   2, 25);
-	_exposed		= new NumberText(7, 5, 228,  4);
-	_tuCost			= new NumberText(7, 5, 310, 60);
+	_battleOrder = new NumberText(7, 5,   2, 25);
+	_exposed     = new NumberText(7, 5, 228,  4);
+	_tuCost      = new NumberText(7, 5, 310, 60);
 
-	_numHead		= new NumberText(7, 5,  79,  31);
-	_numTorso		= new NumberText(7, 5,  79, 144);
-	_numRightArm	= new NumberText(7, 5,  40,  80);
-	_numLeftArm		= new NumberText(7, 5, 117,  80);
-	_numRightLeg	= new NumberText(7, 5,  40, 120);
-	_numLeftLeg		= new NumberText(7, 5, 117, 120);
-	_numFire		= new NumberText(7, 5, 154,  43);
+	_numHead     = new NumberText(7, 5,  79,  31);
+	_numTorso    = new NumberText(7, 5,  79, 144);
+	_numRightArm = new NumberText(7, 5,  40,  80);
+	_numLeftArm  = new NumberText(7, 5, 117,  80);
+	_numRightLeg = new NumberText(7, 5,  40, 120);
+	_numLeftLeg  = new NumberText(7, 5, 117, 120);
+	_numFire     = new NumberText(7, 5, 154,  43);
 
-	_txtItem	= new Text(160, 9, 128, 140);
+	_txtItem     = new Text(160, 9, 128, 140);
 
-	_btnOk		= new BattlescapeButton(35, 23, 237, 0);
-	_btnPrev	= new BattlescapeButton(23, 23, 273, 0);
-	_btnNext	= new BattlescapeButton(23, 23, 297, 0);
+	_btnOk       = new BattlescapeButton(35, 23, 237, 0);
+	_btnPrev     = new BattlescapeButton(23, 23, 273, 0);
+	_btnNext     = new BattlescapeButton(23, 23, 297, 0);
 
-	_btnRank	= new BattlescapeButton(26, 23,   0,   0);
-	_btnUnload	= new BattlescapeButton(32, 25, 288,  32);
-	_btnGroundL	= new BattlescapeButton(32, 15,   0, 137);
-	_btnGroundR	= new BattlescapeButton(32, 15, 288, 137);
+	_btnRank     = new BattlescapeButton(26, 23,   0,   0);
+	_btnUnload   = new BattlescapeButton(32, 25, 288,  32);
+	_btnGroundL  = new BattlescapeButton(32, 15,   0, 137);
+	_btnGroundR  = new BattlescapeButton(32, 15, 288, 137);
 
 //	_btnCreateTemplate	= new BattlescapeButton(32,22, _templateBtnX, _createTemplateBtnY);
 //	_btnApplyTemplate	= new BattlescapeButton(32,22, _templateBtnX, _applyTemplateBtnY);
@@ -162,38 +162,38 @@ InventoryState::InventoryState(
 
 	add(_srfGender);
 	add(_srfRagdoll);
-	add(_txtName,		"textName",			"inventory", _srfBg);
+	add(_txtName,   "textName",        "inventory", _srfBg);
 
-	add(_txtWeight,		"textWeight",		"inventory", _srfBg);
-	add(_txtTUs,		"textTUs",			"inventory", _srfBg);
-	add(_txtFAcc,		"textFiring",		"inventory", _srfBg);
-	add(_txtReact,		"textReaction",		"inventory", _srfBg);
-	add(_txtThrow,		"textThrowing",		"inventory", _srfBg);
-	add(_txtMelee,		"textMelee",		"inventory", _srfBg);
-	add(_txtPStr,		"textPsiStrength",	"inventory", _srfBg);
-	add(_txtPSkill,		"textPsiSkill",		"inventory", _srfBg);
+	add(_txtWeight, "textWeight",      "inventory", _srfBg);
+	add(_txtTUs,    "textTUs",         "inventory", _srfBg);
+	add(_txtFAcc,   "textFiring",      "inventory", _srfBg);
+	add(_txtReact,  "textReaction",    "inventory", _srfBg);
+	add(_txtThrow,  "textThrowing",    "inventory", _srfBg);
+	add(_txtMelee,  "textMelee",       "inventory", _srfBg);
+	add(_txtPStr,   "textPsiStrength", "inventory", _srfBg);
+	add(_txtPSkill, "textPsiSkill",    "inventory", _srfBg);
 
 	add(_battleOrder);
 	add(_exposed);
 	add(_tuCost);
 
-	add(_txtItem,		"textItem",			"inventory", _srfBg);
-	add(_txtAmmo,		"textAmmo",			"inventory", _srfBg);
-	add(_btnOk,			"buttonOK",			"inventory", _srfBg);
-	add(_btnPrev,		"buttonPrev",		"inventory", _srfBg);
-	add(_btnNext,		"buttonNext",		"inventory", _srfBg);
-	add(_btnUnload,		"buttonUnload",		"inventory", _srfBg);
-	add(_btnGroundL,	"buttonGround",		"inventory", _srfBg);
-	add(_btnGroundR,	"buttonGround",		"inventory", _srfBg);
-	add(_btnRank,		"rank",				"inventory", _srfBg);
+	add(_txtItem,    "textItem",     "inventory", _srfBg);
+	add(_txtAmmo,    "textAmmo",     "inventory", _srfBg);
+	add(_btnOk,      "buttonOK",     "inventory", _srfBg);
+	add(_btnPrev,    "buttonPrev",   "inventory", _srfBg);
+	add(_btnNext,    "buttonNext",   "inventory", _srfBg);
+	add(_btnUnload,  "buttonUnload", "inventory", _srfBg);
+	add(_btnGroundL, "buttonGround", "inventory", _srfBg);
+	add(_btnGroundR, "buttonGround", "inventory", _srfBg);
+	add(_btnRank,    "rank",         "inventory", _srfBg);
 
-//	add(_btnCreateTemplate,	"buttonCreate",	"inventory", _srfBg);
-//	add(_btnApplyTemplate,	"buttonApply",	"inventory", _srfBg);
+//	add(_btnCreateTemplate, "buttonCreate", "inventory", _srfBg);
+//	add(_btnApplyTemplate,  "buttonApply",  "inventory", _srfBg);
 //	add(_btnClearInventory);
 
-	add(_txtUseTU,		"textTUs",			"inventory", _srfBg);
-	add(_txtThrowTU,	"textTUs",			"inventory", _srfBg);
-	add(_txtPsiTU,		"textTUs",			"inventory", _srfBg);
+	add(_txtUseTU,   "textTUs", "inventory", _srfBg);
+	add(_txtThrowTU, "textTUs", "inventory", _srfBg);
+	add(_txtPsiTU,   "textTUs", "inventory", _srfBg);
 
 	add(_numHead);
 	add(_numTorso);
@@ -212,17 +212,17 @@ InventoryState::InventoryState(
 	_txtName->setBig();
 	_txtName->setHighContrast();
 
-	_txtWeight	->setHighContrast();
-	_txtTUs		->setHighContrast();
-	_txtFAcc	->setHighContrast();
-	_txtReact	->setHighContrast();
-	_txtThrow	->setHighContrast();
-	_txtMelee	->setHighContrast();
-	_txtPStr	->setHighContrast();
-	_txtPSkill	->setHighContrast();
-	_txtUseTU	->setHighContrast();
-	_txtThrowTU	->setHighContrast();
-	_txtPsiTU	->setHighContrast();
+	_txtWeight ->setHighContrast();
+	_txtTUs    ->setHighContrast();
+	_txtFAcc   ->setHighContrast();
+	_txtReact  ->setHighContrast();
+	_txtThrow  ->setHighContrast();
+	_txtMelee  ->setHighContrast();
+	_txtPStr   ->setHighContrast();
+	_txtPSkill ->setHighContrast();
+	_txtUseTU  ->setHighContrast();
+	_txtThrowTU->setHighContrast();
+	_txtPsiTU  ->setHighContrast();
 
 	_battleOrder->setColor(WHITE);
 	_battleOrder->setVisible(false);
@@ -233,27 +233,27 @@ InventoryState::InventoryState(
 	_tuCost->setColor(WHITE);
 	_tuCost->setVisible(false);
 
-	_numHead		->setColor(RED);
-	_numHead		->setVisible(false);
-	_numTorso		->setColor(RED);
-	_numTorso		->setVisible(false);
-	_numRightArm	->setColor(RED);
-	_numRightArm	->setVisible(false);
-	_numLeftArm		->setColor(RED);
-	_numLeftArm		->setVisible(false);
-	_numRightLeg	->setColor(RED);
-	_numRightLeg	->setVisible(false);
-	_numLeftLeg		->setColor(RED);
-	_numLeftLeg		->setVisible(false);
-	_numFire		->setColor(ORANGE);
-	_numFire		->setVisible(false);
+	_numHead    ->setColor(RED);
+	_numHead    ->setVisible(false);
+	_numTorso   ->setColor(RED);
+	_numTorso   ->setVisible(false);
+	_numRightArm->setColor(RED);
+	_numRightArm->setVisible(false);
+	_numLeftArm ->setColor(RED);
+	_numLeftArm ->setVisible(false);
+	_numRightLeg->setColor(RED);
+	_numRightLeg->setVisible(false);
+	_numLeftLeg ->setColor(RED);
+	_numLeftLeg ->setVisible(false);
+	_numFire    ->setColor(ORANGE);
+	_numFire    ->setVisible(false);
 
 	_txtItem->setHighContrast();
 
 	_txtAmmo->setAlign(ALIGN_LEFT);
 	_txtAmmo->setHighContrast();
 
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnOkClick),
@@ -262,80 +262,80 @@ InventoryState::InventoryState(
 							Options::keyCancel);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnOkClick),
 							Options::keyBattleInventory);
-//	_btnOk->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnOk->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+//	_btnOk->onMouseIn(      static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnOk->onMouseOut(     static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnOk->setTooltip("STR_OK");
 
-	_btnPrev->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnPrevClick));
-	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnPrevClick),
-								Options::keyBattlePrevUnit);
-	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnPrevClick),
-								SDLK_LEFT);
-	_btnPrev->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnPrevClick),
-								SDLK_KP4);
-//	_btnPrev->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnPrev->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+	_btnPrev->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnPrevClick));
+	_btnPrev->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnPrevClick),
+							  Options::keyBattlePrevUnit);
+	_btnPrev->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnPrevClick),
+							  SDLK_LEFT);
+	_btnPrev->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnPrevClick),
+							  SDLK_KP4);
+//	_btnPrev->onMouseIn(      static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnPrev->onMouseOut(     static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnPrev->setTooltip("STR_PREVIOUS_UNIT");
 
-	_btnNext->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnNextClick));
-	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnNextClick),
-								Options::keyBattleNextUnit);
-	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnNextClick),
-								SDLK_RIGHT);
-	_btnNext->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnNextClick),
-								SDLK_KP6);
-//	_btnNext->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnNext->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+	_btnNext->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnNextClick));
+	_btnNext->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnNextClick),
+							  Options::keyBattleNextUnit);
+	_btnNext->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnNextClick),
+							  SDLK_RIGHT);
+	_btnNext->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnNextClick),
+							  SDLK_KP6);
+//	_btnNext->onMouseIn(      static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnNext->onMouseOut(     static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnNext->setTooltip("STR_NEXT_UNIT");
 
-	_btnUnload->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnLoadIconClick));
-	_btnUnload->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnSaveLayouts),
-								SDL_BUTTON_RIGHT);
-//	_btnUnload->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnLoadIconClick));
-//	_btnUnload->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnUnload->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+	_btnUnload->onMouseClick(static_cast<ActionHandler>(&InventoryState::btnLoadIconClick));
+	_btnUnload->onMouseClick(static_cast<ActionHandler>(&InventoryState::btnSaveLayouts),
+							 SDL_BUTTON_RIGHT);
+//	_btnUnload->onMouseClick(static_cast<ActionHandler>(&InventoryState::btnLoadIconClick));
+//	_btnUnload->onMouseIn(   static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnUnload->onMouseOut(  static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnUnload->setTooltip("STR_UNLOAD_WEAPON");
 
 	_inventoryPanel->onMousePress(static_cast<ActionHandler>(&InventoryState::btnGroundPress));
 
-	_btnGroundL->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnGroundClick));
-	_btnGroundL->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnClearGroundClick),
-								SDL_BUTTON_RIGHT);
+	_btnGroundL->onMouseClick(static_cast<ActionHandler>(&InventoryState::btnGroundClick));
+	_btnGroundL->onMouseClick(static_cast<ActionHandler>(&InventoryState::btnClearGroundClick),
+							  SDL_BUTTON_RIGHT);
 
-	_btnGroundR->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnGroundClick));
-	_btnGroundR->onMouseClick(		static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
-									SDL_BUTTON_RIGHT);
-	_btnGroundR->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
-									Options::keyInvClear);
-//	_btnGroundR->onMouseIn(			static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnGroundR->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+	_btnGroundR->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnGroundClick));
+	_btnGroundR->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
+							     SDL_BUTTON_RIGHT);
+	_btnGroundR->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
+								 Options::keyInvClear);
+//	_btnGroundR->onMouseIn(      static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnGroundR->onMouseOut(     static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnGroundR->setTooltip("STR_SCROLL_RIGHT");
 
-	_btnRank->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnRankClick));
-//	_btnRank->onMouseIn(	static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnRank->onMouseOut(	static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+	_btnRank->onMouseClick(static_cast<ActionHandler>(&InventoryState::btnRankClick));
+//	_btnRank->onMouseIn(   static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnRank->onMouseOut(  static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnRank->setTooltip("STR_UNIT_STATS");
 
 
-/*	_btnCreateTemplate->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnCreateTemplateClick));
+/*	_btnCreateTemplate->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnCreateTemplateClick));
 	_btnCreateTemplate->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnCreateTemplateClick),
 										Options::keyInvCreateTemplate); */
-//	_btnCreateTemplate->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnCreateTemplate->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+//	_btnCreateTemplate->onMouseIn(      static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnCreateTemplate->onMouseOut(     static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnCreateTemplate->setTooltip("STR_CREATE_INVENTORY_TEMPLATE");
 
-/*	_btnApplyTemplate->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnApplyTemplateClick));
-	_btnApplyTemplate->onKeyboardPress(	static_cast<ActionHandler>(&InventoryState::btnApplyTemplateClick),
-										Options::keyInvApplyTemplate); */
-//	_btnApplyTemplate->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnApplyTemplate->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+/*	_btnApplyTemplate->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnApplyTemplateClick));
+	_btnApplyTemplate->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnApplyTemplateClick),
+									   Options::keyInvApplyTemplate); */
+//	_btnApplyTemplate->onMouseIn(      static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnApplyTemplate->onMouseOut(     static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnApplyTemplate->setTooltip("STR_APPLY_INVENTORY_TEMPLATE");
 
-/*	_btnClearInventory->onMouseClick(	static_cast<ActionHandler>(&InventoryState::btnClearUnitClick));
+/*	_btnClearInventory->onMouseClick(   static_cast<ActionHandler>(&InventoryState::btnClearUnitClick));
 	_btnClearInventory->onKeyboardPress(static_cast<ActionHandler>(&InventoryState::btnClearUnitClick),
 										Options::keyInvClear); */
-//	_btnClearInventory->onMouseIn(		static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
-//	_btnClearInventory->onMouseOut(		static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
+//	_btnClearInventory->onMouseIn(      static_cast<ActionHandler>(&InventoryState::txtTooltipIn));
+//	_btnClearInventory->onMouseOut(     static_cast<ActionHandler>(&InventoryState::txtTooltipOut));
 //	_btnClearInventory->setTooltip("STR_CLEAR_INVENTORY");
 
 
@@ -343,7 +343,7 @@ InventoryState::InventoryState(
 /*	if (_tuMode)
 	{
 		_btnCreateTemplate->setVisible(false);
-		_btnApplyTemplate->setVisible(false);
+		_btnApplyTemplate ->setVisible(false);
 		_btnClearInventory->setVisible(false);
 	}
 	else
@@ -351,24 +351,24 @@ InventoryState::InventoryState(
 
 	_inventoryPanel->drawGrids();
 	_inventoryPanel->setTuMode(_tuMode);
-	_inventoryPanel->onMouseClick(	static_cast<ActionHandler>(&InventoryState::inClick),
-									0u);
-	_inventoryPanel->onMouseOver(	static_cast<ActionHandler>(&InventoryState::inMouseOver));
-	_inventoryPanel->onMouseOut(	static_cast<ActionHandler>(&InventoryState::inMouseOut));
+	_inventoryPanel->onMouseClick(static_cast<ActionHandler>(&InventoryState::inClick),
+								  0u);
+	_inventoryPanel->onMouseOver( static_cast<ActionHandler>(&InventoryState::inMouseOver));
+	_inventoryPanel->onMouseOut(  static_cast<ActionHandler>(&InventoryState::inMouseOut));
 
-	_txtTUs->setVisible(_tuMode);
+	_txtTUs  ->setVisible(_tuMode);
 	_txtUseTU->setVisible(_tuMode);
 
 	const bool vis (_tuMode == false);
-	_txtFAcc->setVisible(vis);
-	_txtReact->setVisible(vis);
-	_txtThrow->setVisible(vis);
-	_txtMelee->setVisible(vis);
-	_txtPStr->setVisible(vis);
+	_txtFAcc  ->setVisible(vis);
+	_txtReact ->setVisible(vis);
+	_txtThrow ->setVisible(vis);
+	_txtMelee ->setVisible(vis);
+	_txtPStr  ->setVisible(vis);
 	_txtPSkill->setVisible(vis);
 
-	_timer = new Timer(333u);
-	_timer->onTimer((StateHandler)&InventoryState::blinkExposed);
+	_tr = new Timer(333u);
+	_tr->onTimer((StateHandler)&InventoryState::blinkExposed);
 //	_timer->onTimer((StateHandler)&InventoryState::keyRepeat);
 //	_timer->start();
 }
@@ -388,13 +388,13 @@ static void _clearInventoryTemplate(std::vector<SoldierLayout*>& inventoryTempla
 InventoryState::~InventoryState()
 {
 //	_clearInventoryTemplate(_curInventoryTemplate);
-	delete _timer;
+	delete _tr;
 
 	if (_battleState != nullptr)
 	{
 		TileEngine* const te (_battleSave->getTileEngine());
 		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
+				i  = _battleSave->getUnits()->begin();
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
@@ -444,7 +444,7 @@ InventoryState::~InventoryState()
 void InventoryState::think()
 {
 	State::think(); // NOTE: Hits Timer for Inventory.
-	_timer->think(this, nullptr);
+	_tr->think(this, nullptr);
 }
 
 /**
@@ -490,9 +490,9 @@ void InventoryState::init()
 
 	_unit->setCacheInvalid();
 
-	_srfRagdoll	->clear();
-	_btnRank	->clear();
-	_srfGender	->clear();
+	_srfRagdoll->clear();
+	_btnRank   ->clear();
+	_srfGender ->clear();
 
 	_txtName->setText(_unit->getLabel(_game->getLanguage()));
 
@@ -523,10 +523,10 @@ void InventoryState::init()
 		switch (sol->getLook())
 		{
 			default:
-			case LOOK_BLONDE:		look += "0"; break;
-			case LOOK_BROWNHAIR:	look += "1"; break;
-			case LOOK_ORIENTAL:		look += "2"; break;
-			case LOOK_AFRICAN:		look += "3";
+			case LOOK_BLONDE:    look += "0"; break;
+			case LOOK_BROWNHAIR: look += "1"; break;
+			case LOOK_ORIENTAL:  look += "2"; break;
+			case LOOK_AFRICAN:   look += "3";
 		}
 		look += ".SPK";
 
@@ -577,12 +577,12 @@ void InventoryState::updateStats() // private.
 		_exposed->setValue(static_cast<unsigned>(exposed));
 		_exposed->setVisible();
 
-		if (_timer->isRunning() == false)
-			_timer->start();
+		if (_tr->isRunning() == false)
+			_tr->start();
 	}
 	else
 	{
-		_timer->stop();
+		_tr->stop();
 		_exposed->setVisible(false);
 	}
 
@@ -668,7 +668,7 @@ void InventoryState::updateWounds() // private.
 			++i)
 	{
 		bodyPart = static_cast<UnitBodyPart>(i);
-		wound = static_cast<unsigned>(_unit->getFatals(bodyPart));
+		wound    = static_cast<unsigned>(_unit->getFatals(bodyPart));
 
 		switch (bodyPart)
 		{
@@ -720,7 +720,7 @@ void InventoryState::btnOkClick(Action*)
 			_battleSave->distributeEquipt(_battleSave->getBattleInventory());
 
 			for (std::vector<BattleUnit*>::const_iterator
-					i = _battleSave->getUnits()->begin();
+					i  = _battleSave->getUnits()->begin();
 					i != _battleSave->getUnits()->end();
 					++i)
 			{
@@ -773,8 +773,8 @@ void InventoryState::btnLoadIconClick(Action*)
 {
 	if (_inventoryPanel->unload() == true)
 	{
-		_txtItem->setText(L"");
-		_txtAmmo->setText(L"");
+		_txtItem ->setText(L"");
+		_txtAmmo ->setText(L"");
 		_txtUseTU->setText(L"");
 
 		_srfLoad->clear();
@@ -950,18 +950,18 @@ void InventoryState::btnClearGroundClick(Action*)
 	if (_battleState == nullptr								// don't accept clicks during tactical or pre-tactical
 		&& _inventoryPanel->getSelectedItem() == nullptr)	// or if mouse-grab has an item
 	{
-		Craft* craft (nullptr);	// find a Craft and later its Base_
+		Craft* craft (nullptr); // find a Craft and later its Base_
 
 		const std::vector<Base*>* const baseList (_battleSave->getSavedGame()->getBases());
 		for (std::vector<Base*>::const_iterator
-				i = baseList->begin();
+				i  = baseList->begin();
 				i != baseList->end() && craft == nullptr;
 				++i)
 		{
 			if ((*i)->getTactical() == true) return; // if a Base is in tactical then any Craft isn't.
 
 			for (std::vector<Craft*>::const_iterator
-					j = (*i)->getCrafts()->begin();
+					j  = (*i)->getCrafts()->begin();
 					j != (*i)->getCrafts()->end() && craft == nullptr;
 					++j)
 			{
@@ -985,7 +985,7 @@ void InventoryState::btnClearGroundClick(Action*)
 
 				std::string type;
 				for (std::vector<BattleItem*>::const_iterator
-						i = grdList->begin();
+						i  = grdList->begin();
 						i != grdList->end();
 						++i)
 				{
@@ -1046,33 +1046,33 @@ void InventoryState::inClick(Action*)
 	// vast majority of this function has been subsumed into inMouseOver().
 	// But i'm leaving it in anyway ...
 
-	const BattleItem* const selItem (_inventoryPanel->getSelectedItem());
-	if (selItem != nullptr)
+	const BattleItem* const itSelected (_inventoryPanel->getSelectedItem());
+	if (itSelected != nullptr)
 	{
-		setExtraInfo(selItem);
+		setExtraInfo(itSelected);
 
 		std::wstring wst;
-		switch (selItem->getRules()->getBattleType())
+		switch (itSelected->getRules()->getBattleType())
 		{
 			case BT_MEDIKIT:
 				wst = tr("STR_MEDI_KIT_QUANTITIES_LEFT")
-						.arg(selItem->getPainKillerQuantity())
-						.arg(selItem->getStimulantQuantity())
-						.arg(selItem->getHealQuantity());
+						.arg(itSelected->getPainKillerQuantity())
+						.arg(itSelected->getStimulantQuantity())
+						.arg(itSelected->getHealQuantity());
 				break;
 
 			case BT_AMMO:
-				wst = tr("STR_AMMO_ROUNDS_LEFT").arg(selItem->getAmmoQuantity());
+				wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itSelected->getAmmoQuantity());
 				break;
 
 			case BT_FIREARM:
 //			case BT_MELEE:
-				if (selItem->selfPowered() == false || selItem->selfExpended() == true)
+				if (itSelected->selfPowered() == false || itSelected->selfExpended() == true)
 				{
-					const BattleItem* const aItem (selItem->getAmmoItem());
-					if (aItem != nullptr)
+					const BattleItem* const itLoad (itSelected->getAmmoItem());
+					if (itLoad != nullptr)
 					{
-						wst = tr("STR_AMMO_ROUNDS_LEFT").arg(aItem->getAmmoQuantity());
+						wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itLoad->getAmmoQuantity());
 
 						SDL_Rect rect;
 						rect.x =
@@ -1090,7 +1090,7 @@ void InventoryState::inClick(Action*)
 						rect.h = static_cast<Uint16>(rect.h - 2u);
 						_srfLoad->drawRect(&rect, 15u);
 
-						aItem->getRules()->drawHandSprite(
+						itLoad->getRules()->drawHandSprite(
 													_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
 													_srfLoad);
 					}
@@ -1130,34 +1130,34 @@ void InventoryState::inMouseOver(Action*)
 	{
 		_srfLoad->clear();
 
-		const BattleItem* const overItem (_inventoryPanel->getMouseOverItem());
-		if (overItem != nullptr)
+		const BattleItem* const itOver (_inventoryPanel->getMouseOverItem());
+		if (itOver != nullptr)
 		{
-			setExtraInfo(overItem);
+			setExtraInfo(itOver);
 //			_updateTemplateButtons(false);
 
 			std::wstring wst;
-			switch (overItem->getRules()->getBattleType())
+			switch (itOver->getRules()->getBattleType())
 			{
 				case BT_MEDIKIT:
 					wst = tr("STR_MEDI_KIT_QUANTITIES_LEFT")
-							.arg(overItem->getPainKillerQuantity())
-							.arg(overItem->getStimulantQuantity())
-							.arg(overItem->getHealQuantity());
+							.arg(itOver->getPainKillerQuantity())
+							.arg(itOver->getStimulantQuantity())
+							.arg(itOver->getHealQuantity());
 					break;
 
 				case BT_AMMO:
-					wst = tr("STR_AMMO_ROUNDS_LEFT").arg(overItem->getAmmoQuantity());
+					wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itOver->getAmmoQuantity());
 					break;
 
 				case BT_FIREARM:
 //				case BT_MELEE:
-					if (overItem->selfPowered() == false || overItem->selfExpended() == true)
+					if (itOver->selfPowered() == false || itOver->selfExpended() == true)
 					{
-						const BattleItem* const aItem (overItem->getAmmoItem());
-						if (aItem != nullptr)
+						const BattleItem* const itLoad (itOver->getAmmoItem());
+						if (itLoad != nullptr)
 						{
-							wst = tr("STR_AMMO_ROUNDS_LEFT").arg(aItem->getAmmoQuantity());
+							wst = tr("STR_AMMO_ROUNDS_LEFT").arg(itLoad->getAmmoQuantity());
 
 							SDL_Rect rect;
 							rect.x =
@@ -1175,7 +1175,7 @@ void InventoryState::inMouseOver(Action*)
 							rect.h = static_cast<Uint16>(rect.h - 2u);
 							_srfLoad->drawRect(&rect, 15u);
 
-							aItem->getRules()->drawHandSprite(
+							itLoad->getRules()->drawHandSprite(
 														_game->getResourcePack()->getSurfaceSet("BIGOBS.PCK"),
 														_srfLoad);
 //							_updateTemplateButtons(false);
@@ -1188,8 +1188,8 @@ void InventoryState::inMouseOver(Action*)
 		else // no Item under cursor.
 		{
 //			if (_currentTooltip.empty())
-			_txtItem->setText(L"");
-			_txtAmmo->setText(L"");
+			_txtItem ->setText(L"");
+			_txtAmmo ->setText(L"");
 			_txtUseTU->setText(L"");
 //			_updateTemplateButtons(!_tuMode);
 		}
@@ -1204,8 +1204,8 @@ void InventoryState::inMouseOut(Action*)
 {
 	_tuCost->setVisible(false);
 
-	_txtItem->setText(L"");
-	_txtAmmo->setText(L"");
+	_txtItem ->setText(L"");
+	_txtAmmo ->setText(L"");
 	_txtUseTU->setText(L"");
 
 	_srfLoad->clear();
@@ -1258,7 +1258,7 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 		if (corpseUnit != nullptr)
 		{
 			if (corpseUnit->getType().compare(0u,11u, "STR_FLOATER") == 0 // special handling for Floaters.
-				&& (_game->getSavedGame()->isResearched("STR_FLOATER") == false
+				&& (   _game->getSavedGame()->isResearched("STR_FLOATER") == false
 					|| _game->getSavedGame()->isResearched("STR_FLOATER_AUTOPSY") == false))
 			{
 				label << tr("STR_FLOATER"); // STR_FLOATER_CORPSE
@@ -1318,15 +1318,15 @@ void InventoryState::setExtraInfo(const BattleItem* const selOver) // private.
 					tu = _unit->getActionTu(bat, selOver);
 					switch (bat)
 					{
-						case BA_LAUNCH:		actionType = "STR_LAUNCH_";	break;
-						case BA_SNAPSHOT:	actionType = "STR_SNAP_";	break;
-						case BA_AUTOSHOT:	actionType = "STR_BURST_";	break;
-						case BA_AIMEDSHOT:	actionType = "STR_SCOPE_";	break;
-						case BA_PRIME:		actionType = "STR_PRIME_";	break;
-						case BA_DEFUSE:		actionType = "STR_DEFUSE_";	break;
-						case BA_USE:		actionType = "STR_USE_";	break;
-						case BA_PSIPANIC:	actionType = "STR_PSI_";	break;
-						case BA_MELEE:		actionType = "STR_ATTACK_";
+						case BA_LAUNCH:    actionType = "STR_LAUNCH_"; break;
+						case BA_SNAPSHOT:  actionType = "STR_SNAP_";   break;
+						case BA_AUTOSHOT:  actionType = "STR_BURST_";  break;
+						case BA_AIMEDSHOT: actionType = "STR_SCOPE_";  break;
+						case BA_PRIME:     actionType = "STR_PRIME_";  break;
+						case BA_DEFUSE:    actionType = "STR_DEFUSE_"; break;
+						case BA_USE:       actionType = "STR_USE_";    break;
+						case BA_PSIPANIC:  actionType = "STR_PSI_";    break;
+						case BA_MELEE:     actionType = "STR_ATTACK_";
 					}
 			}
 			_txtUseTU->setText(tr(actionType).arg(tu));

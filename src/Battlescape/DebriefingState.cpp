@@ -1202,11 +1202,11 @@ void DebriefingState::prepareDebriefing() // private.
 							if (itRight != nullptr)
 							{
 								itRule = itRight->getRules();
-								if (itRule->isFixed() == true
-									&& itRule->getFullClip() > 0
-									&& (itRight = itRight->getAmmoItem()) != nullptr)
+								if (itRule->isFixed() == true)
 								{
-									_lostProperty[itRight->getRules()] += itRule->getFullClip();
+									const int fullclip (itRule->getFullClip());
+									if (fullclip > 0 && (itRight = itRight->getAmmoItem()) != nullptr)
+										_lostProperty[itRight->getRules()] += fullclip;
 								}
 							}
 						}
@@ -1246,19 +1246,20 @@ void DebriefingState::prepareDebriefing() // private.
 								const BattleItem* itRight ((*i)->getItem(ST_RIGHTHAND));
 								if (itRight != nullptr)
 								{
-									int clip;
 									itRule = itRight->getRules();
-									if (itRule->isFixed() == true
-										&& (clip = itRule->getFullClip()) > 0
-										&& (itRight = itRight->getAmmoItem()) != nullptr)
+									if (itRule->isFixed() == true)
 									{
-										itRule = itRight->getRules();
-										const int qtyLoad (itRight->getAmmoQuantity());
-										_base->getStorageItems()->addItem(			// return any load from the support-unit's fixed-weapon to base-stores.
-																		itRule->getType(),
-																		qtyLoad);
-										if (qtyLoad < clip)
-											_lostProperty[itRule] += clip - qtyLoad;
+										int fullclip (itRule->getFullClip());
+										if (fullclip > 0 && (itRight = itRight->getAmmoItem()) != nullptr)
+										{
+											itRule = itRight->getRules();
+											const int qtyLoad (itRight->getAmmoQuantity());
+											_base->getStorageItems()->addItem(			// return any load from the support-unit's fixed-weapon to base-stores.
+																			itRule->getType(),
+																			qtyLoad);
+											if (qtyLoad < fullclip)
+												_lostProperty[itRule] += fullclip - qtyLoad;
+										}
 									}
 								}
 							}
@@ -1291,9 +1292,9 @@ void DebriefingState::prepareDebriefing() // private.
 
 									if ((*j)->selfPowered() == false)
 									{
-										const BattleItem* const load ((*j)->getAmmoItem());
-										if (load != nullptr && load->isProperty() == true)
-											++_lostProperty[load->getRules()];
+										const BattleItem* const clip ((*j)->getAmmoItem());
+										if (clip != nullptr && clip->isProperty() == true)
+											++_lostProperty[clip->getRules()];
 									}
 								}
 
@@ -1323,9 +1324,6 @@ void DebriefingState::prepareDebriefing() // private.
 											TAC_RESULT[10u], // support destroyed
 											-(*i)->getValue());
 
-								++_lostProperty[_rules->getItemRule((*i)->getType())];
-
-								// TODO: lostProperty that eg. dogs can carry.
 								for (std::vector<BattleItem*>::const_iterator // add equipment to '_lostProperty' ->
 										j  = (*i)->getInventory()->begin();
 										j != (*i)->getInventory()->end();
@@ -1339,23 +1337,24 @@ void DebriefingState::prepareDebriefing() // private.
 
 										if ((*j)->selfPowered() == false)
 										{
-											const BattleItem* const load ((*j)->getAmmoItem());
-											if (load != nullptr && load->isProperty() == true)
-												++_lostProperty[load->getRules()];
+											const BattleItem* const clip ((*j)->getAmmoItem());
+											if (clip != nullptr && clip->isProperty() == true)
+												++_lostProperty[clip->getRules()];
 										}
 									}
 								}
 
+								++_lostProperty[_rules->getItemRule((*i)->getType())];
 
 								const BattleItem* itRight ((*i)->getItem(ST_RIGHTHAND));
 								if (itRight != nullptr)
 								{
 									itRule = itRight->getRules();
-									if (itRule->isFixed() == true
-										&& itRule->getFullClip() > 0
-										&& (itRight = itRight->getAmmoItem()) != nullptr)
+									if (itRule->isFixed() == true)
 									{
-										_lostProperty[itRight->getRules()] += itRule->getFullClip();
+										const int fullclip (itRule->getFullClip());
+										if (fullclip > 0 && (itRight = itRight->getAmmoItem()) != nullptr)
+											_lostProperty[itRight->getRules()] += fullclip;
 									}
 								}
 							}
@@ -1629,8 +1628,8 @@ void DebriefingState::prepareDebriefing() // private.
 						case ALIEN_HABITAT:
 //							if (_specialTypes.find(tileType) != _specialTypes.end())
 							addResultStat(
-										_specialTypes[tileType]->type,
-										_specialTypes[tileType]->value);
+									_specialTypes[tileType]->type,
+									_specialTypes[tileType]->value);
 					}
 				}
 			}
@@ -1670,15 +1669,41 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		Log(LOG_INFO) << ". handle deleted property - id= " << (*i)->getId() << " type= " << (*i)->getRules()->getType();
 
-		if (_surplus.find(itRule = (*i)->getRules()) == _surplus.end())
-			++_lostProperty[itRule];
-		else if (--_surplus[itRule] == 0)	// NOTE: '_surplusItems' shall never contain clips - vid. recoverItems()
-			_surplus.erase(itRule);			// ... clips handled immediately below_
-	}										// TODO: Extensive testing on item-gains/losses ....
+		itRule = (*i)->getRules();
+		switch (itRule->getBattleType())
+		{
+			case BT_AMMO:
+				Log(LOG_INFO) << ". . is Load - add to lost property - PRINT LOSTPROPERTY VECTOR CONTENTS";
+				++_lostProperty[itRule];
+				// debug
+				for (std::map<const RuleItem*, int>::const_iterator
+						j  = _lostProperty.begin();
+						j != _lostProperty.end();
+						++j)
+				{
+					Log(LOG_INFO) << ". . . " << j->first->getType() << " qty= " << j->second;
+				}
+				// end_debug
+				break;
+
+			default:
+				Log(LOG_INFO) << ". . is NOT Load";
+				if (_surplus.find(itRule) == _surplus.end())
+				{
+					Log(LOG_INFO) << ". . . not in surplus - add to lost property";
+					++_lostProperty[itRule];
+				}
+				else if (--_surplus[itRule] == 0)	// NOTE: '_surplus' shall never contain clips - vid. recoverItems()
+				{
+					Log(LOG_INFO) << ". . . is in surplus but only 1 - erase from surplus";
+					_surplus.erase(itRule);			// ... clips handled immediately below_
+				}
+		}											// TODO: Extensive testing on property-gains/losses ....
+	}
 
 	int
-		qtyFullClip,
-		clipsTotal;
+		fullclip,
+		clips;
 	for (std::map<const RuleItem*, int>::const_iterator
 			i  = _clips.begin();	// '_clips' is a tally of both xcomProperty + found clips
 			i != _clips.end();		// so '_clipsProperty' needs to be subtracted to find clipsGained.
@@ -1686,10 +1711,10 @@ void DebriefingState::prepareDebriefing() // private.
 	{
 		Log(LOG_INFO) << ". handle clips - type= " << i->first->getType() << " qty= " << i->second;
 
-		if ((qtyFullClip = i->first->getFullClip()) != 0) // safety.
+		if ((fullclip = i->first->getFullClip()) != 0) // safety.
 		{
-			clipsTotal = i->second / qtyFullClip;
-			switch (clipsTotal)
+			clips = i->second / fullclip;
+			switch (clips)
 			{
 				case 0:					// all clips-of-type are lost including those brought on the mission
 					if (i->second != 0)	// and if there's a partial-clip that needs to be added to the lost-vector too iff it's xCom Property.
@@ -1702,7 +1727,7 @@ void DebriefingState::prepareDebriefing() // private.
 
 				default:				// clips were found whether xcomProperty or not. Add them to Base-stores!
 				{
-					_lostProperty.erase(i->first);
+//					_lostProperty.erase(i->first);
 
 					int roundsProperty;
 					std::map<const RuleItem*, int>::const_iterator j (_clipsProperty.find(i->first));
@@ -1711,13 +1736,13 @@ void DebriefingState::prepareDebriefing() // private.
 					else
 						roundsProperty = 0;
 
-					int clipsGained ((i->second - roundsProperty) / qtyFullClip);
+					int clipsGained ((i->second - roundsProperty) / fullclip);
 					if (clipsGained != 0)
-						_surplus[i->first] = clipsGained;			// these clips are over & above those brought as xcomProperty.
+						_surplus[i->first] = clipsGained;	// these clips are over & above those brought as xcomProperty.
 
 					_base->getStorageItems()->addItem(
 													i->first->getType(),
-													clipsTotal);	// these clips include both xcomProperty and found clips.
+													clips);	// these clips include both xcomProperty and found clips.
 				}
 			}
 		}
@@ -1869,6 +1894,8 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 			}
 			craft->getVehicles()->clear();
 
+			const RuleItem* itRule;
+
 			int
 				qtySupport,
 				quads;
@@ -1893,7 +1920,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 
 				qtySupport = std::min(baseQty, i->second);
 
-				const RuleItem* const itRule (_rules->getItemRule(i->first));
+				itRule = _rules->getItemRule(i->first);
 
 				if (itRule->getFullClip() < 1)
 				{
@@ -2040,6 +2067,8 @@ void DebriefingState::recoverItems(std::vector<BattleItem*>* const its) // priva
 								const BattleItem* const clip ((*i)->getAmmoItem());
 								if (clip != nullptr) //&& clip->getRules()->getFullClip() != 0) // <- nobody be stupid and make a clip with 0 ammo-capacity.
 								{
+									Log(LOG_INFO) << ". . clip= " << clip->getRules()->getType();
+
 									_clips[clip->getRules()] += clip->getAmmoQuantity();
 									if ((*i)->isProperty() == true)
 										_clipsProperty[clip->getRules()] += clip->getAmmoQuantity();

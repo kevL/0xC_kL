@@ -51,9 +51,9 @@ class DebriefExtraState
 private:
 	enum DebriefExtraScreen
 	{
-		SCN_LOOT_GAINED,	// 0
-		SCN_LOOT_LOST,		// 1
-		SCN_SOL_STATS		// 2
+		DES_SURPLUS,		// 0
+		DES_LOSTPROPERTY,	// 1
+		DES_SOLSTATS		// 2
 	} _screen;
 
 	static const Uint8
@@ -82,8 +82,8 @@ private:
 		_typesSell;
 
 	std::map<const RuleItem*, int>
-		_itemsGained,
-		_itemsLost;
+		_surplus,
+		_lostProperty;
 	std::map<std::wstring, std::vector<int>> _solStatDeltas;
 
 	Text
@@ -150,8 +150,8 @@ private:
 		DebriefExtraState(
 				Base* const base,
 				std::wstring operation,
-				std::map<const RuleItem*, int> itemsGained,
-				std::map<const RuleItem*, int> itemsLost,
+				std::map<const RuleItem*, int> surplus,
+				std::map<const RuleItem*, int> lostProperty,
 				std::map<std::wstring, std::vector<int>> solStatDeltas);
 		/// Cleans up the DebriefExtra state.
 		~DebriefExtraState();

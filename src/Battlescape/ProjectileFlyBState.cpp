@@ -918,34 +918,39 @@ void ProjectileFlyBState::think()
 				Position
 					voxelFinal (_prj->getPosition(-1)), // <- beware of 'offset -1'
 					pos (Position::toTileSpace(voxelFinal));
-
-				if (pos.x > _battleSave->getMapSizeX()) // note: Bounds-checking is also done better in Projectile::applyAccuracy()
+/*
+				if (pos.x > _battleSave->getMapSizeX())
 					--pos.x; // huh, that looks tenuous
 
 				if (pos.y > _battleSave->getMapSizeY())
 					--pos.y; // huh, that looks tenuous
+*/
+				if (pos.x < 0) pos.x = 0; // note: Bounds-checking is also done better in Projectile::applyAccuracy() ->
+				else if (pos.x >= _battleSave->getMapSizeX()) pos.x = _battleSave->getMapSizeX();
+				if (pos.y < 0) pos.y = 0;
+				else if (pos.y >= _battleSave->getMapSizeY()) pos.y = _battleSave->getMapSizeY();
 
-				BattleItem* const throwItem (_prj->getThrowItem());
-				if (throwItem->getRules()->getBattleType() == BT_GRENADE
-					&& throwItem->getFuse() == 0) //&& Options::battleInstantGrenade == true // -> moved to PrimeGrenadeState (0 cannot be set w/out InstantGrenades)
+				BattleItem* const itThrow (_prj->getThrowItem());
+				if (itThrow->getRules()->getBattleType() == BT_GRENADE
+					&& itThrow->getFuse() == 0) //&& Options::battleInstantGrenade == true // -> moved to PrimeGrenadeState (0 cannot be set w/out InstantGrenades)
 				{
 					_battleGame->stateBPushFront(new ExplosionBState( // it's a hot potato set to explode on contact
 																_battleGame,
 																voxelFinal,
-																throwItem->getRules(),
+																itThrow->getRules(),
 																_unit));
-					_battleSave->sendItemToDelete(throwItem);
+					_battleSave->sendItemToDelete(itThrow);
 				}
 				else
 				{
-					_battleGame->dropItem(throwItem, pos);
+					_battleGame->dropItem(itThrow, pos);
 
 					if (_unit->getFaction() == FACTION_HOSTILE
 						&& _prjItem->getRules()->getBattleType() == BT_GRENADE)
 					{
 						_battleGame->getTileEngine()->setDangerZone(
 																pos,
-																throwItem->getRules()->getExplosionRadius(),
+																itThrow->getRules()->getExplosionRadius(),
 																_unit);
 					}
 				}

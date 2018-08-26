@@ -2446,19 +2446,19 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 				case STATUS_PANICKING:
 				{
 					//Log(LOG_INFO) << ". PANIC";
-					BattleItem* item;
+					BattleItem* it;
 					if (RNG::percent(75) == true)
 					{
-						item = unit->getItem(ST_RIGHTHAND);
-						if (item != nullptr)
-							dropItem(item, unit->getPosition());
+						it = unit->getItem(ST_RIGHTHAND);
+						if (it != nullptr)
+							dropItem(it, unit->getPosition());
 					}
 
 					if (RNG::percent(75) == true)
 					{
-						item = unit->getItem(ST_LEFTHAND);
-						if (item != nullptr)
-							dropItem(item, unit->getPosition());
+						it = unit->getItem(ST_LEFTHAND);
+						if (it != nullptr)
+							dropItem(it, unit->getPosition());
 					}
 
 					unit->setCacheInvalid();
@@ -3098,34 +3098,36 @@ void BattlescapeGame::requestEndTurn()
 /**
  * Drops an item to the floor and affects it with gravity then recalculates FoV
  * if it's a light-source.
- * @param item		- pointer to a BattleItem
+ * @param it		- pointer to a BattleItem
  * @param pos		- reference to a Position to place the item
  * @param create	- true if the item has just been created and needs to be
  *                    added to the battleitems vector (default false)
  */
 void BattlescapeGame::dropItem(
-		BattleItem* const item,
+		BattleItem* const it,
 		const Position& pos,
 		bool create)
 {
-	if (item->getRules()->isFixed() == false)
+	if (it->getRules()->isFixed() == false)
 	{
 		Tile* const tile (_battleSave->getTile(pos));
 		if (tile != nullptr)
 		{
-			item->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
-			tile->addItem(item);
+			it->setInventorySection(getRuleset()->getInventoryRule(ST_GROUND));
+			tile->addItem(it);
 
-			if (item->getBodyUnit() != nullptr)
-				item->getBodyUnit()->setPosition(pos);
+			if (it->getBodyUnit() != nullptr)
+				it->getBodyUnit()->setPosition(pos);
 
 			if (create == true)
-				_battleSave->getItems()->push_back(item);
+				_battleSave->getItems()->push_back(it);
+			else
+				it->changeOwner();
 
 			getTileEngine()->applyGravity(tile);
 
-			if (item->getRules()->getBattleType() == BT_FLARE
-				&& item->getFuse() != -1)
+			if (it->getRules()->getBattleType() == BT_FLARE
+				&& it->getFuse() != -1)
 			{
 				getTileEngine()->calculateTerrainLighting();
 				getTileEngine()->calcFovUnits_all(true);

@@ -55,20 +55,20 @@ namespace OpenXcom
  * Creates the DebriefExtra state.
  * @param base			- pointer to the Base that was in tactical
  * @param operation		- the operation title
- * @param itemsGained	- a map of pointers to RuleItems & ints for gained items
- * @param itemsLost		- a map of pointers to RuleItems & ints for lost items
+ * @param surplus		- a map of pointers to RuleItems & ints for gained items
+ * @param lostProperty	- a map of pointers to RuleItems & ints for lost items
  * @param solStatDeltas	- a map of wide-strings & vectors of ints
  */
 DebriefExtraState::DebriefExtraState(
 		Base* const base,
 		std::wstring operation,
-		std::map<const RuleItem*, int> itemsGained,
-		std::map<const RuleItem*, int> itemsLost,
+		std::map<const RuleItem*, int> surplus,
+		std::map<const RuleItem*, int> lostProperty,
 		std::map<std::wstring, std::vector<int>> solStatDeltas)
 	:
 		_base(base),
-		_itemsGained(itemsGained),
-		_itemsLost(itemsLost),
+		_surplus(surplus),
+		_lostProperty(lostProperty),
 		_solStatDeltas(solStatDeltas),
 		_sel(0u),
 		_costTotal(0),
@@ -78,7 +78,7 @@ DebriefExtraState::DebriefExtraState(
 
 	_txtTitle     = new Text(288, 16,  16, 8);
 	_txtBaseLabel = new Text( 80,  9,  16, 8);
-	_txtScreen    = new Text( 30,  9, 274, 8);
+	_txtScreen    = new Text( 40,  9, 274, 8);
 
 	_txtStorage   = new Text(80, 9,  16, 26);
 	_txtQtyItems  = new Text(55, 9, 186, 26);
@@ -138,13 +138,13 @@ DebriefExtraState::DebriefExtraState(
 
 	_txtScreen->setAlign(ALIGN_RIGHT);
 
-	if (_itemsGained.empty() == false)
+	if (_surplus.empty() == false)
 	{
-		_txtScreen   ->setText(L"SELL");
+		_txtScreen   ->setText(L"SURPLUS");
 		_txtQtyItems ->setText(L"loot");
 		_txtBuyOrSell->setText(L"sell");
 
-		_screen = SCN_LOOT_GAINED;
+		_screen = DES_SURPLUS;
 
 		_lstGained->setColumns(4, 162,55,30,20);
 		_lstGained->setBackground(_window);
@@ -157,19 +157,19 @@ DebriefExtraState::DebriefExtraState(
 		_lstGained->onRightArrowPress(  static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowPress));
 		_lstGained->onRightArrowRelease(static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowRelease));
 
-		styleList(_itemsGained, _lstGained);
+		styleList(_surplus, _lstGained);
 	}
 	else
 	{
-		_txtScreen   ->setText(L"BUY");
+		_txtScreen   ->setText(L"LOST");
 		_txtQtyItems ->setText(L"lost");
 		_txtBuyOrSell->setText(L"buy");
 
-		_screen = SCN_LOOT_LOST;
+		_screen = DES_LOSTPROPERTY;
 	}
 
 
-	if (_itemsLost.empty() == false)
+	if (_lostProperty.empty() == false)
 	{
 		_lstLost->setColumns(4, 162,55,30,20);
 		_lstLost->setBackground(_window);
@@ -182,9 +182,9 @@ DebriefExtraState::DebriefExtraState(
 		_lstLost->onRightArrowPress(  static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowPress));
 		_lstLost->onRightArrowRelease(static_cast<ActionHandler>(&DebriefExtraState::lstRightArrowRelease));
 
-		styleList(_itemsLost, _lstLost);
+		styleList(_lostProperty, _lstLost);
 	}
-	else if (_itemsGained.empty() == true)
+	else if (_surplus.empty() == true)
 	{
 		_txtStorage  ->setVisible(false);
 		_txtQtyItems ->setVisible(false);
@@ -192,7 +192,7 @@ DebriefExtraState::DebriefExtraState(
 		_txtQtyAtBase->setVisible(false);
 
 		_txtScreen->setText(L"STATS");
-		_screen = SCN_SOL_STATS;
+		_screen = DES_SOLSTATS;
 	}
 
 
@@ -206,9 +206,9 @@ DebriefExtraState::DebriefExtraState(
 		buildSoldierStats();
 
 
-	_lstGained  ->setVisible(_screen == SCN_LOOT_GAINED);
-	_lstLost    ->setVisible(_screen == SCN_LOOT_LOST);
-	_lstSolStats->setVisible(_screen == SCN_SOL_STATS);
+	_lstGained  ->setVisible(_screen == DES_SURPLUS);
+	_lstLost    ->setVisible(_screen == DES_LOSTPROPERTY);
+	_lstSolStats->setVisible(_screen == DES_SOLSTATS);
 
 	_txtCash->setVisible(false);
 
@@ -237,10 +237,10 @@ void DebriefExtraState::lstLeftArrowPress(Action* action) // private.
 {
 	switch (_screen)
 	{
-		case SCN_LOOT_GAINED:
+		case DES_SURPLUS:
 			_sel = _lstGained->getSelectedRow();
 			break;
-		case SCN_LOOT_LOST:
+		case DES_LOSTPROPERTY:
 			_sel = _lstLost->getSelectedRow();
 	}
 
@@ -278,10 +278,10 @@ void DebriefExtraState::lstRightArrowPress(Action* action) // private.
 {
 	switch (_screen)
 	{
-		case SCN_LOOT_GAINED:
+		case DES_SURPLUS:
 			_sel = _lstGained->getSelectedRow();
 			break;
-		case SCN_LOOT_LOST:
+		case DES_LOSTPROPERTY:
 			_sel = _lstLost->getSelectedRow();
 	}
 
@@ -325,14 +325,14 @@ void DebriefExtraState::increase(int delta) // private.
 {
 	switch (_screen)
 	{
-		case SCN_LOOT_GAINED:
+		case DES_SURPLUS:
 		{
-			const RuleItem* const itRule (getRule(_itemsGained));
+			const RuleItem* const itRule (getRule(_surplus));
 			if (itRule != nullptr && itRule->getSellCost() != 0 && itRule->isLiveAlien() == false
-				&& _qtysSell[_sel] < _itemsGained[itRule])
+				&& _qtysSell[_sel] < _surplus[itRule])
 			{
 				delta = std::min(delta,
-								_itemsGained[itRule] - _qtysSell[_sel]);
+								_surplus[itRule] - _qtysSell[_sel]);
 
 				_qtysSell[_sel] += delta;
 				_costTotal += itRule->getSellCost() * delta;
@@ -343,12 +343,12 @@ void DebriefExtraState::increase(int delta) // private.
 			break;
 		}
 
-		case SCN_LOOT_LOST:
+		case DES_LOSTPROPERTY:
 			if (_error.empty() == false)
 				_error.clear();
 			else
 			{
-				const RuleItem* const itRule (getRule(_itemsLost));
+				const RuleItem* const itRule (getRule(_lostProperty));
 				if (itRule != nullptr && itRule->getBuyCost() != 0)
 				{
 					if (_costTotal + itRule->getBuyCost() > _game->getSavedGame()->getFunds())
@@ -420,10 +420,10 @@ void DebriefExtraState::decrease(int delta) // private.
 {
 	switch (_screen)
 	{
-		case SCN_LOOT_GAINED:
+		case DES_SURPLUS:
 			if (_qtysSell[_sel] > 0)
 			{
-				const RuleItem* const itRule (getRule(_itemsGained));
+				const RuleItem* const itRule (getRule(_surplus));
 				if (itRule != nullptr) // safety.
 				{
 					delta = std::min(delta, _qtysSell[_sel]);
@@ -437,10 +437,10 @@ void DebriefExtraState::decrease(int delta) // private.
 			}
 			break;
 
-		case SCN_LOOT_LOST:
+		case DES_LOSTPROPERTY:
 			if (_qtysBuy[_sel] > 0)
 			{
-				const RuleItem* const itRule (getRule(_itemsLost));
+				const RuleItem* const itRule (getRule(_lostProperty));
 				if (itRule != nullptr) // safety.
 				{
 					delta = std::min(delta, _qtysBuy[_sel]);
@@ -462,12 +462,12 @@ void DebriefExtraState::updateListrow() // private.
 {
 	switch (_screen)
 	{
-		case SCN_LOOT_GAINED:
+		case DES_SURPLUS:
 			_lstGained->setCellText(_sel, 2u, Text::intWide(_qtysSell[_sel]));
 			_lstGained->setCellText(_sel, 3u, Text::intWide(_qtysSellBase[_sel] - _qtysSell[_sel]));
 			break;
 
-		case SCN_LOOT_LOST:
+		case DES_LOSTPROPERTY:
 			_lstLost->setCellText(_sel, 2u, Text::intWide(_qtysBuy[_sel]));
 			_lstLost->setCellText(_sel, 3u, Text::intWide(_qtysBuyBase[_sel] + _qtysBuy[_sel]));
 	}
@@ -477,8 +477,8 @@ void DebriefExtraState::updateListrow() // private.
 		std::wstring wst;
 		switch (_screen)
 		{
-			case SCN_LOOT_GAINED: wst = L"+"; break;
-			case SCN_LOOT_LOST:   wst = L"-";
+			case DES_SURPLUS: wst = L"+"; break;
+			case DES_LOSTPROPERTY:   wst = L"-";
 		}
 		_txtCash->setText(wst + Text::formatCurrency(static_cast<int64_t>(_costTotal)));
 		_txtCash->setVisible();
@@ -515,8 +515,8 @@ const RuleItem* DebriefExtraState::getRule(const std::map<const RuleItem*, int>&
 const RuleItem* DebriefExtraState::getRule(const std::string& type) const // private.
 {
 	for (std::map<const RuleItem*, int>::const_iterator
-			i  = _itemsLost.begin();
-			i != _itemsLost.end();
+			i  = _lostProperty.begin();
+			i != _lostProperty.end();
 			++i)
 	{
 		if (i->first->getType() == type) return i->first;
@@ -544,7 +544,7 @@ void DebriefExtraState::btnOkClick(Action*)
 {
 	switch (_screen)
 	{
-		case SCN_LOOT_GAINED:
+		case DES_SURPLUS:
 			_lstGained->setVisible(false);
 			_txtCash  ->setVisible(false);
 
@@ -566,9 +566,9 @@ void DebriefExtraState::btnOkClick(Action*)
 				}
 			}
 
-			if (_itemsLost.empty() == false)
+			if (_lostProperty.empty() == false)
 			{
-				_screen = SCN_LOOT_LOST;
+				_screen = DES_LOSTPROPERTY;
 
 				_storeSize = 0.;
 				_txtStorage->setText(_base->storesDeltaFormat());
@@ -582,7 +582,7 @@ void DebriefExtraState::btnOkClick(Action*)
 			}
 			// no break;
 
-		case SCN_LOOT_LOST:
+		case DES_LOSTPROPERTY:
 			_lstLost     ->setVisible(false);
 			_txtCash     ->setVisible(false);
 			_txtQtyItems ->setVisible(false);
@@ -613,14 +613,14 @@ void DebriefExtraState::btnOkClick(Action*)
 
 			if (_solStatDeltas.empty() == false)
 			{
-				_screen = SCN_SOL_STATS;
+				_screen = DES_SOLSTATS;
 				_txtScreen->setText(L"STATS");
 				_lstSolStats->setVisible();
 				break;
 			}
 			// no break;
 
-		case SCN_SOL_STATS:
+		case DES_SOLSTATS:
 			if (_game->getQtyStates() == 2u // ie: (1) this, (2) Geoscape
 				&& _game->getResourcePack()->isMusicPlaying(OpenXcom::res_MUSIC_TAC_AWARDS))
 			{

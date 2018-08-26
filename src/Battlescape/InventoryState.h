@@ -103,7 +103,7 @@ private:
 		* _txtUseTU,
 		* _txtThrowTU,
 		* _txtPsiTU;
-	Timer* _timer;
+	Timer* _tr;
 
 /*	std::vector<SoldierLayout*> _curInventoryTemplate; */
 

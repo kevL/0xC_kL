@@ -487,6 +487,7 @@ void SavedBattleGame::load(
 		owner,
 		uId;
 	std::string st;
+	bool ground;
 
 	static const size_t LIST_TYPE (3u);
 	static const std::string itLists_st[LIST_TYPE]
@@ -530,6 +531,9 @@ void SavedBattleGame::load(
 					it->setInventorySection(rules->getInventory(st));
 				}
 
+				ground = it->getInventorySection() != nullptr
+					  && it->getInventorySection()->getCategory() == IC_GROUND;
+
 				owner = (*j)["owner"].as<int>(-1); // cf. BattleItem::save() ->
 				uId   = (*j)["unit"] .as<int>(-1);
 
@@ -538,20 +542,23 @@ void SavedBattleGame::load(
 						k != _units.end();
 						++k)
 				{
-					const int test ((*k)->getId());
-					if (test == owner)
-						it->changeOwner(*k);
-					else if (test == uId)
+					const int testUnit ((*k)->getId());
+					if (testUnit == owner)
+					{
+						if (ground == false)
+							it->changeOwner(*k);	// ie. add to unit-inventory
+						else
+							it->setOwner(*k);		// ie. do NOT add to unit-inventory
+					}
+					else if (testUnit == uId)
 						it->setBodyUnit(*k);
 				}
 
-				if (it->getInventorySection() != nullptr						// match up items and tiles
-					&& it->getInventorySection()->getCategory() == IC_GROUND)	// NOTE: 'section' should always be valid unless it's a loaded Ammo-item.
+				if (ground == true) // match up items and tiles
 				{
 					if ((*j)["position"])
 					{
 						pos = (*j)["position"].as<Position>();
-//						if (pos.z != -1) // was not saved if pos.z= -1
 						it->setInventorySection(rules->getInventoryRule(ST_GROUND));
 						getTile(pos)->addItem(it);
 					}
@@ -1743,44 +1750,17 @@ void SavedBattleGame::distributeEquipt(Tile* const tile)
  * If the item is xComProperty upon removal the pointer to the item is kept in
  * the '_deletedProperty' vector which is flushed and destroyed in the
  * SavedBattleGame dTor.
+ * @note See note for BattleItem::changeOwner().
  * @param it - pointer to an item to remove
  * @return, const_iterator to the next item in the BattleItems list
  */
 std::vector<BattleItem*>::const_iterator SavedBattleGame::sendItemToDelete(BattleItem* const it)
 {
+	it->changeOwner();
+
 	Tile* const tile (it->getTile());
 	if (tile != nullptr)
-	{
-		for (std::vector<BattleItem*>::const_iterator
-				i  = tile->getInventory()->begin();
-				i != tile->getInventory()->end();
-				++i)
-		{
-			if (*i == it)
-			{
-				tile->getInventory()->erase(i);
-				break;
-			}
-		}
-	}
-	else
-	{
-		BattleUnit* const unit (it->getOwner());
-		if (unit != nullptr)
-		{
-			for (std::vector<BattleItem*>::const_iterator
-					i  = unit->getInventory()->begin();
-					i != unit->getInventory()->end();
-					++i)
-			{
-				if (*i == it)
-				{
-					unit->getInventory()->erase(i);
-					break;
-				}
-			}
-		}
-	}
+		tile->removeItem(it);
 
 	for (std::vector<BattleItem*>::const_iterator
 			i  = _items.begin();
@@ -2331,7 +2311,7 @@ void SavedBattleGame::deleteBody(const BattleUnit* const unit)
 {
 	int quads (unit->getArmor()->getSize() * unit->getArmor()->getSize());
 	for (std::vector<BattleItem*>::const_iterator
-			i = _items.begin();
+			i  = _items.begin();
 			i != _items.end();
 			)
 	{
