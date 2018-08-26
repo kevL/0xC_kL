@@ -477,8 +477,8 @@ void DebriefExtraState::updateListrow() // private.
 		std::wstring wst;
 		switch (_screen)
 		{
-			case DES_SURPLUS: wst = L"+"; break;
-			case DES_LOSTPROPERTY:   wst = L"-";
+			case DES_SURPLUS:      wst = L"+"; break;
+			case DES_LOSTPROPERTY: wst = L"-";
 		}
 		_txtCash->setText(wst + Text::formatCurrency(static_cast<int64_t>(_costTotal)));
 		_txtCash->setVisible();

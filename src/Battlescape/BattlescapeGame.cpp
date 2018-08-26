@@ -1891,7 +1891,7 @@ void BattlescapeGame::checkExposedByMelee(BattleUnit* const unit) const
 	//Log(LOG_INFO) << "BattlescapeGame::checkExposedByMelee() spotters qty= " << unit->getRfSpotters()->size();
 
 	for (std::list<BattleUnit*>::const_iterator // -> not sure what happens if RF-trigger kills Cyberdisc that kills aLien .....
-			i = unit->getRfSpotters()->begin();
+			i  = unit->getRfSpotters()->begin();
 			i != unit->getRfSpotters()->end();
 			++i)
 	{

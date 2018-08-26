@@ -49,15 +49,15 @@ BattleItem::BattleItem(
 		_unit(nullptr),
 		_tile(nullptr),
 		_section(nullptr),
-		_inventoryX(0),
-		_inventoryY(0),
-		_ammoItem(nullptr),
-		_ammoQty(itRule->getFullClip()),
+		_x(0),
+		_y(0),
+		_load(nullptr),
+		_rounds(itRule->getFullClip()),
 		_fuse(-1),
-		_painKiller(0),
+		_morphine(0),
 		_heal(0),
 		_stimulant(0),
-		_xcomProperty(false)
+		_property(false)
 {
 	if (pId != nullptr)	// <- this is for SavedBattleGame to keep track
 	{					//    of a brand new item on the battlefield
@@ -72,7 +72,7 @@ BattleItem::BattleItem(
 	{
 		case BT_MEDIKIT:
 			_heal       = _itRule->getHealQuantity();
-			_painKiller = _itRule->getPainKillerQuantity();
+			_morphine = _itRule->getPainKillerQuantity();
 			_stimulant  = _itRule->getStimulantQuantity();
 			break;
 
@@ -81,7 +81,7 @@ BattleItem::BattleItem(
 				break;
 			// no break;
 		case BT_MELEE: // Melee weapons do NOT require ammo.
-			_ammoItem = this;
+			_load = this;
 	}
 	// NOTE: lasers, melee, etc. have "clipsize -1" [ie, SetAmmoQuantity(-1)]
 	// - needed for melee-item reaction hits, etc. Can be set in Ruleset but do
@@ -103,14 +103,15 @@ BattleItem::~BattleItem()
  */
 void BattleItem::load(const YAML::Node& node)
 {
-	_inventoryX   = node["inventoryX"]  .as<int>(_inventoryX);
-	_inventoryY   = node["inventoryY"]  .as<int>(_inventoryY);
-	_ammoQty      = node["ammoQty"]     .as<int>(_ammoQty);
-	_painKiller   = node["painKiller"]  .as<int>(_painKiller);
-	_heal         = node["heal"]        .as<int>(_heal);
-	_stimulant    = node["stimulant"]   .as<int>(_stimulant);
-	_fuse         = node["fuse"]        .as<int>(_fuse);
-	_xcomProperty = node["xcomProperty"].as<bool>(_xcomProperty);
+	_x = node["x"].as<int>(_x);
+	_y = node["y"].as<int>(_y);
+
+	_rounds    = node["rounds"]   .as<int>(_rounds);
+	_morphine  = node["morphine"] .as<int>(_morphine);
+	_heal      = node["heal"]     .as<int>(_heal);
+	_stimulant = node["stimulant"].as<int>(_stimulant);
+	_fuse      = node["fuse"]     .as<int>(_fuse);
+	_property  = node["property"] .as<bool>(_property);
 }
 
 /**
@@ -118,7 +119,7 @@ void BattleItem::load(const YAML::Node& node)
  */
 void BattleItem::loadDeleted()
 {
-	_xcomProperty = true;
+	_property = true;
 }
 
 /**
@@ -132,20 +133,20 @@ YAML::Node BattleItem::save() const
 	node["id"]   = _id;
 	node["type"] = _itRule->getType();
 
-	if (_inventoryX != 0) node["inventoryX"] = _inventoryX;
-	if (_inventoryY != 0) node["inventoryY"] = _inventoryY;
+	if (_x != 0) node["x"] = _x;
+	if (_y != 0) node["y"] = _y;
 
-	if (_ammoQty > 0)          node["ammoQty"]      = _ammoQty;
-	if (_painKiller != 0)      node["painKiller"]   = _painKiller;
-	if (_heal != 0)            node["heal"]         = _heal;
-	if (_stimulant != 0)       node["stimulant"]    = _stimulant;
-	if (_fuse != -1)           node["fuse"]         = _fuse;
-	if (_xcomProperty == true) node["xcomProperty"] = _xcomProperty;
-	if (_owner != nullptr)     node["owner"]        = _owner->getId();
-	if (_unit != nullptr)      node["unit"]         = _unit->getId();
-	if (_section != nullptr)   node["section"]      = _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
-	if (_tile != nullptr)      node["position"]     = _tile->getPosition();
-	if (_ammoItem != nullptr)  node["ammoItem"]     = _ammoItem->getId();
+	if (_rounds > 0)         node["rounds"]    = _rounds;
+	if (_morphine != 0)      node["morphine"]  = _morphine;
+	if (_heal != 0)          node["heal"]      = _heal;
+	if (_stimulant != 0)     node["stimulant"] = _stimulant;
+	if (_fuse != -1)         node["fuse"]      = _fuse;
+	if (_property == true)   node["property"]  = _property;
+	if (_owner != nullptr)   node["owner"]     = _owner->getId();
+	if (_unit != nullptr)    node["unit"]      = _unit->getId();
+	if (_section != nullptr) node["section"]   = _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
+	if (_tile != nullptr)    node["position"]  = _tile->getPosition();
+	if (_load != nullptr)    node["load"]      = _load->getId();
 
 	return node;
 }
@@ -200,10 +201,10 @@ void BattleItem::setFuse(int turn)
  */
 int BattleItem::getAmmoQuantity() const
 {
-	if (_ammoQty == -1)
+	if (_rounds == -1)
 		return std::numeric_limits<int>::max();
 
-	return _ammoQty;
+	return _rounds;
 }
 
 /**
@@ -212,7 +213,7 @@ int BattleItem::getAmmoQuantity() const
  */
 void BattleItem::setAmmoQuantity(int qty)
 {
-	_ammoQty = qty;
+	_rounds = qty;
 }
 
 /**
@@ -223,7 +224,7 @@ void BattleItem::setAmmoQuantity(int qty)
  */
 BattleItem* BattleItem::getAmmoItem() const
 {
-	return _ammoItem;
+	return _load;
 }
 
 /**
@@ -236,11 +237,11 @@ bool BattleItem::setAmmoItem(
 		BattleItem* const load,
 		bool init)
 {
-	if (_ammoItem != this) // ie. if weapon requires a load ...
+	if (_load != this) // ie. if weapon requires a load ...
 	{
 		if (load == nullptr) // unload weapon ->
-			_ammoItem = nullptr;
-		else if (_ammoItem == nullptr)
+			_load = nullptr;
+		else if (_load == nullptr)
 		{
 			for (std::vector<std::string>::const_iterator
 					i  = _itRule->getAcceptedLoadTypes()->begin();
@@ -249,13 +250,13 @@ bool BattleItem::setAmmoItem(
 			{
 				if (*i == load->getRules()->getType()) // load weapon ->
 				{
-					_ammoItem = load;
-					_ammoItem->_inventoryX =
-					_ammoItem->_inventoryY = 0;
+					_load = load;
+					_load->_x =
+					_load->_y = 0;
 					if (init == false)
 					{
-						_ammoItem->changeOwner();
-						_ammoItem->setInventorySection();
+						_load->changeOwner();
+						_load->setInventorySection();
 					}
 					return true;
 				}
@@ -273,7 +274,7 @@ bool BattleItem::setAmmoItem(
  */
 bool BattleItem::selfPowered() const
 {
-	return (_ammoItem == this);
+	return (_load == this);
 }
 
 /**
@@ -297,7 +298,7 @@ void BattleItem::spendBullet(
 		SavedBattleGame& battleSave,
 		BattleItem& weapon)
 {
-	if (_ammoQty != -1 && --_ammoQty == 0) // -1== infinite
+	if (_rounds != -1 && --_rounds == 0) // -1== infinite
 	{
 		weapon.setAmmoItem();
 		battleSave.sendItemToDelete(this);
@@ -381,7 +382,7 @@ void BattleItem::setInventorySection(const RuleInventory* const inRule)
  */
 int BattleItem::getSlotX() const
 {
-	return _inventoryX;
+	return _x;
 }
 
 /**
@@ -390,7 +391,7 @@ int BattleItem::getSlotX() const
  */
 void BattleItem::setSlotX(int x)
 {
-	_inventoryX = x;
+	_x = x;
 }
 
 /**
@@ -399,7 +400,7 @@ void BattleItem::setSlotX(int x)
  */
 int BattleItem::getSlotY() const
 {
-	return _inventoryY;
+	return _y;
 }
 
 /**
@@ -408,7 +409,7 @@ int BattleItem::getSlotY() const
  */
 void BattleItem::setSlotY(int y)
 {
-	_inventoryY = y;
+	_y = y;
 }
 
 /**
@@ -430,15 +431,15 @@ bool BattleItem::occupiesSlot(
 		return true;
 
 	if (it == nullptr)
-		return (   x >= _inventoryX
-				&& x <  _inventoryX + _itRule->getInventoryWidth()
-				&& y >= _inventoryY
-				&& y <  _inventoryY + _itRule->getInventoryHeight());
+		return (   x >= _x
+				&& x <  _x + _itRule->getInventoryWidth()
+				&& y >= _y
+				&& y <  _y + _itRule->getInventoryHeight());
 
-	return (	x + it->getRules()->getInventoryWidth() > _inventoryX
-			 && x < _inventoryX + _itRule->getInventoryWidth()
-			 && y + it->getRules()->getInventoryHeight() > _inventoryY
-			 && y < _inventoryY + _itRule->getInventoryHeight());
+	return (	x + it->getRules()->getInventoryWidth() > _x
+			 && x < _x + _itRule->getInventoryWidth()
+			 && y + it->getRules()->getInventoryHeight() > _y
+			 && y < _y + _itRule->getInventoryHeight());
 /*	return !(
 				x >= _inventoryX + _itRule->getInventoryWidth()
 			 || x + item->getRules()->getInventoryWidth() <= _inventoryX
@@ -515,7 +516,7 @@ int BattleItem::getHealQuantity() const
  */
 void BattleItem::setPainKillerQuantity(int pk)
 {
-	_painKiller = pk;
+	_morphine = pk;
 }
 
 /**
@@ -524,7 +525,7 @@ void BattleItem::setPainKillerQuantity(int pk)
  */
 int BattleItem::getPainKillerQuantity() const
 {
-	return _painKiller;
+	return _morphine;
 }
 
 /**
@@ -564,7 +565,7 @@ void BattleItem::changeRule(const RuleItem* const itRule)
  */
 void BattleItem::setProperty()
 {
-	_xcomProperty = true;
+	_property = true;
 }
 
 /**
@@ -573,7 +574,7 @@ void BattleItem::setProperty()
  */
 bool BattleItem::isProperty() const
 {
-	return _xcomProperty;
+	return _property;
 }
 
 }

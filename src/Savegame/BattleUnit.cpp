@@ -168,11 +168,11 @@ BattleUnit::BattleUnit(
 	int rankValue;
 	switch (sol->getRank())
 	{
-		case RANK_SQUADDIE:		rankValue =	 2;	break; // was 0
-		case RANK_SERGEANT:		rankValue =	 5;	break; // was 1
-		case RANK_CAPTAIN:		rankValue =	15;	break; // was 3
-		case RANK_COLONEL:		rankValue =	30;	break; // was 6
-		case RANK_COMMANDER:	rankValue =	50;	break; // was 10
+		case RANK_SQUADDIE:  rankValue =  2; break; // was 0
+		case RANK_SERGEANT:  rankValue =  5; break; // was 1
+		case RANK_CAPTAIN:   rankValue = 15; break; // was 3
+		case RANK_COLONEL:   rankValue = 30; break; // was 6
+		case RANK_COMMANDER: rankValue = 50; break; // was 10
 
 		default:
 			rankValue = 0;
@@ -181,15 +181,15 @@ BattleUnit::BattleUnit(
 //	_value = 20 + ((sol->getMissions() + rankValue) * (diff + 1));
 	_value = 20 + ((sol->getMissions() + rankValue) * (_battleSave->getSavedGame()->getDifficultyInt() + 1));
 
-	_tu		= _stats.tu;
-	_energy	= _stats.stamina;
-	_health	= _stats.health;
+	_tu     = _stats.tu;
+	_energy = _stats.stamina;
+	_health = _stats.health;
 
-	_armorHp[SIDE_FRONT]	= _arRule->getFrontArmor();
-	_armorHp[SIDE_LEFT]		=
-	_armorHp[SIDE_RIGHT]	= _arRule->getSideArmor();
-	_armorHp[SIDE_REAR]		= _arRule->getRearArmor();
-	_armorHp[SIDE_UNDER]	= _arRule->getUnderArmor();
+	_armorHp[SIDE_FRONT] = _arRule->getFrontArmor();
+	_armorHp[SIDE_LEFT]  =
+	_armorHp[SIDE_RIGHT] = _arRule->getSideArmor();
+	_armorHp[SIDE_REAR]  = _arRule->getRearArmor();
+	_armorHp[SIDE_UNDER] = _arRule->getUnderArmor();
 
 	for (size_t
 			i = 0u;
@@ -360,20 +360,20 @@ BattleUnit::BattleUnit(
 			_turnsExposed = -1;
 	}
 
-	_tu		= _stats.tu;
-	_energy	= _stats.stamina;
-	_health	= _stats.health;
+	_tu     = _stats.tu;
+	_energy = _stats.stamina;
+	_health = _stats.health;
 
 	if (_unitRule->isFemale() == true)
 		_gender = GENDER_FEMALE;
 	else
 		_gender = GENDER_MALE;
 
-	_armorHp[SIDE_FRONT]	= _arRule->getFrontArmor();
-	_armorHp[SIDE_LEFT]		=
-	_armorHp[SIDE_RIGHT]	= _arRule->getSideArmor();
-	_armorHp[SIDE_REAR]		= _arRule->getRearArmor();
-	_armorHp[SIDE_UNDER]	= _arRule->getUnderArmor();
+	_armorHp[SIDE_FRONT] = _arRule->getFrontArmor();
+	_armorHp[SIDE_LEFT]  =
+	_armorHp[SIDE_RIGHT] = _arRule->getSideArmor();
+	_armorHp[SIDE_REAR]  = _arRule->getRearArmor();
+	_armorHp[SIDE_UNDER] = _arRule->getUnderArmor();
 
 	for (size_t
 			i = 0u;
@@ -445,7 +445,7 @@ BattleUnit::~BattleUnit()
 	if (_geoscapeSoldier != nullptr)	// NOTE: Only BattleUnits that have geoscape-soldiers should ever get
 	{									// BattleUnitStatistics or BattleUnitKills.
 		for (std::vector<BattleUnitKill*>::const_iterator
-				i = _tacstats->kills.begin();
+				i  = _tacstats->kills.begin();
 				i != _tacstats->kills.end();
 				++i)
 		{
@@ -464,42 +464,40 @@ BattleUnit::~BattleUnit()
  */
 void BattleUnit::load(const YAML::Node& node)
 {
-	_status			= static_cast<UnitStatus>(node["status"]		.as<int>(_status));
-	_killerFaction	= static_cast<UnitFaction>(node["killerFaction"].as<int>(_killerFaction));
-	_faction		= static_cast<UnitFaction>(node["faction"]		.as<int>(_faction));
+	_status        = static_cast<UnitStatus>(node["status"]        .as<int>(_status));
+	_killerFaction = static_cast<UnitFaction>(node["killerFaction"].as<int>(_killerFaction));
+	_faction       = static_cast<UnitFaction>(node["faction"]      .as<int>(_faction));
 	if (node["originalFaction"])
 		_originalFaction = static_cast<UnitFaction>(node["originalFaction"].as<int>());
 	else
 		_originalFaction = _faction;
 
-	_id					= node["id"]					.as<int>(_id);
-	_pos				= node["position"]				.as<Position>(_pos);
+	_id  = node["id"]      .as<int>(_id);
+	_pos = node["position"].as<Position>(_pos);
 
-	_dir				=
-	_dirTo				= node["direction"]				.as<int>(_dir);
-	_dirTurret			=
-	_dirToTurret		= node["directionTurret"]		.as<int>(_dirTurret);
+	_dir       = _dirTo       = node["dir"]      .as<int>(_dir);
+	_dirTurret = _dirToTurret = node["dirTurret"].as<int>(_dirTurret);
 
-	_tu					= node["tu"]					.as<int>(_tu);
-	_health				= node["health"]				.as<int>(_health);
-	_stunLevel			= node["stunLevel"]				.as<int>(_stunLevel);
-	_energy				= node["energy"]				.as<int>(_energy);
-	_morale				= node["morale"]				.as<int>(_morale);
-	_floating			= node["floating"]				.as<bool>(_floating);
-	_fire				= node["fire"]					.as<int>(_fire);
-	_visible			= node["visible"]				.as<bool>(_visible);
-	_turnsExposed		= node["turnsExposed"]			.as<int>(_turnsExposed);
-	_rankInt			= node["rankInt"]				.as<int>(_rankInt);
-	_takedowns			= node["takedowns"]				.as<int>(_takedowns);
-	_dontReselect		= node["dontReselect"]			.as<bool>(_dontReselect);
-	_motionPoints		= node["motionPoints"]			.as<int>(_motionPoints);
-	_spawnType			= node["spawnType"]				.as<std::string>(_spawnType);
-	_mcStrength			= node["mcStrength"]			.as<int>(_mcStrength);
-	_mcSkill			= node["mcSkill"]				.as<int>(_mcSkill);
-	_drugDose			= node["drugDose"]				.as<int>(_drugDose);
-	_murdererId			= node["murdererId"]			.as<int>(_murdererId);
-	_hasBeenStunned		= node["beenStunned"]			.as<bool>(_hasBeenStunned);
-//	_psiTriedQty		= node["psiTriedQty"]			.as<bool>(_psiTriedQty);
+	_tu             = node["tu"]          .as<int>(_tu);
+	_health         = node["health"]      .as<int>(_health);
+	_stunLevel      = node["stunLevel"]   .as<int>(_stunLevel);
+	_energy         = node["energy"]      .as<int>(_energy);
+	_morale         = node["morale"]      .as<int>(_morale);
+	_floating       = node["floating"]    .as<bool>(_floating);
+	_fire           = node["fire"]        .as<int>(_fire);
+	_visible        = node["visible"]     .as<bool>(_visible);
+	_turnsExposed   = node["turnsExposed"].as<int>(_turnsExposed);
+	_rankInt        = node["rankInt"]     .as<int>(_rankInt);
+	_takedowns      = node["takedowns"]   .as<int>(_takedowns);
+	_dontReselect   = node["dontReselect"].as<bool>(_dontReselect);
+	_motionPoints   = node["motionPoints"].as<int>(_motionPoints);
+	_spawnType      = node["spawnType"]   .as<std::string>(_spawnType);
+	_mcStrength     = node["mcStrength"]  .as<int>(_mcStrength);
+	_mcSkill        = node["mcSkill"]     .as<int>(_mcSkill);
+	_drugDose       = node["drugDose"]    .as<int>(_drugDose);
+	_murdererId     = node["murdererId"]  .as<int>(_murdererId);
+	_hasBeenStunned = node["beenStunned"] .as<bool>(_hasBeenStunned);
+//	_psiTriedQty    = node["psiTriedQty"] .as<bool>(_psiTriedQty);
 
 	_turretType = static_cast<TurretType>(node["turretType"].as<int>(_turretType));
 	_activeHand = static_cast<ActiveHand>(node["activeHand"].as<int>(_activeHand));
@@ -528,16 +526,16 @@ void BattleUnit::load(const YAML::Node& node)
 		if (node["tacstats"])
 			_tacstats->load(node["tacstats"]);
 
-		_battleOrder	= node["battleOrder"]	.as<size_t>(_battleOrder);
-		_kneeled		= node["kneeled"]		.as<bool>(_kneeled);
+		_battleOrder = node["battleOrder"].as<size_t>(_battleOrder);
+		_kneeled     = node["kneeled"]    .as<bool>(_kneeled);
 
-		_expBravery		= node["expBravery"]	.as<int>(_expBravery);
-		_expReactions	= node["expReactions"]	.as<int>(_expReactions);
-		_expFiring		= node["expFiring"]		.as<int>(_expFiring);
-		_expThrowing	= node["expThrowing"]	.as<int>(_expThrowing);
-		_expPsiSkill	= node["expPsiSkill"]	.as<int>(_expPsiSkill);
-		_expPsiStrength	= node["expPsiStrength"].as<int>(_expPsiStrength);
-		_expMelee		= node["expMelee"]		.as<int>(_expMelee);
+		_expBravery     = node["expBravery"]    .as<int>(_expBravery);
+		_expReactions   = node["expReactions"]  .as<int>(_expReactions);
+		_expFiring      = node["expFiring"]     .as<int>(_expFiring);
+		_expThrowing    = node["expThrowing"]   .as<int>(_expThrowing);
+		_expPsiSkill    = node["expPsiSkill"]   .as<int>(_expPsiSkill);
+		_expPsiStrength = node["expPsiStrength"].as<int>(_expPsiStrength);
+		_expMelee       = node["expMelee"]      .as<int>(_expMelee);
 	}
 
 	if (node["spottedUnits"])
@@ -573,7 +571,7 @@ void BattleUnit::loadSpotted()
 			++i)
 	{
 		for (std::vector<BattleUnit*>::const_iterator
-				j = _battleSave->getUnits()->begin();
+				j  = _battleSave->getUnits()->begin();
 				j != _battleSave->getUnits()->end();
 				++j)
 		{
@@ -600,44 +598,44 @@ YAML::Node BattleUnit::save() const
 	if (getLabel().empty() == false)
 		node["label"] = Language::wstrToUtf8(getLabel());
 
-	node["genUnitType"]		= _type;
-	node["genUnitArmor"]	= _arRule->getType();
+	node["genUnitType"]  = _type;
+	node["genUnitArmor"] = _arRule->getType();
 
 	node["faction"] = static_cast<int>(_faction);
 	if (_originalFaction != _faction)
 	{
-		node["originalFaction"]	= static_cast<int>(_originalFaction);
+		node["originalFaction"] = static_cast<int>(_originalFaction);
 
 		if (_originalFaction != FACTION_HOSTILE)
 		{
-			node["mcStrength"]	= _mcStrength;
-			node["mcSkill"]		= _mcSkill;
+			node["mcStrength"] = _mcStrength;
+			node["mcSkill"]    = _mcSkill;
 		}
 	}
 
-	node["status"]			= static_cast<int>(_status);
-	node["position"]		= _pos;
-	node["direction"]		= _dir;
-	node["directionTurret"]	= _dirTurret;
-	node["tu"]				= _tu;
-	node["health"]			= _health;
-	node["stunLevel"]		= _stunLevel;
-	node["energy"]			= _energy;
-	node["turnsExposed"]	= _turnsExposed;
-	node["rankInt"]			= _rankInt;
+	node["status"]       = static_cast<int>(_status);
+	node["position"]     = _pos;
+	node["dir"]          = _dir;
+	node["dirTurret"]    = _dirTurret;
+	node["tu"]           = _tu;
+	node["health"]       = _health;
+	node["stunLevel"]    = _stunLevel;
+	node["energy"]       = _energy;
+	node["rankInt"]      = _rankInt;
+	node["turnsExposed"] = _turnsExposed;
 
-	if (_morale != 100)					node["morale"]			= _morale;
-	if (_floating == true)				node["floating"]		= _floating;
-	if (_fire != 0)						node["fire"]			= _fire;
-	if (_turretType != TRT_NONE)		node["turretType"]		= static_cast<int>(_turretType); // TODO: use unitRule to get turretType.
-	if (_visible == true)				node["visible"]			= _visible;
-	if (_killerFaction != FACTION_NONE)	node["killerFaction"]	= static_cast<int>(_killerFaction);
-	if (_motionPoints != 0)				node["motionPoints"]	= _motionPoints;
-	if (_takedowns != 0)				node["takedowns"]		= _takedowns;
-	if (_drugDose != 0)					node["drugDose"]		= _drugDose;
-	if (_murdererId != 0)				node["murdererId"]		= _murdererId;
-	if (_hasBeenStunned == true)		node["beenStunned"]		= _hasBeenStunned;
-//	if (_psiTriedQty != 0)				node["psiTriedQty"]		= _psiTriedQty;
+	if (_morale != 100)                 node["morale"]        = _morale;
+	if (_floating != false)             node["floating"]      = _floating;
+	if (_fire != 0)                     node["fire"]          = _fire;
+	if (_turretType != TRT_NONE)        node["turretType"]    = static_cast<int>(_turretType); // TODO: use unitRule to get turretType.
+	if (_visible != false)              node["visible"]       = _visible;
+	if (_killerFaction != FACTION_NONE) node["killerFaction"] = static_cast<int>(_killerFaction);
+	if (_motionPoints != 0)             node["motionPoints"]  = _motionPoints;
+	if (_takedowns != 0)                node["takedowns"]     = _takedowns;
+	if (_drugDose != 0)                 node["drugDose"]      = _drugDose;
+	if (_murdererId != 0)               node["murdererId"]    = _murdererId;
+	if (_hasBeenStunned != false)       node["beenStunned"]   = _hasBeenStunned;
+//	if (_psiTriedQty != 0)              node["psiTriedQty"]   = _psiTriedQty;
 
 	node["activeHand"] = static_cast<int>(_activeHand);
 
@@ -681,13 +679,13 @@ YAML::Node BattleUnit::save() const
 
 		if (_kneeled == true) node["kneeled"] = _kneeled;
 
-		if (_expBravery		!= 0) node["expBravery"]		= _expBravery;
-		if (_expReactions	!= 0) node["expReactions"]		= _expReactions;
-		if (_expFiring		!= 0) node["expFiring"]			= _expFiring;
-		if (_expThrowing	!= 0) node["expThrowing"]		= _expThrowing;
-		if (_expPsiSkill	!= 0) node["expPsiSkill"]		= _expPsiSkill;
-		if (_expPsiStrength	!= 0) node["expPsiStrength"]	= _expPsiStrength;
-		if (_expMelee		!= 0) node["expMelee"]			= _expMelee;
+		if (_expBravery     != 0) node["expBravery"]     = _expBravery;
+		if (_expReactions   != 0) node["expReactions"]   = _expReactions;
+		if (_expFiring      != 0) node["expFiring"]      = _expFiring;
+		if (_expThrowing    != 0) node["expThrowing"]    = _expThrowing;
+		if (_expPsiSkill    != 0) node["expPsiSkill"]    = _expPsiSkill;
+		if (_expPsiStrength != 0) node["expPsiStrength"] = _expPsiStrength;
+		if (_expMelee       != 0) node["expMelee"]       = _expMelee;
 	}
 
 //	for (size_t i = 0; i != _recolor.size(); ++i)
@@ -1045,11 +1043,11 @@ void BattleUnit::turn(bool turret)
 			}
 		}
 
-		if		(_dir < 0) _dir = 7;
-		else if	(_dir > 7) _dir = 0;
+		if      (_dir < 0) _dir = 7;
+		else if (_dir > 7) _dir = 0;
 
-		if		(_dirTurret < 0) _dirTurret = 7;
-		else if	(_dirTurret > 7) _dirTurret = 0;
+		if      (_dirTurret < 0) _dirTurret = 7;
+		else if (_dirTurret > 7) _dirTurret = 0;
 
 		if (_visible == true) _cacheInvalid = true;
 	}
@@ -1492,8 +1490,8 @@ int BattleUnit::takeDamage(
 		const bool ignoreArmor)
 {
 	static const int
-		HEAD_LEVEL_OFFSET	= 5,
-		WAIST_LEVEL_CUTOFF	= 6;
+		HEAD_LEVEL_OFFSET  = 5,
+		WAIST_LEVEL_CUTOFF = 6;
 
 
 	//Log(LOG_INFO) << "";
@@ -1529,9 +1527,9 @@ int BattleUnit::takeDamage(
 				abs_x (std::abs(relVoxel.x)),
 				abs_y (std::abs(relVoxel.y));
 
-			if		(abs_y > abs_x * 2)
+			if      (abs_y > abs_x * 2)
 				dirRel =  8 + 4 * static_cast<int>(relVoxel.y > 0); // hit from South (y-pos) or North (y-neg)
-			else if	(abs_x > abs_y * 2)
+			else if (abs_x > abs_y * 2)
 				dirRel = 10 + 4 * static_cast<int>(relVoxel.x < 0); // hit from East (x-pos) or West (x-neg)
 			else
 			{
@@ -1554,17 +1552,17 @@ int BattleUnit::takeDamage(
 			switch ((dirRel - _dir) % 8)
 			{
 				default:
-				case 0:	side = SIDE_FRONT;						break;
-				case 1:	side = RNG::percent(50)	? SIDE_FRONT
-												: SIDE_RIGHT;	break;
-				case 2:	side = SIDE_RIGHT;						break;
-				case 3:	side = RNG::percent(50)	? SIDE_REAR
-												: SIDE_RIGHT;	break;
-				case 4:	side = SIDE_REAR;						break;
-				case 5:	side = RNG::percent(50)	? SIDE_REAR
-												: SIDE_LEFT;	break;
-				case 6:	side = SIDE_LEFT;						break;
-				case 7:	side = RNG::percent(50)	? SIDE_FRONT
+				case 0: side = SIDE_FRONT;                    break;
+				case 1: side = RNG::percent(50) ? SIDE_FRONT
+												: SIDE_RIGHT; break;
+				case 2: side = SIDE_RIGHT;                    break;
+				case 3: side = RNG::percent(50) ? SIDE_REAR
+												: SIDE_RIGHT; break;
+				case 4: side = SIDE_REAR;                     break;
+				case 5: side = RNG::percent(50) ? SIDE_REAR
+												: SIDE_LEFT;  break;
+				case 6: side = SIDE_LEFT;                     break;
+				case 7: side = RNG::percent(50) ? SIDE_FRONT
 												: SIDE_LEFT;
 			}
 			//Log(LOG_INFO) << ". . side= " << (int)side;
@@ -1577,24 +1575,24 @@ int BattleUnit::takeDamage(
 				{
 					switch (side)
 					{
-						case SIDE_LEFT:		bodyPart = BODYPART_LEFTARM;	break;
-						case SIDE_RIGHT:	bodyPart = BODYPART_RIGHTARM;	break;
+						case SIDE_LEFT:  bodyPart = BODYPART_LEFTARM;  break;
+						case SIDE_RIGHT: bodyPart = BODYPART_RIGHTARM; break;
 						default:
 						case SIDE_FRONT:
-						case SIDE_REAR:		bodyPart = BODYPART_TORSO;
+						case SIDE_REAR:  bodyPart = BODYPART_TORSO;
 					}
 				}
 				else
 				{
 					switch (side)
 					{
-						case SIDE_LEFT: 	bodyPart = BODYPART_LEFTLEG; 	break;
-						case SIDE_RIGHT:	bodyPart = BODYPART_RIGHTLEG; 	break;
+						case SIDE_LEFT:  bodyPart = BODYPART_LEFTLEG;  break;
+						case SIDE_RIGHT: bodyPart = BODYPART_RIGHTLEG; break;
 						default:
 						case SIDE_FRONT:
-						case SIDE_REAR:		bodyPart = static_cast<UnitBodyPart>(RNG::generate(
-																							static_cast<int>(BODYPART_RIGHTLEG),
-																							static_cast<int>(BODYPART_LEFTLEG)));
+						case SIDE_REAR:  bodyPart = static_cast<UnitBodyPart>(RNG::generate(
+																						static_cast<int>(BODYPART_RIGHTLEG),
+																						static_cast<int>(BODYPART_LEFTLEG)));
 					}
 				}
 			}
@@ -1632,8 +1630,8 @@ int BattleUnit::takeDamage(
 						_isFireDeath = true;
 						_spawnType.clear();
 
-						if (_isZombie == true)	_specab = SPECAB_EXPLODE;
-						else					_specab = SPECAB_NONE;
+						if (_isZombie == true) _specab = SPECAB_EXPLODE;
+						else                   _specab = SPECAB_NONE;
 					}
 				}
 				else
@@ -2370,8 +2368,8 @@ double BattleUnit::getAccuracy(
 	BattleActionType baType;
 	switch (bat)
 	{
-		case BA_NONE:	baType = action.type; break;
-		default:		baType = bat;
+		case BA_NONE: baType = action.type; break;
+		default:      baType = bat;
 	}
 
 	switch (baType)
@@ -2525,18 +2523,19 @@ int BattleUnit::getInitiative(const int actionTu) const
 	//Log(LOG_INFO) << ". _stats.tu= " << _stats.tu;
 	//Log(LOG_INFO) << ". _tu= " << _tu;
 
-	int tu (_tu - actionTu);
+	const int tu (_tu - actionTu);
+	if (tu > 0)
+	{
+		double init (static_cast<double>(_stats.reactions * tu)
+				   / static_cast<double>(_stats.tu));
 
-	if (tu < 1) return 0;
+		//Log(LOG_INFO) << ". acu= " << getAccuracyModifier();
+		init *= getAccuracyModifier();
 
-	double init (static_cast<double>(_stats.reactions * tu)
-			   / static_cast<double>(_stats.tu));
-
-	//Log(LOG_INFO) << ". acu= " << getAccuracyModifier();
-	init *= getAccuracyModifier();
-
-	//Log(LOG_INFO) << ". init= " << static_cast<int>(std::ceil(init));
-	return static_cast<int>(std::ceil(init));
+		//Log(LOG_INFO) << ". init= " << static_cast<int>(std::ceil(init));
+		return static_cast<int>(std::ceil(init));
+	}
+	return 0;
 }
 
 /**
@@ -2681,8 +2680,8 @@ void BattleUnit::moraleChange(int change)
 	if (isMoralable() == true)
 	{
 		_morale += change;
-		if		(_morale > 100)	_morale = 100;
-		else if	(_morale <   0)	_morale =   0;
+		if      (_morale > 100) _morale = 100;
+		else if (_morale <   0) _morale =   0;
 	}
 }
 
@@ -2930,7 +2929,7 @@ BattleItem* BattleUnit::getItem(
 	if (inRule->getCategory() != IC_GROUND) // Soldier items
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _inventory.begin();
+				i  = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
@@ -2944,7 +2943,7 @@ BattleItem* BattleUnit::getItem(
 	else if (_tile != nullptr) // Ground items
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _tile->getInventory()->begin();
+				i  = _tile->getInventory()->begin();
 				i != _tile->getInventory()->end();
 				++i)
 		{
@@ -2971,7 +2970,7 @@ BattleItem* BattleUnit::getItem(
 	if (type != "STR_GROUND") // Soldier items
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _inventory.begin();
+				i  = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
@@ -2986,11 +2985,11 @@ BattleItem* BattleUnit::getItem(
 	else if (_tile != nullptr) // Ground items
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _tile->getInventory()->begin();
+				i  = _tile->getInventory()->begin();
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->occupiesSlot(x,y) == true) //&& (*i)->getInventorySection() != nullptr
+			if ((*i)->occupiesSlot(x,y) == true)
 				return *i;
 		}
 	}
@@ -3012,7 +3011,7 @@ BattleItem* BattleUnit::getItem(
 	if (section != ST_GROUND)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _inventory.begin();
+				i  = _inventory.begin();
 				i != _inventory.end();
 				++i)
 		{
@@ -3027,11 +3026,11 @@ BattleItem* BattleUnit::getItem(
 	else if (_tile != nullptr) // Ground items
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _tile->getInventory()->begin();
+				i  = _tile->getInventory()->begin();
 				i != _tile->getInventory()->end();
 				++i)
 		{
-			if ((*i)->occupiesSlot(x,y) == true) //&& (*i)->getInventorySection() != nullptr
+			if ((*i)->occupiesSlot(x,y) == true)
 				return *i;
 		}
 	}
@@ -3242,7 +3241,7 @@ BattleItem* BattleUnit::getGrenade() const
 
 	std::vector<BattleItem*> grenades;
 	for (std::vector<BattleItem*>::const_iterator
-			i = _inventory.begin();
+			i  = _inventory.begin();
 			i != _inventory.end();
 			++i)
 	{
@@ -3270,7 +3269,6 @@ bool BattleUnit::isGrenadeSuitable(const BattleItem* const grenade) const // pri
 	{
 		return true; // -> is player-panic allow smoke grenades.
 	}
-
 	return false; // -> is AI only !smoke grenades.
 }
 
@@ -3310,11 +3308,11 @@ BattleItem* BattleUnit::getRangedWeapon(bool quickest) const
 
 	const bool
 		hasRT (rtWeapon != nullptr
-				&& rtWeapon->getRules()->getBattleType() == BT_FIREARM
-				&& rtWeapon->getAmmoItem() != nullptr),
+			&& rtWeapon->getRules()->getBattleType() == BT_FIREARM
+			&& rtWeapon->getAmmoItem() != nullptr),
 		hasLT (ltWeapon != nullptr
-				&& ltWeapon->getRules()->getBattleType() == BT_FIREARM
-				&& ltWeapon->getAmmoItem() != nullptr);
+			&& ltWeapon->getRules()->getBattleType() == BT_FIREARM
+			&& ltWeapon->getAmmoItem() != nullptr);
 
 	if (!hasRT && !hasLT)
 	{
@@ -3398,12 +3396,12 @@ bool BattleUnit::checkReload()
 	if (_tu >= tuReload)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = getInventory()->begin();
+				i  = getInventory()->begin();
 				i != getInventory()->end();
 				++i)
 		{
 			for (std::vector<std::string>::const_iterator
-					j = weapon->getRules()->getAcceptedLoadTypes()->begin();
+					j  = weapon->getRules()->getAcceptedLoadTypes()->begin();
 					j != weapon->getRules()->getAcceptedLoadTypes()->end();
 					++j)
 			{
@@ -3698,10 +3696,10 @@ int BattleUnit::improveStat(int xp) const // private.
 {
 	int tier;
 
-	if		(xp > 10) tier = 4;
+	if      (xp > 10) tier = 4;
 	else if (xp >  5) tier = 3;
 	else if (xp >  2) tier = 2;
-	else			  tier = 1;
+	else              tier = 1;
 
 	return ((tier >> 1u) + RNG::generate(0, tier));
 }
@@ -4278,12 +4276,12 @@ void BattleUnit::putdown(bool autokill)
 	if (_battleGame != nullptr) // Check if death NOT by pre-battle hidden/power-source explosion.
 	{
 		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
+				i  = _battleSave->getUnits()->begin();
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
 			for (std::vector<BattleUnit*>::const_iterator
-					j = (*i)->getHostileUnits().begin();
+					j  = (*i)->getHostileUnits().begin();
 					j != (*i)->getHostileUnits().end();
 					++j)
 			{
@@ -4295,7 +4293,7 @@ void BattleUnit::putdown(bool autokill)
 			}
 
 			for (std::vector<BattleUnit*>::const_iterator
-					j = (*i)->getHostileUnitsThisTurn().begin();
+					j  = (*i)->getHostileUnitsThisTurn().begin();
 					j != (*i)->getHostileUnitsThisTurn().end();
 					++j)
 			{
@@ -4363,7 +4361,7 @@ int BattleUnit::getCarriedWeight(const BattleItem* const dragItem) const
 {
 	int weight (_arRule->getWeight());
 	for (std::vector<BattleItem*>::const_iterator
-			i = _inventory.begin();
+			i  = _inventory.begin();
 			i != _inventory.end();
 			++i)
 	{
@@ -4424,12 +4422,12 @@ void BattleUnit::deriveRank()
 	switch (_geoscapeSoldier->getRank())
 	{
 		default:
-		case RANK_ROOKIE:		_rankInt = 0; break;
-		case RANK_SQUADDIE:		_rankInt = 1; break;
-		case RANK_SERGEANT:		_rankInt = 2; break;
-		case RANK_CAPTAIN:		_rankInt = 3; break;
-		case RANK_COLONEL:		_rankInt = 4; break;
-		case RANK_COMMANDER:	_rankInt = 5;
+		case RANK_ROOKIE:    _rankInt = 0; break;
+		case RANK_SQUADDIE:  _rankInt = 1; break;
+		case RANK_SERGEANT:  _rankInt = 2; break;
+		case RANK_CAPTAIN:   _rankInt = 3; break;
+		case RANK_COLONEL:   _rankInt = 4; break;
+		case RANK_COMMANDER: _rankInt = 5;
 	}
 }
 
@@ -4496,15 +4494,15 @@ void BattleUnit::adjustStats()
 	const DifficultyLevel diff (_battleSave->getSavedGame()->getDifficulty());
 	const int elapsed (_battleSave->getSavedGame()->getMonthsElapsed());
 
-	_stats.tu			+= 4 * diff * _stats.tu				/ 100;
-	_stats.stamina		+= 4 * diff * _stats.stamina		/ 100;
-	_stats.reactions	+= 6 * diff * _stats.reactions		/ 100;
-	_stats.firing		+= 6 * diff * _stats.firing			/ 100;
-	_stats.throwing		+= 4 * diff * _stats.throwing		/ 100;
-	_stats.melee		+= 4 * diff * _stats.melee			/ 100;
-	_stats.strength		+= 2 * diff * _stats.strength		/ 100;
-	_stats.psiStrength	+= 4 * diff * _stats.psiStrength	/ 100;
-	_stats.psiSkill		+= 4 * diff * _stats.psiSkill		/ 100;
+	_stats.tu          += 4 * diff * _stats.tu          / 100;
+	_stats.stamina     += 4 * diff * _stats.stamina     / 100;
+	_stats.reactions   += 6 * diff * _stats.reactions   / 100;
+	_stats.firing      += 6 * diff * _stats.firing      / 100;
+	_stats.throwing    += 4 * diff * _stats.throwing    / 100;
+	_stats.melee       += 4 * diff * _stats.melee       / 100;
+	_stats.strength    += 2 * diff * _stats.strength    / 100;
+	_stats.psiStrength += 4 * diff * _stats.psiStrength / 100;
+	_stats.psiSkill    += 4 * diff * _stats.psiSkill    / 100;
 
 	if (diff == DIFF_BEGINNER)
 	{
@@ -4521,12 +4519,12 @@ void BattleUnit::adjustStats()
 
 	if (elapsed > 0) // aLiens get tuffer as game progresses:
 	{
-		if (_stats.reactions > 0)	_stats.reactions	+= elapsed;
-		if (_stats.firing > 0)		_stats.firing		+= elapsed;
-		if (_stats.throwing > 0)	_stats.throwing		+= elapsed;
-		if (_stats.melee > 0)		_stats.melee		+= elapsed;
-		if (_stats.psiStrength > 0)	_stats.psiStrength	+= (elapsed << 1u);
-		if (_stats.psiSkill > 0)	_stats.psiSkill		+= (elapsed >> 1u);
+		if (_stats.reactions > 0)   _stats.reactions   += elapsed;
+		if (_stats.firing > 0)      _stats.firing      += elapsed;
+		if (_stats.throwing > 0)    _stats.throwing    += elapsed;
+		if (_stats.melee > 0)       _stats.melee       += elapsed;
+		if (_stats.psiStrength > 0) _stats.psiStrength += (elapsed << 1u);
+		if (_stats.psiSkill > 0)    _stats.psiSkill    += (elapsed >> 1u);
 
 		_stats.health += (elapsed >> 1u);
 
@@ -4821,12 +4819,12 @@ void BattleUnit::hostileMcValues(
 	{
 		case -1: // get params
 			strength = _mcStrength;
-			skill = _mcSkill;
+			skill    = _mcSkill;
 			break;
 
 		default: // set params
-			_mcStrength	= strength - ((_stats.psiStrength + 4) / 5);
-			_mcSkill	= skill    - ((_stats.psiSkill    + 4) / 5);
+			_mcStrength = strength - ((_stats.psiStrength + 4) / 5);
+			_mcSkill    = skill    - ((_stats.psiSkill    + 4) / 5);
 
 			if (_mcStrength < 0) _mcStrength = 0;
 			if (_mcSkill    < 0) _mcSkill    = 0;
@@ -4953,18 +4951,18 @@ std::string BattleUnit::debugStatus(const UnitStatus status) // static
 {
 	switch (status)
 	{
-		case STATUS_STANDING:		return "standing";
-		case STATUS_WALKING:		return "walking";
-		case STATUS_FLYING:			return "flying";
-		case STATUS_TURNING:		return "turning";
-		case STATUS_AIMING:			return "aiming";
-		case STATUS_COLLAPSING:		return "collapsing";
-		case STATUS_DEAD:			return "dead";
-		case STATUS_UNCONSCIOUS:	return "unconscious";
-		case STATUS_PANICKING:		return "panicking";
-		case STATUS_BERSERK:		return "berserk";
-		case STATUS_LATENT:			return "latent";
-		case STATUS_LATENT_START:	return "latent_start";
+		case STATUS_STANDING:     return "standing";
+		case STATUS_WALKING:      return "walking";
+		case STATUS_FLYING:       return "flying";
+		case STATUS_TURNING:      return "turning";
+		case STATUS_AIMING:       return "aiming";
+		case STATUS_COLLAPSING:   return "collapsing";
+		case STATUS_DEAD:         return "dead";
+		case STATUS_UNCONSCIOUS:  return "unconscious";
+		case STATUS_PANICKING:    return "panicking";
+		case STATUS_BERSERK:      return "berserk";
+		case STATUS_LATENT:       return "latent";
+		case STATUS_LATENT_START: return "latent_start";
 
 		default:
 			return "error: no status";

@@ -40,19 +40,19 @@ class BattleItem
 {
 
 private:
-	bool _xcomProperty;
+	bool _property;
 	int
-		_ammoQty,
 		_fuse,
 		_id,
-		_inventoryX,
-		_inventoryY,
+		_rounds,
+		_x,
+		_y,
 
 		_heal,
-		_painKiller,
+		_morphine,
 		_stimulant;
 
-	BattleItem* _ammoItem;
+	BattleItem* _load;
 	BattleUnit
 		* _owner,
 		* _unit;

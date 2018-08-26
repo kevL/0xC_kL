@@ -695,7 +695,7 @@ void Inventory::mouseClick(Action* action, State* state)
 							{
 								bool fail (true);
 								for (std::vector<std::string>::const_iterator
-										i = itOver->getRules()->getAcceptedLoadTypes()->begin();
+										i  = itOver->getRules()->getAcceptedLoadTypes()->begin();
 										i != itOver->getRules()->getAcceptedLoadTypes()->end();
 										++i)
 								{

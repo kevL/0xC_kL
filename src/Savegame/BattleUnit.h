@@ -85,11 +85,11 @@ enum UnitFaction
 
 enum UnitSide
 {
-	SIDE_FRONT,			// 0
-	SIDE_LEFT,			// 1
-	SIDE_RIGHT,			// 2
-	SIDE_REAR,			// 3
-	SIDE_UNDER			// 4
+	SIDE_FRONT,	// 0
+	SIDE_LEFT,	// 1
+	SIDE_RIGHT,	// 2
+	SIDE_REAR,	// 3
+	SIDE_UNDER	// 4
 };
 
 enum UnitBodyPart

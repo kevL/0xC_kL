@@ -582,7 +582,7 @@ void SavedBattleGame::load(
 	{
 		if (rules->getItemRule((*i)["type"].as<std::string>()) != nullptr)
 		{
-			const int load ((*i)["ammoItem"].as<int>(-1)); // cf. BattleItem::save()
+			const int load ((*i)["load"].as<int>(-1)); // cf. BattleItem::save()
 			if (load != -1)
 			{
 				for (std::vector<BattleItem*>::const_iterator
@@ -1290,7 +1290,7 @@ bool SavedBattleGame::factionEndTurn()
 {
 	//Log(LOG_INFO) << "sbg:factionEndTurn() side= " << _side;
 	for (std::vector<BattleUnit*>::const_iterator	// set *all* units non-selectable
-			i = _units.begin();						// Units of the upcoming turn's faction are
+			i  = _units.begin();					// Units of the upcoming turn's faction are
 			i != _units.end();						// set selectable at the end.
 			++i)
 	{
@@ -1356,7 +1356,7 @@ bool SavedBattleGame::factionEndTurn()
 
 			int aLienIntelTest;
 			for (std::vector<BattleUnit*>::const_iterator
-					i = _units.begin();
+					i  = _units.begin();
 					i != _units.end();
 					++i)
 			{
@@ -1379,7 +1379,7 @@ bool SavedBattleGame::factionEndTurn()
 				&& _turn > (_cheatTurn >> 2u))
 			{
 				for (std::vector<BattleUnit*>::const_iterator // find a conscious non-MC'd aLien ...
-						i = _units.begin();
+						i  = _units.begin();
 						i != _units.end() && _cheatAI == false;
 						++i)
 				{
@@ -1403,7 +1403,7 @@ bool SavedBattleGame::factionEndTurn()
 	}
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _units.begin();
+			i  = _units.begin();
 			i != _units.end();
 			++i)
 	{
