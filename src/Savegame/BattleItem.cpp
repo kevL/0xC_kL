@@ -71,13 +71,13 @@ BattleItem::BattleItem(
 	switch (_itRule->getBattleType())
 	{
 		case BT_MEDIKIT:
-			_heal       = _itRule->getHealQuantity();
-			_morphine = _itRule->getPainKillerQuantity();
-			_stimulant  = _itRule->getStimulantQuantity();
+			_heal      = _itRule->getHealQuantity();
+			_morphine  = _itRule->getPainKillerQuantity();
+			_stimulant = _itRule->getStimulantQuantity();
 			break;
 
 		case BT_FIREARM: // Firearms w/out defined ammo ARE the ammo.
-			if (_itRule->getAcceptedLoadTypes()->empty() == false)
+			if (_itRule->getClipTypes()->empty() == false)
 				break;
 			// no break;
 		case BT_MELEE: // Melee weapons do NOT require ammo.
@@ -88,7 +88,8 @@ BattleItem::BattleItem(
 	// it here. Except that it creates problems w/ TANKS returning to Base. So
 	// do it in Ruleset: melee-items need "clipSize -1" to do reactionFire.
 	// Unless i changed it .... Actually they need "_ammoItem = this" as above.
-	// ... not sure what's up with tanks-returning-to-Base anymore.
+	// ... not sure what's up with tanks-returning-to-Base anymore. Anyway,
+	// somebody really jacked off all over ammo handling ......
 }
 
 /**
@@ -219,7 +220,7 @@ void BattleItem::setAmmoQuantity(int qty)
 /**
  * Gets this BattleItem's currently loaded ammo-item.
  * @return, pointer to BattleItem or nullptr
- *			- nullptr if this BattleItem has no ammo loaded OR is a clip on its own
+ *			- nullptr if this BattleItem has no ammo loaded OR is a clip itself
  *			- the loaded ammo-item OR the weapon itself if weapon is its own ammo
  */
 BattleItem* BattleItem::getAmmoItem() const
@@ -244,8 +245,8 @@ bool BattleItem::setAmmoItem(
 		else if (_load == nullptr)
 		{
 			for (std::vector<std::string>::const_iterator
-					i  = _itRule->getAcceptedLoadTypes()->begin();
-					i != _itRule->getAcceptedLoadTypes()->end();
+					i  = _itRule->getClipTypes()->begin();
+					i != _itRule->getClipTypes()->end();
 					++i)
 			{
 				if (*i == load->getRules()->getType()) // load weapon ->
@@ -285,20 +286,22 @@ bool BattleItem::selfPowered() const
 bool BattleItem::selfExpended() const
 {
 	return _itRule->getBattleType() == BT_FIREARM
-		&& _itRule->getAcceptedLoadTypes()->empty() == true
+		&& _itRule->getClipTypes()->empty() == true
 		&& _itRule->getFullClip() > 0;
 }
 
 /**
- * Spends a bullet from this BattleItem.
+ * Expends rounds from this BattleItem.
  * @param battleSave	- reference to the SavedBattleGame
  * @param weapon		- reference to the weapon containing this ammo
+ * @param rounds		- quantity of rounds to expend (default 1)
  */
 void BattleItem::spendBullet(
 		SavedBattleGame& battleSave,
-		BattleItem& weapon)
+		BattleItem& weapon,
+		int rounds)
 {
-	if (_rounds != -1 && --_rounds == 0) // -1== infinite
+	if (_rounds != -1 && (_rounds -= rounds) == 0) // -1== infinite
 	{
 		weapon.setAmmoItem();
 		battleSave.sendItemToDelete(this);

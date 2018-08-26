@@ -74,12 +74,13 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_forced(false),
 		_unit(nullptr),
 		_load(nullptr),
+		_shots(1),
 		_prjItem(nullptr),
 		_prjImpact(VOXEL_FLOOR),
 		_prjVector(0,0,-1),
 		_init(true),
 		_targetFloor(false),
-		_prjStart(0),
+		_start(0),
 		_prj(nullptr)
 {
 	if (_posOrigin.z == -1)
@@ -130,12 +131,23 @@ void ProjectileFlyBState::init()
 		{
 			popThis = true;
 		}
-		else if (_unit->getTu() >= _action.TU // go ->
-			|| _action.type == BA_MELEE
+		else if (_unit->getTu() >= _action.TU	// go ->
+			|| _action.type == BA_MELEE			// what are tu checked elsewhere for melee/panic/rf ->
 			|| _battleGame->playerPanicHandled() == false
 			|| _unit->getFaction() != FACTION_PLAYER)
 		{
 			_load = _action.weapon->getAmmoItem();
+
+			if (_action.type == BA_AUTOSHOT)
+			{
+				_shots = _action.weapon->getRules()->getAutoShots();
+				if (_action.weapon->selfPowered() == false
+					&& _load != nullptr
+					&& _load->getAmmoQuantity() < _shots)
+				{
+					_shots = _load->getAmmoQuantity();
+				}
+			}
 
 			bool fireValid;
 			if (_unit->getFaction() != _battleSave->getSide()) // reaction fire
@@ -738,16 +750,16 @@ void ProjectileFlyBState::think()
 	if (_unit->getUnitStatus() == STATUS_AIMING
 		&& _unit->getArmor()->getShootFrames() != 0)
 	{
-		if (_prjStart == 0) _prjStart = 1;
+		if (_start == 0) _start = 1;
 		_unit->keepAiming();
 
 		if (_unit->getAimingPhase() < _unit->getArmor()->getFirePhase())
 			return;
 	}
 
-	if (_prjStart == 1)
+	if (_start == 1)
 	{
-		_prjStart = 2;
+		_start = 2;
 		_battleGame->getMap()->showProjectile();
 	}
 
@@ -756,17 +768,12 @@ void ProjectileFlyBState::think()
 	if (_prj == nullptr)
 	{
 		Position pos;
-		if (_load != nullptr
-			&& _action.type == BA_AUTOSHOT
-			&& _action.autoShotCount < _action.weapon->getRules()->getAutoShots()
+		if (_action.type == BA_AUTOSHOT // && _load != nullptr
+			&& _action.autoShotCount < _shots
 			&& _unit->isOut_t() == false
 			&& (_unit->getMoveTypeUnit() == MT_FLY
 				|| _battleSave->getTile(pos = _unit->getPosition())
 						->isFloored(_battleSave->getTile(pos + Position(0,0,-1))) == true))
-//			&& ((_battleSave->getTile(_unit->getPosition()) != nullptr // wtf. ->
-//					&& _battleSave->getTile(_unit->getPosition())
-//						->isFloored(_battleSave->getTile(_unit->getPosition() + Position(0,0,-1))) == true)
-//				|| _unit->getMoveTypeUnit() == MT_FLY))
 		{
 			createProjectile(); // autoshot.
 		}
@@ -867,7 +874,8 @@ void ProjectileFlyBState::think()
 				case BA_AIMEDSHOT:
 					_load->spendBullet(
 									*_battleSave,
-									*_action.weapon);
+									*_action.weapon,
+									_shots);
 					// no break;
 				case BA_THROW:
 				case BA_MELEE:
@@ -1044,8 +1052,8 @@ void ProjectileFlyBState::think()
 																_unit,
 																nullptr,
 																_action.type != BA_AUTOSHOT // final projectile -> stop Aiming.
-																	|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots()
-																	|| _action.weapon->getAmmoItem() == nullptr,
+																	|| _action.autoShotCount == _shots,
+//																	|| _action.weapon->getAmmoItem() == nullptr,
 																false, false,
 																_action.type == BA_LAUNCH));
 
@@ -1173,7 +1181,7 @@ void ProjectileFlyBState::think()
 
 				if (_load == nullptr
 					|| _action.type != BA_AUTOSHOT
-					|| _action.autoShotCount == _action.weapon->getRules()->getAutoShots())
+					|| _action.autoShotCount == _shots)
 				{
 					_battleGame->getMap()->setReveal(false);
 

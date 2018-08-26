@@ -2893,7 +2893,7 @@ void GeoscapeState::time1Day()
 					const RuleItem* const parentRule (_rules->getItemRule(parentType));
 					if (   parentRule != nullptr
 						&& parentRule->getBattleType() == BT_FIREARM
-						&& parentRule->getAcceptedLoadTypes()->empty() == false)
+						&& parentRule->getClipTypes()->empty() == false)
 					{
 						const RuleManufacture* const mfRule (_rules->getManufacture(parentType));
 						if (mfRule != nullptr)
@@ -2901,7 +2901,7 @@ void GeoscapeState::time1Day()
 							const std::vector<std::string>& required (mfRule->getRequiredResearch());
 							if (_playSave->isResearched(required) == false)
 							{
-								const std::string& dependentType (parentRule->getAcceptedLoadTypes()->front());
+								const std::string& dependentType (parentRule->getClipTypes()->front());
 								if (std::find(
 											required.begin(),
 											required.end(),

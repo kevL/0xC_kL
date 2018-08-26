@@ -375,7 +375,7 @@ void TransferItemsState::init()
 							if ((*k)->getRules()->getType() == type)
 								++destQty;
 							else if ((*k)->getLoad() > 0
-								&& (*k)->getRules()->getAcceptedLoadTypes()->front() == type)
+								&& (*k)->getRules()->getClipTypes()->front() == type)
 							{
 								destQty += (*k)->getLoad();
 							}

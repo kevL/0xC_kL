@@ -102,7 +102,8 @@ private:
 		/// Spends a bullet from this BattleItem.
 		void spendBullet(
 				SavedBattleGame& battleSave,
-				BattleItem& weapon);
+				BattleItem& weapon,
+				int rounds = 1);
 
 		/// Gets turns until the BattleItem explodes.
 		int getFuse() const;

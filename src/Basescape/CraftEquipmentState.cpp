@@ -477,7 +477,7 @@ void CraftEquipmentState::rightByValue(int delta)
 						}
 						else // tank needs Ammo.
 						{
-							const std::string& loadType (itRule->getAcceptedLoadTypes()->front());
+							const std::string& loadType (itRule->getClipTypes()->front());
 							const int
 								clipsRequired (itRule->getFullClip()),
 								baseClips (_base->getStorageItems()->getItemQuantity(loadType));
@@ -605,7 +605,7 @@ void CraftEquipmentState::leftByValue(int delta)
 
 		if (itRule->isFixed() == true) // convert Vehicles to storage-items
 		{
-			const std::string& loadType (itRule->getAcceptedLoadTypes()->front());
+			const std::string& loadType (itRule->getClipTypes()->front());
 
 			if (_isQuickBattle == false)
 			{

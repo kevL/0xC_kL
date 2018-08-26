@@ -399,7 +399,7 @@ PurchaseState::PurchaseState(Base* const base)
 						if ((*k)->getRules()->getType() == type)
 							++baseQty;
 						else if ((*k)->getLoad() > 0
-							&& (*k)->getRules()->getAcceptedLoadTypes()->front() == type)
+							&& (*k)->getRules()->getClipTypes()->front() == type)
 						{
 							baseQty += (*k)->getLoad();
 						}

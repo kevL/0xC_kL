@@ -686,7 +686,7 @@ void Inventory::mouseClick(Action* action, State* state)
 									_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[0u]));
 							}
 						}
-						else if (itOver->getRules()->getAcceptedLoadTypes()->empty() == false // Put item in weapon.
+						else if (itOver->getRules()->getClipTypes()->empty() == false // Put item in weapon.
 							&& (_tuMode == false || itOver->getInventorySection()->getCategory() == IC_HAND))
 						{
 							if (itOver->getAmmoItem() != nullptr)
@@ -695,8 +695,8 @@ void Inventory::mouseClick(Action* action, State* state)
 							{
 								bool fail (true);
 								for (std::vector<std::string>::const_iterator
-										i  = itOver->getRules()->getAcceptedLoadTypes()->begin();
-										i != itOver->getRules()->getAcceptedLoadTypes()->end();
+										i  = itOver->getRules()->getClipTypes()->begin();
+										i != itOver->getRules()->getClipTypes()->end();
 										++i)
 								{
 									if (*i == _selItem->getRules()->getType())
@@ -1343,7 +1343,7 @@ bool Inventory::unload()
 	BattleItem* const itLoad (_selItem->getAmmoItem());
 	if (itLoad == nullptr)
 	{
-		if (_selItem->getRules()->getAcceptedLoadTypes()->empty() == false)
+		if (_selItem->getRules()->getClipTypes()->empty() == false)
 			_warning->showMessage(_game->getLanguage()->getString(BattlescapeGame::PLAYER_ERROR[2u])); // weapon is not loaded
 
 		return false;

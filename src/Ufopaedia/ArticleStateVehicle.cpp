@@ -124,9 +124,9 @@ ArticleStateVehicle::ArticleStateVehicle(const ArticleDefinitionVehicle* const d
 				tr("STR_WEAPON_LC").c_str(),
 				tr(defs->weapon).c_str());
 
-	if (itRule->getAcceptedLoadTypes()->empty() == false)
+	if (itRule->getClipTypes()->empty() == false)
 	{
-		const RuleItem* const aRule (_game->getRuleset()->getItemRule(itRule->getAcceptedLoadTypes()->front()));
+		const RuleItem* const aRule (_game->getRuleset()->getItemRule(itRule->getClipTypes()->front()));
 
 		_lstStats->addRow(
 					2,

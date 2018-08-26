@@ -10,7 +10,7 @@ items:
 #    handSprite: 0
     bulletSprite: 4
     fireSound: 12
-    acceptedLoads:
+    clipTypes:
       - STR_HWP_CANNON_SHELLS
     accuracySnap: 59
     accuracyAimed: 98
@@ -34,7 +34,7 @@ items:
 #    handSprite: 0
     bulletSprite: 0
     fireSound: 52
-    acceptedLoads:
+    clipTypes:
       - STR_HWP_ROCKETS
     accuracySnap: 67
     accuracyAimed: 119

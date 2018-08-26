@@ -1938,7 +1938,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				}
 				else
 				{
-					const std::string& type (itRule->getAcceptedLoadTypes()->front());
+					const std::string& type (itRule->getClipTypes()->front());
 					const int
 						clipsRequired (itRule->getFullClip()),
 						baseClips (_base->getStorageItems()->getItemQuantity(type));

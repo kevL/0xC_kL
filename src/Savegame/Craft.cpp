@@ -1522,7 +1522,7 @@ void Craft::unloadCraft(
 
 			if (itRule->getFullClip() > 0)
 				_base->getStorageItems()->addItem(
-											itRule->getAcceptedLoadTypes()->front(),
+											itRule->getClipTypes()->front(),
 											(*i)->getLoad());
 			if (updateCraft == true)
 			{

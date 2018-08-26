@@ -1944,8 +1944,8 @@ void BattlescapeGame::diaryAttacker( // private.
 			{
 				itRule = rules->getItemRule(*i);
 				for (std::vector<std::string>::const_iterator
-						j = itRule->getAcceptedLoadTypes()->begin();
-						j != itRule->getAcceptedLoadTypes()->end();
+						j = itRule->getClipTypes()->begin();
+						j != itRule->getClipTypes()->end();
 						++j)
 				{
 					if (*j == _killStatWeaponLoad
@@ -3482,8 +3482,8 @@ bool BattlescapeGame::worthTaking(
 					{
 						//Log(LOG_INFO) << ". . has Firearm for it";
 						for (std::vector<std::string>::const_iterator
-								j = (*i)->getRules()->getAcceptedLoadTypes()->begin();
-								j != (*i)->getRules()->getAcceptedLoadTypes()->end();
+								j = (*i)->getRules()->getClipTypes()->begin();
+								j != (*i)->getRules()->getClipTypes()->end();
 								++j)
 						{
 							//Log(LOG_INFO) << ". . . try matching " << (*j);

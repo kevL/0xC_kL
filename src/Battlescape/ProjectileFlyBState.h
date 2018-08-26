@@ -50,7 +50,9 @@ private:
 		_forced,
 		_init,
 		_targetFloor;
-	int _prjStart;
+	int
+		_shots,
+		_start;
 
 	BattleItem
 		* _load,

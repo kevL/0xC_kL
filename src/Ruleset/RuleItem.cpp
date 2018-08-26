@@ -135,14 +135,14 @@ void RuleItem::load(
 		int modIndex,
 		int listOrder)
 {
-	_type			= node["type"]			.as<std::string>(_type);
-	_label			= node["label"]			.as<std::string>(_label);
-	_reqResearch	= node["reqResearch"]	.as<std::vector<std::string>>(_reqResearch);
-	_size			= node["size"]			.as<double>(_size);
-	_costBuy		= node["costBuy"]		.as<int>(_costBuy);
-	_costSell		= node["costSell"]		.as<int>(_costSell);
-	_transferTime	= node["transferTime"]	.as<int>(_transferTime);
-	_weight			= node["weight"]		.as<int>(_weight);
+	_type         = node["type"]        .as<std::string>(_type);
+	_label        = node["label"]       .as<std::string>(_label);
+	_reqResearch  = node["reqResearch"] .as<std::vector<std::string>>(_reqResearch);
+	_size         = node["size"]        .as<double>(_size);
+	_costBuy      = node["costBuy"]     .as<int>(_costBuy);
+	_costSell     = node["costSell"]    .as<int>(_costSell);
+	_transferTime = node["transferTime"].as<int>(_transferTime);
+	_weight       = node["weight"]      .as<int>(_weight);
 
 	if (node["bigSprite"])
 	{
@@ -216,69 +216,69 @@ void RuleItem::load(
 
 	_meleeAni = node["meleeAni"].as<int>(_meleeAni);
 
-	_dType			= static_cast<DamageType>(node["damageType"].as<int>(_dType));
-	_bType			= static_cast<BattleType>(node["battleType"].as<int>(_bType));
-	_specialType	= static_cast<TileType>(node["specialType"]	.as<int>(_specialType));
-	_turretType		= static_cast<TurretType>(node["turretType"].as<int>(_turretType));
+	_dType       = static_cast<DamageType>(node["damageType"].as<int>(_dType));
+	_bType       = static_cast<BattleType>(node["battleType"].as<int>(_bType));
+	_specialType = static_cast<TileType>(node["specialType"] .as<int>(_specialType));
+	_turretType  = static_cast<TurretType>(node["turretType"].as<int>(_turretType));
 
-	_firePower			= node["power"]				.as<int>(_firePower);
-	_meleePower			= node["meleePower"]		.as<int>(_meleePower);
-	_strengthApplied	= node["strengthApplied"]	.as<bool>(_strengthApplied);
-	_skillApplied		= node["skillApplied"]		.as<bool>(_skillApplied);
-	_fullClip			= node["fullClip"]			.as<int>(_fullClip);
-	_acceptedLoads		= node["acceptedLoads"]		.as<std::vector<std::string>>(_acceptedLoads);
-	_accuracyAuto		= node["accuracyAuto"]		.as<int>(_accuracyAuto);
-	_accuracySnap		= node["accuracySnap"]		.as<int>(_accuracySnap);
-	_accuracyAimed		= node["accuracyAimed"]		.as<int>(_accuracyAimed);
-	_accuracyMelee		= node["accuracyMelee"]		.as<int>(_accuracyMelee);
-	_tuAuto				= node["tuAuto"]			.as<int>(_tuAuto);
-	_tuSnap				= node["tuSnap"]			.as<int>(_tuSnap);
-	_tuAimed			= node["tuAimed"]			.as<int>(_tuAimed);
-	_tuLaunch			= node["tuLaunch"]			.as<int>(_tuLaunch);
-	_tuUse				= node["tuUse"]				.as<int>(_tuUse);
-	_tuPrime			= node["tuPrime"]			.as<int>(_tuPrime);
-	_tuDefuse			= node["tuDefuse"]			.as<int>(_tuDefuse);
-	_tuMelee			= node["tuMelee"]			.as<int>(_tuMelee);
-	_tuReload			= node["tuReload"]			.as<int>(_tuReload);
-	_tuUnload			= node["tuUnload"]			.as<int>(_tuUnload);
-	_twoHanded			= node["twoHanded"]			.as<bool>(_twoHanded);
-	_waypoint			= node["waypoint"]			.as<int>(_waypoint);
-	_fixedWeapon		= node["fixedWeapon"]		.as<bool>(_fixedWeapon);
-	_invWidth			= node["invWidth"]			.as<int>(_invWidth);
-	_invHeight			= node["invHeight"]			.as<int>(_invHeight);
-	_painKiller			= node["painKiller"]		.as<int>(_painKiller);
-	_heal				= node["heal"]				.as<int>(_heal);
-	_stimulant			= node["stimulant"]			.as<int>(_stimulant);
-	_woundRecovery		= node["woundRecovery"]		.as<int>(_woundRecovery);
-	_healthRecovery		= node["healthRecovery"]	.as<int>(_healthRecovery);
-	_stunRecovery		= node["stunRecovery"]		.as<int>(_stunRecovery);
-	_energyRecovery		= node["energyRecovery"]	.as<int>(_energyRecovery);
-	_score				= node["score"]				.as<int>(_score);
-	_armor				= node["armor"]				.as<int>(_armor);
-	_recover			= node["recover"]			.as<bool>(_recover);
-	_liveAlien			= node["liveAlien"]			.as<bool>(_liveAlien);
-	_blastRadius		= node["blastRadius"]		.as<int>(_blastRadius);
-	_attraction			= node["attraction"]		.as<int>(_attraction);
-	_flatRate			= node["flatRate"]			.as<bool>(_flatRate);
-	_arcingShot			= node["arcingShot"]		.as<bool>(_arcingShot);
-	_maxRange			= node["maxRange"]			.as<int>(_maxRange);
-	_aimRange			= node["aimRange"]			.as<int>(_aimRange);
-	_snapRange			= node["snapRange"]			.as<int>(_snapRange);
-	_autoRange			= node["autoRange"]			.as<int>(_autoRange);
-	_minRange			= node["minRange"]			.as<int>(_minRange);
-	_dropoff			= node["dropoff"]			.as<int>(_dropoff);
-	_bulletSpeed		= node["bulletSpeed"]		.as<int>(_bulletSpeed);
-	_explosionSpeed		= node["explosionSpeed"]	.as<int>(_explosionSpeed);
-	_autoShots			= node["autoShots"]			.as<int>(_autoShots);
-	_autoKick			= node["autoKick"]			.as<int>(_autoKick);
-	_shotgunPellets		= node["shotgunPellets"]	.as<int>(_shotgunPellets);
-	_shotgunPattern		= node["shotgunPattern"]	.as<int>(_shotgunPattern);
-	_zombieUnit			= node["zombieUnit"]		.as<std::string>(_zombieUnit);
-	_LOSRequired		= node["LOSRequired"]		.as<bool>(_LOSRequired);
-	_noReaction			= node["noReaction"]		.as<bool>(_noReaction);
-	_noResearch			= node["noResearch"]		.as<bool>(_noResearch);
-	_defusePulse		= node["defusePulse"]		.as<bool>(_defusePulse);
-	_acuCrouch			= node["acuCrouch"]			.as<double>(_acuCrouch);
+	_firePower       = node["power"]          .as<int>(_firePower);
+	_meleePower      = node["meleePower"]     .as<int>(_meleePower);
+	_strengthApplied = node["strengthApplied"].as<bool>(_strengthApplied);
+	_skillApplied    = node["skillApplied"]   .as<bool>(_skillApplied);
+	_fullClip        = node["fullClip"]       .as<int>(_fullClip);
+	_clipTypes       = node["clipTypes"]      .as<std::vector<std::string>>(_clipTypes);
+	_accuracyAuto    = node["accuracyAuto"]   .as<int>(_accuracyAuto);
+	_accuracySnap    = node["accuracySnap"]   .as<int>(_accuracySnap);
+	_accuracyAimed   = node["accuracyAimed"]  .as<int>(_accuracyAimed);
+	_accuracyMelee   = node["accuracyMelee"]  .as<int>(_accuracyMelee);
+	_tuAuto          = node["tuAuto"]         .as<int>(_tuAuto);
+	_tuSnap          = node["tuSnap"]         .as<int>(_tuSnap);
+	_tuAimed         = node["tuAimed"]        .as<int>(_tuAimed);
+	_tuLaunch        = node["tuLaunch"]       .as<int>(_tuLaunch);
+	_tuUse           = node["tuUse"]          .as<int>(_tuUse);
+	_tuPrime         = node["tuPrime"]        .as<int>(_tuPrime);
+	_tuDefuse        = node["tuDefuse"]       .as<int>(_tuDefuse);
+	_tuMelee         = node["tuMelee"]        .as<int>(_tuMelee);
+	_tuReload        = node["tuReload"]       .as<int>(_tuReload);
+	_tuUnload        = node["tuUnload"]       .as<int>(_tuUnload);
+	_twoHanded       = node["twoHanded"]      .as<bool>(_twoHanded);
+	_waypoint        = node["waypoint"]       .as<int>(_waypoint);
+	_fixedWeapon     = node["fixedWeapon"]    .as<bool>(_fixedWeapon);
+	_invWidth        = node["invWidth"]       .as<int>(_invWidth);
+	_invHeight       = node["invHeight"]      .as<int>(_invHeight);
+	_painKiller      = node["painKiller"]     .as<int>(_painKiller);
+	_heal            = node["heal"]           .as<int>(_heal);
+	_stimulant       = node["stimulant"]      .as<int>(_stimulant);
+	_woundRecovery   = node["woundRecovery"]  .as<int>(_woundRecovery);
+	_healthRecovery  = node["healthRecovery"] .as<int>(_healthRecovery);
+	_stunRecovery    = node["stunRecovery"]   .as<int>(_stunRecovery);
+	_energyRecovery  = node["energyRecovery"] .as<int>(_energyRecovery);
+	_score           = node["score"]          .as<int>(_score);
+	_armor           = node["armor"]          .as<int>(_armor);
+	_recover         = node["recover"]        .as<bool>(_recover);
+	_liveAlien       = node["liveAlien"]      .as<bool>(_liveAlien);
+	_blastRadius     = node["blastRadius"]    .as<int>(_blastRadius);
+	_attraction      = node["attraction"]     .as<int>(_attraction);
+	_flatRate        = node["flatRate"]       .as<bool>(_flatRate);
+	_arcingShot      = node["arcingShot"]     .as<bool>(_arcingShot);
+	_maxRange        = node["maxRange"]       .as<int>(_maxRange);
+	_aimRange        = node["aimRange"]       .as<int>(_aimRange);
+	_snapRange       = node["snapRange"]      .as<int>(_snapRange);
+	_autoRange       = node["autoRange"]      .as<int>(_autoRange);
+	_minRange        = node["minRange"]       .as<int>(_minRange);
+	_dropoff         = node["dropoff"]        .as<int>(_dropoff);
+	_bulletSpeed     = node["bulletSpeed"]    .as<int>(_bulletSpeed);
+	_explosionSpeed  = node["explosionSpeed"] .as<int>(_explosionSpeed);
+	_autoShots       = node["autoShots"]      .as<int>(_autoShots);
+	_autoKick        = node["autoKick"]       .as<int>(_autoKick);
+	_shotgunPellets  = node["shotgunPellets"] .as<int>(_shotgunPellets);
+	_shotgunPattern  = node["shotgunPattern"] .as<int>(_shotgunPattern);
+	_zombieUnit      = node["zombieUnit"]     .as<std::string>(_zombieUnit);
+	_LOSRequired     = node["LOSRequired"]    .as<bool>(_LOSRequired);
+	_noReaction      = node["noReaction"]     .as<bool>(_noReaction);
+	_noResearch      = node["noResearch"]     .as<bool>(_noResearch);
+	_defusePulse     = node["defusePulse"]    .as<bool>(_defusePulse);
+	_acuCrouch       = node["acuCrouch"]      .as<double>(_acuCrouch);
 
 	switch (_dType)
 	{
@@ -299,11 +299,11 @@ void RuleItem::load(
 	{
 		case BT_FIREARM:
 		case BT_MELEE:
-			if (_fullClip == 0 && _acceptedLoads.empty())
+			if (_fullClip == 0 && _clipTypes.empty())
 			{
 				throw Exception("RuleItem::load() " + _type
-						+ " has _fullClip=0 and no _acceptedLoads. Use 'clipSize: -1'"
-						+ " for unlimited load or assign an accepted-load type.");
+						+ " has _fullClip=0 and no _clipTypes. Use 'fullClip: -1'"
+						+ " for unlimited rounds or assign at least one clipType.");
 			}
 	}
 }
@@ -613,9 +613,9 @@ int RuleItem::getDefuseTu() const
  * Gets a list of loadable ammunition that the Item accepts.
  * @return, pointer to a vector of loadable types
  */
-const std::vector<std::string>* RuleItem::getAcceptedLoadTypes() const
+const std::vector<std::string>* RuleItem::getClipTypes() const
 {
-	return &_acceptedLoads;
+	return &_clipTypes;
 }
 
 /**

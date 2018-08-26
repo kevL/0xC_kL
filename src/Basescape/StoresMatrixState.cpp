@@ -380,7 +380,7 @@ StoresMatrixState::StoresMatrixState(const Base* base)
 						if ((*l)->getRules()->getType() == type)
 							++qty[baseId];
 						else if ((*l)->getLoad() > 0
-							&& (*l)->getRules()->getAcceptedLoadTypes()->front() == type)
+							&& (*l)->getRules()->getClipTypes()->front() == type)
 						{
 							qty[baseId] += (*l)->getLoad();
 						}

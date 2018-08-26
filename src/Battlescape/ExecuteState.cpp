@@ -58,17 +58,17 @@ ExecuteState::ExecuteState(BattleAction* const action)
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 270, 96, 25, 50);
-	_txtTitle	= new Text(200, 17, 60, 58);
-	_lstTarget	= new TextList(234, 33, 42, 80);
-	_btnCancel	= new TextButton(120, 14, 100, 125);
+	_window    = new Window(this, 270, 96, 25, 50);
+	_txtTitle  = new Text(200, 17, 60, 58);
+	_lstTarget = new TextList(234, 33, 42, 80);
+	_btnCancel = new TextButton(120, 14, 100, 125);
 
 	setPalette(PAL_BATTLESCAPE);
 
-	add(_window,	"messageWindowBorder",	"battlescape");
-	add(_txtTitle,	"messageWindows",		"battlescape");
+	add(_window,    "messageWindowBorder",  "battlescape");
+	add(_txtTitle,  "messageWindows",       "battlescape");
 	add(_lstTarget);
-	add(_btnCancel,	"messageWindowButtons",	"battlescape");
+	add(_btnCancel, "messageWindowButtons", "battlescape");
 
 	centerSurfaces();
 
@@ -91,7 +91,7 @@ ExecuteState::ExecuteState(BattleAction* const action)
 
 	_btnCancel->setText(tr("STR_CANCEL"));
 	_btnCancel->setHighContrast();
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ExecuteState::btnCancelClick));
+	_btnCancel->onMouseClick(   static_cast<ActionHandler>(&ExecuteState::btnCancelClick));
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ExecuteState::btnCancelClick),
 								Options::keyCancel);
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ExecuteState::btnCancelClick),
@@ -132,7 +132,7 @@ void ExecuteState::init()
 		{
 			tile = battleSave->getTile(pos + Position(x,y,0));
 			for (std::vector<BattleItem*>::const_iterator
-					i = tile->getInventory()->begin();
+					i  = tile->getInventory()->begin();
 					i != tile->getInventory()->end();
 					++i)
 			{
@@ -151,7 +151,7 @@ void ExecuteState::init()
 	if ((tile = battleSave->getTileEngine()->getExecutionTile(_action->actor)) != nullptr)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = tile->getInventory()->begin();
+				i  = tile->getInventory()->begin();
 				i != tile->getInventory()->end();
 				++i)
 		{
@@ -180,7 +180,7 @@ void ExecuteState::lstTargetPress(Action* action)
 		else
 		{
 			BattleUnit* const targetUnit (_targetUnits[_lstTarget->getSelectedRow()]);
-			_action->posTarget = targetUnit->getPosition(); // jic.
+			_action->posTarget  = targetUnit->getPosition(); // jic.
 			_action->targetUnit = targetUnit;
 
 			const RuleItem* const itRule (_action->weapon->getRules());

@@ -1309,7 +1309,7 @@ void BattlescapeGenerator::deployXcom() // private.
 			++i)
 	{
 		if ((*i)->getInventorySection() == grdRule
-			&& (*i)->getRules()->getAcceptedLoadTypes()->empty() == false)
+			&& (*i)->getRules()->getClipTypes()->empty() == false)
 //			&& (*i)->getRules()->isFixed() == false
 //			&& (*i)->getAmmoItem() == nullptr
 //			&& (*i)->selfPowered() == false
@@ -1413,7 +1413,7 @@ void BattlescapeGenerator::prepareBaseDefenseVehicles(std::vector<Vehicle*>* veh
 			}
 			else
 			{
-				const std::string type (itRule->getAcceptedLoadTypes()->front());
+				const std::string type (itRule->getClipTypes()->front());
 				const int
 					clipsRequired (itRule->getFullClip()),
 					baseClips (baseStores->getItemQuantity(type)),
@@ -1487,7 +1487,7 @@ BattleUnit* BattlescapeGenerator::addPlayerSupportUnit(Vehicle* const vehicle) /
 
 		if (weapon->getRules()->getFullClip() > 0)
 		{
-			type = vehicle->getRules()->getAcceptedLoadTypes()->front();
+			type = vehicle->getRules()->getClipTypes()->front();
 			BattleItem* const load (new BattleItem(					// add load and assign the weapon as its owner.
 												_rules->getItemRule(type),
 												_battleSave->getCanonicalBattleId()));

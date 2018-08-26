@@ -2867,36 +2867,36 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 {
 	clearHostileIcons();
 
-	_srfRank		->clear();
-	_isfRightHand	->clear();
-	_isfLeftHand	->clear();
-	_btnKneel		->clear();
+	_srfRank      ->clear();
+	_isfRightHand ->clear();
+	_isfLeftHand  ->clear();
+	_btnKneel     ->clear();
 
-	_isfLeftHand	->setVisible(false);
-	_isfRightHand	->setVisible(false);
-	_numAmmoL		->setVisible(false);
-	_numAmmoR		->setVisible(false);
-	_numFuseL		->setVisible(false);
-	_numFuseR		->setVisible(false);
+	_isfLeftHand  ->setVisible(false);
+	_isfRightHand ->setVisible(false);
+	_numAmmoL     ->setVisible(false);
+	_numAmmoR     ->setVisible(false);
+	_numFuseL     ->setVisible(false);
+	_numFuseR     ->setVisible(false);
 
-	_numTwohandL	->setVisible(false);
-	_numTwohandR	->setVisible(false);
+	_numTwohandL  ->setVisible(false);
+	_numTwohandR  ->setVisible(false);
 
-	_numMediL1		->setVisible(false);
-	_numMediL2		->setVisible(false);
-	_numMediL3		->setVisible(false);
-	_numMediR1		->setVisible(false);
-	_numMediR2		->setVisible(false);
-	_numMediR3		->setVisible(false);
+	_numMediL1    ->setVisible(false);
+	_numMediL2    ->setVisible(false);
+	_numMediL3    ->setVisible(false);
+	_numMediR1    ->setVisible(false);
+	_numMediR2    ->setVisible(false);
+	_numMediR3    ->setVisible(false);
 
-	_srfOverweight	->setVisible(false);
-	_numDir			->setVisible(false);
-	_numDirTur		->setVisible(false);
+	_srfOverweight->setVisible(false);
+	_numDir       ->setVisible(false);
+	_numDirTur    ->setVisible(false);
 
-	_numTULaunch	->setVisible(false);
-	_numTUAim		->setVisible(false);
-	_numTUAuto		->setVisible(false);
-	_numTUSnap		->setVisible(false);
+	_numTULaunch  ->setVisible(false);
+	_numTUAim     ->setVisible(false);
+	_numTUAuto    ->setVisible(false);
+	_numTUSnap    ->setVisible(false);
 
 	_isOverweight = false;
 
@@ -2909,37 +2909,37 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 		_txtName->setText(L"");
 
-		_srfRank		->setVisible(false);
+		_srfRank     ->setVisible(false);
 
-		_numTimeUnits	->setVisible(false);
-		_barTimeUnits	->setVisible(false);
+		_numTimeUnits->setVisible(false);
+		_barTimeUnits->setVisible(false);
 
-		_numEnergy		->setVisible(false);
-		_barEnergy		->setVisible(false);
+		_numEnergy   ->setVisible(false);
+		_barEnergy   ->setVisible(false);
 
-		_numHealth		->setVisible(false);
-		_barHealth		->setVisible(false);
+		_numHealth   ->setVisible(false);
+		_barHealth   ->setVisible(false);
 
-		_numMorale		->setVisible(false);
-		_barMorale		->setVisible(false);
+		_numMorale   ->setVisible(false);
+		_barMorale   ->setVisible(false);
 
 		return;
 	}
 //	else not aLien nor civilian; ie. a controlled unit ->>
 
-	_srfRank		->setVisible();
+	_srfRank     ->setVisible();
 
-	_numTimeUnits	->setVisible();
-	_barTimeUnits	->setVisible();
+	_numTimeUnits->setVisible();
+	_barTimeUnits->setVisible();
 
-	_numEnergy		->setVisible();
-	_barEnergy		->setVisible();
+	_numEnergy   ->setVisible();
+	_barEnergy   ->setVisible();
 
-	_numHealth		->setVisible();
-	_barHealth		->setVisible();
+	_numHealth   ->setVisible();
+	_barHealth   ->setVisible();
 
-	_numMorale		->setVisible();
-	_barMorale		->setVisible();
+	_numMorale   ->setVisible();
+	_barMorale   ->setVisible();
 
 
 	BattleUnit* const selUnit (_battleSave->getSelectedUnit());
@@ -3005,8 +3005,8 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 
 	const BattleItem
-		* const rtItem (selUnit->getItem(ST_RIGHTHAND)),
-		* const ltItem (selUnit->getItem(ST_LEFTHAND));
+		* const itRight (selUnit->getItem(ST_RIGHTHAND)),
+		* const itLeft  (selUnit->getItem(ST_LEFTHAND));
 	const RuleItem* itRule;
 
 	ActiveHand ah (selUnit->deterActiveHand());
@@ -3021,39 +3021,39 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 		switch (ah)
 		{
 			case AH_RIGHT:
-				switch (rtItem->getRules()->getBattleType())
+				switch (itRight->getRules()->getBattleType())
 				{
 					case BT_FIREARM:
 					case BT_MELEE:
-						tuLaunch = selUnit->getActionTu(BA_LAUNCH, rtItem);
-						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, rtItem);
-						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, rtItem);
-						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, rtItem);
+						tuLaunch = selUnit->getActionTu(BA_LAUNCH,    itRight);
+						tuAim    = selUnit->getActionTu(BA_AIMEDSHOT, itRight);
+						tuAuto   = selUnit->getActionTu(BA_AUTOSHOT,  itRight);
+						tuSnap   = selUnit->getActionTu(BA_SNAPSHOT,  itRight);
 						if (tuLaunch  == 0
 							&& tuAim  == 0
 							&& tuAuto == 0
 							&& tuSnap == 0)
 						{
-							tuSnap = selUnit->getActionTu(BA_MELEE, rtItem);
+							tuSnap = selUnit->getActionTu(BA_MELEE, itRight);
 						}
 				}
 				break;
 
 			case AH_LEFT:
-				switch (ltItem->getRules()->getBattleType())
+				switch (itLeft->getRules()->getBattleType())
 				{
 					case BT_FIREARM:
 					case BT_MELEE:
-						tuLaunch = selUnit->getActionTu(BA_LAUNCH, ltItem);
-						tuAim = selUnit->getActionTu(BA_AIMEDSHOT, ltItem);
-						tuAuto = selUnit->getActionTu(BA_AUTOSHOT, ltItem);
-						tuSnap = selUnit->getActionTu(BA_SNAPSHOT, ltItem);
+						tuLaunch = selUnit->getActionTu(BA_LAUNCH,    itLeft);
+						tuAim    = selUnit->getActionTu(BA_AIMEDSHOT, itLeft);
+						tuAuto   = selUnit->getActionTu(BA_AUTOSHOT,  itLeft);
+						tuSnap   = selUnit->getActionTu(BA_SNAPSHOT,  itLeft);
 						if (tuLaunch  == 0
 							&& tuAim  == 0
 							&& tuAuto == 0
 							&& tuSnap == 0)
 						{
-							tuSnap = selUnit->getActionTu(BA_MELEE, ltItem);
+							tuSnap = selUnit->getActionTu(BA_MELEE, itLeft);
 						}
 				}
 		}
@@ -3083,9 +3083,9 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 		}
 	}
 
-	if (rtItem != nullptr)
+	if (itRight != nullptr)
 	{
-		itRule = rtItem->getRules();
+		itRule = itRight->getRules();
 		itRule->drawHandSprite(
 							_srtBigobs,
 							_isfRightHand);
@@ -3098,25 +3098,25 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 		{
 			case BT_FIREARM:
 //			case BT_MELEE:
-				if (rtItem->selfPowered() == false || rtItem->selfExpended() == true)
+				if (itRight->selfPowered() == false || itRight->selfExpended() == true)
 				{
 					Uint8 color;
 
-					const BattleItem* const aItem (rtItem->getAmmoItem());
-					if (aItem != nullptr)
+					const BattleItem* const clip (itRight->getAmmoItem());
+					if (clip != nullptr)
 					{
-						const int load (aItem->getAmmoQuantity());
-						_numAmmoR->setValue(static_cast<unsigned>(load));
+						const int rounds (clip->getAmmoQuantity());
+						_numAmmoR->setValue(static_cast<unsigned>(rounds));
 
 						int fullclip;
 						if (itRule->isFixed() == true)
 							fullclip = itRule->getFullClip();
 						else
-							fullclip = aItem->getRules()->getFullClip();
+							fullclip = clip->getRules()->getFullClip();
 
-						if		(load ==  fullclip)			color = GREEN_D;
-						else if	(load >= (fullclip >> 1u))	color = YELLOW_D;
-						else								color = ORANGE_D;
+						if      (rounds ==  fullclip)        color = GREEN_D;
+						else if (rounds >= (fullclip >> 1u)) color = YELLOW_D;
+						else                                 color = ORANGE_D;
 					}
 					else
 					{
@@ -3130,14 +3130,14 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 			case BT_AMMO:
 				_numAmmoR->setVisible();
-				_numAmmoR->setValue(static_cast<unsigned>(rtItem->getAmmoQuantity()));
+				_numAmmoR->setValue(static_cast<unsigned>(itRight->getAmmoQuantity()));
 				break;
 
 			case BT_GRENADE:
-				if (rtItem->getFuse() > 0)
+				if (itRight->getFuse() > 0)
 				{
 					_numFuseR->setVisible();
-					_numFuseR->setValue(static_cast<unsigned>(rtItem->getFuse()));
+					_numFuseR->setValue(static_cast<unsigned>(itRight->getFuse()));
 				}
 				break;
 
@@ -3145,15 +3145,15 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 				_numMediR2->setVisible();
 				_numMediR1->setVisible();
 				_numMediR3->setVisible();
-				_numMediR1->setValue(static_cast<unsigned>(rtItem->getPainKillerQuantity()));
-				_numMediR2->setValue(static_cast<unsigned>(rtItem->getStimulantQuantity()));
-				_numMediR3->setValue(static_cast<unsigned>(rtItem->getHealQuantity()));
+				_numMediR1->setValue(static_cast<unsigned>(itRight->getPainKillerQuantity()));
+				_numMediR2->setValue(static_cast<unsigned>(itRight->getStimulantQuantity()));
+				_numMediR3->setValue(static_cast<unsigned>(itRight->getHealQuantity()));
 		}
 	}
 
-	if (ltItem != nullptr)
+	if (itLeft != nullptr)
 	{
-		itRule = ltItem->getRules();
+		itRule = itLeft->getRules();
 		itRule->drawHandSprite(
 							_srtBigobs,
 							_isfLeftHand);
@@ -3166,25 +3166,25 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 		{
 			case BT_FIREARM:
 //			case BT_MELEE:
-				if (ltItem->selfPowered() == false || ltItem->selfExpended() == true)
+				if (itLeft->selfPowered() == false || itLeft->selfExpended() == true)
 				{
 					Uint8 color;
 
-					const BattleItem* const aItem (ltItem->getAmmoItem());
-					if (aItem != nullptr)
+					const BattleItem* const clip (itLeft->getAmmoItem());
+					if (clip != nullptr)
 					{
-						const int load (aItem->getAmmoQuantity());
-						_numAmmoL->setValue(static_cast<unsigned>(load));
+						const int rounds (clip->getAmmoQuantity());
+						_numAmmoL->setValue(static_cast<unsigned>(rounds));
 
 						int fullclip;
 						if (itRule->isFixed() == true)
 							fullclip = itRule->getFullClip();
 						else
-							fullclip = aItem->getRules()->getFullClip();
+							fullclip = clip->getRules()->getFullClip();
 
-						if		(load ==  fullclip)			color = GREEN_D;
-						else if	(load >= (fullclip >> 1u))	color = YELLOW_D;
-						else								color = ORANGE_D;
+						if      (rounds ==  fullclip)        color = GREEN_D;
+						else if (rounds >= (fullclip >> 1u)) color = YELLOW_D;
+						else                                 color = ORANGE_D;
 					}
 					else
 					{
@@ -3198,14 +3198,14 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 			case BT_AMMO:
 				_numAmmoL->setVisible();
-				_numAmmoL->setValue(static_cast<unsigned>(ltItem->getAmmoQuantity()));
+				_numAmmoL->setValue(static_cast<unsigned>(itLeft->getAmmoQuantity()));
 				break;
 
 			case BT_GRENADE:
-				if (ltItem->getFuse() > 0)
+				if (itLeft->getFuse() > 0)
 				{
 					_numFuseL->setVisible();
-					_numFuseL->setValue(static_cast<unsigned>(ltItem->getFuse()));
+					_numFuseL->setValue(static_cast<unsigned>(itLeft->getFuse()));
 				}
 				break;
 
@@ -3213,9 +3213,9 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 				_numMediL2->setVisible();
 				_numMediL1->setVisible();
 				_numMediL3->setVisible();
-				_numMediL1->setValue(static_cast<unsigned>(ltItem->getPainKillerQuantity()));
-				_numMediL2->setValue(static_cast<unsigned>(ltItem->getStimulantQuantity()));
-				_numMediL3->setValue(static_cast<unsigned>(ltItem->getHealQuantity()));
+				_numMediL1->setValue(static_cast<unsigned>(itLeft->getPainKillerQuantity()));
+				_numMediL2->setValue(static_cast<unsigned>(itLeft->getStimulantQuantity()));
+				_numMediL3->setValue(static_cast<unsigned>(itLeft->getHealQuantity()));
 		}
 	}
 

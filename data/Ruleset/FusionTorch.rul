@@ -19,7 +19,7 @@ items:
     twoHanded: true
     noReaction: true
     listOrder: 3710
-    acceptedLoads:
+    clipTypes:
       - STR_FUSION_TORCH_POWER_CELL
 
   - type: STR_FUSION_TORCH_POWER_CELL

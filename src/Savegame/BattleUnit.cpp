@@ -3401,8 +3401,8 @@ bool BattleUnit::checkReload()
 				++i)
 		{
 			for (std::vector<std::string>::const_iterator
-					j  = weapon->getRules()->getAcceptedLoadTypes()->begin();
-					j != weapon->getRules()->getAcceptedLoadTypes()->end();
+					j  = weapon->getRules()->getClipTypes()->begin();
+					j != weapon->getRules()->getClipTypes()->end();
 					++j)
 			{
 				if (*j == (*i)->getRules()->getType())
