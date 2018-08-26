@@ -307,7 +307,7 @@ void StartState::think()
 					std::wostringstream error;
 					error << tr("STR_MOD_UNSUCCESSFUL") << L'\x02';
 					for (std::vector<std::string>::const_iterator
-							i = Options::badRules.begin();
+							i  = Options::badRules.begin();
 							i != Options::badRules.end();
 							++i)
 					{
@@ -498,8 +498,10 @@ void StartState::doDosart() // private.
 		{
 			if (_dosStep == 2100) // roughly.
 				addNewline();
+			else if ((_dosStep - 2100) % 2760 == 0)
+				addNewline();
 
-			addWait();
+			addDot();
 			addCaret();
 		}
 //		}
@@ -550,7 +552,7 @@ void StartState::addCaret() // private.
 /**
  * Adds a wait-glyph to the dos-terminal.
  */
-void StartState::addWait() // private.
+void StartState::addDot() // private.
 {
 	_output << L".";
 	_text->setText(_output.str());

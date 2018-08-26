@@ -86,7 +86,7 @@ private:
 	/// Adds a caret to dos-text.
 	void addCaret();
 	/// Adds a wait to dos-text.
-	void addWait();
+	void addDot();
 
 
 	public:
