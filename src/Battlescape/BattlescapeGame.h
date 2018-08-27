@@ -165,24 +165,24 @@ struct BattleAction
 		switch (type)
 		{
 			default:
-			case BA_NONE:		return "none";
-			case BA_TURN:		return "turn";
-			case BA_MOVE:		return "move";
-			case BA_PRIME:		return "prime";
-			case BA_THROW:		return "throw";
-			case BA_AUTOSHOT:	return "autoshot";
-			case BA_SNAPSHOT:	return "snapshot";
-			case BA_AIMEDSHOT:	return "aimedshot";
-			case BA_MELEE:		return "melee";
-			case BA_USE:		return "use";
-			case BA_LAUNCH:		return "launch";
-			case BA_PSICONTROL:	return "psi-control";
-			case BA_PSIPANIC:	return "psi-panic";
-			case BA_THINK:		return "think";
-			case BA_DEFUSE:		return "defuse";
-			case BA_DROP:		return "drop";
-			case BA_PSICONFUSE:	return "psi-confuse";
-			case BA_PSICOURAGE:	return "psi-courage";
+			case BA_NONE:       return "none";
+			case BA_TURN:       return "turn";
+			case BA_MOVE:       return "move";
+			case BA_PRIME:      return "prime";
+			case BA_THROW:      return "throw";
+			case BA_AUTOSHOT:   return "autoshot";
+			case BA_SNAPSHOT:   return "snapshot";
+			case BA_AIMEDSHOT:  return "aimedshot";
+			case BA_MELEE:      return "melee";
+			case BA_USE:        return "use";
+			case BA_LAUNCH:     return "launch";
+			case BA_PSICONTROL: return "psi-control";
+			case BA_PSIPANIC:   return "psi-panic";
+			case BA_THINK:      return "think";
+			case BA_DEFUSE:     return "defuse";
+			case BA_DROP:       return "drop";
+			case BA_PSICONFUSE: return "psi-confuse";
+			case BA_PSICOURAGE: return "psi-courage";
 		}
 	}
 

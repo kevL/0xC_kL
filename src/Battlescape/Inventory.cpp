@@ -278,12 +278,13 @@ void Inventory::drawItems()
 
 		const RuleInventory* inRule;
 
-		std::vector<BattleItem*>* list (_selUnit->getInventory());
+		std::vector<BattleItem*>* inventory (_selUnit->getInventory());
 		for (std::vector<BattleItem*>::const_iterator // draw items in Unit sections.
-				i  = list->begin();
-				i != list->end();
+				i  = inventory->begin();
+				i != inventory->end();
 				++i)
 		{
+			//Log(LOG_INFO) << (*i)->getId() << " " << (*i)->getRules()->getType();
 			if (*i != _selItem)
 			{
 				if ((sprite = _srtBigobs->getFrame((*i)->getRules()->getBigSprite())) != nullptr) // safety.
@@ -324,10 +325,10 @@ void Inventory::drawItems()
 			RED (37u);
 
 		inRule = _game->getRuleset()->getInventoryRule(ST_GROUND);
-		list = _selUnit->getUnitTile()->getInventory();
+		inventory = _selUnit->getUnitTile()->getInventory();
 		for (std::vector<BattleItem*>::const_iterator // draw items in Ground section.
-				i  = list->begin();
-				i != list->end();
+				i  = inventory->begin();
+				i != inventory->end();
 				++i)
 		{
 			if (*i != _selItem									// Items can be made invisible by setting their width to 0;

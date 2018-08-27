@@ -573,7 +573,7 @@ void DebriefExtraState::btnOkClick(Action*)
 				_storeSize = 0.;
 				_txtStorage->setText(_base->storesDeltaFormat());
 
-				_txtScreen   ->setText(L"BUY");
+				_txtScreen   ->setText(L"LOST");
 				_txtQtyItems ->setText(L"lost");
 				_txtBuyOrSell->setText(L"buy");
 

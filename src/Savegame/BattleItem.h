@@ -52,7 +52,7 @@ private:
 		_morphine,
 		_stimulant;
 
-	BattleItem* _load;
+	BattleItem* _clip;
 	BattleUnit
 		* _owner,
 		* _unit;
@@ -91,7 +91,7 @@ private:
 		BattleItem* getClip() const;
 		/// Sets the BattleItem's ammo BattleItem.
 		bool setClip(
-				BattleItem* const load = nullptr,
+				BattleItem* const it = nullptr,
 				bool init = false);
 		/// Checks if the BattleItem has unlimited shots.
 		bool selfPowered() const;
@@ -109,7 +109,9 @@ private:
 		void setFuse(int turn);
 
 		/// Adds or clears the BattleItem from a unit's inventory.
-		void changeOwner(BattleUnit* const unit = nullptr);
+		void changeOwner(
+				BattleUnit* const unit = nullptr,
+				bool clear = false);
 		/// Sets the BattleItem's owner.
 		void setOwner(BattleUnit* const unit = nullptr);
 		/// Gets the BattleItem's owner.

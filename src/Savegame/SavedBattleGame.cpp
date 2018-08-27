@@ -582,15 +582,15 @@ void SavedBattleGame::load(
 	{
 		if (rules->getItemRule((*i)["type"].as<std::string>()) != nullptr)
 		{
-			const int load ((*i)["load"].as<int>(-1)); // cf. BattleItem::save()
-			if (load != -1)
+			const int clip ((*i)["clip"].as<int>(-1)); // cf. BattleItem::save()
+			if (clip != -1)
 			{
 				for (std::vector<BattleItem*>::const_iterator
 						j  = _items.begin();
 						j != _items.end();
 						++j)
 				{
-					if ((*j)->getId() == load)
+					if ((*j)->getId() == clip)
 					{
 						(*pWeapon)->setClip(*j, true);
 						break;
@@ -602,8 +602,8 @@ void SavedBattleGame::load(
 	}
 
 	for (YAML::const_iterator
-			i  = node["toDelete"].begin();
-			i != node["toDelete"].end();
+			i  = node["delete"].begin();
+			i != node["delete"].end();
 			++i)
 	{
 		st = (*i)["type"].as<std::string>();
@@ -611,9 +611,9 @@ void SavedBattleGame::load(
 		{
 			id = (*i)["id"].as<int>(-1); // NOTE: 'id' should always be valid here.
 			it = new BattleItem(
-								rules->getItemRule(st),
-								nullptr,
-								id);
+							rules->getItemRule(st),
+							nullptr,
+							id);
 			it->loadDeleted();
 			_deletedProperty.push_back(it);
 		}
@@ -841,7 +841,7 @@ YAML::Node SavedBattleGame::save() const
 			i != _deletedProperty.end();
 			++i)
 	{
-		node["toDelete"].push_back((*i)->saveDeleted());
+		node["delete"].push_back((*i)->saveDeleted());
 	}
 
 //	node["batReserved"]   = static_cast<int>(_batReserved);

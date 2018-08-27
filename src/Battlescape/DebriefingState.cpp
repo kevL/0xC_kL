@@ -1253,12 +1253,12 @@ void DebriefingState::prepareDebriefing() // private.
 										if (fullclip > 0 && (itRight = itRight->getClip()) != nullptr)
 										{
 											itRule = itRight->getRules();
-											const int qtyLoad (itRight->getClipRounds());
+											const int rounds (itRight->getClipRounds());
 											_base->getStorageItems()->addItem(			// return any load from the support-unit's fixed-weapon to base-stores.
 																			itRule->getType(),
-																			qtyLoad);
-											if (qtyLoad < fullclip)
-												_lostProperty[itRule] += fullclip - qtyLoad;
+																			rounds);
+											if (rounds < fullclip)
+												_lostProperty[itRule] += fullclip - rounds;
 										}
 									}
 								}
@@ -1683,7 +1683,7 @@ void DebriefingState::prepareDebriefing() // private.
 				//{
 					//Log(LOG_INFO) << ". . . " << j->first->getType() << " qty= " << j->second;
 				//}
-				// end_debug
+				// debug_end
 				break;
 
 			default:
@@ -1728,7 +1728,6 @@ void DebriefingState::prepareDebriefing() // private.
 					//Log(LOG_INFO) << ". . . add to _lostProperty";
 					++_lostProperty[i->first];	// NOTE: fullclips that agents expended will be added to '_lostProperty'
 				}								// from the 'SavedBattleGame::_deletedProperty' vector.
-				break;
 			}
 
 			if ((clips = i->second / fullclip) != 0)
@@ -1948,10 +1947,10 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 				{
 					const std::string& type (itRule->getClipTypes()->front());
 					const int
-						clipsRequired (itRule->getFullClip()),
+						fullclip (itRule->getFullClip()),
 						baseClips (_base->getStorageItems()->getItemQuantity(type));
 
-					if ((qtyUnreplaced = (clipsRequired * i->second) - baseClips) > 0)
+					if ((qtyUnreplaced = (fullclip * i->second) - baseClips) > 0)
 					{
 						const UnreplacedStat stat
 						{
@@ -1963,7 +1962,7 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 					}
 
 					qtySupport = std::min(qtySupport,
-										  baseClips / clipsRequired);
+										  baseClips / fullclip);
 					if (qtySupport != 0)
 					{
 						for (int
@@ -1973,11 +1972,11 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 						{
 							craft->getVehicles()->push_back(new Vehicle(
 																	itRule,
-																	clipsRequired,
+																	fullclip,
 																	quads));
 						}
 						_base->getStorageItems()->removeItem(i->first, qtySupport);
-						_base->getStorageItems()->removeItem(type, clipsRequired * qtySupport);
+						_base->getStorageItems()->removeItem(type, fullclip * qtySupport);
 					}
 				}
 			}

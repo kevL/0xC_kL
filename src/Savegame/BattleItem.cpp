@@ -51,7 +51,7 @@ BattleItem::BattleItem(
 		_section(nullptr),
 		_x(0),
 		_y(0),
-		_load(nullptr),
+		_clip(nullptr),
 		_rounds(itRule->getFullClip()),
 		_fuse(-1),
 		_morphine(0),
@@ -81,7 +81,7 @@ BattleItem::BattleItem(
 				break;
 			// no break;
 		case BT_MELEE: // Melee weapons do NOT require ammo.
-			_load = this;
+			_clip = this;
 	}
 	// NOTE: lasers, melee, etc. have "clipsize -1" [ie, SetAmmoQuantity(-1)]
 	// - needed for melee-item reaction hits, etc. Can be set in Ruleset but do
@@ -147,7 +147,7 @@ YAML::Node BattleItem::save() const
 	if (_unit != nullptr)    node["unit"]      = _unit->getId();
 	if (_section != nullptr) node["section"]   = _section->getInventoryType(); // NOTE: 'section' should always be valid. Unless it's a loaded Ammo-item.
 	if (_tile != nullptr)    node["position"]  = _tile->getPosition();
-	if (_load != nullptr)    node["load"]      = _load->getId();
+	if (_clip != nullptr)    node["clip"]      = _clip->getId();
 
 	return node;
 }
@@ -225,43 +225,47 @@ void BattleItem::setClipRounds(int qty)
  */
 BattleItem* BattleItem::getClip() const
 {
-	return _load;
+	return _clip;
 }
 
 /**
  * Sets an ammo-item for this BattleItem.
- * @param load - the ammo-item (default nullptr)
- * @param init - true if called from SavedBattleGame::load() (default false)
+ * @param it	- the clip (default nullptr)
+ * @param init	- true if called from SavedBattleGame::load() (default false)
  * @return, true if 'item' is valid and gets loaded into the weapon
  */
 bool BattleItem::setClip(
-		BattleItem* const load,
+		BattleItem* const it,
 		bool init)
 {
-	if (_load != this) // ie. if weapon requires a load ...
+	if (_clip != this) // ie. if weapon requires a clip ...
 	{
-		if (load == nullptr) // unload weapon ->
-			_load = nullptr;
-		else if (_load == nullptr)
+		if (it == nullptr)			// unload weapon
+			_clip = nullptr;
+		else if (_clip == nullptr)	// load weapon
 		{
-			for (std::vector<std::string>::const_iterator
-					i  = _itRule->getClipTypes()->begin();
-					i != _itRule->getClipTypes()->end();
-					++i)
+			if (init == false)
 			{
-				if (*i == load->getRules()->getType()) // load weapon ->
+				for (std::vector<std::string>::const_iterator
+						i  = _itRule->getClipTypes()->begin();
+						i != _itRule->getClipTypes()->end();
+						++i)
 				{
-					_load = load;
-					_load->_x =
-					_load->_y = 0;
-					if (init == false)
+					if (*i == it->getRules()->getType())
 					{
-						_load->changeOwner();
-						_load->setInventorySection();
+						_clip = it;
+
+						_clip->_x =
+						_clip->_y = 0;
+						_clip->changeOwner(nullptr, true);
+						_clip->setInventorySection();
+
+						return true;
 					}
-					return true;
 				}
 			}
+			else
+				_clip = it;
 		}
 	}
 	return false;
@@ -275,7 +279,7 @@ bool BattleItem::setClip(
  */
 bool BattleItem::selfPowered() const
 {
-	return (_load == this);
+	return (_clip == this);
 }
 
 /**
@@ -318,9 +322,12 @@ void BattleItem::expendRounds(
  * determine if an item is actually carried (or cycle through unit-inventory
  * searching for the item).
  * NOTE: Loads do not have an owner or a tile.
- * @param unit - pointer to a BattleUnit (default nullptr)
+ * @param unit	- pointer to a BattleUnit (default nullptr)
+ * @param clear	- true to clear the current owner if loading a clip (default false)
  */
-void BattleItem::changeOwner(BattleUnit* const unit)
+void BattleItem::changeOwner(
+		BattleUnit* const unit,
+		bool clear)
 {
 	if (unit != nullptr)
 	{
@@ -329,7 +336,7 @@ void BattleItem::changeOwner(BattleUnit* const unit)
 	}
 	else if (_owner != nullptr)
 	{
-		for (std::vector<BattleItem*>::const_iterator
+		for (std::vector<BattleItem*>::const_iterator // NOTE: The owner might not actually possess the clip.
 				i  = _owner->getInventory()->begin();
 				i != _owner->getInventory()->end();
 				++i)
@@ -340,6 +347,8 @@ void BattleItem::changeOwner(BattleUnit* const unit)
 				break;
 			}
 		}
+
+		if (clear == true) _owner = nullptr;
 	}
 }
 
