@@ -77,42 +77,42 @@ AlienContainmentState::AlienContainmentState(
 		_baseList(_game->getSavedGame()->getBases()),
 		_jogRodent(jogRodent)
 {
-	_window			= new Window(this);
-	_mini			= new MiniBaseView(128, 16, 180, 27, MBV_CONTAINMENT);
+	_window        = new Window(this);
+	_mini          = new MiniBaseView(128, 16, 180, 27, MBV_CONTAINMENT);
 
-	_txtTitle		= new Text(300, 17, 10, 10);
-	_txtBaseLabel	= new Text( 80,  9, 16, 10);
-	_txtHoverBase	= new Text( 80,  9, 224, 10);
+	_txtTitle      = new Text(300, 17,  10, 10);
+	_txtBaseLabel  = new Text( 80,  9,  16, 10);
+	_txtHoverBase  = new Text( 80,  9, 224, 10);
 
-	_txtSpace		= new Text(81, 9, 16, 30);
-	_txtResearch	= new Text(80, 9, 97, 30);
+	_txtSpace      = new Text(81, 9, 16, 30);
+	_txtResearch   = new Text(80, 9, 97, 30);
 
-	_txtItem		= new Text(138, 9,  16, 45);
-	_txtLiveAliens	= new Text( 50, 9, 154, 45);
-	_txtDeadAliens	= new Text( 50, 9, 204, 45);
-	_txtInResearch	= new Text( 47, 9, 254, 45);
+	_txtItem       = new Text(138, 9,  16, 45);
+	_txtLiveAliens = new Text( 50, 9, 154, 45);
+	_txtDeadAliens = new Text( 50, 9, 204, 45);
+	_txtInResearch = new Text( 47, 9, 254, 45);
 
-	_lstAliens		= new TextList(285, 121, 16, 55);
+	_lstAliens     = new TextList(285, 121, 16, 55);
 
-	_btnCancel		= new TextButton(134, 16,  16, 177);
-	_btnOk			= new TextButton(134, 16, 170, 177);
+	_btnCancel     = new TextButton(134, 16,  16, 177);
+	_btnOk         = new TextButton(134, 16, 170, 177);
 
 	setInterface("manageContainment");
 
-	add(_window,		"window",	"manageContainment");
-	add(_mini,			"miniBase",	"basescape");			// <-
-	add(_txtTitle,		"text",		"manageContainment");
-	add(_txtBaseLabel,	"text",		"manageContainment");
-	add(_txtHoverBase,	"numbers",	"baseInfo");			// <-
-	add(_txtSpace,		"text",		"manageContainment");
-	add(_txtResearch,	"text",		"manageContainment");
-	add(_txtItem,		"text",		"manageContainment");
-	add(_txtLiveAliens,	"text",		"manageContainment");
-	add(_txtDeadAliens,	"text",		"manageContainment");
-	add(_txtInResearch,	"text",		"manageContainment");
-	add(_lstAliens,		"list",		"manageContainment");
-	add(_btnCancel,		"button",	"manageContainment");
-	add(_btnOk,			"button",	"manageContainment");
+	add(_window,        "window",   "manageContainment");
+	add(_mini,          "miniBase", "basescape");			// <-
+	add(_txtTitle,      "text",     "manageContainment");
+	add(_txtBaseLabel,  "text",     "manageContainment");
+	add(_txtHoverBase,  "numbers",  "baseInfo");			// <-
+	add(_txtSpace,      "text",     "manageContainment");
+	add(_txtResearch,   "text",     "manageContainment");
+	add(_txtItem,       "text",     "manageContainment");
+	add(_txtLiveAliens, "text",     "manageContainment");
+	add(_txtDeadAliens, "text",     "manageContainment");
+	add(_txtInResearch, "text",     "manageContainment");
+	add(_lstAliens,     "list",     "manageContainment");
+	add(_btnCancel,     "button",   "manageContainment");
+	add(_btnOk,         "button",   "manageContainment");
 
 	centerSurfaces();
 
@@ -132,8 +132,8 @@ AlienContainmentState::AlienContainmentState(
 	}
 	_mini->onMouseClick(static_cast<ActionHandler>(&AlienContainmentState::miniClick),
 						SDL_BUTTON_LEFT);
-	_mini->onMouseOver(	static_cast<ActionHandler>(&AlienContainmentState::miniMouseOver));
-	_mini->onMouseOut(	static_cast<ActionHandler>(&AlienContainmentState::miniMouseOut));
+	_mini->onMouseOver( static_cast<ActionHandler>(&AlienContainmentState::miniMouseOver));
+	_mini->onMouseOut(  static_cast<ActionHandler>(&AlienContainmentState::miniMouseOut));
 
 	_txtHoverBase->setAlign(ALIGN_RIGHT);
 
@@ -152,14 +152,14 @@ AlienContainmentState::AlienContainmentState(
 			st = "STR_REMOVE_SELECTED";
 	}
 	_btnOk->setText(tr(st));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&AlienContainmentState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&AlienContainmentState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienContainmentState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&AlienContainmentState::btnOkClick),
 							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&AlienContainmentState::btnCancelClick));
+	_btnCancel->onMouseClick(   static_cast<ActionHandler>(&AlienContainmentState::btnCancelClick));
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&AlienContainmentState::btnCancelClick),
 								Options::keyCancel);
 
@@ -178,10 +178,10 @@ AlienContainmentState::AlienContainmentState(
 	if (_jogRodent == -1)
 		_lstAliens->setSelectable();
 
-	_lstAliens->onLeftArrowPress(	static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowPress));
-	_lstAliens->onLeftArrowRelease(	static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowRelease));
+	_lstAliens->onLeftArrowPress(  static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowPress));
+	_lstAliens->onLeftArrowRelease(static_cast<ActionHandler>(&AlienContainmentState::lstLeftArrowRelease));
 
-	_lstAliens->onRightArrowPress(	static_cast<ActionHandler>(&AlienContainmentState::lstRightArrowPress));
+	_lstAliens->onRightArrowPress(  static_cast<ActionHandler>(&AlienContainmentState::lstRightArrowPress));
 	_lstAliens->onRightArrowRelease(static_cast<ActionHandler>(&AlienContainmentState::lstRightArrowRelease));
 
 
@@ -220,7 +220,7 @@ void AlienContainmentState::init()
 
 	std::vector<std::string> interrogations;
 	for (std::vector<ResearchProject*>::const_iterator
-			i = _base->getResearch().begin();
+			i  = _base->getResearch().begin();
 			i != _base->getResearch().end();
 			++i)
 	{
@@ -240,7 +240,7 @@ void AlienContainmentState::init()
 
 	const std::vector<std::string>& allItems (_game->getRuleset()->getItemsList());
 	for (std::vector<std::string>::const_iterator
-			i = allItems.begin();
+			i  = allItems.begin();
 			i != allItems.end();
 			++i)
 	{
@@ -279,7 +279,7 @@ void AlienContainmentState::init()
 	}
 
 	for (std::vector<std::string>::const_iterator // add research aLiens that are not in Containment.
-			i = interrogations.begin();
+			i  = interrogations.begin();
 			i != interrogations.end();
 			++i)
 	{

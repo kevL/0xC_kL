@@ -515,6 +515,7 @@ void DebriefingState::btnOkClick(Action*)
 			bool playAwardMusic (false);
 
 			// NOTE: These show to player in reverse order.
+
 			if (_unreplaced.empty() == false)
 				_game->pushState(new CannotReequipState(_unreplaced));
 

@@ -177,14 +177,14 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 		*colors = gradient[i];
 	}
 
-	_paletteTypes[PAL_NONE]			= nullptr; // Convert palettes-by-string to palettes-by-enumerator ->
-	_paletteTypes[PAL_BACKPALS]		= _palettes.at("BACKPALS.DAT");
-	_paletteTypes[PAL_BASESCAPE]	= _palettes.at("PAL_BASESCAPE");
-	_paletteTypes[PAL_BATTLEPEDIA]	= _palettes.at("PAL_BATTLEPEDIA");
-	_paletteTypes[PAL_BATTLESCAPE]	= _palettes.at("PAL_BATTLESCAPE");
-	_paletteTypes[PAL_GEOSCAPE]		= _palettes.at("PAL_GEOSCAPE");
-	_paletteTypes[PAL_GRAPHS]		= _palettes.at("PAL_GRAPHS");
-	_paletteTypes[PAL_UFOPAEDIA]	= _palettes.at("PAL_UFOPAEDIA");
+	_paletteTypes[PAL_NONE]        = nullptr; // Convert palettes-by-string to palettes-by-enumerator ->
+	_paletteTypes[PAL_BACKPALS]    = _palettes.at("BACKPALS.DAT");
+	_paletteTypes[PAL_BASESCAPE]   = _palettes.at("PAL_BASESCAPE");
+	_paletteTypes[PAL_BATTLEPEDIA] = _palettes.at("PAL_BATTLEPEDIA");
+	_paletteTypes[PAL_BATTLESCAPE] = _palettes.at("PAL_BATTLESCAPE");
+	_paletteTypes[PAL_GEOSCAPE]    = _palettes.at("PAL_GEOSCAPE");
+	_paletteTypes[PAL_GRAPHS]      = _palettes.at("PAL_GRAPHS");
+	_paletteTypes[PAL_UFOPAEDIA]   = _palettes.at("PAL_UFOPAEDIA");
 
 
 	/* FONT */
@@ -194,7 +194,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 	Font::setIndex(Language::utf8ToWstr(doc["chars"].as<std::string>()));
 	for (YAML::const_iterator
-			i = doc["fonts"].begin();
+			i  = doc["fonts"].begin();
 			i != doc["fonts"].end();
 			++i)
 	{
@@ -218,7 +218,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	std::vector<std::string> files (CrossPlatform::getFolderContents(folder, "SCR"));
 
 	for (std::vector<std::string>::iterator
-			i = files.begin();
+			i  = files.begin();
 			i != files.end();
 			++i)
 	{
@@ -234,7 +234,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 	files = CrossPlatform::getFolderContents(folder, "SPK");
 	for (std::vector<std::string>::iterator
-			i = files.begin();
+			i  = files.begin();
 			i != files.end();
 			++i)
 	{
@@ -253,7 +253,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	{
 		files = CrossPlatform::getFolderContents(folder, "LBM");
 		for (std::vector<std::string>::iterator
-				i = files.begin();
+				i  = files.begin();
 				i != files.end();
 				++i)
 		{
@@ -328,7 +328,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 		const std::vector<std::pair<std::string, RuleMusic*>> musicRules (rules->getMusicTracks());
 		for (std::vector<std::pair<std::string, RuleMusic*>>::const_iterator
-				i = musicRules.begin();
+				i  = musicRules.begin();
 				i != musicRules.end();
 				++i)
 		{
@@ -340,7 +340,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			if (mode == "replace")
 			{
 				for (std::vector<std::string>::const_iterator
-						j = terrains.begin();
+						j  = terrains.begin();
 						j != terrains.end();
 						++j)
 				{
@@ -349,7 +349,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			}
 
 			for (std::vector<std::string>::const_iterator
-					j = terrains.begin();
+					j  = terrains.begin();
 					j != terrains.end();
 					++j)
 			{
@@ -373,19 +373,19 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 		bool loaded;
 
 		for (std::map<std::string, std::map<std::string, std::vector<std::pair<std::string, int>>>>::const_iterator
-				i = _musicAssignment.begin();
+				i  = _musicAssignment.begin();
 				i != _musicAssignment.end();
 				++i)
 		{
 			assignment = i->second;
 			for (std::map<std::string, std::vector<std::pair<std::string, int>>>::const_iterator
-					j = assignment.begin();
+					j  = assignment.begin();
 					j != assignment.end();
 					++j)
 			{
 				musicList = j->second;
 				for (std::vector<std::pair<std::string, int>>::const_iterator
-						k = musicList.begin();
+						k =  musicList.begin();
 						k != musicList.end();
 						++k)
 				{
@@ -516,11 +516,11 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	}
 
 	// define GUI sound Fx
-	TextButton::soundPress	= getSound("GEO.CAT", ResourcePack::BUTTON_PRESS);		// #0 bleep
-	kL_soundPop				= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// wahahahah <- global.
-	Window::soundPopup[0u]	= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// #1 wahahahah	// not used - but leave it:
-	Window::soundPopup[1u]	= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[1u]);	// #2 swish1	// The sound itself is also defined as 'kL_soundPop' above^
-	Window::soundPopup[2u]	= getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[2u]);	// #3 swish2
+	TextButton::soundPress = getSound("GEO.CAT", ResourcePack::BUTTON_PRESS);		// #0 bleep
+	kL_soundPop            = getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// wahahahah <- global.
+	Window::soundPopup[0u] = getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[0u]);	// #1 wahahahah	// not used - but leave it:
+	Window::soundPopup[1u] = getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[1u]);	// #2 swish1	// The sound itself is also defined as 'kL_soundPop' above^
+	Window::soundPopup[2u] = getSound("GEO.CAT", ResourcePack::WINDOW_POPUP[2u]);	// #3 swish2
 
 	/* BATTLESCAPE RESOURCES */
 	Log(LOG_INFO) << "Loading battlescape resources ...";
@@ -584,7 +584,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 	const std::vector<std::pair<std::string, ExtraSprites*>> allSprites (rules->getExtraSprites());
 	for (std::vector<std::pair<std::string, ExtraSprites*>>::const_iterator
-			i = allSprites.begin();
+			i  = allSprites.begin();
 			i != allSprites.end();
 			++i)
 	{
@@ -643,7 +643,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 			//}
 
 			for (std::map<int, std::string>::const_iterator
-					j = sprites->getSprites()->begin();
+					j  = sprites->getSprites()->begin();
 					j != sprites->getSprites()->end();
 					++j)
 			{
@@ -657,7 +657,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 					oststr2 << CrossPlatform::getDataFolder(j->second);
 					const std::vector<std::string> contents (CrossPlatform::getFolderContents(oststr2.str()));
 					for (std::vector<std::string>::const_iterator
-							k = contents.begin();
+							k  = contents.begin();
 							k != contents.end();
 							++k)
 					{
@@ -811,18 +811,18 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 	for (int y = 172; y >= 152; --y)
 		for (int x = 5; x <= 314; ++x)
 			altBack07->setPixelColor(
-									x, y + 4,
-									altBack07->getPixelColor(x,y));
+								x, y + 4,
+								altBack07->getPixelColor(x,y));
 	for (int y = 147; y >= 134; --y)
 		for (int x = 5; x <= 314; ++x)
 			altBack07->setPixelColor(
-									x, y + 9,
-									altBack07->getPixelColor(x,y));
+								x, y + 9,
+								altBack07->getPixelColor(x,y));
 	for (int y = 132; y >= 109; --y)
 		for (int x = 5; x <= 314; ++x)
 			altBack07->setPixelColor(
-									x, y + 10,
-									altBack07->getPixelColor(x,y));
+								x, y + 10,
+								altBack07->getPixelColor(x,y));
 	_surfaces["ALTBACK07.SCR"] = altBack07; // kL_end.
 
 
@@ -851,7 +851,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 
 	const std::vector<std::pair<std::string, ExtraSounds*>> allSounds (rules->getExtraSounds());
 	for (std::vector<std::pair<std::string, ExtraSounds*>>::const_iterator
-			i = allSounds.begin();
+			i  = allSounds.begin();
 			i != allSounds.end();
 			++i)
 	{
@@ -863,7 +863,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 		//else Log(LOG_VERBOSE) << "Adding/Replacing items in sound set: " << i->first;
 
 		for (std::map<int, std::string>::const_iterator
-				j = i->second->getSounds()->begin();
+				j  = i->second->getSounds()->begin();
 				j != i->second->getSounds()->end();
 				++j)
 		{
@@ -877,7 +877,7 @@ XcomResourcePack::XcomResourcePack(const Ruleset* const rules)
 				files = CrossPlatform::getFolderContents(oststr.str());
 
 				for (std::vector<std::string>::const_iterator
-						k = files.begin();
+						k  = files.begin();
 						k != files.end();
 						++k)
 				{
@@ -1015,7 +1015,7 @@ void XcomResourcePack::loadBattlescapeResources()
 	const std::string units (CrossPlatform::getDataFolder("UNITS/"));
 	std::vector<std::string> unitSets (CrossPlatform::getFolderContents(units, "PCK"));
 	for (std::vector<std::string>::iterator
-			i = unitSets.begin();
+			i  = unitSets.begin();
 			i != unitSets.end();
 			++i)
 	{
@@ -1096,7 +1096,7 @@ void XcomResourcePack::loadBattlescapeResources()
 	// Load Battlescape ragdolls
 	std::vector<std::string> ragdolls (CrossPlatform::getFolderContents(ufograph, "SPK"));
 	for (std::vector<std::string>::iterator
-			i = ragdolls.begin();
+			i  = ragdolls.begin();
 			i != ragdolls.end();
 			++i)
 	{

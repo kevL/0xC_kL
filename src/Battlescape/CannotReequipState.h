@@ -37,8 +37,8 @@ class Window;
 
 
 /**
- * Screen shown when there's not enough equipment
- * to re-equip a craft after a mission.
+ * Screen shown when there's not enough equipment to re-equip a craft after a
+ * mission.
  */
 class CannotReequipState
 	:
@@ -57,7 +57,7 @@ private:
 
 
 	public:
-		/// Creates the Cannot Reequip state.
+		/// Creates a CannotReequip state.
 		explicit CannotReequipState(std::vector<UnreplacedStat> its);
 		/// Cleans up the Cannot Reequip state.
 		~CannotReequipState();
