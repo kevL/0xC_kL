@@ -89,7 +89,7 @@ ComboBox::ComboBox(
 	_list->setColumns(1, _list->getWidth());
 	_list->setBackground(_window);
 	_list->setSelectable();
-	_list->setMargin(0);
+	_list->setMargin();
 
 	toggleCbx(true);
 }

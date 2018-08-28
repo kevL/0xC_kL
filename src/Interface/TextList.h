@@ -256,7 +256,7 @@ private:
 		/// Sets the margin of the TextList.
 		void setMargin(int margin = 0);
 		/// Gets the margin of the TextList.
-		int getMargin() const;
+//		int getMargin() const;
 
 		/// Sets the arrow-color of the TextList.
 		void setArrowColor(Uint8 color);

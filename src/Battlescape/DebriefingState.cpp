@@ -205,7 +205,7 @@ DebriefingState::DebriefingState()
 
 	_lstTotal->setColumns(2, 244,36);
 	_lstTotal->setDot();
-	_lstTotal->setMargin(0);
+	_lstTotal->setMargin();
 
 	_txtBaseLabel->setAlign(ALIGN_RIGHT);	// NOTE: Text is set in prepareDebriefing() before
 											// a possibly failed BaseDefense dangles '_base' ptr.

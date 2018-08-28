@@ -653,7 +653,7 @@ BattlescapeState::BattlescapeState()
 
 	_lstTileInfo->setColumns(2, 11, 7);
 	_lstTileInfo->setHighContrast();
-	_lstTileInfo->setMargin(0);
+	_lstTileInfo->setMargin();
 
 	_txtConsole1->setHighContrast();
 	_txtConsole1->setVisible(_showConsole > 0);
@@ -681,7 +681,7 @@ BattlescapeState::BattlescapeState()
 
 	_lstSoldierInfo->setHighContrast();
 	_lstSoldierInfo->setColumns(2, 10,15);
-	_lstSoldierInfo->setMargin(0);
+	_lstSoldierInfo->setMargin();
 
 	_srfAlienIcon->setVisible(false);
 
