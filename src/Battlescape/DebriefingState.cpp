@@ -212,16 +212,16 @@ DebriefingState::DebriefingState()
 
 
 	_tactical = new TacticalStatistics();
-	prepareDebriefing();				// <- |-- GATHER ALL DATA HERE <- < ||
+	prepareDebriefing();					// <- |-- GATHER ALL DATA HERE <- < ||
 
 
 
 	int
-		offsetY_stats	(0),
-		offsetY_recover	(0),
-		aliensKilled	(0),
-		civiliansSaved	(0),
-		civiliansDead	(0);
+		offsetY_stats   (0),
+		offsetY_recover (0),
+		aliensKilled    (0),
+		civiliansSaved  (0),
+		civiliansDead   (0);
 
 	for (std::vector<DebriefStat*>::const_iterator
 			i  = _statList.begin();
@@ -257,9 +257,9 @@ DebriefingState::DebriefingState()
 				offsetY_stats += 8;
 			}
 
-			if		((*i)->type == TAC_RESULT[0u]) aliensKilled   = (*i)->qty;	// aLiens killed
-			else if	((*i)->type == TAC_RESULT[7u]) civiliansSaved = (*i)->qty;	// civilians saved
-			else if	((*i)->type == TAC_RESULT[5u]								// civilians killed by aLiens
+			if      ((*i)->type == TAC_RESULT[0u]) aliensKilled   = (*i)->qty;	// aLiens killed
+			else if ((*i)->type == TAC_RESULT[7u]) civiliansSaved = (*i)->qty;	// civilians saved
+			else if ((*i)->type == TAC_RESULT[5u]								// civilians killed by aLiens
 				||   (*i)->type == TAC_RESULT[6u]) civiliansDead += (*i)->qty;	// civilians killed by player
 		}
 	}
@@ -406,7 +406,7 @@ DebriefingState::DebriefingState()
 					// This can be exploited by MC'ing all aLiens and then
 					// executing all aLiens with a single Soldier.
 					if (take == _aliensStunned + aliensKilled
-						&& take > 3 + _diff)
+						&& take > 2 + _diff)
 					{
 						tacstats->nikeCross = true;
 					}
@@ -675,8 +675,8 @@ void ClearAlienBase::operator () (AlienMission* const mission) const
 
 /**
  * Prepares debriefing: Determines success or failure; gathers Aliens, Corpses,
- * Artefacts, UFO Components; handles units and re-equipping any crafts. If
- * aborted only the things on the exit-area are recovered.
+ * Artefacts, UFO Components; handles units, item-recovery and re-equipping any
+ * crafts. If aborted only the units + items on exit-area tiles are recovered.
  */
 void DebriefingState::prepareDebriefing() // private.
 {
@@ -1671,20 +1671,11 @@ void DebriefingState::prepareDebriefing() // private.
 		//Log(LOG_INFO) << ". handle deleted property - id= " << (*i)->getId() << " type= " << (*i)->getRules()->getType();
 
 		itRule = (*i)->getRules();
-		switch (itRule->getBattleType())
+		switch (itRule->getBattleType()) // NOTE: '_surplus' does not contain clips yet
 		{
 			case BT_AMMO:
-				//Log(LOG_INFO) << ". . is Load - add to lost property - PRINT LOSTPROPERTY VECTOR CONTENTS";
+				//Log(LOG_INFO) << ". . is Load - add to lost property";
 				++_lostProperty[itRule];
-				// debug
-				//for (std::map<const RuleItem*, int>::const_iterator
-				//		j  = _lostProperty.begin();
-				//		j != _lostProperty.end();
-				//		++j)
-				//{
-					//Log(LOG_INFO) << ". . . " << j->first->getType() << " qty= " << j->second;
-				//}
-				// debug_end
 				break;
 
 			default:
@@ -1694,12 +1685,12 @@ void DebriefingState::prepareDebriefing() // private.
 					//Log(LOG_INFO) << ". . . not in surplus - add to lost property";
 					++_lostProperty[itRule];
 				}
-				else if (--_surplus[itRule] == 0)	// NOTE: '_surplus' shall never contain clips - vid. recoverItems()
+				else if (--_surplus[itRule] == 0)
 				{
 					//Log(LOG_INFO) << ". . . is in surplus but only 1 - erase from surplus";
-					_surplus.erase(itRule);			// ... clips handled immediately below_
+					_surplus.erase(itRule);
 				}
-		}											// TODO: Extensive testing on property-gains/losses ....
+		}
 	}
 
 	int
@@ -1846,6 +1837,167 @@ void DebriefingState::prepareDebriefing() // private.
 }
 
 /**
+ * Recovers items from tactical.
+ * TODO: Figure out what's going on w/ QuickBattles and base-storage. Eg, the
+ * proper tabulation of gains/losses might rely on returning stuff to Base stores.
+ * @note Transfers the contents of a battlefield-inventory to the Base's stores.
+ * This bypasses fixed-weapons and non-recoverable items.
+ * @param its - pointer to a vector of pointers to BattleItems on the battlefield
+ */
+void DebriefingState::recoverItems(std::vector<BattleItem*>* const its) // private.
+{
+	//Log(LOG_INFO) << "DebriefingState::recoverItems()";
+
+	const RuleItem* itRule;
+	const BattleUnit* unit;
+	BattleType bType;
+	std::string type;
+
+	for (std::vector<BattleItem*>::const_iterator
+			i  = its->begin();
+			i != its->end();
+			++i)
+	{
+		itRule = (*i)->getRules();
+		//Log(LOG_INFO) << ". type= " << itRule->getType();
+
+		if (itRule->isFixed() == false && itRule->isRecoverable() == true)
+		{
+			_base->refurbishCraft(type = itRule->getType());
+
+			bType = itRule->getBattleType();
+			switch (bType)
+			{
+				case BT_FUEL:
+					_surplus[itRule] += _rules->getAlienFuelQuantity();
+					addResultStat(
+								_rules->getAlienFuelType(),
+								itRule->getRecoveryScore(),
+								_rules->getAlienFuelQuantity());
+					break;
+
+				default:
+					if (bType != BT_CORPSE && _playSave->isResearched(type) == false)
+						addResultStat(
+									TAC_RESULT[3u], // aLien artefacts recovered
+									itRule->getRecoveryScore());
+
+					switch (bType) // shuttle all times instantly to the Base
+					{
+						case BT_CORPSE:
+							if ((unit = (*i)->getBodyUnit()) != nullptr)
+							{
+								switch (unit->getUnitStatus())
+								{
+									case STATUS_DEAD:
+									{
+										addResultStat(
+													TAC_RESULT[2u], // aLien corpses recovered
+													unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;
+																			// but at present all the corpse-rules spec. default values of 3 or 5 pts. Cf, below_
+										const std::string& corpse (unit->getArmor()->getCorpseGeoscape());
+										if (corpse.empty() == false) // safety.
+										{
+											_base->getStorageItems()->addItem(corpse);
+											++_surplus[_rules->getItemRule(corpse)];
+										}
+										break;
+									}
+
+									case STATUS_UNCONSCIOUS:
+										if (unit->getOriginalFaction() == FACTION_HOSTILE)
+											recoverLiveAlien(unit);
+
+									// TODO: have to handle STATUS_LATENT and/or STATUS_LATENT_START here if
+									// I ever bother to implement 2-stage missions that aren't the final battle.
+								}
+							}
+							break;
+
+						case BT_AMMO:
+							//Log(LOG_INFO) << ". . BT_AMMO rounds= " << (*i)->getClipRounds();
+							_rounds[itRule] += (*i)->getClipRounds();
+							if ((*i)->isProperty() == true)
+								_roundsProperty[itRule] += (*i)->getClipRounds();
+							break;
+
+						case BT_FIREARM:
+							if ((*i)->selfPowered() == false)
+							{
+								const BattleItem* const clip ((*i)->getClip());
+								if (clip != nullptr) //&& clip->getRules()->getFullClip() != 0) // <- nobody be stupid and make a clip with 0 ammo-capacity.
+								{
+									//Log(LOG_INFO) << ". . clip= " << clip->getRules()->getType();
+									_rounds[clip->getRules()] += clip->getClipRounds();
+									if ((*i)->isProperty() == true)
+										_roundsProperty[clip->getRules()] += clip->getClipRounds();
+								}
+							}
+							// no break;
+
+						default:
+							_base->getStorageItems()->addItem(type);
+							if ((*i)->isProperty() == false)
+								++_surplus[itRule];
+					}
+			}
+		}
+	}
+}
+
+/**
+ * Recovers a live aLien from the battlefield.
+ * TODO: Figure out what's going on w/ QuickBattles and base-storage. Eg, the
+ * proper tabulation of gains/losses might rely on returning stuff to Base stores.
+ * @param unit - pointer to a BattleUnit to recover
+ */
+void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
+{
+	if (_isQuickBattle == true || _base->hasContainment() == true)
+	{
+		//Log(LOG_INFO) << ". . . alienLive id-" << unit->getId() << " " << unit->getType();
+		const std::string& type (unit->getType());
+
+		int value;
+		if (_rules->getResearch(type) != nullptr
+			&& _playSave->isResearched(type) == false)
+		{
+			value = unit->getValue() << 1u;
+		}
+		else
+			value = unit->getValue();
+
+		addResultStat(
+					TAC_RESULT[1u], // aLien captured
+					value);
+
+		_base->getStorageItems()->addItem(type);
+		++_surplus[_rules->getItemRule(type)];
+
+		if (_base->getFreeContainment() < 0)
+			_capture = ARR_CONTAINMENT;
+		else
+			_capture = ARR_NONE;
+	}
+	else
+	{
+		//Log(LOG_INFO) << ". . . alienDead id-" << unit->getId() << " " << unit->getType();
+		_capture = ARR_DIES;
+
+		addResultStat(
+					TAC_RESULT[2u], // aLien corpse recovered
+					unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;
+											// but at present all the corpse-rules spec. default values of 3 or 5 pts. Cf, above^
+		const std::string& corpse (unit->getArmor()->getCorpseGeoscape());
+		if (corpse.empty() == false) // safety. (Or error-out if there isn't one.)
+		{
+			_base->getStorageItems()->addItem(corpse); // NOTE: This won't be a quick-battle here, okay to add to Base stores.
+			++_surplus[_rules->getItemRule(corpse)];
+		}
+	}
+}
+
+/**
  * Reequips a Craft after tactical.
  * TODO: Figure out what's going on w/ QuickBattles and base-storage. Eg, the
  * proper tabulation of gains/losses might rely on returning stuff to Base stores.
@@ -1981,178 +2133,6 @@ void DebriefingState::reequipCraft(Craft* const craft) // private.
 					}
 				}
 			}
-		}
-	}
-}
-
-/**
- * Recovers items from tactical.
- * TODO: Figure out what's going on w/ QuickBattles and base-storage. Eg, the
- * proper tabulation of gains/losses might rely on returning stuff to Base stores.
- * @note Transfers the contents of a battlefield-inventory to the Base's stores.
- * This bypasses fixed-weapons and non-recoverable items.
- * @param its - pointer to a vector of pointers to BattleItems on the battlefield
- */
-void DebriefingState::recoverItems(std::vector<BattleItem*>* const its) // private.
-{
-	//Log(LOG_INFO) << "DebriefingState::recoverItems()";
-
-	const RuleItem* itRule;
-	const BattleUnit* unit;
-	BattleType bType;
-	std::string type;
-
-	for (std::vector<BattleItem*>::const_iterator
-			i  = its->begin();
-			i != its->end();
-			++i)
-	{
-		itRule = (*i)->getRules();
-		//Log(LOG_INFO) << ". type= " << itRule->getType();
-
-		if (itRule->isFixed() == false && itRule->isRecoverable() == true)
-		{
-			_base->refurbishCraft(type = itRule->getType());
-
-			bType = itRule->getBattleType();
-			switch (bType)
-			{
-				case BT_FUEL:
-					_surplus[itRule] += _rules->getAlienFuelQuantity();
-					addResultStat(
-								_rules->getAlienFuelType(),
-								itRule->getRecoveryScore(),
-								_rules->getAlienFuelQuantity());
-					break;
-
-				default:
-					if (bType != BT_CORPSE && _playSave->isResearched(type) == false)
-						addResultStat(
-									TAC_RESULT[3u], // aLien artefacts recovered
-									itRule->getRecoveryScore());
-
-					switch (bType) // shuttle all times instantly to the Base
-					{
-						case BT_CORPSE:
-							if ((unit = (*i)->getBodyUnit()) != nullptr)
-							{
-								switch (unit->getUnitStatus())
-								{
-									case STATUS_DEAD:
-									{
-										addResultStat(
-													TAC_RESULT[2u], // aLien corpses recovered
-													unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;
-																			// but at present all the corpse-rules spec. default values of 3 or 5 pts. Cf, below_
-										const std::string& corpse (unit->getArmor()->getCorpseGeoscape());
-										if (corpse.empty() == false) // safety.
-										{
-											_base->getStorageItems()->addItem(corpse);
-											++_surplus[_rules->getItemRule(corpse)];
-										}
-										break;
-									}
-
-									case STATUS_UNCONSCIOUS:
-										if (unit->getOriginalFaction() == FACTION_HOSTILE)
-											recoverLiveAlien(unit);
-
-									// TODO: have to handle STATUS_LATENT and/or STATUS_LATENT_START here if
-									// I ever bother to implement 2-stage missions that aren't the final battle.
-								}
-							}
-							break;
-
-						case BT_AMMO:
-							//Log(LOG_INFO) << ". . BT_AMMO rounds= " << (*i)->getClipRounds();
-							_rounds[itRule] += (*i)->getClipRounds();
-							if ((*i)->isProperty() == true)
-								_roundsProperty[itRule] += (*i)->getClipRounds();
-
-							// debug
-							//for (std::map<const RuleItem*, int>::const_iterator
-							//		j  = _rounds.begin();
-							//		j != _rounds.end();
-							//		++j)
-							//{
-								//Log(LOG_INFO) << ". . . _rounds Type= " << j->first->getType() << " qty= " << j->second;
-							//}
-							// debug_end
-							break;
-
-						case BT_FIREARM:
-							if ((*i)->selfPowered() == false)
-							{
-								const BattleItem* const clip ((*i)->getClip());
-								if (clip != nullptr) //&& clip->getRules()->getFullClip() != 0) // <- nobody be stupid and make a clip with 0 ammo-capacity.
-								{
-									//Log(LOG_INFO) << ". . clip= " << clip->getRules()->getType();
-
-									_rounds[clip->getRules()] += clip->getClipRounds();
-									if ((*i)->isProperty() == true)
-										_roundsProperty[clip->getRules()] += clip->getClipRounds();
-								}
-							}
-							// no break;
-
-						default:
-							_base->getStorageItems()->addItem(type);
-							if ((*i)->isProperty() == false)
-								++_surplus[itRule];
-					}
-			}
-		}
-	}
-}
-
-/**
- * Recovers a live aLien from the battlefield.
- * TODO: Figure out what's going on w/ QuickBattles and base-storage. Eg, the
- * proper tabulation of gains/losses might rely on returning stuff to Base stores.
- * @param unit - pointer to a BattleUnit to recover
- */
-void DebriefingState::recoverLiveAlien(const BattleUnit* const unit) // private.
-{
-	if (_isQuickBattle == true || _base->hasContainment() == true)
-	{
-		//Log(LOG_INFO) << ". . . alienLive id-" << unit->getId() << " " << unit->getType();
-		const std::string& type (unit->getType());
-
-		int value;
-		if (_rules->getResearch(type) != nullptr
-			&& _playSave->isResearched(type) == false)
-		{
-			value = unit->getValue() << 1u;
-		}
-		else
-			value = unit->getValue();
-
-		addResultStat(
-					TAC_RESULT[1u], // aLien captured
-					value);
-
-		_base->getStorageItems()->addItem(type);
-		++_surplus[_rules->getItemRule(type)];
-
-		if (_base->getFreeContainment() < 0)
-			_capture = ARR_CONTAINMENT;
-		else
-			_capture = ARR_NONE;
-	}
-	else
-	{
-		//Log(LOG_INFO) << ". . . alienDead id-" << unit->getId() << " " << unit->getType();
-		_capture = ARR_DIES;
-
-		addResultStat(
-					TAC_RESULT[2u], // aLien corpse recovered
-					unit->getValue() / 3);	// TODO: This should rather be the 'recoveryPoints' of the corpse-item;
-											// but at present all the corpse-rules spec. default values of 3 or 5 pts. Cf, above^
-		const std::string& corpse (unit->getArmor()->getCorpseGeoscape());
-		if (corpse.empty() == false) // safety. (Or error-out if there isn't one.)
-		{
-			_base->getStorageItems()->addItem(corpse); // NOTE: This won't be a quick-battle here, okay to add to Base stores.
-			++_surplus[_rules->getItemRule(corpse)];
 		}
 	}
 }
