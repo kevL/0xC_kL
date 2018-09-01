@@ -1915,7 +1915,7 @@ Node* SavedBattleGame::getSpawnNode(
 			i != _nodes.end();
 			++i)
 	{
-		if ((*i)->getPriority() != 0			// spawn-priority 0 is not spawnplace
+		if ((*i)->getSpawnWeight() != 0			// spawn-priority 0 is not spawnplace
 			&& (*i)->getNodeRank() == unitRank	// ranks must match
 			&& isNodeType(*i, unit)				// unit's size and walk-type must match node's
 			&& setUnitPosition(					// check if unit can be set at this node
@@ -1924,7 +1924,7 @@ Node* SavedBattleGame::getSpawnNode(
 							true) == true)			// test-only: runs again w/ FALSE on return to bgen::addAlien()
 		{
 			for (int // weight each eligible node by its Priority.
-					j = (*i)->getPriority();
+					j = (*i)->getSpawnWeight();
 					j != 0;
 					--j)
 			{
@@ -1963,19 +1963,19 @@ Node* SavedBattleGame::getPatrolNode(
 	if (scout == true)
 		qtyNodes = getNodes()->size();
 	else
-		qtyNodes = startNode->getNodeLinks()->size();
+		qtyNodes = Node::NODE_LINKS;
 
 	for (size_t
 			i = 0u;
 			i != qtyNodes;
 			++i)
 	{
-		if (scout == true || startNode->getNodeLinks()->at(i) > -1)	// non-scouts need Links to travel along.
-		{															// N-E-S-W directions are never used (linkId's -2,-3,-4,-5).
-			if (scout == true)										// Meaning that non-scouts never leave their spawn-block ...
+		if (scout == true || startNode->getLinks()->at(i) > -1)	// non-scouts need Links to travel along.
+		{														// N-E-S-W directions are never used (linkId's -2,-3,-4,-5).
+			if (scout == true)									// Meaning that non-scouts never leave their spawn-block ...
 				node = getNodes()->at(i);
 			else
-				node = getNodes()->at(static_cast<size_t>(startNode->getNodeLinks()->at(i)));
+				node = getNodes()->at(static_cast<size_t>(startNode->getLinks()->at(i)));
 
 			if ((node->getPatrol() != 0										// for non-scouts find a node with a desirability above 0
 					|| node->getNodeRank() > NR_SCOUT
@@ -2051,7 +2051,7 @@ Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
 	{
 		if (unit->getPosition().z == (*i)->getPosition().z
 			&& (unit->getArmor()->getSize() == 1
-				|| !((*i)->getNodeType() & Node::TYPE_SMALL)))
+				|| !((*i)->getUnitType() & Node::TYPE_SMALL)))
 		{
 			distTest = TileEngine::distSqr(
 									(*i)->getPosition(),
@@ -2079,29 +2079,29 @@ bool SavedBattleGame::isNodeType(
 		const Node* const node,
 		const BattleUnit* const unit) const
 {
-	const int type (node->getNodeType());
+	const int type (node->getUnitType());
 
-	if (type & Node::TYPE_DANGEROUS)					// +16	Only Type_Dangerous is ever added to a
-		return false;									//		stock nodeType in the code currently.
+	if ((type & Node::TYPE_DANGEROUS) == 0)					// +16	Only Type_Dangerous is ever added to a
+	{														//		stock nodeType in the code currently.
+		switch (type)
+		{
+			case Node::TYPE_FLYING:							// 1
+				return unit->getMoveTypeUnit() == MT_FLY
+					&& unit->getArmor()->getSize() == 1;
 
-	switch (type)
-	{
-		case Node::TYPE_FLYING:							// 1
-			return unit->getMoveTypeUnit() == MT_FLY
-				&& unit->getArmor()->getSize() == 1;
+			case Node::TYPE_SMALL:							// 2
+				return unit->getArmor()->getSize() == 1;
 
-		case Node::TYPE_SMALL:							// 2
-			return unit->getArmor()->getSize() == 1;
+			case Node::TYPE_LARGEFLYING:					// 4
+				return unit->getMoveTypeUnit() == MT_FLY;
 
-		case Node::TYPE_LARGEFLYING:					// 4
-			return unit->getMoveTypeUnit() == MT_FLY;
-
-//		case 0:											// Any.
-//			break;
-//		case Node::TYPE_LARGE:							// 8 All units can use Type_Large.
-//			break;
+//			case 0:											// Any.
+//			case Node::TYPE_LARGE:							// 8 All units can use Type_Large.
+//				break;
+		}
+		return true;
 	}
-	return true;
+	return false;
 }
 
 /**

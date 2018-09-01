@@ -53,45 +53,47 @@ private:
 	bool _allocated;
 	int
 		_id,		// unique identifier
-		_type,		// usable by small/large/flying units.
-		_rank,		// aLien rank that can spawn or path here
-		_patrol,	// desirability of patrolling to - "flags" in .RMP
-		_priority,	// desirability of spawning at - "spawn" in .RMP
+		_unittype,		// usable by small/large/flying units.
+		_noderank,		// aLien rank that can spawn or path here
+		_patrolpriority,	// desirability of patrolling to - "flags" in .RMP
+		_spawnweight,	// desirability of spawning at - "spawn" in .RMP
 		_segment,	// something to do with nodeLinks; see BattlescapeGenerator::attachNodeLinks() etc.
-		_destruct;	// something to do with shooting objectives in BaseDefense missions
+		_attackfacility;	// something to do with shooting objectives in BaseDefense missions
 
 	Position _pos;
 
-	std::vector<int> _nodeLinks;
+	std::vector<int> _links;
 
 
 	public:
 		static const int
-			SEG_CRAFT	= 1000,
-			SEG_UFO		= 2000,
+			SEG_CRAFT = 1000,
+			SEG_UFO   = 2000,
 
 			// -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4 <- loaded in BattlescapeGenerator::loadRouteFile()
-			TYPE_FLYING			= 0x01,	// non-flying unit cannot spawn here when this bit is set; see SavedBattleGame::getSpawnNode()
-			TYPE_SMALL			= 0x02,	// large unit cannot spawn here when this bit is set; see SavedBattleGame::getSpawnNode()
-										// NOTE: getNodeType() is also used in SavedBattleGame::getPatrolNode() <- ie, it's not about spawning only; it affects patrolling also.
-			TYPE_LARGEFLYING	= 0x04,	// kL_add
-			TYPE_LARGE			= 0x08,	// kL_add (not used... equivalent to Any)
-			TYPE_DANGEROUS		= 0x10,	// kL_changed from 0x04[ie.large] -> an aLien was shot here, stop patrolling to it like an idiot with a deathwish
+			TYPE_FLYING      = 0x01, // non-flying unit cannot spawn here when this bit is set; see SavedBattleGame::getSpawnNode()
+			TYPE_SMALL       = 0x02, // large unit cannot spawn here when this bit is set; see SavedBattleGame::getSpawnNode()
+									 // NOTE: getNodeType() is also used in SavedBattleGame::getPatrolNode() <- ie, it's not about spawning only; it affects patrolling also.
+			TYPE_LARGEFLYING = 0x04, // kL_add
+			TYPE_LARGE       = 0x08, // kL_add (not used... equivalent to Any)
+			TYPE_DANGEROUS   = 0x10, // kL_changed from 0x04[ie.large] -> an aLien was shot here, stop patrolling to it like an idiot with a deathwish
 
 			nodeRank[8u][8u]; // maps node-ranks (.RMP) to aLiens' ranks
+
+		static const size_t NODE_LINKS = 5u;
 
 		/// Creates a Node.
 		Node();
 		/// Also creates a Node.
 		Node(
-				size_t id,
+				int id,
 				Position pos,
 				int segment,
-				int type,
-				int nodeRank,
-				int patrol,
-				int reserved,
-				int priority);
+				int unittype,
+				int noderank,
+				int patrolpriority,
+				int attackfacility,
+				int spawnweight);
 		/// Cleans up the Node.
 		~Node();
 
@@ -100,17 +102,19 @@ private:
 		/// Saves the Node to YAML.
 		YAML::Node save() const;
 
+		/// Sets the Node's ID.
+		void setId(int id);
 		/// Gets the Node's ID.
 		int getId() const;
 
 		/// Gets the Node's paths.
-		std::vector<int>* getNodeLinks();
+		std::vector<int>* getLinks();
 
 		/// Gets the Node's rank.
 		NodeRank getNodeRank() const;
 
 		/// Gets the Node's priority.
-		int getPriority() const;
+		int getSpawnWeight() const;
 
 		/// Gets the Node's position.
 		const Position& getPosition() const;
@@ -119,13 +123,13 @@ private:
 		int getSegment() const;
 
 		/// Sets the Node's type. SURPRISE!! (not)
-		void setNodeType(int type);
+		void setDangerous();
 		/// Gets the Node's type.
-		int getNodeType() const;
+		int getUnitType() const;
 
-		/// Gets the 'flags' variable which is really the patrol-desirability value.
+		/// Gets the 'flags' variable which is really the patrol-priority value.
 		int getPatrol() const
-		{ return _patrol; }
+		{ return _patrolpriority; }
 
 		// kL_note: in SavedBattleGame::getPatrolNodes() I changed less-than to greater-than ...
 		// wonder if that matters here. So: REVERTED.
@@ -141,9 +145,7 @@ private:
 		/// Checks if the Node is allocated.
 		bool isAllocated() const;
 		/// Sets the Node as allocated.
-		void allocateNode();
-		/// Sets the Node as NOT allocated.
-		void freeNode();
+		void allocate(bool allocated = true);
 
 		/// Gets if the Node is suitable for an aLien to target an xCom Base's targets/objective-parts.
 		bool isAlienTarget() const;

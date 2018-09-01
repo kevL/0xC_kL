@@ -63,7 +63,6 @@ private:
 		_generateFuel,
 		_isFakeInventory,
 		_isQuickBattle;
-//		_error;
 	int
 		_alienItemLevel,
 		_blocksLeft,
@@ -71,6 +70,7 @@ private:
 		_mapsize_x,
 		_mapsize_y,
 		_mapsize_z,
+		_nodeId,
 		_shade,
 		_unitSequence;
 	size_t _battleOrder;
@@ -83,6 +83,8 @@ private:
 		_drill,
 		_seg;
 	std::vector<std::vector<MapBlock*>> _blocks;
+
+	std::vector<int> _invalidIds; // out-of-bounds NodeIDs
 
 	std::vector<BattleItem*>* _itemList;
 	std::vector<BattleUnit*>* _unitList;
@@ -167,6 +169,8 @@ private:
 			int offset_x,
 			int offset_y,
 			int seg);
+	/// Fixes invalid nodes.
+	void decrNodeIds();
 
 	/// Fills power-sources with aLien-fuel objects.
 	void fuelPowerSources();

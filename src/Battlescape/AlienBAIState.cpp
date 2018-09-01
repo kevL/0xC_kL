@@ -458,7 +458,7 @@ void AlienBAIState::setupPatrol() // private.
 	{
 		//if (_traceAI) Log(LOG_INFO) << "Patrol destination reached!";
 		_startNode = _stopNode;
-		_stopNode->freeNode();
+		_stopNode->allocate(false);
 		_stopNode = nullptr;
 
 		const int dir (_battleSave->getTileEngine()->faceWindow(_unit->getPosition()));
@@ -563,7 +563,7 @@ void AlienBAIState::setupPatrol() // private.
 		_pf->calculatePath(_unit, _stopNode->getPosition());
 		if (_pf->getStartDirection() != -1)
 		{
-			_stopNode->allocateNode();
+			_stopNode->allocate();
 			_patrolAction->type = BA_MOVE;
 			_patrolAction->posTarget = _stopNode->getPosition();
 //			_patrolAction->firstTU = _pf->getTuFirst();

@@ -110,10 +110,10 @@ BattlescapeGenerator::BattlescapeGenerator(const Game* const game)
 		_craftZ(0),
 		_isFakeInventory(false),
 		_battleOrder(0u),
+		_nodeId(0),
 		_blocksLeft(0),
 		_testBlock(nullptr),
 		_isQuickBattle(game->getSavedGame()->getMonthsElapsed() == -1)
-//		_error(false)
 {}
 
 /**
@@ -2513,13 +2513,13 @@ int BattlescapeGenerator::loadBlockFile( // private.
 		const RuleItem* itRule;
 		BattleItem* item;
 		for (std::map<std::string, std::vector<Position>>::const_iterator
-				i = block->getPlacedItems().begin();
+				i  = block->getPlacedItems().begin();
 				i != block->getPlacedItems().end();
 				++i)
 		{
 			itRule = _rules->getItemRule(i->first);
 			for (std::vector<Position>::const_iterator
-					j = i->second.begin();
+					j  = i->second.begin();
 					j != i->second.end();
 					++j)
 			{
@@ -2552,6 +2552,8 @@ void BattlescapeGenerator::loadRouteFile( // private.
 		int offset_y,
 		int seg)
 {
+	//Log(LOG_INFO) << "BattlescapeGenerator::loadRouteFile() - " << block->getType();
+
 	std::ostringstream file;
 	file << "ROUTES/" << block->getType() << ".RMP";
 
@@ -2563,108 +2565,118 @@ void BattlescapeGenerator::loadRouteFile( // private.
 		throw Exception("bGen:loadRouteFile() " + file.str() + " not found");
 	}
 
+
+//	const int offsetId (static_cast<int>(_battleSave->getNodes()->size()));
 	int
 		pos_x,
 		pos_y,
 		pos_z,
 
-		patrolType,
-		spawnRank,
-		patrolPriority,
-		attackBase,
-		spawnWeight,
+		unittype,
+		noderank, // is used for spawning and patrolling both.
+		patrolpriority,
+		attackfacility,
+		spawnweight,
 
 		linkId,
-		nodeId (0); // debug. 0-based
+		linkId_offset (_nodeId);
 
-	const int nodeOffset (static_cast<int>(_battleSave->getNodes()->size()));
 	Node* node;
 	Position pos;
 
-	char dataArray[24u];
+	char dataArray[24u]; // NOTE: These are signed values. I want unsigned values.
 	while (ifstr.read(
 					reinterpret_cast<char*>(&dataArray),
 					sizeof(dataArray)))
 	{
-		pos_x = static_cast<int>(dataArray[1u]); // NOTE: Here is where x-y values get reversed
-		pos_y = static_cast<int>(dataArray[0u]); // vis-a-vis x/y values in the .RMP files vs. IG loaded values.
-		pos_z = static_cast<int>(dataArray[2u]);
+		//Log(LOG_INFO) << ". _nodeId= " << _nodeId;
+
+		pos_x = static_cast<int>(static_cast<unsigned char>(dataArray[1u])); // NOTE: Here is where x-y values get reversed
+		pos_y = static_cast<int>(static_cast<unsigned char>(dataArray[0u])); // vis-a-vis x/y values in the .RMP files vs. IG loaded values.
+		pos_z = static_cast<int>(static_cast<unsigned char>(dataArray[2u]));
 
 		// NOTE: 'dataArray[3u]' is not used.
 
-		if (   pos_x > -1 && pos_x < block->getSizeX()
-			&& pos_y > -1 && pos_y < block->getSizeY()
-			&& pos_z > -1 && pos_z < block->getSizeZ())
+		if (   pos_x < block->getSizeX()
+			&& pos_y < block->getSizeY()
+			&& pos_z < block->getSizeZ())
 		{
 			pos = Position(
 						offset_x + pos_x,
 						offset_y + pos_y,
 						block->getSizeZ() - pos_z - 1); // NOTE: Invert the z-level.
 
-			patrolType		= static_cast<int>(dataArray[19u]); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
-			spawnRank		= static_cast<int>(dataArray[20u]);
-			patrolPriority	= static_cast<int>(dataArray[21u]);
-			attackBase		= static_cast<int>(dataArray[22u]);
-			spawnWeight		= static_cast<int>(dataArray[23u]);
+			unittype       = static_cast<int>(static_cast<unsigned char>(dataArray[19u])); // -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4
+			noderank       = static_cast<int>(static_cast<unsigned char>(dataArray[20u]));
+			patrolpriority = static_cast<int>(static_cast<unsigned char>(dataArray[21u]));
+			attackfacility = static_cast<int>(static_cast<unsigned char>(dataArray[22u]));
+			spawnweight    = static_cast<int>(static_cast<unsigned char>(dataArray[23u]));
 
-			// TYPE_FLYING		= 0x01 -> ref Savegame/Node.h
-			// TYPE_SMALL		= 0x02
-			// TYPE_LARGEFLYING	= 0x04
-			// TYPE_LARGE		= 0x08
-			// TYPE_DANGEROUS	= 0x10 <- not in RMP file.
-			if		(patrolType == 3) patrolType = 4; // for bit-wise
-			else if (patrolType == 4) patrolType = 8;
+			// TYPE_FLYING      = 0x01 -> ref Savegame/Node.h
+			// TYPE_SMALL       = 0x02
+			// TYPE_LARGEFLYING = 0x04
+			// TYPE_LARGE       = 0x08
+			// TYPE_DANGEROUS   = 0x10 <- not in RMP file.
+			if		(unittype == 3) unittype = 4; // for bit-wise
+			else if (unittype == 4) unittype = 8;
 
 			if (_battleSave->getTacType() != TCT_BASEDEFENSE)
-				attackBase = 0; // ensure these get zero'd for nonBaseDefense battles; cf. Node::isAlienTarget()
+				attackfacility = 0; // ensure these get zero'd for nonBaseDefense battles; cf. Node::isAlienTarget()
 
 			node = new Node(
-						_battleSave->getNodes()->size(),
-						pos,
-						seg,
-						patrolType,
-						spawnRank,
-						patrolPriority,
-						attackBase,
-						spawnWeight);
+							_nodeId,
+							pos,
+							seg,
+							unittype,
+							noderank,
+							patrolpriority,
+							attackfacility,
+							spawnweight);
 
 			for (size_t // create nodeLinks ->
-					j = 0u;
-					j != 5u; // Max links that a node can have.
+					j  = 0u;
+					j != Node::NODE_LINKS; // Max links that a node can have.
 					++j)
 			{
-				linkId = static_cast<int>(dataArray[(j * 3u) + 4u]); // <- 4[5,6],7[8,9],10[11,12],13[14,15],16[17,18] -> [unitType & distance of linked nodes are not used]
+				linkId = static_cast<int>(static_cast<unsigned char>(dataArray[j * 3u + 4u]));	// <- 4[5,6],7[8,9],10[11,12],13[14,15],16[17,18]
+																								// -> [distance & unitType of linked nodes are not used]
+				//Log(LOG_INFO) << ". #" << j << " linkId[0]= " << linkId;
 
-				if (linkId < 251) // do not offset special values; ie. links to N,S,E,West, or none.
-					linkId += nodeOffset;
+				if (linkId < 251) // do not offset special values; ie. links to N,S,E,W, and None.
+					linkId += linkId_offset;
 				else
-					linkId -= 256;	// 255 -> -1 = unused
-									// 254 -> -2 = north
-									// 253 -> -3 = east
-									// 252 -> -4 = south
-									// 251 -> -5 = west
+					linkId -= 256; // 255 -> -1 = unused linkslot
+								   // 254 -> -2 = north link
+								   // 253 -> -3 = east link
+								   // 252 -> -4 = south link
+								   // 251 -> -5 = west link
+				//Log(LOG_INFO) << ". #" << j << " linkId[1]= " << linkId;
 
-				std::vector<int>* const nodeLinks (node->getNodeLinks());
-				if (std::find(
-							nodeLinks->rbegin(),
-							nodeLinks->rend(),
-							linkId) != nodeLinks->rend())
+				std::vector<int>* const links (node->getLinks());
+
+				if (linkId != -1
+					&& std::find(
+							links->rbegin(), // is reversed because any duplicated link is most likely to be the previous link.
+							links->rend(),
+							linkId) != links->rend())
 				{
 					linkId = -1; // prevent multiple identical links on nodes.
 				}
 
-				nodeLinks->push_back(linkId);
+				links->push_back(linkId);
 			}
 			_battleSave->getNodes()->push_back(node);
 		}
 		else
 		{
-//			_error = true;
 			Log(LOG_WARNING) << "bGen:loadRouteFile() Error in RMP file: " << file.str()
-							 << " node #" << nodeId << " is outside map boundaries at"
+							 << " node #" << _nodeId << " is outside map boundaries at"
 							 << " (" << pos_x << "," << pos_y << "," << pos_z << ")";
+
+			_invalidIds.push_back(_nodeId);
 		}
-		++nodeId;
+
+		++_nodeId;
 	}
 
 	if (ifstr.eof() == false)
@@ -2673,6 +2685,145 @@ void BattlescapeGenerator::loadRouteFile( // private.
 	}
 	ifstr.close();
 }
+
+/**
+ * Shuttles nodeIds downward to account for invalid (out-of-bounds) nodes and
+ * fixes any Link-IDs that need to be changed.
+ */
+void BattlescapeGenerator::decrNodeIds() // private.
+{
+	_nodeId = 0u; // safety.
+
+	int id;
+
+	for (std::vector<Node*>::const_iterator
+			i  = _battleSave->getNodes()->begin();
+			i != _battleSave->getNodes()->end();
+			++i)
+	{
+		id = (*i)->getId();
+		for (std::vector<int>::const_iterator // fix NodeIDs ->
+				j  = _invalidIds.begin();
+				j != _invalidIds.end();
+				++j)
+		{
+			if (*j <= id)
+				--id;
+			else
+				break;
+		}
+		(*i)->setId(id);
+
+		for (std::vector<int>::iterator // fix LinkIDs ->
+				j  = (*i)->getLinks()->begin();
+				j != (*i)->getLinks()->end();
+				++j)
+		{
+			for (std::vector<int>::const_reverse_iterator	// reversed so that a lesser value of (*k) doesn't knock
+					k  = _invalidIds.rbegin();				// (*j)'s ID down before the latter gets tested for equality
+					k != _invalidIds.rend();
+					++k)
+			{
+				if (*k == *j)
+				{
+					*j = -1;
+					break;
+				}
+
+				if (*k < *j)
+					--(*j);
+			}
+		}
+	}
+
+	_invalidIds.clear(); // safety.
+}
+/* void BattlescapeGenerator::decrNodeIds() // private. <- debug version ->
+{
+	_nodeId = 0u; // safety.
+
+	Log(LOG_INFO) << "";
+	Log(LOG_INFO) << "BattlescapeGenerator::decrNodeIds()";
+	for (std::vector<int>::const_iterator // debug ->
+			j  = _invalidIds.begin();
+			j != _invalidIds.end();
+			++j)
+	{
+		Log(LOG_INFO) << "invalid ID= " << (*j);
+	}
+	Log(LOG_INFO) << "";
+
+	int id;
+
+	for (std::vector<Node*>::const_iterator
+			i  = _battleSave->getNodes()->begin();
+			i != _battleSave->getNodes()->end();
+			++i)
+	{
+		id = (*i)->getId();
+		Log(LOG_INFO) << ". nodeId= " << id;
+
+		for (std::vector<int>::const_iterator
+				j  = _invalidIds.begin();
+				j != _invalidIds.end();
+				++j)
+		{
+			if (*j <= id)
+			{
+				Log(LOG_INFO) << ". change node= " << id << " decr to id= " << (id - 1);
+				--id;
+			}
+			else
+				break;
+		}
+		(*i)->setId(id);
+
+
+		for (std::vector<int>::iterator
+				j  = (*i)->getLinks()->begin();
+				j != (*i)->getLinks()->end();
+				++j)
+		{
+			Log(LOG_INFO) << ". . linkId= " << (*j);
+			for (std::vector<int>::const_reverse_iterator	// reversed so that a lesser value of (*k) doesn't knock
+					k  = _invalidIds.rbegin();				// (*j)'s ID down before the latter gets tested for equality
+					k != _invalidIds.rend();
+					++k)
+			{
+				if (*k == *j)
+				{
+					Log(LOG_INFO) << ". . . " << (*j) << " invalid SET TO -1";
+					*j = -1;
+					break;
+				}
+
+				if (*k < *j)
+				{
+					Log(LOG_INFO) << ". . . " << (*j) << " DECR TO " << (*j - 1);
+					--(*j);
+				}
+			}
+		}
+	}
+
+	_invalidIds.clear(); // safety.
+
+	Log(LOG_INFO) << ""; // debug ->
+	for (std::vector<Node*>::const_iterator
+			i  = _battleSave->getNodes()->begin();
+			i != _battleSave->getNodes()->end();
+			++i)
+	{
+		Log(LOG_INFO) << "id= " << (*i)->getId();
+		for (std::vector<int>::iterator
+				j  = (*i)->getLinks()->begin();
+				j != (*i)->getLinks()->end();
+				++j)
+		{
+			Log(LOG_INFO) << ". link= " << (*j);
+		}
+	}
+} */
 
 /**
  * Fills power-sources with aLien-fuel objects.
@@ -2816,7 +2967,7 @@ void BattlescapeGenerator::runFakeInventory(
 void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const directives) // private.
 {
 	//Log(LOG_INFO) << "generateMap, terraRule = " << _terrainRule->getType() << " script = " << _terrainRule->getScriptType();
-//	_error = false;
+
 	_testBlock = new MapBlock("testBlock");
 
 	init(); // setup generation vars
@@ -3283,12 +3434,11 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 		}
 	}
 
-	attachNodeLinks();
 
-//	if (_error == true)
-//	{
-//		throw Exception("bGen:generateMap() Map failed to fully generate. See logfile for details.");
-//	}
+	if (_invalidIds.empty() == false)
+		decrNodeIds();
+
+	attachNodeLinks();
 }
 
 /**
@@ -3556,9 +3706,13 @@ void BattlescapeGenerator::attachNodeLinks() // private.
 	size_t
 		x,y;
 
+	const std::vector<Node*>::const_iterator
+		nodesBeg (_battleSave->getNodes()->begin()),
+		nodesEnd (_battleSave->getNodes()->end());
+
 	for (std::vector<Node*>::const_iterator
-			i = _battleSave->getNodes()->begin();
-			i != _battleSave->getNodes()->end();
+			i  = nodesBeg;
+			i != nodesEnd;
 			++i)
 	{
 		x = static_cast<size_t>((*i)->getPosition().x / 10),
@@ -3585,8 +3739,8 @@ void BattlescapeGenerator::attachNodeLinks() // private.
 			borSegs[3u] = _seg[x][y - 1u];
 
 		for (std::vector<int>::iterator
-				j  = (*i)->getNodeLinks()->begin();
-				j != (*i)->getNodeLinks()->end();
+				j  = (*i)->getLinks()->begin();
+				j != (*i)->getLinks()->end();
 				++j)
 		{
 			for (size_t
@@ -3597,15 +3751,15 @@ void BattlescapeGenerator::attachNodeLinks() // private.
 				if (*j == borDirs[dir])
 				{
 					for (std::vector<Node*>::const_iterator
-							k  = _battleSave->getNodes()->begin();
-							k != _battleSave->getNodes()->end();
+							k  = nodesBeg;
+							k != nodesEnd;
 							++k)
 					{
 						if ((*k)->getSegment() == borSegs[dir])
 						{
 							for (std::vector<int>::iterator
-									l  = (*k)->getNodeLinks()->begin();
-									l != (*k)->getNodeLinks()->end();
+									l  = (*k)->getLinks()->begin();
+									l != (*k)->getLinks()->end();
 									++l )
 							{
 								if (*l == borDirs_invert[dir])
@@ -3929,8 +4083,8 @@ bool BattlescapeGenerator::addBlock( // private.
 	const size_t
 		xSize (static_cast<size_t>((block->getSizeX() - 1) / 10)),
 		ySize (static_cast<size_t>((block->getSizeY() - 1) / 10)),
-		xt (static_cast<size_t>(x)),
-		yt (static_cast<size_t>(y));
+		xt    (static_cast<size_t>(x)),
+		yt    (static_cast<size_t>(y));
 
 	for (size_t
 			xd = 0u;

@@ -81,44 +81,44 @@ const int Node::nodeRank[8u][8u]
 Node::Node()
 	:
 		_id(0),
-		_type(0),
-		_rank(0),
-		_patrol(0),
-		_priority(0),
+		_unittype(0),
+		_noderank(0),
+		_patrolpriority(0),
+		_spawnweight(0),
 		_segment(0),
-		_destruct(0),
+		_attackfacility(0),
 		_allocated(false)
 {}
 
 /**
  * Initializes the Node for the battlescape.
- * @param id		- node's ID
- * @param pos		- node's Position
- * @param segment	- for linking nodes
- * @param type		- size and movement type of allowable units
- * @param nodeRank	- rank of allowable units
- * @param patrol	- preferability of the node for patrolling
- * @param destruct	- for BaseDefense objectives
- * @param priority	- preferability of the node for spawning
+ * @param id				- node's ID
+ * @param pos				- node's Position
+ * @param segment			- for linking nodes
+ * @param unittype			- size and movement type of allowable units (used for spawns only)
+ * @param nodeank			- rank of allowable units (used for spawns and patrols)
+ * @param patrolpriority	- preferability of the node for patrolling
+ * @param attackfacility	- lures aLiens to attack their BaseDefense objectives
+ * @param spawnweight		- weight of the node for spawning
  */
 Node::Node(
-		size_t id,
+		int id,
 		Position pos,
 		int segment,
-		int type,
-		int nodeRank,
-		int patrol,
-		int destruct,
-		int priority)
+		int unittype,
+		int noderank,
+		int patrolpriority,
+		int attackfacility,
+		int spawnweight)
 	:
-		_id(static_cast<int>(id)),
+		_id(id),
 		_pos(pos),
 		_segment(segment),
-		_type(type),
-		_rank(nodeRank),
-		_patrol(patrol),
-		_destruct(destruct),
-		_priority(priority),
+		_unittype(unittype),
+		_noderank(noderank),
+		_patrolpriority(patrolpriority),
+		_attackfacility(attackfacility),
+		_spawnweight(spawnweight),
 		_allocated(false)
 {}
 
@@ -134,16 +134,16 @@ Node::~Node()
  */
 void Node::load(const YAML::Node& node)
 {
-	_id			= node["id"]		.as<int>(_id);
-	_pos		= node["position"]	.as<Position>(_pos);
-	_type		= node["type"]		.as<int>(_type);
-	_rank		= node["rank"]		.as<int>(_rank);
-	_patrol		= node["patrol"]	.as<int>(_patrol);
-	_destruct	= node["destruct"]	.as<int>(_destruct);
-	_priority	= node["priority"]	.as<int>(_priority);
-	_allocated	= node["allocated"]	.as<bool>(_allocated);
-	_nodeLinks	= node["links"]		.as<std::vector<int>>(_nodeLinks);
-//	_segment	= node["segment"]	.as<int>(_segment);
+	_id             = node["id"]       .as<int>(_id);
+	_pos            = node["pos"]      .as<Position>(_pos);
+	_unittype       = node["type"]     .as<int>(_unittype);
+	_noderank       = node["rank"]     .as<int>(_noderank);
+	_patrolpriority = node["patrol"]   .as<int>(_patrolpriority);
+	_attackfacility = node["attack"]   .as<int>(_attackfacility);
+	_spawnweight	= node["spawn"]    .as<int>(_spawnweight);
+	_allocated      = node["allocated"].as<bool>(_allocated);
+	_links          = node["links"]    .as<std::vector<int>>(_links);
+//	_segment        = node["segment"]  .as<int>(_segment);
 }
 
 /**
@@ -154,18 +154,27 @@ YAML::Node Node::save() const
 {
 	YAML::Node node;
 
-	node["id"]			= _id;
-	node["position"]	= _pos;
-	node["type"]		= _type;
-	node["rank"]		= _rank;
-	node["patrol"]		= _patrol;
-	node["destruct"]	= _destruct;
-	node["priority"]	= _priority;
-	node["allocated"]	= _allocated;
-	node["links"]		= _nodeLinks;
-//	node["segment"]		= _segment;
+	node["id"]        = _id;
+	node["pos"]       = _pos;
+	node["type"]      = _unittype;
+	node["rank"]      = _noderank;
+	node["patrol"]    = _patrolpriority;
+	node["attack"]    = _attackfacility;
+	node["spawn"]     = _spawnweight;
+	node["allocated"] = _allocated;
+	node["links"]     = _links;
+//	node["segment"]   = _segment;
 
 	return node;
+}
+
+/**
+ * Sets this Node's ID.
+ * @param id - the ID
+ */
+void Node::setId(int id)
+{
+	_id = id;
 }
 
 /**
@@ -183,16 +192,16 @@ int Node::getId() const
  */
 NodeRank Node::getNodeRank() const
 {
-	return static_cast<NodeRank>(_rank);
+	return static_cast<NodeRank>(_noderank);
 }
 
 /**
  * Gets the priority of this Node as a spawnpoint.
  * @return, priority
  */
-int Node::getPriority() const
+int Node::getSpawnWeight() const
 {
-	return _priority;
+	return _spawnweight;
 }
 
 /**
@@ -217,26 +226,27 @@ int Node::getSegment() const
  * Gets this Node's linked Nodes for pathing.
  * @return, pointer to a vector of node-IDs
  */
-std::vector<int>* Node::getNodeLinks()
+std::vector<int>* Node::getLinks()
 {
-	return &_nodeLinks;
+	return &_links;
 }
 
 /**
- * Sets this Node's type.
+ * Sets this Node's type as dangerous to aLiens.
  */
-void Node::setNodeType(int type)
+void Node::setDangerous()
 {
-	_type = type;
+	_unittype |= TYPE_DANGEROUS;
 }
 
 /**
- * Gets this Node's type.
+ * Gets this Node's unittype.
+ * @note Also stores bit-dangerous which disallows its use by aLiens.
  * @return, type
  */
-int Node::getNodeType() const
+int Node::getUnitType() const
 {
-	return _type;
+	return _unittype;
 }
 
 /**
@@ -250,18 +260,11 @@ bool Node::isAllocated() const
 
 /**
  * Sets this Node as allocated.
+ * @param allocated - true to allocate the node (default true)
  */
-void Node::allocateNode()
+void Node::allocate(bool allocated)
 {
-	_allocated = true;
-}
-
-/**
- * Sets this Node as NOT allocated.
- */
-void Node::freeNode()
-{
-	_allocated = false;
+	_allocated = allocated;
 }
 
 /**
@@ -270,7 +273,7 @@ void Node::freeNode()
  */
 bool Node::isAlienTarget() const
 {
-	return (_destruct != 0);
+	return (_attackfacility != 0);
 }
 
 }

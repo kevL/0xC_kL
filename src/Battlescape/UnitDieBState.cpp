@@ -96,14 +96,14 @@ UnitDieBState::UnitDieBState(
 		{
 			case FACTION_HOSTILE:
 				for (std::vector<Node*>::const_iterator // flag nearby Nodes as Type_Dangerous.
-						i = _battleSave->getNodes()->begin();
+						i  = _battleSave->getNodes()->begin();
 						i != _battleSave->getNodes()->end();
 						++i)
 				{
 					if (TileEngine::distance(
 										(*i)->getPosition(),
-										_unit->getPosition()) < 6)
-						(*i)->setNodeType((*i)->getNodeType() | Node::TYPE_DANGEROUS);
+										_unit->getPosition()) < 5)
+						(*i)->setDangerous();
 				}
 				// no break;
 

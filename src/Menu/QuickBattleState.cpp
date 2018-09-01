@@ -85,74 +85,74 @@ QuickBattleState::QuickBattleState()
 		_rules(_game->getRuleset()),
 		_missionTypes(_game->getRuleset()->getDeploymentsList())
 {
-	_window				= new Window(this, 320, 200, 0,0, POPUP_BOTH);
+	_window          = new Window(this, 320, 200, 0,0, POPUP_BOTH);
 
-	_txtTitle			= new Text(320, 17, 0, 9);
+	_txtTitle        = new Text(320, 17, 0, 9);
 
-	_txtMapOptions		= new Text(148, 9, 8, 68);
-	_txtAlienOptions	= new Text(148, 9, 164, 68);
+	_txtMapOptions   = new Text(148, 9, 8, 68);
+	_txtAlienOptions = new Text(148, 9, 164, 68);
 
-	_frameL				= new Frame(148, 96, 8, 78);
-	_frameR				= new Frame(148, 96, 164, 78);
+	_frameL          = new Frame(148, 96, 8, 78);
+	_frameR          = new Frame(148, 96, 164, 78);
 
-	_txtMission			= new Text(100, 9, 8, 30);
-	_cbxMission			= new ComboBox(this, 214, 16, 98, 26);
+	_txtMission      = new Text(100, 9, 8, 30);
+	_cbxMission      = new ComboBox(this, 214, 16, 98, 26);
 
-	_txtCraft			= new Text(100, 9, 8, 50);
-	_cbxCraft			= new ComboBox(this, 106, 16, 98, 46);
-	_btnCraft			= new TextButton(106, 16, 206, 46);
+	_txtCraft        = new Text(100, 9, 8, 50);
+	_cbxCraft        = new ComboBox(this, 106, 16, 98, 46);
+	_btnCraft        = new TextButton(106, 16, 206, 46);
 
-	_txtDarkness		= new Text(120, 9, 22, 83);
-	_slrDarkness		= new Slider(120, 16, 22, 93);
+	_txtDarkness     = new Text(120, 9, 22, 83);
+	_slrDarkness     = new Slider(120, 16, 22, 93);
 
-	_txtTerrain			= new Text(120, 9, 22, 113);
-	_cbxTerrain			= new ComboBox(this, 140, 16, 12, 123, 5);
+	_txtTerrain      = new Text(120, 9, 22, 113);
+	_cbxTerrain      = new ComboBox(this, 140, 16, 12, 123, 5);
 
-	_txtDifficulty		= new Text(120, 9, 178, 83);
-	_cbxDifficulty		= new ComboBox(this, 120, 16, 178, 93);
+	_txtDifficulty   = new Text(120, 9, 178, 83);
+	_cbxDifficulty   = new ComboBox(this, 120, 16, 178, 93);
 
-	_txtAlienRace		= new Text(120, 9, 178, 113);
-	_cbxAlienRace		= new ComboBox(this, 120, 16, 178, 123);
+	_txtAlienRace    = new Text(120, 9, 178, 113);
+	_cbxAlienRace    = new ComboBox(this, 120, 16, 178, 123);
 
-	_txtAlienTech		= new Text(120, 9, 178, 143);
-	_slrAlienTech		= new Slider(120, 16, 178, 153);
+	_txtAlienTech    = new Text(120, 9, 178, 143);
+	_slrAlienTech    = new Slider(120, 16, 178, 153);
 
-	_btnCancel			= new TextButton(75, 16,  10, 176);
-	_btnGenerate		= new TextButton(75, 16,  85, 176);
-	_btnRandom			= new TextButton(75, 16, 160, 176);
-	_btnOk				= new TextButton(75, 16, 235, 176);
+	_btnCancel       = new TextButton(75, 16,  10, 176);
+	_btnGenerate     = new TextButton(75, 16,  85, 176);
+	_btnRandom       = new TextButton(75, 16, 160, 176);
+	_btnOk           = new TextButton(75, 16, 235, 176);
 
 	setInterface("newBattleMenu");
 
-	add(_window,			"window",	"newBattleMenu");
-	add(_txtTitle,			"heading",	"newBattleMenu");
-	add(_txtMapOptions,		"heading",	"newBattleMenu");
-	add(_frameL,			"frames",	"newBattleMenu");
-	add(_txtAlienOptions,	"heading",	"newBattleMenu");
-	add(_frameR,			"frames",	"newBattleMenu");
+	add(_window,          "window",  "newBattleMenu");
+	add(_txtTitle,        "heading", "newBattleMenu");
+	add(_txtMapOptions,   "heading", "newBattleMenu");
+	add(_frameL,          "frames",  "newBattleMenu");
+	add(_txtAlienOptions, "heading", "newBattleMenu");
+	add(_frameR,          "frames",  "newBattleMenu");
 
-	add(_txtMission,		"text",		"newBattleMenu");
-	add(_txtCraft,			"text",		"newBattleMenu");
-	add(_btnCraft,			"button1",	"newBattleMenu");
+	add(_txtMission,      "text",    "newBattleMenu");
+	add(_txtCraft,        "text",    "newBattleMenu");
+	add(_btnCraft,        "button1", "newBattleMenu");
 
-	add(_txtDarkness,		"text",		"newBattleMenu");
-	add(_slrDarkness,		"button1",	"newBattleMenu");
-	add(_txtTerrain,		"text",		"newBattleMenu");
-	add(_txtDifficulty,		"text",		"newBattleMenu");
-	add(_txtAlienRace,		"text",		"newBattleMenu");
-	add(_txtAlienTech,		"text",		"newBattleMenu");
-	add(_slrAlienTech,		"button1",	"newBattleMenu");
+	add(_txtDarkness,     "text",    "newBattleMenu");
+	add(_slrDarkness,     "button1", "newBattleMenu");
+	add(_txtTerrain,      "text",    "newBattleMenu");
+	add(_txtDifficulty,   "text",    "newBattleMenu");
+	add(_txtAlienRace,    "text",    "newBattleMenu");
+	add(_txtAlienTech,    "text",    "newBattleMenu");
+	add(_slrAlienTech,    "button1", "newBattleMenu");
 
-	add(_btnCancel,			"button2",	"newBattleMenu");
-	add(_btnGenerate,		"button2",	"newBattleMenu");
-	add(_btnRandom,			"button2",	"newBattleMenu");
-	add(_btnOk,				"button2",	"newBattleMenu");
+	add(_btnCancel,       "button2", "newBattleMenu");
+	add(_btnGenerate,     "button2", "newBattleMenu");
+	add(_btnRandom,       "button2", "newBattleMenu");
+	add(_btnOk,           "button2", "newBattleMenu");
 
-	add(_cbxTerrain,		"button1",	"newBattleMenu");
-	add(_cbxAlienRace,		"button1",	"newBattleMenu");
-	add(_cbxDifficulty,		"button1",	"newBattleMenu");
-	add(_cbxCraft,			"button1",	"newBattleMenu");
-	add(_cbxMission,		"button1",	"newBattleMenu");
+	add(_cbxTerrain,      "button1", "newBattleMenu");
+	add(_cbxAlienRace,    "button1", "newBattleMenu");
+	add(_cbxDifficulty,   "button1", "newBattleMenu");
+	add(_cbxCraft,        "button1", "newBattleMenu");
+	add(_cbxMission,      "button1", "newBattleMenu");
 
 	centerSurfaces();
 
@@ -166,15 +166,15 @@ QuickBattleState::QuickBattleState()
 	_frameL->setThickness(3);
 	_frameR->setThickness(3);
 
-	_txtMapOptions->	setText(tr("STR_MAP_OPTIONS"));
-	_txtAlienOptions->	setText(tr("STR_ALIEN_OPTIONS"));
-	_txtMission->		setText(tr("STR_MISSION"));
-	_txtCraft->			setText(tr("STR_CRAFT"));
-	_txtDarkness->		setText(tr("STR_MAP_DARKNESS"));
-	_txtTerrain->		setText(tr("STR_MAP_TERRAIN"));
-	_txtDifficulty->	setText(tr("STR_DIFFICULTY"));
-	_txtAlienRace->		setText(tr("STR_ALIEN_RACE"));
-	_txtAlienTech->		setText(tr("STR_ALIEN_TECH_LEVEL"));
+	_txtMapOptions  ->setText(tr("STR_MAP_OPTIONS"));
+	_txtAlienOptions->setText(tr("STR_ALIEN_OPTIONS"));
+	_txtMission     ->setText(tr("STR_MISSION"));
+	_txtCraft       ->setText(tr("STR_CRAFT"));
+	_txtDarkness    ->setText(tr("STR_MAP_DARKNESS"));
+	_txtTerrain     ->setText(tr("STR_MAP_TERRAIN"));
+	_txtDifficulty  ->setText(tr("STR_DIFFICULTY"));
+	_txtAlienRace   ->setText(tr("STR_ALIEN_RACE"));
+	_txtAlienTech   ->setText(tr("STR_ALIEN_TECH_LEVEL"));
 
 	_cbxMission->setOptions(_missionTypes);
 	_cbxMission->setBackgroundFill(BROWN_D);
@@ -182,7 +182,7 @@ QuickBattleState::QuickBattleState()
 
 	const std::vector<std::string>& allCraft (_rules->getCraftsList());
 	for (std::vector<std::string>::const_iterator
-			i = allCraft.begin();
+			i  = allCraft.begin();
 			i != allCraft.end();
 			++i)
 	{
@@ -223,14 +223,14 @@ QuickBattleState::QuickBattleState()
 	_btnRandom->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnRandClick));
 
 	_btnOk->setText(tr("STR_COMBAT_UC"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&QuickBattleState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&QuickBattleState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnOkClick),
 							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&QuickBattleState::btnCancelClick));
+	_btnCancel->onMouseClick(   static_cast<ActionHandler>(&QuickBattleState::btnCancelClick));
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnCancelClick),
 								Options::keyCancel);
 
@@ -297,7 +297,7 @@ void QuickBattleState::configLoad(const std::string& file)
 				{
 					_craft = _base->getCrafts()->front();
 					for (std::map<std::string, int>::iterator
-							i = _craft->getCraftItems()->getContents()->begin();
+							i  = _craft->getCraftItems()->getContents()->begin();
 							i != _craft->getCraftItems()->getContents()->end();
 							++i)
 					{
@@ -356,15 +356,15 @@ void QuickBattleState::configSave(const std::string& file)
 	YAML::Emitter out;
 
 	YAML::Node node;
-	node["mission"]		= _cbxMission->getSelected();
-	node["craft"]		= _cbxCraft->getSelected();
-	node["darkness"]	= _slrDarkness->getValue();
-	node["terrain"]		= _cbxTerrain->getSelected();
-	node["alienRace"]	= _cbxAlienRace->getSelected();
-	node["difficulty"]	= _cbxDifficulty->getSelected();
-	node["alienTech"]	= _slrAlienTech->getValue();
-	node["base"]		= _base->save();
-	node["rng"]			= RNG::getSeed();
+	node["mission"]    = _cbxMission->getSelected();
+	node["craft"]      = _cbxCraft->getSelected();
+	node["darkness"]   = _slrDarkness->getValue();
+	node["terrain"]    = _cbxTerrain->getSelected();
+	node["alienRace"]  = _cbxAlienRace->getSelected();
+	node["difficulty"] = _cbxDifficulty->getSelected();
+	node["alienTech"]  = _slrAlienTech->getValue();
+	node["base"]       = _base->save();
+	node["rng"]        = RNG::getSeed();
 	out << node;
 
 	ofstr << out.c_str();
@@ -388,7 +388,7 @@ void QuickBattleState::configCreate()
 	_base->setLabel(L"tactical");
 
 	for (std::vector<Craft*>::const_iterator	// Clear and generate Craft.
-			i = _base->getCrafts()->begin();	// NOTE: There's actually only ever 1 Craft at the quick-base.
+			i  = _base->getCrafts()->begin();	// NOTE: There's actually only ever 1 Craft at the quick-base.
 			i != _base->getCrafts()->end();
 			++i)
 	{
@@ -418,7 +418,7 @@ void QuickBattleState::configCreate()
 void QuickBattleState::resetSoldiers()
 {
 	for (std::vector<Soldier*>::const_iterator
-			i = _base->getSoldiers()->begin();
+			i  = _base->getSoldiers()->begin();
 			i != _base->getSoldiers()->end();
 			++i)
 	{
@@ -446,7 +446,7 @@ void QuickBattleState::resetSoldiers()
 
 		stats = sol->getCurrentStats();
 		for (int
-				j = 0;		// promote rank and stats
+				j  = 0;		// promote rank and stats
 				j != 13;	// arbitrary iterations ...
 				++j)
 		{
@@ -465,17 +465,17 @@ void QuickBattleState::resetSoldiers()
 			{
 				hasRookieStats = false;
 
-				stats->tu			+= RNG::generate(0, 6);
-				stats->stamina		+= RNG::generate(0, 6);
-				stats->health		+= RNG::generate(0, 5);
-				stats->bravery		+= RNG::generate(0, 5);
-				stats->reactions	+= RNG::generate(0, 5);
-				stats->firing		+= RNG::generate(0, 7);
-				stats->throwing		+= RNG::generate(0, 6);
-				stats->strength		+= RNG::generate(0, 8);
-				stats->melee		+= RNG::generate(0, 5);
-				stats->psiStrength	+= RNG::generate(0, 4);
-				stats->psiSkill		+= RNG::generate(0,20);
+				stats->tu          += RNG::generate(0, 6);
+				stats->stamina     += RNG::generate(0, 6);
+				stats->health      += RNG::generate(0, 5);
+				stats->bravery     += RNG::generate(0, 5);
+				stats->reactions   += RNG::generate(0, 5);
+				stats->firing      += RNG::generate(0, 7);
+				stats->throwing    += RNG::generate(0, 6);
+				stats->strength    += RNG::generate(0, 8);
+				stats->melee       += RNG::generate(0, 5);
+				stats->psiStrength += RNG::generate(0, 4);
+				stats->psiSkill    += RNG::generate(0,20);
 			}
 		}
 
@@ -483,17 +483,17 @@ void QuickBattleState::resetSoldiers()
 		{
 			stats->bravery = stats->bravery / 10 * 10;
 
-			if (stats->tu			> statCaps.tu)			stats->tu			= statCaps.tu;
-			if (stats->stamina		> statCaps.stamina)		stats->stamina		= statCaps.stamina;
-			if (stats->health		> statCaps.health)		stats->health		= statCaps.health;
-			if (stats->bravery		> statCaps.bravery)		stats->bravery		= statCaps.bravery;
-			if (stats->reactions	> statCaps.reactions)	stats->reactions	= statCaps.reactions;
-			if (stats->firing		> statCaps.firing)		stats->firing		= statCaps.firing;
-			if (stats->throwing		> statCaps.throwing)	stats->throwing		= statCaps.throwing;
-			if (stats->strength		> statCaps.strength)	stats->strength		= statCaps.strength;
-			if (stats->melee		> statCaps.melee)		stats->melee		= statCaps.melee;
-			if (stats->psiStrength	> statCaps.psiStrength)	stats->psiStrength	= statCaps.psiStrength;
-			if (stats->psiSkill		> statCaps.psiSkill)	stats->psiSkill		= statCaps.psiSkill;
+			if (stats->tu          > statCaps.tu)          stats->tu          = statCaps.tu;
+			if (stats->stamina     > statCaps.stamina)     stats->stamina     = statCaps.stamina;
+			if (stats->health      > statCaps.health)      stats->health      = statCaps.health;
+			if (stats->bravery     > statCaps.bravery)     stats->bravery     = statCaps.bravery;
+			if (stats->reactions   > statCaps.reactions)   stats->reactions   = statCaps.reactions;
+			if (stats->firing      > statCaps.firing)      stats->firing      = statCaps.firing;
+			if (stats->throwing    > statCaps.throwing)    stats->throwing    = statCaps.throwing;
+			if (stats->strength    > statCaps.strength)    stats->strength    = statCaps.strength;
+			if (stats->melee       > statCaps.melee)       stats->melee       = statCaps.melee;
+			if (stats->psiStrength > statCaps.psiStrength) stats->psiStrength = statCaps.psiStrength;
+			if (stats->psiSkill    > statCaps.psiSkill)    stats->psiSkill    = statCaps.psiSkill;
 		}
 
 		sol->autoStat();
@@ -519,7 +519,7 @@ void QuickBattleState::resetBaseStores() const // private.
 	const RuleItem* itRule;
 	const std::vector<std::string>& allItems (_rules->getItemsList());
 	for (std::vector<std::string>::const_iterator
-			i = allItems.begin();
+			i  = allItems.begin();
 			i != allItems.end();
 			++i)
 	{
@@ -527,7 +527,7 @@ void QuickBattleState::resetBaseStores() const // private.
 		{
 			craftOrdnance = false;
 			for (std::vector<std::string>::const_iterator
-					j = cwList.begin();
+					j  = cwList.begin();
 					j != cwList.end();
 					++j)
 			{
@@ -566,7 +566,7 @@ void QuickBattleState::resetBaseStores() const // private.
 void QuickBattleState::resetResearchGenerals() const // private.
 {
 	for (std::vector<ResearchGeneral*>::const_iterator
-			i = _playSave->getResearchGenerals().begin();
+			i  = _playSave->getResearchGenerals().begin();
 			i != _playSave->getResearchGenerals().end();
 			++i)
 	{
@@ -717,8 +717,8 @@ void QuickBattleState::btnCancelClick(Action*)
  */
 void QuickBattleState::btnRandClick(Action*)
 {
-//	configCreate();	// <- Do NOT reset Base/Craft/Soldiers here.
-	RNG::setSeed();	// TODO: Add buttons to run configCreate() and/or reset RNG-seed.
+//	configCreate(); // <- Do NOT reset Base/Craft/Soldiers here.
+	RNG::setSeed(); // TODO: Add buttons to run configCreate() and/or reset RNG-seed.
 					// -> else do it the old-fashioned way and delete 'battle.cfg'
 
 	_cbxMission->setSelected(RNG::pick(_missionTypes.size()));
@@ -771,7 +771,7 @@ void QuickBattleState::cbxMissionChange(Action*)
 		_base->setQuickDefense(false);
 
 		for (std::vector<Vehicle*>::const_iterator
-				i = _craft->getVehicles()->begin();
+				i  = _craft->getVehicles()->begin();
 				i != _craft->getVehicles()->end();
 				++i)
 		{
@@ -815,7 +815,7 @@ void QuickBattleState::cbxMissionChange(Action*)
 
 		// debug:
 		//for (std::vector<std::string>::const_iterator
-		//		i = globeTerrains.begin();
+		//		i  = globeTerrains.begin();
 		//		i != globeTerrains.end();
 		//		++i)
 		//	Log(LOG_INFO) << ". . . globeTerrain = " << *i;
@@ -824,7 +824,7 @@ void QuickBattleState::cbxMissionChange(Action*)
 	std::set<std::string> terrains;
 
 	for (std::vector<std::string>::const_iterator
-			i = deployTerrains.begin();
+			i  = deployTerrains.begin();
 			i != deployTerrains.end();
 			++i)
 	{
@@ -833,7 +833,7 @@ void QuickBattleState::cbxMissionChange(Action*)
 	}
 
 	for (std::vector<std::string>::const_iterator
-		i = globeTerrains.begin();
+		i  = globeTerrains.begin();
 		i != globeTerrains.end();
 		++i)
 	{
@@ -845,7 +845,7 @@ void QuickBattleState::cbxMissionChange(Action*)
 
 	std::vector<std::string> terrainOptions;
 	for (std::set<std::string>::const_iterator
-			i = terrains.begin();
+			i  = terrains.begin();
 			i != terrains.end();
 			++i)
 	{
@@ -882,7 +882,7 @@ void QuickBattleState::cbxCraftChange(Action*)
 	{
 		std::vector<Soldier*>* const soldiers (_base->getSoldiers()); // NOTE: Perhaps should not reverse-iterate since AutoStat ran.
 		for (std::vector<Soldier*>::const_reverse_iterator
-				rit = soldiers->rbegin();
+				rit  = soldiers->rbegin();
 				rit != soldiers->rend() && solCur > solCap;
 				++rit)
 		{

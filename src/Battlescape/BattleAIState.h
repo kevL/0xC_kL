@@ -61,32 +61,32 @@ class BattleAIState
 
 protected:
 	static const int
-		FAST_PASS_THRESHOLD		= 100,
-		BASE_SUCCESS_SYSTEMATIC	= 100,
-		BASE_SUCCESS_DESPERATE	= 115,
-		BASE_SUCCESS			=  73,
-		EXPOSURE_PENALTY		=  12,
-		FIRE_PENALTY			=  37,
-		COVER_BONUS				=  29,
-		SMOKE_BONUS				=   3,
-		CUR_TILE_PREF			=  10,
+		FAST_PASS_THRESHOLD     = 100,
+		BASE_SUCCESS_SYSTEMATIC = 100,
+		BASE_SUCCESS_DESPERATE  = 115,
+		BASE_SUCCESS            =  73,
+		EXPOSURE_PENALTY        =  12,
+		FIRE_PENALTY            =  37,
+		COVER_BONUS             =  29,
+		SMOKE_BONUS             =   3,
+		CUR_TILE_PREF           =  10,
 
-		ESCAPE_FAIL				= -100000,
+		ESCAPE_FAIL             = -100000,
 
-		TRACE_DIR				= 10,
+		TRACE_DIR               = 10,
 
-		CAP_DIST				= 1000,
-		CAP_DIST_SQR			= 1000000;
+		CAP_DIST                = 1000,
+		CAP_DIST_SQR            = 1000000;
 
 	static const Uint8
-		TRACE_RED		=  3u,
-		TRACE_GREEN		=  4u,
-		TRACE_LIME		=  5u,
-		TRACE_ORANGE	=  7u,
-		TRACE_BLUE		=  8u,
-		TRACE_YELLOW	= 10u,
-		TRACE_BROWN		= 11u,
-		TRACE_PURPLE	= 13u;
+		TRACE_RED    =  3u,
+		TRACE_GREEN  =  4u,
+		TRACE_LIME   =  5u,
+		TRACE_ORANGE =  7u,
+		TRACE_BLUE   =  8u,
+		TRACE_YELLOW = 10u,
+		TRACE_BROWN  = 11u,
+		TRACE_PURPLE = 13u;
 
 	int
 		_spottersOrigin,

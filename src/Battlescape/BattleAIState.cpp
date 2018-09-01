@@ -62,17 +62,16 @@ BattleAIState::~BattleAIState() // virtual.
  */
 void BattleAIState::load(const YAML::Node& node) // virtual
 {
-	_AIMode = static_cast<AIMode>(node["AIMode"].as<int>(0));
+	_AIMode = static_cast<AIMode>(node["mode"].as<int>(0));
 
-	const int
-		startNodeId	= node["startNode"]	.as<int>(-1),
-		stopNodeId	= node["stopNode"]	.as<int>(-1);
+	int nodeId (node["start"].as<int>(-1));
+	if (nodeId != -1)
+		_startNode = _battleSave->getNodes()->at(static_cast<size_t>(nodeId));
 
-	if (startNodeId != -1)
-		_startNode = _battleSave->getNodes()->at(static_cast<size_t>(startNodeId));
+	nodeId = node["stop"].as<int>(-1);
 
-	if (stopNodeId != -1)
-		_stopNode = _battleSave->getNodes()->at(static_cast<size_t>(stopNodeId));
+	if (nodeId != -1)
+		_stopNode = _battleSave->getNodes()->at(static_cast<size_t>(nodeId));
 }
 
 /**
@@ -81,25 +80,25 @@ void BattleAIState::load(const YAML::Node& node) // virtual
  */
 YAML::Node BattleAIState::save() const // virtual.
 {
-	int
-		startNodeId,
-		stopNodeId;
-
-	if (_startNode != nullptr)
-		startNodeId	= _startNode->getId();
-	else
-		startNodeId = -1;
-
-	if (_stopNode != nullptr)
-		stopNodeId = _stopNode->getId();
-	else
-		stopNodeId = -1;
-
 	YAML::Node node;
 
-	node["startNode"]	= startNodeId;
-	node["stopNode"]	= stopNodeId;
-	node["AIMode"]		= static_cast<int>(_AIMode);
+	node["mode"] = static_cast<int>(_AIMode);
+
+	int nodeId;
+
+	if (_startNode != nullptr)
+		nodeId = _startNode->getId();
+	else
+		nodeId = -1;
+
+	node["start"] = nodeId;
+
+	if (_stopNode != nullptr)
+		nodeId = _stopNode->getId();
+	else
+		nodeId = -1;
+
+	node["stop"] = nodeId;
 
 	return node;
 }
