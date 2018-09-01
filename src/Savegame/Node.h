@@ -52,13 +52,13 @@ class Node
 private:
 	bool _allocated;
 	int
-		_id,		// unique identifier
-		_unittype,		// usable by small/large/flying units.
-		_noderank,		// aLien rank that can spawn or path here
-		_patrolpriority,	// desirability of patrolling to - "flags" in .RMP
-		_spawnweight,	// desirability of spawning at - "spawn" in .RMP
-		_segment,	// something to do with nodeLinks; see BattlescapeGenerator::attachNodeLinks() etc.
-		_attackfacility;	// something to do with shooting objectives in BaseDefense missions
+		_id,				// unique identifier
+		_unittype,			// usability by small/large/flying units
+		_noderank,			// aLien rank that can spawn or path here
+		_patrolpriority,	// desirability of patrolling to
+		_spawnweight,		// desirability of spawning at
+		_segment,			// something to do with nodeLinks between MapBlocks; see BattlescapeGenerator::attachNodeLinks() etc.
+		_attackfacility;	// lures aLiens to shoot objectives in BaseDefense missions
 
 	Position _pos;
 
@@ -71,11 +71,11 @@ private:
 			SEG_UFO   = 2000,
 
 			// -> Any=0; Flying=1; Small=2; FlyingLarge=3; Large=4 <- loaded in BattlescapeGenerator::loadRouteFile()
-			TYPE_FLYING      = 0x01, // non-flying unit cannot spawn here when this bit is set; see SavedBattleGame::getSpawnNode()
+			TYPE_SMALLFLYING = 0x01, // non-flying unit cannot spawn here when this bit is set; see SavedBattleGame::getSpawnNode()
 			TYPE_SMALL       = 0x02, // large unit cannot spawn here when this bit is set; see SavedBattleGame::getSpawnNode()
 									 // NOTE: getNodeType() is also used in SavedBattleGame::getPatrolNode() <- ie, it's not about spawning only; it affects patrolling also.
 			TYPE_LARGEFLYING = 0x04, // kL_add
-			TYPE_LARGE       = 0x08, // kL_add (not used... equivalent to Any)
+//			TYPE_LARGE       = 0x08, // kL_add (not used... equivalent to Any)
 			TYPE_DANGEROUS   = 0x10, // kL_changed from 0x04[ie.large] -> an aLien was shot here, stop patrolling to it like an idiot with a deathwish
 
 			nodeRank[8u][8u]; // maps node-ranks (.RMP) to aLiens' ranks
@@ -128,7 +128,7 @@ private:
 		int getUnitType() const;
 
 		/// Gets the 'flags' variable which is really the patrol-priority value.
-		int getPatrol() const
+		int getPatrolPriority() const
 		{ return _patrolpriority; }
 
 		// kL_note: in SavedBattleGame::getPatrolNodes() I changed less-than to greater-than ...

@@ -147,7 +147,7 @@ void CivilianBAIState::setupPatrol() // private.
 	}
 
 	if (_startNode == nullptr)
-		_startNode = _battleSave->getNearestNode(_unit);
+		_startNode = _battleSave->getStartNode(_unit);
 
 	_stopNode = _battleSave->getPatrolNode(true, _unit, _startNode);
 	if (_stopNode == nullptr)

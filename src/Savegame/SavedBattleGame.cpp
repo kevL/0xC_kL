@@ -1909,9 +1909,9 @@ Node* SavedBattleGame::getSpawnNode(
 		int unitRank,
 		BattleUnit* const unit)
 {
-	std::vector<Node*> spawnNodes;
+	std::vector<Node*> nodes;
 	for (std::vector<Node*>::const_iterator
-			i = _nodes.begin();
+			i  = _nodes.begin();
 			i != _nodes.end();
 			++i)
 	{
@@ -1928,35 +1928,35 @@ Node* SavedBattleGame::getSpawnNode(
 					j != 0;
 					--j)
 			{
-				spawnNodes.push_back(*i);
+				nodes.push_back(*i);
 			}
 		}
 	}
 
-	if (spawnNodes.empty() == false)
-		return spawnNodes[RNG::pick(spawnNodes.size())];
+	if (nodes.empty() == false)
+		return nodes[RNG::pick(nodes.size())];
 
 	return nullptr;
 }
 
 /**
  * Finds a suitable Node where a specified BattleUnit can patrol to.
- * @param scout		- true if the unit is scouting
- * @param unit		- pointer to a BattleUnit
- * @param startNode	- pointer to the node that unit is currently at
+ * @param scout	- true if the unit is scouting
+ * @param unit	- pointer to a BattleUnit
+ * @param start	- pointer to the node that unit is currently at
  * @return, pointer to the destination Node
  */
 Node* SavedBattleGame::getPatrolNode(
 		bool scout,
 		BattleUnit* const unit,
-		Node* startNode)
+		Node* start)
 {
-	if (startNode == nullptr)
-		startNode = getNearestNode(unit);
+	if (start == nullptr)
+		start = getStartNode(unit);
 
 	std::vector<Node*>
-		scoutNodes,
-		officerNodes;
+		nodesScout,
+		nodesOfficer;
 	Node* node;
 
 	size_t qtyNodes;
@@ -1970,16 +1970,16 @@ Node* SavedBattleGame::getPatrolNode(
 			i != qtyNodes;
 			++i)
 	{
-		if (scout == true || startNode->getLinks()->at(i) > -1)	// non-scouts need Links to travel along.
-		{														// N-E-S-W directions are never used (linkId's -2,-3,-4,-5).
-			if (scout == true)									// Meaning that non-scouts never leave their spawn-block ...
+		if (scout == true || start->getLinks()->at(i) > -1)	// non-scouts need Links to travel along.
+		{													// N-E-S-W directions are never used (linkId's -2,-3,-4,-5).
+			if (scout == true)								// Meaning that non-scouts never leave their spawn-block ...
 				node = getNodes()->at(i);
 			else
-				node = getNodes()->at(static_cast<size_t>(startNode->getLinks()->at(i)));
+				node = getNodes()->at(static_cast<size_t>(start->getLinks()->at(i)));
 
-			if ((node->getPatrol() != 0										// for non-scouts find a node with a desirability above 0
-					|| node->getNodeRank() > NR_SCOUT
-					|| scout == true)
+			if ((node->getPatrolPriority() != 0								// for non-scouts find a node with a desirability above 0
+					|| scout == true
+					|| node->getNodeRank() > NR_SCOUT)
 				&& node->isAllocated() == false								// check if not allocated
 				&& isNodeType(node, unit)
 				&& setUnitPosition(											// check if unit can be set at this node
@@ -1990,44 +1990,44 @@ Node* SavedBattleGame::getPatrolNode(
 				&& getTile(node->getPosition())->getFire() == 0				// you are not a firefighter; do not patrol into fire
 				&& (getTile(node->getPosition())->getDangerous() == false	// aliens don't run into a grenade blast
 					|| unit->getFaction() != FACTION_HOSTILE)					// but civies do!
-				&& (node != startNode										// scouts push forward
+				&& (node != start											// scouts push forward
 					|| scout == false))											// others can mill around.. ie, stand there.
 			{
 				for (int
-						j = node->getPatrol(); // weight each eligible node by its patrol-Flags.
+						j = node->getPatrolPriority(); // weight each eligible node by its patrol-Flags.
 						j != -1;
 						--j)
 				{
-					scoutNodes.push_back(node);
+					nodesScout.push_back(node);
 
 					if (scout == false
 						&& node->getNodeRank() == Node::nodeRank[static_cast<size_t>(unit->getRankInt())]
 																[0u]) // high-class node here.
 					{
-						officerNodes.push_back(node);
+						nodesOfficer.push_back(node);
 					}
 				}
 			}
 		}
 	}
 
-	if (scoutNodes.empty() == true)
+	if (nodesScout.empty() == true)
 	{
 		if (scout == false && unit->getArmor()->getSize() == 2)
 		{
 //			return Sectopod::CTD();
-			return getPatrolNode(true, unit, startNode);
+			return getPatrolNode(true, unit, start); // recurse w/ scout=true
 		}
 		return nullptr;
 	}
 
 	if (scout == true // picks a random destination
-		|| officerNodes.empty() == true
+		|| nodesOfficer.empty() == true
 		|| RNG::percent(17) == true) // officers can go for a stroll ...
 	{
-		return scoutNodes[RNG::pick(scoutNodes.size())];
+		return nodesScout[RNG::pick(nodesScout.size())];
 	}
-	return officerNodes[RNG::pick(officerNodes.size())];
+	return nodesOfficer[RNG::pick(nodesOfficer.size())];
 }
 
 /**
@@ -2037,21 +2037,27 @@ Node* SavedBattleGame::getPatrolNode(
  * @param unit - pointer to a BattleUnit
  * @return, the nearest Node
  */
-Node* SavedBattleGame::getNearestNode(const BattleUnit* const unit) const
+Node* SavedBattleGame::getStartNode(const BattleUnit* const unit) const
 {
 	Node* node (nullptr);
 	int
 		dist (1000000),
 		distTest;
 
+	const int posZ (unit->getPosition().z);
+	const bool onequad (unit->getArmor()->getSize() == 1);
+
+	// NOTE/TODO: This doesn't check for Flying unit/nodetype - that is it
+	// assumes that non-flying units can start from a flying-only nodetype.
+
 	for (std::vector<Node*>::const_iterator
-			i = _nodes.begin();
+			i  = _nodes.begin();
 			i != _nodes.end();
 			++i)
 	{
-		if (unit->getPosition().z == (*i)->getPosition().z
-			&& (unit->getArmor()->getSize() == 1
-				|| !((*i)->getUnitType() & Node::TYPE_SMALL)))
+		if ((*i)->getPosition().z == posZ
+			&& (onequad == true
+				|| (((*i)->getUnitType() & (Node::TYPE_SMALL | Node::TYPE_SMALLFLYING)) == 0)))
 		{
 			distTest = TileEngine::distSqr(
 									(*i)->getPosition(),
@@ -2085,9 +2091,9 @@ bool SavedBattleGame::isNodeType(
 	{														//		stock nodeType in the code currently.
 		switch (type)
 		{
-			case Node::TYPE_FLYING:							// 1
-				return unit->getMoveTypeUnit() == MT_FLY
-					&& unit->getArmor()->getSize() == 1;
+			case Node::TYPE_SMALLFLYING:					// 1
+				return unit->getArmor()->getSize() == 1
+					&& unit->getMoveTypeUnit() == MT_FLY;
 
 			case Node::TYPE_SMALL:							// 2
 				return unit->getArmor()->getSize() == 1;

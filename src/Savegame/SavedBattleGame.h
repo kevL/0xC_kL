@@ -369,9 +369,9 @@ private:
 		Node* getPatrolNode(
 				bool scout,
 				BattleUnit* const unit,
-				Node* startNode);
+				Node* start);
 		/// Gets the Node considered nearest to a BattleUnit.
-		Node* getNearestNode(const BattleUnit* const unit) const;
+		Node* getStartNode(const BattleUnit* const unit) const;
 		/// Gets if a BattleUnit can use a particular Node.
 		bool isNodeType(
 				const Node* const node,

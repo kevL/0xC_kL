@@ -2612,7 +2612,7 @@ void BattlescapeGenerator::loadRouteFile( // private.
 			attackfacility = static_cast<int>(static_cast<unsigned char>(dataArray[22u]));
 			spawnweight    = static_cast<int>(static_cast<unsigned char>(dataArray[23u]));
 
-			// TYPE_FLYING      = 0x01 -> ref Savegame/Node.h
+			// TYPE_SMALLFLYING = 0x01 -> ref Savegame/Node.h
 			// TYPE_SMALL       = 0x02
 			// TYPE_LARGEFLYING = 0x04
 			// TYPE_LARGE       = 0x08

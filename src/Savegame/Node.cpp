@@ -95,8 +95,8 @@ Node::Node()
  * @param id				- node's ID
  * @param pos				- node's Position
  * @param segment			- for linking nodes
- * @param unittype			- size and movement type of allowable units (used for spawns only)
- * @param nodeank			- rank of allowable units (used for spawns and patrols)
+ * @param unittype			- size and movement type of allowable units (used for spawns and patrols)
+ * @param noderank			- rank of allowable units (used for spawns and patrols)
  * @param patrolpriority	- preferability of the node for patrolling
  * @param attackfacility	- lures aLiens to attack their BaseDefense objectives
  * @param spawnweight		- weight of the node for spawning

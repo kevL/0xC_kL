@@ -62,7 +62,7 @@ BattleAIState::~BattleAIState() // virtual.
  */
 void BattleAIState::load(const YAML::Node& node) // virtual
 {
-	_AIMode = static_cast<AIMode>(node["mode"].as<int>(0));
+	_AIMode = static_cast<AIMode>(node["ai"].as<int>(0));
 
 	int nodeId (node["start"].as<int>(-1));
 	if (nodeId != -1)
@@ -82,7 +82,7 @@ YAML::Node BattleAIState::save() const // virtual.
 {
 	YAML::Node node;
 
-	node["mode"] = static_cast<int>(_AIMode);
+	node["ai"] = static_cast<int>(_AIMode);
 
 	int nodeId;
 
