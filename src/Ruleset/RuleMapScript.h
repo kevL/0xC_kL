@@ -87,14 +87,14 @@ class RuleMapScript
 {
 
 private:
+	size_t _id;
 	int
 		_sizeX,
 		_sizeY,
 		_sizeZ,
-		_executionChance,
-		_executions,
-		_cumulativeFrequency,
-		_label;
+		_percent,
+		_iterations,
+		_frequency;
 
 	TunnelData* _tunnelData;
 
@@ -105,14 +105,14 @@ private:
 
 	std::vector<int>
 		_blocks,
-		_blocksTemp,
-		_conditions,
-		_frequencies,
-		_frequenciesTemp,
+		_blocksTest,
+		_freqs,
+		_freqsTest,
 		_groups,
-		_groupsTemp,
-		_maxUses,
-		_maxUsesTemp;
+		_groupsTest,
+		_limit,
+		_limitTest,
+		_prereqs;
 	std::vector<SDL_Rect*> _rects;
 
 	/// Randomly generates a group from the array.
@@ -152,20 +152,20 @@ private:
 		{ return _sizeZ; };
 
 		/// Get the chances of this directive executing.
-		int chanceOfExecution() const
-		{ return _executionChance; };
+		int getPercent() const
+		{ return _percent; };
 
-		/// Gets the label for this directive.
-		int getLabel() const
-		{ return _label; };
+		/// Gets the ID of this directive.
+		size_t getId() const
+		{ return _id; };
 
 		/// Gets how many times this directive repeats (1 repeat means 2 executions)
-		int getExecutions() const
-		{ return _executions; };
+		int getIterations() const
+		{ return _iterations; };
 
 		/// Gets what conditions apply to this directive.
-		const std::vector<int>* getConditions() const
-		{ return &_conditions; };
+		const std::vector<int>* getPrereqs() const
+		{ return &_prereqs; };
 
 		/// Gets the groups-vector for iteration.
 		const std::vector<int>* getGroups() const

@@ -2720,7 +2720,7 @@ void BattlescapeGenerator::decrNodeIds() // private.
 				++j)
 		{
 			for (std::vector<int>::const_reverse_iterator	// reversed so that a lesser value of (*k) doesn't knock
-					k  = _invalidIds.rbegin();				// (*j)'s ID down before the latter gets tested for equality
+					k  = _invalidIds.rbegin();				// (*j)'s ID down before they get tested for equality
 					k != _invalidIds.rend();
 					++k)
 			{
@@ -2979,8 +2979,6 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 		dataSetIds     (0),
 		dataSetIds_ufo (0);
 
-	std::map<int, bool> conditions; // an array to track each directive's success/failure
-
 	for (std::vector<MapDataSet*>::const_iterator
 			i  = _terrainRule->getMapDataSets()->begin();
 			i != _terrainRule->getMapDataSets()->end();
@@ -3000,7 +2998,8 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 	if (_battleSave->getTacType() == TCT_BASEDEFENSE) // this mission-type is "hard-coded" in terms of map-layout
 		generateBaseMap();
 
-	bool success;
+
+	std::map<size_t, bool> results; // an array to track each directive's success/failure
 
 	for (std::vector<RuleMapScript*>::const_iterator // process script-directives
 			i  = directives->begin();
@@ -3008,26 +3007,29 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 			++i)
 	{
 		//Log(LOG_INFO) << "do script Directive type= " << (int)(*i)->getType();
-		if ((*i)->getLabel() != 0
-			&& conditions.find((*i)->getLabel()) != conditions.end())
+		if ((*i)->getId() != 0u
+			&& results.find((*i)->getId()) != results.end())
 		{
-			throw Exception("bGen:generateMap() Multiple directives share the same label.");
+			throw Exception("bGen:generateMap() Multiple directives have an identical ID.");
 		}
 
-		success = conditions[(*i)->getLabel()] = false;
+		bool& success = results[(*i)->getId()] = false;
 
 		bool doit (true);
-		if ((*i)->getConditions()->empty() == false) // if this command runs conditionally on the failures or successes of previous commands
+		if ((*i)->getPrereqs()->empty() == false) // if this command runs conditionally on the failures or successes of previous commands
 		{
+			size_t id;
+
 			for (std::vector<int>::const_iterator // compare the corresponding entries in the success/failure vector
-					j  = (*i)->getConditions()->begin();
-					j != (*i)->getConditions()->end();
+					j  = (*i)->getPrereqs()->begin();
+					j != (*i)->getPrereqs()->end();
 					++j)
 			{
-				if (conditions.find(std::abs(*j)) != conditions.end())	// positive numbers indicate conditional on success, negative means conditional on failure
-				{														// ie: [1,-2] means this command only runs if command 1 succeeded and command 2 failed.
-					if (   (*j > 0 && conditions[*j] == false)
-						|| (*j < 0 && conditions[std::abs(*j)] == true))
+				id = static_cast<size_t>(std::abs(*j));
+				if (results.find(id) != results.end())	// positive numbers indicate conditional on success, negative means conditional on failure
+				{										// ie: [1,-2] means this command only runs if command 1 succeeded and command 2 failed.
+					if (   (*j > 0 && results[id] == false)
+						|| (*j < 0 && results[id] == true))
 					{
 						doit = false;
 						break;
@@ -3035,20 +3037,20 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 				}
 				else
 				{
-					throw Exception("bGen:generateMap() Conditional directive expected a label that did not exist before the directive.");
+					throw Exception("bGen:generateMap() Directive expected a prerequisite directive that does not exist.");
 				}
 			}
 		}
 
 		if (doit == true
-			&& RNG::percent((*i)->chanceOfExecution()) == true) // if there's a chance a command will/won't execute by design take that into account here
+			&& RNG::percent((*i)->getPercent()) == true) // if there's a chance a command will/won't execute by design take that into account here
 		{
 			//Log(LOG_INFO) << " execution TRUE";
 			(*i)->init(); // initialize the block selection arrays
 
 			for (int // each command can be attempted multiple times since randomization within the rects may occur
 					j = 0;
-					j != (*i)->getExecutions();
+					j != (*i)->getIterations();
 					++j)
 			{
 				MapBlock* block;
@@ -3065,7 +3067,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 											block->getSizeX(),
 											block->getSizeY()) == true)
 						{
-							success |= addBlock(x,y, block) == true;
+							success |= (addBlock(x,y, block) == true);
 						}
 						break;
 
@@ -3196,7 +3198,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 											block->getSizeX(),
 											block->getSizeY()) == true)
 							{
-								success |= addBlock(x,y, block) == true; // fill area will succeed if even one block is added
+								success |= (addBlock(x,y, block) == true); // fill area will succeed if even one block is added
 							}
 							else
 								break;
@@ -3242,7 +3244,7 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 											if (*z < static_cast<int>(_terrainRule->getMapBlocks()->size()))
 												success = (_blocks[static_cast<size_t>(x)]
 																  [static_cast<size_t>(y)] == _terrainRule->getMapBlocks()
-																												->at(static_cast<size_t>(*z)));
+																											->at(static_cast<size_t>(*z)));
 										}
 									}
 									else // wildcard - don't care what block it is, just wanna know if there's a block here

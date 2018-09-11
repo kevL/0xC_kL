@@ -38,10 +38,10 @@ RuleMapScript::RuleMapScript()
 		_sizeX(1),
 		_sizeY(1),
 		_sizeZ(0),
-		_executionChance(100),
-		_executions(1),
-		_cumulativeFrequency(0),
-		_label(0),
+		_percent(100),
+		_iterations(1),
+		_frequency(0),
+		_id(0u),
 		_direction(MD_NONE),
 		_tunnelData(nullptr)
 {}
@@ -52,7 +52,7 @@ RuleMapScript::RuleMapScript()
 RuleMapScript::~RuleMapScript()
 {
 	for (std::vector<SDL_Rect*>::const_iterator
-			i = _rects.begin();
+			i  = _rects.begin();
 			i != _rects.end();
 			++i)
 		delete *i;
@@ -111,7 +111,7 @@ void RuleMapScript::load(const YAML::Node& node)
 	if (const YAML::Node& subnode = node["rects"])
 	{
 		for (YAML::const_iterator
-				i = subnode.begin();
+				i  = subnode.begin();
 				i != subnode.end();
 				++i)
 		{
@@ -133,13 +133,13 @@ void RuleMapScript::load(const YAML::Node& node)
 		if (const YAML::Node& data = subnode["MCDReplacements"])
 		{
 			for (YAML::Node::const_iterator
-					i = data.begin();
+					i  = data.begin();
 					i != data.end();
 					++i)
 			{
 				MCDReplacement replacement;
-				replacement.entry = (*i)["entry"].as<int>(-1);
-				replacement.dataSet = (*i)["set"].as<int>(-1);
+				replacement.entry   = (*i)["entry"].as<int>(-1);
+				replacement.dataSet = (*i)["set"]  .as<int>(-1);
 
 				const std::string type ((*i)["type"].as<std::string>());
 				_tunnelData->replacements[type] = replacement;
@@ -147,12 +147,12 @@ void RuleMapScript::load(const YAML::Node& node)
 		}
 	}
 
-	if (const YAML::Node& subnode = node["conditions"])
+	if (const YAML::Node& subnode = node["prereqs"])
 	{
 		if (subnode.Type() == YAML::NodeType::Sequence)
-			_conditions = subnode.as<std::vector<int>>(_conditions);
+			_prereqs = subnode.as<std::vector<int>>(_prereqs);
 		else
-			_conditions.push_back(subnode.as<int>(0));
+			_prereqs.push_back(subnode.as<int>(0));
 	}
 
 	if (const YAML::Node& subnode = node["size"])
@@ -168,7 +168,7 @@ void RuleMapScript::load(const YAML::Node& node)
 
 			size_t j (0u);
 			for (YAML::const_iterator
-					i = subnode.begin();
+					i  = subnode.begin();
 					i != subnode.end() && j != 3u;
 					++i, ++j)
 				*sizes[j] = (*i).as<int>(1);
@@ -184,7 +184,7 @@ void RuleMapScript::load(const YAML::Node& node)
 		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
 			for (YAML::const_iterator
-					i = subnode.begin();
+					i  = subnode.begin();
 					i != subnode.end();
 					++i)
 				_groups.push_back((*i).as<int>(0));
@@ -193,14 +193,14 @@ void RuleMapScript::load(const YAML::Node& node)
 			_groups.push_back(subnode.as<int>(0));
 	}
 
-	size_t selectionSize (_groups.size());
+	size_t choices (_groups.size());
 	if (const YAML::Node& subnode = node["blocks"])
 	{
 		_groups.clear();
 		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
 			for (YAML::const_iterator
-					i = subnode.begin();
+					i  = subnode.begin();
 					i != subnode.end();
 					++i)
 				_blocks.push_back((*i).as<int>(0));
@@ -208,11 +208,11 @@ void RuleMapScript::load(const YAML::Node& node)
 		else
 			_blocks.push_back(subnode.as<int>(0));
 
-		selectionSize = _blocks.size();
+		choices = _blocks.size();
 	}
 
-	_frequencies.resize(selectionSize, 1);
-	_maxUses.resize(selectionSize, -1);
+	_freqs  .resize(choices,  1);
+	_limit.resize(choices, -1);
 
 	if (const YAML::Node& subnode = node["freqs"])
 	{
@@ -220,28 +220,28 @@ void RuleMapScript::load(const YAML::Node& node)
 		{
 			size_t j (0u);
 			for (YAML::const_iterator
-					i = subnode.begin();
-					i != subnode.end() && j != selectionSize;
+					i  = subnode.begin();
+					i != subnode.end() && j != choices;
 					++i, ++j)
-				_frequencies.at(j) = (*i).as<int>(1);
+				_freqs.at(j) = (*i).as<int>(1);
 		}
 		else
-			_frequencies.at(0u) = subnode.as<int>(1);
+			_freqs.at(0u) = subnode.as<int>(1);
 	}
 
-	if (const YAML::Node& subnode = node["maxUses"])
+	if (const YAML::Node& subnode = node["limit"])
 	{
 		if (subnode.Type() == YAML::NodeType::Sequence)
 		{
 			size_t j (0u);
 			for (YAML::const_iterator
-					i = subnode.begin();
-					i != subnode.end() && j != selectionSize;
+					i  = subnode.begin();
+					i != subnode.end() && j != choices;
 					++i, ++j)
-				_maxUses.at(j) = (*i).as<int>(-1);
+				_limit.at(j) = (*i).as<int>(-1);
 		}
 		else
-			_maxUses.at(0u) = subnode.as<int>(-1);
+			_limit.at(0u) = subnode.as<int>(-1);
 	}
 
 	if (const YAML::Node& subnode = node["direction"])
@@ -269,10 +269,10 @@ void RuleMapScript::load(const YAML::Node& node)
 		}
 	}
 
-	_executionChance	= node["executionChance"]	.as<int>(_executionChance);
-	_executions			= node["executions"]		.as<int>(_executions);
-	_ufoType			= node["ufoType"]			.as<std::string>(_ufoType);
-	_label				= std::abs(node["label"]	.as<int>(_label)); // take no chances, use Head & Shoulders.
+	_percent    = node["percent"]   .as<int>(_percent);
+	_iterations = node["iterations"].as<int>(_iterations);
+	_ufoType    = node["ufoType"]   .as<std::string>(_ufoType);
+	_id         = node["id"]        .as<size_t>(_id);
 }
 
 /**
@@ -280,22 +280,23 @@ void RuleMapScript::load(const YAML::Node& node)
  */
 void RuleMapScript::init()
 {
-	_cumulativeFrequency = 0;
-	_blocksTemp.clear();
-	_groupsTemp.clear();
-	_frequenciesTemp.clear();
-	_maxUsesTemp.clear();
+	_frequency = 0;
+
+	_freqsTest .clear();
+	_blocksTest.clear();
+	_groupsTest.clear();
+	_limitTest .clear();
 
 	for (std::vector<int>::const_iterator
-			i = _frequencies.begin();
-			i != _frequencies.end();
+			i  = _freqs.begin();
+			i != _freqs.end();
 			++i)
-		_cumulativeFrequency += *i;
+		_frequency += *i;
 
-	_blocksTemp = _blocks;
-	_groupsTemp = _groups;
-	_frequenciesTemp = _frequencies;
-	_maxUsesTemp = _maxUses;
+	_freqsTest  = _freqs;
+	_blocksTest = _blocks;
+	_groupsTest = _groups;
+	_limitTest  = _limit;
 }
 
 /**
@@ -310,32 +311,30 @@ int RuleMapScript::getGroup() // private.
 	if (_groups.size() == 0u)
 		return 0;// MBT_DEFAULT; // NOTE: Returning a MapBlockType is ... misleading.
 
-	if (_cumulativeFrequency > 0)
+	if (_frequency > 0)
 	{
 		int pick (RNG::generate(0,
-								_cumulativeFrequency - 1));
+								_frequency - 1));
 
 		for (size_t
 				i = 0u;
-				i != _groupsTemp.size();
+				i != _groupsTest.size();
 				++i)
 		{
-			if (pick < _frequenciesTemp.at(i))
+			if (pick < _freqsTest.at(i))
 			{
-				const int ret (_groupsTemp.at(i));
-				if (_maxUsesTemp.at(i) > 0)
+				const int group (_groupsTest.at(i));
+				if (_limitTest.at(i) > 0 && --_limitTest.at(i) == 0)
 				{
-					if (--_maxUsesTemp.at(i) == 0)
-					{
-						_groupsTemp.erase(_groupsTemp.begin() + static_cast<std::ptrdiff_t>(i));
-						_cumulativeFrequency -= _frequenciesTemp.at(i);
-						_frequenciesTemp.erase(_frequenciesTemp.begin() + static_cast<std::ptrdiff_t>(i));
-						_maxUsesTemp.erase(_maxUsesTemp.begin() + static_cast<std::ptrdiff_t>(i));
-					}
+					_frequency -= _freqsTest.at(i);
+
+					_groupsTest.erase(_groupsTest.begin() + static_cast<std::ptrdiff_t>(i));
+					_freqsTest .erase(_freqsTest .begin() + static_cast<std::ptrdiff_t>(i));
+					_limitTest .erase(_limitTest .begin() + static_cast<std::ptrdiff_t>(i));
 				}
-				return ret;
+				return group;
 			}
-			pick -= _frequenciesTemp.at(i);
+			pick -= _freqsTest.at(i);
 		}
 	}
 	return -1;// MBT_UNDEFINED; // NOTE: Returning a MapBlockType is ... misleading.
@@ -349,30 +348,30 @@ int RuleMapScript::getGroup() // private.
  */
 int RuleMapScript::getBlock() // private.
 {
-	if (_cumulativeFrequency > 0)
+	if (_frequency > 0)
 	{
 		int pick (RNG::generate(0,
-								_cumulativeFrequency - 1));
+								_frequency - 1));
 
 		for (size_t
 				i = 0u;
-				i != _blocksTemp.size();
+				i != _blocksTest.size();
 				++i)
 		{
-			if (pick < _frequenciesTemp.at(i))
+			if (pick < _freqsTest.at(i))
 			{
-				const int ret (_blocksTemp.at(i));
-				if (_maxUsesTemp.at(i) > 0
-					&& --_maxUsesTemp.at(i) == 0)
+				const int block (_blocksTest.at(i));
+				if (_limitTest.at(i) > 0 && --_limitTest.at(i) == 0)
 				{
-					_blocksTemp.erase(_blocksTemp.begin() + static_cast<std::ptrdiff_t>(i));
-					_cumulativeFrequency -= _frequenciesTemp.at(i);
-					_frequenciesTemp.erase(_frequenciesTemp.begin() + static_cast<std::ptrdiff_t>(i));
-					_maxUsesTemp.erase(_maxUsesTemp.begin() + static_cast<std::ptrdiff_t>(i));
+					_frequency -= _freqsTest.at(i);
+
+					_blocksTest.erase(_blocksTest.begin() + static_cast<std::ptrdiff_t>(i));
+					_freqsTest .erase(_freqsTest .begin() + static_cast<std::ptrdiff_t>(i));
+					_limitTest .erase(_limitTest .begin() + static_cast<std::ptrdiff_t>(i));
 				}
-				return ret;
+				return block;
 			}
-			pick -= _frequenciesTemp.at(i);
+			pick -= _freqsTest.at(i);
 		}
 	}
 	return -1;// MBT_UNDEFINED; // NOTE: Returning a MapBlockType is ... misleading.
@@ -392,11 +391,11 @@ MapBlock* RuleMapScript::getNextBlock(const RuleTerrain* const terrainRule)
 										_sizeY * 10,
 										getGroup());
 
-	const int blockId (getBlock());
-	if (blockId != -1// MBT_UNDEFINED) // NOTE: Comparing 'blockId' with a MapBlockType is ... misleading.
-		&& blockId < static_cast<int>(terrainRule->getMapBlocks()->size()))
+	const int block (getBlock());
+	if (block != -1// MBT_UNDEFINED) // NOTE: Comparing 'blockId' with a MapBlockType is ... misleading.
+		&& block < static_cast<int>(terrainRule->getMapBlocks()->size()))
 	{
-		return terrainRule->getMapBlocks()->at(static_cast<size_t>(blockId));
+		return terrainRule->getMapBlocks()->at(static_cast<size_t>(block));
 	}
 	return nullptr;
 }
