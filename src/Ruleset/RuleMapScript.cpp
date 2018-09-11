@@ -211,7 +211,7 @@ void RuleMapScript::load(const YAML::Node& node)
 		choices = _blocks.size();
 	}
 
-	_freqs  .resize(choices,  1);
+	_freqs.resize(choices,  1);
 	_limit.resize(choices, -1);
 
 	if (const YAML::Node& subnode = node["freqs"])

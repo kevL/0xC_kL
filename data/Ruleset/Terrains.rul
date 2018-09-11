@@ -16,19 +16,19 @@ terrains:
       - type: AREA51BASE00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: AREA51BASE01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: AREA51BASE02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: AREA51BASE03
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: AREA51BASE04
         width: 10
         length: 10
@@ -545,7 +545,7 @@ terrains:
       - type: COMRCURBAN19
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: COMRCURBAN20
         width: 10
         length: 10
@@ -560,7 +560,7 @@ terrains:
       - type: CULTA00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA01
         width: 10
         length: 10
@@ -582,7 +582,7 @@ terrains:
       - type: CULTA07
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA08
         width: 10
         length: 10
@@ -595,7 +595,7 @@ terrains:
       - type: CULTA11
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA12
         width: 10
         length: 10
@@ -627,7 +627,7 @@ terrains:
       - type: CULTA00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA01
         width: 10
         length: 10
@@ -649,7 +649,7 @@ terrains:
       - type: CULTA07
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA08
         width: 10
         length: 10
@@ -662,7 +662,7 @@ terrains:
       - type: CULTA11
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA12
         width: 10
         length: 10
@@ -763,15 +763,15 @@ terrains:
       - type: CULTA00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA07
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTA11
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CULTAFARM00
         width: 20
         length: 20
@@ -1062,15 +1062,15 @@ terrains:
       - type: DAWNURBAN50
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DAWNURBAN51
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DAWNURBAN52
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DAWNURBAN53
         width: 10
         length: 10
@@ -1171,15 +1171,15 @@ terrains:
       - type: DESERTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT03
         width: 10
         length: 10
@@ -1236,11 +1236,11 @@ terrains:
       - type: ATLANTDESERT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: ATLANTDESERT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: ATLANTDESERT02
         width: 10
         length: 10
@@ -1283,11 +1283,11 @@ terrains:
       - type: FOREST00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FOREST01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FOREST02
         width: 10
         length: 10
@@ -1329,11 +1329,11 @@ terrains:
       - type: FORESTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FORESTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FORESTMOUNT02
         width: 10
         length: 10
@@ -1510,7 +1510,7 @@ terrains:
       - type: SAVANNADESERT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: GRASSLANDDESERTMOUNT
     script: DESERT
@@ -1522,15 +1522,15 @@ terrains:
       - type: DESERTMOUNT00
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: DESERTMOUNT01
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: DESERTMOUNT02
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: DESERTMOUNT03
         width: 10
         length: 10
@@ -1579,7 +1579,7 @@ terrains:
       - type: SAVANNADESERTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: GRASSLANDFOREST
     script: DESERT
@@ -1590,11 +1590,11 @@ terrains:
       - type: FOREST00
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FOREST01
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FOREST02
         width: 10
         length: 10
@@ -1628,7 +1628,7 @@ terrains:
       - type: SAVANNAFOREST00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: GRASSLANDFORESTMOUNT
     script: DESERT
@@ -1640,11 +1640,11 @@ terrains:
       - type: FORESTMOUNT00
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FORESTMOUNT01
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FORESTMOUNT02
         width: 10
         length: 10
@@ -1723,7 +1723,7 @@ terrains:
       - type: SAVANNAFORESTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: INDUSTRIALUFO
     script: URBANUFO #was INDUSTRIALUFO
@@ -1784,11 +1784,11 @@ terrains:
       - type: INDUSTRIALURBAN16
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: INDUSTRIALURBAN17
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: INDUSTRIALURBAN
     script: URBAN #was INDUSTRIALURBAN
@@ -1881,15 +1881,15 @@ terrains:
       - type: JUNGLE00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: JUNGLE01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: JUNGLE02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: JUNGLE03
         width: 10
         length: 10
@@ -1927,15 +1927,15 @@ terrains:
       - type: JUNGLEMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: JUNGLEMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: JUNGLEMOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: JUNGLEMOUNT03
         width: 10
         length: 10
@@ -2029,11 +2029,11 @@ terrains:
       - type: MUJUNGLE00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MUJUNGLE01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MUJUNGLE02
         width: 10
         length: 10
@@ -2106,11 +2106,11 @@ terrains:
       - type: URBAN03
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: URBAN04
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: URBAN05
         width: 20
         length: 20
@@ -2235,11 +2235,11 @@ terrains:
       - type: URBAN03
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: URBAN04
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: URBAN05
         width: 20
         length: 20
@@ -2393,15 +2393,15 @@ terrains:
       - type: MOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MOUNT03
         width: 10
         length: 10
@@ -2875,15 +2875,15 @@ terrains:
       - type: DESERTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT03
         width: 10
         length: 10
@@ -2940,15 +2940,15 @@ terrains:
       - type: POLARMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: POLARMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: POLARMOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: POLARMOUNT03
         width: 10
         length: 10
@@ -2999,11 +2999,11 @@ terrains:
       - type: PORTUFO00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: PORTUFO01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: PORTUFO02
         width: 10
         length: 10
@@ -3121,19 +3121,19 @@ terrains:
       - type: PORTURBAN10
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: PORTURBAN11
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: PORTURBAN12
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: PORTURBAN13
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: PORTURBAN14
         width: 10
         length: 10
@@ -3184,7 +3184,7 @@ terrains:
       - type: RAILYARDURBAN00
         width: 10
         length: 10
-        groups: [1, 3] #was 1
+        groups: [0, 1, 3] #was 1
       - type: RAILYARDURBAN01
         width: 10
         length: 10
@@ -3321,7 +3321,7 @@ terrains:
       - type: SAVANNADESERT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: SAVANNADESERTMOUNT
     script: DESERT
@@ -3333,15 +3333,15 @@ terrains:
       - type: DESERTMOUNT00
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: DESERTMOUNT01
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: DESERTMOUNT02
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: DESERTMOUNT03
         width: 10
         length: 10
@@ -3390,7 +3390,7 @@ terrains:
       - type: SAVANNADESERTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: SAVANNAFOREST
     script: DEFAULT
@@ -3401,11 +3401,11 @@ terrains:
       - type: FOREST00
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FOREST01
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FOREST02
         width: 10
         length: 10
@@ -3439,7 +3439,7 @@ terrains:
       - type: SAVANNAFOREST00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: SAVANNAFORESTMOUNT
     script: DESERT
@@ -3451,11 +3451,11 @@ terrains:
       - type: FORESTMOUNT00
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FORESTMOUNT01
         width: 10
         length: 10
-#        groups: [1]
+#        groups: [0, 1]
       - type: FORESTMOUNT02
         width: 10
         length: 10
@@ -3534,7 +3534,7 @@ terrains:
       - type: SAVANNAFORESTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
 
   - type: STEPPEDESERT
     script: DESERT
@@ -3590,15 +3590,15 @@ terrains:
       - type: DESERTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT03
         width: 10
         length: 10
@@ -3653,11 +3653,11 @@ terrains:
       - type: FOREST00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FOREST01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FOREST02
         width: 10
         length: 10
@@ -3699,11 +3699,11 @@ terrains:
       - type: FORESTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FORESTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FORESTMOUNT02
         width: 10
         length: 10
@@ -3834,15 +3834,15 @@ terrains:
       - type: DESERTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT03
         width: 10
         length: 10
@@ -3897,11 +3897,11 @@ terrains:
       - type: FOREST00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FOREST01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FOREST02
         width: 10
         length: 10
@@ -3943,11 +3943,11 @@ terrains:
       - type: FORESTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FORESTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: FORESTMOUNT02
         width: 10
         length: 10
@@ -4078,15 +4078,15 @@ terrains:
       - type: DESERTMOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: DESERTMOUNT03
         width: 10
         length: 10
@@ -4141,15 +4141,15 @@ terrains:
       - type: MOUNT00
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MOUNT01
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MOUNT02
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: MOUNT03
         width: 10
         length: 10
@@ -4619,7 +4619,7 @@ terrains:
       - type: CF03
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CF04
         width: 10
         length: 10
@@ -4668,11 +4668,11 @@ terrains:
       - type: CF103
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CF104
         width: 10
         length: 10
-        groups: [1]
+        groups: [0, 1]
       - type: CF105
         width: 20
         length: 20

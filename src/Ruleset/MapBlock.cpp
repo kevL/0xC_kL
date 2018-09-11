@@ -55,35 +55,35 @@ MapBlock::~MapBlock()
  */
 void MapBlock::load(const YAML::Node& node)
 {
-	_type	= node["type"]	.as<std::string>(_type);
-	_size_x	= node["width"]	.as<int>(_size_x);
-	_size_y	= node["length"].as<int>(_size_y);
-	_size_z	= node["height"].as<int>(_size_z);
+	_type   = node["type"]  .as<std::string>(_type);
+	_size_x = node["width"] .as<int>(_size_x);
+	_size_y = node["length"].as<int>(_size_y);
+	_size_z = node["height"].as<int>(_size_z);
 
 	if (_size_x % 10 != 0 || _size_y % 10 != 0)
 	{
-		std::string error ("Error: MapBlock " + _type + ": Size must be divisible by ten");
+		std::string error ("MapBlock.load() " + _type + ": x/y must be evenly divisible by ten");
 		throw Exception(error);
 	}
 
-	if (const YAML::Node& block = node["groups"])
+	if (const YAML::Node& group = node["groups"])
 	{
 		_groups.clear();
 
-		if (block.Type() == YAML::NodeType::Sequence)
-			_groups = block.as<std::vector<int>>(_groups);
+		if (group.Type() == YAML::NodeType::Sequence)
+			_groups = group.as<std::vector<int>>(_groups);
 		else
-			_groups.push_back(block.as<int>(0));
+			_groups.push_back(group.as<int>(0));
 	}
 
-	if (const YAML::Node& block = node["revealedFloors"])
+	if (const YAML::Node& floor = node["revealedFloors"])
 	{
 		_revealedFloors.clear();
 
-		if (block.Type() == YAML::NodeType::Sequence)
-			_revealedFloors = block.as<std::vector<int>>(_revealedFloors);
+		if (floor.Type() == YAML::NodeType::Sequence)
+			_revealedFloors = floor.as<std::vector<int>>(_revealedFloors);
 		else
-			_revealedFloors.push_back(block.as<int>(0));
+			_revealedFloors.push_back(floor.as<int>(0));
 	}
 
 	_items = node["items"].as<std::map<std::string, std::vector<Position>>>(_items);
