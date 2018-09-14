@@ -563,7 +563,7 @@ void SavedBattleGame::load(
 						getTile(pos)->addItem(it);
 					}
 					else
-						pos = Position(0,0,-1); // cf. BattleItem::save()
+						pos = Position::POS_BELOW; // cf. BattleItem::save()
 				}
 
 				itLists[i]->push_back(it);
@@ -1663,7 +1663,7 @@ void SavedBattleGame::setBattleState(BattlescapeState* const battleState)
 void SavedBattleGame::positionUnits()
 {
 	Position pos;
-	const Position& posBelow (Position(0,0,-1));
+	const Position& posBelow (Position::POS_BELOW);
 
 	for (size_t
 			i = 0u;
@@ -2367,7 +2367,7 @@ bool SavedBattleGame::setUnitPosition(
 			{
 				if (tile->getTerrainLevel() == -24) // NOTE: This never runs ... hopefully.
 				{
-					pos0 += Position(0,0,1);
+					pos0 += Position::POS_ABOVE;
 					x =
 					y = unitSize + 1; // start over.
 					break;
@@ -2426,7 +2426,7 @@ bool SavedBattleGame::setUnitPosition(
 		unit->setPosition(pos0);
 		unit->setUnitTile(
 						getTile(pos0),
-						getTile(pos0 + Position(0,0,-1)));
+						getTile(pos0 + Position::POS_BELOW));
 		for (int
 				x = unitSize;
 				x != -1;
@@ -2491,10 +2491,10 @@ bool SavedBattleGame::placeUnitByPosition(
 }
 //	if (unit->getMovementType() == MT_FLY) // uhh no.
 //	{
-//		Tile* tile = getTile(pos + Position(0,0,1));
+//		Tile* tile (getTile(pos + Position::POS_ABOVE));
 //		if (tile
 //			&& tile->isFloored(getTile(pos)) == false
-//			&& setUnitPosition(unit, pos + Position(0,0,1)))
+//			&& setUnitPosition(unit, pos + Position::POS_ABOVE))
 //		{
 //			return true;
 //		}

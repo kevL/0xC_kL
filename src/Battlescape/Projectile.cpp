@@ -722,7 +722,7 @@ bool Projectile::verifyTarget( // private.
 //		{
 //			const Tile* const tileTest (_battleSave->getTile(posTest));
 //			if (tileTest != nullptr && tileTest->getTileUnit() == nullptr) // must be poking head up from tileBelow
-//				posTest += Position(0,0,-1);
+//				posTest += Position::POS_BELOW;
 //		}
 
 		//Log(LOG_INFO) << ". result = " << _action.result;
@@ -744,11 +744,11 @@ bool Projectile::verifyTarget( // private.
 				{
 					const Tile* const tileTest (_battleSave->getTile(posTest));		// -> from above <-
 					if (tileTest != nullptr && tileTest->getTileUnit() == nullptr)	// must be poking head up from tileBelow
-						posTest += Position(0,0,-1);
+						posTest += Position::POS_BELOW;
 
 					const BattleUnit
 						* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit()),
-						* const testUnit (_battleSave->getTile(posTest)->getTileUnit());
+						* const testUnit   (_battleSave->getTile(posTest)          ->getTileUnit());
 					if (testUnit != targetUnit && testUnit->getUnitVisible() == true)
 						return false;
 					break;

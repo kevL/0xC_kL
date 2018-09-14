@@ -2866,7 +2866,7 @@ void BattleUnit::setUnitTile(
 		Tile* const tile,
 		const Tile* const tileBelow)
 {
-	Log(LOG_INFO) << "BattleUnit::setUnitTile()";
+	//Log(LOG_INFO) << "BattleUnit::setUnitTile()";
 
 	if ((_tile = tile) != nullptr)
 	{
@@ -2876,7 +2876,7 @@ void BattleUnit::setUnitTile(
 				if (_mType == MT_FLY
 					&& _tile->isFloored(tileBelow) == false)
 				{
-					Log(LOG_INFO) << ". set Flying";
+					//Log(LOG_INFO) << ". set Flying";
 					_status = STATUS_FLYING;
 					_floating = true;
 				}
@@ -2918,7 +2918,7 @@ Tile* BattleUnit::getUnitTile() const
  */
 Tile* BattleUnit::getUnitTileBelow() const
 {
-	return _battleSave->getTile(_pos + Position(0,0,-1));
+	return _battleSave->getTile(_pos + Position::POS_BELOW);
 }
 
 /**

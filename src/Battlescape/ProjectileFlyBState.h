@@ -80,7 +80,7 @@ private:
 		ProjectileFlyBState(
 				BattlescapeGame* const battleGame,
 				BattleAction action,
-				Position origin = Position(0,0,-1));
+				Position origin = Position::POS_BELOW);
 		/// Cleans up the ProjectileFlyB state.
 		~ProjectileFlyBState();
 

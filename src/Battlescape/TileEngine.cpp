@@ -573,7 +573,7 @@ void TileEngine::calcFovTiles(const BattleUnit* const unit) const
 
 	if (unit->getHeight(true) - _battleSave->getTile(posUnit)->getTerrainLevel() > 31) // arbitrary 24+8, could use Pathfinding::UNIT_HEIGHT
 	{
-		const Tile* const tileAbove (_battleSave->getTile(posUnit + Position(0,0,1)));
+		const Tile* const tileAbove (_battleSave->getTile(posUnit + Position::POS_ABOVE));
 		if (tileAbove != nullptr && tileAbove->isFloored() == false)
 			++posUnit.z;
 	}
@@ -1697,7 +1697,7 @@ bool TileEngine::checkReactionFire(
 	}
 
 	if (ret == false)
-		_battleSave->rfTriggerOffset(Position(0,0,-1));
+		_battleSave->rfTriggerOffset(Position::POS_BELOW);
 
 	return ret;
 }
@@ -2152,7 +2152,7 @@ void TileEngine::hit(
 			if (targetUnit == nullptr
 				&& _battleSave->getTile(posTarget)->isFloored() == false)
 			{
-				const Tile* const tileBelow (_battleSave->getTile(posTarget + Position(0,0,-1)));
+				const Tile* const tileBelow (_battleSave->getTile(posTarget + Position::POS_BELOW));
 				if (tileBelow != nullptr && tileBelow->getTileUnit() != nullptr)
 					targetUnit = tileBelow->getTileUnit();
 			}
@@ -5318,7 +5318,7 @@ bool TileEngine::validateThrow(
 			&& tile->getMapData(O_FLOOR) != nullptr
 			&& tile->getMapData(O_FLOOR)->isGravLift() == true)
 		{
-			const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position(0,0,-1)));
+			const Tile* const tileBelow (_battleSave->getTile(tile->getPosition() + Position::POS_BELOW));
 			if (tileBelow != nullptr
 				&& tileBelow->getMapData(O_FLOOR) != nullptr
 				&& tileBelow->getMapData(O_FLOOR)->isGravLift() == true)
@@ -5778,14 +5778,14 @@ Tile* TileEngine::getVerticalTile( // private.
 {
 	Tile* tileOrigin (_battleSave->getTile(posOrigin));
 
-	Tile* tileTargetAbove (_battleSave->getTile(posTarget + Position(0,0, 1)));
+	Tile* tileTargetAbove (_battleSave->getTile(posTarget + Position::POS_ABOVE));
 	if (tileTargetAbove != nullptr
 		&& std::abs(tileTargetAbove->getTerrainLevel() - (tileOrigin->getTerrainLevel() + 24)) < 9)
 	{
 		return tileTargetAbove;
 	}
 
-	Tile* tileTargetBelow (_battleSave->getTile(posTarget + Position(0,0,-1)));
+	Tile* tileTargetBelow (_battleSave->getTile(posTarget + Position::POS_BELOW));
 	if (tileTargetBelow != nullptr
 		&& std::abs((tileTargetBelow->getTerrainLevel() + 24) + tileOrigin->getTerrainLevel()) < 9)
 	{

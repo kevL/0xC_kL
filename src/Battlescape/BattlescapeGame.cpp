@@ -385,7 +385,7 @@ void BattlescapeGame::popBattleState()
 //		getTileEngine()->detonateTile(*i);
 //
 //		getTileEngine()->applyGravity(*i);
-//		Tile* const tileAbove (_battleSave->getTile((*i)->getPosition() + Position(0,0,1)));
+//		Tile* const tileAbove (_battleSave->getTile((*i)->getPosition() + Position::POS_ABOVE));
 //		if (tileAbove != nullptr)
 //			getTileEngine()->applyGravity(tileAbove);
 //	}
@@ -655,7 +655,7 @@ void BattlescapeGame::popBattleState()
 		{											// the camera-to-original-position must be handled independently.
 			//Log(LOG_INFO) << ". set Camera to triggerPos " << _battleSave->rfTriggerOffset();
 			getMap()->getCamera()->setMapOffset(_battleSave->rfTriggerOffset());
-			_battleSave->rfTriggerOffset(Position(0,0,-1));
+			_battleSave->rfTriggerOffset(Position::POS_BELOW);
 		}
 
 		if (_battleSave->getSide() == FACTION_PLAYER || _debugPlay == true)
@@ -1077,12 +1077,12 @@ void BattlescapeGame::handleNonTargetAction()
 {
 	if (_playerAction.targeting == false)
 	{
-		_playerAction.posCamera = Position(0,0,-1);
+		_playerAction.posCamera = Position::POS_BELOW;
 
 		static const int
-			WARN_NONE	(0),
-			WARN		(1),
-			WARN_ARG	(2);
+			WARN_NONE (0),
+			WARN      (1),
+			WARN_ARG  (2);
 
 		int showWarning (WARN_NONE);
 
@@ -2528,7 +2528,7 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 										action.posCamera = _battleSave->getBattleState()->getMap()->getCamera()->getMapOffset();
 									}
 									else
-										action.posCamera = Position(0,0,-1);
+										action.posCamera = Position::POS_BELOW;
 
 									const int actionTu (action.actor->getActionTu(action.type, action.weapon));
 									int shots; // tabulate how many shots can be fired before unit runs out of TUs
@@ -2794,7 +2794,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 												_playerAction.actor->getPosition(),
 												_playerAction.posTarget) <= _playerAction.weapon->getRules()->getMaxRange())
 							{
-								_playerAction.posCamera = Position(0,0,-1);
+								_playerAction.posCamera = Position::POS_BELOW;
 
 								stateBPushBack(new ProjectileFlyBState(this, _playerAction)); // TODO: Clear out the redundancy that occurs in ProjFlyB::init().
 
@@ -2848,7 +2848,7 @@ void BattlescapeGame::primaryAction(const Position& pos)
 					_playerAction.posCamera = getMap()->getCamera()->getMapOffset();
 				}
 				else
-					_playerAction.posCamera = Position(0,0,-1);
+					_playerAction.posCamera = Position::POS_BELOW;
 
 				_battleStates.push_back(new ProjectileFlyBState(this, _playerAction));	// TODO: should check for valid LoF/LoT *before* invoking this
 																						// instead of the (flakey) checks in that state. Then conform w/ AI ...
@@ -3204,7 +3204,7 @@ void BattlescapeGame::convertUnit(BattleUnit* potato)
 	potato->setPosition(pos);
 	potato->setUnitTile(
 					_battleSave->getTile(pos),
-					_battleSave->getTile(pos + Position(0,0,-1)));
+					_battleSave->getTile(pos + Position::POS_BELOW));
 	_battleSave->getTile(pos)->setTileUnit(potato); // NOTE: This could, theoretically, be a large potato.
 
 	potato->setUnitDirection(BattleUnit::DIR_FACEPLAYER);

@@ -746,11 +746,11 @@ int Pathfinding::getTuCostPf(
 		rise (false);
 
 	int
-		quadsGoingUp	(0),
-		quadsGoingDown	(0),	// TODO: 3 vars all denoting essentially the same thing ->
-		quadsFalling	(0),	// The problem is they were trying to account for a unit
-		quadsOnAir		(0),	// standing on nothing and a unit stepping onto nothing
-								// simultaneously (during the same 'step'/call/loop).
+		quadsGoingUp   (0),
+		quadsGoingDown (0),	// TODO: 3 vars all denoting essentially the same thing ->
+		quadsFalling   (0),	// The problem is they were trying to account for a unit
+		quadsOnAir     (0),	// standing on nothing and a unit stepping onto nothing
+							// simultaneously (during the same 'step'/call/loop).
 		cost,
 		costTotal (0);
 
@@ -763,9 +763,6 @@ int Pathfinding::getTuCostPf(
 		* tileStopAbove;
 
 	Position posOffset;
-	static const Position
-		& posAbove (Position(0,0, 1)),
-		& posBelow (Position(0,0,-1));
 
 	const int
 		unitSize  (_unit->getArmor()->getSize()),
@@ -840,8 +837,8 @@ int Pathfinding::getTuCostPf(
 
 			Position posOffsetVertical; // this will later be used to re-init the startTile [inits to (0,0,0)]
 
-			tileStopBelow = _battleSave->getTile(*posStop + posOffset + posBelow),
-			tileStopAbove = _battleSave->getTile(*posStop + posOffset + posAbove);
+			tileStopBelow = _battleSave->getTile(*posStop + posOffset + Position::POS_BELOW),
+			tileStopAbove = _battleSave->getTile(*posStop + posOffset + Position::POS_ABOVE);
 
 			if (rise == false
 				&& dir < DIR_UP
@@ -966,7 +963,7 @@ int Pathfinding::getTuCostPf(
 					fall = true;
 					dir = DIR_DOWN;
 
-					*posStop = posStart + posBelow;
+					*posStop = posStart + Position::POS_BELOW;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
 				}
 			}
@@ -1151,7 +1148,7 @@ int Pathfinding::getWallTuCost( // private.
 	{
 		case 0:
 //			if (tileStart->getPosition().z < tileStop->getPosition().z) // don't count wallCosts on the floor below.
-//				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,0,1));
+//				tile = _battleSave->getTile(tileStart->getPosition() + Position::POS_ABOVE);
 //			else
 //				tile = tileStart;
 
@@ -1214,7 +1211,7 @@ int Pathfinding::getWallTuCost( // private.
 
 		case 2:
 //			if (tileStart->getPosition().z > tileStop->getPosition().z)
-//				tile = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1));
+//				tile = _battleSave->getTile(tileStop->getPosition() + Position::POS_ABOVE);
 //			else
 //				tile = tileStop;
 
@@ -1277,7 +1274,7 @@ int Pathfinding::getWallTuCost( // private.
 
 		case 4:
 //			if (tileStart->getPosition().z > tileStop->getPosition().z)
-//				tile = _battleSave->getTile(tileStop->getPosition() + Position(0,0,1));
+//				tile = _battleSave->getTile(tileStop->getPosition() + Position::POS_ABOVE);
 //			else
 //				tile = tileStop;
 
@@ -1340,7 +1337,7 @@ int Pathfinding::getWallTuCost( // private.
 
 		case 6:
 //			if (tileStart->getPosition().z < tileStop->getPosition().z)
-//				tile = _battleSave->getTile(tileStart->getPosition() + Position(0,0,1));
+//				tile = _battleSave->getTile(tileStart->getPosition() + Position::POS_ABOVE);
 //			else
 //				tile = tileStart;
 
@@ -2089,8 +2086,8 @@ UpDownCheck Pathfinding::validateUpDown(
 
 	if (   startTile->getMapData(O_FLOOR) != nullptr
 		&& startTile->getMapData(O_FLOOR)->isGravLift()
-		&& stopTile->getMapData(O_FLOOR) != nullptr
-		&& stopTile->getMapData(O_FLOOR)->isGravLift())
+		&& stopTile ->getMapData(O_FLOOR) != nullptr
+		&& stopTile ->getMapData(O_FLOOR)->isGravLift())
 	{
 		return FLY_GRAVLIFT;
 	}
@@ -2102,7 +2099,6 @@ UpDownCheck Pathfinding::validateUpDown(
 				&& stopTile->isFloored(startTile) == false)
 			|| (dir == DIR_DOWN
 				&& startTile->isFloored(startTile->getTileBelow(_battleSave)) == false))
-//				&& startTile->isFloored(_battleSave->getTile(posStart + Position(0,0,-1))) == false))
 		{
 //			if (launch == true)
 //			{

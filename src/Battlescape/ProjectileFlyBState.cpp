@@ -59,7 +59,7 @@ namespace OpenXcom
  * Sets up the ProjectileFlyBState.
  * @param battleGame	- pointer to the BattlescapeGame
  * @param action		- the current BattleAction (BattlescapeGame.h)
- * @param posOrigin		- origin in tile-space (default Position(0,0,-1))
+ * @param posOrigin		- origin in tile-space (default Position::POS_BELOW)
  */
 ProjectileFlyBState::ProjectileFlyBState(
 		BattlescapeGame* const battleGame,
@@ -773,7 +773,7 @@ void ProjectileFlyBState::think()
 			&& _unit->isOut_t() == false
 			&& (_unit->getMoveTypeUnit() == MT_FLY
 				|| _battleSave->getTile(pos = _unit->getPosition())
-						->isFloored(_battleSave->getTile(pos + Position(0,0,-1))) == true))
+						->isFloored(_battleSave->getTile(pos + Position::POS_BELOW)) == true))
 		{
 			createProjectile(); // autoshot.
 		}
@@ -827,7 +827,7 @@ void ProjectileFlyBState::think()
 							shotCamera->setMapOffset(_action.posCamera);
 							_battleGame->getMap()->draw(); // NOTE: Might not be needed. Ie, the camera-offset seems to take hold okay without.
 						}
-//						_action.posCamera = Position(0,0,-1);
+//						_action.posCamera = Position::POS_BELOW;
 //						_parent->getMap()->invalidate();
 
 						//if (debug) Log(LOG_INFO) << "FlyB: . . . Screw you, State Machine.";

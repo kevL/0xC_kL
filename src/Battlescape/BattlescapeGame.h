@@ -146,7 +146,7 @@ struct BattleAction
 		dash = false;
 		diff = 0;
 		shotCount = 0;
-		posCamera = Position(0,0,-1);
+		posCamera = Position::POS_BELOW;
 		desperate = false;
 		finalFacing = -1;
 		finalAction = false;

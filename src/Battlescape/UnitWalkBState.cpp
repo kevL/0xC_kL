@@ -699,7 +699,7 @@ bool UnitWalkBState::statusWalk() // private.
 		//Log(LOG_INFO) << ". . walkB: keepWalking()";
 		if (_isVisible == true) playMoveSound();
 		_unit->keepWalking( // advances _walkPhase
-						_battleSave->getTile(_unit->getPosition() + Position(0,0,-1)),
+						_battleSave->getTile(_unit->getPosition() + Position::POS_BELOW),
 						_isVisible == true);
 		//Log(LOG_INFO) << ". . walkB: establishTilesLink()";
 		if (_tilesLinked == false) establishTilesLink();
@@ -734,7 +734,7 @@ bool UnitWalkBState::statusWalk() // private.
 
 		_unit->setUnitTile(
 						_battleSave->getTile(pos),
-						_battleSave->getTile(pos + Position(0,0,-1)));
+						_battleSave->getTile(pos + Position::POS_BELOW));
 
 		Tile* tile;
 		const Tile* tileBelow;

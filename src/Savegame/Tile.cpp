@@ -378,9 +378,7 @@ bool Tile::isFloored(const Tile* const tileBelow) const
  */
 Tile* Tile::getTileBelow(const SavedBattleGame* const battleSave) const
 {
-	static const Position& posBelow (Position(0,0,-1));
-
-	return battleSave->getTile(_pos + posBelow);
+	return battleSave->getTile(_pos + Position::POS_BELOW);
 }
 
 /**
@@ -390,9 +388,7 @@ Tile* Tile::getTileBelow(const SavedBattleGame* const battleSave) const
  */
 Tile* Tile::getTileAbove(const SavedBattleGame* const battleSave) const
 {
-	static const Position& posAbove (Position(0,0,+1));
-
-	return battleSave->getTile(_pos + posAbove);
+	return battleSave->getTile(_pos + Position::POS_ABOVE);
 }
 
 /**
@@ -739,7 +735,7 @@ int Tile::destroyTilepart(
 
 	if (tLevel == -24) // destroy the object-part above if all its support was destroyed.
 	{
-		Tile* const tileAbove (battleSave->getTile(_pos + Position(0,0,1)));
+		Tile* const tileAbove (battleSave->getTile(_pos + Position::POS_ABOVE));
 		if (   tileAbove != nullptr
 			&& tileAbove->getMapData(O_FLOOR)  == nullptr
 			&& tileAbove->getMapData(O_OBJECT) != nullptr
