@@ -89,7 +89,7 @@ private:
 //		_kneelReserved,
 		_pacified,
 //		_preBattle,
-		_unitsFalling;
+		_bonk;
 	int
 		_cheatTurn,
 		_groundLevel,
@@ -130,7 +130,7 @@ private:
 		_terrain;
 	std::wstring _operationTitle;
 
-	std::list<BattleUnit*> _fallingUnits;
+	std::list<BattleUnit*> _bonkers;
 
 //	std::set<Tile*> _detonationTiles;
 
@@ -395,21 +395,21 @@ private:
 				const Position& pos,
 				bool large) const;
 
-		/// Adds this unit to the list of falling BattleUnits.
-		bool addFallingUnit(BattleUnit* const unit);
-		/// Gets the list of falling BattleUnits.
-		std::list<BattleUnit*>* getFallingUnits();
-		/// Accesses the '_unitsFalling' bool.
-		bool& unitsFalling();
+		/// Adds this unit to the list of bonking BattleUnits.
+		bool addBonker(BattleUnit* const unit);
+		/// Gets the list of bonking BattleUnits.
+		std::list<BattleUnit*>* getBonkers();
+		/// Accesses the '_bonk' bool.
+		bool& doBonks();
 
 		/// Gets the highest ranked, living unit of faction.
 		const BattleUnit* getHighestRanked(
-				int& qtyAllies,
-				bool isXcom = true) const;
+				int& allies,
+				bool xcom = true) const;
 		/// Gets the morale modifier based on the highest ranked, living xcom/alien unit, or for a unit passed into this function.
 		int getMoraleModifier(
 				const BattleUnit* const unit = nullptr,
-				bool isXcom = true) const;
+				bool xcom = true) const;
 
 		/// Resets the turn-counter.
 		void resetTurnCounter();

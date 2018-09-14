@@ -75,7 +75,8 @@ UnitDieBState::UnitDieBState(
 		_post(0),
 		_isInfected(unit->getSpawnType().empty() == false)
 {
-	//Log(LOG_INFO) << "UnitDieBState::cTor";
+	//Log(LOG_INFO) << "UnitDieBState::cTor " << _unit->getId(); // _action.actor->getId()
+
 //	_unit->clearVisibleTiles();
 //	_unit->clearHostileUnits();
 
@@ -156,6 +157,8 @@ std::string UnitDieBState::getBattleStateLabel() const
  */
 void UnitDieBState::think()
 {
+	//Log(LOG_INFO) << "UnitDieBState::think() " << _unit->getId() << " status= " << BattleUnit::debugStatus(_unit->getUnitStatus());
+
 //	#0
 	if (_isSilent == false) // skip focus and sound.
 	{
@@ -167,9 +170,9 @@ void UnitDieBState::think()
 			&& _unit->hasCriedShotgun() == false
 			&& _unit->getOverDose() == false)
 		{
-//			Log(LOG_INFO) << "";
-//			Log(LOG_INFO) << "UnitDieBState::think() id-" << _unit->getId();
-//			Log(LOG_INFO) << ". call playDeathSound()";
+			//Log(LOG_INFO) << "";
+			//Log(LOG_INFO) << "UnitDieBState::think() id-" << _unit->getId();
+			//Log(LOG_INFO) << ". call playDeathSound()";
 
 			_unit->playDeathSound();
 		}
@@ -191,6 +194,7 @@ void UnitDieBState::think()
 	switch (_unit->getUnitStatus())
 	{
 		case STATUS_TURNING:
+			//Log(LOG_INFO) << ". STATUS_TURNING";
 			if (_isInfected == false)
 			{
 				//Log(LOG_INFO) << "unitDieB: think() set interval " << BattlescapeState::STATE_INTERVAL_DEATHSPIN;
@@ -202,6 +206,7 @@ void UnitDieBState::think()
 			break; // -> STATUS_STANDING
 
 		case STATUS_STANDING:
+			//Log(LOG_INFO) << ". STATUS_STANDING";
 			if (_isInfected == false || _unit->isZombie() == true)
 			{
 				//Log(LOG_INFO) << "unitDieB: think() set interval " << BattlescapeState::STATE_INTERVAL_STANDARD;
@@ -216,14 +221,18 @@ void UnitDieBState::think()
 			break; // -> STATUS_COLLAPSING -> STATUS_DEAD or STATUS_UNCONSCIOUS
 
 		case STATUS_COLLAPSING:
+			//Log(LOG_INFO) << ". STATUS_COLLAPSING";
 			if (_unit->keepCollapsing() == false) break; // -> STATUS_DEAD or STATUS_UNCONSCIOUS
 			// no break;
 
 		case STATUS_DEAD:
 		case STATUS_UNCONSCIOUS:
+			//Log(LOG_INFO) << ". STATUS_DEAD or _UNCONSCIOUS";
 			switch (_post)
 			{
 				case 0:
+					//Log(LOG_INFO) << ". . post 0";
+
 					if (_isInfected == true)
 						_battleGame->convertUnit(_unit);
 
@@ -241,9 +250,11 @@ void UnitDieBState::think()
 
 				case 1:
 				{
+					//Log(LOG_INFO) << ". . post 1";
+
 					bool persistReveal (false);
 					for (std::vector<BattleUnit*>::const_iterator
-							i = _battleSave->getUnits()->begin();
+							i  = _battleSave->getUnits()->begin();
 							i != _battleSave->getUnits()->end();
 							++i)
 					{
@@ -302,6 +313,8 @@ void UnitDieBState::think()
  */
 void UnitDieBState::drop() // private.
 {
+	//Log(LOG_INFO) << "UnitDieBState::drop() " << _unit->getId();
+
 	if (_isPreTactical == false)
 		_battleSave->getBattleState()->showPsiButton(false);	// ... why is this here ...
 																// any reason it's not in, say, the cTor or init() or popBattleState()

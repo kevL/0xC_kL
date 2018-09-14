@@ -46,14 +46,14 @@ namespace OpenXcom
 
 /**
  * Sets up the UnitBonkBState.
- * @param battleGame - pointer to the BattlescapeGame
+ * @param battle - pointer to the BattlescapeGame
  */
-UnitBonkBState::UnitBonkBState(BattlescapeGame* const battleGame)
+UnitBonkBState::UnitBonkBState(BattlescapeGame* const battle)
 	:
-		BattleState(battleGame),
-		_te(battleGame->getTileEngine()),
-		_battleSave(battleGame->getBattleSave()),
-		_unitsBonking(_battleSave->getFallingUnits())
+		BattleState(battle),
+		_te(battle->getTileEngine()),
+		_battleSave(battle->getBattleSave()),
+		_unitsBonking(battle->getBattleSave()->getBonkers())
 {
 	//Log(LOG_INFO) << "UnitBonkBState:cTor";
 }
@@ -118,10 +118,9 @@ void UnitBonkBState::think()
 		posStop,
 		posQuadStart,
 		posQuadStop;
-	const Position& posBelow (Position(0,0,-1));
 
 	for (std::list<BattleUnit*>::const_iterator
-			i = _unitsBonking->begin();
+			i  = _unitsBonking->begin();
 			i != _unitsBonking->end();
 			)
 	{
@@ -135,7 +134,7 @@ void UnitBonkBState::think()
 				case STATUS_WALKING:
 				case STATUS_FLYING:
 					//Log(LOG_INFO) << ". . call keepWalking()";
-					(*i)->keepWalking(_battleSave->getTile(pos + posBelow), true);
+					(*i)->keepWalking(_battleSave->getTile(pos + Position::POS_BELOW), true);
 					_battleGame->getMap()->cacheUnitSprite(*i);
 
 					++i;
@@ -167,7 +166,7 @@ void UnitBonkBState::think()
 				}
 
 				for (std::vector<Tile*>::const_iterator // check each tile for units that need moving out of the way.
-						j = _tilesToBonkInto.begin();
+						j  = _tilesToBonkInto.begin();
 						j != _tilesToBonkInto.end();
 						++j)
 				{
@@ -209,8 +208,8 @@ void UnitBonkBState::think()
 				}
 
 				(*i)->setUnitTile(
-								_battleSave->getTile(pos),
-								_battleSave->getTile(pos + posBelow));
+							_battleSave->getTile(pos),
+							_battleSave->getTile(pos + Position::POS_BELOW));
 				for (int // update tiles moved to.
 						x = quads;
 						x != -1;
@@ -234,11 +233,12 @@ void UnitBonkBState::think()
 						if (canFall(*i) == true)
 						{
 							//Log(LOG_INFO) << ". . still falling -> startWalking()";
-							posStop = pos + posBelow;
+							posStop = pos + Position::POS_BELOW;
 							(*i)->startWalking(
 											Pathfinding::DIR_DOWN,
 											posStop,
-											_battleSave->getTile(posStop));
+											_battleSave->getTile(pos));
+//											_battleSave->getTile(posStop));
 
 							(*i)->setCacheInvalid();
 							_battleGame->getMap()->cacheUnitSprite(*i);
@@ -303,7 +303,7 @@ void UnitBonkBState::think()
 		std::vector<Tile*> escapeTiles;
 
 		for (std::vector<BattleUnit*>::const_iterator
-				j = _unitsBonked.begin();
+				j  = _unitsBonked.begin();
 				j != _unitsBonked.end();
 				)
 		{
@@ -346,7 +346,7 @@ void UnitBonkBState::think()
 					posQuadStart = *k;
 					posQuadStop = posQuadStart + posVect;
 					tile = _battleSave->getTile(posQuadStop);
-					tileBelow = _battleSave->getTile(posQuadStop + posBelow);
+					tileBelow = _battleSave->getTile(posQuadStop + Position::POS_BELOW);
 
 					bool
 						aboutToBeOccupiedFromAbove (tile != nullptr
@@ -384,7 +384,7 @@ void UnitBonkBState::think()
 					if (k == posQuadrants.end())
 					{
 						//Log(LOG_INFO) << ". . . . move unit";
-						if (_battleSave->addFallingUnit(unitBelow) == true)
+						if (_battleSave->addBonker(unitBelow) == true)
 						{
 							//Log(LOG_INFO) << ". . . . . add Falling Unit";
 							escape = true;
@@ -408,7 +408,7 @@ void UnitBonkBState::think()
 							unitBelow->startWalking(
 												dir,
 												unitBelow->getPosition() + posVect,
-												_battleSave->getTile(posQuadStart + posBelow));
+												_battleSave->getTile(posQuadStart + Position::POS_BELOW));
 
 							j = _unitsBonked.erase(j);
 						}
@@ -447,32 +447,32 @@ void UnitBonkBState::think()
  */
 bool UnitBonkBState::canFall(const BattleUnit* const unit)
 {
-	if (unit->getWalkPhase() != 0 || unit->getMoveTypeUnit() == MT_FLY)
-		return false;
-
-	const Position& pos (unit->getPosition());
-	if (pos.z == 0)
-		return false;
-
-
-	const Tile* tile;
-	const int quads (unit->getArmor()->getSize() - 1);
-	for (int
-			x = quads;
-			x != -1;
-			--x)
+	if (unit->getWalkPhase() == 0 && unit->getMoveTypeUnit() != MT_FLY)
 	{
-		for (int
-				y = quads;
-				y != -1;
-				--y)
+		const Position& pos (unit->getPosition());
+		if (pos.z != 0)
 		{
-			tile = _battleSave->getTile(pos + Position(x,y,0));
-			if (tile->isFloored(tile->getTileBelow(_battleSave)) == true)
-				return false;
+			const Tile* tile;
+			const int quads (unit->getArmor()->getSize() - 1);
+			for (int
+					x = quads;
+					x != -1;
+					--x)
+			{
+				for (int
+						y = quads;
+						y != -1;
+						--y)
+				{
+					tile = _battleSave->getTile(pos + Position(x,y,0));
+					if (tile->isFloored(tile->getTileBelow(_battleSave)) == true)
+						return false;
+				}
+			}
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 }

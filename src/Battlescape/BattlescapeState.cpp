@@ -1535,7 +1535,7 @@ void BattlescapeState::mapClick(Action* action)
 					Log(LOG_INFO) << "data sets";
 					size_t id (0u);
 					for (std::vector<MapDataSet*>::const_iterator
-							i = _battleSave->getBattleDataSets()->begin();
+							i  = _battleSave->getBattleDataSets()->begin();
 							i != _battleSave->getBattleDataSets()->end();
 							++i, ++id)
 					{

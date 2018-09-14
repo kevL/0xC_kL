@@ -805,7 +805,7 @@ Soldier* BattleUnit::getGeoscapeSoldier() const
 
 /**
  * Sets this BattleUnit's Position.
- * @param pos			- reference to a position
+ * @param pos - reference to a position
  */
 void BattleUnit::setPosition(const Position& pos)
 {
@@ -1081,13 +1081,15 @@ int BattleUnit::getWalkPhase() const
  * Initializes variables to start walking.
  * @param dir		- the direction to walk
  * @param posStop	- reference to the Position this unit should end up at
- * @param tileBelow	- pointer to the Tile below destination position
+ * @param tileBelow	- pointer to the Tile below the start-position
+// * @param tileBelow	- pointer to the Tile below destination-position
  */
 void BattleUnit::startWalking(
 		int dir,
 		const Position& posStop,
 		const Tile* const tileBelow)
 {
+	//Log(LOG_INFO) << "BattleUnit::startWalking()";
 	_walkPhase = 0;
 
 	_posStart = _pos;
@@ -1099,6 +1101,7 @@ void BattleUnit::startWalking(
 	{
 		case Pathfinding::DIR_UP:
 		case Pathfinding::DIR_DOWN:
+			//Log(LOG_INFO) << ". set Flying 1";
 			_status = STATUS_FLYING; // controls walking sound in UnitWalkBState, what else: leg-sprites.
 			_dirVertical = dir;
 			_floating = _tile->getMapData(O_FLOOR) == nullptr
@@ -1115,6 +1118,7 @@ void BattleUnit::startWalking(
 			}
 			else
 			{
+				//Log(LOG_INFO) << ". set Flying 2";
 				_status = STATUS_FLYING;
 				_floating = true;
 			}
@@ -2862,6 +2866,8 @@ void BattleUnit::setUnitTile(
 		Tile* const tile,
 		const Tile* const tileBelow)
 {
+	Log(LOG_INFO) << "BattleUnit::setUnitTile()";
+
 	if ((_tile = tile) != nullptr)
 	{
 		switch (_status) // if moving or revived ->
@@ -2870,6 +2876,7 @@ void BattleUnit::setUnitTile(
 				if (_mType == MT_FLY
 					&& _tile->isFloored(tileBelow) == false)
 				{
+					Log(LOG_INFO) << ". set Flying";
 					_status = STATUS_FLYING;
 					_floating = true;
 				}

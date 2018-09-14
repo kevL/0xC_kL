@@ -6368,7 +6368,7 @@ void TileEngine::applyGravity(Tile* const tile) const
 			{
 				tileDest = _battleSave->getTile(posDest);
 				for (std::vector<BattleItem*>::const_iterator
-						i = tile->getInventory()->begin();
+						i  = tile->getInventory()->begin();
 						i != tile->getInventory()->end();
 						++i)
 				{
@@ -6380,7 +6380,9 @@ void TileEngine::applyGravity(Tile* const tile) const
 			}
 		}
 
-		if (unit != nullptr)
+		if (unit != nullptr
+			&& unit->getUnitStatus() != STATUS_DEAD
+			&& unit->getUnitStatus() != STATUS_UNCONSCIOUS)
 		{
 			// TODO: This routine should do a test w/ sbg:setUnitPosition()
 			// else a falling large unit could splice through a wall, etc.
@@ -6431,12 +6433,13 @@ void TileEngine::applyGravity(Tile* const tile) const
 						// instantiate fallingUnits from there if needed. Then fallingUnits could
 						// likely be handled one at a time instead of enmasse as they are at present.
 
-						const Position& posBelow (unit->getPosition() + Position(0,0,-1));
+						const Position& posBelow (unit->getPosition() + Position::POS_BELOW);
 						unit->startWalking(
 										Pathfinding::DIR_DOWN,
 										posBelow,
-										_battleSave->getTile(posBelow));
-						_battleSave->addFallingUnit(unit);
+										_battleSave->getTile(pos));
+//										_battleSave->getTile(posBelow));
+						_battleSave->addBonker(unit);
 						break;
 					}
 

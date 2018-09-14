@@ -39,7 +39,9 @@ public:
 	int
 		x,y,z;
 
-	static const Position POS_BOGUS;
+	static const Position& POS_BOGUS;
+	static const Position& POS_BELOW;
+	static const Position& POS_ABOVE;
 
 	/// Null position constructor.
 	Position()

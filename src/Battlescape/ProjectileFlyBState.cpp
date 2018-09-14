@@ -881,7 +881,7 @@ void ProjectileFlyBState::think()
 				case BA_MELEE:
 				default:
 					if (_unit->getFaction() == _battleSave->getSide()
-						&& _battleSave->unitsFalling() == false)
+						&& _battleSave->doBonks() == false)
 					{
 						//Log(LOG_INFO) << "ProjectileFlyBState::think() CALL te::checkReactionFire()"
 						//			    << " id-" << _unit->getId()

@@ -57,7 +57,7 @@ private:
 
 	public:
 		/// Creates a UnitBonkBState.
-		explicit UnitBonkBState(BattlescapeGame* const battleGame);
+		explicit UnitBonkBState(BattlescapeGame* const battle);
 		/// Cleans up the UnitBonkBState.
 		~UnitBonkBState();
 

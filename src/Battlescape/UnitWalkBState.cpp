@@ -643,8 +643,9 @@ bool UnitWalkBState::statusStand() // private.
 
 	//Log(LOG_INFO) << ". walkB:startWalking()";
 	_unit->startWalking(
-					dir, posStop,
-					_battleSave->getTile(posStart + Position(0,0,-1)));
+					dir,
+					posStop,
+					_battleSave->getTile(posStart + Position::POS_BELOW));
 
 	if (_isVisible == true)
 	{
@@ -791,7 +792,7 @@ bool UnitWalkBState::statusWalk() // private.
 						_fall = false;
 
 						_pf->dequeuePath();
-						_battleSave->addFallingUnit(_unit); // if '_unit' is about to fall onto another unit use UnitBonkBState.
+						_battleSave->addBonker(_unit); // if '_unit' is about to fall onto another unit use UnitBonkBState.
 
 						//Log(LOG_INFO) << "UnitWalkBState::think() addFallingUnit() id-" << _unit->getId();
 						_battleGame->stateBPushFront(new UnitBonkBState(_battleGame));

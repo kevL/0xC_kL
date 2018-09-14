@@ -218,10 +218,10 @@ void BattlescapeGame::think()
 	//Log(LOG_INFO) << "bg:think()";
 	if (_battleStates.empty() == true) // nothing is happening -> see if they need some aLien AI or units panicking or whatever
 	{
-		if (_battleSave->unitsFalling() == true)
+		if (_battleSave->doBonks() == true)
 		{
 			//Log(LOG_INFO) << ". Units are Falling() selUnit id-" << _battleSave->getSelectedUnit()->getId();
-			_battleSave->unitsFalling() = false;
+			_battleSave->doBonks() = false;
 			stateBPushFront(new UnitBonkBState(this));
 		}
 		else

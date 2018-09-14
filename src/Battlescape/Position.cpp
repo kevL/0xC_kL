@@ -23,7 +23,9 @@
 namespace OpenXcom
 {
 
-const Position Position::POS_BOGUS = Position(-1,-1,-1); // static
+const Position& Position::POS_BOGUS = Position(-1,-1,-1); // static
+const Position& Position::POS_BELOW = Position( 0, 0,-1); // static
+const Position& Position::POS_ABOVE = Position( 0, 0, 1); // static
 
 /**
  * Converts voxel-space to tile-space.

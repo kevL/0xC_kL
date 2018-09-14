@@ -1627,7 +1627,9 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 	else // Transport Craft w/out unit-locations.
 	{
 		//Log(LOG_INFO) << ". Craft w/out locations";
-		Tile* tile;
+		Tile
+			* tile,
+			* tileStartFirst = nullptr;
 		int supportOrder (0);
 		for (size_t
 				i = 0u;
@@ -1636,10 +1638,14 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
 		{
 			if (isStartTile(tile = _battleSave->getTiles()[i]) == true)
 			{
+				if (tileStartFirst == nullptr)
+					tileStartFirst = tile;
+
 				if (unit->getGeoscapeSoldier() == nullptr)
 				{
 					if ((unit->getArmor()->getSize() == 1
-							|| tile->getPosition().x == _tileEquipt->getPosition().x)
+							|| tile->getPosition().x == tileStartFirst->getPosition().x)
+//							|| tile->getPosition().x == _tileEquipt->getPosition().x // '_tileEquipt' can be null here.
 						&& ++supportOrder == 3
 						&& _battleSave->setUnitPosition(
 													unit,
