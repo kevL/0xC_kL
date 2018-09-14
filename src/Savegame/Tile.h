@@ -222,7 +222,8 @@ private:
 		/// Sets the black fog-of-war status of a tile-section.
 		void setRevealed(
 				SectionType section = ST_CONTENT,
-				bool revealed = true);
+				bool revealed = true,
+				bool force = false);
 		/// Gets the black fog-of-war status of a tile-section.
 		bool isRevealed(SectionType section = ST_CONTENT) const;
 

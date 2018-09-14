@@ -1540,7 +1540,10 @@ void SavedBattleGame::debugTac()
 			i != _qtyTilesTotal;
 			++i)
 	{
-		_tiles[i]->setRevealed();
+		_tiles[i]->setRevealed(
+							ST_CONTENT,
+							true,
+							true); // force
 	}
 }
 

@@ -571,15 +571,17 @@ bool Tile::closeSlideDoor()
 /**
  * Sets this Tile's sections' revealed flags.
  * @note Also re-caches the sprites for any unit on this Tile if the value changes.
- * @param section - the SectionType (Tile.h) (default ST_CONTENT)
- *					0 westwall
- *					1 northwall
- *					2 object+floor
- * @param revealed - true if revealed (default true)
+ * @param section	- the SectionType (Tile.h) (default ST_CONTENT)
+ *					  0 westwall
+ *					  1 northwall
+ *					  2 object+floor
+ * @param revealed	- true if revealed (default true)
+ * @param force		- true to force internal UFO-walls to get revealed for debug (default false)
  */
 void Tile::setRevealed(
 		SectionType section,
-		bool revealed)
+		bool revealed,
+		bool force)
 {
 	if (_revealed[section] != revealed)
 	{
@@ -587,7 +589,8 @@ void Tile::setRevealed(
 			&& section == ST_CONTENT)
 		{
 			if (    _parts[O_OBJECT] == nullptr
-				|| (_parts[O_OBJECT]->getBigwall() & 0x6) == 0) // NeSw, NwSe: Try no-reveal (walls) if content is diag BigWall.
+				|| (_parts[O_OBJECT]->getBigwall() & (BIGWALL_NESW | BIGWALL_NWSE)) == 0	// Try no-reveal (walls) if content is diag BigWall to stop
+				|| force == true)															// seeing internal UFO walls when the outer hull is seen.
 			{
 				_revealed[ST_WEST]  = // if object+floor is revealed set west- & north-walls revealed also.
 				_revealed[ST_NORTH] = true;
