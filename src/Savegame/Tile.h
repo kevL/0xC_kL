@@ -69,7 +69,7 @@ class Tile
 {
 
 	public:
-		static const size_t PARTS_TILE = 4u;
+		static const size_t TILE_PARTS = 4u;
 
 private:
 	static const int LIGHT_FULL = 15;
@@ -84,12 +84,12 @@ private:
 		_visible;
 	int
 		_aniOffset,
-		_aniCycle[PARTS_TILE],
+		_aniCycle[TILE_PARTS],
 		_explosive,
 		_fire,
 		_lightLayers[LIGHTLAYERS],
-		_partIds[PARTS_TILE],
-		_partSetIds[PARTS_TILE],
+		_partIds[TILE_PARTS],
+		_partSetIds[TILE_PARTS],
 		_previewDir,
 		_previewTu,
 		_smoke;
@@ -98,7 +98,7 @@ private:
 	DamageType _explosiveType;
 
 	BattleUnit* _unit;
-	MapData* _parts[PARTS_TILE];
+	MapData* _parts[TILE_PARTS];
 
 	Position _pos;
 

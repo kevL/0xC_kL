@@ -72,15 +72,15 @@ enum BigwallType
 }; */
 enum BigwallType
 {
-	BIGWALL_NONE	= 0x0000,	//   0 - 0000 0000
-	BIGWALL_BLOCK	= 0x0001,	//   1 - 0000 0001
-	BIGWALL_NESW	= 0x0002,	//   2 - 0000 0010
-	BIGWALL_NWSE	= 0x0004,	//   4 - 0000 0100
-	BIGWALL_WEST	= 0x0008,	//   8 - 0000 1000
-	BIGWALL_NORTH	= 0x0010,	//  16 - 0001 0000
-	BIGWALL_EAST	= 0x0020,	//  32 - 0010 0000
-	BIGWALL_SOUTH	= 0x0040,	//  64 - 0100 0000
-	BIGWALL_E_S		= 0x0080	// 128 - 1000 0000
+	BIGWALL_NONE  = 0x0000,	//   0 - 0000 0000
+	BIGWALL_BLOCK = 0x0001,	//   1 - 0000 0001
+	BIGWALL_NESW  = 0x0002,	//   2 - 0000 0010
+	BIGWALL_NWSE  = 0x0004,	//   4 - 0000 0100
+	BIGWALL_WEST  = 0x0008,	//   8 - 0000 1000
+	BIGWALL_NORTH = 0x0010,	//  16 - 0001 0000
+	BIGWALL_EAST  = 0x0020,	//  32 - 0010 0000
+	BIGWALL_SOUTH = 0x0040,	//  64 - 0100 0000
+	BIGWALL_E_S   = 0x0080	// 128 - 1000 0000
 };
 
 //enum TerrainHeight
@@ -147,11 +147,11 @@ private:
 
 	public:
 //		static const int
-//			TH_FLOOR	=  0,
-//			TH_THIRD	=  8,
-//			TH_HALF		= 12,
-//			TH_TWOTHIRD	= 16,
-//			TH_CEIL		= 24;
+//			TH_FLOOR    =  0,
+//			TH_THIRD    =  8,
+//			TH_HALF     = 12,
+//			TH_TWOTHIRD = 16,
+//			TH_CEIL     = 24;
 
 		/// cTor.
 		explicit MapData(MapDataSet* const dataSet);
@@ -291,7 +291,7 @@ private:
 		/// Gets the type of explosive.
 		DamageType getExplosiveType() const;
 		/// Sets the type of explosive.
-		void setExplosiveType(int value);
+		void setExplosiveType(int type);
 
 		/// Sets the MiniMap index.
 		void setMiniMapIndex(unsigned short id);
@@ -326,13 +326,13 @@ private:
 		{
 			switch (type)
 			{
-				case VOXEL_EMPTY:		return "-1 VOXEL_EMPTY";
-				case VOXEL_FLOOR:		return  "0 VOXEL_FLOOR";
-				case VOXEL_WESTWALL:	return  "1 VOXEL_WESTWALL";
-				case VOXEL_NORTHWALL:	return  "2 VOXEL_NORTHWALL";
-				case VOXEL_OBJECT:		return  "3 VOXEL_OBJECT";
-				case VOXEL_UNIT:		return  "4 VOXEL_UNIT";
-				case VOXEL_OUTOFBOUNDS:	return  "5 VOXEL_OUTOFBOUNDS";
+				case VOXEL_EMPTY:       return "-1 VOXEL_EMPTY";
+				case VOXEL_FLOOR:       return  "0 VOXEL_FLOOR";
+				case VOXEL_WESTWALL:    return  "1 VOXEL_WESTWALL";
+				case VOXEL_NORTHWALL:   return  "2 VOXEL_NORTHWALL";
+				case VOXEL_OBJECT:      return  "3 VOXEL_OBJECT";
+				case VOXEL_UNIT:        return  "4 VOXEL_UNIT";
+				case VOXEL_OUTOFBOUNDS: return  "5 VOXEL_OUTOFBOUNDS";
 			}
 			return "ERROR: no VoxelType";
 		}

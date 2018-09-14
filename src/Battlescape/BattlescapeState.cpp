@@ -1539,7 +1539,7 @@ void BattlescapeState::mapClick(Action* action)
 							i != _battleSave->getBattleDataSets()->end();
 							++i, ++id)
 					{
-						Log(LOG_INFO) << ". " << id << " - " << (*i)->getType();
+						Log(LOG_INFO) << ". " << id << " - " << (*i)->getType() << " (" << (*i)->getRecords()->size() << " records)";
 					}
 
 

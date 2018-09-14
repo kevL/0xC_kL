@@ -85,74 +85,78 @@ QuickBattleState::QuickBattleState()
 		_rules(_game->getRuleset()),
 		_missionTypes(_game->getRuleset()->getDeploymentsList())
 {
-	_window          = new Window(this, 320, 200, 0,0, POPUP_BOTH);
+	_window           = new Window(this, 320, 200, 0,0, POPUP_BOTH);
 
-	_txtTitle        = new Text(320, 17, 0, 9);
+	_txtTitle         = new Text(320, 16, 0, 8);
 
-	_txtMapOptions   = new Text(148, 9, 8, 68);
-	_txtAlienOptions = new Text(148, 9, 164, 68);
+	_txtMission       = new Text(           50,  9,  8, 28);
+	_cbxMission       = new ComboBox(this, 250, 16, 60, 24);
 
-	_frameL          = new Frame(148, 96, 8, 78);
-	_frameR          = new Frame(148, 96, 164, 78);
+	_txtCraft         = new Text(           50,  9,   8, 45);
+	_cbxCraft         = new ComboBox(this, 125, 16,  60, 41);
+	_btnCraft         = new TextButton(    125, 16, 185, 41);
 
-	_txtMission      = new Text(100, 9, 8, 30);
-	_cbxMission      = new ComboBox(this, 214, 16, 98, 26);
+	_txtMapOptions    = new Text(148, 9,   8, 60);
+	_txtAlienOptions  = new Text(148, 9, 164, 60);
 
-	_txtCraft        = new Text(100, 9, 8, 50);
-	_cbxCraft        = new ComboBox(this, 106, 16, 98, 46);
-	_btnCraft        = new TextButton(106, 16, 206, 46);
+	_frameL           = new Frame(148, 87,   8, 69);
+	_frameR           = new Frame(148, 87, 164, 69);
 
-	_txtDarkness     = new Text(120, 9, 22, 83);
-	_slrDarkness     = new Slider(120, 16, 22, 93);
+	_txtDarkness      = new Text(  120,  9, 22, 73);
+	_slrDarkness      = new Slider(120, 16, 22, 82);
 
-	_txtTerrain      = new Text(120, 9, 22, 113);
-	_cbxTerrain      = new ComboBox(this, 140, 16, 12, 123, 5);
+	_txtTerrain       = new Text(          120,  9, 22, 101);
+	_cbxTerrain       = new ComboBox(this, 140, 16, 12, 110, 5);
 
-	_txtDifficulty   = new Text(120, 9, 178, 83);
-	_cbxDifficulty   = new ComboBox(this, 120, 16, 178, 93);
+	_txtDifficulty    = new Text(          120,  9, 178, 73);
+	_cbxDifficulty    = new ComboBox(this, 120, 16, 178, 82);
 
-	_txtAlienRace    = new Text(120, 9, 178, 113);
-	_cbxAlienRace    = new ComboBox(this, 120, 16, 178, 123);
+	_txtAlienRace     = new Text(          120,  9, 178, 101);
+	_cbxAlienRace     = new ComboBox(this, 120, 16, 178, 110);
 
-	_txtAlienTech    = new Text(120, 9, 178, 143);
-	_slrAlienTech    = new Slider(120, 16, 178, 153);
+	_txtAlienTech     = new Text(  120,  9, 178, 128);
+	_slrAlienTech     = new Slider(120, 16, 178, 137);
 
-	_btnCancel       = new TextButton(75, 16,  10, 176);
-	_btnGenerate     = new TextButton(75, 16,  85, 176);
-	_btnRandom       = new TextButton(75, 16, 160, 176);
-	_btnOk           = new TextButton(75, 16, 235, 176);
+	_btnScrub         = new TextButton(99, 16,  10, 159);
+	_btnResetSoldiers = new TextButton(99, 16, 111, 159);
+	_btnRandMission   = new TextButton(99, 16, 211, 159);
+
+	_btnCancel        = new TextButton(149, 16,  10, 176);
+	_btnStart         = new TextButton(149, 16, 161, 176);
 
 	setInterface("newBattleMenu");
 
-	add(_window,          "window",  "newBattleMenu");
-	add(_txtTitle,        "heading", "newBattleMenu");
-	add(_txtMapOptions,   "heading", "newBattleMenu");
-	add(_frameL,          "frames",  "newBattleMenu");
-	add(_txtAlienOptions, "heading", "newBattleMenu");
-	add(_frameR,          "frames",  "newBattleMenu");
+	add(_window,           "window",  "newBattleMenu");
+	add(_txtTitle,         "heading", "newBattleMenu");
+	add(_txtMapOptions,    "heading", "newBattleMenu");
+	add(_frameL,           "frames",  "newBattleMenu");
+	add(_txtAlienOptions,  "heading", "newBattleMenu");
+	add(_frameR,           "frames",  "newBattleMenu");
 
-	add(_txtMission,      "text",    "newBattleMenu");
-	add(_txtCraft,        "text",    "newBattleMenu");
-	add(_btnCraft,        "button1", "newBattleMenu");
+	add(_txtMission,       "text",    "newBattleMenu");
+	add(_txtCraft,         "text",    "newBattleMenu");
+	add(_btnCraft,         "button1", "newBattleMenu");
 
-	add(_txtDarkness,     "text",    "newBattleMenu");
-	add(_slrDarkness,     "button1", "newBattleMenu");
-	add(_txtTerrain,      "text",    "newBattleMenu");
-	add(_txtDifficulty,   "text",    "newBattleMenu");
-	add(_txtAlienRace,    "text",    "newBattleMenu");
-	add(_txtAlienTech,    "text",    "newBattleMenu");
-	add(_slrAlienTech,    "button1", "newBattleMenu");
+	add(_txtDarkness,      "text",    "newBattleMenu");
+	add(_slrDarkness,      "button1", "newBattleMenu");
+	add(_txtTerrain,       "text",    "newBattleMenu");
+	add(_txtDifficulty,    "text",    "newBattleMenu");
+	add(_txtAlienRace,     "text",    "newBattleMenu");
+	add(_txtAlienTech,     "text",    "newBattleMenu");
+	add(_slrAlienTech,     "button1", "newBattleMenu");
 
-	add(_btnCancel,       "button2", "newBattleMenu");
-	add(_btnGenerate,     "button2", "newBattleMenu");
-	add(_btnRandom,       "button2", "newBattleMenu");
-	add(_btnOk,           "button2", "newBattleMenu");
+	add(_btnScrub,         "button2", "newBattleMenu");
+	add(_btnResetSoldiers, "button2", "newBattleMenu");
+	add(_btnRandMission,   "button2", "newBattleMenu");
 
-	add(_cbxTerrain,      "button1", "newBattleMenu");
-	add(_cbxAlienRace,    "button1", "newBattleMenu");
-	add(_cbxDifficulty,   "button1", "newBattleMenu");
-	add(_cbxCraft,        "button1", "newBattleMenu");
-	add(_cbxMission,      "button1", "newBattleMenu");
+	add(_btnCancel,        "button2", "newBattleMenu");
+	add(_btnStart,         "button2", "newBattleMenu");
+
+	add(_cbxTerrain,       "button1", "newBattleMenu");
+	add(_cbxAlienRace,     "button1", "newBattleMenu");
+	add(_cbxDifficulty,    "button1", "newBattleMenu");
+	add(_cbxCraft,         "button1", "newBattleMenu");
+	add(_cbxMission,       "button1", "newBattleMenu");
 
 	centerSurfaces();
 
@@ -216,17 +220,20 @@ QuickBattleState::QuickBattleState()
 	_btnCraft->setText(tr("STR_EQUIP_CRAFT"));
 	_btnCraft->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnCraftClick));
 
-	_btnGenerate->setText(tr("STR_GENERATE"));
-	_btnGenerate->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnGenerateClick));
+	_btnScrub->setText(tr("STR_SCRUB"));
+	_btnScrub->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnScrubClick));
 
-	_btnRandom->setText(tr("STR_RANDOMIZE"));
-	_btnRandom->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnRandClick));
+	_btnResetSoldiers->setText(tr("STR_RESETSOLDERS"));
+	_btnResetSoldiers->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnResetSoldiersClick));
 
-	_btnOk->setText(tr("STR_COMBAT_UC"));
-	_btnOk->onMouseClick(   static_cast<ActionHandler>(&QuickBattleState::btnOkClick));
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnOkClick),
+	_btnRandMission->setText(tr("STR_RANDOMIZE"));
+	_btnRandMission->onMouseClick(static_cast<ActionHandler>(&QuickBattleState::btnRandMissionClick));
+
+	_btnStart->setText(tr("STR_COMBAT_UC"));
+	_btnStart->onMouseClick(   static_cast<ActionHandler>(&QuickBattleState::btnStartClick));
+	_btnStart->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnStartClick),
 							Options::keyOk);
-	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnOkClick),
+	_btnStart->onKeyboardPress(static_cast<ActionHandler>(&QuickBattleState::btnStartClick),
 							Options::keyOkKeypad);
 
 	_btnCancel->setText(tr("STR_CANCEL"));
@@ -270,7 +277,7 @@ void QuickBattleState::configLoad(const std::string& file)
 		{
 			YAML::Node doc (YAML::LoadFile(config));
 
-			if (doc["rng"] && Options::reSeedOnLoad == false)
+			if (doc["rng"]) //&& Options::reSeedOnLoad == false // NOTE: Click the Scrub button to reset the RNG-seed.
 				RNG::setSeed(doc["rng"].as<uint64_t>());
 			else
 				RNG::setSeed(); // savescrub.
@@ -433,7 +440,7 @@ void QuickBattleState::resetSoldiers()
 		hasRookieStats;
 
 	for (int
-			i = 0;
+			i   = 0;
 			i != 50; // qty Soldiers on call
 			++i)
 	{
@@ -446,8 +453,8 @@ void QuickBattleState::resetSoldiers()
 
 		stats = sol->getCurrentStats();
 		for (int
-				j  = 0;		// promote rank and stats
-				j != 13;	// arbitrary iterations ...
+				j  =  0; // promote rank and stats
+				j != 13; // arbitrary iterations ...
 				++j)
 		{
 			if (RNG::percent(11 - static_cast<int>(sol->getRank()))
@@ -587,7 +594,7 @@ void QuickBattleState::resetResearchGenerals() const // private.
  * Starts the battle.
  * @param action - pointer to an Action
  */
-void QuickBattleState::btnOkClick(Action*)
+void QuickBattleState::btnStartClick(Action*)
 {
 	configSave();
 
@@ -715,10 +722,10 @@ void QuickBattleState::btnCancelClick(Action*)
  * Randomize the state
  * @param action - pointer to an Action
  */
-void QuickBattleState::btnRandClick(Action*)
+void QuickBattleState::btnRandMissionClick(Action*)
 {
 //	configCreate(); // <- Do NOT reset Base/Craft/Soldiers here.
-	RNG::setSeed(); // TODO: Add buttons to run configCreate() and/or reset RNG-seed.
+//	RNG::setSeed(); // TODO: Add buttons to run configCreate() and/or reset RNG-seed.
 					// -> else do it the old-fashioned way and delete 'battle.cfg'
 
 	_cbxMission->setSelected(RNG::pick(_missionTypes.size()));
@@ -749,10 +756,19 @@ void QuickBattleState::btnCraftClick(Action*)
 }
 
 /**
+ * Resets the RNG.
+ * @param action - pointer to an Action
+ */
+void QuickBattleState::btnScrubClick(Action*)
+{
+	RNG::setSeed();
+}
+
+/**
  * Generates a new group of Soldiers.
  * @param action - pointer to an Action
  */
-void QuickBattleState::btnGenerateClick(Action*)
+void QuickBattleState::btnResetSoldiersClick(Action*)
 {
 	resetSoldiers();
 }

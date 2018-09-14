@@ -658,7 +658,7 @@ void SavedBattleGame::load(
 void SavedBattleGame::loadMapResources(const Game* const game)
 {
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _battleDataSets.begin();
+			i  = _battleDataSets.begin();
 			i != _battleDataSets.end();
 			++i)
 	{
@@ -681,7 +681,7 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 	{
 		for (size_t
 				j = 0u;
-				j != Tile::PARTS_TILE;
+				j != Tile::TILE_PARTS;
 				++j)
 		{
 			partType = static_cast<MapDataType>(j);
@@ -906,7 +906,7 @@ void SavedBattleGame::initMap(
 	_battleDataSets.clear(); // clear MCD types.
 
 	for (std::vector<Node*>::const_iterator // delete Nodes ->
-			i = _nodes.begin();
+			i  = _nodes.begin();
 			i != _nodes.end();
 			++i)
 	{
@@ -1663,8 +1663,6 @@ void SavedBattleGame::setBattleState(BattlescapeState* const battleState)
 void SavedBattleGame::positionUnits()
 {
 	Position pos;
-	const Position& posBelow (Position::POS_BELOW);
-
 	for (size_t
 			i = 0u;
 			i != _qtyTilesTotal;
@@ -1686,7 +1684,7 @@ void SavedBattleGame::positionUnits()
 			pos = (*i)->getPosition();
 			(*i)->setUnitTile(
 							getTile(pos),
-							getTile(pos + posBelow)); // second set BattleUnit->Tile link for the unit's primary quadrant
+							getTile(pos + Position::POS_BELOW)); // second set BattleUnit->Tile link for the unit's primary quadrant
 
 			const int unitSize ((*i)->getArmor()->getSize() - 1);
 			for (int

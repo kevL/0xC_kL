@@ -114,7 +114,7 @@ void MiniMapView::draw()
 
 //	if (_srtScanG != nullptr) // This had better well be there.
 //	{
-	static const int parts (static_cast<int>(Tile::PARTS_TILE));
+	static const int parts (static_cast<int>(Tile::TILE_PARTS));
 
 	Tile* tile;
 	Surface* srf;

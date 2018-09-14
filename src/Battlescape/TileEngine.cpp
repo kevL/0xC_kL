@@ -5948,7 +5948,7 @@ VoxelType TileEngine::voxelCheck(
 
 	for (size_t
 			i = 0u; // terrain parts [0=floor, 1/2=walls, 3=content-object]
-			i != Tile::PARTS_TILE;
+			i != Tile::TILE_PARTS;
 			++i)
 	{
 		if (tile->isSlideDoorOpen(type = static_cast<MapDataType>(i)) == false

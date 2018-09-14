@@ -82,11 +82,12 @@ private:
 		* _txtAlienRace,
 		* _txtAlienTech;
 	TextButton
-		* _btnOk,
 		* _btnCancel,
 		* _btnCraft,
-		* _btnGenerate,
-		* _btnRandom;
+		* _btnResetSoldiers,
+		* _btnRandMission,
+		* _btnScrub,
+		* _btnStart;
 	Window* _window;
 
 	std::vector<std::string>
@@ -118,16 +119,18 @@ private:
 		/// Clears and generates the Soldiers.
 		void resetSoldiers();
 
-		/// Handler for clicking the Ok button.
-		void btnOkClick(Action* action);
+		/// Handler for clicking the Start button.
+		void btnStartClick(Action* action);
 		/// Handler for clicking the Cancel button.
 		void btnCancelClick(Action* action);
 		/// Handler for clicking the Randomize button.
-		void btnRandClick(Action* action);
+		void btnRandMissionClick(Action* action);
 		/// Handler for clicking the Equip Craft button.
 		void btnCraftClick(Action* action);
-		/// Handler for clicking the Generate button.
-		void btnGenerateClick(Action* action);
+		/// Handler for clicking the Reset Soldiers button.
+		void btnResetSoldiersClick(Action* action);
+		/// Handler for clicking the Scrub button.
+		void btnScrubClick(Action* action);
 
 		/// Handler for changing the Mission combobox.
 		void cbxMissionChange(Action* action);

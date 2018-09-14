@@ -1577,7 +1577,7 @@ void DebriefingState::prepareDebriefing() // private.
 		else
 			objectType = TILE;
 
-		const int parts (static_cast<int>(Tile::PARTS_TILE));
+		const int parts (static_cast<int>(Tile::TILE_PARTS));
 		const MapData* part;
 
 		int qtyAlloysRuined (0);

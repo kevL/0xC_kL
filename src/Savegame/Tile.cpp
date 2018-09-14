@@ -76,7 +76,7 @@ Tile::Tile(const Position& pos)
 	size_t i;
 	for (
 			i = 0u;
-			i != PARTS_TILE;
+			i != TILE_PARTS;
 			++i)
 	{
 		_parts[i]      = nullptr;
@@ -118,7 +118,7 @@ void Tile::load(const YAML::Node& node)
 {
 	for (size_t
 			i = 0u;
-			i != PARTS_TILE;
+			i != TILE_PARTS;
 			++i)
 	{
 		_partIds[i]    = node["mapDataID"][i]   .as<int>(_partIds[i]);
@@ -196,7 +196,7 @@ YAML::Node Tile::save() const
 
 	for (size_t
 			i = 0u;
-			i != PARTS_TILE;
+			i != TILE_PARTS;
 			++i)
 	{
 		node["mapDataID"].push_back(_partIds[i]);
@@ -556,7 +556,7 @@ bool Tile::closeSlideDoor()
 	int ret (false);
 	for (size_t
 			i = 0u;
-			i != PARTS_TILE;
+			i != TILE_PARTS;
 			++i)
 	{
 		if (isSlideDoorOpen(static_cast<MapDataType>(i)) == true)
@@ -839,7 +839,7 @@ int Tile::getBurnable(MapDataType partType) const
 		int burn (255); // not burnable. <- lower is better :)
 		for (size_t
 				i = 0u;
-				i != PARTS_TILE;
+				i != TILE_PARTS;
 				++i)
 		{
 			if (   _parts[i] != nullptr
@@ -881,7 +881,7 @@ int Tile::getFuel(MapDataType partType) const
 		int fuel (0);
 		for (size_t
 				i = 0u;
-				i != PARTS_TILE;
+				i != TILE_PARTS;
 				++i)
 		{
 			if (   _parts[i] != nullptr
@@ -1221,7 +1221,7 @@ void Tile::animateTile()
 	int nextFrame;
 	for (size_t
 			i = 0u;
-			i != PARTS_TILE;
+			i != TILE_PARTS;
 			++i)
 	{
 		if (_parts[i] != nullptr)

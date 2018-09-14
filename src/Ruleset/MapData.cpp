@@ -30,7 +30,7 @@ namespace OpenXcom
 /**
  * Creates a MapData tile-part.
  * @note yes, This is a tile-part.
- * @param dataSet - pointer to the MapDataSet this tile-part belongs to
+ * @param dataSet - pointer to the MapDataSet (aka MCD) this tile-part belongs to
  */
 MapData::MapData(MapDataSet* const dataSet)
 	:
@@ -257,17 +257,17 @@ int MapData::getBlock(DamageType dType) const
 {
 	switch (dType)
 	{
-//		case DT_NONE:	return _block[1];
-//		case DT_HE:		return _block[2];
-//		case DT_SMOKE:	return _block[3];
-//		case DT_IN:		return _block[4];
-//		case DT_STUN:	return _block[5];
+//		case DT_NONE:  return _block[1];
+//		case DT_HE:    return _block[2];
+//		case DT_SMOKE: return _block[3];
+//		case DT_IN:    return _block[4];
+//		case DT_STUN:  return _block[5];
 											// see setBlock() below_
-		case DT_NONE:	return _block[1u];	// stop LoS: [0 or 100], was [0 or 255]
+		case DT_NONE:  return _block[1u];	// stop LoS: [0 or 100], was [0 or 255]
 		case DT_HE:
 		case DT_IN:
-		case DT_STUN:	return _block[2u];	// HE block [int] // TODO: Just fix all this crap.
-		case DT_SMOKE:	return _block[3u];	// block smoke: try (bool), was [0 or 256]
+		case DT_STUN:  return _block[2u];	// HE block [int] // TODO: Just fix all this crap.
+		case DT_SMOKE: return _block[3u];	// block smoke: try (bool), was [0 or 256]
 	}
 	return 0;
 }
@@ -375,10 +375,10 @@ int MapData::getTuCostPart(MoveType type) const
 {
 	switch (type)
 	{
-		case MT_WALK:	return _tuWalk;
-		case MT_SLIDE:	return _tuSlide;
-		case MT_FLOAT:	// wft.
-		case MT_FLY:	return _tuFly;
+		case MT_WALK:  return _tuWalk;
+		case MT_SLIDE: return _tuSlide;
+		case MT_FLOAT: // wft.
+		case MT_FLY:   return _tuFly;
 	}
 	return 0;
 }
@@ -603,11 +603,11 @@ DamageType MapData::getExplosiveType() const
 
 /**
  * Sets the type of explosive.
- * @param value - the type of explosive
+ * @param type - the type of explosive
  */
-void MapData::setExplosiveType(int value)
+void MapData::setExplosiveType(int type)
 {
-	switch (value) // account for (HE_Type)MCD vs. (RuleItem.h)DamageType mismatch
+	switch (type) // account for (HE_Type)MCD vs. (RuleItem.h)DamageType mismatch
 	{
 		case 0: _explosiveType = DT_HE;
 			break;

@@ -2427,7 +2427,7 @@ int BattlescapeGenerator::loadBlockFile( // private.
 		throw Exception("bGen:loadBlockFile() Craft/UFO is too tall.");
 	}
 
-	unsigned char parts[Tile::PARTS_TILE];
+	unsigned char parts[Tile::TILE_PARTS];
 	size_t partId;
 
 	bool revealDone;
@@ -2439,7 +2439,7 @@ int BattlescapeGenerator::loadBlockFile( // private.
 
 		for (size_t
 				i = 0u;
-				i != Tile::PARTS_TILE;
+				i != Tile::TILE_PARTS;
 				++i)
 		{
 			partId = static_cast<size_t>(parts[i]);
@@ -3162,12 +3162,12 @@ void BattlescapeGenerator::generateMap(const std::vector<RuleMapScript*>* const 
 								ufoBlocks.push_back(block);
 
 								for (
-										x = static_cast<int>(ufoPosTest.x);
+										x  = static_cast<int>(ufoPosTest.x);
 										x != static_cast<int>(ufoPosTest.x) + static_cast<int>(ufoPosTest.w);
 										++x)
 								{
 									for (
-											y = static_cast<int>(ufoPosTest.y);
+											y  = static_cast<int>(ufoPosTest.y);
 											y != static_cast<int>(ufoPosTest.y) + static_cast<int>(ufoPosTest.h);
 											++y)
 									{
@@ -3651,7 +3651,7 @@ void BattlescapeGenerator::clearModule( // private.
 				tile = _battleSave->getTile(Position(dx,dy,z));
 				for (size_t
 						partType = 0u;
-						partType != Tile::PARTS_TILE;
+						partType != Tile::TILE_PARTS;
 						++partType)
 				{
 					tile->setMapData(nullptr,-1,-1, static_cast<MapDataType>(partType));
@@ -4541,7 +4541,7 @@ void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const rule
 		{
 			for (size_t
 					j = 0u;
-					j != Tile::PARTS_TILE;
+					j != Tile::TILE_PARTS;
 					++j)
 			{
 				partType = static_cast<MapDataType>(j);

@@ -72,7 +72,7 @@ MapDataSet::~MapDataSet()
 void MapDataSet::load(const YAML::Node& node)
 {
 	for (YAML::const_iterator
-			i = node.begin();
+			i  = node.begin();
 			i != node.end();
 			++i)
 		_type = i->as<std::string>(_type);
@@ -127,49 +127,49 @@ void MapDataSet::loadData()
 #pragma pack(push, 1)	// align the incoming MCD-values with 1-byte boundaries
 		struct MCD		// This struct helps read the .MCD file-format.
 		{
-			unsigned char	Frame[8u];
-			unsigned char	LOFT[12u];
-			unsigned short	ScanG;
-			unsigned char	u23;
-			unsigned char	u24;
-			unsigned char	u25;
-			unsigned char	u26;
-			unsigned char	u27;
-			unsigned char	u28;
-			unsigned char	u29;
-			unsigned char	u30;
-			unsigned char	UFO_Door;
-			unsigned char	Stop_LOS;
-			unsigned char	No_Floor;
-			unsigned char	Big_Wall;
-			unsigned char	Gravlift;
-			unsigned char	Door;
-			unsigned char	Block_Fire;
-			unsigned char	Block_Smoke;
-			unsigned char	u39; // NOTE: so-called 'Start_Phase' is around here. See MCDEdit v1.17i
-			unsigned char	TU_Walk;
-			unsigned char	TU_Slide;
-			unsigned char	TU_Fly;
-			unsigned char	Armor;
-			unsigned char	HE_Block;
-			unsigned char	Die_MCD;
-			unsigned char	Flammable;
-			unsigned char	Alt_MCD;
-			unsigned char	u48;
-			signed char		T_Level;
-			unsigned char	P_Level;
-			unsigned char	u51;
-			unsigned char	Light_Block;
-			unsigned char	Footstep;
-			unsigned char	Tile_Type;
-			unsigned char	HE_Type;
-			unsigned char	HE_Strength;
-			unsigned char	Smoke_Blockage;
-			unsigned char	Fuel;
-			unsigned char	Light_Source;
-			unsigned char	Target_Type;
-			unsigned char	Xcom_Base;
-			unsigned char	u62;
+			unsigned char  Frame[8u];
+			unsigned char  LOFT[12u];
+			unsigned short ScanG;
+			unsigned char  u23;
+			unsigned char  u24;
+			unsigned char  u25;
+			unsigned char  u26;
+			unsigned char  u27;
+			unsigned char  u28;
+			unsigned char  u29;
+			unsigned char  u30;
+			unsigned char  UFO_Door;
+			unsigned char  Stop_LOS;
+			unsigned char  No_Floor;
+			unsigned char  Big_Wall;
+			unsigned char  Gravlift;
+			unsigned char  Door;
+			unsigned char  Block_Fire;
+			unsigned char  Block_Smoke;
+			unsigned char  u39; // NOTE: so-called 'Start_Phase' is around here. See MCDEdit v1.17i
+			unsigned char  TU_Walk;
+			unsigned char  TU_Slide;
+			unsigned char  TU_Fly;
+			unsigned char  Armor;
+			unsigned char  HE_Block;
+			unsigned char  Die_MCD;
+			unsigned char  Flammable;
+			unsigned char  Alt_MCD;
+			unsigned char  u48;
+			signed char    T_Level;
+			unsigned char  P_Level;
+			unsigned char  u51;
+			unsigned char  Light_Block;
+			unsigned char  Footstep;
+			unsigned char  Tile_Type;
+			unsigned char  HE_Type;
+			unsigned char  HE_Strength;
+			unsigned char  Smoke_Blockage;
+			unsigned char  Fuel;
+			unsigned char  Light_Source;
+			unsigned char  Target_Type;
+			unsigned char  Xcom_Base;
+			unsigned char  u62;
 		};
 #pragma pack(pop) // revert to standard byte-alignment
 
@@ -197,7 +197,7 @@ void MapDataSet::loadData()
 
 			// Set all the terrain-tilepart properties:
 			for (size_t
-					i = 0u;
+					i  = 0u;
 					i != 8u; // sprite-frames (battlescape tactical animations)
 					++i)
 			{
@@ -205,26 +205,26 @@ void MapDataSet::loadData()
 			}
 
 			part->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
-			part->setTileType(static_cast<TileType>(mcd.Target_Type));
-			part->setOffsetY(static_cast<int>(mcd.P_Level));
+			part->setTileType(static_cast<TileType>   (mcd.Target_Type));
+			part->setOffsetY( static_cast<int>        (mcd.P_Level));
 			part->setTuCosts(
 					static_cast<int>(mcd.TU_Walk),
 					static_cast<int>(mcd.TU_Slide),
 					static_cast<int>(mcd.TU_Fly));
 			part->setFlags(
-					mcd.UFO_Door	!= 0,
-					mcd.Stop_LOS	!= 0,
-					mcd.No_Floor	!= 0,
+					mcd.UFO_Door    != 0,
+					mcd.Stop_LOS    != 0,
+					mcd.No_Floor    != 0,
 					static_cast<int>(mcd.Big_Wall),
-					mcd.Gravlift	!= 0,
-					mcd.Door		!= 0,
-					mcd.Block_Fire	!= 0,
-					mcd.Block_Smoke	!= 0,
-					mcd.Xcom_Base	!= 0);
-			part->setTerrainLevel(static_cast<int>(mcd.T_Level));
+					mcd.Gravlift    != 0,
+					mcd.Door        != 0,
+					mcd.Block_Fire  != 0,
+					mcd.Block_Smoke != 0,
+					mcd.Xcom_Base   != 0);
+			part->setTerrainLevel( static_cast<int>(mcd.T_Level));
 			part->setFootstepSound(static_cast<int>(mcd.Footstep));
-			part->setAltMCD(static_cast<int>(mcd.Alt_MCD));
-			part->setDieMCD(static_cast<int>(mcd.Die_MCD));
+			part->setAltMCD(       static_cast<int>(mcd.Alt_MCD));
+			part->setDieMCD(       static_cast<int>(mcd.Die_MCD));
 			part->setBlock(
 					static_cast<int>(mcd.Light_Block),
 					static_cast<int>(mcd.Stop_LOS),
@@ -232,18 +232,18 @@ void MapDataSet::loadData()
 					static_cast<int>(mcd.Block_Smoke),
 					static_cast<int>(mcd.Flammable),
 					static_cast<int>(mcd.HE_Block));
-			part->setLightSource(static_cast<int>(mcd.Light_Source));
-			part->setArmorPoints(static_cast<int>(mcd.Armor));
-			part->setFlammable(static_cast<int>(mcd.Flammable));
-			part->setFuel(static_cast<int>(mcd.Fuel));
+			part->setLightSource(  static_cast<int>(mcd.Light_Source));
+			part->setArmorPoints(  static_cast<int>(mcd.Armor));
+			part->setFlammable(    static_cast<int>(mcd.Flammable));
+			part->setFuel(         static_cast<int>(mcd.Fuel));
 			part->setExplosiveType(static_cast<int>(mcd.HE_Type));
-			part->setExplosive(static_cast<int>(mcd.HE_Strength));
+			part->setExplosive(    static_cast<int>(mcd.HE_Strength));
 
 			mcd.ScanG = SDL_SwapLE16(mcd.ScanG);
 			part->setMiniMapIndex(mcd.ScanG);
 
 			for (size_t
-					loft = 0u;
+					loft  =  0u;
 					loft != 12u; // LoFT layers (each layer is doubled to give a total height of 24 voxels)
 					++loft)
 			{
@@ -275,7 +275,7 @@ void MapDataSet::loadData()
 
 		// process the MapDataSet to put 'block' values on floortiles (as they don't exist in UFO::Orig)
 		for (std::vector<MapData*>::const_iterator
-				i = _records.begin();
+				i  = _records.begin();
 				i != _records.end();
 				++i)
 		{
@@ -327,7 +327,7 @@ void MapDataSet::unloadData()
 		_loaded = false;
 
 		for (std::vector<MapData*>::const_iterator
-				i = _records.begin();
+				i  = _records.begin();
 				i != _records.end();
 				)
 		{

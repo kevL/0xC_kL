@@ -47,7 +47,7 @@ RuleTerrain::RuleTerrain(const std::string& type)
 RuleTerrain::~RuleTerrain()
 {
 	for (std::vector<MapBlock*>::const_iterator
-			i = _blocks.begin();
+			i  = _blocks.begin();
 			i != _blocks.end();
 			++i)
 		delete *i;
@@ -62,8 +62,8 @@ void RuleTerrain::load(
 		const YAML::Node& node,
 		Ruleset* const rules)
 {
-	_type	= node["type"]	.as<std::string>(_type);
-	_script	= node["script"].as<std::string>(_script);
+	_type   = node["type"]  .as<std::string>(_type);
+	_script = node["script"].as<std::string>(_script);
 
 	if (const YAML::Node& dataSets = node["dataSets"])
 	{
@@ -72,7 +72,7 @@ void RuleTerrain::load(
 		_dataSets.push_back(rules->getMapDataSet("BLANKS")); // NOTE: The rule for every terrain-type gets "BLANKS".
 
 		for (YAML::const_iterator
-				i = dataSets.begin();
+				i  = dataSets.begin();
 				i != dataSets.end();
 				++i)
 		{
@@ -84,7 +84,7 @@ void RuleTerrain::load(
 	{
 		_blocks.clear();
 		for (YAML::const_iterator
-				i = blocks.begin();
+				i  = blocks.begin();
 				i != blocks.end();
 				++i)
 		{
@@ -103,7 +103,7 @@ void RuleTerrain::load(
 	}
 
 	for (YAML::const_iterator
-			i = node["music"].begin();
+			i  = node["music"].begin();
 			i != node["music"].end();
 			++i)
 	{
@@ -159,7 +159,7 @@ MapBlock* RuleTerrain::getTerrainBlock(
 	std::vector<MapBlock*> blocks;
 
 	for (std::vector<MapBlock*>::const_iterator
-			i = _blocks.begin();
+			i  = _blocks.begin();
 			i != _blocks.end();
 			++i)
 	{
@@ -190,7 +190,7 @@ MapBlock* RuleTerrain::getTerrainBlock(
 MapBlock* RuleTerrain::getTerrainBlock(const std::string& type) const
 {
 	for (std::vector<MapBlock*>::const_iterator
-			i = _blocks.begin();
+			i  = _blocks.begin();
 			i != _blocks.end();
 			++i)
 	{
