@@ -2587,7 +2587,7 @@ void TileEngine::explode(
 
 							BattleUnit* bu;
 							for (std::vector<BattleItem*>::const_iterator
-									i = tileStop->getInventory()->begin();
+									i  = tileStop->getInventory()->begin();
 									i != tileStop->getInventory()->end();
 									++i)
 							{
@@ -2669,7 +2669,7 @@ void TileEngine::explode(
 							while (done == false && tileStop->getInventory()->empty() == false)
 							{
 								for (std::vector<BattleItem*>::const_iterator
-										i = tileStop->getInventory()->begin();
+										i  = tileStop->getInventory()->begin();
 										i != tileStop->getInventory()->end();
 										)
 								{
@@ -2777,7 +2777,7 @@ void TileEngine::explode(
 
 							BattleUnit* bu;
 							for (std::vector<BattleItem*>::const_iterator
-									i = tileStop->getInventory()->begin();
+									i  = tileStop->getInventory()->begin();
 									i != tileStop->getInventory()->end();
 									++i)
 							{
@@ -2874,7 +2874,7 @@ void TileEngine::explode(
 							while (done == false && tileStop->getInventory()->empty() == false)
 							{
 								for (std::vector<BattleItem*>::const_iterator
-										i = tileFire->getInventory()->begin();
+										i  = tileFire->getInventory()->begin();
 										i != tileFire->getInventory()->end();
 										)
 								{
@@ -2988,7 +2988,7 @@ void TileEngine::explode(
 	_dirRay = -1;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -3007,7 +3007,7 @@ void TileEngine::explode(
 
 		//Log(LOG_INFO) << ". tilesAffected size= " << tilesAffected.size();
 		for (std::set<Tile*>::const_iterator
-				i = tilesAffected.begin();
+				i  = tilesAffected.begin();
 				i != tilesAffected.end();
 				++i)
 		{
@@ -3028,7 +3028,7 @@ void TileEngine::explode(
 	if (defusePulse == true)
 	{
 		for (std::vector<BattleItem*>::const_iterator
-				i = _battleSave->getItems()->begin();
+				i  = _battleSave->getItems()->begin();
 				i != _battleSave->getItems()->end();
 				++i)
 		{
@@ -6333,123 +6333,142 @@ bool TileEngine::psiAttack(BattleAction* const action)
  */
 void TileEngine::applyGravity(Tile* const tile) const
 {
-	if (tile == nullptr) return; // safety.
+	//Log(LOG_INFO) << "TileEngine::applyGravity()";
 
-	const Position& pos (tile->getPosition());
-	if (pos.z == 0
-		|| tile->isFloored(tile->getTileBelow(_battleSave)) == true)
+	if (tile != nullptr) // safety.
 	{
-		return; // early out.
-	}
+		const Position& pos (tile->getPosition());
+		//Log(LOG_INFO) << ". pos " << pos;
 
-
-	BattleUnit* const unit (tile->getTileUnit()); // NOTE: This could be any quadrant of a large unit.
-
-	const bool hasItems (tile->getInventory()->empty() == false);
-
-	if (hasItems == true || unit != nullptr)
-	{
-		Tile* tileDest;
-		Position posDest;
-
-		if (hasItems == true)
+		if (pos.z == 0
+			|| tile->isFloored(tile->getTileBelow(_battleSave)) == true)
 		{
-			posDest = pos;
-			while (posDest.z != 0)
-			{
-				tileDest = _battleSave->getTile(posDest);
-				if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == false)
-					--posDest.z;
-				else
-					break;
-			}
-
-			if (posDest.z != pos.z)
-			{
-				tileDest = _battleSave->getTile(posDest);
-				for (std::vector<BattleItem*>::const_iterator
-						i  = tile->getInventory()->begin();
-						i != tile->getInventory()->end();
-						++i)
-				{
-					tileDest->addItem(*i);
-					if ((*i)->getBodyUnit() != nullptr) //&& (*i)->getBodyUnit()->getPosition() == pos
-						(*i)->getBodyUnit()->setPosition(posDest);
-				}
-				tile->getInventory()->clear();
-			}
+			return; // early out.
 		}
 
-		if (unit != nullptr
-			&& unit->getUnitStatus() != STATUS_DEAD
-			&& unit->getUnitStatus() != STATUS_UNCONSCIOUS)
-		{
-			// TODO: This routine should do a test w/ sbg:setUnitPosition()
-			// else a falling large unit could splice through a wall, etc.
-			bool canFall (true);
-			const int unitSize (unit->getArmor()->getSize());
 
-			posDest = unit->getPosition();
-			while (posDest.z != 0 && canFall == true)
+		BattleUnit* const unit (tile->getTileUnit()); // NOTE: This could be any quadrant of a large unit.
+
+		const bool hasItems (tile->getInventory()->empty() == false);
+
+		if (hasItems == true || unit != nullptr)
+		{
+			Tile* tileDest;
+			Position posDest;
+
+			if (hasItems == true)
 			{
-				canFall = true;
-				for (int
-						y = 0;
-						y != unitSize && canFall == true;
-						++y)
+				//Log(LOG_INFO) << ". . hasItems";
+
+				posDest = pos;
+				while (posDest.z != 0)
 				{
-					for (int
-							x = 0;
-							x != unitSize && canFall == true;
-							++x)
-					{
-						tileDest = _battleSave->getTile(Position(
-																posDest.x + x,
-																posDest.y + y,
-																posDest.z));
-						if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == true)	// NOTE: Water has no floor so units that die on them ... try to sink.
-							canFall = false;													// ... before I changed the loop condition to > 0, that is
-					}
+					tileDest = _battleSave->getTile(posDest);
+					if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == false)
+						--posDest.z;
+					else
+						break;
 				}
-				if (canFall == true) --posDest.z;
+
+				if (posDest.z != pos.z)
+				{
+					//Log(LOG_INFO) << ". . . drop items";
+
+					tileDest = _battleSave->getTile(posDest);
+					for (std::vector<BattleItem*>::const_iterator
+							i  = tile->getInventory()->begin();
+							i != tile->getInventory()->end();
+							++i)
+					{
+						//Log(LOG_INFO) << ". . . . " << (*i)->getRules()->getType();
+
+						tileDest->addItem(*i);
+						if ((*i)->getBodyUnit() != nullptr) //&& (*i)->getBodyUnit()->getPosition() == pos
+							(*i)->getBodyUnit()->setPosition(posDest);
+					}
+					tile->getInventory()->clear();
+				}
+				//else Log(LOG_INFO) << ". . . no drop items.";
 			}
 
-			if (posDest.z != pos.z)
-			{
-				unit->kneelUnit(false);
-				switch (unit->getMoveTypeUnit())
+			if (unit != nullptr // && unit->isOut_t(OUT_HEALTH_STUN) == false)	// NOTE: This funct can be called before UnitDieBState runs
+				&& unit->getUnitStatus() != STATUS_DEAD							// particularly at the end of TileEngine::explode() ....
+				&& unit->getUnitStatus() != STATUS_UNCONSCIOUS)					// But it can also run after UnitDieBState runs ...
+			{																	// long story short: It creates problems either way.
+				//Log(LOG_INFO) << ". . hasUnit id-" << unit->getId();
+
+				// TODO: This routine should do a test w/ sbg:setUnitPosition()
+				// else a falling large unit could splice through a wall, etc.
+				bool canFall (true);
+				const int unitSize (unit->getArmor()->getSize());
+
+				posDest = unit->getPosition();
+				while (posDest.z != 0)
 				{
-					case MT_WALK:
-					case MT_SLIDE:
+					canFall = true;
+					for (int
+							y = 0;
+							y != unitSize && canFall == true;
+							++y)
 					{
-//						tileDest = _battleSave->getTile(Position(
-//															unit->getPosition().x,
-//															unit->getPosition().y,
-//															posDest.z));
-						//Log(LOG_INFO) << "te:applyGravity() -> addFallingUnit() id-" << unit->getId();
-
-						// TODO: Figure out how UnitBonkBState really works, or should work.
-						// This should probably merely setup and run UnitWalkBState; that would
-						// instantiate fallingUnits from there if needed. Then fallingUnits could
-						// likely be handled one at a time instead of enmasse as they are at present.
-
-						const Position& posBelow (unit->getPosition() + Position::POS_BELOW);
-						unit->startWalking(
-										Pathfinding::DIR_DOWN,
-										posBelow,
-										_battleSave->getTile(pos));
-//										_battleSave->getTile(posBelow));
-						_battleSave->addBonker(unit);
-						break;
+						for (int
+								x = 0;
+								x != unitSize && canFall == true;
+								++x)
+						{
+							tileDest = _battleSave->getTile(Position(
+																	posDest.x + x,
+																	posDest.y + y,
+																	posDest.z));
+							if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == true)	// NOTE: Water has no floor so units that die on them ... try to sink.
+								canFall = false;													// ... before I changed the loop condition to > 0, that is
+						}
 					}
-
-					case MT_FLY:
-						tileDest = unit->getUnitTile();
-						if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == true)
-							unit->setFloating(false);
-						else
-							unit->setFloating();
+					if (canFall == true)
+						--posDest.z;
+					else
+						break;
 				}
+
+				if (posDest.z != pos.z)
+				{
+					//Log(LOG_INFO) << ". . . drop unit";
+
+					unit->kneelUnit(false);
+					switch (unit->getMoveTypeUnit())
+					{
+						case MT_WALK:
+						case MT_SLIDE:
+						{
+//							tileDest = _battleSave->getTile(Position(
+//																unit->getPosition().x,
+//																unit->getPosition().y,
+//																posDest.z));
+							//Log(LOG_INFO) << ". . . . MT_WALK/MT_SLIDE -> startWalking() and addBonker()";
+
+							// TODO: Figure out how UnitBonkBState really works, or should work.
+							// This should probably merely setup and run UnitWalkBState; that would
+							// instantiate fallingUnits from there if needed. Then fallingUnits could
+							// likely be handled one at a time instead of enmasse as they are at present.
+
+							unit->startWalking(
+											Pathfinding::DIR_DOWN,
+											unit->getPosition() + Position::POS_BELOW);
+							_battleSave->addBonker(unit);
+							break;
+						}
+
+						case MT_FLY:
+							//Log(LOG_INFO) << ". . . . MT_FLY -> setFloating()";
+
+							tileDest = unit->getUnitTile();
+							if (tileDest->isFloored(tileDest->getTileBelow(_battleSave)) == true)
+								unit->setFloating(false);
+							else
+								unit->setFloating();
+					}
+				}
+				//else Log(LOG_INFO) << ". . . no drop unit.";
 			}
 		}
 	}

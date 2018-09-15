@@ -72,9 +72,7 @@ std::string UnitBonkBState::getBattleStateLabel() const
 {
 	std::ostringstream oststr;
 	oststr << "UnitBonkBState";
-	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
-	else oststr << " - Actor INVALID";
-
+	if (_action.actor != nullptr) oststr << " ActorId-" << _action.actor->getId();
 	return oststr.str();
 }
 
@@ -115,8 +113,6 @@ void UnitBonkBState::think()
 	Position
 		pos,
 		posStart,
-		posStop,
-		posQuadStart,
 		posQuadStop;
 
 	for (std::list<BattleUnit*>::const_iterator
@@ -233,12 +229,9 @@ void UnitBonkBState::think()
 						if (canFall(*i) == true)
 						{
 							//Log(LOG_INFO) << ". . still falling -> startWalking()";
-							posStop = pos + Position::POS_BELOW;
 							(*i)->startWalking(
 											Pathfinding::DIR_DOWN,
-											posStop,
-											_battleSave->getTile(pos));
-//											_battleSave->getTile(posStop));
+											pos + Position::POS_BELOW);
 
 							(*i)->setCacheInvalid();
 							_battleGame->getMap()->cacheUnitSprite(*i);
@@ -303,15 +296,14 @@ void UnitBonkBState::think()
 		std::vector<Tile*> escapeTiles;
 
 		for (std::vector<BattleUnit*>::const_iterator
-				j  = _unitsBonked.begin();
-				j != _unitsBonked.end();
+				i  = _unitsBonked.begin();
+				i != _unitsBonked.end();
 				)
 		{
-			//Log(LOG_INFO) << ". moving unit ID " << (*j)->getId();
-			unitBelow = *j;
+			//Log(LOG_INFO) << ". moving unit ID " << (*i)->getId();
 			bool escape (false);
 
-			const int belowSize (unitBelow->getArmor()->getSize() - 1); // need to move all sections of unitBelow out of the way.
+			const int belowSize ((*i)->getArmor()->getSize() - 1); // need to move all sections of unitBelow out of the way.
 			std::vector<Position> posQuadrants;
 			for (int
 					x = belowSize;
@@ -324,7 +316,7 @@ void UnitBonkBState::think()
 						--y)
 				{
 					//Log(LOG_INFO) << ". body size + 1";
-					posQuadrants.push_back(unitBelow->getPosition() + Position(x,y,0));
+					posQuadrants.push_back((*i)->getPosition() + Position(x,y,0));
 				}
 			}
 
@@ -338,53 +330,38 @@ void UnitBonkBState::think()
 				Pathfinding::directionToVector(dir, &posVect);
 
 				for (std::vector<Position>::const_iterator
-						k = posQuadrants.begin();
-						k != posQuadrants.end();
+						j  = posQuadrants.begin();
+						j != posQuadrants.end();
 						)
 				{
-					//Log(LOG_INFO) << ". . . checking bodysections";
-					posQuadStart = *k;
-					posQuadStop = posQuadStart + posVect;
+					//Log(LOG_INFO) << ". . . checking quads";
+					posQuadStop = *j + posVect;
 					tile = _battleSave->getTile(posQuadStop);
 					tileBelow = _battleSave->getTile(posQuadStop + Position::POS_BELOW);
 
-					bool
-						aboutToBeOccupiedFromAbove (tile != nullptr
-												 && std::find(
-															_tilesToBonkInto.begin(),
-															_tilesToBonkInto.end(),
-															tile) != _tilesToBonkInto.end()),
-						alreadyTaken (tile != nullptr
-								   && std::find(
-											escapeTiles.begin(),
-											escapeTiles.end(),
-											tile) != escapeTiles.end()),
-						alreadyOccupied (tile != nullptr
-									  && tile->getTileUnit() != nullptr
-									  && tile->getTileUnit() != unitBelow),
-						hasFloor (tile != nullptr
-							   && tile->isFloored(tileBelow) == true),
-//									blocked (_battleSave->getPathfinding()->isBlockedDir(_battleSave->getTile(posQuadStart), dir, unitBelow)),
-						blocked (_battleSave->getPathfinding()->getTuCostPf(posQuadStart, dir, &posQuadStop) == Pathfinding::PF_FAIL_TU),
-						unitCanFly (unitBelow->getMoveTypeUnit() == MT_FLY),
-						canMoveToTile (tile != nullptr
-									&& alreadyOccupied == false
-									&& alreadyTaken == false
-									&& aboutToBeOccupiedFromAbove == false
-									&& blocked == false
-									&& (hasFloor == true || unitCanFly == true));
+					if (tile == nullptr
+						|| (tile->getTileUnit() != nullptr && tile->getTileUnit() != *i)
+						|| (tile->isFloored(tileBelow) == false && (*i)->getMoveTypeUnit() != MT_FLY)
+						|| std::find(
+								escapeTiles.begin(),
+								escapeTiles.end(),
+								tile) != escapeTiles.end()
+						|| std::find(
+								_tilesToBonkInto.begin(),
+								_tilesToBonkInto.end(),
+								tile) != _tilesToBonkInto.end()
+						|| _battleSave->getPathfinding()->getTuCostPf(*j, dir, &posQuadStop) == Pathfinding::PF_FAIL_TU)
+//						|| _battleSave->getPathfinding()->isBlockedDir(_battleSave->getTile(*j), dir, *i)
+					{
+						break; // no go -> try next direction
+					}
+					// else check next quad of the unit ->
 
-					if (canMoveToTile == false)	// no go - Try next direction.
-						break;
-
-					++k;						// okay - Check next quad of the unit.
-
-
-					// If all sections of the unit-fallen-onto can be moved then move it.
-					if (k == posQuadrants.end())
+					// if all sections of the unit-fallen-onto can be moved then move it
+					if (++j == posQuadrants.end())
 					{
 						//Log(LOG_INFO) << ". . . . move unit";
-						if (_battleSave->addBonker(unitBelow) == true)
+						if (_battleSave->addBonker(*i) == true)
 						{
 							//Log(LOG_INFO) << ". . . . . add Falling Unit";
 							escape = true;
@@ -405,12 +382,12 @@ void UnitBonkBState::think()
 							}
 
 							//Log(LOG_INFO) << ". . . . startWalking() out of the way?";
-							unitBelow->startWalking(
-												dir,
-												unitBelow->getPosition() + posVect,
-												_battleSave->getTile(posQuadStart + Position::POS_BELOW));
+							(*i)->startWalking(
+											dir,
+											(*i)->getPosition() + posVect,
+											_battleSave->getTile(*j + Position::POS_BELOW));
 
-							j = _unitsBonked.erase(j);
+							i = _unitsBonked.erase(i);
 						}
 					}
 				}
@@ -419,8 +396,8 @@ void UnitBonkBState::think()
 			if (escape == false)
 			{
 				//Log(LOG_INFO) << ". . . NOT escape";
-//				unitBelow->knockOut(); // needs conversion check. THIS FUNCTION HAS BEEN REMOVED.
-				j = _unitsBonked.erase(j);
+//				(*i)->knockOut(); // needs conversion check. THIS FUNCTION HAS BEEN REMOVED.
+				i = _unitsBonked.erase(i);
 			}
 		}
 

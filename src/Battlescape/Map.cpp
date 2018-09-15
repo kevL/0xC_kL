@@ -1047,7 +1047,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 																sprite = unitNorth->getCache(quadrant);
 																//if (sprite != nullptr)
 																{
-																	if (unitNorth->isOut_t(OUT_HLTH_STUN) == true)
+																	if (unitNorth->isOut_t(OUT_HEALTH_STUN) == true)
 																		shade = std::min(tileShade, SHADE_UNIT);
 																	else
 																		shade = tileShade;
@@ -1491,7 +1491,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 								sprite = _unit->getCache(quadrant);
 								if (sprite != nullptr) // <- check is needed for start of Tactical.
 								{
-									if (_unit->isOut_t(OUT_HLTH_STUN) == true)
+									if (_unit->isOut_t(OUT_HEALTH_STUN) == true)
 										shade = std::min(tileShade, SHADE_UNIT);
 									else
 										shade = tileShade;

@@ -101,9 +101,8 @@ std::string ProjectileFlyBState::getBattleStateLabel() const
 {
 	std::ostringstream oststr;
 	oststr << "ProjectileFlyBState";
-	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
-	else oststr << " - Actor INVALID";
-
+	if (_action.actor != nullptr) oststr << " ActorId-" << _action.actor->getId();
+	if (_unit         != nullptr) oststr << " UnitId-"  << _unit        ->getId();
 	return oststr.str();
 }
 
@@ -604,7 +603,7 @@ bool ProjectileFlyBState::createProjectile() // private.
 				&& _clip->getRules()->getExplosionRadius() != -1)
 			{
 				const Tile* const tile (_battleSave->getTile(_prj->getFinalPosition()));
-//				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT ....
+				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT .... uh not true don't know why.
 				{
 					switch (tile->getMapData(O_OBJECT)->getBigwall())
 					{
@@ -621,8 +620,8 @@ bool ProjectileFlyBState::createProjectile() // private.
 			if (soundId == -1)
 				soundId = _action.weapon->getRules()->getFireSound();
 
-			_unit->startAiming();
-			_battleGame->getMap()->cacheUnitSprite(_unit);
+			if (_unit->startAiming() == false)	// if not a Celatid
+				_unit->toggleShoot();			// grenade-launcher
 		}
 		else // no line of fire; Note that BattleUnit accuracy^ should *not* be considered before this. Unless this is some sort of failsafe/exploit for the AI ...
 		{
@@ -1194,7 +1193,7 @@ void ProjectileFlyBState::think()
 				contactsHandled.resize(posContacts.size());
 
 				for (std::vector<Position>::const_iterator
-						i = posContacts.begin();
+						i  = posContacts.begin();
 						i != posContacts.end();
 						++i)
 				{

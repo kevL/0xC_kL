@@ -52,9 +52,7 @@ std::string BattleState::getBattleStateLabel() const // virtual.
 {
 	std::ostringstream oststr;
 	oststr << "BattleState";
-	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
-	else oststr << " - Actor INVALID";
-
+	if (_action.actor != nullptr) oststr << " ActorId-" << _action.actor->getId();
 	return oststr.str();
 }
 

@@ -364,7 +364,7 @@ void BattlescapeGame::popBattleState()
 	//Log(LOG_INFO) << "BattlescapeGame::popBattleState() qtyStates= " << _battleStates.size();
 
 //	for (std::list<BattleState*>::const_iterator
-//			i = _battleStates.begin();
+//			i  = _battleStates.begin();
 //			i != _battleStates.end();
 //			++i)
 //		Log(LOG_INFO) << ". . " << (*i)->getBattleStateLabel();
@@ -378,7 +378,7 @@ void BattlescapeGame::popBattleState()
 //	std::set<Tile*>& tilesToDetonate (_battleSave->detonationTiles()); // detonate tiles affected with HE
 //	Log(LOG_INFO) << ". explode Tiles qty= " << tilesToDetonate.size();
 //	for (std::set<Tile*>::const_iterator
-//			i = tilesToDetonate.begin();
+//			i  = tilesToDetonate.begin();
 //			i != tilesToDetonate.end();
 //			++i)
 //	{
@@ -615,7 +615,7 @@ void BattlescapeGame::popBattleState()
 		}
 
 
-		if (_battleSave->getSelectedUnit() == nullptr
+		if (   _battleSave->getSelectedUnit() == nullptr
 			|| _battleSave->getSelectedUnit()->isOut_t() == true)
 		{
 			//Log(LOG_INFO) << ". selUnit invalid OR incapacitated: cancelAction";
@@ -3230,8 +3230,8 @@ void BattlescapeGame::convertUnit(BattleUnit* potato)
 	}
 	getMap()->cacheUnitSprite(potato);
 
-	getTileEngine()->applyGravity(potato->getUnitTile());
-}
+	getTileEngine()->applyGravity(potato->getUnitTile());	// pretty sure this is handled during UnitDieBState.
+}															// But perhaps not for the converted BattleUnit itself.
 
 /**
  * Gets the battlefield Map.

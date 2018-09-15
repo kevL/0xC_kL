@@ -25,7 +25,7 @@
 #include "Map.h"
 #include "TileEngine.h"
 
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
 
@@ -109,9 +109,8 @@ std::string ExplosionBState::getBattleStateLabel() const
 {
 	std::ostringstream oststr;
 	oststr << "ExplosionBState";
-	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
-	else oststr << " - Actor INVALID";
-
+	if (_action.actor != nullptr) oststr << " ActorId-" << _action.actor->getId();
+	if (_unit         != nullptr) oststr << " UnitId-"  << _unit        ->getId();
 	return oststr.str();
 }
 
@@ -606,6 +605,10 @@ void ExplosionBState::explode() // private.
 				(*i)->hasCriedShotgun(false);
 			}
 		}
+
+		//Log(LOG_INFO) << ". _lowerWeapon= " << _lowerWeapon;
+		//Log(LOG_INFO) << ". _isLaunched= "  << _isLaunched;
+		//if (_unit != nullptr) Log(LOG_INFO) << ". status= " << _unit->debugStatus(_unit->getUnitStatus());
 
 		if (_unit != nullptr			// if this hit/explosion was caused by a unit put the weapon down
 			&& _lowerWeapon == true)	// NOTE: This is a stupid place to toggle the unit-sprite: try popBattleState().

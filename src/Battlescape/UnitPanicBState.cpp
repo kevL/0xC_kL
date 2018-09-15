@@ -57,9 +57,8 @@ std::string UnitPanicBState::getBattleStateLabel() const
 {
 	std::ostringstream oststr;
 	oststr << "UnitPanicBState";
-	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
-	else oststr << " - Actor INVALID";
-
+	if (_action.actor != nullptr) oststr << " ActorId-" << _action.actor->getId();
+	if (_unit         != nullptr) oststr << " UnitId-"  << _unit        ->getId();
 	return oststr.str();
 }
 

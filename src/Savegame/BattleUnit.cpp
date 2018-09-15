@@ -38,7 +38,7 @@
 #include "../Battlescape/TileEngine.h"
 
 #include "../Engine/Language.h"
-//#include "../Engine/Logger.h"
+#include "../Engine/Logger.h"
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
@@ -1081,7 +1081,8 @@ int BattleUnit::getWalkPhase() const
  * Initializes variables to start walking.
  * @param dir		- the direction to walk
  * @param posStop	- reference to the Position this unit should end up at
- * @param tileBelow	- pointer to the Tile below the start-position
+ * @param tileBelow	- pointer to the Tile below the start-position (needed only
+ *                    if dir is 0..7 - ie. NOT up/down) (default nullptr)
 // * @param tileBelow	- pointer to the Tile below destination-position
  */
 void BattleUnit::startWalking(
@@ -1412,7 +1413,7 @@ bool BattleUnit::isFloating() const
 void BattleUnit::toggleShoot()
 {
 	//Log(LOG_INFO) << "";
-	//Log(LOG_INFO) << "BattleUnit::toggleShoot()";
+	//Log(LOG_INFO) << "BattleUnit::toggleShoot() status= " << debugStatus(_status);
 
 	switch (_status)
 	{
@@ -1974,16 +1975,23 @@ int BattleUnit::getCollapsePhase() const
 
 /**
  * Intializes an aiming sequence.
+ * @return, true if aiming is an animation of the armor - false if that of a weapon
  */
-void BattleUnit::startAiming()
+bool BattleUnit::startAiming()
 {
 	if (_arRule->getShootFrames() != 0)
 	{
 		_status = STATUS_AIMING;
 		_aimPhase = 0;
 
-		if (_visible == true) _cacheInvalid = true;
+		if (_visible == true)
+		{
+			_cacheInvalid = true;
+			_battleGame->getMap()->cacheUnitSprite(this);
+		}
+		return true;
 	}
+	return false;
 }
 
 /**
@@ -1997,7 +2005,11 @@ void BattleUnit::keepAiming()
 	if (_aimPhase == _arRule->getShootFrames() + 1)
 		_status = STATUS_STANDING;
 
-	if (_visible == true) _cacheInvalid = true;
+	if (_visible == true)
+	{
+		_cacheInvalid = true;
+//		_battleGame->getMap()->cacheUnitSprite(this); // not sure if required <-
+	}
 }
 
 /**
@@ -2060,7 +2072,7 @@ bool BattleUnit::isOut_t(const OutCheck test) const
 				return true;
 			break;
 
-		case OUT_HLTH_STUN:
+		case OUT_HEALTH_STUN:
 			if (_health == 0 || _health <= _stunLevel)
 				return true;
 	}

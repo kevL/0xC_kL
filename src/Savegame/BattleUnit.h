@@ -109,7 +109,7 @@ enum OutCheck
 	OUT_STAT,		// 1
 	OUT_HEALTH,		// 2
 	OUT_STUNNED,	// 3
-	OUT_HLTH_STUN	// 4
+	OUT_HEALTH_STUN	// 4
 };
 
 enum ActiveHand
@@ -371,7 +371,7 @@ private:
 		void startWalking(
 				int dir,
 				const Position& posStop,
-				const Tile* const tileBelow);
+				const Tile* const tileBelow = nullptr);
 		/// Advances the walkingPhase.
 		void keepWalking(
 				const Tile* const tileBelow,
@@ -481,8 +481,8 @@ private:
 		/// Gets the collapsing sequence phase.
 		int getCollapsePhase() const;
 
-		/// Starts an aiming sequence. This is only for celatids.
-		void startAiming();
+		/// Starts an aiming sequence. This is only for celatids. And grenade launchers.
+		bool startAiming();
 		/// Advances an aiming sequence.
 		void keepAiming();
 		/// Gets the aiming sequence phase.

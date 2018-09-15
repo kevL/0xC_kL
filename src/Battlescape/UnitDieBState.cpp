@@ -138,9 +138,8 @@ std::string UnitDieBState::getBattleStateLabel() const
 {
 	std::ostringstream oststr;
 	oststr << "UnitDieBState";
-	if (_action.actor != nullptr) oststr << " id-" << _action.actor->getId();
-	else oststr << " - Actor INVALID";
-
+	if (_action.actor != nullptr) oststr << " ActorId-" << _action.actor->getId();
+	if (_unit         != nullptr) oststr << " UnitId-"  << _unit        ->getId();
 	return oststr.str();
 }
 
@@ -164,6 +163,7 @@ void UnitDieBState::think()
 	{
 		_isSilent = true; // done.
 
+		//Log(LOG_INFO) << ". focusPosition()";
 		_battleGame->getMap()->getCamera()->focusPosition(_unit->getPosition());	// NOTE: Can't be done in cTor or init() because
 																					// ... BattleState machine gets confused.
 		if (   _unit->getHealth() == 0
