@@ -165,14 +165,14 @@ extraSprites:
       0: Resources/Sprites/geograph/textures/textures.png
 
 # -------- UFOGRAPH -------- #
-  - type: TacIcons #ICONS.PCK
+  - type: TacToolbar #ICONS.PCK
     width: 320
     height: 56
     singleImage: true
     files:
       0: Resources/Sprites/ufograph/icons_kL.png
 
-  - type: TacIconsOverlay
+  - type: TacToolbarOverlay
     width: 224
     height: 32
     subX: 32

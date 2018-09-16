@@ -1239,9 +1239,9 @@ interfaces:
       - id: visibleUnits
         pos: [300, -16]
         color: 16
-      - id: icons
+      - id: toolbar
         size: [320, 56]
-      - id: numIcons
+      - id: numToolbar
         color: 93
       - id: warning
         color: 16

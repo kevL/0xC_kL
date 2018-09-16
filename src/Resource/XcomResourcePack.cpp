@@ -1070,7 +1070,7 @@ void XcomResourcePack::loadBattlescapeResources()
 //		"TAC01.SCR",	// -> "Inventory"
 		"DETBORD.PCK",
 		"DETBORD2.PCK",
-//		"ICONS.PCK",	// -> "TacIcons"
+//		"ICONS.PCK",	// -> "TacToolbar"
 		"MEDIBORD.PCK",
 //		"SCANBORD.PCK",	// -> "Scanbord"
 		"UNIBORD.PCK"

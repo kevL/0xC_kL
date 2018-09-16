@@ -46,7 +46,7 @@ namespace OpenXcom
  * @param mapsize_y			- current map-size in y-axis
  * @param mapsize_z			- current map-size in z-axis
  * @param battleField		- pointer to Map
- * @param playableHeight	- height of map-surface minus icons-height
+ * @param playableHeight	- height of map-surface minus toolbar-height
  */
 Camera::Camera(
 		int spriteWidth,
@@ -826,9 +826,9 @@ bool Camera::isInFocus(const Position& posField) const // private.
 	posScreen.y += _offsetField.y + posy;
 	if (unitWalking)
 	{
-//pretty hardcoded hack to handle overlapping by icons
+//pretty hardcoded hack to handle overlapping by the toolbar
 //(they are always in the center at the bottom of the screen)
-//Free positioned icons would require more complex workaround.
+//Free positioned toolbar would require more complex workaround.
 //__________
 //|________|
 //||      ||
@@ -845,8 +845,8 @@ bool Camera::isInFocus(const Position& posField) const // private.
 			|| posScreen.x >= _screenWidth + sizex
 			|| posScreen.y < 0 - sizey
 			|| posScreen.y >= _screenHeight + sizey ) return false; //totally outside
-		int side = ( _screenWidth - _map->getIconWidth() ) / 2;
-		if ( (posScreen.y < (_screenHeight - _map->getIconHeight()) + sizey) ) return true; //above icons
+		int side = ( _screenWidth - _map->getToolbarWidth() ) / 2;
+		if ( (posScreen.y < (_screenHeight - _map->getToolbarHeight()) + sizey) ) return true; //above toolbar
 		if ( (side > 1) && ( (posScreen.x < side + sizex) || (posScreen.x >= (_screenWidth - side - sizex)) ) ) return true; //at sides (if there are any)
 		return false;
 	}
@@ -867,7 +867,7 @@ void Camera::resize()
 	_screenWidth = _map->getWidth();
 	_screenHeight = _map->getHeight();
 
-	_playableHeight = _map->getHeight() - _map->getIconHeight();
+	_playableHeight = _map->getHeight() - _map->getToolbarHeight();
 }
 
 /**

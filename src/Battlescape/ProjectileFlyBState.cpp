@@ -59,7 +59,7 @@ namespace OpenXcom
  * Sets up the ProjectileFlyBState.
  * @param battleGame	- pointer to the BattlescapeGame
  * @param action		- the current BattleAction (BattlescapeGame.h)
- * @param posOrigin		- origin in tile-space (default Position::POS_BELOW)
+ * @param posOrigin		- origin in tile-space (default Position::POS_BOGUS)
  */
 ProjectileFlyBState::ProjectileFlyBState(
 		BattlescapeGame* const battleGame,
@@ -83,7 +83,7 @@ ProjectileFlyBState::ProjectileFlyBState(
 		_start(0),
 		_prj(nullptr)
 {
-	if (_posOrigin.z == -1)
+	if (_posOrigin == Position::POS_BOGUS)
 		_posOrigin = _action.actor->getPosition();
 }
 
@@ -140,6 +140,7 @@ void ProjectileFlyBState::init()
 			if (_action.type == BA_AUTOSHOT)
 			{
 				_shots = _action.weapon->getRules()->getAutoShots();
+
 				if (_action.weapon->selfPowered() == false
 					&& _clip != nullptr
 					&& _clip->getClipRounds() < _shots)
@@ -148,19 +149,19 @@ void ProjectileFlyBState::init()
 				}
 			}
 
-			bool fireValid;
+			bool rfValid;
 			if (_unit->getFaction() != _battleSave->getSide()) // reaction fire
 			{
 				const BattleUnit* const targetUnit (_battleSave->getTile(_action.posTarget)->getTileUnit());
-				fireValid = targetUnit != nullptr
+				rfValid = targetUnit != nullptr
 						 && targetUnit->isOut_t() == false
 						 && targetUnit == _battleSave->getSelectedUnit()
 						 && _clip != nullptr;
 			}
 			else
-				fireValid = true;
+				rfValid = true;
 
-			if (fireValid == false || _unit->getStopShot() == true)
+			if (rfValid == false || _unit->getStopShot() == true)
 			{
 				_unit->setTu(_unit->getTu() + _action.TU);
 				popThis = true;
@@ -190,7 +191,7 @@ void ProjectileFlyBState::init()
 		// Except that Berserk tries to use SnapShot .... needs looking at.
 
 
-		// snapshot defaults to "hit" if it's a melee weapon (in case of reaction
+		// shot-type defaults to "hit" if it's a melee weapon (in case of reaction
 		// with a melee weapon) for Silacoid attack etc.
 		if (_action.weapon->getRules()->getBattleType() == BT_MELEE)
 		{
@@ -376,11 +377,11 @@ void ProjectileFlyBState::init()
 //					_targetVoxel.x += 8;
 //					_targetVoxel.y += 8;
 //					_targetVoxel.z += 10;
-					// question: where does no-LoF popup -- oh yeah in a convoluted crap.
+					// question: where does no-LoF popup - oh yeah in a convoluted crap.
 
 					// karadoc: if this action requires direct line-of-sight, should abort.
 					// iff it's a line-shot (not arcing).
-					// kL_note: You're playing around with the AI here, dude -- and I don't think you've considered that AT ALL.
+					// kL_note: You're playing around with the AI here, dude - and I don't think you've considered that AT ALL.
 					// Apart from that, I'm not so sure this is needed with the changes I've made to
 					// - doTargetUnit()
 					// - plotLine()

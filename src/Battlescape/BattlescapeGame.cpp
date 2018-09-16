@@ -1647,12 +1647,12 @@ void BattlescapeGame::endTurn() // private.
 													false);
 
 				if (_battleSave->getDebugTac() == false)
-					_battleSave->getBattleState()->toggleIcons(true);
+					_battleSave->getBattleState()->toggleToolbar(true);
 			}
 			else
 			{
 				getMap()->setSelectorType(CT_NONE);
-				_battleSave->getBattleState()->toggleIcons(false);
+				_battleSave->getBattleState()->toggleToolbar(false);
 			}
 
 			_battleSave->setPacified(pacified);

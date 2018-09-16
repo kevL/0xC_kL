@@ -23,10 +23,10 @@
 
 #include "../fmath.h"
 
-#include "BattlescapeMessage.h"
 #include "BattlescapeState.h"
 #include "Camera.h"
 #include "Explosion.h"
+#include "HiddenMovement.h"
 #include "Pathfinding.h"
 #include "Projectile.h"
 #include "ProjectileFlyBState.h"
@@ -82,7 +82,7 @@ namespace OpenXcom
  * @param height			- height in pixels
  * @param x					- x-position in pixels
  * @param y					- y-position in pixels
- * @param playableHeight	- Map height above HUD-icons (generally clickable)
+ * @param playableHeight	- Map height above HUD-toolbar (generally clickable)
  */
 Map::Map(
 		const Game* const game,
@@ -128,8 +128,8 @@ Map::Map(
 		_unit(nullptr)
 {
 	const RuleInterface* const uiRule (_game->getRuleset()->getInterface("battlescape"));
-	_iconWidth  = uiRule->getElement("icons")->w;
-	_iconHeight = uiRule->getElement("icons")->h;
+	_toolbarWidth  = uiRule->getElement("toolbar")->w;
+	_toolbarHeight = uiRule->getElement("toolbar")->h;
 
 	if (Options::traceAI != 0) // turn everything on to see the markers.
 		_previewSetting = PATH_FULL;
@@ -148,14 +148,14 @@ Map::Map(
 					_battleSave->getMapSizeY(),
 					_battleSave->getMapSizeZ(),
 					this,
-					playableHeight);
+					_playableHeight);
 
 	int hiddenHeight;
-	if (playableHeight < 200)
-		hiddenHeight = playableHeight;
+	if (_playableHeight < 200)
+		hiddenHeight = _playableHeight;
 	else
 		hiddenHeight = 200;
-	_hiddenScreen = new BattlescapeMessage(320, hiddenHeight); // "Hidden Movement..." screen
+	_hiddenScreen = new HiddenMovement(320, hiddenHeight);
 	_hiddenScreen->setX(_game->getScreen()->getDX());
 	_hiddenScreen->setY(_game->getScreen()->getDY());
 	_hiddenScreen->setTextColor(static_cast<Uint8>(uiRule->getElement("messageWindows")->color));
@@ -1082,7 +1082,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 // Draw Cursor Background
 						if (_selectorType != CT_NONE
-							&& _battleSave->getBattleState()->getMouseOverIcons() == false
+							&& _battleSave->getBattleState()->getMouseOverToolbar() == false
 							&& _selectorX >  itX - _selectorSize
 							&& _selectorY >  itY - _selectorSize
 							&& _selectorX <= itX
@@ -1760,7 +1760,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 // Draw Cursor Front
 						if (_selectorType != CT_NONE
-							&& _battleSave->getBattleState()->getMouseOverIcons() == false
+							&& _battleSave->getBattleState()->getMouseOverToolbar() == false
 							&& _selectorX >  itX - _selectorSize
 							&& _selectorY >  itY - _selectorSize
 							&& _selectorX <= itX
@@ -3103,11 +3103,11 @@ void Map::setUnitDying(bool flag)
  * Special handling for setting the height of the Map viewport.
  * @param height - the new base screen height
  */
-void Map::setHeight(int height)
+void Map::setHeight(int height) // override
 {
 	Surface::setHeight(height);
 
-	_playableHeight = height - _iconHeight;
+	_playableHeight = height - _toolbarHeight;
 	if (_playableHeight < 200)
 		height = _playableHeight;
 	else
@@ -3121,7 +3121,7 @@ void Map::setHeight(int height)
  * Special handling for setting the width of the Map viewport.
  * @param width - the new base screen width
  */
-void Map::setWidth(int width)
+void Map::setWidth(int width) // override
 {
 	Surface::setWidth(width);
 	_hiddenScreen->setX(_hiddenScreen->getX() + (width - getWidth()) >> 1u);
@@ -3130,29 +3130,29 @@ void Map::setWidth(int width)
 /**
  * Gets the hidden-movement screen's vertical position.
  * @return, the vertical position
- */
+ *
 int Map::getMessageY() const
 {
 	return _hiddenScreen->getY();
-}
+} */
 
 /**
- * Gets the icon-height.
- * @return, icon-panel height
+ * Gets the toolbar-height.
+ * @return, toolbar-panel height
  */
-int Map::getIconHeight() const
+int Map::getToolbarHeight() const
 {
-	return _iconHeight;
+	return _toolbarHeight;
 }
 
 /**
- * Gets the icon-width.
- * @return, icon-panel width
- */
-int Map::getIconWidth() const
+ * Gets the toolbar-width.
+ * @return, toolbar-panel width
+ *
+int Map::getToolbarWidth() const
 {
 	return _iconWidth;
-}
+} */
 
 /**
  * Gets the angle (left/right balance) of a sound-effect based on a map-position.

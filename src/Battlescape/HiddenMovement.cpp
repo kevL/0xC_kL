@@ -17,7 +17,7 @@
  * along with OpenXcom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BattlescapeMessage.h"
+#include "HiddenMovement.h"
 
 //#include "../Engine/Palette.h"
 
@@ -29,14 +29,13 @@ namespace OpenXcom
 {
 
 /**
- * Sets up a blank BattlescapeMessage with the specified size and position.
- * @note This is the "Hidden Movement" screen.
+ * Sets up a blank HiddenMovement screen with the specified size and position.
  * @param width		- width in pixels
  * @param height	- height in pixels
  * @param x			- x-position in pixels (default 0)
  * @param y			- y-position in pixels (default 0)
  */
-BattlescapeMessage::BattlescapeMessage(
+HiddenMovement::HiddenMovement(
 		int width,
 		int height,
 		int x,
@@ -55,7 +54,7 @@ BattlescapeMessage::BattlescapeMessage(
 						POPUP_NONE);
 	_window->setHighContrast();
 
-	_text = new Text( // "Hidden Movement" text
+	_text = new Text(
 					width  - 28,
 					height - 12,
 					x, y + 14);
@@ -67,17 +66,17 @@ BattlescapeMessage::BattlescapeMessage(
 /**
  * Deletes Surfaces.
  */
-BattlescapeMessage::~BattlescapeMessage()
+HiddenMovement::~HiddenMovement()
 {
 	delete _window;
 	delete _text;
 }
 
 /**
- * Changes the position of this BattlescapeMessage in the x-axis.
+ * Changes the position of this HiddenMovement in the x-axis.
  * @param x - x-position in pixels
  */
-void BattlescapeMessage::setX(int x)
+void HiddenMovement::setX(int x)
 {
 	Surface::setX(x);
 	_window->setX(x);
@@ -85,10 +84,10 @@ void BattlescapeMessage::setX(int x)
 }
 
 /**
- * Changes the position of this BattlescapeMessage in the y-axis.
+ * Changes the position of this HiddenMovement in the y-axis.
  * @param y - y-position in pixels
  */
-void BattlescapeMessage::setY(int y)
+void HiddenMovement::setY(int y)
 {
 	Surface::setY(y);
 	_window->setY(y);
@@ -96,19 +95,19 @@ void BattlescapeMessage::setY(int y)
 }
 
 /**
- * Changes this BattlescapeMessage's background.
+ * Changes this HiddenMovement's background.
  * @param background - pointer to background surface
  */
-void BattlescapeMessage::setBackground(Surface* const bg)
+void HiddenMovement::setBackground(Surface* const bg)
 {
 	_window->setBackground(bg);
 }
 
 /**
- * Changes this BattlescapeMessage's text.
+ * Changes this HiddenMovement's text.
  * @param message - reference to the Message string
  */
-void BattlescapeMessage::setText(const std::wstring& message)
+void HiddenMovement::setText(const std::wstring& message)
 {
 	_text->setText(message);
 }
@@ -121,7 +120,7 @@ void BattlescapeMessage::setText(const std::wstring& message)
  * @param small	- pointer to small-size Font
  * @param lang	- pointer to current Language
  */
-void BattlescapeMessage::initText(
+void HiddenMovement::initText(
 		Font* const big,
 		Font* const small,
 		const Language* const lang)
@@ -136,7 +135,7 @@ void BattlescapeMessage::initText(
  * @param firstcolor	- offset of the first color to replace (default 0)
  * @param ncolors		- amount of colors to replace (default 256)
  */
-void BattlescapeMessage::setPalette(
+void HiddenMovement::setPalette(
 		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)
@@ -150,7 +149,7 @@ void BattlescapeMessage::setPalette(
  * Blits the battlescape message.
  * @param srf - pointer to a Surface
  */
-void BattlescapeMessage::blit(const Surface* const srf)
+void HiddenMovement::blit(const Surface* const srf)
 {
 	Surface::blit(srf);
 
@@ -159,10 +158,10 @@ void BattlescapeMessage::blit(const Surface* const srf)
 }
 
 /**
- * Special handling for setting the height of this BattlescapeMessage.
+ * Special handling for setting the height of this HiddenMovement.
  * @param height - the height
  */
-void BattlescapeMessage::setHeight(int height)
+void HiddenMovement::setHeight(int height)
 {
 	Surface::setHeight(height);
 
@@ -171,10 +170,10 @@ void BattlescapeMessage::setHeight(int height)
 }
 
 /**
- * Sets the text-color of this BattlescapeMessage.
+ * Sets the text-color of this HiddenMovement.
  * @param color - the color
  */
-void BattlescapeMessage::setTextColor(Uint8 color)
+void HiddenMovement::setTextColor(Uint8 color)
 {
 	_text->setColor(color);
 }

@@ -64,37 +64,37 @@ class BattlescapeState final
 
 private:
 	static const size_t
-		ICONS_HOSTILE	= 20u,
-		ICONS_MEDIC		= 10u,
-		PHASE_TARGET	=  6u,
-		PHASE_FUSE		= 22u;
+		ICONS_HOSTILE = 20u,
+		ICONS_MEDIC   = 10u,
+		PHASE_TARGET  =  6u,
+		PHASE_FUSE    = 22u;
 
 	static const Uint8
-		TRANSP		=   0u,
-		WHITE		=   2u,
-		BLACK		=  14u,
-		ORANGE		=  16u,
-		ORANGE_D	=  20u,
-		RED			=  32u,
-		RED_M		=  38u,
-		RED_D		=  42u,
-		GREEN		=  48u,
-		GREEN_D		=  52u,
-		BROWN_L		=  80u,
-		BLUE		= 128u,
-		YELLOW		= 144u,
-		YELLOW_D	= 148u,
-		BROWN		= 160u;
+		TRANSP   =   0u,
+		WHITE    =   2u,
+		BLACK    =  14u,
+		ORANGE   =  16u,
+		ORANGE_D =  20u,
+		RED      =  32u,
+		RED_M    =  38u,
+		RED_D    =  42u,
+		GREEN    =  48u,
+		GREEN_D  =  52u,
+		BROWN_L  =  80u,
+		BLUE     = 128u,
+		YELLOW   = 144u,
+		YELLOW_D = 148u,
+		BROWN    = 160u;
 
 	bool
 		_autosave,
-		_iconsHidden,
+		_toolbarHidden,
 		_init,
 		_dragScrollActivated,
 //		_dragScrollStepped,
 		_dragScrollPastPixelThreshold,
 		_isOverweight,
-		_mouseOverIcons,
+		_mouseOverToolbar,
 		_showSoldierData;
 	int
 		_showConsole,
@@ -137,7 +137,7 @@ private:
 	BattlescapeGame* _battleGame;
 	BattleUnit* _hostileUnits[ICONS_HOSTILE];
 	InteractiveSurface
-		* _icons,
+		* _toolbar,
 		* _isfLeftHand,
 		* _isfRightHand,
 		* _isfStats,
@@ -190,7 +190,7 @@ private:
 		* _srfTitle;
 	SurfaceSet
 		* _srtBigobs,
-		* _srtIconsOverlay,
+		* _srtToolbarOverlay,
 		* _srtScanG,
 		* _srtTargeter;
 	Tile* _tileMedic[ICONS_MEDIC];
@@ -271,12 +271,12 @@ private:
 
 	public:
 		static const Uint32
-//			STATE_INTERVAL_STANDARD		=  90u; // for fast shaders - Raw, Quillez, etc.
-			STATE_INTERVAL_STANDARD		=  76u, // for slow shaders - 4xHQX & above. TODO: Ruleset.
-			STATE_INTERVAL_FAST			=  15u,
-			STATE_INTERVAL_DEATHSPIN	=  21u,
-			STATE_INTERVAL_EXPLOSION	= 100u,
-			STATE_INTERVAL_TILE			=  87u;
+//			STATE_INTERVAL_STANDARD  =  90u; // for fast shaders - Raw, Quillez, etc.
+			STATE_INTERVAL_STANDARD  =  76u, // for slow shaders - 4xHQX & above. TODO: Ruleset.
+			STATE_INTERVAL_FAST      =  15u,
+			STATE_INTERVAL_DEATHSPIN =  21u,
+			STATE_INTERVAL_EXPLOSION = 100u,
+			STATE_INTERVAL_TILE      =  87u;
 		Uint32
 			STATE_INTERVAL_XCOM,
 			STATE_INTERVAL_XCOMDASH,
@@ -464,7 +464,7 @@ private:
 
 		/// Prints a debug-message onScreen.
 		void printDebug(const std::wstring& wst);
-		/// Shows a red warning message that fades overlaid on the HUD-icons.
+		/// Shows a red warning message that fades overlaid on the HUD-toolbar.
 		void warning(
 				const std::string& st,
 				int arg = std::numeric_limits<int>::max());
@@ -485,12 +485,12 @@ private:
 		/// Returns a pointer to the battlegame, in case we need its functions.
 		BattlescapeGame* getBattleGame();
 
-		/// Handler for the mouse moving over the icons, disables the tile selection cube.
-		void mouseInIcons(Action* action);
-		/// Handler for the mouse going out of the icons, enabling the tile selection cube.
-		void mouseOutIcons(Action* action);
-		/// Checks if the mouse is over the icons.
-		bool getMouseOverIcons() const;
+		/// Handler for the mouse moving over the toolbar, disables the tile selection cube.
+		void mouseInToolbar(Action* action);
+		/// Handler for the mouse going out of the toolbar, enabling the tile selection cube.
+		void mouseOutToolbar(Action* action);
+		/// Checks if the mouse is over the toolbar.
+		bool getMouseOverToolbar() const;
 
 		/// Updates the resolution settings, the window was just resized.
 		void resize(
@@ -501,15 +501,15 @@ private:
 		void updateTurnText();
 
 		/// Toggles the icons' surfaces' visibility for Hidden Movement.
-		void toggleIcons(bool vis);
+		void toggleToolbar(bool vis);
 
-		/// Gets the TimeUnits field from icons.
+		/// Gets the TimeUnits field of the toolbar.
 		NumberText* getTuField() const;
-		/// Gets the TimeUnits bar from icons.
+		/// Gets the TimeUnits bar of the toolbar.
 		Bar* getTuBar() const;
-		/// Gets the Energy field from icons.
+		/// Gets the Energy field of the toolbar.
 		NumberText* getEnergyField() const;
-		/// Gets the Energy bar from icons.
+		/// Gets the Energy bar of the toolbar.
 		Bar* getEnergyBar() const;
 
 		/// Updates experience data for the currently selected soldier.

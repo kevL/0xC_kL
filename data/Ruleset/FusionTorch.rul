@@ -32,7 +32,7 @@ items:
     bigSprite: 60
     floorSprite: 74
     damageType: 4
-    fullClip: 3
+    fullClip: 2
     battleType: 2
     invWidth: 1
     invHeight: 1

@@ -32,10 +32,10 @@ namespace OpenXcom
 {
 
 class BattlescapeGame;
-class BattlescapeMessage;
 class BattleUnit;
 class Camera;
 class Explosion;
+class HiddenMovement;
 class NumberText;
 class Projectile;
 class ResourcePack;
@@ -123,8 +123,8 @@ private:
 	int
 		_aniCycle,
 		_selectorSize,
-		_iconHeight,
-		_iconWidth,
+		_toolbarHeight,
+		_toolbarWidth,
 		_mX,
 		_mY,
 		_selectorX,
@@ -139,7 +139,7 @@ private:
 	PathPreview _previewSetting;
 
 	BattlescapeGame* _battleGame;
-	BattlescapeMessage* _hiddenScreen;
+	HiddenMovement* _hiddenScreen;
 	BattleUnit* _unit;
 	Camera* _camera;
 	const Game* _game;
@@ -308,12 +308,12 @@ private:
 		void setWidth(int width) override;
 
 		/// Gets the vertical position of the hidden-movement screen.
-		int getMessageY() const;
+//		int getMessageY() const;
 
-		/// Gets the icon-height.
-		int getIconHeight() const;
-		/// Gets the icon-width.
-		int getIconWidth() const;
+		/// Gets the toolbar-height.
+		int getToolbarHeight() const;
+		/// Gets the toolbar-width.
+//		int getToolbarWidth() const;
 
 		/// Converts a map-position to a sound-angle.
 		int getSoundAngle(const Position& pos) const;

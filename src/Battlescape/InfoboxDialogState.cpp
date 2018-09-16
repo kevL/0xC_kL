@@ -48,15 +48,15 @@ InfoboxDialogState::InfoboxDialogState(const std::wstring& msg)
 {
 	_fullScreen = false;
 
-	_frame		= new Frame(260, 90, 30, 86);
-	_txtTitle	= new Text(250, 58, 35, 93);
-	_btnOk		= new TextButton(120, 16, 100, 153);
+	_frame    = new Frame(260, 90, 30, 86);
+	_txtTitle = new Text(250, 58, 35, 93);
+	_btnOk    = new TextButton(120, 16, 100, 153);
 
 	setPalette(PAL_BATTLESCAPE);
 
-	add(_frame,		"infoBoxOK",		"battlescape");
-	add(_txtTitle,	"infoBoxOK",		"battlescape");
-	add(_btnOk,		"infoBoxOKButton",	"battlescape");
+	add(_frame,    "infoBoxOK",       "battlescape");
+	add(_txtTitle, "infoBoxOK",       "battlescape");
+	add(_btnOk,    "infoBoxOKButton", "battlescape");
 
 	centerSurfaces();
 
@@ -71,7 +71,7 @@ InfoboxDialogState::InfoboxDialogState(const std::wstring& msg)
 	_txtTitle->setBig();
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&InfoboxDialogState::btnOkClick),

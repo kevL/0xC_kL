@@ -36,7 +36,7 @@ class Window;
 /**
  * Generic window used to display messages over the Battlescape map.
  */
-class BattlescapeMessage final
+class HiddenMovement final
 	:
 		public Surface
 {
@@ -47,41 +47,41 @@ private:
 
 
 	public:
-		/// Creates a BattlescapeMessage with the specified size and position.
-		BattlescapeMessage(
+		/// Creates a HiddenMovement screen with the specified size and position.
+		HiddenMovement(
 				int width,
 				int height,
 				int x = 0,
 				int y = 0);
-		/// Cleans up the BattlescapeMessage.
-		~BattlescapeMessage();
+		/// Cleans up the HiddenMovement.
+		~HiddenMovement();
 
 		/// Sets the x-position of the surface.
 		void setX(int x) override;
 		/// Sets the y-position of the surface.
 		void setY(int y) override;
 
-		/// Sets the BattlescapeMessage's background.
+		/// Sets the HiddenMovement's background.
 		void setBackground(Surface* const bg);
-		/// Sets the BattlescapeMessage's text.
+		/// Sets the HiddenMovement's text.
 		void setText(const std::wstring& message);
-		/// Initializes the BattlescapeMessage's resources.
+		/// Initializes the HiddenMovement's resources.
 		void initText(
 				Font* const big,
 				Font* const small,
 				const Language* const lang) override;
-		/// Sets the BattlescapeMessage's palette.
+		/// Sets the HiddenMovement's palette.
 		void setPalette(
 				SDL_Color* const colors,
 				int firstcolor = 0,
 				int ncolors = 256) override;
-		/// Blits the BattlescapeMessage.
+		/// Blits the HiddenMovement.
 		void blit(const Surface* const srf) override;
 
-		/// Special handling for setting the height of the BattlescapeMessage.
+		/// Special handling for setting the height of the HiddenMovement.
 		void setHeight(int height) override;
 
-		/// Sets the text-color of the BattlescapeMessage.
+		/// Sets the text-color of the HiddenMovement.
 		void setTextColor(Uint8 color);
 };
 
