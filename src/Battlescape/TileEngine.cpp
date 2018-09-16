@@ -249,7 +249,7 @@ void TileEngine::calculateUnitLighting() const
 		unitSize;
 	Position pos;
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1139,11 +1139,11 @@ bool TileEngine::doTargetUnit(
 		relY (static_cast<int>(std::ceil(static_cast<float>(-relVoxel.x) * theta))),
 		scanOffsetXY[10u]
 		{
-			 0,		 0,
-			 relX,	 relY,
-			-relX,	-relY,
-			 relY,	-relX,
-			-relY,	 relX
+			 0,     0,
+			 relX,  relY,
+			-relX, -relY,
+			 relY, -relX,
+			-relY,  relX
 		};
 
 /*	if (debug)
@@ -1204,7 +1204,7 @@ bool TileEngine::doTargetUnit(
 			} */
 
 			for (size_t // scan from vertical center-line outwards left and right using scanOffsetXY[]
-					j = 0u;
+					j  = 0u;
 					j != 5u;
 					++j)
 			{
@@ -1386,7 +1386,7 @@ bool TileEngine::doTargetTilepart(
 
 
 	for (int // find out height range
-			j = 1;
+			j  =  1;
 			j != 12 && foundMinZ == false;
 			++j)
 	{
@@ -1712,7 +1712,7 @@ std::vector<BattleUnit*> TileEngine::getSpottingUnits(const BattleUnit* const un
 	std::vector<BattleUnit*> spotters;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1773,7 +1773,7 @@ BattleUnit* TileEngine::getReactor(
 		initTest;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = spotters.begin();
+			i  = spotters.begin();
 			i != spotters.end();
 			++i)
 	{
@@ -2086,8 +2086,8 @@ void TileEngine::hit(
 			}
 
 			power = RNG::generate( // 25% to 75% linear.
-								(power		>> 2u),
-								(power * 3)	>> 2u);
+								(power      >> 2u),
+								(power * 3) >> 2u);
 			// This is where to adjust damage based on effectiveness of weapon vs Terrain!
 			// DT_NONE,		// 0
 			// DT_AP,		// 1
@@ -2167,7 +2167,7 @@ void TileEngine::hit(
 					{
 						int fire (attacker->getUnitRules()->getSpecabPower());
 						fire = RNG::generate( // 12.5% to 37.5%
-										(fire	   >> 3u),
+										(fire      >> 3u),
 										(fire * 3) >> 3u);
 						targetUnit->takeDamage(
 											Position(0,0,0),
@@ -2385,9 +2385,9 @@ void TileEngine::explode(
 
 	bool takenXp (false);
 
-	//Log(LOG_INFO) << ". r_Max= "		<< r_Max;
-	//Log(LOG_INFO) << ". xy_Reduct= "	<< xy_Reduct;
-	//Log(LOG_INFO) << ". z_Reduct= "	<< z_Reduct;
+	//Log(LOG_INFO) << ". r_Max= "     << r_Max;
+	//Log(LOG_INFO) << ". xy_Reduct= " << xy_Reduct;
+	//Log(LOG_INFO) << ". z_Reduct= "  << z_Reduct;
 
 
 //	for (int fi = 0; fi == 0; ++fi)		// kL_note: Looks like a TEST ray. ( 0 == horizontal )
@@ -2799,7 +2799,7 @@ void TileEngine::explode(
 							{
 								targetUnit->setTakenExplosive();
 								power_OnUnit = RNG::generate( // 25% - 75%
-														(_powerE	  >> 2u),
+														(_powerE      >> 2u),
 														(_powerE * 3) >> 2u);
 								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
 								//Log(LOG_INFO) << ". . DT_IN id-" << targetUnit->getId() << " firePower= " << firePower;
@@ -2851,7 +2851,7 @@ void TileEngine::explode(
 								&& targetUnit->getTakenExplosive() == false)
 							{
 								power_OnUnit = RNG::generate( // 25% - 75%
-														(_powerE	  >> 2u),
+														(_powerE      >> 2u),
 														(_powerE * 3) >> 2u);
 								targetUnit->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
 								//Log(LOG_INFO) << ". . DT_IN id-" << targetUnit->getId() << " firePower= " << firePower;
@@ -2882,7 +2882,7 @@ void TileEngine::explode(
 									{
 										bu->setTakenExplosive();
 										power_OnUnit = RNG::generate( // 25% - 75%
-																(_powerE	  >> 2u),
+																(_powerE      >> 2u),
 																(_powerE * 3) >> 2u);
 										bu->takeDamage(Position(0,0,0), power_OnUnit, DT_IN, true);
 
@@ -2997,11 +2997,18 @@ void TileEngine::explode(
 
 	if (dType == DT_HE)								// detonate tiles affected with HE
 	{
+		Tile* tileAbove;
+
 		if (_trueTile != nullptr)					// special case for when a diagonal bigwall is directly targetted.
 		{											// The explosion is moved out a tile so give a full-power hit to the true target-tile.
 			_trueTile->setExplosive(power, DT_HE);
+			//Log(LOG_INFO) << "_trueTile -> call detonateTile()";
 			detonateTile(_trueTile);				// I doubt this needs any *further* consideration ...
-		}											// although it would be nice to have the explosion 'kick in' a bit.
+			applyGravity(_trueTile);				// although it would be nice to have the explosion 'kick in' a bit.
+
+			if ((tileAbove = _trueTile->getTileAbove(_battleSave)) != nullptr)
+				applyGravity(tileAbove); // ... are you sure.
+		}							
 
 		//Log(LOG_INFO) << ". tilesAffected size= " << tilesAffected.size();
 		for (std::set<Tile*>::const_iterator
@@ -3013,8 +3020,8 @@ void TileEngine::explode(
 			{
 				detonateTile(*i);
 				applyGravity(*i);
-				Tile* const tileAbove ((*i)->getTileAbove(_battleSave));
-				if (tileAbove != nullptr)
+
+				if ((tileAbove = (*i)->getTileAbove(_battleSave)) != nullptr)
 					applyGravity(tileAbove); // ... are you sure.
 			}
 		}
@@ -3095,15 +3102,15 @@ int TileEngine::horizontalBlockage(
 	}
 
 	static const Position
-		posNorth	(Position( 0,-1, 0)),
-		posEast		(Position( 1, 0, 0)),
-		posSouth	(Position( 0, 1, 0)),
-		posWest		(Position(-1, 0, 0));
+		posNorth (Position( 0,-1, 0)),
+		posEast  (Position( 1, 0, 0)),
+		posSouth (Position( 0, 1, 0)),
+		posWest  (Position(-1, 0, 0));
 
 	int block (0);
 	switch (dir)
 	{
-		case 0:	// north
+		case 0: // north
 			block = blockage(
 							tileStart,
 							O_NORTHWALL,
@@ -4312,6 +4319,7 @@ void TileEngine::setProjectileDirection(const int dir)
 void TileEngine::detonateTile(Tile* const tile) const
 {
 	int power (tile->getExplosive());
+	//if (tile->getPosition() == Position(36,31,0)) Log(LOG_INFO) << "detonateTile() power= " << power;
 	if (power != 0)
 	{
 		//bool debug (tile->getPosition() == Position(20,30,3));
@@ -4653,7 +4661,7 @@ DoorResult TileEngine::unitOpensDoor(
 				partType = O_FLOOR; // just a reset for 'partType'.
 
 				for (std::vector<std::pair<Position, MapDataType>>::const_iterator
-						i = wallCheck.begin();
+						i  = wallCheck.begin();
 						i != wallCheck.end();
 						++i)
 				{
@@ -5993,13 +6001,13 @@ VoxelType TileEngine::voxelCheck(
 				case 2:
 				{
 					int tLevelTest;
-					for (    int i = 0; i != unitSize; ++i)
-						for (int j = 0; j != unitSize; ++j)
-						{
-							tLevelTest = _battleSave->getTile(posUnit + Position(i,j,0))->getTerrainLevel();
-							if (tLevelTest < tLevel)
-								tLevel = tLevelTest;
-						}
+					for (int i = 0; i != unitSize; ++i)
+					for (int j = 0; j != unitSize; ++j)
+					{
+						tLevelTest = _battleSave->getTile(posUnit + Position(i,j,0))->getTerrainLevel();
+						if (tLevelTest < tLevel)
+							tLevel = tLevelTest;
+					}
 					break;
 				}
 			}
@@ -6164,9 +6172,9 @@ bool TileEngine::psiAttack(BattleAction* const action)
 								switch (victim->getOriginalFaction())
 								{
 									default:
-									case FACTION_HOSTILE:	xp = 2; break;
-									case FACTION_NEUTRAL:	xp = 1; break;
-									case FACTION_PLAYER:	xp = 0;
+									case FACTION_HOSTILE: xp = 2; break;
+									case FACTION_NEUTRAL: xp = 1; break;
+									case FACTION_PLAYER:  xp = 0;
 								}
 								break;
 
