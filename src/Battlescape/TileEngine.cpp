@@ -48,9 +48,7 @@
 #include "../Ruleset/MapDataSet.h"
 #include "../Ruleset/RuleArmor.h"
 
-#include "../Savegame/BattleItem.h"
 #include "../Savegame/BattleUnit.h"
-#include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/SavedGame.h"
 
 

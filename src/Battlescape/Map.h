@@ -302,13 +302,13 @@ private:
 		/// Sets the unit-dying flag.
 		void setUnitDying(bool flag = true);
 
-		/// Special handling for updating Map height.
-		void setHeight(int height) override;
 		/// Special handling for updating Map width.
 		void setWidth(int width) override;
+		/// Special handling for updating Map height.
+		void setHeight(int height) override;
 
 		/// Gets the vertical position of the hidden-movement screen.
-//		int getMessageY() const;
+//		int getHiddenY() const;
 
 		/// Gets the toolbar-height.
 		int getToolbarHeight() const;

@@ -2516,7 +2516,7 @@ void Map::setPalette(
 	Surface::setPalette(colors, firstcolor, ncolors);
 
 	for (std::vector<MapDataSet*>::const_iterator
-			i = _battleSave->getBattleDataSets()->begin();
+			i  = _battleSave->getBattleDataSets()->begin();
 			i != _battleSave->getBattleDataSets()->end();
 			++i)
 	{
@@ -2526,9 +2526,9 @@ void Map::setPalette(
 	_hiddenScreen->setPalette(colors, firstcolor, ncolors);
 	_hiddenScreen->setBackground(_res->getSurface("Diehard"));
 	_hiddenScreen->initText(
-					_res->getFont("FONT_BIG"),
-					_res->getFont("FONT_SMALL"),
-					_game->getLanguage());
+						_res->getFont("FONT_BIG"),
+						_res->getFont("FONT_SMALL"),
+						_game->getLanguage());
 	_hiddenScreen->setText(_game->getLanguage()->getString("STR_HIDDEN_MOVEMENT"));
 }
 
@@ -3100,6 +3100,16 @@ void Map::setUnitDying(bool flag)
 }
 
 /**
+ * Special handling for setting the width of the Map viewport.
+ * @param width - the new base screen width
+ */
+void Map::setWidth(int width) // override
+{
+	Surface::setWidth(width);
+	_hiddenScreen->setX(_hiddenScreen->getX() + (width - getWidth()) >> 1u);
+}
+
+/**
  * Special handling for setting the height of the Map viewport.
  * @param height - the new base screen height
  */
@@ -3118,20 +3128,10 @@ void Map::setHeight(int height) // override
 }
 
 /**
- * Special handling for setting the width of the Map viewport.
- * @param width - the new base screen width
- */
-void Map::setWidth(int width) // override
-{
-	Surface::setWidth(width);
-	_hiddenScreen->setX(_hiddenScreen->getX() + (width - getWidth()) >> 1u);
-}
-
-/**
  * Gets the hidden-movement screen's vertical position.
  * @return, the vertical position
  *
-int Map::getMessageY() const
+int Map::getHiddenY() const
 {
 	return _hiddenScreen->getY();
 } */

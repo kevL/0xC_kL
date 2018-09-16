@@ -29,6 +29,8 @@
 #include "../Ruleset/MapData.h"
 #include "../Ruleset/RuleItem.h"
 
+#include "../Savegame/BattleItem.h"
+#include "../Savegame/SavedBattleGame.h"
 #include "../Savegame/Tile.h"
 
 
@@ -53,13 +55,13 @@ class TileEngine
 {
 	public:
 		static const int
-			SIGHTDIST_TSp		= 20,							// tile-space
-			SIGHTDIST_TSp_Sqr	= SIGHTDIST_TSp * SIGHTDIST_TSp;
+			SIGHTDIST_TSp     = 20,							// tile-space
+			SIGHTDIST_TSp_Sqr = SIGHTDIST_TSp * SIGHTDIST_TSp;
 
 private:
 	static const int
-		SIGHTDIST_VSp		= SIGHTDIST_TSp * 16,				// voxel-space
-		SIGHTDIST_VSp_Sqr	= SIGHTDIST_VSp * SIGHTDIST_VSp,
+		SIGHTDIST_VSp     = SIGHTDIST_TSp * 16,				// voxel-space
+		SIGHTDIST_VSp_Sqr = SIGHTDIST_VSp * SIGHTDIST_VSp,
 
 		MAX_SHADE_TO_SEE_UNITS = 8, // cf. TacticalStatistics::NIGHT_SHADE
 
@@ -68,16 +70,16 @@ private:
 		HARD_BLOCK = 100000,	// this is a hardblock for HE; hence it has to be higher
 								// than the highest HE power in the Rulesets, but it also
 								// needs to be able to add without overflowing.
-		LIGHT_FIRE	= 15,
-		LIGHT_SUN	= 15,
-		LIGHT_UNIT	= 12,
+		LIGHT_FIRE = 15,
+		LIGHT_SUN  = 15,
+		LIGHT_UNIT = 12,
 
-		EYE_OFFSET	= -4;
+		EYE_OFFSET = -4;
 
 	static const size_t
-		LIGHT_LAYER_AMBIENT	= 0u,
-		LIGHT_LAYER_STATIC	= 1u,
-		LIGHT_LAYER_DYNAMIC	= 2u,
+		LIGHT_LAYER_AMBIENT = 0u,
+		LIGHT_LAYER_STATIC  = 1u,
+		LIGHT_LAYER_DYNAMIC = 2u,
 
 		LOFT_LAYERS = 12u;
 

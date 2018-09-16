@@ -155,11 +155,11 @@ BattlescapeState::BattlescapeState()
 	_txtOperationTitle   = new Text(screenWidth, 16, 0, 2);
 	_srfTitle            = new Surface(screenWidth, 21, 0, 0);
 
-	_toolbar = new InteractiveSurface(	// the HUD Surface at bottom-center of Screen.
+	_toolbar = new InteractiveSurface(
 									toolbarWidth,
 									toolbarHeight,
 									x,y);
-	_map = new Map(						// battlefield Surface here.
+	_map = new Map(
 				_game,
 				screenWidth,
 				screenHeight,
@@ -693,7 +693,7 @@ BattlescapeState::BattlescapeState()
 	_srfOverweight->setVisible(false);
 
 	_toolbar->onMouseIn( static_cast<ActionHandler>(&BattlescapeState::mouseInToolbar));
-	_toolbar->onMouseOut( static_cast<ActionHandler>(&BattlescapeState::mouseOutToolbar));
+	_toolbar->onMouseOut(static_cast<ActionHandler>(&BattlescapeState::mouseOutToolbar));
 
 	_btnUnitUp->onMousePress(  static_cast<ActionHandler>(&BattlescapeState::btnUnitUpPress),
 							   SDL_BUTTON_LEFT);

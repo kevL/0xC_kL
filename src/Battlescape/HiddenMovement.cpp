@@ -54,12 +54,7 @@ HiddenMovement::HiddenMovement(
 						POPUP_NONE);
 	_window->setHighContrast();
 
-	_text = new Text(
-					width  - 28,
-					height - 12,
-					x, y + 14);
-	_text->setAlign(ALIGN_CENTER);
-	_text->setVerticalAlign(ALIGN_MIDDLE);
+	_text = new Text(150, 16); // x/y are set in Map cTor.
 	_text->setHighContrast();
 }
 
@@ -76,22 +71,24 @@ HiddenMovement::~HiddenMovement()
  * Changes the position of this HiddenMovement in the x-axis.
  * @param x - x-position in pixels
  */
-void HiddenMovement::setX(int x)
+void HiddenMovement::setX(int x) // override
 {
 	Surface::setX(x);
+
 	_window->setX(x);
-	_text->setX(x);
+	_text  ->setX(x + 75);
 }
 
 /**
  * Changes the position of this HiddenMovement in the y-axis.
  * @param y - y-position in pixels
  */
-void HiddenMovement::setY(int y)
+void HiddenMovement::setY(int y) // override
 {
 	Surface::setY(y);
+
 	_window->setY(y);
-	_text->setY(y);
+	_text  ->setY(y + 85);
 }
 
 /**
