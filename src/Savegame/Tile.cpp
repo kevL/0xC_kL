@@ -924,13 +924,17 @@ bool Tile::igniteTile(int power)
 			{
 				power = ((power + 4) / 5) + ((burn + 7) >> 3u) + (((fuel << 1u) + 6) / 7);
 				//Log(LOG_INFO) << ". . . power= " << power;
-				if (RNG::percent(power) == true)	// unfortunately the state-machine may cause an unpredictable quantity of calls to this
-				{									// ... via ExplosionBState::think().
+				if (RNG::percent(power) == true)					// unfortunately the state-machine may cause an unpredictable quantity of calls to this
+				{													// ... via ExplosionBState::think().
 					//Log(LOG_INFO) << ". . . . turns= " << ((burn + 15) >> 4u);
-					addSmoke((burn + 15) >> 4u);	// TODO: Add smoke to tileAbove also.
+					int turns ((burn + 15) >> 4u);
+					addSmoke(RNG::generate(0, turns));				// TODO: Add smoke to tileAbove also.
 
 					if (allowFire() == true && _fire < fuel + 1)	// TODO: pass in tileBelow and check its terrainLevel for -24;
-						addFire(fuel + 1);							// drop fire through to any tileBelow ...
+					{
+						turns = fuel + 1;
+						addFire(RNG::generate(0, turns));			// drop fire through to any tileBelow ...
+					}
 
 					return true;
 				}

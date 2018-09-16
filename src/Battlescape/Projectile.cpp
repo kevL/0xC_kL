@@ -517,7 +517,7 @@ void Projectile::applyAccuracy( // private.
 			accuracy = std::max(ACU_MIN, accuracy);
 
 			if (_action.actor->getGeoscapeSoldier() != nullptr)
-				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().firing) + 10.;
+				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().firing); // + 10.
 			else
 				perfect = 150.; // higher value makes non-Soldiers less accurate at spitting/arcing shot.
 			//Log(LOG_INFO) << ". . arcshot perfect= " << perfect;
@@ -525,16 +525,17 @@ void Projectile::applyAccuracy( // private.
 		else // Throw
 		{
 			if (_action.actor->getGeoscapeSoldier() != nullptr)
-				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().throwing) + 10.;
+				perfect = static_cast<double>(_battleSave->getBattleGame()->getRuleset()->getSoldier("STR_SOLDIER")->getStatCaps().throwing); // + 10.
 			else
 				perfect = 150.; // higher value makes non-Soldiers less accurate at throwing.
 			//Log(LOG_INFO) << ". . throw perfect= " << perfect;
 		}
 
-		accuracy = accuracy * 50. + 72.2; // arbitrary adjustment.
+		accuracy = accuracy * 50. + 75.; // arbitrary adjustment.
 		//Log(LOG_INFO) << ". acu= " << accuracy;
 
 		double deviation (perfect - accuracy);
+		if (deviation < 0.) deviation = 0.;
 		//Log(LOG_INFO) << ". deviation[0]= " << deviation;
 		deviation = std::max(deviation * targetDist * PCT,
 							 ACU_MIN);
@@ -691,18 +692,18 @@ double Projectile::targetAccuracy( // private.
  * VoxelType is really a voxel in the target tile and if not then if it's an
  * acceptable substitute in an adjacent tile.
  * @param originVoxel	- origin in voxel-space
- * @param useExclude	- true for normal shots; false for BL-waypoints (default true)
+ * @param excludeActor	- true for normal shots; false for BL-waypoints (default true)
  * @return, true if shot allowed
  */
 bool Projectile::verifyTarget( // private.
 		const Position& originVoxel,
-		bool useExclude)
+		bool excludeActor)
 {
-	const BattleUnit* excludeUnit;
-	if (useExclude == true)
-		excludeUnit = _action.actor;
+	const BattleUnit* exclude;
+	if (excludeActor == true)
+		exclude = _action.actor;
 	else
-		excludeUnit = nullptr;
+		exclude = nullptr;
 
 	//Log(LOG_INFO) << "Verify ... call plotLine() targetVoxel " << _targetVoxel;
 	const VoxelType voxelType (_battleSave->getTileEngine()->plotLine(
@@ -710,7 +711,7 @@ bool Projectile::verifyTarget( // private.
 																	_targetVoxel,
 																	false,
 																	&_trj,
-																	excludeUnit));
+																	exclude));
 	//Log(LOG_INFO) << ". voxelType = " << (int)voxelType;
 	//Log(LOG_INFO) << ". isTrj = " << (int)(_trj.empty() == false);
 	if (voxelType != VOXEL_EMPTY && _trj.empty() == false)
@@ -874,7 +875,7 @@ BattleAction* Projectile::getBattleAction()
  * Gets the ACTUAL target-position for this Projectile.
  * @note It is important to note that we use the final position of the
  * projectile here.
- * @return, trajectory finish as a tile position
+ * @return, trajectory finish as a tile-position
  */
 Position Projectile::getFinalPosition() const
 {
@@ -883,7 +884,7 @@ Position Projectile::getFinalPosition() const
 
 /**
  * Gets the final direction of this Projectile's trajectory as a unit-vector.
- * @return, a unit vector indicating final direction
+ * @return, a unit-vector indicating final direction
  */
 Position Projectile::getStrikeVector() const
 {
@@ -894,7 +895,7 @@ Position Projectile::getStrikeVector() const
 	{
 		const Position
 			posFinal (_trj.back()),
-			posPre (_trj.at(trjSize - 3u));
+			posPre   (_trj.at(trjSize - 3u));
 
 		int
 			x,y;
@@ -931,7 +932,7 @@ Position Projectile::getStrikeVector() const
  * Sets a forced-shot against a Unit.
  * @note This is used in rare circumstances when TileEngine::doTargetUnit()
  * determines a targetVoxel that's inbetween a targetUnit's upper and lower
- * exposed areas -- so that verifyTarget() will allow a shot against a Voxel_Unit
+ * exposed areas - so that verifyTarget() will allow a shot against a Voxel_Unit
  * despite the plotted voxel belonging to an object-part. In this case you'll
  * need to *miss* the voxel to actually hit the targeted BattleUnit.
  * TODO: that.

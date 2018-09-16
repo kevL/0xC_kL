@@ -200,7 +200,7 @@ BattlescapeGame::BattlescapeGame(
 BattlescapeGame::~BattlescapeGame()
 {
 	for (std::list<BattleState*>::const_iterator
-			i = _battleStates.begin();
+			i  = _battleStates.begin();
 			i != _battleStates.end();
 			++i)
 		delete *i;

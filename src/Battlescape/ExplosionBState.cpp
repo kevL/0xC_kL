@@ -25,7 +25,7 @@
 #include "Map.h"
 #include "TileEngine.h"
 
-#include "../Engine/Logger.h"
+//#include "../Engine/Logger.h"
 #include "../Engine/RNG.h"
 #include "../Engine/Sound.h"
 

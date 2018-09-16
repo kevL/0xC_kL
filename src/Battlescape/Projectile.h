@@ -88,7 +88,7 @@ private:
 	/// Verifies that a targeted position has LoF.
 	bool verifyTarget(
 			const Position& originVoxel,
-			bool useExclude = true);
+			bool excludeActor = true);
 
 
 	public:

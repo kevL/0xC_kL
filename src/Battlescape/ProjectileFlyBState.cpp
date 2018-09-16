@@ -288,7 +288,7 @@ void ProjectileFlyBState::init()
 
 
 		// ** Assign TARGET voxel ** ->
-		const Tile* const tileTarget ( _battleSave->getTile(_action.posTarget));
+		const Tile* const tileTarget (_battleSave->getTile(_action.posTarget));
 		_targetVoxel = Position::toVoxelSpace(_action.posTarget);
 		//Log(LOG_INFO) << "FlyB init targetVoxel " << _targetVoxel;
 
