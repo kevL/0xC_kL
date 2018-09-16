@@ -925,7 +925,7 @@ void GeoscapeState::blit()
 	State::blit();
 
 	for (std::list<DogfightState*>::const_iterator
-			i = _dogfights.begin();
+			i  = _dogfights.begin();
 			i != _dogfights.end();
 			++i)
 	{
@@ -976,17 +976,17 @@ void GeoscapeState::handle(Action* action)
 							beep = true;
 							_txtDebug->setText(L"SOLDIER AWARDS DELETED");
 							for (std::vector<Base*>::const_iterator						// clear Awards from living Soldiers ->
-									i = _playSave->getBases()->begin();
+									i  = _playSave->getBases()->begin();
 									i != _playSave->getBases()->end();
 									++i)
 							{
 								for (std::vector<Soldier*>::const_iterator
-										j = (*i)->getSoldiers()->begin();
+										j  = (*i)->getSoldiers()->begin();
 										j != (*i)->getSoldiers()->end();
 										++j)
 								{
 									for (std::vector<SoldierAward*>::const_iterator
-											k = (*j)->getDiary()->getSoldierAwards().begin();
+											k  = (*j)->getDiary()->getSoldierAwards().begin();
 											k != (*j)->getDiary()->getSoldierAwards().end();
 											++k)
 									{
@@ -997,12 +997,12 @@ void GeoscapeState::handle(Action* action)
 							}
 
 							for (std::vector<SoldierDead*>::const_iterator				// clear Awards from dead Soldiers ->
-									i = _playSave->getDeadSoldiers()->begin();
+									i  = _playSave->getDeadSoldiers()->begin();
 									i != _playSave->getDeadSoldiers()->end();
 									++i)
 							{
 								for (std::vector<SoldierAward*>::const_iterator
-										j = (*i)->getDiary()->getSoldierAwards().begin();
+										j  = (*i)->getDiary()->getSoldierAwards().begin();
 										j != (*i)->getDiary()->getSoldierAwards().end();
 										++j)
 								{
@@ -1016,12 +1016,12 @@ void GeoscapeState::handle(Action* action)
 							beep = true;
 							_txtDebug->setText(L"SOLDIER AWARDS UPDATED");
 							for (std::vector<Base*>::const_iterator						// update Awards for living Soldiers ->
-									i = _playSave->getBases()->begin();
+									i  = _playSave->getBases()->begin();
 									i != _playSave->getBases()->end();
 									++i)
 							{
 								for (std::vector<Soldier*>::const_iterator
-										j = (*i)->getSoldiers()->begin();
+										j  = (*i)->getSoldiers()->begin();
 										j != (*i)->getSoldiers()->end();
 										++j)
 								{
@@ -1032,7 +1032,7 @@ void GeoscapeState::handle(Action* action)
 							}
 
 							for (std::vector<SoldierDead*>::const_iterator				// update Awards for dead Soldiers ->
-									i = _playSave->getDeadSoldiers()->begin();
+									i  = _playSave->getDeadSoldiers()->begin();
 									i != _playSave->getDeadSoldiers()->end();
 									++i)
 							{
@@ -1080,7 +1080,7 @@ void GeoscapeState::handle(Action* action)
 		if (_dogfights.empty() == false)
 		{
 			for (std::list<DogfightState*>::const_iterator
-					i = _dogfights.begin();
+					i  = _dogfights.begin();
 					i != _dogfights.end();
 					++i)
 			{

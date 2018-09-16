@@ -200,6 +200,10 @@ BattlescapeState::BattlescapeState()
 
 	_isfLeftHand   = new InteractiveSurface(32, 48, x +   8, y + 5);
 	_isfRightHand  = new InteractiveSurface(32, 48, x + 280, y + 5);
+
+	_srfAhL        = new Surface(36, 52, x +   6, y + 2);
+	_srfAhR        = new Surface(36, 52, x + 278, y + 2);
+
 	_numAmmoL      = new NumberText(7, 5, x +  33, y + 5);
 	_numAmmoR      = new NumberText(7, 5, x + 305, y + 5);
 
@@ -292,8 +296,7 @@ BattlescapeState::BattlescapeState()
 						45);
 	_srfBtnBorder	= new Surface(
 						32,24,
-						screenWidth - 32,
-						0);
+						screenWidth - 32); // y is set when Lauch or Psi buttons are pressed.
 
 	_txtName        = new Text(136, 9, x + 135, y + 32);
 
@@ -420,8 +423,18 @@ BattlescapeState::BattlescapeState()
 	add(_numMediR2,       "numDark",            "battlescape", _toolbar);
 	add(_numMediR3,       "numDark",            "battlescape", _toolbar);
 	add(_srfTargeter);
+	add(_srfAhL);
+	add(_srfAhR);
 
 	_srfTargeter->setVisible(false);
+	_srfAhL     ->setVisible(false);
+	_srfAhR     ->setVisible(false);
+
+	_srfAhL->drawRect(0,0, 36,52, ORANGE_D);
+	_srfAhL->drawRect(1,1, 34,50, TRANSP);
+	_srfAhR->drawRect(0,0, 36,52, ORANGE_D);
+	_srfAhR->drawRect(1,1, 34,50, TRANSP);
+
 
 	for (size_t
 			i = 0u;
@@ -984,7 +997,7 @@ BattlescapeState::BattlescapeState()
 	_timerTactical->onTimer(static_cast<StateHandler>(&BattlescapeState::handleState));
 	//_timerTactical->debug("BattlescapeState");
 
-	_battleGame = new BattlescapeGame(_battleSave, this);
+	_battle = new BattlescapeGame(_battleSave, this);
 	//Log(LOG_INFO) << "Create BattlescapeState EXIT";
 }
 
@@ -996,7 +1009,7 @@ BattlescapeState::~BattlescapeState()
 	//Log(LOG_INFO) << "Delete BattlescapeState";
 	delete _timerAnimate;
 	delete _timerTactical;
-	delete _battleGame;
+	delete _battle;
 }
 
 /**
@@ -1025,13 +1038,13 @@ void BattlescapeState::init()
 		_map->cacheUnitSprites();
 		_map->draw();
 
-		_battleGame->getTileEngine()->calcFovTiles_all();
-		_battleGame->getTileEngine()->calcFovUnits_all();
+		_battle->getTileEngine()->calcFovTiles_all();
+		_battle->getTileEngine()->calcFovUnits_all();
 
 //		if (playableUnitSelected() == false)
 //			selectNextPlayerUnit();
 
-		_battleGame->setupSelector();
+		_battle->setupSelector();
 		updateSoldierInfo(false);
 
 		if (playableUnitSelected() == true)
@@ -1113,7 +1126,7 @@ void BattlescapeState::think()
 			State::think();
 
 			//Log(LOG_INFO) << "BattlescapeState::think() -> _battleGame.think()";
-			_battleGame->think();
+			_battle->think();
 			//Log(LOG_INFO) << "BattlescapeState::think() -> _timerAnimate.think()";
 			_timerAnimate->think(this, nullptr);
 			//Log(LOG_INFO) << "BattlescapeState::think() -> _timerTactical.think()";
@@ -1123,7 +1136,7 @@ void BattlescapeState::think()
 			if (popped == true)
 			{
 				popped = false;
-				_battleGame->handleNonTargetAction();
+				_battle->handleNonTargetAction();
 			}
 		}
 	}
@@ -1495,10 +1508,10 @@ void BattlescapeState::mapClick(Action* action)
 //			_map->getCamera()->setMapOffset(_dragScrollStartPos);
 
 		if ((action->getDetails()->button.button != SDL_BUTTON_RIGHT	// right-click removes pathPreview or aborts walking state
-				|| _battleGame->cancelTacticalAction() == false)		// or skips projectile trajectory, etc.
+				|| _battle->cancelTacticalAction() == false)		// or skips projectile trajectory, etc.
 			&& (_mouseOverToolbar == false
 				&& _map->getSelectorType() != CT_NONE
-				&& _battleGame->isBusy() == false))
+				&& _battle->isBusy() == false))
 		{
 			Position pos;
 			_map->getSelectorPosition(pos);
@@ -1508,12 +1521,12 @@ void BattlescapeState::mapClick(Action* action)
 				switch (action->getDetails()->button.button)
 				{
 					case SDL_BUTTON_LEFT:
-						_battleGame->primaryAction(pos);
+						_battle->primaryAction(pos);
 						break;
 
 					case SDL_BUTTON_RIGHT:
 						if (playableUnitSelected() == true)
-							_battleGame->secondaryAction(pos);
+							_battle->secondaryAction(pos);
 				}
 
 
@@ -1737,7 +1750,7 @@ inline void BattlescapeState::handle(Action* action)
 
 							if (casualties == true)
 							{
-								_battleGame->checkCasualties(nullptr, nullptr, true);
+								_battle->checkCasualties(nullptr, nullptr, true);
 //								_battleGame->handleBattleState(); // why. Let the regular call by the tactical-timer handle it.
 							}
 						}
@@ -1845,8 +1858,8 @@ void BattlescapeState::btnUnitUpPress(Action*)
 				case FLY_GRAVLIFT:
 				case FLY_GOOD:
 					_srtToolbarOverlay->getFrame(0)->blit(_btnUnitUp);
-					_battleGame->cancelTacticalAction();
-					_battleGame->moveUpDown(
+					_battle->cancelTacticalAction();
+					_battle->moveUpDown(
 										_battleSave->getSelectedUnit(),
 										Pathfinding::DIR_UP);
 			}
@@ -1889,8 +1902,8 @@ void BattlescapeState::btnUnitDownPress(Action*)
 			case FLY_GRAVLIFT:
 			case FLY_GOOD:
 				_srtToolbarOverlay->getFrame(7)->blit(_btnUnitDown);
-				_battleGame->cancelTacticalAction();
-				_battleGame->moveUpDown(
+				_battle->cancelTacticalAction();
+				_battle->moveUpDown(
 									_battleSave->getSelectedUnit(),
 									Pathfinding::DIR_DOWN);
 		}
@@ -1988,23 +2001,23 @@ void BattlescapeState::btnKneelClick(Action*)
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
 		if (unit != nullptr)
 		{
-			if (_battleGame->kneelToggle(unit) == true)
+			if (_battle->kneelToggle(unit) == true)
 			{
-				_battleGame->getTileEngine()->calcFovTiles(unit); // always Faction_Player here.
-				_battleGame->getTileEngine()->calcFovUnits_pos(unit->getPosition(), true);
+				_battle->getTileEngine()->calcFovTiles(unit); // always Faction_Player here.
+				_battle->getTileEngine()->calcFovUnits_pos(unit->getPosition(), true);
 
 				updateSoldierInfo(false);
 
-				if (_battleGame->getTileEngine()->checkReactionFire(unit) == true)
+				if (_battle->getTileEngine()->checkReactionFire(unit) == true)
 					_battleSave->rfTriggerOffset(_map->getCamera()->getMapOffset());
 
-				Pathfinding* const pf (_battleGame->getPathfinding());
+				Pathfinding* const pf (_battle->getPathfinding());
 				if (pf->isPathPreviewed() == true)
 				{
-					pf->setPathingUnit(_battleGame->getTacticalAction()->actor);
+					pf->setPathingUnit(_battle->getTacticalAction()->actor);
 					pf->calculatePath(
-								_battleGame->getTacticalAction()->actor,
-								_battleGame->getTacticalAction()->posTarget);
+								_battle->getTacticalAction()->actor,
+								_battle->getTacticalAction()->posTarget);
 					pf->clearPreview();
 					pf->previewPath();
 				}
@@ -2040,15 +2053,15 @@ void BattlescapeState::btnInventoryClick(Action*)
 		if ((unit->isMechanical() == false && unit->getRankString() != "STR_LIVE_TERRORIST")
 			|| _battleSave->getDebugTac() == true)
 		{
-			if (_battleGame->getTacticalAction()->type == BA_LAUNCH) // clean up the waypoints
+			if (_battle->getTacticalAction()->type == BA_LAUNCH) // clean up the waypoints
 			{
-				_battleGame->getTacticalAction()->waypoints.clear();
+				_battle->getTacticalAction()->waypoints.clear();
 				_map->getWaypoints()->clear();
 				_btnLaunch->setVisible(false);
 			}
 
-			_battleGame->cancelTacticalAction(true);
-			_battleGame->setupSelector();
+			_battle->cancelTacticalAction(true);
+			_battle->setupSelector();
 //			_srtToolbarOverlay->getFrame(3)->blit(_btnInventory); // clear() not implemented @ InventoryState.
 			_game->pushState(new InventoryState(
 											true, //_battleSave->getDebugTac() == false, // CHEAT For debugging.
@@ -2094,7 +2107,7 @@ void BattlescapeState::btnCenterRelease(Action*)
  */
 void BattlescapeState::btnNextUnitPress(Action*)
 {
-	if (_battleGame->getTacticalAction()->type == BA_NONE
+	if (_battle->getTacticalAction()->type == BA_NONE
 		&& allowButtons() == true)
 	{
 		_srtToolbarOverlay->getFrame(4)->blit(_btnNextUnit);
@@ -2118,7 +2131,7 @@ void BattlescapeState::btnNextUnitRelease(Action*)
  */
 void BattlescapeState::btnNextStopPress(Action*)
 {
-	if (_battleGame->getTacticalAction()->type == BA_NONE
+	if (_battle->getTacticalAction()->type == BA_NONE
 		&& allowButtons() == true)
 	{
 		_srtToolbarOverlay->getFrame(11)->blit(_btnNextStop);
@@ -2142,7 +2155,7 @@ void BattlescapeState::btnNextStopRelease(Action*)
  */
 void BattlescapeState::btnPrevUnitPress(Action*)
 {
-	if (_battleGame->getTacticalAction()->type == BA_NONE
+	if (_battle->getTacticalAction()->type == BA_NONE
 		&& allowButtons() == true)
 	{
 		_srtToolbarOverlay->getFrame(4)->blit(_btnNextUnit);
@@ -2166,7 +2179,7 @@ void BattlescapeState::btnPrevUnitRelease(Action*)
  */
 void BattlescapeState::btnPrevStopPress(Action*)
 {
-	if (_battleGame->getTacticalAction()->type == BA_NONE
+	if (_battle->getTacticalAction()->type == BA_NONE
 		&& allowButtons() == true)
 	{
 		_srtToolbarOverlay->getFrame(11)->blit(_btnNextStop);
@@ -2207,8 +2220,8 @@ BattleUnit* BattlescapeState::selectNextPlayerUnit(
 	if (unit != nullptr)
 		_map->getCamera()->centerPosition(unit->getPosition());
 
-	_battleGame->cancelTacticalAction();
-	_battleGame->setupSelector();
+	_battle->cancelTacticalAction();
+	_battle->setupSelector();
 
 	return unit;
 //	}
@@ -2237,8 +2250,8 @@ BattleUnit* BattlescapeState::selectPreviousPlayerUnit(
 	if (unit != nullptr)
 		_map->getCamera()->centerPosition(unit->getPosition());
 
-	_battleGame->cancelTacticalAction();
-	_battleGame->setupSelector();
+	_battle->cancelTacticalAction();
+	_battle->setupSelector();
 
 	return unit;
 //	}
@@ -2278,7 +2291,7 @@ void BattlescapeState::setLayerValue(int level)
 void BattlescapeState::btnBattleOptionsClick(Action*)
 {
 	if (allowButtons(true) == true
-		&& _battleGame->cancelTacticalAction() == false)
+		&& _battle->cancelTacticalAction() == false)
 	{
 		_srtToolbarOverlay->getFrame(12)->blit(_btnOptions);
 		_game->pushState(new PauseState(OPT_BATTLESCAPE));
@@ -2306,7 +2319,7 @@ void BattlescapeState::btnEndTurnClick(Action*)
 	{
 //		_txtTooltip->setText(L"");
 //		_srtToolbarOverlay->getFrame(6)->blit(_btnEndTurn);
-		_battleGame->requestEndTurn();
+		_battle->requestEndTurn();
 	}
 }
 
@@ -2364,14 +2377,14 @@ void BattlescapeState::btnStatsClick(Action* action)
 			}			// when the cursor is on the scroll-border if trigger-scroll is enabled.
 		}
 
-		if (_battleGame->getTacticalAction()->type == BA_LAUNCH)	// clean up any BL-waypoints
+		if (_battle->getTacticalAction()->type == BA_LAUNCH)	// clean up any BL-waypoints
 		{															// probly handled in cancelTacticalAction() below_
-			_battleGame->getTacticalAction()->waypoints.clear();	// but i don't want to look it up.
+			_battle->getTacticalAction()->waypoints.clear();	// but i don't want to look it up.
 			_map->getWaypoints()->clear();
 			_btnLaunch->setVisible(false);
 		}
 
-		_battleGame->cancelTacticalAction(true);
+		_battle->cancelTacticalAction(true);
 		_game->pushState(new UnitInfoState(
 										_battleSave->getSelectedUnit(),
 										this));
@@ -2448,7 +2461,7 @@ void BattlescapeState::activateHand( // private.
 		BattleUnit* const unit,
 		ActiveHand hand)
 {
-	_battleGame->cancelTacticalAction();
+	_battle->cancelTacticalAction();
 
 	unit->setActiveHand(hand);
 	updateSoldierInfo(false);
@@ -2573,10 +2586,10 @@ void BattlescapeState::btnHostileUnitPress(Action* action)
 							_battleSave->setSelectedUnit(nextSpotter);
 							updateSoldierInfo(false); // try no calcFov()
 
-							_battleGame->cancelTacticalAction();
-							_battleGame->getTacticalAction()->actor = nextSpotter;
+							_battle->cancelTacticalAction();
+							_battle->getTacticalAction()->actor = nextSpotter;
 
-							_battleGame->setupSelector();
+							_battle->setupSelector();
 						}
 						_map->getCamera()->focusPosition(nextSpotter->getPosition());
 					}
@@ -2624,10 +2637,10 @@ void BattlescapeState::btnWoundedPress(Action* action)
 							_battleSave->setSelectedUnit(unit);
 							updateSoldierInfo(false); // try no calcFov()
 
-							_battleGame->cancelTacticalAction();
-							_battleGame->getTacticalAction()->actor = unit;
+							_battle->cancelTacticalAction();
+							_battle->getTacticalAction()->actor = unit;
 
-							_battleGame->setupSelector();
+							_battle->setupSelector();
 						}
 					}
 					break;
@@ -2651,16 +2664,16 @@ void BattlescapeState::btnLaunchPress(Action* action)
 			_srfBtnBorder->setY(20);
 			_srfBtnBorder->setVisible();
 
-			_battleGame->launchAction();
+			_battle->launchAction();
 			break;
 
 		case SDL_BUTTON_RIGHT:
-			_battleGame->getTacticalAction()->waypoints.clear();
+			_battle->getTacticalAction()->waypoints.clear();
 			_map->getWaypoints()->clear();
 			_btnLaunch->setVisible(false);
 
-			_battleGame->cancelTacticalAction(true);
-			_battleGame->setupSelector();
+			_battle->cancelTacticalAction(true);
+			_battle->setupSelector();
 	}
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
@@ -2673,12 +2686,12 @@ void BattlescapeState::btnLaunchPress(Action* action)
 void BattlescapeState::btnPsiClick(Action* action)
 {
 	if (_map->getSelectorType() != CT_PSI
-		&& _battleGame->getTacticalAction()->waypoints.empty() == true)
+		&& _battle->getTacticalAction()->waypoints.empty() == true)
 	{
 		_srfBtnBorder->setY(45);
 		_srfBtnBorder->setVisible();
 
-		_battleGame->psiButtonAction();
+		_battle->psiButtonAction();
 	}
 
 	action->getDetails()->type = SDL_NOEVENT; // consume the event
@@ -2695,13 +2708,13 @@ void BattlescapeState::btnZeroTuClick(Action*)
 		&& playableUnitSelected() == true)
 	{
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		if (_battleGame->noActionsPending(unit) == true)
+		if (_battle->noActionsPending(unit) == true)
 		{
 			unit->setTu();
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
 
-			_battleGame->cancelTacticalAction();
+			_battle->cancelTacticalAction();
 		}
 	}
 }
@@ -2719,13 +2732,13 @@ void BattlescapeState::keyZeroTuPress(Action* action)
 		&& playableUnitSelected() == true)
 	{
 		BattleUnit* const unit (_battleSave->getSelectedUnit());
-		if (_battleGame->noActionsPending(unit) == true)
+		if (_battle->noActionsPending(unit) == true)
 		{
 			unit->setTu();
 			_numTimeUnits->setValue(0u);
 			_barTimeUnits->setValue(0.);
 
-			_battleGame->cancelTacticalAction();
+			_battle->cancelTacticalAction();
 		}
 	}
 }
@@ -2801,7 +2814,7 @@ void BattlescapeState::keyTurnUnit(Action* action)
 	if (keyId == Options::keyBattlePivotCcw || keyId == Options::keyBattlePivotCw
 		&& playableUnitSelected() == true)
 	{
-		BattleAction* const tacAction (_battleGame->getTacticalAction());
+		BattleAction* const tacAction (_battle->getTacticalAction());
 		tacAction->actor = _battleSave->getSelectedUnit();
 		tacAction->targeting = false;
 
@@ -2824,7 +2837,7 @@ void BattlescapeState::keyTurnUnit(Action* action)
 		}
 		tacAction->value = (dir + 8) % 8;
 
-		_battleGame->stateBPushBack(new UnitTurnBState(_battleGame, *tacAction));
+		_battle->stateBPushBack(new UnitTurnBState(_battle, *tacAction));
 	}
 }
 
@@ -2843,7 +2856,7 @@ bool BattlescapeState::allowButtons(bool allowSave) const // private
 			(allowSave == true
 					|| _battleSave->getSide() == FACTION_PLAYER
 					|| _battleSave->getDebugTac() == true)
-				&& (_battleGame->playerPanicHandled() == true
+				&& (_battle->playerPanicHandled() == true
 					|| _init == true) // huh.
 				&& _map->getProjectile() == nullptr);
 }
@@ -2876,6 +2889,10 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 
 	_isfLeftHand  ->setVisible(false);
 	_isfRightHand ->setVisible(false);
+
+	_srfAhL       ->setVisible(false);
+	_srfAhR       ->setVisible(false);
+
 	_numAmmoL     ->setVisible(false);
 	_numAmmoR     ->setVisible(false);
 	_numFuseL     ->setVisible(false);
@@ -3023,6 +3040,7 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 		switch (ah)
 		{
 			case AH_RIGHT:
+				_srfAhR->setVisible(true);
 				switch (itRight->getRules()->getBattleType())
 				{
 					case BT_FIREARM:
@@ -3042,6 +3060,7 @@ void BattlescapeState::updateSoldierInfo(bool spot)
 				break;
 
 			case AH_LEFT:
+				_srfAhL->setVisible(true);
 				switch (itLeft->getRules()->getBattleType())
 				{
 					case BT_FIREARM:
@@ -3394,11 +3413,11 @@ void BattlescapeState::toggleKneelButton(const BattleUnit* const unit)
  */
 void BattlescapeState::animate()
 {
-	_map->animateMap(_battleGame->isBusy() == false);	// this needs to happen regardless so that UFO
+	_map->animateMap(_battle->isBusy() == false);	// this needs to happen regardless so that UFO
 														// doors (&tc) do not stall walking units (&tc)
 	if (_map->getMapHidden() == false)
 	{
-		if (_battleGame->getShotgun() == true)
+		if (_battle->getShotgun() == true)
 			shotgunExplosion();
 
 		if (_battleSave->getSide() == FACTION_PLAYER)
@@ -3417,7 +3436,7 @@ void BattlescapeState::animate()
 				if (_srfTargeter->getVisible() == true)
 					cycleTargeter();
 
-				if (_battleGame->getLiquidate() == true)
+				if (_battle->getLiquidate() == true)
 					liquidationExplosion();
 
 				if (_isOverweight == true && RNG::seedless(0,3) == 0)
@@ -3425,7 +3444,7 @@ void BattlescapeState::animate()
 
 				static int stickyTiks (0);
 				if (_srfBtnBorder->getVisible() == true
-					&& ++stickyTiks == 3)
+					&& ++stickyTiks == 2)
 				{
 					stickyTiks = 0;
 					_srfBtnBorder->setVisible(false);
@@ -3610,7 +3629,7 @@ void BattlescapeState::liquidationExplosion() // private.
 
 	if (explList->empty() == true)
 	{
-		_battleGame->endLiquidate();
+		_battle->endLiquidate();
 		_battleSave->getSelectedUnit()->toggleShoot();
 	}
 }
@@ -3637,7 +3656,7 @@ void BattlescapeState::shotgunExplosion() // private.
 	}
 
 	if (explList->empty() == true)
-		_battleGame->setShotgun(false);
+		_battle->setShotgun(false);
 }
 
 /**
@@ -3649,9 +3668,9 @@ void BattlescapeState::showActionMenu( // private.
 		BattleItem* const item,
 		bool injured)
 {
-	if (_battleGame->isBusy() == false)
+	if (_battle->isBusy() == false)
 	{
-		BattleAction* const action (_battleGame->getTacticalAction());
+		BattleAction* const action (_battle->getTacticalAction());
 //		action->weapon = nullptr; // safety.
 
 		if (item != nullptr)
@@ -3681,7 +3700,7 @@ void BattlescapeState::showActionMenu( // private.
  */
 void BattlescapeState::handleState()
 {
-	_battleGame->handleBattleState();
+	_battle->handleBattleState();
 }
 
 /**
@@ -3969,7 +3988,7 @@ void BattlescapeState::clearDragScroll(bool doInfo)
  */
 BattlescapeGame* BattlescapeState::getBattleGame()
 {
-	return _battleGame;
+	return _battle;
 }
 
 /**
@@ -4493,7 +4512,7 @@ void BattlescapeState::saveVoxelView() // private.
 	std::vector<Position> trj;
 
 	Position
-		originVoxel (_battleGame->getTileEngine()->getSightOriginVoxel(selUnit)),
+		originVoxel (_battle->getTileEngine()->getSightOriginVoxel(selUnit)),
 		targetVoxel,
 		pos;
 	const Tile* tile (nullptr);

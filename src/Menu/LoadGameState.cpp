@@ -117,7 +117,7 @@ LoadGameState::~LoadGameState()
 void LoadGameState::build(SDL_Color* const palette) // private.
 {
 //#ifdef _WIN32
-//	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
+//	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() or GeoscapeState::handle() for Fkeys
 //#endif
 	_fullScreen = false;
 

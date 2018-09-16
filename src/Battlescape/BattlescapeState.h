@@ -134,7 +134,7 @@ private:
 
 //		* _reserve;
 //		* _btnReserveNone, * _btnReserveSnap, * _btnReserveAimed, * _btnReserveAuto, * _btnReserveKneel, * _btnZeroTUs;
-	BattlescapeGame* _battleGame;
+	BattlescapeGame* _battle;
 	BattleUnit* _hostileUnits[ICONS_HOSTILE];
 	InteractiveSurface
 		* _toolbar,
@@ -187,7 +187,9 @@ private:
 		* _srfOverweight,
 		* _srfRank,
 		* _srfTargeter,
-		* _srfTitle;
+		* _srfTitle,
+		* _srfAhL, // ActiveHand Left highlight
+		* _srfAhR; // ActiveHand Right highlight
 	SurfaceSet
 		* _srtBigobs,
 		* _srtToolbarOverlay,

@@ -108,7 +108,7 @@ void ListLoadState::lstSavesPress(Action* action)
 
 			bool confirmLoad (false);
 			for (std::vector<std::string>::const_iterator
-					i = _saves[_lstSaves->getSelectedRow()].rulesets.begin();
+					i  = _saves[_lstSaves->getSelectedRow()].rulesets.begin();
 					i != _saves[_lstSaves->getSelectedRow()].rulesets.end();
 					++i)
 			{
@@ -151,17 +151,15 @@ void ListLoadState::lstSavesPress(Action* action)
  */
 void ListLoadState::hideElements(bool hide)
 {
-	const bool vis (!hide);
-
-	_txtTitle	->setVisible(vis);
-	_txtDelete	->setVisible(vis);
-	_txtName	->setVisible(vis);
-	_txtDate	->setVisible(vis);
-	_sortName	->setVisible(vis);
-	_sortDate	->setVisible(vis);
-	_lstSaves	->setVisible(vis);
-	_txtDetails	->setVisible(vis);
-	_btnCancel	->setVisible(vis);
+	_txtTitle  ->setVisible(!hide);
+	_txtDelete ->setVisible(!hide);
+	_txtName   ->setVisible(!hide);
+	_txtDate   ->setVisible(!hide);
+	_sortName  ->setVisible(!hide);
+	_sortDate  ->setVisible(!hide);
+	_lstSaves  ->setVisible(!hide);
+	_txtDetails->setVisible(!hide);
+	_btnCancel ->setVisible(!hide);
 }
 
 }
