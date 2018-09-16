@@ -64,7 +64,7 @@ private:
 		/// Sets the HiddenMovement's background.
 		void setBackground(Surface* const bg);
 		/// Sets the HiddenMovement's text.
-		void setText(const std::wstring& message);
+		void setText(const std::wstring& st);
 		/// Initializes the HiddenMovement's resources.
 		void initText(
 				Font* const big,

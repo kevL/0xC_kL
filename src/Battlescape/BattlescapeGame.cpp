@@ -2804,10 +2804,10 @@ void BattlescapeGame::primaryAction(const Position& pos)
 									switch (_playerAction.type)
 									{
 										default:
-										case BA_PSIPANIC:	st = "STR_PSI_PANIC_SUCCESS";	break;
-										case BA_PSICONTROL:	st = "STR_PSI_CONTROL_SUCCESS";	break;
-										case BA_PSICONFUSE:	st = "STR_PSI_CONFUSE_SUCCESS";	break;
-										case BA_PSICOURAGE:	st = "STR_PSI_COURAGE_SUCCESS";
+										case BA_PSIPANIC:   st = "STR_PSI_PANIC_SUCCESS";   break;
+										case BA_PSICONTROL: st = "STR_PSI_CONTROL_SUCCESS"; break;
+										case BA_PSICONFUSE: st = "STR_PSI_CONFUSE_SUCCESS"; break;
+										case BA_PSICOURAGE: st = "STR_PSI_COURAGE_SUCCESS";
 									}
 									Game* const game (_battleState->getGame());
 									game->pushState(new InfoboxState(game->getLanguage()->getString(st).arg(_playerAction.value)));

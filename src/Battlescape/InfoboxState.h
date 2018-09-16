@@ -47,10 +47,10 @@ private:
 
 
 	public:
-		static const int INFOBOX_DURATION = 2500;
+		static const int INFOBOX_DURATION = 2225;
 
 		/// Creates an Infobox state.
-		explicit InfoboxState(const std::wstring& msg);
+		explicit InfoboxState(const std::wstring& wst);
 		/// Cleans up the Infobox state.
 		~InfoboxState();
 

@@ -32,19 +32,19 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements of the InfoboxState.
- * @param msg - reference to a message wide-string
+ * @param wst - reference to a wide-string
  */
-InfoboxState::InfoboxState(const std::wstring& msg)
+InfoboxState::InfoboxState(const std::wstring& wst)
 {
 	_fullScreen = false;
 
-	_frame	= new Frame(260, 90, 30, 110);
-	_text	= new Text(250, 80, 35, 115);
+	_frame = new Frame(260, 90, 30, 110);
+	_text  = new Text(250, 80, 35, 115);
 
 	setPalette(PAL_BATTLESCAPE);
 
-	add(_frame,	"infoBox", "battlescape");
-	add(_text,	"infoBox", "battlescape");
+	add(_frame, "infoBox", "battlescape");
+	add(_text,  "infoBox", "battlescape");
 
 	centerSurfaces();
 
@@ -52,7 +52,7 @@ InfoboxState::InfoboxState(const std::wstring& msg)
 	_frame->setThickness(8);
 	_frame->setHighContrast();
 
-	_text->setText(msg);
+	_text->setText(wst);
 
 	_text->setAlign(ALIGN_CENTER);
 	_text->setVerticalAlign(ALIGN_MIDDLE);

@@ -2505,10 +2505,10 @@ bool Map::checkNorth( // private.
 /**
  * Replaces a specified quantity of colors in this Surface's palette.
  * @param colors		- pointer to the set of colors
- * @param firstcolor	- offset of the first color to replace
- * @param ncolors		- amount of colors to replace
+ * @param firstcolor	- offset of the first color to replace (default 0)
+ * @param ncolors		- amount of colors to replace (default 256)
  */
-void Map::setPalette(
+void Map::setPalette( // override
 		SDL_Color* const colors,
 		int firstcolor,
 		int ncolors)

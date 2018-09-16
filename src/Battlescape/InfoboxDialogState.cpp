@@ -39,9 +39,9 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements of an InfoboxDialog.
- * @param msg - reference to a message wide-string
+ * @param wst - reference to a message wide-string
  */
-InfoboxDialogState::InfoboxDialogState(const std::wstring& msg)
+InfoboxDialogState::InfoboxDialogState(const std::wstring& wst)
 	:
 		_cursorVisible(_game->getCursor()->getVisible()),
 		_cursorHidden(_game->getCursor()->getHidden())
@@ -63,7 +63,7 @@ InfoboxDialogState::InfoboxDialogState(const std::wstring& msg)
 
 	_frame->setHighContrast();
 
-	_txtTitle->setText(msg);
+	_txtTitle->setText(wst);
 	_txtTitle->setAlign(ALIGN_CENTER);
 	_txtTitle->setVerticalAlign(ALIGN_MIDDLE);
 	_txtTitle->setHighContrast();

@@ -76,7 +76,7 @@ void HiddenMovement::setX(int x) // override
 	Surface::setX(x);
 
 	_window->setX(x);
-	_text  ->setX(x + 75);
+	_text  ->setX(x + 74);
 }
 
 /**
@@ -88,7 +88,7 @@ void HiddenMovement::setY(int y) // override
 	Surface::setY(y);
 
 	_window->setY(y);
-	_text  ->setY(y + 85);
+	_text  ->setY(y + 86);
 }
 
 /**
@@ -102,11 +102,11 @@ void HiddenMovement::setBackground(Surface* const bg)
 
 /**
  * Changes this HiddenMovement's text.
- * @param message - reference to the Message string
+ * @param st - reference to a string
  */
-void HiddenMovement::setText(const std::wstring& message)
+void HiddenMovement::setText(const std::wstring& st)
 {
-	_text->setText(message);
+	_text->setText(st);
 }
 
 /**
@@ -139,7 +139,7 @@ void HiddenMovement::setPalette(
 {
 	Surface::setPalette(colors, firstcolor, ncolors);
 	_window->setPalette(colors, firstcolor, ncolors);
-	_text->setPalette(colors, firstcolor, ncolors);
+	_text  ->setPalette(colors, firstcolor, ncolors);
 }
 
 /**
@@ -151,7 +151,7 @@ void HiddenMovement::blit(const Surface* const srf)
 	Surface::blit(srf);
 
 	_window->blit(srf);
-	_text->blit(srf);
+	_text  ->blit(srf);
 }
 
 /**
@@ -163,7 +163,7 @@ void HiddenMovement::setHeight(int height)
 	Surface::setHeight(height);
 
 	_window->setHeight(height);
-	_text->setHeight(height);
+	_text  ->setHeight(height);
 }
 
 /**

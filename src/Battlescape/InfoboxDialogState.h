@@ -54,7 +54,7 @@ private:
 
 	public:
 		/// Creates the InfoboxDialogState.
-		explicit InfoboxDialogState(const std::wstring& msg);
+		explicit InfoboxDialogState(const std::wstring& wst);
 		/// Cleans up the InfoboxDialogState.
 		~InfoboxDialogState();
 
