@@ -76,7 +76,7 @@ struct DebriefStat
 };
 
 /**
- * Container for tracking tile-part types after tactical.
+ * Container for tracking points and recovery of special tile-part types.
  */
 struct SpecialType
 {
@@ -203,13 +203,13 @@ private:
 
 	std::vector<BattleUnit*>* _unitList;
 	std::vector<DebriefStat*> _statList;
-	std::vector<Soldier*> _soldiersFeted;
+	std::vector<Soldier*>     _soldiersFeted;
 	std::vector<SoldierDead*> _soldiersLost;
 
 	///
-	static SpecialPart convertSpecialTileToSpecialPart(TileType tileType)
+	static SpecialPart convertSpecialTileToSpecialPart(TilepartSpecial specialType)
 	{
-		switch (tileType)
+		switch (specialType)
 		{
 			case START_TILE:          return STP_START_TILE;			//  1 - not used.
 

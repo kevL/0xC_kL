@@ -648,8 +648,8 @@ private:
 		/// Reloads weapon if needed.
 		bool checkReload();
 
-		/// Checks if the BattleUnit is standing on a specified tile-type.
-		bool isOnTiletype(const TileType tileType) const;
+		/// Checks if this BattleUnit is standing on a floor-part of a specified special-type.
+		bool isOnSpecialType(const TilepartSpecial specialType) const;
 
 		/// Gets the BattleUnit's height taking into account kneeling/standing.
 		int getHeight(bool floating = false) const;

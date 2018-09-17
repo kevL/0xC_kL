@@ -59,7 +59,7 @@ private:
 	std::vector<std::pair<size_t, std::vector<size_t>>> _lofts;
 
 	std::vector<std::pair<size_t, MapDataType>> _objectTypes;
-	std::vector<std::pair<size_t, TileType>> _specialTypes;
+	std::vector<std::pair<size_t, TilepartSpecial>> _specialTypes;
 
 
 	public:

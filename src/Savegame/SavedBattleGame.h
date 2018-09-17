@@ -108,7 +108,7 @@ private:
 //	BattleActionType _batReserved;
 	ChronoResult _chronoResult;
 	Position _rfTriggerOffset;
-	TileType _objectiveTile;
+	TilepartSpecial _objectiveType;
 	TacticalType _tacType;
 	UnitFaction _side;
 
@@ -346,9 +346,9 @@ private:
 		bool isAborted() const;
 
 		/// Sets the objective-tiletype for this mission.
-		void setObjectiveTileType(TileType type);
+		void setObjectiveTilepartType(TilepartSpecial specialType);
 		/// Gets the objective-tiletype of this mission.
-		TileType getObjectiveTileType() const;
+		TilepartSpecial getObjectiveTilepartType() const;
 		/// Sets how many objective-tiles need to be destroyed.
 		void initObjectives(int qty);
 		/// Increments the objective-tiles destroyed counter.

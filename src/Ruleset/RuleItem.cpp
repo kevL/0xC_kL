@@ -216,10 +216,10 @@ void RuleItem::load(
 
 	_meleeAni = node["meleeAni"].as<int>(_meleeAni);
 
-	_dType       = static_cast<DamageType>(node["damageType"].as<int>(_dType));
-	_bType       = static_cast<BattleType>(node["battleType"].as<int>(_bType));
-	_specialType = static_cast<TileType>(node["specialType"] .as<int>(_specialType));
-	_turretType  = static_cast<TurretType>(node["turretType"].as<int>(_turretType));
+	_dType       = static_cast<DamageType>     (node["damageType"] .as<int>(_dType));
+	_bType       = static_cast<BattleType>     (node["battleType"] .as<int>(_bType));
+	_specialType = static_cast<TilepartSpecial>(node["specialType"].as<int>(_specialType));
+	_turretType  = static_cast<TurretType>     (node["turretType"] .as<int>(_turretType));
 
 	_firePower       = node["power"]          .as<int>(_firePower);
 	_meleePower      = node["meleePower"]     .as<int>(_meleePower);
@@ -1103,7 +1103,7 @@ bool RuleItem::isLosRequired() const
  * "starting point" so try not to use those ones.
  * @return, special type
  */
-TileType RuleItem::getTileType() const
+TilepartSpecial RuleItem::getSpecialType() const
 {
 	return _specialType;
 }

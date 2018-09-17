@@ -558,7 +558,7 @@ void QuickBattleState::resetBaseStores() const // private.
 				if (   itRule->getBattleType() != BT_CORPSE
 					&& itRule->isLiveAlien() == false
 					&& itRule->isRecoverable() == true
-					&& itRule->getTileType() == TILE) // ie. is NOT AlienHabitat or whatnot.
+					&& itRule->getSpecialType() == TILE) // ie. is NOT AlienHabitat or whatnot.
 				{
 					_base->getStorageItems()->addItem(*i);
 				}

@@ -74,7 +74,7 @@ enum TurretType
 	TRT_BLASTER		//  4
 };
 
-enum TileType // NOTE: These are actually special designations of part-types and they are set in MCD files.
+enum TilepartSpecial // NOTE: These are set in MCD files (and they pertain to parts not full Tiles).
 {
 	TILE,					//  0
 	START_TILE,				//  1
@@ -201,7 +201,7 @@ private:
 
 	BattleType _bType;
 	DamageType _dType;
-	TileType _specialType;
+	TilepartSpecial _specialType;
 	TurretType _turretType;
 
 	std::vector<std::string>
@@ -425,7 +425,7 @@ private:
 		bool isLosRequired() const;
 
 		/// Gets the associated special type of this item.
-		TileType getTileType() const;
+		TilepartSpecial getSpecialType() const;
 
 		/// Gets the item's default BattleAction.
 		BattleActionType getDefaultAction(bool isPrimed = false) const;

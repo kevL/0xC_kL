@@ -554,7 +554,7 @@ void BattlescapeGenerator::stage2()
 								&& (_battleSave->isAborted() == false
 									|| (tile != nullptr
 										&& tile->getMapData(O_FLOOR) != nullptr
-										&& tile->getMapData(O_FLOOR)->getTileType() == EXIT_TILE)))
+										&& tile->getMapData(O_FLOOR)->getSpecialType() == EXIT_TILE)))
 							{
 								dst = &forwardGround;
 							}
@@ -611,7 +611,7 @@ void BattlescapeGenerator::stage2()
 				}
 				else if (tile->getMapData(O_FLOOR) != nullptr) // definitely aborted.
 				{
-					switch (tile->getMapData(O_FLOOR)->getTileType())
+					switch (tile->getMapData(O_FLOOR)->getSpecialType())
 					{
 						case START_TILE: dst = guaranteed;
 							break;
@@ -971,15 +971,15 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 						{
 							found = true;
 
-							if ((*i)->isOnTiletype(START_TILE) == true)
+							if ((*i)->isOnSpecialType(START_TILE) == true)
 								unit->setUnitStatus(STATUS_LATENT_START);
 							else
 							{
 								switch (unit->getOriginalFaction())
 								{
 									case FACTION_PLAYER:
-										if ((*i)->isOnTiletype(EXIT_TILE) == true	// the unit's carrier is on an End_Tile and is carrying said
-											&& unit->isHealable() == true)			// unit to the next stage. So remain Unconscious @ pos(-1,-1,-1)
+										if ((*i)->isOnSpecialType(EXIT_TILE) == true	// the unit's carrier is on an End_Tile and is carrying said
+											&& unit->isHealable() == true)				// unit to the next stage. So remain Unconscious @ pos(-1,-1,-1)
 										{
 											break;
 										}
@@ -998,7 +998,7 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 				const Tile* const tile (_battleSave->getTile(pos));
 				if (tile != nullptr && tile->getMapData(O_FLOOR) != nullptr)
 				{
-					switch (tile->getMapData(O_FLOOR)->getTileType())
+					switch (tile->getMapData(O_FLOOR)->getSpecialType())
 					{
 						case START_TILE:
 							unit->setUnitStatus(STATUS_LATENT_START);
@@ -1022,14 +1022,14 @@ void BattlescapeGenerator::setUnitLatency(BattleUnit* const unit) // private.
 			break;
 
 		case STATUS_STANDING: // TODO: Check that MC'd units are reset to original faction ....
-			if (unit->isOnTiletype(START_TILE) == true)
+			if (unit->isOnSpecialType(START_TILE) == true)
 				unit->setUnitStatus(STATUS_LATENT_START);
 			else
 			{
 				switch (unit->getOriginalFaction())
 				{
 					case FACTION_PLAYER:
-						if (unit->isOnTiletype(EXIT_TILE) == true)
+						if (unit->isOnSpecialType(EXIT_TILE) == true)
 							break;
 						// no break;
 					case FACTION_HOSTILE:
@@ -1690,12 +1690,12 @@ BattleUnit* BattlescapeGenerator::addPlayerUnit(BattleUnit* const unit) // priva
  */
 bool BattlescapeGenerator::isStartTile(Tile* const tile) // private.
 {
-	if (   tile != nullptr											// is a tile
-		&& tile->getMapData(O_FLOOR) != nullptr						// has a floor
-		&& tile->getMapData(O_FLOOR)->getTileType() == START_TILE	// is a 'start point', ie. cargo tile
-		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) != 255	// is walkable.
-		&& tile->getMapData(O_OBJECT) == nullptr					// no object content
-		&& tile->getTileUnit() == nullptr)							// and no unit on Tile.
+	if (   tile != nullptr												// is a tile
+		&& tile->getMapData(O_FLOOR) != nullptr							// has a floor
+		&& tile->getMapData(O_FLOOR)->getSpecialType() == START_TILE	// is a 'start point', ie. cargo tile
+		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) != 255		// is walkable.
+		&& tile->getMapData(O_OBJECT) == nullptr						// no object content
+		&& tile->getTileUnit() == nullptr)								// and no unit on Tile.
 	{
 		return true;
 	}
@@ -2845,7 +2845,7 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 	{
 		tile = _battleSave->getTiles()[i];
 		if (   tile->getMapData(O_OBJECT)
-			&& tile->getMapData(O_OBJECT)->getTileType() == UFO_POWER_SOURCE)
+			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
 		{
 			alienFuel = new BattleItem(
 									_rules->getItemRule(_rules->getAlienFuelType()),
@@ -2870,7 +2870,7 @@ void BattlescapeGenerator::explodePowerSources() // private.
 	{
 		tile = _battleSave->getTiles()[i];
 		if (   tile->getMapData(O_OBJECT) != nullptr
-			&& tile->getMapData(O_OBJECT)->getTileType() == UFO_POWER_SOURCE
+			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE
 			&& RNG::percent(80) == true)
 		{
 			double power (static_cast<double>(100 - _ufo->getUfoHullPct()));	// range: ~50+ to ~100-
@@ -4525,12 +4525,12 @@ bool BattlescapeGenerator::clearBlocks(const RuleMapScript* const script) // pri
  */
 void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const ruleDeploy) // private.
 {
-	const TileType objectType (ruleDeploy->getPlayerObjective());
-	if (objectType != TILE)
+	const TilepartSpecial specialType (ruleDeploy->getPlayerObjective());
+	if (specialType != TILE)
 	{
 		int
-			qtyReq (ruleDeploy->getObjectivesRequired()),
-			inSitu (0);
+			required (ruleDeploy->getObjectivesRequired()),
+			found    (0);
 		MapDataType partType;
 		const Tile* tile;
 
@@ -4548,21 +4548,21 @@ void BattlescapeGenerator::setupObjectives(const RuleAlienDeployment* const rule
 
 				tile = _battleSave->getTiles()[i];
 				if (   tile->getMapData(partType) != nullptr
-					&& tile->getMapData(partType)->getTileType() == objectType)
+					&& tile->getMapData(partType)->getSpecialType() == specialType)
 				{
-					++inSitu;
+					++found;
 				}
 			}
 		}
 
-		if (inSitu != 0)
+		if (found != 0)
 		{
-			_battleSave->setObjectiveTileType(objectType);
+			_battleSave->setObjectiveTilepartType(specialType);
 
-			if (qtyReq == 0 || inSitu < qtyReq)
-				qtyReq = inSitu;
+			if (required == 0 || found < required)
+				required = found;
 
-			_battleSave->initObjectives(qtyReq);
+			_battleSave->initObjectives(required);
 		}
 	}
 }

@@ -1159,7 +1159,7 @@ alienDeployments:
       music: GEO_BRIEF_BASEASSAULT
       background: BACK01.SCR
     isAlienBase: true      #tells quick-battles what to do with this deployment
-    objectiveTile: 3       #TileType:UFO_NAVIGATION
+    objectiveType: 3       #SpecialType:UFO_NAVIGATION
     objectiveNotice: STR_ALIEN_BASE_CONTROL_DESTROYED
     objectiveSuccess: [STR_ALIEN_BASE_CONTROL_DESTROYED, 500]
     generatedMissionPct: 4 #pct per day
@@ -1589,7 +1589,7 @@ alienDeployments:
 #      showTargetText: false
 #      showCraftText: false
 #      textOffset: -16
-    objectiveTile: 14 #TileType:MUST_DESTROY
+    objectiveType: 14 #SpecialType:MUST_DESTROY
     objectivesRequired: 4
 
 #Alien Tech Level, http://openxcom.org/forum/index.php?topic=1356.0

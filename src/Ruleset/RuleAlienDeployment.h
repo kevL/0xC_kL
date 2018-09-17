@@ -154,7 +154,7 @@ private:
 
 	BriefingData _briefingData;
 	ChronoResult _chronoResult;
-	TileType _objectiveTile;
+	TilepartSpecial _objectiveType;
 	WeightedOptions _generatedMission;
 
 	public:
@@ -224,7 +224,7 @@ private:
 		const std::vector<std::string>& getDeploymentMusics() const;
 
 		/// Gets the objective-tiletype for the RuleAlienDeployment.
-		TileType getPlayerObjective() const;
+		TilepartSpecial getPlayerObjective() const;
 		/// Gets a fixed quantity of objective-tiles required if any.
 		int getObjectivesRequired() const;
 		/// Gets the string to show when enough objective-tiles are destroyed.

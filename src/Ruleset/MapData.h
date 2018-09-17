@@ -142,7 +142,7 @@ private:
 	BigwallType _bigWall;
 	DamageType _explosiveType;
 	MapDataType _partType;
-	TileType _tileType;
+	TilepartSpecial _specialType;
 
 
 	public:
@@ -226,10 +226,10 @@ private:
 		/// Sets the type of the part.
 		void setPartType(MapDataType type);
 
-		/// Gets a TileType for the part.
-		TileType getTileType() const;
-		/// Sets a TileType for the part.
-		void setTileType(TileType type);
+		/// Gets a TilepartSpecial for the part.
+		TilepartSpecial getSpecialType() const;
+		/// Sets a TilepartSpecial for the part.
+		void setSpecialType(TilepartSpecial specialType);
 
 		/// Gets the TU-cost to move over the part.
 		int getTuCostPart(MoveType type) const;

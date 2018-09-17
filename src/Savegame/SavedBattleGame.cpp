@@ -85,7 +85,7 @@ SavedBattleGame::SavedBattleGame(
 		_debugTac(false),
 		_aborted(false),
 		_itemId(0),
-		_objectiveTile(TILE),
+		_objectiveType(TILE),
 		_objectivesRequired(0),
 		_objectivesDestroyed(0),
 		_bonk(false),
@@ -621,9 +621,9 @@ void SavedBattleGame::load(
 
 	Log(LOG_INFO) << ". set some vars";
 
-	_objectiveTile = static_cast<TileType>(node["objectiveTile"].as<int>(_objectiveTile));
-	_objectivesRequired  = node["objectivesRequired"] .as<int>(_objectivesRequired);
-	_objectivesDestroyed = node["objectivesDestroyed"].as<int>(_objectivesDestroyed);
+	_objectiveType       = static_cast<TilepartSpecial>(node["objectiveType"]      .as<int>(_objectiveType));
+	_objectivesRequired  =                              node["objectivesRequired"] .as<int>(_objectivesRequired);
+	_objectivesDestroyed =                              node["objectivesDestroyed"].as<int>(_objectivesDestroyed);
 
 	_turnLimit = node["turnLimit"].as<int>(_turnLimit);
 	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
@@ -718,7 +718,7 @@ YAML::Node SavedBattleGame::save() const
 
 	if (_objectivesRequired != 0)
 	{
-		node["objectiveTile"]       = static_cast<int>(_objectiveTile);
+		node["objectiveType"]       = static_cast<int>(_objectiveType);
 		node["objectivesRequired"]  = _objectivesRequired;
 		node["objectivesDestroyed"] = _objectivesDestroyed;
 	}
@@ -1812,18 +1812,18 @@ bool SavedBattleGame::isAborted() const
  * Sets the objective-tiletype for the current battle.
  * @param type - objective-tiletype (RuleItem.h)
  */
-void SavedBattleGame::setObjectiveTileType(TileType type)
+void SavedBattleGame::setObjectiveTilepartType(TilepartSpecial specialType)
 {
-	_objectiveTile = type;
+	_objectiveType = specialType;
 }
 
 /**
  * Gets the objective-tiletype for the current battle.
  * @return, objective-tiletype (RuleItem.h)
  */
-TileType SavedBattleGame::getObjectiveTileType() const
+TilepartSpecial SavedBattleGame::getObjectiveTilepartType() const
 {
-	return _objectiveTile;
+	return _objectiveType;
 }
 
 /**

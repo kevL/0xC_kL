@@ -1603,7 +1603,7 @@ void BattlescapeGame::endTurn() // private.
 								liveHostile,
 								livePlayer));
 
-	if (_battleSave->getObjectiveTileType() == OBJECTIVE_TILE // brain death, end Final Mission.
+	if (_battleSave->getObjectiveTilepartType() == OBJECTIVE_TILE // brain death, end Final Mission.
 		&& _battleSave->allObjectivesDestroyed() == true)
 	{
 		_battleState->finishBattle(false, livePlayer);
@@ -1629,7 +1629,7 @@ void BattlescapeGame::endTurn() // private.
 	}
 	else
 	{
-		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTileType() != OBJECTIVE_TILE)
+		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTilepartType() != OBJECTIVE_TILE)
 								 || livePlayer  <  1);
 
 		if (battleComplete == false)
@@ -3655,7 +3655,7 @@ bool BattlescapeGame::tallyUnits(
 	livePlayer = 0;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -3716,13 +3716,13 @@ int BattlescapeGame::tallyPlayerExit() const
 {
 	int ret (0);
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
 		if ((*i)->getOriginalFaction() == FACTION_PLAYER
 			&& (*i)->isMindControlled() == false
-			&& (*i)->isOnTiletype(EXIT_TILE) == true) // NOTE: Unit will be Status_Standing to be on tile.
+			&& (*i)->isOnSpecialType(EXIT_TILE) == true) // NOTE: Unit will be Status_Standing to be on tile.
 		{
 			++ret;
 		}
@@ -3738,7 +3738,7 @@ int BattlescapeGame::tallyHostiles() const
 {
 	int ret (0);
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{

@@ -204,9 +204,9 @@ void MapDataSet::loadData()
 				part->setSprite(i, static_cast<int>(mcd.Frame[i]));
 			}
 
-			part->setPartType(static_cast<MapDataType>(mcd.Tile_Type));
-			part->setTileType(static_cast<TileType>   (mcd.Target_Type));
-			part->setOffsetY( static_cast<int>        (mcd.P_Level));
+			part->setPartType(   static_cast<MapDataType>    (mcd.Tile_Type));
+			part->setSpecialType(static_cast<TilepartSpecial>(mcd.Target_Type));
+			part->setOffsetY(    static_cast<int>            (mcd.P_Level));
 			part->setTuCosts(
 					static_cast<int>(mcd.TU_Walk),
 					static_cast<int>(mcd.TU_Slide),

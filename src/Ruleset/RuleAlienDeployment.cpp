@@ -57,13 +57,13 @@ struct convert<OpenXcom::DeploymentData>
 	{
 		Node node;
 
-		node["alienRank"]		= rhs.alienRank;
-		node["lowQty"]			= rhs.lowQty;
-		node["highQty"]			= rhs.highQty;
-		node["dQty"]			= rhs.dQty;
-		node["extraQty"]		= rhs.extraQty;
-		node["pctOutsideUfo"]	= rhs.pctOutsideUfo;
-		node["itemSets"]		= rhs.itemSets;
+		node["alienRank"]     = rhs.alienRank;
+		node["lowQty"]        = rhs.lowQty;
+		node["highQty"]       = rhs.highQty;
+		node["dQty"]          = rhs.dQty;
+		node["extraQty"]      = rhs.extraQty;
+		node["pctOutsideUfo"] = rhs.pctOutsideUfo;
+		node["itemSets"]      = rhs.itemSets;
 
 		return node;
 	}
@@ -76,13 +76,13 @@ struct convert<OpenXcom::DeploymentData>
 		if (node.IsMap() == false)
 			return false;
 
-		rhs.alienRank		= node["alienRank"]		.as<int>(rhs.alienRank);
-		rhs.lowQty			= node["lowQty"]		.as<int>(rhs.lowQty);
-		rhs.highQty			= node["highQty"]		.as<int>(rhs.highQty);
-		rhs.dQty			= node["dQty"]			.as<int>(rhs.dQty);
-		rhs.extraQty		= node["extraQty"]		.as<int>(0); // give this a default, as it's not 100% needed, unlike the others.
-		rhs.pctOutsideUfo	= node["pctOutsideUfo"]	.as<int>(rhs.pctOutsideUfo);
-		rhs.itemSets		= node["itemSets"]		.as<std::vector<OpenXcom::ItemSet>>(rhs.itemSets);
+		rhs.alienRank     = node["alienRank"]    .as<int>(rhs.alienRank);
+		rhs.lowQty        = node["lowQty"]       .as<int>(rhs.lowQty);
+		rhs.highQty       = node["highQty"]      .as<int>(rhs.highQty);
+		rhs.dQty          = node["dQty"]         .as<int>(rhs.dQty);
+		rhs.extraQty      = node["extraQty"]     .as<int>(0); // give this a default, as it's not 100% needed, unlike the others.
+		rhs.pctOutsideUfo = node["pctOutsideUfo"].as<int>(rhs.pctOutsideUfo);
+		rhs.itemSets      = node["itemSets"]     .as<std::vector<OpenXcom::ItemSet>>(rhs.itemSets);
 
 		return true;
 	}
@@ -96,14 +96,14 @@ struct convert<OpenXcom::BriefingData>
 	{
 		Node node;
 
-		node["palette"]			= rhs.palette;
-		node["textOffset"]		= rhs.textOffset;
-		node["title"]			= rhs.title;
-		node["desc"]			= rhs.desc;
-		node["music"]			= rhs.music;
-		node["background"]		= rhs.background;
-		node["showCraftText"]	= rhs.showCraftText;
-		node["showTargetText"]	= rhs.showTargetText;
+		node["palette"]        = rhs.palette;
+		node["textOffset"]     = rhs.textOffset;
+		node["title"]          = rhs.title;
+		node["desc"]           = rhs.desc;
+		node["music"]          = rhs.music;
+		node["background"]     = rhs.background;
+		node["showCraftText"]  = rhs.showCraftText;
+		node["showTargetText"] = rhs.showTargetText;
 
 		return node;
 	}
@@ -114,14 +114,14 @@ struct convert<OpenXcom::BriefingData>
 		if (node.IsMap() == false)
 			return false;
 
-		rhs.palette			= node["palette"]		.as<int>(rhs.palette);
-		rhs.textOffset		= node["textOffset"]	.as<int>(rhs.textOffset);
-		rhs.title			= node["title"]			.as<std::string>(rhs.title);
-		rhs.desc			= node["desc"]			.as<std::string>(rhs.desc);
-		rhs.music			= node["music"]			.as<std::string>(rhs.music);
-		rhs.background		= node["background"]	.as<std::string>(rhs.background);
-		rhs.showCraftText	= node["showCraftText"]	.as<bool>(rhs.showCraftText);
-		rhs.showTargetText	= node["showTargetText"].as<bool>(rhs.showTargetText);
+		rhs.palette        = node["palette"]       .as<int>(rhs.palette);
+		rhs.textOffset     = node["textOffset"]    .as<int>(rhs.textOffset);
+		rhs.title          = node["title"]         .as<std::string>(rhs.title);
+		rhs.desc           = node["desc"]          .as<std::string>(rhs.desc);
+		rhs.music          = node["music"]         .as<std::string>(rhs.music);
+		rhs.background     = node["background"]    .as<std::string>(rhs.background);
+		rhs.showCraftText  = node["showCraftText"] .as<bool>(rhs.showCraftText);
+		rhs.showTargetText = node["showTargetText"].as<bool>(rhs.showTargetText);
 
 		return true;
 	}
@@ -150,7 +150,7 @@ RuleAlienDeployment::RuleAlienDeployment(const std::string& type)
 		_finalMission(false),
 		_durationMin(0),
 		_durationMax(0),
-		_objectiveTile(TILE),
+		_objectiveType(TILE),
 		_objectivesRequired(0),
 		_objectiveSuccessScore(0),
 		_objectiveFailedScore(0),
@@ -177,31 +177,31 @@ RuleAlienDeployment::~RuleAlienDeployment()
  */
 void RuleAlienDeployment::load(const YAML::Node& node)
 {
-	_type				= node["type"]				.as<std::string>(_type);
-	_data				= node["data"]				.as<std::vector<DeploymentData>>(_data);
-	_width				= node["width"]				.as<int>(_width);
-	_length				= node["length"]			.as<int>(_length);
-	_height				= node["height"]			.as<int>(_height);
-	_civilians			= node["civilians"]			.as<int>(_civilians);
-	_terrains			= node["terrains"]			.as<std::vector<std::string>>(_terrains);
-	_shade				= node["shade"]				.as<int>(_shade);
-	_nextStage			= node["nextStage"]			.as<std::string>(_nextStage);
-	_race				= node["race"]				.as<std::string>(_race);
-	_noRetreat			= node["noRetreat"]			.as<bool>(_noRetreat);
-	_finalDestination	= node["finalDestination"]	.as<bool>(_finalDestination);
-	_finalMission		= node["finalMission"]		.as<bool>(_finalMission);
-	_script				= node["script"]			.as<std::string>(_script);
-	_briefingData		= node["briefing"]			.as<BriefingData>(_briefingData);
-	_alert				= node["alert"]				.as<std::string>(_alert);
-	_alertBg			= node["alertBg"]			.as<std::string>(_alertBg);
-	_markerIcon			= node["markerIcon"]		.as<int>(_markerIcon);
-	_markerType			= node["markerType"]		.as<std::string>("");
+	_type             = node["type"]            .as<std::string>(_type);
+	_data             = node["data"]            .as<std::vector<DeploymentData>>(_data);
+	_width            = node["width"]           .as<int>(_width);
+	_length           = node["length"]          .as<int>(_length);
+	_height           = node["height"]          .as<int>(_height);
+	_civilians        = node["civilians"]       .as<int>(_civilians);
+	_terrains         = node["terrains"]        .as<std::vector<std::string>>(_terrains);
+	_shade            = node["shade"]           .as<int>(_shade);
+	_nextStage        = node["nextStage"]       .as<std::string>(_nextStage);
+	_race             = node["race"]            .as<std::string>(_race);
+	_noRetreat        = node["noRetreat"]       .as<bool>(_noRetreat);
+	_finalDestination = node["finalDestination"].as<bool>(_finalDestination);
+	_finalMission     = node["finalMission"]    .as<bool>(_finalMission);
+	_script           = node["script"]          .as<std::string>(_script);
+	_briefingData     = node["briefing"]        .as<BriefingData>(_briefingData);
+	_alert            = node["alert"]           .as<std::string>(_alert);
+	_alertBg          = node["alertBg"]         .as<std::string>(_alertBg);
+	_markerIcon       = node["markerIcon"]      .as<int>(_markerIcon);
+	_markerType       = node["markerType"]      .as<std::string>("");
 
 	if (_markerType.empty() == true)
 	{
-		if		(_type == "STR_ALIEN_BASE_ASSAULT")	_markerType = Target::stTarget[2u]; // "STR_ALIEN_BASE"
-		else if	(_type == "STR_TERROR_MISSION"
-			||	 _type == "STR_PORT_ATTACK")		_markerType = Target::stTarget[3u]; // "STR_TERROR_SITE"
+		if      (_type == "STR_ALIEN_BASE_ASSAULT") _markerType = Target::stTarget[2u]; // "STR_ALIEN_BASE"
+		else if (_type == "STR_TERROR_MISSION"
+			||   _type == "STR_PORT_ATTACK")        _markerType = Target::stTarget[3u]; // "STR_TERROR_SITE"
 		// not relevant:
 		// STR_BASE_DEFENSE
 		// STR_MARS_CYDONIA_LANDING
@@ -232,29 +232,30 @@ void RuleAlienDeployment::load(const YAML::Node& node)
 
 	_musics = node["music"].as<std::vector<std::string>>(_musics); // NOTE: might not be compatible w/ sza_MusicRules.
 
-	_objectiveTile = static_cast<TileType>(node["objectiveTile"].as<int>(_objectiveTile));
-	_objectivesRequired	= node["objectivesRequired"].as<int>(_objectivesRequired);
-	_objectiveNotice	= node["objectiveNotice"].as<std::string>(_objectiveNotice);
+	_objectiveType      = static_cast<TilepartSpecial>(node["objectiveType"].as<int>(_objectiveType));
+	_objectivesRequired = node["objectivesRequired"]                        .as<int>(_objectivesRequired);
+	_objectiveNotice    = node["objectiveNotice"]                           .as<std::string>(_objectiveNotice);
 
-	_despawnPenalty	= node["despawnPenalty"].as<int>(_despawnPenalty);
+	_despawnPenalty = node["despawnPenalty"].as<int>(_despawnPenalty);
 
 	if (node["objectiveSuccess"])
 	{
-		_objectiveSuccessText	= node["objectiveSuccess"][0u].as<std::string>(_objectiveSuccessText);
-		_objectiveSuccessScore	= node["objectiveSuccess"][1u].as<int>(_objectiveSuccessScore);
+		_objectiveSuccessText  = node["objectiveSuccess"][0u].as<std::string>(_objectiveSuccessText);
+		_objectiveSuccessScore = node["objectiveSuccess"][1u].as<int>(_objectiveSuccessScore);
 	}
 	if (node["objectiveFailed"])
 	{
-		_objectiveFailedText	= node["objectiveFailed"][0u].as<std::string>(_objectiveFailedText);
-		_objectiveFailedScore	= node["objectiveFailed"][1u].as<int>(_objectiveFailedScore);
+		_objectiveFailedText  = node["objectiveFailed"][0u].as<std::string>(_objectiveFailedText);
+		_objectiveFailedScore = node["objectiveFailed"][1u].as<int>(_objectiveFailedScore);
 	}
 
-	_cheatTurn		= node["cheatTurn"].as<int>(_cheatTurn);
-	_turnLimit		= node["turnLimit"].as<int>(_turnLimit);
-	_chronoResult	= static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
+	_cheatTurn    = node["cheatTurn"]                             .as<int>(_cheatTurn);
+	_turnLimit    = node["turnLimit"]                             .as<int>(_turnLimit);
+	_chronoResult = static_cast<ChronoResult>(node["chronoResult"].as<int>(_chronoResult));
 
-	_isAlienBase			= node["isAlienBase"]			.as<bool>(_isAlienBase);
-	_generatedMissionPct	= node["generatedMissionPct"]	.as<int>(_generatedMissionPct);
+	_isAlienBase = node["isAlienBase"].as<bool>(_isAlienBase);
+
+	_generatedMissionPct = node["generatedMissionPct"].as<int>(_generatedMissionPct);
 	if (node["generatedMission"])
 		_generatedMission.load(node["generatedMission"]);
 }
@@ -289,9 +290,9 @@ void RuleAlienDeployment::getDimensions(
 		int* lenght,
 		int* heigth) const
 {
-	*width	= _width;
-	*lenght	= _length;
-	*heigth	= _height;
+	*width  = _width;
+	*lenght = _length;
+	*heigth = _height;
 }
 
 /**
@@ -451,9 +452,9 @@ const std::vector<std::string>& RuleAlienDeployment::getDeploymentMusics() const
  * Gets the objective-tiletype for this RuleAlienDeployment (eg alien-control-consoles).
  * @return, objective-tiletype (RuleItem.h)
  */
-TileType RuleAlienDeployment::getPlayerObjective() const
+TilepartSpecial RuleAlienDeployment::getPlayerObjective() const
 {
-	return _objectiveTile;
+	return _objectiveType;
 }
 
 /**

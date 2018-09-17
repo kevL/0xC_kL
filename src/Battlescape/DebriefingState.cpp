@@ -480,7 +480,6 @@ DebriefingState::~DebriefingState()
 			++i)
 		delete *i;
 
-//	for (std::map<TileType, SpecialType*>::const_iterator
 	for (std::map<SpecialPart, SpecialType*>::const_iterator
 			i  = _specialTypes.begin();
 			i != _specialTypes.end();
@@ -692,7 +691,7 @@ void DebriefingState::prepareDebriefing() // private.
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
-		switch (specialPart = convertSpecialTileToSpecialPart(itRule->getTileType()))
+		switch (specialPart = convertSpecialTileToSpecialPart(itRule->getSpecialType()))
 		{
 			case STP_UFO_POWER_SOURCE:
 			case STP_UFO_NAVIGATION:
@@ -755,8 +754,6 @@ void DebriefingState::prepareDebriefing() // private.
 	// TODO: "Base is Lost".
 //	_statList.push_back(new DebriefStat("STR_XCOM_AGENTS_RETIRED_THROUGH_INJURY"));
 
-	// TODO: Don't send anything to base-stores if this is a QuickBattle debriefing.
-	
 	for (std::map<SpecialPart, SpecialType*>::const_iterator
 			i  = _specialTypes.begin();
 			i != _specialTypes.end();
@@ -866,7 +863,7 @@ void DebriefingState::prepareDebriefing() // private.
 						//Log(LOG_INFO) << ". id= " << (*i)->getId() << " Standing";
 						if (_aborted == false
 							|| ((*i)->getGeoscapeSoldier() != nullptr // TODO: Or dog.
-								&& (*i)->isOnTiletype(START_TILE) == true))
+								&& (*i)->isOnSpecialType(START_TILE) == true))
 						{
 							//Log(LOG_INFO) << ". . rescue Set TRUE";
 							rescue = true;
@@ -876,7 +873,7 @@ void DebriefingState::prepareDebriefing() // private.
 					case STATUS_UNCONSCIOUS:
 						//Log(LOG_INFO) << ". id= " << (*i)->getId() << " Unconscious";
 						if (_aborted == false
-							|| (*i)->isOnTiletype(START_TILE) == true)
+							|| (*i)->isOnSpecialType(START_TILE) == true)
 						{
 							//Log(LOG_INFO) << ". . add to _playerLive";
 							++_playerLive;
@@ -1217,8 +1214,8 @@ void DebriefingState::prepareDebriefing() // private.
 					case STATUS_UNCONSCIOUS:
 						//Log(LOG_INFO) << ". player Standing or Unconscious id-" << (*i)->getId() << " " << (*i)->getType();
 						if (_isHostileStanding == false
-							|| (abortAlive == true							// NOTE: And not BaseDefense if anyone is stupid
-								&& (*i)->isOnTiletype(START_TILE) == true))	// enough to design a base-block with Start_Tile's.
+							|| (abortAlive == true								// NOTE: And not BaseDefense if anyone is stupid
+								&& (*i)->isOnSpecialType(START_TILE) == true))	// enough to design a base-block with Start_Tile's.
 						{
 							recoverItems((*i)->getInventory()); // NOTE: Unconscious units have dropped their inventory.
 
@@ -1423,7 +1420,7 @@ void DebriefingState::prepareDebriefing() // private.
 						//Log(LOG_INFO) << ". neutral Standing or Unconscious id-" << (*i)->getId() << " " << (*i)->getType();
 						if (_isHostileStanding == false
 							|| (abortAlive == true
-								&& (*i)->isOnTiletype(START_TILE) == true))
+								&& (*i)->isOnSpecialType(START_TILE) == true))
 						{
 							addResultStat(
 										TAC_RESULT[7u], // civilian rescued
@@ -1555,7 +1552,7 @@ void DebriefingState::prepareDebriefing() // private.
 			{
 				tile = _battleSave->getTiles()[i];
 				if (   tile->getMapData(O_FLOOR) != nullptr
-					&& tile->getMapData(O_FLOOR)->getTileType() == START_TILE)
+					&& tile->getMapData(O_FLOOR)->getSpecialType() == START_TILE)
 				{
 					recoverItems(tile->getInventory());
 				}
@@ -1568,8 +1565,8 @@ void DebriefingState::prepareDebriefing() // private.
 		//Log(LOG_INFO) << ". recover Conditional";
 		recoverItems(_battleSave->recoverConditional());
 
-		TileType
-			tileType,
+		TilepartSpecial
+			specialType,
 			objectType;
 
 		if (ruleDeploy != nullptr)
@@ -1593,7 +1590,7 @@ void DebriefingState::prepareDebriefing() // private.
 			tile = _battleSave->getTiles()[i];
 
 			if (   tile->getMapData(O_FLOOR) == nullptr
-				|| tile->getMapData(O_FLOOR)->getTileType() != START_TILE)
+				|| tile->getMapData(O_FLOOR)->getSpecialType() != START_TILE)
 			{
 				recoverItems(tile->getInventory());
 			}
@@ -1604,18 +1601,18 @@ void DebriefingState::prepareDebriefing() // private.
 					++j)
 			{
 				if ((part = tile->getMapData(static_cast<MapDataType>(j))) != nullptr
-					&& (tileType = part->getTileType()) != objectType)	// not sure why parts of objectType should not be recovered.
-				{														// in fact I think it's just another wotWarboy.
-					switch (specialPart = convertSpecialTileToSpecialPart(tileType))
+					&& (specialType = part->getSpecialType()) != objectType) // not sure why tileparts of objectType should not be recovered.
+				{
+					switch (specialPart = convertSpecialTileToSpecialPart(specialType))
 					{
-						case STP_TILE:
+						case STP_TILE:				// NOTE: These are not included in '_specialTypes' above^
 						case STP_START_TILE:
 						case STP_EXIT_TILE:
 						case STP_OBJECTIVE_TILE:
-							break;				// NOTE: These are not included in '_specialTypes' above^
+							break;
 
 						case STP_RUINED_ALLOYS:		// NOTE: This is in '_specialTypes' above^ (adds half-value to Alloys' pts)
-							++qtyAlloysRuined;	// but not included on the statList displayed for Debriefing.
+							++qtyAlloysRuined;		// but not included on the statList displayed for Debriefing.
 							break;
 
 //						default:

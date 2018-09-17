@@ -2107,8 +2107,8 @@ void TileEngine::hit(
 					power = ((power * 3) + 19) / 20;	// 15%
 					break;
 				case DT_LASER:
-					if (   tile->getMapData(partType)->getTileType() != ALIEN_ALLOYS
-						&& tile->getMapData(partType)->getTileType() != RUINED_ALLOYS)
+					if (   tile->getMapData(partType)->getSpecialType() != ALIEN_ALLOYS
+						&& tile->getMapData(partType)->getSpecialType() != RUINED_ALLOYS)
 					{
 						power = (power + 4) / 5;		// 20% // problem: Fusion Torch; fixed, heh.
 					}

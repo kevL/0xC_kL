@@ -3437,15 +3437,16 @@ bool BattleUnit::checkReload()
 }
 
 /**
- * Checks if this BattleUnit is standing on a specified tile-type.
+ * Checks if this BattleUnit is standing on a floor-part of a specified
+ * special-type.
  * @param tileType - type of tile to check for (RuleItem.h)
  * @return, true if unit is currently conscious on @a tileType
  */
-bool BattleUnit::isOnTiletype(const TileType tileType) const
+bool BattleUnit::isOnSpecialType(const TilepartSpecial specialType) const
 {
 	return _tile != nullptr
 		&& _tile->getMapData(O_FLOOR) != nullptr
-		&& _tile->getMapData(O_FLOOR)->getTileType() == tileType;
+		&& _tile->getMapData(O_FLOOR)->getSpecialType() == specialType;
 }
 
 /**
