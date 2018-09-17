@@ -74,7 +74,7 @@ enum TurretType
 	TRT_BLASTER		//  4
 };
 
-enum TileType // NOTE: These are actually special designations of part-types.
+enum TileType // NOTE: These are actually special designations of part-types and they are set in MCD files.
 {
 	TILE,					//  0
 	START_TILE,				//  1

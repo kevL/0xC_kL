@@ -62,7 +62,7 @@ struct DebriefStat
 	/**
 	 * cTor.
 	 * @param typeId	- reference to a type of result
-	 * @param reco		- true to recover the result and send it to base-stores
+	 * @param reco		- true to recover the result and send it to base-stores (default false)
 	 */
 	DebriefStat(
 			const std::string& typeId,
@@ -123,6 +123,25 @@ class DebriefingState
 private:
 	static const char* const TAC_RESULT[12u];
 
+	enum SpecialPart
+	{
+		STP_TILE,					//  0
+		STP_START_TILE,				//  1
+		STP_UFO_POWER_SOURCE,		//  2
+		STP_UFO_NAVIGATION,			//  3
+		STP_UFO_CONSTRUCTION,		//  4
+		STP_ALIEN_FOOD,				//  5
+		STP_ALIEN_REPRODUCTION,		//  6
+		STP_ALIEN_ENTERTAINMENT,	//  7
+		STP_ALIEN_SURGERY,			//  8
+		STP_ALIEN_EXAMINATION,		//  9
+		STP_ALIEN_HABITAT,			// 10 switched -> Because I want habitat to appear above alloys
+		STP_ALIEN_ALLOYS,			// 11 switched <- along with UFO parts like food/surgery/etc.
+		STP_RUINED_ALLOYS,			// 12 (And I don't want to change all the MCD records to do it.)
+		STP_EXIT_TILE,				// 13
+		STP_OBJECTIVE_TILE			// 14
+	};
+
 	enum AlienRecoveryResult
 	{
 		ARR_NONE,		// 0
@@ -170,7 +189,7 @@ private:
 
 	TacticalStatistics* _tactical;
 
-	std::map<TileType, SpecialType*> _specialTypes;
+	std::map<SpecialPart, SpecialType*> _specialTypes;
 	std::map<const RuleItem*, int>
 		_rounds,
 		_roundsProperty,
@@ -186,6 +205,31 @@ private:
 	std::vector<DebriefStat*> _statList;
 	std::vector<Soldier*> _soldiersFeted;
 	std::vector<SoldierDead*> _soldiersLost;
+
+	///
+	static SpecialPart convertSpecialTileToSpecialPart(TileType tileType)
+	{
+		switch (tileType)
+		{
+			case START_TILE:          return STP_START_TILE;			//  1 - not used.
+
+			case UFO_POWER_SOURCE:    return STP_UFO_POWER_SOURCE;		//  2
+			case UFO_NAVIGATION:      return STP_UFO_NAVIGATION;		//  3
+			case UFO_CONSTRUCTION:    return STP_UFO_CONSTRUCTION;		//  4
+			case ALIEN_FOOD:          return STP_ALIEN_FOOD;			//  5
+			case ALIEN_REPRODUCTION:  return STP_ALIEN_REPRODUCTION;	//  6
+			case ALIEN_ENTERTAINMENT: return STP_ALIEN_ENTERTAINMENT;	//  7
+			case ALIEN_SURGERY:       return STP_ALIEN_SURGERY;			//  8
+			case ALIEN_EXAMINATION:   return STP_ALIEN_EXAMINATION;		//  9
+			case ALIEN_ALLOYS:        return STP_ALIEN_ALLOYS;			// 10 -> 11
+			case ALIEN_HABITAT:       return STP_ALIEN_HABITAT;			// 11 -> 10
+			case RUINED_ALLOYS:       return STP_RUINED_ALLOYS;			// 12 -> give half-Alloy value for ruined alloy-tiles.
+
+			case EXIT_TILE:           return STP_EXIT_TILE;				// 13 - not used.
+			case OBJECTIVE_TILE:      return STP_OBJECTIVE_TILE;		// 14 - not used.
+		}
+		return STP_TILE; // 0 - not used.
+	}
 
 	/// Adds a DebriefStat.
 	void addResultStat(

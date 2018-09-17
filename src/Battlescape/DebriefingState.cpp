@@ -480,7 +480,8 @@ DebriefingState::~DebriefingState()
 			++i)
 		delete *i;
 
-	for (std::map<TileType, SpecialType*>::const_iterator
+//	for (std::map<TileType, SpecialType*>::const_iterator
+	for (std::map<SpecialPart, SpecialType*>::const_iterator
 			i  = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
@@ -633,7 +634,7 @@ void DebriefingState::addResultStat( // private.
 		if ((*i)->type == type)
 		{
 			(*i)->score += score;
-			(*i)->qty += qty;
+			(*i)->qty   += qty;
 			break;
 		}
 	}
@@ -682,6 +683,8 @@ void DebriefingState::prepareDebriefing() // private.
 {
 	//Log(LOG_INFO) << "DebriefingState::prepareDebriefing()";
 
+	SpecialPart specialPart;
+
 	const RuleItem* itRule;
 	for (std::vector<std::string>::const_iterator
 			i  = _rules->getItemsList().begin();
@@ -689,30 +692,25 @@ void DebriefingState::prepareDebriefing() // private.
 			++i)
 	{
 		itRule = _rules->getItemRule(*i);
-		const TileType tileType (itRule->getTileType());
-		switch (tileType)
+		switch (specialPart = convertSpecialTileToSpecialPart(itRule->getTileType()))
 		{
-//			case TILE
-//			case START_TILE:
-			case UFO_POWER_SOURCE:		//  2
-			case UFO_NAVIGATION:		//  3
-			case UFO_CONSTRUCTION:		//  4
-			case ALIEN_FOOD:			//  5
-			case ALIEN_REPRODUCTION:	//  6
-			case ALIEN_ENTERTAINMENT:	//  7
-			case ALIEN_SURGERY:			//  8
-			case ALIEN_EXAMINATION:		//  9
-			case ALIEN_ALLOYS:			// 10
-			case ALIEN_HABITAT:			// 11
-			case RUINED_ALLOYS:			// 12 -> give half-Alloy value for ruined alloy-tiles.
-//			case EXIT_TILE:
-//			case OBJECTIVE_TILE:
+			case STP_UFO_POWER_SOURCE:
+			case STP_UFO_NAVIGATION:
+			case STP_UFO_CONSTRUCTION:
+			case STP_ALIEN_FOOD:
+			case STP_ALIEN_REPRODUCTION:
+			case STP_ALIEN_ENTERTAINMENT:
+			case STP_ALIEN_SURGERY:
+			case STP_ALIEN_EXAMINATION:
+			case STP_ALIEN_HABITAT:
+			case STP_ALIEN_ALLOYS:
+			case STP_RUINED_ALLOYS:
 			{
 				SpecialType* const specialType (new SpecialType());
 				specialType->type = *i;
 				specialType->value = itRule->getRecoveryScore();
 
-				_specialTypes[tileType] = specialType;
+				_specialTypes[specialPart] = specialType;
 			}
 		}
 	}
@@ -757,12 +755,14 @@ void DebriefingState::prepareDebriefing() // private.
 	// TODO: "Base is Lost".
 //	_statList.push_back(new DebriefStat("STR_XCOM_AGENTS_RETIRED_THROUGH_INJURY"));
 
-	for (std::map<TileType, SpecialType*>::const_iterator
+	// TODO: Don't send anything to base-stores if this is a QuickBattle debriefing.
+	
+	for (std::map<SpecialPart, SpecialType*>::const_iterator
 			i  = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
 	{
-		if (i->first != RUINED_ALLOYS)
+		if (i->first != STP_RUINED_ALLOYS)
 			_statList.push_back(new DebriefStat((*i).second->type, true));
 	}
 	_statList.push_back(new DebriefStat(_rules->getAlienFuelType(), true));
@@ -1580,6 +1580,8 @@ void DebriefingState::prepareDebriefing() // private.
 		const int parts (static_cast<int>(Tile::TILE_PARTS));
 		const MapData* part;
 
+		SpecialPart specialPart;
+
 		int qtyAlloysRuined (0);
 
 		Tile* tile;
@@ -1604,33 +1606,33 @@ void DebriefingState::prepareDebriefing() // private.
 				if ((part = tile->getMapData(static_cast<MapDataType>(j))) != nullptr
 					&& (tileType = part->getTileType()) != objectType)	// not sure why parts of objectType should not be recovered.
 				{														// in fact I think it's just another wotWarboy.
-					switch (tileType)
+					switch (specialPart = convertSpecialTileToSpecialPart(tileType))
 					{
-						case TILE:
-						case START_TILE:
-						case EXIT_TILE:
-						case OBJECTIVE_TILE:
+						case STP_TILE:
+						case STP_START_TILE:
+						case STP_EXIT_TILE:
+						case STP_OBJECTIVE_TILE:
 							break;				// NOTE: These are not included in '_specialTypes' above^
 
-						case RUINED_ALLOYS:		// NOTE: This is in '_specialTypes' above^ (adds half-value to Alloys' pts)
+						case STP_RUINED_ALLOYS:		// NOTE: This is in '_specialTypes' above^ (adds half-value to Alloys' pts)
 							++qtyAlloysRuined;	// but not included on the statList displayed for Debriefing.
 							break;
 
 //						default:
-						case UFO_POWER_SOURCE:	// NOTE: These are all in '_specialTypes' above^
-						case UFO_NAVIGATION:
-						case UFO_CONSTRUCTION:
-						case ALIEN_FOOD:
-						case ALIEN_REPRODUCTION:
-						case ALIEN_ENTERTAINMENT:
-						case ALIEN_SURGERY:
-						case ALIEN_EXAMINATION:
-						case ALIEN_ALLOYS:
-						case ALIEN_HABITAT:
+						case STP_UFO_POWER_SOURCE:	// NOTE: These are all in '_specialTypes' above^
+						case STP_UFO_NAVIGATION:
+						case STP_UFO_CONSTRUCTION:
+						case STP_ALIEN_FOOD:
+						case STP_ALIEN_REPRODUCTION:
+						case STP_ALIEN_ENTERTAINMENT:
+						case STP_ALIEN_SURGERY:
+						case STP_ALIEN_EXAMINATION:
+						case STP_ALIEN_ALLOYS:
+						case STP_ALIEN_HABITAT:
 //							if (_specialTypes.find(tileType) != _specialTypes.end())
 							addResultStat(
-									_specialTypes[tileType]->type,
-									_specialTypes[tileType]->value);
+									_specialTypes[specialPart]->type,
+									_specialTypes[specialPart]->value);
 					}
 				}
 			}
@@ -1641,20 +1643,19 @@ void DebriefingState::prepareDebriefing() // private.
 				i != _statList.end();
 				++i)
 		{
-			if ((*i)->type == _specialTypes[ALIEN_ALLOYS]->type)
+			if ((*i)->type == _specialTypes[STP_ALIEN_ALLOYS]->type) // NOTE: Elerium is handled in recoverItems().
 			{
 				int alloyDivisor; // TODO: Subtract diff*10 for gameDifficulty.
-				switch (tacType)
-				{
-					case TCT_BASEASSAULT: alloyDivisor = 150; break;
-					default:              alloyDivisor = 15;
-				}
+				if (tacType == TCT_BASEASSAULT)
+					alloyDivisor = 150;
+				else
+					alloyDivisor = 15;
 
-				(*i)->qty = ((*i)->qty + (qtyAlloysRuined >> 1u)) / alloyDivisor;
-				(*i)->score = ((*i)->score + ((qtyAlloysRuined * _specialTypes[RUINED_ALLOYS]->value) >> 1u)) / alloyDivisor;
+				(*i)->qty   = ((*i)->qty   +  (qtyAlloysRuined >> 1u)) / alloyDivisor;
+				(*i)->score = ((*i)->score + ((qtyAlloysRuined * _specialTypes[STP_RUINED_ALLOYS]->value) >> 1u)) / alloyDivisor;
 
 				if ((*i)->qty != 0 && (*i)->recover == true)
-					_surplus[_rules->getItemRule((*i)->type)] = (*i)->qty; // NOTE: Elerium is handled in recoverItems().
+					_surplus[_rules->getItemRule((*i)->type)] = (*i)->qty;
 			}
 
 			if ((*i)->qty != 0 && (*i)->recover == true)
