@@ -1565,14 +1565,14 @@ void DebriefingState::prepareDebriefing() // private.
 		//Log(LOG_INFO) << ". recover Conditional";
 		recoverItems(_battleSave->recoverConditional());
 
-		TilepartSpecial
-			specialType,
-			objectType;
+/*		TilepartSpecial
+			objectiveType,
+			specialType;
 
 		if (ruleDeploy != nullptr)
-			objectType = ruleDeploy->getPlayerObjective();
+			objectiveType = ruleDeploy->getPlayerObjective();
 		else
-			objectType = TILE;
+			objectiveType = TILE; */
 
 		const int parts (static_cast<int>(Tile::TILE_PARTS));
 		const MapData* part;
@@ -1600,10 +1600,11 @@ void DebriefingState::prepareDebriefing() // private.
 					j != parts;
 					++j)
 			{
-				if ((part = tile->getMapData(static_cast<MapDataType>(j))) != nullptr
-					&& (specialType = part->getSpecialType()) != objectType) // not sure why tileparts of objectType should not be recovered.
+				if ((part = tile->getMapData(static_cast<MapDataType>(j))) != nullptr)
+//					&& (specialType = part->getSpecialType()) != objectiveType // not sure why tileparts of 'objectiveType' should not be recovered.
 				{
-					switch (specialPart = convertSpecialTileToSpecialPart(specialType))
+//					switch (specialPart = convertSpecialTileToSpecialPart(specialType))
+					switch (specialPart = convertSpecialTileToSpecialPart(part->getSpecialType()))
 					{
 						case STP_TILE:				// NOTE: These are not included in '_specialTypes' above^
 						case STP_START_TILE:
@@ -1646,7 +1647,7 @@ void DebriefingState::prepareDebriefing() // private.
 				if (tacType == TCT_BASEASSAULT)
 					alloyDivisor = 150;
 				else
-					alloyDivisor = 15;
+					alloyDivisor = 15; // TODO: The divisors are a bit high.
 
 				(*i)->qty   = ((*i)->qty   +  (qtyAlloysRuined >> 1u)) / alloyDivisor;
 				(*i)->score = ((*i)->score + ((qtyAlloysRuined * _specialTypes[STP_RUINED_ALLOYS]->value) >> 1u)) / alloyDivisor;

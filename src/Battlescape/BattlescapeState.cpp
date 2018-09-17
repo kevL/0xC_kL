@@ -296,7 +296,7 @@ BattlescapeState::BattlescapeState()
 						45);
 	_srfBtnBorder	= new Surface(
 						32,24,
-						screenWidth - 32); // y is set when Lauch or Psi buttons are pressed.
+						screenWidth - 32); // y is set when Launch or Psi buttons are pressed.
 
 	_txtName        = new Text(136, 9, x + 135, y + 32);
 
@@ -1508,7 +1508,7 @@ void BattlescapeState::mapClick(Action* action)
 //			_map->getCamera()->setMapOffset(_dragScrollStartPos);
 
 		if ((action->getDetails()->button.button != SDL_BUTTON_RIGHT	// right-click removes pathPreview or aborts walking state
-				|| _battle->cancelTacticalAction() == false)		// or skips projectile trajectory, etc.
+				|| _battle->cancelTacticalAction() == false)			// or skips projectile trajectory, etc.
 			&& (_mouseOverToolbar == false
 				&& _map->getSelectorType() != CT_NONE
 				&& _battle->isBusy() == false))
@@ -3414,7 +3414,7 @@ void BattlescapeState::toggleKneelButton(const BattleUnit* const unit)
 void BattlescapeState::animate()
 {
 	_map->animateMap(_battle->isBusy() == false);	// this needs to happen regardless so that UFO
-														// doors (&tc) do not stall walking units (&tc)
+													// doors (&tc) do not stall walking units (&tc)
 	if (_map->getMapHidden() == false)
 	{
 		if (_battle->getShotgun() == true)
