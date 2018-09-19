@@ -223,9 +223,9 @@ void MapDataSet::loadData()
 					mcd.Xcom_Base   != 0);
 			record->setTerrainLevel( static_cast<int>(mcd.T_Level));
 			record->setFootstepSound(static_cast<int>(mcd.Footstep));
-			record->setAltMCD(       static_cast<int>(mcd.Alt_MCD));
-			record->setDieMCD(       static_cast<int>(mcd.Die_MCD));
-			record->setBlock(
+			record->setAltPart(       static_cast<int>(mcd.Alt_MCD));
+			record->setDiePart(       static_cast<int>(mcd.Die_MCD));
+			record->setBlocks(
 					static_cast<int>(mcd.Light_Block),
 					static_cast<int>(mcd.Stop_LOS),
 					static_cast<int>(mcd.HE_Block),
@@ -282,12 +282,12 @@ void MapDataSet::loadData()
 			if ((*i)->getPartType() == O_FLOOR && (*i)->getBlock(DT_HE) == 0)
 			{
 				const int armor ((*i)->getArmorPoints());
-				(*i)->setDefaultBlock(armor);
+				(*i)->setDefaultBlocks(armor);
 
-				if ((*i)->getDieMCD() != 0)
-					_records.at(static_cast<size_t>((*i)->getDieMCD()))->setDefaultBlock(armor);
+				if ((*i)->getDiePart() != 0)
+					_records.at(static_cast<size_t>((*i)->getDiePart()))->setDefaultBlocks(armor);
 
-				if ((*i)->isGravLift() == false) (*i)->setStopLOS();
+				if ((*i)->isGravLift() == false) (*i)->setStopLos();
 			}
 		}
 

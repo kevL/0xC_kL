@@ -276,7 +276,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 			i != _deathTiles.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setDieMCD(i->second);
+		dataSet->getRecords()->at(i->first)->setDiePart(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
@@ -332,7 +332,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 			i != _heBlocks.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setHEBlock(i->second);
+		dataSet->getRecords()->at(i->first)->setHeBlock(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, bool>>::const_iterator
@@ -348,7 +348,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 			i != _stopLOSes.end();
 			++i)
 	{
-		dataSet->getRecords()->at(i->first)->setStopLOS(i->second);
+		dataSet->getRecords()->at(i->first)->setStopLos(i->second);
 	}
 
 	for (std::vector<std::pair<size_t, std::vector<size_t>>>::const_iterator

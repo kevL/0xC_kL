@@ -28,18 +28,18 @@ namespace OpenXcom
 {
 
 /**
- * Creates the MapData tile-part.
- * @note yes, This is a tile-part.
- * @param dataSet - pointer to the MapDataSet (aka MCD) this tile-part belongs to
+ * Creates the MapData tilepart.
+ * @note yes, This is a tilepart.
+ * @param dataSet - pointer to the MapDataSet (aka MCD) this tilepart belongs to
  */
 MapData::MapData(MapDataSet* const dataSet)
 	:
 		_dataSet(dataSet),
 		_specialType(TILE),
-		_isDoor(false),
+		_door(false),
 		_hingeDoor(false),
 		_slideDoor(false),
-		_stopLOS(false),
+		_stopLos(false),
 		_noFloor(false),
 		_gravLift(false),
 		_disallowFire(false),
@@ -49,25 +49,25 @@ MapData::MapData(MapDataSet* const dataSet)
 		_tuWalk(0),
 		_tuSlide(0),
 		_tuFly(0),
-		_terrainLevel(0),
-		_footstepSound(0),
-		_dieMCD(0),
-		_altMCD(0),
+		_level(0),
+		_sound(0),
+		_dieId(0),
+		_altId(0),
 		_partType(O_FLOOR),
-		_lightSource(0),
+		_light(0),
 		_armor(0),
 		_flammable(0),
 		_fuel(0),
 		_explosive(0),
 		_explosiveType(DT_NONE),
 		_bigWall(BIGWALL_NONE),
-		_miniMapIndex(0),
-		_isPsychedelic(0)
+		_miniId(0),
+		_psychedelic(0)
 {
 	//Log(LOG_INFO) << "MapData cTor dataSet = " << _dataSet->getType();
-	std::fill_n(_sprite,  8u,0u);
-	std::fill_n(_block,   6u,0u);
-	std::fill_n(_loftId, 12u,0u);
+	std::fill_n(_sprites,  8u,0u);
+	std::fill_n(_blocks,   6u,0u);
+	std::fill_n(_loftIds, 12u,0u);
 }
 
 /**
@@ -79,7 +79,7 @@ MapData::~MapData()
 }
 
 /**
- * Gets the MapDataSet/tileset this tile-part belongs to.
+ * Gets the MapDataSet/tileset this tilepart belongs to.
  * @return, pointer to MapDataSet
  */
 MapDataSet* MapData::getDataset() const
@@ -94,7 +94,7 @@ MapDataSet* MapData::getDataset() const
  */
 int MapData::getSprite(int aniCycle) const
 {
-	return _sprite[static_cast<size_t>(aniCycle)];
+	return _sprites[static_cast<size_t>(aniCycle)];
 }
 
 /**
@@ -106,20 +106,20 @@ void MapData::setSprite(
 		size_t aniCycle,
 		int id)
 {
-	_sprite[aniCycle] = id;
+	_sprites[aniCycle] = id;
 }
 
 /**
- * Gets if this tile-part is either a normal door or a ufo-door.
+ * Gets if this tilepart is either a normal door or a ufo-door.
  * @return, true if door
  */
 bool MapData::isDoor() const
 {
-	return _isDoor;
+	return _door;
 }
 
 /**
- * Gets whether this tile-part is a normal door.
+ * Gets whether this tilepart is a normal door.
  * @return, true if normal door
  */
 bool MapData::isHingeDoor() const
@@ -128,7 +128,7 @@ bool MapData::isHingeDoor() const
 }
 
 /**
- * Gets whether this tile-part is an animated ufo-door.
+ * Gets whether this tilepart is an animated ufo-door.
  * @return, true if ufo-door
  */
 bool MapData::isSlideDoor() const
@@ -137,16 +137,16 @@ bool MapData::isSlideDoor() const
 }
 
 /**
- * Gets whether this tile-part stops LoS.
+ * Gets whether this tilepart stops LoS.
  * @return, true if stops LoS
  */
-bool MapData::stopLOS() const
+bool MapData::stopsLos() const
 {
-	return _stopLOS;
+	return _stopLos;
 }
 
 /**
- * Gets whether this tile-part is a floor.
+ * Gets whether this tilepart is a floor.
  * @return, true if a floor
  */
 bool MapData::isNoFloor() const
@@ -155,7 +155,7 @@ bool MapData::isNoFloor() const
 }
 
 /**
- * Gets whether this tile-part is a bigwall that blocks surrounding diagonal
+ * Gets whether this tilepart is a bigwall that blocks surrounding diagonal
  * paths.
  * @note Return value key:
  * 0: not a bigWall
@@ -176,7 +176,7 @@ BigwallType MapData::getBigwall() const
 }
 
 /**
- * Gets whether this tile-part is a grav lift.
+ * Gets whether this tilepart is a grav lift.
  * @return, true if a grav lift
  */
 bool MapData::isGravLift() const
@@ -185,7 +185,7 @@ bool MapData::isGravLift() const
 }
 
 /**
- * Gets whether this tile-part blocks smoke.
+ * Gets whether this tilepart blocks smoke.
  * @return, true if blocks smoke
  */
 bool MapData::blocksSmoke() const
@@ -194,7 +194,7 @@ bool MapData::blocksSmoke() const
 }
 
 /**
- * Gets whether this tile-part blocks fire.
+ * Gets whether this tilepart blocks fire.
  * @return, true if blocks fire
  */
 bool MapData::blocksFire() const
@@ -226,7 +226,7 @@ void MapData::setFlags(
 		bool baseObject)
 {
 	_slideDoor     = slideDoor;
-	_stopLOS       = stopLOS;
+	_stopLos       = stopLOS;
 	_noFloor       = noFloor;
 	_bigWall       = static_cast<BigwallType>(bigWall);
 	_gravLift      = gravLift;
@@ -235,7 +235,7 @@ void MapData::setFlags(
 	_disallowSmoke = disallowSmoke;
 	_baseObject    = baseObject;
 
-	_isDoor = _slideDoor
+	_door = _slideDoor
 		   || _hingeDoor;
 }
 
@@ -254,11 +254,11 @@ int MapData::getBlock(DamageType dType) const
 //		case DT_IN:    return _block[4];
 //		case DT_STUN:  return _block[5];
 											// see setBlock() below_
-		case DT_NONE:  return _block[1u];	// stop LoS: [0 or 100], was [0 or 255]
+		case DT_NONE:  return _blocks[1u];	// stop LoS: [0 or 100], was [0 or 255]
 		case DT_HE:
 		case DT_IN:
-		case DT_STUN:  return _block[2u];	// HE block [int] // TODO: Just fix all this crap.
-		case DT_SMOKE: return _block[3u];	// block smoke: try (bool), was [0 or 256]
+		case DT_STUN:  return _blocks[2u];	// HE block [int] // TODO: Just fix all this crap.
+		case DT_SMOKE: return _blocks[3u];	// block smoke: try (bool), was [0 or 256]
 	}
 	return 0;
 }
@@ -272,7 +272,7 @@ int MapData::getBlock(DamageType dType) const
  * @param fire		- fire blockage				- Flammable (lower = more flammable)
  * @param gas		- gas blockage				- HE_Block
  */
-void MapData::setBlock(
+void MapData::setBlocks(
 		int light,
 		int vision,
 		int he,
@@ -280,55 +280,55 @@ void MapData::setBlock(
 		int fire,
 		int gas)
 {
-	_block[0u] = light;					// not used.
-	_block[1u] = vision == 1 ? 100 : 0;	// stopLoS==true needs to be a significantly large integer (only about 10+ really)
-										// so that if a directionally opposite Field of View check includes a "-1",
-										// meaning block by bigWall or other content-object, the result is not reduced
-										// to zero (no block at all) when added to regular stopLoS by a standard wall.
-										//
-										// It would be unnecessary to use that jigger-pokery if TileEngine::horizontalBlockage()
-										// and TileEngine::blockage() were coded differently - verticalBlockage() too, perhaps.
-	_block[2u] = he;
-	_block[3u] = smoke;					// this is the same as the _blockSmoke flag.
-	_block[4u] = fire;					// IMPORTANT: this is Flammable, NOT Block_Fire per se.
-	_block[5u] = gas;					// probably not used.
+	_blocks[0u] = light;					// not used.
+	_blocks[1u] = vision == 1 ? 100 : 0;	// stopLoS==true needs to be a significantly large integer (only about 10+ really)
+											// so that if a directionally opposite Field of View check includes a "-1",
+											// meaning block by bigWall or other content-object, the result is not reduced
+											// to zero (no block at all) when added to regular stopLoS by a standard wall.
+											//
+											// It would be unnecessary to use that jigger-pokery if TileEngine::horizontalBlockage()
+											// and TileEngine::blockage() were coded differently - verticalBlockage() too, perhaps.
+	_blocks[2u] = he;
+	_blocks[3u] = smoke;					// this is the same as the _blockSmoke flag.
+	_blocks[4u] = fire;						// IMPORTANT: this is Flammable, NOT Block_Fire per se.
+	_blocks[5u] = gas;						// probably not used.
 }
 
 /**
  * Sets default blockage values if none are assigned in an MCD.
  * @param he - armor value of the tilepart
  */
-void MapData::setDefaultBlock(int he)
+void MapData::setDefaultBlocks(int he)
 {
-	_block[0u] = 1;
-	_block[1u] = 1;
-	_block[2u] = he;
-	_block[3u] = 1;
-	_block[4u] = 1;
-	_block[5u] = 1;
+	_blocks[0u] = 1;
+	_blocks[1u] = 1;
+	_blocks[2u] = he;
+	_blocks[3u] = 1;
+	_blocks[4u] = 1;
+	_blocks[5u] = 1;
 }
 
 /**
- * Sets whether this tile-part stops LoS.
+ * Sets whether this tilepart stops LoS.
  * @param, true if stops LoS
  */
-void MapData::setStopLOS(bool stopLOS)
+void MapData::setStopLos(bool stopLos)
 {
-	_stopLOS = stopLOS;
-	_block[1u] = (stopLOS == true) ? 100 : 0;
+	_stopLos = stopLos;
+	_blocks[1u] = (stopLos == true) ? 100 : 0;
 }
 
 /**
  * Sets the amount of HE blockage.
  * @param heBlock - the high explosive blockage
  */
-void MapData::setHEBlock(int heBlock)
+void MapData::setHeBlock(int he)
 {
-	_block[2u] = heBlock;
+	_blocks[2u] = he;
 }
 
 /**
- * Gets the offset on the y-axis for drawing this tile-part.
+ * Gets the offset on the y-axis for drawing this tilepart.
  * @return, the offset in pixels
  */
 int MapData::getOffsetY() const
@@ -337,7 +337,7 @@ int MapData::getOffsetY() const
 }
 
 /**
- * Sets the offset on the y-axis for drawing this tile-part.
+ * Sets the offset on the y-axis for drawing this tilepart.
  * @param offset - the offset in pixels
  */
 void MapData::setOffsetY(int offset)
@@ -346,8 +346,8 @@ void MapData::setOffsetY(int offset)
 }
 
 /**
- * Gets the MapDataType (part-type) of this tile-part.
- * @return, the tile-part type (0-3)
+ * Gets the MapDataType (part-type) of this tilepart.
+ * @return, the tilepart type (0-3)
  */
 MapDataType MapData::getPartType() const
 {
@@ -355,8 +355,8 @@ MapDataType MapData::getPartType() const
 }
 
 /**
- * Sets the MapDataType (part-type) of this tile-part.
- * @param type - the tile-part type (0-3)
+ * Sets the MapDataType (part-type) of this tilepart.
+ * @param type - the tilepart type (0-3)
  */
 void MapData::setPartType(MapDataType type)
 {
@@ -364,7 +364,7 @@ void MapData::setPartType(MapDataType type)
 }
 
 /**
- * Gets this tile-part's TilepartSpecial.
+ * Gets this tilepart's TilepartSpecial.
  * @return, the TilepartSpecial (MapData.h)
  */
 TilepartSpecial MapData::getSpecialType() const
@@ -373,16 +373,16 @@ TilepartSpecial MapData::getSpecialType() const
 }
 
 /**
- * Sets this tile-part's TilepartSpecial.
- * @param value	- a TilepartSpecial (MapData.h)
+ * Sets this tilepart's TilepartSpecial.
+ * @param type - a TilepartSpecial (MapData.h)
  */
-void MapData::setSpecialType(TilepartSpecial specialType)
+void MapData::setSpecialType(TilepartSpecial type)
 {
-	_specialType = specialType;
+	_specialType = type;
 }
 
 /**
- * Gets the TU-cost to move over/through this tile-part.
+ * Gets the TU-cost to move over/through this tilepart.
  * @param type - the MoveType (MapData.h)
  * @return, the TU-cost
  */
@@ -399,7 +399,7 @@ int MapData::getTuCostPart(MoveType type) const
 }
 
 /**
- * Sets the TU-cost to move over this tile-part.
+ * Sets the TU-cost to move over this tilepart.
  * @param walk	- the walking TU-cost
  * @param slide	- the sliding TU-cost
  * @param fly	- the flying TU-cost
@@ -415,79 +415,79 @@ void MapData::setTuCosts(
 }
 
 /**
- * Adds to the graphical Y-offset of units or objects on this tile-part.
+ * Adds to the graphical Y-offset of units or objects on this tilepart.
  * @return, y-offset in pixels
  */
 int MapData::getTerrainLevel() const
 {
-	return _terrainLevel;
+	return _level;
 }
 
 /**
- * Sets the Y-offset for units or objects on this tile-part.
+ * Sets the Y-offset for units or objects on this tilepart.
  * @param offset - y-offset in pixels
  */
 void MapData::setTerrainLevel(int offset)
 {
-	_terrainLevel = offset;
+	_level = offset;
 }
 
 /**
- * Gets the index to this tile-part's footstep sound.
+ * Gets the index to this tilepart's footstep sound.
  * @return, the sound ID
  */
 int MapData::getFootstepSound() const
 {
-	return _footstepSound;
+	return _sound;
 }
 
 /**
- * Sets the index to this tile-part's footstep sound.
- * @param value - the sound ID
+ * Sets the index to this tilepart's footstep sound.
+ * @param sound - the sound ID
  */
-void MapData::setFootstepSound(int value)
+void MapData::setFootstepSound(int sound)
 {
-	_footstepSound = value;
+	_sound = sound;
 }
 
 /**
- * Gets the alternate tile-part ID.
- * @return, the alternate tile-part ID
+ * Gets the alternate tilepart ID.
+ * @return, the alternate tilepart ID
  */
-int MapData::getAltMCD() const
+int MapData::getAltPart() const
 {
-	return _altMCD;
+	return _altId;
 }
 
 /**
- * Sets the alternate tile-part ID.
- * @param value - the alternate tile-part ID
+ * Sets the alternate tilepart ID.
+ * @param id - the alternate tilepart ID
  */
-void MapData::setAltMCD(int value)
+void MapData::setAltPart(int id)
 {
-	_altMCD = value;
+	_altId = id;
 }
 
 /**
- * Gets the dead tile-part ID.
- * @return, the dead tile-part ID
+ * Gets the dead tilepart ID.
+ * @return, the dead tilepart ID
  */
-int MapData::getDieMCD() const
+int MapData::getDiePart() const
 {
-	return _dieMCD;
+	return _dieId;
 }
 
 /**
- * Sets the dead tile-part ID.
- * @param value - the dead tile-part ID
+ * Sets the dead tilepart ID.
+ * @param id - the dead tilepart ID
  */
-void MapData::setDieMCD(int value)
+void MapData::setDiePart(int id)
 {
-	_dieMCD = value;
+	_dieId = id;
 }
 
 /**
- * Gets the amount of light this tile-part emits.
+ * Gets the amount of light this tilepart emits.
  * @return, the amount of light
  */
 int MapData::getLightSource() const
@@ -495,21 +495,21 @@ int MapData::getLightSource() const
 //	if (_lightSource == 1)	// lamp posts have 1
 //		return 15;			// but they should emit more light -> Fixed in MCD.
 
-	return _lightSource;// - 1;
+	return _light;// - 1;
 }
 
 /**
- * Sets the amount of light this tile-part emits.
- * @param value - the amount of light
+ * Sets the amount of light this tilepart emits.
+ * @param light - the amount of light
  */
-void MapData::setLightSource(int value)
+void MapData::setLightSource(int light)
 {
-	_lightSource = value;
+	_light = light;
 }
 
 /**
  * Gets the amount of armor.
- * @note Total hitpoints of the tile-part before destroyed. "255" shall be
+ * @note Total hitpoints of the tilepart before destroyed. "255" shall be
  * considered indestructible.
  * @return, the amount of armor
  */
@@ -520,17 +520,17 @@ int MapData::getArmorPoints() const
 
 /**
  * Sets the amount of armor.
- * @note Total hitpoints of the tile-part before destroyed. "255" shall be
+ * @note Total hitpoints of the tilepart before destroyed. "255" shall be
  * considered indestructible.
- * @param value - the amount of armor
+ * @param armor - the amount of armor
  */
-void MapData::setArmorPoints(int value)
+void MapData::setArmorPoints(int armor)
 {
-	_armor = value;
+	_armor = armor;
 }
 
 /**
- * Gets the amount of flammable (how flammable this tile-part is).
+ * Gets the amount of flammable (how flammable this tilepart is).
  * @note "255" shall be considered not flammable.
  * @return, the amount of flammable
  */
@@ -540,13 +540,13 @@ int MapData::getFlammable() const
 }
 
 /**
- * Sets the amount of flammable (how flammable this tile-part is).
+ * Sets the amount of flammable (how flammable this tilepart is).
  * @note "255" shall be considered not flammable.
- * @param value - the amount of flammable
+ * @param flammable - the amount of flammable
  */
-void MapData::setFlammable(int value)
+void MapData::setFlammable(int flammable)
 {
-	_flammable = value;
+	_flammable = flammable;
 }
 
 /**
@@ -560,11 +560,11 @@ int MapData::getFuel() const
 
 /**
  * Sets the amount of fuel.
- * @param value - the amount of fuel
+ * @param fuel - the amount of fuel
  */
-void MapData::setFuel(int value)
+void MapData::setFuel(int fuel)
 {
-	_fuel = value;
+	_fuel = fuel;
 }
 
 /**
@@ -574,7 +574,7 @@ void MapData::setFuel(int value)
  */
 size_t MapData::getLoftId(size_t layer) const
 {
-	return _loftId[layer];
+	return _loftIds[layer];
 }
 
 /**
@@ -586,7 +586,7 @@ void MapData::setLoftId(
 		size_t loft,
 		size_t layer)
 {
-	_loftId[layer] = loft;
+	_loftIds[layer] = loft;
 }
 
 /**
@@ -644,7 +644,7 @@ void MapData::setExplosiveType(int type)
  */
 void MapData::setMiniMapIndex(unsigned short id)
 {
-	_miniMapIndex = static_cast<int>(id);
+	_miniId = static_cast<int>(id);
 }
 
 /**
@@ -653,7 +653,7 @@ void MapData::setMiniMapIndex(unsigned short id)
  */
 int MapData::getMiniMapIndex() const
 {
-	return _miniMapIndex;
+	return _miniId;
 }
 
 /**
@@ -694,15 +694,15 @@ void MapData::setTuFly(int tu)
 
 /**
  * Sets the "no floor" flag.
- * @param isNoFloor - true if the tile has no floor part
+ * @param noFloor - true if the tile has no floor part
  */
-void MapData::setNoFloor(bool isNoFloor)
+void MapData::setNoFloor(bool noFloor)
 {
-	_noFloor = isNoFloor;
+	_noFloor = noFloor;
 }
 
 /**
- * Checks if this is an aLien-objective tile-part.
+ * Checks if this is an aLien-objective tilepart.
  * @return, true if so
  */
 bool MapData::isBaseObject() const
@@ -711,21 +711,21 @@ bool MapData::isBaseObject() const
 }
 
 /**
- * Sets if this tile-part is psychedelic.
+ * Sets if this tilepart is psychedelic.
  * @param psycho - true if psycho
  */
 void MapData::setPsychedelic(int psycho)
 {
-	_isPsychedelic = psycho;
+	_psychedelic = psycho;
 }
 
 /**
- * Gets if this tile-part is psychedelic.
+ * Gets if this tilepart is psychedelic.
  * @return, true if psycho
  */
 int MapData::getPsychedelic() const
 {
-	return _isPsychedelic;
+	return _psychedelic;
 }
 
 }

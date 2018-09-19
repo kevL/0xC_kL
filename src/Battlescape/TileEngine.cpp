@@ -3887,7 +3887,7 @@ int TileEngine::blockage( // private.
 								{
 									default:
 									case DT_NONE:
-										if (part->stopLOS() == true)
+										if (part->stopsLos() == true)
 											return HARD_BLOCK;
 										break;
 
@@ -3908,7 +3908,7 @@ int TileEngine::blockage( // private.
 							//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret HARD_BLOCK[0] partType = " << partType << " " << tile->getPosition();
 						}
 					}
-					else if (part->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
+					else if (part->stopsLos() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 						&& _powerE > -1
 						&& _powerE < (part->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE!
 					{
@@ -4003,7 +4003,7 @@ int TileEngine::blockage( // private.
 							switch (dType) // TODO: Needs Gas/Stun dType added.
 							{
 								case DT_NONE:
-									if (object->stopLOS() == false)
+									if (object->stopsLos() == false)
 									{
 										//if (_debug) Log(LOG_INFO) << ". . . . DT_None/no stopLOS ret 0";
 										return 0;
@@ -4033,7 +4033,7 @@ int TileEngine::blockage( // private.
 							{
 								case BIGWALL_NESW:
 								case BIGWALL_NWSE:
-									if (object->stopLOS() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
+									if (object->stopsLos() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 										&& _powerE > -1
 										&& _powerE < (object->getArmorPoints() << 1u))
 									{
@@ -4051,7 +4051,7 @@ int TileEngine::blockage( // private.
 						switch (dType) // TODO: Needs Gas/Stun dType added.
 						{
 							case DT_NONE:
-								if (object->stopLOS() == true)
+								if (object->stopsLos() == true)
 								{
 									//if (_debug) Log(LOG_INFO) << ". . . DT_None/stopLOS ret HARD_BLOCK";
 									return HARD_BLOCK;
@@ -4213,7 +4213,7 @@ int TileEngine::blockage( // private.
 								switch (dType) // TODO: Needs Gas/Stun dType added.
 								{
 									case DT_NONE:
-										if (object->stopLOS() == false)
+										if (object->stopsLos() == false)
 										{
 											//if (_debug) Log(LOG_INFO) << ". . DT_None/noStopLOS ret 0 ( dir 8/9 up/down )";
 											return 0;
@@ -4270,7 +4270,7 @@ int TileEngine::blockage( // private.
 								break;
 
 							default: // use stopLOS to hinder explosions from propagating through BigWalls freely.
-								if (object->stopLOS() == true)
+								if (object->stopsLos() == true)
 								{
 									//if (_debug) Log(LOG_INFO) << ". default/no stopLOS HARD_BLOCK";
 									return HARD_BLOCK;
@@ -4372,7 +4372,7 @@ void TileEngine::detonateTile(Tile* const tile) const
 		int
 			powerTest,
 			density (0),
-			dieMCD;
+			dieId;
 
 		MapDataType
 			partTest,
@@ -4491,8 +4491,8 @@ void TileEngine::detonateTile(Tile* const tile) const
 				}
 
 				// This tracks dead object-parts (object-part can become a floor-part ... unless your MCDs are correct!)
-				if ((dieMCD = part->getDieMCD()) != 0)
-					partNext = part->getDataset()->getRecords()->at(static_cast<size_t>(dieMCD))->getPartType();
+				if ((dieId = part->getDiePart()) != 0)
+					partNext = part->getDataset()->getRecords()->at(static_cast<size_t>(dieId))->getPartType();
 				else
 					partNext = partTest;
 
@@ -6491,7 +6491,7 @@ int TileEngine::faceWindow(const Position& pos) const
 	if ((tile = _battleSave->getTile(pos)) != nullptr)
 	{
 		if (   tile->getMapData(O_NORTHWALL) != nullptr
-			&& tile->getMapData(O_NORTHWALL)->stopLOS() == false)
+			&& tile->getMapData(O_NORTHWALL)->stopsLos() == false)
 		{
 			if (pos.y != 0)
 				return 0;
@@ -6500,7 +6500,7 @@ int TileEngine::faceWindow(const Position& pos) const
 		}
 
 		if (   tile->getMapData(O_WESTWALL) != nullptr
-			&& tile->getMapData(O_WESTWALL)->stopLOS() == false)
+			&& tile->getMapData(O_WESTWALL)->stopsLos() == false)
 		{
 			if (pos.x != 0)
 				return 6;
@@ -6511,7 +6511,7 @@ int TileEngine::faceWindow(const Position& pos) const
 
 	if ((tile = _battleSave->getTile(pos + Position(1,0,0))) != nullptr
 		&& tile->getMapData(O_WESTWALL) != nullptr
-		&& tile->getMapData(O_WESTWALL)->stopLOS() == false)
+		&& tile->getMapData(O_WESTWALL)->stopsLos() == false)
 	{
 		if (pos.x != _battleSave->getMapSizeX() - 1)
 			return 2;
@@ -6521,7 +6521,7 @@ int TileEngine::faceWindow(const Position& pos) const
 
 	if ((tile = _battleSave->getTile(pos + Position(0,1,0))) != nullptr
 		&& tile->getMapData(O_NORTHWALL) != nullptr
-		&& tile->getMapData(O_NORTHWALL)->stopLOS() == false)
+		&& tile->getMapData(O_NORTHWALL)->stopsLos() == false)
 	{
 		if (pos.y != _battleSave->getMapSizeY() - 1)
 			return 4;

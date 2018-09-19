@@ -500,7 +500,7 @@ DoorResult Tile::openDoor(
 			}
 			//Log(LOG_INFO) << ". . okay, open HingeDoor";
 
-			const size_t altId (static_cast<size_t>(_parts[partType]->getAltMCD()));
+			const size_t altId (static_cast<size_t>(_parts[partType]->getAltPart()));
 			MapData* const altPart (_parts[partType]->getDataset()->getRecords()->at(altId));
 			const MapDataType altPartType (altPart->getPartType());
 
@@ -699,7 +699,7 @@ int Tile::destroyTilepart(
 
 			if (obliterate == false)
 			{
-				const int deadId (part->getDieMCD());
+				const int deadId (part->getDiePart());
 				if (deadId != 0) // instantiate a death-part if there is one.
 				{
 					MapData* const partDead (part->getDataset()->getRecords()->at(static_cast<size_t>(deadId)));

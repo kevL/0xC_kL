@@ -110,38 +110,38 @@ private:
 		_baseObject,
 		_disallowFire,
 		_disallowSmoke,
-		_isDoor,
+		_door,
 		_gravLift,
 		_hingeDoor,
 		_noFloor,
 		_slideDoor,
-		_stopLOS;
+		_stopLos;
 	int
 		_armor,
-		_altMCD,
-		_block[6u],
-		_dieMCD,
+		_altId,
+		_blocks[6u],
+		_dieId,
 		_explosive,
 		_flammable,
-		_footstepSound,
 		_fuel,
-		_isPsychedelic,
-		_lightSource,
-		_miniMapIndex,
-		_sprite[8u],
-		_terrainLevel,
+		_level,
+		_light,
+		_miniId,
+		_psychedelic,
+		_sound,
+		_sprites[8u],
 		_tuWalk,
 		_tuFly,
 		_tuSlide,
 		_yOffset;
 
-	size_t _loftId[12u];
+	size_t _loftIds[12u];
 
 	MapDataSet* _dataSet;
 
-	BigwallType _bigWall;
-	DamageType _explosiveType;
-	MapDataType _partType;
+	BigwallType     _bigWall;
+	DamageType      _explosiveType;
+	MapDataType     _partType;
 	TilepartSpecial _specialType;
 
 
@@ -169,14 +169,14 @@ private:
 				size_t aniCycle,
 				int id);
 
-		/// Gets if this tile-part is either a normal door or a ufo-door.
+		/// Gets if this tilepart is either a normal door or a ufo-door.
 		bool isDoor() const;
 		/// Gets whether the part is a normal door.
 		bool isHingeDoor() const;
 		/// Gets whether the part is an animated ufo-door.
 		bool isSlideDoor() const;
 		/// Gets whether the part stops LoS.
-		bool stopLOS() const;
+		bool stopsLos() const;
 		/// Gets whether the part is considered a solid floor.
 		bool isNoFloor() const;
 		/// Gets whether the part is a BigWall.
@@ -203,7 +203,7 @@ private:
 		/// Gets the amount of blockage of a certain type.
 		int getBlock(DamageType dType) const;
 		/// Sets the amount of blockage for a bunch of types.
-		void setBlock(
+		void setBlocks(
 				int light,
 				int vision,
 				int he,
@@ -211,11 +211,11 @@ private:
 				int fire,
 				int gas);
 		/// Sets default blockage values if none are assigned in an MCD.
-		void setDefaultBlock(int he);
+		void setDefaultBlocks(int he);
 		/// Sets whether the part stops LoS.
-		void setStopLOS(bool stopLOS = true);
+		void setStopLos(bool stopLos = true);
 		/// Sets the amount of HE blockage.
-		void setHEBlock(int heBlock);
+		void setHeBlock(int he);
 
 		/// Gets the offset on the y-axis when drawing the part.
 		int getOffsetY() const;
@@ -230,7 +230,7 @@ private:
 		/// Gets a TilepartSpecial for the part.
 		TilepartSpecial getSpecialType() const;
 		/// Sets a TilepartSpecial for the part.
-		void setSpecialType(TilepartSpecial specialType);
+		void setSpecialType(TilepartSpecial type);
 
 		/// Gets the TU-cost to move over the part.
 		int getTuCostPart(MoveType type) const;
@@ -248,35 +248,35 @@ private:
 		/// Gets the index of the footstep-sound.
 		int getFootstepSound() const;
 		/// Sets the index of the footstep-sound.
-		void setFootstepSound(int value);
+		void setFootstepSound(int sound);
 
 		/// Gets the alternate object-ID.
-		int getAltMCD() const;
+		int getAltPart() const;
 		/// Sets the alternate object-ID.
-		void setAltMCD(int value);
+		void setAltPart(int id);
 		/// Gets the dead-object-ID.
-		int getDieMCD() const;
+		int getDiePart() const;
 		/// Sets the dead-object-ID.
-		void setDieMCD(int value);
+		void setDiePart(int id);
 
 		/// Gets the amount of light the part emits.
 		int getLightSource() const;
 		/// Sets the amount of light the part emits.
-		void setLightSource(int value);
+		void setLightSource(int light);
 
 		/// Gets the amount of armor.
 		int getArmorPoints() const;
 		/// Sets the amount of armor.
-		void setArmorPoints(int value);
+		void setArmorPoints(int armor);
 
 		/// Gets the amount of flammable.
 		int getFlammable() const;
 		/// Sets the amount of flammable.
-		void setFlammable(int value);
+		void setFlammable(int flammable);
 		/// Gets the amount of fuel.
 		int getFuel() const;
 		/// Sets the amount of fuel.
-		void setFuel(int value);
+		void setFuel(int fuel);
 
 		/// Gets the LoFT-index of a specified layer.
 		size_t getLoftId(size_t layer) const;
@@ -310,14 +310,14 @@ private:
 		void setTuFly(int tu);
 
 		/// Sets the part as not-a-floor.
-		void setNoFloor(bool isNoFloor);
+		void setNoFloor(bool noFloor);
 
-		/// Checks if the part is an aLien-objective tile-part.
+		/// Checks if the part is an aLien-objective tilepart.
 		bool isBaseObject() const;
 
-		/// Sets if the tile-part is psychedelic.
+		/// Sets if the tilepart is psychedelic.
 		void setPsychedelic(int psycho);
-		/// Gets if the tile-part is psychedelic.
+		/// Gets if the tilepart is psychedelic.
 		int getPsychedelic() const;
 
 		/**
