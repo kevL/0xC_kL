@@ -1043,17 +1043,13 @@ int Tile::getSmoke() const
  */
 bool Tile::allowSmoke() const // private.
 {
-	if (_parts[O_OBJECT] != nullptr)
-	{
-		switch (_parts[O_OBJECT]->getBigwall())
-		{
-			case BIGWALL_NESW:
-			case BIGWALL_NWSE:
-				if (_parts[O_OBJECT]->blockSmoke() == true)
-					return false;
-		}
-	}
-	return true;
+	const MapData* const part (_parts[O_OBJECT]);
+	return  part == nullptr
+		||  part->blocksSmoke() == false
+		|| (part->getBigwall() & (BIGWALL_WEST | BIGWALL_NORTH
+											   | BIGWALL_EAST
+											   | BIGWALL_SOUTH
+											   | BIGWALL_E_S)) != 0;
 }
 
 /**
@@ -1064,28 +1060,17 @@ bool Tile::allowSmoke() const // private.
  */
 bool Tile::allowFire() const // private.
 {
-	if (_parts[O_FLOOR] == nullptr && _parts[O_OBJECT] == nullptr)
-		return false;
+	const MapData
+		* const partF (_parts[O_FLOOR]),
+		* const partO (_parts[O_OBJECT]);
 
-	if (   _parts[O_FLOOR] != nullptr
-		&& _parts[O_FLOOR]->blockFire() == true)
-	{
-		return false;
-	}
-
-	if (_parts[O_OBJECT] != nullptr)
-	{
-		switch (_parts[O_OBJECT]->getBigwall())
-		{
-			case BIGWALL_NONE:
-			case BIGWALL_BLOCK:
-			case BIGWALL_NESW:
-			case BIGWALL_NWSE:
-				if (_parts[O_OBJECT]->blockFire() == true)
-					return false;
-		}
-	}
-	return true;
+	return (partF == nullptr || partF->blocksFire() == false)
+		&& (    partO == nullptr
+			||  partO->blocksFire() == false
+			|| (partO->getBigwall() & (BIGWALL_WEST | BIGWALL_NORTH
+													| BIGWALL_EAST
+													| BIGWALL_SOUTH
+													| BIGWALL_E_S))) != 0;
 }
 
 /**
@@ -1099,38 +1084,38 @@ bool Tile::allowFire() const // private.
 void Tile::hitTileContent(SavedBattleGame* const battleSave)
 {
 	int
-		powerSmoke,
-		powerFire;
+		powerS,
+		powerF;
 
 	if (_smoke != 0)
-		powerSmoke = 1 + ((_smoke + 3) >> 2u);
+		powerS = 1 + ((_smoke + 3) >> 2u);
 	else
-		powerSmoke = 0;
+		powerS = 0;
 
 	if (_fire != 0)
-		powerFire = _fire + RNG::generate(3,9);
+		powerF = _fire + RNG::generate(3,9);
 	else
-		powerFire = 0;
+		powerF = 0;
 
 	float vulnr;
 	if (battleSave == nullptr) // damage standing units at end of faction's turn-phase. Notice this hits only the primary quadrant! ... perhaps.
 	{
-		if (powerSmoke != 0 && _unit->isHealable() == true
+		if (powerS != 0 && _unit->isHealable() == true
 			&& (vulnr = _unit->getArmor()->getDamageModifier(DT_SMOKE)) > 0.f) // try to knock _unit out.
 		{
 			_unit->takeDamage(
 							Position(0,0,0),
-							static_cast<int>(Round(static_cast<float>(powerSmoke) * vulnr)),
+							static_cast<int>(Round(static_cast<float>(powerS) * vulnr)),
 							DT_SMOKE, // -> DT_STUN
 							true);
 		}
 
-		if (powerFire != 0
+		if (powerF != 0
 			&& (vulnr = _unit->getArmor()->getDamageModifier(DT_IN)) > 0.f)
 		{
 			_unit->takeDamage(
 							Position(0,0,0),
-							static_cast<int>(Round(static_cast<float>(powerFire) * vulnr)),
+							static_cast<int>(Round(static_cast<float>(powerF) * vulnr)),
 							DT_IN,
 							true);
 
@@ -1147,7 +1132,7 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 	{
 		BattleUnit* unit;
 
-		if (powerSmoke != 0)
+		if (powerS != 0)
 		{
 			for (std::vector<BattleItem*>::const_iterator // handle unconscious units on this Tile vs. DT_SMOKE
 					i  = _inventory.begin();
@@ -1163,14 +1148,14 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 					if ((vulnr = unit->getArmor()->getDamageModifier(DT_SMOKE)) > 0.f)
 						unit->takeDamage(
 									Position(0,0,0),
-									static_cast<int>(Round(static_cast<float>(powerSmoke) * vulnr)),
+									static_cast<int>(Round(static_cast<float>(powerS) * vulnr)),
 									DT_SMOKE,
 									true);
 				}
 			}
 		}
 
-		if (powerFire != 0) // TODO: Cook-off grenades (question: primed or not). Cf, TileEngine::explode() case: DT_IN.
+		if (powerF != 0) // TODO: Cook-off grenades (question: primed or not). Cf, TileEngine::explode() case: DT_IN.
 		{
 			bool done (false);
 			while (done == false && _inventory.empty() == false) // handle items including unconscious or dead units on this Tile vs. DT_IN
@@ -1190,7 +1175,7 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 						{
 							unit->takeDamage(
 										Position(0,0,0),
-										static_cast<int>(static_cast<float>(powerFire) * vulnr),
+										static_cast<int>(static_cast<float>(powerF) * vulnr),
 										DT_IN,
 										true);
 
@@ -1202,7 +1187,7 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 						}
 						done = (++i == _inventory.end());
 					}
-					else if (powerFire > (*i)->getRules()->getArmorPoints() // no modifier when destroying items, not even corpse in bodyarmor.
+					else if (powerF > (*i)->getRules()->getArmorPoints() // no modifier when destroying items, not even corpse in bodyarmor.
 						&& (unit == nullptr || unit->getUnitStatus() == STATUS_DEAD))
 					{
 						battleSave->sendItemToDelete(*i);	// This should not kill *and* remove a unit's corpse on the same
@@ -1217,43 +1202,44 @@ void Tile::hitTileContent(SavedBattleGame* const battleSave)
 }
 
 /**
- * Animates the tile.
- * @note This means to advance the current frame for every part. Ufo-doors are a
- * bit special - they animate only when triggered; when ufo-doors are on frame 0
- * (closed) or frame 7 (open) they are not animated further. A ufo-door on an
- * XCOM craft has only 4 frames; when it hits frame 3 it jumps to frame 7 (open).
+ * Animates this Tile.
+ * @note This advances the current frame for every part. Ufo-doors are a bit
+ * special - they animate only when triggered; when ufo-doors are on frame 0
+ * (closed) or frame 7 (open) they are not animated further until further
+ * notice. A ufo-door on an XCOM craft has only 4 frames; when it hits frame 3
+ * it jumps to frame 7 (open).
  */
 void Tile::animateTile()
 {
-	int nextFrame;
+	const MapData* part;
+
+	int cycle;
 	for (size_t
 			i = 0u;
 			i != TILE_PARTS;
 			++i)
 	{
-		if (_parts[i] != nullptr)
+		if ((part = _parts[i]) != nullptr)
 		{
-			switch (_parts[i]->getPsychedelic())
+			switch (part->getPsychedelic())
 			{
 				default:
 				case 0:
-					if (_parts[i]->isSlideDoor() == false
-						|| (_aniCycle[i] != 0
-							&& _aniCycle[i] != 7)) // ufo-door is currently static
+					cycle = _aniCycle[i];
+					if (part->isSlideDoor() == false
+						|| (   cycle != 0 // ufo-door is currently static ->
+							&& cycle != 7))
 					{
-						nextFrame = _aniCycle[i] + 1;
-
-						if (_parts[i]->isSlideDoor() == true // special handling for Avenger & Lightning doors
-							&& _parts[i]->getSpecialType() == START_TILE
-							&& nextFrame == 3)
+						if (++cycle == 8)
+							cycle = 0;
+						else if (cycle == 3								// special handling for Avenger and Lightning doors:
+							&& part->isSlideDoor() == true				// their cycle has only 4 frames instead of the regular 8.
+							&& part->getSpecialType() == START_TILE)	// -> so ensure that their doors are flagged as as StartTiles in the MCDs
 						{
-							nextFrame = 7;
+							cycle = 7;
 						}
 
-						if (nextFrame == 8)
-							nextFrame = 0;
-
-						_aniCycle[i] = nextFrame;
+						_aniCycle[i] = cycle;
 					}
 					break;
 
@@ -1283,14 +1269,14 @@ int Tile::getAnimationOffset() const
 
 /**
  * Gets the sprite of a certain part of this Tile.
- * @param partType - tile-part to get a sprite for
+ * @param parttype - tile-part to get a sprite for
  * @return, pointer to the sprite
  */
-Surface* Tile::getSprite(MapDataType partType) const
+Surface* Tile::getSprite(MapDataType parttype) const
 {
-	const MapData* const data (_parts[partType]);
+	const MapData* const data (_parts[parttype]);
 	if (data != nullptr)
-		return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_aniCycle[partType]));
+		return data->getDataset()->getSurfaceset()->getFrame(data->getSprite(_aniCycle[parttype]));
 
 	return nullptr;
 }

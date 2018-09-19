@@ -99,7 +99,7 @@ class MapDataSet;
  * MapData is the smallest piece of a battlefield, holding info about a floor,
  * wall, or object.
  * @note THIS IS A TILEPART. A better ident for this class would be 'TileData'
- * or even 'PartData'. Or just 'TilePart'.
+ * or even 'PartData'. Or just 'TilePart'. -> TilepartData
  * @sa MapDataSet.
  */
 class MapData
@@ -108,13 +108,13 @@ class MapData
 private:
 	bool
 		_baseObject,
-		_blockFire,
-		_blockSmoke,
+		_disallowFire,
+		_disallowSmoke,
 		_isDoor,
-		_isGravLift,
-		_isHingeDoor,
-		_isNoFloor,
-		_isSlideDoor,
+		_gravLift,
+		_hingeDoor,
+		_noFloor,
+		_slideDoor,
 		_stopLOS;
 	int
 		_armor,
@@ -184,35 +184,36 @@ private:
 		/// Gets whether the part is a grav-lift.
 		bool isGravLift() const;
 		/// Gets whether the part blocks smoke.
-		bool blockSmoke() const;
+		bool blocksSmoke() const;
 		/// Gets whether the part blocks fire.
-		bool blockFire() const;
-
-		/// Sets whether the part stops LoS.
-		void setStopLOS(bool stopLOS = true);
+		bool blocksFire() const;
 
 		/// Sets a whack of flags.
 		void setFlags(
-				bool isUfoDoor,
+				bool slideDoor,
 				bool stopLOS,
-				bool isNoFloor,
+				bool noFloor,
 				int  bigWall,
-				bool isGravLift,
-				bool isDoor,
-				bool blockFire,
-				bool blockSmoke,
+				bool gravLift,
+				bool hingeDoor,
+				bool disallowFire,
+				bool disallowSmoke,
 				bool baseObject);
 
 		/// Gets the amount of blockage of a certain type.
 		int getBlock(DamageType dType) const;
 		/// Sets the amount of blockage for a bunch of types.
 		void setBlock(
-				int lightBlock,
-				int visionBlock,
-				int heBlock,
-				int smokeBlock,
-				int fireBlock,
-				int gasBlock);
+				int light,
+				int vision,
+				int he,
+				int smoke,
+				int fire,
+				int gas);
+		/// Sets default blockage values if none are assigned in an MCD.
+		void setDefaultBlock(int he);
+		/// Sets whether the part stops LoS.
+		void setStopLOS(bool stopLOS = true);
 		/// Sets the amount of HE blockage.
 		void setHEBlock(int heBlock);
 

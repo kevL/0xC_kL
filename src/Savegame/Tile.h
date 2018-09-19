@@ -292,7 +292,7 @@ private:
 		int getAnimationOffset() const;
 
 		/// Gets the sprite for a specified part.
-		Surface* getSprite(MapDataType partType) const;
+		Surface* getSprite(MapDataType parttype) const;
 
 		/// Sets a specified BattleUnit on the Tile.
 		void setTileUnit(BattleUnit* const unit = nullptr);

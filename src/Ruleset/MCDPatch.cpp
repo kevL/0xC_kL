@@ -53,7 +53,7 @@ void MCDPatch::load(const YAML::Node& node) // TODO: fill this out with more dat
 	YAML::Node data (node["data"]);
 
 	for (YAML::const_iterator
-			i = data.begin();
+			i  = data.begin();
 			i != data.end();
 			++i)
 	{
@@ -223,7 +223,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 {
 	//Log(LOG_INFO) << "MCDPatch::patchData() dataSet= " << dataSet->getType();
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _bigWalls.begin();
+			i  = _bigWalls.begin();
 			i != _bigWalls.end();
 			++i)
 	{
@@ -232,15 +232,15 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 		switch (i->second) // convert decimal-based patches to hexadecimal BigwallTypes.
 		{
 			default:
-			case 0: bigwall = 0x0000; break;	// BIGWALL_NONE
-			case 1: bigwall = 0x0001; break;	// BIGWALL_BLOCK
-			case 2: bigwall = 0x0002; break;	// BIGWALL_NESW
-			case 3: bigwall = 0x0004; break;	// BIGWALL_NWSE
-			case 4: bigwall = 0x0008; break;	// BIGWALL_WEST
-			case 5: bigwall = 0x0010; break;	// BIGWALL_NORTH
-			case 6: bigwall = 0x0020; break;	// BIGWALL_EAST
-			case 7: bigwall = 0x0040; break;	// BIGWALL_SOUTH
-			case 8: bigwall = 0x0080;			// BIGWALL_E_S
+			case 0: bigwall = 0x00; break;	// BIGWALL_NONE
+			case 1: bigwall = 0x01; break;	// BIGWALL_BLOCK
+			case 2: bigwall = 0x02; break;	// BIGWALL_NESW
+			case 3: bigwall = 0x04; break;	// BIGWALL_NWSE
+			case 4: bigwall = 0x08; break;	// BIGWALL_WEST
+			case 5: bigwall = 0x10; break;	// BIGWALL_NORTH
+			case 6: bigwall = 0x20; break;	// BIGWALL_EAST
+			case 7: bigwall = 0x40; break;	// BIGWALL_SOUTH
+			case 8: bigwall = 0x80;			// BIGWALL_E_S
 
 //			case 9:								// BIGWALL_W_N - not used in stock UFO.
 		}
@@ -248,7 +248,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _tuWalks.begin();
+			i  = _tuWalks.begin();
 			i != _tuWalks.end();
 			++i)
 	{
@@ -256,7 +256,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _tuSlides.begin();
+			i  = _tuSlides.begin();
 			i != _tuSlides.end();
 			++i)
 	{
@@ -264,7 +264,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _tuFlys.begin();
+			i  = _tuFlys.begin();
 			i != _tuFlys.end();
 			++i)
 	{
@@ -272,7 +272,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _deathTiles.begin();
+			i  = _deathTiles.begin();
 			i != _deathTiles.end();
 			++i)
 	{
@@ -280,7 +280,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _terrainHeight.begin();
+			i  = _terrainHeight.begin();
 			i != _terrainHeight.end();
 			++i)
 	{
@@ -288,7 +288,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _explosives.begin();
+			i  = _explosives.begin();
 			i != _explosives.end();
 			++i)
 	{
@@ -296,7 +296,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _armors.begin();
+			i  = _armors.begin();
 			i != _armors.end();
 			++i)
 	{
@@ -304,7 +304,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _flammabilities.begin();
+			i  = _flammabilities.begin();
 			i != _flammabilities.end();
 			++i)
 	{
@@ -312,7 +312,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _fuels.begin();
+			i  = _fuels.begin();
 			i != _fuels.end();
 			++i)
 	{
@@ -320,7 +320,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _footstepSounds.begin();
+			i  = _footstepSounds.begin();
 			i != _footstepSounds.end();
 			++i)
 	{
@@ -328,7 +328,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _heBlocks.begin();
+			i  = _heBlocks.begin();
 			i != _heBlocks.end();
 			++i)
 	{
@@ -336,7 +336,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, bool>>::const_iterator
-			i = _noFloors.begin();
+			i  = _noFloors.begin();
 			i != _noFloors.end();
 			++i)
 	{
@@ -344,7 +344,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, bool>>::const_iterator
-			i = _stopLOSes.begin();
+			i  = _stopLOSes.begin();
 			i != _stopLOSes.end();
 			++i)
 	{
@@ -352,13 +352,13 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, std::vector<size_t>>>::const_iterator
-			i = _lofts.begin();
+			i  = _lofts.begin();
 			i != _lofts.end();
 			++i)
 	{
 		size_t layer (0u);
 		for (std::vector<size_t>::const_iterator
-				j = i->second.begin();
+				j  = i->second.begin();
 				j != i->second.end();
 				++j)
 		{
@@ -367,7 +367,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, MapDataType>>::const_iterator
-			i = _objectTypes.begin();
+			i  = _objectTypes.begin();
 			i != _objectTypes.end();
 			++i)
 	{
@@ -375,7 +375,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, TilepartSpecial>>::const_iterator
-			i = _specialTypes.begin();
+			i  = _specialTypes.begin();
 			i != _specialTypes.end();
 			++i)
 	{
@@ -383,7 +383,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _scanG.begin();
+			i  = _scanG.begin();
 			i != _scanG.end();
 			++i)
 	{
@@ -391,7 +391,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 	}
 
 	for (std::vector<std::pair<size_t, int>>::const_iterator
-			i = _psychedelic.begin();
+			i  = _psychedelic.begin();
 			i != _psychedelic.end();
 			++i)
 	{

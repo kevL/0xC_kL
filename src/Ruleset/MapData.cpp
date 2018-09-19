@@ -28,7 +28,7 @@ namespace OpenXcom
 {
 
 /**
- * Creates a MapData tile-part.
+ * Creates the MapData tile-part.
  * @note yes, This is a tile-part.
  * @param dataSet - pointer to the MapDataSet (aka MCD) this tile-part belongs to
  */
@@ -37,13 +37,13 @@ MapData::MapData(MapDataSet* const dataSet)
 		_dataSet(dataSet),
 		_specialType(TILE),
 		_isDoor(false),
-		_isHingeDoor(false),
-		_isSlideDoor(false),
+		_hingeDoor(false),
+		_slideDoor(false),
 		_stopLOS(false),
-		_isNoFloor(false),
-		_isGravLift(false),
-		_blockFire(false),
-		_blockSmoke(false),
+		_noFloor(false),
+		_gravLift(false),
+		_disallowFire(false),
+		_disallowSmoke(false),
 		_baseObject(false),
 		_yOffset(0),
 		_tuWalk(0),
@@ -71,7 +71,7 @@ MapData::MapData(MapDataSet* const dataSet)
 }
 
 /**
- * Destroys the MapData.
+ * Destroys this MapData.
  */
 MapData::~MapData()
 {
@@ -124,7 +124,7 @@ bool MapData::isDoor() const
  */
 bool MapData::isHingeDoor() const
 {
-	return _isHingeDoor;
+	return _hingeDoor;
 }
 
 /**
@@ -133,7 +133,7 @@ bool MapData::isHingeDoor() const
  */
 bool MapData::isSlideDoor() const
 {
-	return _isSlideDoor;
+	return _slideDoor;
 }
 
 /**
@@ -151,7 +151,7 @@ bool MapData::stopLOS() const
  */
 bool MapData::isNoFloor() const
 {
-	return _isNoFloor;
+	return _noFloor;
 }
 
 /**
@@ -181,71 +181,62 @@ BigwallType MapData::getBigwall() const
  */
 bool MapData::isGravLift() const
 {
-	return _isGravLift;
+	return _gravLift;
 }
 
 /**
  * Gets whether this tile-part blocks smoke.
  * @return, true if blocks smoke
  */
-bool MapData::blockSmoke() const
+bool MapData::blocksSmoke() const
 {
-	return _blockSmoke;
+	return _disallowSmoke;
 }
 
 /**
  * Gets whether this tile-part blocks fire.
  * @return, true if blocks fire
  */
-bool MapData::blockFire() const
+bool MapData::blocksFire() const
 {
-	return _blockFire;
-}
-
-/**
- * Sets whether this tile-part stops LoS.
- * @param, true if stops LoS
- */
-void MapData::setStopLOS(bool stopLOS)
-{
-	_stopLOS = stopLOS;
-	_block[1u] = (stopLOS == true) ? 100 : 0;
+	return _disallowFire;
 }
 
 /**
  * Sets a bunch of flags.
- * @param isUfoDoor		- true if a ufo door
+ * @param slideDoor		- true if a ufo door
  * @param stopLOS		- true if stops line of sight
- * @param isNoFloor		- true if *not* a floor
+ * @param noFloor		- true if *not* a floor
  * @param bigWall		- type if a bigWall
- * @param isGravLift	- true if a grav lift
- * @param isDoor		- true if a normal door
- * @param blockFire		- true if blocks fire
- * @param blockSmoke	- true if blocks smoke
+ * @param gravLift		- true if a grav lift
+ * @param hingeDoor		- true if a normal door
+ * @param disallowFire	- true if blocks fire
+ * @param disallowSmoke	- true if blocks smoke
  * @param baseObject	- true if a base-object/aLien-objective
  */
 void MapData::setFlags(
-		bool isUfoDoor,
+		bool slideDoor,
 		bool stopLOS,
-		bool isNoFloor,
+		bool noFloor,
 		int  bigWall,
-		bool isGravLift,
-		bool isDoor,
-		bool blockFire,
-		bool blockSmoke,
+		bool gravLift,
+		bool hingeDoor,
+		bool disallowFire,
+		bool disallowSmoke,
 		bool baseObject)
 {
-	_isSlideDoor	= isUfoDoor;
-	_stopLOS		= stopLOS;
-	_isNoFloor		= isNoFloor;
-	_bigWall		= static_cast<BigwallType>(bigWall);
-	_isGravLift		= isGravLift;
-	_isHingeDoor	= isDoor;
-	_blockFire		= blockFire;
-	_blockSmoke		= blockSmoke;
-	_baseObject		= baseObject;
+	_slideDoor     = slideDoor;
+	_stopLOS       = stopLOS;
+	_noFloor       = noFloor;
+	_bigWall       = static_cast<BigwallType>(bigWall);
+	_gravLift      = gravLift;
+	_hingeDoor     = hingeDoor;
+	_disallowFire  = disallowFire;
+	_disallowSmoke = disallowSmoke;
+	_baseObject    = baseObject;
 
-	_isDoor = _isHingeDoor || _isSlideDoor;
+	_isDoor = _slideDoor
+		   || _hingeDoor;
 }
 
 /**
@@ -274,33 +265,57 @@ int MapData::getBlock(DamageType dType) const
 
 /**
  * Sets the quantity of blockage for all types.
- * @param lightBlock	- light blockage			- Light_Block
- * @param visionBlock	- vision blockage			- Stop_LOS
- * @param heBlock		- high explosive blockage	- HE_Block
- * @param smokeBlock	- smoke blockage			- Block_Smoke
- * @param fireBlock		- fire blockage				- Flammable (lower = more flammable)
- * @param gasBlock		- gas blockage				- HE_Block
+ * @param light		- light blockage			- Light_Block
+ * @param vision	- vision blockage			- Stop_LOS
+ * @param he		- high explosive blockage	- HE_Block
+ * @param smoke		- smoke blockage			- Block_Smoke
+ * @param fire		- fire blockage				- Flammable (lower = more flammable)
+ * @param gas		- gas blockage				- HE_Block
  */
 void MapData::setBlock(
-		int lightBlock,
-		int visionBlock,
-		int heBlock,
-		int smokeBlock,
-		int fireBlock,
-		int gasBlock)
+		int light,
+		int vision,
+		int he,
+		int smoke,
+		int fire,
+		int gas)
 {
-	_block[0u] = lightBlock;					// not used.
-	_block[1u] = visionBlock == 1 ? 100 : 0;	// stopLoS==true needs to be a significantly large integer (only about 10+ really)
-												// so that if a directionally opposite Field of View check includes a "-1",
-												// meaning block by bigWall or other content-object, the result is not reduced
-												// to zero (no block at all) when added to regular stopLoS by a standard wall.
-												//
-												// It would be unnecessary to use that jigger-pokery if TileEngine::horizontalBlockage()
-												// and TileEngine::blockage() were coded differently -- verticalBlockage() too, perhaps.
-	_block[2u] = heBlock;
-	_block[3u] = smokeBlock;					// this is the same as the _blockSmoke flag.
-	_block[4u] = fireBlock;						// this is Flammable, NOT Block_Fire.
-	_block[5u] = gasBlock;						// probably not used.
+	_block[0u] = light;					// not used.
+	_block[1u] = vision == 1 ? 100 : 0;	// stopLoS==true needs to be a significantly large integer (only about 10+ really)
+										// so that if a directionally opposite Field of View check includes a "-1",
+										// meaning block by bigWall or other content-object, the result is not reduced
+										// to zero (no block at all) when added to regular stopLoS by a standard wall.
+										//
+										// It would be unnecessary to use that jigger-pokery if TileEngine::horizontalBlockage()
+										// and TileEngine::blockage() were coded differently - verticalBlockage() too, perhaps.
+	_block[2u] = he;
+	_block[3u] = smoke;					// this is the same as the _blockSmoke flag.
+	_block[4u] = fire;					// IMPORTANT: this is Flammable, NOT Block_Fire per se.
+	_block[5u] = gas;					// probably not used.
+}
+
+/**
+ * Sets default blockage values if none are assigned in an MCD.
+ * @param he - armor value of the tilepart
+ */
+void MapData::setDefaultBlock(int he)
+{
+	_block[0u] = 1;
+	_block[1u] = 1;
+	_block[2u] = he;
+	_block[3u] = 1;
+	_block[4u] = 1;
+	_block[5u] = 1;
+}
+
+/**
+ * Sets whether this tile-part stops LoS.
+ * @param, true if stops LoS
+ */
+void MapData::setStopLOS(bool stopLOS)
+{
+	_stopLOS = stopLOS;
+	_block[1u] = (stopLOS == true) ? 100 : 0;
 }
 
 /**
@@ -683,7 +698,7 @@ void MapData::setTuFly(int tu)
  */
 void MapData::setNoFloor(bool isNoFloor)
 {
-	_isNoFloor = isNoFloor;
+	_noFloor = isNoFloor;
 }
 
 /**

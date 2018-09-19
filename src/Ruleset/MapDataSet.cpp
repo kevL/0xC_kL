@@ -130,14 +130,14 @@ void MapDataSet::loadData()
 			unsigned char  Frame[8u];
 			unsigned char  LOFT[12u];
 			unsigned short ScanG;
-			unsigned char  u23;
-			unsigned char  u24;
-			unsigned char  u25;
-			unsigned char  u26;
-			unsigned char  u27;
-			unsigned char  u28;
-			unsigned char  u29;
-			unsigned char  u30;
+			unsigned char  u23;				// not used.
+			unsigned char  u24;				// not used.
+			unsigned char  u25;				// not used.
+			unsigned char  u26;				// not used.
+			unsigned char  u27;				// not used.
+			unsigned char  u28;				// not used.
+			unsigned char  u29;				// not used.
+			unsigned char  u30;				// not used.
 			unsigned char  UFO_Door;
 			unsigned char  Stop_LOS;
 			unsigned char  No_Floor;
@@ -146,7 +146,7 @@ void MapDataSet::loadData()
 			unsigned char  Door;
 			unsigned char  Block_Fire;
 			unsigned char  Block_Smoke;
-			unsigned char  u39; // NOTE: so-called 'Start_Phase' is around here. See MCDEdit v1.17i
+			unsigned char  u39;				// not used. NOTE: so-called 'Start_Phase' is around here. See MCDEdit v1.17i
 			unsigned char  TU_Walk;
 			unsigned char  TU_Slide;
 			unsigned char  TU_Fly;
@@ -155,21 +155,21 @@ void MapDataSet::loadData()
 			unsigned char  Die_MCD;
 			unsigned char  Flammable;
 			unsigned char  Alt_MCD;
-			unsigned char  u48;
+			unsigned char  u48;				// not used.
 			signed char    T_Level;
 			unsigned char  P_Level;
-			unsigned char  u51;
+			unsigned char  u51;				// not used.
 			unsigned char  Light_Block;
 			unsigned char  Footstep;
 			unsigned char  Tile_Type;
 			unsigned char  HE_Type;
 			unsigned char  HE_Strength;
-			unsigned char  Smoke_Blockage;
+			unsigned char  Smoke_Blockage;	// not used.
 			unsigned char  Fuel;
 			unsigned char  Light_Source;
 			unsigned char  Target_Type;
 			unsigned char  Xcom_Base;
-			unsigned char  u62;
+			unsigned char  u62;				// not used.
 		};
 #pragma pack(pop) // revert to standard byte-alignment
 
@@ -186,14 +186,14 @@ void MapDataSet::loadData()
 		}
 
 
-		MapData* part;
-		int partId (0); // <- used only for BLANKS tileset.
+		MapData* record;	// data for a tilepart
+		int id (0);			// <- used only for BLANKS tileset.
 		while (ifstr.read(
 						reinterpret_cast<char*>(&mcd),
 						sizeof(MCD)))
 		{
-			part = new MapData(this);
-			_records.push_back(part);
+			record = new MapData(this);
+			_records.push_back(record);
 
 			// Set all the terrain-tilepart properties:
 			for (size_t
@@ -201,17 +201,17 @@ void MapDataSet::loadData()
 					i != 8u; // sprite-frames (battlescape tactical animations)
 					++i)
 			{
-				part->setSprite(i, static_cast<int>(mcd.Frame[i]));
+				record->setSprite(i, static_cast<int>(mcd.Frame[i]));
 			}
 
-			part->setPartType(   static_cast<MapDataType>    (mcd.Tile_Type));
-			part->setSpecialType(static_cast<TilepartSpecial>(mcd.Target_Type));
-			part->setOffsetY(    static_cast<int>            (mcd.P_Level));
-			part->setTuCosts(
+			record->setPartType(   static_cast<MapDataType>    (mcd.Tile_Type));
+			record->setSpecialType(static_cast<TilepartSpecial>(mcd.Target_Type));
+			record->setOffsetY(    static_cast<int>            (mcd.P_Level));
+			record->setTuCosts(
 					static_cast<int>(mcd.TU_Walk),
 					static_cast<int>(mcd.TU_Slide),
 					static_cast<int>(mcd.TU_Fly));
-			part->setFlags(
+			record->setFlags(
 					mcd.UFO_Door    != 0,
 					mcd.Stop_LOS    != 0,
 					mcd.No_Floor    != 0,
@@ -221,33 +221,33 @@ void MapDataSet::loadData()
 					mcd.Block_Fire  != 0,
 					mcd.Block_Smoke != 0,
 					mcd.Xcom_Base   != 0);
-			part->setTerrainLevel( static_cast<int>(mcd.T_Level));
-			part->setFootstepSound(static_cast<int>(mcd.Footstep));
-			part->setAltMCD(       static_cast<int>(mcd.Alt_MCD));
-			part->setDieMCD(       static_cast<int>(mcd.Die_MCD));
-			part->setBlock(
+			record->setTerrainLevel( static_cast<int>(mcd.T_Level));
+			record->setFootstepSound(static_cast<int>(mcd.Footstep));
+			record->setAltMCD(       static_cast<int>(mcd.Alt_MCD));
+			record->setDieMCD(       static_cast<int>(mcd.Die_MCD));
+			record->setBlock(
 					static_cast<int>(mcd.Light_Block),
 					static_cast<int>(mcd.Stop_LOS),
 					static_cast<int>(mcd.HE_Block),
 					static_cast<int>(mcd.Block_Smoke),
-					static_cast<int>(mcd.Flammable),
+					static_cast<int>(mcd.Flammable), // IMPORTANT: this is Flammable, NOT Block_Fire per se.
 					static_cast<int>(mcd.HE_Block));
-			part->setLightSource(  static_cast<int>(mcd.Light_Source));
-			part->setArmorPoints(  static_cast<int>(mcd.Armor));
-			part->setFlammable(    static_cast<int>(mcd.Flammable));
-			part->setFuel(         static_cast<int>(mcd.Fuel));
-			part->setExplosiveType(static_cast<int>(mcd.HE_Type));
-			part->setExplosive(    static_cast<int>(mcd.HE_Strength));
+			record->setLightSource(  static_cast<int>(mcd.Light_Source));
+			record->setArmorPoints(  static_cast<int>(mcd.Armor));
+			record->setFlammable(    static_cast<int>(mcd.Flammable));
+			record->setFuel(         static_cast<int>(mcd.Fuel));
+			record->setExplosiveType(static_cast<int>(mcd.HE_Type));
+			record->setExplosive(    static_cast<int>(mcd.HE_Strength));
 
 			mcd.ScanG = SDL_SwapLE16(mcd.ScanG);
-			part->setMiniMapIndex(mcd.ScanG);
+			record->setMiniMapIndex(mcd.ScanG);
 
 			for (size_t
 					loft  =  0u;
 					loft != 12u; // LoFT layers (each layer is doubled to give a total height of 24 voxels)
 					++loft)
 			{
-				part->setLoftId(
+				record->setLoftId(
 							static_cast<size_t>(mcd.LOFT[loft]),
 							loft);
 			}
@@ -256,13 +256,13 @@ void MapDataSet::loadData()
 			// are accessible to all MapDataSet-instantiations.
 			if (_type.compare("BLANKS") == 0)
 			{
-				switch (partId)
+				switch (id)
 				{
-					case 0: MapDataSet::_floorBlank  = part; break;	// not used directly. Although RuleTerrain::getTerrainPart()
-					case 1: MapDataSet::_floorScorch = part;		// uses BLANKS entry #0 to 'fix' broken tile-parts.
+					case 0: MapDataSet::_floorBlank  = record; break;	// not used directly. Although RuleTerrain::getTerrainPart()
+					case 1: MapDataSet::_floorScorch = record;			// uses BLANKS entry #0 to 'fix' broken tile-parts.
 				}
 			}
-			++partId;
+			++id;
 		}
 
 
@@ -282,22 +282,11 @@ void MapDataSet::loadData()
 			if ((*i)->getPartType() == O_FLOOR && (*i)->getBlock(DT_HE) == 0)
 			{
 				const int armor ((*i)->getArmorPoints());
-				(*i)->setBlock(
-							1,		// light
-							1,		// LoS
-							armor,	// HE
-							1,		// smoke
-							1,		// fire
-							1);		// gas
+				(*i)->setDefaultBlock(armor);
 
 				if ((*i)->getDieMCD() != 0)
-					_records.at(static_cast<size_t>((*i)->getDieMCD()))->setBlock(
-																				1,
-																				1,
-																				armor,
-																				1,
-																				1,
-																				1);
+					_records.at(static_cast<size_t>((*i)->getDieMCD()))->setDefaultBlock(armor);
+
 				if ((*i)->isGravLift() == false) (*i)->setStopLOS();
 			}
 		}

@@ -64,8 +64,8 @@ AlienBAIState::AlienBAIState(
 		_distClosest(CAP_DIST),
 		_reserve(BA_NONE)
 {
-	//if (_unit->getId() != 1000006) _traceAI = 0;
-	//Log(LOG_INFO) << "Create AlienBAIState traceAI= " << _traceAI;
+	//if (_unit->getId() != 1000003) _traceAI = 0;
+	//Log(LOG_INFO) << "Create AlienBAIState id-" << _unit->getId() << " traceAI= " << _traceAI;
 
 	switch (_unit->getOriginalFaction())
 	{
@@ -451,6 +451,7 @@ void AlienBAIState::thinkAi(BattleAction* const aiAction)
 void AlienBAIState::setupPatrol() // private.
 {
 	if (_traceAI) Log(LOG_INFO) << "AlienBAIState::setupPatrol() id-" << _unit->getId();
+
 	_patrolAction->TU = 0;
 
 	if (_stopNode != nullptr

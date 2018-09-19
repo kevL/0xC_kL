@@ -3892,12 +3892,12 @@ int TileEngine::blockage( // private.
 										break;
 
 									case DT_SMOKE:
-										if (part->blockSmoke() == true)
+										if (part->blocksSmoke() == true)
 											return HARD_BLOCK;
 										break;
 
 									case DT_IN:
-										if (part->blockFire() == true)
+										if (part->blocksFire() == true)
 											return HARD_BLOCK;
 								}
 								break;
@@ -4011,7 +4011,7 @@ int TileEngine::blockage( // private.
 									break;
 
 								case DT_SMOKE:
-									if (object->blockSmoke() == false)
+									if (object->blocksSmoke() == false)
 									{
 										//if (_debug) Log(LOG_INFO) << ". . . . DT_Smoke/no blockSmoke ret 0";
 										return 0;
@@ -4019,7 +4019,7 @@ int TileEngine::blockage( // private.
 									break;
 
 								case DT_IN:
-									if (object->blockFire() == false)
+									if (object->blocksFire() == false)
 									{
 										//if (_debug) Log(LOG_INFO) << ". . . . DT_INC/no blockFire ret 0";
 										return 0;
@@ -4059,7 +4059,7 @@ int TileEngine::blockage( // private.
 								break;
 
 							case DT_SMOKE:
-								if (object->blockSmoke() == true)
+								if (object->blocksSmoke() == true)
 								{
 									//if (_debug) Log(LOG_INFO) << ". . . DT_Smoke/blockSmoke ret HARD_BLOCK";
 									return HARD_BLOCK;
@@ -4067,7 +4067,7 @@ int TileEngine::blockage( // private.
 								break;
 
 							case DT_IN:
-								if (object->blockFire() == true)
+								if (object->blocksFire() == true)
 								{
 									//if (_debug) Log(LOG_INFO) << ". . . DT_INC/blockFire ret HARD_BLOCK";
 									return HARD_BLOCK;
@@ -4221,7 +4221,7 @@ int TileEngine::blockage( // private.
 										break;
 
 									case DT_SMOKE:
-										if (object->blockSmoke() == false)
+										if (object->blocksSmoke() == false)
 										{
 											//if (_debug) Log(LOG_INFO) << ". . DT_Smoke/no blockSmoke ret 0 ( dir 8/9 up/down )";
 											return 0;
@@ -4229,7 +4229,7 @@ int TileEngine::blockage( // private.
 										break;
 
 									case DT_IN:
-										if (object->blockFire() == false)
+										if (object->blocksFire() == false)
 										{
 											//if (_debug) Log(LOG_INFO) << ". . DT_Fire/no blockFire ret 0 ( dir 8/9 up/down )";
 											return 0;
@@ -4254,7 +4254,7 @@ int TileEngine::blockage( // private.
 						switch (dType)
 						{
 							case DT_SMOKE:
-								if (object->blockSmoke() == true)
+								if (object->blocksSmoke() == true)
 								{
 									//if (_debug) Log(LOG_INFO) << ". DT_Smoke/blockSmoke HARD_BLOCK";
 									return HARD_BLOCK;
@@ -4262,7 +4262,7 @@ int TileEngine::blockage( // private.
 								break;
 
 							case DT_IN:
-								if (object->blockFire() == true)
+								if (object->blocksFire() == true)
 								{
 									//if (_debug) Log(LOG_INFO) << ". DT_INC/blockFire HARD_BLOCK";
 									return HARD_BLOCK;

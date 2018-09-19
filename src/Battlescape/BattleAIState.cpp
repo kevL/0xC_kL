@@ -143,9 +143,9 @@ std::vector<size_t>& BattleAIState::reachableTiles()
  */
 void BattleAIState::resetAI()
 {
-	_AIMode = AI_PATROL;
+	_AIMode    = AI_PATROL;
 	_startNode =
-	_stopNode = nullptr;
+	_stopNode  = nullptr;
 }
 
 /**
