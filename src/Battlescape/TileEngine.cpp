@@ -873,21 +873,25 @@ bool TileEngine::visible(
 		const BattleUnit* const unit,
 		const Tile* const tile) const
 {
-	//return false;
 	//bool debug (false);
+
 	if (tile != nullptr)
 	{
-		//debug = unit->getId() == 1000020 || unit->getId() == 167;
-		//if (debug) Log(LOG_INFO) << "TileEngine::visible() id-" << unit->getId();
+		//debug = unit->getId() == 1000009 || unit->getId() == 27 || unit->getId() == 1000000;
+//		if (debug)
+//		{
+//			Log(LOG_INFO) << "";
+//			Log(LOG_INFO) << "TileEngine::visible() id-" << unit->getId();
+//		}
 
 		const BattleUnit* const targetUnit (getTargetUnit(tile));
 		if (targetUnit != nullptr && targetUnit->getUnitTile() != nullptr) //targetUnit->isOut_t() == false)
 		{
-			//Log(LOG_INFO) << ". try to sight id-" << targetUnit->getId();
+			//if (debug) Log(LOG_INFO) << ". try to sight id-" << targetUnit->getId();
 
 			if (unit->getFaction() == targetUnit->getFaction())
 			{
-				//Log(LOG_INFO) << ". . faction - ret TRUE";
+				//if (debug) Log(LOG_INFO) << ". . faction - ret TRUE";
 				return true;
 			}
 
@@ -931,7 +935,8 @@ bool TileEngine::visible(
 									&trj,
 									unit);
 
-							float distLimit (static_cast<float>(trj.size()));
+							float dist (static_cast<float>(trj.size()));
+							//if (debug) Log(LOG_INFO) << ". . dist= " << dist;
 							const Tile* tileScan (nullptr);
 
 							for (size_t
@@ -941,8 +946,9 @@ bool TileEngine::visible(
 							{
 								tileScan = _battleSave->getTile(Position::toTileSpace(trj.at(i)));
 
-								distLimit += static_cast<float>(tileScan->getSmoke() + tileScan->getFire()) / 3.f;
-								if (static_cast<int>(std::ceil(distLimit * distLimit)) > SIGHTDIST_VSp_Sqr)
+								dist += static_cast<float>(tileScan->getSmoke() + tileScan->getFire()) / 3.f;
+								//if (debug) Log(LOG_INFO) << ". . . dist= " << dist;
+								if (static_cast<int>(std::ceil(dist * dist)) > SIGHTDIST_VSp_Sqr)
 								{
 									//if (debug) Log(LOG_INFO) << ". . . failed SIGHTDIST_VSp_Sqr - ret FALSE";
 									return false;

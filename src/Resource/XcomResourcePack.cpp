@@ -1121,7 +1121,7 @@ void XcomResourcePack::loadBattlescapeResources()
 			Surface* srf;
 
 			for (int // chest frame
-					i = 0;
+					i  = 0;
 					i != 8;
 					++i)
 			{
@@ -1142,7 +1142,7 @@ void XcomResourcePack::loadBattlescapeResources()
 			}
 
 			for (int // fall frame
-					i = 0;
+					i  = 0;
 					i != 3;
 					++i)
 			{

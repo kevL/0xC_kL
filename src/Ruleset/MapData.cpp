@@ -236,7 +236,7 @@ void MapData::setFlags(
 	_baseObject    = baseObject;
 
 	_door = _slideDoor
-		   || _hingeDoor;
+		 || _hingeDoor;
 }
 
 /**

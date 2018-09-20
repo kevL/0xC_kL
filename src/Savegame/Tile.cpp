@@ -1064,13 +1064,13 @@ bool Tile::allowFire() const // private.
 		* const partF (_parts[O_FLOOR]),
 		* const partO (_parts[O_OBJECT]);
 
-	return (partF == nullptr || partF->blocksFire() == false)
-		&& (    partO == nullptr
-			||  partO->blocksFire() == false
-			|| (partO->getBigwall() & (BIGWALL_WEST | BIGWALL_NORTH
-													| BIGWALL_EAST
-													| BIGWALL_SOUTH
-													| BIGWALL_E_S))) != 0;
+	return (partF != nullptr && partF->blocksFire() == false && partO == nullptr)
+		|| (partO != nullptr
+			&& (   partO->blocksFire() == false
+				|| partO->getBigwall() & (BIGWALL_WEST | BIGWALL_NORTH
+													   | BIGWALL_EAST
+													   | BIGWALL_SOUTH
+													   | BIGWALL_E_S) != 0));
 }
 
 /**
