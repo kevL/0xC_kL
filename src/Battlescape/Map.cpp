@@ -892,8 +892,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 	int
 		spriteId,
 		tileShade,
-		shade,
-		aniOffset;
+		shade;
 
 	size_t quadrant;	// The quadrant is 0 for small units; large units have quadrants 1,2 & 3 also; describes		0|1
 						// the relative x/y Position of the unit's primary quadrant vs. the current tile's Position.	2|3
@@ -1685,26 +1684,23 @@ void Map::drawTerrain(Surface* const surface) // private.
 							std::string st;
 							if (_tile->getFire() != 0) // check & draw fire first.
 							{
-								st = "SMOKE.PCK"; // TODO: Breakout fire-sprites to their own SurfaceSet.
+								st       = "SMOKE.PCK"; // TODO: Breakout fire-sprites to their own SurfaceSet.
 								spriteId =
-								shade = 0;
+								shade    = 0;
 							}
 							else if (_tile->getSmoke() != 0
 								&& (hasUnit == false || _unit->getUnitFire() == 0))
 							{
-								st = "SmokeCloud";
-								spriteId = _tile->getSmoke() >> 1u; //+ ResourcePack::SMOKE_OFFSET
-								shade = tileShade;
+								st       = "SmokeCloud";
+								spriteId = ((_tile->getSmoke() - 1) >> 2u) << 2u; //+ ResourcePack::SMOKE_OFFSET
+								shade    = tileShade;
 							}
 							else
 								spriteId = -1;
 
 							if (spriteId != -1)
 							{
-								aniOffset = (_aniCycle >> 1u) + _tile->getAnimationOffset();
-								if (aniOffset > 3) aniOffset -= 4;
-								spriteId += aniOffset;
-
+								spriteId += ((_aniCycle >> 1u) + _tile->getAnimationOffset()) % 4;
 								sprite = _res->getSurfaceSet(st)->getFrame(spriteId);
 								//if (sprite != nullptr)
 									sprite->blitNShade(

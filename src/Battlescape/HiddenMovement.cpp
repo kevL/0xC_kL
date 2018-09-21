@@ -76,7 +76,7 @@ void HiddenMovement::setX(int x) // override
 	Surface::setX(x);
 
 	_window->setX(x);
-	_text  ->setX(x + 72);
+	_text  ->setX(x + 71);
 }
 
 /**
@@ -88,7 +88,7 @@ void HiddenMovement::setY(int y) // override
 	Surface::setY(y);
 
 	_window->setY(y);
-	_text  ->setY(y + 87);
+	_text  ->setY(y + 88);
 }
 
 /**

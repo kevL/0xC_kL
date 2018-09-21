@@ -156,10 +156,7 @@ void Pathfinding::setInputModifiers(bool missile)
 		_alt  = (SDL_GetModState() & KMOD_ALT)  != 0;
 
 		const Uint8* const keystate (SDL_GetKeyState(nullptr));
-		if (keystate[SDLK_z] != 0)
-			_zPath = true;
-		else
-			_zPath = false;
+		_zPath = (keystate[SDLK_z] != 0);
 	}
 }
 
@@ -197,8 +194,8 @@ void Pathfinding::calculatePath(
 	//Log(LOG_INFO) << "pf:calculatePath() id-" << unit->getId();
 	//Log(LOG_INFO) << ". posStop " << posStop;
 	// i'm DONE with these out of bounds errors.
-	// kL_note: I really don't care what you're "DONE" with ..... if you're going
-	// to cry like a babby, at least make it humorous -- like
+	// kL_note: I really don't care what you're "DONE" with ..... if you're
+	// going to cry like a babby, at least make it humorous - like
 	// GREAT FLAMING TOADS OF HOLY RABBIT SHIT i can't stand it anymore!!1! PS. fixing out of bounds checks
 	const int unitSize (unit->getArmor()->getSize());
 	if (   posStop.x < 0
@@ -486,7 +483,7 @@ bool Pathfinding::aStarPath( // private.
 	//Log(LOG_INFO) << "";
 	//Log(LOG_INFO) << "pf:aStarPath() id-" << _unit->getId();
 	for (std::vector<PathfindingNode>::iterator
-			i = _nodes.begin();
+			i  = _nodes.begin();
 			i != _nodes.end();
 			++i)
 	{
@@ -680,7 +677,7 @@ std::vector<size_t> Pathfinding::findReachable(
 	std::vector<size_t> nodeList;
 	nodeList.reserve(nodes.size());
 	for (std::vector<PathfindingNode*>::const_iterator
-			i = nodes.begin();
+			i  = nodes.begin();
 			i != nodes.end();
 			++i)
 	{
@@ -1431,10 +1428,10 @@ bool Pathfinding::isBlockedDir(
 	const Position pos (startTile->getPosition());
 
 	static const Position
-		posNorth	(Position( 0,-1, 0)),
-		posEast		(Position( 1, 0, 0)),
-		posSouth	(Position( 0, 1, 0)),
-		posWest		(Position(-1, 0, 0));
+		posNorth (Position( 0,-1, 0)),
+		posEast  (Position( 1, 0, 0)),
+		posSouth (Position( 0, 1, 0)),
+		posWest  (Position(-1, 0, 0));
 
 
 	switch (dir)

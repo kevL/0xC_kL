@@ -1002,8 +1002,8 @@ void Tile::addSmoke(int turns)
 		if (_smoke == 0 && _fire == 0)
 			_aniOffset = RNG::seedless(0,3);
 
-		if ((_smoke += turns) > 17)
-			_smoke = 17;
+		if ((_smoke += turns) > 12)
+			_smoke = 12;
 	}
 }
 

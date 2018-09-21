@@ -361,7 +361,6 @@ void SavedBattleGame::load(
 		}
 	}
 
-
 	if (_tacType == TCT_BASEDEFENSE)
 	{
 		Log(LOG_INFO) << ". load xcom base";
@@ -669,8 +668,8 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 	}
 
 	int
-		partId,
-		partSetId;
+		record,  // id of data for a tilepart
+		dataset; // id of the terrain's MCD data (within the total datasets aka MCD terrains)
 	MapDataType partType;
 
 	Tile* tile;
@@ -679,24 +678,23 @@ void SavedBattleGame::loadMapResources(const Game* const game)
 			i != _qtyTilesTotal;
 			++i)
 	{
+		tile = _tiles[i];
 		for (size_t
 				j = 0u;
 				j != Tile::TILE_PARTS;
 				++j)
 		{
 			partType = static_cast<MapDataType>(j);
-
-			tile = _tiles[i];
 			tile->getMapData(
-						&partId,
-						&partSetId,
+						&record,
+						&dataset,
 						partType);
 
-			if (partId != -1 && partSetId != -1)
+			if (record != -1 && dataset != -1)
 				tile->setMapData(
-							_battleDataSets[static_cast<size_t>(partSetId)]->getRecords()->at(static_cast<size_t>(partId)),
-							partId,
-							partSetId,
+							_battleDataSets[static_cast<size_t>(dataset)]->getRecords()->at(static_cast<size_t>(record)),
+							record,
+							dataset,
 							partType);
 		}
 	}

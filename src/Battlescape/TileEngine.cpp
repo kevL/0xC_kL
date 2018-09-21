@@ -6066,25 +6066,25 @@ VoxelType TileEngine::voxelCheck(
  */
 bool TileEngine::psiAttack(BattleAction* const action)
 {
-	static const bool debug (false);
-	if (debug) {
-		Log(LOG_INFO) << "";
-		Log(LOG_INFO) << "TileEngine::psiAttack() id-" << action->actor->getId();
-	}
+//	static const bool debug (false);
+//	if (debug) {
+//		Log(LOG_INFO) << "";
+//		Log(LOG_INFO) << "TileEngine::psiAttack() id-" << action->actor->getId();
+//	}
 
 	const Tile* const tile (_battleSave->getTile(action->posTarget));
 	if (tile != nullptr)
 	{
-		if (debug) Log(LOG_INFO) << ". vs " << action->posTarget;
+		//if (debug) Log(LOG_INFO) << ". vs " << action->posTarget;
 		BattleUnit* const victim (tile->getTileUnit());
 		if (victim != nullptr)
 		{
-			if (debug) Log(LOG_INFO) << ". . vs ID " << victim->getId();
+			//if (debug) Log(LOG_INFO) << ". . vs ID " << victim->getId();
 			if (victim->psiBlock() == false)
 			{
 				if (action->type == BA_PSICOURAGE)
 				{
-					if (debug) Log(LOG_INFO) << ". . . . BA_PSICONTROL";
+					//if (debug) Log(LOG_INFO) << ". . . . BA_PSICONTROL";
 					const int morale (10 + RNG::generate(0,20) + ((action->actor->getBattleStats()->psiSkill + 9) / 10)); // round up.
 					action->value = morale;
 					victim->moraleChange(morale);
@@ -6100,7 +6100,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 					&& victim->getOriginalFaction() == FACTION_HOSTILE // aLiens should be reduced to 50- Morale before MC.
 					&& RNG::percent(victim->getMorale() - 50) == true)
 				{
-					if (debug) Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
+					//if (debug) Log(LOG_INFO) << ". . . . RESIST vs " << (victim->getMorale() - 50);
 					_battleSave->getBattleState()->warning("STR_PSI_RESIST");
 					return false;
 				}
@@ -6141,11 +6141,11 @@ bool TileEngine::psiAttack(BattleAction* const action)
 
 				float attack (static_cast<float>(statsActor->psiStrength * (statsActor->psiSkill + bonusSkill)) / 50.f);
 
-				if (debug) {
-					Log(LOG_INFO) << ". . . defense=\t"	<< (int)defense;
-					Log(LOG_INFO) << ". . . attack=\t"	<< (int)attack;
-					Log(LOG_INFO) << ". . . dist=\t\t"	<< (int)dist;
-				}
+//				if (debug) {
+//					Log(LOG_INFO) << ". . . defense=\t"	<< (int)defense;
+//					Log(LOG_INFO) << ". . . attack=\t"	<< (int)attack;
+//					Log(LOG_INFO) << ". . . dist=\t\t"	<< (int)dist;
+//				}
 
 				attack -= dist * 2.f;
 				attack -= defense;
@@ -6161,10 +6161,10 @@ bool TileEngine::psiAttack(BattleAction* const action)
 				const int success (static_cast<int>(attack));
 				action->value = success;
 
-				if (debug) Log(LOG_INFO) << ". . . success=\t" << success;
+				//if (debug) Log(LOG_INFO) << ". . . success=\t" << success;
 				if (RNG::percent(success) == true)
 				{
-					if (debug) Log(LOG_INFO) << ". . . . SUCCESS";
+					//if (debug) Log(LOG_INFO) << ". . . . SUCCESS";
 					if (action->actor->getOriginalFaction() == FACTION_PLAYER)
 					{
 						int xp;
@@ -6189,13 +6189,13 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						action->actor->addPsiSkillExp(xp);
 					}
 
-					if (debug) Log(LOG_INFO) << ". . . . victim morale[0]= " << victim->getMorale();
+					//if (debug) Log(LOG_INFO) << ". . . . victim morale[0]= " << victim->getMorale();
 					switch (action->type)
 					{
 						default:
 						case BA_PSIPANIC:
 						{
-							if (debug) Log(LOG_INFO) << ". . . . . BA_PSIPANIC";
+							//if (debug) Log(LOG_INFO) << ". . . . . BA_PSIPANIC";
 							int morale (100);
 							switch (action->actor->getOriginalFaction())
 							{
@@ -6210,16 +6210,16 @@ bool TileEngine::psiAttack(BattleAction* const action)
 							if (morale > 0)
 								victim->moraleChange(-morale);
 
-							if (debug) {
-								Log(LOG_INFO) << ". . . . . morale reduction= " << morale;
-								Log(LOG_INFO) << ". . . . . victim morale[1]= " << victim->getMorale();
-							}
+//							if (debug) {
+//								Log(LOG_INFO) << ". . . . . morale reduction= " << morale;
+//								Log(LOG_INFO) << ". . . . . victim morale[1]= " << victim->getMorale();
+//							}
 							break;
 						}
 
 						case BA_PSICONTROL:
 						{
-							if (debug) Log(LOG_INFO) << ". . . . . BA_PSICONTROL";
+							//if (debug) Log(LOG_INFO) << ". . . . . BA_PSICONTROL";
 							int morale (statsVictim->bravery);
 							switch (action->actor->getFaction())
 							{
@@ -6259,7 +6259,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 									}
 							}
 							victim->moraleChange(morale);
-							if (debug) Log(LOG_INFO) << ". . . . . victim morale[2]= " << victim->getMorale();
+							//if (debug) Log(LOG_INFO) << ". . . . . victim morale[2]= " << victim->getMorale();
 
 							if (victim->getAIState() != nullptr)
 							{
@@ -6287,14 +6287,14 @@ bool TileEngine::psiAttack(BattleAction* const action)
 						case BA_PSICONFUSE:
 						{
 							const int tuLoss ((statsActor->psiSkill + 2) / 3);
-							if (debug) {
-								Log(LOG_INFO) << ". . . . . BA_PSICONFUSE";
-								Log(LOG_INFO) << ". . . . . tuLoss= " << tuLoss;
-							}
+//							if (debug) {
+//								Log(LOG_INFO) << ". . . . . BA_PSICONFUSE";
+//								Log(LOG_INFO) << ". . . . . tuLoss= " << tuLoss;
+//							}
 							victim->setTu(victim->getTu() - tuLoss);
 						}
 					}
-					if (debug) Log(LOG_INFO) << "TileEngine::psiAttack() ret TRUE";
+					//if (debug) Log(LOG_INFO) << "TileEngine::psiAttack() ret TRUE";
 					return true;
 				}
 
@@ -6333,7 +6333,7 @@ bool TileEngine::psiAttack(BattleAction* const action)
 		}
 	}
 
-	if (debug) Log(LOG_INFO) << "TileEngine::psiAttack() ret FALSE";
+	//if (debug) Log(LOG_INFO) << "TileEngine::psiAttack() ret FALSE";
 	return false;
 }
 
