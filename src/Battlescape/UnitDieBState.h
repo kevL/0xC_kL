@@ -57,7 +57,7 @@ private:
 	public:
 		/// Creates a UnitDieBState object.
 		UnitDieBState(
-				BattlescapeGame* const battleGame,
+				BattlescapeGame* const battle,
 				BattleUnit* const unit,
 				const bool isPreTactical,
 				const bool isSilent = true,

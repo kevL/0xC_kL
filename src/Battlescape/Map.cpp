@@ -121,7 +121,7 @@ Map::Map(
 		_showProjectile(true),
 		_battleSave(game->getSavedGame()->getBattleSave()),
 		_te(game->getSavedGame()->getBattleSave()->getTileEngine()),
-		_battleGame(nullptr), // is Set in BattlescapeGame cTor.
+		_battle(nullptr), // is Set in BattlescapeGame cTor.
 		_res(game->getResourcePack()),
 		_fuseColor(31u),
 		_tile(nullptr),
@@ -1105,10 +1105,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 									case CT_TOSS:
 										if (hasUnit == true
 											&& (_selectorType != CT_PSI
-												|| ((_battleGame->getTacticalAction()->type == BA_PSICOURAGE
+												|| ((_battle->getTacticalAction()->type == BA_PSICOURAGE
 														&& _unit->getFaction() != FACTION_HOSTILE
 														&& _unit != _battleSave->getSelectedUnit())
-													|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
+													|| (_battle->getTacticalAction()->type != BA_PSICOURAGE
 														&& _unit->getFaction() != FACTION_PLAYER))))
 										{
 											spriteId = (_aniCycle & 1);	// yellow flashing box
@@ -1574,7 +1574,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 												&& (_unit->getArmor()->getSize() == 1 || quadrant == 1u)
 //												&& _projectileInFOV == false && _explosionInFOV == false)
 //												&& _battleSave->getBattleState()->allowButtons() == true
-												&& _battleGame->getTacticalAction()->type == BA_NONE)
+												&& _battle->getTacticalAction()->type == BA_NONE)
 												// well that's quirky. The exposed value of actor gets drawn on the
 												// defender (at least when within one tile) for a brief flash, even
 												// before projectile and explosion is taken into account. If projectile
@@ -1788,10 +1788,10 @@ void Map::drawTerrain(Surface* const surface) // private.
 									case CT_TOSS:
 										if (hasUnit == true
 											&& (_selectorType != CT_PSI
-												|| ((_battleGame->getTacticalAction()->type == BA_PSICOURAGE
+												|| ((_battle->getTacticalAction()->type == BA_PSICOURAGE
 														&& _unit->getFaction() != FACTION_HOSTILE
 														&& _unit != _battleSave->getSelectedUnit())
-													|| (_battleGame->getTacticalAction()->type != BA_PSICOURAGE
+													|| (_battle->getTacticalAction()->type != BA_PSICOURAGE
 														&& _unit->getFaction() != FACTION_PLAYER))))
 										{
 											spriteId = 3 + (_aniCycle & 1);	// yellow flashing box
@@ -1835,7 +1835,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										// to turn accuracy to 'red 0' if target is out of LoS/LoF.
 										//
 										// TODO: use Projectile::rangeAccuracy() as a static function.
-										const BattleAction* const action (_battleGame->getTacticalAction());
+										const BattleAction* const action (_battle->getTacticalAction());
 										int accuracy;
 										Uint8 color;
 
@@ -1922,7 +1922,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 
 									case CT_TOSS:
 									{
-										BattleAction* const action (_battleGame->getTacticalAction());
+										BattleAction* const action (_battle->getTacticalAction());
 										action->posTarget = Position(itX,itY,itZ);
 
 										unsigned accuracy;
@@ -3227,11 +3227,11 @@ SavedBattleGame* Map::getBattleSave() const
 
 /**
  * Sets the BattlescapeGame.
- * @param battleGame - pointer to BattlescapeGame
+ * @param battle - pointer to BattlescapeGame
  */
-void Map::setBattleGame(BattlescapeGame* const battleGame)
+void Map::setBattleGame(BattlescapeGame* const battle)
 {
-	_battleGame = battleGame;
+	_battle = battle;
 }
 
 /**

@@ -175,43 +175,43 @@ SavedGame::~SavedGame()
 	delete _time;
 
 	for (std::vector<Country*>::const_iterator
-			i = _countries.begin();
+			i  = _countries.begin();
 			i != _countries.end();
 			++i)
 		delete *i;
 
 	for (std::vector<Region*>::const_iterator
-			i = _regions.begin();
+			i  = _regions.begin();
 			i != _regions.end();
 			++i)
 		delete *i;
 
 	for (std::vector<Base*>::const_iterator
-			i = _bases.begin();
+			i  = _bases.begin();
 			i != _bases.end();
 			++i)
 		delete *i;
 
 	for (std::vector<Ufo*>::const_iterator
-			i = _ufos.begin();
+			i  = _ufos.begin();
 			i != _ufos.end();
 			++i)
 		delete *i;
 
 	for (std::vector<Waypoint*>::const_iterator
-			i = _waypoints.begin();
+			i  = _waypoints.begin();
 			i != _waypoints.end();
 			++i)
 		delete *i;
 
 	for (std::vector<TerrorSite*>::const_iterator
-			i = _terrorSites.begin();
+			i  = _terrorSites.begin();
 			i != _terrorSites.end();
 			++i)
 		delete *i;
 
 	for (std::vector<AlienBase*>::const_iterator
-			i = _alienBases.begin();
+			i  = _alienBases.begin();
 			i != _alienBases.end();
 			++i)
 		delete *i;
@@ -219,25 +219,25 @@ SavedGame::~SavedGame()
 	delete _alienStrategy;
 
 	for (std::vector<AlienMission*>::const_iterator
-			i = _activeMissions.begin();
+			i  = _activeMissions.begin();
 			i != _activeMissions.end();
 			++i)
 		delete *i;
 
 	for (std::vector<SoldierDead*>::const_iterator
-			i = _deadSoldiers.begin();
+			i  = _deadSoldiers.begin();
 			i != _deadSoldiers.end();
 			++i)
 		delete *i;
 
 	for (std::vector<TacticalStatistics*>::const_iterator
-			i = _tacticalStats.begin();
+			i  = _tacticalStats.begin();
 			i != _tacticalStats.end();
 			++i)
 		delete *i;
 
 	for (std::vector<ResearchGeneral*>::const_iterator
-			i = _research.begin();
+			i  = _research.begin();
 			i != _research.end();
 			++i)
 		delete *i;
@@ -262,7 +262,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 	{
 		saves = CrossPlatform::getFolderContents(Options::getUserFolder(), SAVE_Ext_AQ);
 		for (std::vector<std::string>::const_iterator
-				i = saves.begin();
+				i  = saves.begin();
 				i != saves.end();
 				++i)
 		{
@@ -285,7 +285,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 
 	saves = CrossPlatform::getFolderContents(Options::getUserFolder(), SAVE_Ext);
 	for (std::vector<std::string>::const_iterator
-			i = saves.begin();
+			i  = saves.begin();
 			i != saves.end();
 			++i)
 	{
@@ -477,7 +477,7 @@ void SavedGame::load(
 	const RuleCountry* countryRule;
 	Country* country;
 	for (YAML::const_iterator
-			i = doc["countries"].begin();
+			i  = doc["countries"].begin();
 			i != doc["countries"].end();
 			++i)
 	{
@@ -495,7 +495,7 @@ void SavedGame::load(
 	const RuleRegion* regionRule;
 	Region* region;
 	for (YAML::const_iterator
-			i = doc["regions"].begin();
+			i  = doc["regions"].begin();
 			i != doc["regions"].end();
 			++i)
 	{
@@ -513,7 +513,7 @@ void SavedGame::load(
 	const RuleAlienDeployment* ruleDeploy;
 	AlienBase* aBase;
 	for (YAML::const_iterator
-			i = doc["alienBases"].begin();
+			i  = doc["alienBases"].begin();
 			i != doc["alienBases"].end();
 			++i)
 	{
@@ -532,7 +532,7 @@ void SavedGame::load(
 	const YAML::Node& missions (doc["alienMissions"]);
 	AlienMission* mission;
 	for (YAML::const_iterator
-			i = missions.begin();
+			i  = missions.begin();
 			i != missions.end();
 			++i)
 	{
@@ -549,7 +549,7 @@ void SavedGame::load(
 	Log(LOG_INFO) << ". load ufos";
 	Ufo* ufo;
 	for (YAML::const_iterator
-			i = doc["ufos"].begin();
+			i  = doc["ufos"].begin();
 			i != doc["ufos"].end();
 			++i)
 	{
@@ -566,7 +566,7 @@ void SavedGame::load(
 	Log(LOG_INFO) << ". load waypoints"; // Waypoints must be loaded before Bases (for Craft destinations).
 	Waypoint* wp;
 	for (YAML::const_iterator
-			i = doc["waypoints"].begin();
+			i  = doc["waypoints"].begin();
 			i != doc["waypoints"].end();
 			++i)
 	{
@@ -579,7 +579,7 @@ void SavedGame::load(
 	TerrorSite* site;
 	std::string deploy;
 	for (YAML::const_iterator
-			i = doc["terrorSites"].begin();
+			i  = doc["terrorSites"].begin();
 			i != doc["terrorSites"].end();
 			++i)
 	{
@@ -600,7 +600,7 @@ void SavedGame::load(
 	// I don't use psi-evaluation.
 	const RuleResearch* resRule;
 	for (YAML::const_iterator
-			i = doc["research"].begin();
+			i  = doc["research"].begin();
 			i != doc["research"].end();
 			++i)
 	{
@@ -616,7 +616,7 @@ void SavedGame::load(
 
 	Log(LOG_INFO) << ". load xcom bases";
 	for (YAML::const_iterator
-			i = doc["bases"].begin();
+			i  = doc["bases"].begin();
 			i != doc["bases"].end();
 			++i)
 	{
@@ -630,7 +630,7 @@ void SavedGame::load(
 
 	Log(LOG_INFO) << ". load dead soldiers";
 	for (YAML::const_iterator
-			i = doc["deadSoldiers"].begin();
+			i  = doc["deadSoldiers"].begin();
 			i != doc["deadSoldiers"].end();
 			++i)
 	{
@@ -642,7 +642,7 @@ void SavedGame::load(
 	Log(LOG_INFO) << ". load mission statistics";
 	TacticalStatistics* tacticalStats;
 	for (YAML::const_iterator
-			i = doc["missionStatistics"].begin();
+			i  = doc["missionStatistics"].begin();
 			i != doc["missionStatistics"].end();
 			++i)
 	{
@@ -651,7 +651,7 @@ void SavedGame::load(
 		_tacticalStats.push_back(tacticalStats);
 	}
 
-	if (const YAML::Node& battle = doc["battleGame"])
+	if (const YAML::Node& battle = doc["battle"])
 	{
 		Log(LOG_INFO) << "SavedGame: loading tactical";
 		_battleSave = new SavedBattleGame(
@@ -742,55 +742,55 @@ void SavedGame::save(const std::string& file) const
 
 
 	for (std::vector<Country*>::const_iterator
-			i = _countries.begin();
+			i  = _countries.begin();
 			i != _countries.end();
 			++i)
 		node["countries"].push_back((*i)->save());
 
 	for (std::vector<Region*>::const_iterator
-			i = _regions.begin();
+			i  = _regions.begin();
 			i != _regions.end();
 			++i)
 		node["regions"].push_back((*i)->save());
 
 	for (std::vector<Base*>::const_iterator
-			i = _bases.begin();
+			i  = _bases.begin();
 			i != _bases.end();
 			++i)
 		node["bases"].push_back((*i)->save());
 
 	for (std::vector<Waypoint*>::const_iterator
-			i = _waypoints.begin();
+			i  = _waypoints.begin();
 			i != _waypoints.end();
 			++i)
 		node["waypoints"].push_back((*i)->save());
 
 	for (std::vector<TerrorSite*>::const_iterator
-			i = _terrorSites.begin();
+			i  = _terrorSites.begin();
 			i != _terrorSites.end();
 			++i)
 		node["terrorSites"].push_back((*i)->save());
 
 	for (std::vector<AlienBase*>::const_iterator // AlienBases must be saved before AlienMissions.
-			i = _alienBases.begin();
+			i  = _alienBases.begin();
 			i != _alienBases.end();
 			++i)
 		node["alienBases"].push_back((*i)->save());
 
 	for (std::vector<AlienMission*>::const_iterator // AlienMissions must be saved before Ufos.
-			i = _activeMissions.begin();
+			i  = _activeMissions.begin();
 			i != _activeMissions.end();
 			++i)
 		node["alienMissions"].push_back((*i)->save());
 
 	for (std::vector<Ufo*>::const_iterator
-			i = _ufos.begin();
+			i  = _ufos.begin();
 			i != _ufos.end();
 			++i)
 		node["ufos"].push_back((*i)->save());
 
 	for (std::vector<ResearchGeneral*>::const_iterator
-			i = _research.begin();
+			i  = _research.begin();
 			i != _research.end();
 			++i)
 		node["research"].push_back((*i)->save());
@@ -798,19 +798,19 @@ void SavedGame::save(const std::string& file) const
 	node["alienStrategy"] = _alienStrategy->save();
 
 	for (std::vector<SoldierDead*>::const_iterator
-			i = _deadSoldiers.begin();
+			i  = _deadSoldiers.begin();
 			i != _deadSoldiers.end();
 			++i)
 		node["deadSoldiers"].push_back((*i)->save());
 
 	for (std::vector<TacticalStatistics*>::const_iterator
-			i = _tacticalStats.begin();
+			i  = _tacticalStats.begin();
 			i != _tacticalStats.end();
 			++i)
 		node["missionStatistics"].push_back((*i)->save());
 
 	if (_battleSave != nullptr)
-		node["battleGame"] = _battleSave->save();
+		node["battle"] = _battleSave->save();
 
 	out << node;
 	ofstr << out.c_str();
@@ -1022,7 +1022,7 @@ void SavedGame::balanceBudget()
 		spent  (0);
 
 	for (std::vector<Base*>::const_iterator
-			i = _bases.begin();
+			i  = _bases.begin();
 			i != _bases.end();
 			++i)
 	{
@@ -1071,7 +1071,7 @@ int SavedGame::getTotalCountryFunds() const
 {
 	int total (0);
 	for (std::vector<Country*>::const_iterator
-			i = _countries.begin();
+			i  = _countries.begin();
 			i != _countries.end();
 			++i)
 	{
@@ -1289,7 +1289,7 @@ int SavedGame::getBaseMaintenances() const
 {
 	int total (0);
 	for (std::vector<Base*>::const_iterator
-			i = _bases.begin();
+			i  = _bases.begin();
 			i != _bases.end();
 			++i)
 	{
@@ -1641,7 +1641,7 @@ void SavedGame::tabulatePopupManufacture(
 {
 	const RuleManufacture* mfRule;
 	for (std::vector<std::string>::const_iterator
-			i = _rules->getManufactureList().begin();
+			i  = _rules->getManufactureList().begin();
 			i != _rules->getManufactureList().end();
 			++i)
 	{
@@ -1711,7 +1711,7 @@ void SavedGame::tabulateStartableResearch(
 					if (showProject == true) break;
 
 					for (std::vector<std::string>::const_iterator
-							j = resRule->getRequestedResearch().begin();
+							j  = resRule->getRequestedResearch().begin();
 							j != resRule->getRequestedResearch().end();
 							++j)
 					{
@@ -1755,7 +1755,7 @@ void SavedGame::tabulateStartableManufacture(
 
 	const RuleManufacture* mfRule;
 	for (std::vector<std::string>::const_iterator
-			i = _rules->getManufactureList().begin();
+			i  = _rules->getManufactureList().begin();
 			i != _rules->getManufactureList().end();
 			++i)
 	{
@@ -1769,7 +1769,7 @@ void SavedGame::tabulateStartableManufacture(
 			bypass = false;
 
 			for (std::map<std::string, int>::const_iterator // qty of each facility-type required
-					j = mfRule->getRequiredFacilities().begin();
+					j  = mfRule->getRequiredFacilities().begin();
 					j != mfRule->getRequiredFacilities().end();
 					++j)
 			{
@@ -1777,7 +1777,7 @@ void SavedGame::tabulateStartableManufacture(
 				if (j->second != 0) // safety. RuleManufacture should NOT spec. required-facilities < 1.
 				{
 					for (std::vector<BaseFacility*>::const_iterator
-							k = baseFacs->begin();
+							k  = baseFacs->begin();
 							k != baseFacs->end();
 							++k)
 					{
@@ -1830,7 +1830,7 @@ bool SavedGame::isResearched(const std::vector<std::string>& resTypes) const
 	if (_debugGeo == false && resTypes.empty() == false)
 	{
 		for (std::vector<std::string>::const_iterator
-				j = resTypes.begin();
+				j  = resTypes.begin();
 				j != resTypes.end();
 				++j)
 		{
@@ -1850,12 +1850,12 @@ bool SavedGame::isResearched(const std::vector<std::string>& resTypes) const
 Soldier* SavedGame::getSoldier(int id) const
 {
 	for (std::vector<Base*>::const_iterator
-			i = _bases.begin();
+			i  = _bases.begin();
 			i != _bases.end();
 			++i)
 	{
 		for (std::vector<Soldier*>::const_iterator
-				j = (*i)->getSoldiers()->begin();
+				j  = (*i)->getSoldiers()->begin();
 				j != (*i)->getSoldiers()->end();
 				++j)
 		{
@@ -1878,12 +1878,12 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 	std::vector<Soldier*> soldiers;
 
 	for (std::vector<Base*>::const_iterator
-			i = _bases.begin();
+			i  = _bases.begin();
 			i != _bases.end();
 			++i)
 	{
 		for (std::vector<Soldier*>::const_iterator
-				j = (*i)->getSoldiers()->begin();
+				j  = (*i)->getSoldiers()->begin();
 				j != (*i)->getSoldiers()->end();
 				++j)
 		{
@@ -1892,7 +1892,7 @@ bool SavedGame::handlePromotions(std::vector<Soldier*>& participants)
 		}
 
 		for (std::vector<Transfer*>::const_iterator
-				j = (*i)->getTransfers()->begin();
+				j  = (*i)->getTransfers()->begin();
 				j != (*i)->getTransfers()->end();
 				++j)
 		{
@@ -2004,7 +2004,7 @@ Soldier* SavedGame::inspectSoldiers( // private.
 		scoreTest;
 
 	for (std::vector<Soldier*>::const_iterator
-			i = soldiers.begin();
+			i  = soldiers.begin();
 			i != soldiers.end();
 			++i)
 	{
@@ -2394,12 +2394,9 @@ std::string SavedGame::getDebugArg() const
  */
 bool SavedGame::getDebugArgDone()
 {
-	const bool ret (_debugArgDone);
-
-	if (_debugArgDone == true)
-		_debugArgDone = false;
-
-	return ret;
+	const bool done (_debugArgDone);
+	_debugArgDone = false;
+	return done;
 }
 
 /**
@@ -2442,7 +2439,7 @@ void SavedGame::scorePoints(
 		bool aLien) const
 {
 	for (std::vector<Region*>::const_iterator
-			i = _regions.begin();
+			i  = _regions.begin();
 			i != _regions.end();
 			++i)
 	{
@@ -2457,7 +2454,7 @@ void SavedGame::scorePoints(
 	}
 
 	for (std::vector<Country*>::const_iterator
-			i = _countries.begin();
+			i  = _countries.begin();
 			i != _countries.end();
 			++i)
 	{

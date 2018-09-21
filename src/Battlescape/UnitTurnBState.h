@@ -50,7 +50,7 @@ private:
 	public:
 		/// Creates a UnitTurnBState.
 		UnitTurnBState(
-				BattlescapeGame* const battleGame,
+				BattlescapeGame* const battle,
 				BattleAction action,
 				bool chargeTu = true);
 		/// Cleans up the UnitTurnBState.

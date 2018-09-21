@@ -197,7 +197,7 @@ private:
 	BattleAIState* _unitAiState;
 //	BattleItem* _specWeapon[SPEC_WEAPON_MAX];
 	BattleItem* _fist;
-	BattlescapeGame* _battleGame;
+	BattlescapeGame* _battle;
 	BattleUnit* _chargeTarget;
 	SavedBattleGame* _battleSave;
 	Surface* _spriteCache[4u]; // holds quadrants
@@ -301,7 +301,7 @@ private:
 				const int id,
 				RuleArmor* const armor,
 				SavedBattleGame* const battleSave,
-				BattlescapeGame* const battleGame = nullptr);
+				BattlescapeGame* const battle = nullptr);
 		/// Cleans up the BattleUnit.
 		~BattleUnit();
 
@@ -876,7 +876,7 @@ private:
 		size_t getBattleOrder() const;
 
 		/// Sets the BattleGame for the BattleUnit.
-		void setBattleForUnit(BattlescapeGame* const battleGame);
+		void setBattleForUnit(BattlescapeGame* const battle);
 
 		/// Sets the BattleUnit's turn direction when spinning 180 degrees.
 		void setTurnDirection(int dir);

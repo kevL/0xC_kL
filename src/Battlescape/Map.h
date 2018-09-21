@@ -138,7 +138,7 @@ private:
 
 	PathPreview _previewSetting;
 
-	BattlescapeGame* _battleGame;
+	BattlescapeGame* _battle;
 	HiddenMovement* _hiddenScreen;
 	BattleUnit* _unit;
 	Camera* _camera;
@@ -335,7 +335,7 @@ private:
 		SavedBattleGame* getBattleSave() const;
 
 		/// Sets the BattlescapeGame.
-		void setBattleGame(BattlescapeGame* const battleGame);
+		void setBattleGame(BattlescapeGame* const battle);
 
 		/// Tells the Map to remain revealed because there's a duration-type action going down.
 		void setReveal(bool reveal = true);

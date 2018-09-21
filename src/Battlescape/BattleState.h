@@ -42,13 +42,13 @@ class BattleState
 
 protected:
 	BattleAction _action;
-	BattlescapeGame* _battleGame;
+	BattlescapeGame* _battle;
 
 
 	public:
 		/// Creates a BattleState linked to the BattlescapeGame.
 		BattleState(
-				BattlescapeGame* const battleGame,
+				BattlescapeGame* const battle,
 				BattleAction action = {});
 		/// Cleans up the BattleState.
 		virtual ~BattleState();

@@ -45,7 +45,7 @@ namespace OpenXcom
 
 /**
  * Sets up an ExplosionBState.
- * @param battleGame	- pointer to the BattlescapeGame
+ * @param battle		- pointer to the BattlescapeGame
  * @param centerVoxel	- center position in voxel-space
  * @param itRule		- pointer to the weapon's rule (can be and usually is
  *						  the weapon's load or a grenade)
@@ -59,7 +59,7 @@ namespace OpenXcom
  * @param isLaunched	- true if shot by a Launcher (default false)
  */
 ExplosionBState::ExplosionBState(
-		BattlescapeGame* const battleGame,
+		BattlescapeGame* const battle,
 		const Position centerVoxel,
 		const RuleItem* const itRule,
 		BattleUnit* const unit,
@@ -69,7 +69,7 @@ ExplosionBState::ExplosionBState(
 		bool forceCamera,
 		bool isLaunched)
 	:
-		BattleState(battleGame),
+		BattleState(battle),
 		_centerVoxel(centerVoxel),
 		_itRule(itRule),
 		_unit(unit),
@@ -78,7 +78,7 @@ ExplosionBState::ExplosionBState(
 		_meleeSuccess(meleeSuccess),
 		_forceCamera(forceCamera),
 		_isLaunched(isLaunched),
-		_battleSave(battleGame->getBattleSave()),
+		_battleSave(battle->getBattleSave()),
 		_power(0),
 		_areaOfEffect(true),
 		_buttHurt(false),
@@ -135,7 +135,7 @@ void ExplosionBState::init()
 				_buttHurt = _unit != nullptr
 						 && _unit->getFaction() == FACTION_PLAYER
 						 && _itRule->getBattleType() != BT_MELEE
-						 && _battleGame->getTacticalAction()->type == BA_MELEE;
+						 && _battle->getTacticalAction()->type == BA_MELEE;
 
 				if (_buttHurt == true)
 					_power = _itRule->getMeleePower();
@@ -176,7 +176,7 @@ void ExplosionBState::init()
 	else if (_unit != nullptr // cyberdiscs!!! And ... ZOMBIES.
 		&& _unit->getSpecialAbility() == SPECAB_EXPLODE)
 	{
-		_power = _battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getPower();
+		_power = _battle->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getPower();
 		const int
 			power1 ((_power << 1u) / 3), // 66% to 150%
 			power2 ((_power * 3) >> 1u);
@@ -209,7 +209,7 @@ void ExplosionBState::init()
 			if (_itRule != nullptr)
 			{
 				if (_itRule->defusePulse() == true)
-					_battleGame->getMap()->setBlastFlash(true);
+					_battle->getMap()->setBlastFlash(true);
 
 				interval = static_cast<Uint32>(
 						   std::max(1,
@@ -256,12 +256,12 @@ void ExplosionBState::init()
 
 				if (aniStart != -1)
 				{
-					_battleGame->setStateInterval(interval);
-					_battleGame->getMap()->getExplosions()->push_back(new Explosion(
-																				ET_AOE,
-																				explVoxel - Position(16,16,0), // jog downward on the screen.
-																				aniStart,
-																				aniDelay));
+					_battle->setStateInterval(interval);
+					_battle->getMap()->getExplosions()->push_back(new Explosion(
+																			ET_AOE,
+																			explVoxel - Position(16,16,0), // jog downward on the screen.
+																			aniStart,
+																			aniDelay));
 				}
 			}
 
@@ -275,16 +275,16 @@ void ExplosionBState::init()
 				soundId = static_cast<int>(ResourcePack::LARGE_EXPLOSION);
 
 			if (soundId != -1)
-				_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-												->play(-1, _battleGame->getMap()->getSoundAngle(posTarget));
+				_battle->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+												->play(-1, _battle->getMap()->getSoundAngle(posTarget));
 
 			if (_forceCamera == true)
-				_battleGame->getMap()->getCamera()->centerPosition(posTarget);
+				_battle->getMap()->getCamera()->centerPosition(posTarget);
 			else
-				_battleGame->getMap()->getCamera()->focusPosition(posTarget);
+				_battle->getMap()->getCamera()->focusPosition(posTarget);
 		}
 		else
-			_battleGame->popBattleState();
+			_battle->popBattleState();
 	}
 	else // create a bullet hit, or melee hit, or psi-hit, or acid spit hit
 	{
@@ -355,28 +355,28 @@ void ExplosionBState::init()
 		if (aniStart_att != -1 || aniStart_hit != -1)
 		{
 			if (aniStart_att != -1) // TODO: Move create Explosion for start-swing to ProjectileFlyBState::performMeleeAttack().
-				_battleGame->getMap()->getExplosions()->push_back(new Explosion(
-																			explType_att,
-																			_centerVoxel,
-																			aniStart_att));
+				_battle->getMap()->getExplosions()->push_back(new Explosion(
+																		explType_att,
+																		_centerVoxel,
+																		aniStart_att));
 
 			if (aniStart_hit != -1)
-				_battleGame->getMap()->getExplosions()->push_back(new Explosion(
-																			explType_hit,
-																			_centerVoxel,
-																			aniStart_hit));
+				_battle->getMap()->getExplosions()->push_back(new Explosion(
+																		explType_hit,
+																		_centerVoxel,
+																		aniStart_hit));
 
 			Uint32 interval (static_cast<Uint32>(
 							 std::max(1,
 									  static_cast<int>(BattlescapeState::STATE_INTERVAL_EXPLOSION) - _itRule->getExplosionSpeed())));
-			_battleGame->setStateInterval(interval);
+			_battle->setStateInterval(interval);
 		}
 
 		if (soundId != -1)
-			_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-											->play(-1, _battleGame->getMap()->getSoundAngle(posTarget));
+			_battle->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+											->play(-1, _battle->getMap()->getSoundAngle(posTarget));
 
-		Camera* const exploCam (_battleGame->getMap()->getCamera());
+		Camera* const exploCam (_battle->getMap()->getCamera());
 		if (_forceCamera == true
 			|| (exploCam->isOnScreen(posTarget) == false
 				&& (_battleSave->getSide() != FACTION_PLAYER
@@ -419,9 +419,9 @@ void ExplosionBState::think()
 //	if (_extend < 1) explode();
 
 	//Log(LOG_INFO) << "ExplosionBState::think()";
-	if (_battleGame->getMap()->getBlastFlash() == false)
+	if (_battle->getMap()->getBlastFlash() == false)
 	{
-		std::list<Explosion*>* const explList (_battleGame->getMap()->getExplosions());
+		std::list<Explosion*>* const explList (_battle->getMap()->getExplosions());
 		//Log(LOG_INFO) << ". expl qty= " << explList->size();
 
 		for (std::list<Explosion*>::const_iterator
@@ -497,7 +497,7 @@ void ExplosionBState::explode() // private.
 
 				if (_melee == true) // NOTE: melee Hit success/failure, and hit/miss sound-FX, are determined in ProjectileFlyBState.
 				{
-					_battleGame->getTacticalAction()->type = BA_NONE;
+					_battle->getTacticalAction()->type = BA_NONE;
 
 					if (_unit != nullptr)
 					{
@@ -532,12 +532,12 @@ void ExplosionBState::explode() // private.
 
 					if (_meleeSuccess == false) // MISS.
 					{
-						_battleGame->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
+						_battle->checkExposedByMelee(_unit); // determine whether playerFaction-attacker gets exposed.
 
 						if (_unit != nullptr) // safety.
 							_unit->toggleShoot();
 
-						_battleGame->popBattleState();
+						_battle->popBattleState();
 						return;
 					}
 				}
@@ -576,7 +576,7 @@ void ExplosionBState::explode() // private.
 			isTerrain = true;
 			int radius;
 			if (_unit != nullptr && _unit->getSpecialAbility() == SPECAB_EXPLODE)
-				radius = _battleGame->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getExplosionRadius();
+				radius = _battle->getRuleset()->getItemRule(_unit->getArmor()->getCorpseGeoscape())->getExplosionRadius();
 			else
 				radius = 6;
 
@@ -589,16 +589,16 @@ void ExplosionBState::explode() // private.
 
 
 		//Log(LOG_INFO) << ". call bg.checkCasualties()";
-		_battleGame->checkCasualties(
-								_itRule,
-								_unit,
-								false,
-								isTerrain);
+		_battle->checkCasualties(
+							_itRule,
+							_unit,
+							false,
+							isTerrain);
 
 		if (_itRule != nullptr && _itRule->getShotgunPellets() != 0)
 		{
 			for (std::vector<BattleUnit*>::const_iterator
-					i = _battleSave->getUnits()->begin();
+					i =  _battleSave->getUnits()->begin();
 					i != _battleSave->getUnits()->end();
 					++i)
 			{
@@ -620,7 +620,7 @@ void ExplosionBState::explode() // private.
 		}
 
 //		_parent->getMap()->cacheUnitSprites();	// why do all sprites need re-caching: the only one that changes
-		_battleGame->popBattleState();			// is the shooter-weapon. and that's now done in toggleShoot().
+		_battle->popBattleState();				// is the shooter-weapon. and that's now done in toggleShoot().
 												// Besides, only units flagged as needing re-caching get re-cached.
 												// Animations like death will get re-cached by their own States.
 
@@ -628,19 +628,19 @@ void ExplosionBState::explode() // private.
 		if (tile != nullptr)
 		{
 			const Position& explVoxel (Position::toVoxelSpaceCentered(tile->getPosition(), 10));
-			_battleGame->stateBPushNext(new ExplosionBState(
-														_battleGame,
-														explVoxel,
-														nullptr,
-														_unit,
-														tile,
-														false,
-														false,
-														_forceCamera));
+			_battle->stateBPushNext(new ExplosionBState(
+													_battle,
+													explVoxel,
+													nullptr,
+													_unit,
+													tile,
+													false,
+													false,
+													_forceCamera));
 		}
 	}
 	else
-		_battleGame->popBattleState();
+		_battle->popBattleState();
 }
 
 }

@@ -27,14 +27,14 @@ namespace OpenXcom
 
 /**
  * Sets up the BattleState.
- * @param battleGame	- pointer to BattlescapeGame
- * @param action		- struct containing info about the current BattleAction
+ * @param battle - pointer to BattlescapeGame
+ * @param action - struct containing info about the current BattleAction
  */
 BattleState::BattleState(
-		BattlescapeGame* const battleGame,
+		BattlescapeGame* const battle,
 		BattleAction action)
 	:
-		_battleGame(battleGame),
+		_battle(battle),
 		_action(action)
 {}
 

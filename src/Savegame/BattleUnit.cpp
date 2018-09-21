@@ -75,7 +75,7 @@ BattleUnit::BattleUnit(
 		_originalFaction(FACTION_PLAYER),
 		_killerFaction(FACTION_NONE),
 		_murdererId(0),
-		_battleGame(nullptr),
+		_battle(nullptr),
 		_turretType(TRT_NONE),
 		_tile(nullptr),
 //		_pos(Position()),
@@ -230,7 +230,7 @@ BattleUnit::BattleUnit(
  * @param id			- the unit's ID
  * @param arRule		- pointer to RuleArmor
  * @param battleSave	- pointer to the SavedBattleGame
- * @param battleGame	- pointer to the BattlescapeGame (default nullptr)
+ * @param battle		- pointer to the BattlescapeGame (default nullptr)
  */
 BattleUnit::BattleUnit(
 		RuleUnit* const unitRule,
@@ -238,7 +238,7 @@ BattleUnit::BattleUnit(
 		const int id,
 		RuleArmor* const arRule,
 		SavedBattleGame* const battleSave,
-		BattlescapeGame* const battleGame) // for converted Units
+		BattlescapeGame* const battle) // for converted Units
 	:
 		_geoscapeSoldier(nullptr),
 		_unitRule(unitRule),
@@ -249,7 +249,7 @@ BattleUnit::BattleUnit(
 		_battleSave(battleSave),
 		_killerFaction(FACTION_NONE),
 		_murdererId(0),
-		_battleGame(battleGame),
+		_battle(battle),
 		_rankInt(5), // aLien soldier, this includes Civies.
 		_turretType(TRT_NONE),
 //		_pos(Position()),
@@ -1421,14 +1421,14 @@ void BattleUnit::toggleShoot()
 			//Log(LOG_INFO) << ". standing -> aiming";
 			_status = STATUS_AIMING;
 			_cacheInvalid = true;
-			_battleGame->getMap()->cacheUnitSprite(this);
+			_battle->getMap()->cacheUnitSprite(this);
 			break;
 
 		case STATUS_AIMING:
 			//Log(LOG_INFO) << ". aiming -> standing";
 			_status = STATUS_STANDING;
 			_cacheInvalid = true;
-			_battleGame->getMap()->cacheUnitSprite(this);
+			_battle->getMap()->cacheUnitSprite(this);
 	}
 }
 
@@ -1717,7 +1717,7 @@ void BattleUnit::playDeathSound(bool fleshwound) const
 {
 	//Log(LOG_INFO) << "BattleUnit::playDeathSound() id-" << _id;
 
-	if (_battleGame != nullptr) // check if hit by pre-battle hidden/power-source explosion.
+	if (_battle != nullptr) // check if hit by pre-battle hidden/power-source explosion.
 	{
 		int soundId;
 		if (_geoscapeSoldier != nullptr)
@@ -1758,8 +1758,8 @@ void BattleUnit::playDeathSound(bool fleshwound) const
 		if (soundId != -1)
 		{
 			//Log(LOG_INFO) << ". soundId= " << soundId;
-			_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-											->play(-1, _battleGame->getMap()->getSoundAngle(_pos));
+			_battle->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+											->play(-1, _battle->getMap()->getSoundAngle(_pos));
 		}
 	}
 }
@@ -1987,7 +1987,7 @@ bool BattleUnit::startAiming()
 		if (_visible == true)
 		{
 			_cacheInvalid = true;
-			_battleGame->getMap()->cacheUnitSprite(this);
+			_battle->getMap()->cacheUnitSprite(this);
 		}
 		return true;
 	}
@@ -2115,8 +2115,8 @@ int BattleUnit::getActionTu(
 		case BA_DROP:
 		{
 			const RuleInventory
-				* const handRule (_battleGame->getRuleset()->getInventoryRule(ST_RIGHTHAND)), // might be leftHand Lol ...
-				* const grdRule  (_battleGame->getRuleset()->getInventoryRule(ST_GROUND));
+				* const handRule (_battle->getRuleset()->getInventoryRule(ST_RIGHTHAND)), // might be leftHand Lol ...
+				* const grdRule  (_battle->getRuleset()->getInventoryRule(ST_GROUND));
 			return handRule->getCost(grdRule); // flat rate.
 		}
 
@@ -2462,7 +2462,7 @@ double BattleUnit::getAccuracy(
 		}
 	} // no penalty for dual-wielding 2x1h weapons
 
-	if (_battleGame->playerPanicHandled() == false) // berserk xCom agents get lowered accuracy.
+	if (_battle->playerPanicHandled() == false) // berserk xCom agents get lowered accuracy.
 		ret *= 0.68;
 
 	//Log(LOG_INFO) << "BattleUnit::getAccuracy() ret = " << ret;
@@ -3284,7 +3284,7 @@ BattleItem* BattleUnit::getGrenade() const
 bool BattleUnit::isGrenadeSuitable(const BattleItem* const grenade) const // private.
 {
 	if (grenade->getRules()->getDamageType() != DT_SMOKE
-		|| _battleGame->playerPanicHandled() == false)
+		|| _battle->playerPanicHandled() == false)
 	{
 		return true; // -> is player-panic allow smoke grenades.
 	}
@@ -3851,9 +3851,9 @@ void BattleUnit::morphine()
 	if (_health == 0												// just died. Use death animations
 		|| (isStunned() == true && _status != STATUS_UNCONSCIOUS))	// unless already unconscious.
 	{
-		_battleGame->checkCasualties(
-								_battleGame->getTacticalAction()->weapon->getRules(),
-								_battleGame->getTacticalAction()->actor);
+		_battle->checkCasualties(
+							_battle->getTacticalAction()->weapon->getRules(),
+							_battle->getTacticalAction()->actor);
 	}
 }
 
@@ -4293,7 +4293,7 @@ void BattleUnit::putdown(bool autokill)
 	_hostileUnitsThisTurn.clear();
 
 	// Clear this unit from all other BattleUnit's '_hostileUnits' & '_hostileUnitsThisTurn' vectors.
-	if (_battleGame != nullptr) // Check if death NOT by pre-battle hidden/power-source explosion.
+	if (_battle != nullptr) // Check if death NOT by pre-battle hidden/power-source explosion.
 	{
 		for (std::vector<BattleUnit*>::const_iterator
 				i  = _battleSave->getUnits()->begin();
@@ -4783,16 +4783,16 @@ size_t BattleUnit::getBattleOrder() const
 
 /**
  * Sets the BattleGame for this BattleUnit.
- * @param battleGame - pointer to BattleGame
+ * @param battle - pointer to BattleGame
  */
-void BattleUnit::setBattleForUnit(BattlescapeGame* const battleGame)
+void BattleUnit::setBattleForUnit(BattlescapeGame* const battle)
 {
-	_battleGame = battleGame;
+	_battle = battle;
 
 	if (_unitRule != nullptr
 		&& _unitRule->getMeleeWeapon() == "STR_FIST")
 	{
-		_fist = _battleGame->getFist();
+		_fist = _battle->getFist();
 	}
 }
 

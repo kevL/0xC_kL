@@ -148,10 +148,10 @@ struct PromotionInfo
 	/// Builds this struct.
 	PromotionInfo()
 		:
-			hasCO			(false),
-			totalColonels	(0),
-			totalCaptains	(0),
-			totalSergeants	(0)
+			hasCO          (false),
+			totalColonels  (0),
+			totalCaptains  (0),
+			totalSergeants (0)
 	{}
 };
 
@@ -216,17 +216,17 @@ private:
 		_income,
 		_maintenance;
 
-	std::vector<AlienBase*>				_alienBases;
-	std::vector<AlienMission*>			_activeMissions;
-	std::vector<Base*>					_bases;
-	std::vector<Country*>				_countries;
-	std::vector<TerrorSite*>			_terrorSites;
-	std::vector<TacticalStatistics*>	_tacticalStats;
-	std::vector<Region*>				_regions;
-	std::vector<ResearchGeneral*>		_research;
-	std::vector<SoldierDead*>			_deadSoldiers;
-	std::vector<Ufo*>					_ufos;
-	std::vector<Waypoint*>				_waypoints;
+	std::vector<AlienBase*>          _alienBases;
+	std::vector<AlienMission*>       _activeMissions;
+	std::vector<Base*>               _bases;
+	std::vector<Country*>            _countries;
+	std::vector<TerrorSite*>         _terrorSites;
+	std::vector<TacticalStatistics*> _tacticalStats;
+	std::vector<Region*>             _regions;
+	std::vector<ResearchGeneral*>    _research;
+	std::vector<SoldierDead*>        _deadSoldiers;
+	std::vector<Ufo*>                _ufos;
+	std::vector<Waypoint*>           _waypoints;
 
 
 	/// Gets the info of a specified save-file.

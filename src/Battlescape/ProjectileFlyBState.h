@@ -78,7 +78,7 @@ private:
 	public:
 		/// Creates a new ProjectileFlyB state.
 		ProjectileFlyBState(
-				BattlescapeGame* const battleGame,
+				BattlescapeGame* const battle,
 				BattleAction action,
 				Position origin = Position::POS_BOGUS);
 		/// Cleans up the ProjectileFlyB state.

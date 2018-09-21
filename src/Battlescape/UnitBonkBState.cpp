@@ -86,16 +86,16 @@ void UnitBonkBState::init()
 	{
 		default:
 		case FACTION_PLAYER:
-			interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_XCOM;
+			interval = _battle->getBattlescapeState()->STATE_INTERVAL_XCOM;
 			break;
 
 		case FACTION_HOSTILE:
 		case FACTION_NEUTRAL:
-			interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+			interval = _battle->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 	}
 
 	//Log(LOG_INFO) << "unitFallB: init() set interval= " << interval;
-	_battleGame->setStateInterval(interval);
+	_battle->setStateInterval(interval);
 }
 
 /**
@@ -131,7 +131,7 @@ void UnitBonkBState::think()
 				case STATUS_FLYING:
 					//Log(LOG_INFO) << ". . call keepWalking()";
 					(*i)->keepWalking(_battleSave->getTile(pos + Position::POS_BELOW), true);
-					_battleGame->getMap()->cacheUnitSprite(*i);
+					_battle->getMap()->cacheUnitSprite(*i);
 
 					++i;
 					continue;
@@ -234,7 +234,7 @@ void UnitBonkBState::think()
 											pos + Position::POS_BELOW);
 
 							(*i)->setCacheInvalid();
-							_battleGame->getMap()->cacheUnitSprite(*i);
+							_battle->getMap()->cacheUnitSprite(*i);
 
 							++i; // <- are you sure. why not let unit continue falling
 						}
@@ -247,29 +247,29 @@ void UnitBonkBState::think()
 								(*i)->burnTile((*i)->getUnitTile());
 
 								if ((*i)->getUnitStatus() != STATUS_STANDING)	// ie. burned a hole in the floor and fell through it
-									_battleGame->getPathfinding()->abortPath();	// TODO: trace this.
+									_battle->getPathfinding()->abortPath();	// TODO: trace this.
 							}
 
 							_te->calculateUnitLighting();
 
 							(*i)->setCacheInvalid();
-							_battleGame->getMap()->cacheUnitSprite(*i);
+							_battle->getMap()->cacheUnitSprite(*i);
 
 							if ((*i)->getFaction() == FACTION_PLAYER)
 								_te->calcFovTiles(*i);
 							_te->calcFovUnits_pos(pos, true);
 
-							_battleGame->checkProxyGrenades(*i);
+							_battle->checkProxyGrenades(*i);
 							// kL_add: Put checkForSilacoid() here!
 
 							if ((*i)->getUnitStatus() == STATUS_STANDING)
 							{
-								if (_battleGame->getTileEngine()->checkReactionFire(*i) == true)	// TODO: Not so sure I want RF on these guys ....
+								if (_battle->getTileEngine()->checkReactionFire(*i) == true)	// TODO: Not so sure I want RF on these guys ....
 								{
-									if ((*i)->getFaction() == _battleSave->getSide())				// Eg. this would need a vector to be accurate.
-										_battleSave->rfTriggerOffset(_battleGame->getMap()->getCamera()->getMapOffset());
+									if ((*i)->getFaction() == _battleSave->getSide())			// Eg. this would need a vector to be accurate.
+										_battleSave->rfTriggerOffset(_battle->getMap()->getCamera()->getMapOffset());
 
-									_battleGame->getPathfinding()->abortPath();						// In fact this whole state should be bypassed.
+									_battle->getPathfinding()->abortPath();						// In fact this whole state should be bypassed.
 								}
 								i = _unitsBonking->erase(i);
 							}
@@ -402,7 +402,7 @@ void UnitBonkBState::think()
 		}
 
 		//Log(LOG_INFO) << ". . checkCasualties()";
-		_battleGame->checkCasualties();
+		_battle->checkCasualties();
 	}
 
 
@@ -413,7 +413,7 @@ void UnitBonkBState::think()
 //		_tilesToFallInto.clear();
 //		_unitsUnder.clear();
 
-		_battleGame->popBattleState();
+		_battle->popBattleState();
 	}
 	//Log(LOG_INFO) << "UnitBonkBState::think() EXIT";
 }

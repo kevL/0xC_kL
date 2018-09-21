@@ -38,16 +38,16 @@ namespace OpenXcom
 
 /**
  * Sets up the UnitTurnBState.
- * @param battleGame	- pointer to the BattlescapeGame
- * @param action		- the current BattleAction
- * @param chargeTu		- true if there is TU-cost, false for reaction fire and panic (default true)
+ * @param battle	- pointer to the BattlescapeGame
+ * @param action	- the current BattleAction
+ * @param chargeTu	- true if there is TU-cost, false for reaction fire and panic (default true)
  */
 UnitTurnBState::UnitTurnBState(
-		BattlescapeGame* const battleGame,
+		BattlescapeGame* const battle,
 		BattleAction action,
 		bool chargeTu)
 	:
-		BattleState(battleGame, action),
+		BattleState(battle, action),
 		_unit(action.actor),
 		_chargeTu(chargeTu),
 		_turret(false),
@@ -125,18 +125,18 @@ void UnitTurnBState::init()
 
 					Uint32 interval;
 					if (_unit->getFaction() == FACTION_PLAYER)
-						interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_XCOM;
+						interval = _battle->getBattlescapeState()->STATE_INTERVAL_XCOM;
 					else
-						interval = _battleGame->getBattlescapeState()->STATE_INTERVAL_ALIEN;
+						interval = _battle->getBattlescapeState()->STATE_INTERVAL_ALIEN;
 
-					_battleGame->setStateInterval(interval);
+					_battle->setStateInterval(interval);
 					break;
 
 				case STATUS_STANDING: // try to open a door
 					if (_chargeTu == true && _action.type == BA_NONE)
 					{
 						int soundId;
-						switch (_battleGame->getTileEngine()->unitOpensDoor(_unit))
+						switch (_battle->getTileEngine()->unitOpensDoor(_unit))
 						{
 							case DR_WOOD_OPEN:
 								soundId = static_cast<int>(ResourcePack::DOOR_OPEN);
@@ -156,19 +156,19 @@ void UnitTurnBState::init()
 						}
 
 						if (soundId != -1)
-							_battleGame->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
-															->play(-1, _battleGame->getMap()->getSoundAngle(_unit->getPosition()));
+							_battle->getResourcePack()->getSound("BATTLE.CAT", static_cast<unsigned>(soundId))
+															->play(-1, _battle->getMap()->getSoundAngle(_unit->getPosition()));
 					} // no break;
 
 				default: // safety.
 					_unit->clearTurnDirection();
-					_battleGame->popBattleState();
+					_battle->popBattleState();
 			}
 			break;
 
 		default:
 			_unit->clearTurnDirection();
-			_battleGame->popBattleState();
+			_battle->popBattleState();
 	}
 }
 
@@ -182,7 +182,7 @@ void UnitTurnBState::think()
 	if (_chargeTu == true
 		&& _action.targeting == false
 		&& _unit->getFaction() != FACTION_PLAYER // <- no Reserve tolerance.
-		&& _battleGame->checkReservedTu(_unit, _tu) == false)
+		&& _battle->checkReservedTu(_unit, _tu) == false)
 	{
 		_unit->setUnitStatus(STATUS_STANDING);
 		pop = true;
@@ -190,17 +190,17 @@ void UnitTurnBState::think()
 	else if (_unit->expendTu(_tu) == true)
 	{
 		_unit->turn(_turret); // done-> STATUS_STANDING
-		_battleGame->getMap()->cacheUnitSprite(_unit);
+		_battle->getMap()->cacheUnitSprite(_unit);
 
 		bool spot;
 		switch (_unit->getFaction())
 		{
 			case FACTION_PLAYER:
-				_battleGame->getTileEngine()->calcFovTiles(_unit);
+				_battle->getTileEngine()->calcFovTiles(_unit);
 				// no break;
 			case FACTION_HOSTILE:
-				spot = _battleGame->playerPanicHandled() == true // short-circuit of calcFovUnits() is intentional.
-					&& _battleGame->getTileEngine()->calcFovUnits(_unit);
+				spot = _battle->playerPanicHandled() == true // short-circuit of calcFovUnits() is intentional.
+					&& _battle->getTileEngine()->calcFovUnits(_unit);
 				break;
 
 			case FACTION_NEUTRAL:
@@ -238,10 +238,10 @@ void UnitTurnBState::think()
 				pop = false;
 				if (_chargeTu == true && _unit->getFaction() == FACTION_PLAYER)
 				{
-					_battleGame->getBattlescapeState()->clearHostileIcons();
+					_battle->getBattlescapeState()->clearHostileIcons();
 
-					if (_battleGame->playerPanicHandled() == true)
-						_battleGame->getBattlescapeState()->updateHostileIcons();
+					if (_battle->playerPanicHandled() == true)
+						_battle->getBattlescapeState()->updateHostileIcons();
 				}
 		}
 	}
@@ -255,7 +255,7 @@ void UnitTurnBState::think()
 	if (pop == true)
 	{
 		_unit->clearTurnDirection();
-		_battleGame->popBattleState();
+		_battle->popBattleState();
 	}
 }
 
