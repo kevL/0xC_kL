@@ -69,7 +69,7 @@ namespace OpenXcom
 {
 
 const std::string
-	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq",
+	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq", // static ->
 	SavedGame::SAVE_AUTO_Tac = "_autotac_.aq",
 	SavedGame::SAVE_Quick    = "_quick_.aq",
 	SavedGame::SAVE_Ext      = "sav",

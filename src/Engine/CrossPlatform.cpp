@@ -1043,18 +1043,18 @@ bool naturalCompare(
 
 /**
  * Moves a file from one path to another replacing any existing file.
- * @param src	- reference to the source-path
- * @param dest	- reference to the destination-path
+ * @param src - reference to the source-path
+ * @param dst - reference to the destination-path
  * @return, true if the operation succeeded
  */
 bool moveFile(
 		const std::string& src,
-		const std::string& dest)
+		const std::string& dst)
 {
 #ifdef _WIN32
 	return (MoveFileExA(
 					src.c_str(),
-					dest.c_str(),
+					dst.c_str(),
 					MOVEFILE_REPLACE_EXISTING) != 0);
 #else
 //	return (rename(src.c_str(), dest.c_str()) == 0);
@@ -1065,7 +1065,7 @@ bool moveFile(
 	try
 	{
 		srcStream.open(src.c_str(), std::ios::binary);
-		destStream.open(dest.c_str(), std::ios::binary);
+		destStream.open(dst.c_str(), std::ios::binary);
 		destStream << srcStream.rdbuf();
 		srcStream.close();
 		destStream.close();

@@ -81,10 +81,10 @@ NextTurnState::NextTurnState(
 
 	if (_aliensPacified == false)
 	{
-		_txtTitle   = new Text(320, 17, 0,  68);
-		_txtTurn    = new Text(320, 17, 0,  93);
-		_txtSide    = new Text(320, 17, 0, 109);
-		_txtMessage = new Text(320, 17, 0, 149);
+		_txtTitle   = new Text(320, 16, 0,  68);
+		_txtTurn    = new Text(320, 16, 0,  93);
+		_txtSide    = new Text(320, 16, 0, 109);
+		_txtMessage = new Text(320, 16, 0, 149);
 	}
 	else
 		_txtMessage	= new Text();

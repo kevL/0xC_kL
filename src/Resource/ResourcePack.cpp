@@ -190,7 +190,7 @@ void ResourcePack::playMusic(
 		if (music != _muteMusic) // note: '_muteMusic'= nullptr
 		{
 			if (Options::musicAlwaysLoop == false
-				&& (trackType == OpenXcom::res_MUSIC_WIN		// never loop these tracks
+				&& (   trackType == OpenXcom::res_MUSIC_WIN		// never loop these tracks
 					|| trackType == OpenXcom::res_MUSIC_LOSE))	// unless the Option is true
 			{
 				loops = 1;

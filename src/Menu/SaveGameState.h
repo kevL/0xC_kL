@@ -48,7 +48,7 @@ class SaveGameState
 private:
 	static const int WAIT_TICKS = 5;
 
-	int _firstRun;
+	int _wait;
 	std::string _file;
 
 	OptionsOrigin _origin;

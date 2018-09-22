@@ -45,6 +45,8 @@
 //#include "../Engine/Options.h"
 #include "../Engine/RNG.h"
 
+#include "../Interface/Text.h"
+
 #include "../Resource/XcomResourcePack.h"
 
 #include "../Ruleset/MapDataSet.h"
@@ -1287,6 +1289,15 @@ int SavedBattleGame::getTurn() const
 bool SavedBattleGame::factionEndTurn()
 {
 	//Log(LOG_INFO) << "sbg:factionEndTurn() side= " << _side;
+
+	if (_side == FACTION_PLAYER) // ie. End of Player turn
+	{
+		std::string file = "tac_END_" + std::to_string(_turn);		// this Save is done auto at the end of Player's turn
+		_playSave->setLabel(L"tac_END_" + Text::intWide(_turn));	// vid BattlescapeGame::endTurn() for start of Player turn
+		_playSave->save(file + SavedGame::SAVE_ExtDot);
+	}
+
+
 	for (std::vector<BattleUnit*>::const_iterator	// set *all* units non-selectable
 			i  = _units.begin();					// Units of the upcoming turn's faction are
 			i != _units.end();						// set selectable at the end.
@@ -1341,14 +1352,14 @@ bool SavedBattleGame::factionEndTurn()
 	{
 		case FACTION_PLAYER:
 		{
+			++_turn;
+
 			std::fill(
 					_shuffleUnits.begin(),
 					_shuffleUnits.end(),
 					nullptr);
 
 			tileVolatiles(); // do Tile stuff
-
-			++_turn;
 
 			firstFactionUnit(FACTION_PLAYER); // set '_selectedUnit'
 
@@ -2137,7 +2148,7 @@ void SavedBattleGame::tileVolatiles() // private.
 
 	int var;
 	for (std::vector<Tile*>::const_iterator // TODO: Spread fires upward similar to smoke below_
-			i = tilesFired.begin();
+			i  = tilesFired.begin();
 			i != tilesFired.end();
 			++i)
 	{
@@ -2183,7 +2194,7 @@ void SavedBattleGame::tileVolatiles() // private.
 	}
 
 	for (std::vector<Tile*>::const_iterator
-			i = tilesSmoked.begin();
+			i  = tilesSmoked.begin();
 			i != tilesSmoked.end();
 			++i)
 	{

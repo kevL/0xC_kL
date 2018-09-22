@@ -1629,10 +1629,10 @@ void BattlescapeGame::endTurn() // private.
 	}
 	else
 	{
-		const bool battleComplete ((liveHostile == 0 && _battleSave->getObjectiveTilepartType() != OBJECTIVE_TILE)
-								 || livePlayer  <  1);
+		const bool finish ((liveHostile == 0 && _battleSave->getObjectiveTilepartType() != OBJECTIVE_TILE)
+						 || livePlayer  <  1);
 
-		if (battleComplete == false)
+		if (finish == false)
 		{
 			showInfoBoxQueue();
 			_battleState->updateSoldierInfo(false); // try no calcFov()
@@ -1662,10 +1662,10 @@ void BattlescapeGame::endTurn() // private.
 		{
 			_endTurnRequested = false;
 
-			switch (_battleSave->getSide())
+			switch (_battleSave->getSide()) // NOTE: This is the next turn's faction
 			{
 				case FACTION_NEUTRAL:
-					if (battleComplete == false) break;
+					if (finish == false) break;
 					// no break;
 				case FACTION_HOSTILE:
 				case FACTION_PLAYER:
@@ -1673,6 +1673,16 @@ void BattlescapeGame::endTurn() // private.
 																	_battleSave,
 																	_battleState,
 																	pacified));
+			}
+
+			if (_battleSave->getSide() == FACTION_PLAYER)	// this Save is done auto at the start of Player's turn
+			{												// vid SavedBattleGame::factionEndTurn() for end of Player's turn
+				const int turn (_battleSave->getTurn());
+				std::string file ("tac_BEG_" + std::to_string(turn));
+
+				SavedGame* const play (_battleSave->getSavedGame());
+				play->setLabel(L"tac_BEG_" + Text::intWide(turn));
+				play->save(file + SavedGame::SAVE_ExtDot);
 			}
 		}
 	}

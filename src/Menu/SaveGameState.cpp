@@ -68,7 +68,7 @@ SaveGameState::SaveGameState(
 		_origin(origin),
 		_file(file),
 		_type(SAVE_DEFAULT),
-		_firstRun(0)
+		_wait(0)
 {
 	build(palette);
 }
@@ -86,9 +86,9 @@ SaveGameState::SaveGameState(
 	:
 		_origin(origin),
 		_type(type),
-		_firstRun(0)
+		_wait(0)
 {
-	switch (type)
+	switch (_type)
 	{
 		case SAVE_QUICK:
 			_file = SavedGame::SAVE_Quick;
@@ -126,12 +126,9 @@ SaveGameState::~SaveGameState()
  */
 void SaveGameState::build(SDL_Color* const palette) // private.
 {
-//#ifdef _WIN32
-//	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() for Fkeys
-//#endif
 	_fullScreen = false;
 
-	_txtStatus = new Text(320, 17, 0, 92);
+	_txtStatus = new Text(320, 16, 0, 92);
 
 	setPalette(palette);
 
@@ -164,17 +161,17 @@ void SaveGameState::think()
 {
 	State::think();
 
-	if (_firstRun < WAIT_TICKS) // wait a bit to Ensure this gets drawn properly
-		++_firstRun;
+	if (_wait < WAIT_TICKS) // wait a bit to Ensure this gets drawn properly
+		++_wait;
 	else
 	{
-		_game->popState();
+		_game->popState(); // this.
 		_game->getCursor()->setVisible();
 
 		switch (_type)
 		{
-			case SAVE_DEFAULT: // manual save - close the Save screen.
-				_game->popState();
+			case SAVE_DEFAULT:		// ordinary save from ListSaveState
+				_game->popState();	// close the ListSave screen.
 
 				if (_game->getSavedGame()->isIronman() == false) // And the Pause screen too. what - why should an Ironballs game get passed in here as type SAVE_DEFAULT.
 					_game->popState();
@@ -196,7 +193,7 @@ void SaveGameState::think()
 									Options::getUserFolder() + backup,
 									Options::getUserFolder() + _file) == false)
 			{
-				throw Exception("Save backed up in " + backup);
+				throw Exception("Save has been backed up as " + backup);
 			}
 
 			if (_type == SAVE_IRONMAN_QUIT)

@@ -213,14 +213,14 @@ void ListSaveState::saveGame() // private.
 
 	hideElements();
 
-	std::wstring wst (_edtSave->getText());
+	std::wstring label (_edtSave->getText());
 
-	if (wst.empty() == true && _game->getSavedGame()->isIronman() == true)
-		wst = SavedGame::SAVE_Ironballs;
+	if (label.empty() == true && _game->getSavedGame()->isIronman() == true)
+		label = SavedGame::SAVE_Ironballs;
 
-	_game->getSavedGame()->setLabel(wst);
+	_game->getSavedGame()->setLabel(label);
 
-	std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(wst)));
+	std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(label)));
 
 	if (_selected > 0)
 	{
