@@ -47,7 +47,9 @@ class LoadGameState
 {
 
 private:
-	int _firstRun;
+	static const int WAIT_TICKS = 5;
+
+	int _wait;
 	std::string _file;
 
 	Text* _txtStatus;

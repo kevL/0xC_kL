@@ -106,10 +106,11 @@ void ListLoadState::lstPress(Action* action)
 			if (fade == true)
 				_game->getResourcePack()->fadeMusic(_game, 1123);
 
-			bool confirmLoad (false);
+			bool verified (true);
 			for (std::vector<std::string>::const_iterator
-					i  = _saves[_lstSaves->getSelectedRow()].rulesets.begin();
-					i != _saves[_lstSaves->getSelectedRow()].rulesets.end();
+					i  = _saves[_lstSaves->getSelectedRow()].rulesets.begin(),
+					j  = _saves[_lstSaves->getSelectedRow()].rulesets.end();
+					i != j;
 					++i)
 			{
 				if (std::find(
@@ -117,12 +118,12 @@ void ListLoadState::lstPress(Action* action)
 							Options::rulesets.end(),
 							*i) == Options::rulesets.end())
 				{
-					confirmLoad = true;
+					verified = false;
 					break;
 				}
 			}
 
-			if (confirmLoad == false)
+			if (verified == true)
 			{
 				hideElements();
 				_game->pushState(new LoadGameState(

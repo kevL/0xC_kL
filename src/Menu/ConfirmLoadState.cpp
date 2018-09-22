@@ -53,21 +53,21 @@ ConfirmLoadState::ConfirmLoadState(
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 216, 100, 52, 50, POPUP_BOTH);
-	_txtText	= new Text(180, 60, 70, 60);
+	_window  = new Window(this, 216, 100, 52, 50, POPUP_BOTH);
+	_txtText = new Text(180, 60, 70, 60);
 
-	_btnNo		= new TextButton(60, 20, 65, 122);
-	_btnYes		= new TextButton(60, 20, 195, 122);
+	_btnNo  = new TextButton(60, 20, 65, 122);
+	_btnYes = new TextButton(60, 20, 195, 122);
 
 	setInterface(
 			"saveMenus",
 			false,
 			_origin == OPT_BATTLESCAPE);
 
-	add(_window,	"confirmLoad", "saveMenus");
-	add(_btnYes,	"confirmLoad", "saveMenus");
-	add(_btnNo,		"confirmLoad", "saveMenus");
-	add(_txtText,	"confirmLoad", "saveMenus");
+	add(_window,  "confirmLoad", "saveMenus");
+	add(_btnYes,  "confirmLoad", "saveMenus");
+	add(_btnNo,   "confirmLoad", "saveMenus");
+	add(_txtText, "confirmLoad", "saveMenus");
 
 	centerSurfaces();
 
@@ -75,14 +75,14 @@ ConfirmLoadState::ConfirmLoadState(
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnYes->setText(tr("STR_YES"));
-	_btnYes->onMouseClick(		static_cast<ActionHandler>(&ConfirmLoadState::btnYesClick));
-	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLoadState::btnYesClick),
-								Options::keyOk);
-	_btnYes->onKeyboardPress(	static_cast<ActionHandler>(&ConfirmLoadState::btnYesClick),
-								Options::keyOkKeypad);
+	_btnYes->onMouseClick(   static_cast<ActionHandler>(&ConfirmLoadState::btnYesClick));
+	_btnYes->onKeyboardPress(static_cast<ActionHandler>(&ConfirmLoadState::btnYesClick),
+							 Options::keyOk);
+	_btnYes->onKeyboardPress(static_cast<ActionHandler>(&ConfirmLoadState::btnYesClick),
+							 Options::keyOkKeypad);
 
 	_btnNo->setText(tr("STR_NO"));
-	_btnNo->onMouseClick(	static_cast<ActionHandler>(&ConfirmLoadState::btnNoClick));
+	_btnNo->onMouseClick(   static_cast<ActionHandler>(&ConfirmLoadState::btnNoClick));
 	_btnNo->onKeyboardPress(static_cast<ActionHandler>(&ConfirmLoadState::btnNoClick),
 							Options::keyCancel);
 

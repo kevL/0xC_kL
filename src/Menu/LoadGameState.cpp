@@ -65,7 +65,7 @@ LoadGameState::LoadGameState(
 		_origin(origin),
 		_file(file),
 		_parent(parent),
-		_firstRun(0)
+		_wait(0)
 {
 	build(palette);
 }
@@ -82,7 +82,7 @@ LoadGameState::LoadGameState(
 		SDL_Color* const palette)
 	:
 		_origin(origin),
-		_firstRun(0)
+		_wait(0)
 {
 	switch (type) // can't auto-load ironman games
 	{
@@ -116,12 +116,9 @@ LoadGameState::~LoadGameState()
  */
 void LoadGameState::build(SDL_Color* const palette) // private.
 {
-//#ifdef _WIN32
-//	MessageBeep(MB_OK); // <- done in BattlescapeState::handle() or GeoscapeState::handle() for Fkeys
-//#endif
 	_fullScreen = false;
 
-	_txtStatus = new Text(320, 17, 0, 92);
+	_txtStatus = new Text(320, 16, 0, 92);
 
 	setPalette(palette);
 
@@ -169,11 +166,11 @@ void LoadGameState::think()
 {
 	State::think();
 
-	if (_firstRun < 10) // wait a bit to Ensure this gets drawn properly
-		++_firstRun;
+	if (_wait < WAIT_TICKS) // wait a bit to Ensure this gets drawn properly
+		++_wait;
 	else
 	{
-		_game->popState();
+		_game->popState(); // this.
 		_game->getCursor()->setVisible();
 
 		SavedGame* const playSave (new SavedGame(_game->getRuleset()));
