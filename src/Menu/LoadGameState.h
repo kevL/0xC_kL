@@ -71,14 +71,13 @@ private:
 				ListLoadState* const parent);
 		LoadGameState(
 				OptionsOrigin origin,
-				SaveType type,
 				SDL_Color* const palette);
 		/// Cleans up the LoadGameState.
 		~LoadGameState();
 
-		/// Validates the save.
+		/// Ignores quick-loads without a save available.
 		void init() override;
-		/// Loads the save.
+		/// Loads a clicked entry.
 		void think() override;
 };
 

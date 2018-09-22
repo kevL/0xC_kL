@@ -56,6 +56,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the SaveGame screen.
+ * @note Used by ListSaveState::saveGame() only.
  * @param origin	- section that originated this state
  * @param file		- reference to name of the save-file without extension
  * @param palette	- pointer to parent-state palette
@@ -75,6 +76,7 @@ SaveGameState::SaveGameState(
 
 /**
  * Initializes all the elements in the SaveGame screen.
+ * @note Typically used for quicksaves, autosaves, and ironballs saves.
  * @param origin	- section that originated this state
  * @param type		- type of quick-save being used
  * @param palette	- pointer to parent-state palette

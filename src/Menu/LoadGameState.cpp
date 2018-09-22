@@ -51,6 +51,7 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the LoadGame screen.
+ * @note Used by ListLoadState::lstPress() and ConfirmLoadState::btnYesClick() only.
  * @param origin	- section that originated this state
  * @param file		- reference to the name of the save-file without extension
  * @param palette	- pointer to parent-state palette
@@ -72,31 +73,19 @@ LoadGameState::LoadGameState(
 
 /**
  * Initializes all the elements in the LoadGame screen.
+ * @note Used by GeoscapeState/BattlescapeState::handle() only for loading a quicksave.
  * @param origin	- section that originated this state
- * @param type		- type of quick-load being used
  * @param palette	- pointer to parent-state palette
  */
 LoadGameState::LoadGameState(
 		OptionsOrigin origin,
-		SaveType type,
 		SDL_Color* const palette)
 	:
 		_origin(origin),
+		_file(SavedGame::SAVE_Quick),
+		_parent(nullptr),
 		_wait(0)
 {
-	switch (type) // can't auto-load ironman games
-	{
-		case SAVE_QUICK:
-			_file = SavedGame::SAVE_Quick;
-			break;
-
-		case SAVE_AUTO_GEOSCAPE:
-			_file = SavedGame::SAVE_AUTO_Geo;
-			break;
-
-		case SAVE_AUTO_BATTLESCAPE:
-			_file = SavedGame::SAVE_AUTO_Tac;
-	}
 	build(palette);
 }
 
@@ -145,14 +134,13 @@ void LoadGameState::build(SDL_Color* const palette) // private.
 }
 
 /**
- * Ignores quick-loads without a save available.
+ * Ignores quickloads without a save available.
  */
 void LoadGameState::init()
 {
 	State::init();
 
-	if (_file == SavedGame::SAVE_Quick
-		&& CrossPlatform::fileExists(Options::getUserFolder() + _file) == false)
+	if (CrossPlatform::fileExists(Options::getUserFolder() + _file) == false)
 	{
 		_game->popState();
 		_game->getCursor()->setVisible();
@@ -160,7 +148,7 @@ void LoadGameState::init()
 }
 
 /**
- * Loads the specified entry.
+ * Loads a clicked entry.
  */
 void LoadGameState::think()
 {
@@ -170,7 +158,7 @@ void LoadGameState::think()
 		++_wait;
 	else
 	{
-		_game->popState(); // this.
+		_game->popState();
 		_game->getCursor()->setVisible();
 
 		SavedGame* const playSave (new SavedGame(_game->getRuleset()));
@@ -217,7 +205,7 @@ void LoadGameState::think()
 		catch (Exception& e)
 		{
 			Log(LOG_INFO) << "LoadGame error";
-			_parent->hideElements(false);
+			if (_parent != nullptr) _parent->hideElements(false);
 
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
@@ -247,7 +235,7 @@ void LoadGameState::think()
 		catch (YAML::Exception& e)
 		{
 			Log(LOG_INFO) << "LoadGame error YAML";
-			_parent->hideElements(false);
+			if (_parent != nullptr) _parent->hideElements(false);
 
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;

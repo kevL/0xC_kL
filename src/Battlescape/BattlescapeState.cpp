@@ -1797,7 +1797,6 @@ inline void BattlescapeState::handle(Action* action)
 						beep = true;
 						_game->pushState(new LoadGameState(
 														OPT_BATTLESCAPE,
-														SAVE_QUICK,
 														_palette));
 					}
 				}

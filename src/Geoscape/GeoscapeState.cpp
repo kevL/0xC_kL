@@ -1067,7 +1067,6 @@ void GeoscapeState::handle(Action* action)
 					beep = true;
 					popupGeo(new LoadGameState(
 										OPT_GEOSCAPE,
-										SAVE_QUICK,
 										_palette));
 				}
 			}
