@@ -62,15 +62,15 @@ BriefingState::BriefingState(
 		const Craft* const craft,
 		const Base* const base)
 {
-	_window			= new Window(this);
-	_txtTitle		= new Text(288, 17, 16, 22);
+	_window      = new Window(this);
+	_txtTitle    = new Text(288, 17, 16, 22);
 
-	_txtTarget		= new Text(288, 17, 16, 39);
-	_txtCraft		= new Text(288, 17, 16, 56);
+	_txtTarget   = new Text(288, 17, 16, 39);
+	_txtCraft    = new Text(288, 17, 16, 56);
 
-	_txtBriefing	= new Text(288, 97, 16, 75);
+	_txtBriefing = new Text(288, 97, 16, 75);
 
-	_btnOk			= new TextButton(288, 16, 16, 177);
+	_btnOk       = new TextButton(288, 16, 16, 177);
 
 
 	std::string type (_game->getSavedGame()->getBattleSave()->getTacticalType());
@@ -136,18 +136,18 @@ BriefingState::BriefingState(
 	setPalette(PAL_GEOSCAPE, backpal);
 	_window->setBackground(_game->getResourcePack()->getSurface(bg));
 
-	add(_window,		"window",	"briefing");
-	add(_txtTitle,		"text",		"briefing");
-	add(_txtTarget,		"text",		"briefing");
-	add(_txtCraft,		"text",		"briefing");
-	add(_txtBriefing,	"text",		"briefing");
-	add(_btnOk,			"button",	"briefing");
+	add(_window,      "window", "briefing");
+	add(_txtTitle,    "text",   "briefing");
+	add(_txtTarget,   "text",   "briefing");
+	add(_txtCraft,    "text",   "briefing");
+	add(_txtBriefing, "text",   "briefing");
+	add(_btnOk,       "button", "briefing");
 
 	centerSurfaces();
 
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&BriefingState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&BriefingState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BriefingState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&BriefingState::btnOkClick),
@@ -196,7 +196,7 @@ BriefingState::BriefingState(
 
 	if (_txtTarget->getVisible() == false)
 	{
-		_txtCraft->setY(_txtCraft->getY() - 16);
+		_txtCraft   ->setY(_txtCraft->getY()    - 16);
 		_txtBriefing->setY(_txtBriefing->getY() - 16);
 	}
 
@@ -230,28 +230,27 @@ void BriefingState::btnOkClick(Action*)
 										liveHostile,
 										livePlayer);
 
-	switch (liveHostile)
+	if (liveHostile == 0)
 	{
-		case 0:
-			Options::baseXResolution = Options::baseXGeoscape;
-			Options::baseYResolution = Options::baseYGeoscape;
+		Options::baseXResolution = Options::baseXGeoscape;
+		Options::baseYResolution = Options::baseYGeoscape;
 
-			delete battleState;
-			_game->pushState(new AliensCrashState());
-			break;
+		delete battleState;
+		_game->pushState(new AliensCrashState());
+	}
+	else
+	{
+		Options::baseXResolution = Options::baseXBattlescape;
+		Options::baseYResolution = Options::baseYBattlescape;
 
-		default:
-			Options::baseXResolution = Options::baseXBattlescape;
-			Options::baseYResolution = Options::baseYBattlescape;
-
-			_game->pushState(battleState);
-			_game->getSavedGame()->getBattleSave()->setBattleState(battleState);
-			_game->pushState(new NextTurnState(
-											_game->getSavedGame()->getBattleSave(),
-											battleState));
-			_game->pushState(new InventoryState(
-											false,
-											battleState));
+		_game->pushState(battleState);
+		_game->getSavedGame()->getBattleSave()->setBattleState(battleState);
+		_game->pushState(new NextTurnState(
+										_game->getSavedGame()->getBattleSave(),
+										battleState));
+		_game->pushState(new InventoryState(
+										false,
+										battleState));
 	}
 
 	_game->getScreen()->resetDisplay(false);

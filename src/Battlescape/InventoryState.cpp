@@ -727,6 +727,10 @@ void InventoryState::btnOkClick(Action*)
 				if ((*i)->getFaction() == FACTION_PLAYER)
 					(*i)->prepareUnit(true);
 			}
+
+			SavedGame* const playSave (_battleSave->getSavedGame());
+			playSave->setLabel(L"tac_MISSION");
+			playSave->save("tac_MISSION" + SavedGame::SAVE_ExtDot);
 		}
 	}
 }
