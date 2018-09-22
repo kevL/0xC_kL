@@ -58,10 +58,10 @@ struct compareSaveName
 	explicit compareSaveName(bool rev)
 		:
 			_reverse(rev)
-			{}
+	{}
 
 	///
-	bool operator()(
+	bool operator () (
 			const SaveInfo& a,
 			const SaveInfo& b) const
 	{
@@ -69,8 +69,8 @@ struct compareSaveName
 			return CrossPlatform::naturalCompare(
 											a.label,
 											b.label);
-		else
-			return _reverse ? b.reserved : a.reserved;
+
+		return _reverse ? b.reserved : a.reserved;
 	}
 };
 
@@ -87,17 +87,17 @@ struct compareSaveTimestamp
 	explicit compareSaveTimestamp(bool rev)
 		:
 			_reverse(rev)
-			{}
+	{}
 
 	///
-	bool operator()(
+	bool operator () (
 			const SaveInfo& a,
 			const SaveInfo& b) const
 	{
 		if (a.reserved == b.reserved)
 			return a.timestamp < b.timestamp;
-		else
-			return _reverse ? b.reserved : a.reserved;
+
+		return _reverse ? b.reserved : a.reserved;
 	}
 };
 
@@ -122,43 +122,43 @@ ListGamesState::ListGamesState(
 {
 	_fullScreen = false;
 
-	_window		= new Window(this, 320, 200, 0, 0, POPUP_BOTH);
+	_window     = new Window(this, 320, 200, 0, 0, POPUP_BOTH);
 
-	_txtTitle	= new Text(310, 16, 5,  8);
-	_txtDelete	= new Text(310,  9, 5, 24);
+	_txtTitle   = new Text(310, 16, 5,  8);
+	_txtDelete  = new Text(310,  9, 5, 24);
 
-	_txtName	= new Text(176, 9,  16, 33);
-	_txtDate	= new Text( 84, 9, 204, 33);
-	_sortName	= new ArrowButton(ARROW_NONE, 11, 8,  16, 33);
-	_sortDate	= new ArrowButton(ARROW_NONE, 11, 8, 204, 33);
+	_txtName    = new Text(176, 9,  16, 33);
+	_txtDate    = new Text( 84, 9, 204, 33);
+	_sortName   = new ArrowButton(ARROW_NONE, 11, 8,  16, 33);
+	_sortDate   = new ArrowButton(ARROW_NONE, 11, 8, 204, 33);
 
-	_lstSaves	= new TextList(285, 121, 16, 42);
+	_lstSaves   = new TextList(285, 121, 16, 42);
 
 	_txtDetails = new Text(288, 9, 16, 165);
 
-	_btnCancel	= new TextButton(134, 16, 16, 177);
+	_btnCancel  = new TextButton(134, 16, 16, 177);
 
 	setInterface(
 			"geoscape",
 			true,
 			_origin == OPT_BATTLESCAPE);
 
-	add(_window,		"window",	"saveMenus");
-	add(_txtTitle,		"text",		"saveMenus");
-	add(_txtDelete,		"text",		"saveMenus");
-	add(_txtName,		"text",		"saveMenus");
-	add(_txtDate,		"text",		"saveMenus");
-	add(_sortName,		"text",		"saveMenus");
-	add(_sortDate,		"text",		"saveMenus");
-	add(_lstSaves,		"list",		"saveMenus");
-	add(_txtDetails,	"text",		"saveMenus");
-	add(_btnCancel,		"button",	"saveMenus");
+	add(_window,     "window", "saveMenus");
+	add(_txtTitle,   "text",   "saveMenus");
+	add(_txtDelete,  "text",   "saveMenus");
+	add(_txtName,    "text",   "saveMenus");
+	add(_txtDate,    "text",   "saveMenus");
+	add(_sortName,   "text",   "saveMenus");
+	add(_sortDate,   "text",   "saveMenus");
+	add(_lstSaves,   "list",   "saveMenus");
+	add(_txtDetails, "text",   "saveMenus");
+	add(_btnCancel,  "button", "saveMenus");
 
 
 	_window->setBackground(_game->getResourcePack()->getSurface("BACK01.SCR"));
 
 	_btnCancel->setText(tr("STR_CANCEL_UC"));
-	_btnCancel->onMouseClick(	static_cast<ActionHandler>(&ListGamesState::btnCancelClick));
+	_btnCancel->onMouseClick(   static_cast<ActionHandler>(&ListGamesState::btnCancelClick));
 	_btnCancel->onKeyboardPress(static_cast<ActionHandler>(&ListGamesState::btnCancelKeypress),
 								Options::keyCancel);
 
@@ -175,9 +175,9 @@ ListGamesState::ListGamesState(
 	_lstSaves->setColumns(3, 188,60,29);
 	_lstSaves->setBackground(_window);
 	_lstSaves->setSelectable();
-	_lstSaves->onMouseOver(	static_cast<ActionHandler>(&ListGamesState::lstSavesMouseOver));
-	_lstSaves->onMouseOut(	static_cast<ActionHandler>(&ListGamesState::lstSavesMouseOut));
-	_lstSaves->onMousePress(static_cast<ActionHandler>(&ListGamesState::lstSavesPress));
+	_lstSaves->onMouseOver( static_cast<ActionHandler>(&ListGamesState::lstMouseOver));
+	_lstSaves->onMouseOut(  static_cast<ActionHandler>(&ListGamesState::lstMouseOut));
+	_lstSaves->onMousePress(static_cast<ActionHandler>(&ListGamesState::lstPress));
 
 	_txtDetails->setWordWrap();
 	_txtDetails->setText(tr("STR_DETAILS").arg(L""));
@@ -309,7 +309,7 @@ void ListGamesState::updateList() // virtual.
 	Uint8 color (_lstSaves->getSecondaryColor());
 
 	for (std::vector<SaveInfo>::const_iterator
-			i = _saves.begin();
+			i  = _saves.begin();
 			i != _saves.end();
 			++i, ++r)
 	{
@@ -351,7 +351,7 @@ void ListGamesState::btnCancelKeypress(Action*)
  * Shows the details of the currently hovered entry.
  * @param action - pointer to an Action
  */
-void ListGamesState::lstSavesMouseOver(Action*)
+void ListGamesState::lstMouseOver(Action*)
 {
 	if (_editMode == false)
 	{
@@ -367,7 +367,7 @@ void ListGamesState::lstSavesMouseOver(Action*)
 /**
  * Hides details of hovered entry.
  */
-void ListGamesState::lstSavesMouseOut(Action*)
+void ListGamesState::lstMouseOut(Action*)
 {
 	if (_editMode == false)
 		_txtDetails->setText(tr("STR_DETAILS").arg(L""));
@@ -377,7 +377,7 @@ void ListGamesState::lstSavesMouseOut(Action*)
  * Asks to confirm deletion of the pressed entry.
  * @param action - pointer to an Action
  */
-void ListGamesState::lstSavesPress(Action* action) // virtual.
+void ListGamesState::lstPress(Action* action) // virtual.
 {
 	if (_editMode == false
 		&& action->getDetails()->button.button == SDL_BUTTON_RIGHT
@@ -434,11 +434,12 @@ void ListGamesState::sortDateClick(Action*) // private.
 }
 
 /**
- * Disables sorting.
+ * Enables/disables sorting the list.
+ * @param sortable - true if sortable (default true)
  */
-void ListGamesState::disableSort() // protected.
+void ListGamesState::setSortable(bool sortable) // protected.
 {
-	_sortable = false;
+	_sortable = sortable;
 }
 
 }

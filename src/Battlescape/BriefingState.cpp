@@ -196,7 +196,7 @@ BriefingState::BriefingState(
 
 	if (_txtTarget->getVisible() == false)
 	{
-		_txtCraft   ->setY(_txtCraft->getY()    - 16);
+		_txtCraft   ->setY(_txtCraft   ->getY() - 16);
 		_txtBriefing->setY(_txtBriefing->getY() - 16);
 	}
 

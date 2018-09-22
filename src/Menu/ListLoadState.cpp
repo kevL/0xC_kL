@@ -66,7 +66,7 @@ ListLoadState::~ListLoadState()
  * Loads the pressed entry.
  * @param action - pointer to an Action
  */
-void ListLoadState::lstSavesPress(Action* action)
+void ListLoadState::lstPress(Action* action)
 {
 	switch (action->getDetails()->button.button)
 	{
@@ -140,7 +140,7 @@ void ListLoadState::lstSavesPress(Action* action)
 		}
 
 		case SDL_BUTTON_RIGHT:
-			ListGamesState::lstSavesPress(action); // -> delete file
+			ListGamesState::lstPress(action); // -> delete file
 	}
 }
 

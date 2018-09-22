@@ -95,7 +95,7 @@ void ListSaveState::updateList()
  * Edits the selected entry.
  * @param action - pointer to an Action
  */
-void ListSaveState::lstSavesPress(Action* action)
+void ListSaveState::lstPress(Action* action)
 {
 //	if (action->getDetails()->button.button == SDL_BUTTON_RIGHT && _edtSave->isFocused())
 //	{
@@ -148,12 +148,12 @@ void ListSaveState::lstSavesPress(Action* action)
 				_edtSave->setVisible();
 				_edtSave->setFocusEdit(); // NOTE: modal=false allows keypress Enter to save.
 
-				disableSort();
+				setSortable(false);
 				break;
 			}
 
 			case SDL_BUTTON_RIGHT:
-				ListGamesState::lstSavesPress(action); // -> delete file
+				ListGamesState::lstPress(action); // -> delete file
 		}
 	}
 }
@@ -173,6 +173,8 @@ void ListSaveState::keySavePress(Action* action)
 		}
 		else if (action->getDetails()->key.keysym.sym == Options::keyCancel)
 		{
+			setSortable();
+
 			_jogRodent = true;
 
 			_btnSaveGame->setVisible(false);

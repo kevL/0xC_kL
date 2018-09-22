@@ -88,8 +88,8 @@ private:
 
 		std::vector<SaveInfo> _saves;
 
-		/// Disables the sort buttons.
-		void disableSort();
+		/// Enables/disables sorting the list.
+		void setSortable(bool sortable = true);
 
 
 
@@ -116,11 +116,11 @@ private:
 			void btnCancelKeypress(Action* action);
 
 			/// Handler for moving the mouse over a List item.
-			void lstSavesMouseOver(Action* action);
+			void lstMouseOver(Action* action);
 			/// Handler for moving the mouse outside the List borders.
-			void lstSavesMouseOut(Action* action);
+			void lstMouseOut(Action* action);
 			/// Handler for clicking the List.
-			virtual void lstSavesPress(Action* action);
+			virtual void lstPress(Action* action);
 };
 
 }

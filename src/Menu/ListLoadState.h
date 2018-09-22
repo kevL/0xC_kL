@@ -40,7 +40,7 @@ class ListLoadState
 		~ListLoadState();
 
 		/// Handler for clicking the List.
-		void lstSavesPress(Action* action) override;
+		void lstPress(Action* action) override;
 
 		/// Hides textual elements of this state.
 		void hideElements(bool hide = true);

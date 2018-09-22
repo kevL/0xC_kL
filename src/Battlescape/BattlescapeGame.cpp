@@ -1680,9 +1680,9 @@ void BattlescapeGame::endTurn() // private.
 				const int turn (_battleSave->getTurn());
 				std::string file ("tac_BEG_" + std::to_string(turn));
 
-				SavedGame* const play (_battleSave->getSavedGame());
-				play->setLabel(L"tac_BEG_" + Text::intWide(turn));
-				play->save(file + SavedGame::SAVE_ExtDot);
+				SavedGame* const playSave (_battleSave->getSavedGame());
+				playSave->setLabel(L"tac_BEG_" + Text::intWide(turn));
+				playSave->save(file + SavedGame::SAVE_ExtDot);
 			}
 		}
 	}

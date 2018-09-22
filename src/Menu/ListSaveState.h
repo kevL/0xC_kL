@@ -70,7 +70,7 @@ private:
 		/// Handler for clicking on the save-button.
 		void btnSaveClick(Action *action);
 		/// Handler for pressing the List.
-		void lstSavesPress(Action* action) override;
+		void lstPress(Action* action) override;
 };
 
 }
