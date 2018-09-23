@@ -41,9 +41,6 @@ class ListLoadState
 
 		/// Handler for clicking the List.
 		void lstPress(Action* action) override;
-
-		/// Hides textual elements of this state.
-		void hideElements(bool hide = true);
 };
 
 }

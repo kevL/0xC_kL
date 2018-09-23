@@ -44,8 +44,8 @@ namespace OpenXcom
 ListSaveState::ListSaveState(OptionsOrigin origin)
 	:
 		ListGamesState(origin, 1u, false),
-		_selected(-1),
-		_selectedPre(-1)
+		_sel(-1),
+		_sel0(-1)
 {
 	_edtSave     = new TextEdit(this, 168, 9);
 	_btnSaveGame = new TextButton(134, 16, 170, 177);
@@ -116,21 +116,21 @@ void ListSaveState::lstPress(Action* action)
 				_lstSaves->setScrollable(false);
 				_lstSaves->setSelectable(false);
 
-				_selectedPre = _selected;
+				_sel0 = _sel;
 				const size_t sel (_lstSaves->getSelectedRow());
-				_selected = static_cast<int>(sel);
+				_sel = static_cast<int>(sel);
 
-				switch (_selectedPre)
+				switch (_sel0)
 				{
 					case -1: // first click on the list
 						break;
 
 					case 0:
-						_lstSaves->setCellText(static_cast<size_t>(_selectedPre), 0u, tr("STR_NEW_SAVED_GAME_SLOT"));
+						_lstSaves->setCellText(static_cast<size_t>(_sel0), 0u, tr("STR_NEW_SAVED_GAME_SLOT"));
 						break;
 
 					default:
-						_lstSaves->setCellText(static_cast<size_t>(_selectedPre), 0u, _label);
+						_lstSaves->setCellText(static_cast<size_t>(_sel0), 0u, _label);
 				}
 
 				_label = _lstSaves->getCellText(sel, 0u);
@@ -144,7 +144,7 @@ void ListSaveState::lstPress(Action* action)
 				_edtSave->setText(_label);
 
 				_edtSave->setX(_lstSaves->getColumnX(0u));
-				_edtSave->setY(_lstSaves->getRowY(static_cast<size_t>(_selected)));
+				_edtSave->setY(_lstSaves->getRowY(static_cast<size_t>(_sel)));
 				_edtSave->setVisible();
 				_edtSave->setFocusEdit(); // NOTE: modal=false allows keypress Enter to save.
 
@@ -198,7 +198,7 @@ void ListSaveState::keySavePress(Action* action)
  */
 void ListSaveState::btnSaveClick(Action*)
 {
-	if (_editMode == true && _selected != -1)
+	if (_editMode == true && _sel != -1)
 		saveGame();
 }
 
@@ -209,11 +209,11 @@ void ListSaveState::btnSaveClick(Action*)
 void ListSaveState::saveGame() // private.
 {
 //	_editMode = false;					// safeties. Should not need these three <- ie.
-//	_btnSaveGame->setVisible(false);	// SaveGameState() below_ pops current state(s) all the way back to play.
+//	_btnSaveGame->setVisible(false);	// SaveGameState() below_ pops stacked State(s) all the way back to play.
 //	_lstSaves->setSelectable();
 //	_lstSaves->setScrollable();			// don't need this either ....
 
-	hideElements();
+	hideList();
 
 	std::wstring label (_edtSave->getText());
 
@@ -224,16 +224,16 @@ void ListSaveState::saveGame() // private.
 
 	std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(label)));
 
-	if (_selected > 0)
+	if (_sel > 0)
 	{
-		std::string filePre (_saves[static_cast<size_t>(_selected - 1)].file);
-		if (filePre != file + SavedGame::SAVE_ExtDot)
+		std::string file0 (_info[static_cast<size_t>(_sel - 1)].file);
+		if (file0 != file + SavedGame::SAVE_ExtDot)
 		{
 			while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_ExtDot) == true)
 				file += "_";
 
 			CrossPlatform::moveFile(
-								Options::getUserFolder() + filePre,
+								Options::getUserFolder() + file0,
 								Options::getUserFolder() + file + SavedGame::SAVE_ExtDot);
 		}
 	}
@@ -248,21 +248,15 @@ void ListSaveState::saveGame() // private.
 }
 
 /**
- * Hides textual elements of this State.
+ * Hides/shows the list.
+ * @param hide - true to hide all elements of the state (default true)
  */
-void ListSaveState::hideElements() // private.
+void ListSaveState::hideList(bool hide) // override
 {
-	_txtTitle	->setVisible(false);
-	_txtDelete	->setVisible(false);
-	_txtName	->setVisible(false);
-	_txtDate	->setVisible(false);
-	_sortName	->setVisible(false);
-	_sortDate	->setVisible(false);
-	_lstSaves	->setVisible(false);
-	_edtSave	->setVisible(false);
-	_txtDetails	->setVisible(false);
-	_btnCancel	->setVisible(false);
-	_btnSaveGame->setVisible(false);
+	ListGamesState::hideList(hide);
+
+	_edtSave	->setVisible(!hide);
+	_btnSaveGame->setVisible(!hide);
 }
 
 }

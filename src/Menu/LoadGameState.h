@@ -47,7 +47,7 @@ class LoadGameState
 {
 
 private:
-	static const int WAIT_TICKS = 5;
+	static const int WAIT_TICKS = 3;
 
 	int _wait;
 	std::string _file;

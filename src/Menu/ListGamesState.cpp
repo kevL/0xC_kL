@@ -209,7 +209,7 @@ void ListGamesState::init()
 
 	try
 	{
-		_saves = SavedGame::getList(
+		_info = SavedGame::getList(
 								_game->getLanguage(),
 								_autoquick);
 		sortList(Options::saveOrder);
@@ -275,26 +275,26 @@ void ListGamesState::sortList(SaveSort order) // private.
 	{
 		case SORT_NAME_ASC:
 			std::sort(
-					_saves.begin(),
-					_saves.end(),
+					_info.begin(),
+					_info.end(),
 					compareSaveName(false));
 			break;
 		case SORT_NAME_DESC:
 			std::sort(
-					_saves.rbegin(),
-					_saves.rend(),
+					_info.rbegin(),
+					_info.rend(),
 					compareSaveName(true));
 			break;
 		case SORT_DATE_ASC:
 			std::sort(
-					_saves.begin(),
-					_saves.end(),
+					_info.begin(),
+					_info.end(),
 					compareSaveTimestamp(false));
 			break;
 		case SORT_DATE_DESC:
 			std::sort(
-					_saves.rbegin(),
-					_saves.rend(),
+					_info.rbegin(),
+					_info.rend(),
 					compareSaveTimestamp(true));
 	}
 	updateList();
@@ -309,8 +309,8 @@ void ListGamesState::updateList() // virtual.
 	Uint8 color (_lstSaves->getSecondaryColor());
 
 	for (std::vector<SaveInfo>::const_iterator
-			i  = _saves.begin();
-			i != _saves.end();
+			i  = _info.begin();
+			i != _info.end();
 			++i, ++r)
 	{
 		_lstSaves->addRow(
@@ -357,8 +357,8 @@ void ListGamesState::lstMouseOver(Action*)
 	{
 		std::wstring wst;
 		const int sel (static_cast<int>(_lstSaves->getSelectedRow()) - static_cast<int>(_firstValid));
-		if (sel > -1 && sel < static_cast<int>(_saves.size()))
-			wst = _saves[static_cast<size_t>(sel)].details;
+		if (sel > -1 && sel < static_cast<int>(_info.size()))
+			wst = _info[static_cast<size_t>(sel)].details;
 
 		_txtDetails->setText(tr("STR_DETAILS").arg(wst));
 	}
@@ -385,7 +385,7 @@ void ListGamesState::lstPress(Action* action) // virtual.
 	{
 		_game->pushState(new DeleteSaveState(
 										_origin,
-										_saves[_lstSaves->getSelectedRow() - _firstValid].file));
+										_info[_lstSaves->getSelectedRow() - _firstValid].file));
 	}
 }
 
@@ -440,6 +440,23 @@ void ListGamesState::sortDateClick(Action*) // private.
 void ListGamesState::setSortable(bool sortable) // protected.
 {
 	_sortable = sortable;
+}
+
+/**
+ * Hides/shows the list.
+ * @param hide - true to hide all elements of the state (default true)
+ */
+void ListGamesState::hideList(bool hide) // virtual.
+{
+	_txtTitle  ->setVisible(!hide);
+	_txtDelete ->setVisible(!hide);
+	_txtName   ->setVisible(!hide);
+	_txtDate   ->setVisible(!hide);
+	_sortName  ->setVisible(!hide);
+	_sortDate  ->setVisible(!hide);
+	_lstSaves  ->setVisible(!hide);
+	_txtDetails->setVisible(!hide);
+	_btnCancel ->setVisible(!hide);
 }
 
 }

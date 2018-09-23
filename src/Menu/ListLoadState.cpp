@@ -83,7 +83,7 @@ void ListLoadState::lstPress(Action* action)
 					break;
 
 				case OPT_GEOSCAPE:
-					switch (_saves[_lstSaves->getSelectedRow()].mode)
+					switch (_info[_lstSaves->getSelectedRow()].mode)
 					{
 						case SM_BATTLESCAPE:
 							fade = true;
@@ -94,7 +94,7 @@ void ListLoadState::lstPress(Action* action)
 					break;
 
 				case OPT_BATTLESCAPE:
-					switch (_saves[_lstSaves->getSelectedRow()].mode)
+					switch (_info[_lstSaves->getSelectedRow()].mode)
 					{
 						case SM_GEOSCAPE:
 							fade = true;
@@ -108,8 +108,8 @@ void ListLoadState::lstPress(Action* action)
 
 			bool verified (true);
 			for (std::vector<std::string>::const_iterator
-					i  = _saves[_lstSaves->getSelectedRow()].rulesets.begin(),
-					j  = _saves[_lstSaves->getSelectedRow()].rulesets.end();
+					i  = _info[_lstSaves->getSelectedRow()].rulesets.begin(),
+					j  = _info[_lstSaves->getSelectedRow()].rulesets.end();
 					i != j;
 					++i)
 			{
@@ -125,17 +125,17 @@ void ListLoadState::lstPress(Action* action)
 
 			if (verified == true)
 			{
-				hideElements();
+				hideList();
 				_game->pushState(new LoadGameState(
 												_origin,
-												_saves[_lstSaves->getSelectedRow()].file,
+												_info[_lstSaves->getSelectedRow()].file,
 												_palette,
 												this));
 			}
 			else
 				_game->pushState(new ConfirmLoadState(
 												_origin,
-												_saves[_lstSaves->getSelectedRow()].file,
+												_info[_lstSaves->getSelectedRow()].file,
 												this));
 			break;
 		}
@@ -143,24 +143,6 @@ void ListLoadState::lstPress(Action* action)
 		case SDL_BUTTON_RIGHT:
 			ListGamesState::lstPress(action); // -> delete file
 	}
-}
-
-/**
- * Hides textual elements of this State.
- * @note Called from LoadGameState, possibly through ConfirmLoadState.
- * @param hide - true to hide elements (default true)
- */
-void ListLoadState::hideElements(bool hide)
-{
-	_txtTitle  ->setVisible(!hide);
-	_txtDelete ->setVisible(!hide);
-	_txtName   ->setVisible(!hide);
-	_txtDate   ->setVisible(!hide);
-	_sortName  ->setVisible(!hide);
-	_sortDate  ->setVisible(!hide);
-	_lstSaves  ->setVisible(!hide);
-	_txtDetails->setVisible(!hide);
-	_btnCancel ->setVisible(!hide);
 }
 
 }

@@ -86,11 +86,10 @@ private:
 		TextList* _lstSaves;
 		Window* _window;
 
-		std::vector<SaveInfo> _saves;
+		std::vector<SaveInfo> _info;
 
 		/// Enables/disables sorting the list.
 		void setSortable(bool sortable = true);
-
 
 
 		public:
@@ -121,6 +120,9 @@ private:
 			void lstMouseOut(Action* action);
 			/// Handler for clicking the List.
 			virtual void lstPress(Action* action);
+
+			/// Hides/shows the list.
+			virtual void hideList(bool hide = true);
 };
 
 }

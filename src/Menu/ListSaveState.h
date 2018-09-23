@@ -42,8 +42,8 @@ private:
 	static const Uint8 COLOR_EDIT = 160u; // slate in Geoscape/brown in Battlescape.
 
 	int // TODO: These should be size_t's; indepth consideration required ....
-		_selectedPre,
-		_selected;
+		_sel0,
+		_sel;
 
 	std::wstring _label;
 
@@ -52,8 +52,6 @@ private:
 
 	/// Saves the current game.
 	void saveGame();
-	/// Hides textual elements of this state.
-	void hideElements();
 
 
 	public:
@@ -71,6 +69,9 @@ private:
 		void btnSaveClick(Action *action);
 		/// Handler for pressing the List.
 		void lstPress(Action* action) override;
+
+		/// Hides/shows the list.
+		void hideList(bool hide = true) override;
 };
 
 }

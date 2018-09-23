@@ -107,7 +107,7 @@ ConfirmLoadState::~ConfirmLoadState()
  */
 void ConfirmLoadState::btnYesClick(Action*)
 {
-	_parent->hideElements();
+	_parent->hideList();
 
 	_game->popState();
 	_game->pushState(new LoadGameState(

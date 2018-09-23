@@ -154,7 +154,7 @@ void LoadGameState::think()
 {
 	State::think();
 
-	if (_wait < WAIT_TICKS) // wait a bit to Ensure this gets drawn properly
+	if (_wait < WAIT_TICKS) // persist the text to Ensure that player sees it
 		++_wait;
 	else
 	{
@@ -205,7 +205,7 @@ void LoadGameState::think()
 		catch (Exception& e)
 		{
 			Log(LOG_INFO) << "LoadGame error";
-			if (_parent != nullptr) _parent->hideElements(false);
+			if (_parent != nullptr) _parent->hideList(false);
 
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;
@@ -235,7 +235,7 @@ void LoadGameState::think()
 		catch (YAML::Exception& e)
 		{
 			Log(LOG_INFO) << "LoadGame error YAML";
-			if (_parent != nullptr) _parent->hideElements(false);
+			if (_parent != nullptr) _parent->hideList(false);
 
 			Log(LOG_ERROR) << e.what();
 			std::wostringstream error;

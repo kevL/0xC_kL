@@ -76,7 +76,7 @@ SaveGameState::SaveGameState(
 
 /**
  * Initializes all the elements in the SaveGame screen.
- * @note Typically used for quicksaves, autosaves, and ironballs saves.
+ * @note Used for quicksaves, autosaves, and ironballs saves.
  * @param origin	- section that originated this state
  * @param type		- type of quick-save being used
  * @param palette	- pointer to parent-state palette
@@ -111,6 +111,22 @@ SaveGameState::SaveGameState(
 
 	build(palette);
 }
+/* enum SaveType
+{
+	SAVE_DEFAULT,			// 0
+	SAVE_QUICK,				// 1
+	SAVE_AUTO_GEOSCAPE,		// 2
+	SAVE_AUTO_BATTLESCAPE,	// 3
+	SAVE_IRONMAN,			// 4
+	SAVE_IRONMAN_QUIT		// 5
+}; */
+/*	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq"
+	SavedGame::SAVE_AUTO_Tac = "_autotac_.aq"
+	SavedGame::SAVE_Quick    = "_quick_.aq"
+	SavedGame::SAVE_Ext      = "sav"
+	SavedGame::SAVE_ExtDot   = ".sav"
+	SavedGame::SAVE_Ext_AQ   = "aq"
+	SavedGame::SAVE_BakDot   = ".bak" */
 
 /**
  * dTor.
@@ -163,7 +179,7 @@ void SaveGameState::think()
 {
 	State::think();
 
-	if (_wait < WAIT_TICKS) // wait a bit to Ensure this gets drawn properly
+	if (_wait < WAIT_TICKS) // persist the text to Ensure that player sees it
 		++_wait;
 	else
 	{

@@ -310,7 +310,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 
 /**
  * Gets the info of a specified save-file.
- * @param file - reference a save by filename
+ * @param file - reference a save by file+ext
  * @param lang - pointer to the loaded Language
  * @return, the SaveInfo (SavedGame.h)
  */
@@ -322,32 +322,33 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 	const YAML::Node doc (YAML::LoadFile(path));
 
 	SaveInfo info;
-	info.file = file;
 
-	if (info.file == SAVE_Quick)
+	if (file == SAVE_Quick) // TODO: Put the label in the YAML file.
 	{
+		info.reserved = true;
 		info.label = lang->getString("STR_QUICK_SAVE_SLOT");
-		info.reserved = true;
 	}
-	else if (info.file == SAVE_AUTO_Geo)
+	else if (file == SAVE_AUTO_Geo)
 	{
+		info.reserved = true;
 		info.label = lang->getString("STR_AUTO_SAVE_GEOSCAPE_SLOT");
-		info.reserved = true;
 	}
-	else if (info.file == SAVE_AUTO_Tac)
+	else if (file == SAVE_AUTO_Tac)
 	{
-		info.label = lang->getString("STR_AUTO_SAVE_BATTLESCAPE_SLOT");
 		info.reserved = true;
+		info.label = lang->getString("STR_AUTO_SAVE_BATTLESCAPE_SLOT");
 	}
 	else
 	{
+		info.reserved = false;
+
 		if (doc["label"])
 			info.label = Language::utf8ToWstr(doc["label"].as<std::string>());
 		else
 			info.label = Language::fsToWstr(CrossPlatform::noExt(file));
-
-		info.reserved = false;
 	}
+
+	info.file = file;
 
 	info.timestamp = CrossPlatform::getDateModified(path);
 	const std::pair<std::wstring, std::wstring> timePair (CrossPlatform::timeToString(info.timestamp));
