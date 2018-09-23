@@ -1542,7 +1542,7 @@ bool AlienBAIState::findFirePosition() // private.
 		RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
 		for (std::vector<Position>::const_iterator
-				i = tileSearch.begin();
+				i  = tileSearch.begin();
 				i != tileSearch.end();
 				++i)
 		{
@@ -1561,7 +1561,14 @@ bool AlienBAIState::findFirePosition() // private.
 															_unit) == true)
 				{
 					_pf->calculatePath(_unit, pos);
-					if (_pf->getStartDirection() != -1) // && _pf->getTuCostTotalPf() <= _unit->getTu()
+					int dir (_pf->getStartDirection());
+					if (_traceAI) {
+						Log(LOG_INFO) << ". dir= " << dir;
+						Log(LOG_INFO) << ". _pf->getTuCostTotalPf()= " << _pf->getTuCostTotalPf();
+						Log(LOG_INFO) << ". _unit->getTu()= " << _unit->getTu();
+					}
+
+					if (dir != -1) // && _pf->getTuCostTotalPf() <= _unit->getTu() // NOTE: _reachableAttack takes care of tu consideration
 					{
 						scoreTest = BASE_SUCCESS_SYSTEMATIC - tallySpotters(pos) * EXPOSURE_PENALTY;
 						scoreTest += _unit->getTu() - _pf->getTuCostTotalPf();
@@ -1569,8 +1576,12 @@ bool AlienBAIState::findFirePosition() // private.
 						if (_unitAggro->checkViewSector(pos) == false)
 							scoreTest += 15;
 
+						if (_traceAI) Log(LOG_INFO) << ". . scoreTest= " << scoreTest << " / score= " << score;
+
 						if (scoreTest > score)
 						{
+							if (_traceAI) Log(LOG_INFO) << ". . . pos " << pos;
+
 							score = scoreTest;
 							_attackAction->posTarget = pos;
 //							_attackAction->firstTU = _pf->getTuFirst();

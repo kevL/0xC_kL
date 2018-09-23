@@ -1763,10 +1763,10 @@ bool Pathfinding::isBlockedTile( // private.
 
 						case FACTION_HOSTILE:
 						case FACTION_NEUTRAL: // TODO: Perhaps use (exposed<intelligence) instead of hostileUnitsThisTurn.
-							if (std::find(
-									_unit->getHostileUnitsThisTurn().begin(),
-									_unit->getHostileUnitsThisTurn().end(),
-									blockUnit) != _unit->getHostileUnitsThisTurn().end())
+//							if (std::find(
+//									_unit->getHostileUnitsThisTurn().begin(),				// TEST
+//									_unit->getHostileUnitsThisTurn().end(),					// TODO: The ai hangs (loops) if there is a blocking unit that it hasn't spotted
+//									blockUnit) != _unit->getHostileUnitsThisTurn().end())	// after AlienBAIState::findFirePosition() - do Move. So fix the AI ...
 							{
 								return true;
 							}
