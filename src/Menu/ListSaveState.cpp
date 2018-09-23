@@ -223,28 +223,32 @@ void ListSaveState::saveGame() // private.
 	_game->getSavedGame()->setLabel(label);
 
 	std::string file (CrossPlatform::sanitizeFilename(Language::wstrToFs(label)));
+	const std::string  fe (file + SavedGame::SAVE_ExtDot);
+	const std::string pfe (Options::getUserFolder() + fe);
 
 	if (_sel > 0)
 	{
-		std::string file0 (_info[static_cast<size_t>(_sel - 1)].file);
-		if (file0 != file + SavedGame::SAVE_ExtDot)
+		const std::string fileinfo (_info[static_cast<size_t>(_sel - 1)].file);
+		if (fileinfo != fe)
 		{
-			while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_ExtDot) == true)
+			while (CrossPlatform::fileExists(pfe) == true)
 				file += "_";
 
 			CrossPlatform::moveFile(
-								Options::getUserFolder() + file0,
-								Options::getUserFolder() + file + SavedGame::SAVE_ExtDot);
+								Options::getUserFolder() + fileinfo,
+								pfe);
 		}
 	}
 	else
 	{
-		while (CrossPlatform::fileExists(Options::getUserFolder() + file + SavedGame::SAVE_ExtDot) == true)
+		while (CrossPlatform::fileExists(pfe) == true)
 			file += "_";
 	}
 
-	file += SavedGame::SAVE_ExtDot;
-	_game->pushState(new SaveGameState(_origin, file, _palette));
+	_game->pushState(new SaveGameState(
+									_origin,
+									file + SavedGame::SAVE_ExtDot,
+									_palette));
 }
 
 /**

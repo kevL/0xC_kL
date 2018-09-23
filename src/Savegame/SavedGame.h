@@ -257,9 +257,9 @@ private:
 			SAVE_AUTO_Geo,
 			SAVE_AUTO_Tac,
 			SAVE_Quick,
+			SAVE_Ext_AQ,
 			SAVE_Ext,
 			SAVE_ExtDot,
-			SAVE_Ext_AQ,
 			SAVE_BakDot;
 		static const std::wstring SAVE_Ironballs;
 

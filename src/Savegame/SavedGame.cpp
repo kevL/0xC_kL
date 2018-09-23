@@ -72,10 +72,10 @@ const std::string
 	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq", // static ->
 	SavedGame::SAVE_AUTO_Tac = "_autotac_.aq",
 	SavedGame::SAVE_Quick    = "_quick_.aq",
-	SavedGame::SAVE_Ext      = "sav",
+	SavedGame::SAVE_Ext_AQ   = "aq",			// for getting folder contents
+	SavedGame::SAVE_Ext      = "sav",			// for getting folder contents
 	SavedGame::SAVE_ExtDot   = ".sav",
-	SavedGame::SAVE_Ext_AQ   = "aq",
-	SavedGame::SAVE_BakDot   = ".bak";
+	SavedGame::SAVE_BakDot   = ".try";			// for backup during a regular save
 
 const std::wstring SavedGame::SAVE_Ironballs = L"_ironballs_"; // default save-label if user doesn't supply a label
 
@@ -88,7 +88,7 @@ struct IsResearchRule
 	const RuleResearch* _resRule;
 	explicit IsResearchRule(const RuleResearch* const resRule);
 
-	bool operator ()(const ResearchProject* const project) const;
+	bool operator () (const ResearchProject* const project) const;
 };
 ///
 IsResearchRule::IsResearchRule(const RuleResearch* const resRule)
@@ -96,7 +96,7 @@ IsResearchRule::IsResearchRule(const RuleResearch* const resRule)
 		_resRule(resRule)
 {}
 ///
-bool IsResearchRule::operator ()(const ResearchProject* const project) const
+bool IsResearchRule::operator () (const ResearchProject* const project) const
 {
 	return (project->getRules() == _resRule);
 }
@@ -110,7 +110,7 @@ struct IsManufactureRule
 	const RuleManufacture* _mfRule;
 	explicit IsManufactureRule(const RuleManufacture* const mfRule);
 
-	bool operator ()(const ManufactureProject* const project) const;
+	bool operator () (const ManufactureProject* const project) const;
 };
 ///
 IsManufactureRule::IsManufactureRule(const RuleManufacture* const mfRule)
@@ -118,7 +118,7 @@ IsManufactureRule::IsManufactureRule(const RuleManufacture* const mfRule)
 		_mfRule(mfRule)
 {}
 ///
-bool IsManufactureRule::operator ()(const ManufactureProject* const project) const
+bool IsManufactureRule::operator () (const ManufactureProject* const project) const
 {
 	return (project->getRules() == _mfRule);
 }
@@ -310,7 +310,7 @@ std::vector<SaveInfo> SavedGame::getList( // static.
 
 /**
  * Gets the info of a specified save-file.
- * @param file - reference a save by file+ext
+ * @param file - reference a save by file w/ extension
  * @param lang - pointer to the loaded Language
  * @return, the SaveInfo (SavedGame.h)
  */
@@ -318,8 +318,8 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 		const std::string& file,
 		const Language* const lang)
 {
-	const std::string path (Options::getUserFolder() + file);
-	const YAML::Node doc (YAML::LoadFile(path));
+	const std::string pfe (Options::getUserFolder() + file);
+	const YAML::Node doc (YAML::LoadFile(pfe));
 
 	SaveInfo info;
 
@@ -350,7 +350,7 @@ SaveInfo SavedGame::getSaveInfo( // private/static.
 
 	info.file = file;
 
-	info.timestamp = CrossPlatform::getDateModified(path);
+	info.timestamp = CrossPlatform::getDateModified(pfe);
 	const std::pair<std::wstring, std::wstring> timePair (CrossPlatform::timeToString(info.timestamp));
 	info.isoDate = timePair.first;
 	info.isoTime = timePair.second;

@@ -58,7 +58,7 @@ namespace OpenXcom
  * Initializes all the elements in the SaveGame screen.
  * @note Used by ListSaveState::saveGame() only.
  * @param origin	- section that originated this state
- * @param file		- reference to name of the save-file without extension
+ * @param file		- reference to name of the save-file with extension
  * @param palette	- pointer to parent-state palette
  */
 SaveGameState::SaveGameState(
@@ -211,7 +211,7 @@ void SaveGameState::think()
 									Options::getUserFolder() + backup,
 									Options::getUserFolder() + _file) == false)
 			{
-				throw Exception("Save has been backed up as " + backup);
+				throw Exception("SaveGameState::think() has backed up the file as " + backup);
 			}
 
 			if (_type == SAVE_IRONMAN_QUIT)
