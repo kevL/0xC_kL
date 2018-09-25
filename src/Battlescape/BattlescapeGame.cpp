@@ -1675,15 +1675,19 @@ void BattlescapeGame::endTurn() // private.
 																	pacified));
 			}
 
-			if (_battleSave->getSide() == FACTION_PLAYER)	// this Save is done auto at the start of Player's turn
-			{												// vid SavedBattleGame::factionEndTurn() for end of Player's turn
-				const int turn (_battleSave->getTurn());
-				std::string file ("tac_BEG_" + std::to_string(turn));
+			if (_battleSave->getSide() == FACTION_PLAYER)
+			{
+//				const int turn (_battleSave->getTurn());
+//				std::string file ("tac_BEG_" + std::to_string(turn));
 
 				SavedGame* const playSave (_battleSave->getSavedGame());
-				playSave->setLabel(L"tac_BEG_" + Text::intWide(turn));
-				playSave->save(file + SavedGame::SAVE_ExtDot);
-			}
+
+//				playSave->setLabel(L"tac_BEG_" + Text::intWide(turn));
+//				playSave->save(file + SavedGame::SAVE_ExtDot);
+
+				playSave->setLabel(SavedGame::SAVELABEL_TacTurnBeg);	// this Save is done auto at the start of Player's turn
+				playSave->save(SavedGame::SAVE_TacTurnBeg);				// vid SavedBattleGame::factionEndTurn() for end of Player's turn
+			}															// vid InventoryState::btnOkClick() for start of tactical
 		}
 	}
 }

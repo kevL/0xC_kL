@@ -218,7 +218,7 @@ void ListSaveState::saveGame() // private.
 	std::wstring label (_edtSave->getText());
 
 	if (label.empty() == true && _game->getSavedGame()->isIronman() == true)
-		label = SavedGame::SAVE_Ironballs;
+		label = SavedGame::SAVELABEL_Ironballs;
 
 	_game->getSavedGame()->setLabel(label);
 

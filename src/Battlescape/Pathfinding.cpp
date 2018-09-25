@@ -1766,7 +1766,7 @@ bool Pathfinding::isBlockedTile( // private.
 //							if (std::find(
 //									_unit->getHostileUnitsThisTurn().begin(),				// TEST
 //									_unit->getHostileUnitsThisTurn().end(),					// TODO: The ai hangs (loops) if there is a blocking unit that it hasn't spotted
-//									blockUnit) != _unit->getHostileUnitsThisTurn().end())	// after AlienBAIState::findFirePosition() - do Move. So fix the AI ...
+//									blockUnit) != _unit->getHostileUnitsThisTurn().end())	// after AlienBAIState::findFirePosition() -> do Move. So fix the AI ...
 							{
 								return true;
 							}

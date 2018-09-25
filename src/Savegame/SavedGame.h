@@ -260,8 +260,15 @@ private:
 			SAVE_Ext_AQ,
 			SAVE_Ext,
 			SAVE_ExtDot,
-			SAVE_BakDot;
-		static const std::wstring SAVE_Ironballs;
+			SAVE_BakDot,
+			SAVE_TacMission,
+			SAVE_TacTurnBeg,
+			SAVE_TacTurnEnd;
+		static const std::wstring
+			SAVELABEL_Ironballs,
+			SAVELABEL_TacMission,
+			SAVELABEL_TacTurnBeg,
+			SAVELABEL_TacTurnEnd;
 
 		/// Creates a SavedGame.
 		explicit SavedGame(const Ruleset* const rules);

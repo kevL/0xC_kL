@@ -1292,10 +1292,13 @@ bool SavedBattleGame::factionEndTurn()
 
 	if (_side == FACTION_PLAYER) // ie. End of Player turn
 	{
-		std::string file = "tac_END_" + std::to_string(_turn);		// this Save is done auto at the end of Player's turn
-		_playSave->setLabel(L"tac_END_" + Text::intWide(_turn));	// vid BattlescapeGame::endTurn() for start of Player turn
-		_playSave->save(file + SavedGame::SAVE_ExtDot);
-	}
+//		std::string file = "tac_END_" + std::to_string(_turn);
+//		_playSave->setLabel(L"tac_END_" + Text::intWide(_turn));
+//		_playSave->save(file + SavedGame::SAVE_ExtDot);
+
+		_playSave->setLabel(SavedGame::SAVELABEL_TacTurnEnd);	// this Save is done auto at the end of Player's turn
+		_playSave->save(SavedGame::SAVE_TacTurnEnd);			// vid BattlescapeGame::endTurn() for start of Player turn
+	}															// vid InventoryState::btnOkClick() for start of tactical
 
 
 	for (std::vector<BattleUnit*>::const_iterator	// set *all* units non-selectable

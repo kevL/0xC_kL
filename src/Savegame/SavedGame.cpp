@@ -68,16 +68,23 @@
 namespace OpenXcom
 {
 
-const std::string
-	SavedGame::SAVE_AUTO_Geo = "_autogeo_.aq", // static ->
-	SavedGame::SAVE_AUTO_Tac = "_autotac_.aq",
-	SavedGame::SAVE_Quick    = "_quick_.aq",
-	SavedGame::SAVE_Ext_AQ   = "aq",			// for getting folder contents
-	SavedGame::SAVE_Ext      = "sav",			// for getting folder contents
-	SavedGame::SAVE_ExtDot   = ".sav",
-	SavedGame::SAVE_BakDot   = ".try";			// for backup during a regular save
+const std::string // static. ->
+	SavedGame::SAVE_AUTO_Geo   = "_autogeo_.aq",
+	SavedGame::SAVE_AUTO_Tac   = "_autotac_.aq",
+	SavedGame::SAVE_Quick      = "_quick_.aq",
+	SavedGame::SAVE_Ext_AQ     = "aq",			// for getting folder contents
+	SavedGame::SAVE_Ext        = "sav",			// for getting folder contents
+	SavedGame::SAVE_ExtDot     = ".sav",
+	SavedGame::SAVE_BakDot     = ".try",			// for backup during a regular save
+	SavedGame::SAVE_TacMission = "tac_MISSION.sav",
+	SavedGame::SAVE_TacTurnBeg = "tac_BEG.sav",
+	SavedGame::SAVE_TacTurnEnd = "tac_END.sav";
 
-const std::wstring SavedGame::SAVE_Ironballs = L"_ironballs_"; // default save-label if user doesn't supply a label
+const std::wstring // static. ->
+	SavedGame::SAVELABEL_Ironballs        = L"_ironballs_", // default save-label if user doesn't supply a label
+	SavedGame::SAVELABEL_TacMission = L"tac_MISSION",
+	SavedGame::SAVELABEL_TacTurnBeg = L"tac_BEG",
+	SavedGame::SAVELABEL_TacTurnEnd = L"tac_END";
 
 
 /// ** FUNCTOR ***

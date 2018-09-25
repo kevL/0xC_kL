@@ -729,9 +729,9 @@ void InventoryState::btnOkClick(Action*)
 			}
 
 			SavedGame* const playSave (_battleSave->getSavedGame());
-			playSave->setLabel(L"tac_MISSION");
-			playSave->save("tac_MISSION" + SavedGame::SAVE_ExtDot);
-		}
+			playSave->setLabel(SavedGame::SAVELABEL_TacMission);	// this Save is done auto at the start of tactical
+			playSave->save(SavedGame::SAVE_TacMission);				// vid BattlescapeGame::endTurn() for start of Player turn
+		}															// vid SavedBattleGame::factionEndTurn() for end of Player's turn
 	}
 }
 
