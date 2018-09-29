@@ -1605,11 +1605,26 @@ bool Craft::interceptGroundTarget() const
 
 /**
  * Gets this Craft's cost for tactical.
+ * @note Is used to predict the operational cost of sending this craft on a
+ * tactical mission.
  * @return, cost
  */
-int Craft::getOperationalExpense() const
+int Craft::getOperationalCost() const
 {
-	return _base->getOperationalExpenses(this) + _crRule->getSoldierCapacity() * 1000;
+	int cost (_crRule->getSoldierCapacity() * 1000); // the craft's tactical cost
+
+	for (std::vector<Soldier*>::const_iterator
+			i = _base->getSoldiers()->begin(), j = _base->getSoldiers()->end();
+			i != j;
+			++i)
+	{
+		if ((*i)->getCraft() == this)
+		{
+			cost += (*i)->getRankCost(false); // onboard soldiers' cost
+		}
+	}
+
+	return (cost + getQtyVehicles(true) * 750); // onboard supports' cost
 }
 
 /**

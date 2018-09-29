@@ -960,7 +960,7 @@ en-US:
   STR_ELECTRO_FLARE: "Flare"
   STR_ELECTRO_FLARE_UFOPEDIA: "This compact device produces a bright flare light when it is thrown. This will highlight enemy units in the vicinity of the electro-flare during night time missions."
   STR_MONTHLY_COSTS: "Costs"
-  STR_CRAFT_RENTAL: "Craft Rental"
+  STR_CRAFT_RENTAL: "Craft Rental/Maintenance"
   STR_SALARIES: "Salaries"
   STR_BASE_MAINTENANCE: "Base Maintenance"
   STR_TOTAL: "Total"

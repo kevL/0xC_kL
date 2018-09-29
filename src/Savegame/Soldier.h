@@ -219,8 +219,8 @@ private:
 		/// Automatically renames the Soldier according to his/her current statistics.
 		void autoStat();
 
-		/// Gets this Soldier's wage for battles or salary.
-		int getSoldierExpense(bool tactical = true) const;
+		/// Gets the Soldier's wage-bonus for salary or tactical.
+		int getRankCost(bool salary = true) const;
 };
 
 }

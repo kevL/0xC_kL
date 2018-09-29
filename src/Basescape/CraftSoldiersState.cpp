@@ -231,7 +231,7 @@ void CraftSoldiersState::extra() const // private.
 	_btnInventory->setVisible(vis && _craft->getCraftItems()->isEmpty() == false);
 
 	if (_isQuickBattle == false)
-		_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_craft->getOperationalExpense())));
+		_txtCost->setText(tr("STR_COST_").arg(Text::formatCurrency(_craft->getOperationalCost())));
 }
 
 /**

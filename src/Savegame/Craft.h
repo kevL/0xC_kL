@@ -283,7 +283,7 @@ private:
 		bool interceptGroundTarget() const;
 
 		/// Gets the Craft's cost for tactical.
-		int getOperationalExpense() const;
+		int getOperationalCost() const;
 
 		/// Sets a craft-weapon disabled or enabled on the Craft.
 		void setWeaponDisabled(int hardpoint, bool disabled);

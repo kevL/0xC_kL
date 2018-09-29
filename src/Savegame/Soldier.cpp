@@ -855,15 +855,18 @@ void Soldier::autoStat()
 }
 
 /**
- * Gets this Soldier's wage for battles or salary.
- * @param tactical - true for tactical-cost, false for monthly salary (default true)
+ * Gets this Soldier's wage-bonus for salary or tactical.
+ * @param salary - true for monthly salary, else tactical-cost (default true)
  */
-int Soldier::getSoldierExpense(bool tactical) const
+int Soldier::getRankCost(bool salary) const
 {
-	if (tactical == true)
-		return static_cast<int>(_rank) * 1500;
+	int factor;
+	if (salary == true)
+		factor = 5000;
+	else
+		factor = 1500;
 
-	return static_cast<int>(_rank) * 5000;
+	return static_cast<int>(_rank) * factor;
 }
 
 }

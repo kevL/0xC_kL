@@ -49,44 +49,44 @@ namespace OpenXcom
  */
 MonthlyCostsState::MonthlyCostsState(Base* base)
 {
-	_window			= new Window(this);
+	_window         = new Window(this);
 
-	_txtTitle		= new Text(300, 17, 10, 8);
+	_txtTitle       = new Text(300, 17, 10, 8);
 
-	_txtUnitCost	= new Text(62, 9, 140, 26);
-	_txtQuantity	= new Text(43, 9, 202, 26);
-	_txtCost		= new Text(56, 9, 245, 26);
+	_txtUnitCost    = new Text(62, 9, 140, 26);
+	_txtQuantity    = new Text(43, 9, 202, 26);
+	_txtCost        = new Text(56, 9, 245, 26);
 
-	_txtRental		= new Text(150, 9, 16, 26);
-	_lstCrafts		= new TextList(285, 65, 16, 36);
+	_txtRental      = new Text(150, 9, 16, 26);
+	_lstCrafts      = new TextList(285, 65, 16, 36);
 
-	_txtSalaries	= new Text(150, 9, 16, 107);
-	_lstSalaries	= new TextList(285, 25, 16, 117);
+	_txtSalaries    = new Text(150, 9, 16, 107);
+	_lstSalaries    = new TextList(285, 25, 16, 117);
 
-	_lstMaintenance	= new TextList(285, 9, 16, 144);
+	_lstMaintenance = new TextList(285, 9, 16, 144);
 
-	_lstBaseCost	= new TextList(103, 9, 198, 155);
-	_lstTotal		= new TextList(103, 9, 198, 165);
-	_txtIncome		= new Text(150, 9, 16, 165);
+	_lstBaseCost    = new TextList(103, 9, 198, 155);
+	_lstTotal       = new TextList(103, 9, 198, 165);
+	_txtIncome      = new Text(150, 9, 16, 165);
 
-	_btnOk			= new TextButton(288, 16, 16, 177);
+	_btnOk          = new TextButton(288, 16, 16, 177);
 
 	setInterface("costsInfo");
 
-	add(_window,			"window",	"costsInfo");
-	add(_txtTitle,			"text1",	"costsInfo");
-	add(_txtUnitCost,		"text1",	"costsInfo");
-	add(_txtQuantity,		"text1",	"costsInfo");
-	add(_txtCost,			"text1",	"costsInfo");
-	add(_txtRental,			"text1",	"costsInfo");
-	add(_lstCrafts,			"list",		"costsInfo");
-	add(_txtSalaries,		"text1",	"costsInfo");
-	add(_lstSalaries,		"list",		"costsInfo");
-	add(_lstMaintenance,	"text1",	"costsInfo");
-	add(_lstBaseCost,		"text2",	"costsInfo");
-	add(_lstTotal,			"text2",	"costsInfo");
-	add(_txtIncome,			"text2",	"costsInfo");
-	add(_btnOk,				"button",	"costsInfo");
+	add(_window,         "window", "costsInfo");
+	add(_txtTitle,       "text1",  "costsInfo");
+	add(_txtUnitCost,    "text1",  "costsInfo");
+	add(_txtQuantity,    "text1",  "costsInfo");
+	add(_txtCost,        "text1",  "costsInfo");
+	add(_txtRental,      "text1",  "costsInfo");
+	add(_lstCrafts,      "list",   "costsInfo");
+	add(_txtSalaries,    "text1",  "costsInfo");
+	add(_lstSalaries,    "list",   "costsInfo");
+	add(_lstMaintenance, "text1",  "costsInfo");
+	add(_lstBaseCost,    "text2",  "costsInfo");
+	add(_lstTotal,       "text2",  "costsInfo");
+	add(_txtIncome,      "text2",  "costsInfo");
+	add(_btnOk,          "button", "costsInfo");
 
 	centerSurfaces();
 
@@ -111,21 +111,21 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	const RuleCraft* crRule;
 	const std::vector<std::string>& allCraft (_game->getRuleset()->getCraftsList());
 	for (std::vector<std::string>::const_iterator
-			i = allCraft.begin();
+			i  = allCraft.begin();
 			i != allCraft.end();
 			++i)
 	{
 		crRule = _game->getRuleset()->getCraft(*i);
-		if (_game->getSavedGame()->isResearched(crRule->getRequiredResearch()) == true)
+		if (_game->getSavedGame()->isResearched(crRule->getRequiredResearch()) == true
+			&& (cost = crRule->getRentCost()) != 0
+			&& (qty = base->getCraftCount(*i)) != 0)
 		{
-			cost = crRule->getRentCost();
-			qty = base->getCraftCount(*i);
 			_lstCrafts->addRow(
 							4,
 							tr(*i).c_str(),
 							Text::formatCurrency(cost).c_str(),
 							Text::intWide(qty).c_str(),
-							Text::formatCurrency(qty * cost).c_str());
+							Text::formatCurrency(cost * qty).c_str());
 		}
 	}
 
@@ -135,51 +135,64 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 	_lstSalaries->setColumns(4, 124,62,43,56);
 	_lstSalaries->setMargin();
 	_lstSalaries->setDot();
+
 	const RuleSoldier* solRule;
-	const std::vector<std::string>& soldierList (_game->getRuleset()->getSoldiersList());
+	const std::vector<std::string>& soldierTypes (_game->getRuleset()->getSoldiersList());
 	for (std::vector<std::string>::const_iterator
-			i = soldierList.begin();
-			i != soldierList.end();
+			i = soldierTypes.begin(), j = soldierTypes.end();
+			i != j;
 			++i)
 	{
 		solRule = _game->getRuleset()->getSoldier(*i);
-		if (solRule->getBuyCost() != 0
-			&& _game->getSavedGame()->isResearched(solRule->getRequiredResearch()))
+		if (_game->getSavedGame()->isResearched(solRule->getRequiredResearch()) == true
+			&& (cost = solRule->getSalaryCost()) != 0
+			&& (qty = base->getSoldierCount(*i)) != 0)
 		{
 			std::string type;
-			if (i == soldierList.begin())
+			if (i == soldierTypes.begin())
 				type = "STR_SOLDIERS";
 			else
 				type = *i;
 
-			cost = solRule->getSalaryCost();
-			qty = base->getSoldierCount(*i);
+			int total (0);
+			for (std::vector<Soldier*>::const_iterator
+					k = base->getSoldiers()->begin(), l = base->getSoldiers()->end();
+					k != l;
+					++k)
+			{
+				total += cost + (*k)->getRankCost();
+			}
+
 			_lstSalaries->addRow(
 							4,
 							tr(type).c_str(),
 							Text::formatCurrency(cost).c_str(),
 							Text::intWide(qty).c_str(),
-							Text::formatCurrency(qty * cost).c_str());
+							Text::formatCurrency(total).c_str());
 		}
 	}
 
-	cost = _game->getRuleset()->getEngineerCost();
-	qty = base->getTotalEngineers();
-	_lstSalaries->addRow(
-					4,
-					tr("STR_ENGINEERS").c_str(),
-					Text::formatCurrency(cost).c_str(),
-					Text::intWide(qty).c_str(),
-					Text::formatCurrency(qty * cost).c_str());
+	if ((cost = _game->getRuleset()->getEngineerCost()) != 0
+		&& (qty = base->getTotalEngineers()) != 0)
+	{
+		_lstSalaries->addRow(
+						4,
+						tr("STR_ENGINEERS").c_str(),
+						Text::formatCurrency(cost).c_str(),
+						Text::intWide(qty).c_str(),
+						Text::formatCurrency(cost * qty).c_str());
+	}
 
-	cost = _game->getRuleset()->getScientistCost();
-	qty = base->getTotalScientists();
-	_lstSalaries->addRow(
-					4,
-					tr("STR_SCIENTISTS").c_str(),
-					Text::formatCurrency(cost).c_str(),
-					Text::intWide(qty).c_str(),
-					Text::formatCurrency(qty * cost).c_str());
+	if ((cost = _game->getRuleset()->getScientistCost()) != 0
+		&& (qty = base->getTotalScientists()) != 0)
+	{
+		_lstSalaries->addRow(
+						4,
+						tr("STR_SCIENTISTS").c_str(),
+						Text::formatCurrency(cost).c_str(),
+						Text::intWide(qty).c_str(),
+						Text::formatCurrency(cost * qty).c_str());
+	}
 
 	std::wostringstream woststr;
 
@@ -213,7 +226,7 @@ MonthlyCostsState::MonthlyCostsState(Base* base)
 					Text::formatCurrency(_game->getSavedGame()->getBaseMaintenances()).c_str());
 
 	_btnOk->setText(tr("STR_OK"));
-	_btnOk->onMouseClick(	static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick));
+	_btnOk->onMouseClick(   static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick));
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick),
 							Options::keyOk);
 	_btnOk->onKeyboardPress(static_cast<ActionHandler>(&MonthlyCostsState::btnOkClick),

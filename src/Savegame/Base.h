@@ -369,8 +369,6 @@ private:
 		/// Gets various recalls for the Base.
 		size_t getRecallRow(RecallType recallType) const;
 
-		/// Calculates the bonus-expense for Soldiers by rank.
-		int getOperationalExpenses(const Craft* const craft = nullptr) const;
 		/// Calculates a Soldier's bonus-pay for doing a tactical mission.
 		int expenseSoldier(
 				const Soldier* const sol,
