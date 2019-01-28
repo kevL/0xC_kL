@@ -2427,6 +2427,7 @@ int BattlescapeGenerator::loadBlockFile( // private.
 		throw Exception("bGen:loadBlockFile() Craft/UFO is too tall.");
 	}
 
+	Tile* tile;
 	unsigned char parts[Tile::TILE_PARTS];
 	size_t partId;
 
@@ -2442,19 +2443,26 @@ int BattlescapeGenerator::loadBlockFile( // private.
 				i != Tile::TILE_PARTS;
 				++i)
 		{
+			// i=0 floor
+			// i=1 westwall
+			// i=2 northwall
+			// i=3 content object
+
 			partId = static_cast<size_t>(parts[i]);
+
+			tile = _battleSave->getTile(Position(x,y,z));
 
 			// Remove natural terrain that is inside Craft or Ufo.
 			if (i != 0u				// not if it's a floor since Craft/Ufo part will overwrite it anyway
 				&& partId == 0u		// and only if no Craft/Ufo part would overwrite the part
 				&& parts[0u] != 0u)	// but only if there *is* a floor-part to the Craft/Ufo so it would (have) be(en) inside the Craft/Ufo
 			{
-				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, static_cast<MapDataType>(i));
+				tile->setMapData(nullptr,-1,-1, static_cast<MapDataType>(i));
 			}
 
 			// Then overwrite previous terrain with Craft or Ufo terrain.
 			// nb. See sequence of map-loading in generateMap() (1st terrain, 2nd Ufo, 3rd Craft) <- preMapScripting.
-			if (partId > 0u)
+			if (partId != 0u)
 			{
 				size_t dataId (partId);
 				int dataSetId (partSetId);
@@ -2463,25 +2471,24 @@ int BattlescapeGenerator::loadBlockFile( // private.
 //				if (partSetId > 0) // ie: ufo or craft.
 //					_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1,3); // erase content-object
 
-				_battleSave->getTile(Position(x,y,z))->setMapData(
-																data,
-																static_cast<int>(dataId),
-																dataSetId,
-																static_cast<MapDataType>(i));
+				tile->setMapData(
+								data,
+								static_cast<int>(dataId),
+								dataSetId,
+								static_cast<MapDataType>(i));
+
+				if (craft == true // Reveal only tiles inside the Craft.
+					&& z != _craftZ)
+				{
+					revealDone = true;
+					tile->setRevealed();
+				}
 			}
 
 			// If the part is not a floor and is empty, remove it; this prevents growing grass in UFOs.
 			// note: And outside UFOs. so remark it
 //			if (part == 3 && partId == 0)
 //				_battleSave->getTile(Position(x,y,z))->setMapData(nullptr,-1,-1, part);
-
-			if (craft == true // Reveal only tiles inside the Craft.
-				&& partId != 0u
-				&& z != _craftZ)
-			{
-				revealDone = true;
-				_battleSave->getTile(Position(x,y,z))->setRevealed();
-			}
 		}
 
 //		if (craft && _craftZ == z)
@@ -2491,9 +2498,10 @@ int BattlescapeGenerator::loadBlockFile( // private.
 //		}
 
 		if (revealDone == false)
-			_battleSave->getTile(Position(x,y,z))->setRevealed(
-															ST_CONTENT,
-															revealed == true || block->isFloorRevealed(z) == true);
+			tile->setRevealed(
+							ST_CONTENT,
+							revealed == true || block->isFloorRevealed(z) == true);
+
 		if (++x == size_x + offset_x)
 		{
 			x = offset_x;

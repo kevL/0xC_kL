@@ -223,8 +223,8 @@ void MapDataSet::loadData()
 					mcd.Xcom_Base   != 0);
 			record->setTerrainLevel( static_cast<int>(mcd.T_Level));
 			record->setFootstepSound(static_cast<int>(mcd.Footstep));
-			record->setAltPart(       static_cast<int>(mcd.Alt_MCD));
-			record->setDiePart(       static_cast<int>(mcd.Die_MCD));
+			record->setAltPart(      static_cast<int>(mcd.Alt_MCD));
+			record->setDiePart(      static_cast<int>(mcd.Die_MCD));
 			record->setBlocks(
 					static_cast<int>(mcd.Light_Block),
 					static_cast<int>(mcd.Stop_LOS),
@@ -252,7 +252,7 @@ void MapDataSet::loadData()
 							loft);
 			}
 
-			// Load the two tiles of the BLANKS dataset as static so that they
+			// Load the two records of the BLANKS dataset as static so that they
 			// are accessible to all MapDataSet-instantiations.
 			if (_type.compare("BLANKS") == 0)
 			{
