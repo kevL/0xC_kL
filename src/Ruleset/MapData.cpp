@@ -392,7 +392,6 @@ int MapData::getTuCostPart(MoveType type) const
 	{
 		case MT_WALK:  return _tuWalk;
 		case MT_SLIDE: return _tuSlide;
-		case MT_FLOAT: // wft.
 		case MT_FLY:   return _tuFly;
 	}
 	return 0;

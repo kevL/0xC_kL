@@ -4359,7 +4359,6 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 				{
 					switch (mType)
 					{
-						case MT_FLOAT: // wft.
 						case MT_FLY: tuCost = 4;
 							break;
 

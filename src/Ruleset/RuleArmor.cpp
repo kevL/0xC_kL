@@ -276,7 +276,7 @@ MoveType RuleArmor::getMoveTypeArmor() const
 }
 
 /**
- * Gets the size of this armor. Normally 1 (small) or 2 (big).
+ * Gets the size of this armor. Normally 1x1 (small) or 2x2 (big).
  * @return, size
  */
 int RuleArmor::getSize() const

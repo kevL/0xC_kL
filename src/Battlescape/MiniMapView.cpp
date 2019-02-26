@@ -50,11 +50,11 @@ namespace OpenXcom
 
 /**
  * Initializes all the elements in the MiniMapView.
- * @param width			- the width
- * @param height		- the height
- * @param x				- the x-origin
- * @param y				- the y-origin
- * @param game			- pointer to the core Game
+ * @param width		- the width
+ * @param height	- the height
+ * @param x			- the x-origin
+ * @param y			- the y-origin
+ * @param game		- pointer to the core Game
  */
 MiniMapView::MiniMapView(
 		int width,
@@ -130,13 +130,13 @@ void MiniMapView::draw()
 		int py (startY);
 		for (int
 				y = Surface::getY();
-				y < height + Surface::getY();
+				y < Surface::getY() + height;
 				y += CELL_HEIGHT)
 		{
 			int px (startX);
 			for (int
 					x = Surface::getX();
-					x < width + Surface::getX();
+					x < Surface::getX() + width;
 					x += CELL_WIDTH)
 			{
 				if ((tile = _battleSave->getTile(Position(px, py, lvl))) != nullptr)

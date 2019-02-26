@@ -29,9 +29,8 @@ namespace OpenXcom
 enum MoveType
 {
 	MT_WALK,	// 0
-	MT_FLY,		// 1 note Fly & Slide should be switched here and in ruleset-armors
-	MT_SLIDE,	// 2 to conform to their order in MCD files. because.
-	MT_FLOAT	// 3 wft.
+	MT_SLIDE,	// 1
+	MT_FLY,		// 2
 };
 
 enum VoxelType
@@ -131,8 +130,8 @@ private:
 		_sound,
 		_sprites[8u],
 		_tuWalk,
-		_tuFly,
 		_tuSlide,
+		_tuFly,
 		_yOffset;
 
 	size_t _loftIds[12u];

@@ -242,7 +242,7 @@ void MCDPatch::patchData(MapDataSet* const dataSet) const
 			case 7: bigwall = 0x40; break;	// BIGWALL_SOUTH
 			case 8: bigwall = 0x80;			// BIGWALL_E_S
 
-//			case 9:								// BIGWALL_W_N - not used in stock UFO.
+//			case 9:							// BIGWALL_W_N - not used in stock UFO.
 		}
 		dataSet->getRecords()->at(i->first)->setBigWall(bigwall);
 	}
