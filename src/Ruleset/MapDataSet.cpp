@@ -127,49 +127,49 @@ void MapDataSet::loadData()
 #pragma pack(push, 1)	// align the incoming MCD-values with 1-byte boundaries
 		struct MCD		// This struct helps read the .MCD file-format.
 		{
-			unsigned char  Frame[8u];
-			unsigned char  LOFT[12u];
-			unsigned short ScanG;
-			unsigned char  u23;				// not used.
-			unsigned char  u24;				// not used.
-			unsigned char  u25;				// not used.
-			unsigned char  u26;				// not used.
-			unsigned char  u27;				// not used.
-			unsigned char  u28;				// not used.
-			unsigned char  u29;				// not used.
-			unsigned char  u30;				// not used.
-			unsigned char  UFO_Door;
-			unsigned char  Stop_LOS;
-			unsigned char  No_Floor;
-			unsigned char  Big_Wall;
-			unsigned char  Gravlift;
-			unsigned char  Door;
-			unsigned char  Block_Fire;
-			unsigned char  Block_Smoke;
-			unsigned char  u39;				// not used. NOTE: so-called 'Start_Phase' is around here. See MCDEdit v1.17i
-			unsigned char  TU_Walk;
-			unsigned char  TU_Slide;
-			unsigned char  TU_Fly;
-			unsigned char  Armor;
-			unsigned char  HE_Block;
-			unsigned char  Die_MCD;
-			unsigned char  Flammable;
-			unsigned char  Alt_MCD;
-			unsigned char  u48;				// not used.
-			signed char    T_Level;
-			unsigned char  P_Level;
-			unsigned char  u51;				// not used.
-			unsigned char  Light_Block;
-			unsigned char  Footstep;
-			unsigned char  Tile_Type;
-			unsigned char  HE_Type;
-			unsigned char  HE_Strength;
-			unsigned char  Smoke_Blockage;	// not used.
-			unsigned char  Fuel;
-			unsigned char  Light_Source;
-			unsigned char  Target_Type;
-			unsigned char  Xcom_Base;
-			unsigned char  u62;				// not used.
+			unsigned char  Frame[8u];		// 0..7
+			unsigned char  LOFT[12u];		// 8..19
+			unsigned short ScanG;			// 20..21 - little endian
+			unsigned char  u23;				// 22 - not used.
+			unsigned char  u24;				// 23 - not used.
+			unsigned char  u25;				// 24 - not used.
+			unsigned char  u26;				// 25 - not used.
+			unsigned char  u27;				// 26 - not used.
+			unsigned char  u28;				// 27 - not used.
+			unsigned char  u29;				// 28 - not used.
+			unsigned char  u30;				// 29 - not used.
+			unsigned char  UFO_Door;		// 30
+			unsigned char  Stop_LOS;		// 31
+			unsigned char  No_Floor;		// 32
+			unsigned char  Big_Wall;		// 33
+			unsigned char  Gravlift;		// 34
+			unsigned char  Door;			// 35
+			unsigned char  Block_Fire;		// 36
+			unsigned char  Block_Smoke;		// 37
+			unsigned char  u39;				// 38 - not used. NOTE: so-called 'Start_Phase'. See MCDEdit v1.17i - Correction: 'LeftRightHalf'.
+			unsigned char  TU_Walk;			// 39
+			unsigned char  TU_Slide;		// 40
+			unsigned char  TU_Fly;			// 41
+			unsigned char  Armor;			// 42
+			unsigned char  HE_Block;		// 43
+			unsigned char  Die_MCD;			// 44
+			unsigned char  Flammable;		// 45
+			unsigned char  Alt_MCD;			// 46
+			unsigned char  u48;				// 47 - not used.
+			signed char    T_Level;			// 48 - terrain_level offset (negative, objects *on* the tile not the part itself)
+			unsigned char  P_Level;			// 49 - sprite_level  offset (positive, the part itself)
+			unsigned char  u51;				// 50 - not used.
+			unsigned char  Light_Block;		// 51
+			unsigned char  Footstep;		// 52
+			unsigned char  Tile_Type;		// 53
+			unsigned char  HE_Type;			// 54
+			unsigned char  HE_Strength;		// 55
+			unsigned char  Smoke_Blockage;	// 56 - not used.
+			unsigned char  Fuel;			// 57
+			unsigned char  Light_Source;	// 58
+			unsigned char  Target_Type;		// 59
+			unsigned char  Xcom_Base;		// 60
+			unsigned char  u62;				// 61 - not used.
 		};
 #pragma pack(pop) // revert to standard byte-alignment
 

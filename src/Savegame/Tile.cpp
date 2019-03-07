@@ -406,7 +406,7 @@ bool Tile::isBigWall() const
 /**
  * Gets the terrain-level of this Tile.
  * @note For graphical Y offsets etc. Terrain-level starts and 0 and goes
- * upwards to -24; negative values are higher.
+ * upwards to -24; negative values are drawn higher.
  * @return, the level in pixels
  */
 int Tile::getTerrainLevel() const

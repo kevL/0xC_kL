@@ -329,7 +329,8 @@ void MapData::setHeBlock(int he)
 
 /**
  * Gets the offset on the y-axis for drawing this tilepart.
- * @return, the offset in pixels
+ * @note this value is positive (cf. getTerrainLevel())
+ * @return, the inverse-offset of the sprite in pixels
  */
 int MapData::getOffsetY() const
 {
@@ -338,7 +339,8 @@ int MapData::getOffsetY() const
 
 /**
  * Sets the offset on the y-axis for drawing this tilepart.
- * @param offset - the offset in pixels
+ * @note this value is positive (cf. setTerrainLevel())
+ * @param offset - the inverse-offset of the sprite in pixels
  */
 void MapData::setOffsetY(int offset)
 {
@@ -414,7 +416,9 @@ void MapData::setTuCosts(
 }
 
 /**
- * Adds to the graphical Y-offset of units or objects on this tilepart.
+ * Adds to the graphical Y-offset of units or objects on this tilepart if this
+ * tilepart is a floor or content-object.
+ * @note this value is negative (cf. getOffsetY())
  * @return, y-offset in pixels
  */
 int MapData::getTerrainLevel() const
@@ -424,6 +428,7 @@ int MapData::getTerrainLevel() const
 
 /**
  * Sets the Y-offset for units or objects on this tilepart.
+ * @note this value is negative (cf. setOffsetY())
  * @param offset - y-offset in pixels
  */
 void MapData::setTerrainLevel(int offset)
