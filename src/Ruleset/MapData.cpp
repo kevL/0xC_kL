@@ -146,8 +146,17 @@ bool MapData::stopsLos() const
 }
 
 /**
- * Gets whether this tilepart is a floor.
- * @return, true if a floor
+ * Sets whether this tilepart acts as (not) a floor.
+ * @param noFloor - true if the tile does not act as a floor
+ */
+void MapData::setNoFloor(bool noFloor)
+{
+	_noFloor = noFloor;
+}
+
+/**
+ * Gets whether this tilepart acts as (not) a floor.
+ * @return, true if the tile does not act as a floor
  */
 bool MapData::isNoFloor() const
 {
@@ -694,15 +703,6 @@ void MapData::setTuSlide(int tu)
 void MapData::setTuFly(int tu)
 {
 	_tuFly = tu;
-}
-
-/**
- * Sets the "no floor" flag.
- * @param noFloor - true if the tile has no floor part
- */
-void MapData::setNoFloor(bool noFloor)
-{
-	_noFloor = noFloor;
 }
 
 /**

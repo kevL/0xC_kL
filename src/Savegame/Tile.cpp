@@ -360,7 +360,7 @@ int Tile::getTuCostTile(
 bool Tile::isFloored(const Tile* const tileBelow) const
 {
 	if (_pos.z == 0
-		|| (tileBelow != nullptr && tileBelow->getTerrainLevel() == -24))
+		|| (tileBelow != nullptr && tileBelow->getTerrainLevel() == -24)) // TODO: That could be refined.
 	{
 		return true;
 	}
