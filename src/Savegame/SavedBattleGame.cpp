@@ -2175,12 +2175,12 @@ void SavedBattleGame::tileVolatiles() // private.
 		}
 		else // try to destroy object- and/or floor-parts when Fire goes out.
 		{
-			if ((*i)->getMapData(O_OBJECT) != nullptr)
+			if ((*i)->getMapData(O_CONTENT) != nullptr)
 			{
-				if (   (*i)->getMapData(O_OBJECT)->getFlammable()   != 255
-					&& (*i)->getMapData(O_OBJECT)->getArmorPoints() != 255) // NOTE: Also checked in destroyTilepart().
+				if (   (*i)->getMapData(O_CONTENT)->getFlammable()   != 255
+					&& (*i)->getMapData(O_CONTENT)->getArmorPoints() != 255) // NOTE: Also checked in destroyTilepart().
 				{
-					(*i)->destroyTilepart(O_OBJECT, this);
+					(*i)->destroyTilepart(O_CONTENT, this);
 					(*i)->destroyTilepart(O_FLOOR, this);	// NOTE: There is no assurance that the current floor-part is actually 'flammable';
 				}											// but it ensures that if there's not a current floor-part then
 			}												// at least a scorched-earth floor-part gets laid down.
@@ -2388,7 +2388,7 @@ bool SavedBattleGame::setUnitPosition(
 
 				if ((tile->getTileUnit() != nullptr && tile->getTileUnit() != unit)
 					|| tile->getTuCostTile(
-										O_OBJECT,
+										O_CONTENT,
 										unit->getMoveTypeUnit()) == 255
 					|| (unit->getMoveTypeUnit() != MT_FLY // <- so just use the unit's moveType.
 						&& tile->isFloored(tile->getTileBelow(this)) == false))
@@ -2396,9 +2396,9 @@ bool SavedBattleGame::setUnitPosition(
 					return false;
 				}
 
-				if (tile->getMapData(O_OBJECT) != nullptr)
+				if (tile->getMapData(O_CONTENT) != nullptr)
 				{
-					switch (tile->getMapData(O_OBJECT)->getBigwall())
+					switch (tile->getMapData(O_CONTENT)->getBigwall())
 					{
 						case BIGWALL_BLOCK:
 						case BIGWALL_NESW:
@@ -2804,8 +2804,8 @@ void SavedBattleGame::calcBaseDestruct()
 					++z)
 			{
 				if ((tile = getTile(Position(x,y,z))) != nullptr
-					&& tile->getMapData(O_OBJECT) != nullptr
-					&& tile->getMapData(O_OBJECT)->isBaseObject() == true)
+					&& tile->getMapData(O_CONTENT) != nullptr
+					&& tile->getMapData(O_CONTENT)->isBaseObject() == true)
 				{
 					_baseModules[static_cast<size_t>(x / 10)]
 								[static_cast<size_t>(y / 10)].first += _baseModules[static_cast<size_t>(x / 10)]

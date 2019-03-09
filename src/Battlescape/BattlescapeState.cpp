@@ -1593,10 +1593,10 @@ void BattlescapeState::mapClick(Action* action)
 					}
 					else Log(LOG_INFO) << ". no NORTHWALL";
 
-					if (tile->getMapData(O_OBJECT) != nullptr)
+					if (tile->getMapData(O_CONTENT) != nullptr)
 					{
-						tile->getMapData(&partId, &partSetId, O_OBJECT);
-						Log(LOG_INFO) << ". OBJECT partSetId= "	<< partSetId << " - " << tile->getMapData(O_OBJECT)->getDataset()->getType();
+						tile->getMapData(&partId, &partSetId, O_CONTENT);
+						Log(LOG_INFO) << ". OBJECT partSetId= "	<< partSetId << " - " << tile->getMapData(O_CONTENT)->getDataset()->getType();
 						Log(LOG_INFO) << ". OBJECT partId= "	<< partId;
 					}
 					else Log(LOG_INFO) << ". no OBJECT";
@@ -4343,8 +4343,8 @@ void BattlescapeState::updateTileInfo(const Tile* const tile) // private.
 				mType = MT_WALK;
 			}
 
-			if (tile->getMapData(O_OBJECT) != nullptr)
-				tuCost = 4 + tile->getTuCostTile(O_OBJECT, mType);
+			if (tile->getMapData(O_CONTENT) != nullptr)
+				tuCost = 4 + tile->getTuCostTile(O_CONTENT, mType);
 			else if (tile->isFloored()					// <- do *not* check for a tileBelow yet
 				&& tile->getMapData(O_FLOOR) != nullptr)
 			{
@@ -4890,7 +4890,7 @@ void BattlescapeState::saveAIMap() // private.
 				rect.y = static_cast<Sint16>(y * static_cast<int>(rect.h));
 
 				if (   tile->getTuCostTile(O_FLOOR,  MT_FLY) != 255
-					&& tile->getTuCostTile(O_OBJECT, MT_FLY) != 255)
+					&& tile->getTuCostTile(O_CONTENT, MT_FLY) != 255)
 				{
 					SDL_FillRect(
 							img,

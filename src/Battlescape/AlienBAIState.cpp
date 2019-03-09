@@ -502,7 +502,7 @@ void AlienBAIState::setupPatrol() // private.
 						j != y + 9;
 						++j)
 				{
-					if ((data = _battleSave->getTile(Position(i,j,1))->getMapData(O_OBJECT)) != nullptr
+					if ((data = _battleSave->getTile(Position(i,j,1))->getMapData(O_CONTENT)) != nullptr
 						&& data->isBaseObject() == true)
 //						&& data->getDieMCD() && data->getArmor() < 60) // TODO: Create function canDestroy(int power);
 					{

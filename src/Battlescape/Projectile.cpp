@@ -316,11 +316,11 @@ VoxelType Projectile::calculateThrow(double accuracy)
 			{
 				//Log(LOG_INFO) << ". . . NOT outofbounds";
 				const Tile* const tile (_battleSave->getTile(Position::toTileSpace(_trj.back()))); // _trj.at(0)
-				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because impactTest=VOXEL_OBJECT ... bzzzttT.
-//					&& tile->getMapData(O_OBJECT)->getTuCostPart(MT_WALK) == 255
+				if (tile != nullptr && tile->getMapData(O_CONTENT) != nullptr) // safety. Should be unnecessary because impactTest=VOXEL_OBJECT ... bzzzttT.
+//					&& tile->getMapData(O_CONTENT)->getTuCostPart(MT_WALK) == 255
 //					&& action.weapon->getRules()->isGrenade() == true)
 				{
-					switch (tile->getMapData(O_OBJECT)->getBigwall())
+					switch (tile->getMapData(O_CONTENT)->getBigwall())
 					{
 						case BIGWALL_NESW:
 						case BIGWALL_NWSE:

@@ -159,12 +159,12 @@ void Tile::loadBinary(
 	_partIds[O_FLOOR]        = unserializeInt(&buffer, serKey._partId);
 	_partIds[O_WESTWALL]     = unserializeInt(&buffer, serKey._partId);
 	_partIds[O_NORTHWALL]    = unserializeInt(&buffer, serKey._partId);
-	_partIds[O_OBJECT]       = unserializeInt(&buffer, serKey._partId);
+	_partIds[O_CONTENT]      = unserializeInt(&buffer, serKey._partId);
 
 	_partSetIds[O_FLOOR]     = unserializeInt(&buffer, serKey._partSetId);
 	_partSetIds[O_WESTWALL]  = unserializeInt(&buffer, serKey._partSetId);
 	_partSetIds[O_NORTHWALL] = unserializeInt(&buffer, serKey._partSetId);
-	_partSetIds[O_OBJECT]    = unserializeInt(&buffer, serKey._partSetId);
+	_partSetIds[O_CONTENT]   = unserializeInt(&buffer, serKey._partSetId);
 
 	_smoke     = unserializeInt(&buffer, serKey._smoke);
 	_fire      = unserializeInt(&buffer, serKey._fire);
@@ -238,12 +238,12 @@ void Tile::saveBinary(Uint8** buffer) const
 	serializeInt(buffer, serializationKey._partId, _partIds[O_FLOOR]);
 	serializeInt(buffer, serializationKey._partId, _partIds[O_WESTWALL]);
 	serializeInt(buffer, serializationKey._partId, _partIds[O_NORTHWALL]);
-	serializeInt(buffer, serializationKey._partId, _partIds[O_OBJECT]);
+	serializeInt(buffer, serializationKey._partId, _partIds[O_CONTENT]);
 
 	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_FLOOR]);
 	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_WESTWALL]);
 	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_NORTHWALL]);
-	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_OBJECT]);
+	serializeInt(buffer, serializationKey._partSetId, _partSetIds[O_CONTENT]);
 
 	serializeInt(buffer, serializationKey._smoke,     _smoke);
 	serializeInt(buffer, serializationKey._fire,      _fire);
@@ -313,7 +313,7 @@ bool Tile::isVoid(
 	return _parts[O_FLOOR]     == nullptr
 		&& _parts[O_WESTWALL]  == nullptr
 		&& _parts[O_NORTHWALL] == nullptr
-		&& _parts[O_OBJECT]    == nullptr
+		&& _parts[O_CONTENT]   == nullptr
 		&& (testInventory == false || _inventory.empty() == true)
 		&& (testVolatiles == false || _smoke == 0); // -> fireTiles always have smoke.
 }
@@ -338,8 +338,8 @@ int Tile::getTuCostTile(
 			case O_NORTHWALL:
 				return _parts[partType]->getTuCostPart(type);
 
-			case O_OBJECT:
-				switch (_parts[O_OBJECT]->getBigwall())
+			case O_CONTENT:
+				switch (_parts[O_CONTENT]->getBigwall())
 				{
 					case BIGWALL_NONE:
 					case BIGWALL_BLOCK:
@@ -397,8 +397,8 @@ Tile* Tile::getTileAbove(const SavedBattleGame* const battleSave) const
  *
 bool Tile::isBigWall() const
 {
-	if (_parts[O_OBJECT] != nullptr)
-		return (_parts[O_OBJECT]->getBigwall() != BIGWALL_NONE);
+	if (_parts[O_CONTENT] != nullptr)
+		return (_parts[O_CONTENT]->getBigwall() != BIGWALL_NONE);
 
 	return false;
 } */
@@ -415,9 +415,9 @@ int Tile::getTerrainLevel() const
 	if (_parts[O_FLOOR] != nullptr)
 		level = _parts[O_FLOOR]->getTerrainLevel();
 
-	if (_parts[O_OBJECT] != nullptr)
+	if (_parts[O_CONTENT] != nullptr)
 		level = std::min(level,
-						_parts[O_OBJECT]->getTerrainLevel());
+						_parts[O_CONTENT]->getTerrainLevel());
 
 	return level;
 }
@@ -436,25 +436,25 @@ int Tile::getTerrainLevel() const
  */
 int Tile::getFootstepSound(const Tile* const tileBelow) const
 {
-	if (_parts[O_OBJECT] != nullptr
-		&& _parts[O_OBJECT]->getFootstepSound() != 0)
+	if (_parts[O_CONTENT] != nullptr
+		&& _parts[O_CONTENT]->getFootstepSound() != 0)
 	{
-		switch (_parts[O_OBJECT]->getBigwall())
+		switch (_parts[O_CONTENT]->getBigwall())
 		{
 			case BIGWALL_NONE:
 			case BIGWALL_BLOCK:
-				return _parts[O_OBJECT]->getFootstepSound();
+				return _parts[O_CONTENT]->getFootstepSound();
 		}
 	}
 
 	if (_parts[O_FLOOR] != nullptr)
 		return _parts[O_FLOOR]->getFootstepSound();
 
-	if (_parts[O_OBJECT] == nullptr
+	if (_parts[O_CONTENT] == nullptr
 		&& tileBelow != nullptr
 		&& tileBelow->getTerrainLevel() == -24)
 	{
-		return tileBelow->getMapData(O_OBJECT)->getFootstepSound();
+		return tileBelow->getMapData(O_CONTENT)->getFootstepSound();
 	}
 	return 0;
 }
@@ -588,8 +588,8 @@ void Tile::setRevealed(
 		if ((_revealed[section] = revealed) == true
 			&& section == ST_CONTENT)
 		{
-			if (    _parts[O_OBJECT] == nullptr
-				|| (_parts[O_OBJECT]->getBigwall() & (BIGWALL_NESW | BIGWALL_NWSE)) == 0	// Try no-reveal (walls) if content is diag BigWall to stop
+			if (    _parts[O_CONTENT] == nullptr
+				|| (_parts[O_CONTENT]->getBigwall() & (BIGWALL_NESW | BIGWALL_NWSE)) == 0	// Try no-reveal (walls) if content is diag BigWall to stop
 				|| force == true)															// seeing internal UFO walls when the outer hull is seen.
 			{
 				_revealed[ST_WEST]  = // if object+floor is revealed set west- & north-walls revealed also.
@@ -691,8 +691,8 @@ int Tile::destroyTilepart(
 			if (part->getSpecialType() == battleSave->getObjectiveTilepartType())
 				battleSave->addDestroyedObjective();
 
-			if (partType == O_OBJECT)
-				tLevel = _parts[O_OBJECT]->getTerrainLevel();
+			if (partType == O_CONTENT)
+				tLevel = _parts[O_CONTENT]->getTerrainLevel();
 
 			const int partSetId (_partSetIds[partType]);	// cache the partSetId for a possible death-tile below_
 			setMapData(nullptr,-1,-1, partType);			// destroy current part.
@@ -729,10 +729,10 @@ int Tile::destroyTilepart(
 					MapDataSet::getScorchedEarth(),
 					1,0, O_FLOOR);
 
-		if (   _parts[O_OBJECT] != nullptr // destroy object-part if the floor-part was just destroyed.
-			&& _parts[O_OBJECT]->getBigwall() == BIGWALL_NONE)
+		if (   _parts[O_CONTENT] != nullptr // destroy object-part if the floor-part was just destroyed.
+			&& _parts[O_CONTENT]->getBigwall() == BIGWALL_NONE)
 		{
-			destroyTilepart(O_OBJECT, battleSave, true); // stop floating haybales.
+			destroyTilepart(O_CONTENT, battleSave, true); // stop floating haybales.
 		}
 	}
 
@@ -740,11 +740,11 @@ int Tile::destroyTilepart(
 	{
 		Tile* const tileAbove (battleSave->getTile(_pos + Position::POS_ABOVE));
 		if (   tileAbove != nullptr
-			&& tileAbove->getMapData(O_FLOOR)  == nullptr
-			&& tileAbove->getMapData(O_OBJECT) != nullptr
-			&& tileAbove->getMapData(O_OBJECT)->getBigwall() == BIGWALL_NONE)
+			&& tileAbove->getMapData(O_FLOOR)   == nullptr
+			&& tileAbove->getMapData(O_CONTENT) != nullptr
+			&& tileAbove->getMapData(O_CONTENT)->getBigwall() == BIGWALL_NONE)
 		{
-			tileAbove->destroyTilepart(O_OBJECT, battleSave, true); // stop floating lamposts. Trees would be more difficult.
+			tileAbove->destroyTilepart(O_CONTENT, battleSave, true); // stop floating lamposts. Trees would be more difficult.
 		}
 	}
 
@@ -1043,7 +1043,7 @@ int Tile::getSmoke() const
  */
 bool Tile::allowSmoke() const // private.
 {
-	const MapData* const part (_parts[O_OBJECT]);
+	const MapData* const part (_parts[O_CONTENT]);
 	return  part == nullptr
 		||  part->blocksSmoke() == false
 		|| (part->getBigwall() & (BIGWALL_WEST | BIGWALL_NORTH
@@ -1062,7 +1062,7 @@ bool Tile::allowFire() const // private.
 {
 	const MapData
 		* const partF (_parts[O_FLOOR]),
-		* const partO (_parts[O_OBJECT]);
+		* const partO (_parts[O_CONTENT]);
 
 	return (partF != nullptr && partF->blocksFire() == false && partO == nullptr)
 		|| (partO != nullptr

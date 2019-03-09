@@ -1878,8 +1878,8 @@ void BattlescapeGame::checkCasualties(
 //					i != _battleSave->getMapSizeXYZ();
 //					++i)
 //			{
-//				if (_battleSave->getTiles()[i]->getMapData(O_OBJECT) != nullptr
-//					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT)->getTileType() == UFO_NAVIGATION)
+//				if (_battleSave->getTiles()[i]->getMapData(O_CONTENT) != nullptr
+//					&& _battleSave->getTiles()[i]->getMapData(O_CONTENT)->getTileType() == UFO_NAVIGATION)
 //				{
 //					controlDestroyed = false;
 //					break;
@@ -3362,7 +3362,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 			if ((tile = (*i)->getTile()) != nullptr
 				&& (tile->getTileUnit() == nullptr || tile->getTileUnit() == unit)
 				&& tile->getTuCostTile(O_FLOOR, MT_WALK) != 255 // TODO:: pathfind.
-				&& tile->getTuCostTile(O_OBJECT, MT_WALK) != 255
+				&& tile->getTuCostTile(O_CONTENT, MT_WALK) != 255
 				&& worthTaking(*i, unit) == true)
 			{
 				//Log(LOG_INFO) << ". . . eligible";

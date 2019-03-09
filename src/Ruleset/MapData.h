@@ -52,7 +52,7 @@ enum MapDataType
 	O_FLOOR,		//  0
 	O_WESTWALL,		//  1
 	O_NORTHWALL,	//  2
-	O_OBJECT,		//  3 // TODO: -> 'O_CONTENT'
+	O_CONTENT,		//  3
 };
 
 /*

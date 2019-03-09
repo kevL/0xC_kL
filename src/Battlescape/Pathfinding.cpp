@@ -248,9 +248,9 @@ void Pathfinding::calculatePath(
 						launchTarget) == true
 				|| isBlockedTile(
 						tileStop,
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget) == true
-				|| tileStop->getTuCostTile(O_OBJECT, _mType) == PF_FAIL_TU)
+				|| tileStop->getTuCostTile(O_CONTENT, _mType) == PF_FAIL_TU)
 			{
 				//Log(LOG_INFO) << ". early out [2]";
 				return;
@@ -301,7 +301,7 @@ void Pathfinding::calculatePath(
 			launchTarget) == false
 		&& isBlockedTile(
 				tileStop,
-				O_OBJECT,
+				O_CONTENT,
 				launchTarget) == false)
 	{
 		if (unitSize == 2)
@@ -870,8 +870,8 @@ int Pathfinding::getTuCostPf(
 					--posStop->z;
 					tileStop = _battleSave->getTile(*posStop + posOffset);
 
-					if (tileStopBelow->getMapData(O_OBJECT) != nullptr)			// copied from below_
-						cost = 4 + tileStopBelow->getTuCostTile(O_OBJECT, _mType);
+					if (tileStopBelow->getMapData(O_CONTENT) != nullptr)		// copied from below_
+						cost = 4 + tileStopBelow->getTuCostTile(O_CONTENT, _mType);
 					else if (tileStopBelow->getMapData(O_FLOOR) != nullptr)
 						cost = tileStopBelow->getTuCostTile(O_FLOOR, _mType);
 					else
@@ -918,15 +918,15 @@ int Pathfinding::getTuCostPf(
 							case FLY_GOOD:
 								cost = 8;
 
-								if (tileStop->getMapData(O_OBJECT) != nullptr)
+								if (tileStop->getMapData(O_CONTENT) != nullptr)
 								{
-									switch (tileStop->getMapData(O_OBJECT)->getBigwall())
+									switch (tileStop->getMapData(O_CONTENT)->getBigwall())
 									{
 										case BIGWALL_NONE:
 										case BIGWALL_BLOCK:
 										case BIGWALL_NESW:
 										case BIGWALL_NWSE:
-											cost += tileStop->getTuCostTile(O_OBJECT, _mType);
+											cost += tileStop->getTuCostTile(O_CONTENT, _mType);
 											// TODO: Early-exit if cost>PF_FAIL_TU.
 									}
 								}
@@ -986,9 +986,9 @@ int Pathfinding::getTuCostPf(
 						launchTarget) == true
 				|| isBlockedTile(
 							tileStop,
-							O_OBJECT,
+							O_CONTENT,
 							launchTarget) == true
-				|| tileStop->getTuCostTile(O_OBJECT, _mType) == PF_FAIL_TU)
+				|| tileStop->getTuCostTile(O_CONTENT, _mType) == PF_FAIL_TU)
 			{
 				//if (_debug) Log(LOG_INFO) << ". . . tile blocked or tileCost PF_FAIL_TU";
 				return PF_FAIL_TU;
@@ -1007,11 +1007,11 @@ int Pathfinding::getTuCostPf(
 //				else
 //					cost = 4;
 //
-//				if (tileStop->getMapData(O_OBJECT) != nullptr) //&& rise == false
-//					cost += tileStop->getTuCostTile(O_OBJECT, _mType);
+//				if (tileStop->getMapData(O_CONTENT) != nullptr) //&& rise == false
+//					cost += tileStop->getTuCostTile(O_CONTENT, _mType);
 
-				if (tileStop->getMapData(O_OBJECT) != nullptr) //&& rise == false
-					cost = 4 + tileStop->getTuCostTile(O_OBJECT, _mType);
+				if (tileStop->getMapData(O_CONTENT) != nullptr) //&& rise == false
+					cost = 4 + tileStop->getTuCostTile(O_CONTENT, _mType);
 				else if (tileStop->getMapData(O_FLOOR) != nullptr)
 					cost = tileStop->getTuCostTile(O_FLOOR, _mType);
 				else
@@ -1463,7 +1463,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NESW) == true
 				|| isBlockedTile(
@@ -1472,7 +1472,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posNorth),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NESW) == true)
 			{
@@ -1499,7 +1499,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posEast),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NWSE) == true
 				|| isBlockedTile(
@@ -1516,7 +1516,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NWSE) == true)
 			{
@@ -1551,7 +1551,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posSouth),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NESW) == true
 				|| isBlockedTile(
@@ -1560,7 +1560,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posWest),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NESW) == true)
 			{
@@ -1595,7 +1595,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posWest),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NWSE) == true
 				|| isBlockedTile(
@@ -1604,7 +1604,7 @@ bool Pathfinding::isBlockedDir(
 						launchTarget) == true
 				|| isBlockedTile(
 						_battleSave->getTile(pos + posNorth),
-						O_OBJECT,
+						O_CONTENT,
 						launchTarget,
 						BIGWALL_NWSE) == true)
 			{
@@ -1635,9 +1635,9 @@ bool Pathfinding::isBlockedTile( // private.
 
 	switch (partType)
 	{
-		case O_OBJECT:
+		case O_CONTENT:
 			//Log(LOG_INFO) << ". part is Bigwall/object " << tile->getPosition();
-			if ((part = tile->getMapData(O_OBJECT)) != nullptr)
+			if ((part = tile->getMapData(O_CONTENT)) != nullptr)
 			{
 				const BigwallType bigType (part->getBigwall());
 				switch (bigType)
@@ -1663,7 +1663,7 @@ bool Pathfinding::isBlockedTile( // private.
 				return true;
 			}
 
-			if ((part = tile->getMapData(O_OBJECT)) != nullptr)
+			if ((part = tile->getMapData(O_CONTENT)) != nullptr)
 			{
 				switch (part->getBigwall())
 				{
@@ -1677,7 +1677,7 @@ bool Pathfinding::isBlockedTile( // private.
 			if (tileWest == nullptr)
 				return true;
 
-			if ((part = tileWest->getMapData(O_OBJECT)) != nullptr)
+			if ((part = tileWest->getMapData(O_CONTENT)) != nullptr)
 			{
 				switch (part->getBigwall())
 				{
@@ -1701,7 +1701,7 @@ bool Pathfinding::isBlockedTile( // private.
 				return true;
 			}
 
-			if ((part = tile->getMapData(O_OBJECT)) != nullptr)
+			if ((part = tile->getMapData(O_CONTENT)) != nullptr)
 			{
 				switch (part->getBigwall())
 				{
@@ -1715,7 +1715,7 @@ bool Pathfinding::isBlockedTile( // private.
 			if (tileNorth == nullptr)
 				return true;
 
-			if ((part = tileNorth->getMapData(O_OBJECT)) != nullptr)
+			if ((part = tileNorth->getMapData(O_CONTENT)) != nullptr)
 			{
 				switch (part->getBigwall())
 				{
@@ -2065,12 +2065,12 @@ UpDownCheck Pathfinding::validateUpDown(
 	if (stopTile == nullptr) return FLY_BLOCKED;
 
 
-	if (stopTile->getMapData(O_OBJECT) != nullptr)	// NOTE: This is effectively an early-out for up/down movement; getTuCostPf()
-	{												// will also prevent movement if TU-cost(O_OBJECT) is more than the unit has.
-		switch (stopTile->getMapData(O_OBJECT)->getBigwall())
+	if (stopTile->getMapData(O_CONTENT) != nullptr)	// NOTE: This is effectively an early-out for up/down movement; getTuCostPf()
+	{												// will also prevent movement if TU-cost(O_CONTENT) is more than the unit has.
+		switch (stopTile->getMapData(O_CONTENT)->getBigwall())
 		{
 			case BIGWALL_NONE:
-				if (stopTile->getMapData(O_OBJECT)->getTuCostPart(_mType) != 255)
+				if (stopTile->getMapData(O_CONTENT)->getTuCostPart(_mType) != 255)
 					break;
 				// no break;
 

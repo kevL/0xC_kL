@@ -984,8 +984,8 @@ void Map::drawTerrain(Surface* const surface) // private.
 								const Tile* const tileEast (_battleSave->getTile(posField + posEast));
 								if (tileEast != nullptr // why.
 									&& tileEast->getSprite(O_FLOOR) == nullptr
-									&& (tileEast->getMapData(O_OBJECT) == nullptr // special case ->
-										|| tileEast->getMapData(O_OBJECT)->getBigwall() != BIGWALL_NWSE))
+									&& (tileEast->getMapData(O_CONTENT) == nullptr // special case ->
+										|| tileEast->getMapData(O_CONTENT)->getBigwall() != BIGWALL_NWSE))
 								{
 									const Tile* const tileEastBelow (_battleSave->getTile(posField + posEastBelow));
 									const BattleUnit* const unitEastBelow (tileEastBelow->getTileUnit());
@@ -1202,9 +1202,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 							}
 
 // Draw Object in Background & Center
-							if ((sprite = _tile->getSprite(O_OBJECT)) != nullptr)
+							if ((sprite = _tile->getSprite(O_CONTENT)) != nullptr)
 							{
-								switch (_tile->getMapData(O_OBJECT)->getBigwall())
+								switch (_tile->getMapData(O_CONTENT)->getBigwall())
 								{
 									case BIGWALL_NONE:
 									case BIGWALL_BLOCK:
@@ -1217,7 +1217,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 										sprite->blitNShade(
 												surface,
 												posScreen.x,
-												posScreen.y - _tile->getMapData(O_OBJECT)->getOffsetY(),
+												posScreen.y - _tile->getMapData(O_CONTENT)->getOffsetY(),
 												tileShade);
 								}
 							}
@@ -1516,36 +1516,36 @@ void Map::drawTerrain(Surface* const surface) // private.
 									}
 
 									if (redrawEastwall == true
-										&& (   _tile->getMapData(O_OBJECT) == nullptr
-											|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST))
+										&& (   _tile->getMapData(O_CONTENT) == nullptr
+											|| _tile->getMapData(O_CONTENT)->getBigwall() != BIGWALL_EAST))
 									{
 										const Tile* const tileNorth (_battleSave->getTile(posField + POS_NORTH));
 										if (tileNorth != nullptr // safety. perhaps
-											&& tileNorth->getMapData(O_OBJECT) != nullptr
-											&& tileNorth->getMapData(O_OBJECT)->getBigwall() == BIGWALL_EAST)
+											&& tileNorth->getMapData(O_CONTENT) != nullptr
+											&& tileNorth->getMapData(O_CONTENT)->getBigwall() == BIGWALL_EAST)
 										{
-											sprite = tileNorth->getSprite(O_OBJECT);
+											sprite = tileNorth->getSprite(O_CONTENT);
 											sprite->blitNShade(
 													surface,
 													posScreen.x + 16,
-													posScreen.y -  8 - tileNorth->getMapData(O_OBJECT)->getOffsetY(),
+													posScreen.y -  8 - tileNorth->getMapData(O_CONTENT)->getOffsetY(),
 													tileNorth->getShade());
 										}
 									}
 									else if (redrawSouthwall == true
-										&& (   _tile->getMapData(O_OBJECT) == nullptr
-											|| _tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH))
+										&& (   _tile->getMapData(O_CONTENT) == nullptr
+											|| _tile->getMapData(O_CONTENT)->getBigwall() != BIGWALL_SOUTH))
 									{
 										const Tile* const tileWest (_battleSave->getTile(posField + POS_WEST));
 										if (tileWest != nullptr
-											&& tileWest->getMapData(O_OBJECT) != nullptr
-											&& tileWest->getMapData(O_OBJECT)->getBigwall() == BIGWALL_SOUTH)
+											&& tileWest->getMapData(O_CONTENT) != nullptr
+											&& tileWest->getMapData(O_CONTENT)->getBigwall() == BIGWALL_SOUTH)
 										{
-											sprite = tileWest->getSprite(O_OBJECT);
+											sprite = tileWest->getSprite(O_CONTENT);
 											sprite->blitNShade(
 													surface,
 													posScreen.x - 16,
-													posScreen.y -  8 - tileWest->getMapData(O_OBJECT)->getOffsetY(),
+													posScreen.y -  8 - tileWest->getMapData(O_CONTENT)->getOffsetY(),
 													tileWest->getShade());
 										}
 									}
@@ -1739,9 +1739,9 @@ void Map::drawTerrain(Surface* const surface) // private.
 						}
 
 // Draw Front Object
-						if ((sprite = _tile->getSprite(O_OBJECT)) != nullptr)
+						if ((sprite = _tile->getSprite(O_CONTENT)) != nullptr)
 						{
-							switch (_tile->getMapData(O_OBJECT)->getBigwall())
+							switch (_tile->getMapData(O_CONTENT)->getBigwall())
 							{
 								case BIGWALL_EAST:
 								case BIGWALL_SOUTH:
@@ -1749,7 +1749,7 @@ void Map::drawTerrain(Surface* const surface) // private.
 									sprite->blitNShade(
 											surface,
 											posScreen.x,
-											posScreen.y - _tile->getMapData(O_OBJECT)->getOffsetY(),
+											posScreen.y - _tile->getMapData(O_CONTENT)->getOffsetY(),
 											tileShade);
 							}
 						}
@@ -2360,15 +2360,15 @@ bool Map::checkWest( // private.
 	//Log(LOG_INFO) << "ret[1] " << ret;
 
 	if (ret == false)
-		ret = (tile6->getMapData(O_OBJECT) == nullptr
-				|| tile6->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH)
+		ret = (tile6->getMapData(O_CONTENT) == nullptr
+				|| tile6->getMapData(O_CONTENT)->getBigwall() != BIGWALL_SOUTH)
 			&& (tile5 == nullptr
 				|| ((tile5->getMapData(O_NORTHWALL) == nullptr
 						|| (tile5->getMapData(O_NORTHWALL)->getTuCostPart(MT_WALK) != 255
 							&& tile5->getMapData(O_NORTHWALL)->isSlideDoor() == false)
 						|| tile5->isSlideDoorOpen(O_NORTHWALL) == true)
-					&& (tile5->getMapData(O_OBJECT) == nullptr
-						|| (tile5->getMapData(O_OBJECT)->getBigwall() & 0x33) == 0))); // Block/NeSw/North/East.
+					&& (tile5->getMapData(O_CONTENT) == nullptr
+						|| (tile5->getMapData(O_CONTENT)->getBigwall() & 0x33) == 0))); // Block/NeSw/North/East.
 	//Log(LOG_INFO) << "ret[2] " << ret;
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
@@ -2396,15 +2396,15 @@ bool Map::checkWest( // private.
 						* const tile (_battleSave->getTile(pos)),
 						* const tileSouth (_battleSave->getTile(pos + Position(0,1,0)));
 					if (!
-						((tile->getMapData(O_OBJECT) == nullptr
-							|| tile->getMapData(O_OBJECT)->getBigwall() != BIGWALL_SOUTH)
+						((tile->getMapData(O_CONTENT) == nullptr
+							|| tile->getMapData(O_CONTENT)->getBigwall() != BIGWALL_SOUTH)
 						&& (tileSouth == nullptr
 							|| ((tileSouth->getMapData(O_NORTHWALL) == nullptr
 									|| tileSouth->isSlideDoorOpen(O_NORTHWALL) == true
 									|| (tileSouth->getMapData(O_NORTHWALL)->getTuCostPart(MT_WALK) != 255
 										&& tileSouth->getMapData(O_NORTHWALL)->isSlideDoor() == false))
-								&& (tileSouth->getMapData(O_OBJECT) == nullptr
-									|| (tileSouth->getMapData(O_OBJECT)->getBigwall() & 0x3) == 0))))) // Block/NeSw.
+								&& (tileSouth->getMapData(O_CONTENT) == nullptr
+									|| (tileSouth->getMapData(O_CONTENT)->getBigwall() & 0x3) == 0))))) // Block/NeSw.
 						// All that causes clipping when the large unit moves out eastward from along the northern side
 						// of an EW barrier but it's better than leaving a big hole in the 3rd quadrant as it moves out.
 						// And anything is better than re-drawing tile-parts.
@@ -2462,14 +2462,14 @@ bool Map::checkNorth( // private.
 		ret = false; // '_unit' is NOT Valid.
 
 	if (ret == false)
-		ret = (tile0->getMapData(O_OBJECT) == nullptr
-				|| tile0->getMapData(O_OBJECT)->getBigwall() != BIGWALL_EAST);
+		ret = (tile0->getMapData(O_CONTENT) == nullptr
+				|| tile0->getMapData(O_CONTENT)->getBigwall() != BIGWALL_EAST);
 //			&& (tile1 == nullptr
 //				|| ((tile1->getMapData(O_WESTWALL) == nullptr
 //						|| tile1->getMapData(O_WESTWALL)->getTuCostPart(MT_WALK) == 0 // <- darn those UFO-westwall-struts.
 //						|| tile1->isSlideDoorOpen(O_WESTWALL) == true)
-//					&& (tile1->getMapData(O_OBJECT) == nullptr
-//						|| (tile1->getMapData(O_OBJECT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
+//					&& (tile1->getMapData(O_CONTENT) == nullptr
+//						|| (tile1->getMapData(O_CONTENT)->getBigwall() & 0xb) == 0)))); // Block/NeSw/West.
 
 	if (ret == false) // unit might actually be too far away from wall to clip despite above conditions - now don't let the floor clip it
 	{

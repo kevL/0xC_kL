@@ -413,7 +413,7 @@ void BattlescapeGenerator::stage()
 				&& (_battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_TILE
 					|| (_battleSave->getTiles()[i]->getPosition().z == 1
 						&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
-						&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))))
+						&& _battleSave->getTiles()[i]->getMapData(O_CONTENT))))
 			{
 				_battleSave->getTiles()[i]->setDiscovered(true, 2);
 			}
@@ -427,7 +427,7 @@ void BattlescapeGenerator::stage()
 				&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_TILE)
 //					|| (_battleSave->getTiles()[i]->getPosition().z == _mapsize_z - 1
 //						&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
-//						&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))
+//						&& _battleSave->getTiles()[i]->getMapData(O_CONTENT))
 			{
 				_battleSave->getTiles()[i]->setDiscovered(true, 2);
 			}
@@ -923,7 +923,7 @@ void BattlescapeGenerator::stage2()
 			&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->getTileType() == START_TILE)
 //				|| (_battleSave->getTiles()[i]->getPosition().z == 1
 //					&& _battleSave->getTiles()[i]->getMapData(O_FLOOR)->isGravLift()
-//					&& _battleSave->getTiles()[i]->getMapData(O_OBJECT))
+//					&& _battleSave->getTiles()[i]->getMapData(O_CONTENT))
 		{
 			_battleSave->getTiles()[i]->setDiscovered(true, 2);
 		}
@@ -1694,7 +1694,7 @@ bool BattlescapeGenerator::isStartTile(Tile* const tile) // private.
 		&& tile->getMapData(O_FLOOR) != nullptr							// has a floor
 		&& tile->getMapData(O_FLOOR)->getSpecialType() == START_TILE	// is a 'start point', ie. cargo tile
 		&& tile->getMapData(O_FLOOR)->getTuCostPart(MT_WALK) != 255		// is walkable.
-		&& tile->getMapData(O_OBJECT) == nullptr						// no object content
+		&& tile->getMapData(O_CONTENT) == nullptr						// no object content
 		&& tile->getTileUnit() == nullptr)								// and no unit on Tile.
 	{
 		return true;
@@ -2852,8 +2852,8 @@ void BattlescapeGenerator::fuelPowerSources() // private.
 			++i)
 	{
 		tile = _battleSave->getTiles()[i];
-		if (   tile->getMapData(O_OBJECT)
-			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE)
+		if (   tile->getMapData(O_CONTENT)
+			&& tile->getMapData(O_CONTENT)->getSpecialType() == UFO_POWER_SOURCE)
 		{
 			alienFuel = new BattleItem(
 									_rules->getItemRule(_rules->getAlienFuelType()),
@@ -2877,8 +2877,8 @@ void BattlescapeGenerator::explodePowerSources() // private.
 			++i)
 	{
 		tile = _battleSave->getTiles()[i];
-		if (   tile->getMapData(O_OBJECT) != nullptr
-			&& tile->getMapData(O_OBJECT)->getSpecialType() == UFO_POWER_SOURCE
+		if (   tile->getMapData(O_CONTENT) != nullptr
+			&& tile->getMapData(O_CONTENT)->getSpecialType() == UFO_POWER_SOURCE
 			&& RNG::percent(80) == true)
 		{
 			double power (static_cast<double>(100 - _ufo->getUfoHullPct()));	// range: ~50+ to ~100-
@@ -3548,7 +3548,7 @@ void BattlescapeGenerator::generateBaseMap() // private.
 
 									if (tile != nullptr
 										&& tile->getMapData(O_FLOOR) != nullptr
-										&& tile->getMapData(O_OBJECT) == nullptr
+										&& tile->getMapData(O_CONTENT) == nullptr
 										&& tileEast != nullptr
 										&& tileEast->getMapData(O_WESTWALL) == nullptr
 										&& tileSouth != nullptr
@@ -4240,7 +4240,7 @@ void BattlescapeGenerator::drill( // private.
 							if (tile != nullptr)
 							{
 								tile->setMapData(nullptr,-1,-1, O_WESTWALL);
-								tile->setMapData(nullptr,-1,-1, O_OBJECT);
+								tile->setMapData(nullptr,-1,-1, O_CONTENT);
 
 								if (floor != nullptr)
 								{
@@ -4260,10 +4260,10 @@ void BattlescapeGenerator::drill( // private.
 																info->level));
 								tile->setMapData(nullptr,-1,-1, O_WESTWALL);
 
-								if ((object = tile->getMapData(O_OBJECT)) != nullptr
+								if ((object = tile->getMapData(O_CONTENT)) != nullptr
 									&& object->getTuCostPart(MT_WALK) == 0)
 								{
-									tile->setMapData(nullptr,-1,-1, O_OBJECT);
+									tile->setMapData(nullptr,-1,-1, O_CONTENT);
 								}
 							}
 						}
@@ -4335,7 +4335,7 @@ void BattlescapeGenerator::drill( // private.
 							if (tile != nullptr)
 							{
 								tile->setMapData(nullptr,-1,-1, O_NORTHWALL);
-								tile->setMapData(nullptr,-1,-1, O_OBJECT);
+								tile->setMapData(nullptr,-1,-1, O_CONTENT);
 
 								if (floor != nullptr)
 								{
@@ -4355,10 +4355,10 @@ void BattlescapeGenerator::drill( // private.
 																info->level));
 								tile->setMapData(nullptr,-1,-1, O_NORTHWALL);
 
-								if ((object = tile->getMapData(O_OBJECT)) != nullptr
+								if ((object = tile->getMapData(O_CONTENT)) != nullptr
 									&& object->getTuCostPart(MT_WALK) == 0)
 								{
-									tile->setMapData(nullptr,-1,-1, O_OBJECT);
+									tile->setMapData(nullptr,-1,-1, O_CONTENT);
 								}
 							}
 						}

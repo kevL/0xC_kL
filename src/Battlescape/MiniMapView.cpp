@@ -165,7 +165,7 @@ void MiniMapView::draw()
 
 					if (colorGroup == 1								// is along the edge
 						&& lvl == 0									// is ground level
-						&& tile->getMapData(O_OBJECT) == nullptr)	// but has no content-object
+						&& tile->getMapData(O_CONTENT) == nullptr)	// but has no content-object
 					{
 						srf = _srtScanG->getFrame(377);				// draw edge marker
 						srf->blitNShade(

@@ -413,7 +413,7 @@ void ProjectileFlyBState::init()
 					} */
 				}
 			}
-			else if (tileTarget->getMapData(O_OBJECT) != nullptr	// force vs. Object by using CTRL above^
+			else if (tileTarget->getMapData(O_CONTENT) != nullptr	// force vs. Object by using CTRL above^
 				&& (_unit->getFaction() != FACTION_PLAYER			// bypass Object by pressing SHIFT
 					|| (SDL_GetModState() & KMOD_SHIFT) == 0))
 			{
@@ -422,7 +422,7 @@ void ProjectileFlyBState::init()
 					|| _battle->getTileEngine()->doTargetTilepart(
 															&originVoxel,
 															tileTarget,
-															O_OBJECT,
+															O_CONTENT,
 															&_targetVoxel,
 															_unit) == false)
 				{
@@ -604,9 +604,9 @@ bool ProjectileFlyBState::createProjectile() // private.
 				&& _clip->getRules()->getExplosionRadius() != -1)
 			{
 				const Tile* const tile (_battleSave->getTile(_prj->getFinalPosition()));
-				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT .... uh not true don't know why.
+				if (tile != nullptr && tile->getMapData(O_CONTENT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT .... uh not true don't know why.
 				{
-					switch (tile->getMapData(O_OBJECT)->getBigwall())
+					switch (tile->getMapData(O_CONTENT)->getBigwall())
 					{
 						case BIGWALL_NESW:
 						case BIGWALL_NWSE:
@@ -672,8 +672,8 @@ bool ProjectileFlyBState::createProjectile() // private.
 				&& _clip->getRules()->getExplosionRadius() > 0)
 			{
 				const Tile* const tile (_battleSave->getTile(_prj->getFinalPosition()));
-//				if (tile != nullptr && tile->getMapData(O_OBJECT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT ....
-				switch (tile->getMapData(O_OBJECT)->getBigwall())
+//				if (tile != nullptr && tile->getMapData(O_CONTENT) != nullptr) // safety. Should be unnecessary because _prjImpact=VOXEL_OBJECT ....
+				switch (tile->getMapData(O_CONTENT)->getBigwall())
 				{
 					case BIGWALL_NESW:
 					case BIGWALL_NWSE:
