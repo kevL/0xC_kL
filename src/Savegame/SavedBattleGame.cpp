@@ -1936,7 +1936,7 @@ Node* SavedBattleGame::getSpawnNode(
 							(*i)->getPosition(),	// and there's not already a unit there.
 							true) == true)			// test-only: runs again w/ FALSE on return to bgen::addAlien()
 		{
-			for (int // weight each eligible node by its Priority.
+			for (int // weight each eligible node by its SpawnWeight.
 					j = (*i)->getSpawnWeight();
 					j != 0;
 					--j)
@@ -2045,8 +2045,8 @@ Node* SavedBattleGame::getPatrolNode(
 
 /**
  * Gets a Node considered nearest to a specified BattleUnit.
- * @note Assume closest node is on same level to avoid strange things. The node
- * has to match unit-size or the AI will freeze.
+ * @note Node must be on same level to avoid strange things and its unittype has
+ * to match unit-size or the AI will freeze.
  * @param unit - pointer to a BattleUnit
  * @return, the nearest Node
  */
@@ -2054,11 +2054,11 @@ Node* SavedBattleGame::getStartNode(const BattleUnit* const unit) const
 {
 	Node* node (nullptr);
 	int
-		dist (1000000),
+		dist (std::numeric_limits<int>::max()),
 		distTest;
 
 	const int posZ (unit->getPosition().z);
-	const bool onequad (unit->getArmor()->getSize() == 1);
+	const bool unitisSmall (unit->getArmor()->getSize() == 1);
 
 	// NOTE/TODO: This doesn't check for Flying unit/nodetype - that is it
 	// assumes that non-flying units can start from a flying-only nodetype.
@@ -2069,7 +2069,7 @@ Node* SavedBattleGame::getStartNode(const BattleUnit* const unit) const
 			++i)
 	{
 		if ((*i)->getPosition().z == posZ
-			&& (onequad == true
+			&& (unitisSmall == true
 				|| (((*i)->getUnitType() & (Node::TYPE_SMALL | Node::TYPE_SMALLFLYING)) == 0)))
 		{
 			distTest = TileEngine::distSqr(

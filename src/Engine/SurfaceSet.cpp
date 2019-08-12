@@ -93,23 +93,16 @@ void SurfaceSet::loadPck(
 			throw Exception(tab + " not found");
 		}
 
-		std::streampos
-			start (ifstr.tellg()),
-			stop;
+		int offsetTest;
+		ifstr.read(reinterpret_cast<char*>(&offsetTest), 4);
 
-		int offset;
-		ifstr.read(
-				reinterpret_cast<char*>(&offset),
-				sizeof(offset));
 		ifstr.seekg(0, std::ios::end);
+		const int bytes (static_cast<int>(ifstr.tellg()));
 
-		stop = ifstr.tellg();
-		const int tabSize (static_cast<int>(stop - start));
-
-		if (offset != 0)
-			q = tabSize >> 1u; // 16-bit offsets
-		else
-			q = tabSize >> 2u; // 32-bit offsets
+		if (offsetTest != 0)	// is UFO - this check relies on the fact that the first sprite-offset is always "0"
+			q = bytes >> 1u;	// 2-byte offsets
+		else					// is TFTD
+			q = bytes >> 2u;	// 4-byte offsets
 
 		ifstr.close();
 
@@ -146,8 +139,8 @@ void SurfaceSet::loadPck(
 		y = 0;
 
 		_frames[i]->lock();
-		ifstr.read(reinterpret_cast<char*>(&val), 1);
-		for (Uint8
+		ifstr.read(reinterpret_cast<char*>(&val), 1);	// the first byte in a PCK-sprite's data denotes
+		for (Uint8										// an initial quantity of lines that are transparent
 				j = 0u;
 				j != val;
 				++j)
@@ -162,9 +155,9 @@ void SurfaceSet::loadPck(
 		}
 
 		while (ifstr.read(reinterpret_cast<char*>(&val), 1)
-			&& val != 255u)
+			&& val != 255u) // 255u is the end-of-sprite data marker
 		{
-			if (val == 254u)
+			if (val == 254u) // 254u is a marker that says, the next byte's quantity of pixels shall be transparent
 			{
 				ifstr.read(reinterpret_cast<char*>(&val), 1);
 				for (Uint8
@@ -186,9 +179,9 @@ void SurfaceSet::loadPck(
 
 /**
  * Loads the contents of an X-Com DAT image-file into this SurfaceSet.
- * Unlike the PCK, a DAT file is an uncompressed image with no
- * offsets so these have to be figured out manually, usually
- * by splitting the image into equal portions.
+ * Unlike the PCK, a DAT file is an uncompressed image with no offsets so these
+ * have to be figured out manually, usually by splitting the image into equal
+ * portions.
  * @param file - reference to the filename of the DAT image
  * @sa http://www.ufopaedia.org/index.php?title=Image_Formats#SCR_.26_DAT
  */
@@ -264,8 +257,7 @@ Surface* SurfaceSet::getFrame(int i)
  */
 Surface* SurfaceSet::addFrame(int i)
 {
-	_frames[i] = new Surface(_width, _height);
-	return _frames[i];
+	return (_frames[i] = new Surface(_width, _height));
 }
 
 /**
