@@ -481,7 +481,7 @@ void AlienBAIState::setupPatrol() // private.
 			&& _attackAction->weapon != nullptr
 			&& _attackAction->weapon->getClip() != nullptr
 			&& _attackAction->weapon->getClip()->getRules()->getDamageType() != DT_HE
-			&& (   _attackAction->weapon->getRules()->getAccuracySnap() != 0 // TODO: this ought be expanded to include melee.
+			&& (   _attackAction->weapon->getRules()->getAccuracySnap() != 0 // TODO: this ought be expanded to include melee. And grenades.
 				|| _attackAction->weapon->getRules()->getAccuracyAuto() != 0
 				|| _attackAction->weapon->getRules()->getAccuracyAimed() != 0)
 			&& _battleSave->baseDestruct()[static_cast<size_t>(_startNode->getPosition().x / 10)]
@@ -493,12 +493,12 @@ void AlienBAIState::setupPatrol() // private.
 				y ((_unit->getPosition().y / 10) * 10);
 
 			for (int
-					i = x;
+					i  = x;
 					i != x + 9;
 					++i)
 			{
 				for (int
-						j = y;
+						j  = y;
 						j != y + 9;
 						++j)
 				{
@@ -523,7 +523,7 @@ void AlienBAIState::setupPatrol() // private.
 				distTest;
 
 			for (std::vector<Node*>::const_iterator
-					i = _battleSave->getNodes()->begin();
+					i  = _battleSave->getNodes()->begin();
 					i != _battleSave->getNodes()->end();
 					++i)
 			{
@@ -707,7 +707,7 @@ void AlienBAIState::setupAmbush() // private.
 		std::vector<int> targetPath;
 
 //		for (std::vector<Node*>::const_iterator			// use node positions for this since it gives map makers a good
-//				i = _battleSave->getNodes()->begin();	// degree of control over how the units will use the environment.
+//				i  = _battleSave->getNodes()->begin();	// degree of control over how the units will use the environment.
 //				i != _battleSave->getNodes()->end();	// Is that why ambushes work so crappy.
 //				++i)
 //		{
@@ -732,7 +732,7 @@ void AlienBAIState::setupAmbush() // private.
 		RNG::shuffle(tileSearch.begin(), tileSearch.end());
 
 		for (std::vector<Position>::const_iterator
-				i = tileSearch.begin();
+				i  = tileSearch.begin();
 				i != tileSearch.end();
 				++i)
 		{
@@ -1257,7 +1257,7 @@ void AlienBAIState::evaluateAiMode() // private.
 		if (_attackAction->type == BA_LAUNCH
 //		if (_hasBlaster == true // note: Blaster-wielding units should go for an AimedShot ... costs less TU.
 //			|| _unitAggro != nullptr)
-			|| (_battleSave->getTile(_attackAction->posTarget) != nullptr
+			|| (   _battleSave->getTile(_attackAction->posTarget) != nullptr
 				&& _battleSave->getTile(_attackAction->posTarget)->getTileUnit() != nullptr))
 		{
 			if (_traceAI) Log(LOG_INFO) << ". . try rifle Or do blaster Action";
@@ -1299,7 +1299,7 @@ int AlienBAIState::tallyTargets() const // private.
 {
 	int ret (0);
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1329,7 +1329,7 @@ int AlienBAIState::tallySpotters(const Position& pos) const // private.
 		targetVoxel;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1374,7 +1374,7 @@ int AlienBAIState::selectNearestTarget() // private.
 	bool canTarget;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1452,7 +1452,7 @@ bool AlienBAIState::selectPlayerTarget() // private.
 		distTest;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1489,7 +1489,7 @@ bool AlienBAIState::selectTarget() // private.
 		distTest;
 
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1726,7 +1726,7 @@ void AlienBAIState::meleeAction() // private.
 
 	// TODO: set up a vector of BattleUnits to pick from
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1798,7 +1798,7 @@ bool AlienBAIState::wayPointAction() // private.
 		const int explRadius (_attackAction->weapon->getClip()->getRules()->getExplosionRadius());
 
 		for (std::vector<BattleUnit*>::const_iterator
-				i = _battleSave->getUnits()->begin();
+				i  = _battleSave->getUnits()->begin();
 				i != _battleSave->getUnits()->end();
 				++i)
 		{
@@ -2253,7 +2253,7 @@ bool AlienBAIState::psiAction() // private.
 				targetVoxel; // placeholder.
 
 			for (std::vector<BattleUnit*>::const_iterator
-					i = _battleSave->getUnits()->begin();
+					i  = _battleSave->getUnits()->begin();
 					i != _battleSave->getUnits()->end();
 					++i)
 			{
@@ -2495,7 +2495,7 @@ bool AlienBAIState::getNodeOfBestEfficacy(BattleAction* action)
 		targetVoxel;
 
 	for (std::vector<Node*>::const_iterator
-			i = _battleSave->getNodes()->begin();
+			i  = _battleSave->getNodes()->begin();
 			i != _battleSave->getNodes()->end();
 			++i)
 	{
@@ -2514,7 +2514,7 @@ bool AlienBAIState::getNodeOfBestEfficacy(BattleAction* action)
 			int nodePoints = 0;
 
 			for (std::vector<BattleUnit*>::const_iterator
-					j = _battleSave->getUnits()->begin();
+					j  = _battleSave->getUnits()->begin();
 					j != _battleSave->getUnits()->end();
 					++j)
 			{

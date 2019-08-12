@@ -609,7 +609,7 @@ DogfightState::~DogfightState()
 
 /**
  * Runs the higher level dogfight functionality.
- * @note This is the handler for GeoscapeState::thinkDogfights() '_tmrDogfight'.
+ * @note This is the handler for GeoscapeState::thinkDogfights() '_trDf'.
  */
 void DogfightState::think()
 {
@@ -675,7 +675,7 @@ void DogfightState::think()
 
 /**
  * Animates the Surface via palette cycling.
- * @note This is called by advanceDogfight().
+ * @note This is called by waltz().
  */
 void DogfightState::cyclePort()
 {

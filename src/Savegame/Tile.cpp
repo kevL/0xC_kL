@@ -1269,7 +1269,7 @@ int Tile::getAnimationOffset() const
 
 /**
  * Gets the sprite of a certain part of this Tile.
- * @param parttype - tile-part to get a sprite for
+ * @param parttype - parttype to get a sprite for
  * @return, pointer to the sprite
  */
 Surface* Tile::getSprite(MapDataType parttype) const
