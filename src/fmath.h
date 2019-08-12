@@ -37,6 +37,7 @@ inline bool AreSame(
 		const _Tx& val2)
 {
 	return std::fabs(val1 - val2) <= std::numeric_limits<_Tx>::epsilon();
+	// * std::max((_Tx)1, std::max(std::fabs(val1), std::fabs(val2))) <- OxC mod to epsilon ...
 }
 
 /**
