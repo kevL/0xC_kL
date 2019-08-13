@@ -410,7 +410,7 @@ DogfightState::DogfightState(
 
 	const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 	for (size_t
-			i = 0u;
+			i  = 0u;
 			i != hardpoints;
 			++i)
 	{
@@ -457,7 +457,7 @@ DogfightState::DogfightState(
 			yPos = cwRange->getHeight() - cw->getRules()->getRange();
 
 			for (int // dashed horizontal line
-					x = x1;
+					x  = x1;
 					x != x1 + 20;
 					x += 2)
 			{
@@ -467,7 +467,7 @@ DogfightState::DogfightState(
 			}
 
 			for (int // vertical line
-					y = yPos;
+					y  = yPos;
 					y != 58;
 					++y)
 			{
@@ -477,7 +477,7 @@ DogfightState::DogfightState(
 			}
 
 			for (int // solid horizontal line
-					x = x2;
+					x  = x2;
 					x != x2 + 3;
 					++x)
 			{
@@ -513,7 +513,7 @@ DogfightState::DogfightState(
 
 	bool dogfight = false; // check if UFO is already engaged by a different interceptor
 	for (std::list<DogfightState*>::const_iterator
-			i = _geoState->getDogfights().begin();
+			i  = _geoState->getDogfights().begin();
 			i != _geoState->getDogfights().end();
 			++i)
 	{
@@ -541,7 +541,7 @@ DogfightState::DogfightState(
 	bool isCraftColor;
 
 	for (int
-			y = 0;
+			y  = 0;
 			y != _srfHull->getHeight();
 			++y)
 	{
@@ -681,12 +681,12 @@ void DogfightState::cyclePort()
 {
 	//if (debug) Log(LOG_INFO) << "cyclePort()";
 	for (int // Animate radar waves and other stuff.
-			x = 0;
+			x  = 0;
 			x != _window->getWidth();
 			++x)
 	{
 		for (int
-				y = 0;
+				y  = 0;
 				y != _window->getHeight();
 				++y)
 		{
@@ -708,7 +708,7 @@ void DogfightState::cyclePort()
 		drawUfo();
 
 	for (std::vector<CraftWeaponProjectile*>::const_iterator
-			i = _projectiles.begin();
+			i  = _projectiles.begin();
 			i != _projectiles.end();
 			++i)
 	{
@@ -766,7 +766,7 @@ void DogfightState::waltz()
 			drawCraft();
 		}
 
-		if (_ufo->isCrashed() == false
+		if (   _ufo->isCrashed() == false
 			&& _ufo->getTicked() == false) // the UFO ticks only once per GeoscapeState::thinkDogfights() for *all* ports
 		{
 			//if (debug) Log(LOG_INFO) << ". . tick UFO";
@@ -800,7 +800,7 @@ void DogfightState::waltz()
 		{
 			int craft (0);
 			for (std::list<DogfightState*>::const_iterator
-					i = _geoState->getDogfights().begin();
+					i  = _geoState->getDogfights().begin();
 					i != _geoState->getDogfights().end();
 					++i)
 			{
@@ -829,7 +829,7 @@ void DogfightState::waltz()
 		//if (debug) Log(LOG_INFO) << ". not reduced - MAIN DOGFIGHT";
 		int delta; // Update distance.
 		const int accel ((_craft->getRules()->getAcceleration()
-						- _ufo->getRules()->getAcceleration()) >> 1u); // could be negative.
+						  - _ufo->getRules()->getAcceleration()) >> 1u); // could be negative.
 
 		if (_breakoff == false)
 		{
@@ -841,7 +841,7 @@ void DogfightState::waltz()
 
 			if (_dist != _desired)
 			{
-				if (_ufo->isCrashed() == false
+				if (     _ufo->isCrashed() == false
 					&& _craft->isDestroyed() == false)
 				{
 					delta = std::max(2,
@@ -861,7 +861,7 @@ void DogfightState::waltz()
 				if (delta > 0)
 				{
 					for (std::vector<CraftWeaponProjectile*>::const_iterator
-							i = _projectiles.begin();
+							i  = _projectiles.begin();
 							i != _projectiles.end();
 							++i)
 					{
@@ -884,7 +884,7 @@ void DogfightState::waltz()
 		int pos;
 
 		for (std::vector<CraftWeaponProjectile*>::const_iterator // Move projectiles and check for hits.
-				i = _projectiles.begin();
+				i  = _projectiles.begin();
 				i != _projectiles.end();
 				)
 		{
@@ -1086,7 +1086,7 @@ void DogfightState::waltz()
 					const CraftWeapon* cw;
 					const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 					for (size_t
-							i = 0u;
+							i  = 0u;
 							i != hardpoints;
 							++i)
 					{
@@ -1140,7 +1140,7 @@ void DogfightState::waltz()
 						std::vector<size_t> altSlots; // Randomize UFO's target.
 
 						for (std::list<DogfightState*>::const_iterator
-								i = _geoState->getDogfights().begin();
+								i  = _geoState->getDogfights().begin();
 								i != _geoState->getDogfights().end();
 								++i)
 						{
@@ -1259,7 +1259,7 @@ void DogfightState::waltz()
 					_playSave->scorePoints(lon,lat, pts, false);
 
 				for (std::list<DogfightState*>::const_iterator
-					i = _geoState->getDogfights().begin();
+					i  = _geoState->getDogfights().begin();
 					i != _geoState->getDogfights().end();
 					++i)
 				{
@@ -1375,7 +1375,7 @@ void DogfightState::adjustDistance(bool hasWeapons) // private.
 		if (_craftStance == _btnCautious) // find range of longest loaded weapon
 		{
 			for (std::vector<CraftWeapon*>::const_iterator
-					i = _craft->getCraftWeapons()->begin();
+					i  = _craft->getCraftWeapons()->begin();
 					i != _craft->getCraftWeapons()->end();
 					++i)
 			{
@@ -1391,7 +1391,7 @@ void DogfightState::adjustDistance(bool hasWeapons) // private.
 		{
 			dist = 999;
 			for (std::vector<CraftWeapon*>::const_iterator
-					i = _craft->getCraftWeapons()->begin();
+					i  = _craft->getCraftWeapons()->begin();
 					i != _craft->getCraftWeapons()->end();
 					++i)
 			{
@@ -1452,7 +1452,7 @@ void DogfightState::keyEscape(Action*)
 	{
 		bool dont (false);
 		for (std::list<DogfightState*>::const_iterator
-				i = _geoState->getDogfights().begin();
+				i  = _geoState->getDogfights().begin();
 				i != _geoState->getDogfights().end();
 				++i)
 		{
@@ -1499,7 +1499,7 @@ void DogfightState::btnCautiousClick(Action*)
 		int fireInterval;
 		const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 		for (size_t
-				i = 0u;
+				i  = 0u;
 				i != hardpoints;
 				++i)
 		{
@@ -1537,7 +1537,7 @@ void DogfightState::btnStandardClick(Action*)
 		int fireInterval;
 		const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 		for (size_t
-				i = 0u;
+				i  = 0u;
 				i != hardpoints;
 				++i)
 		{
@@ -1573,7 +1573,7 @@ void DogfightState::btnAggressiveClick(Action*)
 		int fireInterval;
 		const size_t hardpoints (_craft->getRules()->getWeaponCapacity());
 		for (size_t
-				i = 0u;
+				i  = 0u;
 				i != hardpoints;
 				++i)
 		{
@@ -1834,12 +1834,12 @@ void DogfightState::drawCraft(bool init) // private.
 					color = colors[DAMAGE_RED];
 
 				for (int
-						y = _craftHeight_pre;
+						y  = _craftHeight_pre;
 						y != _craftHeight_pre + rowsToColor;
 						++y)
 				{
 					for (int
-							x = 1;
+							x  = 1;
 							x != 23;
 							++x)
 					{
@@ -1876,12 +1876,12 @@ void DogfightState::drawUfo() // private.
 		Uint8 color;
 
 		for (int
-				y = 0;
+				y  = 0;
 				y != 13;
 				++y)
 		{
 			for (int
-					x = 0;
+					x  = 0;
 					x != 13;
 					++x)
 			{
@@ -1931,12 +1931,12 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj) // pr
 			--pos_x;
 			const int pos_y (_battleScope->getHeight() - prj->getCwpPosition(true));
 			for (int
-					x = 0;
+					x  = 0;
 					x != 3;
 					++x)
 			{
 				for (int
-						y = 0;
+						y  = 0;
 						y != 6;
 						++y)
 				{
@@ -1978,7 +1978,7 @@ void DogfightState::drawProjectile(const CraftWeaponProjectile* const prj) // pr
 				width;
 
 			for (int
-					y = stop;
+					y  = stop;
 					y != start;
 					--y)
 			{
@@ -2179,7 +2179,7 @@ void DogfightState::placePort() // private.
 		y (_window->getY() - _y);
 
 	for (std::vector<Surface*>::const_iterator
-			i = _surfaces.begin();
+			i  = _surfaces.begin();
 			i != _surfaces.end();
 			++i)
 	{
