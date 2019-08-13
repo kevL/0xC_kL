@@ -74,7 +74,7 @@ SurfaceSet::~SurfaceSet()
  * Loads the contents of an X-Com set of PCK/TAB image-files into this SurfaceSet.
  * The PCK file contains an RLE compressed image while the TAB file contains
  * the offsets to each frame in the image.
- * @param pck - reference to filename of the PCK image
+ * @param pck - reference to filename of the PCK sprite-file or spriteset-file
  * @param tab - reference to filename of the TAB offsets (default "")
  * @sa http://www.ufopaedia.org/index.php?title=Image_Formats#PCK
  */
@@ -85,29 +85,46 @@ void SurfaceSet::loadPck(
 	//Log(LOG_INFO) << "SurfaceSet::loadPck() " << pck;
 	int q;
 
-	if (tab.empty() == false) // Load TAB and get image-offsets
-	{
+	if (tab.empty() == false)	// Load TAB and get image-offsets -> actually, don't get the offsets; just
+	{							// use the TAB to deter if the spriteset uses 2-byte or 4-type tabword-lengths.
 		std::ifstream ifstr (tab.c_str(), std::ios::in | std::ios::binary);
 		if (ifstr.fail() == true)
 		{
 			throw Exception(tab + " not found");
 		}
 
-		int offsetTest;
-		ifstr.read(reinterpret_cast<char*>(&offsetTest), 4);
-
 		ifstr.seekg(0, std::ios::end);
-		const int bytes (static_cast<int>(ifstr.tellg()));
+		const int len (static_cast<int>(ifstr.tellg()));
 
-		if (offsetTest != 0)	// is UFO - this check relies on the fact that the first sprite-offset is always "0"
-			q = bytes >> 1u;	// 2-byte offsets
-		else					// is TFTD
-			q = bytes >> 2u;	// 4-byte offsets
+		if (len == 2) // has 1 ufo-sprite
+		{
+			q = 1; // definitely 2-byte offset
+		}
+		else // has 2+ ufo-sprites or 1+ tftd-sprites
+		{
+			ifstr.seekg(0, std::ios::beg);
+
+			// this test relies on the fact that the first sprite-offset for UFO
+			// is always
+			// 00 00
+			// but the first sprite-offset for TFTD is always ... that is, the
+			// first + second sprite-offsets for UFO can never be
+			// 00 00 00 00
+			// (as long as the tabfile contains >2 bytes)
+
+			int offsetTest;
+			ifstr.read(reinterpret_cast<char*>(&offsetTest), 4);
+
+			if (offsetTest != 0)	// is UFO
+				q = len >> 1u;		// 2-byte offsets
+			else					// is TFTD
+				q = len >> 2u;		// 4-byte offsets
+		}
 
 		ifstr.close();
 
 		for (int
-				i = 0;
+				i  = 0;
 				i != q;
 				++i)
 		{
@@ -141,12 +158,12 @@ void SurfaceSet::loadPck(
 		_frames[i]->lock();
 		ifstr.read(reinterpret_cast<char*>(&val), 1);	// the first byte in a PCK-sprite's data denotes
 		for (Uint8										// an initial quantity of lines that are transparent
-				j = 0u;
+				j  = 0u;
 				j != val;
 				++j)
 		{
 			for (int
-					k = 0;
+					k  = 0;
 					k != _width;
 					++k)
 			{
@@ -161,7 +178,7 @@ void SurfaceSet::loadPck(
 			{
 				ifstr.read(reinterpret_cast<char*>(&val), 1);
 				for (Uint8
-						j = 0u;
+						j  = 0u;
 						j != val;
 						++j)
 				{
