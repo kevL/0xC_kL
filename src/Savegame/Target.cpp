@@ -195,10 +195,10 @@ double Target::getDistance(const Target* const target) const
 	// else the formula below returns NaN
 
 	return std::acos(
-				std::cos(_lat)
+				  std::cos(_lat)
 				* std::cos(latTarget)
 				* std::cos(lonTarget - _lon)
-			+ std::sin(_lat)
+				+ std::sin(_lat)
 				* std::sin(latTarget));
 }
 

@@ -96,12 +96,8 @@ inline bool isNaNorInf(
 		const _Tx& val1,
 		const _Tx& val2)
 {
-	if (   std::isnan(val1) || std::isnan(val2)
-		|| std::isinf(val1) || std::isinf(val2))
-	{
-		return true;
-	}
-	return false;
+	return std::isnan(val1) || std::isnan(val2)
+		|| std::isinf(val1) || std::isinf(val2);
 }
 
 /**
