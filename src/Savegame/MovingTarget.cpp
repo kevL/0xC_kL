@@ -249,7 +249,7 @@ void MovingTarget::stepTarget()
 		if (getDistance(_target) > _speedRads)
 		{
 			calculateSpeed();				// NOTE: That could be bypassed if this MovingTarget's target hasn't changed
-			setLongitude(_lon + _speedLon);	// its coords. depending on how accurately the destination is calculated ....
+			setLongitude(_lon + _speedLon);	// its trajectory. depending on how accurately the destination is calculated ....
 			setLatitude( _lat + _speedLat);	// Because this MovingTarget has to get there spot on.
 		}
 		else
