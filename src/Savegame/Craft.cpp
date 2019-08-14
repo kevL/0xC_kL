@@ -113,13 +113,13 @@ Craft::~Craft()
 	delete _items;
 
 	for (std::vector<CraftWeapon*>::const_iterator
-			i = _weapons.begin();
+			i  = _weapons.begin();
 			i != _weapons.end();
 			++i)
 		delete *i;
 
 	for (std::vector<Vehicle*>::const_iterator
-			i = _vehicles.begin();
+			i  = _vehicles.begin();
 			i != _vehicles.end();
 			++i)
 		delete *i;
@@ -136,9 +136,9 @@ void Craft::loadCraft(
 {
 	MovingTarget::load(node);
 
-	_id		= node["id"]	.as<int>(_id);
-	_fuel	= node["fuel"]	.as<int>(_fuel);
-	_hull	= node["hull"]	.as<int>(_hull);
+	_id   = node["id"]  .as<int>(_id);
+	_fuel = node["fuel"].as<int>(_fuel);
+	_hull = node["hull"].as<int>(_hull);
 
 	_warning = static_cast<CraftWarning>(node["warning"].as<int>(_warning));
 
@@ -146,7 +146,7 @@ void Craft::loadCraft(
 
 	size_t j (0u);
 	for (YAML::const_iterator
-			i = node["weapons"].begin();
+			i  = node["weapons"].begin();
 			i != node["weapons"].end();
 			++i)
 	{
@@ -175,7 +175,7 @@ void Craft::loadCraft(
 	{
 		_items->load(node["items"]);
 		for (std::map<std::string, int>::const_iterator
-				i = _items->getContents()->begin();
+				i  = _items->getContents()->begin();
 				i != _items->getContents()->end();
 				)
 		{
@@ -190,7 +190,7 @@ void Craft::loadCraft(
 	}
 
 	for (YAML::const_iterator
-			i = node["vehicles"].begin();
+			i  = node["vehicles"].begin();
 			i != node["vehicles"].end();
 			++i)
 	{
@@ -210,9 +210,9 @@ void Craft::loadCraft(
 
 	_status = static_cast<CraftStatus>(node["status"].as<int>(_status));
 
-	_lowFuel		= node["lowFuel"]		.as<bool>(_lowFuel);
-	_tacticalReturn	= node["tacticalReturn"].as<bool>(_tacticalReturn);
-	_kills			= node["kills"]			.as<int>(_kills);
+	_lowFuel        = node["lowFuel"]       .as<bool>(_lowFuel);
+	_tacticalReturn = node["tacticalReturn"].as<bool>(_tacticalReturn);
+	_kills          = node["kills"]         .as<int>(_kills);
 
 	if (const YAML::Node& label = node["label"])
 		_label = Language::utf8ToWstr(label.as<std::string>());
@@ -235,7 +235,7 @@ void Craft::loadCraft(
 		{
 			const std::vector<Ufo*>* const ufoList (_playSave->getUfos());
 			for (std::vector<Ufo*>::const_iterator
-					i = ufoList->begin();
+					i  = ufoList->begin();
 					i != ufoList->end();
 					++i)
 			{
@@ -250,7 +250,7 @@ void Craft::loadCraft(
 		{
 			const std::vector<Waypoint*>* const wpList (_playSave->getWaypoints());
 			for (std::vector<Waypoint*>::const_iterator
-					i = wpList->begin();
+					i  = wpList->begin();
 					i != wpList->end();
 					++i)
 			{
@@ -265,7 +265,7 @@ void Craft::loadCraft(
 		{
 			const std::vector<AlienBase*>* const abList (_playSave->getAlienBases());
 			for (std::vector<AlienBase*>::const_iterator
-					i = abList->begin();
+					i  = abList->begin();
 					i != abList->end();
 					++i)
 			{
@@ -280,7 +280,7 @@ void Craft::loadCraft(
 		{
 			const std::vector<TerrorSite*>* const terrorList (_playSave->getTerrorSites());
 			for (std::vector<TerrorSite*>::const_iterator
-					i = terrorList->begin();
+					i  = terrorList->begin();
 					i != terrorList->end();
 					++i)
 			{
@@ -297,7 +297,7 @@ void Craft::loadCraft(
 
 			const std::vector<AlienBase*>* const abList (_playSave->getAlienBases());
 			for (std::vector<AlienBase*>::const_iterator
-					i = abList->begin();
+					i  = abList->begin();
 					i != abList->end();
 					++i)
 			{
@@ -314,7 +314,7 @@ void Craft::loadCraft(
 			{
 				const std::vector<TerrorSite*>* const tsList (_playSave->getTerrorSites());
 				for (std::vector<TerrorSite*>::const_iterator //(type == Target::stTarget[3u])
-						i = tsList->begin();
+						i  = tsList->begin();
 						i != tsList->end();
 						++i)
 				{
@@ -329,8 +329,8 @@ void Craft::loadCraft(
 		}
 	}
 
-	_takeOffDelay	= node["takeOff"]	.as<int>(_takeOffDelay);
-	_tactical		= node["tactical"]	.as<bool>(_tactical);
+	_takeOffDelay = node["takeOff"] .as<int>(_takeOffDelay);
+	_tactical     = node["tactical"].as<bool>(_tactical);
 
 	if (_tactical == true) setSpeed();
 }
@@ -347,7 +347,7 @@ YAML::Node Craft::save() const
 	node["id"]   = _id;
 
 	for (std::vector<CraftWeapon*>::const_iterator
-			i = _weapons.begin();
+			i  = _weapons.begin();
 			i != _weapons.end();
 			++i)
 	{
@@ -363,24 +363,24 @@ YAML::Node Craft::save() const
 		node["items"] = _items->save();
 
 	for (std::vector<Vehicle*>::const_iterator
-			i = _vehicles.begin();
+			i  = _vehicles.begin();
 			i != _vehicles.end();
 			++i)
 	{
 		node["vehicles"].push_back((*i)->save());
 	}
 
-	node["status"]	= static_cast<int>(_status);
-	node["hull"]	= _hull;
+	node["status"] = static_cast<int>(_status);
+	node["hull"]   = _hull;
 
-	if (_fuel != 0)					node["fuel"]			= _fuel;
-	if (_lowFuel == true)			node["lowFuel"]			= _lowFuel;
-	if (_tacticalReturn == true)	node["tacticalReturn"]	= _tacticalReturn;
-	if (_tactical == true)			node["tactical"]		= _tactical;
-	if (_kills != 0)				node["kills"]			= _kills;
-	if (_takeOffDelay != 0)			node["takeOff"]			= _takeOffDelay;
-	if (_label.empty() == false)	node["label"]			= Language::wstrToUtf8(_label);
-	if (_warning != CW_NONE)		node["warning"]			= static_cast<int>(_warning);
+	if (_fuel != 0)              node["fuel"]           = _fuel;
+	if (_lowFuel == true)        node["lowFuel"]        = _lowFuel;
+	if (_tacticalReturn == true) node["tacticalReturn"] = _tacticalReturn;
+	if (_tactical == true)       node["tactical"]       = _tactical;
+	if (_kills != 0)             node["kills"]          = _kills;
+	if (_takeOffDelay != 0)      node["takeOff"]        = _takeOffDelay;
+	if (_label.empty() == false) node["label"]          = Language::wstrToUtf8(_label);
+	if (_warning != CW_NONE)     node["warning"]        = static_cast<int>(_warning);
 
 	return node;
 }
@@ -442,7 +442,7 @@ void Craft::changeRules(RuleCraft* const crRule)
 
 	_crRule = crRule;
 	for (size_t
-			i = 0u;
+			i  = 0u;
 			i != _crRule->getWeaponCapacity();
 			++i)
 		_weapons.push_back(nullptr);
@@ -548,11 +548,11 @@ std::string Craft::getCraftStatusString() const
 	switch (_status)
 	{
 		default:
-		case CS_READY:		return "STR_READY";
-		case CS_REFUELLING:	return "STR_REFUELLING";
-		case CS_REARMING:	return "STR_REARMING";
-		case CS_REPAIRS:	return "STR_REPAIRS";
-		case CS_OUT:		return "STR_OUT";
+		case CS_READY:      return "STR_READY";
+		case CS_REFUELLING: return "STR_REFUELLING";
+		case CS_REARMING:   return "STR_REARMING";
+		case CS_REPAIRS:    return "STR_REPAIRS";
+		case CS_OUT:        return "STR_OUT";
 	}
 }
 
@@ -655,12 +655,12 @@ unsigned Craft::getHeadingInt() const
 	if (theta > 157.5 || theta < -157.5)
 		return 6u;
 
-	if (theta >  112.5)	return 7u;
-	if (theta >   67.5)	return 8u;
-	if (theta >   22.5)	return 1u;
-	if (theta < -112.5)	return 5u;
-	if (theta <  -67.5)	return 4u;
-	if (theta <  -22.5)	return 3u;
+	if (theta >  112.5) return 7u;
+	if (theta >   67.5) return 8u;
+	if (theta >   22.5) return 1u;
+	if (theta < -112.5) return 5u;
+	if (theta <  -67.5) return 4u;
+	if (theta <  -22.5) return 3u;
 
 	return 2u;
 }
@@ -693,7 +693,7 @@ size_t Craft::getQtyWeapons() const
 	{
 		size_t qty (0u);
 		for (std::vector<CraftWeapon*>::const_iterator
-				i = _weapons.begin();
+				i  = _weapons.begin();
 				i != _weapons.end();
 				++i)
 		{
@@ -715,7 +715,7 @@ int Craft::getQtySoldiers() const
 	{
 		int qty (0);
 		for (std::vector<Soldier*>::const_iterator
-				i = _base->getSoldiers()->begin();
+				i  = _base->getSoldiers()->begin();
 				i != _base->getSoldiers()->end();
 				++i)
 		{
@@ -752,7 +752,7 @@ int Craft::getQtyVehicles(bool tiles) const
 		{
 			int quads (0);
 			for (std::vector<Vehicle*>::const_iterator
-					i = _vehicles.begin();
+					i  = _vehicles.begin();
 					i != _vehicles.end();
 					++i)
 			{
@@ -848,7 +848,7 @@ bool Craft::isDestroyed() const
  */
 void Craft::setFuel(int fuel)
 {
-	if (fuel > _crRule->getFuelCapacity())
+	if ( fuel > _crRule->getFuelCapacity())
 		_fuel = _crRule->getFuelCapacity();
 	else if (fuel < 0)
 		_fuel = 0;
@@ -1073,7 +1073,7 @@ void Craft::checkup()
 	if (_crRule->getWeaponCapacity() != 0u)
 	{
 		for (std::vector<CraftWeapon*>::const_iterator
-				i = _weapons.begin();
+				i  = _weapons.begin();
 				i != _weapons.end();
 				++i)
 		{
@@ -1148,7 +1148,7 @@ std::string Craft::rearm(const Ruleset* const rules)
 	_warning = CW_NONE;
 
 	for (std::vector<CraftWeapon*>::const_iterator
-			i = _weapons.begin();
+			i  = _weapons.begin();
 			i != _weapons.end();
 			++i)
 	{
@@ -1266,7 +1266,7 @@ int Craft::getSpaceUsed() const
 {
 	int total (0); // <- could use getQtyVehicles(true)
 	for (std::vector<Vehicle*>::const_iterator
-			i = _vehicles.begin();
+			i  = _vehicles.begin();
 			i != _vehicles.end();
 			++i)
 	{
@@ -1284,7 +1284,7 @@ int Craft::getVehicleCount(const std::string& vehicle) const
 {
 	int total (0);
 	for (std::vector<Vehicle*>::const_iterator
-			i = _vehicles.begin();
+			i  = _vehicles.begin();
 			i != _vehicles.end();
 			++i)
 	{
@@ -1387,7 +1387,7 @@ int Craft::getDowntime(bool& isDelayed, const Ruleset* const rules)
 	}
 
 	for (std::vector<CraftWeapon*>::const_iterator
-			i = _weapons.begin();
+			i  = _weapons.begin();
 			i != _weapons.end();
 			++i)
 	{
@@ -1408,7 +1408,7 @@ int Craft::getDowntime(bool& isDelayed, const Ruleset* const rules)
 					if (baseQty < reqQty)
 					{
 						for (std::vector<Transfer*>::const_iterator // check Transfers
-								j = _base->getTransfers()->begin();
+								j  = _base->getTransfers()->begin();
 								j != _base->getTransfers()->end();
 								++j)
 						{
@@ -1446,7 +1446,7 @@ int Craft::getDowntime(bool& isDelayed, const Ruleset* const rules)
 				if (baseQty < reqQty)
 				{
 					for (std::vector<Transfer*>::const_iterator // check Transfers
-							i = _base->getTransfers()->begin();
+							i  = _base->getTransfers()->begin();
 							i != _base->getTransfers()->end();
 							++i)
 					{
@@ -1500,7 +1500,7 @@ void Craft::unloadCraft(
 	if (_crRule->getSoldierCapacity() != 0)
 	{
 		for (std::vector<Soldier*>::const_iterator
-				i = _base->getSoldiers()->begin();
+				i  = _base->getSoldiers()->begin();
 				i != _base->getSoldiers()->end();
 				++i)
 		{
@@ -1513,7 +1513,7 @@ void Craft::unloadCraft(
 	{
 		const RuleItem* itRule;
 		for (std::vector<Vehicle*>::const_iterator
-				i = _vehicles.begin();
+				i  = _vehicles.begin();
 				i != _vehicles.end();
 				)
 		{
@@ -1537,7 +1537,7 @@ void Craft::unloadCraft(
 	if (_crRule->getItemCapacity() != 0)
 	{
 		for (std::map<std::string, int>::const_iterator
-				i = _items->getContents()->begin();
+				i  = _items->getContents()->begin();
 				i != _items->getContents()->end();
 				++i)
 		{
@@ -1551,7 +1551,7 @@ void Craft::unloadCraft(
 	if (updateCraft == false && _crRule->getWeaponCapacity() != 0u)
 	{
 		for (std::vector<CraftWeapon*>::const_iterator
-				i = _weapons.begin();
+				i  = _weapons.begin();
 				i != _weapons.end();
 				++i)
 		{
@@ -1567,7 +1567,7 @@ void Craft::unloadCraft(
 
 
 	for (std::vector<BaseFacility*>::const_iterator
-			i = _base->getFacilities()->begin();
+			i  = _base->getFacilities()->begin();
 			i != _base->getFacilities()->end();
 			++i)
 	{

@@ -74,19 +74,19 @@ bool kL_reCenter = false;
 constexpr int Globe::GLOBESHADE[32u];
 
 const double
-	Globe::ROTATE_LONGITUDE	= 0.176,
-	Globe::ROTATE_LATITUDE	= 0.176;
+	Globe::ROTATE_LONGITUDE = 0.176,
+	Globe::ROTATE_LATITUDE  = 0.176;
 
 Uint8 // these are only fallbacks for Geography.rul->globe
-	Globe::C_LBLBASE	= 100u,	// Palette::blockOffset(6)+4;	// stock 133;
-	Globe::C_LBLCITY	= 167u,	// Palette::blockOffset(10)+7;	// stock 138
-	Globe::C_LBLCOUNTRY	= 227u,	// Palette::blockOffset(14)+3;	// stock 239
-	Globe::C_LINE		= 162u,	// Palette::blockOffset(10)+2;	// light gray
-//	Globe::C_RADAR1		=		// let base radars do its own thing in XuLine()
-	Globe::C_RADAR2		= 150u,	// Palette::blockOffset(9)+6;	// brown
-	Globe::C_FLIGHT		= 166u,	// Palette::blockOffset(10)+6;	// steel gray
-	Globe::C_OCEAN		= 192u,	// Palette::blockOffset(12),	// blue ofc.
-	Globe::C_BLACK		=  15u;
+	Globe::C_LBLBASE    = 100u,	// Palette::blockOffset(6)+4;	// stock 133;
+	Globe::C_LBLCITY    = 167u,	// Palette::blockOffset(10)+7;	// stock 138
+	Globe::C_LBLCOUNTRY = 227u,	// Palette::blockOffset(14)+3;	// stock 239
+	Globe::C_LINE       = 162u,	// Palette::blockOffset(10)+2;	// light gray
+//	Globe::C_RADAR1     =		// let base radars do its own thing in XuLine()
+	Globe::C_RADAR2     = 150u,	// Palette::blockOffset(9)+6;	// brown
+	Globe::C_FLIGHT     = 166u,	// Palette::blockOffset(10)+6;	// steel gray
+	Globe::C_OCEAN      = 192u,	// Palette::blockOffset(12),	// blue ofc.
+	Globe::C_BLACK      =  15u;
 
 
 namespace
@@ -102,11 +102,11 @@ struct Terminator
 
 	/**
 	 * Function returning normal vector of sphere surface.
-	 * @param ox	- x cord of sphere center
-	 * @param oy	- y cord of sphere center
-	 * @param r		- radius of sphere
-	 * @param x		- cord of point where we getting this vector
-	 * @param y		- cord of point where we getting this vector
+	 * @param ox - x cord of sphere center
+	 * @param oy - y cord of sphere center
+	 * @param r  - radius of sphere
+	 * @param x  - cord of point where we getting this vector
+	 * @param y  - cord of point where we getting this vector
 	 * @return, normal vector of sphere surface
 	 */
 	static inline Cord circle_norm(
@@ -150,31 +150,31 @@ struct Terminator
 		// filling terminator-gradient LUT ...
 		int j;
 		for (size_t
-				i = 0u;
+				i  = 0u;
 				i != 240u; // -120 .. +119
 				++i)
 		{
 			j = static_cast<int>(i) - 120;
 
-//			if		(j < -64) j = -16; // bladum -> no.
-//			else if	(j < -56) j = -15;
-//			else if	(j < -48) j = -14;
-//			else if	(j < -40) j = -13;
-//			else if	(j < -32) j = -12;
-//			else if	(j < -24) j = -11;
-//			else if	(j < -16) j = -10;
-//			else if	(j <  -8) j =  -9;
+//			if      (j < -64) j = -16; // bladum -> no.
+//			else if (j < -56) j = -15;
+//			else if (j < -48) j = -14;
+//			else if (j < -40) j = -13;
+//			else if (j < -32) j = -12;
+//			else if (j < -24) j = -11;
+//			else if (j < -16) j = -10;
+//			else if (j <  -8) j =  -9;
 //
-//			else if	(j >  64) j =  16;
-//			else if	(j >  56) j =  15;
-//			else if	(j >  48) j =  14;
-//			else if	(j >  40) j =  13;
-//			else if	(j >  32) j =  12;
-//			else if	(j >  24) j =  11;
-//			else if	(j >  16) j =  10;
-//			else if	(j >   8) j =   9;
+//			else if (j >  64) j =  16;
+//			else if (j >  56) j =  15;
+//			else if (j >  48) j =  14;
+//			else if (j >  40) j =  13;
+//			else if (j >  32) j =  12;
+//			else if (j >  24) j =  11;
+//			else if (j >  16) j =  10;
+//			else if (j >   8) j =   9;
 
-			if		(j < -66) j = -16; // stock ->
+			if      (j < -66) j = -16; // stock ->
 			else if (j < -48) j = -15;
 			else if (j < -33) j = -14;
 			else if (j < -22) j = -13;
@@ -304,14 +304,14 @@ struct CreateTerminator
 
 /**
  * Sets up the Globe with a specified size and position.
- * @param game		- pointer to the core Game
- * @param geoState	- pointer to the GeoscapeState
- * @param cenX		- x-position of the center of the globe
- * @param cenY		- y-position of the center of the globe
- * @param width		- width in pixels
- * @param height	- height in pixels
- * @param x			- x-position in pixels (default 0)
- * @param y			- y-position in pixels (default 0)
+ * @param game     - pointer to the core Game
+ * @param geoState - pointer to the GeoscapeState
+ * @param cenX     - x-position of the center of the globe
+ * @param cenY     - y-position of the center of the globe
+ * @param width    - width in pixels
+ * @param height   - height in pixels
+ * @param x        - x-position in pixels (default 0)
+ * @param y        - y-position in pixels (default 0)
  */
 Globe::Globe(
 		Game* const game,
@@ -356,13 +356,13 @@ Globe::Globe(
 		_crosshairLon(0.),
 		_crosshairLat(0.)
 {
-	_srtTextures	= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeTextures")); //"TEXTURE.DAT"
-	_srtMarkers		= new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
+	_srtTextures = new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeTextures")); //"TEXTURE.DAT"
+	_srtMarkers  = new SurfaceSet(*_game->getResourcePack()->getSurfaceSet("GlobeMarkers"));
 
-	_srfLayerDetail		= new Surface(width, height, x,y);
-	_srfLayerCrosshair	= new Surface(width, height, x,y); // TODO: Persist the crosshair if visible until play is unpaused or Globe is rotated.
-	_srfLayerMarkers	= new Surface(width, height, x,y); // Perhaps if Globe is rotated the crosshair should re-locate to next coordinates.
-	_srfLayerRadars		= new Surface(width, height, x,y);
+	_srfLayerDetail    = new Surface(width, height, x,y);
+	_srfLayerCrosshair = new Surface(width, height, x,y); // TODO: Persist the crosshair if visible until play is unpaused or Globe is rotated.
+	_srfLayerMarkers   = new Surface(width, height, x,y); // Perhaps if Globe is rotated the crosshair should re-locate to next coordinates.
+	_srfLayerRadars    = new Surface(width, height, x,y);
 
 	_clipper = new FastLineClip(
 							x, x + width,
@@ -382,7 +382,7 @@ Globe::Globe(
 
 	_terminatorFluxions.resize(static_cast<size_t>(static_data.random_surf_size * static_data.random_surf_size));
 	for (size_t
-			i = 0u;
+			i  = 0u;
 			i != _terminatorFluxions.size();
 			++i)
 	{
@@ -410,7 +410,7 @@ Globe::~Globe()
 	delete _clipper;
 
 	for (std::list<Polygon*>::const_iterator
-			i = _cacheLand.begin();
+			i  = _cacheLand.begin();
 			i != _cacheLand.end();
 			++i)
 		delete *i;
@@ -421,10 +421,10 @@ Globe::~Globe()
 /**
  * Converts a polar-point into a cartesian-point for mapping a Polygon onto the
  * 3D-looking Globe.
- * @param lon	- longitude of the polar point
- * @param lat	- latitude of the polar point
- * @param x		- pointer to the output x-position
- * @param y		- pointer to the output y-position
+ * @param lon - longitude of the polar point
+ * @param lat - latitude of the polar point
+ * @param x   - pointer to the output x-position
+ * @param y   - pointer to the output y-position
  */
 void Globe::polarToCart( // Orthographic projection
 		double lon,
@@ -455,10 +455,10 @@ void Globe::polarToCart( // Orthographic projection
 /**
  * Converts a cartesian-point into a polar-point for mapping a globe-click onto
  * the flat world.
- * @param x		- x-position of the cartesian point
- * @param y		- y-position of the cartesian point
- * @param lon	- pointer to the output longitude
- * @param lat	- pointer to the output latitude
+ * @param x   - x-position of the cartesian point
+ * @param y   - y-position of the cartesian point
+ * @param lon - pointer to the output longitude
+ * @param lat - pointer to the output latitude
  */
 void Globe::cartToPolar( // Orthographic Projection
 		Sint16 x,
@@ -487,11 +487,11 @@ void Globe::cartToPolar( // Orthographic Projection
 					+ _cenLon;
 	}
 
-	while (*lon < 0.) // keep between 0 and 2PI
-		*lon += M_PI * 2.;
+	while (*lon  < 0.) // keep between 0 and 2PI
+		   *lon += M_PI * 2.;
 
-	while (*lon > M_PI * 2.)
-		*lon -= M_PI * 2.;
+	while (*lon  > M_PI * 2.)
+		   *lon -= M_PI * 2.;
 }
 
 /**
@@ -518,8 +518,8 @@ bool Globe::pointBack( // private.
  *
 double Globe::lastVisibleLat(double lon) const
 {
-//	double c = cos(_cenLat) * cos(lat) * cos(lon - _cenLon) + sin(_cenLat) * sin(lat);
-//	tan(lat) = -cos(_cenLat) * cos(lon - _cenLon)/sin(_cenLat);
+//	double c =  cos(_cenLat) * cos(lat) * cos(lon - _cenLon) + sin(_cenLat) * sin(lat);
+//	tan(lat) = -cos(_cenLat) * cos(lon - _cenLon) / sin(_cenLat);
 	return std::atan(-std::cos(_cenLat) * std::cos(lon - _cenLon) / std::sin(_cenLat));
 } */
 
@@ -548,7 +548,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 	size_t verts;
 
 	for (std::list<Polygon*>::const_iterator
-			i = _globeRule->getPolygons()->begin();
+			i  = _globeRule->getPolygons()->begin();
 			i != _globeRule->getPolygons()->end();
 			++i)
 	{
@@ -556,7 +556,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 
 		verts = (*i)->getPoints();
 		for (size_t
-				j = 0u;
+				j  = 0u;
 				j != verts;
 				++j)
 		{
@@ -579,7 +579,7 @@ Polygon* Globe::getPolygonAtCoord( // private.
 			y = cosLat * sin(cLat) - sinLat * cos(cLat) * cos(cLon - lon);
 
 			for (size_t
-					j = 0u;
+					j  = 0u;
 					j != (*i)->getPoints();
 					++j)
 			{
@@ -605,9 +605,9 @@ Polygon* Globe::getPolygonAtCoord( // private.
 
 /**
  * Checks if a polar-point is inside a certain Polygon.
- * @param lon	- longitude of the point
- * @param lat	- latitude of the point
- * @param poly	- pointer to the polygon
+ * @param lon  - longitude of the point
+ * @param lat  - latitude of the point
+ * @param poly - pointer to the polygon
  * @return, true if inside
  *
 bool Globe::insidePolygon( // private. obsolete, see getPolygonAtCoord()
@@ -744,8 +744,8 @@ void Globe::rotateStopLat()
 
 /**
  * Sets up the perceived radii of the Earth for the several zoom-levels.
- * @param width		- the new width of the Globe
- * @param height	- the new height of the Globe
+ * @param width  - the new width of the Globe
+ * @param height - the new height of the Globe
  */
 void Globe::setupRadii( // private.
 		int width,
@@ -780,17 +780,17 @@ void Globe::setupRadii( // private.
 
 	_earthData.resize(_radii.size());	// data for drawing sun-shadow.
 	for (size_t							// filling normal field for each radius
-			i = 0u;
+			i  = 0u;
 			i != _radii.size();
 			++i)
 	{
 		_earthData[i].resize(static_cast<size_t>(width * height));
 		for (size_t
-				j = 0u;
+				j  = 0u;
 				j != static_cast<size_t>(height);
 				++j)
 			for (size_t
-					k = 0u;
+					k  = 0u;
 					k != static_cast<size_t>(width);
 					++k)
 				_earthData[i]
@@ -1023,9 +1023,9 @@ GlobeRadarDetail Globe::changeRadars()
 
 /**
  * Checks if a certain target is near a certain cartesian-point.
- * @param target	- pointer to Target
- * @param x			- X coordinate of point
- * @param y			- Y coordinate of point
+ * @param target - pointer to Target
+ * @param x      - x-coordinate of point
+ * @param y      - y-coordinate of point
  * @return, true if near
  */
 bool Globe::targetNear( // private.
@@ -1056,9 +1056,9 @@ bool Globe::targetNear( // private.
 
 /**
  * Returns a list of all the Targets currently near a cartesian-point.
- * @param x				- X coordinate of point
- * @param y				- Y coordinate of point
- * @param flightTargets	- true to get targets for Craft only (default true)
+ * @param x             - x-coordinate of point
+ * @param y             - y-coordinate of point
+ * @param flightTargets - true to get targets for Craft only (default true)
  * @return, vector of pointers to Targets
  */
 std::vector<Target*> Globe::getTargets(
@@ -1070,7 +1070,7 @@ std::vector<Target*> Globe::getTargets(
 
 	if (flightTargets == false)
 		for (std::vector<Base*>::const_iterator
-				i = _playSave->getBases()->begin();
+				i  = _playSave->getBases()->begin();
 				i != _playSave->getBases()->end();
 				++i)
 			if ((*i)->isBasePlaced() == true)
@@ -1079,7 +1079,7 @@ std::vector<Target*> Globe::getTargets(
 					targets.push_back(*i);
 
 				for (std::vector<Craft*>::const_iterator
-						j = (*i)->getCrafts()->begin();
+						j  = (*i)->getCrafts()->begin();
 						j != (*i)->getCrafts()->end();
 						++j)
 					if ((*j)->getCraftStatus() == CS_OUT && targetNear(*j, x,y))
@@ -1087,28 +1087,28 @@ std::vector<Target*> Globe::getTargets(
 			}
 
 	for (std::vector<Ufo*>::const_iterator
-			i = _playSave->getUfos()->begin();
+			i  = _playSave->getUfos()->begin();
 			i != _playSave->getUfos()->end();
 			++i)
 		if ((*i)->getDetected() == true && targetNear(*i, x,y) == true)
 			targets.push_back(*i);
 
 	for (std::vector<Waypoint*>::const_iterator
-			i = _playSave->getWaypoints()->begin();
+			i  = _playSave->getWaypoints()->begin();
 			i != _playSave->getWaypoints()->end();
 			++i)
 		if (targetNear(*i, x,y) == true)
 			targets.push_back(*i);
 
 	for (std::vector<TerrorSite*>::const_iterator
-			i = _playSave->getTerrorSites()->begin();
+			i  = _playSave->getTerrorSites()->begin();
 			i != _playSave->getTerrorSites()->end();
 			++i)
 		if (targetNear(*i, x,y) == true)
 			targets.push_back(*i);
 
 	for (std::vector<AlienBase*>::const_iterator
-			i = _playSave->getAlienBases()->begin();
+			i  = _playSave->getAlienBases()->begin();
 			i != _playSave->getAlienBases()->end();
 			++i)
 		if ((*i)->isDetected() == true && targetNear(*i, x,y) == true)
@@ -1126,7 +1126,7 @@ std::vector<Target*> Globe::getTargets(
 void Globe::cachePolygons() // private.
 {
 	for (std::list<Polygon*>::const_iterator
-			i = _cacheLand.begin();
+			i  = _cacheLand.begin();
 			i != _cacheLand.end();
 			++i)
 	{
@@ -1136,7 +1136,7 @@ void Globe::cachePolygons() // private.
 
 	std::list<Polygon*>* const allPolygons (_globeRule->getPolygons());
 	for (std::list<Polygon*>::const_iterator
-			i = allPolygons->begin();
+			i  = allPolygons->begin();
 			i != allPolygons->end();
 			++i)
 	{
@@ -1146,7 +1146,7 @@ void Globe::cachePolygons() // private.
 			z;
 
 		for (size_t
-				j = 0u;
+				j  = 0u;
 				j != (*i)->getPoints();
 				++j)
 		{
@@ -1165,7 +1165,7 @@ void Globe::cachePolygons() // private.
 		Polygon* const poly (new Polygon(**i));
 
 		for (size_t
-				j = 0u;
+				j  = 0u;
 				j != poly->getPoints();
 				++j)
 		{
@@ -1185,9 +1185,9 @@ void Globe::cachePolygons() // private.
 
 /**
  * Replaces a specified quantity of colors in the palette of this Globe.
- * @param colors		- pointer to the set of colors
- * @param firstcolor	- offset of the first color to replace
- * @param ncolors		- amount of colors to replace
+ * @param colors     - pointer to the set of colors
+ * @param firstcolor - offset of the first color to replace
+ * @param ncolors    - amount of colors to replace
  */
 void Globe::setPalette(
 		SDL_Color* const colors,
@@ -1198,13 +1198,13 @@ void Globe::setPalette(
 
 	_flightData->setPalette(getPalette());
 
-	_srtTextures	->setPalette(colors, firstcolor, ncolors);
-	_srtMarkers		->setPalette(colors, firstcolor, ncolors);
+	_srtTextures->setPalette(colors, firstcolor, ncolors);
+	_srtMarkers ->setPalette(colors, firstcolor, ncolors);
 
-	_srfLayerDetail		->setPalette(colors, firstcolor, ncolors);
-	_srfLayerCrosshair	->setPalette(colors, firstcolor, ncolors);
-	_srfLayerMarkers	->setPalette(colors, firstcolor, ncolors);
-	_srfLayerRadars		->setPalette(colors, firstcolor, ncolors);
+	_srfLayerDetail   ->setPalette(colors, firstcolor, ncolors);
+	_srfLayerCrosshair->setPalette(colors, firstcolor, ncolors);
+	_srfLayerMarkers  ->setPalette(colors, firstcolor, ncolors);
+	_srfLayerRadars   ->setPalette(colors, firstcolor, ncolors);
 }
 
 /**
@@ -1221,7 +1221,7 @@ void Globe::think()
 	}
 
 	_timerBlink->think(nullptr, this);
-	_timerRot->think(nullptr, this);
+	_timerRot  ->think(nullptr, this);
 }
 
 /**
@@ -1276,24 +1276,24 @@ void Globe::draw()
 
 	Surface::draw();
 
-	_srfLayerRadars    ->clear();
-	_srfLayerMarkers   ->clear();
-	_srfLayerDetail    ->clear();
-	_srfLayerCrosshair ->clear();
+	_srfLayerRadars   ->clear();
+	_srfLayerMarkers  ->clear();
+	_srfLayerDetail   ->clear();
+	_srfLayerCrosshair->clear();
 
 //	if (_gZ != 0u) // bypass if earthradius=0
-	{
-		drawOcean();
-		drawLand();
-		drawBevel();
-		drawRadars();	// '_srfLayerRadars'
-		drawFlights();	// '_srfLayerRadars' [also draws intercept-markers]
-		drawTerminus();
-		drawMarkers();	// '_srfLayerMarkers'
-		drawDetail();	// '_srfLayerDetail'
+//	{
+	drawOcean();
+	drawLand();
+	drawBevel();
+	drawRadars();	// '_srfLayerRadars'
+	drawFlights();	// '_srfLayerRadars' [also draws intercept-markers]
+	drawTerminus();
+	drawMarkers();	// '_srfLayerMarkers'
+	drawDetail();	// '_srfLayerDetail'
 
-		if (_drawCrosshair == true) drawCrosshair();
-	}
+	if (_drawCrosshair == true) drawCrosshair();
+//	}
 }
 
 /**
@@ -1319,12 +1319,12 @@ void Globe::drawLand()
 		x[4u],y[4u];
 
 	for (std::list<Polygon*>::const_iterator
-			i = _cacheLand.begin();
+			i  = _cacheLand.begin();
 			i != _cacheLand.end();
 			++i)
 	{
 		for (size_t // Convert coordinates
-				j = 0u;
+				j  = 0u;
 				j != (*i)->getPoints();
 				++j)
 		{
@@ -1351,12 +1351,12 @@ void Globe::drawBevel()
 		h (getHeight());
 
 	for (int
-			y = 0;
+			y  = 0;
 			y != h;
 			++y)
 	{
 		for (int
-				x = 0;
+				x  = 0;
 				x != w;
 				++x)
 		{
@@ -1454,7 +1454,7 @@ void Globe::drawRadars()
 		const Ruleset* const rules (_game->getRuleset());
 		const std::vector<std::string>& allFacilities (rules->getBaseFacilitiesList());
 		for (std::vector<std::string>::const_iterator
-				i = allFacilities.begin();
+				i  = allFacilities.begin();
 				i != allFacilities.end();
 				++i)
 		{
@@ -1477,7 +1477,7 @@ void Globe::drawRadars()
 			lon,lat;
 
 		for (std::vector<Base*>::const_iterator
-				i = _playSave->getBases()->begin();
+				i  = _playSave->getBases()->begin();
 				i != _playSave->getBases()->end();
 				++i)
 		{
@@ -1492,7 +1492,7 @@ void Globe::drawRadars()
 						lon = (*i)->getLongitude();
 
 						for (std::vector<BaseFacility*>::const_iterator
-								j = (*i)->getFacilities()->begin();
+								j  = (*i)->getFacilities()->begin();
 								j != (*i)->getFacilities()->end();
 								++j)
 						{
@@ -1523,7 +1523,7 @@ void Globe::drawRadars()
 
 					case GRD_CRAFT:
 						for (std::vector<Craft*>::const_iterator
-								j = (*i)->getCrafts()->begin();
+								j  = (*i)->getCrafts()->begin();
 								j != (*i)->getCrafts()->end();
 								++j)
 						{
@@ -1548,11 +1548,11 @@ void Globe::drawRadars()
 
 /**
  * Draws a range circle.
- * @param lat		-
- * @param lon		-
- * @param radius	-
- * @param segs		-
- * @param color		- (default 0)
+ * @param lat    -
+ * @param lon    -
+ * @param radius -
+ * @param segs   -
+ * @param color  - (default 0)
  */
 void Globe::drawGlobeCircle( // private.
 		double lat,
@@ -1570,7 +1570,7 @@ void Globe::drawGlobeCircle( // private.
 		segs_d (static_cast<double>(segs));
 
 	for (double // 48 segments in circle
-			az = 0.;
+			az  = 0.;
 			az <= M_PI * 2. + 0.01;
 			az += M_PI * 2. / segs_d)
 	{
@@ -1609,12 +1609,12 @@ void Globe::drawFlights()
 	{
 		_srfLayerRadars->lock();
 		for (std::vector<Base*>::const_iterator
-				i = _playSave->getBases()->begin();
+				i  = _playSave->getBases()->begin();
 				i != _playSave->getBases()->end();
 				++i)
 		{
 			for (std::vector<Craft*>::const_iterator
-					j = (*i)->getCrafts()->begin();
+					j  = (*i)->getCrafts()->begin();
 					j != (*i)->getCrafts()->end();
 					++j)
 			{
@@ -1660,11 +1660,11 @@ void Globe::drawFlights()
 
 /**
  * Draws flight paths.
- * @param surface	- pointer to a Surface
- * @param lon1		-
- * @param lat1		-
- * @param lon2		-
- * @param lat2		-
+ * @param surface - pointer to a Surface
+ * @param lon1    -
+ * @param lat1    -
+ * @param lon2    -
+ * @param lat2    -
  */
 void Globe::drawPath( // private.
 		Surface* surface,
@@ -1702,7 +1702,7 @@ void Globe::drawPath( // private.
 			p1.lat,
 			&x1,&y1);
 	for (Sint16
-			i = 0;
+			i  = 0;
 			i != qty;
 			++i)
 	{
@@ -1733,14 +1733,14 @@ void Globe::drawPath( // private.
 
 /**
  * Draws a XuLine!
- * @param surface	-
- * @param src		-
- * @param x1		-
- * @param y1		-
- * @param x2		-
- * @param y2		-
- * @param shade		-
- * @param color		- (default 0)
+ * @param surface -
+ * @param src     -
+ * @param x1      -
+ * @param y1      -
+ * @param x2      -
+ * @param y2      -
+ * @param shade   -
+ * @param color   - (default 0)
  */
 void Globe::XuLine( // private.
 		Surface* surface,
@@ -1902,41 +1902,41 @@ void Globe::drawTerminus()
 void Globe::drawMarkers()
 {
 	for (std::vector<Base*>::const_iterator			// Draw the Base markers
-			i = _playSave->getBases()->begin();
+			i  = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end();
 			++i)
 		drawTarget(*i, _srfLayerMarkers);
 
 	for (std::vector<Waypoint*>::const_iterator		// Draw the Waypoint markers
-			i = _playSave->getWaypoints()->begin();
+			i  = _playSave->getWaypoints()->begin();
 			i != _playSave->getWaypoints()->end();
 			++i)
 		drawTarget(*i, _srfLayerMarkers);
 
 	for (std::vector<TerrorSite*>::const_iterator	// Draw the TerrorSite markers
-			i = _playSave->getTerrorSites()->begin();
+			i  = _playSave->getTerrorSites()->begin();
 			i != _playSave->getTerrorSites()->end();
 			++i)
 		drawTarget(*i, _srfLayerMarkers);
 
 	for (std::vector<AlienBase*>::const_iterator	// Draw the AlienBase markers
-			i = _playSave->getAlienBases()->begin();
+			i  = _playSave->getAlienBases()->begin();
 			i != _playSave->getAlienBases()->end();
 			++i)
 		drawTarget(*i, _srfLayerMarkers);
 
 	for (std::vector<Ufo*>::const_iterator			// Draw the Ufo markers
-			i = _playSave->getUfos()->begin();
+			i  = _playSave->getUfos()->begin();
 			i != _playSave->getUfos()->end();
 			++i)
 		drawTarget(*i, _srfLayerMarkers);
 
 	for (std::vector<Base*>::const_iterator			// Draw the Craft markers
-			i = _playSave->getBases()->begin();
+			i  = _playSave->getBases()->begin();
 			i != _playSave->getBases()->end();
 			++i)
 		for (std::vector<Craft*>::const_iterator
-				j = (*i)->getCrafts()->begin();
+				j  = (*i)->getCrafts()->begin();
 				j != (*i)->getCrafts()->end();
 				++j)
 			drawTarget(*j, _srfLayerMarkers);
@@ -1944,8 +1944,8 @@ void Globe::drawMarkers()
 
 /**
  * Draws the marker for a specified Target on this Globe.
- * @param target	- pointer to the target
- * @param srfGlobe	- pointer to the globe's Surface
+ * @param target   - pointer to the target
+ * @param srfGlobe - pointer to the globe's Surface
  */
 void Globe::drawTarget( // private.
 		const Target* const target,
@@ -2044,21 +2044,21 @@ void Globe::drawDetail()
 
 			_srfLayerDetail->lock();
 			for (std::list<Polyline*>::const_iterator
-					i = _globeRule->getPolylines()->begin();
+					i  = _globeRule->getPolylines()->begin();
 					i != _globeRule->getPolylines()->end();
 					++i)
 			{
 				for (size_t
-						j = 0u;
+						j  = 0u;
 						j != (*i)->getPoints() - 1u;
 						++j)
 				{
-					lon = (*i)->getLongitude(j),
-					lat = (*i)->getLatitude(j);
+					lon  = (*i)->getLongitude(j),
+					lat  = (*i)->getLatitude(j);
 					lon1 = (*i)->getLongitude(j + 1u),
 					lat1 = (*i)->getLatitude(j + 1u);
 
-					if (pointBack(lon,lat) == false
+					if (   pointBack(lon, lat)  == false
 						&& pointBack(lon1,lat1) == false)
 					{
 						polarToCart(
@@ -2082,13 +2082,13 @@ void Globe::drawDetail()
 		{
 			RuleRegion* regionRule;
 			for (std::vector<Region*>::const_iterator
-					i = _playSave->getRegions()->begin();
+					i  = _playSave->getRegions()->begin();
 					i != _playSave->getRegions()->end();
 					++i)
 			{
 				regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
 				for (std::vector<RuleCity*>::const_iterator
-						j = regionRule->getCities().begin();
+						j  = regionRule->getCities().begin();
 						j != regionRule->getCities().end();
 						++j)
 				{
@@ -2114,7 +2114,7 @@ void Globe::drawDetail()
 			label->setColor(C_LBLCOUNTRY); // draw the Country labels
 
 			for (std::vector<Country*>::const_iterator
-					i = _playSave->getCountries()->begin();
+					i  = _playSave->getCountries()->begin();
 					i != _playSave->getCountries()->end();
 					++i)
 			{
@@ -2143,13 +2143,13 @@ void Globe::drawDetail()
 
 			RuleRegion* regionRule;
 			for (std::vector<Region*>::const_iterator
-					i = _playSave->getRegions()->begin();
+					i  = _playSave->getRegions()->begin();
 					i != _playSave->getRegions()->end();
 					++i)
 			{
 				regionRule = const_cast<RuleRegion*>((*i)->getRules()); // strip const for iteration.
 				for (std::vector<RuleCity*>::const_iterator
-						j = regionRule->getCities().begin();
+						j  = regionRule->getCities().begin();
 						j != regionRule->getCities().end();
 						++j)
 				{
@@ -2186,7 +2186,7 @@ void Globe::drawDetail()
 			label->setAlign(ALIGN_LEFT);
 
 			for (std::vector<Base*>::const_iterator
-					i = _playSave->getBases()->begin();
+					i  = _playSave->getBases()->begin();
 					i != _playSave->getBases()->end();
 					++i)
 			{
@@ -2233,7 +2233,7 @@ void Globe::drawDetail()
 					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Country*>::const_iterator
-						i = _playSave->getCountries()->begin();
+						i  = _playSave->getCountries()->begin();
 						i != _playSave->getCountries()->end();
 						++i, ++area)
 				{
@@ -2241,7 +2241,7 @@ void Globe::drawDetail()
 					{
 						color += 10;
 						for (size_t
-								j = 0u;
+								j  = 0u;
 								j != (*i)->getRules()->getLonMin().size();
 								++j)
 						{
@@ -2277,7 +2277,7 @@ void Globe::drawDetail()
 					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Region*>::const_iterator
-						i = _playSave->getRegions()->begin();
+						i  = _playSave->getRegions()->begin();
 						i != _playSave->getRegions()->end();
 						++i, ++area)
 				{
@@ -2285,7 +2285,7 @@ void Globe::drawDetail()
 					{
 						color += 10;
 						for (size_t
-								j = 0u;
+								j  = 0u;
 								j != (*i)->getRules()->getLatMax().size();
 								++j)
 						{
@@ -2319,12 +2319,12 @@ void Globe::drawDetail()
 			{
 				int limit (0);
 				for (std::vector<Region*>::const_iterator
-						i = _playSave->getRegions()->begin();
+						i  = _playSave->getRegions()->begin();
 						i != _playSave->getRegions()->end();
 						++i)
 				{
 					for (std::vector<MissionZone>::const_iterator
-							j = (*i)->getRules()->getMissionZones().begin();
+							j  = (*i)->getRules()->getMissionZones().begin();
 							j != (*i)->getRules()->getMissionZones().end();
 							++j)
 					{
@@ -2336,14 +2336,14 @@ void Globe::drawDetail()
 					_game->setDebugCycle(cycle = -1);
 
 				for (std::vector<Region*>::const_iterator
-						i = _playSave->getRegions()->begin();
+						i  = _playSave->getRegions()->begin();
 						i != _playSave->getRegions()->end();
 						++i)
 				{
 					color = -1;
 					int zoneType (0);
 					for (std::vector<MissionZone>::const_iterator
-							j = (*i)->getRules()->getMissionZones().begin();
+							j  = (*i)->getRules()->getMissionZones().begin();
 							j != (*i)->getRules()->getMissionZones().end();
 							++j, ++area, ++zoneType)
 					{
@@ -2351,7 +2351,7 @@ void Globe::drawDetail()
 						{
 							color += 2;
 							for (std::vector<MissionArea>::const_iterator
-									k = j->areas.begin();
+									k  = j->areas.begin();
 									k != j->areas.end();
 									++k)
 							{
@@ -2403,12 +2403,12 @@ void Globe::drawDetail()
 
 /**
  * Draws a VHLine!
- * @param surface	- pointer to a Surface
- * @param lon1		-
- * @param lat1		-
- * @param lon2		-
- * @param lat2		-
- * @param color		- (default 0)
+ * @param surface - pointer to a Surface
+ * @param lon1    -
+ * @param lat1    -
+ * @param lon2    -
+ * @param lat2    -
+ * @param color   - (default 0)
  */
 void Globe::drawVHLine( // private.
 		Surface* surface,
@@ -2529,16 +2529,16 @@ void Globe::blit(const Surface* const srf)
 {
 	Surface::blit(srf);
 
-	_srfLayerRadars		->blit(srf);
-	_srfLayerDetail		->blit(srf);
-	_srfLayerMarkers	->blit(srf);
-	_srfLayerCrosshair	->blit(srf);
+	_srfLayerRadars   ->blit(srf);
+	_srfLayerDetail   ->blit(srf);
+	_srfLayerMarkers  ->blit(srf);
+	_srfLayerCrosshair->blit(srf);
 }
 
 /**
  * Handles mouse-motion/drag-scroll for this Globe.
- * @param action	- pointer to an Action
- * @param state		- State that the ActionHandlers belong to
+ * @param action - pointer to an Action
+ * @param state  - State that the ActionHandlers belong to
  */
 void Globe::mouseOver(Action* action, State* state)
 {
@@ -2592,8 +2592,8 @@ void Globe::mouseOver(Action* action, State* state)
 
 /**
  * Initiates drag-scroll.
- * @param action	- pointer to an Action
- * @param state		- State that the ActionHandlers belong to
+ * @param action - pointer to an Action
+ * @param state  - State that the ActionHandlers belong to
  */
 void Globe::mousePress(Action* action, State* state)
 {
@@ -2639,8 +2639,8 @@ void Globe::mousePress(Action* action, State* state)
 
 /**
  * 
- * @param action	- pointer to an Action
- * @param state		- State that the ActionHandlers belong to
+ * @param action - pointer to an Action
+ * @param state  - State that the ActionHandlers belong to
  */
 void Globe::mouseRelease(Action* action, State* state)
 {
@@ -2660,8 +2660,8 @@ void Globe::mouseRelease(Action* action, State* state)
 
 /**
  * Finalizes drag-scroll and handles mousewheel-zoom.
- * @param action	- pointer to an Action
- * @param state		- State that the ActionHandlers belong to
+ * @param action - pointer to an Action
+ * @param state  - State that the ActionHandlers belong to
  */
 void Globe::mouseClick(Action* action, State* state)
 {
@@ -2670,8 +2670,8 @@ void Globe::mouseClick(Action* action, State* state)
 		const Uint8 btnId (action->getDetails()->button.button);
 		switch (btnId)
 		{
-			case SDL_BUTTON_WHEELUP:	zoomIn();	break;
-			case SDL_BUTTON_WHEELDOWN:	zoomOut();	break;
+			case SDL_BUTTON_WHEELUP:   zoomIn();  break;
+			case SDL_BUTTON_WHEELDOWN: zoomOut(); break;
 
 			default:
 			{
@@ -2702,8 +2702,8 @@ void Globe::mouseClick(Action* action, State* state)
 
 /**
  * Handles this Globe's keyboard-shortcuts.
- * @param action	- pointer to an Action
- * @param state		- State that the ActionHandlers belong to
+ * @param action - pointer to an Action
+ * @param state  - State that the ActionHandlers belong to
  */
 void Globe::keyboardPress(Action* action, State* state)
 {
@@ -2726,10 +2726,10 @@ void Globe::keyboardPress(Action* action, State* state)
 
 /**
  * Gets the texture and shade of a Polygon at specified coordinates.
- * @param lon		- longitude of the point
- * @param lat 		- latitude of the point
- * @param texture	- pointer to texture ID (-1 if polygon not found)
- * @param shade		- pointer to shade-level
+ * @param lon     - longitude of the point
+ * @param lat     - latitude of the point
+ * @param texture - pointer to texture ID (-1 if polygon not found)
+ * @param shade   - pointer to shade-level
  */
 void Globe::getPolygonTextureAndShade(
 		double lon,
@@ -2752,9 +2752,9 @@ void Globe::getPolygonTextureAndShade(
 
 /**
  * Gets the texture of a Polygon at specified coordinates.
- * @param lon		- longitude of the point
- * @param lat 		- latitude of the point
- * @param texture	- pointer to texture ID (-1 if polygon not found)
+ * @param lon     - longitude of the point
+ * @param lat     - latitude of the point
+ * @param texture - pointer to texture ID (-1 if polygon not found)
  */
 void Globe::getPolygonTexture(
 		double lon,
@@ -2770,9 +2770,9 @@ void Globe::getPolygonTexture(
 
 /**
  * Gets the shade of a Polygon at specified coordinates.
- * @param lon	- longitude of the point
- * @param lat 	- latitude of the point
- * @param shade	- pointer to shade-level
+ * @param lon   - longitude of the point
+ * @param lat   - latitude of the point
+ * @param shade - pointer to shade-level
  */
 void Globe::getPolygonShade(
 		double lon,
@@ -2836,7 +2836,7 @@ void Globe::resize()
 		height (Options::baseYGeoscape);
 
 	for (size_t
-			i = 0u;
+			i  = 0u;
 			i != SRF;
 			++i)
 	{

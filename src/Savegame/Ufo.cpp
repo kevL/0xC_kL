@@ -87,7 +87,7 @@ Ufo::~Ufo()
 {
 	Craft* craft;
 	for (size_t
-			i = 0u;
+			i  = 0u;
 			i != _targeters.size();
 			)
 	{
