@@ -1645,7 +1645,7 @@ void GeoscapeState::time5Seconds()
 					if ((*j)->getTarget() != nullptr)
 					{
 						// NOTE: This has to deal with Landed UFOs, Crashed UFOs, UFOs spawning TerrorSites
-						// and UFOs that are on BaseAssuault runs starting BaseDefense tacticals, etc etc.
+						// and UFOs that are on BaseAssault runs starting BaseDefense tacticals, etc etc.
 
 						const Ufo* const ufo (dynamic_cast<Ufo*>((*j)->getTarget()));
 						if (ufo != nullptr
@@ -1688,9 +1688,10 @@ void GeoscapeState::time5Seconds()
 									case Ufo::FLYING:
 										(*j)->interceptGroundTarget(false);
 
-										if (_dogfights.size() + _dogfightsToStart.size() < 4u // no more than 4 interception-windows at once.
-											&& (*j)->inDogfight() == false
-											&& AreSame((*j)->getDistance(ufo), 0.) == true) // Craft ran into a UFO.
+										if ((*j)->inDogfight() == false // Craft ran into a UFO ->
+											&& (*j)->getRules()->getTopSpeed() >= ufo->getSpeed()
+											&& _dogfights.size() + _dogfightsToStart.size() < 4u // no more than 4 interception-windows at once.
+											&& AreSame((*j)->getDistance(ufo), 0.) == true) // check the distance (~again) might be unnecessary.
 										{
 											_dogfightsToStart.push_back(new DogfightState(_globe, *j, ufo, this));
 //											if (_tmrDfStart->isRunning() == false)	// what are the odds that 2 Craft run into UFO(s) on the same think()

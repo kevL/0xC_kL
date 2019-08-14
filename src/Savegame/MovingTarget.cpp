@@ -281,7 +281,7 @@ void MovingTarget::calculateSpeed() // protected/virtual.
 		//Log(LOG_INFO) << ". . lonPoint= " << _lonPoint;
 		//Log(LOG_INFO) << ". . latPoint= " << _latPoint;
 
-//		if (!reachedDestination()) // <- is probably checked for before any wrapper-calls get here.
+//		if (!reachedDestination()) // <- is probably checked before any wrapper-calls get here.
 //		{
 		const Craft* const craft (dynamic_cast<const Craft*>(this));
 		if (craft != nullptr && craft->inDogfight() == false)
