@@ -30,7 +30,7 @@
 #include "FlcPlayer.h"
 
 //#include <algorithm>
-//#include <cassert>
+#include <cassert>
 //#include <cmath>
 #include <cstring>
 #include <fstream>

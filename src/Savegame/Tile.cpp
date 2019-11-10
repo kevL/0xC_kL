@@ -1046,10 +1046,7 @@ bool Tile::allowSmoke() const // private.
 	const MapData* const part (_parts[O_CONTENT]);
 	return  part == nullptr
 		||  part->blocksSmoke() == false
-		|| (part->getBigwall() & (BIGWALL_WEST | BIGWALL_NORTH
-											   | BIGWALL_EAST
-											   | BIGWALL_SOUTH
-											   | BIGWALL_E_S)) != 0;
+		|| (part->getBigwall() & (BIGWALL_BLOCK | BIGWALL_NESW | BIGWALL_NWSE)) == 0;
 }
 
 /**
@@ -1066,11 +1063,8 @@ bool Tile::allowFire() const // private.
 
 	return (partF != nullptr && partF->blocksFire() == false && partO == nullptr)
 		|| (partO != nullptr
-			&& (   partO->blocksFire() == false
-				|| partO->getBigwall() & (BIGWALL_WEST | BIGWALL_NORTH
-													   | BIGWALL_EAST
-													   | BIGWALL_SOUTH
-													   | BIGWALL_E_S) != 0));
+			&& (    partO->blocksFire() == false
+				|| (partO->getBigwall() & (BIGWALL_BLOCK | BIGWALL_NESW | BIGWALL_NWSE)) == 0));
 }
 
 /**

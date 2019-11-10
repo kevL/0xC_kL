@@ -20,7 +20,7 @@
 #include "TextList.h"
 
 //#include <algorithm>
-//#include <cmath>
+#include <cmath>
 //#include <cstdarg>
 
 #include <limits>

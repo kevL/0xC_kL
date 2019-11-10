@@ -19,7 +19,7 @@
 
 #include "PathfindingOpenSet.h"
 
-//#include <assert.h>
+//#include <cassert.h>
 
 #include "PathfindingNode.h"
 
@@ -48,7 +48,7 @@ PathfindingOpenSet::~PathfindingOpenSet()
  */
 PathfindingNode* PathfindingOpenSet::processNodeTop()
 {
-	assert(isOpenSetEmpty() == false);
+//	assert(isOpenSetEmpty() == false);
 
 	const OpenSetNode* nodeOs (_frontier.top());
 	PathfindingNode* const nodePf (nodeOs->_node);

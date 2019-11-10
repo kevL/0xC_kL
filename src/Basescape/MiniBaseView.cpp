@@ -19,7 +19,7 @@
 
 #include "MiniBaseView.h"
 
-//#include <cmath>
+#include <cmath>
 
 #include "../Engine/Action.h"
 #include "../Engine/SurfaceSet.h"

@@ -19,7 +19,8 @@
 
 #include "SoldierDiary.h"
 
-//#include <sstream> // std::ostringstream
+#include <algorithm>	// find()
+//#include <sstream>	// std::ostringstream
 
 #include "BattleUnitStatistics.h"
 #include "TacticalStatistics.h"

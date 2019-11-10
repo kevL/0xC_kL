@@ -1016,13 +1016,13 @@ void Game::defaultLanguage()
 		{
 			loadLanguage(local);
 		}
-		catch (std::exception)
+		catch (std::exception &)
 		{
 			try // Try to load language locale
 			{
 				loadLanguage(lang);
 			}
-			catch (std::exception) // Give up, use default
+			catch (std::exception &) // Give up, use default
 			{
 				loadLanguage(defaultLang);
 			}
@@ -1034,7 +1034,7 @@ void Game::defaultLanguage()
 		{
 			loadLanguage(Options::language);
 		}
-		catch (std::exception) // Language not found, use default
+		catch (std::exception &) // Language not found, use default
 		{
 			loadLanguage(defaultLang);
 		}

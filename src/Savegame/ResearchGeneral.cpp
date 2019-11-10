@@ -19,6 +19,8 @@
 
 #include "ResearchGeneral.h"
 
+#include <algorithm> // std::find()
+
 #include "../Ruleset/RuleResearch.h"
 
 

@@ -211,7 +211,7 @@ void SoundSet::loadCat(
 			else
 				pSound->load(newsound, bytes);
 		}
-		catch (Exception)
+		catch (Exception &)
 		{ /* ignore junk in the file */ }
 
 		_sounds[i] = pSound;

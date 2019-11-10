@@ -19,6 +19,7 @@
 
 #include "MedikitState.h"
 
+#include <cmath>
 //#include <sstream>
 
 #include "BattlescapeState.h"	// control Civies

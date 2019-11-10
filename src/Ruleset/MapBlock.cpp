@@ -19,7 +19,7 @@
 
 #include "MapBlock.h"
 
-//#include <algorithm> // std::find()
+#include <algorithm> // std::find()
 
 #include "../Battlescape/Position.h"
 

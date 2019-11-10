@@ -19,7 +19,7 @@
 
 #include "OptionInfo.h"
 
-//#include <algorithm>
+#include <algorithm>
 
 #include "Exception.h"
 

@@ -19,7 +19,7 @@
 
 #include "RuleInventory.h"
 
-//#include <cmath>
+#include <cmath>
 
 #include "RuleItem.h"
 

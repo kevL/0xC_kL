@@ -19,6 +19,7 @@
 
 #include "ResearchState.h"
 
+#include <cmath>
 //#include <sstream>
 
 #include "AlienContainmentState.h"

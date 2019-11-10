@@ -19,8 +19,8 @@
 
 #include "Language.h"
 
-//#include <algorithm>	// std::find()
-//#include <cassert>	// assert
+#include <algorithm>	// std::find()
+#include <cassert>		// assert
 //#include <limits>		// std::numeric_limits
 //#include <map>		// std::map
 //#include <set>		// std::set

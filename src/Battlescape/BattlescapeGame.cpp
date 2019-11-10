@@ -710,7 +710,7 @@ bool BattlescapeGame::noActionsPending(const BattleUnit* const unit) const
 	if (_battleStates.empty() == false)
 	{
 		for (std::list<BattleState*>::const_iterator
-				i = _battleStates.begin();
+				i  = _battleStates.begin();
 				i != _battleStates.end();
 				++i)
 		{
@@ -1723,7 +1723,7 @@ void BattlescapeGame::checkCasualties(
 			&& attacker->getMurdererId() != 0)					// it explodes and transfers any kills to a shooter.
 		{
 			for (std::vector<BattleUnit*>::const_iterator
-					i = _battleSave->getUnits()->begin();
+					i  = _battleSave->getUnits()->begin();
 					i != _battleSave->getUnits()->end();
 					++i)
 			{
@@ -1749,7 +1749,7 @@ void BattlescapeGame::checkCasualties(
 		isDead,
 		isConvert;
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -1952,13 +1952,13 @@ void BattlescapeGame::diaryAttacker( // private.
 
 			const std::vector<std::string>& allItems (rules->getItemsList());
 			for (std::vector<std::string>::const_iterator
-					i = allItems.begin();
+					i  = allItems.begin();
 					i != allItems.end();
 					++i)
 			{
 				itRule = rules->getItemRule(*i);
 				for (std::vector<std::string>::const_iterator
-						j = itRule->getClipTypes()->begin();
+						j  = itRule->getClipTypes()->begin();
 						j != itRule->getClipTypes()->end();
 						++j)
 				{
@@ -2128,7 +2128,7 @@ void BattlescapeGame::factionMorale( // private.
 	}
 
 	for (std::vector<BattleUnit*>::const_iterator // do bystander FACTION changes:
-			j = _battleSave->getUnits()->begin();
+			j  = _battleSave->getUnits()->begin();
 			j != _battleSave->getUnits()->end();
 			++j)
 	{
@@ -2200,7 +2200,7 @@ void BattlescapeGame::factionMorale( // private.
 void BattlescapeGame::showInfoBoxQueue() // private.
 {
 	for (std::vector<InfoboxDialogState*>::const_iterator
-			i = _infoboxQueue.begin();
+			i  = _infoboxQueue.begin();
 			i != _infoboxQueue.end();
 			++i)
 	{
@@ -2386,7 +2386,7 @@ bool BattlescapeGame::handlePanickingPlayer() // private.
 {
 	//Log(LOG_INFO) << "bg::handlePanickingPlayer()";
 	for (std::vector<BattleUnit*>::const_iterator
-			i = _battleSave->getUnits()->begin();
+			i  = _battleSave->getUnits()->begin();
 			i != _battleSave->getUnits()->end();
 			++i)
 	{
@@ -3349,7 +3349,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 	const Tile* tile;
 	std::vector<BattleItem*> grdItems;
 	for (std::vector<BattleItem*>::const_iterator
-			i = _battleSave->getItems()->begin();
+			i  = _battleSave->getItems()->begin();
 			i != _battleSave->getItems()->end();
 			++i)
 	{
@@ -3380,7 +3380,7 @@ BattleItem* BattlescapeGame::surveyItems(BattleUnit* const unit) const
 
 		std::vector<BattleItem*> choiceItems;
 		for (std::vector<BattleItem*>::const_iterator
-				i = grdItems.begin();
+				i  = grdItems.begin();
 				i != grdItems.end();
 				++i)
 		{
@@ -3432,12 +3432,12 @@ bool BattlescapeGame::worthTaking(
 
 	bool fit (false);
 	for (std::vector<const RuleInventory*>::const_iterator
-			i = inTypes.begin();
+			i  = inTypes.begin();
 			i != inTypes.end() && fit == false;
 			++i)
 	{
 		for (std::vector<InSlot>::const_iterator
-				j = (*i)->getSlots()->begin();
+				j  = (*i)->getSlots()->begin();
 				j != (*i)->getSlots()->end() && fit == false;
 				++j)
 		{
@@ -3488,7 +3488,7 @@ bool BattlescapeGame::worthTaking(
 			case BT_AMMO:
 				//Log(LOG_INFO) << ". ammo";
 				for (std::vector<BattleItem*>::const_iterator
-						i = unit->getInventory()->begin();
+						i  = unit->getInventory()->begin();
 						i != unit->getInventory()->end();
 						++i)
 				{
@@ -3496,7 +3496,7 @@ bool BattlescapeGame::worthTaking(
 					{
 						//Log(LOG_INFO) << ". . has Firearm for it";
 						for (std::vector<std::string>::const_iterator
-								j = (*i)->getRules()->getClipTypes()->begin();
+								j  = (*i)->getRules()->getClipTypes()->begin();
 								j != (*i)->getRules()->getClipTypes()->end();
 								++j)
 						{

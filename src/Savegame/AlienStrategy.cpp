@@ -20,7 +20,7 @@
 #include "AlienStrategy.h"
 
 //#include <cmath>
-//#include <assert.h>
+#include <cassert>
 
 #include "WeightedOptions.h"
 

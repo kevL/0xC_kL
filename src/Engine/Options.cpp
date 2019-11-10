@@ -19,7 +19,7 @@
 
 #include "Options.h"
 
-//#include <algorithm>	// std::transform()
+#include <algorithm>	// std::transform()
 //#include <cstdio>		// std::fopen(), fflush(), fclose()
 #include <fstream>		// std::ofstream
 #include <iostream>		// std::cout

@@ -19,7 +19,7 @@
 
 #include "PathfindingNode.h"
 
-//#include <cmath> // std::sqrt()
+#include <cmath>
 
 
 namespace OpenXcom

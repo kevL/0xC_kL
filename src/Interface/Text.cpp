@@ -19,7 +19,7 @@
 
 #include "Text.h"
 
-//#include <cmath>		// std::ceil()
+#include <cmath>		// std::ceil()
 //#include <sstream>	// std::wostringstream
 
 #include "../Engine/Font.h"

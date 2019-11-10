@@ -20,7 +20,7 @@
 #include "SavedBattleGame.h"
 
 //#include <vector>
-//#include <assert.h>
+#include <cassert>
 #include <cstring>
 
 #include "BattleItem.h"
