@@ -1445,6 +1445,10 @@ void BattlescapeGame::endTurn() // private.
 
 //	if (_endTurnProcessed == false)
 //	{
+	// TODO: I might actually *want* to consider Turn NEUTRAL in both the
+	// grenade detonation phase and the grenade tickdown (further below).
+//	if (_battleSave->getSide() != FACTION_NEUTRAL) // TODO: I don't think I want that. further consideration req'd ...
+//	{
 	for (size_t // check for hot potatos on the ground
 			i = 0u;
 			i != _battleSave->getMapSizeXYZ();
@@ -1474,6 +1478,7 @@ void BattlescapeGame::endTurn() // private.
 			}
 		}
 	}
+//	}
 
 	if (getTileEngine()->closeSlideDoors() == true) // close doors between grenade & terrain explosions
 		getResourcePack()->getSound("BATTLE.CAT", ResourcePack::SLIDING_DOOR_CLOSE)->play();

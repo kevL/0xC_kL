@@ -19,7 +19,7 @@
 
 #include "PathfindingOpenSet.h"
 
-//#include <cassert.h>
+//#include <cassert>
 
 #include "PathfindingNode.h"
 
