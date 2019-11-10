@@ -257,17 +257,17 @@ int MapData::getBlock(DamageType dType) const
 {
 	switch (dType)
 	{
-//		case DT_NONE:  return _block[1];
-//		case DT_HE:    return _block[2];
-//		case DT_SMOKE: return _block[3];
-//		case DT_IN:    return _block[4];
-//		case DT_STUN:  return _block[5];
-											// see setBlock() below_
-		case DT_NONE:  return _blocks[1u];	// stop LoS: [0 or 100], was [0 or 255]
+//		case DT_NONE:  return _block[BT_LOS];
+//		case DT_HE:    return _block[BT_HE];
+//		case DT_SMOKE: return _block[BT_SMOKE];
+//		case DT_IN:    return _block[BT_FIRE];
+//		case DT_STUN:  return _block[BT_GAS];
+													// see setBlock() below_
+		case DT_NONE:  return _blocks[BT_LOS];		// stop LoS: [0 or 100], was [0 or 255]
 		case DT_HE:
 		case DT_IN:
-		case DT_STUN:  return _blocks[2u];	// HE block [int] // TODO: Just fix all this crap.
-		case DT_SMOKE: return _blocks[3u];	// block smoke: try (bool), was [0 or 256]
+		case DT_STUN:  return _blocks[BT_HE];		// HE block [int] // TODO: Just fix all this crap.
+		case DT_SMOKE: return _blocks[BT_SMOKE];	// block smoke: try (bool), was [0 or 256]
 	}
 	return 0;
 }
@@ -289,32 +289,32 @@ void MapData::setBlocks(
 		int fire,
 		int gas)
 {
-	_blocks[0u] = light;					// not used.
-	_blocks[1u] = vision == 1 ? 100 : 0;	// stopLoS==true needs to be a significantly large integer (only about 10+ really)
-											// so that if a directionally opposite Field of View check includes a "-1",
-											// meaning block by bigWall or other content-object, the result is not reduced
-											// to zero (no block at all) when added to regular stopLoS by a standard wall.
-											//
-											// It would be unnecessary to use that jigger-pokery if TileEngine::horizontalBlockage()
-											// and TileEngine::blockage() were coded differently - verticalBlockage() too, perhaps.
-	_blocks[2u] = he;
-	_blocks[3u] = smoke;					// this is the same as the _blockSmoke flag.
-	_blocks[4u] = fire;						// IMPORTANT: this is Flammable, NOT Block_Fire per se.
-	_blocks[5u] = gas;						// probably not used.
+	_blocks[BT_LIGHT] = light;					// not used.
+	_blocks[BT_LOS]   = vision == 1 ? 100 : 0;	// stopLoS==true needs to be a significantly large integer (only about 10+ really)
+												// so that if a directionally opposite Field of View check includes a "-1",
+												// meaning block by bigWall or other content-object, the result is not reduced
+												// to zero (no block at all) when added to regular stopLoS by a standard wall.
+												//
+												// It would be unnecessary to use that jigger-pokery if TileEngine::horizontalBlockage()
+												// and TileEngine::blockage() were coded differently - verticalBlockage() too, perhaps.
+	_blocks[BT_HE]    = he;
+	_blocks[BT_SMOKE] = smoke;					// this is the same as the _blockSmoke flag.
+	_blocks[BT_FIRE]  = fire;					// IMPORTANT: this is Flammable, NOT Block_Fire per se.
+	_blocks[BT_GAS]   = gas;					// probably not used.
 }
 
 /**
  * Sets default blockage values if none are assigned in an MCD.
- * @param he - armor value of the tilepart
+ * @param armor - armor value of the tilepart
  */
-void MapData::setDefaultBlocks(int he)
+void MapData::setDefaultBlocks(int armor)
 {
-	_blocks[0u] = 1;
-	_blocks[1u] = 1;
-	_blocks[2u] = he;
-	_blocks[3u] = 1;
-	_blocks[4u] = 1;
-	_blocks[5u] = 1;
+	_blocks[BT_LIGHT] = 1;
+	_blocks[BT_LOS]   = 1;
+	_blocks[BT_HE]    = armor;
+	_blocks[BT_SMOKE] = 1;
+	_blocks[BT_FIRE]  = 1;
+	_blocks[BT_GAS]   = 1;
 }
 
 /**
@@ -324,7 +324,7 @@ void MapData::setDefaultBlocks(int he)
 void MapData::setStopLos(bool stopLos)
 {
 	_stopLos = stopLos;
-	_blocks[1u] = (stopLos == true) ? 100 : 0;
+	_blocks[BT_LOS] = (stopLos == true) ? 100 : 0;
 }
 
 /**
@@ -333,7 +333,7 @@ void MapData::setStopLos(bool stopLos)
  */
 void MapData::setHeBlock(int he)
 {
-	_blocks[2u] = he;
+	_blocks[BT_HE] = he;
 }
 
 /**

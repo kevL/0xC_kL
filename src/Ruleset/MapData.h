@@ -105,6 +105,13 @@ class MapData
 {
 
 private:
+	const unsigned int BT_LIGHT = 0u; // block types ->
+	const unsigned int BT_LOS   = 1u;
+	const unsigned int BT_HE    = 2u;
+	const unsigned int BT_SMOKE = 3u;
+	const unsigned int BT_FIRE  = 4u;
+	const unsigned int BT_GAS   = 5u;
+
 	bool
 		_baseObject,
 		_disallowFire,
@@ -116,8 +123,8 @@ private:
 		_slideDoor,
 		_stopLos;
 	int
-		_armor,
 		_altId,
+		_armor,
 		_blocks[6u],
 		_dieId,
 		_explosive,
@@ -210,7 +217,7 @@ private:
 				int fire,
 				int gas);
 		/// Sets default blockage values if none are assigned in an MCD.
-		void setDefaultBlocks(int he);
+		void setDefaultBlocks(int armor);
 		/// Sets whether the part stops LoS.
 		void setStopLos(bool stopLos = true);
 		/// Sets the amount of HE blockage.
