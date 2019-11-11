@@ -159,6 +159,8 @@ private:
 //			TH_TWOTHIRD = 16,
 //			TH_CEIL     = 24;
 
+		static const int INDESTRUCTIBLE = 255;
+
 		/// cTor.
 		explicit MapData(MapDataSet* const dataSet);
 		/// dTor.

@@ -4462,7 +4462,7 @@ void TileEngine::detonateTile(Tile* const tile) const
 
 			// Check tile-part's HP then iterate through and destroy its death-tiles if enough powerTest.
 			while (part != nullptr
-				&& part->getArmorPoints() != 255
+				&& part->getArmorPoints() != MapData::INDESTRUCTIBLE
 				&& (part->getArmorPoints() << 1u) <= powerTest)
 			{
 				if (powerTest == power) // only once per initial part destroyed.

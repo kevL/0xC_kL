@@ -234,6 +234,10 @@ void MapData::setFlags(
 		bool disallowSmoke,
 		bool baseObject)
 {
+	// TODO: If gravlifts are truly indestructible then they ought have their
+	// armor value set to 255 when their dataset loads and be done with it.
+	// see Tile::destroyTilepart()
+
 	_slideDoor     = slideDoor;
 	_stopLos       = stopLOS;
 	_noFloor       = noFloor;

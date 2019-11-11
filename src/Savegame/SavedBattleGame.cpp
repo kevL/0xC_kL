@@ -2159,7 +2159,7 @@ void SavedBattleGame::tileVolatiles() // private.
 		{
 			var <<= 3u;
 			for (int
-					dir = 0;
+					dir  = 0;
 					dir != 8;
 					dir += 2)
 			{
@@ -2177,8 +2177,8 @@ void SavedBattleGame::tileVolatiles() // private.
 		{
 			if ((*i)->getMapData(O_CONTENT) != nullptr)
 			{
-				if (   (*i)->getMapData(O_CONTENT)->getFlammable()   != 255
-					&& (*i)->getMapData(O_CONTENT)->getArmorPoints() != 255) // NOTE: Also checked in destroyTilepart().
+				if (   (*i)->getMapData(O_CONTENT)->getFlammable()   != MapData::INDESTRUCTIBLE
+					&& (*i)->getMapData(O_CONTENT)->getArmorPoints() != MapData::INDESTRUCTIBLE) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_CONTENT, this);
 					(*i)->destroyTilepart(O_FLOOR, this);	// NOTE: There is no assurance that the current floor-part is actually 'flammable';
@@ -2186,8 +2186,8 @@ void SavedBattleGame::tileVolatiles() // private.
 			}												// at least a scorched-earth floor-part gets laid down.
 			else if ((*i)->getMapData(O_FLOOR) != nullptr)
 			{
-				if (   (*i)->getMapData(O_FLOOR)->getFlammable()   != 255
-					&& (*i)->getMapData(O_FLOOR)->getArmorPoints() != 255) // NOTE: Also checked in destroyTilepart().
+				if (   (*i)->getMapData(O_FLOOR)->getFlammable()   != MapData::INDESTRUCTIBLE
+					&& (*i)->getMapData(O_FLOOR)->getArmorPoints() != MapData::INDESTRUCTIBLE) // NOTE: Also checked in destroyTilepart().
 				{
 					(*i)->destroyTilepart(O_FLOOR, this);
 				}

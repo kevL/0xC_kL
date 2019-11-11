@@ -684,7 +684,11 @@ int Tile::destroyTilepart(
 	const MapData* const part (_parts[partType]);
 	if (part != nullptr)
 	{
-		if (part->getArmorPoints() != 255 && part->isGravLift() == false)
+		// TODO: If gravlifts are truly indestructible then they ought have their
+		// armor value set to 255 when their dataset loads and be done with it.
+		// see MapData::setFlags()
+
+		if (part->getArmorPoints() != MapData::INDESTRUCTIBLE && part->isGravLift() == false)
 		{
 			ret = part->getArmorPoints();
 
@@ -839,7 +843,7 @@ int Tile::getBurnable(MapDataType partType) const
 {
 	if (partType == O_NULPART)
 	{
-		int burn (255); // not burnable. <- lower is better :)
+		int burn (MapData::INDESTRUCTIBLE); // not burnable. <- lower is better :)
 		for (size_t
 				i = 0u;
 				i != TILE_PARTS;
