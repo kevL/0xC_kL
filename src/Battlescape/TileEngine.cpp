@@ -4041,7 +4041,7 @@ int TileEngine::blockage( // private.
 								case BIGWALL_NWSE:
 									if (object->stopsLos() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 										&& _powerE > -1
-										&& _powerE < (object->getArmorPoints() << 1u))
+										&& _powerE < (object->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE.
 									{
 										//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir
 										//		<< " HARD_BLOCK partType = " << partType << " " << tile->getPosition();
