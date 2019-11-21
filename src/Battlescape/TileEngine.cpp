@@ -3916,7 +3916,7 @@ int TileEngine::blockage( // private.
 					}
 					else if (part->stopsLos() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 						&& _powerE > -1
-						&& _powerE < (part->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE!
+						&& _powerE < (part->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE
 					{
 						//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir << " Ret HARD_BLOCK[1] partType = " << partType << " " << tile->getPosition();
 						return HARD_BLOCK;
@@ -4041,7 +4041,7 @@ int TileEngine::blockage( // private.
 								case BIGWALL_NWSE:
 									if (object->stopsLos() == true // use stopLOS to hinder explosions from propagating through BigWalls freely.
 										&& _powerE > -1
-										&& _powerE < (object->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE.
+										&& _powerE < (object->getArmorPoints() << 1u)) // terrain absorbs 200% damage from DT_HE
 									{
 										//if (_debug) Log(LOG_INFO) << ". . . . dir = " << dir
 										//		<< " HARD_BLOCK partType = " << partType << " " << tile->getPosition();
@@ -4255,7 +4255,7 @@ int TileEngine::blockage( // private.
 					if (visLike == true
 						|| (diagBigwallPass == false
 							&& _powerE > -1
-							&& _powerE < (object->getArmorPoints() << 1u))) // terrain absorbs 200% damage from DT_HE.
+							&& _powerE < (object->getArmorPoints() << 1u))) // terrain absorbs 200% damage from DT_HE
 					{
 						switch (dType)
 						{

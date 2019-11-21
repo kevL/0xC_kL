@@ -678,7 +678,7 @@ int Tile::destroyTilepart(
 	//Log(LOG_INFO) << "Tile::destroyTilepart() " << _pos;
 
 	int
-		ret,
+		armor,
 		tLevel (0);
 
 	const MapData* const part (_parts[partType]);
@@ -688,10 +688,9 @@ int Tile::destroyTilepart(
 		// armor value set to 255 when their dataset loads and be done with it.
 		// see MapData::setFlags()
 
-		if (part->getArmorPoints() != MapData::INDESTRUCTIBLE && part->isGravLift() == false)
+		if ((armor = part->getArmorPoints()) != MapData::INDESTRUCTIBLE
+			&& part->isGravLift() == false)
 		{
-			ret = part->getArmorPoints();
-
 			if (part->getSpecialType() == battleSave->getObjectiveTilepartType())
 				battleSave->addDestroyedObjective();
 
@@ -724,7 +723,7 @@ int Tile::destroyTilepart(
 			return -1;
 	}
 	else
-		ret = -1;
+		armor = -1;
 
 	if (partType == O_FLOOR) // check if the floor-part on the ground-level is gone.
 	{
@@ -752,7 +751,7 @@ int Tile::destroyTilepart(
 		}
 	}
 
-	return ret;
+	return armor;
 }
 
 /**
@@ -770,13 +769,13 @@ void Tile::hitTile(
 	//Log(LOG_INFO) << "Tile::hitTile() partType= "	<< partType
 	//			  << " hp= "						<< _parts[partType]->getArmor()
 	//			  << " power= "						<< power;
-	int expend;
+	int armor;
 	while (power > 0
 		&& _parts[partType] != nullptr // early out + safety: Also handled in destroyTilepart().
 		&& _parts[partType]->getArmorPoints() <= power)
 	{
-		if ((expend = destroyTilepart(partType, battleSave)) != -1)
-			power -= expend;
+		if ((armor = destroyTilepart(partType, battleSave)) != -1)	// <- replaces the partType with the deadpart ...
+			power -= armor;											// so cycle through deadparts also
 		else
 			break;
 	}
