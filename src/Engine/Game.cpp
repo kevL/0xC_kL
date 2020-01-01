@@ -174,7 +174,7 @@ Game::~Game()
 	Music::stop();
 
 	for (std::list<State*>::const_iterator
-			i = _states.begin();
+			i  = _states.begin();
 			i != _states.end();
 			++i)
 		delete *i;
@@ -243,11 +243,13 @@ void Game::run()
 				_deleted.pop_back();
 			}
 
+			State* state (_states.back());
+
 			if (_init == true)						// initialize the active State
 			{
 				_init = false;
-				_states.back()->resetSurfaces();	// unpress buttons - NOTE: This goes before init() if you want '_isFocused' to toggle properly.
-				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
+				state->resetSurfaces();				// unpress buttons - NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				state->init();						// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
 				int									// update mouse-position
 					x,y;
@@ -262,7 +264,7 @@ void Game::run()
 									_screen->getBorderTop(),
 									_screen->getBorderLeft()));
 //									_rodentState));
-				_states.back()->handle(&action);
+				state->handle(&action);
 			}
 
 			while (SDL_PollEvent(&event) == 1)		// process SDL input-events
@@ -324,7 +326,7 @@ void Game::run()
 									dX (0),
 									dY (0);
 								for (std::list<State*>::const_iterator
-										i = _states.begin();
+										i  = _states.begin();
 										i != _states.end();
 										++i)
 									(*i)->resize(dX, dY);
@@ -376,7 +378,7 @@ void Game::run()
 
 								case SDLK_u: // "ctrl-u" debug UI
 									Options::debugUi = !Options::debugUi;
-									_states.back()->redrawText();
+									state->redrawText();
 									break;
 
 								case SDLK_m: // "ctrl-m" mute
@@ -432,13 +434,13 @@ void Game::run()
 							}
 						}
 
-						_states.back()->handle(&action);
+						state->handle(&action);
 				} // end event-type switch.
 			} // end polling loop.
 
 			_inputActive = true;
 
-			_states.back()->think();					// process logic
+			state->think();								// process logic
 			_fpsCounter->think();
 
 			if (_init == false)							// process rendering
@@ -487,11 +489,13 @@ void Game::run()
 				_deleted.pop_back();
 			}
 
+			State* state (_states.back());
+
 			if (_init == true)						// initialize active State
 			{
 				_init = false;
-				_states.back()->resetSurfaces();	// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
-				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
+				state->resetSurfaces();				// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				state->init();						// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
 				int									// update mouse-position
 					x,y;
@@ -506,7 +510,7 @@ void Game::run()
 									_screen->getBorderTop(),
 									_screen->getBorderLeft()));
 //									_rodentState));
-				_states.back()->handle(&action);
+				state->handle(&action);
 			}
 
 			while (SDL_PollEvent(&event) == 1)		// process SDL input-events
@@ -568,7 +572,7 @@ void Game::run()
 									dX (0),
 									dY (0);
 								for (std::list<State*>::const_iterator
-										i = _states.begin();
+										i  = _states.begin();
 										i != _states.end();
 										++i)
 									(*i)->resize(dX, dY);
@@ -639,7 +643,7 @@ void Game::run()
 
 								case SDLK_u: // "ctrl-u" debug UI
 									Options::debugUi = !Options::debugUi;
-									_states.back()->redrawText();
+									state->redrawText();
 									break;
 
 								case SDLK_m: // "ctrl-m" mute
@@ -699,7 +703,7 @@ void Game::run()
 							}
 						}
 
-						_states.back()->handle(&action);
+						state->handle(&action);
 				} // end event-type switch.
 			} // end polling loop.
 
@@ -708,7 +712,7 @@ void Game::run()
 
 			if (runState != PAUSED)
 			{
-				_states.back()->think();							// process logic
+				state->think();										// process logic
 				_fpsCounter->think();
 
 				if (_init == false)									// process rendering
@@ -1119,7 +1123,7 @@ void Game::loadRulesets()
 //		Options::rulesets.push_back("Xcom1Ruleset");
 
 	for (std::vector<std::string>::const_iterator
-			i = Options::rulesets.begin();
+			i  = Options::rulesets.begin();
 			i != Options::rulesets.end();
 			)
 	{
@@ -1148,7 +1152,7 @@ void Game::loadRulesets()
 //	Log(LOG_INFO) << "\n";
 //	std::vector<std::string> pedList = _rules->getUfopaediaList();
 //	for (std::vector<std::string>::const_iterator
-//			i = pedList.begin();
+//			i  = pedList.begin();
 //			i != pedList.end();
 //			++i)
 //	{
@@ -1164,7 +1168,7 @@ void Game::loadRulesets()
 //	Log(LOG_INFO) << "\n";
 //	std::vector<std::string> pedList = _rules->getUfopaediaList();
 //	for (std::vector<std::string>::const_iterator
-//			i = pedList.begin();
+//			i  = pedList.begin();
 //			i != pedList.end();
 //			++i)
 //	{
