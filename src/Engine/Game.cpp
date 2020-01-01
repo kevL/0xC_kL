@@ -243,13 +243,11 @@ void Game::run()
 				_deleted.pop_back();
 			}
 
-			State* state (_states.back());
-
 			if (_init == true)						// initialize the active State
 			{
 				_init = false;
-				state->resetSurfaces();				// unpress buttons - NOTE: This goes before init() if you want '_isFocused' to toggle properly.
-				state->init();						// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
+				_states.back()->resetSurfaces();	// unpress buttons - NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
 				int									// update mouse-position
 					x,y;
@@ -264,7 +262,7 @@ void Game::run()
 									_screen->getBorderTop(),
 									_screen->getBorderLeft()));
 //									_rodentState));
-				state->handle(&action);
+				_states.back()->handle(&action);
 			}
 
 			while (SDL_PollEvent(&event) == 1)		// process SDL input-events
@@ -378,7 +376,7 @@ void Game::run()
 
 								case SDLK_u: // "ctrl-u" debug UI
 									Options::debugUi = !Options::debugUi;
-									state->redrawText();
+									_states.back()->redrawText();
 									break;
 
 								case SDLK_m: // "ctrl-m" mute
@@ -434,13 +432,13 @@ void Game::run()
 							}
 						}
 
-						state->handle(&action);
+						_states.back()->handle(&action);
 				} // end event-type switch.
 			} // end polling loop.
 
 			_inputActive = true;
 
-			state->think();								// process logic
+			_states.back()->think();					// process logic
 			_fpsCounter->think();
 
 			if (_init == false)							// process rendering
@@ -489,13 +487,11 @@ void Game::run()
 				_deleted.pop_back();
 			}
 
-			State* state (_states.back());
-
 			if (_init == true)						// initialize active State
 			{
 				_init = false;
-				state->resetSurfaces();				// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
-				state->init();						// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
+				_states.back()->resetSurfaces();	// unpress buttons -- NOTE: This goes before init() if you want '_isFocused' to toggle properly.
+				_states.back()->init();				// Globe (geoscape) OR Map (battlescape) will reset (_isFocused=TRUE) here. If you want it to.
 
 				int									// update mouse-position
 					x,y;
@@ -510,7 +506,7 @@ void Game::run()
 									_screen->getBorderTop(),
 									_screen->getBorderLeft()));
 //									_rodentState));
-				state->handle(&action);
+				_states.back()->handle(&action);
 			}
 
 			while (SDL_PollEvent(&event) == 1)		// process SDL input-events
@@ -643,7 +639,7 @@ void Game::run()
 
 								case SDLK_u: // "ctrl-u" debug UI
 									Options::debugUi = !Options::debugUi;
-									state->redrawText();
+									_states.back()->redrawText();
 									break;
 
 								case SDLK_m: // "ctrl-m" mute
@@ -703,7 +699,7 @@ void Game::run()
 							}
 						}
 
-						state->handle(&action);
+						_states.back()->handle(&action);
 				} // end event-type switch.
 			} // end polling loop.
 
@@ -712,7 +708,7 @@ void Game::run()
 
 			if (runState != PAUSED)
 			{
-				state->think();										// process logic
+				_states.back()->think();							// process logic
 				_fpsCounter->think();
 
 				if (_init == false)									// process rendering
