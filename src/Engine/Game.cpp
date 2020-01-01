@@ -434,6 +434,9 @@ void Game::run()
 
 						_states.back()->handle(&action);
 				} // end event-type switch.
+
+				if (_init == true)						// state-stack changed
+					break;
 			} // end polling loop.
 
 			_inputActive = true;
@@ -701,6 +704,9 @@ void Game::run()
 
 						_states.back()->handle(&action);
 				} // end event-type switch.
+
+				if (_init == true)									// state-stack changed
+					break;
 			} // end polling loop.
 
 			_inputActive = true;
