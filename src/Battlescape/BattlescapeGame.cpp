@@ -1282,7 +1282,7 @@ void BattlescapeGame::setupSelector() // NOTE: This might not be needed when cal
 	getMap()->refreshSelectorPosition();
 
 	SelectorType type;
-	int sideSize (1);
+	int sidesize (1);
 
 	if (_playerAction.targeting == true)
 	{
@@ -1315,14 +1315,14 @@ void BattlescapeGame::setupSelector() // NOTE: This might not be needed when cal
 	}
 	else
 	{
-		//Log(LOG_INFO) << ". is NOT targeting: CUBOID";
+		//Log(LOG_INFO) << ". is NOT targeting: CT_CUBOID";
 		type = CT_CUBOID;
 
 		if ((_playerAction.actor = _battleSave->getSelectedUnit()) != nullptr)
-			sideSize = _playerAction.actor->getArmor()->getSize();
+			sidesize = _playerAction.actor->getArmor()->getSize();
 	}
 
-	getMap()->setSelectorType(type, sideSize);
+	getMap()->setSelectorType(type, sidesize);
 }
 
 /**
@@ -2615,6 +2615,30 @@ bool BattlescapeGame::handlePanickingUnit(BattleUnit* const unit) // private.
 	}
 	return false;
 }
+
+/**
+ * Cancels all user actions.
+ * @note Can be called by
+ * BattlescapeState::selectNextPlayerUnit()
+ * BattlescapeState::selectPreviousPlayerUnit()
+ * BattlescapeState::btnUnitUpPress()
+ * BattlescapeState::btnUnitDownPress()
+ * BattlescapeState::btnInventoryClick()
+ * BattlescapeState::btnStatsClick()
+ *
+void BattlescapeGame::cancelAllActions()
+{
+	_battleSave->getPathfinding()->clearPreview();
+
+	_playerAction.waypoints.clear();
+	getMap()->getWaypoints()->clear();
+	_battleState->showLaunchButton(false);
+
+	_playerAction.targeting = false;
+	_playerAction.type = BA_NONE;
+	setupSelector();
+	_battleState->getGame()->getCursor()->setVisible(true);
+} */
 
 /**
  * Cancels the current action the Player has selected (firing, throwing, etc).

@@ -344,6 +344,8 @@ private:
 				BattleUnit* const unit,
 				int tu) const;
 
+		/// Cancels all current battle-actions.
+//		void cancelAllActions();
 		/// Cancels the current battle-action.
 		bool cancelTacticalAction(bool force = false);
 		/// Gets a pointer for access to the battle-action-struct directly.
