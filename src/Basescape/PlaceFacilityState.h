@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 OpenXcom Developers.
+ * Copyright 2010-2020 OpenXcom Developers.
  *
  * This file is part of OpenXcom.
  *
