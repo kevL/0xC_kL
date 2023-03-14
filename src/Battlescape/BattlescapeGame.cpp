@@ -175,7 +175,7 @@ BattlescapeGame::BattlescapeGame(
 							-1);
 
 	for (std::vector<BattleUnit*>::const_iterator	// NOTE: This stuff needs to be done *after*
-			i = _battleSave->getUnits()->begin();	// all the tactical-related class-objects
+			i  = _battleSave->getUnits()->begin();	// all the tactical-related class-objects
 			i != _battleSave->getUnits()->end();	// have finished instantiating ->
 			++i)
 	{
