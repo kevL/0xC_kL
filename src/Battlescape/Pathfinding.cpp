@@ -1047,10 +1047,10 @@ int Pathfinding::getTuCostPf(
 				//								2 ^ 2
 				//								3 2 3
 				int delta (std::min(
-								std::abs(8 + dir - _unit->getUnitDirection()),
+								std::abs(dir - _unit->getUnitDirection() + 8),
 								std::min(
 									std::abs(_unit->getUnitDirection() - dir),
-									std::abs(8 + _unit->getUnitDirection() - dir))));
+									std::abs(_unit->getUnitDirection() - dir + 8))));
 				if (delta == 4) delta = 2;
 
 				cost += delta;
