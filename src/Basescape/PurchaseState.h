@@ -121,11 +121,11 @@ private:
 		/// Runs the timers.
 		void think() override;
 
-		/// Increases the quantity of an item by one.
+		/// Increases the quantity of an item.
 		void onIncrease();
 		/// Increases the quantity of an item by the given value.
 		void increaseByValue(int delta);
-		/// Decreases the quantity of an item by one.
+		/// Decreases the quantity of an item.
 		void onDecrease();
 		/// Decreases the quantity of an item by the given value.
 		void decreaseByValue(int delta);

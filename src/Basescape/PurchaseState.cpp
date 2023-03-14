@@ -632,7 +632,7 @@ void PurchaseState::think()
 }
 
 /**
- * Increases the quantity of the selected item to buy by one.
+ * Increases the quantity of the selected item to buy.
  */
 void PurchaseState::onIncrease()
 {
@@ -641,7 +641,7 @@ void PurchaseState::onIncrease()
 }
 
 /**
- * Increases the quantity of the selected item to buy.
+ * Increases the quantity of the selected item to buy by the given value.
  * @param delta - quantity to add
  */
 void PurchaseState::increaseByValue(int delta)
@@ -735,7 +735,7 @@ void PurchaseState::increaseByValue(int delta)
 }
 
 /**
- * Decreases the quantity of the selected item to buy by one.
+ * Decreases the quantity of the selected item to buy.
  */
 void PurchaseState::onDecrease()
 {
@@ -744,7 +744,7 @@ void PurchaseState::onDecrease()
 }
 
 /**
- * Decreases the quantity of the selected item to buy.
+ * Decreases the quantity of the selected item to buy by the given value.
  * @param delta - quantity to subtract
  */
 void PurchaseState::decreaseByValue(int delta)
