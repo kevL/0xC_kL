@@ -552,6 +552,25 @@ bool ProjectileFlyBState::createProjectile() // private.
 			case VOXEL_FLOOR:
 			case VOXEL_OBJECT:
 			case VOXEL_UNIT:
+			// https://openxcom.org/forum/index.php/topic,10996.msg151426/boardseen.html
+			// Xilmi ->
+			// There's an inconsistency with the evaluation of the result of
+			// calculateThrow(). calculateThrow() returns VOXEL_OUTOFBOUNDS when
+			// the throw is not possible. When it is possible it returns what
+			// kind of object would be hit. However the method receiving that
+			// result also considers hitting a wall as a failure and then simply
+			// does nothing. While the player can just click again the AI is
+			// fucked when that happens because it thinks it tried something
+			// invalid. It is particularly unfair in favor of the player because
+			// all throws that would be really bad duds simply aren't executed
+			// and the player is allowed to try again. The alternative solution
+			// would be to internally let it try again until unit, floor or
+			// object are hit. But I think that's worse as it makes throwing
+			// just stronger than it should be. I'll fix it like this in my
+			// source-fork and recommend other source-forks to do something
+			// similar.
+			case VOXEL_WESTWALL:
+			case VOXEL_NORTHWALL:
 				//Log(LOG_INFO) << ". . VALID";
 				if (_unit->getFaction() != FACTION_PLAYER
 					&& _weapon->getRules()->isGrenade() == true)
